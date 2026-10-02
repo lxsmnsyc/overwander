@@ -1,0 +1,239 @@
+Kecleon:
+  Kecleon:
+    types: [Normal]
+    egg-groups: [Field]
+    biomes: [TropicalRainforest, TropicalSeasonalForest]
+    active: [Morning, Day]
+Shuppet:
+  Shuppet:
+    types: [Ghost]
+    egg-groups: [Amorphous]
+    biomes: [Woodland, TemperateForest]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Banette
+        method: [Level]
+        level: 37
+  Banette:
+    types: [Ghost]
+    egg-groups: [Amorphous]
+    biomes: [Woodland, TemperateForest]
+    active: [Evening, Night]
+    evolves-from: Shuppet
+# Duskull and Dusclops. **Dusclops is not a final evolution**: a
+# Dusknoir stands above it in a later generation, so nothing is
+# invented for it here. What it is short of is the slot that
+# evolution will fill
+Duskull:
+  Duskull:
+    types: [Ghost]
+    egg-groups: [Amorphous]
+    biomes: [Badlands, Woodland]
+    active: [Night]
+    evolves-into:
+      - species: Dusclops
+        method: [Level]
+        level: 37
+  Dusclops:
+    types: [Ghost]
+    egg-groups: [Amorphous]
+    biomes: [Badlands, Woodland]
+    active: [Night]
+    evolves-from: Duskull
+    evolves-into:
+      - species: Dusknoir
+        method: [HeldItem, Trade]
+        item: ReaperCloth
+  # What a Dusclops opens into: a Dusknoir listens for what the dead
+  # still want and carries them off when they are done saying it
+  Dusknoir:
+    types: [Ghost]
+    egg-groups: [Amorphous]
+    biomes: [Badlands, Woodland]
+    active: [Night]
+    evolves-from: Dusclops
+Tropius:
+  Tropius:
+    types: [Grass, Flying]
+    egg-groups: [Monster, Grass]
+    biomes: [TropicalRainforest, TropicalSeasonalForest]
+    active: [Morning, Day]
+Chimecho:
+  Chimecho:
+    types: [Psychic]
+    egg-groups: [Amorphous]
+    biomes: [Mountain, MontaneForest]
+    active: any
+    evolves-from: Chingling
+  # The Chimecho that has not learned to hold its note: a Chingling
+  # rings with every step it takes
+  Chingling:
+    types: [Psychic]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Mountain, MontaneForest]
+    active: any
+    evolves-into:
+      - species: Chimecho
+        method: [Friendship, TimeOfDay]
+        time: [Evening, Night]
+Absol:
+  Absol:
+    types: [Dark]
+    egg-groups: [Field]
+    biomes: [Mountain, AlpineTundra]
+    active: [Evening, Night]
+Snorunt:
+  Snorunt:
+    types: [Ice]
+    egg-groups: [Fairy, Mineral]
+    biomes: [Glacier, AlpineTundra, ColdDesert, Tundra]
+    active: any
+    evolves-into:
+      - species: Glalie
+        method: [Level]
+        level: 42
+      - species: Froslass
+        method: [UsedItem, Gender]
+        item: DawnStone
+        gender: Female
+  Glalie:
+    types: [Ice]
+    egg-groups: [Fairy, Mineral]
+    biomes: [Glacier, AlpineTundra, ColdDesert, Tundra]
+    active: any
+    evolves-from: Snorunt
+  # The other way a Snorunt can go, and only a female one: a Froslass
+  # freezes what it likes the look of and keeps it
+  Froslass:
+    types: [Ice, Ghost]
+    egg-groups: [Fairy, Mineral]
+    biomes: [Glacier, AlpineTundra, ColdDesert, Tundra]
+    active: any
+    evolves-from: Snorunt
+Spheal:
+  Spheal:
+    types: [Ice, Water]
+    egg-groups: [Water1, Field]
+    habitat: Amphibious
+    biomes: [Glacier, PolarOcean, Tundra]
+    active: any
+    evolves-into:
+      - species: Sealeo
+        method: [Level]
+        level: 32
+  Sealeo:
+    types: [Ice, Water]
+    egg-groups: [Water1, Field]
+    habitat: Amphibious
+    biomes: [Glacier, PolarOcean, Tundra]
+    active: any
+    evolves-from: Spheal
+    evolves-into:
+      - species: Walrein
+        method: [Level]
+        level: 44
+  Walrein:
+    types: [Ice, Water]
+    egg-groups: [Water1, Field]
+    habitat: Amphibious
+    biomes: [Glacier, PolarOcean, Tundra]
+    active: any
+    evolves-from: Sealeo
+Clamperl:
+  Clamperl:
+    types: [Water]
+    egg-groups: [Water1]
+    habitat: Water
+    biomes: [CoralReef, Ocean]
+    active: any
+    # The shell opens one of two ways, and what it was holding
+    # decides which. Neither branch is a level, so a Clamperl left
+    # alone stays one
+    evolves-into:
+      - species: Huntail
+        method: [HeldItem, Trade]
+        item: DeepSeaTooth
+      - species: Gorebyss
+        method: [HeldItem, Trade]
+        item: DeepSeaScale
+  Huntail:
+    types: [Water]
+    egg-groups: [Water1]
+    habitat: Water
+    biomes: [DeepOcean]
+    active: any
+    evolves-from: Clamperl
+  Gorebyss:
+    types: [Water]
+    egg-groups: [Water1]
+    habitat: Water
+    biomes: [DeepOcean]
+    active: any
+    evolves-from: Clamperl
+Relicanth:
+  Relicanth:
+    types: [Water, Rock]
+    egg-groups: [Water1, Water2]
+    habitat: Water
+    biomes: [DeepOcean, Ocean]
+    active: [Morning, Day]
+Luvdisc:
+  Luvdisc:
+    types: [Water]
+    egg-groups: [Water2]
+    habitat: Water
+    biomes: [CoralReef, Beach]
+    active: [Morning, Day]
+Bagon:
+  Bagon:
+    types: [Dragon]
+    egg-groups: [Dragon]
+    biomes: [Mountain, AlpineTundra]
+    active: [Day, Evening]
+    evolves-into:
+      - species: Shelgon
+        method: [Level]
+        level: 30
+  Shelgon:
+    types: [Dragon]
+    egg-groups: [Dragon]
+    biomes: [Mountain, AlpineTundra]
+    active: [Day, Evening]
+    evolves-from: Bagon
+    evolves-into:
+      - species: Salamence
+        method: [Level]
+        level: 50
+  Salamence:
+    types: [Dragon, Flying]
+    egg-groups: [Dragon]
+    biomes: [Mountain, AlpineTundra]
+    active: [Day, Evening]
+    evolves-from: Shelgon
+# TM, HM and tutor moves the two with arms share. A Beldum has none:
+Beldum:
+  Beldum:
+    types: [Steel, Psychic]
+    egg-groups: [Mineral]
+    biomes: [Badlands, ColdDesert]
+    active: any
+    evolves-into:
+      - species: Metang
+        method: [Level]
+        level: 20
+  Metang:
+    types: [Steel, Psychic]
+    egg-groups: [Mineral]
+    biomes: [Badlands, ColdDesert]
+    active: any
+    evolves-from: Beldum
+    evolves-into:
+      - species: Metagross
+        method: [Level]
+        level: 45
+  Metagross:
+    types: [Steel, Psychic]
+    egg-groups: [Mineral]
+    biomes: [Badlands, ColdDesert]
+    active: any
+    evolves-from: Metang

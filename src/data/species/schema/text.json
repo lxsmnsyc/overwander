@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Species: text",
+  "type": "object",
+  "propertyNames": {
+    "$ref": "names.json#/definitions/species"
+  },
+  "additionalProperties": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "category": {
+        "type": "string",
+        "description": "As `Seed Pokemon`"
+      }
+    },
+    "required": [
+      "name",
+      "category"
+    ],
+    "additionalProperties": false
+  }
+}

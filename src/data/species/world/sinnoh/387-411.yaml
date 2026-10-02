@@ -1,0 +1,215 @@
+Turtwig:
+  # The grass starter of Sinnoh, a shell that grows into a continent:
+  # the tree on a Torterra's back is why the line ends up part Ground
+  Turtwig:
+    types: [Grass]
+    egg-groups: [Monster, Grass]
+    biomes: [TemperateRainforest, MontaneForest, Woodland]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Grotle
+        method: [Level]
+        level: 18
+  Grotle:
+    types: [Grass]
+    egg-groups: [Monster, Grass]
+    biomes: [TemperateRainforest, MontaneForest, Woodland]
+    active: [Morning, Day]
+    evolves-from: Turtwig
+    evolves-into:
+      - species: Torterra
+        method: [Level]
+        level: 32
+  Torterra:
+    types: [Grass, Ground]
+    egg-groups: [Monster, Grass]
+    biomes: [TemperateRainforest, MontaneForest, Woodland]
+    active: [Morning, Day]
+    evolves-from: Grotle
+Chimchar:
+  # The fire starter of Sinnoh, which climbs with its hands and fights
+  # with them: the flame on its tail is out only while it sleeps
+  Chimchar:
+    types: [Fire]
+    egg-groups: [Field, HumanLike]
+    biomes: [MontaneForest, Mountain]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Monferno
+        method: [Level]
+        level: 14
+  Monferno:
+    types: [Fire, Fighting]
+    egg-groups: [Field, HumanLike]
+    biomes: [MontaneForest, Mountain]
+    active: [Morning, Day]
+    evolves-from: Chimchar
+    evolves-into:
+      - species: Infernape
+        method: [Level]
+        level: 36
+  Infernape:
+    types: [Fire, Fighting]
+    egg-groups: [Field, HumanLike]
+    biomes: [MontaneForest, Mountain]
+    active: [Morning, Day]
+    evolves-from: Monferno
+Piplup:
+  # The water starter of Sinnoh, a penguin too proud to take help: an
+  # Empoleon's wings are blades and the three horns on its beak say
+  # which one is the emperor
+  Piplup:
+    types: [Water]
+    egg-groups: [Water1, Field]
+    habitat: Amphibious
+    biomes: [PolarOcean, RockyCoast, Glacier]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Prinplup
+        method: [Level]
+        level: 16
+  Prinplup:
+    types: [Water]
+    egg-groups: [Water1, Field]
+    habitat: Amphibious
+    biomes: [PolarOcean, RockyCoast, Glacier]
+    active: [Morning, Day]
+    evolves-from: Piplup
+    evolves-into:
+      - species: Empoleon
+        method: [Level]
+        level: 36
+  Empoleon:
+    types: [Water, Steel]
+    egg-groups: [Water1, Field]
+    habitat: Amphibious
+    biomes: [PolarOcean, RockyCoast, Glacier]
+    active: [Morning, Day]
+    evolves-from: Prinplup
+Starly:
+  # Sinnoh's first bird, and the one that never flies alone: a flock of
+  # Starly is loud enough to be heard from the next route over
+  Starly:
+    types: [Normal, Flying]
+    egg-groups: [Flying]
+    biomes: [Grassland, Woodland, TemperateForest]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Staravia
+        method: [Level]
+        level: 14
+  Staravia:
+    types: [Normal, Flying]
+    egg-groups: [Flying]
+    biomes: [Grassland, Woodland, TemperateForest]
+    active: [Morning, Day]
+    evolves-from: Starly
+    evolves-into:
+      - species: Staraptor
+        method: [Level]
+        level: 34
+  Staraptor:
+    types: [Normal, Flying]
+    egg-groups: [Flying]
+    biomes: [Grassland, Woodland, TemperateForest]
+    active: [Morning, Day]
+    evolves-from: Staravia
+Bidoof:
+  # The river's engineer: Bidoof gnaws whatever it finds down to size,
+  # and a Bibarel dams the water with what is left
+  Bidoof:
+    types: [Normal]
+    egg-groups: [Water1, Field]
+    habitat: Amphibious
+    biomes: [Bog, Swamp, TemperateForest]
+    active: any
+    evolves-into:
+      - species: Bibarel
+        method: [Level]
+        level: 15
+  Bibarel:
+    types: [Normal, Water]
+    egg-groups: [Water1, Field]
+    habitat: Amphibious
+    biomes: [Bog, Swamp, TemperateForest, Woodland]
+    active: any
+    evolves-from: Bidoof
+Kricketot:
+  # The cricket that keeps the evening's time: Kricketot knocks its
+  # antennae together, and a Kricketune conducts what answers
+  Kricketot:
+    types: [Bug]
+    egg-groups: [Bug]
+    biomes: [Woodland, TemperateForest, MontaneForest]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Kricketune
+        method: [Level]
+        level: 10
+  Kricketune:
+    types: [Bug]
+    egg-groups: [Bug]
+    biomes: [Woodland, TemperateForest, MontaneForest]
+    active: [Evening, Night]
+    evolves-from: Kricketot
+Shinx:
+  # The lion whose fur works like a circuit: the light in a Luxray's
+  # eyes is the same current, and it sees through whatever it is aimed
+  # at
+  Shinx:
+    types: [Electric]
+    egg-groups: [Field]
+    biomes: [Grassland, Savanna, Shrubland]
+    active: any
+    evolves-into:
+      - species: Luxio
+        method: [Level]
+        level: 15
+  Luxio:
+    types: [Electric]
+    egg-groups: [Field]
+    biomes: [Grassland, Savanna, Shrubland]
+    active: any
+    evolves-from: Shinx
+    evolves-into:
+      - species: Luxray
+        method: [Level]
+        level: 30
+  Luxray:
+    types: [Electric]
+    egg-groups: [Field]
+    biomes: [Grassland, Savanna, Shrubland]
+    active: any
+    evolves-from: Luxio
+Cranidos:
+  # Sinnoh's skull fossil, all head and no room for anything else: the
+  # charge is the whole pokemon, and the Defense says what it costs
+  Cranidos:
+    types: [Rock]
+    egg-groups: [Monster]
+    active: any
+    evolves-into:
+      - species: Rampardos
+        method: [Level]
+        level: 30
+  Rampardos:
+    types: [Rock]
+    egg-groups: [Monster]
+    active: any
+    evolves-from: Cranidos
+Shieldon:
+  # Sinnoh's armor fossil, and the other answer to the same question:
+  # the face is a wall, and everything behind it is spent holding
+  Shieldon:
+    types: [Rock, Steel]
+    egg-groups: [Monster]
+    active: any
+    evolves-into:
+      - species: Bastiodon
+        method: [Level]
+        level: 30
+  Bastiodon:
+    types: [Rock, Steel]
+    egg-groups: [Monster]
+    active: any
+    evolves-from: Shieldon

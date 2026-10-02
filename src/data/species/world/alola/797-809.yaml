@@ -1,0 +1,145 @@
+Celesteela:
+  Celesteela:
+    types: [Steel, Flying]
+    egg-groups: [NoEggsDiscovered]
+    # Ultra Crater
+    biomes: [Mountain]
+    active: any
+Kartana:
+  Kartana:
+    types: [Grass, Steel]
+    egg-groups: [NoEggsDiscovered]
+    # Ultra Forest
+    biomes: [TemperateForest]
+    active: any
+Guzzlord:
+  Guzzlord:
+    types: [Dark, Dragon]
+    egg-groups: [NoEggsDiscovered]
+    # Ultra Ruin
+    biomes: [Badlands]
+    active: any
+Necrozma:
+  # The prism that lost its light, the two shapes it takes with the sun
+  # or the moon folded into it, and the one it bursts into to let the
+  # light back out
+  Necrozma:
+    types: [Psychic]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Mountain]
+    active: any
+    evolves-into:
+      - species: NecrozmaDuskMane
+        method: [UsedItem]
+        item: NSolarizer
+      - species: NecrozmaDawnWings
+        method: [UsedItem]
+        item: NLunarizer
+  NecrozmaDuskMane:
+    types: [Psychic, Steel]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    evolves-from: Necrozma
+    evolves-into:
+      - species: Necrozma
+        method: [UsedItem]
+        item: NSolarizer
+  NecrozmaDawnWings:
+    types: [Psychic, Ghost]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    evolves-from: Necrozma
+    evolves-into:
+      - species: Necrozma
+        method: [UsedItem]
+        item: NLunarizer
+  # Burst into for a fight by a fused shape holding its crystal, and
+  # never kept
+  NecrozmaUltra:
+    types: [Psychic, Dragon]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    worn: true
+Magearna:
+  # Alola's four mythicals, each called by its relic at a lair no
+  # biome hosts, and met now and then in its home country
+  Magearna:
+    types: [Steel, Fairy]
+    egg-groups: [NoEggsDiscovered]
+    # Its kingdom was built into the mountains
+    biomes: [Mountain]
+    active: any
+  MagearnaOriginal:
+    types: [Steel, Fairy]
+    egg-groups: [NoEggsDiscovered]
+    # Its kingdom was built into the mountains
+    biomes: [Mountain]
+    active: any
+    # The colours it was first painted in, five hundred years ago
+    base-form: false
+Marshadow:
+  Marshadow:
+    types: [Fighting, Ghost]
+    egg-groups: [NoEggsDiscovered]
+    # The mountain it watched the hero climb
+    biomes: [Mountain]
+    active: any
+Poipole:
+  Poipole:
+    types: [Poison]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Grassland]
+    active: any
+    # Any level, once it has been taught Dragon Pulse
+    evolves-into:
+      - species: Naganadel
+        method: [Level, KnownMove]
+        level: 1
+        move: DragonPulse
+  Naganadel:
+    types: [Poison, Dragon]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    evolves-from: Poipole
+Stakataka:
+  Stakataka:
+    types: [Rock, Steel]
+    egg-groups: [NoEggsDiscovered]
+    # Poni Grove
+    biomes: [TropicalSeasonalForest]
+    active: any
+Blacephalon:
+  Blacephalon:
+    types: [Fire, Ghost]
+    egg-groups: [NoEggsDiscovered]
+    # Poni Grove
+    biomes: [TropicalSeasonalForest]
+    active: any
+Zeraora:
+  Zeraora:
+    types: [Electric]
+    egg-groups: [NoEggsDiscovered]
+    # The forest behind the city of windmills
+    biomes: [TemperateForest]
+    active: any
+Meltan:
+  Meltan:
+    types: [Steel]
+    egg-groups: [NoEggsDiscovered]
+    # Where there is bare metal in the ground to eat
+    biomes: [Badlands]
+    active: any
+    # The mainline asks for 400 candy in GO. Candy here feeds levels,
+    # so the same feeding is written as a level
+    evolves-into:
+      - species: Melmetal
+        method: [Level]
+        level: 40
+  Melmetal:
+    types: [Steel]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    evolves-from: Meltan

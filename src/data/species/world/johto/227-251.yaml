@@ -1,0 +1,121 @@
+Skarmory:
+  Skarmory:
+    types: [Steel, Flying]
+    egg-groups: [Flying]
+    biomes: [Mountain, AlpineTundra, Badlands]
+    active: [Morning, Day]
+Houndour:
+  Houndour:
+    types: [Dark, Fire]
+    egg-groups: [Field]
+    biomes: [Badlands, Savanna, Shrubland]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Houndoom
+        method: [Level]
+        level: 24
+  Houndoom:
+    types: [Dark, Fire]
+    egg-groups: [Field]
+    biomes: [Badlands, Savanna, Shrubland]
+    active: [Evening, Night]
+    evolves-from: Houndour
+Phanpy:
+  Phanpy:
+    types: [Ground]
+    egg-groups: [Field]
+    biomes: [Savanna, Steppe, Badlands]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Donphan
+        method: [Level]
+        level: 25
+  Donphan:
+    types: [Ground]
+    egg-groups: [Field]
+    biomes: [Savanna, Steppe, Badlands]
+    active: [Morning, Day]
+    evolves-from: Phanpy
+Stantler:
+  Stantler:
+    types: [Normal]
+    egg-groups: [Field]
+    biomes: [TemperateForest, Taiga, MontaneForest]
+    active: any
+Smeargle:
+  Smeargle:
+    types: [Normal]
+    egg-groups: [Field]
+    biomes: [Grassland, Woodland, Shrubland]
+    active: any
+Miltank:
+  Miltank:
+    types: [Normal]
+    egg-groups: [Field]
+    biomes: [Grassland, Steppe, Shrubland]
+    active: [Morning, Day]
+Raikou:
+  Raikou:
+    types: [Electric]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Grassland, Woodland]
+    active: any
+Entei:
+  Entei:
+    types: [Fire]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Grassland, Woodland]
+    active: any
+Suicune:
+  Suicune:
+    types: [Water]
+    egg-groups: [NoEggsDiscovered]
+    habitat: Amphibious
+    biomes: [Grassland, Woodland]
+    active: any
+# The line's own moves come at the same order the whole way up, only
+Larvitar:
+  Larvitar:
+    types: [Rock, Ground]
+    egg-groups: [Monster]
+    biomes: [Mountain, Badlands]
+    active: any
+    evolves-into:
+      - species: Pupitar
+        method: [Level]
+        level: 30
+  Pupitar:
+    types: [Rock, Ground]
+    egg-groups: [Monster]
+    biomes: [Mountain, Badlands]
+    active: any
+    evolves-from: Larvitar
+    evolves-into:
+      - species: Tyranitar
+        method: [Level]
+        level: 55
+  Tyranitar:
+    types: [Rock, Dark]
+    egg-groups: [Monster]
+    biomes: [Mountain, Badlands]
+    active: any
+    evolves-from: Pupitar
+# Both learn the same list at the same levels, either side of their
+Lugia:
+  Lugia:
+    types: [Psychic, Flying]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [DeepOcean, Ocean]
+    active: any
+HoOh:
+  HoOh:
+    types: [Fire, Flying]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Mountain, DeepOcean]
+    active: any
+Celebi:
+  Celebi:
+    types: [Psychic, Grass]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [TemperateForest]
+    active: any

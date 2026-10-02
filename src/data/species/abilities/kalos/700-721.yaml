@@ -1,0 +1,132 @@
+Hawlucha:
+  Hawlucha:
+    abilities: [Limber, Unburden]
+    # Sheer Force is this line's invented filler: the mainline gives
+    # it Limber, Unburden and Mold Breaker and nothing else
+    hidden: [MoldBreaker, SheerForce]
+Dedenne:
+  Dedenne:
+    abilities: [CheekPouch, Pickup]
+    # Minus is this line's invented filler: the mainline gives the
+    # mouse Cheek Pouch, Pickup and Plus, so this is the other half
+    # of the pair it is already born with
+    hidden: [Plus, Minus]
+Carbink:
+  Carbink:
+    abilities: [ClearBody]
+    # Both are this line's invented fillers: the mainline gives the
+    # jewel Clear Body and Sturdy and nothing else, and it is drawn
+    # floating, which is where the Levitate comes from
+    hidden: [Sturdy, Levitate, SolidRock]
+Goomy:
+  Goomy:
+    abilities: [SapSipper, Hydration]
+    hidden: [Gooey]
+  Sliggoo:
+    abilities: [SapSipper, Hydration]
+    hidden: [Gooey]
+  Goodra:
+    abilities: [SapSipper, Hydration]
+    # Water Absorb is this line's invented filler: the mainline gives
+    # the slug Sap Sipper, Hydration and Gooey, and Hisuian Goodra's
+    # Shell Armor belongs to that form rather than to this one
+    hidden: [Gooey, WaterAbsorb]
+Klefki:
+  Klefki:
+    abilities: [Prankster]
+    # Levitate and Frisk are this line's invented fillers: the
+    # mainline gives Klefki the two above and nothing else
+    hidden: [Magician, Levitate, Frisk]
+Phantump:
+  Phantump:
+    abilities: [NaturalCure, Frisk]
+    hidden: [Harvest]
+  Trevenant:
+    abilities: [NaturalCure, Frisk]
+    # Cursed Body is this line's invented filler, and Gourgeist's as
+    # well: the two the versions keep apart answer a move the same way
+    hidden: [Harvest, CursedBody]
+Pumpkaboo:
+  Pumpkaboo:
+    abilities: [Pickup, Frisk]
+    hidden: [Insomnia]
+  Gourgeist:
+    abilities: [Pickup, Frisk]
+    hidden: [Insomnia, CursedBody]
+  PumpkabooSuper:
+    abilities: [Pickup, Frisk]
+    hidden: [Insomnia]
+  GourgeistSuper:
+    abilities: [Pickup, Frisk]
+    hidden: [Insomnia, CursedBody]
+Bergmite:
+  Bergmite:
+    abilities: [OwnTempo, IceBody]
+    hidden: [Sturdy]
+  Avalugg:
+    abilities: [OwnTempo, IceBody]
+    # Snow Warning is this line's invented filler: the mainline gives
+    # the floe Own Tempo, Ice Body and Sturdy, and Hisuian Avalugg's
+    # Strong Jaw belongs to that form rather than to this one
+    hidden: [Sturdy, SnowWarning]
+Noibat:
+  Noibat:
+    abilities: [Frisk, Infiltrator]
+    hidden: [Telepathy]
+  Noivern:
+    abilities: [Frisk, Infiltrator]
+    # Soundproof is this line's invented filler: the mainline gives
+    # the bat Frisk, Infiltrator and Telepathy and nothing else
+    hidden: [Telepathy, Soundproof]
+Xerneas:
+  Xerneas:
+    abilities: [FairyAura]
+    # Fairy Aura is all the mainline gives it, so the other three are
+    # this registry's: the mending it does, the hide that turns a
+    # first blow, and a heal that arrives before anything else
+    hidden: [Healer, Multiscale, Triage]
+Yveltal:
+  Yveltal:
+    abilities: [DarkAura]
+    # Dark Aura is all the mainline gives it, so the other three are
+    # this registry's: what it takes from a kill, what it does to
+    # something already dying, and the fact that nothing walks away
+    hidden: [Moxie, Merciless, ShadowTag]
+Zygarde:
+  Zygarde:
+    abilities: [AuraBreak]
+    # Power Construct is rare to hatch, since the shape it gathers
+    # into is the biggest thing the line has. The other two are this
+    # registry's: a swarm that eats the ground it lives in and cannot
+    # be ended in one blow
+    hidden: [PowerConstruct, EarthEater, Sturdy]
+  ZygardeTenPercent:
+    abilities: [AuraBreak]
+    hidden: [PowerConstruct, EarthEater, Sturdy]
+  ZygardeComplete:
+    abilities: [PowerConstruct]
+    hidden: [EarthEater, Sturdy]
+Diancie:
+  Diancie:
+    abilities: [ClearBody]
+    # Magic Bounce is the mainline's; the other two are this
+    # registry's, and both are Carbink's, since a Diancie is one that
+    # changed rather than a stranger
+    hidden: [MagicBounce, SolidRock, SereneGrace]
+Hoopa:
+  Hoopa:
+    abilities: [Magician]
+    # Magician is all the mainline gives it, so the other three are
+    # this registry's: the ring it sits in, the hand that gets there
+    # first, and a thief that takes an ability rather than an item
+    hidden: [Levitate, Prankster, Trace]
+  HoopaUnbound:
+    abilities: [Magician]
+    hidden: [Levitate, Prankster, Trace]
+Volcanion:
+  Volcanion:
+    abilities: [WaterAbsorb]
+    # Water Absorb is all the mainline gives it, so the other three
+    # are this registry's: the other half of what it is made of, the
+    # jolt a kettle gives when it is struck, and a legendary's weight
+    hidden: [FlashFire, SteamEngine, Pressure]

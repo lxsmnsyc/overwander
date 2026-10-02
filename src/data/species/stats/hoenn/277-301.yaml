@@ -1,0 +1,160 @@
+Wingull:
+  Wingull:
+    stats: { HP: 40, Attack: 30, Defense: 30, SpecialAttack: 55, SpecialDefense: 30, Speed: 85 }
+    catch-rate: 190
+    height: 0.6
+    weight: 9.5
+    gender: [1, 1]
+  Pelipper:
+    stats: { HP: 60, Attack: 50, Defense: 100, SpecialAttack: 95, SpecialDefense: 70, Speed: 65 }
+    catch-rate: 45
+    height: 1.2
+    weight: 28
+    gender: [1, 1]
+Ralts:
+  Ralts:
+    stats: { HP: 28, Attack: 25, Defense: 25, SpecialAttack: 45, SpecialDefense: 35, Speed: 40 }
+    catch-rate: 235
+    height: 0.4
+    weight: 6.6
+    gender: [1, 1]
+  Kirlia:
+    stats: { HP: 38, Attack: 35, Defense: 35, SpecialAttack: 65, SpecialDefense: 55, Speed: 50 }
+    catch-rate: 120
+    height: 0.8
+    weight: 20.2
+    gender: [1, 1]
+  Gardevoir:
+    stats: { HP: 68, Attack: 65, Defense: 65, SpecialAttack: 125, SpecialDefense: 115, Speed: 80 }
+    catch-rate: 45
+    height: 1.6
+    weight: 48.4
+    gender: [1, 1]
+  Gallade:
+    stats: { HP: 68, Attack: 125, Defense: 65, SpecialAttack: 65, SpecialDefense: 115, Speed: 80 }
+    catch-rate: 45
+    height: 1.6
+    weight: 52
+    gender: [1, 0]
+Surskit:
+  Surskit:
+    stats: { HP: 40, Attack: 30, Defense: 32, SpecialAttack: 50, SpecialDefense: 52, Speed: 65 }
+    catch-rate: 200
+    height: 0.5
+    weight: 1.7
+    gender: [1, 1]
+  Masquerain:
+    stats: { HP: 70, Attack: 60, Defense: 62, SpecialAttack: 100, SpecialDefense: 82, Speed: 80 }
+    catch-rate: 75
+    height: 0.8
+    weight: 3.6
+    gender: [1, 1]
+Shroomish:
+  Shroomish:
+    stats: { HP: 60, Attack: 40, Defense: 60, SpecialAttack: 40, SpecialDefense: 60, Speed: 35 }
+    catch-rate: 255
+    height: 0.4
+    weight: 4.5
+    gender: [1, 1]
+  Breloom:
+    stats: { HP: 60, Attack: 130, Defense: 80, SpecialAttack: 60, SpecialDefense: 60, Speed: 70 }
+    catch-rate: 90
+    height: 1.2
+    weight: 39.2
+    gender: [1, 1]
+Slakoth:
+  Slakoth:
+    stats: { HP: 60, Attack: 60, Defense: 60, SpecialAttack: 35, SpecialDefense: 35, Speed: 30 }
+    catch-rate: 255
+    height: 0.8
+    weight: 24
+    gender: [1, 1]
+  Vigoroth:
+    stats: { HP: 80, Attack: 80, Defense: 80, SpecialAttack: 55, SpecialDefense: 55, Speed: 90 }
+    catch-rate: 120
+    height: 1.4
+    weight: 46.5
+    gender: [1, 1]
+  Slaking:
+    stats: { HP: 150, Attack: 160, Defense: 100, SpecialAttack: 95, SpecialDefense: 65, Speed: 100 }
+    catch-rate: 45
+    height: 2
+    weight: 130.5
+    gender: [1, 1]
+Nincada:
+  Nincada:
+    stats: { HP: 31, Attack: 45, Defense: 90, SpecialAttack: 30, SpecialDefense: 30, Speed: 40 }
+    catch-rate: 255
+    height: 0.5
+    weight: 5.5
+    gender: [1, 1]
+  Ninjask:
+    stats: { HP: 61, Attack: 90, Defense: 45, SpecialAttack: 50, SpecialDefense: 50, Speed: 160 }
+    catch-rate: 120
+    height: 0.8
+    weight: 12
+    gender: [1, 1]
+  Shedinja:
+    stats: { HP: 1, Attack: 90, Defense: 45, SpecialAttack: 30, SpecialDefense: 30, Speed: 40 }
+    catch-rate: 45
+    height: 0.8
+    weight: 1.2
+    gender: genderless
+Whismur:
+  Whismur:
+    stats: { HP: 64, Attack: 51, Defense: 23, SpecialAttack: 51, SpecialDefense: 23, Speed: 28 }
+    catch-rate: 190
+    height: 0.6
+    weight: 16.3
+    gender: [1, 1]
+  Loudred:
+    stats: { HP: 84, Attack: 71, Defense: 43, SpecialAttack: 71, SpecialDefense: 43, Speed: 48 }
+    catch-rate: 120
+    height: 1
+    weight: 40.5
+    gender: [1, 1]
+  Exploud:
+    stats: { HP: 104, Attack: 91, Defense: 63, SpecialAttack: 91, SpecialDefense: 73, Speed: 68 }
+    catch-rate: 45
+    height: 1.5
+    weight: 84
+    gender: [1, 1]
+Makuhita:
+  Makuhita:
+    stats: { HP: 72, Attack: 60, Defense: 30, SpecialAttack: 20, SpecialDefense: 30, Speed: 25 }
+    catch-rate: 180
+    height: 1
+    weight: 86.4
+    gender: [3, 1]
+  Hariyama:
+    stats: { HP: 144, Attack: 120, Defense: 60, SpecialAttack: 40, SpecialDefense: 60, Speed: 50 }
+    catch-rate: 200
+    height: 2.3
+    weight: 253.8
+    gender: [3, 1]
+Nosepass:
+  Nosepass:
+    stats: { HP: 30, Attack: 45, Defense: 135, SpecialAttack: 45, SpecialDefense: 90, Speed: 30 }
+    catch-rate: 255
+    height: 1
+    weight: 97
+    gender: [1, 1]
+  Probopass:
+    stats: { HP: 60, Attack: 55, Defense: 145, SpecialAttack: 75, SpecialDefense: 150, Speed: 40 }
+    catch-rate: 60
+    height: 1.4
+    weight: 340
+    gender: [1, 1]
+Skitty:
+  Skitty:
+    stats: { HP: 50, Attack: 45, Defense: 45, SpecialAttack: 35, SpecialDefense: 35, Speed: 50 }
+    catch-rate: 255
+    height: 0.6
+    weight: 11
+    gender: [1, 3]
+  Delcatty:
+    stats: { HP: 70, Attack: 65, Defense: 65, SpecialAttack: 55, SpecialDefense: 55, Speed: 90 }
+    catch-rate: 60
+    height: 1.1
+    weight: 32.6
+    gender: [1, 3]

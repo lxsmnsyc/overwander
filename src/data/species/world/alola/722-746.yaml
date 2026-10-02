@@ -1,0 +1,268 @@
+Rowlet:
+  Rowlet:
+    types: [Grass, Flying]
+    egg-groups: [Flying]
+    biomes: [TropicalSeasonalForest, TropicalRainforest]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Dartrix
+        method: [Level]
+        level: 17
+  Dartrix:
+    types: [Grass, Flying]
+    egg-groups: [Flying]
+    biomes: [TropicalSeasonalForest, TropicalRainforest]
+    active: [Evening, Night]
+    evolves-from: Rowlet
+    evolves-into:
+      - species: Decidueye
+        method: [Level]
+        level: 34
+  Decidueye:
+    types: [Grass, Ghost]
+    egg-groups: [Flying]
+    biomes: [TropicalSeasonalForest, TropicalRainforest]
+    active: [Evening, Night]
+    evolves-from: Dartrix
+Litten:
+  Litten:
+    types: [Fire]
+    egg-groups: [Field]
+    biomes: [Grassland, Steppe]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Torracat
+        method: [Level]
+        level: 17
+  Torracat:
+    types: [Fire]
+    egg-groups: [Field]
+    biomes: [Grassland, Steppe]
+    active: [Evening, Night]
+    evolves-from: Litten
+    evolves-into:
+      - species: Incineroar
+        method: [Level]
+        level: 34
+  Incineroar:
+    types: [Fire, Dark]
+    egg-groups: [Field]
+    biomes: [Grassland, Steppe]
+    active: [Evening, Night]
+    evolves-from: Torracat
+Popplio:
+  Popplio:
+    types: [Water]
+    egg-groups: [Water1, Field]
+    habitat: Amphibious
+    biomes: [Beach, RockyCoast]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Brionne
+        method: [Level]
+        level: 17
+  Brionne:
+    types: [Water]
+    egg-groups: [Water1, Field]
+    habitat: Amphibious
+    biomes: [Beach, RockyCoast]
+    active: [Morning, Day]
+    evolves-from: Popplio
+    evolves-into:
+      - species: Primarina
+        method: [Level]
+        level: 34
+  Primarina:
+    types: [Water, Fairy]
+    egg-groups: [Water1, Field]
+    habitat: Amphibious
+    biomes: [Beach, RockyCoast]
+    active: [Morning, Day]
+    evolves-from: Brionne
+Pikipek:
+  Pikipek:
+    types: [Normal, Flying]
+    egg-groups: [Flying]
+    biomes: [TropicalRainforest, TropicalSeasonalForest, Woodland]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Trumbeak
+        method: [Level]
+        level: 14
+  Trumbeak:
+    types: [Normal, Flying]
+    egg-groups: [Flying]
+    biomes: [TropicalRainforest, TropicalSeasonalForest, Woodland]
+    active: [Morning, Day]
+    evolves-from: Pikipek
+    evolves-into:
+      - species: Toucannon
+        method: [Level]
+        level: 28
+  Toucannon:
+    types: [Normal, Flying]
+    egg-groups: [Flying]
+    biomes: [TropicalRainforest, TropicalSeasonalForest, Woodland]
+    active: [Morning, Day]
+    evolves-from: Trumbeak
+Yungoos:
+  Yungoos:
+    types: [Normal]
+    egg-groups: [Field]
+    biomes: [Grassland, Shrubland]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Gumshoos
+        method: [Level, TimeOfDay]
+        level: 20
+        time: [Morning, Day]
+  Gumshoos:
+    types: [Normal]
+    egg-groups: [Field]
+    biomes: [Grassland, Shrubland]
+    active: [Morning, Day]
+    evolves-from: Yungoos
+Grubbin:
+  Grubbin:
+    types: [Bug]
+    egg-groups: [Bug]
+    biomes: [TropicalRainforest, TropicalSeasonalForest]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Charjabug
+        method: [Level]
+        level: 20
+  Charjabug:
+    types: [Bug, Electric]
+    egg-groups: [Bug]
+    biomes: [TropicalRainforest, TropicalSeasonalForest]
+    active: [Morning, Day]
+    evolves-from: Grubbin
+    # A Thunder Stone rather than a magnetic field, the way Magneton and
+    # Nosepass ask for one: nowhere here is a place with a field in it
+    evolves-into:
+      - species: Vikavolt
+        method: [UsedItem]
+        item: ThunderStone
+  Vikavolt:
+    types: [Bug, Electric]
+    egg-groups: [Bug]
+    biomes: [TropicalRainforest, TropicalSeasonalForest]
+    active: [Morning, Day]
+    evolves-from: Charjabug
+Crabrawler:
+  Crabrawler:
+    types: [Fighting]
+    egg-groups: [Water3]
+    biomes: [Beach, RockyCoast]
+    active: any
+    # An Ice Stone rather than the top of Mount Lanakila, the way the
+    # later games ask for one: nowhere here is that mountain
+    evolves-into:
+      - species: Crabominable
+        method: [UsedItem]
+        item: IceStone
+  Crabominable:
+    types: [Fighting, Ice]
+    egg-groups: [Water3]
+    biomes: [Glacier, AlpineTundra]
+    active: any
+    evolves-from: Crabrawler
+Oricorio:
+  Oricorio:
+    types: [Fire, Flying]
+    egg-groups: [Flying]
+    biomes: [Savanna]
+    active: [Morning, Day]
+  OricorioPomPom:
+    types: [Electric, Flying]
+    egg-groups: [Flying]
+    biomes: [Grassland]
+    active: [Morning, Day]
+    base-form: false
+  OricorioPau:
+    types: [Psychic, Flying]
+    egg-groups: [Flying]
+    biomes: [Beach]
+    active: [Morning, Day]
+    base-form: false
+  OricorioSensu:
+    types: [Ghost, Flying]
+    egg-groups: [Flying]
+    biomes: [TropicalRainforest]
+    active: [Morning, Day]
+    base-form: false
+Cutiefly:
+  Cutiefly:
+    types: [Bug, Fairy]
+    egg-groups: [Bug, Fairy]
+    biomes: [Grassland, TemperateForest, TropicalSeasonalForest]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Ribombee
+        method: [Level]
+        level: 25
+  Ribombee:
+    types: [Bug, Fairy]
+    egg-groups: [Bug, Fairy]
+    biomes: [Grassland, TemperateForest, TropicalSeasonalForest]
+    active: [Morning, Day]
+    evolves-from: Cutiefly
+Rockruff:
+  # The puppy and the three wolves it can grow into. Which one is the
+  # hour it grew up at: the day makes a Midday, the night a Midnight and
+  # the evening between them a Dusk
+  Rockruff:
+    types: [Rock]
+    egg-groups: [Field]
+    biomes: [Steppe, Grassland, Badlands]
+    active: any
+    evolves-into:
+      - species: Lycanroc
+        method: [Level, TimeOfDay]
+        level: 25
+        time: [Morning, Day]
+      - species: LycanrocMidnight
+        method: [Level, TimeOfDay]
+        level: 25
+        time: [Night]
+      - species: LycanrocDusk
+        method: [Level, TimeOfDay]
+        level: 25
+        time: [Evening]
+  Lycanroc:
+    types: [Rock]
+    egg-groups: [Field]
+    biomes: [Steppe, Grassland, Badlands]
+    active: [Morning, Day]
+    evolves-from: Rockruff
+  LycanrocMidnight:
+    types: [Rock]
+    egg-groups: [Field]
+    biomes: [Steppe, Grassland, Badlands]
+    active: [Night]
+    base-form: false
+    evolves-from: Rockruff
+  LycanrocDusk:
+    types: [Rock]
+    egg-groups: [Field]
+    biomes: [Steppe, Grassland, Badlands]
+    active: [Evening]
+    base-form: false
+    evolves-from: Rockruff
+# The two shapes share everything but their stats and their size
+Wishiwashi:
+  Wishiwashi:
+    types: [Water]
+    egg-groups: [Water2]
+    habitat: Water
+    biomes: [CoralReef, Ocean, Mangrove]
+    active: any
+  WishiwashiSchool:
+    types: [Water]
+    egg-groups: [Water2]
+    habitat: Water
+    active: any
+    # The school it calls together mid-fight, so it is never met on its own
+    base-form: false
+    worn: true

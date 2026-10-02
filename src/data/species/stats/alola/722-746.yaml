@@ -1,0 +1,197 @@
+Rowlet:
+  Rowlet:
+    stats: { HP: 68, Attack: 55, Defense: 55, SpecialAttack: 50, SpecialDefense: 50, Speed: 42 }
+    catch-rate: 45
+    height: 0.3
+    weight: 1.5
+    gender: [7, 1]
+  Dartrix:
+    stats: { HP: 78, Attack: 75, Defense: 75, SpecialAttack: 70, SpecialDefense: 70, Speed: 52 }
+    catch-rate: 45
+    height: 0.7
+    weight: 16
+    gender: [7, 1]
+  Decidueye:
+    stats: { HP: 78, Attack: 107, Defense: 75, SpecialAttack: 100, SpecialDefense: 100, Speed: 70 }
+    catch-rate: 45
+    height: 1.6
+    weight: 36.6
+    gender: [7, 1]
+Litten:
+  Litten:
+    stats: { HP: 45, Attack: 65, Defense: 40, SpecialAttack: 60, SpecialDefense: 40, Speed: 70 }
+    catch-rate: 45
+    height: 0.4
+    weight: 4.3
+    gender: [7, 1]
+  Torracat:
+    stats: { HP: 65, Attack: 85, Defense: 50, SpecialAttack: 80, SpecialDefense: 50, Speed: 90 }
+    catch-rate: 45
+    height: 0.7
+    weight: 25
+    gender: [7, 1]
+  Incineroar:
+    stats: { HP: 95, Attack: 115, Defense: 90, SpecialAttack: 80, SpecialDefense: 90, Speed: 60 }
+    catch-rate: 45
+    height: 1.8
+    weight: 83
+    gender: [7, 1]
+Popplio:
+  Popplio:
+    stats: { HP: 50, Attack: 54, Defense: 54, SpecialAttack: 66, SpecialDefense: 56, Speed: 40 }
+    catch-rate: 45
+    height: 0.4
+    weight: 7.5
+    gender: [7, 1]
+  Brionne:
+    stats: { HP: 60, Attack: 69, Defense: 69, SpecialAttack: 91, SpecialDefense: 81, Speed: 50 }
+    catch-rate: 45
+    height: 0.6
+    weight: 17.5
+    gender: [7, 1]
+  Primarina:
+    stats: { HP: 80, Attack: 74, Defense: 74, SpecialAttack: 126, SpecialDefense: 116, Speed: 60 }
+    catch-rate: 45
+    height: 1.8
+    weight: 44
+    gender: [7, 1]
+Pikipek:
+  Pikipek:
+    stats: { HP: 35, Attack: 75, Defense: 30, SpecialAttack: 30, SpecialDefense: 30, Speed: 65 }
+    catch-rate: 255
+    height: 0.3
+    weight: 1.2
+    gender: [4, 4]
+  Trumbeak:
+    stats: { HP: 55, Attack: 85, Defense: 50, SpecialAttack: 40, SpecialDefense: 50, Speed: 75 }
+    catch-rate: 120
+    height: 0.6
+    weight: 14.8
+    gender: [4, 4]
+  Toucannon:
+    stats: { HP: 80, Attack: 120, Defense: 75, SpecialAttack: 75, SpecialDefense: 75, Speed: 60 }
+    catch-rate: 45
+    height: 1.1
+    weight: 26
+    gender: [4, 4]
+Yungoos:
+  Yungoos:
+    stats: { HP: 48, Attack: 70, Defense: 30, SpecialAttack: 30, SpecialDefense: 30, Speed: 45 }
+    catch-rate: 255
+    height: 0.4
+    weight: 6
+    gender: [4, 4]
+  Gumshoos:
+    stats: { HP: 88, Attack: 110, Defense: 60, SpecialAttack: 55, SpecialDefense: 60, Speed: 45 }
+    catch-rate: 127
+    height: 0.7
+    weight: 14.2
+    gender: [4, 4]
+Grubbin:
+  Grubbin:
+    stats: { HP: 47, Attack: 62, Defense: 45, SpecialAttack: 55, SpecialDefense: 45, Speed: 46 }
+    catch-rate: 255
+    height: 0.4
+    weight: 4.4
+    gender: [4, 4]
+  Charjabug:
+    stats: { HP: 57, Attack: 82, Defense: 95, SpecialAttack: 55, SpecialDefense: 75, Speed: 36 }
+    catch-rate: 120
+    height: 0.5
+    weight: 10.5
+    gender: [4, 4]
+  Vikavolt:
+    stats: { HP: 77, Attack: 70, Defense: 90, SpecialAttack: 145, SpecialDefense: 75, Speed: 43 }
+    catch-rate: 45
+    height: 1.5
+    weight: 45
+    gender: [4, 4]
+Crabrawler:
+  Crabrawler:
+    stats: { HP: 47, Attack: 82, Defense: 57, SpecialAttack: 42, SpecialDefense: 47, Speed: 63 }
+    catch-rate: 225
+    height: 0.6
+    weight: 7
+    gender: [4, 4]
+  Crabominable:
+    stats: { HP: 97, Attack: 132, Defense: 77, SpecialAttack: 62, SpecialDefense: 67, Speed: 43 }
+    catch-rate: 60
+    height: 1.7
+    weight: 180
+    gender: [4, 4]
+Oricorio:
+  Oricorio:
+    stats: { HP: 75, Attack: 70, Defense: 70, SpecialAttack: 98, SpecialDefense: 70, Speed: 93 }
+    catch-rate: 45
+    height: 0.6
+    weight: 3.4
+    gender: [1, 3]
+  OricorioPomPom:
+    stats: { HP: 75, Attack: 70, Defense: 70, SpecialAttack: 98, SpecialDefense: 70, Speed: 93 }
+    catch-rate: 45
+    height: 0.6
+    weight: 3.4
+    gender: [1, 3]
+  OricorioPau:
+    stats: { HP: 75, Attack: 70, Defense: 70, SpecialAttack: 98, SpecialDefense: 70, Speed: 93 }
+    catch-rate: 45
+    height: 0.6
+    weight: 3.4
+    gender: [1, 3]
+  OricorioSensu:
+    stats: { HP: 75, Attack: 70, Defense: 70, SpecialAttack: 98, SpecialDefense: 70, Speed: 93 }
+    catch-rate: 45
+    height: 0.6
+    weight: 3.4
+    gender: [1, 3]
+Cutiefly:
+  Cutiefly:
+    stats: { HP: 40, Attack: 45, Defense: 40, SpecialAttack: 55, SpecialDefense: 40, Speed: 84 }
+    catch-rate: 190
+    height: 0.1
+    weight: 0.2
+    gender: [4, 4]
+  Ribombee:
+    stats: { HP: 60, Attack: 55, Defense: 60, SpecialAttack: 95, SpecialDefense: 70, Speed: 124 }
+    catch-rate: 75
+    height: 0.2
+    weight: 0.5
+    gender: [4, 4]
+Rockruff:
+  Rockruff:
+    stats: { HP: 45, Attack: 65, Defense: 40, SpecialAttack: 30, SpecialDefense: 40, Speed: 60 }
+    catch-rate: 190
+    height: 0.5
+    weight: 9.2
+    gender: [4, 4]
+  Lycanroc:
+    stats: { HP: 75, Attack: 115, Defense: 65, SpecialAttack: 55, SpecialDefense: 65, Speed: 112 }
+    catch-rate: 90
+    height: 0.8
+    weight: 25
+    gender: [4, 4]
+  LycanrocMidnight:
+    stats: { HP: 85, Attack: 115, Defense: 75, SpecialAttack: 55, SpecialDefense: 75, Speed: 82 }
+    catch-rate: 90
+    height: 1.1
+    weight: 25
+    gender: [4, 4]
+  LycanrocDusk:
+    stats: { HP: 75, Attack: 117, Defense: 65, SpecialAttack: 55, SpecialDefense: 65, Speed: 110 }
+    catch-rate: 90
+    height: 0.8
+    weight: 25
+    gender: [4, 4]
+Wishiwashi:
+  Wishiwashi:
+    stats: { HP: 45, Attack: 20, Defense: 20, SpecialAttack: 25, SpecialDefense: 25, Speed: 40 }
+    catch-rate: 60
+    height: 0.2
+    weight: 0.3
+    gender: &a1 [4, 4]
+  WishiwashiSchool:
+    stats: { HP: 45, Attack: 140, Defense: 130, SpecialAttack: 140, SpecialDefense: 135, Speed: 30 }
+    catch-rate: 60
+    height: 8.2
+    weight: 78.6
+    gender: *a1

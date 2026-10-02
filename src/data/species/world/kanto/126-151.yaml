@@ -1,0 +1,329 @@
+Magmar:
+  Magmar:
+    types: [Fire]
+    egg-groups: [HumanLike]
+    biomes: [Mountain, Desert, Volcano]
+    active: any
+    evolves-from: Magby
+    evolves-into:
+      - species: Magmortar
+        method: [HeldItem, Trade]
+        item: Magmarizer
+  Magby:
+    types: [Fire]
+    # A baby lays no egg of its own: the stage above it does
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Mountain, Desert]
+    active: any
+    evolves-into:
+      - species: Magmar
+        method: [Level]
+        level: 30
+  # A Magmar with its arms rebuilt as cannons: a Magmortar fires a ball
+  # of its own fire and steps back from the heat
+  Magmortar:
+    types: [Fire]
+    egg-groups: [HumanLike]
+    biomes: [Volcano, Badlands, Desert]
+    active: any
+    evolves-from: Magmar
+Pinsir:
+  Pinsir:
+    types: [Bug]
+    egg-groups: [Bug]
+    active: [Day]
+Tauros:
+  Tauros:
+    types: [Normal]
+    egg-groups: [Field]
+    biomes: [Savanna, Grassland, Steppe]
+    active: [Morning, Day]
+Magikarp:
+  Magikarp:
+    types: [Water]
+    egg-groups: [Water2, Dragon]
+    habitat: Water
+    biomes:
+      - Swamp
+      - Ocean
+      - DeepOcean
+      - RockyCoast
+      - Bog
+      - KelpForest
+      - TropicalRainforest
+      - TropicalSeasonalForest
+      - Savanna
+      - Desert
+      - Shrubland
+      - Grassland
+      - TemperateForest
+      - TemperateRainforest
+      - Mountain
+      - Woodland
+      - Steppe
+      - MontaneForest
+      - Badlands
+    active: any
+    evolves-into:
+      - species: Gyarados
+        method: [Level]
+        level: 20
+  Gyarados:
+    types: [Water, Flying]
+    egg-groups: [Water2, Dragon]
+    habitat: Water
+    biomes:
+      - Ocean
+      - DeepOcean
+      - TropicalRainforest
+      - TropicalSeasonalForest
+      - Savanna
+      - Desert
+      - Shrubland
+      - Grassland
+      - TemperateForest
+      - TemperateRainforest
+      - Mountain
+      - Woodland
+      - Steppe
+      - MontaneForest
+      - Badlands
+    active: any
+    evolves-from: Magikarp
+Lapras:
+  Lapras:
+    types: [Water, Ice]
+    egg-groups: [Monster, Water1]
+    habitat: Water
+    biomes: [Ocean, DeepOcean, PolarOcean]
+    active: any
+Ditto:
+  Ditto:
+    types: [Normal]
+    egg-groups: [Ditto]
+    biomes: [Grassland]
+    active: any
+Eevee:
+  Eevee:
+    types: [Normal]
+    egg-groups: [Field]
+    biomes: [Grassland, Woodland]
+    active: any
+    # The mainline asks for any Fairy move; Baby-Doll Eyes is the
+    # one an Eevee learns by itself, so it stands for the lot
+    evolves-into:
+      - species: Vaporeon
+        method: [UsedItem]
+        item: WaterStone
+      - species: Jolteon
+        method: [UsedItem]
+        item: ThunderStone
+      - species: Flareon
+        method: [UsedItem]
+        item: FireStone
+      - species: Espeon
+        method: [Friendship, TimeOfDay]
+        time: [Morning, Day]
+      - species: Leafeon
+        method: [UsedItem]
+        item: LeafStone
+      - species: Glaceon
+        method: [UsedItem]
+        item: IceStone
+      - species: Umbreon
+        method: [Friendship, TimeOfDay]
+        time: [Evening, Night]
+      - species: Sylveon
+        method: [Friendship, KnownMove]
+        move: BabyDollEyes
+  Vaporeon:
+    types: [Water]
+    egg-groups: [Field]
+    habitat: Amphibious
+    biomes: [Beach, Ocean]
+    active: any
+    evolves-from: Eevee
+  Jolteon:
+    types: [Electric]
+    egg-groups: [Field]
+    biomes: [Grassland]
+    active: any
+    evolves-from: Eevee
+  Flareon:
+    types: [Fire]
+    egg-groups: [Field]
+    biomes: [Shrubland, Grassland]
+    active: any
+    evolves-from: Eevee
+  Espeon:
+    types: [Psychic]
+    egg-groups: [Field]
+    biomes: [Grassland]
+    active: [Morning, Day]
+    evolves-from: Eevee
+  Umbreon:
+    types: [Dark]
+    egg-groups: [Field]
+    biomes: [Woodland]
+    active: [Evening, Night]
+    evolves-from: Eevee
+  # The Eevee that settled in a wood and stayed: a Leafeon lives off
+  # the light and smells like the clearing it sleeps in
+  Leafeon:
+    types: [Grass]
+    egg-groups: [Field]
+    biomes: [TemperateForest, Woodland, TemperateRainforest]
+    active: [Morning, Day]
+    evolves-from: Eevee
+  # The Eevee that settled where the snow does: a Glaceon drops its own
+  # temperature until the air around it freezes
+  Glaceon:
+    types: [Ice]
+    egg-groups: [Field]
+    biomes: [Glacier, Tundra, AlpineTundra, Taiga]
+    active: any
+    evolves-from: Eevee
+  # The ribboned one, which an Eevee grows into by being kept close
+  Sylveon:
+    types: [Fairy]
+    egg-groups: [Field]
+    biomes: [Grassland, Woodland]
+    active: any
+    evolves-from: Eevee
+Porygon:
+  Porygon:
+    types: [Normal]
+    egg-groups: [Mineral]
+    biomes: [Grassland]
+    active: any
+    evolves-into:
+      - species: Porygon2
+        method: [HeldItem, Trade]
+        item: UpGrade
+  Porygon2:
+    types: [Normal]
+    egg-groups: [Mineral]
+    biomes: [Grassland]
+    active: any
+    evolves-from: Porygon
+    evolves-into:
+      - species: PorygonZ
+        method: [HeldItem, Trade]
+        item: DubiousDisc
+  # A Porygon2 somebody patched badly: a Porygon-Z moves in ways nobody
+  # wrote down and is faster for it
+  PorygonZ:
+    types: [Normal]
+    egg-groups: [Mineral]
+    biomes: [Grassland, Steppe]
+    active: any
+    evolves-from: Porygon2
+Omanyte:
+  Omanyte:
+    types: [Rock, Water]
+    egg-groups: [Water1, Water3]
+    habitat: Water
+    active: any
+    evolves-into:
+      - species: Omastar
+        method: [Level]
+        level: 40
+  Omastar:
+    types: [Rock, Water]
+    egg-groups: [Water1, Water3]
+    habitat: Water
+    active: any
+    evolves-from: Omanyte
+Kabuto:
+  Kabuto:
+    types: [Rock, Water]
+    egg-groups: [Water1, Water3]
+    habitat: Amphibious
+    active: [Night]
+    evolves-into:
+      - species: Kabutops
+        method: [Level]
+        level: 40
+  Kabutops:
+    types: [Rock, Water]
+    egg-groups: [Water1, Water3]
+    habitat: Amphibious
+    active: [Night]
+    evolves-from: Kabuto
+Aerodactyl:
+  Aerodactyl:
+    types: [Rock, Flying]
+    egg-groups: [Flying]
+    active: [Day]
+Snorlax:
+  Snorlax:
+    types: [Normal]
+    egg-groups: [Monster]
+    biomes: [Mountain, TemperateForest, Taiga]
+    active: any
+    evolves-from: Munchlax
+  # A Snorlax that still has to look for its food: a Munchlax eats
+  # whatever it finds and hides the rest in its fur
+  Munchlax:
+    types: [Normal]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    evolves-into:
+      - species: Snorlax
+        method: [Friendship]
+Articuno:
+  Articuno:
+    types: [Ice, Flying]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [PolarOcean, DeepOcean]
+    active: any
+Zapdos:
+  Zapdos:
+    types: [Electric, Flying]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Grassland, Steppe]
+    active: any
+Moltres:
+  Moltres:
+    types: [Fire, Flying]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Mountain, Volcano]
+    active: any
+Dratini:
+  Dratini:
+    types: [Dragon]
+    egg-groups: [Water1, Dragon]
+    biomes: [Ocean, DeepOcean]
+    active: any
+    evolves-into:
+      - species: Dragonair
+        method: [Level]
+        level: 30
+  Dragonair:
+    types: [Dragon]
+    egg-groups: [Water1, Dragon]
+    biomes: [Ocean, DeepOcean]
+    active: any
+    evolves-from: Dratini
+    evolves-into:
+      - species: Dragonite
+        method: [Level]
+        level: 55
+  Dragonite:
+    types: [Dragon, Flying]
+    egg-groups: [Water1, Dragon]
+    biomes: [Ocean, DeepOcean]
+    active: any
+    evolves-from: Dragonair
+Mewtwo:
+  Mewtwo:
+    types: [Psychic]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Mountain, AlpineTundra]
+    active: [Night]
+Mew:
+  Mew:
+    types: [Psychic]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [TropicalRainforest]
+    active: any

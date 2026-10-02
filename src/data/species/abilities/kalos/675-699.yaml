@@ -1,0 +1,113 @@
+Furfrou:
+  Furfrou:
+    abilities: [FurCoat]
+    # All three are this line's invented fillers: the mainline gives
+    # Furfrou nothing but Fur Coat
+    hidden: [CuteCharm, Scrappy, QuickFeet]
+Espurr:
+  Espurr:
+    abilities: [KeenEye, Infiltrator]
+    hidden: [OwnTempo]
+  Meowstic:
+    abilities: [KeenEye, Infiltrator]
+    # Synchronize is this line's invented filler: the mainline gives a
+    # male Meowstic Prankster and nothing else, and her Competitive
+    # is her own
+    hidden: [Prankster, Synchronize]
+  MeowsticFemale:
+    abilities: [KeenEye, Infiltrator]
+    hidden: [Competitive, Synchronize]
+Honedge:
+  Honedge:
+    abilities: [NoGuard]
+  Doublade:
+    abilities: [NoGuard]
+  Aegislash:
+    abilities: [StanceChange]
+    # Cursed Body, Clear Body and Justified are this line's invented
+    # fillers: the mainline gives Aegislash the stance and nothing else
+    hidden: [CursedBody, ClearBody, Justified]
+  AegislashBlade:
+    abilities: [StanceChange]
+    hidden: [CursedBody, ClearBody, Justified]
+Spritzee:
+  Spritzee:
+    abilities: [Healer]
+    hidden: [AromaVeil]
+  Aromatisse:
+    abilities: [Healer]
+    # Natural Cure and Misty Surge are this line's invented fillers:
+    # the mainline gives it Healer and Aroma Veil and nothing else
+    hidden: [AromaVeil, NaturalCure, MistySurge]
+Swirlix:
+  Swirlix:
+    abilities: [SweetVeil]
+    hidden: [Unburden]
+  Slurpuff:
+    abilities: [SweetVeil]
+    # Both are this line's invented fillers: the mainline gives it
+    # Sweet Veil and Unburden and nothing else
+    hidden: [Unburden, FriendGuard, ThickFat]
+Inkay:
+  Inkay:
+    abilities: [Contrary, SuctionCups]
+    hidden: [Infiltrator]
+  Malamar:
+    abilities: [Contrary, SuctionCups]
+    # Analytic is this line's invented filler: the mainline gives the
+    # squid Contrary, Suction Cups and Infiltrator and nothing else
+    hidden: [Infiltrator, Analytic]
+Binacle:
+  Binacle:
+    abilities: [ToughClaws, Sniper]
+    hidden: [Pickpocket]
+  Barbaracle:
+    abilities: [ToughClaws, Sniper]
+    # Solid Rock is this line's invented filler: the mainline gives
+    # Barbaracle the three above and nothing else
+    hidden: [Pickpocket, SolidRock]
+Skrelp:
+  Skrelp:
+    abilities: [PoisonPoint, PoisonTouch]
+    hidden: [Adaptability]
+  Dragalge:
+    abilities: [PoisonPoint, PoisonTouch]
+    # Liquid Ooze is this line's invented filler: the mainline gives
+    # Dragalge the three above and nothing else
+    hidden: [Adaptability, LiquidOoze]
+Clauncher:
+  Clauncher:
+    abilities: [MegaLauncher]
+  Clawitzer:
+    abilities: [MegaLauncher]
+    # All three are this line's invented fillers: the mainline gives
+    # Clawitzer the launcher and nothing else
+    hidden: [Sniper, Analytic, Torrent]
+Helioptile:
+  Helioptile:
+    abilities: [DrySkin, SandVeil]
+    hidden: [SolarPower]
+  Heliolisk:
+    abilities: [DrySkin, SandVeil]
+    # Overcoat is this line's invented filler: the mainline gives it
+    # Dry Skin, Sand Veil and Solar Power and nothing else, and a hide
+    # that keeps grit and powder out costs it nothing in any weather
+    hidden: [SolarPower, Overcoat]
+Tyrunt:
+  Tyrunt:
+    abilities: [StrongJaw]
+    hidden: [Sturdy]
+  Tyrantrum:
+    abilities: [StrongJaw]
+    # Intimidate is this line's invented filler: the mainline gives
+    # the two shapes Strong Jaw, Sturdy and Rock Head between them
+    hidden: [RockHead, Intimidate]
+Amaura:
+  Amaura:
+    abilities: [Refrigerate]
+    hidden: [SnowWarning]
+  Aurorus:
+    abilities: [Refrigerate]
+    # Ice Body and Snow Cloak are this line's invented fillers: the
+    # mainline gives Aurorus the two above and nothing else
+    hidden: [SnowWarning, IceBody, SnowCloak]

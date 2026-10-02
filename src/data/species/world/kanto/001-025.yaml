@@ -1,0 +1,267 @@
+Bulbasaur:
+  Bulbasaur:
+    types: [Grass, Poison]
+    egg-groups: [Monster, Grass]
+    biomes: [Grassland, TemperateForest, Woodland]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Ivysaur
+        method: [Level]
+        level: 16
+  Ivysaur:
+    types: [Grass, Poison]
+    egg-groups: [Monster, Grass]
+    biomes: [Grassland, TemperateForest, Woodland]
+    active: [Morning, Day]
+    evolves-from: Bulbasaur
+    evolves-into:
+      - species: Venusaur
+        method: [Level]
+        level: 32
+  Venusaur:
+    types: [Grass, Poison]
+    egg-groups: [Monster, Grass]
+    biomes: [Grassland, TemperateForest, Woodland]
+    active: [Morning, Day]
+    evolves-from: Ivysaur
+Charmander:
+  Charmander:
+    types: [Fire]
+    egg-groups: [Monster, Dragon]
+    biomes: [Mountain, Volcano]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Charmeleon
+        method: [Level]
+        level: 16
+  Charmeleon:
+    types: [Fire]
+    egg-groups: [Monster, Dragon]
+    biomes: [Mountain, Volcano]
+    active: [Morning, Day]
+    evolves-from: Charmander
+    evolves-into:
+      - species: Charizard
+        method: [Level]
+        level: 36
+  Charizard:
+    types: [Fire, Flying]
+    egg-groups: [Monster, Dragon]
+    biomes: [Mountain, Volcano]
+    active: [Morning, Day]
+    evolves-from: Charmeleon
+Squirtle:
+  Squirtle:
+    types: [Water]
+    egg-groups: [Monster, Water1]
+    habitat: Amphibious
+    biomes: [Beach, Swamp]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Wartortle
+        method: [Level]
+        level: 16
+  Wartortle:
+    types: [Water]
+    egg-groups: [Monster, Water1]
+    habitat: Amphibious
+    biomes: [Beach, Swamp]
+    active: [Morning, Day]
+    evolves-from: Squirtle
+    evolves-into:
+      - species: Blastoise
+        method: [Level]
+        level: 36
+  Blastoise:
+    types: [Water]
+    egg-groups: [Monster, Water1]
+    habitat: Amphibious
+    biomes: [Beach, Ocean]
+    active: [Morning, Day]
+    evolves-from: Wartortle
+Caterpie:
+  Caterpie:
+    types: [Bug]
+    egg-groups: [Bug]
+    biomes: [TemperateForest, Woodland]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Metapod
+        method: [Level]
+        level: 7
+  Metapod:
+    types: [Bug]
+    egg-groups: [Bug]
+    biomes: [TemperateForest, Woodland]
+    active: [Morning, Day]
+    evolves-from: Caterpie
+    evolves-into:
+      - species: Butterfree
+        method: [Level]
+        level: 10
+  Butterfree:
+    types: [Bug, Flying]
+    egg-groups: [Bug]
+    biomes: [TemperateForest, Woodland]
+    active: [Morning, Day]
+    evolves-from: Metapod
+Weedle:
+  Weedle:
+    types: [Bug, Poison]
+    egg-groups: [Bug]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Kakuna
+        method: [Level]
+        level: 7
+  Kakuna:
+    types: [Bug, Poison]
+    egg-groups: [Bug]
+    active: [Morning, Day]
+    evolves-from: Weedle
+    evolves-into:
+      - species: Beedrill
+        method: [Level]
+        level: 10
+  Beedrill:
+    types: [Bug, Poison]
+    egg-groups: [Bug]
+    biomes: [TemperateForest, Woodland]
+    active: [Morning, Day]
+    evolves-from: Kakuna
+Pidgey:
+  Pidgey:
+    types: [Normal, Flying]
+    egg-groups: [Flying]
+    biomes: [Grassland, Woodland]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Pidgeotto
+        method: [Level]
+        level: 18
+  Pidgeotto:
+    types: [Normal, Flying]
+    egg-groups: [Flying]
+    biomes: [Grassland, Woodland]
+    active: [Morning, Day]
+    evolves-from: Pidgey
+    evolves-into:
+      - species: Pidgeot
+        method: [Level]
+        level: 36
+  Pidgeot:
+    types: [Normal, Flying]
+    egg-groups: [Flying]
+    biomes: [Grassland, Woodland]
+    active: [Morning, Day]
+    evolves-from: Pidgeotto
+Rattata:
+  Rattata:
+    types: [Normal]
+    egg-groups: [Field]
+    biomes: [Grassland, Woodland]
+    active: any
+    evolves-into:
+      - species: Raticate
+        method: [Level]
+        level: 20
+  Raticate:
+    types: [Normal]
+    egg-groups: [Field]
+    biomes: [Grassland, Woodland]
+    active: any
+    evolves-from: Rattata
+  RattataAlola:
+    types: [Dark, Normal]
+    egg-groups: [Field]
+    biomes: [TropicalSeasonalForest, TropicalRainforest]
+    active: [Evening, Night]
+    base-form: false
+    evolves-into:
+      - species: RaticateAlola
+        method: [Level, TimeOfDay]
+        level: 20
+        time: [Evening, Night]
+  RaticateAlola:
+    types: [Dark, Normal]
+    egg-groups: [Field]
+    biomes: [TropicalSeasonalForest, TropicalRainforest]
+    active: [Evening, Night]
+    base-form: false
+    evolves-from: RattataAlola
+Spearow:
+  Spearow:
+    types: [Normal, Flying]
+    egg-groups: [Flying]
+    biomes: [Shrubland, Steppe]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Fearow
+        method: [Level]
+        level: 20
+  Fearow:
+    types: [Normal, Flying]
+    egg-groups: [Flying]
+    biomes: [Shrubland, Steppe]
+    active: [Morning, Day]
+    evolves-from: Spearow
+Ekans:
+  Ekans:
+    types: [Poison]
+    egg-groups: [Field, Dragon]
+    biomes: [Grassland, Savanna, Steppe, Badlands]
+    active: [Day, Evening, Night]
+    evolves-into:
+      - species: Arbok
+        method: [Level]
+        level: 22
+  Arbok:
+    types: [Poison]
+    egg-groups: [Field, Dragon]
+    biomes: [Grassland, Savanna, Steppe, Badlands]
+    active: [Day, Evening, Night]
+    evolves-from: Ekans
+# A baby lays no egg of its own: the stage above it does
+Pikachu:
+  Pikachu:
+    types: [Electric]
+    egg-groups: [Field, Fairy]
+    biomes: [TemperateForest, Woodland]
+    active: any
+    evolves-from: Pichu
+    # Both Raichu take the same stone, and the catch sheet lets the player pick
+    evolves-into:
+      - species: Raichu
+        method: [UsedItem]
+        item: ThunderStone
+      - species: RaichuAlola
+        method: [UsedItem]
+        item: ThunderStone
+  Raichu:
+    types: [Electric]
+    egg-groups: [Field, Fairy]
+    biomes: [TemperateForest, Woodland]
+    active: any
+    evolves-from: Pikachu
+  Pichu:
+    types: [Electric]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [TemperateForest, Woodland]
+    active: any
+    evolves-into:
+      - species: Pikachu
+        method: [Friendship]
+  PichuSpikyEared:
+    types: [Electric]
+    egg-groups: [NoEggsDiscovered]
+    # Met in Ilex Forest, where Celebi is, and only in the mythical band
+    biomes: [TemperateForest]
+    active: any
+    base-form: false
+  RaichuAlola:
+    types: [Electric, Psychic]
+    egg-groups: [Field, Fairy]
+    biomes: [Beach, TropicalSeasonalForest]
+    active: any
+    base-form: false
+    evolves-from: Pikachu

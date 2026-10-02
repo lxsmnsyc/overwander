@@ -1,0 +1,197 @@
+Bulbasaur:
+  Bulbasaur:
+    stats: { HP: 45, Attack: 49, Defense: 49, SpecialAttack: 65, SpecialDefense: 65, Speed: 45 }
+    catch-rate: 45
+    height: 0.7
+    weight: 6.9
+    gender: [7, 1]
+  Ivysaur:
+    stats: { HP: 60, Attack: 62, Defense: 63, SpecialAttack: 80, SpecialDefense: 80, Speed: 60 }
+    catch-rate: 45
+    height: 1
+    weight: 13
+    gender: [7, 1]
+  Venusaur:
+    stats: { HP: 80, Attack: 82, Defense: 83, SpecialAttack: 100, SpecialDefense: 100, Speed: 80 }
+    catch-rate: 45
+    height: 2
+    weight: 100
+    gender: [7, 1]
+Charmander:
+  Charmander:
+    stats: { HP: 39, Attack: 52, Defense: 43, SpecialAttack: 60, SpecialDefense: 50, Speed: 65 }
+    catch-rate: 45
+    height: 0.6
+    weight: 8.5
+    gender: [7, 1]
+  Charmeleon:
+    stats: { HP: 58, Attack: 64, Defense: 58, SpecialAttack: 80, SpecialDefense: 65, Speed: 80 }
+    catch-rate: 45
+    height: 1.1
+    weight: 19
+    gender: [7, 1]
+  Charizard:
+    stats: { HP: 78, Attack: 84, Defense: 78, SpecialAttack: 109, SpecialDefense: 85, Speed: 100 }
+    catch-rate: 45
+    height: 1.7
+    weight: 90.5
+    gender: [7, 1]
+Squirtle:
+  Squirtle:
+    stats: { HP: 44, Attack: 48, Defense: 65, SpecialAttack: 50, SpecialDefense: 64, Speed: 43 }
+    catch-rate: 45
+    height: 0.5
+    weight: 9
+    gender: [7, 1]
+  Wartortle:
+    stats: { HP: 59, Attack: 63, Defense: 80, SpecialAttack: 65, SpecialDefense: 80, Speed: 58 }
+    catch-rate: 45
+    height: 1
+    weight: 22.5
+    gender: [7, 1]
+  Blastoise:
+    stats: { HP: 79, Attack: 83, Defense: 100, SpecialAttack: 85, SpecialDefense: 105, Speed: 78 }
+    catch-rate: 45
+    height: 1.6
+    weight: 85.5
+    gender: [7, 1]
+Caterpie:
+  Caterpie:
+    stats: { HP: 45, Attack: 30, Defense: 35, SpecialAttack: 20, SpecialDefense: 20, Speed: 45 }
+    catch-rate: 255
+    height: 0.3
+    weight: 2.9
+    gender: [1, 1]
+  Metapod:
+    stats: { HP: 50, Attack: 20, Defense: 55, SpecialAttack: 25, SpecialDefense: 25, Speed: 30 }
+    catch-rate: 120
+    height: 0.7
+    weight: 9.9
+    gender: [1, 1]
+  Butterfree:
+    stats: { HP: 60, Attack: 45, Defense: 50, SpecialAttack: 90, SpecialDefense: 80, Speed: 70 }
+    catch-rate: 45
+    height: 1.1
+    weight: 32
+    gender: [1, 1]
+Weedle:
+  Weedle:
+    stats: { HP: 40, Attack: 35, Defense: 30, SpecialAttack: 20, SpecialDefense: 20, Speed: 50 }
+    catch-rate: 255
+    height: 0.3
+    weight: 3.2
+    gender: [1, 1]
+  Kakuna:
+    stats: { HP: 45, Attack: 25, Defense: 50, SpecialAttack: 25, SpecialDefense: 25, Speed: 35 }
+    catch-rate: 120
+    height: 0.6
+    weight: 10
+    gender: [1, 1]
+  Beedrill:
+    stats: { HP: 65, Attack: 90, Defense: 40, SpecialAttack: 45, SpecialDefense: 80, Speed: 75 }
+    catch-rate: 45
+    height: 1
+    weight: 29.5
+    gender: [1, 1]
+Pidgey:
+  Pidgey:
+    stats: { HP: 40, Attack: 45, Defense: 40, SpecialAttack: 35, SpecialDefense: 35, Speed: 56 }
+    catch-rate: 255
+    height: 0.3
+    weight: 1.8
+    gender: [1, 1]
+  Pidgeotto:
+    stats: { HP: 63, Attack: 60, Defense: 55, SpecialAttack: 50, SpecialDefense: 50, Speed: 71 }
+    catch-rate: 120
+    height: 1.1
+    weight: 30
+    gender: [1, 1]
+  Pidgeot:
+    stats: { HP: 83, Attack: 80, Defense: 75, SpecialAttack: 70, SpecialDefense: 70, Speed: 101 }
+    catch-rate: 45
+    height: 1.5
+    weight: 39.5
+    gender: [1, 1]
+Rattata:
+  Rattata:
+    stats: { HP: 30, Attack: 56, Defense: 35, SpecialAttack: 25, SpecialDefense: 35, Speed: 72 }
+    catch-rate: 255
+    height: 0.3
+    weight: 3.5
+    gender: [1, 1]
+  Raticate:
+    stats: { HP: 55, Attack: 81, Defense: 60, SpecialAttack: 50, SpecialDefense: 70, Speed: 97 }
+    catch-rate: 127
+    height: 0.7
+    weight: 18.5
+    gender: [1, 1]
+  RattataAlola:
+    stats: { HP: 30, Attack: 56, Defense: 35, SpecialAttack: 25, SpecialDefense: 35, Speed: 72 }
+    catch-rate: 255
+    height: 0.3
+    weight: 3.8
+    gender: [4, 4]
+  RaticateAlola:
+    stats: { HP: 75, Attack: 71, Defense: 70, SpecialAttack: 40, SpecialDefense: 80, Speed: 77 }
+    catch-rate: 127
+    height: 0.7
+    weight: 25.5
+    gender: [4, 4]
+Spearow:
+  Spearow:
+    stats: { HP: 40, Attack: 60, Defense: 30, SpecialAttack: 31, SpecialDefense: 31, Speed: 70 }
+    catch-rate: 255
+    height: 0.3
+    weight: 2
+    gender: [1, 1]
+  Fearow:
+    stats: { HP: 65, Attack: 90, Defense: 65, SpecialAttack: 61, SpecialDefense: 61, Speed: 100 }
+    catch-rate: 90
+    height: 1.2
+    weight: 38
+    gender: [1, 1]
+Ekans:
+  Ekans:
+    stats: { HP: 35, Attack: 60, Defense: 44, SpecialAttack: 40, SpecialDefense: 54, Speed: 55 }
+    catch-rate: 255
+    height: 2
+    weight: 6.9
+    gender: [1, 1]
+  Arbok:
+    stats: { HP: 60, Attack: 95, Defense: 69, SpecialAttack: 65, SpecialDefense: 79, Speed: 80 }
+    catch-rate: 90
+    height: 3.5
+    weight: 65
+    gender: [1, 1]
+Pikachu:
+  Pikachu:
+    stats: { HP: 35, Attack: 55, Defense: 40, SpecialAttack: 50, SpecialDefense: 50, Speed: 90 }
+    catch-rate: 190
+    height: 0.4
+    weight: 6
+    gender: [1, 1]
+  Raichu:
+    stats: { HP: 60, Attack: 90, Defense: 55, SpecialAttack: 90, SpecialDefense: 80, Speed: 110 }
+    catch-rate: 75
+    height: 0.8
+    weight: 30
+    gender: [1, 1]
+  Pichu:
+    stats: { HP: 20, Attack: 40, Defense: 15, SpecialAttack: 35, SpecialDefense: 35, Speed: 60 }
+    catch-rate: 190
+    height: 0.3
+    weight: 2
+    gender: &a1 [1, 1]
+  PichuSpikyEared:
+    # Pichu's own spread, 65 higher in every stat
+    stats: { HP: 85, Attack: 105, Defense: 80, SpecialAttack: 100, SpecialDefense: 100, Speed: 125 }
+    catch-rate: 190
+    height: 0.3
+    weight: 2
+    gender: *a1
+  RaichuAlola:
+    stats: { HP: 60, Attack: 85, Defense: 50, SpecialAttack: 95, SpecialDefense: 85, Speed: 110 }
+    catch-rate: 75
+    height: 0.7
+    weight: 21
+    gender: [4, 4]

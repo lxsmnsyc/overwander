@@ -1,0 +1,39 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Species: abilities",
+  "type": "object",
+  "propertyNames": {
+    "$ref": "names.json#/definitions/family"
+  },
+  "additionalProperties": {
+    "type": "object",
+    "description": "A family, with each of its species beneath it",
+    "properties": {},
+    "propertyNames": {
+      "$ref": "names.json#/definitions/species"
+    },
+    "additionalProperties": {
+      "type": "object",
+      "properties": {
+        "abilities": {
+          "type": "array",
+          "items": {
+            "$ref": "names.json#/definitions/ability"
+          },
+          "description": "What it is born with"
+        },
+        "hidden": {
+          "type": "array",
+          "items": {
+            "$ref": "names.json#/definitions/ability"
+          },
+          "description": "What it is rarely born with"
+        }
+      },
+      "required": [
+        "abilities"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,103 @@
+Meowth:
+  Meowth:
+    abilities: [Pickup, Technician]
+    hidden: [Unnerve]
+  Persian:
+    abilities: [Limber, Technician]
+    hidden: [Unnerve]
+  MeowthAlola:
+    abilities: [Pickup, Technician]
+    hidden: [Rattled]
+  PersianAlola:
+    abilities: [FurCoat, Technician]
+    hidden: [Rattled]
+Psyduck:
+  Psyduck:
+    abilities: [Damp, CloudNine]
+    hidden: [SwiftSwim]
+  Golduck:
+    abilities: [Damp, CloudNine]
+    hidden: [SwiftSwim, OwnTempo]
+Mankey:
+  Mankey:
+    abilities: [VitalSpirit, AngerPoint]
+    hidden: [Defiant]
+  Primeape:
+    abilities: [VitalSpirit, AngerPoint]
+    hidden: [Defiant]
+Growlithe:
+  Growlithe:
+    abilities: [Intimidate, FlashFire]
+    hidden: [Justified]
+  Arcanine:
+    abilities: [Intimidate, FlashFire]
+    hidden: [Justified, Reckless]
+Poliwag:
+  Poliwag:
+    abilities: [WaterAbsorb, Damp]
+    hidden: [SwiftSwim]
+  Poliwhirl:
+    abilities: [WaterAbsorb, Damp]
+    hidden: [SwiftSwim]
+  Poliwrath:
+    abilities: [WaterAbsorb, Damp]
+    hidden: [SwiftSwim, Guts]
+  Politoed:
+    abilities: [WaterAbsorb, Damp]
+    hidden: [Drizzle]
+Abra:
+  Abra:
+    abilities: [Synchronize, InnerFocus]
+    hidden: [MagicGuard]
+  Kadabra:
+    abilities: [Synchronize, InnerFocus]
+    hidden: [MagicGuard]
+  Alakazam:
+    abilities: [Synchronize, InnerFocus]
+    hidden: [MagicGuard, Forewarn]
+Machop:
+  Machop:
+    abilities: [Guts, NoGuard]
+    hidden: [Steadfast]
+  Machoke:
+    abilities: [Guts, NoGuard]
+    hidden: [Steadfast]
+  Machamp:
+    abilities: [Guts, NoGuard]
+    hidden: [Steadfast, IronFist]
+Bellsprout:
+  Bellsprout:
+    abilities: [Chlorophyll]
+    hidden: [Gluttony]
+  Weepinbell:
+    abilities: [Chlorophyll]
+    hidden: [Gluttony]
+  Victreebel:
+    abilities: [Chlorophyll]
+    hidden: [Gluttony, Harvest, LiquidOoze]
+Tentacool:
+  Tentacool:
+    abilities: [ClearBody, LiquidOoze]
+    hidden: [RainDish]
+  Tentacruel:
+    abilities: [ClearBody, LiquidOoze]
+    hidden: [RainDish, PoisonTouch]
+Geodude:
+  Geodude:
+    abilities: [RockHead, Sturdy]
+    hidden: [SandVeil]
+  Graveler:
+    abilities: [RockHead, Sturdy]
+    hidden: [SandVeil]
+  Golem:
+    abilities: [RockHead, Sturdy]
+    hidden: [SandVeil, SolidRock]
+  GeodudeAlola:
+    abilities: [MagnetPull, Sturdy]
+    hidden: [Galvanize]
+  GravelerAlola:
+    abilities: [MagnetPull, Sturdy]
+    hidden: [Galvanize]
+  GolemAlola:
+    abilities: [MagnetPull, Sturdy]
+    hidden: [Galvanize, HeavyMetal]

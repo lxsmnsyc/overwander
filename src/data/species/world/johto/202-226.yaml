@@ -1,0 +1,231 @@
+Wobbuffet:
+  Wobbuffet:
+    types: [Psychic]
+    egg-groups: [Amorphous]
+    biomes: [Mountain, Woodland, Grassland]
+    active: any
+    evolves-from: Wynaut
+  Wynaut:
+    types: [Psychic]
+    # A baby lays no egg of its own: the stage above it does
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Mountain, Woodland, Grassland]
+    active: any
+    evolves-into:
+      - species: Wobbuffet
+        method: [Level]
+        level: 15
+Girafarig:
+  Girafarig:
+    types: [Normal, Psychic]
+    egg-groups: [Field]
+    biomes: [Savanna, Grassland, Steppe]
+    active: any
+Pineco:
+  Pineco:
+    types: [Bug]
+    egg-groups: [Bug]
+    biomes: [Woodland, TemperateForest, TropicalRainforest]
+    active: any
+    evolves-into:
+      - species: Forretress
+        method: [Level]
+        level: 31
+  Forretress:
+    types: [Bug, Steel]
+    egg-groups: [Bug]
+    biomes: [Woodland, TemperateForest, TropicalRainforest]
+    active: any
+    evolves-from: Pineco
+Dunsparce:
+  Dunsparce:
+    types: [Normal]
+    egg-groups: [Field]
+    biomes: [Mountain, Steppe, Badlands]
+    active: any
+Gligar:
+  Gligar:
+    types: [Ground, Flying]
+    egg-groups: [Bug]
+    biomes: [Mountain, Badlands, ColdDesert]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Gliscor
+        method: [Level, HeldItem, TimeOfDay]
+        level: 35
+        item: RazorFang
+        time: [Evening, Night]
+  # The shape that comes off the cliff at night: a Gliscor glides down
+  # without a sound and is back up on the rock before anybody looks
+  Gliscor:
+    types: [Ground, Flying]
+    egg-groups: [Bug]
+    biomes: [Mountain, Badlands, ColdDesert]
+    active: [Evening, Night]
+    evolves-from: Gligar
+Snubbull:
+  Snubbull:
+    types: [Fairy]
+    egg-groups: [Field, Fairy]
+    biomes: [Grassland, Shrubland, Woodland]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Granbull
+        method: [Level]
+        level: 23
+  Granbull:
+    types: [Fairy]
+    egg-groups: [Field, Fairy]
+    biomes: [Grassland, Shrubland, Woodland]
+    active: [Morning, Day]
+    evolves-from: Snubbull
+Qwilfish:
+  Qwilfish:
+    types: [Water, Poison]
+    egg-groups: [Water2]
+    habitat: Water
+    biomes: [Ocean, KelpForest, RockyCoast]
+    active: any
+Shuckle:
+  Shuckle:
+    types: [Bug, Rock]
+    egg-groups: [Bug]
+    biomes: [Mountain, Badlands, RockyCoast, CoralReef, KelpForest]
+    active: any
+Heracross:
+  Heracross:
+    types: [Bug, Fighting]
+    egg-groups: [Bug]
+    active: any
+Sneasel:
+  Sneasel:
+    types: [Dark, Ice]
+    egg-groups: [Field]
+    biomes: [AlpineTundra, Tundra, Glacier, ColdDesert, Taiga]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Weavile
+        method: [Level, HeldItem, TimeOfDay]
+        level: 35
+        item: RazorClaw
+        time: [Evening, Night]
+  # A Sneasel that hunts in a group now: a Weavile carves marks into
+  # trees to tell the others what it has found
+  Weavile:
+    types: [Dark, Ice]
+    egg-groups: [Field]
+    biomes: [AlpineTundra, Tundra, Glacier, ColdDesert, Taiga]
+    active: [Evening, Night]
+    evolves-from: Sneasel
+Teddiursa:
+  Teddiursa:
+    types: [Normal]
+    egg-groups: [Field]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Ursaring
+        method: [Level]
+        level: 30
+  Ursaring:
+    types: [Normal]
+    egg-groups: [Field]
+    biomes: [Taiga, MontaneForest, TemperateForest]
+    active: [Morning, Day]
+    evolves-from: Teddiursa
+Slugma:
+  Slugma:
+    types: [Fire]
+    egg-groups: [Amorphous]
+    biomes: [Volcano, Badlands, Mountain]
+    active: any
+    evolves-into:
+      - species: Magcargo
+        method: [Level]
+        level: 38
+  Magcargo:
+    types: [Fire, Rock]
+    egg-groups: [Amorphous]
+    biomes: [Volcano, Badlands, Mountain]
+    active: any
+    evolves-from: Slugma
+Swinub:
+  Swinub:
+    types: [Ice, Ground]
+    egg-groups: [Field]
+    biomes: [Tundra, Glacier, AlpineTundra, ColdDesert, Taiga]
+    active: any
+    evolves-into:
+      - species: Piloswine
+        method: [Level]
+        level: 33
+  Piloswine:
+    types: [Ice, Ground]
+    egg-groups: [Field]
+    biomes: [Tundra, Glacier, AlpineTundra, ColdDesert, Taiga]
+    active: any
+    evolves-from: Swinub
+    evolves-into:
+      - species: Mamoswine
+        method: [Level, KnownMove]
+        level: 45
+        move: AncientPower
+  # What the cold used to grow: a Mamoswine carries tusks that say how
+  # long the winter it was born in lasted
+  Mamoswine:
+    types: [Ice, Ground]
+    egg-groups: [Field]
+    biomes: [Tundra, Glacier, AlpineTundra, ColdDesert, Taiga]
+    active: any
+    evolves-from: Piloswine
+Corsola:
+  Corsola:
+    types: [Water, Rock]
+    egg-groups: [Water1, Water3]
+    habitat: Water
+    biomes: [CoralReef, Ocean, Beach, RockyCoast]
+    active: any
+# The three beams all land together, at the same level up the line
+Remoraid:
+  Remoraid:
+    types: [Water]
+    egg-groups: [Water1, Water2]
+    habitat: Water
+    biomes: [Ocean, KelpForest, CoralReef, RockyCoast]
+    active: any
+    evolves-into:
+      - species: Octillery
+        method: [Level]
+        level: 25
+  Octillery:
+    types: [Water]
+    egg-groups: [Water1, Water2]
+    habitat: Water
+    biomes: [Ocean, KelpForest, CoralReef, RockyCoast]
+    active: any
+    evolves-from: Remoraid
+Delibird:
+  Delibird:
+    types: [Ice, Flying]
+    egg-groups: [Water1, Field]
+    biomes: [Tundra, Glacier, AlpineTundra, Taiga]
+    active: any
+Mantine:
+  Mantine:
+    types: [Water, Flying]
+    egg-groups: [Water1]
+    habitat: Water
+    biomes: [Ocean, CoralReef, KelpForest]
+    active: any
+    evolves-from: Mantyke
+  # A Mantine that has not grown its wings out: a Mantyke swims with
+  # whatever is bigger than it and copies how that thing moves
+  Mantyke:
+    types: [Water, Flying]
+    egg-groups: [NoEggsDiscovered]
+    habitat: Water
+    biomes: [Ocean, CoralReef, KelpForest]
+    active: any
+    evolves-into:
+      - species: Mantine
+        method: [Level]
+        level: 32

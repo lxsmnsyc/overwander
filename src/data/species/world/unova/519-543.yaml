@@ -1,0 +1,246 @@
+Pidove:
+  # The pigeons: a Pidove is underfoot in every town, and an Unfezant
+  # wears the crest of a bird that has decided it is better than you
+  Pidove:
+    types: [Normal, Flying]
+    egg-groups: [Flying]
+    biomes: [Grassland, Woodland]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Tranquill
+        method: [Level]
+        level: 21
+  Tranquill:
+    types: [Normal, Flying]
+    egg-groups: [Flying]
+    biomes: [Grassland, Woodland]
+    active: [Morning, Day]
+    evolves-from: Pidove
+    evolves-into:
+      - species: Unfezant
+        method: [Level]
+        level: 32
+  Unfezant:
+    types: [Normal, Flying]
+    egg-groups: [Flying]
+    biomes: [Grassland, Woodland]
+    active: [Morning, Day]
+    evolves-from: Tranquill
+Blitzle:
+  # The bolts: a Blitzle's mane flashes before it moves, and a
+  # Zebstrika is thunder with hooves
+  Blitzle:
+    types: [Electric]
+    egg-groups: [Field]
+    biomes: [Grassland, Steppe]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Zebstrika
+        method: [Level]
+        level: 27
+  Zebstrika:
+    types: [Electric]
+    egg-groups: [Field]
+    biomes: [Grassland, Steppe]
+    active: [Morning, Day]
+    evolves-from: Blitzle
+Roggenrola:
+  # The ore: a Roggenrola is a lump of it with ears, and a Gigalith has
+  # a core hot enough to fire the country in front of it
+  Roggenrola:
+    types: [Rock]
+    egg-groups: [Mineral]
+    biomes: [Mountain, Badlands]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Boldore
+        method: [Level]
+        level: 25
+  Boldore:
+    types: [Rock]
+    egg-groups: [Mineral]
+    biomes: [Mountain, Badlands]
+    active: [Morning, Day]
+    evolves-from: Roggenrola
+    evolves-into:
+      - species: Gigalith
+        method: [Trade]
+  Gigalith:
+    types: [Rock]
+    egg-groups: [Mineral]
+    biomes: [Mountain, Badlands]
+    active: [Morning, Day]
+    evolves-from: Boldore
+Woobat:
+  # The bats of the passages: a Woobat leaves the mark of its nose on
+  # whatever it takes a liking to, and a Swoobat courts on the wing
+  Woobat:
+    types: [Psychic, Flying]
+    egg-groups: [Flying, Field]
+    biomes: [Mountain, MontaneForest]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Swoobat
+        method: [Friendship]
+  Swoobat:
+    types: [Psychic, Flying]
+    egg-groups: [Flying, Field]
+    biomes: [Mountain, MontaneForest]
+    active: [Evening, Night]
+    evolves-from: Woobat
+Drilbur:
+  # The diggers: a Drilbur spins its claws into the rock, and an
+  # Excadrill is the whole tunnel boring itself
+  Drilbur:
+    types: [Ground]
+    egg-groups: [Field]
+    biomes: [Badlands, Desert]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Excadrill
+        method: [Level]
+        level: 31
+  Excadrill:
+    types: [Ground, Steel]
+    egg-groups: [Field]
+    biomes: [Badlands, Desert]
+    active: [Morning, Day]
+    evolves-from: Drilbur
+Audino:
+  # The listener: it reads a heartbeat through those ears and knows how
+  # whoever it touches is doing
+  Audino:
+    types: [Normal]
+    egg-groups: [Fairy]
+    biomes: [TemperateForest, Woodland]
+    active: [Morning, Day]
+Timburr:
+  # What the line carries, in the order it grows into: a square timber,
+
+  # The labourers: the whole line works a building site, and none of
+  # them will put down what it is carrying
+  Timburr:
+    types: [Fighting]
+    egg-groups: [HumanLike]
+    biomes: [TemperateForest, Woodland]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Gurdurr
+        method: [Level]
+        level: 25
+  Gurdurr:
+    types: [Fighting]
+    egg-groups: [HumanLike]
+    biomes: [TemperateForest, Woodland]
+    active: [Morning, Day]
+    evolves-from: Timburr
+    evolves-into:
+      - species: Conkeldurr
+        method: [Trade]
+  Conkeldurr:
+    types: [Fighting]
+    egg-groups: [HumanLike]
+    biomes: [TemperateForest, Woodland]
+    active: [Morning, Day]
+    evolves-from: Gurdurr
+Tympole:
+  # The croakers: the bumps on them shake the water, and by the last
+  # stage they shake the ground the water sits on
+  Tympole:
+    types: [Water]
+    egg-groups: [Water1]
+    habitat: Amphibious
+    biomes: [Bog, Swamp]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Palpitoad
+        method: [Level]
+        level: 25
+  Palpitoad:
+    types: [Water, Ground]
+    egg-groups: [Water1]
+    habitat: Amphibious
+    biomes: [Bog, Swamp]
+    active: [Evening, Night]
+    evolves-from: Tympole
+    evolves-into:
+      - species: Seismitoad
+        method: [Level]
+        level: 36
+  Seismitoad:
+    types: [Water, Ground]
+    egg-groups: [Water1]
+    habitat: Amphibious
+    biomes: [Bog, Swamp]
+    active: [Evening, Night]
+    evolves-from: Palpitoad
+Throh:
+  # The two halves of one dojo: Throh throws whoever comes at it and
+  # Sawk strikes before they can. Neither is ever female, and neither
+  # evolves, so what they are at level 1 is what they stay
+  Throh:
+    types: [Fighting]
+    egg-groups: [HumanLike]
+    biomes: [TemperateForest, Woodland]
+    active: [Morning, Day]
+Sawk:
+  Sawk:
+    types: [Fighting]
+    egg-groups: [HumanLike]
+    biomes: [TemperateForest, Woodland]
+    active: [Morning, Day]
+Sewaddle:
+  # The tailors: a Sewaddle stitches its own clothes out of leaves, and
+  # a Leavanny makes them for everything smaller than itself
+  Sewaddle:
+    types: [Bug, Grass]
+    egg-groups: [Bug]
+    biomes: [TemperateForest, Woodland]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Swadloon
+        method: [Level]
+        level: 20
+  Swadloon:
+    types: [Bug, Grass]
+    egg-groups: [Bug]
+    biomes: [TemperateForest, Woodland]
+    active: [Morning, Day]
+    evolves-from: Sewaddle
+    evolves-into:
+      - species: Leavanny
+        method: [Friendship]
+  Leavanny:
+    types: [Bug, Grass]
+    egg-groups: [Bug]
+    biomes: [TemperateForest, Woodland]
+    active: [Morning, Day]
+    evolves-from: Swadloon
+Venipede:
+  # The centipedes: a Venipede tastes the ground with its antennae, and
+  # a Scolipede runs down whatever it has decided on
+  Venipede:
+    types: [Bug, Poison]
+    egg-groups: [Bug]
+    biomes: [TemperateForest, Woodland]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Whirlipede
+        method: [Level]
+        level: 22
+  Whirlipede:
+    types: [Bug, Poison]
+    egg-groups: [Bug]
+    biomes: [TemperateForest, Woodland]
+    active: [Evening, Night]
+    evolves-from: Venipede
+    evolves-into:
+      - species: Scolipede
+        method: [Level]
+        level: 30
+  Scolipede:
+    types: [Bug, Poison]
+    egg-groups: [Bug]
+    biomes: [TemperateForest, Woodland]
+    active: [Evening, Night]
+    evolves-from: Whirlipede

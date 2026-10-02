@@ -1,0 +1,113 @@
+Sableye:
+  Sableye:
+    abilities: [KeenEye, Stall]
+    hidden: [Prankster, StickyHold]
+Mawile:
+  Mawile:
+    abilities: [HyperCutter, Intimidate]
+    hidden: [SheerForce, StrongJaw]
+Aron:
+  Aron:
+    abilities: [Sturdy, RockHead]
+    hidden: [HeavyMetal]
+  Lairon:
+    abilities: [Sturdy, RockHead]
+    hidden: [HeavyMetal]
+  Aggron:
+    abilities: [Sturdy, RockHead]
+    # Battle Armor is this registry's rather than the mainline's: it
+    # is the Iron Armor Pokemon, and a final evolution is filled to
+    # four
+    hidden: [HeavyMetal, BattleArmor]
+Meditite:
+  Meditite:
+    abilities: [PurePower]
+    hidden: [Telepathy]
+  Medicham:
+    abilities: [PurePower]
+    # Inner Focus and Levitate are this registry's rather than the
+    # mainline's: it meditates through anything, and off the floor
+    # while it does, and a final evolution is filled to four
+    hidden: [Telepathy, InnerFocus, Levitate]
+Electrike:
+  Electrike:
+    abilities: [Static, LightningRod]
+    hidden: [Minus]
+  Manectric:
+    abilities: [Static, LightningRod]
+    # Quick Feet is this registry's rather than the mainline's: it is
+    # built on 105 Speed, and a final evolution is filled to four
+    hidden: [Minus, QuickFeet]
+Plusle:
+  Plusle:
+    abilities: [Plus]
+    hidden: [LightningRod, FriendGuard, Battery]
+Minun:
+  Minun:
+    abilities: [Minus]
+    hidden: [VoltAbsorb, Healer, Battery]
+Volbeat:
+  Volbeat:
+    abilities: [Illuminate, Swarm]
+    hidden: [Prankster, Rivalry]
+Illumise:
+  Illumise:
+    abilities: [Oblivious, TintedLens]
+    hidden: [Prankster, CuteCharm]
+Roselia:
+  Roselia:
+    abilities: [NaturalCure, PoisonPoint]
+    hidden: [LeafGuard]
+  Budew:
+    abilities: [NaturalCure, PoisonPoint]
+    hidden: [LeafGuard]
+  Roserade:
+    abilities: [NaturalCure, PoisonPoint]
+    hidden: [Technician]
+Gulpin:
+  Gulpin:
+    abilities: [LiquidOoze, StickyHold]
+    hidden: [Gluttony]
+  Swalot:
+    abilities: [LiquidOoze, StickyHold]
+    # One the mainline never gave it: what it swallows things with is
+    # the same stuff it is full of
+    hidden: [Gluttony, PoisonTouch]
+Carvanha:
+  Carvanha:
+    abilities: [RoughSkin]
+    hidden: [SpeedBoost]
+  Sharpedo:
+    abilities: [RoughSkin]
+    # Two the mainline never gave it: what surfaces beside it thinks
+    # better of swinging, and nothing eats while it is circling
+    hidden: [SpeedBoost, Intimidate, Unnerve]
+Wailmer:
+  Wailmer:
+    abilities: [WaterVeil, Oblivious]
+    hidden: [Pressure]
+  Wailord:
+    abilities: [WaterVeil, Oblivious]
+    # One the mainline never gave it: nothing goes off with that much
+    # water spouting over it
+    hidden: [Pressure, Damp]
+Numel:
+  Numel:
+    abilities: [Oblivious, Simple]
+    hidden: [OwnTempo]
+  Camerupt:
+    abilities: [MagmaArmor, SolidRock]
+    hidden: [AngerPoint]
+Torkoal:
+  Torkoal:
+    abilities: [WhiteSmoke, Drought]
+    hidden: [ShellArmor, FlameBody]
+Spoink:
+  Spoink:
+    abilities: [ThickFat, OwnTempo]
+    hidden: [Gluttony]
+  Grumpig:
+    abilities: [ThickFat, OwnTempo]
+    # One the mainline never gave it: the pearls are what it reads
+    # the other side with
+    hidden: [Gluttony, Forewarn]

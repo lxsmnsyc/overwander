@@ -1,0 +1,229 @@
+# The plasma that lives in other people's machines. The five
+# appliance shapes are not stages: a Catalog moves a Rotom between
+# any two of them, its own included, so the line is a wheel rather
+# than a ladder
+Rotom:
+  Rotom:
+    types: [Electric, Ghost]
+    egg-groups: [Amorphous]
+    biomes: [Woodland, TemperateForest]
+    active: any
+    evolves-into:
+      - species: RotomHeat
+        method: [UsedItem]
+        item: RotomCatalog
+      - species: RotomWash
+        method: [UsedItem]
+        item: RotomCatalog
+      - species: RotomFrost
+        method: [UsedItem]
+        item: RotomCatalog
+      - species: RotomFan
+        method: [UsedItem]
+        item: RotomCatalog
+      - species: RotomMow
+        method: [UsedItem]
+        item: RotomCatalog
+  RotomHeat:
+    types: [Electric, Fire]
+    egg-groups: [Amorphous]
+    # It lives where a Rotom does, but a Catalog is the only way
+    # into this shape, so no pool stages one
+    biomes: [Woodland, TemperateForest]
+    active: any
+    base-form: false
+    evolves-from: Rotom
+    evolves-into:
+      - species: Rotom
+        method: [UsedItem]
+        item: RotomCatalog
+      - species: RotomWash
+        method: [UsedItem]
+        item: RotomCatalog
+      - species: RotomFrost
+        method: [UsedItem]
+        item: RotomCatalog
+      - species: RotomFan
+        method: [UsedItem]
+        item: RotomCatalog
+      - species: RotomMow
+        method: [UsedItem]
+        item: RotomCatalog
+  RotomWash:
+    types: [Electric, Water]
+    egg-groups: [Amorphous]
+    # It lives where a Rotom does, but a Catalog is the only way
+    # into this shape, so no pool stages one
+    biomes: [Woodland, TemperateForest]
+    active: any
+    base-form: false
+    evolves-from: Rotom
+    evolves-into:
+      - species: Rotom
+        method: [UsedItem]
+        item: RotomCatalog
+      - species: RotomHeat
+        method: [UsedItem]
+        item: RotomCatalog
+      - species: RotomFrost
+        method: [UsedItem]
+        item: RotomCatalog
+      - species: RotomFan
+        method: [UsedItem]
+        item: RotomCatalog
+      - species: RotomMow
+        method: [UsedItem]
+        item: RotomCatalog
+  RotomFrost:
+    types: [Electric, Ice]
+    egg-groups: [Amorphous]
+    # It lives where a Rotom does, but a Catalog is the only way
+    # into this shape, so no pool stages one
+    biomes: [Woodland, TemperateForest]
+    active: any
+    base-form: false
+    evolves-from: Rotom
+    evolves-into:
+      - species: Rotom
+        method: [UsedItem]
+        item: RotomCatalog
+      - species: RotomHeat
+        method: [UsedItem]
+        item: RotomCatalog
+      - species: RotomWash
+        method: [UsedItem]
+        item: RotomCatalog
+      - species: RotomFan
+        method: [UsedItem]
+        item: RotomCatalog
+      - species: RotomMow
+        method: [UsedItem]
+        item: RotomCatalog
+  RotomFan:
+    types: [Electric, Flying]
+    egg-groups: [Amorphous]
+    # It lives where a Rotom does, but a Catalog is the only way
+    # into this shape, so no pool stages one
+    biomes: [Woodland, TemperateForest]
+    active: any
+    base-form: false
+    evolves-from: Rotom
+    evolves-into:
+      - species: Rotom
+        method: [UsedItem]
+        item: RotomCatalog
+      - species: RotomHeat
+        method: [UsedItem]
+        item: RotomCatalog
+      - species: RotomWash
+        method: [UsedItem]
+        item: RotomCatalog
+      - species: RotomFrost
+        method: [UsedItem]
+        item: RotomCatalog
+      - species: RotomMow
+        method: [UsedItem]
+        item: RotomCatalog
+  RotomMow:
+    types: [Electric, Grass]
+    egg-groups: [Amorphous]
+    # It lives where a Rotom does, but a Catalog is the only way
+    # into this shape, so no pool stages one
+    biomes: [Woodland, TemperateForest]
+    active: any
+    base-form: false
+    evolves-from: Rotom
+    evolves-into:
+      - species: Rotom
+        method: [UsedItem]
+        item: RotomCatalog
+      - species: RotomHeat
+        method: [UsedItem]
+        item: RotomCatalog
+      - species: RotomWash
+        method: [UsedItem]
+        item: RotomCatalog
+      - species: RotomFrost
+        method: [UsedItem]
+        item: RotomCatalog
+      - species: RotomFan
+        method: [UsedItem]
+        item: RotomCatalog
+# The three that were made when the world was: one to know, one to
+# feel, one to decide. They are built to the same plan, three tiny
+# bodies with the same nine moves at the same nine levels, and only
+# the mind inside each of them differs
+Uxie:
+  Uxie:
+    types: [Psychic]
+    egg-groups: [NoEggsDiscovered]
+    habitat: Amphibious
+    biomes: [Taiga, Tundra]
+    active: any
+Mesprit:
+  Mesprit:
+    types: [Psychic]
+    egg-groups: [NoEggsDiscovered]
+    habitat: Amphibious
+    biomes: [TemperateForest, Woodland]
+    active: any
+Azelf:
+  Azelf:
+    types: [Psychic]
+    egg-groups: [NoEggsDiscovered]
+    habitat: Amphibious
+    biomes: [Grassland, Bog]
+    active: any
+# The three the world was made with: one that decides when a thing
+# happens, one that decides where, and the one that was thrown out
+# for what it did with either.
+
+# Each of them keeps a second shape, which is what it looks like on
+# the other side of its own doorway. A shape is worn rather than met:
+# an orb held into a fight is the only way to see one
+Dialga:
+  Dialga:
+    types: [Steel, Dragon]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [AlpineTundra]
+    active: any
+  DialgaOrigin:
+    types: [Steel, Dragon]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    # Worn rather than met, so the dex fills it in the day its
+    # own shape is
+    worn: true
+Palkia:
+  Palkia:
+    types: [Water, Dragon]
+    egg-groups: [NoEggsDiscovered]
+    habitat: Amphibious
+    biomes: [AlpineTundra]
+    active: any
+  PalkiaOrigin:
+    types: [Water, Dragon]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    # Worn rather than met, so the dex fills it in the day its
+    # own shape is
+    worn: true
+Heatran:
+  # The thing living in the volcano rather than under it: it hangs off
+  # the walls and the ceiling by cross-shaped feet, and its blood is
+  # what the mountain is full of
+  Heatran:
+    types: [Fire, Steel]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Volcano]
+    active: any
+Regigigas:
+  # The one that made the other three and towed the continents into
+  # place, shut in a temple in the snow ever since
+  Regigigas:
+    types: [Normal]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Glacier, Tundra]
+    active: any

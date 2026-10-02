@@ -7,7 +7,7 @@ description: >
   code that turns a species id into a dex number, a region or a sheet.
 ---
 
-An alternate form (an unown letter, and later an Alolan Vulpix or a Mega) is a **full species** here: its own `Species` id, its own registration in `src/data/species/`, its own sprite folder, its own dex tallies. What makes it a form is `baseForm: false` and the id it was given.
+An alternate form (an unown letter, and later an Alolan Vulpix or a Mega) is a **full species** here: its own `Species` id, its own entry in the species YAML under `src/data/species/`, its own sprite folder, its own dex tallies. What makes it a form is `base-form: false` and the id it was given.
 
 ## The numbering
 

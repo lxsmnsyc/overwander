@@ -1,0 +1,374 @@
+Exeggcute:
+  Exeggcute:
+    types: [Grass, Psychic]
+    egg-groups: [Grass]
+    biomes: [TropicalRainforest, TropicalSeasonalForest]
+    active: any
+    # Both Exeggutor take the same stone, and the catch sheet lets the player pick
+    evolves-into:
+      - species: Exeggutor
+        method: [UsedItem]
+        item: LeafStone
+      - species: ExeggutorAlola
+        method: [UsedItem]
+        item: LeafStone
+  Exeggutor:
+    types: [Grass, Psychic]
+    egg-groups: [Grass]
+    biomes: [TropicalRainforest, TropicalSeasonalForest]
+    active: any
+    evolves-from: Exeggcute
+  ExeggutorAlola:
+    types: [Grass, Dragon]
+    egg-groups: [Grass]
+    biomes: [Beach]
+    active: any
+    base-form: false
+    evolves-from: Exeggcute
+Cubone:
+  Cubone:
+    types: [Ground]
+    egg-groups: [Monster]
+    biomes: [Mountain, Desert, ColdDesert, Badlands]
+    active: [Night]
+    # By day it grows into a Kanto Marowak, and by night into an Alolan one
+    evolves-into:
+      - species: Marowak
+        method: [Level, TimeOfDay]
+        level: 28
+        time: [Morning, Day]
+      - species: MarowakAlola
+        method: [Level, TimeOfDay]
+        level: 28
+        time: [Evening, Night]
+  Marowak:
+    types: [Ground]
+    egg-groups: [Monster]
+    biomes: [Mountain, Desert, ColdDesert, Badlands]
+    active: [Night]
+    evolves-from: Cubone
+  MarowakAlola:
+    types: [Fire, Ghost]
+    egg-groups: [Monster]
+    biomes: [Volcano]
+    active: [Evening, Night]
+    base-form: false
+    evolves-from: Cubone
+# Which of the three it becomes, decided the way the games decide it
+Tyrogue:
+  Hitmonlee:
+    types: [Fighting]
+    egg-groups: [HumanLike]
+    biomes: [Grassland]
+    active: [Morning, Day]
+    evolves-from: Tyrogue
+  Hitmonchan:
+    types: [Fighting]
+    egg-groups: [HumanLike]
+    biomes: [Grassland]
+    active: [Morning, Day]
+    evolves-from: Tyrogue
+  Tyrogue:
+    types: [Fighting]
+    # A baby has nothing to breed with: it is what an egg holds
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Grassland]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Hitmonlee
+        method: [Level, StatComparison]
+        level: 20
+        compare: { stat: Attack, against: Defense, order: greater }
+      - species: Hitmonchan
+        method: [Level, StatComparison]
+        level: 20
+        compare: { stat: Attack, against: Defense, order: lesser }
+      - species: Hitmontop
+        method: [Level, StatComparison]
+        level: 20
+        compare: { stat: Attack, against: Defense, order: equal }
+  Hitmontop:
+    types: [Fighting]
+    egg-groups: [HumanLike]
+    biomes: [Grassland]
+    active: [Morning, Day]
+    evolves-from: Tyrogue
+Lickitung:
+  Lickitung:
+    types: [Normal]
+    egg-groups: [Monster]
+    biomes: [Grassland, Swamp]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Lickilicky
+        method: [Level, KnownMove]
+        level: 33
+        move: Rollout
+  # The tongue that outgrew the Lickitung: a Lickilicky wraps it around
+  # whatever it wants and carries the thing home
+  Lickilicky:
+    types: [Normal]
+    egg-groups: [Monster]
+    biomes: [Grassland, Woodland, TropicalSeasonalForest]
+    active: any
+    evolves-from: Lickitung
+Koffing:
+  Koffing:
+    types: [Poison]
+    egg-groups: [Amorphous]
+    biomes: [Swamp, Volcano]
+    active: [Night]
+    evolves-into:
+      - species: Weezing
+        method: [Level]
+        level: 35
+  Weezing:
+    types: [Poison]
+    egg-groups: [Amorphous]
+    biomes: [Swamp, Volcano]
+    active: [Night]
+    evolves-from: Koffing
+Rhyhorn:
+  Rhyhorn:
+    types: [Ground, Rock]
+    egg-groups: [Monster, Field]
+    biomes: [Savanna, Desert, Badlands]
+    active: [Day]
+    evolves-into:
+      - species: Rhydon
+        method: [Level]
+        level: 42
+  Rhydon:
+    types: [Ground, Rock]
+    egg-groups: [Monster, Field]
+    biomes: [Savanna, Desert, Badlands]
+    active: [Day]
+    evolves-from: Rhyhorn
+    evolves-into:
+      - species: Rhyperior
+        method: [HeldItem, Trade]
+        item: Protector
+  # A Rhydon in armour it grew itself: a Rhyperior loads rocks into the
+  # holes in its hands and fires them off
+  Rhyperior:
+    types: [Ground, Rock]
+    egg-groups: [Monster, Field]
+    biomes: [Badlands, Mountain, Steppe]
+    active: any
+    evolves-from: Rhydon
+Chansey:
+  Chansey:
+    types: [Normal]
+    egg-groups: [Fairy]
+    biomes: [Grassland, Woodland]
+    active: [Morning, Day]
+    evolves-from: Happiny
+    evolves-into:
+      - species: Blissey
+        method: [Friendship]
+  Blissey:
+    types: [Normal]
+    egg-groups: [Fairy]
+    biomes: [Grassland, Woodland]
+    active: [Morning, Day]
+    evolves-from: Chansey
+  # A Chansey before it has an egg to carry: a Happiny finds a round
+  # white stone instead and will not be told the difference
+  Happiny:
+    types: [Normal]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Grassland, Shrubland, TemperateForest]
+    active: any
+    evolves-into:
+      - species: Chansey
+        method: [Level, HeldItem, TimeOfDay]
+        level: 15
+        item: OvalStone
+        time: [Morning, Day]
+Tangela:
+  Tangela:
+    types: [Grass]
+    egg-groups: [Grass]
+    biomes: [Grassland, TemperateRainforest, KelpForest]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Tangrowth
+        method: [Level, KnownMove]
+        level: 38
+        move: AncientPower
+  # A Tangela that stopped counting its vines: a Tangrowth grows two
+  # arms out of the tangle and takes whatever comes near
+  Tangrowth:
+    types: [Grass]
+    egg-groups: [Grass]
+    biomes: [TropicalRainforest, TemperateRainforest, Swamp, KelpForest]
+    active: any
+    evolves-from: Tangela
+Kangaskhan:
+  Kangaskhan:
+    types: [Normal]
+    egg-groups: [Monster]
+    biomes: [Savanna, Steppe, Badlands]
+    active: [Morning, Day]
+Horsea:
+  Horsea:
+    types: [Water]
+    egg-groups: [Water1, Dragon]
+    habitat: Water
+    biomes: [Ocean, CoralReef, DeepOcean, KelpForest, Beach, RockyCoast]
+    active: any
+    evolves-into:
+      - species: Seadra
+        method: [Level]
+        level: 32
+  Seadra:
+    types: [Water]
+    egg-groups: [Water1, Dragon]
+    habitat: Water
+    biomes: [Ocean, CoralReef, KelpForest, Beach, RockyCoast]
+    active: any
+    evolves-from: Horsea
+    evolves-into:
+      - species: Kingdra
+        method: [HeldItem, Trade]
+        item: DragonScale
+  Kingdra:
+    types: [Water, Dragon]
+    egg-groups: [Water1, Dragon]
+    habitat: Water
+    biomes: [Ocean, CoralReef, Beach, RockyCoast]
+    active: any
+    evolves-from: Seadra
+Goldeen:
+  Goldeen:
+    types: [Water]
+    egg-groups: [Water2]
+    habitat: Water
+    biomes:
+      - Swamp
+      - Beach
+      - TropicalSeasonalForest
+      - Shrubland
+      - Grassland
+      - TemperateForest
+      - Mountain
+      - Steppe
+    active: any
+    evolves-into:
+      - species: Seaking
+        method: [Level]
+        level: 33
+  Seaking:
+    types: [Water]
+    egg-groups: [Water2]
+    habitat: Water
+    biomes:
+      - Swamp
+      - Beach
+      - TropicalSeasonalForest
+      - Shrubland
+      - Grassland
+      - TemperateForest
+      - Mountain
+      - Steppe
+    active: any
+    evolves-from: Goldeen
+Staryu:
+  Staryu:
+    types: [Water]
+    egg-groups: [Water3]
+    habitat: Water
+    biomes: [Beach, CoralReef, RockyCoast, KelpForest]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Starmie
+        method: [UsedItem]
+        item: WaterStone
+  Starmie:
+    types: [Water, Psychic]
+    egg-groups: [Water3]
+    habitat: Water
+    biomes: [Beach, CoralReef, RockyCoast, KelpForest]
+    active: [Evening, Night]
+    evolves-from: Staryu
+MrMime:
+  MrMime:
+    types: [Psychic, Fairy]
+    egg-groups: [HumanLike]
+    biomes: [Grassland]
+    active: [Day]
+    evolves-from: MimeJr
+  # A Mr. Mime still learning the routine: a Mime Jr. copies whoever it
+  # is watching and does not stop when they notice
+  MimeJr:
+    types: [Psychic, Fairy]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Grassland, TemperateForest, Woodland]
+    active: any
+    evolves-into:
+      - species: MrMime
+        method: [Level, KnownMove]
+        level: 20
+        move: Mimic
+Scyther:
+  Scyther:
+    types: [Bug, Flying]
+    egg-groups: [Bug]
+    biomes: [Grassland, TemperateForest, Woodland]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Scizor
+        method: [HeldItem, Trade]
+        item: MetalCoat
+  Scizor:
+    types: [Bug, Steel]
+    egg-groups: [Bug]
+    biomes: [Grassland, TemperateForest, Woodland]
+    active: [Morning, Day]
+    evolves-from: Scyther
+Jynx:
+  Jynx:
+    types: [Ice, Psychic]
+    egg-groups: [HumanLike]
+    biomes: [Glacier, Tundra, Taiga]
+    active: [Evening, Night]
+    evolves-from: Smoochum
+  Smoochum:
+    types: [Ice, Psychic]
+    # A baby lays no egg of its own: the stage above it does
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Glacier, Tundra, Taiga]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Jynx
+        method: [Level]
+        level: 30
+Electabuzz:
+  Electabuzz:
+    types: [Electric]
+    egg-groups: [HumanLike]
+    biomes: [Grassland]
+    active: any
+    evolves-from: Elekid
+    evolves-into:
+      - species: Electivire
+        method: [HeldItem, Trade]
+        item: Electirizer
+  Elekid:
+    types: [Electric]
+    # A baby lays no egg of its own: the stage above it does
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Grassland]
+    active: any
+    evolves-into:
+      - species: Electabuzz
+        method: [Level]
+        level: 30
+  # What an Electabuzz becomes with the current to spare: an Electivire
+  # puts both tails on whatever it is hitting and lets go
+  Electivire:
+    types: [Electric]
+    egg-groups: [HumanLike]
+    biomes: [Grassland, Steppe, Savanna]
+    active: any
+    evolves-from: Electabuzz

@@ -1,0 +1,194 @@
+# What the two above the base pick up: the machines that ask for a
+Chikorita:
+  Chikorita:
+    types: [Grass]
+    egg-groups: [Monster, Grass]
+    biomes: [Grassland, TemperateForest, Woodland]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Bayleef
+        method: [Level]
+        level: 16
+  Bayleef:
+    types: [Grass]
+    egg-groups: [Monster, Grass]
+    biomes: [Grassland, TemperateForest, Woodland]
+    active: [Morning, Day]
+    evolves-from: Chikorita
+    evolves-into:
+      - species: Meganium
+        method: [Level]
+        level: 32
+  Meganium:
+    types: [Grass]
+    egg-groups: [Monster, Grass]
+    biomes: [Grassland, TemperateForest, Woodland]
+    active: [Morning, Day]
+    evolves-from: Bayleef
+# What the two above the base pick up: the machines that ask for a
+Cyndaquil:
+  Cyndaquil:
+    types: [Fire]
+    egg-groups: [Field]
+    biomes: [Mountain, Volcano]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Quilava
+        method: [Level]
+        level: 14
+  Quilava:
+    types: [Fire]
+    egg-groups: [Field]
+    biomes: [Mountain, Volcano]
+    active: [Morning, Day]
+    evolves-from: Cyndaquil
+    evolves-into:
+      - species: Typhlosion
+        method: [Level]
+        level: 36
+  Typhlosion:
+    types: [Fire]
+    egg-groups: [Field]
+    biomes: [Mountain, Volcano]
+    active: [Morning, Day]
+    evolves-from: Quilava
+# What the two above the base pick up: the machines that ask for a
+Totodile:
+  Totodile:
+    types: [Water]
+    egg-groups: [Monster, Water1]
+    habitat: Amphibious
+    biomes: [Swamp, Mangrove]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Croconaw
+        method: [Level]
+        level: 18
+  Croconaw:
+    types: [Water]
+    egg-groups: [Monster, Water1]
+    habitat: Amphibious
+    biomes: [Swamp, Mangrove]
+    active: [Morning, Day]
+    evolves-from: Totodile
+    evolves-into:
+      - species: Feraligatr
+        method: [Level]
+        level: 30
+  Feraligatr:
+    types: [Water]
+    egg-groups: [Monster, Water1]
+    habitat: Amphibious
+    biomes: [Swamp, Mangrove]
+    active: [Morning, Day]
+    evolves-from: Croconaw
+Sentret:
+  Sentret:
+    types: [Normal]
+    egg-groups: [Field]
+    biomes: [Grassland, Woodland, Steppe]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Furret
+        method: [Level]
+        level: 15
+  Furret:
+    types: [Normal]
+    egg-groups: [Field]
+    biomes: [Grassland, Woodland, Steppe]
+    active: [Morning, Day]
+    evolves-from: Sentret
+Hoothoot:
+  Hoothoot:
+    types: [Normal, Flying]
+    egg-groups: [Flying]
+    biomes: [Woodland, TemperateForest, MontaneForest]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Noctowl
+        method: [Level]
+        level: 20
+  Noctowl:
+    types: [Normal, Flying]
+    egg-groups: [Flying]
+    biomes: [Woodland, TemperateForest, MontaneForest]
+    active: [Evening, Night]
+    evolves-from: Hoothoot
+Ledyba:
+  Ledyba:
+    types: [Bug, Flying]
+    egg-groups: [Bug]
+    biomes: [Grassland, Woodland, TemperateForest]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Ledian
+        method: [Level]
+        level: 18
+  Ledian:
+    types: [Bug, Flying]
+    egg-groups: [Bug]
+    biomes: [Grassland, Woodland, TemperateForest]
+    active: [Morning, Day]
+    evolves-from: Ledyba
+Spinarak:
+  Spinarak:
+    types: [Bug, Poison]
+    egg-groups: [Bug]
+    biomes: [Woodland, TemperateForest, TropicalRainforest]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Ariados
+        method: [Level]
+        level: 22
+  Ariados:
+    types: [Bug, Poison]
+    egg-groups: [Bug]
+    biomes: [Woodland, TemperateForest, TropicalRainforest]
+    active: [Evening, Night]
+    evolves-from: Spinarak
+Chinchou:
+  Chinchou:
+    types: [Water, Electric]
+    egg-groups: [Water2]
+    habitat: Water
+    biomes: [Ocean, DeepOcean, KelpForest]
+    active: any
+    evolves-into:
+      - species: Lanturn
+        method: [Level]
+        level: 27
+  Lanturn:
+    types: [Water, Electric]
+    egg-groups: [Water2]
+    habitat: Water
+    biomes: [Ocean, DeepOcean, KelpForest]
+    active: any
+    evolves-from: Chinchou
+Togepi:
+  Togepi:
+    types: [Fairy]
+    # A baby has nothing to breed with: it is what an egg holds
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Grassland, Woodland, TemperateForest]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Togetic
+        method: [Friendship]
+  Togetic:
+    types: [Fairy, Flying]
+    egg-groups: [Flying, Fairy]
+    biomes: [Grassland, Woodland, TemperateForest]
+    active: [Morning, Day]
+    evolves-from: Togepi
+    evolves-into:
+      - species: Togekiss
+        method: [UsedItem]
+        item: ShinyStone
+  # The bird that only turns up where nobody is fighting: a Togekiss
+  # shares what it has with whoever it decided is worth it
+  Togekiss:
+    types: [Fairy, Flying]
+    egg-groups: [Flying, Fairy]
+    biomes: [Grassland, Woodland, TemperateForest]
+    active: [Morning, Day]
+    evolves-from: Togetic

@@ -1,0 +1,150 @@
+# The three golems, sealed one to a chamber. They are built to the
+# same plan: one ability the mainline gave all three, one of its own,
+# and the same nine moves at the same nine levels, differing only in
+# the blow each throws at 9
+Regirock:
+  Regirock:
+    types: [Rock]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Desert, Badlands]
+    active: any
+Regice:
+  Regice:
+    types: [Ice]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [PolarOcean, Taiga, Tundra]
+    active: any
+Registeel:
+  Registeel:
+    types: [Steel]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Mountain, Badlands, Ocean]
+    active: any
+# The eon pair: one sister, one brother, and nothing else of either.
+# Each is single-gendered, so the pair is only ever met as a pair,
+# and the mainline gives both of them one ability and nothing more
+Latias:
+  Latias:
+    types: [Dragon, Psychic]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Ocean]
+    active: any
+Latios:
+  Latios:
+    types: [Dragon, Psychic]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Ocean]
+    active: any
+# The three that decide what the sky is doing: the sea, the land, and
+# the thing that flies above both and calls the argument off. Each
+# carries one ability in the mainline and nothing else, so what fills
+# the other three slots is this registry's
+Kyogre:
+  Kyogre:
+    types: [Water]
+    egg-groups: [NoEggsDiscovered]
+    habitat: Water
+    biomes: [DeepOcean, Beach]
+    active: any
+  # Worn rather than met: a Blue Orb held into a fight returns it to
+  # the shape it had before anybody was around to see it
+  KyogrePrimal:
+    types: [Water]
+    egg-groups: [NoEggsDiscovered]
+    habitat: Water
+    active: any
+    base-form: false
+    worn: true
+Groudon:
+  Groudon:
+    types: [Ground]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Volcano, Beach]
+    active: any
+  # And the Red Orb does the same for the land
+  GroudonPrimal:
+    types: [Ground, Fire]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    worn: true
+Rayquaza:
+  Rayquaza:
+    types: [Dragon, Flying]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Ocean, Beach]
+    active: any
+Jirachi:
+  Jirachi:
+    types: [Steel, Psychic]
+    egg-groups: [NoEggsDiscovered]
+    # The valley it sleeps under, dry ground with the sky open over
+    # it, which is what a comet has to be seen through. The tag is
+    # the reliable way to one; the badlands are the other, at odds
+    # nobody walks out looking for
+    biomes: [Badlands]
+    active: any
+Deoxys:
+  Deoxys:
+    types: [Psychic]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Beach]
+    active: any
+    evolves-into:
+      - species: DeoxysAttack
+        method: [UsedItem]
+        item: Meteorite
+      - species: DeoxysDefense
+        method: [UsedItem]
+        item: Meteorite
+      - species: DeoxysSpeed
+        method: [UsedItem]
+        item: Meteorite
+  DeoxysAttack:
+    types: [Psychic]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    evolves-from: Deoxys
+    evolves-into:
+      - species: Deoxys
+        method: [UsedItem]
+        item: Meteorite
+      - species: DeoxysDefense
+        method: [UsedItem]
+        item: Meteorite
+      - species: DeoxysSpeed
+        method: [UsedItem]
+        item: Meteorite
+  DeoxysDefense:
+    types: [Psychic]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    evolves-from: Deoxys
+    evolves-into:
+      - species: Deoxys
+        method: [UsedItem]
+        item: Meteorite
+      - species: DeoxysAttack
+        method: [UsedItem]
+        item: Meteorite
+      - species: DeoxysSpeed
+        method: [UsedItem]
+        item: Meteorite
+  DeoxysSpeed:
+    types: [Psychic]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    evolves-from: Deoxys
+    evolves-into:
+      - species: Deoxys
+        method: [UsedItem]
+        item: Meteorite
+      - species: DeoxysAttack
+        method: [UsedItem]
+        item: Meteorite
+      - species: DeoxysDefense
+        method: [UsedItem]
+        item: Meteorite

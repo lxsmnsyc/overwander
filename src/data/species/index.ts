@@ -1,12 +1,7 @@
-import registerGen1Species from './gen-1';
-import registerGen2Species from './gen-2';
-import registerGen3Species from './gen-3';
-import registerGen4Species from './gen-4';
-import registerGen5Species from './gen-5';
-import registerGen6Species from './gen-6';
-import registerGen7Species from './gen-7';
+import { registerSpecies as registerSpeciesData } from './__create';
 import registerMegaSpecies from './megas';
 import registerTrueShadowSpecies from './true-shadow';
+import { readSpecies } from './yaml';
 
 export {
   getBaseForms,
@@ -63,9 +58,7 @@ export {
 } from './evolution';
 export type { EvolutionContext, Handover } from './evolution';
 export { REGIONS, REGION_NAMES, getSpeciesByRegion, getSpeciesRegion } from './regions';
-export { getShoreForm } from './gen-4/shellos';
-export { getWingPattern } from './gen-6/scatterbug';
-export { getSeasonalCoat } from './gen-5/deerling';
+export { getSeasonalCoat, getShoreForm, getWingPattern } from './forms';
 export {
   TRUE_SHADOW_BONUS,
   TRUE_SHADOW_WEIGHT,
@@ -78,13 +71,18 @@ export {
 export { getMegaBase, isMegaSpecies, listMegas } from './megas';
 
 export function registerSpecies(): void {
-  registerGen1Species();
-  registerGen2Species();
-  registerGen3Species();
-  registerGen4Species();
-  registerGen5Species();
-  registerGen6Species();
-  registerGen7Species();
+  // Written as YAML, a folder per field and a block of families per file (see ./yaml.ts)
+  const read = readSpecies({
+    world: import.meta.glob('./world/**/*.yaml', { eager: true, import: 'default' }),
+    stats: import.meta.glob('./stats/**/*.yaml', { eager: true, import: 'default' }),
+    abilities: import.meta.glob('./abilities/**/*.yaml', { eager: true, import: 'default' }),
+    learnsets: import.meta.glob('./learnsets/**/*.yaml', { eager: true, import: 'default' }),
+    text: import.meta.glob('../text/en/species.yaml', { eager: true, import: 'default' }),
+  });
+
+  for (const [species, data] of read) {
+    registerSpeciesData(species, data);
+  }
   // Last: each one is a copy of a counterpart that has to exist first
   registerMegaSpecies();
   registerTrueShadowSpecies();

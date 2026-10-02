@@ -1,0 +1,104 @@
+Rowlet:
+  Rowlet:
+    abilities: [Overgrow]
+    hidden: [LongReach]
+  Dartrix:
+    abilities: [Overgrow]
+    hidden: [LongReach]
+  Decidueye:
+    abilities: [Overgrow]
+    hidden: [LongReach, Sniper, KeenEye]
+Litten:
+  Litten:
+    abilities: [Blaze]
+    hidden: [Intimidate]
+  Torracat:
+    abilities: [Blaze]
+    hidden: [Intimidate]
+  Incineroar:
+    abilities: [Blaze]
+    hidden: [Intimidate, ToughClaws, IronFist]
+Popplio:
+  Popplio:
+    abilities: [Torrent]
+    hidden: [LiquidVoice]
+  Brionne:
+    abilities: [Torrent]
+    hidden: [LiquidVoice]
+  Primarina:
+    abilities: [Torrent]
+    hidden: [LiquidVoice, CuteCharm, Hydration]
+Pikipek:
+  Pikipek:
+    abilities: [KeenEye, SkillLink]
+    hidden: [Pickup]
+  Trumbeak:
+    abilities: [KeenEye, SkillLink]
+    hidden: [Pickup]
+  Toucannon:
+    abilities: [KeenEye, SkillLink]
+    hidden: [SheerForce]
+Yungoos:
+  Yungoos:
+    abilities: [Stakeout, StrongJaw]
+    hidden: [Adaptability]
+  Gumshoos:
+    abilities: [Stakeout, StrongJaw]
+    hidden: [Adaptability, Scrappy]
+Grubbin:
+  Grubbin:
+    abilities: [Swarm]
+  Charjabug:
+    abilities: [Battery]
+  Vikavolt:
+    abilities: [Levitate]
+    hidden: [CompoundEyes]
+Crabrawler:
+  Crabrawler:
+    abilities: [HyperCutter, IronFist]
+    hidden: [AngerPoint]
+  Crabominable:
+    abilities: [HyperCutter, IronFist]
+    hidden: [AngerPoint, ShellArmor]
+Oricorio:
+  Oricorio:
+    abilities: [Dancer]
+    hidden: [TangledFeet, KeenEye, GaleWings]
+  OricorioPomPom:
+    abilities: [Dancer]
+    hidden: [TangledFeet, KeenEye, GaleWings]
+  OricorioPau:
+    abilities: [Dancer]
+    hidden: [TangledFeet, KeenEye, GaleWings]
+  OricorioSensu:
+    abilities: [Dancer]
+    hidden: [TangledFeet, KeenEye, GaleWings]
+Cutiefly:
+  Cutiefly:
+    abilities: [HoneyGather, ShieldDust]
+    hidden: [SweetVeil]
+  Ribombee:
+    abilities: [HoneyGather, ShieldDust]
+    hidden: [SweetVeil, FriendGuard]
+Rockruff:
+  Rockruff:
+    abilities: [KeenEye, VitalSpirit]
+    # Own Tempo is the event Rockruff's, the one that grows into a Dusk
+    # in the mainline. Here the hour does that, so the tempo is only a
+    # rarer birth
+    hidden: [Steadfast, OwnTempo]
+  Lycanroc:
+    abilities: [KeenEye, SandRush]
+    hidden: [Steadfast]
+  LycanrocMidnight:
+    abilities: [KeenEye, VitalSpirit]
+    hidden: [NoGuard]
+  LycanrocDusk:
+    abilities: [ToughClaws]
+Wishiwashi:
+  Wishiwashi:
+    abilities: [Schooling]
+    hidden: [SwiftSwim, WimpOut, Anticipation]
+  WishiwashiSchool:
+    abilities: [Schooling]
+    hidden: [SwiftSwim, WimpOut, Anticipation]

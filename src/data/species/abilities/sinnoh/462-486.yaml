@@ -1,0 +1,76 @@
+Rotom:
+  Rotom:
+    abilities: [Levitate]
+    # The other three are this registry's: it is the motor, it is
+    # live to the touch, and it is why the fridge door sticks
+    hidden: [MotorDrive, Static, MagnetPull]
+  RotomHeat:
+    abilities: [Levitate]
+    hidden: []
+  RotomWash:
+    abilities: [Levitate]
+    hidden: []
+  RotomFrost:
+    abilities: [Levitate]
+    hidden: []
+  RotomFan:
+    abilities: [Levitate]
+    hidden: []
+  RotomMow:
+    abilities: [Levitate]
+    hidden: []
+Uxie:
+  Uxie:
+    abilities: [Levitate]
+    # Levitate is all the mainline gives it, so the other three
+    # are this registry's, each of them the thing it stands for
+    hidden: [Anticipation, Frisk, Forewarn]
+Mesprit:
+  Mesprit:
+    abilities: [Levitate]
+    # Levitate is all the mainline gives it, so the other three
+    # are this registry's, each of them the thing it stands for
+    hidden: [Synchronize, SereneGrace, Healer]
+Azelf:
+  Azelf:
+    abilities: [Levitate]
+    # Levitate is all the mainline gives it, so the other three
+    # are this registry's, each of them the thing it stands for
+    hidden: [InnerFocus, OwnTempo, ClearBody]
+Dialga:
+  Dialga:
+    abilities: [Pressure]
+    # Pressure and Telepathy are all the mainline gives it, so the
+    # other two are this registry's: time runs for the one that keeps
+    # it, and it strikes on the beat somebody else is committed to
+    hidden: [Telepathy, SpeedBoost, Analytic]
+  DialgaOrigin:
+    # Unaware is the shape's own, the way Levitate is Giratina
+    # Origin's: with nothing wrapped around it, it fights whoever was
+    # standing there before any of the setup happened
+    abilities: [Pressure, Unaware]
+    hidden: [Telepathy]
+Palkia:
+  Palkia:
+    abilities: [Pressure]
+    # Pressure and Telepathy are all the mainline gives it, so the
+    # other two are this registry's: it steps through the space a
+    # screen takes up, and what lands near it lands somewhere else
+    hidden: [Telepathy, Infiltrator, MagicGuard]
+  PalkiaOrigin:
+    # Shadow Tag is the shape's own: folded shut, it decides where
+    # things are, and nothing it is holding gets to be elsewhere
+    abilities: [Pressure, ShadowTag]
+    hidden: [Telepathy]
+Heatran:
+  Heatran:
+    abilities: [FlashFire]
+    # Flame Body is the mainline's; the other two are this
+    # registry's, one for what it is made of and one for the smoke
+    hidden: [FlameBody, MagmaArmor, WhiteSmoke]
+Regigigas:
+  Regigigas:
+    abilities: [SlowStart]
+    # The other three are this registry's: every move it starts with
+    # is a punch, and 3.7 metres arriving is felt before it swings
+    hidden: [IronFist, Sturdy, Intimidate]

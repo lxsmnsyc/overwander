@@ -1,0 +1,256 @@
+Ponyta:
+  Ponyta:
+    types: [Fire]
+    egg-groups: [Field]
+    biomes: [Grassland, Steppe, Volcano]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Rapidash
+        method: [Level]
+        level: 40
+  Rapidash:
+    types: [Fire]
+    egg-groups: [Field]
+    biomes: [Grassland, Steppe, Volcano]
+    active: [Morning, Day]
+    evolves-from: Ponyta
+Slowpoke:
+  Slowpoke:
+    types: [Water, Psychic]
+    egg-groups: [Monster, Water1]
+    habitat: Amphibious
+    biomes: [Beach, Swamp, Mangrove, RockyCoast, CoralReef]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Slowbro
+        method: [Level]
+        level: 37
+      - species: Slowking
+        method: [HeldItem, Trade]
+        item: KingsRock
+  Slowbro:
+    types: [Water, Psychic]
+    egg-groups: [Monster, Water1]
+    habitat: Amphibious
+    biomes: [Beach, Swamp, Mangrove, RockyCoast, CoralReef]
+    active: [Morning, Day]
+    evolves-from: Slowpoke
+  Slowking:
+    types: [Water, Psychic]
+    egg-groups: [Monster, Water1]
+    habitat: Amphibious
+    biomes: [Beach, Swamp, Mangrove, CoralReef]
+    active: [Morning, Day]
+    evolves-from: Slowpoke
+Magnemite:
+  Magnemite:
+    types: [Electric, Steel]
+    egg-groups: [Mineral]
+    biomes: [Grassland, Steppe]
+    active: any
+    evolves-into:
+      - species: Magneton
+        method: [Level]
+        level: 30
+  Magneton:
+    types: [Electric, Steel]
+    egg-groups: [Mineral]
+    biomes: [Grassland, Steppe]
+    active: any
+    evolves-from: Magnemite
+    # A Thunder Stone rather than a magnetic field, the way Nosepass
+    # asks for one
+    evolves-into:
+      - species: Magnezone
+        method: [UsedItem]
+        item: ThunderStone
+  # Three magnets that agreed to be one thing: a Magnezone puts out a
+  # field strong enough to pull the ground up around it
+  Magnezone:
+    types: [Electric, Steel]
+    egg-groups: [Mineral]
+    biomes: [Mountain, Badlands, Steppe]
+    active: any
+    evolves-from: Magneton
+Farfetchd:
+  Farfetchd:
+    types: [Normal, Flying]
+    egg-groups: [Flying, Field]
+    biomes: [Grassland, Swamp, Mangrove]
+    active: [Morning, Day]
+Doduo:
+  Doduo:
+    types: [Normal, Flying]
+    egg-groups: [Flying]
+    biomes: [Savanna, Steppe]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Dodrio
+        method: [Level]
+        level: 31
+  Dodrio:
+    types: [Normal, Flying]
+    egg-groups: [Flying]
+    biomes: [Savanna, Steppe]
+    active: [Morning, Day]
+    evolves-from: Doduo
+Seel:
+  Seel:
+    types: [Water]
+    egg-groups: [Water1, Field]
+    habitat: Amphibious
+    biomes: [Ocean, PolarOcean, RockyCoast, Taiga, Tundra, Glacier, KelpForest]
+    active: any
+    evolves-into:
+      - species: Dewgong
+        method: [Level]
+        level: 34
+  Dewgong:
+    types: [Water, Ice]
+    egg-groups: [Water1, Field]
+    habitat: Amphibious
+    biomes: [Ocean, PolarOcean, Tundra, RockyCoast, Taiga, Glacier, KelpForest]
+    active: any
+    evolves-from: Seel
+Grimer:
+  Grimer:
+    types: [Poison]
+    egg-groups: [Amorphous]
+    biomes: [Swamp, Bog]
+    active: [Night]
+    evolves-into:
+      - species: Muk
+        method: [Level]
+        level: 38
+  Muk:
+    types: [Poison]
+    egg-groups: [Amorphous]
+    biomes: [Swamp, Bog]
+    active: [Night]
+    evolves-from: Grimer
+  GrimerAlola:
+    types: [Poison, Dark]
+    egg-groups: [Amorphous]
+    biomes: [Beach, Mangrove]
+    active: any
+    base-form: false
+    evolves-into:
+      - species: MukAlola
+        method: [Level]
+        level: 38
+  MukAlola:
+    types: [Poison, Dark]
+    egg-groups: [Amorphous]
+    biomes: [Beach, Mangrove]
+    active: any
+    base-form: false
+    evolves-from: GrimerAlola
+Shellder:
+  Shellder:
+    types: [Water]
+    egg-groups: [Water3]
+    habitat: Water
+    biomes: [Ocean, Beach, RockyCoast]
+    active: any
+    evolves-into:
+      - species: Cloyster
+        method: [UsedItem]
+        item: WaterStone
+  Cloyster:
+    types: [Water, Ice]
+    egg-groups: [Water3]
+    habitat: Water
+    biomes: [Ocean, PolarOcean, RockyCoast, Beach]
+    active: any
+    evolves-from: Shellder
+Gastly:
+  Gastly:
+    types: [Ghost, Poison]
+    egg-groups: [Amorphous]
+    biomes: [Mountain, Bog]
+    active: [Night]
+    evolves-into:
+      - species: Haunter
+        method: [Level]
+        level: 25
+  Haunter:
+    types: [Ghost, Poison]
+    egg-groups: [Amorphous]
+    biomes: [Mountain, Bog]
+    active: [Night]
+    evolves-from: Gastly
+    evolves-into:
+      - species: Gengar
+        method: [Trade]
+  Gengar:
+    types: [Ghost, Poison]
+    egg-groups: [Amorphous]
+    biomes: [Mountain, Bog]
+    active: [Night]
+    evolves-from: Haunter
+Onix:
+  Onix:
+    types: [Rock, Ground]
+    egg-groups: [Mineral]
+    biomes: [Mountain, ColdDesert, Volcano]
+    active: any
+    evolves-into:
+      - species: Steelix
+        method: [HeldItem, Trade]
+        item: MetalCoat
+  Steelix:
+    types: [Steel, Ground]
+    egg-groups: [Mineral]
+    biomes: [Mountain, ColdDesert]
+    active: any
+    evolves-from: Onix
+Drowzee:
+  Drowzee:
+    types: [Psychic]
+    egg-groups: [HumanLike]
+    biomes: [Grassland, Woodland]
+    active: [Night]
+    evolves-into:
+      - species: Hypno
+        method: [Level]
+        level: 26
+  Hypno:
+    types: [Psychic]
+    egg-groups: [HumanLike]
+    biomes: [Grassland, Woodland]
+    active: [Night]
+    evolves-from: Drowzee
+Krabby:
+  Krabby:
+    types: [Water]
+    egg-groups: [Water3]
+    habitat: Amphibious
+    biomes: [Beach, Mangrove, RockyCoast, CoralReef, KelpForest]
+    active: any
+    evolves-into:
+      - species: Kingler
+        method: [Level]
+        level: 28
+  Kingler:
+    types: [Water]
+    egg-groups: [Water3]
+    habitat: Amphibious
+    biomes: [Beach, Mangrove, RockyCoast, CoralReef, KelpForest]
+    active: any
+    evolves-from: Krabby
+Voltorb:
+  Voltorb:
+    types: [Electric]
+    egg-groups: [Mineral]
+    biomes: [Grassland, Steppe]
+    active: any
+    evolves-into:
+      - species: Electrode
+        method: [Level]
+        level: 30
+  Electrode:
+    types: [Electric]
+    egg-groups: [Mineral]
+    biomes: [Grassland, Steppe]
+    active: any
+    evolves-from: Voltorb

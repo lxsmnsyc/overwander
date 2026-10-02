@@ -57,10 +57,10 @@ function table<S extends v.GenericSchema, T>(
 ): MoveTable<T> {
   const out: MoveTable<T> = {};
 
-  for (const [name, value] of Object.entries(v.parse(v.record(NAME, schema), file))) {
+  for (const [name, written] of Object.entries(v.parse(v.record(NAME, v.unknown()), file))) {
     const at = `${where}: ${name}`;
 
-    out[idOf<Moves>(MOVE_IDS, name, at)] = read(value, at);
+    out[idOf<Moves>(MOVE_IDS, name, at)] = read(v.parse(schema, written), at);
   }
   return out;
 }

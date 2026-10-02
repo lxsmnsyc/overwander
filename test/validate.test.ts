@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import check, {
   AUCTION_OFFER,
   BASKET,
+  CATCH_ORDER,
   CELL,
   CHUNK_COORDINATE,
   CLAIM_QUERIES,
@@ -23,6 +24,7 @@ import { GiftKind } from '../src/auth/gift-record';
 import { MAX_PACKED_IVS } from '../src/data/constants/stats';
 import { Items } from '../src/data/ids/items';
 import { Species } from '../src/data/ids/species';
+import Abilities from '../src/data/ids/abilities';
 
 /**
  * What a server function will take as an argument.
@@ -185,5 +187,21 @@ describe('a gift written by hand', () => {
     expect(() => check(STAFF_GIFT, { ...encounter, expiresAt: null })).not.toThrow();
     expect(() => check(STAFF_GIFT, { ...encounter, expiresAt: new Date('nope') })).toThrow();
     expect(() => check(STAFF_GIFT, { ...encounter, expiresAt: Date.now() })).toThrow();
+  });
+});
+
+describe('a pokemon put in order', () => {
+  it('takes a full list of abilities with Shadow or Purified on it as well', () => {
+    const order = {
+      abilities: [
+        Abilities.Overgrow,
+        Abilities.Chlorophyll,
+        Abilities.Blaze,
+        Abilities.SolarPower,
+        Abilities.Purified,
+      ],
+    };
+
+    expect(check(CATCH_ORDER, order)).toEqual(order);
   });
 });

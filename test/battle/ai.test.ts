@@ -1099,6 +1099,24 @@ describe('weighing a move', () => {
     expect(scoreMove(battle, unit, Moves.Minimize, self)).toBeLessThan(BASE_SCORE);
   });
 
+  it('refuses a status move once everyone it reaches already bears it', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    const unit = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    const other = createUnit(battle, teamB);
+    const spread: MoveTarget = { type: MoveTargetType.None };
+
+    // Teeter Dance is worth it while one foe still keeps its head
+    enemy.addStatus(Statuses.Confused, NONE_CAUSE);
+    expect(usableMove(battle, unit, Moves.TeeterDance, spread)).toBe(true);
+    other.addStatus(Statuses.Confused, NONE_CAUSE);
+    expect(usableMove(battle, unit, Moves.TeeterDance, spread)).toBe(false);
+
+    expect(usableMove(battle, unit, Moves.DestinyBond, spread)).toBe(true);
+    unit.addStatus(Statuses.Bonded, NONE_CAUSE);
+    expect(usableMove(battle, unit, Moves.DestinyBond, spread)).toBe(false);
+  });
+
   it('sees a stage held rather than only one pinned', () => {
     const { battle, teamA, teamB } = createAIBattle();
     pinRandom(battle, 0.99);

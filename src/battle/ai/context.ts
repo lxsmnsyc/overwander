@@ -12,6 +12,7 @@ import {
 import type Team from '../team';
 import type Unit from '../unit';
 import { knowsMove } from './fog';
+import { getTrainerSkill } from './skill';
 
 /** How strong a unit currently is. Internal to the AI module */
 export function checkUnitRating(battle: Battle, source: Unit): number {
@@ -35,8 +36,23 @@ function* carriedMoves(unit: Unit): IterableIterator<Moves> {
   }
 }
 
+/** Milliseconds until a unit's cast in progress lands: what is left of it, then its travel */
+export function landsIn(unit: Unit): number {
+  const cast = unit.casting;
+
+  if (cast == null) {
+    return 0;
+  }
+  return cast.time.duration - cast.time.progress + unit.checkMoveDelay(cast.move, cast.target);
+}
+
+/** Milliseconds from casting a move now until it takes effect */
+export function effectIn(unit: Unit, move: Moves, target: MoveTarget): number {
+  return unit.checkMoveCastTime(move, target) + unit.checkMoveDelay(move, target);
+}
+
 /** Whether a move cast at this target lands on the unit */
-function reaches(caster: Unit, move: Moves, target: MoveTarget, unit: Unit): boolean {
+export function reaches(caster: Unit, move: Moves, target: MoveTarget, unit: Unit): boolean {
   switch (target.type) {
     case MoveTargetType.Unit:
       return target.unit === unit;
@@ -63,10 +79,15 @@ export class AIContext {
   private readonly ratings = new Map<Unit, number>();
   private readonly healthShares = new Map<Team, number>();
 
+  /** Milliseconds into a foe's cast before this side's trainer reacts to it */
+  readonly reaction: number;
+
   constructor(
     readonly battle: Battle,
     readonly source: Unit,
-  ) {}
+  ) {
+    this.reaction = getTrainerSkill(source.team).reaction;
+  }
 
   /** The living units on the caster's side, the caster included */
   *friends(): IterableIterator<Unit> {
@@ -99,14 +120,21 @@ export class AIContext {
   }
 
   /**
-   * Whether a foe is winding up a move that will reach this unit and
-   * passes the test. A cast is on show, so this is no peek
+   * Whether a foe is winding up a move that will reach this unit, passes
+   * the test, and lands no sooner than `after` milliseconds from now. A
+   * cast is on show, so this is no peek
    */
-  incoming(unit: Unit, test: (move: Moves) => boolean): boolean {
+  incoming(unit: Unit, test: (move: Moves) => boolean, after = 0): boolean {
     for (const foe of this.foes()) {
       const cast = foe.casting;
 
-      if (cast != null && test(cast.move) && reaches(foe, cast.move, cast.target, unit)) {
+      if (
+        cast != null &&
+        cast.time.progress >= this.reaction &&
+        test(cast.move) &&
+        reaches(foe, cast.move, cast.target, unit) &&
+        landsIn(foe) >= after
+      ) {
         return true;
       }
     }

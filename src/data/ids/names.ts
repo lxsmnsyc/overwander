@@ -9,7 +9,8 @@ import Biome, { TimeOfDay } from './biome';
 import { EggGroups } from './egg-groups';
 import Families from './families';
 import { Types } from '../constants/types';
-import { Stats } from '../constants/stats';
+import { Stages, Stats } from '../constants/stats';
+import { Statuses, TeamStatuses } from './status';
 
 export const SPECIES_IDS = {
   Missingno: Species.Missingno,
@@ -3780,3 +3781,90 @@ export const STAT_IDS = {
   SpecialDefense: Stats.SpecialDefense,
   Speed: Stats.Speed,
 } as const satisfies Record<string, Stats>;
+
+export const STAGE_IDS = {
+  Attack: Stages.Attack,
+  Defense: Stages.Defense,
+  SpecialAttack: Stages.SpecialAttack,
+  SpecialDefense: Stages.SpecialDefense,
+  Speed: Stages.Speed,
+  Evasion: Stages.Evasion,
+  Accuracy: Stages.Accuracy,
+} as const satisfies Record<string, Stages>;
+
+export const STATUS_IDS = {
+  Seeding: Statuses.Seeding,
+  Poisoned: Statuses.Poisoned,
+  Sleeping: Statuses.Sleeping,
+  BadlyPoisoned: Statuses.BadlyPoisoned,
+  Paralyzed: Statuses.Paralyzed,
+  Minimized: Statuses.Minimized,
+  Invulnerable: Statuses.Invulnerable,
+  Raging: Statuses.Raging,
+  Biding: Statuses.Biding,
+  Confused: Statuses.Confused,
+  Recharging: Statuses.Recharging,
+  Substituted: Statuses.Substituted,
+  Burned: Statuses.Burned,
+  Trapped: Statuses.Trapped,
+  Flinched: Statuses.Flinched,
+  Frozen: Statuses.Frozen,
+  FocusEnergy: Statuses.FocusEnergy,
+  Infatuated: Statuses.Infatuated,
+  Grounded: Statuses.Grounded,
+  Floating: Statuses.Floating,
+  Submerged: Statuses.Submerged,
+  Dormant: Statuses.Dormant,
+  Switching: Statuses.Switching,
+  Protected: Statuses.Protected,
+  Enduring: Statuses.Enduring,
+  Cornered: Statuses.Cornered,
+  Nightmared: Statuses.Nightmared,
+  Perishing: Statuses.Perishing,
+  Bonded: Statuses.Bonded,
+  Cursed: Statuses.Cursed,
+  Encored: Statuses.Encored,
+  Identified: Statuses.Identified,
+  Comatose: Statuses.Comatose,
+  Taunted: Statuses.Taunted,
+  Tormented: Statuses.Tormented,
+  Imprisoned: Statuses.Imprisoned,
+  Rooted: Statuses.Rooted,
+  Drowsy: Statuses.Drowsy,
+  Centered: Statuses.Centered,
+  Coated: Statuses.Coated,
+  Snatching: Statuses.Snatching,
+  Grudging: Statuses.Grudging,
+  Uproaring: Statuses.Uproaring,
+  Helped: Statuses.Helped,
+  MindRead: Statuses.MindRead,
+  Embargoed: Statuses.Embargoed,
+  HealBlocked: Statuses.HealBlocked,
+  PowerTricked: Statuses.PowerTricked,
+  Roosting: Statuses.Roosting,
+  MagnetRisen: Statuses.MagnetRisen,
+  AquaRinged: Statuses.AquaRinged,
+  Telekinetic: Statuses.Telekinetic,
+  SkyDropped: Statuses.SkyDropped,
+} as const satisfies Record<string, Statuses>;
+
+export const TEAM_STATUS_IDS = {
+  Reflect: TeamStatuses.Reflect,
+  Unnerved: TeamStatuses.Unnerved,
+  LightScreen: TeamStatuses.LightScreen,
+  Mist: TeamStatuses.Mist,
+  Safeguard: TeamStatuses.Safeguard,
+  Spikes: TeamStatuses.Spikes,
+  ToxicSpikes: TeamStatuses.ToxicSpikes,
+  LuckyChant: TeamStatuses.LuckyChant,
+  StealthRock: TeamStatuses.StealthRock,
+  WideGuard: TeamStatuses.WideGuard,
+  QuickGuard: TeamStatuses.QuickGuard,
+  Rainbow: TeamStatuses.Rainbow,
+  SeaOfFire: TeamStatuses.SeaOfFire,
+  Swamp: TeamStatuses.Swamp,
+  MatBlock: TeamStatuses.MatBlock,
+  CraftyShield: TeamStatuses.CraftyShield,
+  StickyWeb: TeamStatuses.StickyWeb,
+  AuroraVeil: TeamStatuses.AuroraVeil,
+} as const satisfies Record<string, TeamStatuses>;

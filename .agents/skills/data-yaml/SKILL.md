@@ -1,6 +1,6 @@
 ---
 name: data-yaml
-description: Species, moves, abilities and items are written as YAML, a folder per part of the record, and every name in them is checked against its enum when the data loads. Applies whenever adding, editing or reading species, move, ability or item data, or adding an enum member the YAML should be able to name.
+description: Species, moves, abilities, items and the per-move battle numbers are written as YAML, a folder per part of the record, and every name in them is checked against its enum when the data loads. Applies whenever adding, editing or reading species, move, ability, item or battle data, or adding an enum member the YAML should be able to name.
 ---
 
 The species, moves, abilities and items are data, not code. Each part of a record lives in a folder of its own, and the player-facing words live apart from the numbers under `src/data/text/<locale>/`, so a second locale is another folder beside `en/`.
@@ -45,6 +45,22 @@ Under `src/data/moves/`, each part filed by generation and the stretch of moves 
 - `projectile: true` is a move that flies across the gap before it lands.
 - Moves register in id order, which is the pool Metronome draws from, so where a move is filed changes nothing.
 - What a move does beyond its numbers is code, in `src/battle/moves/`. Which sky a weather move calls up is `src/data/moves/weather.ts`.
+
+## Battle numbers
+
+The numbers a fight reads off each move live apart from the move, in `src/data/battle/`, a file per mechanic keyed by move:
+
+| file                  | holds                                                            |
+| --------------------- | ---------------------------------------------------------------- |
+| `statuses.yaml`       | the status a move puts on its `target`, its `self` or its `team` |
+| `added-statuses.yaml` | the status a damaging move may leave, and its `chance` out of 100 |
+| `added-stages.yaml`   | the `stages` a damaging move may push, by `value`, at a `chance`, on its user when `self` |
+| `stages.yaml`         | the stages a status move changes, in the order it changes them  |
+| `multi-hit.yaml`      | `min` and `max` strikes, and whether each is `escalating`        |
+| `recoil.yaml`, `drain.yaml`, `heal.yaml` | a share, as a number or a fraction such as `1/3` |
+| `z-power.yaml`        | a type Z-Move's power, for the moves the table by power gets wrong |
+
+`src/data/battle/index.ts` reads them into the tables the battle files re-export (`STATUS_MOVES`, `RECOIL_MOVES` and the rest). A move is added to a mechanic by adding it to that file; what the mechanic does with the number stays in `src/battle/moves/`.
 
 ## Abilities
 

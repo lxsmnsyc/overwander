@@ -1,0 +1,28 @@
+# How many times a move strikes, from `min` to `max`. An `escalating`
+# move lands each strike harder than the last, by its own number
+
+FuryAttack: { min: 2, max: 5 }
+PinMissile: { min: 2, max: 5 }
+Twineedle: { min: 2, max: 2 }
+DoubleHit: { min: 2, max: 2 }
+DoubleIronBash: { min: 2, max: 2 }
+FurySwipes: { min: 2, max: 5 }
+DoubleKick: { min: 2, max: 2 }
+DoubleSlap: { min: 2, max: 5 }
+SpikeCannon: { min: 2, max: 5 }
+Barrage: { min: 2, max: 5 }
+Bonemerang: { min: 2, max: 2 }
+CometPunch: { min: 2, max: 5 }
+BoneRush: { min: 2, max: 5 }
+TripleKick: { min: 3, max: 3, escalating: true }
+
+# However many of the party pile in, which Beat Up works out itself
+BeatUp: { min: 1, max: 6 }
+ArmThrust: { min: 2, max: 5 }
+BulletSeed: { min: 2, max: 5 }
+IcicleSpear: { min: 2, max: 5 }
+RockBlast: { min: 2, max: 5 }
+DualChop: { min: 2, max: 2 }
+GearGrind: { min: 2, max: 2 }
+TailSlap: { min: 2, max: 5 }
+WaterShuriken: { min: 2, max: 5 }

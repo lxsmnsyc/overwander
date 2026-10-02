@@ -1,7 +1,13 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
-import { Stages } from '../../data/constants/stats';
 import { MoveAffects, MoveCategories, Moves } from '../../data/ids/moves';
 import { Statuses, TeamStatuses } from '../../data/ids/status';
+import {
+  EFFECT_STAGE_MOVES,
+  EFFECT_STATUS_MOVES,
+  SELF_STATUS_MOVES,
+  STATUS_MOVES,
+  TEAM_STATUS_MOVES,
+} from '../../data/battle';
 import { getMoveData } from '../../data/moves';
 import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
@@ -9,158 +15,14 @@ import resolveMoveTargets from '../mechanics/move/targeting';
 import type Unit from '../unit';
 import { getStageMoveEffects } from './stage';
 
-export const STATUS_MOVES: { [key in Moves]?: Statuses } = {
-  [Moves.PoisonPowder]: Statuses.Poisoned,
-  [Moves.PoisonGas]: Statuses.Poisoned,
-  [Moves.LovelyKiss]: Statuses.Sleeping,
-  [Moves.SleepPowder]: Statuses.Sleeping,
-  [Moves.Toxic]: Statuses.BadlyPoisoned,
-  [Moves.DarkVoid]: Statuses.Sleeping,
-  [Moves.StunSpore]: Statuses.Paralyzed,
-  [Moves.Supersonic]: Statuses.Confused,
-  [Moves.ThunderWave]: Statuses.Paralyzed,
-  [Moves.Glare]: Statuses.Paralyzed,
-  [Moves.Sing]: Statuses.Sleeping,
-  [Moves.ConfuseRay]: Statuses.Confused,
-  [Moves.Spore]: Statuses.Sleeping,
-  [Moves.Hypnosis]: Statuses.Sleeping,
-  [Moves.SweetKiss]: Statuses.Confused,
-  [Moves.Attract]: Statuses.Infatuated,
-  [Moves.Swagger]: Statuses.Confused,
-  [Moves.WillOWisp]: Statuses.Burned,
-  [Moves.GrassWhistle]: Statuses.Sleeping,
-  [Moves.TeeterDance]: Statuses.Confused,
-  [Moves.Flatter]: Statuses.Confused,
-  [Moves.Taunt]: Statuses.Taunted,
-  [Moves.Torment]: Statuses.Tormented,
-  [Moves.Yawn]: Statuses.Drowsy,
-  [Moves.Imprison]: Statuses.Imprisoned,
-  [Moves.HelpingHand]: Statuses.Helped,
-  [Moves.ToxicThread]: Statuses.Poisoned,
-  // Follow Me's pull, put on the target rather than taken on
-  [Moves.Spotlight]: Statuses.Centered,
+export {
+  EFFECT_STAGE_MOVES,
+  EFFECT_STATUS_MOVES,
+  SELF_STATUS_MOVES,
+  STATUS_MOVES,
+  TEAM_STATUS_MOVES,
 };
-
-export const SELF_STATUS_MOVES: { [key in Moves]?: Statuses } = {
-  [Moves.FocusEnergy]: Statuses.FocusEnergy,
-  [Moves.Minimize]: Statuses.Minimized,
-  [Moves.FollowMe]: Statuses.Centered,
-  [Moves.MagicCoat]: Statuses.Coated,
-  [Moves.Snatch]: Statuses.Snatching,
-  [Moves.Grudge]: Statuses.Grudging,
-  [Moves.Ingrain]: Statuses.Rooted,
-  [Moves.RagePowder]: Statuses.Centered,
-};
-
-export const EFFECT_STATUS_MOVES: {
-  [key in Moves]?: { status: Statuses; chance: number };
-} = {
-  [Moves.BodySlam]: { status: Statuses.Paralyzed, chance: 30 },
-  [Moves.ForcePalm]: { status: Statuses.Paralyzed, chance: 30 },
-  [Moves.Discharge]: { status: Statuses.Paralyzed, chance: 30 },
-  [Moves.RockClimb]: { status: Statuses.Confused, chance: 20 },
-  [Moves.Chatter]: { status: Statuses.Confused, chance: 100 },
-  [Moves.LavaPlume]: { status: Statuses.Burned, chance: 30 },
-  [Moves.CrossPoison]: { status: Statuses.Poisoned, chance: 10 },
-  [Moves.GunkShot]: { status: Statuses.Poisoned, chance: 30 },
-  [Moves.IronHead]: { status: Statuses.Flinched, chance: 30 },
-  [Moves.PoisonJab]: { status: Statuses.Poisoned, chance: 30 },
-  [Moves.DarkPulse]: { status: Statuses.Flinched, chance: 20 },
-  [Moves.AirSlash]: { status: Statuses.Flinched, chance: 30 },
-  [Moves.FlareBlitz]: { status: Statuses.Burned, chance: 10 },
-  [Moves.Ember]: { status: Statuses.Burned, chance: 10 },
-  [Moves.Flamethrower]: { status: Statuses.Burned, chance: 10 },
-  [Moves.FireBlast]: { status: Statuses.Burned, chance: 10 },
-  [Moves.FireSpin]: { status: Statuses.Trapped, chance: 100 },
-  [Moves.Wrap]: { status: Statuses.Trapped, chance: 100 },
-  [Moves.Clamp]: { status: Statuses.Trapped, chance: 100 },
-  [Moves.MagmaStorm]: { status: Statuses.Trapped, chance: 100 },
-  [Moves.Bind]: { status: Statuses.Trapped, chance: 100 },
-  [Moves.RockSlide]: { status: Statuses.Flinched, chance: 30 },
-  [Moves.Bite]: { status: Statuses.Flinched, chance: 30 },
-  [Moves.IceBeam]: { status: Statuses.Frozen, chance: 10 },
-  [Moves.Blizzard]: { status: Statuses.Frozen, chance: 10 },
-  [Moves.Confusion]: { status: Statuses.Confused, chance: 10 },
-  [Moves.Psybeam]: { status: Statuses.Confused, chance: 10 },
-  [Moves.PoisonSting]: { status: Statuses.Poisoned, chance: 30 },
-  [Moves.Twineedle]: { status: Statuses.Poisoned, chance: 20 },
-  [Moves.SkyAttack]: { status: Statuses.Flinched, chance: 30 },
-  [Moves.HyperFang]: { status: Statuses.Flinched, chance: 10 },
-  [Moves.ThunderShock]: { status: Statuses.Paralyzed, chance: 10 },
-  [Moves.Thunder]: { status: Statuses.Paralyzed, chance: 30 },
-  [Moves.Thunderbolt]: { status: Statuses.Paralyzed, chance: 10 },
-  [Moves.Stomp]: { status: Statuses.Flinched, chance: 30 },
-  [Moves.Headbutt]: { status: Statuses.Flinched, chance: 30 },
-  [Moves.Sludge]: { status: Statuses.Poisoned, chance: 30 },
-  [Moves.Lick]: { status: Statuses.Paralyzed, chance: 30 },
-  [Moves.BoneClub]: { status: Statuses.Flinched, chance: 10 },
-  [Moves.FirePunch]: { status: Statuses.Burned, chance: 10 },
-  [Moves.IcePunch]: { status: Statuses.Frozen, chance: 10 },
-  [Moves.ThunderPunch]: { status: Statuses.Paralyzed, chance: 10 },
-  [Moves.RollingKick]: { status: Statuses.Flinched, chance: 30 },
-  [Moves.Smog]: { status: Statuses.Poisoned, chance: 40 },
-  [Moves.DizzyPunch]: { status: Statuses.Confused, chance: 20 },
-  [Moves.Waterfall]: { status: Statuses.Flinched, chance: 20 },
-  [Moves.FlameWheel]: { status: Statuses.Burned, chance: 10 },
-  [Moves.SacredFire]: { status: Statuses.Burned, chance: 50 },
-  [Moves.PowderSnow]: { status: Statuses.Frozen, chance: 10 },
-  [Moves.Spark]: { status: Statuses.Paralyzed, chance: 30 },
-  [Moves.DragonBreath]: { status: Statuses.Paralyzed, chance: 30 },
-  [Moves.SludgeBomb]: { status: Statuses.Poisoned, chance: 30 },
-  [Moves.ZapCannon]: { status: Statuses.Paralyzed, chance: 100 },
-  [Moves.DynamicPunch]: { status: Statuses.Confused, chance: 100 },
-  [Moves.Twister]: { status: Statuses.Flinched, chance: 20 },
-  [Moves.Snore]: { status: Statuses.Flinched, chance: 30 },
-  [Moves.Whirlpool]: { status: Statuses.Trapped, chance: 100 },
-  [Moves.FakeOut]: { status: Statuses.Flinched, chance: 100 },
-  [Moves.HeatWave]: { status: Statuses.Burned, chance: 10 },
-  [Moves.BlazeKick]: { status: Statuses.Burned, chance: 10 },
-  [Moves.NeedleArm]: { status: Statuses.Flinched, chance: 30 },
-  [Moves.Astonish]: { status: Statuses.Flinched, chance: 30 },
-  [Moves.Extrasensory]: { status: Statuses.Flinched, chance: 10 },
-  [Moves.PoisonFang]: { status: Statuses.BadlyPoisoned, chance: 50 },
-  [Moves.SignalBeam]: { status: Statuses.Confused, chance: 10 },
-  [Moves.WaterPulse]: { status: Statuses.Confused, chance: 20 },
-  [Moves.PoisonTail]: { status: Statuses.Poisoned, chance: 10 },
-  [Moves.VoltTackle]: { status: Statuses.Paralyzed, chance: 10 },
-  [Moves.Bounce]: { status: Statuses.Paralyzed, chance: 30 },
-  [Moves.SandTomb]: { status: Statuses.Trapped, chance: 100 },
-  [Moves.DragonRush]: { status: Statuses.Flinched, chance: 20 },
-  [Moves.ZenHeadbutt]: { status: Statuses.Flinched, chance: 20 },
-  // The fangs bite for an ailment here and roll their flinch apart
-  // from it, in `moves/fangs.ts`
-  [Moves.ThunderFang]: { status: Statuses.Paralyzed, chance: 10 },
-  [Moves.IceFang]: { status: Statuses.Frozen, chance: 10 },
-  [Moves.FireFang]: { status: Statuses.Burned, chance: 10 },
-  [Moves.SludgeWave]: { status: Statuses.Poisoned, chance: 10 },
-  [Moves.Scald]: { status: Statuses.Burned, chance: 30 },
-  [Moves.Inferno]: { status: Statuses.Burned, chance: 100 },
-  [Moves.HeartStamp]: { status: Statuses.Flinched, chance: 30 },
-  [Moves.Steamroller]: { status: Statuses.Flinched, chance: 30 },
-  [Moves.Hurricane]: { status: Statuses.Confused, chance: 30 },
-  [Moves.SearingShot]: { status: Statuses.Burned, chance: 30 },
-  [Moves.RelicSong]: { status: Statuses.Sleeping, chance: 10 },
-  [Moves.BoltStrike]: { status: Statuses.Paralyzed, chance: 20 },
-  [Moves.BlueFlare]: { status: Statuses.Burned, chance: 20 },
-  [Moves.FreezeShock]: { status: Statuses.Paralyzed, chance: 30 },
-  [Moves.IceBurn]: { status: Statuses.Burned, chance: 30 },
-  [Moves.IcicleCrash]: { status: Statuses.Flinched, chance: 30 },
-  [Moves.SteamEruption]: { status: Statuses.Burned, chance: 30 },
-  [Moves.FreezeDry]: { status: Statuses.Frozen, chance: 10 },
-  [Moves.Nuzzle]: { status: Statuses.Paralyzed, chance: 100 },
-  [Moves.Infestation]: { status: Statuses.Trapped, chance: 100 },
-  // Mean Look's hold, thrown by a wave rather than a stare
-  [Moves.ThousandWaves]: { status: Statuses.Cornered, chance: 100 },
-  [Moves.SpiritShackle]: { status: Statuses.Cornered, chance: 100 },
-  [Moves.AnchorShot]: { status: Statuses.Cornered, chance: 100 },
-  [Moves.ZingZap]: { status: Statuses.Flinched, chance: 30 },
-  [Moves.DoubleIronBash]: { status: Statuses.Flinched, chance: 30 },
-  [Moves.SplishySplash]: { status: Statuses.Paralyzed, chance: 30 },
-  [Moves.FloatyFall]: { status: Statuses.Flinched, chance: 30 },
-  [Moves.BuzzyBuzz]: { status: Statuses.Paralyzed, chance: 100 },
-  [Moves.SizzlySlide]: { status: Statuses.Burned, chance: 100 },
-  [Moves.StokedSparksurfer]: { status: Statuses.Paralyzed, chance: 100 },
-};
+export type { AttackStageEffect } from '../../data/battle';
 
 /**
  * The moves that bind whatever they hit. It is read off the effect
@@ -177,160 +39,6 @@ for (const [move, effect] of Object.entries(EFFECT_STATUS_MOVES)) {
     TRAPPING_MOVES.add(Number(move) as Moves);
   }
 }
-
-/**
- * A stage a move pushes on the side as it lands. `self` is which side:
- * a Metal Claw sharpens its own claws, an Iron Tail dents what it hit
- */
-export interface AttackStageEffect {
-  stage: Stages | Stages[];
-  value: number;
-  chance: number;
-  self?: boolean;
-}
-
-export const EFFECT_STAGE_MOVES: { [key in Moves]?: AttackStageEffect } = {
-  [Moves.Bubble]: { stage: Stages.Speed, value: -1, chance: 10 },
-  [Moves.BubbleBeam]: { stage: Stages.Speed, value: -1, chance: 10 },
-  [Moves.Psychic]: { stage: Stages.SpecialDefense, value: -1, chance: 10 },
-  [Moves.Acid]: { stage: Stages.SpecialDefense, value: -1, chance: 10 },
-  [Moves.Constrict]: { stage: Stages.Speed, value: -1, chance: 10 },
-  [Moves.AuroraBeam]: { stage: Stages.Attack, value: -1, chance: 10 },
-  [Moves.Crunch]: { stage: Stages.Defense, value: -1, chance: 20 },
-  [Moves.IronTail]: { stage: Stages.Defense, value: -1, chance: 30 },
-  [Moves.RockSmash]: { stage: Stages.Defense, value: -1, chance: 50 },
-  [Moves.ShadowBall]: { stage: Stages.SpecialDefense, value: -1, chance: 20 },
-  [Moves.MudSlap]: { stage: Stages.Accuracy, value: -1, chance: 100 },
-  [Moves.Octazooka]: { stage: Stages.Accuracy, value: -1, chance: 50 },
-  [Moves.IcyWind]: { stage: Stages.Speed, value: -1, chance: 100 },
-  [Moves.MetalClaw]: { stage: Stages.Attack, value: 1, chance: 10, self: true },
-  [Moves.SteelWing]: { stage: Stages.Defense, value: 1, chance: 10, self: true },
-  [Moves.RapidSpin]: { stage: Stages.Speed, value: 1, chance: 100, self: true },
-  [Moves.LusterPurge]: { stage: Stages.SpecialDefense, value: -1, chance: 50 },
-  [Moves.MistBall]: { stage: Stages.SpecialAttack, value: -1, chance: 50 },
-  [Moves.CrushClaw]: { stage: Stages.Defense, value: -1, chance: 50 },
-  [Moves.RockTomb]: { stage: Stages.Speed, value: -1, chance: 100 },
-  [Moves.MudShot]: { stage: Stages.Speed, value: -1, chance: 100 },
-  [Moves.BugBuzz]: { stage: Stages.SpecialDefense, value: -1, chance: 10 },
-  [Moves.FocusBlast]: { stage: Stages.SpecialDefense, value: -1, chance: 10 },
-  [Moves.EnergyBall]: { stage: Stages.SpecialDefense, value: -1, chance: 10 },
-  [Moves.EarthPower]: { stage: Stages.SpecialDefense, value: -1, chance: 10 },
-  [Moves.MudBomb]: { stage: Stages.Accuracy, value: -1, chance: 30 },
-  [Moves.MirrorShot]: { stage: Stages.Accuracy, value: -1, chance: 30 },
-  [Moves.FlashCannon]: { stage: Stages.SpecialDefense, value: -1, chance: 10 },
-  [Moves.SeedFlare]: { stage: Stages.SpecialDefense, value: -2, chance: 40 },
-  [Moves.ChargeBeam]: { stage: Stages.SpecialAttack, value: 1, chance: 70, self: true },
-  [Moves.MuddyWater]: { stage: Stages.Accuracy, value: -1, chance: 30 },
-  [Moves.MeteorMash]: { stage: Stages.Attack, value: 1, chance: 20, self: true },
-  // Paid after it lands rather than before: the cost of swinging that
-  // hard is taken out of the swinger
-  [Moves.Superpower]: {
-    stage: [Stages.Attack, Stages.Defense],
-    value: -1,
-    chance: 100,
-    self: true,
-  },
-  [Moves.Overheat]: { stage: Stages.SpecialAttack, value: -2, chance: 100, self: true },
-  // The cost of a swing that big, paid by the swinger: Hammer Arm is
-  // slower to come round again, Close Combat is open afterwards
-  [Moves.HammerArm]: { stage: Stages.Speed, value: -1, chance: 100, self: true },
-  [Moves.CloseCombat]: {
-    stage: [Stages.Defense, Stages.SpecialDefense],
-    value: -1,
-    chance: 100,
-    self: true,
-  },
-  [Moves.PsychoBoost]: { stage: Stages.SpecialAttack, value: -2, chance: 100, self: true },
-  [Moves.DracoMeteor]: { stage: Stages.SpecialAttack, value: -2, chance: 100, self: true },
-  [Moves.LeafStorm]: { stage: Stages.SpecialAttack, value: -2, chance: 100, self: true },
-  [Moves.SilverWind]: {
-    stage: [
-      Stages.Attack,
-      Stages.Defense,
-      Stages.SpecialAttack,
-      Stages.SpecialDefense,
-      Stages.Speed,
-    ],
-    value: 1,
-    chance: 10,
-    self: true,
-  },
-  [Moves.AncientPower]: {
-    stage: [
-      Stages.Attack,
-      Stages.Defense,
-      Stages.SpecialAttack,
-      Stages.SpecialDefense,
-      Stages.Speed,
-    ],
-    value: 1,
-    chance: 10,
-    self: true,
-  },
-  [Moves.FlameCharge]: { stage: Stages.Speed, value: 1, chance: 100, self: true },
-  [Moves.LowSweep]: { stage: Stages.Speed, value: -1, chance: 100 },
-  [Moves.AcidSpray]: { stage: Stages.SpecialDefense, value: -2, chance: 100 },
-  [Moves.StruggleBug]: { stage: Stages.SpecialAttack, value: -1, chance: 100 },
-  [Moves.Bulldoze]: { stage: Stages.Speed, value: -1, chance: 100 },
-  [Moves.Electroweb]: { stage: Stages.Speed, value: -1, chance: 100 },
-  [Moves.RazorShell]: { stage: Stages.Defense, value: -1, chance: 50 },
-  [Moves.LeafTornado]: { stage: Stages.Accuracy, value: -1, chance: 50 },
-  [Moves.NightDaze]: { stage: Stages.Accuracy, value: -1, chance: 40 },
-  [Moves.Glaciate]: { stage: Stages.Speed, value: -1, chance: 100 },
-  [Moves.FieryDance]: { stage: Stages.SpecialAttack, value: 1, chance: 50, self: true },
-  [Moves.Snarl]: { stage: Stages.SpecialAttack, value: -1, chance: 100 },
-  [Moves.VCreate]: {
-    stage: [Stages.Defense, Stages.SpecialDefense, Stages.Speed],
-    value: -1,
-    chance: 100,
-    self: true,
-  },
-  [Moves.OminousWind]: {
-    stage: [
-      Stages.Attack,
-      Stages.Defense,
-      Stages.SpecialAttack,
-      Stages.SpecialDefense,
-      Stages.Speed,
-    ],
-    value: 1,
-    chance: 10,
-    self: true,
-  },
-  [Moves.PlayRough]: { stage: Stages.Attack, value: -1, chance: 10 },
-  [Moves.Moonblast]: { stage: Stages.SpecialAttack, value: -1, chance: 30 },
-  [Moves.MysticalFire]: { stage: Stages.SpecialAttack, value: -1, chance: 100 },
-  [Moves.DiamondStorm]: { stage: Stages.Defense, value: 2, chance: 50, self: true },
-  [Moves.PowerUpPunch]: { stage: Stages.Attack, value: 1, chance: 100, self: true },
-  [Moves.DragonAscent]: {
-    stage: [Stages.Defense, Stages.SpecialDefense],
-    value: -1,
-    chance: 100,
-    self: true,
-  },
-  [Moves.HyperspaceFury]: { stage: Stages.Defense, value: -1, chance: 100, self: true },
-  [Moves.IceHammer]: { stage: Stages.Speed, value: -1, chance: 100, self: true },
-  [Moves.Lunge]: { stage: Stages.Attack, value: -1, chance: 100 },
-  [Moves.FireLash]: { stage: Stages.Defense, value: -1, chance: 100 },
-  [Moves.TropKick]: { stage: Stages.Attack, value: -1, chance: 100 },
-  [Moves.ClangingScales]: { stage: Stages.Defense, value: -1, chance: 100, self: true },
-  [Moves.FleurCannon]: { stage: Stages.SpecialAttack, value: -2, chance: 100, self: true },
-  [Moves.ShadowBone]: { stage: Stages.Defense, value: -1, chance: 20 },
-  [Moves.Liquidation]: { stage: Stages.Defense, value: -1, chance: 20 },
-  [Moves.ZippyZap]: { stage: Stages.Evasion, value: 1, chance: 100, self: true },
-  [Moves.ClangorousSoulblaze]: {
-    stage: [
-      Stages.Attack,
-      Stages.Defense,
-      Stages.SpecialAttack,
-      Stages.SpecialDefense,
-      Stages.Speed,
-    ],
-    value: 1,
-    chance: 100,
-    self: true,
-  },
-};
 
 /**
  * Whether the move carries a secondary attack effect (used by e.g.
@@ -478,17 +186,6 @@ function setupUnitStatusMoves(battle: Battle): void {
     }
   });
 }
-
-export const TEAM_STATUS_MOVES: { [key in Moves]?: TeamStatuses } = {
-  [Moves.Reflect]: TeamStatuses.Reflect,
-  [Moves.LightScreen]: TeamStatuses.LightScreen,
-  [Moves.AuroraVeil]: TeamStatuses.AuroraVeil,
-  // The partner moves that leave a screen behind as they land
-  [Moves.GlitzyGlow]: TeamStatuses.LightScreen,
-  [Moves.BaddyBad]: TeamStatuses.Reflect,
-  [Moves.Mist]: TeamStatuses.Mist,
-  [Moves.Safeguard]: TeamStatuses.Safeguard,
-};
 
 function lowersFoeStages(move: Moves): boolean {
   if (getMoveData(move).affects & MoveAffects.Enemy) {

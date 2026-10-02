@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Battle: added statuses",
+  "type": "object",
+  "propertyNames": {
+    "$ref": "names.json#/definitions/move"
+  },
+  "additionalProperties": {
+    "type": "object",
+    "properties": {
+      "status": {
+        "$ref": "names.json#/definitions/status"
+      },
+      "chance": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 100,
+        "description": "The chance, out of 100"
+      }
+    },
+    "required": [
+      "status",
+      "chance"
+    ],
+    "additionalProperties": false
+  }
+}

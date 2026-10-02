@@ -26,6 +26,17 @@
     "./src/data/schema/abilities-text.json": "src/data/text/*/abilities/**/*.yaml",
     "./src/data/schema/abilities-signatures.json": "src/data/abilities/signatures/*.yaml",
     "./src/data/schema/items-records.json": "src/data/items/records/*.yaml",
-    "./src/data/schema/items-text.json": "src/data/text/*/items/*.yaml"
+    "./src/data/schema/items-text.json": "src/data/text/*/items/*.yaml",
+    "./src/data/schema/battle-statuses.json": "src/data/battle/statuses.yaml",
+    "./src/data/schema/battle-added-statuses.json": "src/data/battle/added-statuses.yaml",
+    "./src/data/schema/battle-added-stages.json": "src/data/battle/added-stages.yaml",
+    "./src/data/schema/battle-stages.json": "src/data/battle/stages.yaml",
+    "./src/data/schema/battle-multi-hit.json": "src/data/battle/multi-hit.yaml",
+    "./src/data/schema/battle-share.json": [
+      "src/data/battle/recoil.yaml",
+      "src/data/battle/drain.yaml",
+      "src/data/battle/heal.yaml"
+    ],
+    "./src/data/schema/battle-z-power.json": "src/data/battle/z-power.yaml"
   }
 }

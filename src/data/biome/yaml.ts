@@ -1,5 +1,6 @@
 import * as v from 'valibot';
-import Biome, { TimeOfDay } from '../ids/biome';
+import type Biome from '../ids/biome';
+import { TimeOfDay } from '../ids/biome';
 import { BIOME_IDS, SPECIES_IDS } from '../ids/names';
 import type { Species } from '../ids/species';
 import { idOf } from '../yaml';
@@ -89,14 +90,11 @@ function readBand(band: v.InferOutput<typeof BAND>, where: string): SpawnEntry[]
 function readGroups(groups: v.InferOutput<typeof GROUPS>, where: string): SpawnRarityGroups {
   const read: SpawnRarityGroups = { base: [], uncommon: [], rare: [], special: [] };
 
-  // In the bands' own order, the way a pool written in code listed them
   for (const band of SPAWN_BAND_KEYS) {
     const written = groups[band];
 
     if (written != null) {
       read[band] = readBand(written, `${where}: ${band}`);
-    } else {
-      delete read[band];
     }
   }
   return read;

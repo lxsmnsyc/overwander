@@ -415,14 +415,14 @@ export function getBiomeRoster(biome: Biome, time: TimeOfDay): SpawnRarityGroups
  */
 export function boostFamilyEntries(
   entries: SpawnEntry[],
-  family: Families,
+  families: readonly Families[],
   factor: number,
 ): SpawnEntry[] {
   const boosted: SpawnEntry[] = [];
 
   for (const entry of entries) {
     boosted.push(
-      getSpeciesData(entry.species).family === family
+      families.includes(getSpeciesData(entry.species).family)
         ? { species: entry.species, weight: entry.weight * factor }
         : entry,
     );
@@ -439,10 +439,10 @@ export function boostFamilyEntries(
  */
 export function boostFamilyWeights(
   groups: SpawnRarityGroups,
-  family: Families,
+  families: readonly Families[],
   factor: number,
 ): SpawnRarityGroups {
-  return mapBands(groups, (entries) => boostFamilyEntries(entries, family, factor));
+  return mapBands(groups, (entries) => boostFamilyEntries(entries, families, factor));
 }
 
 /**

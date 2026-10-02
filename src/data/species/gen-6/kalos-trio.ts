@@ -205,6 +205,7 @@ export default function registerKalosTrioSpecies(): void {
         Moves.Toxic,
         Moves.WonderRoom,
         Moves.ZenHeadbutt,
+        Moves.LaserFocus,
       ],
     },
   });
@@ -316,6 +317,7 @@ export default function registerKalosTrioSpecies(): void {
         Moves.Toxic,
         Moves.UTurn,
         Moves.ZenHeadbutt,
+        Moves.LaserFocus,
       ],
     },
   });
@@ -358,7 +360,7 @@ export default function registerKalosTrioSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: { ...ZYGARDE_LEVEL },
-      teachable: [...ZYGARDE_TEACHABLE],
+      teachable: [...ZYGARDE_TEACHABLE, Moves.CoreEnforcer, Moves.StompingTantrum],
     },
   });
   registerSpecies(Species.ZygardeTenPercent, {
@@ -427,7 +429,7 @@ export default function registerKalosTrioSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: { ...ZYGARDE_LEVEL },
-      teachable: [...ZYGARDE_TEACHABLE],
+      teachable: [...ZYGARDE_TEACHABLE, Moves.CoreEnforcer, Moves.StompingTantrum],
     },
   });
 }

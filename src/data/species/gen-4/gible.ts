@@ -165,7 +165,7 @@ export default function registerGibleSpecies(): void {
         40: [Moves.Dig],
         49: [Moves.DragonRush],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.IronTail],
+      teachable: [...FAMILY_TEACHABLE, Moves.IronTail, Moves.LaserFocus],
     },
   });
   registerSpecies(Species.Garchomp, {
@@ -221,6 +221,9 @@ export default function registerGibleSpecies(): void {
         Moves.PoisonJab,
         Moves.Surf,
         Moves.SwordsDance,
+        Moves.BrutalSwing,
+        Moves.StompingTantrum,
+        Moves.LaserFocus,
       ],
     },
   });

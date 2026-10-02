@@ -185,6 +185,9 @@ const VARIABLE_POWER: { [key in Moves]?: (source: Unit, roll: number) => number 
   [Moves.Present]: (_source, roll) => PRESENT_POWERS[Math.floor(roll * PRESENT_POWERS.length)],
   [Moves.Magnitude]: (_source, roll) => magnitudePower(roll),
   [Moves.StoredPower]: (source) => STORED_BASE + STORED_PER_STAGE * raisedStages(source),
+  [Moves.PowerTrip]: (source) => STORED_BASE + STORED_PER_STAGE * raisedStages(source),
+  [Moves.PikaPapow]: (source) => friendshipPower(source.friendship),
+  [Moves.VeeveeVolley]: (source) => friendshipPower(source.friendship),
 };
 
 function friendshipPower(value: number): number {

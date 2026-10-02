@@ -4,6 +4,7 @@ import type Battle from '../core';
 import { BattleEvents } from '../events';
 
 const INCREASED_CRITICAL_HIT_RATIO_MOVES = new Set([
+  Moves.TenMillionVoltThunderbolt,
   Moves.RazorLeaf,
   Moves.Slash,
   Moves.RazorWind,

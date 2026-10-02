@@ -106,6 +106,7 @@ const NON_REFRESHABLE_STATUS = new Set<Statuses>([
 const NON_REFRESHABLE_TEAM_STATUS = new Set<TeamStatuses>([
   TeamStatuses.Reflect,
   TeamStatuses.LightScreen,
+  TeamStatuses.AuroraVeil,
   TeamStatuses.Mist,
 ]);
 

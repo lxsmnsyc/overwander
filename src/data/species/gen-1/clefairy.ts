@@ -139,7 +139,7 @@ export default function registerClefairySpecies(): void {
     activeTimes: TimeOfDay.Night,
     learnSet: {
       level: {
-        1: [Moves.Pound, Moves.Growl, Moves.DisarmingVoice],
+        1: [Moves.Pound, Moves.Growl, Moves.DisarmingVoice, Moves.Spotlight],
         4: [Moves.Encore],
         8: [Moves.Sing],
         13: [Moves.DoubleSlap],
@@ -194,6 +194,7 @@ export default function registerClefairySpecies(): void {
           Moves.Metronome,
           Moves.Moonlight,
           Moves.DisarmingVoice,
+          Moves.Spotlight,
         ],
       },
       teachable: [
@@ -203,6 +204,7 @@ export default function registerClefairySpecies(): void {
         Moves.FocusBlast,
         Moves.GigaImpact,
         Moves.Gravity,
+        Moves.LaserFocus,
       ],
     },
   });

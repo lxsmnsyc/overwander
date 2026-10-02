@@ -353,6 +353,13 @@ const bulbasaurToPikachu = [
             event.source.triggerAbility(Abilities.Intimidate);
           }
         }),
+        // A shape worn on the way in (a Mega, a Therian) arrives after
+        // the entry has been heard, so it scowls as it is put on
+        battle.on(BattleEvents.UnitAddAbility, EventPriority.Post, (event) => {
+          if (event.worn && event.ability === Abilities.Intimidate) {
+            event.source.triggerAbility(Abilities.Intimidate);
+          }
+        }),
         // The enemy attack drop rides the trigger
         battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
           if (event.ability !== Abilities.Intimidate) {

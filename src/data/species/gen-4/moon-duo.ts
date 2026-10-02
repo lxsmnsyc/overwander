@@ -191,6 +191,7 @@ export default function registerMoonDuoSpecies(): void {
         Moves.WillOWisp,
         Moves.XScissor,
         Moves.PowerUpPunch,
+        Moves.ThroatChop,
       ],
     },
   });

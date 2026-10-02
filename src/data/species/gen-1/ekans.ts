@@ -61,6 +61,7 @@ const FAMILY_TEACHABLE = [
   Moves.Bulldoze,
   Moves.Confide,
   Moves.Infestation,
+  Moves.BrutalSwing,
 ];
 
 export default function registerEkansSpecies(): void {
@@ -168,7 +169,14 @@ export default function registerEkansSpecies(): void {
         51: [Moves.Haze],
         56: [Moves.GunkShot, Moves.Coil],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.GigaImpact, Moves.DragonTail],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.GigaImpact,
+        Moves.DragonTail,
+        Moves.StompingTantrum,
+        Moves.ThroatChop,
+      ],
     },
   });
 }

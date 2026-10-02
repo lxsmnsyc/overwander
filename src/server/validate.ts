@@ -4,7 +4,7 @@ import { CELL_COUNT, CHUNK_CELLS } from '../overworld/grid';
 import { AuctionLot, MAX_INCREMENT, MAX_STARTING_BID } from '../auth/auction-record';
 import { MAX_OFFSET, MIN_OFFSET } from '../auth/local-time';
 import { NICKNAME_LIMIT, PLAYER_NAME_LIMIT } from '../auth/nickname';
-import { Slots, mostSlots } from '../data/constants/slots';
+import { SPECIAL_ABILITIES, Slots, mostSlots } from '../data/constants/slots';
 import { DUEL_BANS, MAX_BST_CAP } from '../data/constants/duel-bans';
 import { WORLD_MAX, WORLD_MIN } from '../overworld/world';
 import BattleOutcome from '../auth/battle-outcome';
@@ -339,7 +339,8 @@ export const EFFORT_SPREAD = v.record(
 /** The lists a rearranging player wants, as ids in the order they want them */
 export const CATCH_ORDER = v.object({
   moves: v.optional(listOf(GAME_ID, mostSlots(Slots.Move))),
-  abilities: v.optional(listOf(GAME_ID, mostSlots(Slots.Ability))),
+  // Shadow and Purified sit on the list without taking a slot
+  abilities: v.optional(listOf(GAME_ID, mostSlots(Slots.Ability) + SPECIAL_ABILITIES.size)),
   items: v.optional(listOf(GAME_ID, mostSlots(Slots.Item))),
 });
 

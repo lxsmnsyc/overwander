@@ -182,6 +182,8 @@ export default function registerHoundourSpecies(): void {
         Moves.HyperBeam,
         Moves.Counter,
         Moves.GigaImpact,
+        Moves.LaserFocus,
+        Moves.ThroatChop,
       ],
     },
   });

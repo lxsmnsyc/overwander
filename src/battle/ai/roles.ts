@@ -189,6 +189,8 @@ const HEALS = new Set<Moves>([
   Moves.Swallow,
   Moves.PainSplit,
   Moves.Refresh,
+  Moves.StrengthSap,
+  Moves.Purify,
 ]);
 const SELF_BOOSTS = new Set<Moves>([
   Moves.BellyDrum,
@@ -197,12 +199,15 @@ const SELF_BOOSTS = new Set<Moves>([
   Moves.Curse,
   Moves.Geomancy,
   Moves.PsychUp,
+  // The next move lands as a critical hit, which is what a boost is for
+  Moves.LaserFocus,
 ]);
 const SUPPORTING = new Set<Moves>([
   Moves.AfterYou,
   Moves.AllySwitch,
   Moves.HoldHands,
   Moves.Bestow,
+  Moves.Instruct,
 ]);
 const UTILITIES = new Set<Moves>([
   // Callers and copies, worth whatever they turn into

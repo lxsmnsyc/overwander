@@ -231,6 +231,8 @@ export default function registerOshawottSpecies(): void {
         Moves.KnockOff,
         Moves.Strength,
         Moves.Superpower,
+        Moves.Liquidation,
+        Moves.SmartStrike,
       ],
     },
   });

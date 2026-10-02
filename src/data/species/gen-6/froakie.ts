@@ -6,7 +6,7 @@ import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
 import { EvolutionMethod, Habitat, Species } from '../../ids/species';
-import { registerSpecies } from '../__create';
+import { getSpeciesData, registerSpecies } from '../__create';
 
 // TM, HM and tutor moves shared by the whole family
 const FAMILY_TEACHABLE = [
@@ -192,7 +192,14 @@ export default function registerFroakieSpecies(): void {
     },
     types: [Types.Water, Types.Dark],
     abilities: [Abilities.Torrent],
-    hiddenAbilities: [Abilities.Protean, Abilities.Infiltrator, Abilities.Sniper],
+    // Battle Bond is Greninja's own, so neither Froakie nor Frogadier
+    // can be born with it
+    hiddenAbilities: [
+      Abilities.Protean,
+      Abilities.Infiltrator,
+      Abilities.Sniper,
+      Abilities.BattleBond,
+    ],
     eggGroups: [EggGroups.Water1],
     genderRatio: [7, 1],
     catchRate: 45,
@@ -230,5 +237,29 @@ export default function registerFroakieSpecies(): void {
         Moves.BrutalSwing,
       ],
     },
+  });
+
+  // The bond drawn out: what Battle Bond makes of a Greninja once it
+  // knocks something out. Put on in a fight rather than met, so it
+  // stands in no line and nothing stages it
+  registerSpecies(Species.GreninjaAsh, {
+    ...getSpeciesData(Species.Greninja),
+    name: 'Ash-Greninja',
+    baseForm: false,
+    worn: true,
+    stats: {
+      [Stats.HP]: 72,
+      [Stats.Attack]: 145,
+      [Stats.Defense]: 67,
+      [Stats.SpecialAttack]: 153,
+      [Stats.SpecialDefense]: 71,
+      [Stats.Speed]: 132,
+    },
+    abilities: [Abilities.BattleBond],
+    hiddenAbilities: [],
+    evolvesFrom: undefined,
+    evolvesInto: undefined,
+    eggSpecies: undefined,
+    biomes: [],
   });
 }

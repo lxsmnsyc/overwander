@@ -65,6 +65,10 @@ export const SHIELDS_DOWN_THRESHOLD = 1 / 2;
 export const FLUFFY_CONTACT_SCALE = 0.5;
 export const FLUFFY_FIRE_SCALE = 2;
 
+/** What an Ash-Greninja's Water Shuriken strikes for, and how many times */
+const ASH_SHURIKEN_POWER = 20;
+const ASH_SHURIKEN_HITS = 3;
+
 const FIRE = new Set([Types.Fire]);
 
 const POISONS = new Set([Statuses.Poisoned, Statuses.BadlyPoisoned]);
@@ -207,6 +211,54 @@ const setupAbilities = [
       }),
     ]);
   }),
+
+  /**
+   * Greninja: the first enemy its own move knocks out draws the bond
+   * out, and it fights as Ash-Greninja for the rest of the fight. Both
+   * shapes share an HP stat, so its health stands where it was. The
+   * shape throws its Water Shuriken as a fixed volley
+   * https://bulbapedia.bulbagarden.net/wiki/Battle_Bond_(Ability)
+   */
+  createAbility(
+    Abilities.BattleBond,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+          const cause = event.cause;
+
+          if (
+            !event.success ||
+            event.target.alive ||
+            (event.flags & DamageFlags.Indirect) !== 0 ||
+            cause.type !== EffectType.Move ||
+            cause.unit === event.target ||
+            cause.unit.team.alliance === event.target.team.alliance ||
+            !cause.unit.alive ||
+            cause.unit.species !== Species.Greninja ||
+            !cause.unit.hasAbility(Abilities.BattleBond)
+          ) {
+            return;
+          }
+          cause.unit.triggerAbility(Abilities.BattleBond);
+        }),
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+          if (event.ability === Abilities.BattleBond) {
+            event.source.setSpecies(Species.GreninjaAsh);
+          }
+        }),
+        // The shape's own answer, so boosts still multiply it after
+        battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Exact, (event) => {
+          if (event.move === Moves.WaterShuriken && event.source.species === Species.GreninjaAsh) {
+            event.power = ASH_SHURIKEN_POWER;
+          }
+        }),
+        battle.on(BattleEvents.CheckUnitMoveHits, EventPriority.Post, (event) => {
+          if (event.move === Moves.WaterShuriken && event.source.species === Species.GreninjaAsh) {
+            event.hits = ASH_SHURIKEN_HITS;
+          }
+        }),
+      ]),
+  ),
 
   /**
    * Wishiwashi: the school forms while it holds above a quarter of its

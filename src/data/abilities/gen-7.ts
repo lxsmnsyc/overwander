@@ -63,6 +63,12 @@ export default function registerGen7Abilities(): void {
     description:
       'Its moves hit 2x against an enemy that has not acted since it came onto the field.',
   });
+  // Greninja
+  registerAbility(Abilities.BattleBond, {
+    name: 'Battle Bond',
+    description:
+      'The first time its move knocks out an enemy, it becomes Ash-Greninja for the rest of the fight, and its Water Shuriken always strikes 3 times at 20 power.',
+  });
   // Wishiwashi
   registerAbility(Abilities.Schooling, {
     name: 'Schooling',

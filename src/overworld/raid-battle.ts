@@ -20,6 +20,8 @@ import {
   unpackStatuses,
 } from '../data/ids/status';
 import { BOSS_ALLIANCE } from './raid';
+import { setTrainerSkill } from '../battle/ai/skill';
+import skillOf from './trainer-skill';
 
 /**
  * A raid, fielded.
@@ -179,6 +181,7 @@ export function fieldTeams(
     const team = new Team(battle, alliance, record.player);
 
     alliance.addTeam(team);
+    setTrainerSkill(team, skillOf(record, record.alliance === bossAlliance));
 
     const fielded = units.get(record.alliance) ?? [];
     const party: Unit[] = [];

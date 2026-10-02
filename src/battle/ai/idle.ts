@@ -2,13 +2,14 @@ import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import type Battle from '../core';
 import { BattleEvents } from '../events';
 import { MOVE_LOCKING_STATUS } from '../status';
+import type Team from '../team';
 import type Unit from '../unit';
 import { hasAnyStatus } from '../utils';
-import { chooseMove } from './choose-move';
+import { getTrainer } from './trainer';
 
 /**
- * Drives the units: every tick, any idle unit picks its best move and
- * casts it. A unit is idle when it is not casting or channeling, has
+ * Drives the units: every tick, any idle unit asks its team's trainer
+ * for an order and carries it out. A unit is idle when it is not casting or channeling, has
  * no triggered move whose effect is still pending, and is not locked
  * out of using moves by a status.
  *
@@ -174,23 +175,27 @@ export default function setupIdleAI(battle: Battle): void {
       }
     }
 
-    // A copy, because casting mutates the set the loop is walking —
-    // and a unit that leaves it and comes back within the same tick
-    // would otherwise be visited twice
-    for (const unit of [...idle]) {
+    // Each team's free units go to its trainer together, so it can
+    // order them as one. Gathered first, because casting mutates the
+    // set the loop would otherwise be walking
+    const free = new Map<Team, Unit[]>();
+
+    for (const unit of idle) {
       // The set is a cache of the check, so the check has the last
-      // word: a unit that stopped being idle earlier in this very tick
-      // does not get to act on the strength of a stale entry
+      // word: a unit that stopped being idle does not get to act on
+      // the strength of a stale entry
       if (!isIdle(unit)) {
         idle.delete(unit);
         continue;
       }
 
-      const choice = chooseMove(battle, unit);
+      const units = free.get(unit.team) ?? [];
 
-      if (choice) {
-        unit.cast(choice.move, choice.target);
-      }
+      units.push(unit);
+      free.set(unit.team, units);
+    }
+    for (const [team, units] of free) {
+      getTrainer(battle, team).command(units, clock);
     }
   });
 }

@@ -42,7 +42,10 @@ import { isLoopingCast, pickCast } from '../../../data/constants/cast';
 
 import { Stats } from '../../../data/constants/stats';
 import { MoveFlags } from '../../../data/ids/moves';
-import { Genders, Species } from '../../../data/ids/species';
+import { Genders, Species, getBaseFormSpecies } from '../../../data/ids/species';
+import { getItemForms } from '../../../data/items/form-items';
+import { getStoneMega } from '../../../data/items/mega-stones';
+import type { Items } from '../../../data/ids/items';
 
 import { Statuses, Terrains } from '../../../data/ids/status';
 import { TYPE_COLORS, Types } from '../../../data/constants/types';
@@ -204,6 +207,24 @@ function arenasOf(standings: Standing[], field: { middle: Unit[] }, battle: Batt
     arenas.push({ x, z, radius: radius + ARENA_MARGIN, tint: TERRAIN_TINTS[terrain] });
   }
   return arenas;
+}
+
+/** The shapes a unit's held items (a form item, a Mega Stone) can put it in, of its own species */
+function heldForms(unit: Unit): Species[] {
+  const base = getBaseFormSpecies(unit.species);
+  const forms: Species[] = [];
+
+  for (const key of Object.keys(unit.items)) {
+    const item: Items = Number(key);
+    const mega = getStoneMega(item);
+
+    for (const form of mega == null ? getItemForms(item) : [mega]) {
+      if (form !== unit.appearance && getBaseFormSpecies(form) === base) {
+        forms.push(form);
+      }
+    }
+  }
+  return forms;
 }
 
 /** What a unit is drawn as, and the look it is transforming out of */
@@ -514,6 +535,17 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
     for (const unit of props.battle.units()) {
       spriteFor(unit);
       settling.push(loads.get(unit) ?? Promise.resolve());
+      // The shapes its held item may put it in as it walks on, warmed
+      // now so the change plays as the fight starts rather than once a
+      // sheet has crossed the network
+      for (const form of heldForms(unit)) {
+        settling.push(
+          loadSpeciesSprite(form, {
+            female: unit.gender === Genders.Female,
+            shiny: unit.shiny,
+          }).then(() => undefined),
+        );
+      }
     }
     Promise.allSettled(settling)
       .then(() => {

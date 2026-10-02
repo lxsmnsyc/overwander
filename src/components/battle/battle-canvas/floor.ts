@@ -5,7 +5,8 @@ import projectField, {
   unprojectField,
 } from '../../../canvas/battle/field';
 import type { Painter, QuadPoint } from '../../../canvas/gl/quad-batch';
-import { COLORS } from './metrics';
+import { SKY_BANDS, getSkybox, mixHex } from '../../../canvas/daylight';
+import { localNow } from '../../../auth/clock';
 
 /**
  * The ground a fight is standing on, drawn from the biome's own
@@ -438,16 +439,6 @@ export interface Arena {
   tint: string | null;
 }
 
-/** How dark the far field is at the horizon, and how far down the fog reaches */
-const FOG_ALPHA = 0.85;
-const FOG_DEPTH = 0.45;
-const FOG_BANDS = 10;
-
-/** How dark the picture's edges get, and how far in the darkening runs */
-const VIGNETTE_ALPHA = 0.4;
-const VIGNETTE_REACH = 0.18;
-const VIGNETTE_BANDS = 8;
-
 const SHADE = '#05080d';
 const ARENA_SEGMENTS = 48;
 /** The ring's width as a share of its radius */
@@ -483,16 +474,6 @@ function fillQuad(
   context.closePath();
   context.fill();
   context.restore();
-}
-
-/** A band of the picture from one height to another, full width */
-function rowOf(region: FloorRegion, top: number, bottom: number): { x: number; y: number }[] {
-  return [
-    { x: region.left, y: top },
-    { x: region.right, y: top },
-    { x: region.right, y: bottom },
-    { x: region.left, y: bottom },
-  ];
 }
 
 /** A ring lying on an arena's ground, from `outer` in to `inner` */
@@ -619,58 +600,119 @@ export function drawGroundShade(
     arenaBand(context, view, arena, arena.radius, inner, arena.tint, 0.55 * breath, onto);
   }
 
-  // Fog from the horizon down, thinning as the ground comes nearer
-  const skyline = Math.max(region.top, horizonOf(view));
-  const depth = (region.bottom - skyline) * FOG_DEPTH;
+  drawHaze(context, view, region, arenas, onto);
+}
 
-  for (let band = 0; band < FOG_BANDS; band += 1) {
-    const top = skyline + (depth * band) / FOG_BANDS;
-    const bottom = skyline + (depth * (band + 1)) / FOG_BANDS;
+/**
+ * How far past the furthest side the ground starts to go to sky, and
+ * how far it takes to be gone, in field units. The overworld's haze,
+ * measured from the fight rather than from the player
+ */
+const HAZE_GAP = 4;
+const HAZE_SPAN = 14;
 
-    fillQuad(
-      context,
-      rowOf(region, top, bottom),
-      COLORS.field,
-      FOG_ALPHA * (1 - band / FOG_BANDS) ** 2,
-      onto,
-    );
+/** How big a square of the picture is sky or ground, in drawing units */
+const HAZE_CELL = 3;
+
+const BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];
+
+/** A run of one row that has gone to sky, and how far down the picture the row is */
+interface HazeRun {
+  top: number;
+  left: number;
+  right: number;
+  /** Where the row sits between the top of the picture and the bottom, from 0 to 1 */
+  down: number;
+}
+
+/**
+ * The runs for the last camera. Worked out again only when the field
+ * is turned, resized or regrouped: the dither is fixed to the picture,
+ * and it is only the sky's colours that move with the hour
+ */
+let hazed: { key: string; runs: HazeRun[] } | null = null;
+
+function hazeRuns(view: FieldView, region: FloorRegion, reach: number): HazeRun[] {
+  const key = `${view.yaw}:${view.unit}:${view.width}:${view.height}:${region.left}:${region.top}:${region.right}:${region.bottom}:${reach}`;
+
+  if (hazed?.key === key) {
+    return hazed.runs;
   }
 
-  // The edges of the picture, darkest at the rim
-  const across = (region.right - region.left) * VIGNETTE_REACH;
-  const down = (region.bottom - region.top) * VIGNETTE_REACH;
+  const runs: HazeRun[] = [];
+  const start = reach + HAZE_GAP;
+  const height = region.bottom - region.top;
+  const rows = Math.ceil(height / HAZE_CELL);
+  const columns = Math.ceil((region.right - region.left) / HAZE_CELL);
 
-  for (let band = 0; band < VIGNETTE_BANDS; band += 1) {
-    const alpha = VIGNETTE_ALPHA * (1 - band / VIGNETTE_BANDS) ** 2;
-    const inX = (across * band) / VIGNETTE_BANDS;
-    const outX = (across * (band + 1)) / VIGNETTE_BANDS;
-    const inY = (down * band) / VIGNETTE_BANDS;
-    const outY = (down * (band + 1)) / VIGNETTE_BANDS;
+  for (let row = 0; row < rows; row += 1) {
+    const top = region.top + row * HAZE_CELL;
+    const down = (Math.floor(((top - region.top) / height) * SKY_BANDS) + 0.5) / SKY_BANDS;
+    let from: number | null = null;
 
-    fillQuad(context, rowOf(region, region.top + inY, region.top + outY), SHADE, alpha, onto);
-    fillQuad(context, rowOf(region, region.bottom - outY, region.bottom - inY), SHADE, alpha, onto);
+    for (let column = 0; column <= columns; column += 1) {
+      let sky = false;
+
+      if (column < columns) {
+        const left = region.left + column * HAZE_CELL;
+        const point = unprojectField(left + HAZE_CELL / 2, top + HAZE_CELL / 2, view);
+        const share =
+          point == null
+            ? 1
+            : Math.min(1, Math.max(0, (Math.hypot(point.x, point.z) - start) / HAZE_SPAN));
+
+        // Each square is wholly sky or wholly ground, as each pixel of
+        // the overworld's art is: an ordered dither decides which
+        sky = share > (BAYER[(row % 4) * 4 + (column % 4)] + 0.5) / 16;
+      }
+      if (sky && from == null) {
+        from = column;
+      } else if (!sky && from != null) {
+        runs.push({
+          top,
+          left: region.left + from * HAZE_CELL,
+          right: region.left + column * HAZE_CELL,
+          down,
+        });
+        from = null;
+      }
+    }
+  }
+  hazed = { key, runs };
+  return runs;
+}
+
+/**
+ * The ground past the fight dissolving into the hour's sky, the way the
+ * overworld's country does at the edge of its view, rather than being
+ * darkened at the rim of the picture
+ */
+function drawHaze(
+  context: CanvasRenderingContext2D,
+  view: FieldView,
+  region: FloorRegion,
+  arenas: Arena[],
+  onto?: Painter,
+): void {
+  let reach = 0;
+
+  for (const arena of arenas) {
+    reach = Math.max(reach, Math.hypot(arena.x, arena.z) + arena.radius);
+  }
+
+  const { zenith, horizon } = getSkybox(localNow());
+
+  for (const run of hazeRuns(view, region, reach)) {
     fillQuad(
       context,
       [
-        { x: region.left + inX, y: region.top },
-        { x: region.left + outX, y: region.top },
-        { x: region.left + outX, y: region.bottom },
-        { x: region.left + inX, y: region.bottom },
+        { x: run.left, y: run.top },
+        { x: run.right, y: run.top },
+        { x: run.right, y: run.top + HAZE_CELL },
+        { x: run.left, y: run.top + HAZE_CELL },
       ],
-      SHADE,
-      alpha,
-      onto,
-    );
-    fillQuad(
-      context,
-      [
-        { x: region.right - outX, y: region.top },
-        { x: region.right - inX, y: region.top },
-        { x: region.right - inX, y: region.bottom },
-        { x: region.right - outX, y: region.bottom },
-      ],
-      SHADE,
-      alpha,
+      mixHex(zenith, horizon, run.down),
+      1,
       onto,
     );
   }

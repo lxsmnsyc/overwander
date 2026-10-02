@@ -129,6 +129,11 @@ export interface UnitCardProps {
    * here to observe directly
    */
   revision: () => number;
+  /**
+   * Drawn as a tooltip over the field: nothing on it is pressed, so it
+   * wears the tooltip's surface rather than a card's
+   */
+  tip?: boolean;
 }
 
 export default function UnitCard(props: UnitCardProps): JSX.Element {
@@ -224,8 +229,9 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
 
   return (
     <li
-      class={`flex w-64 shrink-0 flex-col gap-1.5 rounded-xl border-2 border-line bg-paper/95 px-2
-        py-1.5 text-left text-xs shadow-pop-sm ${unit().alive ? '' : 'opacity-50 grayscale'}`}
+      class={`flex w-64 shrink-0 flex-col gap-1.5 rounded-xl border-2 border-line text-left text-xs
+        ${props.tip === true ? 'bg-paper px-3 pt-2 pb-2.5 shadow-float' : 'bg-paper/95 px-2 py-1.5 shadow-pop-sm'}
+        ${unit().alive ? '' : 'opacity-50 grayscale'}`}
     >
       {/* What it is. The level comes first because in a raid the
           difference between a party member and the thing killing it is

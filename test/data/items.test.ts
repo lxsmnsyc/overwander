@@ -813,6 +813,8 @@ describe('item data', () => {
     expect(asDuelRules({ limits: packSlots(2, 2, 2), teamSize: 3 })).toEqual({
       limits: packSlots(2, 2, 2),
       teamSize: 3,
+      maxBst: 0,
+      bans: 0,
     });
   });
 

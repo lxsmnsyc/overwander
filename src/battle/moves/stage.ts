@@ -1,7 +1,7 @@
 import { AttackPriority } from '../../core/event-emitter';
 import { MAX_STAGE, MIN_STAGE } from '../../data/constants/stats';
 import Abilities from '../../data/ids/abilities';
-import { MoveAffects, Moves } from '../../data/ids/moves';
+import { MoveAffects, type Moves } from '../../data/ids/moves';
 import { STAGE_MOVES, type StageMoveEffect } from '../../data/battle';
 import { getMoveData } from '../../data/moves';
 import type Battle from '../core';

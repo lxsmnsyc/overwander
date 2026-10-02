@@ -2,8 +2,8 @@ import { existsSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import registerGameData from '../../src/data';
 import {
-  TIMES_OF_DAY,
   type SpawnRarityGroups,
+  TIMES_OF_DAY,
   getSpawnPool,
   getTownPool,
   hasSpawnPool,
@@ -15,7 +15,7 @@ import {
   spawnOdds,
 } from '../../src/data/biome';
 import { BIOME_NAMES, TIME_OF_DAY_NAMES } from '../../src/data/biome/names';
-import Biome, { SpawnSurface, type TimeOfDay, isIceBiome } from '../../src/data/ids/biome';
+import Biome, { SpawnSurface, isIceBiome } from '../../src/data/ids/biome';
 import EggGroups from '../../src/data/ids/egg-groups';
 import { FOSSIL_SPECIES } from '../../src/data/items/fossils';
 import { HONEY_TREE_SPECIES } from '../../src/data/overworld/honey-tree';
@@ -76,7 +76,7 @@ function everyPool(): [where: string, pool: SpawnRarityGroups][] {
       }
       pools.push([`under ${BIOME_NAMES[id]}, ${when}`, getSpawnPool(id, time, true)]);
     }
-    pools.push([`town, ${when}`, getTownPool(time as TimeOfDay)]);
+    pools.push([`town, ${when}`, getTownPool(time)]);
   }
   return pools;
 }

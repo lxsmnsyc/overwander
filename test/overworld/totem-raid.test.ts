@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { EffectType } from '../../src/battle/events';
 import registerGameData from '../../src/data';
 import { Stages, Stats } from '../../src/data/constants/stats';
@@ -11,6 +11,13 @@ import type Unit from '../../src/battle/unit';
 
 beforeAll(() => {
   registerGameData();
+  // Starting a fight starts its frame clock, which a test drives by hand
+  vi.stubGlobal('requestAnimationFrame', () => 0);
+  vi.stubGlobal('cancelAnimationFrame', () => undefined);
+});
+
+afterAll(() => {
+  vi.unstubAllGlobals();
 });
 
 interface TotemRaid extends RaidBattle {
@@ -30,6 +37,8 @@ function totemRaid(species: Species): TotemRaid {
   ]);
 
   built.battle.initialize();
+  // The units walk on, and the aura goes up, as the fight starts
+  built.battle.start();
 
   const totem = [...(built.units.get(BOSS_ALLIANCE) ?? [])][0];
   const player = [...(built.units.get(PLAYER_ALLIANCE) ?? [])][0];

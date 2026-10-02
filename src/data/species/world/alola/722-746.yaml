@@ -183,7 +183,7 @@ Oricorio:
   OricorioPau:
     types: [Psychic, Flying]
     egg-groups: [Flying]
-    biomes: [Beach]
+    biomes: [Beach, Ocean]
     active: [Morning, Day]
     base-form: false
   OricorioSensu:

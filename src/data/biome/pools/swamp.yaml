@@ -1,8 +1,8 @@
 land:
   morning: &land-morning
     base:
-      FlabebeBlue: 2047
-      Poliwag: 1706
+      FlabebeBlue: 2046
+      Poliwag: 1705
       Goomy: 1024
       Squirtle: 171
       Totodile: 171
@@ -104,7 +104,7 @@ land:
     special: {}
   night:
     base:
-      Tympole: 2241
+      Tympole: 2242
       Poliwag: 1793
       Goomy: 1076
       Froakie: 179
@@ -154,13 +154,12 @@ land:
 water:
   morning: &water-morning
     base:
-      Poliwag: 4068
-      Goomy: 1670
-      Squirtle: 407
-      Totodile: 407
-      Mudkip: 407
+      Poliwag: 4077
+      Squirtle: 408
+      Totodile: 408
+      Mudkip: 408
     uncommon:
-      Magikarp: 257
+      Magikarp: 258
       Barboach: 214
       Corphish: 214
       Wooper: 214
@@ -175,8 +174,7 @@ water:
       Feebas: 86
       Yanma: 43
     rare:
-      Poliwhirl: 781
-      Sliggoo: 481
+      Poliwhirl: 783
       Wartortle: 156
       Croconaw: 156
       Marshtomp: 156
@@ -202,32 +200,29 @@ water:
       Poliwrath: 36
       Politoed: 36
       Farfetchd: 36
-      Goodra: 35
       Feraligatr: 15
       Swampert: 15
     special: {}
   day: *water-morning
   evening:
     base:
-      Tympole: 2813
-      Poliwag: 2250
-      Goomy: 1866
+      Tympole: 2819
+      Poliwag: 2255
       Froakie: 225
     uncommon:
-      Magikarp: 362
-      Barboach: 302
-      Corphish: 302
-      Wooper: 302
-      Bidoof: 302
-      Dewpider: 266
-      Goldeen: 242
-      Marill: 242
+      Magikarp: 363
+      Barboach: 303
+      Corphish: 303
+      Wooper: 303
+      Bidoof: 303
+      Dewpider: 267
+      Goldeen: 243
+      Marill: 243
       Feebas: 121
       Yanma: 60
     rare:
-      Palpitoad: 735
-      Sliggoo: 521
-      Poliwhirl: 368
+      Palpitoad: 737
+      Poliwhirl: 369
       Frogadier: 147
     scarce:
       Seaking: 108
@@ -246,31 +241,28 @@ water:
       Poliwrath: 38
       Politoed: 38
       Seismitoad: 38
-      Goodra: 37
       Greninja: 15
     special: {}
   night:
     base:
-      Tympole: 2813
-      Poliwag: 2250
-      Goomy: 1866
-      Froakie: 225
+      Tympole: 2820
+      Poliwag: 2256
+      Froakie: 226
     uncommon:
-      Magikarp: 330
-      Barboach: 275
-      Corphish: 275
-      Wooper: 275
-      Bidoof: 275
-      Dewpider: 242
-      Goldeen: 220
-      Marill: 220
-      Koffing: 220
+      Magikarp: 331
+      Barboach: 276
+      Corphish: 276
+      Wooper: 276
+      Bidoof: 276
+      Dewpider: 243
+      Goldeen: 221
+      Marill: 221
+      Koffing: 221
       Feebas: 110
       Yanma: 55
     rare:
-      Palpitoad: 735
-      Sliggoo: 521
-      Poliwhirl: 368
+      Palpitoad: 737
+      Poliwhirl: 369
       Frogadier: 147
     scarce:
       Seaking: 92
@@ -290,6 +282,5 @@ water:
       Poliwrath: 38
       Politoed: 38
       Seismitoad: 38
-      Goodra: 37
       Greninja: 15
     special: {}

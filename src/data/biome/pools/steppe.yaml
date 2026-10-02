@@ -153,8 +153,8 @@ land:
       Zapdos: 10
   evening:
     base:
-      GeodudeAlola: 2644
-      Magnemite: 2404
+      GeodudeAlola: 2645
+      Magnemite: 2405
       Litten: 240
     uncommon:
       Wooper: 277
@@ -199,8 +199,8 @@ land:
       Zapdos: 10
   night:
     base:
-      GeodudeAlola: 2644
-      Magnemite: 2404
+      GeodudeAlola: 2645
+      Magnemite: 2405
       Litten: 240
     uncommon:
       Wooper: 277
@@ -248,12 +248,12 @@ water:
   morning: &water-morning
     base: {}
     uncommon:
-      Magikarp: 2070
-      Wooper: 1725
-      Goldeen: 1380
-      Spearow: 1380
-      Doduo: 1380
-      Rufflet: 1104
+      Magikarp: 2075
+      Wooper: 1729
+      Goldeen: 1383
+      Spearow: 1383
+      Doduo: 1383
+      Rufflet: 1107
     rare: {}
     scarce:
       Seaking: 114
@@ -272,10 +272,10 @@ water:
   evening: &water-evening
     base: {}
     uncommon:
-      Magikarp: 2854
-      Wooper: 2378
-      Goldeen: 1903
-      Drifloon: 1903
+      Magikarp: 2861
+      Wooper: 2384
+      Goldeen: 1908
+      Drifloon: 1908
     rare: {}
     scarce:
       Seaking: 179
@@ -285,6 +285,6 @@ water:
       Gyarados: 71
     special: {}
     elusive:
-      Castform: 208
+      Castform: 209
       Magnezone: 104
   night: *water-evening

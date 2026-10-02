@@ -183,20 +183,20 @@ land:
       Shaymin: 10
   day:
     base:
-      Pidove: 435
-      Pidgey: 435
-      Starly: 435
-      Lillipup: 406
-      Fletchling: 377
-      Mareep: 362
-      Hoppip: 362
-      Shinx: 362
-      Flabebe: 348
-      Scatterbug: 348
-      Solosis: 348
-      NidoranF: 290
-      NidoranM: 290
-      Poliwag: 290
+      Pidove: 436
+      Pidgey: 436
+      Starly: 436
+      Lillipup: 407
+      Fletchling: 378
+      Mareep: 363
+      Hoppip: 363
+      Shinx: 363
+      Flabebe: 349
+      Scatterbug: 349
+      Solosis: 349
+      NidoranF: 291
+      NidoranM: 291
+      Poliwag: 291
       Abra: 145
       Bulbasaur: 29
       Chikorita: 29
@@ -367,12 +367,12 @@ land:
       Shaymin: 10
   evening:
     base:
-      Shinx: 1009
-      Gothita: 969
-      NidoranF: 807
-      NidoranM: 807
-      Oddish: 807
-      Poliwag: 807
+      Shinx: 1011
+      Gothita: 971
+      NidoranF: 808
+      NidoranM: 808
+      Oddish: 808
+      Poliwag: 808
       Litten: 81
     uncommon:
       Rattata: 204
@@ -396,7 +396,7 @@ land:
       Girafarig: 34
       Eevee: 14
     rare:
-      Gothorita: 338
+      Gothorita: 339
       Nidorina: 169
       Nidorino: 169
       Gloom: 169
@@ -576,17 +576,17 @@ land:
 water:
   morning: &water-morning
     base:
-      Pidove: 985
-      Pidgey: 985
-      Starly: 985
-      Fletchling: 854
-      Hoppip: 821
-      Poliwag: 657
+      Pidove: 987
+      Pidgey: 987
+      Starly: 987
+      Fletchling: 856
+      Hoppip: 823
+      Poliwag: 658
     uncommon:
-      Magikarp: 354
-      Surskit: 295
-      Taillow: 295
-      Swablu: 259
+      Magikarp: 355
+      Surskit: 296
+      Taillow: 296
+      Swablu: 260
       Goldeen: 236
       Marill: 236
       Psyduck: 236
@@ -595,8 +595,8 @@ water:
       Scyther: 59
       Togetic: 59
     rare:
-      Tranquill: 375
-      Fletchinder: 250
+      Tranquill: 376
+      Fletchinder: 251
       Poliwhirl: 156
       Pidgeotto: 156
       Skiploom: 156
@@ -630,22 +630,22 @@ water:
   day: *water-morning
   evening: &water-evening
     base:
-      Poliwag: 2008
+      Poliwag: 2999
     uncommon:
-      Magikarp: 1071
-      Goldeen: 714
-      Marill: 714
+      Magikarp: 1600
+      Goldeen: 1067
+      Marill: 1067
     rare:
-      Poliwhirl: 1250
+      Poliwhirl: 1867
     scarce:
-      Seaking: 260
-      Azumarill: 130
-      Vespiquen: 130
-      Gyarados: 104
+      Seaking: 388
+      Azumarill: 194
+      Vespiquen: 194
+      Gyarados: 155
     elusive:
-      Castform: 156
-      Poliwrath: 78
-      Politoed: 78
+      Castform: 233
+      Poliwrath: 117
+      Politoed: 117
     special:
       Azelf: 10
   night: *water-evening

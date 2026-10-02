@@ -28,9 +28,6 @@ registerGameData();
 /** The most of a pool one species may be, so a walk is never mostly one thing */
 const MOST_OF_A_POOL = 1 / 2;
 
-/** Fewer species than this and a pool is a niche, judged by nothing but what lives there */
-const NICHE = 3;
-
 /** How much more often an evolution may turn up than what it evolves from */
 const EVOLUTION_LEEWAY = 1.5;
 
@@ -66,18 +63,6 @@ function everyPool(): [where: string, pool: SpawnRarityGroups][] {
 }
 
 const POOLS = everyPool();
-
-/** How many species share the weighed bands, the ones a roll picks between by weight */
-function weighedSpecies(pool: SpawnRarityGroups): number {
-  const species = new Set<Species>();
-
-  for (const band of ['base', 'uncommon', 'rare', 'scarce', 'elusive'] as const) {
-    for (const entry of pool[band] ?? []) {
-      species.add(entry.species);
-    }
-  }
-  return species.size;
-}
 
 function isLegend(species: Species): boolean {
   return isLegendarySpecies(species) || isMythicalSpecies(species);
@@ -150,11 +135,6 @@ describe('spawn balance', () => {
     for (const [where, pool] of POOLS) {
       const odds = spawnOdds(pool);
 
-      // A niche where two or fewer can stand, an island at night, is
-      // mostly one of them however it is weighed
-      if (weighedSpecies(pool) < NICHE) {
-        continue;
-      }
       for (const [species, share] of odds) {
         if (share > MOST_OF_A_POOL && !isLegend(species)) {
           crowded.push(`${where}: ${getSpeciesData(species).name} ${(share * 100).toFixed(0)}%`);

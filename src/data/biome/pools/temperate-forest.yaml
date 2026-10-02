@@ -111,9 +111,9 @@ land:
   day: *land-morning
   evening:
     base:
-      Venipede: 2083
-      Oddish: 1602
-      Poliwag: 1602
+      Venipede: 2082
+      Oddish: 1601
+      Poliwag: 1601
     uncommon:
       Hoothoot: 170
       Kricketot: 170
@@ -192,9 +192,9 @@ land:
       PichuSpikyEared: 10
   night:
     base:
-      Venipede: 2083
-      Oddish: 1602
-      Poliwag: 1602
+      Venipede: 2082
+      Oddish: 1601
+      Poliwag: 1601
     uncommon:
       Hoothoot: 161
       Kricketot: 161
@@ -277,20 +277,20 @@ land:
 water:
   morning: &water-morning
     base:
-      Starly: 3173
-      Poliwag: 2115
+      Starly: 3181
+      Poliwag: 2120
     uncommon:
-      Magikarp: 493
-      Wooper: 411
-      Bidoof: 411
-      Panpour: 362
-      Goldeen: 329
-      Ledyba: 329
+      Magikarp: 494
+      Wooper: 412
+      Bidoof: 412
+      Panpour: 363
+      Goldeen: 330
+      Ledyba: 330
       Scyther: 82
       Togetic: 82
     rare:
-      Poliwhirl: 625
-      Staravia: 625
+      Poliwhirl: 627
+      Staravia: 627
     scarce:
       Seaking: 106
       Bibarel: 106
@@ -315,29 +315,29 @@ water:
   day: *water-morning
   evening: &water-evening
     base:
-      Poliwag: 2010
+      Poliwag: 3000
     uncommon:
-      Magikarp: 577
-      Wooper: 481
-      Hoothoot: 481
-      Bidoof: 481
-      Goldeen: 385
-      Murkrow: 96
+      Magikarp: 861
+      Wooper: 718
+      Hoothoot: 718
+      Bidoof: 718
+      Goldeen: 575
+      Murkrow: 143
     rare:
-      Poliwhirl: 1250
+      Poliwhirl: 1865
     scarce:
-      Seaking: 116
-      Bibarel: 116
-      Noctowl: 116
-      Honchkrow: 69
-      Quagsire: 58
-      Vespiquen: 58
-      Gyarados: 46
-      Mothim: 46
+      Seaking: 173
+      Bibarel: 173
+      Noctowl: 173
+      Honchkrow: 103
+      Quagsire: 87
+      Vespiquen: 87
+      Gyarados: 69
+      Mothim: 69
     elusive:
-      Emolga: 132
-      Rotom: 99
-      Politoed: 82
+      Emolga: 197
+      Rotom: 148
+      Politoed: 122
     special:
       Mesprit: 10
   night: *water-evening

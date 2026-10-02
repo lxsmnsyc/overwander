@@ -149,13 +149,13 @@ land:
   day: *land-morning
   evening:
     base:
-      Venipede: 929
-      Litwick: 786
-      NidoranF: 715
-      NidoranM: 715
-      Oddish: 715
-      Seedot: 715
-      Poliwag: 715
+      Venipede: 930
+      Litwick: 787
+      NidoranF: 716
+      NidoranM: 716
+      Oddish: 716
+      Seedot: 716
+      Poliwag: 716
     uncommon:
       Rattata: 128
       Hoothoot: 106
@@ -403,23 +403,23 @@ land:
 water:
   morning: &water-morning
     base:
-      Pidove: 985
-      Pidgey: 985
-      Starly: 985
-      Fletchling: 854
-      Hoppip: 821
-      Poliwag: 657
+      Pidove: 987
+      Pidgey: 987
+      Starly: 987
+      Fletchling: 856
+      Hoppip: 823
+      Poliwag: 658
     uncommon:
-      Magikarp: 615
-      Panpour: 451
-      Marill: 410
-      Psyduck: 410
-      Ledyba: 410
+      Magikarp: 616
+      Panpour: 452
+      Marill: 411
+      Psyduck: 411
+      Ledyba: 411
       Scyther: 102
       Togetic: 102
     rare:
-      Tranquill: 375
-      Fletchinder: 250
+      Tranquill: 376
+      Fletchinder: 251
       Poliwhirl: 156
       Pidgeotto: 156
       Skiploom: 156
@@ -452,48 +452,48 @@ water:
   day: *water-morning
   evening:
     base:
-      Poliwag: 2010
+      Poliwag: 3000
     uncommon:
-      Magikarp: 605
-      Hoothoot: 504
-      Noibat: 484
-      Marill: 403
-      Drifloon: 403
-      Murkrow: 101
+      Magikarp: 903
+      Hoothoot: 752
+      Noibat: 722
+      Marill: 601
+      Drifloon: 601
+      Murkrow: 151
     rare:
-      Poliwhirl: 1250
+      Poliwhirl: 1865
     scarce:
-      Bibarel: 95
-      Noctowl: 95
-      Ninjask: 95
-      Noivern: 57
-      Drifblim: 57
-      Honchkrow: 57
-      Azumarill: 47
-      Vespiquen: 47
-      Gyarados: 38
-      Mothim: 38
+      Bibarel: 142
+      Noctowl: 142
+      Ninjask: 142
+      Noivern: 85
+      Drifblim: 85
+      Honchkrow: 85
+      Azumarill: 70
+      Vespiquen: 70
+      Gyarados: 57
+      Mothim: 57
     elusive:
-      Emolga: 132
-      Rotom: 99
-      Politoed: 82
+      Emolga: 197
+      Rotom: 148
+      Politoed: 122
     special:
       Mesprit: 10
   night:
     base:
-      Poliwag: 2644
-      Duskull: 2644
+      Poliwag: 2650
+      Duskull: 2650
     uncommon:
-      Magikarp: 581
-      Hoothoot: 484
-      Noibat: 465
-      Marill: 388
-      Drifloon: 388
+      Magikarp: 582
+      Hoothoot: 485
+      Noibat: 466
+      Marill: 389
+      Drifloon: 389
       Murkrow: 97
       Misdreavus: 97
     rare:
-      Dusclops: 769
-      Poliwhirl: 481
+      Dusclops: 771
+      Poliwhirl: 482
     scarce:
       Bibarel: 87
       Noctowl: 87

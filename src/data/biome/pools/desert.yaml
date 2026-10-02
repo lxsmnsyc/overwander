@@ -123,34 +123,34 @@ land:
       Genesect: 10
   evening:
     base:
-      Gible: 145
+      Gible: 417
     uncommon:
-      Sandygast: 288
-      Yamask: 288
-      Baltoy: 288
-      Elgyem: 262
-      Sandshrew: 262
-      Diglett: 262
-      BurmySandy: 262
-      Skorupi: 262
-      Hippopotas: 262
-      Magmar: 65
+      Sandygast: 829
+      Yamask: 829
+      Baltoy: 829
+      Elgyem: 754
+      Sandshrew: 754
+      Diglett: 754
+      BurmySandy: 754
+      Skorupi: 754
+      Hippopotas: 754
+      Magmar: 187
     rare:
-      Gabite: 145
+      Gabite: 417
     scarce:
-      Sandslash: 84
-      Dugtrio: 84
-      Beheeyem: 59
-      Cofagrigus: 59
-      Palossand: 51
-      Cacturne: 51
-      Claydol: 51
-      Drapion: 51
-      Hippowdon: 51
-      Magmortar: 51
-      WormadamSandy: 34
+      Sandslash: 242
+      Dugtrio: 242
+      Beheeyem: 170
+      Cofagrigus: 170
+      Palossand: 147
+      Cacturne: 147
+      Claydol: 147
+      Drapion: 147
+      Hippowdon: 147
+      Magmortar: 147
+      WormadamSandy: 98
     elusive:
-      Garchomp: 50
+      Garchomp: 144
     prized:
       Unown: forms
       Magby: prized
@@ -163,34 +163,34 @@ land:
       Genesect: 10
   night:
     base:
-      Gible: 145
+      Gible: 417
     uncommon:
-      Sandygast: 288
-      Yamask: 288
-      Baltoy: 288
-      Elgyem: 262
-      Diglett: 262
-      Cubone: 262
-      BurmySandy: 262
-      Skorupi: 262
-      Hippopotas: 262
-      Magmar: 65
+      Sandygast: 829
+      Yamask: 829
+      Baltoy: 829
+      Elgyem: 754
+      Diglett: 754
+      Cubone: 754
+      BurmySandy: 754
+      Skorupi: 754
+      Hippopotas: 754
+      Magmar: 187
     rare:
-      Gabite: 145
+      Gabite: 417
     scarce:
-      Dugtrio: 84
-      Marowak: 84
-      Beheeyem: 59
-      Cofagrigus: 59
-      Palossand: 51
-      Cacturne: 51
-      Claydol: 51
-      Drapion: 51
-      Hippowdon: 51
-      Magmortar: 51
-      WormadamSandy: 34
+      Dugtrio: 242
+      Marowak: 242
+      Beheeyem: 170
+      Cofagrigus: 170
+      Palossand: 147
+      Cacturne: 147
+      Claydol: 147
+      Drapion: 147
+      Hippowdon: 147
+      Magmortar: 147
+      WormadamSandy: 98
     elusive:
-      Garchomp: 50
+      Garchomp: 144
     prized:
       Unown: forms
       Magby: prized
@@ -206,14 +206,14 @@ water:
   morning: &water-morning
     base: {}
     uncommon:
-      Magikarp: 2268
-      Barboach: 1890
-      Baltoy: 1663
-      Vullaby: 1210
-      Feebas: 756
-    rare: { Vibrava: 1250 }
+      Magikarp: 2274
+      Barboach: 1895
+      Baltoy: 1668
+      Vullaby: 1213
+      Feebas: 758
+    rare: { Vibrava: 1253 }
     scarce:
-      Whiscash: 185
+      Whiscash: 186
       Mandibuzz: 139
       Claydol: 139
       Gyarados: 93
@@ -228,14 +228,14 @@ water:
   evening: &water-evening
     base: {}
     uncommon:
-      Magikarp: 3117
-      Barboach: 2597
-      Baltoy: 2285
-      Feebas: 1039
+      Magikarp: 3124
+      Barboach: 2603
+      Baltoy: 2290
+      Feebas: 1041
     rare: {}
     scarce:
-      Whiscash: 357
-      Claydol: 268
+      Whiscash: 358
+      Claydol: 269
       Gyarados: 179
       Milotic: 134
     special: {}

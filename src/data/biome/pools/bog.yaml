@@ -177,12 +177,11 @@ land:
 water:
   morning: &water-morning
     base:
-      Poliwag: 2518
-      Lotad: 2518
-      Goomy: 1175
+      Poliwag: 2522
+      Lotad: 2522
       Mudkip: 252
     uncommon:
-      Magikarp: 357
+      Magikarp: 358
       Barboach: 298
       Wooper: 298
       Surskit: 298
@@ -193,9 +192,8 @@ water:
       Feebas: 119
       Yanma: 60
     rare:
-      Lombre: 781
-      Poliwhirl: 391
-      Sliggoo: 298
+      Lombre: 782
+      Poliwhirl: 392
       Marshtomp: 78
     scarce:
       Masquerain: 108
@@ -213,33 +211,30 @@ water:
       Poliwrath: 45
       Ludicolo: 45
       Vivillon: 45
-      Goodra: 37
       Swampert: 18
     special:
       Azelf: 10
   day: *water-morning
   evening:
     base:
-      Tympole: 2034
-      Goomy: 1866
-      Poliwag: 1627
-      Tynamo: 1464
+      Tympole: 2038
+      Poliwag: 1631
+      Tynamo: 1467
       Froakie: 163
     uncommon:
-      Magikarp: 405
-      Barboach: 338
-      Wooper: 338
-      Buizel: 338
-      Bidoof: 338
-      Marill: 270
-      Drifloon: 270
+      Magikarp: 406
+      Barboach: 339
+      Wooper: 339
+      Buizel: 339
+      Bidoof: 339
+      Marill: 271
+      Drifloon: 271
       Feebas: 135
       Yanma: 68
     rare:
-      Sliggoo: 521
-      Palpitoad: 521
-      Eelektrik: 365
-      Poliwhirl: 260
+      Palpitoad: 522
+      Eelektrik: 366
+      Poliwhirl: 261
       Frogadier: 104
     scarce:
       Bibarel: 130
@@ -253,7 +248,6 @@ water:
       BasculinBlue: 65
       Basculin: 65
       Stunfisk: 65
-      Goodra: 59
       Seismitoad: 54
       Eelektross: 43
       Greninja: 22
@@ -261,28 +255,26 @@ water:
       Azelf: 10
   night:
     base:
-      Goomy: 1866
-      Tympole: 1555
-      Poliwag: 1244
-      Gastly: 1244
-      Tynamo: 1120
+      Tympole: 1559
+      Poliwag: 1247
+      Gastly: 1247
+      Tynamo: 1123
       Froakie: 124
     uncommon:
-      Magikarp: 405
-      Barboach: 338
-      Wooper: 338
-      Buizel: 338
-      Bidoof: 338
-      Marill: 270
-      Drifloon: 270
+      Magikarp: 406
+      Barboach: 339
+      Wooper: 339
+      Buizel: 339
+      Bidoof: 339
+      Marill: 271
+      Drifloon: 271
       Feebas: 135
       Yanma: 68
     rare:
-      Sliggoo: 521
-      Palpitoad: 431
-      Eelektrik: 302
-      Poliwhirl: 216
-      Haunter: 216
+      Palpitoad: 432
+      Eelektrik: 303
+      Poliwhirl: 217
+      Haunter: 217
       Frogadier: 86
     scarce:
       Bibarel: 130
@@ -296,7 +288,6 @@ water:
       BasculinBlue: 48
       Basculin: 48
       Stunfisk: 48
-      Goodra: 45
       Poliwrath: 40
       Seismitoad: 40
       Gengar: 40

@@ -59,12 +59,12 @@ land:
     special: {}
   day:
     base:
-      Shinx: 965
-      FlabebeYellow: 926
-      Scatterbug: 926
-      NidoranF: 772
-      NidoranM: 772
-      Rhyhorn: 772
+      Shinx: 966
+      FlabebeYellow: 927
+      Scatterbug: 927
+      NidoranF: 773
+      NidoranM: 773
+      Rhyhorn: 773
       Fennekin: 77
       Torchic: 77
     uncommon:
@@ -161,9 +161,9 @@ land:
     special: {}
   night:
     base:
-      Shinx: 2034
-      NidoranF: 1627
-      NidoranM: 1627
+      Shinx: 2035
+      NidoranF: 1628
+      NidoranM: 1628
     uncommon:
       Wooper: 473
       Mudbray: 417
@@ -198,13 +198,13 @@ water:
   morning: &water-morning
     base: {}
     uncommon:
-      Magikarp: 1643
-      Barboach: 1369
-      Wooper: 1369
-      Taillow: 1369
-      Psyduck: 1096
-      Doduo: 1096
-      Natu: 1096
+      Magikarp: 1647
+      Barboach: 1373
+      Wooper: 1373
+      Taillow: 1373
+      Psyduck: 1099
+      Doduo: 1099
+      Natu: 1099
     rare: {}
     scarce:
       Golduck: 120
@@ -222,13 +222,13 @@ water:
   evening: &water-evening
     base: {}
     uncommon:
-      Magikarp: 3389
-      Barboach: 2824
-      Wooper: 2824
+      Magikarp: 3397
+      Barboach: 2831
+      Wooper: 2831
     rare: {}
     scarce:
-      Whiscash: 441
-      Quagsire: 276
-      Gyarados: 221
+      Whiscash: 442
+      Quagsire: 277
+      Gyarados: 222
     special: {}
   night: *water-evening

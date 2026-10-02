@@ -258,8 +258,10 @@ export function getSpawnPool(
 
   // A surface with a pool of its own is met as written: its weights are
   // shares of that surface's rolls, so nothing from another surface is
-  // mixed in. One without falls back on the biome's roster
-  const own = poolsOn(surface).get(biome)?.[time];
+  // mixed in. One without (a frozen pond, a lake inland) is met from the
+  // land pool, which lists everything that lives in the biome, cut to
+  // what can stand on it
+  const own = poolsOn(surface).get(biome)?.[time] ?? SPAWN_POOLS.get(biome)?.[time];
   const pool = standingOn(own ?? getBiomeRoster(biome, time), surface);
 
   SURFACE_CUTS.set(key, pool);

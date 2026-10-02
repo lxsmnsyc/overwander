@@ -1,15 +1,24 @@
 land:
-  morning: &land-morning
-    base:
-      Dratini: 7788
+  morning:
+    base: {}
     uncommon:
-      Wingull: 2500
-      Exeggcute: 2500
-    rare:
-      Dragonair: 1875
-    scarce: {}
+      Wingull: 1939
+      Seel: 1478
+      Exeggcute: 1368
+      Krabby: 1041
+      Slowpoke: 926
+      Psyduck: 732
+    rare: {}
+    scarce:
+      Dewgong: 447
+      Pelipper: 447
+      Exeggutor: 378
+      Kingler: 327
+      Slowbro: 313
+      Golduck: 235
+      Slowking: 166
     elusive:
-      Dragonite: 50
+      Dragonite: 60
     prized:
       Unown: forms
     special:
@@ -17,17 +26,26 @@ land:
       Articuno: 10
       HoOh: 10
     mythical: {}
-  day: *land-morning
-  evening: &land-evening
-    base:
-      Dratini: 7788
+  day:
+    base: {}
     uncommon:
-      Exeggcute: 2500
-    rare:
-      Dragonair: 1875
-    scarce: {}
+      Wingull: 1939
+      Seel: 1479
+      Exeggcute: 1368
+      Krabby: 1041
+      Slowpoke: 926
+      Psyduck: 728
+    rare: {}
+    scarce:
+      Dewgong: 447
+      Pelipper: 447
+      Exeggutor: 378
+      Kingler: 327
+      Slowbro: 313
+      Golduck: 235
+      Slowking: 166
     elusive:
-      Dragonite: 50
+      Dragonite: 60
     prized:
       Unown: forms
     special:
@@ -35,20 +53,67 @@ land:
       Articuno: 10
       HoOh: 10
     mythical: {}
-  night: *land-evening
+  evening:
+    base:
+      Zubat: 3116
+    uncommon:
+      Krabby: 2798
+      Seel: 1701
+      Exeggcute: 650
+    rare:
+      Golbat: 730
+    scarce:
+      Dewgong: 265
+      Kingler: 265
+      Exeggutor: 238
+    elusive:
+      Sableye: 77
+      Dragonite: 60
+      Crobat: 36
+    prized:
+      Unown: forms
+    special:
+      Lugia: 10
+      Articuno: 10
+      HoOh: 10
+    mythical: {}
+  night:
+    base:
+      Zubat: 2880
+    uncommon:
+      Krabby: 3083
+      Seel: 1406
+      Exeggcute: 846
+    rare:
+      Golbat: 655
+    scarce:
+      Dewgong: 293
+      Kingler: 293
+      Exeggutor: 293
+    elusive:
+      Sableye: 80
+      Dragonite: 60
+      Crobat: 38
+    prized:
+      Unown: forms
+    special:
+      Lugia: 10
+      Articuno: 10
+      HoOh: 10
+    mythical: {}
 
 water:
   morning: &water-morning
     base:
-      Horsea: 4407
-      Dratini: 881
+      Horsea: 4417
+      Dratini: 883
     uncommon:
-      Frillish: 526
-      Tentacool: 526
-      Magikarp: 526
-      Chinchou: 526
-      Wailmer: 395
-    rare: { Dragonair: 1250 }
+      Frillish: 527
+      Tentacool: 527
+      Magikarp: 527
+      Chinchou: 527
+      Wailmer: 396
+    rare: { Dragonair: 1253 }
     scarce:
       Gyarados: 160
       Lanturn: 160
@@ -67,15 +132,15 @@ water:
   day: *water-morning
   evening: &water-evening
     base:
-      Horsea: 4407
-      Dratini: 881
+      Horsea: 4417
+      Dratini: 883
     uncommon:
-      Frillish: 526
-      Tentacool: 526
-      Magikarp: 526
-      Chinchou: 526
-      Wailmer: 395
-    rare: { Dragonair: 1250 }
+      Frillish: 527
+      Tentacool: 527
+      Magikarp: 527
+      Chinchou: 527
+      Wailmer: 396
+    rare: { Dragonair: 1253 }
     scarce:
       Gyarados: 160
       Lanturn: 160

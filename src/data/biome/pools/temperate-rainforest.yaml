@@ -1,9 +1,9 @@
 land:
   morning: &land-morning
     base:
-      Bellsprout: 1679
-      Poliwag: 1679
-      Lotad: 1679
+      Bellsprout: 1680
+      Poliwag: 1680
+      Lotad: 1680
       Turtwig: 252
     uncommon:
       Wooper: 781
@@ -32,20 +32,20 @@ land:
     special: {}
   day: *land-morning
   evening: &land-evening
-    base: { Poliwag: 2010 }
+    base: { Poliwag: 2995 }
     uncommon:
-      Shroomish: 694
-      Wooper: 694
-      Venonat: 556
-      Marill: 556
-    rare: { Poliwhirl: 1250 }
+      Shroomish: 1034
+      Wooper: 1034
+      Venonat: 828
+      Marill: 828
+    rare: { Poliwhirl: 1862 }
     scarce:
-      Venomoth: 174
-      Breloom: 174
-      Tangrowth: 104
-      Azumarill: 87
-      Quagsire: 87
-    elusive: { Politoed: 313 }
+      Venomoth: 259
+      Breloom: 259
+      Tangrowth: 155
+      Azumarill: 130
+      Quagsire: 130
+    elusive: { Politoed: 466 }
     prized:
       Unown: forms
       Azurill: prized
@@ -55,18 +55,18 @@ land:
 water:
   morning: &water-morning
     base:
-      Poliwag: 2644
-      Lotad: 2644
+      Poliwag: 2651
+      Lotad: 2651
     uncommon:
-      Magikarp: 750
-      Wooper: 625
-      Surskit: 625
-      Marill: 500
+      Magikarp: 752
+      Wooper: 627
+      Surskit: 627
+      Marill: 501
     rare:
-      Lombre: 833
-      Poliwhirl: 417
+      Lombre: 835
+      Poliwhirl: 418
     scarce:
-      Masquerain: 260
+      Masquerain: 261
       Azumarill: 130
       Quagsire: 130
       Gyarados: 104
@@ -77,18 +77,18 @@ water:
   day: *water-morning
   evening: &water-evening
     base:
-      Poliwag: 2009
+      Poliwag: 3000
     uncommon:
-      Magikarp: 1000
-      Wooper: 833
-      Marill: 667
+      Magikarp: 1493
+      Wooper: 1244
+      Marill: 996
     rare:
-      Poliwhirl: 1250
+      Poliwhirl: 1867
     scarce:
-      Azumarill: 223
-      Quagsire: 223
-      Gyarados: 179
+      Azumarill: 333
+      Quagsire: 333
+      Gyarados: 267
     elusive:
-      Politoed: 313
+      Politoed: 467
     special: {}
   night: *water-evening

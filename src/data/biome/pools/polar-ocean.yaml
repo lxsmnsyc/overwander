@@ -1,10 +1,10 @@
 land:
   morning: &land-morning
     base:
-      Spheal: 4722
+      Spheal: 4723
       Piplup: 567
     uncommon:
-      Seel: 2500
+      Seel: 2501
     rare:
       Sealeo: 1000
       Prinplup: 250
@@ -21,15 +21,15 @@ land:
   day: *land-morning
   evening: &land-evening
     base:
-      Spheal: 2009
+      Spheal: 2993
     uncommon:
-      Seel: 2500
+      Seel: 3725
     rare:
-      Sealeo: 1250
+      Sealeo: 1862
     scarce:
-      Dewgong: 625
+      Dewgong: 931
     elusive:
-      Walrein: 313
+      Walrein: 466
     prized:
       Unown: forms
     special:
@@ -40,16 +40,16 @@ land:
 water:
   morning: &water-morning
     base:
-      Spheal: 4722
-      Piplup: 567
+      Spheal: 4733
+      Piplup: 568
     uncommon:
-      Seel: 2500
+      Seel: 2506
     rare:
-      Sealeo: 1000
-      Prinplup: 250
+      Sealeo: 1002
+      Prinplup: 251
     scarce:
-      Dewgong: 313
-      Cloyster: 313
+      Dewgong: 314
+      Cloyster: 314
     elusive:
       Walrein: 130
       Lapras: 130
@@ -58,17 +58,17 @@ water:
   day: *water-morning
   evening: &water-evening
     base:
-      Spheal: 2009
+      Spheal: 3000
     uncommon:
-      Seel: 2500
+      Seel: 3733
     rare:
-      Sealeo: 1250
+      Sealeo: 1867
     scarce:
-      Dewgong: 313
-      Cloyster: 313
+      Dewgong: 467
+      Cloyster: 467
     elusive:
-      Walrein: 156
-      Lapras: 156
+      Walrein: 233
+      Lapras: 233
     special: {}
   night: *water-evening
 

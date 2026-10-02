@@ -15,13 +15,13 @@ Exeggcute:
   Exeggutor:
     types: [Grass, Psychic]
     egg-groups: [Grass]
-    biomes: [TropicalRainforest, TropicalSeasonalForest]
+    biomes: [TropicalRainforest, TropicalSeasonalForest, DeepOcean]
     active: any
     evolves-from: Exeggcute
   ExeggutorAlola:
     types: [Grass, Dragon]
     egg-groups: [Grass]
-    biomes: [Beach]
+    biomes: [Beach, Ocean]
     active: any
     base-form: false
     evolves-from: Exeggcute

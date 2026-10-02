@@ -1,11 +1,11 @@
 land:
   morning: &land-morning
     base:
-      Swinub: 1084
-      Spheal: 1084
-      FlabebeWhite: 1040
-      Scatterbug: 1040
-      Vanillite: 1040
+      Swinub: 1085
+      Spheal: 1085
+      FlabebeWhite: 1041
+      Scatterbug: 1041
+      Vanillite: 1041
     uncommon:
       VulpixAlola: 437
       SandshrewAlola: 437
@@ -49,8 +49,8 @@ land:
   day: *land-morning
   evening: &land-evening
     base:
-      Swinub: 2644
-      Spheal: 2644
+      Swinub: 2646
+      Spheal: 2646
     uncommon:
       VulpixAlola: 495
       SandshrewAlola: 495
@@ -91,24 +91,24 @@ land:
 ice:
   morning: &ice-morning
     base:
-      Spheal: 1084
-      Swinub: 1084
-      Vanillite: 1040
-      FlabebeWhite: 1040
-      Scatterbug: 1040
+      Spheal: 1087
+      Swinub: 1087
+      Vanillite: 1043
+      FlabebeWhite: 1043
+      Scatterbug: 1043
     uncommon:
-      Snorunt: 437
-      VulpixAlola: 437
-      SandshrewAlola: 437
-      Cubchoo: 397
-      Seel: 397
-      Snover: 397
+      Snorunt: 438
+      VulpixAlola: 438
+      SandshrewAlola: 438
+      Cubchoo: 398
+      Seel: 398
+      Snover: 398
     rare:
-      Vanillish: 284
-      Piloswine: 284
-      Sealeo: 227
-      FloetteWhite: 227
-      Spewpa: 227
+      Vanillish: 285
+      Piloswine: 285
+      Sealeo: 228
+      FloetteWhite: 228
+      Spewpa: 228
     scarce:
       Dewgong: 120
       Beartic: 72
@@ -131,18 +131,18 @@ ice:
   day: *ice-morning
   evening: &ice-evening
     base:
-      Spheal: 2644
-      Swinub: 2644
+      Spheal: 2651
+      Swinub: 2651
     uncommon:
-      Snorunt: 495
-      VulpixAlola: 495
-      SandshrewAlola: 495
-      Seel: 450
-      Snover: 450
+      Snorunt: 496
+      VulpixAlola: 496
+      SandshrewAlola: 496
+      Seel: 451
+      Snover: 451
       Sneasel: 113
     rare:
-      Sealeo: 769
-      Piloswine: 481
+      Sealeo: 771
+      Piloswine: 482
     scarce:
       Dewgong: 120
       Glalie: 72

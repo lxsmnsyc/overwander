@@ -87,7 +87,7 @@ Salandit:
   Salandit:
     types: [Poison, Fire]
     egg-groups: [Monster, Dragon]
-    biomes: [Volcano, Badlands]
+    biomes: [Volcano, Badlands, Ocean]
     active: any
     evolves-into:
       - species: Salazzle
@@ -97,7 +97,7 @@ Salandit:
   Salazzle:
     types: [Poison, Fire]
     egg-groups: [Monster, Dragon]
-    biomes: [Volcano, Badlands]
+    biomes: [Volcano, Badlands, Ocean]
     active: any
     evolves-from: Salandit
 Stufful:
@@ -166,7 +166,7 @@ Wimpod:
     types: [Bug, Water]
     egg-groups: [Bug, Water3]
     habitat: Amphibious
-    biomes: [Beach, RockyCoast]
+    biomes: [Beach, RockyCoast, Ocean]
     active: any
     evolves-into:
       - species: Golisopod
@@ -176,14 +176,14 @@ Wimpod:
     types: [Bug, Water]
     egg-groups: [Bug, Water3]
     habitat: Amphibious
-    biomes: [Beach, RockyCoast]
+    biomes: [Beach, RockyCoast, Ocean]
     active: any
     evolves-from: Wimpod
 Sandygast:
   Sandygast:
     types: [Ghost, Ground]
     egg-groups: [Amorphous]
-    biomes: [Beach, Desert]
+    biomes: [Beach, Desert, Ocean]
     active: any
     evolves-into:
       - species: Palossand
@@ -192,7 +192,7 @@ Sandygast:
   Palossand:
     types: [Ghost, Ground]
     egg-groups: [Amorphous]
-    biomes: [Beach, Desert]
+    biomes: [Beach, Desert, Ocean]
     active: any
     evolves-from: Sandygast
 Pyukumuku:
@@ -200,5 +200,5 @@ Pyukumuku:
     types: [Water]
     egg-groups: [Water1]
     habitat: Amphibious
-    biomes: [Beach, RockyCoast]
+    biomes: [Beach, RockyCoast, Ocean]
     active: any

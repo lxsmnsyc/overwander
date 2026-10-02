@@ -1,8 +1,8 @@
 land:
   morning: &land-morning
     base:
-      FlabebeBlue: 2759
-      Lotad: 2299
+      FlabebeBlue: 2761
+      Lotad: 2300
       Totodile: 230
     uncommon:
       Corphish: 349
@@ -66,17 +66,17 @@ land:
 water:
   morning: &water-morning
     base:
-      Lotad: 4807
-      Totodile: 481
+      Lotad: 4819
+      Totodile: 482
     uncommon:
-      Corphish: 456
-      Wooper: 456
-      Shellos: 456
-      Dewpider: 401
-      Slowpoke: 365
-      Krabby: 365
+      Corphish: 457
+      Wooper: 457
+      Shellos: 457
+      Dewpider: 402
+      Slowpoke: 366
+      Krabby: 366
     rare:
-      Lombre: 1136
+      Lombre: 1139
       Croconaw: 114
     scarce:
       Slowbro: 106
@@ -97,11 +97,11 @@ water:
   evening: &water-evening
     base: {}
     uncommon:
-      Corphish: 1931
-      Wooper: 1931
-      Shellos: 1931
-      Dewpider: 1699
-      Krabby: 1545
+      Corphish: 1936
+      Wooper: 1936
+      Shellos: 1936
+      Dewpider: 1703
+      Krabby: 1549
     rare: {}
     scarce:
       Kingler: 142

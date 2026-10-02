@@ -1,8 +1,8 @@
 land:
   morning: &land-morning
     base:
-      Swinub: 2698
-      FlabebeWhite: 2590
+      Swinub: 2699
+      FlabebeWhite: 2591
     uncommon:
       Snover: 1111
       Seel: 1111
@@ -30,26 +30,26 @@ land:
       Regice: 10
   day: *land-morning
   evening:
-    base: { Swinub: 2009 }
+    base: { Swinub: 2993 }
     uncommon:
-      Snover: 833
-      Seel: 833
-      Vulpix: 417
-      Stantler: 208
-      Sneasel: 208
-    rare: { Piloswine: 1250 }
+      Snover: 1241
+      Seel: 1241
+      Vulpix: 621
+      Stantler: 310
+      Sneasel: 310
+    rare: { Piloswine: 1862 }
     scarce:
-      Dewgong: 189
-      Abomasnow: 114
-      Glaceon: 114
-      Weavile: 114
-      Ninetales: 95
+      Dewgong: 282
+      Abomasnow: 170
+      Glaceon: 170
+      Weavile: 170
+      Ninetales: 142
     elusive:
-      Pachirisu: 89
-      Jynx: 56
-      Snorlax: 56
-      Mamoswine: 56
-      Delibird: 56
+      Pachirisu: 133
+      Jynx: 83
+      Snorlax: 83
+      Mamoswine: 83
+      Delibird: 83
     prized:
       Unown: forms
       Smoochum: prized
@@ -59,28 +59,28 @@ land:
       Uxie: 10
       Regice: 10
   night:
-    base: { Swinub: 2009 }
+    base: { Swinub: 2994 }
     uncommon:
-      Paras: 625
-      Snover: 625
-      Seel: 625
-      Vulpix: 313
-      Stantler: 156
-      Sneasel: 156
-    rare: { Piloswine: 1250 }
+      Paras: 931
+      Snover: 931
+      Seel: 931
+      Vulpix: 466
+      Stantler: 232
+      Sneasel: 232
+    rare: { Piloswine: 1863 }
     scarce:
-      Parasect: 145
-      Dewgong: 145
-      Abomasnow: 87
-      Glaceon: 87
-      Weavile: 87
-      Ninetales: 73
+      Parasect: 216
+      Dewgong: 216
+      Abomasnow: 130
+      Glaceon: 130
+      Weavile: 130
+      Ninetales: 109
     elusive:
-      Pachirisu: 89
-      Jynx: 56
-      Snorlax: 56
-      Mamoswine: 56
-      Delibird: 56
+      Pachirisu: 133
+      Jynx: 83
+      Snorlax: 83
+      Mamoswine: 83
+      Delibird: 83
     prized:
       Unown: forms
       Smoochum: prized
@@ -93,18 +93,18 @@ land:
 ice:
   morning: &ice-morning
     base:
-      Swinub: 2698
-      FlabebeWhite: 2590
+      Swinub: 2704
+      FlabebeWhite: 2596
     uncommon:
-      Seel: 1111
-      Snover: 1111
-      Stantler: 278
+      Seel: 1114
+      Snover: 1114
+      Stantler: 279
     rare:
-      FloetteWhite: 556
-      Piloswine: 347
-      Ursaring: 347
+      FloetteWhite: 557
+      Piloswine: 348
+      Ursaring: 348
     scarce:
-      Dewgong: 284
+      Dewgong: 285
       Glaceon: 170
       Abomasnow: 170
     elusive:
@@ -118,54 +118,54 @@ ice:
   day: *ice-morning
   evening:
     base:
-      Swinub: 2009
+      Swinub: 2999
     uncommon:
-      Seel: 833
-      Snover: 833
-      Vulpix: 417
-      Sneasel: 208
-      Stantler: 208
+      Seel: 1244
+      Snover: 1244
+      Vulpix: 623
+      Sneasel: 311
+      Stantler: 311
     rare:
-      Piloswine: 1250
+      Piloswine: 1866
     scarce:
-      Dewgong: 189
-      Glaceon: 114
-      Weavile: 114
-      Abomasnow: 114
-      Ninetales: 95
+      Dewgong: 282
+      Glaceon: 170
+      Weavile: 170
+      Abomasnow: 170
+      Ninetales: 142
     elusive:
-      Pachirisu: 89
-      Mamoswine: 56
-      Delibird: 56
-      Jynx: 56
-      Snorlax: 56
+      Pachirisu: 133
+      Mamoswine: 84
+      Delibird: 84
+      Jynx: 84
+      Snorlax: 84
     special:
       Uxie: 10
   night:
     base:
-      Swinub: 2009
+      Swinub: 3000
     uncommon:
-      Seel: 625
-      Paras: 625
-      Snover: 625
-      Vulpix: 313
-      Sneasel: 156
-      Stantler: 156
+      Seel: 933
+      Paras: 933
+      Snover: 933
+      Vulpix: 467
+      Sneasel: 233
+      Stantler: 233
     rare:
-      Piloswine: 1250
+      Piloswine: 1866
     scarce:
-      Dewgong: 145
-      Parasect: 145
-      Glaceon: 87
-      Weavile: 87
-      Abomasnow: 87
-      Ninetales: 73
+      Dewgong: 216
+      Parasect: 216
+      Glaceon: 130
+      Weavile: 130
+      Abomasnow: 130
+      Ninetales: 109
     elusive:
-      Pachirisu: 89
-      Mamoswine: 56
-      Delibird: 56
-      Jynx: 56
-      Snorlax: 56
+      Pachirisu: 133
+      Mamoswine: 84
+      Delibird: 84
+      Jynx: 84
+      Snorlax: 84
     special:
       Uxie: 10
 

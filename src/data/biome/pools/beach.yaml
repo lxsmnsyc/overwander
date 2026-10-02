@@ -12,7 +12,6 @@ land:
       GrimerAlola: 224
       Sandygast: 224
       Wimpod: 224
-      Crabrawler: 223
       Psyduck: 204
       Slowpoke: 204
       Krabby: 204
@@ -62,7 +61,6 @@ land:
       GrimerAlola: 1105
       Sandygast: 1105
       Wimpod: 1105
-      Crabrawler: 1063
       Krabby: 1004
       BurmySandy: 1004
     rare: {}
@@ -94,13 +92,13 @@ land:
 water:
   morning: &water-morning
     base:
-      Horsea: 3777
-      Popplio: 755
-      Squirtle: 755
+      Horsea: 3786
+      Popplio: 757
+      Squirtle: 757
     uncommon:
-      Shellos: 218
-      Wingull: 218
-      Buizel: 218
+      Shellos: 219
+      Wingull: 219
+      Buizel: 219
       Crabrawler: 209
       Binacle: 209
       Mareanie: 192
@@ -112,8 +110,8 @@ water:
       Psyduck: 174
       Slowpoke: 174
     rare:
-      Seadra: 781
-      Brionne: 313
+      Seadra: 783
+      Brionne: 314
       Wartortle: 156
     scarce:
       Cloyster: 55
@@ -145,38 +143,38 @@ water:
   day: *water-morning
   evening: &water-evening
     base:
-      Horsea: 2008
+      Horsea: 2999
     uncommon:
-      Shellos: 258
-      Buizel: 258
-      Inkay: 248
-      Crabrawler: 248
-      Mareanie: 227
-      Wimpod: 227
-      Shellder: 207
-      Krabby: 207
-      Tentacool: 207
-      Staryu: 207
-      Goldeen: 207
+      Shellos: 385
+      Buizel: 385
+      Inkay: 370
+      Crabrawler: 370
+      Mareanie: 339
+      Wimpod: 339
+      Shellder: 309
+      Krabby: 309
+      Tentacool: 309
+      Staryu: 309
+      Goldeen: 309
     rare:
-      Seadra: 1250
+      Seadra: 1867
     scarce:
-      Cloyster: 70
-      Kingler: 70
-      Gastrodon: 70
-      Starmie: 70
-      Seaking: 70
-      Tentacruel: 56
-      Floatzel: 56
-      Toxapex: 42
-      Malamar: 42
-      Golisopod: 42
-      Vaporeon: 35
+      Cloyster: 105
+      Kingler: 105
+      Gastrodon: 105
+      Starmie: 105
+      Seaking: 105
+      Tentacruel: 84
+      Floatzel: 84
+      Toxapex: 63
+      Malamar: 63
+      Golisopod: 63
+      Vaporeon: 52
     elusive:
-      Corsola: 202
-      Pyukumuku: 50
-      RaichuAlola: 40
-      Kingdra: 20
+      Corsola: 302
+      Pyukumuku: 75
+      RaichuAlola: 60
+      Kingdra: 30
     special:
       Kyogre: 10
   night: *water-evening

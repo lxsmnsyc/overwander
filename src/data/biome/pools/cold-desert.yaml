@@ -1,8 +1,8 @@
 land:
   morning: &land-morning
     base:
-      Swinub: 2813
-      Geodude: 2250
+      Swinub: 2815
+      Geodude: 2251
       Beldum: 225
     uncommon:
       Snorunt: 764
@@ -28,8 +28,8 @@ land:
   day: *land-morning
   evening:
     base:
-      Swinub: 2813
-      Geodude: 2250
+      Swinub: 2814
+      Geodude: 2251
       Beldum: 225
     uncommon:
       Snorunt: 671
@@ -61,8 +61,8 @@ land:
     special: {}
   night:
     base:
-      Swinub: 2813
-      Geodude: 2250
+      Swinub: 2815
+      Geodude: 2251
       Beldum: 225
     uncommon:
       Snorunt: 539
@@ -98,20 +98,20 @@ land:
 ice:
   morning: &ice-morning
     base:
-      Swinub: 2813
-      Geodude: 2250
-      Beldum: 225
+      Swinub: 2820
+      Geodude: 2256
+      Beldum: 226
     uncommon:
-      Snorunt: 764
-      Cacnea: 694
-      Diglett: 694
-      Onix: 347
+      Snorunt: 766
+      Cacnea: 696
+      Diglett: 696
+      Onix: 348
     rare:
-      Piloswine: 568
-      Graveler: 568
+      Piloswine: 569
+      Graveler: 569
       Metang: 114
     scarce:
-      Dugtrio: 231
+      Dugtrio: 232
       Glalie: 139
       Froslass: 139
       Steelix: 116
@@ -123,19 +123,19 @@ ice:
   day: *ice-morning
   evening:
     base:
-      Swinub: 2813
-      Geodude: 2250
-      Beldum: 225
+      Swinub: 2820
+      Geodude: 2255
+      Beldum: 226
     uncommon:
-      Snorunt: 671
-      Elgyem: 610
-      Diglett: 610
-      Onix: 305
+      Snorunt: 673
+      Elgyem: 611
+      Diglett: 611
+      Onix: 306
       Sneasel: 152
       Gligar: 152
     rare:
-      Piloswine: 568
-      Graveler: 568
+      Piloswine: 569
+      Graveler: 569
       Metang: 114
     scarce:
       Dugtrio: 120
@@ -154,20 +154,20 @@ ice:
     special: {}
   night:
     base:
-      Swinub: 2813
-      Geodude: 2250
-      Beldum: 225
+      Swinub: 2820
+      Geodude: 2256
+      Beldum: 226
     uncommon:
-      Snorunt: 539
-      Elgyem: 490
-      Diglett: 490
-      Cubone: 490
-      Onix: 245
+      Snorunt: 540
+      Elgyem: 491
+      Diglett: 491
+      Cubone: 491
+      Onix: 246
       Sneasel: 123
       Gligar: 123
     rare:
-      Piloswine: 568
-      Graveler: 568
+      Piloswine: 569
+      Graveler: 569
       Metang: 114
     scarce:
       Dugtrio: 101

@@ -225,7 +225,7 @@ land:
       Jirachi: 10
   evening:
     base:
-      Zubat: 1525
+      Zubat: 1524
       Honedge: 1220
       JangmoO: 1119
       Geodude: 1017
@@ -420,13 +420,13 @@ water:
   morning: &water-morning
     base: {}
     uncommon:
-      Magikarp: 1693
-      Barboach: 1411
-      Corphish: 1411
-      Baltoy: 1242
-      Bronzor: 1129
-      Vullaby: 903
-    rare: { Vibrava: 1250 }
+      Magikarp: 1697
+      Barboach: 1415
+      Corphish: 1415
+      Baltoy: 1245
+      Bronzor: 1132
+      Vullaby: 905
+    rare: { Vibrava: 1253 }
     scarce:
       Whiscash: 114
       Crawdaunt: 114
@@ -449,47 +449,47 @@ water:
   day: *water-morning
   evening:
     base:
-      Zubat: 2008
+      Zubat: 3000
     uncommon:
-      Magikarp: 591
-      Barboach: 492
-      Corphish: 492
-      Baltoy: 433
-      Bronzor: 394
-      Gligar: 98
+      Magikarp: 883
+      Barboach: 735
+      Corphish: 735
+      Baltoy: 647
+      Bronzor: 589
+      Gligar: 146
     rare:
-      Golbat: 1250
+      Golbat: 1867
     scarce:
-      Ninjask: 116
-      Whiscash: 93
-      Crawdaunt: 93
-      Claydol: 69
-      Bronzong: 69
-      Probopass: 69
-      Gliscor: 69
-      Gyarados: 46
+      Ninjask: 173
+      Whiscash: 139
+      Crawdaunt: 139
+      Claydol: 103
+      Bronzong: 103
+      Probopass: 103
+      Gliscor: 103
+      Gyarados: 69
     special: {}
     elusive:
-      Carbink: 99
-      Lunatone: 82
-      Magnezone: 82
-      Hydreigon: 33
-      Metagross: 16
+      Carbink: 148
+      Lunatone: 122
+      Magnezone: 122
+      Hydreigon: 49
+      Metagross: 24
   night:
     base:
-      Zubat: 3173
-      Duskull: 2115
+      Zubat: 3180
+      Duskull: 2120
     uncommon:
-      Magikarp: 568
-      Barboach: 473
-      Corphish: 473
-      Baltoy: 417
-      Bronzor: 379
+      Magikarp: 569
+      Barboach: 474
+      Corphish: 474
+      Baltoy: 418
+      Bronzor: 380
       Misdreavus: 95
       Gligar: 95
     rare:
-      Golbat: 694
-      Dusclops: 556
+      Golbat: 696
+      Dusclops: 557
     scarce:
       Ninjask: 104
       Whiscash: 83

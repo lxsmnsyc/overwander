@@ -67,7 +67,7 @@ land:
   day: *land-morning
   evening:
     base:
-      Poliwag: 4807
+      Poliwag: 4810
       Rowlet: 481
     uncommon:
       Corphish: 398
@@ -78,7 +78,7 @@ land:
       Cherubi: 350
       Exeggcute: 318
     rare:
-      Poliwhirl: 893
+      Poliwhirl: 894
       Dartrix: 357
     scarce:
       Exeggutor: 116
@@ -137,19 +137,19 @@ land:
 water:
   morning: &water-morning
     base:
-      Poliwag: 2644
-      Lotad: 2644
+      Poliwag: 2651
+      Lotad: 2651
     uncommon:
-      Magikarp: 789
-      Corphish: 658
-      Goldeen: 526
-      Psyduck: 526
+      Magikarp: 791
+      Corphish: 660
+      Goldeen: 527
+      Psyduck: 527
     rare:
-      Lombre: 833
-      Poliwhirl: 417
+      Lombre: 835
+      Poliwhirl: 418
     scarce:
-      Seaking: 195
-      Golduck: 195
+      Seaking: 196
+      Golduck: 196
       Crawdaunt: 156
       Gyarados: 78
     elusive:
@@ -164,18 +164,18 @@ water:
   day: *water-morning
   evening: &water-evening
     base:
-      Poliwag: 4807
-      Rowlet: 481
+      Poliwag: 4819
+      Rowlet: 482
     uncommon:
-      Magikarp: 1000
-      Corphish: 833
-      Goldeen: 667
+      Magikarp: 1002
+      Corphish: 835
+      Goldeen: 669
     rare:
-      Poliwhirl: 893
-      Dartrix: 357
+      Poliwhirl: 895
+      Dartrix: 358
     scarce:
-      Seaking: 284
-      Crawdaunt: 227
+      Seaking: 285
+      Crawdaunt: 228
       Gyarados: 114
     elusive:
       Politoed: 142

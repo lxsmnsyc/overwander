@@ -4,7 +4,7 @@ Sableye:
   Sableye:
     types: [Dark, Ghost]
     egg-groups: [HumanLike]
-    biomes: [Badlands, MontaneForest]
+    biomes: [Badlands, MontaneForest, DeepOcean]
     active: [Evening, Night]
 Mawile:
   Mawile:

@@ -1,9 +1,9 @@
 land:
   morning: &land-morning
     base:
-      Mankey: 1490
-      Ralts: 1490
-      Poliwag: 1490
+      Mankey: 1491
+      Ralts: 1491
+      Poliwag: 1491
       Axew: 372
       Chimchar: 223
       Turtwig: 223
@@ -49,8 +49,8 @@ land:
   day: *land-morning
   evening:
     base:
-      Zubat: 3173
-      Poliwag: 2115
+      Zubat: 3174
+      Poliwag: 2116
     uncommon:
       Hoothoot: 625
       Kricketot: 625
@@ -79,8 +79,8 @@ land:
     special: {}
   night:
     base:
-      Zubat: 3173
-      Poliwag: 2115
+      Zubat: 3174
+      Poliwag: 2116
     uncommon:
       Hoothoot: 521
       Kricketot: 521
@@ -112,37 +112,37 @@ land:
 water:
   morning: &water-morning
     base:
-      Poliwag: 2010
+      Poliwag: 3000
     uncommon:
-      Magikarp: 1364
-      Wooper: 1136
+      Magikarp: 2036
+      Wooper: 1696
     rare:
-      Poliwhirl: 1250
+      Poliwhirl: 1866
     scarce:
-      Medicham: 272
-      Quagsire: 136
-      Gyarados: 109
-      Mothim: 109
+      Medicham: 406
+      Quagsire: 203
+      Gyarados: 163
+      Mothim: 163
     elusive:
-      Hawlucha: 117
-      Poliwrath: 98
-      Chimecho: 98
+      Hawlucha: 175
+      Poliwrath: 146
+      Chimecho: 146
     special: {}
   day: *water-morning
   evening:
     base:
-      Zubat: 3173
-      Poliwag: 2115
+      Zubat: 3181
+      Poliwag: 2120
     uncommon:
-      Magikarp: 750
-      Wooper: 625
-      Hoothoot: 625
-      Woobat: 500
+      Magikarp: 752
+      Wooper: 627
+      Hoothoot: 627
+      Woobat: 501
     rare:
-      Golbat: 833
-      Poliwhirl: 417
+      Golbat: 835
+      Poliwhirl: 418
     scarce:
-      Noctowl: 202
+      Noctowl: 203
       Swoobat: 161
       Quagsire: 101
       Gyarados: 81
@@ -155,16 +155,16 @@ water:
     special: {}
   night:
     base:
-      Zubat: 3173
-      Poliwag: 2115
+      Zubat: 3181
+      Poliwag: 2120
     uncommon:
-      Magikarp: 750
-      Wooper: 625
-      Hoothoot: 625
-      Woobat: 500
+      Magikarp: 752
+      Wooper: 627
+      Hoothoot: 627
+      Woobat: 501
     rare:
-      Golbat: 833
-      Poliwhirl: 417
+      Golbat: 835
+      Poliwhirl: 418
     scarce:
       Noctowl: 202
       Swoobat: 161

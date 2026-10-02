@@ -10,7 +10,6 @@ land:
       Buizel: 311
       Binacle: 299
       Wimpod: 274
-      Crabrawler: 267
       Krabby: 249
       Seel: 249
       Slowpoke: 249
@@ -48,7 +47,6 @@ land:
       Shellos: 1712
       Buizel: 1712
       Wimpod: 1506
-      Crabrawler: 1390
       Krabby: 1369
       Seel: 1369
       BurmySandy: 1369
@@ -74,12 +72,12 @@ land:
 water:
   morning: &water-morning
     base:
-      Horsea: 2938
-      Oshawott: 881
-      Piplup: 881
-      Popplio: 588
+      Horsea: 2945
+      Oshawott: 883
+      Piplup: 883
+      Popplio: 589
     uncommon:
-      Magikarp: 237
+      Magikarp: 238
       Wingull: 197
       Shellos: 197
       Buizel: 197
@@ -94,10 +92,10 @@ water:
       Seel: 158
       Slowpoke: 158
     rare:
-      Seadra: 568
-      Brionne: 227
-      Dewott: 227
-      Prinplup: 227
+      Seadra: 569
+      Brionne: 228
+      Dewott: 228
+      Prinplup: 228
     scarce:
       Kingler: 61
       Cloyster: 61
@@ -124,38 +122,38 @@ water:
   day: *water-morning
   evening: &water-evening
     base:
-      Horsea: 2011
+      Horsea: 2999
     uncommon:
-      Magikarp: 280
-      Shellos: 233
-      Buizel: 233
-      Crabrawler: 224
-      Mareanie: 205
-      Wimpod: 205
-      Krabby: 187
-      Shellder: 187
-      Tentacool: 187
-      Remoraid: 187
-      Staryu: 187
-      Seel: 187
+      Magikarp: 418
+      Shellos: 348
+      Buizel: 348
+      Crabrawler: 334
+      Mareanie: 306
+      Wimpod: 306
+      Krabby: 279
+      Shellder: 279
+      Tentacool: 279
+      Remoraid: 279
+      Staryu: 279
+      Seel: 279
     rare:
-      Seadra: 1250
+      Seadra: 1864
     scarce:
-      Kingler: 73
-      Cloyster: 73
-      Starmie: 73
-      Dewgong: 73
-      Gastrodon: 73
-      Tentacruel: 58
-      Octillery: 58
-      Floatzel: 58
-      Toxapex: 44
-      Golisopod: 44
+      Kingler: 109
+      Cloyster: 109
+      Starmie: 109
+      Dewgong: 109
+      Gastrodon: 109
+      Tentacruel: 87
+      Octillery: 87
+      Floatzel: 87
+      Toxapex: 66
+      Golisopod: 66
     elusive:
-      Qwilfish: 146
-      Corsola: 98
-      Pyukumuku: 49
-      Kingdra: 20
+      Qwilfish: 218
+      Corsola: 146
+      Pyukumuku: 73
+      Kingdra: 30
     special:
       TapuFini: 10
   night: *water-evening

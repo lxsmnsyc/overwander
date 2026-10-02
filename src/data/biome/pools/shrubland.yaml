@@ -240,17 +240,17 @@ land:
 water:
   morning: &water-morning
     base:
-      Hoppip: 2938
-      Poliwag: 2350
+      Hoppip: 2946
+      Poliwag: 2356
     uncommon:
-      Magikarp: 652
-      Surskit: 543
-      Goldeen: 435
-      Spearow: 435
-      Natu: 435
+      Magikarp: 654
+      Surskit: 544
+      Goldeen: 436
+      Spearow: 436
+      Natu: 436
     rare:
-      Poliwhirl: 625
-      Skiploom: 625
+      Poliwhirl: 627
+      Skiploom: 627
     scarce:
       Seaking: 160
       Masquerain: 160
@@ -266,16 +266,16 @@ water:
   day: *water-morning
   evening: &water-evening
     base:
-      Poliwag: 2009
+      Poliwag: 3000
     uncommon:
-      Magikarp: 1500
-      Goldeen: 1000
+      Magikarp: 2240
+      Goldeen: 1493
     rare:
-      Poliwhirl: 1250
+      Poliwhirl: 1867
     scarce:
-      Seaking: 446
-      Gyarados: 179
+      Seaking: 666
+      Gyarados: 267
     elusive:
-      Poliwrath: 313
+      Poliwrath: 467
     special: {}
   night: *water-evening

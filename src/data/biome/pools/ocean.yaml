@@ -1,23 +1,31 @@
 land:
-  morning: &land-morning
+  morning:
     base:
-      Scatterbug: 2010
-      Dratini: 407
+      Scatterbug: 2332
     uncommon:
-      Seel: 2500
-      Wingull: 2000
-      Exeggcute: 1500
+      Seel: 2901
+      Wingull: 605
+      Exeggcute: 428
+      Krabby: 323
+      Wimpod: 318
+      Sandygast: 279
     rare:
-      Spewpa: 1250
-      Dragonair: 139
+      Spewpa: 1451
     scarce:
-      Dewgong: 417
-      Vaporeon: 208
+      Vaporeon: 241
+      Dewgong: 139
+      Pelipper: 139
+      Kingler: 102
+      Palossand: 61
+      Golisopod: 60
+      ExeggutorAlola: 43
     elusive:
-      Vivillon: 112
-      Dhelmise: 112
-      Blastoise: 45
-      Dragonite: 45
+      Vivillon: 130
+      Dhelmise: 130
+      Pyukumuku: 114
+      OricorioPau: 79
+      Dragonite: 60
+      Blastoise: 52
     prized:
       Unown: forms
     special:
@@ -27,21 +35,66 @@ land:
       Lugia: 10
       Rayquaza: 10
       Registeel: 10
-  day: *land-morning
-  evening:
+  day:
     base:
-      Dratini: 5288
+      Scatterbug: 2339
     uncommon:
-      Seel: 1500
-      Exeggcute: 1500
+      Seel: 2909
+      Wingull: 606
+      Exeggcute: 429
+      Krabby: 324
+      Wimpod: 319
+      Sandygast: 261
     rare:
-      Dragonair: 1250
+      Spewpa: 1454
     scarce:
-      Dewgong: 417
-      Vaporeon: 208
+      Vaporeon: 243
+      Dewgong: 139
+      Pelipper: 139
+      Kingler: 102
+      Golisopod: 60
+      Palossand: 53
+      ExeggutorAlola: 43
     elusive:
-      Dhelmise: 223
-      Dragonite: 89
+      Vivillon: 131
+      Dhelmise: 131
+      Pyukumuku: 114
+      OricorioPau: 79
+      Dragonite: 60
+      Blastoise: 52
+    prized:
+      Unown: forms
+    special:
+      Nihilego: 10
+      Latias: 10
+      Latios: 10
+      Lugia: 10
+      Rayquaza: 10
+      Registeel: 10
+  evening:
+    base: {}
+    uncommon:
+      Wimpod: 1878
+      Seel: 1871
+      Krabby: 1707
+      Sandygast: 1378
+      Salandit: 729
+      Noibat: 414
+      Exeggcute: 396
+    rare: {}
+    scarce:
+      Vaporeon: 260
+      Dewgong: 162
+      Kingler: 162
+      Salazzle: 120
+      Golisopod: 98
+      Palossand: 69
+      ExeggutorAlola: 69
+      Noivern: 60
+    elusive:
+      Dhelmise: 278
+      Pyukumuku: 216
+      Dragonite: 60
     prized:
       Unown: forms
     special:
@@ -53,19 +106,29 @@ land:
       Rayquaza: 10
       Registeel: 10
   night:
-    base:
-      Dratini: 5288
+    base: {}
     uncommon:
-      Seel: 1500
-      Exeggcute: 1500
-    rare:
-      Dragonair: 1250
+      Wimpod: 1887
+      Seel: 1880
+      Krabby: 1716
+      Sandygast: 1384
+      Salandit: 605
+      Exeggcute: 472
+      Noibat: 417
+    rare: {}
     scarce:
-      Dewgong: 417
-      Vaporeon: 208
+      Vaporeon: 261
+      Dewgong: 162
+      Kingler: 162
+      Salazzle: 120
+      Golisopod: 98
+      Palossand: 71
+      ExeggutorAlola: 71
+      Noivern: 60
     elusive:
-      Dhelmise: 223
-      Dragonite: 89
+      Dhelmise: 279
+      Pyukumuku: 219
+      Dragonite: 60
     prized:
       Unown: forms
     special:
@@ -82,7 +145,7 @@ land:
 water:
   morning: &water-morning
     base:
-      Horsea: 4807
+      Horsea: 4806
       Dratini: 481
     uncommon:
       Tentacool: 290
@@ -117,7 +180,6 @@ water:
       Corsola: 82
       Qwilfish: 62
       Alomomola: 29
-      Dhelmise: 21
       Wishiwashi: 21
       Lapras: 21
       Mantine: 21
@@ -170,7 +232,6 @@ water:
       Lapras: 24
       Mantine: 24
       Kingdra: 24
-      Dhelmise: 23
       Dragonite: 10
     prized:
       Mantyke: prized
@@ -215,7 +276,6 @@ water:
       Lapras: 24
       Mantine: 24
       Kingdra: 24
-      Dhelmise: 23
       Dragonite: 10
     prized:
       Mantyke: prized

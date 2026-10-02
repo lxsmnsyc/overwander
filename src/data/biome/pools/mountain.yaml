@@ -1,7 +1,7 @@
 land:
   morning:
     base:
-      Roggenrola: 783
+      Roggenrola: 784
       JangmoO: 718
       Klink: 653
       Mankey: 653
@@ -228,7 +228,7 @@ land:
       Diancie: 10
   evening:
     base:
-      Zubat: 1311
+      Zubat: 1312
       Honedge: 1049
       JangmoO: 961
       Geodude: 874
@@ -316,7 +316,7 @@ land:
       Diancie: 10
   night:
     base:
-      Zubat: 1150
+      Zubat: 1149
       Honedge: 920
       JangmoO: 843
       Geodude: 766
@@ -415,12 +415,12 @@ water:
   morning:
     base: {}
     uncommon:
-      Magikarp: 2118
-      Swablu: 1553
-      Goldeen: 1412
-      Psyduck: 1412
-      Bronzor: 1412
-      Rufflet: 1130
+      Magikarp: 2123
+      Swablu: 1557
+      Goldeen: 1415
+      Psyduck: 1415
+      Bronzor: 1415
+      Rufflet: 1133
     rare: {}
     scarce:
       Seaking: 106
@@ -442,12 +442,12 @@ water:
   day:
     base: {}
     uncommon:
-      Magikarp: 2118
-      Swablu: 1553
-      Goldeen: 1412
-      Psyduck: 1412
-      Bronzor: 1412
-      Rufflet: 1130
+      Magikarp: 2123
+      Swablu: 1557
+      Goldeen: 1415
+      Psyduck: 1415
+      Bronzor: 1415
+      Rufflet: 1133
     rare: {}
     scarce:
       Seaking: 106
@@ -468,15 +468,15 @@ water:
       Salamence: 21
       Charizard: 21
   evening:
-    base: { Zubat: 3305, Tynamo: 1983 }
+    base: { Zubat: 3313, Tynamo: 1988 }
     uncommon:
-      Magikarp: 750
-      Goldeen: 500
-      Bronzor: 500
-      Woobat: 500
+      Magikarp: 752
+      Goldeen: 501
+      Bronzor: 501
+      Woobat: 501
       Murkrow: 125
       Gligar: 125
-    rare: { Golbat: 735, Eelektrik: 515 }
+    rare: { Golbat: 737, Eelektrik: 516 }
     scarce:
       Seaking: 130
       Swoobat: 104
@@ -496,21 +496,21 @@ water:
       Salamence: 20
   night:
     base:
-      Zubat: 2333
-      Gastly: 1555
-      Tynamo: 1400
+      Zubat: 2339
+      Gastly: 1559
+      Tynamo: 1404
     uncommon:
-      Magikarp: 714
-      Goldeen: 476
-      Bronzor: 476
-      Woobat: 476
+      Magikarp: 716
+      Goldeen: 477
+      Bronzor: 477
+      Woobat: 477
       Murkrow: 119
       Misdreavus: 119
       Gligar: 119
     rare:
-      Golbat: 568
-      Eelektrik: 398
-      Haunter: 284
+      Golbat: 569
+      Eelektrik: 399
+      Haunter: 285
     scarce:
       Seaking: 116
       Swoobat: 93

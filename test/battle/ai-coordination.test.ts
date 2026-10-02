@@ -207,5 +207,22 @@ describe('teammates casting over each other', () => {
     friend.cast(Moves.SunnyDay, { type: MoveTargetType.None });
 
     expect(usableMove(battle, unit, Moves.SunnyDay, { type: MoveTargetType.None })).toBe(false);
+    // A different sky would only replace it
+    expect(usableMove(battle, unit, Moves.RainDance, { type: MoveTargetType.None })).toBe(false);
+  });
+
+  it('leaves the ground to the terrain a teammate is already laying', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    const unit = createUnit(battle, teamA);
+    const friend = createUnit(battle, teamA);
+    createUnit(battle, teamB);
+    const none: MoveTarget = { type: MoveTargetType.None };
+    friend.addMove(Moves.ElectricTerrain);
+
+    friend.cast(Moves.ElectricTerrain, none);
+
+    expect(usableMove(battle, unit, Moves.GrassyTerrain, none)).toBe(false);
+    // The sky is a separate thing
+    expect(usableMove(battle, unit, Moves.SunnyDay, none)).toBe(true);
   });
 });

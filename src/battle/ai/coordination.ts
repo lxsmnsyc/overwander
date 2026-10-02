@@ -2,6 +2,7 @@ import { AttackPriority } from '../../core/event-emitter';
 import { Types } from '../../data/constants/types';
 import { Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
+import { MOVE_WEATHERS } from '../../data/moves/weather';
 import type Battle from '../core';
 import {
   BattleEvents,
@@ -15,6 +16,7 @@ import { LOCKOUTS } from '../moves/lockouts';
 import { NO_ESCAPE_MOVES } from '../moves/no-escape';
 import { STATUS_MOVES } from '../moves/status';
 import { PARTY_CURES } from '../moves/support';
+import { TERRAIN_MOVES } from '../moves/terrain';
 import type Unit from '../unit';
 import { getAIContext } from './context';
 import { MoveRole, getMoveRoles } from './roles';
@@ -119,6 +121,14 @@ function covered(event: CheckUnitAIMoveUsableEvent, friend: Unit): boolean {
     return friend.team === event.source.team;
   }
   if (CALLS.has(move) && CALLS.has(cast.move)) {
+    return true;
+  }
+  // One sky and one ground: a second weather or terrain only replaces
+  // the one a friend is already calling up
+  if (
+    (MOVE_WEATHERS.has(move) && MOVE_WEATHERS.has(cast.move)) ||
+    (TERRAIN_MOVES.has(move) && TERRAIN_MOVES.has(cast.move))
+  ) {
     return true;
   }
   // Two partners trading places at once trade straight back

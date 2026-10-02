@@ -312,7 +312,8 @@ reads what each friend is already casting, and refuses a move the friend's cast
 already covers:
 
 - the same veil, tailwind or team guard over the same team;
-- the same weather, terrain or room over the field;
+- the same room over the field, or any weather or terrain while a friend is
+  calling one up, since the second would only replace the first;
 - the same hazard on the same side, except Spikes and Toxic Spikes, which stack;
 - the same status at a foe a friend is already giving it, since different
   statuses stack.

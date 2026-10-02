@@ -1,0 +1,109 @@
+land:
+  morning: &land-morning
+    base:
+      FlabebeBlue: 24
+      Totodile: 2
+      Lotad: 20
+    uncommon:
+      GrimerAlola: 22
+      Corphish: 25
+      Slowpoke: 20
+      Krabby: 20
+      Wooper: 25
+      Shellos: 25
+      Croagunk: 20
+    rare:
+      FloetteBlue: 8
+      Croconaw: 1
+      Lombre: 10
+    scarce:
+      MukAlola: 6
+      Crawdaunt: 8
+      Slowbro: 10
+      Kingler: 10
+      Slowking: 5
+      Quagsire: 10
+      Gastrodon: 10
+      Toxicroak: 6
+    elusive:
+      FlorgesBlue: 5
+      Carnivine: 6
+      Farfetchd: 5
+      Feraligatr: 2
+      Ludicolo: 5
+    prized:
+      Unown: forms
+    special: {}
+  day: *land-morning
+  evening: &land-evening
+    base: {}
+    uncommon:
+      GrimerAlola: 22
+      Corphish: 25
+      Krabby: 20
+      Wooper: 25
+      Shellos: 25
+      Croagunk: 20
+    rare: {}
+    scarce:
+      MukAlola: 6
+      Crawdaunt: 8
+      Kingler: 10
+      Quagsire: 10
+      Gastrodon: 10
+      Toxicroak: 6
+    elusive:
+      Carnivine: 6
+    prized:
+      Unown: forms
+    special: {}
+  night: *land-evening
+
+water:
+  morning: &water-morning
+    base:
+      Totodile: 2
+      Lotad: 20
+    uncommon:
+      Dewpider: 22
+      Corphish: 25
+      Slowpoke: 20
+      Krabby: 20
+      Wooper: 25
+      Shellos: 25
+    rare:
+      Croconaw: 1
+      Lombre: 10
+    scarce:
+      Araquanid: 6
+      Crawdaunt: 8
+      Slowbro: 10
+      Kingler: 10
+      Slowking: 5
+      Quagsire: 10
+      Gastrodon: 10
+    elusive:
+      Wishiwashi: 5
+      Feraligatr: 2
+      Ludicolo: 5
+    special: {}
+  day: *water-morning
+  evening: &water-evening
+    base: {}
+    uncommon:
+      Dewpider: 22
+      Corphish: 25
+      Krabby: 20
+      Wooper: 25
+      Shellos: 25
+    rare: {}
+    scarce:
+      Araquanid: 6
+      Crawdaunt: 8
+      Kingler: 10
+      Quagsire: 10
+      Gastrodon: 10
+    elusive:
+      Wishiwashi: 5
+    special: {}
+  night: *water-evening

@@ -1,0 +1,283 @@
+land:
+  morning: &land-morning
+    base:
+      Flabebe: 24
+      Scatterbug: 24
+      Chespin: 2
+      Timburr: 25
+      Bulbasaur: 2
+      Caterpie: 30
+      Bellsprout: 20
+      Chikorita: 2
+      Ralts: 20
+      Starly: 30
+      Sewaddle: 28
+    uncommon:
+      Cutiefly: 24
+      Panpour: 22
+      Pansear: 22
+      Pansage: 22
+      Karrablast: 20
+      Deerling: 18
+      Ledyba: 20
+      Pineco: 20
+      Scyther: 5
+      Pikachu: 5
+      Stantler: 5
+      Togetic: 5
+      Bidoof: 25
+      Cherubi: 22
+      Buneary: 25
+      Petilil: 24
+    rare:
+      Floette: 8
+      Spewpa: 8
+      Quilladin: 2
+      Gurdurr: 10
+      Ivysaur: 1
+      Metapod: 15
+      Weepinbell: 5
+      Bayleef: 1
+      Kirlia: 10
+      Ursaring: 5
+      Staravia: 5
+      Swadloon: 12
+    scarce:
+      Ribombee: 6
+      Simipour: 7
+      Simisear: 7
+      Simisage: 7
+      Escavalier: 5
+      Sawsbuck: 7
+      Raichu: 5
+      Ledian: 8
+      Scizor: 5
+      Forretress: 5
+      Bibarel: 10
+      Wormadam: 4
+      Mothim: 4
+      Vespiquen: 5
+      Cherrim: 6
+      Lopunny: 8
+      Ambipom: 6
+      Togekiss: 6
+      Leafeon: 6
+      Lilligant: 7
+    elusive:
+      Florges: 5
+      Vivillon: 5
+      Chesnaught: 2
+      Sawk: 5
+      Throh: 5
+      Emolga: 8
+      Audino: 8
+      Conkeldurr: 5
+      Chatot: 6
+      Pachirisu: 8
+      Rotom: 6
+      Venusaur: 2
+      Butterfree: 10
+      Beedrill: 10
+      Victreebel: 5
+      Snorlax: 5
+      Meganium: 2
+      Sudowoodo: 5
+      Beautifly: 10
+      Gardevoir: 5
+      Staraptor: 5
+      Gallade: 5
+      Leavanny: 6
+    prized:
+      Unown: forms
+      Togepi: prized
+      Pichu: prized
+      Bonsly: prized
+      MimeJr: prized
+      Happiny: prized
+    special:
+      Kartana: 10
+      Xerneas: 10
+      Virizion: 10
+      Mesprit: 10
+    mythical:
+      Zeraora: 10
+      Celebi: 10
+      PichuSpikyEared: 10
+  day: *land-morning
+  evening:
+    base:
+      Oddish: 20
+      Venipede: 26
+    uncommon:
+      Phantump: 24
+      Espurr: 24
+      Foongus: 20
+      Shelmet: 20
+      Deerling: 18
+      Zorua: 20
+      Shuppet: 20
+      Venonat: 20
+      Hoothoot: 25
+      Spinarak: 20
+      Pineco: 20
+      Pikachu: 5
+      Murkrow: 5
+      Stantler: 5
+      Kricketot: 25
+      Bidoof: 25
+      Cherubi: 22
+      Buneary: 25
+    rare:
+      Gloom: 5
+      Whirlipede: 12
+    scarce:
+      Trevenant: 6
+      Meowstic: 3
+      MeowsticFemale: 3
+      Amoonguss: 6
+      Accelgor: 5
+      Sawsbuck: 7
+      Zoroark: 5
+      Banette: 6
+      Raichu: 5
+      Venomoth: 10
+      Noctowl: 10
+      Ariados: 8
+      Forretress: 5
+      Kricketune: 10
+      Bibarel: 10
+      Wormadam: 4
+      Mothim: 4
+      Vespiquen: 5
+      Cherrim: 6
+      Lopunny: 8
+      Ambipom: 6
+      Honchkrow: 6
+    elusive:
+      Emolga: 8
+      Pachirisu: 8
+      Rotom: 6
+      Vileplume: 5
+      Snorlax: 5
+      Sudowoodo: 5
+      Bellossom: 5
+      Dustox: 10
+      Volbeat: 8
+      Illumise: 8
+      Scolipede: 6
+    prized:
+      Unown: forms
+      Pichu: prized
+      Bonsly: prized
+      MimeJr: prized
+      Happiny: prized
+    special:
+      Kartana: 10
+      Xerneas: 10
+      Virizion: 10
+      Mesprit: 10
+    mythical:
+      Zeraora: 10
+      Celebi: 10
+      PichuSpikyEared: 10
+  night:
+    base:
+      Oddish: 20
+      Venipede: 26
+    uncommon:
+      Phantump: 24
+      Espurr: 24
+      Foongus: 20
+      Shelmet: 20
+      Deerling: 18
+      Zorua: 20
+      Shuppet: 20
+      Paras: 20
+      Venonat: 20
+      Hoothoot: 25
+      Spinarak: 20
+      Pineco: 20
+      Pikachu: 5
+      Murkrow: 5
+      Stantler: 5
+      Kricketot: 25
+      Bidoof: 25
+      Cherubi: 22
+      Buneary: 25
+    rare:
+      Gloom: 5
+      Whirlipede: 12
+    scarce:
+      Trevenant: 6
+      Meowstic: 3
+      MeowsticFemale: 3
+      Amoonguss: 6
+      Accelgor: 5
+      Sawsbuck: 7
+      Zoroark: 5
+      Banette: 6
+      Raichu: 5
+      Parasect: 10
+      Venomoth: 10
+      Noctowl: 10
+      Ariados: 8
+      Forretress: 5
+      Kricketune: 10
+      Bibarel: 10
+      Wormadam: 4
+      Mothim: 4
+      Vespiquen: 5
+      Cherrim: 6
+      Lopunny: 8
+      Ambipom: 6
+      Honchkrow: 6
+    elusive:
+      Emolga: 8
+      Pachirisu: 8
+      Rotom: 6
+      Vileplume: 5
+      Snorlax: 5
+      Sudowoodo: 5
+      Bellossom: 5
+      Dustox: 10
+      Volbeat: 8
+      Illumise: 8
+      Scolipede: 6
+    prized:
+      Unown: forms
+      Pichu: prized
+      Bonsly: prized
+      MimeJr: prized
+      Happiny: prized
+    special:
+      Kartana: 10
+      Xerneas: 10
+      Virizion: 10
+      Mesprit: 10
+    mythical:
+      Zeraora: 10
+      Celebi: 10
+      PichuSpikyEared: 10
+
+water:
+  morning: &water-morning
+    base:
+      Poliwag: 20
+    uncommon:
+      Magikarp: 30
+      Goldeen: 20
+      Wooper: 25
+    rare:
+      Poliwhirl: 5
+    scarce:
+      Seaking: 10
+      Quagsire: 5
+      Bibarel: 10
+      Gyarados: 4
+    elusive:
+      Politoed: 5
+    special:
+      Mesprit: 10
+  day: *water-morning
+  evening: *water-morning
+  night: *water-morning

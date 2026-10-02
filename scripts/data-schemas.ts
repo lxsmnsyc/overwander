@@ -326,6 +326,54 @@ const CHANCE: Schema = described(
   'The chance, out of 100',
 );
 
+const SPAWN_BAND: Schema = described(
+  {
+    type: 'object',
+    propertyNames: name('species'),
+    additionalProperties: {
+      anyOf: [
+        { type: 'number', minimum: 0 },
+        described({ const: 'prized' }, 'The weight every prized species shares'),
+        described({ const: 'forms' }, 'Unown only: each of its forms at weight 1'),
+      ],
+    },
+  },
+  'Species and weight, in the order a roll walks them',
+);
+
+const SPAWN_GROUPS: Schema = part(
+  {
+    base: SPAWN_BAND,
+    uncommon: SPAWN_BAND,
+    rare: SPAWN_BAND,
+    scarce: SPAWN_BAND,
+    elusive: SPAWN_BAND,
+    prized: SPAWN_BAND,
+    special: SPAWN_BAND,
+    mythical: SPAWN_BAND,
+  },
+  ['base', 'uncommon', 'rare', 'special'],
+);
+
+const SPAWN_TIMES: Schema = part(
+  { morning: SPAWN_GROUPS, day: SPAWN_GROUPS, evening: SPAWN_GROUPS, night: SPAWN_GROUPS },
+  ['morning', 'day', 'evening', 'night'],
+);
+
+const SPAWN_POOLS: Schema = {
+  $schema: DRAFT,
+  title: 'Biome: spawn pools',
+  type: 'object',
+  properties: {
+    land: SPAWN_TIMES,
+    water: SPAWN_TIMES,
+    ice: SPAWN_TIMES,
+    pool: described(SPAWN_TIMES, 'The one pool the caves or the towns share'),
+    'cave-legends': described(SPAWN_BAND, 'The legendaries met wild in the caves under it'),
+  },
+  additionalProperties: false,
+};
+
 const BATTLE_STATUSES: Schema = {
   $schema: DRAFT,
   title: 'Battle: statuses',
@@ -423,6 +471,7 @@ export default function renderDataSchemas(members: Map<string, string[]>): Map<s
     ['items-records.json', json(ITEM_RECORDS)],
     ['items-text.json', json(ITEM_TEXT)],
     ['battle-statuses.json', json(BATTLE_STATUSES)],
+    ['biome-pools.json', json(SPAWN_POOLS)],
   ]);
 
   for (const [file, title, entry] of BATTLE_FILES) {

@@ -1,0 +1,210 @@
+land:
+  morning: &land-morning
+    base:
+      Scatterbug: 24
+      Dratini: 2
+    uncommon:
+      Seel: 20
+    rare:
+      Spewpa: 8
+      Dragonair: 1
+    scarce:
+      Dewgong: 10
+      Vaporeon: 5
+    elusive:
+      Vivillon: 5
+      Blastoise: 2
+      Dragonite: 2
+    prized:
+      Unown: forms
+    special:
+      Nihilego: 10
+      Latias: 10
+      Latios: 10
+      Lugia: 10
+      Rayquaza: 10
+      Registeel: 10
+  day: *land-morning
+  evening:
+    base:
+      Dratini: 2
+    uncommon:
+      Seel: 20
+    rare:
+      Dragonair: 1
+    scarce:
+      Dewgong: 10
+      Vaporeon: 5
+    elusive:
+      Dragonite: 2
+    prized:
+      Unown: forms
+    special:
+      Nihilego: 10
+      Latias: 10
+      Latios: 10
+      Lugia: 10
+      Cresselia: 10
+      Rayquaza: 10
+      Registeel: 10
+  night:
+    base:
+      Dratini: 2
+    uncommon:
+      Seel: 20
+    rare:
+      Dragonair: 1
+    scarce:
+      Dewgong: 10
+      Vaporeon: 5
+    elusive:
+      Dragonite: 2
+    prized:
+      Unown: forms
+    special:
+      Nihilego: 10
+      Latias: 10
+      Latios: 10
+      Lugia: 10
+      Cresselia: 10
+      Rayquaza: 10
+      Registeel: 10
+    mythical:
+      Darkrai: 10
+
+water:
+  morning: &water-morning
+    base:
+      Horsea: 20
+    uncommon:
+      Clauncher: 24
+      Frillish: 20
+      Carvanha: 20
+      Wailmer: 15
+      Clamperl: 20
+      Tentacool: 30
+      Seel: 20
+      Shellder: 20
+      Magikarp: 30
+      Chinchou: 20
+      Remoraid: 20
+      Finneon: 20
+    rare:
+      Seadra: 10
+    scarce:
+      Clawitzer: 6
+      Jellicent: 5
+      Sharpedo: 6
+      Wailord: 4
+      Tentacruel: 10
+      Dewgong: 10
+      Cloyster: 10
+      Gyarados: 10
+      Vaporeon: 5
+      Lanturn: 10
+      Octillery: 10
+      Lumineon: 6
+    elusive:
+      Dhelmise: 5
+      Wishiwashi: 5
+      Alomomola: 7
+      Blastoise: 2
+      Lapras: 5
+      Mantine: 5
+      Kingdra: 5
+      Corsola: 20
+      Qwilfish: 15
+      Relicanth: 5
+    prized:
+      Mantyke: prized
+    special:
+      Nihilego: 10
+  day: *water-morning
+  evening:
+    base:
+      Horsea: 20
+    uncommon:
+      Frillish: 20
+      Carvanha: 20
+      Wailmer: 15
+      Clamperl: 20
+      Tentacool: 30
+      Seel: 20
+      Shellder: 20
+      Magikarp: 30
+      Chinchou: 20
+      Remoraid: 20
+      Finneon: 20
+    rare:
+      Seadra: 10
+    scarce:
+      Jellicent: 5
+      Sharpedo: 6
+      Wailord: 4
+      Tentacruel: 10
+      Dewgong: 10
+      Cloyster: 10
+      Gyarados: 10
+      Vaporeon: 5
+      Lanturn: 10
+      Octillery: 10
+      Lumineon: 6
+    elusive:
+      Dhelmise: 5
+      Wishiwashi: 5
+      Alomomola: 7
+      Lapras: 5
+      Mantine: 5
+      Kingdra: 5
+      Corsola: 20
+      Qwilfish: 15
+    prized:
+      Mantyke: prized
+    special:
+      Nihilego: 10
+  night:
+    base:
+      Horsea: 20
+    uncommon:
+      Frillish: 20
+      Carvanha: 20
+      Wailmer: 15
+      Clamperl: 20
+      Tentacool: 30
+      Seel: 20
+      Shellder: 20
+      Magikarp: 30
+      Chinchou: 20
+      Remoraid: 20
+      Finneon: 20
+    rare:
+      Seadra: 10
+    scarce:
+      Jellicent: 5
+      Sharpedo: 6
+      Wailord: 4
+      Tentacruel: 10
+      Dewgong: 10
+      Cloyster: 10
+      Gyarados: 10
+      Vaporeon: 5
+      Lanturn: 10
+      Octillery: 10
+      Lumineon: 6
+    elusive:
+      Dhelmise: 5
+      Wishiwashi: 5
+      Alomomola: 7
+      Lapras: 5
+      Mantine: 5
+      Kingdra: 5
+      Corsola: 20
+      Qwilfish: 15
+    prized:
+      Mantyke: prized
+    special:
+      Nihilego: 10
+    mythical: {}
+
+# The legendaries met wild in the caves under it
+cave-legends: { Lugia: 10, Registeel: 10 }

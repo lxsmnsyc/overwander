@@ -1,6 +1,6 @@
 ---
 name: data-yaml
-description: Species, moves, abilities, items and the per-move battle numbers are written as YAML, a folder per part of the record, and every name in them is checked against its enum when the data loads. Applies whenever adding, editing or reading species, move, ability, item or battle data, or adding an enum member the YAML should be able to name.
+description: Species, moves, abilities, items, the per-move battle numbers and the spawn pools are written as YAML, a folder per part of the record, and every name in them is checked against its enum when the data loads. Applies whenever adding, editing or reading species, move, ability, item, battle or spawn data, or adding an enum member the YAML should be able to name.
 ---
 
 The species, moves, abilities and items are data, not code. Each part of a record lives in a folder of its own, and the player-facing words live apart from the numbers under `src/data/text/<locale>/`, so a second locale is another folder beside `en/`.
@@ -61,6 +61,15 @@ The numbers a fight reads off each move live apart from the move, in `src/data/b
 | `z-power.yaml`        | a type Z-Move's power, for the moves the table by power gets wrong |
 
 `src/data/battle/index.ts` reads them into the tables the battle files re-export (`STATUS_MOVES`, `RECOIL_MOVES` and the rest). A move is added to a mechanic by adding it to that file; what the mechanic does with the number stays in `src/battle/moves/`.
+
+## Spawn pools
+
+`src/data/biome/pools/<biome>.yaml` holds a biome's pools by surface (`land`, `water`, `ice`), then by time of day, then by rarity band, each band a map from species to weight, and the `cave-legends` met in the caves under it. `cave.yaml` and `town.yaml` hold the two shared pools under `pool:`.
+
+- **A band's order is the order a roll walks it.** Reordering lines changes which species a given roll lands on, so the world every player sees changes with it. A species is written once per band.
+- Two times that share a pool write it once and point at it: `day: *land-morning`.
+- `prized` is the weight every prized species shares, and `Unown: forms` lays down each Unown form at weight 1.
+- The band odds, the fall-through and everything that reads a pool stay in `src/data/biome/__create.ts`.
 
 ## Abilities
 

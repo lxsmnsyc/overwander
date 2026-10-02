@@ -1,0 +1,76 @@
+land:
+  morning: &land-morning
+    base:
+      Spheal: 25
+      Piplup: 3
+    uncommon:
+      Seel: 20
+    rare:
+      Sealeo: 8
+      Prinplup: 2
+    scarce:
+      Dewgong: 10
+    elusive:
+      Walrein: 5
+      Empoleon: 2
+    prized:
+      Unown: forms
+    special:
+      Regice: 10
+      Articuno: 10
+  day: *land-morning
+  evening: &land-evening
+    base:
+      Spheal: 25
+    uncommon:
+      Seel: 20
+    rare:
+      Sealeo: 8
+    scarce:
+      Dewgong: 10
+    elusive:
+      Walrein: 5
+    prized:
+      Unown: forms
+    special:
+      Regice: 10
+      Articuno: 10
+  night: *land-evening
+
+water:
+  morning: &water-morning
+    base:
+      Spheal: 25
+      Piplup: 3
+    uncommon:
+      Seel: 20
+    rare:
+      Sealeo: 8
+      Prinplup: 2
+    scarce:
+      Dewgong: 10
+      Cloyster: 10
+    elusive:
+      Walrein: 5
+      Lapras: 5
+      Empoleon: 2
+    special: {}
+  day: *water-morning
+  evening: &water-evening
+    base:
+      Spheal: 25
+    uncommon:
+      Seel: 20
+    rare:
+      Sealeo: 8
+    scarce:
+      Dewgong: 10
+      Cloyster: 10
+    elusive:
+      Walrein: 5
+      Lapras: 5
+    special: {}
+  night: *water-evening
+
+# The legendaries met wild in the caves under it
+cave-legends: { Articuno: 10, Regice: 10 }

@@ -1,0 +1,111 @@
+land:
+  morning: &land-morning
+    base:
+      Oshawott: 3
+    uncommon:
+      Tangela: 5
+      Krabby: 20
+      Seel: 20
+      Shellos: 25
+      Wingull: 25
+      Buizel: 25
+    rare:
+      Dewott: 2
+    scarce:
+      Kingler: 10
+      Dewgong: 10
+      Gastrodon: 10
+      Pelipper: 10
+      Floatzel: 8
+      Tangrowth: 4
+    elusive:
+      Samurott: 2
+      Shuckle: 5
+    prized:
+      Unown: forms
+    special: {}
+  day: *land-morning
+  evening: &land-evening
+    base: {}
+    uncommon:
+      Inkay: 24
+      Krabby: 20
+      Seel: 20
+      Shellos: 25
+      Buizel: 25
+    rare: {}
+    scarce:
+      Malamar: 6
+      Kingler: 10
+      Dewgong: 10
+      Gastrodon: 10
+      Floatzel: 8
+    elusive:
+      Shuckle: 5
+    prized:
+      Unown: forms
+    special: {}
+  night: *land-evening
+
+water:
+  morning: &water-morning
+    base:
+      Oshawott: 3
+      Horsea: 20
+    uncommon:
+      Skrelp: 24
+      Tentacool: 20
+      Magikarp: 30
+      Chinchou: 20
+      Remoraid: 20
+      Finneon: 20
+    rare:
+      Dewott: 2
+      Seadra: 10
+    scarce:
+      Dragalge: 6
+      Milotic: 3
+      Tentacruel: 10
+      Lanturn: 10
+      Octillery: 10
+      Lumineon: 6
+    elusive:
+      Dhelmise: 5
+      Bruxish: 5
+      Samurott: 2
+      Mantine: 5
+      Qwilfish: 15
+    prized:
+      Mantyke: prized
+    special: {}
+  day: *water-morning
+  evening: &water-evening
+    base:
+      Horsea: 20
+    uncommon:
+      Inkay: 24
+      Tentacool: 20
+      Staryu: 20
+      Magikarp: 30
+      Chinchou: 20
+      Remoraid: 20
+      Finneon: 20
+    rare:
+      Seadra: 10
+    scarce:
+      Malamar: 6
+      Milotic: 3
+      Tentacruel: 10
+      Starmie: 10
+      Lanturn: 10
+      Octillery: 10
+      Lumineon: 6
+    elusive:
+      Dhelmise: 5
+      Bruxish: 5
+      Mantine: 5
+      Qwilfish: 15
+    prized:
+      Mantyke: prized
+    special: {}
+  night: *water-evening

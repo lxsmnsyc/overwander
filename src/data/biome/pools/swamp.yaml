@@ -1,0 +1,233 @@
+land:
+  morning: &land-morning
+    base:
+      Goomy: 12
+      FlabebeBlue: 24
+      Squirtle: 2
+      Poliwag: 20
+      Totodile: 2
+      Mudkip: 2
+    uncommon:
+      Ducklett: 20
+      Gulpin: 22
+      Corphish: 25
+      Psyduck: 20
+      Slowpoke: 20
+      Wooper: 25
+      Marill: 20
+      Lickitung: 5
+      Yanma: 5
+      Bidoof: 25
+      Croagunk: 20
+    rare:
+      Sliggoo: 5
+      FloetteBlue: 8
+      Wartortle: 1
+      Poliwhirl: 5
+      Croconaw: 1
+      Marshtomp: 1
+    scarce:
+      Swanna: 6
+      Swalot: 7
+      Crawdaunt: 8
+      Golduck: 10
+      Slowbro: 10
+      Azumarill: 5
+      Slowking: 5
+      Masquerain: 10
+      Quagsire: 5
+      Bibarel: 10
+      Toxicroak: 6
+      Yanmega: 6
+      Tangrowth: 6
+    elusive:
+      Goodra: 3
+      FlorgesBlue: 5
+      Stunfisk: 6
+      Carnivine: 6
+      Poliwrath: 5
+      Farfetchd: 5
+      Feraligatr: 2
+      Politoed: 5
+      Swampert: 2
+    prized:
+      Unown: forms
+      Azurill: prized
+    special: {}
+  day: *land-morning
+  evening:
+    base:
+      Goomy: 12
+      Froakie: 2
+      Poliwag: 20
+      Tympole: 25
+    uncommon:
+      Shelmet: 20
+      Gulpin: 22
+      Corphish: 25
+      Wooper: 25
+      Marill: 20
+      Yanma: 5
+      Bidoof: 25
+      Croagunk: 20
+    rare:
+      Sliggoo: 5
+      Frogadier: 2
+      Poliwhirl: 5
+      Palpitoad: 10
+    scarce:
+      Accelgor: 5
+      Swalot: 7
+      Crawdaunt: 8
+      Azumarill: 5
+      Quagsire: 5
+      Bibarel: 10
+      Toxicroak: 6
+      Yanmega: 6
+      Tangrowth: 6
+    elusive:
+      Goodra: 3
+      Greninja: 2
+      Stunfisk: 6
+      Seismitoad: 5
+      Carnivine: 6
+      Poliwrath: 5
+      Politoed: 5
+    prized:
+      Unown: forms
+      Azurill: prized
+    special: {}
+  night:
+    base:
+      Goomy: 12
+      Froakie: 2
+      Poliwag: 20
+      Tympole: 25
+    uncommon:
+      Shelmet: 20
+      Gulpin: 22
+      Corphish: 25
+      Grimer: 20
+      Koffing: 20
+      Wooper: 25
+      Marill: 20
+      Yanma: 5
+      Bidoof: 25
+      Croagunk: 20
+    rare:
+      Sliggoo: 5
+      Frogadier: 2
+      Poliwhirl: 5
+      Palpitoad: 10
+    scarce:
+      Accelgor: 5
+      Swalot: 7
+      Crawdaunt: 8
+      Muk: 10
+      Weezing: 10
+      Azumarill: 5
+      Quagsire: 5
+      Bibarel: 10
+      Toxicroak: 6
+      Yanmega: 6
+      Tangrowth: 6
+    elusive:
+      Goodra: 3
+      Greninja: 2
+      Stunfisk: 6
+      Seismitoad: 5
+      Carnivine: 6
+      Poliwrath: 5
+      Politoed: 5
+    prized:
+      Unown: forms
+      Azurill: prized
+    special: {}
+
+water:
+  morning: &water-morning
+    base:
+      Goomy: 12
+      Squirtle: 2
+      Poliwag: 20
+      Totodile: 2
+      Mudkip: 2
+    uncommon:
+      Dewpider: 22
+      Barboach: 25
+      Corphish: 25
+      Feebas: 10
+      Psyduck: 20
+      Slowpoke: 20
+      Goldeen: 20
+      Magikarp: 30
+      Wooper: 25
+      Marill: 20
+      Surskit: 25
+      Yanma: 5
+    rare:
+      Sliggoo: 5
+      Wartortle: 1
+      Poliwhirl: 5
+      Croconaw: 1
+      Marshtomp: 1
+    scarce:
+      Araquanid: 6
+      Whiscash: 8
+      Crawdaunt: 8
+      Golduck: 10
+      Slowbro: 10
+      Seaking: 10
+      Azumarill: 5
+      Slowking: 5
+      Masquerain: 10
+      Quagsire: 5
+      Bibarel: 10
+      Yanmega: 6
+    elusive:
+      Goodra: 3
+      BasculinBlue: 6
+      Basculin: 6
+      Poliwrath: 5
+      Feraligatr: 2
+      Politoed: 5
+      Swampert: 2
+    special: {}
+  day: *water-morning
+  evening: &water-evening
+    base:
+      Goomy: 12
+      Froakie: 2
+      Poliwag: 20
+    uncommon:
+      Dewpider: 22
+      Barboach: 25
+      Corphish: 25
+      Feebas: 10
+      Goldeen: 20
+      Magikarp: 30
+      Wooper: 25
+      Marill: 20
+      Yanma: 5
+    rare:
+      Sliggoo: 5
+      Frogadier: 2
+      Poliwhirl: 5
+    scarce:
+      Araquanid: 6
+      Whiscash: 8
+      Crawdaunt: 8
+      Seaking: 10
+      Azumarill: 5
+      Quagsire: 5
+      Bibarel: 10
+      Yanmega: 6
+    elusive:
+      Goodra: 3
+      Greninja: 2
+      BasculinBlue: 6
+      Basculin: 6
+      Poliwrath: 5
+      Politoed: 5
+    special: {}
+  night: *water-evening

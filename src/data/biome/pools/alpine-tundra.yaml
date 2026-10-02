@@ -1,0 +1,210 @@
+land:
+  morning:
+    base:
+      Scatterbug: 24
+      Machop: 20
+      Swinub: 25
+    uncommon:
+      VulpixAlola: 22
+      SandshrewAlola: 22
+      Bergmite: 24
+      Snorunt: 22
+      Bronzor: 20
+      Snover: 20
+    rare:
+      Spewpa: 8
+      Machoke: 5
+      Piloswine: 5
+    scarce:
+      NinetalesAlola: 6
+      SandslashAlola: 6
+      Crabominable: 6
+      Avalugg: 6
+      Glalie: 6
+      Bronzong: 6
+      Abomasnow: 6
+      Froslass: 6
+      Glaceon: 6
+    elusive:
+      Drampa: 5
+      Minior: 5
+      Vivillon: 5
+      Machamp: 5
+      Delibird: 5
+      Skarmory: 5
+      Lucario: 5
+      Mamoswine: 5
+    prized:
+      Unown: forms
+      Riolu: prized
+    special:
+      Dialga: 10
+      Palkia: 10
+    mythical:
+      Arceus: 10
+  day:
+    base:
+      Scatterbug: 24
+      Bagon: 3
+      Machop: 20
+      Swinub: 25
+    uncommon:
+      VulpixAlola: 22
+      SandshrewAlola: 22
+      Bergmite: 24
+      Snorunt: 22
+      Bronzor: 20
+      Snover: 20
+    rare:
+      Spewpa: 8
+      Shelgon: 1
+      Machoke: 5
+      Piloswine: 5
+    scarce:
+      NinetalesAlola: 6
+      SandslashAlola: 6
+      Crabominable: 6
+      Avalugg: 6
+      Glalie: 6
+      Bronzong: 6
+      Abomasnow: 6
+      Froslass: 6
+      Glaceon: 6
+    elusive:
+      Drampa: 5
+      Minior: 5
+      Vivillon: 5
+      Salamence: 2
+      Machamp: 5
+      Delibird: 5
+      Skarmory: 5
+      Lucario: 5
+      Mamoswine: 5
+    prized:
+      Unown: forms
+      Riolu: prized
+    special:
+      Dialga: 10
+      Palkia: 10
+    mythical:
+      Arceus: 10
+  evening:
+    base:
+      Bagon: 3
+      Swinub: 25
+    uncommon:
+      VulpixAlola: 22
+      SandshrewAlola: 22
+      Bergmite: 24
+      Snorunt: 22
+      Sneasel: 5
+      Bronzor: 20
+      Snover: 20
+    rare:
+      Shelgon: 1
+      Piloswine: 5
+    scarce:
+      NinetalesAlola: 6
+      SandslashAlola: 6
+      Crabominable: 6
+      Avalugg: 6
+      Glalie: 6
+      Bronzong: 6
+      Abomasnow: 6
+      Froslass: 6
+      Weavile: 6
+      Glaceon: 6
+    elusive:
+      Drampa: 5
+      Minior: 5
+      Cryogonal: 4
+      Salamence: 2
+      Delibird: 5
+      Absol: 5
+      Mamoswine: 5
+    prized:
+      Unown: forms
+    special:
+      Dialga: 10
+      Palkia: 10
+    mythical:
+      Arceus: 10
+  night:
+    base:
+      Swinub: 25
+    uncommon:
+      VulpixAlola: 22
+      SandshrewAlola: 22
+      Bergmite: 24
+      Snorunt: 22
+      Sneasel: 5
+      Bronzor: 20
+      Snover: 20
+    rare:
+      Piloswine: 5
+    scarce:
+      NinetalesAlola: 6
+      SandslashAlola: 6
+      Crabominable: 6
+      Avalugg: 6
+      Glalie: 6
+      Bronzong: 6
+      Abomasnow: 6
+      Froslass: 6
+      Weavile: 6
+      Glaceon: 6
+    elusive:
+      Drampa: 5
+      Minior: 5
+      Cryogonal: 4
+      Delibird: 5
+      Absol: 5
+      Mamoswine: 5
+    prized:
+      Unown: forms
+    special:
+      Dialga: 10
+      Palkia: 10
+      Mewtwo: 10
+    mythical:
+      Arceus: 10
+
+ice:
+  morning: &ice-morning
+    base:
+      Swinub: 25
+    uncommon:
+      Snorunt: 22
+    rare:
+      Piloswine: 5
+    scarce:
+      Glalie: 6
+      Froslass: 6
+      Glaceon: 6
+    elusive:
+      Mamoswine: 5
+      Delibird: 5
+    special: {}
+  day: *ice-morning
+  evening: &ice-evening
+    base:
+      Swinub: 25
+    uncommon:
+      Snorunt: 22
+      Sneasel: 5
+    rare:
+      Piloswine: 5
+    scarce:
+      Glalie: 6
+      Froslass: 6
+      Glaceon: 6
+      Weavile: 6
+    elusive:
+      Cryogonal: 4
+      Mamoswine: 5
+      Delibird: 5
+    special: {}
+  night: *ice-evening
+
+# The legendaries met wild in the caves under it
+cave-legends: { Mewtwo: 10 }

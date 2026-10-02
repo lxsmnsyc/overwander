@@ -1,0 +1,74 @@
+land:
+  morning: &land-morning
+    base:
+      Dratini: 4
+    uncommon: {}
+    rare:
+      Dragonair: 2
+    scarce: {}
+    elusive:
+      Dragonite: 2
+    prized:
+      Unown: forms
+    special:
+      Lugia: 10
+      Articuno: 10
+      HoOh: 10
+    mythical: {}
+  day: *land-morning
+  evening: *land-morning
+  night: *land-morning
+
+water:
+  morning: &water-morning
+    base:
+      Horsea: 20
+    uncommon:
+      Frillish: 20
+      Wailmer: 15
+      Tentacool: 20
+      Magikarp: 20
+      Chinchou: 20
+    rare: {}
+    scarce:
+      Jellicent: 5
+      Wailord: 4
+      Huntail: 5
+      Gorebyss: 5
+      Gyarados: 10
+      Lanturn: 10
+    elusive:
+      Lapras: 5
+      Relicanth: 5
+    special:
+      Kyogre: 10
+    mythical:
+      Manaphy: 10
+  day: *water-morning
+  evening: &water-evening
+    base:
+      Horsea: 20
+    uncommon:
+      Frillish: 20
+      Wailmer: 15
+      Tentacool: 20
+      Magikarp: 20
+      Chinchou: 20
+    rare: {}
+    scarce:
+      Jellicent: 5
+      Wailord: 4
+      Huntail: 5
+      Gorebyss: 5
+      Gyarados: 10
+      Lanturn: 10
+    elusive:
+      Lapras: 5
+    special:
+      Kyogre: 10
+    mythical:
+      Manaphy: 10
+  night: *water-evening
+
+# The legendaries met wild in the caves under it
+cave-legends: { Articuno: 10, Lugia: 10, Kyogre: 10 }

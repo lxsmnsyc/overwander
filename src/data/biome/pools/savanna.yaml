@@ -1,0 +1,213 @@
+land:
+  morning:
+    base:
+      FlabebeYellow: 24
+      Scatterbug: 24
+      NidoranF: 20
+      NidoranM: 20
+      Torchic: 2
+      Shinx: 25
+    uncommon:
+      Mudbray: 22
+      Growlithe: 10
+      Doduo: 20
+      Natu: 20
+      Sunkern: 25
+      Phanpy: 20
+      Taillow: 25
+      Electrike: 25
+      Girafarig: 5
+      Hippopotas: 20
+    rare:
+      FloetteYellow: 8
+      Spewpa: 8
+      Nidorina: 5
+      Nidorino: 5
+      Combusken: 1
+      Luxio: 5
+    scarce:
+      Mudsdale: 6
+      Arcanine: 5
+      Dodrio: 10
+      Swellow: 10
+      Manectric: 10
+      Xatu: 5
+      Sunflora: 5
+      Donphan: 5
+      Hippowdon: 6
+      Electivire: 6
+    elusive:
+      Komala: 5
+      Oricorio: 5
+      FlorgesYellow: 5
+      Vivillon: 5
+      Nidoqueen: 5
+      Nidoking: 5
+      Kangaskhan: 5
+      Tauros: 10
+      Blaziken: 2
+      Plusle: 8
+      Minun: 8
+      Zangoose: 8
+      Luxray: 4
+    prized:
+      Unown: forms
+    special: {}
+  day:
+    base:
+      FlabebeYellow: 24
+      Scatterbug: 24
+      Fennekin: 2
+      NidoranF: 20
+      NidoranM: 20
+      Rhyhorn: 20
+      Torchic: 2
+      Shinx: 25
+    uncommon:
+      Mudbray: 22
+      Ekans: 20
+      Growlithe: 10
+      Doduo: 20
+      Natu: 20
+      Sunkern: 25
+      Phanpy: 20
+      Taillow: 25
+      Electrike: 25
+      Girafarig: 5
+      Hippopotas: 20
+    rare:
+      FloetteYellow: 8
+      Spewpa: 8
+      Braixen: 2
+      Nidorina: 5
+      Nidorino: 5
+      Combusken: 1
+      Rhydon: 10
+      Luxio: 5
+    scarce:
+      Mudsdale: 6
+      Arbok: 10
+      Arcanine: 5
+      Dodrio: 10
+      Swellow: 10
+      Manectric: 10
+      Xatu: 5
+      Sunflora: 5
+      Donphan: 5
+      Hippowdon: 6
+      Electivire: 6
+    elusive:
+      Komala: 5
+      Oricorio: 5
+      FlorgesYellow: 5
+      Vivillon: 5
+      Delphox: 2
+      Nidoqueen: 5
+      Nidoking: 5
+      Kangaskhan: 5
+      Tauros: 10
+      Blaziken: 2
+      Plusle: 8
+      Minun: 8
+      Zangoose: 8
+      Luxray: 4
+    prized:
+      Unown: forms
+    special: {}
+  evening:
+    base:
+      Fennekin: 2
+      NidoranF: 20
+      NidoranM: 20
+      Shinx: 25
+    uncommon:
+      Mudbray: 22
+      Ekans: 20
+      Houndour: 20
+      Poochyena: 20
+      Girafarig: 5
+      Hippopotas: 20
+    rare:
+      Braixen: 2
+      Nidorina: 5
+      Nidorino: 5
+      Luxio: 5
+    scarce:
+      Mudsdale: 6
+      Arbok: 10
+      Mightyena: 10
+      Houndoom: 5
+      Hippowdon: 6
+      Electivire: 6
+    elusive:
+      Komala: 5
+      Delphox: 2
+      Nidoqueen: 5
+      Nidoking: 5
+      Seviper: 8
+      Luxray: 4
+    prized:
+      Unown: forms
+    special: {}
+  night:
+    base:
+      NidoranF: 20
+      NidoranM: 20
+      Shinx: 25
+    uncommon:
+      Mudbray: 22
+      Ekans: 20
+      Houndour: 20
+      Poochyena: 20
+      Girafarig: 5
+      Hippopotas: 20
+    rare:
+      Nidorina: 5
+      Nidorino: 5
+      Luxio: 5
+    scarce:
+      Mudsdale: 6
+      Arbok: 10
+      Mightyena: 10
+      Houndoom: 5
+      Hippowdon: 6
+      Electivire: 6
+    elusive:
+      Komala: 5
+      Nidoqueen: 5
+      Nidoking: 5
+      Seviper: 8
+      Luxray: 4
+    prized:
+      Unown: forms
+    special: {}
+
+water:
+  morning: &water-morning
+    base: {}
+    uncommon:
+      Magikarp: 30
+      Barboach: 25
+      Wooper: 25
+      Psyduck: 20
+    rare: {}
+    scarce:
+      Whiscash: 8
+      Quagsire: 5
+      Golduck: 10
+      Gyarados: 4
+    special: {}
+  day: *water-morning
+  evening: &water-evening
+    base: {}
+    uncommon:
+      Magikarp: 30
+      Barboach: 25
+      Wooper: 25
+    rare: {}
+    scarce:
+      Whiscash: 8
+      Quagsire: 5
+      Gyarados: 4
+    special: {}
+  night: *water-evening

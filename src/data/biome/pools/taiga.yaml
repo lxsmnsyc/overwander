@@ -1,0 +1,109 @@
+land:
+  morning: &land-morning
+    base:
+      FlabebeWhite: 24
+    uncommon:
+      Stantler: 5
+      Snover: 20
+    rare:
+      FloetteWhite: 8
+      Ursaring: 5
+    scarce:
+      Abomasnow: 6
+    elusive:
+      FlorgesWhite: 5
+      Pachirisu: 8
+      Snorlax: 5
+    prized:
+      Unown: forms
+    special:
+      Reshiram: 10
+      Zekrom: 10
+      Uxie: 10
+      Regice: 10
+  day: *land-morning
+  evening:
+    base: {}
+    uncommon:
+      Vulpix: 10
+      Stantler: 5
+      Snover: 20
+    rare: {}
+    scarce:
+      Ninetales: 5
+      Abomasnow: 6
+    elusive:
+      Pachirisu: 8
+      Jynx: 5
+      Snorlax: 5
+    prized:
+      Unown: forms
+      Smoochum: prized
+    special:
+      Reshiram: 10
+      Zekrom: 10
+      Uxie: 10
+      Regice: 10
+  night:
+    base: {}
+    uncommon:
+      Vulpix: 10
+      Paras: 20
+      Stantler: 5
+      Snover: 20
+    rare: {}
+    scarce:
+      Ninetales: 5
+      Parasect: 10
+      Abomasnow: 6
+    elusive:
+      Pachirisu: 8
+      Jynx: 5
+      Snorlax: 5
+    prized:
+      Unown: forms
+      Smoochum: prized
+    special:
+      Reshiram: 10
+      Zekrom: 10
+      Uxie: 10
+      Regice: 10
+
+ice:
+  morning: &ice-morning
+    base:
+      Swinub: 25
+    uncommon:
+      Seel: 20
+    rare:
+      Piloswine: 5
+    scarce:
+      Dewgong: 10
+      Glaceon: 6
+    elusive:
+      Mamoswine: 5
+      Delibird: 5
+    special:
+      Uxie: 10
+  day: *ice-morning
+  evening: &ice-evening
+    base:
+      Swinub: 25
+    uncommon:
+      Seel: 20
+      Sneasel: 5
+    rare:
+      Piloswine: 5
+    scarce:
+      Dewgong: 10
+      Glaceon: 6
+      Weavile: 6
+    elusive:
+      Mamoswine: 5
+      Delibird: 5
+    special:
+      Uxie: 10
+  night: *ice-evening
+
+# The legendaries met wild in the caves under it
+cave-legends: { Regice: 10 }

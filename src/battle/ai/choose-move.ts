@@ -30,7 +30,7 @@ import resolveMoveTargets from '../mechanics/move/targeting';
 import { ACCURACY_PENALTY, BASE_SCORE, KILL_BONUS, STEP_PENALTY, USELESS_PENALTY } from './score';
 import { SELF_STATUS_MOVES } from '../moves/status';
 import type Unit from '../unit';
-import { withAIContext } from './context';
+import { getAIContext, reaches, withAIContext } from './context';
 import setupFog from './fog';
 import setupCoordination from './coordination';
 import setupRoleScoring from './role-score';
@@ -202,6 +202,73 @@ function collectTargets(battle: Battle, source: Unit, move: Moves): MoveTarget[]
   return targets;
 }
 
+/** A cooling move and how soon it is ready */
+export interface CoolingChoice extends AIMoveChoice {
+  /** Milliseconds until it comes off cooldown */
+  ready: number;
+}
+
+/**
+ * The best move still cooling that will be ready within `horizon`
+ * milliseconds, weighed as though it were ready now. What a trainer
+ * compares against acting at once
+ */
+export function bestCoolingMove(
+  battle: Battle,
+  source: Unit,
+  horizon: number,
+): CoolingChoice | undefined {
+  return withAIContext(battle, source, () => {
+    let best: CoolingChoice | undefined;
+
+    for (const state of Object.values(source.moves)) {
+      // oxlint-disable-next-line typescript/no-unnecessary-condition
+      if (!state || state.disabled || state.cooldown == null) {
+        continue;
+      }
+
+      const ready = state.cooldown.duration - state.cooldown.progress;
+
+      if (ready > horizon) {
+        continue;
+      }
+      for (const target of collectTargets(battle, source, state.move)) {
+        if (isMoveUsable(battle, source, state.move, target)) {
+          const score = scoreMove(battle, source, state.move, target);
+
+          if (best == null || score > best.score) {
+            best = { move: state.move, target, score, ready };
+          }
+        }
+      }
+    }
+    return best;
+  });
+}
+
+/**
+ * A usable move and target picked at random, as a trainer that misplays
+ * throws it. Moves still cooling are left out
+ */
+export function randomMove(battle: Battle, source: Unit): AIMoveChoice | undefined {
+  return withAIContext(battle, source, () => {
+    const options: AIMoveChoice[] = [];
+
+    for (const state of Object.values(source.moves)) {
+      // oxlint-disable-next-line typescript/no-unnecessary-condition
+      if (!state || state.disabled || state.cooldown != null) {
+        continue;
+      }
+      for (const target of collectTargets(battle, source, state.move)) {
+        if (isMoveUsable(battle, source, state.move, target)) {
+          options.push({ move: state.move, target, score: BASE_SCORE });
+        }
+      }
+    }
+    return options.length === 0 ? undefined : options[Math.floor(battle.random() * options.length)];
+  });
+}
+
 /** Callers in the middle of being weighed, so one that calls another stops there */
 const weighing = new Set<Moves>();
 
@@ -351,12 +418,43 @@ export function setupChooseMoveAI(battle: Battle): void {
     if (damage <= 0) {
       return undefined;
     }
-    if (damage >= target.health) {
+
+    // What friends already have on the way counts against the target
+    // first: a foe they will finish needs nothing more, and one they
+    // leave standing is finished by less
+    const left = target.health - queuedDamage(source, target);
+
+    if (left <= 0) {
+      return 0;
+    }
+    if (damage >= left) {
       // Gen 4 "try to KO" bonus, and more for getting there first
       const priority = source.checkMovePriority(move, { type: MoveTargetType.Unit, unit: target });
       return KILL_BONUS + (priority > 0 ? PRIORITY_KILL_BONUS : 0);
     }
-    return Math.floor((DAMAGE_SCALE * damage) / target.health);
+    return Math.floor((DAMAGE_SCALE * damage) / left);
+  }
+
+  /**
+   * The damage friends are already winding up at a target. A cast is on
+   * show, so this is what the team knows is on its way
+   */
+  function queuedDamage(source: Unit, target: Unit): number {
+    let total = 0;
+
+    for (const friend of getAIContext(battle, source).friends()) {
+      const cast = friend.casting;
+
+      if (
+        friend !== source &&
+        cast != null &&
+        getMoveData(cast.move).category !== MoveCategories.Status &&
+        reaches(friend, cast.move, cast.target, target)
+      ) {
+        total += estimateDamage(friend, cast.move, target);
+      }
+    }
+    return total;
   }
 
   /**

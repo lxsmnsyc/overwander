@@ -314,7 +314,8 @@ already covers:
 - the same veil, tailwind or team guard over the same team;
 - the same weather, terrain or room over the field;
 - the same hazard on the same side, except Spikes and Toxic Spikes, which stack;
-- an affliction at a foe a friend is already afflicting.
+- the same status at a foe a friend is already giving it, since different
+  statuses stack.
 
 A cast is on show, so reading it is no peek. Only casts still winding up are
 read; a move already in flight for its last quarter of a second is not.

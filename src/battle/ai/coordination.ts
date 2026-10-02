@@ -1,5 +1,6 @@
 import { AttackPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
+import { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
 import {
   BattleEvents,
@@ -7,6 +8,7 @@ import {
   type MoveTarget,
   MoveTargetType,
 } from '../events';
+import { STATUS_MOVES } from '../moves/status';
 import type Unit from '../unit';
 import { getAIContext } from './context';
 import { MoveRole, getMoveRoles } from './roles';
@@ -23,6 +25,16 @@ function sameTarget(a: MoveTarget, b: MoveTarget): boolean {
     default:
       return b.type === MoveTargetType.None;
   }
+}
+
+/** The afflictions cast through their own machinery rather than the status table */
+const MARKS = new Map<Moves, Statuses>([
+  [Moves.LeechSeed, Statuses.Seeding],
+  [Moves.Nightmare, Statuses.Nightmared],
+]);
+
+function statusOf(move: Moves): Statuses | undefined {
+  return STATUS_MOVES[move] ?? MARKS.get(move);
 }
 
 function hasRole(move: Moves, role: MoveRole): boolean {
@@ -51,17 +63,16 @@ function covered(event: CheckUnitAIMoveUsableEvent, friend: Unit): boolean {
     ) {
       return friend.team === event.source.team;
     }
-    return hasRole(move, MoveRole.Field) || (hasRole(move, MoveRole.Hazard) && !LAYERED.has(move));
+    if (hasRole(move, MoveRole.Field) || (hasRole(move, MoveRole.Hazard) && !LAYERED.has(move))) {
+      return true;
+    }
   }
 
-  // A foe takes one affliction at a time: a second one wound up at the
-  // same target would find it taken
-  return (
-    hasRole(move, MoveRole.Status) &&
-    hasRole(cast.move, MoveRole.Status) &&
-    event.target.type === MoveTargetType.Unit &&
-    sameTarget(cast.target, event.target)
-  );
+  // Statuses stack, so only the same one wound up at the same target
+  // would find it taken
+  const status = statusOf(move);
+
+  return status != null && statusOf(cast.move) === status && sameTarget(cast.target, event.target);
 }
 
 /**

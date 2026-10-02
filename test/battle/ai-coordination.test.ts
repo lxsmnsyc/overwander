@@ -82,8 +82,22 @@ describe('teammates casting over each other', () => {
 
     friend.cast(Moves.Toxic, unitTarget(foe));
 
-    expect(usableMove(battle, unit, Moves.ThunderWave, unitTarget(foe))).toBe(false);
-    expect(usableMove(battle, unit, Moves.ThunderWave, unitTarget(other))).toBe(true);
+    expect(usableMove(battle, unit, Moves.Toxic, unitTarget(foe))).toBe(false);
+    expect(usableMove(battle, unit, Moves.Toxic, unitTarget(other))).toBe(true);
+    // A different affliction stacks on top
+    expect(usableMove(battle, unit, Moves.ThunderWave, unitTarget(foe))).toBe(true);
+  });
+
+  it('counts two moves for one status as the same affliction', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    const unit = createUnit(battle, teamA);
+    const friend = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+    friend.addMove(Moves.SleepPowder);
+
+    friend.cast(Moves.SleepPowder, unitTarget(foe));
+
+    expect(usableMove(battle, unit, Moves.Spore, unitTarget(foe))).toBe(false);
   });
 
   it('still adds a layer of Spikes over a teammate’s', () => {

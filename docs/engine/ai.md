@@ -316,6 +316,12 @@ already covers:
 - the same hazard on the same side, except Spikes and Toxic Spikes, which stack;
 - the same status at a foe a friend is already giving it, since different
   statuses stack.
+- the same restriction or change at the same foe: Mean Look and Block, Foresight
+  and Odor Sleuth, Embargo, Soak, a Ghost's Curse and the like;
+- Helping Hand for a partner a friend is already helping;
+- a second Follow Me or Rage Powder, since only one unit draws the hits;
+- a second Heal Bell or Aromatherapy for the same party;
+- a second Perish Song, Haze or Fairy Lock, whose first does the whole job.
 
 A cast is on show, so reading it is no peek. Only casts still winding up are
 read; a move already in flight for its last quarter of a second is not.

@@ -9,6 +9,7 @@ import {
 import Team from '../../src/battle/team';
 import type Unit from '../../src/battle/unit';
 import { unitTarget } from '../../src/battle/utils';
+import { Types } from '../../src/data/constants/types';
 import { Moves } from '../../src/data/ids/moves';
 import { type BattleHarness, createBattle, createUnit, pinRandom } from './harness';
 
@@ -98,6 +99,67 @@ describe('teammates casting over each other', () => {
     friend.cast(Moves.SleepPowder, unitTarget(foe));
 
     expect(usableMove(battle, unit, Moves.Spore, unitTarget(foe))).toBe(false);
+  });
+
+  it('leaves a foe to the restriction a teammate is already winding up', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    const unit = createUnit(battle, teamA, [Types.Ghost]);
+    const foe = createUnit(battle, teamB);
+    const other = createUnit(battle, teamB);
+
+    for (const [cast, mine] of [
+      [Moves.Embargo, Moves.Embargo],
+      [Moves.Soak, Moves.Soak],
+      [Moves.MeanLook, Moves.Block],
+      [Moves.Foresight, Moves.OdorSleuth],
+      [Moves.Curse, Moves.Curse],
+    ] as const) {
+      const friend = createUnit(battle, teamA, [Types.Ghost]);
+      friend.addMove(cast);
+      expect(usableMove(battle, unit, mine, unitTarget(foe))).toBe(true);
+      friend.cast(cast, unitTarget(foe));
+
+      expect(usableMove(battle, unit, mine, unitTarget(foe))).toBe(false);
+      expect(usableMove(battle, unit, mine, unitTarget(other))).toBe(true);
+    }
+  });
+
+  it('lends one hand to a partner and leaves a party-wide move to the first', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    const unit = createUnit(battle, teamA);
+    const partner = createUnit(battle, teamA);
+    createUnit(battle, teamB);
+    const none: MoveTarget = { type: MoveTargetType.None };
+
+    for (const [cast, target, mine] of [
+      [Moves.HelpingHand, unitTarget(partner), Moves.HelpingHand],
+      [Moves.FollowMe, none, Moves.RagePowder],
+      [Moves.HealBell, none, Moves.Aromatherapy],
+      [Moves.Haze, none, Moves.Haze],
+      [Moves.TeeterDance, none, Moves.TeeterDance],
+    ] as const) {
+      const friend = createUnit(battle, teamA);
+      friend.addMove(cast);
+      expect(usableMove(battle, unit, mine, target), `${mine}`).toBe(true);
+      friend.cast(cast, target);
+
+      expect(usableMove(battle, unit, mine, target)).toBe(false);
+    }
+  });
+
+  it('leaves the song to whoever sings first', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    const unit = createUnit(battle, teamA);
+    const friend = createUnit(battle, teamA);
+    for (let i = 0; i < 3; i++) {
+      createUnit(battle, teamB);
+    }
+    const none: MoveTarget = { type: MoveTargetType.None };
+    friend.addMove(Moves.PerishSong);
+
+    expect(usableMove(battle, unit, Moves.PerishSong, none)).toBe(true);
+    friend.cast(Moves.PerishSong, none);
+    expect(usableMove(battle, unit, Moves.PerishSong, none)).toBe(false);
   });
 
   it('still adds a layer of Spikes over a teammate’s', () => {

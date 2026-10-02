@@ -61,7 +61,7 @@ import {
 import { type ItemStack, getItemBand } from '../../../data/overworld/item-pool';
 import Landmark, { LANDMARK_NAMES } from '../../../data/overworld/landmark';
 import Npc from '../../../data/overworld/npc';
-import { NPC_VISIT_TAGS, npcName } from '../../../npcs';
+import { NPC_VISIT_TAGS, npcName } from '../../../overworld/npcs';
 import type { GymSeatStanding } from '../../../auth/gym-seat-record';
 import { enterGymSeat } from '../../../auth/gym-seats';
 import { type LandmarkStandings, readLandmarkStandings } from '../../../auth/landmark-standings';

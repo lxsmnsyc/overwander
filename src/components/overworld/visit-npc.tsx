@@ -2,7 +2,7 @@ import { type InventoryEntry, getInventory } from '../../auth/inventory';
 import { hasVisited } from '../../auth/npcs';
 import { getProfile } from '../../auth/profile';
 import type Npc from '../../data/ids/npcs';
-import { type NpcVisit, getNpc } from '../../npcs';
+import { type NpcVisit, getNpc } from '../../overworld/npcs';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
 import { type ConversationHandle, converse } from '../forms/conversation';
 import { HeadingPortrait } from '../forms/terms';

@@ -1,6 +1,6 @@
 import 'server-only';
 import Npc from '../../data/overworld/npc';
-import { TRADERS } from '../../npcs';
+import { TRADERS } from '../../overworld/npcs';
 import { VENDOR_TRADE_LIMIT, sellPrice } from '../../data/overworld/vendor';
 import type { Items } from '../../data/ids/items';
 import { getItemData } from '../../data/items';

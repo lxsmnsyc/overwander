@@ -3,7 +3,7 @@ name: action-forms
 description: >
   A dialog that asks the player something and hands an answer back is an
   action form: `openForm(Form, input)` from anywhere, awaited, null when the
-  player walks away. An NPC is one folder under `src/npcs`: `createNpc` in its
+  player walks away. An NPC is one folder under `src/overworld/npcs`: `createNpc` in its
   `index.ts` and the script it loads, which talks through a conversation of
   forms. Applies when adding a question dialog, an NPC, or changing what an
   NPC does.
@@ -30,10 +30,10 @@ open on and the one `FormHost` the app draws them in.
 
 ## NPCs
 
-- One folder per role under `src/npcs`. `index.ts` is
+- One folder per role under `src/overworld/npcs`. `index.ts` is
   `createNpc(Npc.X, { name, description, quote, spent, sprites, visit, wanders,
   shop, interact: () => import('./interact') })`, and `interact.tsx` beside it
-  is the script. Add the folder to the `Record` in `src/npcs/index.ts`.
+  is the script. Add the folder to the `Record` in `src/overworld/npcs/index.ts`.
 - `interact` stays a loader. The server and world generation read the
   definitions, and a static import would hand them every form and picker the
   script asks through.

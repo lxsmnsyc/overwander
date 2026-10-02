@@ -1,6 +1,6 @@
 import { readOnly } from '../utils/server-calls';
 import Landmark from '../data/overworld/landmark';
-import { NPC_VISIT_TAGS } from '../npcs';
+import { NPC_VISIT_TAGS } from '../overworld/npcs';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
 import { RaidKind, raidId } from './raid-record';
 import { seatId } from './gym-seat-record';

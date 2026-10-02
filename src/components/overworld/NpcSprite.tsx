@@ -1,6 +1,6 @@
 import type { JSX } from 'solid-js';
 import type Npc from '../../data/overworld/npc';
-import { npcSheet } from '../../npcs';
+import { npcSheet } from '../../overworld/npcs';
 import TrainerSprite from '../sprites/TrainerSprite';
 
 /**

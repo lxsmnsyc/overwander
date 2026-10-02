@@ -52,7 +52,7 @@ import { isFossil } from '../../../src/data/items/fossils';
 import Landmark from '../../../src/data/overworld/landmark';
 import { getPortalCell, portalInRegion } from '../../../src/overworld/portal';
 import Npc, { TRADER_OFFERS } from '../../../src/data/overworld/npc';
-import { NPCS, TRADERS, npcSheet, npcSheets } from '../../../src/npcs';
+import { NPCS, TRADERS, npcSheet, npcSheets } from '../../../src/overworld/npcs';
 import Phenomenon, {
   getPhenomenonGroups,
   getPhenomenonItems,

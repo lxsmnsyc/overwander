@@ -38,7 +38,7 @@ import { previewSnapshot } from '../../auth/catch-snapshot';
 import { getProfileBatched } from '../../auth/profile';
 import { type TeamSnapshotRecord, getTeamSnapshotBatched } from '../../auth/teams';
 import Npc from '../../data/overworld/npc';
-import { npcName } from '../../npcs';
+import { npcName } from '../../overworld/npcs';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import TeamStrip from '../catches/TeamStrip';

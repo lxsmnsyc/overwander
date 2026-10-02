@@ -3,7 +3,7 @@ import { type JSX, Show, createEffect, createSignal } from 'solid-js';
 import type { StopRecord } from '../../auth/stop-record';
 import { startStopBattle } from '../../auth/stops';
 import Npc from '../../data/overworld/npc';
-import { getNpc, npcName, npcSheet } from '../../npcs';
+import { getNpc, npcName, npcSheet } from '../../overworld/npcs';
 import { getSpeciesData } from '../../data/species';
 import {
   FRONTIER_PARTY_LEVELS,

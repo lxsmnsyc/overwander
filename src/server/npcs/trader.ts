@@ -5,7 +5,7 @@ import { Metric } from '../../auth/quest-record';
 import { Balls, type Items } from '../../data/ids/items';
 import type { Species } from '../../data/ids/species';
 import Npc from '../../data/overworld/npc';
-import { npcName } from '../../npcs';
+import { npcName } from '../../overworld/npcs';
 import { settleHandover } from '../../data/species';
 import { deriveTraderPokemon, paysForOffer } from '../../overworld/trader';
 import { isEggRecord, isFavoriteRecord, isGuardedRecord, withoutHeld } from '../catch-fields';

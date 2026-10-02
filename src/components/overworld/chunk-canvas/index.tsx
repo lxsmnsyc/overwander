@@ -85,7 +85,7 @@ import { getBlocker } from '../../../data/overworld/decoration';
 import Landmark from '../../../data/overworld/landmark';
 import Phenomenon from '../../../data/overworld/phenomenon';
 import Npc from '../../../data/overworld/npc';
-import { npcSheet } from '../../../npcs';
+import { npcSheet } from '../../../overworld/npcs';
 import facingToward from '../../../canvas/facing';
 import type OWCharSprite from '../../../canvas/ow-char-sprite';
 import type Strangers from '../../../overworld/strangers';

@@ -20,7 +20,7 @@ import { CAVERN } from '../../../canvas/sky';
 import { asOffset, getLocalOffset } from '../../../auth/local-time';
 import Biome, { isIceBiome } from '../../../data/ids/biome';
 import Landmark from '../../../data/overworld/landmark';
-import { NPC_VISIT_TAGS } from '../../../npcs';
+import { NPC_VISIT_TAGS } from '../../../overworld/npcs';
 import { CHARSETS, FREE_CHARSETS } from '../../../data/overworld/charsets';
 import { getSpeciesData } from '../../../data/species';
 import { isFeaturedSpecies } from '../../../data/species/day';

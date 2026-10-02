@@ -47,7 +47,7 @@ one that covers what you are about to do:
 - `trigger-driven-abilities` - ability effects that do not mutate their
   detection event ride `UnitTriggerAbility` at `Exact` priority.
 - `action-forms` - a dialog that asks something is a form opened with
-  `openForm` and awaited; an NPC is a folder under `src/npcs` whose
+  `openForm` and awaited; an NPC is a folder under `src/overworld/npcs` whose
   `createNpc` names who they are and lazily loads the script that talks
   through a conversation of forms, and the server still decides.
 - `changesets` - every change against `main` ships with one, and a fix for

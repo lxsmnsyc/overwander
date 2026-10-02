@@ -28,7 +28,7 @@ import {
   npcName,
   npcSheet,
   npcSheets,
-} from '../../src/npcs';
+} from '../../src/overworld/npcs';
 import {
   getBaseForms,
   getLevelUpMoves,

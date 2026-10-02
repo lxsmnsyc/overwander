@@ -1,7 +1,7 @@
 /**
  * The people who stand at the world's people landmarks, by role. What
  * each one is called, says and wears is in
- * `src/npcs`, one folder each
+ * `src/overworld/npcs`, one folder each
  */
 const enum Npc {
   /**

@@ -9,6 +9,7 @@ import abilityCueFor, {
   statusCueFor,
   statusTriggerFor,
 } from '../../../canvas/battle/cues';
+import morphCue from '../../../canvas/battle/cues/morph';
 import pixelRatio from '../../../canvas/ratio';
 import createTwist from '../../../canvas/twist';
 import createLongPress from '../../styled/long-press';
@@ -21,7 +22,8 @@ import {
   moveEffectVisual,
   moveMissVisual,
 } from '../../../canvas/battle/moves';
-import type { FieldPoint, FieldView } from '../../../canvas/battle/field';
+import { type FieldPoint, type FieldView, unprojectField } from '../../../canvas/battle/field';
+import { shortestTurn } from '../../../canvas/board';
 import loadTerrainTiles, { TERRAIN_TILE } from '../../../canvas/terrain-tiles';
 import drawFloor, { type Arena, type FloorRegion, type FloorTile, drawGroundShade } from './floor';
 import createBattleScene from '../../../canvas/three/battle-scene';
@@ -70,7 +72,16 @@ import {
   unitsOf,
 } from './field';
 import { type CastLabels, interruptCast, trackCast } from './cast-label';
-import { COLORS, FIELD_UNIT, HEIGHT, JOLT_BEAT, LOADING_LABEL, TURN_SLOP, WIDTH } from './metrics';
+import {
+  COLORS,
+  FIELD_UNIT,
+  HEIGHT,
+  JOLT_BEAT,
+  LOADING_LABEL,
+  TURN_DEAD_ZONE,
+  TURN_SLOP,
+  WIDTH,
+} from './metrics';
 import {
   CUE_GAP,
   type Casting,
@@ -329,6 +340,8 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
    * signal: the frame that changes it is the frame that redraws
    */
   let yaw = 0;
+  /** The camera the last frame was drawn from, for reading the ground under the pointer */
+  let looked: FieldView | null = null;
 
   /**
    * One animation per unit, keyed by what that unit currently looks
@@ -393,6 +406,9 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
    */
   const [loading, setLoading] = createSignal(true);
 
+  /** Plays the form change's light on a unit, once the field is up to draw it */
+  let morphed: ((unit: Unit) => void) | null = null;
+
   const spriteFor = (unit: Unit): SpeciesSpriteAnimation | null => {
     const known = sprites.get(unit);
 
@@ -433,6 +449,7 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
             waiting.sprite = loaded;
             if (waiting.from != null) {
               waiting.morphAt = clock;
+              morphed?.(unit);
             }
           }
         })
@@ -575,7 +592,10 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
         sized = { width, height, ratio };
       }
 
-      const scale = Math.min(width / WIDTH, height / HEIGHT);
+      // Fitted to the height. A phone held upright is narrow, and fitting
+      // the width there left the fight a strip across the middle of a
+      // tall screen; the field runs on past the sides instead
+      const scale = height / HEIGHT;
 
       context.setTransform(ratio, 0, 0, ratio, 0, 0);
       // Cleared rather than filled: the field's own colour is the
@@ -649,6 +669,7 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
         unit: FIELD_UNIT * lobbyCamera(field.teams.length).zoom,
         yaw,
       };
+      looked = view;
       // The ground the fight is standing on, under everything on it:
       // a few hundred tiles laid on a tilted plane, which a 2D context
       // charges a transform and a blit apiece for
@@ -898,6 +919,10 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
     /** Put a picture on the field. */
     const paint = (visual: FieldVisual, source: Unit, targets: Unit[]): void => {
       casting.push({ source, targets, visual });
+    };
+
+    morphed = (unit) => {
+      paint(morphCue(), unit, []);
     };
 
     // A move announces itself when it fires, and its picture is built
@@ -1375,7 +1400,7 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
     // Dragging the field round, for whoever is only watching it. A
     // pointer that started on the canvas keeps turning it wherever it
     // goes, so a drag that runs off the edge does not stick
-    let turning: number | null = null;
+    let turning: { pointer: number; angle: number; clientX: number; clientY: number } | null = null;
     /**
      * Two fingers doing the same job. A phone has the drag already:
      * one finger down is a press on a pokemon, and it is only the
@@ -1390,20 +1415,46 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
     let turned = false;
 
     /**
+     * A point on the page in the drawing's own coordinates. The field
+     * is centred in a canvas the size of the page, so the margins are
+     * stage offset rather than stretched picture
+     */
+    const drawingAt = (event: MouseEvent): { x: number; y: number } => {
+      const bounds = element.getBoundingClientRect();
+
+      return {
+        x: (event.clientX - bounds.left - stage.offsetX) / stage.scale,
+        y: (event.clientY - bounds.top - stage.offsetY) / stage.scale,
+      };
+    };
+
+    /**
+     * Which way round the middle of the field a point under the pointer
+     * lies, as the camera at `heading` sees it. Null over the sky, and
+     * near the middle, where a pixel would swing the field half a turn
+     */
+    const bearingAt = (event: MouseEvent, heading: number): number | null => {
+      if (looked == null) {
+        return null;
+      }
+
+      const { x, y } = drawingAt(event);
+      const point = unprojectField(x, y, { ...looked, yaw: heading });
+
+      if (point == null || Math.hypot(point.x, point.z) < TURN_DEAD_ZONE) {
+        return null;
+      }
+      return Math.atan2(point.z, point.x);
+    };
+
+    /**
      * Which pokemon the pointer is over, from where they were last
      * drawn. The last match wins: `placed` is painted back to front,
      * so on a crowded field that is the one in front — the one it
      * looks like the pointer is over
      */
     const under = (event: PointerEvent | MouseEvent): Slot | null => {
-      const bounds = element.getBoundingClientRect();
-
-      if (bounds.width <= 0 || bounds.height <= 0) {
-        return null;
-      }
-
-      const x = ((event.clientX - bounds.left) / bounds.width) * WIDTH;
-      const y = ((event.clientY - bounds.top) / bounds.height) * HEIGHT;
+      const { x, y } = drawingAt(event);
       let found: Slot | null = null;
 
       for (const slot of placed) {
@@ -1422,16 +1473,16 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
      */
     const spotOf = (slot: Slot): UnitSpot => {
       const bounds = element.getBoundingClientRect();
-      const scaleX = bounds.width / WIDTH;
-      const scaleY = bounds.height / HEIGHT;
+      const left = bounds.left + stage.offsetX;
+      const top = bounds.top + stage.offsetY;
       const box = boxOf(slot);
 
       return {
-        x: bounds.left + (box == null ? slot.x : box.left + box.width / 2) * scaleX,
-        top: bounds.top + (box == null ? slot.y - slot.radius * 2 : box.top) * scaleY,
+        x: left + (box == null ? slot.x : box.left + box.width / 2) * stage.scale,
+        top: top + (box == null ? slot.y - slot.radius * 2 : box.top) * stage.scale,
         // Under the feet, where the bars are: a card dropped below a
         // pokemon should clear what it is standing on
-        bottom: bounds.top + (slot.y + 16) * scaleY,
+        bottom: top + (slot.y + 16) * stage.scale,
       };
     };
 
@@ -1493,7 +1544,21 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
         return;
       }
       event.preventDefault();
-      turning = event.clientX;
+
+      // A point on the ground is taken hold of, the way the overworld
+      // board is: the field then turns about its middle to keep that
+      // point under the pointer
+      const angle = bearingAt(event, 0);
+
+      if (angle == null) {
+        return;
+      }
+      turning = {
+        pointer: event.pointerId,
+        angle: angle - yaw,
+        clientX: event.clientX,
+        clientY: event.clientY,
+      };
       element.setPointerCapture(event.pointerId);
     };
 
@@ -1510,7 +1575,7 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
         return;
       }
       held.onPointerMove(event);
-      if (turning == null) {
+      if (turning?.pointer !== event.pointerId) {
         // A finger sliding over a pokemon is not pointing at it, and
         // the hold above is what asks about one
         if (event.pointerType !== 'touch') {
@@ -1523,16 +1588,20 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       if (hovered != null) {
         report(null);
       }
-      // A drag across the whole width is one turn all the way round,
-      // which is slow enough to aim and quick enough to get behind
-      // something without letting go
       // A pointer that has barely moved was aiming rather than
       // turning: the pick under it still stands
-      if (Math.abs(event.clientX - turning) > TURN_SLOP) {
+      if (
+        Math.hypot(event.clientX - turning.clientX, event.clientY - turning.clientY) > TURN_SLOP
+      ) {
         turned = true;
       }
-      yaw += ((event.clientX - turning) / Math.max(1, element.clientWidth)) * Math.PI * 2;
-      turning = event.clientX;
+
+      const seen = bearingAt(event, 0);
+
+      if (seen == null) {
+        return;
+      }
+      yaw += shortestTurn(yaw, seen - turning.angle);
       draw();
     };
 
@@ -1586,6 +1655,7 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
     draw();
 
     onCleanup(() => {
+      morphed = null;
       scene?.dispose();
       scene = null;
       element.removeEventListener('contextmenu', menu);

@@ -1,5 +1,74 @@
 # overwander
 
+## 4.27.0
+
+### Minor Changes
+
+- 7aae3e0: - Five new true shadows: XD-243, XD-244, XD-245, XD-249 and XD-250, the shadows of Raikou, Entei, Suicune, Lugia and Ho-Oh.
+  - Like the others, each has 10 more points on every stat than its counterpart and can never be purified.
+  - They appear only on a Dark Day: in the special band of the wild pool, and in the shadow lairs of their counterparts.
+- 9d655f8: Diantha holds Kalos's crown:
+  
+  - She asks to see Malva, Siebold, Wikstrom and Drasna beaten first, and pays the Kalos Champion title along with her coat.
+  - Her six are the ones she defends Kalos with, Gardevoir last, and she brings both of Kalos's fossils.
+- 6d602b6: Kalos's Elite Four hold seats now:
+  
+  - Malva on fire, Siebold on water, Wikstrom on steel and Drasna on dragons.
+  - Each asks to see Kalos's eight badges before they will fight, and is seated in the countries their type lives in.
+  - Wikstrom is the first steel member of any Elite Four.
+  - Malva, Siebold and Wikstrom are drawn by Taiga.
+- a0c6df5: Kalos's gym leaders keep gyms now:
+  
+  - Viola, Grant, Korrina, Ramos, Clemont, Valerie, Olympia and Wulfric, each seated in the countries their type lives in.
+  - Eight new badges: Bug, Cliff, Rumble, Plant, Voltage, Fairy, Psychic and Iceberg. They are drawn from the Kalos badge sheet on the profile shelf.
+  - Valerie is the first fairy leader.
+- f14e937: AZ stands above Kalos's league:
+  
+  - He turns up where a champion would have been, at full level, and asks for no badges. Beating him pays his mark and the coat he is drawn in.
+  - He brings Torkoal, Golurk and Sigilyph, then his Eternal Floette, Xerneas and Yveltal.
+- f8d491c: The last two Kalos lines are written:
+  
+  - Litleo and Pyroar. Litleo becomes Pyroar at 35.
+  - Spritzee and Aromatisse. Spritzee becomes Aromatisse when it is handed over holding a Sachet.
+  - Litleo's Pride Call casts Noble Roar at an enemy as it arrives on the field.
+  - Spritzee's Calming Scent takes 1 stage of Speed off the enemy side whenever it uses up its own held item, which is Swirlix's Sugar Rush read from the other side.
+  - Pyroar takes Intimidate, and Aromatisse takes Natural Cure and Misty Surge, as their remaining abilities.
+  - Neither line is staged anywhere yet. Nobody has drawn a male Pyroar, and Aromatisse has only two of its animations.
+- c6ebd6c: Mega Evolution:
+  
+  - The 48 gen 6 Megas, each taken in a fight by a pokemon holding its Mega Stone. Rayquaza needs no stone, only Dragon Ascent.
+  - The 47 Mega Stones, buried like the plates and kicked up by dust clouds.
+  - One pokemon on a team Mega Evolves: the highest level, then the bigger Mega, then the earlier party slot.
+  - A Mega wears its own ability on top of the catch's. Nine whose line already has it wear another instead.
+  - A glowing stone floats over a Mega in battle, and an orb over a Primal. A Mega with no art of its own yet is drawn as its ordinary self.
+  - Primal Kyogre and Primal Groudon, taken by a Kyogre holding the Blue Orb or a Groudon holding the Red Orb. Every holder changes, the way an Origin Forme does.
+  - Aerilate, Parental Bond, Delta Stream, Primordial Sea and Desolate Land are built.
+- 3baafc3: Kalos's three mythicals:
+  
+  - Diancie, Hoopa and Volcanion are here. None of them is staged in the world: a relic is the only way to a fight with one, as with every mythical before them.
+  - The relics are the Heart Diamond, the Sealed Ring and the Steam Valve, found in the special band of the overworld item pool and nowhere else. Their lairs are the Diamond Domain, the Dahara Ruins and the Nebel Plateau.
+  - The Prison Bottle is a held item: a Hoopa holding one fights unbound, with 160 Attack and 170 Special Attack in place of its bound shape's. It is found in the prized band beside the orbs and the Gracidea.
+  - Steam Engine is built: a Fire or Water move landing on its holder raises Speed 6 stages.
+  - Diancie's Regalia gives its whole team 1 stage of Defense every 10 seconds, up to 3, which is Carbink's Crystal Growth handed to the court. Hoopa's Ringback turns 20% of single-target moves aimed at it back on whoever threw them. Volcanion's Boiler answers the weather that damps half of what it is: its Fire moves hit 1.15x in rain and its Water moves 1.15x in sunlight.
+  - Diancie takes Solid Rock and Serene Grace, Hoopa takes Levitate, Prankster and Trace, and Volcanion takes Flash Fire, Steam Engine and Pressure.
+- da7edc7: Built parties give each member a job, and the top trainers bring a Mega:
+  
+  - A built party fields a special core, a physical core, a healer, a protector, a redirector and a field control, leaving out any job no member can do.
+  - The healer is the frailest member able to heal or cure the team, or to raise it when none can, and the redirector is the bulkiest.
+  - A built party never fields more than two cores.
+  - Legends give each member its family's signature ability.
+  - Ace trainers, gym leaders, the Elite Four, champions and legends may give one member a Mega Stone, a core first. Syndicates field none.
+- 46c372d: Team Flare keeps the meadows:
+  
+  - The crime landmark in the grassland and the shrubland is theirs. Rocket keeps the rest of the open country.
+  - Grunts are met in the red suits, with the admins who wear them a rank up. Xerosic, Aliana, Bryony, Celosia and Mable stand above them, and Lysandre bars the cell.
+  - Seven new marks: Team Flare Repelled for clearing a cell, and one each for the five scientists and Lysandre.
+
+### Patch Changes
+
+- cf01a8f: Built teams can use the moves an earlier stage of the line learned, hatched with or was taught, such as a Togekiss with Wish.
+- 90fcfae: Built teams rarely carry Synchronoise, and never beside a teammate it would hit.
+
 ## 4.26.1
 
 ### Patch Changes

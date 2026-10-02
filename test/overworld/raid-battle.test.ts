@@ -73,6 +73,9 @@ function stage(mode: BattleModes): Species[] {
     entered.push(event.source);
   });
   fieldTeams(battle, teams, null);
+  // Nobody walks on until the fight starts
+  expect(entered).toEqual([]);
+  battle.start();
 
   return entered.map((unit) => unit.species);
 }

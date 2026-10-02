@@ -1,0 +1,72 @@
+# The stages a status move changes, and by how much. They are applied
+# in the order written
+
+Growl: { Attack: -1 }
+SwordsDance: { Attack: 2 }
+Meditate: { Attack: 1 }
+Sharpen: { Attack: 1 }
+Charm: { Attack: -2 }
+
+# The target is flattered into swinging harder while it is too
+# confused to aim
+Swagger: { Attack: 2 }
+Howl: { Attack: 1 }
+BulkUp: { Attack: 1, Defense: 1 }
+DragonDance: { Attack: 1, Speed: 1 }
+Tickle: { Attack: -1, Defense: -1 }
+FeatherDance: { Attack: -2 }
+Memento: { Attack: -2, SpecialAttack: -2 }
+HoneClaws: { Attack: 1, Accuracy: 1 }
+Coil: { Attack: 1, Defense: 1, Accuracy: 1 }
+ShellSmash: { Attack: 2, SpecialAttack: 2, SpecialDefense: -1, Defense: -1, Speed: 2 }
+WorkUp: { Attack: 1, SpecialAttack: 1 }
+ShiftGear: { Attack: 1, Speed: 2 }
+NobleRoar: { Attack: -1, SpecialAttack: -1 }
+PlayNice: { Attack: -1 }
+BabyDollEyes: { Attack: -1 }
+TearfulLook: { Attack: -1, SpecialAttack: -1 }
+ExtremeEvoboost: { Attack: 2, SpecialAttack: 2, SpecialDefense: 2, Defense: 2, Speed: 2 }
+Growth: { SpecialAttack: 1 }
+TailGlow: { SpecialAttack: 3 }
+NastyPlot: { SpecialAttack: 2 }
+CalmMind: { SpecialAttack: 1, SpecialDefense: 1 }
+
+# Flattery: the target is talked into leaning on a stat it
+# cannot aim with
+Flatter: { SpecialAttack: 1 }
+QuiverDance: { SpecialAttack: 1, SpecialDefense: 1, Speed: 1 }
+Confide: { SpecialAttack: -1 }
+EerieImpulse: { SpecialAttack: -2 }
+Amnesia: { SpecialDefense: 2 }
+DefendOrder: { SpecialDefense: 1, Defense: 1 }
+CosmicPower: { SpecialDefense: 1, Defense: 1 }
+Stockpile: { SpecialDefense: 1, Defense: 1 }
+Charge: { SpecialDefense: 1 }
+MetalSound: { SpecialDefense: -2 }
+FakeTears: { SpecialDefense: -2 }
+AromaticMist: { SpecialDefense: 1 }
+Leer: { Defense: -1 }
+TailWhip: { Defense: -1 }
+Withdraw: { Defense: 1 }
+Harden: { Defense: 1 }
+Screech: { Defense: -2 }
+DefenseCurl: { Defense: 1 }
+Barrier: { Defense: 2 }
+AcidArmor: { Defense: 2 }
+IronDefense: { Defense: 2 }
+CottonGuard: { Defense: 3 }
+StringShot: { Speed: -2 }
+RockPolish: { Speed: 2 }
+Agility: { Speed: 2 }
+ScaryFace: { Speed: -2 }
+CottonSpore: { Speed: -2 }
+Autotomize: { Speed: 2 }
+ToxicThread: { Speed: -1 }
+Flash: { Accuracy: -1 }
+SandAttack: { Accuracy: -1 }
+SmokeScreen: { Accuracy: -1 }
+Kinesis: { Accuracy: -1 }
+DoubleTeam: { Evasion: 1 }
+Minimize: { Evasion: 2 }
+SweetScent: { Evasion: -2 }
+Defog: { Evasion: -1 }

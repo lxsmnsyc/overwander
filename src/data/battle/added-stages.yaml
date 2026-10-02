@@ -1,0 +1,105 @@
+# The stage a damaging move may push as it lands, the chance it does
+# out of 100, and whose: `self` is its own user, otherwise what it hit
+
+Bubble: { stages: [Speed], value: -1, chance: 10 }
+BubbleBeam: { stages: [Speed], value: -1, chance: 10 }
+Psychic: { stages: [SpecialDefense], value: -1, chance: 10 }
+Acid: { stages: [SpecialDefense], value: -1, chance: 10 }
+Constrict: { stages: [Speed], value: -1, chance: 10 }
+AuroraBeam: { stages: [Attack], value: -1, chance: 10 }
+Crunch: { stages: [Defense], value: -1, chance: 20 }
+IronTail: { stages: [Defense], value: -1, chance: 30 }
+RockSmash: { stages: [Defense], value: -1, chance: 50 }
+ShadowBall: { stages: [SpecialDefense], value: -1, chance: 20 }
+MudSlap: { stages: [Accuracy], value: -1, chance: 100 }
+Octazooka: { stages: [Accuracy], value: -1, chance: 50 }
+IcyWind: { stages: [Speed], value: -1, chance: 100 }
+MetalClaw: { stages: [Attack], value: 1, chance: 10, self: true }
+SteelWing: { stages: [Defense], value: 1, chance: 10, self: true }
+RapidSpin: { stages: [Speed], value: 1, chance: 100, self: true }
+LusterPurge: { stages: [SpecialDefense], value: -1, chance: 50 }
+MistBall: { stages: [SpecialAttack], value: -1, chance: 50 }
+CrushClaw: { stages: [Defense], value: -1, chance: 50 }
+RockTomb: { stages: [Speed], value: -1, chance: 100 }
+MudShot: { stages: [Speed], value: -1, chance: 100 }
+BugBuzz: { stages: [SpecialDefense], value: -1, chance: 10 }
+FocusBlast: { stages: [SpecialDefense], value: -1, chance: 10 }
+EnergyBall: { stages: [SpecialDefense], value: -1, chance: 10 }
+EarthPower: { stages: [SpecialDefense], value: -1, chance: 10 }
+MudBomb: { stages: [Accuracy], value: -1, chance: 30 }
+MirrorShot: { stages: [Accuracy], value: -1, chance: 30 }
+FlashCannon: { stages: [SpecialDefense], value: -1, chance: 10 }
+SeedFlare: { stages: [SpecialDefense], value: -2, chance: 40 }
+ChargeBeam: { stages: [SpecialAttack], value: 1, chance: 70, self: true }
+MuddyWater: { stages: [Accuracy], value: -1, chance: 30 }
+MeteorMash: { stages: [Attack], value: 1, chance: 20, self: true }
+
+# Paid after it lands rather than before: the cost of swinging that
+# hard is taken out of the swinger
+Superpower: { stages: [Attack, Defense], value: -1, chance: 100, self: true }
+Overheat: { stages: [SpecialAttack], value: -2, chance: 100, self: true }
+
+# The cost of a swing that big, paid by the swinger: Hammer Arm is
+# slower to come round again, Close Combat is open afterwards
+HammerArm: { stages: [Speed], value: -1, chance: 100, self: true }
+CloseCombat: { stages: [Defense, SpecialDefense], value: -1, chance: 100, self: true }
+PsychoBoost: { stages: [SpecialAttack], value: -2, chance: 100, self: true }
+DracoMeteor: { stages: [SpecialAttack], value: -2, chance: 100, self: true }
+LeafStorm: { stages: [SpecialAttack], value: -2, chance: 100, self: true }
+SilverWind:
+  {
+    stages: [Attack, Defense, SpecialAttack, SpecialDefense, Speed],
+    value: 1,
+    chance: 10,
+    self: true,
+  }
+AncientPower:
+  {
+    stages: [Attack, Defense, SpecialAttack, SpecialDefense, Speed],
+    value: 1,
+    chance: 10,
+    self: true,
+  }
+FlameCharge: { stages: [Speed], value: 1, chance: 100, self: true }
+LowSweep: { stages: [Speed], value: -1, chance: 100 }
+AcidSpray: { stages: [SpecialDefense], value: -2, chance: 100 }
+StruggleBug: { stages: [SpecialAttack], value: -1, chance: 100 }
+Bulldoze: { stages: [Speed], value: -1, chance: 100 }
+Electroweb: { stages: [Speed], value: -1, chance: 100 }
+RazorShell: { stages: [Defense], value: -1, chance: 50 }
+LeafTornado: { stages: [Accuracy], value: -1, chance: 50 }
+NightDaze: { stages: [Accuracy], value: -1, chance: 40 }
+Glaciate: { stages: [Speed], value: -1, chance: 100 }
+FieryDance: { stages: [SpecialAttack], value: 1, chance: 50, self: true }
+Snarl: { stages: [SpecialAttack], value: -1, chance: 100 }
+VCreate: { stages: [Defense, SpecialDefense, Speed], value: -1, chance: 100, self: true }
+OminousWind:
+  {
+    stages: [Attack, Defense, SpecialAttack, SpecialDefense, Speed],
+    value: 1,
+    chance: 10,
+    self: true,
+  }
+PlayRough: { stages: [Attack], value: -1, chance: 10 }
+Moonblast: { stages: [SpecialAttack], value: -1, chance: 30 }
+MysticalFire: { stages: [SpecialAttack], value: -1, chance: 100 }
+DiamondStorm: { stages: [Defense], value: 2, chance: 50, self: true }
+PowerUpPunch: { stages: [Attack], value: 1, chance: 100, self: true }
+DragonAscent: { stages: [Defense, SpecialDefense], value: -1, chance: 100, self: true }
+HyperspaceFury: { stages: [Defense], value: -1, chance: 100, self: true }
+IceHammer: { stages: [Speed], value: -1, chance: 100, self: true }
+Lunge: { stages: [Attack], value: -1, chance: 100 }
+FireLash: { stages: [Defense], value: -1, chance: 100 }
+TropKick: { stages: [Attack], value: -1, chance: 100 }
+ClangingScales: { stages: [Defense], value: -1, chance: 100, self: true }
+FleurCannon: { stages: [SpecialAttack], value: -2, chance: 100, self: true }
+ShadowBone: { stages: [Defense], value: -1, chance: 20 }
+Liquidation: { stages: [Defense], value: -1, chance: 20 }
+ZippyZap: { stages: [Evasion], value: 1, chance: 100, self: true }
+ClangorousSoulblaze:
+  {
+    stages: [Attack, Defense, SpecialAttack, SpecialDefense, Speed],
+    value: 1,
+    chance: 100,
+    self: true,
+  }

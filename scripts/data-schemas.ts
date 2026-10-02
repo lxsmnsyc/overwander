@@ -34,6 +34,9 @@ const DEFINITIONS: [enumName: string, definition: string][] = [
   ['SpriteAnim', 'sprite-anim'],
   ['ItemTypes', 'item-type'],
   ['ItemFlags', 'item-flag'],
+  ['Stages', 'stage'],
+  ['Statuses', 'status'],
+  ['TeamStatuses', 'team-status'],
 ];
 
 const DRAFT = 'http://json-schema.org/draft-07/schema#';
@@ -308,6 +311,83 @@ const ITEM_TEXT: Schema = {
   ),
 };
 
+const SHARE: Schema = described(
+  {
+    anyOf: [
+      { type: 'number', minimum: 0 },
+      { type: 'string', pattern: '^\\d+/\\d+$' },
+    ],
+  },
+  'A share, as a number or a fraction such as `1/3`',
+);
+
+const CHANCE: Schema = described(
+  { type: 'number', minimum: 0, maximum: 100 },
+  'The chance, out of 100',
+);
+
+const BATTLE_STATUSES: Schema = {
+  $schema: DRAFT,
+  title: 'Battle: statuses',
+  type: 'object',
+  properties: {
+    target: described(
+      { type: 'object', propertyNames: name('move'), additionalProperties: name('status') },
+      'What a status move puts on what it is aimed at',
+    ),
+    self: described(
+      { type: 'object', propertyNames: name('move'), additionalProperties: name('status') },
+      'What a move puts on its own user',
+    ),
+    team: described(
+      { type: 'object', propertyNames: name('move'), additionalProperties: name('team-status') },
+      'What a move lays over its own side',
+    ),
+  },
+  required: ['target', 'self', 'team'],
+  additionalProperties: false,
+};
+
+const BATTLE_FILES: [file: string, title: string, entry: Schema][] = [
+  [
+    'battle-added-statuses.json',
+    'Battle: added statuses',
+    part({ status: name('status'), chance: CHANCE }, ['status', 'chance']),
+  ],
+  [
+    'battle-added-stages.json',
+    'Battle: added stages',
+    part(
+      {
+        stages: names('stage'),
+        value: { type: 'number' },
+        chance: CHANCE,
+        self: described({ const: true }, 'Pushed on its own user rather than on what it hit'),
+      },
+      ['stages', 'value', 'chance'],
+    ),
+  ],
+  [
+    'battle-stages.json',
+    'Battle: stages',
+    { type: 'object', propertyNames: name('stage'), additionalProperties: { type: 'number' } },
+  ],
+  [
+    'battle-multi-hit.json',
+    'Battle: multi-hit',
+    part(
+      {
+        min: { type: 'integer', minimum: 1 },
+        max: { type: 'integer', minimum: 1 },
+        escalating: described({ const: true }, 'Each strike lands harder than the last'),
+      },
+      ['min', 'max'],
+    ),
+  ],
+  ['battle-share.json', 'Battle: shares', SHARE],
+  ['battle-z-power.json', 'Battle: Z-power', { type: 'integer', minimum: 1 }],
+];
+
 function json(schema: Schema): string {
   return `${JSON.stringify(schema, null, 2)}\n`;
 }
@@ -328,7 +408,7 @@ export default function renderDataSchemas(members: Map<string, string[]>): Map<s
     definitions[definition] = { enum: listed(enumName) };
   }
 
-  return new Map([
+  const schemas = new Map([
     ['names.json', json({ $schema: DRAFT, title: 'Names', definitions })],
     ['species-world.json', json(WORLD)],
     ['species-stats.json', json(renderStats(listed('Stats')))],
@@ -342,5 +422,11 @@ export default function renderDataSchemas(members: Map<string, string[]>): Map<s
     ['abilities-signatures.json', json(SIGNATURES)],
     ['items-records.json', json(ITEM_RECORDS)],
     ['items-text.json', json(ITEM_TEXT)],
+    ['battle-statuses.json', json(BATTLE_STATUSES)],
   ]);
+
+  for (const [file, title, entry] of BATTLE_FILES) {
+    schemas.set(file, json(keyed(title, 'move', entry)));
+  }
+  return schemas;
 }

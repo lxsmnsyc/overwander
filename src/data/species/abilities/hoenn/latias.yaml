@@ -1,6 +1,0 @@
-Latias:
-  abilities: [Levitate]
-  # All three are this registry's: the sister is the one that
-  # shields, unmarked while it is whole and faster the longer it
-  # stays in the air
-  hidden: [Healer, Multiscale, SpeedBoost]

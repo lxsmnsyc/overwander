@@ -1,6 +1,0 @@
-Moltres:
-  stats: { HP: 90, Attack: 100, Defense: 90, SpecialAttack: 125, SpecialDefense: 85, Speed: 90 }
-  catch-rate: 3
-  height: 2
-  weight: 60
-  gender: genderless

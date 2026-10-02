@@ -1,8 +1,0 @@
-Pancham:
-  abilities: [IronFist, MoldBreaker]
-  hidden: [Scrappy]
-Pangoro:
-  abilities: [IronFist, MoldBreaker]
-  # Guts is this line's invented filler: the mainline gives the
-  # panda Iron Fist, Mold Breaker and Scrappy and nothing else
-  hidden: [Scrappy, Guts]

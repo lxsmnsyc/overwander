@@ -1,8 +1,0 @@
-Rufflet:
-  abilities: [KeenEye, SheerForce]
-  hidden: [Hustle]
-Braviary:
-  abilities: [KeenEye, SheerForce]
-  # Four without inventing anything: Hustle walks up from the Rufflet
-  # below it and Defiant is its own
-  hidden: [Defiant]

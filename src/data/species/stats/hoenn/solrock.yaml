@@ -1,6 +1,0 @@
-Solrock:
-  stats: { HP: 90, Attack: 95, Defense: 85, SpecialAttack: 55, SpecialDefense: 65, Speed: 70 }
-  catch-rate: 45
-  height: 1.2
-  weight: 154
-  gender: genderless

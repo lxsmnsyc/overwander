@@ -1,9 +1,0 @@
-Wobbuffet:
-  abilities: [ShadowTag]
-  # Unaware and Magic Bounce are this registry's rather than the
-  # mainline's, filling it to four: it gives back what it is given
-  # and counts none of what was built up against it
-  hidden: [Telepathy, Unaware, MagicBounce]
-Wynaut:
-  abilities: [ShadowTag]
-  hidden: [Telepathy]

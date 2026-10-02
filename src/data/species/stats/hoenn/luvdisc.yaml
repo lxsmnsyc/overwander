@@ -1,6 +1,0 @@
-Luvdisc:
-  stats: { HP: 43, Attack: 30, Defense: 55, SpecialAttack: 40, SpecialDefense: 65, Speed: 97 }
-  catch-rate: 225
-  height: 0.6
-  weight: 8.7
-  gender: [1, 3]

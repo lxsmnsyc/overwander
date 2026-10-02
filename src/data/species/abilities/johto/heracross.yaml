@@ -1,6 +1,0 @@
-Heracross:
-  abilities: [Swarm, Guts]
-  # Sap Sipper is this registry's rather than the mainline's,
-  # filling it to four: tree sap is what it spends the night
-  # fighting over
-  hidden: [Moxie, SapSipper]

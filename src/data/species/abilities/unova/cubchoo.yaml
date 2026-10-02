@@ -1,8 +1,0 @@
-Cubchoo:
-  abilities: [SnowCloak, SlushRush]
-  hidden: [Rattled]
-Beartic:
-  abilities: [SnowCloak, SlushRush]
-  # Four without inventing anything: Rattled walks up from the
-  # Cubchoo below it and Swift Swim is its own
-  hidden: [SwiftSwim]

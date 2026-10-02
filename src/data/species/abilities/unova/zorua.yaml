@@ -1,9 +1,0 @@
-Zorua:
-  abilities: [Illusion]
-  hidden: []
-Zoroark:
-  abilities: [Illusion]
-  # The line reaches only Illusion, so three of the four are
-  # invented: a fox that goes through your bag, gets there before you
-  # have understood it, and does not stop at copying the shape
-  hidden: [Pickpocket, Prankster, Trace]

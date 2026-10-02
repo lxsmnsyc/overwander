@@ -1,6 +1,0 @@
-Tropius:
-  stats: { HP: 99, Attack: 68, Defense: 83, SpecialAttack: 72, SpecialDefense: 87, Speed: 51 }
-  catch-rate: 200
-  height: 2
-  weight: 100
-  gender: [1, 1]

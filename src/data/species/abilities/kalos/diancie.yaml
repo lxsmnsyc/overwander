@@ -1,6 +1,0 @@
-Diancie:
-  abilities: [ClearBody]
-  # Magic Bounce is the mainline's; the other two are this
-  # registry's, and both are Carbink's, since a Diancie is one that
-  # changed rather than a stranger
-  hidden: [MagicBounce, SolidRock, SereneGrace]

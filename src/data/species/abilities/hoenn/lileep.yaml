@@ -1,9 +1,0 @@
-Lileep:
-  abilities: [SuctionCups]
-  hidden: [StormDrain]
-Cradily:
-  abilities: [SuctionCups]
-  # Two the mainline never gave it: the filter feeder drinks what
-  # is thrown at it, and a thing anchored to the rock only settles
-  # deeper for being hit
-  hidden: [StormDrain, WaterAbsorb, Stamina]

@@ -1,9 +1,0 @@
-Clamperl:
-  abilities: [ShellArmor]
-  hidden: [Rattled]
-Huntail:
-  abilities: [SwiftSwim]
-  hidden: [WaterVeil]
-Gorebyss:
-  abilities: [SwiftSwim]
-  hidden: [Hydration]

@@ -1,6 +1,0 @@
-Terrakion:
-  stats: { HP: 91, Attack: 129, Defense: 90, SpecialAttack: 72, SpecialDefense: 90, Speed: 108 }
-  catch-rate: 3
-  height: 1.9
-  weight: 260
-  gender: genderless

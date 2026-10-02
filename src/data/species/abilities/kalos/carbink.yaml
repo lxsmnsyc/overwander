@@ -1,6 +1,0 @@
-Carbink:
-  abilities: [ClearBody]
-  # Both are this line's invented fillers: the mainline gives the
-  # jewel Clear Body and Sturdy and nothing else, and it is drawn
-  # floating, which is where the Levitate comes from
-  hidden: [Sturdy, Levitate, SolidRock]

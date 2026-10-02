@@ -1,9 +1,0 @@
-Cacnea:
-  abilities: [SandVeil]
-  hidden: [WaterAbsorb]
-Cacturne:
-  abilities: [SandVeil]
-  # Two the mainline never gave it: a cactus is unpleasant to
-  # touch, and the sand it stalks through is what it moves fastest
-  # in
-  hidden: [WaterAbsorb, RoughSkin, SandRush]

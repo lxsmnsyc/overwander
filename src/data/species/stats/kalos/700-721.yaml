@@ -1,0 +1,171 @@
+Hawlucha:
+  Hawlucha:
+    stats: { HP: 78, Attack: 92, Defense: 75, SpecialAttack: 74, SpecialDefense: 63, Speed: 118 }
+    catch-rate: 100
+    height: 0.8
+    weight: 21.5
+    gender: [1, 1]
+Dedenne:
+  Dedenne:
+    stats: { HP: 67, Attack: 58, Defense: 57, SpecialAttack: 81, SpecialDefense: 67, Speed: 101 }
+    catch-rate: 180
+    height: 0.2
+    weight: 2.2
+    gender: [1, 1]
+Carbink:
+  Carbink:
+    stats: { HP: 50, Attack: 50, Defense: 150, SpecialAttack: 50, SpecialDefense: 150, Speed: 50 }
+    catch-rate: 60
+    height: 0.3
+    weight: 5.7
+    gender: [0, 0]
+Goomy:
+  Goomy:
+    stats: { HP: 45, Attack: 50, Defense: 35, SpecialAttack: 55, SpecialDefense: 75, Speed: 40 }
+    catch-rate: 45
+    height: 0.3
+    weight: 2.8
+    gender: [1, 1]
+  Sliggoo:
+    stats: { HP: 68, Attack: 75, Defense: 53, SpecialAttack: 83, SpecialDefense: 113, Speed: 60 }
+    catch-rate: 45
+    height: 0.8
+    weight: 17.5
+    gender: [1, 1]
+  Goodra:
+    stats: { HP: 90, Attack: 100, Defense: 70, SpecialAttack: 110, SpecialDefense: 150, Speed: 80 }
+    catch-rate: 45
+    height: 2
+    weight: 150.5
+    gender: [1, 1]
+Klefki:
+  Klefki:
+    stats: { HP: 57, Attack: 80, Defense: 91, SpecialAttack: 80, SpecialDefense: 87, Speed: 75 }
+    catch-rate: 75
+    height: 0.2
+    weight: 3
+    gender: [1, 1]
+Phantump:
+  Phantump:
+    stats: { HP: 43, Attack: 70, Defense: 48, SpecialAttack: 50, SpecialDefense: 60, Speed: 38 }
+    catch-rate: 120
+    height: 0.4
+    weight: 7
+    gender: [1, 1]
+  Trevenant:
+    stats: { HP: 85, Attack: 110, Defense: 76, SpecialAttack: 65, SpecialDefense: 82, Speed: 56 }
+    catch-rate: 60
+    height: 1.5
+    weight: 71
+    gender: [1, 1]
+Pumpkaboo:
+  Pumpkaboo:
+    stats: { HP: 49, Attack: 66, Defense: 70, SpecialAttack: 44, SpecialDefense: 55, Speed: 51 }
+    catch-rate: 120
+    height: 0.4
+    weight: 5
+    gender: [1, 1]
+  Gourgeist:
+    stats: { HP: 65, Attack: 90, Defense: 122, SpecialAttack: 58, SpecialDefense: 75, Speed: 84 }
+    catch-rate: 60
+    height: 0.9
+    weight: 12.5
+    gender: [1, 1]
+  PumpkabooSuper:
+    stats: { HP: 59, Attack: 66, Defense: 70, SpecialAttack: 44, SpecialDefense: 55, Speed: 41 }
+    catch-rate: 120
+    height: 0.8
+    weight: 15
+    gender: [1, 1]
+  GourgeistSuper:
+    stats: { HP: 85, Attack: 100, Defense: 122, SpecialAttack: 58, SpecialDefense: 75, Speed: 54 }
+    catch-rate: 60
+    height: 1.7
+    weight: 39
+    gender: [1, 1]
+Bergmite:
+  Bergmite:
+    stats: { HP: 55, Attack: 69, Defense: 85, SpecialAttack: 32, SpecialDefense: 35, Speed: 28 }
+    catch-rate: 190
+    height: 1
+    weight: 99.5
+    gender: [1, 1]
+  Avalugg:
+    stats: { HP: 95, Attack: 117, Defense: 184, SpecialAttack: 44, SpecialDefense: 46, Speed: 28 }
+    catch-rate: 55
+    height: 2
+    weight: 505
+    gender: [1, 1]
+Noibat:
+  Noibat:
+    stats: { HP: 40, Attack: 30, Defense: 35, SpecialAttack: 45, SpecialDefense: 40, Speed: 55 }
+    catch-rate: 190
+    height: 0.5
+    weight: 8
+    gender: [1, 1]
+  Noivern:
+    stats: { HP: 85, Attack: 70, Defense: 80, SpecialAttack: 97, SpecialDefense: 80, Speed: 123 }
+    catch-rate: 45
+    height: 1.5
+    weight: 85
+    gender: [1, 1]
+Xerneas:
+  Xerneas:
+    stats: { HP: 126, Attack: 131, Defense: 95, SpecialAttack: 131, SpecialDefense: 98, Speed: 99 }
+    catch-rate: 45
+    height: 3
+    weight: 215
+    gender: genderless
+Yveltal:
+  Yveltal:
+    stats: { HP: 126, Attack: 131, Defense: 95, SpecialAttack: 131, SpecialDefense: 98, Speed: 99 }
+    catch-rate: 45
+    height: 5.8
+    weight: 203
+    gender: genderless
+Zygarde:
+  Zygarde:
+    stats: { HP: 108, Attack: 100, Defense: 121, SpecialAttack: 81, SpecialDefense: 95, Speed: 95 }
+    catch-rate: 3
+    height: 5
+    weight: 305
+    gender: genderless
+  ZygardeTenPercent:
+    stats: { HP: 54, Attack: 100, Defense: 71, SpecialAttack: 61, SpecialDefense: 85, Speed: 115 }
+    catch-rate: 3
+    height: 1.2
+    weight: 33.5
+    gender: genderless
+  ZygardeComplete:
+    stats: { HP: 216, Attack: 100, Defense: 121, SpecialAttack: 91, SpecialDefense: 95, Speed: 85 }
+    catch-rate: 3
+    height: 4.5
+    weight: 610
+    gender: genderless
+Diancie:
+  Diancie:
+    stats: { HP: 50, Attack: 100, Defense: 150, SpecialAttack: 100, SpecialDefense: 150, Speed: 50 }
+    catch-rate: 3
+    height: 0.7
+    weight: 8.8
+    gender: genderless
+Hoopa:
+  Hoopa:
+    stats: { HP: 80, Attack: 110, Defense: 60, SpecialAttack: 150, SpecialDefense: 130, Speed: 70 }
+    catch-rate: 3
+    height: 0.5
+    weight: 9
+    gender: genderless
+  HoopaUnbound:
+    stats: { HP: 80, Attack: 160, Defense: 60, SpecialAttack: 170, SpecialDefense: 130, Speed: 80 }
+    catch-rate: 3
+    height: 6.5
+    weight: 490
+    gender: genderless
+Volcanion:
+  Volcanion:
+    stats: { HP: 80, Attack: 110, Defense: 120, SpecialAttack: 130, SpecialDefense: 90, Speed: 70 }
+    catch-rate: 3
+    height: 1.7
+    weight: 195
+    gender: genderless

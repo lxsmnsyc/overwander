@@ -1,6 +1,0 @@
-Blacephalon:
-  stats: { HP: 53, Attack: 127, Defense: 53, SpecialAttack: 151, SpecialDefense: 79, Speed: 107 }
-  catch-rate: 30
-  height: 1.8
-  weight: 13
-  gender: genderless

@@ -1,6 +1,0 @@
-Meltan:
-  abilities: [MagnetPull]
-Melmetal:
-  abilities: [IronFist]
-  # Magnet Pull comes up from Meltan, so two of this registry's make four
-  hidden: [HeavyMetal, Steelworker]

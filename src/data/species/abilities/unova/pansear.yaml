@@ -1,9 +1,0 @@
-Pansear:
-  abilities: [Gluttony]
-  hidden: [Blaze]
-Simisear:
-  abilities: [Gluttony]
-  # The line reaches only two, so both of the last slots are
-  # invented: Flash Fire is the monkey drinking its own element, and
-  # Moxie is what 98 Attack at 101 Speed is built to do
-  hidden: [Blaze, FlashFire, Moxie]

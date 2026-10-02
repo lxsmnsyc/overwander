@@ -1,5 +1,0 @@
-Raikou:
-  abilities: [Pressure]
-  # Motor Drive and Volt Absorb are this registry's rather than the
-  # mainline's: the storm it is made of runs it rather than hurts it
-  hidden: [InnerFocus, MotorDrive, VoltAbsorb]

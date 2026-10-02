@@ -1,6 +1,0 @@
-Sawk:
-  abilities: [Sturdy, InnerFocus]
-  # Scrappy is the invented fourth: the line reaches three, and a
-  # karateka breaking through what should not be hittable is the
-  # same idea as the Mold Breaker it already has
-  hidden: [MoldBreaker, Scrappy]

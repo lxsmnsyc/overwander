@@ -1,6 +1,0 @@
-Victini:
-  stats: { HP: 100, Attack: 100, Defense: 100, SpecialAttack: 100, SpecialDefense: 100, Speed: 100 }
-  catch-rate: 3
-  height: 0.4
-  weight: 4
-  gender: genderless

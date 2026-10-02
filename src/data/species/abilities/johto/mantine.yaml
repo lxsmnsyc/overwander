@@ -1,8 +1,0 @@
-Mantine:
-  abilities: [SwiftSwim, WaterAbsorb]
-  # Hydration is this registry's rather than the mainline's,
-  # filling it to four: rain is the water it already lives in
-  hidden: [WaterVeil, Hydration]
-Mantyke:
-  abilities: [SwiftSwim, WaterAbsorb]
-  hidden: [WaterVeil]

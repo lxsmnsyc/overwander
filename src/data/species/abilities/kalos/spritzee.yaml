@@ -1,8 +1,0 @@
-Spritzee:
-  abilities: [Healer]
-  hidden: [AromaVeil]
-Aromatisse:
-  abilities: [Healer]
-  # Natural Cure and Misty Surge are this line's invented fillers:
-  # the mainline gives it Healer and Aroma Veil and nothing else
-  hidden: [AromaVeil, NaturalCure, MistySurge]

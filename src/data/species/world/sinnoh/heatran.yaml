@@ -1,8 +1,0 @@
-# The thing living in the volcano rather than under it: it hangs off
-# the walls and the ceiling by cross-shaped feet, and its blood is
-# what the mountain is full of
-Heatran:
-  types: [Fire, Steel]
-  egg-groups: [NoEggsDiscovered]
-  biomes: [Volcano]
-  active: any

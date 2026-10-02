@@ -1,9 +1,0 @@
-Shieldon:
-  abilities: [Sturdy]
-  hidden: [Soundproof]
-Bastiodon:
-  abilities: [Sturdy]
-  # Filter and Heavy Metal are this registry's rather than the
-  # mainline's: the wall answers the 4x it is built against, and
-  # what holds a line that hard is what it weighs
-  hidden: [Soundproof, Filter, HeavyMetal]

@@ -1,6 +1,0 @@
-Victini:
-  abilities: [VictoryStar]
-  # Flash Fire, Inner Focus and Magic Guard are this registry's
-  # rather than the mainline's: a thing made of fire and will is
-  # not put out, put off, or worn down from the side
-  hidden: [FlashFire, InnerFocus, MagicGuard]

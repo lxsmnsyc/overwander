@@ -1,6 +1,0 @@
-Crabrawler:
-  abilities: [HyperCutter, IronFist]
-  hidden: [AngerPoint]
-Crabominable:
-  abilities: [HyperCutter, IronFist]
-  hidden: [AngerPoint, ShellArmor]

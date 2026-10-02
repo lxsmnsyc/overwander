@@ -1,6 +1,0 @@
-Carnivine:
-  stats: { HP: 74, Attack: 100, Defense: 72, SpecialAttack: 90, SpecialDefense: 72, Speed: 46 }
-  catch-rate: 200
-  height: 1.4
-  weight: 27
-  gender: [1, 1]

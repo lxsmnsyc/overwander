@@ -1,9 +1,0 @@
-Ferroseed:
-  abilities: [IronBarbs]
-  hidden: []
-Ferrothorn:
-  abilities: [IronBarbs]
-  # The line reaches only two, so both of the last slots are
-  # invented: nothing settles on a pod of iron spikes, and a thing
-  # with 131 Defense is there to be stood in front of
-  hidden: [Anticipation, Overcoat, Sturdy]

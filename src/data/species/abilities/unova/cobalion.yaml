@@ -1,5 +1,0 @@
-Cobalion:
-  abilities: [Justified]
-  # Sturdy, Clear Body and Inner Focus are this registry's rather
-  # than the mainline's: nothing moves the one that holds the line
-  hidden: [Sturdy, ClearBody, InnerFocus]

@@ -1,6 +1,0 @@
-Bunnelby:
-  abilities: [Pickup, CheekPouch]
-  hidden: [HugePower]
-Diggersby:
-  abilities: [Pickup, CheekPouch]
-  hidden: [HugePower, SandRush]

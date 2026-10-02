@@ -1,0 +1,1221 @@
+Natu:
+  Natu:
+    types: [Psychic, Flying]
+    egg-groups: [Flying]
+    biomes: [Savanna, Grassland, Shrubland]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Xatu
+        method: [Level]
+        level: 25
+  Xatu:
+    types: [Psychic, Flying]
+    egg-groups: [Flying]
+    biomes: [Savanna, Grassland, Shrubland]
+    active: [Morning, Day]
+    evolves-from: Natu
+Mareep:
+  Mareep:
+    types: [Electric]
+    egg-groups: [Monster, Field]
+    biomes: [Grassland, Steppe, Shrubland]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Flaaffy
+        method: [Level]
+        level: 15
+  Flaaffy:
+    types: [Electric]
+    egg-groups: [Monster, Field]
+    biomes: [Grassland, Steppe, Shrubland]
+    active: [Morning, Day]
+    evolves-from: Mareep
+    evolves-into:
+      - species: Ampharos
+        method: [Level]
+        level: 30
+  Ampharos:
+    types: [Electric]
+    egg-groups: [Monster, Field]
+    biomes: [Grassland, Steppe, Shrubland]
+    active: [Morning, Day]
+    evolves-from: Flaaffy
+Marill:
+  Marill:
+    types: [Water, Fairy]
+    egg-groups: [Water1, Fairy]
+    habitat: Amphibious
+    biomes: [Bog, Swamp, TemperateRainforest, Grassland, Woodland]
+    active: any
+    evolves-from: Azurill
+    evolves-into:
+      - species: Azumarill
+        method: [Level]
+        level: 18
+  Azumarill:
+    types: [Water, Fairy]
+    egg-groups: [Water1, Fairy]
+    habitat: Amphibious
+    biomes: [Bog, Swamp, TemperateRainforest, Grassland, Woodland]
+    active: any
+    evolves-from: Marill
+  Azurill:
+    types: [Normal, Fairy]
+    # A baby lays no egg of its own: the stage above it does
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Bog, Swamp, TemperateRainforest]
+    active: any
+    evolves-into:
+      - species: Marill
+        method: [Friendship]
+Sudowoodo:
+  Sudowoodo:
+    types: [Rock]
+    egg-groups: [Mineral]
+    biomes: [Woodland, TemperateForest, Mountain]
+    active: any
+    evolves-from: Bonsly
+  # A Sudowoodo before it learned to keep still: a Bonsly leaks the
+  # water it cannot hold and calls it crying
+  Bonsly:
+    types: [Rock]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Woodland, TemperateForest, Mountain]
+    active: any
+    evolves-into:
+      - species: Sudowoodo
+        method: [Level, KnownMove]
+        level: 20
+        move: Mimic
+# The powders come in at the same levels all the way up the line
+Hoppip:
+  Hoppip:
+    types: [Grass, Flying]
+    egg-groups: [Fairy, Grass]
+    biomes: [Grassland, Woodland, Shrubland]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Skiploom
+        method: [Level]
+        level: 18
+  Skiploom:
+    types: [Grass, Flying]
+    egg-groups: [Fairy, Grass]
+    biomes: [Grassland, Woodland, Shrubland]
+    active: [Morning, Day]
+    evolves-from: Hoppip
+    evolves-into:
+      - species: Jumpluff
+        method: [Level]
+        level: 27
+  Jumpluff:
+    types: [Grass, Flying]
+    egg-groups: [Fairy, Grass]
+    biomes: [Grassland, Woodland, Shrubland]
+    active: [Morning, Day]
+    evolves-from: Skiploom
+Aipom:
+  Aipom:
+    types: [Normal]
+    egg-groups: [Field]
+    active: any
+    evolves-into:
+      - species: Ambipom
+        method: [Level, KnownMove]
+        level: 32
+        move: DoubleHit
+  # The tail that learned to do everything: an Ambipom stopped using
+  # its hands years ago and has not missed them
+  Ambipom:
+    types: [Normal]
+    egg-groups: [Field]
+    biomes: [TropicalRainforest, TemperateForest, Woodland]
+    active: any
+    evolves-from: Aipom
+Sunkern:
+  Sunkern:
+    types: [Grass]
+    egg-groups: [Grass]
+    biomes: [Grassland, Savanna, Shrubland]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Sunflora
+        method: [UsedItem]
+        item: SunStone
+  Sunflora:
+    types: [Grass]
+    egg-groups: [Grass]
+    biomes: [Grassland, Savanna, Shrubland]
+    active: [Morning, Day]
+    evolves-from: Sunkern
+Yanma:
+  Yanma:
+    types: [Bug, Flying]
+    egg-groups: [Bug]
+    habitat: Amphibious
+    biomes: [Bog, Swamp, TropicalRainforest]
+    active: any
+    evolves-into:
+      - species: Yanmega
+        method: [Level, KnownMove]
+        level: 33
+        move: AncientPower
+  # A Yanma grown past what its wings should carry: a Yanmega beats
+  # them hard enough to knock the wind out of whatever it passes
+  Yanmega:
+    types: [Bug, Flying]
+    egg-groups: [Bug]
+    habitat: Amphibious
+    biomes: [Bog, Swamp, TropicalRainforest]
+    active: any
+    evolves-from: Yanma
+Wooper:
+  Wooper:
+    types: [Water, Ground]
+    egg-groups: [Water1, Field]
+    habitat: Amphibious
+    biomes:
+      - Swamp
+      - Bog
+      - Mangrove
+      - Savanna
+      - TemperateForest
+      - TemperateRainforest
+      - Steppe
+      - MontaneForest
+    active: any
+    evolves-into:
+      - species: Quagsire
+        method: [Level]
+        level: 20
+  Quagsire:
+    types: [Water, Ground]
+    egg-groups: [Water1, Field]
+    habitat: Amphibious
+    biomes:
+      - Swamp
+      - Bog
+      - Mangrove
+      - Savanna
+      - TemperateForest
+      - TemperateRainforest
+      - Steppe
+      - MontaneForest
+    active: any
+    evolves-from: Wooper
+Murkrow:
+  Murkrow:
+    types: [Dark, Flying]
+    egg-groups: [Flying]
+    biomes: [Woodland, TemperateForest, Mountain]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Honchkrow
+        method: [UsedItem]
+        item: DuskStone
+  # The one the flock answers to: a Honchkrow calls in the night and
+  # Murkrow arrive from everywhere to see what it wants
+  Honchkrow:
+    types: [Dark, Flying]
+    egg-groups: [Flying]
+    biomes: [Woodland, TemperateForest, Mountain]
+    active: [Evening, Night]
+    evolves-from: Murkrow
+Misdreavus:
+  Misdreavus:
+    types: [Ghost]
+    egg-groups: [Amorphous]
+    biomes: [Mountain, Woodland, Badlands]
+    active: [Night]
+    evolves-into:
+      - species: Mismagius
+        method: [UsedItem]
+        item: DuskStone
+  # What a Misdreavus becomes once its noise turns into words: a
+  # Mismagius chants, and the chant is what does the damage
+  Mismagius:
+    types: [Ghost]
+    egg-groups: [Amorphous]
+    biomes: [Mountain, Woodland, Badlands]
+    active: [Night]
+    evolves-from: Misdreavus
+Unown:
+  Unown:
+    types: [Psychic]
+    egg-groups: [NoEggsDiscovered]
+    biomes:
+      - DeepOcean
+      - Ocean
+      - CoralReef
+      - Beach
+      - Mangrove
+      - Swamp
+      - TropicalRainforest
+      - TropicalSeasonalForest
+      - Savanna
+      - Desert
+      - Shrubland
+      - Grassland
+      - TemperateForest
+      - TemperateRainforest
+      - ColdDesert
+      - Taiga
+      - Tundra
+      - Mountain
+      - AlpineTundra
+      - Glacier
+      - Woodland
+      - Steppe
+      - MontaneForest
+      - PolarOcean
+      - Volcano
+      - Badlands
+      - RockyCoast
+      - Bog
+      - KelpForest
+    active: any
+  UnownB:
+    types: [Psychic]
+    egg-groups: [NoEggsDiscovered]
+    biomes:
+      - DeepOcean
+      - Ocean
+      - CoralReef
+      - Beach
+      - Mangrove
+      - Swamp
+      - TropicalRainforest
+      - TropicalSeasonalForest
+      - Savanna
+      - Desert
+      - Shrubland
+      - Grassland
+      - TemperateForest
+      - TemperateRainforest
+      - ColdDesert
+      - Taiga
+      - Tundra
+      - Mountain
+      - AlpineTundra
+      - Glacier
+      - Woodland
+      - Steppe
+      - MontaneForest
+      - PolarOcean
+      - Volcano
+      - Badlands
+      - RockyCoast
+      - Bog
+      - KelpForest
+    active: any
+    base-form: false
+  UnownC:
+    types: [Psychic]
+    egg-groups: [NoEggsDiscovered]
+    biomes:
+      - DeepOcean
+      - Ocean
+      - CoralReef
+      - Beach
+      - Mangrove
+      - Swamp
+      - TropicalRainforest
+      - TropicalSeasonalForest
+      - Savanna
+      - Desert
+      - Shrubland
+      - Grassland
+      - TemperateForest
+      - TemperateRainforest
+      - ColdDesert
+      - Taiga
+      - Tundra
+      - Mountain
+      - AlpineTundra
+      - Glacier
+      - Woodland
+      - Steppe
+      - MontaneForest
+      - PolarOcean
+      - Volcano
+      - Badlands
+      - RockyCoast
+      - Bog
+      - KelpForest
+    active: any
+    base-form: false
+  UnownD:
+    types: [Psychic]
+    egg-groups: [NoEggsDiscovered]
+    biomes:
+      - DeepOcean
+      - Ocean
+      - CoralReef
+      - Beach
+      - Mangrove
+      - Swamp
+      - TropicalRainforest
+      - TropicalSeasonalForest
+      - Savanna
+      - Desert
+      - Shrubland
+      - Grassland
+      - TemperateForest
+      - TemperateRainforest
+      - ColdDesert
+      - Taiga
+      - Tundra
+      - Mountain
+      - AlpineTundra
+      - Glacier
+      - Woodland
+      - Steppe
+      - MontaneForest
+      - PolarOcean
+      - Volcano
+      - Badlands
+      - RockyCoast
+      - Bog
+      - KelpForest
+    active: any
+    base-form: false
+  UnownE:
+    types: [Psychic]
+    egg-groups: [NoEggsDiscovered]
+    biomes:
+      - DeepOcean
+      - Ocean
+      - CoralReef
+      - Beach
+      - Mangrove
+      - Swamp
+      - TropicalRainforest
+      - TropicalSeasonalForest
+      - Savanna
+      - Desert
+      - Shrubland
+      - Grassland
+      - TemperateForest
+      - TemperateRainforest
+      - ColdDesert
+      - Taiga
+      - Tundra
+      - Mountain
+      - AlpineTundra
+      - Glacier
+      - Woodland
+      - Steppe
+      - MontaneForest
+      - PolarOcean
+      - Volcano
+      - Badlands
+      - RockyCoast
+      - Bog
+      - KelpForest
+    active: any
+    base-form: false
+  UnownF:
+    types: [Psychic]
+    egg-groups: [NoEggsDiscovered]
+    biomes:
+      - DeepOcean
+      - Ocean
+      - CoralReef
+      - Beach
+      - Mangrove
+      - Swamp
+      - TropicalRainforest
+      - TropicalSeasonalForest
+      - Savanna
+      - Desert
+      - Shrubland
+      - Grassland
+      - TemperateForest
+      - TemperateRainforest
+      - ColdDesert
+      - Taiga
+      - Tundra
+      - Mountain
+      - AlpineTundra
+      - Glacier
+      - Woodland
+      - Steppe
+      - MontaneForest
+      - PolarOcean
+      - Volcano
+      - Badlands
+      - RockyCoast
+      - Bog
+      - KelpForest
+    active: any
+    base-form: false
+  UnownG:
+    types: [Psychic]
+    egg-groups: [NoEggsDiscovered]
+    biomes:
+      - DeepOcean
+      - Ocean
+      - CoralReef
+      - Beach
+      - Mangrove
+      - Swamp
+      - TropicalRainforest
+      - TropicalSeasonalForest
+      - Savanna
+      - Desert
+      - Shrubland
+      - Grassland
+      - TemperateForest
+      - TemperateRainforest
+      - ColdDesert
+      - Taiga
+      - Tundra
+      - Mountain
+      - AlpineTundra
+      - Glacier
+      - Woodland
+      - Steppe
+      - MontaneForest
+      - PolarOcean
+      - Volcano
+      - Badlands
+      - RockyCoast
+      - Bog
+      - KelpForest
+    active: any
+    base-form: false
+  UnownH:
+    types: [Psychic]
+    egg-groups: [NoEggsDiscovered]
+    biomes:
+      - DeepOcean
+      - Ocean
+      - CoralReef
+      - Beach
+      - Mangrove
+      - Swamp
+      - TropicalRainforest
+      - TropicalSeasonalForest
+      - Savanna
+      - Desert
+      - Shrubland
+      - Grassland
+      - TemperateForest
+      - TemperateRainforest
+      - ColdDesert
+      - Taiga
+      - Tundra
+      - Mountain
+      - AlpineTundra
+      - Glacier
+      - Woodland
+      - Steppe
+      - MontaneForest
+      - PolarOcean
+      - Volcano
+      - Badlands
+      - RockyCoast
+      - Bog
+      - KelpForest
+    active: any
+    base-form: false
+  UnownI:
+    types: [Psychic]
+    egg-groups: [NoEggsDiscovered]
+    biomes:
+      - DeepOcean
+      - Ocean
+      - CoralReef
+      - Beach
+      - Mangrove
+      - Swamp
+      - TropicalRainforest
+      - TropicalSeasonalForest
+      - Savanna
+      - Desert
+      - Shrubland
+      - Grassland
+      - TemperateForest
+      - TemperateRainforest
+      - ColdDesert
+      - Taiga
+      - Tundra
+      - Mountain
+      - AlpineTundra
+      - Glacier
+      - Woodland
+      - Steppe
+      - MontaneForest
+      - PolarOcean
+      - Volcano
+      - Badlands
+      - RockyCoast
+      - Bog
+      - KelpForest
+    active: any
+    base-form: false
+  UnownJ:
+    types: [Psychic]
+    egg-groups: [NoEggsDiscovered]
+    biomes:
+      - DeepOcean
+      - Ocean
+      - CoralReef
+      - Beach
+      - Mangrove
+      - Swamp
+      - TropicalRainforest
+      - TropicalSeasonalForest
+      - Savanna
+      - Desert
+      - Shrubland
+      - Grassland
+      - TemperateForest
+      - TemperateRainforest
+      - ColdDesert
+      - Taiga
+      - Tundra
+      - Mountain
+      - AlpineTundra
+      - Glacier
+      - Woodland
+      - Steppe
+      - MontaneForest
+      - PolarOcean
+      - Volcano
+      - Badlands
+      - RockyCoast
+      - Bog
+      - KelpForest
+    active: any
+    base-form: false
+  UnownK:
+    types: [Psychic]
+    egg-groups: [NoEggsDiscovered]
+    biomes:
+      - DeepOcean
+      - Ocean
+      - CoralReef
+      - Beach
+      - Mangrove
+      - Swamp
+      - TropicalRainforest
+      - TropicalSeasonalForest
+      - Savanna
+      - Desert
+      - Shrubland
+      - Grassland
+      - TemperateForest
+      - TemperateRainforest
+      - ColdDesert
+      - Taiga
+      - Tundra
+      - Mountain
+      - AlpineTundra
+      - Glacier
+      - Woodland
+      - Steppe
+      - MontaneForest
+      - PolarOcean
+      - Volcano
+      - Badlands
+      - RockyCoast
+      - Bog
+      - KelpForest
+    active: any
+    base-form: false
+  UnownL:
+    types: [Psychic]
+    egg-groups: [NoEggsDiscovered]
+    biomes:
+      - DeepOcean
+      - Ocean
+      - CoralReef
+      - Beach
+      - Mangrove
+      - Swamp
+      - TropicalRainforest
+      - TropicalSeasonalForest
+      - Savanna
+      - Desert
+      - Shrubland
+      - Grassland
+      - TemperateForest
+      - TemperateRainforest
+      - ColdDesert
+      - Taiga
+      - Tundra
+      - Mountain
+      - AlpineTundra
+      - Glacier
+      - Woodland
+      - Steppe
+      - MontaneForest
+      - PolarOcean
+      - Volcano
+      - Badlands
+      - RockyCoast
+      - Bog
+      - KelpForest
+    active: any
+    base-form: false
+  UnownM:
+    types: [Psychic]
+    egg-groups: [NoEggsDiscovered]
+    biomes:
+      - DeepOcean
+      - Ocean
+      - CoralReef
+      - Beach
+      - Mangrove
+      - Swamp
+      - TropicalRainforest
+      - TropicalSeasonalForest
+      - Savanna
+      - Desert
+      - Shrubland
+      - Grassland
+      - TemperateForest
+      - TemperateRainforest
+      - ColdDesert
+      - Taiga
+      - Tundra
+      - Mountain
+      - AlpineTundra
+      - Glacier
+      - Woodland
+      - Steppe
+      - MontaneForest
+      - PolarOcean
+      - Volcano
+      - Badlands
+      - RockyCoast
+      - Bog
+      - KelpForest
+    active: any
+    base-form: false
+  UnownN:
+    types: [Psychic]
+    egg-groups: [NoEggsDiscovered]
+    biomes:
+      - DeepOcean
+      - Ocean
+      - CoralReef
+      - Beach
+      - Mangrove
+      - Swamp
+      - TropicalRainforest
+      - TropicalSeasonalForest
+      - Savanna
+      - Desert
+      - Shrubland
+      - Grassland
+      - TemperateForest
+      - TemperateRainforest
+      - ColdDesert
+      - Taiga
+      - Tundra
+      - Mountain
+      - AlpineTundra
+      - Glacier
+      - Woodland
+      - Steppe
+      - MontaneForest
+      - PolarOcean
+      - Volcano
+      - Badlands
+      - RockyCoast
+      - Bog
+      - KelpForest
+    active: any
+    base-form: false
+  UnownO:
+    types: [Psychic]
+    egg-groups: [NoEggsDiscovered]
+    biomes:
+      - DeepOcean
+      - Ocean
+      - CoralReef
+      - Beach
+      - Mangrove
+      - Swamp
+      - TropicalRainforest
+      - TropicalSeasonalForest
+      - Savanna
+      - Desert
+      - Shrubland
+      - Grassland
+      - TemperateForest
+      - TemperateRainforest
+      - ColdDesert
+      - Taiga
+      - Tundra
+      - Mountain
+      - AlpineTundra
+      - Glacier
+      - Woodland
+      - Steppe
+      - MontaneForest
+      - PolarOcean
+      - Volcano
+      - Badlands
+      - RockyCoast
+      - Bog
+      - KelpForest
+    active: any
+    base-form: false
+  UnownP:
+    types: [Psychic]
+    egg-groups: [NoEggsDiscovered]
+    biomes:
+      - DeepOcean
+      - Ocean
+      - CoralReef
+      - Beach
+      - Mangrove
+      - Swamp
+      - TropicalRainforest
+      - TropicalSeasonalForest
+      - Savanna
+      - Desert
+      - Shrubland
+      - Grassland
+      - TemperateForest
+      - TemperateRainforest
+      - ColdDesert
+      - Taiga
+      - Tundra
+      - Mountain
+      - AlpineTundra
+      - Glacier
+      - Woodland
+      - Steppe
+      - MontaneForest
+      - PolarOcean
+      - Volcano
+      - Badlands
+      - RockyCoast
+      - Bog
+      - KelpForest
+    active: any
+    base-form: false
+  UnownQ:
+    types: [Psychic]
+    egg-groups: [NoEggsDiscovered]
+    biomes:
+      - DeepOcean
+      - Ocean
+      - CoralReef
+      - Beach
+      - Mangrove
+      - Swamp
+      - TropicalRainforest
+      - TropicalSeasonalForest
+      - Savanna
+      - Desert
+      - Shrubland
+      - Grassland
+      - TemperateForest
+      - TemperateRainforest
+      - ColdDesert
+      - Taiga
+      - Tundra
+      - Mountain
+      - AlpineTundra
+      - Glacier
+      - Woodland
+      - Steppe
+      - MontaneForest
+      - PolarOcean
+      - Volcano
+      - Badlands
+      - RockyCoast
+      - Bog
+      - KelpForest
+    active: any
+    base-form: false
+  UnownR:
+    types: [Psychic]
+    egg-groups: [NoEggsDiscovered]
+    biomes:
+      - DeepOcean
+      - Ocean
+      - CoralReef
+      - Beach
+      - Mangrove
+      - Swamp
+      - TropicalRainforest
+      - TropicalSeasonalForest
+      - Savanna
+      - Desert
+      - Shrubland
+      - Grassland
+      - TemperateForest
+      - TemperateRainforest
+      - ColdDesert
+      - Taiga
+      - Tundra
+      - Mountain
+      - AlpineTundra
+      - Glacier
+      - Woodland
+      - Steppe
+      - MontaneForest
+      - PolarOcean
+      - Volcano
+      - Badlands
+      - RockyCoast
+      - Bog
+      - KelpForest
+    active: any
+    base-form: false
+  UnownS:
+    types: [Psychic]
+    egg-groups: [NoEggsDiscovered]
+    biomes:
+      - DeepOcean
+      - Ocean
+      - CoralReef
+      - Beach
+      - Mangrove
+      - Swamp
+      - TropicalRainforest
+      - TropicalSeasonalForest
+      - Savanna
+      - Desert
+      - Shrubland
+      - Grassland
+      - TemperateForest
+      - TemperateRainforest
+      - ColdDesert
+      - Taiga
+      - Tundra
+      - Mountain
+      - AlpineTundra
+      - Glacier
+      - Woodland
+      - Steppe
+      - MontaneForest
+      - PolarOcean
+      - Volcano
+      - Badlands
+      - RockyCoast
+      - Bog
+      - KelpForest
+    active: any
+    base-form: false
+  UnownT:
+    types: [Psychic]
+    egg-groups: [NoEggsDiscovered]
+    biomes:
+      - DeepOcean
+      - Ocean
+      - CoralReef
+      - Beach
+      - Mangrove
+      - Swamp
+      - TropicalRainforest
+      - TropicalSeasonalForest
+      - Savanna
+      - Desert
+      - Shrubland
+      - Grassland
+      - TemperateForest
+      - TemperateRainforest
+      - ColdDesert
+      - Taiga
+      - Tundra
+      - Mountain
+      - AlpineTundra
+      - Glacier
+      - Woodland
+      - Steppe
+      - MontaneForest
+      - PolarOcean
+      - Volcano
+      - Badlands
+      - RockyCoast
+      - Bog
+      - KelpForest
+    active: any
+    base-form: false
+  UnownU:
+    types: [Psychic]
+    egg-groups: [NoEggsDiscovered]
+    biomes:
+      - DeepOcean
+      - Ocean
+      - CoralReef
+      - Beach
+      - Mangrove
+      - Swamp
+      - TropicalRainforest
+      - TropicalSeasonalForest
+      - Savanna
+      - Desert
+      - Shrubland
+      - Grassland
+      - TemperateForest
+      - TemperateRainforest
+      - ColdDesert
+      - Taiga
+      - Tundra
+      - Mountain
+      - AlpineTundra
+      - Glacier
+      - Woodland
+      - Steppe
+      - MontaneForest
+      - PolarOcean
+      - Volcano
+      - Badlands
+      - RockyCoast
+      - Bog
+      - KelpForest
+    active: any
+    base-form: false
+  UnownV:
+    types: [Psychic]
+    egg-groups: [NoEggsDiscovered]
+    biomes:
+      - DeepOcean
+      - Ocean
+      - CoralReef
+      - Beach
+      - Mangrove
+      - Swamp
+      - TropicalRainforest
+      - TropicalSeasonalForest
+      - Savanna
+      - Desert
+      - Shrubland
+      - Grassland
+      - TemperateForest
+      - TemperateRainforest
+      - ColdDesert
+      - Taiga
+      - Tundra
+      - Mountain
+      - AlpineTundra
+      - Glacier
+      - Woodland
+      - Steppe
+      - MontaneForest
+      - PolarOcean
+      - Volcano
+      - Badlands
+      - RockyCoast
+      - Bog
+      - KelpForest
+    active: any
+    base-form: false
+  UnownW:
+    types: [Psychic]
+    egg-groups: [NoEggsDiscovered]
+    biomes:
+      - DeepOcean
+      - Ocean
+      - CoralReef
+      - Beach
+      - Mangrove
+      - Swamp
+      - TropicalRainforest
+      - TropicalSeasonalForest
+      - Savanna
+      - Desert
+      - Shrubland
+      - Grassland
+      - TemperateForest
+      - TemperateRainforest
+      - ColdDesert
+      - Taiga
+      - Tundra
+      - Mountain
+      - AlpineTundra
+      - Glacier
+      - Woodland
+      - Steppe
+      - MontaneForest
+      - PolarOcean
+      - Volcano
+      - Badlands
+      - RockyCoast
+      - Bog
+      - KelpForest
+    active: any
+    base-form: false
+  UnownX:
+    types: [Psychic]
+    egg-groups: [NoEggsDiscovered]
+    biomes:
+      - DeepOcean
+      - Ocean
+      - CoralReef
+      - Beach
+      - Mangrove
+      - Swamp
+      - TropicalRainforest
+      - TropicalSeasonalForest
+      - Savanna
+      - Desert
+      - Shrubland
+      - Grassland
+      - TemperateForest
+      - TemperateRainforest
+      - ColdDesert
+      - Taiga
+      - Tundra
+      - Mountain
+      - AlpineTundra
+      - Glacier
+      - Woodland
+      - Steppe
+      - MontaneForest
+      - PolarOcean
+      - Volcano
+      - Badlands
+      - RockyCoast
+      - Bog
+      - KelpForest
+    active: any
+    base-form: false
+  UnownY:
+    types: [Psychic]
+    egg-groups: [NoEggsDiscovered]
+    biomes:
+      - DeepOcean
+      - Ocean
+      - CoralReef
+      - Beach
+      - Mangrove
+      - Swamp
+      - TropicalRainforest
+      - TropicalSeasonalForest
+      - Savanna
+      - Desert
+      - Shrubland
+      - Grassland
+      - TemperateForest
+      - TemperateRainforest
+      - ColdDesert
+      - Taiga
+      - Tundra
+      - Mountain
+      - AlpineTundra
+      - Glacier
+      - Woodland
+      - Steppe
+      - MontaneForest
+      - PolarOcean
+      - Volcano
+      - Badlands
+      - RockyCoast
+      - Bog
+      - KelpForest
+    active: any
+    base-form: false
+  UnownZ:
+    types: [Psychic]
+    egg-groups: [NoEggsDiscovered]
+    biomes:
+      - DeepOcean
+      - Ocean
+      - CoralReef
+      - Beach
+      - Mangrove
+      - Swamp
+      - TropicalRainforest
+      - TropicalSeasonalForest
+      - Savanna
+      - Desert
+      - Shrubland
+      - Grassland
+      - TemperateForest
+      - TemperateRainforest
+      - ColdDesert
+      - Taiga
+      - Tundra
+      - Mountain
+      - AlpineTundra
+      - Glacier
+      - Woodland
+      - Steppe
+      - MontaneForest
+      - PolarOcean
+      - Volcano
+      - Badlands
+      - RockyCoast
+      - Bog
+      - KelpForest
+    active: any
+    base-form: false
+  UnownExclamation:
+    types: [Psychic]
+    egg-groups: [NoEggsDiscovered]
+    biomes:
+      - DeepOcean
+      - Ocean
+      - CoralReef
+      - Beach
+      - Mangrove
+      - Swamp
+      - TropicalRainforest
+      - TropicalSeasonalForest
+      - Savanna
+      - Desert
+      - Shrubland
+      - Grassland
+      - TemperateForest
+      - TemperateRainforest
+      - ColdDesert
+      - Taiga
+      - Tundra
+      - Mountain
+      - AlpineTundra
+      - Glacier
+      - Woodland
+      - Steppe
+      - MontaneForest
+      - PolarOcean
+      - Volcano
+      - Badlands
+      - RockyCoast
+      - Bog
+      - KelpForest
+    active: any
+    base-form: false
+  UnownQuestion:
+    types: [Psychic]
+    egg-groups: [NoEggsDiscovered]
+    biomes:
+      - DeepOcean
+      - Ocean
+      - CoralReef
+      - Beach
+      - Mangrove
+      - Swamp
+      - TropicalRainforest
+      - TropicalSeasonalForest
+      - Savanna
+      - Desert
+      - Shrubland
+      - Grassland
+      - TemperateForest
+      - TemperateRainforest
+      - ColdDesert
+      - Taiga
+      - Tundra
+      - Mountain
+      - AlpineTundra
+      - Glacier
+      - Woodland
+      - Steppe
+      - MontaneForest
+      - PolarOcean
+      - Volcano
+      - Badlands
+      - RockyCoast
+      - Bog
+      - KelpForest
+    active: any
+    base-form: false

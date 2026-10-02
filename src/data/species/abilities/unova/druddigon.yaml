@@ -1,5 +1,0 @@
-Druddigon:
-  abilities: [RoughSkin, SheerForce]
-  # Intimidate is the invented fourth: the line reaches three, and
-  # the red face is the first thing anything meets in a tunnel
-  hidden: [MoldBreaker, Intimidate]

@@ -1,0 +1,88 @@
+Mareanie:
+  Mareanie:
+    abilities: [Merciless, Limber]
+    hidden: [Regenerator]
+  Toxapex:
+    abilities: [Merciless, Limber]
+    hidden: [Regenerator, PoisonPoint]
+Mudbray:
+  Mudbray:
+    abilities: [OwnTempo, Stamina]
+    hidden: [InnerFocus]
+  Mudsdale:
+    abilities: [OwnTempo, Stamina]
+    hidden: [InnerFocus, Steadfast]
+Dewpider:
+  Dewpider:
+    abilities: [WaterBubble]
+    hidden: [WaterAbsorb]
+  Araquanid:
+    abilities: [WaterBubble]
+    hidden: [WaterAbsorb, Overcoat, MirrorArmor]
+Fomantis:
+  Fomantis:
+    abilities: [LeafGuard]
+    hidden: [Contrary]
+  Lurantis:
+    abilities: [LeafGuard]
+    hidden: [Contrary, Sharpness, Chlorophyll]
+Morelull:
+  Morelull:
+    abilities: [Illuminate, EffectSpore]
+    hidden: [RainDish]
+  Shiinotic:
+    abilities: [Illuminate, EffectSpore]
+    hidden: [RainDish, DrySkin]
+Salandit:
+  Salandit:
+    abilities: [Corrosion]
+    hidden: [Oblivious]
+  Salazzle:
+    abilities: [Corrosion]
+    hidden: [Oblivious, FlameBody, PoisonTouch]
+Stufful:
+  Stufful:
+    abilities: [Fluffy, Klutz]
+    hidden: [CuteCharm]
+  Bewear:
+    abilities: [Fluffy, Klutz]
+    hidden: [Unnerve]
+Bounsweet:
+  Bounsweet:
+    abilities: [LeafGuard, Oblivious]
+    hidden: [SweetVeil]
+  Steenee:
+    abilities: [LeafGuard, Oblivious]
+    hidden: [SweetVeil]
+  Tsareena:
+    abilities: [LeafGuard, QueenlyMajesty]
+    hidden: [SweetVeil]
+Comfey:
+  Comfey:
+    abilities: [FlowerVeil, Triage]
+    hidden: [NaturalCure, AromaVeil]
+Oranguru:
+  Oranguru:
+    abilities: [InnerFocus, Telepathy]
+    hidden: [Symbiosis, Forewarn]
+Passimian:
+  Passimian:
+    abilities: [Receiver]
+    hidden: [Defiant, Guts, Pickup]
+Wimpod:
+  Wimpod:
+    abilities: [WimpOut]
+  Golisopod:
+    abilities: [EmergencyExit]
+    hidden: [BattleArmor, Sharpness, SwiftSwim]
+Sandygast:
+  Sandygast:
+    abilities: [WaterCompaction]
+    hidden: [SandVeil]
+  Palossand:
+    abilities: [WaterCompaction]
+    hidden: [SandVeil, SandSpit, CursedBody]
+Pyukumuku:
+  Pyukumuku:
+    abilities: [InnardsOut]
+    hidden: [Unaware, Regenerator, LiquidOoze]

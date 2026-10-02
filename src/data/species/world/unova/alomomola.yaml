@@ -1,8 +1,0 @@
-# The nurse: it carries whatever it finds hurt back to the shallows in
-# its fins, and the film over it does the rest
-Alomomola:
-  types: [Water]
-  egg-groups: [Water1, Water2]
-  habitat: Water
-  biomes: [Ocean, CoralReef]
-  active: any

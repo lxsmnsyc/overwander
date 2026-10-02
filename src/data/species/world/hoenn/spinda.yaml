@@ -1,5 +1,0 @@
-Spinda:
-  types: [Normal]
-  egg-groups: [Field, HumanLike]
-  biomes: [Grassland, MontaneForest]
-  active: [Morning, Day]

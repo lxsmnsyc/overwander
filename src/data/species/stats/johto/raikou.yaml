@@ -1,6 +1,0 @@
-Raikou:
-  stats: { HP: 90, Attack: 85, Defense: 75, SpecialAttack: 115, SpecialDefense: 100, Speed: 115 }
-  catch-rate: 3
-  height: 1.9
-  weight: 178
-  gender: genderless

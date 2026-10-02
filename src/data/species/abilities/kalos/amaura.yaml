@@ -1,8 +1,0 @@
-Amaura:
-  abilities: [Refrigerate]
-  hidden: [SnowWarning]
-Aurorus:
-  abilities: [Refrigerate]
-  # Ice Body and Snow Cloak are this line's invented fillers: the
-  # mainline gives Aurorus the two above and nothing else
-  hidden: [SnowWarning, IceBody, SnowCloak]

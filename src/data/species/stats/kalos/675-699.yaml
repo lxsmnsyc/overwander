@@ -1,0 +1,169 @@
+Furfrou:
+  Furfrou:
+    stats: { HP: 75, Attack: 80, Defense: 60, SpecialAttack: 65, SpecialDefense: 90, Speed: 102 }
+    catch-rate: 160
+    height: 1.2
+    weight: 28
+    gender: [1, 1]
+Espurr:
+  Espurr:
+    stats: { HP: 62, Attack: 48, Defense: 54, SpecialAttack: 63, SpecialDefense: 60, Speed: 68 }
+    catch-rate: 190
+    height: 0.3
+    weight: 3.5
+    gender: [1, 1]
+  Meowstic:
+    stats: { HP: 74, Attack: 48, Defense: 76, SpecialAttack: 83, SpecialDefense: 81, Speed: 104 }
+    catch-rate: 75
+    height: 0.6
+    weight: 8.5
+    # Each sex is its own record, so each is only ever that sex
+    gender: [1, 0]
+  MeowsticFemale:
+    stats: { HP: 74, Attack: 48, Defense: 76, SpecialAttack: 83, SpecialDefense: 81, Speed: 104 }
+    catch-rate: 75
+    height: 0.6
+    weight: 8.5
+    gender: [0, 1]
+Honedge:
+  Honedge:
+    stats: { HP: 45, Attack: 80, Defense: 100, SpecialAttack: 35, SpecialDefense: 37, Speed: 28 }
+    catch-rate: 180
+    height: 0.8
+    weight: 2
+    gender: [1, 1]
+  Doublade:
+    stats: { HP: 59, Attack: 110, Defense: 150, SpecialAttack: 45, SpecialDefense: 49, Speed: 35 }
+    catch-rate: 90
+    height: 0.8
+    weight: 4.5
+    gender: [1, 1]
+  Aegislash:
+    stats: { HP: 60, Attack: 50, Defense: 140, SpecialAttack: 50, SpecialDefense: 140, Speed: 60 }
+    catch-rate: 45
+    height: 1.7
+    weight: 53
+    gender: &a1 [1, 1]
+  AegislashBlade:
+    stats: { HP: 60, Attack: 150, Defense: 50, SpecialAttack: 150, SpecialDefense: 50, Speed: 60 }
+    catch-rate: 45
+    height: 1.7
+    weight: 53
+    gender: *a1
+Spritzee:
+  Spritzee:
+    stats: { HP: 78, Attack: 52, Defense: 60, SpecialAttack: 63, SpecialDefense: 65, Speed: 23 }
+    catch-rate: 200
+    height: 0.2
+    weight: 0.5
+    gender: [1, 1]
+  Aromatisse:
+    stats: { HP: 101, Attack: 72, Defense: 72, SpecialAttack: 99, SpecialDefense: 89, Speed: 29 }
+    catch-rate: 140
+    height: 0.8
+    weight: 15.5
+    gender: [1, 1]
+Swirlix:
+  Swirlix:
+    stats: { HP: 62, Attack: 48, Defense: 66, SpecialAttack: 59, SpecialDefense: 57, Speed: 49 }
+    catch-rate: 200
+    height: 0.4
+    weight: 3.5
+    gender: [1, 1]
+  Slurpuff:
+    stats: { HP: 82, Attack: 80, Defense: 86, SpecialAttack: 85, SpecialDefense: 75, Speed: 72 }
+    catch-rate: 140
+    height: 0.8
+    weight: 5
+    gender: [1, 1]
+Inkay:
+  Inkay:
+    stats: { HP: 53, Attack: 54, Defense: 53, SpecialAttack: 37, SpecialDefense: 46, Speed: 45 }
+    catch-rate: 190
+    height: 0.4
+    weight: 3.5
+    gender: [1, 1]
+  Malamar:
+    stats: { HP: 86, Attack: 92, Defense: 88, SpecialAttack: 68, SpecialDefense: 75, Speed: 73 }
+    catch-rate: 80
+    height: 1.5
+    weight: 47
+    gender: [1, 1]
+Binacle:
+  Binacle:
+    stats: { HP: 42, Attack: 52, Defense: 67, SpecialAttack: 39, SpecialDefense: 56, Speed: 50 }
+    catch-rate: 120
+    height: 0.5
+    weight: 31
+    gender: [1, 1]
+  Barbaracle:
+    stats: { HP: 72, Attack: 105, Defense: 115, SpecialAttack: 54, SpecialDefense: 86, Speed: 68 }
+    catch-rate: 45
+    height: 1.3
+    weight: 96
+    gender: [1, 1]
+Skrelp:
+  Skrelp:
+    stats: { HP: 50, Attack: 60, Defense: 60, SpecialAttack: 60, SpecialDefense: 60, Speed: 30 }
+    catch-rate: 225
+    height: 0.5
+    weight: 7.3
+    gender: [1, 1]
+  Dragalge:
+    stats: { HP: 65, Attack: 75, Defense: 90, SpecialAttack: 97, SpecialDefense: 123, Speed: 44 }
+    catch-rate: 55
+    height: 1.8
+    weight: 81.5
+    gender: [1, 1]
+Clauncher:
+  Clauncher:
+    stats: { HP: 50, Attack: 53, Defense: 62, SpecialAttack: 58, SpecialDefense: 63, Speed: 44 }
+    catch-rate: 225
+    height: 0.5
+    weight: 8.3
+    gender: [1, 1]
+  Clawitzer:
+    stats: { HP: 71, Attack: 73, Defense: 88, SpecialAttack: 120, SpecialDefense: 89, Speed: 59 }
+    catch-rate: 55
+    height: 1.3
+    weight: 35.3
+    gender: [1, 1]
+Helioptile:
+  Helioptile:
+    stats: { HP: 44, Attack: 38, Defense: 33, SpecialAttack: 61, SpecialDefense: 43, Speed: 70 }
+    catch-rate: 190
+    height: 0.5
+    weight: 6
+    gender: [1, 1]
+  Heliolisk:
+    stats: { HP: 62, Attack: 55, Defense: 52, SpecialAttack: 109, SpecialDefense: 94, Speed: 109 }
+    catch-rate: 75
+    height: 1
+    weight: 21
+    gender: [1, 1]
+Tyrunt:
+  Tyrunt:
+    stats: { HP: 58, Attack: 89, Defense: 77, SpecialAttack: 45, SpecialDefense: 45, Speed: 48 }
+    catch-rate: 45
+    height: 0.8
+    weight: 26
+    gender: [7, 1]
+  Tyrantrum:
+    stats: { HP: 82, Attack: 121, Defense: 119, SpecialAttack: 69, SpecialDefense: 59, Speed: 71 }
+    catch-rate: 45
+    height: 2.5
+    weight: 270
+    gender: [7, 1]
+Amaura:
+  Amaura:
+    stats: { HP: 77, Attack: 59, Defense: 50, SpecialAttack: 67, SpecialDefense: 63, Speed: 46 }
+    catch-rate: 45
+    height: 1.3
+    weight: 25.2
+    gender: [7, 1]
+  Aurorus:
+    stats: { HP: 123, Attack: 77, Defense: 72, SpecialAttack: 99, SpecialDefense: 92, Speed: 58 }
+    catch-rate: 45
+    height: 2.7
+    weight: 225
+    gender: [7, 1]

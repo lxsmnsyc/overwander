@@ -1,6 +1,0 @@
-Smeargle:
-  abilities: [OwnTempo, Technician]
-  # Prankster is this registry's rather than the mainline's,
-  # filling it to four: everything it knows was copied off somebody
-  # else, and getting there first is what makes that worth anything
-  hidden: [Moody, Prankster]

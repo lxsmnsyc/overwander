@@ -1,7 +1,0 @@
-# The two that only work beside somebody: each carries half of a
-# pair bonus, and Battery is what they hand the rest of the side
-Plusle:
-  types: [Electric]
-  egg-groups: [Fairy]
-  biomes: [Grassland, Savanna]
-  active: [Morning, Day]

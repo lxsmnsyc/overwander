@@ -1,6 +1,0 @@
-Bruxish:
-  stats: { HP: 68, Attack: 105, Defense: 70, SpecialAttack: 70, SpecialDefense: 70, Speed: 92 }
-  catch-rate: 80
-  height: 0.9
-  weight: 19
-  gender: [4, 4]

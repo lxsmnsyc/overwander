@@ -1,8 +1,0 @@
-Phantump:
-  abilities: [NaturalCure, Frisk]
-  hidden: [Harvest]
-Trevenant:
-  abilities: [NaturalCure, Frisk]
-  # Cursed Body is this line's invented filler, and Gourgeist's as
-  # well: the two the versions keep apart answer a move the same way
-  hidden: [Harvest, CursedBody]

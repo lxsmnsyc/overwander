@@ -1,8 +1,0 @@
-Ledyba:
-  abilities: [Swarm, EarlyBird]
-  hidden: [Rattled]
-Ledian:
-  abilities: [Swarm, EarlyBird]
-  # The one of these four already carrying its fourth: Iron Fist is
-  # its own, and Ledyba's Rattled walks up the line to meet it
-  hidden: [IronFist]

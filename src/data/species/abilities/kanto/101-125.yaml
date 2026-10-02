@@ -1,0 +1,147 @@
+Exeggcute:
+  Exeggcute:
+    abilities: [Chlorophyll]
+    hidden: [Harvest]
+  Exeggutor:
+    abilities: [Chlorophyll]
+    hidden: [Harvest, SolarPower, Forewarn]
+  ExeggutorAlola:
+    abilities: [Frisk]
+    hidden: [Harvest, LeafGuard]
+Cubone:
+  Cubone:
+    abilities: [RockHead, LightningRod]
+    hidden: [BattleArmor]
+  Marowak:
+    abilities: [RockHead, LightningRod]
+    hidden: [BattleArmor, Technician]
+  MarowakAlola:
+    abilities: [CursedBody, LightningRod]
+    hidden: [RockHead]
+Tyrogue:
+  Hitmonlee:
+    abilities: [Limber, Reckless]
+    hidden: [Unburden]
+  Hitmonchan:
+    abilities: [KeenEye, IronFist]
+    hidden: [InnerFocus]
+  Tyrogue:
+    abilities: [Guts, Steadfast]
+    hidden: [VitalSpirit]
+  Hitmontop:
+    abilities: [Intimidate, Technician]
+    # Nothing invented here: Tyrogue's Guts and Vital Spirit walk up
+    # to meet its own three
+    hidden: [Steadfast]
+Lickitung:
+  Lickitung:
+    abilities: [OwnTempo, Oblivious]
+    hidden: [CloudNine]
+  Lickilicky:
+    abilities: [OwnTempo, Oblivious]
+    # Thick Fat is this registry's rather than the mainline's: the
+    # line reaches three abilities and needs four, and 110 HP of soft
+    # Normal type is what it is
+    hidden: [CloudNine, ThickFat]
+Koffing:
+  Koffing:
+    abilities: [Levitate, NeutralizingGas]
+    hidden: [Stench]
+  Weezing:
+    abilities: [Levitate, NeutralizingGas]
+    hidden: [Stench, Aftermath]
+Rhyhorn:
+  Rhyhorn:
+    abilities: [LightningRod, RockHead]
+    hidden: [Reckless]
+  Rhydon:
+    abilities: [LightningRod, RockHead]
+    hidden: [Reckless]
+  Rhyperior:
+    abilities: [LightningRod, SolidRock]
+    hidden: [Reckless]
+Chansey:
+  Chansey:
+    abilities: [NaturalCure, SereneGrace]
+    hidden: [Healer]
+  Blissey:
+    abilities: [NaturalCure, SereneGrace]
+    hidden: [Healer]
+  Happiny:
+    abilities: [NaturalCure, SereneGrace]
+    hidden: [FriendGuard]
+Tangela:
+  Tangela:
+    abilities: [Chlorophyll, LeafGuard]
+    hidden: [Regenerator]
+  Tangrowth:
+    abilities: [Chlorophyll, LeafGuard]
+    # Sap Sipper is this registry's rather than the mainline's: the
+    # line reaches three abilities and needs four, and a ball of vines
+    # feeds on what other plants throw at it
+    hidden: [Regenerator, SapSipper]
+Kangaskhan:
+  Kangaskhan:
+    abilities: [EarlyBird, Scrappy]
+    hidden: [InnerFocus, IronFist]
+Horsea:
+  Horsea:
+    abilities: [SwiftSwim, Sniper]
+    hidden: [Damp]
+  Seadra:
+    abilities: [PoisonPoint, Sniper]
+    hidden: [Damp]
+  Kingdra:
+    abilities: [SwiftSwim, Sniper]
+    hidden: [Damp]
+Goldeen:
+  Goldeen:
+    abilities: [SwiftSwim, WaterVeil]
+    hidden: [LightningRod]
+  Seaking:
+    abilities: [SwiftSwim, WaterVeil]
+    hidden: [LightningRod, MoldBreaker]
+Staryu:
+  Staryu:
+    abilities: [Illuminate, NaturalCure]
+    hidden: [Analytic]
+  Starmie:
+    abilities: [Illuminate, NaturalCure]
+    hidden: [Analytic, Regenerator]
+MrMime:
+  MrMime:
+    abilities: [Soundproof, Filter]
+    # Magic Bounce is this registry's rather than the mainline's: Mime
+    # Jr. brings nothing the adult did not have, so the line reaches
+    # three abilities and needs four
+    hidden: [Technician, MagicBounce]
+  MimeJr:
+    abilities: [Soundproof, Filter]
+    hidden: [Technician]
+Scyther:
+  Scyther:
+    abilities: [Swarm, Technician]
+    hidden: [Steadfast]
+  Scizor:
+    abilities: [Swarm, Technician]
+    hidden: [LightMetal]
+Jynx:
+  Jynx:
+    abilities: [Oblivious, Forewarn]
+    hidden: [DrySkin]
+  Smoochum:
+    abilities: [Oblivious, Forewarn]
+    hidden: [Hydration]
+Electabuzz:
+  Electabuzz:
+    abilities: [Static]
+    hidden: [VitalSpirit]
+  Elekid:
+    abilities: [Static]
+    hidden: [VitalSpirit]
+  Electivire:
+    abilities: [MotorDrive]
+    # Iron Fist is this registry's rather than the mainline's: the
+    # line reaches three abilities and needs four, and it fights in
+    # punches with 123 Attack behind them
+    hidden: [VitalSpirit, IronFist]

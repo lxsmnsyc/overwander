@@ -1,7 +1,0 @@
-# The guardian: it flies the same route over the old city it was set
-# to watch and has never once been seen to leave it
-Sigilyph:
-  types: [Psychic, Flying]
-  egg-groups: [Flying]
-  biomes: [Desert, Badlands]
-  active: [Morning, Day]

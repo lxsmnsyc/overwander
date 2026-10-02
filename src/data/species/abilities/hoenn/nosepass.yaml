@@ -1,9 +1,0 @@
-Nosepass:
-  abilities: [Sturdy, MagnetPull]
-  hidden: [SandForce]
-Probopass:
-  abilities: [Sturdy, MagnetPull]
-  # Levitate is this registry's rather than the mainline's: the
-  # three small noses hang in the air around it, and Ground is the
-  # worst thing a Rock and Steel type meets
-  hidden: [SandForce, Levitate]

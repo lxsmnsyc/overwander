@@ -1,9 +1,0 @@
-Roselia:
-  abilities: [NaturalCure, PoisonPoint]
-  hidden: [LeafGuard]
-Budew:
-  abilities: [NaturalCure, PoisonPoint]
-  hidden: [LeafGuard]
-Roserade:
-  abilities: [NaturalCure, PoisonPoint]
-  hidden: [Technician]

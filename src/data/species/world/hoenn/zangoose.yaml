@@ -1,7 +1,0 @@
-# The mongoose and the snake, which the games keep apart and which
-# share a plain here: one hunts by day and the other by night
-Zangoose:
-  types: [Normal]
-  egg-groups: [Field]
-  biomes: [Savanna, Steppe]
-  active: [Morning, Day]

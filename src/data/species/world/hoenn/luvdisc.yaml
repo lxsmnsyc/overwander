@@ -1,6 +1,0 @@
-Luvdisc:
-  types: [Water]
-  egg-groups: [Water2]
-  habitat: Water
-  biomes: [CoralReef, Beach]
-  active: [Morning, Day]

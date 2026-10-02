@@ -1,6 +1,0 @@
-Marshadow:
-  types: [Fighting, Ghost]
-  egg-groups: [NoEggsDiscovered]
-  # The mountain it watched the hero climb
-  biomes: [Mountain]
-  active: any

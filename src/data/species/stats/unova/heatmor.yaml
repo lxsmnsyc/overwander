@@ -1,6 +1,0 @@
-Heatmor:
-  stats: { HP: 85, Attack: 97, Defense: 66, SpecialAttack: 105, SpecialDefense: 66, Speed: 65 }
-  catch-rate: 90
-  height: 1.4
-  weight: 58
-  gender: [1, 1]

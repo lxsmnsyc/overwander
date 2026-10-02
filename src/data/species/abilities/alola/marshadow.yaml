@@ -1,4 +1,0 @@
-Marshadow:
-  abilities: [Technician]
-  # The mainline's one, and these are this registry's
-  hidden: [Infiltrator, Pickpocket, CursedBody]

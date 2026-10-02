@@ -1,0 +1,225 @@
+Wingull:
+  Wingull:
+    types: [Water, Flying]
+    egg-groups: [Water1, Flying]
+    habitat: Amphibious
+    biomes: [Beach, RockyCoast, CoralReef, KelpForest]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Pelipper
+        method: [Level]
+        level: 25
+  Pelipper:
+    types: [Water, Flying]
+    egg-groups: [Water1, Flying]
+    habitat: Amphibious
+    biomes: [Beach, RockyCoast, CoralReef, KelpForest]
+    active: [Morning, Day]
+    evolves-from: Wingull
+Ralts:
+  Ralts:
+    types: [Psychic, Fairy]
+    egg-groups: [HumanLike, Amorphous]
+    biomes: [TemperateForest, MontaneForest]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Kirlia
+        method: [Level]
+        level: 20
+  Kirlia:
+    types: [Psychic, Fairy]
+    egg-groups: [HumanLike, Amorphous]
+    biomes: [TemperateForest, MontaneForest]
+    active: [Morning, Day]
+    evolves-from: Ralts
+    evolves-into:
+      - species: Gardevoir
+        method: [Level]
+        level: 30
+      - species: Gallade
+        method: [UsedItem, Gender]
+        item: DawnStone
+        gender: Male
+  Gardevoir:
+    types: [Psychic, Fairy]
+    egg-groups: [HumanLike, Amorphous]
+    biomes: [TemperateForest, MontaneForest]
+    active: [Morning, Day]
+    evolves-from: Kirlia
+  # The other way a Kirlia can go: a Gallade fights with the blades in
+  # its elbows and puts itself in front of whatever it is protecting
+  Gallade:
+    types: [Psychic, Fighting]
+    egg-groups: [HumanLike, Amorphous]
+    biomes: [TemperateForest, MontaneForest]
+    active: [Morning, Day]
+    evolves-from: Kirlia
+Surskit:
+  Surskit:
+    types: [Bug, Water]
+    egg-groups: [Water1, Bug]
+    habitat: Amphibious
+    biomes: [Swamp, Bog, TropicalRainforest, Shrubland, Grassland, TemperateRainforest]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Masquerain
+        method: [Level]
+        level: 22
+  Masquerain:
+    types: [Bug, Flying]
+    egg-groups: [Water1, Bug]
+    habitat: Amphibious
+    biomes: [Swamp, Bog, TropicalRainforest, Shrubland, Grassland, TemperateRainforest]
+    active: [Morning, Day]
+    evolves-from: Surskit
+Shroomish:
+  Shroomish:
+    types: [Grass]
+    egg-groups: [Fairy, Grass]
+    biomes: [TemperateRainforest, TropicalRainforest]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Breloom
+        method: [Level]
+        level: 23
+  Breloom:
+    types: [Grass, Fighting]
+    egg-groups: [Fairy, Grass]
+    biomes: [TemperateRainforest, TropicalRainforest]
+    active: [Evening, Night]
+    evolves-from: Shroomish
+# What the two above the base pick up: the sloth in the tree is not
+Slakoth:
+  Slakoth:
+    types: [Normal]
+    egg-groups: [Field]
+    biomes: [TropicalRainforest, Woodland]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Vigoroth
+        method: [Level]
+        level: 18
+  Vigoroth:
+    types: [Normal]
+    egg-groups: [Field]
+    biomes: [TropicalRainforest, Woodland]
+    active: [Morning, Day]
+    evolves-from: Slakoth
+    evolves-into:
+      - species: Slaking
+        method: [Level]
+        level: 36
+  Slaking:
+    types: [Normal]
+    egg-groups: [Field]
+    biomes: [TropicalRainforest, Woodland]
+    active: [Morning, Day]
+    evolves-from: Vigoroth
+Nincada:
+  Nincada:
+    types: [Bug, Ground]
+    egg-groups: [Bug]
+    biomes: [Woodland, Badlands]
+    active: [Evening, Night]
+    # Both at once, as in the mainline: the husk is left in the Poke
+    # Ball the bag has to be carrying when the Ninjask emerges
+    evolves-into:
+      - species: Ninjask
+        method: [Level]
+        level: 20
+      - species: Shedinja
+        method: [Level, UsedItem]
+        level: 20
+        item: PokeBall
+        shed: true
+  Ninjask:
+    types: [Bug, Flying]
+    egg-groups: [Bug]
+    biomes: [Woodland, Badlands]
+    active: [Evening, Night]
+    evolves-from: Nincada
+  Shedinja:
+    types: [Bug, Ghost]
+    # A shed shell is not something anything breeds with
+    egg-groups: [Mineral]
+    active: [Evening, Night]
+    evolves-from: Nincada
+# What the two above the base pick up: a whisper has nothing to swing
+Whismur:
+  Whismur:
+    types: [Normal]
+    egg-groups: [Monster, Field]
+    biomes: [Badlands, Steppe]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Loudred
+        method: [Level]
+        level: 20
+  Loudred:
+    types: [Normal]
+    egg-groups: [Monster, Field]
+    biomes: [Badlands, Steppe]
+    active: [Morning, Day]
+    evolves-from: Whismur
+    evolves-into:
+      - species: Exploud
+        method: [Level]
+        level: 40
+  Exploud:
+    types: [Normal]
+    egg-groups: [Monster, Field]
+    biomes: [Badlands, Steppe]
+    active: [Morning, Day]
+    evolves-from: Loudred
+Makuhita:
+  Makuhita:
+    types: [Fighting]
+    egg-groups: [HumanLike]
+    biomes: [Mountain, MontaneForest]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Hariyama
+        method: [Level]
+        level: 24
+  Hariyama:
+    types: [Fighting]
+    egg-groups: [HumanLike]
+    biomes: [Mountain, MontaneForest]
+    active: [Morning, Day]
+    evolves-from: Makuhita
+Nosepass:
+  Nosepass:
+    types: [Rock]
+    egg-groups: [Mineral]
+    biomes: [Mountain, Badlands]
+    active: any
+    # A Thunder Stone rather than a magnetic field: the newer games
+    # sell the stone, and nowhere here is a place with a field in it
+    evolves-into:
+      - species: Probopass
+        method: [UsedItem]
+        item: ThunderStone
+  # A Nosepass that grew a face of its own: a Probopass sends its three
+  # small noses out and works whatever they find from where it stands
+  Probopass:
+    types: [Rock, Steel]
+    egg-groups: [Mineral]
+    biomes: [Mountain, Badlands]
+    active: any
+    evolves-from: Nosepass
+Skitty:
+  Skitty:
+    types: [Normal]
+    egg-groups: [Field, Fairy]
+    biomes: [Grassland, Shrubland]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Delcatty
+        method: [UsedItem]
+        item: MoonStone
+  Delcatty:
+    types: [Normal]
+    egg-groups: [Field, Fairy]
+    biomes: [Grassland, Shrubland]
+    active: [Morning, Day]
+    evolves-from: Skitty

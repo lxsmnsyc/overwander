@@ -1,0 +1,105 @@
+Treecko:
+  Treecko:
+    abilities: [Overgrow]
+    hidden: [Unburden]
+  Grovyle:
+    abilities: [Overgrow]
+    hidden: [Unburden]
+  Sceptile:
+    abilities: [Overgrow]
+    # Chlorophyll and Leaf Guard are this registry's rather than the
+    # mainline's: the line's own machines are Sunny Day and Solar
+    # Beam, and a final evolution is filled to four
+    hidden: [Unburden, Chlorophyll, LeafGuard]
+Torchic:
+  Torchic:
+    abilities: [Blaze]
+    hidden: [SpeedBoost]
+  Combusken:
+    abilities: [Blaze]
+    hidden: [SpeedBoost]
+  Blaziken:
+    abilities: [Blaze]
+    # Iron Fist and Moxie are this registry's rather than the
+    # mainline's: it fights with its fists and kicks, and a final
+    # evolution is filled to four
+    hidden: [SpeedBoost, IronFist, Moxie]
+Mudkip:
+  Mudkip:
+    abilities: [Torrent]
+    hidden: [Damp]
+  Marshtomp:
+    abilities: [Torrent]
+    hidden: [Damp]
+  Swampert:
+    abilities: [Torrent]
+    # Rain Dish and Water Veil are this registry's rather than the
+    # mainline's: it carries its own Rain Dance, and a final
+    # evolution is filled to four
+    hidden: [Damp, RainDish, WaterVeil]
+Poochyena:
+  Poochyena:
+    abilities: [RunAway, QuickFeet]
+    hidden: [Rattled]
+  Mightyena:
+    abilities: [Intimidate, QuickFeet]
+    hidden: [Moxie]
+Zigzagoon:
+  Zigzagoon:
+    abilities: [Pickup, Gluttony]
+    hidden: [QuickFeet]
+  Linoone:
+    abilities: [Pickup, Gluttony]
+    # Frisk is this registry's rather than the mainline's: it already
+    # rummages with Pickup, Covet and Thief, and a final evolution is
+    # filled to four
+    hidden: [QuickFeet, Frisk]
+Wurmple:
+  Wurmple:
+    abilities: [ShieldDust]
+    hidden: [RunAway]
+  Silcoon:
+    abilities: [ShedSkin]
+  Beautifly:
+    abilities: [Swarm]
+    hidden: [Rivalry]
+  Cascoon:
+    abilities: [ShedSkin]
+  Dustox:
+    abilities: [ShieldDust]
+    hidden: [CompoundEyes]
+Lotad:
+  Lotad:
+    abilities: [SwiftSwim, RainDish]
+    hidden: [OwnTempo]
+  Lombre:
+    abilities: [SwiftSwim, RainDish]
+    hidden: [OwnTempo]
+  Ludicolo:
+    abilities: [SwiftSwim, RainDish]
+    # Hydration is this registry's rather than the mainline's: it
+    # dances in its own Rain Dance beside Rain Dish, and a final
+    # evolution is filled to four
+    hidden: [OwnTempo, Hydration]
+Seedot:
+  Seedot:
+    abilities: [Chlorophyll, EarlyBird]
+    hidden: [Pickpocket]
+  Nuzleaf:
+    abilities: [Chlorophyll, EarlyBird]
+    hidden: [Pickpocket]
+  Shiftry:
+    # Early Bird is the line's rather than its own, so it reaches
+    # this stage out of the hidden band
+    abilities: [Chlorophyll, WindRider]
+    hidden: [Pickpocket]
+Taillow:
+  Taillow:
+    abilities: [Guts]
+    hidden: [Scrappy]
+  Swellow:
+    abilities: [Guts]
+    # Gale Wings and Big Pecks are this registry's rather than the
+    # mainline's: it is a 125-Speed bird that fights on the wing, and
+    # a final evolution is filled to four
+    hidden: [Scrappy, GaleWings, BigPecks]

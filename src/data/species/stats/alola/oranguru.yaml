@@ -1,6 +1,0 @@
-Oranguru:
-  stats: { HP: 90, Attack: 60, Defense: 80, SpecialAttack: 90, SpecialDefense: 110, Speed: 60 }
-  catch-rate: 45
-  height: 1.5
-  weight: 76
-  gender: [4, 4]

@@ -1,6 +1,0 @@
-Dedenne:
-  abilities: [CheekPouch, Pickup]
-  # Minus is this line's invented filler: the mainline gives the
-  # mouse Cheek Pouch, Pickup and Plus, so this is the other half
-  # of the pair it is already born with
-  hidden: [Plus, Minus]

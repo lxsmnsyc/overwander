@@ -1,0 +1,300 @@
+Meowth:
+  Meowth:
+    types: [Normal]
+    egg-groups: [Field]
+    biomes: [Grassland, Woodland]
+    active: [Night]
+    evolves-into:
+      - species: Persian
+        method: [Level]
+        level: 28
+  Persian:
+    types: [Normal]
+    egg-groups: [Field]
+    biomes: [Grassland, Woodland]
+    active: [Night]
+    evolves-from: Meowth
+  MeowthAlola:
+    types: [Dark]
+    egg-groups: [Field]
+    biomes: [TropicalSeasonalForest, TropicalRainforest]
+    active: any
+    base-form: false
+    evolves-into:
+      - species: PersianAlola
+        method: [Friendship]
+  PersianAlola:
+    types: [Dark]
+    egg-groups: [Field]
+    biomes: [TropicalSeasonalForest, TropicalRainforest]
+    active: any
+    base-form: false
+    evolves-from: MeowthAlola
+Psyduck:
+  Psyduck:
+    types: [Water]
+    egg-groups: [Water1, Field]
+    habitat: Amphibious
+    biomes: [Swamp, Beach, TropicalSeasonalForest, Savanna, Grassland, Mountain, Woodland]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Golduck
+        method: [Level]
+        level: 33
+  Golduck:
+    types: [Water]
+    egg-groups: [Water1, Field]
+    habitat: Amphibious
+    biomes: [Swamp, Beach, TropicalSeasonalForest, Savanna, Grassland, Mountain, Woodland]
+    active: [Morning, Day]
+    evolves-from: Psyduck
+Mankey:
+  Mankey:
+    types: [Fighting]
+    egg-groups: [Field]
+    biomes: [Mountain, MontaneForest, Badlands]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Primeape
+        method: [Level]
+        level: 28
+  Primeape:
+    types: [Fighting]
+    egg-groups: [Field]
+    biomes: [Mountain, MontaneForest, Badlands]
+    active: [Morning, Day]
+    evolves-from: Mankey
+Growlithe:
+  Growlithe:
+    types: [Fire]
+    egg-groups: [Field]
+    biomes: [Grassland, Savanna, Steppe, Volcano]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Arcanine
+        method: [UsedItem]
+        item: FireStone
+  Arcanine:
+    types: [Fire]
+    egg-groups: [Field]
+    biomes: [Grassland, Savanna, Steppe, Volcano]
+    active: [Morning, Day]
+    evolves-from: Growlithe
+Poliwag:
+  Poliwag:
+    types: [Water]
+    egg-groups: [Water1]
+    habitat: Amphibious
+    biomes:
+      - Swamp
+      - Bog
+      - TropicalRainforest
+      - TropicalSeasonalForest
+      - Shrubland
+      - Grassland
+      - TemperateForest
+      - TemperateRainforest
+      - Woodland
+      - MontaneForest
+    active: any
+    evolves-into:
+      - species: Poliwhirl
+        method: [Level]
+        level: 25
+  Poliwhirl:
+    types: [Water]
+    egg-groups: [Water1]
+    habitat: Amphibious
+    biomes:
+      - Swamp
+      - Bog
+      - TropicalSeasonalForest
+      - Shrubland
+      - Grassland
+      - TemperateForest
+      - TemperateRainforest
+      - Woodland
+      - MontaneForest
+    active: any
+    evolves-from: Poliwag
+    evolves-into:
+      - species: Poliwrath
+        method: [UsedItem]
+        item: WaterStone
+      - species: Politoed
+        method: [HeldItem, Trade]
+        item: KingsRock
+  Poliwrath:
+    types: [Water, Fighting]
+    egg-groups: [Water1]
+    habitat: Amphibious
+    biomes: [Swamp, Bog, Shrubland, Grassland, MontaneForest]
+    active: any
+    evolves-from: Poliwhirl
+  Politoed:
+    types: [Water]
+    egg-groups: [Water1]
+    habitat: Amphibious
+    biomes:
+      - Swamp
+      - TropicalSeasonalForest
+      - Grassland
+      - TemperateForest
+      - TemperateRainforest
+      - Woodland
+    active: any
+    evolves-from: Poliwhirl
+# What a Kadabra comes out of the evolution knowing, taken across
+# both halves of the generation: Red and Blue start it with
+# Teleport, Confusion and Disable, and Yellow drops the latter two
+# from the first level and starts it with Kinesis instead — the
+# spoon-bending it is named for, which nothing at all could learn
+# in Red and Blue. There is one Kadabra here rather than two, so it
+# knows what a Gen 1 Kadabra could know. Johto brings the rest
+# forward a few levels and adds the Future Sight
+Abra:
+  Abra:
+    types: [Psychic]
+    egg-groups: [HumanLike]
+    biomes: [Grassland]
+    active: [Day]
+    evolves-into:
+      - species: Kadabra
+        method: [Level]
+        level: 16
+  Kadabra:
+    types: [Psychic]
+    egg-groups: [HumanLike]
+    biomes: [Grassland]
+    active: [Day]
+    evolves-from: Abra
+    evolves-into:
+      - species: Alakazam
+        method: [Trade]
+  Alakazam:
+    types: [Psychic]
+    egg-groups: [HumanLike]
+    biomes: [Grassland]
+    active: [Day]
+    evolves-from: Kadabra
+Machop:
+  Machop:
+    types: [Fighting]
+    egg-groups: [HumanLike]
+    biomes: [Mountain, AlpineTundra]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Machoke
+        method: [Level]
+        level: 28
+  Machoke:
+    types: [Fighting]
+    egg-groups: [HumanLike]
+    biomes: [Mountain, AlpineTundra]
+    active: [Morning, Day]
+    evolves-from: Machop
+    evolves-into:
+      - species: Machamp
+        method: [Trade]
+  Machamp:
+    types: [Fighting]
+    egg-groups: [HumanLike]
+    biomes: [Mountain, AlpineTundra]
+    active: [Morning, Day]
+    evolves-from: Machoke
+Bellsprout:
+  Bellsprout:
+    types: [Grass, Poison]
+    egg-groups: [Grass]
+    biomes: [TemperateForest, TropicalSeasonalForest, TemperateRainforest, Bog]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Weepinbell
+        method: [Level]
+        level: 21
+  Weepinbell:
+    types: [Grass, Poison]
+    egg-groups: [Grass]
+    biomes: [TemperateForest, TropicalSeasonalForest, TemperateRainforest, Bog]
+    active: [Morning, Day]
+    evolves-from: Bellsprout
+    evolves-into:
+      - species: Victreebel
+        method: [UsedItem]
+        item: LeafStone
+  Victreebel:
+    types: [Grass, Poison]
+    egg-groups: [Grass]
+    biomes: [TemperateForest, TropicalSeasonalForest, TemperateRainforest, Bog]
+    active: [Morning, Day]
+    evolves-from: Weepinbell
+Tentacool:
+  Tentacool:
+    types: [Water, Poison]
+    egg-groups: [Water3]
+    habitat: Water
+    biomes: [Ocean, DeepOcean, KelpForest, Beach, RockyCoast]
+    active: any
+    evolves-into:
+      - species: Tentacruel
+        method: [Level]
+        level: 30
+  Tentacruel:
+    types: [Water, Poison]
+    egg-groups: [Water3]
+    habitat: Water
+    biomes: [Ocean, KelpForest, Beach, RockyCoast]
+    active: any
+    evolves-from: Tentacool
+Geodude:
+  Geodude:
+    types: [Rock, Ground]
+    egg-groups: [Mineral]
+    biomes: [Mountain, ColdDesert, Volcano, Badlands]
+    active: any
+    evolves-into:
+      - species: Graveler
+        method: [Level]
+        level: 25
+  Graveler:
+    types: [Rock, Ground]
+    egg-groups: [Mineral]
+    biomes: [Mountain, ColdDesert, Volcano, Badlands]
+    active: any
+    evolves-from: Geodude
+    evolves-into:
+      - species: Golem
+        method: [Trade]
+  Golem:
+    types: [Rock, Ground]
+    egg-groups: [Mineral]
+    biomes: [Mountain, ColdDesert, Volcano]
+    active: any
+    evolves-from: Graveler
+  GeodudeAlola:
+    types: [Rock, Electric]
+    egg-groups: [Mineral]
+    biomes: [Steppe, Shrubland]
+    active: any
+    base-form: false
+    evolves-into:
+      - species: GravelerAlola
+        method: [Level]
+        level: 25
+  GravelerAlola:
+    types: [Rock, Electric]
+    egg-groups: [Mineral]
+    biomes: [Steppe, Shrubland]
+    active: any
+    base-form: false
+    evolves-from: GeodudeAlola
+    evolves-into:
+      - species: GolemAlola
+        method: [Trade]
+  GolemAlola:
+    types: [Rock, Electric]
+    egg-groups: [Mineral]
+    biomes: [Steppe, Shrubland]
+    active: any
+    base-form: false
+    evolves-from: GravelerAlola

@@ -1,9 +1,0 @@
-Charmander:
-  abilities: [Blaze]
-  hidden: [SolarPower]
-Charmeleon:
-  abilities: [Blaze]
-  hidden: [SolarPower]
-Charizard:
-  abilities: [Blaze]
-  hidden: [SolarPower, FlameBody, Intimidate]

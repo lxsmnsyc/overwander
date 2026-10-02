@@ -1,6 +1,0 @@
-Uxie:
-  stats: { HP: 75, Attack: 75, Defense: 130, SpecialAttack: 75, SpecialDefense: 130, Speed: 95 }
-  catch-rate: 3
-  height: 0.3
-  weight: 0.3
-  gender: genderless

@@ -1,8 +1,0 @@
-Makuhita:
-  abilities: [ThickFat, Guts]
-  hidden: [SheerForce]
-Hariyama:
-  abilities: [ThickFat, Guts]
-  # One the mainline never gave it: a sumo digs in rather than
-  # stepping back, so every blow leaves it harder to move
-  hidden: [SheerForce, Stamina]

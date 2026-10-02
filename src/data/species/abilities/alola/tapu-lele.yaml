@@ -1,4 +1,0 @@
-TapuLele:
-  abilities: [PsychicSurge]
-  # Telepathy is the mainline's, and the last two are this registry's
-  hidden: [Telepathy, MagicGuard, Synchronize]

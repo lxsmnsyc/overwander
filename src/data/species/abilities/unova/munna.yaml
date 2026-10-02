@@ -1,8 +1,0 @@
-Munna:
-  abilities: [Forewarn, Synchronize]
-  hidden: [Telepathy]
-Musharna:
-  abilities: [Forewarn, Synchronize]
-  # Comatose is the invented fourth: the line reaches three, and a
-  # pokemon that never wakes is what a Musharna is
-  hidden: [Telepathy, Comatose]

@@ -1,9 +1,0 @@
-Skorupi:
-  abilities: [BattleArmor, Sniper]
-  hidden: [KeenEye]
-Drapion:
-  abilities: [BattleArmor, Sniper]
-  # Merciless is this registry's rather than the mainline's: the
-  # sting is what the pincers are waiting on, and Sniper already
-  # says what a critical is worth to this line
-  hidden: [KeenEye, Merciless]

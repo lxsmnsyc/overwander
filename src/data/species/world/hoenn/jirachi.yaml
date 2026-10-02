@@ -1,9 +1,0 @@
-Jirachi:
-  types: [Steel, Psychic]
-  egg-groups: [NoEggsDiscovered]
-  # The valley it sleeps under, dry ground with the sky open over
-  # it, which is what a comet has to be seen through. The tag is
-  # the reliable way to one; the badlands are the other, at odds
-  # nobody walks out looking for
-  biomes: [Badlands]
-  active: any

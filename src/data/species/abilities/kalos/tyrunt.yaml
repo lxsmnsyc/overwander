@@ -1,8 +1,0 @@
-Tyrunt:
-  abilities: [StrongJaw]
-  hidden: [Sturdy]
-Tyrantrum:
-  abilities: [StrongJaw]
-  # Intimidate is this line's invented filler: the mainline gives
-  # the two shapes Strong Jaw, Sturdy and Rock Head between them
-  hidden: [RockHead, Intimidate]

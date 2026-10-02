@@ -1,8 +1,0 @@
-Finneon:
-  abilities: [SwiftSwim, StormDrain]
-  hidden: [WaterVeil]
-Lumineon:
-  abilities: [SwiftSwim, StormDrain]
-  # Illuminate is this registry's rather than the mainline's: the
-  # Neon Pokemon is named for the light its own dex entry describes
-  hidden: [WaterVeil, Illuminate]

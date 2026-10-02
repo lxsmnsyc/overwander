@@ -1,6 +1,0 @@
-Kecleon:
-  stats: { HP: 60, Attack: 90, Defense: 70, SpecialAttack: 60, SpecialDefense: 120, Speed: 40 }
-  catch-rate: 200
-  height: 1
-  weight: 22
-  gender: [1, 1]

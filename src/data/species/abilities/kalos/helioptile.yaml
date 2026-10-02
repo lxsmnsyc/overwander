@@ -1,9 +1,0 @@
-Helioptile:
-  abilities: [DrySkin, SandVeil]
-  hidden: [SolarPower]
-Heliolisk:
-  abilities: [DrySkin, SandVeil]
-  # Overcoat is this line's invented filler: the mainline gives it
-  # Dry Skin, Sand Veil and Solar Power and nothing else, and a hide
-  # that keeps grit and powder out costs it nothing in any weather
-  hidden: [SolarPower, Overcoat]

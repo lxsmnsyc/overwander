@@ -1,9 +1,0 @@
-Pawniard:
-  abilities: [Defiant, InnerFocus]
-  hidden: [Pressure]
-Bisharp:
-  abilities: [Defiant, InnerFocus]
-  # Three, and it stays at three: Kingambit stands above this one in
-  # a later generation, so anything invented here would be in a
-  # Kingambit's reach the day it lands
-  hidden: [Pressure]

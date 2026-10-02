@@ -1,6 +1,0 @@
-Zekrom:
-  abilities: [Teravolt]
-  # Teravolt is all the mainline gives it, so the other three are
-  # this registry's: the current it eats, the weight a legendary
-  # puts on a fight, and a blow thrown without hedging it
-  hidden: [MotorDrive, Pressure, SheerForce]

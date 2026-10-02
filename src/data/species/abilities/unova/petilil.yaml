@@ -1,8 +1,0 @@
-Petilil:
-  abilities: [Chlorophyll, OwnTempo]
-  hidden: [LeafGuard]
-Lilligant:
-  abilities: [Chlorophyll, OwnTempo]
-  # Serene Grace is the invented fourth: the line reaches three, and
-  # what it throws is powder and petals, all of it added effect
-  hidden: [LeafGuard, SereneGrace]

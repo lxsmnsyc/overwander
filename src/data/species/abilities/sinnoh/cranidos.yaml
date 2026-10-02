@@ -1,9 +1,0 @@
-Cranidos:
-  abilities: [MoldBreaker]
-  hidden: [SheerForce]
-Rampardos:
-  abilities: [MoldBreaker]
-  # Rock Head and Rivalry are this registry's rather than the
-  # mainline's: Head Smash is the line's own move, and the head is
-  # what it settles an argument with
-  hidden: [SheerForce, RockHead, Rivalry]

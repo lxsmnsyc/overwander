@@ -1,8 +1,0 @@
-Teddiursa:
-  abilities: [Pickup, QuickFeet]
-  hidden: [HoneyGather]
-Ursaring:
-  abilities: [Guts, QuickFeet]
-  # Nothing invented here: Teddiursa's Pickup and Honey Gather walk
-  # up to meet its own three, and Ursaluna lands above it later
-  hidden: [Unnerve]

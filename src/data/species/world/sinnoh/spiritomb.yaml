@@ -1,7 +1,0 @@
-# A hundred and eight spirits pressed into one keystone for what
-# they did, and still in it
-Spiritomb:
-  types: [Ghost, Dark]
-  egg-groups: [Amorphous]
-  biomes: [Badlands, Bog, Woodland]
-  active: [Evening, Night]

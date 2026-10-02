@@ -1,6 +1,0 @@
-Pyukumuku:
-  types: [Water]
-  egg-groups: [Water1]
-  habitat: Amphibious
-  biomes: [Beach, RockyCoast]
-  active: any

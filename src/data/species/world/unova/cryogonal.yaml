@@ -1,7 +1,0 @@
-# The crystal: it is born in a snow cloud rather than hatched, and
-# what it catches it catches in chains of ice rather than in a grip
-Cryogonal:
-  types: [Ice]
-  egg-groups: [Mineral]
-  biomes: [Glacier, AlpineTundra]
-  active: [Evening, Night]

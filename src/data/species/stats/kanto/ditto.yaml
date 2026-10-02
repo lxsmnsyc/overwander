@@ -1,6 +1,0 @@
-Ditto:
-  stats: { HP: 48, Attack: 48, Defense: 48, SpecialAttack: 48, SpecialDefense: 48, Speed: 48 }
-  catch-rate: 35
-  height: 0.3
-  weight: 4
-  gender: genderless

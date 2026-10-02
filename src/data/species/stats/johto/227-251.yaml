@@ -1,0 +1,116 @@
+Skarmory:
+  Skarmory:
+    stats: { HP: 65, Attack: 80, Defense: 140, SpecialAttack: 40, SpecialDefense: 70, Speed: 70 }
+    catch-rate: 25
+    height: 1.7
+    weight: 50.5
+    gender: [1, 1]
+Houndour:
+  Houndour:
+    stats: { HP: 45, Attack: 60, Defense: 30, SpecialAttack: 80, SpecialDefense: 50, Speed: 65 }
+    catch-rate: 120
+    height: 0.6
+    weight: 10.8
+    gender: [1, 1]
+  Houndoom:
+    stats: { HP: 75, Attack: 90, Defense: 50, SpecialAttack: 110, SpecialDefense: 80, Speed: 95 }
+    catch-rate: 45
+    height: 1.4
+    weight: 35
+    gender: [1, 1]
+Phanpy:
+  Phanpy:
+    stats: { HP: 90, Attack: 60, Defense: 60, SpecialAttack: 40, SpecialDefense: 40, Speed: 40 }
+    catch-rate: 120
+    height: 0.5
+    weight: 33.5
+    gender: [1, 1]
+  Donphan:
+    stats: { HP: 90, Attack: 120, Defense: 120, SpecialAttack: 60, SpecialDefense: 60, Speed: 50 }
+    catch-rate: 60
+    height: 1.1
+    weight: 120
+    gender: [1, 1]
+Stantler:
+  Stantler:
+    stats: { HP: 73, Attack: 95, Defense: 62, SpecialAttack: 85, SpecialDefense: 65, Speed: 85 }
+    catch-rate: 45
+    height: 1.4
+    weight: 71.2
+    gender: [1, 1]
+Smeargle:
+  Smeargle:
+    stats: { HP: 55, Attack: 20, Defense: 35, SpecialAttack: 20, SpecialDefense: 45, Speed: 75 }
+    catch-rate: 45
+    height: 1.2
+    weight: 58
+    gender: [1, 1]
+Miltank:
+  Miltank:
+    stats: { HP: 95, Attack: 80, Defense: 105, SpecialAttack: 40, SpecialDefense: 70, Speed: 100 }
+    catch-rate: 45
+    height: 1.2
+    weight: 75.5
+    gender: [0, 1]
+Raikou:
+  Raikou:
+    stats: { HP: 90, Attack: 85, Defense: 75, SpecialAttack: 115, SpecialDefense: 100, Speed: 115 }
+    catch-rate: 3
+    height: 1.9
+    weight: 178
+    gender: genderless
+Entei:
+  Entei:
+    stats: { HP: 115, Attack: 115, Defense: 85, SpecialAttack: 90, SpecialDefense: 75, Speed: 100 }
+    catch-rate: 3
+    height: 2.1
+    weight: 198
+    gender: genderless
+Suicune:
+  Suicune:
+    stats: { HP: 100, Attack: 75, Defense: 115, SpecialAttack: 90, SpecialDefense: 115, Speed: 85 }
+    catch-rate: 3
+    height: 2
+    weight: 187
+    gender: genderless
+Larvitar:
+  Larvitar:
+    stats: { HP: 50, Attack: 64, Defense: 50, SpecialAttack: 45, SpecialDefense: 50, Speed: 41 }
+    catch-rate: 45
+    height: 0.6
+    weight: 72
+    gender: [1, 1]
+  Pupitar:
+    stats: { HP: 70, Attack: 84, Defense: 70, SpecialAttack: 65, SpecialDefense: 70, Speed: 51 }
+    catch-rate: 45
+    height: 1.2
+    weight: 152
+    gender: [1, 1]
+  Tyranitar:
+    stats: { HP: 100, Attack: 134, Defense: 110, SpecialAttack: 95, SpecialDefense: 100, Speed: 61 }
+    catch-rate: 45
+    height: 2
+    weight: 202
+    gender: [1, 1]
+Lugia:
+  Lugia:
+    stats: { HP: 106, Attack: 90, Defense: 130, SpecialAttack: 90, SpecialDefense: 154, Speed: 110 }
+    catch-rate: 3
+    height: 5.2
+    weight: 216
+    gender: genderless
+HoOh:
+  HoOh:
+    stats: { HP: 106, Attack: 130, Defense: 90, SpecialAttack: 110, SpecialDefense: 154, Speed: 90 }
+    catch-rate: 3
+    height: 3.8
+    weight: 199
+    gender: genderless
+Celebi:
+  Celebi:
+    stats:
+      { HP: 100, Attack: 100, Defense: 100, SpecialAttack: 100, SpecialDefense: 100, Speed: 100 }
+    catch-rate: 45
+    height: 0.6
+    weight: 5
+    gender: genderless

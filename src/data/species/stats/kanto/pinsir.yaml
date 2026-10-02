@@ -1,6 +1,0 @@
-Pinsir:
-  stats: { HP: 65, Attack: 125, Defense: 100, SpecialAttack: 55, SpecialDefense: 70, Speed: 85 }
-  catch-rate: 45
-  height: 1.5
-  weight: 55
-  gender: [1, 1]

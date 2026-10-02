@@ -1,6 +1,0 @@
-Articuno:
-  stats: { HP: 90, Attack: 85, Defense: 100, SpecialAttack: 95, SpecialDefense: 125, Speed: 85 }
-  catch-rate: 3
-  height: 1.7
-  weight: 55.4
-  gender: genderless

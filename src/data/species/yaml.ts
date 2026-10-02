@@ -5,7 +5,6 @@ import type Abilities from '../ids/abilities';
 import type Biome from '../ids/biome';
 import { AnyTimeOfDay } from '../ids/biome';
 import type EggGroups from '../ids/egg-groups';
-import type Families from '../ids/families';
 import type { Moves } from '../ids/moves';
 import {
   ABILITY_IDS,
@@ -28,8 +27,10 @@ import type { EvolutionData, LearnSetData, SpeciesData, StatComparison } from '.
 /**
  * The species, read out of their YAML.
  *
- * Each field lives in a folder of its own, one file per family, so a
- * part of the record can be loaded without the rest:
+ * Each field lives in a folder of its own, so a part of the record can
+ * be loaded without the rest. Within a field, a region's families are
+ * filed in blocks of 25 dex numbers (`kanto/051-075.yaml`), each family
+ * keyed by its own name with its species beneath it:
  *
  * - `world/` is what the overworld reads: types, habitat, evolutions,
  *   egg groups, biomes and the hours it is about
@@ -133,30 +134,34 @@ function flagsOf(table: Readonly<Record<string, number>>, names: string[], where
   return flags;
 }
 
-/** The family a file is named after: `mr-mime.yaml` is `MrMime` */
-export function familyOfFile(path: string): Families {
-  const base = path.slice(path.lastIndexOf('/') + 1, -'.yaml'.length);
-  let name = '';
-
-  for (const part of base.split('-')) {
-    name += part.charAt(0).toUpperCase() + part.slice(1);
-  }
-  return idOf(FAMILY_IDS, name, path);
+/** Where one species' part was written: the file and the family it sits under */
+interface Written {
+  where: string;
+  family: string;
+  part: unknown;
 }
 
-/** One field's files, merged into one map from species name to its part */
-function collect(files: Record<string, unknown>): Map<string, [path: string, part: unknown]> {
-  const parts = new Map<string, [string, unknown]>();
+const FAMILIES = v.record(NAME, v.record(NAME, v.unknown()));
+
+/**
+ * One field's files, merged into one map from species name to its
+ * part. A file holds a block of families, each keyed by its own name
+ * with its species beneath it
+ */
+function collect(files: Record<string, unknown>): Map<string, Written> {
+  const parts = new Map<string, Written>();
 
   for (const [path, file] of Object.entries(files)) {
-    for (const [name, part] of Object.entries(v.parse(v.record(NAME, v.unknown()), file))) {
-      if (name === FAMILY_TEACHABLE_KEY) {
-        continue;
+    for (const [family, members] of Object.entries(v.parse(FAMILIES, file))) {
+      for (const [name, part] of Object.entries(members)) {
+        if (name === FAMILY_TEACHABLE_KEY) {
+          continue;
+        }
+        if (parts.has(name)) {
+          throw new Error(`${path}: ${name} is written twice`);
+        }
+        parts.set(name, { where: `${path}: ${family}`, family, part });
       }
-      if (parts.has(name)) {
-        throw new Error(`${path}: ${name} is written in two files`);
-      }
-      parts.set(name, [path, part]);
     }
   }
   return parts;
@@ -239,15 +244,29 @@ function readStats(stats: Record<string, number>, where: string): Record<Stats, 
   };
 }
 
-/** What a family shares, by the file it is written in */
+/** The names and categories, which are written flat: one species to a line */
+function collectText(files: Record<string, unknown>): Map<string, v.InferOutput<typeof TEXT>> {
+  const words = new Map<string, v.InferOutput<typeof TEXT>>();
+
+  for (const file of Object.values(files)) {
+    for (const [name, said] of Object.entries(v.parse(v.record(NAME, TEXT), file))) {
+      words.set(name, said);
+    }
+  }
+  return words;
+}
+
+/** What each family can be taught as a whole, by family name */
 function familyTeachables(files: Record<string, unknown>): Map<string, string[]> {
   const shared = new Map<string, string[]>();
 
-  for (const [path, file] of Object.entries(files)) {
-    const list = v.parse(v.record(NAME, v.unknown()), file)[FAMILY_TEACHABLE_KEY];
+  for (const file of Object.values(files)) {
+    for (const [family, members] of Object.entries(v.parse(FAMILIES, file))) {
+      const list = members[FAMILY_TEACHABLE_KEY];
 
-    if (list != null) {
-      shared.set(path, v.parse(NAMES, list));
+      if (list != null) {
+        shared.set(family, v.parse(NAMES, list));
+      }
     }
   }
   return shared;
@@ -293,29 +312,36 @@ export function readSpecies(files: SpeciesFiles): [Species, SpeciesData][] {
   const stats = collect(files.stats);
   const abilities = collect(files.abilities);
   const learnsets = collect(files.learnsets);
-  const text = collect(files.text);
+  const text = collectText(files.text);
   const shared = familyTeachables(files.learnsets);
   const read: [Species, SpeciesData][] = [];
 
-  for (const [name, [worldPath, worldPart]] of world) {
-    const species = idOf(SPECIES_IDS, name, worldPath);
-    const where = `${worldPath}: ${name}`;
-    const need = (field: Map<string, [string, unknown]>, kind: string): [string, unknown] => {
+  for (const [name, placed] of world) {
+    const where = `${placed.where}: ${name}`;
+    const species = idOf(SPECIES_IDS, name, where);
+    const need = (field: Map<string, Written>, kind: string): Written => {
       const found = field.get(name);
 
       if (found == null) {
         throw new Error(`${name} has no ${kind}`);
       }
+      if (found.family !== placed.family) {
+        throw new Error(
+          `${name} is under ${placed.family} in world/ but ${found.family} in ${kind}`,
+        );
+      }
       return found;
     };
 
-    const place = v.parse(WORLD, worldPart);
-    const [, statsPart] = need(stats, 'stats');
-    const body = v.parse(STATS, statsPart);
-    const pools = v.parse(ABILITIES, need(abilities, 'abilities')[1]);
-    const [learnPath, learnPart] = need(learnsets, 'learnset');
-    const moves = v.parse(LEARNSET, learnPart);
-    const words = v.parse(TEXT, need(text, 'name')[1]);
+    const place = v.parse(WORLD, placed.part);
+    const body = v.parse(STATS, need(stats, 'stats').part);
+    const pools = v.parse(ABILITIES, need(abilities, 'abilities').part);
+    const moves = v.parse(LEARNSET, need(learnsets, 'learnset').part);
+    const words = text.get(name);
+
+    if (words == null) {
+      throw new Error(`${name} has no name`);
+    }
 
     const data: SpeciesData = {
       dexNumber: place.dex ?? speciesDexNumber(species),
@@ -323,7 +349,7 @@ export function readSpecies(files: SpeciesFiles): [Species, SpeciesData][] {
       category: words.category,
       height: body.height,
       weight: body.weight,
-      family: familyOfFile(worldPath),
+      family: idOf(FAMILY_IDS, placed.family, where),
       stats: readStats(body.stats, where),
       types: idsOf<Types>(TYPE_IDS, place.types, where),
       abilities: idsOf<Abilities>(ABILITY_IDS, pools.abilities, where),
@@ -333,7 +359,7 @@ export function readSpecies(files: SpeciesFiles): [Species, SpeciesData][] {
       biomes: idsOf<Biome>(BIOME_IDS, place.biomes, where),
       activeTimes:
         place.active === 'any' ? AnyTimeOfDay : flagsOf(TIME_OF_DAY_IDS, place.active, where),
-      learnSet: readLearnSet(moves, shared.get(learnPath) ?? [], where),
+      learnSet: readLearnSet(moves, shared.get(placed.family) ?? [], where),
     };
 
     if (place['base-form'] === false) {

@@ -1,5 +1,0 @@
-Tauros:
-  types: [Normal]
-  egg-groups: [Field]
-  biomes: [Savanna, Grassland, Steppe]
-  active: [Morning, Day]

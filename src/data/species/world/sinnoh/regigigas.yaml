@@ -1,7 +1,0 @@
-# The one that made the other three and towed the continents into
-# place, shut in a temple in the snow ever since
-Regigigas:
-  types: [Normal]
-  egg-groups: [NoEggsDiscovered]
-  biomes: [Glacier, Tundra]
-  active: any

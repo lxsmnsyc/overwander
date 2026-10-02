@@ -1,9 +1,0 @@
-Meloetta:
-  abilities: [SereneGrace]
-  # Soundproof, Healer and Dancer are this registry's rather than
-  # the mainline's: a singer is not sung at, its songs mend what
-  # hears them, and it cannot watch a dance without joining it
-  hidden: [Soundproof, Healer, Dancer]
-MeloettaPirouette:
-  abilities: [SereneGrace]
-  hidden: []

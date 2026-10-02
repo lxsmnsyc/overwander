@@ -1,6 +1,0 @@
-Corsola:
-  types: [Water, Rock]
-  egg-groups: [Water1, Water3]
-  habitat: Water
-  biomes: [CoralReef, Ocean, Beach, RockyCoast]
-  active: any

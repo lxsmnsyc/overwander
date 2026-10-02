@@ -1,6 +1,0 @@
-Cryogonal:
-  abilities: [Levitate]
-  # Ice Body, Snow Warning and Clear Body are the invented three:
-  # Levitate is all the mainline gives it, which leaves it three
-  # short of the four a final evolution has to reach
-  hidden: [IceBody, SnowWarning, ClearBody]

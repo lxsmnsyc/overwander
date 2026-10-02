@@ -1,5 +1,0 @@
-Shuckle:
-  types: [Bug, Rock]
-  egg-groups: [Bug]
-  biomes: [Mountain, Badlands, RockyCoast, CoralReef, KelpForest]
-  active: any

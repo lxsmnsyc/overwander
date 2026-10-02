@@ -1,0 +1,552 @@
+Chespin:
+  Chespin:
+    types: [Grass]
+    egg-groups: [Field]
+    biomes: [TemperateForest, Woodland]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Quilladin
+        method: [Level]
+        level: 16
+  Quilladin:
+    types: [Grass]
+    egg-groups: [Field]
+    biomes: [TemperateForest, Woodland]
+    active: [Morning, Day]
+    evolves-from: Chespin
+    evolves-into:
+      - species: Chesnaught
+        method: [Level]
+        level: 36
+  Chesnaught:
+    types: [Grass, Fighting]
+    egg-groups: [Field]
+    biomes: [TemperateForest, Woodland]
+    active: [Morning, Day]
+    evolves-from: Quilladin
+Fennekin:
+  Fennekin:
+    types: [Fire]
+    egg-groups: [Field]
+    biomes: [Shrubland, Savanna]
+    active: [Day, Evening]
+    evolves-into:
+      - species: Braixen
+        method: [Level]
+        level: 16
+  Braixen:
+    types: [Fire]
+    egg-groups: [Field]
+    biomes: [Shrubland, Savanna]
+    active: [Day, Evening]
+    evolves-from: Fennekin
+    evolves-into:
+      - species: Delphox
+        method: [Level]
+        level: 36
+  Delphox:
+    types: [Fire, Psychic]
+    egg-groups: [Field]
+    biomes: [Shrubland, Savanna]
+    active: [Day, Evening]
+    evolves-from: Braixen
+Froakie:
+  Froakie:
+    types: [Water]
+    egg-groups: [Water1]
+    habitat: Amphibious
+    biomes: [Swamp, Bog]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Frogadier
+        method: [Level]
+        level: 16
+  Frogadier:
+    types: [Water]
+    egg-groups: [Water1]
+    habitat: Amphibious
+    biomes: [Swamp, Bog]
+    active: [Evening, Night]
+    evolves-from: Froakie
+    evolves-into:
+      - species: Greninja
+        method: [Level]
+        level: 36
+  Greninja:
+    types: [Water, Dark]
+    egg-groups: [Water1]
+    habitat: Amphibious
+    biomes: [Swamp, Bog]
+    active: [Evening, Night]
+    evolves-from: Frogadier
+  # The bond drawn out: what Battle Bond makes of a Greninja once it
+  # knocks something out. Put on in a fight rather than met, so it
+  # stands in no line and nothing stages it
+  GreninjaAsh:
+    types: [Water, Dark]
+    egg-groups: [Water1]
+    habitat: Amphibious
+    active: [Evening, Night]
+    base-form: false
+    worn: true
+Bunnelby:
+  Bunnelby:
+    types: [Normal]
+    egg-groups: [Field]
+    biomes: [Grassland, Steppe]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Diggersby
+        method: [Level]
+        level: 20
+  Diggersby:
+    types: [Normal, Ground]
+    egg-groups: [Field]
+    biomes: [Grassland, Steppe]
+    active: [Morning, Day]
+    evolves-from: Bunnelby
+Fletchling:
+  Fletchling:
+    types: [Normal, Flying]
+    egg-groups: [Flying]
+    biomes: [Grassland, Woodland]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Fletchinder
+        method: [Level]
+        level: 17
+  Fletchinder:
+    types: [Fire, Flying]
+    egg-groups: [Flying]
+    biomes: [Grassland, Woodland]
+    active: [Morning, Day]
+    evolves-from: Fletchling
+    evolves-into:
+      - species: Talonflame
+        method: [Level]
+        level: 35
+  Talonflame:
+    types: [Fire, Flying]
+    egg-groups: [Flying]
+    biomes: [Grassland, Woodland]
+    active: [Morning, Day]
+    evolves-from: Fletchinder
+Scatterbug:
+  Scatterbug:
+    types: [Bug]
+    egg-groups: [Bug]
+    biomes:
+      - Glacier
+      - AlpineTundra
+      - Tundra
+      - TemperateForest
+      - Grassland
+      - Woodland
+      - Steppe
+      - Ocean
+      - CoralReef
+      - Badlands
+      - Desert
+      - Bog
+      - TropicalRainforest
+      - Savanna
+      - Volcano
+      - Beach
+      - TropicalSeasonalForest
+      - Shrubland
+    active: [Morning, Day]
+    evolves-into:
+      - species: Spewpa
+        method: [Level]
+        level: 9
+  Spewpa:
+    types: [Bug]
+    egg-groups: [Bug]
+    biomes:
+      - Glacier
+      - AlpineTundra
+      - Tundra
+      - TemperateForest
+      - Grassland
+      - Woodland
+      - Steppe
+      - Ocean
+      - CoralReef
+      - Badlands
+      - Desert
+      - Bog
+      - TropicalRainforest
+      - Savanna
+      - Volcano
+      - Beach
+      - TropicalSeasonalForest
+      - Shrubland
+    active: [Morning, Day]
+    evolves-from: Scatterbug
+    evolves-into:
+      - species: Vivillon
+        method: [Level]
+        level: 12
+  Vivillon:
+    types: [Bug, Flying]
+    egg-groups: [Bug]
+    biomes:
+      - Glacier
+      - AlpineTundra
+      - Tundra
+      - TemperateForest
+      - Grassland
+      - Woodland
+      - Steppe
+      - Ocean
+      - CoralReef
+      - Badlands
+      - Desert
+      - Bog
+      - TropicalRainforest
+      - Savanna
+      - Volcano
+      - Beach
+      - TropicalSeasonalForest
+      - Shrubland
+    active: [Morning, Day]
+    evolves-from: Spewpa
+  VivillonIcySnow:
+    types: [Bug, Flying]
+    egg-groups: [Bug]
+    biomes: [Glacier]
+    active: [Morning, Day]
+    base-form: false
+    evolves-from: Spewpa
+  VivillonPolar:
+    types: [Bug, Flying]
+    egg-groups: [Bug]
+    biomes: [AlpineTundra]
+    active: [Morning, Day]
+    base-form: false
+    evolves-from: Spewpa
+  VivillonTundra:
+    types: [Bug, Flying]
+    egg-groups: [Bug]
+    biomes: [Tundra]
+    active: [Morning, Day]
+    base-form: false
+    evolves-from: Spewpa
+  VivillonContinental:
+    types: [Bug, Flying]
+    egg-groups: [Bug]
+    biomes: [TemperateForest]
+    active: [Morning, Day]
+    base-form: false
+    evolves-from: Spewpa
+  VivillonGarden:
+    types: [Bug, Flying]
+    egg-groups: [Bug]
+    biomes: [Grassland]
+    active: [Morning, Day]
+    base-form: false
+    evolves-from: Spewpa
+  VivillonElegant:
+    types: [Bug, Flying]
+    egg-groups: [Bug]
+    biomes: [Woodland]
+    active: [Morning, Day]
+    base-form: false
+    evolves-from: Spewpa
+  VivillonModern:
+    types: [Bug, Flying]
+    egg-groups: [Bug]
+    biomes: [Steppe]
+    active: [Morning, Day]
+    base-form: false
+    evolves-from: Spewpa
+  VivillonMarine:
+    types: [Bug, Flying]
+    egg-groups: [Bug]
+    biomes: [CoralReef]
+    active: [Morning, Day]
+    base-form: false
+    evolves-from: Spewpa
+  VivillonArchipelago:
+    types: [Bug, Flying]
+    egg-groups: [Bug]
+    biomes: [Beach]
+    active: [Morning, Day]
+    base-form: false
+    evolves-from: Spewpa
+  VivillonHighPlains:
+    types: [Bug, Flying]
+    egg-groups: [Bug]
+    biomes: [Badlands]
+    active: [Morning, Day]
+    base-form: false
+    evolves-from: Spewpa
+  VivillonSandstorm:
+    types: [Bug, Flying]
+    egg-groups: [Bug]
+    biomes: [Desert]
+    active: [Morning, Day]
+    base-form: false
+    evolves-from: Spewpa
+  VivillonRiver:
+    types: [Bug, Flying]
+    egg-groups: [Bug]
+    biomes: [Bog]
+    active: [Morning, Day]
+    base-form: false
+    evolves-from: Spewpa
+  VivillonMonsoon:
+    types: [Bug, Flying]
+    egg-groups: [Bug]
+    biomes: [TropicalRainforest]
+    active: [Morning, Day]
+    base-form: false
+    evolves-from: Spewpa
+  VivillonSavannah:
+    types: [Bug, Flying]
+    egg-groups: [Bug]
+    biomes: [Savanna]
+    active: [Morning, Day]
+    base-form: false
+    evolves-from: Spewpa
+  VivillonSun:
+    types: [Bug, Flying]
+    egg-groups: [Bug]
+    biomes: [Volcano]
+    active: [Morning, Day]
+    base-form: false
+    evolves-from: Spewpa
+  VivillonOcean:
+    types: [Bug, Flying]
+    egg-groups: [Bug]
+    biomes: [Ocean]
+    active: [Morning, Day]
+    base-form: false
+    evolves-from: Spewpa
+  VivillonJungle:
+    types: [Bug, Flying]
+    egg-groups: [Bug]
+    biomes: [TropicalSeasonalForest]
+    active: [Morning, Day]
+    base-form: false
+    evolves-from: Spewpa
+  # The two the games hand out rather than grow: they are met on a
+  # town's streets and nowhere else, and no Spewpa ever comes out as
+  # one, so neither is on a country's list or on the road up from the
+  # caterpillar
+  VivillonFancy:
+    types: [Bug, Flying]
+    egg-groups: [Bug]
+    active: any
+    base-form: false
+  VivillonPokeBall:
+    types: [Bug, Flying]
+    egg-groups: [Bug]
+    active: any
+    base-form: false
+Litleo:
+  # The lion cub and the king it grows into. Nothing is staged yet:
+  # nobody has drawn a male Pyroar, so the line waits for its art
+  Litleo:
+    types: [Fire, Normal]
+    egg-groups: [Field]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Pyroar
+        method: [Level]
+        level: 35
+  Pyroar:
+    types: [Fire, Normal]
+    egg-groups: [Field]
+    active: [Morning, Day]
+    evolves-from: Litleo
+# The colour of flower a Flabebe picked, which it carries for life:
+# the flower is the pokemon's weapon, so a Floette and a Florges are
+# the same colour as the one that found it. Red grows anywhere the
+# line grows; the other four are each a country's own
+Flabebe:
+  Flabebe:
+    types: [Fairy]
+    egg-groups: [Fairy]
+    biomes: [Grassland, TemperateForest, Woodland]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Floette
+        method: [Level]
+        level: 19
+  Floette:
+    types: [Fairy]
+    egg-groups: [Fairy]
+    biomes: [Grassland, TemperateForest, Woodland]
+    active: [Morning, Day]
+    evolves-from: Flabebe
+    evolves-into:
+      - species: Florges
+        method: [UsedItem]
+        item: ShinyStone
+  Florges:
+    types: [Fairy]
+    egg-groups: [Fairy]
+    biomes: [Grassland, TemperateForest, Woodland]
+    active: [Morning, Day]
+    evolves-from: Floette
+  FlabebeYellow:
+    types: [Fairy]
+    egg-groups: [Fairy]
+    biomes: [Savanna, Steppe]
+    active: [Morning, Day]
+    base-form: false
+    evolves-into:
+      - species: FloetteYellow
+        method: [Level]
+        level: 19
+  FloetteYellow:
+    types: [Fairy]
+    egg-groups: [Fairy]
+    biomes: [Savanna, Steppe]
+    active: [Morning, Day]
+    base-form: false
+    evolves-from: FlabebeYellow
+    evolves-into:
+      - species: FlorgesYellow
+        method: [UsedItem]
+        item: ShinyStone
+  FlorgesYellow:
+    types: [Fairy]
+    egg-groups: [Fairy]
+    biomes: [Savanna, Steppe]
+    active: [Morning, Day]
+    base-form: false
+    evolves-from: FloetteYellow
+  FlabebeOrange:
+    types: [Fairy]
+    egg-groups: [Fairy]
+    biomes: [Shrubland, TropicalSeasonalForest]
+    active: [Morning, Day]
+    base-form: false
+    evolves-into:
+      - species: FloetteOrange
+        method: [Level]
+        level: 19
+  FloetteOrange:
+    types: [Fairy]
+    egg-groups: [Fairy]
+    biomes: [Shrubland, TropicalSeasonalForest]
+    active: [Morning, Day]
+    base-form: false
+    evolves-from: FlabebeOrange
+    evolves-into:
+      - species: FlorgesOrange
+        method: [UsedItem]
+        item: ShinyStone
+  FlorgesOrange:
+    types: [Fairy]
+    egg-groups: [Fairy]
+    biomes: [Shrubland, TropicalSeasonalForest]
+    active: [Morning, Day]
+    base-form: false
+    evolves-from: FloetteOrange
+  FlabebeBlue:
+    types: [Fairy]
+    egg-groups: [Fairy]
+    biomes: [Bog, Swamp, Mangrove]
+    active: [Morning, Day]
+    base-form: false
+    evolves-into:
+      - species: FloetteBlue
+        method: [Level]
+        level: 19
+  FloetteBlue:
+    types: [Fairy]
+    egg-groups: [Fairy]
+    biomes: [Bog, Swamp, Mangrove]
+    active: [Morning, Day]
+    base-form: false
+    evolves-from: FlabebeBlue
+    evolves-into:
+      - species: FlorgesBlue
+        method: [UsedItem]
+        item: ShinyStone
+  FlorgesBlue:
+    types: [Fairy]
+    egg-groups: [Fairy]
+    biomes: [Bog, Swamp, Mangrove]
+    active: [Morning, Day]
+    base-form: false
+    evolves-from: FloetteBlue
+  FlabebeWhite:
+    types: [Fairy]
+    egg-groups: [Fairy]
+    biomes: [Taiga, Tundra]
+    active: [Morning, Day]
+    base-form: false
+    evolves-into:
+      - species: FloetteWhite
+        method: [Level]
+        level: 19
+  FloetteWhite:
+    types: [Fairy]
+    egg-groups: [Fairy]
+    biomes: [Taiga, Tundra]
+    active: [Morning, Day]
+    base-form: false
+    evolves-from: FlabebeWhite
+    evolves-into:
+      - species: FlorgesWhite
+        method: [UsedItem]
+        item: ShinyStone
+  FlorgesWhite:
+    types: [Fairy]
+    egg-groups: [Fairy]
+    biomes: [Taiga, Tundra]
+    active: [Morning, Day]
+    base-form: false
+    evolves-from: FloetteWhite
+  # The flower nobody picked, which has not wilted in three thousand
+  # years: it is met on a town's streets and nowhere else, no Flabebe
+  # grows into it, and it never takes a stone
+  FloetteEternal:
+    types: [Fairy]
+    egg-groups: [Fairy]
+    active: any
+    base-form: false
+# The pasture the goats graze, both stages alike
+Skiddo:
+  Skiddo:
+    types: [Grass]
+    egg-groups: [Field]
+    biomes: [Grassland, Shrubland, Steppe, MontaneForest]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Gogoat
+        method: [Level]
+        level: 32
+  Gogoat:
+    types: [Grass]
+    egg-groups: [Field]
+    biomes: [Grassland, Shrubland, Steppe, MontaneForest]
+    active: [Morning, Day]
+    evolves-from: Skiddo
+Pancham:
+  # The bamboo both shapes chew on
+
+  # The panda with a leaf in its teeth and the brawler it grows into.
+  # Pangoro takes anything mended on the other side personally, which
+  # is what its signature counts
+  Pancham:
+    types: [Fighting]
+    egg-groups: [Field, HumanLike]
+    biomes: [TropicalSeasonalForest, Woodland]
+    active: [Morning, Day, Evening]
+    # The mainline also asks for a Dark type in the party, which
+    # nothing here can measure yet
+    evolves-into:
+      - species: Pangoro
+        method: [Level]
+        level: 32
+  Pangoro:
+    types: [Fighting, Dark]
+    egg-groups: [Field, HumanLike]
+    biomes: [TropicalSeasonalForest, Woodland]
+    active: [Morning, Day, Evening]
+    evolves-from: Pancham

@@ -1,9 +1,0 @@
-Squirtle:
-  abilities: [Torrent]
-  hidden: [RainDish]
-Wartortle:
-  abilities: [Torrent]
-  hidden: [RainDish]
-Blastoise:
-  abilities: [Torrent]
-  hidden: [RainDish, ShellArmor, Sniper]

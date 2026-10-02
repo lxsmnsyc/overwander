@@ -1,9 +1,0 @@
-Exeggcute:
-  abilities: [Chlorophyll]
-  hidden: [Harvest]
-Exeggutor:
-  abilities: [Chlorophyll]
-  hidden: [Harvest, SolarPower, Forewarn]
-ExeggutorAlola:
-  abilities: [Frisk]
-  hidden: [Harvest, LeafGuard]

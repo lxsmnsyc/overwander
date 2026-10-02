@@ -1,5 +1,0 @@
-Suicune:
-  abilities: [Pressure]
-  # Water Absorb and Storm Drain are this registry's rather than the
-  # mainline's: the north wind runs on the water it goes to purify
-  hidden: [InnerFocus, WaterAbsorb, StormDrain]

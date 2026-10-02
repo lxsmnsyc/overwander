@@ -1,6 +1,0 @@
-Cresselia:
-  abilities: [Levitate]
-  # The other three are this registry's: what it does for a sleeper
-  # it does awake as well, and the crescent it trails is a light
-  # nobody dims
-  hidden: [Healer, Illuminate, AromaVeil]

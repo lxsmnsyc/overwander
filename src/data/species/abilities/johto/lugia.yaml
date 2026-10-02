@@ -1,6 +1,0 @@
-Lugia:
-  abilities: [Pressure]
-  # Drizzle and Marvel Scale are this registry's rather than the
-  # mainline's: a beat of its wings is a forty day storm, and it
-  # sleeps at the bottom of the sea to keep from starting one
-  hidden: [Multiscale, Drizzle, MarvelScale]

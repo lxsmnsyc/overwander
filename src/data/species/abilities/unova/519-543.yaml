@@ -1,0 +1,118 @@
+Pidove:
+  Pidove:
+    abilities: [BigPecks, SuperLuck]
+    hidden: [Rivalry]
+  Tranquill:
+    abilities: [BigPecks, SuperLuck]
+    hidden: [Rivalry]
+  Unfezant:
+    abilities: [BigPecks, SuperLuck]
+    # Defiant is the invented fourth: the line reaches three, and a
+    # bird this proud answers being belittled
+    hidden: [Rivalry, Defiant]
+Blitzle:
+  Blitzle:
+    abilities: [LightningRod, MotorDrive]
+    hidden: [SapSipper]
+  Zebstrika:
+    abilities: [LightningRod, MotorDrive]
+    # Reckless is the invented fourth: the line reaches three, and it
+    # throws itself at things with Wild Charge and Take Down
+    hidden: [SapSipper, Reckless]
+Roggenrola:
+  Roggenrola:
+    abilities: [Sturdy, WeakArmor]
+    hidden: [SandForce]
+  Boldore:
+    abilities: [Sturdy, WeakArmor]
+    hidden: [SandForce]
+  Gigalith:
+    # Weak Armor is reached through Roggenrola rather than its own,
+    # which is what the pools walk puts in the hidden band
+    abilities: [Sturdy, SandStream]
+    hidden: [SandForce]
+Woobat:
+  Woobat:
+    abilities: [Unaware, Klutz]
+    hidden: [Simple]
+  Swoobat:
+    abilities: [Unaware, Klutz]
+    # Infiltrator is the invented fourth: the line reaches three, and
+    # a bat this size gets in wherever it likes
+    hidden: [Simple, Infiltrator]
+Drilbur:
+  Drilbur:
+    abilities: [SandRush, SandForce]
+    hidden: [MoldBreaker]
+  Excadrill:
+    abilities: [SandRush, SandForce]
+    # Tough Claws is the invented fourth: the line reaches three, and
+    # everything it fights with is a drill or a claw
+    hidden: [MoldBreaker, ToughClaws]
+Audino:
+  Audino:
+    abilities: [Healer, Regenerator]
+    # Friend Guard is the invented fourth: the line reaches three, and
+    # a nurse that keeps the rest of the party standing is what it is
+    hidden: [Klutz, FriendGuard]
+Timburr:
+  Timburr:
+    abilities: [Guts, SheerForce]
+    hidden: [IronFist]
+  Gurdurr:
+    abilities: [Guts, SheerForce]
+    hidden: [IronFist]
+  Conkeldurr:
+    abilities: [Guts, SheerForce]
+    # Rock Head is the invented fourth: the line reaches three, and
+    # it throws its own weight about with concrete in both hands
+    hidden: [IronFist, RockHead]
+Tympole:
+  Tympole:
+    abilities: [SwiftSwim, Hydration]
+    hidden: [WaterAbsorb]
+  Palpitoad:
+    abilities: [SwiftSwim, Hydration]
+    hidden: [WaterAbsorb]
+  Seismitoad:
+    # Poison Touch is its own, and Hydration walks up from the two
+    # stages below, so the line reaches four without an invention
+    abilities: [SwiftSwim, PoisonTouch]
+    hidden: [WaterAbsorb]
+Throh:
+  Throh:
+    abilities: [Guts, InnerFocus]
+    # Stamina is the invented fourth: the line reaches three, and a
+    # judoka on 120 HP wins by being the one still standing
+    hidden: [MoldBreaker, Stamina]
+Sawk:
+  Sawk:
+    abilities: [Sturdy, InnerFocus]
+    # Scrappy is the invented fourth: the line reaches three, and a
+    # karateka breaking through what should not be hittable is the
+    # same idea as the Mold Breaker it already has
+    hidden: [MoldBreaker, Scrappy]
+Sewaddle:
+  Sewaddle:
+    abilities: [Swarm, Chlorophyll]
+    hidden: [Overcoat]
+  Swadloon:
+    abilities: [LeafGuard, Chlorophyll]
+    hidden: [Overcoat]
+  Leavanny:
+    # Leaf Guard comes through Swadloon rather than its own, which is
+    # what the pools walk puts in the hidden band
+    abilities: [Swarm, Chlorophyll]
+    hidden: [Overcoat]
+Venipede:
+  Venipede:
+    abilities: [PoisonPoint, Swarm]
+    hidden: [SpeedBoost]
+  Whirlipede:
+    abilities: [PoisonPoint, Swarm]
+    hidden: [SpeedBoost]
+  Scolipede:
+    abilities: [PoisonPoint, Swarm]
+    # Rough Skin is the invented fourth: the line reaches three, and
+    # it is spines and horns from end to end
+    hidden: [SpeedBoost, RoughSkin]

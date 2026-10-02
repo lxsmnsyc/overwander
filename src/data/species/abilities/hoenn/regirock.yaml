@@ -1,6 +1,0 @@
-Regirock:
-  abilities: [ClearBody]
-  # Solid Rock and Sand Force are this registry's rather than the
-  # mainline's: a wall of boulders takes the worst of a blow, and
-  # the desert it was sealed in is where it hits hardest
-  hidden: [Sturdy, SolidRock, SandForce]

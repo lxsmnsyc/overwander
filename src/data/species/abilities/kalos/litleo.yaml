@@ -1,8 +1,0 @@
-Litleo:
-  abilities: [Rivalry, Unnerve]
-  hidden: [Moxie]
-Pyroar:
-  abilities: [Rivalry, Unnerve]
-  # Intimidate is this line's invented filler: the mainline gives it
-  # three abilities, and Fire Mane belongs to the Mega
-  hidden: [Moxie, Intimidate]

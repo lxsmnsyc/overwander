@@ -1,8 +1,0 @@
-Ducklett:
-  abilities: [KeenEye, BigPecks]
-  hidden: [Hydration]
-Swanna:
-  abilities: [KeenEye, BigPecks]
-  # Rain Dish is the invented fourth: the line reaches three, and it
-  # sits beside the Hydration it already has rather than repeating it
-  hidden: [Hydration, RainDish]

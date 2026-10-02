@@ -1,7 +1,0 @@
-Wobbuffet:
-  level:
-    '1': [Counter, DestinyBond, MirrorCoat, Safeguard]
-Wynaut:
-  level:
-    '1': [Charm, Encore, Splash]
-    '15': [Counter, DestinyBond, MirrorCoat, Safeguard]

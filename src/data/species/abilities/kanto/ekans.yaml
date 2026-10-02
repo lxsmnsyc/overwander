@@ -1,6 +1,0 @@
-Ekans:
-  abilities: [Intimidate, ShedSkin]
-  hidden: [Unnerve]
-Arbok:
-  abilities: [Intimidate, ShedSkin]
-  hidden: [Unnerve, PoisonTouch]

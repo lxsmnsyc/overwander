@@ -1,5 +1,0 @@
-Furfrou:
-  abilities: [FurCoat]
-  # All three are this line's invented fillers: the mainline gives
-  # Furfrou nothing but Fur Coat
-  hidden: [CuteCharm, Scrappy, QuickFeet]

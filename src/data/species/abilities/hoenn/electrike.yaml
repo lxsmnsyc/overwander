@@ -1,8 +1,0 @@
-Electrike:
-  abilities: [Static, LightningRod]
-  hidden: [Minus]
-Manectric:
-  abilities: [Static, LightningRod]
-  # Quick Feet is this registry's rather than the mainline's: it is
-  # built on 105 Speed, and a final evolution is filled to four
-  hidden: [Minus, QuickFeet]

@@ -1,7 +1,0 @@
-# The key ring. It collects keys it has no lock for and rattles them
-# at anything that comes close
-Klefki:
-  types: [Steel, Fairy]
-  egg-groups: [Mineral]
-  biomes: [Shrubland, Badlands]
-  active: [Morning, Day]

@@ -1,7 +1,0 @@
-# The mouth hanging off a branch. It smells sweet on purpose, and
-# what comes to find out why does not come back
-Carnivine:
-  types: [Grass]
-  egg-groups: [Grass]
-  biomes: [Swamp, Mangrove, TropicalRainforest]
-  active: any

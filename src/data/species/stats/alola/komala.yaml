@@ -1,6 +1,0 @@
-Komala:
-  stats: { HP: 65, Attack: 115, Defense: 65, SpecialAttack: 75, SpecialDefense: 95, Speed: 65 }
-  catch-rate: 45
-  height: 0.4
-  weight: 19.9
-  gender: [4, 4]

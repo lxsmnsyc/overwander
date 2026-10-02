@@ -1,6 +1,0 @@
-Regice:
-  stats: { HP: 80, Attack: 50, Defense: 100, SpecialAttack: 100, SpecialDefense: 200, Speed: 50 }
-  catch-rate: 3
-  height: 1.8
-  weight: 175
-  gender: genderless

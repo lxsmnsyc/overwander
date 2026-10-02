@@ -1,0 +1,111 @@
+Alomomola:
+  Alomomola:
+    abilities: [Healer, Hydration]
+    # Unaware is the invented fourth: the line reaches three, and
+    # something with 165 HP wins by still being there at the end
+    hidden: [Regenerator, Unaware]
+Joltik:
+  Joltik:
+    abilities: [CompoundEyes, Unnerve]
+    hidden: [Swarm]
+  Galvantula:
+    abilities: [CompoundEyes, Unnerve]
+    # Static is the invented fourth: the line reaches three, and a
+    # spider that makes its own current by rubbing is what it is
+    hidden: [Swarm, Static]
+Ferroseed:
+  Ferroseed:
+    abilities: [IronBarbs]
+    hidden: []
+  Ferrothorn:
+    abilities: [IronBarbs]
+    # The line reaches only two, so both of the last slots are
+    # invented: nothing settles on a pod of iron spikes, and a thing
+    # with 131 Defense is there to be stood in front of
+    hidden: [Anticipation, Overcoat, Sturdy]
+Klink:
+  Klink:
+    abilities: [Plus, Minus]
+    hidden: [ClearBody]
+  Klang:
+    abilities: [Plus, Minus]
+    hidden: [ClearBody]
+  Klinklang:
+    abilities: [Plus, Minus]
+    # Motor Drive is the invented fourth: the line reaches three, and
+    # what it does with the current it spins up is run on it
+    hidden: [ClearBody, MotorDrive]
+Tynamo:
+  Tynamo:
+    abilities: [Levitate]
+    hidden: []
+  Eelektrik:
+    abilities: [Levitate]
+    hidden: []
+  Eelektross:
+    abilities: [Levitate]
+    # Volt Absorb, Strong Jaw and Water Absorb are the invented three:
+    # Levitate is all the whole line reaches, which leaves the last
+    # stage three short of four
+    hidden: [VoltAbsorb, StrongJaw, WaterAbsorb]
+Elgyem:
+  Elgyem:
+    abilities: [Telepathy, Synchronize]
+    hidden: [Analytic]
+  Beheeyem:
+    abilities: [Telepathy, Synchronize]
+    # Forewarn is the invented fourth: the line reaches three, and
+    # reading the strongest thing in front of it is what the fingers
+    # are for
+    hidden: [Analytic, Forewarn]
+Litwick:
+  Litwick:
+    abilities: [FlashFire, FlameBody]
+    hidden: [Infiltrator]
+  Lampent:
+    abilities: [FlashFire, FlameBody]
+    hidden: [Infiltrator]
+  Chandelure:
+    abilities: [FlashFire, FlameBody]
+    # Illuminate is the invented fourth: the line reaches three, and a
+    # chandelier is the one thing on the field that lights the room
+    hidden: [Infiltrator, Illuminate]
+Axew:
+  Axew:
+    abilities: [Rivalry, MoldBreaker]
+    hidden: [Unnerve]
+  Fraxure:
+    abilities: [Rivalry, MoldBreaker]
+    hidden: [Unnerve]
+  Haxorus:
+    abilities: [Rivalry, MoldBreaker]
+    # Hyper Cutter is the invented fourth: the line reaches three, and
+    # nothing should be able to dull the one stat it is built on
+    hidden: [Unnerve, HyperCutter]
+Cubchoo:
+  Cubchoo:
+    abilities: [SnowCloak, SlushRush]
+    hidden: [Rattled]
+  Beartic:
+    abilities: [SnowCloak, SlushRush]
+    # Four without inventing anything: Rattled walks up from the
+    # Cubchoo below it and Swift Swim is its own
+    hidden: [SwiftSwim]
+Cryogonal:
+  Cryogonal:
+    abilities: [Levitate]
+    # Ice Body, Snow Warning and Clear Body are the invented three:
+    # Levitate is all the mainline gives it, which leaves it three
+    # short of the four a final evolution has to reach
+    hidden: [IceBody, SnowWarning, ClearBody]
+Shelmet:
+  Shelmet:
+    abilities: [Hydration, ShellArmor]
+    hidden: [Overcoat]
+  Accelgor:
+    abilities: [Hydration, StickyHold]
+    hidden: [Unburden]
+Stunfisk:
+  Stunfisk:
+    abilities: [Static, Limber]
+    hidden: [SandVeil, LightningRod]

@@ -1,6 +1,0 @@
-Qwilfish:
-  stats: { HP: 65, Attack: 95, Defense: 85, SpecialAttack: 55, SpecialDefense: 55, Speed: 85 }
-  catch-rate: 45
-  height: 0.5
-  weight: 3.9
-  gender: [1, 1]

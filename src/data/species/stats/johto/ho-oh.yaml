@@ -1,6 +1,0 @@
-HoOh:
-  stats: { HP: 106, Attack: 130, Defense: 90, SpecialAttack: 110, SpecialDefense: 154, Speed: 90 }
-  catch-rate: 3
-  height: 3.8
-  weight: 199
-  gender: genderless

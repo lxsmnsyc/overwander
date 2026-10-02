@@ -1,8 +1,0 @@
-# The bull that settles everything head first, and keeps the rest of
-# the herd at its back while it does
-Bouffalant:
-  types: [Normal]
-  egg-groups: [Field]
-  # The open grass it charges through, by day
-  biomes: [Grassland, Steppe]
-  active: [Morning, Day]

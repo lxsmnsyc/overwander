@@ -1,6 +1,0 @@
-Sawk:
-  stats: { HP: 75, Attack: 125, Defense: 75, SpecialAttack: 30, SpecialDefense: 75, Speed: 85 }
-  catch-rate: 45
-  height: 1.4
-  weight: 51
-  gender: [1, 0]

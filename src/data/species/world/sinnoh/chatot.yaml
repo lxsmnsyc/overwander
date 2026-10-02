@@ -1,7 +1,0 @@
-# The bird that keeps whatever it was told. Every note it makes is
-# somebody else's, and it says them back louder
-Chatot:
-  types: [Normal, Flying]
-  egg-groups: [Flying]
-  biomes: [TropicalSeasonalForest, TemperateForest, Woodland]
-  active: [Morning, Day]

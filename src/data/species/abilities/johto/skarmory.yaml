@@ -1,6 +1,0 @@
-Skarmory:
-  abilities: [KeenEye, Sturdy]
-  # Mirror Armor is this registry's rather than the mainline's,
-  # filling it to four: steel plate sends a blow back the way it
-  # came, which is the one thing that gets past 140 Defense
-  hidden: [WeakArmor, MirrorArmor]

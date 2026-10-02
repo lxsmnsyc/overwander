@@ -1,0 +1,109 @@
+Kecleon:
+  Kecleon:
+    abilities: [ColorChange]
+    hidden: [Protean, Infiltrator, Analytic]
+Shuppet:
+  Shuppet:
+    abilities: [Insomnia, Frisk]
+    hidden: [CursedBody]
+  Banette:
+    abilities: [Insomnia, Frisk]
+    # One the mainline never gave it: a doll thrown away takes a
+    # piece of whoever finished it
+    hidden: [CursedBody, Aftermath]
+Duskull:
+  Duskull:
+    abilities: [Levitate]
+    hidden: [Frisk]
+  Dusclops:
+    abilities: [Pressure]
+    hidden: [Frisk]
+  Dusknoir:
+    abilities: [Pressure]
+    # Iron Fist is this registry's rather than the mainline's: the
+    # line has three abilities and needs four, and every punch it
+    # learns is thrown with the one hand it has
+    hidden: [Frisk, IronFist]
+Tropius:
+  Tropius:
+    abilities: [Chlorophyll, SolarPower]
+    hidden: [Harvest, Gluttony]
+Chimecho:
+  Chimecho:
+    abilities: [Levitate]
+    # Healer, Own Tempo and Forewarn are this registry's rather than
+    # the mainline's: a chime is rung over somebody, keeps its own
+    # time whatever blows through it, and is hung up to be read
+    hidden: [Healer, OwnTempo, Forewarn]
+  Chingling:
+    abilities: [Levitate]
+    hidden: []
+Absol:
+  Absol:
+    abilities: [Pressure, SuperLuck]
+    hidden: [Justified, Sharpness]
+Snorunt:
+  Snorunt:
+    abilities: [InnerFocus, IceBody]
+    hidden: [Moody]
+  Glalie:
+    abilities: [InnerFocus, IceBody]
+    # One the mainline never gave it: it arrives with the sky its
+    # other two abilities are waiting for
+    hidden: [Moody, SnowWarning]
+  Froslass:
+    abilities: [SnowCloak]
+    hidden: [CursedBody]
+Spheal:
+  Spheal:
+    abilities: [ThickFat, IceBody]
+    hidden: [Oblivious]
+  Sealeo:
+    abilities: [ThickFat, IceBody]
+    hidden: [Oblivious]
+  Walrein:
+    abilities: [ThickFat, IceBody]
+    # One the mainline never gave it: the sky its line already feeds
+    # on is one a bulk that size can move through
+    hidden: [Oblivious, SlushRush]
+Clamperl:
+  Clamperl:
+    abilities: [ShellArmor]
+    hidden: [Rattled]
+  Huntail:
+    abilities: [SwiftSwim]
+    hidden: [WaterVeil]
+  Gorebyss:
+    abilities: [SwiftSwim]
+    hidden: [Hydration]
+Relicanth:
+  Relicanth:
+    abilities: [SwiftSwim, RockHead]
+    hidden: [Sturdy, Multiscale]
+Luvdisc:
+  Luvdisc:
+    abilities: [SwiftSwim]
+    hidden: [Hydration, CuteCharm, Healer]
+Bagon:
+  Bagon:
+    abilities: [RockHead]
+    hidden: [SheerForce]
+  Shelgon:
+    abilities: [RockHead]
+    hidden: [Overcoat]
+  Salamence:
+    abilities: [Intimidate]
+    hidden: [Moxie]
+Beldum:
+  Beldum:
+    abilities: [ClearBody]
+    hidden: [LightMetal]
+  Metang:
+    abilities: [ClearBody]
+    hidden: [LightMetal]
+  Metagross:
+    abilities: [ClearBody]
+    # Two the mainline never gave it: it holds itself off the ground
+    # on its own mind, and four brains' worth of attention goes into
+    # whatever it makes of steel
+    hidden: [LightMetal, Levitate, Steelworker]

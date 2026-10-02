@@ -1,6 +1,0 @@
-Volcanion:
-  stats: { HP: 80, Attack: 110, Defense: 120, SpecialAttack: 130, SpecialDefense: 90, Speed: 70 }
-  catch-rate: 3
-  height: 1.7
-  weight: 195
-  gender: genderless

@@ -1,5 +1,0 @@
-Illumise:
-  types: [Bug]
-  egg-groups: [Bug, HumanLike]
-  biomes: [Bog, TemperateForest]
-  active: [Evening, Night]

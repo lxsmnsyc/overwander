@@ -1,8 +1,0 @@
-Noibat:
-  abilities: [Frisk, Infiltrator]
-  hidden: [Telepathy]
-Noivern:
-  abilities: [Frisk, Infiltrator]
-  # Soundproof is this line's invented filler: the mainline gives
-  # the bat Frisk, Infiltrator and Telepathy and nothing else
-  hidden: [Telepathy, Soundproof]

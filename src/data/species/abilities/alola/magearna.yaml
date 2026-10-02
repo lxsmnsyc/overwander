@@ -1,8 +1,0 @@
-Magearna:
-  abilities: [SoulHeart]
-  # Soul-Heart is all the mainline gives it, so these are this registry's
-  hidden: [Download, Analytic, ClearBody]
-MagearnaOriginal:
-  abilities: [SoulHeart]
-  # Soul-Heart is all the mainline gives it, so these are this registry's
-  hidden: [Download, Analytic, ClearBody]

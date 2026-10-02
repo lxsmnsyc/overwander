@@ -1,8 +1,0 @@
-Skiddo:
-  abilities: [SapSipper]
-  hidden: [GrassPelt]
-Gogoat:
-  abilities: [SapSipper]
-  # Stamina and Harvest are this line's invented fillers: the
-  # mainline gives Gogoat only the two above
-  hidden: [GrassPelt, Stamina, Harvest]

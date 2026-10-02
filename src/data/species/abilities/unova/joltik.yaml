@@ -1,8 +1,0 @@
-Joltik:
-  abilities: [CompoundEyes, Unnerve]
-  hidden: [Swarm]
-Galvantula:
-  abilities: [CompoundEyes, Unnerve]
-  # Static is the invented fourth: the line reaches three, and a
-  # spider that makes its own current by rubbing is what it is
-  hidden: [Swarm, Static]

@@ -1,6 +1,0 @@
-TapuBulu:
-  stats: { HP: 70, Attack: 130, Defense: 115, SpecialAttack: 85, SpecialDefense: 95, Speed: 75 }
-  catch-rate: 3
-  height: 1.9
-  weight: 45.5
-  gender: genderless

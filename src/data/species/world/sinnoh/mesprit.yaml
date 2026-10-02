@@ -1,6 +1,0 @@
-Mesprit:
-  types: [Psychic]
-  egg-groups: [NoEggsDiscovered]
-  habitat: Amphibious
-  biomes: [TemperateForest, Woodland]
-  active: any

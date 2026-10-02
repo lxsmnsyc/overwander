@@ -1,6 +1,0 @@
-Corsola:
-  stats: { HP: 65, Attack: 55, Defense: 95, SpecialAttack: 65, SpecialDefense: 95, Speed: 35 }
-  catch-rate: 60
-  height: 0.6
-  weight: 5
-  gender: [1, 3]

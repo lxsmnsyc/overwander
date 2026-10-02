@@ -1,7 +1,0 @@
-# Two stones that came down rather than grew: one turns up under the
-# moon and the other under the sun
-Lunatone:
-  types: [Rock, Psychic]
-  egg-groups: [Mineral]
-  biomes: [Badlands, ColdDesert]
-  active: [Evening, Night]

@@ -1,6 +1,0 @@
-Alomomola:
-  stats: { HP: 165, Attack: 75, Defense: 80, SpecialAttack: 40, SpecialDefense: 45, Speed: 65 }
-  catch-rate: 75
-  height: 1.2
-  weight: 31.6
-  gender: [1, 1]

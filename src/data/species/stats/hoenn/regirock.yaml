@@ -1,6 +1,0 @@
-Regirock:
-  stats: { HP: 80, Attack: 100, Defense: 200, SpecialAttack: 50, SpecialDefense: 100, Speed: 50 }
-  catch-rate: 3
-  height: 1.7
-  weight: 230
-  gender: genderless

@@ -1,6 +1,0 @@
-Qwilfish:
-  types: [Water, Poison]
-  egg-groups: [Water2]
-  habitat: Water
-  biomes: [Ocean, KelpForest, RockyCoast]
-  active: any

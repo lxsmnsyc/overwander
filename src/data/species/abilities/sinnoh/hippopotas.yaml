@@ -1,9 +1,0 @@
-Hippopotas:
-  abilities: [SandStream]
-  hidden: [SandForce]
-Hippowdon:
-  abilities: [SandStream]
-  # Thick Fat and Solid Rock are this registry's rather than the
-  # mainline's: the line has two abilities and needs four, and a hide
-  # packed with fat and sand is what it is made of
-  hidden: [SandForce, ThickFat, SolidRock]

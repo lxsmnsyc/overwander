@@ -1,6 +1,0 @@
-Maractus:
-  stats: { HP: 75, Attack: 86, Defense: 67, SpecialAttack: 106, SpecialDefense: 67, Speed: 60 }
-  catch-rate: 255
-  height: 1
-  weight: 28
-  gender: [1, 1]

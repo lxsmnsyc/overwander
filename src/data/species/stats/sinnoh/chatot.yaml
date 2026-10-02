@@ -1,6 +1,0 @@
-Chatot:
-  stats: { HP: 76, Attack: 65, Defense: 45, SpecialAttack: 92, SpecialDefense: 42, Speed: 91 }
-  catch-rate: 30
-  height: 0.5
-  weight: 1.9
-  gender: [1, 1]

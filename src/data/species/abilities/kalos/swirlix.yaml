@@ -1,8 +1,0 @@
-Swirlix:
-  abilities: [SweetVeil]
-  hidden: [Unburden]
-Slurpuff:
-  abilities: [SweetVeil]
-  # Both are this line's invented fillers: the mainline gives it
-  # Sweet Veil and Unburden and nothing else
-  hidden: [Unburden, FriendGuard, ThickFat]

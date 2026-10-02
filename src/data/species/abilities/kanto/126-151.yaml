@@ -1,0 +1,129 @@
+Magmar:
+  Magmar:
+    abilities: [FlameBody]
+    hidden: [VitalSpirit]
+  Magby:
+    abilities: [FlameBody]
+    hidden: [VitalSpirit]
+  Magmortar:
+    abilities: [FlameBody]
+    # Flash Fire and Solar Power are this registry's rather than the
+    # mainline's: the line reaches two abilities and needs four, and
+    # both are what a cannon that runs on its own heat would have
+    hidden: [VitalSpirit, FlashFire, SolarPower]
+Pinsir:
+  Pinsir:
+    abilities: [HyperCutter, MoldBreaker]
+    hidden: [Moxie, Swarm]
+Tauros:
+  Tauros:
+    abilities: [Intimidate, AngerPoint]
+    hidden: [SheerForce, Reckless]
+Magikarp:
+  Magikarp:
+    abilities: [SwiftSwim]
+    hidden: [Rattled]
+  Gyarados:
+    abilities: [Intimidate]
+    hidden: [Moxie]
+Lapras:
+  Lapras:
+    abilities: [WaterAbsorb, ShellArmor]
+    hidden: [Hydration, FriendGuard]
+Ditto:
+  Ditto:
+    abilities: [Limber]
+    hidden: [Imposter, StickyHold, Unaware]
+Eevee:
+  Eevee:
+    abilities: [RunAway, Adaptability]
+    hidden: [Anticipation]
+  Vaporeon:
+    abilities: [WaterAbsorb]
+    hidden: [Hydration]
+  Jolteon:
+    abilities: [VoltAbsorb]
+    hidden: [QuickFeet]
+  Flareon:
+    abilities: [FlashFire]
+    hidden: [Guts]
+  Espeon:
+    abilities: [Synchronize]
+    hidden: [MagicBounce]
+  Umbreon:
+    abilities: [Synchronize]
+    hidden: [InnerFocus]
+  Leafeon:
+    abilities: [LeafGuard]
+    hidden: [Chlorophyll]
+  Glaceon:
+    abilities: [SnowCloak]
+    hidden: [IceBody]
+  Sylveon:
+    abilities: [CuteCharm]
+    hidden: [Pixilate]
+Porygon:
+  Porygon:
+    abilities: [Trace, Download]
+    hidden: [Analytic]
+  Porygon2:
+    abilities: [Trace, Download]
+    hidden: [Analytic]
+  PorygonZ:
+    abilities: [Adaptability, Download]
+    hidden: [Analytic]
+Omanyte:
+  Omanyte:
+    abilities: [SwiftSwim, ShellArmor]
+    hidden: [WeakArmor]
+  Omastar:
+    abilities: [SwiftSwim, ShellArmor]
+    hidden: [WeakArmor, Sniper]
+Kabuto:
+  Kabuto:
+    abilities: [SwiftSwim, BattleArmor]
+    hidden: [WeakArmor]
+  Kabutops:
+    abilities: [SwiftSwim, BattleArmor]
+    hidden: [WeakArmor, Sharpness]
+Aerodactyl:
+  Aerodactyl:
+    abilities: [RockHead, Pressure]
+    hidden: [Unnerve, StrongJaw]
+Snorlax:
+  Snorlax:
+    abilities: [Immunity, ThickFat]
+    hidden: [Gluttony]
+  Munchlax:
+    abilities: [Pickup, ThickFat]
+    hidden: [Gluttony]
+Articuno:
+  Articuno:
+    abilities: [Pressure]
+    hidden: [SnowCloak, IceBody, SnowWarning]
+Zapdos:
+  Zapdos:
+    abilities: [Pressure]
+    hidden: [Static, LightningRod, Drizzle]
+Moltres:
+  Moltres:
+    abilities: [Pressure]
+    hidden: [FlameBody, Drought, FlashFire]
+Dratini:
+  Dratini:
+    abilities: [ShedSkin]
+    hidden: [MarvelScale]
+  Dragonair:
+    abilities: [ShedSkin]
+    hidden: [MarvelScale]
+  Dragonite:
+    abilities: [InnerFocus]
+    hidden: [Multiscale]
+Mewtwo:
+  Mewtwo:
+    abilities: [Pressure]
+    hidden: [Unnerve, MagicGuard, Forewarn]
+Mew:
+  Mew:
+    abilities: [Synchronize]
+    hidden: [Trace, Adaptability, Protean]

@@ -1,9 +1,0 @@
-Larvesta:
-  abilities: [FlameBody]
-  hidden: [Swarm]
-Volcarona:
-  abilities: [FlameBody]
-  # Drought and Magic Guard are the invented pair: the whole line
-  # reaches only Flame Body and Swarm, which leaves it two short, and
-  # a 65 Defense moth loses more to chip than to blows
-  hidden: [Swarm, Drought, MagicGuard]

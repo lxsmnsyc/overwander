@@ -1,6 +1,0 @@
-Reshiram:
-  abilities: [Turboblaze]
-  # Turboblaze is all the mainline gives it, so the other three are
-  # this registry's: the fire it is made of, the weight a legendary
-  # puts on a fight, and a flame that catches twice as often
-  hidden: [FlashFire, Pressure, SereneGrace]

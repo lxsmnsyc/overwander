@@ -1,4 +1,0 @@
-Zeraora:
-  abilities: [VoltAbsorb]
-  # The mainline's one, and these are this registry's
-  hidden: [IronFist, SpeedBoost, LightningRod]

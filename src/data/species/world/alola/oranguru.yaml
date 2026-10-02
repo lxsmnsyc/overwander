@@ -1,5 +1,0 @@
-Oranguru:
-  types: [Normal, Psychic]
-  egg-groups: [Field]
-  biomes: [TropicalRainforest, TropicalSeasonalForest]
-  active: [Morning, Day, Evening]

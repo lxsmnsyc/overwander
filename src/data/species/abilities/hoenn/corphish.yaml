@@ -1,8 +1,0 @@
-Corphish:
-  abilities: [HyperCutter, ShellArmor]
-  hidden: [Adaptability]
-Crawdaunt:
-  abilities: [HyperCutter, ShellArmor]
-  # One the mainline never gave it: those pincers are most of what
-  # it is, and Crabhammer is most of what it does with them
-  hidden: [Adaptability, ToughClaws]

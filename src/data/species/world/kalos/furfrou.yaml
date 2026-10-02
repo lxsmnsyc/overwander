@@ -1,8 +1,0 @@
-# The poodle, in the coat it grows itself. The nine trims a groomer
-# cuts are held back until they are drawn, so there is one shape here
-# and the salon comes later
-Furfrou:
-  types: [Normal]
-  egg-groups: [Field]
-  biomes: [Grassland, Woodland, Shrubland]
-  active: [Morning, Day, Evening]

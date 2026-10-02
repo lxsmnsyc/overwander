@@ -1,6 +1,0 @@
-Mewtwo:
-  stats: { HP: 106, Attack: 110, Defense: 90, SpecialAttack: 154, SpecialDefense: 90, Speed: 130 }
-  catch-rate: 3
-  height: 2
-  weight: 122
-  gender: genderless

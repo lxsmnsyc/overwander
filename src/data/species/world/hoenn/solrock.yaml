@@ -1,5 +1,0 @@
-Solrock:
-  types: [Rock, Psychic]
-  egg-groups: [Mineral]
-  biomes: [Badlands, Desert]
-  active: [Morning, Day]

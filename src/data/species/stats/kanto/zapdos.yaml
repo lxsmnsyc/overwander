@@ -1,6 +1,0 @@
-Zapdos:
-  stats: { HP: 90, Attack: 90, Defense: 85, SpecialAttack: 125, SpecialDefense: 90, Speed: 100 }
-  catch-rate: 3
-  height: 1.6
-  weight: 52.6
-  gender: genderless

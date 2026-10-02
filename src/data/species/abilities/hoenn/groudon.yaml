@@ -1,8 +1,0 @@
-Groudon:
-  abilities: [Drought]
-  # All three are this registry's: nothing freezes what it is made
-  # of, every blow settles it deeper, and it is expensive to fight
-  hidden: [MagmaArmor, Stamina, Pressure]
-GroudonPrimal:
-  abilities: [Drought, DesolateLand]
-  hidden: [MagmaArmor, Stamina, Pressure]

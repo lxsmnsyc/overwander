@@ -1,5 +1,0 @@
-Regigigas:
-  abilities: [SlowStart]
-  # The other three are this registry's: every move it starts with
-  # is a punch, and 3.7 metres arriving is felt before it swings
-  hidden: [IronFist, Sturdy, Intimidate]

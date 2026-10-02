@@ -1,6 +1,0 @@
-Shuckle:
-  abilities: [Sturdy, Gluttony]
-  # Harvest is this registry's rather than the mainline's, filling
-  # it to four: the berries it hoards in its shell come back, which
-  # is what the shell is for
-  hidden: [Contrary, Harvest]

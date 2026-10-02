@@ -1,6 +1,0 @@
-Reshiram:
-  stats: { HP: 100, Attack: 120, Defense: 100, SpecialAttack: 150, SpecialDefense: 120, Speed: 90 }
-  catch-rate: 3
-  height: 3.2
-  weight: 330
-  gender: genderless

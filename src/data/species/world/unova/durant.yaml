@@ -1,7 +1,0 @@
-# The iron ant: it nests in colonies and armours itself against the
-# one thing that comes for the nest, which is a Heatmor
-Durant:
-  types: [Bug, Steel]
-  egg-groups: [Bug]
-  biomes: [Badlands, Mountain]
-  active: [Morning, Day]

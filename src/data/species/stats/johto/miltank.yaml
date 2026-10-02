@@ -1,6 +1,0 @@
-Miltank:
-  stats: { HP: 95, Attack: 80, Defense: 105, SpecialAttack: 40, SpecialDefense: 70, Speed: 100 }
-  catch-rate: 45
-  height: 1.2
-  weight: 75.5
-  gender: [0, 1]

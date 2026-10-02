@@ -1,6 +1,0 @@
-Shroomish:
-  abilities: [EffectSpore, PoisonHeal]
-  hidden: [QuickFeet]
-Breloom:
-  abilities: [EffectSpore, PoisonHeal]
-  hidden: [Technician]

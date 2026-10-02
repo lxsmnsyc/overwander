@@ -174,8 +174,8 @@ function writtenSpecies(): Set<number> {
   for (const file of sourceFiles(SPECIES)) {
     const text = readFileSync(file, 'utf8');
 
-    // A YAML file names its species as keys, the code as `Species.Name`
-    const pattern = file.endsWith('.yaml') ? /^(\w+):/gm : /Species\.(\w+)/g;
+    // A YAML file names its species as keys under their family, the code as `Species.Name`
+    const pattern = file.endsWith('.yaml') ? /^ {0,2}([A-Z]\w*):/gm : /Species\.(\w+)/g;
 
     for (const [, name] of text.matchAll(pattern)) {
       const id = numbered.get(name);

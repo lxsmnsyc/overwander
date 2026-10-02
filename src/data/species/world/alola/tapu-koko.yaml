@@ -1,7 +1,0 @@
-# The four guardians of Alola, one to each island. None is born and
-# none evolves: each is met at the ruin its island keeps for it
-TapuKoko:
-  types: [Electric, Fairy]
-  egg-groups: [NoEggsDiscovered]
-  biomes: [TropicalSeasonalForest]
-  active: any

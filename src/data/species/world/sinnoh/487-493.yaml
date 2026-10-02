@@ -1,0 +1,185 @@
+Giratina:
+  Giratina:
+    types: [Ghost, Dragon]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Badlands, Bog]
+    active: any
+  GiratinaOrigin:
+    types: [Ghost, Dragon]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    # Worn rather than met, so the dex fills it in the day its
+    # own shape is
+    worn: true
+# The two halves of one moon, met on two islands off the same coast:
+# the crescent that hands out a good night's sleep, and the shadow
+# that takes it away again
+Cresselia:
+  Cresselia:
+    types: [Psychic]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Ocean]
+    active: [Evening, Night]
+# The prince of the sea and what its egg comes to. Phione is not an
+# evolution and never becomes a Manaphy: it is what a Manaphy lays,
+# which is the only way one is ever met
+Manaphy:
+  Phione:
+    types: [Water]
+    egg-groups: [Water1, Fairy]
+    habitat: Water
+    biomes: [Ocean, DeepOcean]
+    active: any
+  Manaphy:
+    types: [Water]
+    egg-groups: [Water1, Fairy]
+    habitat: Water
+    biomes: [DeepOcean]
+    active: any
+    # Its egg is a Phione and never another Manaphy, which is what
+    # the mainline does and the only way to a Phione at all
+    egg-species: Phione
+Darkrai:
+  Darkrai:
+    types: [Dark]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Ocean]
+    active: [Night]
+# The flower that grows back whatever was ruined, and the shape it
+# opens into with a Gracidea in its hands: the same pokemon lying
+# down and the same pokemon in the air
+Shaymin:
+  Shaymin:
+    types: [Grass]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Grassland]
+    active: any
+  ShayminSky:
+    types: [Grass, Flying]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    # Worn rather than met: the flower is what opens it, so the dex
+    # fills it in the day the shape it lies down in is
+    worn: true
+# The one that was there first, and the seventeen shapes a Plate puts
+# it in. Multitype is what lets a Plate do that, and the shape carries
+# the type, so an Arceus with it is whichever stone it is holding
+
+# The stats it has in every shape, which are the same six numbers
+
+# Each shape, and the type its own Plate paints it
+
+# Worn rather than met: a Plate in its hands is what paints it,
+# so the dex fills the shape in the day the bare one is
+
+# Worn rather than met, so no pool stages one
+Arceus:
+  Arceus:
+    types: [Normal]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [AlpineTundra]
+    active: any
+  ArceusBug:
+    types: [Bug]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    worn: true
+  ArceusDark:
+    types: [Dark]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    worn: true
+  ArceusDragon:
+    types: [Dragon]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    worn: true
+  ArceusElectric:
+    types: [Electric]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    worn: true
+  ArceusFighting:
+    types: [Fighting]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    worn: true
+  ArceusFire:
+    types: [Fire]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    worn: true
+  ArceusFlying:
+    types: [Flying]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    worn: true
+  ArceusGhost:
+    types: [Ghost]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    worn: true
+  ArceusGrass:
+    types: [Grass]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    worn: true
+  ArceusGround:
+    types: [Ground]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    worn: true
+  ArceusIce:
+    types: [Ice]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    worn: true
+  ArceusPoison:
+    types: [Poison]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    worn: true
+  ArceusPsychic:
+    types: [Psychic]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    worn: true
+  ArceusRock:
+    types: [Rock]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    worn: true
+  ArceusSteel:
+    types: [Steel]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    worn: true
+  ArceusWater:
+    types: [Water]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    worn: true
+  ArceusFairy:
+    types: [Fairy]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    worn: true

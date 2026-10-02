@@ -1,6 +1,0 @@
-Seviper:
-  stats: { HP: 73, Attack: 100, Defense: 60, SpecialAttack: 100, SpecialDefense: 60, Speed: 65 }
-  catch-rate: 90
-  height: 2.7
-  weight: 52.5
-  gender: [1, 1]

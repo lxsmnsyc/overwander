@@ -1,9 +1,0 @@
-Baltoy:
-  abilities: [Levitate]
-Claydol:
-  abilities: [Levitate]
-  # Three the mainline never gave it, which is what a doll with one
-  # ability owes: it works out the answer at leisure, fired clay
-  # blunts what should be devastating, and the sand it was dug from
-  # sharpens what it throws
-  hidden: [Analytic, Filter, SandForce]

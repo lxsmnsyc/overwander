@@ -1,6 +1,0 @@
-Lapras:
-  types: [Water, Ice]
-  egg-groups: [Monster, Water1]
-  habitat: Water
-  biomes: [Ocean, DeepOcean, PolarOcean]
-  active: any

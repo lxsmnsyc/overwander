@@ -1,6 +1,0 @@
-Bruxish:
-  types: [Water, Psychic]
-  egg-groups: [Water2]
-  habitat: Water
-  biomes: [CoralReef, KelpForest]
-  active: any

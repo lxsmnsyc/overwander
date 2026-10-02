@@ -1,9 +1,0 @@
-Snover:
-  abilities: [SnowWarning]
-  hidden: [Soundproof]
-Abomasnow:
-  abilities: [SnowWarning]
-  # Ice Body and Slush Rush are this registry's rather than the
-  # mainline's: the line has two abilities and needs four, and both
-  # are paid for by the hail it brings itself
-  hidden: [Soundproof, IceBody, SlushRush]

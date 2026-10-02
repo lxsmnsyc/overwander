@@ -1,5 +1,0 @@
-Mesprit:
-  abilities: [Levitate]
-  # Levitate is all the mainline gives it, so the other three
-  # are this registry's, each of them the thing it stands for
-  hidden: [Synchronize, SereneGrace, Healer]

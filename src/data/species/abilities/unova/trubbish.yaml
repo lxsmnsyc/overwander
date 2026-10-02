@@ -1,8 +1,0 @@
-Trubbish:
-  abilities: [Stench, StickyHold]
-  hidden: [Aftermath]
-Garbodor:
-  # Sticky Hold walks up from Trubbish, so the line reaches four
-  # without an invention
-  abilities: [Stench, WeakArmor]
-  hidden: [Aftermath]

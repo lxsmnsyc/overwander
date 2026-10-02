@@ -71,7 +71,7 @@ export {
 export { getMegaBase, isMegaSpecies, listMegas } from './megas';
 
 export function registerSpecies(): void {
-  // Written as YAML, a folder per field and a file per family (see ./yaml.ts)
+  // Written as YAML, a folder per field and a block of families per file (see ./yaml.ts)
   const read = readSpecies({
     world: import.meta.glob('./world/**/*.yaml', { eager: true, import: 'default' }),
     stats: import.meta.glob('./stats/**/*.yaml', { eager: true, import: 'default' }),

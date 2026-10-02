@@ -1,6 +1,0 @@
-Guzzlord:
-  stats: { HP: 223, Attack: 101, Defense: 53, SpecialAttack: 97, SpecialDefense: 53, Speed: 43 }
-  catch-rate: 45
-  height: 5.5
-  weight: 888
-  gender: genderless

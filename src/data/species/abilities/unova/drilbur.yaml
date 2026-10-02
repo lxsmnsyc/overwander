@@ -1,8 +1,0 @@
-Drilbur:
-  abilities: [SandRush, SandForce]
-  hidden: [MoldBreaker]
-Excadrill:
-  abilities: [SandRush, SandForce]
-  # Tough Claws is the invented fourth: the line reaches three, and
-  # everything it fights with is a drill or a claw
-  hidden: [MoldBreaker, ToughClaws]

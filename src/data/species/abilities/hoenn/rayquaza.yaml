@@ -1,6 +1,0 @@
-Rayquaza:
-  abilities: [AirLock]
-  # All three are this registry's: it is expensive to fight, what
-  # it comes down on thinks better of swinging, and nothing gets
-  # through the first blow at full strength
-  hidden: [Pressure, Intimidate, Multiscale]

@@ -1,8 +1,0 @@
-# Kalos's three mythicals. None of them is staged: a relic is the
-# only way to a fight with one, and each still names the country it
-# came out of so a catch can say where it was met
-Diancie:
-  types: [Rock, Fairy]
-  egg-groups: [NoEggsDiscovered]
-  biomes: [Mountain]
-  active: any

@@ -1,5 +1,0 @@
-Hawlucha:
-  abilities: [Limber, Unburden]
-  # Sheer Force is this line's invented filler: the mainline gives
-  # it Limber, Unburden and Mold Breaker and nothing else
-  hidden: [MoldBreaker, SheerForce]

@@ -1,6 +1,0 @@
-Zekrom:
-  stats: { HP: 100, Attack: 150, Defense: 120, SpecialAttack: 120, SpecialDefense: 100, Speed: 90 }
-  catch-rate: 3
-  height: 2.9
-  weight: 345
-  gender: genderless

@@ -1,6 +1,0 @@
-Tentacool:
-  abilities: [ClearBody, LiquidOoze]
-  hidden: [RainDish]
-Tentacruel:
-  abilities: [ClearBody, LiquidOoze]
-  hidden: [RainDish, PoisonTouch]

@@ -1,7 +1,0 @@
-# The squirrel that glides between the trees on the membranes under
-# its arms, and holds its charge in its cheeks until it lets go
-Emolga:
-  types: [Electric, Flying]
-  egg-groups: [Field]
-  biomes: [TemperateForest, Woodland]
-  active: any

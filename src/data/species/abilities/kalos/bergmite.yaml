@@ -1,9 +1,0 @@
-Bergmite:
-  abilities: [OwnTempo, IceBody]
-  hidden: [Sturdy]
-Avalugg:
-  abilities: [OwnTempo, IceBody]
-  # Snow Warning is this line's invented filler: the mainline gives
-  # the floe Own Tempo, Ice Body and Sturdy, and Hisuian Avalugg's
-  # Strong Jaw belongs to that form rather than to this one
-  hidden: [Sturdy, SnowWarning]

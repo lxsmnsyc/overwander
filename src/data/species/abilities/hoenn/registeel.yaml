@@ -1,5 +1,0 @@
-Registeel:
-  abilities: [ClearBody]
-  # Steelworker and Filter are this registry's: a body hammered out
-  # of one metal swings it hardest, and takes the worst of a blow
-  hidden: [LightMetal, Steelworker, Filter]

@@ -1,8 +1,0 @@
-Mienfoo:
-  abilities: [InnerFocus, Regenerator]
-  hidden: [Reckless]
-Mienshao:
-  abilities: [InnerFocus, Regenerator]
-  # Iron Fist is the invented fourth: the line reaches three, and a
-  # combination fighter should get something for the blows it throws
-  hidden: [Reckless, IronFist]

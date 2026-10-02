@@ -1,9 +1,0 @@
-Chinchou:
-  abilities: [VoltAbsorb, Illuminate]
-  hidden: [WaterAbsorb]
-Lanturn:
-  abilities: [VoltAbsorb, Illuminate]
-  # Hydration is this registry's rather than the mainline's,
-  # filling a final evolution to four: the deep water it lives in
-  # washes off whatever it picked up nearer the surface
-  hidden: [WaterAbsorb, Hydration]

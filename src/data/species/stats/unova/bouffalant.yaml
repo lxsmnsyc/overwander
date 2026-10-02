@@ -1,6 +1,0 @@
-Bouffalant:
-  stats: { HP: 95, Attack: 110, Defense: 95, SpecialAttack: 40, SpecialDefense: 95, Speed: 55 }
-  catch-rate: 45
-  height: 1.6
-  weight: 94.6
-  gender: [1, 1]

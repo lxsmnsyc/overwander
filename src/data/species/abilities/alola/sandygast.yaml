@@ -1,6 +1,0 @@
-Sandygast:
-  abilities: [WaterCompaction]
-  hidden: [SandVeil]
-Palossand:
-  abilities: [WaterCompaction]
-  hidden: [SandVeil, SandSpit, CursedBody]

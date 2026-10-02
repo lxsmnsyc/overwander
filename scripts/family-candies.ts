@@ -240,50 +240,48 @@ function filesUnder(folder: string): string[] {
 /**
  * Every written species with the three things a family needs of it:
  * which family it belongs to, its dex number, and what it evolved
- * from. Read out of the species YAML, where each family's file is named
- * after it and an id past the form band names its dex number
+ * from. Read out of the species YAML, where each family is keyed by its
+ * own name with its species beneath it, and an id past the form band
+ * names its dex number
  */
 function entriesOf(species: Map<string, number>, families: Map<string, number>): Entry[] {
   const entries: Entry[] = [];
 
   for (const file of filesUnder(join(SPECIES_ROOT, 'world'))) {
-    if (!file.endsWith('.yaml')) {
-      continue;
-    }
-
-    const base = file.slice(file.lastIndexOf('/') + 1, -'.yaml'.length);
-    const family = families.get(
-      base
-        .split('-')
-        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-        .join(''),
-    );
-    const written: unknown = parse(readFileSync(file, 'utf8'));
+    const written: unknown = file.endsWith('.yaml') ? parse(readFileSync(file, 'utf8')) : null;
 
     if (typeof written !== 'object' || written == null) {
       continue;
     }
-    for (const [key, part] of Object.entries(written)) {
-      const id = species.get(key);
-      const said: unknown = part;
+    for (const [familyName, members] of Object.entries(written)) {
+      const family = families.get(familyName);
+      const held: unknown = members;
 
-      if (id == null || family == null || typeof said !== 'object' || said == null) {
+      if (family == null || typeof held !== 'object' || held == null) {
         continue;
       }
+      for (const [key, part] of Object.entries(held)) {
+        const id = species.get(key);
+        const said: unknown = part;
 
-      const dex = 'dex' in said && typeof said.dex === 'number' ? said.dex : null;
-      const from =
-        'evolves-from' in said && typeof said['evolves-from'] === 'string'
-          ? said['evolves-from']
-          : '';
+        if (id == null || typeof said !== 'object' || said == null) {
+          continue;
+        }
 
-      entries.push({
-        species: id,
-        key,
-        dex: dex ?? (id < FORM_BAND ? id : Math.floor((id - FORM_BAND) / 100)),
-        family,
-        from: species.get(from) ?? null,
-      });
+        const dex = 'dex' in said && typeof said.dex === 'number' ? said.dex : null;
+        const from =
+          'evolves-from' in said && typeof said['evolves-from'] === 'string'
+            ? said['evolves-from']
+            : '';
+
+        entries.push({
+          species: id,
+          key,
+          dex: dex ?? (id < FORM_BAND ? id : Math.floor((id - FORM_BAND) / 100)),
+          family,
+          from: species.get(from) ?? null,
+        });
+      }
     }
   }
   return entries;

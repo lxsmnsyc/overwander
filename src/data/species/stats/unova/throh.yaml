@@ -1,6 +1,0 @@
-Throh:
-  stats: { HP: 120, Attack: 100, Defense: 85, SpecialAttack: 30, SpecialDefense: 85, Speed: 45 }
-  catch-rate: 45
-  height: 1.3
-  weight: 55.5
-  gender: [1, 0]

@@ -1,5 +1,0 @@
-Stantler:
-  types: [Normal]
-  egg-groups: [Field]
-  biomes: [TemperateForest, Taiga, MontaneForest]
-  active: any

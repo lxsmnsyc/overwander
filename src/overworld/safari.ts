@@ -10,10 +10,10 @@ import { Genders } from '../data/ids/species';
 import type { Species } from '../data/ids/species';
 
 import {
-  BAIT_BERRY_NAMES,
+  BAIT_BERRIES,
   BAIT_CATCH_BONUS,
   NANAB_FLEE_FACTOR,
-  PRIZE_BERRY_NAMES,
+  PRIZE_BERRIES,
   RAZZ_CATCH_BONUS,
 } from '../data/items/berries';
 import {
@@ -326,14 +326,14 @@ export const FEED_CATCH_BONUS: Partial<Record<Items, number>> = {
   [Items.SitrusBerry]: CURE_CATCH_BONUS,
 };
 
-for (const item of BAIT_BERRY_NAMES.keys()) {
+for (const item of BAIT_BERRIES) {
   FEED_CATCH_BONUS[item] = BAIT_CATCH_BONUS;
 }
 
 // A grade is bait first: one whose grade buys something other than
 // catch odds still buys what plain bait does, so feeding it is never
 // worse than feeding the fruit it was grown from
-for (const item of PRIZE_BERRY_NAMES.keys()) {
+for (const item of PRIZE_BERRIES) {
   FEED_CATCH_BONUS[item] = RAZZ_CATCH_BONUS.get(item) ?? BAIT_CATCH_BONUS;
 }
 

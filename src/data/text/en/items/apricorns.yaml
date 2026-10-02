@@ -1,0 +1,9 @@
+templates:
+  apricorn: Kurt carves this one into a {ball}.
+RedApricorn: { name: Red Apricorn }
+BlueApricorn: { name: Blue Apricorn }
+YellowApricorn: { name: Yellow Apricorn }
+GreenApricorn: { name: Green Apricorn }
+PinkApricorn: { name: Pink Apricorn }
+WhiteApricorn: { name: White Apricorn }
+BlackApricorn: { name: Black Apricorn }

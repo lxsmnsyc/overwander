@@ -1,0 +1,21 @@
+templates:
+  effort: Adds {effort} {stat} effort. Spent on use.
+  max: Sets {stat} effort to {max}. Spent on use.
+HPUp: { name: HP Up }
+Protein: { name: Protein }
+Iron: { name: Iron }
+Calcium: { name: Calcium }
+Zinc: { name: Zinc }
+Carbos: { name: Carbos }
+HPUpMax: { name: HP Up Max }
+ProteinMax: { name: Protein Max }
+IronMax: { name: Iron Max }
+CalciumMax: { name: Calcium Max }
+ZincMax: { name: Zinc Max }
+CarbosMax: { name: Carbos Max }
+PPUp:
+  name: PP Up
+  description: Shortens one move’s cooldown by a step, for good. Spent on use.
+PPMax:
+  name: PP Max
+  description: Shortens one move’s cooldown as far as it will go, for good. Spent on use.

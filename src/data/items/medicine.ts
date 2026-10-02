@@ -1,6 +1,6 @@
-import { ItemFlags, ItemTypes, Items } from '../ids/items';
+import { Items } from '../ids/items';
 import { NON_VOLATILE_STATUSES, Statuses } from '../ids/status';
-import { nameToIcon, registerItem } from './__create';
+import { itemText } from './__create';
 
 /**
  * Medicine: what a party is put right with between fights.
@@ -130,111 +130,66 @@ export function isHerbal(item: Items): boolean {
 }
 
 /**
- * What a medicine does, in one line, worked out of its own entry
- * above rather than written twice: a potion that is retuned describes
- * itself correctly without being edited
- */
-/**
- * What a cure takes off, as the thing rather than the state: the two
+ * The word for what a cure takes off, by its template: the two
  * poisons share a word, so an Antidote reads as one cure rather than
  * two
  */
-const CURE_NAMES = new Map<Statuses, string>([
+const CURE_WORDS = new Map<Statuses, string>([
   [Statuses.Poisoned, 'poison'],
   [Statuses.BadlyPoisoned, 'poison'],
   [Statuses.Sleeping, 'sleep'],
   [Statuses.Paralyzed, 'paralysis'],
-  [Statuses.Burned, 'a burn'],
+  [Statuses.Burned, 'burn'],
   [Statuses.Frozen, 'freezing'],
 ]);
 
-// How a bitter cost paid more than once reads
+// How a bitter cost paid more than once reads, by its template
 const BITTER_TIMES: { [bitter: number]: string } = {
-  2: ' twice over',
-  3: ' three times over',
+  1: 'bitter',
+  2: 'bitterTwice',
+  3: 'bitterThrice',
 };
 
+/**
+ * What a medicine does, in one line, worked out of its own entry
+ * above rather than written twice: a potion that is retuned describes
+ * itself correctly without being edited
+ */
 export function describeMedicine(item: Items): string {
   const effect = MEDICINES.get(item);
 
   if (effect == null) {
-    return '';
+    throw new Error(`Item ${item} is not medicine`);
   }
 
   const parts: string[] = [];
 
-  if (effect.revives > 0) {
-    parts.push(
-      effect.revives >= 1
-        ? 'Revives a fainted pokemon at full HP.'
-        : `Revives a fainted pokemon at ${effect.revives === 0.5 ? '1/2 HP' : `${Math.round(effect.revives * 100)}% of its HP`}.`,
-    );
+  if (effect.revives >= 1) {
+    parts.push(itemText('medicine', 'reviveFull'));
+  } else if (effect.revives === 0.5) {
+    parts.push(itemText('medicine', 'reviveHalf'));
+  } else if (effect.revives > 0) {
+    parts.push(itemText('medicine', 'revive', { percent: Math.round(effect.revives * 100) }));
   } else if (effect.restore === FULL) {
-    parts.push('Restores all HP.');
+    parts.push(itemText('medicine', 'restoreAll'));
   } else if (effect.restore > 0) {
-    parts.push(`Restores ${effect.restore} HP.`);
+    parts.push(itemText('medicine', 'restore', { restore: effect.restore }));
   }
 
   if (effect.cures === EVERY_STATUS) {
-    parts.push('Cures every status.');
+    parts.push(itemText('medicine', 'cureAll'));
   } else if (effect.cures != null) {
     const cured = new Set<string>();
 
     for (const status of effect.cures) {
-      cured.add(CURE_NAMES.get(status) ?? '');
+      cured.add(itemText('medicine', CURE_WORDS.get(status) ?? ''));
     }
 
-    parts.push(`Cures ${[...cured].join(' and ')}.`);
+    parts.push(itemText('medicine', 'cure', { cures: [...cured].join(' and ') }));
   }
 
   if (effect.bitter != null) {
-    parts.push(`Bitter: costs friendship${BITTER_TIMES[effect.bitter] ?? ''}.`);
+    parts.push(itemText('medicine', BITTER_TIMES[effect.bitter] ?? 'bitter'));
   }
   return parts.join(' ');
-}
-
-const MEDICINE_RESALE = 0.5;
-
-/**
- * Registered with the market in mind: medicine is the one thing gold
- * is always worth spending on, so unlike a berry or a bottle cap it
- * carries a price
- */
-function registerMedicine(item: Items, name: string, buy: number): void {
-  registerItem(item, {
-    name,
-    description: describeMedicine(item),
-    type: ItemTypes.Medicine,
-    icon: nameToIcon('medicine', name),
-    // Used on a pokemon and spent doing it; never held, so nothing
-    // drinks a potion mid-battle
-    flags: ItemFlags.Usable | ItemFlags.Consumable | ItemFlags.Marketable,
-    buy,
-    sell: buy * MEDICINE_RESALE,
-  });
-}
-
-export default function registerMedicines(): void {
-  registerMedicine(Items.Potion, 'Potion', 300);
-  registerMedicine(Items.SuperPotion, 'Super Potion', 700);
-  registerMedicine(Items.HyperPotion, 'Hyper Potion', 1500);
-  registerMedicine(Items.MaxPotion, 'Max Potion', 2500);
-  registerMedicine(Items.FullRestore, 'Full Restore', 3000);
-  registerMedicine(Items.Antidote, 'Antidote', 200);
-  registerMedicine(Items.BurnHeal, 'Burn Heal', 200);
-  registerMedicine(Items.IceHeal, 'Ice Heal', 200);
-  registerMedicine(Items.Awakening, 'Awakening', 200);
-  registerMedicine(Items.ParalyzeHeal, 'Paralyze Heal', 200);
-  registerMedicine(Items.FullHeal, 'Full Heal', 600);
-  // A revive is what a lost raid costs, so it is priced like one
-  registerMedicine(Items.Revive, 'Revive', 2000);
-  registerMedicine(Items.MaxRevive, 'Max Revive', 4000);
-  // The herbal four are the cheap answer to all three problems, and
-  // every price here undercuts the bottle it competes with. What they
-  // cost instead is friendship, which is the one thing gold cannot buy
-  // back — a groomer sells half of what is left, never the last of it
-  registerMedicine(Items.EnergyPowder, 'Energy Powder', 500);
-  registerMedicine(Items.EnergyRoot, 'Energy Root', 800);
-  registerMedicine(Items.HealPowder, 'Heal Powder', 450);
-  registerMedicine(Items.RevivalHerb, 'Revival Herb', 2800);
 }

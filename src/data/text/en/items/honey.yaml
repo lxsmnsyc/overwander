@@ -1,0 +1,3 @@
+templates:
+  honey: Restores {restore} HP to the pokemon holding it once it drops to a quarter. Also spread on a Honey Tree to draw out what lives there.
+Honey: { name: Honey }

@@ -1,0 +1,128 @@
+# Priced with the market in mind: medicine is the one thing gold is
+# always worth spending on, so unlike a berry or a bottle cap it
+# carries a price, and sells back at half. Used on a pokemon and spent
+# doing it; never held, so nothing drinks a potion mid-battle
+
+Potion:
+  type: Medicine
+  icon: medicine/potion
+  flags: [Consumable, Usable, Marketable]
+  buy: 300
+  sell: 150
+
+SuperPotion:
+  type: Medicine
+  icon: medicine/super-potion
+  flags: [Consumable, Usable, Marketable]
+  buy: 700
+  sell: 350
+
+HyperPotion:
+  type: Medicine
+  icon: medicine/hyper-potion
+  flags: [Consumable, Usable, Marketable]
+  buy: 1500
+  sell: 750
+
+MaxPotion:
+  type: Medicine
+  icon: medicine/max-potion
+  flags: [Consumable, Usable, Marketable]
+  buy: 2500
+  sell: 1250
+
+FullRestore:
+  type: Medicine
+  icon: medicine/full-restore
+  flags: [Consumable, Usable, Marketable]
+  buy: 3000
+  sell: 1500
+
+Antidote:
+  type: Medicine
+  icon: medicine/antidote
+  flags: [Consumable, Usable, Marketable]
+  buy: 200
+  sell: 100
+
+BurnHeal:
+  type: Medicine
+  icon: medicine/burn-heal
+  flags: [Consumable, Usable, Marketable]
+  buy: 200
+  sell: 100
+
+IceHeal:
+  type: Medicine
+  icon: medicine/ice-heal
+  flags: [Consumable, Usable, Marketable]
+  buy: 200
+  sell: 100
+
+Awakening:
+  type: Medicine
+  icon: medicine/awakening
+  flags: [Consumable, Usable, Marketable]
+  buy: 200
+  sell: 100
+
+ParalyzeHeal:
+  type: Medicine
+  icon: medicine/paralyze-heal
+  flags: [Consumable, Usable, Marketable]
+  buy: 200
+  sell: 100
+
+FullHeal:
+  type: Medicine
+  icon: medicine/full-heal
+  flags: [Consumable, Usable, Marketable]
+  buy: 600
+  sell: 300
+
+# A revive is what a lost raid costs, so it is priced like one
+Revive:
+  type: Medicine
+  icon: medicine/revive
+  flags: [Consumable, Usable, Marketable]
+  buy: 2000
+  sell: 1000
+
+MaxRevive:
+  type: Medicine
+  icon: medicine/max-revive
+  flags: [Consumable, Usable, Marketable]
+  buy: 4000
+  sell: 2000
+
+# The herbal four are the cheap answer to all three problems, and
+# every price here undercuts the bottle it competes with. What they
+# cost instead is friendship, which is the one thing gold cannot buy
+# back: a groomer sells half of what is left, never the last of it
+EnergyPowder:
+  type: Medicine
+  icon: medicine/energy-powder
+  flags: [Consumable, Usable, Marketable]
+  buy: 500
+  sell: 250
+
+EnergyRoot:
+  type: Medicine
+  icon: medicine/energy-root
+  flags: [Consumable, Usable, Marketable]
+  buy: 800
+  sell: 400
+
+HealPowder:
+  type: Medicine
+  icon: medicine/heal-powder
+  flags: [Consumable, Usable, Marketable]
+  buy: 450
+  sell: 225
+
+RevivalHerb:
+  type: Medicine
+  icon: medicine/revival-herb
+  flags: [Consumable, Usable, Marketable]
+  buy: 2800
+  sell: 1400

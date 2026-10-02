@@ -1,0 +1,66 @@
+PokeBall:
+  name: Poke Ball
+  description: The plain ball. No help and no hindrance.
+GreatBall:
+  name: Great Ball
+  description: A 1.5x better chance than a plain ball.
+UltraBall:
+  name: Ultra Ball
+  description: Twice a plain ball’s chance.
+MasterBall:
+  name: Master Ball
+  description: Never fails.
+PremierBall:
+  name: Premier Ball
+  description: Catches like a plain ball. A keepsake.
+HealBall:
+  name: Heal Ball
+  description: Catches like a plain ball, and restores your buddy to full HP with its status cleared.
+LuxuryBall:
+  name: Luxury Ball
+  description: Catches like a plain ball. Whatever it holds warms to you 2x as fast, for life.
+NetBall:
+  name: Net Ball
+  description: 3.5x against Bug and Water types.
+DiveBall:
+  name: Dive Ball
+  description: 3.5x on water.
+NestBall:
+  name: Nest Ball
+  description: Up to 4x against a low-level encounter, fading as the level rises.
+RepeatBall:
+  name: Repeat Ball
+  description: 3.5x against a species you already own.
+TimerBall:
+  name: Timer Ball
+  description: Grows about 0.3x with each throw or feeding at this encounter, up to 4x.
+QuickBall:
+  name: Quick Ball
+  description: 5x before anything has been thrown or fed at this encounter, plain afterwards.
+LevelBall:
+  name: Level Ball
+  description: Up to 8x on something far below the buddy walking beside you.
+LureBall:
+  name: Lure Ball
+  description: 5x on something startled out of rippling water.
+MoonBall:
+  name: Moon Ball
+  description: 4x on any member of a line that evolves with a Moon Stone.
+FriendBall:
+  name: Friend Ball
+  description: Catches like a plain ball. What it holds arrives at 200 friendship, unless it is a shadow.
+LoveBall:
+  name: Love Ball
+  description: 8x on the buddy's own species of the opposite gender.
+HeavyBall:
+  name: Heavy Ball
+  description: Up to 4x by weight, from 2x at 100 kg.
+FastBall:
+  name: Fast Ball
+  description: 4x on a species with 100 base Speed or more.
+BeastBall:
+  name: Beast Ball
+  description: 5x on an Ultra Beast, and 0.1x on anything else.
+DuskBall:
+  name: Dusk Ball
+  description: 3x in the evening and at night.

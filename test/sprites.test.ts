@@ -52,8 +52,8 @@ const SPRITE_ROOT = 'public/sprites';
 
 // Moves first: the withdrawn machines are registered whatever species exist
 registerMoves();
-registerItems();
 registerSpecies();
+registerItems();
 
 /** The outline the candy drawing is drawn in, which no swap repaints. */
 const CANDY_OUTLINE = '41,41,41';

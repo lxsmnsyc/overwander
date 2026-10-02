@@ -1,0 +1,6 @@
+templates:
+  capsule: Draws another ability its line can reach into one pokemon, up to {slots} of them. Which one is a roll. Spent on use.
+AbilityCapsule: { name: Ability Capsule }
+AbilityPatch:
+  name: Ability Patch
+  description: Writes its family's signature ability into one pokemon for good, replacing an ability you choose when no slot is free. Spent on use.

@@ -1,0 +1,132 @@
+# Unlike every other type item they are consumable: landing the move is
+# what spends one. A gem costs a fraction of the booster it out-hits,
+# because it only has the one hit in it.
+#
+# The `gems` sheet holds one per type, named after the type, so the
+# gem's own picture is the type it belongs to.
+
+NormalGem:
+  type: Held
+  icon: gems/normal
+  flags: [Consumable, Holdable, Marketable]
+  buy: 1500
+  sell: 750
+
+FightingGem:
+  type: Held
+  icon: gems/fighting
+  flags: [Consumable, Holdable, Marketable]
+  buy: 1500
+  sell: 750
+
+FlyingGem:
+  type: Held
+  icon: gems/flying
+  flags: [Consumable, Holdable, Marketable]
+  buy: 1500
+  sell: 750
+
+PoisonGem:
+  type: Held
+  icon: gems/poison
+  flags: [Consumable, Holdable, Marketable]
+  buy: 1500
+  sell: 750
+
+GroundGem:
+  type: Held
+  icon: gems/ground
+  flags: [Consumable, Holdable, Marketable]
+  buy: 1500
+  sell: 750
+
+RockGem:
+  type: Held
+  icon: gems/rock
+  flags: [Consumable, Holdable, Marketable]
+  buy: 1500
+  sell: 750
+
+BugGem:
+  type: Held
+  icon: gems/bug
+  flags: [Consumable, Holdable, Marketable]
+  buy: 1500
+  sell: 750
+
+GhostGem:
+  type: Held
+  icon: gems/ghost
+  flags: [Consumable, Holdable, Marketable]
+  buy: 1500
+  sell: 750
+
+SteelGem:
+  type: Held
+  icon: gems/steel
+  flags: [Consumable, Holdable, Marketable]
+  buy: 1500
+  sell: 750
+
+FireGem:
+  type: Held
+  icon: gems/fire
+  flags: [Consumable, Holdable, Marketable]
+  buy: 1500
+  sell: 750
+
+WaterGem:
+  type: Held
+  icon: gems/water
+  flags: [Consumable, Holdable, Marketable]
+  buy: 1500
+  sell: 750
+
+GrassGem:
+  type: Held
+  icon: gems/grass
+  flags: [Consumable, Holdable, Marketable]
+  buy: 1500
+  sell: 750
+
+ElectricGem:
+  type: Held
+  icon: gems/electric
+  flags: [Consumable, Holdable, Marketable]
+  buy: 1500
+  sell: 750
+
+PsychicGem:
+  type: Held
+  icon: gems/psychic
+  flags: [Consumable, Holdable, Marketable]
+  buy: 1500
+  sell: 750
+
+IceGem:
+  type: Held
+  icon: gems/ice
+  flags: [Consumable, Holdable, Marketable]
+  buy: 1500
+  sell: 750
+
+DragonGem:
+  type: Held
+  icon: gems/dragon
+  flags: [Consumable, Holdable, Marketable]
+  buy: 1500
+  sell: 750
+
+DarkGem:
+  type: Held
+  icon: gems/dark
+  flags: [Consumable, Holdable, Marketable]
+  buy: 1500
+  sell: 750
+
+FairyGem:
+  type: Held
+  icon: gems/fairy
+  flags: [Consumable, Holdable, Marketable]
+  buy: 1500
+  sell: 750

@@ -1,5 +1,4 @@
-import { ItemFlags, ItemTypes, Items } from '../ids/items';
-import { nameToIcon, registerItem } from './__create';
+import { Items } from '../ids/items';
 
 /**
  * Stat-enhancing held items: what a pokemon carries to be stronger
@@ -15,89 +14,25 @@ import { nameToIcon, registerItem } from './__create';
  *
  * The battle side of them lives in
  * [`src/battle/items/stat-boosters.ts`](../../battle/items/stat-boosters.ts);
- * this is only what they are and what they cost.
+ * this is only which items they are.
  */
 
-/**
- * The items a shop stocks, and what one costs. They are dear because
- * each is worth half again of a stat
- */
-export const GENERAL_STAT_BOOSTERS: Map<Items, [name: string, description: string]> = new Map([
-  [
-    Items.ChoiceBand,
-    ['Choice Band', '1.5x Attack, but its holder can only cast the move it opened with.'],
-  ],
-  [
-    Items.ChoiceSpecs,
-    ['Choice Specs', '1.5x Special Attack, but its holder can only cast the move it opened with.'],
-  ],
-  [
-    Items.ChoiceScarf,
-    ['Choice Scarf', '1.5x Speed, but its holder can only cast the move it opened with.'],
-  ],
-  [
-    Items.AssaultVest,
-    ['Assault Vest', '1.5x Special Defense. Its holder cannot cast a status move at all.'],
-  ],
-  [
-    Items.Eviolite,
-    ['Eviolite', '1.5x both defenses, for a pokemon with somewhere left to evolve to.'],
-  ],
+/** The items a shop stocks */
+export const GENERAL_STAT_BOOSTERS = new Set<Items>([
+  Items.ChoiceBand,
+  Items.ChoiceSpecs,
+  Items.ChoiceScarf,
+  Items.AssaultVest,
+  Items.Eviolite,
 ]);
 
 /**
  * The species relics: found in the world, never stocked, and useless
  * in any grip but the right one
  */
-export const RELIC_STAT_BOOSTERS: Map<Items, [name: string, description: string]> = new Map([
-  [
-    Items.LightBall,
-    ['Light Ball', '2x a Pikachu’s Attack and Special Attack. Nothing to anybody else.'],
-  ],
-  [Items.ThickClub, ['Thick Club', '2x a Cubone’s or Marowak’s Attack. Nothing to anybody else.']],
-  [Items.MetalPowder, ['Metal Powder', '2x a Ditto’s Defense. Nothing to anybody else.']],
-  [Items.QuickPowder, ['Quick Powder', '2x a Ditto’s Speed. Nothing to anybody else.']],
+export const RELIC_STAT_BOOSTERS = new Set<Items>([
+  Items.LightBall,
+  Items.ThickClub,
+  Items.MetalPowder,
+  Items.QuickPowder,
 ]);
-
-export const STAT_BOOSTER_PRICE = 8000;
-
-const STAT_BOOSTER_RESALE = 0.5;
-
-/**
- * What a relic sells for. Nothing stocks them, so the price is only
- * what a shop will take one off a player's hands for
- */
-const RELIC_RESALE = 1000;
-
-/**
- * Register the stat-enhancing items. Every one of them is held for as
- * long as its holder keeps it: none is consumed, and none is used on
- * a pokemon
- */
-export default function registerStatBoosters(): void {
-  for (const [item, [name, description]] of GENERAL_STAT_BOOSTERS) {
-    registerItem(item, {
-      name,
-      type: ItemTypes.Held,
-      description,
-      icon: nameToIcon('held', name),
-      flags: ItemFlags.Holdable | ItemFlags.Marketable,
-      buy: STAT_BOOSTER_PRICE,
-      sell: STAT_BOOSTER_PRICE * STAT_BOOSTER_RESALE,
-    });
-  }
-
-  for (const [item, [name, description]] of RELIC_STAT_BOOSTERS) {
-    registerItem(item, {
-      name,
-      type: ItemTypes.Held,
-      description,
-      icon: nameToIcon('held', name),
-      // Found rather than bought: a relic has no listing, only a
-      // price somebody will pay for it
-      flags: ItemFlags.Holdable,
-      buy: 0,
-      sell: RELIC_RESALE,
-    });
-  }
-}

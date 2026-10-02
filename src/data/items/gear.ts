@@ -1,5 +1,4 @@
-import { ItemFlags, ItemTypes, Items } from '../ids/items';
-import { nameToIcon, registerItem } from './__create';
+import { Items } from '../ids/items';
 
 /**
  * The gear: held items that work for as long as they are carried and
@@ -15,67 +14,35 @@ import { nameToIcon, registerItem } from './__create';
  *
  * The battle side of them lives in
  * [`src/battle/items/gear.ts`](../../battle/items/gear.ts); this is
- * only what they are and what they cost.
+ * only which items they are.
  */
 
-/**
- * What the market lists, and what one costs. The price is flat across
- * the shelf on purpose: none of them is strictly better than another,
- * so what a player is choosing between is what their pokemon needs
- * rather than what they can afford
- */
-export const MARKET_GEAR: Map<Items, [name: string, description: string]> = new Map([
-  [Items.ShellBell, ['Shell Bell', 'Hands its holder back 1/8 of the damage it deals.']],
-  [Items.MuscleBand, ['Muscle Band', '1.1x damage from physical moves.']],
-  [Items.WiseGlasses, ['Wise Glasses', '1.1x damage from special moves.']],
-  [Items.ExpertBelt, ['Expert Belt', '1.2x damage, but only from super-effective blows.']],
-  [
-    Items.Metronome,
-    [
-      'Metronome',
-      '+0.2x damage for each repeat cast of the same move, up to 2x. Resets on a change.',
-    ],
-  ],
-  [Items.WideLens, ['Wide Lens', '1.1x accuracy on everything its holder throws.']],
-  [Items.ScopeLens, ['Scope Lens', 'Sharpens its holder’s criticals by 1 stage.']],
-  [Items.BrightPowder, ['Bright Powder', 'Anything aimed at its holder is 10% likelier to miss.']],
-  [
-    Items.QuickClaw,
-    ['Quick Claw', '1/5 of the time, its holder’s next move winds up a bracket faster.'],
-  ],
-  [Items.FocusBand, ['Focus Band', '1/10 of the time, its holder is left standing on 1 HP.']],
-  [Items.RockyHelmet, ['Rocky Helmet', 'Anything that touches its holder pays 1/6 of its own HP.']],
-  [
-    Items.SafetyGoggles,
-    ['Safety Goggles', 'No sandstorm or hail damage, and powder moves do nothing.'],
-  ],
-  [
-    Items.UtilityUmbrella,
-    ['Utility Umbrella', 'Its holder stands under clear sky: sun and rain change nothing for it.'],
-  ],
-  [Items.SmokeBall, ['Smoke Ball', 'Its holder can always switch out, even when trapped.']],
-  [
-    Items.DestinyKnot,
-    [
-      'Destiny Knot',
-      'Whoever infatuates its holder is infatuated back. An egg bred from it copies 5 values instead of 3.',
-    ],
-  ],
-  [Items.GripClaw, ['Grip Claw', 'Binds its holder lands hold 1.75x as long.']],
-  [Items.BindingBand, ['Binding Band', 'Binds its holder lands chip 1/3 harder.']],
-  [Items.ZoomLens, ['Zoom Lens', '1.2x accuracy against a target already casting or channelling.']],
-  [Items.IronBall, ['Iron Ball', 'Halves its holder’s Speed and drags it to the ground.']],
-  [
-    Items.LaggingTail,
-    ['Lagging Tail', 'Its holder winds up a bracket slower than it otherwise would.'],
-  ],
-  [Items.RingTarget, ['Ring Target', 'Its holder loses every type immunity it has.']],
-  [Items.FloatStone, ['Float Stone', 'Halves what its holder weighs.']],
-  [Items.ProtectivePads, ['Protective Pads', 'Nothing its holder throws counts as contact.']],
-  [
-    Items.ClearAmulet,
-    ['Clear Amulet', 'Refuses every stat drop anybody else tries, and is never spent.'],
-  ],
+/** What the market lists */
+export const MARKET_GEAR = new Set<Items>([
+  Items.ShellBell,
+  Items.MuscleBand,
+  Items.WiseGlasses,
+  Items.ExpertBelt,
+  Items.Metronome,
+  Items.WideLens,
+  Items.ScopeLens,
+  Items.BrightPowder,
+  Items.QuickClaw,
+  Items.FocusBand,
+  Items.RockyHelmet,
+  Items.SafetyGoggles,
+  Items.UtilityUmbrella,
+  Items.SmokeBall,
+  Items.DestinyKnot,
+  Items.GripClaw,
+  Items.BindingBand,
+  Items.ZoomLens,
+  Items.IronBall,
+  Items.LaggingTail,
+  Items.RingTarget,
+  Items.FloatStone,
+  Items.ProtectivePads,
+  Items.ClearAmulet,
 ]);
 
 /**
@@ -85,60 +52,27 @@ export const MARKET_GEAR: Map<Items, [name: string, description: string]> = new 
  * The line against the shelf is manufacture: a Wide Lens is ground and
  * a Muscle Band is woven, so a shop stocks as many as a player can pay
  * for, while rubbish, a leek, a moult and a rock have no supplier but
- * the ground. Keeping the Leftovers here is also what keeps the flat
- * shelf price honest — every party wants one, so a listing would make
- * it the first purchase and everything else the second
+ * the ground
  */
-export const FOUND_GEAR: Map<Items, [name: string, description: string]> = new Map([
-  [
-    Items.BlackSludge,
-    [
-      'Black Sludge',
-      'A Poison type gets 1/16 of its HP back each time it acts. Anybody else loses 1/8.',
-    ],
-  ],
-  [
-    Items.LuckyPunch,
-    ['Lucky Punch', 'Sharpens a Chansey’s criticals by 2 stages. Nothing to anybody else.'],
-  ],
-  [
-    Items.Stick,
-    ['Stick', 'Sharpens a Farfetch’d’s criticals by 2 stages. Nothing to anybody else.'],
-  ],
-  [Items.ShedShell, ['Shed Shell', 'Its holder can always switch out, even when trapped.']],
-  [Items.Leftovers, ['Leftovers', 'Hands its holder 1/16 of its HP back every time it acts.']],
-  [Items.DampRock, ['Damp Rock', 'Rain its holder calls lasts 1.6x as long.']],
-  [Items.HeatRock, ['Heat Rock', 'Sun its holder calls lasts 1.6x as long.']],
-  [Items.IcyRock, ['Icy Rock', 'Hail and snow its holder calls last 1.6x as long.']],
-  [Items.SmoothRock, ['Smooth Rock', 'A sandstorm its holder calls lasts 1.6x as long.']],
-  [Items.LightClay, ['Light Clay', 'Screens its holder puts up last 1.6x as long.']],
-  [Items.TerrainExtender, ['Terrain Extender', 'Terrain its holder lays lasts 1.6x as long.']],
-  [Items.BigRoot, ['Big Root', '1.3x on everything its holder drains.']],
-  [Items.SoulDew, ['Soul Dew', '1.2x damage from a Latios’ or Latias’ Psychic and Dragon moves.']],
-  [
-    Items.LoadedDice,
-    ['Loaded Dice', 'A move of its holder’s that strikes several times never lands fewer than 4.'],
-  ],
-  [
-    Items.HeavyDutyBoots,
-    ['Heavy-Duty Boots', 'Its holder walks over spikes, toxic spikes and stealth rock.'],
-  ],
+export const FOUND_GEAR = new Set<Items>([
+  Items.BlackSludge,
+  Items.LuckyPunch,
+  Items.Stick,
+  Items.ShedShell,
+  Items.Leftovers,
+  Items.DampRock,
+  Items.HeatRock,
+  Items.IcyRock,
+  Items.SmoothRock,
+  Items.LightClay,
+  Items.TerrainExtender,
+  Items.BigRoot,
+  Items.SoulDew,
+  Items.LoadedDice,
+  Items.HeavyDutyBoots,
   // A burr off a bush, which is why nobody sells one
-  [
-    Items.StickyBarb,
-    ['Sticky Barb', 'Costs its holder 1/8 of its HP per move, and sticks to whoever touches it.'],
-  ],
+  Items.StickyBarb,
 ]);
-
-export const GEAR_PRICE = 5000;
-
-const GEAR_RESALE = 0.5;
-
-/**
- * What a found piece of gear fetches. Nothing stocks them, so this is
- * only what somebody will pay to take one away
- */
-const FOUND_GEAR_RESALE = 1000;
 
 /**
  * The found gear the geologist also sells, since each is a rock or a
@@ -155,34 +89,4 @@ export const QUARRIED_GEAR = new Set<Items>([
 
 export function isGear(item: Items): boolean {
   return MARKET_GEAR.has(item) || FOUND_GEAR.has(item);
-}
-
-export default function registerGear(): void {
-  for (const [item, [name, description]] of MARKET_GEAR) {
-    registerItem(item, {
-      name,
-      description,
-      type: ItemTypes.Held,
-      icon: nameToIcon('held', name),
-      // Held for as long as its holder keeps it: none is consumed,
-      // and none is used on a pokemon
-      flags: ItemFlags.Holdable | ItemFlags.Marketable,
-      buy: GEAR_PRICE,
-      sell: GEAR_PRICE * GEAR_RESALE,
-    });
-  }
-
-  for (const [item, [name, description]] of FOUND_GEAR) {
-    const quarried = QUARRIED_GEAR.has(item);
-
-    registerItem(item, {
-      name,
-      description,
-      type: ItemTypes.Held,
-      icon: nameToIcon('held', name),
-      flags: quarried ? ItemFlags.Holdable | ItemFlags.Marketable : ItemFlags.Holdable,
-      buy: quarried ? GEAR_PRICE : 0,
-      sell: quarried ? GEAR_PRICE * GEAR_RESALE : FOUND_GEAR_RESALE,
-    });
-  }
 }

@@ -1,0 +1,97 @@
+# Drawn on the medicine sheet, which is what a vitamin is: something a
+# pokemon swallows for what it does to it
+
+# What the market charges. Dear on purpose: it is three wings and a
+# third in one bottle, and the only training in the game that gold
+# alone can buy
+HPUp:
+  type: Training
+  icon: medicine/hp-up
+  flags: [Consumable, Usable, Marketable]
+  buy: 5000
+  sell: 2500
+
+Protein:
+  type: Training
+  icon: medicine/protein
+  flags: [Consumable, Usable, Marketable]
+  buy: 5000
+  sell: 2500
+
+Iron:
+  type: Training
+  icon: medicine/iron
+  flags: [Consumable, Usable, Marketable]
+  buy: 5000
+  sell: 2500
+
+Calcium:
+  type: Training
+  icon: medicine/calcium
+  flags: [Consumable, Usable, Marketable]
+  buy: 5000
+  sell: 2500
+
+Zinc:
+  type: Training
+  icon: medicine/zinc
+  flags: [Consumable, Usable, Marketable]
+  buy: 5000
+  sell: 2500
+
+Carbos:
+  type: Training
+  icon: medicine/carbos
+  flags: [Consumable, Usable, Marketable]
+  buy: 5000
+  sell: 2500
+
+# The Max vitamins are found, never bought
+HPUpMax:
+  type: Training
+  icon: medicine/hp-up-max
+  flags: [Consumable, Usable]
+
+ProteinMax:
+  type: Training
+  icon: medicine/protein-max
+  flags: [Consumable, Usable]
+
+IronMax:
+  type: Training
+  icon: medicine/iron-max
+  flags: [Consumable, Usable]
+
+CalciumMax:
+  type: Training
+  icon: medicine/calcium-max
+  flags: [Consumable, Usable]
+
+ZincMax:
+  type: Training
+  icon: medicine/zinc-max
+  flags: [Consumable, Usable]
+
+CarbosMax:
+  type: Training
+  icon: medicine/carbos-max
+  flags: [Consumable, Usable]
+
+# The PP items are stocked beside the vitamins and cost more, because
+# what they change is permanent and no berry takes it back: a stat can
+# be trained back down with a bitter berry, a move's points cannot.
+# A PP Max is the whole allowance (PP_UP_LIMIT) bought at once, so it
+# costs that many PP Ups
+PPUp:
+  type: Training
+  icon: medicine/pp-up
+  flags: [Consumable, Usable, Marketable]
+  buy: 9800
+  sell: 4900
+
+PPMax:
+  type: Training
+  icon: medicine/pp-max
+  flags: [Consumable, Usable, Marketable]
+  buy: 29400
+  sell: 14700

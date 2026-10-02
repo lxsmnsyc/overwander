@@ -44,7 +44,7 @@ import registerItems, {
 } from '../../src/data/items';
 import { WING_STATS, isWing } from '../../src/data/items/wings';
 import {
-  BAIT_BERRY_NAMES,
+  BAIT_BERRIES,
   BAIT_CATCH_BONUS,
   BERRY_BRACE_STAGES,
   BERRY_EFFORT_DROPS,
@@ -55,7 +55,7 @@ import {
   NANAB_FLEE_FACTOR,
   PINAP_CANDY_HELPINGS,
   PINCH_BERRIES,
-  PRIZE_BERRY_NAMES,
+  PRIZE_BERRIES,
   RAZZ_CATCH_BONUS,
   describeBerry,
   isBerry,
@@ -156,7 +156,6 @@ import {
   purifyAbilities,
   purifyIVs,
 } from '../../src/data/items/purifying-gem';
-import { CANDY_ITEM_PRICE } from '../../src/data/items/candy-items';
 import { isPortalKey } from '../../src/data/items/portal-key';
 import Landmark, { LANDMARKS, LANDMARK_NAMES } from '../../src/data/overworld/landmark';
 import {
@@ -281,7 +280,7 @@ describe('item data', () => {
       expect(data.flags & ItemFlags.Holdable).not.toBe(0);
       expect(data.flags & ItemFlags.Marketable).not.toBe(0);
       expect(data.flags & ItemFlags.Consumable).toBe(0);
-      expect(data.buy).toBe(CANDY_ITEM_PRICE);
+      expect(data.buy).toBe(6000);
       expect(data.sell).toBeLessThan(data.buy);
     }
     expect(getItemData(Items.ExpShare).name).toBe('Exp. Share');
@@ -1839,11 +1838,10 @@ describe('item data', () => {
   });
 
   it('registers the flavour berries as bait, and nothing else', () => {
-    for (const [item, name] of BAIT_BERRY_NAMES) {
+    for (const item of BAIT_BERRIES) {
       const data = getItemData(item);
 
       expect(isBerry(item)).toBe(true);
-      expect(data.name).toBe(name);
       expect(data.type).toBe(ItemTypes.Berry);
       // Fed, never held: nothing in a battle reads one
       expect(data.flags & ItemFlags.Holdable).toBe(0);
@@ -1858,11 +1856,11 @@ describe('item data', () => {
     const jobs = [RAZZ_CATCH_BONUS, NANAB_FLEE_FACTOR, PINAP_CANDY_HELPINGS];
     const grown = new Set(BERRY_POOL.special.map((entry) => entry.item));
 
-    for (const [item, name] of PRIZE_BERRY_NAMES) {
+    for (const item of PRIZE_BERRIES) {
       const data = getItemData(item);
+      const { name } = data;
 
       expect(isBerry(item)).toBe(true);
-      expect(data.name).toBe(name);
       expect(data.type).toBe(ItemTypes.Berry);
       // Fed, never held
       expect(data.flags & ItemFlags.Holdable).toBe(0);
@@ -1900,7 +1898,7 @@ describe('item data', () => {
     for (const entry of BERRY_POOL.base) {
       everyday.add(entry.item);
     }
-    for (const item of BAIT_BERRY_NAMES.keys()) {
+    for (const item of BAIT_BERRIES) {
       expect(everyday.has(item), getItemData(item).name).toBe(true);
     }
   });

@@ -1,0 +1,17 @@
+templates:
+  sweet: Cures {cures} a second after one lands on its holder.
+  treat: Restores {restore} HP when its holder drops to 1/5 of its HP.
+  poison: poison
+  sleep: sleep
+  paralysis: paralysis
+  burn: a burn
+  freezing: freezing
+LavaCookie: { name: Lava Cookie }
+OldGateau: { name: Old Gateau }
+Casteliacone: { name: Casteliacone }
+LumioseGalette: { name: Lumiose Galette }
+ShalourSable: { name: Shalour Sable }
+BigMalasada: { name: Big Malasada }
+PewterCrunchies: { name: Pewter Crunchies }
+RageCandyBar: { name: Rage Candy Bar }
+SweetHeart: { name: Sweet Heart }

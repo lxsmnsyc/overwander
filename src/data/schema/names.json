@@ -3769,6 +3769,28 @@
         "Yawn",
         "Slap"
       ]
+    },
+    "item-type": {
+      "enum": [
+        "Medicine",
+        "PokeBall",
+        "Berry",
+        "Held",
+        "Machine",
+        "KeyItem",
+        "Evolution",
+        "Valuable",
+        "Training",
+        "Fossil"
+      ]
+    },
+    "item-flag": {
+      "enum": [
+        "Consumable",
+        "Holdable",
+        "Usable",
+        "Marketable"
+      ]
     }
   }
 }

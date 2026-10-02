@@ -32,6 +32,8 @@ const DEFINITIONS: [enumName: string, definition: string][] = [
   ['MoveAffects', 'move-affect'],
   ['MoveFlags', 'move-flag'],
   ['SpriteAnim', 'sprite-anim'],
+  ['ItemTypes', 'item-type'],
+  ['ItemFlags', 'item-flag'],
 ];
 
 const DRAFT = 'http://json-schema.org/draft-07/schema#';
@@ -268,6 +270,44 @@ const SIGNATURES: Schema = {
   additionalProperties: false,
 };
 
+const ITEM_RECORDS = keyed(
+  'Items: records',
+  'item',
+  part(
+    {
+      type: name('item-type'),
+      icon: described({ type: 'string' }, 'The picture, as `sheet/name`'),
+      flags: names('item-flag'),
+      buy: described(COUNT, 'What the market charges, or left out for none'),
+      sell: described(COUNT, 'What a vendor pays, or left out for nothing'),
+    },
+    ['type', 'icon'],
+  ),
+);
+
+const ITEM_TEXT: Schema = {
+  $schema: DRAFT,
+  title: 'Items: text',
+  type: 'object',
+  properties: {
+    templates: described(
+      { type: 'object', additionalProperties: { type: 'string' } },
+      "Sentences the family's code fills in, with `{placeholders}`",
+    ),
+  },
+  propertyNames: { anyOf: [name('item'), { const: 'templates' }] },
+  additionalProperties: part(
+    {
+      name: { type: 'string' },
+      description: described(
+        { type: 'string' },
+        "One player-facing line, ending in a full stop. Left out where the family's code writes it from a template",
+      ),
+    },
+    ['name'],
+  ),
+};
+
 function json(schema: Schema): string {
   return `${JSON.stringify(schema, null, 2)}\n`;
 }
@@ -300,5 +340,7 @@ export default function renderDataSchemas(members: Map<string, string[]>): Map<s
     ['moves-text.json', json(MOVE_TEXT)],
     ['abilities-text.json', json(ABILITY_TEXT)],
     ['abilities-signatures.json', json(SIGNATURES)],
+    ['items-records.json', json(ITEM_RECORDS)],
+    ['items-text.json', json(ITEM_TEXT)],
   ]);
 }

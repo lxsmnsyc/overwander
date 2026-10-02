@@ -1,0 +1,20 @@
+templates:
+  type: '{type} moves hit 1.5x. Spent on the first one that lands.'
+NormalGem: { name: Normal Gem }
+FightingGem: { name: Fighting Gem }
+FlyingGem: { name: Flying Gem }
+PoisonGem: { name: Poison Gem }
+GroundGem: { name: Ground Gem }
+RockGem: { name: Rock Gem }
+BugGem: { name: Bug Gem }
+GhostGem: { name: Ghost Gem }
+SteelGem: { name: Steel Gem }
+FireGem: { name: Fire Gem }
+WaterGem: { name: Water Gem }
+GrassGem: { name: Grass Gem }
+ElectricGem: { name: Electric Gem }
+PsychicGem: { name: Psychic Gem }
+IceGem: { name: Ice Gem }
+DragonGem: { name: Dragon Gem }
+DarkGem: { name: Dark Gem }
+FairyGem: { name: Fairy Gem }

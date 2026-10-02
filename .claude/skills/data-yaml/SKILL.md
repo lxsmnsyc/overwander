@@ -1,9 +1,9 @@
 ---
 name: data-yaml
-description: Species, moves and abilities are written as YAML, a folder per part of the record, and every name in them is checked against its enum when the data loads. Applies whenever adding, editing or reading species, move or ability data, or adding an enum member the YAML should be able to name.
+description: Species, moves, abilities and items are written as YAML, a folder per part of the record, and every name in them is checked against its enum when the data loads. Applies whenever adding, editing or reading species, move, ability or item data, or adding an enum member the YAML should be able to name.
 ---
 
-The species, moves and abilities are data, not code. Each part of a record lives in a folder of its own, and the player-facing words live apart from the numbers under `src/data/text/<locale>/`, so a second locale is another folder beside `en/`.
+The species, moves, abilities and items are data, not code. Each part of a record lives in a folder of its own, and the player-facing words live apart from the numbers under `src/data/text/<locale>/`, so a second locale is another folder beside `en/`.
 
 ## Species
 
@@ -49,6 +49,19 @@ Under `src/data/moves/`, each part filed by generation and the stretch of moves 
 ## Abilities
 
 An ability is a name and a line, so all of it is text: `text/en/abilities/gen-N.yaml`, grouped under a comment naming the line that introduces it, and `text/en/abilities/signature/<region>.yaml` for the signatures. Which family is granted which signature is `src/data/abilities/signatures/<region>.yaml`, under `families:`, with a regional line's own under `forms:`. A family is filed under the region its species files are.
+
+## Items
+
+A file per family in two folders, each item keyed by name:
+
+| folder                 | holds                                                         |
+| ---------------------- | ------------------------------------------------------------- |
+| `items/records/`       | type, icon (`sheet/name`), flags, buy and sell; flags and prices left out for none |
+| `text/en/items/`       | each name, and a written-out `description` where the line is the item's own |
+
+- **A line that follows a table is a template.** The family's text file keeps the sentence under `templates:` with `{placeholders}`, the item leaves its `description` out, and the family's `describeX(item)` fills it in with `itemText` from the table the engine reads (the `registry-descriptions` skill). The describer is listed in `DESCRIBERS` in `src/data/items/index.ts`.
+- **The family order is `ITEM_FAMILIES` in `src/data/items/index.ts`**, and a shelf lists a type's items in that order, each file's in the order it writes them. A new family is added there.
+- **Behaviour stays in the family's TS file**: what a berry does, how much a drink gives back, which type a gem lifts. The machines are generated from the learnsets, so they have no records, only templates.
 
 ## Rules
 

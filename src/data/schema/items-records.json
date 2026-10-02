@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Items: records",
+  "type": "object",
+  "propertyNames": {
+    "$ref": "names.json#/definitions/item"
+  },
+  "additionalProperties": {
+    "type": "object",
+    "properties": {
+      "type": {
+        "$ref": "names.json#/definitions/item-type"
+      },
+      "icon": {
+        "type": "string",
+        "description": "The picture, as `sheet/name`"
+      },
+      "flags": {
+        "type": "array",
+        "items": {
+          "$ref": "names.json#/definitions/item-flag"
+        }
+      },
+      "buy": {
+        "type": "number",
+        "minimum": 0,
+        "description": "What the market charges, or left out for none"
+      },
+      "sell": {
+        "type": "number",
+        "minimum": 0,
+        "description": "What a vendor pays, or left out for nothing"
+      }
+    },
+    "required": [
+      "type",
+      "icon"
+    ],
+    "additionalProperties": false
+  }
+}

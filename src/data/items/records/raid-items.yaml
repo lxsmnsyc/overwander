@@ -1,0 +1,97 @@
+# Key items rather than valuables (nothing sells one), and consumable,
+# since starting the raid spends the relic that called it.
+
+OldSeaMap:
+  type: KeyItem
+  icon: key/old-sea-map
+  flags: [Consumable, Usable]
+
+GSBall:
+  type: KeyItem
+  icon: key/gs-ball
+  flags: [Consumable, Usable]
+
+AuroraTicket:
+  type: KeyItem
+  icon: key/auroraticket
+  flags: [Consumable, Usable]
+
+WishTag:
+  type: KeyItem
+  icon: key/wish-tag
+  flags: [Consumable, Usable]
+
+MemberCard:
+  type: KeyItem
+  icon: key/member-card
+  flags: [Consumable, Usable]
+
+ManaphyEgg:
+  type: KeyItem
+  icon: key/manaphy-egg
+  flags: [Consumable, Usable]
+
+OaksLetter:
+  type: KeyItem
+  icon: key/oaks-letter
+  flags: [Consumable, Usable]
+
+AzureFlute:
+  type: KeyItem
+  icon: key/azure-flute
+  flags: [Consumable, Usable]
+
+ColtsPetal:
+  type: KeyItem
+  icon: key/radiant-petal
+  flags: [Consumable, Usable]
+
+LibertyPass:
+  type: KeyItem
+  icon: key/liberty-pass
+  flags: [Consumable, Usable]
+
+MusicBox:
+  type: KeyItem
+  icon: key/music-box
+  flags: [Consumable, Usable]
+
+ColressMachine:
+  type: KeyItem
+  icon: key/colress-machine
+  flags: [Consumable, Usable]
+
+HeartDiamond:
+  type: KeyItem
+  icon: key/heart-diamond
+  flags: [Consumable, Usable]
+
+SealedRing:
+  type: KeyItem
+  icon: key/sealed-ring
+  flags: [Consumable, Usable]
+
+SteamValve:
+  type: KeyItem
+  icon: key/steam-valve
+  flags: [Consumable, Usable]
+
+AncientPokeBall:
+  type: KeyItem
+  icon: key/ancient-poke-ball
+  flags: [Consumable, Usable]
+
+HerosCharm:
+  type: KeyItem
+  icon: key/heros-charm
+  flags: [Consumable, Usable]
+
+WindmillCharm:
+  type: KeyItem
+  icon: key/windmill-charm
+  flags: [Consumable, Usable]
+
+MysteryBox:
+  type: KeyItem
+  icon: key/mystery-box
+  flags: [Consumable, Usable]

@@ -3,7 +3,8 @@ import type { DuelRules } from '../../auth/duels';
 import { TEAM_SIZE } from '../../auth/teams';
 import { withLimit } from '../../data/constants/battle-limits';
 import { Slots, getSlots, leastSlots, mostSlots } from '../../data/constants/slots';
-import { Button, Dialog, DialogActions, Hint, HintList, Note, Select } from '../styled';
+import { BST_CAPS, DuelBan } from '../../data/constants/duel-bans';
+import { Button, Checkbox, Dialog, DialogActions, Hint, HintList, Note, Select } from '../styled';
 
 /**
  * What the host is setting the fight to.
@@ -43,6 +44,13 @@ for (let count = 1; count <= TEAM_SIZE; count++) {
   TEAM_CHOICES.push(count);
 }
 
+/** The stat total caps, with none first */
+const BST_OPTIONS: { value: number; label: string }[] = [];
+
+for (const cap of BST_CAPS) {
+  BST_OPTIONS.push({ value: cap, label: cap === 0 ? 'No cap' : String(cap) });
+}
+
 const countOptions = (counts: number[]): { value: number; label: string }[] => {
   const options: { value: number; label: string }[] = [];
 
@@ -68,6 +76,17 @@ export default function DuelRulesDialog(props: DuelRulesDialogProps): JSX.Elemen
   const setSlots = (kind: Slots, count: number): void => {
     setDraft((held) => ({ ...held, limits: withLimit(held.limits, kind, count) }));
   };
+
+  const banField = (label: string, ban: DuelBan, description?: string): JSX.Element => (
+    <Checkbox
+      label={label}
+      description={description}
+      checked={(draft().bans & ban) !== 0}
+      onChange={(barred) => {
+        setDraft((held) => ({ ...held, bans: barred ? held.bans | ban : held.bans & ~ban }));
+      }}
+    />
+  );
 
   const slotField = (label: string, kind: Slots): JSX.Element => (
     <Select
@@ -96,6 +115,7 @@ export default function DuelRulesDialog(props: DuelRulesDialogProps): JSX.Elemen
               its sheet.
             </li>
             <li>Changing a rule takes both sides' Ready away.</li>
+            <li>A pokemon the new rules bar is taken out of its party.</li>
           </HintList>
         </Hint>
       }
@@ -112,6 +132,21 @@ export default function DuelRulesDialog(props: DuelRulesDialogProps): JSX.Elemen
           setDraft((held) => ({ ...held, teamSize: count }));
         }}
       />
+      <Select
+        label="Highest base stat total"
+        value={draft().maxBst}
+        options={BST_OPTIONS}
+        onChange={(cap) => {
+          setDraft((held) => ({ ...held, maxBst: cap }));
+        }}
+      />
+      {banField('No legendaries', DuelBan.Legendary)}
+      {banField('No mythicals', DuelBan.Mythical)}
+      {banField(
+        'No held-item forms',
+        DuelBan.ItemForms,
+        'A pokemon holding an item that changes its form, such as a Plate or an orb, stays out.',
+      )}
 
       <Note>
         A ceiling, not an allowance: a pokemon fights with what it actually has, cut to this. Both

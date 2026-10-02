@@ -239,6 +239,11 @@ export default class EffectBatch {
   private yaw = 0;
   /** How far toward the camera the next shapes are judged, in field units */
   private lift = 0;
+  /**
+   * The ground spot every shape is judged at instead, while one is
+   * set, and how far behind it
+   */
+  private plane: { at: Spot; behind: number } | null = null;
 
   constructor() {
     const material = new RawShaderMaterial({
@@ -297,11 +302,23 @@ export default class EffectBatch {
     this.toward.set(-Math.sin(yaw), 0, -Math.cos(yaw));
     this.filled = 0;
     this.lift = 0;
+    this.plane = null;
   }
 
   /** How far toward the camera what follows is judged, so it clears the body it is on */
   near(units: number): void {
     this.lift = units;
+    this.plane = null;
+  }
+
+  /**
+   * Judge what follows at the depth of one spot, a little behind it,
+   * however far it reaches. An aura is then a layer just behind its
+   * pokemon's picture: hidden by that body and by whatever stands
+   * nearer, and over whatever stands further off
+   */
+  flat(at: Spot, behind: number): void {
+    this.plane = { at, behind };
   }
 
   /** Which way the camera's right is along the ground, for spreading things across the picture */
@@ -702,8 +719,16 @@ export default class EffectBatch {
     into[to + 11] = look;
     into[to + 12] = lying;
     into[to + 13] = add;
-    into[to + 14] = lift;
+    into[to + 14] = this.plane == null ? lift : this.layered(at);
     this.filled += 1;
+  }
+
+  /** The lift that brings a spot to the depth of the plane being judged at */
+  private layered(at: Spot): number {
+    const { at: plane, behind } = this.plane ?? { at, behind: 0 };
+    const [wx, wz] = this.away;
+
+    return (at[0] - plane[0]) * wx + (at[2] - plane[2]) * wz - behind;
   }
 
   private room(): void {

@@ -32042,15 +32042,15 @@
       }
     },
     "public/sprites/ui/candies/alola/image.png": {
-      "digest": "876e6f0b98770b47",
-      "bytes": 2569,
+      "digest": "7e88d155b1bfda57",
+      "bytes": 2676,
       "width": 80,
       "height": 64,
       "compact": {
-        "at": "2026-09-30T05:30:16Z",
+        "at": "2026-10-02T13:53:37Z",
         "as": "already compact",
-        "was": 2569,
-        "bytes": 2569
+        "was": 2676,
+        "bytes": 2676
       }
     },
     "public/sprites/ui/candies/hoenn/image.png": {

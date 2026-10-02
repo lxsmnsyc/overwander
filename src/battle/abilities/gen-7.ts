@@ -28,6 +28,7 @@ import {
   createThickFatAbility,
   createTypeShiftAbility,
 } from './__create';
+import { STAT_STAGES, createStatExtremes } from './signature/__create';
 
 /** What Neuroforce makes a super-effective blow worth */
 export const NEUROFORCE_SCALE = 1.25;
@@ -97,6 +98,32 @@ const setupAbilities = [
   createClearBodyAbility(Abilities.FullMetalBody),
   createMultiscaleAbility(Abilities.ShadowShield),
   createFilterAbility(Abilities.PrismArmor),
+
+  // The Ultra Beasts: whatever it knocks out makes it stronger where
+  // it is already strongest
+  // https://bulbapedia.bulbagarden.net/wiki/Beast_Boost_(Ability)
+  createAbility(Abilities.BeastBoost, (battle) => {
+    const stats = createStatExtremes();
+
+    return battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
+      const killer = event.attacker;
+
+      if (killer === event.source || !killer.alive || !killer.hasAbility(Abilities.BeastBoost)) {
+        return;
+      }
+
+      const stage = STAT_STAGES[stats.extremes(killer).highest];
+
+      if (stage != null) {
+        killer.triggerAbility(Abilities.BeastBoost);
+        killer.addStage(stage, 1, {
+          type: EffectType.Ability,
+          ability: Abilities.BeastBoost,
+          unit: killer,
+        });
+      }
+    });
+  }),
 
   // Ultra Necrozma: the light it let out lands hardest where it
   // already lands well

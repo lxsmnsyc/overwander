@@ -62,7 +62,10 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Tropius, weight: 8 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [{ species: Species.TapuLele, weight: 10 }],
+      special: [
+        { species: Species.Buzzwole, weight: 10 },
+        { species: Species.TapuLele, weight: 10 },
+      ],
       mythical: [{ species: Species.Mew, weight: 10 }],
     },
     [TimeOfDay.Day]: {
@@ -110,7 +113,10 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Tropius, weight: 8 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [{ species: Species.TapuLele, weight: 10 }],
+      special: [
+        { species: Species.Buzzwole, weight: 10 },
+        { species: Species.TapuLele, weight: 10 },
+      ],
       mythical: [{ species: Species.Mew, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
@@ -144,7 +150,10 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Carnivine, weight: 6 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [{ species: Species.TapuLele, weight: 10 }],
+      special: [
+        { species: Species.Buzzwole, weight: 10 },
+        { species: Species.TapuLele, weight: 10 },
+      ],
       mythical: [{ species: Species.Mew, weight: 10 }],
     },
     [TimeOfDay.Night]: {
@@ -177,7 +186,10 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Carnivine, weight: 6 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [{ species: Species.TapuLele, weight: 10 }],
+      special: [
+        { species: Species.Buzzwole, weight: 10 },
+        { species: Species.TapuLele, weight: 10 },
+      ],
       mythical: [{ species: Species.Mew, weight: 10 }],
     },
   });

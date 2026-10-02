@@ -1074,6 +1074,17 @@ const enum Abilities {
   // The light trio: one reads its health from the top, one from the bottom
   Zenith = 200412,
   Nadir = 200413,
+  // The Ultra Beasts: each shrugs off one weakness this world has for it
+  Earthless = 200414,
+  Windbreak = 200415,
+  GaleWard = 200416,
+  Unearthed = 200417,
+  HeatShield = 200418,
+  Fireproof = 200419,
+  Unenchanted = 200420,
+  ClosedMind = 200421,
+  DeepFooting = 200422,
+  DryFuse = 200423,
 }
 
 export default Abilities;

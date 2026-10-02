@@ -2417,6 +2417,58 @@ export default function registerSignatureAbilities(): void {
     description: 'Its damaging moves hit up to 1.3x the lower its HP, and 1x at full.',
   });
 
+  // The Ultra Beasts, on one axis: each came from another world, so one
+  // type this world would beat it with lands only as hard as any other
+  registerSignature(Families.Nihilego, Abilities.Earthless, {
+    name: 'Earthless',
+    description: 'Ground moves hit it for neutral damage rather than super effective.',
+  });
+
+  registerSignature(Families.Buzzwole, Abilities.Windbreak, {
+    name: 'Windbreak',
+    description: 'Flying moves hit it for neutral damage rather than super effective.',
+  });
+
+  registerSignature(Families.Pheromosa, Abilities.GaleWard, {
+    name: 'Gale Ward',
+    description: 'Flying moves hit it for neutral damage rather than super effective.',
+  });
+
+  registerSignature(Families.Xurkitree, Abilities.Unearthed, {
+    name: 'Unearthed',
+    description: 'Ground moves hit it for neutral damage rather than super effective.',
+  });
+
+  registerSignature(Families.Celesteela, Abilities.HeatShield, {
+    name: 'Heat Shield',
+    description: 'Fire moves hit it for neutral damage rather than super effective.',
+  });
+
+  registerSignature(Families.Kartana, Abilities.Fireproof, {
+    name: 'Fireproof',
+    description: 'Fire moves hit it for neutral damage rather than super effective.',
+  });
+
+  registerSignature(Families.Guzzlord, Abilities.Unenchanted, {
+    name: 'Unenchanted',
+    description: 'Fairy moves hit it for neutral damage rather than super effective.',
+  });
+
+  registerSignature(Families.Poipole, Abilities.ClosedMind, {
+    name: 'Closed Mind',
+    description: 'Psychic moves hit it for neutral damage rather than super effective.',
+  });
+
+  registerSignature(Families.Stakataka, Abilities.DeepFooting, {
+    name: 'Deep Footing',
+    description: 'Ground moves hit it for neutral damage rather than super effective.',
+  });
+
+  registerSignature(Families.Blacephalon, Abilities.DryFuse, {
+    name: 'Dry Fuse',
+    description: 'Water moves hit it for neutral damage rather than super effective.',
+  });
+
   // The Alolan lines whose every stage is regional carry their own
   registerFormSignature([Species.RattataAlola, Species.RaticateAlola], Abilities.RichDiet, {
     name: 'Rich Diet',

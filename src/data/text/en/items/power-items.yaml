@@ -1,0 +1,11 @@
+templates:
+  stat: An egg bred from its holder copies that parent’s {stat}.
+MachoBrace:
+  name: Macho Brace
+  description: A wing or vitamin used on its holder is worth 2x the effort, but its Speed is halved.
+PowerWeight: { name: Power Weight }
+PowerBracer: { name: Power Bracer }
+PowerBelt: { name: Power Belt }
+PowerLens: { name: Power Lens }
+PowerBand: { name: Power Band }
+PowerAnklet: { name: Power Anklet }

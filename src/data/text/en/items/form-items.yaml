@@ -1,0 +1,51 @@
+# The ability each shape brings is written out because it is battle
+# code, which data may not import
+
+AdamantOrb:
+  name: Adamant Orb
+  description: A Dialga holding it fights in its other shape, which also brings Unaware.
+LustrousOrb:
+  name: Lustrous Orb
+  description: A Palkia holding it fights in its other shape, which also brings Shadow Tag.
+GriseousOrb:
+  name: Griseous Orb
+  description: A Giratina holding it fights in its other shape, which also brings Levitate.
+BlueOrb:
+  name: Blue Orb
+  description: A Kyogre holding it fights in its Primal shape, which also brings Primordial Sea.
+RedOrb:
+  name: Red Orb
+  description: A Groudon holding it fights in its Primal shape, which also brings Desolate Land.
+PrisonBottle:
+  name: Prison Bottle
+  description: A Hoopa holding it fights unbound, with its rings let out.
+RevealGlass:
+  name: Reveal Glass
+  description: A Tornadus, Thundurus or Landorus holding it fights in its Therian shape, which also brings Regenerator, Volt Absorb or Intimidate.
+Gracidea:
+  name: Gracidea
+  description: A Shaymin holding it fights in its other shape, which also brings Serene Grace.
+Meteorite:
+  name: Meteorite
+  description: Rearranges the Deoxys it is used on into another of its shapes. Spent on each change.
+DnaSplicers:
+  name: DNA Splicers
+  description: Folds a dragon into a Kyurem, and pulls it back out. Never spent.
+RedNectar:
+  name: Red Nectar
+  description: Dances the Oricorio it is used on into its Baile Style. Spent on each change.
+YellowNectar:
+  name: Yellow Nectar
+  description: Dances the Oricorio it is used on into its Pom-Pom Style. Spent on each change.
+PinkNectar:
+  name: Pink Nectar
+  description: Dances the Oricorio it is used on into its Pa'u Style. Spent on each change.
+PurpleNectar:
+  name: Purple Nectar
+  description: Dances the Oricorio it is used on into its Sensu Style. Spent on each change.
+NSolarizer:
+  name: N-Solarizer
+  description: Folds a Solgaleo into a Necrozma, and pulls it back out. Never spent.
+NLunarizer:
+  name: N-Lunarizer
+  description: Folds a Lunala into a Necrozma, and pulls it back out. Never spent.

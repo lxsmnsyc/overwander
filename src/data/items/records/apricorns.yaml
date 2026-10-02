@@ -1,0 +1,29 @@
+# No flag at all: nothing holds one, nothing uses one in the field,
+# and no counter lists one. It is carried to somebody
+RedApricorn:
+  type: Evolution
+  icon: apricorn/red
+
+BlueApricorn:
+  type: Evolution
+  icon: apricorn/blue
+
+YellowApricorn:
+  type: Evolution
+  icon: apricorn/yellow
+
+GreenApricorn:
+  type: Evolution
+  icon: apricorn/green
+
+PinkApricorn:
+  type: Evolution
+  icon: apricorn/pink
+
+WhiteApricorn:
+  type: Evolution
+  icon: apricorn/white
+
+BlackApricorn:
+  type: Evolution
+  icon: apricorn/black

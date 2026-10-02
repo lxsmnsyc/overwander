@@ -1,0 +1,60 @@
+# The `fossils` sheet names them by the rock rather than by the item, so
+# the word "fossil" is the part that is dropped from the icon.
+#
+# Spent when it is revived, and worth nothing to anybody else: no vendor
+# stocks one and no vendor takes one.
+
+HelixFossil:
+  type: Fossil
+  icon: fossils/helix
+  flags: [Consumable]
+
+DomeFossil:
+  type: Fossil
+  icon: fossils/dome
+  flags: [Consumable]
+
+OldAmber:
+  type: Fossil
+  icon: fossils/old-amber
+  flags: [Consumable]
+
+RootFossil:
+  type: Fossil
+  icon: fossils/root
+  flags: [Consumable]
+
+ClawFossil:
+  type: Fossil
+  icon: fossils/claw
+  flags: [Consumable]
+
+SkullFossil:
+  type: Fossil
+  icon: fossils/skull
+  flags: [Consumable]
+
+ArmorFossil:
+  type: Fossil
+  icon: fossils/armor
+  flags: [Consumable]
+
+CoverFossil:
+  type: Fossil
+  icon: fossils/cover
+  flags: [Consumable]
+
+PlumeFossil:
+  type: Fossil
+  icon: fossils/plume
+  flags: [Consumable]
+
+JawFossil:
+  type: Fossil
+  icon: fossils/jaw
+  flags: [Consumable]
+
+SailFossil:
+  type: Fossil
+  icon: fossils/sail
+  flags: [Consumable]

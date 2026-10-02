@@ -1,0 +1,152 @@
+# Dearer than a vitamin, which moves one stat by a little: a nature
+# is two stats for the rest of the pokemon's life. Sells back at half.
+# There is one picture per stat a nature can raise rather than one per
+# mint, so the four that raise Attack share a jar and a neutral one has
+# its own
+
+LonelyMint:
+  type: Training
+  icon: mints/attack
+  flags: [Consumable, Usable, Marketable]
+  buy: 12000
+  sell: 6000
+
+BraveMint:
+  type: Training
+  icon: mints/attack
+  flags: [Consumable, Usable, Marketable]
+  buy: 12000
+  sell: 6000
+
+AdamantMint:
+  type: Training
+  icon: mints/attack
+  flags: [Consumable, Usable, Marketable]
+  buy: 12000
+  sell: 6000
+
+NaughtyMint:
+  type: Training
+  icon: mints/attack
+  flags: [Consumable, Usable, Marketable]
+  buy: 12000
+  sell: 6000
+
+BoldMint:
+  type: Training
+  icon: mints/defense
+  flags: [Consumable, Usable, Marketable]
+  buy: 12000
+  sell: 6000
+
+RelaxedMint:
+  type: Training
+  icon: mints/defense
+  flags: [Consumable, Usable, Marketable]
+  buy: 12000
+  sell: 6000
+
+ImpishMint:
+  type: Training
+  icon: mints/defense
+  flags: [Consumable, Usable, Marketable]
+  buy: 12000
+  sell: 6000
+
+LaxMint:
+  type: Training
+  icon: mints/defense
+  flags: [Consumable, Usable, Marketable]
+  buy: 12000
+  sell: 6000
+
+TimidMint:
+  type: Training
+  icon: mints/speed
+  flags: [Consumable, Usable, Marketable]
+  buy: 12000
+  sell: 6000
+
+HastyMint:
+  type: Training
+  icon: mints/speed
+  flags: [Consumable, Usable, Marketable]
+  buy: 12000
+  sell: 6000
+
+SeriousMint:
+  type: Training
+  icon: mints/neutral
+  flags: [Consumable, Usable, Marketable]
+  buy: 12000
+  sell: 6000
+
+JollyMint:
+  type: Training
+  icon: mints/speed
+  flags: [Consumable, Usable, Marketable]
+  buy: 12000
+  sell: 6000
+
+NaiveMint:
+  type: Training
+  icon: mints/speed
+  flags: [Consumable, Usable, Marketable]
+  buy: 12000
+  sell: 6000
+
+ModestMint:
+  type: Training
+  icon: mints/special-attack
+  flags: [Consumable, Usable, Marketable]
+  buy: 12000
+  sell: 6000
+
+MildMint:
+  type: Training
+  icon: mints/special-attack
+  flags: [Consumable, Usable, Marketable]
+  buy: 12000
+  sell: 6000
+
+QuietMint:
+  type: Training
+  icon: mints/special-attack
+  flags: [Consumable, Usable, Marketable]
+  buy: 12000
+  sell: 6000
+
+RashMint:
+  type: Training
+  icon: mints/special-attack
+  flags: [Consumable, Usable, Marketable]
+  buy: 12000
+  sell: 6000
+
+CalmMint:
+  type: Training
+  icon: mints/special-defense
+  flags: [Consumable, Usable, Marketable]
+  buy: 12000
+  sell: 6000
+
+GentleMint:
+  type: Training
+  icon: mints/special-defense
+  flags: [Consumable, Usable, Marketable]
+  buy: 12000
+  sell: 6000
+
+SassyMint:
+  type: Training
+  icon: mints/special-defense
+  flags: [Consumable, Usable, Marketable]
+  buy: 12000
+  sell: 6000
+
+CarefulMint:
+  type: Training
+  icon: mints/special-defense
+  flags: [Consumable, Usable, Marketable]
+  buy: 12000
+  sell: 6000

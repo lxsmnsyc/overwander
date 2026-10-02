@@ -4,7 +4,7 @@ import { EvolutionMethod, Genders, Habitat, Species } from './species';
 import { MoveAffects, MoveCategories, MoveFlags, MoveTargets, Moves } from './moves';
 import { SpriteAnim } from './sprite-anims';
 import Abilities from './abilities';
-import { Items } from './items';
+import { ItemFlags, ItemTypes, Items } from './items';
 import Biome, { TimeOfDay } from './biome';
 import { EggGroups } from './egg-groups';
 import Families from './families';
@@ -3247,6 +3247,26 @@ export const ITEM_IDS = {
   SkillBook: Items.SkillBook,
   RevealGlass: Items.RevealGlass,
 } as const satisfies Record<string, Items>;
+
+export const ITEM_TYPE_IDS = {
+  Medicine: ItemTypes.Medicine,
+  PokeBall: ItemTypes.PokeBall,
+  Berry: ItemTypes.Berry,
+  Held: ItemTypes.Held,
+  Machine: ItemTypes.Machine,
+  KeyItem: ItemTypes.KeyItem,
+  Evolution: ItemTypes.Evolution,
+  Valuable: ItemTypes.Valuable,
+  Training: ItemTypes.Training,
+  Fossil: ItemTypes.Fossil,
+} as const satisfies Record<string, ItemTypes>;
+
+export const ITEM_FLAG_IDS = {
+  Consumable: ItemFlags.Consumable,
+  Holdable: ItemFlags.Holdable,
+  Usable: ItemFlags.Usable,
+  Marketable: ItemFlags.Marketable,
+} as const satisfies Record<string, ItemFlags>;
 
 export const BIOME_IDS = {
   DeepOcean: Biome.DeepOcean,

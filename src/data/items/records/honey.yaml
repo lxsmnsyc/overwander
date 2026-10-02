@@ -1,0 +1,6 @@
+Honey:
+  type: Held
+  icon: other/honey
+  flags: [Consumable, Holdable, Marketable]
+  buy: 200
+  sell: 100

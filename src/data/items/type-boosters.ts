@@ -1,6 +1,6 @@
 import { TYPE_NAMES, Types } from '../constants/types';
-import { ItemFlags, ItemTypes, Items } from '../ids/items';
-import { nameToIcon, registerItem } from './__create';
+import { Items } from '../ids/items';
+import { itemText } from './__create';
 
 /**
  * Type-enhancing held items: one per attacking type, each worth a
@@ -10,7 +10,7 @@ import { nameToIcon, registerItem } from './__create';
  *
  * The battle side of them lives in
  * [`src/battle/items/type-boosters.ts`](../../battle/items/type-boosters.ts);
- * this is only what they are and what they cost.
+ * this is only which type each one lifts.
  */
 export const TYPE_BOOSTERS = new Map<Items, Types>([
   [Items.SilkScarf, Types.Normal],
@@ -33,52 +33,11 @@ export const TYPE_BOOSTERS = new Map<Items, Types>([
   [Items.FairyFeather, Types.Fairy],
 ]);
 
-const NAMES: { [key in Items]?: string } = {
-  [Items.SilkScarf]: 'Silk Scarf',
-  [Items.BlackBelt]: 'Black Belt',
-  [Items.SharpBeak]: 'Sharp Beak',
-  [Items.PoisonBarb]: 'Poison Barb',
-  [Items.SoftSand]: 'Soft Sand',
-  [Items.HardStone]: 'Hard Stone',
-  [Items.SilverPowder]: 'Silver Powder',
-  [Items.SpellTag]: 'Spell Tag',
-  [Items.MetalCoat]: 'Metal Coat',
-  [Items.Charcoal]: 'Charcoal',
-  [Items.MysticWater]: 'Mystic Water',
-  [Items.MiracleSeed]: 'Miracle Seed',
-  [Items.Magnet]: 'Magnet',
-  [Items.TwistedSpoon]: 'Twisted Spoon',
-  [Items.NeverMeltIce]: 'Never-Melt Ice',
-  [Items.DragonFang]: 'Dragon Fang',
-  [Items.BlackGlasses]: 'Black Glasses',
-  [Items.FairyFeather]: 'Fairy Feather',
-};
+export function describeTypeBooster(item: Items): string {
+  const type = TYPE_BOOSTERS.get(item);
 
-/**
- * They all do the same job, so they all cost the same: a flat price
- * rather than one type being dearer than another
- */
-export const TYPE_BOOSTER_PRICE = 4000;
-
-const TYPE_BOOSTER_RESALE = 0.5;
-
-/**
- * Register the type-enhancing items. Every attacking type has one, so
- * the list is the map above rather than eighteen near-identical
- * blocks
- */
-export default function registerTypeBoosters(): void {
-  for (const [item, type] of TYPE_BOOSTERS) {
-    registerItem(item, {
-      name: NAMES[item] ?? `Item #${item}`,
-      type: ItemTypes.Held,
-      description: `${TYPE_NAMES[type]} moves hit 1.2x for as long as it is held.`,
-      icon: nameToIcon('held', NAMES[item] ?? ''),
-      // Held for as long as its holder keeps it: nothing consumes a
-      // Charcoal, and nothing uses one on a pokemon either
-      flags: ItemFlags.Holdable | ItemFlags.Marketable,
-      buy: TYPE_BOOSTER_PRICE,
-      sell: TYPE_BOOSTER_PRICE * TYPE_BOOSTER_RESALE,
-    });
+  if (type == null) {
+    throw new Error(`No type booster line for item #${item}`);
   }
+  return itemText('type-boosters', 'type', { type: TYPE_NAMES[type] });
 }

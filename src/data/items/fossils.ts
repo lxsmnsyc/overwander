@@ -1,6 +1,5 @@
-import { ItemFlags, ItemTypes, Items } from '../ids/items';
+import { Items } from '../ids/items';
 import { Species } from '../ids/species';
-import { registerItem } from './__create';
 
 /**
  * The fossils: an extinct pokemon, still in the rock.
@@ -59,57 +58,4 @@ export function getSpeciesFossil(species: Species): Items | null {
     }
   }
   return null;
-}
-
-const NAMES: { [key in Items]?: string } = {
-  [Items.HelixFossil]: 'Helix Fossil',
-  [Items.DomeFossil]: 'Dome Fossil',
-  [Items.OldAmber]: 'Old Amber',
-  [Items.RootFossil]: 'Root Fossil',
-  [Items.ClawFossil]: 'Claw Fossil',
-  [Items.SkullFossil]: 'Skull Fossil',
-  [Items.ArmorFossil]: 'Armor Fossil',
-  [Items.CoverFossil]: 'Cover Fossil',
-  [Items.PlumeFossil]: 'Plume Fossil',
-  [Items.JawFossil]: 'Jaw Fossil',
-  [Items.SailFossil]: 'Sail Fossil',
-};
-
-/**
- * The picture each one is drawn with. The `fossils` sheet names them
- * by the rock rather than by the item, so the word "fossil" is the
- * part that is dropped
- */
-const ICONS: { [key in Items]?: string } = {
-  [Items.HelixFossil]: 'fossils/helix',
-  [Items.DomeFossil]: 'fossils/dome',
-  [Items.OldAmber]: 'fossils/old-amber',
-  [Items.RootFossil]: 'fossils/root',
-  [Items.ClawFossil]: 'fossils/claw',
-  [Items.SkullFossil]: 'fossils/skull',
-  [Items.ArmorFossil]: 'fossils/armor',
-  [Items.CoverFossil]: 'fossils/cover',
-  [Items.PlumeFossil]: 'fossils/plume',
-  [Items.JawFossil]: 'fossils/jaw',
-  [Items.SailFossil]: 'fossils/sail',
-};
-
-export default function registerFossils(): void {
-  for (const item of FOSSIL_SPECIES.keys()) {
-    registerItem(item, {
-      name: NAMES[item] ?? 'Fossil',
-      // What is in the rock is not written on it. The bench is where
-      // a player finds out, and a description that named the species
-      // would settle it before they ever paid for one
-      description:
-        'Something ancient is still in the rock. The Fossil Scientist revives it at level 20, spending the fossil.',
-      type: ItemTypes.Fossil,
-      icon: ICONS[item] ?? 'fossils/old-amber',
-      // Spent when it is revived, and worth nothing to anybody else:
-      // no vendor stocks one and no vendor takes one
-      flags: ItemFlags.Consumable,
-      buy: 0,
-      sell: 0,
-    });
-  }
 }

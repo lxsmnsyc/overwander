@@ -1,48 +1,32 @@
-import registerApricorns from './apricorns';
-import registerBalls from './balls';
-import registerBattleItems from './battle-items';
-import registerBattleBerries from './berries';
-import registerBottleCaps from './bottle-caps';
-import registerCandyItems from './candy-items';
-import registerDrinks from './drinks';
-import registerDrives from './drives';
-import registerMemories from './memories';
-import registerZCrystals from './z-crystals';
-import registerFormItems from './form-items';
-import registerMegaStones from './mega-stones';
-import registerFossils from './fossils';
-import registerGear from './gear';
-import registerGems from './gems';
-import registerHeartScale from './heart-scale';
-import registerHoney from './honey';
-import registerIncenses from './incenses';
-import registerKeyItems from './key-items';
+import type { Items } from '../ids/items';
+import { registerItem, registerItemTemplates } from './__create';
+import { describeAbilityItem } from './ability-items';
+import { describeApricorn } from './apricorns';
+import { describeBerry } from './berries';
+import { describeBottleCap } from './bottle-caps';
+import { describeDrink } from './drinks';
+import { describeDrive } from './drives';
+import { describeEscapeRope } from './escape-rope';
+import { describeGem } from './gems';
+import { describeHoney } from './honey';
+import { describeIncense } from './incenses';
+import { describeKeyItem } from './key-items';
+import { describeMedicine } from './medicine';
+import { describeMegaStone } from './mega-stones';
+import { describeMemory } from './memories';
+import { describeMintItem } from './mints';
+import { describePlate } from './plates';
+import { describePowerItem } from './power-items';
+import { describePurifyingGem } from './purifying-gem';
+import { describeRareCandy } from './rare-candy';
+import { describeTreat } from './treats';
+import { describeTypeBooster } from './type-boosters';
+import { describeValuable } from './valuables';
+import { describeVitamin } from './vitamins';
+import { describeWing } from './wings';
+import { describeZCrystal } from './z-crystals';
 import registerMachines from './machines';
-import registerMedicines from './medicine';
-import registerMints from './mints';
-import registerOneShots from './one-shots';
-import registerOrbs from './orbs';
-import registerPlates from './plates';
-import registerEscapeRope from './escape-rope';
-import registerPortalKey from './portal-key';
-import registerPowerItems from './power-items';
-import registerPurifyingGem from './purifying-gem';
-import registerRareCandy from './rare-candy';
-import registerSacredAsh from './sacred-ash';
-import registerSootheBell from './soothe-bell';
-import registerRaidItems from './raid-items';
-import registerStatBoosters from './stat-boosters';
-import registerEvolutionStones from './stones';
-import registerTradeItems from './trade-items';
-import registerTreats from './treats';
-import registerTrinkets from './trinkets';
-import registerAbilityItems from './ability-items';
-import registerSkillBook from './skill-book';
-import registerUtilityBelt from './utility-belt';
-import registerTypeBoosters from './type-boosters';
-import registerValuables from './valuables';
-import registerVitamins from './vitamins';
-import registerWings from './wings';
+import { readItems } from './yaml';
 
 export { getItemData, listItemsByType, registerItem } from './__create';
 export type { ItemData } from './__create';
@@ -54,55 +38,118 @@ export { ITEM_TYPE_NAMES, ITEM_TYPE_ORDER } from './names';
 export { WING_EFFORT, WING_STATS, isWing } from './wings';
 
 /**
+ * The families, in the order a shelf lists them: each family's items
+ * come in the order its file writes them
+ */
+const ITEM_FAMILIES = [
+  'balls',
+  'apricorns',
+  'berries',
+  'medicine',
+  'drinks',
+  'treats',
+  'stones',
+  'trade-items',
+  'type-boosters',
+  'stat-boosters',
+  'gear',
+  'one-shots',
+  'battle-items',
+  'incenses',
+  'trinkets',
+  'power-items',
+  'gems',
+  'orbs',
+  'plates',
+  'drives',
+  'memories',
+  'z-crystals',
+  'candy-items',
+  'rare-candy',
+  'bottle-caps',
+  'mints',
+  'utility-belt',
+  'skill-book',
+  'ability-items',
+  'purifying-gem',
+  'sacred-ash',
+  'soothe-bell',
+  'escape-rope',
+  'portal-key',
+  'key-items',
+  'raid-items',
+  'valuables',
+  'heart-scale',
+  'honey',
+  'fossils',
+  'form-items',
+  'mega-stones',
+  'wings',
+  'vitamins',
+] as const;
+
+/**
+ * The families whose lines follow their own tables, and the code that
+ * writes each one out of its text file's templates
+ */
+const DESCRIBERS = new Map<string, (item: Items) => string>([
+  ['ability-items', describeAbilityItem],
+  ['apricorns', describeApricorn],
+  ['berries', describeBerry],
+  ['bottle-caps', describeBottleCap],
+  ['drinks', describeDrink],
+  ['drives', describeDrive],
+  ['escape-rope', describeEscapeRope],
+  ['gems', describeGem],
+  ['honey', describeHoney],
+  ['incenses', describeIncense],
+  ['key-items', describeKeyItem],
+  ['medicine', describeMedicine],
+  ['mega-stones', describeMegaStone],
+  ['memories', describeMemory],
+  ['mints', describeMintItem],
+  ['plates', describePlate],
+  ['power-items', describePowerItem],
+  ['purifying-gem', describePurifyingGem],
+  ['rare-candy', describeRareCandy],
+  ['treats', describeTreat],
+  ['type-boosters', describeTypeBooster],
+  ['valuables', describeValuable],
+  ['vitamins', describeVitamin],
+  ['wings', describeWing],
+  ['z-crystals', describeZCrystal],
+]);
+
+/**
  * The machines are generated from the species learn sets, so the
  * species and their moves have to be registered before this runs
  */
 export default function registerItems(): void {
-  registerBalls();
-  // After the balls: an apricorn's line names the ball it becomes,
-  // and it reads that name out of the registry
-  registerApricorns();
-  registerBattleBerries();
-  registerMedicines();
-  registerDrinks();
-  registerTreats();
-  registerEvolutionStones();
-  registerTradeItems();
-  registerTypeBoosters();
-  registerStatBoosters();
-  registerGear();
-  registerOneShots();
-  registerBattleItems();
-  registerIncenses();
-  registerTrinkets();
-  registerPowerItems();
-  registerGems();
-  registerOrbs();
-  registerPlates();
-  registerDrives();
-  registerMemories();
-  registerZCrystals();
-  registerCandyItems();
-  registerRareCandy();
-  registerBottleCaps();
-  registerMints();
-  registerUtilityBelt();
-  registerSkillBook();
-  registerAbilityItems();
-  registerPurifyingGem();
-  registerSacredAsh();
-  registerSootheBell();
-  registerEscapeRope();
-  registerPortalKey();
-  registerKeyItems();
-  registerRaidItems();
-  registerValuables();
-  registerHeartScale();
-  registerHoney();
-  registerFossils();
-  registerFormItems();
-  registerMegaStones();
-  registerWings();
-  registerVitamins();
+  // Written as YAML, a file per family (see ./yaml.ts)
+  const { items, text } = readItems(
+    {
+      records: import.meta.glob('./records/*.yaml', { eager: true, import: 'default' }),
+      text: import.meta.glob('../text/en/items/*.yaml', { eager: true, import: 'default' }),
+    },
+    ITEM_FAMILIES,
+  );
+
+  for (const [family, words] of text) {
+    registerItemTemplates(family, words.templates);
+  }
+  for (const { item, data } of items) {
+    registerItem(item, data);
+  }
+  // Once every name is in, since a line may name another item
+  for (const { family, item, data } of items) {
+    if (data.description === '') {
+      const describe = DESCRIBERS.get(family);
+
+      if (describe == null) {
+        throw new Error(`${family}: ${data.name} has no description and nothing writes one`);
+      }
+      registerItem(item, { ...data, description: describe(item) });
+    }
+  }
   registerMachines();
 }

@@ -1,0 +1,4 @@
+HeartScale:
+  type: Valuable
+  icon: other/heart-scale
+  flags: [Consumable]

@@ -1,0 +1,19 @@
+templates:
+  memory: Multi-Attack is {type}-type while it is held, and so is a Silvally with RKS System.
+FightingMemory: { name: Fighting Memory }
+FlyingMemory: { name: Flying Memory }
+PoisonMemory: { name: Poison Memory }
+GroundMemory: { name: Ground Memory }
+RockMemory: { name: Rock Memory }
+BugMemory: { name: Bug Memory }
+GhostMemory: { name: Ghost Memory }
+SteelMemory: { name: Steel Memory }
+FireMemory: { name: Fire Memory }
+WaterMemory: { name: Water Memory }
+GrassMemory: { name: Grass Memory }
+ElectricMemory: { name: Electric Memory }
+PsychicMemory: { name: Psychic Memory }
+IceMemory: { name: Ice Memory }
+DragonMemory: { name: Dragon Memory }
+DarkMemory: { name: Dark Memory }
+FairyMemory: { name: Fairy Memory }

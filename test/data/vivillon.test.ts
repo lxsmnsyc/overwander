@@ -14,8 +14,8 @@ import { getSpeciesData, getWingPattern, registerSpecies } from '../../src/data/
 
 registerMoves();
 registerAbilities();
-registerItems();
 registerSpecies();
+registerItems();
 registerBiomeSpawns();
 
 /** Every country there is, to read what wings it grows */

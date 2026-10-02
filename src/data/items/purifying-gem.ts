@@ -1,10 +1,10 @@
 import { PURIFIED_FRIENDSHIP_BONUS } from '../constants/friendship';
 import { MAX_IV, STAT_ORDER, getIV, setIV } from '../constants/stats';
 import Abilities from '../ids/abilities';
-import { ItemFlags, ItemTypes, Items } from '../ids/items';
+import { Items } from '../ids/items';
 import type { Species } from '../ids/species';
 import { isTrueShadow } from '../species/true-shadow';
-import { registerItem } from './__create';
+import { itemText } from './__create';
 
 /**
  * The Purifying Gem: the only thing that takes a shadow off a pokemon.
@@ -77,19 +77,13 @@ export function purifyAbilities(abilities: Abilities[]): Abilities[] {
   return purified;
 }
 
-export default function registerPurifyingGem(): void {
-  registerItem(Items.PurifyingGem, {
-    name: 'Purifying Gem',
-    description: `Turns a shadow's Shadow ability into Purified, raises every value by ${PURIFY_IV_BOOST} up to ${MAX_IV}, adds ${PURIFIED_FRIENDSHIP_BONUS} friendship and halves its candy costs.`,
-    // Spent on a pokemon to change what it is rather than what it can
-    // do, the way a bottle cap is
-    type: ItemTypes.Training,
-    // Its own picture, tinted out of a piece of sea glass by
-    // `scripts/item-icons.ts`. A shadow is purple, so what lifts one is
-    // the same shard gone white
-    icon: 'held/purifying-gem',
-    flags: ItemFlags.Usable | ItemFlags.Consumable,
-    buy: 0,
-    sell: 0,
+export function describePurifyingGem(item: Items): string {
+  if (item !== Items.PurifyingGem) {
+    throw new Error(`Item #${item} is not the Purifying Gem`);
+  }
+  return itemText('purifying-gem', 'gem', {
+    boost: PURIFY_IV_BOOST,
+    max: MAX_IV,
+    friendship: PURIFIED_FRIENDSHIP_BONUS,
   });
 }

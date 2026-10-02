@@ -1,0 +1,104 @@
+# Held, never spent, and found rather than bought, the way a plate is,
+# and sold back for what a plate fetches
+
+FightingMemory:
+  type: Held
+  icon: memories/fighting
+  flags: [Holdable]
+  sell: 2000
+
+FlyingMemory:
+  type: Held
+  icon: memories/flying
+  flags: [Holdable]
+  sell: 2000
+
+PoisonMemory:
+  type: Held
+  icon: memories/poison
+  flags: [Holdable]
+  sell: 2000
+
+GroundMemory:
+  type: Held
+  icon: memories/ground
+  flags: [Holdable]
+  sell: 2000
+
+RockMemory:
+  type: Held
+  icon: memories/rock
+  flags: [Holdable]
+  sell: 2000
+
+BugMemory:
+  type: Held
+  icon: memories/bug
+  flags: [Holdable]
+  sell: 2000
+
+GhostMemory:
+  type: Held
+  icon: memories/ghost
+  flags: [Holdable]
+  sell: 2000
+
+SteelMemory:
+  type: Held
+  icon: memories/steel
+  flags: [Holdable]
+  sell: 2000
+
+FireMemory:
+  type: Held
+  icon: memories/fire
+  flags: [Holdable]
+  sell: 2000
+
+WaterMemory:
+  type: Held
+  icon: memories/water
+  flags: [Holdable]
+  sell: 2000
+
+GrassMemory:
+  type: Held
+  icon: memories/grass
+  flags: [Holdable]
+  sell: 2000
+
+ElectricMemory:
+  type: Held
+  icon: memories/electric
+  flags: [Holdable]
+  sell: 2000
+
+PsychicMemory:
+  type: Held
+  icon: memories/psychic
+  flags: [Holdable]
+  sell: 2000
+
+IceMemory:
+  type: Held
+  icon: memories/ice
+  flags: [Holdable]
+  sell: 2000
+
+DragonMemory:
+  type: Held
+  icon: memories/dragon
+  flags: [Holdable]
+  sell: 2000
+
+DarkMemory:
+  type: Held
+  icon: memories/dark
+  flags: [Holdable]
+  sell: 2000
+
+FairyMemory:
+  type: Held
+  icon: memories/fairy
+  flags: [Holdable]
+  sell: 2000

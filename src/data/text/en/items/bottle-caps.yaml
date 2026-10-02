@@ -1,0 +1,5 @@
+templates:
+  golden: Raises every one of a pokemon’s values to {max}. Spent on use.
+  plain: Raises one value of your choice that is not yet {max} to {max}. Spent on use.
+GoldenBottleCap: { name: Golden Bottle Cap }
+BottleCap: { name: Bottle Cap }

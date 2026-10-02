@@ -1,6 +1,6 @@
 import { STAT_NAMES, Stats } from '../constants/stats';
-import { ItemFlags, ItemTypes, Items } from '../ids/items';
-import { nameToIcon, registerItem } from './__create';
+import { Items } from '../ids/items';
+import { itemText } from './__create';
 
 /**
  * The power items: held gear whose whole effect is on the next
@@ -16,30 +16,21 @@ import { nameToIcon, registerItem } from './__create';
  * values for fighting. That half is not written, because nothing here
  * asks an item what a fight was worth yet
  */
-export const POWER_ITEMS: Map<Items, [name: string, stat: Stats]> = new Map([
-  [Items.PowerWeight, ['Power Weight', Stats.HP]],
-  [Items.PowerBracer, ['Power Bracer', Stats.Attack]],
-  [Items.PowerBelt, ['Power Belt', Stats.Defense]],
-  [Items.PowerLens, ['Power Lens', Stats.SpecialAttack]],
-  [Items.PowerBand, ['Power Band', Stats.SpecialDefense]],
-  [Items.PowerAnklet, ['Power Anklet', Stats.Speed]],
+export const POWER_ITEMS: Map<Items, Stats> = new Map([
+  [Items.PowerWeight, Stats.HP],
+  [Items.PowerBracer, Stats.Attack],
+  [Items.PowerBelt, Stats.Defense],
+  [Items.PowerLens, Stats.SpecialAttack],
+  [Items.PowerBand, Stats.SpecialDefense],
+  [Items.PowerAnklet, Stats.Speed],
 ]);
-
-/**
- * What one costs. Twice the gear price: a piece of gear wins a fight
- * that is happening, and one of these decides what a player's next
- * fifty pokemon are made of
- */
-export const POWER_ITEM_PRICE = 10000;
-
-const POWER_ITEM_RESALE = 0.5;
 
 /**
  * The stat this item forces an egg to inherit, or null for anything
  * that is not a power item
  */
 export function getPowerStat(item: Items): Stats | null {
-  return POWER_ITEMS.get(item)?.[1] ?? null;
+  return POWER_ITEMS.get(item) ?? null;
 }
 
 export function isPowerItem(item: Items): boolean {
@@ -74,29 +65,11 @@ export function getHeldPowerStat(items: Items[]): Stats | null {
 export const MACHO_BRACE_EFFORT = 2;
 export const MACHO_BRACE_SPEED = 0.5;
 
-export default function registerPowerItems(): void {
-  registerItem(Items.MachoBrace, {
-    name: 'Macho Brace',
-    description:
-      'A wing or vitamin used on its holder is worth 2x the effort, but its Speed is halved.',
-    type: ItemTypes.Held,
-    icon: nameToIcon('ev-items', 'Macho Brace'),
-    flags: ItemFlags.Holdable | ItemFlags.Marketable,
-    buy: POWER_ITEM_PRICE,
-    sell: POWER_ITEM_PRICE * POWER_ITEM_RESALE,
-  });
+export function describePowerItem(item: Items): string {
+  const stat = POWER_ITEMS.get(item);
 
-  for (const [item, [name, stat]] of POWER_ITEMS) {
-    registerItem(item, {
-      name,
-      description: `An egg bred from its holder copies that parent’s ${STAT_NAMES[stat]}.`,
-      type: ItemTypes.Held,
-      // The sheet is named for what the mainline uses these for rather
-      // than for what they do here
-      icon: nameToIcon('ev-items', name),
-      flags: ItemFlags.Holdable | ItemFlags.Marketable,
-      buy: POWER_ITEM_PRICE,
-      sell: POWER_ITEM_PRICE * POWER_ITEM_RESALE,
-    });
+  if (stat == null) {
+    throw new Error(`No power item line for item #${item}`);
   }
+  return itemText('power-items', 'stat', { stat: STAT_NAMES[stat] });
 }

@@ -45,6 +45,8 @@ const TABLES: Table[] = [
   { name: 'SPRITE_ANIM_IDS', enumName: 'SpriteAnim', from: './sprite-anims', isObject: true },
   { name: 'ABILITY_IDS', enumName: 'Abilities', from: './abilities', isDefault: true },
   { name: 'ITEM_IDS', enumName: 'Items', from: './items' },
+  { name: 'ITEM_TYPE_IDS', enumName: 'ItemTypes', from: './items' },
+  { name: 'ITEM_FLAG_IDS', enumName: 'ItemFlags', from: './items' },
   { name: 'BIOME_IDS', enumName: 'Biome', from: './biome', isDefault: true },
   { name: 'TIME_OF_DAY_IDS', enumName: 'TimeOfDay', from: './biome' },
   { name: 'EGG_GROUP_IDS', enumName: 'EggGroups', from: './egg-groups' },

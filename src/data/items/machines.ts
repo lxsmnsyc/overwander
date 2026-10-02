@@ -3,7 +3,7 @@ import { ItemFlags, ItemTypes, getMachineItem } from '../ids/items';
 import { MoveCategories, Moves } from '../ids/moves';
 import { TUTOR_ONLY_MOVES, getMoveData } from '../moves';
 import { getRegisteredSpecies, getSpeciesData } from '../species';
-import { registerItem } from './__create';
+import { itemText, registerItem } from './__create';
 
 /**
  * A machine's price follows the move it teaches: a status or weak
@@ -101,7 +101,7 @@ export default function registerMachines(): void {
     const buy = priceOf(move);
 
     registerMachine(move, {
-      description: `Teaches ${getMoveData(move).name} to a pokemon that can learn it. Spent on use.`,
+      description: itemText('machines', 'stocked', { move: getMoveData(move).name }),
       flags: ItemFlags.Usable | ItemFlags.Consumable | ItemFlags.Marketable,
       buy,
       sell: buy * MACHINE_RESALE,
@@ -111,7 +111,7 @@ export default function registerMachines(): void {
   // paid for one is out of pocket
   for (const move of getWithdrawnMachineMoves()) {
     registerMachine(move, {
-      description: `Teaches ${getMoveData(move).name} to a pokemon that can learn it. No longer sold; a vendor buys it back for what it cost.`,
+      description: itemText('machines', 'withdrawn', { move: getMoveData(move).name }),
       flags: ItemFlags.Usable | ItemFlags.Consumable,
       buy: priceOf(move),
       sell: priceOf(move),
@@ -124,7 +124,7 @@ function registerMachine(
   terms: { description: string; flags: ItemFlags; buy: number; sell: number },
 ): void {
   registerItem(getMachineItem(move), {
-    name: `TM ${getMoveData(move).name}`,
+    name: itemText('machines', 'name', { move: getMoveData(move).name }),
     // A machine is drawn in the colours of the move it teaches, which is
     // the whole of what a machine looks like: the `tm` sheet holds one per type
     icon: `tm/${TYPE_NAMES[getMoveData(move).type].toLowerCase()}`,

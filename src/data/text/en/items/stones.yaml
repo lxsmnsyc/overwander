@@ -1,0 +1,36 @@
+FireStone:
+  name: Fire Stone
+  description: Evolves the pokemon it is used on, where a line asks for it.
+WaterStone:
+  name: Water Stone
+  description: Evolves the pokemon it is used on, where a line asks for it.
+ThunderStone:
+  name: Thunder Stone
+  description: Evolves the pokemon it is used on, where a line asks for it.
+LeafStone:
+  name: Leaf Stone
+  description: Evolves the pokemon it is used on, where a line asks for it.
+MoonStone:
+  name: Moon Stone
+  description: Evolves the pokemon it is used on, where a line asks for it.
+SunStone:
+  name: Sun Stone
+  description: Evolves the pokemon it is used on, where a line asks for it.
+ShinyStone:
+  name: Shiny Stone
+  description: Evolves the pokemon it is used on, where a line asks for it.
+DuskStone:
+  name: Dusk Stone
+  description: Evolves the pokemon it is used on, where a line asks for it.
+DawnStone:
+  name: Dawn Stone
+  description: Evolves the pokemon it is used on, where a line asks for it.
+IceStone:
+  name: Ice Stone
+  description: Evolves the pokemon it is used on, where a line asks for it.
+RotomCatalog:
+  name: Rotom Catalog
+  description: Moves the Rotom it is used on into another of its machines. Spent on each change.
+ZygardeCube:
+  name: Zygarde Cube
+  description: Puts the Zygarde it is used on into its other shape. Spent on each change.

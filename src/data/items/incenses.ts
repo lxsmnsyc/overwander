@@ -1,6 +1,6 @@
 import { TYPE_NAMES, Types } from '../constants/types';
-import { ItemFlags, ItemTypes, Items } from '../ids/items';
-import { registerItem } from './__create';
+import { Items } from '../ids/items';
+import { itemText } from './__create';
 
 /**
  * The incenses: held smokes, each one a small edge somewhere.
@@ -41,66 +41,16 @@ export const FIELD_INCENSES = new Set<Items>([
 ]);
 
 /**
- * What each of the four that do not lift a type is for
- */
-const FIELD_DESCRIPTIONS: { [key in Items]?: string } = {
-  [Items.FullIncense]: 'Its holder winds up a bracket slower than it otherwise would.',
-  [Items.LaxIncense]: 'Anything aimed at its holder is 5% likelier to miss.',
-  [Items.LuckIncense]:
-    'While your buddy carries it, 2x the gold from a won raid or a beaten stop trainer.',
-  [Items.PureIncense]: '3 fewer wild spawns around the buddy carrying it.',
-};
-
-const NAMES: { [key in Items]?: string } = {
-  [Items.FullIncense]: 'Full Incense',
-  [Items.LaxIncense]: 'Lax Incense',
-  [Items.LuckIncense]: 'Luck Incense',
-  [Items.OddIncense]: 'Odd Incense',
-  [Items.PureIncense]: 'Pure Incense',
-  [Items.RockIncense]: 'Rock Incense',
-  [Items.RoseIncense]: 'Rose Incense',
-  [Items.SeaIncense]: 'Sea Incense',
-  [Items.WaveIncense]: 'Wave Incense',
-};
-
-/**
- * An incense costs less than the plain item it stands beside: a Sea
- * Incense and a Mystic Water do the same thing, and the incense is
- * the cheaper way to it
- */
-export const INCENSE_PRICE = 3000;
-
-const INCENSE_RESALE = 0.5;
-
-/**
  * Every incense, for callers that only care that it is one
  */
 export const INCENSES: Items[] = [...INCENSE_TYPES.keys(), ...FIELD_INCENSES];
 
-/**
- * Register the incenses. All of them are held and none is spent: an
- * incense burns for as long as its holder carries it
- */
-function describeIncense(item: Items): string {
+/** The line for an incense that lifts a type */
+export function describeIncense(item: Items): string {
   const type = INCENSE_TYPES.get(item);
 
-  return type == null
-    ? (FIELD_DESCRIPTIONS[item] ?? '')
-    : `${TYPE_NAMES[type]} moves hit 1.2x for as long as it is held.`;
-}
-
-export default function registerIncenses(): void {
-  for (const item of INCENSES) {
-    registerItem(item, {
-      name: NAMES[item] ?? `Item #${item}`,
-      type: ItemTypes.Held,
-      description: describeIncense(item),
-      // The `incense` sheet names them by the word in front of the
-      // word "Incense": a Sea Incense is `sea`
-      icon: `incense/${(NAMES[item] ?? '').split(' ')[0].toLowerCase()}`,
-      flags: ItemFlags.Holdable | ItemFlags.Marketable,
-      buy: INCENSE_PRICE,
-      sell: INCENSE_PRICE * INCENSE_RESALE,
-    });
+  if (type == null) {
+    throw new Error(`No incense line for item #${item}`);
   }
+  return itemText('incenses', 'type', { type: TYPE_NAMES[type] });
 }

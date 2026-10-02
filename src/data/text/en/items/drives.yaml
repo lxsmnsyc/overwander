@@ -1,0 +1,6 @@
+templates:
+  drive: Techno Blast is {type}-type while it is held.
+DouseDrive: { name: Douse Drive }
+ShockDrive: { name: Shock Drive }
+BurnDrive: { name: Burn Drive }
+ChillDrive: { name: Chill Drive }

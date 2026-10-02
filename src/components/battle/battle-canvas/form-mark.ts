@@ -5,7 +5,7 @@ import type { Items } from '../../../data/ids/items';
 import type { Species } from '../../../data/ids/species';
 import { getItemData } from '../../../data/items';
 import { FORM_ITEMS } from '../../../data/items/form-items';
-import { MEGA_STONES, getMegaStone } from '../../../data/items/mega-stones';
+import { getMegaStone } from '../../../data/items/mega-stones';
 import { isMegaSpecies } from '../../../data/species/megas';
 import type { SlotBatch } from './draw';
 
@@ -56,7 +56,7 @@ function sheetOf(name: string): BasicSprite | null {
 }
 
 function iconOf(species: Species): { sheet: string; name: string } | null {
-  const item = SHAPE_ITEMS.get(species);
+  const item = SHAPE_ITEMS.get(species) ?? (isMegaSpecies(species) ? getMegaStone(species) : null);
 
   if (item != null) {
     // An item's icon is written as its sheet and its name
@@ -64,13 +64,7 @@ function iconOf(species: Species): { sheet: string; name: string } | null {
 
     return { sheet, name };
   }
-  if (!isMegaSpecies(species)) {
-    return null;
-  }
-  const stone = getMegaStone(species);
-  const held = stone == null ? null : MEGA_STONES.get(stone);
-
-  return held == null ? KEY_STONE : { sheet: 'mega-stones', name: held.icon };
+  return isMegaSpecies(species) ? KEY_STONE : null;
 }
 
 function paint(context: CanvasRenderingContext2D, quad: SpriteQuad, alpha: number): void {

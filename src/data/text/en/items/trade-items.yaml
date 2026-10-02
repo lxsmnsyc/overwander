@@ -1,0 +1,51 @@
+RazorClaw:
+  name: Razor Claw
+  description: Sharpens its holder’s criticals by 1 stage. A Sneasel holding it evolves from level 35 in the evening or at night, spending it.
+RazorFang:
+  name: Razor Fang
+  description: 1/10 of its holder’s blows leave the target flinching. A Gligar holding it evolves from level 35 in the evening or at night, spending it.
+OvalStone:
+  name: Oval Stone
+  description: A Happiny holding it grows into a Chansey from level 15, in the morning or by day, spending it.
+LinkingCord:
+  name: Linking Cord
+  description: Evolves a pokemon that would otherwise only evolve by being traded. A held item the trade asks for is still needed, and spent.
+KingsRock:
+  name: King's Rock
+  description: 1/10 of its holder’s blows leave the target flinching. Also evolves a line that asks for it.
+DragonScale:
+  name: Dragon Scale
+  description: Evolves the pokemon holding it through a trade, where a line asks for it.
+UpGrade:
+  name: Up-Grade
+  description: Evolves the pokemon holding it through a trade, where a line asks for it.
+Sachet:
+  name: Sachet
+  description: Evolves the pokemon holding it through a trade, where a line asks for it.
+WhippedDream:
+  name: Whipped Dream
+  description: Evolves the pokemon holding it through a trade, where a line asks for it.
+DeepSeaTooth:
+  name: Deep Sea Tooth
+  description: A Clamperl traded holding it opens into the one with the teeth.
+DeepSeaScale:
+  name: Deep Sea Scale
+  description: A Clamperl traded holding it opens into the one with the scales.
+PrismScale:
+  name: Prism Scale
+  description: A Feebas traded holding it turns into what it grows up as.
+Protector:
+  name: Protector
+  description: A Rhydon traded holding it grows the armour it was missing.
+Electirizer:
+  name: Electirizer
+  description: An Electabuzz traded holding it grows into the one with the cables.
+Magmarizer:
+  name: Magmarizer
+  description: A Magmar traded holding it grows the arms it fires from.
+ReaperCloth:
+  name: Reaper Cloth
+  description: A Dusclops traded holding it opens into what it was covering.
+DubiousDisc:
+  name: Dubious Disc
+  description: A Porygon2 traded holding it comes back wrong, and faster for it.

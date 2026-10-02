@@ -1,5 +1,5 @@
-import { ItemFlags, ItemTypes, Items } from '../ids/items';
-import { nameToIcon, registerItem } from './__create';
+import { Items } from '../ids/items';
+import { itemText } from './__create';
 
 /**
  * The drinks: what a region bottles and sells to anybody walking past.
@@ -13,42 +13,28 @@ import { nameToIcon, registerItem } from './__create';
  */
 
 export interface Drink {
-  name: string;
   /**
    * Health it gives back. Flat rather than a share, which is what
    * makes the cheap ones worth less to a big pokemon and the dear ones
    * worth carrying by anybody
    */
   restore: number;
-  buy: number;
 }
 
 export const DRINKS: Map<Items, Drink> = new Map([
-  [Items.FreshWater, { name: 'Fresh Water', restore: 30, buy: 200 }],
-  [Items.SodaPop, { name: 'Soda Pop', restore: 60, buy: 300 }],
-  [Items.Lemonade, { name: 'Lemonade', restore: 80, buy: 350 }],
-  [Items.MoomooMilk, { name: 'Moomoo Milk', restore: 100, buy: 500 }],
+  [Items.FreshWater, { restore: 30 }],
+  [Items.SodaPop, { restore: 60 }],
+  [Items.Lemonade, { restore: 80 }],
+  [Items.MoomooMilk, { restore: 100 }],
   // Squeezed fresh by the chef rather than bottled, and what it gives
   // back is what one handful of berries is worth
-  [Items.BerryJuice, { name: 'Berry Juice', restore: 20, buy: 300 }],
+  [Items.BerryJuice, { restore: 20 }],
 ]);
-
-const DRINK_RESALE = 0.5;
 
 export function isDrink(item: Items): boolean {
   return DRINKS.has(item);
 }
 
-export default function registerDrinks(): void {
-  for (const [item, drink] of DRINKS) {
-    registerItem(item, {
-      name: drink.name,
-      description: `Restores ${drink.restore} HP when its holder drops to 1/5 of its HP.`,
-      type: ItemTypes.Held,
-      icon: nameToIcon('medicine', drink.name),
-      flags: ItemFlags.Holdable | ItemFlags.Consumable | ItemFlags.Marketable,
-      buy: drink.buy,
-      sell: drink.buy * DRINK_RESALE,
-    });
-  }
+export function describeDrink(item: Items): string {
+  return itemText('drinks', 'drink', { restore: DRINKS.get(item)?.restore ?? 0 });
 }

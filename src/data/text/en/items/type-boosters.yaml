@@ -1,0 +1,20 @@
+templates:
+  type: '{type} moves hit 1.2x for as long as it is held.'
+SilkScarf: { name: Silk Scarf }
+BlackBelt: { name: Black Belt }
+SharpBeak: { name: Sharp Beak }
+PoisonBarb: { name: Poison Barb }
+SoftSand: { name: Soft Sand }
+HardStone: { name: Hard Stone }
+SilverPowder: { name: Silver Powder }
+SpellTag: { name: Spell Tag }
+MetalCoat: { name: Metal Coat }
+Charcoal: { name: Charcoal }
+MysticWater: { name: Mystic Water }
+MiracleSeed: { name: Miracle Seed }
+Magnet: { name: Magnet }
+TwistedSpoon: { name: Twisted Spoon }
+NeverMeltIce: { name: Never-Melt Ice }
+DragonFang: { name: Dragon Fang }
+BlackGlasses: { name: Black Glasses }
+FairyFeather: { name: Fairy Feather }

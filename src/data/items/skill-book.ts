@@ -1,6 +1,5 @@
 import { Slots } from '../constants/slots';
-import { ItemFlags, ItemTypes, Items } from '../ids/items';
-import { registerItem } from './__create';
+import { Items } from '../ids/items';
 
 /**
  * The Skill Book: one more move slot for one pokemon, for good. The
@@ -12,17 +11,4 @@ export const SKILL_BOOK_SLOT = Slots.Move;
 
 export function isSkillBook(item: Items): boolean {
   return item === Items.SkillBook;
-}
-
-export default function registerSkillBook(): void {
-  registerItem(Items.SkillBook, {
-    name: 'Skill Book',
-    description: 'Gives one pokemon a permanent extra move slot. Spent on use.',
-    type: ItemTypes.Training,
-    // Its own picture, tinted out of the rule book by `scripts/item-icons.ts`
-    icon: 'key/skill-book',
-    flags: ItemFlags.Usable | ItemFlags.Consumable,
-    buy: 0,
-    sell: 0,
-  });
 }

@@ -1,0 +1,9 @@
+templates:
+  kit: See {cells} cells in the dark underground and under a Dark Day, while your buddy carries it.
+ShinyCharm:
+  name: Shiny Charm
+  description: Eight times the odds of a shiny, while your buddy carries it.
+ExplorerKit: { name: Explorer Kit }
+CatchingCharm:
+  name: Catching Charm
+  description: Half again on every catch chance, while your buddy carries it.

@@ -1,0 +1,280 @@
+# The market gear is priced flat across the shelf on purpose: none of it is
+# strictly better than another, so what a player is choosing between is
+# what their pokemon needs rather than what they can afford. None is
+# consumed, and none is used on a pokemon.
+
+ShellBell:
+  type: Held
+  icon: held/shell-bell
+  flags: [Holdable, Marketable]
+  buy: 5000
+  sell: 2500
+
+MuscleBand:
+  type: Held
+  icon: held/muscle-band
+  flags: [Holdable, Marketable]
+  buy: 5000
+  sell: 2500
+
+WiseGlasses:
+  type: Held
+  icon: held/wise-glasses
+  flags: [Holdable, Marketable]
+  buy: 5000
+  sell: 2500
+
+ExpertBelt:
+  type: Held
+  icon: held/expert-belt
+  flags: [Holdable, Marketable]
+  buy: 5000
+  sell: 2500
+
+Metronome:
+  type: Held
+  icon: held/metronome
+  flags: [Holdable, Marketable]
+  buy: 5000
+  sell: 2500
+
+WideLens:
+  type: Held
+  icon: held/wide-lens
+  flags: [Holdable, Marketable]
+  buy: 5000
+  sell: 2500
+
+ScopeLens:
+  type: Held
+  icon: held/scope-lens
+  flags: [Holdable, Marketable]
+  buy: 5000
+  sell: 2500
+
+BrightPowder:
+  type: Held
+  icon: held/bright-powder
+  flags: [Holdable, Marketable]
+  buy: 5000
+  sell: 2500
+
+QuickClaw:
+  type: Held
+  icon: held/quick-claw
+  flags: [Holdable, Marketable]
+  buy: 5000
+  sell: 2500
+
+FocusBand:
+  type: Held
+  icon: held/focus-band
+  flags: [Holdable, Marketable]
+  buy: 5000
+  sell: 2500
+
+RockyHelmet:
+  type: Held
+  icon: held/rocky-helmet
+  flags: [Holdable, Marketable]
+  buy: 5000
+  sell: 2500
+
+SafetyGoggles:
+  type: Held
+  icon: held/safety-goggles
+  flags: [Holdable, Marketable]
+  buy: 5000
+  sell: 2500
+
+UtilityUmbrella:
+  type: Held
+  icon: held/utility-umbrella
+  flags: [Holdable, Marketable]
+  buy: 5000
+  sell: 2500
+
+SmokeBall:
+  type: Held
+  icon: held/smoke-ball
+  flags: [Holdable, Marketable]
+  buy: 5000
+  sell: 2500
+
+DestinyKnot:
+  type: Held
+  icon: held/destiny-knot
+  flags: [Holdable, Marketable]
+  buy: 5000
+  sell: 2500
+
+GripClaw:
+  type: Held
+  icon: held/grip-claw
+  flags: [Holdable, Marketable]
+  buy: 5000
+  sell: 2500
+
+BindingBand:
+  type: Held
+  icon: held/binding-band
+  flags: [Holdable, Marketable]
+  buy: 5000
+  sell: 2500
+
+ZoomLens:
+  type: Held
+  icon: held/zoom-lens
+  flags: [Holdable, Marketable]
+  buy: 5000
+  sell: 2500
+
+IronBall:
+  type: Held
+  icon: held/iron-ball
+  flags: [Holdable, Marketable]
+  buy: 5000
+  sell: 2500
+
+LaggingTail:
+  type: Held
+  icon: held/lagging-tail
+  flags: [Holdable, Marketable]
+  buy: 5000
+  sell: 2500
+
+RingTarget:
+  type: Held
+  icon: held/ring-target
+  flags: [Holdable, Marketable]
+  buy: 5000
+  sell: 2500
+
+FloatStone:
+  type: Held
+  icon: held/float-stone
+  flags: [Holdable, Marketable]
+  buy: 5000
+  sell: 2500
+
+ProtectivePads:
+  type: Held
+  icon: held/protective-pads
+  flags: [Holdable, Marketable]
+  buy: 5000
+  sell: 2500
+
+ClearAmulet:
+  type: Held
+  icon: held/clear-amulet
+  flags: [Holdable, Marketable]
+  buy: 5000
+  sell: 2500
+
+# The found gear nobody stocks fetches a flat 1,000, which is only what
+# somebody will pay to take one away.
+BlackSludge:
+  type: Held
+  icon: held/black-sludge
+  flags: [Holdable]
+  sell: 1000
+
+LuckyPunch:
+  type: Held
+  icon: held/lucky-punch
+  flags: [Holdable]
+  sell: 1000
+
+Stick:
+  type: Held
+  icon: held/stick
+  flags: [Holdable]
+  sell: 1000
+
+ShedShell:
+  type: Held
+  icon: held/shed-shell
+  flags: [Holdable]
+  sell: 1000
+
+# Kept off the shelf, which keeps the flat price honest: every party wants
+# one, so a listing would make it the first purchase and everything else
+# the second.
+Leftovers:
+  type: Held
+  icon: held/leftovers
+  flags: [Holdable]
+  sell: 1000
+
+# The sky stones and the Light Clay are quarried: the geologist sells
+# them at the gear price.
+DampRock:
+  type: Held
+  icon: held/damp-rock
+  flags: [Holdable, Marketable]
+  buy: 5000
+  sell: 2500
+
+HeatRock:
+  type: Held
+  icon: held/heat-rock
+  flags: [Holdable, Marketable]
+  buy: 5000
+  sell: 2500
+
+IcyRock:
+  type: Held
+  icon: held/icy-rock
+  flags: [Holdable, Marketable]
+  buy: 5000
+  sell: 2500
+
+SmoothRock:
+  type: Held
+  icon: held/smooth-rock
+  flags: [Holdable, Marketable]
+  buy: 5000
+  sell: 2500
+
+LightClay:
+  type: Held
+  icon: held/light-clay
+  flags: [Holdable, Marketable]
+  buy: 5000
+  sell: 2500
+
+TerrainExtender:
+  type: Held
+  icon: held/terrain-extender
+  flags: [Holdable]
+  sell: 1000
+
+BigRoot:
+  type: Held
+  icon: held/big-root
+  flags: [Holdable]
+  sell: 1000
+
+SoulDew:
+  type: Held
+  icon: held/soul-dew
+  flags: [Holdable]
+  sell: 1000
+
+LoadedDice:
+  type: Held
+  icon: held/loaded-dice
+  flags: [Holdable]
+  sell: 1000
+
+HeavyDutyBoots:
+  type: Held
+  icon: held/heavy-duty-boots
+  flags: [Holdable]
+  sell: 1000
+
+StickyBarb:
+  type: Held
+  icon: held/sticky-barb
+  flags: [Holdable]
+  sell: 1000

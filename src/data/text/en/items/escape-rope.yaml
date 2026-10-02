@@ -1,0 +1,3 @@
+templates:
+  rope: Climbs out of a cave at the nearest mouth, up to {chunks} chunks away. Spent on use.
+EscapeRope: { name: Escape Rope }

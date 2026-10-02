@@ -1,5 +1,4 @@
-import { ItemFlags, ItemTypes, Items } from '../ids/items';
-import { nameToIcon, registerItem } from './__create';
+import { Items } from '../ids/items';
 
 /**
  * The trinkets: held items whose whole effect happens outside a fight.
@@ -11,84 +10,21 @@ import { nameToIcon, registerItem } from './__create';
  * [`src/overworld/items/trinkets.ts`](../../overworld/items/trinkets.ts).
  */
 
-/**
- * What the market lists. The tag does what a Pure Incense does, so it
- * is priced as one
- */
-export const MARKET_TRINKETS: Map<Items, [name: string, description: string]> = new Map([
-  [Items.CleanseTag, ['Cleanse Tag', '3 fewer wild spawns around the buddy carrying it.']],
-]);
+/** What the market lists */
+export const MARKET_TRINKETS = new Set<Items>([Items.CleanseTag]);
 
 /**
  * The two no stall sells: a stone the geologist digs up, and a coin no
  * shopkeeper would part with for gold. Being unbuyable is what keeps
  * the coin from simply being a better Luck Incense on the same shelf
  */
-export const FOUND_TRINKETS: Map<Items, [name: string, description: string]> = new Map([
-  [
-    Items.Everstone,
-    ['Everstone', 'Its holder will not evolve, and an egg bred from it inherits its nature.'],
-  ],
-  [
-    Items.AmuletCoin,
-    [
-      'Amulet Coin',
-      'While your buddy carries it, 3x the gold from a won raid or a beaten stop trainer.',
-    ],
-  ],
-]);
+export const FOUND_TRINKETS = new Set<Items>([Items.Everstone, Items.AmuletCoin]);
 
 /**
  * Every trinket, for callers that only care that it is one
  */
-export const TRINKETS: Map<Items, [name: string, description: string]> = new Map([
-  ...MARKET_TRINKETS,
-  ...FOUND_TRINKETS,
-]);
-
-/**
- * What a listed one costs. It is the incense price rather than the
- * gear price because the tag is an incense by another name
- */
-export const TRINKET_PRICE = 3000;
-
-const TRINKET_RESALE = 0.5;
-
-/**
- * What a found one fetches. Nothing stocks them, so this is only what
- * somebody will pay to take one away
- */
-const FOUND_TRINKET_RESALE = 1000;
+export const TRINKETS = new Set<Items>([...MARKET_TRINKETS, ...FOUND_TRINKETS]);
 
 export function isTrinket(item: Items): boolean {
   return TRINKETS.has(item);
-}
-
-export default function registerTrinkets(): void {
-  for (const [item, [name, description]] of MARKET_TRINKETS) {
-    registerItem(item, {
-      name,
-      description,
-      type: ItemTypes.Held,
-      icon: nameToIcon('held', name),
-      flags: ItemFlags.Holdable | ItemFlags.Marketable,
-      buy: TRINKET_PRICE,
-      sell: TRINKET_PRICE * TRINKET_RESALE,
-    });
-  }
-
-  for (const [item, [name, description]] of FOUND_TRINKETS) {
-    // The Everstone is a stone, so the geologist sells it as well
-    const quarried = item === Items.Everstone;
-
-    registerItem(item, {
-      name,
-      description,
-      type: ItemTypes.Held,
-      icon: nameToIcon('held', name),
-      flags: quarried ? ItemFlags.Holdable | ItemFlags.Marketable : ItemFlags.Holdable,
-      buy: quarried ? TRINKET_PRICE : 0,
-      sell: quarried ? TRINKET_PRICE * TRINKET_RESALE : FOUND_TRINKET_RESALE,
-    });
-  }
 }

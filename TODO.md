@@ -273,6 +273,24 @@ What is still short of the mainline, in rough order of how much it matters:
 
 - Pre-existing species with new types
 
+### Alola trainers
+
+Skipped until five core trainers have overworld sprites. The Pokéngine Alola
+collection (`10v2m11k`) has only a placeholder for each, and no other upload or
+pack has them.
+
+- [ ] Hala (kahuna, Elite Four in Sun and Moon)
+- [ ] Ilima (trial captain)
+- [ ] Acerola (trial captain, Elite Four)
+- [ ] Mina (trial captain)
+- [ ] Plumeria (Team Skull admin)
+
+Everything else the set needs has a sheet there: the other kahunas and
+captains, Molayne, Kahili, Kukui, Hau, Gladion, Guzma, the Skull grunts, the
+Aether staff, Faba and Lusamine, and most of Alola's trainer classes. Most
+overworlds are DiegoWT's, under kyledove's battle sprites, free to use with
+credit. Collector and Golfer have no Alolan overworld either.
+
 ### Available Mega Sprites
 
 - [ ] Venusaur

@@ -5,6 +5,7 @@ import { AuctionLot, MAX_INCREMENT, MAX_STARTING_BID } from '../auth/auction-rec
 import { MAX_OFFSET, MIN_OFFSET } from '../auth/local-time';
 import { NICKNAME_LIMIT, PLAYER_NAME_LIMIT } from '../auth/nickname';
 import { Slots, mostSlots } from '../data/constants/slots';
+import { DUEL_BANS, MAX_BST_CAP } from '../data/constants/duel-bans';
 import { WORLD_MAX, WORLD_MIN } from '../overworld/world';
 import BattleOutcome from '../auth/battle-outcome';
 import { CLAIM_CHUNK_LIMIT } from '../auth/snapshot-record';
@@ -366,6 +367,8 @@ export const AUCTION_OFFER = v.variant('lot', [
 export const DUEL_RULES = v.object({
   limits: COUNT,
   teamSize: whole(1, TEAM_SIZE),
+  maxBst: whole(0, MAX_BST_CAP),
+  bans: whole(0, DUEL_BANS),
 });
 
 /** The chunks a board is asking about, each in its own zone and layer */

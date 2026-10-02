@@ -121,6 +121,8 @@ export interface TeamPickerDialogProps {
    * else takes the game's own six
    */
   max?: number;
+  /** Why the fight's own rules bar a pokemon, beside the reasons any fight does */
+  refuse?: (option: CatchOption) => string | null;
   /**
    * Fired with the chosen catch ids, at most `max` of them
    */
@@ -178,7 +180,12 @@ export default function TeamPickerDialog(props: TeamPickerDialogProps): JSX.Elem
     for (const id of catches) {
       const option = byId().get(id);
 
-      if (option != null && heldBack(option) == null && taken.length < max()) {
+      if (
+        option != null &&
+        heldBack(option) == null &&
+        props.refuse?.(option) == null &&
+        taken.length < max()
+      ) {
         taken.push(id);
       }
     }
@@ -308,7 +315,7 @@ export default function TeamPickerDialog(props: TeamPickerDialogProps): JSX.Elem
             sort="level"
             verb="Join with"
             empty="No catches to bring."
-            reason={heldBack}
+            reason={(option) => heldBack(option) ?? props.refuse?.(option) ?? null}
             onOptions={(options) => {
               setOffered(options);
             }}

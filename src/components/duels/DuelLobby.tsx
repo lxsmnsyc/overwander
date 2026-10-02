@@ -31,6 +31,8 @@ import {
   watchDuel,
 } from '../../auth/duels';
 import { Slots, getSlots } from '../../data/constants/slots';
+import { DuelBan } from '../../data/constants/duel-bans';
+import { duelRefusal } from '../../data/constants/duel-rules';
 import { LobbyRole } from '../../auth/lobby-role';
 import { type Profile, getProfiles } from '../../auth/profile';
 import DuelRulesDialog from '../battle/DuelRulesDialog';
@@ -67,6 +69,13 @@ export interface DuelLobbyProps {
 const STAMP =
   'shrink-0 rounded-full border-2 px-2 py-1 text-[10.5px] font-extrabold tracking-wide uppercase';
 const STAMP_READY = 'border-leaf-dark bg-leaf text-on-accent shadow-pop-sm';
+
+/** What each ban reads as on the rules chips */
+const BAN_CHIPS: [DuelBan, string][] = [
+  [DuelBan.Legendary, 'No legendaries'],
+  [DuelBan.Mythical, 'No mythicals'],
+  [DuelBan.ItemForms, 'No held-item forms'],
+];
 
 /** How many watchers' faces are drawn before the count says the rest */
 const WATCH_FACES = 5;
@@ -125,6 +134,8 @@ function LobbyRows(
   const isHost = (): boolean => duel()?.host === props.user.uid;
   const teamSize = (): number => duel()?.teamSize ?? DEFAULT_DUEL_RULES.teamSize;
   const limits = (): number => duel()?.limits ?? DEFAULT_DUEL_RULES.limits;
+  const maxBst = (): number => duel()?.maxBst ?? 0;
+  const bans = (): number => duel()?.bans ?? 0;
 
   const fighting = (): boolean => mine()?.role === LobbyRole.Fighter;
   const seatFree = (): boolean => fighters().length < DUEL_FIGHTERS;
@@ -370,6 +381,18 @@ function LobbyRows(
               ]}
             >
               {/* Nothing is recorded: no candy, no aftermath, and what the party spent comes back */}
+              <Show when={maxBst() > 0}>
+                <span class={`${TERM_CHIP} bg-line-soft`}>
+                  <span class="font-semibold text-muted">Stat total</span>≤ {maxBst()}
+                </span>
+              </Show>
+              <For each={BAN_CHIPS}>
+                {([ban, label]) => (
+                  <Show when={(bans() & ban) !== 0}>
+                    <span class={`${TERM_CHIP} bg-ember-soft text-ember-dark`}>{label}</span>
+                  </Show>
+                )}
+              </For>
               <span class={`${TERM_CHIP} bg-line-soft`}>Unranked</span>
               <Show when={isHost()}>
                 <button
@@ -477,7 +500,7 @@ function LobbyRows(
         onClose={() => {
           setArranging(false);
         }}
-        rules={{ limits: limits(), teamSize: teamSize() }}
+        rules={{ limits: limits(), teamSize: teamSize(), maxBst: maxBst(), bans: bans() }}
         onSubmit={(rules) => {
           setArranging(false);
           act(async () => setDuelRules(props.duelId, rules), 'Those rules could not be set.');
@@ -488,6 +511,8 @@ function LobbyRows(
         player={props.user.uid}
         max={teamSize()}
         isOpen={picking()}
+        // What the host barred stays in the box, greyed, with the reason
+        refuse={(option) => duelRefusal(option.caught, { maxBst: maxBst(), bans: bans() })}
         onClose={() => {
           setPicking(false);
         }}

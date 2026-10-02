@@ -698,7 +698,7 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
         // A ring that has outgrown its room is looked at from further
         // back, so a raid of sixteen fills the same picture a raid of
         // four does
-        unit: FIELD_UNIT * lobbyCamera(field.teams.length).zoom,
+        unit: FIELD_UNIT * lobbyCamera(field.teams.length).view,
         yaw,
       };
       looked = view;

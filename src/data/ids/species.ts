@@ -1650,6 +1650,9 @@ export const SHAYMIN_FORMS: Species[] = [Species.Shaymin, Species.ShayminSky];
 /** The husk and the two shapes a dragon folded into it puts it in */
 export const KYUREM_FORMS: Species[] = [Species.Kyurem, Species.KyuremBlack, Species.KyuremWhite];
 
+/** Magearna as it is met, then in the colours it was first painted in */
+export const MAGEARNA_FORMS: Species[] = [Species.Magearna, Species.MagearnaOriginal];
+
 /** Necrozma alone, with the sun or the moon inside it, and its light let out */
 export const NECROZMA_FORMS: Species[] = [
   Species.Necrozma,

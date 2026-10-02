@@ -76,6 +76,7 @@ import typeNullToJangmoO from './type-null-to-jangmo-o';
 import tapus from './tapus';
 import lightTrio from './light-trio';
 import ultraBeasts from './ultra-beasts';
+import alolaMythicals from './alola-mythicals';
 
 /**
  * The invented abilities, one per evolution family, in the order the
@@ -155,6 +156,7 @@ const setupAbilities = [
   ...tapus,
   ...lightTrio,
   ...ultraBeasts,
+  ...alolaMythicals,
   ...deerling,
   ...emolga,
   ...tirtougaToBouffalant,

@@ -1085,6 +1085,11 @@ const enum Abilities {
   ClosedMind = 200421,
   DeepFooting = 200422,
   DryFuse = 200423,
+  // Alola's mythicals, one each
+  SoulRelay = 200424,
+  UmbralStrike = 200425,
+  IonField = 200426,
+  MetalEater = 200427,
 }
 
 export default Abilities;

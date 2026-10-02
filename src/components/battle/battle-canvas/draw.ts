@@ -571,7 +571,8 @@ export function drawSlot(
   const stood = slot.stand?.share ?? 0;
   // What a downed pokemon is left drawn at. The painted pass sets it
   // on the context; the batch takes it a quad at a time
-  const alpha = (unit.alive ? 1 : 0.35) * (1 - stood * (1 - BEHIND));
+  const faded = unit.alive ? 1 : 0.35;
+  const alpha = faded * (1 - stood * (1 - BEHIND));
 
   context.globalAlpha = alpha;
 
@@ -780,7 +781,10 @@ export function drawSlot(
   const busy = unit.casting ?? unit.channeling;
   const wound = busy == null || !unit.alive ? 0 : fractionOf(busy.time);
 
-  drawBar(context, slot.x, slot.y + 10, share, healthColor(share), bar, BAR_HEIGHT, onto, alpha);
+  // The bars and the plate are not dimmed with a body behind its doll:
+  // what a substituted pokemon is casting is what a watcher reads it by
+  context.globalAlpha = faded;
+  drawBar(context, slot.x, slot.y + 10, share, healthColor(share), bar, BAR_HEIGHT, onto, faded);
   drawBar(
     context,
     slot.x,
@@ -790,7 +794,7 @@ export function drawSlot(
     bar,
     CAST_HEIGHT,
     onto,
-    alpha,
+    faded,
   );
 
   // What it is in the middle of, named on a plate above its head. The
@@ -799,9 +803,9 @@ export function drawSlot(
   const label = labels.get(unit);
 
   if (label != null && roomy) {
-    drawCastLabel(context, label, slot.x, slot.y - slot.radius * 2 - 14, clock, onto, alpha);
+    drawCastLabel(context, label, slot.x, slot.y - slot.radius * 2 - 14, clock, onto, faded);
   }
   // Above the plate, so a shape drawn as its old one still reads as changed
-  drawFormMark(context, unit.species, slot.x, slot.y - slot.radius * 2 - 14, clock, alpha, onto);
+  drawFormMark(context, unit.species, slot.x, slot.y - slot.radius * 2 - 14, clock, faded, onto);
   context.globalAlpha = 1;
 }

@@ -54,10 +54,13 @@ export interface CounterTermsProps {
   rows?: { label: string; value: JSX.Element }[];
   /** How often the counter serves, or that it already has this while */
   often?: string;
+  /** Anything else that stands at the end of the row, such as a button to change the terms */
+  children?: JSX.Element;
 }
 
 /** One term as a chip: gold for money, ember when the player is short */
-const CHIP = 'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold';
+export const TERM_CHIP =
+  'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold';
 
 /**
  * Always the first thing in a counter, as a row of chips: the price,
@@ -67,12 +70,12 @@ export function CounterTerms(props: CounterTermsProps): JSX.Element {
   return (
     <div class="flex flex-wrap gap-1.5">
       <Show when={props.cost}>
-        {(cost) => <span class={`${CHIP} bg-gold-soft text-gold`}>{costChip(cost())}</span>}
+        {(cost) => <span class={`${TERM_CHIP} bg-gold-soft text-gold`}>{costChip(cost())}</span>}
       </Show>
       <Show when={props.have}>
         {(have) => (
           <span
-            class={`${CHIP} ${have().short ? 'bg-ember-soft text-ember-dark' : 'bg-line-soft'}`}
+            class={`${TERM_CHIP} ${have().short ? 'bg-ember-soft text-ember-dark' : 'bg-line-soft'}`}
           >
             You carry {have().amount.toLocaleString()} {have().unit}
           </span>
@@ -80,15 +83,16 @@ export function CounterTerms(props: CounterTermsProps): JSX.Element {
       </Show>
       <For each={props.rows ?? []}>
         {(row) => (
-          <span class={`${CHIP} bg-line-soft`}>
+          <span class={`${TERM_CHIP} bg-line-soft`}>
             <span class="font-semibold text-muted">{row.label}</span>
             {row.value}
           </span>
         )}
       </For>
       <Show when={props.often}>
-        {(often) => <span class={`${CHIP} bg-line-soft`}>{often()}</span>}
+        {(often) => <span class={`${TERM_CHIP} bg-line-soft`}>{often()}</span>}
       </Show>
+      {props.children}
     </div>
   );
 }

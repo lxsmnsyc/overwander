@@ -3510,6 +3510,7 @@ export const ITEM_IDS = {
   ScrollOfWaters: Items.ScrollOfWaters,
   BlackAugurite: Items.BlackAugurite,
   PeatBlock: Items.PeatBlock,
+  DadasScarf: Items.DadasScarf,
 } as const satisfies Record<string, Items>;
 
 export const ITEM_TYPE_IDS = {

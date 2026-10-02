@@ -1157,6 +1157,9 @@ export const enum Items {
   /** The Hisuian stones: the augurite a Scyther cleaves itself an axe from, the peat an Ursaring evolves in */
   BlackAugurite = 597,
   PeatBlock = 598,
+
+  /** The relic Galar's mythical leaves behind it: the scarf the Zarude that raised a child wears */
+  DadasScarf = 599,
 }
 
 /**

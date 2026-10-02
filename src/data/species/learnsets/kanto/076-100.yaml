@@ -70,8 +70,6 @@ Ponyta:
       56: [FlareBlitz]
       61: [FireBlast]
     teachable: [HyperBeam, GigaImpact, DrillRun, ThroatChop, SmartStrike]
-# TM, HM and tutor moves shared by the whole family
-
 # Slowbro's claws open up the fighting-style TMs
 Slowpoke:
   Slowpoke:
@@ -366,7 +364,6 @@ Slowpoke:
       - Confide
       - PowerUpPunch
       - LaserFocus
-# TM, HM and tutor moves shared by the whole family
 Magnemite:
   Magnemite:
     level:
@@ -549,7 +546,6 @@ Magnemite:
       - Thunderbolt
       - Toxic
       - Confide
-# TM, HM and tutor moves
 Farfetchd:
   Farfetchd:
     level:
@@ -772,9 +768,6 @@ Seel:
       43: [IceBeam, AquaTail]
       60: [Safeguard]
     teachable: [HyperBeam, Avalanche, GigaImpact, FrostBreath, Liquidation]
-# TM, HM and tutor moves shared by the whole family
-
-# TM and tutor moves shared by the whole family
 Grimer:
   Grimer:
     level:

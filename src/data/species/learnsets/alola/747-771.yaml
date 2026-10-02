@@ -594,7 +594,6 @@ Bounsweet:
       - LowSweep
       - Payback
       - UTurn
-# TM and tutor moves shared by the whole family
 Comfey:
   Comfey:
     level:
@@ -667,7 +666,6 @@ Comfey:
       - UTurn
       - WorrySeed
     egg: [AfterYou, Amnesia, Endure, LuckyChant]
-# TM and tutor moves shared by the whole family
 Oranguru:
   Oranguru:
     level:
@@ -748,7 +746,6 @@ Oranguru:
       - WorkUp
       - ZenHeadbutt
     egg: [Extrasensory, PsychicTerrain, WonderRoom]
-# TM and tutor moves shared by the whole family
 Passimian:
   Passimian:
     level:
@@ -976,7 +973,6 @@ Sandygast:
       54: [ShoreUp]
       60: [Sandstorm]
     teachable: [Embargo, Fling, GigaImpact, Quash, SludgeBomb]
-# TM and tutor moves shared by the whole family
 Pyukumuku:
   Pyukumuku:
     level:

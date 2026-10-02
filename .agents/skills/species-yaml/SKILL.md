@@ -27,7 +27,7 @@ Growlithe:
     types: [Fire]
 ```
 - **Names, not numbers.** Write things the way the code names them: `Arcanine`, `FlareBlitz`, `FireStone`, `UsedItem`. The loader (`src/data/species/yaml.ts`) checks each against its enum through `src/data/ids/names.ts` and fails the load on a typo.
-- **A new enum member needs `pnpm id-names`** before the YAML can use it. A test fails when the tables are out of date.
+- **A new enum member needs `pnpm id-names`** before the YAML can use it. It rewrites the name tables and the JSON Schemas in `src/data/species/schema/`, and a test fails when either is out of date. The schemas are for the editor only (completion and squiggles through the Red Hat YAML extension, mapped in `.vscode/settings.json`); the loader is still what decides whether the data is right, so a field added to the loader is added to `scripts/species-schemas.ts` too.
 - **`family-teachable`, under a family, holds the moves the whole family can be taught.** Each species' `teachable` list adds to it.
 - **`active: any`** is every hour of the day. `base-form: false` marks a form, and `worn: true` a shape put on mid-fight. `dex` is written only where the id's own dex number would be wrong.
 - **Comments are welcome.** They say why a value is what it is, the way they did in the code.

@@ -628,9 +628,6 @@ Pidgey:
       62: [AirSlash]
       68: [Hurricane]
     teachable: [HyperBeam, GigaImpact, LaserFocus]
-# TM, HM and tutor moves shared by the whole family
-
-# TM and tutor moves shared by the whole family
 Rattata:
   Rattata:
     level:
@@ -1072,9 +1069,6 @@ Ekans:
       51: [Haze]
       56: [GunkShot, Coil]
     teachable: [HyperBeam, GigaImpact, DragonTail, StompingTantrum, ThroatChop]
-# TM, HM and tutor moves shared by the whole family
-
-# TM and tutor moves shared by the whole family
 Pikachu:
   Pikachu:
     level:

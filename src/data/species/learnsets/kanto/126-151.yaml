@@ -514,7 +514,6 @@ Ditto:
   Ditto:
     level:
       1: [Transform]
-# TM, HM and tutor moves shared by the whole family
 Eevee:
   Eevee:
     level:
@@ -1789,7 +1788,6 @@ Snorlax:
       - Whirlwind
       - ZenHeadbutt
       - Belch
-# TM, HM and tutor moves shared by all three birds
 Articuno:
   Articuno:
     level:

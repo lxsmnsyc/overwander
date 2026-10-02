@@ -352,7 +352,6 @@ Klink:
       48: [ZapCannon]
       54: [HyperBeam]
       76: [MagneticFlux]
-# TM and tutor moves the two grown sizes share
 Tynamo:
   Tynamo:
     # A Tynamo knows four things and never learns a fifth until it

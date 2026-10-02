@@ -72,7 +72,6 @@ Wingull:
       61: [HydroPump]
       63: [Hurricane]
     teachable: [Surf, HyperBeam, GigaImpact, GunkShot, SeedBomb, SkyDrop]
-# TM, HM and tutor moves shared by the whole family
 Ralts:
   Ralts:
     level:

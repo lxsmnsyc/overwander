@@ -13,5 +13,12 @@
     "editor.defaultFormatter": "oxc.oxc-vscode"
   },
   "biome.enabled": false,
-  "prettier.enable": false
+  "prettier.enable": false,
+  "yaml.schemas": {
+    "./src/data/species/schema/world.json": "src/data/species/world/**/*.yaml",
+    "./src/data/species/schema/stats.json": "src/data/species/stats/**/*.yaml",
+    "./src/data/species/schema/abilities.json": "src/data/species/abilities/**/*.yaml",
+    "./src/data/species/schema/learnsets.json": "src/data/species/learnsets/**/*.yaml",
+    "./src/data/species/schema/text.json": "src/data/text/*/species.yaml"
+  }
 }

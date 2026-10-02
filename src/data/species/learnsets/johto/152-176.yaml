@@ -747,8 +747,6 @@ Chinchou:
       54: [IonDeluge]
       61: [Charge]
     teachable: [HyperBeam, AquaTail, GigaImpact]
-# TM, HM and tutor moves shared by the whole family
-
 # The line learns the same list either side of evolving
 Togepi:
   Togepi:

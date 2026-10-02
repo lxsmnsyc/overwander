@@ -1,8 +1,11 @@
-import { readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import renderSpeciesSchemas, { SCHEMA_DIR } from './species-schemas.ts';
 
 /**
  * Writes `src/data/ids/names.ts`: every member of the enums the YAML
- * data refers to, keyed by its own name.
+ * data refers to, keyed by its own name. Also writes the JSON Schemas
+ * in `src/data/species/schema/`, which hand the same names to an
+ * editor for completion and squiggles.
  *
  * The data files name things the way the code does (`Arcanine`,
  * `FlareBlitz`), and these tables are how a name becomes an id. They
@@ -65,6 +68,16 @@ function membersOf(table: Table): string[] {
   return names;
 }
 
+/** Every listed enum's members, by the enum's name */
+export function enumMembers(): Map<string, string[]> {
+  const members = new Map<string, string[]>();
+
+  for (const table of TABLES) {
+    members.set(table.enumName, membersOf(table));
+  }
+  return members;
+}
+
 /** The whole generated file, so a test can tell whether it is current */
 export default function renderIdNames(): string {
   /** Each file's default import, and its named ones */
@@ -106,4 +119,9 @@ export default function renderIdNames(): string {
 if (import.meta.main) {
   writeFileSync(new URL(`../${OUTPUT}`, import.meta.url), renderIdNames());
   console.log(`${OUTPUT} written`);
+  mkdirSync(new URL(`../${SCHEMA_DIR}`, import.meta.url), { recursive: true });
+  for (const [file, schema] of renderSpeciesSchemas(enumMembers())) {
+    writeFileSync(new URL(`../${SCHEMA_DIR}/${file}`, import.meta.url), schema);
+  }
+  console.log(`${SCHEMA_DIR} written`);
 }

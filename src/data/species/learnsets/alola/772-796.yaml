@@ -1122,7 +1122,6 @@ Minior:
       43: [DoubleEdge]
       45: [ShellSmash]
       50: [Explosion]
-# TM and tutor moves shared by the whole family
 Komala:
   Komala:
     level:
@@ -1175,7 +1174,6 @@ Komala:
       - WorkUp
       - ZenHeadbutt
     egg: [Charm, PlayRough, Sing, Wish]
-# TM and tutor moves shared by the whole family
 Turtonator:
   Turtonator:
     level:
@@ -1251,7 +1249,6 @@ Turtonator:
       - WillOWisp
       - WorkUp
     egg: [FireSpin, HeadSmash, Revenge, WideGuard]
-# TM and tutor moves shared by the whole family
 Togedemaru:
   Togedemaru:
     level:
@@ -1412,7 +1409,6 @@ Mimikyu:
       46: [PlayRough]
       50: [PainSplit]
     egg: [Curse, DestinyBond, Grudge, Nightmare]
-# TM and tutor moves shared by the whole family
 Bruxish:
   Bruxish:
     level:
@@ -1483,7 +1479,6 @@ Bruxish:
       - Waterfall
       - WonderRoom
     egg: [IceFang, PoisonFang, Rage, WaterPulse]
-# TM and tutor moves shared by the whole family
 Drampa:
   Drampa:
     level:
@@ -1570,7 +1565,6 @@ Drampa:
       - WaterPulse
       - WorkUp
     egg: [DragonRush, Hurricane, Mist, PlayRough, RazorWind]
-# TM and tutor moves shared by the whole family
 Dhelmise:
   Dhelmise:
     level:

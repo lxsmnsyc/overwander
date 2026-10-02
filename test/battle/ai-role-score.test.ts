@@ -83,6 +83,25 @@ describe('scoring by role', () => {
     );
   });
 
+  it('raises Protect only if it is up before the hit lands', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    const unit = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+    unit.addMove(Moves.Protect);
+    foe.addMove(Moves.Tackle);
+
+    foe.cast(Moves.Tackle, unitTarget(unit));
+
+    expect(scoreMove(battle, unit, Moves.Protect, NONE)).toBe(
+      BASE_SCORE + ROLE_BASE[MoveRole.Shield],
+    );
+
+    // Late in the wind-up the hit lands before Protect would be up
+    battle.tick(1600);
+
+    expect(scoreMove(battle, unit, Moves.Protect, NONE)).toBe(BASE_SCORE);
+  });
+
   it('bends the room only for the slower side', () => {
     const { battle, teamA, teamB } = createAIBattle();
     const unit = createUnit(battle, teamA);

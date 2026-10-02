@@ -13,6 +13,8 @@ import {
 } from '../auth/duel-record';
 import { withLimit } from '../data/constants/battle-limits';
 import { Slots, getSlots } from '../data/constants/slots';
+import { BST_CAPS, DUEL_BANS } from '../data/constants/duel-bans';
+import { duelRefusal } from '../data/constants/duel-rules';
 import TEAM_SIZE from '../auth/team-size';
 import { LobbyRole } from '../auth/lobby-role';
 import { asCaughtPokemon } from '../auth/caught-record';
@@ -76,6 +78,8 @@ export async function readDuel(id: string): Promise<DuelRecord | null> {
     createdAt: asNumber(row.created_at),
     limits: asNumber(row.limits),
     teamSize: asNumber(row.team_size),
+    maxBst: asNumber(row.max_bst),
+    bans: asNumber(row.bans),
     members: seated,
   });
 }
@@ -328,9 +332,33 @@ export async function setDuelRole(uid: string, id: string, role: LobbyRole): Pro
 export async function setDuelRules(uid: string, id: string, rules: DuelRules): Promise<boolean> {
   const limits = clampLimits(rules.limits);
   const teamSize = Math.max(1, Math.min(TEAM_SIZE, Math.floor(rules.teamSize)));
+  const maxBst = new Set<number>(BST_CAPS).has(rules.maxBst) ? rules.maxBst : 0;
+  const bans = Math.floor(rules.bans) & DUEL_BANS;
 
   if (!Number.isFinite(rules.limits) || !Number.isFinite(rules.teamSize)) {
     return false;
+  }
+  // Read before the lock, so the parties the new rules bar can be let go of with it
+  const before = await readDuel(id);
+  const barred: { player: string; caught: string }[] = [];
+
+  if (before != null) {
+    const parties: string[] = [];
+
+    for (const member of before.members) {
+      parties.push(...member.catches);
+    }
+    const found = await readCaughtMany(getSql(), parties);
+
+    for (const member of before.members) {
+      for (const caught of member.catches) {
+        const record = found.get(caught);
+
+        if (record != null && duelRefusal(asCaughtPokemon(record), { maxBst, bans }) != null) {
+          barred.push({ player: member.player, caught });
+        }
+      }
+    }
   }
 
   return tx(async (transaction) => {
@@ -344,11 +372,20 @@ export async function setDuelRules(uid: string, id: string, rules: DuelRules): P
     }
 
     await transaction`
-      update duels set limits = ${limits}, team_size = ${teamSize} where id = ${id}
+      update duels set limits = ${limits}, team_size = ${teamSize}, max_bst = ${maxBst},
+        bans = ${bans}
+      where id = ${id}
     `;
     await transaction`
       delete from duel_catches where duel_id = ${id} and slot >= ${teamSize}
     `;
+    // Whatever the new rules bar leaves its party, and the fighter picks again
+    for (const { player, caught } of barred) {
+      await transaction`
+        delete from duel_catches
+        where duel_id = ${id} and player = ${player} and caught_id = ${caught}
+      `;
+    }
     await transaction`
       update duel_members set ready = false where duel_id = ${id}
     `;
@@ -425,6 +462,12 @@ export async function setDuelParty(uid: string, id: string, catches: string[]): 
   }
   for (const entry of owned) {
     if (isGuardedRecord(entry)) {
+      return false;
+    }
+  }
+  // The host's own bars: a stat total cap, the one-per-world kinds, held-item forms
+  for (const entry of owned) {
+    if (duelRefusal(asCaughtPokemon(entry), duel) != null) {
       return false;
     }
   }

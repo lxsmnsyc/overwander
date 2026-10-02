@@ -712,6 +712,8 @@ describe('world', () => {
     // lay it, and left to anything else, which takes the stages
     expect(getBannedBossMoves(Species.Gengar).has(Moves.Curse)).toBe(true);
     expect(getBannedBossMoves(Species.Snorlax).has(Moves.Curse)).toBe(false);
+    // Mind Blown is paid in half a raid pool
+    expect(BANNED_BOSS_MOVES.has(Moves.MindBlown)).toBe(true);
 
     // Clefable would otherwise take Metronome, which can call
     // anything registered — Transform included

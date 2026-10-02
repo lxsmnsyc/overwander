@@ -1,0 +1,40 @@
+Burmy:
+  Burmy: { name: Burmy, category: Bagworm Pokemon }
+  BurmySandy: { name: Sandy Burmy, category: Bagworm Pokemon }
+  BurmyTrash: { name: Trash Burmy, category: Bagworm Pokemon }
+  Wormadam: { name: Wormadam, category: Bagworm Pokemon }
+  WormadamSandy: { name: Sandy Wormadam, category: Bagworm Pokemon }
+  WormadamTrash: { name: Trash Wormadam, category: Bagworm Pokemon }
+  Mothim: { name: Mothim, category: Moth Pokemon }
+Combee:
+  Combee: { name: Combee, category: Tiny Bee Pokemon }
+  Vespiquen: { name: Vespiquen, category: Beehive Pokemon }
+Pachirisu:
+  Pachirisu: { name: Pachirisu, category: EleSquirrel Pokemon }
+Buizel:
+  Buizel: { name: Buizel, category: Sea Weasel Pokemon }
+  Floatzel: { name: Floatzel, category: Sea Weasel Pokemon }
+Cherubi:
+  Cherubi: { name: Cherubi, category: Cherry Pokemon }
+  Cherrim: { name: Cherrim, category: Blossom Pokemon }
+  CherrimSunshine: { name: Sunshine Cherrim, category: Blossom Pokemon }
+Shellos:
+  Shellos: { name: Shellos, category: Sea Slug Pokemon }
+  ShellosEast: { name: East Shellos, category: Sea Slug Pokemon }
+  Gastrodon: { name: Gastrodon, category: Sea Slug Pokemon }
+  GastrodonEast: { name: East Gastrodon, category: Sea Slug Pokemon }
+Drifloon:
+  Drifloon: { name: Drifloon, category: Balloon Pokemon }
+  Drifblim: { name: Drifblim, category: Blimp Pokemon }
+Buneary:
+  Buneary: { name: Buneary, category: Rabbit Pokemon }
+  Lopunny: { name: Lopunny, category: Rabbit Pokemon }
+Glameow:
+  Glameow: { name: Glameow, category: Catty Pokemon }
+  Purugly: { name: Purugly, category: Tiger Cat Pokemon }
+Stunky:
+  Stunky: { name: Stunky, category: Skunk Pokemon }
+  Skuntank: { name: Skuntank, category: Skunk Pokemon }
+Bronzor:
+  Bronzor: { name: Bronzor, category: Bronze Pokemon }
+  Bronzong: { name: Bronzong, category: Bronze Bell Pokemon }

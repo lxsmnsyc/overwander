@@ -1,0 +1,120 @@
+# From Play Rough to Aromatic Mist, the heart of the Fairy type
+
+PlayRough:
+  type: Fairy
+  category: Physical
+  power: 90
+  accuracy: 90
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+FairyWind:
+  type: Fairy
+  category: Special
+  power: 40
+  accuracy: 100
+  pp: 30
+  target: Unit
+  flags: [Wind]
+
+Moonblast:
+  type: Fairy
+  category: Special
+  power: 95
+  accuracy: 100
+  pp: 15
+  target: Unit
+  projectile: true
+
+Boomburst:
+  type: Normal
+  category: Special
+  power: 140
+  accuracy: 100
+  pp: 10
+  target: None
+  affects: [Unit, Own, Enemy]
+  flags: [Sound]
+
+FairyLock:
+  type: Fairy
+  category: Status
+  pp: 10
+  target: None
+
+KingsShield:
+  type: Steel
+  category: Status
+  priority: 4
+  pp: 10
+  target: None
+
+PlayNice:
+  type: Normal
+  category: Status
+  pp: 20
+  target: Unit
+
+Confide:
+  type: Normal
+  category: Status
+  pp: 20
+  target: Unit
+  flags: [Sound]
+
+DiamondStorm:
+  type: Rock
+  category: Physical
+  power: 100
+  accuracy: 95
+  pp: 5
+  target: None
+  affects: [Unit, Enemy]
+
+SteamEruption:
+  type: Water
+  category: Special
+  power: 110
+  accuracy: 95
+  pp: 5
+  target: Unit
+
+HyperspaceHole:
+  type: Psychic
+  category: Special
+  power: 80
+  pp: 5
+  target: Unit
+
+WaterShuriken:
+  type: Water
+  category: Special
+  power: 15
+  accuracy: 100
+  priority: 1
+  pp: 20
+  target: Unit
+  projectile: true
+
+MysticalFire:
+  type: Fire
+  category: Special
+  power: 75
+  accuracy: 100
+  pp: 10
+  target: Unit
+
+SpikyShield:
+  type: Grass
+  category: Status
+  priority: 4
+  pp: 10
+  target: None
+
+AromaticMist:
+  type: Fairy
+  category: Status
+  pp: 20
+  target: Unit
+  affects: [Unit, Own]

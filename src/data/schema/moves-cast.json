@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Moves: cast",
+  "type": "object",
+  "propertyNames": {
+    "$ref": "names.json#/definitions/move"
+  },
+  "additionalProperties": {
+    "type": "array",
+    "items": {
+      "$ref": "names.json#/definitions/sprite-anim"
+    },
+    "description": "The clips the caster plays, most wanted first, ending on a common one"
+  }
+}

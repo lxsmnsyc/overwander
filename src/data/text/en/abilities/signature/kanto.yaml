@@ -1,0 +1,257 @@
+# The signature abilities of the families filed under Kanto
+
+VerdantField:
+  name: Verdant Field
+  description: Grass moves hit 1.2x and Water moves 0.8x for everybody on the field while it stands.
+EmberField:
+  name: Ember Field
+  description: Fire moves hit 1.2x and Grass moves 0.8x for everybody on the field while it stands.
+DelugeField:
+  name: Deluge Field
+  description: Water moves hit 1.2x and Fire moves 0.8x for everybody on the field while it stands.
+PowderBurst:
+  name: Powder Burst
+  description: Its status moves reach every enemy on the field, not only the one it aimed at.
+TwinStinger:
+  name: Twin Stinger
+  description: Each single-hit physical move it uses strikes twice at 60% power, so anything that answers a landed blow answers both.
+Slipstream:
+  name: Slipstream
+  description: Cast and channel times are 20% shorter for its party while it stands.
+Nibble:
+  name: Nibble
+  description: Every damaging move it lands takes another 1/32 of the target's HP, whatever its armour.
+Relentless:
+  name: Relentless
+  description: Each move it lands on the same target as the last hits 10% harder, up to 1.4x. Aiming at anybody else starts it over.
+Squeeze:
+  name: Squeeze
+  description: While it casts or channels, the last enemy it touched loses 1/16 of its HP each second.
+ChainLightning:
+  name: Chain Lightning
+  description: An Electric move it lands arcs to one other standing enemy for 1/3 of the damage it dealt.
+CurlUp:
+  name: Curl Up
+  description: Each hit it takes casts Defense Curl on itself.
+QueensCourt:
+  name: Queen's Court
+  description: Her Defense and Special Defense rise 15% for each poisoned enemy on the field, counting up to 3.
+KingsCourt:
+  name: King's Court
+  description: His Attack and Special Attack rise 15% for each poisoned enemy on the field, counting up to 3.
+WishingWell:
+  name: Wishing Well
+  description: Each time it acts, it casts Wish on the teammate lowest on HP.
+NineTails:
+  name: Nine Tails
+  description: Its Special Attack rises 8% for each hit it has taken, up to 9 hits.
+Lullaby:
+  name: Lullaby
+  description: Sleep it inflicts lasts 1.5x as long, and its moves hit 1.5x against a sleeping target.
+Bloodthirst:
+  name: Bloodthirst
+  description: Draining moves and Leech Seed restore 1.5x for it. Every other heal on it is halved.
+DeepRoots:
+  name: Deep Roots
+  description: It casts Ingrain on itself as it arrives on the field.
+FungalBloom:
+  name: Fungal Bloom
+  description: Heals 1/8 of its HP each time it lands poison, sleep, paralysis, a burn or a freeze on an enemy.
+DustStorm:
+  name: Dust Storm
+  description: Its Special Attack rises 12% for every enemy carrying a status, up to 4 of them.
+Undermine:
+  name: Undermine
+  description: Each move it lands leaves that enemy taking 5% more from everybody, up to 25%, for the rest of the fight.
+Cutpurse:
+  name: Cutpurse
+  description: The first move it lands on each enemy knocks their held item away.
+HeadacheBurst:
+  name: Headache Burst
+  description: At or below 1/2 HP its Special Attack is 1.5x and its Psychic moves cannot miss.
+BlindRage:
+  name: Blind Rage
+  description: Its Attack is 1.4x and its moves are 15% less accurate. Nothing can heal it while the rage is on.
+ChaseDown:
+  name: Chase Down
+  description: Its moves hit 1.5x against a target at or below 1/3 HP, and such a target cannot flee from it, ghosts aside.
+HypnoticSpiral:
+  name: Hypnotic Spiral
+  description: Whoever lands a contact move on it takes 30% longer over their next cast.
+TeleportGuard:
+  name: Teleport Guard
+  description: It blinks away from the first attack that would land on it, then needs 10 seconds to do it again.
+OverheadThrow:
+  name: Overhead Throw
+  description: Its contact moves hit 1.4x against a target heavier than it, and 1.1x against a lighter one.
+Digest:
+  name: Digest
+  description: Landing a move on a target at or below 1/4 HP heals it 1/4 of its own HP. A finished target counts.
+TentacleGrasp:
+  name: Tentacle Grasp
+  description: No enemy it has landed a move on may flee while it is still standing, ghosts aside.
+SolidCore:
+  name: Solid Core
+  description: Physical moves hit it at 0.7x and special moves at 1.3x.
+Gallop:
+  name: Gallop
+  description: Its Speed rises 10% each time it acts, up to 1.5x. Any damage it takes, poison and weather included, brings it back to a standstill.
+DelayedReaction:
+  name: Delayed Reaction
+  description: It only feels half of each hit at once. The other half arrives 4 seconds later.
+RepulsionField:
+  name: Repulsion Field
+  description: Special moves hit at 0.9x for everybody on the field, its own included.
+LeekDuelist:
+  name: Leek Duelist
+  description: Its critical stage is 2 higher and its criticals hit 1.25x harder. Everything hits it 1.25x in return.
+SecondHead:
+  name: Second Head
+  description: Every third move it lands strikes again at once for 50% power.
+SleekHide:
+  name: Sleek Hide
+  description: Contact moves hit it at 0.75x and everything else at 1.1x.
+CorrosiveOoze:
+  name: Corrosive Ooze
+  description: Whoever lands a contact move on it has their held item destroyed, not knocked loose.
+SpikeShell:
+  name: Spike Shell
+  description: Contact moves hit it at 0.5x, and whoever lands one takes 1/8 of their own HP.
+NightTerror:
+  name: Night Terror
+  description: An enemy it damages cannot be healed for the next 4 seconds.
+LivingTunnel:
+  name: Living Tunnel
+  description: Its teammates take 0.8x from Rock and Ground moves while it stands, and it takes those at 1.2x.
+DreamFeast:
+  name: Dream Feast
+  description: Landing a move on a sleeping target heals it 1/8 of its HP.
+HeavyPincer:
+  name: Heavy Pincer
+  description: Its contact moves hit 1.45x while it is at or above 1/2 HP.
+Overload:
+  name: Overload
+  description: Its Speed doubles below 1/2 HP.
+Psyseed:
+  name: Psyseed
+  description: An enemy its Psychic moves damage has Leech Seed cast on it.
+MourningBone:
+  name: Mourning Bone
+  description: Its moves hit 1.4x while it is the only one left standing in its party.
+SecondWind:
+  name: Second Wind
+  description: The first time it falls below 1/4 HP it heals 1/3 of its HP. Once per battle.
+TasteEverything:
+  name: Taste Everything
+  description: A contact move it lands on a berry holder eats that berry, healing or curing it as the berry would.
+SmogScreen:
+  name: Smog Screen
+  description: Enemy moves are 15% less accurate while it stands. Its own side sees fine.
+Corkscrew:
+  name: Corkscrew
+  description: Its contact moves hit 1.15x and ignore any Defense the target has raised.
+Cushioned:
+  name: Cushioned
+  description: No single hit takes more than 1/4 of its HP off it.
+VineWeb:
+  name: Vine Web
+  description: It lays a layer of Spikes on the enemy side each time it arrives on the field.
+MothersShield:
+  name: Mother's Shield
+  description: Enemy moves aimed at a teammate below 1/2 HP are aimed at her instead.
+WhirlCurrent:
+  name: Whirl Current
+  description: Enemy cast times are 20% longer while rain is falling.
+Upstream:
+  name: Upstream
+  description: Its moves hit 1.35x against any target whose max HP is higher than its own.
+CoreReset:
+  name: Core Reset
+  description: Each time it acts, one stat drop on it is undone.
+MimedBarrier:
+  name: Mimed Barrier
+  description: It casts Light Screen over its party as it arrives, and physical moves hit it at 1.15x itself.
+CleanCut:
+  name: Clean Cut
+  description: Its critical hits ignore every stage on the target's defending stat.
+IcyCharm:
+  name: Icy Charm
+  description: Its moves hit 1.5x against a target that is infatuated or confused.
+StaticField:
+  name: Static Field
+  description: Its Speed rises 15% for each contact hit it has taken, up to 4 of them.
+BlastFurnace:
+  name: Blast Furnace
+  description: Its Fire moves burn the target 30% of the time.
+Snapjaw:
+  name: Snapjaw
+  description: Its moves hit 1.5x against a target that is casting or channelling.
+Bullheaded:
+  name: Bullheaded
+  description: Its contact moves hit 1.3x, and everything hits it 1.15x in return.
+LateBloomer:
+  name: Late Bloomer
+  description: Its moves hit 5% harder for every 10 seconds it has been in the fight, up to 1.5x.
+SafePassage:
+  name: Safe Passage
+  description: It casts Safeguard over its party as it arrives, and its teammates cannot be stopped from fleeing.
+Formless:
+  name: Formless
+  description: Critical hits land on it as ordinary hits, and its stages cannot be lowered.
+LatentPotential:
+  name: Latent Potential
+  description: Whichever of its five battle stats is lowest counts 1.3x.
+Rollback:
+  name: Rollback
+  description: The first time it drops below 1/2 HP, its health goes back to what it was 4 seconds earlier.
+HelixShell:
+  name: Helix Shell
+  description: Its Defense and Special Defense count as 1.25x against every blow it takes.
+DomeBlade:
+  name: Dome Blade
+  description: Its blows count the target's Defense or Special Defense as 0.75x.
+PredatorsDive:
+  name: Predator's Dive
+  description: Its first move against each enemy hits 1.5x.
+FullBelly:
+  name: Full Belly
+  description: It heals 1/16 of its HP every time it acts, and its cast times are 25% longer.
+Frostwing:
+  name: Frostwing
+  description: Every enemy loses a stage of Speed as it arrives on the field.
+Stormwing:
+  name: Stormwing
+  description: Every enemy loses a stage of Special Defense as it arrives on the field.
+Emberwing:
+  name: Emberwing
+  description: Every enemy loses a stage of Defense as it arrives on the field.
+SereneStorm:
+  name: Serene Storm
+  description: Weather it calls up never clears on its own, and its party takes no damage from any weather.
+GeneticApex:
+  name: Genetic Apex
+  description: Its highest battle stat counts 1.25x and its lowest counts 0.8x.
+AncestralMemory:
+  name: Ancestral Memory
+  description: Any type that has already hit it once hits it at 0.85x thereafter.
+RichDiet:
+  name: Rich Diet
+  description: Each Berry it eats raises its Attack 1 stage.
+Frostforged:
+  name: Frostforged
+  description: Fire and Fighting moves hit it at 0.75x.
+AuroraCrown:
+  name: Aurora Crown
+  description: It casts Aurora Veil over its party as it arrives on the field while hail or snow falls.
+WireSnare:
+  name: Wire Snare
+  description: The first contact move to land on it after each entrance binds the attacker.
+TauntingGaze:
+  name: Taunting Gaze
+  description: It casts Taunt at an enemy as it arrives on the field.
+MagnetFloat:
+  name: Magnet Float
+  description: It casts Magnet Rise on itself as it arrives on the field.
+CrystalToxin:
+  name: Crystal Toxin
+  description: Poison it puts on an enemy cannot be cured.

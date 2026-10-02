@@ -1,0 +1,45 @@
+SearingShot:
+  name: Searing Shot
+  description: Hits the user's own team and everything opposite. 30% to burn.
+TechnoBlast:
+  name: Techno Blast
+  description: Takes the type of the Drive the user holds, and is Normal without one.
+RelicSong:
+  name: Relic Song
+  description: Hits everything opposite. 10% to put each to sleep. It is a sound.
+SecretSword:
+  name: Secret Sword
+  description: Lands against the target's Defense rather than its Special Defense.
+Glaciate:
+  name: Glaciate
+  description: Hits everything opposite, and drops each one's Speed a stage.
+BoltStrike:
+  name: Bolt Strike
+  description: 20% to paralyse.
+BlueFlare:
+  name: Blue Flare
+  description: 20% to burn.
+FieryDance:
+  name: Fiery Dance
+  description: 50% to raise the user's Special Attack a stage.
+FreezeShock:
+  name: Freeze Shock
+  description: Winds up, then strikes. 30% to paralyse.
+IceBurn:
+  name: Ice Burn
+  description: Winds up, then strikes. 30% to burn.
+Snarl:
+  name: Snarl
+  description: Hits everything opposite, and drops each one's Special Attack a stage. It is a sound.
+IcicleCrash:
+  name: Icicle Crash
+  description: 30% to flinch.
+VCreate:
+  name: V-create
+  description: Drops the user's Defense, Special Defense and Speed a stage each.
+FusionFlare:
+  name: Fusion Flare
+  description: 2x power if a Fusion Bolt landed anywhere in the last 2 seconds. Thaws the user.
+FusionBolt:
+  name: Fusion Bolt
+  description: 2x power if a Fusion Flare landed anywhere in the last 2 seconds.

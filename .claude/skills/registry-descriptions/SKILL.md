@@ -47,7 +47,8 @@ Entries whose behaviour is genuinely their own get a hand-written line, kept in 
 | registry  | field added in                   | filled in                     |
 | --------- | -------------------------------- | ----------------------------- |
 | items     | `src/data/items/__create.ts`     | each `src/data/items/*.ts`    |
-| abilities | `src/data/abilities/__create.ts` | `src/data/abilities/gen-1.ts` |
+| abilities | `src/data/abilities/__create.ts` | `src/data/text/en/abilities/*.yaml` |
+| moves     | `src/data/moves/__create.ts`     | `src/data/text/en/moves/**/*.yaml` |
 
 ## Test it
 

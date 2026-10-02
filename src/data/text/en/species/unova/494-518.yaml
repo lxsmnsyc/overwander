@@ -1,0 +1,36 @@
+Victini:
+  Victini: { name: Victini, category: Victory Pokemon }
+Snivy:
+  Snivy: { name: Snivy, category: Grass Snake Pokemon }
+  Servine: { name: Servine, category: Grass Snake Pokemon }
+  Serperior: { name: Serperior, category: Regal Pokemon }
+Tepig:
+  Tepig: { name: Tepig, category: Fire Pig Pokemon }
+  Pignite: { name: Pignite, category: Fire Pig Pokemon }
+  Emboar: { name: Emboar, category: Mega Fire Pig Pokemon }
+Oshawott:
+  Oshawott: { name: Oshawott, category: Sea Otter Pokemon }
+  Dewott: { name: Dewott, category: Discipline Pokemon }
+  Samurott: { name: Samurott, category: Formidable Pokemon }
+Patrat:
+  Patrat: { name: Patrat, category: Scout Pokemon }
+  Watchog: { name: Watchog, category: Lookout Pokemon }
+Lillipup:
+  Lillipup: { name: Lillipup, category: Puppy Pokemon }
+  Herdier: { name: Herdier, category: Loyal Dog Pokemon }
+  Stoutland: { name: Stoutland, category: Big-Hearted Pokemon }
+Purrloin:
+  Purrloin: { name: Purrloin, category: Devious Pokemon }
+  Liepard: { name: Liepard, category: Cruel Pokemon }
+Pansage:
+  Pansage: { name: Pansage, category: Grass Monkey Pokemon }
+  Simisage: { name: Simisage, category: Thorn Monkey Pokemon }
+Pansear:
+  Pansear: { name: Pansear, category: High Temp Pokemon }
+  Simisear: { name: Simisear, category: Ember Pokemon }
+Panpour:
+  Panpour: { name: Panpour, category: Spray Pokemon }
+  Simipour: { name: Simipour, category: Geyser Pokemon }
+Munna:
+  Munna: { name: Munna, category: Dream Eater Pokemon }
+  Musharna: { name: Musharna, category: Drowsing Pokemon }

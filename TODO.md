@@ -8,8 +8,8 @@ later feature adds more text to translate and more data to load at boot.
 The three plans touch the same registries, so they are sequenced: decide how
 text leaves the registries (i18n) before splitting them for loading, and keep
 the database copy independent of both. Game data moves to YAML a registry at a
-time, a folder per field so each part can load on its own (species first, see
-the `species-yaml` skill); behaviour stays TypeScript.
+time, a folder per field so each part can load on its own (see the `data-yaml`
+skill); behaviour stays TypeScript.
 
 ### Internationalization
 
@@ -55,11 +55,11 @@ thin slice of it.
       ability pools or held-item tables.
 - [x] **Split the species record by field, as source files.** Done as YAML:
       `world/`, `stats/`, `abilities/` and `learnsets/`, families filed in
-      blocks of 25 dex numbers per region, with names in
-      `text/en/species.yaml`. They still load eagerly; loading each field
+      blocks of 25 dex numbers per region, with names filed the same way
+      under `text/en/species/`. They still load eagerly; loading each field
       when it is first wanted is the next step.
-- [ ] **Move the other registries to YAML** on the same pipeline: moves, then
-      abilities and items, then the biome pools and lairs. The Megas and true
+- [ ] **Move the other registries to YAML** on the same pipeline. Moves and
+      abilities are done; items are next, then the biome pools and lairs. The Megas and true
       shadows can follow once the YAML can say `inherits:`.
 - [ ] **Load moves, abilities and items on demand** in the browser, behind a
       Suspense gate around the panels and the battle view. The server keeps

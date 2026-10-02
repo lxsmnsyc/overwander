@@ -22,6 +22,7 @@ import {
   TYPE_IDS,
 } from '../ids/names';
 import { type Species, speciesDexNumber, speciesFormIndex } from '../ids/species';
+import { flagsOf, idOf, idsOf } from '../yaml';
 import type { EvolutionData, LearnSetData, SpeciesData, StatComparison } from './__create';
 
 /**
@@ -37,7 +38,8 @@ import type { EvolutionData, LearnSetData, SpeciesData, StatComparison } from '.
  * - `stats/` holds base stats, catch rate, size and gender ratio
  * - `abilities/` holds the ability pools
  * - `learnsets/` holds the moves it learns by level, machine and egg
- * - `text/<locale>/species.yaml` holds each name and category
+ * - `text/<locale>/species/` holds each name and category, filed the
+ *   same way
  *
  * A file names things the way the code does (`Arcanine`, `FireStone`),
  * and every name is checked here against the enum it belongs to, so a
@@ -106,33 +108,6 @@ const TEXT = v.object({ name: v.string(), category: v.string() });
 
 /** The key a learnsets file keeps the teachable moves its whole family shares under */
 export const FAMILY_TEACHABLE_KEY = 'family-teachable';
-
-/** A name looked up in its table, or a clear failure naming where it was written */
-function idOf<T>(table: Readonly<Record<string, T>>, name: string, where: string): T {
-  if (!Object.hasOwn(table, name)) {
-    throw new Error(`${where}: no such name "${name}"`);
-  }
-  return table[name];
-}
-
-function idsOf<T>(table: Readonly<Record<string, T>>, names: string[], where: string): T[] {
-  const ids: T[] = [];
-
-  for (const name of names) {
-    ids.push(idOf(table, name, where));
-  }
-  return ids;
-}
-
-/** A set of flag names as the bitfield they stand for */
-function flagsOf(table: Readonly<Record<string, number>>, names: string[], where: string): number {
-  let flags = 0;
-
-  for (const name of names) {
-    flags |= idOf(table, name, where);
-  }
-  return flags;
-}
 
 /** Where one species' part was written: the file and the family it sits under */
 interface Written {
@@ -244,18 +219,6 @@ function readStats(stats: Record<string, number>, where: string): Record<Stats, 
   };
 }
 
-/** The names and categories, which are written flat: one species to a line */
-function collectText(files: Record<string, unknown>): Map<string, v.InferOutput<typeof TEXT>> {
-  const words = new Map<string, v.InferOutput<typeof TEXT>>();
-
-  for (const file of Object.values(files)) {
-    for (const [name, said] of Object.entries(v.parse(v.record(NAME, TEXT), file))) {
-      words.set(name, said);
-    }
-  }
-  return words;
-}
-
 /** What each family can be taught as a whole, by family name */
 function familyTeachables(files: Record<string, unknown>): Map<string, string[]> {
   const shared = new Map<string, string[]>();
@@ -312,7 +275,7 @@ export function readSpecies(files: SpeciesFiles): [Species, SpeciesData][] {
   const stats = collect(files.stats);
   const abilities = collect(files.abilities);
   const learnsets = collect(files.learnsets);
-  const text = collectText(files.text);
+  const text = collect(files.text);
   const shared = familyTeachables(files.learnsets);
   const read: [Species, SpeciesData][] = [];
 
@@ -337,11 +300,7 @@ export function readSpecies(files: SpeciesFiles): [Species, SpeciesData][] {
     const body = v.parse(STATS, need(stats, 'stats').part);
     const pools = v.parse(ABILITIES, need(abilities, 'abilities').part);
     const moves = v.parse(LEARNSET, need(learnsets, 'learnset').part);
-    const words = text.get(name);
-
-    if (words == null) {
-      throw new Error(`${name} has no name`);
-    }
+    const words = v.parse(TEXT, need(text, 'name').part);
 
     const data: SpeciesData = {
       dexNumber: place.dex ?? speciesDexNumber(species),

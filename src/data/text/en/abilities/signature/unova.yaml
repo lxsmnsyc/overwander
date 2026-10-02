@@ -1,0 +1,248 @@
+# The signature abilities of the families filed under Unova
+
+LeafOpening:
+  name: Leaf Opening
+  description: The first move it lands each fight takes 1 stage of Speed off the target.
+EmberOpening:
+  name: Ember Opening
+  description: The first move it lands each fight hits 1.5x.
+ShellOpening:
+  name: Shell Opening
+  description: The first move it lands each fight raises its own Defense 2 stages.
+Spotter:
+  name: Spotter
+  description: Its team throws 1.2x as accurately at a target that is casting or channelling.
+LoyalGuard:
+  name: Loyal Guard
+  description: 1.5x Defense and Special Defense while a teammate is under 1/2 HP.
+CatBurglar:
+  name: Cat Burglar
+  description: The first move it lands each fight takes the target’s held item.
+LeafCrown:
+  name: Leaf Crown
+  description: The first time it drops below 1/2 HP it seeds every enemy. Once per battle.
+EmberTuft:
+  name: Ember Tuft
+  description: The first time it drops below 1/2 HP it burns every enemy. Once per battle.
+GeyserTail:
+  name: Geyser Tail
+  description: The first time it drops below 1/2 HP it traps every enemy in a whirlpool. Once per battle.
+Doze:
+  name: Doze
+  description: It heals 1/16 of its HP for each second it has stood idle, up to 8, as it next acts.
+Homing:
+  name: Homing
+  description: Its moves cannot miss a target it has already landed a move on this fight.
+StormDash:
+  name: Storm Dash
+  description: Its moves hit 10% harder for each stage of Speed it holds, up to 1.5x.
+Aftershock:
+  name: Aftershock
+  description: A blow that leaves it standing on 1 HP costs whoever threw it 1/4 of their HP.
+HeartMark:
+  name: Heart Mark
+  description: It casts Attract at an enemy as it arrives on the field.
+Torque:
+  name: Torque
+  description: Its moves hit 1.25x and wind up 25% slower.
+Ward:
+  name: Ward
+  description: While it stands, the first blow that would finish a teammate leaves them on 1 HP instead. Once per teammate.
+LoadBearing:
+  name: Load Bearing
+  description: At or above 1/2 HP it takes 0.6x from everything. Below that it takes the lot and deals 1.4x.
+RippleOut:
+  name: Ripple Out
+  description: A move it lands also deals 1/4 of that damage to every other enemy.
+RedBelt:
+  name: Red Belt
+  description: Physical moves hit its whole team at 0.85x while it stands, itself included.
+BlueBelt:
+  name: Blue Belt
+  description: Its whole team throws physical moves at 1.15x while it stands, itself included.
+Tailor:
+  name: Tailor
+  description: It dresses its worst hurt teammate as it arrives, and that one takes 0.8x for the fight.
+HurryVenom:
+  name: Hurry Venom
+  description: Poison it puts on an enemy costs them 1.5x as much each time they act.
+SporeDrift:
+  name: Spore Drift
+  description: Its powder moves cannot miss, and nothing is immune to them.
+PollenWaltz:
+  name: Pollen Waltz
+  description: Every stat stage one of its dances gives it is given to its teammates as well.
+DeathRoll:
+  name: Death Roll
+  description: Its contact moves hit 1.25x against a target it has already landed one on.
+GlancingBlow:
+  name: Glancing Blow
+  description: A move of its that misses still deals 1/4 of what it would have.
+DrySpell:
+  name: Dry Spell
+  description: While no weather is up, its moves hit 1.3x and it heals 1/16 of its HP each time it acts.
+Slab:
+  name: Slab
+  description: The rock it carries takes the first 1/4 of its HP worth of damage each fight.
+GangUp:
+  name: Gang Up
+  description: Its moves hit 10% harder for each teammate still standing with it, up to 1.3x.
+WardCircle:
+  name: Ward Circle
+  description: Nothing can lay hazards on its side while it stands, and it sweeps any away as it arrives.
+DeathMask:
+  name: Death Mask
+  description: Whoever finishes one of its teammates loses 2 stages of its best stat.
+Litterbug:
+  name: Litterbug
+  description: It casts Toxic Spikes onto the enemy side as it arrives on the field.
+Bluff:
+  name: Bluff
+  description: The first move that would hit it super effectively passes through it. Once per battle.
+CleanSweep:
+  name: Clean Sweep
+  description: It sweeps every hazard and screen off both sides of the field as it arrives.
+Fixation:
+  name: Fixation
+  description: Its whole team hits 1.2x against whichever enemy is lowest on HP.
+Division:
+  name: Division
+  description: It takes 1/4 of every blow aimed at a teammate in their place.
+StaticFeed:
+  name: Static Feed
+  description: It heals 1/8 of its HP whenever an Electric move lands on anybody, either side.
+ThornCurtain:
+  name: Thorn Curtain
+  description: Its teammates take 0.85x from contact moves while it stands.
+Meshing:
+  name: Meshing
+  description: While a teammate stands with it, its team takes 0.9x and its own moves hit 1.2x.
+BloodWater:
+  name: Blood Water
+  description: Its moves hit 15% harder for each enemy already below 1/2 HP, up to 1.45x.
+SwanDance:
+  name: Swan Dance
+  description: Every dance move it uses raises its Speed 1 stage on top of what the dance does.
+FlashFreeze:
+  name: Flash Freeze
+  description: The first Ice move it lands each fight freezes the target outright.
+TidePool:
+  name: Tide Pool
+  description: Every heal on its team is worth 1.3x while it stands, its own included.
+SwapField:
+  name: Swap Field
+  description: It casts Wonder Room as it arrives on the field.
+Hexlight:
+  name: Hexlight
+  description: Its moves hit 1.4x against a target that has a status condition.
+BrokenSeal:
+  name: Broken Seal
+  description: The first time it drops below 1/2 HP it gains 2 stages of Attack and loses 1 of Defense. Once per battle.
+Scoring:
+  name: Scoring
+  description: Every physical move it lands takes 1 stage of Defense off the target.
+Sunwarmed:
+  name: Sunwarmed
+  description: Its moves take 0.75x as long to cast while harsh sunlight is up.
+ThreeHeads:
+  name: Three Heads
+  description: Every move it lands also bites one other enemy for 1/3 of the damage.
+Honed:
+  name: Honed
+  description: +1 Attack every time an enemy raises a stat of its own.
+Warcry:
+  name: Warcry
+  description: +2 Attack every time one of its teammates faints.
+Bonewear:
+  name: Bonewear
+  description: +1 Defense and +1 Special Defense every time an enemy faints.
+Anteater:
+  name: Anteater
+  description: Its moves hit 1.5x against a Bug or Steel target.
+AntGuard:
+  name: Ant Guard
+  description: Fire moves hit it at 0.5x.
+EmberHalo:
+  name: Ember Halo
+  description: Every enemy loses 1/16 of its HP each time it acts while it stands.
+LatchOn:
+  name: Latch On
+  description: Whatever its contact moves land on cannot flee, ghosts aside, and loses 1/16 of its HP each time it acts. One at a time.
+FrostFangs:
+  name: Frost Fangs
+  description: Its contact moves hit 1.25x, with a 20% chance to freeze.
+CrystalChain:
+  name: Crystal Chain
+  description: A freeze on an enemy lasts 2x as long while it stands.
+SleeveGuard:
+  name: Sleeve Guard
+  description: Contact moves land on it at 0.75x.
+IronVigil:
+  name: Iron Vigil
+  description: Its teammates take physical moves at 0.8x while it stands.
+StoneVigil:
+  name: Stone Vigil
+  description: Its teammates take special moves at 0.8x while it stands.
+LeafVigil:
+  name: Leaf Vigil
+  description: Its teammates take indirect damage at 0.8x and cannot be poisoned while it stands.
+TideVigil:
+  name: Tide Vigil
+  description: Its teammates never flinch and refuse enemy stat drops while it stands.
+TruthCreed:
+  name: Truth Creed
+  description: Hits 1.3x an enemy carrying a status condition.
+IdealCreed:
+  name: Ideal Creed
+  description: Hits 1.3x an enemy carrying a raised stat stage.
+HollowCreed:
+  name: Hollow Creed
+  description: Hits 1.3x an enemy carrying neither a status nor a raised stat stage.
+Windfall:
+  name: Windfall
+  description: Its team throws Flying moves at 1.3x while it stands.
+Stormfall:
+  name: Stormfall
+  description: Its team throws Electric moves at 1.3x while it stands.
+Landfall:
+  name: Landfall
+  description: Its team throws Ground moves at 1.3x while it stands.
+WinnersShare:
+  name: Winner's Share
+  description: Each enemy that faints gives its whole team +1 Attack and +1 Special Attack.
+Countertune:
+  name: Countertune
+  description: Changing shape swaps its Attack and Special Attack stages, and its two defences.
+Overclock:
+  name: Overclock
+  description: Casts 25% faster above 1/2 HP. At or below it, loses 1/16 of its HP each time it acts.
+Turning:
+  name: Turning
+  description: "Its Normal moves take its coat's type and hit 1.2x: spring Grass, summer Fire, autumn Ground, winter Ice."
+Glidewake:
+  name: Glidewake
+  description: Each move it lands gives it +1 Evasion, up to +2. Any hit on it takes all of it back.
+DeepHold:
+  name: Deep Hold
+  description: The first hit that would take it under 1/2 HP leaves it there, and raises its Defense 2 stages.
+Featherstone:
+  name: Featherstone
+  description: The first time it falls under 1/2 HP, it heals 1/4 of its HP. Once a battle.
+ShellThief:
+  name: Shell Thief
+  description: The first physical move it lands on each enemy takes 1 Defense stage off them and puts it on itself.
+Barehide:
+  name: Barehide
+  description: Refuses every Defense drop from anybody else, and gains +1 Special Defense instead.
+Sporeburst:
+  name: Sporeburst
+  description: Fainting casts Stun Spore at every enemy on the field.
+StillWater:
+  name: Still Water
+  description: While it stands, every enemy takes 1.2x as long to cast. Cooldowns are untouched.
+Shockmud:
+  name: Shockmud
+  description: Its Ground moves hit 1.2x and paralyse 20% of the time.
+HerdBond:
+  name: Herd Bond
+  description: Attack rises 10% for each other pokemon on its team still standing.

@@ -1,0 +1,5 @@
+Roost: [CarefulWalk, Withdraw, Charge]
+Gravity: [RaiseArms, Swell, Charge]
+MiracleEye: [Appeal, Emit, Charge]
+WakeUpSlap: [Slap, Swing, Attack]
+HammerArm: [Chop, Slam, Attack]

@@ -2,5 +2,5 @@ import { defineConfig } from 'oxfmt';
 
 export default defineConfig({
   singleQuote: true,
-  ignorePatterns: ['example.js', 'public/**', 'src/data/species/schema/**'],
+  ignorePatterns: ['example.js', 'public/**', 'src/data/schema/**'],
 });

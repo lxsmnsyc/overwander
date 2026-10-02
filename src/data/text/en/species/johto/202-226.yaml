@@ -1,0 +1,45 @@
+Wobbuffet:
+  Wobbuffet: { name: Wobbuffet, category: Patient Pokemon }
+  Wynaut: { name: Wynaut, category: Bright Pokemon }
+Girafarig:
+  Girafarig: { name: Girafarig, category: Long Neck Pokemon }
+Pineco:
+  Pineco: { name: Pineco, category: Bagworm Pokemon }
+  Forretress: { name: Forretress, category: Bagworm Pokemon }
+Dunsparce:
+  Dunsparce: { name: Dunsparce, category: Land Snake Pokemon }
+Gligar:
+  Gligar: { name: Gligar, category: Fly Scorpion Pokemon }
+  Gliscor: { name: Gliscor, category: Fang Scorpion Pokemon }
+Snubbull:
+  Snubbull: { name: Snubbull, category: Fairy Pokemon }
+  Granbull: { name: Granbull, category: Fairy Pokemon }
+Qwilfish:
+  Qwilfish: { name: Qwilfish, category: Balloon Pokemon }
+Shuckle:
+  Shuckle: { name: Shuckle, category: Mold Pokemon }
+Heracross:
+  Heracross: { name: Heracross, category: Single Horn Pokemon }
+Sneasel:
+  Sneasel: { name: Sneasel, category: Sharp Claw Pokemon }
+  Weavile: { name: Weavile, category: Sharp Claw Pokemon }
+Teddiursa:
+  Teddiursa: { name: Teddiursa, category: Little Bear Pokemon }
+  Ursaring: { name: Ursaring, category: Hibernator Pokemon }
+Slugma:
+  Slugma: { name: Slugma, category: Lava Pokemon }
+  Magcargo: { name: Magcargo, category: Lava Pokemon }
+Swinub:
+  Swinub: { name: Swinub, category: Pig Pokemon }
+  Piloswine: { name: Piloswine, category: Swine Pokemon }
+  Mamoswine: { name: Mamoswine, category: Twin Tusk Pokemon }
+Corsola:
+  Corsola: { name: Corsola, category: Coral Pokemon }
+Remoraid:
+  Remoraid: { name: Remoraid, category: Jet Pokemon }
+  Octillery: { name: Octillery, category: Jet Pokemon }
+Delibird:
+  Delibird: { name: Delibird, category: Delivery Pokemon }
+Mantine:
+  Mantine: { name: Mantine, category: Kite Pokemon }
+  Mantyke: { name: Mantyke, category: Kite Pokemon }

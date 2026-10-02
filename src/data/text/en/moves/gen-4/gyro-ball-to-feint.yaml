@@ -1,0 +1,15 @@
+GyroBall:
+  name: Gyro Ball
+  description: The slower the user is against the target, the harder it hits, up to 150 power.
+HealingWish:
+  name: Healing Wish
+  description: The user faints, and a teammate on the field goes back to full HP and is cured.
+Brine:
+  name: Brine
+  description: 2x power on a target below 1/2 HP.
+NaturalGift:
+  name: Natural Gift
+  description: Throws the user's berry at 80 power, typed as whatever the berry resists or Normal. The berry is spent.
+Feint:
+  name: Feint
+  description: Hits through Protect and Detect, and breaks the guard it went through.

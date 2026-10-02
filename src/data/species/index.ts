@@ -77,7 +77,7 @@ export function registerSpecies(): void {
     stats: import.meta.glob('./stats/**/*.yaml', { eager: true, import: 'default' }),
     abilities: import.meta.glob('./abilities/**/*.yaml', { eager: true, import: 'default' }),
     learnsets: import.meta.glob('./learnsets/**/*.yaml', { eager: true, import: 'default' }),
-    text: import.meta.glob('../text/en/species.yaml', { eager: true, import: 'default' }),
+    text: import.meta.glob('../text/en/species/**/*.yaml', { eager: true, import: 'default' }),
   });
 
   for (const [species, data] of read) {

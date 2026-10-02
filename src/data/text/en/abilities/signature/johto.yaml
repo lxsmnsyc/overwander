@@ -1,0 +1,155 @@
+# The signature abilities of the families filed under Johto
+
+Sapmark:
+  name: Sapmark
+  description: Anything it lands a move on loses 1/16 of its HP each time it acts, and Chikorita drinks the same.
+Embermark:
+  name: Embermark
+  description: Anything it lands a move on loses 1/16 of its HP each time it acts, or 1/8 while it is burned.
+Jawmark:
+  name: Jawmark
+  description: The one thing it has its jaws in loses 1/8 of its HP each time it acts. Only ever one at a time.
+Sentry:
+  name: Sentry
+  description: Nobody in its party can be hit by a critical hit while it stands.
+WatchfulRoost:
+  name: Watchful Roost
+  description: It casts Reflect over its party as it arrives on the field.
+Relay:
+  name: Relay
+  description: Whenever it is switched out, its stat stages carry to the teammate coming in.
+SilkSnare:
+  name: Silk Snare
+  description: It casts String Shot at every standing enemy as it arrives on the field.
+LanternLure:
+  name: Lantern Lure
+  description: It casts Confuse Ray at an enemy as it arrives on the field.
+FairShare:
+  name: Fair Share
+  description: When a move under 100% accuracy lands on somebody in its party, the next such move aimed at them misses.
+Prophecy:
+  name: Prophecy
+  description: It casts Future Sight at an enemy as it arrives on the field.
+LiveWire:
+  name: Live Wire
+  description: It casts Thunder Wave at an enemy as it arrives on the field.
+Spillover:
+  name: Spillover
+  description: Healing past its full HP is thrown at an enemy as damage rather than wasted.
+FalseWood:
+  name: False Wood
+  description: It counts as a Grass type for working out what hurts it, until the first hit lands on it.
+Updraft:
+  name: Updraft
+  description: It cannot be trapped, its Speed cannot be lowered, and it always gets away.
+Tailthrow:
+  name: Tailthrow
+  description: It casts Fling as it arrives on the field, throwing its held item at an enemy.
+SunlitCharge:
+  name: Sunlit Charge
+  description: Its channelled moves hit 1.3x and cannot be interrupted.
+Resonance:
+  name: Resonance
+  description: Its sound moves reach every enemy on the field, not only the one it aimed at.
+ContagiousYawn:
+  name: Contagious Yawn
+  description: It casts Yawn at an enemy as it arrives on the field.
+Magpie:
+  name: Magpie
+  description: Any held item taken off somebody else on the field goes into its empty hands.
+SharedMisery:
+  name: Shared Misery
+  description: The first time it drops below 1/3 of its HP it casts Pain Split at the healthiest enemy.
+RuinousScript:
+  name: Ruinous Script
+  description: Held items do nothing on the enemy side while it stands.
+Backlash:
+  name: Backlash
+  description: It banks 1/4 of every hit it takes, and pays the bank back to whoever last struck it when it next acts.
+Ambidextrous:
+  name: Ambidextrous
+  description: Its moves are worked out from whichever of its Attack and Special Attack is higher.
+Shrapnel:
+  name: Shrapnel
+  description: When it faints, it casts Spikes and Toxic Spikes onto the enemy side.
+HiddenDen:
+  name: Hidden Den
+  description: While anybody else in its party stands, enemies cannot aim a single-target move at it.
+SandRider:
+  name: Sand Rider
+  description: While sand blows, its moves cannot miss and everything hits it at 0.75x.
+Bully:
+  name: Bully
+  description: Its moves hit 1.3x against a target whose Attack has been lowered.
+LastBarb:
+  name: Last Barb
+  description: When it faints, it casts Toxic at whoever finished it.
+Fermenter:
+  name: Fermenter
+  description: Each time it acts with a free hand, a Berry Juice appears in it.
+Heave:
+  name: Heave
+  description: The first contact move it lands on each enemy casts Whirlwind at them.
+SharpClaw:
+  name: Sharp Claw
+  description: Each contact move it lands drops the target's Defense by a stage.
+SweetPaw:
+  name: Sweet Paw
+  description: Its contact moves heal it 1/8 of the damage they deal.
+MagmaTrail:
+  name: Magma Trail
+  description: An enemy it has landed a move on loses 1/16 of its HP each time it acts, while it stands.
+Icebreaker:
+  name: Icebreaker
+  description: A move it lands tears Reflect and Light Screen off the target's side.
+CoralBloom:
+  name: Coral Bloom
+  description: Whenever it is healed, the teammate lowest on HP is healed the same amount.
+Ricochet:
+  name: Ricochet
+  description: When a single-target move of its misses, it strikes another standing enemy instead, at full power.
+Delivery:
+  name: Delivery
+  description: It hands a Berry Juice to the teammate lowest on HP as it arrives on the field.
+Escort:
+  name: Escort
+  description: Its teammates' Special Defense counts 1.3x while it stands.
+Steelmolt:
+  name: Steelmolt
+  description: Lays a layer of Spikes on the enemy side as a hit drops it to 3/4 and to 1/2 HP.
+PackHowl:
+  name: Pack Howl
+  description: Every teammate gains a stage of Attack as it arrives on the field.
+Momentum:
+  name: Momentum
+  description: Its moves hit 1.1x for each move it has landed since taking the field, up to 1.5x.
+MindFog:
+  name: Mind Fog
+  description: Enemy Special Attack counts 0.85x while it stands.
+Palette:
+  name: Palette
+  description: Its moves take the type of the last move that hit it.
+Cowbell:
+  name: Cowbell
+  description: It casts Heal Bell over its party as it arrives on the field.
+RisenThunder:
+  name: Risen Thunder
+  description: The first blow that would finish it leaves it on 1 HP, cured, and a stage faster. Once per battle.
+RisenFlame:
+  name: Risen Flame
+  description: The first blow that would finish it leaves it on 1 HP, cured, and a stage stronger. Once per battle.
+RisenTide:
+  name: Risen Tide
+  description: The first blow that would finish it leaves it on 1 HP, cured, and a stage up in Defense. Once per battle.
+Tyrant:
+  name: Tyrant
+  description: Nothing on the enemy side can raise a stat while it stands.
+SilverAegis:
+  name: Silver Aegis
+  description: The first blow that would finish a teammate leaves it on 1 HP instead. Once per battle.
+RainbowRekindling:
+  name: Rainbow Rekindling
+  description: The first teammate to fall gets back up on 1/3 of its HP. Once per battle.
+TimelineSplit:
+  name: Timeline Split
+  description: The first time it drops below 1/2 HP, every stat drop on it is undone and every status cleared.

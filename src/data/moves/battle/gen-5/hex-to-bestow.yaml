@@ -1,0 +1,90 @@
+# From Hex to Bestow: the moves that move pokemon, items and wind-ups
+# about rather than only hitting
+
+Hex:
+  type: Ghost
+  category: Special
+  power: 65
+  accuracy: 100
+  pp: 10
+  target: Unit
+
+SkyDrop:
+  type: Flying
+  category: Physical
+  power: 60
+  accuracy: 100
+  pp: 10
+  target: Unit
+  flags: [Contact]
+  steps: 1
+
+ShiftGear:
+  type: Steel
+  category: Status
+  pp: 10
+  target: None
+
+CircleThrow:
+  type: Fighting
+  category: Physical
+  power: 60
+  accuracy: 90
+  priority: -6
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+Incinerate:
+  type: Fire
+  category: Special
+  power: 60
+  accuracy: 100
+  pp: 15
+  target: None
+  affects: [Unit, Enemy]
+
+Quash:
+  type: Dark
+  category: Status
+  accuracy: 100
+  pp: 15
+  target: Unit
+
+Acrobatics:
+  type: Flying
+  category: Physical
+  power: 55
+  accuracy: 100
+  pp: 15
+  target: Unit
+  flags: [Contact]
+
+ReflectType:
+  type: Normal
+  category: Status
+  pp: 15
+  target: Unit
+
+Retaliate:
+  type: Normal
+  category: Physical
+  power: 70
+  accuracy: 100
+  pp: 5
+  target: Unit
+  flags: [Contact]
+
+FinalGambit:
+  type: Fighting
+  category: Special
+  accuracy: 100
+  pp: 5
+  target: Unit
+
+Bestow:
+  type: Normal
+  category: Status
+  pp: 15
+  target: Unit
+  affects: [Unit, Own]

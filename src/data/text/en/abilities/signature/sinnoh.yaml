@@ -1,0 +1,134 @@
+# The signature abilities of the families filed under Sinnoh
+
+BarkBrace:
+  name: Bark Brace
+  description: The first physical blow it takes each fight lands at 1/2 and roots it, so it heals 1/16 of its HP each time it acts but cannot leave the field.
+CinderBrace:
+  name: Cinder Brace
+  description: The first special blow it takes each fight lands at 1/2, and its next move to land hits 1.5x.
+CrestBrace:
+  name: Crest Brace
+  description: The first status move aimed at it each fight fails, and it takes a stage of Special Attack from the insult.
+Murmuration:
+  name: Murmuration
+  description: Its attacks hit 1.05x for each teammate still standing, up to 1.25x.
+Lodgework:
+  name: Lodgework
+  description: Its team takes 25% less indirect damage while it stands.
+Chorus:
+  name: Chorus
+  description: Sound moves from its team hit 1.2x while it stands, its own included.
+GleamEyes:
+  name: Gleam Eyes
+  description: Its attacks ignore the target's raised evasion, and reach one hidden by Fly, Dig, Dive, Bounce or Shadow Force.
+Ramrod:
+  name: Ramrod
+  description: Its attacks strike through Protect, Detect and a Substitute.
+Bulwark:
+  name: Bulwark
+  description: A guard it puts up covers its whole team for as long as its own holds.
+Patchwork:
+  name: Patchwork
+  description: The first hit of each type it takes raises its Defense and Special Defense 1 stage, 3 times a fight.
+TwoSeas:
+  name: Two Seas
+  description: The west shell hits 1.25x with Water moves, the east shell with Ground moves.
+PollenDole:
+  name: Pollen Dole
+  description: Each attack it lands puts 1/16 of its worst hurt teammate's HP back for them.
+FloatSac:
+  name: Float Sac
+  description: It floats above Ground moves and hazards until any damage takes it under 1/2 HP.
+SecondBloom:
+  name: Second Bloom
+  description: The first time it falls under 1/2 HP each fight it takes 1/4 of its HP back and 1 stage of Special Attack.
+CarryOff:
+  name: Carry Off
+  description: 20% for an attack it lands to blow the target away, as Whirlwind would.
+Springheel:
+  name: Springheel
+  description: Each of the first 3 attacks it lands raises its Speed 1 stage.
+VelvetClaws:
+  name: Velvet Claws
+  description: Its contact moves hit 1.25x against anything that has gained a stat stage this fight.
+RankAir:
+  name: Rank Air
+  description: Its moves hit 1.25x against a poisoned target.
+DeepToll:
+  name: Deep Toll
+  description: Every move it reaches for costs each enemy 1/16 of their HP.
+Skyhunt:
+  name: Skyhunt
+  description: Its Ground moves reach what is off the ground, and hit it 1.2x.
+AuraMatch:
+  name: Aura Match
+  description: Its moves hit 1.25x against a target holding a larger share of its HP.
+DustBath:
+  name: Dust Bath
+  description: It heals 1/16 of its HP every time it reaches for a move while sand blows.
+Ambush:
+  name: Ambush
+  description: The first move it lands on each enemy hits 1.3x.
+Finisher:
+  name: Finisher
+  description: Its moves wind up 25% faster against a target at or below 1/4 HP.
+FalseEyes:
+  name: False Eyes
+  description: A single-target move aimed at a teammate below 1/2 HP comes to it instead.
+Evergreen:
+  name: Evergreen
+  description: Fire moves hit it at 0.5x while hail or snow falls.
+Sparkfur:
+  name: Sparkfur
+  description: Anything that touches it or one of its teammates is paralyzed 30% of the time.
+Birdsong:
+  name: Birdsong
+  description: Its damaging sound moves confuse the target 20% of the time.
+Soulwell:
+  name: Soulwell
+  description: Heals 1/4 of its HP whenever anybody on the field faints.
+Snapvine:
+  name: Snapvine
+  description: The first move it lands on each enemy binds them as well.
+Appliance:
+  name: Appliance
+  description: Its moves of the type its shape gives it, Electric aside, hit 1.3x.
+Mindgift:
+  name: Mindgift
+  description: Its whole team gains 1 stage of accuracy as it takes the field.
+Heartgift:
+  name: Heartgift
+  description: Its whole team gains 1 stage of Special Attack as it takes the field.
+Willgift:
+  name: Willgift
+  description: Its whole team gains 1 stage of Attack as it takes the field.
+Lavadome:
+  name: Lavadome
+  description: A burned enemy takes 1.25x from everything while it stands.
+TitanSeal:
+  name: Titan Seal
+  description: For 8 seconds it takes 0.5x. It then deals 1.25x and gains 2 stages of Attack.
+TimeDrag:
+  name: Time Drag
+  description: Every enemy reads its Speed stage 1 lower while it stands.
+SpaceDrift:
+  name: Space Drift
+  description: Every enemy reads its accuracy stage 1 lower while it stands.
+VoidWeight:
+  name: Void Weight
+  description: Every enemy reads its Attack stage 1 lower while it stands.
+WaningLight:
+  name: Waning Light
+  description: Every timed status on its team runs 0.5x as long, its own and the helpful ones included.
+WaxingDark:
+  name: Waxing Dark
+  description: Every timed status it puts on an enemy runs 1.5x as long.
+Heartcurrent:
+  name: Heartcurrent
+  description: Every stat stage an enemy gains is written onto it as well.
+Firstlight:
+  name: Firstlight
+  description: Its moves of its own type are never resisted. An immunity still holds.
+Purebloom:
+  name: Purebloom
+  description: Poison costs its teammates no HP while it stands.

@@ -1,7 +1,8 @@
 // Written by scripts/id-names.ts from the enums it lists; run `pnpm id-names`
 // rather than editing it
 import { EvolutionMethod, Genders, Habitat, Species } from './species';
-import { Moves } from './moves';
+import { MoveAffects, MoveCategories, MoveFlags, MoveTargets, Moves } from './moves';
+import { SpriteAnim } from './sprite-anims';
 import Abilities from './abilities';
 import { Items } from './items';
 import Biome, { TimeOfDay } from './biome';
@@ -1834,6 +1835,88 @@ export const MOVE_IDS = {
   VeeveeVolley: Moves.VeeveeVolley,
   DoubleIronBash: Moves.DoubleIronBash,
 } as const satisfies Record<string, Moves>;
+
+export const MOVE_CATEGORY_IDS = {
+  Physical: MoveCategories.Physical,
+  Special: MoveCategories.Special,
+  Status: MoveCategories.Status,
+} as const satisfies Record<string, MoveCategories>;
+
+export const MOVE_TARGET_IDS = {
+  None: MoveTargets.None,
+  Unit: MoveTargets.Unit,
+  Team: MoveTargets.Team,
+} as const satisfies Record<string, MoveTargets>;
+
+export const MOVE_AFFECT_IDS = {
+  Self: MoveAffects.Self,
+  Unit: MoveAffects.Unit,
+  Team: MoveAffects.Team,
+  Own: MoveAffects.Own,
+  Ally: MoveAffects.Ally,
+  Enemy: MoveAffects.Enemy,
+  Fainted: MoveAffects.Fainted,
+} as const satisfies Record<string, MoveAffects>;
+
+export const MOVE_FLAG_IDS = {
+  Contact: MoveFlags.Contact,
+  Sound: MoveFlags.Sound,
+  Powder: MoveFlags.Powder,
+  Bite: MoveFlags.Bite,
+  Slicing: MoveFlags.Slicing,
+  Wind: MoveFlags.Wind,
+} as const satisfies Record<string, MoveFlags>;
+
+export const SPRITE_ANIM_IDS = {
+  Idle: SpriteAnim.Idle,
+  Sleep: SpriteAnim.Sleep,
+  Hurt: SpriteAnim.Hurt,
+  Attack: SpriteAnim.Attack,
+  Charge: SpriteAnim.Charge,
+  Shoot: SpriteAnim.Shoot,
+  Double: SpriteAnim.Double,
+  Hop: SpriteAnim.Hop,
+  Rotate: SpriteAnim.Rotate,
+  Walk: SpriteAnim.Walk,
+  Swing: SpriteAnim.Swing,
+  Slice: SpriteAnim.Slice,
+  SpAttack: SpriteAnim.SpAttack,
+  Shock: SpriteAnim.Shock,
+  QuickStrike: SpriteAnim.QuickStrike,
+  Strike: SpriteAnim.Strike,
+  Jab: SpriteAnim.Jab,
+  Punch: SpriteAnim.Punch,
+  Kick: SpriteAnim.Kick,
+  MultiStrike: SpriteAnim.MultiStrike,
+  Slam: SpriteAnim.Slam,
+  Withdraw: SpriteAnim.Withdraw,
+  Twirl: SpriteAnim.Twirl,
+  RearUp: SpriteAnim.RearUp,
+  Shake: SpriteAnim.Shake,
+  Lick: SpriteAnim.Lick,
+  Dance: SpriteAnim.Dance,
+  Uppercut: SpriteAnim.Uppercut,
+  Gas: SpriteAnim.Gas,
+  Stomp: SpriteAnim.Stomp,
+  Emit: SpriteAnim.Emit,
+  Swell: SpriteAnim.Swell,
+  Ricochet: SpriteAnim.Ricochet,
+  MultiScratch: SpriteAnim.MultiScratch,
+  Bite: SpriteAnim.Bite,
+  Appeal: SpriteAnim.Appeal,
+  Chop: SpriteAnim.Chop,
+  Hover: SpriteAnim.Hover,
+  Rumble: SpriteAnim.Rumble,
+  Sound: SpriteAnim.Sound,
+  FlapAround: SpriteAnim.FlapAround,
+  TailWhip: SpriteAnim.TailWhip,
+  Scratch: SpriteAnim.Scratch,
+  CarefulWalk: SpriteAnim.CarefulWalk,
+  RaiseArms: SpriteAnim.RaiseArms,
+  Sing: SpriteAnim.Sing,
+  Yawn: SpriteAnim.Yawn,
+  Slap: SpriteAnim.Slap,
+} as const satisfies Record<string, SpriteAnim>;
 
 export const ABILITY_IDS = {
   Overgrow: Abilities.Overgrow,

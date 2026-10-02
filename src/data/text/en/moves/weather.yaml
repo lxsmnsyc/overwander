@@ -1,0 +1,12 @@
+RainDance:
+  name: Rain Dance
+  description: Calls up rain for ten seconds.
+SunnyDay:
+  name: Sunny Day
+  description: Calls up sun for ten seconds.
+Sandstorm:
+  name: Sandstorm
+  description: Calls up a sandstorm for ten seconds.
+Hail:
+  name: Hail
+  description: Calls up hail for ten seconds.

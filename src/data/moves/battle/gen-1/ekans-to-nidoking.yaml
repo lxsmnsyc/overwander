@@ -1,0 +1,133 @@
+# What is met between Ekans and Nidoking: the snakes, the sparks and
+# the horns
+
+Wrap:
+  type: Normal
+  category: Physical
+  power: 15
+  accuracy: 90
+  pp: 20
+  target: Unit
+  flags: [Contact]
+
+Glare:
+  type: Normal
+  category: Status
+  accuracy: 100
+  pp: 30
+  target: Unit
+
+Screech:
+  type: Normal
+  category: Status
+  accuracy: 85
+  pp: 40
+  target: Unit
+  affects: [Unit, Own, Enemy]
+  flags: [Sound]
+
+Acid:
+  type: Poison
+  category: Special
+  power: 40
+  accuracy: 100
+  pp: 30
+  target: None
+  affects: [Unit, Enemy]
+  projectile: true
+
+RockSlide:
+  type: Rock
+  category: Physical
+  power: 75
+  accuracy: 90
+  pp: 10
+  target: None
+  affects: [Unit, Enemy]
+  projectile: true
+
+ThunderShock:
+  type: Electric
+  category: Special
+  power: 40
+  accuracy: 100
+  pp: 30
+  target: Unit
+
+ThunderWave:
+  type: Electric
+  category: Status
+  accuracy: 90
+  pp: 20
+  target: Unit
+
+Thunder:
+  type: Electric
+  category: Special
+  power: 110
+  accuracy: 70
+  pp: 10
+  target: Unit
+
+Thunderbolt:
+  type: Electric
+  category: Special
+  power: 90
+  accuracy: 100
+  pp: 15
+  target: Unit
+
+PayDay:
+  type: Normal
+  category: Physical
+  power: 40
+  accuracy: 100
+  pp: 20
+  target: Unit
+  projectile: true
+
+FurySwipes:
+  type: Normal
+  category: Physical
+  power: 18
+  accuracy: 80
+  pp: 15
+  target: Unit
+  flags: [Contact]
+
+DoubleKick:
+  type: Fighting
+  category: Physical
+  power: 30
+  accuracy: 100
+  pp: 30
+  target: Unit
+  flags: [Contact]
+
+HornAttack:
+  type: Normal
+  category: Physical
+  power: 65
+  accuracy: 100
+  pp: 25
+  target: Unit
+  flags: [Contact]
+
+HornDrill:
+  type: Normal
+  category: Physical
+  accuracy: 30
+  pp: 5
+  target: Unit
+  flags: [Contact]
+
+# Rampage: every step lands the same attack
+Thrash:
+  type: Normal
+  category: Physical
+  power: 120
+  accuracy: 100
+  pp: 10
+  target: Unit
+  flags: [Contact]
+  steps: 2

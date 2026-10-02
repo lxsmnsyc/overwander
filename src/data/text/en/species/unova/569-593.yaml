@@ -1,0 +1,41 @@
+Zorua:
+  Zorua: { name: Zorua, category: Tricky Fox Pokemon }
+  Zoroark: { name: Zoroark, category: Illusion Fox Pokemon }
+Minccino:
+  Minccino: { name: Minccino, category: Chinchilla Pokemon }
+  Cinccino: { name: Cinccino, category: Scarf Pokemon }
+Gothita:
+  Gothita: { name: Gothita, category: Fixation Pokemon }
+  Gothorita: { name: Gothorita, category: Manipulate Pokemon }
+  Gothitelle: { name: Gothitelle, category: Astral Body Pokemon }
+Solosis:
+  Solosis: { name: Solosis, category: Cell Pokemon }
+  Duosion: { name: Duosion, category: Mitosis Pokemon }
+  Reuniclus: { name: Reuniclus, category: Multiplying Pokemon }
+Ducklett:
+  Ducklett: { name: Ducklett, category: Water Bird Pokemon }
+  Swanna: { name: Swanna, category: White Bird Pokemon }
+Vanillite:
+  Vanillite: { name: Vanillite, category: Fresh Snow Pokemon }
+  Vanillish: { name: Vanillish, category: Icy Snow Pokemon }
+  Vanilluxe: { name: Vanilluxe, category: Snowstorm Pokemon }
+Deerling:
+  Deerling: { name: Deerling, category: Season Pokemon }
+  DeerlingSummer: { name: Summer Deerling, category: Season Pokemon }
+  DeerlingAutumn: { name: Autumn Deerling, category: Season Pokemon }
+  DeerlingWinter: { name: Winter Deerling, category: Season Pokemon }
+  Sawsbuck: { name: Sawsbuck, category: Season Pokemon }
+  SawsbuckSummer: { name: Summer Sawsbuck, category: Season Pokemon }
+  SawsbuckAutumn: { name: Autumn Sawsbuck, category: Season Pokemon }
+  SawsbuckWinter: { name: Winter Sawsbuck, category: Season Pokemon }
+Emolga:
+  Emolga: { name: Emolga, category: Sky Squirrel Pokemon }
+Karrablast:
+  Karrablast: { name: Karrablast, category: Clamping Pokemon }
+  Escavalier: { name: Escavalier, category: Cavalry Pokemon }
+Foongus:
+  Foongus: { name: Foongus, category: Mushroom Pokemon }
+  Amoonguss: { name: Amoonguss, category: Mushroom Pokemon }
+Frillish:
+  Frillish: { name: Frillish, category: Floating Pokemon }
+  Jellicent: { name: Jellicent, category: Floating Pokemon }

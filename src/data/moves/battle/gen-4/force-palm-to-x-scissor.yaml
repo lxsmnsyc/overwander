@@ -1,0 +1,89 @@
+# From Force Palm to X-Scissor: the end of Sinnoh's second stretch,
+# which is mostly the plain hits every type was owed
+
+ForcePalm:
+  type: Fighting
+  category: Physical
+  power: 60
+  accuracy: 100
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+AuraSphere:
+  type: Fighting
+  category: Special
+  power: 80
+  pp: 20
+  target: Unit
+  projectile: true
+
+RockPolish:
+  type: Rock
+  category: Status
+  pp: 20
+  target: None
+
+PoisonJab:
+  type: Poison
+  category: Physical
+  power: 80
+  accuracy: 100
+  pp: 20
+  target: Unit
+  flags: [Contact]
+
+DarkPulse:
+  type: Dark
+  category: Special
+  power: 80
+  accuracy: 100
+  pp: 15
+  target: Unit
+  projectile: true
+
+NightSlash:
+  type: Dark
+  category: Physical
+  power: 70
+  accuracy: 100
+  pp: 15
+  target: Unit
+  flags: [Contact, Slicing]
+
+AquaTail:
+  type: Water
+  category: Physical
+  power: 90
+  accuracy: 90
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+SeedBomb:
+  type: Grass
+  category: Physical
+  power: 80
+  accuracy: 100
+  pp: 15
+  target: Unit
+  projectile: true
+
+AirSlash:
+  type: Flying
+  category: Special
+  power: 75
+  accuracy: 95
+  pp: 15
+  target: Unit
+  flags: [Slicing, Wind]
+  projectile: true
+
+XScissor:
+  type: Bug
+  category: Physical
+  power: 80
+  accuracy: 100
+  pp: 15
+  target: Unit
+  flags: [Contact, Slicing]

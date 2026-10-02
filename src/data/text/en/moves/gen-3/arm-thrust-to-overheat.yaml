@@ -1,0 +1,72 @@
+ArmThrust:
+  name: Arm Thrust
+  description: Strikes 2 to 5 times.
+Camouflage:
+  name: Camouflage
+  description: The user takes the type of the ground underfoot.
+TailGlow:
+  name: Tail Glow
+  description: Raises the user's Special Attack 3 stages.
+LusterPurge:
+  name: Luster Purge
+  description: 50% to drop the target's Special Defense a stage.
+MistBall:
+  name: Mist Ball
+  description: 50% to drop the target's Special Attack a stage.
+FeatherDance:
+  name: Feather Dance
+  description: Drops the target's Attack 2 stages.
+TeeterDance:
+  name: Teeter Dance
+  description: Confuses everything else on the field, its own side included.
+BlazeKick:
+  name: Blaze Kick
+  description: Crits more readily. 10% to burn.
+MudSport:
+  name: Mud Sport
+  description: For 10 seconds Electric moves hit for 1/2.
+IceBall:
+  name: Ice Ball
+  description: Rolls 5 times over, each pass twice the power of the last. Defense Curl doubles it again.
+NeedleArm:
+  name: Needle Arm
+  description: 30% to flinch.
+SlackOff:
+  name: Slack Off
+  description: Heals the user 1/2 its HP.
+HyperVoice:
+  name: Hyper Voice
+  description: Hits everything opposite. It is a sound.
+PoisonFang:
+  name: Poison Fang
+  description: 50% to badly poison.
+CrushClaw:
+  name: Crush Claw
+  description: 50% to drop the target's Defense a stage.
+BlastBurn:
+  name: Blast Burn
+  description: The user has to recharge for 2 seconds afterwards.
+HydroCannon:
+  name: Hydro Cannon
+  description: The user has to recharge for 2 seconds afterwards.
+MeteorMash:
+  name: Meteor Mash
+  description: 20% to raise the user's Attack a stage.
+Astonish:
+  name: Astonish
+  description: 30% to flinch.
+WeatherBall:
+  name: Weather Ball
+  description: In sun, rain, sandstorm, hail or snow it hits for 2x and takes the weather's type.
+Aromatherapy:
+  name: Aromatherapy
+  description: Cures burns, poison, paralysis, sleep and freezing across the user's whole party.
+FakeTears:
+  name: Fake Tears
+  description: Drops the target's Special Defense 2 stages.
+AirCutter:
+  name: Air Cutter
+  description: Hits everything opposite. Crits more readily.
+Overheat:
+  name: Overheat
+  description: Drops the user's Special Attack 2 stages after it lands.

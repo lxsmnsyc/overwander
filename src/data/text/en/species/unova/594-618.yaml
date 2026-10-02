@@ -1,0 +1,37 @@
+Alomomola:
+  Alomomola: { name: Alomomola, category: Caring Pokemon }
+Joltik:
+  Joltik: { name: Joltik, category: Attaching Pokemon }
+  Galvantula: { name: Galvantula, category: EleSpider Pokemon }
+Ferroseed:
+  Ferroseed: { name: Ferroseed, category: Thorn Seed Pokemon }
+  Ferrothorn: { name: Ferrothorn, category: Thorn Pod Pokemon }
+Klink:
+  Klink: { name: Klink, category: Gear Pokemon }
+  Klang: { name: Klang, category: Gear Pokemon }
+  Klinklang: { name: Klinklang, category: Gear Pokemon }
+Tynamo:
+  Tynamo: { name: Tynamo, category: EleFish Pokemon }
+  Eelektrik: { name: Eelektrik, category: EleFish Pokemon }
+  Eelektross: { name: Eelektross, category: EleFish Pokemon }
+Elgyem:
+  Elgyem: { name: Elgyem, category: Cerebral Pokemon }
+  Beheeyem: { name: Beheeyem, category: Cerebral Pokemon }
+Litwick:
+  Litwick: { name: Litwick, category: Candle Pokemon }
+  Lampent: { name: Lampent, category: Lamp Pokemon }
+  Chandelure: { name: Chandelure, category: Luring Pokemon }
+Axew:
+  Axew: { name: Axew, category: Tusk Pokemon }
+  Fraxure: { name: Fraxure, category: Axe Jaw Pokemon }
+  Haxorus: { name: Haxorus, category: Axe Jaw Pokemon }
+Cubchoo:
+  Cubchoo: { name: Cubchoo, category: Chill Pokemon }
+  Beartic: { name: Beartic, category: Freezing Pokemon }
+Cryogonal:
+  Cryogonal: { name: Cryogonal, category: Crystallizing Pokemon }
+Shelmet:
+  Shelmet: { name: Shelmet, category: Snail Pokemon }
+  Accelgor: { name: Accelgor, category: Shell Out Pokemon }
+Stunfisk:
+  Stunfisk: { name: Stunfisk, category: Trap Pokemon }

@@ -1,0 +1,69 @@
+Chespin:
+  Chespin: { name: Chespin, category: Spiny Nut Pokemon }
+  Quilladin: { name: Quilladin, category: Spiny Armor Pokemon }
+  Chesnaught: { name: Chesnaught, category: Spiny Armor Pokemon }
+Fennekin:
+  Fennekin: { name: Fennekin, category: Fox Pokemon }
+  Braixen: { name: Braixen, category: Fox Pokemon }
+  Delphox: { name: Delphox, category: Fox Pokemon }
+Froakie:
+  Froakie: { name: Froakie, category: Bubble Frog Pokemon }
+  Frogadier: { name: Frogadier, category: Bubble Frog Pokemon }
+  Greninja: { name: Greninja, category: Ninja Pokemon }
+  GreninjaAsh: { name: Ash-Greninja, category: Ninja Pokemon }
+Bunnelby:
+  Bunnelby: { name: Bunnelby, category: Digging Pokemon }
+  Diggersby: { name: Diggersby, category: Digging Pokemon }
+Fletchling:
+  Fletchling: { name: Fletchling, category: Tiny Robin Pokemon }
+  Fletchinder: { name: Fletchinder, category: Ember Pokemon }
+  Talonflame: { name: Talonflame, category: Scorching Pokemon }
+Scatterbug:
+  Scatterbug: { name: Scatterbug, category: Scatterdust Pokemon }
+  Spewpa: { name: Spewpa, category: Scatterdust Pokemon }
+  Vivillon: { name: Vivillon, category: Scale Pokemon }
+  VivillonIcySnow: { name: Icy Snow Vivillon, category: Scale Pokemon }
+  VivillonPolar: { name: Polar Vivillon, category: Scale Pokemon }
+  VivillonTundra: { name: Tundra Vivillon, category: Scale Pokemon }
+  VivillonContinental: { name: Continental Vivillon, category: Scale Pokemon }
+  VivillonGarden: { name: Garden Vivillon, category: Scale Pokemon }
+  VivillonElegant: { name: Elegant Vivillon, category: Scale Pokemon }
+  VivillonModern: { name: Modern Vivillon, category: Scale Pokemon }
+  VivillonMarine: { name: Marine Vivillon, category: Scale Pokemon }
+  VivillonArchipelago: { name: Archipelago Vivillon, category: Scale Pokemon }
+  VivillonHighPlains: { name: High Plains Vivillon, category: Scale Pokemon }
+  VivillonSandstorm: { name: Sandstorm Vivillon, category: Scale Pokemon }
+  VivillonRiver: { name: River Vivillon, category: Scale Pokemon }
+  VivillonMonsoon: { name: Monsoon Vivillon, category: Scale Pokemon }
+  VivillonSavannah: { name: Savannah Vivillon, category: Scale Pokemon }
+  VivillonSun: { name: Sun Vivillon, category: Scale Pokemon }
+  VivillonOcean: { name: Ocean Vivillon, category: Scale Pokemon }
+  VivillonJungle: { name: Jungle Vivillon, category: Scale Pokemon }
+  VivillonFancy: { name: Fancy Vivillon, category: Scale Pokemon }
+  VivillonPokeBall: { name: Poke Ball Vivillon, category: Scale Pokemon }
+Litleo:
+  Litleo: { name: Litleo, category: Lion Cub Pokemon }
+  Pyroar: { name: Pyroar, category: Royal Pokemon }
+Flabebe:
+  Flabebe: { name: Flabebe, category: Single Bloom Pokemon }
+  Floette: { name: Floette, category: Single Bloom Pokemon }
+  Florges: { name: Florges, category: Garden Pokemon }
+  FlabebeYellow: { name: Yellow Flabebe, category: Single Bloom Pokemon }
+  FloetteYellow: { name: Yellow Floette, category: Single Bloom Pokemon }
+  FlorgesYellow: { name: Yellow Florges, category: Garden Pokemon }
+  FlabebeOrange: { name: Orange Flabebe, category: Single Bloom Pokemon }
+  FloetteOrange: { name: Orange Floette, category: Single Bloom Pokemon }
+  FlorgesOrange: { name: Orange Florges, category: Garden Pokemon }
+  FlabebeBlue: { name: Blue Flabebe, category: Single Bloom Pokemon }
+  FloetteBlue: { name: Blue Floette, category: Single Bloom Pokemon }
+  FlorgesBlue: { name: Blue Florges, category: Garden Pokemon }
+  FlabebeWhite: { name: White Flabebe, category: Single Bloom Pokemon }
+  FloetteWhite: { name: White Floette, category: Single Bloom Pokemon }
+  FlorgesWhite: { name: White Florges, category: Garden Pokemon }
+  FloetteEternal: { name: Eternal Floette, category: Single Bloom Pokemon }
+Skiddo:
+  Skiddo: { name: Skiddo, category: Mount Pokemon }
+  Gogoat: { name: Gogoat, category: Mount Pokemon }
+Pancham:
+  Pancham: { name: Pancham, category: Playful Pokemon }
+  Pangoro: { name: Pangoro, category: Daunting Pokemon }

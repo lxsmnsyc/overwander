@@ -1,0 +1,38 @@
+# From Roost to Hammer Arm: the opening of Sinnoh's list, where the
+# support moves rewrite what the ground and the sky are worth
+
+Roost:
+  type: Flying
+  category: Status
+  pp: 5
+  target: None
+
+Gravity:
+  type: Psychic
+  category: Status
+  pp: 5
+  target: None
+
+MiracleEye:
+  type: Psychic
+  category: Status
+  pp: 40
+  target: Unit
+
+WakeUpSlap:
+  type: Fighting
+  category: Physical
+  power: 70
+  accuracy: 100
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+HammerArm:
+  type: Fighting
+  category: Physical
+  power: 100
+  accuracy: 90
+  pp: 10
+  target: Unit
+  flags: [Contact]

@@ -1,0 +1,137 @@
+# From Switcheroo to Mirror Shot: the last of Sinnoh's third stretch,
+# the quick hits and the three fangs
+
+Switcheroo:
+  type: Dark
+  category: Status
+  accuracy: 100
+  pp: 10
+  target: Unit
+
+GigaImpact:
+  type: Normal
+  category: Physical
+  power: 150
+  accuracy: 90
+  pp: 5
+  target: Unit
+  flags: [Contact]
+
+NastyPlot:
+  type: Dark
+  category: Status
+  pp: 20
+  target: None
+
+BulletPunch:
+  type: Steel
+  category: Physical
+  power: 40
+  accuracy: 100
+  priority: 1
+  pp: 30
+  target: Unit
+  flags: [Contact]
+
+Avalanche:
+  type: Ice
+  category: Physical
+  power: 60
+  accuracy: 100
+  priority: -4
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+IceShard:
+  type: Ice
+  category: Physical
+  power: 40
+  accuracy: 100
+  priority: 1
+  pp: 30
+  target: Unit
+  projectile: true
+
+ShadowClaw:
+  type: Ghost
+  category: Physical
+  power: 70
+  accuracy: 100
+  pp: 15
+  target: Unit
+  flags: [Contact, Slicing]
+
+ThunderFang:
+  type: Electric
+  category: Physical
+  power: 65
+  accuracy: 95
+  pp: 15
+  target: Unit
+  flags: [Contact, Bite]
+
+IceFang:
+  type: Ice
+  category: Physical
+  power: 65
+  accuracy: 95
+  pp: 15
+  target: Unit
+  flags: [Contact, Bite]
+
+FireFang:
+  type: Fire
+  category: Physical
+  power: 65
+  accuracy: 95
+  pp: 15
+  target: Unit
+  flags: [Contact, Bite]
+
+ShadowSneak:
+  type: Ghost
+  category: Physical
+  power: 40
+  accuracy: 100
+  priority: 1
+  pp: 30
+  target: Unit
+  flags: [Contact]
+
+MudBomb:
+  type: Ground
+  category: Special
+  power: 65
+  accuracy: 85
+  pp: 10
+  target: Unit
+  projectile: true
+
+PsychoCut:
+  type: Psychic
+  category: Physical
+  power: 70
+  accuracy: 100
+  pp: 20
+  target: Unit
+  flags: [Slicing]
+  projectile: true
+
+ZenHeadbutt:
+  type: Psychic
+  category: Physical
+  power: 80
+  accuracy: 90
+  pp: 15
+  target: Unit
+  flags: [Contact]
+
+MirrorShot:
+  type: Steel
+  category: Special
+  power: 65
+  accuracy: 85
+  pp: 10
+  target: Unit
+  projectile: true

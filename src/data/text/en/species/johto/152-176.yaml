@@ -1,0 +1,31 @@
+Chikorita:
+  Chikorita: { name: Chikorita, category: Leaf Pokemon }
+  Bayleef: { name: Bayleef, category: Leaf Pokemon }
+  Meganium: { name: Meganium, category: Herb Pokemon }
+Cyndaquil:
+  Cyndaquil: { name: Cyndaquil, category: Fire Mouse Pokemon }
+  Quilava: { name: Quilava, category: Volcano Pokemon }
+  Typhlosion: { name: Typhlosion, category: Volcano Pokemon }
+Totodile:
+  Totodile: { name: Totodile, category: Big Jaw Pokemon }
+  Croconaw: { name: Croconaw, category: Big Jaw Pokemon }
+  Feraligatr: { name: Feraligatr, category: Big Jaw Pokemon }
+Sentret:
+  Sentret: { name: Sentret, category: Scout Pokemon }
+  Furret: { name: Furret, category: Long Body Pokemon }
+Hoothoot:
+  Hoothoot: { name: Hoothoot, category: Owl Pokemon }
+  Noctowl: { name: Noctowl, category: Owl Pokemon }
+Ledyba:
+  Ledyba: { name: Ledyba, category: Five Star Pokemon }
+  Ledian: { name: Ledian, category: Five Star Pokemon }
+Spinarak:
+  Spinarak: { name: Spinarak, category: String Spit Pokemon }
+  Ariados: { name: Ariados, category: Long Leg Pokemon }
+Chinchou:
+  Chinchou: { name: Chinchou, category: Angler Pokemon }
+  Lanturn: { name: Lanturn, category: Light Pokemon }
+Togepi:
+  Togepi: { name: Togepi, category: Spike Ball Pokemon }
+  Togetic: { name: Togetic, category: Happiness Pokemon }
+  Togekiss: { name: Togekiss, category: Jubilee Pokemon }

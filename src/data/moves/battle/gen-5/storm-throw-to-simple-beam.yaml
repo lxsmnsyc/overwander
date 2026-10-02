@@ -1,0 +1,117 @@
+# From Storm Throw to Simple Beam: the moves that read weight, Speed
+# and the target's own Attack
+
+StormThrow:
+  type: Fighting
+  category: Physical
+  power: 60
+  accuracy: 100
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+FlameBurst:
+  type: Fire
+  category: Special
+  power: 70
+  accuracy: 100
+  pp: 15
+  target: Unit
+  projectile: true
+
+SludgeWave:
+  type: Poison
+  category: Special
+  power: 95
+  accuracy: 100
+  pp: 10
+  target: None
+  affects: [Unit, Own, Enemy]
+
+QuiverDance:
+  type: Bug
+  category: Status
+  pp: 20
+  target: None
+  flags: [Wind]
+
+HeavySlam:
+  type: Steel
+  category: Physical
+  accuracy: 100
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+Synchronoise:
+  type: Psychic
+  category: Special
+  power: 120
+  accuracy: 100
+  pp: 10
+  target: None
+  affects: [Unit, Own, Enemy]
+
+ElectroBall:
+  type: Electric
+  category: Special
+  accuracy: 100
+  pp: 10
+  target: Unit
+  projectile: true
+
+Soak:
+  type: Water
+  category: Status
+  accuracy: 100
+  pp: 20
+  target: Unit
+
+FlameCharge:
+  type: Fire
+  category: Physical
+  power: 50
+  accuracy: 100
+  pp: 20
+  target: Unit
+  flags: [Contact]
+
+Coil:
+  type: Poison
+  category: Status
+  pp: 20
+  target: None
+
+LowSweep:
+  type: Fighting
+  category: Physical
+  power: 65
+  accuracy: 100
+  pp: 20
+  target: Unit
+  flags: [Contact]
+
+AcidSpray:
+  type: Poison
+  category: Special
+  power: 40
+  accuracy: 100
+  pp: 20
+  target: Unit
+  projectile: true
+
+FoulPlay:
+  type: Dark
+  category: Physical
+  power: 95
+  accuracy: 100
+  pp: 15
+  target: Unit
+  flags: [Contact]
+
+SimpleBeam:
+  type: Normal
+  category: Status
+  accuracy: 100
+  pp: 15
+  target: Unit

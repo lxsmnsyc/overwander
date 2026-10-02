@@ -300,7 +300,7 @@ export function batchSkybox(
 }
 
 /** `from` and `to` mixed by `amount`, as the `#rrggbb` the canvas takes */
-function mixHex(from: string, to: string, amount: number): string {
+export function mixHex(from: string, to: string, amount: number): string {
   const a = Number.parseInt(from.slice(1), 16);
   const b = Number.parseInt(to.slice(1), 16);
   let mixed = '#';

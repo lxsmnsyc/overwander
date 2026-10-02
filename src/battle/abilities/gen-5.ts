@@ -85,29 +85,41 @@ const setupAbilities = [
       }
     }
 
+    function dress(source: Unit): void {
+      if (!source.hasAbility(Abilities.Illusion)) {
+        return;
+      }
+
+      // The last one on the team, which is the mainline's rule and
+      // is the one a player is least likely to be watching
+      let worn: Unit | undefined;
+
+      for (const mate of source.team.units) {
+        if (mate !== source && mate.alive) {
+          worn = mate;
+        }
+      }
+
+      if (worn == null) {
+        return;
+      }
+      acting.add(source);
+      source.setAppearance(worn.species);
+    }
+
     return new MergedLifecycle([
+      // Dressed before the field is first drawn: the units only walk on
+      // when the fight starts, and a countdown spent showing the real
+      // face would give the act away before it began
+      battle.on(BattleEvents.Initialize, EventPriority.Post, () => {
+        for (const unit of battle.units()) {
+          dress(unit);
+        }
+      }),
       battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
-        const source = event.source;
-
-        if (event.reactivation || !source.hasAbility(Abilities.Illusion)) {
-          return;
+        if (!event.reactivation) {
+          dress(event.source);
         }
-
-        // The last one on the team, which is the mainline's rule and
-        // is the one a player is least likely to be watching
-        let worn: Unit | undefined;
-
-        for (const mate of source.team.units) {
-          if (mate !== source && mate.alive) {
-            worn = mate;
-          }
-        }
-
-        if (worn == null) {
-          return;
-        }
-        acting.add(source);
-        source.setAppearance(worn.species);
       }),
 
       battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {

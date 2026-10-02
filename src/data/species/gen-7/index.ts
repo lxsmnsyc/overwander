@@ -44,6 +44,8 @@ import registerAlolanGrimerSpecies from './alolan-grimer';
 import registerAlolanExeggutorSpecies from './alolan-exeggutor';
 import registerAlolanMarowakSpecies from './alolan-marowak';
 import registerTapuSpecies from './tapus';
+import registerCosmogSpecies from './cosmog';
+import registerNecrozmaSpecies from './necrozma';
 
 /** Alola, as far as it is written */
 export default function registerGen7Species(): void {
@@ -93,4 +95,6 @@ export default function registerGen7Species(): void {
   registerAlolanExeggutorSpecies();
   registerAlolanMarowakSpecies();
   registerTapuSpecies();
+  registerCosmogSpecies();
+  registerNecrozmaSpecies();
 }

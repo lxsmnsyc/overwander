@@ -2405,6 +2405,18 @@ export default function registerSignatureAbilities(): void {
     description: "Its team's Special Defense counts 1.25x while Misty Terrain is on the field.",
   });
 
+  // The light trio, on one axis: the pair burns brightest whole, and
+  // the prism that lost its light burns brightest broken
+  registerSignature(Families.Cosmog, Abilities.Zenith, {
+    name: 'Zenith',
+    description: 'Its damaging moves hit up to 1.3x the fuller its HP, and 1x near none.',
+  });
+
+  registerSignature(Families.Necrozma, Abilities.Nadir, {
+    name: 'Nadir',
+    description: 'Its damaging moves hit up to 1.3x the lower its HP, and 1x at full.',
+  });
+
   // The Alolan lines whose every stage is regional carry their own
   registerFormSignature([Species.RattataAlola, Species.RaticateAlola], Abilities.RichDiet, {
     name: 'Rich Diet',

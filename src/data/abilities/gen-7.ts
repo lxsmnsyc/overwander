@@ -19,6 +19,24 @@ export default function registerGen7Abilities(): void {
     name: 'Grassy Surge',
     description: 'Lays Grassy Terrain as it takes the field.',
   });
+  // The light trio. The first three are older abilities that nothing
+  // which ignores abilities can see past
+  registerAbility(Abilities.FullMetalBody, {
+    name: 'Full Metal Body',
+    description: 'Refuses every stat drop from anybody else, even through Mold Breaker.',
+  });
+  registerAbility(Abilities.ShadowShield, {
+    name: 'Shadow Shield',
+    description: 'Halves any blow that lands on it at full health, even through Mold Breaker.',
+  });
+  registerAbility(Abilities.PrismArmor, {
+    name: 'Prism Armor',
+    description: 'Super-effective blows on it hit 1/4 softer, even through Mold Breaker.',
+  });
+  registerAbility(Abilities.Neuroforce, {
+    name: 'Neuroforce',
+    description: 'Its super-effective moves hit 1.25x.',
+  });
   // Rowlet
   registerAbility(Abilities.LongReach, {
     name: 'Long Reach',

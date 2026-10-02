@@ -5,7 +5,7 @@ import type Battle from '../../core';
 import { BattleEvents, MoveTargetType } from '../../events';
 import { type Lifecycle, MergedLifecycle } from '../../lifecycle';
 import type Unit from '../../unit';
-import PROTECTED_ABILITIES from '../protected';
+import PROTECTED_ABILITIES, { MOLD_PROOF_ABILITIES } from '../protected';
 import { createAbility } from './create';
 
 /**
@@ -33,7 +33,11 @@ export function createPierceWindows(
   battle: Battle,
   pierces: (source: Unit, move: Moves) => boolean,
 ): Lifecycle[] {
-  const EXEMPT = new Set<Abilities>([Abilities.NeutralizingGas, ...PROTECTED_ABILITIES]);
+  const EXEMPT = new Set<Abilities>([
+    Abilities.NeutralizingGas,
+    ...PROTECTED_ABILITIES,
+    ...MOLD_PROOF_ABILITIES,
+  ]);
 
   /**
    * Nested per-defender window counts for in-flight holder attacks

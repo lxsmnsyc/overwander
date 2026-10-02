@@ -472,6 +472,9 @@ export const EVERY_LAIR: Lairs[] = [
   Lairs.RuinsOfLife,
   Lairs.RuinsOfAbundance,
   Lairs.RuinsOfHope,
+  Lairs.AltarOfTheSunne,
+  Lairs.AltarOfTheMoone,
+  Lairs.TenCaratHill,
 ];
 
 /**
@@ -567,6 +570,8 @@ const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
     Lairs.RockPeakRuins,
     Lairs.TrialChamber,
     Lairs.TerminusCave,
+    Lairs.AltarOfTheSunne,
+    Lairs.AltarOfTheMoone,
   ],
   [Biome.Mountain]: [
     Lairs.MtEmber,
@@ -577,6 +582,7 @@ const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
     Lairs.TrialChamber,
     Lairs.FrostCavern,
     Lairs.TerminusCave,
+    Lairs.TenCaratHill,
   ],
   [Biome.AlpineTundra]: [Lairs.CeruleanCave, Lairs.SpearPillar],
   [Biome.Volcano]: [Lairs.MtEmber, Lairs.TerraCave, Lairs.StarkMountain],

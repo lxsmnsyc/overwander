@@ -3,7 +3,7 @@ import { asCaughtPokemon, isAuctionableCatch } from '../auth/caught-record';
 import { getMaxHealth, rescaleHealth } from '../auth/health';
 import { ITEM_STACKS } from '../auth/stacks';
 import type { Species } from '../data/ids/species';
-import { FUSION_HUSK, FUSION_ITEM, getFusionPartner, isFusedSpecies } from '../data/species/fusion';
+import { getFusionHusk, getFusionItem, getFusionPartner } from '../data/species/fusion';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
 import { readCaughtIn, updateCaughtIn } from './caught-io';
 import { tx } from './db';
@@ -13,14 +13,14 @@ import { asNumber } from './read';
 import { readStackIn } from './stacks';
 
 /**
- * Folding a dragon into a Kyurem, and pulling it back out, written
- * with admin credentials.
+ * Folding a partner into its husk (a dragon into a Kyurem, the sun or
+ * the moon into a Necrozma), and pulling it back out, written with
+ * admin credentials.
  *
  * Both halves survive a fusion: the husk takes the new shape and the
  * dragon is kept, hidden and pointed at what it went into, which is
- * what lets the pair come apart again. The splicers are held rather
- * than spent, so the only thing checked about them is that the player
- * has a pair
+ * what lets the pair come apart again. The item is held rather than
+ * spent, so the only thing checked about it is that the player has one
  */
 
 /** A catch nobody may fold in or take apart: busy, fragile or spoken for */
@@ -42,9 +42,9 @@ async function isBuddy(
 }
 
 /**
- * Fold a dragon into a Kyurem. Resolves the shape it now stands in,
+ * Fold a partner into its husk. Resolves the shape it now stands in,
  * or null when the fusion is refused: either half is not the player's
- * or is busy, the shapes do not match, or there are no splicers
+ * or is busy, the shapes do not match, or the item is missing
  */
 export async function fuseCatch(
   uid: string,
@@ -53,8 +53,10 @@ export async function fuseCatch(
   into: Species,
 ): Promise<Species | null> {
   const wanted = getFusionPartner(into);
+  const wantedHusk = getFusionHusk(into);
+  const item = getFusionItem(into);
 
-  if (wanted == null || catchId === partnerId) {
+  if (wanted == null || wantedHusk == null || item == null || catchId === partnerId) {
     return null;
   }
   const fused = await tx(async (transaction) => {
@@ -76,7 +78,7 @@ export async function fuseCatch(
 
     // A husk that is already carrying one, or a dragon that is
     // already inside something, is not free to be joined
-    if (husk !== FUSION_HUSK || dragon !== wanted || caught.fusedWith != null) {
+    if (husk !== wantedHusk || dragon !== wanted || caught.fusedWith != null) {
       return null;
     }
     if (partner.hidden === true) {
@@ -85,7 +87,7 @@ export async function fuseCatch(
     if (await isBuddy(transaction, uid, partnerId)) {
       return null;
     }
-    if ((await readStackIn(transaction, ITEM_STACKS, uid, FUSION_ITEM)) < 1) {
+    if ((await readStackIn(transaction, ITEM_STACKS, uid, item)) < 1) {
       return null;
     }
     const record = asCaughtPokemon(caught);
@@ -115,7 +117,7 @@ export async function fuseCatch(
 }
 
 /**
- * Pull the dragon back out of a fused Kyurem. Resolves the shape the
+ * Pull the partner back out of a fused shape. Resolves the shape the
  * husk falls back to, or null when it is refused
  */
 export async function unfuseCatch(uid: string, catchId: string): Promise<Species | null> {
@@ -128,10 +130,13 @@ export async function unfuseCatch(uid: string, catchId: string): Promise<Species
     // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
     const species = asNumber(caught.species) as Species;
 
-    if (!isFusedSpecies(species)) {
+    const husk = getFusionHusk(species);
+    const item = getFusionItem(species);
+
+    if (husk == null || item == null) {
       return null;
     }
-    if ((await readStackIn(transaction, ITEM_STACKS, uid, FUSION_ITEM)) < 1) {
+    if ((await readStackIn(transaction, ITEM_STACKS, uid, item)) < 1) {
       return null;
     }
     const partnerId: unknown = caught.fusedWith;
@@ -147,18 +152,18 @@ export async function unfuseCatch(uid: string, catchId: string): Promise<Species
       return null;
     }
     const record = asCaughtPokemon(caught);
-    const whole = getMaxHealth({ ...record, species: FUSION_HUSK });
+    const whole = getMaxHealth({ ...record, species: husk });
 
     await updateCaughtIn(transaction, catchId, {
-      species: FUSION_HUSK,
+      species: husk,
       canEvolve: false,
-      auctionable: isAuctionableCatch({ ...record, species: FUSION_HUSK }),
+      auctionable: isAuctionableCatch({ ...record, species: husk }),
       health: rescaleHealth(record.health, getMaxHealth(record), whole),
       maxHealth: whole,
       fusedWith: null,
     });
     await updateCaughtIn(transaction, partnerId, { hidden: false });
 
-    return FUSION_HUSK;
+    return husk;
   });
 }

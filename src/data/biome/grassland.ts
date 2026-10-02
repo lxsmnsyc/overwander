@@ -162,6 +162,8 @@ export default function registerGrasslandSpawns(): void {
       ],
       prized: [
         ...UNOWN_SPAWNS,
+        { species: Species.Cosmog, weight: PRIZED_WEIGHT },
+        { species: Species.Cosmoem, weight: PRIZED_WEIGHT },
         { species: Species.Togepi, weight: PRIZED_WEIGHT },
         { species: Species.Tyrogue, weight: PRIZED_WEIGHT },
         { species: Species.Elekid, weight: PRIZED_WEIGHT },
@@ -340,6 +342,8 @@ export default function registerGrasslandSpawns(): void {
       ],
       prized: [
         ...UNOWN_SPAWNS,
+        { species: Species.Cosmog, weight: PRIZED_WEIGHT },
+        { species: Species.Cosmoem, weight: PRIZED_WEIGHT },
         { species: Species.Togepi, weight: PRIZED_WEIGHT },
         { species: Species.Tyrogue, weight: PRIZED_WEIGHT },
         { species: Species.Elekid, weight: PRIZED_WEIGHT },
@@ -441,6 +445,8 @@ export default function registerGrasslandSpawns(): void {
       ],
       prized: [
         ...UNOWN_SPAWNS,
+        { species: Species.Cosmog, weight: PRIZED_WEIGHT },
+        { species: Species.Cosmoem, weight: PRIZED_WEIGHT },
         { species: Species.Igglybuff, weight: PRIZED_WEIGHT },
         { species: Species.Elekid, weight: PRIZED_WEIGHT },
         { species: Species.Wynaut, weight: PRIZED_WEIGHT },
@@ -544,6 +550,8 @@ export default function registerGrasslandSpawns(): void {
       ],
       prized: [
         ...UNOWN_SPAWNS,
+        { species: Species.Cosmog, weight: PRIZED_WEIGHT },
+        { species: Species.Cosmoem, weight: PRIZED_WEIGHT },
         { species: Species.Igglybuff, weight: PRIZED_WEIGHT },
         { species: Species.Elekid, weight: PRIZED_WEIGHT },
         { species: Species.Wynaut, weight: PRIZED_WEIGHT },

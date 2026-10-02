@@ -248,6 +248,33 @@ const enum Lairs {
   UltraRuin = 70,
   /** The grove on Poni the last two came through into */
   PoniGrove = 71,
+  // Galar's and Hisui's, reserved the same way as Alola's
+  /** The misty forest the two heroes of Galar sleep in */
+  SlumberingWeald = 72,
+  /** The plant under Hammerlocke that fed on the Darkest Day's power */
+  EnergyPlant = 73,
+  /** The tower of the dark style, which is the Single Strike Urshifu's */
+  TowerOfDarkness = 74,
+  /** The tower of the water style, which is the Rapid Strike Urshifu's */
+  TowerOfWaters = 75,
+  /** The jungle the Zarude keep, where one of them raised a child */
+  ForestOfOkoya = 76,
+  /** The ruin on the Crown Tundra that wakes one of two Regis */
+  SplitDecisionRuins = 77,
+  /** The shrine the king of bountiful harvests was once worshipped at */
+  CrownShrine = 78,
+  /** The slope the Iceroot Carrot grows on, which draws Glastrier */
+  SnowslideSlope = 79,
+  /** The cemetery the Shaderoot Carrot grows in, which draws Spectrier */
+  OldCemetery = 80,
+  /** The frozen land the Galarian Articuno roams */
+  CrownTundra = 81,
+  /** The open country the Galarian Zapdos runs across */
+  WildArea = 82,
+  /** The island the Galarian Moltres circles */
+  IsleOfArmor = 83,
+  /** The bog in Hisui's Crimson Mirelands the fourth force of nature blows over */
+  ScarletBog = 84,
 }
 
 export const LAIR_NAMES: Record<Lairs, string> = {
@@ -323,6 +350,19 @@ export const LAIR_NAMES: Record<Lairs, string> = {
   [Lairs.UltraForest]: 'Ultra Forest',
   [Lairs.UltraRuin]: 'Ultra Ruin',
   [Lairs.PoniGrove]: 'Poni Grove',
+  [Lairs.SlumberingWeald]: 'Slumbering Weald',
+  [Lairs.EnergyPlant]: 'Energy Plant',
+  [Lairs.TowerOfDarkness]: 'Tower of Darkness',
+  [Lairs.TowerOfWaters]: 'Tower of Waters',
+  [Lairs.ForestOfOkoya]: 'Forest of Okoya',
+  [Lairs.SplitDecisionRuins]: 'Split-Decision Ruins',
+  [Lairs.CrownShrine]: 'Crown Shrine',
+  [Lairs.SnowslideSlope]: 'Snowslide Slope',
+  [Lairs.OldCemetery]: 'Old Cemetery',
+  [Lairs.CrownTundra]: 'Crown Tundra',
+  [Lairs.WildArea]: 'Wild Area',
+  [Lairs.IsleOfArmor]: 'Isle of Armor',
+  [Lairs.ScarletBog]: 'Scarlet Bog',
 };
 
 /**
@@ -405,6 +445,19 @@ export const LAIR_SPECIES: Record<Lairs, Species[]> = {
   [Lairs.UltraForest]: [Species.Kartana],
   [Lairs.UltraRuin]: [Species.Guzzlord],
   [Lairs.PoniGrove]: [Species.Stakataka, Species.Blacephalon],
+  [Lairs.SlumberingWeald]: [Species.Zacian, Species.Zamazenta],
+  [Lairs.EnergyPlant]: [Species.Eternatus],
+  [Lairs.TowerOfDarkness]: [Species.Urshifu],
+  [Lairs.TowerOfWaters]: [Species.UrshifuRapidStrike],
+  [Lairs.ForestOfOkoya]: [Species.Zarude],
+  [Lairs.SplitDecisionRuins]: [Species.Regieleki, Species.Regidrago],
+  [Lairs.CrownShrine]: [Species.Calyrex],
+  [Lairs.SnowslideSlope]: [Species.Glastrier],
+  [Lairs.OldCemetery]: [Species.Spectrier],
+  [Lairs.CrownTundra]: [Species.ArticunoGalar],
+  [Lairs.WildArea]: [Species.ZapdosGalar],
+  [Lairs.IsleOfArmor]: [Species.MoltresGalar],
+  [Lairs.ScarletBog]: [Species.Enamorus],
 };
 
 /**

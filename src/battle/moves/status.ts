@@ -5,6 +5,8 @@ import { Statuses, TeamStatuses } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
 import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
+import resolveMoveTargets from '../mechanics/move/targeting';
+import type Unit from '../unit';
 import { getStageMoveEffects } from './stage';
 
 export const STATUS_MOVES: { [key in Moves]?: Statuses } = {
@@ -352,7 +354,6 @@ function setupUnitStatusMoves(battle: Battle): void {
     if (
       !event.usable ||
       status == null ||
-      event.target.type !== MoveTargetType.Unit ||
       // The flattery moves raise a stat as well as muddling the head,
       // so whether they are worth casting is their own question
       FLATTERY_MOVES.has(event.move)
@@ -360,18 +361,34 @@ function setupUnitStatusMoves(battle: Battle): void {
       return;
     }
 
-    const target = event.target.unit;
+    const cause = { type: EffectType.Move, move: event.move, unit: event.source } as const;
+    const takes = (unit: Unit): boolean =>
+      unit.status[status] == null && !unit.checkStatusImmunity(status, cause);
 
-    if (
-      target.status[status] != null ||
-      target.checkStatusImmunity(status, {
-        type: EffectType.Move,
-        move: event.move,
-        unit: event.source,
-      })
-    ) {
-      event.usable = false;
+    if (event.target.type === MoveTargetType.Unit) {
+      event.usable = takes(event.target.unit);
+      return;
     }
+
+    // A move cast at nobody (Teeter Dance) is worth it while one foe
+    // it reaches would still take the status
+    const data = getMoveData(event.move);
+    for (const reached of resolveMoveTargets(
+      battle,
+      event.source,
+      event.target,
+      data.target,
+      data.affects,
+    )) {
+      if (
+        reached.type === MoveTargetType.Unit &&
+        reached.unit.team.alliance !== event.source.team.alliance &&
+        takes(reached.unit)
+      ) {
+        return;
+      }
+    }
+    event.usable = false;
   });
 
   battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {

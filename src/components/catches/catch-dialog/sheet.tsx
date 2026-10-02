@@ -1454,6 +1454,11 @@ export function CatchSheetBody(
         // back to afterwards
         isOpen={
           props.catchId != null &&
+          // Held shut until this catch's record is in, so a sheet never
+          // opens to say it is loading. The first read waits at the
+          // boundary above; a later catch keeps the last record
+          // standing, so the id is what says this one has arrived
+          props.detail.latest?.id === props.catchId &&
           teaching() == null &&
           bottle() == null &&
           naming() == null &&

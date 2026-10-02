@@ -51,6 +51,8 @@ export interface DuelsTabProps {
    * in one, and nothing while they are looking at the list
    */
   onTitle?: (title: string | null) => void;
+  /** Whether this player holds a seat in the open lobby */
+  onSeated?: (seated: boolean) => void;
 }
 
 /**
@@ -188,7 +190,14 @@ export default function DuelsTab(props: DuelsTabProps): JSX.Element {
           </>
         }
       >
-        {(id) => <DuelLobby user={props.user} duelId={id()} onTitle={props.onTitle} />}
+        {(id) => (
+          <DuelLobby
+            user={props.user}
+            duelId={id()}
+            onTitle={props.onTitle}
+            onSeated={props.onSeated}
+          />
+        )}
       </Show>
     </Panel>
   );

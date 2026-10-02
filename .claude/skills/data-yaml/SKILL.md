@@ -66,10 +66,12 @@ The numbers a fight reads off each move live apart from the move, in `src/data/b
 
 `src/data/biome/pools/<biome>.yaml` holds a biome's pools by surface (`land`, `water`, `ice`), then by time of day, then by rarity band, each band a map from species to weight, and the `cave-legends` met in the caves under it. `cave.yaml` and `town.yaml` hold the two shared pools under `pool:`.
 
-- **A band's order is the order a roll walks it.** Reordering lines changes which species a given roll lands on, so the world every player sees changes with it. A species is written once per band.
-- Two times that share a pool write it once and point at it: `day: *land-morning`.
+- **A weight is a share of every roll**, in hundredths of a percent: `2010` is 20.1%, and a pool adds up to about 10,000. Only the `prized`, `special` and `mythical` bands keep fixed odds (1/512, 1/4096, 1/4096); everything else is one draw by weight.
+- **Bands base to elusive are labels.** They decide how rare a species reads (candy, level, badge) and which rank a landmark draws from, not how often it is met. A species is filed in the band its line puts it in.
+- **A surface's pool is everything met on that surface.** Nothing is borrowed from another surface, so a water pool lists every species met on water.
+- Each band is written heaviest first, and a species is written once per band. Two times that share a pool write it once and point at it: `day: *land-morning`.
 - `prized` is the weight every prized species shares, and `Unown: forms` lays down each Unown form at weight 1.
-- The band odds, the fall-through and everything that reads a pool stay in `src/data/biome/__create.ts`.
+- `test/data/spawn-balance.test.ts` holds the pools to a few rules: no species is most of a pool, no evolution is met much more often than what it evolves from, and every drawn wild line can be met somewhere.
 
 ## Abilities
 

@@ -150,7 +150,7 @@ Noibat:
   Noibat:
     types: [Flying, Dragon]
     egg-groups: [Flying, Dragon]
-    biomes: [Woodland, TropicalRainforest]
+    biomes: [Woodland, TropicalRainforest, Ocean]
     active: [Evening, Night]
     evolves-into:
       - species: Noivern
@@ -159,7 +159,7 @@ Noibat:
   Noivern:
     types: [Flying, Dragon]
     egg-groups: [Flying, Dragon]
-    biomes: [Woodland, TropicalRainforest]
+    biomes: [Woodland, TropicalRainforest, Ocean]
     active: [Evening, Night]
     evolves-from: Noibat
 Xerneas:

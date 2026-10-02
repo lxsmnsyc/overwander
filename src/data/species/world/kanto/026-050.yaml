@@ -172,7 +172,7 @@ Zubat:
   Zubat:
     types: [Poison, Flying]
     egg-groups: [Flying]
-    biomes: [Mountain, MontaneForest, Badlands]
+    biomes: [Mountain, MontaneForest, Badlands, DeepOcean]
     active: [Evening, Night]
     evolves-into:
       - species: Golbat
@@ -181,7 +181,7 @@ Zubat:
   Golbat:
     types: [Poison, Flying]
     egg-groups: [Flying]
-    biomes: [Mountain, MontaneForest, Badlands]
+    biomes: [Mountain, MontaneForest, Badlands, DeepOcean]
     active: [Evening, Night]
     evolves-from: Zubat
     evolves-into:
@@ -190,7 +190,7 @@ Zubat:
   Crobat:
     types: [Poison, Flying]
     egg-groups: [Flying]
-    biomes: [Mountain, MontaneForest]
+    biomes: [Mountain, MontaneForest, DeepOcean]
     active: [Evening, Night]
     evolves-from: Golbat
 Oddish:

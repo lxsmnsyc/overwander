@@ -1,53 +1,63 @@
 # The Pikipek line is written but waits on sprites, since the
 # collection has drawn no Trumbeak and no finished Toucannon. Once it
-# does, mornings and days take Pikipek in base at 24, Trumbeak in
-# rare at 8 and Toucannon in elusive at 5
+# does, mornings and days take Pikipek in base, Trumbeak in rare and
+# Toucannon in elusive, each weighed like its neighbours there
 land:
   morning: &land-morning
     base:
-      Bounsweet: 22
-      Grubbin: 22
-      FlabebeOrange: 24
-      Scatterbug: 24
-      Bellsprout: 20
-      Treecko: 2
+      FlabebeOrange: 824
+      Scatterbug: 824
+      Bounsweet: 755
+      Grubbin: 755
+      Bellsprout: 687
+      Poliwag: 687
+      Lotad: 687
+      Treecko: 69
     uncommon:
-      MeowthAlola: 22
-      Stufful: 22
-      Fomantis: 22
-      Cutiefly: 24
-      Pancham: 24
-      Exeggcute: 20
-      Cherubi: 22
+      Corphish: 311
+      Cutiefly: 299
+      Pancham: 299
+      MeowthAlola: 274
+      Stufful: 274
+      Fomantis: 274
+      Cherubi: 274
+      Exeggcute: 249
+      Psyduck: 249
     rare:
-      Steenee: 8
-      Charjabug: 8
-      FloetteOrange: 8
-      Spewpa: 8
-      Weepinbell: 5
-      Grovyle: 1
+      Lombre: 236
+      Steenee: 189
+      Charjabug: 189
+      FloetteOrange: 189
+      Spewpa: 189
+      Weepinbell: 118
+      Poliwhirl: 118
+      Grovyle: 24
     scarce:
-      PersianAlola: 6
-      Bewear: 6
-      Lurantis: 6
-      Ribombee: 6
-      Pangoro: 6
-      Exeggutor: 10
-      Cherrim: 6
-      Lickilicky: 6
+      Exeggutor: 89
+      Golduck: 89
+      Crawdaunt: 71
+      PersianAlola: 54
+      Bewear: 54
+      Lurantis: 54
+      Ribombee: 54
+      Pangoro: 54
+      Cherrim: 54
+      Lickilicky: 54
     elusive:
-      Komala: 5
-      RaichuAlola: 4
-      Comfey: 5
-      Tsareena: 4
-      Vikavolt: 4
-      FlorgesOrange: 5
-      Vivillon: 5
-      Chatot: 6
-      Victreebel: 5
-      Sceptile: 2
-      Kecleon: 10
-      Tropius: 8
+      Kecleon: 43
+      Tropius: 34
+      Chatot: 26
+      Komala: 21
+      Comfey: 21
+      FlorgesOrange: 21
+      Vivillon: 21
+      Victreebel: 21
+      Politoed: 21
+      Ludicolo: 21
+      RaichuAlola: 17
+      Tsareena: 17
+      Vikavolt: 17
+      Sceptile: 9
     prized:
       Unown: forms
     special:
@@ -57,28 +67,33 @@ land:
   day: *land-morning
   evening:
     base:
-      Rowlet: 2
+      Poliwag: 4810
+      Rowlet: 481
     uncommon:
-      MeowthAlola: 22
-      RattataAlola: 22
-      Stufful: 22
-      Pancham: 24
-      Exeggcute: 20
-      Cherubi: 22
+      Corphish: 398
+      Pancham: 382
+      MeowthAlola: 350
+      RattataAlola: 350
+      Stufful: 350
+      Cherubi: 350
+      Exeggcute: 318
     rare:
-      Dartrix: 2
+      Poliwhirl: 894
+      Dartrix: 357
     scarce:
-      PersianAlola: 6
-      RaticateAlola: 6
-      Bewear: 6
-      Pangoro: 6
-      Exeggutor: 10
-      Cherrim: 6
-      Lickilicky: 6
+      Exeggutor: 116
+      Crawdaunt: 93
+      PersianAlola: 69
+      RaticateAlola: 69
+      Bewear: 69
+      Pangoro: 69
+      Cherrim: 69
+      Lickilicky: 69
     elusive:
-      Komala: 5
-      RaichuAlola: 4
-      Decidueye: 2
+      Komala: 98
+      Politoed: 98
+      RaichuAlola: 78
+      Decidueye: 39
     prized:
       Unown: forms
     special:
@@ -87,26 +102,31 @@ land:
       TapuKoko: 10
   night:
     base:
-      Rowlet: 2
+      Poliwag: 4807
+      Rowlet: 481
     uncommon:
-      MeowthAlola: 22
-      RattataAlola: 22
-      Stufful: 22
-      Exeggcute: 20
-      Cherubi: 22
+      Corphish: 470
+      MeowthAlola: 414
+      RattataAlola: 414
+      Stufful: 414
+      Cherubi: 414
+      Exeggcute: 376
     rare:
-      Dartrix: 2
+      Poliwhirl: 893
+      Dartrix: 357
     scarce:
-      PersianAlola: 6
-      RaticateAlola: 6
-      Bewear: 6
-      Exeggutor: 10
-      Cherrim: 6
-      Lickilicky: 6
+      Exeggutor: 130
+      Crawdaunt: 104
+      PersianAlola: 78
+      RaticateAlola: 78
+      Bewear: 78
+      Cherrim: 78
+      Lickilicky: 78
     elusive:
-      Komala: 5
-      RaichuAlola: 4
-      Decidueye: 2
+      Komala: 98
+      Politoed: 98
+      RaichuAlola: 78
+      Decidueye: 39
     prized:
       Unown: forms
     special:
@@ -117,40 +137,49 @@ land:
 water:
   morning: &water-morning
     base:
-      Poliwag: 20
-      Lotad: 20
+      Poliwag: 2651
+      Lotad: 2651
     uncommon:
-      Magikarp: 30
-      Goldeen: 20
-      Corphish: 25
-      Psyduck: 20
+      Magikarp: 791
+      Corphish: 660
+      Goldeen: 527
+      Psyduck: 527
     rare:
-      Poliwhirl: 5
-      Lombre: 10
+      Lombre: 835
+      Poliwhirl: 418
     scarce:
-      Seaking: 10
-      Crawdaunt: 8
-      Golduck: 10
-      Gyarados: 4
+      Seaking: 196
+      Golduck: 196
+      Crawdaunt: 156
+      Gyarados: 78
     elusive:
-      Politoed: 5
-      Ludicolo: 5
+      Tropius: 68
+      Chatot: 51
+      Politoed: 42
+      Ludicolo: 42
+      Vivillon: 42
+      RaichuAlola: 34
+      Vikavolt: 34
     special: {}
   day: *water-morning
   evening: &water-evening
     base:
-      Poliwag: 20
+      Poliwag: 4819
+      Rowlet: 482
     uncommon:
-      Magikarp: 30
-      Goldeen: 20
-      Corphish: 25
+      Magikarp: 1002
+      Corphish: 835
+      Goldeen: 669
     rare:
-      Poliwhirl: 5
+      Poliwhirl: 895
+      Dartrix: 358
     scarce:
-      Seaking: 10
-      Crawdaunt: 8
-      Gyarados: 4
+      Seaking: 285
+      Crawdaunt: 228
+      Gyarados: 114
     elusive:
-      Politoed: 5
+      Politoed: 142
+      RaichuAlola: 114
+      Decidueye: 57
     special: {}
   night: *water-evening

@@ -1,25 +1,25 @@
 land:
   morning: &land-morning
     base:
-      Scatterbug: 24
+      Scatterbug: 2994
     uncommon:
-      Krabby: 20
-      Corphish: 25
-      Wingull: 25
-      Shellos: 25
-      Slowpoke: 20
+      Corphish: 810
+      Wingull: 810
+      Shellos: 810
+      Krabby: 649
+      Slowpoke: 649
     rare:
-      Spewpa: 8
+      Spewpa: 1864
     scarce:
-      Kingler: 10
-      Crawdaunt: 8
-      Pelipper: 10
-      Gastrodon: 10
-      Slowbro: 10
+      Kingler: 194
+      Pelipper: 194
+      Gastrodon: 194
+      Slowbro: 194
+      Crawdaunt: 155
     elusive:
-      Vivillon: 5
-      Shuckle: 5
-      Slowking: 5
+      Vivillon: 155
+      Shuckle: 155
+      Slowking: 155
     prized:
       Unown: forms
     special: {}
@@ -27,16 +27,16 @@ land:
   evening: &land-evening
     base: {}
     uncommon:
-      Krabby: 20
-      Corphish: 25
-      Shellos: 25
+      Corphish: 3229
+      Shellos: 3229
+      Krabby: 2583
     rare: {}
     scarce:
-      Kingler: 10
-      Crawdaunt: 8
-      Gastrodon: 10
+      Kingler: 223
+      Gastrodon: 223
+      Crawdaunt: 179
     elusive:
-      Shuckle: 5
+      Shuckle: 313
     prized:
       Unown: forms
     special: {}
@@ -45,61 +45,79 @@ land:
 water:
   morning: &water-morning
     base:
-      Horsea: 20
+      Horsea: 2995
     uncommon:
-      Mareanie: 22
-      Clauncher: 24
-      Skrelp: 24
-      Carvanha: 20
-      Clamperl: 20
-      Remoraid: 20
-      Finneon: 20
+      Corphish: 352
+      Wingull: 352
+      Shellos: 352
+      Clauncher: 337
+      Skrelp: 337
+      Mareanie: 310
+      Carvanha: 282
+      Clamperl: 282
+      Remoraid: 282
+      Finneon: 282
+      Krabby: 282
+      Slowpoke: 282
     rare:
-      Seadra: 10
+      Seadra: 1862
     scarce:
-      Toxapex: 6
-      Clawitzer: 6
-      Dragalge: 6
-      Sharpedo: 6
-      Octillery: 5
-      Lumineon: 6
+      Kingler: 112
+      Pelipper: 112
+      Gastrodon: 112
+      Slowbro: 112
+      Crawdaunt: 89
+      Toxapex: 67
+      Clawitzer: 67
+      Dragalge: 67
+      Sharpedo: 67
+      Lumineon: 67
+      Octillery: 57
     elusive:
-      Bruxish: 5
-      Wishiwashi: 5
-      Alomomola: 7
-      Mantine: 5
-      Kingdra: 5
-      Corsola: 20
-      Luvdisc: 15
+      Corsola: 130
+      Luvdisc: 97
+      Alomomola: 45
+      Bruxish: 33
+      Wishiwashi: 33
+      Mantine: 33
+      Kingdra: 33
+      Vivillon: 33
+      Slowking: 33
     prized:
       Mantyke: prized
     special: {}
   day: *water-morning
   evening: &water-evening
     base:
-      Horsea: 20
+      Horsea: 2994
     uncommon:
-      Mareanie: 22
-      Carvanha: 20
-      Clamperl: 20
-      Staryu: 20
-      Remoraid: 20
-      Finneon: 20
+      Corphish: 486
+      Shellos: 486
+      Mareanie: 426
+      Carvanha: 388
+      Clamperl: 388
+      Staryu: 388
+      Remoraid: 388
+      Finneon: 388
+      Krabby: 388
     rare:
-      Seadra: 10
+      Seadra: 1863
     scarce:
-      Toxapex: 6
-      Sharpedo: 6
-      Starmie: 10
-      Octillery: 10
-      Lumineon: 6
+      Starmie: 142
+      Octillery: 142
+      Kingler: 142
+      Gastrodon: 142
+      Crawdaunt: 113
+      Toxapex: 85
+      Sharpedo: 85
+      Lumineon: 85
     elusive:
-      Bruxish: 5
-      Wishiwashi: 5
-      Alomomola: 7
-      Mantine: 5
-      Kingdra: 5
-      Corsola: 20
+      Corsola: 198
+      Alomomola: 70
+      Bruxish: 49
+      Wishiwashi: 49
+      Mantine: 49
+      Kingdra: 49
     prized:
       Mantyke: prized
     special: {}

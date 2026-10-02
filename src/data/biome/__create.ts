@@ -256,7 +256,13 @@ export function getSpawnPool(
     return known;
   }
 
-  const pool = standingOn(getBiomeRoster(biome, time), surface);
+  // A surface with a pool of its own is met as written: its weights are
+  // shares of that surface's rolls, so nothing from another surface is
+  // mixed in. One without (a frozen pond, a lake inland) is met from the
+  // land pool, which lists everything that lives in the biome, cut to
+  // what can stand on it
+  const own = poolsOn(surface).get(biome)?.[time] ?? SPAWN_POOLS.get(biome)?.[time];
+  const pool = standingOn(own ?? getBiomeRoster(biome, time), surface);
 
   SURFACE_CUTS.set(key, pool);
   return pool;
@@ -722,16 +728,10 @@ export function listTownHabitats(species: Species): { time: TimeOfDay; rarity: S
 }
 
 /**
- * The five bands a line's stages are dealt into, halving as they go
- * and ending at 1/32. Half the ladder is spent on them, so the walk
- * turns up the whole of a line rather than the bottom of it over and
- * over: a grown pokemon is met twice as often as the old band had it
+ * The odds of the three bands a roll only reaches on their own: the
+ * prized finds and the legends. Everything else in a pool shares what
+ * is left, each by its own weight
  */
-export const UNCOMMON_SPAWN_ODDS = 1 / 4;
-export const RARE_SPAWN_ODDS = 1 / 8;
-export const SCARCE_SPAWN_ODDS = 1 / 16;
-export const ELUSIVE_SPAWN_ODDS = 1 / 32;
-
 export const PRIZED_SPAWN_ODDS = 1 / 512;
 export const SPECIAL_SPAWN_ODDS = 1 / 4096;
 
@@ -1168,62 +1168,108 @@ export function pickFromEntries(entries: SpawnEntry[], random: () => number): Sp
 }
 
 /**
- * The bands a spawn roll walks, richest first, with the width of each
- * one's slice of the draw. They are widths rather than running
- * totals, so a band added between two others takes its share out of
- * **base** and leaves every other band as wide as it was
+ * The bands a roll reaches on fixed odds, richest first. Each takes
+ * its slice only when it holds something; an empty one leaves its
+ * slice with the rest of the pool
  */
-/** The bands a roll only reaches on its own odds, never by falling into them */
-const LEGEND_BANDS = new Set<keyof SpawnRarityGroups>(['special', 'mythical']);
-
-const SPAWN_BANDS: [band: keyof SpawnRarityGroups, odds: number][] = [
+const FIXED_BANDS: [band: keyof SpawnRarityGroups, odds: number][] = [
   ['mythical', MYTHICAL_SPAWN_ODDS],
   ['special', SPECIAL_SPAWN_ODDS],
   ['prized', PRIZED_SPAWN_ODDS],
-  ['elusive', ELUSIVE_SPAWN_ODDS],
-  ['scarce', SCARCE_SPAWN_ODDS],
-  ['rare', RARE_SPAWN_ODDS],
-  ['uncommon', UNCOMMON_SPAWN_ODDS],
 ];
 
 /**
- * Roll one spawn from a period's rarity groups: the first draw picks
- * the band (1/4096 mythical, 1/4096 special, 1/512 prized, 1/32
- * elusive, 1/16 scarce, 1/8 rare, 1/4 uncommon, base otherwise), the
- * second draw picks within the band by weight.
+ * The bands that share the rest of a roll. Their weights are written
+ * as the share of every roll each species gets, so a band says how
+ * rare a species reads (its candy, its level, its badge) and the
+ * weight alone says how often it is met
+ */
+const WEIGHED_BANDS: (keyof SpawnRarityGroups)[] = [
+  'base',
+  'uncommon',
+  'rare',
+  'scarce',
+  'elusive',
+];
+
+/** Everything the weighed bands hold, in one list */
+function weighed(groups: SpawnRarityGroups): SpawnEntry[] {
+  const entries: SpawnEntry[] = [];
+
+  for (const band of WEIGHED_BANDS) {
+    entries.push(...spawnBand(groups, band));
+  }
+  return entries;
+}
+
+/**
+ * How often each species in a pool is what a roll stages, as a share
+ * of every roll, the way `pickSpawn` deals them
+ */
+export function spawnOdds(groups: SpawnRarityGroups): Map<Species, number> {
+  const odds = new Map<Species, number>();
+  const deal = (entries: SpawnEntry[], share: number): void => {
+    let total = 0;
+
+    for (const entry of entries) {
+      total += entry.weight;
+    }
+    for (const entry of entries) {
+      if (total > 0) {
+        odds.set(entry.species, (odds.get(entry.species) ?? 0) + (share * entry.weight) / total);
+      }
+    }
+  };
+  let rest = 1;
+
+  for (const [band, share] of FIXED_BANDS) {
+    const tier = spawnBand(groups, band);
+
+    if (tier.length > 0) {
+      deal(tier, share);
+      rest -= share;
+    }
+  }
+
+  const common = weighed(groups);
+
+  if (common.length > 0) {
+    deal(common, rest);
+  } else {
+    deal(spawnBand(groups, 'prized'), rest);
+  }
+  return odds;
+}
+
+/**
+ * Roll one spawn from a period's rarity groups. The first draw decides
+ * whether the roll lands in one of the fixed bands (1/4096 mythical,
+ * 1/4096 special, 1/512 prized, each only when it holds something);
+ * otherwise the second draw picks from everything else by weight.
  *
- * A roll landing in a band this biome keeps nothing in falls to the
- * next band down rather than to base, which is what lets most biomes
- * leave the prized band out altogether and still roll their rares.
- * An empty base band falls the other way, up to the richest band that
- * holds anything: a coast whose every pokemon is one stage from
- * finished still has pokemon on it. That climb stops short of the
- * legends, so a pool holding only a legend stays empty rather than
- * staging it on every roll
+ * A pool with nothing but fixed bands falls back on its prized finds,
+ * never its legends, so a pool holding only a legend stays empty
+ * rather than staging it on every roll
  */
 export function pickSpawn(groups: SpawnRarityGroups, random: () => number): Species | null {
   const roll = random();
   let edge = 0;
 
-  for (const [band, odds] of SPAWN_BANDS) {
-    edge += odds;
-
+  for (const [band, odds] of FIXED_BANDS) {
     const tier = spawnBand(groups, band);
 
-    if (roll < edge && tier.length > 0) {
-      return pickFromEntries(tier, random);
+    if (tier.length > 0) {
+      edge += odds;
+      if (roll < edge) {
+        return pickFromEntries(tier, random);
+      }
     }
   }
-  if (groups.base.length > 0) {
-    return pickFromEntries(groups.base, random);
-  }
 
-  for (const [band] of [...SPAWN_BANDS].reverse()) {
-    const tier = spawnBand(groups, band);
+  const common = weighed(groups);
 
-    if (tier.length > 0 && !LEGEND_BANDS.has(band)) {
-      return pickFromEntries(tier, random);
-    }
+  if (common.length > 0) {
+    return pickFromEntries(common, random);
   }
-  return null;
+  return pickFromEntries(spawnBand(groups, 'prized'), random);
 }

@@ -25,15 +25,20 @@ import {
  * are not a biome's own.
  *
  * A biome's file holds a pool per surface it has (`land`, `water`,
- * `ice`), each a pool per time of day, each a set of rarity bands from
- * species to weight, and the `cave-legends` met in the caves under it.
- * Two times that see the same pool write it once and point at it
- * (`day: *land-morning`).
+ * `ice`), each a pool per time of day, and the `cave-legends` met in
+ * the caves under it. A surface's pool is everything met on that
+ * surface; nothing is borrowed from another one. Two times that see
+ * the same pool write it once and point at it (`day: *land-morning`).
  *
- * The order a band is written in is the order a roll walks it, so
- * moving a line moves which species a given roll lands on. `prized`
- * is the weight every prized species shares, and `Unown: forms` puts
- * down each Unown form at weight 1
+ * The prized, special and mythical bands take fixed odds (1/512,
+ * 1/4096 and 1/4096). Everything else is one draw by weight, the
+ * weights written in hundredths of a percent of all rolls, so 2010 is
+ * 20.1% and a pool's weights add up to about 10,000. The other bands
+ * (base to elusive) only say how rare a species reads: its candy, its
+ * level, its badge. Each band is written heaviest first.
+ *
+ * `prized` is the weight every prized species shares, and
+ * `Unown: forms` puts down each Unown form at weight 1
  */
 
 const NAME = v.string();

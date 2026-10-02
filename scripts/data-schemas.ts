@@ -338,7 +338,7 @@ const SPAWN_BAND: Schema = described(
       ],
     },
   },
-  'Species and weight, in the order a roll walks them',
+  'Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first',
 );
 
 const SPAWN_GROUPS: Schema = part(

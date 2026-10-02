@@ -1,39 +1,39 @@
 land:
   morning:
     base:
-      Scatterbug: 24
-      Machop: 20
-      Swinub: 25
+      Swinub: 1903
+      Scatterbug: 1826
+      Machop: 1523
     uncommon:
-      VulpixAlola: 22
-      SandshrewAlola: 22
-      Bergmite: 24
-      Snorunt: 22
-      Bronzor: 20
-      Snover: 20
+      Bergmite: 459
+      VulpixAlola: 420
+      SandshrewAlola: 420
+      Snorunt: 420
+      Bronzor: 382
+      Snover: 382
     rare:
-      Spewpa: 8
-      Machoke: 5
-      Piloswine: 5
+      Spewpa: 552
+      Machoke: 345
+      Piloswine: 345
     scarce:
-      NinetalesAlola: 6
-      SandslashAlola: 6
-      Crabominable: 6
-      Avalugg: 6
-      Glalie: 6
-      Bronzong: 6
-      Abomasnow: 6
-      Froslass: 6
-      Glaceon: 6
+      NinetalesAlola: 77
+      SandslashAlola: 77
+      Avalugg: 77
+      Glalie: 77
+      Bronzong: 77
+      Abomasnow: 77
+      Froslass: 77
+      Glaceon: 77
+      Crabominable: 69
     elusive:
-      Drampa: 5
-      Minior: 5
-      Vivillon: 5
-      Machamp: 5
-      Delibird: 5
-      Skarmory: 5
-      Lucario: 5
-      Mamoswine: 5
+      Drampa: 39
+      Minior: 39
+      Vivillon: 39
+      Machamp: 39
+      Delibird: 39
+      Skarmory: 39
+      Lucario: 39
+      Mamoswine: 39
     prized:
       Unown: forms
       Riolu: prized
@@ -44,42 +44,42 @@ land:
       Arceus: 10
   day:
     base:
-      Scatterbug: 24
-      Bagon: 3
-      Machop: 20
-      Swinub: 25
+      Swinub: 1824
+      Scatterbug: 1751
+      Machop: 1459
+      Bagon: 219
     uncommon:
-      VulpixAlola: 22
-      SandshrewAlola: 22
-      Bergmite: 24
-      Snorunt: 22
-      Bronzor: 20
-      Snover: 20
+      Bergmite: 459
+      VulpixAlola: 420
+      SandshrewAlola: 420
+      Snorunt: 420
+      Bronzor: 382
+      Snover: 382
     rare:
-      Spewpa: 8
-      Shelgon: 1
-      Machoke: 5
-      Piloswine: 5
+      Spewpa: 522
+      Machoke: 327
+      Piloswine: 327
+      Shelgon: 66
     scarce:
-      NinetalesAlola: 6
-      SandslashAlola: 6
-      Crabominable: 6
-      Avalugg: 6
-      Glalie: 6
-      Bronzong: 6
-      Abomasnow: 6
-      Froslass: 6
-      Glaceon: 6
+      NinetalesAlola: 77
+      SandslashAlola: 77
+      Avalugg: 77
+      Glalie: 77
+      Bronzong: 77
+      Abomasnow: 77
+      Froslass: 77
+      Glaceon: 77
+      Crabominable: 69
     elusive:
-      Drampa: 5
-      Minior: 5
-      Vivillon: 5
-      Salamence: 2
-      Machamp: 5
-      Delibird: 5
-      Skarmory: 5
-      Lucario: 5
-      Mamoswine: 5
+      Drampa: 37
+      Minior: 37
+      Vivillon: 37
+      Machamp: 37
+      Delibird: 37
+      Skarmory: 37
+      Lucario: 37
+      Mamoswine: 37
+      Salamence: 15
     prized:
       Unown: forms
       Riolu: prized
@@ -90,38 +90,38 @@ land:
       Arceus: 10
   evening:
     base:
-      Bagon: 3
-      Swinub: 25
+      Swinub: 4696
+      Bagon: 564
     uncommon:
-      VulpixAlola: 22
-      SandshrewAlola: 22
-      Bergmite: 24
-      Snorunt: 22
-      Sneasel: 5
-      Bronzor: 20
-      Snover: 20
+      Bergmite: 442
+      VulpixAlola: 405
+      SandshrewAlola: 405
+      Snorunt: 405
+      Bronzor: 368
+      Snover: 368
+      Sneasel: 92
     rare:
-      Shelgon: 1
-      Piloswine: 5
+      Piloswine: 1036
+      Shelgon: 207
     scarce:
-      NinetalesAlola: 6
-      SandslashAlola: 6
-      Crabominable: 6
-      Avalugg: 6
-      Glalie: 6
-      Bronzong: 6
-      Abomasnow: 6
-      Froslass: 6
-      Weavile: 6
-      Glaceon: 6
+      NinetalesAlola: 69
+      SandslashAlola: 69
+      Avalugg: 69
+      Glalie: 69
+      Bronzong: 69
+      Abomasnow: 69
+      Froslass: 69
+      Weavile: 69
+      Glaceon: 69
+      Crabominable: 63
     elusive:
-      Drampa: 5
-      Minior: 5
-      Cryogonal: 4
-      Salamence: 2
-      Delibird: 5
-      Absol: 5
-      Mamoswine: 5
+      Drampa: 50
+      Minior: 50
+      Delibird: 50
+      Absol: 50
+      Mamoswine: 50
+      Cryogonal: 40
+      Salamence: 20
     prized:
       Unown: forms
     special:
@@ -131,35 +131,35 @@ land:
       Arceus: 10
   night:
     base:
-      Swinub: 25
+      Swinub: 2965
     uncommon:
-      VulpixAlola: 22
-      SandshrewAlola: 22
-      Bergmite: 24
-      Snorunt: 22
-      Sneasel: 5
-      Bronzor: 20
-      Snover: 20
+      Bergmite: 656
+      VulpixAlola: 601
+      SandshrewAlola: 601
+      Snorunt: 601
+      Bronzor: 547
+      Snover: 547
+      Sneasel: 137
     rare:
-      Piloswine: 5
+      Piloswine: 1847
     scarce:
-      NinetalesAlola: 6
-      SandslashAlola: 6
-      Crabominable: 6
-      Avalugg: 6
-      Glalie: 6
-      Bronzong: 6
-      Abomasnow: 6
-      Froslass: 6
-      Weavile: 6
-      Glaceon: 6
+      NinetalesAlola: 102
+      SandslashAlola: 102
+      Avalugg: 102
+      Glalie: 102
+      Bronzong: 102
+      Abomasnow: 102
+      Froslass: 102
+      Weavile: 102
+      Glaceon: 102
+      Crabominable: 93
     elusive:
-      Drampa: 5
-      Minior: 5
-      Cryogonal: 4
-      Delibird: 5
-      Absol: 5
-      Mamoswine: 5
+      Drampa: 80
+      Minior: 80
+      Delibird: 80
+      Absol: 80
+      Mamoswine: 80
+      Cryogonal: 64
     prized:
       Unown: forms
     special:
@@ -170,41 +170,144 @@ land:
       Arceus: 10
 
 ice:
-  morning: &ice-morning
+  morning:
     base:
-      Swinub: 25
+      Swinub: 1921
+      Scatterbug: 1844
+      Machop: 1537
     uncommon:
-      Snorunt: 22
+      Bergmite: 463
+      Snorunt: 424
+      VulpixAlola: 424
+      SandshrewAlola: 424
+      Bronzor: 386
+      Snover: 386
     rare:
-      Piloswine: 5
+      Spewpa: 557
+      Piloswine: 348
+      Machoke: 348
     scarce:
-      Glalie: 6
-      Froslass: 6
-      Glaceon: 6
+      Glalie: 78
+      Froslass: 78
+      Glaceon: 78
+      NinetalesAlola: 78
+      SandslashAlola: 78
+      Avalugg: 78
+      Bronzong: 78
+      Abomasnow: 78
     elusive:
-      Mamoswine: 5
-      Delibird: 5
+      Mamoswine: 39
+      Delibird: 39
+      Drampa: 39
+      Minior: 39
+      Vivillon: 39
+      Machamp: 39
+      Skarmory: 39
+      Lucario: 39
     special: {}
-  day: *ice-morning
-  evening: &ice-evening
+  day:
     base:
-      Swinub: 25
+      Swinub: 1841
+      Scatterbug: 1768
+      Machop: 1473
+      Bagon: 221
     uncommon:
-      Snorunt: 22
-      Sneasel: 5
+      Bergmite: 463
+      Snorunt: 424
+      VulpixAlola: 424
+      SandshrewAlola: 424
+      Bronzor: 386
+      Snover: 386
     rare:
-      Piloswine: 5
+      Spewpa: 527
+      Piloswine: 330
+      Machoke: 330
+      Shelgon: 66
     scarce:
-      Glalie: 6
-      Froslass: 6
-      Glaceon: 6
-      Weavile: 6
+      Glalie: 78
+      Froslass: 78
+      Glaceon: 78
+      NinetalesAlola: 78
+      SandslashAlola: 78
+      Avalugg: 78
+      Bronzong: 78
+      Abomasnow: 78
     elusive:
-      Cryogonal: 4
-      Mamoswine: 5
-      Delibird: 5
+      Mamoswine: 37
+      Delibird: 37
+      Drampa: 37
+      Minior: 37
+      Vivillon: 37
+      Machamp: 37
+      Skarmory: 37
+      Lucario: 37
+      Salamence: 15
     special: {}
-  night: *ice-evening
+  evening:
+    base:
+      Swinub: 4737
+      Bagon: 569
+    uncommon:
+      Bergmite: 445
+      Snorunt: 408
+      VulpixAlola: 408
+      SandshrewAlola: 408
+      Bronzor: 371
+      Snover: 371
+      Sneasel: 93
+    rare:
+      Piloswine: 1045
+      Shelgon: 209
+    scarce:
+      Glalie: 69
+      Froslass: 69
+      Glaceon: 69
+      Weavile: 69
+      NinetalesAlola: 69
+      SandslashAlola: 69
+      Avalugg: 69
+      Bronzong: 69
+      Abomasnow: 69
+    elusive:
+      Mamoswine: 50
+      Delibird: 50
+      Drampa: 50
+      Minior: 50
+      Absol: 50
+      Cryogonal: 40
+      Salamence: 20
+    special: {}
+  night:
+    base:
+      Swinub: 3000
+    uncommon:
+      Bergmite: 664
+      Snorunt: 608
+      VulpixAlola: 608
+      SandshrewAlola: 608
+      Bronzor: 553
+      Snover: 553
+      Sneasel: 139
+    rare:
+      Piloswine: 1869
+    scarce:
+      Glalie: 103
+      Froslass: 103
+      Glaceon: 103
+      Weavile: 103
+      NinetalesAlola: 103
+      SandslashAlola: 103
+      Avalugg: 103
+      Bronzong: 103
+      Abomasnow: 103
+    elusive:
+      Mamoswine: 81
+      Delibird: 81
+      Drampa: 81
+      Minior: 81
+      Absol: 81
+      Cryogonal: 64
+    special: {}
 
 # The legendaries met wild in the caves under it
 cave-legends: { Mewtwo: 10 }

@@ -3,7 +3,7 @@ Wingull:
     types: [Water, Flying]
     egg-groups: [Water1, Flying]
     habitat: Amphibious
-    biomes: [Beach, RockyCoast, CoralReef, KelpForest]
+    biomes: [Beach, RockyCoast, CoralReef, KelpForest, Ocean, DeepOcean]
     active: [Morning, Day]
     evolves-into:
       - species: Pelipper
@@ -13,7 +13,7 @@ Wingull:
     types: [Water, Flying]
     egg-groups: [Water1, Flying]
     habitat: Amphibious
-    biomes: [Beach, RockyCoast, CoralReef, KelpForest]
+    biomes: [Beach, RockyCoast, CoralReef, KelpForest, DeepOcean, Ocean]
     active: [Morning, Day]
     evolves-from: Wingull
 Ralts:

@@ -35,7 +35,8 @@ Psyduck:
     types: [Water]
     egg-groups: [Water1, Field]
     habitat: Amphibious
-    biomes: [Swamp, Beach, TropicalSeasonalForest, Savanna, Grassland, Mountain, Woodland]
+    biomes:
+      [Swamp, Beach, TropicalSeasonalForest, Savanna, Grassland, Mountain, Woodland, DeepOcean]
     active: [Morning, Day]
     evolves-into:
       - species: Golduck
@@ -45,7 +46,8 @@ Psyduck:
     types: [Water]
     egg-groups: [Water1, Field]
     habitat: Amphibious
-    biomes: [Swamp, Beach, TropicalSeasonalForest, Savanna, Grassland, Mountain, Woodland]
+    biomes:
+      [Swamp, Beach, TropicalSeasonalForest, Savanna, Grassland, Mountain, Woodland, DeepOcean]
     active: [Morning, Day]
     evolves-from: Psyduck
 Mankey:

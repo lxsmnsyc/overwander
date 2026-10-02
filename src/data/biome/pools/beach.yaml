@@ -1,48 +1,47 @@
 land:
   morning: &land-morning
     base:
-      Popplio: 2
-      Scatterbug: 24
-      Squirtle: 2
+      Scatterbug: 4533
+      Popplio: 378
+      Squirtle: 378
     uncommon:
-      GrimerAlola: 22
-      Sandygast: 22
-      Wimpod: 22
-      Crabrawler: 24
-      Binacle: 24
-      Psyduck: 20
-      Slowpoke: 20
-      Krabby: 20
-      Wingull: 25
-      Shellos: 25
-      BurmySandy: 20
-      Buizel: 25
+      Wingull: 255
+      Shellos: 255
+      Buizel: 255
+      Binacle: 245
+      GrimerAlola: 224
+      Sandygast: 224
+      Wimpod: 224
+      Psyduck: 204
+      Slowpoke: 204
+      Krabby: 204
+      BurmySandy: 204
     rare:
-      Brionne: 2
-      Spewpa: 8
-      Wartortle: 1
+      Spewpa: 909
+      Brionne: 227
+      Wartortle: 114
     scarce:
-      ExeggutorAlola: 6
-      MukAlola: 6
-      Palossand: 6
-      Golisopod: 6
-      Barbaracle: 6
-      Golduck: 10
-      Slowbro: 10
-      Kingler: 10
-      Vaporeon: 5
-      Slowking: 5
-      Pelipper: 10
-      Gastrodon: 10
-      WormadamSandy: 4
-      Floatzel: 8
+      Golduck: 61
+      Slowbro: 61
+      Kingler: 61
+      Pelipper: 61
+      Gastrodon: 61
+      Floatzel: 49
+      ExeggutorAlola: 37
+      MukAlola: 37
+      Palossand: 37
+      Golisopod: 37
+      Barbaracle: 37
+      Vaporeon: 31
+      Slowking: 31
+      WormadamSandy: 25
     elusive:
-      RaichuAlola: 4
-      Pyukumuku: 5
-      OricorioPau: 5
-      Primarina: 2
-      Vivillon: 5
-      Blastoise: 2
+      Pyukumuku: 68
+      OricorioPau: 68
+      Vivillon: 68
+      RaichuAlola: 54
+      Primarina: 27
+      Blastoise: 27
     prized:
       Unown: forms
       TypeNull: prized
@@ -56,30 +55,29 @@ land:
   evening: &land-evening
     base: {}
     uncommon:
-      GrimerAlola: 22
-      Sandygast: 22
-      Wimpod: 22
-      Crabrawler: 24
-      Inkay: 24
-      Krabby: 20
-      Shellos: 25
-      BurmySandy: 20
-      Buizel: 25
+      Shellos: 1255
+      Buizel: 1255
+      Inkay: 1205
+      GrimerAlola: 1105
+      Sandygast: 1105
+      Wimpod: 1105
+      Krabby: 1004
+      BurmySandy: 1004
     rare: {}
     scarce:
-      ExeggutorAlola: 6
-      MukAlola: 6
-      Palossand: 6
-      Golisopod: 6
-      Malamar: 6
-      Kingler: 10
-      Vaporeon: 5
-      Gastrodon: 10
-      WormadamSandy: 4
-      Floatzel: 8
+      Kingler: 93
+      Gastrodon: 93
+      Floatzel: 75
+      ExeggutorAlola: 56
+      MukAlola: 56
+      Palossand: 56
+      Golisopod: 56
+      Malamar: 56
+      Vaporeon: 47
+      WormadamSandy: 37
     elusive:
-      RaichuAlola: 4
-      Pyukumuku: 5
+      Pyukumuku: 174
+      RaichuAlola: 139
     prized:
       Unown: forms
       TypeNull: prized
@@ -94,61 +92,89 @@ land:
 water:
   morning: &water-morning
     base:
-      Popplio: 2
-      Horsea: 10
+      Horsea: 3786
+      Popplio: 757
+      Squirtle: 757
     uncommon:
-      Mareanie: 22
-      Shellder: 20
-      Krabby: 20
-      Tentacool: 20
-      Shellos: 25
-      Wingull: 25
-      Goldeen: 20
+      Shellos: 219
+      Wingull: 219
+      Buizel: 219
+      Crabrawler: 209
+      Binacle: 209
+      Mareanie: 192
+      Wimpod: 192
+      Shellder: 174
+      Krabby: 174
+      Tentacool: 174
+      Goldeen: 174
+      Psyduck: 174
+      Slowpoke: 174
     rare:
-      Brionne: 2
-      Seadra: 5
+      Seadra: 783
+      Brionne: 314
+      Wartortle: 156
     scarce:
-      Toxapex: 6
-      Cloyster: 10
-      Kingler: 10
-      Tentacruel: 8
-      Gastrodon: 10
-      Pelipper: 10
-      Seaking: 10
+      Cloyster: 55
+      Kingler: 55
+      Gastrodon: 55
+      Pelipper: 55
+      Seaking: 55
+      Golduck: 55
+      Slowbro: 55
+      Tentacruel: 44
+      Floatzel: 44
+      Toxapex: 33
+      Golisopod: 33
+      Barbaracle: 33
+      Vaporeon: 27
+      Slowking: 27
     elusive:
-      Primarina: 2
-      Corsola: 20
-      Kingdra: 2
-      Luvdisc: 15
+      Corsola: 104
+      Luvdisc: 78
+      Pyukumuku: 26
+      OricorioPau: 26
+      Vivillon: 26
+      RaichuAlola: 21
+      Primarina: 10
+      Kingdra: 10
+      Blastoise: 10
     special:
       Kyogre: 10
   day: *water-morning
   evening: &water-evening
     base:
-      Horsea: 10
+      Horsea: 2999
     uncommon:
-      Mareanie: 22
-      Inkay: 24
-      Shellder: 20
-      Krabby: 20
-      Tentacool: 20
-      Shellos: 25
-      Staryu: 20
-      Goldeen: 20
+      Shellos: 385
+      Buizel: 385
+      Inkay: 370
+      Crabrawler: 370
+      Mareanie: 339
+      Wimpod: 339
+      Shellder: 309
+      Krabby: 309
+      Tentacool: 309
+      Staryu: 309
+      Goldeen: 309
     rare:
-      Seadra: 5
+      Seadra: 1867
     scarce:
-      Toxapex: 6
-      Malamar: 6
-      Cloyster: 10
-      Kingler: 10
-      Tentacruel: 8
-      Gastrodon: 10
-      Starmie: 10
-      Seaking: 10
+      Cloyster: 105
+      Kingler: 105
+      Gastrodon: 105
+      Starmie: 105
+      Seaking: 105
+      Tentacruel: 84
+      Floatzel: 84
+      Toxapex: 63
+      Malamar: 63
+      Golisopod: 63
+      Vaporeon: 52
     elusive:
-      Corsola: 20
-      Kingdra: 2
+      Corsola: 302
+      Pyukumuku: 75
+      RaichuAlola: 60
+      Kingdra: 30
     special:
       Kyogre: 10
   night: *water-evening

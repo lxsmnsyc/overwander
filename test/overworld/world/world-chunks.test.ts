@@ -69,6 +69,7 @@ import deriveEncounter, {
 import Landmark from '../../../src/data/overworld/landmark';
 import Phenomenon, { BIOME_PHENOMENA } from '../../../src/data/overworld/phenomenon';
 import World from '../../../src/overworld/world';
+import { isTotemSpecies } from '../../../src/data/overworld/totems';
 import findChunk from './helpers';
 
 // Spawn rolls read the species registry and the biome spawn pools;
@@ -973,7 +974,8 @@ describe('world', () => {
         const shadow = snapshot.getShadowLairs();
 
         for (const [cell, landmark] of chunk.getLandmarkCells()) {
-          if (landmark !== Landmark.LegendaryLair) {
+          // A Totem's window is its own kind, covered on its own below
+          if (landmark !== Landmark.LegendaryLair || snapshot.isTotemLair(cell)) {
             continue;
           }
           // Never both, and never an empty legendary lair
@@ -992,6 +994,43 @@ describe('world', () => {
     expect(fallen).toBeGreaterThan(0);
     // ...and it holds a shadow raid rather than standing empty
     expect(raided).toBeGreaterThan(0);
+  });
+
+  it('stands a lair as a Totem some windows, and as nothing else then', () => {
+    const world = new World('overworld');
+    const lairs: ReturnType<World['getChunk']>[] = [];
+
+    for (let x = -16; x < 16; x++) {
+      for (let y = -16; y < 16; y++) {
+        const chunk = world.getChunk(x, y);
+        const kinds = new Set(chunk.getLandmarkCells().values());
+
+        if (kinds.has(Landmark.LegendaryLair) || kinds.has(Landmark.ShadowLair)) {
+          lairs.push(chunk);
+        }
+      }
+    }
+
+    let totems = 0;
+
+    for (let window = 0; window < 4 && totems < 3; window++) {
+      for (const chunk of lairs) {
+        const snapshot = new ChunkSnapshot(chunk, window * RAID_INTERVAL);
+        const legendary = snapshot.getLegendaryLairs();
+        const shadow = snapshot.getShadowLairs();
+
+        for (const [cell, roll] of snapshot.getTotemLairs()) {
+          totems++;
+          // One kind a window: a Totem's lair holds nobody else
+          expect(legendary.has(cell) || shadow.has(cell)).toBe(false);
+          expect(snapshot.isShadowLair(cell)).toBe(false);
+          // A final stage, at home on the tile's own biome
+          expect(isTotemSpecies(roll.species)).toBe(true);
+          expect(roll.lair).toBeNull();
+        }
+      }
+    }
+    expect(totems).toBeGreaterThan(0);
   });
 
   it('lets a shadow take over one of the biome own lairs', () => {

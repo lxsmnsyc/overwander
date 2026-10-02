@@ -1,5 +1,5 @@
 import { For, type JSX, Show, createSignal } from 'solid-js';
-import { RaidAction, RaidKind, type RaidView, enterRaid } from '../../auth/raids';
+import { RaidAction, RaidKind, type RaidView, enterRaid, getTotemTitle } from '../../auth/raids';
 import { getLairTitle } from '../../data/overworld/lair';
 import { getSpeciesData } from '../../data/species';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
@@ -39,6 +39,9 @@ function describeRaid(view: RaidView): string {
   }
   if (view.kind === RaidKind.Shadow) {
     return 'A shadow raid: what it leaves behind is stronger and costs twice the candy to raise.';
+  }
+  if (view.kind === RaidKind.Totem) {
+    return 'A Totem raid: it starts boosted and calls an ally at half HP. Beaten, it leaves a Z-Crystal and waits at Totem size.';
   }
   return 'A raid takes a party. Beaten, it waits in the overworld for whoever fought it.';
 }
@@ -105,9 +108,13 @@ export default function RaidDialog(props: RaidDialogProps): JSX.Element {
   const title = (): string => {
     const standing = view();
 
-    return standing == null
-      ? 'Lair'
-      : getLairTitle(standing.lair, standing.biome, standing.kind === RaidKind.Shadow);
+    if (standing == null) {
+      return 'Lair';
+    }
+    if (standing.kind === RaidKind.Totem) {
+      return getTotemTitle(standing.species);
+    }
+    return getLairTitle(standing.lair, standing.biome, standing.kind === RaidKind.Shadow);
   };
 
   /**

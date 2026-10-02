@@ -578,6 +578,11 @@ const enum Abilities {
    */
   Purified = 100003,
   /**
+   * What makes a raid boss a Totem: the aura it starts in, and the one
+   * ally of its own line it calls at half HP
+   */
+  Totem = 100004,
+  /**
    * Signature (one per family, granted rather than rolled at birth).
    * They sit outside the pools walk, so a line's four ordinary
    * abilities stay four

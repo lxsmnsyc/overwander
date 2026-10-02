@@ -7,6 +7,8 @@ import type { Species } from '../../data/ids/species';
 import { getSpeciesSignature } from '../../data/abilities';
 import { getSpeciesAbilityPools, getSpeciesData } from '../../data/species';
 import { getSpeciesHeldItems, pickHeldItem } from '../../data/species/held-items';
+import { getTotemSize } from '../../data/overworld/totems';
+import { EncounterType } from './kinds';
 import {
   HELD_ITEM_MASK,
   HELD_ITEM_RANGE,
@@ -338,4 +340,12 @@ export function deriveSize(species: Species, traitValue: number): Size {
     height: Math.max(0.01, Math.round(data.height * scale * 100) / 100),
     weight: Math.max(0.1, Math.round(data.weight * scale ** 3 * 10) / 10),
   };
+}
+
+/**
+ * A catch's measurements: rolled off its trait value, except for a
+ * Totem raid's prize, which keeps the Totem's own size for good
+ */
+export function deriveCatchSize(species: Species, traitValue: number, type: EncounterType): Size {
+  return type === EncounterType.TotemRaid ? getTotemSize(species) : deriveSize(species, traitValue);
 }

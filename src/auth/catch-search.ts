@@ -2,7 +2,7 @@ import type { CaughtPokemon } from './caught';
 import { ACQUISITION_NAMES, getCatchName, isFavorite, isGuarded, isShiny } from './caught-record';
 import { BALL_ITEMS, type Items } from '../data/ids/items';
 import { BIOME_NAMES, TIME_OF_DAY_NAMES } from '../data/biome/names';
-import { ENCOUNTER_TYPE_NAMES, EncounterType, deriveSize } from '../overworld/encounter';
+import { ENCOUNTER_TYPE_NAMES, EncounterType, deriveCatchSize } from '../overworld/encounter';
 import { GENDER_NAMES } from '../data/ids/species';
 import { LAIR_NAMES } from '../data/overworld/lair';
 import { ITEM_TYPE_ORDER, getItemData, listItemsByType } from '../data/items';
@@ -820,10 +820,10 @@ const FIELDS = new Map<string, CatchField>(
     // This individual's own measurements, which two of the same
     // species disagree about
     weight: hidden((caught, value) =>
-      numeric(value, deriveSize(caught.species, caught.traitValue).weight),
+      numeric(value, deriveCatchSize(caught.species, caught.traitValue, caught.type).weight),
     ),
     height: hidden((caught, value) =>
-      numeric(value, deriveSize(caught.species, caught.traitValue).height),
+      numeric(value, deriveCatchSize(caught.species, caught.traitValue, caught.type).height),
     ),
     // One stat as it actually comes out: `stat:spe:>120`. The stat has
     // to be named, since "the stats" added up is not a number anybody

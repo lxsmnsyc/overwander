@@ -10,7 +10,7 @@ import {
   mythicalRaidId,
   raidId,
 } from '../../auth/raid-record';
-import ChunkSnapshot from '../../overworld/chunk-snapshot';
+import ChunkSnapshot, { type RaidRoll } from '../../overworld/chunk-snapshot';
 import getWorld from '../../overworld/current';
 import AleaRNG from '../../core/alea';
 import type { Items } from '../../data/ids/items';
@@ -30,6 +30,14 @@ import { asOutcome, isBattleLost, isRaidLost } from './outcome';
  * The lobby itself: looking at one, opening one, leaving one, and
  * watching one from outside
  */
+/** The rolls standing on lairs of this kind this window */
+function lairRolls(snapshot: ChunkSnapshot, kind: RaidKind): Map<number, RaidRoll> {
+  if (kind === RaidKind.Totem) {
+    return snapshot.getTotemLairs();
+  }
+  return kind === RaidKind.Shadow ? snapshot.getShadowLairs() : snapshot.getLegendaryLairs();
+}
+
 /**
  * Look at a lair without staging anything.
  *
@@ -56,10 +64,7 @@ export async function peekRaid(
   const chunk = getWorld(depth).getChunk(x, y);
   const zone = asOffset(offset);
   const snapshot = new ChunkSnapshot(chunk, toLocalTime(now, zone), zone);
-  const roll =
-    kind === RaidKind.Shadow
-      ? snapshot.getShadowLairs().get(cell)
-      : snapshot.getLegendaryLairs().get(cell);
+  const roll = lairRolls(snapshot, kind).get(cell);
 
   if (roll == null) {
     return null;
@@ -150,10 +155,7 @@ export async function enterRaid(
   const chunk = getWorld(depth).getChunk(x, y);
   const zone = asOffset(offset);
   const snapshot = new ChunkSnapshot(chunk, toLocalTime(now, zone), zone);
-  const roll =
-    kind === RaidKind.Shadow
-      ? snapshot.getShadowLairs().get(cell)
-      : snapshot.getLegendaryLairs().get(cell);
+  const roll = lairRolls(snapshot, kind).get(cell);
 
   if (roll == null) {
     return null;

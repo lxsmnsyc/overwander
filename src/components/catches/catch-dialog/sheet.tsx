@@ -34,7 +34,7 @@ import AnimatedSprite from '../../sprites/AnimatedSprite';
 import { HeadingPortrait } from '../../overworld/npc-dialog/terms';
 import TargetStrip from '../TargetStrip';
 import { hatchEgg } from '../../../auth/eggs';
-import { deriveSize } from '../../../overworld/encounter';
+import { deriveCatchSize } from '../../../overworld/encounter';
 import { type EvolutionOption, evolveCatch } from '../../../auth/evolution';
 import { fuseCatch, unfuseCatch } from '../../../auth/fusion';
 import type { InventoryEntry } from '../../../auth/inventory';
@@ -1606,10 +1606,20 @@ export function CatchSheetBody(
                             {(type) => <TypeBadge type={type} />}
                           </For>
                           <Badge>
-                            {deriveSize(loaded().species, loaded().traitValue).height.toFixed(2)} m
+                            {deriveCatchSize(
+                              loaded().species,
+                              loaded().traitValue,
+                              loaded().type,
+                            ).height.toFixed(2)}{' '}
+                            m
                           </Badge>
                           <Badge>
-                            {deriveSize(loaded().species, loaded().traitValue).weight.toFixed(1)} kg
+                            {deriveCatchSize(
+                              loaded().species,
+                              loaded().traitValue,
+                              loaded().type,
+                            ).weight.toFixed(1)}{' '}
+                            kg
                           </Badge>
                           <TooltipHost
                             name="Friendship"

@@ -26,7 +26,13 @@ import { type EggWalk, type WalkReport, walk } from '../../../auth/eggs';
 import type { EncounterRecord } from '../../../auth/encounter-record';
 import { getLocalOffset } from '../../../auth/local-time';
 import { localNow } from '../../../auth/clock';
-import { RaidAction, RaidKind, type RaidView, canJoinRaids, peekRaid } from '../../../auth/raids';
+import {
+  RaidAction,
+  type RaidView,
+  canJoinRaids,
+  getLairKind,
+  peekRaid,
+} from '../../../auth/raids';
 import { type StopRecord, stopIdOf } from '../../../auth/stop-record';
 import { claimStopReward, enterStop } from '../../../auth/stops';
 import { createSafariSession, isEncounterRetired } from '../../../auth/safari';
@@ -1913,7 +1919,7 @@ export default function OverworldBoard(props: {
       return null;
     }
     if (landmark === Landmark.LegendaryLair || landmark === Landmark.ShadowLair) {
-      const kind = landmark === Landmark.ShadowLair ? RaidKind.Shadow : RaidKind.Legendary;
+      const kind = getLairKind(spot.snapshot, spot.cell);
       // Looked at rather than walked into: nothing is staged until the
       // dialog's button is pressed, so a player who thinks better of it
       // leaves no lobby standing behind them

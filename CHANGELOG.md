@@ -1,5 +1,14 @@
 # overwander
 
+## 4.28.2
+
+### Patch Changes
+
+- 825612e: The battle camera stands further back and draws the pokemon smaller with it, so a team's wider ring reads as space between them, and the field sits a little higher so the nearest pokemon's bars stay on screen.
+- 8ecbb7c: A boosted spawn (a raid prize, a favouring sky, a phenomenon, a honey tree) is now likelier to roll perfect values. Its values are spread between the floor and 31 instead of only being lifted to the floor, so the bigger the boost, the better the odds of a 31.
+- 2f47b09: A raid boss can no longer be hit for a share of its whole pool. Ranging Shot's floor, Deep Kelp's cut-off, Solar Power's sun chip, Stored Bounce's bank and Slab's shield are each held to the boss damage cap against or on a boss, and a boss can no longer learn Mind Blown.
+- 7aa2d08: Dragging a move, ability or item into a new order lets go wherever the pointer is released, instead of staying stuck to the cursor.
+
 ## 4.28.1
 
 ### Patch Changes

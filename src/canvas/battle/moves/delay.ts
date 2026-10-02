@@ -530,6 +530,36 @@ const NAMED: Partial<Record<Moves, [winding?: DelayShape, striking?: DelayShape]
  * and the shape they land as is what tells them apart: keying off it
  * splits the one charge that most of the game used to share
  */
+/**
+ * Landings that already cross the gap or come down onto the target, so
+ * the wait before them is the caster winding up rather than a throw
+ */
+const ARRIVES_ITSELF = new Set<EffectShape>([
+  // Sent from the caster
+  'Stream',
+  'Wave',
+  'Zap',
+  'Sickles',
+  'Beam',
+  'Stars',
+  'Spike',
+  'Pulse',
+  'Shuriken',
+  'Shackle',
+  'Techno',
+  'Ruin',
+  'Oblivion',
+  'Overload',
+  // Falling onto the target, or closing in on it
+  'Rocks',
+  'Weather',
+  'Verdict',
+  'Fusion',
+  'Lunar',
+  'Converge',
+  'Tri',
+]);
+
 const BY_LANDING: Partial<Record<EffectShape, DelayShape>> = {
   Haze: 'Drift',
   Mend: 'Gather',
@@ -620,7 +650,9 @@ export function delayShapeFor(move: Moves, steps: number): DelayShape | null {
   // something being sent: the data only names a delay for the moves
   // that are shot or thrown
   if (data.category !== MoveCategories.Status && data.delay != null) {
-    return 'Thrown';
+    // Unless the landing brings its own: a moon dropping on the target
+    // after a ball has already crossed to it is the move arriving twice
+    return ARRIVES_ITSELF.has(effectShapeFor(move)) ? 'Charge' : 'Thrown';
   }
   const landed = BY_LANDING[effectShapeFor(move)];
 

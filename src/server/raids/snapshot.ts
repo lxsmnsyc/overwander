@@ -39,9 +39,11 @@ import { isCatchLocked } from '../locks';
  */
 function behindTheCurtain(
   frozen: CatchSnapshot,
-  options?: { bare?: boolean; curtain?: PikeCurtain },
+  options?: { bare?: boolean; curtain?: PikeCurtain; healed?: boolean },
 ): CatchSnapshot {
-  const carried = options?.bare === true ? { ...frozen, items: [] } : frozen;
+  const bared = options?.bare === true ? { ...frozen, items: [] } : frozen;
+  const carried =
+    options?.healed === true ? { ...bared, health: getMaxHealth(bared), statuses: 0 } : bared;
   const curtain = options?.curtain;
 
   if (curtain == null) {
@@ -77,6 +79,12 @@ export async function publishTeamSnapshot(
      * through the same one
      */
     curtain?: PikeCurtain;
+    /**
+     * Freeze the party at full health with nothing on it, for a fight
+     * that does not carry the overworld in. A fainted pokemon comes
+     * too, since it is fielded healed
+     */
+    healed?: boolean;
   },
 ): Promise<string | null> {
   if (catches.length === 0) {
@@ -106,7 +114,7 @@ export async function publishTeamSnapshot(
         !isCatchLocked(data) &&
         !isEggRecord(data) &&
         !isGuardedRecord(data) &&
-        !isFainted(asCaughtPokemon(data))
+        (options?.healed === true || !isFainted(asCaughtPokemon(data)))
       ) {
         const frozen = createCatchSnapshot(id, asCaughtPokemon(data));
 

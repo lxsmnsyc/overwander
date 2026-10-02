@@ -54,10 +54,10 @@ thin slice of it.
       Split out a `deriveShiny`. After this the overworld needs no learn sets,
       ability pools or held-item tables.
 - [x] **Split the species record by field, as source files.** Done as YAML:
-      `world/`, `stats/`, `abilities/` and `learnsets/`, families filed in blocks
-      of 25 dex numbers per region,
-      with names in `text/en/species.yaml`. They still load eagerly; loading
-      each field when it is first wanted is the next step.
+      `world/`, `stats/`, `abilities/` and `learnsets/`, families filed in
+      blocks of 25 dex numbers per region, with names in
+      `text/en/species.yaml`. They still load eagerly; loading each field
+      when it is first wanted is the next step.
 - [ ] **Move the other registries to YAML** on the same pipeline: moves, then
       abilities and items, then the biome pools and lairs. The Megas and true
       shadows can follow once the YAML can say `inherits:`.

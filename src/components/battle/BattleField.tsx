@@ -25,14 +25,6 @@ import UnitCard from './UnitCard';
  */
 const CARD_ROOM = 260;
 
-/**
- * How long the card waits after the pointer leaves the pokemon. It is
- * the time it takes to cross the gap onto the card itself, which a
- * player has to be able to do: what an ability or an item does is on a
- * card over the card
- */
-const CLOSE_DELAY = 140;
-
 export interface BattleFieldProps {
   battle: Battle;
   /** The ground the fight is standing on, for the field to draw. */
@@ -86,24 +78,6 @@ export default function BattleField(props: BattleFieldProps): JSX.Element {
     });
   });
 
-  let leaving: ReturnType<typeof setTimeout> | undefined;
-
-  const keep = (): void => {
-    if (leaving != null) {
-      clearTimeout(leaving);
-      leaving = undefined;
-    }
-  };
-
-  const drop = (): void => {
-    keep();
-    leaving = setTimeout(() => {
-      setHovered(null);
-    }, CLOSE_DELAY);
-  };
-
-  onCleanup(keep);
-
   return (
     <>
       <BattleCanvas
@@ -111,12 +85,7 @@ export default function BattleField(props: BattleFieldProps): JSX.Element {
         biome={props.biome}
         player={props.player}
         onHover={(unit, at) => {
-          if (unit == null || at == null) {
-            drop();
-            return;
-          }
-          keep();
-          setHovered({ unit, at });
+          setHovered(unit == null || at == null ? null : { unit, at });
         }}
         onPick={(unit) => {
           props.onPick?.(unit);
@@ -131,22 +100,22 @@ export default function BattleField(props: BattleFieldProps): JSX.Element {
           being watched from the near side */}
       <Show when={hovered()}>
         {(spot) => (
-          <ul
+          // A tooltip: nothing on it is pressed, so it lets the pointer
+          // through to the field and goes the moment the pokemon is left
+          <div
+            role="tooltip"
             aria-label="The pokemon under the pointer"
-            // Pressable, so the pointer can be moved onto it. Leaving
-            // the pokemon starts a short wait rather than clearing the
-            // card, and arriving here calls the wait off
-            class={`fixed z-20 m-0 flex list-none -translate-x-1/2 p-0
-              ${spot().at.top < CARD_ROOM ? '' : '-translate-y-full'}`}
+            class={`pointer-events-none fixed z-20 -translate-x-1/2
+              ${spot().at.top < CARD_ROOM ? 'pt-1.5' : '-translate-y-full pb-1.5'}`}
             style={{
               left: `${spot().at.x}px`,
               top: `${spot().at.top < CARD_ROOM ? spot().at.bottom : spot().at.top}px`,
             }}
-            onMouseEnter={keep}
-            onMouseLeave={drop}
           >
-            <UnitCard unit={spot().unit} revision={beat} />
-          </ul>
+            <ul class="m-0 flex list-none p-0">
+              <UnitCard unit={spot().unit} revision={beat} tip />
+            </ul>
+          </div>
         )}
       </Show>
     </>

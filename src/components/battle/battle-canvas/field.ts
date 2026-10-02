@@ -200,9 +200,22 @@ export interface Standing {
  * round. What makes a circle fit a wide frame is the camera standing
  * lower, which `field.ts` does
  */
-const LOBBY_RADIUS = 24;
+const LOBBY_RADIUS = 28;
 
-const TEAM_RADIUS = 4.5;
+/**
+ * How far a party stands from its own middle. Wide enough that six
+ * neighbours round it stand clear of each other's slots rather than
+ * crowding the centre
+ */
+const TEAM_RADIUS = 6.5;
+
+/**
+ * How much more of the field the camera takes in than it once did,
+ * as a share of the old scale. The rings were spread out, and the
+ * camera stepped back to keep them in frame without shrinking the
+ * pokemon standing on them
+ */
+const FIELD_VIEW = 0.86;
 
 /**
  * How far apart two parties stand on the lobby ring.
@@ -213,7 +226,7 @@ const TEAM_RADIUS = 4.5;
  * eight parties and starts stepping outward at the ninth, which is the
  * point at which a fixed ring runs out of room
  */
-const LOBBY_GAP = 17;
+const LOBBY_GAP = 21;
 
 /**
  * The point on the ring closest to the camera. `z` counts away from
@@ -237,10 +250,11 @@ const NEAREST = -Math.PI / 2;
  * further apart on screen while leaving them the same size, which is
  * the opposite of what a camera does
  */
-export function lobbyCamera(teams: number): { radius: number; zoom: number } {
+export function lobbyCamera(teams: number): { radius: number; zoom: number; view: number } {
   const radius = ringRadius(teams, LOBBY_RADIUS, LOBBY_GAP);
+  const zoom = LOBBY_RADIUS / radius;
 
-  return { radius, zoom: LOBBY_RADIUS / radius };
+  return { radius, zoom, view: zoom * FIELD_VIEW };
 }
 
 /**

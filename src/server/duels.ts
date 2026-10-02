@@ -18,7 +18,6 @@ import { duelRefusal } from '../data/constants/duel-rules';
 import TEAM_SIZE from '../auth/team-size';
 import { LobbyRole } from '../auth/lobby-role';
 import { asCaughtPokemon } from '../auth/caught-record';
-import { isFainted } from '../auth/health';
 import { getSql, newDocId, tx } from './db';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
 import { isAnyCatchLocked } from './locks';
@@ -456,11 +455,6 @@ export async function setDuelParty(uid: string, id: string, catches: string[]): 
     }
   }
   for (const entry of owned) {
-    if (isFainted(asCaughtPokemon(entry))) {
-      return false;
-    }
-  }
-  for (const entry of owned) {
     if (isGuardedRecord(entry)) {
       return false;
     }
@@ -590,7 +584,9 @@ export async function startDuel(uid: string, id: string, now: number): Promise<s
   const freezing: ReturnType<typeof publishTeamSnapshot>[] = [];
 
   for (const [side, member] of fighters.entries()) {
-    freezing.push(publishTeamSnapshot(member.player, member.catches, side, now));
+    // Frozen healthy: a duel is a match between parties, not between
+    // whatever the overworld last left of them
+    freezing.push(publishTeamSnapshot(member.player, member.catches, side, now, { healed: true }));
   }
 
   const fielded: [string, string][] = [];

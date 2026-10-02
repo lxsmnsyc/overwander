@@ -511,6 +511,8 @@ function LobbyRows(
         player={props.user.uid}
         max={teamSize()}
         isOpen={picking()}
+        // A duel fields everyone healthy, so a fainted pokemon can come
+        healed
         // What the host barred stays in the box, greyed, with the reason
         refuse={(option) => duelRefusal(option.caught, { maxBst: maxBst(), bans: bans() })}
         onClose={() => {

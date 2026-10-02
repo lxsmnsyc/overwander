@@ -1,0 +1,59 @@
+# From Cross Poison to Stealth Rock: the heavy physical moves of
+# Sinnoh's fourth stretch, and the stones laid under a side
+
+CrossPoison:
+  type: Poison
+  category: Physical
+  power: 70
+  accuracy: 100
+  pp: 20
+  target: Unit
+  flags: [Contact, Slicing]
+
+GunkShot:
+  type: Poison
+  category: Physical
+  power: 120
+  accuracy: 80
+  pp: 5
+  target: Unit
+  projectile: true
+
+IronHead:
+  type: Steel
+  category: Physical
+  power: 80
+  accuracy: 100
+  pp: 15
+  target: Unit
+  flags: [Contact]
+
+MagnetBomb:
+  type: Steel
+  category: Physical
+  power: 60
+  pp: 20
+  target: Unit
+  projectile: true
+
+StoneEdge:
+  type: Rock
+  category: Physical
+  power: 100
+  accuracy: 80
+  pp: 5
+  target: Unit
+  projectile: true
+
+Captivate:
+  type: Normal
+  category: Status
+  accuracy: 100
+  pp: 20
+  target: Unit
+
+StealthRock:
+  type: Rock
+  category: Status
+  pp: 20
+  target: Team

@@ -1,0 +1,167 @@
+# The signature abilities of the families filed under Alola
+
+QuillAudience:
+  name: Quill Audience
+  description: Its Speed counts 1.1x for each enemy standing, up to 4 of them.
+HeelAudience:
+  name: Heel Audience
+  description: Its Attack counts 1.1x for each enemy standing, up to 4 of them.
+AriaAudience:
+  name: Aria Audience
+  description: Its Special Attack counts 1.1x for each teammate standing, up to 4 of them.
+Drumroll:
+  name: Drumroll
+  description: Its multi-hit moves strike 1 more time.
+ScoreToSettle:
+  name: Score to Settle
+  description: Its moves hit 1.3x against whichever enemy last hit it.
+TrickleCharge:
+  name: Trickle Charge
+  description: Its Special Attack rises 10% for each Electric move anybody lands, either side, up to 1.5x.
+ReboundPunch:
+  name: Rebound Punch
+  description: When one of its punching moves misses or is blocked, its next punching move hits 1.5x.
+DizzyTwirl:
+  name: Dizzy Twirl
+  description: While confused it never hits itself, and its moves hit 1.3x.
+HoneyShare:
+  name: Honey Share
+  description: While it stands, berries its teammates eat heal 1.5x as much and raise a stat 1 more stage.
+Provoke:
+  name: Provoke
+  description: An enemy it hits must aim its next single-target move at it.
+Regroup:
+  name: Regroup
+  description: While it swims alone it heals 1/8 of its HP each time it acts, so the school can gather again.
+HeavyHooves:
+  name: Heavy Hooves
+  description: Its physical moves hit 1% harder for every 20 kg it weighs, up to 1.4x.
+BubbleWard:
+  name: Bubble Ward
+  description: While it stands, its teammates take Fire moves at 0.75x and cannot be burned.
+OrchidGuise:
+  name: Orchid Guise
+  description: Enemies cannot aim a single-target move at it until it lands its first attack, which hits 1.3x.
+TropStride:
+  name: Trop Stride
+  description: Its kicking moves hit 1.3x.
+DrowsyGlow:
+  name: Drowsy Glow
+  description: Each damaging move it lands casts Yawn on the target 20% of the time.
+LeiGift:
+  name: Lei Gift
+  description: As it arrives, its worst hurt teammate is given a lei, and heals 1/16 of their HP each time they act for the fight.
+SagesCall:
+  name: Sage’s Call
+  description: Each time it acts, its teammate with the highest Attack or Special Attack casts its next move 25% faster.
+RushPass:
+  name: Rush Pass
+  description: Its moves hit 1.3x whenever they are cast faster than they would be on their own.
+ToxicDome:
+  name: Toxic Dome
+  description: The first hit it takes after each entrance hits it at 0.5x, and it casts Toxic at the attacker.
+FumeFlare:
+  name: Fume Flare
+  description: Its Fire moves poison the target 20% of the time.
+FondCrush:
+  name: Fond Crush
+  description: Its moves hit 1.3x against an infatuated target.
+OpeningSlash:
+  name: Opening Slash
+  description: The first move it lands after each entrance hits 1.5x.
+CastleDrain:
+  name: Castle Drain
+  description: Whoever lands a contact move on it loses 1/8 of their HP, and it heals that much.
+TossedBack:
+  name: Tossed Back
+  description: The first blow that would knock it out leaves it on 1 HP and sends it off the field for its strongest teammate. Once per battle.
+Starfall:
+  name: Starfall
+  description: The first move it casts after each entrance is cast 50% faster.
+ChargedSpines:
+  name: Charged Spines
+  description: A contact move landing on it charges it, and its next Electric move that lands hits 1.5x.
+NapTime:
+  name: Nap Time
+  description: Every 3rd time it acts, it heals 1/4 of its HP.
+BlastShell:
+  name: Blast Shell
+  description: A physical move landing on it or a teammate charges it, and its next Fire move that lands hits 1.5x.
+EldersIre:
+  name: Elder’s Ire
+  description: A special move landing on it or a teammate charges it, and its next Dragon move that lands hits 1.5x.
+GrudgeShroud:
+  name: Grudge Shroud
+  description: The first time each enemy lands a move on it, it casts Spite at them.
+MemoryEcho:
+  name: Memory Echo
+  description: Its super-effective moves hit 1.2x.
+PsychicGnash:
+  name: Psychic Gnash
+  description: Its biting moves confuse the target 20% of the time.
+GhostShip:
+  name: Ghost Ship
+  description: Its Ghost and Grass moves hit 1.3x while rain falls.
+WarClangor:
+  name: War Clangor
+  description: Each sound move it lands raises its Defense 1 stage, up to 3 stages.
+StormBlessing:
+  name: Storm Blessing
+  description: Its team's Speed counts 1.25x while Electric Terrain is on the field.
+MindBlessing:
+  name: Mind Blessing
+  description: Its team's Special Attack counts 1.25x while Psychic Terrain is on the field.
+WildBlessing:
+  name: Wild Blessing
+  description: Its team's Attack counts 1.25x while Grassy Terrain is on the field.
+MistBlessing:
+  name: Mist Blessing
+  description: Its team's Special Defense counts 1.25x while Misty Terrain is on the field.
+Zenith:
+  name: Zenith
+  description: Its damaging moves hit up to 1.3x the fuller its HP, and 1x near none.
+Nadir:
+  name: Nadir
+  description: Its damaging moves hit up to 1.3x the lower its HP, and 1x at full.
+Earthless:
+  name: Earthless
+  description: Ground moves hit it for neutral damage rather than super effective.
+Windbreak:
+  name: Windbreak
+  description: Flying moves hit it for neutral damage rather than super effective.
+GaleWard:
+  name: Gale Ward
+  description: Flying moves hit it for neutral damage rather than super effective.
+Unearthed:
+  name: Unearthed
+  description: Ground moves hit it for neutral damage rather than super effective.
+HeatShield:
+  name: Heat Shield
+  description: Fire moves hit it for neutral damage rather than super effective.
+Fireproof:
+  name: Fireproof
+  description: Fire moves hit it for neutral damage rather than super effective.
+Unenchanted:
+  name: Unenchanted
+  description: Fairy moves hit it for neutral damage rather than super effective.
+ClosedMind:
+  name: Closed Mind
+  description: Psychic moves hit it for neutral damage rather than super effective.
+DeepFooting:
+  name: Deep Footing
+  description: Ground moves hit it for neutral damage rather than super effective.
+DryFuse:
+  name: Dry Fuse
+  description: Water moves hit it for neutral damage rather than super effective.
+SoulRelay:
+  name: Soul Relay
+  description: When a teammate faints, it takes on every stat stage that teammate had raised.
+UmbralStrike:
+  name: Umbral Strike
+  description: Its moves hit 1.25x against a target with any stat stage raised.
+IonField:
+  name: Ion Field
+  description: Enemies' Normal moves are Electric moves while it is on the field.
+MetalEater:
+  name: Metal Eater
+  description: Steel moves heal it 1/4 of its max HP rather than hurting it.

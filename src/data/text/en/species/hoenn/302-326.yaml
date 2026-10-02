@@ -1,0 +1,43 @@
+Sableye:
+  Sableye: { name: Sableye, category: Darkness Pokemon }
+Mawile:
+  Mawile: { name: Mawile, category: Deceiver Pokemon }
+Aron:
+  Aron: { name: Aron, category: Iron Armor Pokemon }
+  Lairon: { name: Lairon, category: Iron Armor Pokemon }
+  Aggron: { name: Aggron, category: Iron Armor Pokemon }
+Meditite:
+  Meditite: { name: Meditite, category: Meditate Pokemon }
+  Medicham: { name: Medicham, category: Meditate Pokemon }
+Electrike:
+  Electrike: { name: Electrike, category: Lightning Pokemon }
+  Manectric: { name: Manectric, category: Discharge Pokemon }
+Plusle:
+  Plusle: { name: Plusle, category: Cheering Pokemon }
+Minun:
+  Minun: { name: Minun, category: Cheering Pokemon }
+Volbeat:
+  Volbeat: { name: Volbeat, category: Firefly Pokemon }
+Illumise:
+  Illumise: { name: Illumise, category: Firefly Pokemon }
+Roselia:
+  Roselia: { name: Roselia, category: Thorn Pokemon }
+  Budew: { name: Budew, category: Bud Pokemon }
+  Roserade: { name: Roserade, category: Bouquet Pokemon }
+Gulpin:
+  Gulpin: { name: Gulpin, category: Stomach Pokemon }
+  Swalot: { name: Swalot, category: Poison Bag Pokemon }
+Carvanha:
+  Carvanha: { name: Carvanha, category: Savage Pokemon }
+  Sharpedo: { name: Sharpedo, category: Brutal Pokemon }
+Wailmer:
+  Wailmer: { name: Wailmer, category: Ball Whale Pokemon }
+  Wailord: { name: Wailord, category: Float Whale Pokemon }
+Numel:
+  Numel: { name: Numel, category: Numb Pokemon }
+  Camerupt: { name: Camerupt, category: Eruption Pokemon }
+Torkoal:
+  Torkoal: { name: Torkoal, category: Coal Pokemon }
+Spoink:
+  Spoink: { name: Spoink, category: Bounce Pokemon }
+  Grumpig: { name: Grumpig, category: Manipulate Pokemon }

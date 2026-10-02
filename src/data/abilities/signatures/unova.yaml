@@ -1,0 +1,164 @@
+# The signature abilities granted to the families filed under Unova
+
+families:
+  # The Unova starters share one signature: each opens the fight its
+  # own way, on the first move it lands, and nothing after that
+  Snivy: LeafOpening
+  Tepig: EmberOpening
+  Oshawott: ShellOpening
+
+  # The three a walk out of the first town meets
+  Patrat: Spotter
+  Lillipup: LoyalGuard
+  Purrloin: CatBurglar
+
+  # The three the second road holds
+  # The elemental monkeys each spend the tuft they carry once, and
+  # what each leaves on the enemy side keeps costing
+  Pansage: LeafCrown
+  Pansear: EmberTuft
+  Panpour: GeyserTail
+  Munna: Doze
+  Pidove: Homing
+  Blitzle: StormDash
+
+  # The three the first cave holds
+  Roggenrola: Aftershock
+  Woobat: HeartMark
+  Drilbur: Torque
+  Audino: Ward
+  Timburr: LoadBearing
+  Tympole: RippleOut
+
+  # Throh and Sawk are one dojo split in two: the throw covers the
+  # team and the strike arms it, each for physical moves only
+  Throh: RedBelt
+  Sawk: BlueBelt
+
+  # The four the forest holds
+  Sewaddle: Tailor
+  Venipede: HurryVenom
+
+  # Cottonee and Petilil are the forest's two halves: what the wind
+  # takes off one reaches every enemy, what the other dances reaches
+  # its own team
+  Cottonee: SporeDrift
+  Petilil: PollenWaltz
+
+  # Route 4 and the Desert Resort
+  Sandile: DeathRoll
+  Darumaka: GlancingBlow
+  Maractus: DrySpell
+  Dwebble: Slab
+
+  # The Relic Castle, and what Castelia leaves out
+  Scraggy: GangUp
+  Sigilyph: WardCircle
+  Yamask: DeathMask
+  Trubbish: Litterbug
+
+  # Route 5, where the games hand out one of the last two apiece
+  Zorua: Bluff
+  Minccino: CleanSweep
+
+  # Gothita and Solosis are the two the games separate: one aims what
+  # its team throws, the other spreads what its team takes
+  Gothita: Fixation
+  Solosis: Division
+
+  # Chargestone Cave
+  Joltik: StaticFeed
+  Ferroseed: ThornCurtain
+  Klink: Meshing
+
+  # Driftveil and the Cold Storage
+  Basculin: BloodWater
+  Ducklett: SwanDance
+  Vanillite: FlashFreeze
+  Alomomola: TidePool
+
+  # Celestial Tower and the road to it
+  Elgyem: SwapField
+  Litwick: Hexlight
+  Golett: BrokenSeal
+
+  # Dragonspiral Tower and the tunnels under it
+  Axew: Scoring
+  Druddigon: Sunwarmed
+  Deino: ThreeHeads
+
+  # Routes 9 and 10
+  Pawniard: Honed
+
+  # Braviary and Mandibuzz are the sky split in two: one answers its
+  # own side's dead, the other answers everybody else's
+  Rufflet: Warcry
+  Vullaby: Bonewear
+
+  # Heatmor and Durant are the one hunt the games tell from both
+  # sides: one is built to open the nest, the other to hold it
+  Heatmor: Anteater
+  Durant: AntGuard
+  Larvesta: EmberHalo
+
+  # Twist Mountain and the moor below it
+  Tynamo: LatchOn
+  Cubchoo: FrostFangs
+  Cryogonal: CrystalChain
+  Mienfoo: SleeveGuard
+
+  # The four swords share one signature: each stands watch over its
+  # team against one kind of harm, and none of them is worth anything
+  # to the holder alone
+  Cobalion: IronVigil
+  Terrakion: StoneVigil
+  Virizion: LeafVigil
+  Keldeo: TideVigil
+
+  # The tao trio: each holds one conviction and asks the target
+  # whether it answers to it. The three tests cannot both fail and
+  # both pass, so a fused Kyurem carrying two of them never stacks
+  Reshiram: TruthCreed
+  Zekrom: IdealCreed
+  Kyurem: HollowCreed
+
+  # The three that ride the storm clouds lift one element apiece for
+  # the side they stand on, which is the same gift told three ways
+  Tornadus: Windfall
+  Thundurus: Stormfall
+  Landorus: Landfall
+
+  # The three the region keeps out of the wild. Each stands alone
+  # rather than in a group, so each is its own design
+  Victini: WinnersShare
+  Meloetta: Countertune
+  Genesect: Overclock
+
+  # The deer wears the year, and each coat throws its plain moves as
+  # a different element
+  Deerling: Turning
+
+  # The glider nothing has got a hand on yet
+  Emolga: Glidewake
+
+  # The region's two fossils, designed as a pair: each refuses the end
+  # once, the way the rock refused to let go of it
+  Tirtouga: DeepHold
+  Archen: Featherstone
+
+  # The pair that trade shells: one takes armour off what it hits, the
+  # other refuses to give any up
+  Karrablast: ShellThief
+  Shelmet: Barehide
+
+  # The lure that is still working after it is gone
+  Foongus: Sporeburst
+
+  # What the water is like around something that drags ships down
+  Frillish: StillWater
+
+  # The mud that bites back
+  Stunfisk: Shockmud
+
+  # A herd is worth more than the bull in front of it
+  Bouffalant: HerdBond

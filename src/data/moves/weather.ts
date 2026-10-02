@@ -1,9 +1,5 @@
-import type { CastAnimation } from '../constants/cast';
-import { SpriteAnim } from '../ids/sprite-anims';
-import { Types } from '../constants/types';
-import { MoveCategories, Moves } from '../ids/moves';
+import { Moves } from '../ids/moves';
 import { Weathers } from '../ids/status';
-import { registerMove } from './__create';
 
 /**
  * The weather moves: what a pokemon does to the sky.
@@ -20,74 +16,22 @@ import { registerMove } from './__create';
  * business, resolved through `setWeather`, so a raid's weather stays
  * team-local while a PvP fight's is shared.
  *
- * The battle half is in
+ * Their numbers are in `battle/weather.yaml` beside the rest; the
+ * battle half is in
  * [`src/battle/moves/weather.ts`](../../battle/moves/weather.ts).
  */
-
-/**
- * The move, the sky it calls up, and what its caster looks like doing
- * it
- */
-const WEATHER_MOVES: {
-  move: Moves;
-  name: string;
-  description: string;
-  type: Types;
-  weather: Weathers;
-  pp: number;
-  cast: CastAnimation[];
-}[] = [
-  {
-    move: Moves.RainDance,
-    name: 'Rain Dance',
-    description: 'Calls up rain for ten seconds.',
-    type: Types.Water,
-    weather: Weathers.Rain,
-    pp: 5,
-    cast: [SpriteAnim.Dance, SpriteAnim.Twirl, SpriteAnim.Swing],
-  },
-  {
-    move: Moves.SunnyDay,
-    name: 'Sunny Day',
-    description: 'Calls up sun for ten seconds.',
-    type: Types.Fire,
-    weather: Weathers.Sunny,
-    pp: 5,
-    cast: [SpriteAnim.RearUp, SpriteAnim.Swell, SpriteAnim.Charge],
-  },
-  {
-    move: Moves.Sandstorm,
-    name: 'Sandstorm',
-    description: 'Calls up a sandstorm for ten seconds.',
-    type: Types.Rock,
-    weather: Weathers.Sandstorm,
-    pp: 10,
-    cast: [SpriteAnim.Shake, SpriteAnim.Twirl, SpriteAnim.Charge],
-  },
-  {
-    move: Moves.Hail,
-    name: 'Hail',
-    description: 'Calls up hail for ten seconds.',
-    type: Types.Ice,
-    weather: Weathers.Hail,
-    pp: 10,
-    cast: [SpriteAnim.Emit, SpriteAnim.Shoot, SpriteAnim.Attack],
-  },
-];
 
 /**
  * What each weather move calls up. It is read by the battle side and
  * by the abilities that do the same thing without a move — a Drought
  * is a Sunny Day nobody had to cast — so the pairing is written once
  */
-export const MOVE_WEATHERS = (() => {
-  const weathers = new Map<Moves, Weathers>();
-
-  for (const { move, weather } of WEATHER_MOVES) {
-    weathers.set(move, weather);
-  }
-  return weathers;
-})();
+export const MOVE_WEATHERS = new Map<Moves, Weathers>([
+  [Moves.RainDance, Weathers.Rain],
+  [Moves.SunnyDay, Weathers.Sunny],
+  [Moves.Sandstorm, Weathers.Sandstorm],
+  [Moves.Hail, Weathers.Hail],
+]);
 
 export function getWeatherMove(weather: Weathers): Moves | undefined {
   for (const [move, called] of MOVE_WEATHERS) {
@@ -96,20 +40,4 @@ export function getWeatherMove(weather: Weathers): Moves | undefined {
     }
   }
   return undefined;
-}
-
-export default function registerWeatherMoves(): void {
-  for (const { move, name, description, type, pp, cast } of WEATHER_MOVES) {
-    registerMove(move, {
-      name,
-      description,
-      type,
-      category: MoveCategories.Status,
-      pp,
-      // The sky is not a thing a move is aimed at
-      target: 0,
-      flags: 0,
-      cast,
-    });
-  }
 }

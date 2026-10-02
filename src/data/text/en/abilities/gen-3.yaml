@@ -1,0 +1,87 @@
+# What Hoenn brought, described in this engine's terms rather than
+# the mainline's
+
+# Shiftry
+WindRider:
+  name: Wind Rider
+  description: Takes nothing from a move that rides on the wind, and gains 1 Attack stage.
+
+# Slakoth
+Truant:
+  name: Truant
+  description: Loafs about for 2 seconds after every move it finishes.
+
+# Shedinja
+WonderGuard:
+  name: Wonder Guard
+  description: Only a move it is weak to lands at all. Status moves, poison and the weather still reach it.
+
+# Skitty
+Normalize:
+  name: Normalize
+  description: Everything it uses comes out Normal-type, whatever the move says.
+
+# Meditite
+PurePower:
+  name: Pure Power
+  description: 2x Attack.
+
+# Electrike
+Minus:
+  name: Minus
+  description: 1.5x Special Attack while a living teammate has Plus or Minus.
+
+# Sableye
+Stall:
+  name: Stall
+  description: Everything it casts winds up slower than it otherwise would.
+
+# Zangoose
+ToxicBoost:
+  name: Toxic Boost
+  description: 1.5x Attack while it is poisoned.
+
+# Plusle
+Battery:
+  name: Battery
+  description: Lifts its teammates' special moves to 1.3x power.
+
+# Torkoal
+WhiteSmoke:
+  name: White Smoke
+  description: Refuses every stat drop from anybody else.
+
+# Kecleon
+ColorChange:
+  name: Color Change
+  description: Turns the type of whatever move just hit it.
+
+# Aron
+HeavyMetal:
+  name: Heavy Metal
+  description: Weighs 2x what it looks like.
+
+# Shroomish
+PoisonHeal:
+  name: Poison Heal
+  description: Poison restores 1/8 of its HP each time it would take some.
+
+# Castform
+Forecast:
+  name: Forecast
+  description: A Castform takes the shape and the type of the sky it stands under.
+
+# Metagross
+Steelworker:
+  name: Steelworker
+  description: Steel moves hit 1.5x, whatever its own types are.
+
+# Numel
+Simple:
+  name: Simple
+  description: Every stat change it takes counts 2x, its own and anybody else’s.
+
+# Rayquaza
+AirLock:
+  name: Air Lock
+  description: Weather does nothing to anybody while it is up.

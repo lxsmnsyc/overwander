@@ -1,0 +1,60 @@
+MachPunch:
+  name: Mach Punch
+  description: Winds up faster than an ordinary move.
+ScaryFace:
+  name: Scary Face
+  description: Drops the target's Speed 2 stages.
+FeintAttack:
+  name: Feint Attack
+  description: Never misses.
+SweetKiss:
+  name: Sweet Kiss
+  description: Confuses the target.
+BellyDrum:
+  name: Belly Drum
+  description: Spends 1/2 the user's HP to put its Attack at the top of the scale.
+SludgeBomb:
+  name: Sludge Bomb
+  description: 30% to poison.
+MudSlap:
+  name: Mud-Slap
+  description: Always drops the target's accuracy a stage.
+Octazooka:
+  name: Octazooka
+  description: 50% to drop the target's accuracy a stage.
+Spikes:
+  name: Spikes
+  description: 'Lays spikes: anything swapped in opposite loses 1/8 of its HP, 1/6 at two layers and 1/4 at three.'
+ZapCannon:
+  name: Zap Cannon
+  description: Always paralyses what it hits.
+Foresight:
+  name: Foresight
+  description: The target loses its evasion and its immunities to Normal and Fighting.
+DestinyBond:
+  name: Destiny Bond
+  description: For 4 seconds, whoever knocks the user out goes down with it.
+PerishSong:
+  name: Perish Song
+  description: Everything that hears it faints in 8 seconds unless it is swapped out first.
+IcyWind:
+  name: Icy Wind
+  description: Hits everything opposite and always drops its Speed a stage.
+Detect:
+  name: Detect
+  description: Blocks everything aimed at the user for 2 seconds. It fails if used twice over.
+BoneRush:
+  name: Bone Rush
+  description: Strikes 2 to 5 times.
+LockOn:
+  name: Lock-On
+  description: For 4 seconds, the user's next move against the target cannot miss.
+Outrage:
+  name: Outrage
+  description: Lands the same hit 3 times over, and leaves the user confused.
+GigaDrain:
+  name: Giga Drain
+  description: Heals the user for 1/2 the damage dealt.
+Endure:
+  name: Endure
+  description: For 2 seconds the user cannot be put below 1 HP. It fails if used twice over.

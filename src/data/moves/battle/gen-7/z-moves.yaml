@@ -1,0 +1,231 @@
+# The Z-Moves, which nobody learns: a held Z-Crystal turns a move into
+# one as it is thrown. The type ones take their power and whether they
+# are physical or special from the move they replace; see
+# `src/data/moves/z-moves.ts`
+
+BreakneckBlitz:
+  type: Normal
+  category: Physical
+  pp: 1
+  target: Unit
+
+AllOutPummeling:
+  type: Fighting
+  category: Physical
+  pp: 1
+  target: Unit
+
+SupersonicSkystrike:
+  type: Flying
+  category: Physical
+  pp: 1
+  target: Unit
+
+AcidDownpour:
+  type: Poison
+  category: Physical
+  pp: 1
+  target: Unit
+
+TectonicRage:
+  type: Ground
+  category: Physical
+  pp: 1
+  target: Unit
+
+ContinentalCrush:
+  type: Rock
+  category: Physical
+  pp: 1
+  target: Unit
+
+SavageSpinOut:
+  type: Bug
+  category: Physical
+  pp: 1
+  target: Unit
+
+NeverEndingNightmare:
+  type: Ghost
+  category: Physical
+  pp: 1
+  target: Unit
+
+CorkscrewCrash:
+  type: Steel
+  category: Physical
+  pp: 1
+  target: Unit
+
+InfernoOverdrive:
+  type: Fire
+  category: Physical
+  pp: 1
+  target: Unit
+
+HydroVortex:
+  type: Water
+  category: Physical
+  pp: 1
+  target: Unit
+
+BloomDoom:
+  type: Grass
+  category: Physical
+  pp: 1
+  target: Unit
+
+GigavoltHavoc:
+  type: Electric
+  category: Physical
+  pp: 1
+  target: Unit
+
+ShatteredPsyche:
+  type: Psychic
+  category: Physical
+  pp: 1
+  target: Unit
+
+SubzeroSlammer:
+  type: Ice
+  category: Physical
+  pp: 1
+  target: Unit
+
+DevastatingDrake:
+  type: Dragon
+  category: Physical
+  pp: 1
+  target: Unit
+
+BlackHoleEclipse:
+  type: Dark
+  category: Physical
+  pp: 1
+  target: Unit
+
+TwinkleTackle:
+  type: Fairy
+  category: Physical
+  pp: 1
+  target: Unit
+
+Catastropika:
+  type: Electric
+  category: Physical
+  power: 210
+  pp: 1
+  target: Unit
+
+SinisterArrowRaid:
+  type: Ghost
+  category: Physical
+  power: 180
+  pp: 1
+  target: Unit
+
+MaliciousMoonsault:
+  type: Dark
+  category: Physical
+  power: 180
+  pp: 1
+  target: Unit
+
+OceanicOperetta:
+  type: Water
+  category: Special
+  power: 195
+  pp: 1
+  target: Unit
+
+GuardianOfAlola:
+  type: Fairy
+  category: Special
+  pp: 1
+  target: Unit
+
+SoulStealing7StarStrike:
+  type: Ghost
+  category: Physical
+  power: 195
+  pp: 1
+  target: Unit
+
+StokedSparksurfer:
+  type: Electric
+  category: Special
+  power: 175
+  pp: 1
+  target: Unit
+
+PulverizingPancake:
+  type: Normal
+  category: Physical
+  power: 210
+  pp: 1
+  target: Unit
+
+ExtremeEvoboost:
+  type: Normal
+  category: Status
+  pp: 1
+  target: None
+
+GenesisSupernova:
+  type: Psychic
+  category: Special
+  power: 185
+  pp: 1
+  target: Unit
+
+TenMillionVoltThunderbolt:
+  type: Electric
+  category: Special
+  power: 195
+  pp: 1
+  target: Unit
+
+LightThatBurnsTheSky:
+  type: Psychic
+  category: Special
+  power: 200
+  pp: 1
+  target: Unit
+
+SearingSunrazeSmash:
+  type: Steel
+  category: Physical
+  power: 200
+  pp: 1
+  target: Unit
+
+MenacingMoonrazeMaelstrom:
+  type: Ghost
+  category: Special
+  power: 200
+  pp: 1
+  target: Unit
+
+LetsSnuggleForever:
+  type: Fairy
+  category: Physical
+  power: 190
+  pp: 1
+  target: Unit
+
+SplinteredStormshards:
+  type: Rock
+  category: Physical
+  power: 190
+  pp: 1
+  target: Unit
+
+ClangorousSoulblaze:
+  type: Dragon
+  category: Special
+  power: 185
+  pp: 1
+  target: None
+  affects: [Unit, Enemy]
+  flags: [Sound]

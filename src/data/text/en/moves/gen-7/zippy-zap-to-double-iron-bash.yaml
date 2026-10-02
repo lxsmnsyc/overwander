@@ -1,0 +1,42 @@
+ZippyZap:
+  name: Zippy Zap
+  description: Winds up far faster than an ordinary move, and raises the user's evasion a stage.
+SplishySplash:
+  name: Splishy Splash
+  description: Hits everything opposite. 30% to paralyse.
+FloatyFall:
+  name: Floaty Fall
+  description: 30% to make the target flinch.
+PikaPapow:
+  name: Pika Papow
+  description: The fonder of you the user is, the harder it hits, up to 102 power. Never misses.
+BouncyBubble:
+  name: Bouncy Bubble
+  description: Heals the user for all the damage dealt.
+BuzzyBuzz:
+  name: Buzzy Buzz
+  description: Always paralyses.
+SizzlySlide:
+  name: Sizzly Slide
+  description: Always burns.
+GlitzyGlow:
+  name: Glitzy Glow
+  description: Puts up Light Screen over the user's side as it lands.
+BaddyBad:
+  name: Baddy Bad
+  description: Puts up Reflect over the user's side as it lands.
+SappySeed:
+  name: Sappy Seed
+  description: Plants a Leech Seed on the target as it lands.
+FreezyFrost:
+  name: Freezy Frost
+  description: Resets every stat stage on the field as it lands, the user's included.
+SparklySwirl:
+  name: Sparkly Swirl
+  description: Cures the user's whole party as it lands.
+VeeveeVolley:
+  name: Veevee Volley
+  description: The fonder of you the user is, the harder it hits, up to 102 power. Never misses.
+DoubleIronBash:
+  name: Double Iron Bash
+  description: Strikes twice. 30% to make the target flinch each time.

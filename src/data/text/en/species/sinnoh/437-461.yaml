@@ -1,0 +1,28 @@
+Chatot:
+  Chatot: { name: Chatot, category: Music Note Pokemon }
+Spiritomb:
+  Spiritomb: { name: Spiritomb, category: Forbidden Pokemon }
+Gible:
+  Gible: { name: Gible, category: Land Shark Pokemon }
+  Gabite: { name: Gabite, category: Cave Pokemon }
+  Garchomp: { name: Garchomp, category: Mach Pokemon }
+Riolu:
+  Riolu: { name: Riolu, category: Emanation Pokemon }
+  Lucario: { name: Lucario, category: Aura Pokemon }
+Hippopotas:
+  Hippopotas: { name: Hippopotas, category: Hippo Pokemon }
+  Hippowdon: { name: Hippowdon, category: Heavyweight Pokemon }
+Skorupi:
+  Skorupi: { name: Skorupi, category: Scorpion Pokemon }
+  Drapion: { name: Drapion, category: Ogre Scorpion Pokemon }
+Croagunk:
+  Croagunk: { name: Croagunk, category: Toxic Mouth Pokemon }
+  Toxicroak: { name: Toxicroak, category: Toxic Mouth Pokemon }
+Carnivine:
+  Carnivine: { name: Carnivine, category: Bug Catcher Pokemon }
+Finneon:
+  Finneon: { name: Finneon, category: Wing Fish Pokemon }
+  Lumineon: { name: Lumineon, category: Neon Pokemon }
+Snover:
+  Snover: { name: Snover, category: Frost Tree Pokemon }
+  Abomasnow: { name: Abomasnow, category: Frost Tree Pokemon }

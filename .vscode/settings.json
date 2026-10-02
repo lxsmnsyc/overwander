@@ -15,10 +15,15 @@
   "biome.enabled": false,
   "prettier.enable": false,
   "yaml.schemas": {
-    "./src/data/species/schema/world.json": "src/data/species/world/**/*.yaml",
-    "./src/data/species/schema/stats.json": "src/data/species/stats/**/*.yaml",
-    "./src/data/species/schema/abilities.json": "src/data/species/abilities/**/*.yaml",
-    "./src/data/species/schema/learnsets.json": "src/data/species/learnsets/**/*.yaml",
-    "./src/data/species/schema/text.json": "src/data/text/*/species.yaml"
+    "./src/data/schema/species-world.json": "src/data/species/world/**/*.yaml",
+    "./src/data/schema/species-stats.json": "src/data/species/stats/**/*.yaml",
+    "./src/data/schema/species-abilities.json": "src/data/species/abilities/**/*.yaml",
+    "./src/data/schema/species-learnsets.json": "src/data/species/learnsets/**/*.yaml",
+    "./src/data/schema/species-text.json": "src/data/text/*/species/**/*.yaml",
+    "./src/data/schema/moves-battle.json": "src/data/moves/battle/**/*.yaml",
+    "./src/data/schema/moves-cast.json": "src/data/moves/cast/**/*.yaml",
+    "./src/data/schema/moves-text.json": "src/data/text/*/moves/**/*.yaml",
+    "./src/data/schema/abilities-text.json": "src/data/text/*/abilities/**/*.yaml",
+    "./src/data/schema/abilities-signatures.json": "src/data/abilities/signatures/*.yaml"
   }
 }

@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Abilities: text",
+  "type": "object",
+  "propertyNames": {
+    "$ref": "names.json#/definitions/ability"
+  },
+  "additionalProperties": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "description": {
+        "type": "string",
+        "description": "One player-facing line, ending in a full stop"
+      }
+    },
+    "required": [
+      "name",
+      "description"
+    ],
+    "additionalProperties": false
+  }
+}

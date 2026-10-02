@@ -1,0 +1,22 @@
+# From Heal Block to Power Trick: the last of Sinnoh's first stretch,
+# where a move rewrites what a stat is for
+
+HealBlock:
+  type: Psychic
+  category: Status
+  accuracy: 100
+  pp: 15
+  target: Unit
+
+WringOut:
+  type: Normal
+  category: Special
+  accuracy: 100
+  pp: 5
+  target: Unit
+
+PowerTrick:
+  type: Psychic
+  category: Status
+  pp: 10
+  target: None

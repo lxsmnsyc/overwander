@@ -1,0 +1,51 @@
+Sketch:
+  name: Sketch
+  description: Copies the last move the target used, over Sketch itself, for good.
+TripleKick:
+  name: Triple Kick
+  description: Kicks 3 times, each one harder than the last.
+Thief:
+  name: Thief
+  description: Takes the target's held item if the user is carrying nothing.
+SpiderWeb:
+  name: Spider Web
+  description: The target cannot be swapped out for 10 seconds, ghosts aside. It takes no damage from it.
+MindReader:
+  name: Mind Reader
+  description: For 4 seconds, the user's next move against the target cannot miss.
+Nightmare:
+  name: Nightmare
+  description: A sleeping target loses 1/4 of its HP every time it would act.
+FlameWheel:
+  name: Flame Wheel
+  description: 10% to burn. The user thaws itself out casting it.
+Snore:
+  name: Snore
+  description: Only works while the user is asleep. 30% to flinch. It is a sound.
+Curse:
+  name: Curse
+  description: A Ghost spends 1/2 its HP to take 1/4 of the target's every time it acts. Anything else trades a stage of Speed for a stage of Attack and Defense.
+Flail:
+  name: Flail
+  description: The less HP the user has left, the harder it hits, up to 200 power.
+Conversion2:
+  name: Conversion 2
+  description: Turns the user into a type that resists the target's last move.
+Aeroblast:
+  name: Aeroblast
+  description: Crits more readily.
+CottonSpore:
+  name: Cotton Spore
+  description: Drops the Speed of everything opposite 2 stages. A spore, so Grass ignores it.
+Reversal:
+  name: Reversal
+  description: The less HP the user has left, the harder it hits, up to 200 power.
+Spite:
+  name: Spite
+  description: Puts the target's last move on a 4x longer cooldown.
+PowderSnow:
+  name: Powder Snow
+  description: Hits everything opposite. 10% to freeze.
+Protect:
+  name: Protect
+  description: Blocks everything aimed at the user for 2 seconds. It fails if used twice over.

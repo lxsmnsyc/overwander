@@ -1,0 +1,30 @@
+Skarmory:
+  Skarmory: { name: Skarmory, category: Armor Bird Pokemon }
+Houndour:
+  Houndour: { name: Houndour, category: Dark Pokemon }
+  Houndoom: { name: Houndoom, category: Dark Pokemon }
+Phanpy:
+  Phanpy: { name: Phanpy, category: Long Nose Pokemon }
+  Donphan: { name: Donphan, category: Armor Pokemon }
+Stantler:
+  Stantler: { name: Stantler, category: Big Horn Pokemon }
+Smeargle:
+  Smeargle: { name: Smeargle, category: Painter Pokemon }
+Miltank:
+  Miltank: { name: Miltank, category: Milk Cow Pokemon }
+Raikou:
+  Raikou: { name: Raikou, category: Thunder Pokemon }
+Entei:
+  Entei: { name: Entei, category: Volcano Pokemon }
+Suicune:
+  Suicune: { name: Suicune, category: Aurora Pokemon }
+Larvitar:
+  Larvitar: { name: Larvitar, category: Rock Skin Pokemon }
+  Pupitar: { name: Pupitar, category: Hard Shell Pokemon }
+  Tyranitar: { name: Tyranitar, category: Armor Pokemon }
+Lugia:
+  Lugia: { name: Lugia, category: Diving Pokemon }
+HoOh:
+  HoOh: { name: Ho-Oh, category: Rainbow Pokemon }
+Celebi:
+  Celebi: { name: Celebi, category: Time Travel Pokemon }

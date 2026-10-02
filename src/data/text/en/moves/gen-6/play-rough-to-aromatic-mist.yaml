@@ -1,0 +1,45 @@
+PlayRough:
+  name: Play Rough
+  description: 10% to drop the target's Attack a stage.
+FairyWind:
+  name: Fairy Wind
+  description: Plain damage from a distance.
+Moonblast:
+  name: Moonblast
+  description: 30% to drop the target's Special Attack a stage.
+Boomburst:
+  name: Boomburst
+  description: Hits everything opposite and the user's teammates. It is a sound.
+FairyLock:
+  name: Fairy Lock
+  description: Nobody on the field can be swapped out for 2 seconds, ghosts aside.
+KingsShield:
+  name: King's Shield
+  description: Blocks every damaging move aimed at the user for 2 seconds, and drops the Attack of anything that touches it a stage. Status moves pass. It fails if used twice over.
+PlayNice:
+  name: Play Nice
+  description: Drops the target's Attack a stage, and never misses.
+Confide:
+  name: Confide
+  description: Drops the target's Special Attack a stage, and never misses. It is a sound.
+DiamondStorm:
+  name: Diamond Storm
+  description: Hits everything opposite. 50% to raise the user's Defense 2 stages.
+SteamEruption:
+  name: Steam Eruption
+  description: 30% to burn.
+HyperspaceHole:
+  name: Hyperspace Hole
+  description: Hits through Protect and Detect, breaks the guard it went through, and never misses.
+WaterShuriken:
+  name: Water Shuriken
+  description: Strikes 2 to 5 times, with a shorter wind-up than most.
+MysticalFire:
+  name: Mystical Fire
+  description: Always drops the target's Special Attack a stage.
+SpikyShield:
+  name: Spiky Shield
+  description: Blocks everything aimed at the user for 2 seconds, and anything that touches it loses 1/8 of its HP. It fails if used twice over.
+AromaticMist:
+  name: Aromatic Mist
+  description: Raises a teammate's Special Defense a stage.

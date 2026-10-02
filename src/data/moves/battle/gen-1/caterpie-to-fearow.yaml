@@ -1,0 +1,234 @@
+# The bugs and the birds: what Caterpie, Weedle, Pidgey, Rattata and
+# Spearow bring with them
+
+StringShot:
+  type: Bug
+  category: Status
+  accuracy: 95
+  pp: 40
+  target: None
+  affects: [Unit, Enemy]
+  projectile: true
+
+Harden:
+  type: Normal
+  category: Status
+  pp: 30
+  target: None
+
+Confusion:
+  type: Psychic
+  category: Special
+  power: 50
+  accuracy: 100
+  pp: 25
+  target: Unit
+
+StunSpore:
+  type: Grass
+  category: Status
+  accuracy: 75
+  pp: 30
+  target: Unit
+  flags: [Powder]
+
+Supersonic:
+  type: Normal
+  category: Status
+  accuracy: 55
+  pp: 20
+  target: Unit
+  flags: [Sound]
+
+Whirlwind:
+  type: Normal
+  category: Status
+  priority: -6
+  pp: 20
+  target: Unit
+  flags: [Wind]
+  steps: 1
+
+Psybeam:
+  type: Psychic
+  category: Special
+  power: 65
+  accuracy: 100
+  pp: 20
+  target: Unit
+
+Psychic:
+  type: Psychic
+  category: Special
+  power: 90
+  accuracy: 100
+  pp: 10
+  target: Unit
+
+Psywave:
+  type: Psychic
+  category: Special
+  accuracy: 100
+  pp: 15
+  target: Unit
+
+Teleport:
+  type: Psychic
+  category: Status
+  priority: -6
+  pp: 20
+  target: None
+  steps: 1
+
+Flash:
+  type: Normal
+  category: Status
+  accuracy: 100
+  pp: 20
+  target: Unit
+  affects: [Unit, Own, Enemy]
+
+PoisonSting:
+  type: Poison
+  category: Physical
+  power: 15
+  accuracy: 100
+  pp: 35
+  target: Unit
+  projectile: true
+
+FuryAttack:
+  type: Normal
+  category: Physical
+  power: 15
+  accuracy: 85
+  pp: 20
+  target: Unit
+  flags: [Contact]
+
+FocusEnergy:
+  type: Normal
+  category: Status
+  pp: 30
+  target: None
+
+Twineedle:
+  type: Bug
+  category: Physical
+  power: 25
+  accuracy: 100
+  pp: 20
+  target: Unit
+  projectile: true
+
+PinMissile:
+  type: Bug
+  category: Physical
+  power: 25
+  accuracy: 95
+  pp: 20
+  target: Unit
+  projectile: true
+
+Agility:
+  type: Psychic
+  category: Status
+  pp: 30
+  target: None
+
+Gust:
+  type: Flying
+  category: Special
+  power: 40
+  accuracy: 100
+  pp: 35
+  target: Unit
+  flags: [Wind]
+
+SandAttack:
+  type: Ground
+  category: Status
+  accuracy: 100
+  pp: 15
+  target: Unit
+  affects: [Unit, Own, Enemy]
+  projectile: true
+
+QuickAttack:
+  type: Normal
+  category: Physical
+  power: 40
+  accuracy: 100
+  priority: 1
+  pp: 30
+  target: Unit
+  flags: [Contact]
+
+WingAttack:
+  type: Flying
+  category: Physical
+  power: 60
+  accuracy: 100
+  pp: 35
+  target: Unit
+  flags: [Contact]
+
+MirrorMove:
+  type: Flying
+  category: Status
+  pp: 20
+  target: Unit
+
+RazorWind:
+  type: Normal
+  category: Special
+  power: 80
+  accuracy: 100
+  pp: 10
+  target: Unit
+  flags: [Slicing, Wind]
+  steps: 1
+
+SkyAttack:
+  type: Flying
+  category: Physical
+  power: 140
+  accuracy: 90
+  pp: 5
+  target: Unit
+  steps: 1
+
+HyperFang:
+  type: Normal
+  category: Physical
+  power: 80
+  accuracy: 90
+  pp: 15
+  target: Unit
+  flags: [Contact, Bite]
+
+SuperFang:
+  type: Normal
+  category: Physical
+  accuracy: 90
+  pp: 10
+  target: Unit
+  flags: [Contact, Bite]
+
+Peck:
+  type: Flying
+  category: Physical
+  power: 35
+  accuracy: 100
+  pp: 35
+  target: Unit
+  flags: [Contact]
+
+DrillPeck:
+  type: Flying
+  category: Physical
+  power: 80
+  accuracy: 100
+  pp: 20
+  target: Unit
+  flags: [Contact]

@@ -1,0 +1,55 @@
+Exeggcute:
+  Exeggcute: { name: Exeggcute, category: Egg Pokemon }
+  Exeggutor: { name: Exeggutor, category: Coconut Pokemon }
+  ExeggutorAlola: { name: Alolan Exeggutor, category: Coconut Pokemon }
+Cubone:
+  Cubone: { name: Cubone, category: Lonely Pokemon }
+  Marowak: { name: Marowak, category: Bone Keeper Pokemon }
+  MarowakAlola: { name: Alolan Marowak, category: Bone Keeper Pokemon }
+Tyrogue:
+  Hitmonlee: { name: Hitmonlee, category: Kicking Pokemon }
+  Hitmonchan: { name: Hitmonchan, category: Punching Pokemon }
+  Tyrogue: { name: Tyrogue, category: Scuffle Pokemon }
+  Hitmontop: { name: Hitmontop, category: Handstand Pokemon }
+Lickitung:
+  Lickitung: { name: Lickitung, category: Licking Pokemon }
+  Lickilicky: { name: Lickilicky, category: Licking Pokemon }
+Koffing:
+  Koffing: { name: Koffing, category: Poison Gas Pokemon }
+  Weezing: { name: Weezing, category: Poison Gas Pokemon }
+Rhyhorn:
+  Rhyhorn: { name: Rhyhorn, category: Spikes Pokemon }
+  Rhydon: { name: Rhydon, category: Drill Pokemon }
+  Rhyperior: { name: Rhyperior, category: Drill Pokemon }
+Chansey:
+  Chansey: { name: Chansey, category: Egg Pokemon }
+  Blissey: { name: Blissey, category: Happiness Pokemon }
+  Happiny: { name: Happiny, category: Playhouse Pokemon }
+Tangela:
+  Tangela: { name: Tangela, category: Vine Pokemon }
+  Tangrowth: { name: Tangrowth, category: Vine Pokemon }
+Kangaskhan:
+  Kangaskhan: { name: Kangaskhan, category: Parent Pokemon }
+Horsea:
+  Horsea: { name: Horsea, category: Dragon Pokemon }
+  Seadra: { name: Seadra, category: Dragon Pokemon }
+  Kingdra: { name: Kingdra, category: Dragon Pokemon }
+Goldeen:
+  Goldeen: { name: Goldeen, category: Goldfish Pokemon }
+  Seaking: { name: Seaking, category: Goldfish Pokemon }
+Staryu:
+  Staryu: { name: Staryu, category: Star Shape Pokemon }
+  Starmie: { name: Starmie, category: Mysterious Pokemon }
+MrMime:
+  MrMime: { name: Mr. Mime, category: Barrier Pokemon }
+  MimeJr: { name: MimeJr, category: Mime Pokemon }
+Scyther:
+  Scyther: { name: Scyther, category: Mantis Pokemon }
+  Scizor: { name: Scizor, category: Pincer Pokemon }
+Jynx:
+  Jynx: { name: Jynx, category: Human Shape Pokemon }
+  Smoochum: { name: Smoochum, category: Kiss Pokemon }
+Electabuzz:
+  Electabuzz: { name: Electabuzz, category: Electric Pokemon }
+  Elekid: { name: Elekid, category: Electric Pokemon }
+  Electivire: { name: Electivire, category: Thunderbolt Pokemon }

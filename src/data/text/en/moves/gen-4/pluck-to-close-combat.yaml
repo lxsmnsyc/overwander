@@ -1,0 +1,18 @@
+Pluck:
+  name: Pluck
+  description: Eats the target's berry and gets the effect the target would have had.
+Tailwind:
+  name: Tailwind
+  description: 2x Speed for the user's whole team for 6 seconds.
+Acupressure:
+  name: Acupressure
+  description: Raises 1 stat of the user or a teammate 2 stages, picked at random.
+MetalBurst:
+  name: Metal Burst
+  description: Returns 1.5x the last hit taken from a move, at whoever landed it. Fails if nothing has hit the user.
+UTurn:
+  name: U-turn
+  description: The user swaps out for a teammate once it lands.
+CloseCombat:
+  name: Close Combat
+  description: Drops the user's Defense and Special Defense 1 stage each.

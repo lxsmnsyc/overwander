@@ -1,0 +1,111 @@
+# From Spotlight to Smart Strike
+
+Spotlight:
+  type: Normal
+  category: Status
+  priority: 3
+  pp: 15
+  target: Unit
+  affects: [Unit, Own, Enemy]
+
+ToxicThread:
+  type: Poison
+  category: Status
+  accuracy: 100
+  pp: 20
+  target: Unit
+
+LaserFocus:
+  type: Normal
+  category: Status
+  pp: 30
+  target: None
+
+GearUp:
+  type: Steel
+  category: Status
+  pp: 20
+  target: None
+
+ThroatChop:
+  type: Dark
+  category: Physical
+  power: 80
+  accuracy: 100
+  pp: 15
+  target: Unit
+  flags: [Contact]
+
+PollenPuff:
+  type: Bug
+  category: Special
+  power: 90
+  accuracy: 100
+  pp: 15
+  target: Unit
+  affects: [Unit, Own, Enemy]
+  projectile: true
+
+AnchorShot:
+  type: Steel
+  category: Physical
+  power: 80
+  accuracy: 100
+  pp: 20
+  target: Unit
+  flags: [Contact]
+
+PsychicTerrain:
+  type: Psychic
+  category: Status
+  pp: 10
+  target: None
+
+Lunge:
+  type: Bug
+  category: Physical
+  power: 80
+  accuracy: 100
+  pp: 15
+  target: Unit
+  flags: [Contact]
+
+FireLash:
+  type: Fire
+  category: Physical
+  power: 80
+  accuracy: 100
+  pp: 15
+  target: Unit
+  flags: [Contact]
+
+PowerTrip:
+  type: Dark
+  category: Physical
+  power: 20
+  accuracy: 100
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+BurnUp:
+  type: Fire
+  category: Special
+  power: 130
+  accuracy: 100
+  pp: 5
+  target: Unit
+
+SpeedSwap:
+  type: Psychic
+  category: Status
+  pp: 10
+  target: Unit
+
+SmartStrike:
+  type: Steel
+  category: Physical
+  power: 70
+  pp: 10
+  target: Unit
+  flags: [Contact]

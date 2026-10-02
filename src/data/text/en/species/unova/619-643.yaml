@@ -1,0 +1,44 @@
+Mienfoo:
+  Mienfoo: { name: Mienfoo, category: Martial Arts Pokemon }
+  Mienshao: { name: Mienshao, category: Martial Arts Pokemon }
+Druddigon:
+  Druddigon: { name: Druddigon, category: Cave Pokemon }
+Golett:
+  Golett: { name: Golett, category: Automaton Pokemon }
+  Golurk: { name: Golurk, category: Automaton Pokemon }
+Pawniard:
+  Pawniard: { name: Pawniard, category: Sharp Blade Pokemon }
+  Bisharp: { name: Bisharp, category: Sword Blade Pokemon }
+Bouffalant:
+  Bouffalant: { name: Bouffalant, category: Bash Buffalo Pokemon }
+Rufflet:
+  Rufflet: { name: Rufflet, category: Eaglet Pokemon }
+  Braviary: { name: Braviary, category: Valiant Pokemon }
+Vullaby:
+  Vullaby: { name: Vullaby, category: Diapered Pokemon }
+  Mandibuzz: { name: Mandibuzz, category: Bone Vulture Pokemon }
+Heatmor:
+  Heatmor: { name: Heatmor, category: Anteater Pokemon }
+Durant:
+  Durant: { name: Durant, category: Iron Ant Pokemon }
+Deino:
+  Deino: { name: Deino, category: Irate Pokemon }
+  Zweilous: { name: Zweilous, category: Hostile Pokemon }
+  Hydreigon: { name: Hydreigon, category: Brutal Pokemon }
+Larvesta:
+  Larvesta: { name: Larvesta, category: Torch Pokemon }
+  Volcarona: { name: Volcarona, category: Sun Pokemon }
+Cobalion:
+  Cobalion: { name: Cobalion, category: Iron Will Pokemon }
+Terrakion:
+  Terrakion: { name: Terrakion, category: Cavern Pokemon }
+Virizion:
+  Virizion: { name: Virizion, category: Grassland Pokemon }
+Tornadus:
+  Tornadus: { name: Tornadus, category: Cyclone Pokemon }
+  TornadusTherian: { name: Tornadus Therian, category: Cyclone Pokemon }
+Thundurus:
+  Thundurus: { name: Thundurus, category: Bolt Strike Pokemon }
+  ThundurusTherian: { name: Thundurus Therian, category: Bolt Strike Pokemon }
+Reshiram:
+  Reshiram: { name: Reshiram, category: Vast White Pokemon }

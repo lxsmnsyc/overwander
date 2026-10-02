@@ -1,0 +1,28 @@
+Celesteela:
+  Celesteela: { name: Celesteela, category: Launch Pokemon }
+Kartana:
+  Kartana: { name: Kartana, category: Drawn Sword Pokemon }
+Guzzlord:
+  Guzzlord: { name: Guzzlord, category: Junkivore Pokemon }
+Necrozma:
+  Necrozma: { name: Necrozma, category: Prism Pokemon }
+  NecrozmaDuskMane: { name: Dusk Mane Necrozma, category: Prism Pokemon }
+  NecrozmaDawnWings: { name: Dawn Wings Necrozma, category: Prism Pokemon }
+  NecrozmaUltra: { name: Ultra Necrozma, category: Prism Pokemon }
+Magearna:
+  Magearna: { name: Magearna, category: Artificial Pokemon }
+  MagearnaOriginal: { name: Magearna, category: Artificial Pokemon }
+Marshadow:
+  Marshadow: { name: Marshadow, category: Gloomdweller Pokemon }
+Poipole:
+  Poipole: { name: Poipole, category: Poison Pin Pokemon }
+  Naganadel: { name: Naganadel, category: Poison Pin Pokemon }
+Stakataka:
+  Stakataka: { name: Stakataka, category: Rampart Pokemon }
+Blacephalon:
+  Blacephalon: { name: Blacephalon, category: Fireworks Pokemon }
+Zeraora:
+  Zeraora: { name: Zeraora, category: Thunderclap Pokemon }
+Meltan:
+  Meltan: { name: Meltan, category: Hex Nut Pokemon }
+  Melmetal: { name: Melmetal, category: Hex Nut Pokemon }

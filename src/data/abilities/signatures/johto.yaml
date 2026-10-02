@@ -1,0 +1,62 @@
+# The signature abilities granted to the families filed under Johto
+
+families:
+  # The Johto starters share one signature: each leaves its element on
+  # whatever it lands a move on, paid as that thing acts
+  Chikorita: Sapmark
+  Cyndaquil: Embermark
+  Totodile: Jawmark
+  Sentret: Sentry
+  Hoothoot: WatchfulRoost
+  Ledyba: Relay
+  Spinarak: SilkSnare
+  Chinchou: LanternLure
+  Togepi: FairShare
+  Natu: Prophecy
+  Mareep: LiveWire
+  Marill: Spillover
+  Sudowoodo: FalseWood
+  Hoppip: Updraft
+  Aipom: Tailthrow
+  Sunkern: SunlitCharge
+  Yanma: Resonance
+  Wooper: ContagiousYawn
+  Murkrow: Magpie
+  Misdreavus: SharedMisery
+  Unown: RuinousScript
+  Wobbuffet: Backlash
+  Girafarig: Ambidextrous
+  Pineco: Shrapnel
+  Dunsparce: HiddenDen
+  Gligar: SandRider
+  Snubbull: Bully
+  Qwilfish: LastBarb
+  Shuckle: Fermenter
+  Heracross: Heave
+  Sneasel: SharpClaw
+  Teddiursa: SweetPaw
+  Slugma: MagmaTrail
+  Swinub: Icebreaker
+  Corsola: CoralBloom
+  Remoraid: Ricochet
+  Delibird: Delivery
+  Mantine: Escort
+  Skarmory: Steelmolt
+  Houndour: PackHowl
+  Phanpy: Momentum
+  Stantler: MindFog
+  Smeargle: Palette
+  Miltank: Cowbell
+
+  # The three beasts share one signature, told three ways: what Ho-Oh
+  # did for them in the burned tower, once per battle
+  Raikou: RisenThunder
+  Entei: RisenFlame
+  Suicune: RisenTide
+  Larvitar: Tyrant
+
+  # The tower duo share one signature, told either side of a fall: the
+  # guardian keeps its party standing once per battle
+  Lugia: SilverAegis
+  HoOh: RainbowRekindling
+  Celebi: TimelineSplit

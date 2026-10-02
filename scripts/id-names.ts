@@ -1,11 +1,11 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import renderSpeciesSchemas, { SCHEMA_DIR } from './species-schemas.ts';
+import renderDataSchemas, { SCHEMA_DIR } from './data-schemas.ts';
 
 /**
  * Writes `src/data/ids/names.ts`: every member of the enums the YAML
  * data refers to, keyed by its own name. Also writes the JSON Schemas
- * in `src/data/species/schema/`, which hand the same names to an
- * editor for completion and squiggles.
+ * in `src/data/schema/`, which hand the same names to an editor for
+ * completion and squiggles.
  *
  * The data files name things the way the code does (`Arcanine`,
  * `FlareBlitz`), and these tables are how a name becomes an id. They
@@ -28,6 +28,8 @@ interface Table {
   from: string;
   /** Whether the enum is the file's default export */
   isDefault?: boolean;
+  /** Written as a frozen object rather than an `enum` */
+  isObject?: boolean;
 }
 
 const TABLES: Table[] = [
@@ -36,6 +38,11 @@ const TABLES: Table[] = [
   { name: 'HABITAT_IDS', enumName: 'Habitat', from: './species' },
   { name: 'EVOLUTION_METHOD_IDS', enumName: 'EvolutionMethod', from: './species' },
   { name: 'MOVE_IDS', enumName: 'Moves', from: './moves' },
+  { name: 'MOVE_CATEGORY_IDS', enumName: 'MoveCategories', from: './moves' },
+  { name: 'MOVE_TARGET_IDS', enumName: 'MoveTargets', from: './moves' },
+  { name: 'MOVE_AFFECT_IDS', enumName: 'MoveAffects', from: './moves' },
+  { name: 'MOVE_FLAG_IDS', enumName: 'MoveFlags', from: './moves' },
+  { name: 'SPRITE_ANIM_IDS', enumName: 'SpriteAnim', from: './sprite-anims', isObject: true },
   { name: 'ABILITY_IDS', enumName: 'Abilities', from: './abilities', isDefault: true },
   { name: 'ITEM_IDS', enumName: 'Items', from: './items' },
   { name: 'BIOME_IDS', enumName: 'Biome', from: './biome', isDefault: true },
@@ -50,7 +57,11 @@ const TABLES: Table[] = [
 function membersOf(table: Table): string[] {
   const path = new URL(`../src/data/ids/${table.from}.ts`, import.meta.url);
   const source = readFileSync(path, 'utf8');
-  const start = source.search(new RegExp(`enum ${table.enumName} \\{`));
+  const start = source.search(
+    new RegExp(
+      table.isObject === true ? `const ${table.enumName} = \\{` : `enum ${table.enumName} \\{`,
+    ),
+  );
 
   if (start < 0) {
     throw new Error(`No enum ${table.enumName} in ${table.from}`);
@@ -62,7 +73,7 @@ function membersOf(table: Table): string[] {
     .replaceAll(/\/\/.*$/gm, '');
   const names: string[] = [];
 
-  for (const [, name] of body.matchAll(/^\s*([A-Za-z_]\w*)\s*(?:=|,|$)/gm)) {
+  for (const [, name] of body.matchAll(/^\s*([A-Za-z_]\w*)\s*(?:=|:|,|$)/gm)) {
     names.push(name);
   }
   return names;
@@ -120,7 +131,7 @@ if (import.meta.main) {
   writeFileSync(new URL(`../${OUTPUT}`, import.meta.url), renderIdNames());
   console.log(`${OUTPUT} written`);
   mkdirSync(new URL(`../${SCHEMA_DIR}`, import.meta.url), { recursive: true });
-  for (const [file, schema] of renderSpeciesSchemas(enumMembers())) {
+  for (const [file, schema] of renderDataSchemas(enumMembers())) {
     writeFileSync(new URL(`../${SCHEMA_DIR}/${file}`, import.meta.url), schema);
   }
   console.log(`${SCHEMA_DIR} written`);

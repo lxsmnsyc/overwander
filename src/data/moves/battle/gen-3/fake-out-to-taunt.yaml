@@ -1,0 +1,138 @@
+# From Fake Out to Taunt: the openers, the stockpile trio and the
+# moves that talk a fight out of somebody
+
+FakeOut:
+  type: Normal
+  category: Physical
+  power: 40
+  accuracy: 100
+  priority: 3
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+Uproar:
+  type: Normal
+  category: Special
+  power: 90
+  accuracy: 100
+  pp: 10
+  target: Unit
+  flags: [Sound]
+  steps: 2
+
+Stockpile:
+  type: Normal
+  category: Status
+  pp: 20
+  target: None
+  steps: 2
+
+SpitUp:
+  type: Normal
+  category: Special
+  accuracy: 100
+  pp: 10
+  target: Unit
+  projectile: true
+
+Swallow:
+  type: Normal
+  category: Status
+  pp: 10
+  target: None
+
+HeatWave:
+  type: Fire
+  category: Special
+  power: 95
+  accuracy: 90
+  pp: 10
+  target: None
+  affects: [Unit, Enemy]
+  flags: [Wind]
+
+Torment:
+  type: Dark
+  category: Status
+  accuracy: 100
+  pp: 15
+  target: Unit
+
+Flatter:
+  type: Dark
+  category: Status
+  accuracy: 100
+  pp: 15
+  target: Unit
+  affects: [Unit, Own, Enemy]
+
+WillOWisp:
+  type: Fire
+  category: Status
+  accuracy: 85
+  pp: 15
+  target: Unit
+  projectile: true
+
+Memento:
+  type: Dark
+  category: Status
+  accuracy: 100
+  pp: 10
+  target: Unit
+  affects: [Unit, Own, Enemy]
+
+Facade:
+  type: Normal
+  category: Physical
+  power: 70
+  accuracy: 100
+  pp: 20
+  target: Unit
+  flags: [Contact]
+
+FocusPunch:
+  type: Fighting
+  category: Physical
+  power: 150
+  accuracy: 100
+  priority: -3
+  pp: 20
+  target: Unit
+  flags: [Contact]
+
+SmellingSalts:
+  type: Normal
+  category: Physical
+  power: 70
+  accuracy: 100
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+FollowMe:
+  type: Normal
+  category: Status
+  priority: 2
+  pp: 20
+  target: None
+
+NaturePower:
+  type: Normal
+  category: Status
+  pp: 20
+  target: Unit
+
+Charge:
+  type: Electric
+  category: Status
+  pp: 20
+  target: None
+
+Taunt:
+  type: Dark
+  category: Status
+  accuracy: 100
+  pp: 20
+  target: Unit

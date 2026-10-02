@@ -1,0 +1,40 @@
+Kecleon:
+  Kecleon: { name: Kecleon, category: Color Swap Pokemon }
+Shuppet:
+  Shuppet: { name: Shuppet, category: Puppet Pokemon }
+  Banette: { name: Banette, category: Marionette Pokemon }
+Duskull:
+  Duskull: { name: Duskull, category: Requiem Pokemon }
+  Dusclops: { name: Dusclops, category: Beckon Pokemon }
+  Dusknoir: { name: Dusknoir, category: Gripper Pokemon }
+Tropius:
+  Tropius: { name: Tropius, category: Fruit Pokemon }
+Chimecho:
+  Chimecho: { name: Chimecho, category: Wind Chime Pokemon }
+  Chingling: { name: Chingling, category: Bell Pokemon }
+Absol:
+  Absol: { name: Absol, category: Disaster Pokemon }
+Snorunt:
+  Snorunt: { name: Snorunt, category: Snow Hat Pokemon }
+  Glalie: { name: Glalie, category: Face Pokemon }
+  Froslass: { name: Froslass, category: Snow Land Pokemon }
+Spheal:
+  Spheal: { name: Spheal, category: Clap Pokemon }
+  Sealeo: { name: Sealeo, category: Ball Roll Pokemon }
+  Walrein: { name: Walrein, category: Ice Break Pokemon }
+Clamperl:
+  Clamperl: { name: Clamperl, category: Bivalve Pokemon }
+  Huntail: { name: Huntail, category: Deep Sea Pokemon }
+  Gorebyss: { name: Gorebyss, category: South Sea Pokemon }
+Relicanth:
+  Relicanth: { name: Relicanth, category: Longevity Pokemon }
+Luvdisc:
+  Luvdisc: { name: Luvdisc, category: Rendezvous Pokemon }
+Bagon:
+  Bagon: { name: Bagon, category: Rock Head Pokemon }
+  Shelgon: { name: Shelgon, category: Endurance Pokemon }
+  Salamence: { name: Salamence, category: Dragon Pokemon }
+Beldum:
+  Beldum: { name: Beldum, category: Iron Ball Pokemon }
+  Metang: { name: Metang, category: Iron Claw Pokemon }
+  Metagross: { name: Metagross, category: Iron Leg Pokemon }

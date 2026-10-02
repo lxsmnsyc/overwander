@@ -1,0 +1,74 @@
+# From Grass Knot to Attack Order: the last of Sinnoh's fourth
+# stretch, where a move reads what the target weighs or what the user
+# is holding
+
+GrassKnot:
+  type: Grass
+  category: Special
+  power: 50
+  accuracy: 100
+  pp: 20
+  target: Unit
+
+Chatter:
+  type: Flying
+  category: Special
+  power: 65
+  accuracy: 100
+  pp: 20
+  target: Unit
+  flags: [Sound]
+
+Judgment:
+  type: Normal
+  category: Special
+  power: 100
+  accuracy: 100
+  pp: 10
+  target: Unit
+  projectile: true
+
+BugBite:
+  type: Bug
+  category: Physical
+  power: 60
+  accuracy: 100
+  pp: 20
+  target: Unit
+  flags: [Contact, Bite]
+
+ChargeBeam:
+  type: Electric
+  category: Special
+  power: 50
+  accuracy: 90
+  pp: 10
+  target: Unit
+
+WoodHammer:
+  type: Grass
+  category: Physical
+  power: 120
+  accuracy: 100
+  pp: 15
+  target: Unit
+  flags: [Contact]
+
+AquaJet:
+  type: Water
+  category: Physical
+  power: 40
+  accuracy: 100
+  priority: 1
+  pp: 20
+  target: Unit
+  flags: [Contact]
+
+AttackOrder:
+  type: Bug
+  category: Physical
+  power: 90
+  accuracy: 100
+  pp: 15
+  target: Unit
+  projectile: true

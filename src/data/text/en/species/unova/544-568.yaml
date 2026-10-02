@@ -1,0 +1,39 @@
+Cottonee:
+  Cottonee: { name: Cottonee, category: Cotton Puff Pokemon }
+  Whimsicott: { name: Whimsicott, category: Windveiled Pokemon }
+Petilil:
+  Petilil: { name: Petilil, category: Bulb Pokemon }
+  Lilligant: { name: Lilligant, category: Flowering Pokemon }
+Basculin:
+  Basculin: { name: Basculin, category: Hostile Pokemon }
+  BasculinBlue: { name: Basculin Blue, category: Hostile Pokemon }
+Sandile:
+  Sandile: { name: Sandile, category: Desert Croc Pokemon }
+  Krokorok: { name: Krokorok, category: Desert Croc Pokemon }
+  Krookodile: { name: Krookodile, category: Intimidation Pokemon }
+Darumaka:
+  Darumaka: { name: Darumaka, category: Zen Charm Pokemon }
+  Darmanitan: { name: Darmanitan, category: Blazing Pokemon }
+  DarmanitanZen: { name: Darmanitan Zen, category: Blazing Pokemon }
+Maractus:
+  Maractus: { name: Maractus, category: Cactus Pokemon }
+Dwebble:
+  Dwebble: { name: Dwebble, category: Rock Inn Pokemon }
+  Crustle: { name: Crustle, category: Stone Home Pokemon }
+Scraggy:
+  Scraggy: { name: Scraggy, category: Shedding Pokemon }
+  Scrafty: { name: Scrafty, category: Hoodlum Pokemon }
+Sigilyph:
+  Sigilyph: { name: Sigilyph, category: Avianoid Pokemon }
+Yamask:
+  Yamask: { name: Yamask, category: Spirit Pokemon }
+  Cofagrigus: { name: Cofagrigus, category: Coffin Pokemon }
+Tirtouga:
+  Tirtouga: { name: Tirtouga, category: Prototurtle Pokemon }
+  Carracosta: { name: Carracosta, category: Prototurtle Pokemon }
+Archen:
+  Archen: { name: Archen, category: First Bird Pokemon }
+  Archeops: { name: Archeops, category: First Bird Pokemon }
+Trubbish:
+  Trubbish: { name: Trubbish, category: Trash Bag Pokemon }
+  Garbodor: { name: Garbodor, category: Trash Heap Pokemon }

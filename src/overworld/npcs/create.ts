@@ -1,6 +1,10 @@
+import * as v from 'valibot';
 import type { InventoryEntry } from '../../auth/inventory';
 import type { Items } from '../../data/ids/items';
+import { NPC_IDS } from '../../data/ids/names';
 import type Npc from '../../data/ids/npcs';
+import textFile from '../../data/text/en/npcs.yaml';
+import { idOf } from '../../data/yaml';
 import type ChunkSnapshot from '../chunk-snapshot';
 import type { Conversation } from '../../components/forms/conversation';
 import type { ToastRequest } from '../../components/styled';
@@ -63,7 +67,36 @@ export interface NpcDefinition {
   interact?: () => Promise<{ default: NpcScript }>;
 }
 
-/** One of the people, defined in one place: who they are and what they do */
-export function createNpc(id: Npc, definition: Omit<NpcDefinition, 'id'>): NpcDefinition {
-  return { id, ...definition };
+/** What a person says and is called, which is text rather than code */
+type NpcText = Pick<NpcDefinition, 'name' | 'description' | 'quote' | 'spent'>;
+
+const TEXT = v.object({
+  name: v.string(),
+  description: v.string(),
+  quote: v.string(),
+  spent: v.optional(v.string()),
+});
+
+/** Every person's words, from `text/en/npcs.yaml` */
+const NPC_TEXT = new Map<Npc, NpcText>();
+
+for (const [name, said] of Object.entries(v.parse(v.record(v.string(), TEXT), textFile))) {
+  NPC_TEXT.set(idOf<Npc>(NPC_IDS, name, `text/en/npcs.yaml: ${name}`), said);
+}
+
+/**
+ * One of the people, defined in one place: what they wear and what
+ * they do. What they are called and say is `text/en/npcs.yaml`, by
+ * the same id
+ */
+export function createNpc(
+  id: Npc,
+  definition: Omit<NpcDefinition, 'id' | keyof NpcText>,
+): NpcDefinition {
+  const said = NPC_TEXT.get(id);
+
+  if (said == null) {
+    throw new Error(`Npc ${id} needs its words in text/en/npcs.yaml`);
+  }
+  return { id, ...said, ...definition };
 }

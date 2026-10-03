@@ -66,6 +66,10 @@ const TABLES: Table[] = [
   { name: 'LEGEND_IDS', enumName: 'Legend', from: './legends', isDefault: true },
   { name: 'FRONTIER_BRAIN_IDS', enumName: 'FrontierBrain', from: './frontier', isDefault: true },
   { name: 'FRONTIER_RULE_IDS', enumName: 'FrontierRule', from: './frontier' },
+  { name: 'SYNDICATE_IDS', enumName: 'Syndicate', from: './syndicates', isDefault: true },
+  { name: 'EXECUTIVE_IDS', enumName: 'Executive', from: './executives', isDefault: true },
+  { name: 'NPC_IDS', enumName: 'Npc', from: './npcs', isDefault: true },
+  { name: 'VENDOR_KIND_IDS', enumName: 'VendorKind', from: './vendor-kinds', isDefault: true },
   {
     name: 'WEATHER_IDS',
     enumName: 'Weather',

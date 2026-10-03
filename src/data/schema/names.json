@@ -4789,6 +4789,70 @@
         "Singled"
       ]
     },
+    "syndicate": {
+      "enum": [
+        "Rocket",
+        "Magma",
+        "Aqua",
+        "Galactic",
+        "Plasma",
+        "Flare"
+      ]
+    },
+    "executive": {
+      "enum": [
+        "Archer",
+        "Ariana",
+        "Proton",
+        "Petrel",
+        "Tabitha",
+        "Courtney",
+        "Matt",
+        "Shelly",
+        "Mars",
+        "Jupiter",
+        "Saturn",
+        "Colress",
+        "Zinzolin",
+        "Xerosic",
+        "Aliana",
+        "Bryony",
+        "Celosia",
+        "Mable"
+      ]
+    },
+    "npc": {
+      "enum": [
+        "Breeder",
+        "DaycareLady",
+        "NurseJoy",
+        "Groomer",
+        "Vendor",
+        "MoveReminder",
+        "RocketGrunt",
+        "FossilManiac",
+        "FossilScientist",
+        "MoveTutor",
+        "Trainer",
+        "Chef",
+        "Channeler",
+        "Kurt",
+        "Geologist",
+        "DojoMaster",
+        "Trader",
+        "HyperTrainer"
+      ]
+    },
+    "vendor-kind": {
+      "enum": [
+        "Medicine",
+        "Vitamins",
+        "Incenses",
+        "BattleItems",
+        "Balls",
+        "Moves"
+      ]
+    },
     "weather": {
       "enum": [
         "Clear",

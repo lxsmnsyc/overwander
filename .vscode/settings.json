@@ -59,6 +59,12 @@
     "./src/data/schema/legends.json": "src/data/overworld/experts/legends.yaml",
     "./src/data/schema/legends-text.json": "src/data/text/*/legends.yaml",
     "./src/data/schema/frontier.json": "src/data/overworld/experts/frontier.yaml",
-    "./src/data/schema/frontier-text.json": "src/data/text/*/frontier.yaml"
+    "./src/data/schema/frontier-text.json": "src/data/text/*/frontier.yaml",
+    "./src/data/schema/syndicates.json": "src/data/overworld/syndicates.yaml",
+    "./src/data/schema/executives.json": "src/data/overworld/executives.yaml",
+    "./src/data/schema/syndicates-text.json": "src/data/text/*/syndicates.yaml",
+    "./src/data/schema/executives-text.json": "src/data/text/*/executives.yaml",
+    "./src/data/schema/npcs-text.json": "src/data/text/*/npcs.yaml",
+    "./src/data/schema/vendor-stalls-text.json": "src/data/text/*/vendor-stalls.yaml"
   }
 }

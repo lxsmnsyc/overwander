@@ -20,6 +20,10 @@ import EliteMember from './elite';
 import Champion from './champions';
 import Legend from './legends';
 import FrontierBrain, { FrontierRule } from './frontier';
+import Syndicate from './syndicates';
+import Executive from './executives';
+import Npc from './npcs';
+import VendorKind from './vendor-kinds';
 import Weather from '../overworld/weather/kinds';
 
 export const SPECIES_IDS = {
@@ -4775,6 +4779,66 @@ export const FRONTIER_RULE_IDS = {
   Unhealed: FrontierRule.Unhealed,
   Singled: FrontierRule.Singled,
 } as const satisfies Record<string, FrontierRule>;
+
+export const SYNDICATE_IDS = {
+  Rocket: Syndicate.Rocket,
+  Magma: Syndicate.Magma,
+  Aqua: Syndicate.Aqua,
+  Galactic: Syndicate.Galactic,
+  Plasma: Syndicate.Plasma,
+  Flare: Syndicate.Flare,
+} as const satisfies Record<string, Syndicate>;
+
+export const EXECUTIVE_IDS = {
+  Archer: Executive.Archer,
+  Ariana: Executive.Ariana,
+  Proton: Executive.Proton,
+  Petrel: Executive.Petrel,
+  Tabitha: Executive.Tabitha,
+  Courtney: Executive.Courtney,
+  Matt: Executive.Matt,
+  Shelly: Executive.Shelly,
+  Mars: Executive.Mars,
+  Jupiter: Executive.Jupiter,
+  Saturn: Executive.Saturn,
+  Colress: Executive.Colress,
+  Zinzolin: Executive.Zinzolin,
+  Xerosic: Executive.Xerosic,
+  Aliana: Executive.Aliana,
+  Bryony: Executive.Bryony,
+  Celosia: Executive.Celosia,
+  Mable: Executive.Mable,
+} as const satisfies Record<string, Executive>;
+
+export const NPC_IDS = {
+  Breeder: Npc.Breeder,
+  DaycareLady: Npc.DaycareLady,
+  NurseJoy: Npc.NurseJoy,
+  Groomer: Npc.Groomer,
+  Vendor: Npc.Vendor,
+  MoveReminder: Npc.MoveReminder,
+  RocketGrunt: Npc.RocketGrunt,
+  FossilManiac: Npc.FossilManiac,
+  FossilScientist: Npc.FossilScientist,
+  MoveTutor: Npc.MoveTutor,
+  Trainer: Npc.Trainer,
+  Chef: Npc.Chef,
+  Channeler: Npc.Channeler,
+  Kurt: Npc.Kurt,
+  Geologist: Npc.Geologist,
+  DojoMaster: Npc.DojoMaster,
+  Trader: Npc.Trader,
+  HyperTrainer: Npc.HyperTrainer,
+} as const satisfies Record<string, Npc>;
+
+export const VENDOR_KIND_IDS = {
+  Medicine: VendorKind.Medicine,
+  Vitamins: VendorKind.Vitamins,
+  Incenses: VendorKind.Incenses,
+  BattleItems: VendorKind.BattleItems,
+  Balls: VendorKind.Balls,
+  Moves: VendorKind.Moves,
+} as const satisfies Record<string, VendorKind>;
 
 export const WEATHER_IDS = {
   Clear: Weather.Clear,

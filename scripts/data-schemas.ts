@@ -47,6 +47,10 @@ const DEFINITIONS: [enumName: string, definition: string][] = [
   ['Legend', 'legend'],
   ['FrontierBrain', 'frontier-brain'],
   ['FrontierRule', 'frontier-rule'],
+  ['Syndicate', 'syndicate'],
+  ['Executive', 'executive'],
+  ['Npc', 'npc'],
+  ['VendorKind', 'vendor-kind'],
   ['Weather', 'weather'],
 ];
 
@@ -417,6 +421,58 @@ const FRONTIER_TEXT: Schema = {
     ['name', 'house'],
   ),
 };
+
+const RANK: Schema = part(
+  {
+    sheets: described(SHEETS, 'The charsets they are met in'),
+    honor: described(name('award'), 'The mark putting them down pays'),
+  },
+  ['sheets', 'honor'],
+);
+
+const SYNDICATES: Schema = {
+  $schema: DRAFT,
+  title: 'Syndicates',
+  type: 'object',
+  propertyNames: name('syndicate'),
+  additionalProperties: part(
+    {
+      grunt: described(RANK, 'The rank and file'),
+      executives: names('executive', 'Who answers to the boss'),
+      boss: described(RANK, 'The boss'),
+      biomes: names('biome', "What it holds; a biome nobody holds is Rocket's"),
+    },
+    ['grunt', 'executives', 'boss', 'biomes'],
+  ),
+};
+
+const EXECUTIVES: Schema = {
+  $schema: DRAFT,
+  title: 'Executives',
+  type: 'object',
+  propertyNames: name('executive'),
+  additionalProperties: RANK,
+};
+
+function spoken(
+  title: string,
+  definition: string,
+  fields: Record<string, string>,
+  required: string[],
+): Schema {
+  const properties: Record<string, Schema> = {};
+
+  for (const [field, description] of Object.entries(fields)) {
+    properties[field] = described({ type: 'string' }, description);
+  }
+  return {
+    $schema: DRAFT,
+    title,
+    type: 'object',
+    propertyNames: name(definition),
+    additionalProperties: part(properties, required),
+  };
+}
 
 function namesText(title: string, definition: string): Schema {
   return {
@@ -825,6 +881,54 @@ export default function renderDataSchemas(members: Map<string, string[]>): Map<s
     ['legends-text.json', json(namesText('Legend names', 'legend'))],
     ['frontier.json', json(FRONTIER)],
     ['frontier-text.json', json(FRONTIER_TEXT)],
+    ['syndicates.json', json(SYNDICATES)],
+    ['executives.json', json(EXECUTIVES)],
+    [
+      'syndicates-text.json',
+      json(
+        spoken(
+          'Syndicate words',
+          'syndicate',
+          {
+            name: 'What the team is called',
+            boss: "The boss's name",
+            'boss-title': 'What the team calls its boss',
+            'executive-title': 'What the team calls its executives',
+            'boss-quote': 'What the boss says as they bar the cell',
+            'grunt-quote': 'What the rank and file say',
+          },
+          ['name', 'boss', 'boss-title', 'executive-title', 'boss-quote', 'grunt-quote'],
+        ),
+      ),
+    ],
+    [
+      'executives-text.json',
+      json(
+        spoken(
+          'Executive words',
+          'executive',
+          { name: 'What they are called', quote: 'What they say as they bar the cell' },
+          ['name', 'quote'],
+        ),
+      ),
+    ],
+    [
+      'npcs-text.json',
+      json(
+        spoken(
+          'NPC words',
+          'npc',
+          {
+            name: 'What they are called',
+            description: 'What they are for, in a line',
+            quote: 'What they open with',
+            spent: 'What they say once their one visit this window is spent',
+          },
+          ['name', 'description', 'quote'],
+        ),
+      ),
+    ],
+    ['vendor-stalls-text.json', json(namesText('Vendor stall names', 'vendor-kind'))],
   ]);
 
   for (const [file, title, entry] of BATTLE_FILES) {

@@ -657,7 +657,8 @@ export default function PickerBox(
         numbered={slotted()}
         fill={props.fill}
         say={props.say}
-        rewind={props.box?.box}
+        // Every box, Default and each made one are three different places
+        rewind={props.box == null ? '*' : (props.box.box ?? '')}
         onPlace={slotted() ? props.onPlace : undefined}
         placeLabel={props.placeLabel}
         results={props.results}

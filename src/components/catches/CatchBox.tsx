@@ -244,8 +244,12 @@ export interface CatchBoxProps {
    * drawn, so a box of a thousand costs what a box of thirty does
    */
   scroll?: boolean;
-  /** Changed to send a scrolling box back to its first row */
-  rewind?: unknown;
+  /**
+   * Changed to send a scrolling box back to its first row: another box
+   * opened, or a new search. A key rather than anything richer, so it
+   * is only "changed" when its value is
+   */
+  rewind?: string;
   /** Which squares a scrolling box has in sight, as it scrolls */
   onView?: (spot: BoxView) => void;
 }
@@ -663,9 +667,13 @@ export default function CatchBox(props: CatchBoxProps): JSX.Element {
     });
   });
 
+  // Compared by value: a caller rebuilding its props on every pick
+  // asks for this again with the same answer, and that is no change
+  const rewound = createMemo(() => props.rewind ?? '');
+
   createEffect(
     on(
-      () => props.rewind,
+      rewound,
       () => {
         const element = frame();
 

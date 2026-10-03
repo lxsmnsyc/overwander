@@ -51,8 +51,8 @@ export interface CatchGridProps {
    * carried from its first row to its last
    */
   say?: (view: BoxView) => string;
-  /** Changed to send the box back to its first row, passed to the box */
-  rewind?: unknown;
+  /** Changed to send the box back to its first row, passed to the box with the search */
+  rewind?: string;
   /** Putting the picked ones in an empty square, passed to the box */
   onPlace?: (slot: number) => void;
   placeLabel?: (slot: number) => string;
@@ -231,7 +231,7 @@ export default function CatchGrid(props: CatchGridProps): JSX.Element {
           <CatchBox
             entries={matched()}
             scroll
-            rewind={[props.rewind, query()]}
+            rewind={`${props.rewind ?? ''}|${query()}`}
             onView={(spot) => {
               setView(spot);
             }}

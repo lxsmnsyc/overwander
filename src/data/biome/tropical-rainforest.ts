@@ -80,7 +80,7 @@ export default function registerTropicalRainforestSpawns(): void {
       mythical: [{ species: Species.Mew, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
-      base: [],
+      base: [{ species: Species.Rowlet, weight: 2 }],
       uncommon: [
         { species: Species.Noibat, weight: 24 },
         { species: Species.Exeggcute, weight: 20 },
@@ -89,7 +89,7 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Shroomish, weight: 25 },
         { species: Species.Yanma, weight: 5 },
       ],
-      rare: [],
+      rare: [{ species: Species.Dartrix, weight: 2 }],
       scarce: [
         { species: Species.Noivern, weight: 6 },
         { species: Species.Exeggutor, weight: 10 },
@@ -101,6 +101,7 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Tangrowth, weight: 6 },
       ],
       elusive: [
+        { species: Species.Decidueye, weight: 2 },
         { species: Species.Hawlucha, weight: 6 },
         { species: Species.Carnivine, weight: 6 },
       ],
@@ -109,7 +110,7 @@ export default function registerTropicalRainforestSpawns(): void {
       mythical: [{ species: Species.Mew, weight: 10 }],
     },
     [TimeOfDay.Night]: {
-      base: [],
+      base: [{ species: Species.Rowlet, weight: 2 }],
       uncommon: [
         { species: Species.Noibat, weight: 24 },
         { species: Species.Exeggcute, weight: 20 },
@@ -118,7 +119,7 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Shroomish, weight: 25 },
         { species: Species.Yanma, weight: 5 },
       ],
-      rare: [],
+      rare: [{ species: Species.Dartrix, weight: 2 }],
       scarce: [
         { species: Species.Noivern, weight: 6 },
         { species: Species.Exeggutor, weight: 10 },
@@ -129,7 +130,10 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Yanmega, weight: 6 },
         { species: Species.Tangrowth, weight: 6 },
       ],
-      elusive: [{ species: Species.Carnivine, weight: 6 }],
+      elusive: [
+        { species: Species.Decidueye, weight: 2 },
+        { species: Species.Carnivine, weight: 6 },
+      ],
       prized: [...UNOWN_SPAWNS],
       special: [],
       mythical: [{ species: Species.Mew, weight: 10 }],

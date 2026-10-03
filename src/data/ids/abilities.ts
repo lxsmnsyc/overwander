@@ -982,6 +982,12 @@ const enum Abilities {
   Boiler = 200364,
   // Litleo
   PrideCall = 200365,
+  // Rowlet
+  QuillAudience = 200366,
+  // Litten
+  HeelAudience = 200367,
+  // Popplio
+  AriaAudience = 200368,
 }
 
 export default Abilities;

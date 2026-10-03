@@ -47,6 +47,7 @@ const REGIONS: Partial<Record<string, string>> = {
   sinnoh: 'sinnoh',
   unova: 'unova',
   kalos: 'kalos',
+  alola: 'alola',
 };
 
 /**

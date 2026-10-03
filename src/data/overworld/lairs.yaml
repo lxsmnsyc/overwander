@@ -1,0 +1,314 @@
+# Each lair by its enum name: `species` at home there, in the order a raid
+# picks from; `underground` if a cave under its biome stages it too;
+# `reserved` keeps it out of the world until its batch lists it.
+
+SeafoamIslands:
+  species: [Articuno]
+  underground: true
+PowerPlant:
+  species: [Zapdos]
+MtEmber:
+  species: [Moltres]
+CeruleanCave:
+  species: [Mewtwo]
+  underground: true
+# Mew's island. It is never in a biome's list (the world stages no mythical),
+# but a mythical raid called out by a relic still needs a name, and this is
+# the one it has always had
+FarawayIsland:
+  species: [Mew]
+# Where the three beasts were burned and brought back. It is the one lair with
+# more than one resident, which is what the games say: they were made together
+# and set loose together, and no place belongs to any one of them
+BurnedTower:
+  species: [Raikou, Entei, Suicune]
+WhirlIslands:
+  species: [Lugia]
+  underground: true
+BellTower:
+  species: [HoOh]
+# Celebi's shrine. A mythical's lair, so the world never stages it
+IlexForest:
+  species: [Celebi]
+# The three sealed chambers, one golem apiece. Unlike the Burned Tower, which
+# holds three, each of these holds exactly one: they were sealed separately
+# and are opened separately
+DesertRuins:
+  species: [Regirock]
+  underground: true
+IslandCave:
+  species: [Regice]
+  underground: true
+AncientTomb:
+  species: [Registeel]
+  underground: true
+# The island the eon pair keep to, well out in open water. Like the Burned
+# Tower it holds two, so which of the pair is at home is a roll
+SouthernIsland:
+  species: [Latias, Latios]
+# The three the weather trio sleep in: a cavern that floods, one that fills
+# with heat, and the tower the sky is reached from
+MarineCave:
+  species: [Kyogre]
+  underground: true
+TerraCave:
+  species: [Groudon]
+  underground: true
+SkyPillar:
+  species: [Rayquaza]
+# Deoxys' island. A mythical's lair, so no biome lists it: the ticket is the
+# only way there
+BirthIsland:
+  species: [Deoxys]
+# The valley a Jirachi sleeps under, woken by the comet that passes over it. A
+# mythical's lair, so no biome hosts it
+Forina:
+  species: [Jirachi]
+# The three lakes the trio sleep under, one apiece. Like the sealed chambers
+# and unlike the Burned Tower, each holds exactly one: they were set down in
+# three places and stayed in them
+LakeAcuity:
+  species: [Uxie]
+LakeVerity:
+  species: [Mesprit]
+LakeValor:
+  species: [Azelf]
+# The top of the mountain, where the two that made the world are called down.
+# It holds both, like the Southern Island, so which of them answers is a roll
+SpearPillar:
+  species: [Dialga, Palkia]
+# The cave the third one was banished through. One resident, and the only door
+# to the world behind this one
+TurnbackCave:
+  species: [Giratina]
+  underground: true
+# The two islands off the same port, one for each half of the moon. Newmoon
+# Island is a mythical's, so no biome lists it: the pass is the only way onto
+# that boat
+FullmoonIsland:
+  species: [Cresselia]
+NewmoonIsland:
+  species: [Darkrai]
+# The temple that surfaces once and sinks again, and the prince that lives in
+# it. A mythical's lair, so no biome hosts it
+SeaTemple:
+  species: [Manaphy]
+# The cavern at the top of the volcano, which is not a cave the thing in it
+# lives under but the one it hangs off
+StarkMountain:
+  species: [Heatran]
+  underground: true
+# The temple in the snow the fourth golem was shut in, above the three it made
+SnowpointTemple:
+  species: [Regigigas]
+  underground: true
+# The meadow at the end of the broken path, which grows back every time
+# somebody thanks it. A mythical's lair, so no biome hosts it
+FlowerParadise:
+  species: [Shaymin]
+# The stair that opens over the top of the mountain, and what is standing at
+# the top of it. A mythical's lair, so no biome hosts it
+HallOfOrigin:
+  species: [Arceus]
+# The three ruins the golems turn up in again in Sinnoh, one apiece. Each
+# keeps its Hoenn chamber too, so either place stages it
+RockPeakRuins:
+  species: [Regirock]
+  underground: true
+IcebergRuins:
+  species: [Regice]
+  underground: true
+IronRuins:
+  species: [Registeel]
+  underground: true
+# The rock far out at sea the tower duo meet at, one at its foot and one at
+# its peak, so which of them answers is a roll
+NavelRock:
+  species: [Lugia, HoOh]
+# The tower set into the sea cliffs, where an orb calls down any of the
+# weather trio, so which of them answers is a roll
+EmbeddedTower:
+  species: [Kyogre, Groudon, Rayquaza]
+  underground: true
+# The buried castle under the sand, and the moth the desert once took for the
+# sun still in it
+RelicCastle:
+  species: [Volcarona]
+  underground: true
+# The three chambers the swords keep, one apiece the way the lakes are: the
+# cave one waits in, the hall one is tested in and the clearing one thinks in
+GuidanceChamber:
+  species: [Cobalion]
+  underground: true
+TrialChamber:
+  species: [Terrakion]
+  underground: true
+RuminationField:
+  species: [Virizion]
+# The marsh the colt waits in until the other three have been met. A
+# mythical's lair, so no biome hosts it
+MoorOfIcirrus:
+  species: [Keldeo]
+# The tower in the snow the two halves of the dragon sleep under, one in each
+# stone, so which of them answers is a roll
+DragonspiralTower:
+  species: [Reshiram, Zekrom]
+# The crater the husk has been waiting in since it was torn open
+GiantChasm:
+  species: [Kyurem]
+  underground: true
+# The shrine the three storm riders come back to. One place for all three, the
+# way the burned tower holds the beasts: two of them roam the country wrecking
+# it and the third follows behind
+AbundantShrine:
+  species: [Tornadus, Thundurus, Landorus]
+# The garden on the island the ferry runs out to. A mythical's lair, so no
+# biome hosts it
+LibertyGarden:
+  species: [Victini]
+# The ruin under the water the old song came out of, which is where the relics
+# are named for. A mythical's lair, so no biome hosts it
+AbyssalRuins:
+  species: [Meloetta]
+# The laboratory the machine was assembled in. A mythical's lair, so no biome
+# hosts it
+P2Laboratory:
+  species: [Genesect]
+# The wood the stag slept through as a tree. Kalos catches its mascots in a
+# laboratory under a town, which is nowhere a world made of country can put
+# them, so each is at home where its own story happens instead
+WindingWoods:
+  species: [Xerneas]
+# The frozen cave the bird of death folds itself away in
+FrostCavern:
+  species: [Yveltal]
+# The cave the cells gather in, which is where Kalos finds it
+TerminusCave:
+  species: [Zygarde, ZygardeTenPercent]
+# The queen's cave of diamonds. A mythical's, so it is never staged
+DiamondDomain:
+  species: [Diancie]
+# The desert ruin the rings were shut into
+DaharaRuins:
+  species: [Hoopa]
+# The mountain shelf the steam machine keeps to
+NebelPlateau:
+  species: [Volcanion]
+
+# Alola's
+#
+# The kingdom the machine was built in, five hundred years ago
+AzothKingdom:
+  species: [Magearna]
+# The mountain the hero climbed, with something watching from its shadows
+MtTensei:
+  species: [Marshadow]
+# The forest behind the city of windmills
+FulaForest:
+  species: [Zeraora]
+# The park the pokemon of another world are let out into
+GoPark:
+  species: [Meltan]
+# The artificial island the synthetic beast was made and kept on
+AetherParadise:
+  species: [Silvally]
+# The ruin off Melemele's Mahalo Trail, which is Tapu Koko's
+RuinsOfConflict:
+  species: [TapuKoko]
+# The ruin in Akala's green south, which is Tapu Lele's
+RuinsOfLife:
+  species: [TapuLele]
+# The ruin at the far end of the Haina Desert, which is Tapu Bulu's
+RuinsOfAbundance:
+  species: [TapuBulu]
+# The ruin on Poni's stony shore, which is Tapu Fini's
+RuinsOfHope:
+  species: [TapuFini]
+# The altar at the top of Vast Poni Canyon the sun is called down to
+AltarOfTheSunne:
+  species: [Solgaleo]
+# The same altar in the other version, where the moon is
+AltarOfTheMoone:
+  species: [Lunala]
+# The hollow at the back of Melemele's crystal cave, where the prism waits
+TenCaratHill:
+  species: [Necrozma]
+# The drowned dark Nihilego drifts through
+UltraDeepSea:
+  species: [Nihilego]
+# The jungle Buzzwole flexes in
+UltraJungle:
+  species: [Buzzwole]
+# The white desert Pheromosa runs across
+UltraDesert:
+  species: [Pheromosa]
+# The power plant Xurkitree roots itself in
+UltraPlant:
+  species: [Xurkitree]
+# The crater Celesteela launches from
+UltraCrater:
+  species: [Celesteela]
+# The paper forest Kartana cuts through
+UltraForest:
+  species: [Kartana]
+# The ruined city Guzzlord ate
+UltraRuin:
+  species: [Guzzlord]
+# The grove on Poni the last two came through into
+PoniGrove:
+  species: [Stakataka, Blacephalon]
+
+# Galar's and Hisui's, reserved until their batch stages them
+#
+# The misty forest the two heroes of Galar sleep in
+SlumberingWeald:
+  species: [Zacian, Zamazenta]
+  reserved: true
+# The plant under Hammerlocke that fed on the Darkest Day's power
+EnergyPlant:
+  species: [Eternatus]
+  reserved: true
+# The tower of the dark style, which is the Single Strike Urshifu's
+TowerOfDarkness:
+  species: [Urshifu]
+  reserved: true
+# The tower of the water style, which is the Rapid Strike Urshifu's
+TowerOfWaters:
+  species: [UrshifuRapidStrike]
+  reserved: true
+# The jungle the Zarude keep, where one of them raised a child
+ForestOfOkoya:
+  species: [Zarude]
+  reserved: true
+# The ruin on the Crown Tundra that wakes one of two Regis
+SplitDecisionRuins:
+  species: [Regieleki, Regidrago]
+  reserved: true
+# The shrine the king of bountiful harvests was once worshipped at
+CrownShrine:
+  species: [Calyrex]
+  reserved: true
+# The slope the Iceroot Carrot grows on, which draws Glastrier
+SnowslideSlope:
+  species: [Glastrier]
+  reserved: true
+# The cemetery the Shaderoot Carrot grows in, which draws Spectrier
+OldCemetery:
+  species: [Spectrier]
+  reserved: true
+# The frozen land the Galarian Articuno roams
+CrownTundra:
+  species: [ArticunoGalar]
+  reserved: true
+# The open country the Galarian Zapdos runs across
+WildArea:
+  species: [ZapdosGalar]
+  reserved: true
+# The island the Galarian Moltres circles
+IsleOfArmor:
+  species: [MoltresGalar]
+  reserved: true
+# The bog in Hisui's Crimson Mirelands the fourth force of nature blows over
+ScarletBog:
+  species: [Enamorus]
+  reserved: true

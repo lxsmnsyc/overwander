@@ -39,6 +39,7 @@ const DEFINITIONS: [enumName: string, definition: string][] = [
   ['TeamStatuses', 'team-status'],
   ['Regions', 'region'],
   ['Awards', 'award'],
+  ['Lairs', 'lair'],
 ];
 
 const DRAFT = 'http://json-schema.org/draft-07/schema#';
@@ -175,6 +176,37 @@ const REGIONS: Schema = {
     },
     ['dex'],
   ),
+};
+
+const LAIRS: Schema = {
+  $schema: DRAFT,
+  title: 'Lairs',
+  type: 'object',
+  propertyNames: name('lair'),
+  additionalProperties: part(
+    {
+      species: names('species', 'Who is at home there, in the order a raid picks from'),
+      underground: described({ type: 'boolean' }, 'A cave under its biome stages it too'),
+      reserved: described({ type: 'boolean' }, 'Kept out of the world until its batch lists it'),
+    },
+    ['species'],
+  ),
+};
+
+const BIOME_LAIRS: Schema = {
+  $schema: DRAFT,
+  title: 'Biome lairs',
+  type: 'object',
+  propertyNames: name('biome'),
+  additionalProperties: names('lair', 'In the order a landmark draws from them'),
+};
+
+const LAIR_TEXT: Schema = {
+  $schema: DRAFT,
+  title: 'Lair names',
+  type: 'object',
+  propertyNames: name('lair'),
+  additionalProperties: { type: 'string' },
 };
 
 function renderStats(stats: string[]): Schema {
@@ -516,6 +548,9 @@ export default function renderDataSchemas(members: Map<string, string[]>): Map<s
     ['battle-statuses.json', json(BATTLE_STATUSES)],
     ['biome-pools.json', json(SPAWN_POOLS)],
     ['regions.json', json(REGIONS)],
+    ['lairs.json', json(LAIRS)],
+    ['biome-lairs.json', json(BIOME_LAIRS)],
+    ['lairs-text.json', json(LAIR_TEXT)],
   ]);
 
   for (const [file, title, entry] of BATTLE_FILES) {

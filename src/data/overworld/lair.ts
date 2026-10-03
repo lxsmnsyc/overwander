@@ -1,369 +1,28 @@
-import Biome from '../ids/biome';
+import * as v from 'valibot';
+import type Biome from '../ids/biome';
 import { isMythicalSpecies } from '../biome';
 import { BIOME_NAMES } from '../biome/names';
-import { Species } from '../ids/species';
+import Lairs from '../ids/lairs';
+import { BIOME_IDS, LAIR_IDS, SPECIES_IDS } from '../ids/names';
+import type { Species } from '../ids/species';
 import { getTrueShadowCounterpart } from '../species/true-shadow';
+import namesFile from '../text/en/lairs.yaml';
+import { idOf, idsOf } from '../yaml';
+import biomeLairsFile from './biome-lairs.yaml';
+import lairsFile from './lairs.yaml';
 
 /**
- * The lairs: the places a legendary is found rather than the
- * legendary itself.
+ * The lairs: the places a legendary is found. A raid landmark stages a
+ * lair its biome can host, and the lair decides who is at home.
  *
- * A raid landmark used to draw from the biome's legendary pool and
- * take its name from whatever it staged, which meant a chunk could
- * hold "Articuno" twice over and mean two different things by it. A
- * lair is a place instead — Seafoam Islands is Seafoam Islands
- * whoever is in it — so a landmark is staged from the lairs the biome
- * can host, and the lair decides which legendary is at home there.
- *
- * The names are the ones the mainline games gave these places, which
- * is the point: a player who has seen Articuno before knows what a
- * Seafoam Islands lair is without being told.
+ * The data is in `lairs.yaml`, `biome-lairs.yaml` and
+ * `text/en/lairs.yaml`; the numbers are `ids/lairs.ts`.
  */
-const enum Lairs {
-  SeafoamIslands = 0,
-  PowerPlant = 1,
-  MtEmber = 2,
-  CeruleanCave = 3,
-  /**
-   * Mew's island. It is never in a biome's list — the world stages no
-   * mythical — but a mythical raid called out by a relic still needs
-   * a name, and this is the one it has always had
-   */
-  FarawayIsland = 4,
-  /**
-   * Where the three beasts were burned and brought back. It is the
-   * one lair with more than one resident, which is what the games
-   * say: they were made together and set loose together, and no
-   * place belongs to any one of them
-   */
-  BurnedTower = 5,
-  WhirlIslands = 6,
-  BellTower = 7,
-  /**
-   * Celebi's shrine. A mythical's lair, so the world never stages it
-   */
-  IlexForest = 8,
-  /**
-   * The three sealed chambers, one golem apiece. Unlike the Burned
-   * Tower, which holds three, each of these holds exactly one: they
-   * were sealed separately and are opened separately
-   */
-  DesertRuins = 9,
-  IslandCave = 10,
-  AncientTomb = 11,
-  /**
-   * The island the eon pair keep to, well out in open water. Like the
-   * Burned Tower it holds two, so which of the pair is at home is a
-   * roll
-   */
-  SouthernIsland = 12,
-  /**
-   * The three the weather trio sleep in: a cavern that floods, one
-   * that fills with heat, and the tower the sky is reached from
-   */
-  MarineCave = 13,
-  TerraCave = 14,
-  SkyPillar = 15,
-  /**
-   * Deoxys' island. A mythical's lair, so no biome lists it: the
-   * ticket is the only way there
-   */
-  BirthIsland = 16,
-  /**
-   * The valley a Jirachi sleeps under, woken by the comet that passes
-   * over it. A mythical's lair, so no biome hosts it
-   */
-  Forina = 17,
-  /**
-   * The three lakes the trio sleep under, one apiece. Like the sealed
-   * chambers and unlike the Burned Tower, each holds exactly one: they
-   * were set down in three places and stayed in them
-   */
-  LakeAcuity = 18,
-  LakeVerity = 19,
-  LakeValor = 20,
-  /**
-   * The top of the mountain, where the two that made the world are
-   * called down. It holds both, like the Southern Island, so which of
-   * them answers is a roll
-   */
-  SpearPillar = 21,
-  /**
-   * The cave the third one was banished through. One resident, and
-   * the only door to the world behind this one
-   */
-  TurnbackCave = 22,
-  /**
-   * The two islands off the same port, one for each half of the moon.
-   * Newmoon Island is a mythical's, so no biome lists it: the pass is
-   * the only way onto that boat
-   */
-  FullmoonIsland = 23,
-  NewmoonIsland = 24,
-  /**
-   * The temple that surfaces once and sinks again, and the prince
-   * that lives in it. A mythical's lair, so no biome hosts it
-   */
-  SeaTemple = 25,
-  /**
-   * The cavern at the top of the volcano, which is not a cave the
-   * thing in it lives under but the one it hangs off
-   */
-  StarkMountain = 26,
-  /**
-   * The temple in the snow the fourth golem was shut in, above the
-   * three it made
-   */
-  SnowpointTemple = 27,
-  /**
-   * The meadow at the end of the broken path, which grows back every
-   * time somebody thanks it. A mythical's lair, so no biome hosts it
-   */
-  FlowerParadise = 28,
-  /**
-   * The stair that opens over the top of the mountain, and what is
-   * standing at the top of it. A mythical's lair, so no biome hosts it
-   */
-  HallOfOrigin = 29,
-  /**
-   * The three ruins the golems turn up in again in Sinnoh, one apiece.
-   * Each keeps its Hoenn chamber too, so either place stages it
-   */
-  RockPeakRuins = 30,
-  IcebergRuins = 31,
-  IronRuins = 32,
-  /**
-   * The rock far out at sea the tower duo meet at, one at its foot and
-   * one at its peak, so which of them answers is a roll
-   */
-  NavelRock = 33,
-  /**
-   * The tower set into the sea cliffs, where an orb calls down any of
-   * the weather trio, so which of them answers is a roll
-   */
-  EmbeddedTower = 34,
-  /**
-   * The buried castle under the sand, and the moth the desert once
-   * took for the sun still in it
-   */
-  RelicCastle = 35,
-  /**
-   * The three chambers the swords keep, one apiece the way the lakes
-   * are: the cave one waits in, the hall one is tested in and the
-   * clearing one thinks in
-   */
-  GuidanceChamber = 36,
-  TrialChamber = 37,
-  RuminationField = 38,
-  /**
-   * The marsh the colt waits in until the other three have been met.
-   * A mythical's lair, so no biome hosts it
-   */
-  MoorOfIcirrus = 39,
-  /**
-   * The tower in the snow the two halves of the dragon sleep under,
-   * one in each stone, so which of them answers is a roll
-   */
-  DragonspiralTower = 40,
-  /** The crater the husk has been waiting in since it was torn open */
-  GiantChasm = 41,
-  /**
-   * The shrine the three storm riders come back to. One place for all
-   * three, the way the burned tower holds the beasts: two of them
-   * roam the country wrecking it and the third follows behind
-   */
-  AbundantShrine = 42,
-  /**
-   * The garden on the island the ferry runs out to. A mythical's
-   * lair, so no biome hosts it
-   */
-  LibertyGarden = 43,
-  /**
-   * The ruin under the water the old song came out of, which is where
-   * the relics are named for. A mythical's lair, so no biome hosts it
-   */
-  AbyssalRuins = 44,
-  /**
-   * The laboratory the machine was assembled in. A mythical's lair,
-   * so no biome hosts it
-   */
-  P2Laboratory = 45,
-  /**
-   * The wood the stag slept through as a tree. Kalos catches its
-   * mascots in a laboratory under a town, which is nowhere a world
-   * made of country can put them, so each is at home where its own
-   * story happens instead
-   */
-  WindingWoods = 46,
-  /** The frozen cave the bird of death folds itself away in */
-  FrostCavern = 47,
-  /** The cave the cells gather in, which is where Kalos finds it */
-  TerminusCave = 48,
-  /** The queen's cave of diamonds. A mythical's, so it is never staged */
-  DiamondDomain = 49,
-  /** The desert ruin the rings were shut into */
-  DaharaRuins = 50,
-  /** The mountain shelf the steam machine keeps to */
-  NebelPlateau = 51,
-  // Alola's, reserved ahead of the batches that stage them. Each is
-  // named and peopled, but is in no biome and not in EVERY_LAIR until
-  // its batch lists it, so nothing stages one early
-  /** The kingdom the machine was built in, five hundred years ago */
-  AzothKingdom = 52,
-  /** The mountain the hero climbed, with something watching from its shadows */
-  MtTensei = 53,
-  /** The forest behind the city of windmills */
-  FulaForest = 54,
-  /** The park the pokemon of another world are let out into */
-  GoPark = 55,
-  /** The artificial island the synthetic beast was made and kept on */
-  AetherParadise = 56,
-  /** The ruin off Melemele's Mahalo Trail, which is Tapu Koko's */
-  RuinsOfConflict = 57,
-  /** The ruin in Akala's green south, which is Tapu Lele's */
-  RuinsOfLife = 58,
-  /** The ruin at the far end of the Haina Desert, which is Tapu Bulu's */
-  RuinsOfAbundance = 59,
-  /** The ruin on Poni's stony shore, which is Tapu Fini's */
-  RuinsOfHope = 60,
-  /** The altar at the top of Vast Poni Canyon the sun is called down to */
-  AltarOfTheSunne = 61,
-  /** The same altar in the other version, where the moon is */
-  AltarOfTheMoone = 62,
-  /** The hollow at the back of Melemele's crystal cave, where the prism waits */
-  TenCaratHill = 63,
-  /** The drowned dark Nihilego drifts through */
-  UltraDeepSea = 64,
-  /** The jungle Buzzwole flexes in */
-  UltraJungle = 65,
-  /** The white desert Pheromosa runs across */
-  UltraDesert = 66,
-  /** The power plant Xurkitree roots itself in */
-  UltraPlant = 67,
-  /** The crater Celesteela launches from */
-  UltraCrater = 68,
-  /** The paper forest Kartana cuts through */
-  UltraForest = 69,
-  /** The ruined city Guzzlord ate */
-  UltraRuin = 70,
-  /** The grove on Poni the last two came through into */
-  PoniGrove = 71,
-  // Galar's and Hisui's, reserved the same way as Alola's
-  /** The misty forest the two heroes of Galar sleep in */
-  SlumberingWeald = 72,
-  /** The plant under Hammerlocke that fed on the Darkest Day's power */
-  EnergyPlant = 73,
-  /** The tower of the dark style, which is the Single Strike Urshifu's */
-  TowerOfDarkness = 74,
-  /** The tower of the water style, which is the Rapid Strike Urshifu's */
-  TowerOfWaters = 75,
-  /** The jungle the Zarude keep, where one of them raised a child */
-  ForestOfOkoya = 76,
-  /** The ruin on the Crown Tundra that wakes one of two Regis */
-  SplitDecisionRuins = 77,
-  /** The shrine the king of bountiful harvests was once worshipped at */
-  CrownShrine = 78,
-  /** The slope the Iceroot Carrot grows on, which draws Glastrier */
-  SnowslideSlope = 79,
-  /** The cemetery the Shaderoot Carrot grows in, which draws Spectrier */
-  OldCemetery = 80,
-  /** The frozen land the Galarian Articuno roams */
-  CrownTundra = 81,
-  /** The open country the Galarian Zapdos runs across */
-  WildArea = 82,
-  /** The island the Galarian Moltres circles */
-  IsleOfArmor = 83,
-  /** The bog in Hisui's Crimson Mirelands the fourth force of nature blows over */
-  ScarletBog = 84,
-}
-
-export const LAIR_NAMES: Record<Lairs, string> = {
-  [Lairs.SeafoamIslands]: 'Seafoam Islands',
-  [Lairs.PowerPlant]: 'Power Plant',
-  [Lairs.MtEmber]: 'Mt. Ember',
-  [Lairs.CeruleanCave]: 'Cerulean Cave',
-  [Lairs.FarawayIsland]: 'Faraway Island',
-  [Lairs.BurnedTower]: 'Burned Tower',
-  [Lairs.WhirlIslands]: 'Whirl Islands',
-  [Lairs.BellTower]: 'Bell Tower',
-  [Lairs.IlexForest]: 'Ilex Forest',
-  [Lairs.DesertRuins]: 'Desert Ruins',
-  [Lairs.IslandCave]: 'Island Cave',
-  [Lairs.AncientTomb]: 'Ancient Tomb',
-  [Lairs.SouthernIsland]: 'Southern Island',
-  [Lairs.MarineCave]: 'Marine Cave',
-  [Lairs.TerraCave]: 'Terra Cave',
-  [Lairs.SkyPillar]: 'Sky Pillar',
-  [Lairs.BirthIsland]: 'Birth Island',
-  [Lairs.Forina]: 'Forina',
-  [Lairs.LakeAcuity]: 'Lake Acuity',
-  [Lairs.LakeVerity]: 'Lake Verity',
-  [Lairs.LakeValor]: 'Lake Valor',
-  [Lairs.SpearPillar]: 'Spear Pillar',
-  [Lairs.TurnbackCave]: 'Turnback Cave',
-  [Lairs.FullmoonIsland]: 'Fullmoon Island',
-  [Lairs.NewmoonIsland]: 'Newmoon Island',
-  [Lairs.SeaTemple]: 'Sea Temple',
-  [Lairs.StarkMountain]: 'Stark Mountain',
-  [Lairs.SnowpointTemple]: 'Snowpoint Temple',
-  [Lairs.FlowerParadise]: 'Flower Paradise',
-  [Lairs.HallOfOrigin]: 'Hall of Origin',
-  [Lairs.RockPeakRuins]: 'Rock Peak Ruins',
-  [Lairs.IcebergRuins]: 'Iceberg Ruins',
-  [Lairs.IronRuins]: 'Iron Ruins',
-  [Lairs.NavelRock]: 'Navel Rock',
-  [Lairs.EmbeddedTower]: 'Embedded Tower',
-  [Lairs.RelicCastle]: 'Relic Castle',
-  [Lairs.GuidanceChamber]: 'Guidance Chamber',
-  [Lairs.TrialChamber]: 'Trial Chamber',
-  [Lairs.RuminationField]: 'Rumination Field',
-  [Lairs.MoorOfIcirrus]: 'Moor of Icirrus',
-  [Lairs.DragonspiralTower]: 'Dragonspiral Tower',
-  [Lairs.GiantChasm]: 'Giant Chasm',
-  [Lairs.AbundantShrine]: 'Abundant Shrine',
-  [Lairs.LibertyGarden]: 'Liberty Garden',
-  [Lairs.AbyssalRuins]: 'Abyssal Ruins',
-  [Lairs.P2Laboratory]: 'P2 Laboratory',
-  [Lairs.WindingWoods]: 'Winding Woods',
-  [Lairs.FrostCavern]: 'Frost Cavern',
-  [Lairs.TerminusCave]: 'Terminus Cave',
-  [Lairs.DiamondDomain]: 'Diamond Domain',
-  [Lairs.DaharaRuins]: 'Dahara Ruins',
-  [Lairs.NebelPlateau]: 'Nebel Plateau',
-  [Lairs.AzothKingdom]: 'Azoth Kingdom',
-  [Lairs.MtTensei]: 'Mt. Tensei',
-  [Lairs.FulaForest]: 'Fula Forest',
-  [Lairs.GoPark]: 'GO Park',
-  [Lairs.AetherParadise]: 'Aether Paradise',
-  [Lairs.RuinsOfConflict]: 'Ruins of Conflict',
-  [Lairs.RuinsOfLife]: 'Ruins of Life',
-  [Lairs.RuinsOfAbundance]: 'Ruins of Abundance',
-  [Lairs.RuinsOfHope]: 'Ruins of Hope',
-  [Lairs.AltarOfTheSunne]: 'Altar of the Sunne',
-  [Lairs.AltarOfTheMoone]: 'Altar of the Moone',
-  [Lairs.TenCaratHill]: 'Ten Carat Hill',
-  [Lairs.UltraDeepSea]: 'Ultra Deep Sea',
-  [Lairs.UltraJungle]: 'Ultra Jungle',
-  [Lairs.UltraDesert]: 'Ultra Desert',
-  [Lairs.UltraPlant]: 'Ultra Plant',
-  [Lairs.UltraCrater]: 'Ultra Crater',
-  [Lairs.UltraForest]: 'Ultra Forest',
-  [Lairs.UltraRuin]: 'Ultra Ruin',
-  [Lairs.PoniGrove]: 'Poni Grove',
-  [Lairs.SlumberingWeald]: 'Slumbering Weald',
-  [Lairs.EnergyPlant]: 'Energy Plant',
-  [Lairs.TowerOfDarkness]: 'Tower of Darkness',
-  [Lairs.TowerOfWaters]: 'Tower of Waters',
-  [Lairs.ForestOfOkoya]: 'Forest of Okoya',
-  [Lairs.SplitDecisionRuins]: 'Split-Decision Ruins',
-  [Lairs.CrownShrine]: 'Crown Shrine',
-  [Lairs.SnowslideSlope]: 'Snowslide Slope',
-  [Lairs.OldCemetery]: 'Old Cemetery',
-  [Lairs.CrownTundra]: 'Crown Tundra',
-  [Lairs.WildArea]: 'Wild Area',
-  [Lairs.IsleOfArmor]: 'Isle of Armor',
-  [Lairs.ScarletBog]: 'Scarlet Bog',
-};
+const LAIR = v.object({
+  species: v.array(v.string()),
+  underground: v.optional(v.boolean()),
+  reserved: v.optional(v.boolean()),
+});
 
 /**
  * Who lives in each one. A lair stages its own residents and no
@@ -372,171 +31,48 @@ export const LAIR_NAMES: Record<Lairs, string> = {
  * holds the three beasts, so which one is at home is a roll. A
  * legendary may be at home in more than one lair
  */
-export const LAIR_SPECIES: Record<Lairs, Species[]> = {
-  [Lairs.SeafoamIslands]: [Species.Articuno],
-  [Lairs.PowerPlant]: [Species.Zapdos],
-  [Lairs.MtEmber]: [Species.Moltres],
-  [Lairs.CeruleanCave]: [Species.Mewtwo],
-  [Lairs.FarawayIsland]: [Species.Mew],
-  [Lairs.BurnedTower]: [Species.Raikou, Species.Entei, Species.Suicune],
-  [Lairs.WhirlIslands]: [Species.Lugia],
-  [Lairs.BellTower]: [Species.HoOh],
-  [Lairs.IlexForest]: [Species.Celebi],
-  [Lairs.DesertRuins]: [Species.Regirock],
-  [Lairs.IslandCave]: [Species.Regice],
-  [Lairs.AncientTomb]: [Species.Registeel],
-  [Lairs.SouthernIsland]: [Species.Latias, Species.Latios],
-  [Lairs.MarineCave]: [Species.Kyogre],
-  [Lairs.TerraCave]: [Species.Groudon],
-  [Lairs.SkyPillar]: [Species.Rayquaza],
-  [Lairs.BirthIsland]: [Species.Deoxys],
-  [Lairs.Forina]: [Species.Jirachi],
-  [Lairs.LakeAcuity]: [Species.Uxie],
-  [Lairs.LakeVerity]: [Species.Mesprit],
-  [Lairs.LakeValor]: [Species.Azelf],
-  [Lairs.SpearPillar]: [Species.Dialga, Species.Palkia],
-  [Lairs.TurnbackCave]: [Species.Giratina],
-  [Lairs.FullmoonIsland]: [Species.Cresselia],
-  [Lairs.NewmoonIsland]: [Species.Darkrai],
-  [Lairs.SeaTemple]: [Species.Manaphy],
-  [Lairs.StarkMountain]: [Species.Heatran],
-  [Lairs.SnowpointTemple]: [Species.Regigigas],
-  [Lairs.FlowerParadise]: [Species.Shaymin],
-  [Lairs.HallOfOrigin]: [Species.Arceus],
-  [Lairs.RockPeakRuins]: [Species.Regirock],
-  [Lairs.IcebergRuins]: [Species.Regice],
-  [Lairs.IronRuins]: [Species.Registeel],
-  [Lairs.NavelRock]: [Species.Lugia, Species.HoOh],
-  [Lairs.EmbeddedTower]: [Species.Kyogre, Species.Groudon, Species.Rayquaza],
-  [Lairs.RelicCastle]: [Species.Volcarona],
-  [Lairs.GuidanceChamber]: [Species.Cobalion],
-  [Lairs.TrialChamber]: [Species.Terrakion],
-  [Lairs.RuminationField]: [Species.Virizion],
-  [Lairs.MoorOfIcirrus]: [Species.Keldeo],
-  [Lairs.DragonspiralTower]: [Species.Reshiram, Species.Zekrom],
-  [Lairs.GiantChasm]: [Species.Kyurem],
-  [Lairs.AbundantShrine]: [Species.Tornadus, Species.Thundurus, Species.Landorus],
-  [Lairs.LibertyGarden]: [Species.Victini],
-  [Lairs.AbyssalRuins]: [Species.Meloetta],
-  [Lairs.P2Laboratory]: [Species.Genesect],
-  [Lairs.WindingWoods]: [Species.Xerneas],
-  [Lairs.FrostCavern]: [Species.Yveltal],
-  [Lairs.TerminusCave]: [Species.Zygarde, Species.ZygardeTenPercent],
-  [Lairs.DiamondDomain]: [Species.Diancie],
-  [Lairs.DaharaRuins]: [Species.Hoopa],
-  [Lairs.NebelPlateau]: [Species.Volcanion],
-  [Lairs.AzothKingdom]: [Species.Magearna],
-  [Lairs.MtTensei]: [Species.Marshadow],
-  [Lairs.FulaForest]: [Species.Zeraora],
-  [Lairs.GoPark]: [Species.Meltan],
-  [Lairs.AetherParadise]: [Species.Silvally],
-  [Lairs.RuinsOfConflict]: [Species.TapuKoko],
-  [Lairs.RuinsOfLife]: [Species.TapuLele],
-  [Lairs.RuinsOfAbundance]: [Species.TapuBulu],
-  [Lairs.RuinsOfHope]: [Species.TapuFini],
-  [Lairs.AltarOfTheSunne]: [Species.Solgaleo],
-  [Lairs.AltarOfTheMoone]: [Species.Lunala],
-  [Lairs.TenCaratHill]: [Species.Necrozma],
-  [Lairs.UltraDeepSea]: [Species.Nihilego],
-  [Lairs.UltraJungle]: [Species.Buzzwole],
-  [Lairs.UltraDesert]: [Species.Pheromosa],
-  [Lairs.UltraPlant]: [Species.Xurkitree],
-  [Lairs.UltraCrater]: [Species.Celesteela],
-  [Lairs.UltraForest]: [Species.Kartana],
-  [Lairs.UltraRuin]: [Species.Guzzlord],
-  [Lairs.PoniGrove]: [Species.Stakataka, Species.Blacephalon],
-  [Lairs.SlumberingWeald]: [Species.Zacian, Species.Zamazenta],
-  [Lairs.EnergyPlant]: [Species.Eternatus],
-  [Lairs.TowerOfDarkness]: [Species.Urshifu],
-  [Lairs.TowerOfWaters]: [Species.UrshifuRapidStrike],
-  [Lairs.ForestOfOkoya]: [Species.Zarude],
-  [Lairs.SplitDecisionRuins]: [Species.Regieleki, Species.Regidrago],
-  [Lairs.CrownShrine]: [Species.Calyrex],
-  [Lairs.SnowslideSlope]: [Species.Glastrier],
-  [Lairs.OldCemetery]: [Species.Spectrier],
-  [Lairs.CrownTundra]: [Species.ArticunoGalar],
-  [Lairs.WildArea]: [Species.ZapdosGalar],
-  [Lairs.IsleOfArmor]: [Species.MoltresGalar],
-  [Lairs.ScarletBog]: [Species.Enamorus],
-};
+export const LAIR_SPECIES: Record<number, Species[]> = {};
+
+/** What each is called, by lair */
+export const LAIR_NAMES: Record<number, string> = {};
 
 /**
- * Every lair there is, in the order they are numbered
+ * Every lair there is but the reserved ones, in the order they are
+ * numbered
  */
-export const EVERY_LAIR: Lairs[] = [
-  Lairs.SeafoamIslands,
-  Lairs.PowerPlant,
-  Lairs.MtEmber,
-  Lairs.CeruleanCave,
-  Lairs.FarawayIsland,
-  Lairs.BurnedTower,
-  Lairs.WhirlIslands,
-  Lairs.BellTower,
-  Lairs.IlexForest,
-  Lairs.DesertRuins,
-  Lairs.IslandCave,
-  Lairs.AncientTomb,
-  Lairs.SouthernIsland,
-  Lairs.MarineCave,
-  Lairs.TerraCave,
-  Lairs.SkyPillar,
-  Lairs.BirthIsland,
-  Lairs.Forina,
-  Lairs.LakeAcuity,
-  Lairs.LakeVerity,
-  Lairs.LakeValor,
-  Lairs.SpearPillar,
-  Lairs.TurnbackCave,
-  Lairs.FullmoonIsland,
-  Lairs.NewmoonIsland,
-  Lairs.SeaTemple,
-  Lairs.StarkMountain,
-  Lairs.SnowpointTemple,
-  Lairs.FlowerParadise,
-  Lairs.HallOfOrigin,
-  Lairs.RockPeakRuins,
-  Lairs.IcebergRuins,
-  Lairs.IronRuins,
-  Lairs.NavelRock,
-  Lairs.EmbeddedTower,
-  Lairs.RelicCastle,
-  Lairs.GuidanceChamber,
-  Lairs.TrialChamber,
-  Lairs.RuminationField,
-  Lairs.MoorOfIcirrus,
-  Lairs.DragonspiralTower,
-  Lairs.GiantChasm,
-  Lairs.AbundantShrine,
-  Lairs.LibertyGarden,
-  Lairs.AbyssalRuins,
-  Lairs.P2Laboratory,
-  Lairs.WindingWoods,
-  Lairs.FrostCavern,
-  Lairs.TerminusCave,
-  Lairs.DiamondDomain,
-  Lairs.DaharaRuins,
-  Lairs.NebelPlateau,
-  Lairs.AzothKingdom,
-  Lairs.MtTensei,
-  Lairs.FulaForest,
-  Lairs.GoPark,
-  Lairs.AetherParadise,
-  Lairs.RuinsOfConflict,
-  Lairs.RuinsOfLife,
-  Lairs.RuinsOfAbundance,
-  Lairs.RuinsOfHope,
-  Lairs.AltarOfTheSunne,
-  Lairs.AltarOfTheMoone,
-  Lairs.TenCaratHill,
-  Lairs.UltraDeepSea,
-  Lairs.UltraJungle,
-  Lairs.UltraDesert,
-  Lairs.UltraPlant,
-  Lairs.UltraCrater,
-  Lairs.UltraForest,
-  Lairs.UltraRuin,
-  Lairs.PoniGrove,
-];
+export const EVERY_LAIR: Lairs[] = [];
+
+/**
+ * The lairs whose real place is underground: a cave, a buried chamber
+ * or a cavern inside a mountain. A cave stages the ones its biome
+ * hosts and nothing else, and the surface keeps them too
+ */
+const SUBTERRANEAN_LAIRS = new Set<Lairs>();
+
+for (const [name, written] of Object.entries(v.parse(v.record(v.string(), LAIR), lairsFile))) {
+  const where = `lairs.yaml: ${name}`;
+  const lair = idOf(LAIR_IDS, name, where);
+
+  LAIR_SPECIES[lair] = idsOf<Species>(SPECIES_IDS, written.species, where);
+  if (written.underground === true) {
+    SUBTERRANEAN_LAIRS.add(lair);
+  }
+  if (written.reserved !== true) {
+    EVERY_LAIR.push(lair);
+  }
+}
+EVERY_LAIR.sort((one, two) => one - two);
+
+for (const [name, title] of Object.entries(v.parse(v.record(v.string(), v.string()), namesFile))) {
+  LAIR_NAMES[idOf(LAIR_IDS, name, `text/en/lairs.yaml: ${name}`)] = title;
+}
+
+// Every lair the enum has is written down, so none reads as nameless or empty
+for (const [name, lair] of Object.entries(LAIR_IDS)) {
+  if (!Object.hasOwn(LAIR_SPECIES, lair) || !Object.hasOwn(LAIR_NAMES, lair)) {
+    throw new Error(`${name} needs a row in lairs.yaml and a name in text/en/lairs.yaml`);
+  }
+}
 
 /**
  * The lairs the **world** may stage: every one whose residents are
@@ -565,99 +101,19 @@ export const EVERY_STAGED_LAIR: Lairs[] = (() => {
 const STAGED_LAIRS = new Set<Lairs>(EVERY_STAGED_LAIR);
 
 /**
- * Which lairs a biome can host. A lair is a place, so it sits where
- * that place would be: the Seafoam Islands are a sea cave in cold
- * water, Mt. Ember is a volcano, Cerulean Cave is deep under a
- * mountain, and the Power Plant is the one building among them,
- * abandoned on flat ground, which is where the plains are. The three
- * sealed chambers sit where their doors were cut: ruins in the sand,
- * a cave on an island in cold water, a tomb under the rock. Their Sinnoh ruins sit on
- * a sandstorm route, a snowbound one and an island mine.
- *
- * The three lakes sit in the country each of them was found in: the
- * cold one in the north, the wooded one and the one on open ground.
- *
- * A biome with no lair stages no legendary lair at all, which is most
- * of them: a legendary the whole world could walk to is not a
- * legendary.
- *
- * A lair is also a wild spawn: a biome that hosts one lists each
- * resident in its special band, mythicals aside
+ * Which lairs each biome can host, in the order a landmark draws from
+ * them. The order is part of the shared world, so it is the biome's
+ * list as written rather than anything sorted
  */
-const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
-  [Biome.DeepOcean]: [Lairs.SeafoamIslands, Lairs.WhirlIslands, Lairs.MarineCave, Lairs.NavelRock],
-  [Biome.Ocean]: [
-    Lairs.WhirlIslands,
-    Lairs.SouthernIsland,
-    Lairs.FullmoonIsland,
-    Lairs.IronRuins,
-    Lairs.SkyPillar,
-    Lairs.UltraDeepSea,
-  ],
-  [Biome.Beach]: [Lairs.EmbeddedTower, Lairs.AetherParadise],
-  [Biome.PolarOcean]: [Lairs.SeafoamIslands, Lairs.IslandCave],
-  [Biome.Glacier]: [Lairs.SnowpointTemple, Lairs.GiantChasm],
-  [Biome.Grassland]: [Lairs.PowerPlant, Lairs.BurnedTower, Lairs.LakeValor, Lairs.AbundantShrine],
-  [Biome.Bog]: [Lairs.LakeValor, Lairs.TurnbackCave],
-  [Biome.TemperateForest]: [
-    Lairs.LakeVerity,
-    Lairs.RuminationField,
-    Lairs.WindingWoods,
-    Lairs.UltraForest,
-  ],
-  [Biome.Woodland]: [
-    Lairs.BurnedTower,
-    Lairs.LakeVerity,
-    Lairs.RuminationField,
-    Lairs.WindingWoods,
-  ],
-  [Biome.Taiga]: [Lairs.LakeAcuity, Lairs.IcebergRuins, Lairs.DragonspiralTower],
-  [Biome.Tundra]: [
-    Lairs.LakeAcuity,
-    Lairs.SnowpointTemple,
-    Lairs.IcebergRuins,
-    Lairs.DragonspiralTower,
-    Lairs.GiantChasm,
-    Lairs.FrostCavern,
-  ],
-  [Biome.Steppe]: [Lairs.PowerPlant],
-  [Biome.Desert]: [
-    Lairs.DesertRuins,
-    Lairs.RockPeakRuins,
-    Lairs.RelicCastle,
-    Lairs.RuinsOfAbundance,
-    Lairs.UltraDesert,
-  ],
-  [Biome.TropicalSeasonalForest]: [Lairs.RuinsOfConflict, Lairs.PoniGrove],
-  [Biome.TropicalRainforest]: [Lairs.RuinsOfLife, Lairs.UltraJungle],
-  [Biome.RockyCoast]: [Lairs.RuinsOfHope],
-  [Biome.Badlands]: [
-    Lairs.DesertRuins,
-    Lairs.AncientTomb,
-    Lairs.TurnbackCave,
-    Lairs.RockPeakRuins,
-    Lairs.TrialChamber,
-    Lairs.TerminusCave,
-    Lairs.AltarOfTheSunne,
-    Lairs.AltarOfTheMoone,
-    Lairs.UltraPlant,
-    Lairs.UltraRuin,
-  ],
-  [Biome.Mountain]: [
-    Lairs.MtEmber,
-    Lairs.CeruleanCave,
-    Lairs.BellTower,
-    Lairs.AncientTomb,
-    Lairs.GuidanceChamber,
-    Lairs.TrialChamber,
-    Lairs.FrostCavern,
-    Lairs.TerminusCave,
-    Lairs.TenCaratHill,
-    Lairs.UltraCrater,
-  ],
-  [Biome.AlpineTundra]: [Lairs.CeruleanCave, Lairs.SpearPillar],
-  [Biome.Volcano]: [Lairs.MtEmber, Lairs.TerraCave, Lairs.StarkMountain],
-};
+const BIOME_LAIRS = new Map<Biome, Lairs[]>();
+
+for (const [name, lairs] of Object.entries(
+  v.parse(v.record(v.string(), v.array(v.string())), biomeLairsFile),
+)) {
+  const where = `biome-lairs.yaml: ${name}`;
+
+  BIOME_LAIRS.set(idOf(BIOME_IDS, name, where), idsOf<Lairs>(LAIR_IDS, lairs, where));
+}
 
 /**
  * The lairs this biome can host, in the order they are drawn from.
@@ -668,40 +124,13 @@ const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
 export function getBiomeLairs(biome: Biome): Lairs[] {
   const lairs: Lairs[] = [];
 
-  for (const lair of BIOME_LAIRS[biome] ?? []) {
+  for (const lair of BIOME_LAIRS.get(biome) ?? []) {
     if (STAGED_LAIRS.has(lair)) {
       lairs.push(lair);
     }
   }
   return lairs;
 }
-
-/**
- * The lairs whose real place is underground: a cave, a buried chamber
- * or a cavern inside a mountain. A cave stages the ones its biome
- * hosts and nothing else, and the surface keeps them too
- */
-const SUBTERRANEAN_LAIRS = new Set<Lairs>([
-  Lairs.SeafoamIslands,
-  Lairs.CeruleanCave,
-  Lairs.WhirlIslands,
-  Lairs.DesertRuins,
-  Lairs.IslandCave,
-  Lairs.AncientTomb,
-  Lairs.MarineCave,
-  Lairs.TerraCave,
-  Lairs.TurnbackCave,
-  Lairs.StarkMountain,
-  Lairs.SnowpointTemple,
-  Lairs.RockPeakRuins,
-  Lairs.IcebergRuins,
-  Lairs.IronRuins,
-  Lairs.EmbeddedTower,
-  Lairs.RelicCastle,
-  Lairs.GuidanceChamber,
-  Lairs.TrialChamber,
-  Lairs.GiantChasm,
-]);
 
 /** Whether the lair's real place is underground */
 export function isSubterraneanLair(lair: Lairs): boolean {

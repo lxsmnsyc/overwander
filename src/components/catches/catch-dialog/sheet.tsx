@@ -7,6 +7,7 @@ import EvolutionSection from './sections/EvolutionSection';
 import HistorySection from './sections/HistorySection';
 import PortraitSection from './sections/PortraitSection';
 import StatsSection from './sections/StatsSection';
+import BoxChip from './sections/BoxChip';
 import { isAuctionableCatch } from '../../../auth/auctions';
 import { setBuddy } from '../../../auth/buddy';
 import { getCandyCost, getReleaseCandy, useCandy } from '../../../auth/candy';
@@ -1427,6 +1428,25 @@ export function CatchSheetBody(
               <Badge tone="ember">In a raid</Badge>
             </Show>
           </span>
+        )}
+      </Show>
+      {/* Which box it is filed in, and where else it could go */}
+      <Show when={owned() != null && props.catchId != null && view()}>
+        {(record) => (
+          <BoxChip
+            player={props.player}
+            catchId={props.catchId ?? ''}
+            box={record().box}
+            revision={record().box}
+            onMoved={(message) => {
+              say(message, 'leaf');
+              props.onRecordChanged();
+              props.onChange?.();
+            }}
+            onFailed={(message) => {
+              say(message, 'ember');
+            }}
+          />
         )}
       </Show>
       <Show when={owned() != null || props.onDex != null}>

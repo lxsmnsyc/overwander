@@ -3,7 +3,7 @@ import { Types } from '../../data/constants/types';
 import { MoveAttackFlags, MoveCategories, Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
-import { BattleEvents, type EffectCause, EffectType } from '../events';
+import { BattleEvents, type EffectCause, EffectType, type UnitUpdateStatusEvent } from '../events';
 import turns from '../turn';
 import type Unit from '../unit';
 
@@ -42,15 +42,27 @@ export default function setupConfusedStatus(battle: Battle): void {
 
   battle.on(BattleEvents.CheckUnitCanCast, EventPriority.Post, (event) => {
     if (
-      event.success &&
-      event.source.status[Statuses.Confused] &&
-      battle.random() >= CONFUSION_CHANCE
+      !event.success ||
+      !event.source.status[Statuses.Confused] ||
+      battle.random() < CONFUSION_CHANCE
     ) {
-      event.success = false;
+      return;
+    }
 
-      event.source.triggerStatus(Statuses.Confused, {
-        type: EffectType.None,
-      });
+    // Emitted by hand so a listener that turns the self-hit away
+    // leaves the cast standing too
+    const hit: UnitUpdateStatusEvent = {
+      id: 'UnitTriggerStatus',
+      disabled: false,
+      source: event.source,
+      status: Statuses.Confused,
+      cause: { type: EffectType.None },
+    };
+
+    battle.emit(BattleEvents.UnitTriggerStatus, hit);
+
+    if (!hit.disabled) {
+      event.success = false;
     }
   });
 

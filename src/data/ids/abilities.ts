@@ -982,6 +982,36 @@ const enum Abilities {
   Boiler = 200364,
   // Litleo
   PrideCall = 200365,
+  // Rowlet
+  QuillAudience = 200366,
+  // Litten
+  HeelAudience = 200367,
+  // Popplio
+  AriaAudience = 200368,
+  // Pikipek
+  Drumroll = 200369,
+  // Yungoos
+  ScoreToSettle = 200370,
+  // Grubbin
+  TrickleCharge = 200371,
+  // Crabrawler
+  ReboundPunch = 200372,
+  // Oricorio
+  DizzyTwirl = 200373,
+  // Cutiefly
+  HoneyShare = 200374,
+  // Rockruff
+  Provoke = 200375,
+  // Wishiwashi
+  Regroup = 200376,
+  // Mudbray
+  HeavyHooves = 200377,
+  // Dewpider
+  BubbleWard = 200378,
+  // Fomantis
+  OrchidGuise = 200379,
+  // Bounsweet
+  TropStride = 200380,
 }
 
 export default Abilities;

@@ -237,6 +237,7 @@ export default function registerMudkipSpecies(): void {
         Moves.RockClimb,
         Moves.StealthRock,
         Moves.StoneEdge,
+        Moves.StompingTantrum,
       ],
     },
   });

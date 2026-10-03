@@ -19,7 +19,8 @@ const setupTimer = createTimedStatus(Statuses.Protected, DURATION);
 /**
  * The moves a guard does not stop by themselves: Feint walks through
  * it, Shadow Force and Phantom Force come back from off the field, and
- * Hoopa's two moves reach round it from somewhere else. Anything else
+ * Hoopa's two moves reach round it from somewhere else, and Tearful Look
+ * is not an attack to guard against. Anything else
  * that walks through, an ability among them, answers the question
  * below instead of being listed here
  */
@@ -29,6 +30,7 @@ const WALKS_THROUGH = new Set<Moves>([
   Moves.PhantomForce,
   Moves.HyperspaceHole,
   Moves.HyperspaceFury,
+  Moves.TearfulLook,
 ]);
 
 /**

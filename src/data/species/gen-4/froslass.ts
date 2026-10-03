@@ -106,6 +106,8 @@ export default function registerFroslassSpecies(): void {
         Moves.Trick,
         Moves.WaterPulse,
         Moves.Confide,
+        Moves.AuroraVeil,
+        Moves.LaserFocus,
       ],
     },
   });

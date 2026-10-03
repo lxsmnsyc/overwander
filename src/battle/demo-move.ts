@@ -4,6 +4,7 @@ import { getMaxHealth } from '../auth/health';
 import type { TeamSnapshotRecord } from '../auth/teams';
 import { defaultSlots } from '../data/constants/slots';
 import { PERFECT_IVS, Stats } from '../data/constants/stats';
+import { Types } from '../data/constants/types';
 import { MoveAffects, MoveTargets, Moves } from '../data/ids/moves';
 import { Species } from '../data/ids/species';
 import { getMoveData } from '../data/moves';
@@ -48,6 +49,9 @@ export const DEMO_LEVEL = 50;
  */
 export const DEMO_CASTER = Species.Golduck;
 export const DEMO_TARGET = Species.Lickitung;
+
+/** What both dummies are typed as: no type is immune to a Bug, so every move lands */
+export const DEMO_TYPE = Types.Bug;
 
 /**
  * What both dummies are drawn as.
@@ -229,6 +233,12 @@ export function createMoveDemo(move: Moves, rules: DemoRules = { alwaysHits: tru
 
   if (casting == null || receiving == null) {
     throw new Error('The demo could not be staged');
+  }
+  for (const unit of [casting, receiving]) {
+    for (const type of unit.types) {
+      unit.removeType(type);
+    }
+    unit.addType(DEMO_TYPE);
   }
   casting.setAppearance(DEMO_APPEARANCE);
   // A Transform copies what its target looks like, so a doll copying

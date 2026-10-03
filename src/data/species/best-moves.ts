@@ -849,6 +849,9 @@ const MOVE_DRAWBACKS: Partial<Record<Moves, number>> = {
   [Moves.Superpower]: 0.75,
   // Its drops land on defences and Speed rather than the stat it fired from
   [Moves.VCreate]: 0.75,
+  // Burns the user's own Fire type away, and fails without it, so it
+  // is one swing a fight
+  [Moves.BurnUp]: 0.5,
 };
 
 /** The abilities that spare the user each kind of cost */

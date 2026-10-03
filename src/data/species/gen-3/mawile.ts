@@ -111,6 +111,7 @@ export default function registerMawileSpecies(): void {
         Moves.Incinerate,
         Moves.Confide,
         Moves.PowerUpPunch,
+        Moves.LaserFocus,
       ],
       egg: [
         Moves.AncientPower,

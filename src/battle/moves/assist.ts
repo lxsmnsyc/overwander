@@ -1,3 +1,4 @@
+import { Z_MOVES } from '../../data/moves/z-moves';
 import { AttackPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
 import type Battle from '../core';
@@ -24,6 +25,7 @@ const NOT_BORROWED = new Set<Moves>([
   Moves.Counter,
   Moves.MirrorCoat,
   Moves.FocusPunch,
+  ...Z_MOVES,
   Moves.Thief,
   Moves.Covet,
   Moves.Trick,

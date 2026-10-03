@@ -298,6 +298,8 @@ export function assembleCaught(
     health: row.health,
     statuses: row.statuses,
     lair: row.lair,
+    box: row.box,
+    slot: row.box_slot,
     ball: row.ball,
     caughtAt: toStoredISO(row.caught_at_local, asNumber(row.caught_at_offset)),
     locale: row.locale,

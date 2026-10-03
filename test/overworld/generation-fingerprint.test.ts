@@ -116,8 +116,8 @@ describe('generation fingerprint', () => {
 
     const surface = new World('fingerprint-seed');
 
-    expect(fingerprint(surface)).toBe('2bf13fba');
-    expect(fingerprint(surface.at(Depth.Cave))).toBe('4351721d');
+    expect(fingerprint(surface)).toBe('07c716b7');
+    expect(fingerprint(surface.at(Depth.Cave))).toBe('de3ca278');
   });
 
   it('pins the second generation too, so a change to it is a decision', () => {
@@ -125,7 +125,7 @@ describe('generation fingerprint', () => {
 
     const surface = new World('fingerprint-seed', Depth.Surface, Generation.Second);
 
-    expect(fingerprint(surface)).toBe('12032b43');
-    expect(fingerprint(surface.at(Depth.Cave))).toBe('97acbe5f');
+    expect(fingerprint(surface)).toBe('d00fdb2f');
+    expect(fingerprint(surface.at(Depth.Cave))).toBe('14c7926c');
   });
 });

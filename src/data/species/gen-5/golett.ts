@@ -136,6 +136,7 @@ export default function registerGolettSpecies(): void {
       level: {
         1: [Moves.Pound, Moves.DefenseCurl, Moves.MudSlap, Moves.Astonish],
         ...FAMILY_LEVEL,
+        21: [Moves.StompingTantrum],
         40: [Moves.HeavySlam],
         45: [Moves.Earthquake],
         48: [Moves.HammerArm],
@@ -180,8 +181,10 @@ export default function registerGolettSpecies(): void {
           Moves.FocusPunch,
           Moves.Astonish,
           Moves.HeavySlam,
+          Moves.HighHorsepower,
         ],
         ...FAMILY_LEVEL,
+        21: [Moves.StompingTantrum],
         50: [Moves.Earthquake],
         52: [Moves.HammerArm],
         75: [Moves.PhantomForce],

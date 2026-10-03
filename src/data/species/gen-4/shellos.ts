@@ -249,6 +249,7 @@ export default function registerShellosSpecies(): void {
         Moves.StoneEdge,
         Moves.Strength,
         Moves.Waterfall,
+        Moves.StompingTantrum,
       ],
     },
   });
@@ -309,6 +310,7 @@ export default function registerShellosSpecies(): void {
         Moves.StoneEdge,
         Moves.Strength,
         Moves.Waterfall,
+        Moves.StompingTantrum,
       ],
     },
   });

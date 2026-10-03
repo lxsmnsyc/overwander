@@ -107,6 +107,8 @@ export default function registerLegendaryBirdSpecies(): void {
         Moves.Pluck,
         Moves.UTurn,
         Moves.FrostBreath,
+        Moves.AuroraVeil,
+        Moves.LaserFocus,
       ],
     },
   });
@@ -168,6 +170,7 @@ export default function registerLegendaryBirdSpecies(): void {
         Moves.UTurn,
         Moves.VoltSwitch,
         Moves.WildCharge,
+        Moves.LaserFocus,
       ],
     },
   });
@@ -208,6 +211,8 @@ export default function registerLegendaryBirdSpecies(): void {
         61: [Moves.Safeguard],
         73: [Moves.HeatWave],
         92: [Moves.Hurricane],
+
+        99: [Moves.BurnUp],
       },
       teachable: [
         ...BIRD_TEACHABLE,
@@ -226,6 +231,7 @@ export default function registerLegendaryBirdSpecies(): void {
         Moves.UTurn,
         Moves.FlameCharge,
         Moves.Incinerate,
+        Moves.LaserFocus,
       ],
     },
   });

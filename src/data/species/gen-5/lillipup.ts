@@ -106,6 +106,7 @@ export default function registerLillipupSpecies(): void {
         Moves.SandAttack,
         Moves.ThunderFang,
         Moves.Yawn,
+        Moves.PsychicFangs,
       ],
     },
   });
@@ -224,6 +225,7 @@ export default function registerLillipupSpecies(): void {
         Moves.Strength,
         Moves.Surf,
         Moves.Thunder,
+        Moves.StompingTantrum,
       ],
     },
   });

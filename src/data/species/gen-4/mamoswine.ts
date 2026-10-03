@@ -105,6 +105,7 @@ export default function registerMamoswineSpecies(): void {
         Moves.Swagger,
         Moves.Toxic,
         Moves.Confide,
+        Moves.StompingTantrum,
       ],
     },
   });

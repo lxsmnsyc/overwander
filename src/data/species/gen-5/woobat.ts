@@ -169,7 +169,13 @@ export default function registerWoobatSpecies(): void {
         41: [Moves.Psychic],
         47: [Moves.Endeavor],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.GigaImpact, Moves.HyperBeam, Moves.SkyAttack],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.GigaImpact,
+        Moves.HyperBeam,
+        Moves.SkyAttack,
+        Moves.LaserFocus,
+      ],
     },
   });
 }

@@ -98,6 +98,7 @@ export default function registerLeafeonSpecies(): void {
         Moves.Toxic,
         Moves.XScissor,
         Moves.Confide,
+        Moves.LaserFocus,
       ],
     },
   });

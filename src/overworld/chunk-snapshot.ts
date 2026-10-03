@@ -16,7 +16,7 @@ import type { SpawnEntry, SpawnRarityGroups } from '../data/biome';
 import {
   SPECIES_DAY_WEIGHT_BOOST,
   TRUE_SHADOW_WEIGHT,
-  getFeaturedFamily,
+  getFeaturedFamilies,
   getSeasonalCoat,
   getShoreForm,
   getWingPattern,
@@ -35,15 +35,11 @@ import {
   getCaveLairs,
   getLairResidents,
   getSpeciesLairs,
+  lairStandsOn,
   pickLairSpecies,
 } from '../data/overworld/lair';
-import Npc, {
-  EXECUTIVE_CHARSETS,
-  type Executive,
-  NPCS,
-  TRADERS,
-  npcSheets,
-} from '../data/overworld/npc';
+import Npc, { EXECUTIVE_CHARSETS, type Executive } from '../data/overworld/npc';
+import { NPCS, TRADERS, npcSheets } from './npcs';
 import {
   SYNDICATE_BOSS_CHARSETS,
   SYNDICATE_EXECUTIVES,
@@ -531,9 +527,11 @@ export default class ChunkSnapshot {
   }
 
   private crowd(pool: SpawnRarityGroups): SpawnRarityGroups {
-    const featured = getFeaturedFamily(this.timestamp);
-    const dayed =
-      featured == null ? pool : boostFamilyWeights(pool, featured, SPECIES_DAY_WEIGHT_BOOST);
+    const dayed = boostFamilyWeights(
+      pool,
+      getFeaturedFamilies(this.timestamp),
+      SPECIES_DAY_WEIGHT_BOOST,
+    );
 
     return boostTypeWeights(dayed, spawnFavoredTypes(this.weather), WEATHER_SPAWN_BOOST);
   }
@@ -881,12 +879,25 @@ export default class ChunkSnapshot {
     return (species) => canStageBoss(species) && fitsSurface(species, surface);
   }
 
-  /** The lairs of the cell's own biome with at least one resident it can stage */
+  /** The cell's own biome's lairs whose place may be on the cell, water or not */
+  private lairsAt(cell: number): Lairs[] {
+    const wet = this.drawnSurface(cell) === SpawnSurface.Water;
+    const lairs: Lairs[] = [];
+
+    for (const lair of this.lairsHere(this.biomeAt(cell))) {
+      if (lairStandsOn(lair, wet)) {
+        lairs.push(lair);
+      }
+    }
+    return lairs;
+  }
+
+  /** The lairs standing on this cell with at least one resident it can stage */
   private stageableLairs(cell: number): Lairs[] {
     const hosts = this.hostsAt(cell);
     const lairs: Lairs[] = [];
 
-    for (const lair of this.lairsHere(this.biomeAt(cell))) {
+    for (const lair of this.lairsAt(cell)) {
       for (const resident of getLairResidents(lair)) {
         if (hosts(resident)) {
           lairs.push(lair);
@@ -936,12 +947,12 @@ export default class ChunkSnapshot {
 
         // Under a dark day a shadow lair holds a true shadow instead, but
         // only one at home here: its counterpart's lair has to be one this
-        // tile's biome hosts, and the raid is named for that lair. With
+        // tile hosts, and the raid is named for that lair. With
         // none, the lair falls back to an ordinary shadow raid
         const shadows: [Species, Lairs][] = [];
 
         if (dark) {
-          const local = new Set(this.lairsHere(this.biomeAt(cell)));
+          const local = new Set(this.lairsAt(cell));
 
           for (const species of listTrueShadows()) {
             if (!hosts(species)) {
@@ -1026,7 +1037,7 @@ export default class ChunkSnapshot {
           this.biomeAt(cell),
           time,
           () => rng.random(),
-          getFeaturedFamily(this.nestTimestamp),
+          getFeaturedFamilies(this.nestTimestamp),
         );
 
         if (species != null) {
@@ -1980,7 +1991,7 @@ export default class ChunkSnapshot {
       this.biomeAt(cell),
       getTimeOfDay(this.phenomenonTimestamp),
       () => rng.random(),
-      getFeaturedFamily(this.phenomenonTimestamp),
+      getFeaturedFamilies(this.phenomenonTimestamp),
     );
 
     // A pokemon out of a phenomenon answers the meridian too

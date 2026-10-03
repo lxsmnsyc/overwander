@@ -158,7 +158,7 @@ export default function registerAronSpecies(): void {
         53: [Moves.DoubleEdge],
         56: [Moves.MetalBurst],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.StoneEdge],
+      teachable: [...FAMILY_TEACHABLE, Moves.StoneEdge, Moves.StompingTantrum],
     },
   });
 
@@ -244,6 +244,9 @@ export default function registerAronSpecies(): void {
         Moves.Incinerate,
         Moves.DragonTail,
         Moves.PowerUpPunch,
+        Moves.BrutalSwing,
+        Moves.StompingTantrum,
+        Moves.SmartStrike,
       ],
     },
   });

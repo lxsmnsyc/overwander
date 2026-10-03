@@ -162,7 +162,7 @@ export default function registerHorseaSpecies(): void {
         57: [Moves.DragonPulse],
         62: [Moves.DragonDance],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.GigaImpact],
+      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.GigaImpact, Moves.LaserFocus],
     },
   });
 }

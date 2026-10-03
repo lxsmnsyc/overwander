@@ -14,6 +14,7 @@ export const DANCE_MOVES = new Set<Moves>([
   Moves.LunarDance,
   Moves.PetalDance,
   Moves.QuiverDance,
+  Moves.RevelationDance,
   Moves.SwordsDance,
   Moves.TeeterDance,
 ]);

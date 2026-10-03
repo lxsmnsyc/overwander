@@ -166,6 +166,7 @@ export default function registerBuizelSpecies(): void {
         Moves.Roar,
         Moves.Taunt,
         Moves.Torment,
+        Moves.Liquidation,
       ],
     },
   });

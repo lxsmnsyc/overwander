@@ -156,7 +156,13 @@ export default function registerMunnaSpecies(): void {
       // A stone evolution learns nothing further: everything it knows
       // it knew as a Munna
       level: {
-        1: [Moves.DefenseCurl, Moves.Hypnosis, Moves.LuckyChant, Moves.Psybeam],
+        1: [
+          Moves.DefenseCurl,
+          Moves.Hypnosis,
+          Moves.LuckyChant,
+          Moves.Psybeam,
+          Moves.PsychicTerrain,
+        ],
       },
       teachable: [...FAMILY_TEACHABLE, Moves.GigaImpact, Moves.HyperBeam],
     },

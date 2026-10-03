@@ -145,7 +145,14 @@ export default function registerSpearowSpecies(): void {
         43: [Moves.Agility],
         53: [Moves.DrillRun],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.AerialAce, Moves.GigaImpact],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.AerialAce,
+        Moves.GigaImpact,
+        Moves.LaserFocus,
+        Moves.ThroatChop,
+      ],
     },
   });
 }

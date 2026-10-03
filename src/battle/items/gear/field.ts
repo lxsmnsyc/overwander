@@ -11,6 +11,7 @@ import {
   GRIP_CLAW_FACTOR,
   LIGHT_CLAY_FACTOR,
   SCREEN_STATUSES,
+  TERRAIN_EXTENDER_FACTOR,
   WEATHER_ROCK_FACTOR,
 } from './worths';
 
@@ -89,6 +90,15 @@ export const setupLightClay = createHeldItem(Items.LightClay, (battle) =>
       holds(event.cause.unit, Items.LightClay)
     ) {
       event.duration *= LIGHT_CLAY_FACTOR;
+    }
+  }),
+);
+
+// A Terrain Extender holds its holder's terrain down the way a rock holds its sky
+export const setupTerrainExtender = createHeldItem(Items.TerrainExtender, (battle) =>
+  battle.on(BattleEvents.CheckUnitTerrainDuration, EventPriority.Post, (event) => {
+    if (holds(event.source, Items.TerrainExtender)) {
+      event.duration *= TERRAIN_EXTENDER_FACTOR;
     }
   }),
 );

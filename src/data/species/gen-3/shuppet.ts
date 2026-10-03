@@ -170,6 +170,7 @@ export default function registerShuppetSpecies(): void {
         Moves.GigaImpact,
         Moves.ShadowClaw,
         Moves.Infestation,
+        Moves.ThroatChop,
       ],
     },
   });

@@ -201,7 +201,14 @@ export default function registerShinxSpecies(): void {
         56: [Moves.Discharge],
         67: [Moves.ElectricTerrain],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.GigaImpact, Moves.HyperBeam, Moves.Superpower],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.GigaImpact,
+        Moves.HyperBeam,
+        Moves.Superpower,
+        Moves.LaserFocus,
+        Moves.ThroatChop,
+      ],
     },
   });
 }

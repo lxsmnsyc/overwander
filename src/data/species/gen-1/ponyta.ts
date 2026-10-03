@@ -109,6 +109,7 @@ export default function registerPonytaSpecies(): void {
         Moves.QuickAttack,
         Moves.FlameWheel,
         Moves.Charm,
+        Moves.HighHorsepower,
       ],
     },
   });
@@ -158,7 +159,14 @@ export default function registerPonytaSpecies(): void {
         56: [Moves.FlareBlitz],
         61: [Moves.FireBlast],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.GigaImpact, Moves.DrillRun],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.GigaImpact,
+        Moves.DrillRun,
+        Moves.ThroatChop,
+        Moves.SmartStrike,
+      ],
     },
   });
 }

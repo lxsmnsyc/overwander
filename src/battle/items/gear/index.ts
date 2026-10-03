@@ -23,6 +23,7 @@ import {
   setupEscapeItem,
   setupGripClaw,
   setupLightClay,
+  setupTerrainExtender,
   setupWeatherRock,
 } from './field';
 import { setupClearAmulet, setupFlinchItem, setupRazorClaw } from './flinch';
@@ -113,6 +114,7 @@ const SETUPS: ((battle: Battle) => void)[] = [
   setupDestinyKnot,
   ...weatherRockSetups(),
   setupLightClay,
+  setupTerrainExtender,
   setupGripClaw,
   setupBindingBand,
   setupClearAmulet,

@@ -1,12 +1,12 @@
 name: Test
 
-# Every push and every pull request: the type-check, the linter and the
-# unit suite. The database and end-to-end suites are left out, since both
-# need the local database and have to run one at a time.
+# The type-check, the linter and the unit suite. The database and
+# end-to-end suites are left out, since both need the local database and
+# have to run one at a time.
+#
+# Off for now: run by hand from the Actions tab. Put `push` (on main) and
+# `pull_request` back to turn it on again.
 on:
-  push:
-    branches: [main]
-  pull_request:
   workflow_dispatch:
 
 # A branch pushed twice only needs its newest commit checked

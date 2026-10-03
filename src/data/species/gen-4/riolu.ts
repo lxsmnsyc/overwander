@@ -106,7 +106,7 @@ export default function registerRioluSpecies(): void {
         24: [Moves.Screech],
         29: [Moves.Copycat],
       },
-      teachable: [...FAMILY_TEACHABLE],
+      teachable: [...FAMILY_TEACHABLE, Moves.LaserFocus],
       egg: [
         Moves.Agility,
         Moves.Bite,
@@ -150,7 +150,14 @@ export default function registerRioluSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.DarkPulse, Moves.Detect, Moves.Foresight, Moves.MetalClaw, Moves.QuickAttack],
+        1: [
+          Moves.DarkPulse,
+          Moves.Detect,
+          Moves.Foresight,
+          Moves.MetalClaw,
+          Moves.QuickAttack,
+          Moves.LaserFocus,
+        ],
         6: [Moves.Counter],
         11: [Moves.ForcePalm],
         15: [Moves.Feint, Moves.PowerUpPunch],

@@ -38,6 +38,7 @@ export default function registerSudowoodoSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: {
+        22: [Moves.TearfulLook],
         33: [Moves.Block],
         41: [Moves.SuckerPunch],
         49: [Moves.HammerArm],
@@ -108,6 +109,7 @@ export default function registerSudowoodoSpecies(): void {
         Moves.Bulldoze,
         Moves.Confide,
         Moves.PowerUpPunch,
+        Moves.StompingTantrum,
       ],
     },
   });

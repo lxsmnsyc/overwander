@@ -181,6 +181,7 @@ export default function registerPansearSpecies(): void {
         Moves.RockSlide,
         Moves.Superpower,
         Moves.PowerUpPunch,
+        Moves.ThroatChop,
       ],
     },
   });

@@ -227,6 +227,7 @@ export default function registerFroakieSpecies(): void {
         Moves.HyperBeam,
         Moves.IcePunch,
         Moves.LowKick,
+        Moves.BrutalSwing,
       ],
     },
   });

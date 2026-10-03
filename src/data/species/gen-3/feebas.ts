@@ -162,6 +162,8 @@ export default function registerFeebasSpecies(): void {
         Moves.IronHead,
         Moves.Bulldoze,
         Moves.DragonTail,
+        Moves.BrutalSwing,
+        Moves.LaserFocus,
       ],
     },
   });

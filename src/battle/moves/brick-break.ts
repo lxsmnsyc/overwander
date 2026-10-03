@@ -10,11 +10,14 @@ import { BattleEvents, EffectType } from '../events';
  * blow that lands is not reduced by them
  * https://bulbapedia.bulbagarden.net/wiki/Brick_Break_(move)
  */
-const SCREENS = [TeamStatuses.Reflect, TeamStatuses.LightScreen];
+const SCREENS = [TeamStatuses.Reflect, TeamStatuses.LightScreen, TeamStatuses.AuroraVeil];
+
+/** Brick Break, and Psychic Fangs which bites through the same way */
+const SCREEN_BREAKERS = new Set<Moves>([Moves.BrickBreak, Moves.PsychicFangs]);
 
 export default function setupBrickBreak(battle: Battle): void {
   battle.on(BattleEvents.UnitAttack, AttackPriority.Pre, (event) => {
-    if (event.move !== Moves.BrickBreak || event.flags & MoveAttackFlags.Simulated) {
+    if (!SCREEN_BREAKERS.has(event.move) || event.flags & MoveAttackFlags.Simulated) {
       return;
     }
 

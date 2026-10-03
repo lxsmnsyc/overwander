@@ -180,6 +180,8 @@ function asPreview(gift: CatchGift | EncounterGift): CaughtPokemon {
     steppedAt: 0,
     statuses: 0,
     lair: null,
+    box: null,
+    slot: null,
     ball: gift.kind === GiftKind.Catch ? gift.ball : Balls.PokeBall,
     caughtAt: '',
     locale: '',

@@ -150,7 +150,7 @@ export default function registerRoggenrolaSpecies(): void {
         48: [Moves.StoneEdge],
         55: [Moves.Explosion],
       },
-      teachable: [...FAMILY_TEACHABLE],
+      teachable: [...FAMILY_TEACHABLE, Moves.StompingTantrum],
     },
   });
   registerSpecies(Species.Gigalith, {
@@ -200,6 +200,9 @@ export default function registerRoggenrolaSpecies(): void {
         Moves.IronHead,
         Moves.SolarBeam,
         Moves.Superpower,
+        Moves.StompingTantrum,
+        Moves.LaserFocus,
+        Moves.ThroatChop,
       ],
     },
   });

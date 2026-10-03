@@ -29,6 +29,7 @@ import deriveEncounter, {
   EncounterType,
   RAID_FAMILY_DAY_MIN_IV,
   RAID_MIN_IV,
+  raiseIV,
 } from '../src/overworld/encounter';
 import { Species } from '../src/data/ids/species';
 import type { Moves } from '../src/data/ids/moves';
@@ -303,6 +304,40 @@ describe('what weather is worth', () => {
         WEATHER_MIN_IV,
         WEATHER_MIN_IV,
       ]);
+    }
+  });
+
+  it('makes a perfect value likelier the higher the floor', () => {
+    // Every raw value a stat can roll, lifted onto each floor
+    const perfect = (floor: number): number => {
+      let count = 0;
+
+      for (let raw = 0; raw <= MAX_IV; raw++) {
+        if (raiseIV(raw, floor) === MAX_IV) {
+          count += 1;
+        }
+      }
+      return count;
+    };
+
+    expect(perfect(0)).toBe(1);
+    expect(perfect(WEATHER_MIN_IV)).toBeGreaterThan(perfect(0));
+    expect(perfect(2 * WEATHER_MIN_IV)).toBeGreaterThan(perfect(WEATHER_MIN_IV));
+    expect(perfect(3 * WEATHER_MIN_IV)).toBeGreaterThan(perfect(2 * WEATHER_MIN_IV));
+  });
+
+  it('keeps every lifted value between the floor and a perfect one, in order', () => {
+    for (const floor of [0, 9, 18, 27, MAX_IV]) {
+      let last = -1;
+
+      for (let raw = 0; raw <= MAX_IV; raw++) {
+        const raised = raiseIV(raw, floor);
+
+        expect(raised).toBeGreaterThanOrEqual(Math.max(floor, last));
+        expect(raised).toBeLessThanOrEqual(MAX_IV);
+        last = raised;
+      }
+      expect(raiseIV(MAX_IV, floor)).toBe(MAX_IV);
     }
   });
 

@@ -56,6 +56,7 @@ const FAMILY_TEACHABLE = [
   Moves.Swagger,
   Moves.Toxic,
   Moves.ZenHeadbutt,
+  Moves.StompingTantrum,
 ];
 
 // What the king learns whichever size it is
@@ -165,7 +166,7 @@ export default function registerTyruntSpecies(): void {
         68: [Moves.RockSlide],
         75: [Moves.GigaImpact],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.GigaImpact, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.GigaImpact, Moves.HyperBeam, Moves.BrutalSwing],
     },
   });
 }

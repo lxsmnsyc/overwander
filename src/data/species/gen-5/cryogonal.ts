@@ -106,6 +106,8 @@ export default function registerCryogonalSpecies(): void {
         Moves.Toxic,
         Moves.WaterPulse,
         Moves.Confide,
+        Moves.AuroraVeil,
+        Moves.LaserFocus,
       ],
       egg: [Moves.Explosion, Moves.FrostBreath],
     },

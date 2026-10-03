@@ -241,6 +241,8 @@ export default function registerMareepSpecies(): void {
         Moves.GigaImpact,
         Moves.RockClimb,
         Moves.Bulldoze,
+        Moves.BrutalSwing,
+        Moves.LaserFocus,
       ],
     },
   });

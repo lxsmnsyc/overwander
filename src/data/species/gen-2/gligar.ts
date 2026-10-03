@@ -117,6 +117,7 @@ export default function registerGligarSpecies(): void {
         Moves.StruggleBug,
         Moves.Bulldoze,
         Moves.Confide,
+        Moves.ThroatChop,
       ],
       egg: [
         Moves.Counter,

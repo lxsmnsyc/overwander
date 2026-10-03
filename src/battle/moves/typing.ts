@@ -1,4 +1,4 @@
-import { AttackPriority } from '../../core/event-emitter';
+import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Types } from '../../data/constants/types';
 import Abilities from '../../data/ids/abilities';
 import { Moves } from '../../data/ids/moves';
@@ -37,6 +37,8 @@ function changes(move: Moves, source: Unit, target: Unit): boolean {
 const TYPING_MOVES = new Set<Moves>([Moves.Soak, Moves.ReflectType]);
 
 export default function setupTypingMoves(battle: Battle): void {
+  setupBurnUp(battle);
+
   battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     if (!TYPING_MOVES.has(event.move) || event.target.type !== MoveTargetType.Unit) {
       return;
@@ -110,6 +112,31 @@ function setupAddedTypes(battle: Battle): void {
     if (event.usable && type != null) {
       event.usable =
         event.target.type === MoveTargetType.Unit && !event.target.unit.types.has(type);
+    }
+  });
+}
+
+/**
+ * Burn Up spends the user's own fire: it only works from a Fire type,
+ * and the user is not one afterwards
+ * https://bulbapedia.bulbagarden.net/wiki/Burn_Up_(move)
+ */
+function setupBurnUp(battle: Battle): void {
+  battle.on(BattleEvents.CheckUnitCanCast, EventPriority.Post, (event) => {
+    if (event.success && event.move === Moves.BurnUp && !event.source.types.has(Types.Fire)) {
+      event.success = false;
+    }
+  });
+
+  battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
+    if (event.usable && event.move === Moves.BurnUp) {
+      event.usable = event.source.types.has(Types.Fire);
+    }
+  });
+
+  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Post, (event) => {
+    if (event.move === Moves.BurnUp && event.source.types.has(Types.Fire)) {
+      event.source.removeType(Types.Fire);
     }
   });
 }

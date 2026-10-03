@@ -164,6 +164,7 @@ export default function registerMarillSpecies(): void {
         Moves.FocusBlast,
         Moves.GigaImpact,
         Moves.Bulldoze,
+        Moves.Liquidation,
       ],
     },
   });

@@ -181,6 +181,7 @@ export default function registerBudewSpecies(): void {
         Moves.Toxic,
         Moves.Confide,
         Moves.DazzlingGleam,
+        Moves.LaserFocus,
       ],
     },
   });

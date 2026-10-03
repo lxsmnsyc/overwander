@@ -117,6 +117,7 @@ export default function registerSwordsOfJusticeSpecies(): void {
         Moves.StealthRock,
         Moves.ThunderWave,
         Moves.VoltSwitch,
+        Moves.LaserFocus,
       ],
     },
   });
@@ -167,6 +168,8 @@ export default function registerSwordsOfJusticeSpecies(): void {
         Moves.Sandstorm,
         Moves.SmackDown,
         Moves.StealthRock,
+        Moves.StompingTantrum,
+        Moves.LaserFocus,
       ],
     },
   });
@@ -217,6 +220,7 @@ export default function registerSwordsOfJusticeSpecies(): void {
         Moves.SunnyDay,
         Moves.Synthesis,
         Moves.WorrySeed,
+        Moves.LaserFocus,
       ],
     },
   });

@@ -154,7 +154,14 @@ export default function registerPoochyenaSpecies(): void {
         52: [Moves.Thief],
         62: [Moves.SuckerPunch],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.Strength, Moves.GigaImpact],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.Strength,
+        Moves.GigaImpact,
+        Moves.LaserFocus,
+        Moves.ThroatChop,
+      ],
     },
   });
 }

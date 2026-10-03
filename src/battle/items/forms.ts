@@ -19,6 +19,9 @@ const SHAPE_ABILITIES = new Map<Species, Abilities>([
   [Species.ShayminSky, Abilities.SereneGrace],
   [Species.KyogrePrimal, Abilities.PrimordialSea],
   [Species.GroudonPrimal, Abilities.DesolateLand],
+  [Species.TornadusTherian, Abilities.Regenerator],
+  [Species.ThundurusTherian, Abilities.VoltAbsorb],
+  [Species.LandorusTherian, Abilities.Intimidate],
 ]);
 
 /**
@@ -32,19 +35,15 @@ const SHAPE_NEEDS = new Map<Species, Abilities>([[Species.Arceus, Abilities.Mult
  * fights in.
  *
  * The shape is rolled as the holder reaches the field rather than
- * chosen, so an item naming several shapes is a gamble every fight
- * rather than a switch a player sets once. An item naming one shape
- * is that switch. Which shapes each offers is
+ * chosen, so an item naming several shapes of one pokemon is a gamble
+ * every fight rather than a switch a player sets once. An item naming
+ * one shape per pokemon is that switch. Which shapes each offers is
  * [`FORM_ITEMS`](../../data/items/form-items.ts)
  */
 export default function setupFormItems(battle: Battle): void {
   const setups: ((battle: Battle) => void)[] = [];
 
   for (const [item, forms] of FORM_ITEMS) {
-    // Every shape in the set belongs to one pokemon, so the base form
-    // of the first is what the holder has to be
-    const base = getBaseFormSpecies(forms[0]);
-
     setups.push(
       createHeldItem(
         item,
@@ -52,18 +51,27 @@ export default function setupFormItems(battle: Battle): void {
           new MergedLifecycle([
             inner.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
               const unit = event.source;
-
+              const base = getBaseFormSpecies(unit.species);
               const needs = SHAPE_NEEDS.get(base);
 
-              if (
-                getBaseFormSpecies(unit.species) !== base ||
-                !holds(unit, item) ||
-                (needs != null && !unit.hasAbility(needs))
-              ) {
+              if (!holds(unit, item) || (needs != null && !unit.hasAbility(needs))) {
                 return;
               }
 
-              const shape = forms[Math.floor(inner.random() * forms.length)];
+              // One item may serve several pokemon, so only the
+              // holder's own shapes are in the draw
+              const own: Species[] = [];
+
+              for (const form of forms) {
+                if (getBaseFormSpecies(form) === base) {
+                  own.push(form);
+                }
+              }
+              if (own.length === 0) {
+                return;
+              }
+
+              const shape = own[Math.floor(inner.random() * own.length)];
 
               if (unit.species !== shape) {
                 unit.setSpecies(shape);

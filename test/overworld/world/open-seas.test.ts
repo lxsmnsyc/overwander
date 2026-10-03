@@ -10,8 +10,8 @@ import ChunkSnapshot from '../../../src/overworld/chunk-snapshot';
 import { TRAINER_TYPES, isAceTrainer } from '../../../src/data/overworld/trainers';
 import Landmark from '../../../src/data/overworld/landmark';
 import { roleAt } from '../../../src/overworld/ground';
-import { isIslandAt } from '../../../src/overworld/fields';
-import World from '../../../src/overworld/world';
+import World, { Generation } from '../../../src/overworld/world';
+import { Depth } from '../../../src/overworld/depth';
 import findChunk from './helpers';
 
 // Spawn rolls read the species registry and the biome spawn pools;
@@ -24,8 +24,9 @@ registerAbilities();
 registerBiomeSpawns();
 
 describe('the open seas', () => {
-  it('scatters islands, four cells wide at the narrowest', () => {
+  it('scatters islands, never a cell wide at the narrowest', () => {
     const world = new World('overworld');
+    const dry = (x: number, y: number): boolean => roleAt(world, x, y) !== 'water';
     let sea = 0;
     let land = 0;
 
@@ -35,32 +36,32 @@ describe('the open seas', () => {
           continue;
         }
         sea += 1;
-        if (roleAt(world, x, y) !== 'ground') {
+        if (!dry(x, y)) {
           continue;
         }
         land += 1;
-        if (!isIslandAt(world, x, y)) {
-          // The ground closing a gap too narrow to be water, which only
-          // joins two islands into one
-          continue;
-        }
-        // Laid in 4x4 blocks, so no island is a speck of sand
-        const within = [0, 1, 2, 3].map((at) => -at);
-        const broad = within.some((oy) =>
-          within.some((ox) =>
-            [0, 1, 2, 3].every((dy) =>
-              [0, 1, 2, 3].every((dx) => isIslandAt(world, x + ox + dx, y + oy + dy)),
-            ),
-          ),
-        );
+        // Built of 4x4 blocks, and where two islands, or an island and
+        // the coast, stand too close for the water between, the ground
+        // that joins them is widened rather than left a bridge
+        const across = dry(x - 1, y) || dry(x + 1, y);
+        const along = dry(x, y - 1) || dry(x, y + 1);
 
-        expect(broad, `${x},${y}`).toBe(true);
+        expect(across && along, `${x},${y}`).toBe(true);
       }
     }
     // Somewhere to stand out there, and the sea is still the sea
     expect(sea).toBeGreaterThan(0);
     expect(land).toBeGreaterThan(0);
     expect(land / sea).toBeLessThan(0.1);
+  });
+
+  it('widens the ground between two islands a cell apart', () => {
+    // Two islands a row apart overlapping by one column, which dried into a bridge a cell across
+    const world = new World('lxsmnsyc', Depth.Surface, Generation.Second);
+    const dry = (x: number, y: number): boolean => roleAt(world, x, y) !== 'water';
+
+    expect(dry(-8311, -9227)).toBe(true);
+    expect(dry(-8312, -9227) || dry(-8310, -9227)).toBe(true);
   });
 
   it('rolls no berry patch and no wandering npc afloat', () => {

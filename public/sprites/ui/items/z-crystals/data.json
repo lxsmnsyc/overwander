@@ -1,0 +1,462 @@
+{
+  "compact": true,
+  "width": 100,
+  "height": 117,
+  "images": [
+    {
+      "name": "aloraichium-z.png",
+      "x": 0,
+      "y": 0,
+      "width": 24,
+      "height": 13,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        4,
+        10
+      ]
+    },
+    {
+      "name": "buginium-z.png",
+      "x": 24,
+      "y": 0,
+      "width": 24,
+      "height": 13,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        4,
+        10
+      ]
+    },
+    {
+      "name": "darkinium-z.png",
+      "x": 48,
+      "y": 0,
+      "width": 24,
+      "height": 13,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        4,
+        10
+      ]
+    },
+    {
+      "name": "decidium-z.png",
+      "x": 72,
+      "y": 0,
+      "width": 24,
+      "height": 13,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        4,
+        10
+      ]
+    },
+    {
+      "name": "dragonium-z.png",
+      "x": 0,
+      "y": 13,
+      "width": 24,
+      "height": 13,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        4,
+        10
+      ]
+    },
+    {
+      "name": "eevium-z.png",
+      "x": 24,
+      "y": 13,
+      "width": 24,
+      "height": 13,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        4,
+        10
+      ]
+    },
+    {
+      "name": "electrium-z.png",
+      "x": 48,
+      "y": 13,
+      "width": 24,
+      "height": 13,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        4,
+        10
+      ]
+    },
+    {
+      "name": "fairium-z.png",
+      "x": 72,
+      "y": 13,
+      "width": 24,
+      "height": 13,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        4,
+        10
+      ]
+    },
+    {
+      "name": "fightinium-z.png",
+      "x": 0,
+      "y": 26,
+      "width": 24,
+      "height": 13,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        4,
+        10
+      ]
+    },
+    {
+      "name": "firium-z.png",
+      "x": 24,
+      "y": 26,
+      "width": 24,
+      "height": 13,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        4,
+        10
+      ]
+    },
+    {
+      "name": "flyinium-z.png",
+      "x": 48,
+      "y": 26,
+      "width": 24,
+      "height": 13,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        4,
+        10
+      ]
+    },
+    {
+      "name": "ghostium-z.png",
+      "x": 72,
+      "y": 26,
+      "width": 24,
+      "height": 13,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        4,
+        10
+      ]
+    },
+    {
+      "name": "grassium-z.png",
+      "x": 0,
+      "y": 39,
+      "width": 24,
+      "height": 13,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        4,
+        10
+      ]
+    },
+    {
+      "name": "groundium-z.png",
+      "x": 24,
+      "y": 39,
+      "width": 24,
+      "height": 13,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        4,
+        10
+      ]
+    },
+    {
+      "name": "icium-z.png",
+      "x": 48,
+      "y": 39,
+      "width": 24,
+      "height": 13,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        4,
+        10
+      ]
+    },
+    {
+      "name": "incinium-z.png",
+      "x": 72,
+      "y": 39,
+      "width": 24,
+      "height": 13,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        4,
+        10
+      ]
+    },
+    {
+      "name": "kommonium-z.png",
+      "x": 0,
+      "y": 52,
+      "width": 28,
+      "height": 13,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        2,
+        9
+      ]
+    },
+    {
+      "name": "lunalium-z.png",
+      "x": 28,
+      "y": 52,
+      "width": 28,
+      "height": 13,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        2,
+        9
+      ]
+    },
+    {
+      "name": "lycanium-z.png",
+      "x": 56,
+      "y": 52,
+      "width": 28,
+      "height": 13,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        2,
+        9
+      ]
+    },
+    {
+      "name": "marshadium-z.png",
+      "x": 0,
+      "y": 65,
+      "width": 24,
+      "height": 13,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        4,
+        10
+      ]
+    },
+    {
+      "name": "mewnium-z.png",
+      "x": 24,
+      "y": 65,
+      "width": 24,
+      "height": 13,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        4,
+        10
+      ]
+    },
+    {
+      "name": "mimikium-z.png",
+      "x": 48,
+      "y": 65,
+      "width": 28,
+      "height": 13,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        2,
+        9
+      ]
+    },
+    {
+      "name": "normalium-z.png",
+      "x": 76,
+      "y": 65,
+      "width": 24,
+      "height": 13,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        4,
+        10
+      ]
+    },
+    {
+      "name": "pikanium-z.png",
+      "x": 0,
+      "y": 78,
+      "width": 24,
+      "height": 13,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        4,
+        10
+      ]
+    },
+    {
+      "name": "pikashunium-z.png",
+      "x": 24,
+      "y": 78,
+      "width": 24,
+      "height": 13,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        4,
+        10
+      ]
+    },
+    {
+      "name": "poisonium-z.png",
+      "x": 48,
+      "y": 78,
+      "width": 24,
+      "height": 13,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        4,
+        10
+      ]
+    },
+    {
+      "name": "primarium-z.png",
+      "x": 72,
+      "y": 78,
+      "width": 24,
+      "height": 13,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        4,
+        10
+      ]
+    },
+    {
+      "name": "psychium-z.png",
+      "x": 0,
+      "y": 91,
+      "width": 24,
+      "height": 13,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        4,
+        10
+      ]
+    },
+    {
+      "name": "rockium-z.png",
+      "x": 24,
+      "y": 91,
+      "width": 24,
+      "height": 13,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        4,
+        10
+      ]
+    },
+    {
+      "name": "snorlium-z.png",
+      "x": 48,
+      "y": 91,
+      "width": 24,
+      "height": 13,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        4,
+        10
+      ]
+    },
+    {
+      "name": "solganium-z.png",
+      "x": 72,
+      "y": 91,
+      "width": 28,
+      "height": 13,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        2,
+        9
+      ]
+    },
+    {
+      "name": "steelium-z.png",
+      "x": 0,
+      "y": 104,
+      "width": 24,
+      "height": 13,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        4,
+        10
+      ]
+    },
+    {
+      "name": "tapunium-z.png",
+      "x": 24,
+      "y": 104,
+      "width": 24,
+      "height": 13,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        4,
+        10
+      ]
+    },
+    {
+      "name": "ultranecrozium-z.png",
+      "x": 48,
+      "y": 104,
+      "width": 28,
+      "height": 13,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        2,
+        9
+      ]
+    },
+    {
+      "name": "waterium-z.png",
+      "x": 76,
+      "y": 104,
+      "width": 24,
+      "height": 13,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        4,
+        10
+      ]
+    }
+  ]
+}

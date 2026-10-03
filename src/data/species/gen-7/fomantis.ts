@@ -1,0 +1,157 @@
+import { Stats } from '../../constants/stats';
+import { Types } from '../../constants/types';
+import Abilities from '../../ids/abilities';
+import Biome, { TimeOfDay } from '../../ids/biome';
+import EggGroups from '../../ids/egg-groups';
+import Families from '../../ids/families';
+import { Moves } from '../../ids/moves';
+import { EvolutionMethod, Species } from '../../ids/species';
+import { registerSpecies } from '../__create';
+
+// TM and tutor moves shared by the whole family
+const FAMILY_TEACHABLE = [
+  Moves.Attract,
+  Moves.BugBite,
+  Moves.Confide,
+  Moves.Defog,
+  Moves.DoubleTeam,
+  Moves.DualChop,
+  Moves.EnergyBall,
+  Moves.Facade,
+  Moves.FalseSwipe,
+  Moves.Fling,
+  Moves.Frustration,
+  Moves.GigaDrain,
+  Moves.GrassKnot,
+  Moves.HiddenPower,
+  Moves.LeechLife,
+  Moves.NaturePower,
+  Moves.Payback,
+  Moves.PoisonJab,
+  Moves.Protect,
+  Moves.Rest,
+  Moves.Return,
+  Moves.Round,
+  Moves.Safeguard,
+  Moves.SeedBomb,
+  Moves.SignalBeam,
+  Moves.SleepTalk,
+  Moves.Snore,
+  Moves.SolarBeam,
+  Moves.Substitute,
+  Moves.SunnyDay,
+  Moves.Swagger,
+  Moves.SwordsDance,
+  Moves.Synthesis,
+  Moves.Toxic,
+  Moves.WorrySeed,
+  Moves.XScissor,
+];
+
+export default function registerFomantisSpecies(): void {
+  registerSpecies(Species.Fomantis, {
+    dexNumber: 753,
+    evolvesInto: [
+      {
+        species: Species.Lurantis,
+        method: EvolutionMethod.Level | EvolutionMethod.TimeOfDay,
+        level: 34,
+        time: TimeOfDay.Morning | TimeOfDay.Day,
+      },
+    ],
+    name: 'Fomantis',
+    category: 'Sickle Grass Pokemon',
+    height: 0.3,
+    weight: 1.5,
+    family: Families.Fomantis,
+    stats: {
+      [Stats.HP]: 40,
+      [Stats.Attack]: 55,
+      [Stats.Defense]: 35,
+      [Stats.SpecialAttack]: 50,
+      [Stats.SpecialDefense]: 35,
+      [Stats.Speed]: 35,
+    },
+    types: [Types.Grass],
+    abilities: [Abilities.LeafGuard],
+    hiddenAbilities: [Abilities.Contrary],
+    eggGroups: [EggGroups.Grass],
+    genderRatio: [4, 4],
+    catchRate: 190,
+    biomes: [Biome.TropicalRainforest, Biome.TropicalSeasonalForest, Biome.Grassland],
+    activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
+    learnSet: {
+      level: {
+        1: [Moves.FuryCutter],
+        5: [Moves.Leafage],
+        10: [Moves.RazorLeaf],
+        14: [Moves.Growth],
+        19: [Moves.Ingrain],
+        23: [Moves.LeafBlade],
+        28: [Moves.Synthesis],
+        32: [Moves.Slash],
+        37: [Moves.SweetScent],
+        41: [Moves.SolarBeam],
+        46: [Moves.SunnyDay],
+      },
+      teachable: [...FAMILY_TEACHABLE],
+      egg: [Moves.Aromatherapy, Moves.Defog, Moves.GigaDrain, Moves.LeafStorm, Moves.WeatherBall],
+    },
+  });
+  registerSpecies(Species.Lurantis, {
+    dexNumber: 754,
+    name: 'Lurantis',
+    category: 'Bloom Sickle Pokemon',
+    height: 0.9,
+    weight: 18.5,
+    family: Families.Fomantis,
+    evolvesFrom: Species.Fomantis,
+    stats: {
+      [Stats.HP]: 70,
+      [Stats.Attack]: 105,
+      [Stats.Defense]: 90,
+      [Stats.SpecialAttack]: 80,
+      [Stats.SpecialDefense]: 90,
+      [Stats.Speed]: 45,
+    },
+    types: [Types.Grass],
+    abilities: [Abilities.LeafGuard],
+    hiddenAbilities: [Abilities.Contrary, Abilities.Sharpness, Abilities.Chlorophyll],
+    eggGroups: [EggGroups.Grass],
+    genderRatio: [4, 4],
+    catchRate: 75,
+    biomes: [Biome.TropicalRainforest, Biome.TropicalSeasonalForest, Biome.Grassland],
+    activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
+    learnSet: {
+      level: {
+        1: [
+          Moves.FuryCutter,
+          Moves.Growth,
+          Moves.Leafage,
+          Moves.NightSlash,
+          Moves.PetalBlizzard,
+          Moves.RazorLeaf,
+          Moves.XScissor,
+        ],
+        19: [Moves.Ingrain],
+        23: [Moves.LeafBlade],
+        28: [Moves.Synthesis],
+        32: [Moves.Slash],
+        40: [Moves.SweetScent],
+        47: [Moves.SolarBlade],
+        55: [Moves.SunnyDay],
+      },
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.AerialAce,
+        Moves.BrickBreak,
+        Moves.GigaImpact,
+        Moves.HyperBeam,
+        Moves.KnockOff,
+        Moves.LaserFocus,
+        Moves.LowSweep,
+        Moves.Superpower,
+      ],
+    },
+  });
+}

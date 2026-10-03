@@ -53,6 +53,7 @@ const FAMILY_TEACHABLE = [
   Moves.EchoedVoice,
   Moves.Bulldoze,
   Moves.Confide,
+  Moves.StompingTantrum,
 ];
 
 export default function registerDiglettSpecies(): void {

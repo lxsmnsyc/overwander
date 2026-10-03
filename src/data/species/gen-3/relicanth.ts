@@ -99,6 +99,7 @@ export default function registerRelicanthSpecies(): void {
         Moves.Scald,
         Moves.Bulldoze,
         Moves.Confide,
+        Moves.StompingTantrum,
       ],
       egg: [Moves.Amnesia, Moves.SkullBash, Moves.Magnitude, Moves.WaterSport],
     },

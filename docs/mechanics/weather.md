@@ -56,8 +56,10 @@ under one is given nothing.
 ## What weather is worth
 
 Every sky is kind to a type or two, and a pokemon of a type its sky favours
-comes with a floor of **10 under every one of its six values**. Everything else
-met in that weather rolls exactly as it would have under a clear sky. Rain is
+comes with a floor of **9 under every one of its six values**. The roll is
+spread between the floor and 31 rather than lifted only where it fell short, so
+a perfect value is likelier too: 2 in 32 per stat against 1 in 32. Everything
+else met in that weather rolls exactly as it would have under a clear sky. Rain is
 worth walking into for a Water type and not for whatever else is standing in it.
 
 Rain favours Water and Electric, a breeze favours Flying, cloud favours Normal,

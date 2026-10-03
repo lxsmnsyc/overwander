@@ -101,7 +101,7 @@ export default function registerCarvanhaSpecies(): void {
         43: [Moves.Agility],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.HydroPump, Moves.Thrash],
+      egg: [Moves.HydroPump, Moves.Thrash, Moves.PsychicFangs],
     },
   });
 
@@ -159,6 +159,7 @@ export default function registerCarvanhaSpecies(): void {
         Moves.GigaImpact,
         Moves.PoisonJab,
         Moves.Bulldoze,
+        Moves.Liquidation,
       ],
     },
   });

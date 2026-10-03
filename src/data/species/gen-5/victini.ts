@@ -145,6 +145,7 @@ export default function registerVictiniSpecies(): void {
         Moves.Confide,
         Moves.DazzlingGleam,
         Moves.PowerUpPunch,
+        Moves.LaserFocus,
       ],
     },
   });

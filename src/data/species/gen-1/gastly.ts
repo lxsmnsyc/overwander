@@ -243,6 +243,7 @@ export default function registerGastlySpecies(): void {
         Moves.PoisonJab,
         Moves.ShadowClaw,
         Moves.PowerUpPunch,
+        Moves.LaserFocus,
       ],
     },
   });

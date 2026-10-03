@@ -114,6 +114,7 @@ export default function registerSmoochumSpecies(): void {
         Moves.EchoedVoice,
         Moves.FrostBreath,
         Moves.Confide,
+        Moves.AuroraVeil,
       ],
       egg: [
         Moves.LovelyKiss,

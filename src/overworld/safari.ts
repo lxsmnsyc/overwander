@@ -22,6 +22,7 @@ import {
   isFeaturedSpecies,
   lineEvolvesByItem,
 } from '../data/species';
+import { isUltraBeast } from '../data/species/ultra-beasts';
 import Phenomenon from '../data/overworld/phenomenon';
 import { type Encounter, EncounterType, isRaidEncounter } from './encounter';
 
@@ -130,6 +131,7 @@ export const BALL_MODIFIERS: Record<Balls, number> = {
   [Balls.LoveBall]: 1,
   [Balls.HeavyBall]: 1,
   [Balls.FastBall]: 1,
+  [Balls.BeastBall]: 1,
 };
 
 /**
@@ -160,6 +162,10 @@ const DIVE_BALL_MODIFIER = 3.5;
  * Mainline Fast Ball: shines on whatever would have outrun it
  */
 const FAST_BALL_MODIFIER = 4;
+
+/** A Beast Ball on an Ultra Beast, and on anything else */
+const BEAST_BALL_MODIFIER = 5;
+const BEAST_BALL_ELSEWHERE = 0.1;
 const FAST_BALL_SPEED = 100;
 
 /**
@@ -630,6 +636,8 @@ export default class SafariSession<
         return this.context.speciesCaught === true ? REPEAT_BALL_MODIFIER : 1;
       case Balls.DuskBall:
         return (getTimeOfDay(this.encounter.timestamp) & DUSK_TIMES) === 0 ? 1 : DUSK_BALL_MODIFIER;
+      case Balls.BeastBall:
+        return isUltraBeast(this.encounter.species) ? BEAST_BALL_MODIFIER : BEAST_BALL_ELSEWHERE;
       case Balls.FastBall:
         return getSpeciesData(this.encounter.species).stats[Stats.Speed] >= FAST_BALL_SPEED
           ? FAST_BALL_MODIFIER

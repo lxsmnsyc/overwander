@@ -164,6 +164,7 @@ export default function registerSwinubSpecies(): void {
         Moves.Avalanche,
         Moves.GigaImpact,
         Moves.StoneEdge,
+        Moves.StompingTantrum,
       ],
     },
   });

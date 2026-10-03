@@ -114,6 +114,7 @@ export default function registerGirafarigSpecies(): void {
         Moves.WorkUp,
         Moves.Confide,
         Moves.DazzlingGleam,
+        Moves.StompingTantrum,
       ],
       egg: [
         Moves.Amnesia,
@@ -123,6 +124,8 @@ export default function registerGirafarigSpecies(): void {
         Moves.TakeDown,
         Moves.MagicCoat,
         Moves.Wish,
+        Moves.PsychicFangs,
+        Moves.PsychicTerrain,
       ],
     },
   });

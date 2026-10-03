@@ -8,7 +8,7 @@ import {
   onMount,
 } from 'solid-js';
 import { FULL_BOARD_EXTRA } from '../../../overworld/board';
-import { SQUARES } from '../../../overworld/grid';
+import { CHUNK_CELLS, SQUARES } from '../../../overworld/grid';
 import LRUMap from '../../../core/lru-map';
 import {
   BOARD_CELLS,
@@ -84,7 +84,8 @@ import type Decoration from '../../../data/overworld/decoration';
 import { getBlocker } from '../../../data/overworld/decoration';
 import Landmark from '../../../data/overworld/landmark';
 import Phenomenon from '../../../data/overworld/phenomenon';
-import Npc, { npcSheet } from '../../../data/overworld/npc';
+import Npc from '../../../data/overworld/npc';
+import { npcSheet } from '../../../overworld/npcs';
 import facingToward from '../../../canvas/facing';
 import type OWCharSprite from '../../../canvas/ow-char-sprite';
 import type Strangers from '../../../overworld/strangers';
@@ -115,6 +116,7 @@ import type { ItemStack } from '../../../data/overworld/item-pool';
 import {
   CELL,
   CELL_STRIDE,
+  CHUNK_LINE,
   CLOCK_STEP,
   COLORS,
   DRAW_PACE,
@@ -2689,6 +2691,38 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
        * ruled while the player has grid lines on
        */
       const gridLines = settings().gridLines;
+      const chunkLines = settings().chunkLines;
+
+      /**
+       * The edges of this cell that are a chunk's edge: its far side
+       * where it is the first row of a chunk, its left where it is the
+       * first column. Each edge between two chunks is ruled once, by
+       * the cell on its far or right-hand side
+       */
+      const chunkEdges = (square: BoardCell, corners: ProjectedPoint[]): void => {
+        const edges: [ProjectedPoint, ProjectedPoint][] = [];
+
+        // The corners run far left, far right, near right, near left
+        if ((square.y + props.origin[1]) % CHUNK_CELLS === 0) {
+          edges.push([corners[0], corners[1]]);
+        }
+        if ((square.x + props.origin[0]) % CHUNK_CELLS === 0) {
+          edges.push([corners[3], corners[0]]);
+        }
+        for (const [from, to] of edges) {
+          if (batch != null) {
+            batch.line(COLORS.chunk, from, to, CHUNK_LINE);
+            continue;
+          }
+          context.beginPath();
+          context.moveTo(from.x, from.y);
+          context.lineTo(to.x, to.y);
+          context.strokeStyle = COLORS.chunk;
+          context.lineWidth = CHUNK_LINE;
+          context.stroke();
+          context.lineWidth = 1;
+        }
+      };
       const rule = (corners: ProjectedPoint[], glow: number): void => {
         if (batch != null) {
           if (glow > 0) {
@@ -2960,6 +2994,9 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         // them and whatever stands on it covers them
         marks?.depth(floorOf(square, lift));
         rule(outline, hot ? HOVER_GLOW : 0);
+        if (chunkLines) {
+          chunkEdges(square, outline);
+        }
         // Dev only: a cliff tile in red and a seamed one in green, to check the step rules by eye
         if (stepHighlight) {
           const step = props.ground.step?.(square.x, square.y);

@@ -51,7 +51,7 @@ export default function registerBonslySpecies(): void {
         9: [Moves.LowKick],
         14: [Moves.RockThrow],
         17: [Moves.Mimic],
-        22: [Moves.Block],
+        22: [Moves.Block, Moves.TearfulLook],
         25: [Moves.FeintAttack],
         30: [Moves.RockTomb],
         33: [Moves.RockSlide],
@@ -95,6 +95,7 @@ export default function registerBonslySpecies(): void {
         Moves.Toxic,
         Moves.Uproar,
         Moves.Confide,
+        Moves.StompingTantrum,
       ],
       egg: [
         Moves.DefenseCurl,

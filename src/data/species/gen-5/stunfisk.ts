@@ -101,6 +101,7 @@ export default function registerStunfiskSpecies(): void {
         Moves.Uproar,
         Moves.Confide,
         Moves.Infestation,
+        Moves.StompingTantrum,
       ],
       egg: [
         Moves.Astonish,

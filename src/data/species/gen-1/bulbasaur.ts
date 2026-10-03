@@ -216,6 +216,7 @@ export default function registerBulbasaurSpecies(): void {
         Moves.RockClimb,
         Moves.SeedBomb,
         Moves.Bulldoze,
+        Moves.StompingTantrum,
       ],
     },
   });

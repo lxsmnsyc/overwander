@@ -282,6 +282,12 @@ const kalos = {
           0,
           { color: light, alpha },
         );
+      } else if (type === Types.Psychic) {
+        ripple(context, spot, size * 0.4 * (0.5 + rise), {
+          color: light,
+          alpha,
+          width: 1.8 * stage.scale,
+        });
       } else {
         orb(context, spot, size * 0.35 * (0.6 + rise), { color: light, alpha: alpha * 0.5 });
       }

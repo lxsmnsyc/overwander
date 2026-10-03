@@ -57,32 +57,26 @@ export function getDaysInYear(timestamp: number): number {
 }
 
 /**
- * The family in the spotlight today: the day of the year counted
- * around the roster, so every day features somebody and every family
- * comes up.
- *
- * The year is longer than the roster while the game is this young, so
- * the count wraps and a family is featured two or three times a year.
- * Once the families outnumber the days the wrap stops mattering: the
- * day of the year is already smaller than the roster, so it indexes
- * straight into it and the ones past the end wait for a longer year
- * that never comes. Counting by position rather than by family number
- * is what keeps a reserved gap in the numbering from costing a day
+ * The families in the spotlight today: each family's day is its id
+ * counted around the year. There are more families than days, so some
+ * days feature two, and every family comes up once a year
  */
-export function getFeaturedFamily(timestamp: number): Families | null {
-  const families = getRegisteredFamilies();
+export function getFeaturedFamilies(timestamp: number): Families[] {
+  const day = getDayOfYear(timestamp);
+  const days = getDaysInYear(timestamp);
+  const featured: Families[] = [];
 
-  if (families.length === 0) {
-    return null;
+  for (const family of getRegisteredFamilies()) {
+    if (family % days === day) {
+      featured.push(family);
+    }
   }
-  return families[getDayOfYear(timestamp) % families.length];
+  return featured;
 }
 
 /**
- * Whether the species belongs to the day's featured family
+ * Whether the species belongs to one of the day's featured families
  */
 export function isFeaturedSpecies(species: Species, timestamp: number): boolean {
-  const featured = getFeaturedFamily(timestamp);
-
-  return featured != null && getSpeciesData(species).family === featured;
+  return getFeaturedFamilies(timestamp).includes(getSpeciesData(species).family);
 }

@@ -7,7 +7,7 @@ import type { QuestPayout } from '../../../auth/quests';
 import { TYPE_NAMES } from '../../../data/constants/types';
 import { Items } from '../../../data/ids/items';
 import { getMoveData } from '../../../data/moves';
-import { NPC_NAMES } from '../../../data/overworld/npc';
+import { npcName } from '../../../overworld/npcs';
 import {
   type QuestRequirement,
   type QuestReward,
@@ -107,7 +107,7 @@ export function describeRequirement(requirement: QuestRequirement): string {
     case Metric.NpcVisits:
       return requirement.npc == null
         ? `Deal with ${count} wanderer${count === 1 ? '' : 's'}`
-        : `Deal with a ${NPC_NAMES[requirement.npc]} ${count} time${count === 1 ? '' : 's'}`;
+        : `Deal with a ${npcName(requirement.npc)} ${count} time${count === 1 ? '' : 's'}`;
     case Metric.Landmarks:
       return requirement.landmark == null
         ? `Claim ${count} landmark${count === 1 ? '' : 's'}`

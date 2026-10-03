@@ -171,6 +171,7 @@ export default function registerCacneaSpecies(): void {
         Moves.GigaImpact,
         Moves.FoulPlay,
         Moves.Retaliate,
+        Moves.StompingTantrum,
       ],
     },
   });

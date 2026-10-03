@@ -93,6 +93,8 @@ export default function registerGlaceonSpecies(): void {
         Moves.Toxic,
         Moves.WaterPulse,
         Moves.Confide,
+        Moves.AuroraVeil,
+        Moves.LaserFocus,
       ],
     },
   });

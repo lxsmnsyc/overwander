@@ -132,6 +132,8 @@ export function previewSnapshot(snapshot: CatchSnapshot): CaughtPokemon {
     steppedAt: 0,
     statuses: snapshot.statuses,
     lair: null,
+    box: null,
+    slot: null,
     ball: Balls.PokeBall,
     caughtAt: '',
     locale: '',

@@ -88,7 +88,10 @@ const bulbasaurToPikachu = [
               },
               event.source,
               maxHP / 8,
-              DamageFlags.NonLethal,
+              // A share of its health, like Dry Skin's in the same sun,
+              // so a boss holding it pays the boss cap rather than an
+              // eighth of a raid pool each time it acts
+              DamageFlags.NonLethal | DamageFlags.Indirect | DamageFlags.HealthScaled,
             );
           }
         }),
@@ -350,6 +353,13 @@ const bulbasaurToPikachu = [
       new MergedLifecycle([
         battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
           if (event.source.hasAbility(Abilities.Intimidate)) {
+            event.source.triggerAbility(Abilities.Intimidate);
+          }
+        }),
+        // A shape worn on the way in (a Mega, a Therian) arrives after
+        // the entry has been heard, so it scowls as it is put on
+        battle.on(BattleEvents.UnitAddAbility, EventPriority.Post, (event) => {
+          if (event.worn && event.ability === Abilities.Intimidate) {
             event.source.triggerAbility(Abilities.Intimidate);
           }
         }),

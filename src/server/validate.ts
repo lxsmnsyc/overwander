@@ -4,7 +4,8 @@ import { CELL_COUNT, CHUNK_CELLS } from '../overworld/grid';
 import { AuctionLot, MAX_INCREMENT, MAX_STARTING_BID } from '../auth/auction-record';
 import { MAX_OFFSET, MIN_OFFSET } from '../auth/local-time';
 import { NICKNAME_LIMIT, PLAYER_NAME_LIMIT } from '../auth/nickname';
-import { Slots, mostSlots } from '../data/constants/slots';
+import { SPECIAL_ABILITIES, Slots, mostSlots } from '../data/constants/slots';
+import { DUEL_BANS, MAX_BST_CAP } from '../data/constants/duel-bans';
 import { WORLD_MAX, WORLD_MIN } from '../overworld/world';
 import BattleOutcome from '../auth/battle-outcome';
 import { CLAIM_CHUNK_LIMIT } from '../auth/snapshot-record';
@@ -16,6 +17,7 @@ import { MAX_LEVEL } from '../data/constants/levels';
 import Npc, { TRADER_OFFERS } from '../data/overworld/npc';
 import { RaidKind } from '../auth/raid-record';
 import TEAM_SIZE from '../auth/team-size';
+import { BOX_COLOURS, BOX_LIMIT, BOX_NAME_LIMIT, BOX_SLOT_LIMIT } from '../auth/box-record';
 import { FEATURES } from './switches';
 import { TRADE_GOLD_LIMIT } from '../auth/trade-record';
 
@@ -287,6 +289,21 @@ export const CATCH_IDS = listOf(ID, MAX_PAGE);
 /** Which mark a bulk call is setting */
 export const MARK_FIELD = v.picklist(['favorite', 'guarded']);
 
+/** A box's name, checked for length here and for what is left of it by the writer */
+export const BOX_NAME = v.pipe(v.string(), v.maxLength(BOX_NAME_LIMIT));
+
+/** One of the colours a box can be marked with */
+export const BOX_COLOUR = whole(0, BOX_COLOURS.length - 1);
+
+/** Every one of a player's boxes, in the order they want them */
+export const BOX_ORDER = listOf(ID, BOX_LIMIT);
+
+/** A square of a box, or none for the first free one */
+export const MAYBE_SLOT = v.nullable(whole(0, BOX_SLOT_LIMIT));
+
+/** How a box can be laid out again */
+export const BOX_LAYOUT = v.picklist(['dex', 'packed']);
+
 /** How often a rotation comes round */
 export const ROTATION_SCOPE = v.picklist(['daily', 'weekly']);
 
@@ -338,7 +355,8 @@ export const EFFORT_SPREAD = v.record(
 /** The lists a rearranging player wants, as ids in the order they want them */
 export const CATCH_ORDER = v.object({
   moves: v.optional(listOf(GAME_ID, mostSlots(Slots.Move))),
-  abilities: v.optional(listOf(GAME_ID, mostSlots(Slots.Ability))),
+  // Shadow and Purified sit on the list without taking a slot
+  abilities: v.optional(listOf(GAME_ID, mostSlots(Slots.Ability) + SPECIAL_ABILITIES.size)),
   items: v.optional(listOf(GAME_ID, mostSlots(Slots.Item))),
 });
 
@@ -366,6 +384,8 @@ export const AUCTION_OFFER = v.variant('lot', [
 export const DUEL_RULES = v.object({
   limits: COUNT,
   teamSize: whole(1, TEAM_SIZE),
+  maxBst: whole(0, MAX_BST_CAP),
+  bans: whole(0, DUEL_BANS),
 });
 
 /** The chunks a board is asking about, each in its own zone and layer */

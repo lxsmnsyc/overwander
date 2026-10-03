@@ -107,6 +107,8 @@ export default function registerSteelixSpecies(): void {
         Moves.Bulldoze,
         Moves.DragonTail,
         Moves.Confide,
+        Moves.BrutalSwing,
+        Moves.StompingTantrum,
       ],
     },
   });

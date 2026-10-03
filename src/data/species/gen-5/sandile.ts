@@ -152,6 +152,7 @@ export default function registerSandileSpecies(): void {
         Moves.Spite,
         Moves.ThunderFang,
         Moves.Uproar,
+        Moves.PowerTrip,
       ],
     },
   });
@@ -211,6 +212,7 @@ export default function registerSandileSpecies(): void {
         Moves.RockSmash,
         Moves.Strength,
         Moves.PowerUpPunch,
+        Moves.BrutalSwing,
       ],
     },
   });
@@ -242,7 +244,15 @@ export default function registerSandileSpecies(): void {
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
-        1: [Moves.SandAttack, Moves.Leer, Moves.Bite, Moves.Rage, Moves.Outrage, Moves.HoneClaws],
+        1: [
+          Moves.SandAttack,
+          Moves.Leer,
+          Moves.Bite,
+          Moves.Rage,
+          Moves.Outrage,
+          Moves.HoneClaws,
+          Moves.PowerTrip,
+        ],
         ...FAMILY_LEVEL,
         32: [Moves.Sandstorm],
         35: [Moves.FoulPlay],
@@ -276,6 +286,9 @@ export default function registerSandileSpecies(): void {
         Moves.Strength,
         Moves.Superpower,
         Moves.PowerUpPunch,
+        Moves.BrutalSwing,
+        Moves.StompingTantrum,
+        Moves.ThroatChop,
       ],
     },
   });

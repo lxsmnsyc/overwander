@@ -178,6 +178,22 @@ function WorldPane(): JSX.Element {
         }}
       />
       <Switch
+        label="Chunk lines"
+        description="Rules a line where one chunk of the world meets the next."
+        checked={settings().chunkLines}
+        onChange={(on) => {
+          setSetting('chunkLines', on);
+        }}
+      />
+      <Switch
+        label="World map grid"
+        description="Rules every chunk on the world map, the detailed map as well."
+        checked={settings().mapGrid}
+        onChange={(on) => {
+          setSetting('mapGrid', on);
+        }}
+      />
+      <Switch
         label="Flat board"
         description="Draws the board flat from straight above on a wide screen too, the way an
           upright screen always shows it."

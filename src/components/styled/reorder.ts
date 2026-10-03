@@ -33,9 +33,6 @@ export interface ReorderOptions {
 export interface ReorderItemProps {
   'data-reorder': number;
   onPointerDown: (event: PointerEvent) => void;
-  onPointerMove: (event: PointerEvent) => void;
-  onPointerUp: () => void;
-  onPointerCancel: () => void;
   onKeyDown: (event: KeyboardEvent) => void;
 }
 
@@ -176,7 +173,65 @@ export default function createReorder(options: ReorderOptions): Reorder {
     window.addEventListener('touchmove', block, { passive: false });
   };
 
-  const drop = (): void => {
+  const carry = (event: PointerEvent): void => {
+    const carrying = drag;
+
+    if (carrying == null || carrying.pointer !== event.pointerId) {
+      return;
+    }
+
+    const gone = Math.hypot(event.clientX - carrying.x, event.clientY - carrying.y);
+
+    if (!carrying.lifted) {
+      // A finger that moves before it has held is scrolling, and
+      // a mouse that moves at all is dragging
+      if (event.pointerType === 'touch') {
+        if (gone > SLACK) {
+          drop();
+        }
+        return;
+      }
+      if (gone <= SLACK) {
+        return;
+      }
+      lift();
+    }
+
+    const over = indexAt(list, event.clientX, event.clientY, carrying.at);
+
+    if (over != null && past(list, carrying.at, over, event.clientX, event.clientY)) {
+      options.onMove(carrying.at, over);
+      carrying.at = over;
+      setHeld(over);
+    }
+    follow(event.clientX, event.clientY);
+  };
+
+  const release = (event: PointerEvent): void => {
+    if (drag?.pointer === event.pointerId) {
+      drop();
+    }
+  };
+
+  /**
+   * Heard on the window rather than on the entry. Moving the entry
+   * in the list moves its element in the page, which loses the
+   * pointer capture, so a release away from every entry never
+   * reached one and left the entry stuck to the pointer
+   */
+  const listen = (on: boolean): void => {
+    if (on) {
+      window.addEventListener('pointermove', carry);
+      window.addEventListener('pointerup', release);
+      window.addEventListener('pointercancel', release);
+      return;
+    }
+    window.removeEventListener('pointermove', carry);
+    window.removeEventListener('pointerup', release);
+    window.removeEventListener('pointercancel', release);
+  };
+
+  function drop(): void {
     if (lifting != null) {
       clearTimeout(lifting);
       lifting = null;
@@ -184,8 +239,9 @@ export default function createReorder(options: ReorderOptions): Reorder {
     drag = null;
     setHeld(null);
     setOffset(null);
+    listen(false);
     window.removeEventListener('touchmove', block);
-  };
+  }
 
   onCleanup(drop);
 
@@ -240,49 +296,11 @@ export default function createReorder(options: ReorderOptions): Reorder {
           element: event.currentTarget,
           lifted: false,
         };
+        listen(true);
 
         if (event.pointerType === 'touch') {
           lifting = setTimeout(lift, HOLD);
         }
-      },
-      onPointerMove: (event: PointerEvent): void => {
-        const carrying = drag;
-
-        if (carrying == null || carrying.pointer !== event.pointerId) {
-          return;
-        }
-
-        const gone = Math.hypot(event.clientX - carrying.x, event.clientY - carrying.y);
-
-        if (!carrying.lifted) {
-          // A finger that moves before it has held is scrolling, and
-          // a mouse that moves at all is dragging
-          if (event.pointerType === 'touch') {
-            if (gone > SLACK) {
-              drop();
-            }
-            return;
-          }
-          if (gone <= SLACK) {
-            return;
-          }
-          lift();
-        }
-
-        const over = indexAt(list, event.clientX, event.clientY, carrying.at);
-
-        if (over != null && past(list, carrying.at, over, event.clientX, event.clientY)) {
-          options.onMove(carrying.at, over);
-          carrying.at = over;
-          setHeld(over);
-        }
-        follow(event.clientX, event.clientY);
-      },
-      onPointerUp: (): void => {
-        drop();
-      },
-      onPointerCancel: (): void => {
-        drop();
       },
       onKeyDown: (event: KeyboardEvent): void => {
         // The same thing without a pointer. Held with a modifier so

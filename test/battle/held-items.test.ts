@@ -34,6 +34,7 @@ import {
   LOADED_DICE_FLOOR,
   MACHO_BRACE_SPEED,
   SOUL_DEW_FACTOR,
+  TERRAIN_EXTENDER_FACTOR,
 } from '../../src/battle/items/gear/worths';
 import { X_ITEM_STAGES_BOOST } from '../../src/battle/items/battle-items';
 import { POLICY_STAGES, REACTION_STAGES } from '../../src/battle/items/one-shots';
@@ -51,7 +52,7 @@ import { Types } from '../../src/data/constants/types';
 import { Items } from '../../src/data/ids/items';
 import { MoveCategories, Moves } from '../../src/data/ids/moves';
 import { Genders, Species } from '../../src/data/ids/species';
-import { Statuses, TeamStatuses, Weathers } from '../../src/data/ids/status';
+import { Statuses, TeamStatuses, Terrains, Weathers } from '../../src/data/ids/status';
 import { getMoveData } from '../../src/data/moves';
 import { packSlots } from '../../src/data/constants/slots';
 import { createHeldItems } from '../../src/battle/items/__create';
@@ -536,6 +537,39 @@ describe('gear that lengthens what is already running', () => {
 
     battle.tick(SCREEN_DURATION * (LIGHT_CLAY_FACTOR - 1));
     expect(teamA.status[TeamStatuses.Reflect]).toBeUndefined();
+  });
+
+  it('holds a terrain down for longer with a Terrain Extender', () => {
+    const { battle, teamA } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const bare = createUnit(battle, teamA);
+
+    holder.addItem(Items.TerrainExtender);
+
+    expect(holder.checkTerrainDuration(Terrains.Grassy, 1000)).toBe(1000 * TERRAIN_EXTENDER_FACTOR);
+    expect(bare.checkTerrainDuration(Terrains.Grassy, 1000)).toBe(1000);
+  });
+
+  it('spends a seed once its own terrain is laid, or once its holder walks onto it', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const electric = createUnit(battle, teamA);
+    const misty = createUnit(battle, teamB);
+
+    electric.addItem(Items.ElectricSeed);
+    misty.addItem(Items.MistySeed);
+    battle.setTerrain(Terrains.Electric);
+
+    expect(electric.stages[Stages.Defense]).toBe(REACTION_STAGES);
+    expect(electric.items[Items.ElectricSeed]).toBeUndefined();
+    expect(misty.stages[Stages.SpecialDefense]).toBe(0);
+    expect(misty.items[Items.MistySeed]).toBeDefined();
+
+    battle.setTerrain(Terrains.Psychic);
+    const late = createUnit(battle, teamB);
+
+    late.addItem(Items.PsychicSeed);
+    late.enter();
+    expect(late.stages[Stages.SpecialDefense]).toBe(REACTION_STAGES);
   });
 
   it('holds a bind on for longer with a Grip Claw', () => {

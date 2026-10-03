@@ -71,6 +71,7 @@ const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.WaterPulse,
   Moves.XScissor,
+  Moves.Liquidation,
 ];
 
 // What both shapes learn on the way up
@@ -185,6 +186,8 @@ export default function registerBinacleSpecies(): void {
         Moves.HyperBeam,
         Moves.LowKick,
         Moves.Superpower,
+        Moves.BrutalSwing,
+        Moves.LaserFocus,
       ],
     },
   });

@@ -110,6 +110,8 @@ export default function registerMeteoriteSpecies(): void {
         Moves.Acrobatics,
         Moves.Bulldoze,
         Moves.Confide,
+        Moves.StompingTantrum,
+        Moves.LaserFocus,
       ],
     },
   });
@@ -215,6 +217,8 @@ export default function registerMeteoriteSpecies(): void {
         Moves.Acrobatics,
         Moves.Bulldoze,
         Moves.Confide,
+        Moves.StompingTantrum,
+        Moves.LaserFocus,
       ],
     },
   });

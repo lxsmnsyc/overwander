@@ -49,14 +49,11 @@ export function resolveNest(
   biome: Biome,
   time: TimeOfDay,
   random: () => number,
-  featured: Families | null = null,
+  featured: readonly Families[] = [],
 ): Species | null {
   const pool = getEggPool(biome, time);
 
-  return pickFromEntries(
-    featured == null ? pool : boostFamilyEntries(pool, featured, SPECIES_DAY_WEIGHT_BOOST),
-    random,
-  );
+  return pickFromEntries(boostFamilyEntries(pool, featured, SPECIES_DAY_WEIGHT_BOOST), random);
 }
 
 /**
@@ -153,7 +150,7 @@ const PHENOMENON_CLASSES: Partial<Record<Phenomenon, SpawnClass>> = {
  * A biome with nothing of the kind answers null, and the caller hands
  * over what the phenomenon was carrying instead.
  *
- * The day's featured family, when one is given, crowds the pool
+ * The day's featured families, when there are any, crowd the pool
  * exactly as it crowds the overworld's
  */
 function startled(
@@ -161,14 +158,11 @@ function startled(
   biome: Biome,
   time: TimeOfDay,
   random: () => number,
-  featured: Families | null,
+  featured: readonly Families[],
 ): Species | null {
   const kind = PHENOMENON_CLASSES[phenomenon];
   const biomePool = kind == null ? getSpawnPool(biome, time) : getClassPool(biome, time, kind);
-  const pool =
-    featured == null
-      ? biomePool
-      : boostFamilyWeights(biomePool, featured, SPECIES_DAY_WEIGHT_BOOST);
+  const pool = boostFamilyWeights(biomePool, featured, SPECIES_DAY_WEIGHT_BOOST);
   const rare = random() < PHENOMENON_RARE_CHANCE;
   const [, middle, grown] = spawnRanks(pool);
   // Either rank, so a biome with nothing half-grown borrows what is
@@ -202,7 +196,7 @@ export function resolvePhenomenon(
   biome: Biome,
   time: TimeOfDay,
   random: () => number,
-  featured: Families | null = null,
+  featured: readonly Families[] = [],
 ): PhenomenonReward | null {
   // A stash on a cache's terms, drawn through the phenomenon's richer
   // bands

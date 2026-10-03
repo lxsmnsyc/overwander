@@ -34,6 +34,7 @@ const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.WorkUp,
   Moves.Confide,
+  Moves.LaserFocus,
 ];
 
 /**
@@ -98,6 +99,7 @@ export default function registerPatratSpecies(): void {
         Moves.Pursuit,
         Moves.Revenge,
         Moves.Screech,
+        Moves.TearfulLook,
       ],
     },
   });
@@ -159,6 +161,7 @@ export default function registerPatratSpecies(): void {
         Moves.Thunder,
         Moves.ThunderWave,
         Moves.PowerUpPunch,
+        Moves.StompingTantrum,
       ],
     },
   });

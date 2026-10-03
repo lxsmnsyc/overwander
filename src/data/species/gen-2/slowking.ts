@@ -137,6 +137,7 @@ export default function registerSlowkingSpecies(): void {
         Moves.DragonTail,
         Moves.Confide,
         Moves.PowerUpPunch,
+        Moves.LaserFocus,
       ],
     },
   });

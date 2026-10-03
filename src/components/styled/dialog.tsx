@@ -133,6 +133,11 @@ const STUCK_BOTTOM =
 export interface DialogProps extends ParentProps {
   isOpen: boolean;
   onClose: () => void;
+  /**
+   * Fired at the end of every fade out, whoever closed it. A caller
+   * that keeps closed dialogs mounted uses it to know when one is gone
+   */
+  afterLeave?: () => void;
   width?: DialogWidth;
   /**
    * What the dialog is called
@@ -268,18 +273,20 @@ export function Dialog(props: DialogProps): JSX.Element {
    * already made would put away whatever it opened instead
    */
   const reportClose = (): void => {
-    if (!asked) {
-      return;
+    if (asked) {
+      asked = false;
+      props.onClose();
+      // A caller that refused the close keeps its dialog. Hiding is this
+      // dialog's own doing and only a change of `isOpen` puts it back,
+      // so a handler that declined left the panel gone while whatever it
+      // was standing over stayed open underneath, refusing every press
+      if (props.isOpen) {
+        setShowing(true);
+      }
     }
-    asked = false;
-    props.onClose();
-    // A caller that refused the close keeps its dialog. Hiding is this
-    // dialog's own doing and only a change of `isOpen` puts it back,
-    // so a handler that declined left the panel gone while whatever it
-    // was standing over stayed open underneath, refusing every press
-    if (props.isOpen) {
-      setShowing(true);
-    }
+    // After the close is reported, so a caller answering it has already
+    // marked the dialog as done by the time it hears the fade is over
+    props.afterLeave?.();
   };
 
   /** The name box across the top edge, with the face of whoever is talking */

@@ -4,7 +4,7 @@ import { Types } from '../../data/constants/types';
 import { Items } from '../../data/ids/items';
 import { DamageFlags, MoveCategories, MoveFlags, MoveTargetPriorities } from '../../data/ids/moves';
 import Abilities from '../../data/ids/abilities';
-import { Statuses } from '../../data/ids/status';
+import { Statuses, Terrains } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
 import { checkTeamUnit } from '../ai/rating';
 import type Battle from '../core';
@@ -334,6 +334,60 @@ const setupAdrenalineOrb = createHeldItem(Items.AdrenalineOrb, (battle) =>
   }),
 );
 
+/** The seeds, each spent for a stage once its own terrain covers the holder */
+const SEEDS: { item: Items; terrain: Terrains; stage: Stages }[] = [
+  { item: Items.ElectricSeed, terrain: Terrains.Electric, stage: Stages.Defense },
+  { item: Items.GrassySeed, terrain: Terrains.Grassy, stage: Stages.Defense },
+  { item: Items.MistySeed, terrain: Terrains.Misty, stage: Stages.SpecialDefense },
+  { item: Items.PsychicSeed, terrain: Terrains.Psychic, stage: Stages.SpecialDefense },
+];
+
+/** The terrain laid over a unit, whether or not it is grounded enough to feel it */
+function terrainOver(battle: Battle, unit: Unit): Terrains {
+  return battle.terrain.current === Terrains.None
+    ? unit.team.terrain.current
+    : battle.terrain.current;
+}
+
+// Asked when a terrain goes down and when a holder takes the field under one
+function setupSeed(seed: (typeof SEEDS)[number]): (battle: Battle) => void {
+  return createHeldItem(seed.item, (battle) => {
+    const sprout = (unit: Unit): void => {
+      if (!unit.alive || terrainOver(battle, unit) !== seed.terrain) {
+        return;
+      }
+
+      const spent = spendItem(unit, seed.item);
+
+      if (spent) {
+        unit.addStage(seed.stage, REACTION_STAGES, spent);
+      }
+    };
+
+    return new MergedLifecycle([
+      battle.on(BattleEvents.SetTerrain, EventPriority.Post, () => {
+        for (const unit of battle.units()) {
+          sprout(unit);
+        }
+      }),
+      battle.on(BattleEvents.TeamSetTerrain, EventPriority.Post, (event) => {
+        for (const unit of event.team.units) {
+          sprout(unit);
+        }
+      }),
+      battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+        sprout(event.source);
+      }),
+    ]);
+  });
+}
+
+const SEED_SETUPS: ((battle: Battle) => void)[] = [];
+
+for (const seed of SEEDS) {
+  SEED_SETUPS.push(setupSeed(seed));
+}
+
 /**
  * A White Herb puts back everything that has been taken off its holder
  * — every lowered stage at once, however many blows they came from,
@@ -472,6 +526,7 @@ const SETUPS: ((battle: Battle) => void)[] = [
   setupWhiteHerb,
   setupMentalHerb,
   setupPowerHerb,
+  ...SEED_SETUPS,
 ];
 
 export default function setupOneShots(battle: Battle): void {

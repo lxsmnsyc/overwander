@@ -182,6 +182,7 @@ export default function registerElgyemSpecies(): void {
           Moves.HealBlock,
           Moves.WonderRoom,
           Moves.Synchronoise,
+          Moves.PsychicTerrain,
         ],
         ...FAMILY_LEVEL,
         45: [Moves.Recover, Moves.CalmMind],

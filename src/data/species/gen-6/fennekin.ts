@@ -106,7 +106,7 @@ export default function registerFennekinSpecies(): void {
         48: [Moves.FireBlast],
       },
       teachable: [...FAMILY_TEACHABLE],
-      egg: [Moves.HeatWave, Moves.Hypnosis, Moves.MagicCoat, Moves.Wish],
+      egg: [Moves.HeatWave, Moves.Hypnosis, Moves.MagicCoat, Moves.Wish, Moves.PsychicTerrain],
     },
   });
   registerSpecies(Species.Braixen, {
@@ -170,6 +170,7 @@ export default function registerFennekinSpecies(): void {
         Moves.Trick,
         Moves.WonderRoom,
         Moves.ZenHeadbutt,
+        Moves.LaserFocus,
       ],
     },
   });
@@ -238,6 +239,7 @@ export default function registerFennekinSpecies(): void {
         Moves.TrickRoom,
         Moves.WonderRoom,
         Moves.ZenHeadbutt,
+        Moves.LaserFocus,
       ],
     },
   });

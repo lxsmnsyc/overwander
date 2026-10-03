@@ -242,6 +242,7 @@ export default function registerChimcharSpecies(): void {
         Moves.RockTomb,
         Moves.SolarBeam,
         Moves.StoneEdge,
+        Moves.LaserFocus,
       ],
     },
   });

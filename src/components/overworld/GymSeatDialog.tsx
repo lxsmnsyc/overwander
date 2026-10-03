@@ -12,7 +12,8 @@ import type { PlayerIdentity } from '../../auth/user';
 import { getSpeciesData } from '../../data/species';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
 import { useGame } from '../app/game-context';
-import TeamPickerDialog from '../battle/TeamPickerDialog';
+import { openForm } from '../forms/stack';
+import { PickTeamForm } from '../forms/pick-team';
 import CatchBox, { type BoxEntry } from '../catches/CatchBox';
 import PlayerPlate from '../profile/PlayerPlate';
 import { Button, Dialog, DialogActions, Meta, Note, useToast } from '../styled';
@@ -20,7 +21,7 @@ import AtlasSprite from '../sprites/AtlasSprite';
 import { OW_SPRITE_ROOT } from '../../canvas/ow-char-sprites';
 import Landmark from '../../data/overworld/landmark';
 import landmarkPicture, { LANDMARK_SHEET } from '../../data/overworld/landmark-sprite';
-import { CounterSpent, CounterStep, CounterTerms, HeadingPortrait } from './npc-dialog/terms';
+import { CounterSpent, CounterStep, CounterTerms, HeadingPortrait } from '../forms/terms';
 
 /**
  * A gym seat, put to whoever walked up to it.
@@ -191,6 +192,24 @@ function SeatCounter(
       });
   };
 
+  /** Ask for the party, with the seat stepping aside while it is picked */
+  const pickTeam = (purpose: 'take' | 'challenge'): void => {
+    setPicking(purpose);
+    openForm(PickTeamForm, { player: props.user.uid })
+      .then((team) => {
+        if (team == null) {
+          setPicking(null);
+        } else if (purpose === 'challenge') {
+          challenge(team);
+        } else {
+          seat(team);
+        }
+      })
+      .catch(() => {
+        setPicking(null);
+      });
+  };
+
   const vacate = (): void => {
     const chunk = props.snapshot;
     const cell = props.cell;
@@ -323,7 +342,7 @@ function SeatCounter(
                   tone="primary"
                   disabled={busy() || barred()}
                   onClick={() => {
-                    setPicking('take');
+                    pickTeam('take');
                   }}
                 >
                   {held() == null ? 'Take the seat' : 'Change the line-up'}
@@ -342,7 +361,7 @@ function SeatCounter(
                 tone="primary"
                 disabled={busy()}
                 onClick={() => {
-                  setPicking('challenge');
+                  pickTeam('challenge');
                 }}
               >
                 Challenge
@@ -352,15 +371,6 @@ function SeatCounter(
           <Button onClick={props.onClose}>Walk on</Button>
         </DialogActions>
       </Dialog>
-
-      <TeamPickerDialog
-        player={props.user.uid}
-        isOpen={picking() != null}
-        onClose={() => {
-          setPicking(null);
-        }}
-        onSubmit={picking() === 'challenge' ? challenge : seat}
-      />
     </>
   );
 }

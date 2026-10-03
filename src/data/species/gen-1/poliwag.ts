@@ -263,6 +263,7 @@ export default function registerPoliwagSpecies(): void {
         Moves.VacuumWave,
         Moves.LowSweep,
         Moves.WorkUp,
+        Moves.ThroatChop,
       ],
     },
   });

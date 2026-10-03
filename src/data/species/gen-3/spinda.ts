@@ -115,6 +115,7 @@ export default function registerSpindaSpecies(): void {
         Moves.WildCharge,
         Moves.Confide,
         Moves.PowerUpPunch,
+        Moves.StompingTantrum,
       ],
       egg: [
         Moves.Disable,
@@ -125,6 +126,7 @@ export default function registerSpindaSpecies(): void {
         Moves.Wish,
         Moves.Trick,
         Moves.PsychoCut,
+        Moves.Spotlight,
       ],
     },
   });

@@ -12,6 +12,57 @@ The idle set is maintained by the lifecycle events rather than rescanned. The
 outcome check never asks the AI what it _would_ do, because consuming a random
 would pull every replay off its seed.
 
+## The invisible trainer
+
+Every team has an invisible trainer
+([`src/battle/ai/trainer.ts`](../../src/battle/ai/trainer.ts)). A free unit
+does not choose its own move: it asks its trainer for an order and carries it
+out, and a trainer may also leave it standing. The idle loop below still decides
+which units are free; the trainer decides what they do.
+
+A trainer starts from the move each unit's own scoring picks, then decides
+whether now is the moment:
+
+- **It waits for a better move.** A move coming off cooldown within a turn is
+  weighed as if ready, less 4 points for each second of waiting. When that
+  beats acting now, the unit holds.
+- **It stands guard.** A unit holding a ready Protect, Detect, Endure, Me First
+  or Sucker Punch, with nothing worth 8 or more to do, waits for a foe to commit
+  so the reactive move can answer it. It gives up after half a turn.
+- **It times what it raises.** Every cast lands after its remaining wind-up
+  and its travel delay, which the engine already reports. A Protect or team
+  guard counts only if it is up before the foe's hit lands, and Me First and
+  Sucker Punch only if the foe is still swinging when they go off.
+- **It times its combos.** Helping Hand counts only on a partner's hit that
+  lands after it, Follow Me only when a foe's hit at a teammate lands after the
+  redirect is up, and Encore only on a cast still winding up when it lands.
+- **It orders free units best-first.** When several units are free at once, the
+  most valuable order goes out first and the rest are planned again around it.
+- **It counts what the team has on the way.** A hit is weighed against what
+  friends' visible casts leave of the target, so a foe friends will finish is
+  left alone and one they leave in reach counts as a KO.
+
+### Skill by rank
+
+Each trainer has a skill ([`src/battle/ai/skill.ts`](../../src/battle/ai/skill.ts)):
+
+| Skill | Think  | Reaction | Waits up to | Misplays | Who                                    |
+| ----- | ------ | -------- | ----------- | -------- | -------------------------------------- |
+| Top   | 0 ms   | 0 ms     | 1 turn      | 0%       | Players, the Elite, champions, legends |
+| Gym   | 250 ms | 300 ms   | 1 turn      | 5%       | Gym leaders, Ace Trainers              |
+| Basic | 500 ms | 600 ms   | half a turn | 15%      | Grunts, ordinary trainers, raid bosses |
+
+- **Think** is how long a unit stands free before its trainer orders it.
+- **Reaction** is how far into a foe's cast the trainer is before it reacts to
+  it, for shields and guards.
+- **Misplays** are orders for a random usable move instead of the best one.
+
+`fieldTeams` sets each team's skill from its own snapshot
+([`src/overworld/trainer-skill.ts`](../../src/overworld/trainer-skill.ts)), so a
+replay reads the same skill. A player's team gets top skill. A computer's is
+told by its outfit: two ordinary abilities each is the Elite and above, trained
+effort or held items is a gym leader or an Ace Trainer, and the rest are basic.
+
 ## Keeping the idle set accurate
 
 A set that stands in for a check is only worth keeping while it cannot go stale.
@@ -261,9 +312,23 @@ reads what each friend is already casting, and refuses a move the friend's cast
 already covers:
 
 - the same veil, tailwind or team guard over the same team;
-- the same weather, terrain or room over the field;
+- the same room over the field, or any weather or terrain while a friend is
+  calling one up, since the second would only replace the first;
 - the same hazard on the same side, except Spikes and Toxic Spikes, which stack;
-- an affliction at a foe a friend is already afflicting.
+- the same status at a foe a friend is already giving it, since different
+  statuses stack.
+- the same restriction or change at the same foe: Mean Look and Block, Foresight
+  and Odor Sleuth, Embargo, Soak, a Ghost's Curse and the like;
+- Helping Hand for a partner a friend is already helping;
+- a second Follow Me or Rage Powder, since only one unit draws the hits;
+- a second Heal Bell or Aromatherapy for the same party;
+- a second Perish Song, Haze or Fairy Lock, whose first does the whole job.
+- a second Topsy-Turvy at the same foe, or a second Ally Switch, which would
+  turn the first straight back.
+
+It also reads a friend's cast for a move worth pairing with: a Pledge that lands
+after a teammate's different one, inside the window, lands as the combined hit
+and scores `PLEDGE_PAIR_BONUS` more ([`src/battle/moves/pledges.ts`](../../src/battle/moves/pledges.ts)).
 
 A cast is on show, so reading it is no peek. Only casts still winding up are
 read; a move already in flight for its last quarter of a second is not.

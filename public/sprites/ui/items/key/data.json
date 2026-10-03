@@ -1,7 +1,7 @@
 {
   "compact": true,
   "width": 299,
-  "height": 364,
+  "height": 384,
   "images": [
     {
       "name": "acro-bike-gen3.png",
@@ -53,6 +53,19 @@
       "trim": [
         3,
         4
+      ]
+    },
+    {
+      "name": "ancient-poke-ball.png",
+      "x": 274,
+      "y": 26,
+      "width": 18,
+      "height": 18,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        7,
+        7
       ]
     },
     {
@@ -1148,6 +1161,19 @@
       ]
     },
     {
+      "name": "heros-charm.png",
+      "x": 269,
+      "y": 348,
+      "width": 20,
+      "height": 20,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        6,
+        6
+      ]
+    },
+    {
       "name": "hi-tech-earbuds.png",
       "x": 0,
       "y": 349,
@@ -1808,6 +1834,19 @@
       "trim": [
         5,
         6
+      ]
+    },
+    {
+      "name": "mystery-box.png",
+      "x": 73,
+      "y": 363,
+      "width": 22,
+      "height": 17,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        5,
+        7
       ]
     },
     {
@@ -2722,8 +2761,8 @@
     },
     {
       "name": "skill-book.png",
-      "x": 274,
-      "y": 26,
+      "x": 95,
+      "y": 363,
       "width": 22,
       "height": 20,
       "sourceWidth": 32,
@@ -3186,6 +3225,19 @@
       "trim": [
         9,
         3
+      ]
+    },
+    {
+      "name": "windmill-charm.png",
+      "x": 249,
+      "y": 359,
+      "width": 19,
+      "height": 22,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        7,
+        5
       ]
     },
     {

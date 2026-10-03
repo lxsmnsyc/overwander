@@ -104,6 +104,7 @@ export default function registerEspeonSpecies(): void {
         Moves.WorkUp,
         Moves.Confide,
         Moves.DazzlingGleam,
+        Moves.LaserFocus,
       ],
     },
   });

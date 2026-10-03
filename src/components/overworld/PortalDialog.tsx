@@ -35,7 +35,7 @@ import { OW_SPRITE_ROOT } from '../../canvas/ow-char-sprites';
 import Landmark from '../../data/overworld/landmark';
 import landmarkPicture, { LANDMARK_SHEET } from '../../data/overworld/landmark-sprite';
 import describeWhere from '../../overworld/bearing';
-import { CostBadge, CounterStep, CounterTerms, HeadingPortrait } from './npc-dialog/terms';
+import { CostBadge, CounterStep, CounterTerms, HeadingPortrait } from '../forms/terms';
 import { failed, readable } from '../app/resource-reads';
 import playEffect, { Effect } from '../app/sound';
 

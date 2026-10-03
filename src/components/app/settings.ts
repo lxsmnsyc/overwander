@@ -79,6 +79,10 @@ export interface GameSettings {
   detailedMap: boolean;
   /** Whether every cell of the board is ruled round */
   gridLines: boolean;
+  /** Whether the board rules the edges where one chunk meets the next */
+  chunkLines: boolean;
+  /** Whether the world map rules every chunk, the detailed map included */
+  mapGrid: boolean;
   /** Whether a wide screen draws the board flat too, as an upright one always does */
   flatBoard: boolean;
   /** How the edge of the board meets the sky */
@@ -111,6 +115,8 @@ function defaults(): GameSettings {
     keys: { ...DEFAULT_BINDS },
     detailedMap: false,
     gridLines: false,
+    chunkLines: false,
+    mapGrid: false,
     flatBoard: false,
     boardEdge: 'haze',
     stepHighlight: true,
@@ -196,6 +202,8 @@ function stored(): GameSettings {
       keys: bindsOf(said.keys),
       detailedMap: said.detailedMap === true,
       gridLines: said.gridLines === true,
+      chunkLines: said.chunkLines === true,
+      mapGrid: said.mapGrid === true,
       flatBoard: said.flatBoard === true,
       boardEdge: oneOf(said.boardEdge, ['haze', 'full', 'plain'] as const, base.boardEdge),
       stepHighlight: said.stepHighlight !== false,

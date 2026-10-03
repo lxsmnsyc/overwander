@@ -135,6 +135,8 @@ export default function registerBlisseySpecies(): void {
         Moves.Confide,
         Moves.DazzlingGleam,
         Moves.PowerUpPunch,
+        Moves.StompingTantrum,
+        Moves.LaserFocus,
       ],
     },
   });

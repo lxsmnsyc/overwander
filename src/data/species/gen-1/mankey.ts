@@ -131,6 +131,7 @@ export default function registerMankeySpecies(): void {
         27: [Moves.FocusEnergy],
         33: [Moves.SeismicToss],
         39: [Moves.Thrash, Moves.CrossChop],
+        43: [Moves.StompingTantrum],
         45: [Moves.Screech, Moves.Punishment],
         49: [Moves.CloseCombat],
         53: [Moves.FinalGambit],
@@ -146,6 +147,7 @@ export default function registerMankeySpecies(): void {
 
         Moves.Revenge,
         Moves.SmellingSalts,
+        Moves.PowerTrip,
       ],
     },
   });
@@ -183,12 +185,19 @@ export default function registerMankeySpecies(): void {
         36: [Moves.SeismicToss],
         45: [Moves.CrossChop],
         46: [Moves.Thrash],
+        48: [Moves.StompingTantrum],
         53: [Moves.Punishment],
         54: [Moves.Screech],
         59: [Moves.CloseCombat],
         63: [Moves.FinalGambit],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.GigaImpact, Moves.StoneEdge],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.GigaImpact,
+        Moves.StoneEdge,
+        Moves.ThroatChop,
+      ],
     },
   });
 }

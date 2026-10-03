@@ -79,8 +79,9 @@ the walk. An egg carried past midnight keeps the paces it banked and goes back
 to ordinary paces.
 
 A raid cleared on the featured family's own day hands over a pokemon whose
-individual stats are all at least 10. That floor stacks with the one a favouring
-sky gives: see [Weather](weather.md).
+individual stats are all at least 9 more than a raid's own floor, and is likelier
+to roll perfect ones. That floor stacks with the one a favouring sky gives: see
+[Weather](weather.md).
 
 ## See also
 

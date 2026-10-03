@@ -153,6 +153,7 @@ export default function registerSlugmaSpecies(): void {
         Moves.StoneEdge,
         Moves.SmackDown,
         Moves.Bulldoze,
+        Moves.StompingTantrum,
       ],
     },
   });

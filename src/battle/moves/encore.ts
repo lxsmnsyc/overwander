@@ -1,3 +1,4 @@
+import { Z_MOVES } from '../../data/moves/z-moves';
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { MoveCategories, Moves } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
@@ -7,12 +8,13 @@ import type Battle from '../core';
 import { BattleEvents, EffectType, type MoveTarget, MoveTargetType } from '../events';
 import type Unit from '../unit';
 import { unitTarget } from '../utils';
+import { effectIn, landsIn } from '../ai/context';
 
 /**
  * Casts an encore never locks: the fallbacks repeat nothing worth
  * hearing, and Encore itself cannot call for another one
  */
-const NOT_A_MOVE = new Set<Moves>([Moves.Struggle, Moves.Attack, Moves.Encore]);
+const NOT_A_MOVE = new Set<Moves>([Moves.Struggle, Moves.Attack, Moves.Encore, ...Z_MOVES]);
 
 /** How many more times the locked move plays after its own cast */
 const REPEATS = 2;
@@ -158,10 +160,12 @@ export default function setupEncore(battle: Battle): void {
     const target = event.target.unit;
     const cast = target.casting?.move;
     const friendly = target.team.alliance === event.source.team.alliance;
+    // It locks the cast only if it lands while that cast is still going
     const worth =
       cast != null &&
       !NOT_A_MOVE.has(cast) &&
-      (friendly || getMoveData(cast).category === MoveCategories.Status);
+      (friendly || getMoveData(cast).category === MoveCategories.Status) &&
+      landsIn(target) >= effectIn(event.source, event.move, event.target);
 
     event.score += worth ? ENCORE_BONUS : -USELESS_PENALTY;
   });

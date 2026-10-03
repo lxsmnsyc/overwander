@@ -201,6 +201,7 @@ export default function registerPhantumpSpecies(): void {
         Moves.ScaryFace,
         Moves.TakeDown,
         Moves.XScissor,
+        Moves.BrutalSwing,
       ],
     },
   });

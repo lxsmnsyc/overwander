@@ -196,6 +196,7 @@ export default function registerMinccinoSpecies(): void {
         Moves.LightScreen,
         Moves.RockBlast,
         Moves.Thunder,
+        Moves.LaserFocus,
       ],
     },
   });

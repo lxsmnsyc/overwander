@@ -129,6 +129,7 @@ export default function registerDedenneSpecies(): void {
         Moves.HelpingHand,
         Moves.MagnetRise,
         Moves.NaturalGift,
+        Moves.TearfulLook,
       ],
     },
   });

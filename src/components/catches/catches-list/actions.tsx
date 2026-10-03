@@ -5,7 +5,8 @@ import type Families from '../../../data/ids/families';
 import { getFamilyName, getSpeciesData } from '../../../data/species';
 import CandySprite from '../../sprites/CandySprite';
 import type { CatchOption } from '../catch-picker';
-import { Badge, Button, Meta, Row } from '../../styled';
+import { Badge, Button, Menu, type MenuAction, Meta, Row } from '../../styled';
+import type { RailBox } from './rail';
 
 /**
  * What to do with a handful of pokemon at once.
@@ -22,6 +23,11 @@ export interface CatchActionsProps {
   onGuard: (on: boolean) => void;
   onRelease: () => void;
   onClear: () => void;
+  /** Every box, to file the picked ones into */
+  boxes: RailBox[];
+  onMove: (box: string | null) => void;
+  /** Make a box and file the picked ones into it */
+  onMoveToNew: () => void;
   /** While a round trip is in the air, so nothing is asked for twice */
   busy?: boolean;
   /** Drawn last on the row of buttons: the dialog's way out */
@@ -121,6 +127,38 @@ export default function CatchActions(props: CatchActionsProps): JSX.Element {
     return kept;
   };
 
+  /**
+   * Where they can go. A box every one of them is already in is still
+   * listed, so the list reads the same whatever is picked, but it does
+   * nothing
+   */
+  const destinations = (): MenuAction[] => {
+    const actions: MenuAction[] = [];
+
+    for (const box of props.boxes) {
+      let already = props.chosen.length > 0;
+
+      for (const option of props.chosen) {
+        if (option.caught.box !== box.id) {
+          already = false;
+        }
+      }
+      actions.push({
+        label: already ? `${box.name} (here now)` : box.name,
+        disabled: already,
+        onSelect: () => {
+          props.onMove(box.id);
+        },
+      });
+    }
+    actions.push({
+      label: `New box with these ${count()}`,
+      separated: true,
+      onSelect: props.onMoveToNew,
+    });
+    return actions;
+  };
+
   const release = (): void => {
     if (!releasing()) {
       setReleasing(true);
@@ -167,6 +205,9 @@ export default function CatchActions(props: CatchActionsProps): JSX.Element {
         <Meta class="shrink-0 basis-full text-center tabular-nums sm:basis-auto">
           {count()} selected
         </Meta>
+        <Show when={count() > 0 && props.busy !== true}>
+          <Menu label={`Move ${count()} to`} actions={destinations()} />
+        </Show>
         <Button
           disabled={props.busy === true || count() === 0}
           onClick={() => {

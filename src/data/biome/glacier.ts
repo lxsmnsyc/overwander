@@ -28,6 +28,7 @@ export default function registerGlacierSpawns(): void {
         { species: Species.Prinplup, weight: 2 },
       ],
       scarce: [
+        { species: Species.Crabominable, weight: 6 },
         { species: Species.Avalugg, weight: 6 },
         { species: Species.Beartic, weight: 6 },
         { species: Species.Glalie, weight: 6 },
@@ -69,6 +70,7 @@ export default function registerGlacierSpawns(): void {
         { species: Species.Prinplup, weight: 2 },
       ],
       scarce: [
+        { species: Species.Crabominable, weight: 6 },
         { species: Species.Avalugg, weight: 6 },
         { species: Species.Beartic, weight: 6 },
         { species: Species.Glalie, weight: 6 },
@@ -104,6 +106,7 @@ export default function registerGlacierSpawns(): void {
         { species: Species.Piloswine, weight: 5 },
       ],
       scarce: [
+        { species: Species.Crabominable, weight: 6 },
         { species: Species.Avalugg, weight: 6 },
         { species: Species.Glalie, weight: 6 },
         { species: Species.Froslass, weight: 6 },
@@ -138,6 +141,7 @@ export default function registerGlacierSpawns(): void {
         { species: Species.Piloswine, weight: 5 },
       ],
       scarce: [
+        { species: Species.Crabominable, weight: 6 },
         { species: Species.Avalugg, weight: 6 },
         { species: Species.Glalie, weight: 6 },
         { species: Species.Froslass, weight: 6 },

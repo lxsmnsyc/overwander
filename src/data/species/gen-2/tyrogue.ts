@@ -52,6 +52,7 @@ const FAMILY_TEACHABLE = [
   Moves.Bulldoze,
   Moves.WorkUp,
   Moves.Confide,
+  Moves.LaserFocus,
 ];
 
 // Which of the three it becomes, decided the way the games decide it

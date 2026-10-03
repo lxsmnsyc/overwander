@@ -162,6 +162,7 @@ export default function registerBarboachSpecies(): void {
         Moves.RockSlide,
         Moves.GigaImpact,
         Moves.StoneEdge,
+        Moves.StompingTantrum,
       ],
     },
   });

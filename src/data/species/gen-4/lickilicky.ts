@@ -122,6 +122,8 @@ export default function registerLickilickySpecies(): void {
         Moves.ZenHeadbutt,
         Moves.Confide,
         Moves.PowerUpPunch,
+        Moves.BrutalSwing,
+        Moves.StompingTantrum,
       ],
     },
   });

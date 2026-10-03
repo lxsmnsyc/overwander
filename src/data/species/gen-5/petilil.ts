@@ -42,6 +42,7 @@ const FAMILY_TEACHABLE = [
   Moves.Toxic,
   Moves.WorrySeed,
   Moves.Confide,
+  Moves.LaserFocus,
 ];
 
 /**

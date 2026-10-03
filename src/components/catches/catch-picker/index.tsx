@@ -10,11 +10,19 @@ import {
   planCatchSearch,
 } from '../../../auth/catch-search';
 import ensureBattleData from '../../../data/battle-data';
-import { Button, Dialog, DialogActions, Note } from '../../styled';
+import { type BoxRecord, DEFAULT_BOX_NAME, listBoxes } from '../../../auth/boxes';
+import { answered } from '../../app/resource-reads';
+import { Button, Dialog, DialogActions, Note, Select } from '../../styled';
 import PickerBox from './box';
-import type { CatchOption, CatchPickerProps } from './options';
+import type { BoxFilter, CatchOption, CatchPickerProps } from './options';
 
-export type { CatchOption, CatchPickerProps } from './options';
+export type { BoxFilter, CatchOption, CatchPickerProps } from './options';
+
+/** The switcher's value for every box at once, which no box id can be */
+const ALL_BOXES = '*';
+
+/** The switcher's value for Default */
+const DEFAULT_BOX = '';
 
 /**
  * Picking one of the player's pokemon.
@@ -113,6 +121,64 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
   );
 
   /**
+   * The player's boxes, for the switcher and for saying which box each
+   * square lives in. Somebody else's are never read: a box is its
+   * owner's own arrangement
+   */
+  const [boxes] = createResource(
+    () =>
+      showing() && props.viewOnly !== true && owner() === auth.user()?.uid
+        ? ([owner(), props.revision, handled()] as const)
+        : null,
+    async ([player]): Promise<[string, BoxRecord][]> => listBoxes(player),
+  );
+
+  /** Which box the switcher is on, where the picker holds the choice itself */
+  const [switched, setSwitched] = createSignal(ALL_BOXES);
+
+  /** Which box is showing, whoever chose it */
+  const view = (): BoxFilter => {
+    if (props.box !== undefined) {
+      return props.box;
+    }
+    return switched() === ALL_BOXES
+      ? null
+      : { box: switched() === DEFAULT_BOX ? null : switched() };
+  };
+
+  /**
+   * The switcher, drawn beside the search for a player who has made a
+   * box. Picks made in one box stay picked while another is showing
+   */
+  const switcher = (): JSX.Element => {
+    const made = answered(boxes) ?? [];
+
+    if (props.box !== undefined || made.length === 0) {
+      return null;
+    }
+
+    const options = [
+      { value: ALL_BOXES, label: 'All boxes' },
+      { value: DEFAULT_BOX, label: DEFAULT_BOX_NAME },
+    ];
+
+    for (const [id, box] of made) {
+      options.push({ value: id, label: box.name });
+    }
+    return (
+      <Select
+        label="Box"
+        class="shrink-0 [&>label]:sr-only"
+        value={switched()}
+        options={options}
+        onChange={(value) => {
+          setSwitched(value);
+        }}
+      />
+    );
+  };
+
+  /**
    * The facts about the box that live in other tables, read once
    * beside the rows. A view-only box reads them too: they are about
    * whose pokemon these are, not about who is looking
@@ -169,6 +235,14 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
       <Show when={ready()} fallback={<Note>Looking them over…</Note>}>
         <PickerBox
           {...props}
+          box={view()}
+          boxes={boxes}
+          aside={() => (
+            <>
+              {switcher()}
+              {props.aside?.()}
+            </>
+          )}
           owned={owned}
           around={around}
           showing={showing()}

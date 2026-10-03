@@ -2,6 +2,12 @@ import type { JSX } from 'solid-js';
 import type { CaughtPokemon } from '../../../auth/caught';
 
 /**
+ * Which box a picker is showing: one of the player's (`box` its id),
+ * or Default (`box` null). Null for every box at once
+ */
+export type BoxFilter = { box: string | null } | null;
+
+/**
  * One of the player's pokemon, with the one thing a caller cannot read
  * off the record itself: whether it is in a battle right now. That
  * needs the server's clock, which the picker reads once for the whole
@@ -121,6 +127,17 @@ interface CatchPickerCommonProps {
    * time
    */
   onOptions?: (offered: CatchOption[]) => void;
+  /**
+   * Which box to show, for a caller that holds the choice itself: the
+   * boxes screen, whose rail is the switcher. Left out, a picker over
+   * the player's own pokemon draws a switcher of its own once they
+   * have made a box, and starts on all of them
+   */
+  box?: BoxFilter;
+  /** Picking a pokemon up to file it somewhere else */
+  onDragStart?: (id: string, event: DragEvent) => void;
+  /** Something dropped on a square of the box being shown, by its slot */
+  onDropOn?: (slot: number) => void;
 }
 
 export type CatchPickerProps = CatchPickerCommonProps &

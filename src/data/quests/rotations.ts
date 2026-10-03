@@ -5,7 +5,7 @@ import { Items } from '../ids/items';
 import { getSpeciesLairs } from '../overworld/lair';
 import { getRegisteredFamilies } from '../species/__create';
 import { getFamilyName, getRegisteredSpecies, getSpeciesData } from '../species';
-import { getFeaturedFamily } from '../species/day';
+import { getFeaturedFamilies } from '../species/day';
 import { type MetricRequirement, RequirementKind } from './index';
 
 /**
@@ -82,7 +82,8 @@ const DAILY_POOL: [name: string, requirement: MetricRequirement, rewards: Rotati
  * names one, a walk, and one drawn from the pool
  */
 export function getDailyQuests(now: number): RotationQuest[] {
-  const featured = getFeaturedFamily(now);
+  // A day featuring two families spotlights the first of them
+  const featured = getFeaturedFamilies(now).at(0);
   const spotlight: RotationQuest =
     featured == null
       ? {

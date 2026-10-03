@@ -112,6 +112,8 @@ export default function registerOnixSpecies(): void {
         Moves.Bulldoze,
         Moves.DragonTail,
         Moves.Confide,
+        Moves.BrutalSwing,
+        Moves.StompingTantrum,
       ],
       egg: [Moves.RockSlide, Moves.Flail, Moves.Block, Moves.HeavySlam, Moves.Rototiller],
     },

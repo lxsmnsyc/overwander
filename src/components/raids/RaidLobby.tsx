@@ -40,7 +40,8 @@ import AnimatedSprite from '../sprites/AnimatedSprite';
 import LobbyInviteDialog from '../battle/LobbyInviteDialog';
 import LobbyParty from '../battle/LobbyParty';
 import SpectatorList from '../battle/SpectatorList';
-import TeamPickerDialog from '../battle/TeamPickerDialog';
+import { openForm } from '../forms/stack';
+import { PickTeamForm } from '../forms/pick-team';
 import TypeBadge from '../sprites/TypeBadge';
 import matchesTeam, { TEAM_VOCABULARY, type TeamContext, orderTeams } from '../../auth/team-search';
 import {
@@ -233,7 +234,6 @@ function LobbyRows(
   },
 ): JSX.Element {
   const game = useGame();
-  const [picking, setPicking] = createSignal(false);
   const [calling, setCalling] = createSignal(false);
   const [status, setStatus] = createSignal<string | null>(null);
 
@@ -576,7 +576,17 @@ function LobbyRows(
               <Show when={canJoin() !== false && !full()}>
                 <Button
                   onClick={() => {
-                    setPicking(true);
+                    openForm(PickTeamForm, { player: props.user.uid })
+                      .then((catches) => {
+                        if (catches != null) {
+                          act(
+                            async () => joinRaid(props.raidId, catches),
+                            // The usual cause is a pokemon already fighting or waiting elsewhere
+                            'That team could not join: one of them may already be in another raid.',
+                          );
+                        }
+                      })
+                      .catch(() => undefined);
                   }}
                 >
                   {mine() ? 'Change team' : 'Form a team'}
@@ -609,23 +619,6 @@ function LobbyRows(
         description="They see the call above their list of raids, and joining answers it."
         present={teamPlayers()}
         onInvite={async (uid, role) => inviteToRaid(props.raidId, uid, role)}
-      />
-
-      <TeamPickerDialog
-        player={props.user.uid}
-        isOpen={picking()}
-        onClose={() => {
-          setPicking(false);
-        }}
-        onSubmit={(catches) => {
-          setPicking(false);
-          act(
-            async () => joinRaid(props.raidId, catches),
-            // The usual cause is a pokemon that is already fighting
-            // or already waiting in another lobby
-            'That team could not join — one of them may already be in another raid.',
-          );
-        }}
       />
     </>
   );

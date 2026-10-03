@@ -112,6 +112,7 @@ export default function registerTangrowthSpecies(): void {
         Moves.Toxic,
         Moves.Confide,
         Moves.Infestation,
+        Moves.StompingTantrum,
       ],
     },
   });

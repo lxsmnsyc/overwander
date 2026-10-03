@@ -232,6 +232,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Mudkip, weight: 2 },
       ],
       uncommon: [
+        { species: Species.Dewpider, weight: 22 },
         { species: Species.Barboach, weight: 25 },
         { species: Species.Corphish, weight: 25 },
         { species: Species.Feebas, weight: 10 },
@@ -252,6 +253,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Marshtomp, weight: 1 },
       ],
       scarce: [
+        { species: Species.Araquanid, weight: 6 },
         { species: Species.Whiscash, weight: 8 },
         { species: Species.Crawdaunt, weight: 8 },
         { species: Species.Golduck, weight: 10 },
@@ -284,6 +286,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Mudkip, weight: 2 },
       ],
       uncommon: [
+        { species: Species.Dewpider, weight: 22 },
         { species: Species.Barboach, weight: 25 },
         { species: Species.Corphish, weight: 25 },
         { species: Species.Feebas, weight: 10 },
@@ -304,6 +307,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Marshtomp, weight: 1 },
       ],
       scarce: [
+        { species: Species.Araquanid, weight: 6 },
         { species: Species.Whiscash, weight: 8 },
         { species: Species.Crawdaunt, weight: 8 },
         { species: Species.Golduck, weight: 10 },
@@ -334,6 +338,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Poliwag, weight: 20 },
       ],
       uncommon: [
+        { species: Species.Dewpider, weight: 22 },
         { species: Species.Barboach, weight: 25 },
         { species: Species.Corphish, weight: 25 },
         { species: Species.Feebas, weight: 10 },
@@ -349,6 +354,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Poliwhirl, weight: 5 },
       ],
       scarce: [
+        { species: Species.Araquanid, weight: 6 },
         { species: Species.Whiscash, weight: 8 },
         { species: Species.Crawdaunt, weight: 8 },
         { species: Species.Seaking, weight: 10 },
@@ -374,6 +380,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Poliwag, weight: 20 },
       ],
       uncommon: [
+        { species: Species.Dewpider, weight: 22 },
         { species: Species.Barboach, weight: 25 },
         { species: Species.Corphish, weight: 25 },
         { species: Species.Feebas, weight: 10 },
@@ -389,6 +396,7 @@ export default function registerSwampSpawns(): void {
         { species: Species.Poliwhirl, weight: 5 },
       ],
       scarce: [
+        { species: Species.Araquanid, weight: 6 },
         { species: Species.Whiscash, weight: 8 },
         { species: Species.Crawdaunt, weight: 8 },
         { species: Species.Seaking, weight: 10 },

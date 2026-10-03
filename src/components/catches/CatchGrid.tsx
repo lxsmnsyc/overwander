@@ -1,7 +1,7 @@
 import { type Accessor, type JSX, Show, children, createMemo, createSignal } from 'solid-js';
 import { type CaughtPokemon, findDuplicates } from '../../auth/caught';
 import matchesCatch, { CATCH_VOCABULARY, orderCatches } from '../../auth/catch-search';
-import CatchBox, { type BoxEntry, boxSizeOf } from './CatchBox';
+import CatchBox, { type BoxEntry, type BoxGap, type BoxSquare, boxSizeOf, isGap } from './CatchBox';
 import settings from '../app/settings';
 import { Note, Row, Search, createPager } from '../styled';
 
@@ -20,7 +20,11 @@ export interface CatchGridEntry {
 }
 
 export interface CatchGridProps {
-  entries: CatchGridEntry[];
+  /**
+   * The squares, in order. Gaps are kept only while nothing is
+   * searched for: a search lists what it found, packed
+   */
+  entries: (CatchGridEntry | BoxGap)[];
   /**
    * A caller with a search of its own draws none here — the auction
    * board narrows both of its trays with one box
@@ -48,17 +52,33 @@ export interface CatchGridProps {
    * caller that rebuilds its own props as the box changes under it
    */
   aside?: () => JSX.Element;
+  /** Picking a pokemon up to file it, passed to the box */
+  onDragStart?: (id: string, event: DragEvent) => void;
+  /** Something dropped on a square of a box that keeps gaps, by its slot */
+  onDropOn?: (slot: number) => void;
 }
 
 export default function CatchGrid(props: CatchGridProps): JSX.Element {
   const [typed, setTyped] = createSignal('');
   const query = (): string => props.search ?? typed();
 
+  /** Every pokemon the grid holds, gaps left out */
+  const pokemon = createMemo<CatchGridEntry[]>(() => {
+    const found: CatchGridEntry[] = [];
+
+    for (const entry of props.entries) {
+      if (!('gap' in entry)) {
+        found.push(entry);
+      }
+    }
+    return found;
+  });
+
   /** Every species the grid holds more than one of, for `is:duplicate` */
   const duplicates = createMemo(() => {
     const box: CaughtPokemon[] = [];
 
-    for (const entry of props.entries) {
+    for (const entry of pokemon()) {
       box.push(entry.caught);
     }
     return findDuplicates(box);
@@ -66,22 +86,42 @@ export default function CatchGrid(props: CatchGridProps): JSX.Element {
 
   // The query is applied here even when the caller fetched against it,
   // because the store only answers half of a search
-  const matched = createMemo<BoxEntry[]>(() => {
+  const matched = createMemo<BoxSquare[]>(() => {
+    // Nothing asked: the squares as the caller laid them out, gaps and all
+    if (query().trim() === '') {
+      const squares: BoxSquare[] = [];
+
+      for (const entry of props.entries) {
+        squares.push('gap' in entry ? entry : entry.square);
+      }
+      return squares;
+    }
+
     const kept: CatchGridEntry[] = [];
 
-    for (const entry of props.entries) {
+    for (const entry of pokemon()) {
       if (matchesCatch(entry.caught, query(), { id: entry.square.id, duplicates: duplicates() })) {
         kept.push(entry);
       }
     }
 
-    const squares: BoxEntry[] = [];
+    const squares: BoxSquare[] = [];
 
     for (const entry of orderCatches(kept, query(), (one) => one.caught)) {
       squares.push(entry.square);
     }
     return squares;
   });
+
+  /** Whether any pokemon is showing, which an empty box of gaps is not */
+  const showing = (): boolean => {
+    for (const square of matched()) {
+      if (!isGap(square)) {
+        return true;
+      }
+    }
+    return false;
+  };
 
   // A box the player has set eight wide holds forty, so the page has
   // to be the box rather than a constant beside it
@@ -123,7 +163,7 @@ export default function CatchGrid(props: CatchGridProps): JSX.Element {
       </Show>
 
       <Show
-        when={matched().length > 0}
+        when={showing()}
         fallback={
           <Note>
             {query().length === 0
@@ -141,6 +181,10 @@ export default function CatchGrid(props: CatchGridProps): JSX.Element {
           onOpen={props.onOpen}
           cardOnly={props.cardOnly}
           cell={props.cell}
+          onDragStart={props.onDragStart}
+          // Only while the gaps are drawn: a searched list is packed,
+          // and a square in it is not the slot it stands in
+          onDropOn={query().trim() === '' ? props.onDropOn : undefined}
         />
       </Show>
     </div>

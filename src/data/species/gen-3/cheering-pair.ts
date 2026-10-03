@@ -105,7 +105,7 @@ export default function registerCheeringPairSpecies(): void {
         Moves.WildCharge,
         Moves.Confide,
       ],
-      egg: [Moves.Wish, Moves.Discharge],
+      egg: [Moves.Wish, Moves.Discharge, Moves.TearfulLook],
     },
   });
 
@@ -202,7 +202,7 @@ export default function registerCheeringPairSpecies(): void {
         Moves.WildCharge,
         Moves.Confide,
       ],
-      egg: [Moves.Wish, Moves.Discharge],
+      egg: [Moves.Wish, Moves.Discharge, Moves.TearfulLook],
     },
   });
 }

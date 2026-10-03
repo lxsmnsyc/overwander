@@ -1,4 +1,4 @@
-import { type Accessor, Index, type JSX, Show } from 'solid-js';
+import { type Accessor, Index, type JSX, Show, createSignal } from 'solid-js';
 import type { AuraKind } from '../../canvas/auras';
 import { Species } from '../../data/ids/species';
 import { LockIcon, MoonIcon, SparklesIcon, StarIcon, SunIcon } from '../icons';
@@ -110,13 +110,51 @@ export interface BoxEntry {
    */
   mark?: 'picked' | 'refused';
   /**
+   * Why a refused square is refused, said on the square where its
+   * level would be: "in a raid", "fainted", "locked"
+   */
+  reason?: string;
+  /**
+   * Its level and the share of its HP it has left, drawn as a badge
+   * and a bar along the bottom. Left out for an egg, and by a caller
+   * drawing something that is nobody's yet
+   */
+  level?: number;
+  health?: number;
+  /**
+   * The box it is filed in, for a square shown among other boxes'
+   * squares: a search across every box says where each one lives
+   */
+  place?: { name: string; tone: string };
+  /**
+   * Its square in a box that keeps gaps, so something dropped on it
+   * knows where it landed
+   */
+  slot?: number;
+  /**
    * What a screen reader is told about this square
    */
   label: string;
 }
 
+/**
+ * An empty square of a box that keeps gaps, standing where a pokemon
+ * could be filed
+ */
+export interface BoxGap {
+  gap: number;
+}
+
+/** What a square of the box holds: a pokemon, or a gap kept for one */
+export type BoxSquare = BoxEntry | BoxGap;
+
+/** Whether a square is a gap rather than a pokemon */
+export function isGap(square: BoxSquare): square is BoxGap {
+  return 'gap' in square;
+}
+
 export interface CatchBoxProps {
-  entries: BoxEntry[];
+  entries: BoxSquare[];
   /**
    * What a press on a square does. A card-only box has none — the
    * buttons are in the card that comes up over it
@@ -147,6 +185,16 @@ export interface CatchBoxProps {
    * mean anything
    */
   capacity?: number;
+  /**
+   * Picking a pokemon up to file it somewhere else. Given, every
+   * pokemon's square can be dragged
+   */
+  onDragStart?: (id: string, event: DragEvent) => void;
+  /**
+   * Something dropped on a square of a box that keeps gaps, by the
+   * square's slot. Given, gaps and slotted pokemon both take a drop
+   */
+  onDropOn?: (slot: number) => void;
 }
 
 /**
@@ -163,6 +211,28 @@ function toneOf(entry: BoxEntry): string {
   // the box, and a player counting their six should see why it is not
   // one of them
   return entry.fainted ? 'border-line bg-ember-soft' : 'border-line bg-paper hover:bg-line-soft';
+}
+
+/** What a square needs to take a drop */
+interface DropHandlers {
+  onDragOver?: (event: DragEvent) => void;
+  onDragLeave?: () => void;
+  onDrop?: (event: DragEvent) => void;
+}
+
+/** What a pokemon's square needs to be picked up */
+interface DragHandlers {
+  draggable?: boolean;
+  onDragStart?: (event: DragEvent) => void;
+  onDragEnd?: () => void;
+}
+
+/** The bar's colour, by how much is left, the way a battle draws it */
+function healthTone(health: number): string {
+  if (health > 0.5) {
+    return 'bg-leaf';
+  }
+  return health > 0.2 ? 'bg-gold' : 'bg-ember';
 }
 
 /**
@@ -189,7 +259,75 @@ export default function CatchBox(props: CatchBoxProps): JSX.Element {
    * collection is a part-full one, so most of these answers are
    * "nothing"
    */
-  const entryAt = (index: number): BoxEntry | undefined => props.entries.at(index);
+  const entryAt = (index: number): BoxEntry | undefined => {
+    const square = props.entries.at(index);
+
+    return square == null || isGap(square) ? undefined : square;
+  };
+
+  /** The slot a square stands for, where the box keeps gaps */
+  const slotAt = (index: number): number | undefined => {
+    const square = props.entries.at(index);
+
+    if (square == null) {
+      return undefined;
+    }
+    return isGap(square) ? square.gap : square.slot;
+  };
+
+  /** Which square something is being dragged over, to light it as the drop */
+  const [hovered, setHovered] = createSignal<number | null>(null);
+
+  /**
+   * What makes a square take a drop. Only a box that keeps gaps takes
+   * one: anywhere else the order is a sort, and a pokemon dropped into
+   * a sorted list would not stay where it was put
+   */
+  const dropProps = (index: number): DropHandlers => {
+    const slot = slotAt(index);
+    const onDropOn = props.onDropOn;
+
+    if (slot == null || onDropOn == null) {
+      return {};
+    }
+    return {
+      onDragOver: (event: DragEvent) => {
+        event.preventDefault();
+        setHovered(index);
+      },
+      onDragLeave: () => {
+        setHovered((at) => (at === index ? null : at));
+      },
+      onDrop: (event: DragEvent) => {
+        event.preventDefault();
+        setHovered(null);
+        onDropOn(slot);
+      },
+    };
+  };
+
+  /** The lit edge of the square under a drag */
+  const lit = (index: number): string =>
+    hovered() === index ? 'border-dashed !border-leaf !bg-leaf-soft' : '';
+
+  /** Whatever the caller needs to start a drag from a pokemon's square */
+  const dragProps = (entry: Accessor<BoxEntry>): DragHandlers => {
+    const onDragStart = props.onDragStart;
+
+    if (onDragStart == null) {
+      return {};
+    }
+    return {
+      draggable: true,
+      onDragStart: (event: DragEvent) => {
+        event.dataTransfer?.setData('text/plain', entry().id);
+        onDragStart(entry().id, event);
+      },
+      onDragEnd: () => {
+        setHovered(null);
+      },
+    };
+  };
 
   /**
    * What is in a square: the pokemon, what its walk has come to, whether
@@ -230,6 +368,63 @@ export default function CatchBox(props: CatchBoxProps): JSX.Element {
         </span>
       </Show>
 
+      {/* Its level and its HP along the bottom, or, on a square the
+          caller refuses, why: a player counting their party wants the
+          reason more than the level */}
+      <Show
+        when={entry().reason}
+        fallback={
+          <>
+            <Show when={entry().level}>
+              {(level) => (
+                <span
+                  class="pointer-events-none absolute bottom-2 left-1 rounded-md bg-ink px-1
+                    text-[10px] leading-[15px] font-black text-paper tabular-nums"
+                >
+                  {level()}
+                </span>
+              )}
+            </Show>
+            {/* Not keyed on the number: a fainted one has none left,
+                and an empty bar is still the bar */}
+            <Show when={entry().health !== undefined}>
+              <span
+                class="pointer-events-none absolute inset-x-1.5 bottom-1 h-0.75 overflow-hidden
+                  rounded-full bg-line-soft"
+              >
+                <span
+                  class={`block h-full ${healthTone(entry().health ?? 0)}`}
+                  style={{ width: `${Math.min(1, Math.max(0, entry().health ?? 0)) * 100}%` }}
+                />
+              </span>
+            </Show>
+          </>
+        }
+      >
+        {(reason) => (
+          <span
+            class="pointer-events-none absolute inset-x-1 bottom-1 truncate rounded-md border
+              border-ember bg-ember-soft text-center text-[10px] leading-[15px] font-black
+              text-ember-dark"
+          >
+            {reason()}
+          </span>
+        )}
+      </Show>
+
+      {/* Which box it lives in, on a search across all of them */}
+      <Show when={entry().place}>
+        {(place) => (
+          <span
+            class="pointer-events-none absolute inset-x-4 top-0.5 flex items-center
+              justify-center gap-1 truncate text-[10px] leading-tight font-black text-ink"
+          >
+            <span class="size-2 shrink-0 rounded-sm" style={{ background: place().tone }} />
+            <span class="truncate">{place().name}</span>
+          </span>
+        )}
+      </Show>
+
       {/* What the player has said about it, in the corner away from
           everything the game says. Both are quiet marks: neither
           changes what the square does, and both are worth seeing
@@ -265,7 +460,7 @@ export default function CatchBox(props: CatchBoxProps): JSX.Element {
 
       {/* Whether the caller has it, in the corner the bag puts its
           counts in */}
-      <Show when={entry().mark} keyed>
+      <Show when={entry().reason == null && entry().mark} keyed>
         {(mark) => (
           <span
             class={`pointer-events-none absolute right-0.5 bottom-0.5 rounded-full border bg-paper
@@ -293,13 +488,24 @@ export default function CatchBox(props: CatchBoxProps): JSX.Element {
 
   const squares = (): null[] => squaresOf(props.capacity ?? boxSizeOf(width()));
 
+  const filled = (): number => {
+    let count = 0;
+
+    for (const square of props.entries) {
+      if (!isGap(square)) {
+        count += 1;
+      }
+    }
+    return count;
+  };
+
   return (
     // Narrower than the panel it sits in, with air around it: a box
     // stretched across a wide dialog is thirty large squares to sweep
     // the eye over rather than one thing to look at
     <div
       role="group"
-      aria-label={`Box of pokemon, ${props.entries.length} of ${squares().length} squares filled.`}
+      aria-label={`Box of pokemon, ${filled()} of ${squares().length} squares filled.`}
       class={`mx-auto my-2 grid w-full gap-1.5 rounded-xl border-4 border-tide bg-parchment p-1.5
         shadow-pop ${SHAPE[props.columns ?? 6]}`}
     >
@@ -312,7 +518,9 @@ export default function CatchBox(props: CatchBoxProps): JSX.Element {
               // half-built grid reads as a broken one
               <span
                 aria-hidden="true"
-                class="aspect-square w-full rounded-lg border-2 border-line-soft bg-paper/40"
+                class={`aspect-square w-full rounded-lg border-2 border-line-soft bg-paper/40
+                  ${lit(index)}`}
+                {...dropProps(index)}
               />
             }
           >
@@ -327,7 +535,8 @@ export default function CatchBox(props: CatchBoxProps): JSX.Element {
                   <span
                     role="img"
                     aria-label={entry().label}
-                    class={`${SQUARE} ${toneOf(entry())}`}
+                    class={`${SQUARE} ${toneOf(entry())} ${lit(index)}`}
+                    {...dropProps(index)}
                   >
                     {inside(entry)}
                   </span>
@@ -337,7 +546,9 @@ export default function CatchBox(props: CatchBoxProps): JSX.Element {
                   type="button"
                   aria-label={entry().label}
                   aria-pressed={entry().mark === 'picked'}
-                  class={`${SQUARE} cursor-pointer ${toneOf(entry())}`}
+                  class={`${SQUARE} cursor-pointer ${toneOf(entry())} ${lit(index)}`}
+                  {...dragProps(entry)}
+                  {...dropProps(index)}
                   onClick={(event) => {
                     // The hover card is portaled out of this button but
                     // its clicks still bubble here through the component

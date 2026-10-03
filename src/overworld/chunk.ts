@@ -193,6 +193,9 @@ function biomeLandmarks(biome: Biome, depth: Depth): Landmark[] {
  */
 const SINGLETON_LANDMARKS = new Set([Landmark.LegendaryLair, Landmark.ShadowLair]);
 
+/** The lairs, which stand on the water as readily as on the ground */
+const LAIR_LANDMARKS = new Set([Landmark.LegendaryLair, Landmark.ShadowLair]);
+
 /**
  * The cells touching one, diagonals included, clipped to the chunk.
  * A landmark keeps this ring clear of everything else, so there is
@@ -739,7 +742,9 @@ export default class Chunk {
         // landmark stands beside the pool rather than in it, and a
         // chunk one lake covers is stood on all the same rather than
         // left with nothing on it. Only what can be afloat takes that
-        // fallback, so a flooded field puts nobody on its lake
+        // fallback, so a flooded field puts nobody on its lake. A lair
+        // takes either alike, since a lake's lair is on the lake
+        const anywhere = LAIR_LANDMARKS.has(landmark);
         let cell: number | undefined;
         let wet: number | undefined;
 
@@ -752,6 +757,10 @@ export default class Chunk {
             break;
           }
           if (landmarkFloats(landmark, this.getCellBiomes()[candidate])) {
+            if (anywhere) {
+              cell = candidate;
+              break;
+            }
             wet ??= candidate;
           }
         }

@@ -139,6 +139,7 @@ export default function registerDrowzeeSpecies(): void {
         Moves.RolePlay,
         Moves.GuardSwap,
         Moves.PsychoCut,
+        Moves.PsychicTerrain,
       ],
     },
   });

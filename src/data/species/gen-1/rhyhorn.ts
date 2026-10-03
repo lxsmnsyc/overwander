@@ -69,6 +69,8 @@ const FAMILY_TEACHABLE = [
   Moves.Bulldoze,
   Moves.DrillRun,
   Moves.Confide,
+  Moves.SmartStrike,
+  Moves.StompingTantrum,
 ];
 
 const FAMILY_ABILITIES = [Abilities.LightningRod, Abilities.RockHead];
@@ -229,6 +231,7 @@ export default function registerRhyhornSpecies(): void {
         Moves.SmackDown,
         Moves.DragonTail,
         Moves.PowerUpPunch,
+        Moves.BrutalSwing,
       ],
     },
   });

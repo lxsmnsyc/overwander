@@ -245,6 +245,7 @@ export default function registerTorchicSpecies(): void {
         Moves.VacuumWave,
         Moves.Acrobatics,
         Moves.Bulldoze,
+        Moves.LaserFocus,
       ],
     },
   });

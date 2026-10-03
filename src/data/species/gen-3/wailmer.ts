@@ -148,7 +148,13 @@ export default function registerWailmerSpecies(): void {
         59: [Moves.HydroPump],
         70: [Moves.HeavySlam],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.GigaImpact, Moves.IronHead],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.GigaImpact,
+        Moves.IronHead,
+        Moves.Liquidation,
+      ],
     },
   });
 }

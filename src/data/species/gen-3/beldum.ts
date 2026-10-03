@@ -213,6 +213,8 @@ export default function registerBeldumSpecies(): void {
         Moves.NaturalGift,
         Moves.RockPolish,
         Moves.StealthRock,
+        Moves.StompingTantrum,
+        Moves.LaserFocus,
       ],
     },
   });

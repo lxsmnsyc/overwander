@@ -189,6 +189,7 @@ export default function registerShelmetSpecies(): void {
         Moves.Venoshock,
         Moves.Confide,
         Moves.Infestation,
+        Moves.LaserFocus,
       ],
     },
   });

@@ -119,6 +119,7 @@ export default function registerPiplupSpecies(): void {
         Moves.Snore,
         Moves.Supersonic,
         Moves.Yawn,
+        Moves.PowerTrip,
       ],
     },
   });
@@ -239,6 +240,9 @@ export default function registerPiplupSpecies(): void {
         Moves.SteelWing,
         Moves.Strength,
         Moves.SwordsDance,
+        Moves.Liquidation,
+        Moves.LaserFocus,
+        Moves.ThroatChop,
       ],
     },
   });

@@ -208,6 +208,7 @@ export default function registerSphealSpecies(): void {
         Moves.Avalanche,
         Moves.GigaImpact,
         Moves.IronHead,
+        Moves.StompingTantrum,
       ],
     },
   });

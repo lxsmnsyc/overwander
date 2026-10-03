@@ -108,6 +108,7 @@ export default function registerMaractusSpecies(): void {
         Moves.WeatherBall,
         Moves.WorrySeed,
         Moves.Confide,
+        Moves.ThroatChop,
       ],
       egg: [
         Moves.Bounce,

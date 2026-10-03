@@ -139,6 +139,7 @@ export default function registerEonDuoSpecies(): void {
         Moves.SuckerPunch,
         Moves.Tailwind,
         Moves.MagicRoom,
+        Moves.LaserFocus,
       ],
     },
   });
@@ -202,6 +203,7 @@ export default function registerEonDuoSpecies(): void {
         Moves.ShadowClaw,
         Moves.Tailwind,
         Moves.WonderRoom,
+        Moves.LaserFocus,
       ],
     },
   });

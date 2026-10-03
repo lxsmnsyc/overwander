@@ -83,3 +83,11 @@ export const COLORS = {
   track: '#26303e',
   text: '#e6ecf5',
 } as const;
+
+/**
+ * How near the middle of the field a drag may take hold and still
+ * turn it, in field units. The field turns about its middle, so a
+ * point right on it has no angle to speak of and a pixel there would
+ * swing the camera half a turn
+ */
+export const TURN_DEAD_ZONE = 2;

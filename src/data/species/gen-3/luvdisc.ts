@@ -83,6 +83,7 @@ export default function registerLuvdiscSpecies(): void {
         Moves.Round,
         Moves.Scald,
         Moves.Confide,
+        Moves.Liquidation,
       ],
       egg: [
         Moves.Splash,

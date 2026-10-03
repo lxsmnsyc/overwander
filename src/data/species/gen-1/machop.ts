@@ -182,7 +182,7 @@ export default function registerMachopSpecies(): void {
         43: [Moves.CrossChop],
         52: [Moves.Submission, Moves.ScaryFace],
       },
-      teachable: [...FAMILY_TEACHABLE],
+      teachable: [...FAMILY_TEACHABLE, Moves.StompingTantrum],
     },
   });
 
@@ -221,7 +221,14 @@ export default function registerMachopSpecies(): void {
         43: [Moves.CrossChop],
         52: [Moves.Submission, Moves.ScaryFace],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.HyperBeam, Moves.GigaImpact, Moves.StoneEdge],
+      teachable: [
+        ...FAMILY_TEACHABLE,
+        Moves.HyperBeam,
+        Moves.GigaImpact,
+        Moves.StoneEdge,
+        Moves.StompingTantrum,
+        Moves.ThroatChop,
+      ],
     },
   });
 }

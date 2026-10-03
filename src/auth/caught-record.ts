@@ -209,6 +209,13 @@ export interface CaughtPokemon {
    */
   lair: Lairs | null;
   /**
+   * The box its owner filed it in, or null for Default, and its square
+   * there. Squares may leave gaps, so the slot is the place rather than
+   * a rank; it means nothing while `box` is null
+   */
+  box: string | null;
+  slot: number | null;
+  /**
    * The ball the catch was made with
    */
   ball: Balls;
@@ -632,6 +639,8 @@ export function asCaughtPokemon(value: unknown): CaughtPokemon {
         : asNumber(data.health),
     statuses: asNumber(data.statuses),
     lair: data.lair == null ? null : (asNumber(data.lair) as Lairs),
+    box: data.box == null ? null : asString(data.box),
+    slot: data.box == null || data.slot == null ? null : asNumber(data.slot),
     ball: asNumber(data.ball) as Balls,
     caughtAt: asString(data.caughtAt),
     locale: asString(data.locale),

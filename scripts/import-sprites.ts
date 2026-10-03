@@ -47,6 +47,7 @@ const REGIONS: Partial<Record<string, string>> = {
   sinnoh: 'sinnoh',
   unova: 'unova',
   kalos: 'kalos',
+  alola: 'alola',
 };
 
 /**
@@ -191,6 +192,32 @@ function writtenSpecies(): Set<number> {
   return ids;
 }
 
+/**
+ * The ids the game names as a shadow (`ArticunoShadow`). The collection
+ * files its Shadow drawings among a species' forms, so a slot is only
+ * a shadow's where the id it lands on is one: Keldeo's second slot is a
+ * Shadow Keldeo, not the Resolute form the id band numbers there
+ */
+function shadowSpecies(): Set<number> {
+  const source = readFileSync(IDS, 'utf8');
+  const body = source.slice(source.indexOf('export const enum Species {'));
+  const shadows = new Set<number>();
+
+  for (const [, name, id] of body.slice(0, body.indexOf('\n}')).matchAll(/(\w+) = (\d+),/g)) {
+    if (name.endsWith('Shadow')) {
+      shadows.add(Number(id));
+    }
+  }
+  return shadows;
+}
+
+/** Whether the collection drew this slot as a Shadow, by the form name on its sheet */
+function isShadowSlot(root: string, slot: Slot): boolean {
+  const sheet: unknown = JSON.parse(readFileSync(join(root, slot.path, 'sheet.json'), 'utf8'));
+
+  return isRecord(sheet) && sheet.formName === 'Shadow';
+}
+
 /** Every TypeScript file under a folder, the species data being a tree of them */
 function sourceFiles(folder: string): string[] {
   const found: string[] = [];
@@ -208,7 +235,7 @@ function sourceFiles(folder: string): string[] {
 }
 
 /** The species id this form is known by here, or nothing for one it is not. */
-function wanted(slot: Slot, known: Set<number>): Wanted | null {
+function wanted(root: string, slot: Slot, known: Set<number>, shadows: Set<number>): Wanted | null {
   if (slot.region === 'misc' && slot.dex === 0) {
     const misc = MISC[slot.form];
 
@@ -224,7 +251,10 @@ function wanted(slot: Slot, known: Set<number>): Wanted | null {
   // reserved band gives it
   const species = slot.form === 0 ? slot.dex : FORM_BAND + slot.dex * FORMS_PER_SPECIES + slot.form;
 
-  return known.has(species) ? { ...slot, species, under: region } : null;
+  if (!known.has(species) || shadows.has(species) !== isShadowSlot(root, slot)) {
+    return null;
+  }
+  return { ...slot, species, under: region };
 }
 
 /** What the clips are called, for a line somebody has to read. */
@@ -259,10 +289,11 @@ export default function importSprites(source: string, dryRun: boolean): void {
   }
   const slots = slotsOf(root);
   const known = writtenSpecies();
+  const shadows = shadowSpecies();
   const taking: Wanted[] = [];
 
   for (const slot of slots) {
-    const held = wanted(slot, known);
+    const held = wanted(root, slot, known, shadows);
 
     if (held != null) {
       taking.push(held);

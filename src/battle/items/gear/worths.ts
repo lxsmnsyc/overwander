@@ -171,6 +171,7 @@ export const RAZOR_CLAW_CRITICAL_STAGES = SCOPE_LENS_CRITICAL_STAGES;
 export const SCREEN_STATUSES = new Set<TeamStatuses>([
   TeamStatuses.Reflect,
   TeamStatuses.LightScreen,
+  TeamStatuses.AuroraVeil,
 ]);
 
 /**
@@ -178,6 +179,9 @@ export const SCREEN_STATUSES = new Set<TeamStatuses>([
  * the mainline's five turns become eight
  */
 export const WEATHER_ROCK_FACTOR = 1.6;
+
+/** What a Terrain Extender is worth: the mainline's five turns of terrain become eight */
+export const TERRAIN_EXTENDER_FACTOR = 1.6;
 
 /**
  * The rocks, and the sky each one holds out for longer. Hail and snow

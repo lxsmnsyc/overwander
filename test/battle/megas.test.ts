@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { Stats } from '../../src/data/constants/stats';
+import { Stages, Stats } from '../../src/data/constants/stats';
 import { Types } from '../../src/data/constants/types';
 import Abilities from '../../src/data/ids/abilities';
 import { Items } from '../../src/data/ids/items';
@@ -23,6 +23,21 @@ describe('Mega Evolution', () => {
     expect([...ghost.types]).toEqual([Types.Ghost, Types.Poison]);
     expect(ghost.hasAbility(Abilities.ShadowTag)).toBe(true);
     expect(ghost.hasAbility(Abilities.CursedBody)).toBe(true);
+  });
+
+  it('scowls as a Manectric puts its Mega on, Intimidate and all', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const dog = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+    dog.setSpecies(Species.Manectric);
+    dog.addAbility(Abilities.Static);
+    dog.addItem(Items.Manectite);
+    foe.enter();
+
+    dog.enter();
+
+    expect(dog.species).toBe(Species.ManectricMega);
+    expect(foe.stages[Stages.Attack]).toBe(-1);
   });
 
   it('wears the filler where the line already has the Mega’s own ability', () => {

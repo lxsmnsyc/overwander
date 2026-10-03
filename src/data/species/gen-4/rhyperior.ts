@@ -126,6 +126,9 @@ export default function registerRhyperiorSpecies(): void {
         Moves.Uproar,
         Moves.Confide,
         Moves.PowerUpPunch,
+        Moves.BrutalSwing,
+        Moves.StompingTantrum,
+        Moves.SmartStrike,
       ],
     },
   });

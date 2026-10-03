@@ -144,7 +144,7 @@ export default function registerChinchouSpecies(): void {
         47: [Moves.AquaRing],
         54: [Moves.IonDeluge],
         61: [Moves.Charge],
-        1: [Moves.Bubble, Moves.Supersonic, Moves.ThunderWave, Moves.EerieImpulse],
+        1: [Moves.Bubble, Moves.Supersonic, Moves.ThunderWave, Moves.EerieImpulse, Moves.Spotlight],
         13: [Moves.Flail],
         17: [Moves.WaterGun],
         25: [Moves.Spark],

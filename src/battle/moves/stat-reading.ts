@@ -16,7 +16,7 @@ const BORROWED_ATTACK = new Set<Moves>([Moves.FoulPlay]);
 const AGAINST_DEFENSE = new Set<Moves>([Moves.Psyshock, Moves.Psystrike, Moves.SecretSword]);
 
 /** Blind to the target's stages, its evasion included */
-const IGNORES_STAGES = new Set<Moves>([Moves.ChipAway, Moves.SacredSword]);
+const IGNORES_STAGES = new Set<Moves>([Moves.ChipAway, Moves.SacredSword, Moves.DarkestLariat]);
 
 const ALWAYS_CRITICAL = new Set<Moves>([Moves.StormThrow, Moves.FrostBreath]);
 

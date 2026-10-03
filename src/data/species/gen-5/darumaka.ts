@@ -120,6 +120,7 @@ const DARMANITAN_SHARED = {
       Moves.StoneEdge,
       Moves.Torment,
       Moves.Trick,
+      Moves.LaserFocus,
     ],
   },
 };

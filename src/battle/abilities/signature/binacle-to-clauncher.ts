@@ -1,9 +1,9 @@
 import { AttackPriority, EventPriority } from '../../../core/event-emitter';
-import { Stats } from '../../../data/constants/stats';
 import Abilities from '../../../data/ids/abilities';
 import { DamageFlags, MoveCategories } from '../../../data/ids/moves';
 import { BattleEvents } from '../../events';
 import { createAbility } from '../__create';
+import { healthShare } from '../special';
 
 /** What a stage is worth to something with seven hands on it */
 export const MANY_HANDS_SCALE = 1.5;
@@ -47,7 +47,7 @@ const setupAbilities = [
         return;
       }
 
-      if (event.value < target.checkStat(Stats.HP, 0) * SHOT_FLOOR) {
+      if (event.value < healthShare(target, SHOT_FLOOR)) {
         event.value = 0;
         target.triggerAbility(Abilities.DeepKelp);
       }
@@ -68,7 +68,8 @@ const setupAbilities = [
         return;
       }
 
-      const floor = parent.target.checkStat(Stats.HP, 0) * SHOT_FLOOR;
+      // Held to the boss cap on a raid boss, whose pool is sixtyfold
+      const floor = healthShare(parent.target, SHOT_FLOOR);
 
       if (event.value < floor) {
         event.value = floor;

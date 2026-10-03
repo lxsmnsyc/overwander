@@ -177,6 +177,8 @@ export default function registerBunnelbySpecies(): void {
         Moves.SwordsDance,
         Moves.ThunderPunch,
         Moves.Uproar,
+        Moves.BrutalSwing,
+        Moves.StompingTantrum,
       ],
     },
   });

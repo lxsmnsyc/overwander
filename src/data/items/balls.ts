@@ -210,6 +210,16 @@ export default function registerBalls(): void {
     buy: 0,
     sell: 0,
   });
+  // Made for the Ultra Beasts, and poor at anything else
+  registerItem(Items.BeastBall, {
+    name: 'Beast Ball',
+    type: ItemTypes.PokeBall,
+    description: '5x on an Ultra Beast, and 0.1x on anything else.',
+    icon: 'balls/beast',
+    flags: ItemFlags.Usable | ItemFlags.Consumable,
+    buy: 0,
+    sell: 500,
+  });
   // Better at night and in caves
   registerItem(Items.DuskBall, {
     name: 'Dusk Ball',

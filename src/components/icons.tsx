@@ -803,3 +803,23 @@ export function KeyIcon(props: ComponentProps<'svg'>): JSX.Element {
     </svg>
   );
 }
+
+/** A box, opened from the menu for the player's pokemon */
+export function BoxIcon(props: ComponentProps<'svg'>): JSX.Element {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="1.8"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      {...props}
+    >
+      <path d="M3 7l9-4 9 4v10l-9 4-9-4z" />
+      <path d="M3 7l9 4 9-4" />
+      <path d="M12 11v10" />
+    </svg>
+  );
+}

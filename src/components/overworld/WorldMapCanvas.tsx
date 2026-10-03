@@ -334,6 +334,21 @@ export default function WorldMapCanvas(props: WorldMapCanvasProps): JSX.Element 
       context.clearRect(0, 0, size, size);
       context.drawImage(ground, 0, 0);
 
+      // The chunk grid over the detailed map as well, for a player who
+      // asked for it. The quick map draws its own into the ground
+      if (settings().mapGrid) {
+        context.strokeStyle = COLORS.grid;
+        context.lineWidth = 1;
+        context.beginPath();
+        for (let line = 0; line <= across; line++) {
+          context.moveTo(line * TILE + 0.5, 0);
+          context.lineTo(line * TILE + 0.5, size);
+          context.moveTo(0, line * TILE + 0.5);
+          context.lineTo(size, line * TILE + 0.5);
+        }
+        context.stroke();
+      }
+
       // Where the player is standing: the same ground, ringed
       const column = props.playerX - props.originX;
       const row = props.playerY - props.originY;

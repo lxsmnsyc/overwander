@@ -265,7 +265,7 @@ export default function registerKalosMythicalSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: { ...HOOPA_LEVEL },
-      teachable: [...HOOPA_TEACHABLE],
+      teachable: [...HOOPA_TEACHABLE, Moves.LaserFocus, Moves.ThroatChop],
     },
   });
   registerSpecies(Species.HoopaUnbound, {
@@ -297,7 +297,7 @@ export default function registerKalosMythicalSpecies(): void {
     activeTimes: AnyTimeOfDay,
     learnSet: {
       level: { ...HOOPA_LEVEL, 1: [...HOOPA_LEVEL[1], Moves.HyperspaceFury] },
-      teachable: [...HOOPA_TEACHABLE],
+      teachable: [...HOOPA_TEACHABLE, Moves.LaserFocus, Moves.ThroatChop],
     },
   });
   registerSpecies(Species.Volcanion, {
@@ -417,6 +417,8 @@ export default function registerKalosMythicalSpecies(): void {
         Moves.WeatherBall,
         Moves.WildCharge,
         Moves.WillOWisp,
+        Moves.StompingTantrum,
+        Moves.Liquidation,
       ],
     },
   });

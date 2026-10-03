@@ -188,6 +188,7 @@ export default function registerWurmpleSpecies(): void {
         Moves.Roost,
         Moves.Tailwind,
         Moves.UTurn,
+        Moves.LaserFocus,
       ],
     },
   });
@@ -282,6 +283,7 @@ export default function registerWurmpleSpecies(): void {
         Moves.Roost,
         Moves.Tailwind,
         Moves.UTurn,
+        Moves.LaserFocus,
       ],
     },
   });

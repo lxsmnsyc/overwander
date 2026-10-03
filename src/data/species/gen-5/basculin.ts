@@ -100,6 +100,7 @@ const SHARED = {
       Moves.Whirlpool,
       Moves.ZenHeadbutt,
       Moves.Confide,
+      Moves.Liquidation,
     ],
     egg: [
       Moves.Agility,

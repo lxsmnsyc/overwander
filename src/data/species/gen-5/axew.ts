@@ -195,7 +195,7 @@ export default function registerAxewSpecies(): void {
         51: [Moves.Guillotine],
         56: [Moves.GigaImpact],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.LowKick],
+      teachable: [...FAMILY_TEACHABLE, Moves.LowKick, Moves.StompingTantrum],
     },
   });
   registerSpecies(Species.Haxorus, {
@@ -252,6 +252,9 @@ export default function registerAxewSpecies(): void {
         Moves.LowSweep,
         Moves.PsychoCut,
         Moves.RockSlide,
+        Moves.BrutalSwing,
+        Moves.StompingTantrum,
+        Moves.LaserFocus,
       ],
     },
   });

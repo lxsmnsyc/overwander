@@ -168,6 +168,7 @@ export default function registerSpoinkSpecies(): void {
         Moves.GigaImpact,
         Moves.Bulldoze,
         Moves.PowerUpPunch,
+        Moves.LaserFocus,
       ],
     },
   });

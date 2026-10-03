@@ -2469,6 +2469,9 @@ describe('Iron Fist', () => {
     const target = { type: MoveTargetType.Unit, unit: enemy } as const;
 
     expect(unit.checkMovePower(Moves.FirePunch, target)).toBeCloseTo(75 * 1.2);
+    // Every generation's punches, not only the first two's
+    expect(unit.checkMovePower(Moves.MachPunch, target)).toBeCloseTo(40 * 1.2);
+    expect(unit.checkMovePower(Moves.IceHammer, target)).toBeCloseTo(100 * 1.2);
     expect(unit.checkMovePower(Moves.Tackle, target)).toBe(40);
   });
 });

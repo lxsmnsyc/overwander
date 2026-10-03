@@ -2214,4 +2214,72 @@ export default function registerSignatureAbilities(): void {
     name: 'Aria Audience',
     description: 'Its Special Attack counts 1.1x for each teammate standing, up to 4 of them.',
   });
+
+  // The three the first roads out of Melemele's towns walk past
+  registerSignature(Families.Pikipek, Abilities.Drumroll, {
+    name: 'Drumroll',
+    description: 'Its multi-hit moves strike 1 more time.',
+  });
+
+  registerSignature(Families.Yungoos, Abilities.ScoreToSettle, {
+    name: 'Score to Settle',
+    description: 'Its moves hit 1.3x against whichever enemy last hit it.',
+  });
+
+  registerSignature(Families.Grubbin, Abilities.TrickleCharge, {
+    name: 'Trickle Charge',
+    description:
+      'Its Special Attack rises 10% for each Electric move anybody lands, either side, up to 1.5x.',
+  });
+
+  // Melemele's meadow and hill
+  registerSignature(Families.Crabrawler, Abilities.ReboundPunch, {
+    name: 'Rebound Punch',
+    description:
+      'When one of its punching moves misses or is blocked, its next punching move hits 1.5x.',
+  });
+
+  registerSignature(Families.Oricorio, Abilities.DizzyTwirl, {
+    name: 'Dizzy Twirl',
+    description: 'While confused it never hits itself, and its moves hit 1.3x.',
+  });
+
+  registerSignature(Families.Cutiefly, Abilities.HoneyShare, {
+    name: 'Honey Share',
+    description:
+      'While it stands, berries its teammates eat heal 1.5x as much and raise a stat 1 more stage.',
+  });
+
+  registerSignature(Families.Rockruff, Abilities.Provoke, {
+    name: 'Provoke',
+    description: 'An enemy it hits must aim its next single-target move at it.',
+  });
+
+  // Akala's first roads and Brooklet Hill
+  registerSignature(Families.Wishiwashi, Abilities.Regroup, {
+    name: 'Regroup',
+    description:
+      'While it swims alone it heals 1/8 of its HP each time it acts, so the school can gather again.',
+  });
+
+  registerSignature(Families.Mudbray, Abilities.HeavyHooves, {
+    name: 'Heavy Hooves',
+    description: 'Its physical moves hit 1% harder for every 20 kg it weighs, up to 1.4x.',
+  });
+
+  registerSignature(Families.Dewpider, Abilities.BubbleWard, {
+    name: 'Bubble Ward',
+    description: 'While it stands, its teammates take Fire moves at 0.75x and cannot be burned.',
+  });
+
+  registerSignature(Families.Fomantis, Abilities.OrchidGuise, {
+    name: 'Orchid Guise',
+    description:
+      'Enemies cannot aim a single-target move at it until it lands its first attack, which hits 1.3x.',
+  });
+
+  registerSignature(Families.Bounsweet, Abilities.TropStride, {
+    name: 'Trop Stride',
+    description: 'Its kicking moves hit 1.3x.',
+  });
 }

@@ -14,6 +14,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Piplup, weight: 3 },
       ],
       uncommon: [
+        { species: Species.Crabrawler, weight: 24 },
         { species: Species.Binacle, weight: 24 },
         { species: Species.Krabby, weight: 20 },
         { species: Species.Seel, weight: 20 },
@@ -55,6 +56,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Piplup, weight: 3 },
       ],
       uncommon: [
+        { species: Species.Crabrawler, weight: 24 },
         { species: Species.Binacle, weight: 24 },
         { species: Species.Krabby, weight: 20 },
         { species: Species.Seel, weight: 20 },
@@ -92,6 +94,7 @@ export default function registerRockyCoastSpawns(): void {
     [TimeOfDay.Evening]: {
       base: [],
       uncommon: [
+        { species: Species.Crabrawler, weight: 24 },
         { species: Species.Krabby, weight: 20 },
         { species: Species.Seel, weight: 20 },
         { species: Species.Shellos, weight: 25 },
@@ -114,6 +117,7 @@ export default function registerRockyCoastSpawns(): void {
     [TimeOfDay.Night]: {
       base: [],
       uncommon: [
+        { species: Species.Crabrawler, weight: 24 },
         { species: Species.Krabby, weight: 20 },
         { species: Species.Seel, weight: 20 },
         { species: Species.Shellos, weight: 25 },

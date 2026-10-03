@@ -1,6 +1,6 @@
 {
   "name": "overwander",
-  "version": "4.28.0",
+  "version": "4.29.0",
   "private": true,
   "type": "module",
   "publishConfig": {
@@ -30,6 +30,7 @@
     "cs:pub": "changeset publish",
     "cs:tag": "node scripts/tag-release.ts",
     "cs:add": "changeset add",
+    "cs:release": "bash scripts/release.sh",
     "db": "docker compose -f compose.dev.yaml up --detach --wait",
     "db:stop": "docker compose -f compose.dev.yaml stop",
     "db:reset": "docker compose -f compose.dev.yaml down && pnpm db && pnpm db:migrate",

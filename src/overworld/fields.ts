@@ -1,4 +1,5 @@
 import Biome, { BIOME_CONFIGS, isOpenSea, isWaterBiome } from '../data/ids/biome';
+import CellMemo from '../core/cell-memo';
 import { ORTHOGONAL, SQUARES, SURROUNDING } from './grid';
 import type World from './world';
 
@@ -364,7 +365,7 @@ function isIslandField(world: World, x: number, y: number): boolean {
 }
 
 /**
- * Whether an island covers this cell.
+ * Whether one of the island blocks covers this cell.
  *
  * Laid in 4x4 blocks, so no island is a speck and its rim always has
  * room for its edges and corners. A block has to be open sea at its
@@ -372,7 +373,7 @@ function isIslandField(world: World, x: number, y: number): boolean {
  * next door does; the corners stand in for every cell of it, as a
  * country's border does not wander within four cells
  */
-export function isIslandAt(world: World, x: number, y: number): boolean {
+function isIslandBlock(world: World, x: number, y: number): boolean {
   // The cell's own reading first: every cell of the sea asks this, and
   // a cell the field does not stand out of is in no block of them
   if (!isIslandField(world, x, y)) {
@@ -417,6 +418,87 @@ export function isIslandAt(world: World, x: number, y: number): boolean {
       if (whole) {
         return true;
       }
+    }
+  }
+  return false;
+}
+
+/** The island blocks already worked out, per world */
+const ISLAND_BLOCKS = new WeakMap<World, CellMemo<boolean>>();
+
+function inIslandBlock(world: World, x: number, y: number): boolean {
+  let kept = ISLAND_BLOCKS.get(world);
+
+  if (kept == null) {
+    kept = new CellMemo<boolean>();
+    ISLAND_BLOCKS.set(world, kept);
+  }
+  const known = kept.get(x, y);
+
+  if (known != null) {
+    return known;
+  }
+  const answer = isIslandBlock(world, x, y);
+
+  kept.set(x, y, answer);
+  return answer;
+}
+
+/** The widest gap between two blocks that the water cannot stand in */
+const STRAIT = 3;
+
+/**
+ * Whether this is sea beside an island too narrow for the water to
+ * stand in, between two of its blocks or between it and the coast,
+ * which dries into ground joining them
+ */
+function isStrait(world: World, x: number, y: number): boolean {
+  if (inIslandBlock(world, x, y)) {
+    return false;
+  }
+  let island = false;
+  const shut = (cx: number, cy: number): boolean => {
+    if (inIslandBlock(world, cx, cy)) {
+      island = true;
+      return true;
+    }
+    const biome = world.getCellBiome(cx, cy);
+
+    // A lake or a wetland next door is water the sea runs into, not a coast
+    return !isOpenSea(biome) && !isWaterAt(world, cx, cy, biome);
+  };
+
+  for (let oy = 1 - STRAIT; oy <= 0; oy += 1) {
+    for (let ox = 1 - STRAIT; ox <= 0; ox += 1) {
+      let open = true;
+
+      for (let dy = 0; open && dy < STRAIT; dy += 1) {
+        for (let dx = 0; open && dx < STRAIT; dx += 1) {
+          open = !shut(x + ox + dx, y + oy + dy);
+        }
+      }
+      if (open) {
+        return false;
+      }
+    }
+  }
+  // A narrow inlet of the coast with no island in it is the coast's own
+  return island;
+}
+
+/**
+ * Whether an island covers this cell: its blocks, and the ground a
+ * strait between two of them dries into, widened by a cell each way.
+ * Left as it dries, a strait a cell wide where two islands overlap by
+ * a cell was a bridge one cell across
+ */
+export function isIslandAt(world: World, x: number, y: number): boolean {
+  if (inIslandBlock(world, x, y)) {
+    return true;
+  }
+  for (const [dx, dy] of [[0, 0], ...SURROUNDING]) {
+    if (isOpenSea(world.getCellBiome(x + dx, y + dy)) && isStrait(world, x + dx, y + dy)) {
+      return true;
     }
   }
   return false;

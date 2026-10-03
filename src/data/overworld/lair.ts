@@ -655,6 +655,47 @@ export function isSubterraneanLair(lair: Lairs): boolean {
   return SUBTERRANEAN_LAIRS.has(lair);
 }
 
+/**
+ * The lairs whose place is the water itself: a lake, or the sea over a
+ * flooded cavern. They stand only on water, so a Lake Acuity is never
+ * a field
+ */
+const AQUATIC_LAIRS = new Set<Lairs>([
+  Lairs.LakeAcuity,
+  Lairs.LakeVerity,
+  Lairs.LakeValor,
+  Lairs.MarineCave,
+  Lairs.SeaTemple,
+]);
+
+/**
+ * The lairs on an island out at sea, which stand on the water as well
+ * as on the ground: a lair at sea is the island being there
+ */
+const ISLAND_LAIRS = new Set<Lairs>([
+  Lairs.SeafoamIslands,
+  Lairs.FarawayIsland,
+  Lairs.WhirlIslands,
+  Lairs.IslandCave,
+  Lairs.SouthernIsland,
+  Lairs.BirthIsland,
+  Lairs.FullmoonIsland,
+  Lairs.NewmoonIsland,
+  Lairs.NavelRock,
+]);
+
+/**
+ * Whether the lair's place may be on this cell, by whether it is water.
+ * Every lair that is neither on the water nor an island stays off it,
+ * so a Mt. Ember is never the open sea
+ */
+export function lairStandsOn(lair: Lairs, water: boolean): boolean {
+  if (ISLAND_LAIRS.has(lair)) {
+    return true;
+  }
+  return AQUATIC_LAIRS.has(lair) === water;
+}
+
 /** The lairs the caves under this biome can host */
 export function getCaveLairs(biome: Biome): Lairs[] {
   const lairs: Lairs[] = [];

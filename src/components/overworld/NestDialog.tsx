@@ -4,7 +4,7 @@ import { getSpeciesData } from '../../data/species';
 import type { Buddy } from '../../overworld/core';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import { Button, Dialog, DialogActions, Meta } from '../styled';
-import { CounterSpent, CounterTerms, HeadingPortrait } from './npc-dialog/terms';
+import { CounterSpent, CounterTerms, HeadingPortrait } from '../forms/terms';
 
 /**
  * An egg that has been found, put to the player before it is theirs.

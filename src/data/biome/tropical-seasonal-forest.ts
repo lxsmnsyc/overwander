@@ -13,6 +13,7 @@ export default function registerTropicalSeasonalForestSpawns(): void {
   registerSpawnPool(Biome.TropicalSeasonalForest, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Bounsweet, weight: 22 },
         { species: Species.Grubbin, weight: 22 },
         { species: Species.FlabebeOrange, weight: 24 },
         { species: Species.Scatterbug, weight: 24 },
@@ -20,12 +21,14 @@ export default function registerTropicalSeasonalForestSpawns(): void {
         { species: Species.Treecko, weight: 2 },
       ],
       uncommon: [
+        { species: Species.Fomantis, weight: 22 },
         { species: Species.Cutiefly, weight: 24 },
         { species: Species.Pancham, weight: 24 },
         { species: Species.Exeggcute, weight: 20 },
         { species: Species.Cherubi, weight: 22 },
       ],
       rare: [
+        { species: Species.Steenee, weight: 8 },
         { species: Species.Charjabug, weight: 8 },
         { species: Species.FloetteOrange, weight: 8 },
         { species: Species.Spewpa, weight: 8 },
@@ -33,6 +36,7 @@ export default function registerTropicalSeasonalForestSpawns(): void {
         { species: Species.Grovyle, weight: 1 },
       ],
       scarce: [
+        { species: Species.Lurantis, weight: 6 },
         { species: Species.Ribombee, weight: 6 },
         { species: Species.Pangoro, weight: 6 },
         { species: Species.Exeggutor, weight: 10 },
@@ -40,6 +44,7 @@ export default function registerTropicalSeasonalForestSpawns(): void {
         { species: Species.Lickilicky, weight: 6 },
       ],
       elusive: [
+        { species: Species.Tsareena, weight: 4 },
         { species: Species.Vikavolt, weight: 4 },
         { species: Species.FlorgesOrange, weight: 5 },
         { species: Species.Vivillon, weight: 5 },
@@ -54,6 +59,7 @@ export default function registerTropicalSeasonalForestSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Bounsweet, weight: 22 },
         { species: Species.Grubbin, weight: 22 },
         { species: Species.FlabebeOrange, weight: 24 },
         { species: Species.Scatterbug, weight: 24 },
@@ -61,12 +67,14 @@ export default function registerTropicalSeasonalForestSpawns(): void {
         { species: Species.Treecko, weight: 2 },
       ],
       uncommon: [
+        { species: Species.Fomantis, weight: 22 },
         { species: Species.Cutiefly, weight: 24 },
         { species: Species.Pancham, weight: 24 },
         { species: Species.Exeggcute, weight: 20 },
         { species: Species.Cherubi, weight: 22 },
       ],
       rare: [
+        { species: Species.Steenee, weight: 8 },
         { species: Species.Charjabug, weight: 8 },
         { species: Species.FloetteOrange, weight: 8 },
         { species: Species.Spewpa, weight: 8 },
@@ -74,6 +82,7 @@ export default function registerTropicalSeasonalForestSpawns(): void {
         { species: Species.Grovyle, weight: 1 },
       ],
       scarce: [
+        { species: Species.Lurantis, weight: 6 },
         { species: Species.Ribombee, weight: 6 },
         { species: Species.Pangoro, weight: 6 },
         { species: Species.Exeggutor, weight: 10 },
@@ -81,6 +90,7 @@ export default function registerTropicalSeasonalForestSpawns(): void {
         { species: Species.Lickilicky, weight: 6 },
       ],
       elusive: [
+        { species: Species.Tsareena, weight: 4 },
         { species: Species.Vikavolt, weight: 4 },
         { species: Species.FlorgesOrange, weight: 5 },
         { species: Species.Vivillon, weight: 5 },

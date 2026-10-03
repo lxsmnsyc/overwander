@@ -65,6 +65,7 @@ import {
   TORNADUS_FORMS,
   UNOWN_FORMS,
   VIVILLON_FORMS,
+  WISHIWASHI_FORMS,
   WORMADAM_FORMS,
   ZYGARDE_FORMS,
   getBaseFormSpecies,
@@ -438,6 +439,7 @@ describe('species forms', () => {
       ...SAWSBUCK_FORMS.slice(1),
       ...ORICORIO_FORMS.slice(1),
       ...LYCANROC_FORMS.slice(1),
+      ...WISHIWASHI_FORMS.slice(1),
       // The true shadows, which are forms of the birds they are the
       // shadow of rather than pokemon of their own
       ...listTrueShadows(),

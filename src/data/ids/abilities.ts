@@ -1002,6 +1002,16 @@ const enum Abilities {
   HoneyShare = 200374,
   // Rockruff
   Provoke = 200375,
+  // Wishiwashi
+  Regroup = 200376,
+  // Mudbray
+  HeavyHooves = 200377,
+  // Dewpider
+  BubbleWard = 200378,
+  // Fomantis
+  OrchidGuise = 200379,
+  // Bounsweet
+  TropStride = 200380,
 }
 
 export default Abilities;

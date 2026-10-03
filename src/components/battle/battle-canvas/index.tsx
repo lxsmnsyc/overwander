@@ -63,6 +63,7 @@ import {
 import type { Spot } from '../../../canvas/three/effect-batch';
 import { spread } from '../../../canvas/battle/moves/__paint';
 import {
+  FIELD_HORIZON,
   type Slot,
   type Stand,
   type Standing,
@@ -698,7 +699,8 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
         // A ring that has outgrown its room is looked at from further
         // back, so a raid of sixteen fills the same picture a raid of
         // four does
-        unit: FIELD_UNIT * lobbyCamera(field.teams.length).view,
+        unit: FIELD_UNIT * lobbyCamera(field.teams.length).zoom,
+        horizon: FIELD_HORIZON,
         yaw,
       };
       looked = view;

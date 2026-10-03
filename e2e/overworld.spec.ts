@@ -36,7 +36,7 @@ test.describe('the overworld', () => {
       'World',
       'Notices',
       'Profile',
-      'Catches',
+      'Boxes',
       'Bag',
       'Pokedex',
       'Quests',
@@ -111,6 +111,6 @@ test.describe('the overworld', () => {
     // leaves its overlay behind looks shut and swallows every press
     await expect(page.getByRole('navigation', { name: 'Game' })).toBeVisible();
     // `openPanel` asserts the panel is up, which is the whole point
-    await openPanel(page, 'Catches');
+    await openPanel(page, 'Boxes');
   });
 });

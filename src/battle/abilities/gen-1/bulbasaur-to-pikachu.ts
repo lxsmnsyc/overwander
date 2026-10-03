@@ -88,7 +88,10 @@ const bulbasaurToPikachu = [
               },
               event.source,
               maxHP / 8,
-              DamageFlags.NonLethal,
+              // A share of its health, like Dry Skin's in the same sun,
+              // so a boss holding it pays the boss cap rather than an
+              // eighth of a raid pool each time it acts
+              DamageFlags.NonLethal | DamageFlags.Indirect | DamageFlags.HealthScaled,
             );
           }
         }),

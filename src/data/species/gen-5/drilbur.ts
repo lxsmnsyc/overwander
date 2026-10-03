@@ -154,6 +154,9 @@ export default function registerDrilburSpecies(): void {
         Moves.HyperBeam,
         Moves.IronHead,
         Moves.MagnetRise,
+        Moves.BrutalSwing,
+        Moves.StompingTantrum,
+        Moves.SmartStrike,
       ],
     },
   });

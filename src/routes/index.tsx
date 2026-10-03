@@ -89,7 +89,7 @@ const TITLES: Record<Panelled, string> = {
   [GameDialog.Profile]: 'Profile',
   [GameDialog.Raids]: 'Raids',
   [GameDialog.Auctions]: 'Auctions',
-  [GameDialog.Catches]: 'Catches',
+  [GameDialog.Catches]: 'Boxes',
   [GameDialog.Inventory]: 'Bag',
   [GameDialog.Pokedex]: 'Pokedex',
   [GameDialog.Gifts]: 'Gifts',
@@ -105,7 +105,7 @@ const DESCRIPTIONS: Record<Panelled, string> = {
     'Your details, your buddy, your friends, your battles, your bids and your trades.',
   [GameDialog.Raids]: 'Every lobby still gathering in the current window.',
   [GameDialog.Auctions]: 'What is up for auction, and what you have to sell.',
-  [GameDialog.Catches]: 'Every pokemon you have caught, as a box of squares.',
+  [GameDialog.Catches]: 'Every pokemon you have caught, filed into boxes.',
   [GameDialog.Inventory]: 'Everything you are carrying.',
   [GameDialog.Pokedex]: 'Every pokemon there is, and how many of them you have met.',
   [GameDialog.Gifts]: 'What the game is holding for you, until you come for it.',
@@ -142,6 +142,7 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
   const [hosting, setHosting] = createSignal(false);
   /** The same, for the battle lobby a player is standing in */
   const [duelling, setDuelling] = createSignal<string | null>(null);
+  const [seated, setSeated] = createSignal(false);
   const close = (): void => {
     // Wherever the profile was sent to open is spent once it closes:
     // the next player to open it from the menu wants it as they left
@@ -367,6 +368,8 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
           <Dialog
             isOpen={showing(GameDialog.Battles)}
             onClose={close}
+            // A seated player leaves by Leave, which takes their party out
+            insistent={seated()}
             width="wide"
             terse
             title={duelling() ?? TITLES[GameDialog.Battles]}
@@ -376,6 +379,9 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
               user={props.user}
               onTitle={(named) => {
                 setDuelling(named);
+              }}
+              onSeated={(held) => {
+                setSeated(held);
               }}
             />
             <Show when={duelling() == null}>

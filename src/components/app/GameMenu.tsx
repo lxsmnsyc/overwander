@@ -33,6 +33,7 @@ import {
   ActionsIcon,
   BagIcon,
   BellIcon,
+  BoxIcon,
   ChevronDownIcon,
   FireIcon,
   GiftIcon,
@@ -41,7 +42,6 @@ import {
   NewsIcon,
   SearchIcon,
   SettingsIcon,
-  SparklesIcon,
   SwordsIcon,
   TrophyIcon,
   UserIcon,
@@ -117,7 +117,7 @@ const GROUPS: MenuGroup[] = [
   {
     label: 'You',
     entries: [
-      { label: 'Catches', dialog: GameDialog.Catches, icon: SparklesIcon },
+      { label: 'Boxes', dialog: GameDialog.Catches, icon: BoxIcon },
       { label: 'Bag', dialog: GameDialog.Inventory, icon: BagIcon },
       { label: 'Pokedex', dialog: GameDialog.Pokedex, icon: SearchIcon },
       { label: 'Profile', dialog: GameDialog.Profile, icon: UserIcon },

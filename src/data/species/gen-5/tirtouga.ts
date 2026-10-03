@@ -108,6 +108,7 @@ export default function registerTirtougaSpecies(): void {
         Moves.Waterfall,
         Moves.Whirlpool,
         Moves.Confide,
+        Moves.Liquidation,
       ],
       egg: [
         Moves.Bide,
@@ -217,6 +218,7 @@ export default function registerTirtougaSpecies(): void {
         Moves.Toxic,
         Moves.Waterfall,
         Moves.Confide,
+        Moves.Liquidation,
       ],
     },
   });

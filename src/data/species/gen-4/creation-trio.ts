@@ -126,6 +126,7 @@ export default function registerCreationTrioSpecies(): void {
         Moves.Sandstorm,
         Moves.StealthRock,
         Moves.TrickRoom,
+        Moves.StompingTantrum,
       ],
     },
   });
@@ -191,6 +192,8 @@ export default function registerCreationTrioSpecies(): void {
         Moves.Surf,
         Moves.TrickRoom,
         Moves.WaterPulse,
+        Moves.StompingTantrum,
+        Moves.Liquidation,
       ],
     },
   });
@@ -256,6 +259,7 @@ export default function registerCreationTrioSpecies(): void {
         Moves.Spite,
         Moves.SteelWing,
         Moves.WillOWisp,
+        Moves.BrutalSwing,
       ],
     },
   });
@@ -323,6 +327,7 @@ export default function registerCreationTrioSpecies(): void {
         Moves.Sandstorm,
         Moves.StealthRock,
         Moves.TrickRoom,
+        Moves.StompingTantrum,
       ],
     },
   });
@@ -391,6 +396,8 @@ export default function registerCreationTrioSpecies(): void {
         Moves.Surf,
         Moves.TrickRoom,
         Moves.WaterPulse,
+        Moves.StompingTantrum,
+        Moves.Liquidation,
       ],
     },
   });
@@ -458,6 +465,7 @@ export default function registerCreationTrioSpecies(): void {
         Moves.Spite,
         Moves.SteelWing,
         Moves.WillOWisp,
+        Moves.BrutalSwing,
       ],
     },
   });

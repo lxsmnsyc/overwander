@@ -51,7 +51,7 @@ export default function registerHeatmorSpecies(): void {
         25: [Moves.Slash],
         26: [Moves.Snatch],
         31: [Moves.FlameBurst],
-        44: [Moves.Amnesia],
+        44: [Moves.Amnesia, Moves.FireLash],
         47: [Moves.Flamethrower],
         60: [Moves.FlareBlitz],
       },
@@ -105,6 +105,8 @@ export default function registerHeatmorSpecies(): void {
         Moves.WillOWisp,
         Moves.Confide,
         Moves.PowerUpPunch,
+        Moves.StompingTantrum,
+        Moves.ThroatChop,
       ],
       egg: [
         Moves.BodySlam,

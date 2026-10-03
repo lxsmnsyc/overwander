@@ -7,6 +7,7 @@ import EvolutionSection from './sections/EvolutionSection';
 import HistorySection from './sections/HistorySection';
 import PortraitSection from './sections/PortraitSection';
 import StatsSection from './sections/StatsSection';
+import BoxChip from './sections/BoxChip';
 import { isAuctionableCatch } from '../../../auth/auctions';
 import { setBuddy } from '../../../auth/buddy';
 import { getCandyCost, getReleaseCandy, useCandy } from '../../../auth/candy';
@@ -1437,6 +1438,25 @@ export function CatchSheetBody(
           </span>
         )}
       </Show>
+      {/* Which box it is filed in, and where else it could go */}
+      <Show when={owned() != null && props.catchId != null && view()}>
+        {(record) => (
+          <BoxChip
+            player={props.player}
+            catchId={props.catchId ?? ''}
+            box={record().box}
+            revision={record().box}
+            onMoved={(message) => {
+              say(message, 'leaf');
+              props.onRecordChanged();
+              props.onChange?.();
+            }}
+            onFailed={(message) => {
+              say(message, 'ember');
+            }}
+          />
+        )}
+      </Show>
       <Show when={owned() != null || props.onDex != null}>
         <Menu label="Actions" icon={ActionsIcon} actions={menuActions()} />
       </Show>
@@ -1462,6 +1482,11 @@ export function CatchSheetBody(
         // back to afterwards
         isOpen={
           props.catchId != null &&
+          // Held shut until this catch's record is in, so a sheet never
+          // opens to say it is loading. The first read waits at the
+          // boundary above; a later catch keeps the last record
+          // standing, so the id is what says this one has arrived
+          props.detail.latest?.id === props.catchId &&
           teaching() == null &&
           bottle() == null &&
           naming() == null &&

@@ -40,6 +40,7 @@ const DEFINITIONS: [enumName: string, definition: string][] = [
   ['Regions', 'region'],
   ['Awards', 'award'],
   ['Lairs', 'lair'],
+  ['Weather', 'weather'],
 ];
 
 const DRAFT = 'http://json-schema.org/draft-07/schema#';
@@ -207,6 +208,44 @@ const LAIR_TEXT: Schema = {
   type: 'object',
   propertyNames: name('lair'),
   additionalProperties: { type: 'string' },
+};
+
+const BIOME_WEATHER: Schema = {
+  $schema: DRAFT,
+  title: 'Biome weather',
+  type: 'object',
+  properties: {
+    corners: described(
+      part(
+        {
+          wildest: name('weather'),
+          stillest: name('weather'),
+          bleakest: name('weather'),
+          thickest: name('weather'),
+        },
+        ['wildest', 'stillest', 'bleakest', 'thickest'],
+      ),
+      'The four rarest skies, shared by every country',
+    ),
+    biomes: {
+      type: 'object',
+      propertyNames: name('biome'),
+      additionalProperties: part(
+        {
+          clear: described(name('weather'), 'Driest and calmest'),
+          stirred: described(name('weather'), 'Dry, with the air moving'),
+          damp: described(name('weather'), 'The edge of a front'),
+          wet: described(name('weather'), 'Inside a front'),
+          storm: described(name('weather'), 'The core of a front'),
+          rare: described(name('weather'), 'Its own showpiece, where it has one'),
+          corners: described({ const: false }, 'Leaves the four rarest skies out'),
+        },
+        ['clear', 'stirred', 'damp', 'wet', 'storm'],
+      ),
+    },
+  },
+  required: ['corners', 'biomes'],
+  additionalProperties: false,
 };
 
 function renderStats(stats: string[]): Schema {
@@ -551,6 +590,7 @@ export default function renderDataSchemas(members: Map<string, string[]>): Map<s
     ['lairs.json', json(LAIRS)],
     ['biome-lairs.json', json(BIOME_LAIRS)],
     ['lairs-text.json', json(LAIR_TEXT)],
+    ['biome-weather.json', json(BIOME_WEATHER)],
   ]);
 
   for (const [file, title, entry] of BATTLE_FILES) {

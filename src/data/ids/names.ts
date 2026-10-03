@@ -14,6 +14,7 @@ import { Statuses, TeamStatuses } from './status';
 import Regions from './regions';
 import Awards from './awards';
 import Lairs from './lairs';
+import Weather from '../overworld/weather/kinds';
 
 export const SPECIES_IDS = {
   Missingno: Species.Missingno,
@@ -4429,3 +4430,32 @@ export const LAIR_IDS = {
   IsleOfArmor: Lairs.IsleOfArmor,
   ScarletBog: Lairs.ScarletBog,
 } as const satisfies Record<string, Lairs>;
+
+export const WEATHER_IDS = {
+  Clear: Weather.Clear,
+  Cloudy: Weather.Cloudy,
+  Overcast: Weather.Overcast,
+  Breezy: Weather.Breezy,
+  Drizzle: Weather.Drizzle,
+  Rain: Weather.Rain,
+  Downpour: Weather.Downpour,
+  Thunderstorm: Weather.Thunderstorm,
+  Mist: Weather.Mist,
+  Fog: Weather.Fog,
+  Haze: Weather.Haze,
+  Frost: Weather.Frost,
+  Snow: Weather.Snow,
+  Blizzard: Weather.Blizzard,
+  Hail: Weather.Hail,
+  Sandstorm: Weather.Sandstorm,
+  DustHaze: Weather.DustHaze,
+  Heatwave: Weather.Heatwave,
+  FallingAsh: Weather.FallingAsh,
+  Aurora: Weather.Aurora,
+  Rainbow: Weather.Rainbow,
+  PollenDrift: Weather.PollenDrift,
+  MeteorShower: Weather.MeteorShower,
+  FataMorgana: Weather.FataMorgana,
+  DarkDay: Weather.DarkDay,
+  Fogbow: Weather.Fogbow,
+} as const satisfies Record<string, Weather>;

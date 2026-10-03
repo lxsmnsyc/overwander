@@ -4442,6 +4442,36 @@
         "IsleOfArmor",
         "ScarletBog"
       ]
+    },
+    "weather": {
+      "enum": [
+        "Clear",
+        "Cloudy",
+        "Overcast",
+        "Breezy",
+        "Drizzle",
+        "Rain",
+        "Downpour",
+        "Thunderstorm",
+        "Mist",
+        "Fog",
+        "Haze",
+        "Frost",
+        "Snow",
+        "Blizzard",
+        "Hail",
+        "Sandstorm",
+        "DustHaze",
+        "Heatwave",
+        "FallingAsh",
+        "Aurora",
+        "Rainbow",
+        "PollenDrift",
+        "MeteorShower",
+        "FataMorgana",
+        "DarkDay",
+        "Fogbow"
+      ]
     }
   }
 }

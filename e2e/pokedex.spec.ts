@@ -187,7 +187,7 @@ test.describe('the pokedex', () => {
   });
 
   test('steps between the player`s own pokemon from the catch sheet', async ({ page }) => {
-    const catches = await openPanel(page, 'Catches');
+    const catches = await openPanel(page, 'Boxes');
     const box = catches.getByRole('group', { name: /^Box of pokemon/ });
 
     await expect(box).toBeVisible();

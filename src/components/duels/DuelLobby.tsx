@@ -39,9 +39,10 @@ import DuelRulesDialog from '../battle/DuelRulesDialog';
 import LobbyInviteDialog from '../battle/LobbyInviteDialog';
 import LobbyParty from '../battle/LobbyParty';
 import { PlayerFace } from '../profile/PlayerPlate';
-import { CounterTerms, TERM_CHIP } from '../overworld/npc-dialog/terms';
+import { CounterTerms, TERM_CHIP } from '../forms/terms';
 import SpectatorList from '../battle/SpectatorList';
-import TeamPickerDialog from '../battle/TeamPickerDialog';
+import { openForm } from '../forms/stack';
+import { PickTeamForm } from '../forms/pick-team';
 import watchLive from '../app/watch';
 import { Button, DialogActions, Meta, Note, Status } from '../styled';
 import { useGame } from '../app/game-context';
@@ -87,7 +88,6 @@ function LobbyRows(
   },
 ): JSX.Element {
   const game = useGame();
-  const [picking, setPicking] = createSignal(false);
   const [calling, setCalling] = createSignal(false);
   const [arranging, setArranging] = createSignal(false);
   const [status, setStatus] = createSignal<string | null>(null);
@@ -240,7 +240,23 @@ function LobbyRows(
       <Button
         disabled={busy() || member.ready}
         onClick={() => {
-          setPicking(true);
+          openForm(PickTeamForm, {
+            player: props.user.uid,
+            max: teamSize(),
+            // A duel fields everyone healthy, so a fainted pokemon can come
+            healed: true,
+            // What the host barred stays in the box, greyed, with the reason
+            refuse: (option) => duelRefusal(option.caught, { maxBst: maxBst(), bans: bans() }),
+          })
+            .then((catches) => {
+              if (catches != null) {
+                act(
+                  async () => setDuelParty(props.duelId, catches),
+                  'That team could not be brought: one of them may already be in another lobby.',
+                );
+              }
+            })
+            .catch(() => undefined);
         }}
       >
         {member.catches.length > 0 ? 'Change team' : 'Form a team'}
@@ -504,26 +520,6 @@ function LobbyRows(
         onSubmit={(rules) => {
           setArranging(false);
           act(async () => setDuelRules(props.duelId, rules), 'Those rules could not be set.');
-        }}
-      />
-
-      <TeamPickerDialog
-        player={props.user.uid}
-        max={teamSize()}
-        isOpen={picking()}
-        // A duel fields everyone healthy, so a fainted pokemon can come
-        healed
-        // What the host barred stays in the box, greyed, with the reason
-        refuse={(option) => duelRefusal(option.caught, { maxBst: maxBst(), bans: bans() })}
-        onClose={() => {
-          setPicking(false);
-        }}
-        onSubmit={(catches) => {
-          setPicking(false);
-          act(
-            async () => setDuelParty(props.duelId, catches),
-            'That team could not be brought: one of them may already be in another lobby.',
-          );
         }}
       />
     </>

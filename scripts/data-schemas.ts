@@ -41,6 +41,8 @@ const DEFINITIONS: [enumName: string, definition: string][] = [
   ['Awards', 'award'],
   ['Lairs', 'lair'],
   ['TrainerClass', 'trainer'],
+  ['GymLeader', 'gym-leader'],
+  ['EliteMember', 'elite-member'],
   ['Weather', 'weather'],
 ];
 
@@ -258,6 +260,85 @@ const TRAINER_SHEET_TEXT: Schema = {
   $schema: DRAFT,
   title: 'Trainer sheet names',
   type: 'object',
+  additionalProperties: { type: 'string' },
+};
+
+const SHEETS: Schema = { type: 'array', items: { type: 'string' }, minItems: 1 };
+
+const GYM_LEADERS: Schema = {
+  $schema: DRAFT,
+  title: 'Gym leaders',
+  type: 'object',
+  propertyNames: name('gym-leader'),
+  additionalProperties: part(
+    {
+      type: described(name('type'), 'What they field'),
+      badge: described(name('award'), 'What beating them pays'),
+      sheets: described(SHEETS, 'The charsets they are seen in'),
+      prize: described(SHEETS, 'Coats the badge pays that they are never seen in'),
+      later: described(SHEETS, "Coats that also ask for the next league's crown"),
+      signature: described(name('species'), 'Their ace, standing sixth'),
+    },
+    ['type', 'badge', 'sheets', 'signature'],
+  ),
+};
+
+const BIOME_GYM_LEADERS: Schema = {
+  $schema: DRAFT,
+  title: 'Biome gym leaders',
+  type: 'object',
+  propertyNames: name('biome'),
+  additionalProperties: names('gym-leader', 'In the order a gym rolls from them'),
+};
+
+const GYM_LEADER_TEXT: Schema = {
+  $schema: DRAFT,
+  title: 'Gym leader names',
+  type: 'object',
+  propertyNames: name('gym-leader'),
+  additionalProperties: { type: 'string' },
+};
+
+const ELITE: Schema = {
+  $schema: DRAFT,
+  title: 'Elite Four',
+  type: 'object',
+  propertyNames: name('elite-member'),
+  additionalProperties: part(
+    {
+      type: described(name('type'), 'The type they are known for'),
+      honor: described(name('award'), 'What beating them pays'),
+      sheets: described(SHEETS, 'The charsets they are seen in'),
+      signature: described(name('species'), 'Their ace, standing last'),
+      pool: described(
+        part(
+          {
+            types: names('type', 'The types that count as theirs'),
+            'egg-groups': names('egg-group', 'Egg groups that count as theirs besides'),
+            also: names('species', 'Named species no rule reaches'),
+          },
+          ['types'],
+        ),
+        'What they field out of',
+      ),
+    },
+    ['type', 'honor', 'sheets', 'signature', 'pool'],
+  ),
+};
+
+const BIOME_ELITE: Schema = {
+  $schema: DRAFT,
+  title: 'Biome elite',
+  type: 'object',
+  propertyNames: name('biome'),
+  additionalProperties: names('elite-member', 'In the order a seat rolls from them'),
+};
+
+const ELITE_TEXT: Schema = {
+  $schema: DRAFT,
+  title: 'Elite Four names',
+  type: 'object',
+  propertyNames: name('elite-member'),
   additionalProperties: { type: 'string' },
 };
 
@@ -646,6 +727,12 @@ export default function renderDataSchemas(members: Map<string, string[]>): Map<s
     ['biome-trainers.json', json(BIOME_TRAINERS)],
     ['trainers-text.json', json(TRAINER_TEXT)],
     ['trainer-sheets-text.json', json(TRAINER_SHEET_TEXT)],
+    ['gym-leaders.json', json(GYM_LEADERS)],
+    ['biome-gym-leaders.json', json(BIOME_GYM_LEADERS)],
+    ['gym-leaders-text.json', json(GYM_LEADER_TEXT)],
+    ['elite.json', json(ELITE)],
+    ['biome-elite.json', json(BIOME_ELITE)],
+    ['elite-text.json', json(ELITE_TEXT)],
   ]);
 
   for (const [file, title, entry] of BATTLE_FILES) {

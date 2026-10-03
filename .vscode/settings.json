@@ -47,6 +47,12 @@
     "./src/data/schema/trainer-classes.json": "src/data/overworld/trainers/classes/*.yaml",
     "./src/data/schema/biome-trainers.json": "src/data/overworld/trainers/biomes.yaml",
     "./src/data/schema/trainers-text.json": "src/data/text/*/trainers/*.yaml",
-    "./src/data/schema/trainer-sheets-text.json": "src/data/text/*/trainer-sheets.yaml"
+    "./src/data/schema/trainer-sheets-text.json": "src/data/text/*/trainer-sheets.yaml",
+    "./src/data/schema/gym-leaders.json": "src/data/overworld/experts/gym-leaders.yaml",
+    "./src/data/schema/biome-gym-leaders.json": "src/data/overworld/experts/biome-gym-leaders.yaml",
+    "./src/data/schema/gym-leaders-text.json": "src/data/text/*/gym-leaders.yaml",
+    "./src/data/schema/elite.json": "src/data/overworld/experts/elite.yaml",
+    "./src/data/schema/biome-elite.json": "src/data/overworld/experts/biome-elite.yaml",
+    "./src/data/schema/elite-text.json": "src/data/text/*/elite.yaml"
   }
 }

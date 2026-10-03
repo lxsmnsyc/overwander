@@ -1,0 +1,72 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Elite Four",
+  "type": "object",
+  "propertyNames": {
+    "$ref": "names.json#/definitions/elite-member"
+  },
+  "additionalProperties": {
+    "type": "object",
+    "properties": {
+      "type": {
+        "$ref": "names.json#/definitions/type",
+        "description": "The type they are known for"
+      },
+      "honor": {
+        "$ref": "names.json#/definitions/award",
+        "description": "What beating them pays"
+      },
+      "sheets": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "minItems": 1,
+        "description": "The charsets they are seen in"
+      },
+      "signature": {
+        "$ref": "names.json#/definitions/species",
+        "description": "Their ace, standing last"
+      },
+      "pool": {
+        "type": "object",
+        "properties": {
+          "types": {
+            "type": "array",
+            "items": {
+              "$ref": "names.json#/definitions/type"
+            },
+            "description": "The types that count as theirs"
+          },
+          "egg-groups": {
+            "type": "array",
+            "items": {
+              "$ref": "names.json#/definitions/egg-group"
+            },
+            "description": "Egg groups that count as theirs besides"
+          },
+          "also": {
+            "type": "array",
+            "items": {
+              "$ref": "names.json#/definitions/species"
+            },
+            "description": "Named species no rule reaches"
+          }
+        },
+        "required": [
+          "types"
+        ],
+        "additionalProperties": false,
+        "description": "What they field out of"
+      }
+    },
+    "required": [
+      "type",
+      "honor",
+      "sheets",
+      "signature",
+      "pool"
+    ],
+    "additionalProperties": false
+  }
+}

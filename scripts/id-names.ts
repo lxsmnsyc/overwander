@@ -60,6 +60,8 @@ const TABLES: Table[] = [
   { name: 'AWARD_IDS', enumName: 'Awards', from: './awards', isDefault: true },
   { name: 'LAIR_IDS', enumName: 'Lairs', from: './lairs', isDefault: true },
   { name: 'TRAINER_IDS', enumName: 'TrainerClass', from: './trainers', isDefault: true },
+  { name: 'GYM_LEADER_IDS', enumName: 'GymLeader', from: './gym-leaders', isDefault: true },
+  { name: 'ELITE_MEMBER_IDS', enumName: 'EliteMember', from: './elite', isDefault: true },
   {
     name: 'WEATHER_IDS',
     enumName: 'Weather',

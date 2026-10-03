@@ -1,5 +1,5 @@
-import { Species } from '../ids/species';
-import { getBaseSpecies } from './__create';
+import type { Species } from '../ids/species';
+import { getBaseSpecies, getSpeciesData } from './__create';
 
 /**
  * How long a species' egg takes to open, in hatch cycles.
@@ -7,7 +7,8 @@ import { getBaseSpecies } from './__create';
  * A cycle is the mainline's own unit, and the figures below are its
  * figures: a Magikarp is the cheapest egg in the game and a Mewtwo the
  * dearest, with most of the dex sitting on the same middling number.
- * Only the exceptions are written down — anything absent takes
+ * Only the exceptions are written down, as `egg-cycles:` in the
+ * species' `species/stats/` file. Anything absent takes
  * `DEFAULT_EGG_CYCLES`, which is what the great majority take.
  *
  * What a cycle is worth in steps is
@@ -20,56 +21,6 @@ import { getBaseSpecies } from './__create';
  */
 export const DEFAULT_EGG_CYCLES = 20;
 
-const SPECIES_EGG_CYCLES: Map<Species, number> = new Map([
-  // The one everybody knows: a Magikarp is out of the shell before
-  // anything else has started
-  [Species.Magikarp, 5],
-
-  // Keyed at the stage the line hatches at, which for these is the
-  // baby a later generation put underneath them
-  [Species.Pichu, 10],
-  [Species.Cleffa, 10],
-  [Species.Igglybuff, 10],
-
-  // The early-route lines, which is what makes them early-route
-  [Species.Caterpie, 15],
-  [Species.Weedle, 15],
-  [Species.Pidgey, 15],
-  [Species.Rattata, 15],
-  [Species.Spearow, 15],
-  [Species.Zubat, 15],
-  [Species.Geodude, 15],
-
-  [Species.Onix, 25],
-  [Species.Tyrogue, 25],
-  [Species.MimeJr, 25],
-  [Species.Scyther, 25],
-  [Species.Smoochum, 25],
-  [Species.Elekid, 25],
-  [Species.Magby, 25],
-  [Species.Pinsir, 25],
-
-  // Revived rather than born, and priced accordingly
-  [Species.Omanyte, 30],
-  [Species.Kabuto, 30],
-
-  [Species.Eevee, 35],
-  [Species.Aerodactyl, 35],
-
-  [Species.Happiny, 40],
-  [Species.Lapras, 40],
-  [Species.Munchlax, 40],
-  [Species.Dratini, 40],
-
-  // Nothing lays these, so the figures only ever reach a nest egg or a
-  // raid prize — but a legendary out of a shell should cost a walk
-  [Species.Articuno, 80],
-  [Species.Zapdos, 80],
-  [Species.Moltres, 80],
-  [Species.Mewtwo, 120],
-  [Species.Mew, 120],
-]);
-
 /**
  * How many cycles this species' egg takes.
  *
@@ -78,5 +29,5 @@ const SPECIES_EGG_CYCLES: Map<Species, number> = new Map([
  * can hand out an egg of something already evolved
  */
 export function getEggCycles(species: Species): number {
-  return SPECIES_EGG_CYCLES.get(getBaseSpecies(species)) ?? DEFAULT_EGG_CYCLES;
+  return getSpeciesData(getBaseSpecies(species)).eggCycles ?? DEFAULT_EGG_CYCLES;
 }

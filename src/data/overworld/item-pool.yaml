@@ -1,0 +1,384 @@
+# The ground's item pool by band, each band a map from item to weight in the
+# order a roll walks it, so moving an entry changes what every stash holds.
+# A lowercase key is a whole family at that weight apiece (`wings: 3`), read
+# from the family's own table. Which ground hides what is biome-items.ts.
+
+base:
+  PokeBall: 30
+  GreatBall: 10
+  PremierBall: 5
+  HealBall: 5
+  LuxuryBall: 5
+  Pearl: 8
+  Stardust: 8
+  # The roadside trinkets: a shell off a beach, a feather off a
+  # path, a mushroom nobody would stop for. They are what makes a
+  # walk pay at all, so they are the commonest gold in the game
+  ShoalSalt: 6
+  ShoalShell: 6
+  PrettyWing: 6
+  TinyMushroom: 8
+  # The first rung of the relic ladder. It is worth what a Stardust
+  # is worth, so it is hidden where a Stardust is hidden
+  RelicCopper: 4
+  # Somebody's rubbish, which is a meal to a Poison type and a slow
+  # poisoning to everyone else. It is litter, so it lies where
+  # litter lies
+  BlackSludge: 4
+  # A burr picked up off the same walk, and about as welcome
+  StickyBarb: 4
+  # The way out of a cave, hidden in the country that has caves in
+  # it as often as anywhere else: a rope is worth carrying before
+  # you need it
+  EscapeRope: 6
+  # The everyday medicine. A walk that turns up a Potion and an
+  # Antidote is a walk that paid for the raid it is walking towards
+  Potion: 12
+  Antidote: 5
+  BurnHeal: 5
+  IceHeal: 5
+  Awakening: 5
+  ParalyzeHeal: 5
+  # The herbs grow where a walk goes, which is the reason they cost
+  # less than what a shop bottles: they are picked rather than
+  # bought, and the pokemon that swallows one settles the bill
+  EnergyPowder: 8
+  HealPowder: 8
+  # A jar for a honey tree, left where the trees are
+  Honey: 6
+uncommon:
+  NetBall: 10
+  DiveBall: 10
+  NestBall: 10
+  RepeatBall: 10
+  TimerBall: 10
+  QuickBall: 10
+  DuskBall: 10
+  BeastBall: 3
+  # A shade thinner than the base valuables would make them, so the
+  # band's doubled width never makes a dearer find the commoner one
+  BigPearl: 7
+  StarPiece: 7
+  BigMushroom: 6
+  # Priced with the Big Mushroom, so it is hidden with it: a bone in
+  # a richer band than a dearer pearl would break the ladder
+  RareBone: 5
+  SuperPotion: 10
+  FullHeal: 6
+  # The only thing the Move Reminder takes. It is dug up rather than
+  # bought because nothing sells one: a forgotten move costs a walk,
+  # which is what the move cost in the first place
+  HeartScale: 8
+  # Holding a line one stage short of where it would go is a
+  # decision players make early and often, so the stone is common
+  Everstone: 6
+scarce:
+  UltraBall: 15
+  # Kurt's balls, dropped by whoever carried one out of his shop.
+  # Thin, since nobody sells them and each is for one kind of catch
+  LevelBall: 3
+  LureBall: 3
+  MoonBall: 3
+  FriendBall: 3
+  LoveBall: 3
+  HeavyBall: 3
+  FastBall: 3
+  RelicSilver: 4
+  HyperPotion: 6
+  # The root is a Hyper Potion's worth and then some, so it sits in
+  # the band the Hyper Potion sits in rather than with the powders
+  EnergyRoot: 6
+  # What a party comes back from a lost fight on, all of it bottled
+  # and sold. The herb is a Revive that grows out of the ground
+  MaxPotion: 6
+  Revive: 6
+  RevivalHerb: 4
+  # The stones that hold a sky out longer, and the clay that does
+  # the same for a screen. Thin slots: each is worth nothing to a
+  # party not built around the thing it lengthens
+  DampRock: 3
+  HeatRock: 3
+  IcyRock: 3
+  SmoothRock: 3
+  LightClay: 3
+  TerrainExtender: 3
+  # Pulled up with them, and about as particular: everything to a
+  # pokemon that drains, nothing to anything else
+  BigRoot: 4
+  # The wings, blown along the ground: three points of training
+  # each, and the only effort a pokemon gets that its levels did
+  # not pay for. Thin slots, because they are the one thing in the
+  # game that raises a stat past what a level allows
+  wings: 3
+  # The one-shots, dropped where their moment ended. Each waits for
+  # one thing to happen to its holder and is spent on it, which is
+  # the band's own test: through the next fight and no further
+  one-shots: 2
+  # The everyday held gear: a type lifted by a fifth, a tenth more
+  # damage, a lens. Thin slots each, since there are forty-five of
+  # them. The type boosters also drop off the wild species that
+  # carry them
+  type-boosters: 1
+  market-gear: 1
+  # Left behind by whatever wriggled out of it, which is what it
+  # does for whoever picks it up
+  ShedShell: 4
+  # Boots somebody walked out of: worth a slot to anything that has
+  # to walk back onto a field somebody else laid spikes on
+  HeavyDutyBoots: 4
+  # Somebody's weighted dice, which is worth a slot to the handful
+  # of pokemon that throw a move several times over
+  LoadedDice: 3
+  # The training kit: a brace heavier than anything wants to wear, a
+  # bell rung for a pokemon that was not caught in a comfortable
+  # ball, and the candy pair, a walk's worth of extra candy each
+  MachoBrace: 3
+  SootheBell: 3
+  ExpShare: 2
+  LuckyEgg: 2
+rare:
+  FireStone: 10
+  WaterStone: 10
+  ThunderStone: 10
+  LeafStone: 10
+  MoonStone: 10
+  SunStone: 10
+  # Sinnoh's four, buried like the six above them now that a line
+  # asks for each
+  ShinyStone: 8
+  DuskStone: 8
+  DawnStone: 8
+  IceStone: 8
+  # Not a stone, and here for the same reason they are: it is used
+  # on a pokemon and spent. Thinner, because a Rotom wants more
+  # than one of them and nobody sells any
+  RotomCatalog: 6
+  # Beside it for the same reason, and as thin: a Zygarde goes both
+  # ways between its shapes, so one cube is never enough either
+  ZygardeCube: 6
+  # What a trade or a held evolution asks for, on the stones' terms
+  # but thinner: each is wanted by one line rather than several
+  KingsRock: 3
+  DragonScale: 3
+  UpGrade: 3
+  Protector: 3
+  Electirizer: 3
+  Magmarizer: 3
+  ReaperCloth: 3
+  DubiousDisc: 3
+  DeepSeaTooth: 3
+  DeepSeaScale: 3
+  PrismScale: 3
+  OvalStone: 3
+  RazorClaw: 3
+  RazorFang: 3
+  LinkingCord: 4
+  # A level for any line, whatever candy it takes
+  RareCandy: 5
+  # 10 effort a bottle, one step past the wings' 3
+  vitamins: 3
+  # A step off one move's cooldown for good; its bigger bottle is
+  # prized
+  PPUp: 3
+  Nugget: 8
+  # The middle of the ladder, thinning as it climbs
+  # Cut off a Slowpoke, and worth more than the nugget it is found
+  # beside, which is the joke, and the reason it is thin
+  SlowpokeTail: 3
+  PearlString: 5
+  RelicGold: 4
+  BalmMushroom: 4
+  BigNugget: 2
+  # The top of the medicine: the Full Restore, and the Max Revive
+  # that brings a pokemon back from nothing at full health. Both are
+  # bottled and sold, so a find is a saving rather than a prize
+  FullRestore: 4
+  MaxRevive: 5
+  # The relics: a Cubone's bone, a Ditto's dust. Thinner than the
+  # band's staples because each is worth nothing to anybody who has
+  # not caught that one species, and one to anybody who has
+  LightBall: 3
+  ThickClub: 3
+  MetalPowder: 3
+  QuickPowder: 3
+  # And the two that sharpen one species' aim: a Chansey's glove
+  # and a Farfetch'd leek
+  LuckyPunch: 3
+  Stick: 3
+  # A Soul Dew is nothing to anybody but the pair it belongs to
+  SoulDew: 2
+  # A stone's weight, because every pokemon a player owns wants one,
+  # where a Fire Stone is wanted once, by one line
+  Leftovers: 10
+  # The plates, buried where they fell. Seventeen thin slots share
+  # about what one stone is worth, so digging one up stays an event
+  plates: 1
+  # The Drives are found on the same terms as the plates
+  drives: 1
+  # And the Mega Stones, which are held for a shape the way a plate is
+  mega-stones: 1
+  # The Memories on the plates' terms, and the Z-Crystals on the stones'
+  memories: 1
+  type-crystals: 1
+  signature-crystals: 1
+  # The strongest gear, on the plates' terms: thin slots, so the
+  # band stays the stones' and finding a Choice Band stays an event
+  orbs: 1
+  stat-boosters: 1
+prized:
+  # A dug-up cap fixes one stat of one pokemon, and nothing else in
+  # the game touches what a catch was born with. The commonest of
+  # the three, so the band has something a player can actually hope
+  # for. Its golden twin, which fixes all six, stays special
+  BottleCap: 10
+  # The only way a shadow is ever put right, and a shadow is a raid
+  # rather than an everyday thing
+  PurifyingGem: 8
+  # The only thing that widens a pokemon rather than filling it in.
+  # Thin: a second held item is a whole build, and one belt is one
+  # pokemon's worth of it
+  UtilityBelt: 4
+  # Room for another move, as thin as the belt: a fifth move is a
+  # whole new way for one pokemon to fight
+  SkillBook: 4
+  # Room for another ability, which the Channeler then has
+  # something to fill. Commoner than the belt: a species that
+  # cannot reach four on its own needs one before she is any use
+  AbilityCapsule: 6
+  # The one ability nothing rolls, written into a pokemon that
+  # already has everything its line can be born with. Thin: it
+  # cannot be taken back
+  AbilityPatch: 4
+  # One crossing of the world. It is spent in the crossing, so it
+  # changes where a player is rather than what a pokemon is, but it
+  # is the only thing that does, and a network nobody can reach is
+  # no network. Prized rather than special: the map is meant to be
+  # walked more than once in a lifetime
+  PortalKey: 8
+  # The one thing in the game that answers a party being wiped out,
+  # and it answers once. Thin, and prized rather than special
+  # because a team that finds one has found a second chance rather
+  # than something nobody else will ever see
+  SacredAsh: 4
+  # The fossils. Reviving one is irreversible and is the only way
+  # to the species inside, which is the test this band is for; the
+  # maniac sells them, so the pool is the lucky route rather than
+  # the only one. The amber is thinner because Aerodactyl is
+  HelixFossil: 8
+  DomeFossil: 8
+  OldAmber: 5
+  RootFossil: 8
+  ClawFossil: 8
+  SkullFossil: 8
+  ArmorFossil: 8
+  CoverFossil: 8
+  PlumeFossil: 8
+  JawFossil: 8
+  SailFossil: 8
+  # The rock a Deoxys rearranges itself with, spent on each
+  # rearrangement. Prized rather than special: it is worth nothing
+  # to anybody who has not been to the island, and everything to
+  # whoever has
+  Meteorite: 4
+  # The orbs and the flower, which the meteorite is the first of:
+  # each is worth nothing at all until its own legendary has been
+  # caught, and everything the moment one has. Thinner than the
+  # rock, since each names one pokemon where the rock names four
+  # shapes of the same one
+  AdamantOrb: 3
+  LustrousOrb: 3
+  GriseousOrb: 3
+  BlueOrb: 3
+  RedOrb: 3
+  Gracidea: 3
+  # As thin as the orbs, for the same reason: the splicers are worth
+  # nothing until a Kyurem has been caught
+  DnaSplicers: 3
+  PrisonBottle: 3
+  # A little thicker than an orb: one mirror serves three genies
+  RevealGlass: 4
+  # The prisms, on the orbs' terms: each names one pokemon
+  NSolarizer: 3
+  NLunarizer: 3
+  # The nectars, spent the way the meteorite is and as thin: four
+  # styles of one pokemon share them
+  RedNectar: 1
+  YellowNectar: 1
+  PinkNectar: 1
+  PurpleNectar: 1
+  # Three purses instead of one, for good, and nothing sells one.
+  # Here rather than in rare so that parting with it is asked about
+  # twice
+  AmuletCoin: 4
+  # The ruins. They change nothing about a pokemon, which is what
+  # the rest of this band is for; what puts them here is that one of
+  # them pays for a season of everything else, and a band that draws
+  # a Bottle Cap is the right rate for that.
+  #
+  # The four are spread rather than levelled, because the ladder is
+  # read by price: each is dearer than the one above it, so each is
+  # scarcer than the one above it
+  RelicVase: 4
+  CometShard: 3
+  RelicBand: 2
+  RelicStatue: 1
+  # The power items: each decides what a player's next fifty eggs
+  # are made of, which is the band's permanence test passed on the
+  # next generation rather than on the holder
+  power-items: 3
+  # A move's cooldown taken as far down as it goes, for good
+  PPMax: 2
+  # A lamp for the dark underground, and nobody sells one
+  ExplorerKit: 3
+  # The mints. A nature is two stats for the rest of a pokemon's
+  # life and nothing else touches one, which is this band exactly.
+  # The thinnest weight there is, because there are twenty-one of
+  # them: finding a mint is ordinary, finding the one a player came
+  # for is not, and the chef is who they go to when it matters
+  mints: 1
+special:
+  MasterBall: 10
+  ShinyCharm: 10
+  # Beside the Shiny Charm and a little readier to turn up: what it
+  # is worth is half again on a throw rather than eight times a
+  # roll, so it is the lesser of the two charms in every sense
+  CatchingCharm: 12
+  # The only way a mythical is ever fought: the relic is found
+  # here or not at all
+  OldSeaMap: 6
+  GSBall: 6
+  AuroraTicket: 6
+  WishTag: 6
+  MemberCard: 6
+  ManaphyEgg: 6
+  OaksLetter: 6
+  AzureFlute: 6
+  ColtsPetal: 6
+  LibertyPass: 6
+  MusicBox: 6
+  ColressMachine: 6
+  HeartDiamond: 6
+  SealedRing: 6
+  SteamValve: 6
+  AncientPokeBall: 6
+  HerosCharm: 6
+  WindmillCharm: 6
+  MysteryBox: 6
+  # Six stats made perfect at once. Nothing else undoes a bad roll,
+  # so it belongs with the things gold cannot buy
+  GoldenBottleCap: 8
+  # A stat's effort filled in one go, and every level at once. Each
+  # stays wider than the crown, which is the rarest find there is
+  max-vitamins: 4
+  RareCandyMax: 6
+  # The one thing here that is only gold. Everything beside it is
+  # something gold cannot buy, and the crown earns its place the
+  # other way round: six hundred thousand is more than the game pays
+  # for anything else, so the band that hides a Master Ball is the
+  # only one that can hide it.
+  #
+  # Thin even for this band, and that is the whole of why. A band
+  # eight times rarer is not by itself rarer than a wide slot in the
+  # band below: at 5 the crown outdrew the statue under it, which is
+  # worth two thirds as much
+  RelicCrown: 3

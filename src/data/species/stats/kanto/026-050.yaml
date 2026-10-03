@@ -80,6 +80,7 @@ Clefairy:
     height: 0.3
     weight: 3
     gender: [1, 3]
+    egg-cycles: 10
 Vulpix:
   Vulpix:
     stats: { HP: 38, Attack: 41, Defense: 40, SpecialAttack: 50, SpecialDefense: 65, Speed: 65 }
@@ -124,6 +125,7 @@ Jigglypuff:
     height: 0.3
     weight: 1
     gender: [1, 3]
+    egg-cycles: 10
 Zubat:
   Zubat:
     stats: { HP: 40, Attack: 45, Defense: 35, SpecialAttack: 30, SpecialDefense: 40, Speed: 55 }
@@ -131,6 +133,7 @@ Zubat:
     height: 0.8
     weight: 7.5
     gender: [1, 1]
+    egg-cycles: 15
   Golbat:
     stats: { HP: 75, Attack: 80, Defense: 70, SpecialAttack: 65, SpecialDefense: 75, Speed: 90 }
     catch-rate: 90

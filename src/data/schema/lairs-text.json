@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Lair names",
+  "type": "object",
+  "propertyNames": {
+    "$ref": "names.json#/definitions/lair"
+  },
+  "additionalProperties": {
+    "type": "string"
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Trainer classes",
+  "type": "object",
+  "propertyNames": {
+    "$ref": "names.json#/definitions/trainer"
+  },
+  "additionalProperties": {
+    "type": "object",
+    "properties": {
+      "types": {
+        "type": "array",
+        "items": {
+          "$ref": "names.json#/definitions/type"
+        },
+        "description": "What it fields; an empty list is every type"
+      },
+      "sheets": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "minItems": 1,
+        "description": "The charsets it may stand in"
+      },
+      "trade": {
+        "$ref": "names.json#/definitions/trainer",
+        "description": "The trade it is one region's version of, left out where it is its own"
+      }
+    },
+    "required": [
+      "types",
+      "sheets"
+    ],
+    "additionalProperties": false
+  }
+}

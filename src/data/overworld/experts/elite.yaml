@@ -1,0 +1,246 @@
+# The Elite Four, each by their enum name: the `type` they are known for,
+# the `honor` beating them pays, the `sheets` they are seen in, the
+# `signature` that stands last, and the `pool` they field out of: its
+# `types`, any `egg-groups` that count as theirs besides, and the species
+# no rule reaches that are theirs `also`. What each is called is text/en.
+# Which badges each asks to see is read off the honor, by league.
+
+# Kanto
+
+# Slowbro is hers in every game she appears in and there is nothing icy
+# about him, so he is named rather than derived
+Lorelei:
+  type: Ice
+  honor: LoreleiDefeated
+  sheets: [characters/frlg/lorelei]
+  signature: Lapras
+  pool:
+    types: [Ice]
+    also: [Slowbro]
+# The Ground half brings the heavy ground with it, and overlaps Brock's
+# rock at Golem and Rhydon, which is right: they are the same pokemon a
+# fighting specialist and a rock specialist would both want. Onix is
+# named, since a Steelix above him puts him below the band the rules read
+Bruno:
+  type: Fighting
+  honor: BrunoDefeated
+  sheets:
+    - characters/frlg/bruno
+    - characters/lgpe/bruno
+  signature: Machamp
+  pool:
+    types: [Fighting, Ground]
+    also: [Onix]
+# The Ghost type on its own, now that it runs to a dozen grown species
+# across the regions. She carried the Amorphous group while Kanto had one
+# grown Ghost, and that widener had come to reach Gardevoir and Castform,
+# which no ghost specialist would field. Her Golbat and Arbok stay named
+Agatha:
+  type: Ghost
+  honor: AgathaDefeated
+  sheets:
+    - characters/frlg/agatha
+    - characters/lgpe/agatha
+  signature: Gengar
+  pool:
+    types: [Ghost]
+    also: [Golbat, Arbok]
+# The Dragon egg group is the whole point: it is why a Gyarados stands on
+# a dragon master's team. Aerodactyl is a dragon by neither rule and by
+# every eye, so he is named
+Lance:
+  type: Dragon
+  honor: LanceDefeated
+  sheets:
+    - characters/frlg/lance
+    - characters/lgpe/lance
+  signature: Dragonite
+  pool:
+    types: [Dragon]
+    egg-groups: [Dragon]
+    also: [Aerodactyl]
+
+# Johto
+
+# Johto's three each field a type wide enough to stand on its own, so none
+# of them needs a widener
+Will:
+  type: Psychic
+  honor: WillDefeated
+  sheets: [characters/hgss/will]
+  signature: Xatu
+  pool:
+    types: [Psychic]
+# His Heart Gold sheet alone. The other two are the gym leader's, and a
+# sprite is unlocked by one deed: the Soul Badge is what he is worn off in
+# Kanto, his mark is what he is worn off in Johto
+Koga:
+  type: Poison
+  honor: KogaDefeated
+  sheets: [characters/hgss/koga]
+  signature: Crobat
+  pool:
+    types: [Poison]
+Karen:
+  type: Dark
+  honor: KarenDefeated
+  sheets: [characters/hgss/karen]
+  signature: Houndoom
+  pool:
+    types: [Dark]
+# His Heart Gold sheet, the way the rest of Johto's league is drawn. The
+# Kanto seat above keeps the two he is drawn in there
+JohtoBruno:
+  type: Fighting
+  honor: JohtoBrunoDefeated
+  sheets: [characters/hgss/bruno]
+  signature: Machamp
+  pool:
+    types: [Fighting, Ground]
+    also: [Onix]
+
+# Hoenn
+
+# Hoenn's four field their type and nothing else: each of their mainline
+# teams is that type all the way down, Sableye and Kingdra included, so
+# there is nothing for a widener to reach
+Sidney:
+  type: Dark
+  honor: SidneyDefeated
+  sheets: [characters/oras/sidney]
+  signature: Absol
+  pool:
+    types: [Dark]
+Phoebe:
+  type: Ghost
+  honor: PhoebeDefeated
+  sheets: [characters/oras/phoebe]
+  signature: Dusclops
+  pool:
+    types: [Ghost]
+Glacia:
+  type: Ice
+  honor: GlaciaDefeated
+  sheets: [characters/oras/glacia]
+  signature: Walrein
+  pool:
+    types: [Ice]
+Drake:
+  type: Dragon
+  honor: DrakeDefeated
+  sheets: [characters/oras/drake]
+  signature: Salamence
+  pool:
+    types: [Dragon]
+
+# Sinnoh
+
+# Drapion is a Poison and Dark pokemon that Aaron closes with in every
+# game he is in, which is Agatha's Golbat again: the type chart does not
+# reach it and the man fields it anyway
+# Not the Drapion he actually closes with: a signature is of the expert's
+# own kind, and the bug he keeps in both his teams is the Heracross
+Aaron:
+  type: Bug
+  honor: AaronDefeated
+  sheets: [characters/dppt/aaron]
+  signature: Heracross
+  pool:
+    types: [Bug]
+    also: [Drapion]
+# The Sudowoodo is hers in Diamond and Pearl, and it is rock rather than
+# ground
+Bertha:
+  type: Ground
+  honor: BerthaDefeated
+  sheets: [characters/dppt/bertha]
+  signature: Hippowdon
+  pool:
+    types: [Ground]
+    also: [Sudowoodo]
+# Platinum's ace, from the team that is fire all the way down. Diamond and
+# Pearl close him with an Infernape, which is a starter a player chooses
+# rather than a pokemon of his
+Flint:
+  type: Fire
+  honor: FlintDefeated
+  sheets: [characters/dppt/flint]
+  signature: Magmortar
+  pool:
+    types: [Fire]
+Lucian:
+  type: Psychic
+  honor: LucianDefeated
+  sheets: [characters/dppt/lucian]
+  signature: Bronzong
+  pool:
+    types: [Psychic]
+
+# Unova
+
+# Unova's four are each their type all the way down, the way Hoenn's are,
+# so none of them needs a widener
+Shauntal:
+  type: Ghost
+  honor: ShauntalDefeated
+  sheets: [characters/b2w2/shauntal]
+  signature: Chandelure
+  pool:
+    types: [Ghost]
+Marshal:
+  type: Fighting
+  honor: MarshalDefeated
+  sheets: [characters/b2w2/marshal]
+  signature: Conkeldurr
+  pool:
+    types: [Fighting]
+Grimsley:
+  type: Dark
+  honor: GrimsleyDefeated
+  sheets: [characters/b2w2/grimsley]
+  signature: Bisharp
+  pool:
+    types: [Dark]
+# The Battle Castle's lady, grown into a league seat. The Frontier keeps
+# its own Caitlin, and the two are the same person
+# Her league sheet. The Frontier seat keeps the one she is drawn in at the
+# Battle Castle, and each is worn off its own deed
+Caitlin:
+  type: Psychic
+  honor: CaitlinDefeated
+  sheets: [characters/b2w2/caitlin]
+  signature: Reuniclus
+  pool:
+    types: [Psychic]
+
+# Kalos
+
+# The Talonflame she closes with, since her Pyroar is staged nowhere yet
+Malva:
+  type: Fire
+  honor: MalvaDefeated
+  sheets: [characters/xy/malva]
+  signature: Talonflame
+  pool:
+    types: [Fire]
+Siebold:
+  type: Water
+  honor: SieboldDefeated
+  sheets: [characters/xy/siebold]
+  signature: Barbaracle
+  pool:
+    types: [Water]
+Wikstrom:
+  type: Steel
+  honor: WikstromDefeated
+  sheets: [characters/xy/wikstrom]
+  signature: Aegislash
+  pool:
+    types: [Steel]
+Drasna:
+  type: Dragon
+  honor: DrasnaDefeated
+  sheets: [characters/xy/drasna]
+  signature: Noivern
+  pool:
+    types: [Dragon]

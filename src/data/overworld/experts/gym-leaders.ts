@@ -1,22 +1,29 @@
-import { Types } from '../../constants/types';
-import Awards from '../../ids/awards';
-import Biome from '../../ids/biome';
+import * as v from 'valibot';
+import type { Types } from '../../constants/types';
+import type Awards from '../../ids/awards';
+import type Biome from '../../ids/biome';
+import GymLeader from '../../ids/gym-leaders';
 import { type Items, getMachineItem } from '../../ids/items';
 import type { Moves } from '../../ids/moves';
+import { AWARD_IDS, BIOME_IDS, GYM_LEADER_IDS, SPECIES_IDS, TYPE_IDS } from '../../ids/names';
+import type { Species } from '../../ids/species';
 import { getTeachableMoves } from '../../items/machines';
 import { getMoveData } from '../../moves';
+import namesFile from '../../text/en/gym-leaders.yaml';
+import { idOf, idsOf } from '../../yaml';
+import biomesFile from './biome-gym-leaders.yaml';
+import leadersFile from './gym-leaders.yaml';
+
+export { GymLeader };
 
 /**
  * The type experts who stand at the fighting landmarks above a plain
  * trainer: gym leaders, the Elite Four and the Champion. Who stands
  * at a given cell and what they field both turn over with the window,
- * like any other stop
- */
-
-/**
- * The leaders of the regions, numbered Kanto's eight, Johto's,
- * Hoenn's, Sinnoh's, Unova's, then Kalos's. Which of them a country seats is
- * the table below.
+ * like any other stop.
+ *
+ * The leaders are data, in `gym-leaders.yaml`, `biome-gym-leaders.yaml`
+ * and `text/en/gym-leaders.yaml`; the numbers are `ids/gym-leaders.ts`.
  *
  * Two regions seat more people than they have gyms. Mossdeep is kept
  * by two, so Tate and Liza are a leader each and share the one badge.
@@ -25,364 +32,28 @@ import { getMoveData } from '../../moves';
  * in Aspertia a league later, so the Basic Badge has two keepers as
  * well. Iris is left out, since Opelucid is Drayden's here
  */
-const enum GymLeader {
-  Brock = 0,
-  Misty = 1,
-  LtSurge = 2,
-  Erika = 3,
-  Koga = 4,
-  Sabrina = 5,
-  Blaine = 6,
-  Giovanni = 7,
-  Falkner = 8,
-  Bugsy = 9,
-  Whitney = 10,
-  Morty = 11,
-  Chuck = 12,
-  Jasmine = 13,
-  Pryce = 14,
-  Clair = 15,
-  Roxanne = 16,
-  Brawly = 17,
-  Wattson = 18,
-  Flannery = 19,
-  Norman = 20,
-  Winona = 21,
-  Tate = 22,
-  Liza = 23,
-  Juan = 24,
-  Roark = 25,
-  Gardenia = 26,
-  Maylene = 27,
-  CrasherWake = 28,
-  Fantina = 29,
-  Byron = 30,
-  Candice = 31,
-  Volkner = 32,
-  Cilan = 33,
-  Chili = 34,
-  Cress = 35,
-  Lenora = 36,
-  Burgh = 37,
-  Elesa = 38,
-  Clay = 39,
-  Skyla = 40,
-  Brycen = 41,
-  Drayden = 42,
-  Cheren = 43,
-  Roxie = 44,
-  Marlon = 45,
-  Viola = 46,
-  Grant = 47,
-  Korrina = 48,
-  Ramos = 49,
-  Clemont = 50,
-  Valerie = 51,
-  Olympia = 52,
-  Wulfric = 53,
-}
+const LEADER = v.object({
+  type: v.string(),
+  badge: v.string(),
+  sheets: v.array(v.string()),
+  prize: v.optional(v.array(v.string())),
+  later: v.optional(v.array(v.string())),
+  signature: v.string(),
+});
 
-export { GymLeader };
+/** Every leader, in the order they are numbered */
+export const GYM_LEADERS: GymLeader[] = [];
 
-export const GYM_LEADERS: GymLeader[] = [
-  GymLeader.Brock,
-  GymLeader.Misty,
-  GymLeader.LtSurge,
-  GymLeader.Erika,
-  GymLeader.Koga,
-  GymLeader.Sabrina,
-  GymLeader.Blaine,
-  GymLeader.Giovanni,
-  GymLeader.Falkner,
-  GymLeader.Bugsy,
-  GymLeader.Whitney,
-  GymLeader.Morty,
-  GymLeader.Chuck,
-  GymLeader.Jasmine,
-  GymLeader.Pryce,
-  GymLeader.Clair,
-  GymLeader.Roxanne,
-  GymLeader.Brawly,
-  GymLeader.Wattson,
-  GymLeader.Flannery,
-  GymLeader.Norman,
-  GymLeader.Winona,
-  GymLeader.Tate,
-  GymLeader.Liza,
-  GymLeader.Juan,
-  GymLeader.Roark,
-  GymLeader.Gardenia,
-  GymLeader.Maylene,
-  GymLeader.CrasherWake,
-  GymLeader.Fantina,
-  GymLeader.Byron,
-  GymLeader.Candice,
-  GymLeader.Volkner,
-  GymLeader.Cilan,
-  GymLeader.Chili,
-  GymLeader.Cress,
-  GymLeader.Lenora,
-  GymLeader.Burgh,
-  GymLeader.Elesa,
-  GymLeader.Clay,
-  GymLeader.Skyla,
-  GymLeader.Brycen,
-  GymLeader.Drayden,
-  GymLeader.Cheren,
-  GymLeader.Roxie,
-  GymLeader.Marlon,
-  GymLeader.Viola,
-  GymLeader.Grant,
-  GymLeader.Korrina,
-  GymLeader.Ramos,
-  GymLeader.Clemont,
-  GymLeader.Valerie,
-  GymLeader.Olympia,
-  GymLeader.Wulfric,
-];
+export const GYM_LEADER_NAMES: Record<number, string> = {};
 
-export const GYM_LEADER_NAMES: Record<GymLeader, string> = {
-  [GymLeader.Brock]: 'Brock',
-  [GymLeader.Misty]: 'Misty',
-  [GymLeader.LtSurge]: 'Lt. Surge',
-  [GymLeader.Erika]: 'Erika',
-  [GymLeader.Koga]: 'Koga',
-  [GymLeader.Sabrina]: 'Sabrina',
-  [GymLeader.Blaine]: 'Blaine',
-  [GymLeader.Giovanni]: 'Giovanni',
-  [GymLeader.Falkner]: 'Falkner',
-  [GymLeader.Bugsy]: 'Bugsy',
-  [GymLeader.Whitney]: 'Whitney',
-  [GymLeader.Morty]: 'Morty',
-  [GymLeader.Chuck]: 'Chuck',
-  [GymLeader.Jasmine]: 'Jasmine',
-  [GymLeader.Pryce]: 'Pryce',
-  [GymLeader.Clair]: 'Clair',
-  [GymLeader.Roxanne]: 'Roxanne',
-  [GymLeader.Brawly]: 'Brawly',
-  [GymLeader.Wattson]: 'Wattson',
-  [GymLeader.Flannery]: 'Flannery',
-  [GymLeader.Norman]: 'Norman',
-  [GymLeader.Winona]: 'Winona',
-  [GymLeader.Tate]: 'Tate',
-  [GymLeader.Liza]: 'Liza',
-  [GymLeader.Juan]: 'Juan',
-  [GymLeader.Roark]: 'Roark',
-  [GymLeader.Gardenia]: 'Gardenia',
-  [GymLeader.Maylene]: 'Maylene',
-  // The name he goes by in his own gym, and the one on the badge case
-  [GymLeader.CrasherWake]: 'Crasher Wake',
-  [GymLeader.Fantina]: 'Fantina',
-  [GymLeader.Byron]: 'Byron',
-  [GymLeader.Candice]: 'Candice',
-  [GymLeader.Volkner]: 'Volkner',
-  [GymLeader.Cilan]: 'Cilan',
-  [GymLeader.Chili]: 'Chili',
-  [GymLeader.Cress]: 'Cress',
-  [GymLeader.Lenora]: 'Lenora',
-  [GymLeader.Burgh]: 'Burgh',
-  [GymLeader.Elesa]: 'Elesa',
-  [GymLeader.Clay]: 'Clay',
-  [GymLeader.Skyla]: 'Skyla',
-  [GymLeader.Brycen]: 'Brycen',
-  // Opelucid is kept by him in Black and by Iris in White, and she
-  // is the one who goes on to be champion, so the gym is his here
-  [GymLeader.Drayden]: 'Drayden',
-  [GymLeader.Cheren]: 'Cheren',
-  [GymLeader.Roxie]: 'Roxie',
-  [GymLeader.Marlon]: 'Marlon',
-  [GymLeader.Viola]: 'Viola',
-  [GymLeader.Grant]: 'Grant',
-  [GymLeader.Korrina]: 'Korrina',
-  [GymLeader.Ramos]: 'Ramos',
-  [GymLeader.Clemont]: 'Clemont',
-  [GymLeader.Valerie]: 'Valerie',
-  [GymLeader.Olympia]: 'Olympia',
-  [GymLeader.Wulfric]: 'Wulfric',
-};
+/** What each leader fields */
+export const GYM_LEADER_TYPES: Record<number, Types> = {};
 
-/** What each leader fields. */
-export const GYM_LEADER_TYPES: Record<GymLeader, Types> = {
-  [GymLeader.Brock]: Types.Rock,
-  [GymLeader.Misty]: Types.Water,
-  [GymLeader.LtSurge]: Types.Electric,
-  [GymLeader.Erika]: Types.Grass,
-  [GymLeader.Koga]: Types.Poison,
-  [GymLeader.Sabrina]: Types.Psychic,
-  [GymLeader.Blaine]: Types.Fire,
-  [GymLeader.Giovanni]: Types.Ground,
-  [GymLeader.Falkner]: Types.Flying,
-  [GymLeader.Bugsy]: Types.Bug,
-  [GymLeader.Whitney]: Types.Normal,
-  [GymLeader.Morty]: Types.Ghost,
-  [GymLeader.Chuck]: Types.Fighting,
-  [GymLeader.Jasmine]: Types.Steel,
-  [GymLeader.Pryce]: Types.Ice,
-  [GymLeader.Clair]: Types.Dragon,
-  [GymLeader.Roxanne]: Types.Rock,
-  [GymLeader.Brawly]: Types.Fighting,
-  [GymLeader.Wattson]: Types.Electric,
-  [GymLeader.Flannery]: Types.Fire,
-  [GymLeader.Norman]: Types.Normal,
-  [GymLeader.Winona]: Types.Flying,
-  [GymLeader.Tate]: Types.Psychic,
-  [GymLeader.Liza]: Types.Psychic,
-  [GymLeader.Juan]: Types.Water,
-  [GymLeader.Roark]: Types.Rock,
-  [GymLeader.Gardenia]: Types.Grass,
-  [GymLeader.Maylene]: Types.Fighting,
-  [GymLeader.CrasherWake]: Types.Water,
-  [GymLeader.Fantina]: Types.Ghost,
-  [GymLeader.Byron]: Types.Steel,
-  [GymLeader.Candice]: Types.Ice,
-  [GymLeader.Volkner]: Types.Electric,
-  // Striaton's three, one gym and three fights
-  [GymLeader.Cilan]: Types.Grass,
-  [GymLeader.Chili]: Types.Fire,
-  [GymLeader.Cress]: Types.Water,
-  [GymLeader.Lenora]: Types.Normal,
-  [GymLeader.Burgh]: Types.Bug,
-  [GymLeader.Elesa]: Types.Electric,
-  [GymLeader.Clay]: Types.Ground,
-  [GymLeader.Skyla]: Types.Flying,
-  [GymLeader.Brycen]: Types.Ice,
-  [GymLeader.Drayden]: Types.Dragon,
-  // The three the sequels seat: Cheren takes Lenora's fight in
-  // another town, and the other two are gyms the first league
-  // never ran
-  [GymLeader.Cheren]: Types.Normal,
-  [GymLeader.Roxie]: Types.Poison,
-  [GymLeader.Marlon]: Types.Water,
-  [GymLeader.Viola]: Types.Bug,
-  [GymLeader.Grant]: Types.Rock,
-  [GymLeader.Korrina]: Types.Fighting,
-  [GymLeader.Ramos]: Types.Grass,
-  [GymLeader.Clemont]: Types.Electric,
-  [GymLeader.Valerie]: Types.Fairy,
-  [GymLeader.Olympia]: Types.Psychic,
-  [GymLeader.Wulfric]: Types.Ice,
-};
+/** The badge beating each pays */
+export const GYM_LEADER_BADGES: Record<number, Awards> = {};
 
-export const GYM_LEADER_BADGES: Record<GymLeader, Awards> = {
-  [GymLeader.Brock]: Awards.BoulderBadge,
-  [GymLeader.Misty]: Awards.CascadeBadge,
-  [GymLeader.LtSurge]: Awards.ThunderBadge,
-  [GymLeader.Erika]: Awards.RainbowBadge,
-  [GymLeader.Koga]: Awards.SoulBadge,
-  [GymLeader.Sabrina]: Awards.MarshBadge,
-  [GymLeader.Blaine]: Awards.VolcanoBadge,
-  [GymLeader.Giovanni]: Awards.EarthBadge,
-  [GymLeader.Falkner]: Awards.ZephyrBadge,
-  [GymLeader.Bugsy]: Awards.HiveBadge,
-  [GymLeader.Whitney]: Awards.PlainBadge,
-  [GymLeader.Morty]: Awards.FogBadge,
-  [GymLeader.Chuck]: Awards.StormBadge,
-  [GymLeader.Jasmine]: Awards.MineralBadge,
-  [GymLeader.Pryce]: Awards.GlacierBadge,
-  [GymLeader.Clair]: Awards.RisingBadge,
-  [GymLeader.Roxanne]: Awards.StoneBadge,
-  [GymLeader.Brawly]: Awards.KnuckleBadge,
-  [GymLeader.Wattson]: Awards.DynamoBadge,
-  [GymLeader.Flannery]: Awards.HeatBadge,
-  [GymLeader.Norman]: Awards.BalanceBadge,
-  [GymLeader.Winona]: Awards.FeatherBadge,
-  // One gym, two people: whichever of them a chunk seats, the badge
-  // that gym pays is the same one
-  [GymLeader.Tate]: Awards.MindBadge,
-  [GymLeader.Liza]: Awards.MindBadge,
-  [GymLeader.Juan]: Awards.RainBadge,
-  [GymLeader.Roark]: Awards.CoalBadge,
-  [GymLeader.Gardenia]: Awards.ForestBadge,
-  [GymLeader.Maylene]: Awards.CobbleBadge,
-  [GymLeader.CrasherWake]: Awards.FenBadge,
-  [GymLeader.Fantina]: Awards.RelicBadge,
-  [GymLeader.Byron]: Awards.MineBadge,
-  [GymLeader.Candice]: Awards.IcicleBadge,
-  [GymLeader.Volkner]: Awards.BeaconBadge,
-  // One gym, three people, one badge between them, whichever of the
-  // three fights a challenger
-  [GymLeader.Cilan]: Awards.TrioBadge,
-  [GymLeader.Chili]: Awards.TrioBadge,
-  [GymLeader.Cress]: Awards.TrioBadge,
-  [GymLeader.Lenora]: Awards.BasicBadge,
-  [GymLeader.Burgh]: Awards.InsectBadge,
-  [GymLeader.Elesa]: Awards.BoltBadge,
-  [GymLeader.Clay]: Awards.QuakeBadge,
-  [GymLeader.Skyla]: Awards.JetBadge,
-  [GymLeader.Brycen]: Awards.FreezeBadge,
-  [GymLeader.Drayden]: Awards.LegendBadge,
-  // Aspertia pays what Nacrene paid: the same fight, a league later
-  [GymLeader.Cheren]: Awards.BasicBadge,
-  [GymLeader.Roxie]: Awards.ToxicBadge,
-  [GymLeader.Marlon]: Awards.WaveBadge,
-  [GymLeader.Viola]: Awards.BugBadge,
-  [GymLeader.Grant]: Awards.CliffBadge,
-  [GymLeader.Korrina]: Awards.RumbleBadge,
-  [GymLeader.Ramos]: Awards.PlantBadge,
-  [GymLeader.Clemont]: Awards.VoltageBadge,
-  [GymLeader.Valerie]: Awards.FairyBadge,
-  [GymLeader.Olympia]: Awards.PsychicBadge,
-  [GymLeader.Wulfric]: Awards.IcebergBadge,
-};
-
-export const GYM_LEADER_CHARSETS: Record<GymLeader, string[]> = {
-  [GymLeader.Brock]: ['characters/frlg/brock', 'characters/lgpe/brock'],
-  [GymLeader.Misty]: ['characters/frlg/misty', 'characters/lgpe/misty'],
-  [GymLeader.LtSurge]: ['characters/frlg/surge', 'characters/lgpe/surge'],
-  [GymLeader.Erika]: ['characters/frlg/erika', 'characters/lgpe/erika'],
-  [GymLeader.Koga]: ['characters/frlg/koga', 'characters/lgpe/koga'],
-  [GymLeader.Sabrina]: ['characters/frlg/sabrina', 'characters/lgpe/sabrina'],
-  [GymLeader.Blaine]: ['characters/frlg/blaine', 'characters/lgpe/blaine'],
-  [GymLeader.Giovanni]: ['characters/frlg/giovanni'],
-  [GymLeader.Falkner]: ['characters/hgss/falkner'],
-  [GymLeader.Bugsy]: ['characters/hgss/bugsy'],
-  [GymLeader.Whitney]: ['characters/hgss/whitney'],
-  [GymLeader.Morty]: ['characters/hgss/morty'],
-  [GymLeader.Chuck]: ['characters/hgss/chuck'],
-  [GymLeader.Jasmine]: ['characters/hgss/jasmine'],
-  [GymLeader.Pryce]: ['characters/hgss/pryce'],
-  [GymLeader.Clair]: ['characters/hgss/clair'],
-  [GymLeader.Roxanne]: ['characters/rse/roxanne', 'characters/oras/roxanne'],
-  [GymLeader.Brawly]: ['characters/rse/brawly'],
-  [GymLeader.Wattson]: ['characters/rse/wattson'],
-  [GymLeader.Flannery]: ['characters/rse/flannery', 'characters/oras/flannery'],
-  [GymLeader.Norman]: ['characters/rse/norman'],
-  [GymLeader.Winona]: ['characters/rse/winona'],
-  [GymLeader.Tate]: ['characters/rse/tate', 'characters/oras/tate'],
-  [GymLeader.Liza]: ['characters/rse/liza', 'characters/oras/liza'],
-  [GymLeader.Juan]: ['characters/rse/juan'],
-  [GymLeader.Roark]: ['characters/dppt/roark'],
-  [GymLeader.Gardenia]: ['characters/dppt/gardenia'],
-  [GymLeader.Maylene]: ['characters/dppt/maylene'],
-  [GymLeader.CrasherWake]: ['characters/dppt/crasher-wake'],
-  [GymLeader.Fantina]: ['characters/dppt/fantina'],
-  [GymLeader.Byron]: ['characters/dppt/byron'],
-  [GymLeader.Candice]: ['characters/dppt/candice'],
-  [GymLeader.Volkner]: ['characters/dppt/volkner'],
-  [GymLeader.Cilan]: ['characters/b2w2/cilan'],
-  [GymLeader.Chili]: ['characters/b2w2/chili'],
-  [GymLeader.Cress]: ['characters/b2w2/cress'],
-  // Lenora and Elesa are each drawn twice, once for Black and White
-  // and once for the sequels, and both looks are the same era
-  [GymLeader.Lenora]: ['characters/b2w2/lenora-1', 'characters/b2w2/lenora-2'],
-  [GymLeader.Burgh]: ['characters/b2w2/burgh'],
-  [GymLeader.Elesa]: ['characters/b2w2/elesa-1', 'characters/b2w2/elesa-2'],
-  [GymLeader.Clay]: ['characters/b2w2/clay'],
-  [GymLeader.Skyla]: ['characters/b2w2/skyla'],
-  [GymLeader.Brycen]: ['characters/b2w2/brycen'],
-  [GymLeader.Drayden]: ['characters/b2w2/drayden'],
-  [GymLeader.Cheren]: ['characters/b2w2/cheren-1', 'characters/b2w2/cheren-2'],
-  [GymLeader.Roxie]: ['characters/b2w2/roxie'],
-  [GymLeader.Marlon]: ['characters/b2w2/marlon'],
-  [GymLeader.Viola]: ['characters/xy/viola'],
-  [GymLeader.Grant]: ['characters/xy/grant'],
-  [GymLeader.Korrina]: ['characters/xy/korrina'],
-  [GymLeader.Ramos]: ['characters/xy/ramos'],
-  [GymLeader.Clemont]: ['characters/xy/clemont'],
-  [GymLeader.Valerie]: ['characters/xy/valerie'],
-  [GymLeader.Olympia]: ['characters/xy/olympia'],
-  [GymLeader.Wulfric]: ['characters/xy/wulfric'],
-};
+/** The sheets each is seen in */
+export const GYM_LEADER_CHARSETS: Record<number, string[]> = {};
 
 /**
  * Coats a badge unlocks that its leader is never seen in.
@@ -392,9 +63,7 @@ export const GYM_LEADER_CHARSETS: Record<GymLeader, string[]> = {
  * Giovanni's Let's Go coat is here because the gym he keeps is drawn
  * in his Fire Red one
  */
-export const GYM_LEADER_PRIZE_CHARSETS: Partial<Record<GymLeader, string[]>> = {
-  [GymLeader.Giovanni]: ['characters/lgpe/giovanni'],
-};
+export const GYM_LEADER_PRIZE_CHARSETS: Partial<Record<number, string[]>> = {};
 
 /**
  * The coat a Kanto leader is drawn in in Johto's era.
@@ -404,387 +73,65 @@ export const GYM_LEADER_PRIZE_CHARSETS: Partial<Record<GymLeader, string[]>> = {
  * somebody who has not taken it. Koga's gym has passed to his
  * daughter by then, so the Soul Badge pays Janine
  */
-export const GYM_LEADER_LATER_CHARSETS: Partial<Record<GymLeader, string[]>> = {
-  [GymLeader.Brock]: ['characters/hgss/brock'],
-  [GymLeader.Misty]: ['characters/hgss/misty'],
-  [GymLeader.LtSurge]: ['characters/hgss/surge'],
-  [GymLeader.Erika]: ['characters/hgss/erika'],
-  [GymLeader.Koga]: ['characters/hgss/janine'],
-  [GymLeader.Sabrina]: ['characters/hgss/sabrina'],
-  [GymLeader.Blaine]: ['characters/hgss/blaine'],
-};
+export const GYM_LEADER_LATER_CHARSETS: Partial<Record<number, string[]>> = {};
 
 /**
- * Which leaders keep the gyms of each biome. The country is the map
- * to the badges: a player hunting Blaine walks to fire country. Every
- * region's leaders share those countries, so the list per biome holds
- * all of them and the chunk's own fixture roll says which gym is
- * whose. Valerie, the one fairy leader, keeps the meadows and woods.
- * The open seas never roll a people landmark, and are mapped only so
- * the table stays total
+ * The one pokemon a leader is remembered for, which stands in their
+ * sixth slot however the other five roll. It is the mainline ace,
+ * so several of them are below the band the other five are drawn
+ * from: Brock's Onix is a middle stage now that a Steelix exists,
+ * and he brings it anyway
  */
-export const BIOME_GYM_LEADERS: Record<Biome, GymLeader[]> = {
-  [Biome.DeepOcean]: [
-    GymLeader.Misty,
-    GymLeader.Falkner,
-    GymLeader.Winona,
-    GymLeader.Juan,
-    GymLeader.CrasherWake,
-    GymLeader.Cress,
-    GymLeader.Skyla,
-    GymLeader.Marlon,
-  ],
-  [Biome.Ocean]: [
-    GymLeader.Misty,
-    GymLeader.Falkner,
-    GymLeader.Winona,
-    GymLeader.Juan,
-    GymLeader.CrasherWake,
-    GymLeader.Cress,
-    GymLeader.Skyla,
-    GymLeader.Marlon,
-  ],
-  [Biome.CoralReef]: [
-    GymLeader.Misty,
-    GymLeader.Juan,
-    GymLeader.CrasherWake,
-    GymLeader.Cress,
-    GymLeader.Marlon,
-  ],
-  [Biome.Beach]: [
-    GymLeader.Misty,
-    GymLeader.Falkner,
-    GymLeader.Whitney,
-    GymLeader.Juan,
-    GymLeader.Winona,
-    GymLeader.Norman,
-    GymLeader.Brawly,
-    GymLeader.CrasherWake,
-    GymLeader.Maylene,
-    GymLeader.Cress,
-    GymLeader.Lenora,
-    GymLeader.Skyla,
-    GymLeader.Cheren,
-    GymLeader.Marlon,
-    GymLeader.Korrina,
-  ],
-  [Biome.Mangrove]: [
-    GymLeader.Koga,
-    GymLeader.Bugsy,
-    GymLeader.Norman,
-    GymLeader.Burgh,
-    GymLeader.Roxie,
-    GymLeader.Viola,
-  ],
-  [Biome.KelpForest]: [
-    GymLeader.Misty,
-    GymLeader.Juan,
-    GymLeader.CrasherWake,
-    GymLeader.Cress,
-    GymLeader.Marlon,
-  ],
-  [Biome.PolarOcean]: [
-    GymLeader.Misty,
-    GymLeader.Falkner,
-    GymLeader.Pryce,
-    GymLeader.Winona,
-    GymLeader.Juan,
-    GymLeader.CrasherWake,
-    GymLeader.Candice,
-    GymLeader.Cress,
-    GymLeader.Skyla,
-    GymLeader.Brycen,
-    GymLeader.Marlon,
-    GymLeader.Wulfric,
-  ],
-  [Biome.Glacier]: [
-    GymLeader.Misty,
-    GymLeader.Pryce,
-    GymLeader.Juan,
-    GymLeader.CrasherWake,
-    GymLeader.Candice,
-    GymLeader.Cress,
-    GymLeader.Brycen,
-    GymLeader.Marlon,
-    GymLeader.Wulfric,
-  ],
-  [Biome.Tundra]: [
-    GymLeader.Misty,
-    GymLeader.Pryce,
-    GymLeader.Falkner,
-    GymLeader.Whitney,
-    GymLeader.Juan,
-    GymLeader.Winona,
-    GymLeader.Norman,
-    GymLeader.CrasherWake,
-    GymLeader.Candice,
-    GymLeader.Cress,
-    GymLeader.Lenora,
-    GymLeader.Skyla,
-    GymLeader.Brycen,
-    GymLeader.Cheren,
-    GymLeader.Marlon,
-    GymLeader.Wulfric,
-  ],
-  [Biome.Swamp]: [
-    GymLeader.Koga,
-    GymLeader.Morty,
-    GymLeader.Bugsy,
-    GymLeader.Norman,
-    GymLeader.Fantina,
-    GymLeader.Burgh,
-    GymLeader.Roxie,
-    GymLeader.Viola,
-  ],
-  [Biome.Bog]: [
-    GymLeader.Koga,
-    GymLeader.Morty,
-    GymLeader.Norman,
-    GymLeader.Fantina,
-    GymLeader.Roxie,
-  ],
-  [Biome.TropicalSeasonalForest]: [
-    GymLeader.Erika,
-    GymLeader.Bugsy,
-    GymLeader.Whitney,
-    GymLeader.Falkner,
-    GymLeader.Norman,
-    GymLeader.Winona,
-    GymLeader.Gardenia,
-    GymLeader.Cilan,
-    GymLeader.Lenora,
-    GymLeader.Burgh,
-    GymLeader.Skyla,
-    GymLeader.Cheren,
-    GymLeader.Viola,
-    GymLeader.Ramos,
-  ],
-  [Biome.Grassland]: [
-    GymLeader.Erika,
-    GymLeader.Whitney,
-    GymLeader.Bugsy,
-    GymLeader.Falkner,
-    GymLeader.Norman,
-    GymLeader.Winona,
-    GymLeader.Gardenia,
-    GymLeader.Cilan,
-    GymLeader.Lenora,
-    GymLeader.Burgh,
-    GymLeader.Skyla,
-    GymLeader.Cheren,
-    GymLeader.Viola,
-    GymLeader.Ramos,
-    GymLeader.Valerie,
-  ],
-  [Biome.TemperateForest]: [
-    GymLeader.Erika,
-    GymLeader.Bugsy,
-    GymLeader.Whitney,
-    GymLeader.Morty,
-    GymLeader.Norman,
-    GymLeader.Gardenia,
-    GymLeader.Fantina,
-    GymLeader.Cilan,
-    GymLeader.Lenora,
-    GymLeader.Burgh,
-    GymLeader.Cheren,
-    GymLeader.Viola,
-    GymLeader.Ramos,
-    GymLeader.Valerie,
-  ],
-  [Biome.Woodland]: [
-    GymLeader.Erika,
-    GymLeader.Bugsy,
-    GymLeader.Whitney,
-    GymLeader.Norman,
-    GymLeader.Gardenia,
-    GymLeader.Cilan,
-    GymLeader.Lenora,
-    GymLeader.Burgh,
-    GymLeader.Cheren,
-    GymLeader.Viola,
-    GymLeader.Ramos,
-    GymLeader.Valerie,
-  ],
-  [Biome.Savanna]: [
-    GymLeader.LtSurge,
-    GymLeader.Falkner,
-    GymLeader.Chuck,
-    GymLeader.Giovanni,
-    GymLeader.Wattson,
-    GymLeader.Winona,
-    GymLeader.Brawly,
-    GymLeader.Maylene,
-    GymLeader.Volkner,
-    GymLeader.Elesa,
-    GymLeader.Clay,
-    GymLeader.Skyla,
-    GymLeader.Korrina,
-    GymLeader.Clemont,
-  ],
-  [Biome.Steppe]: [
-    GymLeader.LtSurge,
-    GymLeader.Falkner,
-    GymLeader.Giovanni,
-    GymLeader.Wattson,
-    GymLeader.Winona,
-    GymLeader.Volkner,
-    GymLeader.Elesa,
-    GymLeader.Clay,
-    GymLeader.Skyla,
-    GymLeader.Clemont,
-  ],
-  [Biome.Desert]: [
-    GymLeader.Blaine,
-    GymLeader.Giovanni,
-    GymLeader.Flannery,
-    GymLeader.Chili,
-    GymLeader.Clay,
-  ],
-  [Biome.Volcano]: [
-    GymLeader.Blaine,
-    GymLeader.Jasmine,
-    GymLeader.Clair,
-    GymLeader.Flannery,
-    GymLeader.Byron,
-    GymLeader.Chili,
-    GymLeader.Drayden,
-  ],
-  [Biome.ColdDesert]: [
-    GymLeader.Brock,
-    GymLeader.Pryce,
-    GymLeader.Jasmine,
-    GymLeader.Giovanni,
-    GymLeader.Roxanne,
-    GymLeader.Roark,
-    GymLeader.Byron,
-    GymLeader.Candice,
-    GymLeader.Clay,
-    GymLeader.Brycen,
-    GymLeader.Grant,
-    GymLeader.Wulfric,
-  ],
-  [Biome.Mountain]: [
-    GymLeader.Brock,
-    GymLeader.Chuck,
-    GymLeader.Jasmine,
-    GymLeader.Clair,
-    GymLeader.Giovanni,
-    GymLeader.Roxanne,
-    GymLeader.Brawly,
-    GymLeader.Roark,
-    GymLeader.Maylene,
-    GymLeader.Byron,
-    GymLeader.Clay,
-    GymLeader.Drayden,
-    GymLeader.Grant,
-    GymLeader.Korrina,
-  ],
-  [Biome.AlpineTundra]: [
-    GymLeader.Brock,
-    GymLeader.Pryce,
-    GymLeader.Falkner,
-    GymLeader.Clair,
-    GymLeader.Roxanne,
-    GymLeader.Winona,
-    GymLeader.Roark,
-    GymLeader.Candice,
-    GymLeader.Skyla,
-    GymLeader.Brycen,
-    GymLeader.Drayden,
-    GymLeader.Grant,
-    GymLeader.Wulfric,
-  ],
-  [Biome.Badlands]: [
-    GymLeader.Brock,
-    GymLeader.Chuck,
-    GymLeader.Jasmine,
-    GymLeader.Giovanni,
-    GymLeader.Roxanne,
-    GymLeader.Brawly,
-    GymLeader.Roark,
-    GymLeader.Maylene,
-    GymLeader.Byron,
-    GymLeader.Clay,
-    GymLeader.Grant,
-    GymLeader.Korrina,
-  ],
-  [Biome.RockyCoast]: [
-    GymLeader.Brock,
-    GymLeader.Falkner,
-    GymLeader.Roxanne,
-    GymLeader.Winona,
-    GymLeader.Roark,
-    GymLeader.Skyla,
-    GymLeader.Grant,
-  ],
-  [Biome.TemperateRainforest]: [
-    GymLeader.Sabrina,
-    GymLeader.Bugsy,
-    GymLeader.Morty,
-    GymLeader.Tate,
-    GymLeader.Liza,
-    GymLeader.Fantina,
-    GymLeader.Burgh,
-    GymLeader.Viola,
-    GymLeader.Olympia,
-  ],
-  [Biome.MontaneForest]: [
-    GymLeader.Sabrina,
-    GymLeader.Bugsy,
-    GymLeader.Tate,
-    GymLeader.Liza,
-    GymLeader.Burgh,
-    GymLeader.Viola,
-    GymLeader.Valerie,
-    GymLeader.Olympia,
-  ],
-  [Biome.Beyond]: [
-    GymLeader.Sabrina,
-    GymLeader.Morty,
-    GymLeader.Clair,
-    GymLeader.Tate,
-    GymLeader.Liza,
-    GymLeader.Fantina,
-    GymLeader.Drayden,
-    GymLeader.Olympia,
-  ],
-  [Biome.TropicalRainforest]: [
-    GymLeader.Bugsy,
-    GymLeader.Erika,
-    GymLeader.Norman,
-    GymLeader.Gardenia,
-    GymLeader.Cilan,
-    GymLeader.Burgh,
-    GymLeader.Viola,
-    GymLeader.Ramos,
-  ],
-  [Biome.Shrubland]: [
-    GymLeader.Whitney,
-    GymLeader.Bugsy,
-    GymLeader.Norman,
-    GymLeader.Wattson,
-    GymLeader.Volkner,
-    GymLeader.Lenora,
-    GymLeader.Burgh,
-    GymLeader.Elesa,
-    GymLeader.Cheren,
-    GymLeader.Viola,
-    GymLeader.Clemont,
-  ],
-  [Biome.Taiga]: [
-    GymLeader.Bugsy,
-    GymLeader.Falkner,
-    GymLeader.Pryce,
-    GymLeader.Winona,
-    GymLeader.Candice,
-    GymLeader.Burgh,
-    GymLeader.Skyla,
-    GymLeader.Brycen,
-    GymLeader.Viola,
-    GymLeader.Wulfric,
-  ],
-};
+export const GYM_LEADER_SIGNATURES: Record<number, Species> = {};
+
+for (const [name, written] of Object.entries(v.parse(v.record(v.string(), LEADER), leadersFile))) {
+  const where = `gym-leaders.yaml: ${name}`;
+  const leader = idOf<GymLeader>(GYM_LEADER_IDS, name, where);
+
+  GYM_LEADERS.push(leader);
+  GYM_LEADER_TYPES[leader] = idOf<Types>(TYPE_IDS, written.type, where);
+  GYM_LEADER_BADGES[leader] = idOf<Awards>(AWARD_IDS, written.badge, where);
+  GYM_LEADER_CHARSETS[leader] = written.sheets;
+  GYM_LEADER_SIGNATURES[leader] = idOf<Species>(SPECIES_IDS, written.signature, where);
+  if (written.prize != null) {
+    GYM_LEADER_PRIZE_CHARSETS[leader] = written.prize;
+  }
+  if (written.later != null) {
+    GYM_LEADER_LATER_CHARSETS[leader] = written.later;
+  }
+}
+GYM_LEADERS.sort((one, two) => one - two);
+
+for (const [name, title] of Object.entries(v.parse(v.record(v.string(), v.string()), namesFile))) {
+  GYM_LEADER_NAMES[idOf<GymLeader>(GYM_LEADER_IDS, name, `text/en/gym-leaders.yaml: ${name}`)] =
+    title;
+}
+
+// Every leader the enum has is written down, so none stands nameless or bare
+for (const [name, leader] of Object.entries(GYM_LEADER_IDS)) {
+  if (!Object.hasOwn(GYM_LEADER_TYPES, leader) || !Object.hasOwn(GYM_LEADER_NAMES, leader)) {
+    throw new Error(`${name} needs a record in gym-leaders.yaml and a name in text/en`);
+  }
+}
+
+/**
+ * Which leaders keep the gyms of each biome, in the order the chunk's
+ * own fixture roll picks from. Every region's leaders share those
+ * countries, so the list per biome holds all of them
+ */
+export const BIOME_GYM_LEADERS: Record<number, GymLeader[]> = {};
+
+for (const [name, leaders] of Object.entries(
+  v.parse(v.record(v.string(), v.array(v.string())), biomesFile),
+)) {
+  const where = `biome-gym-leaders.yaml: ${name}`;
+
+  BIOME_GYM_LEADERS[idOf<Biome>(BIOME_IDS, name, where)] = idsOf<GymLeader>(
+    GYM_LEADER_IDS,
+    leaders,
+    where,
+  );
+}
 
 /**
  * The machine a beaten leader hands over: one of the TMs of their own

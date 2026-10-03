@@ -120,6 +120,7 @@ Roselia:
       - species: Roselia
         method: [Friendship, TimeOfDay]
         time: [Morning, Day]
+    rank: baby
   Roserade:
     types: [Grass, Poison]
     egg-groups: [Fairy, Grass]

@@ -1,16 +1,22 @@
 /**
- * The duelling classes, split by what each table answers: who they
- * are, what they are called, what they field, where they stand and
- * what they say.
+ * The duelling classes. Who they are, what they field and wear, what
+ * they are called and say, and where they stand are data, read in
+ * `classes.ts` and `biomes.ts`; what is worked out from them is here.
  */
 
-export { TRAINER_CLASSES, TRAINER_REGIONS, TrainerClass } from './classes';
-export { TRAINER_BASE_NAMES, TRAINER_NAMES, TRAINER_SHEET_NAMES, trainerNameIn } from './names';
-export { TRAINER_TRADE, TRAINER_TRADES, getTradeClasses } from './trades';
-export { default as TRAINER_TYPES } from './types';
-export { default as TRAINER_CHARSETS } from './charsets';
+export {
+  TRAINER_BASE_NAMES,
+  TRAINER_CHARSETS,
+  TRAINER_CLASSES,
+  TRAINER_QUOTES,
+  TRAINER_REGIONS,
+  TRAINER_TRADE,
+  TRAINER_TYPES,
+  TrainerClass,
+} from './classes';
+export { TRAINER_NAMES, TRAINER_SHEET_NAMES, trainerNameIn } from './names';
+export { TRAINER_TRADES, getTradeClasses } from './trades';
 export { BIOME_TRAINERS, getBiomeTrainers } from './biomes';
-export { default as TRAINER_QUOTES } from './quotes';
 export {
   ACE_PARTY_SIZE,
   ACE_TRAINER_LEVELS,

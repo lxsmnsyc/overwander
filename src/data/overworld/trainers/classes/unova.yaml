@@ -1,0 +1,208 @@
+# Unova's trainer classes, each by its enum name: `types` it fields
+# (an empty list is every type), the `sheets` it may stand in, and the
+# `trade` it is one region's version of, left out where it is its own.
+# What each is called and says is text/en/trainers.
+
+# Unova's own, the city trades: the counter and the depot bring what a
+# town runs on, the ball court brings what a body does, and the stage
+# brings what nobody can see through
+Backpacker:
+  types: [Ground, Normal]
+  sheets:
+    - characters/b2w2/backpacker-f
+    - characters/b2w2/backpacker-m
+Baker:
+  types: [Fire]
+  sheets: [characters/b2w2/baker]
+Clerk:
+  types: [Normal, Steel]
+  sheets:
+    - characters/b2w2/clerk-f
+    - characters/b2w2/clerk-m-1
+    - characters/b2w2/clerk-m-2
+Dancer:
+  types: [Fighting]
+  sheets: [characters/b2w2/dancer]
+DepotAgent:
+  types: [Steel, Electric]
+  sheets: [characters/b2w2/depot-agent]
+Doctor:
+  types: [Normal, Psychic]
+  sheets: [characters/b2w2/doctor]
+Harlequin:
+  types: [Psychic]
+  sheets: [characters/b2w2/harlequin]
+Hoopster:
+  types: [Normal]
+  sheets: [characters/b2w2/hoopster]
+Infielder:
+  types: [Flying]
+  sheets: [characters/b2w2/infielder]
+Janitor:
+  types: [Poison]
+  sheets: [characters/b2w2/janitor]
+Lady:
+  types: [Grass, Normal]
+  sheets: [characters/b2w2/lady]
+Linebacker:
+  types: [Rock, Steel]
+  sheets: [characters/b2w2/linebacker]
+Maid:
+  types: [Ice, Normal]
+  sheets: [characters/b2w2/maid]
+Musician:
+  types: [Electric]
+  sheets: [characters/b2w2/musician]
+NurseryAide:
+  types: [Normal]
+  sheets: [characters/b2w2/nursery-aide]
+Pilot:
+  types: [Flying]
+  sheets: [characters/b2w2/pilot]
+Smasher:
+  types: [Fighting]
+  sheets: [characters/b2w2/smasher]
+Socialite:
+  types: [Normal, Psychic]
+  sheets: [characters/b2w2/socialite]
+Striker:
+  types: [Ground]
+  sheets: [characters/b2w2/striker]
+SuitActor:
+  types: [Dark]
+  sheets: [characters/b2w2/suit-actor]
+Veteran:
+  types: [Dragon, Steel]
+  sheets: [characters/b2w2/veteran]
+Backers:
+  types: [Normal, Fighting]
+  sheets:
+    - characters/b2w2/backers-1
+    - characters/b2w2/backers-2
+# And its own of the trades already on the road
+UnovaAceTrainer:
+  types: []
+  sheets:
+    - characters/b2w2/ace-trainer-f
+    - characters/b2w2/ace-trainer-m
+  trade: AceTrainer
+UnovaArtist:
+  types: [Normal]
+  sheets: [characters/b2w2/artist]
+  trade: Artist
+UnovaBattleGirl:
+  types: [Fighting]
+  sheets: [characters/b2w2/battle-girl]
+  trade: BattleGirl
+UnovaBeauty:
+  types: [Normal, Water]
+  sheets: [characters/b2w2/beauty]
+  trade: Beauty
+UnovaBiker:
+  types: [Poison]
+  sheets: [characters/b2w2/biker]
+  trade: Biker
+UnovaBlackBelt:
+  types: [Fighting]
+  sheets: [characters/b2w2/black-belt]
+  trade: BlackBelt
+UnovaBreeder:
+  types: [Normal, Grass]
+  sheets:
+    - characters/b2w2/breeder-f
+    - characters/b2w2/breeder-m
+  trade: Breeder
+UnovaCyclist:
+  types: [Electric]
+  sheets:
+    - characters/b2w2/cyclist-f
+    - characters/b2w2/cyclist-m
+  trade: Cyclist
+UnovaFisherman:
+  types: [Water]
+  sheets: [characters/b2w2/fisher]
+  trade: Fisherman
+UnovaGentleman:
+  types: [Fire, Electric]
+  sheets: [characters/b2w2/gentleman]
+  trade: Gentleman
+UnovaGuitarist:
+  types: [Electric]
+  sheets: [characters/b2w2/guitarist]
+  trade: Guitarist
+UnovaHiker:
+  types: [Ground]
+  sheets: [characters/b2w2/hiker]
+  trade: Hiker
+UnovaLass:
+  types: [Normal]
+  sheets: [characters/b2w2/lass]
+  trade: Lass
+UnovaParasolLady:
+  types: [Water]
+  sheets: [characters/b2w2/parasol-lady]
+  trade: ParasolLady
+UnovaPokeFan:
+  types: [Normal, Electric]
+  sheets:
+    - characters/b2w2/poke-fan-f
+    - characters/b2w2/poke-fan-m
+  trade: PokeFan
+UnovaPoliceman:
+  types: [Fire, Dark]
+  sheets: [characters/b2w2/policeman]
+  trade: Policeman
+UnovaPsychic:
+  types: [Psychic]
+  sheets:
+    - characters/b2w2/psychic-f
+    - characters/b2w2/psychic-m
+  trade: Psychic
+UnovaRanger:
+  types: [Grass, Bug]
+  sheets:
+    - characters/b2w2/ranger-f
+    - characters/b2w2/ranger-m
+  trade: Ranger
+UnovaRichBoy:
+  types: [Normal, Flying]
+  sheets: [characters/b2w2/rich-boy]
+  trade: RichBoy
+UnovaRoughneck:
+  types: [Poison]
+  sheets: [characters/b2w2/roughneck]
+  trade: Biker
+UnovaSchoolKid:
+  types: [Electric]
+  sheets:
+    - characters/b2w2/schoolkid-f
+    - characters/b2w2/schoolkid-m
+  trade: SchoolKid
+UnovaScientist:
+  types: [Steel]
+  sheets:
+    - characters/b2w2/scientist-f
+    - characters/b2w2/scientist-m
+  trade: Scientist
+UnovaSwimmer:
+  types: [Water]
+  sheets:
+    - characters/b2w2/swimmer-f
+    - characters/b2w2/swimmer-m
+  trade: Swimmer
+UnovaWaiter:
+  types: [Normal, Fire]
+  sheets:
+    - characters/b2w2/waiter-f
+    - characters/b2w2/waiter-m
+  trade: Waiter
+UnovaWorker:
+  types: [Rock, Steel]
+  sheets:
+    - characters/b2w2/worker-1
+    - characters/b2w2/worker-2
+  trade: Worker
+UnovaYoungster:
+  types: [Ground]
+  sheets: [characters/b2w2/youngster]
+  trade: Youngster

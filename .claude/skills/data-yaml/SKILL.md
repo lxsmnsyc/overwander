@@ -11,8 +11,8 @@ Under `src/data/species/`, with a folder per region inside each field:
 
 | folder                   | holds                                                                    |
 | ------------------------ | ------------------------------------------------------------------------ |
-| `world/`                 | types, egg groups, habitat, biomes, active hours, evolutions, form flags |
-| `stats/`                 | base stats, catch rate, height, weight, gender ratio                     |
+| `world/`                 | types, egg groups, habitat, biomes, active hours, evolutions, form flags, `held` items, `rank`, `awaiting` |
+| `stats/`                 | base stats, catch rate, height, weight, gender ratio, `egg-cycles`       |
 | `abilities/`             | `abilities` and `hidden`                                                 |
 | `learnsets/`             | level, teachable and egg moves, plus a `family-teachable` list           |
 | `text/en/species/`       | each name and category                                                   |
@@ -29,7 +29,29 @@ Growlithe:
 ```
 
 - **`family-teachable`, under a family, holds the moves the whole family can be taught.** Each species' `teachable` list adds to it.
+- **`held`** is what a wild one carries: `{ common, uncommon, rare }`, at 1/2, 1/20 and 1/100, each slot left out for none. Every stage of a line writes the same.
+- **`rank`** is a hand-kept class the shape of a line cannot say: `legendary` (what a raid or lair stages), `mythical` (what a relic calls), `baby`, `prized` and `mythical-odds` (rarity alone). A true shadow takes its counterpart's, and a Mega has none.
+- **`awaiting: baby | evolution`** marks a line whose missing stage a later generation adds. Take it off when that stage is written down.
+- **`egg-cycles`** is written only on the stage a line hatches at, and only where it is not 20.
 - **`active: any`** is every hour of the day. `base-form: false` marks a form, and `worn: true` a shape put on mid-fight. `dex` is written only where the id's own dex number would be wrong.
+
+## Regions
+
+`src/data/species/regions.yaml` holds each region by its enum name: the `dex` numbers it covers, ends included, and, for a region with a dex chain, the `milestones` each rung asks for and the `medal` the last one hangs. A rung keeps its number for good, so milestones are appended, never inserted. The sprite folder names stay in `regions.ts` beside the enum.
+
+## Overworld
+
+| file                              | holds                                                                 |
+| --------------------------------- | --------------------------------------------------------------------- |
+| `overworld/lairs.yaml`            | each lair's `species` (in the order a raid picks), `underground`, `reserved` |
+| `overworld/biome-lairs.yaml`      | each biome's lairs, in the order a landmark draws them                |
+| `text/en/lairs.yaml`              | each lair's name                                                      |
+| `overworld/item-pool.yaml`        | the ground's items by band, item to weight; a lowercase key is a whole family (`wings: 3`) |
+| `overworld/weather/biomes.yaml`   | each biome's six skies, and the four `corners` every country shares   |
+
+- **Order is part of the world.** A biome's lair list and each band of the item pool are walked by a seeded roll, so moving an entry changes what every player's map holds. Append; never reorder.
+- **A lair is numbered by the enum in `ids/lairs.ts`,** since a raid prize records it. A new lair is an enum member, a row in each lair file, and `pnpm id-names`. `reserved: true` keeps it out of the world until its batch lists it.
+- **An item family a pool names** is listed in `ITEM_FAMILIES` in `overworld/item-pool.ts`.
 
 ## Moves
 

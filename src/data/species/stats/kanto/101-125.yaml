@@ -55,6 +55,7 @@ Tyrogue:
     height: 0.7
     weight: 21
     gender: [1, 0]
+    egg-cycles: 25
   Hitmontop:
     stats: { HP: 50, Attack: 95, Defense: 95, SpecialAttack: 35, SpecialDefense: 110, Speed: 70 }
     catch-rate: 45
@@ -125,6 +126,7 @@ Chansey:
     height: 0.6
     weight: 24.4
     gender: [0, 1]
+    egg-cycles: 40
 Tangela:
   Tangela:
     stats: { HP: 65, Attack: 55, Defense: 115, SpecialAttack: 100, SpecialDefense: 40, Speed: 60 }
@@ -203,6 +205,7 @@ MrMime:
     height: 0.6
     weight: 13
     gender: [1, 1]
+    egg-cycles: 25
 Scyther:
   Scyther:
     stats: { HP: 70, Attack: 110, Defense: 80, SpecialAttack: 55, SpecialDefense: 80, Speed: 105 }
@@ -210,6 +213,7 @@ Scyther:
     height: 1.5
     weight: 56
     gender: [1, 1]
+    egg-cycles: 25
   Scizor:
     stats: { HP: 70, Attack: 130, Defense: 100, SpecialAttack: 55, SpecialDefense: 80, Speed: 65 }
     catch-rate: 25
@@ -229,6 +233,7 @@ Jynx:
     height: 0.4
     weight: 6
     gender: [0, 1]
+    egg-cycles: 25
 Electabuzz:
   Electabuzz:
     stats: { HP: 65, Attack: 83, Defense: 57, SpecialAttack: 95, SpecialDefense: 85, Speed: 105 }
@@ -242,6 +247,7 @@ Electabuzz:
     height: 0.6
     weight: 23.5
     gender: [3, 1]
+    egg-cycles: 25
   Electivire:
     stats: { HP: 75, Attack: 123, Defense: 67, SpecialAttack: 95, SpecialDefense: 85, Speed: 95 }
     catch-rate: 30

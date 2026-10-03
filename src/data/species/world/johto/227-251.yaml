@@ -42,6 +42,7 @@ Stantler:
     egg-groups: [Field]
     biomes: [TemperateForest, Taiga, MontaneForest]
     active: any
+    awaiting: evolution
 Smeargle:
   Smeargle:
     types: [Normal]
@@ -60,12 +61,14 @@ Raikou:
     egg-groups: [NoEggsDiscovered]
     biomes: [Grassland, Woodland]
     active: any
+    rank: legendary
 Entei:
   Entei:
     types: [Fire]
     egg-groups: [NoEggsDiscovered]
     biomes: [Grassland, Woodland]
     active: any
+    rank: legendary
 Suicune:
   Suicune:
     types: [Water]
@@ -73,6 +76,7 @@ Suicune:
     habitat: Amphibious
     biomes: [Grassland, Woodland]
     active: any
+    rank: legendary
 # The line's own moves come at the same order the whole way up, only
 Larvitar:
   Larvitar:
@@ -107,15 +111,18 @@ Lugia:
     egg-groups: [NoEggsDiscovered]
     biomes: [DeepOcean, Ocean]
     active: any
+    rank: legendary
 HoOh:
   HoOh:
     types: [Fire, Flying]
     egg-groups: [NoEggsDiscovered]
     biomes: [Mountain, DeepOcean]
     active: any
+    rank: legendary
 Celebi:
   Celebi:
     types: [Psychic, Grass]
     egg-groups: [NoEggsDiscovered]
     biomes: [TemperateForest]
     active: any
+    rank: mythical

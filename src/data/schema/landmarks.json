@@ -1,0 +1,34 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Landmarks",
+  "type": "object",
+  "propertyNames": {
+    "$ref": "names.json#/definitions/landmark"
+  },
+  "additionalProperties": {
+    "type": "object",
+    "properties": {
+      "weight": {
+        "type": "number",
+        "minimum": 0,
+        "description": "How often it is rolled; 0 for one that is placed"
+      },
+      "picture": {
+        "type": "string",
+        "description": "Its picture on the landmarks sheet"
+      },
+      "taken": {
+        "type": "string",
+        "description": "What it looks like once this player has been"
+      },
+      "underground": {
+        "type": "string",
+        "description": "What it looks like from below"
+      }
+    },
+    "required": [
+      "weight"
+    ],
+    "additionalProperties": false
+  }
+}

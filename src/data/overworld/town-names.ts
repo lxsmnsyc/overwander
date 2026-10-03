@@ -1,4 +1,9 @@
-import Biome, { type SettledBiome } from '../ids/biome';
+import * as v from 'valibot';
+import type Biome from '../ids/biome';
+import type { SettledBiome } from '../ids/biome';
+import { BIOME_IDS } from '../ids/names';
+import townNamesFile from '../text/en/town-names.yaml';
+import { idOf } from '../yaml';
 
 /**
  * What a town is called.
@@ -23,7 +28,20 @@ import Biome, { type SettledBiome } from '../ids/biome';
  * The county is what makes that fit, and what keeps it fitting. A roll
  * without one would be 262,144 regions against 49,920 names, five
  * times more world than words. See `COUNTY_NAMES`.
+ *
+ * The words are `text/en/town-names.yaml`; how they are put together
+ * is here
  */
+
+const WORDS = v.object({
+  heads: v.record(v.string(), v.array(v.string())),
+  tails: v.array(v.string()),
+  titles: v.array(v.string()),
+  marks: v.array(v.string()),
+  counties: v.array(v.string()),
+});
+
+const words = v.parse(WORDS, townNamesFile);
 
 /**
  * The head of a name, by the biome the town stands on. One entry per
@@ -33,107 +51,25 @@ import Biome, { type SettledBiome } from '../ids/biome';
  * built on until it has been given words. Public so a test can hold
  * it to that
  */
-export const TOWN_HEADS: Record<SettledBiome, string[]> = {
-  [Biome.Beach]: ['Shell', 'Dune', 'Surf', 'Drift', 'Pebble', 'Tide', 'Cockle', 'Foam'],
-  [Biome.Mangrove]: ['Stilt', 'Tangle', 'Silt', 'Brack', 'Prop', 'Wade', 'Heron', 'Knot'],
-  [Biome.Swamp]: ['Mire', 'Reed', 'Murk', 'Peat', 'Sedge', 'Gloam', 'Croak', 'Sump'],
-  [Biome.TropicalRainforest]: [
-    'Vine',
-    'Orchid',
-    'Fever',
-    'Emerald',
-    'Liana',
-    'Toucan',
-    'Steam',
-    'Deep',
-  ],
-  [Biome.TropicalSeasonalForest]: [
-    'Teak',
-    'Monsoon',
-    'Ebon',
-    'Cicada',
-    'Bamboo',
-    'Sap',
-    'Husk',
-    'Downpour',
-  ],
-  [Biome.Savanna]: ['Acacia', 'Amber', 'Tawny', 'Ochre', 'Pride', 'Veldt', 'Baobab', 'Wildfire'],
-  [Biome.Desert]: ['Scorch', 'Mirage', 'Quartz', 'Basin', 'Cactus', 'Sirocco', 'Dust', 'Kiln'],
-  [Biome.Shrubland]: ['Heath', 'Gorse', 'Broom', 'Sage', 'Bramble', 'Scrub', 'Juniper', 'Myrtle'],
-  [Biome.Grassland]: ['Meadow', 'Clover', 'Barley', 'Lark', 'Corn', 'Hay', 'Swallow', 'Sunrise'],
-  [Biome.TemperateForest]: ['Oak', 'Beech', 'Acorn', 'Hazel', 'Birch', 'Fawn', 'Elder', 'Maple'],
-  [Biome.TemperateRainforest]: [
-    'Moss',
-    'Lichen',
-    'Cedar',
-    'Dew',
-    'Sorrel',
-    'Hush',
-    'Laurel',
-    'Drizzle',
-  ],
-  [Biome.ColdDesert]: ['Flint', 'Gypsum', 'Bitter', 'Chalk', 'Grit', 'Alkali', 'Scour', 'Pale'],
-  [Biome.Taiga]: ['Pine', 'Spruce', 'Resin', 'Needle', 'Sable', 'Owl', 'Larch', 'Cone'],
-  [Biome.Tundra]: ['Frost', 'Thaw', 'Cotton', 'Willow', 'Hare', 'Bleak', 'Snow', 'Permafrost'],
-  [Biome.Mountain]: ['Crag', 'Granite', 'Eagle', 'Slate', 'Storm', 'Iron', 'Spur', 'Summit'],
-  [Biome.AlpineTundra]: ['Rime', 'Cirque', 'Marmot', 'Alpen', 'Thin', 'Cloud', 'Scree', 'Silver'],
-  [Biome.Glacier]: ['Hoar', 'Floe', 'Glass', 'Serac', 'Moraine', 'White', 'Still', 'Calving'],
-  [Biome.Woodland]: ['Copse', 'Glade', 'Rowan', 'Thicket', 'Badger', 'Holly', 'Dapple', 'Nut'],
-  [Biome.Steppe]: ['Horse', 'Feather', 'Saiga', 'Gale', 'Wide', 'Kite', 'Roam', 'Sweep'],
-  [Biome.MontaneForest]: ['Fir', 'Hemlock', 'Bear', 'Talus', 'Fog', 'Lynx', 'Timber', 'Switchback'],
-  [Biome.Volcano]: ['Ember', 'Cinder', 'Basalt', 'Sulphur', 'Pumice', 'Fume', 'Magma', 'Ashfall'],
-  [Biome.Badlands]: ['Gulch', 'Hoodoo', 'Rust', 'Butte', 'Vulture', 'Bone', 'Wash', 'Redrock'],
-  [Biome.RockyCoast]: ['Cliff', 'Kittiwake', 'Spray', 'Stack', 'Beacon', 'Tern', 'Barnacle', 'Lee'],
-  [Biome.Bog]: ['Quag', 'Cranberry', 'Tussock', 'Fen', 'Bittern', 'Sink', 'Wisp', 'Blackwater'],
-};
+export const TOWN_HEADS: Record<number, string[]> = {};
+
+for (const [name, heads] of Object.entries(words.heads)) {
+  const where = `text/en/town-names.yaml: ${name}`;
+
+  // The arithmetic below reads eight to a biome, and one short or over
+  // would rename every town of it
+  if (heads.length !== 8) {
+    throw new Error(`${where}: needs exactly 8 heads`);
+  }
+  TOWN_HEADS[idOf<Biome>(BIOME_IDS, name, where)] = heads;
+}
 
 /**
  * What is welded onto the head, which is what makes the name one word
  * rather than two. Shared across the world: the ground a town stands
  * on says where it is, and a tail says what shape the place takes
  */
-const TAILS: string[] = [
-  'fell',
-  'mere',
-  'ridge',
-  'hollow',
-  'brook',
-  'reach',
-  'march',
-  'crest',
-  'gate',
-  'haven',
-  'moor',
-  'dale',
-  'ford',
-  'wick',
-  'burn',
-  'stead',
-  'holt',
-  'combe',
-  'tarn',
-  'scar',
-  'bourne',
-  'glen',
-  'cairn',
-  'thorpe',
-  'barrow',
-  'spire',
-  'run',
-  'shade',
-  'wold',
-  'rise',
-  'strand',
-  'gorge',
-  'field',
-  'watch',
-  'hurst',
-  'bury',
-  'croft',
-  'garth',
-  'mouth',
-  'shaw',
-];
+const TAILS: string[] = words.tails;
 
 /**
  * What the place calls itself. Rolled rather than taken from how many
@@ -141,39 +77,13 @@ const TAILS: string[] = [
  * of the names gone, and a hamlet with a gym in it is the sort of
  * thing a real map is full of
  */
-const TITLES: string[] = [
-  'Town',
-  'City',
-  'Village',
-  'Hamlet',
-  'Borough',
-  'Outpost',
-  'Landing',
-  'Crossing',
-  'Mills',
-  'Rest',
-  'Quarter',
-  'Waypoint',
-];
+const TITLES: string[] = words.titles;
 
 /**
  * The word in front, where there is one. Most towns have none, since
  * a world where every place is an Upper or a New reads as a joke
  */
-const MARKS: string[] = [
-  'New',
-  'Old',
-  'Upper',
-  'Lower',
-  'North',
-  'South',
-  'East',
-  'West',
-  'Great',
-  'Little',
-  'Port',
-  'Fort',
-];
+const MARKS: string[] = words.marks;
 
 /**
  * The counties the world is divided into, which is the second half of
@@ -192,72 +102,7 @@ const MARKS: string[] = [
  * existing town in the county it was already in, under the name it
  * already had. It only wants more counties at the edges
  */
-const COUNTY_NAMES: string[] = [
-  'Ashmarch',
-  'Kelvenmoor',
-  'Dunhollow',
-  'Brackenshire',
-  'Thornwold',
-  'Greyfen',
-  'Highmarch',
-  'Westerling',
-  'Stonereach',
-  'Elderfen',
-  'Mirefold',
-  'Cindermarch',
-  'Coldharrow',
-  'Sablewold',
-  'Larkenfen',
-  'Orrenmoor',
-  'Vesperhold',
-  'Marrowfen',
-  'Gildenmarch',
-  'Hollowshire',
-  'Amberfold',
-  'Ravenmoor',
-  'Silverfen',
-  'Winterhold',
-  'Duskmarch',
-  'Thistlewold',
-  'Pelloway',
-  'Harrowfen',
-  'Brimshire',
-  'Calderfold',
-  'Nettlemoor',
-  'Ironmarch',
-  'Wyndhollow',
-  'Ferrowshire',
-  'Glenmarch',
-  'Saltenfen',
-  'Oakenwold',
-  'Windermarch',
-  'Tarnhollow',
-  'Bracklemoor',
-  'Emberfold',
-  'Fallowshire',
-  'Grimmarch',
-  'Heathenfen',
-  'Ivywold',
-  'Junipermoor',
-  'Kestrelhold',
-  'Lowmarch',
-  'Mosswold',
-  'Northfen',
-  'Orchardshire',
-  'Peatmarch',
-  'Quarryhold',
-  'Reedfold',
-  'Sedgemoor',
-  'Tinderwold',
-  'Umberfen',
-  'Vaultmarch',
-  'Wolfhollow',
-  'Yarrowshire',
-  'Ashenfold',
-  'Bellmarch',
-  'Cragmarch',
-  'Dalefen',
-];
+const COUNTY_NAMES: string[] = words.counties;
 
 /** How many regions to a county, on each axis */
 export const COUNTY_REGIONS = 64;

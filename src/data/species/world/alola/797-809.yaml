@@ -5,6 +5,7 @@ Celesteela:
     # Ultra Crater
     biomes: [Mountain]
     active: any
+    rank: legendary
 Kartana:
   Kartana:
     types: [Grass, Steel]
@@ -12,6 +13,7 @@ Kartana:
     # Ultra Forest
     biomes: [TemperateForest]
     active: any
+    rank: legendary
 Guzzlord:
   Guzzlord:
     types: [Dark, Dragon]
@@ -19,6 +21,7 @@ Guzzlord:
     # Ultra Ruin
     biomes: [Badlands]
     active: any
+    rank: legendary
 Necrozma:
   # The prism that lost its light, the two shapes it takes with the sun
   # or the moon folded into it, and the one it bursts into to let the
@@ -35,6 +38,7 @@ Necrozma:
       - species: NecrozmaDawnWings
         method: [UsedItem]
         item: NLunarizer
+    rank: legendary
   NecrozmaDuskMane:
     types: [Psychic, Steel]
     egg-groups: [NoEggsDiscovered]
@@ -72,6 +76,7 @@ Magearna:
     # Its kingdom was built into the mountains
     biomes: [Mountain]
     active: any
+    rank: mythical
   MagearnaOriginal:
     types: [Steel, Fairy]
     egg-groups: [NoEggsDiscovered]
@@ -80,6 +85,7 @@ Magearna:
     active: any
     # The colours it was first painted in, five hundred years ago
     base-form: false
+    rank: mythical
 Marshadow:
   Marshadow:
     types: [Fighting, Ghost]
@@ -87,6 +93,7 @@ Marshadow:
     # The mountain it watched the hero climb
     biomes: [Mountain]
     active: any
+    rank: mythical
 Poipole:
   Poipole:
     types: [Poison]
@@ -99,6 +106,8 @@ Poipole:
         method: [Level, KnownMove]
         level: 1
         move: DragonPulse
+    # A gift in the mainline, so as rare here as the made ones
+    rank: prized
   Naganadel:
     types: [Poison, Dragon]
     egg-groups: [NoEggsDiscovered]
@@ -111,6 +120,7 @@ Stakataka:
     # Poni Grove
     biomes: [TropicalSeasonalForest]
     active: any
+    rank: legendary
 Blacephalon:
   Blacephalon:
     types: [Fire, Ghost]
@@ -118,6 +128,7 @@ Blacephalon:
     # Poni Grove
     biomes: [TropicalSeasonalForest]
     active: any
+    rank: legendary
 Zeraora:
   Zeraora:
     types: [Electric]
@@ -125,6 +136,7 @@ Zeraora:
     # The forest behind the city of windmills
     biomes: [TemperateForest]
     active: any
+    rank: mythical
 Meltan:
   Meltan:
     types: [Steel]
@@ -138,8 +150,10 @@ Meltan:
       - species: Melmetal
         method: [Level]
         level: 40
+    rank: mythical
   Melmetal:
     types: [Steel]
     egg-groups: [NoEggsDiscovered]
     active: any
     evolves-from: Meltan
+    rank: mythical

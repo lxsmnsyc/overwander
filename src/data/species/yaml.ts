@@ -23,7 +23,13 @@ import {
 } from '../ids/names';
 import { type Species, speciesDexNumber, speciesFormIndex } from '../ids/species';
 import { flagsOf, idOf, idsOf } from '../yaml';
-import type { EvolutionData, LearnSetData, SpeciesData, StatComparison } from './__create';
+import type {
+  EvolutionData,
+  LearnSetData,
+  SpeciesData,
+  StatComparison,
+  WildHeldItems,
+} from './__create';
 
 /**
  * The species, read out of their YAML.
@@ -34,8 +40,10 @@ import type { EvolutionData, LearnSetData, SpeciesData, StatComparison } from '.
  * keyed by its own name with its species beneath it:
  *
  * - `world/` is what the overworld reads: types, habitat, evolutions,
- *   egg groups, biomes and the hours it is about
- * - `stats/` holds base stats, catch rate, size and gender ratio
+ *   egg groups, biomes, the hours it is about, what a wild one holds,
+ *   and its rank where the shape of its line cannot say it
+ * - `stats/` holds base stats, catch rate, size, gender ratio and,
+ *   where it differs, its egg cycles
  * - `abilities/` holds the ability pools
  * - `learnsets/` holds the moves it learns by level, machine and egg
  * - `text/<locale>/species/` holds each name and category, filed the
@@ -83,6 +91,11 @@ const WORLD = v.object({
     ),
   ),
   'egg-species': v.optional(NAME),
+  held: v.optional(
+    v.object({ common: v.optional(NAME), uncommon: v.optional(NAME), rare: v.optional(NAME) }),
+  ),
+  rank: v.optional(v.picklist(['legendary', 'mythical', 'baby', 'prized', 'mythical-odds'])),
+  awaiting: v.optional(v.picklist(['baby', 'evolution'])),
 });
 
 const STATS = v.object({
@@ -91,6 +104,7 @@ const STATS = v.object({
   height: COUNT,
   weight: COUNT,
   gender: v.union([v.literal('genderless'), v.tuple([COUNT, COUNT])]),
+  'egg-cycles': v.optional(COUNT),
 });
 
 const ABILITIES = v.object({
@@ -189,6 +203,25 @@ function readEvolutions(
       evolution.shed = true;
     }
     read.push(evolution);
+  }
+  return read;
+}
+
+/** The slots a wild one carries, each checked as an item */
+function readHeld(
+  held: NonNullable<v.InferOutput<typeof WORLD>['held']>,
+  where: string,
+): WildHeldItems {
+  const read: WildHeldItems = {};
+
+  if (held.common != null) {
+    read.common = idOf(ITEM_IDS, held.common, where);
+  }
+  if (held.uncommon != null) {
+    read.uncommon = idOf(ITEM_IDS, held.uncommon, where);
+  }
+  if (held.rare != null) {
+    read.rare = idOf(ITEM_IDS, held.rare, where);
   }
   return read;
 }
@@ -344,6 +377,18 @@ export function readSpecies(files: SpeciesFiles): [Species, SpeciesData][] {
     }
     if (place['egg-species'] != null) {
       data.eggSpecies = idOf(SPECIES_IDS, place['egg-species'], where);
+    }
+    if (place.held != null) {
+      data.heldItems = readHeld(place.held, where);
+    }
+    if (place.rank != null) {
+      data.rank = place.rank;
+    }
+    if (place.awaiting != null) {
+      data.awaiting = place.awaiting;
+    }
+    if (body['egg-cycles'] != null) {
+      data.eggCycles = body['egg-cycles'];
     }
     read.push([species, data]);
   }

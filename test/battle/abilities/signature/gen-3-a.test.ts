@@ -1,5 +1,6 @@
 // Treecko through Torkoal.
 
+import { BOSS_DAMAGE_CAP } from '../../../../src/battle/abilities/special';
 import { describe, expect, it } from 'vitest';
 import {
   CHEER_MAX_SHOUTS,
@@ -1006,5 +1007,34 @@ describe('Stored Bounce', () => {
     );
 
     expect(loaded - clean).toBeCloseTo(maxHP * STORED_BOUNCE_CAP, 0);
+  });
+
+  it("holds a boss' bank to the boss cap", () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const boss = createUnit(battle, teamA);
+    const enemy = createUnit(battle, teamB);
+    boss.addAbility(Abilities.Boss);
+    boss.addAbility(Abilities.StoredBounce);
+    boss.setHealth(boss.checkStat(Stats.HP, 0));
+
+    // A raid's worth of hits, which half a raid pool would all keep
+    for (let hits = 0; hits < 10; hits += 1) {
+      enemy.damage({ type: EffectType.Move, move: Moves.Pound, unit: enemy }, boss, 300, 0);
+    }
+
+    let bounced = 0;
+
+    battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+      if (
+        event.cause.type === EffectType.Ability &&
+        event.cause.ability === Abilities.StoredBounce
+      ) {
+        bounced += event.value;
+      }
+    });
+    dealDamage(boss, enemy, Moves.Pound, 40, Types.Normal, MoveCategories.Physical);
+
+    expect(bounced).toBeCloseTo(BOSS_DAMAGE_CAP, 5);
   });
 });

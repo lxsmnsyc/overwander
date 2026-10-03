@@ -174,12 +174,14 @@ Xerneas:
     egg-groups: [NoEggsDiscovered]
     biomes: [TemperateForest, Woodland]
     active: any
+    rank: legendary
 Yveltal:
   Yveltal:
     types: [Dark, Flying]
     egg-groups: [NoEggsDiscovered]
     biomes: [Mountain, Tundra]
     active: any
+    rank: legendary
 Zygarde:
   Zygarde:
     types: [Dragon, Ground]
@@ -193,6 +195,7 @@ Zygarde:
       - species: ZygardeTenPercent
         method: [UsedItem]
         item: ZygardeCube
+    rank: legendary
   ZygardeTenPercent:
     types: [Dragon, Ground]
     egg-groups: [NoEggsDiscovered]
@@ -205,6 +208,7 @@ Zygarde:
       - species: Zygarde
         method: [UsedItem]
         item: ZygardeCube
+    rank: legendary
   ZygardeComplete:
     types: [Dragon, Ground]
     egg-groups: [NoEggsDiscovered]
@@ -219,12 +223,15 @@ Diancie:
     egg-groups: [NoEggsDiscovered]
     biomes: [Mountain]
     active: any
+    rank: mythical
 Hoopa:
   Hoopa:
     types: [Psychic, Ghost]
     egg-groups: [NoEggsDiscovered]
     biomes: [Desert]
     active: any
+    # The bound shape only: unbound is worn while the bottle is held
+    rank: mythical
   HoopaUnbound:
     types: [Psychic, Dark]
     egg-groups: [NoEggsDiscovered]
@@ -236,3 +243,4 @@ Volcanion:
     egg-groups: [NoEggsDiscovered]
     biomes: [Volcano]
     active: any
+    rank: mythical

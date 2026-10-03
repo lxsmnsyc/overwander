@@ -68,6 +68,7 @@ Marill:
     evolves-into:
       - species: Marill
         method: [Friendship]
+    rank: baby
 Sudowoodo:
   Sudowoodo:
     types: [Rock]
@@ -87,6 +88,7 @@ Sudowoodo:
         method: [Level, KnownMove]
         level: 20
         move: Mimic
+    rank: baby
 # The powders come in at the same levels all the way up the line
 Hoppip:
   Hoppip:

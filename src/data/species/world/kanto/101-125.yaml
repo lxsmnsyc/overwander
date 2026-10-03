@@ -12,12 +12,14 @@ Exeggcute:
       - species: ExeggutorAlola
         method: [UsedItem]
         item: LeafStone
+    held: { common: OranBerry, uncommon: MiracleSeed, rare: SitrusBerry }
   Exeggutor:
     types: [Grass, Psychic]
     egg-groups: [Grass]
     biomes: [TropicalRainforest, TropicalSeasonalForest, DeepOcean]
     active: any
     evolves-from: Exeggcute
+    held: { common: OranBerry, uncommon: MiracleSeed, rare: SitrusBerry }
   ExeggutorAlola:
     types: [Grass, Dragon]
     egg-groups: [Grass]
@@ -41,12 +43,14 @@ Cubone:
         method: [Level, TimeOfDay]
         level: 28
         time: [Evening, Night]
+    held: { common: TinyMushroom, uncommon: HardStone, rare: ThickClub }
   Marowak:
     types: [Ground]
     egg-groups: [Monster]
     biomes: [Mountain, Desert, ColdDesert, Badlands]
     active: [Night]
     evolves-from: Cubone
+    held: { common: TinyMushroom, uncommon: HardStone, rare: ThickClub }
   MarowakAlola:
     types: [Fire, Ghost]
     egg-groups: [Monster]
@@ -62,12 +66,14 @@ Tyrogue:
     biomes: [Grassland]
     active: [Morning, Day]
     evolves-from: Tyrogue
+    held: { common: OranBerry, uncommon: BlackBelt, rare: FocusBand }
   Hitmonchan:
     types: [Fighting]
     egg-groups: [HumanLike]
     biomes: [Grassland]
     active: [Morning, Day]
     evolves-from: Tyrogue
+    held: { common: OranBerry, uncommon: BlackBelt, rare: FocusBand }
   Tyrogue:
     types: [Fighting]
     # A baby has nothing to breed with: it is what an egg holds
@@ -87,6 +93,7 @@ Tyrogue:
         method: [Level, StatComparison]
         level: 20
         compare: { stat: Attack, against: Defense, order: equal }
+    rank: baby
   Hitmontop:
     types: [Fighting]
     egg-groups: [HumanLike]
@@ -104,6 +111,7 @@ Lickitung:
         method: [Level, KnownMove]
         level: 33
         move: Rollout
+    held: { common: OranBerry, uncommon: SilkScarf, rare: Leftovers }
   # The tongue that outgrew the Lickitung: a Lickilicky wraps it around
   # whatever it wants and carries the thing home
   Lickilicky:
@@ -122,12 +130,14 @@ Koffing:
       - species: Weezing
         method: [Level]
         level: 35
+    held: { common: PechaBerry, uncommon: SmokeBall, rare: BlackSludge }
   Weezing:
     types: [Poison]
     egg-groups: [Amorphous]
     biomes: [Swamp, Volcano]
     active: [Night]
     evolves-from: Koffing
+    held: { common: PechaBerry, uncommon: SmokeBall, rare: BlackSludge }
 Rhyhorn:
   Rhyhorn:
     types: [Ground, Rock]
@@ -138,6 +148,7 @@ Rhyhorn:
       - species: Rhydon
         method: [Level]
         level: 42
+    held: { common: TinyMushroom, uncommon: Protector, rare: HardStone }
   Rhydon:
     types: [Ground, Rock]
     egg-groups: [Monster, Field]
@@ -148,6 +159,7 @@ Rhyhorn:
       - species: Rhyperior
         method: [HeldItem, Trade]
         item: Protector
+    held: { common: TinyMushroom, uncommon: Protector, rare: HardStone }
   # A Rhydon in armour it grew itself: a Rhyperior loads rocks into the
   # holes in its hands and fires them off
   Rhyperior:
@@ -166,6 +178,7 @@ Chansey:
     evolves-into:
       - species: Blissey
         method: [Friendship]
+    held: { common: OranBerry, uncommon: SilkScarf, rare: LuckyEgg }
   Blissey:
     types: [Normal]
     egg-groups: [Fairy]
@@ -185,6 +198,7 @@ Chansey:
         level: 15
         item: OvalStone
         time: [Morning, Day]
+    rank: baby
 Tangela:
   Tangela:
     types: [Grass]
@@ -196,6 +210,7 @@ Tangela:
         method: [Level, KnownMove]
         level: 38
         move: AncientPower
+    held: { common: OranBerry, uncommon: MiracleSeed, rare: BigRoot }
   # A Tangela that stopped counting its vines: a Tangrowth grows two
   # arms out of the tangle and takes whatever comes near
   Tangrowth:
@@ -210,6 +225,7 @@ Kangaskhan:
     egg-groups: [Monster]
     biomes: [Savanna, Steppe, Badlands]
     active: [Morning, Day]
+    held: { common: OranBerry, uncommon: SilkScarf, rare: Leftovers }
 Horsea:
   Horsea:
     types: [Water]
@@ -221,6 +237,7 @@ Horsea:
       - species: Seadra
         method: [Level]
         level: 32
+    held: { common: OranBerry, uncommon: DragonScale, rare: MysticWater }
   Seadra:
     types: [Water]
     egg-groups: [Water1, Dragon]
@@ -232,6 +249,7 @@ Horsea:
       - species: Kingdra
         method: [HeldItem, Trade]
         item: DragonScale
+    held: { common: OranBerry, uncommon: DragonScale, rare: MysticWater }
   Kingdra:
     types: [Water, Dragon]
     egg-groups: [Water1, Dragon]
@@ -258,6 +276,7 @@ Goldeen:
       - species: Seaking
         method: [Level]
         level: 33
+    held: { common: OranBerry, uncommon: MysticWater, rare: SharpBeak }
   Seaking:
     types: [Water]
     egg-groups: [Water2]
@@ -273,6 +292,7 @@ Goldeen:
       - Steppe
     active: any
     evolves-from: Goldeen
+    held: { common: OranBerry, uncommon: MysticWater, rare: SharpBeak }
 Staryu:
   Staryu:
     types: [Water]
@@ -284,6 +304,7 @@ Staryu:
       - species: Starmie
         method: [UsedItem]
         item: WaterStone
+    held: { common: Stardust, uncommon: StarPiece, rare: CometShard }
   Starmie:
     types: [Water, Psychic]
     egg-groups: [Water3]
@@ -291,6 +312,7 @@ Staryu:
     biomes: [Beach, CoralReef, RockyCoast, KelpForest]
     active: [Evening, Night]
     evolves-from: Staryu
+    held: { common: Stardust, uncommon: StarPiece, rare: CometShard }
 MrMime:
   MrMime:
     types: [Psychic, Fairy]
@@ -298,6 +320,7 @@ MrMime:
     biomes: [Grassland]
     active: [Day]
     evolves-from: MimeJr
+    held: { common: OranBerry, uncommon: TwistedSpoon, rare: LightClay }
   # A Mr. Mime still learning the routine: a Mime Jr. copies whoever it
   # is watching and does not stop when they notice
   MimeJr:
@@ -310,6 +333,7 @@ MrMime:
         method: [Level, KnownMove]
         level: 20
         move: Mimic
+    rank: baby
 Scyther:
   Scyther:
     types: [Bug, Flying]
@@ -320,6 +344,7 @@ Scyther:
       - species: Scizor
         method: [HeldItem, Trade]
         item: MetalCoat
+    held: { common: OranBerry, uncommon: MetalCoat, rare: SilverPowder }
   Scizor:
     types: [Bug, Steel]
     egg-groups: [Bug]
@@ -333,6 +358,7 @@ Jynx:
     biomes: [Glacier, Tundra, Taiga]
     active: [Evening, Night]
     evolves-from: Smoochum
+    held: { common: AspearBerry, uncommon: NeverMeltIce, rare: TwistedSpoon }
   Smoochum:
     types: [Ice, Psychic]
     # A baby lays no egg of its own: the stage above it does
@@ -343,6 +369,7 @@ Jynx:
       - species: Jynx
         method: [Level]
         level: 30
+    rank: baby
 Electabuzz:
   Electabuzz:
     types: [Electric]
@@ -354,6 +381,7 @@ Electabuzz:
       - species: Electivire
         method: [HeldItem, Trade]
         item: Electirizer
+    held: { common: OranBerry, uncommon: Electirizer, rare: Magnet }
   Elekid:
     types: [Electric]
     # A baby lays no egg of its own: the stage above it does
@@ -364,6 +392,7 @@ Electabuzz:
       - species: Electabuzz
         method: [Level]
         level: 30
+    rank: baby
   # What an Electabuzz becomes with the current to spare: an Electivire
   # puts both tails on whatever it is hitting and lets go
   Electivire:

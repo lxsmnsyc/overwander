@@ -4,6 +4,7 @@ Giratina:
     egg-groups: [NoEggsDiscovered]
     biomes: [Badlands, Bog]
     active: any
+    rank: legendary
   GiratinaOrigin:
     types: [Ghost, Dragon]
     egg-groups: [NoEggsDiscovered]
@@ -21,6 +22,7 @@ Cresselia:
     egg-groups: [NoEggsDiscovered]
     biomes: [Ocean]
     active: [Evening, Night]
+    rank: legendary
 # The prince of the sea and what its egg comes to. Phione is not an
 # evolution and never becomes a Manaphy: it is what a Manaphy lays,
 # which is the only way one is ever met
@@ -40,12 +42,14 @@ Manaphy:
     # Its egg is a Phione and never another Manaphy, which is what
     # the mainline does and the only way to a Phione at all
     egg-species: Phione
+    rank: mythical
 Darkrai:
   Darkrai:
     types: [Dark]
     egg-groups: [NoEggsDiscovered]
     biomes: [Ocean]
     active: [Night]
+    rank: mythical
 # The flower that grows back whatever was ruined, and the shape it
 # opens into with a Gracidea in its hands: the same pokemon lying
 # down and the same pokemon in the air
@@ -55,6 +59,7 @@ Shaymin:
     egg-groups: [NoEggsDiscovered]
     biomes: [Grassland]
     active: any
+    rank: mythical
   ShayminSky:
     types: [Grass, Flying]
     egg-groups: [NoEggsDiscovered]
@@ -81,6 +86,7 @@ Arceus:
     egg-groups: [NoEggsDiscovered]
     biomes: [AlpineTundra]
     active: any
+    rank: mythical
   ArceusBug:
     types: [Bug]
     egg-groups: [NoEggsDiscovered]

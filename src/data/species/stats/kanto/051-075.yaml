@@ -164,6 +164,7 @@ Geodude:
     height: 0.4
     weight: 20
     gender: [1, 1]
+    egg-cycles: 15
   Graveler:
     stats: { HP: 55, Attack: 95, Defense: 115, SpecialAttack: 45, SpecialDefense: 45, Speed: 35 }
     catch-rate: 120

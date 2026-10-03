@@ -54,6 +54,7 @@ Riolu:
       - species: Lucario
         method: [Friendship, TimeOfDay]
         time: [Morning, Day]
+    rank: baby
   Lucario:
     types: [Fighting, Steel]
     egg-groups: [Field, HumanLike]

@@ -1,0 +1,84 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Biome weather",
+  "type": "object",
+  "properties": {
+    "corners": {
+      "type": "object",
+      "properties": {
+        "wildest": {
+          "$ref": "names.json#/definitions/weather"
+        },
+        "stillest": {
+          "$ref": "names.json#/definitions/weather"
+        },
+        "bleakest": {
+          "$ref": "names.json#/definitions/weather"
+        },
+        "thickest": {
+          "$ref": "names.json#/definitions/weather"
+        }
+      },
+      "required": [
+        "wildest",
+        "stillest",
+        "bleakest",
+        "thickest"
+      ],
+      "additionalProperties": false,
+      "description": "The four rarest skies, shared by every country"
+    },
+    "biomes": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "names.json#/definitions/biome"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "clear": {
+            "$ref": "names.json#/definitions/weather",
+            "description": "Driest and calmest"
+          },
+          "stirred": {
+            "$ref": "names.json#/definitions/weather",
+            "description": "Dry, with the air moving"
+          },
+          "damp": {
+            "$ref": "names.json#/definitions/weather",
+            "description": "The edge of a front"
+          },
+          "wet": {
+            "$ref": "names.json#/definitions/weather",
+            "description": "Inside a front"
+          },
+          "storm": {
+            "$ref": "names.json#/definitions/weather",
+            "description": "The core of a front"
+          },
+          "rare": {
+            "$ref": "names.json#/definitions/weather",
+            "description": "Its own showpiece, where it has one"
+          },
+          "corners": {
+            "const": false,
+            "description": "Leaves the four rarest skies out"
+          }
+        },
+        "required": [
+          "clear",
+          "stirred",
+          "damp",
+          "wet",
+          "storm"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "corners",
+    "biomes"
+  ],
+  "additionalProperties": false
+}

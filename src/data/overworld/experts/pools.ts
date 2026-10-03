@@ -1,5 +1,5 @@
-import { Types } from '../../constants/types';
-import EggGroups from '../../ids/egg-groups';
+import type { Types } from '../../constants/types';
+import type EggGroups from '../../ids/egg-groups';
 import { Species, getBaseFormSpecies } from '../../ids/species';
 import {
   getGrowthRoads,
@@ -11,8 +11,8 @@ import {
 import { SpawnRarity, getSpawnRarity } from '../../biome';
 import { EVERY_LAIR, getLairResidents } from '../lair';
 import canMeetSpecies from '../reach';
-import { EliteMember } from './elite';
-import { GYM_LEADER_TYPES, GymLeader } from './gym-leaders';
+import { ELITE_MEMBER_POOLS, type EliteMember } from './elite';
+import { GYM_LEADER_TYPES, type GymLeader } from './gym-leaders';
 
 /**
  * Every expert fields a full 6, whatever their rank; the rank sets
@@ -44,208 +44,12 @@ export interface ExpertPool {
 }
 
 /**
- * What each of the Elite Four fields.
- *
- * Each widening is the one their mainline team actually shows. Bruno
- * brings hard ground along with the muscle, Agatha's ghosts keep the
- * company they keep, and Lance's dragons are read off the breeding
- * table rather than the type chart
- */
-export const ELITE_MEMBER_POOLS: Record<EliteMember, ExpertPool> = {
-  // Slowbro is hers in every game she appears in and there is nothing
-  // icy about him, so he is named rather than derived
-  [EliteMember.Lorelei]: { types: [Types.Ice], also: [Species.Slowbro] },
-  // The Ground half brings the heavy ground with it, and overlaps
-  // Brock's rock at Golem and Rhydon, which is right: they are the
-  // same pokemon a fighting specialist and a rock specialist would
-  // both want. Onix is named, since a Steelix above him puts him
-  // below the band the rules read
-  [EliteMember.Bruno]: {
-    types: [Types.Fighting, Types.Ground],
-    also: [Species.Onix],
-  },
-  // The Ghost type on its own, now that it runs to a dozen grown
-  // species across the regions. She carried the Amorphous group while
-  // Kanto had one grown Ghost, and that widener had come to reach
-  // Gardevoir and Castform, which no ghost specialist would field.
-  // Her Golbat and Arbok stay named
-  [EliteMember.Agatha]: {
-    types: [Types.Ghost],
-    also: [Species.Golbat, Species.Arbok],
-  },
-  // The Dragon egg group is the whole point: it is why a Gyarados
-  // stands on a dragon master's team. Aerodactyl is a dragon by
-  // neither rule and by every eye, so he is named
-  [EliteMember.Lance]: {
-    types: [Types.Dragon],
-    eggGroups: [EggGroups.Dragon],
-    also: [Species.Aerodactyl],
-  },
-  // Johto's three each field a type wide enough to stand on its own,
-  // so none of them needs a widener
-  [EliteMember.Will]: { types: [Types.Psychic] },
-  [EliteMember.Koga]: { types: [Types.Poison] },
-  [EliteMember.Karen]: { types: [Types.Dark] },
-  [EliteMember.JohtoBruno]: {
-    types: [Types.Fighting, Types.Ground],
-    also: [Species.Onix],
-  },
-  // Hoenn's four field their type and nothing else: each of their
-  // mainline teams is that type all the way down, Sableye and Kingdra
-  // included, so there is nothing for a widener to reach
-  [EliteMember.Sidney]: { types: [Types.Dark] },
-  [EliteMember.Phoebe]: { types: [Types.Ghost] },
-  [EliteMember.Glacia]: { types: [Types.Ice] },
-  [EliteMember.Drake]: { types: [Types.Dragon] },
-  // Drapion is a Poison and Dark pokemon that Aaron closes with in
-  // every game he is in, which is Agatha's Golbat again: the type
-  // chart does not reach it and the man fields it anyway
-  [EliteMember.Aaron]: { types: [Types.Bug], also: [Species.Drapion] },
-  // The Sudowoodo is hers in Diamond and Pearl, and it is rock rather
-  // than ground
-  [EliteMember.Bertha]: { types: [Types.Ground], also: [Species.Sudowoodo] },
-  [EliteMember.Flint]: { types: [Types.Fire] },
-  [EliteMember.Lucian]: { types: [Types.Psychic] },
-  // Unova's four are each their type all the way down, the way
-  // Hoenn's are, so none of them needs a widener
-  [EliteMember.Shauntal]: { types: [Types.Ghost] },
-  [EliteMember.Marshal]: { types: [Types.Fighting] },
-  [EliteMember.Grimsley]: { types: [Types.Dark] },
-  [EliteMember.Caitlin]: { types: [Types.Psychic] },
-  [EliteMember.Malva]: { types: [Types.Fire] },
-  [EliteMember.Siebold]: { types: [Types.Water] },
-  [EliteMember.Wikstrom]: { types: [Types.Steel] },
-  [EliteMember.Drasna]: { types: [Types.Dragon] },
-};
-
-/**
- * The one an elite is remembered for, standing last the way a gym
- * leader's does. Bruno's is his Machamp in both leagues, since Bruno
- * is in both
- */
-export const ELITE_MEMBER_SIGNATURES: Record<EliteMember, Species> = {
-  [EliteMember.Lorelei]: Species.Lapras,
-  [EliteMember.Bruno]: Species.Machamp,
-  [EliteMember.Agatha]: Species.Gengar,
-  [EliteMember.Lance]: Species.Dragonite,
-  [EliteMember.Will]: Species.Xatu,
-  [EliteMember.Koga]: Species.Crobat,
-  [EliteMember.Karen]: Species.Houndoom,
-  [EliteMember.JohtoBruno]: Species.Machamp,
-  [EliteMember.Sidney]: Species.Absol,
-  [EliteMember.Phoebe]: Species.Dusclops,
-  [EliteMember.Glacia]: Species.Walrein,
-  [EliteMember.Drake]: Species.Salamence,
-  // Not the Drapion he actually closes with: a signature is of the
-  // expert's own kind, and the bug he keeps in both his teams is the
-  // Heracross
-  [EliteMember.Aaron]: Species.Heracross,
-  [EliteMember.Bertha]: Species.Hippowdon,
-  // Platinum's ace, from the team that is fire all the way down.
-  // Diamond and Pearl close him with an Infernape, which is a
-  // starter a player chooses rather than a pokemon of his
-  [EliteMember.Flint]: Species.Magmortar,
-  [EliteMember.Lucian]: Species.Bronzong,
-  [EliteMember.Shauntal]: Species.Chandelure,
-  [EliteMember.Marshal]: Species.Conkeldurr,
-  [EliteMember.Grimsley]: Species.Bisharp,
-  [EliteMember.Caitlin]: Species.Reuniclus,
-  // The Talonflame she closes with, since her Pyroar is staged nowhere yet
-  [EliteMember.Malva]: Species.Talonflame,
-  [EliteMember.Siebold]: Species.Barbaracle,
-  [EliteMember.Wikstrom]: Species.Aegislash,
-  [EliteMember.Drasna]: Species.Noivern,
-};
-
-/**
  * And what a gym leader fields: their own type and nothing more, read
  * off the table above rather than kept twice
  */
 export function getGymLeaderPool(leader: GymLeader): ExpertPool {
   return { types: [GYM_LEADER_TYPES[leader]] };
 }
-
-/**
- * The one pokemon a leader is remembered for, which stands in their
- * sixth slot however the other five roll. It is the mainline ace,
- * so several of them are below the band the other five are drawn
- * from: Brock's Onix is a middle stage now that a Steelix exists,
- * and he brings it anyway
- */
-export const GYM_LEADER_SIGNATURES: Record<GymLeader, Species> = {
-  [GymLeader.Brock]: Species.Onix,
-  [GymLeader.Misty]: Species.Starmie,
-  [GymLeader.LtSurge]: Species.Raichu,
-  [GymLeader.Erika]: Species.Vileplume,
-  [GymLeader.Koga]: Species.Weezing,
-  [GymLeader.Sabrina]: Species.Alakazam,
-  [GymLeader.Blaine]: Species.Arcanine,
-  [GymLeader.Giovanni]: Species.Rhydon,
-  [GymLeader.Falkner]: Species.Pidgeotto,
-  [GymLeader.Bugsy]: Species.Scyther,
-  [GymLeader.Whitney]: Species.Miltank,
-  [GymLeader.Morty]: Species.Gengar,
-  [GymLeader.Chuck]: Species.Poliwrath,
-  [GymLeader.Jasmine]: Species.Steelix,
-  [GymLeader.Pryce]: Species.Piloswine,
-  [GymLeader.Clair]: Species.Kingdra,
-  [GymLeader.Roxanne]: Species.Nosepass,
-  [GymLeader.Brawly]: Species.Hariyama,
-  [GymLeader.Wattson]: Species.Manectric,
-  [GymLeader.Flannery]: Species.Torkoal,
-  [GymLeader.Norman]: Species.Slaking,
-  [GymLeader.Winona]: Species.Altaria,
-  [GymLeader.Tate]: Species.Solrock,
-  [GymLeader.Liza]: Species.Lunatone,
-  // The same ace Clair brings, which is the mainline's own doing:
-  // two water-and-dragon gyms, one Kingdra between them
-  [GymLeader.Juan]: Species.Kingdra,
-  // Roark's ace is a first stage with a Rampardos above it, which is
-  // Brock's Onix again: the pokemon the gym is remembered for rather
-  // than the strongest thing its keeper could field
-  [GymLeader.Roark]: Species.Cranidos,
-  [GymLeader.Gardenia]: Species.Roserade,
-  [GymLeader.Maylene]: Species.Lucario,
-  [GymLeader.CrasherWake]: Species.Floatzel,
-  // The ghost she closes with in Diamond and Pearl, which is the
-  // league this badge order is read from
-  [GymLeader.Fantina]: Species.Drifblim,
-  [GymLeader.Byron]: Species.Bastiodon,
-  [GymLeader.Candice]: Species.Abomasnow,
-  // Not the Raichu he opens with: Lt. Surge is already remembered for
-  // that one, and the Luxray is what Sunyshore closes with anyway
-  [GymLeader.Volkner]: Species.Luxray,
-  // Striaton's three each close with an elemental monkey, and those
-  // three lines are written but staged nowhere while Simisear and
-  // Simipour are undrawn. A leader may not field what nobody can
-  // meet, so each stands with another of their own fight until then
-  [GymLeader.Cilan]: Species.Lilligant,
-  [GymLeader.Chili]: Species.Emboar,
-  [GymLeader.Cress]: Species.Seismitoad,
-  [GymLeader.Lenora]: Species.Watchog,
-  [GymLeader.Burgh]: Species.Leavanny,
-  [GymLeader.Elesa]: Species.Emolga,
-  [GymLeader.Clay]: Species.Excadrill,
-  [GymLeader.Skyla]: Species.Swanna,
-  [GymLeader.Brycen]: Species.Cryogonal,
-  [GymLeader.Drayden]: Species.Haxorus,
-  [GymLeader.Cheren]: Species.Stoutland,
-  [GymLeader.Roxie]: Species.Garbodor,
-  // The Jellicent he closes with is unwritten, and the Wailord is
-  // his in the same team
-  [GymLeader.Marlon]: Species.Wailord,
-  [GymLeader.Viola]: Species.Vivillon,
-  // The fossil he closes with in X, a first stage like Roark's Cranidos
-  [GymLeader.Grant]: Species.Tyrunt,
-  // Her gym ace rather than the Lucario she Mega Evolves on the tower,
-  // which is Maylene's already
-  [GymLeader.Korrina]: Species.Hawlucha,
-  [GymLeader.Ramos]: Species.Gogoat,
-  [GymLeader.Clemont]: Species.Heliolisk,
-  [GymLeader.Valerie]: Species.Sylveon,
-  [GymLeader.Olympia]: Species.Meowstic,
-  [GymLeader.Wulfric]: Species.Avalugg,
-};
 
 /**
  * The species an expert may field out of a roster: the **rare** band

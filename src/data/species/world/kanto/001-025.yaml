@@ -8,6 +8,7 @@ Bulbasaur:
       - species: Ivysaur
         method: [Level]
         level: 16
+    held: { common: OranBerry, uncommon: MiracleSeed }
   Ivysaur:
     types: [Grass, Poison]
     egg-groups: [Monster, Grass]
@@ -18,12 +19,14 @@ Bulbasaur:
       - species: Venusaur
         method: [Level]
         level: 32
+    held: { common: OranBerry, uncommon: MiracleSeed }
   Venusaur:
     types: [Grass, Poison]
     egg-groups: [Monster, Grass]
     biomes: [Grassland, TemperateForest, Woodland]
     active: [Morning, Day]
     evolves-from: Ivysaur
+    held: { common: OranBerry, uncommon: MiracleSeed }
 Charmander:
   Charmander:
     types: [Fire]
@@ -34,6 +37,7 @@ Charmander:
       - species: Charmeleon
         method: [Level]
         level: 16
+    held: { common: RawstBerry, uncommon: Charcoal }
   Charmeleon:
     types: [Fire]
     egg-groups: [Monster, Dragon]
@@ -44,12 +48,14 @@ Charmander:
       - species: Charizard
         method: [Level]
         level: 36
+    held: { common: RawstBerry, uncommon: Charcoal }
   Charizard:
     types: [Fire, Flying]
     egg-groups: [Monster, Dragon]
     biomes: [Mountain, Volcano]
     active: [Morning, Day]
     evolves-from: Charmeleon
+    held: { common: RawstBerry, uncommon: Charcoal }
 Squirtle:
   Squirtle:
     types: [Water]
@@ -61,6 +67,7 @@ Squirtle:
       - species: Wartortle
         method: [Level]
         level: 16
+    held: { common: OranBerry, uncommon: MysticWater }
   Wartortle:
     types: [Water]
     egg-groups: [Monster, Water1]
@@ -72,6 +79,7 @@ Squirtle:
       - species: Blastoise
         method: [Level]
         level: 36
+    held: { common: OranBerry, uncommon: MysticWater }
   Blastoise:
     types: [Water]
     egg-groups: [Monster, Water1]
@@ -79,6 +87,7 @@ Squirtle:
     biomes: [Beach, Ocean]
     active: [Morning, Day]
     evolves-from: Wartortle
+    held: { common: OranBerry, uncommon: MysticWater }
 Caterpie:
   Caterpie:
     types: [Bug]
@@ -89,6 +98,7 @@ Caterpie:
       - species: Metapod
         method: [Level]
         level: 7
+    held: { common: OranBerry, uncommon: SilverPowder }
   Metapod:
     types: [Bug]
     egg-groups: [Bug]
@@ -99,12 +109,14 @@ Caterpie:
       - species: Butterfree
         method: [Level]
         level: 10
+    held: { common: OranBerry, uncommon: SilverPowder }
   Butterfree:
     types: [Bug, Flying]
     egg-groups: [Bug]
     biomes: [TemperateForest, Woodland]
     active: [Morning, Day]
     evolves-from: Metapod
+    held: { common: OranBerry, uncommon: SilverPowder, rare: LaxIncense }
 Weedle:
   Weedle:
     types: [Bug, Poison]
@@ -114,6 +126,7 @@ Weedle:
       - species: Kakuna
         method: [Level]
         level: 7
+    held: { common: PechaBerry, uncommon: PoisonBarb }
   Kakuna:
     types: [Bug, Poison]
     egg-groups: [Bug]
@@ -123,12 +136,14 @@ Weedle:
       - species: Beedrill
         method: [Level]
         level: 10
+    held: { common: PechaBerry, uncommon: PoisonBarb }
   Beedrill:
     types: [Bug, Poison]
     egg-groups: [Bug]
     biomes: [TemperateForest, Woodland]
     active: [Morning, Day]
     evolves-from: Kakuna
+    held: { common: PechaBerry, uncommon: PoisonBarb, rare: SilverPowder }
 Pidgey:
   Pidgey:
     types: [Normal, Flying]
@@ -139,6 +154,7 @@ Pidgey:
       - species: Pidgeotto
         method: [Level]
         level: 18
+    held: { common: OranBerry, uncommon: SharpBeak, rare: BrightPowder }
   Pidgeotto:
     types: [Normal, Flying]
     egg-groups: [Flying]
@@ -149,12 +165,14 @@ Pidgey:
       - species: Pidgeot
         method: [Level]
         level: 36
+    held: { common: OranBerry, uncommon: SharpBeak, rare: BrightPowder }
   Pidgeot:
     types: [Normal, Flying]
     egg-groups: [Flying]
     biomes: [Grassland, Woodland]
     active: [Morning, Day]
     evolves-from: Pidgeotto
+    held: { common: OranBerry, uncommon: SharpBeak, rare: BrightPowder }
 Rattata:
   Rattata:
     types: [Normal]
@@ -165,12 +183,14 @@ Rattata:
       - species: Raticate
         method: [Level]
         level: 20
+    held: { common: OranBerry, uncommon: SilkScarf, rare: QuickClaw }
   Raticate:
     types: [Normal]
     egg-groups: [Field]
     biomes: [Grassland, Woodland]
     active: any
     evolves-from: Rattata
+    held: { common: OranBerry, uncommon: SilkScarf, rare: QuickClaw }
   RattataAlola:
     types: [Dark, Normal]
     egg-groups: [Field]
@@ -199,12 +219,14 @@ Spearow:
       - species: Fearow
         method: [Level]
         level: 20
+    held: { common: OranBerry, uncommon: SharpBeak, rare: BrightPowder }
   Fearow:
     types: [Normal, Flying]
     egg-groups: [Flying]
     biomes: [Shrubland, Steppe]
     active: [Morning, Day]
     evolves-from: Spearow
+    held: { common: OranBerry, uncommon: SharpBeak, rare: BrightPowder }
 Ekans:
   Ekans:
     types: [Poison]
@@ -215,12 +237,14 @@ Ekans:
       - species: Arbok
         method: [Level]
         level: 22
+    held: { common: PechaBerry, uncommon: PoisonBarb }
   Arbok:
     types: [Poison]
     egg-groups: [Field, Dragon]
     biomes: [Grassland, Savanna, Steppe, Badlands]
     active: [Day, Evening, Night]
     evolves-from: Ekans
+    held: { common: PechaBerry, uncommon: PoisonBarb }
 # A baby lays no egg of its own: the stage above it does
 Pikachu:
   Pikachu:
@@ -237,12 +261,14 @@ Pikachu:
       - species: RaichuAlola
         method: [UsedItem]
         item: ThunderStone
+    held: { common: OranBerry, uncommon: Magnet, rare: LightBall }
   Raichu:
     types: [Electric]
     egg-groups: [Field, Fairy]
     biomes: [TemperateForest, Woodland]
     active: any
     evolves-from: Pikachu
+    held: { common: OranBerry, uncommon: Magnet, rare: LightBall }
   Pichu:
     types: [Electric]
     egg-groups: [NoEggsDiscovered]
@@ -251,6 +277,7 @@ Pikachu:
     evolves-into:
       - species: Pikachu
         method: [Friendship]
+    rank: baby
   PichuSpikyEared:
     types: [Electric]
     egg-groups: [NoEggsDiscovered]
@@ -258,6 +285,8 @@ Pikachu:
     biomes: [TemperateForest]
     active: any
     base-form: false
+    # Met as rarely as a mythical, but no relic calls it and no raid stages it
+    rank: mythical-odds
   RaichuAlola:
     types: [Electric, Psychic]
     egg-groups: [Field, Fairy]

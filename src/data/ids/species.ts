@@ -958,6 +958,106 @@ export const enum Species {
   Zeraora = 807,
   Meltan = 808,
   Melmetal = 809,
+
+  // Galar
+  Grookey = 810,
+  Thwackey = 811,
+  Rillaboom = 812,
+  Scorbunny = 813,
+  Raboot = 814,
+  Cinderace = 815,
+  Sobble = 816,
+  Drizzile = 817,
+  Inteleon = 818,
+  Skwovet = 819,
+  Greedent = 820,
+  Rookidee = 821,
+  Corvisquire = 822,
+  Corviknight = 823,
+  Blipbug = 824,
+  Dottler = 825,
+  Orbeetle = 826,
+  Nickit = 827,
+  Thievul = 828,
+  Gossifleur = 829,
+  Eldegoss = 830,
+  Wooloo = 831,
+  Dubwool = 832,
+  Chewtle = 833,
+  Drednaw = 834,
+  Yamper = 835,
+  Boltund = 836,
+  Rolycoly = 837,
+  Carkol = 838,
+  Coalossal = 839,
+  Applin = 840,
+  Flapple = 841,
+  Appletun = 842,
+  Silicobra = 843,
+  Sandaconda = 844,
+  Cramorant = 845,
+  Arrokuda = 846,
+  Barraskewda = 847,
+  Toxel = 848,
+  Toxtricity = 849,
+  Sizzlipede = 850,
+  Centiskorch = 851,
+  Clobbopus = 852,
+  Grapploct = 853,
+  Sinistea = 854,
+  Polteageist = 855,
+  Hatenna = 856,
+  Hattrem = 857,
+  Hatterene = 858,
+  Impidimp = 859,
+  Morgrem = 860,
+  Grimmsnarl = 861,
+  Obstagoon = 862,
+  Perrserker = 863,
+  Cursola = 864,
+  Sirfetchd = 865,
+  MrRime = 866,
+  Runerigus = 867,
+  Milcery = 868,
+  Alcremie = 869,
+  Falinks = 870,
+  Pincurchin = 871,
+  Snom = 872,
+  Frosmoth = 873,
+  Stonjourner = 874,
+  Eiscue = 875,
+  Indeedee = 876,
+  Morpeko = 877,
+  Cufant = 878,
+  Copperajah = 879,
+  Dracozolt = 880,
+  Arctozolt = 881,
+  Dracovish = 882,
+  Arctovish = 883,
+  Duraludon = 884,
+  Dreepy = 885,
+  Drakloak = 886,
+  Dragapult = 887,
+  Zacian = 888,
+  Zamazenta = 889,
+  Eternatus = 890,
+  Kubfu = 891,
+  Urshifu = 892,
+  Zarude = 893,
+  Regieleki = 894,
+  Regidrago = 895,
+  Glastrier = 896,
+  Spectrier = 897,
+  Calyrex = 898,
+
+  // Hisui
+  Wyrdeer = 899,
+  Kleavor = 900,
+  Ursaluna = 901,
+  Basculegion = 902,
+  Sneasler = 903,
+  Overqwil = 904,
+  Enamorus = 905,
   DeoxysAttack = 1038601,
   DeoxysDefense = 1038602,
   DeoxysSpeed = 1038603,
@@ -1265,6 +1365,69 @@ export const enum Species {
 
   /** The colours Magearna was first painted in */
   MagearnaOriginal = 1080101,
+
+  /** The Galarian forms of the older lines, each in the collection's own Galar slot */
+  MeowthGalar = 1005202,
+  PonytaGalar = 1007701,
+  RapidashGalar = 1007801,
+  SlowpokeGalar = 1007901,
+  SlowbroGalar = 1008001,
+  FarfetchdGalar = 1008301,
+  WeezingGalar = 1011001,
+  MrMimeGalar = 1012201,
+  ArticunoGalar = 1014401,
+  ZapdosGalar = 1014501,
+  MoltresGalar = 1014601,
+  SlowkingGalar = 1019901,
+  CorsolaGalar = 1022201,
+  ZigzagoonGalar = 1026301,
+  LinooneGalar = 1026401,
+
+  /** The Hisuian forms of the older lines, each in the collection's own Hisui slot */
+  GrowlitheHisui = 1005801,
+  ArcanineHisui = 1005901,
+  VoltorbHisui = 1010001,
+  ElectrodeHisui = 1010101,
+  TyphlosionHisui = 1015701,
+  QwilfishHisui = 1021101,
+  SneaselHisui = 1021501,
+  SliggooHisui = 1070501,
+  GoodraHisui = 1070601,
+  AvaluggHisui = 1071301,
+  DecidueyeHisui = 1072401,
+
+  /** What a Cramorant comes back up with after a dive: the small catch, then the big one */
+  CramorantGulping = 1084501,
+  CramorantGorging = 1084502,
+
+  /** The calm key a Toxtricity is born into by its nature, Amped at the base */
+  ToxtricityLowKey = 1084901,
+
+  /** The head an Eiscue is left with once its ice is gone */
+  EiscueNoice = 1087501,
+
+  /** The mood a Morpeko swings into each time it acts */
+  MorpekoHangry = 1087701,
+
+  /** The heroes with their rusted relics restored */
+  ZacianCrowned = 1088801,
+  ZamazentaCrowned = 1088901,
+
+  /** The shape Eternatus takes at the height of its power */
+  EternatusEternamax = 1089001,
+
+  /** The style an Urshifu masters in the tower of water, Single Strike at the base */
+  UrshifuRapidStrike = 1089201,
+
+  /** The Zarude that raised a child of the jungle */
+  ZarudeDada = 1089301,
+
+  /** Calyrex astride one of its steeds, the ice first */
+  CalyrexIce = 1089801,
+  CalyrexShadow = 1089802,
+
+  /** The shape Enamorus takes when the Reveal Glass shows its other self */
+  EnamorusTherian = 1090501,
 }
 
 /**

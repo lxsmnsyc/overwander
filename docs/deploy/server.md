@@ -106,10 +106,10 @@ now), release from a checkout of `main` instead:
 ```bash
 pnpm cs:ver                 # fold the pending changesets into the version and changelog
 git commit -am "chore: version packages" && git push
-bash scripts/release.sh     # tag, publish the GitHub release, and the sprite host
+pnpm cs:release            # tag, publish the GitHub release, and the sprite host
 ```
 
-`scripts/release.sh` needs `gh` signed in, and `CLOUDFLARE_API_TOKEN` and
+`pnpm cs:release` (`scripts/release.sh`) needs `gh` signed in, and `CLOUDFLARE_API_TOKEN` and
 `CLOUDFLARE_ACCOUNT_ID` in the environment for the sprite host.
 
 The server fetches the release itself, so GitHub never needs a way in.

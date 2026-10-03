@@ -48,7 +48,9 @@ export default function BoxHeading(props: BoxHeadingProps): JSX.Element {
   /** What the line under the name says about how full the box is */
   const fill = (): string => {
     if (props.selecting) {
-      return 'Press to pick. Shift-press picks a run, and a picked set carries across pages and searches.';
+      const place = props.id == null ? '' : ' Then press an empty square to put them there.';
+
+      return `Press to pick. Shift-press picks a run, and picks carry across boxes and searches.${place}`;
     }
     const pokemon = `${props.count} pokemon`;
 

@@ -1,4 +1,15 @@
-import { type Accessor, Index, type JSX, Show, createSignal } from 'solid-js';
+import {
+  type Accessor,
+  Index,
+  type JSX,
+  Show,
+  createEffect,
+  createMemo,
+  createSignal,
+  on,
+  onCleanup,
+  onMount,
+} from 'solid-js';
 import type { AuraKind } from '../../canvas/auras';
 import { Species } from '../../data/ids/species';
 import { LockIcon, MoonIcon, SparklesIcon, StarIcon, SunIcon } from '../icons';
@@ -219,6 +230,33 @@ export interface CatchBoxProps {
    * square's slot. Given, gaps and slotted pokemon both take a drop
    */
   onDropOn?: (slot: number) => void;
+  /**
+   * Putting the picked pokemon in an empty square, by its slot. Given,
+   * every gap is a button: a finger cannot drag, and dragging is the
+   * only other way to say where in a box something goes
+   */
+  onPlace?: (slot: number) => void;
+  /** What a gap that places says to a screen reader */
+  placeLabel?: (slot: number) => string;
+  /**
+   * Whether a box longer than five rows scrolls inside its frame
+   * rather than standing as tall as it is. Only the rows in sight are
+   * drawn, so a box of a thousand costs what a box of thirty does
+   */
+  scroll?: boolean;
+  /** Changed to send a scrolling box back to its first row */
+  rewind?: unknown;
+  /** Which squares a scrolling box has in sight, as it scrolls */
+  onView?: (spot: BoxView) => void;
+}
+
+/** Which squares are in sight, counted from 1 */
+export interface BoxView {
+  from: number;
+  to: number;
+  total: number;
+  /** Whether there is more than fits, so the box scrolls at all */
+  scrolls: boolean;
 }
 
 /** What came with a press, beyond which square it was */
@@ -284,21 +322,43 @@ const COLUMNS: Record<3 | BoxWidth, string> = {
 };
 
 /**
- * How wide the grid is laid out, and how wide it is allowed to grow.
- * The two travel together: a square is a share of the box, so the
- * width is what keeps a three-square box drawing squares the size of
- * a six-square one
+ * How wide the box is allowed to grow. A square is a share of the box,
+ * so the width is what keeps a three-square box drawing squares the
+ * size of a six-square one
  */
-const SHAPE: Record<3 | BoxWidth, string> = {
-  3: 'max-w-64 grid-cols-3',
-  5: 'max-w-md grid-cols-5',
-  6: 'max-w-lg grid-cols-6',
-  8: 'max-w-2xl grid-cols-8',
+const WIDTH: Record<3 | BoxWidth, string> = {
+  3: 'max-w-64',
+  5: 'max-w-md',
+  6: 'max-w-lg',
+  8: 'max-w-2xl',
 };
+
+/**
+ * The frame's padding and border and the gap between squares, in
+ * pixels, matching `p-1.5`, `border-4` and `gap-1.5`: a scrolling box
+ * works out how tall a row is from them
+ */
+const PAD = 6;
+const BORDER = 4;
+const GAP = 6;
+
+/** Rows drawn past each edge, so a quick flick never shows a blank one */
+const OVERSCAN = 2;
+
+/**
+ * How near the top or bottom a drag has to be to scroll the box, and
+ * how far it scrolls each time the browser says the drag moved, at the
+ * very edge
+ */
+const EDGE = 56;
+const EDGE_STEP = 18;
 
 export default function CatchBox(props: CatchBoxProps): JSX.Element {
   /** The shape of one square: square, or wide in a box that fills */
-  const aspect = (): string => (props.fill === true ? 'aspect-[7/4]' : 'aspect-square');
+  // Square on a phone, where a wide square leaves the sprite too small
+  // to tell under its badges
+  const aspect = (): string =>
+    props.fill === true ? 'aspect-square sm:aspect-[7/4]' : 'aspect-square';
 
   /**
    * What is standing in a square, if anything. The last box of a
@@ -329,25 +389,31 @@ export default function CatchBox(props: CatchBoxProps): JSX.Element {
    * one: anywhere else the order is a sort, and a pokemon dropped into
    * a sorted list would not stay where it was put
    */
-  const dropProps = (index: number): DropHandlers => {
-    const slot = slotAt(index);
-    const onDropOn = props.onDropOn;
+  const dropProps = (index: Accessor<number>): DropHandlers => {
+    // Asked as the drag happens rather than when the square is drawn:
+    // a scrolling box hands the same square a new slot as it scrolls
+    const slot = (): number | undefined => (props.onDropOn == null ? undefined : slotAt(index()));
 
-    if (slot == null || onDropOn == null) {
-      return {};
-    }
     return {
       onDragOver: (event: DragEvent) => {
+        if (slot() == null) {
+          return;
+        }
         event.preventDefault();
-        setHovered(index);
+        setHovered(index());
       },
       onDragLeave: () => {
-        setHovered((at) => (at === index ? null : at));
+        setHovered((at) => (at === index() ? null : at));
       },
       onDrop: (event: DragEvent) => {
+        const landed = slot();
+
+        if (landed == null) {
+          return;
+        }
         event.preventDefault();
         setHovered(null);
-        onDropOn(slot);
+        props.onDropOn?.(landed);
       },
     };
   };
@@ -557,105 +623,302 @@ export default function CatchBox(props: CatchBoxProps): JSX.Element {
   const width = (): BoxWidth =>
     props.columns == null || props.columns === 3 ? BOX_COLUMNS : props.columns;
 
-  const squares = (): null[] => squaresOf(props.capacity ?? boxSizeOf(width()));
+  const columns = (): 3 | BoxWidth => props.columns ?? BOX_COLUMNS;
+
+  /**
+   * How many squares are drawn: what the caller asked for, or at least
+   * a box's worth and then whole rows for however many it was given
+   */
+  const count = (): number =>
+    props.capacity ??
+    Math.max(boxSizeOf(width()), Math.ceil(props.entries.length / columns()) * columns());
+
+  const rows = (): number => Math.ceil(count() / columns());
+
+  /** Whether the box scrolls inside its frame rather than standing full height */
+  const scrolls = (): boolean =>
+    props.scroll === true && props.compact !== true && rows() > BOX_ROWS;
+
+  const [frame, setFrame] = createSignal<HTMLElement>();
+  /** The frame's width inside its border, once it has been laid out */
+  const [across, setAcross] = createSignal(0);
+  /** Whether the screen is wide enough for a filling box's wide squares */
+  const [wide, setWide] = createSignal(false);
+  const [top, setTop] = createSignal(0);
+
+  onMount(() => {
+    const element = frame();
+
+    if (element == null || typeof ResizeObserver === 'undefined') {
+      return;
+    }
+    const observer = new ResizeObserver(() => {
+      setAcross(element.clientWidth);
+      setWide(globalThis.matchMedia('(min-width: 640px)').matches);
+    });
+
+    observer.observe(element);
+    onCleanup(() => {
+      observer.disconnect();
+    });
+  });
+
+  createEffect(
+    on(
+      () => props.rewind,
+      () => {
+        const element = frame();
+
+        if (element != null) {
+          element.scrollTop = 0;
+        }
+        setTop(0);
+      },
+      { defer: true },
+    ),
+  );
+
+  /** How tall one row is with the gap under it, or 0 before the box is laid out */
+  const stride = (): number => {
+    const inner = across() - 2 * PAD;
+
+    if (inner <= 0) {
+      return 0;
+    }
+    const square = (inner - (columns() - 1) * GAP) / columns();
+
+    return square * (props.fill === true && wide() ? 4 / 7 : 1) + GAP;
+  };
+
+  /** The first row in sight, whole or not */
+  const firstRow = (): number => (stride() === 0 ? 0 : Math.floor(top() / stride()));
+
+  /**
+   * The squares drawn, by index: the rows in sight and a couple either
+   * side. Before the box is measured, its first box's worth
+   */
+  const windowed = createMemo<number[]>(() => {
+    const first = Math.max(0, firstRow() - OVERSCAN);
+    const last = Math.min(rows(), firstRow() + BOX_ROWS + 1 + OVERSCAN);
+    const drawn: number[] = [];
+
+    for (let index = first * columns(); index < Math.min(count(), last * columns()); index++) {
+      drawn.push(index);
+    }
+    return drawn;
+  });
+
+  createEffect(() => {
+    const start = Math.min(rows() - 1, Math.round(top() / Math.max(1, stride())));
+    const from = scrolls() ? Math.max(0, start) * columns() : 0;
+
+    // Counted against what was given, so the empty row a box ends on
+    // is not counted as pokemon
+    const total = props.entries.length;
+
+    props.onView?.({
+      from: Math.min(total, from + 1),
+      to: Math.min(total, from + boxSizeOf(width())),
+      total,
+      scrolls: scrolls(),
+    });
+  });
+
+  /**
+   * A drag held near the top or bottom scrolls the box, so a pokemon
+   * can be carried to a row out of sight. The browser says the drag
+   * moved several times a second even while it is held still
+   */
+  const edge = (event: DragEvent & { currentTarget: HTMLElement }): void => {
+    const box = event.currentTarget.getBoundingClientRect();
+    const above = event.clientY - box.top;
+    const below = box.bottom - event.clientY;
+
+    if (above < EDGE) {
+      event.currentTarget.scrollTop -= EDGE_STEP * (1 - Math.max(0, above) / EDGE);
+    } else if (below < EDGE) {
+      event.currentTarget.scrollTop += EDGE_STEP * (1 - Math.max(0, below) / EDGE);
+    }
+  };
 
   const filled = (): number => {
-    let count = 0;
+    let found = 0;
 
     for (const square of props.entries) {
       if (!isGap(square)) {
-        count += 1;
+        found += 1;
       }
     }
-    return count;
+    return found;
   };
+
+  /** One square of the box, whichever index it is drawing now */
+  const square = (index: Accessor<number>): JSX.Element => (
+    <Show
+      when={entryAt(index())}
+      fallback={
+        // The rest of the box, drawn empty rather than left out: a
+        // half-built grid reads as a broken one
+        <Show
+          when={props.onPlace != null && slotAt(index()) != null}
+          fallback={
+            <span
+              aria-hidden="true"
+              class={`flex ${aspect()} w-full flex-col items-center justify-center rounded-lg
+                border-2 bg-paper/40 text-[10px] font-black text-muted ${
+                  props.numbered === true ? 'border-dashed border-line' : 'border-line-soft'
+                } ${lit(index())}`}
+              {...dropProps(index)}
+            >
+              <Show when={hovered() === index()}>
+                <span class="text-leaf-dark">Drop here</span>
+              </Show>
+              <Show
+                when={hovered() !== index() && props.numbered === true && slotAt(index()) != null}
+              >
+                {slotNumber(slotAt(index()) ?? index())}
+              </Show>
+            </span>
+          }
+        >
+          {/* A gap the picked ones can be put in, said so on its face */}
+          <button
+            type="button"
+            aria-label={
+              props.placeLabel?.(slotAt(index()) ?? 0) ??
+              `Put them in slot ${(slotAt(index()) ?? 0) + 1}`
+            }
+            class={`flex ${aspect()} w-full cursor-pointer flex-col items-center justify-center
+              rounded-lg border-2 border-dashed border-leaf bg-leaf-soft/40 text-[10px]
+              font-black text-leaf-dark transition-colors hover:bg-leaf-soft ${lit(index())}`}
+            {...dropProps(index)}
+            onClick={() => {
+              const slot = slotAt(index());
+
+              if (slot != null) {
+                props.onPlace?.(slot);
+              }
+            }}
+          >
+            <span aria-hidden="true">Put here</span>
+            <Show when={props.numbered === true}>
+              <span aria-hidden="true" class="text-muted">
+                {slotNumber(slotAt(index()) ?? 0)}
+              </span>
+            </Show>
+          </button>
+        </Show>
+      }
+    >
+      {(entry) => (
+        // A square that acts is a button. One whose card holds the
+        // only button is not: a press on it would do nothing, and
+        // a keyboard offered thirty stops that lead nowhere has to
+        // walk past all of them to reach the card
+        <Show
+          when={props.cardOnly !== true}
+          fallback={
+            <span
+              role="img"
+              aria-label={entry().label}
+              class={`${SQUARE} ${aspect()} ${toneOf(entry())} ${lit(index())}`}
+              {...dropProps(index)}
+            >
+              {inside(entry)}
+            </span>
+          }
+        >
+          <button
+            type="button"
+            aria-label={entry().label}
+            aria-pressed={entry().mark === 'picked'}
+            class={`${SQUARE} ${aspect()} cursor-pointer ${toneOf(entry())} ${lit(index())}`}
+            {...dragProps(entry)}
+            {...dropProps(index)}
+            onClick={(event) => {
+              // The hover card is portaled out of this button but
+              // its clicks still bubble here through the component
+              // tree; only a press on the square itself counts,
+              // or pressing Add on the card would also toggle the
+              // square straight back off
+              if (!event.currentTarget.contains(event.target)) {
+                return;
+              }
+              props.onOpen?.(entry().id, { shift: event.shiftKey });
+            }}
+            {...holdProps(entry)}
+          >
+            {inside(entry)}
+          </button>
+        </Show>
+      )}
+    </Show>
+  );
+
+  /** The frame round the squares, without the grid that lays them out */
+  const framed = (): string =>
+    props.compact === true
+      ? 'w-full'
+      : `mx-auto my-2 w-full rounded-xl border-4 border-tide bg-parchment p-1.5 shadow-pop ${
+          props.fill === true ? '' : WIDTH[columns()]
+        }`;
+
+  const grid = (): string =>
+    `grid ${props.compact === true ? 'gap-1' : 'gap-1.5'} ${COLUMNS[columns()]}`;
 
   return (
     // Narrower than the panel it sits in, with air around it: a box
     // stretched across a wide dialog is thirty large squares to sweep
     // the eye over rather than one thing to look at
     <div
+      ref={(element) => {
+        setFrame(element);
+      }}
       role="group"
-      aria-label={`Box of pokemon, ${filled()} of ${squares().length} squares filled.`}
-      class={`grid w-full ${
-        props.compact === true
-          ? `gap-1 ${COLUMNS[props.columns ?? 6]}`
-          : `mx-auto my-2 gap-1.5 rounded-xl border-4 border-tide bg-parchment p-1.5 shadow-pop ${
-              props.fill === true ? COLUMNS[props.columns ?? 6] : SHAPE[props.columns ?? 6]
-            }`
-      }`}
+      aria-label={`Box of pokemon, ${filled()} of ${count()} squares filled.`}
+      class={
+        scrolls()
+          ? `${framed()} overflow-y-auto overscroll-contain [scrollbar-gutter:stable]`
+          : `${framed()} ${grid()}`
+      }
+      // Five rows tall, the size a box has always been, and the rest
+      // scrolled to
+      style={
+        scrolls() && stride() > 0
+          ? { height: `${BOX_ROWS * stride() - GAP + 2 * (PAD + BORDER)}px` }
+          : undefined
+      }
+      onScroll={(event) => {
+        setTop(event.currentTarget.scrollTop);
+      }}
+      onDragOver={(event) => {
+        if (scrolls()) {
+          edge(event);
+        }
+      }}
     >
-      <Index each={squares()}>
-        {(_, index) => (
-          <Show
-            when={entryAt(index)}
-            fallback={
-              // The rest of the box, drawn empty rather than left out: a
-              // half-built grid reads as a broken one
-              <span
-                aria-hidden="true"
-                class={`flex ${aspect()} w-full flex-col items-center justify-center rounded-lg
-                  border-2 bg-paper/40 text-[10px] font-black text-muted ${
-                    props.numbered === true ? 'border-dashed border-line' : 'border-line-soft'
-                  } ${lit(index)}`}
-                {...dropProps(index)}
-              >
-                <Show when={hovered() === index}>
-                  <span class="text-leaf-dark">Drop here</span>
-                </Show>
-                <Show
-                  when={hovered() !== index && props.numbered === true && slotAt(index) != null}
-                >
-                  {slotNumber(slotAt(index) ?? index)}
-                </Show>
-              </span>
+      <Show
+        when={scrolls()}
+        fallback={<Index each={squaresOf(count())}>{(_, index) => square(() => index)}</Index>}
+      >
+        <div
+          class="relative"
+          style={stride() > 0 ? { height: `${rows() * stride() - GAP}px` } : undefined}
+        >
+          <div
+            class={`${stride() > 0 ? 'absolute inset-x-0' : ''} ${grid()}`}
+            style={
+              stride() > 0
+                ? { top: `${Math.max(0, firstRow() - OVERSCAN) * stride()}px` }
+                : undefined
             }
           >
-            {(entry) => (
-              // A square that acts is a button. One whose card holds the
-              // only button is not: a press on it would do nothing, and
-              // a keyboard offered thirty stops that lead nowhere has to
-              // walk past all of them to reach the card
-              <Show
-                when={props.cardOnly !== true}
-                fallback={
-                  <span
-                    role="img"
-                    aria-label={entry().label}
-                    class={`${SQUARE} ${aspect()} ${toneOf(entry())} ${lit(index)}`}
-                    {...dropProps(index)}
-                  >
-                    {inside(entry)}
-                  </span>
-                }
-              >
-                <button
-                  type="button"
-                  aria-label={entry().label}
-                  aria-pressed={entry().mark === 'picked'}
-                  class={`${SQUARE} ${aspect()} cursor-pointer ${toneOf(entry())} ${lit(index)}`}
-                  {...dragProps(entry)}
-                  {...dropProps(index)}
-                  onClick={(event) => {
-                    // The hover card is portaled out of this button but
-                    // its clicks still bubble here through the component
-                    // tree; only a press on the square itself counts,
-                    // or pressing Add on the card would also toggle the
-                    // square straight back off
-                    if (!event.currentTarget.contains(event.target)) {
-                      return;
-                    }
-                    props.onOpen?.(entry().id, { shift: event.shiftKey });
-                  }}
-                  {...holdProps(entry)}
-                >
-                  {inside(entry)}
-                </button>
-              </Show>
-            )}
-          </Show>
-        )}
-      </Index>
+            {/* By position, so a square scrolled to is the same button
+                given a new pokemon rather than a new button */}
+            <Index each={windowed()}>{(index) => square(index)}</Index>
+          </div>
+        </div>
+      </Show>
     </div>
   );
 }

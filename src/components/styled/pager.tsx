@@ -21,28 +21,7 @@ export interface Pager<T> {
    * Drawn only when there is more than one page. With `range`, it also
    * says which rows are showing out of how many, and stays up for one page
    */
-  controls: (options?: PagerOptions) => JSX.Element;
-}
-
-/** Where a page stands, for a caller that words it itself */
-export interface PageSpot {
-  page: number;
-  pages: number;
-  /** The first and last rows showing, counted from 1 */
-  from: number;
-  to: number;
-  total: number;
-}
-
-export interface PagerOptions {
-  range?: boolean;
-  /**
-   * Where the page is said on the left and both arrows stand together
-   * on the right, for a grid whose page is read before it is turned
-   */
-  split?: boolean;
-  /** What the page is called, in place of the pager's own words */
-  say?: (spot: PageSpot) => string;
+  controls: (options?: { range?: boolean }) => JSX.Element;
 }
 
 /**
@@ -77,63 +56,18 @@ export function createPager<T>(
 
   return {
     shown,
-    controls: (options) => {
-      const spot = (): PageSpot => ({
-        page: page() + 1,
-        pages: pages(),
-        from: Math.min(items().length, page() * fits() + 1),
-        to: Math.min(items().length, (page() + 1) * fits()),
-        total: items().length,
-      });
-      const back = (): JSX.Element => (
-        <Button
-          label="Previous page"
-          disabled={page() === 0}
-          onClick={() => {
-            setPage((at) => Math.max(0, at - 1));
-          }}
-        >
-          <ArrowLeftIcon class="size-4" aria-hidden="true" />
-        </Button>
-      );
-      const on = (): JSX.Element => (
-        <Button
-          label="Next page"
-          disabled={page() >= pages() - 1}
-          onClick={() => {
-            setPage((at) => Math.min(pages() - 1, at + 1));
-          }}
-        >
-          <ArrowRightIcon class="size-4" aria-hidden="true" />
-        </Button>
-      );
-
-      if (options?.split === true) {
-        return (
-          <div class="flex items-center justify-between gap-2">
-            <Meta class="font-extrabold tabular-nums">
-              {options.say?.(spot()) ?? `Page ${spot().page} of ${spot().pages}`}
-            </Meta>
-            <div class="flex shrink-0 gap-2">
-              {back()}
-              {on()}
-            </div>
-          </div>
-        );
-      }
-      return pagedRow(options, back, on);
-    },
-  };
-
-  function pagedRow(
-    options: PagerOptions | undefined,
-    back: () => JSX.Element,
-    on: () => JSX.Element,
-  ): JSX.Element {
-    return (
+    controls: (options) => (
       <Show when={pages() > 1 || (options?.range === true && items().length > 0)}>
         <Row class="justify-center">
-          {back()}
+          <Button
+            label="Previous page"
+            disabled={page() === 0}
+            onClick={() => {
+              setPage((at) => Math.max(0, at - 1));
+            }}
+          >
+            <ArrowLeftIcon class="size-4" aria-hidden="true" />
+          </Button>
           <Meta class="tabular-nums">
             {options?.range === true
               ? `${unit} ${page() + 1} · ${Math.min(items().length, page() * fits() + 1)}–${Math.min(
@@ -142,9 +76,17 @@ export function createPager<T>(
                 )} of ${items().length}`
               : `${unit} ${page() + 1} of ${pages()}`}
           </Meta>
-          {on()}
+          <Button
+            label="Next page"
+            disabled={page() >= pages() - 1}
+            onClick={() => {
+              setPage((at) => Math.min(pages() - 1, at + 1));
+            }}
+          >
+            <ArrowRightIcon class="size-4" aria-hidden="true" />
+          </Button>
         </Row>
       </Show>
-    );
-  }
+    ),
+  };
 }

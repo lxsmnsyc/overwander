@@ -26,7 +26,8 @@ import { useGame } from '../../app/game-context';
 import createClientSignal from '../../app/client-signal';
 import { answered } from '../../app/resource-reads';
 import { BoxIcon, PlusIcon, SelectIcon, SwapIcon } from '../../icons';
-import { Button, Dialog, DialogActions, Meta, type PageSpot, Select, useToast } from '../../styled';
+import { Button, Dialog, DialogActions, Meta, Select, useToast } from '../../styled';
+import type { BoxView } from '../CatchBox';
 import { type QueryControls, parseControls, withControl } from '../../../core/query';
 import CatchActions from './actions';
 import BoxHeading from './heading';
@@ -355,14 +356,17 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
   const startDrag = (id: string): void => {
     setDragging(marking() && picked().includes(id) ? picked() : [id]);
     // Over once the pointer lets go, wherever that is: a drop lands
-    // before this, so it still knows what was carried
-    window.addEventListener(
-      'dragend',
-      () => {
-        setDragging([]);
-      },
-      { once: true },
-    );
+    // before this, so it still knows what was carried. The next press
+    // ends it too, since a square scrolled out from under the drag is
+    // no longer there to say it ended
+    const over = (): void => {
+      setDragging([]);
+      window.removeEventListener('dragend', over);
+      window.removeEventListener('pointerdown', over);
+    };
+
+    window.addEventListener('dragend', over);
+    window.addEventListener('pointerdown', over);
   };
 
   const selecting = (): boolean => marking() && mine();
@@ -451,11 +455,9 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
   const placeholder = (): string =>
     everywhere() ? 'Search every box' : `Search ${nameOf(current())}`;
 
-  /** How the pages are said: by slot in a box that keeps them */
-  const pageSay = (spot: PageSpot): string =>
-    slotted()
-      ? `Slots ${spot.from} to ${spot.to} · page ${spot.page} of ${spot.pages}`
-      : `Page ${spot.page} of ${spot.pages}`;
+  /** Where in the box the player has scrolled to: by slot in a box that keeps them */
+  const viewSay = (view: BoxView): string =>
+    `${slotted() ? 'Slots' : 'Showing'} ${view.from} to ${view.to} of ${view.total}`;
 
   /** How many boxes the search found something in */
   const foundIn = (): number => {
@@ -670,7 +672,7 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
             }}
             placeholder={placeholder()}
             fill
-            pager={{ split: true, say: pageSay }}
+            say={viewSay}
             results={
               <Show when={counting()}>
                 <div class="flex flex-wrap items-center justify-between gap-2">
@@ -729,6 +731,16 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
                   }
                 : undefined
             }
+            // The picked ones put in an empty square, which is what a
+            // finger does in place of dragging them there
+            onPlace={
+              selecting() && picked().length > 0 && !everywhere() && current() != null
+                ? (slot) => {
+                    file(picked(), current(), slot);
+                  }
+                : undefined
+            }
+            placeLabel={(slot) => `Put the ${picked().length} picked in slot ${slot + 1}`}
             // A finger held on a pokemon starts picking, with it picked
             onHold={
               mine()

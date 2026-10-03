@@ -503,7 +503,6 @@ export default function PickerBox(
    */
   const withGaps = (made: CatchGridEntry[]): (CatchGridEntry | BoxGap)[] => {
     const columns = settings().boxColumns;
-    const page = boxSizeOf(columns);
     const laid: (CatchGridEntry | BoxGap)[] = [];
     let next = 0;
 
@@ -517,7 +516,9 @@ export default function PickerBox(
       next = slot + 1;
     }
 
-    const end = Math.ceil((next + columns) / page) * page;
+    // Always one empty row past the last pokemon to place into, and
+    // never less than a box's worth
+    const end = Math.max(boxSizeOf(columns), Math.ceil((next + columns) / columns) * columns);
 
     for (; next < end; next++) {
       laid.push({ gap: next });
@@ -655,7 +656,10 @@ export default function PickerBox(
         onHold={props.onHold}
         numbered={slotted()}
         fill={props.fill}
-        pager={props.pager}
+        say={props.say}
+        rewind={props.box?.box}
+        onPlace={slotted() ? props.onPlace : undefined}
+        placeLabel={props.placeLabel}
         results={props.results}
         emptyCard={slotted() ? props.emptyCard : undefined}
         onDragStart={props.onDragStart}

@@ -5,16 +5,16 @@ import CatchBox, {
   type BoxEntry,
   type BoxGap,
   type BoxSquare,
+  type BoxView,
   type SquarePress,
-  boxSizeOf,
   isGap,
 } from './CatchBox';
 import settings from '../app/settings';
-import { Meta, Note, type PagerOptions, Row, Search, createPager } from '../styled';
+import { Meta, Note, Row, Search } from '../styled';
 
 /**
- * A box of squares with its furniture — the search over it, the pages
- * under it, and what to say when it is empty. It is `ItemGrid`, for
+ * A box of squares with its furniture — the search over it, where in
+ * the box the player is, and what to say when it is empty. It is `ItemGrid`, for
  * catches: `CatchBox` stays the dumb grid, and every screen that shows
  * pokemon as squares wraps it in this instead of hand-rolling the same
  * search and pager beside it.
@@ -45,8 +45,17 @@ export interface CatchGridProps {
   numbered?: boolean;
   /** Whether the box takes the whole width, passed to the box */
   fill?: boolean;
-  /** How the pages are said and turned; a centred range by default */
-  pager?: PagerOptions;
+  /**
+   * How the squares in sight are said, over a box long enough to
+   * scroll. One box scrolled rather than paged, so a pokemon can be
+   * carried from its first row to its last
+   */
+  say?: (view: BoxView) => string;
+  /** Changed to send the box back to its first row, passed to the box */
+  rewind?: unknown;
+  /** Putting the picked ones in an empty square, passed to the box */
+  onPlace?: (slot: number) => void;
+  placeLabel?: (slot: number) => string;
   /** A line under the search about what it found */
   results?: JSX.Element;
   /**
@@ -152,9 +161,17 @@ export default function CatchGrid(props: CatchGridProps): JSX.Element {
     return false;
   };
 
-  // A box the player has set eight wide holds forty, so the page has
-  // to be the box rather than a constant beside it
-  const shelf = createPager(matched, () => boxSizeOf(settings().boxColumns), 'Box');
+  const [view, setView] = createSignal<BoxView | null>(null);
+
+  /** Where in the box the player is, while it scrolls */
+  const where = (): string | null => {
+    const spot = view();
+
+    if (spot == null || !spot.scrolls) {
+      return null;
+    }
+    return props.say?.(spot) ?? `${spot.from} to ${spot.to} of ${spot.total}`;
+  };
 
   // Resolved once: a prop holding markup is a getter, and reading it
   // twice builds what it describes twice
@@ -205,12 +222,19 @@ export default function CatchGrid(props: CatchGridProps): JSX.Element {
           </Note>
         }
       >
-        {/* Above the box: five rows of squares fill a laptop screen, and
-            paging under them is paging a player has to scroll to */}
-        {shelf.controls(props.pager ?? { range: true })}
+        {/* Above the box: five rows of squares fill a laptop screen,
+            and a line under them is a line a player has to scroll to */}
+        <Show when={where()}>
+          {(said) => <Meta class="font-extrabold tabular-nums">{said()}</Meta>}
+        </Show>
         <div class="relative">
           <CatchBox
-            entries={shelf.shown()}
+            entries={matched()}
+            scroll
+            rewind={[props.rewind, query()]}
+            onView={(spot) => {
+              setView(spot);
+            }}
             columns={settings().boxColumns}
             onOpen={props.onOpen}
             onHold={props.onHold}
@@ -222,6 +246,8 @@ export default function CatchGrid(props: CatchGridProps): JSX.Element {
             // Only while the gaps are drawn: a searched list is packed,
             // and a square in it is not the slot it stands in
             onDropOn={query().trim() === '' ? props.onDropOn : undefined}
+            onPlace={query().trim() === '' ? props.onPlace : undefined}
+            placeLabel={props.placeLabel}
           />
           <Show when={!showing() && props.emptyCard}>
             {(card) => (

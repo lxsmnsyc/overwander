@@ -2282,4 +2282,28 @@ export default function registerSignatureAbilities(): void {
     name: 'Trop Stride',
     description: 'Its kicking moves hit 1.3x.',
   });
+
+  // The Lush Jungle
+  registerSignature(Families.Morelull, Abilities.DrowsyGlow, {
+    name: 'Drowsy Glow',
+    description: 'Each damaging move it lands casts Yawn on the target 20% of the time.',
+  });
+
+  registerSignature(Families.Comfey, Abilities.LeiGift, {
+    name: 'Lei Gift',
+    description:
+      'As it arrives, its worst hurt teammate is given a lei, and heals 1/16 of their HP each time they act for the fight.',
+  });
+
+  registerSignature(Families.Oranguru, Abilities.SagesCall, {
+    name: 'Sage’s Call',
+    description:
+      'Each time it acts, its teammate with the highest Attack or Special Attack casts its next move 25% faster.',
+  });
+
+  registerSignature(Families.Passimian, Abilities.RushPass, {
+    name: 'Rush Pass',
+    description:
+      'Its moves hit 1.3x whenever they are cast faster than they would be on their own.',
+  });
 }

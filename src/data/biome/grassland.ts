@@ -123,6 +123,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Lilligant, weight: 7 },
       ],
       elusive: [
+        { species: Species.Comfey, weight: 5 },
         { species: Species.OricorioPomPom, weight: 5 },
         { species: Species.Dedenne, weight: 6 },
         { species: Species.Furfrou, weight: 5 },
@@ -295,6 +296,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Lilligant, weight: 7 },
       ],
       elusive: [
+        { species: Species.Comfey, weight: 5 },
         { species: Species.OricorioPomPom, weight: 5 },
         { species: Species.Dedenne, weight: 6 },
         { species: Species.Furfrou, weight: 5 },

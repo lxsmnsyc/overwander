@@ -9,7 +9,13 @@ export default function registerTropicalRainforestSpawns(): void {
   // The Pikipek line is written but waits on sprites, since the
   // collection has drawn no Trumbeak and no finished Toucannon. Once it
   // does, mornings and days take Pikipek in base at 24, Trumbeak in
-  // rare at 8 and Toucannon in elusive at 5
+  // rare at 8 and Toucannon in elusive at 5.
+  //
+  // The Lush Jungle waits the same way. With no Shiinotic drawn,
+  // evenings and nights will take Morelull in uncommon at 22 and
+  // Shiinotic in scarce at 6. With no Oranguru drawn, mornings, days and
+  // evenings will take both it and its counterpart Passimian in elusive
+  // at 5, and so will the tropical seasonal forest
   registerSpawnPool(Biome.TropicalRainforest, {
     [TimeOfDay.Morning]: {
       base: [
@@ -41,6 +47,7 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Tangrowth, weight: 6 },
       ],
       elusive: [
+        { species: Species.Comfey, weight: 5 },
         { species: Species.Tsareena, weight: 4 },
         { species: Species.OricorioSensu, weight: 5 },
         { species: Species.Vikavolt, weight: 4 },
@@ -86,6 +93,7 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Tangrowth, weight: 6 },
       ],
       elusive: [
+        { species: Species.Comfey, weight: 5 },
         { species: Species.Tsareena, weight: 4 },
         { species: Species.OricorioSensu, weight: 5 },
         { species: Species.Vikavolt, weight: 4 },

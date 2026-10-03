@@ -1,0 +1,154 @@
+# Hoenn's trainer classes, each by its enum name: `types` it fields
+# (an empty list is every type), the `sheets` it may stand in, and the
+# `trade` it is one region's version of, left out where it is its own.
+# What each is called and says is text/en/trainers.
+
+# Hoenn's own three: the ninja keeps what hides, the tuber what the sea
+# keeps cold, and the fan whatever is worth a photograph
+NinjaBoy:
+  types: [Poison, Ghost]
+  sheets:
+    - characters/oras/ninja-boy
+    - characters/rse/ninja-boy
+Tuber:
+  types: [Water, Ice]
+  sheets:
+    - characters/oras/tuber-f
+    - characters/oras/tuber-m
+PokeFan:
+  types: [Normal, Electric]
+  sheets:
+    - characters/oras/pokefan-f
+    - characters/oras/pokefan-m
+HoennAceTrainer:
+  types: []
+  sheets:
+    - characters/oras/ace-trainer
+    - characters/oras/ace-trainer-f
+  trade: AceTrainer
+HoennLass:
+  types: [Normal]
+  sheets: [characters/oras/lass]
+  trade: Lass
+HoennBirdKeeper:
+  types: [Flying]
+  sheets: [characters/oras/bird-keeper]
+  trade: BirdKeeper
+HoennBugCatcher:
+  types: [Bug]
+  sheets: [characters/oras/bug-catcher]
+  trade: BugCatcher
+HoennSwimmer:
+  types: [Water]
+  sheets: [characters/oras/swimmer]
+  trade: Swimmer
+HoennYoungster:
+  types: [Ground]
+  sheets: [characters/oras/youngster]
+  trade: Youngster
+HoennSchoolKid:
+  types: [Electric]
+  sheets:
+    - characters/oras/schoolkid-f
+    - characters/oras/schoolkid-m
+  trade: SchoolKid
+HoennCamper:
+  types: [Rock]
+  sheets:
+    - characters/oras/camper
+    - characters/oras/picnicker
+  trade: Camper
+HoennBeauty:
+  types: [Normal, Water]
+  sheets: [characters/oras/beauty]
+  trade: Beauty
+HoennFisherman:
+  types: [Water]
+  sheets: [characters/oras/fisher]
+  trade: Fisherman
+HoennSailor:
+  types: [Water, Fighting]
+  sheets: [characters/oras/sailor]
+  trade: Sailor
+HoennGentleman:
+  types: [Fire, Electric]
+  sheets: [characters/oras/gentleman]
+  trade: Gentleman
+# Devon's researchers, who are where Hoenn's steel is made
+HoennScientist:
+  types: [Steel]
+  sheets: [characters/rse/devon-researcher]
+  trade: Scientist
+Guitarist:
+  types: [Electric]
+  sheets: [characters/oras/guitarist]
+  trade: Rocker
+Kindler:
+  types: [Fire]
+  sheets: [characters/oras/kindler]
+  trade: Firebreather
+BattleGirl:
+  types: [Fighting]
+  sheets: [characters/oras/battle-girl]
+  trade: BlackBelt
+# Hoenn has nobody who only reads minds, and its old masters field the
+# Medicham that is both
+Expert:
+  types: [Psychic, Fighting]
+  sheets: [characters/oras/expert]
+  trade: Psychic
+RuinManiac:
+  types: [Rock, Ground]
+  sheets: [characters/oras/ruin-maniac]
+  trade: PokeManiac
+StreetThug:
+  types: [Dark]
+  sheets: [characters/oras/street-thug]
+  trade: Burglar
+DragonTamer:
+  types: [Dragon]
+  sheets: [characters/oras/dragon-tamer]
+  trade: Tamer
+AromaLady:
+  types: [Grass]
+  sheets: [characters/oras/aroma-lady]
+  trade: Sage
+# The couple field what a pair of them would: Hoenn's Volbeat and
+# Illumise, and the Ralts line both regions grow
+Couple:
+  types: [Bug, Psychic]
+  sheets:
+    - characters/oras/couple-f
+    - characters/oras/couple-m
+HoennBreeder:
+  types: [Normal, Grass]
+  sheets:
+    - characters/oras/breeder-f
+    - characters/oras/breeder-m
+  trade: Breeder
+HoennRanger:
+  types: [Grass, Bug]
+  sheets:
+    - characters/oras/ranger-f
+    - characters/oras/ranger-m
+  trade: Ranger
+HoennCollector:
+  types: [Rock, Ghost]
+  sheets: [characters/oras/collector]
+  trade: Collector
+HoennReporter:
+  types: [Normal, Electric]
+  sheets:
+    - characters/oras/reporter
+    - characters/oras/cameraman
+  trade: Reporter
+HoennRichBoy:
+  types: [Normal, Flying]
+  sheets:
+    - characters/oras/rich-boy
+    - characters/oras/lady
+  trade: RichBoy
+HoennParasolLady:
+  types: [Water]
+  sheets: [characters/oras/parasol-lady]
+  trade: ParasolLady

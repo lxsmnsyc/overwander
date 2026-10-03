@@ -43,6 +43,10 @@
     "./src/data/schema/lairs.json": "src/data/overworld/lairs.yaml",
     "./src/data/schema/biome-lairs.json": "src/data/overworld/biome-lairs.yaml",
     "./src/data/schema/lairs-text.json": "src/data/text/*/lairs.yaml",
-    "./src/data/schema/biome-weather.json": "src/data/overworld/weather/biomes.yaml"
+    "./src/data/schema/biome-weather.json": "src/data/overworld/weather/biomes.yaml",
+    "./src/data/schema/trainer-classes.json": "src/data/overworld/trainers/classes/*.yaml",
+    "./src/data/schema/biome-trainers.json": "src/data/overworld/trainers/biomes.yaml",
+    "./src/data/schema/trainers-text.json": "src/data/text/*/trainers/*.yaml",
+    "./src/data/schema/trainer-sheets-text.json": "src/data/text/*/trainer-sheets.yaml"
   }
 }

@@ -59,6 +59,7 @@ const TABLES: Table[] = [
   { name: 'REGION_IDS', enumName: 'Regions', from: './regions', isDefault: true },
   { name: 'AWARD_IDS', enumName: 'Awards', from: './awards', isDefault: true },
   { name: 'LAIR_IDS', enumName: 'Lairs', from: './lairs', isDefault: true },
+  { name: 'TRAINER_IDS', enumName: 'TrainerClass', from: './trainers', isDefault: true },
   {
     name: 'WEATHER_IDS',
     enumName: 'Weather',

@@ -148,7 +148,6 @@ function readItemPool(): ItemRarityGroups {
  */
 export const ITEM_POOL: ItemRarityGroups = readItemPool();
 
-
 /**
  * Which band of the pool something is drawn from
  */

@@ -40,6 +40,7 @@ const DEFINITIONS: [enumName: string, definition: string][] = [
   ['Regions', 'region'],
   ['Awards', 'award'],
   ['Lairs', 'lair'],
+  ['TrainerClass', 'trainer'],
   ['Weather', 'weather'],
 ];
 
@@ -207,6 +208,56 @@ const LAIR_TEXT: Schema = {
   title: 'Lair names',
   type: 'object',
   propertyNames: name('lair'),
+  additionalProperties: { type: 'string' },
+};
+
+const TRAINER_CLASSES: Schema = {
+  $schema: DRAFT,
+  title: 'Trainer classes',
+  type: 'object',
+  propertyNames: name('trainer'),
+  additionalProperties: part(
+    {
+      types: names('type', 'What it fields; an empty list is every type'),
+      sheets: described(
+        { type: 'array', items: { type: 'string' }, minItems: 1 },
+        'The charsets it may stand in',
+      ),
+      trade: described(
+        name('trainer'),
+        "The trade it is one region's version of, left out where it is its own",
+      ),
+    },
+    ['types', 'sheets'],
+  ),
+};
+
+const BIOME_TRAINERS: Schema = {
+  $schema: DRAFT,
+  title: 'Biome trainers',
+  type: 'object',
+  propertyNames: name('biome'),
+  additionalProperties: names('trainer', 'In the order a stop rolls from them'),
+};
+
+const TRAINER_TEXT: Schema = {
+  $schema: DRAFT,
+  title: 'Trainer class text',
+  type: 'object',
+  propertyNames: name('trainer'),
+  additionalProperties: part(
+    {
+      name: described({ type: 'string' }, 'What the mainline calls the class'),
+      quote: described({ type: 'string' }, 'What it says as the duel is put to the player'),
+    },
+    ['name', 'quote'],
+  ),
+};
+
+const TRAINER_SHEET_TEXT: Schema = {
+  $schema: DRAFT,
+  title: 'Trainer sheet names',
+  type: 'object',
   additionalProperties: { type: 'string' },
 };
 
@@ -591,6 +642,10 @@ export default function renderDataSchemas(members: Map<string, string[]>): Map<s
     ['biome-lairs.json', json(BIOME_LAIRS)],
     ['lairs-text.json', json(LAIR_TEXT)],
     ['biome-weather.json', json(BIOME_WEATHER)],
+    ['trainer-classes.json', json(TRAINER_CLASSES)],
+    ['biome-trainers.json', json(BIOME_TRAINERS)],
+    ['trainers-text.json', json(TRAINER_TEXT)],
+    ['trainer-sheets-text.json', json(TRAINER_SHEET_TEXT)],
   ]);
 
   for (const [file, title, entry] of BATTLE_FILES) {

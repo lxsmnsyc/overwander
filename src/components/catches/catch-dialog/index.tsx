@@ -1,4 +1,4 @@
-import { type JSX, type Resource, createResource } from 'solid-js';
+import { type JSX, type Resource, Suspense, createResource } from 'solid-js';
 import { isLockLive } from '../../../auth/battle-lock';
 import { getBuddy } from '../../../auth/buddy';
 import { syncServerClock } from '../../../auth/clock';
@@ -20,6 +20,7 @@ import { getSpeciesData } from '../../../data/species';
 
 import { type CatchDialogProps, CatchSheetBody } from './sheet';
 import { answered } from '../../app/resource-reads';
+import BattleData from '../../app/battle-data';
 
 export type { CatchDialogProps };
 
@@ -329,26 +330,34 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
   );
 
   return (
-    <CatchSheet
-      {...props}
-      detail={detail}
-      dex={dex}
-      onlyOne={onlyOne}
-      selling={selling}
-      bag={bag}
-      buddy={buddy}
-      onRecordChanged={() => {
-        Promise.resolve(refetch()).catch(() => undefined);
-        // Evolving one registers what it became, so the line under it
-        // stops being a silhouette without the sheet being reopened
-        Promise.resolve(refetchDex()).catch(() => undefined);
-      }}
-      onBagChanged={() => {
-        Promise.resolve(refetchBag()).catch(() => undefined);
-      }}
-      onBuddyChanged={() => {
-        Promise.resolve(refetchBuddy()).catch(() => undefined);
-      }}
-    />
+    // The sheet's own boundary, with nothing to show while it waits:
+    // like a trainer's dialog, the sheet arrives once its record and
+    // the registries it reads are in, and the page behind it stands
+    // still meanwhile
+    <Suspense>
+      <BattleData>
+        <CatchSheet
+          {...props}
+          detail={detail}
+          dex={dex}
+          onlyOne={onlyOne}
+          selling={selling}
+          bag={bag}
+          buddy={buddy}
+          onRecordChanged={() => {
+            Promise.resolve(refetch()).catch(() => undefined);
+            // Evolving one registers what it became, so the line under it
+            // stops being a silhouette without the sheet being reopened
+            Promise.resolve(refetchDex()).catch(() => undefined);
+          }}
+          onBagChanged={() => {
+            Promise.resolve(refetchBag()).catch(() => undefined);
+          }}
+          onBuddyChanged={() => {
+            Promise.resolve(refetchBuddy()).catch(() => undefined);
+          }}
+        />
+      </BattleData>
+    </Suspense>
   );
 }

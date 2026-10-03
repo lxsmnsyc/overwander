@@ -295,7 +295,11 @@ export default async function loadSpeciesSprite(
    * there is any drawing carrying it; a **form** is a flower or a tail
    * a few species differ by, and losing it costs a detail rather than
    * the point. So the shiny form is asked for first, then the shiny
-   * without it, and only then the ordinary coat
+   * without it, and only then the ordinary coat.
+   *
+   * A Mega nobody has drawn yet is drawn as the pokemon it is a Mega
+   * of. Losing the Mega sits between the two: a female Mega Steelix
+   * is the Mega's own sheet rather than a female Steelix
    */
   const tried: [shiny: boolean, female: boolean][] = [];
 

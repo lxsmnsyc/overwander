@@ -2,6 +2,7 @@ import type { AttackPriority, BaseEvent, EventPriority } from '../../core/event-
 import type { EventMap } from '../../core/event-engine';
 import type {
   CheckTeamAIUnitEvent,
+  CheckUnitAIMoveFeedsEvent,
   CheckUnitAIMoveScoreEvent,
   CheckUnitAIMoveUsableEvent,
   CheckUnitAIRatingEvent,
@@ -292,6 +293,7 @@ export interface BattleEventMap extends EventMap {
   // AI events
   [BattleEvents.CheckUnitAIMoveScore]: [CheckUnitAIMoveScoreEvent, AttackPriority];
   [BattleEvents.CheckUnitAIMoveUsable]: [CheckUnitAIMoveUsableEvent, AttackPriority];
+  [BattleEvents.CheckUnitAIMoveFeeds]: [CheckUnitAIMoveFeedsEvent, AttackPriority];
   [BattleEvents.UnitAIChooseMove]: [UnitAIChooseMoveEvent, EventPriority];
   [BattleEvents.CheckUnitAIRating]: [CheckUnitAIRatingEvent, EventPriority];
   [BattleEvents.CheckTeamAIUnit]: [CheckTeamAIUnitEvent, EventPriority];

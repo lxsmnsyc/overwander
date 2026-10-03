@@ -7,6 +7,7 @@ import EvolutionSection from './sections/EvolutionSection';
 import HistorySection from './sections/HistorySection';
 import PortraitSection from './sections/PortraitSection';
 import StatsSection from './sections/StatsSection';
+import BoxChip from './sections/BoxChip';
 import { isAuctionableCatch } from '../../../auth/auctions';
 import { setBuddy } from '../../../auth/buddy';
 import { getCandyCost, getReleaseCandy, useCandy } from '../../../auth/candy';
@@ -30,12 +31,14 @@ import { useAuth } from '../../../auth/context';
 import { answered, failed, readable } from '../../app/resource-reads';
 
 import { canHatch, isEgg } from '../../../auth/egg';
+import AnimatedSprite from '../../sprites/AnimatedSprite';
+import { HeadingPortrait } from '../../forms/terms';
+import TargetStrip from '../TargetStrip';
 import { hatchEgg } from '../../../auth/eggs';
 import { deriveSize } from '../../../overworld/encounter';
 import { type EvolutionOption, evolveCatch } from '../../../auth/evolution';
 import { fuseCatch, unfuseCatch } from '../../../auth/fusion';
 import type { InventoryEntry } from '../../../auth/inventory';
-import { learnLevelUpMove } from '../../../auth/moves';
 import playEffect, { Effect } from '../../app/sound';
 import type { PokedexView } from '../../../auth/pokedex';
 import { trainEfforts } from '../../../auth/training';
@@ -47,7 +50,7 @@ import { BALL_ITEMS, type Items, getMachineMove, isMachineItem } from '../../../
 import { MAX_FRIENDSHIP, describeFriendship } from '../../../data/constants/friendship';
 import ItemSprite from '../../items/ItemSprite';
 import type { Moves } from '../../../data/ids/moves';
-import type { Species } from '../../../data/ids/species';
+import { Species } from '../../../data/ids/species';
 
 import { isPPItem } from '../../../data/items/vitamins';
 import { isPreciousItem } from '../../../data/overworld/item-pool';
@@ -88,7 +91,7 @@ import AbilityPatchDialog from '../AbilityPatchDialog';
 import CatchPicker from '../catch-picker';
 import IncreasePPDialog from '../IncreasePPDialog';
 import BottleCapDialog from '../BottleCapDialog';
-import TeachMoveDialog from '../TeachMoveDialog';
+import { askTeachings } from '../../forms/teach-move';
 
 import {
   For,
@@ -419,6 +422,15 @@ export function CatchSheetBody(
       waiting?.();
     }
   };
+
+  // A machine and a level ask the same question, so they share the form;
+  // answering one steps to whatever else the level offered
+  askTeachings(teaching, nextTeaching, (levelled) => {
+    say(levelled ? 'Learned.' : 'Taught.', 'leaf');
+    props.onRecordChanged();
+    props.onBagChanged();
+    props.onChange?.();
+  });
 
   /**
    * Ask about whatever the level it just reached has to offer.
@@ -1426,6 +1438,25 @@ export function CatchSheetBody(
           </span>
         )}
       </Show>
+      {/* Which box it is filed in, and where else it could go */}
+      <Show when={owned() != null && props.catchId != null && view()}>
+        {(record) => (
+          <BoxChip
+            player={props.player}
+            catchId={props.catchId ?? ''}
+            box={record().box}
+            revision={record().box}
+            onMoved={(message) => {
+              say(message, 'leaf');
+              props.onRecordChanged();
+              props.onChange?.();
+            }}
+            onFailed={(message) => {
+              say(message, 'ember');
+            }}
+          />
+        )}
+      </Show>
       <Show when={owned() != null || props.onDex != null}>
         <Menu label="Actions" icon={ActionsIcon} actions={menuActions()} />
       </Show>
@@ -1451,6 +1482,11 @@ export function CatchSheetBody(
         // back to afterwards
         isOpen={
           props.catchId != null &&
+          // Held shut until this catch's record is in, so a sheet never
+          // opens to say it is loading. The first read waits at the
+          // boundary above; a later catch keeps the last record
+          // standing, so the id is what says this one has arrived
+          props.detail.latest?.id === props.catchId &&
           teaching() == null &&
           bottle() == null &&
           naming() == null &&
@@ -1827,29 +1863,6 @@ export function CatchSheetBody(
         </Show>
       </Dialog>
 
-      {/* Learning is its own dialog because what it costs is a
-          question — which move is given up — and one used on a pokemon
-          with room asks nothing at all. A machine and a level ask the
-          same question, so they share it; only the price differs, and
-          a level has none.
-
-          Closing steps to whatever else the level offered rather than
-          straight back to the sheet, since a level can hand over two
-          moves at once and each is its own decision */}
-      <TeachMoveDialog
-        catchId={teaching()?.catchId ?? null}
-        move={teaching()?.move ?? null}
-        cost={teaching()?.levelled === true ? 'Nothing' : undefined}
-        teach={teaching()?.levelled === true ? learnLevelUpMove : undefined}
-        onClose={nextTeaching}
-        onTaught={() => {
-          say(teaching()?.levelled === true ? 'Learned.' : 'Taught.', 'leaf');
-          props.onRecordChanged();
-          props.onBagChanged();
-          props.onChange?.();
-        }}
-      />
-
       {/* Naming, on a dialog of its own for the same reason teaching
           is: the sheet is long and the field would be somewhere down
           it, while this is one box and one button.
@@ -1926,6 +1939,24 @@ export function CatchSheetBody(
         }}
         title="Use item"
         description={`Choose what to spend on ${named()}.`}
+        terse
+        lead={
+          <Show when={view()}>
+            {(loaded) => (
+              <HeadingPortrait>
+                <AnimatedSprite
+                  species={isEgg(loaded()) ? Species.Egg : loaded().species}
+                  shiny={!isEgg(loaded()) && isShiny(loaded())}
+                  direction="Down"
+                  still
+                  fill
+                  label=""
+                />
+              </HeadingPortrait>
+            )}
+          </Show>
+        }
+        header={<Show when={view()}>{(loaded) => <TargetStrip caught={loaded()} />}</Show>}
         entries={readable(props.bag)}
         disabled={frozen()}
         // Only the prized and special bands ask twice. Everything a

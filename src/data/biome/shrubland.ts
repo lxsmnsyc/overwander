@@ -6,6 +6,9 @@ import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool, registerWaterPool } fro
  * Shrubland spawn pool, grouped by day-cycle period and rarity band
  */
 export default function registerShrublandSpawns(): void {
+  // The Yungoos line is written but waits on sprites, since the
+  // collection has drawn no Gumshoos. Once it does, mornings and days
+  // take Yungoos in uncommon at 25 and Gumshoos in scarce at 6
   registerSpawnPool(Biome.Shrubland, {
     [TimeOfDay.Morning]: {
       base: [
@@ -18,6 +21,7 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Shinx, weight: 25 },
       ],
       uncommon: [
+        { species: Species.Swirlix, weight: 24 },
         { species: Species.Skiddo, weight: 24 },
         { species: Species.Minccino, weight: 26 },
         { species: Species.Spoink, weight: 20 },
@@ -40,6 +44,7 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Luxio, weight: 5 },
       ],
       scarce: [
+        { species: Species.Slurpuff, weight: 6 },
         { species: Species.Gogoat, weight: 6 },
         { species: Species.Cinccino, weight: 7 },
         { species: Species.Grumpig, weight: 6 },
@@ -85,6 +90,7 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Shinx, weight: 25 },
       ],
       uncommon: [
+        { species: Species.Swirlix, weight: 24 },
         { species: Species.Skiddo, weight: 24 },
         { species: Species.Minccino, weight: 26 },
         { species: Species.Spoink, weight: 20 },
@@ -108,6 +114,7 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Luxio, weight: 5 },
       ],
       scarce: [
+        { species: Species.Slurpuff, weight: 6 },
         { species: Species.Gogoat, weight: 6 },
         { species: Species.Cinccino, weight: 7 },
         { species: Species.Grumpig, weight: 6 },

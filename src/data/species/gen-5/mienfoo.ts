@@ -195,6 +195,7 @@ export default function registerMienfooSpecies(): void {
         Moves.GigaImpact,
         Moves.HyperBeam,
         Moves.VacuumWave,
+        Moves.LaserFocus,
       ],
     },
   });

@@ -10,8 +10,8 @@ import { registerSpecies } from '../__create';
 
 /**
  * The one that was there first, and the seventeen shapes a Plate puts
- * it in. Multitype is not battle machinery here: the shape carries
- * the type, so what an Arceus is is whichever stone it is holding
+ * it in. Multitype is what lets a Plate do that, and the shape carries
+ * the type, so an Arceus with it is whichever stone it is holding
  */
 
 // The one hundred moves every shape of it is taught
@@ -116,6 +116,8 @@ const ARCEUS_TEACHABLE = [
   Moves.XScissor,
   Moves.ZenHeadbutt,
   Moves.Confide,
+  Moves.Liquidation,
+  Moves.LaserFocus,
 ];
 
 /** The stats it has in every shape, which are the same six numbers */

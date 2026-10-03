@@ -133,6 +133,11 @@ export const enum RaidAction {
    * Watching pays nothing
    */
   Spectate = 2,
+  /**
+   * The raid is being fought and the player's own party is in it: they
+   * walked away from the fight and can walk back into it as theirs
+   */
+  Rejoin = 3,
 }
 
 /**

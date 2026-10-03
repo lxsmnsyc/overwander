@@ -940,6 +940,78 @@ const enum Abilities {
   DeepKelp = 200342,
   // Clauncher
   RangingShot = 200343,
+  // Tyrunt
+  JawSnap = 200344,
+  // Amaura
+  Frostbound = 200345,
+  // Inkay
+  Overturn = 200346,
+  // Helioptile
+  Backfeed = 200347,
+  // Hawlucha
+  TopRope = 200348,
+  // Phantump
+  Undergrowth = 200349,
+  // Pumpkaboo
+  Hollowing = 200350,
+  // Bergmite
+  Deadweight = 200351,
+  // Goomy
+  Seepage = 200352,
+  // Noibat
+  Echolocation = 200353,
+  // Pancham
+  Begrudge = 200354,
+  // Swirlix
+  SugarRush = 200355,
+  // Spritzee, Swirlix's counterpart
+  CalmingScent = 200356,
+  // Dedenne
+  QuickWhiskers = 200357,
+  // Carbink
+  CrystalGrowth = 200358,
+  // The Kalos trio: one axis, three ways
+  Quickening = 200359,
+  Withering = 200360,
+  EvenKeel = 200361,
+  // Diancie
+  Regalia = 200362,
+  // Hoopa
+  Ringback = 200363,
+  // Volcanion
+  Boiler = 200364,
+  // Litleo
+  PrideCall = 200365,
+  // Rowlet
+  QuillAudience = 200366,
+  // Litten
+  HeelAudience = 200367,
+  // Popplio
+  AriaAudience = 200368,
+  // Pikipek
+  Drumroll = 200369,
+  // Yungoos
+  ScoreToSettle = 200370,
+  // Grubbin
+  TrickleCharge = 200371,
+  // Crabrawler
+  ReboundPunch = 200372,
+  // Oricorio
+  DizzyTwirl = 200373,
+  // Cutiefly
+  HoneyShare = 200374,
+  // Rockruff
+  Provoke = 200375,
+  // Wishiwashi
+  Regroup = 200376,
+  // Mudbray
+  HeavyHooves = 200377,
+  // Dewpider
+  BubbleWard = 200378,
+  // Fomantis
+  OrchidGuise = 200379,
+  // Bounsweet
+  TropStride = 200380,
 }
 
 export default Abilities;

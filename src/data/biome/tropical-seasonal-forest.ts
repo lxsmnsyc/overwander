@@ -6,30 +6,46 @@ import { UNOWN_SPAWNS, registerSpawnPool, registerWaterPool } from './__create';
  * TropicalSeasonalForest spawn pool, grouped by day-cycle period and rarity band
  */
 export default function registerTropicalSeasonalForestSpawns(): void {
+  // The Pikipek line is written but waits on sprites, since the
+  // collection has drawn no Trumbeak and no finished Toucannon. Once it
+  // does, mornings and days take Pikipek in base at 24, Trumbeak in
+  // rare at 8 and Toucannon in elusive at 5
   registerSpawnPool(Biome.TropicalSeasonalForest, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Bounsweet, weight: 22 },
+        { species: Species.Grubbin, weight: 22 },
         { species: Species.FlabebeOrange, weight: 24 },
         { species: Species.Scatterbug, weight: 24 },
         { species: Species.Bellsprout, weight: 20 },
         { species: Species.Treecko, weight: 2 },
       ],
       uncommon: [
+        { species: Species.Fomantis, weight: 22 },
+        { species: Species.Cutiefly, weight: 24 },
+        { species: Species.Pancham, weight: 24 },
         { species: Species.Exeggcute, weight: 20 },
         { species: Species.Cherubi, weight: 22 },
       ],
       rare: [
+        { species: Species.Steenee, weight: 8 },
+        { species: Species.Charjabug, weight: 8 },
         { species: Species.FloetteOrange, weight: 8 },
         { species: Species.Spewpa, weight: 8 },
         { species: Species.Weepinbell, weight: 5 },
         { species: Species.Grovyle, weight: 1 },
       ],
       scarce: [
+        { species: Species.Lurantis, weight: 6 },
+        { species: Species.Ribombee, weight: 6 },
+        { species: Species.Pangoro, weight: 6 },
         { species: Species.Exeggutor, weight: 10 },
         { species: Species.Cherrim, weight: 6 },
         { species: Species.Lickilicky, weight: 6 },
       ],
       elusive: [
+        { species: Species.Tsareena, weight: 4 },
+        { species: Species.Vikavolt, weight: 4 },
         { species: Species.FlorgesOrange, weight: 5 },
         { species: Species.Vivillon, weight: 5 },
         { species: Species.Chatot, weight: 6 },
@@ -43,27 +59,39 @@ export default function registerTropicalSeasonalForestSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Bounsweet, weight: 22 },
+        { species: Species.Grubbin, weight: 22 },
         { species: Species.FlabebeOrange, weight: 24 },
         { species: Species.Scatterbug, weight: 24 },
         { species: Species.Bellsprout, weight: 20 },
         { species: Species.Treecko, weight: 2 },
       ],
       uncommon: [
+        { species: Species.Fomantis, weight: 22 },
+        { species: Species.Cutiefly, weight: 24 },
+        { species: Species.Pancham, weight: 24 },
         { species: Species.Exeggcute, weight: 20 },
         { species: Species.Cherubi, weight: 22 },
       ],
       rare: [
+        { species: Species.Steenee, weight: 8 },
+        { species: Species.Charjabug, weight: 8 },
         { species: Species.FloetteOrange, weight: 8 },
         { species: Species.Spewpa, weight: 8 },
         { species: Species.Weepinbell, weight: 5 },
         { species: Species.Grovyle, weight: 1 },
       ],
       scarce: [
+        { species: Species.Lurantis, weight: 6 },
+        { species: Species.Ribombee, weight: 6 },
+        { species: Species.Pangoro, weight: 6 },
         { species: Species.Exeggutor, weight: 10 },
         { species: Species.Cherrim, weight: 6 },
         { species: Species.Lickilicky, weight: 6 },
       ],
       elusive: [
+        { species: Species.Tsareena, weight: 4 },
+        { species: Species.Vikavolt, weight: 4 },
         { species: Species.FlorgesOrange, weight: 5 },
         { species: Species.Vivillon, weight: 5 },
         { species: Species.Chatot, weight: 6 },
@@ -76,34 +104,36 @@ export default function registerTropicalSeasonalForestSpawns(): void {
       special: [],
     },
     [TimeOfDay.Evening]: {
-      base: [],
+      base: [{ species: Species.Rowlet, weight: 2 }],
       uncommon: [
+        { species: Species.Pancham, weight: 24 },
         { species: Species.Exeggcute, weight: 20 },
         { species: Species.Cherubi, weight: 22 },
       ],
-      rare: [],
+      rare: [{ species: Species.Dartrix, weight: 2 }],
       scarce: [
+        { species: Species.Pangoro, weight: 6 },
         { species: Species.Exeggutor, weight: 10 },
         { species: Species.Cherrim, weight: 6 },
         { species: Species.Lickilicky, weight: 6 },
       ],
-      elusive: [],
+      elusive: [{ species: Species.Decidueye, weight: 2 }],
       prized: [...UNOWN_SPAWNS],
       special: [],
     },
     [TimeOfDay.Night]: {
-      base: [],
+      base: [{ species: Species.Rowlet, weight: 2 }],
       uncommon: [
         { species: Species.Exeggcute, weight: 20 },
         { species: Species.Cherubi, weight: 22 },
       ],
-      rare: [],
+      rare: [{ species: Species.Dartrix, weight: 2 }],
       scarce: [
         { species: Species.Exeggutor, weight: 10 },
         { species: Species.Cherrim, weight: 6 },
         { species: Species.Lickilicky, weight: 6 },
       ],
-      elusive: [],
+      elusive: [{ species: Species.Decidueye, weight: 2 }],
       prized: [...UNOWN_SPAWNS],
       special: [],
     },

@@ -53,6 +53,7 @@ export default function registerVolcanoSpawns(): void {
         { species: Species.Moltres, weight: 10 },
         { species: Species.Heatran, weight: 10 },
       ],
+      mythical: [{ species: Species.Volcanion, weight: 10 }],
     },
     [TimeOfDay.Day]: {
       base: [
@@ -98,6 +99,7 @@ export default function registerVolcanoSpawns(): void {
         { species: Species.Moltres, weight: 10 },
         { species: Species.Heatran, weight: 10 },
       ],
+      mythical: [{ species: Species.Volcanion, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
       base: [{ species: Species.Deino, weight: 2 }],
@@ -122,6 +124,7 @@ export default function registerVolcanoSpawns(): void {
         { species: Species.Moltres, weight: 10 },
         { species: Species.Heatran, weight: 10 },
       ],
+      mythical: [{ species: Species.Volcanion, weight: 10 }],
     },
     [TimeOfDay.Night]: {
       base: [{ species: Species.Deino, weight: 2 }],
@@ -148,6 +151,7 @@ export default function registerVolcanoSpawns(): void {
         { species: Species.Moltres, weight: 10 },
         { species: Species.Heatran, weight: 10 },
       ],
+      mythical: [{ species: Species.Volcanion, weight: 10 }],
     },
   });
 }

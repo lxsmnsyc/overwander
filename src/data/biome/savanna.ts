@@ -17,6 +17,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Shinx, weight: 25 },
       ],
       uncommon: [
+        { species: Species.Mudbray, weight: 22 },
         { species: Species.Growlithe, weight: 10 },
         { species: Species.Doduo, weight: 20 },
         { species: Species.Natu, weight: 20 },
@@ -36,6 +37,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Luxio, weight: 5 },
       ],
       scarce: [
+        { species: Species.Mudsdale, weight: 6 },
         { species: Species.Arcanine, weight: 5 },
         { species: Species.Dodrio, weight: 10 },
         { species: Species.Swellow, weight: 10 },
@@ -47,6 +49,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Electivire, weight: 6 },
       ],
       elusive: [
+        { species: Species.Oricorio, weight: 5 },
         { species: Species.FlorgesYellow, weight: 5 },
         { species: Species.Vivillon, weight: 5 },
         { species: Species.Nidoqueen, weight: 5 },
@@ -74,6 +77,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Shinx, weight: 25 },
       ],
       uncommon: [
+        { species: Species.Mudbray, weight: 22 },
         { species: Species.Ekans, weight: 20 },
         { species: Species.Growlithe, weight: 10 },
         { species: Species.Doduo, weight: 20 },
@@ -96,6 +100,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Luxio, weight: 5 },
       ],
       scarce: [
+        { species: Species.Mudsdale, weight: 6 },
         { species: Species.Arbok, weight: 10 },
         { species: Species.Arcanine, weight: 5 },
         { species: Species.Dodrio, weight: 10 },
@@ -108,6 +113,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Electivire, weight: 6 },
       ],
       elusive: [
+        { species: Species.Oricorio, weight: 5 },
         { species: Species.FlorgesYellow, weight: 5 },
         { species: Species.Vivillon, weight: 5 },
         { species: Species.Delphox, weight: 2 },
@@ -132,6 +138,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Shinx, weight: 25 },
       ],
       uncommon: [
+        { species: Species.Mudbray, weight: 22 },
         { species: Species.Ekans, weight: 20 },
         { species: Species.Houndour, weight: 20 },
         { species: Species.Poochyena, weight: 20 },
@@ -145,6 +152,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Luxio, weight: 5 },
       ],
       scarce: [
+        { species: Species.Mudsdale, weight: 6 },
         { species: Species.Arbok, weight: 10 },
         { species: Species.Mightyena, weight: 10 },
         { species: Species.Houndoom, weight: 5 },
@@ -168,6 +176,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Shinx, weight: 25 },
       ],
       uncommon: [
+        { species: Species.Mudbray, weight: 22 },
         { species: Species.Ekans, weight: 20 },
         { species: Species.Houndour, weight: 20 },
         { species: Species.Poochyena, weight: 20 },
@@ -180,6 +189,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Luxio, weight: 5 },
       ],
       scarce: [
+        { species: Species.Mudsdale, weight: 6 },
         { species: Species.Arbok, weight: 10 },
         { species: Species.Mightyena, weight: 10 },
         { species: Species.Houndoom, weight: 5 },

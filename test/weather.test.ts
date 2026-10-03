@@ -20,6 +20,8 @@ import Weather, {
   toBattleWeather,
   widensMoveSlots,
 } from '../src/data/overworld/weather';
+import { PHENOMENON_MIN_IV } from '../src/data/overworld/phenomenon';
+import { HONEY_TREE_MIN_IV } from '../src/data/overworld/honey-tree';
 import World from '../src/overworld/world';
 import ChunkSnapshot from '../src/overworld/chunk-snapshot';
 import deriveEncounter, {
@@ -27,6 +29,7 @@ import deriveEncounter, {
   EncounterType,
   RAID_FAMILY_DAY_MIN_IV,
   RAID_MIN_IV,
+  raiseIV,
 } from '../src/overworld/encounter';
 import { Species } from '../src/data/ids/species';
 import type { Moves } from '../src/data/ids/moves';
@@ -304,12 +307,64 @@ describe('what weather is worth', () => {
     }
   });
 
+  it('makes a perfect value likelier the higher the floor', () => {
+    // Every raw value a stat can roll, lifted onto each floor
+    const perfect = (floor: number): number => {
+      let count = 0;
+
+      for (let raw = 0; raw <= MAX_IV; raw++) {
+        if (raiseIV(raw, floor) === MAX_IV) {
+          count += 1;
+        }
+      }
+      return count;
+    };
+
+    expect(perfect(0)).toBe(1);
+    expect(perfect(WEATHER_MIN_IV)).toBeGreaterThan(perfect(0));
+    expect(perfect(2 * WEATHER_MIN_IV)).toBeGreaterThan(perfect(WEATHER_MIN_IV));
+    expect(perfect(3 * WEATHER_MIN_IV)).toBeGreaterThan(perfect(2 * WEATHER_MIN_IV));
+  });
+
+  it('keeps every lifted value between the floor and a perfect one, in order', () => {
+    for (const floor of [0, 9, 18, 27, MAX_IV]) {
+      let last = -1;
+
+      for (let raw = 0; raw <= MAX_IV; raw++) {
+        const raised = raiseIV(raw, floor);
+
+        expect(raised).toBeGreaterThanOrEqual(Math.max(floor, last));
+        expect(raised).toBeLessThanOrEqual(MAX_IV);
+        last = raised;
+      }
+      expect(raiseIV(MAX_IV, floor)).toBe(MAX_IV);
+    }
+  });
+
   it('is worth nothing to a pokemon the sky is not about', () => {
     // Rain is worth walking into for a Water type, and a rat is not
     // one. A floor under everything met in the rain would be a floor
     // under the whole game
     for (const sky of [Weather.Rain, Weather.Snow, Weather.Fog, Weather.Aurora]) {
       expect(valuesOf(sky)).toEqual([0, 0, 0, 0, 0, 0]);
+    }
+  });
+
+  it("stacks a caller's own floor on the sky's", () => {
+    // What a phenomenon and a honey tree each pass
+    for (const floor of [PHENOMENON_MIN_IV, HONEY_TREE_MIN_IV]) {
+      const met = (weather: Weather | undefined): number[] => {
+        const encounter = deriveEncounter(snapshot, [...hopeless], 'trainer-red', {
+          type: EncounterType.Wild,
+          weather,
+          minimumIV: floor,
+        });
+        return STAT_ORDER.map((stat) => getIV(encounter.ivs, stat));
+      };
+
+      expect(met(undefined)).toEqual(Array(6).fill(floor));
+      // Rattata is Normal, which dust favours
+      expect(met(Weather.DustHaze)).toEqual(Array(6).fill(floor + WEATHER_MIN_IV));
     }
   });
 

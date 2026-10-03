@@ -2067,9 +2067,219 @@ export default function registerSignatureAbilities(): void {
       "Its special moves deal at least 1/8 of the target's HP, however they are resisted.",
   });
 
+  // Kalos's two fossils, which both attack the clock
+  registerSignature(Families.Tyrunt, Abilities.JawSnap, {
+    name: 'Jaw Snap',
+    description:
+      'A move it lands cancels whatever the target was casting or channelling, once every 8 seconds per target.',
+  });
+
+  registerSignature(Families.Amaura, Abilities.Frostbound, {
+    name: 'Frostbound',
+    description: 'A target it damages casts and channels 30% slower for the next 6 seconds.',
+  });
+
+  // The three Kalos meets on its way up out of the towns
+  registerSignature(Families.Inkay, Abilities.Overturn, {
+    name: 'Overturn',
+    description:
+      'A move it lands flips every stat stage the target holds, once every 10 seconds per target.',
+  });
+
+  registerSignature(Families.Helioptile, Abilities.Backfeed, {
+    name: 'Backfeed',
+    description: 'Each Electric move it lands heals its whole team 1/16 of the damage it dealt.',
+  });
+
+  registerSignature(Families.Hawlucha, Abilities.TopRope, {
+    name: 'Top Rope',
+    description: 'Its contact moves hit 10% harder for each 50 kg the target weighs, up to 1.5x.',
+  });
+
+  // The two the versions keep apart, and the ice beside them
+  registerSignature(Families.Phantump, Abilities.Undergrowth, {
+    name: 'Undergrowth',
+    description: 'A move it lands adds the Grass type to the target, once per target.',
+  });
+
+  registerSignature(Families.Pumpkaboo, Abilities.Hollowing, {
+    name: 'Hollowing',
+    description: 'A move it lands adds the Ghost type to the target, once per target.',
+  });
+
+  registerSignature(Families.Bergmite, Abilities.Deadweight, {
+    name: 'Deadweight',
+    description: 'Its physical moves use its Defense in place of its Attack while it is higher.',
+  });
+
+  // The slug that soaks a blow and the bat that hears where it came from
+  registerSignature(Families.Goomy, Abilities.Seepage, {
+    name: 'Seepage',
+    description: '40% of every direct blow it takes is paid over the next 4 seconds instead.',
+  });
+
+  registerSignature(Families.Noibat, Abilities.Echolocation, {
+    name: 'Echolocation',
+    description:
+      'An enemy that lands a move on it is heard: its next damaging move at that enemy is a critical hit.',
+  });
+
+  // The four Kalos keeps for last
+  registerSignature(Families.Pancham, Abilities.Begrudge, {
+    name: 'Begrudge',
+    description: 'It gains 1 stage of Attack every time an enemy is healed.',
+  });
+
+  registerSignature(Families.Swirlix, Abilities.SugarRush, {
+    name: 'Sugar Rush',
+    description: 'Its whole team gains 1 stage of Speed whenever it uses up its own held item.',
+  });
+
+  registerSignature(Families.Dedenne, Abilities.QuickWhiskers, {
+    name: 'Quick Whiskers',
+    description: 'Its moves cast at 1 step higher priority. Cooldowns are untouched.',
+  });
+
+  registerSignature(Families.Carbink, Abilities.CrystalGrowth, {
+    name: 'Crystal Growth',
+    description:
+      'It gains 1 stage of Defense and 1 of Special Defense every 10 seconds, up to 3 of each.',
+  });
+
+  /**
+   * Kalos's three, on one axis: a stat stage is life given or taken,
+   * and the thing in the ground will have neither
+   */
+  registerSignature(Families.Xerneas, Abilities.Quickening, {
+    name: 'Quickening',
+    description: 'Every stat rise on its team is 1 stage bigger.',
+  });
+
+  registerSignature(Families.Yveltal, Abilities.Withering, {
+    name: 'Withering',
+    description: 'Every stat drop it lands on an enemy is 1 stage deeper.',
+  });
+
+  registerSignature(Families.Zygarde, Abilities.EvenKeel, {
+    name: 'Even Keel',
+    description: 'Every stat stage on the field counts 0.5x, its own included.',
+  });
+
+  // Kalos's three mythicals
+  registerSignature(Families.Diancie, Abilities.Regalia, {
+    name: 'Regalia',
+    description: 'Its whole team gains 1 stage of Defense every 10 seconds, up to 3.',
+  });
+
+  registerSignature(Families.Hoopa, Abilities.Ringback, {
+    name: 'Ringback',
+    description: '20% of single-target moves aimed at it are turned back on whoever threw them.',
+  });
+
+  registerSignature(Families.Volcanion, Abilities.Boiler, {
+    name: 'Boiler',
+    description: 'Its Fire moves hit 1.15x in rain and its Water moves hit 1.15x in sunlight.',
+  });
+
+  // The two Kalos lines that waited on their evolutions being drawn
+  registerSignature(Families.Litleo, Abilities.PrideCall, {
+    name: 'Pride Call',
+    description: 'It casts Noble Roar at an enemy as it arrives on the field.',
+  });
+
+  registerSignature(Families.Spritzee, Abilities.CalmingScent, {
+    name: 'Calming Scent',
+    description: 'The enemy side loses 1 stage of Speed whenever it uses up its own held item.',
+  });
+
   registerSignature(Families.Froakie, Abilities.ShadeBond, {
     name: 'Shade Bond',
     description:
       'Its team, itself included, casts and channels at 0.85x the time while it stands. Cooldowns are untouched.',
+  });
+
+  // Alola's three starters, each playing to a crowd: the two that
+  // fight it out read the far side, the singer reads its own
+  registerSignature(Families.Rowlet, Abilities.QuillAudience, {
+    name: 'Quill Audience',
+    description: 'Its Speed counts 1.1x for each enemy standing, up to 4 of them.',
+  });
+
+  registerSignature(Families.Litten, Abilities.HeelAudience, {
+    name: 'Heel Audience',
+    description: 'Its Attack counts 1.1x for each enemy standing, up to 4 of them.',
+  });
+
+  registerSignature(Families.Popplio, Abilities.AriaAudience, {
+    name: 'Aria Audience',
+    description: 'Its Special Attack counts 1.1x for each teammate standing, up to 4 of them.',
+  });
+
+  // The three the first roads out of Melemele's towns walk past
+  registerSignature(Families.Pikipek, Abilities.Drumroll, {
+    name: 'Drumroll',
+    description: 'Its multi-hit moves strike 1 more time.',
+  });
+
+  registerSignature(Families.Yungoos, Abilities.ScoreToSettle, {
+    name: 'Score to Settle',
+    description: 'Its moves hit 1.3x against whichever enemy last hit it.',
+  });
+
+  registerSignature(Families.Grubbin, Abilities.TrickleCharge, {
+    name: 'Trickle Charge',
+    description:
+      'Its Special Attack rises 10% for each Electric move anybody lands, either side, up to 1.5x.',
+  });
+
+  // Melemele's meadow and hill
+  registerSignature(Families.Crabrawler, Abilities.ReboundPunch, {
+    name: 'Rebound Punch',
+    description:
+      'When one of its punching moves misses or is blocked, its next punching move hits 1.5x.',
+  });
+
+  registerSignature(Families.Oricorio, Abilities.DizzyTwirl, {
+    name: 'Dizzy Twirl',
+    description: 'While confused it never hits itself, and its moves hit 1.3x.',
+  });
+
+  registerSignature(Families.Cutiefly, Abilities.HoneyShare, {
+    name: 'Honey Share',
+    description:
+      'While it stands, berries its teammates eat heal 1.5x as much and raise a stat 1 more stage.',
+  });
+
+  registerSignature(Families.Rockruff, Abilities.Provoke, {
+    name: 'Provoke',
+    description: 'An enemy it hits must aim its next single-target move at it.',
+  });
+
+  // Akala's first roads and Brooklet Hill
+  registerSignature(Families.Wishiwashi, Abilities.Regroup, {
+    name: 'Regroup',
+    description:
+      'While it swims alone it heals 1/8 of its HP each time it acts, so the school can gather again.',
+  });
+
+  registerSignature(Families.Mudbray, Abilities.HeavyHooves, {
+    name: 'Heavy Hooves',
+    description: 'Its physical moves hit 1% harder for every 20 kg it weighs, up to 1.4x.',
+  });
+
+  registerSignature(Families.Dewpider, Abilities.BubbleWard, {
+    name: 'Bubble Ward',
+    description: 'While it stands, its teammates take Fire moves at 0.75x and cannot be burned.',
+  });
+
+  registerSignature(Families.Fomantis, Abilities.OrchidGuise, {
+    name: 'Orchid Guise',
+    description:
+      'Enemies cannot aim a single-target move at it until it lands its first attack, which hits 1.3x.',
+  });
+
+  registerSignature(Families.Bounsweet, Abilities.TropStride, {
+    name: 'Trop Stride',
+    description: 'Its kicking moves hit 1.3x.',
   });
 }

@@ -61,7 +61,7 @@ import {
   isBerry,
 } from '../../src/data/items/berries';
 import BERRY_POOL from '../../src/data/overworld/berry-pool';
-import { getMoveData, registerMoves } from '../../src/data/moves';
+import { TUTOR_ONLY_MOVES, getMoveData, registerMoves } from '../../src/data/moves';
 import AleaRNG from '../../src/core/alea';
 import {
   ITEM_POOL,
@@ -230,6 +230,26 @@ describe('item data', () => {
     expect(getMachineMove(Items.MasterBall)).toBeNull();
   });
 
+  it('stocks no machine for a tutor-only move, and buys a withdrawn one back in full', () => {
+    const stocked = new Set(getVendorGoods(VendorKind.Moves));
+
+    for (const move of TUTOR_ONLY_MOVES) {
+      const item = getMachineItem(move);
+
+      expect(getTeachableMoves()).not.toContain(move);
+      expect(stocked.has(item)).toBe(false);
+      expect(isMarketable(item)).toBe(false);
+      // Still in the registry, so a bag that already holds one reads it
+      expect(sellPrice(item)).toBe(getItemData(item).buy);
+      expect(sellPrice(item)).toBeGreaterThan(0);
+    }
+    // A retired one too: Head Smash was only ever an egg move
+    expect(stocked.has(getMachineItem(Moves.HeadSmash))).toBe(false);
+    expect(sellPrice(getMachineItem(Moves.HeadSmash))).toBe(
+      getItemData(getMachineItem(Moves.HeadSmash)).buy,
+    );
+  });
+
   it('keeps machines out of the overworld and in the market', () => {
     // A machine is bought, never found: no band of the pool holds one
     for (const band of ['base', 'uncommon', 'rare', 'special'] as const) {
@@ -332,6 +352,8 @@ describe('item data', () => {
       Species.Shieldon,
       Species.Tirtouga,
       Species.Archen,
+      Species.Tyrunt,
+      Species.Amaura,
     ]);
 
     for (const [item, species] of FOSSIL_SPECIES) {
@@ -792,6 +814,8 @@ describe('item data', () => {
     expect(asDuelRules({ limits: packSlots(2, 2, 2), teamSize: 3 })).toEqual({
       limits: packSlots(2, 2, 2),
       teamSize: 3,
+      maxBst: 0,
+      bans: 0,
     });
   });
 
@@ -1372,6 +1396,9 @@ describe('item data', () => {
       Items.LibertyPass,
       Items.MusicBox,
       Items.ColressMachine,
+      Items.HeartDiamond,
+      Items.SealedRing,
+      Items.SteamValve,
       Items.GoldenBottleCap,
       Items.HPUpMax,
       Items.ProteinMax,
@@ -1667,15 +1694,20 @@ describe('item data', () => {
     expect(relic.buy).toBe(0);
     expect(relic.sell).toBe(0);
 
+    const registered = new Set(getRegisteredSpecies());
+
     for (const [item, species] of RAID_ITEMS) {
-      // Every relic names a mythical, and only the special band
-      // carries it
-      expect(getRaidSpecies(item)).toBe(species);
       expect(isMythicalSpecies(species)).toBe(true);
-      expect(ITEM_POOL.special.some((entry) => entry.item === item)).toBe(true);
       for (const band of ['base', 'uncommon', 'rare'] as const) {
         expect(ITEM_POOL[band].some((entry) => entry.item === item)).toBe(false);
       }
+      // Every relic names a mythical, and only the special band carries
+      // it. One whose mythical is not written yet calls nothing and is
+      // found nowhere
+      const written = registered.has(species);
+
+      expect(getRaidSpecies(item)).toBe(written ? species : null);
+      expect(ITEM_POOL.special.some((entry) => entry.item === item)).toBe(written);
     }
 
     // A relic that named a legendary would call nothing: the world
@@ -1684,8 +1716,8 @@ describe('item data', () => {
   });
 
   it('paints an Arceus with every Plate it can hold', () => {
-    // Multitype is not battle machinery: a Plate names one shape, and
-    // the shape's own species data carries the type the Plate lifts
+    // A Plate names one shape for a Multitype holder, and the shape's
+    // own species data carries the type the Plate lifts
     for (const [plate, type] of PLATES) {
       const shapes = getItemForms(plate);
 

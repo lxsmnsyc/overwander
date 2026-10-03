@@ -199,7 +199,7 @@ export default function registerFlabebeSpecies(): void {
       learnSet: {
         level: { ...FLABEBE_LEVEL },
         teachable: [...FAMILY_TEACHABLE],
-        egg: [Moves.Camouflage, Moves.Captivate, Moves.Copycat],
+        egg: [Moves.Camouflage, Moves.Captivate, Moves.Copycat, Moves.TearfulLook],
       },
     });
     registerSpecies(colour.floette, {
@@ -294,7 +294,7 @@ export default function registerFlabebeSpecies(): void {
     },
     types: [Types.Fairy],
     abilities: [Abilities.FlowerVeil],
-    hiddenAbilities: [Abilities.Symbiosis],
+    hiddenAbilities: [Abilities.Symbiosis, Abilities.Pixilate, Abilities.FlowerGift],
     eggGroups: [EggGroups.Fairy],
     genderRatio: [0, 1],
     catchRate: 45,

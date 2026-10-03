@@ -74,6 +74,7 @@ export const enum Balls {
   LoveBall = 18,
   HeavyBall = 19,
   FastBall = 20,
+  BeastBall = 21,
 }
 
 export const enum Items {
@@ -950,9 +951,155 @@ export const enum Items {
   /** Unova's two, the shell that swam and the wing that tried to fly */
   CoverFossil = 442,
   PlumeFossil = 443,
+  /** The two Kalos fossils, which are shipped with their lines */
+  JawFossil = 444,
+  SailFossil = 445,
+  /** The relics Kalos's three mythicals leave behind them */
+  HeartDiamond = 446,
+  SealedRing = 447,
+  SteamValve = 448,
+  /** What lets the rings out, and puts them back */
+  PrisonBottle = 449,
 
-  // 444 to 563 are held for the Kalos and Alola items the gen 7
-  // branches number
+  /**
+   * The box the cells are gathered in, spent putting a tenth of a
+   * Zygarde back up to half of one. The legendaries branch numbered
+   * it 446 before the mythicals' relics took that
+   */
+  ZygardeCube = 450,
+
+  /** The Mega Stones, in the order the dex meets their pokemon */
+  Venusaurite = 451,
+  CharizarditeX = 452,
+  CharizarditeY = 453,
+  Blastoisinite = 454,
+  Beedrillite = 455,
+  Pidgeotite = 456,
+  Alakazite = 457,
+  Slowbronite = 458,
+  Gengarite = 459,
+  Kangaskhanite = 460,
+  Pinsirite = 461,
+  Gyaradosite = 462,
+  Aerodactylite = 463,
+  MewtwoniteX = 464,
+  MewtwoniteY = 465,
+  Ampharosite = 466,
+  Steelixite = 467,
+  Scizorite = 468,
+  Heracronite = 469,
+  Houndoominite = 470,
+  Tyranitarite = 471,
+  Sceptilite = 472,
+  Blazikenite = 473,
+  Swampertite = 474,
+  Gardevoirite = 475,
+  Sablenite = 476,
+  Mawilite = 477,
+  Aggronite = 478,
+  Medichamite = 479,
+  Manectite = 480,
+  Sharpedonite = 481,
+  Cameruptite = 482,
+  Altarianite = 483,
+  Banettite = 484,
+  Absolite = 485,
+  Glalitite = 486,
+  Salamencite = 487,
+  Metagrossite = 488,
+  Latiasite = 489,
+  Latiosite = 490,
+  Lopunnite = 491,
+  Garchompite = 492,
+  Lucarionite = 493,
+  Abomasite = 494,
+  Galladite = 495,
+  Audinite = 496,
+  Diancite = 497,
+
+  /** The orbs that return the sea and the land to their Primal shapes */
+  BlueOrb = 498,
+  RedOrb = 499,
+
+  /** The ball made for the Ultra Beasts */
+  BeastBall = 500,
+
+  /** The discs a Silvally reads its type off, in the order its forms are numbered */
+  FightingMemory = 501,
+  FlyingMemory = 502,
+  PoisonMemory = 503,
+  GroundMemory = 504,
+  RockMemory = 505,
+  BugMemory = 506,
+  GhostMemory = 507,
+  SteelMemory = 508,
+  FireMemory = 509,
+  WaterMemory = 510,
+  GrassMemory = 511,
+  ElectricMemory = 512,
+  PsychicMemory = 513,
+  IceMemory = 514,
+  DragonMemory = 515,
+  DarkMemory = 516,
+  FairyMemory = 517,
+
+  /** The nectars that change the dance an Oricorio takes on */
+  RedNectar = 518,
+  YellowNectar = 519,
+  PinkNectar = 520,
+  PurpleNectar = 521,
+
+  /** What fuses Necrozma with Solgaleo or Lunala, and parts them again */
+  NSolarizer = 522,
+  NLunarizer = 523,
+
+  /** Kept for its number only: a Z-Move needs no ring here, so it is never registered */
+  ZRing = 524,
+
+  /** The Z-Crystals of each type, Normal first */
+  NormaliumZ = 525,
+  FightiniumZ = 526,
+  FlyiniumZ = 527,
+  PoisoniumZ = 528,
+  GroundiumZ = 529,
+  RockiumZ = 530,
+  BuginiumZ = 531,
+  GhostiumZ = 532,
+  SteeliumZ = 533,
+  FiriumZ = 534,
+  WateriumZ = 535,
+  GrassiumZ = 536,
+  ElectriumZ = 537,
+  PsychiumZ = 538,
+  IciumZ = 539,
+  DragoniumZ = 540,
+  DarkiniumZ = 541,
+  FairiumZ = 542,
+
+  /** The Z-Crystals of one line's own Z-Move, in the order the dex meets their pokemon */
+  PikaniumZ = 543,
+  PikashuniumZ = 544,
+  AloraichiumZ = 545,
+  EeviumZ = 546,
+  SnorliumZ = 547,
+  MewniumZ = 548,
+  DecidiumZ = 549,
+  InciniumZ = 550,
+  PrimariumZ = 551,
+  LycaniumZ = 552,
+  MimikiumZ = 553,
+  KommoniumZ = 554,
+  TapuniumZ = 555,
+  SolganiumZ = 556,
+  LunaliumZ = 557,
+  UltranecroziumZ = 558,
+  MarshadiumZ = 559,
+
+  /** The relics Alola's mythicals leave behind them, in the order the dex meets their pokemon */
+  AncientPokeBall = 560,
+  HerosCharm = 561,
+  WindmillCharm = 562,
+  MysteryBox = 563,
 
   /** The Max vitamins, which fill one stat's effort at once */
   HPUpMax = 564,
@@ -972,6 +1119,8 @@ export const enum Items {
   RareCandyMax = 576,
   /** Room for one more move, the way a Utility Belt is room for one more item */
   SkillBook = 577,
+  /** What shows the forces of nature their other shape */
+  RevealGlass = 578,
 }
 
 /**
@@ -1066,6 +1215,7 @@ export const BALL_ITEMS: Record<Balls, Items> = {
   [Balls.LoveBall]: Items.LoveBall,
   [Balls.HeavyBall]: Items.HeavyBall,
   [Balls.FastBall]: Items.FastBall,
+  [Balls.BeastBall]: Items.BeastBall,
 };
 
 const BALLS_BY_ITEM = (() => {

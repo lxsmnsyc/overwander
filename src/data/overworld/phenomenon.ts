@@ -2,7 +2,9 @@ import Biome from '../ids/biome';
 import { ItemTypes, Items } from '../ids/items';
 import { listItemsByType } from '../items';
 import { GEMS } from '../items/gems';
+import { MEGA_STONES } from '../items/mega-stones';
 import { PLATES } from '../items/plates';
+import { SIGNATURE_CRYSTALS, TYPE_CRYSTALS } from '../items/z-crystals';
 import { isValuable } from '../items/valuables';
 import { MAX_WING_STATS, WING_STATS } from '../items/wings';
 import { type ItemPoolEntry, type ItemRarityGroups, getItemBand, getItemOdds } from './item-pool';
@@ -117,6 +119,12 @@ export const PHENOMENON_ITEM_CHANCE = 0.5;
  * a phenomenon lifts the floor rather than the ceiling
  */
 export const PHENOMENON_RARE_CHANCE = 1 / 8;
+
+/**
+ * The floor under every value of a pokemon a phenomenon startles out,
+ * the raid's and the sky's number. It stacks with a favouring sky
+ */
+export const PHENOMENON_MIN_IV = 9;
 
 /**
  * How often a grotto holds an **egg** of the biome instead of the
@@ -298,6 +306,9 @@ function buildPool(phenomenon: Phenomenon): Items[] {
       ...GEMS.keys(),
       ...spendableStones(),
       ...PLATES.keys(),
+      ...MEGA_STONES.keys(),
+      ...TYPE_CRYSTALS.keys(),
+      ...SIGNATURE_CRYSTALS.keys(),
       ...listItemsByType(ItemTypes.Valuable),
     ];
   }

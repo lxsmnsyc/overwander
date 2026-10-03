@@ -29,9 +29,10 @@ export const TERRAIN_BLUNTING = 0.5;
 export const GRASSY_HEAL_SHARE = 1 / 16;
 
 /** The type each terrain strengthens for whoever throws it from the ground */
-const BOOSTED: { [key in Terrains]?: Types } = {
+export const TERRAIN_BOOSTED: { [key in Terrains]?: Types } = {
   [Terrains.Electric]: Types.Electric,
   [Terrains.Grassy]: Types.Grass,
+  [Terrains.Psychic]: Types.Psychic,
 };
 
 /** The quakes a lawn takes the force out of */
@@ -79,7 +80,7 @@ export default function setupTerrainMechanics(battle: Battle): void {
       return;
     }
 
-    const boosted = BOOSTED[event.source.checkTerrain()];
+    const boosted = TERRAIN_BOOSTED[event.source.checkTerrain()];
 
     if (boosted != null && event.source.checkMoveType(event.move, event.target) === boosted) {
       event.power *= TERRAIN_BOOST;
@@ -102,6 +103,24 @@ export default function setupTerrainMechanics(battle: Battle): void {
 
   battle.on(BattleEvents.CheckUnitStatusImmunity, EventPriority.Post, (event) => {
     if (!event.immune && REFUSED[event.source.checkTerrain()]?.has(event.status) === true) {
+      event.immune = true;
+    }
+  });
+
+  // Psychic Terrain turns away what winds up faster than an ordinary
+  // move, from the other side, before it reaches a grounded unit
+  battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
+    if (event.immune || event.target.type !== MoveTargetType.Unit) {
+      return;
+    }
+
+    const target = event.target.unit;
+
+    if (
+      target.team.alliance !== event.source.team.alliance &&
+      target.checkTerrain() === Terrains.Psychic &&
+      event.source.checkMovePriority(event.move, event.target) > 0
+    ) {
       event.immune = true;
     }
   });

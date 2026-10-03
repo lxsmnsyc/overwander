@@ -48,7 +48,7 @@ import {
   getDayOfYear,
   getDaysInYear,
   getFamilyName,
-  getFeaturedFamily,
+  getFeaturedFamilies,
   getRegisteredFamilies,
   getRegisteredSpecies,
   getShedEvolutions,
@@ -126,8 +126,9 @@ describe('evolution data', () => {
       { species: Species.Ivysaur, method: EvolutionMethod.Level, level: 16 },
     ]);
 
-    // Seven roads out of one Eevee: five stones and two friendships
-    expect(getSpeciesData(Species.Eevee).evolvesInto).toHaveLength(7);
+    // Eight roads out of one Eevee: five stones, two friendships by
+    // the clock, and the ribboned one that also asks for a move
+    expect(getSpeciesData(Species.Eevee).evolvesInto).toHaveLength(8);
     expect(getSpeciesData(Species.Eevee).evolvesInto?.[0]).toEqual({
       species: Species.Vaporeon,
       method: EvolutionMethod.UsedItem,
@@ -873,29 +874,28 @@ describe('species day', () => {
     expect(getDayOfYear(YEAR_START + 364 * DAY)).toBe(364);
   });
 
-  it('features a family every day, counting the year around the roster', () => {
+  it("features each family on its id's day of the year", () => {
     const roster = getRegisteredFamilies();
+    const days = getDaysInYear(YEAR_START);
 
     // Family 0 is Bulbasaur's, so it opens the year; family 1 is
     // Charmander's, and so on
-    expect(getFeaturedFamily(YEAR_START)).toBe(Families.Bulbasaur);
-    expect(getFeaturedFamily(YEAR_START + DAY)).toBe(Families.Charmander);
-    expect(getFeaturedFamily(YEAR_START + Families.Mewtwo * DAY)).toBe(Families.Mewtwo);
+    expect(getFeaturedFamilies(YEAR_START)).toContain(Families.Bulbasaur);
+    expect(getFeaturedFamilies(YEAR_START + DAY)).toContain(Families.Charmander);
+    expect(getFeaturedFamilies(YEAR_START + Families.Mewtwo * DAY)).toContain(Families.Mewtwo);
 
-    // The roster runs short of a year, so it comes round again rather
-    // than leaving the rest of the year blank
-    expect(getFeaturedFamily(YEAR_START + roster.length * DAY)).toBe(Families.Bulbasaur);
-    for (let day = 0; day < getDaysInYear(YEAR_START); day++) {
-      expect(getFeaturedFamily(YEAR_START + day * DAY)).not.toBeNull();
+    // Every family comes up exactly once a year, and a day holds each
+    // family whose id comes round to it
+    const seen: Families[] = [];
+
+    for (let day = 0; day < days; day++) {
+      for (const family of getFeaturedFamilies(YEAR_START + day * DAY)) {
+        expect(family % days).toBe(day);
+        seen.push(family);
+      }
     }
-
-    // Every family gets its day, the ones past a reserved gap in the
-    // numbering included
-    const featured = new Set(
-      Array.from({ length: roster.length }, (_, day) => getFeaturedFamily(YEAR_START + day * DAY)),
-    );
-
-    expect(featured.size).toBe(roster.length);
+    expect(seen.length).toBe(roster.length);
+    expect(new Set(seen)).toEqual(new Set(roster));
 
     // The whole family is featured, not just one stage
     expect(isFeaturedSpecies(Species.Venusaur, YEAR_START)).toBe(true);
@@ -950,7 +950,7 @@ describe('species day', () => {
 
   it('weights the featured family four times as heavily', () => {
     const pool = getSpawnPool(Biome.Grassland, TimeOfDay.Morning);
-    const boosted = boostFamilyWeights(pool, Families.Pidgey, SPECIES_DAY_WEIGHT_BOOST);
+    const boosted = boostFamilyWeights(pool, [Families.Pidgey], SPECIES_DAY_WEIGHT_BOOST);
 
     for (const band of ['base', 'uncommon', 'rare', 'special'] as const) {
       pool[band].forEach((entry, index) => {

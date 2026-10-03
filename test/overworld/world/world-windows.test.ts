@@ -4,17 +4,14 @@ import { describe, expect, it } from 'vitest';
 import registerAbilities from '../../../src/data/abilities';
 import registerBiomeSpawns, {
   BIOME_NAMES,
+  SpawnClass,
   SpawnRarity,
   getBiomeRoster,
+  getSpawnClass,
   getSpawnRarity,
   isGrownSpecies,
 } from '../../../src/data/biome';
-import Biome, {
-  SpawnSurface,
-  TimeOfDay,
-  getTimeOfDay,
-  growsHoneyTrees,
-} from '../../../src/data/ids/biome';
+import Biome, { TimeOfDay, getTimeOfDay, growsHoneyTrees } from '../../../src/data/ids/biome';
 import { APRICORNS, ItemTypes, Items } from '../../../src/data/ids/items';
 import registerItems, { getItemData } from '../../../src/data/items';
 import { isValuable } from '../../../src/data/items/valuables';
@@ -26,7 +23,6 @@ import {
   getItemBand,
   getItemOdds,
 } from '../../../src/data/overworld/item-pool';
-import EggGroups from '../../../src/data/ids/egg-groups';
 import { Species } from '../../../src/data/ids/species';
 import { getBaseSpecies, getSpeciesData, registerSpecies } from '../../../src/data/species';
 import { seatId } from '../../../src/auth/gym-seat-record';
@@ -55,13 +51,8 @@ import { FOSSIL_OFFER_KINDS, getFossilPrice } from '../../../src/data/overworld/
 import { isFossil } from '../../../src/data/items/fossils';
 import Landmark from '../../../src/data/overworld/landmark';
 import { getPortalCell, portalInRegion } from '../../../src/overworld/portal';
-import Npc, {
-  NPCS,
-  TRADERS,
-  TRADER_OFFERS,
-  npcSheet,
-  npcSheets,
-} from '../../../src/data/overworld/npc';
+import Npc, { TRADER_OFFERS } from '../../../src/data/overworld/npc';
+import { NPCS, TRADERS, npcSheet, npcSheets } from '../../../src/overworld/npcs';
 import Phenomenon, {
   getPhenomenonGroups,
   getPhenomenonItems,
@@ -1080,6 +1071,11 @@ describe('world', () => {
     expect(new Set(getPhenomenonItems(Phenomenon.FlyingShadow)).has(Items.HealthWing)).toBe(true);
     expect(new Set(getPhenomenonItems(Phenomenon.RipplingWater)).has(Items.FireStone)).toBe(false);
     expect(new Set(getPhenomenonItems(Phenomenon.DustCloud)).has(Items.FireStone)).toBe(true);
+    // Dust is for what comes out of rock, the Mega Stones and the
+    // Z-Crystals included
+    expect(new Set(getPhenomenonItems(Phenomenon.DustCloud)).has(Items.CharizarditeX)).toBe(true);
+    expect(new Set(getPhenomenonItems(Phenomenon.DustCloud)).has(Items.FiriumZ)).toBe(true);
+    expect(new Set(getPhenomenonItems(Phenomenon.DustCloud)).has(Items.PikaniumZ)).toBe(true);
     expect(getPhenomenonItems(Phenomenon.HiddenGrotto)).toEqual([]);
   });
 
@@ -1187,7 +1183,6 @@ describe('world', () => {
   });
 
   it('startles what the phenomenon looks like', () => {
-    const water = new Set([EggGroups.Water1, EggGroups.Water2, EggGroups.Water3]);
     // Skip the item half, then walk both bands with a spread of picks
     const draws = [];
 
@@ -1197,65 +1192,26 @@ describe('world', () => {
       }
     }
 
-    for (const roll of draws) {
-      const rolls = (values: number[]) => () => values.shift() ?? 0.999;
+    const looks: [Phenomenon, Biome, SpawnClass][] = [
       // A shadow over grassland is always something that flies
-      const shadowed = resolvePhenomenon(
-        Phenomenon.FlyingShadow,
-        Biome.Grassland,
-        TimeOfDay.Morning,
-        rolls([...roll]),
-      );
-
-      expect(shadowed?.kind).toBe('pokemon');
-      if (shadowed?.kind === 'pokemon') {
-        expect(getSpeciesData(shadowed.species).eggGroups).toContain(EggGroups.Flying);
-      }
-
+      [Phenomenon.FlyingShadow, Biome.Grassland, SpawnClass.Flying],
       // A ripple in a swamp is never the Farfetch'd wading beside it
-      const rippled = resolvePhenomenon(
-        Phenomenon.RipplingWater,
-        Biome.Swamp,
-        TimeOfDay.Morning,
-        rolls([...roll]),
-      );
+      [Phenomenon.RipplingWater, Biome.Swamp, SpawnClass.Water],
+      // And dust off a desert is something that keeps to the ground
+      [Phenomenon.DustCloud, Biome.Desert, SpawnClass.Ground],
+    ];
 
-      expect(rippled?.kind).toBe('pokemon');
-      if (rippled?.kind === 'pokemon') {
-        const groups = getSpeciesData(rippled.species).eggGroups;
+    for (const [phenomenon, biome, kind] of looks) {
+      for (const roll of draws) {
+        const rolls = (values: number[]) => () => values.shift() ?? 0.999;
+        const found = resolvePhenomenon(phenomenon, biome, TimeOfDay.Morning, rolls([...roll]));
 
-        expect(groups.some((group) => water.has(group))).toBe(true);
+        expect(found?.kind).toBe('pokemon');
+        if (found?.kind === 'pokemon') {
+          expect(getSpawnClass(found.species), getSpeciesData(found.species).name).toBe(kind);
+        }
       }
     }
-
-    // A biome with nothing that fits hands over what the phenomenon
-    // was carrying rather than a species of the wrong kind
-    const landlocked = resolvePhenomenon(
-      Phenomenon.RipplingWater,
-      Biome.Grassland,
-      TimeOfDay.Morning,
-      (() => {
-        const values = [0.9, 0.5, 0];
-        return () => values.shift() ?? 0.999;
-      })(),
-    );
-
-    expect(landlocked?.kind).toBe('item');
-
-    // ...but a pond in the same grassland draws from its water pool
-    const pond = resolvePhenomenon(
-      Phenomenon.RipplingWater,
-      Biome.Grassland,
-      TimeOfDay.Morning,
-      (() => {
-        const values = [0.9, 0.5, 0];
-        return () => values.shift() ?? 0.999;
-      })(),
-      null,
-      SpawnSurface.Water,
-    );
-
-    expect(pond?.kind).toBe('pokemon');
   });
 
   it('produces varied biomes across a region', () => {

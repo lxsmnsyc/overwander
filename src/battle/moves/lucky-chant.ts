@@ -1,7 +1,6 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
 import { TeamStatuses } from '../../data/ids/status';
-import { USELESS_PENALTY } from '../ai/score';
 import type Battle from '../core';
 import { BattleEvents, EffectType } from '../events';
 import type Team from '../team';
@@ -57,9 +56,9 @@ export default function setupLuckyChant(battle: Battle): void {
   });
 
   // A second chant while the first is still going adds nothing
-  battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
-    if (event.move === Moves.LuckyChant && remaining.has(event.source.team)) {
-      event.score -= USELESS_PENALTY;
+  battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
+    if (event.usable && event.move === Moves.LuckyChant && remaining.has(event.source.team)) {
+      event.usable = false;
     }
   });
 }

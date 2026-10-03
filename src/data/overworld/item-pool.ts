@@ -4,7 +4,10 @@ import { DRIVES } from '../items/drives';
 import { MARKET_GEAR } from '../items/gear';
 import { ONE_SHOTS } from '../items/one-shots';
 import { ORBS } from '../items/orbs';
+import { MEGA_STONES } from '../items/mega-stones';
+import { MEMORIES } from '../items/memories';
 import { PLATES } from '../items/plates';
+import { SIGNATURE_CRYSTALS, TYPE_CRYSTALS } from '../items/z-crystals';
 import { MAX_VITAMIN_STATS, VITAMIN_STATS } from '../items/vitamins';
 import { MINT_NATURES } from '../items/mints';
 import { POWER_ITEMS } from '../items/power-items';
@@ -128,6 +131,7 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.TimerBall, weight: 10 },
     { item: Items.QuickBall, weight: 10 },
     { item: Items.DuskBall, weight: 10 },
+    { item: Items.BeastBall, weight: 3 },
     // A shade thinner than the base valuables would make them, so the
     // band's doubled width never makes a dearer find the commoner one
     { item: Items.BigPearl, weight: 7 },
@@ -175,6 +179,7 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.IcyRock, weight: 3 },
     { item: Items.SmoothRock, weight: 3 },
     { item: Items.LightClay, weight: 3 },
+    { item: Items.TerrainExtender, weight: 3 },
     // Pulled up with them, and about as particular: everything to a
     // pokemon that drains, nothing to anything else
     { item: Items.BigRoot, weight: 4 },
@@ -227,6 +232,9 @@ export const ITEM_POOL: ItemRarityGroups = {
     // on a pokemon and spent. Thinner, because a Rotom wants more
     // than one of them and nobody sells any
     { item: Items.RotomCatalog, weight: 6 },
+    // Beside it for the same reason, and as thin: a Zygarde goes both
+    // ways between its shapes, so one cube is never enough either
+    { item: Items.ZygardeCube, weight: 6 },
     // What a trade or a held evolution asks for, on the stones' terms
     // but thinner: each is wanted by one line rather than several
     { item: Items.KingsRock, weight: 3 },
@@ -286,6 +294,12 @@ export const ITEM_POOL: ItemRarityGroups = {
     ...evenlyWeighted(PLATES.keys(), 1),
     // The Drives are found on the same terms as the plates
     ...evenlyWeighted(DRIVES.keys(), 1),
+    // And the Mega Stones, which are held for a shape the way a plate is
+    ...evenlyWeighted(MEGA_STONES.keys(), 1),
+    // The Memories on the plates' terms, and the Z-Crystals on the stones'
+    ...evenlyWeighted(MEMORIES.keys(), 1),
+    ...evenlyWeighted(TYPE_CRYSTALS.keys(), 1),
+    ...evenlyWeighted(SIGNATURE_CRYSTALS.keys(), 1),
     // The strongest gear, on the plates' terms: thin slots, so the
     // band stays the stones' and finding a Choice Band stays an event
     ...evenlyWeighted(ORBS.keys(), 1),
@@ -341,6 +355,8 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.ArmorFossil, weight: 8 },
     { item: Items.CoverFossil, weight: 8 },
     { item: Items.PlumeFossil, weight: 8 },
+    { item: Items.JawFossil, weight: 8 },
+    { item: Items.SailFossil, weight: 8 },
     // The rock a Deoxys rearranges itself with, spent on each
     // rearrangement. Prized rather than special: it is worth nothing
     // to anybody who has not been to the island, and everything to
@@ -354,10 +370,24 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.AdamantOrb, weight: 3 },
     { item: Items.LustrousOrb, weight: 3 },
     { item: Items.GriseousOrb, weight: 3 },
+    { item: Items.BlueOrb, weight: 3 },
+    { item: Items.RedOrb, weight: 3 },
     { item: Items.Gracidea, weight: 3 },
     // As thin as the orbs, for the same reason: the splicers are worth
     // nothing until a Kyurem has been caught
     { item: Items.DnaSplicers, weight: 3 },
+    { item: Items.PrisonBottle, weight: 3 },
+    // A little thicker than an orb: one mirror serves three genies
+    { item: Items.RevealGlass, weight: 4 },
+    // The prisms, on the orbs' terms: each names one pokemon
+    { item: Items.NSolarizer, weight: 3 },
+    { item: Items.NLunarizer, weight: 3 },
+    // The nectars, spent the way the meteorite is and as thin: four
+    // styles of one pokemon share them
+    { item: Items.RedNectar, weight: 1 },
+    { item: Items.YellowNectar, weight: 1 },
+    { item: Items.PinkNectar, weight: 1 },
+    { item: Items.PurpleNectar, weight: 1 },
     // Three purses instead of one, for good, and nothing sells one.
     // Here rather than in rare so that parting with it is asked about
     // twice
@@ -410,6 +440,9 @@ export const ITEM_POOL: ItemRarityGroups = {
     { item: Items.LibertyPass, weight: 6 },
     { item: Items.MusicBox, weight: 6 },
     { item: Items.ColressMachine, weight: 6 },
+    { item: Items.HeartDiamond, weight: 6 },
+    { item: Items.SealedRing, weight: 6 },
+    { item: Items.SteamValve, weight: 6 },
     // Six stats made perfect at once. Nothing else undoes a bad roll,
     // so it belongs with the things gold cannot buy
     { item: Items.GoldenBottleCap, weight: 8 },

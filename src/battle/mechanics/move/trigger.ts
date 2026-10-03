@@ -1,15 +1,18 @@
 import { AttackPriority, EventPriority } from '../../../core/event-emitter';
 import { Stages } from '../../../data/constants/stats';
-import { MoveTargets, StatFlags } from '../../../data/ids/moves';
+import { MoveTargets, type Moves, StatFlags } from '../../../data/ids/moves';
 import { getMoveData } from '../../../data/moves';
 import type Battle from '../../core';
 import type {
+  MoveTarget,
   TriggerMoveData,
   UnitTriggerMoveEvent,
   UnitTriggerMoveResolveAccuracyEvent,
   UnitTriggerMoveRollHitEvent,
 } from '../../events';
 import { BattleEvents, MoveTargetType } from '../../events';
+import { isCentered } from '../../status/centered';
+import type Unit from '../../unit';
 import resolveMoveTargets from './targeting';
 
 /** A move going off: what it is aimed at, whether it lands, and what it sets off */
@@ -112,6 +115,30 @@ export default function setupTriggerMoveMechanics(battle: Battle): void {
     }
   });
 
+  /** Whoever pulls a widened move onto themselves, or nobody */
+  function drawnTarget(
+    source: Unit,
+    move: Moves,
+    aimed: MoveTarget,
+    targets: MoveTarget[],
+  ): MoveTarget | undefined {
+    if (aimed.type === MoveTargetType.Unit && aimed.unit !== source && isCentered(aimed.unit)) {
+      return aimed;
+    }
+    for (const target of targets) {
+      const redirect = source.checkMoveRedirect(move, target);
+
+      if (
+        target.type === MoveTargetType.Unit &&
+        redirect.type === MoveTargetType.Unit &&
+        redirect.unit !== target.unit
+      ) {
+        return redirect;
+      }
+    }
+    return undefined;
+  }
+
   // The effective target mask resolves through the event engine so
   // abilities (e.g. Boss) can widen it
   battle.on(BattleEvents.CheckUnitMoveTargeting, EventPriority.Exact, (event) => {
@@ -137,6 +164,17 @@ export default function setupTriggerMoveMechanics(battle: Battle): void {
     // Only a move aimed at one thing can be put onto somebody else:
     // one that goes out to a whole side already reaches everybody
     const single = targeting.target !== MoveTargets.None;
+
+    // A move widened from one target (a raid boss's) is still drawn by
+    // a centre or a rod, and then lands on that one alone
+    if (!single && getMoveData(event.move).target === MoveTargets.Unit) {
+      const drawn = drawnTarget(event.source, event.move, event.target, targets);
+
+      if (drawn != null) {
+        event.source.triggerMoveTarget(event.move, drawn, event.steps);
+        return;
+      }
+    }
 
     for (const target of targets) {
       event.source.triggerMoveTarget(

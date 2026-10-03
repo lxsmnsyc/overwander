@@ -1,8 +1,10 @@
+import { Z_MOVES } from '../../data/moves/z-moves';
 import { AttackPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
 import { getRegisteredMoves } from '../../data/moves';
 import type Battle from '../core';
 import { BattleEvents } from '../events';
+import { RISKY_PENALTY } from '../ai/score';
 
 /**
  * Moves Metronome never calls. The three nobody knows are in here for
@@ -22,6 +24,8 @@ const EXCLUDED = new Set<Moves>([
   Moves.Metronome,
   Moves.MirrorMove,
   Moves.Sketch,
+  // Z-Moves are what a crystal makes of a move, never a move of their own
+  ...Z_MOVES,
 ]);
 
 // https://bulbapedia.bulbagarden.net/wiki/Metronome_(move)
@@ -37,6 +41,13 @@ export default function setupMetronome(battle: Battle): void {
       pool.push(move);
     }
   }
+
+  // Anything at all may come of it, so it only beats doing nothing
+  battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
+    if (event.move === Moves.Metronome) {
+      event.score -= RISKY_PENALTY;
+    }
+  });
 
   battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     if (event.move !== Moves.Metronome) {

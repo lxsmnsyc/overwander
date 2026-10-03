@@ -117,7 +117,7 @@ export default function registerLakeTrioSpecies(): void {
         66: [Moves.NaturalGift],
         76: [Moves.Memento],
       },
-      teachable: [...LAKE_TEACHABLE, Moves.GigaDrain, Moves.SolarBeam],
+      teachable: [...LAKE_TEACHABLE, Moves.GigaDrain, Moves.SolarBeam, Moves.LaserFocus],
     },
   });
   registerSpecies(Species.Mesprit, {
@@ -160,7 +160,7 @@ export default function registerLakeTrioSpecies(): void {
         66: [Moves.NaturalGift],
         76: [Moves.HealingWish],
       },
-      teachable: [...LAKE_TEACHABLE, Moves.Blizzard, Moves.IceBeam],
+      teachable: [...LAKE_TEACHABLE, Moves.Blizzard, Moves.IceBeam, Moves.LaserFocus],
     },
   });
   registerSpecies(Species.Azelf, {
@@ -213,6 +213,7 @@ export default function registerLakeTrioSpecies(): void {
         Moves.Taunt,
         Moves.Torment,
         Moves.Uproar,
+        Moves.LaserFocus,
       ],
     },
   });

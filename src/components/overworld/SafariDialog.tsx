@@ -572,29 +572,9 @@ function SafariBody(
       return 'Encounter';
     }
     const { encounter } = active;
-    // The level first, then what it is, then the one mark for its
-    // gender — the order the catch sheet and the field readout say it
-    // in. Read as a phrase rather than as a row of facts separated by
-    // dots, which is what a name is
-    const said = `Lv. ${encounter.level} ${getSpeciesData(encounter.species).name} ${
-      GENDER_MARKS[encounter.gender]
-    }`.trimEnd();
-
+    // Caught before, the level, the marks, then the name and its gender
     return (
       <span class="inline-flex items-center justify-center gap-1.5">
-        <Show when={isShiny(encounter)}>
-          {/* Left in the bar's own white rather than the gold it is
-              drawn in on a card: gold on the blue bar is barely a
-              colour at all. The word beside it is what a screen
-              reader hears, since the dialog is announced by this
-              heading and a picture says nothing to one */}
-          <SparklesIcon aria-hidden="true" class="size-4 shrink-0" />
-          <span class="sr-only">Shiny</span>
-        </Show>
-        <Show when={isShadow(encounter)}>
-          <FireIcon aria-hidden="true" class="size-4 shrink-0" />
-          <span class="sr-only">Shadow</span>
-        </Show>
         {/* Latest rather than read, so the heading never waits on the dex */}
         <Show when={props.owned.latest === true}>
           {/* The ball fills 18 of its 32-pixel cell, so the cell is drawn at 28 to bring
@@ -602,7 +582,20 @@ function SafariBody(
           <ItemSprite item={BALL_ITEMS[Balls.PokeBall]} size={28} label="" class="-m-1.5" />
           <span class="sr-only">Caught before</span>
         </Show>
-        {said}
+        <span>Lv. {encounter.level}</span>
+        <Show when={isShiny(encounter)}>
+          {/* The bar's own white rather than gold, which barely shows on
+              the blue. The word is what a screen reader hears */}
+          <SparklesIcon aria-hidden="true" class="size-4 shrink-0" />
+          <span class="sr-only">Shiny</span>
+        </Show>
+        <Show when={isShadow(encounter)}>
+          <FireIcon aria-hidden="true" class="size-4 shrink-0" />
+          <span class="sr-only">Shadow</span>
+        </Show>
+        <span>
+          {`${getSpeciesData(encounter.species).name} ${GENDER_MARKS[encounter.gender]}`.trimEnd()}
+        </span>
       </span>
     );
   };

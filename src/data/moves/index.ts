@@ -4,6 +4,7 @@ import registerGen3Moves from './gen-3';
 import registerGen4Moves from './gen-4';
 import registerGen5Moves from './gen-5';
 import registerGen6Moves from './gen-6';
+import registerGen7Moves from './gen-7';
 import registerWeatherMoves from './weather';
 
 export {
@@ -20,6 +21,7 @@ export {
   getSpeedCooldownFactor,
 } from './__create';
 export type { MoveData } from './__create';
+export { TUTOR_ONLY_MOVES, isTutorOnlyMove } from './tutor-only';
 export { MOVE_WEATHERS, getWeatherMove } from './weather';
 
 export function registerMoves(): void {
@@ -29,5 +31,6 @@ export function registerMoves(): void {
   registerGen4Moves();
   registerGen5Moves();
   registerGen6Moves();
+  registerGen7Moves();
   registerWeatherMoves();
 }

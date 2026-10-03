@@ -11,7 +11,6 @@ import {
 } from 'solid-js';
 import { type CandyStack, getCandies } from '../../auth/candy';
 import { getCaught } from '../../auth/caught';
-import { learnLevelUpMove } from '../../auth/moves';
 import { capAsksForStat } from '../../data/items/bottle-caps';
 import {
   ItemFlags,
@@ -35,7 +34,7 @@ import CatchPicker from '../catches/catch-picker';
 import AbilityPatchDialog from '../catches/AbilityPatchDialog';
 import IncreasePPDialog from '../catches/IncreasePPDialog';
 import BottleCapDialog from '../catches/BottleCapDialog';
-import TeachMoveDialog from '../catches/TeachMoveDialog';
+import { askTeachings } from '../forms/teach-move';
 import CandyGrid, { type CandyPile } from './CandyGrid';
 import ItemGrid, { type ItemCell } from './ItemGrid';
 import { describeItem } from '../details';
@@ -345,6 +344,13 @@ function BagBody(
     );
   };
 
+  // A machine asks which move is given up for it, and a level whether a
+  // new one is taken at all: the same form with a different price
+  askTeachings(teaching, nextTeaching, () => {
+    said('Taught.');
+    changed();
+  });
+
   /**
    * Spend it where the player is standing.
    *
@@ -489,21 +495,6 @@ function BagBody(
           }
           repeating = repeatable(item);
           spend(catchId, item);
-        }}
-      />
-
-      {/* A machine asks which move is given up for it, and a level
-          asks whether a new one is taken at all. Both are the same
-          question with a different price, so both come here */}
-      <TeachMoveDialog
-        catchId={teaching()?.catchId ?? null}
-        move={teaching()?.move ?? null}
-        cost={teaching()?.levelled === true ? 'Nothing' : undefined}
-        teach={teaching()?.levelled === true ? learnLevelUpMove : undefined}
-        onClose={nextTeaching}
-        onTaught={() => {
-          said('Taught.');
-          changed();
         }}
       />
 

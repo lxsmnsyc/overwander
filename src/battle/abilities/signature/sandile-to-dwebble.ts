@@ -9,6 +9,7 @@ import { MergedLifecycle } from '../../lifecycle';
 import type Unit from '../../unit';
 import { onUnitActs } from '../../utils';
 import { createAbility } from '../__create';
+import { healthShare } from '../special';
 import { createUnitState, isPseudoMove } from './__create';
 
 /**
@@ -183,7 +184,9 @@ const setupAbilities = [
           return;
         }
 
-        const left = state.get(target) ?? target.checkStat(Stats.HP, 0) * SLAB_SHARE;
+        // A boss' slab is held to the boss cap: a quarter of a raid
+        // pool would soak fifteen ordinary pools before it moved
+        const left = state.get(target) ?? healthShare(target, SLAB_SHARE);
 
         if (left <= 0) {
           return;

@@ -8,6 +8,7 @@ import type { MoveTarget } from '../events';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import { ASLEEP_STATUSES } from '../status';
 import { hasAnyStatus } from '../utils';
+import type Unit from '../unit';
 
 /**
  * The moves that take health back from what they hit. Exported so an
@@ -25,6 +26,7 @@ export const ABSORB_MOVES = new Set<Moves>([
   Moves.ParabolicCharge,
   Moves.DrainingKiss,
   Moves.OblivionWing,
+  Moves.BouncyBubble,
 ]);
 
 const HEALING_FACTOR = 0.5;
@@ -33,6 +35,7 @@ const HEALING_FACTOR = 0.5;
 const DRAIN_SHARES: { [key in Moves]?: number } = {
   [Moves.DrainingKiss]: 0.75,
   [Moves.OblivionWing]: 0.75,
+  [Moves.BouncyBubble]: 1,
 };
 
 /**
@@ -47,6 +50,13 @@ const HURTING = 0.5;
  * dealing
  */
 const DRAIN_BONUS = Math.round(HEAL_BONUS / 2);
+
+/** What a drain is worth to its user on top of the hit: something only while it is hurting */
+export function drainWorth(source: Unit, move: Moves): number {
+  return ABSORB_MOVES.has(move) && source.health < source.checkStat(Stats.HP, 0) * HURTING
+    ? DRAIN_BONUS
+    : 0;
+}
 
 /**
  * What counts as having a dream to eat. A dormant boss is not asleep,
@@ -107,14 +117,6 @@ export default function setupAbsorb(battle: Battle): void {
   // A drain is a hit that heals, so it is worth more than the hit
   // alone to a user with room to take the health back
   battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
-    if (!ABSORB_MOVES.has(event.move)) {
-      return;
-    }
-
-    const source = event.source;
-
-    if (source.health < source.checkStat(Stats.HP, 0) * HURTING) {
-      event.score += DRAIN_BONUS;
-    }
+    event.score += drainWorth(event.source, event.move);
   });
 }

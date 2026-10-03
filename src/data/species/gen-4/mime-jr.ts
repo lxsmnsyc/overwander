@@ -129,6 +129,7 @@ export default function registerMimeJrSpecies(): void {
         Moves.TeeterDance,
         Moves.Trick,
         Moves.WakeUpSlap,
+        Moves.PsychicTerrain,
       ],
     },
   });

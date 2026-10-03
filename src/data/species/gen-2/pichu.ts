@@ -129,6 +129,7 @@ export default function registerPichuSpecies(): void {
     },
     // It never evolves, as in the games
     evolvesInto: undefined,
+    hiddenAbilities: [Abilities.LightningRod, Abilities.ElectricSurge, Abilities.FriendGuard],
     // Met in Ilex Forest, where Celebi is, and only in the mythical band
     biomes: [Biome.TemperateForest],
   });

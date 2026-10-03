@@ -55,6 +55,18 @@ import bunnelbyToScatterbug from './bunnelby-to-scatterbug';
 import flabebeToFurfrou from './flabebe-to-furfrou';
 import espurrToKlefki from './espurr-to-klefki';
 import binacleToClauncher from './binacle-to-clauncher';
+import tyruntAndAmaura from './tyrunt-and-amaura';
+import inkayToHawlucha from './inkay-to-hawlucha';
+import phantumpToBergmite from './phantump-to-bergmite';
+import goomyAndNoibat from './goomy-and-noibat';
+import panchamToCarbink from './pancham-to-carbink';
+import kalosTrio from './kalos-trio';
+import kalosMythicals from './kalos-mythicals';
+import litleoAndSpritzee from './litleo-and-spritzee';
+import rowletToPopplio from './rowlet-to-popplio';
+import pikipekToGrubbin from './pikipek-to-grubbin';
+import oricorioToCrabrawler from './oricorio-to-crabrawler';
+import wishiwashiToBounsweet from './wishiwashi-to-bounsweet';
 
 /**
  * The invented abilities, one per evolution family, in the order the
@@ -113,6 +125,18 @@ const setupAbilities = [
   ...flabebeToFurfrou,
   ...espurrToKlefki,
   ...binacleToClauncher,
+  ...tyruntAndAmaura,
+  ...inkayToHawlucha,
+  ...phantumpToBergmite,
+  ...goomyAndNoibat,
+  ...panchamToCarbink,
+  ...kalosTrio,
+  ...kalosMythicals,
+  ...litleoAndSpritzee,
+  ...rowletToPopplio,
+  ...pikipekToGrubbin,
+  ...oricorioToCrabrawler,
+  ...wishiwashiToBounsweet,
   ...deerling,
   ...emolga,
   ...tirtougaToBouffalant,

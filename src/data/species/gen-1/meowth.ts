@@ -76,6 +76,7 @@ const FAMILY_TEACHABLE = [
   Moves.Retaliate,
   Moves.WorkUp,
   Moves.Confide,
+  Moves.ThroatChop,
 ];
 
 export default function registerMeowthSpecies(): void {

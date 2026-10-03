@@ -10,9 +10,17 @@ import type Abilities from '../../data/ids/abilities';
 import type { Items } from '../../data/ids/items';
 import { Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
-import { detailAbility, detailItem } from '../details';
+import { STATUS_NAMES } from '../../auth/health';
+import {
+  ABILITY_PILLS,
+  type AbilityKind,
+  abilityKind,
+  detailAbility,
+  detailItem,
+} from '../details';
 import { getMoveData } from '../../data/moves';
 import { getSpeciesData } from '../../data/species';
+import MoveTooltip from '../moves/MoveTooltip';
 import { Meta, TooltipHost } from '../styled';
 
 /**
@@ -96,67 +104,6 @@ export const STATUS_COLORS: Record<Statuses, string> = {
   [Statuses.SkyDropped]: '#8ab4e0',
 };
 
-const STATUS_NAMES: Record<Statuses, string> = {
-  [Statuses.Seeding]: 'Seeded',
-  [Statuses.Poisoned]: 'Poisoned',
-  [Statuses.Sleeping]: 'Asleep',
-  [Statuses.BadlyPoisoned]: 'Badly poisoned',
-  [Statuses.Paralyzed]: 'Paralyzed',
-  [Statuses.Minimized]: 'Minimized',
-  [Statuses.Invulnerable]: 'Invulnerable',
-  [Statuses.Raging]: 'Raging',
-  [Statuses.Biding]: 'Biding',
-  [Statuses.Confused]: 'Confused',
-  [Statuses.Recharging]: 'Recharging',
-  [Statuses.Substituted]: 'Substitute',
-  [Statuses.Burned]: 'Burned',
-  [Statuses.Trapped]: 'Trapped',
-  [Statuses.Flinched]: 'Flinched',
-  [Statuses.Frozen]: 'Frozen',
-  [Statuses.FocusEnergy]: 'Focused',
-  [Statuses.Infatuated]: 'Infatuated',
-  [Statuses.Grounded]: 'Grounded',
-  [Statuses.Floating]: 'Floating',
-  [Statuses.Submerged]: 'Submerged',
-  [Statuses.Dormant]: 'Dormant',
-  [Statuses.Switching]: 'Switching',
-  [Statuses.Protected]: 'Protected',
-  [Statuses.Enduring]: 'Enduring',
-  [Statuses.Cornered]: 'Cornered',
-  [Statuses.Nightmared]: 'Nightmare',
-  [Statuses.Perishing]: 'Perishing',
-  [Statuses.Bonded]: 'Bonded',
-  [Statuses.Cursed]: 'Cursed',
-  [Statuses.Encored]: 'Encored',
-  [Statuses.Identified]: 'Identified',
-  [Statuses.Comatose]: 'Comatose',
-  [Statuses.Taunted]: 'Taunted',
-  [Statuses.Tormented]: 'Tormented',
-  [Statuses.Imprisoned]: 'Imprisoned',
-  [Statuses.Rooted]: 'Rooted',
-  [Statuses.Drowsy]: 'Drowsy',
-  [Statuses.Centered]: 'Centered',
-  [Statuses.Coated]: 'Coated',
-  [Statuses.Snatching]: 'Snatching',
-  [Statuses.Grudging]: 'Grudging',
-  [Statuses.Uproaring]: 'Uproar',
-  [Statuses.Helped]: 'Helped',
-  [Statuses.MindRead]: 'Read',
-  [Statuses.Embargoed]: 'Embargoed',
-  [Statuses.HealBlocked]: 'Heal Blocked',
-  [Statuses.PowerTricked]: 'Power Trick',
-  [Statuses.Roosting]: 'Roosting',
-  [Statuses.MagnetRisen]: 'Magnet Rise',
-  [Statuses.AquaRinged]: 'Aqua Ring',
-  [Statuses.Telekinetic]: 'Telekinesis',
-  [Statuses.SkyDropped]: 'Sky Drop',
-};
-
-/**
- * How many move boxes the column holds: what a pokemon carries
- */
-const MOVE_SLOTS = 4;
-
 /**
  * How far along a timed thing is, as a fraction of itself. Everything
  * the engine times — a cooldown coming back, a move being wound up —
@@ -182,6 +129,11 @@ export interface UnitCardProps {
    * here to observe directly
    */
   revision: () => number;
+  /**
+   * Drawn as a tooltip over the field: nothing on it is pressed, so it
+   * wears the tooltip's surface rather than a card's
+   */
+  tip?: boolean;
 }
 
 export default function UnitCard(props: UnitCardProps): JSX.Element {
@@ -206,18 +158,15 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
 
     // Reduced here in the memo, because a `For` row reads its item once
     // and a cooldown read in the markup would never move
-    const moves: { name: string; disabled: boolean; ready: number }[] = [];
+    const moves: { move: Moves; name: string; disabled: boolean; ready: number }[] = [];
 
     for (const move of Object.values(unit.moves)) {
-      if (moves.length >= MOVE_SLOTS) {
-        break;
-      }
-      // The plain swing every unit is fielded with comes first, so
-      // listing it would push the fourth real move off the card
+      // The plain swing every unit is fielded with is not one of its moves
       if (move.move === Moves.Attack) {
         continue;
       }
       moves.push({
+        move: move.move,
         name: getMoveData(move.move).name,
         disabled: move.disabled,
         ready: fractionOf(move.cooldown),
@@ -226,13 +175,13 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
 
     // Only the enabled half: a suppressed ability or an eaten item is
     // one the pokemon no longer has
-    const abilities: { name: string; description: string }[] = [];
+    const abilities: { name: string; description: string; kind: AbilityKind }[] = [];
 
     for (const key of Object.keys(unit.abilities)) {
       const ability: Abilities = Number(key);
 
       if (unit.abilities[ability] === true) {
-        abilities.push(detailAbility(ability));
+        abilities.push({ ...detailAbility(ability), kind: abilityKind(unit.species, ability) });
       }
     }
 
@@ -280,8 +229,9 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
 
   return (
     <li
-      class={`flex w-64 shrink-0 flex-col gap-1.5 rounded-xl border-2 border-line bg-paper/95 px-2
-        py-1.5 text-left text-xs shadow-pop-sm ${unit().alive ? '' : 'opacity-50 grayscale'}`}
+      class={`flex w-64 shrink-0 flex-col gap-1.5 rounded-xl border-2 border-line text-left text-xs
+        ${props.tip === true ? 'bg-paper px-3 pt-2 pb-2.5 shadow-float' : 'bg-paper/95 px-2 py-1.5 shadow-pop-sm'}
+        ${unit().alive ? '' : 'opacity-50 grayscale'}`}
     >
       {/* What it is. The level comes first because in a raid the
           difference between a party member and the thing killing it is
@@ -346,30 +296,33 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
         {/* The moves, each box a bar of its own cooldown. A full box is
             a move that can be thrown now.
 
-            `Index` rather than `For`: the boxes are four slots that go
+            `Index` rather than `For`: the boxes are slots that go
             on saying different things, not a list of things that come
             and go. `For` keys on the item, and an item reduced to what
             it draws is a new object on every tick — which would rebuild
-            all four rows sixty times a second. `Index` keys on the slot
-            and hands the row a signal, so a tick moves four widths and
+            every row sixty times a second. `Index` keys on the slot
+            and hands the row a signal, so a tick moves the widths and
             touches nothing else */}
         <ul class="m-0 flex list-none flex-col gap-0.5 p-0">
           <Index each={view().moves}>
             {(move) => (
-              <li
-                class="relative overflow-hidden rounded border border-line-soft bg-line-soft px-1
-                  py-0.5"
-                title={`${move().name}${move().disabled ? ' — disabled' : ''}`}
-              >
-                <div
-                  class={`absolute inset-y-0 left-0 ${
-                    move().disabled ? 'bg-muted/30' : 'bg-tide/30'
-                  }`}
-                  style={{ width: `${move().ready * 100}%` }}
-                />
-                <span class={`relative block truncate ${move().disabled ? 'text-muted' : ''}`}>
-                  {move().name}
-                </span>
+              <li>
+                <MoveTooltip class="block" move={move().move}>
+                  <span
+                    class="relative block overflow-hidden rounded border border-line-soft
+                      bg-line-soft px-1 py-0.5"
+                  >
+                    <span
+                      class={`absolute inset-y-0 left-0 ${
+                        move().disabled ? 'bg-muted/30' : 'bg-tide/30'
+                      }`}
+                      style={{ width: `${move().ready * 100}%` }}
+                    />
+                    <span class={`relative block truncate ${move().disabled ? 'text-muted' : ''}`}>
+                      {move().name}
+                    </span>
+                  </span>
+                </MoveTooltip>
               </li>
             )}
           </Index>
@@ -382,10 +335,14 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
           <For each={view().abilities} fallback={<Meta>No ability</Meta>}>
             {(ability) => (
               <li>
-                <TooltipHost class="block" kind="ability" {...ability}>
+                <TooltipHost
+                  class="block"
+                  kind="ability"
+                  name={ability.name}
+                  description={ability.description}
+                >
                   <span
-                    class="block truncate rounded border border-line-soft bg-tide-soft px-1 py-0.5
-                      text-tide-dark"
+                    class={`block truncate rounded border px-1 py-0.5 ${ABILITY_PILLS[ability.kind]}`}
                   >
                     {ability.name}
                   </span>
@@ -413,20 +370,20 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
         </ul>
       </div>
 
-      {/* And whatever is stuck to it, as colours. There is a name on
-          each for anyone hovering or listening, since a colour on its
-          own says nothing to somebody who cannot see it */}
+      {/* And whatever is stuck to it, as colours, each named in a
+          tooltip and to a screen reader */}
       <Show when={view().statuses.length}>
         <div class="flex flex-wrap gap-0.5">
           <For each={view().statuses}>
             {(status) => (
-              <span
-                class="size-2.5 rounded-[2px]"
-                style={{ 'background-color': STATUS_COLORS[status] }}
-                title={STATUS_NAMES[status]}
-                aria-label={STATUS_NAMES[status]}
-                role="img"
-              />
+              <TooltipHost class="inline-flex" kind="status" name={STATUS_NAMES[status]}>
+                <span
+                  class="size-2.5 rounded-[2px]"
+                  style={{ 'background-color': STATUS_COLORS[status] }}
+                  aria-label={STATUS_NAMES[status]}
+                  role="img"
+                />
+              </TooltipHost>
             )}
           </For>
         </div>

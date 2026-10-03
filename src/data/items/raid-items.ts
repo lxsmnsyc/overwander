@@ -1,5 +1,6 @@
 import { isMythicalSpecies } from '../biome';
 import { Species } from '../ids/species';
+import { getRegisteredSpecies } from '../species';
 import { ItemFlags, ItemTypes, Items } from '../ids/items';
 import { nameToIcon, registerItem } from './__create';
 
@@ -31,6 +32,13 @@ export const RAID_ITEMS = new Map<Items, Species>([
   [Items.LibertyPass, Species.Victini],
   [Items.MusicBox, Species.Meloetta],
   [Items.ColressMachine, Species.Genesect],
+  [Items.HeartDiamond, Species.Diancie],
+  [Items.SealedRing, Species.Hoopa],
+  [Items.SteamValve, Species.Volcanion],
+  [Items.AncientPokeBall, Species.Magearna],
+  [Items.HerosCharm, Species.Marshadow],
+  [Items.WindmillCharm, Species.Zeraora],
+  [Items.MysteryBox, Species.Meltan],
 ]);
 
 const NAMES: { [key in Items]?: string } = {
@@ -46,6 +54,13 @@ const NAMES: { [key in Items]?: string } = {
   [Items.LibertyPass]: 'Liberty Pass',
   [Items.MusicBox]: 'Music Box',
   [Items.ColressMachine]: 'Colress Machine',
+  [Items.HeartDiamond]: 'Heart Diamond',
+  [Items.SealedRing]: 'Sealed Ring',
+  [Items.SteamValve]: 'Steam Valve',
+  [Items.AncientPokeBall]: 'Ancient Poke Ball',
+  [Items.HerosCharm]: "Hero's Charm",
+  [Items.WindmillCharm]: 'Windmill Charm',
+  [Items.MysteryBox]: 'Mystery Box',
 };
 
 /**
@@ -66,6 +81,13 @@ const PLACES: { [key in Items]?: string } = {
   [Items.LibertyPass]: 'the garden on the island the ferry runs out to',
   [Items.MusicBox]: 'the ruin the old song is still sung in',
   [Items.ColressMachine]: 'the laboratory it was carried out of',
+  [Items.HeartDiamond]: 'the cave of diamonds the jewels keep',
+  [Items.SealedRing]: 'the desert ruin the rings were shut into',
+  [Items.SteamValve]: 'the vent in the mountain the steam comes out of',
+  [Items.AncientPokeBall]: 'the workshop the old ball was made in',
+  [Items.HerosCharm]: 'the mountain the hero climbed',
+  [Items.WindmillCharm]: 'the forest behind the city of windmills',
+  [Items.MysteryBox]: 'the park the box was opened in',
 };
 
 /**
@@ -74,9 +96,17 @@ const PLACES: { [key in Items]?: string } = {
  */
 const ICONS: { [key in Items]?: string } = {
   [Items.AuroraTicket]: 'key/auroraticket',
+  [Items.HeartDiamond]: 'key/heart-diamond',
+  [Items.SealedRing]: 'key/sealed-ring',
+  [Items.SteamValve]: 'key/steam-valve',
   [Items.OaksLetter]: 'key/oaks-letter',
   [Items.ColtsPetal]: 'key/radiant-petal',
+  [Items.HerosCharm]: 'key/heros-charm',
 };
+
+function isRegisteredSpecies(species: Species): boolean {
+  return getRegisteredSpecies().includes(species);
+}
 
 /**
  * What the item calls, or null when it calls nothing. Only a mythical
@@ -85,7 +115,10 @@ const ICONS: { [key in Items]?: string } = {
 export function getRaidSpecies(item: Items): Species | null {
   const species = RAID_ITEMS.get(item);
 
-  return species != null && isMythicalSpecies(species) ? species : null;
+  // A relic whose mythical is not written yet calls nothing
+  return species != null && isMythicalSpecies(species) && isRegisteredSpecies(species)
+    ? species
+    : null;
 }
 
 /**

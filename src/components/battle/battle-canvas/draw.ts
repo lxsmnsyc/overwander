@@ -1,6 +1,7 @@
 import type SpeciesSpriteAnimation from '../../../canvas/species-sprite-animation';
 import type { Slot } from './field';
 import { type CastLabels, drawCastLabel } from './cast-label';
+import drawFormMark from './form-mark';
 import { COLORS, HIT_REACH, NAMED_RADIUS } from './metrics';
 import speciesSize from '../../../canvas/species-size';
 import { type Striking, animationFor } from './motion';
@@ -377,6 +378,32 @@ function nameOf(unit: Unit): string {
 }
 
 /**
+ * How much an aura's ground shapes are squashed toward the camera so
+ * they lie as flat as the pokemon's shadow. The shadow is an ellipse
+ * of a fixed shape on the picture, and a circle on the ground seen
+ * from this camera barely shortens, so the aura read as a round plate
+ * under an oval shadow. Measured at the feet: how much one step away
+ * shortens against one step across, against how much the shadow does
+ */
+function shadowSquash(
+  kit: EffectBatch,
+  view: FieldView,
+  floor: Spot,
+  radius: number,
+  flatness: number,
+): number {
+  const [ax, az] = kit.across;
+  const [wx, wz] = kit.away;
+  const at = projectField({ x: floor[0], z: floor[2] }, view);
+  const across = projectField({ x: floor[0] + ax * radius, z: floor[2] + az * radius }, view);
+  const away = projectField({ x: floor[0] + wx * radius, z: floor[2] + wz * radius }, view);
+  const wide = Math.hypot(across.x - at.x, across.y - at.y);
+  const deep = Math.hypot(away.x - at.x, away.y - at.y);
+
+  return wide <= 0 || deep <= 0 ? 1 : Math.min(1, (flatness * wide) / deep);
+}
+
+/**
  * A slot's aura and shiny sparkle, built in the battle scene where the
  * pokemon's own picture hides whatever is behind it
  */
@@ -405,9 +432,18 @@ export function drawLitDecor(
     const paint = unit.hasAbility(Abilities.Shadow) ? litShadowAura : litPurifiedAura;
 
     // The ground shadow's, as the painted aura is measured
-    const radius = sprite.shadowRadius(scale).x / worth;
+    const shadow = sprite.shadowRadius(scale);
+    const radius = shadow.x / worth;
 
-    paint(kit, floor, radius, clock, seed, unit.alive ? 1 : 0.35);
+    paint(
+      kit,
+      floor,
+      radius,
+      clock,
+      seed,
+      unit.alive ? 1 : 0.35,
+      shadowSquash(kit, view, floor, radius, shadow.y / shadow.x),
+    );
   }
   // Held until the fight's first tick: nothing moves before it, so a
   // sparkle started then sat still through the countdown
@@ -563,7 +599,8 @@ export function drawSlot(
   const stood = slot.stand?.share ?? 0;
   // What a downed pokemon is left drawn at. The painted pass sets it
   // on the context; the batch takes it a quad at a time
-  const alpha = (unit.alive ? 1 : 0.35) * (1 - stood * (1 - BEHIND));
+  const faded = unit.alive ? 1 : 0.35;
+  const alpha = faded * (1 - stood * (1 - BEHIND));
 
   context.globalAlpha = alpha;
 
@@ -772,7 +809,10 @@ export function drawSlot(
   const busy = unit.casting ?? unit.channeling;
   const wound = busy == null || !unit.alive ? 0 : fractionOf(busy.time);
 
-  drawBar(context, slot.x, slot.y + 10, share, healthColor(share), bar, BAR_HEIGHT, onto, alpha);
+  // The bars and the plate are not dimmed with a body behind its doll:
+  // what a substituted pokemon is casting is what a watcher reads it by
+  context.globalAlpha = faded;
+  drawBar(context, slot.x, slot.y + 10, share, healthColor(share), bar, BAR_HEIGHT, onto, faded);
   drawBar(
     context,
     slot.x,
@@ -782,7 +822,7 @@ export function drawSlot(
     bar,
     CAST_HEIGHT,
     onto,
-    alpha,
+    faded,
   );
 
   // What it is in the middle of, named on a plate above its head. The
@@ -791,7 +831,9 @@ export function drawSlot(
   const label = labels.get(unit);
 
   if (label != null && roomy) {
-    drawCastLabel(context, label, slot.x, slot.y - slot.radius * 2 - 14, clock, onto, alpha);
+    drawCastLabel(context, label, slot.x, slot.y - slot.radius * 2 - 14, clock, onto, faded);
   }
+  // Above the plate, so a shape drawn as its old one still reads as changed
+  drawFormMark(context, unit.species, slot.x, slot.y - slot.radius * 2 - 14, clock, faded, onto);
   context.globalAlpha = 1;
 }

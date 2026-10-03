@@ -2,6 +2,7 @@ import Biome from '../ids/biome';
 import { isMythicalSpecies } from '../biome';
 import { BIOME_NAMES } from '../biome/names';
 import { Species } from '../ids/species';
+import { getTrueShadowCounterpart } from '../species/true-shadow';
 
 /**
  * The lairs: the places a legendary is found rather than the
@@ -187,6 +188,66 @@ const enum Lairs {
    * so no biome hosts it
    */
   P2Laboratory = 45,
+  /**
+   * The wood the stag slept through as a tree. Kalos catches its
+   * mascots in a laboratory under a town, which is nowhere a world
+   * made of country can put them, so each is at home where its own
+   * story happens instead
+   */
+  WindingWoods = 46,
+  /** The frozen cave the bird of death folds itself away in */
+  FrostCavern = 47,
+  /** The cave the cells gather in, which is where Kalos finds it */
+  TerminusCave = 48,
+  /** The queen's cave of diamonds. A mythical's, so it is never staged */
+  DiamondDomain = 49,
+  /** The desert ruin the rings were shut into */
+  DaharaRuins = 50,
+  /** The mountain shelf the steam machine keeps to */
+  NebelPlateau = 51,
+  // Alola's, reserved ahead of the batches that stage them. Each is
+  // named and peopled, but is in no biome and not in EVERY_LAIR until
+  // its batch lists it, so nothing stages one early
+  /** The kingdom the machine was built in, five hundred years ago */
+  AzothKingdom = 52,
+  /** The mountain the hero climbed, with something watching from its shadows */
+  MtTensei = 53,
+  /** The forest behind the city of windmills */
+  FulaForest = 54,
+  /** The park the pokemon of another world are let out into */
+  GoPark = 55,
+  /** The artificial island the synthetic beast was made and kept on */
+  AetherParadise = 56,
+  /** The ruin off Melemele's Mahalo Trail, which is Tapu Koko's */
+  RuinsOfConflict = 57,
+  /** The ruin in Akala's green south, which is Tapu Lele's */
+  RuinsOfLife = 58,
+  /** The ruin at the far end of the Haina Desert, which is Tapu Bulu's */
+  RuinsOfAbundance = 59,
+  /** The ruin on Poni's stony shore, which is Tapu Fini's */
+  RuinsOfHope = 60,
+  /** The altar at the top of Vast Poni Canyon the sun is called down to */
+  AltarOfTheSunne = 61,
+  /** The same altar in the other version, where the moon is */
+  AltarOfTheMoone = 62,
+  /** The hollow at the back of Melemele's crystal cave, where the prism waits */
+  TenCaratHill = 63,
+  /** The drowned dark Nihilego drifts through */
+  UltraDeepSea = 64,
+  /** The jungle Buzzwole flexes in */
+  UltraJungle = 65,
+  /** The white desert Pheromosa runs across */
+  UltraDesert = 66,
+  /** The power plant Xurkitree roots itself in */
+  UltraPlant = 67,
+  /** The crater Celesteela launches from */
+  UltraCrater = 68,
+  /** The paper forest Kartana cuts through */
+  UltraForest = 69,
+  /** The ruined city Guzzlord ate */
+  UltraRuin = 70,
+  /** The grove on Poni the last two came through into */
+  PoniGrove = 71,
 }
 
 export const LAIR_NAMES: Record<Lairs, string> = {
@@ -236,6 +297,32 @@ export const LAIR_NAMES: Record<Lairs, string> = {
   [Lairs.LibertyGarden]: 'Liberty Garden',
   [Lairs.AbyssalRuins]: 'Abyssal Ruins',
   [Lairs.P2Laboratory]: 'P2 Laboratory',
+  [Lairs.WindingWoods]: 'Winding Woods',
+  [Lairs.FrostCavern]: 'Frost Cavern',
+  [Lairs.TerminusCave]: 'Terminus Cave',
+  [Lairs.DiamondDomain]: 'Diamond Domain',
+  [Lairs.DaharaRuins]: 'Dahara Ruins',
+  [Lairs.NebelPlateau]: 'Nebel Plateau',
+  [Lairs.AzothKingdom]: 'Azoth Kingdom',
+  [Lairs.MtTensei]: 'Mt. Tensei',
+  [Lairs.FulaForest]: 'Fula Forest',
+  [Lairs.GoPark]: 'GO Park',
+  [Lairs.AetherParadise]: 'Aether Paradise',
+  [Lairs.RuinsOfConflict]: 'Ruins of Conflict',
+  [Lairs.RuinsOfLife]: 'Ruins of Life',
+  [Lairs.RuinsOfAbundance]: 'Ruins of Abundance',
+  [Lairs.RuinsOfHope]: 'Ruins of Hope',
+  [Lairs.AltarOfTheSunne]: 'Altar of the Sunne',
+  [Lairs.AltarOfTheMoone]: 'Altar of the Moone',
+  [Lairs.TenCaratHill]: 'Ten Carat Hill',
+  [Lairs.UltraDeepSea]: 'Ultra Deep Sea',
+  [Lairs.UltraJungle]: 'Ultra Jungle',
+  [Lairs.UltraDesert]: 'Ultra Desert',
+  [Lairs.UltraPlant]: 'Ultra Plant',
+  [Lairs.UltraCrater]: 'Ultra Crater',
+  [Lairs.UltraForest]: 'Ultra Forest',
+  [Lairs.UltraRuin]: 'Ultra Ruin',
+  [Lairs.PoniGrove]: 'Poni Grove',
 };
 
 /**
@@ -292,6 +379,32 @@ export const LAIR_SPECIES: Record<Lairs, Species[]> = {
   [Lairs.LibertyGarden]: [Species.Victini],
   [Lairs.AbyssalRuins]: [Species.Meloetta],
   [Lairs.P2Laboratory]: [Species.Genesect],
+  [Lairs.WindingWoods]: [Species.Xerneas],
+  [Lairs.FrostCavern]: [Species.Yveltal],
+  [Lairs.TerminusCave]: [Species.Zygarde, Species.ZygardeTenPercent],
+  [Lairs.DiamondDomain]: [Species.Diancie],
+  [Lairs.DaharaRuins]: [Species.Hoopa],
+  [Lairs.NebelPlateau]: [Species.Volcanion],
+  [Lairs.AzothKingdom]: [Species.Magearna],
+  [Lairs.MtTensei]: [Species.Marshadow],
+  [Lairs.FulaForest]: [Species.Zeraora],
+  [Lairs.GoPark]: [Species.Meltan],
+  [Lairs.AetherParadise]: [Species.Silvally],
+  [Lairs.RuinsOfConflict]: [Species.TapuKoko],
+  [Lairs.RuinsOfLife]: [Species.TapuLele],
+  [Lairs.RuinsOfAbundance]: [Species.TapuBulu],
+  [Lairs.RuinsOfHope]: [Species.TapuFini],
+  [Lairs.AltarOfTheSunne]: [Species.Solgaleo],
+  [Lairs.AltarOfTheMoone]: [Species.Lunala],
+  [Lairs.TenCaratHill]: [Species.Necrozma],
+  [Lairs.UltraDeepSea]: [Species.Nihilego],
+  [Lairs.UltraJungle]: [Species.Buzzwole],
+  [Lairs.UltraDesert]: [Species.Pheromosa],
+  [Lairs.UltraPlant]: [Species.Xurkitree],
+  [Lairs.UltraCrater]: [Species.Celesteela],
+  [Lairs.UltraForest]: [Species.Kartana],
+  [Lairs.UltraRuin]: [Species.Guzzlord],
+  [Lairs.PoniGrove]: [Species.Stakataka, Species.Blacephalon],
 };
 
 /**
@@ -344,6 +457,16 @@ export const EVERY_LAIR: Lairs[] = [
   Lairs.LibertyGarden,
   Lairs.AbyssalRuins,
   Lairs.P2Laboratory,
+  Lairs.WindingWoods,
+  Lairs.FrostCavern,
+  Lairs.TerminusCave,
+  Lairs.DiamondDomain,
+  Lairs.DaharaRuins,
+  Lairs.NebelPlateau,
+  Lairs.AzothKingdom,
+  Lairs.MtTensei,
+  Lairs.FulaForest,
+  Lairs.GoPark,
 ];
 
 /**
@@ -406,8 +529,13 @@ const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
   [Biome.Glacier]: [Lairs.SnowpointTemple, Lairs.GiantChasm],
   [Biome.Grassland]: [Lairs.PowerPlant, Lairs.BurnedTower, Lairs.LakeValor, Lairs.AbundantShrine],
   [Biome.Bog]: [Lairs.LakeValor, Lairs.TurnbackCave],
-  [Biome.TemperateForest]: [Lairs.LakeVerity, Lairs.RuminationField],
-  [Biome.Woodland]: [Lairs.BurnedTower, Lairs.LakeVerity, Lairs.RuminationField],
+  [Biome.TemperateForest]: [Lairs.LakeVerity, Lairs.RuminationField, Lairs.WindingWoods],
+  [Biome.Woodland]: [
+    Lairs.BurnedTower,
+    Lairs.LakeVerity,
+    Lairs.RuminationField,
+    Lairs.WindingWoods,
+  ],
   [Biome.Taiga]: [Lairs.LakeAcuity, Lairs.IcebergRuins, Lairs.DragonspiralTower],
   [Biome.Tundra]: [
     Lairs.LakeAcuity,
@@ -415,6 +543,7 @@ const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
     Lairs.IcebergRuins,
     Lairs.DragonspiralTower,
     Lairs.GiantChasm,
+    Lairs.FrostCavern,
   ],
   [Biome.Steppe]: [Lairs.PowerPlant],
   [Biome.Desert]: [Lairs.DesertRuins, Lairs.RockPeakRuins, Lairs.RelicCastle],
@@ -424,6 +553,7 @@ const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
     Lairs.TurnbackCave,
     Lairs.RockPeakRuins,
     Lairs.TrialChamber,
+    Lairs.TerminusCave,
   ],
   [Biome.Mountain]: [
     Lairs.MtEmber,
@@ -432,6 +562,8 @@ const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
     Lairs.AncientTomb,
     Lairs.GuidanceChamber,
     Lairs.TrialChamber,
+    Lairs.FrostCavern,
+    Lairs.TerminusCave,
   ],
   [Biome.AlpineTundra]: [Lairs.CeruleanCave, Lairs.SpearPillar],
   [Biome.Volcano]: [Lairs.MtEmber, Lairs.TerraCave, Lairs.StarkMountain],
@@ -486,6 +618,47 @@ export function isSubterraneanLair(lair: Lairs): boolean {
   return SUBTERRANEAN_LAIRS.has(lair);
 }
 
+/**
+ * The lairs whose place is the water itself: a lake, or the sea over a
+ * flooded cavern. They stand only on water, so a Lake Acuity is never
+ * a field
+ */
+const AQUATIC_LAIRS = new Set<Lairs>([
+  Lairs.LakeAcuity,
+  Lairs.LakeVerity,
+  Lairs.LakeValor,
+  Lairs.MarineCave,
+  Lairs.SeaTemple,
+]);
+
+/**
+ * The lairs on an island out at sea, which stand on the water as well
+ * as on the ground: a lair at sea is the island being there
+ */
+const ISLAND_LAIRS = new Set<Lairs>([
+  Lairs.SeafoamIslands,
+  Lairs.FarawayIsland,
+  Lairs.WhirlIslands,
+  Lairs.IslandCave,
+  Lairs.SouthernIsland,
+  Lairs.BirthIsland,
+  Lairs.FullmoonIsland,
+  Lairs.NewmoonIsland,
+  Lairs.NavelRock,
+]);
+
+/**
+ * Whether the lair's place may be on this cell, by whether it is water.
+ * Every lair that is neither on the water nor an island stays off it,
+ * so a Mt. Ember is never the open sea
+ */
+export function lairStandsOn(lair: Lairs, water: boolean): boolean {
+  if (ISLAND_LAIRS.has(lair)) {
+    return true;
+  }
+  return AQUATIC_LAIRS.has(lair) === water;
+}
+
 /** The lairs the caves under this biome can host */
 export function getCaveLairs(biome: Biome): Lairs[] {
   const lairs: Lairs[] = [];
@@ -528,10 +701,13 @@ export function pickLairSpecies(
 
 /**
  * Every lair a species is at home in, in the order they are numbered,
- * and empty for anything that has no place of its own
+ * and empty for anything that has no place of its own. A true shadow
+ * is at home where its counterpart is
  */
 export function getSpeciesLairs(species: Species): Lairs[] {
-  return EVERY_LAIR.filter((lair) => LAIR_SPECIES[lair].includes(species));
+  const resident = getTrueShadowCounterpart(species) ?? species;
+
+  return EVERY_LAIR.filter((lair) => LAIR_SPECIES[lair].includes(resident));
 }
 
 /**

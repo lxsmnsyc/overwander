@@ -32,6 +32,8 @@ export const FOSSIL_SPECIES = new Map<Items, Species>([
   [Items.ArmorFossil, Species.Shieldon],
   [Items.CoverFossil, Species.Tirtouga],
   [Items.PlumeFossil, Species.Archen],
+  [Items.JawFossil, Species.Tyrunt],
+  [Items.SailFossil, Species.Amaura],
 ]);
 
 export function isFossil(item: Items): boolean {
@@ -69,6 +71,8 @@ const NAMES: { [key in Items]?: string } = {
   [Items.ArmorFossil]: 'Armor Fossil',
   [Items.CoverFossil]: 'Cover Fossil',
   [Items.PlumeFossil]: 'Plume Fossil',
+  [Items.JawFossil]: 'Jaw Fossil',
+  [Items.SailFossil]: 'Sail Fossil',
 };
 
 /**
@@ -86,6 +90,8 @@ const ICONS: { [key in Items]?: string } = {
   [Items.ArmorFossil]: 'fossils/armor',
   [Items.CoverFossil]: 'fossils/cover',
   [Items.PlumeFossil]: 'fossils/plume',
+  [Items.JawFossil]: 'fossils/jaw',
+  [Items.SailFossil]: 'fossils/sail',
 };
 
 export default function registerFossils(): void {

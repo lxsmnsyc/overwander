@@ -6,7 +6,9 @@ import AleaRNG from '../core/alea';
 import { defaultSlots } from '../data/constants/slots';
 import { MAX_LEVEL } from '../data/constants/levels';
 import { MAX_IV, Stats, packIVs } from '../data/constants/stats';
-import { Species } from '../data/ids/species';
+import type { Items } from '../data/ids/items';
+import { Species, getBaseFormSpecies } from '../data/ids/species';
+import { MEGA_STONES } from '../data/items/mega-stones';
 import type Abilities from '../data/ids/abilities';
 import { getSignatureAbility } from '../data/abilities';
 import { getRegisteredSpecies, getSpeciesData, isFullyEvolved, isWornForm } from '../data/species';
@@ -82,6 +84,24 @@ function demoAbility(species: Species, traitValue: number): Abilities {
   return getSignatureAbility(getSpeciesData(species).family) ?? deriveAbility(species, traitValue);
 }
 
+/**
+ * The stones each pokemon could hold for its Mega. Charizard and
+ * Mewtwo have two, so a list rather than one
+ */
+let megaStones: Map<Species, Items[]> | null = null;
+
+function getMegaStones(): Map<Species, Items[]> {
+  if (megaStones == null) {
+    megaStones = new Map();
+    for (const [item, stone] of MEGA_STONES) {
+      const base = getBaseFormSpecies(stone.mega);
+
+      megaStones.set(base, [...(megaStones.get(base) ?? []), item]);
+    }
+  }
+  return megaStones;
+}
+
 function pick<T>(entries: T[], random: () => number): T {
   return entries[Math.min(entries.length - 1, Math.floor(random() * entries.length))];
 }
@@ -95,8 +115,11 @@ function pick<T>(entries: T[], random: () => number): T {
  * the way a demo might find convenient. A bug that shows up here is a
  * bug the game has
  */
-function rollCatch(random: () => number, index: number): CatchSnapshot {
-  const species = pick(getRollableSpecies(), random);
+function rollCatch(random: () => number, index: number, mega = false): CatchSnapshot {
+  // A party's first pokemon is one with a Mega, so every party on the
+  // page has one to show
+  const species = pick(mega ? [...getMegaStones().keys()] : getRollableSpecies(), random);
+  const stones = getMegaStones().get(species);
   const level = Math.min(
     MAX_LEVEL,
     DEMO_MIN_LEVEL + Math.floor(random() * (DEMO_MAX_LEVEL - DEMO_MIN_LEVEL + 1)),
@@ -142,7 +165,9 @@ function rollCatch(random: () => number, index: number): CatchSnapshot {
     // any of its moves
     movePoints: {},
     abilities: [demoAbility(species, traitValue)],
-    items: [],
+    // Anybody who has a stone holds it, which leaves the pick of who
+    // Mega Evolves to the battle, the way it is in a real party
+    items: stones == null ? [] : [pick(stones, random)],
     slots: defaultSlots(),
     health: getMaxHealth({ species, level, ivs, effortValues }),
     // Nothing has raised it, so it thinks of nobody
@@ -197,7 +222,7 @@ export function createDemoRaidTeams(seed: string, shadow = false): TeamSnapshotR
     const catches: CatchSnapshot[] = [];
 
     for (let member = 0; member < DEMO_TEAM_SIZE; member++) {
-      catches.push(rollCatch(random, team * DEMO_TEAM_SIZE + member));
+      catches.push(rollCatch(random, team * DEMO_TEAM_SIZE + member, member === 0));
     }
     teams.push({ player: `demo-${team + 1}`, alliance: PLAYER_ALLIANCE, catches });
   }

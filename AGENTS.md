@@ -37,14 +37,19 @@ one that covers what you are about to do:
 - `server-function-order` - a `'use server'` function is addressed by its place
   in its file; the build guard refuses every call from another build, so it
   must never be weakened and every server call must go through `fetch`.
-- `spawn-surfaces` - a spawn rolls from the land, water or ice pool of the cell
-  under it, and a species' `habitat` decides which of those pools may list it.
+- `spawn-surfaces` - a biome's pools are mixed into one roster that each cell
+  cuts by surface; a species' kind (ground, water or flying) decides where it
+  stands, and only an amphibious water species leaves the water.
 - `world-generation` - the live world's generation is frozen and pinned by a
   fingerprint test; every roll that places something on the ground goes through
   `world.draws(key)` with a name, and existing calls are never reordered; rows
   tied to the ground carry a `generation` column that every query filters on.
 - `trigger-driven-abilities` - ability effects that do not mutate their
   detection event ride `UnitTriggerAbility` at `Exact` priority.
+- `action-forms` - a dialog that asks something is a form opened with
+  `openForm` and awaited; an NPC is a folder under `src/overworld/npcs` whose
+  `createNpc` names who they are and lazily loads the script that talks
+  through a conversation of forms, and the server still decides.
 - `changesets` - every change against `main` ships with one, and a fix for
   something the same branch broke ships with none. `patch` when something that
   already existed behaves differently, `minor` when something new exists,

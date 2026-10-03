@@ -30,6 +30,13 @@ import {
   createWaterAbsorbAbility,
 } from '../__create';
 import { MergedLifecycle } from '../../lifecycle';
+import { knowsAbility } from '../../ai/fog';
+import { registerWeatherWant } from '../../ai/weather-wants';
+
+// The skies these thrive under, so the AI weighs a weather move by who gains from it
+registerWeatherWant(Abilities.SwiftSwim, [Weathers.Rain]);
+registerWeatherWant(Abilities.DrySkin, [Weathers.Rain]);
+registerWeatherWant(Abilities.SandForce, [Weathers.Sandstorm]);
 
 /**
  * Paras to Tentacool: the spore carriers, the sleepers and what a
@@ -146,8 +153,15 @@ const parasToTentacool = [
       // Otherwise the holder's opponent picks an Explosion it will
       // never be allowed to cast, every tick, for ever
       battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
-        if (event.usable && holders.size > 0 && SELF_DESTRUCT_MOVES.has(event.move)) {
-          event.usable = false;
+        if (!event.usable || !SELF_DESTRUCT_MOVES.has(event.move)) {
+          return;
+        }
+        // Only a Damp the caster knows about
+        for (const holder of holders) {
+          if (knowsAbility(event.source, holder, Abilities.Damp)) {
+            event.usable = false;
+            return;
+          }
         }
       }),
       battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {

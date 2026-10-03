@@ -25,6 +25,7 @@ const RANGES: { region: Regions; from: number; to: number }[] = [
   { region: Regions.Sinnoh, from: 387, to: 493 },
   { region: Regions.Unova, from: 494, to: 649 },
   { region: Regions.Kalos, from: 650, to: 721 },
+  { region: Regions.Alola, from: 722, to: 809 },
 ];
 
 /**
@@ -39,6 +40,7 @@ export const REGION_NAMES: Record<Regions, string> = {
   [Regions.Sinnoh]: 'sinnoh',
   [Regions.Unova]: 'unova',
   [Regions.Kalos]: 'kalos',
+  [Regions.Alola]: 'alola',
 };
 
 /** Every region there is, in order. */
@@ -50,6 +52,7 @@ export const REGIONS: Regions[] = [
   Regions.Sinnoh,
   Regions.Unova,
   Regions.Kalos,
+  Regions.Alola,
 ];
 
 /** The dex numbers one region covers, ends included, or null for Unknown */

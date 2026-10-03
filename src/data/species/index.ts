@@ -4,6 +4,7 @@ import registerGen3Species from './gen-3';
 import registerGen4Species from './gen-4';
 import registerGen5Species from './gen-5';
 import registerGen6Species from './gen-6';
+import registerGen7Species from './gen-7';
 import registerMegaSpecies from './megas';
 import registerTrueShadowSpecies from './true-shadow';
 
@@ -83,6 +84,7 @@ export function registerSpecies(): void {
   registerGen4Species();
   registerGen5Species();
   registerGen6Species();
+  registerGen7Species();
   // Last: each one is a copy of a counterpart that has to exist first
   registerMegaSpecies();
   registerTrueShadowSpecies();

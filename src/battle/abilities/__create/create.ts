@@ -132,3 +132,20 @@ export function createContactHazard(
     }
   });
 }
+
+/**
+ * An ability that keeps its holder out of arm's reach: none of its
+ * moves count as contact, so nothing that answers a touch ever gets
+ * to answer. Long Reach
+ */
+export function createNoContactAbility(
+  ability: Abilities,
+): ((battle: Battle) => void) & { ability: Abilities } {
+  return createAbility(ability, (battle) =>
+    battle.on(BattleEvents.CheckUnitMoveContact, EventPriority.Post, (event) => {
+      if (event.contact && event.source.hasAbility(ability)) {
+        event.contact = false;
+      }
+    }),
+  );
+}

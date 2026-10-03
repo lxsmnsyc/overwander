@@ -267,19 +267,26 @@ export function createToughClawsAbility(
  * abilities, which turn its Normal moves into their own element and
  * pay a little extra for the trouble.
  *
- * `from` is the type being rewritten, or null for anything at all,
- * and the scale is only paid where the rewrite actually happened
+ * `from` is the type being rewritten, a test for the moves that are
+ * (Liquid Voice's sound moves), or null for anything at all. The
+ * scale is only paid where the rewrite actually happened
  * https://bulbapedia.bulbagarden.net/wiki/Refrigerate_(Ability)
  */
 export function createTypeShiftAbility(
   targetAbility: Abilities,
-  from: Types | null,
+  from: Types | ((move: Moves) => boolean) | null,
   to: Types,
   factor = 1,
 ): (battle: Battle) => void {
   /** Whether this move is one the ability rewrites */
   function shifts(move: Moves, source: Unit): boolean {
-    return source.hasAbility(targetAbility) && (from == null || getMoveData(move).type === from);
+    if (!source.hasAbility(targetAbility)) {
+      return false;
+    }
+    if (from == null) {
+      return true;
+    }
+    return typeof from === 'function' ? from(move) : getMoveData(move).type === from;
   }
 
   return createAbility(

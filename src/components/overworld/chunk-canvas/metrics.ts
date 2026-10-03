@@ -192,8 +192,13 @@ export const GOAL_PULSE = 500;
  */
 export const HOVER_GLOW = 0.22;
 
+/** How thick the line between two chunks is drawn */
+export const CHUNK_LINE = 2;
+
 export const COLORS = {
   grid: 'rgba(0, 0, 0, 0.12)',
+  /** Where one chunk meets the next: heavier than a cell's line, so the two read apart */
+  chunk: 'rgba(0, 0, 0, 0.4)',
   /**
    * The cell the player is on
    */

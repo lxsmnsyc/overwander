@@ -225,6 +225,16 @@ export interface Light {
   add?: number;
 }
 
+/** A shape lying on the ground, and how flat it lies */
+export interface Lying extends Light {
+  /**
+   * How much shorter it is toward the camera than across, from 0 to 1.
+   * A ground circle seen from this camera barely shortens, so something
+   * that has to match a pokemon's flat shadow is squashed to it
+   */
+  squash?: number;
+}
+
 export default class EffectBatch {
   readonly mesh: Mesh<BufferGeometry, RawShaderMaterial>;
   private vertices = new Float32Array(ROOM * 6 * STRIDE);
@@ -337,8 +347,8 @@ export default class EffectBatch {
   }
 
   /** The same light lying on the ground: a pool under a fire, a flash on the floor */
-  pool(at: Spot, radius: number, colour: string, alpha: number, light: Light = {}): void {
-    this.square(at, radius, 0, packed(Shape.Glow, 0), colour, alpha, light.add ?? 1, true);
+  pool(at: Spot, radius: number, colour: string, alpha: number, light: Lying = {}): void {
+    this.lie(at, radius, packed(Shape.Glow, 0), colour, alpha, light);
   }
 
   /** A ring facing the camera. `width` is the band's share of the radius, up to 1 */
@@ -360,9 +370,9 @@ export default class EffectBatch {
     width: number,
     colour: string,
     alpha: number,
-    light: Light = {},
+    light: Lying = {},
   ): void {
-    this.square(at, radius, 0, packed(Shape.Ring, width * 4), colour, alpha, light.add ?? 1, true);
+    this.lie(at, radius, packed(Shape.Ring, width * 4), colour, alpha, light);
   }
 
   /** A streak through a point, `angle` turned on the picture with up positive */
@@ -588,6 +598,28 @@ export default class EffectBatch {
     const w = m[12] * spot[0] + m[13] * spot[1] + m[14] * spot[2] + m[15];
 
     return this.lens / Math.max(1e-6, w);
+  }
+
+  /** Lying on the ground, level, and squashed toward the camera where asked */
+  private lie(
+    at: Spot,
+    radius: number,
+    look: number,
+    colour: string,
+    alpha: number,
+    light: Lying,
+  ): void {
+    const squash = light.squash ?? 1;
+
+    if (squash === 1) {
+      this.square(at, radius, 0, look, colour, alpha, light.add ?? 1, true);
+      return;
+    }
+
+    const [ax, az] = this.across;
+    const [wx, wz] = this.away;
+
+    this.lay(at, radius, ax, az, wx * squash, wz * squash, look, colour, alpha, light.add ?? 1);
   }
 
   private square(

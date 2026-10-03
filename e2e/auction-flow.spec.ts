@@ -319,7 +319,7 @@ test.describe('the auction house', () => {
     // the one they won
     await buyerBoard.getByRole('button', { name: 'Close' }).click();
 
-    const catches = await openPanel(buyer.page, 'Catches');
+    const catches = await openPanel(buyer.page, 'Boxes');
 
     await expect(
       catches.getByRole('group', { name: /^Box of pokemon, 2 of 30 squares filled/ }),

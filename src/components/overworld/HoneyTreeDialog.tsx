@@ -11,7 +11,7 @@ import Landmark from '../../data/overworld/landmark';
 import landmarkPicture, { LANDMARK_SHEET } from '../../data/overworld/landmark-sprite';
 
 import { Button, Dialog, DialogActions, Note, useToast } from '../styled';
-import { CostBadge, CounterSpent, CounterTerms, HeadingPortrait } from './npc-dialog/terms';
+import { CostBadge, CounterSpent, CounterTerms, HeadingPortrait } from '../forms/terms';
 import { failed, readable } from '../app/resource-reads';
 import playEffect, { Effect } from '../app/sound';
 

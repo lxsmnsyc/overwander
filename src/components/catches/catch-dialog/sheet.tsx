@@ -32,14 +32,13 @@ import { answered, failed, readable } from '../../app/resource-reads';
 
 import { canHatch, isEgg } from '../../../auth/egg';
 import AnimatedSprite from '../../sprites/AnimatedSprite';
-import { HeadingPortrait } from '../../overworld/npc-dialog/terms';
+import { HeadingPortrait } from '../../forms/terms';
 import TargetStrip from '../TargetStrip';
 import { hatchEgg } from '../../../auth/eggs';
 import { deriveSize } from '../../../overworld/encounter';
 import { type EvolutionOption, evolveCatch } from '../../../auth/evolution';
 import { fuseCatch, unfuseCatch } from '../../../auth/fusion';
 import type { InventoryEntry } from '../../../auth/inventory';
-import { learnLevelUpMove } from '../../../auth/moves';
 import playEffect, { Effect } from '../../app/sound';
 import type { PokedexView } from '../../../auth/pokedex';
 import { trainEfforts } from '../../../auth/training';
@@ -92,7 +91,7 @@ import AbilityPatchDialog from '../AbilityPatchDialog';
 import CatchPicker from '../catch-picker';
 import IncreasePPDialog from '../IncreasePPDialog';
 import BottleCapDialog from '../BottleCapDialog';
-import TeachMoveDialog from '../TeachMoveDialog';
+import { askTeachings } from '../../forms/teach-move';
 
 import {
   For,
@@ -423,6 +422,15 @@ export function CatchSheetBody(
       waiting?.();
     }
   };
+
+  // A machine and a level ask the same question, so they share the form;
+  // answering one steps to whatever else the level offered
+  askTeachings(teaching, nextTeaching, (levelled) => {
+    say(levelled ? 'Learned.' : 'Taught.', 'leaf');
+    props.onRecordChanged();
+    props.onBagChanged();
+    props.onChange?.();
+  });
 
   /**
    * Ask about whatever the level it just reached has to offer.
@@ -1854,29 +1862,6 @@ export function CatchSheetBody(
           )}
         </Show>
       </Dialog>
-
-      {/* Learning is its own dialog because what it costs is a
-          question — which move is given up — and one used on a pokemon
-          with room asks nothing at all. A machine and a level ask the
-          same question, so they share it; only the price differs, and
-          a level has none.
-
-          Closing steps to whatever else the level offered rather than
-          straight back to the sheet, since a level can hand over two
-          moves at once and each is its own decision */}
-      <TeachMoveDialog
-        catchId={teaching()?.catchId ?? null}
-        move={teaching()?.move ?? null}
-        cost={teaching()?.levelled === true ? 'Nothing' : undefined}
-        teach={teaching()?.levelled === true ? learnLevelUpMove : undefined}
-        onClose={nextTeaching}
-        onTaught={() => {
-          say(teaching()?.levelled === true ? 'Learned.' : 'Taught.', 'leaf');
-          props.onRecordChanged();
-          props.onBagChanged();
-          props.onChange?.();
-        }}
-      />
 
       {/* Naming, on a dialog of its own for the same reason teaching
           is: the sheet is long and the field would be somewhere down

@@ -48,6 +48,18 @@ export const BOSS_STAT_SCALE = 2;
 export const BOSS_DAMAGE_CAP = 200;
 
 /**
+ * A share of a unit's max HP, for an effect measured against it: a
+ * floor under a hit, a cut-off under which a blow does nothing. A
+ * boss' pool is sixtyfold, so its share is held to the same cap as
+ * any other share-of-HP hit on it
+ */
+export function healthShare(unit: Unit, share: number): number {
+  const amount = unit.checkStat(Stats.HP, 0) * share;
+
+  return unit.hasAbility(Abilities.Boss) ? Math.min(amount, BOSS_DAMAGE_CAP) : amount;
+}
+
+/**
  * The most a boss puts back in a second. A flat figure rather than a
  * share, so a bulky boss heals no more than a frail one, and a stack
  * of heals landing together is worth no more than one

@@ -87,6 +87,11 @@ export function asBoxEntry([id, caught]: [string, CaughtPokemon]): BoxEntry {
     aura: isEgg(caught) ? undefined : catchAura(caught),
     locked: isGuarded(caught),
     favorite: isFavorite(caught),
+    // An egg has neither yet, and its walk is the bar it draws instead
+    ...(isEgg(caught)
+      ? {}
+      : { level: caught.level, health: caught.health / Math.max(1, getMaxHealth(caught)) }),
+    ...(caught.slot == null ? {} : { slot: caught.slot }),
     label: describeCatch(caught),
   };
 }

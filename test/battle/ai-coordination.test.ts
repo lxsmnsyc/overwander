@@ -15,6 +15,7 @@ import { unitTarget } from '../../src/battle/utils';
 import { Stages } from '../../src/data/constants/stats';
 import { Types } from '../../src/data/constants/types';
 import { Moves } from '../../src/data/ids/moves';
+import { Statuses } from '../../src/data/ids/status';
 import { type BattleHarness, createBattle, createUnit, pinRandom } from './harness';
 
 function createAIBattle(): BattleHarness {
@@ -109,6 +110,29 @@ describe('teammates casting over each other', () => {
     expect(usableMove(battle, unit, Moves.Toxic, unitTarget(other))).toBe(true);
     // A different affliction stacks on top
     expect(usableMove(battle, unit, Moves.ThunderWave, unitTarget(foe))).toBe(true);
+  });
+
+  it('leaves a foe to the affliction a teammate has let go and is still in the air', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    const unit = createUnit(battle, teamA);
+    const friend = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+    friend.addMove(Moves.Toxic);
+    // Every roll lands, so the Toxic is in the air rather than missed
+    pinRandom(battle, 0);
+
+    friend.cast(Moves.Toxic, unitTarget(foe));
+
+    // Step to the moment the cast ends and the move is on its way
+    while (friend.casting != null) {
+      battle.tick(50);
+    }
+    expect(foe.status[Statuses.BadlyPoisoned]).toBeUndefined();
+    expect(usableMove(battle, unit, Moves.Toxic, unitTarget(foe))).toBe(false);
+
+    battle.tick(1000);
+    expect(foe.status[Statuses.BadlyPoisoned]).toBeDefined();
+    expect(usableMove(battle, unit, Moves.Toxic, unitTarget(foe))).toBe(false);
   });
 
   it('counts two moves for one status as the same affliction', () => {

@@ -39,6 +39,20 @@ Growlithe:
 
 `src/data/species/regions.yaml` holds each region by its enum name: the `dex` numbers it covers, ends included, and, for a region with a dex chain, the `milestones` each rung asks for and the `medal` the last one hangs. A rung keeps its number for good, so milestones are appended, never inserted. The sprite folder names stay in `regions.ts` beside the enum.
 
+## Overworld
+
+| file                              | holds                                                                 |
+| --------------------------------- | --------------------------------------------------------------------- |
+| `overworld/lairs.yaml`            | each lair's `species` (in the order a raid picks), `underground`, `reserved` |
+| `overworld/biome-lairs.yaml`      | each biome's lairs, in the order a landmark draws them                |
+| `text/en/lairs.yaml`              | each lair's name                                                      |
+| `overworld/item-pool.yaml`        | the ground's items by band, item to weight; a lowercase key is a whole family (`wings: 3`) |
+| `overworld/weather/biomes.yaml`   | each biome's six skies, and the four `corners` every country shares   |
+
+- **Order is part of the world.** A biome's lair list and each band of the item pool are walked by a seeded roll, so moving an entry changes what every player's map holds. Append; never reorder.
+- **A lair is numbered by the enum in `ids/lairs.ts`,** since a raid prize records it. A new lair is an enum member, a row in each lair file, and `pnpm id-names`. `reserved: true` keeps it out of the world until its batch lists it.
+- **An item family a pool names** is listed in `ITEM_FAMILIES` in `overworld/item-pool.ts`.
+
 ## Moves
 
 Under `src/data/moves/`, each part filed by generation and the stretch of moves it was written in (`gen-1/bulbasaur-to-blastoise.yaml`), every move keyed by its name:

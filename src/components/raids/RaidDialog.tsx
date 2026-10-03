@@ -4,7 +4,7 @@ import { getLairTitle } from '../../data/overworld/lair';
 import { getSpeciesData } from '../../data/species';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
 import { Button, Dialog, DialogActions, Meta, useToast } from '../styled';
-import { CounterSpent, CounterTerms } from '../overworld/npc-dialog/terms';
+import { CounterSpent, CounterTerms } from '../forms/terms';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import TypeBadge from '../sprites/TypeBadge';
 import { GameDialog, useGame } from '../app/game-context';

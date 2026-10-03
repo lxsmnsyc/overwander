@@ -210,12 +210,19 @@ const LOBBY_RADIUS = 28;
 const TEAM_RADIUS = 6.5;
 
 /**
- * How much more of the field the camera takes in than it once did,
- * as a share of the old scale. The rings were spread out, and the
- * camera stepped back to keep them in frame without shrinking the
- * pokemon standing on them
+ * How far the camera stands back from the rings, as a share of the
+ * scale it once had. The pokemon are drawn smaller with it, so the
+ * wider rings read as room between them rather than as the same
+ * crowd spread over more ground
  */
-const FIELD_VIEW = 0.86;
+const FIELD_VIEW = 0.8;
+
+/**
+ * How far down the picture the middle of the field sits. A little
+ * above halfway: the near party stands closest to the camera and is
+ * drawn largest, and its bars need the room under it
+ */
+export const FIELD_HORIZON = 0.46;
 
 /**
  * How far apart two parties stand on the lobby ring.
@@ -250,11 +257,10 @@ const NEAREST = -Math.PI / 2;
  * further apart on screen while leaving them the same size, which is
  * the opposite of what a camera does
  */
-export function lobbyCamera(teams: number): { radius: number; zoom: number; view: number } {
+export function lobbyCamera(teams: number): { radius: number; zoom: number } {
   const radius = ringRadius(teams, LOBBY_RADIUS, LOBBY_GAP);
-  const zoom = LOBBY_RADIUS / radius;
 
-  return { radius, zoom, view: zoom * FIELD_VIEW };
+  return { radius, zoom: (LOBBY_RADIUS / radius) * FIELD_VIEW };
 }
 
 /**

@@ -100,6 +100,8 @@ const BANNED_BOSS_MOVES = new Set<Moves>([
   Moves.AromaticMist,
   Moves.Celebrate,
   Moves.HappyHour,
+  // Paid in half its health, which on a raid pool is half the raid
+  Moves.MindBlown,
   // TODO: temporary. A boss is already immune to Perishing, so the
   // song costs it a move slot and does nothing. Drop this line when
   // there is something for it to do

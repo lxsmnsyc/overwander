@@ -37,6 +37,7 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Tangrowth, weight: 6 },
       ],
       elusive: [
+        { species: Species.OricorioSensu, weight: 5 },
         { species: Species.Vikavolt, weight: 4 },
         { species: Species.Hawlucha, weight: 6 },
         { species: Species.Vivillon, weight: 5 },
@@ -76,6 +77,7 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Tangrowth, weight: 6 },
       ],
       elusive: [
+        { species: Species.OricorioSensu, weight: 5 },
         { species: Species.Vikavolt, weight: 4 },
         { species: Species.Hawlucha, weight: 6 },
         { species: Species.Vivillon, weight: 5 },

@@ -17,6 +17,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Whismur, weight: 25 },
       ],
       uncommon: [
+        { species: Species.Rockruff, weight: 22 },
         { species: Species.Skiddo, weight: 24 },
         { species: Species.Bunnelby, weight: 26 },
         { species: Species.Blitzle, weight: 25 },
@@ -43,6 +44,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Flaaffy, weight: 5 },
       ],
       scarce: [
+        { species: Species.Lycanroc, weight: 6 },
         { species: Species.Gogoat, weight: 6 },
         { species: Species.Diggersby, weight: 6 },
         { species: Species.Zebstrika, weight: 6 },
@@ -87,6 +89,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Whismur, weight: 25 },
       ],
       uncommon: [
+        { species: Species.Rockruff, weight: 22 },
         { species: Species.Skiddo, weight: 24 },
         { species: Species.Bunnelby, weight: 26 },
         { species: Species.Blitzle, weight: 25 },
@@ -114,6 +117,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Flaaffy, weight: 5 },
       ],
       scarce: [
+        { species: Species.Lycanroc, weight: 6 },
         { species: Species.Gogoat, weight: 6 },
         { species: Species.Diggersby, weight: 6 },
         { species: Species.Zebstrika, weight: 6 },
@@ -155,6 +159,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Magnemite, weight: 20 },
       ],
       uncommon: [
+        { species: Species.Rockruff, weight: 22 },
         { species: Species.Golett, weight: 20 },
         { species: Species.Scraggy, weight: 22 },
         { species: Species.Ekans, weight: 20 },
@@ -170,6 +175,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Magneton, weight: 10 },
       ],
       scarce: [
+        { species: Species.LycanrocDusk, weight: 6 },
         { species: Species.Golurk, weight: 6 },
         { species: Species.Scrafty, weight: 7 },
         { species: Species.Arbok, weight: 10 },
@@ -196,6 +202,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Magnemite, weight: 20 },
       ],
       uncommon: [
+        { species: Species.Rockruff, weight: 22 },
         { species: Species.Golett, weight: 20 },
         { species: Species.Scraggy, weight: 22 },
         { species: Species.Ekans, weight: 20 },
@@ -211,6 +218,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Magneton, weight: 10 },
       ],
       scarce: [
+        { species: Species.LycanrocMidnight, weight: 6 },
         { species: Species.Golurk, weight: 6 },
         { species: Species.Scrafty, weight: 7 },
         { species: Species.Arbok, weight: 10 },

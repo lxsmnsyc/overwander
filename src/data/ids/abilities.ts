@@ -994,6 +994,14 @@ const enum Abilities {
   ScoreToSettle = 200370,
   // Grubbin
   TrickleCharge = 200371,
+  // Crabrawler
+  ReboundPunch = 200372,
+  // Oricorio
+  DizzyTwirl = 200373,
+  // Cutiefly
+  HoneyShare = 200374,
+  // Rockruff
+  Provoke = 200375,
 }
 
 export default Abilities;

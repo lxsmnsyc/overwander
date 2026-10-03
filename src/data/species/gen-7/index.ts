@@ -4,6 +4,10 @@ import registerPopplioSpecies from './popplio';
 import registerPikipekSpecies from './pikipek';
 import registerYungoosSpecies from './yungoos';
 import registerGrubbinSpecies from './grubbin';
+import registerCrabrawlerSpecies from './crabrawler';
+import registerOricorioSpecies from './oricorio';
+import registerCutieflySpecies from './cutiefly';
+import registerRockruffSpecies from './rockruff';
 
 /** Alola, as far as it is written */
 export default function registerGen7Species(): void {
@@ -13,4 +17,8 @@ export default function registerGen7Species(): void {
   registerPikipekSpecies();
   registerYungoosSpecies();
   registerGrubbinSpecies();
+  registerCrabrawlerSpecies();
+  registerOricorioSpecies();
+  registerCutieflySpecies();
+  registerRockruffSpecies();
 }

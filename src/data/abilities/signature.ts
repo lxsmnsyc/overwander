@@ -2231,4 +2231,27 @@ export default function registerSignatureAbilities(): void {
     description:
       'Its Special Attack rises 10% for each Electric move anybody lands, either side, up to 1.5x.',
   });
+
+  // Melemele's meadow and hill
+  registerSignature(Families.Crabrawler, Abilities.ReboundPunch, {
+    name: 'Rebound Punch',
+    description:
+      'When one of its punching moves misses or is blocked, its next punching move hits 1.5x.',
+  });
+
+  registerSignature(Families.Oricorio, Abilities.DizzyTwirl, {
+    name: 'Dizzy Twirl',
+    description: 'While confused it never hits itself, and its moves hit 1.3x.',
+  });
+
+  registerSignature(Families.Cutiefly, Abilities.HoneyShare, {
+    name: 'Honey Share',
+    description:
+      'While it stands, berries its teammates eat heal 1.5x as much and raise a stat 1 more stage.',
+  });
+
+  registerSignature(Families.Rockruff, Abilities.Provoke, {
+    name: 'Provoke',
+    description: 'An enemy it hits must aim its next single-target move at it.',
+  });
 }

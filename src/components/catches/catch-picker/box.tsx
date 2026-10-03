@@ -1,4 +1,13 @@
 import matchesCatch, { type CatchContext, orderCatches } from '../../../auth/catch-search';
+import {
+  type BoxRecord,
+  DEFAULT_BOX_NAME,
+  DEFAULT_BOX_TONE,
+  boxTone,
+} from '../../../auth/box-record';
+import { parseControls } from '../../../core/query';
+import { answered } from '../../app/resource-reads';
+import settings from '../../app/settings';
 import { type CaughtPokemon, findDuplicates, giveItem, takeItem } from '../../../auth/caught';
 import { useAuth } from '../../../auth/context';
 import { ItemFlags, type Items } from '../../../data/ids/items';
@@ -7,6 +16,7 @@ import InventoryPicker from '../../items/InventoryPicker';
 import { Button, HoverCard, Row, Status } from '../../styled';
 import CatchCard from '../CatchCard';
 import CatchGrid, { type CatchGridEntry } from '../CatchGrid';
+import { type BoxGap, boxSizeOf } from '../CatchBox';
 import { asBoxEntry, describeCatch } from '../catch-summary';
 import {
   type JSX,
@@ -49,6 +59,8 @@ export default function PickerBox(
      * two neighbours are answered from
      */
     around: Resource<CatchContext>;
+    /** The player's boxes, to say which one each square lives in */
+    boxes: Resource<[string, BoxRecord][]>;
     showing: boolean;
     /**
      * What is being searched for. It belongs to whoever owns the
@@ -104,6 +116,40 @@ export default function PickerBox(
   });
 
   const query = (): string => props.search;
+
+  /**
+   * Whether the box showing keeps its pokemon in squares, gaps and all.
+   * Only a box the player made does: Default is where new catches land,
+   * newest first, and keeps no places
+   */
+  const slotted = (): boolean => props.box?.box != null;
+
+  /**
+   * Which box each square lives in, said on the square while every box
+   * is showing at once. Said for nobody who has made no box: everything
+   * of theirs is in Default and the label would say so thirty times
+   */
+  const places = createMemo(() => {
+    const made = answered(props.boxes) ?? [];
+    const named = new Map<string, { name: string; tone: string }>();
+
+    if (props.box !== null || made.length === 0) {
+      return null;
+    }
+    for (const [id, box] of made) {
+      named.set(id, { name: box.name, tone: boxTone(box.colour) });
+    }
+    return named;
+  });
+
+  const placeOf = (option: CatchOption): { name: string; tone: string } | undefined => {
+    const named = places();
+
+    if (named == null) {
+      return undefined;
+    }
+    return named.get(option.caught.box ?? '') ?? { name: DEFAULT_BOX_NAME, tone: DEFAULT_BOX_TONE };
+  };
   /**
    * Whether these are the reader's own pokemon. Somebody else's box is
    * read and nothing else: there is nothing of theirs to hand an item
@@ -166,9 +212,25 @@ export default function PickerBox(
    * A `sort:` overrides both the newest-first order the box arrives in
    * and whatever the caller asked it to be arranged by
    */
-  const arranged = createMemo<CatchOption[]>(() =>
-    orderCatches(offered(), query(), (option) => option.caught, props.sort),
-  );
+  const arranged = createMemo<CatchOption[]>(() => {
+    const view = props.box;
+    const shown: CatchOption[] = [];
+
+    for (const option of offered()) {
+      if (view == null || option.caught.box === view.box) {
+        shown.push(option);
+      }
+    }
+    // A box of the player's own stands in its squares until a sort says otherwise
+    if (slotted() && parseControls(query(), true).sort === '') {
+      return shown.sort(
+        (one, other) =>
+          (one.caught.slot ?? Number.MAX_SAFE_INTEGER) -
+          (other.caught.slot ?? Number.MAX_SAFE_INTEGER),
+      );
+    }
+    return orderCatches(shown, query(), (option) => option.caught, props.sort);
+  });
 
   const options = createMemo<CatchOption[]>(() => {
     const kept: CatchOption[] = [];
@@ -258,7 +320,13 @@ export default function PickerBox(
       return;
     }
 
-    const byId = optionById();
+    // Every box rather than the one showing: a saved team is filed wherever it is filed
+    const byId = new Map<string, CatchOption>();
+
+    for (const option of offered()) {
+      byId.set(option.id, option);
+    }
+
     const taken: string[] = [];
 
     for (const id of wanted) {
@@ -375,23 +443,61 @@ export default function PickerBox(
   };
 
   /**
+   * A box's squares with its gaps drawn in, so a player building a dex
+   * sees what is missing where it would go. It always ends in at least
+   * one empty row, to file into
+   */
+  const withGaps = (made: CatchGridEntry[]): (CatchGridEntry | BoxGap)[] => {
+    const columns = settings().boxColumns;
+    const page = boxSizeOf(columns);
+    const laid: (CatchGridEntry | BoxGap)[] = [];
+    let next = 0;
+
+    for (const entry of made) {
+      const slot = entry.square.slot ?? next;
+
+      for (; next < slot; next++) {
+        laid.push({ gap: next });
+      }
+      laid.push(entry);
+      next = slot + 1;
+    }
+
+    const end = Math.ceil((next + columns) / page) * page;
+
+    for (; next < end; next++) {
+      laid.push({ gap: next });
+    }
+    return laid;
+  };
+
+  /**
    * Every square the caller will accept, each carrying whether the
    * player has taken it or refuses it. A refusal is drawn rather than
    * hidden: a player hunting for a pokemon that is not in their party
    * wants to be told it is fighting somewhere else, not left to
    * wonder where it went
    */
-  const entries = createMemo<CatchGridEntry[]>(() => {
+  const entries = createMemo<(CatchGridEntry | BoxGap)[]>(() => {
     const made: CatchGridEntry[] = [];
 
     for (const option of arranged()) {
       const refused = props.reason?.(option) ?? null;
       const taken = props.multiple === true ? isDrafted(option.id) : props.value === option.id;
-      const square = asBoxEntry([option.id, option.caught]);
+      const place = placeOf(option);
+      const square = {
+        ...asBoxEntry([option.id, option.caught]),
+        ...(place == null ? {} : { place }),
+      };
 
       if (refused != null) {
         made.push({
-          square: { ...square, mark: 'refused' as const, label: `${square.label} — ${refused}` },
+          square: {
+            ...square,
+            mark: 'refused' as const,
+            reason: refused,
+            label: `${square.label} — ${refused}`,
+          },
           caught: option.caught,
         });
         continue;
@@ -401,7 +507,7 @@ export default function PickerBox(
         caught: option.caught,
       });
     }
-    return made;
+    return slotted() && query().trim() === '' ? withGaps(made) : made;
   });
 
   /**
@@ -479,6 +585,8 @@ export default function PickerBox(
         // own terms — a listing opens its dialog, a double pick asks
         // "Sure?"
         onOpen={pressById}
+        onDragStart={props.onDragStart}
+        onDropOn={props.onDropOn}
         empty={props.empty ?? 'You have nothing for this.'}
         noMatch={`None of ${props.viewOnly === true ? 'theirs' : 'yours'} match that.`}
         cell={(entry) => (

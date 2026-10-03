@@ -8,18 +8,21 @@ Regirock:
     egg-groups: [NoEggsDiscovered]
     biomes: [Desert, Badlands]
     active: any
+    rank: legendary
 Regice:
   Regice:
     types: [Ice]
     egg-groups: [NoEggsDiscovered]
     biomes: [PolarOcean, Taiga, Tundra]
     active: any
+    rank: legendary
 Registeel:
   Registeel:
     types: [Steel]
     egg-groups: [NoEggsDiscovered]
     biomes: [Mountain, Badlands, Ocean]
     active: any
+    rank: legendary
 # The eon pair: one sister, one brother, and nothing else of either.
 # Each is single-gendered, so the pair is only ever met as a pair,
 # and the mainline gives both of them one ability and nothing more
@@ -29,12 +32,14 @@ Latias:
     egg-groups: [NoEggsDiscovered]
     biomes: [Ocean]
     active: any
+    rank: legendary
 Latios:
   Latios:
     types: [Dragon, Psychic]
     egg-groups: [NoEggsDiscovered]
     biomes: [Ocean]
     active: any
+    rank: legendary
 # The three that decide what the sky is doing: the sea, the land, and
 # the thing that flies above both and calls the argument off. Each
 # carries one ability in the mainline and nothing else, so what fills
@@ -46,6 +51,7 @@ Kyogre:
     habitat: Water
     biomes: [DeepOcean, Beach]
     active: any
+    rank: legendary
   # Worn rather than met: a Blue Orb held into a fight returns it to
   # the shape it had before anybody was around to see it
   KyogrePrimal:
@@ -61,6 +67,7 @@ Groudon:
     egg-groups: [NoEggsDiscovered]
     biomes: [Volcano, Beach]
     active: any
+    rank: legendary
   # And the Red Orb does the same for the land
   GroudonPrimal:
     types: [Ground, Fire]
@@ -74,6 +81,7 @@ Rayquaza:
     egg-groups: [NoEggsDiscovered]
     biomes: [Ocean, Beach]
     active: any
+    rank: legendary
 Jirachi:
   Jirachi:
     types: [Steel, Psychic]
@@ -84,6 +92,7 @@ Jirachi:
     # nobody walks out looking for
     biomes: [Badlands]
     active: any
+    rank: mythical
 Deoxys:
   Deoxys:
     types: [Psychic]
@@ -100,6 +109,9 @@ Deoxys:
       - species: DeoxysSpeed
         method: [UsedItem]
         item: Meteorite
+    # Every arrangement of Deoxys is mythical, since each is owned rather
+    # than worn for a fight
+    rank: mythical
   DeoxysAttack:
     types: [Psychic]
     egg-groups: [NoEggsDiscovered]
@@ -116,6 +128,7 @@ Deoxys:
       - species: DeoxysSpeed
         method: [UsedItem]
         item: Meteorite
+    rank: mythical
   DeoxysDefense:
     types: [Psychic]
     egg-groups: [NoEggsDiscovered]
@@ -132,6 +145,7 @@ Deoxys:
       - species: DeoxysSpeed
         method: [UsedItem]
         item: Meteorite
+    rank: mythical
   DeoxysSpeed:
     types: [Psychic]
     egg-groups: [NoEggsDiscovered]
@@ -148,3 +162,4 @@ Deoxys:
       - species: DeoxysDefense
         method: [UsedItem]
         item: Meteorite
+    rank: mythical

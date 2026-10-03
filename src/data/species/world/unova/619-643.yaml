@@ -163,12 +163,18 @@ Larvesta:
       - species: Volcarona
         method: [Level]
         level: 59
+    # Met as rarely as a baby: half of what the games make of the moth the
+    # desert once mistook for the sun. The other half is Volcarona
+    rank: prized
   Volcarona:
     types: [Bug, Fire]
     egg-groups: [Bug]
     biomes: [Desert]
     active: [Morning, Day]
     evolves-from: Larvesta
+    # Not one-per-world the way the rest are, but it answers to the Relic
+    # Castle, and what a raid stages is the legendary set
+    rank: legendary
 # The three that stood between the pokemon and a burning forest, and
 # have kept standing since. They are built to one plan: the same
 # fourteen moves at the same levels, the same 580 spread turned a
@@ -179,18 +185,21 @@ Cobalion:
     egg-groups: [NoEggsDiscovered]
     biomes: [Mountain]
     active: any
+    rank: legendary
 Terrakion:
   Terrakion:
     types: [Rock, Fighting]
     egg-groups: [NoEggsDiscovered]
     biomes: [Mountain, Badlands]
     active: any
+    rank: legendary
 Virizion:
   Virizion:
     types: [Grass, Fighting]
     egg-groups: [NoEggsDiscovered]
     biomes: [TemperateForest, Woodland]
     active: any
+    rank: legendary
 Tornadus:
   # What the tornadus knows, in either shape
 
@@ -211,6 +220,7 @@ Tornadus:
     egg-groups: [NoEggsDiscovered]
     biomes: [Grassland]
     active: any
+    rank: legendary
   # The other shape each one takes. It carries the ability that shape
   # is known by and nothing else, the way the mainline has it, and
   # nothing hands a catch one of these until the mirror is written
@@ -225,6 +235,7 @@ Thundurus:
     egg-groups: [NoEggsDiscovered]
     biomes: [Grassland]
     active: any
+    rank: legendary
   ThundurusTherian:
     types: [Electric, Flying]
     egg-groups: [NoEggsDiscovered]
@@ -246,3 +257,4 @@ Reshiram:
     egg-groups: [NoEggsDiscovered]
     biomes: [Taiga, Tundra]
     active: any
+    rank: legendary

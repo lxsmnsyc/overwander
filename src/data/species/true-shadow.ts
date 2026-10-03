@@ -91,6 +91,9 @@ export default function registerTrueShadowSpecies(): void {
       // Met in the dark and nowhere else, so no biome lists one and
       // no pool stages one: the sky is what decides, not the country
       biomes: [],
+      // It keeps its counterpart's rank, which is what stages it in the
+      // same band, but nothing wild carries anything into the dark
+      heldItems: undefined,
     });
   }
 }

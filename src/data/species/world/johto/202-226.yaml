@@ -15,12 +15,14 @@ Wobbuffet:
       - species: Wobbuffet
         method: [Level]
         level: 15
+    rank: baby
 Girafarig:
   Girafarig:
     types: [Normal, Psychic]
     egg-groups: [Field]
     biomes: [Savanna, Grassland, Steppe]
     active: any
+    awaiting: evolution
 Pineco:
   Pineco:
     types: [Bug]
@@ -43,6 +45,7 @@ Dunsparce:
     egg-groups: [Field]
     biomes: [Mountain, Steppe, Badlands]
     active: any
+    awaiting: evolution
 Gligar:
   Gligar:
     types: [Ground, Flying]
@@ -132,6 +135,7 @@ Teddiursa:
     biomes: [Taiga, MontaneForest, TemperateForest]
     active: [Morning, Day]
     evolves-from: Teddiursa
+    awaiting: evolution
 Slugma:
   Slugma:
     types: [Fire]
@@ -229,3 +233,4 @@ Mantine:
       - species: Mantine
         method: [Level]
         level: 32
+    rank: baby

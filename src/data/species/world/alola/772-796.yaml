@@ -10,12 +10,16 @@ TypeNull:
     evolves-into:
       - species: Silvally
         method: [Friendship]
+    # The line is made rather than born, so it is never common
+    rank: prized
   Silvally:
     types: [Normal]
     egg-groups: [NoEggsDiscovered]
     biomes: [Beach]
     active: any
     evolves-from: TypeNull
+    # Staged by its lair and raided there
+    rank: legendary
   SilvallyFighting:
     types: [Fighting]
     egg-groups: [NoEggsDiscovered]
@@ -271,18 +275,21 @@ TapuKoko:
     egg-groups: [NoEggsDiscovered]
     biomes: [TropicalSeasonalForest]
     active: any
+    rank: legendary
 TapuLele:
   TapuLele:
     types: [Psychic, Fairy]
     egg-groups: [NoEggsDiscovered]
     biomes: [TropicalRainforest]
     active: any
+    rank: legendary
 TapuBulu:
   TapuBulu:
     types: [Grass, Fairy]
     egg-groups: [NoEggsDiscovered]
     biomes: [Desert]
     active: any
+    rank: legendary
 TapuFini:
   TapuFini:
     types: [Water, Fairy]
@@ -291,6 +298,7 @@ TapuFini:
     habitat: Amphibious
     biomes: [RockyCoast]
     active: any
+    rank: legendary
 Cosmog:
   # The nebula that grows into the sun or the moon. Which one is the
   # hour it finishes growing at: by day a Solgaleo, by night a Lunala
@@ -303,6 +311,8 @@ Cosmog:
       - species: Cosmoem
         method: [Level]
         level: 43
+    # The light pair before it grows, as rare as the line is
+    rank: prized
   Cosmoem:
     types: [Psychic]
     egg-groups: [NoEggsDiscovered]
@@ -318,18 +328,21 @@ Cosmog:
         method: [Level, TimeOfDay]
         level: 53
         time: [Evening, Night]
+    rank: prized
   Solgaleo:
     types: [Psychic, Steel]
     egg-groups: [NoEggsDiscovered]
     biomes: [Badlands]
     active: any
     evolves-from: Cosmoem
+    rank: legendary
   Lunala:
     types: [Psychic, Ghost]
     egg-groups: [NoEggsDiscovered]
     biomes: [Badlands]
     active: any
     evolves-from: Cosmoem
+    rank: legendary
 Nihilego:
   # The creatures that came through the wormholes from Ultra Space. Each
   # is met in the country most like the world it came from
@@ -341,6 +354,8 @@ Nihilego:
     # Ultra Deep Sea
     biomes: [Ocean]
     active: any
+    # The Ultra Beasts are staged by their lairs the way a legendary is
+    rank: legendary
 Buzzwole:
   Buzzwole:
     types: [Bug, Fighting]
@@ -348,6 +363,7 @@ Buzzwole:
     # Ultra Jungle
     biomes: [TropicalRainforest]
     active: any
+    rank: legendary
 Pheromosa:
   Pheromosa:
     types: [Bug, Fighting]
@@ -355,6 +371,7 @@ Pheromosa:
     # Ultra Desert
     biomes: [Desert]
     active: any
+    rank: legendary
 Xurkitree:
   Xurkitree:
     types: [Electric]
@@ -362,3 +379,4 @@ Xurkitree:
     # Ultra Plant
     biomes: [Badlands]
     active: any
+    rank: legendary

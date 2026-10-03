@@ -146,6 +146,7 @@ Onix:
     height: 8.8
     weight: 210
     gender: [1, 1]
+    egg-cycles: 25
   Steelix:
     stats: { HP: 75, Attack: 85, Defense: 200, SpecialAttack: 55, SpecialDefense: 65, Speed: 30 }
     catch-rate: 25

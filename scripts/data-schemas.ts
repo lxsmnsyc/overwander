@@ -130,6 +130,25 @@ const WORLD = block(
         name('species'),
         'What its eggs hatch into, when not the bottom of its line',
       ),
+      held: described(
+        part(
+          {
+            common: described(name('item'), 'Carried by half of them'),
+            uncommon: described(name('item'), 'One in twenty'),
+            rare: described(name('item'), 'One in a hundred'),
+          },
+          [],
+        ),
+        'What a wild one carries when it is met',
+      ),
+      rank: described(
+        { enum: ['legendary', 'mythical', 'baby', 'prized', 'mythical-odds'] },
+        'A hand-kept class the shape of its line cannot say',
+      ),
+      awaiting: described(
+        { enum: ['baby', 'evolution'] },
+        'A stage of its line a later generation adds that is not registered yet',
+      ),
     },
     ['types', 'egg-groups', 'active'],
   ),
@@ -158,6 +177,7 @@ function renderStats(stats: string[]): Schema {
           },
           'Male to female, as `[1, 1]`, or `genderless`',
         ),
+        'egg-cycles': described(COUNT, 'Hatch cycles, where not the default 20'),
       },
       ['stats', 'catch-rate', 'height', 'weight', 'gender'],
     ),

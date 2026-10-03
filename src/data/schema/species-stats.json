@@ -84,6 +84,11 @@
             }
           ],
           "description": "Male to female, as `[1, 1]`, or `genderless`"
+        },
+        "egg-cycles": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Hatch cycles, where not the default 20"
         }
       },
       "required": [

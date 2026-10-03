@@ -339,11 +339,14 @@ Scatterbug:
     egg-groups: [Bug]
     active: any
     base-form: false
+    # No country grows these wings, so a town is the only place one is met
+    rank: prized
   VivillonPokeBall:
     types: [Bug, Flying]
     egg-groups: [Bug]
     active: any
     base-form: false
+    rank: mythical-odds
 Litleo:
   # The lion cub and the king it grows into. Nothing is staged yet:
   # nobody has drawn a male Pyroar, so the line waits for its art
@@ -510,6 +513,7 @@ Flabebe:
     egg-groups: [Fairy]
     active: any
     base-form: false
+    rank: mythical-odds
 # The pasture the goats graze, both stages alike
 Skiddo:
   Skiddo:

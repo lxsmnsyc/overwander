@@ -62,6 +62,7 @@ Caterpie:
     height: 0.3
     weight: 2.9
     gender: [1, 1]
+    egg-cycles: 15
   Metapod:
     stats: { HP: 50, Attack: 20, Defense: 55, SpecialAttack: 25, SpecialDefense: 25, Speed: 30 }
     catch-rate: 120
@@ -81,6 +82,7 @@ Weedle:
     height: 0.3
     weight: 3.2
     gender: [1, 1]
+    egg-cycles: 15
   Kakuna:
     stats: { HP: 45, Attack: 25, Defense: 50, SpecialAttack: 25, SpecialDefense: 25, Speed: 35 }
     catch-rate: 120
@@ -100,6 +102,7 @@ Pidgey:
     height: 0.3
     weight: 1.8
     gender: [1, 1]
+    egg-cycles: 15
   Pidgeotto:
     stats: { HP: 63, Attack: 60, Defense: 55, SpecialAttack: 50, SpecialDefense: 50, Speed: 71 }
     catch-rate: 120
@@ -119,6 +122,7 @@ Rattata:
     height: 0.3
     weight: 3.5
     gender: [1, 1]
+    egg-cycles: 15
   Raticate:
     stats: { HP: 55, Attack: 81, Defense: 60, SpecialAttack: 50, SpecialDefense: 70, Speed: 97 }
     catch-rate: 127
@@ -144,6 +148,7 @@ Spearow:
     height: 0.3
     weight: 2
     gender: [1, 1]
+    egg-cycles: 15
   Fearow:
     stats: { HP: 65, Attack: 90, Defense: 65, SpecialAttack: 61, SpecialDefense: 61, Speed: 100 }
     catch-rate: 90
@@ -182,6 +187,7 @@ Pikachu:
     height: 0.3
     weight: 2
     gender: &a1 [1, 1]
+    egg-cycles: 10
   PichuSpikyEared:
     # Pichu's own spread, 65 higher in every stat
     stats: { HP: 85, Attack: 105, Defense: 80, SpecialAttack: 100, SpecialDefense: 100, Speed: 125 }

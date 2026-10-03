@@ -3,9 +3,16 @@ import { SpawnSurface, TimeOfDay } from '../ids/biome';
 import EggGroups from '../ids/egg-groups';
 import type Families from '../ids/families';
 import Abilities from '../ids/abilities';
-import { DEOXYS_FORMS, Habitat, Species, UNOWN_FORMS, getBaseFormSpecies } from '../ids/species';
+import { Habitat, Species, UNOWN_FORMS, getBaseFormSpecies } from '../ids/species';
 import { Types } from '../constants/types';
-import { getBaseSpecies, getHabitat, getSpeciesAbilities, getSpeciesData } from '../species';
+import {
+  type SpeciesRank,
+  findSpeciesData,
+  getBaseSpecies,
+  getHabitat,
+  getSpeciesAbilities,
+  getSpeciesData,
+} from '../species';
 
 /**
  * One weighted slot of a biome's spawn pool
@@ -522,7 +529,7 @@ const EGG_POOLS = new WeakMap<SpawnRarityGroups, SpawnEntry[]>();
  * its line and would be counted twice. That leaves out the unown,
  * which has no line to walk back along: it is met rather than hatched.
  * A line whose baby the game has yet to register is left out too, for
- * the reason `AWAITING_BABY_SPECIES` gives
+ * the reason `isAwaitingBaby` gives
  */
 export function getEggPool(biome: Biome, time: TimeOfDay): SpawnEntry[] {
   const groups = getBiomeRoster(biome, time);
@@ -743,124 +750,14 @@ export const SPECIAL_SPAWN_ODDS = 1 / 4096;
 export const MYTHICAL_SPAWN_ODDS = SPECIAL_SPAWN_ODDS;
 
 /**
- * The one-per-world class: Gen 1 legendaries and Mew. Future gens
- * add their legendaries, mythicals, unowns, ultra beasts and
- * paradoxes here
+ * Which hand-kept class a species is in, written as `rank:` beside it
+ * in its `species/world/` file: legendary, mythical, baby, prized or
+ * mythical-odds. A true shadow takes its counterpart's. Placeholders
+ * (Missingno, an egg, a substitute) are in none
  */
-/**
- * Legendaries: the special-tier species a raid can stage. Mythicals
- * are deliberately not here — they are gifts, not encounters
- */
-const LEGENDARY_SPECIES = new Set<Species>([
-  Species.Articuno,
-  Species.Zapdos,
-  Species.Moltres,
-  // The true shadows, which a dark day stages in the same band their
-  // counterparts stand in
-  Species.ArticunoShadow,
-  Species.ZapdosShadow,
-  Species.MoltresShadow,
-  Species.MewtwoShadow,
-  Species.RaikouShadow,
-  Species.EnteiShadow,
-  Species.SuicuneShadow,
-  Species.LugiaShadow,
-  Species.HoOhShadow,
-  Species.Mewtwo,
-  Species.Raikou,
-  Species.Entei,
-  Species.Suicune,
-  Species.Lugia,
-  Species.HoOh,
-  Species.Regirock,
-  Species.Regice,
-  Species.Registeel,
-  Species.Latias,
-  Species.Latios,
-  Species.Kyogre,
-  Species.Groudon,
-  Species.Rayquaza,
-  Species.Uxie,
-  Species.Mesprit,
-  Species.Azelf,
-  Species.Dialga,
-  Species.Palkia,
-  Species.Giratina,
-  Species.Cresselia,
-  Species.Heatran,
-  Species.Regigigas,
-  // Not one-per-world the way the rest are, but it answers to the
-  // Relic Castle, and what a raid stages is this set
-  Species.Volcarona,
-  Species.Cobalion,
-  Species.Terrakion,
-  Species.Virizion,
-  Species.Reshiram,
-  Species.Zekrom,
-  Species.Kyurem,
-  Species.Xerneas,
-  Species.Yveltal,
-  Species.Zygarde,
-  Species.ZygardeTenPercent,
-  Species.Tornadus,
-  Species.Thundurus,
-  Species.Landorus,
-  // Staged by its lair and raided there. Type: Null below it is prized
-  // instead: the line is made rather than born, so it is never common
-  Species.Silvally,
-  Species.TapuKoko,
-  Species.TapuLele,
-  Species.TapuBulu,
-  Species.TapuFini,
-  Species.Solgaleo,
-  Species.Lunala,
-  Species.Necrozma,
-  // The Ultra Beasts, staged by their lairs the way a legendary is
-  Species.Nihilego,
-  Species.Buzzwole,
-  Species.Pheromosa,
-  Species.Xurkitree,
-  Species.Celesteela,
-  Species.Kartana,
-  Species.Guzzlord,
-  Species.Stakataka,
-  Species.Blacephalon,
-]);
-
-/**
- * Mythicals: special-tier, and never staged by the world. A landmark
- * will not roll one — the only way to face a mythical is to carry the
- * relic that calls it, which is what a raid item is
- */
-const MYTHICAL_SPECIES = new Set<Species>([
-  Species.Mew,
-  Species.Celebi,
-  Species.Jirachi,
-  // Every arrangement of Deoxys, since each is one a player owns
-  // rather than a shape one wears for a fight
-  ...DEOXYS_FORMS,
-  Species.Darkrai,
-  Species.Manaphy,
-  Species.Shaymin,
-  Species.Arceus,
-  Species.Keldeo,
-  Species.Victini,
-  // The bare ones only: the step and the four cassettes are worn for
-  // a fight rather than owned, the way Shaymin Sky is
-  Species.Meloetta,
-  Species.Genesect,
-  Species.Diancie,
-  // The bound shape only: unbound is worn while the bottle is held
-  Species.Hoopa,
-  Species.Volcanion,
-  // Both colours of Magearna are owned rather than worn
-  Species.Magearna,
-  Species.MagearnaOriginal,
-  Species.Marshadow,
-  Species.Zeraora,
-  Species.Meltan,
-  Species.Melmetal,
-]);
+function rankOf(species: Species): SpeciesRank | undefined {
+  return findSpeciesData(species)?.rank;
+}
 
 /**
  * Whether the species is a legendary, the only kind a legendary raid
@@ -868,7 +765,7 @@ const MYTHICAL_SPECIES = new Set<Species>([
  * mythicals answer false
  */
 export function isLegendarySpecies(species: Species): boolean {
-  return LEGENDARY_SPECIES.has(species);
+  return rankOf(species) === 'legendary';
 }
 
 /**
@@ -876,36 +773,8 @@ export function isLegendarySpecies(species: Species): boolean {
  * call. A legendary answers false: those are the world's to stage
  */
 export function isMythicalSpecies(species: Species): boolean {
-  return MYTHICAL_SPECIES.has(species);
+  return rankOf(species) === 'mythical';
 }
-
-/**
- * Babies: the first stage of a line that a later gen put in front of
- * what used to be the first stage. They can still evolve, so nothing
- * about the shape of their line would place them — a baby reads as an
- * ordinary Base species — and meeting one in the wild is meant to be
- * a story. Gen 1 has none; future gens register theirs here
- */
-const BABY_SPECIES = new Set<Species>([
-  Species.Pichu,
-  Species.Cleffa,
-  Species.Igglybuff,
-  Species.Togepi,
-  Species.Tyrogue,
-  Species.Smoochum,
-  Species.Elekid,
-  Species.Magby,
-  Species.Azurill,
-  Species.Wynaut,
-  Species.Bonsly,
-  Species.MimeJr,
-  Species.Happiny,
-  Species.Munchlax,
-  Species.Mantyke,
-  Species.Budew,
-  Species.Chingling,
-  Species.Riolu,
-]);
 
 /**
  * The unowns. One species wearing many faces, and the point of it is
@@ -913,34 +782,6 @@ const BABY_SPECIES = new Set<Species>([
  * collected over months
  */
 const UNOWN_SPECIES = new Set<Species>(UNOWN_FORMS);
-
-/**
- * Staged above the band its line's shape would earn. A Larvesta is
- * met as rarely as a baby, which is half of what the games make of
- * the moth the desert once mistook for the sun. The other half is the
- * moth itself, which is a legendary here and sits in that set.
- *
- * The fancy Vivillon is the other: no country grows those wings, so a
- * town is the only place one is ever met
- */
-const PRIZED_BY_HAND = new Set<Species>([
-  Species.Larvesta,
-  Species.VivillonFancy,
-  Species.TypeNull,
-  // The nebula and the protostar are the light pair before it grows,
-  // so they are as rare as the line is
-  Species.Cosmog,
-  Species.Cosmoem,
-  // A gift in the mainline, so it is as rare here as the made ones
-  Species.Poipole,
-]);
-
-/** Met as rarely as a mythical, but no relic calls it and no raid stages it */
-const MYTHICAL_BY_HAND = new Set<Species>([
-  Species.PichuSpikyEared,
-  Species.FloetteEternal,
-  Species.VivillonPokeBall,
-]);
 
 /**
  * The unowns as prized-band entries, for a pool to spread into its
@@ -970,61 +811,19 @@ export const UNOWN_SPAWNS: SpawnEntry[] = (() => {
 export const PRIZED_WEIGHT = UNOWN_SPAWNS.length;
 
 /**
- * Species whose baby the game does not have yet.
- *
- * A nest lays the first stage of a line, and for these that stage is
- * a pokemon a later gen put in front of them: a Pikachu hatches from
- * a Pichu, not from a Pikachu. Until the baby is registered the walk
- * back stops one stage short and the nest lays the wrong thing, and
- * an egg already laid keeps the answer it was laid under. So they are
- * left out of nests rather than hatched as themselves.
- *
- * Every entry leaves this list the moment its baby is registered.
- * They are still met in the wild, still bred and still evolved: this
- * is about what a nest holds and nothing else
- */
-const AWAITING_BABY_SPECIES = new Set<Species>([
-  // Every baby the game knows about is registered. A later
-  // generation's babies belong here as they are written down
-]);
-
-/**
  * Whether the species hatches from something the game has not
  * registered yet, which is what keeps it out of a nest
  */
 export function isAwaitingBaby(species: Species): boolean {
-  return AWAITING_BABY_SPECIES.has(species);
+  return findSpeciesData(species)?.awaiting === 'baby';
 }
-
-/**
- * Species whose evolution the game does not have yet.
- *
- * A later gen gives each of these somewhere to go, so the band they
- * belong in is the one a middle stage sits in rather than the one a
- * finished pokemon does. Without this a Togetic would be drawn as
- * rarely as a Nidoking and then turn out to be a stage short.
- *
- * A regional form's evolution does not count: a Sirfetch'd is a
- * Galarian Farfetch'd's, and the one this game stages has nowhere to
- * go. Every entry leaves this list the moment its evolution is
- * registered
- */
-const AWAITING_EVOLUTION_SPECIES = new Set<Species>([
-  // Gen 8 evolutions
-  Species.Ursaring,
-  Species.Stantler,
-  // Gen 9 evolutions
-  Species.Primeape,
-  Species.Girafarig,
-  Species.Dunsparce,
-]);
 
 /**
  * Whether the species evolves into something the game has not
  * registered yet, which is what keeps it out of the rare band
  */
 export function isAwaitingEvolution(species: Species): boolean {
-  return AWAITING_EVOLUTION_SPECIES.has(species);
+  return findSpeciesData(species)?.awaiting === 'evolution';
 }
 
 /**
@@ -1044,7 +843,7 @@ export function isGrownSpecies(species: Species): boolean {
  * anything the shape of a line can be read off
  */
 export function isPrizedSpecies(species: Species): boolean {
-  return BABY_SPECIES.has(species) || UNOWN_SPECIES.has(species);
+  return rankOf(species) === 'baby' || UNOWN_SPECIES.has(species);
 }
 
 /**
@@ -1057,7 +856,7 @@ export function getLineStage(species: Species): number {
   let stage = 0;
 
   for (;;) {
-    if (!BABY_SPECIES.has(at)) {
+    if (rankOf(at) !== 'baby') {
       stage += 1;
     }
 
@@ -1082,7 +881,7 @@ export function getLineStage(species: Species): number {
  * the line is one stage long however many shapes it takes
  */
 function stagesBelow(species: Species): number {
-  const own = BABY_SPECIES.has(species) ? 0 : 1;
+  const own = rankOf(species) === 'baby' ? 0 : 1;
   const dex = getSpeciesData(species).dexNumber;
   const below: number[] = [];
 
@@ -1113,15 +912,17 @@ export function getSpawnRarity(species: Species): SpawnRarity {
   // The two are asked apart rather than together: what stages one is
   // a lair and what stages the other is a relic, and everything that
   // reads a rarity wants to know which
-  if (MYTHICAL_SPECIES.has(species) || MYTHICAL_BY_HAND.has(species)) {
+  const rank = rankOf(species);
+
+  if (rank === 'mythical' || rank === 'mythical-odds') {
     return SpawnRarity.Mythical;
   }
-  if (LEGENDARY_SPECIES.has(species)) {
+  if (rank === 'legendary') {
     return SpawnRarity.Special;
   }
   // Asked before the shape of the line is, since a baby evolves like
   // any other first stage and would otherwise read as Base
-  if (isPrizedSpecies(species) || PRIZED_BY_HAND.has(species)) {
+  if (isPrizedSpecies(species) || rank === 'prized') {
     return SpawnRarity.Prized;
   }
 

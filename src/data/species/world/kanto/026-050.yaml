@@ -8,12 +8,14 @@ Sandshrew:
       - species: Sandslash
         method: [Level]
         level: 22
+    held: { common: TinyMushroom, uncommon: SoftSand, rare: QuickClaw }
   Sandslash:
     types: [Ground]
     egg-groups: [Field]
     biomes: [Desert, Badlands]
     active: [Day, Evening]
     evolves-from: Sandshrew
+    held: { common: TinyMushroom, uncommon: SoftSand, rare: QuickClaw }
   SandshrewAlola:
     types: [Ice, Steel]
     egg-groups: [Field]
@@ -41,6 +43,7 @@ NidoranF:
       - species: Nidorina
         method: [Level]
         level: 16
+    held: { common: PechaBerry, uncommon: PoisonBarb, rare: MoonStone }
   Nidorina:
     types: [Poison]
     egg-groups: [Monster, Field]
@@ -51,12 +54,14 @@ NidoranF:
       - species: Nidoqueen
         method: [UsedItem]
         item: MoonStone
+    held: { common: PechaBerry, uncommon: PoisonBarb, rare: MoonStone }
   Nidoqueen:
     types: [Poison, Ground]
     egg-groups: [Monster, Field]
     biomes: [Grassland, Savanna, Woodland]
     active: any
     evolves-from: Nidorina
+    held: { common: PechaBerry, uncommon: PoisonBarb, rare: MoonStone }
 NidoranM:
   NidoranM:
     types: [Poison]
@@ -67,6 +72,7 @@ NidoranM:
       - species: Nidorino
         method: [Level]
         level: 16
+    held: { common: PechaBerry, uncommon: PoisonBarb, rare: MoonStone }
   Nidorino:
     types: [Poison]
     egg-groups: [Monster, Field]
@@ -77,12 +83,14 @@ NidoranM:
       - species: Nidoking
         method: [UsedItem]
         item: MoonStone
+    held: { common: PechaBerry, uncommon: PoisonBarb, rare: MoonStone }
   Nidoking:
     types: [Poison, Ground]
     egg-groups: [Monster, Field]
     biomes: [Grassland, Savanna, Woodland]
     active: any
     evolves-from: Nidorino
+    held: { common: PechaBerry, uncommon: PoisonBarb, rare: MoonStone }
 Clefairy:
   Clefairy:
     types: [Fairy]
@@ -94,12 +102,14 @@ Clefairy:
       - species: Clefable
         method: [UsedItem]
         item: MoonStone
+    held: { common: OranBerry, uncommon: Stardust, rare: MoonStone }
   Clefable:
     types: [Fairy]
     egg-groups: [Fairy]
     biomes: [Mountain]
     active: [Night]
     evolves-from: Clefairy
+    held: { common: OranBerry, uncommon: Stardust, rare: MoonStone }
   Cleffa:
     types: [Fairy]
     # A baby lays no egg of its own: the stage above it does
@@ -109,6 +119,7 @@ Clefairy:
     evolves-into:
       - species: Clefairy
         method: [Friendship]
+    rank: baby
 Vulpix:
   Vulpix:
     types: [Fire]
@@ -119,12 +130,14 @@ Vulpix:
       - species: Ninetales
         method: [UsedItem]
         item: FireStone
+    held: { common: RawstBerry, uncommon: Charcoal }
   Ninetales:
     types: [Fire]
     egg-groups: [Field]
     biomes: [Woodland, Shrubland, Taiga, Volcano]
     active: [Evening, Night]
     evolves-from: Vulpix
+    held: { common: RawstBerry, uncommon: Charcoal }
   VulpixAlola:
     types: [Ice]
     egg-groups: [Field]
@@ -153,12 +166,14 @@ Jigglypuff:
       - species: Wigglytuff
         method: [UsedItem]
         item: MoonStone
+    held: { common: OranBerry, uncommon: SilkScarf, rare: MoonStone }
   Wigglytuff:
     types: [Normal, Fairy]
     egg-groups: [Fairy]
     biomes: [Grassland, Woodland]
     active: [Evening, Night]
     evolves-from: Jigglypuff
+    held: { common: OranBerry, uncommon: SilkScarf, rare: MoonStone }
   Igglybuff:
     types: [Normal, Fairy]
     # A baby lays no egg of its own: the stage above it does
@@ -168,6 +183,7 @@ Jigglypuff:
     evolves-into:
       - species: Jigglypuff
         method: [Friendship]
+    rank: baby
 Zubat:
   Zubat:
     types: [Poison, Flying]
@@ -178,6 +194,7 @@ Zubat:
       - species: Golbat
         method: [Level]
         level: 22
+    held: { common: PechaBerry, uncommon: SharpBeak, rare: PoisonBarb }
   Golbat:
     types: [Poison, Flying]
     egg-groups: [Flying]
@@ -187,6 +204,7 @@ Zubat:
     evolves-into:
       - species: Crobat
         method: [Friendship]
+    held: { common: PechaBerry, uncommon: SharpBeak, rare: PoisonBarb }
   Crobat:
     types: [Poison, Flying]
     egg-groups: [Flying]
@@ -203,6 +221,7 @@ Oddish:
       - species: Gloom
         method: [Level]
         level: 21
+    held: { common: OranBerry, uncommon: MiracleSeed, rare: PoisonBarb }
   Gloom:
     types: [Grass, Poison]
     egg-groups: [Grass]
@@ -216,12 +235,14 @@ Oddish:
       - species: Bellossom
         method: [UsedItem]
         item: SunStone
+    held: { common: OranBerry, uncommon: MiracleSeed, rare: PoisonBarb }
   Vileplume:
     types: [Grass, Poison]
     egg-groups: [Grass]
     biomes: [Grassland, TemperateForest, Woodland, Bog]
     active: [Evening, Night]
     evolves-from: Gloom
+    held: { common: OranBerry, uncommon: MiracleSeed, rare: PoisonBarb }
   Bellossom:
     types: [Grass]
     egg-groups: [Grass]
@@ -238,12 +259,14 @@ Paras:
       - species: Parasect
         method: [Level]
         level: 24
+    held: { common: TinyMushroom, uncommon: BigMushroom }
   Parasect:
     types: [Bug, Grass]
     egg-groups: [Bug, Grass]
     biomes: [TemperateForest, MontaneForest, Taiga]
     active: [Night]
     evolves-from: Paras
+    held: { common: TinyMushroom, uncommon: BigMushroom }
 Venonat:
   Venonat:
     types: [Bug, Poison]
@@ -254,12 +277,14 @@ Venonat:
       - species: Venomoth
         method: [Level]
         level: 31
+    held: { common: OranBerry, uncommon: SilverPowder, rare: LaxIncense }
   Venomoth:
     types: [Bug, Poison]
     egg-groups: [Bug]
     biomes: [TemperateForest, TemperateRainforest, Bog]
     active: [Evening, Night]
     evolves-from: Venonat
+    held: { common: OranBerry, uncommon: SilverPowder, rare: LaxIncense }
 Diglett:
   Diglett:
     types: [Ground]
@@ -270,12 +295,14 @@ Diglett:
       - species: Dugtrio
         method: [Level]
         level: 26
+    held: { common: TinyMushroom, uncommon: SoftSand, rare: QuickClaw }
   Dugtrio:
     types: [Ground]
     egg-groups: [Field]
     biomes: [Mountain, Desert, ColdDesert]
     active: any
     evolves-from: Diglett
+    held: { common: TinyMushroom, uncommon: SoftSand, rare: QuickClaw }
   DiglettAlola:
     types: [Ground, Steel]
     egg-groups: [Field]

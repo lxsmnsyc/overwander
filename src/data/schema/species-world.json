@@ -152,6 +152,43 @@
         "egg-species": {
           "$ref": "names.json#/definitions/species",
           "description": "What its eggs hatch into, when not the bottom of its line"
+        },
+        "held": {
+          "type": "object",
+          "properties": {
+            "common": {
+              "$ref": "names.json#/definitions/item",
+              "description": "Carried by half of them"
+            },
+            "uncommon": {
+              "$ref": "names.json#/definitions/item",
+              "description": "One in twenty"
+            },
+            "rare": {
+              "$ref": "names.json#/definitions/item",
+              "description": "One in a hundred"
+            }
+          },
+          "required": [],
+          "additionalProperties": false,
+          "description": "What a wild one carries when it is met"
+        },
+        "rank": {
+          "enum": [
+            "legendary",
+            "mythical",
+            "baby",
+            "prized",
+            "mythical-odds"
+          ],
+          "description": "A hand-kept class the shape of its line cannot say"
+        },
+        "awaiting": {
+          "enum": [
+            "baby",
+            "evolution"
+          ],
+          "description": "A stage of its line a later generation adds that is not registered yet"
         }
       },
       "required": [

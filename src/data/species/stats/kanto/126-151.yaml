@@ -11,6 +11,7 @@ Magmar:
     height: 0.7
     weight: 21.4
     gender: [3, 1]
+    egg-cycles: 25
   Magmortar:
     stats: { HP: 75, Attack: 95, Defense: 67, SpecialAttack: 125, SpecialDefense: 95, Speed: 83 }
     catch-rate: 30
@@ -24,6 +25,7 @@ Pinsir:
     height: 1.5
     weight: 55
     gender: [1, 1]
+    egg-cycles: 25
 Tauros:
   Tauros:
     stats: { HP: 75, Attack: 100, Defense: 95, SpecialAttack: 40, SpecialDefense: 70, Speed: 110 }
@@ -38,6 +40,8 @@ Magikarp:
     height: 0.9
     weight: 10
     gender: [1, 1]
+    # The cheapest egg in the game
+    egg-cycles: 5
   Gyarados:
     stats: { HP: 95, Attack: 125, Defense: 79, SpecialAttack: 60, SpecialDefense: 100, Speed: 81 }
     catch-rate: 45
@@ -51,6 +55,7 @@ Lapras:
     height: 2.5
     weight: 220
     gender: [1, 1]
+    egg-cycles: 40
 Ditto:
   Ditto:
     stats: { HP: 48, Attack: 48, Defense: 48, SpecialAttack: 48, SpecialDefense: 48, Speed: 48 }
@@ -65,6 +70,7 @@ Eevee:
     height: 0.3
     weight: 6.5
     gender: [7, 1]
+    egg-cycles: 35
   Vaporeon:
     stats: { HP: 130, Attack: 65, Defense: 60, SpecialAttack: 110, SpecialDefense: 95, Speed: 65 }
     catch-rate: 45
@@ -139,6 +145,8 @@ Omanyte:
     height: 0.4
     weight: 7.5
     gender: [7, 1]
+    # Revived rather than born, and priced accordingly
+    egg-cycles: 30
   Omastar:
     stats: { HP: 70, Attack: 60, Defense: 125, SpecialAttack: 115, SpecialDefense: 70, Speed: 55 }
     catch-rate: 45
@@ -152,6 +160,7 @@ Kabuto:
     height: 0.5
     weight: 11.5
     gender: [7, 1]
+    egg-cycles: 30
   Kabutops:
     stats: { HP: 60, Attack: 115, Defense: 105, SpecialAttack: 65, SpecialDefense: 70, Speed: 80 }
     catch-rate: 45
@@ -165,6 +174,7 @@ Aerodactyl:
     height: 1.8
     weight: 59
     gender: [7, 1]
+    egg-cycles: 35
 Snorlax:
   Snorlax:
     stats: { HP: 160, Attack: 110, Defense: 65, SpecialAttack: 65, SpecialDefense: 110, Speed: 30 }
@@ -178,6 +188,7 @@ Snorlax:
     height: 0.6
     weight: 105
     gender: [7, 1]
+    egg-cycles: 40
 Articuno:
   Articuno:
     stats: { HP: 90, Attack: 85, Defense: 100, SpecialAttack: 95, SpecialDefense: 125, Speed: 85 }
@@ -185,6 +196,9 @@ Articuno:
     height: 1.7
     weight: 55.4
     gender: genderless
+    # Nothing lays these, so the figure only reaches a nest egg or a raid
+    # prize, but a legendary out of a shell should cost a walk
+    egg-cycles: 80
 Zapdos:
   Zapdos:
     stats: { HP: 90, Attack: 90, Defense: 85, SpecialAttack: 125, SpecialDefense: 90, Speed: 100 }
@@ -192,6 +206,7 @@ Zapdos:
     height: 1.6
     weight: 52.6
     gender: genderless
+    egg-cycles: 80
 Moltres:
   Moltres:
     stats: { HP: 90, Attack: 100, Defense: 90, SpecialAttack: 125, SpecialDefense: 85, Speed: 90 }
@@ -199,6 +214,7 @@ Moltres:
     height: 2
     weight: 60
     gender: genderless
+    egg-cycles: 80
 Dratini:
   Dratini:
     stats: { HP: 41, Attack: 64, Defense: 45, SpecialAttack: 50, SpecialDefense: 50, Speed: 50 }
@@ -206,6 +222,7 @@ Dratini:
     height: 1.8
     weight: 3.3
     gender: [1, 1]
+    egg-cycles: 40
   Dragonair:
     stats: { HP: 61, Attack: 84, Defense: 65, SpecialAttack: 70, SpecialDefense: 70, Speed: 70 }
     catch-rate: 45
@@ -225,6 +242,7 @@ Mewtwo:
     height: 2
     weight: 122
     gender: genderless
+    egg-cycles: 120
 Mew:
   Mew:
     stats:
@@ -233,3 +251,4 @@ Mew:
     height: 0.4
     weight: 4
     gender: genderless
+    egg-cycles: 120

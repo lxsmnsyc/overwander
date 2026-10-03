@@ -10,9 +10,17 @@ import {
   planCatchSearch,
 } from '../../../auth/catch-search';
 import ensureBattleData from '../../../data/battle-data';
-import { type BoxRecord, DEFAULT_BOX_NAME, listBoxes } from '../../../auth/boxes';
+import {
+  type BoxRecord,
+  DEFAULT_BOX_NAME,
+  DEFAULT_BOX_TONE,
+  boxTone,
+  listBoxes,
+} from '../../../auth/boxes';
 import { answered } from '../../app/resource-reads';
-import { Button, Dialog, DialogActions, Note, Select } from '../../styled';
+import { parseControls } from '../../../core/query';
+import { BoxIcon } from '../../icons';
+import { Button, Dialog, DialogActions, Meta, Note, Select, type SelectOption } from '../../styled';
 import PickerBox from './box';
 import type { BoxFilter, CatchOption, CatchPickerProps } from './options';
 
@@ -23,6 +31,9 @@ const ALL_BOXES = '*';
 
 /** The switcher's value for Default */
 const DEFAULT_BOX = '';
+
+/** How each order a caller may ask for is said beside the search */
+const SORT_NOTES = new Map<string, string>([['level', 'Strongest first']]);
 
 /**
  * Picking one of the player's pokemon.
@@ -147,28 +158,54 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
   };
 
   /**
-   * The switcher, drawn beside the search for a player who has made a
-   * box. Picks made in one box stay picked while another is showing
+   * Whether the picker offers its boxes to switch between: the
+   * player's own pokemon, where the caller has not fixed one box
+   */
+  const switches = (): boolean =>
+    props.box === undefined && props.viewOnly !== true && owner() === auth.user()?.uid;
+
+  /** The name of the box the switcher is on, or nothing while every box is showing */
+  const switchedName = (): string | null => {
+    const id = switched();
+
+    if (id === ALL_BOXES) {
+      return null;
+    }
+    if (id === DEFAULT_BOX) {
+      return DEFAULT_BOX_NAME;
+    }
+    for (const [made, box] of answered(boxes) ?? []) {
+      if (made === id) {
+        return box.name;
+      }
+    }
+    return null;
+  };
+
+  /**
+   * The switcher, first in the row before the search. Drawn even for a
+   * player who has made no box yet, since it is where boxes show up
+   * outside the screen that makes them
    */
   const switcher = (): JSX.Element => {
-    const made = answered(boxes) ?? [];
-
-    if (props.box !== undefined || made.length === 0) {
+    if (!switches()) {
       return null;
     }
 
-    const options = [
+    const options: SelectOption<string>[] = [
       { value: ALL_BOXES, label: 'All boxes' },
-      { value: DEFAULT_BOX, label: DEFAULT_BOX_NAME },
+      { value: DEFAULT_BOX, label: DEFAULT_BOX_NAME, tone: DEFAULT_BOX_TONE },
     ];
 
-    for (const [id, box] of made) {
-      options.push({ value: id, label: box.name });
+    for (const [id, box] of answered(boxes) ?? []) {
+      options.push({ value: id, label: box.name, tone: boxTone(box.colour) });
     }
     return (
       <Select
         label="Box"
         class="shrink-0 [&>label]:sr-only"
+        accent
+        icon={<BoxIcon class="size-4 shrink-0 text-tide-dark" aria-hidden="true" />}
         value={switched()}
         options={options}
         onChange={(value) => {
@@ -176,6 +213,35 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
         }}
       />
     );
+  };
+
+  /** What the search says it looks through, which is the box the switcher is on */
+  const placeholder = (): string | undefined => {
+    if (!switches()) {
+      return undefined;
+    }
+    const name = switchedName();
+
+    return name == null ? 'Search every box' : `Search ${name}`;
+  };
+
+  /**
+   * Said while one box of several is showing to a picker that takes
+   * more than one: a pick is not lost by switching away from its box
+   */
+  const remark = (): string | undefined =>
+    props.multiple === true && switches() && switched() !== ALL_BOXES
+      ? 'Picks made in other boxes stay picked while you look at this one.'
+      : undefined;
+
+  /** The order the caller asked for, said beside the search until a `sort:` of the player's own replaces it */
+  const sorted = (): JSX.Element => {
+    const said = props.sort == null ? undefined : SORT_NOTES.get(props.sort);
+
+    if (said == null || parseControls(query(), true).sort !== '') {
+      return null;
+    }
+    return <Meta class="shrink-0">{said}</Meta>;
   };
 
   /**
@@ -237,9 +303,12 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
           {...props}
           box={view()}
           boxes={boxes}
+          lead={switcher}
+          placeholder={placeholder()}
+          remark={remark()}
           aside={() => (
             <>
-              {switcher()}
+              {sorted()}
               {props.aside?.()}
             </>
           )}

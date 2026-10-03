@@ -69,6 +69,12 @@ export default function PickerBox(
      */
     search: string;
     onSearch: (value: string) => void;
+    /** The box switcher, before the search */
+    lead?: () => JSX.Element;
+    /** What the search says it searches */
+    placeholder?: string;
+    /** A line under the search */
+    remark?: string;
     onHandled: () => void;
     onDone: () => void;
   },
@@ -575,6 +581,9 @@ export default function PickerBox(
       <CatchGrid
         entries={entries()}
         aside={props.aside}
+        lead={props.lead}
+        placeholder={props.placeholder}
+        note={props.remark}
         search={query()}
         onSearch={(typed) => {
           props.onSearch(typed);

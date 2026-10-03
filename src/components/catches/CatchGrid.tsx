@@ -3,7 +3,7 @@ import { type CaughtPokemon, findDuplicates } from '../../auth/caught';
 import matchesCatch, { CATCH_VOCABULARY, orderCatches } from '../../auth/catch-search';
 import CatchBox, { type BoxEntry, type BoxGap, type BoxSquare, boxSizeOf, isGap } from './CatchBox';
 import settings from '../app/settings';
-import { Note, Row, Search, createPager } from '../styled';
+import { Meta, Note, Row, Search, createPager } from '../styled';
 
 /**
  * A box of squares with its furniture — the search over it, the pages
@@ -52,6 +52,12 @@ export interface CatchGridProps {
    * caller that rebuilds its own props as the box changes under it
    */
   aside?: () => JSX.Element;
+  /** What stands before the search: which box it is searching */
+  lead?: () => JSX.Element;
+  /** What the search says it searches, while nothing is typed */
+  placeholder?: string;
+  /** A line under the search, about the box as a whole */
+  note?: string;
   /** Picking a pokemon up to file it, passed to the box */
   onDragStart?: (id: string, event: DragEvent) => void;
   /** Something dropped on a square of a box that keeps gaps, by its slot */
@@ -130,6 +136,7 @@ export default function CatchGrid(props: CatchGridProps): JSX.Element {
   // Resolved once: a prop holding markup is a getter, and reading it
   // twice builds what it describes twice
   const aside = children(() => props.aside?.());
+  const lead = children(() => props.lead?.());
 
   return (
     <div class="flex w-full flex-col gap-3">
@@ -139,11 +146,12 @@ export default function CatchGrid(props: CatchGridProps): JSX.Element {
       <Show when={props.bare !== true}>
         {/* On a phone the controls beside it drop under the search rather than squeezing it */}
         <Row class="items-center gap-2 sm:flex-nowrap">
+          {lead()}
           <div class="min-w-48 grow basis-full sm:basis-0">
             <Search
               vocabulary={CATCH_VOCABULARY}
               example="type:fire"
-              placeholder="Name, or type:fire is:shiny"
+              placeholder={props.placeholder ?? 'Name, or type:fire is:shiny'}
               value={query()}
               onChange={(value) => {
                 if (props.onSearch == null) {
@@ -160,6 +168,7 @@ export default function CatchGrid(props: CatchGridProps): JSX.Element {
               changes is what a square does */}
           {aside()}
         </Row>
+        <Show when={props.note}>{(note) => <Meta>{note()}</Meta>}</Show>
       </Show>
 
       <Show

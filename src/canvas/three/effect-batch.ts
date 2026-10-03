@@ -225,6 +225,16 @@ export interface Light {
   add?: number;
 }
 
+/** A shape lying on the ground, and how flat it lies */
+export interface Lying extends Light {
+  /**
+   * How much shorter it is toward the camera than across, from 0 to 1.
+   * A ground circle seen from this camera barely shortens, so something
+   * that has to match a pokemon's flat shadow is squashed to it
+   */
+  squash?: number;
+}
+
 export default class EffectBatch {
   readonly mesh: Mesh<BufferGeometry, RawShaderMaterial>;
   private vertices = new Float32Array(ROOM * 6 * STRIDE);
@@ -239,6 +249,11 @@ export default class EffectBatch {
   private yaw = 0;
   /** How far toward the camera the next shapes are judged, in field units */
   private lift = 0;
+  /**
+   * The ground spot every shape is judged at instead, while one is
+   * set, and how far behind it
+   */
+  private plane: { at: Spot; behind: number } | null = null;
 
   constructor() {
     const material = new RawShaderMaterial({
@@ -297,11 +312,23 @@ export default class EffectBatch {
     this.toward.set(-Math.sin(yaw), 0, -Math.cos(yaw));
     this.filled = 0;
     this.lift = 0;
+    this.plane = null;
   }
 
   /** How far toward the camera what follows is judged, so it clears the body it is on */
   near(units: number): void {
     this.lift = units;
+    this.plane = null;
+  }
+
+  /**
+   * Judge what follows at the depth of one spot, a little behind it,
+   * however far it reaches. An aura is then a layer just behind its
+   * pokemon's picture: hidden by that body and by whatever stands
+   * nearer, and over whatever stands further off
+   */
+  flat(at: Spot, behind: number): void {
+    this.plane = { at, behind };
   }
 
   /** Which way the camera's right is along the ground, for spreading things across the picture */
@@ -320,8 +347,8 @@ export default class EffectBatch {
   }
 
   /** The same light lying on the ground: a pool under a fire, a flash on the floor */
-  pool(at: Spot, radius: number, colour: string, alpha: number, light: Light = {}): void {
-    this.square(at, radius, 0, packed(Shape.Glow, 0), colour, alpha, light.add ?? 1, true);
+  pool(at: Spot, radius: number, colour: string, alpha: number, light: Lying = {}): void {
+    this.lie(at, radius, packed(Shape.Glow, 0), colour, alpha, light);
   }
 
   /** A ring facing the camera. `width` is the band's share of the radius, up to 1 */
@@ -343,9 +370,9 @@ export default class EffectBatch {
     width: number,
     colour: string,
     alpha: number,
-    light: Light = {},
+    light: Lying = {},
   ): void {
-    this.square(at, radius, 0, packed(Shape.Ring, width * 4), colour, alpha, light.add ?? 1, true);
+    this.lie(at, radius, packed(Shape.Ring, width * 4), colour, alpha, light);
   }
 
   /** A streak through a point, `angle` turned on the picture with up positive */
@@ -573,6 +600,28 @@ export default class EffectBatch {
     return this.lens / Math.max(1e-6, w);
   }
 
+  /** Lying on the ground, level, and squashed toward the camera where asked */
+  private lie(
+    at: Spot,
+    radius: number,
+    look: number,
+    colour: string,
+    alpha: number,
+    light: Lying,
+  ): void {
+    const squash = light.squash ?? 1;
+
+    if (squash === 1) {
+      this.square(at, radius, 0, look, colour, alpha, light.add ?? 1, true);
+      return;
+    }
+
+    const [ax, az] = this.across;
+    const [wx, wz] = this.away;
+
+    this.lay(at, radius, ax, az, wx * squash, wz * squash, look, colour, alpha, light.add ?? 1);
+  }
+
   private square(
     at: Spot,
     radius: number,
@@ -702,8 +751,16 @@ export default class EffectBatch {
     into[to + 11] = look;
     into[to + 12] = lying;
     into[to + 13] = add;
-    into[to + 14] = lift;
+    into[to + 14] = this.plane == null ? lift : this.layered(at);
     this.filled += 1;
+  }
+
+  /** The lift that brings a spot to the depth of the plane being judged at */
+  private layered(at: Spot): number {
+    const { at: plane, behind } = this.plane ?? { at, behind: 0 };
+    const [wx, wz] = this.away;
+
+    return (at[0] - plane[0]) * wx + (at[2] - plane[2]) * wz - behind;
   }
 
   private room(): void {

@@ -4,9 +4,14 @@
  * changing what a blow is worth, refusing something, and the sky
  */
 
-export { createAbility, createContactHazard, getAbilityHolders } from './create';
+export {
+  createAbility,
+  createContactHazard,
+  createNoContactAbility,
+  getAbilityHolders,
+} from './create';
 export { createFeedScoring, createHealFeedScoring, createStageFeedScoring } from './scoring';
-export { createAbsorbStageAbility, createClearBodyAbility } from './absorb';
+export { createAbsorbStageAbility, createClearBodyAbility, createRodAbility } from './absorb';
 export { movesFlagged, movesOfType } from './matchers';
 export type { AbsorbMatcher } from './matchers';
 export {
@@ -18,6 +23,7 @@ export {
   createPolarityAbility,
   createWaterAbsorbAbility,
   createToughClawsAbility,
+  createTypeShiftAbility,
   createWeightAbility,
 } from './power';
 export {
@@ -35,5 +41,7 @@ export {
   chipImmunity,
   createCloudNineAbility,
   createDrizzleAbility,
+  createPrimalWeatherAbility,
   createSandRushAbility,
+  createSurgeAbility,
 } from './weather';

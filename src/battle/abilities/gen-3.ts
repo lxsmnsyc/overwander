@@ -21,6 +21,7 @@ import {
   createPolarityAbility,
   createRestageAbility,
   createStatusBoostAbility,
+  createTypeShiftAbility,
   createWeightAbility,
   movesFlagged,
 } from './__create';
@@ -250,13 +251,8 @@ const setupAbilities = [
    * always gets on a Normal move
    * https://bulbapedia.bulbagarden.net/wiki/Normalize_(Ability)
    */
-  createAbility(Abilities.Normalize, (battle) =>
-    battle.on(BattleEvents.CheckUnitMoveType, EventPriority.Post, (event) => {
-      if (event.source.hasAbility(Abilities.Normalize)) {
-        event.type = Types.Normal;
-      }
-    }),
-  ),
+  // Everything it throws lands as Normal, whatever it started as
+  createTypeShiftAbility(Abilities.Normalize, null, Types.Normal),
 
   createAbility(Abilities.Truant, (battle) =>
     battle.on(BattleEvents.UnitFinishCast, EventPriority.Post, (event) => {

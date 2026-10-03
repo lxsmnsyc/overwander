@@ -85,6 +85,7 @@ export default function registerBidoofSpecies(): void {
       [Stats.Speed]: 31,
     },
     types: [Types.Normal],
+    habitat: Habitat.Amphibious,
     abilities: [Abilities.Simple, Abilities.Unaware],
     hiddenAbilities: [Abilities.Moody],
     eggGroups: [EggGroups.Water1, EggGroups.Field],
@@ -178,6 +179,8 @@ export default function registerBidoofSpecies(): void {
         Moves.WaterPulse,
         Moves.Waterfall,
         Moves.Whirlpool,
+        Moves.StompingTantrum,
+        Moves.Liquidation,
       ],
     },
   });

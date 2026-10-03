@@ -8,7 +8,7 @@ import {
   MoveCategories,
   MoveFlags,
   MoveTargets,
-  Moves,
+  type Moves,
 } from '../../../data/ids/moves';
 import { getMoveData, getWeatherMove } from '../../../data/moves';
 import { Statuses, TeamStatuses, type Weathers } from '../../../data/ids/status';
@@ -22,8 +22,11 @@ import {
 } from '../../events';
 import { type Lifecycle, MergedLifecycle } from '../../lifecycle';
 import type Unit from '../../unit';
-import { isPrimalWeather, onUnitActs, slipsTraps } from '../../utils';
+import { isPrimalWeather, onUnitActs, slipsTraps, unitTarget } from '../../utils';
 import { createAbility, getAbilityHolders } from '../__create';
+import { PSEUDO_MOVES } from '../../../data/moves/pseudo';
+
+export { isPseudoMove } from '../../../data/moves/pseudo';
 
 /**
  * What the signature abilities that remember something share: state
@@ -189,18 +192,6 @@ export function allyHolder(battle: Battle, unit: Unit, ability: Abilities): Unit
   }
 
   return undefined;
-}
-
-/**
- * The moves no signature reads: a confused unit hitting itself, the
- * bare fallback swing and the last resort. None of them are the
- * pokemon's own attack, and one of them has no registry entry to ask
- */
-const PSEUDO_MOVES = new Set<Moves>([Moves._Confused, Moves.Struggle, Moves.Attack]);
-
-/** Whether the move is one of the three no signature reads */
-export function isPseudoMove(move: Moves): boolean {
-  return PSEUDO_MOVES.has(move);
 }
 
 /** Whether this is a physical move the pokemon actually chose */
@@ -1826,4 +1817,112 @@ export function createBondAbility(
       }
     });
   });
+}
+
+/**
+ * What a version pair's two curses share: a move it lands puts the
+ * caster's own type onto the target, cast as the line's signature
+ * move so the move's own rules stand. A target already carrying that
+ * type is left alone, which is what keeps it to once each
+ */
+export function createCurseAbility(
+  ability: Abilities,
+  move: Moves,
+  type: Types,
+): ((battle: Battle) => void) & { ability: Abilities } {
+  return createAbility(ability, (battle) =>
+    battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+      const target = event.target;
+      const cause = event.cause;
+
+      if (
+        !event.success ||
+        (event.flags & DamageFlags.Indirect) !== 0 ||
+        cause.type !== EffectType.Move ||
+        cause.unit.team === target.team ||
+        !cause.unit.hasAbility(ability) ||
+        target.types.has(type)
+      ) {
+        return;
+      }
+
+      cause.unit.triggerAbility(ability);
+      cause.unit.triggerMove(move, unitTarget(target), 0);
+    }),
+  );
+}
+
+/** What a spent item is worth, to either side of the field */
+export const SPENT_ITEM_STAGES = 1;
+
+/**
+ * What the two sweet shops share: finishing its own held item moves
+ * the field a step, Swirlix towards its own side and Spritzee away
+ * from the other. Only what the holder spends itself counts, so an
+ * item knocked out of its hands is nobody's
+ */
+export function createSpentItemAbility(
+  ability: Abilities,
+  own: boolean,
+): ((battle: Battle) => void) & { ability: Abilities } {
+  return createAbility(ability, (battle) =>
+    battle.on(BattleEvents.UnitRemoveItem, EventPriority.Post, (event) => {
+      const shop = event.source;
+
+      if (event.cause.type !== EffectType.Item || !shop.hasAbility(ability)) {
+        return;
+      }
+
+      shop.triggerAbility(ability);
+
+      const cause = { type: EffectType.Ability, ability, unit: shop } as const;
+
+      for (const unit of own ? shop.team.units : battle.units(shop.team.alliance)) {
+        if (unit.alive) {
+          unit.addStage(Stages.Speed, own ? SPENT_ITEM_STAGES : -SPENT_ITEM_STAGES, cause);
+        }
+      }
+    }),
+  );
+}
+
+/** What each head in an Alola starter's audience is worth, and how many count */
+export const AUDIENCE_SHARE = 0.1;
+export const AUDIENCE_LIMIT = 4;
+
+/** Who an Alola starter plays to: the far side, or its own team */
+export type AudienceKind = 'enemies' | 'team';
+
+/** How many of its audience are standing, capped at the limit */
+function audienceSize(unit: Unit, kind: AudienceKind): number {
+  let count = 0;
+  const crowd = kind === 'team' ? unit.team.units : unit.battle.units(unit.team.alliance);
+
+  for (const other of crowd) {
+    if (other !== unit && other.alive) {
+      count += 1;
+    }
+  }
+
+  return Math.min(count, AUDIENCE_LIMIT);
+}
+
+/**
+ * What the Alola starters share: each plays to a crowd, and one of its
+ * stats counts for more with every head in it. Recounted on every
+ * read, so the crowd thinning shows at once. The team is the holder's
+ * own, never the whole alliance
+ */
+export function createAudienceAbility(
+  ability: Abilities,
+  stat: Stats,
+  kind: AudienceKind,
+): ((battle: Battle) => void) & { ability: Abilities } {
+  return createAbility(ability, (battle) =>
+    battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+      if (event.stat === stat && event.source.hasAbility(ability)) {
+        event.value *= 1 + audienceSize(event.source, kind) * AUDIENCE_SHARE;
+      }
+    }),
+  );
 }

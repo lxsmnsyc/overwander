@@ -4,7 +4,8 @@ import { Statuses } from '../../data/ids/status';
 import { USELESS_PENALTY } from '../ai/score';
 import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
-import { ASLEEP_STATUSES } from '../status';
+import { ASLEEP_STATUSES, MAJOR_STATUS_CONDITIONS } from '../status';
+import { Stats } from '../../data/constants/stats';
 import { hasAnyStatus } from '../utils';
 
 /**
@@ -12,8 +13,13 @@ import { hasAnyStatus } from '../utils';
  *
  * Refresh shakes off what the user is carrying, and Smelling Salts
  * wakes a paralysed target out of it, which is what pays for the
- * doubled hit it lands at the same time.
+ * doubled hit it lands at the same time. Sparkling Aria washes a burn
+ * off whatever it hits, and Purify cleans the target's status up and
+ * is paid for it in health.
  */
+
+/** What Purify puts back on the user, as a share of its HP */
+export const PURIFY_HEAL = 0.5;
 
 /** What a Refresh reaches: everything but sleep and ice */
 const REFRESHED = new Set<Statuses>([
@@ -31,6 +37,31 @@ export default function setupCureMoves(battle: Battle): void {
       for (const status of REFRESHED) {
         event.source.removeStatus(status, cause);
       }
+      return;
+    }
+
+    if (event.move === Moves.SparklingAria && event.target.type === MoveTargetType.Unit) {
+      event.target.unit.removeStatus(Statuses.Burned, {
+        type: EffectType.Move,
+        move: event.move,
+        unit: event.source,
+      });
+    }
+
+    if (event.move === Moves.Purify && event.target.type === MoveTargetType.Unit) {
+      const target = event.target.unit;
+
+      if (!hasAnyStatus(target, MAJOR_STATUS_CONDITIONS)) {
+        event.source.triggerMoveEffectFailed(event.move, event.target, event.steps);
+        return;
+      }
+
+      const cause = { type: EffectType.Move, move: event.move, unit: event.source } as const;
+
+      for (const status of MAJOR_STATUS_CONDITIONS) {
+        target.removeStatus(status, cause);
+      }
+      event.source.heal(cause, event.source, event.source.checkStat(Stats.HP, 0) * PURIFY_HEAL, 0);
       return;
     }
 
@@ -59,6 +90,15 @@ export default function setupCureMoves(battle: Battle): void {
   battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
     if (event.move === Moves.Refresh && !hasAnyStatus(event.source, REFRESHED)) {
       event.score -= USELESS_PENALTY;
+    }
+  });
+
+  // And a Purify with nothing to clean up fails outright
+  battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
+    if (event.usable && event.move === Moves.Purify) {
+      event.usable =
+        event.target.type === MoveTargetType.Unit &&
+        hasAnyStatus(event.target.unit, MAJOR_STATUS_CONDITIONS);
     }
   });
 }

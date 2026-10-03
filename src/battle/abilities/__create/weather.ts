@@ -3,12 +3,13 @@ import type { EventListenerLifecycle } from '../../../core/event-emitter';
 import { Stats } from '../../../data/constants/stats';
 import { getWeatherMove } from '../../../data/moves';
 import type Abilities from '../../../data/ids/abilities';
+import type { Moves } from '../../../data/ids/moves';
 import { Weathers } from '../../../data/ids/status';
 import type Battle from '../../core';
 import type { CheckUnitCanDamageEvent } from '../../events';
 import { BattleEvents, EffectType, MoveTargetType } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
-import { isPrimalWeather } from '../../utils';
+import { isPrimalWeather, skyOverTeam } from '../../utils';
 import type Unit from '../../unit';
 import { createAbility } from './create';
 
@@ -68,6 +69,86 @@ export function createDrizzleAbility(
           }
 
           event.source.triggerMove(move, { type: MoveTargetType.None }, 0);
+        }),
+      ]),
+  );
+}
+
+/**
+ * Meta ability for Primordial Sea, Desolate Land and Delta Stream: a
+ * primal sky that holds for as long as its holder stands, and clears
+ * once nobody left on the field is raising it. Being primal is what
+ * keeps every other sky out while it lasts
+ * https://bulbapedia.bulbagarden.net/wiki/Primordial_Sea_(Ability)
+ */
+export function createPrimalWeatherAbility(
+  targetAbility: Abilities,
+  targetWeather: Weathers,
+): (battle: Battle) => void {
+  return createAbility(targetAbility, (battle) => {
+    function raise(unit: Unit): void {
+      if (unit.alive && unit.hasAbility(targetAbility)) {
+        unit.triggerAbility(targetAbility);
+      }
+    }
+
+    function still(unit: Unit): void {
+      if (!unit.hasAbility(targetAbility) || skyOverTeam(unit.team) !== targetWeather) {
+        return;
+      }
+      for (const other of battle.units()) {
+        if (other !== unit && other.alive && other.hasAbility(targetAbility)) {
+          return;
+        }
+      }
+      unit.setWeather(Weathers.None);
+    }
+
+    return new MergedLifecycle([
+      // Worn the moment a shape is taken, which is already on the field
+      battle.on(BattleEvents.UnitAddAbility, EventPriority.Post, (event) => {
+        raise(event.source);
+      }),
+      battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+        raise(event.source);
+      }),
+      battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+        if (event.ability === targetAbility) {
+          event.source.setWeather(targetWeather);
+        }
+      }),
+      battle.on(BattleEvents.UnitLeavesField, EventPriority.Post, (event) => {
+        still(event.source);
+      }),
+      battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
+        still(event.source);
+      }),
+    ]);
+  });
+}
+
+/**
+ * Meta ability for the terrain setters (Misty Surge, Electric Surge):
+ * they cast the terrain's move on entry, so the move's own clock runs it
+ * https://bulbapedia.bulbagarden.net/wiki/Electric_Surge_(Ability)
+ */
+export function createSurgeAbility(
+  targetAbility: Abilities,
+  terrainMove: Moves,
+): (battle: Battle) => void {
+  return createAbility(
+    targetAbility,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+          if (event.source.hasAbility(targetAbility)) {
+            event.source.triggerAbility(targetAbility);
+          }
+        }),
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+          if (event.ability === targetAbility) {
+            event.source.triggerMove(terrainMove, { type: MoveTargetType.None }, 0);
+          }
         }),
       ]),
   );

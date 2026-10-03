@@ -16,7 +16,7 @@ import type Unit from '../unit';
  * already poisoned
  * https://bulbapedia.bulbagarden.net/wiki/Rototiller_(move)
  */
-interface FieldStatMove {
+export interface FieldStatMove {
   stages: Stages[];
   value: number;
   /** Whether this unit is one the move reaches */
@@ -34,7 +34,7 @@ function isPoisoned(unit: Unit): boolean {
   return false;
 }
 
-const FIELD_STAT_MOVES: { [key in Moves]?: FieldStatMove } = {
+export const FIELD_STAT_MOVES: { [key in Moves]?: FieldStatMove } = {
   // The soil is turned, so what is not standing in it is not reached
   [Moves.Rototiller]: {
     stages: [Stages.Attack, Stages.SpecialAttack],
@@ -48,6 +48,14 @@ const FIELD_STAT_MOVES: { [key in Moves]?: FieldStatMove } = {
   },
   [Moves.MagneticFlux]: {
     stages: [Stages.Defense, Stages.SpecialDefense],
+    value: 1,
+    reaches: (unit, source) =>
+      unit.team === source.team &&
+      (unit.hasAbility(Abilities.Plus) || unit.hasAbility(Abilities.Minus)),
+  },
+  // Magnetic Flux's other half, on the attacking stats
+  [Moves.GearUp]: {
+    stages: [Stages.Attack, Stages.SpecialAttack],
     value: 1,
     reaches: (unit, source) =>
       unit.team === source.team &&

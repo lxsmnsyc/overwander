@@ -191,6 +191,7 @@ export default function registerSnubbullSpecies(): void {
         Moves.GigaImpact,
         Moves.RockClimb,
         Moves.StoneEdge,
+        Moves.StompingTantrum,
       ],
     },
   });

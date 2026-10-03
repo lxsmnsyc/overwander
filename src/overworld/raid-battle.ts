@@ -5,7 +5,8 @@ import type { TeamSnapshotRecord } from '../auth/teams';
 import Alliance from '../battle/alliance';
 import type Battle from '../battle/core';
 import { BattleModes } from '../battle/core';
-import { EffectType } from '../battle/events';
+import { BattleEvents, EffectType } from '../battle/events';
+import { EventPriority } from '../core/event-emitter';
 import type Biome from '../data/ids/biome';
 import createBattle from '../battle/setup';
 import Team from '../battle/team';
@@ -19,6 +20,8 @@ import {
   unpackStatuses,
 } from '../data/ids/status';
 import { BOSS_ALLIANCE } from './raid';
+import { setTrainerSkill } from '../battle/ai/skill';
+import skillOf from './trainer-skill';
 
 /**
  * A raid, fielded.
@@ -175,6 +178,7 @@ export function fieldTeams(
     const team = new Team(battle, alliance, record.player);
 
     alliance.addTeam(team);
+    setTrainerSkill(team, skillOf(record, record.alliance === bossAlliance));
 
     const fielded = units.get(record.alliance) ?? [];
     const party: Unit[] = [];
@@ -188,7 +192,12 @@ export function fieldTeams(
     units.set(record.alliance, fielded);
   }
 
-  enterBySpeed(battle, parties);
+  // On the start rather than now. The countdown shows every unit as it
+  // was stored, and what entering does to it (a form item's shape, an
+  // Intimidate, a Drought) happens where the field can be watched
+  battle.on(BattleEvents.Start, EventPriority.Pre, () => {
+    enterBySpeed(battle, parties);
+  });
 
   return { units, alliances };
 }
@@ -258,11 +267,23 @@ export function collectAftermath(built: RaidBattle, player: string): BattleAfter
  * so the server clamps it to the party it actually staged
  */
 export function countDefeated(built: RaidBattle, player: string): number {
+  let mine: Alliance | null = null;
+
+  for (const fielded of built.units.values()) {
+    for (const unit of fielded) {
+      if (unit.team.player === player) {
+        mine = unit.team.alliance;
+      }
+    }
+  }
+
+  // Only the other alliance counts: the other parties in a raid lobby
+  // fight beside this player, so their faints are no win of theirs
   let downed = 0;
 
   for (const fielded of built.units.values()) {
     for (const unit of fielded) {
-      if (unit.team.player !== player && unit.health <= 0) {
+      if (unit.team.alliance !== mine && unit.health <= 0) {
         downed += 1;
       }
     }

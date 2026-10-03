@@ -5,7 +5,7 @@ import Biome, { AnyTimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Moves } from '../../ids/moves';
-import { Species } from '../../ids/species';
+import { Habitat, Species } from '../../ids/species';
 import { registerSpecies } from '../__create';
 
 /**
@@ -126,6 +126,7 @@ export default function registerCreationTrioSpecies(): void {
         Moves.Sandstorm,
         Moves.StealthRock,
         Moves.TrickRoom,
+        Moves.StompingTantrum,
       ],
     },
   });
@@ -145,6 +146,7 @@ export default function registerCreationTrioSpecies(): void {
       [Stats.Speed]: 100,
     },
     types: [Types.Water, Types.Dragon],
+    habitat: Habitat.Amphibious,
     abilities: [Abilities.Pressure],
     // Pressure and Telepathy are all the mainline gives it, so the
     // other two are this registry's: it steps through the space a
@@ -190,6 +192,8 @@ export default function registerCreationTrioSpecies(): void {
         Moves.Surf,
         Moves.TrickRoom,
         Moves.WaterPulse,
+        Moves.StompingTantrum,
+        Moves.Liquidation,
       ],
     },
   });
@@ -255,6 +259,7 @@ export default function registerCreationTrioSpecies(): void {
         Moves.Spite,
         Moves.SteelWing,
         Moves.WillOWisp,
+        Moves.BrutalSwing,
       ],
     },
   });
@@ -322,6 +327,7 @@ export default function registerCreationTrioSpecies(): void {
         Moves.Sandstorm,
         Moves.StealthRock,
         Moves.TrickRoom,
+        Moves.StompingTantrum,
       ],
     },
   });
@@ -390,6 +396,8 @@ export default function registerCreationTrioSpecies(): void {
         Moves.Surf,
         Moves.TrickRoom,
         Moves.WaterPulse,
+        Moves.StompingTantrum,
+        Moves.Liquidation,
       ],
     },
   });
@@ -457,6 +465,7 @@ export default function registerCreationTrioSpecies(): void {
         Moves.Spite,
         Moves.SteelWing,
         Moves.WillOWisp,
+        Moves.BrutalSwing,
       ],
     },
   });

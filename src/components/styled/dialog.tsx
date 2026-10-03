@@ -49,11 +49,10 @@ const WIDTHS: Record<DialogWidth, string> = {
 };
 
 /**
- * Where a dialog stands and how wide it is. Room is left over the top
- * for the nameplate, which sits across the sheet's top edge
+ * Where a dialog stands: centred both ways, so the space over it
+ * matches the space under it. The nameplate is inside the placed box
  */
-const PLACE = 'fixed left-1/2 top-[7%] -translate-x-1/2';
-const SHEET_PLACE = 'fixed left-1/2 top-[3vh] -translate-x-1/2';
+const PLACE = 'fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2';
 
 /**
  * The sheet itself: white on a soft edge, round and chunky, standing on
@@ -134,6 +133,11 @@ const STUCK_BOTTOM =
 export interface DialogProps extends ParentProps {
   isOpen: boolean;
   onClose: () => void;
+  /**
+   * Fired at the end of every fade out, whoever closed it. A caller
+   * that keeps closed dialogs mounted uses it to know when one is gone
+   */
+  afterLeave?: () => void;
   width?: DialogWidth;
   /**
    * What the dialog is called
@@ -269,18 +273,20 @@ export function Dialog(props: DialogProps): JSX.Element {
    * already made would put away whatever it opened instead
    */
   const reportClose = (): void => {
-    if (!asked) {
-      return;
+    if (asked) {
+      asked = false;
+      props.onClose();
+      // A caller that refused the close keeps its dialog. Hiding is this
+      // dialog's own doing and only a change of `isOpen` puts it back,
+      // so a handler that declined left the panel gone while whatever it
+      // was standing over stayed open underneath, refusing every press
+      if (props.isOpen) {
+        setShowing(true);
+      }
     }
-    asked = false;
-    props.onClose();
-    // A caller that refused the close keeps its dialog. Hiding is this
-    // dialog's own doing and only a change of `isOpen` puts it back,
-    // so a handler that declined left the panel gone while whatever it
-    // was standing over stayed open underneath, refusing every press
-    if (props.isOpen) {
-      setShowing(true);
-    }
+    // After the close is reported, so a caller answering it has already
+    // marked the dialog as done by the time it hears the fade is over
+    props.afterLeave?.();
   };
 
   /** The name box across the top edge, with the face of whoever is talking */
@@ -430,7 +436,7 @@ export function Dialog(props: DialogProps): JSX.Element {
             <Suspense>
               <TransitionChild
                 {...FADE}
-                class={`${props.layout === 'sheet' ? SHEET_PLACE : PLACE} ${
+                class={`${PLACE} ${
                   props.quiet === true ? '' : 'pt-[17px]'
                 } ${WIDTHS[props.width ?? 'narrow']}`}
               >

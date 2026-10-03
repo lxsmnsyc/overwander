@@ -51,6 +51,7 @@ const FAMILY_TEACHABLE = [
   Moves.Payback,
   Moves.Round,
   Moves.Confide,
+  Moves.Liquidation,
 ];
 
 const FAMILY_ABILITIES = [Abilities.ShellArmor, Abilities.SkillLink];
@@ -155,6 +156,7 @@ export default function registerShellderSpecies(): void {
         Moves.GigaImpact,
         Moves.PoisonJab,
         Moves.FrostBreath,
+        Moves.SmartStrike,
       ],
     },
   });

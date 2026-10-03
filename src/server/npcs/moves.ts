@@ -6,6 +6,7 @@ import Npc, {
   TUTOR_FEE,
   getRecallableMoves,
   getTutorableMoves,
+  tutorRefuses,
 } from '../../data/overworld/npc';
 import type { Moves } from '../../data/ids/moves';
 import { Slots } from '../../data/constants/slots';
@@ -86,8 +87,18 @@ export async function tutorMove(
   if (snapshot == null) {
     return { refused: LearnRefusal.Gone };
   }
-  return learnMove(uid, catchId, move, TUTOR_FEE, replaces, (species, _level, known) =>
-    new Set(getTutorableMoves(species, known)).has(move),
+  return learnMove(
+    uid,
+    catchId,
+    move,
+    TUTOR_FEE,
+    replaces,
+    (species, _level, known, _from, friendship) => {
+      if (!new Set(getTutorableMoves(species, known)).has(move)) {
+        return false;
+      }
+      return tutorRefuses(move, friendship) ? LearnRefusal.Unfriendly : true;
+    },
   );
 }
 

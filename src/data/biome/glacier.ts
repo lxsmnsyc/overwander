@@ -16,6 +16,7 @@ export default function registerGlacierSpawns(): void {
         { species: Species.Piplup, weight: 3 },
       ],
       uncommon: [
+        { species: Species.Bergmite, weight: 24 },
         { species: Species.Snorunt, weight: 22 },
         { species: Species.Cubchoo, weight: 20 },
       ],
@@ -27,6 +28,8 @@ export default function registerGlacierSpawns(): void {
         { species: Species.Prinplup, weight: 2 },
       ],
       scarce: [
+        { species: Species.Crabominable, weight: 6 },
+        { species: Species.Avalugg, weight: 6 },
         { species: Species.Beartic, weight: 6 },
         { species: Species.Glalie, weight: 6 },
         { species: Species.Froslass, weight: 6 },
@@ -55,6 +58,7 @@ export default function registerGlacierSpawns(): void {
         { species: Species.Piplup, weight: 3 },
       ],
       uncommon: [
+        { species: Species.Bergmite, weight: 24 },
         { species: Species.Snorunt, weight: 22 },
         { species: Species.Cubchoo, weight: 20 },
       ],
@@ -66,6 +70,8 @@ export default function registerGlacierSpawns(): void {
         { species: Species.Prinplup, weight: 2 },
       ],
       scarce: [
+        { species: Species.Crabominable, weight: 6 },
+        { species: Species.Avalugg, weight: 6 },
         { species: Species.Beartic, weight: 6 },
         { species: Species.Glalie, weight: 6 },
         { species: Species.Froslass, weight: 6 },
@@ -91,6 +97,7 @@ export default function registerGlacierSpawns(): void {
         { species: Species.Swinub, weight: 25 },
       ],
       uncommon: [
+        { species: Species.Bergmite, weight: 24 },
         { species: Species.Snorunt, weight: 22 },
         { species: Species.Sneasel, weight: 5 },
       ],
@@ -99,6 +106,8 @@ export default function registerGlacierSpawns(): void {
         { species: Species.Piloswine, weight: 5 },
       ],
       scarce: [
+        { species: Species.Crabominable, weight: 6 },
+        { species: Species.Avalugg, weight: 6 },
         { species: Species.Glalie, weight: 6 },
         { species: Species.Froslass, weight: 6 },
         { species: Species.Weavile, weight: 6 },
@@ -123,6 +132,7 @@ export default function registerGlacierSpawns(): void {
         { species: Species.Swinub, weight: 25 },
       ],
       uncommon: [
+        { species: Species.Bergmite, weight: 24 },
         { species: Species.Snorunt, weight: 22 },
         { species: Species.Sneasel, weight: 5 },
       ],
@@ -131,6 +141,8 @@ export default function registerGlacierSpawns(): void {
         { species: Species.Piloswine, weight: 5 },
       ],
       scarce: [
+        { species: Species.Crabominable, weight: 6 },
+        { species: Species.Avalugg, weight: 6 },
         { species: Species.Glalie, weight: 6 },
         { species: Species.Froslass, weight: 6 },
         { species: Species.Weavile, weight: 6 },

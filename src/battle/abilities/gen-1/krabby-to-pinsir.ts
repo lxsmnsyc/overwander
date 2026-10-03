@@ -3,10 +3,11 @@ import { Stages, Stats } from '../../../data/constants/stats';
 import { Types } from '../../../data/constants/types';
 import Abilities from '../../../data/ids/abilities';
 import { ItemTypes, type Items } from '../../../data/ids/items';
-import { DamageFlags, MoveFlags, Moves } from '../../../data/ids/moves';
-import { Statuses } from '../../../data/ids/status';
+import { DamageFlags, MoveFlags } from '../../../data/ids/moves';
+import { Statuses, Weathers } from '../../../data/ids/status';
 import { getItemData } from '../../../data/items';
 import { getMoveData } from '../../../data/moves';
+import { isPunchMove } from '../../../data/moves/punches';
 import { checkUnitRating } from '../../ai/rating';
 import { BattleEvents, EffectType, MoveTargetType } from '../../events';
 import { CRASH_MOVES } from '../../moves/crash';
@@ -26,6 +27,11 @@ import {
   createShellArmorAbility,
 } from '../__create';
 import { MergedLifecycle } from '../../lifecycle';
+import { registerWeatherWant } from '../../ai/weather-wants';
+
+// The skies these thrive under, so the AI weighs a weather move by who gains from it
+registerWeatherWant(Abilities.LeafGuard, [Weathers.Sunny]);
+registerWeatherWant(Abilities.Harvest, [Weathers.Sunny]);
 
 /**
  * Krabby to Pinsir: the shells, the fists and what the odd ones do
@@ -242,21 +248,13 @@ const krabbyToPinsir = [
   // Tyrogue (Hitmonchan)
   // https://bulbapedia.bulbagarden.net/wiki/Iron_Fist_(Ability)
   createAbility(Abilities.IronFist, (battle) => {
-    const PUNCH_MOVES = new Set<Moves>([
-      Moves.MegaPunch,
-      Moves.CometPunch,
-      Moves.FirePunch,
-      Moves.IcePunch,
-      Moves.ThunderPunch,
-      Moves.DizzyPunch,
-    ]);
     const FACTOR = 1.2;
 
     return battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
       if (
         event.power != null &&
         event.source.hasAbility(Abilities.IronFist) &&
-        PUNCH_MOVES.has(event.move)
+        isPunchMove(event.move)
       ) {
         event.power *= FACTOR;
       }

@@ -100,6 +100,18 @@ Without the token, the release still publishes and the workflow logs a warning
 that the sprite host was not deployed. To publish it by hand, run
 `pnpm dlx wrangler@4 deploy` while signed in with `wrangler login`.
 
+While the workflow is switched off (it runs only when started by hand for
+now), release from a checkout of `main` instead:
+
+```bash
+pnpm cs:ver                 # fold the pending changesets into the version and changelog
+git commit -am "chore: version packages" && git push
+pnpm cs:release            # tag, publish the GitHub release, and the sprite host
+```
+
+`pnpm cs:release` (`scripts/release.sh`) needs `gh` signed in, and `CLOUDFLARE_API_TOKEN` and
+`CLOUDFLARE_ACCOUNT_ID` in the environment for the sprite host.
+
 The server fetches the release itself, so GitHub never needs a way in.
 [`scripts/deploy.sh`](../../scripts/deploy.sh) checks out the newest `v*` tag,
 installs, builds, then rebuilds the `app` image and restarts it. When that tag is already live it does

@@ -51,6 +51,7 @@ const FAMILY_TEACHABLE = [
   Moves.Retaliate,
   Moves.WorkUp,
   Moves.Confide,
+  Moves.LaserFocus,
 ];
 
 export default function registerEeveeSpecies(): void {
@@ -91,6 +92,13 @@ export default function registerEeveeSpecies(): void {
         species: Species.Umbreon,
         method: EvolutionMethod.Friendship | EvolutionMethod.TimeOfDay,
         time: TimeOfDay.Evening | TimeOfDay.Night,
+      },
+      {
+        // The mainline asks for any Fairy move; Baby-Doll Eyes is the
+        // one an Eevee learns by itself, so it stands for the lot
+        species: Species.Sylveon,
+        method: EvolutionMethod.Friendship | EvolutionMethod.KnownMove,
+        move: Moves.BabyDollEyes,
       },
     ],
     name: 'Eevee',

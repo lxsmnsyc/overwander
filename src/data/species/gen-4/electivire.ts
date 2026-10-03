@@ -118,6 +118,7 @@ export default function registerElectivireSpecies(): void {
         Moves.Toxic,
         Moves.Confide,
         Moves.PowerUpPunch,
+        Moves.StompingTantrum,
       ],
     },
   });

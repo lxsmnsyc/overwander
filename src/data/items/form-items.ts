@@ -1,5 +1,6 @@
 import { Species } from '../ids/species';
 import { DRIVES } from './drives';
+import { MEMORIES } from './memories';
 import { PLATES } from './plates';
 import { Types } from '../constants/types';
 import { ItemFlags, ItemTypes, Items } from '../ids/items';
@@ -61,6 +62,34 @@ const GENESECT_DRIVES: [Items, Species[]][] = [...DRIVES].flatMap(([drive, type]
   return shape == null ? [] : [[drive, [shape]] as [Items, Species[]]];
 });
 
+/** Which shape each Memory makes a Silvally, by the type it carries */
+const SILVALLY_TYPE_FORMS: { [key in Types]?: Species } = {
+  [Types.Fighting]: Species.SilvallyFighting,
+  [Types.Flying]: Species.SilvallyFlying,
+  [Types.Poison]: Species.SilvallyPoison,
+  [Types.Ground]: Species.SilvallyGround,
+  [Types.Rock]: Species.SilvallyRock,
+  [Types.Bug]: Species.SilvallyBug,
+  [Types.Ghost]: Species.SilvallyGhost,
+  [Types.Steel]: Species.SilvallySteel,
+  [Types.Fire]: Species.SilvallyFire,
+  [Types.Water]: Species.SilvallyWater,
+  [Types.Grass]: Species.SilvallyGrass,
+  [Types.Electric]: Species.SilvallyElectric,
+  [Types.Psychic]: Species.SilvallyPsychic,
+  [Types.Ice]: Species.SilvallyIce,
+  [Types.Dragon]: Species.SilvallyDragon,
+  [Types.Dark]: Species.SilvallyDark,
+  [Types.Fairy]: Species.SilvallyFairy,
+};
+
+/** The Memory rows, derived the way the Plate rows are */
+const SILVALLY_MEMORIES: [Items, Species[]][] = [...MEMORIES].flatMap(([memory, type]) => {
+  const shape = SILVALLY_TYPE_FORMS[type];
+
+  return shape == null ? [] : [[memory, [shape]] as [Items, Species[]]];
+});
+
 export const FORM_ITEMS = new Map<Items, Species[]>([
   // One shape each rather than a set, so an orb is a switch a player
   // sets rather than a roll
@@ -68,6 +97,14 @@ export const FORM_ITEMS = new Map<Items, Species[]>([
   [Items.LustrousOrb, [Species.PalkiaOrigin]],
   [Items.GriseousOrb, [Species.GiratinaOrigin]],
   [Items.Gracidea, [Species.ShayminSky]],
+  [Items.PrisonBottle, [Species.HoopaUnbound]],
+  // One mirror for the three genies: each holder takes its own Therian
+  // shape, so it is still a switch rather than a roll
+  [Items.RevealGlass, [Species.TornadusTherian, Species.ThundurusTherian, Species.LandorusTherian]],
+  // Primal Reversion is an Origin forme's rule rather than a Mega's:
+  // every holder takes the shape, with no limit to a team
+  [Items.BlueOrb, [Species.KyogrePrimal]],
+  [Items.RedOrb, [Species.GroudonPrimal]],
   // The seventeen Plates, each of which is already a type booster.
   // Holding one paints an Arceus the type it lifts, which is what the
   // mainline calls Multitype: there is no battle code behind it, only
@@ -77,6 +114,10 @@ export const FORM_ITEMS = new Map<Items, Species[]>([
   // type. Holding one repaints the machine round the cannon, which
   // is all the mainline means by a Genesect form
   ...GENESECT_DRIVES,
+  // The seventeen Memories, each of which already sets a Multi-Attack's
+  // type. Holding one makes a Silvally that type, which is the
+  // mainline's RKS System
+  ...SILVALLY_MEMORIES,
 ]);
 
 /**
@@ -112,10 +153,29 @@ export const GRACIDEA_PRICE = 8_000;
  */
 export const SPLICERS_PRICE = 12_000;
 
-const CREATION_ORBS: [item: Items, name: string, icon: string][] = [
+/** What a nectar costs: a flower's worth, since the island grows them */
+export const NECTAR_PRICE = 2000;
+
+/** The style each nectar dances an Oricorio into, Baile at the base */
+export const NECTAR_STYLES = new Map<Items, [name: string, style: Species, styleName: string]>([
+  [Items.RedNectar, ['Red Nectar', Species.Oricorio, 'Baile']],
+  [Items.YellowNectar, ['Yellow Nectar', Species.OricorioPomPom, 'Pom-Pom']],
+  [Items.PinkNectar, ['Pink Nectar', Species.OricorioPau, "Pa'u"]],
+  [Items.PurpleNectar, ['Purple Nectar', Species.OricorioSensu, 'Sensu']],
+]);
+
+/** The two prisms that fold a Solgaleo or a Lunala into a Necrozma, and part them again */
+const PRISMS: [item: Items, name: string, icon: string, into: string][] = [
+  [Items.NSolarizer, 'N-Solarizer', 'n-solarizer', 'a Solgaleo'],
+  [Items.NLunarizer, 'N-Lunarizer', 'n-lunarizer', 'a Lunala'],
+];
+
+const LEGEND_ORBS: [item: Items, name: string, icon: string][] = [
   [Items.AdamantOrb, 'Adamant Orb', 'adamant-orb'],
   [Items.LustrousOrb, 'Lustrous Orb', 'lustrous-orb'],
   [Items.GriseousOrb, 'Griseous Orb', 'griseous-orb'],
+  [Items.BlueOrb, 'Blue Orb', 'blue-orb'],
+  [Items.RedOrb, 'Red Orb', 'red-orb'],
 ];
 
 // Written out because the ability each shape brings is battle code,
@@ -128,6 +188,13 @@ const DESCRIPTIONS: { [key in Items]?: string } = {
     'A Giratina holding it fights in its other shape, which also brings Levitate.',
   [Items.Gracidea]:
     'A Shaymin holding it fights in its other shape, which also brings Serene Grace.',
+  [Items.PrisonBottle]: 'A Hoopa holding it fights unbound, with its rings let out.',
+  [Items.RevealGlass]:
+    'A Tornadus, Thundurus or Landorus holding it fights in its Therian shape, which also brings Regenerator, Volt Absorb or Intimidate.',
+  [Items.BlueOrb]:
+    'A Kyogre holding it fights in its Primal shape, which also brings Primordial Sea.',
+  [Items.RedOrb]:
+    'A Groudon holding it fights in its Primal shape, which also brings Desolate Land.',
 };
 
 export default function registerFormItems(): void {
@@ -144,13 +211,13 @@ export default function registerFormItems(): void {
     sell: METEORITE_PRICE / 2,
   });
 
-  for (const [item, name, icon] of CREATION_ORBS) {
+  for (const [item, name, icon] of LEGEND_ORBS) {
     registerItem(item, {
       name,
       description: DESCRIPTIONS[item] ?? '',
       type: ItemTypes.Held,
-      // The three are drawn on the held sheet, which is where the
-      // collection packed them
+      // Drawn on the held sheet, which is where the collection
+      // packed them
       icon: `held/${icon}`,
       flags: ItemFlags.Holdable,
       buy: 0,
@@ -167,6 +234,53 @@ export default function registerFormItems(): void {
     flags: ItemFlags.Usable,
     buy: 0,
     sell: SPLICERS_PRICE / 2,
+  });
+
+  for (const [item, [name, , styleName]] of NECTAR_STYLES) {
+    registerItem(item, {
+      name,
+      description: `Dances the Oricorio it is used on into its ${styleName} Style. Spent on each change.`,
+      type: ItemTypes.Evolution,
+      icon: `other/${name.toLowerCase().replace(' ', '-')}`,
+      flags: ItemFlags.Usable,
+      buy: 0,
+      sell: NECTAR_PRICE / 2,
+    });
+  }
+
+  for (const [item, name, icon, into] of PRISMS) {
+    registerItem(item, {
+      name,
+      description: `Folds ${into} into a Necrozma, and pulls it back out. Never spent.`,
+      type: ItemTypes.Evolution,
+      // Drawn on the key sheet, which is where the collection packed it
+      icon: `key/${icon}`,
+      flags: ItemFlags.Usable,
+      buy: 0,
+      sell: SPLICERS_PRICE / 2,
+    });
+  }
+
+  registerItem(Items.PrisonBottle, {
+    name: 'Prison Bottle',
+    description: DESCRIPTIONS[Items.PrisonBottle] ?? '',
+    type: ItemTypes.Held,
+    // Drawn on the key sheet, which is where the collection packed it
+    icon: 'key/prison-bottle',
+    flags: ItemFlags.Holdable,
+    buy: 0,
+    sell: ORB_PRICE / 2,
+  });
+
+  registerItem(Items.RevealGlass, {
+    name: 'Reveal Glass',
+    description: DESCRIPTIONS[Items.RevealGlass] ?? '',
+    type: ItemTypes.Held,
+    // Drawn on the key sheet, which is where the collection packed it
+    icon: 'key/reveal-glass',
+    flags: ItemFlags.Holdable,
+    buy: 0,
+    sell: ORB_PRICE / 2,
   });
 
   registerItem(Items.Gracidea, {

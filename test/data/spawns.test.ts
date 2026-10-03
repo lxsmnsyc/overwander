@@ -4,9 +4,12 @@ import registerBiomeSpawns, {
   MYTHICAL_SPAWN_ODDS,
   SPAWN_BAND_KEYS,
   SPECIAL_SPAWN_ODDS,
+  SpawnClass,
   SpawnRarity,
   TIMES_OF_DAY,
   fitsSurface,
+  getBiomeRoster,
+  getSpawnClass,
   getSpawnPool,
   isLegendarySpecies,
   isMythicalSpecies,
@@ -50,16 +53,35 @@ describe('which pool a species may stand in', () => {
     expect(fitsSurface(Species.Magikarp, SpawnSurface.Ice)).toBe(false);
     expect(fitsSurface(Species.Rhyhorn, SpawnSurface.Water)).toBe(false);
     expect(fitsSurface(Species.Rhyhorn, SpawnSurface.Ice)).toBe(true);
-    // A flier is ground unless its data says otherwise
-    expect(fitsSurface(Species.Pidgey, SpawnSurface.Water)).toBe(false);
-    // Something at home on both stands in either
+    // A flier or floater is over ground and water alike
+    expect(fitsSurface(Species.Pidgey, SpawnSurface.Water)).toBe(true);
+    expect(fitsSurface(Species.Pidgey, SpawnSurface.Land)).toBe(true);
+    expect(fitsSurface(Species.Gastly, SpawnSurface.Water)).toBe(true);
+    // ...save the flying types that live under the water
+    expect(fitsSurface(Species.Gyarados, SpawnSurface.Land)).toBe(false);
+    expect(fitsSurface(Species.Gyarados, SpawnSurface.Water)).toBe(true);
+    // An amphibious water species stands in either
     expect(fitsSurface(Species.Psyduck, SpawnSurface.Land)).toBe(true);
     expect(fitsSurface(Species.Psyduck, SpawnSurface.Water)).toBe(true);
+    // A water egg group does not put a desert scorpion in the water
+    expect(fitsSurface(Species.Skorupi, SpawnSurface.Water)).toBe(false);
+    expect(fitsSurface(Species.Skorupi, SpawnSurface.Land)).toBe(true);
+    // A water species with no mark of its own keeps to the water
+    expect(fitsSurface(Species.Dratini, SpawnSurface.Land)).toBe(false);
+  });
+
+  it('splits every species into the ground, the water or the air', () => {
+    expect(getSpawnClass(Species.Pidgey)).toBe(SpawnClass.Flying);
+    expect(getSpawnClass(Species.Bronzor)).toBe(SpawnClass.Flying);
+    expect(getSpawnClass(Species.Pelipper)).toBe(SpawnClass.Flying);
+    expect(getSpawnClass(Species.Gyarados)).toBe(SpawnClass.Water);
+    expect(getSpawnClass(Species.Magikarp)).toBe(SpawnClass.Water);
+    expect(getSpawnClass(Species.Bidoof)).toBe(SpawnClass.Water);
+    expect(getSpawnClass(Species.Drapion)).toBe(SpawnClass.Ground);
+    expect(getSpawnClass(Species.Rhyhorn)).toBe(SpawnClass.Ground);
   });
 
   it('gives every Water type a place in the water', () => {
-    // Palkia is Water by type and lives nowhere near it, and Wash Rotom
-    // is only ever reached through a Catalog
     const dry = new Set<Species>();
 
     for (const species of getRegisteredSpecies()) {
@@ -73,7 +95,7 @@ describe('which pool a species may stand in', () => {
         dry.add(species);
       }
     }
-    expect(dry).toEqual(new Set([Species.Palkia, Species.RotomWash]));
+    expect(dry).toEqual(new Set());
   });
 
   it('writes every pool for the surface it stands on', () => {
@@ -258,7 +280,11 @@ describe('where a species lives', () => {
     const counted = new Map<Species, number>();
 
     for (const [biome, time, surface] of everyPool()) {
-      const groups = getSpawnPool(biome, time, false, surface);
+      // One roster per biome and hour, whatever its surfaces
+      if (surface !== SpawnSurface.Land) {
+        continue;
+      }
+      const groups = getBiomeRoster(biome, time);
 
       for (const band of SPAWN_BAND_KEYS) {
         for (const entry of spawnBand(groups, band)) {
@@ -315,7 +341,12 @@ describe('where a species lives', () => {
     // Porygon is met on town streets, which no biome pool holds, and
     // what it evolves into is made rather than met. The far shore's
     // shell is staged by the pool its west counterpart sits in, and
-    // swapped for as the world hands it over, so no pool names it either
+    // swapped for as the world hands it over, so no pool names it either.
+    //
+    // The Pikipek and Yungoos lines name where they live, but the
+    // collection has drawn no Trumbeak, finished Toucannon or Gumshoos,
+    // so neither is staged until it does. The pools they are waiting
+    // for are written as comments in the biome files
     const unstaged = new Set<Species>([
       Species.Phione,
       ...ROTOM_FORMS.slice(1),
@@ -332,6 +363,11 @@ describe('where a species lives', () => {
       // no pool names them either
       ...DEERLING_FORMS.slice(1),
       ...SAWSBUCK_FORMS.slice(1),
+      Species.Pikipek,
+      Species.Trumbeak,
+      Species.Toucannon,
+      Species.Yungoos,
+      Species.Gumshoos,
     ]);
     const staged = new Set<Species>();
 

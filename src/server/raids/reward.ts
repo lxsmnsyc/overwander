@@ -3,7 +3,7 @@ import BattleOutcome from '../../auth/battle-outcome';
 import { type EncounterRecord, asEncounterRecord } from '../../auth/encounter-record';
 import { RaidKind, type RaidRecord, asRaidRecord, deriveRaidReward } from '../../auth/raid-record';
 import ChunkSnapshot from '../../overworld/chunk-snapshot';
-import getWorld, { WORLD_GENERATION } from '../../overworld/current';
+import { WORLD_GENERATION, getChunkOfSeed } from '../../overworld/current';
 import createOverworld from '../../overworld/setup';
 import resolveBuddy from '../buddy';
 import { Metric } from '../../auth/quest-record';
@@ -82,7 +82,8 @@ export async function claimRaidReward(uid: string, lobby: string): Promise<RaidR
   await grantGold(uid, gold, 'raid-reward');
   await bumpProgress(uid, [[Metric.GoldEarned, 0, gold]]);
 
-  const chunk = getWorld().getChunk(raid.chunk.x, raid.chunk.y);
+  // The raid's own world, so a cave lair's prize remembers the cave
+  const chunk = getChunkOfSeed(raid.chunk.x, raid.chunk.y, raid.chunk.seed);
   // The raid's own window and zone, not wherever the claimant is now
   const snapshot = new ChunkSnapshot(chunk, raid.timestamp, raid.offset);
   const [spawnId, spawn] = deriveRaidReward(raid, lobby, uid);

@@ -1,9 +1,13 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Stages } from '../../data/constants/stats';
-import { Moves } from '../../data/ids/moves';
+import { MoveAffects, MoveCategories, Moves } from '../../data/ids/moves';
 import { Statuses, TeamStatuses } from '../../data/ids/status';
+import { getMoveData } from '../../data/moves';
 import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
+import resolveMoveTargets from '../mechanics/move/targeting';
+import type Unit from '../unit';
+import { getStageMoveEffects } from './stage';
 
 export const STATUS_MOVES: { [key in Moves]?: Statuses } = {
   [Moves.PoisonPowder]: Statuses.Poisoned,
@@ -32,6 +36,9 @@ export const STATUS_MOVES: { [key in Moves]?: Statuses } = {
   [Moves.Yawn]: Statuses.Drowsy,
   [Moves.Imprison]: Statuses.Imprisoned,
   [Moves.HelpingHand]: Statuses.Helped,
+  [Moves.ToxicThread]: Statuses.Poisoned,
+  // Follow Me's pull, put on the target rather than taken on
+  [Moves.Spotlight]: Statuses.Centered,
 };
 
 export const SELF_STATUS_MOVES: { [key in Moves]?: Statuses } = {
@@ -45,7 +52,7 @@ export const SELF_STATUS_MOVES: { [key in Moves]?: Statuses } = {
   [Moves.RagePowder]: Statuses.Centered,
 };
 
-const EFFECT_STATUS_MOVES: {
+export const EFFECT_STATUS_MOVES: {
   [key in Moves]?: { status: Statuses; chance: number };
 } = {
   [Moves.BodySlam]: { status: Statuses.Paralyzed, chance: 30 },
@@ -144,6 +151,15 @@ const EFFECT_STATUS_MOVES: {
   [Moves.Infestation]: { status: Statuses.Trapped, chance: 100 },
   // Mean Look's hold, thrown by a wave rather than a stare
   [Moves.ThousandWaves]: { status: Statuses.Cornered, chance: 100 },
+  [Moves.SpiritShackle]: { status: Statuses.Cornered, chance: 100 },
+  [Moves.AnchorShot]: { status: Statuses.Cornered, chance: 100 },
+  [Moves.ZingZap]: { status: Statuses.Flinched, chance: 30 },
+  [Moves.DoubleIronBash]: { status: Statuses.Flinched, chance: 30 },
+  [Moves.SplishySplash]: { status: Statuses.Paralyzed, chance: 30 },
+  [Moves.FloatyFall]: { status: Statuses.Flinched, chance: 30 },
+  [Moves.BuzzyBuzz]: { status: Statuses.Paralyzed, chance: 100 },
+  [Moves.SizzlySlide]: { status: Statuses.Burned, chance: 100 },
+  [Moves.StokedSparksurfer]: { status: Statuses.Paralyzed, chance: 100 },
 };
 
 /**
@@ -166,14 +182,14 @@ for (const [move, effect] of Object.entries(EFFECT_STATUS_MOVES)) {
  * A stage a move pushes on the side as it lands. `self` is which side:
  * a Metal Claw sharpens its own claws, an Iron Tail dents what it hit
  */
-interface AttackStageEffect {
+export interface AttackStageEffect {
   stage: Stages | Stages[];
   value: number;
   chance: number;
   self?: boolean;
 }
 
-const EFFECT_STAGE_MOVES: { [key in Moves]?: AttackStageEffect } = {
+export const EFFECT_STAGE_MOVES: { [key in Moves]?: AttackStageEffect } = {
   [Moves.Bubble]: { stage: Stages.Speed, value: -1, chance: 10 },
   [Moves.BubbleBeam]: { stage: Stages.Speed, value: -1, chance: 10 },
   [Moves.Psychic]: { stage: Stages.SpecialDefense, value: -1, chance: 10 },
@@ -293,6 +309,27 @@ const EFFECT_STAGE_MOVES: { [key in Moves]?: AttackStageEffect } = {
     self: true,
   },
   [Moves.HyperspaceFury]: { stage: Stages.Defense, value: -1, chance: 100, self: true },
+  [Moves.IceHammer]: { stage: Stages.Speed, value: -1, chance: 100, self: true },
+  [Moves.Lunge]: { stage: Stages.Attack, value: -1, chance: 100 },
+  [Moves.FireLash]: { stage: Stages.Defense, value: -1, chance: 100 },
+  [Moves.TropKick]: { stage: Stages.Attack, value: -1, chance: 100 },
+  [Moves.ClangingScales]: { stage: Stages.Defense, value: -1, chance: 100, self: true },
+  [Moves.FleurCannon]: { stage: Stages.SpecialAttack, value: -2, chance: 100, self: true },
+  [Moves.ShadowBone]: { stage: Stages.Defense, value: -1, chance: 20 },
+  [Moves.Liquidation]: { stage: Stages.Defense, value: -1, chance: 20 },
+  [Moves.ZippyZap]: { stage: Stages.Evasion, value: 1, chance: 100, self: true },
+  [Moves.ClangorousSoulblaze]: {
+    stage: [
+      Stages.Attack,
+      Stages.Defense,
+      Stages.SpecialAttack,
+      Stages.SpecialDefense,
+      Stages.Speed,
+    ],
+    value: 1,
+    chance: 100,
+    self: true,
+  },
 };
 
 /**
@@ -350,7 +387,6 @@ function setupUnitStatusMoves(battle: Battle): void {
     if (
       !event.usable ||
       status == null ||
-      event.target.type !== MoveTargetType.Unit ||
       // The flattery moves raise a stat as well as muddling the head,
       // so whether they are worth casting is their own question
       FLATTERY_MOVES.has(event.move)
@@ -358,18 +394,34 @@ function setupUnitStatusMoves(battle: Battle): void {
       return;
     }
 
-    const target = event.target.unit;
+    const cause = { type: EffectType.Move, move: event.move, unit: event.source } as const;
+    const takes = (unit: Unit): boolean =>
+      unit.status[status] == null && !unit.checkStatusImmunity(status, cause);
 
-    if (
-      target.status[status] != null ||
-      target.checkStatusImmunity(status, {
-        type: EffectType.Move,
-        move: event.move,
-        unit: event.source,
-      })
-    ) {
-      event.usable = false;
+    if (event.target.type === MoveTargetType.Unit) {
+      event.usable = takes(event.target.unit);
+      return;
     }
+
+    // A move cast at nobody (Teeter Dance) is worth it while one foe
+    // it reaches would still take the status
+    const data = getMoveData(event.move);
+    for (const reached of resolveMoveTargets(
+      battle,
+      event.source,
+      event.target,
+      data.target,
+      data.affects,
+    )) {
+      if (
+        reached.type === MoveTargetType.Unit &&
+        reached.unit.team.alliance !== event.source.team.alliance &&
+        takes(reached.unit)
+      ) {
+        return;
+      }
+    }
+    event.usable = false;
   });
 
   battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
@@ -427,11 +479,36 @@ function setupUnitStatusMoves(battle: Battle): void {
   });
 }
 
-const TEAM_STATUS_MOVES: { [key in Moves]?: TeamStatuses } = {
+export const TEAM_STATUS_MOVES: { [key in Moves]?: TeamStatuses } = {
   [Moves.Reflect]: TeamStatuses.Reflect,
   [Moves.LightScreen]: TeamStatuses.LightScreen,
+  [Moves.AuroraVeil]: TeamStatuses.AuroraVeil,
+  // The partner moves that leave a screen behind as they land
+  [Moves.GlitzyGlow]: TeamStatuses.LightScreen,
+  [Moves.BaddyBad]: TeamStatuses.Reflect,
   [Moves.Mist]: TeamStatuses.Mist,
   [Moves.Safeguard]: TeamStatuses.Safeguard,
+};
+
+function lowersFoeStages(move: Moves): boolean {
+  if (getMoveData(move).affects & MoveAffects.Enemy) {
+    for (const effect of getStageMoveEffects(move)) {
+      if (effect.value < 0) {
+        return true;
+      }
+    }
+  }
+  const effect = EFFECT_STAGE_MOVES[move];
+  return effect != null && !effect.self && effect.value < 0;
+}
+
+/** Whether a foe's move is one the veil would stop */
+export const VEIL_THREATS: { [key in TeamStatuses]?: (move: Moves) => boolean } = {
+  [TeamStatuses.Reflect]: (move) => getMoveData(move).category === MoveCategories.Physical,
+  [TeamStatuses.LightScreen]: (move) => getMoveData(move).category === MoveCategories.Special,
+  [TeamStatuses.Safeguard]: (move) =>
+    STATUS_MOVES[move] != null || EFFECT_STATUS_MOVES[move] != null,
+  [TeamStatuses.Mist]: lowersFoeStages,
 };
 
 function setupTeamStatusMoves(battle: Battle): void {

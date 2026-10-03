@@ -5,6 +5,8 @@ import { USELESS_PENALTY } from '../ai/score';
 import type Battle from '../core';
 import { BattleEvents, MoveTargetType } from '../events';
 import type Unit from '../unit';
+import { scoreAsCall } from '../ai/choose-move';
+import { effectIn, landsIn } from '../ai/context';
 
 /**
  * The three that watch what somebody else is doing.
@@ -53,8 +55,15 @@ export default function setupReadingTheField(battle: Battle): void {
     }
 
     if (event.move === Moves.SuckerPunch || event.move === Moves.MeFirst) {
+      const target = event.target.type === MoveTargetType.Unit ? event.target.unit : undefined;
+
+      // The target has to still be swinging when this goes off, so a
+      // cast that will land first is no opening
       event.usable =
-        event.target.type === MoveTargetType.Unit && swinging(event.target.unit) != null;
+        target != null &&
+        swinging(target) != null &&
+        (target.casting == null ||
+          landsIn(target) >= effectIn(event.source, event.move, event.target));
     }
     if (event.move === Moves.Copycat) {
       event.usable = copied != null;
@@ -134,10 +143,30 @@ export default function setupReadingTheField(battle: Battle): void {
     taking.delete(event.source);
   });
 
-  // Copying nothing is a cast spent on nothing
+  // Each is worth what it would fire: the last move on the field, or
+  // the target's own move at Me First's extra power
   battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
-    if (event.move === Moves.Copycat && copied == null) {
-      event.score -= USELESS_PENALTY;
+    if (event.move === Moves.Copycat) {
+      if (copied == null) {
+        event.score -= USELESS_PENALTY;
+      } else {
+        scoreAsCall(battle, event, copied);
+      }
+      return;
+    }
+
+    const taken =
+      event.move === Moves.MeFirst && event.target.type === MoveTargetType.Unit
+        ? swinging(event.target.unit)
+        : undefined;
+
+    if (taken != null) {
+      taking.add(event.source);
+      try {
+        scoreAsCall(battle, event, taken);
+      } finally {
+        taking.delete(event.source);
+      }
     }
   });
 }

@@ -37,7 +37,8 @@ import type { CaughtPokemon } from '../../auth/caught';
 import { previewSnapshot } from '../../auth/catch-snapshot';
 import { getProfileBatched } from '../../auth/profile';
 import { type TeamSnapshotRecord, getTeamSnapshotBatched } from '../../auth/teams';
-import Npc, { NPC_NAMES } from '../../data/overworld/npc';
+import Npc from '../../data/overworld/npc';
+import { npcName } from '../../overworld/npcs';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import TeamStrip from '../catches/TeamStrip';
@@ -192,6 +193,13 @@ function OwnStrip(props: { fought: Resource<FoughtLine> }): JSX.Element {
  */
 const NPC_FACE = 34;
 
+/** The plate's colours by how the fight ended, the way a row is tinted */
+const PLATE_TONES: Record<'leaf' | 'ember' | 'none', string> = {
+  leaf: 'border-leaf bg-leaf-soft',
+  ember: 'border-ember bg-ember-soft',
+  none: 'border-line bg-paper',
+};
+
 function HistoryRow(props: {
   id: string;
   record: BattleRecord;
@@ -208,106 +216,112 @@ function HistoryRow(props: {
   const kind = (): BattleKind => getBattleKind(props.record);
 
   return (
-    <ListRow
-      tone={OUTCOME_ROW_TONES[props.record.outcome]}
+    // The team stands on its own, outside the plate, so a narrow row
+    // never squeezes it out of sight
+    <li
+      class="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-2"
       title={OUTCOME_LABELS[props.record.outcome]}
     >
-      {/* What the fight was, kept on one line */}
-      <span class="flex min-w-0 items-center gap-2">
-        <Badge>{BATTLE_KIND_NAMES[kind()]}</Badge>
-        <Meta>vs</Meta>
-        <Switch>
-          <Match when={kind() === BattleKind.Raid}>
-            <span class="flex items-center gap-1.5 font-medium">
-              {/* Fitted to a square of its own rather than drawn at a
+      <div class="w-full max-w-60 shrink-0">
+        <Suspense fallback={<Note>Reading the team…</Note>}>
+          <OwnStrip fought={fought} />
+        </Suspense>
+      </div>
+      <div
+        class={`flex min-w-0 grow flex-wrap items-center gap-x-2 gap-y-1 rounded-xl border-2 px-3
+          py-2 text-sm shadow-pop-sm ${PLATE_TONES[OUTCOME_ROW_TONES[props.record.outcome] ?? 'none']}`}
+      >
+        {/* What the fight was, kept on one line */}
+        <span class="flex min-w-0 items-center gap-2">
+          <Badge>{BATTLE_KIND_NAMES[kind()]}</Badge>
+          <Meta>vs</Meta>
+          <Switch>
+            <Match when={kind() === BattleKind.Raid}>
+              <span class="flex items-center gap-1.5 font-medium">
+                {/* Fitted to a square of its own rather than drawn at a
                   multiple of the sheet: a raid boss is whatever size its
                   sheet is, and one tall one stretched every row in the
                   list to its height */}
-              <span class="flex size-10 shrink-0 items-center justify-center">
-                <AnimatedSprite
-                  species={props.record.species}
-                  animation={SpriteAnim.Idle}
-                  direction="DownLeft"
-                  fill
-                  label={getSpeciesData(props.record.species).name}
-                />
+                <span class="flex size-10 shrink-0 items-center justify-center">
+                  <AnimatedSprite
+                    species={props.record.species}
+                    animation={SpriteAnim.Idle}
+                    direction="DownLeft"
+                    fill
+                    label={getSpeciesData(props.record.species).name}
+                  />
+                </span>
+                {getSpeciesData(props.record.species).name}
               </span>
-              {getSpeciesData(props.record.species).name}
-            </span>
-          </Match>
-          <Match when={kind() === BattleKind.Npc}>
-            {/* Whoever was standing there, kept on the record: a stop
+            </Match>
+            <Match when={kind() === BattleKind.Npc}>
+              {/* Whoever was standing there, kept on the record: a stop
                 stages a grunt, a duelling trainer, a gym leader or the
                 Champion, and calling every one of them a grunt was the
                 history saying the same wrong thing about all of them.
                 A fight stored before the name was kept has none, and
                 falls back to what it used to say */}
-            <span class="flex items-center gap-1.5 font-medium">
-              <PlayerFace sprite={props.record.opponentSprite} size={NPC_FACE} />
-              {props.record.opponent === '' ? NPC_NAMES[Npc.RocketGrunt] : props.record.opponent}
-            </span>
-          </Match>
-          <Match when={kind() === BattleKind.Player}>
-            <Suspense fallback={<Meta>A trainer</Meta>}>
-              <RivalPlate
-                fought={fought}
-                onVisit={(uid) => {
-                  game.setVisiting(uid);
-                }}
-              />
-            </Suspense>
-          </Match>
-        </Switch>
-      </span>
-      <Show when={props.owes}>
+              <span class="flex items-center gap-1.5 font-medium">
+                <PlayerFace sprite={props.record.opponentSprite} size={NPC_FACE} />
+                {props.record.opponent === '' ? npcName(Npc.RocketGrunt) : props.record.opponent}
+              </span>
+            </Match>
+            <Match when={kind() === BattleKind.Player}>
+              <Suspense fallback={<Meta>A trainer</Meta>}>
+                <RivalPlate
+                  fought={fought}
+                  onVisit={(uid) => {
+                    game.setVisiting(uid);
+                  }}
+                />
+              </Suspense>
+            </Match>
+          </Switch>
+        </span>
+        <Show when={props.owes}>
+          <Button
+            class="order-last sm:order-none"
+            tone="primary"
+            onClick={() => {
+              // The overworld meets it: the encounter derives from the
+              // raid's own chunk and window
+              game.setReward({ raid: props.record.raid });
+              game.setDialog(GameDialog.None);
+              props.onClaimed();
+            }}
+          >
+            Claim {getSpeciesData(props.record.species).name}
+          </Button>
+        </Show>
+        <span class="grow" />
+        {/* Watching it back, from the row's end: the same fight again, with nothing at stake */}
         <Button
-          class="order-last sm:order-none"
-          tone="primary"
+          label="Watch replay"
+          title="Watch replay"
           onClick={() => {
-            // The overworld meets it: the encounter derives from the
-            // raid's own chunk and window
-            game.setReward({ raid: props.record.raid });
-            game.setDialog(GameDialog.None);
-            props.onClaimed();
+            game.setBattle({ id: props.id, replay: true });
           }}
         >
-          Claim {getSpeciesData(props.record.species).name}
+          <PlayIcon class="size-5" aria-hidden="true" />
         </Button>
-      </Show>
-      <span class="grow" />
-      {/* Under the title on a phone, with the buttons kept beside it */}
-      <div class="order-last basis-full sm:order-none sm:basis-auto">
-        <Suspense fallback={<Note>Reading the team…</Note>}>
-          <OwnStrip fought={fought} />
-        </Suspense>
+        <Button
+          label="Copy link to this battle"
+          title="Copy link"
+          onClick={() => {
+            navigator.clipboard
+              .writeText(`${location.origin}/battle/${props.id}`)
+              .then(() => {
+                toast.push({ message: 'Link copied.', tone: 'leaf' });
+              })
+              .catch(() => {
+                toast.push({ message: 'The link could not be copied.', tone: 'ember' });
+              });
+          }}
+        >
+          <ShareIcon class="size-5" aria-hidden="true" />
+        </Button>
       </div>
-      {/* Watching it back, from the row's end: the same fight again, with nothing at stake */}
-      <Button
-        label="Watch replay"
-        title="Watch replay"
-        onClick={() => {
-          game.setBattle({ id: props.id, replay: true });
-        }}
-      >
-        <PlayIcon class="size-5" aria-hidden="true" />
-      </Button>
-      <Button
-        label="Copy link to this battle"
-        title="Copy link"
-        onClick={() => {
-          navigator.clipboard
-            .writeText(`${location.origin}/battle/${props.id}`)
-            .then(() => {
-              toast.push({ message: 'Link copied.', tone: 'leaf' });
-            })
-            .catch(() => {
-              toast.push({ message: 'The link could not be copied.', tone: 'ember' });
-            });
-        }}
-      >
-        <ShareIcon class="size-5" aria-hidden="true" />
-      </Button>
-    </ListRow>
+    </li>
   );
 }
 

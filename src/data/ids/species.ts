@@ -813,24 +813,151 @@ export const enum Species {
   Scatterbug = 664,
   Spewpa = 665,
   Vivillon = 666,
+  Litleo = 667,
+  Pyroar = 668,
   Flabebe = 669,
   Floette = 670,
   Florges = 671,
   Skiddo = 672,
   Gogoat = 673,
+  Pancham = 674,
+  Pangoro = 675,
   Furfrou = 676,
   Espurr = 677,
   Meowstic = 678,
   Honedge = 679,
   Doublade = 680,
   Aegislash = 681,
+  Spritzee = 682,
+  Aromatisse = 683,
+  Swirlix = 684,
+  Slurpuff = 685,
+  Inkay = 686,
+  Malamar = 687,
   Binacle = 688,
   Barbaracle = 689,
   Skrelp = 690,
   Dragalge = 691,
   Clauncher = 692,
   Clawitzer = 693,
+  Helioptile = 694,
+  Heliolisk = 695,
+  Tyrunt = 696,
+  Tyrantrum = 697,
+  Amaura = 698,
+  Aurorus = 699,
+  Sylveon = 700,
+  Hawlucha = 701,
+  Dedenne = 702,
+  Carbink = 703,
+  Goomy = 704,
+  Sliggoo = 705,
+  Goodra = 706,
   Klefki = 707,
+  Phantump = 708,
+  Trevenant = 709,
+  Pumpkaboo = 710,
+  Gourgeist = 711,
+  Bergmite = 712,
+  Avalugg = 713,
+  Noibat = 714,
+  Noivern = 715,
+  Xerneas = 716,
+  Yveltal = 717,
+  Zygarde = 718,
+  Diancie = 719,
+  Hoopa = 720,
+  Volcanion = 721,
+
+  // Alola
+  Rowlet = 722,
+  Dartrix = 723,
+  Decidueye = 724,
+  Litten = 725,
+  Torracat = 726,
+  Incineroar = 727,
+  Popplio = 728,
+  Brionne = 729,
+  Primarina = 730,
+  Pikipek = 731,
+  Trumbeak = 732,
+  Toucannon = 733,
+  Yungoos = 734,
+  Gumshoos = 735,
+  Grubbin = 736,
+  Charjabug = 737,
+  Vikavolt = 738,
+  Crabrawler = 739,
+  Crabominable = 740,
+  Oricorio = 741,
+  Cutiefly = 742,
+  Ribombee = 743,
+  Rockruff = 744,
+  Lycanroc = 745,
+  Wishiwashi = 746,
+  Mareanie = 747,
+  Toxapex = 748,
+  Mudbray = 749,
+  Mudsdale = 750,
+  Dewpider = 751,
+  Araquanid = 752,
+  Fomantis = 753,
+  Lurantis = 754,
+  Morelull = 755,
+  Shiinotic = 756,
+  Salandit = 757,
+  Salazzle = 758,
+  Stufful = 759,
+  Bewear = 760,
+  Bounsweet = 761,
+  Steenee = 762,
+  Tsareena = 763,
+  Comfey = 764,
+  Oranguru = 765,
+  Passimian = 766,
+  Wimpod = 767,
+  Golisopod = 768,
+  Sandygast = 769,
+  Palossand = 770,
+  Pyukumuku = 771,
+  TypeNull = 772,
+  Silvally = 773,
+  Minior = 774,
+  Komala = 775,
+  Turtonator = 776,
+  Togedemaru = 777,
+  Mimikyu = 778,
+  Bruxish = 779,
+  Drampa = 780,
+  Dhelmise = 781,
+  JangmoO = 782,
+  HakamoO = 783,
+  KommoO = 784,
+  TapuKoko = 785,
+  TapuLele = 786,
+  TapuBulu = 787,
+  TapuFini = 788,
+  Cosmog = 789,
+  Cosmoem = 790,
+  Solgaleo = 791,
+  Lunala = 792,
+  Nihilego = 793,
+  Buzzwole = 794,
+  Pheromosa = 795,
+  Xurkitree = 796,
+  Celesteela = 797,
+  Kartana = 798,
+  Guzzlord = 799,
+  Necrozma = 800,
+  Magearna = 801,
+  Marshadow = 802,
+  Poipole = 803,
+  Naganadel = 804,
+  Stakataka = 805,
+  Blacephalon = 806,
+  Zeraora = 807,
+  Meltan = 808,
+  Melmetal = 809,
   DeoxysAttack = 1038601,
   DeoxysDefense = 1038602,
   DeoxysSpeed = 1038603,
@@ -875,6 +1002,21 @@ export const enum Species {
 
   /** The female of the line, who evolves out of a female Espurr */
   MeowsticFemale = 1067801,
+
+  /** The shape the rings let out when the bottle is opened */
+  HoopaUnbound = 1072001,
+
+  /** The share of itself a Zygarde has gathered, half of it at the base */
+  ZygardeTenPercent = 1071801,
+  ZygardeComplete = 1071802,
+
+  /** How big the pumpkin grew, the middling one at the base */
+  PumpkabooSmall = 1071001,
+  PumpkabooLarge = 1071002,
+  PumpkabooSuper = 1071003,
+  GourgeistSmall = 1071101,
+  GourgeistLarge = 1071102,
+  GourgeistSuper = 1071103,
 
   /** The sword drawn, which is what an Aegislash is while it attacks */
   AegislashBlade = 1068101,
@@ -986,6 +1128,143 @@ export const enum Species {
   ZapdosShadow = 1014504,
   MoltresShadow = 1014604,
   MewtwoShadow = 1015003,
+  RaikouShadow = 1024302,
+  EnteiShadow = 1024403,
+  SuicuneShadow = 1024503,
+  LugiaShadow = 1024901,
+  HoOhShadow = 1025002,
+
+  /**
+   * The Megas. The form index is the collection's own Mega slot, so
+   * the art imports under it: Slowbro's is 2 because its Galarian
+   * shape took 1
+   */
+  VenusaurMega = 1000301,
+  CharizardMegaX = 1000601,
+  CharizardMegaY = 1000602,
+  BlastoiseMega = 1000901,
+  BeedrillMega = 1001501,
+  PidgeotMega = 1001801,
+  AlakazamMega = 1006501,
+  SlowbroMega = 1008002,
+  GengarMega = 1009401,
+  KangaskhanMega = 1011501,
+  PinsirMega = 1012701,
+  GyaradosMega = 1013001,
+  AerodactylMega = 1014201,
+  MewtwoMegaX = 1015001,
+  MewtwoMegaY = 1015002,
+  AmpharosMega = 1018101,
+  SteelixMega = 1020801,
+  ScizorMega = 1021201,
+  HeracrossMega = 1021401,
+  HoundoomMega = 1022901,
+  TyranitarMega = 1024801,
+  SceptileMega = 1025401,
+  BlazikenMega = 1025701,
+  SwampertMega = 1026001,
+  GardevoirMega = 1028201,
+  SableyeMega = 1030201,
+  MawileMega = 1030301,
+  AggronMega = 1030601,
+  MedichamMega = 1030801,
+  ManectricMega = 1031001,
+  SharpedoMega = 1031901,
+  CameruptMega = 1032301,
+  AltariaMega = 1033401,
+  BanetteMega = 1035401,
+  AbsolMega = 1035901,
+  GlalieMega = 1036201,
+  SalamenceMega = 1037301,
+  MetagrossMega = 1037601,
+  LatiasMega = 1038001,
+  LatiosMega = 1038101,
+  RayquazaMega = 1038401,
+  LopunnyMega = 1042801,
+  GarchompMega = 1044501,
+  LucarioMega = 1044801,
+  AbomasnowMega = 1046001,
+  GalladeMega = 1047501,
+  AudinoMega = 1053101,
+  DiancieMega = 1071901,
+
+  /** The two Primals, in the collection's own Primal slot */
+  KyogrePrimal = 1038201,
+  GroudonPrimal = 1038301,
+
+  /** The Alolan forms of the Kanto lines, each in the collection's own Alola slot */
+  RattataAlola = 1001901,
+  RaticateAlola = 1002001,
+  RaichuAlola = 1002601,
+  SandshrewAlola = 1002701,
+  SandslashAlola = 1002801,
+  VulpixAlola = 1003701,
+  NinetalesAlola = 1003801,
+  DiglettAlola = 1005001,
+  DugtrioAlola = 1005101,
+  MeowthAlola = 1005201,
+  PersianAlola = 1005301,
+  GeodudeAlola = 1007401,
+  GravelerAlola = 1007501,
+  GolemAlola = 1007601,
+  GrimerAlola = 1008801,
+  MukAlola = 1008901,
+  ExeggutorAlola = 1010301,
+  MarowakAlola = 1010501,
+
+  /** The bond with its trainer drawn out, which is what Battle Bond makes of a Greninja */
+  GreninjaAsh = 1065801,
+
+  /** The four dances an Oricorio takes on from the nectar it drinks, Baile at the base */
+  OricorioPomPom = 1074101,
+  OricorioPau = 1074102,
+  OricorioSensu = 1074103,
+
+  /** The hour a Lycanroc grew up at, Midday at the base */
+  LycanrocMidnight = 1074501,
+  LycanrocDusk = 1074502,
+
+  /** The school a Wishiwashi calls in while it is strong enough */
+  WishiwashiSchool = 1074601,
+
+  /** The seventeen memories a Silvally can carry, Normal at the base */
+  SilvallyFighting = 1077301,
+  SilvallyFlying = 1077302,
+  SilvallyPoison = 1077303,
+  SilvallyGround = 1077304,
+  SilvallyRock = 1077305,
+  SilvallyBug = 1077306,
+  SilvallyGhost = 1077307,
+  SilvallySteel = 1077308,
+  SilvallyFire = 1077309,
+  SilvallyWater = 1077310,
+  SilvallyGrass = 1077311,
+  SilvallyElectric = 1077312,
+  SilvallyPsychic = 1077313,
+  SilvallyIce = 1077314,
+  SilvallyDragon = 1077315,
+  SilvallyDark = 1077316,
+  SilvallyFairy = 1077317,
+
+  /** The core under a Minior's shell, one colour apiece, the Meteor shell at the base */
+  MiniorRed = 1077401,
+  MiniorOrange = 1077402,
+  MiniorYellow = 1077403,
+  MiniorGreen = 1077404,
+  MiniorBlue = 1077405,
+  MiniorIndigo = 1077406,
+  MiniorViolet = 1077407,
+
+  /** The disguise once it has taken a hit */
+  MimikyuBusted = 1077801,
+
+  /** What Necrozma becomes with one of the light pair inside it, and the light let out */
+  NecrozmaDuskMane = 1080001,
+  NecrozmaDawnWings = 1080002,
+  NecrozmaUltra = 1080003,
+
+  /** The colours Magearna was first painted in */
+  MagearnaOriginal = 1080101,
 }
 
 /**
@@ -1169,6 +1448,32 @@ export const FLORGES_FORMS: Species[] = [
   Species.FlorgesWhite,
 ];
 
+/** The two Hoopa, bound first: the rings in, then the rings out */
+export const HOOPA_FORMS: Species[] = [Species.Hoopa, Species.HoopaUnbound];
+
+/** What a Zygarde has gathered of itself, half first, then a tenth, then all */
+export const ZYGARDE_FORMS: Species[] = [
+  Species.Zygarde,
+  Species.ZygardeTenPercent,
+  Species.ZygardeComplete,
+];
+
+/** Each size a pumpkin comes in, the middling one first */
+export const PUMPKABOO_FORMS: Species[] = [
+  Species.Pumpkaboo,
+  Species.PumpkabooSmall,
+  Species.PumpkabooLarge,
+  Species.PumpkabooSuper,
+];
+
+/** The same four sizes grown */
+export const GOURGEIST_FORMS: Species[] = [
+  Species.Gourgeist,
+  Species.GourgeistSmall,
+  Species.GourgeistLarge,
+  Species.GourgeistSuper,
+];
+
 /** Each deer's four coats, spring first, in the order the year turns */
 export const DEERLING_FORMS = [
   Species.Deerling,
@@ -1229,6 +1534,24 @@ export const CASTFORM_FORMS: Species[] = [
 export const DIALGA_FORMS: Species[] = [Species.Dialga, Species.DialgaOrigin];
 export const PALKIA_FORMS: Species[] = [Species.Palkia, Species.PalkiaOrigin];
 export const GIRATINA_FORMS: Species[] = [Species.Giratina, Species.GiratinaOrigin];
+
+/** The four dances an Oricorio takes on, Baile at the base */
+export const ORICORIO_FORMS: Species[] = [
+  Species.Oricorio,
+  Species.OricorioPomPom,
+  Species.OricorioPau,
+  Species.OricorioSensu,
+];
+
+/** The three hours a Lycanroc can grow up at, Midday at the base */
+export const LYCANROC_FORMS: Species[] = [
+  Species.Lycanroc,
+  Species.LycanrocMidnight,
+  Species.LycanrocDusk,
+];
+
+/** A Wishiwashi alone, and the school it calls together from level 20 */
+export const WISHIWASHI_FORMS: Species[] = [Species.Wishiwashi, Species.WishiwashiSchool];
 
 /** Rotom and the five machines it gets into */
 export const ROTOM_FORMS: Species[] = [

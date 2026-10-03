@@ -48,6 +48,7 @@ const FAMILY_TEACHABLE = [
   Moves.StruggleBug,
   Moves.Confide,
   Moves.Infestation,
+  Moves.Liquidation,
 ];
 
 export default function registerSurskitSpecies(): void {
@@ -74,7 +75,7 @@ export default function registerSurskitSpecies(): void {
       [Stats.Speed]: 65,
     },
     types: [Types.Bug, Types.Water],
-    habitat: Habitat.Water,
+    habitat: Habitat.Amphibious,
     abilities: [Abilities.SwiftSwim],
     hiddenAbilities: [Abilities.RainDish],
     eggGroups: [EggGroups.Water1, EggGroups.Bug],
@@ -108,6 +109,7 @@ export default function registerSurskitSpecies(): void {
         Moves.MudShot,
         Moves.HydroPump,
         Moves.FellStinger,
+        Moves.Lunge,
       ],
     },
   });

@@ -67,6 +67,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Probopass, weight: 6 },
       ],
       elusive: [
+        { species: Species.Carbink, weight: 6 },
         { species: Species.Durant, weight: 6 },
         { species: Species.Druddigon, weight: 5 },
         { species: Species.Haxorus, weight: 3 },
@@ -101,12 +102,16 @@ export default function registerMountainSpawns(): void {
         { species: Species.Bonsly, weight: PRIZED_WEIGHT },
       ],
       special: [
+        { species: Species.ZygardeTenPercent, weight: 5 },
+        { species: Species.Zygarde, weight: 5 },
+        { species: Species.Yveltal, weight: 10 },
         { species: Species.Terrakion, weight: 10 },
         { species: Species.Cobalion, weight: 10 },
         { species: Species.Registeel, weight: 10 },
         { species: Species.Moltres, weight: 10 },
         { species: Species.HoOh, weight: 10 },
       ],
+      mythical: [{ species: Species.Diancie, weight: 10 }],
     },
     [TimeOfDay.Day]: {
       base: [
@@ -170,6 +175,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Probopass, weight: 6 },
       ],
       elusive: [
+        { species: Species.Carbink, weight: 6 },
         { species: Species.Durant, weight: 6 },
         { species: Species.Druddigon, weight: 5 },
         { species: Species.Haxorus, weight: 3 },
@@ -205,12 +211,16 @@ export default function registerMountainSpawns(): void {
         { species: Species.Bonsly, weight: PRIZED_WEIGHT },
       ],
       special: [
+        { species: Species.ZygardeTenPercent, weight: 5 },
+        { species: Species.Zygarde, weight: 5 },
+        { species: Species.Yveltal, weight: 10 },
         { species: Species.Terrakion, weight: 10 },
         { species: Species.Cobalion, weight: 10 },
         { species: Species.Registeel, weight: 10 },
         { species: Species.Moltres, weight: 10 },
         { species: Species.HoOh, weight: 10 },
       ],
+      mythical: [{ species: Species.Diancie, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
       base: [
@@ -260,6 +270,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Swoobat, weight: 8 },
       ],
       elusive: [
+        { species: Species.Carbink, weight: 6 },
         { species: Species.Aegislash, weight: 5 },
         { species: Species.Eelektross, weight: 4 },
         { species: Species.Salamence, weight: 2 },
@@ -284,12 +295,16 @@ export default function registerMountainSpawns(): void {
         { species: Species.Bonsly, weight: PRIZED_WEIGHT },
       ],
       special: [
+        { species: Species.ZygardeTenPercent, weight: 5 },
+        { species: Species.Zygarde, weight: 5 },
+        { species: Species.Yveltal, weight: 10 },
         { species: Species.Terrakion, weight: 10 },
         { species: Species.Cobalion, weight: 10 },
         { species: Species.Registeel, weight: 10 },
         { species: Species.Moltres, weight: 10 },
         { species: Species.HoOh, weight: 10 },
       ],
+      mythical: [{ species: Species.Diancie, weight: 10 }],
     },
     [TimeOfDay.Night]: {
       base: [
@@ -345,6 +360,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Swoobat, weight: 8 },
       ],
       elusive: [
+        { species: Species.Carbink, weight: 6 },
         { species: Species.Aegislash, weight: 5 },
         { species: Species.Eelektross, weight: 4 },
         { species: Species.Golem, weight: 5 },
@@ -370,6 +386,9 @@ export default function registerMountainSpawns(): void {
         { species: Species.Bonsly, weight: PRIZED_WEIGHT },
       ],
       special: [
+        { species: Species.ZygardeTenPercent, weight: 5 },
+        { species: Species.Zygarde, weight: 5 },
+        { species: Species.Yveltal, weight: 10 },
         { species: Species.Terrakion, weight: 10 },
         { species: Species.Cobalion, weight: 10 },
         { species: Species.Registeel, weight: 10 },
@@ -377,6 +396,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Mewtwo, weight: 10 },
         { species: Species.HoOh, weight: 10 },
       ],
+      mythical: [{ species: Species.Diancie, weight: 10 }],
     },
   });
   registerWaterPool(Biome.Mountain, {

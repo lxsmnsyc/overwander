@@ -67,6 +67,7 @@ export default function registerKelpForestSpawns(): void {
     [TimeOfDay.Evening]: {
       base: [],
       uncommon: [
+        { species: Species.Inkay, weight: 24 },
         { species: Species.Krabby, weight: 20 },
         { species: Species.Seel, weight: 20 },
         { species: Species.Shellos, weight: 25 },
@@ -74,6 +75,7 @@ export default function registerKelpForestSpawns(): void {
       ],
       rare: [],
       scarce: [
+        { species: Species.Malamar, weight: 6 },
         { species: Species.Kingler, weight: 10 },
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Gastrodon, weight: 10 },
@@ -86,6 +88,7 @@ export default function registerKelpForestSpawns(): void {
     [TimeOfDay.Night]: {
       base: [],
       uncommon: [
+        { species: Species.Inkay, weight: 24 },
         { species: Species.Krabby, weight: 20 },
         { species: Species.Seel, weight: 20 },
         { species: Species.Shellos, weight: 25 },
@@ -93,6 +96,7 @@ export default function registerKelpForestSpawns(): void {
       ],
       rare: [],
       scarce: [
+        { species: Species.Malamar, weight: 6 },
         { species: Species.Kingler, weight: 10 },
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Gastrodon, weight: 10 },
@@ -173,6 +177,7 @@ export default function registerKelpForestSpawns(): void {
     [TimeOfDay.Evening]: {
       base: [{ species: Species.Horsea, weight: 20 }],
       uncommon: [
+        { species: Species.Inkay, weight: 24 },
         { species: Species.Tentacool, weight: 20 },
         { species: Species.Staryu, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
@@ -182,6 +187,7 @@ export default function registerKelpForestSpawns(): void {
       ],
       rare: [{ species: Species.Seadra, weight: 10 }],
       scarce: [
+        { species: Species.Malamar, weight: 6 },
         { species: Species.Milotic, weight: 3 },
         { species: Species.Tentacruel, weight: 10 },
         { species: Species.Starmie, weight: 10 },
@@ -199,6 +205,7 @@ export default function registerKelpForestSpawns(): void {
     [TimeOfDay.Night]: {
       base: [{ species: Species.Horsea, weight: 20 }],
       uncommon: [
+        { species: Species.Inkay, weight: 24 },
         { species: Species.Tentacool, weight: 20 },
         { species: Species.Staryu, weight: 20 },
         { species: Species.Magikarp, weight: 30 },
@@ -208,6 +215,7 @@ export default function registerKelpForestSpawns(): void {
       ],
       rare: [{ species: Species.Seadra, weight: 10 }],
       scarce: [
+        { species: Species.Malamar, weight: 6 },
         { species: Species.Milotic, weight: 3 },
         { species: Species.Tentacruel, weight: 10 },
         { species: Species.Starmie, weight: 10 },

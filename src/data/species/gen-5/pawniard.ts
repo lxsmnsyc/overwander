@@ -194,6 +194,8 @@ export default function registerPawniardSpecies(): void {
         Moves.GigaImpact,
         Moves.HyperBeam,
         Moves.Reversal,
+        Moves.LaserFocus,
+        Moves.ThroatChop,
       ],
     },
   });

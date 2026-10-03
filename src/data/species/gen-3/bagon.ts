@@ -221,6 +221,8 @@ export default function registerBagonSpecies(): void {
         Moves.Tailwind,
         Moves.Bulldoze,
         Moves.DragonTail,
+        Moves.BrutalSwing,
+        Moves.LaserFocus,
       ],
     },
   });

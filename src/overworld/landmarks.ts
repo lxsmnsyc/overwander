@@ -1,15 +1,15 @@
 import {
+  SpawnClass,
   boostFamilyEntries,
   boostFamilyWeights,
+  getClassPool,
   getEggPool,
   getSpawnPool,
   pickFromEntries,
   spawnRanks,
 } from '../data/biome';
-import type { SpawnEntry } from '../data/biome';
 import type Biome from '../data/ids/biome';
-import { SpawnSurface, type TimeOfDay } from '../data/ids/biome';
-import EggGroups from '../data/ids/egg-groups';
+import type { TimeOfDay } from '../data/ids/biome';
 import { APRICORNS, type Items } from '../data/ids/items';
 import type Families from '../data/ids/families';
 import type { Species } from '../data/ids/species';
@@ -23,7 +23,7 @@ import Phenomenon, {
   PHENOMENON_RARE_CHANCE,
   getPhenomenonGroups,
 } from '../data/overworld/phenomenon';
-import { SPECIES_DAY_WEIGHT_BOOST, getSpeciesData } from '../data/species';
+import { SPECIES_DAY_WEIGHT_BOOST } from '../data/species';
 
 /**
  * What a phenomenon turned out to be: something to meet, something to
@@ -49,14 +49,11 @@ export function resolveNest(
   biome: Biome,
   time: TimeOfDay,
   random: () => number,
-  featured: Families | null = null,
+  featured: readonly Families[] = [],
 ): Species | null {
   const pool = getEggPool(biome, time);
 
-  return pickFromEntries(
-    featured == null ? pool : boostFamilyEntries(pool, featured, SPECIES_DAY_WEIGHT_BOOST),
-    random,
-  );
+  return pickFromEntries(boostFamilyEntries(pool, featured, SPECIES_DAY_WEIGHT_BOOST), random);
 }
 
 /**
@@ -130,35 +127,15 @@ export function resolveApricornTree(colour: () => number, crop: () => number): I
 }
 
 /**
- * The egg groups a phenomenon insists on: rippling water startles the
- * three water groups, a flying shadow the flying one. The others take
- * whatever the biome has
+ * The kind of pokemon a phenomenon startles: rippling water the water
+ * kind, a flying shadow the fliers and a dust cloud what keeps to the
+ * ground. A grotto takes whatever stands on the ground
  */
-const PHENOMENON_EGG_GROUPS: Partial<Record<Phenomenon, Set<EggGroups>>> = {
-  [Phenomenon.RipplingWater]: new Set([EggGroups.Water1, EggGroups.Water2, EggGroups.Water3]),
-  [Phenomenon.FlyingShadow]: new Set([EggGroups.Flying]),
+const PHENOMENON_CLASSES: Partial<Record<Phenomenon, SpawnClass>> = {
+  [Phenomenon.RipplingWater]: SpawnClass.Water,
+  [Phenomenon.FlyingShadow]: SpawnClass.Flying,
+  [Phenomenon.DustCloud]: SpawnClass.Ground,
 };
-
-/**
- * The band's entries that fit what the phenomenon looks like; the
- * whole band when it insists on nothing
- */
-function fitting(entries: SpawnEntry[], groups: Set<EggGroups> | undefined): SpawnEntry[] {
-  if (groups == null) {
-    return entries;
-  }
-  const fits: SpawnEntry[] = [];
-
-  for (const entry of entries) {
-    for (const group of getSpeciesData(entry.species).eggGroups) {
-      if (groups.has(group)) {
-        fits.push(entry);
-        break;
-      }
-    }
-  }
-  return fits;
-}
 
 /**
  * The pokemon a phenomenon startled out: the biome's **uncommon** band
@@ -167,13 +144,13 @@ function fitting(entries: SpawnEntry[], groups: Set<EggGroups> | undefined): Spa
  * band is not in it at all — what a player can meet by walking is not
  * worth stopping for — and neither is the special one.
  *
- * Rippling water and a flying shadow look like something particular,
- * and that is binding rather than a preference: a shadow overhead that
- * turned out to be a Rattata is the picture lying. A biome with
- * nothing of the kind answers null, and the caller hands over what the
- * phenomenon was carrying instead.
+ * Rippling water, a flying shadow and a dust cloud each look like one
+ * kind of pokemon, and that is binding rather than a preference: a
+ * shadow overhead that turned out to be a Rattata is the picture lying.
+ * A biome with nothing of the kind answers null, and the caller hands
+ * over what the phenomenon was carrying instead.
  *
- * The day's featured family, when one is given, crowds the pool
+ * The day's featured families, when there are any, crowd the pool
  * exactly as it crowds the overworld's
  */
 function startled(
@@ -181,25 +158,16 @@ function startled(
   biome: Biome,
   time: TimeOfDay,
   random: () => number,
-  featured: Families | null,
-  surface: SpawnSurface,
+  featured: readonly Families[],
 ): Species | null {
-  const biomePool = getSpawnPool(biome, time, false, surface);
-  const pool =
-    featured == null
-      ? biomePool
-      : boostFamilyWeights(biomePool, featured, SPECIES_DAY_WEIGHT_BOOST);
-  const groups = PHENOMENON_EGG_GROUPS[phenomenon];
+  const kind = PHENOMENON_CLASSES[phenomenon];
+  const biomePool = kind == null ? getSpawnPool(biome, time) : getClassPool(biome, time, kind);
+  const pool = boostFamilyWeights(biomePool, featured, SPECIES_DAY_WEIGHT_BOOST);
   const rare = random() < PHENOMENON_RARE_CHANCE;
   const [, middle, grown] = spawnRanks(pool);
-  const preferred = rare ? grown : middle;
-  const fallback = rare ? middle : grown;
   // Either rank, so a biome with nothing half-grown borrows what is
   // grown. What is never borrowed is a species of the wrong kind
-  const bands =
-    groups == null
-      ? [preferred, fallback]
-      : [fitting(preferred, groups), fitting(fallback, groups)];
+  const bands = rare ? [grown, middle] : [middle, grown];
 
   for (const band of bands) {
     if (band.length > 0) {
@@ -221,16 +189,14 @@ function startled(
  * any landmark hands over without a fee or a walk.
  *
  * Answers null when the biome has nothing in the bands a phenomenon
- * draws from. The surface is the pool it startles out of, so a ripple
- * on a pond draws from the biome's water
+ * draws from
  */
 export function resolvePhenomenon(
   phenomenon: Phenomenon,
   biome: Biome,
   time: TimeOfDay,
   random: () => number,
-  featured: Families | null = null,
-  surface = SpawnSurface.Land,
+  featured: readonly Families[] = [],
 ): PhenomenonReward | null {
   // A stash on a cache's terms, drawn through the phenomenon's richer
   // bands
@@ -250,7 +216,7 @@ export function resolvePhenomenon(
     return dropped();
   }
 
-  const species = startled(phenomenon, biome, time, random, featured, surface);
+  const species = startled(phenomenon, biome, time, random, featured);
 
   // A shadow over a biome with nothing that flies drops what it was
   // carrying rather than turning out to be nothing at all

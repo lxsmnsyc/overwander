@@ -257,7 +257,6 @@ function findRaid(
   offset: number,
   boss?: string,
 ): { snapshot: ChunkSnapshot; cell: number; roll: RaidRoll } | null {
-  const kind = shadow ? Landmark.ShadowLair : Landmark.LegendaryLair;
   const world = getWorld();
   const windows = boss == null ? 1 : BOSS_WINDOWS;
 
@@ -265,7 +264,8 @@ function findRaid(
     const chunk = world.getChunk(chunkX, chunkY);
 
     for (const [cell, landmark] of chunk.getLandmarkCells()) {
-      if (landmark !== kind) {
+      // Either lair, since a legendary one with nothing to host stages a shadow raid
+      if (landmark !== Landmark.ShadowLair && landmark !== Landmark.LegendaryLair) {
         continue;
       }
       for (let window = 0; window < windows; window++) {

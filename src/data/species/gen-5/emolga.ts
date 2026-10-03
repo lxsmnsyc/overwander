@@ -111,7 +111,7 @@ export default function registerEmolgaSpecies(): void {
         Moves.WildCharge,
         Moves.Confide,
       ],
-      egg: [Moves.IonDeluge],
+      egg: [Moves.IonDeluge, Moves.SpeedSwap],
     },
   });
 }

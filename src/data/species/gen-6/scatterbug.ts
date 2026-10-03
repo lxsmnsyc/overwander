@@ -274,6 +274,7 @@ export default function registerScatterbugSpecies(): void {
         Moves.Thief,
         Moves.Toxic,
         Moves.UTurn,
+        Moves.LaserFocus,
       ],
     },
   });
@@ -366,6 +367,7 @@ export default function registerScatterbugSpecies(): void {
           Moves.Thief,
           Moves.Toxic,
           Moves.UTurn,
+          Moves.LaserFocus,
         ],
       },
       name: pattern.name,
@@ -378,9 +380,10 @@ export default function registerScatterbugSpecies(): void {
   // town's streets and nowhere else, and no Spewpa ever comes out as
   // one, so neither is on a country's list or on the road up from the
   // caterpillar
-  for (const [species, name] of [
-    [Species.VivillonFancy, 'Fancy Vivillon'],
-    [Species.VivillonPokeBall, 'Poke Ball Vivillon'],
+  // Without Spewpa below them they miss Shed Skin, so each gets a filler
+  for (const [species, name, filler] of [
+    [Species.VivillonFancy, 'Fancy Vivillon', Abilities.CuteCharm],
+    [Species.VivillonPokeBall, 'Poke Ball Vivillon', Abilities.Pickup],
   ] as const) {
     registerSpecies(species, {
       dexNumber: 666,
@@ -398,7 +401,7 @@ export default function registerScatterbugSpecies(): void {
       },
       types: [Types.Bug, Types.Flying],
       abilities: [Abilities.ShieldDust, Abilities.CompoundEyes],
-      hiddenAbilities: [Abilities.FriendGuard],
+      hiddenAbilities: [Abilities.FriendGuard, filler],
       eggGroups: [EggGroups.Bug],
       genderRatio: [4, 4],
       catchRate: 45,
@@ -465,6 +468,7 @@ export default function registerScatterbugSpecies(): void {
           Moves.Thief,
           Moves.Toxic,
           Moves.UTurn,
+          Moves.LaserFocus,
         ],
       },
       name,

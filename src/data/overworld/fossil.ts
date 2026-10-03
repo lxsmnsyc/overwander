@@ -47,6 +47,8 @@ export const FOSSIL_PRICES = new Map<Items, number>([
   [Items.ArmorFossil, 12_000],
   [Items.CoverFossil, 12_000],
   [Items.PlumeFossil, 12_000],
+  [Items.JawFossil, 12_000],
+  [Items.SailFossil, 12_000],
 ]);
 
 /**

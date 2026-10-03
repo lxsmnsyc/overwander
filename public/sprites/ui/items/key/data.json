@@ -1,7 +1,7 @@
 {
   "compact": true,
   "width": 299,
-  "height": 364,
+  "height": 384,
   "images": [
     {
       "name": "acro-bike-gen3.png",
@@ -56,6 +56,19 @@
       ]
     },
     {
+      "name": "ancient-poke-ball.png",
+      "x": 274,
+      "y": 26,
+      "width": 18,
+      "height": 18,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        7,
+        7
+      ]
+    },
+    {
       "name": "apricorn-box.png",
       "x": 104,
       "y": 54,
@@ -83,7 +96,7 @@
     },
     {
       "name": "armor-pass.png",
-      "x": 251,
+      "x": 246,
       "y": 204,
       "width": 28,
       "height": 19,
@@ -96,7 +109,7 @@
     },
     {
       "name": "auroraticket.png",
-      "x": 272,
+      "x": 252,
       "y": 281,
       "width": 21,
       "height": 17,
@@ -109,8 +122,8 @@
     },
     {
       "name": "autograph.png",
-      "x": 0,
-      "y": 224,
+      "x": 274,
+      "y": 204,
       "width": 22,
       "height": 19,
       "sourceWidth": 32,
@@ -135,7 +148,7 @@
     },
     {
       "name": "band-autograph.png",
-      "x": 218,
+      "x": 197,
       "y": 262,
       "width": 21,
       "height": 18,
@@ -252,8 +265,8 @@
     },
     {
       "name": "bike-voucher.png",
-      "x": 0,
-      "y": 299,
+      "x": 273,
+      "y": 281,
       "width": 21,
       "height": 17,
       "sourceWidth": 32,
@@ -278,7 +291,7 @@
     },
     {
       "name": "blue-card.png",
-      "x": 210,
+      "x": 189,
       "y": 316,
       "width": 20,
       "height": 16,
@@ -291,7 +304,7 @@
     },
     {
       "name": "blue-orb-gen3.png",
-      "x": 230,
+      "x": 209,
       "y": 316,
       "width": 16,
       "height": 16,
@@ -304,7 +317,7 @@
     },
     {
       "name": "blue-orb-gen4.png",
-      "x": 82,
+      "x": 73,
       "y": 349,
       "width": 14,
       "height": 14,
@@ -330,7 +343,7 @@
     },
     {
       "name": "card-key-gen3.png",
-      "x": 21,
+      "x": 0,
       "y": 299,
       "width": 21,
       "height": 17,
@@ -343,7 +356,7 @@
     },
     {
       "name": "card-key.png",
-      "x": 246,
+      "x": 225,
       "y": 316,
       "width": 20,
       "height": 16,
@@ -382,7 +395,7 @@
     },
     {
       "name": "clear-bell.png",
-      "x": 22,
+      "x": 0,
       "y": 224,
       "width": 22,
       "height": 19,
@@ -421,7 +434,7 @@
     },
     {
       "name": "common-stone.png",
-      "x": 96,
+      "x": 87,
       "y": 349,
       "width": 13,
       "height": 14,
@@ -447,8 +460,8 @@
     },
     {
       "name": "contest-costume--jacket.png",
-      "x": 0,
-      "y": 349,
+      "x": 269,
+      "y": 333,
       "width": 27,
       "height": 15,
       "sourceWidth": 32,
@@ -460,7 +473,7 @@
     },
     {
       "name": "contest-pass.png",
-      "x": 42,
+      "x": 21,
       "y": 299,
       "width": 21,
       "height": 17,
@@ -473,7 +486,7 @@
     },
     {
       "name": "coupon-1.png",
-      "x": 63,
+      "x": 42,
       "y": 299,
       "width": 21,
       "height": 17,
@@ -486,7 +499,7 @@
     },
     {
       "name": "coupon-2.png",
-      "x": 84,
+      "x": 63,
       "y": 299,
       "width": 21,
       "height": 17,
@@ -499,7 +512,7 @@
     },
     {
       "name": "coupon-3.png",
-      "x": 105,
+      "x": 84,
       "y": 299,
       "width": 21,
       "height": 17,
@@ -512,7 +525,7 @@
     },
     {
       "name": "crown-pass.png",
-      "x": 44,
+      "x": 22,
       "y": 224,
       "width": 28,
       "height": 19,
@@ -525,7 +538,7 @@
     },
     {
       "name": "dark-stone.png",
-      "x": 266,
+      "x": 245,
       "y": 316,
       "width": 16,
       "height": 16,
@@ -538,8 +551,8 @@
     },
     {
       "name": "data-card.png",
-      "x": 0,
-      "y": 333,
+      "x": 261,
+      "y": 316,
       "width": 20,
       "height": 16,
       "sourceWidth": 32,
@@ -577,7 +590,7 @@
     },
     {
       "name": "devon-scope-gen3.png",
-      "x": 20,
+      "x": 0,
       "y": 333,
       "width": 22,
       "height": 16,
@@ -590,7 +603,7 @@
     },
     {
       "name": "devon-scope.png",
-      "x": 42,
+      "x": 22,
       "y": 333,
       "width": 23,
       "height": 16,
@@ -759,7 +772,7 @@
     },
     {
       "name": "elevator-key.png",
-      "x": 72,
+      "x": 50,
       "y": 224,
       "width": 23,
       "height": 19,
@@ -785,7 +798,7 @@
     },
     {
       "name": "enigma-stone.png",
-      "x": 95,
+      "x": 73,
       "y": 224,
       "width": 20,
       "height": 19,
@@ -798,7 +811,7 @@
     },
     {
       "name": "enigmatic-card.png",
-      "x": 239,
+      "x": 218,
       "y": 262,
       "width": 22,
       "height": 18,
@@ -824,7 +837,7 @@
     },
     {
       "name": "eon-ticket.png",
-      "x": 126,
+      "x": 105,
       "y": 299,
       "width": 21,
       "height": 17,
@@ -876,7 +889,7 @@
     },
     {
       "name": "fame-checker.png",
-      "x": 147,
+      "x": 126,
       "y": 299,
       "width": 22,
       "height": 17,
@@ -902,7 +915,7 @@
     },
     {
       "name": "festival-ticket.png",
-      "x": 169,
+      "x": 148,
       "y": 299,
       "width": 21,
       "height": 17,
@@ -954,7 +967,7 @@
     },
     {
       "name": "galactic-key.png",
-      "x": 190,
+      "x": 169,
       "y": 299,
       "width": 21,
       "height": 17,
@@ -980,7 +993,7 @@
     },
     {
       "name": "go-goggles-gen3.png",
-      "x": 65,
+      "x": 45,
       "y": 333,
       "width": 22,
       "height": 16,
@@ -993,7 +1006,7 @@
     },
     {
       "name": "go-goggles.png",
-      "x": 115,
+      "x": 93,
       "y": 224,
       "width": 24,
       "height": 19,
@@ -1006,7 +1019,7 @@
     },
     {
       "name": "god-stone.png",
-      "x": 87,
+      "x": 67,
       "y": 333,
       "width": 16,
       "height": 16,
@@ -1071,7 +1084,7 @@
     },
     {
       "name": "gram-1.png",
-      "x": 139,
+      "x": 117,
       "y": 224,
       "width": 22,
       "height": 19,
@@ -1084,7 +1097,7 @@
     },
     {
       "name": "gram-2.png",
-      "x": 161,
+      "x": 139,
       "y": 224,
       "width": 22,
       "height": 19,
@@ -1097,7 +1110,7 @@
     },
     {
       "name": "gram-3.png",
-      "x": 183,
+      "x": 161,
       "y": 224,
       "width": 22,
       "height": 19,
@@ -1110,7 +1123,7 @@
     },
     {
       "name": "grubby-hanky.png",
-      "x": 261,
+      "x": 240,
       "y": 262,
       "width": 18,
       "height": 18,
@@ -1123,7 +1136,7 @@
     },
     {
       "name": "gs-ball.png",
-      "x": 279,
+      "x": 258,
       "y": 262,
       "width": 18,
       "height": 18,
@@ -1135,8 +1148,34 @@
       ]
     },
     {
+      "name": "heart-diamond.png",
+      "x": 55,
+      "y": 349,
+      "width": 18,
+      "height": 15,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        7,
+        9
+      ]
+    },
+    {
+      "name": "heros-charm.png",
+      "x": 269,
+      "y": 348,
+      "width": 20,
+      "height": 20,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        6,
+        6
+      ]
+    },
+    {
       "name": "hi-tech-earbuds.png",
-      "x": 27,
+      "x": 0,
       "y": 349,
       "width": 25,
       "height": 15,
@@ -1149,7 +1188,7 @@
     },
     {
       "name": "holo-caster--green.png",
-      "x": 103,
+      "x": 83,
       "y": 333,
       "width": 14,
       "height": 16,
@@ -1162,7 +1201,7 @@
     },
     {
       "name": "holo-caster--red.png",
-      "x": 117,
+      "x": 97,
       "y": 333,
       "width": 14,
       "height": 16,
@@ -1175,7 +1214,7 @@
     },
     {
       "name": "holo-caster.png",
-      "x": 131,
+      "x": 111,
       "y": 333,
       "width": 14,
       "height": 16,
@@ -1214,7 +1253,7 @@
     },
     {
       "name": "intriguing-stone.png",
-      "x": 109,
+      "x": 100,
       "y": 349,
       "width": 14,
       "height": 14,
@@ -1227,7 +1266,7 @@
     },
     {
       "name": "jade-orb.png",
-      "x": 123,
+      "x": 114,
       "y": 349,
       "width": 14,
       "height": 14,
@@ -1253,7 +1292,7 @@
     },
     {
       "name": "key-stone-gen6.png",
-      "x": 137,
+      "x": 128,
       "y": 349,
       "width": 14,
       "height": 14,
@@ -1279,7 +1318,7 @@
     },
     {
       "name": "key-to-room-1.png",
-      "x": 205,
+      "x": 183,
       "y": 224,
       "width": 21,
       "height": 19,
@@ -1292,7 +1331,7 @@
     },
     {
       "name": "key-to-room-2.png",
-      "x": 226,
+      "x": 204,
       "y": 224,
       "width": 21,
       "height": 19,
@@ -1305,7 +1344,7 @@
     },
     {
       "name": "key-to-room-4.png",
-      "x": 247,
+      "x": 225,
       "y": 224,
       "width": 21,
       "height": 19,
@@ -1318,7 +1357,7 @@
     },
     {
       "name": "key-to-room-6.png",
-      "x": 268,
+      "x": 246,
       "y": 224,
       "width": 21,
       "height": 19,
@@ -1344,7 +1383,7 @@
     },
     {
       "name": "lens-case.png",
-      "x": 145,
+      "x": 125,
       "y": 333,
       "width": 19,
       "height": 16,
@@ -1357,8 +1396,8 @@
     },
     {
       "name": "letter.png",
-      "x": 0,
-      "y": 243,
+      "x": 267,
+      "y": 224,
       "width": 22,
       "height": 19,
       "sourceWidth": 32,
@@ -1370,7 +1409,7 @@
     },
     {
       "name": "liberty-pass.png",
-      "x": 211,
+      "x": 190,
       "y": 299,
       "width": 21,
       "height": 17,
@@ -1383,7 +1422,7 @@
     },
     {
       "name": "lift-key-gen3.png",
-      "x": 22,
+      "x": 0,
       "y": 243,
       "width": 20,
       "height": 19,
@@ -1396,7 +1435,7 @@
     },
     {
       "name": "lift-key.png",
-      "x": 42,
+      "x": 20,
       "y": 243,
       "width": 20,
       "height": 19,
@@ -1409,7 +1448,7 @@
     },
     {
       "name": "light-stone.png",
-      "x": 164,
+      "x": 144,
       "y": 333,
       "width": 16,
       "height": 16,
@@ -1422,8 +1461,8 @@
     },
     {
       "name": "lock-capsule-gen4.png",
-      "x": 0,
-      "y": 281,
+      "x": 276,
+      "y": 262,
       "width": 20,
       "height": 18,
       "sourceWidth": 32,
@@ -1448,7 +1487,7 @@
     },
     {
       "name": "looker-ticket.png",
-      "x": 20,
+      "x": 0,
       "y": 281,
       "width": 28,
       "height": 18,
@@ -1487,7 +1526,7 @@
     },
     {
       "name": "lost-item.png",
-      "x": 52,
+      "x": 25,
       "y": 349,
       "width": 15,
       "height": 15,
@@ -1552,7 +1591,7 @@
     },
     {
       "name": "magma-emblem.png",
-      "x": 62,
+      "x": 40,
       "y": 243,
       "width": 20,
       "height": 19,
@@ -1565,7 +1604,7 @@
     },
     {
       "name": "magma-stone.png",
-      "x": 48,
+      "x": 28,
       "y": 281,
       "width": 20,
       "height": 18,
@@ -1591,7 +1630,7 @@
     },
     {
       "name": "makeup-bag.png",
-      "x": 180,
+      "x": 160,
       "y": 333,
       "width": 22,
       "height": 16,
@@ -1630,7 +1669,7 @@
     },
     {
       "name": "medal-box.png",
-      "x": 232,
+      "x": 211,
       "y": 299,
       "width": 22,
       "height": 17,
@@ -1643,7 +1682,7 @@
     },
     {
       "name": "mega-bracelet.png",
-      "x": 151,
+      "x": 142,
       "y": 349,
       "width": 18,
       "height": 14,
@@ -1669,7 +1708,7 @@
     },
     {
       "name": "mega-cuff.png",
-      "x": 82,
+      "x": 60,
       "y": 243,
       "width": 22,
       "height": 19,
@@ -1682,7 +1721,7 @@
     },
     {
       "name": "mega-ring.png",
-      "x": 243,
+      "x": 249,
       "y": 349,
       "width": 13,
       "height": 10,
@@ -1708,7 +1747,7 @@
     },
     {
       "name": "meteorite--2.png",
-      "x": 68,
+      "x": 48,
       "y": 281,
       "width": 18,
       "height": 18,
@@ -1721,7 +1760,7 @@
     },
     {
       "name": "meteorite--3.png",
-      "x": 254,
+      "x": 233,
       "y": 299,
       "width": 17,
       "height": 17,
@@ -1734,7 +1773,7 @@
     },
     {
       "name": "meteorite--4.png",
-      "x": 202,
+      "x": 182,
       "y": 333,
       "width": 15,
       "height": 16,
@@ -1747,7 +1786,7 @@
     },
     {
       "name": "meteorite-shard.png",
-      "x": 169,
+      "x": 160,
       "y": 349,
       "width": 17,
       "height": 14,
@@ -1798,8 +1837,21 @@
       ]
     },
     {
+      "name": "mystery-box.png",
+      "x": 73,
+      "y": 363,
+      "width": 22,
+      "height": 17,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        5,
+        7
+      ]
+    },
+    {
       "name": "mystery-egg.png",
-      "x": 217,
+      "x": 197,
       "y": 333,
       "width": 14,
       "height": 16,
@@ -1812,7 +1864,7 @@
     },
     {
       "name": "mysticticket.png",
-      "x": 271,
+      "x": 250,
       "y": 299,
       "width": 21,
       "height": 17,
@@ -1825,7 +1877,7 @@
     },
     {
       "name": "n-lunarizer.png",
-      "x": 104,
+      "x": 82,
       "y": 243,
       "width": 21,
       "height": 19,
@@ -1838,7 +1890,7 @@
     },
     {
       "name": "n-solarizer.png",
-      "x": 125,
+      "x": 103,
       "y": 243,
       "width": 21,
       "height": 19,
@@ -1851,7 +1903,7 @@
     },
     {
       "name": "oaks-letter.png",
-      "x": 146,
+      "x": 124,
       "y": 243,
       "width": 22,
       "height": 19,
@@ -1864,7 +1916,7 @@
     },
     {
       "name": "oaks-parcel.png",
-      "x": 168,
+      "x": 146,
       "y": 243,
       "width": 20,
       "height": 19,
@@ -1877,7 +1929,7 @@
     },
     {
       "name": "old-amber.png",
-      "x": 188,
+      "x": 166,
       "y": 243,
       "width": 20,
       "height": 19,
@@ -1903,7 +1955,7 @@
     },
     {
       "name": "old-letter.png",
-      "x": 208,
+      "x": 186,
       "y": 243,
       "width": 24,
       "height": 19,
@@ -1955,8 +2007,8 @@
     },
     {
       "name": "pair-of-tickets.png",
-      "x": 0,
-      "y": 316,
+      "x": 271,
+      "y": 299,
       "width": 21,
       "height": 17,
       "sourceWidth": 32,
@@ -1981,7 +2033,7 @@
     },
     {
       "name": "parcel.png",
-      "x": 232,
+      "x": 210,
       "y": 243,
       "width": 20,
       "height": 19,
@@ -1994,7 +2046,7 @@
     },
     {
       "name": "pass.png",
-      "x": 231,
+      "x": 211,
       "y": 333,
       "width": 20,
       "height": 16,
@@ -2007,7 +2059,7 @@
     },
     {
       "name": "permit.png",
-      "x": 21,
+      "x": 0,
       "y": 316,
       "width": 21,
       "height": 17,
@@ -2033,7 +2085,7 @@
     },
     {
       "name": "plasma-card.png",
-      "x": 42,
+      "x": 21,
       "y": 316,
       "width": 21,
       "height": 17,
@@ -2059,7 +2111,7 @@
     },
     {
       "name": "point-card.png",
-      "x": 63,
+      "x": 42,
       "y": 316,
       "width": 21,
       "height": 17,
@@ -2150,7 +2202,7 @@
     },
     {
       "name": "portal-key.png",
-      "x": 186,
+      "x": 177,
       "y": 349,
       "width": 14,
       "height": 14,
@@ -2176,7 +2228,7 @@
     },
     {
       "name": "power-plant-pass.png",
-      "x": 84,
+      "x": 63,
       "y": 316,
       "width": 21,
       "height": 17,
@@ -2215,7 +2267,7 @@
     },
     {
       "name": "profs-letter.png",
-      "x": 252,
+      "x": 230,
       "y": 243,
       "width": 22,
       "height": 19,
@@ -2228,7 +2280,7 @@
     },
     {
       "name": "prop-case.png",
-      "x": 86,
+      "x": 66,
       "y": 281,
       "width": 19,
       "height": 18,
@@ -2267,7 +2319,7 @@
     },
     {
       "name": "rainbow-pass.png",
-      "x": 105,
+      "x": 84,
       "y": 316,
       "width": 21,
       "height": 17,
@@ -2306,7 +2358,7 @@
     },
     {
       "name": "red-orb-gen3.png",
-      "x": 251,
+      "x": 231,
       "y": 333,
       "width": 16,
       "height": 16,
@@ -2319,7 +2371,7 @@
     },
     {
       "name": "red-orb-gen4.png",
-      "x": 200,
+      "x": 191,
       "y": 349,
       "width": 14,
       "height": 14,
@@ -2332,7 +2384,7 @@
     },
     {
       "name": "red-scale.png",
-      "x": 230,
+      "x": 236,
       "y": 349,
       "width": 13,
       "height": 13,
@@ -2345,7 +2397,7 @@
     },
     {
       "name": "reins-of-unity.png",
-      "x": 105,
+      "x": 85,
       "y": 281,
       "width": 26,
       "height": 18,
@@ -2384,7 +2436,7 @@
     },
     {
       "name": "rm-1-key.png",
-      "x": 274,
+      "x": 252,
       "y": 243,
       "width": 21,
       "height": 19,
@@ -2397,6 +2449,19 @@
     },
     {
       "name": "rm-2-key.png",
+      "x": 273,
+      "y": 243,
+      "width": 21,
+      "height": 19,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        6,
+        7
+      ]
+    },
+    {
+      "name": "rm-4-key.png",
       "x": 0,
       "y": 262,
       "width": 21,
@@ -2409,21 +2474,8 @@
       ]
     },
     {
-      "name": "rm-4-key.png",
-      "x": 21,
-      "y": 262,
-      "width": 21,
-      "height": 19,
-      "sourceWidth": 32,
-      "sourceHeight": 32,
-      "trim": [
-        6,
-        7
-      ]
-    },
-    {
       "name": "rm-6-key.png",
-      "x": 42,
+      "x": 21,
       "y": 262,
       "width": 21,
       "height": 19,
@@ -2501,7 +2553,7 @@
     },
     {
       "name": "rotom-catalog.png",
-      "x": 63,
+      "x": 42,
       "y": 262,
       "width": 24,
       "height": 19,
@@ -2514,7 +2566,7 @@
     },
     {
       "name": "ruby.png",
-      "x": 87,
+      "x": 66,
       "y": 262,
       "width": 20,
       "height": 19,
@@ -2540,7 +2592,7 @@
     },
     {
       "name": "sapphire.png",
-      "x": 107,
+      "x": 86,
       "y": 262,
       "width": 20,
       "height": 19,
@@ -2566,7 +2618,7 @@
     },
     {
       "name": "seal-bag.png",
-      "x": 127,
+      "x": 106,
       "y": 262,
       "width": 16,
       "height": 19,
@@ -2588,6 +2640,19 @@
       "trim": [
         5,
         5
+      ]
+    },
+    {
+      "name": "sealed-ring.png",
+      "x": 221,
+      "y": 349,
+      "width": 15,
+      "height": 14,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        10
       ]
     },
     {
@@ -2618,7 +2683,7 @@
     },
     {
       "name": "secret-potion.png",
-      "x": 131,
+      "x": 111,
       "y": 281,
       "width": 21,
       "height": 18,
@@ -2657,7 +2722,7 @@
     },
     {
       "name": "silph-scope-gen3.png",
-      "x": 152,
+      "x": 132,
       "y": 281,
       "width": 22,
       "height": 18,
@@ -2670,7 +2735,7 @@
     },
     {
       "name": "silph-scope.png",
-      "x": 174,
+      "x": 154,
       "y": 281,
       "width": 27,
       "height": 18,
@@ -2696,8 +2761,8 @@
     },
     {
       "name": "skill-book.png",
-      "x": 229,
-      "y": 204,
+      "x": 95,
+      "y": 363,
       "width": 22,
       "height": 20,
       "sourceWidth": 32,
@@ -2774,7 +2839,7 @@
     },
     {
       "name": "sprinklotad.png",
-      "x": 267,
+      "x": 247,
       "y": 333,
       "width": 22,
       "height": 16,
@@ -2787,7 +2852,7 @@
     },
     {
       "name": "squirt-bottle.png",
-      "x": 126,
+      "x": 105,
       "y": 316,
       "width": 22,
       "height": 17,
@@ -2800,7 +2865,7 @@
     },
     {
       "name": "ss-ticket.png",
-      "x": 148,
+      "x": 127,
       "y": 316,
       "width": 21,
       "height": 17,
@@ -2809,6 +2874,19 @@
       "trim": [
         5,
         8
+      ]
+    },
+    {
+      "name": "steam-valve.png",
+      "x": 229,
+      "y": 204,
+      "width": 17,
+      "height": 20,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        7,
+        6
       ]
     },
     {
@@ -2865,7 +2943,7 @@
     },
     {
       "name": "suite-key.png",
-      "x": 143,
+      "x": 122,
       "y": 262,
       "width": 20,
       "height": 19,
@@ -2930,7 +3008,7 @@
     },
     {
       "name": "tea.png",
-      "x": 163,
+      "x": 142,
       "y": 262,
       "width": 16,
       "height": 19,
@@ -2969,7 +3047,7 @@
     },
     {
       "name": "tm-case.png",
-      "x": 201,
+      "x": 181,
       "y": 281,
       "width": 22,
       "height": 18,
@@ -2982,7 +3060,7 @@
     },
     {
       "name": "tmv-pass.png",
-      "x": 223,
+      "x": 203,
       "y": 281,
       "width": 27,
       "height": 18,
@@ -2995,7 +3073,7 @@
     },
     {
       "name": "town-map-gen3.png",
-      "x": 179,
+      "x": 158,
       "y": 262,
       "width": 21,
       "height": 19,
@@ -3073,7 +3151,7 @@
     },
     {
       "name": "tri-pass.png",
-      "x": 169,
+      "x": 148,
       "y": 316,
       "width": 21,
       "height": 17,
@@ -3086,7 +3164,7 @@
     },
     {
       "name": "unown-report.png",
-      "x": 200,
+      "x": 179,
       "y": 262,
       "width": 18,
       "height": 19,
@@ -3112,7 +3190,7 @@
     },
     {
       "name": "vs-seeker.png",
-      "x": 190,
+      "x": 169,
       "y": 316,
       "width": 20,
       "height": 17,
@@ -3125,7 +3203,7 @@
     },
     {
       "name": "wailmer-pail.png",
-      "x": 250,
+      "x": 230,
       "y": 281,
       "width": 22,
       "height": 18,
@@ -3150,6 +3228,19 @@
       ]
     },
     {
+      "name": "windmill-charm.png",
+      "x": 249,
+      "y": 359,
+      "width": 19,
+      "height": 22,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        7,
+        5
+      ]
+    },
+    {
       "name": "wish-tag.png",
       "x": 208,
       "y": 204,
@@ -3164,7 +3255,7 @@
     },
     {
       "name": "wishing-chip.png",
-      "x": 214,
+      "x": 205,
       "y": 349,
       "width": 16,
       "height": 14,
@@ -3294,7 +3385,7 @@
     },
     {
       "name": "zygarde-cube.png",
-      "x": 67,
+      "x": 40,
       "y": 349,
       "width": 15,
       "height": 15,

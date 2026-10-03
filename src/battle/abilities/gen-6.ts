@@ -1,21 +1,39 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
-import { Stats } from '../../data/constants/stats';
+import { Stages, Stats } from '../../data/constants/stats';
 import { Types } from '../../data/constants/types';
 import Abilities from '../../data/ids/abilities';
-import { DamageFlags, MoveAttackFlags, MoveCategories, Moves } from '../../data/ids/moves';
+import {
+  DamageFlags,
+  MoveAttackFlags,
+  MoveCategories,
+  MoveTargets,
+  Moves,
+} from '../../data/ids/moves';
 import { Species, getBaseFormSpecies } from '../../data/ids/species';
-import { Terrains } from '../../data/ids/status';
+import { NON_VOLATILE_STATUSES, Statuses, Terrains, Weathers } from '../../data/ids/status';
+import { getMoveData } from '../../data/moves';
+import { MULTI_HIT_MOVES } from '../../data/moves/multi-hit';
 import { MergedLifecycle } from '../lifecycle';
 import type Battle from '../core';
-import { BattleEvents, EffectType, MoveTargetType } from '../events';
+import { BattleEvents, type EffectCause, EffectType, MoveTargetType } from '../events';
 import type Unit from '../unit';
-import { hasFreeItemSlot, stealableItem } from '../utils';
-import { createAbility } from './__create';
+import { hasFreeItemSlot, stealableItem, unitTarget } from '../utils';
+import { HEALING_MOVES } from '../moves/recover';
+import { fieldHolder } from './signature/__create';
+import {
+  createAbility,
+  createContactHazard,
+  createPrimalWeatherAbility,
+  createSurgeAbility,
+  createTypeShiftAbility,
+  createWaterAbsorbAbility,
+} from './__create';
 
 /** What a pelt of grass is worth while there is grass to stand on */
 const GRASS_PELT_SCALE = 1.5;
 
 /** The teammate holding the veil over this one, if one is standing */
+
 function veiledBy(unit: Unit, ability: Abilities): Unit | undefined {
   if (!unit.types.has(Types.Grass)) {
     return undefined;
@@ -28,6 +46,29 @@ function veiledBy(unit: Unit, ability: Abilities): Unit | undefined {
   }
 
   return undefined;
+}
+
+/** What Flower Veil keeps off a grass teammate */
+const FLOWER_VEILED = new Set<Statuses>([...NON_VOLATILE_STATUSES, Statuses.Drowsy]);
+
+/**
+ * The teammate whose Flower Veil turns this status away, if any. Only a
+ * major status or a Yawn from somebody else: a Substitute, a Rest or
+ * its own orb still lands
+ */
+function flowerVeiled(event: {
+  source: Unit;
+  status: Statuses;
+  cause: EffectCause;
+}): Unit | undefined {
+  if (
+    !FLOWER_VEILED.has(event.status) ||
+    !('unit' in event.cause) ||
+    event.cause.unit === event.source
+  ) {
+    return undefined;
+  }
+  return veiledBy(event.source, Abilities.FlowerVeil);
 }
 
 /**
@@ -46,6 +87,44 @@ const PULSE_MOVES = new Set<Moves>([
 
 /** What a launcher is worth to a pulse, thrown or given */
 const MEGA_LAUNCHER_SCALE = 1.5;
+
+/** What a Normal move is worth once an ability has shifted its type */
+const TYPE_SHIFT_SCALE = 1.2;
+
+/** What the wind is worth to a move it carried on the way out */
+const AERILATE_SCALE = 1.2;
+
+/** What the child's blow is worth beside the parent's */
+const PARENTAL_BOND_SCALE = 0.25;
+
+/**
+ * What an aura is worth to the type it carries, and what it is worth
+ * once something on the field is breaking auras rather than casting
+ * them
+ * https://bulbapedia.bulbagarden.net/wiki/Fairy_Aura_(Ability)
+ */
+const AURA_SCALE = 4 / 3;
+const BROKEN_AURA_SCALE = 3 / 4;
+
+/** How much of itself a Zygarde has to lose before the rest gathers */
+const POWER_CONSTRUCT_THRESHOLD = 1 / 2;
+
+/** What a struck kettle gains, all at once */
+const STEAM_ENGINE_STAGES = 6;
+
+/** What Triage moves a heal ahead by, which here is cast time */
+const TRIAGE_PRIORITY = 3;
+
+/** The teammate keeping this one awake, if one is standing */
+function sweetenedBy(unit: Unit): Unit | undefined {
+  for (const mate of unit.team.units) {
+    if (mate.alive && mate.hasAbility(Abilities.SweetVeil)) {
+      return mate;
+    }
+  }
+
+  return undefined;
+}
 
 /**
  * What a shell thick enough to stop a shot turns away: everything
@@ -76,6 +155,24 @@ const BALLISTIC_MOVES = new Set<Moves>([
   Moves.WeatherBall,
   Moves.ZapCannon,
 ]);
+
+/**
+ * One aura over the whole field, its own side included. A break on
+ * the field turns every aura round rather than switching it off,
+ * which is what the mainline does with it
+ */
+function createAuraAbility(ability: Abilities, type: Types): (battle: Battle) => void {
+  return createAbility(ability, (battle) =>
+    battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
+      if (event.parent.type !== type || fieldHolder(battle, ability) == null) {
+        return;
+      }
+
+      event.value *=
+        fieldHolder(battle, Abilities.AuraBreak) == null ? AURA_SCALE : BROKEN_AURA_SCALE;
+    }),
+  );
+}
 
 /** Kalos's abilities, which are the same list its starters need */
 const setupAbilities = [
@@ -133,12 +230,12 @@ const setupAbilities = [
     (battle) =>
       new MergedLifecycle([
         battle.on(BattleEvents.CheckUnitStatusImmunity, EventPriority.Post, (event) => {
-          if (!event.immune && veiledBy(event.source, Abilities.FlowerVeil) != null) {
+          if (!event.immune && flowerVeiled(event) != null) {
             event.immune = true;
           }
         }),
         battle.on(BattleEvents.UnitAddStatusFailed, EventPriority.Post, (event) => {
-          veiledBy(event.source, Abilities.FlowerVeil)?.triggerAbility(Abilities.FlowerVeil);
+          flowerVeiled(event)?.triggerAbility(Abilities.FlowerVeil);
         }),
         // A drop it puts on itself still lands, the way Clear Body's does
         battle.on(BattleEvents.CheckUnitCanAddStage, EventPriority.Post, (event) => {
@@ -209,24 +306,11 @@ const setupAbilities = [
     }),
   ),
 
-  // Florges: the mist comes up with it, cast as the move rather than
-  // laid by hand, so the terrain's own clock runs it
-  createAbility(
-    Abilities.MistySurge,
-    (battle) =>
-      new MergedLifecycle([
-        battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
-          if (event.source.hasAbility(Abilities.MistySurge)) {
-            event.source.triggerAbility(Abilities.MistySurge);
-          }
-        }),
-        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
-          if (event.ability === Abilities.MistySurge) {
-            event.source.triggerMove(Moves.MistyTerrain, { type: MoveTargetType.None }, 0);
-          }
-        }),
-      ]),
-  ),
+  // Florges: the mist comes up with it
+  createSurgeAbility(Abilities.MistySurge, Moves.MistyTerrain),
+
+  // Spiky-eared Pichu: the charge in its ears spills into the ground
+  createSurgeAbility(Abilities.ElectricSurge, Moves.ElectricTerrain),
 
   // Clauncher: the claw is a barrel, so anything fired down it lands
   // harder, and the one pulse that mends rather than hurts mends more
@@ -251,6 +335,144 @@ const setupAbilities = [
             event.value *= MEGA_LAUNCHER_SCALE;
           }
         }),
+      ]),
+  ),
+
+  // Amaura: what it throws freezes on the way out, which is worth a
+  // fifth again on top of landing as Ice
+  createTypeShiftAbility(Abilities.Refrigerate, Types.Normal, Types.Ice, TYPE_SHIFT_SCALE),
+
+  // Swirlix: the cream is a bed, so nothing on its team goes to sleep
+  createAbility(
+    Abilities.SweetVeil,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.CheckUnitStatusImmunity, EventPriority.Post, (event) => {
+          if (
+            !event.immune &&
+            event.status === Statuses.Sleeping &&
+            sweetenedBy(event.source) != null
+          ) {
+            event.immune = true;
+          }
+        }),
+        battle.on(BattleEvents.UnitAddStatusFailed, EventPriority.Post, (event) => {
+          if (event.status === Statuses.Sleeping) {
+            sweetenedBy(event.source)?.triggerAbility(Abilities.SweetVeil);
+          }
+        }),
+      ]),
+  ),
+
+  // Sylveon: what it throws goes out as ribbon rather than as noise
+  createTypeShiftAbility(Abilities.Pixilate, Types.Normal, Types.Fairy, TYPE_SHIFT_SCALE),
+
+  // Xerneas and Yveltal: each lays its own type over the whole field
+  createAuraAbility(Abilities.FairyAura, Types.Fairy),
+  createAuraAbility(Abilities.DarkAura, Types.Dark),
+
+  // Zygarde: it casts no aura of its own and turns the ones that are
+  // cast, which the two aura abilities read for themselves
+  createAbility(Abilities.AuraBreak, (battle) =>
+    battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+      if (event.source.hasAbility(Abilities.AuraBreak)) {
+        event.source.triggerAbility(Abilities.AuraBreak);
+      }
+    }),
+  ),
+
+  // Zygarde: the rest of the cells come when half of what is here is
+  // gone. The shape it gathers into carries its own stats, so the
+  // health it is on stays where it is
+  createAbility(Abilities.PowerConstruct, (battle) =>
+    battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+      const unit = event.target;
+
+      if (
+        !unit.alive ||
+        !unit.hasAbility(Abilities.PowerConstruct) ||
+        unit.species === Species.ZygardeComplete ||
+        getBaseFormSpecies(unit.species) !== Species.Zygarde ||
+        unit.health > unit.checkStat(Stats.HP, 0) * POWER_CONSTRUCT_THRESHOLD
+      ) {
+        return;
+      }
+
+      unit.triggerAbility(Abilities.PowerConstruct);
+      unit.setSpecies(Species.ZygardeComplete);
+    }),
+  ),
+
+  // Volcanion: a kettle struck by fire or water jumps
+  createAbility(Abilities.SteamEngine, (battle) =>
+    battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+      const cause = event.cause;
+
+      if (
+        !event.success ||
+        (event.flags & DamageFlags.Indirect) !== 0 ||
+        cause.type !== EffectType.Move ||
+        cause.unit === event.target ||
+        !event.target.hasAbility(Abilities.SteamEngine)
+      ) {
+        return;
+      }
+
+      const type = cause.unit.checkMoveType(cause.move, unitTarget(event.target));
+
+      if (type !== Types.Fire && type !== Types.Water) {
+        return;
+      }
+
+      event.target.triggerAbility(Abilities.SteamEngine);
+      event.target.addStage(Stages.Speed, STEAM_ENGINE_STAGES, {
+        type: EffectType.Ability,
+        ability: Abilities.SteamEngine,
+        unit: event.target,
+      });
+    }),
+  ),
+
+  // Xerneas: a heal it reaches for is already on its way
+  createAbility(Abilities.Triage, (battle) =>
+    battle.on(BattleEvents.CheckUnitMovePriority, EventPriority.Post, (event) => {
+      if (HEALING_MOVES.has(event.move) && event.source.hasAbility(Abilities.Triage)) {
+        event.priority += TRIAGE_PRIORITY;
+      }
+    }),
+  ),
+
+  // Zygarde: the ground it is made of is something it can take back
+  createWaterAbsorbAbility(Abilities.EarthEater, Types.Ground),
+
+  // Goomy: the slime comes off on whatever touches it, and a foot
+  // in it is a foot that is slower afterwards
+  createAbility(
+    Abilities.Gooey,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+          if (
+            !event.success ||
+            (event.flags & DamageFlags.Indirect) !== 0 ||
+            event.cause.type !== EffectType.Move ||
+            event.cause.unit === event.target ||
+            !event.target.hasAbility(Abilities.Gooey) ||
+            !event.cause.unit.checkMoveContact(event.cause.move, unitTarget(event.target))
+          ) {
+            return;
+          }
+
+          event.target.triggerAbility(Abilities.Gooey);
+          event.cause.unit.addStage(Stages.Speed, -1, {
+            type: EffectType.Ability,
+            ability: Abilities.Gooey,
+            unit: event.target,
+          });
+        }),
+        // Touching it costs something, so the AI is told before it
+        // decides to
+        createContactHazard(battle, Abilities.Gooey),
       ]),
   ),
 
@@ -292,6 +514,53 @@ const setupAbilities = [
       }),
     ]);
   }),
+
+  // Mega Pinsir and Mega Salamence: the wings carry a plain move
+  createTypeShiftAbility(Abilities.Aerilate, Types.Normal, Types.Flying, AERILATE_SCALE),
+
+  // Mega Kangaskhan: the child throws the same move again, softer.
+  // Only a move cast at one unit, and never one that already strikes
+  // more than once
+  createAbility(Abilities.ParentalBond, (battle) => {
+    const striking = new Set<Unit>();
+
+    return battle.on(BattleEvents.UnitAttack, AttackPriority.Post, (event) => {
+      const source = event.source;
+
+      // Its own confused swing has no move data behind it, so the
+      // move is only read once everything else has said yes
+      if (
+        !event.success ||
+        !event.target.alive ||
+        event.target === source ||
+        event.flags & MoveAttackFlags.Simulated ||
+        striking.has(source) ||
+        !source.hasAbility(Abilities.ParentalBond) ||
+        MULTI_HIT_MOVES[event.move] != null ||
+        getMoveData(event.move).target !== MoveTargets.Unit
+      ) {
+        return;
+      }
+
+      striking.add(source);
+      source.triggerAbility(Abilities.ParentalBond);
+      source.attack(
+        event.target,
+        event.move,
+        event.value * PARENTAL_BOND_SCALE,
+        event.type,
+        event.category,
+        event.flags,
+      );
+      striking.delete(source);
+    });
+  }),
+
+  // Primal Kyogre, Primal Groudon and Mega Rayquaza: each raises its
+  // own primal sky for as long as it stands
+  createPrimalWeatherAbility(Abilities.PrimordialSea, Weathers.HeavyRain),
+  createPrimalWeatherAbility(Abilities.DesolateLand, Weathers.ExtremeSunny),
+  createPrimalWeatherAbility(Abilities.DeltaStream, Weathers.StrongWinds),
 ];
 
 export default function setupGen6Abilities(battle: Battle): void {

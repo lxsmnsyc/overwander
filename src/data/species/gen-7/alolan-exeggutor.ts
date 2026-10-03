@@ -1,0 +1,110 @@
+import { Stats } from '../../constants/stats';
+import { Types } from '../../constants/types';
+import Abilities from '../../ids/abilities';
+import Biome, { TimeOfDay } from '../../ids/biome';
+import EggGroups from '../../ids/egg-groups';
+import Families from '../../ids/families';
+import { Moves } from '../../ids/moves';
+import { Species } from '../../ids/species';
+import { registerSpecies } from '../__create';
+
+// TM and tutor moves shared by the whole family
+const FAMILY_TEACHABLE = [
+  Moves.Attract,
+  Moves.Block,
+  Moves.BrickBreak,
+  Moves.BrutalSwing,
+  Moves.Bulldoze,
+  Moves.Confide,
+  Moves.DoubleTeam,
+  Moves.DracoMeteor,
+  Moves.DragonPulse,
+  Moves.DragonTail,
+  Moves.DreamEater,
+  Moves.Earthquake,
+  Moves.EnergyBall,
+  Moves.Explosion,
+  Moves.Facade,
+  Moves.Flamethrower,
+  Moves.Frustration,
+  Moves.GigaDrain,
+  Moves.GigaImpact,
+  Moves.GrassKnot,
+  Moves.Gravity,
+  Moves.HiddenPower,
+  Moves.HyperBeam,
+  Moves.Infestation,
+  Moves.IronHead,
+  Moves.IronTail,
+  Moves.KnockOff,
+  Moves.LightScreen,
+  Moves.LowKick,
+  Moves.NaturePower,
+  Moves.Outrage,
+  Moves.Protect,
+  Moves.PsychUp,
+  Moves.Psychic,
+  Moves.Psyshock,
+  Moves.Reflect,
+  Moves.Rest,
+  Moves.Return,
+  Moves.Round,
+  Moves.SeedBomb,
+  Moves.SkillSwap,
+  Moves.SleepTalk,
+  Moves.SludgeBomb,
+  Moves.Snore,
+  Moves.SolarBeam,
+  Moves.StompingTantrum,
+  Moves.Substitute,
+  Moves.SunnyDay,
+  Moves.Superpower,
+  Moves.Swagger,
+  Moves.SwordsDance,
+  Moves.Synthesis,
+  Moves.Telekinesis,
+  Moves.Thief,
+  Moves.Toxic,
+  Moves.TrickRoom,
+  Moves.WorrySeed,
+  Moves.ZenHeadbutt,
+];
+
+export default function registerAlolanExeggutorSpecies(): void {
+  registerSpecies(Species.ExeggutorAlola, {
+    dexNumber: 103,
+    name: 'Alolan Exeggutor',
+    category: 'Coconut Pokemon',
+    height: 10.9,
+    weight: 415.6,
+    family: Families.Exeggcute,
+    baseForm: false,
+    evolvesFrom: Species.Exeggcute,
+    stats: {
+      [Stats.HP]: 95,
+      [Stats.Attack]: 105,
+      [Stats.Defense]: 85,
+      [Stats.SpecialAttack]: 125,
+      [Stats.SpecialDefense]: 75,
+      [Stats.Speed]: 45,
+    },
+    types: [Types.Grass, Types.Dragon],
+    abilities: [Abilities.Frisk],
+    hiddenAbilities: [Abilities.Harvest, Abilities.LeafGuard],
+    eggGroups: [EggGroups.Grass],
+    genderRatio: [4, 4],
+    catchRate: 45,
+    biomes: [Biome.Beach],
+    activeTimes: TimeOfDay.Morning | TimeOfDay.Day | TimeOfDay.Evening | TimeOfDay.Night,
+    learnSet: {
+      level: {
+        1: [Moves.Barrage, Moves.Confusion, Moves.DragonHammer, Moves.Hypnosis, Moves.SeedBomb],
+        17: [Moves.Psyshock],
+        27: [Moves.EggBomb],
+        37: [Moves.WoodHammer],
+        47: [Moves.LeafStorm],
+      },
+      teachable: [...FAMILY_TEACHABLE],
+    },
+  });
+}

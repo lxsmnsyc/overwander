@@ -14,6 +14,7 @@ export default function registerBeachSpawns(): void {
         { species: Species.Squirtle, weight: 2 },
       ],
       uncommon: [
+        { species: Species.GrimerAlola, weight: 22 },
         { species: Species.Sandygast, weight: 22 },
         { species: Species.Wimpod, weight: 22 },
         { species: Species.Crabrawler, weight: 24 },
@@ -32,6 +33,8 @@ export default function registerBeachSpawns(): void {
         { species: Species.Wartortle, weight: 1 },
       ],
       scarce: [
+        { species: Species.ExeggutorAlola, weight: 6 },
+        { species: Species.MukAlola, weight: 6 },
         { species: Species.Palossand, weight: 6 },
         { species: Species.Golisopod, weight: 6 },
         { species: Species.Barbaracle, weight: 6 },
@@ -67,6 +70,7 @@ export default function registerBeachSpawns(): void {
         { species: Species.Squirtle, weight: 2 },
       ],
       uncommon: [
+        { species: Species.GrimerAlola, weight: 22 },
         { species: Species.Sandygast, weight: 22 },
         { species: Species.Wimpod, weight: 22 },
         { species: Species.Crabrawler, weight: 24 },
@@ -85,6 +89,8 @@ export default function registerBeachSpawns(): void {
         { species: Species.Wartortle, weight: 1 },
       ],
       scarce: [
+        { species: Species.ExeggutorAlola, weight: 6 },
+        { species: Species.MukAlola, weight: 6 },
         { species: Species.Palossand, weight: 6 },
         { species: Species.Golisopod, weight: 6 },
         { species: Species.Barbaracle, weight: 6 },
@@ -116,6 +122,7 @@ export default function registerBeachSpawns(): void {
     [TimeOfDay.Evening]: {
       base: [],
       uncommon: [
+        { species: Species.GrimerAlola, weight: 22 },
         { species: Species.Sandygast, weight: 22 },
         { species: Species.Wimpod, weight: 22 },
         { species: Species.Crabrawler, weight: 24 },
@@ -127,6 +134,8 @@ export default function registerBeachSpawns(): void {
       ],
       rare: [],
       scarce: [
+        { species: Species.ExeggutorAlola, weight: 6 },
+        { species: Species.MukAlola, weight: 6 },
         { species: Species.Palossand, weight: 6 },
         { species: Species.Golisopod, weight: 6 },
         { species: Species.Malamar, weight: 6 },
@@ -150,6 +159,7 @@ export default function registerBeachSpawns(): void {
     [TimeOfDay.Night]: {
       base: [],
       uncommon: [
+        { species: Species.GrimerAlola, weight: 22 },
         { species: Species.Sandygast, weight: 22 },
         { species: Species.Wimpod, weight: 22 },
         { species: Species.Crabrawler, weight: 24 },
@@ -161,6 +171,8 @@ export default function registerBeachSpawns(): void {
       ],
       rare: [],
       scarce: [
+        { species: Species.ExeggutorAlola, weight: 6 },
+        { species: Species.MukAlola, weight: 6 },
         { species: Species.Palossand, weight: 6 },
         { species: Species.Golisopod, weight: 6 },
         { species: Species.Malamar, weight: 6 },

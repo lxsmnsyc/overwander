@@ -1564,6 +1564,13 @@ export const ALOLAN_FORMS: Species[] = [
   Species.DugtrioAlola,
   Species.MeowthAlola,
   Species.PersianAlola,
+  Species.GeodudeAlola,
+  Species.GravelerAlola,
+  Species.GolemAlola,
+  Species.GrimerAlola,
+  Species.MukAlola,
+  Species.ExeggutorAlola,
+  Species.MarowakAlola,
 ];
 
 export const WISHIWASHI_FORMS: Species[] = [Species.Wishiwashi, Species.WishiwashiSchool];

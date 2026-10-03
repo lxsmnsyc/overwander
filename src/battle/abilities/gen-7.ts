@@ -7,7 +7,6 @@ import { DamageFlags, MoveCategories, MoveFlags, Moves } from '../../data/ids/mo
 import { MINIOR_FORMS, Species, getBaseFormSpecies } from '../../data/ids/species';
 import { NON_VOLATILE_STATUSES, Statuses, Terrains } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
-import { abilitiesOf } from '../moves/ability-moves';
 import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import { MergedLifecycle } from '../lifecycle';
@@ -18,6 +17,7 @@ import {
   createGooeyAbility,
   createLimberAbility,
   createNoContactAbility,
+  createReceiverAbility,
   createRetreatAbility,
   createSandRushAbility,
   createThickFatAbility,
@@ -38,6 +38,9 @@ export const WATER_BUBBLE_SCALE = 2;
 
 /** What a Water move packs onto the sand's Defense */
 export const WATER_COMPACTION_STAGES = 2;
+
+/** What the charge is worth to a Normal move it turned Electric */
+export const GALVANIZE_SCALE = 1.2;
 
 /** What a berry does for a Ripen holder that eats it */
 export const RIPEN_SCALE = 2;
@@ -65,25 +68,6 @@ export function getMiniorCore(unit: Unit): Species {
 
   return MINIOR_FORMS[1 + (hashString(key) % (MINIOR_FORMS.length - 1))];
 }
-
-/**
- * What Receiver will not take up: the ones that copy in their own
- * right, and the ones only a particular shape can use
- */
-const UNRECEIVABLE = new Set<Abilities>([
-  Abilities.Receiver,
-  Abilities.Trace,
-  Abilities.Forecast,
-  Abilities.FlowerGift,
-  Abilities.Multitype,
-  Abilities.Illusion,
-  Abilities.WonderGuard,
-  Abilities.ZenMode,
-  Abilities.Imposter,
-  Abilities.StanceChange,
-  Abilities.PowerConstruct,
-  Abilities.Schooling,
-]);
 
 /** Whether a move is carried on sound, which is what a voice can wet */
 function isSound(move: Moves): boolean {
@@ -240,32 +224,10 @@ const setupAbilities = [
     }),
   ),
 
-  /**
-   * Passimian: a fallen teammate's ability is picked up where Receiver
-   * was, the first one it does not already carry. Once it has, there is
-   * no Receiver left to take another
-   * https://bulbapedia.bulbagarden.net/wiki/Receiver_(Ability)
-   */
-  createAbility(Abilities.Receiver, (battle) =>
-    battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
-      const fallen = event.source;
-
-      for (const holder of fallen.team.units) {
-        if (holder === fallen || !holder.alive || !holder.hasAbility(Abilities.Receiver)) {
-          continue;
-        }
-
-        for (const ability of abilitiesOf(fallen)) {
-          if (!UNRECEIVABLE.has(ability) && !holder.hasAbility(ability)) {
-            holder.triggerAbility(Abilities.Receiver);
-            holder.removeAbility(Abilities.Receiver);
-            holder.addAbility(ability);
-            return;
-          }
-        }
-      }
-    }),
-  ),
+  // Passimian, and Alolan Grimer under another name: a fallen teammate's
+  // ability is picked up in its place
+  createReceiverAbility(Abilities.Receiver),
+  createReceiverAbility(Abilities.PowerOfAlchemy),
 
   // Wimpod and Golisopod: one bolt under two names. A trap holds it,
   // and what it spent on purpose does not count
@@ -440,6 +402,10 @@ const setupAbilities = [
         }),
       ]),
   ),
+
+  // Alolan Geodude: what it throws goes out charged
+  // https://bulbapedia.bulbagarden.net/wiki/Galvanize_(Ability)
+  createTypeShiftAbility(Abilities.Galvanize, Types.Normal, Types.Electric, GALVANIZE_SCALE),
 ];
 
 export default function setupGen7Abilities(battle: Battle): void {

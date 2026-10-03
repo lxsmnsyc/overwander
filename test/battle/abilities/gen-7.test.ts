@@ -2,8 +2,10 @@ import { describe, expect, it } from 'vitest';
 import { Types } from '../../../src/data/constants/types';
 import Abilities from '../../../src/data/ids/abilities';
 import { Moves } from '../../../src/data/ids/moves';
+import { STAKEOUT_SCALE } from '../../../src/battle/abilities/gen-7';
 import { unitTarget } from '../../../src/battle/utils';
 import { createBattle, createUnit, pinRandom } from '../harness';
+import { act } from './signature/helpers';
 
 describe('Long Reach', () => {
   it('never touches what it hits', () => {
@@ -47,5 +49,31 @@ describe('Liquid Voice', () => {
     // A voice changes what it is made of, not what it is worth
     expect(seal.checkMovePower(Moves.HyperVoice, at)).toBe(plain);
     expect(seal.checkMoveType(Moves.Tackle, at)).toBe(Types.Normal);
+  });
+});
+
+describe('Stakeout', () => {
+  it('hits 2x on an enemy that has not acted since it came in', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const mongoose = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    mongoose.enter();
+    mongoose.addAbility(Abilities.Stakeout);
+
+    const plain = mongoose.checkMovePower(Moves.Tackle, unitTarget(foe)) ?? 0;
+
+    foe.enter();
+    mate.enter();
+
+    expect(mongoose.checkMovePower(Moves.Tackle, unitTarget(foe))).toBe(plain * STAKEOUT_SCALE);
+    // A teammate walking in is nobody to stake out
+    expect(mongoose.checkMovePower(Moves.Tackle, unitTarget(mate))).toBe(plain);
+
+    act(battle, foe);
+
+    expect(mongoose.checkMovePower(Moves.Tackle, unitTarget(foe))).toBe(plain);
   });
 });

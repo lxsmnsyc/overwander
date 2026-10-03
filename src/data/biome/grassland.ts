@@ -6,6 +6,9 @@ import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool, registerWaterPool } fro
  * Grassland spawn pool, grouped by day-cycle period and rarity band
  */
 export default function registerGrasslandSpawns(): void {
+  // The Yungoos line is written but waits on sprites, since the
+  // collection has drawn no Gumshoos. Once it does, mornings and days
+  // take Yungoos in uncommon at 25 and Gumshoos in scarce at 6
   registerSpawnPool(Biome.Grassland, {
     [TimeOfDay.Morning]: {
       base: [

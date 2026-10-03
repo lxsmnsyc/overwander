@@ -1050,6 +1050,14 @@ const enum Abilities {
   MagnetFloat = 200398,
   // Alolan Grimer
   CrystalToxin = 200399,
+  // Komala
+  NapTime = 200400,
+  // Turtonator
+  BlastShell = 200401,
+  // Mimikyu
+  GrudgeShroud = 200402,
+  // Drampa
+  EldersIre = 200403,
 }
 
 export default Abilities;

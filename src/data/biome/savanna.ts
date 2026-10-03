@@ -49,6 +49,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Electivire, weight: 6 },
       ],
       elusive: [
+        { species: Species.Komala, weight: 5 },
         { species: Species.Oricorio, weight: 5 },
         { species: Species.FlorgesYellow, weight: 5 },
         { species: Species.Vivillon, weight: 5 },
@@ -113,6 +114,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Electivire, weight: 6 },
       ],
       elusive: [
+        { species: Species.Komala, weight: 5 },
         { species: Species.Oricorio, weight: 5 },
         { species: Species.FlorgesYellow, weight: 5 },
         { species: Species.Vivillon, weight: 5 },
@@ -160,6 +162,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Electivire, weight: 6 },
       ],
       elusive: [
+        { species: Species.Komala, weight: 5 },
         { species: Species.Delphox, weight: 2 },
         { species: Species.Nidoqueen, weight: 5 },
         { species: Species.Nidoking, weight: 5 },
@@ -197,6 +200,7 @@ export default function registerSavannaSpawns(): void {
         { species: Species.Electivire, weight: 6 },
       ],
       elusive: [
+        { species: Species.Komala, weight: 5 },
         { species: Species.Nidoqueen, weight: 5 },
         { species: Species.Nidoking, weight: 5 },
         { species: Species.Seviper, weight: 8 },

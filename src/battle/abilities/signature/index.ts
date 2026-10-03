@@ -71,6 +71,7 @@ import morelullToPassimian from './morelull-to-passimian';
 import mareanieToWimpod from './mareanie-to-wimpod';
 import sandygastToTogedemaru from './sandygast-to-togedemaru';
 import alolanRattataToMeowth from './alolan-rattata-to-meowth';
+import komalaToDrampa from './komala-to-drampa';
 
 /**
  * The invented abilities, one per evolution family, in the order the
@@ -145,6 +146,7 @@ const setupAbilities = [
   ...mareanieToWimpod,
   ...sandygastToTogedemaru,
   ...alolanRattataToMeowth,
+  ...komalaToDrampa,
   ...deerling,
   ...emolga,
   ...tirtougaToBouffalant,

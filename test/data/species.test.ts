@@ -53,6 +53,7 @@ import {
   LYCANROC_FORMS,
   MELOETTA_FORMS,
   MEOWSTIC_FORMS,
+  MIMIKYU_FORMS,
   MINIOR_FORMS,
   ORICORIO_FORMS,
   PALKIA_FORMS,
@@ -443,6 +444,7 @@ describe('species forms', () => {
       ...LYCANROC_FORMS.slice(1),
       ...WISHIWASHI_FORMS.slice(1),
       ...MINIOR_FORMS.slice(1),
+      ...MIMIKYU_FORMS.slice(1),
       ...ALOLAN_FORMS,
       // The true shadows, which are forms of the birds they are the
       // shadow of rather than pokemon of their own

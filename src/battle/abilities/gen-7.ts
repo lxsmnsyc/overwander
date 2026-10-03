@@ -39,6 +39,9 @@ export const WATER_BUBBLE_SCALE = 2;
 /** What a Water move packs onto the sand's Defense */
 export const WATER_COMPACTION_STAGES = 2;
 
+/** What breaking the rag costs the Mimikyu under it */
+export const DISGUISE_CHIP = 1 / 8;
+
 /** What the charge is worth to a Normal move it turned Electric */
 export const GALVANIZE_SCALE = 1.2;
 
@@ -406,6 +409,49 @@ const setupAbilities = [
   // Alolan Geodude: what it throws goes out charged
   // https://bulbapedia.bulbagarden.net/wiki/Galvanize_(Ability)
   createTypeShiftAbility(Abilities.Galvanize, Types.Normal, Types.Electric, GALVANIZE_SCALE),
+
+  /**
+   * Mimikyu: the rag takes the first blow and gives way, costing the one
+   * under it 1/8 of its HP, as it does from Sword and Shield on. It stays
+   * broken for the rest of the fight
+   * https://bulbapedia.bulbagarden.net/wiki/Disguise_(Ability)
+   */
+  createAbility(
+    Abilities.Disguise,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.CheckUnitCanDamage, EventPriority.Post, (event) => {
+          const { cause, target } = event;
+
+          if (
+            !event.success ||
+            event.flags & DamageFlags.Indirect ||
+            cause.type !== EffectType.Move ||
+            cause.unit === target ||
+            target.species !== Species.Mimikyu ||
+            !target.hasAbility(Abilities.Disguise)
+          ) {
+            return;
+          }
+          event.success = false;
+          target.triggerAbility(Abilities.Disguise);
+        }),
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+          const unit = event.source;
+
+          if (event.ability !== Abilities.Disguise || unit.species !== Species.Mimikyu) {
+            return;
+          }
+          unit.setSpecies(Species.MimikyuBusted);
+          unit.damage(
+            { type: EffectType.Ability, ability: Abilities.Disguise, unit },
+            unit,
+            unit.checkStat(Stats.HP, 0) * DISGUISE_CHIP,
+            DamageFlags.Indirect,
+          );
+        }),
+      ]),
+  ),
 ];
 
 export default function setupGen7Abilities(battle: Battle): void {

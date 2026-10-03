@@ -1575,6 +1575,9 @@ export const ALOLAN_FORMS: Species[] = [
 
 export const WISHIWASHI_FORMS: Species[] = [Species.Wishiwashi, Species.WishiwashiSchool];
 
+/** Mimikyu under its rag, and the rag once a blow has broken it */
+export const MIMIKYU_FORMS: Species[] = [Species.Mimikyu, Species.MimikyuBusted];
+
 /** Minior in its shell, and the seven cores Shields Down can crack it open to */
 export const MINIOR_FORMS: Species[] = [
   Species.Minior,

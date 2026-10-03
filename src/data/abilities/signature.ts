@@ -2344,6 +2344,28 @@ export default function registerSignatureAbilities(): void {
       'A contact move landing on it charges it, and its next Electric move that lands hits 1.5x.',
   });
 
+  registerSignature(Families.Komala, Abilities.NapTime, {
+    name: 'Nap Time',
+    description: 'Every 3rd time it acts, it heals 1/4 of its HP.',
+  });
+
+  // Turtonator and Drampa, the Sun and Moon pair: each answers one kind of blow on its team
+  registerSignature(Families.Turtonator, Abilities.BlastShell, {
+    name: 'Blast Shell',
+    description:
+      'A physical move landing on it or a teammate charges it, and its next Fire move that lands hits 1.5x.',
+  });
+  registerSignature(Families.Drampa, Abilities.EldersIre, {
+    name: 'Elder’s Ire',
+    description:
+      'A special move landing on it or a teammate charges it, and its next Dragon move that lands hits 1.5x.',
+  });
+
+  registerSignature(Families.Mimikyu, Abilities.GrudgeShroud, {
+    name: 'Grudge Shroud',
+    description: 'The first time each enemy lands a move on it, it casts Spite at them.',
+  });
+
   // The Alolan lines whose every stage is regional carry their own
   registerFormSignature([Species.RattataAlola, Species.RaticateAlola], Abilities.RichDiet, {
     name: 'Rich Diet',

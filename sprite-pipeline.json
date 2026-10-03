@@ -9193,6 +9193,30 @@
         "bytes": 11427
       }
     },
+    "public/sprites/pokemon/alola/1077801/regular.png": {
+      "digest": "f3b300192d14e10c",
+      "bytes": 8462,
+      "width": 240,
+      "height": 181,
+      "compact": {
+        "at": "2026-09-30T05:38:01Z",
+        "as": "already compact",
+        "was": 8462,
+        "bytes": 8462
+      }
+    },
+    "public/sprites/pokemon/alola/1077801/shiny.png": {
+      "digest": "9885f41eb6e4e61c",
+      "bytes": 8478,
+      "width": 240,
+      "height": 181,
+      "compact": {
+        "at": "2026-09-30T05:38:01Z",
+        "as": "already compact",
+        "was": 8478,
+        "bytes": 8478
+      }
+    },
     "public/sprites/pokemon/alola/722/regular.png": {
       "digest": "a17c5f608ca64d26",
       "bytes": 4989,
@@ -10297,6 +10321,54 @@
         "bytes": 11775
       }
     },
+    "public/sprites/pokemon/alola/775/regular.png": {
+      "digest": "94a5bfbdbca3c628",
+      "bytes": 8897,
+      "width": 208,
+      "height": 182,
+      "compact": {
+        "at": "2026-09-30T05:38:01Z",
+        "as": "already compact",
+        "was": 8897,
+        "bytes": 8897
+      }
+    },
+    "public/sprites/pokemon/alola/775/shiny.png": {
+      "digest": "335aef6eb81bf910",
+      "bytes": 8897,
+      "width": 208,
+      "height": 182,
+      "compact": {
+        "at": "2026-09-30T05:38:01Z",
+        "as": "already compact",
+        "was": 8897,
+        "bytes": 8897
+      }
+    },
+    "public/sprites/pokemon/alola/776/regular.png": {
+      "digest": "97251d9a7c5579c1",
+      "bytes": 12412,
+      "width": 374,
+      "height": 175,
+      "compact": {
+        "at": "2026-09-30T05:38:01Z",
+        "as": "already compact",
+        "was": 12412,
+        "bytes": 12412
+      }
+    },
+    "public/sprites/pokemon/alola/776/shiny.png": {
+      "digest": "8a5e9f3b6da4b6b9",
+      "bytes": 12424,
+      "width": 374,
+      "height": 175,
+      "compact": {
+        "at": "2026-09-30T05:38:01Z",
+        "as": "already compact",
+        "was": 12424,
+        "bytes": 12424
+      }
+    },
     "public/sprites/pokemon/alola/777/regular.png": {
       "digest": "cc1877965509dc5e",
       "bytes": 14012,
@@ -10319,6 +10391,54 @@
         "as": "already compact",
         "was": 14257,
         "bytes": 14257
+      }
+    },
+    "public/sprites/pokemon/alola/778/regular.png": {
+      "digest": "185862116b8be7e0",
+      "bytes": 5561,
+      "width": 193,
+      "height": 148,
+      "compact": {
+        "at": "2026-09-30T05:38:01Z",
+        "as": "already compact",
+        "was": 5561,
+        "bytes": 5561
+      }
+    },
+    "public/sprites/pokemon/alola/778/shiny.png": {
+      "digest": "e59b9e8467a317c9",
+      "bytes": 5562,
+      "width": 193,
+      "height": 148,
+      "compact": {
+        "at": "2026-09-30T05:38:01Z",
+        "as": "already compact",
+        "was": 5562,
+        "bytes": 5562
+      }
+    },
+    "public/sprites/pokemon/alola/780/regular.png": {
+      "digest": "4c37fe19f086679f",
+      "bytes": 11044,
+      "width": 152,
+      "height": 476,
+      "compact": {
+        "at": "2026-09-30T05:38:01Z",
+        "as": "already compact",
+        "was": 11044,
+        "bytes": 11044
+      }
+    },
+    "public/sprites/pokemon/alola/780/shiny.png": {
+      "digest": "271e67997c474671",
+      "bytes": 11010,
+      "width": 152,
+      "height": 476,
+      "compact": {
+        "at": "2026-09-30T05:38:01Z",
+        "as": "already compact",
+        "was": 11010,
+        "bytes": 11010
       }
     },
     "public/sprites/pokemon/hoenn/1028201/regular.png": {
@@ -32870,15 +32990,15 @@
       }
     },
     "public/sprites/ui/candies/alola/image.png": {
-      "digest": "ec8824c191371020",
-      "bytes": 4335,
+      "digest": "2689a3498fbe97b5",
+      "bytes": 4957,
       "width": 96,
-      "height": 80,
+      "height": 96,
       "compact": {
-        "at": "2026-09-30T05:35:25Z",
+        "at": "2026-09-30T05:38:01Z",
         "as": "already compact",
-        "was": 4335,
-        "bytes": 4335
+        "was": 4957,
+        "bytes": 4957
       }
     },
     "public/sprites/ui/candies/hoenn/image.png": {

@@ -122,6 +122,7 @@ export default function registerSylveonSpecies(): void {
         Moves.Toxic,
         Moves.WeatherBall,
         Moves.WorkUp,
+        Moves.LaserFocus,
       ],
     },
   });

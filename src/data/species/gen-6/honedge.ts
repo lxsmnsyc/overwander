@@ -45,6 +45,8 @@ const FAMILY_TEACHABLE = [
   Moves.Swagger,
   Moves.SwordsDance,
   Moves.Toxic,
+  Moves.BrutalSwing,
+  Moves.LaserFocus,
 ];
 
 // The level-up moves the sword keeps through every shape

@@ -51,13 +51,8 @@ import { FOSSIL_OFFER_KINDS, getFossilPrice } from '../../../src/data/overworld/
 import { isFossil } from '../../../src/data/items/fossils';
 import Landmark from '../../../src/data/overworld/landmark';
 import { getPortalCell, portalInRegion } from '../../../src/overworld/portal';
-import Npc, {
-  NPCS,
-  TRADERS,
-  TRADER_OFFERS,
-  npcSheet,
-  npcSheets,
-} from '../../../src/data/overworld/npc';
+import Npc, { TRADER_OFFERS } from '../../../src/data/overworld/npc';
+import { NPCS, TRADERS, npcSheet, npcSheets } from '../../../src/overworld/npcs';
 import Phenomenon, {
   getPhenomenonGroups,
   getPhenomenonItems,
@@ -1076,8 +1071,11 @@ describe('world', () => {
     expect(new Set(getPhenomenonItems(Phenomenon.FlyingShadow)).has(Items.HealthWing)).toBe(true);
     expect(new Set(getPhenomenonItems(Phenomenon.RipplingWater)).has(Items.FireStone)).toBe(false);
     expect(new Set(getPhenomenonItems(Phenomenon.DustCloud)).has(Items.FireStone)).toBe(true);
-    // Dust is for what comes out of rock, the Mega Stones included
+    // Dust is for what comes out of rock, the Mega Stones and the
+    // Z-Crystals included
     expect(new Set(getPhenomenonItems(Phenomenon.DustCloud)).has(Items.CharizarditeX)).toBe(true);
+    expect(new Set(getPhenomenonItems(Phenomenon.DustCloud)).has(Items.FiriumZ)).toBe(true);
+    expect(new Set(getPhenomenonItems(Phenomenon.DustCloud)).has(Items.PikaniumZ)).toBe(true);
     expect(getPhenomenonItems(Phenomenon.HiddenGrotto)).toEqual([]);
   });
 

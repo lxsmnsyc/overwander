@@ -112,6 +112,7 @@ export default function registerCoralReefSpawns(): void {
         { species: Species.Lumineon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Wishiwashi, weight: 5 },
         { species: Species.Alomomola, weight: 7 },
         { species: Species.Mantine, weight: 5 },
         { species: Species.Kingdra, weight: 5 },
@@ -140,6 +141,7 @@ export default function registerCoralReefSpawns(): void {
         { species: Species.Lumineon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Wishiwashi, weight: 5 },
         { species: Species.Alomomola, weight: 7 },
         { species: Species.Mantine, weight: 5 },
         { species: Species.Kingdra, weight: 5 },
@@ -166,6 +168,7 @@ export default function registerCoralReefSpawns(): void {
         { species: Species.Lumineon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Wishiwashi, weight: 5 },
         { species: Species.Alomomola, weight: 7 },
         { species: Species.Mantine, weight: 5 },
         { species: Species.Kingdra, weight: 5 },
@@ -191,6 +194,7 @@ export default function registerCoralReefSpawns(): void {
         { species: Species.Lumineon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Wishiwashi, weight: 5 },
         { species: Species.Alomomola, weight: 7 },
         { species: Species.Mantine, weight: 5 },
         { species: Species.Kingdra, weight: 5 },

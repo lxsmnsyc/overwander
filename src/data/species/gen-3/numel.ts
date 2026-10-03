@@ -150,6 +150,7 @@ export default function registerNumelSpecies(): void {
         Moves.IronHead,
         Moves.RockPolish,
         Moves.StoneEdge,
+        Moves.StompingTantrum,
       ],
     },
   });

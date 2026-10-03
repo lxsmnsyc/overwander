@@ -1,5 +1,273 @@
 # overwander
 
+## 4.29.0
+
+### Minor Changes
+
+- 67cdee8: The families Akala's first roads and Brooklet Hill turn up:
+  
+  - Wishiwashi swims in the coral reef, the ocean and the mangrove at any hour. From level 20 it fights as a school while it holds above 1/4 of its HP.
+  - Mudbray and Mudsdale live in the savanna, the steppe and the grassland at any hour.
+  - Dewpider and Araquanid live in the water of the swamp, the mangrove and the tropical rainforest at any hour.
+  - Fomantis and Lurantis live in the tropical rainforest, the tropical seasonal forest and the grassland by morning and day. A Fomantis evolves only by morning or day.
+  - Bounsweet, Steenee and Tsareena live in the tropical rainforest and the tropical seasonal forest by morning and day. A Steenee evolves once it knows Stomp.
+  - Each family has a signature ability. Regroup heals a lone Wishiwashi 1/8 of its HP each time it acts. Heavy Hooves makes its physical moves hit 1% harder for every 20 kg it weighs, up to 1.4x. Bubble Ward makes its teammates take Fire moves at 0.75x and keeps them from being burned. Orchid Guise keeps enemies from aiming at it until its first attack lands, which hits 1.3x. Trop Stride makes its kicking moves hit 1.3x.
+  - Water Bubble halves Fire moves on its holder, keeps it from being burned and doubles its Water moves.
+  - Wimp Out sends its holder off the field for its strongest teammate when damage drops it below 1/2 HP.
+  - Wishiwashi can also be born with Swift Swim, Wimp Out or Anticipation, Mudsdale with Steadfast, Araquanid with Overcoat or Mirror Armor, and Lurantis with Sharpness or Chlorophyll.
+  - All of them learn their moves by level, machine, tutor and egg, as they do in Sun, Moon, Ultra Sun and Ultra Moon.
+  - The sprite import no longer draws a Shadow slot of the collection as a species' other form, which had put Shadow Keldeo's art on the Resolute form.
+- d61a50c: The families the first roads out of Melemele's towns walk past:
+  
+  - Grubbin, Charjabug and Vikavolt live in the tropical rainforest and the tropical seasonal forest by morning and day. A Charjabug evolves with a Thunder Stone.
+  - Pikipek, Trumbeak and Toucannon, and Yungoos and Gumshoos, are written but not met in the wild yet: they wait on art for Trumbeak, Toucannon and Gumshoos.
+  - Each family has a signature ability. Drumroll gives its multi-hit moves 1 more strike. Score to Settle hits 1.3x against whichever enemy last hit it. Trickle Charge raises its Special Attack 10% for each Electric move anybody lands, up to 1.5x.
+  - Stakeout hits 2x against an enemy that has not acted since it came onto the field.
+  - Gumshoos can also be born with Scrappy, and Vikavolt with Compound Eyes.
+  - All eight learn their moves by level, machine, tutor and egg, as they do in Sun, Moon, Ultra Sun and Ultra Moon.
+- 0348895: Alola's items:
+  
+  - Terrain Extender makes the terrain its holder lays last 1.6x as long.
+  - The Electric, Grassy, Misty and Psychic Seeds give their holder +1 Defense or Special Defense once their terrain covers it, then are gone.
+  - Beast Ball catches 5x on an Ultra Beast and 0.1x on anything else. It turns up on walks and is never sold.
+  - A Silvally holding a Memory takes that type's shape.
+  - The Memories and the Z-Crystals turn up on walks, one thin slot each, and the Z-Crystals come out of dust clouds too.
+  - The four nectars and the N-Solarizer and N-Lunarizer are in the bag and turn up on walks, ready for Oricorio and Necrozma.
+- 0a15a78: The families Melemele's meadow and hill turn up:
+  
+  - Crabrawler lives on the beach and the rocky coast, and Crabominable on the glacier and the alpine tundra. A Crabrawler evolves with an Ice Stone.
+  - Oricorio dances in the style of where it was met: Baile in the savanna, Pom-Pom in the grassland, Pa'u on the beach and Sensu in the tropical rainforest, by morning and day.
+  - Cutiefly and Ribombee live in the grassland, the temperate forest and the tropical seasonal forest by morning and day.
+  - Rockruff lives in the steppe, the grassland and the badlands at any hour. It grows into a Midday Lycanroc by morning or day, a Midnight Lycanroc by night and a Dusk Lycanroc in the evening, and each of the three is met in the wild at its own hour.
+  - Each family has a signature ability. Rebound Punch hits 1.5x with the punch after one that missed or was blocked. Dizzy Twirl never hits itself while confused, and its moves hit 1.3x while it is. Honey Share makes the berries its teammates eat heal 1.5x as much and raise a stat 1 more stage. Provoke turns the next single-target move of an enemy it hits onto itself.
+  - Oricorio can also be born with Tangled Feet, Keen Eye or Gale Wings, Ribombee with Friend Guard, Crabominable with Shell Armor, and Rockruff with Own Tempo.
+  - All of them learn their moves by level, machine, tutor and egg, as they do in Sun, Moon, Ultra Sun and Ultra Moon.
+  - Iron Fist powers up every punch, Mach Punch and Drain Punch among them, rather than only the first two generations' six.
+  - Dancer copies Revelation Dance.
+- 7d4226e: Alola's three starters, and the abilities they carry:
+  
+  - Rowlet, Dartrix and Decidueye live in the tropical rainforest and the tropical seasonal forest in the evening and at night. Litten, Torracat and Incineroar live in the grassland and the steppe in the evening and at night. Popplio, Brionne and Primarina live on the beach and the rocky coast by morning and day, on land or in the water.
+  - Each family has a signature ability that plays to a crowd, counting up to 4: Quill Audience puts 1.1x on its Speed for each enemy standing, Heel Audience does the same for its Attack, and Aria Audience puts 1.1x on its Special Attack for each teammate standing.
+  - Long Reach keeps every move it throws from making contact. Liquid Voice turns its sound moves into Water moves.
+  - Decidueye can also be born with Sniper or Keen Eye, Incineroar with Tough Claws or Iron Fist, and Primarina with Cute Charm or Hydration.
+  - All nine learn their moves by level, machine, tutor and egg, as they do in Sun, Moon, Ultra Sun and Ultra Moon.
+- f3c0037: Boxes: make up to 32 named, coloured boxes and file your catches into them. A box keeps each pokemon in its own square and allows gaps, so a living dex can hold a place for what is missing, and it can be laid out by dex number or closed up in one press. Deleting a box sends its pokemon back to Default, and a pokemon that changes hands leaves its old owner's box.
+- b2d79a5: Two new display settings: Chunk lines rules the edges where one chunk meets the next on the board, and World map grid rules every chunk on the world map, the detailed map included.
+- a094a76: - Townsfolk talk through a speech box: their line, then the question they are asking, one step at a time.
+  - Questions are action forms that any screen can open and await: teaching a move and forming a team are the first.
+  - Each NPC is defined in one place with `createNpc`: name, lines, sprites and the script for what they do.
+
+### Patch Changes
+
+- 5e4ac29: In battle, a purified pokemon's light and a shadow pokemon's storm lie as flat as the pokemon's own shadow, an ellipse rather than a round plate.
+- bef9c54: A dropdown inside a dialog, such as the duel rules, is drawn over the dialog and its bottom bar, and opens upward when there is no room below.
+- adb72b5: Lairs stand on the water as readily as on the ground, never on lava. A lake's lair is now on the lake, an island's lair may be at sea, and every other lair stays on dry ground, so a lair on the water stages a legendary or shadow raid that belongs there.
+- af89548: Two islands that stand too close for the sea between them, or an island too close to the coast, are now joined by ground at least three cells wide rather than a bridge a single cell across.
+- b87a166: A shiny met in the safari, or shown in any dialog, sparkles exactly as it does in the overworld and in battle: the same burst, the same glints and the same size.
+- 816ef70: A teammate no longer throws a second Toxic, or any status move, at a foe while the first is still in the air.
+
+## 4.28.2
+
+### Patch Changes
+
+- 825612e: The battle camera stands further back and draws the pokemon smaller with it, so a team's wider ring reads as space between them, and the field sits a little higher so the nearest pokemon's bars stay on screen.
+- 8ecbb7c: A boosted spawn (a raid prize, a favouring sky, a phenomenon, a honey tree) is now likelier to roll perfect values. Its values are spread between the floor and 31 instead of only being lifted to the floor, so the bigger the boost, the better the odds of a 31.
+- 2f47b09: A raid boss can no longer be hit for a share of its whole pool. Ranging Shot's floor, Deep Kelp's cut-off, Solar Power's sun chip, Stored Bounce's bank and Slab's shield are each held to the boss damage cap against or on a boss, and a boss can no longer learn Mind Blown.
+- 7aa2d08: Dragging a move, ability or item into a new order lets go wherever the pointer is released, instead of staying stuck to the cursor.
+
+## 4.28.1
+
+### Patch Changes
+
+- 411681a: A shadow or purified aura sits just behind its own pokemon, so a pokemon standing further back no longer shows through it.
+- 411681a: Dragging the battlefield turns it round its middle, the way the overworld board turns, rather than spinning with sideways movement.
+- 411681a: The battlefield is fitted to the screen's height, so a phone held upright shows the fight larger.
+- 411681a: The ground beyond a fight fades into the sky in the overworld's dithered haze, in place of the dark edges.
+- 22c3d99: A team's pokemon stand further from their own middle so they no longer crowd it, and the battle camera takes in more of the field to keep the wider rings in view.
+- d78a543: A pokemon's sheet opens once its record has arrived, the way a trainer's dialog does, rather than opening first to say it is loading.
+- 89c90c1: A duel fields both parties at full health with no statuses, and a fainted pokemon can be brought. Nothing the duel does is written back.
+- 4b99f35: Pokemon walk onto the field when a battle starts rather than while it is being set up. The countdown shows each one as it was stored, and what arriving does (a form item's shape, a Mega Evolution, Intimidate, a weather ability) plays where it can be watched, form changes with their light.
+- ff25721: Family ids no longer skip 121, which was held for a Tyrogue family that already existed. Every family from Miltank on moves one id down, so its species day comes a day sooner and every day of the year features a family. Candy stacks were moved to match, along with the Unova candy that inserting Victini had left on the family before.
+- 411681a: A pokemon changing form in battle is wrapped in light that closes in, flashes as the new form takes over, and breaks outward.
+- 411681a: Moves whose landing already flies or falls onto the target, such as Moonblast, wind up at the caster instead of also throwing a projectile.
+- 411681a: A pokemon behind its substitute keeps its move plate and bars at full strength, so what it is casting can still be read.
+- 411681a: The card over a pokemon on the battlefield is a tooltip: it lets the pointer through and goes as soon as the pokemon is left.
+
+## 4.28.0
+
+### Minor Changes
+
+- 08bf4f9: Alola's moves:
+  
+  - Every move generation 7 introduced except the Z-Moves is in the move list, from Shore Up to Double Iron Bash, the Let's Go partner moves included.
+  - First Impression works once a trip onto the field, and throwing it spends Fake Out's and Mat Block's chance too.
+  - Psychic Terrain holds for 10 seconds. Grounded pokemon are safe from the other side's moves that wind up faster than an ordinary move, and their Psychic moves hit 1.3x.
+  - Aurora Veil only goes up in hail or snow, and cuts both physical and special damage against the side by 1/3. It does not stack with Reflect or Light Screen, and Brick Break, Psychic Fangs and Defog take it down.
+  - Baneful Bunker guards the user and poisons whatever touches it.
+  - Spotlight draws every single-target move aimed at the target's side to the target.
+  - Glitzy Glow and Baddy Bad put up Light Screen and Reflect over the user's side as they land.
+  - Shell Trap only goes off, at once, when a physical move hits the user during its wind-up. Beak Blast burns anything that touches the user during its wind-up.
+  - Instruct makes the target throw its last move again at once. Laser Focus makes the user's next move within 4 seconds a critical hit.
+  - Throat Chop stops the target using sound moves for 4 seconds. Pollen Puff heals a teammate instead of hitting it.
+  - Sunsteel Strike, Moongeist Beam and Photon Geyser ignore the target's abilities, and Photon Geyser lands as a physical move when the user's Attack is higher.
+  - Stomping Tantrum hits 2x after the user's last move failed. Core Enforcer takes an ability off each target that is not winding up a move.
+  - The 17 Memories are held items that set Multi-Attack's type.
+  - Z-Moves are in. A pokemon holding a Z-Crystal turns a matching damaging move into its Z-Move as it goes off, once a side a fight.
+  - A type crystal gives a status move of its type the mainline Z-effect before the move goes off, such as a stage raised, full HP or cleared drops.
+  - The 18 type crystals take their power from the move they replace, and the 17 signature crystals each turn one line's own move into its own Z-Move.
+  - A Mega, or a pokemon holding its Mega Stone, never throws a Z-Move.
+  - Every Z-Move has a picture of its own, opening with the user gathering its Z-Power under a gold Z.
+  - Alola's signature moves have pictures of their own, and Psychic Terrain washes the floor pink.
+- a6f377c: - A battle lobby's host can cap the base stat total a pokemon may bring. A held item that changes its form counts at that form's total.
+  - The host can also bar legendaries, mythicals, and pokemon holding an item that changes their form.
+  - A barred pokemon is greyed out in the team picker with the reason, and is taken out of a party when the rules change.
+- 52ea503: - New held item, the Reveal Glass: a Tornadus, Thundurus or Landorus holding it fights in its Therian Forme, which brings Regenerator, Volt Absorb or Intimidate on top of its own ability. It turns up in the prized band of the item pool.
+  - Every form held for a fight now floats its item over the pokemon, the way a Mega floats its stone: the Origin orbs, the Primal orbs, the Plates, the Drives, the Gracidea, the Prison Bottle and the Reveal Glass. Shapes without art of their own still read as changed.
+  - Intimidate now lands when it comes with a shape put on as the pokemon enters, so Mega Manectric scowls as it Mega Evolves.
+
+### Patch Changes
+
+- 585f26f: - The battle lobby is laid out like a battle screen: two seats face each other across a field, each with its trainer plate, a ready stamp and the party.
+  - The lobby is named for whoever hosts it, and the rules are chips, with Change rules beside them for the host.
+  - Ready is a stamp on your own seat, and Change team and Watch instead sit under it.
+  - Invite is in the dock only, and the dock says why Start is not ready yet.
+  - Watchers show as a row of faces.
+  - A seated player can only leave by Leave, so their party never stays behind in the lobby.
+- ef4526b: Teammates no longer double up on a move whose first cast does the whole job: the same restriction on the same foe (Mean Look, Foresight, Embargo, Soak, a Ghost's Curse and the like), Helping Hand on a partner already being helped, two units drawing hits with Follow Me or Rage Powder, two party cures, or a second Perish Song, Haze or Fairy Lock.
+- 0997fba: Teammates pair their Pledges: a unit favours a Pledge that would land just after a teammate's different one, so the two combine into the stronger hit and leave its field behind.
+- f164515: Teammates only hold back a status move when a teammate is already giving that same status to that foe. Statuses stack, so a Thunder Wave no longer waits on a teammate's Toxic, while a second Toxic (or a Spore behind a Sleep Powder) still does.
+- ad53f0f: Teammates no longer call up a different weather or terrain while a teammate is already calling one up, since the second would only replace the first.
+- 4df5596: Teammates no longer cast a second Topsy-Turvy at a foe a teammate is already flipping, or a second Ally Switch while a partner is already switching, since either would turn the first straight back.
+- 585f26f: Answering a battle invite from Notifications joins the lobby, so the player is still in the room when the battle starts.
+- 0502ee1: Kanto's, Johto's, Hoenn's, Sinnoh's, Unova's and Kalos's pokemon learn Alola's moves by level, machine, tutor and egg, as they do in Sun, Moon, Ultra Sun and Ultra Moon.
+- 05b2c2a: A shadow or purified pokemon with four abilities can have its abilities put in a new order.
+- c6e5079: The AI no longer casts a stat-stage move that would change nothing: a Swords Dance at +6, a Growl on foes already at -6, a Screech into Mist. It looks for a target where the move still works instead. Moves that do something besides (Minimize, Defog, Memento, Swagger and a few others) are still weighed on the rest of what they do.
+- 8ce4ff5: The AI no longer casts Teeter Dance when every foe it reaches is already confused, or Destiny Bond while its bond still holds.
+- b35f8d9: - Helping Hand is used just before a teammate's attack lands, and Follow Me when a foe's attack is about to hit a teammate.
+  - Encore is aimed at a move the foe is still winding up.
+  - When several teammates are free at once, the strongest play goes first and the others plan around it.
+- 8fc1f6d: - Teammates count the hits already on their way to a foe, so they finish a foe one more hit would take down.
+  - They stop piling more hits onto a foe that is already going down.
+- b248384: - How well a team is directed now depends on who it belongs to.
+  - Grunts, ordinary trainers and raid bosses react slower and now and then make a poor choice.
+  - Gym leaders and Ace Trainers are sharper, and the Elite, champions and your own team play their best.
+- f5d93cc: - Protect, Detect and the team guards are raised only when they will be up before the foe's hit lands.
+  - Me First and Sucker Punch are used only when the foe will still be winding up when they go off.
+- 2b0b274: - A pokemon may hold back for a much stronger move that is about to come off cooldown, instead of throwing a weak one.
+  - A pokemon holding Protect, Detect, Endure, Me First or Sucker Punch stands ready to answer a foe for a moment before acting.
+- 02fc6bf: Each family's species day is the day of the year its number comes round to, so every family has one day a year and some days feature two.
+
+## 4.27.0
+
+### Minor Changes
+
+- 7aae3e0: - Five new true shadows: XD-243, XD-244, XD-245, XD-249 and XD-250, the shadows of Raikou, Entei, Suicune, Lugia and Ho-Oh.
+  - Like the others, each has 10 more points on every stat than its counterpart and can never be purified.
+  - They appear only on a Dark Day: in the special band of the wild pool, and in the shadow lairs of their counterparts.
+- 9d655f8: Diantha holds Kalos's crown:
+  
+  - She asks to see Malva, Siebold, Wikstrom and Drasna beaten first, and pays the Kalos Champion title along with her coat.
+  - Her six are the ones she defends Kalos with, Gardevoir last, and she brings both of Kalos's fossils.
+- 6d602b6: Kalos's Elite Four hold seats now:
+  
+  - Malva on fire, Siebold on water, Wikstrom on steel and Drasna on dragons.
+  - Each asks to see Kalos's eight badges before they will fight, and is seated in the countries their type lives in.
+  - Wikstrom is the first steel member of any Elite Four.
+  - Malva, Siebold and Wikstrom are drawn by Taiga.
+- a0c6df5: Kalos's gym leaders keep gyms now:
+  
+  - Viola, Grant, Korrina, Ramos, Clemont, Valerie, Olympia and Wulfric, each seated in the countries their type lives in.
+  - Eight new badges: Bug, Cliff, Rumble, Plant, Voltage, Fairy, Psychic and Iceberg. They are drawn from the Kalos badge sheet on the profile shelf.
+  - Valerie is the first fairy leader.
+- f14e937: AZ stands above Kalos's league:
+  
+  - He turns up where a champion would have been, at full level, and asks for no badges. Beating him pays his mark and the coat he is drawn in.
+  - He brings Torkoal, Golurk and Sigilyph, then his Eternal Floette, Xerneas and Yveltal.
+- f8d491c: The last two Kalos lines are written:
+  
+  - Litleo and Pyroar. Litleo becomes Pyroar at 35.
+  - Spritzee and Aromatisse. Spritzee becomes Aromatisse when it is handed over holding a Sachet.
+  - Litleo's Pride Call casts Noble Roar at an enemy as it arrives on the field.
+  - Spritzee's Calming Scent takes 1 stage of Speed off the enemy side whenever it uses up its own held item, which is Swirlix's Sugar Rush read from the other side.
+  - Pyroar takes Intimidate, and Aromatisse takes Natural Cure and Misty Surge, as their remaining abilities.
+  - Neither line is staged anywhere yet. Nobody has drawn a male Pyroar, and Aromatisse has only two of its animations.
+- c6ebd6c: Mega Evolution:
+  
+  - The 48 gen 6 Megas, each taken in a fight by a pokemon holding its Mega Stone. Rayquaza needs no stone, only Dragon Ascent.
+  - The 47 Mega Stones, buried like the plates and kicked up by dust clouds.
+  - One pokemon on a team Mega Evolves: the highest level, then the bigger Mega, then the earlier party slot.
+  - A Mega wears its own ability on top of the catch's. Nine whose line already has it wear another instead.
+  - A glowing stone floats over a Mega in battle, and an orb over a Primal. A Mega with no art of its own yet is drawn as its ordinary self.
+  - Primal Kyogre and Primal Groudon, taken by a Kyogre holding the Blue Orb or a Groudon holding the Red Orb. Every holder changes, the way an Origin Forme does.
+  - Aerilate, Parental Bond, Delta Stream, Primordial Sea and Desolate Land are built.
+- 3baafc3: Kalos's three mythicals:
+  
+  - Diancie, Hoopa and Volcanion are here. None of them is staged in the world: a relic is the only way to a fight with one, as with every mythical before them.
+  - The relics are the Heart Diamond, the Sealed Ring and the Steam Valve, found in the special band of the overworld item pool and nowhere else. Their lairs are the Diamond Domain, the Dahara Ruins and the Nebel Plateau.
+  - The Prison Bottle is a held item: a Hoopa holding one fights unbound, with 160 Attack and 170 Special Attack in place of its bound shape's. It is found in the prized band beside the orbs and the Gracidea.
+  - Steam Engine is built: a Fire or Water move landing on its holder raises Speed 6 stages.
+  - Diancie's Regalia gives its whole team 1 stage of Defense every 10 seconds, up to 3, which is Carbink's Crystal Growth handed to the court. Hoopa's Ringback turns 20% of single-target moves aimed at it back on whoever threw them. Volcanion's Boiler answers the weather that damps half of what it is: its Fire moves hit 1.15x in rain and its Water moves 1.15x in sunlight.
+  - Diancie takes Solid Rock and Serene Grace, Hoopa takes Levitate, Prankster and Trace, and Volcanion takes Flash Fire, Steam Engine and Pressure.
+- da7edc7: Built parties give each member a job, and the top trainers bring a Mega:
+  
+  - A built party fields a special core, a physical core, a healer, a protector, a redirector and a field control, leaving out any job no member can do.
+  - The healer is the frailest member able to heal or cure the team, or to raise it when none can, and the redirector is the bulkiest.
+  - A built party never fields more than two cores.
+  - Legends give each member its family's signature ability.
+  - Ace trainers, gym leaders, the Elite Four, champions and legends may give one member a Mega Stone, a core first. Syndicates field none.
+- 46c372d: Team Flare keeps the meadows:
+  
+  - The crime landmark in the grassland and the shrubland is theirs. Rocket keeps the rest of the open country.
+  - Grunts are met in the red suits, with the admins who wear them a rank up. Xerosic, Aliana, Bryony, Celosia and Mable stand above them, and Lysandre bars the cell.
+  - Seven new marks: Team Flare Repelled for clearing a cell, and one each for the five scientists and Lysandre.
+
+### Patch Changes
+
+- cf01a8f: Built teams can use the moves an earlier stage of the line learned, hatched with or was taught, such as a Togekiss with Wish.
+- 90fcfae: Built teams rarely carry Synchronoise, and never beside a teammate it would hit.
+
+## 4.26.1
+
+### Patch Changes
+
+- 58df8e7: - Award squares on the profile stay square on a phone, with badges and portraits shrunk to fit instead of clipped.
+  - A battle history entry shows the team first, outside the tinted plate that holds the fight and its buttons, so the team is always visible.
+- f9514a2: - On a Dark Day, a shadow lair now holds a true shadow only where that shadow's counterpart has a lair in the same biome. The raid is named after that lair.
+  - A shadow lair in a biome with no such lair keeps its ordinary shadow raid. A Woodland lair no longer stages XD-144 as "Shadow Seafoam Islands".
+- c53d0fa: - A legendary lair that has no legendary to host this window now stands as a shadow lair instead of staying empty. This happens most often in kelp forests and cold deserts.
+- 4529b17: - Computer-controlled pokemon no longer attack a teammate who is merely immune to the move, such as a Ground move into a teammate with Levitate.
+  - They still aim a move at a teammate whose ability turns it into a heal or a boost, such as Fire into Flash Fire, and only while that teammate gains something from it.
+  - After a raid boss falls, its challengers no longer turn their attacks on each other.
+
+## 4.26.0
+
+### Minor Changes
+
+- 184ec88: - Wild pokemon are now placed by kind. Fliers and floaters appear over both ground and water.
+  - Water pokemon appear only on water, except amphibious ones, which also walk on land.
+  - Everything else keeps to the ground.
+  - Gyarados, Mantine and Mantyke stay in the water, and Skorupi and Drapion stay on land.
+  - Bidoof, Surskit, Palkia, Cradily and Armaldo are now amphibious.
+  - Dratini and Dragonair now appear only on water.
+  - A rippling water turns up a water pokemon, a flying shadow a flier, and a dust cloud something that keeps to the ground.
+  - Changes what every cell rolls: existing windows roll different spawns than before.
+
+### Patch Changes
+
+- 358ae05: - A syndicate cell in a cave is now fought and rewarded as one. Its boss or grunt hands over their pokemon, fields shadows, and is named in the battle history.
+  - A cave raid's prize now records the cave it was won in.
+- 6b56dc9: - On the catch sheet, a dragged move, ability or item follows the pointer.
+  - Prized items found in the world show in a gold popup, and special items in a violet one.
+  - Wish's star arcs from the caster to the pokemon it is left with, taking the whole wait to get there.
+- 9f74ce0: - A lair now hosts what its own tile allows. A lair on water holds only pokemon that swim or fly, and a lair on land only pokemon that can stand there.
+  - A lair reads the biome of its own tile, not the biome at the middle of its chunk, so a lair across a biome border hosts that biome's residents.
+  - A shadow raid with no named lair is now called after its own tile's biome.
+  - Changes raids: some lairs host a different pokemon than before.
+- 9e77d42: - Walking back up to a raid your party is still fighting now offers Rejoin, which puts you back in your own fight instead of watching it as a replay.
+  - Only a fight you are in is offered this way. Anyone else still gets a seat to watch.
+- dc8995f: - A syndicate executive waiting to be fought glows magenta on the board, and a boss glows violet. Grunts stay red.
+  - A legend holding the champion's seat glows pearl white, so it is told apart from the champion.
+
 ## 4.25.2
 
 ### Patch Changes

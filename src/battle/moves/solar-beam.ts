@@ -14,16 +14,19 @@ const HALVING_WEATHERS = new Set<Weathers>([
   Weathers.Sandstorm,
 ]);
 
+/** The two that gather sunlight before they fire */
+const SOLAR_MOVES = new Set<Moves>([Moves.SolarBeam, Moves.SolarBlade]);
+
 export default function setupSolarBeam(battle: Battle): void {
   battle.on(BattleEvents.CheckUnitMoveSteps, EventPriority.Post, (event) => {
-    if (event.move === Moves.SolarBeam && isWeatherSunny(event.source)) {
+    if (SOLAR_MOVES.has(event.move) && isWeatherSunny(event.source)) {
       event.steps = 0;
     }
   });
 
   battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
     if (
-      event.move === Moves.SolarBeam &&
+      SOLAR_MOVES.has(event.move) &&
       event.power != null &&
       HALVING_WEATHERS.has(event.source.checkWeather())
     ) {

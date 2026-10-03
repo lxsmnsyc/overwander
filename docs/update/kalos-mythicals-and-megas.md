@@ -1,9 +1,11 @@
-# Kalos's mythicals and Mega Evolution
+# Kalos's league, mythicals and Megas
 
 **Kalos is written in full**: its three mythicals, **Diancie, Hoopa and
 Volcanion**, and its last two lines, Litleo and Spritzee. **Mega Evolution** is
 here too, with all 48 Megas of the sixth generation and the Primals of Kyogre
-and Groudon.
+and Groudon. **Kalos's trainers take the road**: eight gym leaders, an Elite
+Four, **Diantha**, **AZ** and **Team Flare**. And the **Johto legendaries** cast
+true shadows.
 
 Everything from before is still here.
 
@@ -56,6 +58,70 @@ no stone: it Mega Evolves if it knows Dragon Ascent.
 - **It is not a Mega Evolution.** Every holder changes, the way an Origin Forme
   does, and none of them uses up the team's one Mega.
 - **An orb floats over a Primal** the way a stone does over a Mega.
+
+## Kalos's eight gym leaders
+
+Viola, Grant, Korrina, Ramos, Clemont, Valerie, Olympia and Wulfric.
+
+- **Eight new badges**: Bug, Cliff, Rumble, Plant, Voltage, Fairy, Psychic and
+  Iceberg. They are drawn from the Kalos badge sheet on the profile shelf.
+- **Valerie is the first fairy leader.**
+- **Each leader is seated in the countries their type lives in.**
+
+## The Elite Four
+
+**Malva** on Fire, **Siebold** on Water, **Wikstrom** on Steel and **Drasna**
+on Dragon.
+
+- **Each asks to see Kalos's eight badges** before they will fight.
+- **Wikstrom is the first steel member** of any Elite Four.
+- **Malva, Siebold and Wikstrom are drawn by Taiga.**
+
+## The champion and the legend
+
+- **Diantha** holds Kalos's crown. She asks to see all four of the Elite Four
+  beaten first, and pays the **Kalos Champion** title and her coat. Her six are
+  the ones she defends Kalos with, both of Kalos's fossils among them and
+  Gardevoir last.
+- **AZ** turns up where a champion would have been, at full level, and asks for
+  no badges. He brings Torkoal, Golurk and Sigilyph, then his Eternal Floette,
+  Xerneas and Yveltal. Beating him pays his mark and his coat.
+
+## Team Flare
+
+- **The crime landmark in the grassland and the shrubland is Team Flare's.**
+  Team Rocket keeps the rest of the open country.
+- **Grunts wear the red suits**, with the admins a rank above them.
+- **Xerosic, Aliana, Bryony, Celosia and Mable** stand above the admins, and
+  **Lysandre** holds the cell.
+- **Seven new marks**: Team Flare Repelled for clearing a cell, and one each
+  for the five scientists and Lysandre.
+
+## Smarter built teams
+
+- **Each member of a built party has a job**: a special core, a physical core, a
+  healer, a protector, a redirector and a field control. A job no member can do
+  is left out, and a party never fields more than two cores.
+- **The healer is the frailest member** able to heal or cure the team. The
+  redirector is the bulkiest.
+- **The top trainers bring a Mega.** Ace trainers, gym leaders, the Elite Four,
+  champions and legends may give one member a Mega Stone, a core first.
+  Syndicates never do.
+- **Legends give each member its family's signature ability.**
+- **Built teams can use moves an earlier stage learned**, such as a Togekiss
+  with Wish.
+- **Built teams rarely carry Synchronoise**, and never beside a teammate it
+  would hit.
+
+## The Johto legendaries' true shadows
+
+**Five new true shadows**: XD-243, XD-244, XD-245, XD-249 and XD-250, the
+shadows of Raikou, Entei, Suicune, Lugia and Ho-Oh.
+
+- **Each has 10 more points on every stat** than its counterpart, and can never
+  be purified.
+- **They appear only on a Dark Day**, in the special band of the wild pool and
+  in their counterparts' shadow lairs.
 
 ## A signature for each of them
 

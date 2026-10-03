@@ -247,7 +247,7 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
     if (!arrangeable()) {
       return '';
     }
-    return lifted ? 'cursor-grabbing opacity-50' : 'cursor-grab';
+    return lifted ? 'cursor-grabbing shadow-pop' : 'cursor-grab';
   };
 
   const save = (): void => {
@@ -297,7 +297,11 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
           <ul class="m-0 grid list-none grid-cols-2 gap-1 p-0" {...abilitiesOrder.listProps}>
             <Index each={abilities()}>
               {(ability, at) => (
-                <li {...abilitiesOrder.itemProps(at)} class={grip(abilitiesOrder.held() === at)}>
+                <li
+                  {...abilitiesOrder.itemProps(at)}
+                  style={abilitiesOrder.style(at)}
+                  class={grip(abilitiesOrder.held() === at)}
+                >
                   <TooltipHost class="block" kind="ability" {...detailAbility(ability())}>
                     <Badge
                       class="w-full justify-center"
@@ -360,6 +364,7 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
                 <li
                   class={`contents ${at < items().length ? grip(itemsOrder.held() === at) : ''}`}
                   {...(at < items().length ? itemsOrder.itemProps(at) : {})}
+                  style={itemsOrder.style(at)}
                 >
                   <Show
                     when={at < items().length}
@@ -465,7 +470,11 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
         <ul class="m-0 grid list-none grid-cols-2 gap-1 p-0" {...movesOrder.listProps}>
           <Index each={moves()}>
             {(move, at) => (
-              <li {...movesOrder.itemProps(at)} class={grip(movesOrder.held() === at)}>
+              <li
+                {...movesOrder.itemProps(at)}
+                style={movesOrder.style(at)}
+                class={grip(movesOrder.held() === at)}
+              >
                 <MoveTooltip
                   class="block"
                   move={move()}

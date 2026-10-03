@@ -107,6 +107,22 @@ Small and unblocked.
 - [ ] adjacent chunk preload
 - [ ] Mini Boss ability
 - [ ] catch tags
+- [ ] **An NPC API.** One NPC is spread over many places today: its id, name,
+      charsets and visit tag in `src/data/overworld/npc.ts`, its counter under
+      `src/components/overworld/npc-dialog/counters/` and its entry in
+      `counter.tsx`, its server handler under `src/server/npcs/` with a client
+      wrapper in `src/auth/npcs.ts`, the trader list in `src/server/validate.ts`,
+      and where it stands in `chunk-snapshot.ts`. A `createNpc` definition
+      should declare all of it in one place, the way `createAbility` does for
+      abilities, so adding the Jeweler or the Archaeologist above is one file.
+
+- [ ] **Type: Null and Silvally.** When Gen 7 lands, Silvally's 17 Memories
+      are form items the way the Plates are: rows in `FORM_ITEMS` derived from
+      the type each Memory loads, gated on RKS System through `SHAPE_NEEDS` the
+      way Arceus is gated on Multitype, with the Memory floating over the
+      changed shape like every other held form (`form-mark.ts`). Type: Null has
+      no forms and evolves by friendship; its Battle Armor and the helmet are
+      the only thing to decide.
 
 ## 3. Player systems
 
@@ -118,31 +134,26 @@ private to its owner and stored, so none of them touches world generation.
 Folders for catches. The catches list opens on the boxes instead of one long
 grid.
 
-- [ ] **Data.** A `box` table (`box id, name, catch id, position`), one row per
-      catch filed in a box, with `position` its place inside that box. The catch
-      keeps a nullable `caught.box` relation to its box, so reading a catch says
-      which box it is in without searching the `box` table. A catch with no box is
-      in the **Default** box, which is not a row and cannot be renamed or deleted,
-      so every existing catch lands there with no migration of its rows.
-- [ ] **Open questions on that shape.** Where an empty box lives, since it has no
-      catch to hang a row on, and where a box's own name and order are kept once
-      and not on every catch's row. Settle both before the migration.
-- [ ] **Actions.** Create, rename, reorder, delete a box. Deleting one moves its
-      catches back to Default rather than releasing anything, which clears their
-      `caught.box`. Move one catch or a picked set, through the multi-pick the
-      catch picker already has. Reorder inside a box by drag, written as a dense
-      `position` renumbered on drop.
-- [ ] **Limits.** A cap on box count (for example 32) and a name length, checked
-      in the server function. A box holds any number of catches; a box's grid
-      pages at `BOX_SIZE` like the list does today.
-- [ ] **Reads.** Listing a box is one query on `box (box id, position)`, so it
-      wants that index. Search keeps reading the whole collection, with
-      `box:<name>` added to the search grammar so a query can still narrow to one.
-- [ ] **What stays out.** A box is only presentation. The party, the buddy,
-      raids, trades and auctions read catches as they do now, and a catch in a
-      lot or a battle can still be filed.
-- [ ] **Overlap to settle first.** "Catch tags" in Next up covers some of the
-      same need. Decide whether tags ship as well (a catch in one box, with many
+- [x] **Data.** A `boxes` table (`id, player, name, colour, position`) and two
+      nullable columns on `caught`: `box` and `box_slot`. A catch with no box is
+      in **Default**, which is not a row, so every existing catch landed there
+      with no migration of its rows. A slot is a square and may leave gaps.
+- [x] **Actions.** Make, rename, recolour and delete a box. Deleting one sends
+      its catches back to Default. File one catch (from its sheet) or a picked
+      set (Move N to), drag onto a box in the rail or onto a square, lay a box
+      out by dex number, close up its gaps, move everything to another box.
+- [x] **Limits.** 32 boxes and a 24-character name, checked in the server
+      function. A box holds any number of catches and pages at the box size.
+- [x] **Pickers.** Every catch picker over the player's own pokemon draws a
+      box switcher once they have made a box, and a square shows which box it
+      lives in while all of them are showing.
+- [ ] **Reorder boxes by drag.** `arrangeBoxes` is written; the rail has no
+      grip to drive it yet.
+- [ ] **Shift-press picks a run, and Pick all N.** In the boxes design, not built.
+- [ ] **`box:<name>` in the search grammar**, for a query that narrows to one
+      box without the switcher.
+- [ ] **Overlap to settle.** "Catch tags" in Next up covers some of the same
+      need. Decide whether tags ship as well (a catch in one box, with many
       tags) or are dropped in favour of boxes.
 
 ### Incubators

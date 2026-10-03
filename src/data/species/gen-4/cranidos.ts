@@ -186,6 +186,8 @@ export default function registerCranidosSpecies(): void {
         Moves.PainSplit,
         Moves.Surf,
         Moves.Whirlpool,
+        Moves.StompingTantrum,
+        Moves.LaserFocus,
       ],
     },
   });

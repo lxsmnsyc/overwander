@@ -171,6 +171,27 @@ describe('Solar Power', () => {
     // 160 max HP - 1/8
     expect(unit.health).toBe(140);
   });
+
+  it('chips a boss for the boss cap rather than an eighth of its pool', () => {
+    const { battle, teamA } = createBattle();
+    const boss = createUnit(battle, teamA);
+    boss.addAbility(Abilities.Boss);
+    boss.addAbility(Abilities.SolarPower);
+    boss.setHealth(boss.checkStat(Stats.HP, 0));
+    teamA.weather.current = Weathers.Sunny;
+
+    const whole = boss.health;
+
+    battle.emit(BattleEvents.UnitCast, {
+      id: 'UnitCast',
+      disabled: false,
+      source: boss,
+      move: Moves.Tackle,
+      target: { type: MoveTargetType.None },
+    });
+
+    expect(whole - boss.health).toBe(BOSS_DAMAGE_CAP);
+  });
 });
 
 describe('Tough Claws', () => {
@@ -2448,6 +2469,9 @@ describe('Iron Fist', () => {
     const target = { type: MoveTargetType.Unit, unit: enemy } as const;
 
     expect(unit.checkMovePower(Moves.FirePunch, target)).toBeCloseTo(75 * 1.2);
+    // Every generation's punches, not only the first two's
+    expect(unit.checkMovePower(Moves.MachPunch, target)).toBeCloseTo(40 * 1.2);
+    expect(unit.checkMovePower(Moves.IceHammer, target)).toBeCloseTo(100 * 1.2);
     expect(unit.checkMovePower(Moves.Tackle, target)).toBe(40);
   });
 });

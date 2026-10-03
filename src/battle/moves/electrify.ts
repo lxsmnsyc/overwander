@@ -19,7 +19,8 @@ export default function setupElectrify(battle: Battle): void {
   let deluge = 0;
 
   battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
-    if (event.move === Moves.IonDeluge) {
+    // Plasma Fists leaves the same charge in the air behind its punch
+    if (event.move === Moves.IonDeluge || event.move === Moves.PlasmaFists) {
       deluge = ELECTRIFY_DURATION;
     } else if (event.move === Moves.Electrify && event.target.type === MoveTargetType.Unit) {
       charged.set(event.target.unit, ELECTRIFY_DURATION);

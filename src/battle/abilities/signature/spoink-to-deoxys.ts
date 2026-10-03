@@ -12,6 +12,7 @@ import type Unit from '../../unit';
 import { MAJOR_STATUS_CONDITIONS } from '../../status';
 import { countHeldItems, hasAnyStatus, hasFreeItemSlot, onUnitActs, unitTarget } from '../../utils';
 import { createAbility, getAbilityHolders } from '../__create';
+import { healthShare } from '../special';
 import {
   STAT_STAGES,
   createDamageTaken,
@@ -152,7 +153,9 @@ const spoinkToDeoxys = [
 
         const held = (state.get(target) ?? 0) + taken * STORED_BOUNCE_SHARE;
 
-        state.set(target, Math.min(target.checkStat(Stats.HP, 0) * STORED_BOUNCE_CAP, held));
+        // A boss' bank is held to the boss cap, or a raid's worth of
+        // hits would come back on one player at once
+        state.set(target, Math.min(healthShare(target, STORED_BOUNCE_CAP), held));
       }),
       battle.on(BattleEvents.UnitAttack, AttackPriority.Post, (event) => {
         const source = event.source;

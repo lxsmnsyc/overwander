@@ -20,6 +20,7 @@ import { Moves } from '../data/ids/moves';
 import { getRegisteredMoves } from '../data/moves';
 import BATTLE_TIMEOUT from '../auth/battle-lock';
 import { canCallHappyHour, payDayCeiling } from '../battle/moves/pay-day';
+import { Z_MOVES } from '../data/moves/z-moves';
 import { moveGoldIn } from './profile';
 
 /**
@@ -36,7 +37,8 @@ function settleSketch(record: CaughtPokemon, sketched: Moves | undefined): Moves
     sketched == null ||
     !record.moves.includes(Moves.Sketch) ||
     record.moves.includes(sketched) ||
-    !new Set(getRegisteredMoves()).has(sketched)
+    !new Set(getRegisteredMoves()).has(sketched) ||
+    Z_MOVES.has(sketched)
   ) {
     return undefined;
   }

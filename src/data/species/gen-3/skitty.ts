@@ -167,6 +167,8 @@ export default function registerSkittySpecies(): void {
         Moves.RockSmash,
         Moves.Captivate,
         Moves.GigaImpact,
+        Moves.StompingTantrum,
+        Moves.LaserFocus,
       ],
     },
   });

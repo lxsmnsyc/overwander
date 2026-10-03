@@ -22,6 +22,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Sewaddle, weight: 28 },
       ],
       uncommon: [
+        { species: Species.Cutiefly, weight: 24 },
         { species: Species.Panpour, weight: 22 },
         { species: Species.Pansear, weight: 22 },
         { species: Species.Pansage, weight: 22 },
@@ -53,6 +54,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Swadloon, weight: 12 },
       ],
       scarce: [
+        { species: Species.Ribombee, weight: 6 },
         { species: Species.Simipour, weight: 7 },
         { species: Species.Simisear, weight: 7 },
         { species: Species.Simisage, weight: 7 },
@@ -132,6 +134,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Sewaddle, weight: 28 },
       ],
       uncommon: [
+        { species: Species.Cutiefly, weight: 24 },
         { species: Species.Panpour, weight: 22 },
         { species: Species.Pansear, weight: 22 },
         { species: Species.Pansage, weight: 22 },
@@ -163,6 +166,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Swadloon, weight: 12 },
       ],
       scarce: [
+        { species: Species.Ribombee, weight: 6 },
         { species: Species.Simipour, weight: 7 },
         { species: Species.Simisear, weight: 7 },
         { species: Species.Simisage, weight: 7 },

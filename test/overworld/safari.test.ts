@@ -1,3 +1,4 @@
+import { isUltraBeast } from '../../src/data/species/ultra-beasts';
 import { describe, expect, it } from 'vitest';
 import { MAX_IV, Stats, getIV, getOtherStat, setIV } from '../../src/data/constants/stats';
 import Biome from '../../src/data/ids/biome';
@@ -217,6 +218,14 @@ describe('safari session', () => {
     expect(sea.getBallModifier(Balls.DiveBall)).toBe(3.5);
     expect(swamp.getBallModifier(Balls.DiveBall)).toBe(3.5);
     expect(beach.getBallModifier(Balls.DiveBall)).toBe(1);
+  });
+
+  it('answers a Beast Ball by whether the species is an Ultra Beast', () => {
+    expect(isUltraBeast(Species.Nihilego)).toBe(true);
+    expect(isUltraBeast(Species.Tauros)).toBe(false);
+    expect(new SafariSession(makeEncounter(), rolls([])).getBallModifier(Balls.BeastBall)).toBe(
+      0.1,
+    );
   });
 
   it("answers the Fast, Heavy and Moon Balls off the species' own numbers", () => {

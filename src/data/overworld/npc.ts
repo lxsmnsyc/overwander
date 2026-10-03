@@ -14,240 +14,9 @@ import {
 } from '../species';
 import { isTutorOnlyMove } from '../moves/tutor-only';
 
-/**
- * The people who stand at the world's people landmarks. Most pass
- * through a wandering-NPC cell: the cell is fixed by the chunk seed,
- * the way every landmark is, but who is standing on it is not — every
- * 3 hours brings somebody else, so the spot is a crossroads rather
- * than a shop. The two who fight, Team Rocket and the duelling
- * trainer, stand at landmarks of their own instead, and so do the
- * vendor and Nurse Joy, who keep a stall and a counter
- */
-const enum Npc {
-  /**
-   * Takes two compatible pokemon and a fee, and hands back an egg
-   */
-  Breeder = 0,
-  /**
-   * Takes an egg and a fee, and warms it half a walk's worth further
-   * along than it already was
-   */
-  DaycareLady = 1,
-  /**
-   * Looks a party over and hands it back whole: health, statuses and,
-   * for a shadow, the shadow itself. She charges nothing and turns
-   * nobody away, however often they come back. She does not wander:
-   * her counter is the Pokémon Center, one to a town
-   */
-  NurseJoy = 2,
-  /**
-   * Takes one pokemon and a fee, and hands it back thinking half
-   * again as well of its owner as it did. The daycare lady's trade,
-   * done on the pokemon rather than on the egg
-   */
-  Groomer = 3,
-  /**
-   * Keeps the market stall: a crate off one of the trade's counters —
-   * balls and medicine, vitamins, incenses, or the X items — and a
-   * purse. He does not wander. His stall is a landmark of its own, so
-   * a player short of balls knows where to walk; which counter he set
-   * up is still the window's roll. He deals as often as the purse
-   * holds, and buys anything the market puts a price on
-   */
-  Vendor = 4,
-  /**
-   * Takes a Heart Scale and puts back a move the pokemon learned by
-   * levelling and has since lost. He is the only way a forgotten
-   * level-up move ever comes back, gold is no use to him, and he
-   * serves as often as a player has scales
-   */
-  MoveReminder = 5,
-  /**
-   * Bars the cell and fights whoever accepts, with shadows of the
-   * biome's own. Beaten, they pay a purse and leave one of their
-   * party behind. Not a wanderer any more: Team Rocket stands at a
-   * landmark of its own, and once in a long while it is Giovanni
-   */
-  RocketGrunt = 6,
-  /**
-   * Carries two of the three fossils and will part with one for
-   * gold. He is the only place a fossil can be bought, and he sells
-   * a player one while he is standing there
-   */
-  FossilManiac = 7,
-  /**
-   * Takes a fossil and hands back what was in it. He charges nothing
-   * but the rock, and — alone among the people who do something to a
-   * pokemon — he will do it as often as a player has fossils
-   */
-  FossilScientist = 8,
-  /**
-   * Takes a Heart Scale and puts a move on a pokemon that its species
-   * can be taught but never grows into. The reminder's counter run the
-   * other way: he deals in what a machine would teach, not in what was
-   * lost, and the scale paces him the same way
-   */
-  MoveTutor = 9,
-  /**
-   * Offers a fair duel: three of the biome's own against whatever the
-   * player brings, purse on a win. The grunt's fight without the
-   * ambush — nothing fielded is a shadow. Like Team Rocket, a
-   * landmark of their own rather than a wanderer
-   */
-  Trainer = 10,
-  /**
-   * Carries a larder of drinks and treats: the vendor's trade with
-   * the one shelf no vendor stocks. Like the vendor, he serves as
-   * often as the purse holds
-   */
-  Chef = 11,
-  /**
-   * Takes a Heart Scale and draws out a second thing the pokemon was
-   * always able to do: one more ability slot, filled at once from
-   * what its line is capable of. The only way a pokemon ever gains an
-   * ability, since every other one it has was rolled before the
-   * player met it
-   */
-  Channeler = 12,
-  /**
-   * Takes apricorns and carves them into the balls their colours
-   * make: one apricorn, one ball, and he works through as many as a
-   * player is carrying. He charges nothing, since the picking is the
-   * price, and his seven balls are sold nowhere else at all
-   */
-  Kurt = 13,
-  /**
-   * Carries a crate of stones: the evolution stones, the gems and the
-   * rocks a holder is built around. He is the only one who sells any
-   * of them, and like the chef he serves as often as the purse holds
-   */
-  Geologist = 14,
-  /**
-   * Takes a Heart Scale and trains a pokemon to hold one more move, up
-   * to the most any pokemon can. The Skill Book's work done for a
-   * scale, and like the Move Reminder he serves as often as a player
-   * has scales
-   */
-  DojoMaster = 15,
-  /**
-   * Brings six pokemon from other biomes and swaps one of them for any
-   * of the player's own from the same spawn band. Once a window, and
-   * what he hands over arrives traded, so a trade evolution opens
-   */
-  Trader = 16,
-  /**
-   * Trains one of a pokemon's values all the way up, for gold by the
-   * point. Dear on purpose: this is for players who already have the
-   * pokemon they want and the purse to finish it. Once a window
-   */
-  HyperTrainer = 17,
-}
+import Npc from '../ids/npcs';
 
 export default Npc;
-
-/**
- * Everyone who wanders, for uniform rolls over the variants.
- *
- * Four of them are not in it. The grunt and the trainer stand at
- * landmarks of their own; so does the vendor, whose stall is the
- * Market, and so does Nurse Joy, whose counter is the Pokémon Center.
- * Every service left here rotates, and the list is short on purpose:
- * each name added to it makes every other name rarer, which is why
- * the one service a player cannot do without was taken out of it
- */
-export const NPCS: Npc[] = [
-  Npc.Breeder,
-  Npc.DaycareLady,
-  Npc.Groomer,
-  Npc.MoveReminder,
-  Npc.FossilManiac,
-  Npc.FossilScientist,
-  Npc.MoveTutor,
-  Npc.Chef,
-  Npc.Channeler,
-  Npc.Kurt,
-  Npc.Geologist,
-  Npc.DojoMaster,
-  Npc.Trader,
-  Npc.HyperTrainer,
-];
-
-/** The people who keep a crate to buy from, and take what a player sells */
-export const TRADERS = new Set<Npc>([Npc.Vendor, Npc.Chef, Npc.Geologist]);
-
-/**
- * The wanderers who serve a player once a window, and the visit marker
- * the server takes for it. Everyone else can be visited again
- */
-export const NPC_VISIT_TAGS = new Map<Npc, string>([
-  [Npc.Breeder, 'breed'],
-  [Npc.DaycareLady, 'daycare'],
-  [Npc.Groomer, 'groom'],
-  [Npc.FossilManiac, 'fossil'],
-  [Npc.Channeler, 'channel'],
-  [Npc.Trader, 'swap'],
-  [Npc.HyperTrainer, 'hyper'],
-]);
-
-/**
- * The charsets a role may turn up wearing: the community packs' takes
- * on the same figure, FRLG and LGPE where both drew one. Which of a
- * role's styles is standing there is the window's roll, see
- * `ChunkSnapshot.getWandererCoats`. Every role names its own, so a
- * new one cannot be added without being dressed
- */
-const NPC_CHARSETS: Record<Npc, string[]> = {
-  [Npc.Breeder]: [
-    'characters/frlg/camper-f',
-    'characters/lgpe/picnicker',
-    'characters/dppt/breeder-f',
-    'characters/dppt/breeder-m',
-    'characters/oras/breeder-f',
-    'characters/oras/breeder-m',
-    'characters/b2w2/breeder-f',
-    'characters/b2w2/breeder-m',
-  ],
-  [Npc.DaycareLady]: ['characters/frlg/woman'],
-  [Npc.NurseJoy]: ['characters/extra/nurse'],
-  [Npc.Groomer]: ['characters/frlg/daisy-oak', 'characters/lgpe/daisy-oak'],
-  [Npc.Vendor]: ['characters/frlg/shop-keeper'],
-  [Npc.MoveReminder]: ['characters/frlg/old-man'],
-  [Npc.RocketGrunt]: ['characters/hgss/rocket-f', 'characters/hgss/rocket-m'],
-  [Npc.FossilManiac]: ['characters/frlg/ruin-maniac', 'characters/lgpe/poke-maniac'],
-  [Npc.FossilScientist]: ['characters/lgpe/scientist', 'characters/frlg/staff-member'],
-  [Npc.MoveTutor]: ['characters/frlg/gentleman', 'characters/lgpe/gentleman'],
-  [Npc.Trainer]: [
-    'characters/frlg/ace-trainer-f',
-    'characters/frlg/ace-trainer-m',
-    'characters/lgpe/ace-trainer',
-  ],
-  [Npc.Chef]: ['characters/frlg/chef'],
-  [Npc.Channeler]: ['characters/lgpe/channeler'],
-  [Npc.Kurt]: ['characters/hgss/kurt'],
-  [Npc.Geologist]: [
-    'characters/frlg/hiker',
-    'characters/lgpe/hiker',
-    'characters/dppt/hiker',
-    'characters/b2w2/hiker',
-  ],
-  [Npc.DojoMaster]: [
-    'characters/lgpe/black-belt',
-    'characters/hgss/black-belt',
-    'characters/dppt/black-belt',
-    'characters/b2w2/black-belt',
-  ],
-  [Npc.Trader]: [
-    'characters/b2w2/backpacker-m',
-    'characters/b2w2/backpacker-f',
-    'characters/dppt/collector',
-    'characters/oras/collector',
-  ],
-  [Npc.HyperTrainer]: [
-    'characters/b2w2/veteran',
-    'characters/dppt/expert',
-    'characters/oras/expert',
-  ],
-};
 
 /**
  * The people who answer to a syndicate's boss. Like Giovanni they are the grunt's
@@ -269,6 +38,11 @@ const enum Executive {
   Saturn = 10,
   Colress = 11,
   Zinzolin = 12,
+  Xerosic = 13,
+  Aliana = 14,
+  Bryony = 15,
+  Celosia = 16,
+  Mable = 17,
 }
 
 export { Executive };
@@ -287,6 +61,11 @@ export const EXECUTIVE_NAMES: Record<Executive, string> = {
   [Executive.Saturn]: 'Saturn',
   [Executive.Colress]: 'Colress',
   [Executive.Zinzolin]: 'Zinzolin',
+  [Executive.Xerosic]: 'Xerosic',
+  [Executive.Aliana]: 'Aliana',
+  [Executive.Bryony]: 'Bryony',
+  [Executive.Celosia]: 'Celosia',
+  [Executive.Mable]: 'Mable',
 };
 
 export const EXECUTIVE_CHARSETS: Record<Executive, string[]> = {
@@ -305,6 +84,11 @@ export const EXECUTIVE_CHARSETS: Record<Executive, string[]> = {
   // wears once the machine is his own
   [Executive.Colress]: ['characters/b2w2/colress-1', 'characters/b2w2/colress-2'],
   [Executive.Zinzolin]: ['characters/b2w2/zinzolin'],
+  [Executive.Xerosic]: ['characters/xy/xerosic'],
+  [Executive.Aliana]: ['characters/xy/aliana'],
+  [Executive.Bryony]: ['characters/xy/bryony'],
+  [Executive.Celosia]: ['characters/xy/celosia'],
+  [Executive.Mable]: ['characters/xy/mable'],
 };
 
 /** The mark putting one of them down is worth, one to each */
@@ -322,6 +106,11 @@ export const EXECUTIVE_HONORS: Record<Executive, Awards> = {
   [Executive.Saturn]: Awards.SaturnDefeated,
   [Executive.Colress]: Awards.ColressDefeated,
   [Executive.Zinzolin]: Awards.ZinzolinDefeated,
+  [Executive.Xerosic]: Awards.XerosicDefeated,
+  [Executive.Aliana]: Awards.AlianaDefeated,
+  [Executive.Bryony]: Awards.BryonyDefeated,
+  [Executive.Celosia]: Awards.CelosiaDefeated,
+  [Executive.Mable]: Awards.MableDefeated,
 };
 
 /** What each says as they bar the cell */
@@ -339,41 +128,11 @@ export const EXECUTIVE_QUOTES: Record<Executive, string> = {
   [Executive.Saturn]: 'I have my doubts about all this. None of them are about beating you.',
   [Executive.Colress]: 'I want to see the strength a pokemon reaches with you. Purely as data.',
   [Executive.Zinzolin]: 'You will be cold long before you are finished. Begin.',
-};
-
-/**
- * Every charset a wanderer of this role may be drawn with
- */
-export function npcSheets(npc: Npc): string[] {
-  return NPC_CHARSETS[npc];
-}
-
-/**
- * The role's first style, for anywhere that has no window to roll one
- */
-export function npcSheet(npc: Npc): string {
-  return npcSheets(npc)[0];
-}
-
-export const NPC_NAMES: Record<Npc, string> = {
-  [Npc.Breeder]: 'Breeder',
-  [Npc.DaycareLady]: 'Daycare Lady',
-  [Npc.NurseJoy]: 'Nurse Joy',
-  [Npc.Groomer]: 'Groomer',
-  [Npc.Vendor]: 'Vendor',
-  [Npc.MoveReminder]: 'Move Reminder',
-  [Npc.RocketGrunt]: 'Team Rocket Grunt',
-  [Npc.FossilManiac]: 'Fossil Maniac',
-  [Npc.FossilScientist]: 'Fossil Scientist',
-  [Npc.MoveTutor]: 'Move Tutor',
-  [Npc.Trainer]: 'Trainer',
-  [Npc.Chef]: 'Chef',
-  [Npc.Channeler]: 'Channeler',
-  [Npc.Kurt]: 'Kurt',
-  [Npc.Geologist]: 'Geologist',
-  [Npc.DojoMaster]: 'Dojo Master',
-  [Npc.Trader]: 'Trader',
-  [Npc.HyperTrainer]: 'Hyper Trainer',
+  [Executive.Xerosic]: 'Fascinating. Let me see how your pokemon hold up under stress.',
+  [Executive.Aliana]: 'The world is ugly, so we are fixing it. You are part of the ugly.',
+  [Executive.Bryony]: 'Calculating your odds. They round down to nothing.',
+  [Executive.Celosia]: 'Only the beautiful get to stay. I will judge whether you do.',
+  [Executive.Mable]: 'We scientists are busy. Let us make this quick and quiet.',
 };
 
 /**

@@ -169,6 +169,7 @@ export default function registerSnoverSpecies(): void {
         Moves.RockSmash,
         Moves.RockTomb,
         Moves.Strength,
+        Moves.StompingTantrum,
       ],
     },
   });

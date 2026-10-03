@@ -1,4 +1,4 @@
-import { type Accessor, createSignal, onCleanup } from 'solid-js';
+import { type Accessor, type JSX, createSignal, onCleanup } from 'solid-js';
 
 /**
  * A list the player can put in another order by dragging it.
@@ -33,9 +33,6 @@ export interface ReorderOptions {
 export interface ReorderItemProps {
   'data-reorder': number;
   onPointerDown: (event: PointerEvent) => void;
-  onPointerMove: (event: PointerEvent) => void;
-  onPointerUp: () => void;
-  onPointerCancel: () => void;
   onKeyDown: (event: KeyboardEvent) => void;
 }
 
@@ -46,10 +43,20 @@ export interface Reorder {
   itemProps: (index: number) => ReorderItemProps;
   /** Which entry is being carried, for drawing it as lifted */
   held: Accessor<number | null>;
+  /** Goes on each entry's style: the carried one is moved to stay under the pointer */
+  style: (index: number) => JSX.CSSProperties | undefined;
 }
 
-/** Where the entry under this point is, or null for none of them */
-function indexAt(list: HTMLElement | undefined, x: number, y: number): number | null {
+/**
+ * Where the entry under this point is, or null for none of them. The
+ * carried entry is under the pointer too, so it is looked past
+ */
+function indexAt(
+  list: HTMLElement | undefined,
+  x: number,
+  y: number,
+  carrying: number,
+): number | null {
   if (list == null) {
     return null;
   }
@@ -57,7 +64,7 @@ function indexAt(list: HTMLElement | undefined, x: number, y: number): number | 
   for (const element of document.elementsFromPoint(x, y)) {
     const entry = element.closest<HTMLElement>('[data-reorder]');
 
-    if (entry != null && list.contains(entry)) {
+    if (entry != null && list.contains(entry) && Number(entry.dataset.reorder) !== carrying) {
       return Number(entry.dataset.reorder);
     }
   }
@@ -88,7 +95,8 @@ function past(
   const box = entry.getBoundingClientRect();
   const forward = index > from;
 
-  if (lifted != null && Math.abs(lifted.getBoundingClientRect().top - box.top) < 1) {
+  // Laid-out tops rather than drawn ones, since the carried entry is drawn under the pointer
+  if (lifted != null && lifted.offsetTop === entry.offsetTop) {
     const middle = box.left + box.width / 2;
 
     return forward ? x > middle : x < middle;
@@ -102,9 +110,43 @@ function past(
 export default function createReorder(options: ReorderOptions): Reorder {
   let list: HTMLElement | undefined;
   let lifting: ReturnType<typeof setTimeout> | null = null;
-  /** The drag in progress: which pointer, where it started, where the entry is now */
-  let drag: { pointer: number; at: number; x: number; y: number; lifted: boolean } | null = null;
+  /**
+   * The drag in progress: which pointer, where it started, where the
+   * entry is now, and where on the entry it was taken hold of
+   */
+  let drag: {
+    pointer: number;
+    at: number;
+    x: number;
+    y: number;
+    grabX: number;
+    grabY: number;
+    element: HTMLElement;
+    lifted: boolean;
+  } | null = null;
   const [held, setHeld] = createSignal<number | null>(null);
+  /** How far the carried entry is drawn from its own place, to sit under the pointer */
+  const [offset, setOffset] = createSignal<{ x: number; y: number } | null>(null);
+
+  /** Put the carried entry under the pointer, measured from the place it now has */
+  const follow = (x: number, y: number): void => {
+    if (drag == null) {
+      return;
+    }
+    const entry = list?.querySelector<HTMLElement>(`[data-reorder="${drag.at}"]`);
+
+    if (entry == null) {
+      return;
+    }
+    // The box includes the shift already drawn, so it is taken back off
+    const box = entry.getBoundingClientRect();
+    const drawn = offset() ?? { x: 0, y: 0 };
+
+    setOffset({
+      x: x - drag.grabX - (box.left - drawn.x),
+      y: y - drag.grabY - (box.top - drawn.y),
+    });
+  };
 
   /**
    * A finger that has lifted an entry is not scrolling with it. The
@@ -122,18 +164,84 @@ export default function createReorder(options: ReorderOptions): Reorder {
     }
     drag.lifted = true;
     setHeld(drag.at);
+    // The entry moves with the pointer, so the pointer is kept on it
+    try {
+      drag.element.setPointerCapture(drag.pointer);
+    } catch {
+      // A pointer already gone has nothing to capture
+    }
     window.addEventListener('touchmove', block, { passive: false });
   };
 
-  const drop = (): void => {
+  const carry = (event: PointerEvent): void => {
+    const carrying = drag;
+
+    if (carrying == null || carrying.pointer !== event.pointerId) {
+      return;
+    }
+
+    const gone = Math.hypot(event.clientX - carrying.x, event.clientY - carrying.y);
+
+    if (!carrying.lifted) {
+      // A finger that moves before it has held is scrolling, and
+      // a mouse that moves at all is dragging
+      if (event.pointerType === 'touch') {
+        if (gone > SLACK) {
+          drop();
+        }
+        return;
+      }
+      if (gone <= SLACK) {
+        return;
+      }
+      lift();
+    }
+
+    const over = indexAt(list, event.clientX, event.clientY, carrying.at);
+
+    if (over != null && past(list, carrying.at, over, event.clientX, event.clientY)) {
+      options.onMove(carrying.at, over);
+      carrying.at = over;
+      setHeld(over);
+    }
+    follow(event.clientX, event.clientY);
+  };
+
+  const release = (event: PointerEvent): void => {
+    if (drag?.pointer === event.pointerId) {
+      drop();
+    }
+  };
+
+  /**
+   * Heard on the window rather than on the entry. Moving the entry
+   * in the list moves its element in the page, which loses the
+   * pointer capture, so a release away from every entry never
+   * reached one and left the entry stuck to the pointer
+   */
+  const listen = (on: boolean): void => {
+    if (on) {
+      window.addEventListener('pointermove', carry);
+      window.addEventListener('pointerup', release);
+      window.addEventListener('pointercancel', release);
+      return;
+    }
+    window.removeEventListener('pointermove', carry);
+    window.removeEventListener('pointerup', release);
+    window.removeEventListener('pointercancel', release);
+  };
+
+  function drop(): void {
     if (lifting != null) {
       clearTimeout(lifting);
       lifting = null;
     }
     drag = null;
     setHeld(null);
+    setOffset(null);
+    listen(false);
     window.removeEventListener('touchmove', block);
-  };
+  }
 
   onCleanup(drop);
 
@@ -153,6 +261,18 @@ export default function createReorder(options: ReorderOptions): Reorder {
       },
     },
     held,
+    style: (index: number) => {
+      const shift = offset();
+
+      return held() === index && shift != null
+        ? {
+            transform: `translate(${shift.x}px, ${shift.y}px)`,
+            position: 'relative',
+            'z-index': 10,
+            'pointer-events': 'none',
+          }
+        : undefined;
+    },
     itemProps: (index: number) => ({
       'data-reorder': index,
       onPointerDown: (event: PointerEvent): void => {
@@ -161,59 +281,26 @@ export default function createReorder(options: ReorderOptions): Reorder {
         if (!options.enabled() || event.button !== 0) {
           return;
         }
+        if (!(event.currentTarget instanceof HTMLElement)) {
+          return;
+        }
+        const box = event.currentTarget.getBoundingClientRect();
+
         drag = {
           pointer: event.pointerId,
           at: index,
           x: event.clientX,
           y: event.clientY,
+          grabX: event.clientX - box.left,
+          grabY: event.clientY - box.top,
+          element: event.currentTarget,
           lifted: false,
         };
+        listen(true);
 
         if (event.pointerType === 'touch') {
           lifting = setTimeout(lift, HOLD);
         }
-      },
-      onPointerMove: (event: PointerEvent): void => {
-        const carrying = drag;
-
-        if (carrying == null || carrying.pointer !== event.pointerId) {
-          return;
-        }
-
-        const gone = Math.hypot(event.clientX - carrying.x, event.clientY - carrying.y);
-
-        if (!carrying.lifted) {
-          // A finger that moves before it has held is scrolling, and
-          // a mouse that moves at all is dragging
-          if (event.pointerType === 'touch') {
-            if (gone > SLACK) {
-              drop();
-            }
-            return;
-          }
-          if (gone <= SLACK) {
-            return;
-          }
-          lift();
-        }
-
-        const over = indexAt(list, event.clientX, event.clientY);
-
-        if (over == null || over === carrying.at) {
-          return;
-        }
-        if (!past(list, carrying.at, over, event.clientX, event.clientY)) {
-          return;
-        }
-        options.onMove(carrying.at, over);
-        carrying.at = over;
-        setHeld(over);
-      },
-      onPointerUp: (): void => {
-        drop();
-      },
-      onPointerCancel: (): void => {
-        drop();
       },
       onKeyDown: (event: KeyboardEvent): void => {
         // The same thing without a pointer. Held with a modifier so

@@ -20,7 +20,8 @@ import { Stats } from '../../../src/data/constants/stats';
 import { Species } from '../../../src/data/ids/species';
 import Weather from '../../../src/data/overworld/weather';
 import Landmark from '../../../src/data/overworld/landmark';
-import { getSpeciesLairs } from '../../../src/data/overworld/lair';
+import type Lairs from '../../../src/data/overworld/lair';
+import { getBiomeLairs, getSpeciesLairs } from '../../../src/data/overworld/lair';
 import ChunkSnapshot, {
   RAID_INTERVAL,
   WEATHER_INTERVAL,
@@ -111,6 +112,11 @@ describe('what a true shadow is', () => {
     expect(getSpeciesData(Species.ZapdosShadow).name).toBe('XD-145');
     expect(getSpeciesData(Species.MoltresShadow).name).toBe('XD-146');
     expect(getSpeciesData(Species.MewtwoShadow).name).toBe('XD-150');
+    expect(getSpeciesData(Species.RaikouShadow).name).toBe('XD-243');
+    expect(getSpeciesData(Species.EnteiShadow).name).toBe('XD-244');
+    expect(getSpeciesData(Species.SuicuneShadow).name).toBe('XD-245');
+    expect(getSpeciesData(Species.LugiaShadow).name).toBe('XD-249');
+    expect(getSpeciesData(Species.HoOhShadow).name).toBe('XD-250');
     expect(getSpeciesData(Species.RegirockShadow).name).toBe('XD-377');
     expect(getSpeciesData(Species.RegiceShadow).name).toBe('XD-378');
     expect(getSpeciesData(Species.RegisteelShadow).name).toBe('XD-379');
@@ -162,8 +168,11 @@ describe('where a true shadow is met', () => {
     const cell = centeredCells(PLACEMENT_AREA)[0];
     const staged = new Set(spawnBand(under.getCellPool(cell), 'special').map((e) => e.species));
 
+    // Each one that can stand on the cell, so XD-382 keeps to the water
+    const surface = chunk.getCellSurface(cell);
+
     for (const shadow of listTrueShadows()) {
-      expect(staged.has(shadow)).toBe(true);
+      expect(staged.has(shadow)).toBe(fitsSurface(shadow, surface));
     }
 
     // The same chunk in an hour the sky is ordinary stages none of them
@@ -204,22 +213,36 @@ describe('where a true shadow is met', () => {
     }
   });
 
-  it('takes over every shadow lair while the dark day lasts', () => {
+  it('takes over a shadow lair only where its counterpart is at home', () => {
     const world = new World('overworld');
-    const holds = (chunk: ReturnType<World['getChunk']>): boolean => {
-      for (const landmark of chunk.getLandmarkCells().values()) {
-        if (landmark === Landmark.ShadowLair) {
+    // The lairs some true shadow's counterpart lives in
+    const homes = new Set<Lairs>();
+
+    for (const shadow of listTrueShadows()) {
+      for (const lair of getSpeciesLairs(shadow)) {
+        homes.add(lair);
+      }
+    }
+    const hostsHome = (biome: number): boolean => {
+      for (const lair of getBiomeLairs(biome)) {
+        if (homes.has(lair)) {
           return true;
         }
       }
-
       return false;
     };
     // A raid reads the sky at its own window rather than at the hour,
     // so the hour has to be one a raid window opens on
     const dark = findDarkDay(
       world,
-      holds,
+      (chunk) => {
+        for (const [cell, landmark] of chunk.getLandmarkCells()) {
+          if (landmark === Landmark.ShadowLair && hostsHome(chunk.getCellBiomes()[cell])) {
+            return true;
+          }
+        }
+        return false;
+      },
       (window) => (window * WEATHER_INTERVAL) % RAID_INTERVAL === 0,
     );
 
@@ -230,18 +253,23 @@ describe('where a true shadow is met', () => {
 
     expect(snapshot.raidWeather).toBe(Weather.DarkDay);
 
-    const staged = [...snapshot.getShadowLairs().values()];
+    let taken = 0;
 
-    expect(staged.length).toBeGreaterThan(0);
-    for (const roll of staged) {
-      // Guaranteed rather than rolled for: the sky is the whole draw
-      expect(isTrueShadow(roll.species)).toBe(true);
+    for (const [cell, roll] of snapshot.getShadowLairs()) {
+      const biome = snapshot.biomeAt(cell);
+
+      if (!isTrueShadow(roll.species)) {
+        // Nothing at home on this tile, so an ordinary shadow raid stands
+        expect(roll.lair == null || !homes.has(roll.lair)).toBe(true);
+        continue;
+      }
+      taken++;
       expect(canStageBoss(roll.species)).toBe(true);
-      // In its counterpart's lair, so the raid is named for the place
-      expect(roll.lair).toBe(
-        getSpeciesLairs(getTrueShadowCounterpart(roll.species) ?? roll.species)[0],
-      );
+      // In a lair of its counterpart's that this biome actually hosts
+      expect(getBiomeLairs(biome)).toContain(roll.lair);
+      expect(getSpeciesLairs(roll.species)).toContain(roll.lair);
     }
+    expect(taken).toBeGreaterThan(0);
   });
 
   it('is at home where its counterpart is', () => {

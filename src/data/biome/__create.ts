@@ -415,14 +415,14 @@ export function getBiomeRoster(biome: Biome, time: TimeOfDay): SpawnRarityGroups
  */
 export function boostFamilyEntries(
   entries: SpawnEntry[],
-  family: Families,
+  families: readonly Families[],
   factor: number,
 ): SpawnEntry[] {
   const boosted: SpawnEntry[] = [];
 
   for (const entry of entries) {
     boosted.push(
-      getSpeciesData(entry.species).family === family
+      families.includes(getSpeciesData(entry.species).family)
         ? { species: entry.species, weight: entry.weight * factor }
         : entry,
     );
@@ -439,10 +439,10 @@ export function boostFamilyEntries(
  */
 export function boostFamilyWeights(
   groups: SpawnRarityGroups,
-  family: Families,
+  families: readonly Families[],
   factor: number,
 ): SpawnRarityGroups {
-  return mapBands(groups, (entries) => boostFamilyEntries(entries, family, factor));
+  return mapBands(groups, (entries) => boostFamilyEntries(entries, families, factor));
 }
 
 /**
@@ -761,6 +761,11 @@ const LEGENDARY_SPECIES = new Set<Species>([
   Species.ZapdosShadow,
   Species.MoltresShadow,
   Species.MewtwoShadow,
+  Species.RaikouShadow,
+  Species.EnteiShadow,
+  Species.SuicuneShadow,
+  Species.LugiaShadow,
+  Species.HoOhShadow,
   Species.RegirockShadow,
   Species.RegiceShadow,
   Species.RegisteelShadow,
@@ -836,6 +841,13 @@ const MYTHICAL_SPECIES = new Set<Species>([
   // The bound shape only: unbound is worn while the bottle is held
   Species.Hoopa,
   Species.Volcanion,
+  // Both colours of Magearna are owned rather than worn
+  Species.Magearna,
+  Species.MagearnaOriginal,
+  Species.Marshadow,
+  Species.Zeraora,
+  Species.Meltan,
+  Species.Melmetal,
 ]);
 
 /**

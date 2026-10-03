@@ -149,7 +149,7 @@ export default function registerCherubiSpecies(): void {
         48: [Moves.LuckyChant],
         50: [Moves.PetalBlizzard],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.GigaImpact, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.GigaImpact, Moves.HyperBeam, Moves.LaserFocus],
     },
   });
   registerSpecies(Species.CherrimSunshine, {
@@ -193,7 +193,7 @@ export default function registerCherubiSpecies(): void {
         48: [Moves.LuckyChant],
         50: [Moves.PetalBlizzard],
       },
-      teachable: [...FAMILY_TEACHABLE, Moves.GigaImpact, Moves.HyperBeam],
+      teachable: [...FAMILY_TEACHABLE, Moves.GigaImpact, Moves.HyperBeam, Moves.LaserFocus],
     },
   });
 }

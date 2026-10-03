@@ -4,6 +4,7 @@ import registerGen3Abilities from './gen-3';
 import registerGen4Abilities from './gen-4';
 import registerGen5Abilities from './gen-5';
 import registerGen6Abilities from './gen-6';
+import registerGen7Abilities from './gen-7';
 import registerSignatureAbilities from './signature';
 
 export {
@@ -22,5 +23,6 @@ export default function registerAbilities(): void {
   registerGen4Abilities();
   registerGen5Abilities();
   registerGen6Abilities();
+  registerGen7Abilities();
   registerSignatureAbilities();
 }

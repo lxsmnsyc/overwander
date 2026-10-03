@@ -74,6 +74,7 @@ export const enum Balls {
   LoveBall = 18,
   HeavyBall = 19,
   FastBall = 20,
+  BeastBall = 21,
 }
 
 export const enum Items {
@@ -1052,7 +1053,7 @@ export const enum Items {
   NSolarizer = 522,
   NLunarizer = 523,
 
-  /** What a trainer wears to call up a Z-Move */
+  /** Kept for its number only: a Z-Move needs no ring here, so it is never registered */
   ZRing = 524,
 
   /** The Z-Crystals of each type, Normal first */
@@ -1214,6 +1215,7 @@ export const BALL_ITEMS: Record<Balls, Items> = {
   [Balls.LoveBall]: Items.LoveBall,
   [Balls.HeavyBall]: Items.HeavyBall,
   [Balls.FastBall]: Items.FastBall,
+  [Balls.BeastBall]: Items.BeastBall,
 };
 
 const BALLS_BY_ITEM = (() => {

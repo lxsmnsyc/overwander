@@ -463,6 +463,10 @@ export const EVERY_LAIR: Lairs[] = [
   Lairs.DiamondDomain,
   Lairs.DaharaRuins,
   Lairs.NebelPlateau,
+  Lairs.AzothKingdom,
+  Lairs.MtTensei,
+  Lairs.FulaForest,
+  Lairs.GoPark,
 ];
 
 /**

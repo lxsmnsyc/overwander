@@ -53,6 +53,10 @@
     "./src/data/schema/gym-leaders-text.json": "src/data/text/*/gym-leaders.yaml",
     "./src/data/schema/elite.json": "src/data/overworld/experts/elite.yaml",
     "./src/data/schema/biome-elite.json": "src/data/overworld/experts/biome-elite.yaml",
-    "./src/data/schema/elite-text.json": "src/data/text/*/elite.yaml"
+    "./src/data/schema/elite-text.json": "src/data/text/*/elite.yaml",
+    "./src/data/schema/champions.json": "src/data/overworld/experts/champions.yaml",
+    "./src/data/schema/champions-text.json": "src/data/text/*/champions.yaml",
+    "./src/data/schema/legends.json": "src/data/overworld/experts/legends.yaml",
+    "./src/data/schema/legends-text.json": "src/data/text/*/legends.yaml"
   }
 }

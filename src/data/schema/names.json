@@ -4739,6 +4739,25 @@
         "Drasna"
       ]
     },
+    "champion": {
+      "enum": [
+        "Blue",
+        "Lance",
+        "Wallace",
+        "Cynthia",
+        "Iris",
+        "Diantha"
+      ]
+    },
+    "legend": {
+      "enum": [
+        "Red",
+        "Steven",
+        "N",
+        "Alder",
+        "AZ"
+      ]
+    },
     "weather": {
       "enum": [
         "Clear",

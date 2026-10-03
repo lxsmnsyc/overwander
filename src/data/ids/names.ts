@@ -17,6 +17,8 @@ import Lairs from './lairs';
 import TrainerClass from './trainers';
 import GymLeader from './gym-leaders';
 import EliteMember from './elite';
+import Champion from './champions';
+import Legend from './legends';
 import Weather from '../overworld/weather/kinds';
 
 export const SPECIES_IDS = {
@@ -4726,6 +4728,23 @@ export const ELITE_MEMBER_IDS = {
   Wikstrom: EliteMember.Wikstrom,
   Drasna: EliteMember.Drasna,
 } as const satisfies Record<string, EliteMember>;
+
+export const CHAMPION_IDS = {
+  Blue: Champion.Blue,
+  Lance: Champion.Lance,
+  Wallace: Champion.Wallace,
+  Cynthia: Champion.Cynthia,
+  Iris: Champion.Iris,
+  Diantha: Champion.Diantha,
+} as const satisfies Record<string, Champion>;
+
+export const LEGEND_IDS = {
+  Red: Legend.Red,
+  Steven: Legend.Steven,
+  N: Legend.N,
+  Alder: Legend.Alder,
+  AZ: Legend.AZ,
+} as const satisfies Record<string, Legend>;
 
 export const WEATHER_IDS = {
   Clear: Weather.Clear,

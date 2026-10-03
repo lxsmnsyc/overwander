@@ -1,122 +1,61 @@
-import Awards from '../../ids/awards';
-import { Species } from '../../ids/species';
-
-/**
- * The tier above the league.
- *
- * A legend keeps no seat and answers to no badge case: they turn up
- * where a champion would have been, at full level, and anybody
- * standing there may fight them. Each is somebody the mainline puts
- * above its own league: the one at the top of a mountain, the one
- * who hands his region over and goes looking for stones, the one
- * who walks away from Unova's throne, the champion who gave that seat
- * up to wander it, and the king who ended Kalos's war
- */
-const enum Legend {
-  Red = 0,
-  Steven = 1,
-  N = 2,
-  Alder = 3,
-  AZ = 4,
-}
+import * as v from 'valibot';
+import type Awards from '../../ids/awards';
+import Legend from '../../ids/legends';
+import { AWARD_IDS, LEGEND_IDS, SPECIES_IDS } from '../../ids/names';
+import type { Species } from '../../ids/species';
+import namesFile from '../../text/en/legends.yaml';
+import { idOf, idsOf } from '../../yaml';
+import legendsFile from './legends.yaml';
 
 export { Legend };
 
-export const LEGENDS: Legend[] = [Legend.Red, Legend.Steven, Legend.N, Legend.Alder, Legend.AZ];
+/**
+ * The legends, read out of `legends.yaml` and `text/en/legends.yaml`;
+ * the numbers are `ids/legends.ts`
+ */
+const LEGEND = v.object({
+  honor: v.string(),
+  sheets: v.array(v.string()),
+  prize: v.array(v.string()),
+  party: v.array(v.string()),
+});
 
-export const LEGEND_NAMES: Record<Legend, string> = {
-  [Legend.Red]: 'Red',
-  [Legend.Steven]: 'Steven',
-  [Legend.N]: 'N',
-  [Legend.Alder]: 'Alder',
-  [Legend.AZ]: 'AZ',
-};
+/** Every legend, in the order they are numbered */
+export const LEGENDS: Legend[] = [];
 
-export const LEGEND_CHARSETS: Record<Legend, string[]> = {
-  [Legend.Red]: ['characters/frlg/red'],
-  [Legend.Steven]: ['characters/oras/steven'],
-  [Legend.N]: ['characters/b2w2/n'],
-  [Legend.Alder]: ['characters/b2w2/alder'],
-  [Legend.AZ]: ['characters/xy/az'],
-};
+export const LEGEND_NAMES: Record<number, string> = {};
+
+/** The sheets each is seen in */
+export const LEGEND_CHARSETS: Record<number, string[]> = {};
 
 /** The mark beating one is worth, which is the only thing they pay */
-export const LEGEND_HONORS: Record<Legend, Awards> = {
-  [Legend.Red]: Awards.RedDefeated,
-  [Legend.Steven]: Awards.StevenDefeated,
-  [Legend.N]: Awards.NDefeated,
-  [Legend.Alder]: Awards.AlderDefeated,
-  [Legend.AZ]: Awards.AZDefeated,
-};
+export const LEGEND_HONORS: Record<number, Awards> = {};
 
-/**
- * And the coats that mark unlocks.
- *
- * Red's Fire Red sheet is left out because it is what the game starts
- * everybody as, so a mark that unlocked it would be worth nothing to
- * wear; what is left is the other two of him, the Mt. Silver coat
- * first. Steven's one coat is nobody's starting look, so his mark
- * pays the sheet he is standing there in
- */
-export const LEGEND_PRIZE_CHARSETS: Record<Legend, string[]> = {
-  [Legend.Red]: ['characters/hgss/red', 'characters/lgpe/red'],
-  [Legend.Steven]: ['characters/oras/steven'],
-  [Legend.N]: ['characters/b2w2/n'],
-  [Legend.Alder]: ['characters/b2w2/alder'],
-  [Legend.AZ]: ['characters/xy/az'],
-};
+/** And the coats that mark unlocks */
+export const LEGEND_PRIZE_CHARSETS: Record<number, string[]> = {};
 
 /** A legend's own six, the way a champion's is their own */
-export const LEGEND_PARTIES: Record<Legend, Species[]> = {
-  [Legend.Red]: [
-    Species.Pikachu,
-    Species.Lapras,
-    Species.Snorlax,
-    Species.Venusaur,
-    Species.Charizard,
-    Species.Blastoise,
-  ],
-  // The steel he is met with on the mountain in Omega Ruby, Metagross
-  // last
-  [Legend.Steven]: [
-    Species.Skarmory,
-    Species.Claydol,
-    Species.Aggron,
-    Species.Cradily,
-    Species.Armaldo,
-    Species.Metagross,
-  ],
-  /*
-   * His castle six, with both dragons rather than the one his version
-   * hands him: he is the only person either of them answers to. The
-   * Vanilluxe is the one left out for them, which Alder carries anyway
-   */
-  [Legend.N]: [
-    Species.Zoroark,
-    Species.Carracosta,
-    Species.Archeops,
-    Species.Klinklang,
-    Species.Reshiram,
-    Species.Zekrom,
-  ],
-  // The six he held the league with in Black and White, Volcarona last
-  [Legend.Alder]: [
-    Species.Accelgor,
-    Species.Bouffalant,
-    Species.Druddigon,
-    Species.Vanilluxe,
-    Species.Escavalier,
-    Species.Volcarona,
-  ],
-  // His three from the post-game fight, then the Floette he spent three
-  // thousand years looking for, and both halves of the power his
-  // weapon was built on
-  [Legend.AZ]: [
-    Species.Torkoal,
-    Species.Golurk,
-    Species.Sigilyph,
-    Species.FloetteEternal,
-    Species.Xerneas,
-    Species.Yveltal,
-  ],
-};
+export const LEGEND_PARTIES: Record<number, Species[]> = {};
+
+for (const [name, written] of Object.entries(v.parse(v.record(v.string(), LEGEND), legendsFile))) {
+  const where = `legends.yaml: ${name}`;
+  const legend = idOf<Legend>(LEGEND_IDS, name, where);
+
+  LEGENDS.push(legend);
+  LEGEND_HONORS[legend] = idOf<Awards>(AWARD_IDS, written.honor, where);
+  LEGEND_CHARSETS[legend] = written.sheets;
+  LEGEND_PRIZE_CHARSETS[legend] = written.prize;
+  LEGEND_PARTIES[legend] = idsOf<Species>(SPECIES_IDS, written.party, where);
+}
+LEGENDS.sort((one, two) => one - two);
+
+for (const [name, title] of Object.entries(v.parse(v.record(v.string(), v.string()), namesFile))) {
+  LEGEND_NAMES[idOf<Legend>(LEGEND_IDS, name, `text/en/legends.yaml: ${name}`)] = title;
+}
+
+// Every legend the enum has is written down, so none turns up nameless or bare
+for (const [name, legend] of Object.entries(LEGEND_IDS)) {
+  if (!Object.hasOwn(LEGEND_HONORS, legend) || !Object.hasOwn(LEGEND_NAMES, legend)) {
+    throw new Error(`${name} needs a record in legends.yaml and a name in text/en`);
+  }
+}

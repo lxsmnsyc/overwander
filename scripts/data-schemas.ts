@@ -43,6 +43,8 @@ const DEFINITIONS: [enumName: string, definition: string][] = [
   ['TrainerClass', 'trainer'],
   ['GymLeader', 'gym-leader'],
   ['EliteMember', 'elite-member'],
+  ['Champion', 'champion'],
+  ['Legend', 'legend'],
   ['Weather', 'weather'],
 ];
 
@@ -341,6 +343,51 @@ const ELITE_TEXT: Schema = {
   propertyNames: name('elite-member'),
   additionalProperties: { type: 'string' },
 };
+
+const PARTY: Schema = { ...names('species'), minItems: 6, maxItems: 6 };
+
+const CHAMPIONS: Schema = {
+  $schema: DRAFT,
+  title: 'Champions',
+  type: 'object',
+  propertyNames: name('champion'),
+  additionalProperties: part(
+    {
+      title: described(name('award'), 'The title the seat is worth'),
+      league: described(name('region'), 'Whose Elite Four they ask to see beaten first'),
+      sheets: described(SHEETS, 'The charsets they are seen in'),
+      prize: described(SHEETS, 'Coats the title pays besides'),
+      party: described(PARTY, 'Their own six'),
+    },
+    ['title', 'league', 'sheets', 'party'],
+  ),
+};
+
+const LEGENDS: Schema = {
+  $schema: DRAFT,
+  title: 'Legends',
+  type: 'object',
+  propertyNames: name('legend'),
+  additionalProperties: part(
+    {
+      honor: described(name('award'), 'The mark beating them pays'),
+      sheets: described(SHEETS, 'The charsets they are seen in'),
+      prize: described(SHEETS, 'Coats the mark unlocks'),
+      party: described(PARTY, 'Their own six'),
+    },
+    ['honor', 'sheets', 'prize', 'party'],
+  ),
+};
+
+function namesText(title: string, definition: string): Schema {
+  return {
+    $schema: DRAFT,
+    title,
+    type: 'object',
+    propertyNames: name(definition),
+    additionalProperties: { type: 'string' },
+  };
+}
 
 const BIOME_WEATHER: Schema = {
   $schema: DRAFT,
@@ -733,6 +780,10 @@ export default function renderDataSchemas(members: Map<string, string[]>): Map<s
     ['elite.json', json(ELITE)],
     ['biome-elite.json', json(BIOME_ELITE)],
     ['elite-text.json', json(ELITE_TEXT)],
+    ['champions.json', json(CHAMPIONS)],
+    ['champions-text.json', json(namesText('Champion names', 'champion'))],
+    ['legends.json', json(LEGENDS)],
+    ['legends-text.json', json(namesText('Legend names', 'legend'))],
   ]);
 
   for (const [file, title, entry] of BATTLE_FILES) {

@@ -366,12 +366,43 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
     return `Nothing in ${nameOf(current())} yet. Drag some onto it, or pick some and move them here.`;
   };
 
+  /** Whether every box shows at once, and whether presses pick: the two toggles over the box */
+  const toggles = (): JSX.Element => (
+    <>
+      <Show when={mine() && made().length > 0}>
+        <Button
+          class="shrink-0"
+          tone={everywhere() ? 'primary' : undefined}
+          title="Search every box rather than the one showing"
+          onClick={() => {
+            setEverywhere(!everywhere());
+          }}
+        >
+          All boxes
+        </Button>
+      </Show>
+      <Show when={mine()}>
+        <Button
+          class="shrink-0"
+          tone={selecting() ? 'primary' : undefined}
+          disabled={busy()}
+          onClick={() => {
+            setMarking(!marking());
+          }}
+        >
+          {selecting() ? 'Done' : 'Select'}
+        </Button>
+      </Show>
+    </>
+  );
+
   const heading = (): JSX.Element => (
     <Show
       when={!everywhere()}
       fallback={
-        <div class="flex flex-col">
+        <div class="flex items-start justify-between gap-3">
           <h3 class="m-0 text-xl font-black">Every box</h3>
+          <div class="flex shrink-0 items-center gap-2">{toggles()}</div>
         </div>
       }
     >
@@ -384,6 +415,7 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
         span={tally().spans.get(current() ?? '') ?? 0}
         boxes={rail()}
         busy={busy()}
+        controls={toggles()}
         onEdit={(name, colour) => {
           const id = current();
 
@@ -485,30 +517,6 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
                     <ArrowDownIcon class="size-5" aria-hidden="true" />
                   </Show>
                 </Button>
-                <Show when={mine() && made().length > 0}>
-                  <Button
-                    class="shrink-0"
-                    tone={everywhere() ? 'primary' : undefined}
-                    title="Search every box rather than the one showing"
-                    onClick={() => {
-                      setEverywhere(!everywhere());
-                    }}
-                  >
-                    All boxes
-                  </Button>
-                </Show>
-                <Show when={mine()}>
-                  <Button
-                    class="shrink-0"
-                    tone={selecting() ? 'primary' : undefined}
-                    disabled={busy()}
-                    onClick={() => {
-                      setMarking(!marking());
-                    }}
-                  >
-                    {selecting() ? 'Done' : 'Select'}
-                  </Button>
-                </Show>
               </>
             )}
             // Nothing more asked for while a round trip is in the air

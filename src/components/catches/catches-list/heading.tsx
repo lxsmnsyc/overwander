@@ -27,6 +27,8 @@ export interface BoxHeadingProps {
   onLayOut: (layout: BoxLayout) => void;
   onEmpty: (to: string | null) => void;
   onDelete: () => void;
+  /** What stands beside the menu: the toggles that change what the box shows */
+  controls?: JSX.Element;
 }
 
 /** What the heading is asking about, if anything, under the name */
@@ -78,52 +80,55 @@ export default function BoxHeading(props: BoxHeadingProps): JSX.Element {
           </div>
           <Meta>{fill()}</Meta>
         </div>
-        <Show when={props.id != null}>
-          <Menu
-            label={`${props.name} menu`}
-            icon={ActionsIcon}
-            actions={[
-              {
-                label: 'Rename or recolour',
-                onSelect: () => {
-                  setAsking('edit');
+        <div class="flex shrink-0 items-center gap-2">
+          {props.controls}
+          <Show when={props.id != null}>
+            <Menu
+              label={`${props.name} menu`}
+              icon={ActionsIcon}
+              actions={[
+                {
+                  label: 'Rename or recolour',
+                  onSelect: () => {
+                    setAsking('edit');
+                  },
                 },
-              },
-              {
-                label: 'Lay out by dex number',
-                separated: true,
-                disabled: props.busy || props.count === 0,
-                onSelect: () => {
-                  props.onLayOut('dex');
+                {
+                  label: 'Lay out by dex number',
+                  separated: true,
+                  disabled: props.busy || props.count === 0,
+                  onSelect: () => {
+                    props.onLayOut('dex');
+                  },
                 },
-              },
-              {
-                label: 'Close up the gaps',
-                disabled: props.busy || gaps() === 0,
-                onSelect: () => {
-                  props.onLayOut('packed');
+                {
+                  label: 'Close up the gaps',
+                  disabled: props.busy || gaps() === 0,
+                  onSelect: () => {
+                    props.onLayOut('packed');
+                  },
                 },
-              },
-              {
-                label: `Move all ${props.count} to another box`,
-                disabled: props.busy || props.count === 0,
-                onSelect: () => {
-                  setTo(TO_DEFAULT);
-                  setAsking('empty');
+                {
+                  label: `Move all ${props.count} to another box`,
+                  disabled: props.busy || props.count === 0,
+                  onSelect: () => {
+                    setTo(TO_DEFAULT);
+                    setAsking('empty');
+                  },
                 },
-              },
-              {
-                label: 'Delete box',
-                tone: 'danger',
-                separated: true,
-                disabled: props.busy,
-                onSelect: () => {
-                  setAsking('delete');
+                {
+                  label: 'Delete box',
+                  tone: 'danger',
+                  separated: true,
+                  disabled: props.busy,
+                  onSelect: () => {
+                    setAsking('delete');
+                  },
                 },
-              },
-            ]}
-          />
-        </Show>
+              ]}
+            />
+          </Show>
+        </div>
       </div>
 
       <Switch>

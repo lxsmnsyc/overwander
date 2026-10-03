@@ -1,5 +1,71 @@
 # overwander
 
+## 4.29.0
+
+### Minor Changes
+
+- 67cdee8: The families Akala's first roads and Brooklet Hill turn up:
+  
+  - Wishiwashi swims in the coral reef, the ocean and the mangrove at any hour. From level 20 it fights as a school while it holds above 1/4 of its HP.
+  - Mudbray and Mudsdale live in the savanna, the steppe and the grassland at any hour.
+  - Dewpider and Araquanid live in the water of the swamp, the mangrove and the tropical rainforest at any hour.
+  - Fomantis and Lurantis live in the tropical rainforest, the tropical seasonal forest and the grassland by morning and day. A Fomantis evolves only by morning or day.
+  - Bounsweet, Steenee and Tsareena live in the tropical rainforest and the tropical seasonal forest by morning and day. A Steenee evolves once it knows Stomp.
+  - Each family has a signature ability. Regroup heals a lone Wishiwashi 1/8 of its HP each time it acts. Heavy Hooves makes its physical moves hit 1% harder for every 20 kg it weighs, up to 1.4x. Bubble Ward makes its teammates take Fire moves at 0.75x and keeps them from being burned. Orchid Guise keeps enemies from aiming at it until its first attack lands, which hits 1.3x. Trop Stride makes its kicking moves hit 1.3x.
+  - Water Bubble halves Fire moves on its holder, keeps it from being burned and doubles its Water moves.
+  - Wimp Out sends its holder off the field for its strongest teammate when damage drops it below 1/2 HP.
+  - Wishiwashi can also be born with Swift Swim, Wimp Out or Anticipation, Mudsdale with Steadfast, Araquanid with Overcoat or Mirror Armor, and Lurantis with Sharpness or Chlorophyll.
+  - All of them learn their moves by level, machine, tutor and egg, as they do in Sun, Moon, Ultra Sun and Ultra Moon.
+  - The sprite import no longer draws a Shadow slot of the collection as a species' other form, which had put Shadow Keldeo's art on the Resolute form.
+- d61a50c: The families the first roads out of Melemele's towns walk past:
+  
+  - Grubbin, Charjabug and Vikavolt live in the tropical rainforest and the tropical seasonal forest by morning and day. A Charjabug evolves with a Thunder Stone.
+  - Pikipek, Trumbeak and Toucannon, and Yungoos and Gumshoos, are written but not met in the wild yet: they wait on art for Trumbeak, Toucannon and Gumshoos.
+  - Each family has a signature ability. Drumroll gives its multi-hit moves 1 more strike. Score to Settle hits 1.3x against whichever enemy last hit it. Trickle Charge raises its Special Attack 10% for each Electric move anybody lands, up to 1.5x.
+  - Stakeout hits 2x against an enemy that has not acted since it came onto the field.
+  - Gumshoos can also be born with Scrappy, and Vikavolt with Compound Eyes.
+  - All eight learn their moves by level, machine, tutor and egg, as they do in Sun, Moon, Ultra Sun and Ultra Moon.
+- 0348895: Alola's items:
+  
+  - Terrain Extender makes the terrain its holder lays last 1.6x as long.
+  - The Electric, Grassy, Misty and Psychic Seeds give their holder +1 Defense or Special Defense once their terrain covers it, then are gone.
+  - Beast Ball catches 5x on an Ultra Beast and 0.1x on anything else. It turns up on walks and is never sold.
+  - A Silvally holding a Memory takes that type's shape.
+  - The Memories and the Z-Crystals turn up on walks, one thin slot each, and the Z-Crystals come out of dust clouds too.
+  - The four nectars and the N-Solarizer and N-Lunarizer are in the bag and turn up on walks, ready for Oricorio and Necrozma.
+- 0a15a78: The families Melemele's meadow and hill turn up:
+  
+  - Crabrawler lives on the beach and the rocky coast, and Crabominable on the glacier and the alpine tundra. A Crabrawler evolves with an Ice Stone.
+  - Oricorio dances in the style of where it was met: Baile in the savanna, Pom-Pom in the grassland, Pa'u on the beach and Sensu in the tropical rainforest, by morning and day.
+  - Cutiefly and Ribombee live in the grassland, the temperate forest and the tropical seasonal forest by morning and day.
+  - Rockruff lives in the steppe, the grassland and the badlands at any hour. It grows into a Midday Lycanroc by morning or day, a Midnight Lycanroc by night and a Dusk Lycanroc in the evening, and each of the three is met in the wild at its own hour.
+  - Each family has a signature ability. Rebound Punch hits 1.5x with the punch after one that missed or was blocked. Dizzy Twirl never hits itself while confused, and its moves hit 1.3x while it is. Honey Share makes the berries its teammates eat heal 1.5x as much and raise a stat 1 more stage. Provoke turns the next single-target move of an enemy it hits onto itself.
+  - Oricorio can also be born with Tangled Feet, Keen Eye or Gale Wings, Ribombee with Friend Guard, Crabominable with Shell Armor, and Rockruff with Own Tempo.
+  - All of them learn their moves by level, machine, tutor and egg, as they do in Sun, Moon, Ultra Sun and Ultra Moon.
+  - Iron Fist powers up every punch, Mach Punch and Drain Punch among them, rather than only the first two generations' six.
+  - Dancer copies Revelation Dance.
+- 7d4226e: Alola's three starters, and the abilities they carry:
+  
+  - Rowlet, Dartrix and Decidueye live in the tropical rainforest and the tropical seasonal forest in the evening and at night. Litten, Torracat and Incineroar live in the grassland and the steppe in the evening and at night. Popplio, Brionne and Primarina live on the beach and the rocky coast by morning and day, on land or in the water.
+  - Each family has a signature ability that plays to a crowd, counting up to 4: Quill Audience puts 1.1x on its Speed for each enemy standing, Heel Audience does the same for its Attack, and Aria Audience puts 1.1x on its Special Attack for each teammate standing.
+  - Long Reach keeps every move it throws from making contact. Liquid Voice turns its sound moves into Water moves.
+  - Decidueye can also be born with Sniper or Keen Eye, Incineroar with Tough Claws or Iron Fist, and Primarina with Cute Charm or Hydration.
+  - All nine learn their moves by level, machine, tutor and egg, as they do in Sun, Moon, Ultra Sun and Ultra Moon.
+- f3c0037: Boxes: make up to 32 named, coloured boxes and file your catches into them. A box keeps each pokemon in its own square and allows gaps, so a living dex can hold a place for what is missing, and it can be laid out by dex number or closed up in one press. Deleting a box sends its pokemon back to Default, and a pokemon that changes hands leaves its old owner's box.
+- b2d79a5: Two new display settings: Chunk lines rules the edges where one chunk meets the next on the board, and World map grid rules every chunk on the world map, the detailed map included.
+- a094a76: - Townsfolk talk through a speech box: their line, then the question they are asking, one step at a time.
+  - Questions are action forms that any screen can open and await: teaching a move and forming a team are the first.
+  - Each NPC is defined in one place with `createNpc`: name, lines, sprites and the script for what they do.
+
+### Patch Changes
+
+- 5e4ac29: In battle, a purified pokemon's light and a shadow pokemon's storm lie as flat as the pokemon's own shadow, an ellipse rather than a round plate.
+- bef9c54: A dropdown inside a dialog, such as the duel rules, is drawn over the dialog and its bottom bar, and opens upward when there is no room below.
+- adb72b5: Lairs stand on the water as readily as on the ground, never on lava. A lake's lair is now on the lake, an island's lair may be at sea, and every other lair stays on dry ground, so a lair on the water stages a legendary or shadow raid that belongs there.
+- af89548: Two islands that stand too close for the sea between them, or an island too close to the coast, are now joined by ground at least three cells wide rather than a bridge a single cell across.
+- b87a166: A shiny met in the safari, or shown in any dialog, sparkles exactly as it does in the overworld and in battle: the same burst, the same glints and the same size.
+- 816ef70: A teammate no longer throws a second Toxic, or any status move, at a foe while the first is still in the air.
+
 ## 4.28.2
 
 ### Patch Changes

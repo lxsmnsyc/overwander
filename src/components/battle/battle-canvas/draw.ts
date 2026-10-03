@@ -378,6 +378,32 @@ function nameOf(unit: Unit): string {
 }
 
 /**
+ * How much an aura's ground shapes are squashed toward the camera so
+ * they lie as flat as the pokemon's shadow. The shadow is an ellipse
+ * of a fixed shape on the picture, and a circle on the ground seen
+ * from this camera barely shortens, so the aura read as a round plate
+ * under an oval shadow. Measured at the feet: how much one step away
+ * shortens against one step across, against how much the shadow does
+ */
+function shadowSquash(
+  kit: EffectBatch,
+  view: FieldView,
+  floor: Spot,
+  radius: number,
+  flatness: number,
+): number {
+  const [ax, az] = kit.across;
+  const [wx, wz] = kit.away;
+  const at = projectField({ x: floor[0], z: floor[2] }, view);
+  const across = projectField({ x: floor[0] + ax * radius, z: floor[2] + az * radius }, view);
+  const away = projectField({ x: floor[0] + wx * radius, z: floor[2] + wz * radius }, view);
+  const wide = Math.hypot(across.x - at.x, across.y - at.y);
+  const deep = Math.hypot(away.x - at.x, away.y - at.y);
+
+  return wide <= 0 || deep <= 0 ? 1 : Math.min(1, (flatness * wide) / deep);
+}
+
+/**
  * A slot's aura and shiny sparkle, built in the battle scene where the
  * pokemon's own picture hides whatever is behind it
  */
@@ -406,9 +432,18 @@ export function drawLitDecor(
     const paint = unit.hasAbility(Abilities.Shadow) ? litShadowAura : litPurifiedAura;
 
     // The ground shadow's, as the painted aura is measured
-    const radius = sprite.shadowRadius(scale).x / worth;
+    const shadow = sprite.shadowRadius(scale);
+    const radius = shadow.x / worth;
 
-    paint(kit, floor, radius, clock, seed, unit.alive ? 1 : 0.35);
+    paint(
+      kit,
+      floor,
+      radius,
+      clock,
+      seed,
+      unit.alive ? 1 : 0.35,
+      shadowSquash(kit, view, floor, radius, shadow.y / shadow.x),
+    );
   }
   // Held until the fight's first tick: nothing moves before it, so a
   // sparkle started then sat still through the countdown

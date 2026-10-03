@@ -1,6 +1,5 @@
 import {
   type Accessor,
-  For,
   type JSX,
   Show,
   createEffect,
@@ -13,19 +12,11 @@ import settings from '../app/settings';
 import type SpeciesSpriteAnimation from '../../canvas/species-sprite-animation';
 import speciesSize from '../../canvas/species-size';
 import loadSpeciesSprite from '../../canvas/species-sprites';
-import {
-  SPARKLE_BURST,
-  SPARKLE_COLORS,
-  SPARKLE_MIDDLE,
-  SPARKLE_RAYS,
-  SPARKLE_RAY_REACH,
-  SPARKLE_RING_REACH,
+import drawSparkle, {
+  SPARKLE_FRAME,
+  SPARKLE_LIFE,
   SPARKLE_SPREAD,
-  SPARKLE_STARS,
-  SPARKLE_STAR_LIFE,
   SPARKLE_STAR_SIZE,
-  SPARKLE_TINTS,
-  sparkleStar,
 } from '../../canvas/sparkle';
 import type { Point, SpriteDirection } from '../../canvas/sprite-sheet';
 import type { Species } from '../../data/ids/species';
@@ -198,114 +189,6 @@ function groundOf(drawn: Drawn): JSX.CSSProperties | null {
 }
 
 /**
- * The four-pointed glint a sparkle is made of, as a shape rather than a
- * glyph: a diamond with its sides pulled in, which is how a star has
- * been drawn for as long as anything has been drawn sparkling
- */
-const STAR = (() => {
-  // Long points on the axes and short ones between them, with a narrow
-  // waist in every gap: the canvas glint's two crossed stars as one shape
-  const corners: string[] = [];
-
-  for (let at = 0; at < 16; at += 1) {
-    const angle = (at / 16) * Math.PI * 2 - Math.PI / 2;
-    let reach = 8;
-
-    if (at % 4 === 0) {
-      reach = 50;
-    } else if (at % 2 === 0) {
-      reach = 27;
-    }
-
-    corners.push(
-      `${(50 + Math.cos(angle) * reach).toFixed(1)}% ${(50 + Math.sin(angle) * reach).toFixed(1)}%`,
-    );
-  }
-  return `polygon(${corners.join(', ')})`;
-})();
-
-/**
- * Where each star of a sparkle sits, in shares of the cell, and when it
- * lights.
- *
- * The placement is the canvas sparkle's own — same seed, same scatter —
- * so a shiny met in the overworld and the same shiny met in a dialog
- * glint the same way. What differs is that the browser runs the star
- * rather than a draw loop: one keyframe, one delay each
- */
-function starsOf(drawn: Drawn, seed: number): JSX.CSSProperties[] {
-  const across = drawn.frame.width / drawn.bounds.width;
-  const up = drawn.frame.height / drawn.bounds.height;
-  // The middle of the box rather than of the element: the shadow may
-  // have widened one side and the pokemon has not moved
-  const middle = (drawn.cell.width / 2 - drawn.bounds.x) / drawn.bounds.width;
-  // The stars are thrown up from the point the pokemon stands on, which
-  // is not the bottom of the box on a clip that leaves the ground
-  const floor =
-    (drawn.feet == null ? drawn.cell.height : drawn.feet[1] + 0.5 - drawn.bounds.y) /
-    drawn.bounds.height;
-  const size = across * SPARKLE_STAR_SIZE * 2;
-  // Widths are shares of the box's width and heights of its height, so
-  // a length measured across is turned into one measured down
-  const tall = drawn.bounds.width / drawn.bounds.height;
-  const burstY = floor + SPARKLE_MIDDLE * up;
-  const pieces: JSX.CSSProperties[] = [];
-
-  // The burst: a ring and the rays, each standing on the middle
-  const ring = across * SPARKLE_RING_REACH * 2;
-
-  pieces.push({
-    position: 'absolute',
-    left: `${(middle - ring / 2) * 100}%`,
-    top: `${(burstY - (ring * tall) / 2) * 100}%`,
-    width: `${ring * 100}%`,
-    'aspect-ratio': '1',
-    'border-radius': '50%',
-    border: `2px solid ${SPARKLE_COLORS.fill}`,
-    'box-shadow': `0 0 0 1px ${SPARKLE_COLORS.edge}, inset 0 0 0 1px ${SPARKLE_COLORS.edge}`,
-    animation: `sparkle-ring ${SPARKLE_BURST}ms ease-out both`,
-  });
-  for (let ray = 0; ray < SPARKLE_RAYS; ray += 1) {
-    const length = across * SPARKLE_RAY_REACH * (ray % 2 === 0 ? 1 : 0.6);
-    const thick = across * 0.05;
-
-    pieces.push({
-      position: 'absolute',
-      left: `${(middle - thick / 2) * 100}%`,
-      top: `${(burstY - length * tall) * 100}%`,
-      width: `${thick * 100}%`,
-      'aspect-ratio': `${thick / length}`,
-      'border-radius': '9999px',
-      background: `linear-gradient(to top, transparent, ${ray % 2 === 0 ? SPARKLE_COLORS.core : SPARKLE_COLORS.fill})`,
-      'box-shadow': `0 0 0 1px ${SPARKLE_COLORS.edge}`,
-      'transform-origin': '50% 100%',
-      // Off the axes, so the burst never reads as a crosshair
-      '--turn': `${((ray + 0.5) / SPARKLE_RAYS) * 360}deg`,
-      animation: `sparkle-ray ${SPARKLE_BURST}ms ease-out both`,
-    });
-  }
-
-  for (let star = 0; star < SPARKLE_STARS; star++) {
-    const spot = sparkleStar(seed, star, SPARKLE_SPREAD);
-
-    pieces.push({
-      position: 'absolute',
-      left: `${(middle + spot.x * across - size / 2) * 100}%`,
-      top: `${(floor + spot.y * up - (size * tall) / 2) * 100}%`,
-      width: `${size * 100}%`,
-      'aspect-ratio': '1',
-      // A clip cuts any outline off, so the dark edge is painted into
-      // the tips of the points instead
-      background: `radial-gradient(circle, ${SPARKLE_COLORS.core} 10%, ${SPARKLE_TINTS[star % SPARKLE_TINTS.length]} 28%, ${SPARKLE_TINTS[star % SPARKLE_TINTS.length]} 55%, ${SPARKLE_COLORS.edge} 75%)`,
-      'clip-path': STAR,
-      '--spin': `${star % 2 === 0 ? 20 : -20}deg`,
-      animation: `sparkle-star ${SPARKLE_STAR_LIFE}ms ease-out ${spot.delay}ms both`,
-    });
-  }
-  return pieces;
-}
-
-/**
  * How much sharper the aura canvas is than the box it covers: the
  * wisps are soft shapes, and a one-to-one buffer under a sprite drawn
  * at four times its sheet reads as mush
@@ -415,27 +298,107 @@ function AuraCanvas(props: {
 }
 
 /**
- * The stars, thrown once.
- *
- * They are placed from the first frame that is drawn and then left
- * alone: the picture changes twenty-four times a second, and a list of
- * stars rebuilt on every frame is a list of *new* elements every frame,
- * each starting its animation from the beginning. That reads as a
- * pokemon that glitters permanently rather than one that announces
- * itself — which is the thing a sparkle is not
+ * How far past the pokemon a sparkle reaches, in `SPARKLE_FRAME`s: the
+ * glints are thrown a quarter of the spread to each side, and the
+ * widest adds its own size
  */
-function Sparkle(props: { drawn: Accessor<Drawn | null>; seed: number }): JSX.Element {
-  const thrown = createMemo((placed: JSX.CSSProperties[] | undefined) => {
-    if (placed != null) {
-      return placed;
+const SPARKLE_SIDE = SPARKLE_SPREAD / 4 + SPARKLE_STAR_SIZE;
+
+/** How far above the feet it reaches, and below them, in `SPARKLE_FRAME`s */
+const SPARKLE_UP = 1.3;
+const SPARKLE_DOWN = 0.3;
+
+/**
+ * A shiny's sparkle, thrown once.
+ *
+ * Painted by the overworld's and the battle's own painter on a canvas
+ * over the picture, so a shiny met in a dialog sparkles exactly as it
+ * does on the board: the same burst, the same glints in the same
+ * places, and the same size whatever the pokemon, since the painter
+ * sizes it off `SPARKLE_FRAME` rather than off the sprite
+ */
+function SparkleCanvas(props: { drawn: Accessor<Drawn | null>; seed: number }): JSX.Element {
+  let canvas: HTMLCanvasElement | undefined;
+  let age = 0;
+
+  /** The box it is painted in, in box pixels, standing on the pokemon's feet */
+  const reach = createMemo(() => {
+    const drawn = props.drawn();
+
+    if (drawn == null) {
+      return null;
     }
+    const feet = drawn.feet ?? [drawn.cell.width / 2, drawn.cell.height - 1];
+    const x = feet[0] + 0.5;
+    const y = feet[1] + 0.5;
+    const side = SPARKLE_FRAME * (0.5 + SPARKLE_SIDE);
 
-    const showing = props.drawn();
-
-    return showing == null ? undefined : starsOf(showing, props.seed);
+    return {
+      x: x - side,
+      y: y - SPARKLE_FRAME * SPARKLE_UP,
+      width: side * 2,
+      height: SPARKLE_FRAME * (SPARKLE_UP + SPARKLE_DOWN),
+      feet: [x, y],
+    };
   });
 
-  return <For each={thrown()}>{(star) => <span style={star} />}</For>;
+  const stop = ticking((elapsed) => {
+    age += elapsed;
+
+    const area = reach();
+    const context = canvas?.getContext('2d');
+
+    if (canvas == null || context == null || area == null) {
+      return;
+    }
+
+    const width = Math.max(1, Math.round(area.width * AURA_RESOLUTION));
+    const height = Math.max(1, Math.round(area.height * AURA_RESOLUTION));
+
+    if (canvas.width !== width) {
+      canvas.width = width;
+    }
+    if (canvas.height !== height) {
+      canvas.height = height;
+    }
+    context.clearRect(0, 0, width, height);
+    if (age > SPARKLE_LIFE) {
+      stop();
+      return;
+    }
+    drawSparkle(
+      context,
+      props.seed,
+      age,
+      (area.feet[0] - area.x) * AURA_RESOLUTION,
+      (area.feet[1] - area.y) * AURA_RESOLUTION,
+      AURA_RESOLUTION,
+    );
+  });
+
+  onCleanup(stop);
+
+  /** Where the box sits, as shares of the element it hangs out of */
+  const placed = (): JSX.CSSProperties => {
+    const drawn = props.drawn();
+    const area = reach();
+
+    if (drawn == null || area == null) {
+      return {};
+    }
+    const box = drawn.bounds;
+
+    return {
+      left: share(area.x - box.x, box.width),
+      top: share(area.y - box.y, box.height),
+      width: share(area.width, box.width),
+      height: share(area.height, box.height),
+    };
+  };
+
+  return (
+    <canvas ref={canvas} aria-hidden="true" class="pointer-events-none absolute" style={placed()} />
+  );
 }
 
 /**
@@ -776,7 +739,7 @@ export default function AnimatedSprite(props: AnimatedSpriteProps): JSX.Element 
                 throws a fresh handful rather than leaving the first
                 one's finished animation on screen */}
             <Show when={props.sparkle === true ? props.species : null} keyed>
-              {(seed) => <Sparkle drawn={drawn} seed={seed} />}
+              {(seed) => <SparkleCanvas drawn={drawn} seed={seed} />}
             </Show>
           </>
         )}

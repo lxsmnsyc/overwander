@@ -9,6 +9,7 @@ import {
   MANY_HANDS_SCALE,
   SHOT_FLOOR,
 } from '../../../../src/battle/abilities/signature/binacle-to-clauncher';
+import { BOSS_DAMAGE_CAP } from '../../../../src/battle/abilities/special';
 import { createBattle, createUnit, pinRandom } from '../../harness';
 import { NONE_CAUSE, dealDamage } from './helpers';
 
@@ -75,6 +76,47 @@ describe("Kalos's sea", () => {
     expect(
       dealDamage(gunner, foe, Moves.Bubble, 10, Types.Water, MoveCategories.Special),
     ).toBeCloseTo(whole * SHOT_FLOOR, 0);
+  });
+
+  it('floors a shot at a boss to the boss cap, not an eighth of its pool', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const gunner = createUnit(battle, teamA, [Types.Water]);
+    const boss = createUnit(battle, teamB, [Types.Water]);
+
+    pinRandom(battle, 1);
+    boss.addAbility(Abilities.Boss);
+    boss.setHealth(boss.checkStat(Stats.HP, 0));
+    gunner.addAbility(Abilities.RangingShot);
+    gunner.enter();
+    boss.enter();
+
+    // An eighth of a sixtyfold pool would be most of a raid in one shot
+    expect(boss.checkStat(Stats.HP, 0) * SHOT_FLOOR).toBeGreaterThan(BOSS_DAMAGE_CAP);
+    expect(
+      dealDamage(gunner, boss, Moves.Bubble, 10, Types.Water, MoveCategories.Special),
+    ).toBeCloseTo(BOSS_DAMAGE_CAP, 0);
+  });
+
+  it('lets a boss in kelp feel any blow past the boss cap', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const boss = createUnit(battle, teamA, [Types.Poison, Types.Water]);
+    const foe = createUnit(battle, teamB);
+
+    pinRandom(battle, 1);
+    boss.addAbility(Abilities.Boss);
+    boss.addAbility(Abilities.DeepKelp);
+    boss.setHealth(boss.checkStat(Stats.HP, 0));
+    boss.enter();
+    foe.enter();
+
+    const whole = boss.health;
+
+    // Under the cap is still nothing, but a real blow is no longer
+    // measured against an eighth of the whole raid pool
+    foe.damage(NONE_CAUSE, boss, BOSS_DAMAGE_CAP * 0.5, 0);
+    expect(boss.health).toBe(whole);
+    foe.damage(NONE_CAUSE, boss, BOSS_DAMAGE_CAP * 2, 0);
+    expect(boss.health).toBeCloseTo(whole - BOSS_DAMAGE_CAP * 2, 0);
   });
 
   it('leaves a physical shot and a refused one alone', () => {

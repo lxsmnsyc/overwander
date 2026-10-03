@@ -1,8 +1,10 @@
-import { For, type JSX, Show, createSignal } from 'solid-js';
+import { For, type JSX, Show, createEffect, createSignal, onCleanup } from 'solid-js';
+import { Portal } from 'solid-js/web';
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions, Transition } from 'terracotta';
 import { FieldFrame } from './form';
 import { SHEER } from './transition';
 import dismissOutside from './dismiss';
+import { usePortalHost } from './portal-host';
 
 /**
  * One choice out of a list that is too long to show at once.
@@ -41,6 +43,12 @@ const BUTTON =
   ' focus-visible:outline-offset-2 focus-visible:outline-tide aria-disabled:cursor-not-allowed' +
   ' aria-disabled:bg-line-soft aria-disabled:text-muted aria-disabled:hover:border-line';
 
+/** How far below its button the list hangs, the same as the combobox's */
+const DROP_GAP = 6;
+
+/** The tallest the list grows before it scrolls, which was `max-h-64` */
+const LIST_HEIGHT = 256;
+
 const OPTION =
   'cursor-pointer rounded-lg px-2 py-1 text-sm font-semibold transition-colors' +
   ' hover:bg-tide-soft aria-selected:bg-tide aria-selected:text-on-accent' +
@@ -52,9 +60,61 @@ export default function Select<V>(props: SelectProps<V>): JSX.Element {
   const [open, setOpen] = createSignal(false);
   /** The whole control, for working out what is a press away from it */
   const [root, setRoot] = createSignal<HTMLElement>();
+  /** The list, drawn apart from the control so a dialog cannot clip it */
+  const [panel, setPanel] = createSignal<HTMLElement>();
+  const host = usePortalHost();
+  /**
+   * Where the list hangs: under the button, or over it when the window
+   * has no room below, and never taller than the room it has
+   */
+  const [spot, setSpot] = createSignal<{
+    left: number;
+    width: number;
+    top: number;
+    /** Hung from above the button rather than below it */
+    up?: boolean;
+    room: number;
+  } | null>(null);
 
-  dismissOutside(root, open, () => {
-    setOpen(false);
+  dismissOutside(
+    root,
+    open,
+    () => {
+      setOpen(false);
+    },
+    panel,
+  );
+
+  // Placed under the button while it is open, and again whenever the
+  // page moves under it. Drawn in place, a list near the foot of a
+  // dialog was cut off by the panel and hidden behind its dock
+  createEffect(() => {
+    const anchor = root();
+
+    if (!open() || anchor == null) {
+      return;
+    }
+
+    const put = (): void => {
+      const rect = anchor.getBoundingClientRect();
+      const below = window.innerHeight - rect.bottom - DROP_GAP * 2;
+      const above = rect.top - DROP_GAP * 2;
+
+      setSpot(
+        below >= LIST_HEIGHT || below >= above
+          ? { left: rect.left, width: rect.width, top: rect.bottom + DROP_GAP, room: below }
+          : { left: rect.left, width: rect.width, top: rect.top - DROP_GAP, room: above, up: true },
+      );
+    };
+
+    put();
+    // Captured, so a scroll inside a dialog counts as well as the window's own
+    window.addEventListener('scroll', put, true);
+    window.addEventListener('resize', put);
+    onCleanup(() => {
+      window.removeEventListener('scroll', put, true);
+      window.removeEventListener('resize', put);
+    });
   });
   /** The name of what is chosen, or the placeholder standing in for it */
   const showing = (): string => {
@@ -108,24 +168,41 @@ export default function Select<V>(props: SelectProps<V>): JSX.Element {
             {showing()}
             <span aria-hidden="true">▾</span>
           </ListboxButton>
-          <Transition show={open()} {...SHEER} class="absolute top-full left-0 z-20 mt-1.5 w-full">
-            <ListboxOptions
-              unmount={false}
-              class="flex max-h-64 w-full list-none flex-col gap-0.5 overflow-y-auto rounded-xl
-                border-2 border-line bg-paper p-1 shadow-float"
+          <Portal mount={host()}>
+            <Transition
+              ref={(element: HTMLElement) => {
+                setPanel(element);
+              }}
+              show={open()}
+              {...SHEER}
+              class="fixed z-40"
+              style={{
+                left: `${spot()?.left ?? 0}px`,
+                top: `${spot()?.top ?? 0}px`,
+                width: `${spot()?.width ?? 0}px`,
+                // Its own height up from the top of the button, whatever that height is
+                transform: spot()?.up === true ? 'translateY(-100%)' : undefined,
+              }}
             >
-              <For each={props.options}>
-                {(option) => (
-                  <ListboxOption class={OPTION} value={option.value} disabled={option.disabled}>
-                    {option.label}
-                  </ListboxOption>
-                )}
-              </For>
-              <Show when={props.options.length === 0}>
-                <li class="px-2 py-1 text-sm text-muted">Nothing to choose from.</li>
-              </Show>
-            </ListboxOptions>
-          </Transition>
+              <ListboxOptions
+                unmount={false}
+                style={{ 'max-height': `${Math.min(LIST_HEIGHT, spot()?.room ?? LIST_HEIGHT)}px` }}
+                class="flex w-full list-none flex-col gap-0.5 overflow-y-auto rounded-xl border-2
+                border-line bg-paper p-1 shadow-float"
+              >
+                <For each={props.options}>
+                  {(option) => (
+                    <ListboxOption class={OPTION} value={option.value} disabled={option.disabled}>
+                      {option.label}
+                    </ListboxOption>
+                  )}
+                </For>
+                <Show when={props.options.length === 0}>
+                  <li class="px-2 py-1 text-sm text-muted">Nothing to choose from.</li>
+                </Show>
+              </ListboxOptions>
+            </Transition>
+          </Portal>
         </Listbox>
       )}
     </FieldFrame>

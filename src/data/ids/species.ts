@@ -1535,6 +1535,24 @@ export const DIALGA_FORMS: Species[] = [Species.Dialga, Species.DialgaOrigin];
 export const PALKIA_FORMS: Species[] = [Species.Palkia, Species.PalkiaOrigin];
 export const GIRATINA_FORMS: Species[] = [Species.Giratina, Species.GiratinaOrigin];
 
+/** The four dances an Oricorio takes on, Baile at the base */
+export const ORICORIO_FORMS: Species[] = [
+  Species.Oricorio,
+  Species.OricorioPomPom,
+  Species.OricorioPau,
+  Species.OricorioSensu,
+];
+
+/** The three hours a Lycanroc can grow up at, Midday at the base */
+export const LYCANROC_FORMS: Species[] = [
+  Species.Lycanroc,
+  Species.LycanrocMidnight,
+  Species.LycanrocDusk,
+];
+
+/** A Wishiwashi alone, and the school it calls together from level 20 */
+export const WISHIWASHI_FORMS: Species[] = [Species.Wishiwashi, Species.WishiwashiSchool];
+
 /** Rotom and the five machines it gets into */
 export const ROTOM_FORMS: Species[] = [
   Species.Rotom,

@@ -13,23 +13,27 @@ export default function registerTropicalRainforestSpawns(): void {
   registerSpawnPool(Biome.TropicalRainforest, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.Bounsweet, weight: 22 },
         { species: Species.Grubbin, weight: 22 },
         { species: Species.Scatterbug, weight: 24 },
         { species: Species.Treecko, weight: 2 },
         { species: Species.Slakoth, weight: 20 },
       ],
       uncommon: [
+        { species: Species.Fomantis, weight: 22 },
         { species: Species.Exeggcute, weight: 20 },
         { species: Species.Pineco, weight: 20 },
         { species: Species.Yanma, weight: 5 },
       ],
       rare: [
+        { species: Species.Steenee, weight: 8 },
         { species: Species.Charjabug, weight: 8 },
         { species: Species.Spewpa, weight: 8 },
         { species: Species.Grovyle, weight: 1 },
         { species: Species.Vigoroth, weight: 10 },
       ],
       scarce: [
+        { species: Species.Lurantis, weight: 6 },
         { species: Species.Exeggutor, weight: 10 },
         { species: Species.Forretress, weight: 5 },
         { species: Species.Ambipom, weight: 6 },
@@ -37,6 +41,8 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Tangrowth, weight: 6 },
       ],
       elusive: [
+        { species: Species.Tsareena, weight: 4 },
+        { species: Species.OricorioSensu, weight: 5 },
         { species: Species.Vikavolt, weight: 4 },
         { species: Species.Hawlucha, weight: 6 },
         { species: Species.Vivillon, weight: 5 },
@@ -52,23 +58,27 @@ export default function registerTropicalRainforestSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.Bounsweet, weight: 22 },
         { species: Species.Grubbin, weight: 22 },
         { species: Species.Scatterbug, weight: 24 },
         { species: Species.Treecko, weight: 2 },
         { species: Species.Slakoth, weight: 20 },
       ],
       uncommon: [
+        { species: Species.Fomantis, weight: 22 },
         { species: Species.Exeggcute, weight: 20 },
         { species: Species.Pineco, weight: 20 },
         { species: Species.Yanma, weight: 5 },
       ],
       rare: [
+        { species: Species.Steenee, weight: 8 },
         { species: Species.Charjabug, weight: 8 },
         { species: Species.Spewpa, weight: 8 },
         { species: Species.Grovyle, weight: 1 },
         { species: Species.Vigoroth, weight: 10 },
       ],
       scarce: [
+        { species: Species.Lurantis, weight: 6 },
         { species: Species.Exeggutor, weight: 10 },
         { species: Species.Forretress, weight: 5 },
         { species: Species.Ambipom, weight: 6 },
@@ -76,6 +86,8 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Tangrowth, weight: 6 },
       ],
       elusive: [
+        { species: Species.Tsareena, weight: 4 },
+        { species: Species.OricorioSensu, weight: 5 },
         { species: Species.Vikavolt, weight: 4 },
         { species: Species.Hawlucha, weight: 6 },
         { species: Species.Vivillon, weight: 5 },
@@ -157,6 +169,7 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Mudkip, weight: 2 },
       ],
       uncommon: [
+        { species: Species.Dewpider, weight: 22 },
         { species: Species.Magikarp, weight: 30 },
         { species: Species.Barboach, weight: 25 },
         { species: Species.Surskit, weight: 25 },
@@ -167,6 +180,7 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Marshtomp, weight: 1 },
       ],
       scarce: [
+        { species: Species.Araquanid, weight: 6 },
         { species: Species.Whiscash, weight: 8 },
         { species: Species.Yanmega, weight: 6 },
         { species: Species.Masquerain, weight: 10 },
@@ -185,6 +199,7 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Mudkip, weight: 2 },
       ],
       uncommon: [
+        { species: Species.Dewpider, weight: 22 },
         { species: Species.Magikarp, weight: 30 },
         { species: Species.Barboach, weight: 25 },
         { species: Species.Surskit, weight: 25 },
@@ -195,6 +210,7 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Marshtomp, weight: 1 },
       ],
       scarce: [
+        { species: Species.Araquanid, weight: 6 },
         { species: Species.Whiscash, weight: 8 },
         { species: Species.Yanmega, weight: 6 },
         { species: Species.Masquerain, weight: 10 },
@@ -209,12 +225,14 @@ export default function registerTropicalRainforestSpawns(): void {
     [TimeOfDay.Evening]: {
       base: [{ species: Species.Poliwag, weight: 20 }],
       uncommon: [
+        { species: Species.Dewpider, weight: 22 },
         { species: Species.Magikarp, weight: 30 },
         { species: Species.Barboach, weight: 25 },
         { species: Species.Yanma, weight: 5 },
       ],
       rare: [],
       scarce: [
+        { species: Species.Araquanid, weight: 6 },
         { species: Species.Whiscash, weight: 8 },
         { species: Species.Yanmega, weight: 6 },
         { species: Species.Gyarados, weight: 4 },
@@ -224,12 +242,14 @@ export default function registerTropicalRainforestSpawns(): void {
     [TimeOfDay.Night]: {
       base: [{ species: Species.Poliwag, weight: 20 }],
       uncommon: [
+        { species: Species.Dewpider, weight: 22 },
         { species: Species.Magikarp, weight: 30 },
         { species: Species.Barboach, weight: 25 },
         { species: Species.Yanma, weight: 5 },
       ],
       rare: [],
       scarce: [
+        { species: Species.Araquanid, weight: 6 },
         { species: Species.Whiscash, weight: 8 },
         { species: Species.Yanmega, weight: 6 },
         { species: Species.Gyarados, weight: 4 },

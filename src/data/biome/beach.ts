@@ -14,6 +14,7 @@ export default function registerBeachSpawns(): void {
         { species: Species.Squirtle, weight: 2 },
       ],
       uncommon: [
+        { species: Species.Crabrawler, weight: 24 },
         { species: Species.Binacle, weight: 24 },
         { species: Species.Psyduck, weight: 20 },
         { species: Species.Slowpoke, weight: 20 },
@@ -41,6 +42,7 @@ export default function registerBeachSpawns(): void {
         { species: Species.Floatzel, weight: 8 },
       ],
       elusive: [
+        { species: Species.OricorioPau, weight: 5 },
         { species: Species.Primarina, weight: 2 },
         { species: Species.Vivillon, weight: 5 },
         { species: Species.Blastoise, weight: 2 },
@@ -59,6 +61,7 @@ export default function registerBeachSpawns(): void {
         { species: Species.Squirtle, weight: 2 },
       ],
       uncommon: [
+        { species: Species.Crabrawler, weight: 24 },
         { species: Species.Binacle, weight: 24 },
         { species: Species.Psyduck, weight: 20 },
         { species: Species.Slowpoke, weight: 20 },
@@ -86,6 +89,7 @@ export default function registerBeachSpawns(): void {
         { species: Species.Floatzel, weight: 8 },
       ],
       elusive: [
+        { species: Species.OricorioPau, weight: 5 },
         { species: Species.Primarina, weight: 2 },
         { species: Species.Vivillon, weight: 5 },
         { species: Species.Blastoise, weight: 2 },
@@ -100,6 +104,7 @@ export default function registerBeachSpawns(): void {
     [TimeOfDay.Evening]: {
       base: [],
       uncommon: [
+        { species: Species.Crabrawler, weight: 24 },
         { species: Species.Inkay, weight: 24 },
         { species: Species.Krabby, weight: 20 },
         { species: Species.Shellos, weight: 25 },
@@ -126,6 +131,7 @@ export default function registerBeachSpawns(): void {
     [TimeOfDay.Night]: {
       base: [],
       uncommon: [
+        { species: Species.Crabrawler, weight: 24 },
         { species: Species.Inkay, weight: 24 },
         { species: Species.Krabby, weight: 20 },
         { species: Species.Shellos, weight: 25 },

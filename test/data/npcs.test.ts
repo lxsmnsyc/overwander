@@ -15,15 +15,20 @@ import Npc, {
   EXECUTIVE_HONORS,
   EXECUTIVE_NAMES,
   EXECUTIVE_QUOTES,
-  NPCS,
-  NPC_NAMES,
   REMINDER_FEE,
   getRecallableMoves,
   getTutorableMoves,
-  npcSheet,
-  npcSheets,
   tutorRefuses,
 } from '../../src/data/overworld/npc';
+import {
+  NPCS,
+  NPC_VISIT_TAGS,
+  TRADERS,
+  npcDefinitions,
+  npcName,
+  npcSheet,
+  npcSheets,
+} from '../../src/overworld/npcs';
 import {
   getBaseForms,
   getLevelUpMoves,
@@ -64,11 +69,59 @@ describe('wandering NPCs', () => {
   it('names everyone who wanders', () => {
     expect(new Set(NPCS).size).toBe(NPCS.length);
     for (const npc of NPCS) {
-      expect(NPC_NAMES[npc].length).toBeGreaterThan(0);
+      expect(npcName(npc).length).toBeGreaterThan(0);
     }
     expect(new Set(NPCS).has(Npc.MoveReminder)).toBe(true);
     // The one wanderer whose price is not gold
     expect(REMINDER_FEE).toBe(Items.HeartScale);
+  });
+
+  it('keeps the wandering roll as the world was generated with it', () => {
+    // Who stands on a wandering cell is an index into this list, so
+    // its order is part of every existing world
+    expect(NPCS).toEqual([
+      Npc.Breeder,
+      Npc.DaycareLady,
+      Npc.Groomer,
+      Npc.MoveReminder,
+      Npc.FossilManiac,
+      Npc.FossilScientist,
+      Npc.MoveTutor,
+      Npc.Chef,
+      Npc.Channeler,
+      Npc.Kurt,
+      Npc.Geologist,
+      Npc.DojoMaster,
+      Npc.Trader,
+      Npc.HyperTrainer,
+    ]);
+    expect(TRADERS).toEqual(new Set([Npc.Vendor, Npc.Chef, Npc.Geologist]));
+    expect([...NPC_VISIT_TAGS.values()]).toEqual([
+      'breed',
+      'daycare',
+      'groom',
+      'fossil',
+      'channel',
+      'swap',
+      'hyper',
+    ]);
+  });
+
+  it('gives everyone a description, an opening line, and words for a spent visit', () => {
+    for (const npc of npcDefinitions()) {
+      expect(npc.description, npc.name).toMatch(/\.$/);
+      expect(npc.quote.length, npc.name).toBeGreaterThan(0);
+      // Whoever serves once a window says so when asked again
+      if (npc.visit != null) {
+        expect(npc.spent, npc.name).toBeDefined();
+      }
+    }
+  });
+
+  it('files every definition under its own id', () => {
+    for (const [at, npc] of npcDefinitions().entries()) {
+      expect(npc.id, npc.name).toBe(at);
+    }
   });
 
   it('names everyone their own charset', () => {

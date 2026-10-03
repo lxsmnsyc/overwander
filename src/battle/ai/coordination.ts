@@ -1,4 +1,4 @@
-import { AttackPriority } from '../../core/event-emitter';
+import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Types } from '../../data/constants/types';
 import { Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
@@ -78,17 +78,17 @@ function hasRole(move: Moves, role: MoveRole): boolean {
   return getMoveRoles(move).has(role);
 }
 
+/** A move a teammate is winding up, or has let go and is still on its way */
+interface Underway {
+  move: Moves;
+  target: MoveTarget;
+}
+
 /**
- * Whether a teammate's cast already covers what this move would do, so
+ * Whether a teammate's move already covers what this move would do, so
  * casting it too would only land on what is already there
  */
-function covered(event: CheckUnitAIMoveUsableEvent, friend: Unit): boolean {
-  const cast = friend.casting;
-
-  if (cast == null) {
-    return false;
-  }
-
+function covered(event: CheckUnitAIMoveUsableEvent, friend: Unit, cast: Underway): boolean {
   const move = event.move;
 
   // The same veil or tailwind over the same team, the same sky,
@@ -148,14 +148,57 @@ function covered(event: CheckUnitAIMoveUsableEvent, friend: Unit): boolean {
  * told what a friend is already winding up before it doubles it
  */
 export default function setupCoordination(battle: Battle): void {
+  /**
+   * What each unit has let go that has not landed yet. A cast ends when
+   * the move leaves, and a Toxic still in the air has not poisoned
+   * anybody, so without these a teammate saw the target free and threw
+   * a second one after it
+   */
+  const flying = new Map<Unit, Underway[]>();
+
+  // Last, and only for a move that did go: one stopped at the gate
+  // never flies, and one with no flight time has already landed
+  battle.on(BattleEvents.UnitTriggerMove, AttackPriority.Cleanup, (event) => {
+    if (!event.disabled && event.source.checkMoveDelay(event.move, event.target) > 0) {
+      flying.set(event.source, [
+        ...(flying.get(event.source) ?? []),
+        { move: event.move, target: event.target },
+      ]);
+    }
+  });
+
+  battle.on(BattleEvents.UnitTriggerMoveEnd, EventPriority.Pre, (event) => {
+    const moves = flying.get(event.source);
+    const landed = moves?.findIndex((one) => one.move === event.move) ?? -1;
+
+    if (moves != null && landed >= 0) {
+      moves.splice(landed, 1);
+    }
+  });
+
+  /** What a friend is winding up and what it has in the air */
+  function underway(friend: Unit): Underway[] {
+    const moves = [...(flying.get(friend) ?? [])];
+
+    if (friend.casting != null) {
+      moves.push(friend.casting);
+    }
+    return moves;
+  }
+
   battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
     if (!event.usable) {
       return;
     }
     for (const friend of getAIContext(battle, event.source).friends()) {
-      if (friend !== event.source && covered(event, friend)) {
-        event.usable = false;
-        return;
+      if (friend === event.source) {
+        continue;
+      }
+      for (const cast of underway(friend)) {
+        if (covered(event, friend, cast)) {
+          event.usable = false;
+          return;
+        }
       }
     }
   });

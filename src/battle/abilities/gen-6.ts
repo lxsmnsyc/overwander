@@ -309,9 +309,6 @@ const setupAbilities = [
   // Florges: the mist comes up with it
   createSurgeAbility(Abilities.MistySurge, Moves.MistyTerrain),
 
-  // Spiky-eared Pichu: the charge in its ears spills into the ground
-  createSurgeAbility(Abilities.ElectricSurge, Moves.ElectricTerrain),
-
   // Clauncher: the claw is a barrel, so anything fired down it lands
   // harder, and the one pulse that mends rather than hurts mends more
   createAbility(

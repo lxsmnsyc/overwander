@@ -11,7 +11,7 @@ import {
   type Moves,
 } from '../../../data/ids/moves';
 import { getMoveData, getWeatherMove } from '../../../data/moves';
-import { Statuses, TeamStatuses, type Weathers } from '../../../data/ids/status';
+import { Statuses, TeamStatuses, Terrains, type Weathers } from '../../../data/ids/status';
 import type Battle from '../../core';
 import {
   BattleEvents,
@@ -1974,4 +1974,40 @@ export function createHitBackAbility(
       }),
     ]);
   });
+}
+
+/** What a Tapu's terrain makes its team's blessed stat count for */
+export const BLESSING_SCALE = 1.25;
+
+/**
+ * What the Tapus share: while a guardian's own terrain is down, one
+ * stat of each unit on its team counts for more. The field is read
+ * rather than the unit, so a teammate in the air is blessed too, and
+ * two holders on one team still bless it once
+ */
+export function createBlessingAbility(
+  ability: Abilities,
+  terrain: Terrains,
+  stat: Stats,
+): ((battle: Battle) => void) & { ability: Abilities } {
+  return createAbility(ability, (battle) =>
+    battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+      const unit = event.source;
+      const laid =
+        battle.terrain.current === Terrains.None
+          ? unit.team.terrain.current
+          : battle.terrain.current;
+
+      if (event.stat !== stat || laid !== terrain) {
+        return;
+      }
+
+      for (const mate of unit.team.units) {
+        if (mate.alive && mate.hasAbility(ability)) {
+          event.value *= BLESSING_SCALE;
+          return;
+        }
+      }
+    }),
+  );
 }

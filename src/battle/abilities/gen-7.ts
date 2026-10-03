@@ -21,6 +21,7 @@ import {
   createReceiverAbility,
   createRetreatAbility,
   createSandRushAbility,
+  createSurgeAbility,
   createThickFatAbility,
   createTypeShiftAbility,
 } from './__create';
@@ -80,6 +81,11 @@ function isSound(move: Moves): boolean {
 
 /** Alola's abilities, as far as its lines are written */
 const setupAbilities = [
+  // The Tapus each lay their own island's terrain as they arrive
+  createSurgeAbility(Abilities.ElectricSurge, Moves.ElectricTerrain),
+  createSurgeAbility(Abilities.PsychicSurge, Moves.PsychicTerrain),
+  createSurgeAbility(Abilities.GrassySurge, Moves.GrassyTerrain),
+
   // Rowlet: it shoots its quills from where it stands
   createNoContactAbility(Abilities.LongReach),
 

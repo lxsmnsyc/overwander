@@ -468,6 +468,10 @@ export const EVERY_LAIR: Lairs[] = [
   Lairs.FulaForest,
   Lairs.GoPark,
   Lairs.AetherParadise,
+  Lairs.RuinsOfConflict,
+  Lairs.RuinsOfLife,
+  Lairs.RuinsOfAbundance,
+  Lairs.RuinsOfHope,
 ];
 
 /**
@@ -547,7 +551,15 @@ const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
     Lairs.FrostCavern,
   ],
   [Biome.Steppe]: [Lairs.PowerPlant],
-  [Biome.Desert]: [Lairs.DesertRuins, Lairs.RockPeakRuins, Lairs.RelicCastle],
+  [Biome.Desert]: [
+    Lairs.DesertRuins,
+    Lairs.RockPeakRuins,
+    Lairs.RelicCastle,
+    Lairs.RuinsOfAbundance,
+  ],
+  [Biome.TropicalSeasonalForest]: [Lairs.RuinsOfConflict],
+  [Biome.TropicalRainforest]: [Lairs.RuinsOfLife],
+  [Biome.RockyCoast]: [Lairs.RuinsOfHope],
   [Biome.Badlands]: [
     Lairs.DesertRuins,
     Lairs.AncientTomb,

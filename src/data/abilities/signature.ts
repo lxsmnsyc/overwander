@@ -2383,6 +2383,28 @@ export default function registerSignatureAbilities(): void {
     description: 'Each sound move it lands raises its Defense 1 stage, up to 3 stages.',
   });
 
+  // The Tapus, on one axis: each guardian blesses its own team while
+  // its own terrain is down
+  registerSignature(Families.TapuKoko, Abilities.StormBlessing, {
+    name: 'Storm Blessing',
+    description: "Its team's Speed counts 1.25x while Electric Terrain is on the field.",
+  });
+
+  registerSignature(Families.TapuLele, Abilities.MindBlessing, {
+    name: 'Mind Blessing',
+    description: "Its team's Special Attack counts 1.25x while Psychic Terrain is on the field.",
+  });
+
+  registerSignature(Families.TapuBulu, Abilities.WildBlessing, {
+    name: 'Wild Blessing',
+    description: "Its team's Attack counts 1.25x while Grassy Terrain is on the field.",
+  });
+
+  registerSignature(Families.TapuFini, Abilities.MistBlessing, {
+    name: 'Mist Blessing',
+    description: "Its team's Special Defense counts 1.25x while Misty Terrain is on the field.",
+  });
+
   // The Alolan lines whose every stage is regional carry their own
   registerFormSignature([Species.RattataAlola, Species.RaticateAlola], Abilities.RichDiet, {
     name: 'Rich Diet',

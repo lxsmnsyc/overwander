@@ -2,11 +2,10 @@ import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
 import { Types } from '../../data/constants/types';
 import Abilities from '../../data/ids/abilities';
-import { DamageFlags, MoveFlags, MoveTargetPriorities, type Moves } from '../../data/ids/moves';
+import { MoveFlags, type Moves } from '../../data/ids/moves';
 import { Species, getBaseFormSpecies } from '../../data/ids/species';
 import { Statuses } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
-import { checkTeamUnit } from '../ai/rating';
 import { abilitiesOf } from '../moves/ability-moves';
 import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
@@ -17,6 +16,7 @@ import {
   createAbility,
   createLimberAbility,
   createNoContactAbility,
+  createRetreatAbility,
   createThickFatAbility,
   createTypeShiftAbility,
 } from './__create';
@@ -33,10 +33,13 @@ export const SCHOOLING_THRESHOLD = 1 / 4;
 /** What the bubble does for its own Water moves */
 export const WATER_BUBBLE_SCALE = 2;
 
-/** The share of its HP a Wimp Out holder bolts below */
-export const WIMP_OUT_THRESHOLD = 1 / 2;
+/** What the fur makes of a touching blow, and of a Fire one */
+export const FLUFFY_CONTACT_SCALE = 0.5;
+export const FLUFFY_FIRE_SCALE = 2;
 
 const FIRE = new Set([Types.Fire]);
+
+const POISONS = new Set([Statuses.Poisoned, Statuses.BadlyPoisoned]);
 
 /**
  * What Receiver will not take up: the ones that copy in their own
@@ -170,6 +173,48 @@ const setupAbilities = [
     }),
   ),
 
+  // Salandit: its poison eats through what a Poison or Steel type
+  // would shrug off. Only the type is set aside, never a status it holds
+  // https://bulbapedia.bulbagarden.net/wiki/Corrosion_(Ability)
+  createAbility(Abilities.Corrosion, (battle) =>
+    battle.on(BattleEvents.CheckUnitStatusImmunity, EventPriority.Exact, (event) => {
+      const cause = event.cause;
+      const target = event.source;
+
+      if (
+        event.immune &&
+        POISONS.has(event.status) &&
+        cause.type !== EffectType.None &&
+        cause.type !== EffectType.Weather &&
+        cause.unit !== target &&
+        cause.unit.hasAbility(Abilities.Corrosion) &&
+        !target.status[event.status] &&
+        (target.types.has(Types.Poison) || target.types.has(Types.Steel))
+      ) {
+        event.immune = false;
+      }
+    }),
+  ),
+
+  // Stufful: the fur softens a blow that touches it and catches fire
+  // from one that burns. A touching Fire move is both, so it lands as usual
+  // https://bulbapedia.bulbagarden.net/wiki/Fluffy_(Ability)
+  createAbility(Abilities.Fluffy, (battle) =>
+    battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
+      const { move, source, target, type } = event.parent;
+
+      if (!target.hasAbility(Abilities.Fluffy)) {
+        return;
+      }
+      if (source.checkMoveContact(move, { type: MoveTargetType.Unit, unit: target })) {
+        event.value *= FLUFFY_CONTACT_SCALE;
+      }
+      if (type === Types.Fire) {
+        event.value *= FLUFFY_FIRE_SCALE;
+      }
+    }),
+  ),
+
   /**
    * Passimian: a fallen teammate's ability is picked up where Receiver
    * was, the first one it does not already carry. Once it has, there is
@@ -197,41 +242,10 @@ const setupAbilities = [
     }),
   ),
 
-  /**
-   * Wimpod, and Wishiwashi as a filler: damage that takes it across
-   * half its HP sends it off the field for its strongest teammate. What
-   * it spent on purpose does not count, and a trap holds it
-   * https://bulbapedia.bulbagarden.net/wiki/Wimp_Out_(Ability)
-   */
-  createAbility(Abilities.WimpOut, (battle) =>
-    battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
-      const unit = event.target;
-      const line = unit.checkStat(Stats.HP, 0) * WIMP_OUT_THRESHOLD;
-
-      if (
-        !event.success ||
-        !unit.alive ||
-        event.flags & DamageFlags.Cost ||
-        unit.health >= line ||
-        unit.health + event.value < line ||
-        !unit.hasAbility(Abilities.WimpOut)
-      ) {
-        return;
-      }
-
-      const replacement = checkTeamUnit(battle, unit.team, MoveTargetPriorities.Strongest, unit);
-
-      if (replacement == null || !unit.checkEscape() || !replacement.checkEscape()) {
-        return;
-      }
-      unit.triggerAbility(Abilities.WimpOut);
-      unit.forceSwitch(replacement, {
-        type: EffectType.Ability,
-        ability: Abilities.WimpOut,
-        unit,
-      });
-    }),
-  ),
+  // Wimpod and Golisopod: one bolt under two names. A trap holds it,
+  // and what it spent on purpose does not count
+  createRetreatAbility(Abilities.WimpOut),
+  createRetreatAbility(Abilities.EmergencyExit),
 ];
 
 export default function setupGen7Abilities(battle: Battle): void {

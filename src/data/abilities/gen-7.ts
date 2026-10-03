@@ -33,6 +33,16 @@ export default function registerGen7Abilities(): void {
     name: 'Water Bubble',
     description: 'Fire moves hit it at 0.5x, it cannot be burned, and its Water moves hit 2x.',
   });
+  // Salandit
+  registerAbility(Abilities.Corrosion, {
+    name: 'Corrosion',
+    description: 'It can poison Poison and Steel types.',
+  });
+  // Stufful
+  registerAbility(Abilities.Fluffy, {
+    name: 'Fluffy',
+    description: 'Contact moves hit it at 0.5x, but Fire moves hit it 2x.',
+  });
   // Passimian
   registerAbility(Abilities.Receiver, {
     name: 'Receiver',
@@ -41,6 +51,12 @@ export default function registerGen7Abilities(): void {
   // Wimpod
   registerAbility(Abilities.WimpOut, {
     name: 'Wimp Out',
+    description:
+      'When damage drops it below 1/2 HP, it leaves the field and its strongest teammate comes in.',
+  });
+  // Golisopod
+  registerAbility(Abilities.EmergencyExit, {
+    name: 'Emergency Exit',
     description:
       'When damage drops it below 1/2 HP, it leaves the field and its strongest teammate comes in.',
   });

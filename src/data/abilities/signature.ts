@@ -2306,4 +2306,21 @@ export default function registerSignatureAbilities(): void {
     description:
       'Its moves hit 1.3x whenever they are cast faster than they would be on their own.',
   });
+  registerSignature(Families.Mareanie, Abilities.ToxicDome, {
+    name: 'Toxic Dome',
+    description:
+      'The first hit it takes after each entrance hits it at 0.5x, and it casts Toxic at the attacker.',
+  });
+  registerSignature(Families.Salandit, Abilities.FumeFlare, {
+    name: 'Fume Flare',
+    description: 'Its Fire moves poison the target 20% of the time.',
+  });
+  registerSignature(Families.Stufful, Abilities.FondCrush, {
+    name: 'Fond Crush',
+    description: 'Its moves hit 1.3x against an infatuated target.',
+  });
+  registerSignature(Families.Wimpod, Abilities.OpeningSlash, {
+    name: 'Opening Slash',
+    description: 'The first move it lands after each entrance hits 1.5x.',
+  });
 }

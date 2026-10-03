@@ -1020,6 +1020,14 @@ const enum Abilities {
   SagesCall = 200383,
   // Passimian
   RushPass = 200384,
+  // Mareanie
+  ToxicDome = 200385,
+  // Salandit
+  FumeFlare = 200386,
+  // Stufful
+  FondCrush = 200387,
+  // Wimpod
+  OpeningSlash = 200388,
 }
 
 export default Abilities;

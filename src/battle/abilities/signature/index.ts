@@ -68,6 +68,7 @@ import pikipekToGrubbin from './pikipek-to-grubbin';
 import oricorioToCrabrawler from './oricorio-to-crabrawler';
 import wishiwashiToBounsweet from './wishiwashi-to-bounsweet';
 import morelullToPassimian from './morelull-to-passimian';
+import mareanieToWimpod from './mareanie-to-wimpod';
 
 /**
  * The invented abilities, one per evolution family, in the order the
@@ -139,6 +140,7 @@ const setupAbilities = [
   ...oricorioToCrabrawler,
   ...wishiwashiToBounsweet,
   ...morelullToPassimian,
+  ...mareanieToWimpod,
   ...deerling,
   ...emolga,
   ...tirtougaToBouffalant,

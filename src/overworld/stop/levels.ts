@@ -6,7 +6,8 @@ import {
   LEGEND_NAMES,
 } from '../../data/overworld/experts';
 import Landmark from '../../data/overworld/landmark';
-import Npc, { npcSheet } from '../../data/overworld/npc';
+import Npc from '../../data/overworld/npc';
+import { npcSheet } from '../npcs';
 import { bossName, executiveName, gruntName } from '../../data/overworld/syndicate';
 import { TYPE_TRAINER_LEVELS, trainerNameIn } from '../../data/overworld/trainers';
 import type ChunkSnapshot from '../chunk-snapshot';

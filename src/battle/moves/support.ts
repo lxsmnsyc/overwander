@@ -34,6 +34,12 @@ const DRUM_COST = 0.5;
 /** The moves that clear the whole party, however they carry */
 export const PARTY_CURES = new Set<Moves>([Moves.HealBell, Moves.Aromatherapy, Moves.SparklySwirl]);
 
+/** The moves that mend the user's whole team at once */
+const TEAM_MENDS = new Set<Moves>([Moves.LifeDew, Moves.JungleHealing, Moves.LunarBlessing]);
+
+/** What each of them puts back, as a share of each unit's HP */
+export const TEAM_MEND_SHARE = 0.25;
+
 /** The most a Pain Split is worth for the health it is sharing */
 const SHARE_BONUS = 5;
 
@@ -178,6 +184,27 @@ export default function setupSupportMoves(battle: Battle): void {
 
     for (const unit of event.source.team.units) {
       if (unit.alive) {
+        unit.cure(cause);
+      }
+    }
+  });
+
+  // Life Dew, Jungle Healing and Lunar Blessing: a quarter back for
+  // the user and every teammate still standing, and the two that heal
+  // more than wounds clear what each is carrying as well
+  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
+    if (!TEAM_MENDS.has(event.move)) {
+      return;
+    }
+
+    const cause = { type: EffectType.Move, move: event.move, unit: event.source } as const;
+
+    for (const unit of event.source.team.units) {
+      if (!unit.alive) {
+        continue;
+      }
+      unit.heal(cause, unit, unit.checkStat(Stats.HP, 0) * TEAM_MEND_SHARE, 0);
+      if (event.move !== Moves.LifeDew) {
         unit.cure(cause);
       }
     }

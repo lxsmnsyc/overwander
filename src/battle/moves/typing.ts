@@ -25,12 +25,20 @@ function retype(unit: Unit, types: Types[]): void {
   }
 }
 
+/** The moves that make the target one type and nothing else */
+const RETYPES = new Map<Moves, Types>([
+  [Moves.Soak, Types.Water],
+  [Moves.MagicPowder, Types.Psychic],
+]);
+
 /** Whether the move would change anything, which is also when it works */
 function changes(move: Moves, source: Unit, target: Unit): boolean {
-  if (move === Moves.Soak) {
+  const into = RETYPES.get(move);
+
+  if (into != null) {
     // A Multitype or RKS System pokemon's type is its item's, not something to wash off
     return (
-      !hasExactly(target, [Types.Water]) &&
+      !hasExactly(target, [into]) &&
       !target.hasAbility(Abilities.Multitype) &&
       !target.hasAbility(Abilities.RksSystem)
     );
@@ -38,7 +46,7 @@ function changes(move: Moves, source: Unit, target: Unit): boolean {
   return target.types.size > 0 && !hasExactly(source, [...target.types]);
 }
 
-const TYPING_MOVES = new Set<Moves>([Moves.Soak, Moves.ReflectType]);
+const TYPING_MOVES = new Set<Moves>([...RETYPES.keys(), Moves.ReflectType]);
 
 export default function setupTypingMoves(battle: Battle): void {
   setupBurnUp(battle);
@@ -55,10 +63,12 @@ export default function setupTypingMoves(battle: Battle): void {
       return;
     }
 
-    if (event.move === Moves.Soak) {
-      retype(target, [Types.Water]);
-    } else {
+    const into = RETYPES.get(event.move);
+
+    if (into == null) {
       retype(event.source, [...target.types]);
+    } else {
+      retype(target, [into]);
     }
   });
 

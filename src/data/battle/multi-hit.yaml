@@ -26,3 +26,10 @@ DualChop: { min: 2, max: 2 }
 GearGrind: { min: 2, max: 2 }
 TailSlap: { min: 2, max: 5 }
 WaterShuriken: { min: 2, max: 5 }
+
+# Galar
+DragonDarts: { min: 2, max: 2 }
+ScaleShot: { min: 2, max: 5 }
+TripleAxel: { min: 3, max: 3, escalating: true }
+DualWingbeat: { min: 2, max: 2 }
+SurgingStrikes: { min: 3, max: 3 }

@@ -5,6 +5,7 @@ import type Battle from '../core';
 import { BattleEvents } from '../events';
 import type Alliance from '../alliance';
 import type Team from '../team';
+import type Unit from '../unit';
 import turns from '../turn';
 
 /**
@@ -28,8 +29,8 @@ export default function setupTerrainMoves(battle: Battle): void {
   battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     const terrain = TERRAIN_MOVES.get(event.move);
 
-    // Lycanroc's Z-Move clears whatever the field was laid with
-    if (event.move === Moves.SplinteredStormshards) {
+    // Lycanroc's Z-Move and Steel Roller clear whatever the field was laid with
+    if (event.move === Moves.SplinteredStormshards || event.move === Moves.SteelRoller) {
       event.source.setTerrain(Terrains.None, 0);
       return;
     }
@@ -38,6 +39,30 @@ export default function setupTerrainMoves(battle: Battle): void {
         terrain,
         event.source.checkTerrainDuration(terrain, TERRAIN_DURATION),
       );
+    }
+  });
+
+  // Steel Roller has nothing to roll flat without a terrain somewhere
+  // on the field, its own side's or the battle's
+  const laid = (unit: Unit): boolean =>
+    battle.terrain.current !== Terrains.None || unit.team.terrain.current !== Terrains.None;
+
+  battle.on(BattleEvents.CheckUnitCanCast, EventPriority.Post, (event) => {
+    if (event.success && event.move === Moves.SteelRoller && !laid(event.source)) {
+      event.success = false;
+    }
+  });
+
+  battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
+    if (event.usable && event.move === Moves.SteelRoller) {
+      event.usable = laid(event.source);
+    }
+  });
+
+  // Grassy Glide skims a lawn faster than it could walk one
+  battle.on(BattleEvents.CheckUnitMovePriority, EventPriority.Post, (event) => {
+    if (event.move === Moves.GrassyGlide && event.source.checkTerrain() === Terrains.Grassy) {
+      event.priority += 1;
     }
   });
 

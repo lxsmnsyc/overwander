@@ -108,3 +108,19 @@ FloatyFall: { status: Flinched, chance: 30 }
 BuzzyBuzz: { status: Paralyzed, chance: 100 }
 SizzlySlide: { status: Burned, chance: 100 }
 StokedSparksurfer: { status: Paralyzed, chance: 100 }
+
+# Galar and Hisui
+SnapTrap: { status: Trapped, chance: 100 }
+ThunderCage: { status: Trapped, chance: 100 }
+PyroBall: { status: Burned, chance: 10 }
+StrangeSteam: { status: Confused, chance: 20 }
+ShellSideArm: { status: Poisoned, chance: 20 }
+ScorchingSands: { status: Burned, chance: 30 }
+FreezingGlare: { status: Frozen, chance: 10 }
+FieryWrath: { status: Flinched, chance: 20 }
+MountainGale: { status: Flinched, chance: 30 }
+BarbBarrage: { status: Poisoned, chance: 50 }
+TripleArrows: { status: Flinched, chance: 30 }
+InfernalParade: { status: Burned, chance: 30 }
+WildboltStorm: { status: Paralyzed, chance: 20 }
+SandsearStorm: { status: Burned, chance: 20 }

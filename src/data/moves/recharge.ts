@@ -18,6 +18,8 @@ export const RECHARGE_MOVES = new Set<Moves>([
   Moves.RockWrecker,
   Moves.RoarOfTime,
   Moves.PrismaticLaser,
+  Moves.Eternabeam,
+  Moves.MeteorAssault,
 ]);
 
 export function isRechargeMove(move: Moves): boolean {

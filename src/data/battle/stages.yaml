@@ -70,3 +70,13 @@ DoubleTeam: { Evasion: 1 }
 Minimize: { Evasion: 2 }
 SweetScent: { Evasion: -2 }
 Defog: { Evasion: -1 }
+
+# Galar and Hisui. No Retreat and Clangorous Soul rise everything at once;
+# what each costs is in the code
+NoRetreat: { Attack: 1, Defense: 1, SpecialAttack: 1, SpecialDefense: 1, Speed: 1 }
+ClangorousSoul: { Attack: 1, Defense: 1, SpecialAttack: 1, SpecialDefense: 1, Speed: 1 }
+TarShot: { Speed: -1 }
+Decorate: { Attack: 2, SpecialAttack: 2 }
+VictoryDance: { Attack: 1, Defense: 1, Speed: 1 }
+Shelter: { Defense: 2 }
+TakeHeart: { SpecialAttack: 1, SpecialDefense: 1 }

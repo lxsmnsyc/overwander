@@ -14,6 +14,8 @@ const THAWING_MOVES = new Set<Moves>([
   Moves.SacredFire,
   Moves.Scald,
   Moves.FusionFlare,
+  Moves.PyroBall,
+  Moves.ScorchingSands,
 ]);
 
 export default function setupThawingMoves(battle: Battle): void {

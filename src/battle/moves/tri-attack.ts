@@ -4,21 +4,38 @@ import { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
 import { BattleEvents, EffectType } from '../events';
 
-// https://bulbapedia.bulbagarden.net/wiki/Tri_Attack_(move)
-export default function setupTriAttack(battle: Battle): void {
-  const CHANCE = 20;
-  const STATUSES = [Statuses.Burned, Statuses.Frozen, Statuses.Paralyzed];
+/**
+ * The moves that land one of three afflictions, evenly rolled: Tri
+ * Attack's fire, ice and lightning, and Dire Claw's poison, paralysis
+ * and sleep
+ * https://bulbapedia.bulbagarden.net/wiki/Tri_Attack_(move)
+ * https://bulbapedia.bulbagarden.net/wiki/Dire_Claw_(move)
+ */
+const ROLLS = new Map<Moves, { chance: number; statuses: Statuses[] }>([
+  [
+    Moves.TriAttack,
+    { chance: 20, statuses: [Statuses.Burned, Statuses.Frozen, Statuses.Paralyzed] },
+  ],
+  [
+    Moves.DireClaw,
+    { chance: 50, statuses: [Statuses.Poisoned, Statuses.Paralyzed, Statuses.Sleeping] },
+  ],
+]);
 
+export default function setupTriAttack(battle: Battle): void {
   battle.on(BattleEvents.CheckUnitAttackEffectChance, EventPriority.Post, (event) => {
-    if (event.parent.move === Moves.TriAttack) {
-      event.value = CHANCE;
+    const roll = ROLLS.get(event.parent.move);
+
+    if (roll != null) {
+      event.value = roll.chance;
     }
   });
 
-  // One of the three afflictions, evenly rolled
   battle.on(BattleEvents.UnitAttackEffect, EventPriority.Exact, (event) => {
-    if (event.parent.move === Moves.TriAttack) {
-      const status = STATUSES[Math.floor(battle.random() * STATUSES.length)];
+    const roll = ROLLS.get(event.parent.move);
+
+    if (roll != null) {
+      const status = roll.statuses[Math.floor(battle.random() * roll.statuses.length)];
 
       event.parent.target.addStatus(status, {
         type: EffectType.Move,

@@ -103,3 +103,22 @@ ClangorousSoulblaze:
     chance: 100,
     self: true,
   }
+
+# Galar and Hisui
+DrumBeating: { stages: [Speed], value: -1, chance: 100 }
+AuraWheel: { stages: [Speed], value: 1, chance: 100, self: true }
+BreakingSwipe: { stages: [Attack], value: -1, chance: 100 }
+AppleAcid: { stages: [SpecialDefense], value: -1, chance: 100 }
+GravApple: { stages: [Defense], value: -1, chance: 100 }
+SpiritBreak: { stages: [SpecialAttack], value: -1, chance: 100 }
+SkitterSmack: { stages: [SpecialAttack], value: -1, chance: 100 }
+ThunderousKick: { stages: [Defense], value: -1, chance: 100 }
+PsyshieldBash: { stages: [Defense], value: 1, chance: 100, self: true }
+SpringtideStorm: { stages: [Attack], value: -1, chance: 30 }
+MysticalPower: { stages: [SpecialAttack], value: 1, chance: 100, self: true }
+EsperWing: { stages: [Speed], value: 1, chance: 100, self: true }
+BitterMalice: { stages: [Attack], value: -1, chance: 100 }
+TripleArrows: { stages: [Defense], value: -1, chance: 50 }
+BleakwindStorm: { stages: [Speed], value: -1, chance: 30 }
+# The cost of charging in headlong, paid by the one who charged
+HeadlongRush: { stages: [Defense, SpecialDefense], value: -1, chance: 100, self: true }

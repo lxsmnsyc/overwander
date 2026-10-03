@@ -66,7 +66,12 @@ export default function setupFollowMe(battle: Battle): void {
 
     const aimed = casting.target.unit;
 
-    if (aimed.team === caster.team || !isSingleTarget(casting.move)) {
+    // Snipe Shot is aimed past whatever is calling for attention
+    if (
+      aimed.team === caster.team ||
+      !isSingleTarget(casting.move) ||
+      casting.move === Moves.SnipeShot
+    ) {
       return;
     }
 

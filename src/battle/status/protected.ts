@@ -63,10 +63,12 @@ export default function setupProtectedStatus(battle: Battle): void {
       return;
     }
 
-    // A King's Shield is raised against blows, so a status move walks
-    // straight past it without breaking it
+    // A King's Shield or an Obstruct is raised against blows, so a
+    // status move walks straight past it without breaking it
+    const raised = guardOf(target);
+
     if (
-      guardOf(target) === Moves.KingsShield &&
+      (raised === Moves.KingsShield || raised === Moves.Obstruct) &&
       getMoveData(event.move).category === MoveCategories.Status
     ) {
       return;

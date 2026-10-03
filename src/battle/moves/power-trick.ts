@@ -10,10 +10,13 @@ import { BattleEvents, EffectType } from '../events';
  * the mark is what says which. What the swap does to a stat is in
  * `status/power-tricked.ts`
  * https://bulbapedia.bulbagarden.net/wiki/Power_Trick_(move)
+ *
+ * Power Shift is the same trick in Hisui, where it swapped Attack and
+ * Defense alone before Scarlet and Violet widened it
  */
 export default function setupPowerTrick(battle: Battle): void {
   battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
-    if (event.move !== Moves.PowerTrick) {
+    if (event.move !== Moves.PowerTrick && event.move !== Moves.PowerShift) {
       return;
     }
 

@@ -1,0 +1,72 @@
+DireClaw:
+  name: Dire Claw
+  description: 50% to poison, paralyse or put the target to sleep.
+PsyshieldBash:
+  name: Psyshield Bash
+  description: Raises the user's Defense a stage.
+PowerShift:
+  name: Power Shift
+  description: Swaps the user's Attack and Defense.
+StoneAxe:
+  name: Stone Axe
+  description: Leaves stones hanging over the target's side, as Stealth Rock does.
+SpringtideStorm:
+  name: Springtide Storm
+  description: Hits everything opposite, 30% to drop their Attack a stage.
+MysticalPower:
+  name: Mystical Power
+  description: Raises the user's Special Attack a stage.
+RagingFury:
+  name: Raging Fury
+  description: Lands the same hit 3 times over, and leaves the user confused.
+WaveCrash:
+  name: Wave Crash
+  description: The user takes 1/3 of the damage it deals.
+Chloroblast:
+  name: Chloroblast
+  description: Costs the user 1/2 its HP however it lands.
+MountainGale:
+  name: Mountain Gale
+  description: 30% to flinch.
+VictoryDance:
+  name: Victory Dance
+  description: Raises the user's Attack, Defense and Speed a stage.
+HeadlongRush:
+  name: Headlong Rush
+  description: Drops the user's Defense and Special Defense a stage.
+BarbBarrage:
+  name: Barb Barrage
+  description: 50% to poison, and 2x power against a poisoned target.
+EsperWing:
+  name: Esper Wing
+  description: More likely to land a critical, and raises the user's Speed a stage.
+BitterMalice:
+  name: Bitter Malice
+  description: Drops the target's Attack a stage.
+Shelter:
+  name: Shelter
+  description: Raises the user's Defense 2 stages.
+TripleArrows:
+  name: Triple Arrows
+  description: More likely to land a critical. 50% to drop the target's Defense a stage, 30% to flinch.
+InfernalParade:
+  name: Infernal Parade
+  description: 30% to burn, and 2x power against a target with a status condition.
+CeaselessEdge:
+  name: Ceaseless Edge
+  description: Leaves a layer of spikes on the target's side.
+BleakwindStorm:
+  name: Bleakwind Storm
+  description: Hits everything opposite, 30% to drop their Speed a stage. Never misses in rain.
+WildboltStorm:
+  name: Wildbolt Storm
+  description: Hits everything opposite, 20% to paralyse. Never misses in rain.
+SandsearStorm:
+  name: Sandsear Storm
+  description: Hits everything opposite, 20% to burn. Never misses in rain.
+LunarBlessing:
+  name: Lunar Blessing
+  description: Heals the user and its teammates 1/4 of their HP, and cures their status conditions.
+TakeHeart:
+  name: Take Heart
+  description: Raises the user's Special Attack and Special Defense a stage, and cures its status condition.

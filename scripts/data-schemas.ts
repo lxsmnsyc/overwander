@@ -52,6 +52,8 @@ const DEFINITIONS: [enumName: string, definition: string][] = [
   ['Npc', 'npc'],
   ['VendorKind', 'vendor-kind'],
   ['Decoration', 'decoration'],
+  ['Landmark', 'landmark'],
+  ['Phenomenon', 'phenomenon'],
   ['Weather', 'weather'],
 ];
 
@@ -541,6 +543,30 @@ const SNOW_TREES: Schema = {
   additionalProperties: { type: 'string' },
 };
 
+const LANDMARKS: Schema = {
+  $schema: DRAFT,
+  title: 'Landmarks',
+  type: 'object',
+  propertyNames: name('landmark'),
+  additionalProperties: part(
+    {
+      weight: described(COUNT, 'How often it is rolled; 0 for one that is placed'),
+      picture: described({ type: 'string' }, 'Its picture on the landmarks sheet'),
+      taken: described({ type: 'string' }, 'What it looks like once this player has been'),
+      underground: described({ type: 'string' }, 'What it looks like from below'),
+    },
+    ['weight'],
+  ),
+};
+
+const BIOME_PHENOMENA: Schema = {
+  $schema: DRAFT,
+  title: 'Biome phenomena',
+  type: 'object',
+  propertyNames: name('biome'),
+  additionalProperties: names('phenomenon', 'In the order the window rolls from them'),
+};
+
 function namesText(title: string, definition: string): Schema {
   return {
     $schema: DRAFT,
@@ -1001,6 +1027,10 @@ export default function renderDataSchemas(members: Map<string, string[]>): Map<s
     ['biome-decorations.json', json(BIOME_DECORATIONS)],
     ['snow-trees.json', json(SNOW_TREES)],
     ['decorations-text.json', json(namesText('Decoration names', 'decoration'))],
+    ['landmarks.json', json(LANDMARKS)],
+    ['landmarks-text.json', json(namesText('Landmark names', 'landmark'))],
+    ['biome-phenomena.json', json(BIOME_PHENOMENA)],
+    ['phenomena-text.json', json(namesText('Phenomenon names', 'phenomenon'))],
   ]);
 
   for (const [file, title, entry] of BATTLE_FILES) {

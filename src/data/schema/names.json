@@ -4871,6 +4871,38 @@
         "Stump"
       ]
     },
+    "landmark": {
+      "enum": [
+        "ItemCache",
+        "LegendaryLair",
+        "ShadowLair",
+        "BerryPatch",
+        "Nest",
+        "WanderingNpc",
+        "Portal",
+        "TeamRocket",
+        "Trainer",
+        "GymLeader",
+        "EliteFour",
+        "Champion",
+        "Market",
+        "GymSeat",
+        "AuctionBoard",
+        "ApricornTree",
+        "FrontierBrain",
+        "PokemonCenter",
+        "CaveMouth",
+        "HoneyTree"
+      ]
+    },
+    "phenomenon": {
+      "enum": [
+        "HiddenGrotto",
+        "DustCloud",
+        "RipplingWater",
+        "FlyingShadow"
+      ]
+    },
     "weather": {
       "enum": [
         "Clear",

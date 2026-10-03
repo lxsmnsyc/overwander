@@ -1,0 +1,67 @@
+# Each landmark by its enum name, in the order the country rolls from
+# once its biome has taken out what cannot be there. `weight` is how often
+# it is rolled against the rest of its biome's pool: a cache, a bush and a
+# tree are what a walk turns up, a duel or a grunt is an afternoon, and a
+# raid is a reason to travel. A landmark a town lays out, or the ground
+# itself decides, weighs nothing: it is placed rather than rolled.
+#
+# `picture` is what it is drawn as on the `landmarks` sheet. One left out
+# is one somebody stands on (a market is its vendor, a gym its leader) or
+# one that grows, like the berry patch. `taken` is what this player sees
+# once they have been, and `underground` what it is drawn as from below,
+# where that differs.
+
+ItemCache:
+  weight: 15
+  picture: cache
+  # A stash one trainer carried off is still buried for the next
+  taken: cache-taken
+LegendaryLair:
+  weight: 2
+  picture: lair
+ShadowLair:
+  weight: 6
+  picture: lair-rubble
+BerryPatch:
+  weight: 15
+Nest:
+  weight: 6
+  picture: nest
+WanderingNpc:
+  weight: 0
+Portal:
+  weight: 0
+  picture: portal
+TeamRocket:
+  weight: 10
+Trainer:
+  weight: 10
+GymLeader:
+  weight: 0
+EliteFour:
+  weight: 0
+Champion:
+  weight: 0
+Market:
+  weight: 0
+GymSeat:
+  weight: 0
+  picture: seat
+AuctionBoard:
+  weight: 0
+  picture: board
+ApricornTree:
+  weight: 15
+FrontierBrain:
+  weight: 1
+PokemonCenter:
+  weight: 0
+CaveMouth:
+  weight: 0
+  picture: cave
+  # The one landmark on both layers at once: a hole in the hillside seen
+  # from the country above, and the lit way out seen from the dark below
+  underground: cave-exit
+HoneyTree:
+  weight: 15
+  picture: honey-tree

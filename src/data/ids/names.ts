@@ -25,6 +25,8 @@ import Executive from './executives';
 import Npc from './npcs';
 import VendorKind from './vendor-kinds';
 import Decoration from './decorations';
+import Landmark from './landmarks';
+import Phenomenon from './phenomena';
 import Weather from '../overworld/weather/kinds';
 
 export const SPECIES_IDS = {
@@ -4857,6 +4859,36 @@ export const DECORATION_IDS = {
   Mushroom: Decoration.Mushroom,
   Stump: Decoration.Stump,
 } as const satisfies Record<string, Decoration>;
+
+export const LANDMARK_IDS = {
+  ItemCache: Landmark.ItemCache,
+  LegendaryLair: Landmark.LegendaryLair,
+  ShadowLair: Landmark.ShadowLair,
+  BerryPatch: Landmark.BerryPatch,
+  Nest: Landmark.Nest,
+  WanderingNpc: Landmark.WanderingNpc,
+  Portal: Landmark.Portal,
+  TeamRocket: Landmark.TeamRocket,
+  Trainer: Landmark.Trainer,
+  GymLeader: Landmark.GymLeader,
+  EliteFour: Landmark.EliteFour,
+  Champion: Landmark.Champion,
+  Market: Landmark.Market,
+  GymSeat: Landmark.GymSeat,
+  AuctionBoard: Landmark.AuctionBoard,
+  ApricornTree: Landmark.ApricornTree,
+  FrontierBrain: Landmark.FrontierBrain,
+  PokemonCenter: Landmark.PokemonCenter,
+  CaveMouth: Landmark.CaveMouth,
+  HoneyTree: Landmark.HoneyTree,
+} as const satisfies Record<string, Landmark>;
+
+export const PHENOMENON_IDS = {
+  HiddenGrotto: Phenomenon.HiddenGrotto,
+  DustCloud: Phenomenon.DustCloud,
+  RipplingWater: Phenomenon.RipplingWater,
+  FlyingShadow: Phenomenon.FlyingShadow,
+} as const satisfies Record<string, Phenomenon>;
 
 export const WEATHER_IDS = {
   Clear: Weather.Clear,

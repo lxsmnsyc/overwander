@@ -70,6 +70,10 @@
     "./src/data/schema/decorations.json": "src/data/overworld/decorations.yaml",
     "./src/data/schema/biome-decorations.json": "src/data/overworld/biome-decorations.yaml",
     "./src/data/schema/snow-trees.json": "src/data/overworld/snow-trees.yaml",
-    "./src/data/schema/decorations-text.json": "src/data/text/*/decorations.yaml"
+    "./src/data/schema/decorations-text.json": "src/data/text/*/decorations.yaml",
+    "./src/data/schema/landmarks.json": "src/data/overworld/landmarks.yaml",
+    "./src/data/schema/landmarks-text.json": "src/data/text/*/landmarks.yaml",
+    "./src/data/schema/biome-phenomena.json": "src/data/overworld/biome-phenomena.yaml",
+    "./src/data/schema/phenomena-text.json": "src/data/text/*/phenomena.yaml"
   }
 }

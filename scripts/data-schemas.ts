@@ -474,6 +474,30 @@ function spoken(
   };
 }
 
+const WORDS: Schema = { type: 'array', items: { type: 'string' }, uniqueItems: true };
+
+const TOWN_NAMES: Schema = {
+  $schema: DRAFT,
+  title: 'Town names',
+  type: 'object',
+  properties: {
+    heads: described(
+      {
+        type: 'object',
+        propertyNames: name('biome'),
+        additionalProperties: { ...WORDS, minItems: 8, maxItems: 8 },
+      },
+      'Exactly 8 heads per biome a town can stand on',
+    ),
+    tails: described(WORDS, 'Welded onto the head'),
+    titles: described(WORDS, 'What the place calls itself'),
+    marks: described(WORDS, 'The word in front, where there is one'),
+    counties: described(WORDS, 'The counties, 8 to a row'),
+  },
+  required: ['heads', 'tails', 'titles', 'marks', 'counties'],
+  additionalProperties: false,
+};
+
 function namesText(title: string, definition: string): Schema {
   return {
     $schema: DRAFT,
@@ -929,6 +953,7 @@ export default function renderDataSchemas(members: Map<string, string[]>): Map<s
       ),
     ],
     ['vendor-stalls-text.json', json(namesText('Vendor stall names', 'vendor-kind'))],
+    ['town-names-text.json', json(TOWN_NAMES)],
   ]);
 
   for (const [file, title, entry] of BATTLE_FILES) {

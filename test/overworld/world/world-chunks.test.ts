@@ -418,7 +418,7 @@ describe('world', () => {
     expect(getSpeciesLairs(Species.Kyogre)).toEqual([Lairs.MarineCave, Lairs.EmbeddedTower]);
     expect(getSpeciesLairs(Species.Groudon)).toEqual([Lairs.TerraCave, Lairs.EmbeddedTower]);
     expect(getSpeciesLairs(Species.Rayquaza)).toEqual([Lairs.SkyPillar, Lairs.EmbeddedTower]);
-    expect(getBiomeLairs(Biome.Beach)).toEqual([Lairs.EmbeddedTower]);
+    expect(getBiomeLairs(Biome.Beach)).toEqual([Lairs.EmbeddedTower, Lairs.AetherParadise]);
     expect(getBiomeLairs(Biome.Badlands)).toContain(Lairs.RockPeakRuins);
     expect(getBiomeLairs(Biome.Tundra)).toContain(Lairs.IcebergRuins);
     expect(getBiomeLairs(Biome.Ocean)).toContain(Lairs.IronRuins);

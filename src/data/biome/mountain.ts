@@ -9,6 +9,7 @@ export default function registerMountainSpawns(): void {
   registerSpawnPool(Biome.Mountain, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.JangmoO, weight: 22 },
         { species: Species.Axew, weight: 5 },
         { species: Species.Klink, weight: 20 },
         { species: Species.Charmander, weight: 2 },
@@ -39,6 +40,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Bronzor, weight: 20 },
       ],
       rare: [
+        { species: Species.HakamoO, weight: 8 },
         { species: Species.Fraxure, weight: 3 },
         { species: Species.Klang, weight: 8 },
         { species: Species.Charmeleon, weight: 1 },
@@ -67,6 +69,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Probopass, weight: 6 },
       ],
       elusive: [
+        { species: Species.KommoO, weight: 4 },
         { species: Species.Drampa, weight: 5 },
         { species: Species.Minior, weight: 5 },
         { species: Species.Togedemaru, weight: 5 },
@@ -118,6 +121,7 @@ export default function registerMountainSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.JangmoO, weight: 22 },
         { species: Species.Axew, weight: 5 },
         { species: Species.Klink, weight: 20 },
         { species: Species.Bagon, weight: 3 },
@@ -149,6 +153,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Bronzor, weight: 20 },
       ],
       rare: [
+        { species: Species.HakamoO, weight: 8 },
         { species: Species.Fraxure, weight: 3 },
         { species: Species.Klang, weight: 8 },
         { species: Species.Shelgon, weight: 1 },
@@ -178,6 +183,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Probopass, weight: 6 },
       ],
       elusive: [
+        { species: Species.KommoO, weight: 4 },
         { species: Species.Drampa, weight: 5 },
         { species: Species.Minior, weight: 5 },
         { species: Species.Togedemaru, weight: 5 },
@@ -230,6 +236,7 @@ export default function registerMountainSpawns(): void {
     },
     [TimeOfDay.Evening]: {
       base: [
+        { species: Species.JangmoO, weight: 22 },
         { species: Species.Honedge, weight: 24 },
         { species: Species.Tynamo, weight: 18 },
         { species: Species.Bagon, weight: 3 },
@@ -254,6 +261,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Woobat, weight: 20 },
       ],
       rare: [
+        { species: Species.HakamoO, weight: 8 },
         { species: Species.Doublade, weight: 8 },
         { species: Species.Eelektrik, weight: 7 },
         { species: Species.Shelgon, weight: 1 },
@@ -276,6 +284,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Swoobat, weight: 8 },
       ],
       elusive: [
+        { species: Species.KommoO, weight: 4 },
         { species: Species.Drampa, weight: 5 },
         { species: Species.Minior, weight: 5 },
         { species: Species.Togedemaru, weight: 5 },
@@ -317,6 +326,7 @@ export default function registerMountainSpawns(): void {
     },
     [TimeOfDay.Night]: {
       base: [
+        { species: Species.JangmoO, weight: 22 },
         { species: Species.Honedge, weight: 24 },
         { species: Species.Tynamo, weight: 18 },
         { species: Species.Zubat, weight: 30 },
@@ -344,6 +354,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Woobat, weight: 20 },
       ],
       rare: [
+        { species: Species.HakamoO, weight: 8 },
         { species: Species.Doublade, weight: 8 },
         { species: Species.Eelektrik, weight: 7 },
         { species: Species.Graveler, weight: 5 },
@@ -369,6 +380,7 @@ export default function registerMountainSpawns(): void {
         { species: Species.Swoobat, weight: 8 },
       ],
       elusive: [
+        { species: Species.KommoO, weight: 4 },
         { species: Species.Drampa, weight: 5 },
         { species: Species.Minior, weight: 5 },
         { species: Species.Togedemaru, weight: 5 },

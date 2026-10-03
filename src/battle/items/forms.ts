@@ -26,9 +26,13 @@ const SHAPE_ABILITIES = new Map<Species, Abilities>([
 
 /**
  * The pokemon that only answer their form item through an ability of
- * their own. An Arceus born with a filler keeps its Normal type
+ * their own. An Arceus or a Silvally born with a filler keeps its
+ * Normal type
  */
-const SHAPE_NEEDS = new Map<Species, Abilities>([[Species.Arceus, Abilities.Multitype]]);
+const SHAPE_NEEDS = new Map<Species, Abilities>([
+  [Species.Arceus, Abilities.Multitype],
+  [Species.Silvally, Abilities.RksSystem],
+]);
 
 /**
  * The form items: a held thing that decides which shape its holder

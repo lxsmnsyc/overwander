@@ -17,6 +17,7 @@ import {
   createGooeyAbility,
   createLimberAbility,
   createNoContactAbility,
+  createQueenlyMajestyAbility,
   createReceiverAbility,
   createRetreatAbility,
   createSandRushAbility,
@@ -452,6 +453,10 @@ const setupAbilities = [
         }),
       ]),
   ),
+
+  // Bruxish: its glare turns away whatever tries to cut in ahead, the way
+  // Queenly Majesty does
+  createQueenlyMajestyAbility(Abilities.Dazzling),
 ];
 
 export default function setupGen7Abilities(battle: Battle): void {

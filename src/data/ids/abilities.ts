@@ -1058,6 +1058,14 @@ const enum Abilities {
   GrudgeShroud = 200402,
   // Drampa
   EldersIre = 200403,
+  // Type: Null
+  MemoryEcho = 200404,
+  // Bruxish
+  PsychicGnash = 200405,
+  // Dhelmise
+  GhostShip = 200406,
+  // Jangmo-o
+  WarClangor = 200407,
 }
 
 export default Abilities;

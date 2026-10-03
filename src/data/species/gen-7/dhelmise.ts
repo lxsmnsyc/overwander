@@ -1,0 +1,110 @@
+import { Stats } from '../../constants/stats';
+import { Types } from '../../constants/types';
+import Abilities from '../../ids/abilities';
+import Biome, { TimeOfDay } from '../../ids/biome';
+import EggGroups from '../../ids/egg-groups';
+import Families from '../../ids/families';
+import { Moves } from '../../ids/moves';
+import { Habitat, Species } from '../../ids/species';
+import { registerSpecies } from '../__create';
+
+// TM and tutor moves shared by the whole family
+const FAMILY_TEACHABLE = [
+  Moves.AerialAce,
+  Moves.AllySwitch,
+  Moves.Attract,
+  Moves.Block,
+  Moves.BrickBreak,
+  Moves.BrutalSwing,
+  Moves.Bulldoze,
+  Moves.Confide,
+  Moves.DoubleTeam,
+  Moves.Earthquake,
+  Moves.Embargo,
+  Moves.EnergyBall,
+  Moves.Facade,
+  Moves.FlashCannon,
+  Moves.Frustration,
+  Moves.GigaDrain,
+  Moves.GigaImpact,
+  Moves.GrassKnot,
+  Moves.GyroBall,
+  Moves.HelpingHand,
+  Moves.HiddenPower,
+  Moves.HyperBeam,
+  Moves.IronDefense,
+  Moves.IronHead,
+  Moves.KnockOff,
+  Moves.PainSplit,
+  Moves.Payback,
+  Moves.Protect,
+  Moves.RainDance,
+  Moves.Rest,
+  Moves.Return,
+  Moves.RockSlide,
+  Moves.RolePlay,
+  Moves.Round,
+  Moves.ShadowBall,
+  Moves.ShadowClaw,
+  Moves.SleepTalk,
+  Moves.SludgeWave,
+  Moves.Snore,
+  Moves.SolarBeam,
+  Moves.Spite,
+  Moves.Substitute,
+  Moves.SunnyDay,
+  Moves.Surf,
+  Moves.Swagger,
+  Moves.SwordsDance,
+  Moves.Synthesis,
+  Moves.Telekinesis,
+  Moves.Thief,
+  Moves.Toxic,
+];
+
+export default function registerDhelmiseSpecies(): void {
+  registerSpecies(Species.Dhelmise, {
+    dexNumber: 781,
+    name: 'Dhelmise',
+    category: 'Sea Creeper Pokemon',
+    height: 3.9,
+    weight: 210,
+    family: Families.Dhelmise,
+    habitat: Habitat.Water,
+    stats: {
+      [Stats.HP]: 70,
+      [Stats.Attack]: 131,
+      [Stats.Defense]: 100,
+      [Stats.SpecialAttack]: 86,
+      [Stats.SpecialDefense]: 90,
+      [Stats.Speed]: 40,
+    },
+    types: [Types.Ghost, Types.Grass],
+    abilities: [Abilities.Steelworker],
+    hiddenAbilities: [Abilities.HeavyMetal, Abilities.CursedBody, Abilities.ShadowTag],
+    eggGroups: [EggGroups.Mineral],
+    genderRatio: [0, 0],
+    catchRate: 25,
+    biomes: [Biome.Ocean, Biome.KelpForest],
+    activeTimes: TimeOfDay.Morning | TimeOfDay.Day | TimeOfDay.Evening | TimeOfDay.Night,
+    learnSet: {
+      level: {
+        1: [Moves.Absorb, Moves.Astonish, Moves.Growth, Moves.RapidSpin, Moves.Switcheroo],
+        5: [Moves.MegaDrain],
+        9: [Moves.Wrap],
+        14: [Moves.GyroBall],
+        18: [Moves.MetalSound],
+        23: [Moves.GigaDrain],
+        27: [Moves.Whirlpool],
+        32: [Moves.AnchorShot],
+        36: [Moves.ShadowBall],
+        41: [Moves.EnergyBall],
+        45: [Moves.Slam],
+        50: [Moves.HeavySlam],
+        54: [Moves.PhantomForce],
+        59: [Moves.PowerWhip],
+      },
+      teachable: [...FAMILY_TEACHABLE],
+    },
+  });
+}

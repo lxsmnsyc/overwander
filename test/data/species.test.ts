@@ -63,6 +63,7 @@ import {
   SAWSBUCK_FORMS,
   SHAYMIN_FORMS,
   SHELLOS_FORMS,
+  SILVALLY_FORMS,
   Species,
   THUNDURUS_FORMS,
   TORNADUS_FORMS,
@@ -444,6 +445,7 @@ describe('species forms', () => {
       ...LYCANROC_FORMS.slice(1),
       ...WISHIWASHI_FORMS.slice(1),
       ...MINIOR_FORMS.slice(1),
+      ...SILVALLY_FORMS.slice(1),
       ...MIMIKYU_FORMS.slice(1),
       ...ALOLAN_FORMS,
       // The true shadows, which are forms of the birds they are the

@@ -1,8 +1,8 @@
 import { AttackPriority, EventPriority } from '../../../core/event-emitter';
 import { Stages, Stats } from '../../../data/constants/stats';
-import { DamageFlags, StatFlags } from '../../../data/ids/moves';
+import { DamageFlags, type Moves, StatFlags } from '../../../data/ids/moves';
 import type { Types } from '../../../data/constants/types';
-import type { UnitAttackEvent } from '../../events';
+import type { MoveTarget, UnitAttackEvent } from '../../events';
 import type Unit from '../../unit';
 import type Abilities from '../../../data/ids/abilities';
 import type { Statuses } from '../../../data/ids/status';
@@ -320,6 +320,55 @@ export function createGooeyAbility(ability: Abilities): (battle: Battle) => void
         // Touching it costs something, so the AI is told before it
         // decides to
         createContactHazard(battle, ability),
+      ]),
+  );
+}
+
+/**
+ * Meta ability for the ones that turn a queue-jumping move away from
+ * their whole side (Queenly Majesty, Dazzling). The priority is asked of
+ * the caster rather than read off the move, so a Prankster's status move
+ * counts
+ * https://bulbapedia.bulbagarden.net/wiki/Queenly_Majesty_(Ability)
+ */
+export function createQueenlyMajestyAbility(ability: Abilities): (battle: Battle) => void {
+  /** Whoever on the struck side turns the move away, or nobody */
+  function guards(source: Unit, move: Moves, target: MoveTarget): Unit[] {
+    if (target.type !== MoveTargetType.Unit) {
+      return [];
+    }
+
+    const found: Unit[] = [];
+
+    for (const unit of target.unit.team.units) {
+      if (unit === source) {
+        return [];
+      }
+      if (unit.alive && unit.hasAbility(ability)) {
+        found.push(unit);
+      }
+    }
+    return found.length > 0 && source.checkMovePriority(move, target) > 0 ? found : [];
+  }
+
+  return createAbility(
+    ability,
+    (battle) =>
+      new MergedLifecycle([
+        // Pure query: a move that cuts ahead of the queue cannot land
+        battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
+          if (!event.immune && guards(event.source, event.move, event.target).length > 0) {
+            event.immune = true;
+          }
+        }),
+        // The cue only fires when a real use was blocked, on the holder
+        battle.on(BattleEvents.UnitTriggerMoveFailed, EventPriority.Post, (event) => {
+          const parent = event.parent;
+
+          for (const unit of guards(parent.source, parent.move, parent.target)) {
+            unit.triggerAbility(ability);
+          }
+        }),
       ]),
   );
 }

@@ -13,6 +13,7 @@ import registerBiomeSpawns, {
 } from '../../../src/data/biome';
 import Biome, {
   BIOME_CONFIGS,
+  SpawnSurface,
   TimeOfDay,
   getTimeOfDay,
   isWaterBiome,
@@ -22,6 +23,7 @@ import Lairs, {
   getLairResidents,
   getLairTitle,
   getSpeciesLairs,
+  lairStandsOn,
 } from '../../../src/data/overworld/lair';
 import { Items } from '../../../src/data/ids/items';
 import registerItems from '../../../src/data/items';
@@ -937,6 +939,12 @@ describe('world', () => {
 
             staged++;
             expect(fitsSurface(roll.species, chunk.getCellSurface(cell)), name).toBe(true);
+            // A lake's lair is on the lake, and a mountain's is not at sea
+            if (roll.lair != null) {
+              const wet = chunk.getCellSurface(cell) === SpawnSurface.Water;
+
+              expect(lairStandsOn(roll.lair, wet), name).toBe(true);
+            }
           }
           for (const [cell, roll] of snapshot.getLegendaryLairs()) {
             expect(getBiomeLairs(snapshot.biomeAt(cell))).toContain(roll.lair);

@@ -160,7 +160,7 @@ export async function expectShut(dialog: Locator): Promise<void> {
 const MENU_DIALOGS: Record<string, string> = {
   Profile: 'Profile',
   World: 'World Map',
-  Catches: 'Catches',
+  Boxes: 'Boxes',
   Pokedex: 'Pokedex',
   Bag: 'Bag',
   Raids: 'Raids',
@@ -353,7 +353,7 @@ export async function claimStarter(page: Page): Promise<void> {
  * Open the player's collection, drawn as a box of squares
  */
 export async function openBox(page: Page): Promise<Locator> {
-  const catches = await openPanel(page, 'Catches');
+  const catches = await openPanel(page, 'Boxes');
 
   // By its own name rather than "the grid in the panel": the squares are
   // laid out inside it, and a bare lookup matches whatever else the

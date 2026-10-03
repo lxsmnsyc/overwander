@@ -49,14 +49,32 @@ const AURA_BEHIND = 0.1;
 /** The dark line round every sparkle shape, so a pale glint still shows on sand */
 const SPARKLE_EDGE = '#5a3c00';
 
-/** How far across the picture a direction round the pokemon points, from 0 to 1 */
-function sideways(kit: EffectBatch, angle: number): number {
+/**
+ * A spot on the ground round the pokemon: `angle` 0 across the picture
+ * and a quarter turn away from the camera, `out` from its feet, with the
+ * part away from the camera squashed the way its shadow is
+ */
+function round(
+  kit: EffectBatch,
+  floor: Spot,
+  angle: number,
+  out: number,
+  squash: number,
+  lift = 0,
+): Spot {
   const [ax, az] = kit.across;
+  const [wx, wz] = kit.away;
+  const across = Math.cos(angle) * out;
+  const away = Math.sin(angle) * out * squash;
 
-  return Math.abs(Math.cos(angle) * ax + Math.sin(angle) * az);
+  return [floor[0] + ax * across + wx * away, lift, floor[2] + az * across + wz * away];
 }
 
-/** The storm cloud a shadow pokemon stands in. `radius` is its ground shadow's */
+/**
+ * The storm cloud a shadow pokemon stands in. `radius` is its ground
+ * shadow's, and `squash` how much flatter that shadow lies toward the
+ * camera than a ground circle does, so the storm lies the same way
+ */
 export function litShadowAura(
   kit: EffectBatch,
   floor: Spot,
@@ -64,6 +82,7 @@ export function litShadowAura(
   elapsed: number,
   seed: number,
   strength: number,
+  squash = 1,
 ): void {
   // Judged just behind the body, as the painted aura is drawn under it: only what reaches past its outline shows
   kit.flat(floor, AURA_BEHIND);
@@ -73,7 +92,7 @@ export function litShadowAura(
   // Angle 0 across the picture and a quarter turn toward the camera, as the painted storm is laid out
   const place = (spot: StormSpot, lift = 0): Spot => {
     const across = Math.cos(spot.angle) * radius * spot.out;
-    const toward = Math.sin(spot.angle) * radius * spot.out;
+    const toward = Math.sin(spot.angle) * radius * spot.out * squash;
 
     return [
       floor[0] + ax * across - wx * toward,
@@ -91,11 +110,14 @@ export function litShadowAura(
   };
   const { wave } = storm;
 
-  kit.pool(floor, radius * 1.5, '#120422', 0.7 * strength, { add: 0 });
+  kit.pool(floor, radius * 1.5, '#120422', 0.7 * strength, { add: 0, squash });
   kit.ripple(floor, radius * wave.out, 0.28 / wave.out, '#1e0834', 0.5 * wave.life * strength, {
     add: 0,
+    squash,
   });
-  kit.ripple(floor, radius * wave.out, 0.12 / wave.out, '#be60ff', 0.6 * wave.life * strength);
+  kit.ripple(floor, radius * wave.out, 0.12 / wave.out, '#be60ff', 0.6 * wave.life * strength, {
+    squash,
+  });
 
   const ring = trace(storm.ring, 0.02);
 
@@ -133,7 +155,11 @@ export function litShadowAura(
   }
 }
 
-/** The light a purified pokemon stands in. `radius` is its ground shadow's */
+/**
+ * The light a purified pokemon stands in. `radius` is its ground
+ * shadow's, and `squash` how much flatter that shadow lies toward the
+ * camera than a ground circle does, so the ring lies the same way
+ */
 export function litPurifiedAura(
   kit: EffectBatch,
   floor: Spot,
@@ -141,18 +167,20 @@ export function litPurifiedAura(
   elapsed: number,
   seed: number,
   strength: number,
+  squash = 1,
 ): void {
   // Judged just behind the body, as the painted aura is drawn under it: only what reaches past its outline shows
   kit.flat(floor, AURA_BEHIND);
   const ring = radius * 1.15;
 
-  kit.pool(floor, radius * 1.5, '#ffecaa', 0.55 * strength);
+  kit.pool(floor, radius * 1.5, '#ffecaa', 0.55 * strength, { squash });
   for (let index = 0; index < PILLARS; index += 1) {
     const angle = ((index + 0.5) / PILLARS) * TAU;
     const breath = 0.5 + 0.5 * Math.sin((elapsed / BREATH) * TAU + index * 1.9 + seed);
     const out = radius * 1.2;
-    const base: Spot = [floor[0] + Math.cos(angle) * out, 0.02, floor[2] + Math.sin(angle) * out];
-    const tall = radius * (1.7 + sideways(kit, angle)) * (0.8 + 0.2 * breath);
+    const base = round(kit, floor, angle, out, squash, 0.02);
+    // Tallest at the sides, where the body does not stand in front of them
+    const tall = radius * (1.7 + Math.abs(Math.cos(angle))) * (0.8 + 0.2 * breath);
     const wide = radius * (0.14 + 0.06 * breath) * 2;
     const middle: Spot = [base[0], tall * 0.6, base[2]];
     const top: Spot = [base[0], tall, base[2]];
@@ -164,8 +192,8 @@ export function litPurifiedAura(
     kit.ribbon([base, middle], wide, '#ffe282', (0.45 + 0.35 * breath) * strength);
     kit.ribbon([middle, top], wide * 0.6, '#fff4c8', (0.2 + 0.2 * breath) * strength);
   }
-  kit.ripple(floor, ring, 0.22, '#b07014', 0.55 * strength, { add: 0 });
-  kit.ripple(floor, ring, 0.12, '#ffd66e', 0.9 * strength);
+  kit.ripple(floor, ring, 0.22, '#b07014', 0.55 * strength, { add: 0, squash });
+  kit.ripple(floor, ring, 0.12, '#ffd66e', 0.9 * strength, { squash });
 
   const orbit = (elapsed / ORBIT + seed * 0.37) * TAU;
 
@@ -175,7 +203,7 @@ export function litPurifiedAura(
     for (let step = 0; step <= 6; step += 1) {
       const angle = start + (step / 6) * 0.9;
 
-      path.push([floor[0] + Math.cos(angle) * ring, 0.05, floor[2] + Math.sin(angle) * ring]);
+      path.push(round(kit, floor, angle, ring, squash, 0.05));
     }
     kit.ribbon(path, radius * 0.18, '#fffce8', 0.95 * strength);
   }
@@ -187,11 +215,7 @@ export function litPurifiedAura(
     const size = radius * (0.26 + drift(seed, index, 1) * 0.14) * (1 - phase * 0.3);
     const spot = aside(
       kit,
-      [
-        floor[0] + Math.cos(angle) * radius * 1.3,
-        phase * radius * RISE,
-        floor[2] + Math.sin(angle) * radius * 1.3,
-      ],
+      round(kit, floor, angle, radius * 1.3, squash, phase * radius * RISE),
       Math.sin(phase * TAU + index) * radius * 0.2,
     );
 

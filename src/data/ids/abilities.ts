@@ -1036,6 +1036,16 @@ const enum Abilities {
   Starfall = 200391,
   // Togedemaru
   ChargedSpines = 200392,
+  // Alolan Rattata
+  RichDiet = 200393,
+  // Alolan Sandshrew
+  Frostforged = 200394,
+  // Alolan Vulpix
+  AuroraCrown = 200395,
+  // Alolan Diglett
+  WireSnare = 200396,
+  // Alolan Meowth
+  TauntingGaze = 200397,
 }
 
 export default Abilities;

@@ -1,5 +1,7 @@
 import type Abilities from '../ids/abilities';
 import type Families from '../ids/families';
+import type { Species } from '../ids/species';
+import { getSpeciesData } from '../species/__create';
 
 export interface AbilityData {
   name: string;
@@ -62,4 +64,30 @@ export function registerSignature(family: Families, ability: Abilities, data: Ab
  */
 export function getSignatureAbility(family: Families): Abilities | null {
   return SIGNATURE_ABILITIES.get(family) ?? null;
+}
+
+/**
+ * The signatures a regional line was given in place of its family's.
+ * Only a line whose every stage has the regional form earns its own;
+ * a lone regional stage keeps the family's
+ */
+const FORM_SIGNATURES = new Map<Species, Abilities>();
+
+export function registerFormSignature(
+  forms: Species[],
+  ability: Abilities,
+  data: AbilityData,
+): void {
+  registerAbility(ability, data);
+  for (const form of forms) {
+    FORM_SIGNATURES.set(form, ability);
+  }
+}
+
+/**
+ * The signature a species is owed: its regional line's own where it has
+ * one, its family's otherwise, and null where neither is written yet
+ */
+export function getSpeciesSignature(species: Species): Abilities | null {
+  return FORM_SIGNATURES.get(species) ?? getSignatureAbility(getSpeciesData(species).family);
 }

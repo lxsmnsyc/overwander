@@ -46,6 +46,7 @@ export default function registerBeachSpawns(): void {
         { species: Species.Floatzel, weight: 8 },
       ],
       elusive: [
+        { species: Species.RaichuAlola, weight: 4 },
         { species: Species.Pyukumuku, weight: 5 },
         { species: Species.OricorioPau, weight: 5 },
         { species: Species.Primarina, weight: 2 },
@@ -98,6 +99,7 @@ export default function registerBeachSpawns(): void {
         { species: Species.Floatzel, weight: 8 },
       ],
       elusive: [
+        { species: Species.RaichuAlola, weight: 4 },
         { species: Species.Pyukumuku, weight: 5 },
         { species: Species.OricorioPau, weight: 5 },
         { species: Species.Primarina, weight: 2 },
@@ -134,7 +136,10 @@ export default function registerBeachSpawns(): void {
         { species: Species.WormadamSandy, weight: 4 },
         { species: Species.Floatzel, weight: 8 },
       ],
-      elusive: [{ species: Species.Pyukumuku, weight: 5 }],
+      elusive: [
+        { species: Species.RaichuAlola, weight: 4 },
+        { species: Species.Pyukumuku, weight: 5 },
+      ],
       prized: [...UNOWN_SPAWNS],
       special: [
         { species: Species.Groudon, weight: 10 },
@@ -165,7 +170,10 @@ export default function registerBeachSpawns(): void {
         { species: Species.WormadamSandy, weight: 4 },
         { species: Species.Floatzel, weight: 8 },
       ],
-      elusive: [{ species: Species.Pyukumuku, weight: 5 }],
+      elusive: [
+        { species: Species.RaichuAlola, weight: 4 },
+        { species: Species.Pyukumuku, weight: 5 },
+      ],
       prized: [...UNOWN_SPAWNS],
       special: [
         { species: Species.Groudon, weight: 10 },

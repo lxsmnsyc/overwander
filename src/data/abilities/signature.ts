@@ -1,6 +1,7 @@
 import Abilities from '../ids/abilities';
 import Families from '../ids/families';
-import { registerSignature } from './__create';
+import { Species } from '../ids/species';
+import { registerFormSignature, registerSignature } from './__create';
 
 /**
  * One invented ability per evolution family, themed on what the line
@@ -2341,5 +2342,28 @@ export default function registerSignatureAbilities(): void {
     name: 'Charged Spines',
     description:
       'A contact move landing on it charges it, and its next Electric move that lands hits 1.5x.',
+  });
+
+  // The Alolan lines whose every stage is regional carry their own
+  registerFormSignature([Species.RattataAlola, Species.RaticateAlola], Abilities.RichDiet, {
+    name: 'Rich Diet',
+    description: 'Each Berry it eats raises its Attack 1 stage.',
+  });
+  registerFormSignature([Species.SandshrewAlola, Species.SandslashAlola], Abilities.Frostforged, {
+    name: 'Frostforged',
+    description: 'Fire and Fighting moves hit it at 0.75x.',
+  });
+  registerFormSignature([Species.VulpixAlola, Species.NinetalesAlola], Abilities.AuroraCrown, {
+    name: 'Aurora Crown',
+    description:
+      'It casts Aurora Veil over its party as it arrives on the field while hail or snow falls.',
+  });
+  registerFormSignature([Species.DiglettAlola, Species.DugtrioAlola], Abilities.WireSnare, {
+    name: 'Wire Snare',
+    description: 'The first contact move to land on it after each entrance binds the attacker.',
+  });
+  registerFormSignature([Species.MeowthAlola, Species.PersianAlola], Abilities.TauntingGaze, {
+    name: 'Taunting Gaze',
+    description: 'It casts Taunt at an enemy as it arrives on the field.',
   });
 }

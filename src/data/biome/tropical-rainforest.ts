@@ -26,6 +26,7 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Slakoth, weight: 20 },
       ],
       uncommon: [
+        { species: Species.MeowthAlola, weight: 22 },
         { species: Species.Fomantis, weight: 22 },
         { species: Species.Exeggcute, weight: 20 },
         { species: Species.Pineco, weight: 20 },
@@ -39,6 +40,7 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Vigoroth, weight: 10 },
       ],
       scarce: [
+        { species: Species.PersianAlola, weight: 6 },
         { species: Species.Lurantis, weight: 6 },
         { species: Species.Exeggutor, weight: 10 },
         { species: Species.Forretress, weight: 5 },
@@ -72,6 +74,7 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Slakoth, weight: 20 },
       ],
       uncommon: [
+        { species: Species.MeowthAlola, weight: 22 },
         { species: Species.Fomantis, weight: 22 },
         { species: Species.Exeggcute, weight: 20 },
         { species: Species.Pineco, weight: 20 },
@@ -85,6 +88,7 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Vigoroth, weight: 10 },
       ],
       scarce: [
+        { species: Species.PersianAlola, weight: 6 },
         { species: Species.Lurantis, weight: 6 },
         { species: Species.Exeggutor, weight: 10 },
         { species: Species.Forretress, weight: 5 },
@@ -112,6 +116,8 @@ export default function registerTropicalRainforestSpawns(): void {
     [TimeOfDay.Evening]: {
       base: [{ species: Species.Rowlet, weight: 2 }],
       uncommon: [
+        { species: Species.MeowthAlola, weight: 22 },
+        { species: Species.RattataAlola, weight: 22 },
         { species: Species.Noibat, weight: 24 },
         { species: Species.Exeggcute, weight: 20 },
         { species: Species.Spinarak, weight: 20 },
@@ -121,6 +127,8 @@ export default function registerTropicalRainforestSpawns(): void {
       ],
       rare: [{ species: Species.Dartrix, weight: 2 }],
       scarce: [
+        { species: Species.PersianAlola, weight: 6 },
+        { species: Species.RaticateAlola, weight: 6 },
         { species: Species.Noivern, weight: 6 },
         { species: Species.Exeggutor, weight: 10 },
         { species: Species.Ariados, weight: 8 },
@@ -142,6 +150,8 @@ export default function registerTropicalRainforestSpawns(): void {
     [TimeOfDay.Night]: {
       base: [{ species: Species.Rowlet, weight: 2 }],
       uncommon: [
+        { species: Species.MeowthAlola, weight: 22 },
+        { species: Species.RattataAlola, weight: 22 },
         { species: Species.Noibat, weight: 24 },
         { species: Species.Exeggcute, weight: 20 },
         { species: Species.Spinarak, weight: 20 },
@@ -151,6 +161,8 @@ export default function registerTropicalRainforestSpawns(): void {
       ],
       rare: [{ species: Species.Dartrix, weight: 2 }],
       scarce: [
+        { species: Species.PersianAlola, weight: 6 },
+        { species: Species.RaticateAlola, weight: 6 },
         { species: Species.Noivern, weight: 6 },
         { species: Species.Exeggutor, weight: 10 },
         { species: Species.Ariados, weight: 8 },

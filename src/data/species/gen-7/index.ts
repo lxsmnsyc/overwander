@@ -25,6 +25,12 @@ import registerSandygastSpecies from './sandygast';
 import registerPyukumukuSpecies from './pyukumuku';
 import registerMiniorSpecies from './minior';
 import registerTogedemaruSpecies from './togedemaru';
+import registerAlolanRattataSpecies from './alolan-rattata';
+import registerAlolanRaichuSpecies from './alolan-raichu';
+import registerAlolanSandshrewSpecies from './alolan-sandshrew';
+import registerAlolanVulpixSpecies from './alolan-vulpix';
+import registerAlolanDiglettSpecies from './alolan-diglett';
+import registerAlolanMeowthSpecies from './alolan-meowth';
 
 /** Alola, as far as it is written */
 export default function registerGen7Species(): void {
@@ -55,4 +61,10 @@ export default function registerGen7Species(): void {
   registerPyukumukuSpecies();
   registerMiniorSpecies();
   registerTogedemaruSpecies();
+  registerAlolanRattataSpecies();
+  registerAlolanRaichuSpecies();
+  registerAlolanSandshrewSpecies();
+  registerAlolanVulpixSpecies();
+  registerAlolanDiglettSpecies();
+  registerAlolanMeowthSpecies();
 }

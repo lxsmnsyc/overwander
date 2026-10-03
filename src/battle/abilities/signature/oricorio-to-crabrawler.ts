@@ -1,23 +1,15 @@
 import { AttackPriority, EventPriority } from '../../../core/event-emitter';
 import Abilities from '../../../data/ids/abilities';
-import { ItemTypes } from '../../../data/ids/items';
 import { MoveAttackFlags } from '../../../data/ids/moves';
 import { Statuses } from '../../../data/ids/status';
-import { getItemData } from '../../../data/items';
 import { isPunchMove } from '../../../data/moves/punches';
 import type Battle from '../../core';
-import {
-  BattleEvents,
-  type EffectCause,
-  EffectType,
-  MoveTargetType,
-  type UnitTriggerMoveChildEvent,
-} from '../../events';
+import { BattleEvents, MoveTargetType, type UnitTriggerMoveChildEvent } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
 import { STATUS_MOVES } from '../../moves/status';
 import { isCentered } from '../../status/centered';
 import type Unit from '../../unit';
-import { unitTarget } from '../../utils';
+import { isOwnBerry, unitTarget } from '../../utils';
 import { createAbility, getAbilityHolders } from '../__create';
 import { createUnitState, isPseudoMove, isSingleTargetMove } from './__create';
 
@@ -29,15 +21,6 @@ export const DIZZY_TWIRL_SCALE = 1.3;
 
 /** What a berry is worth to a teammate while the bee stands */
 export const HONEY_SHARE_SCALE = 1.5;
-
-/** Whether a berry the unit ate itself caused this */
-function isOwnBerry(cause: EffectCause, eater: Unit): boolean {
-  return (
-    cause.type === EffectType.Item &&
-    cause.unit === eater &&
-    getItemData(cause.item).type === ItemTypes.Berry
-  );
-}
 
 /** A standing holder of Honey Share beside the eater, not the eater itself */
 function sharerOf(battle: Battle, eater: Unit): Unit | undefined {

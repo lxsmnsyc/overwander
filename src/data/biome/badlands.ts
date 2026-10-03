@@ -23,6 +23,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Roggenrola, weight: 24 },
       ],
       uncommon: [
+        { species: Species.DiglettAlola, weight: 22 },
         { species: Species.Salandit, weight: 22 },
         { species: Species.Rockruff, weight: 22 },
         { species: Species.Helioptile, weight: 24 },
@@ -55,6 +56,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Boldore, weight: 12 },
       ],
       scarce: [
+        { species: Species.DugtrioAlola, weight: 6 },
         { species: Species.Salazzle, weight: 6 },
         { species: Species.Lycanroc, weight: 6 },
         { species: Species.Heliolisk, weight: 6 },
@@ -125,6 +127,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Roggenrola, weight: 24 },
       ],
       uncommon: [
+        { species: Species.DiglettAlola, weight: 22 },
         { species: Species.Salandit, weight: 22 },
         { species: Species.Rockruff, weight: 22 },
         { species: Species.Helioptile, weight: 24 },
@@ -160,6 +163,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Boldore, weight: 12 },
       ],
       scarce: [
+        { species: Species.DugtrioAlola, weight: 6 },
         { species: Species.Salazzle, weight: 6 },
         { species: Species.Lycanroc, weight: 6 },
         { species: Species.Heliolisk, weight: 6 },
@@ -226,6 +230,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Gible, weight: 2 },
       ],
       uncommon: [
+        { species: Species.DiglettAlola, weight: 22 },
         { species: Species.Salandit, weight: 22 },
         { species: Species.Rockruff, weight: 22 },
         { species: Species.Pawniard, weight: 16 },
@@ -255,6 +260,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Gabite, weight: 1 },
       ],
       scarce: [
+        { species: Species.DugtrioAlola, weight: 6 },
         { species: Species.Salazzle, weight: 6 },
         { species: Species.LycanrocDusk, weight: 6 },
         { species: Species.Bisharp, weight: 6 },
@@ -312,6 +318,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Gible, weight: 2 },
       ],
       uncommon: [
+        { species: Species.DiglettAlola, weight: 22 },
         { species: Species.Salandit, weight: 22 },
         { species: Species.Rockruff, weight: 22 },
         { species: Species.Pawniard, weight: 16 },
@@ -344,6 +351,7 @@ export default function registerBadlandsSpawns(): void {
         { species: Species.Gabite, weight: 1 },
       ],
       scarce: [
+        { species: Species.DugtrioAlola, weight: 6 },
         { species: Species.Salazzle, weight: 6 },
         { species: Species.LycanrocMidnight, weight: 6 },
         { species: Species.Bisharp, weight: 6 },

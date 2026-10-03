@@ -16,6 +16,12 @@ export interface TeamStripProps {
    * that gives it the width says so
    */
   class?: string;
+  /**
+   * What each one finished a fight on, by its place in the party, as a
+   * share of its HP: a summary draws the party as the fight left it
+   * rather than as it went in
+   */
+  ended?: (number | undefined)[];
 }
 
 /**
@@ -28,8 +34,11 @@ export default function TeamStrip(props: TeamStripProps): JSX.Element {
   const entries = (): BoxEntry[] => {
     const squares: BoxEntry[] = [];
 
-    for (const record of props.catches) {
-      squares.push(asBoxEntry(record));
+    for (const [seat, record] of props.catches.entries()) {
+      const entry = asBoxEntry(record);
+      const health = props.ended?.[seat];
+
+      squares.push(health == null ? entry : { ...entry, health, fainted: health <= 0 });
     }
     return squares;
   };

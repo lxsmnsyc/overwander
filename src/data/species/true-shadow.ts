@@ -92,8 +92,9 @@ export default function registerTrueShadowSpecies(): void {
       // no pool stages one: the sky is what decides, not the country
       biomes: [],
       // It keeps its counterpart's rank, which is what stages it in the
-      // same band, but nothing wild carries anything into the dark
+      // same band, but carries nothing and lays no egg of its own
       heldItems: undefined,
+      eggCycles: undefined,
     });
   }
 }

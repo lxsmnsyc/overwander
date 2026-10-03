@@ -172,6 +172,13 @@ export interface CatchBoxProps {
    */
   numbered?: boolean;
   /**
+   * Whether it is a team rather than a box: a plain row of squares with
+   * no frame round it, each pokemon filling its square, and the level
+   * left to the card. A team is read at a glance beside something
+   * else, where the box's badges covered all of a small sprite
+   */
+  compact?: boolean;
+  /**
    * Whether the box takes the whole width it is given, its squares
    * wider than they are tall, for the screen that is nothing but the
    * box: thirty squares that size fit a laptop without scrolling
@@ -391,7 +398,11 @@ export default function CatchBox(props: CatchBoxProps): JSX.Element {
       {/* Square and inset by the same margin on every side, so the
           pokemon is fitted to a square whichever way round its cell is
           the longer */}
-      <span class="pointer-events-none absolute inset-1.5 flex items-center justify-center">
+      <span
+        class={`pointer-events-none absolute flex items-center justify-center ${
+          props.compact === true ? 'inset-0.5' : 'inset-1.5'
+        }`}
+      >
         {/* Square, centred and as tall as the cell, so a wide cell does not stretch it */}
         <span class="absolute inset-y-0 left-1/2 aspect-square h-full max-w-full -translate-x-1/2">
           <AnimatedSprite
@@ -431,7 +442,7 @@ export default function CatchBox(props: CatchBoxProps): JSX.Element {
         when={entry().reason}
         fallback={
           <>
-            <Show when={entry().level}>
+            <Show when={props.compact !== true && entry().level}>
               {(level) => (
                 <span
                   class="pointer-events-none absolute bottom-2 left-1 rounded-md bg-ink px-1
@@ -445,8 +456,11 @@ export default function CatchBox(props: CatchBoxProps): JSX.Element {
                 and an empty bar is still the bar */}
             <Show when={entry().health !== undefined}>
               <span
-                class="pointer-events-none absolute inset-x-1.5 bottom-1 h-0.75 overflow-hidden
-                  rounded-full bg-line-soft"
+                class={`pointer-events-none absolute overflow-hidden rounded-full bg-line-soft ${
+                  props.compact === true
+                    ? 'inset-x-1 bottom-0.5 h-0.5'
+                    : 'inset-x-1.5 bottom-1 h-0.75'
+                }`}
               >
                 <span
                   class={`block h-full ${healthTone(entry().health ?? 0)}`}
@@ -563,10 +577,13 @@ export default function CatchBox(props: CatchBoxProps): JSX.Element {
     <div
       role="group"
       aria-label={`Box of pokemon, ${filled()} of ${squares().length} squares filled.`}
-      class={`mx-auto my-2 grid w-full gap-1.5 rounded-xl border-4 border-tide bg-parchment p-1.5
-        shadow-pop ${
-          props.fill === true ? COLUMNS[props.columns ?? 6] : SHAPE[props.columns ?? 6]
-        }`}
+      class={`grid w-full ${
+        props.compact === true
+          ? `gap-1 ${COLUMNS[props.columns ?? 6]}`
+          : `mx-auto my-2 gap-1.5 rounded-xl border-4 border-tide bg-parchment p-1.5 shadow-pop ${
+              props.fill === true ? COLUMNS[props.columns ?? 6] : SHAPE[props.columns ?? 6]
+            }`
+      }`}
     >
       <Index each={squares()}>
         {(_, index) => (

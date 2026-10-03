@@ -21,7 +21,7 @@ export interface TeamRowProps extends ParentProps {
 export default function TeamRow(props: TeamRowProps): JSX.Element {
   return (
     <li aria-label={props.name} class="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-2">
-      <div class="w-full max-w-60 shrink-0">
+      <div class="w-full shrink-0 sm:w-80">
         <TeamStrip catches={props.catches} />
       </div>
       <div

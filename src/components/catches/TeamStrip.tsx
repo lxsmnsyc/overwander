@@ -44,9 +44,10 @@ export default function TeamStrip(props: TeamStripProps): JSX.Element {
   };
 
   return (
-    <div class={props.class ?? 'w-full max-w-60'}>
+    <div class={props.class ?? 'w-full max-w-80'}>
       <CatchBox
         capacity={TEAM_SIZE}
+        compact
         cardOnly
         entries={entries()}
         cell={(entry) => (

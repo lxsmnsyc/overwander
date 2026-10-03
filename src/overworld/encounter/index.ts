@@ -135,6 +135,23 @@ export interface EncounterOptions {
   skyGifts?: boolean;
 }
 
+/**
+ * One rolled value lifted onto a floor. The roll is spread across the
+ * floor and the ceiling rather than clamped to the floor: a clamp only
+ * lifts the low rolls, so a boosted spawn was no likelier to be
+ * perfect than any other. Spread from the top, a bigger floor gives a
+ * perfect value to more rolls (2 of 32 at 9, 8 of 32 at 27)
+ */
+export function raiseIV(raw: number, floor: number): number {
+  if (floor <= 0) {
+    return raw;
+  }
+  if (floor >= MAX_IV) {
+    return MAX_IV;
+  }
+  return MAX_IV - Math.floor(((MAX_IV - raw) * (MAX_IV - floor)) / MAX_IV);
+}
+
 export default function deriveEncounter(
   snapshot: ChunkSnapshot,
   spawn: Spawn,
@@ -169,7 +186,7 @@ export default function deriveEncounter(
     options.level ?? lowest + Math.floor((levelSlice / TRAIT_RANGE) * (highest - lowest + 1));
 
   const sliceIV = (index: number): number =>
-    Math.max(minimumIV, (individualValue >>> (IV_BITS * index)) & IV_MASK);
+    raiseIV((individualValue >>> (IV_BITS * index)) & IV_MASK, minimumIV);
 
   const ivs = packIVs({
     [Stats.HP]: sliceIV(0),

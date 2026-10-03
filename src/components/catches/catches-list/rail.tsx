@@ -79,18 +79,31 @@ export default function BoxRail(props: BoxRailProps): JSX.Element {
   /** Boxes the player made, which is what the limit counts */
   const made = (): number => props.boxes.length - 1;
 
-  /** The player's boxes with the one being moved put down before `before` */
-  const reordered = (before: string): string[] => {
+  /**
+   * The player's boxes with `carried` put down where `onto` stands:
+   * before it when carried up the list, after it when carried down, so
+   * a box can reach the end. Handed the box rather than reading it from
+   * the drag, which is over by the time this is asked
+   */
+  const reordered = (carried: string, onto: string): string[] => {
     const order: string[] = [];
+    let passed = false;
 
     for (const box of props.boxes) {
-      if (box.id == null || box.id === moving()) {
+      if (box.id == null) {
         continue;
       }
-      if (box.id === before) {
-        order.push(moving() ?? '');
+      if (box.id === carried) {
+        passed = true;
+        continue;
+      }
+      if (box.id === onto && !passed) {
+        order.push(carried);
       }
       order.push(box.id);
+      if (box.id === onto && passed) {
+        order.push(carried);
+      }
     }
     return order;
   };
@@ -183,7 +196,7 @@ export default function BoxRail(props: BoxRailProps): JSX.Element {
               if (carried != null) {
                 setMoving(null);
                 if (box.id != null && box.id !== carried) {
-                  props.onArrange(reordered(box.id));
+                  props.onArrange(reordered(carried, box.id));
                 }
                 return;
               }

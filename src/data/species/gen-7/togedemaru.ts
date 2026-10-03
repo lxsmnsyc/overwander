@@ -1,0 +1,116 @@
+import { Stats } from '../../constants/stats';
+import { Types } from '../../constants/types';
+import Abilities from '../../ids/abilities';
+import Biome, { TimeOfDay } from '../../ids/biome';
+import EggGroups from '../../ids/egg-groups';
+import Families from '../../ids/families';
+import { Moves } from '../../ids/moves';
+import { Species } from '../../ids/species';
+import { registerSpecies } from '../__create';
+
+// TM and tutor moves shared by the whole family
+const FAMILY_TEACHABLE = [
+  Moves.AfterYou,
+  Moves.Attract,
+  Moves.Bounce,
+  Moves.ChargeBeam,
+  Moves.Confide,
+  Moves.Covet,
+  Moves.DoubleTeam,
+  Moves.Electroweb,
+  Moves.Endeavor,
+  Moves.Facade,
+  Moves.Fling,
+  Moves.Frustration,
+  Moves.GigaImpact,
+  Moves.GrassKnot,
+  Moves.Gravity,
+  Moves.GyroBall,
+  Moves.HelpingHand,
+  Moves.HiddenPower,
+  Moves.IronHead,
+  Moves.IronTail,
+  Moves.LastResort,
+  Moves.MagnetRise,
+  Moves.Payback,
+  Moves.PoisonJab,
+  Moves.Protect,
+  Moves.Reflect,
+  Moves.Rest,
+  Moves.Return,
+  Moves.RolePlay,
+  Moves.Round,
+  Moves.ShockWave,
+  Moves.SleepTalk,
+  Moves.Snore,
+  Moves.Substitute,
+  Moves.SuperFang,
+  Moves.Swagger,
+  Moves.Thief,
+  Moves.Thunder,
+  Moves.ThunderWave,
+  Moves.Thunderbolt,
+  Moves.Toxic,
+  Moves.UTurn,
+  Moves.VoltSwitch,
+  Moves.WildCharge,
+  Moves.WorkUp,
+  Moves.ZenHeadbutt,
+];
+
+export default function registerTogedemaruSpecies(): void {
+  registerSpecies(Species.Togedemaru, {
+    dexNumber: 777,
+    name: 'Togedemaru',
+    category: 'Roly-Poly Pokemon',
+    height: 0.3,
+    weight: 3.3,
+    family: Families.Togedemaru,
+    stats: {
+      [Stats.HP]: 65,
+      [Stats.Attack]: 98,
+      [Stats.Defense]: 63,
+      [Stats.SpecialAttack]: 40,
+      [Stats.SpecialDefense]: 73,
+      [Stats.Speed]: 96,
+    },
+    types: [Types.Electric, Types.Steel],
+    abilities: [Abilities.IronBarbs, Abilities.LightningRod],
+    hiddenAbilities: [Abilities.Sturdy, Abilities.Static],
+    eggGroups: [EggGroups.Field, EggGroups.Fairy],
+    genderRatio: [4, 4],
+    catchRate: 180,
+    biomes: [Biome.Mountain, Biome.Grassland],
+    activeTimes: TimeOfDay.Morning | TimeOfDay.Day | TimeOfDay.Evening | TimeOfDay.Night,
+    learnSet: {
+      level: {
+        1: [Moves.Tackle, Moves.ThunderShock],
+        5: [Moves.DefenseCurl],
+        9: [Moves.Rollout],
+        13: [Moves.Charge],
+        17: [Moves.Spark],
+        21: [Moves.Nuzzle],
+        25: [Moves.MagnetRise],
+        29: [Moves.Discharge],
+        33: [Moves.ZingZap],
+        37: [Moves.ElectricTerrain],
+        41: [Moves.WildCharge],
+        45: [Moves.PinMissile],
+        49: [Moves.SpikyShield],
+        53: [Moves.FellStinger],
+      },
+      teachable: [...FAMILY_TEACHABLE],
+      egg: [
+        Moves.DisarmingVoice,
+        Moves.Encore,
+        Moves.FakeOut,
+        Moves.Flail,
+        Moves.Present,
+        Moves.Reversal,
+        Moves.Tickle,
+        Moves.Twineedle,
+        Moves.Wish,
+      ],
+    },
+  });
+}

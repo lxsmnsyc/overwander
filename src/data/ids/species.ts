@@ -1553,6 +1553,18 @@ export const LYCANROC_FORMS: Species[] = [
 /** A Wishiwashi alone, and the school it calls together from level 20 */
 export const WISHIWASHI_FORMS: Species[] = [Species.Wishiwashi, Species.WishiwashiSchool];
 
+/** Minior in its shell, and the seven cores Shields Down can crack it open to */
+export const MINIOR_FORMS: Species[] = [
+  Species.Minior,
+  Species.MiniorRed,
+  Species.MiniorOrange,
+  Species.MiniorYellow,
+  Species.MiniorGreen,
+  Species.MiniorBlue,
+  Species.MiniorIndigo,
+  Species.MiniorViolet,
+];
+
 /** Rotom and the five machines it gets into */
 export const ROTOM_FORMS: Species[] = [
   Species.Rotom,

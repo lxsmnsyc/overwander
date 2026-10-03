@@ -60,4 +60,25 @@ export default function registerGen7Abilities(): void {
     description:
       'When damage drops it below 1/2 HP, it leaves the field and its strongest teammate comes in.',
   });
+  // Sandygast
+  registerAbility(Abilities.WaterCompaction, {
+    name: 'Water Compaction',
+    description: 'Each Water move that lands on it raises its Defense 2 stages.',
+  });
+  // Palossand
+  registerAbility(Abilities.SandSpit, {
+    name: 'Sand Spit',
+    description: 'It casts Sandstorm whenever a damaging move lands on it.',
+  });
+  // Pyukumuku
+  registerAbility(Abilities.InnardsOut, {
+    name: 'Innards Out',
+    description: 'Whoever knocks it out with a move takes as much damage as it had HP left.',
+  });
+  // Minior
+  registerAbility(Abilities.ShieldsDown, {
+    name: 'Shields Down',
+    description:
+      'Above 1/2 HP it fights in its shell, which no major status gets through. At or below 1/2 HP it fights as its faster, frailer core.',
+  });
 }

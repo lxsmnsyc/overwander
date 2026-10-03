@@ -237,9 +237,9 @@ describe('sprite metadata', () => {
 
   /**
    * A clip whose drawing starts above or left of the cell it is
-   * declared in, and how far. Combee's Idle and all four of
-   * Jellicent's clips are one pixel up, and Reshiram's three wide
-   * clips and Incineroar's Charge start a column or three out, which
+   * declared in, and how far. Combee's Idle, all four of Jellicent's
+   * clips and Minior's Idle and Walk are one pixel up, and Reshiram's
+   * three wide clips and Incineroar's Charge start a column or three out, which
    * is the archive's own offset rather than anything the import does.
    * Listed for the same reason as the overdrawn ones: a fresh one
    * should fail rather than pass quietly
@@ -254,6 +254,9 @@ describe('sprite metadata', () => {
     ['643 Shoot', -1],
     ['643 Swing', -2],
     ['727 Charge', -3],
+    ['774 Idle', -1],
+    ['774 Walk', -1],
+    [' ', -1],
   ]);
 
   it('trims frames into the cell they were drawn in', () => {

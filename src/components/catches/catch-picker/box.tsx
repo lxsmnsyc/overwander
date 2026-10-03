@@ -133,14 +133,18 @@ export default function PickerBox(
 
   /**
    * Which box each square lives in, said on the square while every box
-   * is showing at once. Said for nobody who has made no box: everything
-   * of theirs is in Default and the label would say so thirty times
+   * is showing at once on the Boxes screen. Said for nobody who has made
+   * no box: everything of theirs is in Default and the label would say
+   * so thirty times
    */
   const places = createMemo(() => {
     const made = answered(props.boxes) ?? [];
     const named = new Map<string, { name: string; tone: string }>();
 
-    if (props.box !== null || made.length === 0) {
+    // Only where the squares are wide enough to read a name on: the
+    // Boxes screen's search across every box. On a picker's squares
+    // it shrank to a letter or two and said nothing
+    if (props.box !== null || made.length === 0 || props.fill !== true) {
       return null;
     }
     for (const [id, box] of made) {

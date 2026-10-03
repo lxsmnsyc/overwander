@@ -24,6 +24,7 @@ import Syndicate from './syndicates';
 import Executive from './executives';
 import Npc from './npcs';
 import VendorKind from './vendor-kinds';
+import Decoration from './decorations';
 import Weather from '../overworld/weather/kinds';
 
 export const SPECIES_IDS = {
@@ -4839,6 +4840,23 @@ export const VENDOR_KIND_IDS = {
   Balls: VendorKind.Balls,
   Moves: VendorKind.Moves,
 } as const satisfies Record<string, VendorKind>;
+
+export const DECORATION_IDS = {
+  Tree: Decoration.Tree,
+  Pine: Decoration.Pine,
+  Palm: Decoration.Palm,
+  Cactus: Decoration.Cactus,
+  Shrub: Decoration.Shrub,
+  Grass: Decoration.Grass,
+  Flower: Decoration.Flower,
+  Rock: Decoration.Rock,
+  Boulder: Decoration.Boulder,
+  Reed: Decoration.Reed,
+  Coral: Decoration.Coral,
+  Ice: Decoration.Ice,
+  Mushroom: Decoration.Mushroom,
+  Stump: Decoration.Stump,
+} as const satisfies Record<string, Decoration>;
 
 export const WEATHER_IDS = {
   Clear: Weather.Clear,

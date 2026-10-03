@@ -4853,6 +4853,24 @@
         "Moves"
       ]
     },
+    "decoration": {
+      "enum": [
+        "Tree",
+        "Pine",
+        "Palm",
+        "Cactus",
+        "Shrub",
+        "Grass",
+        "Flower",
+        "Rock",
+        "Boulder",
+        "Reed",
+        "Coral",
+        "Ice",
+        "Mushroom",
+        "Stump"
+      ]
+    },
     "weather": {
       "enum": [
         "Clear",

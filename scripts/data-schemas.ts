@@ -51,6 +51,7 @@ const DEFINITIONS: [enumName: string, definition: string][] = [
   ['Executive', 'executive'],
   ['Npc', 'npc'],
   ['VendorKind', 'vendor-kind'],
+  ['Decoration', 'decoration'],
   ['Weather', 'weather'],
 ];
 
@@ -496,6 +497,48 @@ const TOWN_NAMES: Schema = {
   },
   required: ['heads', 'tails', 'titles', 'marks', 'counties'],
   additionalProperties: false,
+};
+
+const PICTURES: Schema = { type: 'array', items: { type: 'string' }, minItems: 1 };
+
+const DECORATIONS: Schema = {
+  $schema: DRAFT,
+  title: 'Decorations',
+  type: 'object',
+  propertyNames: name('decoration'),
+  additionalProperties: part(
+    {
+      sheet: described({ enum: ['trees', 'decorations'] }, 'The sheet it is drawn from'),
+      pictures: described(PICTURES, 'The pictures it is drawn as, in the order cells pick them'),
+    },
+    ['sheet', 'pictures'],
+  ),
+};
+
+const BIOME_DECORATIONS: Schema = {
+  $schema: DRAFT,
+  title: 'Biome decorations',
+  type: 'object',
+  propertyNames: name('biome'),
+  additionalProperties: part(
+    {
+      grows: names('decoration', 'What grows there; a kind written twice is twice as likely'),
+      blocker: described(name('decoration'), 'What a blocked cell shows, a tree where left out'),
+      island: names('decoration', 'What grows on an island in this sea'),
+      pictures: described(
+        { type: 'object', propertyNames: name('decoration'), additionalProperties: PICTURES },
+        'What this biome draws a kind as instead',
+      ),
+    },
+    ['grows'],
+  ),
+};
+
+const SNOW_TREES: Schema = {
+  $schema: DRAFT,
+  title: 'Snow trees',
+  type: 'object',
+  additionalProperties: { type: 'string' },
 };
 
 function namesText(title: string, definition: string): Schema {
@@ -954,6 +997,10 @@ export default function renderDataSchemas(members: Map<string, string[]>): Map<s
     ],
     ['vendor-stalls-text.json', json(namesText('Vendor stall names', 'vendor-kind'))],
     ['town-names-text.json', json(TOWN_NAMES)],
+    ['decorations.json', json(DECORATIONS)],
+    ['biome-decorations.json', json(BIOME_DECORATIONS)],
+    ['snow-trees.json', json(SNOW_TREES)],
+    ['decorations-text.json', json(namesText('Decoration names', 'decoration'))],
   ]);
 
   for (const [file, title, entry] of BATTLE_FILES) {

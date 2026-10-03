@@ -1,0 +1,181 @@
+# The scenery of each biome. `grows` is what grows or lies about there,
+# rolled over uniformly, and a kind written twice is how a biome says what
+# it is mostly made of: a taiga is pines with the odd rock, not half and
+# half. The order is part of the shared world, so reordering moves scenery
+# on every map. `blocker` is the tall thing a cell nothing can walk
+# through shows, a tree where none is named. `island` is what grows on an
+# island in an open sea, where the sea's own list is what stands in the
+# water around it. `pictures` is what the biome draws a kind as, where it
+# draws something of its own: a forest and a savanna both put a Tree down
+# and mean different things by it. A kind left out draws its own pictures
+# from decorations.yaml.
+
+# Ocean floor: coral, and the stones it grows on
+DeepOcean:
+  grows: [Coral]
+  blocker: Rock
+  island: [Palm, Rock, Shrub]
+Ocean:
+  grows: [Coral, Rock]
+  blocker: Rock
+  island: [Palm, Palm, Shrub, Grass]
+CoralReef:
+  grows: [Coral, Coral, Rock]
+  blocker: Coral
+  island: [Palm, Palm, Flower]
+  pictures:
+    Coral: [coral, coral-brain, coral-red]
+# Shore: the sea has taken the soil, so what grows is low and tough
+Beach:
+  grows: [Palm, Rock, Shrub]
+  blocker: Palm
+  pictures:
+    Shrub: [shrub, shrub-tall, shrub-flower]
+# Wetlands: everything standing in water is grown over
+Mangrove:
+  grows: [Tree, Reed, Reed]
+  pictures:
+    Tree: [dark]
+Swamp:
+  grows: [Reed, Reed, Mushroom, Stump]
+  blocker: Stump
+  pictures:
+    Stump: [log-moss, stump, log]
+# Tropics: closed canopy, ferns under it, moss on the stone
+TropicalRainforest:
+  grows: [Tree, Tree, Mushroom]
+  pictures:
+    Tree: [jungle]
+TropicalSeasonalForest:
+  grows: [Tree, Shrub, Grass]
+  pictures:
+    Tree: [olive]
+    Shrub: [shrub-fern, shrub, shrub-tall]
+# What survives a dry season: sparse, and more bark than leaf
+Savanna:
+  grows: [Grass, Grass, Tree, Rock]
+  blocker: Tree
+  pictures:
+    Tree: [dry]
+    Grass: [grass-blades, grass, grass-broad]
+    Rock: [rock-brown, rock, rock-pair]
+Desert:
+  grows: [Cactus, Cactus, Rock, Boulder]
+  blocker: Cactus
+  pictures:
+    Rock: [rock-brown, rock-pair, rock]
+    Boulder: [boulder-brown, boulder-stack, boulder]
+Shrubland:
+  grows: [Shrub, Shrub, Rock]
+  blocker: Shrub
+  pictures:
+    Shrub: [shrub, shrub-spiky, shrub-flower, shrub-tall]
+# Open country: one round tree standing on its own in the grass
+Grassland:
+  grows: [Grass, Grass, Flower, Tree]
+  pictures:
+    Tree: [round]
+    Flower: [flower, flower-white, flower-blue]
+TemperateForest:
+  grows: [Tree, Tree, Stump, Shrub]
+  pictures:
+    Shrub: [shrub-fern, shrub-sapling, shrub]
+    Stump: [stump, log, log-moss, stump-dark]
+TemperateRainforest:
+  grows: [Tree, Tree, Mushroom, Stump]
+  pictures:
+    Tree: [jungle]
+    Stump: [log-moss, stump, log]
+# Cold: snow on everything that does not move
+ColdDesert:
+  grows: [Rock, Boulder, Shrub]
+  blocker: Boulder
+  pictures:
+    Rock: [rock-snow, rock-pair, rock-iced]
+    Boulder: [boulder-snow, boulder-brown, boulder]
+    Shrub: [shrub-conifer, shrub-sapling, shrub-dark]
+Taiga:
+  grows: [Pine, Pine, Rock]
+  blocker: Pine
+  pictures:
+    Rock: [rock-snow, rock-iced, rock-pair]
+Tundra:
+  grows: [Rock, Shrub, Ice]
+  blocker: Rock
+  pictures:
+    Rock: [rock-snow, rock-iced, rock-pair]
+    Shrub: [shrub-star, shrub-conifer, shrub-dark]
+# Highlands: bare stone, and one tree line's worth of trees
+Mountain:
+  grows: [Boulder, Rock, Pine]
+  blocker: Boulder
+  pictures:
+    Pine: [pine-dark]
+    Boulder: [boulder, boulder-stack, boulder-brown]
+AlpineTundra:
+  grows: [Rock, Ice, Shrub]
+  blocker: Boulder
+  pictures:
+    Rock: [rock-snow, rock-iced, rock-pair]
+    Shrub: [shrub-star, shrub-dark, shrub-conifer]
+# Nothing grows on it: bare stone and what the last eruption left
+Volcano:
+  grows: [Boulder, Boulder, Rock]
+  blocker: Boulder
+  pictures:
+    Boulder: [boulder-stack, boulder, boulder-brown]
+    Rock: [rock-pair, rock-brown, rock]
+Glacier:
+  grows: [Ice, Ice, Rock]
+  blocker: Ice
+  pictures:
+    Rock: [rock-iced, rock-snow, rock-pair]
+# Thin cover, and the season showing in it
+Woodland:
+  grows: [Tree, Grass, Flower]
+  pictures:
+    Tree: [autumn]
+    Flower: [flower-white, flower-blue, flower]
+Steppe:
+  grows: [Grass, Grass, Rock]
+  blocker: Rock
+  pictures:
+    Grass: [grass-blades, grass-broad, grass]
+# Both of its trees are the mountain's: short, dark and holding on
+MontaneForest:
+  grows: [Pine, Tree, Boulder]
+  blocker: Pine
+  pictures:
+    Tree: [fir]
+    Pine: [pine-blue]
+    Boulder: [boulder-moss, boulder, boulder-stack]
+PolarOcean:
+  grows: [Ice, Ice, Coral]
+  blocker: Ice
+  island: [Ice, Rock, Rock]
+  pictures:
+    Ice: [ice-floe, ice-shards, ice]
+Badlands:
+  grows: [Boulder, Rock, Cactus]
+  blocker: Boulder
+  pictures:
+    Boulder: [boulder-brown, boulder-stack, boulder]
+    Rock: [rock-brown, rock-pair, rock]
+RockyCoast:
+  grows: [Rock, Boulder, Shrub]
+  pictures:
+    Rock: [rock, rock-pair, rock-iced]
+    Shrub: [shrub-star, shrub, shrub-tall]
+Bog:
+  grows: [Reed, Mushroom, Mushroom, Stump]
+  blocker: Stump
+  pictures:
+    Stump: [log-moss, stump, stump-pale]
+# The reeds stand in for the kelp itself
+KelpForest:
+  grows: [Reed, Reed, Coral]
+  blocker: Coral
+  island: [Rock, Shrub, Grass]
+# Nowhere on the map, and nothing standing in it
+Beyond:
+  grows: []

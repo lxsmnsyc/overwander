@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Biome decorations",
+  "type": "object",
+  "propertyNames": {
+    "$ref": "names.json#/definitions/biome"
+  },
+  "additionalProperties": {
+    "type": "object",
+    "properties": {
+      "grows": {
+        "type": "array",
+        "items": {
+          "$ref": "names.json#/definitions/decoration"
+        },
+        "description": "What grows there; a kind written twice is twice as likely"
+      },
+      "blocker": {
+        "$ref": "names.json#/definitions/decoration",
+        "description": "What a blocked cell shows, a tree where left out"
+      },
+      "island": {
+        "type": "array",
+        "items": {
+          "$ref": "names.json#/definitions/decoration"
+        },
+        "description": "What grows on an island in this sea"
+      },
+      "pictures": {
+        "type": "object",
+        "propertyNames": {
+          "$ref": "names.json#/definitions/decoration"
+        },
+        "additionalProperties": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        },
+        "description": "What this biome draws a kind as instead"
+      }
+    },
+    "required": [
+      "grows"
+    ],
+    "additionalProperties": false
+  }
+}

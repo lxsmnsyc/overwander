@@ -1,0 +1,23 @@
+# Each kind of scenery by its enum name: the `sheet` it is drawn from
+# (`trees` or `decorations`, under the overworld sprite root) and the
+# `pictures` it is drawn as where its biome says nothing more, in the
+# order the cells of a chunk pick them. A list rather than one picture: a
+# chunk rolls eight to twelve pieces out of three or four kinds, and one
+# picture a kind put the same rock down four times in a row. What a
+# player is told each one is lives in text/en, apart from this, so
+# renaming one never repoints it at a picture that is not there.
+
+Tree: { sheet: trees, pictures: [broadleaf] }
+Pine: { sheet: trees, pictures: [pine] }
+Palm: { sheet: trees, pictures: [palm] }
+Cactus: { sheet: decorations, pictures: [cactus, cactus-flower] }
+Shrub: { sheet: decorations, pictures: [shrub, shrub-spiky, shrub-tall, shrub-dark] }
+Grass: { sheet: decorations, pictures: [grass, grass-broad, grass-blades, grass-fern] }
+Flower: { sheet: decorations, pictures: [flower, flower-white, flower-blue] }
+Rock: { sheet: decorations, pictures: [rock, rock-pair, rock-brown] }
+Boulder: { sheet: decorations, pictures: [boulder, boulder-brown, boulder-stack] }
+Reed: { sheet: decorations, pictures: [reed] }
+Coral: { sheet: decorations, pictures: [coral, coral-brain, coral-red, coral-small] }
+Ice: { sheet: decorations, pictures: [ice, ice-shards, ice-shard, ice-floe] }
+Mushroom: { sheet: decorations, pictures: [mushroom, mushroom-red] }
+Stump: { sheet: decorations, pictures: [stump, log, stump-pale, log-moss] }

@@ -70,6 +70,7 @@ const TABLES: Table[] = [
   { name: 'EXECUTIVE_IDS', enumName: 'Executive', from: './executives', isDefault: true },
   { name: 'NPC_IDS', enumName: 'Npc', from: './npcs', isDefault: true },
   { name: 'VENDOR_KIND_IDS', enumName: 'VendorKind', from: './vendor-kinds', isDefault: true },
+  { name: 'DECORATION_IDS', enumName: 'Decoration', from: './decorations', isDefault: true },
   {
     name: 'WEATHER_IDS',
     enumName: 'Weather',

@@ -66,6 +66,10 @@
     "./src/data/schema/executives-text.json": "src/data/text/*/executives.yaml",
     "./src/data/schema/npcs-text.json": "src/data/text/*/npcs.yaml",
     "./src/data/schema/vendor-stalls-text.json": "src/data/text/*/vendor-stalls.yaml",
-    "./src/data/schema/town-names-text.json": "src/data/text/*/town-names.yaml"
+    "./src/data/schema/town-names-text.json": "src/data/text/*/town-names.yaml",
+    "./src/data/schema/decorations.json": "src/data/overworld/decorations.yaml",
+    "./src/data/schema/biome-decorations.json": "src/data/overworld/biome-decorations.yaml",
+    "./src/data/schema/snow-trees.json": "src/data/overworld/snow-trees.yaml",
+    "./src/data/schema/decorations-text.json": "src/data/text/*/decorations.yaml"
   }
 }

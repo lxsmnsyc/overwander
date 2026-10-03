@@ -1,5 +1,6 @@
 // Snivy through Oshawott.
 
+import { BOSS_DAMAGE_CAP } from '../../../../src/battle/abilities/special';
 import { describe, expect, it } from 'vitest';
 import { Stages, Stats, StatsKind } from '../../../../src/data/constants/stats';
 import { Types } from '../../../../src/data/constants/types';
@@ -834,6 +835,24 @@ describe('the desert families', () => {
     // The rest of the slab goes, and what is left over reaches Crustle
     foe.damage({ type: EffectType.None }, crustle, slab, 0);
     expect(whole - crustle.health).toBeCloseTo(slab / 2, 0);
+  });
+
+  it("holds a boss' slab to the boss cap", () => {
+    const { battle, teamA, teamB } = createBattle();
+    const boss = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    boss.addAbility(Abilities.Boss);
+    boss.addAbility(Abilities.Slab);
+    boss.setHealth(boss.checkStat(Stats.HP, 0));
+    boss.enter();
+    foe.enter();
+
+    const whole = boss.health;
+
+    // A quarter of a raid pool would soak this whole; the cap does not
+    foe.damage({ type: EffectType.None }, boss, BOSS_DAMAGE_CAP * 3, 0);
+    expect(whole - boss.health).toBeCloseTo(BOSS_DAMAGE_CAP * 2, 0);
   });
 
   it('sits a Darmanitan down below half and stands it back up above', () => {

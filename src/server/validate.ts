@@ -17,6 +17,7 @@ import { MAX_LEVEL } from '../data/constants/levels';
 import Npc, { TRADER_OFFERS } from '../data/overworld/npc';
 import { RaidKind } from '../auth/raid-record';
 import TEAM_SIZE from '../auth/team-size';
+import { BOX_COLOURS, BOX_LIMIT, BOX_NAME_LIMIT, BOX_SLOT_LIMIT } from '../auth/box-record';
 import { FEATURES } from './switches';
 import { TRADE_GOLD_LIMIT } from '../auth/trade-record';
 
@@ -287,6 +288,21 @@ export const CATCH_IDS = listOf(ID, MAX_PAGE);
 
 /** Which mark a bulk call is setting */
 export const MARK_FIELD = v.picklist(['favorite', 'guarded']);
+
+/** A box's name, checked for length here and for what is left of it by the writer */
+export const BOX_NAME = v.pipe(v.string(), v.maxLength(BOX_NAME_LIMIT));
+
+/** One of the colours a box can be marked with */
+export const BOX_COLOUR = whole(0, BOX_COLOURS.length - 1);
+
+/** Every one of a player's boxes, in the order they want them */
+export const BOX_ORDER = listOf(ID, BOX_LIMIT);
+
+/** A square of a box, or none for the first free one */
+export const MAYBE_SLOT = v.nullable(whole(0, BOX_SLOT_LIMIT));
+
+/** How a box can be laid out again */
+export const BOX_LAYOUT = v.picklist(['dex', 'packed']);
 
 /** How often a rotation comes round */
 export const ROTATION_SCOPE = v.picklist(['daily', 'weekly']);

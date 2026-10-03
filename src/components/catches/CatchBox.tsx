@@ -2,6 +2,7 @@ import { type Accessor, Index, type JSX, Show, createSignal } from 'solid-js';
 import type { AuraKind } from '../../canvas/auras';
 import { Species } from '../../data/ids/species';
 import { LockIcon, MoonIcon, SparklesIcon, StarIcon, SunIcon } from '../icons';
+import createLongPress, { type LongPress } from '../styled/long-press';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 
 /**
@@ -159,7 +160,23 @@ export interface CatchBoxProps {
    * What a press on a square does. A card-only box has none — the
    * buttons are in the card that comes up over it
    */
-  onOpen?: (id: string) => void;
+  onOpen?: (id: string, press: SquarePress) => void;
+  /**
+   * A finger held on a pokemon's square. Given, the hold is the
+   * caller's: the Boxes screen starts picking from it
+   */
+  onHold?: (id: string) => void;
+  /**
+   * Whether each empty square says which slot it is, for a box laid
+   * out in squares: a dex box reads its gaps by number
+   */
+  numbered?: boolean;
+  /**
+   * Whether the box takes the whole width it is given, its squares
+   * wider than they are tall, for the screen that is nothing but the
+   * box: thirty squares that size fit a laptop without scrolling
+   */
+  fill?: boolean;
   /**
    * What stands over an occupied square: a hover card, usually. It is
    * laid over the square rather than beside the sprite, so whatever is
@@ -195,6 +212,17 @@ export interface CatchBoxProps {
    * square's slot. Given, gaps and slotted pokemon both take a drop
    */
   onDropOn?: (slot: number) => void;
+}
+
+/** What came with a press, beyond which square it was */
+export interface SquarePress {
+  /** Shift held, which picks the run from the last press to this one */
+  shift: boolean;
+}
+
+/** A slot's number as a dex writes it */
+function slotNumber(slot: number): string {
+  return `#${String(slot + 1).padStart(3, '0')}`;
 }
 
 /**
@@ -238,7 +266,15 @@ function healthTone(health: number): string {
 /**
  * The frame of a square, whether or not it is one that can be pressed
  */
-const SQUARE = 'relative aspect-square w-full rounded-lg border-2 transition-colors';
+const SQUARE = 'relative w-full rounded-lg border-2 transition-colors';
+
+/** The columns alone, for a box that takes the whole width */
+const COLUMNS: Record<3 | BoxWidth, string> = {
+  3: 'grid-cols-3',
+  5: 'grid-cols-5',
+  6: 'grid-cols-6',
+  8: 'grid-cols-8',
+};
 
 /**
  * How wide the grid is laid out, and how wide it is allowed to grow.
@@ -254,6 +290,9 @@ const SHAPE: Record<3 | BoxWidth, string> = {
 };
 
 export default function CatchBox(props: CatchBoxProps): JSX.Element {
+  /** The shape of one square: square, or wide in a box that fills */
+  const aspect = (): string => (props.fill === true ? 'aspect-[7/4]' : 'aspect-square');
+
   /**
    * What is standing in a square, if anything. The last box of a
    * collection is a part-full one, so most of these answers are
@@ -329,6 +368,18 @@ export default function CatchBox(props: CatchBoxProps): JSX.Element {
     };
   };
 
+  /** What makes a finger held on a pokemon's square the caller's */
+  const holdProps = (entry: Accessor<BoxEntry>): Partial<LongPress> => {
+    const onHold = props.onHold;
+
+    if (onHold == null) {
+      return {};
+    }
+    return createLongPress(() => {
+      onHold(entry().id);
+    });
+  };
+
   /**
    * What is in a square: the pokemon, what its walk has come to, whether
    * the caller has taken it, and whatever the caller stands over it. The
@@ -341,16 +392,21 @@ export default function CatchBox(props: CatchBoxProps): JSX.Element {
           pokemon is fitted to a square whichever way round its cell is
           the longer */}
       <span class="pointer-events-none absolute inset-1.5 flex items-center justify-center">
-        <AnimatedSprite
-          species={entry().egg ? Species.Egg : entry().species}
-          shiny={entry().shiny}
-          direction="DownLeft"
-          // An egg's clock runs at the speed of its own walk; everything
-          // else breathes at the speed it was drawn at
-          speed={entry().egg ? EGG_SPEED[0] + (EGG_SPEED[1] - EGG_SPEED[0]) * entry().progress : 1}
-          fill
-          shadow
-        />
+        {/* Square, centred and as tall as the cell, so a wide cell does not stretch it */}
+        <span class="absolute inset-y-0 left-1/2 aspect-square h-full max-w-full -translate-x-1/2">
+          <AnimatedSprite
+            species={entry().egg ? Species.Egg : entry().species}
+            shiny={entry().shiny}
+            direction="DownLeft"
+            // An egg's clock runs at the speed of its own walk; everything
+            // else breathes at the speed it was drawn at
+            speed={
+              entry().egg ? EGG_SPEED[0] + (EGG_SPEED[1] - EGG_SPEED[0]) * entry().progress : 1
+            }
+            fill
+            shadow
+          />
+        </span>
       </span>
 
       {/* What is left of an egg's walk, under it. An egg has no species
@@ -416,8 +472,9 @@ export default function CatchBox(props: CatchBoxProps): JSX.Element {
       <Show when={entry().place}>
         {(place) => (
           <span
-            class="pointer-events-none absolute inset-x-4 top-0.5 flex items-center
-              justify-center gap-1 truncate text-[10px] leading-tight font-black text-ink"
+            class="pointer-events-none absolute inset-x-0.5 top-0.5 z-10 flex items-center
+              justify-center gap-1 truncate rounded-md bg-paper/85 px-0.5 text-[10px] leading-tight
+              font-black text-ink"
           >
             <span class="size-2 shrink-0 rounded-sm" style={{ background: place().tone }} />
             <span class="truncate">{place().name}</span>
@@ -507,7 +564,9 @@ export default function CatchBox(props: CatchBoxProps): JSX.Element {
       role="group"
       aria-label={`Box of pokemon, ${filled()} of ${squares().length} squares filled.`}
       class={`mx-auto my-2 grid w-full gap-1.5 rounded-xl border-4 border-tide bg-parchment p-1.5
-        shadow-pop ${SHAPE[props.columns ?? 6]}`}
+        shadow-pop ${
+          props.fill === true ? COLUMNS[props.columns ?? 6] : SHAPE[props.columns ?? 6]
+        }`}
     >
       <Index each={squares()}>
         {(_, index) => (
@@ -518,10 +577,21 @@ export default function CatchBox(props: CatchBoxProps): JSX.Element {
               // half-built grid reads as a broken one
               <span
                 aria-hidden="true"
-                class={`aspect-square w-full rounded-lg border-2 border-line-soft bg-paper/40
-                  ${lit(index)}`}
+                class={`flex ${aspect()} w-full flex-col items-center justify-center rounded-lg
+                  border-2 bg-paper/40 text-[10px] font-black text-muted ${
+                    props.numbered === true ? 'border-dashed border-line' : 'border-line-soft'
+                  } ${lit(index)}`}
                 {...dropProps(index)}
-              />
+              >
+                <Show when={hovered() === index}>
+                  <span class="text-leaf-dark">Drop here</span>
+                </Show>
+                <Show
+                  when={hovered() !== index && props.numbered === true && slotAt(index) != null}
+                >
+                  {slotNumber(slotAt(index) ?? index)}
+                </Show>
+              </span>
             }
           >
             {(entry) => (
@@ -535,7 +605,7 @@ export default function CatchBox(props: CatchBoxProps): JSX.Element {
                   <span
                     role="img"
                     aria-label={entry().label}
-                    class={`${SQUARE} ${toneOf(entry())} ${lit(index)}`}
+                    class={`${SQUARE} ${aspect()} ${toneOf(entry())} ${lit(index)}`}
                     {...dropProps(index)}
                   >
                     {inside(entry)}
@@ -546,7 +616,7 @@ export default function CatchBox(props: CatchBoxProps): JSX.Element {
                   type="button"
                   aria-label={entry().label}
                   aria-pressed={entry().mark === 'picked'}
-                  class={`${SQUARE} cursor-pointer ${toneOf(entry())} ${lit(index)}`}
+                  class={`${SQUARE} ${aspect()} cursor-pointer ${toneOf(entry())} ${lit(index)}`}
                   {...dragProps(entry)}
                   {...dropProps(index)}
                   onClick={(event) => {
@@ -558,8 +628,9 @@ export default function CatchBox(props: CatchBoxProps): JSX.Element {
                     if (!event.currentTarget.contains(event.target)) {
                       return;
                     }
-                    props.onOpen?.(entry().id);
+                    props.onOpen?.(entry().id, { shift: event.shiftKey });
                   }}
+                  {...holdProps(entry)}
                 >
                   {inside(entry)}
                 </button>

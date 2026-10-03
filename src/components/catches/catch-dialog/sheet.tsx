@@ -59,7 +59,7 @@ import { isPurifyingGem } from '../../../data/items/purifying-gem';
 import { getFamilyName, getSpeciesData } from '../../../data/species';
 import { getFusionPartner, isFusedSpecies } from '../../../data/species/fusion';
 
-import { ActionsIcon, HeartIcon, LockIcon, SparklesIcon, StarIcon } from '../../icons';
+import { HeartIcon, LockIcon, SparklesIcon, StarIcon } from '../../icons';
 import TypeBadge from '../../sprites/TypeBadge';
 import { GENDER_LABELS, GENDER_MARKS } from '../catch-summary';
 import InventoryPicker from '../../items/InventoryPicker';
@@ -1459,7 +1459,7 @@ export function CatchSheetBody(
         )}
       </Show>
       <Show when={owned() != null || props.onDex != null}>
-        <Menu label="Actions" icon={ActionsIcon} actions={menuActions()} />
+        <Menu label="Actions" actions={menuActions()} />
       </Show>
     </div>
   );

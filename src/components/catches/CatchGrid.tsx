@@ -1,9 +1,16 @@
 import { type Accessor, type JSX, Show, children, createMemo, createSignal } from 'solid-js';
 import { type CaughtPokemon, findDuplicates } from '../../auth/caught';
 import matchesCatch, { CATCH_VOCABULARY, orderCatches } from '../../auth/catch-search';
-import CatchBox, { type BoxEntry, type BoxGap, type BoxSquare, boxSizeOf, isGap } from './CatchBox';
+import CatchBox, {
+  type BoxEntry,
+  type BoxGap,
+  type BoxSquare,
+  type SquarePress,
+  boxSizeOf,
+  isGap,
+} from './CatchBox';
 import settings from '../app/settings';
-import { Meta, Note, Row, Search, createPager } from '../styled';
+import { Meta, Note, type PagerOptions, Row, Search, createPager } from '../styled';
 
 /**
  * A box of squares with its furniture — the search over it, the pages
@@ -31,7 +38,23 @@ export interface CatchGridProps {
    */
   bare?: boolean;
   cardOnly?: boolean;
-  onOpen?: (id: string) => void;
+  onOpen?: (id: string, press: SquarePress) => void;
+  /** A finger held on a pokemon's square, passed to the box */
+  onHold?: (id: string) => void;
+  /** Whether empty squares say which slot they are, passed to the box */
+  numbered?: boolean;
+  /** Whether the box takes the whole width, passed to the box */
+  fill?: boolean;
+  /** How the pages are said and turned; a centred range by default */
+  pager?: PagerOptions;
+  /** A line under the search about what it found */
+  results?: JSX.Element;
+  /**
+   * What stands over a box with nothing in it yet but its squares: a
+   * box the player made is drawn empty, slots and all, with this on
+   * top saying how to fill it
+   */
+  emptyCard?: JSX.Element;
   cell?: (entry: Accessor<BoxEntry>) => JSX.Element;
   /** Said when there is nothing at all, before any search */
   empty?: string;
@@ -169,10 +192,11 @@ export default function CatchGrid(props: CatchGridProps): JSX.Element {
           {aside()}
         </Row>
         <Show when={props.note}>{(note) => <Meta>{note()}</Meta>}</Show>
+        {props.results}
       </Show>
 
       <Show
-        when={showing()}
+        when={showing() || (props.emptyCard != null && query().trim() === '')}
         fallback={
           <Note>
             {query().length === 0
@@ -183,18 +207,35 @@ export default function CatchGrid(props: CatchGridProps): JSX.Element {
       >
         {/* Above the box: five rows of squares fill a laptop screen, and
             paging under them is paging a player has to scroll to */}
-        {shelf.controls({ range: true })}
-        <CatchBox
-          entries={shelf.shown()}
-          columns={settings().boxColumns}
-          onOpen={props.onOpen}
-          cardOnly={props.cardOnly}
-          cell={props.cell}
-          onDragStart={props.onDragStart}
-          // Only while the gaps are drawn: a searched list is packed,
-          // and a square in it is not the slot it stands in
-          onDropOn={query().trim() === '' ? props.onDropOn : undefined}
-        />
+        {shelf.controls(props.pager ?? { range: true })}
+        <div class="relative">
+          <CatchBox
+            entries={shelf.shown()}
+            columns={settings().boxColumns}
+            onOpen={props.onOpen}
+            onHold={props.onHold}
+            numbered={props.numbered}
+            fill={props.fill}
+            cardOnly={props.cardOnly}
+            cell={props.cell}
+            onDragStart={props.onDragStart}
+            // Only while the gaps are drawn: a searched list is packed,
+            // and a square in it is not the slot it stands in
+            onDropOn={query().trim() === '' ? props.onDropOn : undefined}
+          />
+          <Show when={!showing() && props.emptyCard}>
+            {(card) => (
+              <div class="pointer-events-none absolute inset-0 flex items-center justify-center p-4">
+                <div
+                  class="pointer-events-auto flex max-w-sm flex-col gap-1.5 rounded-2xl border-2
+                  border-line bg-paper px-6 py-5 text-center shadow-pop"
+                >
+                  {card()}
+                </div>
+              </div>
+            )}
+          </Show>
+        </div>
       </Show>
     </div>
   );

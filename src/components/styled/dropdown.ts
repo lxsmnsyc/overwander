@@ -25,6 +25,13 @@ const DROP_GAP = 6;
 /** How close to the window's edge the list may come */
 const EDGE = 8;
 
+/**
+ * The least room the list is squeezed into. Capped at whatever little
+ * room was below, a list always fitted, so it never overflowed and
+ * never flipped above its button
+ */
+const LEAST_ROOM = 160;
+
 export interface DropdownOptions {
   open: () => boolean;
   placement: Placement;
@@ -47,7 +54,10 @@ export default function useDropdown(options: DropdownOptions): UseFloatingReturn
       size({
         padding: EDGE,
         apply({ availableHeight, rects, elements }) {
-          elements.floating.style.setProperty('--drop-room', `${Math.max(0, availableHeight)}px`);
+          elements.floating.style.setProperty(
+            '--drop-room',
+            `${Math.max(LEAST_ROOM, availableHeight)}px`,
+          );
           if (options.matchWidth === true) {
             elements.floating.style.minWidth = `${rects.reference.width}px`;
           }

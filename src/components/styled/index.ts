@@ -34,7 +34,7 @@ export { List, ListRow, Meta, RowButton } from './list';
 export { default as Menu } from './menu';
 export type { MenuAction, MenuProps } from './menu';
 export { LIST_PAGE, createPager } from './pager';
-export type { Pager } from './pager';
+export type { PageSpot, Pager, PagerOptions } from './pager';
 export { default as RadioGroup } from './radio-group';
 export type { RadioGroupProps, RadioOption } from './radio-group';
 export { default as createReorder, carried } from './reorder';

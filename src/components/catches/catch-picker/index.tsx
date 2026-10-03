@@ -304,7 +304,7 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
           box={view()}
           boxes={boxes}
           lead={switcher}
-          placeholder={placeholder()}
+          placeholder={props.placeholder ?? placeholder()}
           remark={remark()}
           aside={() => (
             <>
@@ -347,6 +347,7 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
       <Dialog
         isOpen={showing()}
         onClose={close}
+        width="wide"
         title={props.title ?? (props.viewOnly === true ? 'Their pokemon' : 'Your pokemon')}
         description={purpose()}
       >

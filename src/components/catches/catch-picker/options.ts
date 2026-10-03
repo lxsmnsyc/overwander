@@ -1,5 +1,6 @@
 import type { JSX } from 'solid-js';
 import type { CaughtPokemon } from '../../../auth/caught';
+import type { PagerOptions } from '../../styled';
 
 /**
  * Which box a picker is showing: one of the player's (`box` its id),
@@ -138,6 +139,23 @@ interface CatchPickerCommonProps {
   onDragStart?: (id: string, event: DragEvent) => void;
   /** Something dropped on a square of the box being shown, by its slot */
   onDropOn?: (slot: number) => void;
+  /**
+   * A finger held on a square. Given, the squares carry no card of
+   * their own on a touch screen, since a hold is what opens one
+   */
+  onHold?: (id: string) => void;
+  /** How the pages are said and turned */
+  pager?: PagerOptions;
+  /** Whether the box takes the whole width it is given */
+  fill?: boolean;
+  /** A line under the search about what it found */
+  results?: JSX.Element;
+  /** What stands over a box the player made while it is empty */
+  emptyCard?: JSX.Element;
+  /** What the search says it looks through, where the caller knows better */
+  placeholder?: string;
+  /** What the search is showing now, in order, as it changes */
+  onShown?: (shown: CatchOption[]) => void;
 }
 
 export type CatchPickerProps = CatchPickerCommonProps &

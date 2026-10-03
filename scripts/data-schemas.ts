@@ -37,6 +37,8 @@ const DEFINITIONS: [enumName: string, definition: string][] = [
   ['Stages', 'stage'],
   ['Statuses', 'status'],
   ['TeamStatuses', 'team-status'],
+  ['Regions', 'region'],
+  ['Awards', 'award'],
 ];
 
 const DRAFT = 'http://json-schema.org/draft-07/schema#';
@@ -153,6 +155,27 @@ const WORLD = block(
     ['types', 'egg-groups', 'active'],
   ),
 );
+
+const REGIONS: Schema = {
+  $schema: DRAFT,
+  title: 'Regions',
+  type: 'object',
+  propertyNames: name('region'),
+  additionalProperties: part(
+    {
+      dex: described(
+        { type: 'array', items: COUNT, minItems: 2, maxItems: 2 },
+        'The first and last dex number it covers',
+      ),
+      milestones: described(
+        { type: 'array', items: COUNT },
+        'How many of its own each rung of its dex chain asks for',
+      ),
+      medal: described(name('award'), 'What the last rung hangs on the shelf'),
+    },
+    ['dex'],
+  ),
+};
 
 function renderStats(stats: string[]): Schema {
   const values: Record<string, Schema> = {};
@@ -492,6 +515,7 @@ export default function renderDataSchemas(members: Map<string, string[]>): Map<s
     ['items-text.json', json(ITEM_TEXT)],
     ['battle-statuses.json', json(BATTLE_STATUSES)],
     ['biome-pools.json', json(SPAWN_POOLS)],
+    ['regions.json', json(REGIONS)],
   ]);
 
   for (const [file, title, entry] of BATTLE_FILES) {

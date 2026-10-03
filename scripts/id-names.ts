@@ -56,6 +56,8 @@ const TABLES: Table[] = [
   { name: 'STAGE_IDS', enumName: 'Stages', from: '../constants/stats' },
   { name: 'STATUS_IDS', enumName: 'Statuses', from: './status' },
   { name: 'TEAM_STATUS_IDS', enumName: 'TeamStatuses', from: './status' },
+  { name: 'REGION_IDS', enumName: 'Regions', from: './regions', isDefault: true },
+  { name: 'AWARD_IDS', enumName: 'Awards', from: './awards', isDefault: true },
 ];
 
 /** The member names of one enum, in the order they are declared */

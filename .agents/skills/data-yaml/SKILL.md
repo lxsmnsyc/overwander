@@ -35,6 +35,10 @@ Growlithe:
 - **`egg-cycles`** is written only on the stage a line hatches at, and only where it is not 20.
 - **`active: any`** is every hour of the day. `base-form: false` marks a form, and `worn: true` a shape put on mid-fight. `dex` is written only where the id's own dex number would be wrong.
 
+## Regions
+
+`src/data/species/regions.yaml` holds each region by its enum name: the `dex` numbers it covers, ends included, and, for a region with a dex chain, the `milestones` each rung asks for and the `medal` the last one hangs. A rung keeps its number for good, so milestones are appended, never inserted. The sprite folder names stay in `regions.ts` beside the enum.
+
 ## Moves
 
 Under `src/data/moves/`, each part filed by generation and the stretch of moves it was written in (`gen-1/bulbasaur-to-blastoise.yaml`), every move keyed by its name:

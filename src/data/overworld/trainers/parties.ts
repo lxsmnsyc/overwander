@@ -42,7 +42,8 @@ export function isAceTrainer(trainer: TrainerClass): boolean {
     trainer === TrainerClass.JohtoAceTrainer ||
     trainer === TrainerClass.HoennAceTrainer ||
     trainer === TrainerClass.SinnohAceTrainer ||
-    trainer === TrainerClass.UnovaAceTrainer
+    trainer === TrainerClass.UnovaAceTrainer ||
+    trainer === TrainerClass.KalosAceTrainer
   );
 }
 

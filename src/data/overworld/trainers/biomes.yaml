@@ -24,6 +24,8 @@ DeepOcean:
   - Pilot
   - UnovaFisherman
   - UnovaSwimmer
+  - KalosFisherman
+  - KalosSwimmer
 Ocean:
   - Swimmer
   - BirdKeeper
@@ -44,6 +46,8 @@ Ocean:
   - Pilot
   - UnovaFisherman
   - UnovaSwimmer
+  - KalosFisherman
+  - KalosSwimmer
 CoralReef:
   - Swimmer
   - PokeManiac
@@ -58,6 +62,8 @@ CoralReef:
   - SinnohTuber
   - UnovaFisherman
   - UnovaSwimmer
+  - KalosFisherman
+  - KalosSwimmer
 Beach:
   - Swimmer
   - Lass
@@ -108,6 +114,19 @@ Beach:
   - UnovaRichBoy
   - UnovaSwimmer
   - UnovaWaiter
+  - KalosLass
+  - KalosBeauty
+  - KalosFisherman
+  - KalosSwimmer
+  - KalosRichBoy
+  - KalosArtist
+  - KalosCyclist
+  - KalosWaiter
+  - KalosPreschooler
+  - KalosRollerSkater
+  - KalosSocialite
+  - Tourist
+  - RisingStar
 Mangrove:
   - Swimmer
   - Biker
@@ -138,6 +157,10 @@ Mangrove:
   - UnovaRanger
   - UnovaSwimmer
   - UnovaRoughneck
+  - KalosFisherman
+  - KalosSwimmer
+  - KalosRanger
+  - KalosPunkGirl
 Swamp:
   - Biker
   - Channeler
@@ -166,6 +189,10 @@ Swamp:
   - UnovaParasolLady
   - UnovaRanger
   - UnovaRoughneck
+  - KalosHexManiac
+  - KalosRanger
+  - KalosPunkGuy
+  - KalosPunkGirl
 TropicalRainforest:
   - BugCatcher
   - Psychic
@@ -197,6 +224,11 @@ TropicalRainforest:
   - UnovaPsychic
   - UnovaRanger
   - UnovaRoughneck
+  - KalosPsychic
+  - KalosRanger
+  - KalosLady
+  - KalosPunkGirl
+  - KalosGardener
 TropicalSeasonalForest:
   - BugCatcher
   - Lass
@@ -225,6 +257,12 @@ TropicalSeasonalForest:
   - UnovaBreeder
   - UnovaLass
   - UnovaRanger
+  - KalosLass
+  - KalosRanger
+  - KalosBreeder
+  - KalosLady
+  - KalosGardener
+  - Tourist
 Savanna:
   - BirdKeeper
   - Hiker
@@ -262,6 +300,15 @@ Savanna:
   - UnovaHiker
   - UnovaPoliceman
   - UnovaYoungster
+  - KalosYoungster
+  - KalosBlackBelt
+  - KalosBattleGirl
+  - KalosHiker
+  - KalosBackpacker
+  - KalosCyclist
+  - KalosRollerSkater
+  - SkyTrainer
+  - Tourist
 Desert:
   - Hiker
   - PokeManiac
@@ -293,6 +340,14 @@ Desert:
   - UnovaPoliceman
   - UnovaWaiter
   - UnovaYoungster
+  - KalosYoungster
+  - KalosHiker
+  - KalosBackpacker
+  - KalosGentleman
+  - KalosWaiter
+  - KalosVeteran
+  - KalosPunkGuy
+  - KalosChef
 Shrubland:
   - Lass
   - BugCatcher
@@ -342,6 +397,21 @@ Shrubland:
   - UnovaPokeFan
   - UnovaRanger
   - UnovaSchoolKid
+  - KalosLass
+  - KalosBeauty
+  - KalosPokeFan
+  - KalosRanger
+  - KalosBreeder
+  - KalosCyclist
+  - KalosLady
+  - KalosTwins
+  - KalosSchoolKid
+  - KalosPreschooler
+  - KalosSocialite
+  - KalosGardener
+  - FairyTaleGirl
+  - FurisodeGirl
+  - RisingStar
 Grassland:
   - Lass
   - BugCatcher
@@ -401,6 +471,26 @@ Grassland:
   - UnovaRichBoy
   - UnovaWaiter
   - UnovaYoungster
+  - KalosLass
+  - KalosYoungster
+  - KalosBeauty
+  - KalosRichBoy
+  - KalosPokeFan
+  - KalosRanger
+  - KalosBreeder
+  - KalosArtist
+  - KalosCyclist
+  - KalosLady
+  - KalosWaiter
+  - KalosTwins
+  - KalosPreschooler
+  - KalosRollerSkater
+  - KalosSocialite
+  - KalosGardener
+  - FurisodeGirl
+  - Butler
+  - Tourist
+  - RisingStar
 TemperateForest:
   - BugCatcher
   - Lass
@@ -437,6 +527,18 @@ TemperateForest:
   - UnovaLass
   - UnovaRanger
   - UnovaRichBoy
+  - KalosLass
+  - KalosHexManiac
+  - KalosRichBoy
+  - KalosRanger
+  - KalosBreeder
+  - KalosArtist
+  - KalosLady
+  - KalosPreschooler
+  - KalosGardener
+  - FairyTaleGirl
+  - FurisodeGirl
+  - Butler
 TemperateRainforest:
   - BugCatcher
   - Channeler
@@ -462,6 +564,11 @@ TemperateRainforest:
   - Harlequin
   - Lady
   - UnovaPsychic
+  - KalosPsychic
+  - KalosHexManiac
+  - KalosLady
+  - KalosTwins
+  - KalosGardener
 ColdDesert:
   - Hiker
   - PokeManiac
@@ -489,6 +596,12 @@ ColdDesert:
   - UnovaHiker
   - UnovaScientist
   - UnovaWorker
+  - KalosHiker
+  - KalosScientist
+  - KalosWorker
+  - KalosBackpacker
+  - KalosMaid
+  - KalosClerk
 Taiga:
   - Hiker
   - BugCatcher
@@ -518,6 +631,11 @@ Taiga:
   - UnovaHiker
   - UnovaPoliceman
   - UnovaRanger
+  - KalosHiker
+  - KalosRanger
+  - KalosBackpacker
+  - KalosMaid
+  - KalosPunkGuy
 Tundra:
   - Hiker
   - BirdKeeper
@@ -543,6 +661,11 @@ Tundra:
   - UnovaHiker
   - UnovaLass
   - UnovaRichBoy
+  - KalosLass
+  - KalosHiker
+  - KalosRichBoy
+  - KalosBackpacker
+  - KalosMaid
 Mountain:
   - Hiker
   - PokeManiac
@@ -582,6 +705,16 @@ Mountain:
   - UnovaHiker
   - UnovaScientist
   - UnovaWorker
+  - KalosBlackBelt
+  - KalosBattleGirl
+  - KalosHiker
+  - KalosScientist
+  - KalosWorker
+  - KalosBackpacker
+  - KalosVeteran
+  - KalosRollerSkater
+  - KalosClerk
+  - SkyTrainer
 AlpineTundra:
   - Hiker
   - BirdKeeper
@@ -602,6 +735,11 @@ AlpineTundra:
   - Pilot
   - UnovaHiker
   - UnovaWorker
+  - KalosHiker
+  - KalosWorker
+  - KalosBackpacker
+  - KalosMaid
+  - SkyTrainer
 Glacier:
   - Swimmer
   - Hiker
@@ -618,6 +756,10 @@ Glacier:
   - Maid
   - UnovaHiker
   - UnovaSwimmer
+  - KalosSwimmer
+  - KalosHiker
+  - KalosBackpacker
+  - KalosMaid
 Woodland:
   - BugCatcher
   - Lass
@@ -657,6 +799,21 @@ Woodland:
   - UnovaLass
   - UnovaRanger
   - UnovaWaiter
+  - KalosLass
+  - KalosBeauty
+  - KalosHiker
+  - KalosRanger
+  - KalosBreeder
+  - KalosBackpacker
+  - KalosLady
+  - KalosWaiter
+  - KalosTwins
+  - KalosPreschooler
+  - KalosSocialite
+  - KalosGardener
+  - FairyTaleGirl
+  - FurisodeGirl
+  - Butler
 Steppe:
   - BirdKeeper
   - Hiker
@@ -690,6 +847,14 @@ Steppe:
   - UnovaHiker
   - UnovaSchoolKid
   - UnovaYoungster
+  - KalosYoungster
+  - KalosHiker
+  - KalosBackpacker
+  - KalosCyclist
+  - KalosSchoolKid
+  - KalosRollerSkater
+  - SkyTrainer
+  - Tourist
 MontaneForest:
   - Psychic
   - BugCatcher
@@ -723,6 +888,15 @@ MontaneForest:
   - UnovaHiker
   - UnovaPsychic
   - UnovaRanger
+  - KalosHiker
+  - KalosPsychic
+  - KalosRanger
+  - KalosBackpacker
+  - KalosArtist
+  - KalosLady
+  - KalosTwins
+  - KalosGardener
+  - FairyTaleGirl
 PolarOcean:
   - Swimmer
   - BirdKeeper
@@ -741,6 +915,8 @@ PolarOcean:
   - Maid
   - Pilot
   - UnovaSwimmer
+  - KalosSwimmer
+  - KalosMaid
 Beyond:
   - Psychic
   - Channeler
@@ -775,6 +951,12 @@ Beyond:
   - UnovaPsychic
   - UnovaSchoolKid
   - UnovaScientist
+  - KalosPsychic
+  - KalosHexManiac
+  - KalosScientist
+  - KalosSchoolKid
+  - KalosPunkGuy
+  - KalosClerk
 Volcano:
   - Burglar
   - PokeManiac
@@ -807,6 +989,15 @@ Volcano:
   - UnovaScientist
   - UnovaWaiter
   - UnovaWorker
+  - KalosHiker
+  - KalosScientist
+  - KalosWorker
+  - KalosBackpacker
+  - KalosGentleman
+  - KalosWaiter
+  - KalosPunkGuy
+  - KalosChef
+  - KalosClerk
 Badlands:
   - PokeManiac
   - Biker
@@ -858,6 +1049,16 @@ Badlands:
   - UnovaWorker
   - UnovaYoungster
   - UnovaRoughneck
+  - KalosYoungster
+  - KalosBlackBelt
+  - KalosBattleGirl
+  - KalosScientist
+  - KalosWorker
+  - KalosGentleman
+  - KalosPunkGuy
+  - KalosPunkGirl
+  - KalosChef
+  - KalosClerk
 RockyCoast:
   - PokeManiac
   - Swimmer
@@ -891,6 +1092,11 @@ RockyCoast:
   - UnovaRichBoy
   - UnovaSwimmer
   - UnovaWorker
+  - KalosFisherman
+  - KalosSwimmer
+  - KalosWorker
+  - KalosRichBoy
+  - SkyTrainer
 Bog:
   - Biker
   - Channeler
@@ -914,6 +1120,9 @@ Bog:
   - UnovaParasolLady
   - UnovaPoliceman
   - UnovaRoughneck
+  - KalosHexManiac
+  - KalosPunkGuy
+  - KalosPunkGirl
 KelpForest:
   - Swimmer
   - Psychic
@@ -933,3 +1142,6 @@ KelpForest:
   - UnovaFisherman
   - UnovaPsychic
   - UnovaSwimmer
+  - KalosFisherman
+  - KalosSwimmer
+  - KalosPsychic

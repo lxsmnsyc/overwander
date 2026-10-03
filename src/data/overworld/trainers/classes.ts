@@ -5,12 +5,14 @@ import type Regions from '../../ids/regions';
 import TrainerClass from '../../ids/trainers';
 import hoennText from '../../text/en/trainers/hoenn.yaml';
 import johtoText from '../../text/en/trainers/johto.yaml';
+import kalosText from '../../text/en/trainers/kalos.yaml';
 import kantoText from '../../text/en/trainers/kanto.yaml';
 import sinnohText from '../../text/en/trainers/sinnoh.yaml';
 import unovaText from '../../text/en/trainers/unova.yaml';
 import { idOf, idsOf } from '../../yaml';
 import hoennFile from './classes/hoenn.yaml';
 import johtoFile from './classes/johto.yaml';
+import kalosFile from './classes/kalos.yaml';
 import kantoFile from './classes/kanto.yaml';
 import sinnohFile from './classes/sinnoh.yaml';
 import unovaFile from './classes/unova.yaml';
@@ -48,6 +50,7 @@ const REGION_FILES: [region: string, classes: unknown, text: unknown][] = [
   ['hoenn', hoennFile, hoennText],
   ['sinnoh', sinnohFile, sinnohText],
   ['unova', unovaFile, unovaText],
+  ['kalos', kalosFile, kalosText],
 ];
 
 /** Every class, in the order they are numbered */

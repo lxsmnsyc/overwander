@@ -216,6 +216,53 @@ const enum TrainerClass {
   UnovaWaiter = 162,
   UnovaWorker = 163,
   UnovaYoungster = 164,
+  /** Kalos's own of the trades already on the road */
+  KalosAceTrainer = 165,
+  KalosLass = 166,
+  KalosYoungster = 167,
+  KalosBlackBelt = 168,
+  KalosBattleGirl = 169,
+  KalosBeauty = 170,
+  KalosFisherman = 171,
+  KalosSwimmer = 172,
+  KalosHiker = 173,
+  KalosPsychic = 174,
+  KalosHexManiac = 175,
+  KalosScientist = 176,
+  KalosWorker = 177,
+  KalosRichBoy = 178,
+  KalosPokeFan = 179,
+  KalosRanger = 180,
+  KalosBreeder = 181,
+  KalosBackpacker = 182,
+  KalosArtist = 183,
+  KalosCyclist = 184,
+  KalosGentleman = 185,
+  KalosLady = 186,
+  KalosWaiter = 187,
+  KalosMaid = 188,
+  KalosTwins = 189,
+  KalosVeteran = 190,
+  KalosSchoolKid = 191,
+  KalosPreschooler = 192,
+  KalosRollerSkater = 193,
+  KalosPunkGuy = 194,
+  KalosPunkGirl = 195,
+  KalosSocialite = 196,
+  KalosChef = 197,
+  KalosClerk = 198,
+  KalosGardener = 199,
+  /**
+   * Kalos's own trades: the sky, the fairy tale, the kimono, the
+   * household, the tour and the stage. Their titles sit in the second
+   * band with Sinnoh's and Unova's
+   */
+  SkyTrainer = 200,
+  FairyTaleGirl = 201,
+  FurisodeGirl = 202,
+  Butler = 203,
+  Tourist = 204,
+  RisingStar = 205,
 }
 
 export { TrainerClass };

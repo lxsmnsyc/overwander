@@ -70,6 +70,7 @@ export function getBiomeTrainers(biome: Biome): TrainerClass[] {
     TrainerClass.HoennAceTrainer,
     TrainerClass.SinnohAceTrainer,
     TrainerClass.UnovaAceTrainer,
+    TrainerClass.KalosAceTrainer,
     ...BIOME_TRAINERS[biome],
   ];
 }

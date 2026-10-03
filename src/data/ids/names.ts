@@ -19,6 +19,7 @@ import GymLeader from './gym-leaders';
 import EliteMember from './elite';
 import Champion from './champions';
 import Legend from './legends';
+import FrontierBrain, { FrontierRule } from './frontier';
 import Weather from '../overworld/weather/kinds';
 
 export const SPECIES_IDS = {
@@ -4745,6 +4746,35 @@ export const LEGEND_IDS = {
   Alder: Legend.Alder,
   AZ: Legend.AZ,
 } as const satisfies Record<string, Legend>;
+
+export const FRONTIER_BRAIN_IDS = {
+  Brandon: FrontierBrain.Brandon,
+  Greta: FrontierBrain.Greta,
+  Lucy: FrontierBrain.Lucy,
+  Noland: FrontierBrain.Noland,
+  Anabel: FrontierBrain.Anabel,
+  Spenser: FrontierBrain.Spenser,
+  Tucker: FrontierBrain.Tucker,
+  Palmer: FrontierBrain.Palmer,
+  Thorton: FrontierBrain.Thorton,
+  Dahlia: FrontierBrain.Dahlia,
+  Darach: FrontierBrain.Darach,
+  Caitlin: FrontierBrain.Caitlin,
+  Argenta: FrontierBrain.Argenta,
+} as const satisfies Record<string, FrontierBrain>;
+
+export const FRONTIER_RULE_IDS = {
+  None: FrontierRule.None,
+  Bare: FrontierRule.Bare,
+  Timed: FrontierRule.Timed,
+  Curtained: FrontierRule.Curtained,
+  Rented: FrontierRule.Rented,
+  Natured: FrontierRule.Natured,
+  Countered: FrontierRule.Countered,
+  Rolled: FrontierRule.Rolled,
+  Unhealed: FrontierRule.Unhealed,
+  Singled: FrontierRule.Singled,
+} as const satisfies Record<string, FrontierRule>;
 
 export const WEATHER_IDS = {
   Clear: Weather.Clear,

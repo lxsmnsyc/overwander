@@ -4758,6 +4758,37 @@
         "AZ"
       ]
     },
+    "frontier-brain": {
+      "enum": [
+        "Brandon",
+        "Greta",
+        "Lucy",
+        "Noland",
+        "Anabel",
+        "Spenser",
+        "Tucker",
+        "Palmer",
+        "Thorton",
+        "Dahlia",
+        "Darach",
+        "Caitlin",
+        "Argenta"
+      ]
+    },
+    "frontier-rule": {
+      "enum": [
+        "None",
+        "Bare",
+        "Timed",
+        "Curtained",
+        "Rented",
+        "Natured",
+        "Countered",
+        "Rolled",
+        "Unhealed",
+        "Singled"
+      ]
+    },
     "weather": {
       "enum": [
         "Clear",

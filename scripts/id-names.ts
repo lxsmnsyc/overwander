@@ -64,6 +64,8 @@ const TABLES: Table[] = [
   { name: 'ELITE_MEMBER_IDS', enumName: 'EliteMember', from: './elite', isDefault: true },
   { name: 'CHAMPION_IDS', enumName: 'Champion', from: './champions', isDefault: true },
   { name: 'LEGEND_IDS', enumName: 'Legend', from: './legends', isDefault: true },
+  { name: 'FRONTIER_BRAIN_IDS', enumName: 'FrontierBrain', from: './frontier', isDefault: true },
+  { name: 'FRONTIER_RULE_IDS', enumName: 'FrontierRule', from: './frontier' },
   {
     name: 'WEATHER_IDS',
     enumName: 'Weather',

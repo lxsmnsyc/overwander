@@ -45,6 +45,8 @@ const DEFINITIONS: [enumName: string, definition: string][] = [
   ['EliteMember', 'elite-member'],
   ['Champion', 'champion'],
   ['Legend', 'legend'],
+  ['FrontierBrain', 'frontier-brain'],
+  ['FrontierRule', 'frontier-rule'],
   ['Weather', 'weather'],
 ];
 
@@ -376,6 +378,43 @@ const LEGENDS: Schema = {
       party: described(PARTY, 'Their own six'),
     },
     ['honor', 'sheets', 'prize', 'party'],
+  ),
+};
+
+const TRIO: Schema = { ...names('species'), maxItems: 3 };
+
+const FRONTIER: Schema = {
+  $schema: DRAFT,
+  title: 'Frontier Brains',
+  type: 'object',
+  propertyNames: name('frontier-brain'),
+  additionalProperties: part(
+    {
+      rule: described(name('frontier-rule'), 'The house rule the fight is held under'),
+      crown: described(name('award'), 'The region crown they ask to see'),
+      sheets: described(SHEETS, 'The charsets they are seen in'),
+      symbols: described(
+        { type: 'array', items: name('award'), minItems: 2, maxItems: 2 },
+        'The silver symbol, then the gold',
+      ),
+      party: described(TRIO, 'The three they field first; empty when the house draws them'),
+      'gold-party': described(TRIO, 'The three once the challenger holds the silver'),
+    },
+    ['rule', 'crown', 'sheets', 'symbols', 'party', 'gold-party'],
+  ),
+};
+
+const FRONTIER_TEXT: Schema = {
+  $schema: DRAFT,
+  title: 'Frontier Brain names',
+  type: 'object',
+  propertyNames: name('frontier-brain'),
+  additionalProperties: part(
+    {
+      name: { type: 'string' },
+      house: described({ type: 'string' }, 'The house they keep'),
+    },
+    ['name', 'house'],
   ),
 };
 
@@ -784,6 +823,8 @@ export default function renderDataSchemas(members: Map<string, string[]>): Map<s
     ['champions-text.json', json(namesText('Champion names', 'champion'))],
     ['legends.json', json(LEGENDS)],
     ['legends-text.json', json(namesText('Legend names', 'legend'))],
+    ['frontier.json', json(FRONTIER)],
+    ['frontier-text.json', json(FRONTIER_TEXT)],
   ]);
 
   for (const [file, title, entry] of BATTLE_FILES) {

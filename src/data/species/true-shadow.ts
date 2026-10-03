@@ -1,5 +1,5 @@
 import { STAT_ORDER } from '../constants/stats';
-import { Species, speciesDexNumber } from '../ids/species';
+import { Species, getBaseFormSpecies, speciesDexNumber } from '../ids/species';
 import { getSpeciesData, registerSpecies } from './__create';
 
 /**
@@ -28,13 +28,35 @@ const TRUE_SHADOWS = new Map<Species, Species>([
   [Species.Zapdos, Species.ZapdosShadow],
   [Species.Moltres, Species.MoltresShadow],
   [Species.Mewtwo, Species.MewtwoShadow],
+  [Species.Regirock, Species.RegirockShadow],
+  [Species.Regice, Species.RegiceShadow],
+  [Species.Registeel, Species.RegisteelShadow],
+  [Species.Latias, Species.LatiasShadow],
+  [Species.Latios, Species.LatiosShadow],
+  [Species.Kyogre, Species.KyogreShadow],
+  [Species.Groudon, Species.GroudonShadow],
+  [Species.Rayquaza, Species.RayquazaShadow],
 ]);
 
-/** The same pairing read backwards, since no two counterparts share one */
+/**
+ * The worn shapes a true shadow can take, keyed by its counterpart's
+ * shape: a shadow Kyogre holding a Blue Orb reverts to its own Primal
+ */
+const SHADOW_SHAPES = new Map<Species, Species>([
+  [Species.KyogrePrimal, Species.KyogreShadowPrimal],
+  [Species.GroudonPrimal, Species.GroudonShadowPrimal],
+  [Species.RayquazaMega, Species.RayquazaShadowMega],
+]);
+
+/** The same pairings read backwards, since no two counterparts share one */
 const COUNTERPARTS = new Map<Species, Species>();
+const SHAPE_COUNTERPARTS = new Map<Species, Species>();
 
 for (const [counterpart, shadow] of TRUE_SHADOWS) {
   COUNTERPARTS.set(shadow, counterpart);
+}
+for (const [counterpart, shadow] of SHADOW_SHAPES) {
+  SHAPE_COUNTERPARTS.set(shadow, counterpart);
 }
 
 /** The true shadow of this species, or null where none is drawn */
@@ -50,6 +72,23 @@ export function isTrueShadow(species: Species): boolean {
 /** What a true shadow is the shadow of, or null for everything else */
 export function getTrueShadowCounterpart(species: Species): Species | null {
   return COUNTERPARTS.get(species) ?? null;
+}
+
+/**
+ * The shadow's version of a worn shape, or null where none is drawn.
+ * A shape a true shadow cannot take in its own colours is not taken
+ */
+export function getTrueShadowShape(shape: Species): Species | null {
+  return SHADOW_SHAPES.get(shape) ?? null;
+}
+
+/**
+ * What a unit in this shape would be without the shadow: the
+ * counterpart of a true shadow or of one of its worn shapes, or null
+ * for anything that is not a shadow at all
+ */
+export function getShadowlessSpecies(species: Species): Species | null {
+  return COUNTERPARTS.get(species) ?? SHAPE_COUNTERPARTS.get(species) ?? null;
 }
 
 /** Every true shadow there is, in the order the dex meets their counterparts */
@@ -70,7 +109,7 @@ export function trueShadowName(species: Species): string {
  * counterpart that has to be registered first
  */
 export default function registerTrueShadowSpecies(): void {
-  for (const [counterpart, shadow] of TRUE_SHADOWS) {
+  for (const [counterpart, shadow] of [...TRUE_SHADOWS, ...SHADOW_SHAPES]) {
     const base = getSpeciesData(counterpart);
     const stats = { ...base.stats };
 
@@ -78,10 +117,13 @@ export default function registerTrueShadowSpecies(): void {
       stats[stat] += TRUE_SHADOW_BONUS;
     }
 
+    // A worn shape keeps its prefix: Primal Kyogre's is Primal XD-382
+    const plain = getSpeciesData(getBaseFormSpecies(counterpart)).name;
+
     registerSpecies(shadow, {
       ...base,
       baseForm: false,
-      name: trueShadowName(shadow),
+      name: base.name.replace(plain, trueShadowName(shadow)),
       stats,
       // Met in the dark and nowhere else, so no biome lists one and
       // no pool stages one: the sky is what decides, not the country

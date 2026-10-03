@@ -2,6 +2,7 @@ import { EventPriority } from '../../core/event-emitter';
 import Abilities from '../../data/ids/abilities';
 import { FORM_ITEMS } from '../../data/items/form-items';
 import { Species, getBaseFormSpecies } from '../../data/ids/species';
+import { getShadowlessSpecies, getTrueShadowShape } from '../../data/species/true-shadow';
 import type Battle from '../core';
 import { BattleEvents } from '../events';
 import { MergedLifecycle } from '../lifecycle';
@@ -64,9 +65,15 @@ export default function setupFormItems(battle: Battle): void {
               }
 
               const shape = forms[Math.floor(inner.random() * forms.length)];
+              // A true shadow takes its own colours of the shape, or none
+              const worn =
+                getShadowlessSpecies(unit.species) == null ? shape : getTrueShadowShape(shape);
 
-              if (unit.species !== shape) {
-                unit.setSpecies(shape);
+              if (worn == null) {
+                return;
+              }
+              if (unit.species !== worn) {
+                unit.setSpecies(worn);
               }
 
               const bonus = SHAPE_ABILITIES.get(shape);

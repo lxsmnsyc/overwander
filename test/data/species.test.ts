@@ -440,6 +440,10 @@ describe('species forms', () => {
       ...listMegas(),
       Species.KyogrePrimal,
       Species.GroudonPrimal,
+      // And the shapes a true shadow wears in its own colours
+      Species.KyogreShadowPrimal,
+      Species.GroudonShadowPrimal,
+      Species.RayquazaShadowMega,
     ]);
 
     expect(registered.length).toBeGreaterThan(0);

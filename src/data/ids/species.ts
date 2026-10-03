@@ -1038,6 +1038,18 @@ export const enum Species {
   ZapdosShadow = 1014504,
   MoltresShadow = 1014604,
   MewtwoShadow = 1015003,
+  RegirockShadow = 1037702,
+  RegiceShadow = 1037802,
+  RegisteelShadow = 1037902,
+  LatiasShadow = 1038003,
+  LatiosShadow = 1038103,
+  KyogreShadow = 1038203,
+  GroudonShadow = 1038304,
+  RayquazaShadow = 1038404,
+  // The shapes a true shadow can be worn into, in the collection's own slots
+  KyogreShadowPrimal = 1038204,
+  GroudonShadowPrimal = 1038305,
+  RayquazaShadowMega = 1038405,
 
   /**
    * The Megas. The form index is the collection's own Mega slot, so

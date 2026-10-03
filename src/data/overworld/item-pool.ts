@@ -1,5 +1,9 @@
 import { SPECIAL_SPAWN_ODDS } from '../biome/__create';
-import { Items } from '../ids/items';
+import * as v from 'valibot';
+import type { Items } from '../ids/items';
+import { ITEM_IDS } from '../ids/names';
+import { idOf } from '../yaml';
+import poolFile from './item-pool.yaml';
 import { DRIVES } from '../items/drives';
 import { MARKET_GEAR } from '../items/gear';
 import { ONE_SHOTS } from '../items/one-shots';
@@ -57,6 +61,70 @@ export interface ItemRarityGroups {
 }
 
 /**
+ * The families a pool can name as one key, each at the weight it is
+ * written with apiece. A family's members are its own table's, so an
+ * item added to a family is in the pool without being written twice
+ */
+const ITEM_FAMILIES: Record<string, () => Iterable<Items>> = {
+  wings: () => WING_STATS.keys(),
+  'one-shots': () => ONE_SHOTS.keys(),
+  'type-boosters': () => TYPE_BOOSTERS.keys(),
+  'market-gear': () => MARKET_GEAR.keys(),
+  vitamins: () => VITAMIN_STATS.keys(),
+  plates: () => PLATES.keys(),
+  drives: () => DRIVES.keys(),
+  'mega-stones': () => MEGA_STONES.keys(),
+  memories: () => MEMORIES.keys(),
+  'type-crystals': () => TYPE_CRYSTALS.keys(),
+  'signature-crystals': () => SIGNATURE_CRYSTALS.keys(),
+  orbs: () => ORBS.keys(),
+  'stat-boosters': () => GENERAL_STAT_BOOSTERS.keys(),
+  'power-items': () => POWER_ITEMS.keys(),
+  mints: () => MINT_NATURES.keys(),
+  'max-vitamins': () => MAX_VITAMIN_STATS.keys(),
+};
+
+const BAND = v.record(v.string(), v.number());
+
+const POOL = v.object({
+  base: BAND,
+  uncommon: BAND,
+  scarce: BAND,
+  rare: BAND,
+  prized: BAND,
+  special: BAND,
+});
+
+/** One band as written, in its order, each family laid down in its own */
+function readBand(written: Record<string, number>, band: string): ItemPoolEntry[] {
+  const entries: ItemPoolEntry[] = [];
+
+  for (const [key, weight] of Object.entries(written)) {
+    const family = ITEM_FAMILIES[key];
+
+    if (Object.hasOwn(ITEM_FAMILIES, key)) {
+      entries.push(...evenlyWeighted(family(), weight));
+    } else {
+      entries.push({ item: idOf(ITEM_IDS, key, `item-pool.yaml: ${band}`), weight });
+    }
+  }
+  return entries;
+}
+
+function readItemPool(): ItemRarityGroups {
+  const written = v.parse(POOL, poolFile);
+
+  return {
+    base: readBand(written.base, 'base'),
+    uncommon: readBand(written.uncommon, 'uncommon'),
+    scarce: readBand(written.scarce, 'scarce'),
+    rare: readBand(written.rare, 'rare'),
+    prized: readBand(written.prized, 'prized'),
+    special: readBand(written.special, 'special'),
+  };
+}
+
+/**
  * The overworld item pool: balls, evolution stones, the held-item
  * shelves, the valuables the ground hides, and the Shiny Charm.
  *
@@ -72,401 +140,14 @@ export interface ItemRarityGroups {
  *
  * Machines are deliberately absent: they are bought, never found.
  *
- * This is the whole ladder, and what a band and its odds are read
- * off. Where each thing is buried is a separate question, answered by
+ * Written in `item-pool.yaml`. This is the whole ladder, and what a
+ * band and its odds are read off. Where each thing is buried is a separate question, answered by
  * [`biome-items.ts`](./biome-items.ts): a stash draws from what its
  * own ground holds, which is this pool less whatever belongs
  * somewhere else
  */
-export const ITEM_POOL: ItemRarityGroups = {
-  base: [
-    { item: Items.PokeBall, weight: 30 },
-    { item: Items.GreatBall, weight: 10 },
-    { item: Items.PremierBall, weight: 5 },
-    { item: Items.HealBall, weight: 5 },
-    { item: Items.LuxuryBall, weight: 5 },
-    { item: Items.Pearl, weight: 8 },
-    { item: Items.Stardust, weight: 8 },
-    // The roadside trinkets: a shell off a beach, a feather off a
-    // path, a mushroom nobody would stop for. They are what makes a
-    // walk pay at all, so they are the commonest gold in the game
-    { item: Items.ShoalSalt, weight: 6 },
-    { item: Items.ShoalShell, weight: 6 },
-    { item: Items.PrettyWing, weight: 6 },
-    { item: Items.TinyMushroom, weight: 8 },
-    // The first rung of the relic ladder. It is worth what a Stardust
-    // is worth, so it is hidden where a Stardust is hidden
-    { item: Items.RelicCopper, weight: 4 },
-    // Somebody's rubbish, which is a meal to a Poison type and a slow
-    // poisoning to everyone else. It is litter, so it lies where
-    // litter lies
-    { item: Items.BlackSludge, weight: 4 },
-    // A burr picked up off the same walk, and about as welcome
-    { item: Items.StickyBarb, weight: 4 },
-    // The way out of a cave, hidden in the country that has caves in
-    // it as often as anywhere else: a rope is worth carrying before
-    // you need it
-    { item: Items.EscapeRope, weight: 6 },
-    // The everyday medicine. A walk that turns up a Potion and an
-    // Antidote is a walk that paid for the raid it is walking towards
-    { item: Items.Potion, weight: 12 },
-    { item: Items.Antidote, weight: 5 },
-    { item: Items.BurnHeal, weight: 5 },
-    { item: Items.IceHeal, weight: 5 },
-    { item: Items.Awakening, weight: 5 },
-    { item: Items.ParalyzeHeal, weight: 5 },
-    // The herbs grow where a walk goes, which is the reason they cost
-    // less than what a shop bottles: they are picked rather than
-    // bought, and the pokemon that swallows one settles the bill
-    { item: Items.EnergyPowder, weight: 8 },
-    { item: Items.HealPowder, weight: 8 },
-    // A jar for a honey tree, left where the trees are
-    { item: Items.Honey, weight: 6 },
-  ],
-  uncommon: [
-    { item: Items.NetBall, weight: 10 },
-    { item: Items.DiveBall, weight: 10 },
-    { item: Items.NestBall, weight: 10 },
-    { item: Items.RepeatBall, weight: 10 },
-    { item: Items.TimerBall, weight: 10 },
-    { item: Items.QuickBall, weight: 10 },
-    { item: Items.DuskBall, weight: 10 },
-    { item: Items.BeastBall, weight: 3 },
-    // A shade thinner than the base valuables would make them, so the
-    // band's doubled width never makes a dearer find the commoner one
-    { item: Items.BigPearl, weight: 7 },
-    { item: Items.StarPiece, weight: 7 },
-    { item: Items.BigMushroom, weight: 6 },
-    // Priced with the Big Mushroom, so it is hidden with it: a bone in
-    // a richer band than a dearer pearl would break the ladder
-    { item: Items.RareBone, weight: 5 },
-    { item: Items.SuperPotion, weight: 10 },
-    { item: Items.FullHeal, weight: 6 },
-    // The only thing the Move Reminder takes. It is dug up rather than
-    // bought because nothing sells one — a forgotten move costs a walk,
-    // which is what the move cost in the first place
-    { item: Items.HeartScale, weight: 8 },
-    // Holding a line one stage short of where it would go is a
-    // decision players make early and often, so the stone is common
-    { item: Items.Everstone, weight: 6 },
-  ],
-  scarce: [
-    { item: Items.UltraBall, weight: 15 },
-    // Kurt's balls, dropped by whoever carried one out of his shop.
-    // Thin, since nobody sells them and each is for one kind of catch
-    { item: Items.LevelBall, weight: 3 },
-    { item: Items.LureBall, weight: 3 },
-    { item: Items.MoonBall, weight: 3 },
-    { item: Items.FriendBall, weight: 3 },
-    { item: Items.LoveBall, weight: 3 },
-    { item: Items.HeavyBall, weight: 3 },
-    { item: Items.FastBall, weight: 3 },
-    { item: Items.RelicSilver, weight: 4 },
-    { item: Items.HyperPotion, weight: 6 },
-    // The root is a Hyper Potion's worth and then some, so it sits in
-    // the band the Hyper Potion sits in rather than with the powders
-    { item: Items.EnergyRoot, weight: 6 },
-    // What a party comes back from a lost fight on, all of it bottled
-    // and sold. The herb is a Revive that grows out of the ground
-    { item: Items.MaxPotion, weight: 6 },
-    { item: Items.Revive, weight: 6 },
-    { item: Items.RevivalHerb, weight: 4 },
-    // The stones that hold a sky out longer, and the clay that does
-    // the same for a screen. Thin slots: each is worth nothing to a
-    // party not built around the thing it lengthens
-    { item: Items.DampRock, weight: 3 },
-    { item: Items.HeatRock, weight: 3 },
-    { item: Items.IcyRock, weight: 3 },
-    { item: Items.SmoothRock, weight: 3 },
-    { item: Items.LightClay, weight: 3 },
-    { item: Items.TerrainExtender, weight: 3 },
-    // Pulled up with them, and about as particular: everything to a
-    // pokemon that drains, nothing to anything else
-    { item: Items.BigRoot, weight: 4 },
-    // The wings, blown along the ground: three points of training
-    // each, and the only effort a pokemon gets that its levels did
-    // not pay for. Thin slots, because they are the one thing in the
-    // game that raises a stat past what a level allows
-    ...evenlyWeighted(WING_STATS.keys(), 3),
-    // The one-shots, dropped where their moment ended. Each waits for
-    // one thing to happen to its holder and is spent on it, which is
-    // the band's own test: through the next fight and no further
-    ...evenlyWeighted(ONE_SHOTS.keys(), 2),
-    // The everyday held gear: a type lifted by a fifth, a tenth more
-    // damage, a lens. Thin slots each, since there are forty-five of
-    // them. The type boosters also drop off the wild species that
-    // carry them
-    ...evenlyWeighted(TYPE_BOOSTERS.keys(), 1),
-    ...evenlyWeighted(MARKET_GEAR.keys(), 1),
-    // Left behind by whatever wriggled out of it, which is what it
-    // does for whoever picks it up
-    { item: Items.ShedShell, weight: 4 },
-    // Boots somebody walked out of: worth a slot to anything that has
-    // to walk back onto a field somebody else laid spikes on
-    { item: Items.HeavyDutyBoots, weight: 4 },
-    // Somebody's weighted dice, which is worth a slot to the handful
-    // of pokemon that throw a move several times over
-    { item: Items.LoadedDice, weight: 3 },
-    // The training kit: a brace heavier than anything wants to wear, a
-    // bell rung for a pokemon that was not caught in a comfortable
-    // ball, and the candy pair, a walk's worth of extra candy each
-    { item: Items.MachoBrace, weight: 3 },
-    { item: Items.SootheBell, weight: 3 },
-    { item: Items.ExpShare, weight: 2 },
-    { item: Items.LuckyEgg, weight: 2 },
-  ],
-  rare: [
-    { item: Items.FireStone, weight: 10 },
-    { item: Items.WaterStone, weight: 10 },
-    { item: Items.ThunderStone, weight: 10 },
-    { item: Items.LeafStone, weight: 10 },
-    { item: Items.MoonStone, weight: 10 },
-    { item: Items.SunStone, weight: 10 },
-    // Sinnoh's four, buried like the six above them now that a line
-    // asks for each
-    { item: Items.ShinyStone, weight: 8 },
-    { item: Items.DuskStone, weight: 8 },
-    { item: Items.DawnStone, weight: 8 },
-    { item: Items.IceStone, weight: 8 },
-    // Not a stone, and here for the same reason they are: it is used
-    // on a pokemon and spent. Thinner, because a Rotom wants more
-    // than one of them and nobody sells any
-    { item: Items.RotomCatalog, weight: 6 },
-    // Beside it for the same reason, and as thin: a Zygarde goes both
-    // ways between its shapes, so one cube is never enough either
-    { item: Items.ZygardeCube, weight: 6 },
-    // What a trade or a held evolution asks for, on the stones' terms
-    // but thinner: each is wanted by one line rather than several
-    { item: Items.KingsRock, weight: 3 },
-    { item: Items.DragonScale, weight: 3 },
-    { item: Items.UpGrade, weight: 3 },
-    { item: Items.Protector, weight: 3 },
-    { item: Items.Electirizer, weight: 3 },
-    { item: Items.Magmarizer, weight: 3 },
-    { item: Items.ReaperCloth, weight: 3 },
-    { item: Items.DubiousDisc, weight: 3 },
-    { item: Items.DeepSeaTooth, weight: 3 },
-    { item: Items.DeepSeaScale, weight: 3 },
-    { item: Items.PrismScale, weight: 3 },
-    { item: Items.OvalStone, weight: 3 },
-    { item: Items.RazorClaw, weight: 3 },
-    { item: Items.RazorFang, weight: 3 },
-    { item: Items.LinkingCord, weight: 4 },
-    // A level for any line, whatever candy it takes
-    { item: Items.RareCandy, weight: 5 },
-    // 10 effort a bottle, one step past the wings' 3
-    ...evenlyWeighted(VITAMIN_STATS.keys(), 3),
-    // A step off one move's cooldown for good; its bigger bottle is
-    // prized
-    { item: Items.PPUp, weight: 3 },
-    { item: Items.Nugget, weight: 8 },
-    // The middle of the ladder, thinning as it climbs
-    // Cut off a Slowpoke, and worth more than the nugget it is found
-    // beside — which is the joke, and the reason it is thin
-    { item: Items.SlowpokeTail, weight: 3 },
-    { item: Items.PearlString, weight: 5 },
-    { item: Items.RelicGold, weight: 4 },
-    { item: Items.BalmMushroom, weight: 4 },
-    { item: Items.BigNugget, weight: 2 },
-    // The top of the medicine: the Full Restore, and the Max Revive
-    // that brings a pokemon back from nothing at full health. Both are
-    // bottled and sold, so a find is a saving rather than a prize
-    { item: Items.FullRestore, weight: 4 },
-    { item: Items.MaxRevive, weight: 5 },
-    // The relics: a Cubone's bone, a Ditto's dust. Thinner than the
-    // band's staples because each is worth nothing to anybody who has
-    // not caught that one species, and one to anybody who has
-    { item: Items.LightBall, weight: 3 },
-    { item: Items.ThickClub, weight: 3 },
-    { item: Items.MetalPowder, weight: 3 },
-    { item: Items.QuickPowder, weight: 3 },
-    // And the two that sharpen one species' aim: a Chansey's glove
-    // and a Farfetch'd leek
-    { item: Items.LuckyPunch, weight: 3 },
-    { item: Items.Stick, weight: 3 },
-    // A Soul Dew is nothing to anybody but the pair it belongs to
-    { item: Items.SoulDew, weight: 2 },
-    // A stone's weight, because every pokemon a player owns wants one
-    // — a Fire Stone is wanted once, by one line
-    { item: Items.Leftovers, weight: 10 },
-    // The plates, buried where they fell. Seventeen thin slots share
-    // about what one stone is worth, so digging one up stays an event
-    ...evenlyWeighted(PLATES.keys(), 1),
-    // The Drives are found on the same terms as the plates
-    ...evenlyWeighted(DRIVES.keys(), 1),
-    // And the Mega Stones, which are held for a shape the way a plate is
-    ...evenlyWeighted(MEGA_STONES.keys(), 1),
-    // The Memories on the plates' terms, and the Z-Crystals on the stones'
-    ...evenlyWeighted(MEMORIES.keys(), 1),
-    ...evenlyWeighted(TYPE_CRYSTALS.keys(), 1),
-    ...evenlyWeighted(SIGNATURE_CRYSTALS.keys(), 1),
-    // The strongest gear, on the plates' terms: thin slots, so the
-    // band stays the stones' and finding a Choice Band stays an event
-    ...evenlyWeighted(ORBS.keys(), 1),
-    ...evenlyWeighted(GENERAL_STAT_BOOSTERS.keys(), 1),
-  ],
-  prized: [
-    // A dug-up cap fixes one stat of one pokemon, and nothing else in
-    // the game touches what a catch was born with. The commonest of
-    // the three, so the band has something a player can actually hope
-    // for — its golden twin, which fixes all six, stays special
-    { item: Items.BottleCap, weight: 10 },
-    // The only way a shadow is ever put right, and a shadow is a raid
-    // rather than an everyday thing
-    { item: Items.PurifyingGem, weight: 8 },
-    // The only thing that widens a pokemon rather than filling it in.
-    // Thin: a second held item is a whole build, and one belt is one
-    // pokemon's worth of it
-    { item: Items.UtilityBelt, weight: 4 },
-    // Room for another move, as thin as the belt: a fifth move is a
-    // whole new way for one pokemon to fight
-    { item: Items.SkillBook, weight: 4 },
-    // Room for another ability, which the Channeler then has
-    // something to fill. Commoner than the belt: a species that
-    // cannot reach four on its own needs one before she is any use
-    { item: Items.AbilityCapsule, weight: 6 },
-    // The one ability nothing rolls, written into a pokemon that
-    // already has everything its line can be born with. Thin: it
-    // cannot be taken back
-    { item: Items.AbilityPatch, weight: 4 },
-    // One crossing of the world. It is spent in the crossing, so it
-    // changes where a player is rather than what a pokemon is — but it
-    // is the only thing that does, and a network nobody can reach is
-    // no network. Prized rather than special: the map is meant to be
-    // walked more than once in a lifetime
-    { item: Items.PortalKey, weight: 8 },
-    /**
-     * The one thing in the game that answers a party being wiped out,
-     * and it answers once. Thin, and prized rather than special
-     * because a team that finds one has found a second chance rather
-     * than something nobody else will ever see
-     */
-    { item: Items.SacredAsh, weight: 4 },
-    // The fossils. Reviving one is irreversible and is the only way
-    // to the species inside, which is the test this band is for; the
-    // maniac sells them, so the pool is the lucky route rather than
-    // the only one. The amber is thinner because Aerodactyl is
-    { item: Items.HelixFossil, weight: 8 },
-    { item: Items.DomeFossil, weight: 8 },
-    { item: Items.OldAmber, weight: 5 },
-    { item: Items.RootFossil, weight: 8 },
-    { item: Items.ClawFossil, weight: 8 },
-    { item: Items.SkullFossil, weight: 8 },
-    { item: Items.ArmorFossil, weight: 8 },
-    { item: Items.CoverFossil, weight: 8 },
-    { item: Items.PlumeFossil, weight: 8 },
-    { item: Items.JawFossil, weight: 8 },
-    { item: Items.SailFossil, weight: 8 },
-    // The rock a Deoxys rearranges itself with, spent on each
-    // rearrangement. Prized rather than special: it is worth nothing
-    // to anybody who has not been to the island, and everything to
-    // whoever has
-    { item: Items.Meteorite, weight: 4 },
-    // The orbs and the flower, which the meteorite is the first of:
-    // each is worth nothing at all until its own legendary has been
-    // caught, and everything the moment one has. Thinner than the
-    // rock, since each names one pokemon where the rock names four
-    // shapes of the same one
-    { item: Items.AdamantOrb, weight: 3 },
-    { item: Items.LustrousOrb, weight: 3 },
-    { item: Items.GriseousOrb, weight: 3 },
-    { item: Items.BlueOrb, weight: 3 },
-    { item: Items.RedOrb, weight: 3 },
-    { item: Items.Gracidea, weight: 3 },
-    // As thin as the orbs, for the same reason: the splicers are worth
-    // nothing until a Kyurem has been caught
-    { item: Items.DnaSplicers, weight: 3 },
-    { item: Items.PrisonBottle, weight: 3 },
-    // A little thicker than an orb: one mirror serves three genies
-    { item: Items.RevealGlass, weight: 4 },
-    // The prisms, on the orbs' terms: each names one pokemon
-    { item: Items.NSolarizer, weight: 3 },
-    { item: Items.NLunarizer, weight: 3 },
-    // The nectars, spent the way the meteorite is and as thin: four
-    // styles of one pokemon share them
-    { item: Items.RedNectar, weight: 1 },
-    { item: Items.YellowNectar, weight: 1 },
-    { item: Items.PinkNectar, weight: 1 },
-    { item: Items.PurpleNectar, weight: 1 },
-    // Three purses instead of one, for good, and nothing sells one.
-    // Here rather than in rare so that parting with it is asked about
-    // twice
-    { item: Items.AmuletCoin, weight: 4 },
-    // The ruins. They change nothing about a pokemon, which is what
-    // the rest of this band is for; what puts them here is that one of
-    // them pays for a season of everything else, and a band that draws
-    // a Bottle Cap is the right rate for that.
-    //
-    // The four are spread rather than levelled, because the ladder is
-    // read by price: each is dearer than the one above it, so each is
-    // scarcer than the one above it
-    { item: Items.RelicVase, weight: 4 },
-    { item: Items.CometShard, weight: 3 },
-    { item: Items.RelicBand, weight: 2 },
-    { item: Items.RelicStatue, weight: 1 },
-    // The power items: each decides what a player's next fifty eggs
-    // are made of, which is the band's permanence test passed on the
-    // next generation rather than on the holder
-    ...evenlyWeighted(POWER_ITEMS.keys(), 3),
-    // A move's cooldown taken as far down as it goes, for good
-    { item: Items.PPMax, weight: 2 },
-    // A lamp for the dark underground, and nobody sells one
-    { item: Items.ExplorerKit, weight: 3 },
-    // The mints. A nature is two stats for the rest of a pokemon's
-    // life and nothing else touches one, which is this band exactly.
-    // The thinnest weight there is, because there are twenty-one of
-    // them: finding a mint is ordinary, finding the one a player came
-    // for is not, and the chef is who they go to when it matters
-    ...evenlyWeighted(MINT_NATURES.keys(), 1),
-  ],
-  special: [
-    { item: Items.MasterBall, weight: 10 },
-    { item: Items.ShinyCharm, weight: 10 },
-    // Beside the Shiny Charm and a little readier to turn up: what it
-    // is worth is half again on a throw rather than eight times a
-    // roll, so it is the lesser of the two charms in every sense
-    { item: Items.CatchingCharm, weight: 12 },
-    // The only way a mythical is ever fought: the relic is found
-    // here or not at all
-    { item: Items.OldSeaMap, weight: 6 },
-    { item: Items.GSBall, weight: 6 },
-    { item: Items.AuroraTicket, weight: 6 },
-    { item: Items.WishTag, weight: 6 },
-    { item: Items.MemberCard, weight: 6 },
-    { item: Items.ManaphyEgg, weight: 6 },
-    { item: Items.OaksLetter, weight: 6 },
-    { item: Items.AzureFlute, weight: 6 },
-    { item: Items.ColtsPetal, weight: 6 },
-    { item: Items.LibertyPass, weight: 6 },
-    { item: Items.MusicBox, weight: 6 },
-    { item: Items.ColressMachine, weight: 6 },
-    { item: Items.HeartDiamond, weight: 6 },
-    { item: Items.SealedRing, weight: 6 },
-    { item: Items.SteamValve, weight: 6 },
-    { item: Items.AncientPokeBall, weight: 6 },
-    { item: Items.HerosCharm, weight: 6 },
-    { item: Items.WindmillCharm, weight: 6 },
-    { item: Items.MysteryBox, weight: 6 },
-    // Six stats made perfect at once. Nothing else undoes a bad roll,
-    // so it belongs with the things gold cannot buy
-    { item: Items.GoldenBottleCap, weight: 8 },
-    // A stat's effort filled in one go, and every level at once. Each
-    // stays wider than the crown, which is the rarest find there is
-    ...evenlyWeighted(MAX_VITAMIN_STATS.keys(), 4),
-    { item: Items.RareCandyMax, weight: 6 },
-    // The one thing here that is only gold. Everything beside it is
-    // something gold cannot buy, and the crown earns its place the
-    // other way round: six hundred thousand is more than the game pays
-    // for anything else, so the band that hides a Master Ball is the
-    // only one that can hide it.
-    //
-    // Thin even for this band, and that is the whole of why. A band
-    // eight times rarer is not by itself rarer than a wide slot in the
-    // band below: at 5 the crown outdrew the statue under it, which is
-    // worth two thirds as much
-    { item: Items.RelicCrown, weight: 3 },
-  ],
-};
+export const ITEM_POOL: ItemRarityGroups = readItemPool();
+
 
 /**
  * Which band of the pool something is drawn from

@@ -1,0 +1,113 @@
+import { Stats } from '../../constants/stats';
+import { Types } from '../../constants/types';
+import Abilities from '../../ids/abilities';
+import Biome, { TimeOfDay } from '../../ids/biome';
+import EggGroups from '../../ids/egg-groups';
+import Families from '../../ids/families';
+import { Moves } from '../../ids/moves';
+import { Species } from '../../ids/species';
+import { registerSpecies } from '../__create';
+
+// TM and tutor moves shared by the whole family
+const FAMILY_TEACHABLE = [
+  Moves.Acrobatics,
+  Moves.AfterYou,
+  Moves.AllySwitch,
+  Moves.Attract,
+  Moves.Bind,
+  Moves.CalmMind,
+  Moves.Confide,
+  Moves.Covet,
+  Moves.DazzlingGleam,
+  Moves.Defog,
+  Moves.DoubleTeam,
+  Moves.EchoedVoice,
+  Moves.EnergyBall,
+  Moves.Facade,
+  Moves.Fling,
+  Moves.Frustration,
+  Moves.GigaDrain,
+  Moves.GrassKnot,
+  Moves.HealBell,
+  Moves.HelpingHand,
+  Moves.HiddenPower,
+  Moves.HyperBeam,
+  Moves.LightScreen,
+  Moves.MagicCoat,
+  Moves.NaturePower,
+  Moves.PainSplit,
+  Moves.Protect,
+  Moves.PsychUp,
+  Moves.Rest,
+  Moves.Return,
+  Moves.RolePlay,
+  Moves.Round,
+  Moves.Safeguard,
+  Moves.SeedBomb,
+  Moves.SleepTalk,
+  Moves.Snore,
+  Moves.SolarBeam,
+  Moves.Substitute,
+  Moves.SunnyDay,
+  Moves.Swagger,
+  Moves.Synthesis,
+  Moves.Tailwind,
+  Moves.Taunt,
+  Moves.Telekinesis,
+  Moves.Thief,
+  Moves.Toxic,
+  Moves.Trick,
+  Moves.TrickRoom,
+  Moves.UTurn,
+  Moves.WorrySeed,
+];
+
+export default function registerComfeySpecies(): void {
+  registerSpecies(Species.Comfey, {
+    dexNumber: 764,
+    name: 'Comfey',
+    category: 'Posy Picker Pokemon',
+    height: 0.1,
+    weight: 0.3,
+    family: Families.Comfey,
+    stats: {
+      [Stats.HP]: 51,
+      [Stats.Attack]: 52,
+      [Stats.Defense]: 90,
+      [Stats.SpecialAttack]: 82,
+      [Stats.SpecialDefense]: 110,
+      [Stats.Speed]: 100,
+    },
+    types: [Types.Fairy],
+    abilities: [Abilities.FlowerVeil, Abilities.Triage],
+    hiddenAbilities: [Abilities.NaturalCure, Abilities.AromaVeil],
+    eggGroups: [EggGroups.Grass],
+    genderRatio: [2, 6],
+    catchRate: 60,
+    biomes: [Biome.TropicalRainforest, Biome.TropicalSeasonalForest, Biome.Grassland],
+    activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
+    learnSet: {
+      level: {
+        1: [Moves.FlowerShield, Moves.HelpingHand, Moves.VineWhip],
+        4: [Moves.LeechSeed],
+        7: [Moves.DrainingKiss],
+        10: [Moves.MagicalLeaf],
+        13: [Moves.Growth],
+        16: [Moves.Wrap],
+        19: [Moves.SweetKiss],
+        22: [Moves.NaturalGift],
+        25: [Moves.PetalBlizzard],
+        28: [Moves.Synthesis],
+        31: [Moves.SweetScent],
+        34: [Moves.GrassKnot],
+        37: [Moves.FloralHealing],
+        40: [Moves.PetalDance],
+        43: [Moves.Aromatherapy],
+        46: [Moves.GrassyTerrain],
+        49: [Moves.PlayRough],
+      },
+      teachable: [...FAMILY_TEACHABLE],
+      egg: [Moves.AfterYou, Moves.Amnesia, Moves.Endure, Moves.LuckyChant],
+    },
+  });
+}

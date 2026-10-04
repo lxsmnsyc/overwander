@@ -14,6 +14,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Piplup, weight: 3 },
       ],
       uncommon: [
+        { species: Species.Wimpod, weight: 22 },
         { species: Species.Crabrawler, weight: 24 },
         { species: Species.Binacle, weight: 24 },
         { species: Species.Krabby, weight: 20 },
@@ -30,6 +31,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Prinplup, weight: 2 },
       ],
       scarce: [
+        { species: Species.Golisopod, weight: 6 },
         { species: Species.Barbaracle, weight: 6 },
         { species: Species.Kingler, weight: 10 },
         { species: Species.Dewgong, weight: 10 },
@@ -40,6 +42,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Floatzel, weight: 8 },
       ],
       elusive: [
+        { species: Species.Pyukumuku, weight: 5 },
         { species: Species.Primarina, weight: 2 },
         { species: Species.Samurott, weight: 2 },
         { species: Species.Shuckle, weight: 5 },
@@ -56,6 +59,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Piplup, weight: 3 },
       ],
       uncommon: [
+        { species: Species.Wimpod, weight: 22 },
         { species: Species.Crabrawler, weight: 24 },
         { species: Species.Binacle, weight: 24 },
         { species: Species.Krabby, weight: 20 },
@@ -72,6 +76,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Prinplup, weight: 2 },
       ],
       scarce: [
+        { species: Species.Golisopod, weight: 6 },
         { species: Species.Barbaracle, weight: 6 },
         { species: Species.Kingler, weight: 10 },
         { species: Species.Dewgong, weight: 10 },
@@ -82,6 +87,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Floatzel, weight: 8 },
       ],
       elusive: [
+        { species: Species.Pyukumuku, weight: 5 },
         { species: Species.Primarina, weight: 2 },
         { species: Species.Samurott, weight: 2 },
         { species: Species.Shuckle, weight: 5 },
@@ -94,6 +100,7 @@ export default function registerRockyCoastSpawns(): void {
     [TimeOfDay.Evening]: {
       base: [],
       uncommon: [
+        { species: Species.Wimpod, weight: 22 },
         { species: Species.Crabrawler, weight: 24 },
         { species: Species.Krabby, weight: 20 },
         { species: Species.Seel, weight: 20 },
@@ -103,13 +110,17 @@ export default function registerRockyCoastSpawns(): void {
       ],
       rare: [],
       scarce: [
+        { species: Species.Golisopod, weight: 6 },
         { species: Species.Kingler, weight: 10 },
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Gastrodon, weight: 10 },
         { species: Species.WormadamSandy, weight: 4 },
         { species: Species.Floatzel, weight: 8 },
       ],
-      elusive: [{ species: Species.Shuckle, weight: 5 }],
+      elusive: [
+        { species: Species.Pyukumuku, weight: 5 },
+        { species: Species.Shuckle, weight: 5 },
+      ],
       prized: [...UNOWN_SPAWNS],
       special: [],
       mythical: [{ species: Species.Victini, weight: 10 }],
@@ -117,6 +128,7 @@ export default function registerRockyCoastSpawns(): void {
     [TimeOfDay.Night]: {
       base: [],
       uncommon: [
+        { species: Species.Wimpod, weight: 22 },
         { species: Species.Crabrawler, weight: 24 },
         { species: Species.Krabby, weight: 20 },
         { species: Species.Seel, weight: 20 },
@@ -126,13 +138,17 @@ export default function registerRockyCoastSpawns(): void {
       ],
       rare: [],
       scarce: [
+        { species: Species.Golisopod, weight: 6 },
         { species: Species.Kingler, weight: 10 },
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Gastrodon, weight: 10 },
         { species: Species.WormadamSandy, weight: 4 },
         { species: Species.Floatzel, weight: 8 },
       ],
-      elusive: [{ species: Species.Shuckle, weight: 5 }],
+      elusive: [
+        { species: Species.Pyukumuku, weight: 5 },
+        { species: Species.Shuckle, weight: 5 },
+      ],
       prized: [...UNOWN_SPAWNS],
       special: [],
       mythical: [{ species: Species.Victini, weight: 10 }],
@@ -146,6 +162,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Horsea, weight: 10 },
       ],
       uncommon: [
+        { species: Species.Mareanie, weight: 22 },
         { species: Species.Krabby, weight: 20 },
         { species: Species.Shellder, weight: 20 },
         { species: Species.Tentacool, weight: 20 },
@@ -158,6 +175,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Seadra, weight: 5 },
       ],
       scarce: [
+        { species: Species.Toxapex, weight: 6 },
         { species: Species.Kingler, weight: 10 },
         { species: Species.Cloyster, weight: 10 },
         { species: Species.Tentacruel, weight: 8 },
@@ -179,6 +197,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Horsea, weight: 10 },
       ],
       uncommon: [
+        { species: Species.Mareanie, weight: 22 },
         { species: Species.Krabby, weight: 20 },
         { species: Species.Shellder, weight: 20 },
         { species: Species.Tentacool, weight: 20 },
@@ -191,6 +210,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Seadra, weight: 5 },
       ],
       scarce: [
+        { species: Species.Toxapex, weight: 6 },
         { species: Species.Kingler, weight: 10 },
         { species: Species.Cloyster, weight: 10 },
         { species: Species.Tentacruel, weight: 8 },
@@ -208,6 +228,7 @@ export default function registerRockyCoastSpawns(): void {
     [TimeOfDay.Evening]: {
       base: [{ species: Species.Horsea, weight: 10 }],
       uncommon: [
+        { species: Species.Mareanie, weight: 22 },
         { species: Species.Krabby, weight: 20 },
         { species: Species.Shellder, weight: 20 },
         { species: Species.Tentacool, weight: 20 },
@@ -217,6 +238,7 @@ export default function registerRockyCoastSpawns(): void {
       ],
       rare: [{ species: Species.Seadra, weight: 5 }],
       scarce: [
+        { species: Species.Toxapex, weight: 6 },
         { species: Species.Kingler, weight: 10 },
         { species: Species.Cloyster, weight: 10 },
         { species: Species.Tentacruel, weight: 8 },
@@ -233,6 +255,7 @@ export default function registerRockyCoastSpawns(): void {
     [TimeOfDay.Night]: {
       base: [{ species: Species.Horsea, weight: 10 }],
       uncommon: [
+        { species: Species.Mareanie, weight: 22 },
         { species: Species.Krabby, weight: 20 },
         { species: Species.Shellder, weight: 20 },
         { species: Species.Tentacool, weight: 20 },
@@ -242,6 +265,7 @@ export default function registerRockyCoastSpawns(): void {
       ],
       rare: [{ species: Species.Seadra, weight: 5 }],
       scarce: [
+        { species: Species.Toxapex, weight: 6 },
         { species: Species.Kingler, weight: 10 },
         { species: Species.Cloyster, weight: 10 },
         { species: Species.Tentacruel, weight: 8 },

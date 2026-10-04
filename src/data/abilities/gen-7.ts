@@ -33,10 +33,52 @@ export default function registerGen7Abilities(): void {
     name: 'Water Bubble',
     description: 'Fire moves hit it at 0.5x, it cannot be burned, and its Water moves hit 2x.',
   });
+  // Salandit
+  registerAbility(Abilities.Corrosion, {
+    name: 'Corrosion',
+    description: 'It can poison Poison and Steel types.',
+  });
+  // Stufful
+  registerAbility(Abilities.Fluffy, {
+    name: 'Fluffy',
+    description: 'Contact moves hit it at 0.5x, but Fire moves hit it 2x.',
+  });
+  // Passimian
+  registerAbility(Abilities.Receiver, {
+    name: 'Receiver',
+    description: 'When a teammate faints, it takes that teammate’s ability in place of this one.',
+  });
   // Wimpod
   registerAbility(Abilities.WimpOut, {
     name: 'Wimp Out',
     description:
       'When damage drops it below 1/2 HP, it leaves the field and its strongest teammate comes in.',
+  });
+  // Golisopod
+  registerAbility(Abilities.EmergencyExit, {
+    name: 'Emergency Exit',
+    description:
+      'When damage drops it below 1/2 HP, it leaves the field and its strongest teammate comes in.',
+  });
+  // Sandygast
+  registerAbility(Abilities.WaterCompaction, {
+    name: 'Water Compaction',
+    description: 'Each Water move that lands on it raises its Defense 2 stages.',
+  });
+  // Palossand
+  registerAbility(Abilities.SandSpit, {
+    name: 'Sand Spit',
+    description: 'It casts Sandstorm whenever a damaging move lands on it.',
+  });
+  // Pyukumuku
+  registerAbility(Abilities.InnardsOut, {
+    name: 'Innards Out',
+    description: 'Whoever knocks it out with a move takes as much damage as it had HP left.',
+  });
+  // Minior
+  registerAbility(Abilities.ShieldsDown, {
+    name: 'Shields Down',
+    description:
+      'Above 1/2 HP it fights in its shell, which no major status gets through. At or below 1/2 HP it fights as its faster, frailer core.',
   });
 }

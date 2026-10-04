@@ -1012,6 +1012,30 @@ const enum Abilities {
   OrchidGuise = 200379,
   // Bounsweet
   TropStride = 200380,
+  // Morelull
+  DrowsyGlow = 200381,
+  // Comfey
+  LeiGift = 200382,
+  // Oranguru
+  SagesCall = 200383,
+  // Passimian
+  RushPass = 200384,
+  // Mareanie
+  ToxicDome = 200385,
+  // Salandit
+  FumeFlare = 200386,
+  // Stufful
+  FondCrush = 200387,
+  // Wimpod
+  OpeningSlash = 200388,
+  // Sandygast
+  CastleDrain = 200389,
+  // Pyukumuku
+  TossedBack = 200390,
+  // Minior
+  Starfall = 200391,
+  // Togedemaru
+  ChargedSpines = 200392,
 }
 
 export default Abilities;

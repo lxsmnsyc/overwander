@@ -16,6 +16,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Gible, weight: 2 },
       ],
       uncommon: [
+        { species: Species.Sandygast, weight: 22 },
         { species: Species.Helioptile, weight: 24 },
         { species: Species.Dwebble, weight: 22 },
         { species: Species.Vullaby, weight: 16 },
@@ -36,6 +37,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Gabite, weight: 1 },
       ],
       scarce: [
+        { species: Species.Palossand, weight: 6 },
         { species: Species.Heliolisk, weight: 6 },
         { species: Species.Crustle, weight: 7 },
         { species: Species.Mandibuzz, weight: 6 },
@@ -81,6 +83,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Gible, weight: 2 },
       ],
       uncommon: [
+        { species: Species.Sandygast, weight: 22 },
         { species: Species.Helioptile, weight: 24 },
         { species: Species.Dwebble, weight: 22 },
         { species: Species.Vullaby, weight: 16 },
@@ -103,6 +106,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Gabite, weight: 1 },
       ],
       scarce: [
+        { species: Species.Palossand, weight: 6 },
         { species: Species.Heliolisk, weight: 6 },
         { species: Species.Crustle, weight: 7 },
         { species: Species.Mandibuzz, weight: 6 },
@@ -142,6 +146,7 @@ export default function registerDesertSpawns(): void {
     [TimeOfDay.Evening]: {
       base: [{ species: Species.Gible, weight: 2 }],
       uncommon: [
+        { species: Species.Sandygast, weight: 22 },
         { species: Species.Elgyem, weight: 20 },
         { species: Species.Yamask, weight: 22 },
         { species: Species.Baltoy, weight: 22 },
@@ -154,6 +159,7 @@ export default function registerDesertSpawns(): void {
       ],
       rare: [{ species: Species.Gabite, weight: 1 }],
       scarce: [
+        { species: Species.Palossand, weight: 6 },
         { species: Species.Beheeyem, weight: 7 },
         { species: Species.Cofagrigus, weight: 7 },
         { species: Species.Cacturne, weight: 6 },
@@ -176,6 +182,7 @@ export default function registerDesertSpawns(): void {
     [TimeOfDay.Night]: {
       base: [{ species: Species.Gible, weight: 2 }],
       uncommon: [
+        { species: Species.Sandygast, weight: 22 },
         { species: Species.Elgyem, weight: 20 },
         { species: Species.Yamask, weight: 22 },
         { species: Species.Baltoy, weight: 22 },
@@ -188,6 +195,7 @@ export default function registerDesertSpawns(): void {
       ],
       rare: [{ species: Species.Gabite, weight: 1 }],
       scarce: [
+        { species: Species.Palossand, weight: 6 },
         { species: Species.Beheeyem, weight: 7 },
         { species: Species.Cofagrigus, weight: 7 },
         { species: Species.Cacturne, weight: 6 },

@@ -2282,4 +2282,64 @@ export default function registerSignatureAbilities(): void {
     name: 'Trop Stride',
     description: 'Its kicking moves hit 1.3x.',
   });
+
+  // The Lush Jungle
+  registerSignature(Families.Morelull, Abilities.DrowsyGlow, {
+    name: 'Drowsy Glow',
+    description: 'Each damaging move it lands casts Yawn on the target 20% of the time.',
+  });
+
+  registerSignature(Families.Comfey, Abilities.LeiGift, {
+    name: 'Lei Gift',
+    description:
+      'As it arrives, its worst hurt teammate is given a lei, and heals 1/16 of their HP each time they act for the fight.',
+  });
+
+  registerSignature(Families.Oranguru, Abilities.SagesCall, {
+    name: 'Sage’s Call',
+    description:
+      'Each time it acts, its teammate with the highest Attack or Special Attack casts its next move 25% faster.',
+  });
+
+  registerSignature(Families.Passimian, Abilities.RushPass, {
+    name: 'Rush Pass',
+    description:
+      'Its moves hit 1.3x whenever they are cast faster than they would be on their own.',
+  });
+  registerSignature(Families.Mareanie, Abilities.ToxicDome, {
+    name: 'Toxic Dome',
+    description:
+      'The first hit it takes after each entrance hits it at 0.5x, and it casts Toxic at the attacker.',
+  });
+  registerSignature(Families.Salandit, Abilities.FumeFlare, {
+    name: 'Fume Flare',
+    description: 'Its Fire moves poison the target 20% of the time.',
+  });
+  registerSignature(Families.Stufful, Abilities.FondCrush, {
+    name: 'Fond Crush',
+    description: 'Its moves hit 1.3x against an infatuated target.',
+  });
+  registerSignature(Families.Wimpod, Abilities.OpeningSlash, {
+    name: 'Opening Slash',
+    description: 'The first move it lands after each entrance hits 1.5x.',
+  });
+  registerSignature(Families.Sandygast, Abilities.CastleDrain, {
+    name: 'Castle Drain',
+    description:
+      'Whoever lands a contact move on it loses 1/8 of their HP, and it heals that much.',
+  });
+  registerSignature(Families.Pyukumuku, Abilities.TossedBack, {
+    name: 'Tossed Back',
+    description:
+      'The first blow that would knock it out leaves it on 1 HP and sends it off the field for its strongest teammate. Once per battle.',
+  });
+  registerSignature(Families.Minior, Abilities.Starfall, {
+    name: 'Starfall',
+    description: 'The first move it casts after each entrance is cast 50% faster.',
+  });
+  registerSignature(Families.Togedemaru, Abilities.ChargedSpines, {
+    name: 'Charged Spines',
+    description:
+      'A contact move landing on it charges it, and its next Electric move that lands hits 1.5x.',
+  });
 }

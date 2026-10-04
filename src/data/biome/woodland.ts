@@ -33,6 +33,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Sewaddle, weight: 28 },
       ],
       uncommon: [
+        { species: Species.Stufful, weight: 22 },
         { species: Species.Pancham, weight: 24 },
         { species: Species.Panpour, weight: 22 },
         { species: Species.Pansear, weight: 22 },
@@ -74,6 +75,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Swadloon, weight: 12 },
       ],
       scarce: [
+        { species: Species.Bewear, weight: 6 },
         { species: Species.Sylveon, weight: 6 },
         { species: Species.Pangoro, weight: 6 },
         { species: Species.Simipour, weight: 7 },
@@ -174,6 +176,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Sewaddle, weight: 28 },
       ],
       uncommon: [
+        { species: Species.Stufful, weight: 22 },
         { species: Species.Pancham, weight: 24 },
         { species: Species.Panpour, weight: 22 },
         { species: Species.Pansear, weight: 22 },
@@ -215,6 +218,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Swadloon, weight: 12 },
       ],
       scarce: [
+        { species: Species.Bewear, weight: 6 },
         { species: Species.Sylveon, weight: 6 },
         { species: Species.Pangoro, weight: 6 },
         { species: Species.Simipour, weight: 7 },
@@ -303,6 +307,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Venipede, weight: 26 },
       ],
       uncommon: [
+        { species: Species.Stufful, weight: 22 },
         { species: Species.Pancham, weight: 24 },
         { species: Species.Noibat, weight: 24 },
         { species: Species.Pumpkaboo, weight: 12 },
@@ -341,6 +346,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Whirlipede, weight: 12 },
       ],
       scarce: [
+        { species: Species.Bewear, weight: 6 },
         { species: Species.Sylveon, weight: 6 },
         { species: Species.Pangoro, weight: 6 },
         { species: Species.Noivern, weight: 6 },
@@ -426,6 +432,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Venipede, weight: 26 },
       ],
       uncommon: [
+        { species: Species.Stufful, weight: 22 },
         { species: Species.Noibat, weight: 24 },
         { species: Species.Pumpkaboo, weight: 12 },
         { species: Species.PumpkabooSuper, weight: 12 },
@@ -467,6 +474,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Whirlipede, weight: 12 },
       ],
       scarce: [
+        { species: Species.Bewear, weight: 6 },
         { species: Species.Sylveon, weight: 6 },
         { species: Species.Noivern, weight: 6 },
         { species: Species.Gourgeist, weight: 3 },

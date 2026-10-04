@@ -9,10 +9,22 @@ import registerOricorioSpecies from './oricorio';
 import registerCutieflySpecies from './cutiefly';
 import registerRockruffSpecies from './rockruff';
 import registerWishiwashiSpecies from './wishiwashi';
+import registerMareanieSpecies from './mareanie';
 import registerMudbraySpecies from './mudbray';
 import registerDewpiderSpecies from './dewpider';
 import registerFomantisSpecies from './fomantis';
+import registerMorelullSpecies from './morelull';
+import registerSalanditSpecies from './salandit';
+import registerStuffulSpecies from './stufful';
 import registerBounsweetSpecies from './bounsweet';
+import registerComfeySpecies from './comfey';
+import registerOranguruSpecies from './oranguru';
+import registerPassimianSpecies from './passimian';
+import registerWimpodSpecies from './wimpod';
+import registerSandygastSpecies from './sandygast';
+import registerPyukumukuSpecies from './pyukumuku';
+import registerMiniorSpecies from './minior';
+import registerTogedemaruSpecies from './togedemaru';
 
 /** Alola, as far as it is written */
 export default function registerGen7Species(): void {
@@ -27,8 +39,20 @@ export default function registerGen7Species(): void {
   registerCutieflySpecies();
   registerRockruffSpecies();
   registerWishiwashiSpecies();
+  registerMareanieSpecies();
   registerMudbraySpecies();
   registerDewpiderSpecies();
   registerFomantisSpecies();
+  registerMorelullSpecies();
+  registerSalanditSpecies();
+  registerStuffulSpecies();
   registerBounsweetSpecies();
+  registerComfeySpecies();
+  registerOranguruSpecies();
+  registerPassimianSpecies();
+  registerWimpodSpecies();
+  registerSandygastSpecies();
+  registerPyukumukuSpecies();
+  registerMiniorSpecies();
+  registerTogedemaruSpecies();
 }

@@ -1,5 +1,25 @@
 # overwander
 
+## 4.30.0
+
+### Minor Changes
+
+- 434ee22: The Boxes screen is laid out as designed. It opens wide, with New box and Select at the top. Picking turns the top into a green bar to move, mark, release or clear what is picked. The rail counts each box in a pill, takes a drag to put your boxes in order, and holds today's let-go list. An empty box shows its numbered squares with Add pokemon, a box's menu says what laying out and closing up do, and searching every box counts the matches in each. On a phone a long press starts picking, and Move to opens as a sheet from the bottom. Pickers open wide, and a box's name no longer shrinks to one letter on its squares.
+
+### Patch Changes
+
+- ee1c738: Dragging a box to a new place in the list works again; it was refused with "Invalid length". A box dragged down the list now lands after the one it is dropped on, so a box can be moved to the bottom.
+- 37dfc5a: Picking a pokemon in Select mode no longer scrolls the box back to the top.
+- 4278a35: Boxes scroll instead of turning pages, so a pokemon can be moved anywhere in a box. Only the rows in sight are drawn, so a box of hundreds opens as fast as a box of thirty. Dragging a pokemon to the top or bottom edge scrolls the box, and while picking, pressing an empty square puts the picked pokemon there, which works with a finger. Every picker box scrolls the same way. On a phone, the Boxes screen's squares are square again so the sprites can be seen.
+- e15fe4b: Counters are one screen again. A vendor, chef or geologist opens on the crate with Buy and Sell as tabs, so buying is one press. The move tutor, the move reminder and the hyper trainer ask for the pokemon and the move or value together, with the button at the foot. Pickers no longer print a box name on each square, which was too small to read.
+- 7fced22: Archen and Archeops showed "Ability #200" in place of their ability. Defeatist now has its name and description and works in battle: at half HP or less, its Attack and Special Attack drop to 0.5x.
+- 0fa660e: Dropdowns and menus float over the dialog they are opened from rather than being cut off by it or its bottom bar, flip above their button when there is no room below, and never grow taller than the room they have.
+- 5de328b: Every picker of your own pokemon (Form a team, Nurse Joy, Use item, the breeder and the rest) opens with a box switcher before the search, on All boxes, with each box in its colour. The search says which box it looks through, a team picker says it is strongest first, and picks made in one box stay picked while another is showing.
+- fe2d9c3: The summary after a raid is laid out team first. Each party is a full-size row of six, drawn as the fight left it with the fainted greyed and each one's HP where it ended. Beside it, a plate says where the team placed, who fielded it, how much it dealt and its share of the damage, with your own row in green. The boss stands last with what it dealt back, and the best single pokemon is named under the list.
+- 3333111: The catch sheet shows which box a pokemon is in as a chip in its colour, first in the heading row, for every player. Its Move to menu lists each box with a tick on the current one, and New box makes a box and moves the pokemon into it.
+- ec25007: Saved teams, in the profile and in Form a team, show the team first with its name and buttons on a plate beside it, the way the battle history does.
+- 2f637a1: Saved teams, the battle history and lobby parties draw each team as a plain row of squares wide enough to see who is in it: each pokemon fills its square, with only a thin HP line under it, and its level in the card that opens over it.
+
 ## 4.29.0
 
 ### Minor Changes

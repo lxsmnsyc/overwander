@@ -187,6 +187,12 @@ export const enum Statuses {
    * dropped (Sky Drop)
    */
   SkyDropped = 52,
+  /**
+   * The unit has swapped its Attack with its Defense and its Special
+   * Attack with its Special Defense, and swaps them back when it leaves
+   * the field (Power Shift)
+   */
+  PowerShifted = 53,
 }
 
 /**

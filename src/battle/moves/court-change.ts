@@ -4,10 +4,9 @@ import type Battle from '../core';
 import { BattleEvents, EffectType } from '../events';
 import type Team from '../team';
 import type Unit from '../unit';
+import { sideConditions } from '../mechanics/side-conditions';
 import { layersUnder, setSpikes } from './spikes';
-import { setStealthRock, stonesOver } from './stealth-rock';
-import { setStickyWeb, webOver } from './sticky-web';
-import { setToxicSpikes, toxicLayersUnder } from './toxic-spikes';
+import { setStealthRock } from './stealth-rock';
 
 /**
  * The attacks that leave a hazard behind on the side they hit, and the
@@ -15,36 +14,12 @@ import { setToxicSpikes, toxicLayersUnder } from './toxic-spikes';
  *
  * Stone Axe hangs Stealth Rock where it lands and Ceaseless Edge adds
  * a layer of Spikes, both only on a hit: the splinters are what the
- * blow leaves. Court Change carries every hazard laid on the user's
- * side across to the other one, and brings the other side's back
+ * blow leaves. Court Change carries everything laid on the user's side
+ * across to the other one, and brings the other side's back: the
+ * hazards at the depth they lie, and the screens, Mist, Safeguard and
+ * Tailwind with the time each had left
  * https://bulbapedia.bulbagarden.net/wiki/Court_Change_(move)
  */
-
-/** Everything laid on one side, as the four hazards read it */
-interface Laid {
-  rock: boolean;
-  spikes: number;
-  toxic: number;
-  web: boolean;
-}
-
-function laidOn(team: Team): Laid {
-  return {
-    rock: stonesOver(team),
-    spikes: layersUnder(team),
-    toxic: toxicLayersUnder(team),
-    web: webOver(team),
-  };
-}
-
-function lay(team: Team, laid: Laid, unit: Unit): void {
-  const cause = { type: EffectType.Move, move: Moves.CourtChange, unit } as const;
-
-  setStealthRock(team, laid.rock, cause);
-  setSpikes(team, laid.spikes, cause);
-  setToxicSpikes(team, laid.toxic, cause);
-  setStickyWeb(team, laid.web, cause);
-}
 
 /**
  * The side across from the user. A fight has one, and a raid's boss
@@ -89,10 +64,14 @@ export default function setupHazardMoves(battle: Battle): void {
       return;
     }
 
-    const ours = laidOn(own);
-    const theirs = laidOn(other);
+    const cause = { type: EffectType.Move, move: event.move, unit: event.source } as const;
 
-    lay(own, theirs, event.source);
-    lay(other, ours, event.source);
+    for (const condition of sideConditions(battle)) {
+      const ours = condition.read(own);
+      const theirs = condition.read(other);
+
+      condition.write(own, theirs, cause);
+      condition.write(other, ours, cause);
+    }
   });
 }

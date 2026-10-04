@@ -2,6 +2,7 @@ import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Stages, Stats } from '../../data/constants/stats';
 import { Types } from '../../data/constants/types';
 import { DamageFlags, MoveCategories, Moves, StatFlags } from '../../data/ids/moves';
+import { Species } from '../../data/ids/species';
 import { Statuses } from '../../data/ids/status';
 import { isBerry } from '../../data/items/berries';
 import type Battle from '../core';
@@ -107,6 +108,29 @@ export default function setupGalarMoves(battle: Battle): void {
 
     if (physical > special) {
       event.category = MoveCategories.Physical;
+    }
+  });
+
+  // Aura Wheel is Morpeko's own: Electric while it is full, Dark once
+  // it has gone Hangry, and nothing at all in anybody else's hands
+  const isMorpeko = (unit: Unit): boolean =>
+    unit.species === Species.Morpeko || unit.species === Species.MorpekoHangry;
+
+  battle.on(BattleEvents.CheckUnitMoveType, EventPriority.Post, (event) => {
+    if (event.move === Moves.AuraWheel && event.source.species === Species.MorpekoHangry) {
+      event.type = Types.Dark;
+    }
+  });
+
+  battle.on(BattleEvents.CheckUnitCanCast, EventPriority.Post, (event) => {
+    if (event.success && event.move === Moves.AuraWheel && !isMorpeko(event.source)) {
+      event.success = false;
+    }
+  });
+
+  battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
+    if (event.usable && event.move === Moves.AuraWheel) {
+      event.usable = isMorpeko(event.source);
     }
   });
 

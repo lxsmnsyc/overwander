@@ -6,7 +6,7 @@ SteelBeam:
   description: Costs the user 1/2 its HP however it lands.
 ExpandingForce:
   name: Expanding Force
-  description: 1.5x while the user stands on Psychic Terrain.
+  description: While the user stands on Psychic Terrain, hits 1.5x and reaches everything opposite.
 SteelRoller:
   name: Steel Roller
   description: Rolls the terrain flat, ending it. Fails while there is no terrain.

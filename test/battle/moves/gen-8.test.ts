@@ -4,11 +4,12 @@ import { layersUnder } from '../../../src/battle/moves/spikes';
 import { stonesOver } from '../../../src/battle/moves/stealth-rock';
 import turns from '../../../src/battle/turn';
 import type Unit from '../../../src/battle/unit';
-import { Stages, Stats } from '../../../src/data/constants/stats';
+import { Stages, Stats, StatsKind } from '../../../src/data/constants/stats';
 import { Types } from '../../../src/data/constants/types';
 import { Items } from '../../../src/data/ids/items';
-import { Moves } from '../../../src/data/ids/moves';
-import { Statuses, Terrains } from '../../../src/data/ids/status';
+import { MoveTargets, Moves } from '../../../src/data/ids/moves';
+import { Species } from '../../../src/data/ids/species';
+import { Statuses, TeamStatuses, Terrains } from '../../../src/data/ids/status';
 import { getMoveData } from '../../../src/data/moves';
 import { createBattle, createUnit, pinRandom } from '../harness';
 
@@ -395,5 +396,79 @@ describe("Galar's and Hisui's moves with a rule of their own", () => {
     target.triggerMove(Moves.Tackle, at(user), 0);
     user.triggerMoveEffect(Moves.EerieSpell, at(target), 0);
     expect(target.moves[Moves.Tackle]?.cooldown).toBeDefined();
+  });
+
+  it('carries a screen across with Court Change, with the time it had left', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const user = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    foe.triggerMoveEffect(Moves.Reflect, NONE_TARGET, 0);
+    battle.tick(turns(2));
+    user.triggerMoveEffect(Moves.CourtChange, NONE_TARGET, 0);
+    expect(teamB.status[TeamStatuses.Reflect]).toBeUndefined();
+    expect(teamA.status[TeamStatuses.Reflect]).toBeDefined();
+
+    // Five turns' screen, two spent before the swap: three left over here
+    battle.tick(turns(3) - 1);
+    expect(teamA.status[TeamStatuses.Reflect]).toBeDefined();
+    battle.tick(2);
+    expect(teamA.status[TeamStatuses.Reflect]).toBeUndefined();
+  });
+
+  it('carries a Tailwind across with Court Change', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const user = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+    const speed = user.checkStat(Stats.Speed, 0);
+
+    foe.triggerMoveEffect(Moves.Tailwind, NONE_TARGET, 0);
+    user.triggerMoveEffect(Moves.CourtChange, NONE_TARGET, 0);
+    expect(user.checkStat(Stats.Speed, 0)).toBe(speed * 2);
+    expect(foe.checkStat(Stats.Speed, 0)).toBe(speed);
+  });
+
+  it('swaps both pairs of stats with Power Shift, and back again', () => {
+    const { battle, teamA } = createBattle();
+    const user = createUnit(battle, teamA);
+
+    user.setStat(StatsKind.Base, Stats.SpecialAttack, 150);
+    user.setStat(StatsKind.Base, Stats.SpecialDefense, 50);
+
+    const special = user.checkStat(Stats.SpecialAttack, 0);
+    const guard = user.checkStat(Stats.SpecialDefense, 0);
+
+    user.triggerMoveEffect(Moves.PowerShift, NONE_TARGET, 0);
+    expect(user.checkStat(Stats.SpecialAttack, 0)).toBe(guard);
+    expect(user.checkStat(Stats.SpecialDefense, 0)).toBe(special);
+
+    user.triggerMoveEffect(Moves.PowerShift, NONE_TARGET, 0);
+    expect(user.checkStat(Stats.SpecialAttack, 0)).toBe(special);
+  });
+
+  it('lets only Morpeko use Aura Wheel, and turns it Dark while Hangry', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const user = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+
+    user.addMove(Moves.AuraWheel);
+    expect(user.checkCanCast(Moves.AuraWheel, at(target))).toBe(false);
+
+    // Set straight on the unit: Morpeko has its id but no species data yet
+    user.species = Species.Morpeko;
+    expect(user.checkCanCast(Moves.AuraWheel, at(target))).toBe(true);
+    expect(user.checkMoveType(Moves.AuraWheel, at(target))).toBe(Types.Electric);
+
+    user.species = Species.MorpekoHangry;
+    expect(user.checkMoveType(Moves.AuraWheel, at(target))).toBe(Types.Dark);
+  });
+
+  it('reaches everything opposite with Expanding Force on Psychic Terrain', () => {
+    const { battle, teamA } = createBattle();
+    const user = createUnit(battle, teamA);
+
+    expect(user.checkMoveTargeting(Moves.ExpandingForce).target).toBe(MoveTargets.Unit);
+    battle.terrain.current = Terrains.Psychic;
+    expect(user.checkMoveTargeting(Moves.ExpandingForce).target).toBe(MoveTargets.None);
   });
 });

@@ -7,6 +7,7 @@ import type Battle from '../core';
 import { BattleEvents, type EffectCause, EffectType, MoveTargetType } from '../events';
 import type Team from '../team';
 import type Unit from '../unit';
+import { registerSideCondition } from '../mechanics/side-conditions';
 import walksOverHazards from './hazards';
 
 /**
@@ -56,6 +57,13 @@ function walksOn(unit: Unit): boolean {
 }
 
 export default function setupStickyWeb(battle: Battle): void {
+  registerSideCondition(battle, {
+    read: (team) => (webOver(team) ? 1 : undefined),
+    write: (team, value, cause) => {
+      setStickyWeb(team, value != null, cause);
+    },
+  });
+
   battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
     if (
       event.usable &&

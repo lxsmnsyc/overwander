@@ -6,6 +6,7 @@ import type Battle from '../core';
 import { BattleEvents, type EffectCause, EffectType, MoveTargetType } from '../events';
 import type Team from '../team';
 import type Unit from '../unit';
+import { registerSideCondition } from '../mechanics/side-conditions';
 import walksOverHazards from './hazards';
 
 /**
@@ -60,6 +61,13 @@ function walksOn(unit: Unit): boolean {
 }
 
 export default function setupToxicSpikes(battle: Battle): void {
+  registerSideCondition(battle, {
+    read: (team) => toxicLayersUnder(team) || undefined,
+    write: (team, value, cause) => {
+      setToxicSpikes(team, value ?? 0, cause);
+    },
+  });
+
   battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
     if (
       event.usable &&

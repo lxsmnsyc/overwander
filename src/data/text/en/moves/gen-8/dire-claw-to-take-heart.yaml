@@ -6,7 +6,7 @@ PsyshieldBash:
   description: Raises the user's Defense a stage.
 PowerShift:
   name: Power Shift
-  description: Swaps the user's Attack and Defense.
+  description: Swaps the user's Attack with its Defense, and its Special Attack with its Special Defense.
 StoneAxe:
   name: Stone Axe
   description: Leaves stones hanging over the target's side, as Stealth Rock does.

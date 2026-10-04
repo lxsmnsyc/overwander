@@ -7,6 +7,7 @@ import type Battle from '../core';
 import { BattleEvents, type EffectCause, EffectType, MoveTargetType } from '../events';
 import type Team from '../team';
 import type Unit from '../unit';
+import { registerSideCondition } from '../mechanics/side-conditions';
 import walksOverHazards from './hazards';
 
 /**
@@ -73,6 +74,13 @@ function rockAgainst(unit: Unit): number {
 }
 
 export default function setupStealthRock(battle: Battle): void {
+  registerSideCondition(battle, {
+    read: (team) => (stonesOver(team) ? 1 : undefined),
+    write: (team, value, cause) => {
+      setStealthRock(team, value != null, cause);
+    },
+  });
+
   battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
     if (
       event.usable &&

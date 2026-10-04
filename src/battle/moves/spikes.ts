@@ -7,6 +7,7 @@ import type Battle from '../core';
 import { BattleEvents, type EffectCause, EffectType, MoveTargetType } from '../events';
 import type Team from '../team';
 import type Unit from '../unit';
+import { registerSideCondition } from '../mechanics/side-conditions';
 import walksOverHazards from './hazards';
 
 /**
@@ -72,6 +73,13 @@ function walksOn(unit: Unit): boolean {
 }
 
 export default function setupSpikes(battle: Battle): void {
+  registerSideCondition(battle, {
+    read: (team) => layersUnder(team) || undefined,
+    write: (team, value, cause) => {
+      setSpikes(team, value ?? 0, cause);
+    },
+  });
+
   battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
     if (event.usable && event.move === Moves.Spikes && event.target.type === MoveTargetType.Team) {
       event.usable = layersUnder(event.target.team) < LAYER_DAMAGE.length;

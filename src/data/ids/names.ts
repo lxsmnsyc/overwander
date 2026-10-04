@@ -4175,6 +4175,7 @@ export const STATUS_IDS = {
   AquaRinged: Statuses.AquaRinged,
   Telekinetic: Statuses.Telekinetic,
   SkyDropped: Statuses.SkyDropped,
+  PowerShifted: Statuses.PowerShifted,
 } as const satisfies Record<string, Statuses>;
 
 export const TEAM_STATUS_IDS = {

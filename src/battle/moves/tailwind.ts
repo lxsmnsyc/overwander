@@ -4,6 +4,7 @@ import { Moves } from '../../data/ids/moves';
 import type Battle from '../core';
 import { BattleEvents } from '../events';
 import type Team from '../team';
+import { registerSideCondition } from '../mechanics/side-conditions';
 import turns from '../turn';
 
 /**
@@ -24,6 +25,17 @@ const DOUBLED = 2;
 export default function setupTailwind(battle: Battle): void {
   /** How long each side still has the wind behind it */
   const remaining = new Map<Team, number>();
+
+  registerSideCondition(battle, {
+    read: (team) => remaining.get(team),
+    write: (team, value) => {
+      if (value == null) {
+        remaining.delete(team);
+      } else {
+        remaining.set(team, value);
+      }
+    },
+  });
 
   battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     if (event.move === Moves.Tailwind) {

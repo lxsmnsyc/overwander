@@ -36,4 +36,4 @@ FishiousRend:
   description: 2x power if the target has not begun a cast in the last 2 seconds.
 CourtChange:
   name: Court Change
-  description: Swaps the hazards laid on the user's side with the ones laid on the other side.
+  description: 'Swaps everything laid on each side of the field: hazards, screens, Mist, Safeguard and Tailwind.'

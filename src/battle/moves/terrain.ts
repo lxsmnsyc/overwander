@@ -1,5 +1,5 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
-import { Moves } from '../../data/ids/moves';
+import { MoveAffects, MoveTargets, Moves } from '../../data/ids/moves';
 import { Terrains } from '../../data/ids/status';
 import type Battle from '../core';
 import { BattleEvents } from '../events';
@@ -56,6 +56,15 @@ export default function setupTerrainMoves(battle: Battle): void {
   battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
     if (event.usable && event.move === Moves.SteelRoller) {
       event.usable = laid(event.source);
+    }
+  });
+
+  // Expanding Force fills the whole far side while its user stands on
+  // its own Psychic Terrain
+  battle.on(BattleEvents.CheckUnitMoveTargeting, EventPriority.Post, (event) => {
+    if (event.move === Moves.ExpandingForce && event.source.checkTerrain() === Terrains.Psychic) {
+      event.target = MoveTargets.None;
+      event.affects = MoveAffects.Unit | MoveAffects.Enemy;
     }
   });
 

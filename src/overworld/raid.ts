@@ -12,8 +12,18 @@ import { getBannedBossMoves } from '../data/overworld/boss-moves';
 import { MAX_LEVEL } from '../data/constants/levels';
 import { MAX_EFFORT_PER_STAT, MAX_IV, PERFECT_IVS, Stats } from '../data/constants/stats';
 import Abilities from '../data/ids/abilities';
-import type { Moves } from '../data/ids/moves';
+import { CRASH_MOVES } from '../battle/moves/crash';
+import { OHKO_MOVES } from '../battle/moves/fixed-damage';
+import { DELAYED_MOVES } from '../battle/moves/future-sight';
+import { RAMPAGE_MOVES } from '../battle/moves/rampage';
+import { ROLLING_MOVES } from '../battle/moves/rolling';
+import { SELF_DESTRUCT_MOVES } from '../battle/moves/self-destruct';
+import { MoveCategories, Moves } from '../data/ids/moves';
+import { RECHARGE_MOVES } from '../data/moves/recharge';
+import { Z_MOVES } from '../data/moves/z-moves';
 import { Species } from '../data/ids/species';
+import { getMoveData } from '../data/moves';
+import { getReachableMoves, getSpeciesData } from '../data/species';
 import { deriveAbility, deriveGender, deriveMoves, deriveNature, deriveSize } from './encounter';
 
 /**
@@ -85,14 +95,129 @@ function maxEffortValues(): Record<Stats, number> {
   };
 }
 
+/** How many of a boss' moves are attacks, the rest being status moves */
+export const BOSS_ATTACK_COUNT = 5;
+
 /**
- * The up to 8 moves a boss is staged with: what its species knows at
- * `RAID_BOSS_LEVEL`, less the ones a boss may never have. The ban is
- * applied before the moves are taken, so a species with more to draw
- * on still comes with a full set
+ * The status moves worth a boss' cast. Each one it aims at a single
+ * foe goes out to the whole party, so these are what make a party
+ * answer rather than only hit: a status to cure, a stat drop to wait
+ * out, setup thrown away. Sleep is left to Yawn, the one a party sees
+ * coming: a Spore across six pokemon would end the fight on its own
+ */
+const BOSS_STATUS_MOVES: readonly Moves[] = [
+  Moves.WillOWisp,
+  Moves.ThunderWave,
+  Moves.Glare,
+  Moves.Toxic,
+  Moves.Haze,
+  Moves.Yawn,
+  Moves.StunSpore,
+  Moves.Screech,
+  Moves.FakeTears,
+  Moves.Taunt,
+];
+
+/**
+ * Attacks a boss is not built around: the ones that cost it the fight's
+ * pace (a recharge, a lock, a delay, a crash), the ones that only work
+ * under a condition it cannot arrange, and the ones that answer a hit
+ * rather than land one. A boss may still level into any of them
+ */
+const BOSS_UNFIT_ATTACKS = new Set<Moves>([
+  ...SELF_DESTRUCT_MOVES,
+  ...DELAYED_MOVES,
+  ...RECHARGE_MOVES,
+  ...RAMPAGE_MOVES,
+  ...ROLLING_MOVES,
+  ...CRASH_MOVES,
+  ...OHKO_MOVES,
+  ...Z_MOVES,
+  Moves.FocusPunch,
+  Moves.DreamEater,
+  Moves.Snore,
+  Moves.Belch,
+  Moves.LastResort,
+  Moves.NaturalGift,
+  Moves.Fling,
+  Moves.Synchronoise,
+  Moves.Counter,
+  Moves.MirrorCoat,
+  Moves.MetalBurst,
+  Moves.ShellTrap,
+  Moves.BeakBlast,
+]);
+
+/** What an attack is worth to this species: power, the bonus for its own type, and the hit rate */
+function attackWorth(species: Species, move: Moves): number {
+  const data = getMoveData(move);
+  const { stats, types } = getSpeciesData(species);
+  const stab = types.includes(data.type) ? 1.5 : 1;
+  const stat = stats[data.category === MoveCategories.Physical ? Stats.Attack : Stats.SpecialAttack];
+
+  return ((data.power ?? 0) * stab * stat * (data.accuracy ?? 100)) / (data.steps ?? 1);
+}
+
+/**
+ * The 8 moves a boss is staged with, drawn from everything its line
+ * can learn less the ones a boss may never have: its hardest attacks,
+ * one to a type, then the status moves it knows that a party has to
+ * answer. A species short of either fills up from what it levels into
  */
 export function getBossMoves(species: Species): Moves[] {
-  return deriveMoves(species, RAID_BOSS_LEVEL, getBannedBossMoves(species), mostSlots(Slots.Move));
+  const banned = getBannedBossMoves(species);
+  const pool = new Set<Moves>();
+
+  for (const move of getReachableMoves(species)) {
+    if (!banned.has(move)) {
+      pool.add(move);
+    }
+  }
+
+  const attacks: Moves[] = [];
+
+  for (const move of pool) {
+    const data = getMoveData(move);
+
+    if (
+      data.category !== MoveCategories.Status &&
+      (data.power ?? 0) > 0 &&
+      !BOSS_UNFIT_ATTACKS.has(move)
+    ) {
+      attacks.push(move);
+    }
+  }
+  attacks.sort((a, b) => attackWorth(species, b) - attackWorth(species, a));
+
+  const chosen: Moves[] = [];
+  const covered = new Set<number>();
+
+  for (const move of attacks) {
+    if (chosen.length >= BOSS_ATTACK_COUNT) {
+      break;
+    }
+    if (!covered.has(getMoveData(move).type)) {
+      covered.add(getMoveData(move).type);
+      chosen.push(move);
+    }
+  }
+  for (const move of BOSS_STATUS_MOVES) {
+    if (chosen.length >= mostSlots(Slots.Move)) {
+      break;
+    }
+    if (pool.has(move)) {
+      chosen.push(move);
+    }
+  }
+  for (const move of deriveMoves(species, RAID_BOSS_LEVEL, banned, mostSlots(Slots.Move))) {
+    if (chosen.length >= mostSlots(Slots.Move)) {
+      break;
+    }
+    if (!chosen.includes(move)) {
+      chosen.push(move);
+    }
+  }
+  return chosen;
 }
 
 /**
@@ -123,7 +248,7 @@ export function canStageBoss(species: Species): boolean {
 /**
  * The raid boss as a catch snapshot, so a battle builds it from the
  * same shape as a player's party. Its individual values are perfect
- * and its effort values zero; the nature and ability come from the
+ * and its effort values maxed; the nature and ability come from the
  * raid's trait value, which every player in the lobby shares. It
  * belongs to no catch record, so its `caught` id is empty. A shadow
  * boss carries the Shadow ability on top of the Boss one

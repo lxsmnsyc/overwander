@@ -1,4 +1,4 @@
-import { registerMoves } from '../../../src/data/moves';
+import { getMoveData, registerMoves } from '../../../src/data/moves';
 import { describe, expect, it } from 'vitest';
 import { MAX_OFFSET, MIN_OFFSET, asOffset } from '../../../src/auth/local-time';
 import Abilities from '../../../src/data/ids/abilities';
@@ -52,6 +52,7 @@ import ChunkSnapshot, {
 import {
   BANNED_BOSS_SPECIES,
   BOSS_ALLIANCE,
+  BOSS_ATTACK_COUNT,
   PLAYER_ALLIANCE,
   RAID_BOSS_LEVEL,
   canStageBoss,
@@ -59,7 +60,7 @@ import {
   getBossMoves,
 } from '../../../src/overworld/raid';
 import { collectAftermath, createRaidBattle } from '../../../src/overworld/raid-battle';
-import { Moves } from '../../../src/data/ids/moves';
+import { MoveCategories, Moves } from '../../../src/data/ids/moves';
 import deriveEncounter, {
   EncounterType,
   MOVE_LIMIT,
@@ -730,6 +731,29 @@ describe('world', () => {
 
     expect(staged.moves).not.toContain(Moves.MirrorMove);
     expect(staged.moves).toHaveLength(mostSlots(Slots.Move));
+  });
+
+  it('stages a boss with its hardest attacks, one to a type, and statuses to answer', () => {
+    const moves = getBossMoves(Species.Mewtwo);
+    const attacks: Moves[] = [];
+    const types = new Set<number>();
+
+    for (const move of moves) {
+      if (getMoveData(move).category !== MoveCategories.Status) {
+        attacks.push(move);
+        types.add(getMoveData(move).type);
+      }
+    }
+
+    expect(moves).toHaveLength(mostSlots(Slots.Move));
+    expect(attacks).toHaveLength(BOSS_ATTACK_COUNT);
+    expect(types.size).toBe(attacks.length);
+    // Its signature, not the delayed or self-felling ones it could know
+    expect(moves).toContain(Moves.Psystrike);
+    expect(moves).not.toContain(Moves.FutureSight);
+    expect(moves).not.toContain(Moves.SelfDestruct);
+    // And what it says to the whole party at once
+    expect(moves).toContain(Moves.ThunderWave);
   });
 
   it('never stages a Ditto, or anything with nothing left to cast', () => {

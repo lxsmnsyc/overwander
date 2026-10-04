@@ -46,11 +46,11 @@ whether now is the moment:
 
 Each trainer has a skill ([`src/battle/ai/skill.ts`](../../src/battle/ai/skill.ts)):
 
-| Skill | Think  | Reaction | Waits up to | Misplays | Who                                    |
-| ----- | ------ | -------- | ----------- | -------- | -------------------------------------- |
-| Top   | 0 ms   | 0 ms     | 1 turn      | 0%       | Players, the Elite, champions, legends |
-| Gym   | 250 ms | 300 ms   | 1 turn      | 5%       | Gym leaders, Ace Trainers              |
-| Basic | 500 ms | 600 ms   | half a turn | 15%      | Grunts, ordinary trainers, raid bosses |
+| Skill | Think  | Reaction | Waits up to | Misplays | Who                                                 |
+| ----- | ------ | -------- | ----------- | -------- | --------------------------------------------------- |
+| Top   | 0 ms   | 0 ms     | 1 turn      | 0%       | Players, the Elite, champions, legends, raid bosses |
+| Gym   | 250 ms | 300 ms   | 1 turn      | 5%       | Gym leaders, Ace Trainers                           |
+| Basic | 500 ms | 600 ms   | half a turn | 15%      | Grunts, ordinary trainers                           |
 
 - **Think** is how long a unit stands free before its trainer orders it.
 - **Reaction** is how far into a foe's cast the trainer is before it reacts to
@@ -221,8 +221,8 @@ Bluff, a Lock-On's aim) cannot change unnoticed.
 ## A raid boss does not set up
 
 A raid boss never scores a self boost. It does not have to survive a long fight,
-and its casts are already doubled. A boss cast spent winding up a Withdraw is an
-opening handed to the lobby.
+and its casts already wind up two and a half times as long. A boss cast spent
+winding up a Withdraw is an opening handed to the lobby.
 
 ## Move roles
 

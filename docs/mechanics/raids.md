@@ -44,11 +44,24 @@ A boss is a **maxed legendary, perfect in every individual stat and trained to
 the cap in every one**, and every player in the lobby fights exactly the same
 one. Its raid form gives it:
 
-- A raid-sized health pool: sixty times what the species would have had.
+- A raid-sized health pool: 110 times what the species would have had.
 - Double every other stat.
-- Wind-ups that take twice as long, and that nothing short of fainting can
-  interrupt.
+- Wind-ups that take two and a half times as long, and that nothing short of
+  fainting can interrupt.
 - Single-target moves that strike every enemy at once.
+- The sharpest trainer's judgement: it never misplays and never hesitates.
+
+A boss is staged with **eight moves drawn from everything its line can learn**,
+machines and tutors included: its five hardest attacks, one to a type, and the
+status moves it knows that a party has to answer, such as Will-O-Wisp, Thunder
+Wave, Toxic, Haze and Yawn. Each of those goes out to the whole party. It is
+never staged with an attack that costs it the fight's pace or only works under a
+condition, such as Explosion, Future Sight, Hyper Beam, Outrage or Focus Punch.
+
+**A boss shakes off what the party hung on it at half health and again at a
+quarter.** Its status, its stat drops, and any seed, curse, confusion or
+nightmare riding it are gone, so a party built on keeping it burned and charmed
+has to put it all back twice.
 
 A boss opens the fight **dormant**: for the first ten seconds it stands there
 and cannot act, which is the party's window to arrive, buff up and land the
@@ -63,12 +76,13 @@ the party. Infatuation is excluded twice over: a large lobby always contains
 somebody the boss would fall for, and a landed Attract would turn the raid into
 a queue.
 
-**Indirect damage counts, up to 200 a time.** Poison, burns, seeds, weather and
-crash damage from a missed Jump Kick all chip at a boss, and none of them chips
-for more than 200 however large the pool is. Damage measured as a share of its
-health, such as Super Fang, Endeavor and one-hit KO moves, lands for up to 200
-as well. A cost the boss pays itself is paid in full, so one that uses Explosion
-still dies by it.
+**Indirect damage counts, up to 50 a second in all.** Poison, burns, seeds,
+weather and crash damage from a missed Jump Kick all chip at a boss, and so does
+damage measured as a share of its health, such as Super Fang, Endeavor and
+one-hit KO moves. They all draw on one allowance that holds 200 and refills at
+50 a second, so one of them lands for up to 200, and five ticking together are
+worth no more than one. A cost the boss pays itself is paid in full, so one that
+uses Explosion still dies by it.
 
 **A boss heals up to 1,000 HP a second.** Recover, Synthesis and the rest are
 moves it may know again, and the allowance is what it can take back in a second

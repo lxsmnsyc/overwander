@@ -662,7 +662,7 @@ export default class Unit {
   triggerItem(item: Items): void {
     // Presence check (not truthiness): a consumed item is disabled
     // right before its trigger fires the effect
-    if (this.items[item] != null) {
+    if (this.items[item] != null && !this.battle.estimating) {
       this.battle.emit(BattleEvents.UnitTriggerItem, {
         id: 'UnitTriggerItem',
         disabled: false,
@@ -833,8 +833,10 @@ export default class Unit {
     return event.enabled;
   }
 
+  // A cue is something the field saw, and the AI weighing a move is
+  // not: it would also tell the AI's own fog what the foe holds
   triggerAbility(ability: Abilities): void {
-    if (this.abilities[ability]) {
+    if (this.abilities[ability] && !this.battle.estimating) {
       this.battle.emit(BattleEvents.UnitTriggerAbility, {
         id: 'UnitTriggerAbility',
         disabled: false,
@@ -900,6 +902,9 @@ export default class Unit {
   }
 
   triggerStatus(status: Statuses, cause: EffectCause): void {
+    if (this.battle.estimating) {
+      return;
+    }
     this.battle.emit(BattleEvents.UnitTriggerStatus, {
       id: 'UnitTriggerStatus',
       disabled: false,

@@ -23,7 +23,7 @@ import { RECHARGE_MOVES } from '../data/moves/recharge';
 import { Z_MOVES } from '../data/moves/z-moves';
 import { Species } from '../data/ids/species';
 import { getMoveData } from '../data/moves';
-import { getLevelUpMoves, getReachableMoves, getSpeciesData } from '../data/species';
+import { getLevelUpMoves, getSpeciesData } from '../data/species';
 import { deriveAbility, deriveGender, deriveMoves, deriveNature, deriveSize } from './encounter';
 
 /**
@@ -160,18 +160,17 @@ function attackWorth(species: Species, move: Moves): number {
 }
 
 /**
- * The 8 moves a boss is staged with, less the ones a boss may never
- * have: its hardest attacks from everything its line can learn, one
- * to a type, then the status moves it levels into that a party has to
- * answer. A machine teaches Toxic and Thunder Wave to nearly everything,
- * so drawing statuses from machines too gave every boss the same two.
- * A species short of either fills up from what it levels into
+ * The 8 moves a boss is staged with, from the moves its species levels
+ * into and none a boss may never have: a boss is met in the wild, and
+ * nothing in the wild was taught by a machine, a tutor or its parents.
+ * Its hardest attacks first, one to a type, then the status moves a
+ * party has to answer, then whatever else it levels into
  */
 export function getBossMoves(species: Species): Moves[] {
   const banned = getBannedBossMoves(species);
   const pool = new Set<Moves>();
 
-  for (const move of getReachableMoves(species)) {
+  for (const move of getLevelUpMoves(species, RAID_BOSS_LEVEL)) {
     if (!banned.has(move)) {
       pool.add(move);
     }
@@ -204,13 +203,11 @@ export function getBossMoves(species: Species): Moves[] {
       chosen.push(move);
     }
   }
-  const levelled = new Set(getLevelUpMoves(species, RAID_BOSS_LEVEL));
-
   for (const move of BOSS_STATUS_MOVES) {
     if (chosen.length >= mostSlots(Slots.Move)) {
       break;
     }
-    if (pool.has(move) && levelled.has(move)) {
+    if (pool.has(move)) {
       chosen.push(move);
     }
   }

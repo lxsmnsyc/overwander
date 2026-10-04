@@ -28,7 +28,12 @@ import Lairs, {
 import { Items } from '../../../src/data/ids/items';
 import registerItems from '../../../src/data/items';
 import { Genders, Species } from '../../../src/data/ids/species';
-import { getRegisteredSpecies, getSpeciesData, registerSpecies } from '../../../src/data/species';
+import {
+  getLevelUpMoves,
+  getRegisteredSpecies,
+  getSpeciesData,
+  registerSpecies,
+} from '../../../src/data/species';
 import { MAX_LEVEL } from '../../../src/data/constants/levels';
 import { Slots, getSlots, mostSlots } from '../../../src/data/constants/slots';
 import { RaidKind, getRaidTitle } from '../../../src/auth/raids';
@@ -52,7 +57,6 @@ import ChunkSnapshot, {
 import {
   BANNED_BOSS_SPECIES,
   BOSS_ALLIANCE,
-  BOSS_ATTACK_COUNT,
   PLAYER_ALLIANCE,
   RAID_BOSS_LEVEL,
   canStageBoss,
@@ -733,31 +737,35 @@ describe('world', () => {
     expect(staged.moves).toHaveLength(mostSlots(Slots.Move));
   });
 
-  it('stages a boss with its hardest attacks, one to a type, and statuses to answer', () => {
+  it('stages a boss with only what it levels into, its hardest attacks first', () => {
     const moves = getBossMoves(Species.Mewtwo);
-    const attacks: Moves[] = [];
-    const types = new Set<number>();
-
-    for (const move of moves) {
-      if (getMoveData(move).category !== MoveCategories.Status) {
-        attacks.push(move);
-        types.add(getMoveData(move).type);
-      }
-    }
+    const levelled = new Set(getLevelUpMoves(Species.Mewtwo, RAID_BOSS_LEVEL));
+    const leading = new Set<number>();
 
     expect(moves).toHaveLength(mostSlots(Slots.Move));
-    // At least its five hardest, one to a type; a slot no status fills
-    // may take another of what it levels into
-    expect(attacks.length).toBeGreaterThanOrEqual(BOSS_ATTACK_COUNT);
-    expect(types.size).toBeGreaterThanOrEqual(BOSS_ATTACK_COUNT);
-    // Its signature, not the delayed or self-felling ones it could know
-    expect(moves).toContain(Moves.Psystrike);
-    expect(moves).not.toContain(Moves.FutureSight);
-    expect(moves).not.toContain(Moves.SelfDestruct);
-    // Machines teach Toxic and Thunder Wave to nearly everything, so a
-    // boss only throws the statuses it levels into
+    // A boss is met in the wild, so nothing a machine, tutor or parent taught
+    for (const move of moves) {
+      expect(levelled.has(move), getMoveData(move).name).toBe(true);
+    }
+    expect(moves).not.toContain(Moves.IceBeam);
     expect(moves).not.toContain(Moves.Toxic);
     expect(moves).not.toContain(Moves.ThunderWave);
+    // Its signature leads, and the attacks before the first status move
+    // are one to a type
+    expect(moves[0]).toBe(Moves.Psystrike);
+    for (const move of moves) {
+      const data = getMoveData(move);
+
+      if (data.category === MoveCategories.Status) {
+        break;
+      }
+      expect(leading.has(data.type), data.name).toBe(false);
+      leading.add(data.type);
+    }
+    // Not the delayed or self-felling ones it could level into
+    expect(moves).not.toContain(Moves.FutureSight);
+    expect(moves).not.toContain(Moves.SelfDestruct);
+    // The statuses it does level into still come along
     expect(getBossMoves(Species.Zapdos)).toContain(Moves.ThunderWave);
     expect(getBossMoves(Species.Darkrai)).toContain(Moves.Haze);
   });

@@ -1,4 +1,5 @@
 import { BattleModes } from '../../../battle/core';
+import type Alliance from '../../../battle/alliance';
 import type Team from '../../../battle/team';
 import type { RaidBattle } from '../../../overworld/raid-battle';
 import type { Species } from '../../../data/ids/species';
@@ -30,10 +31,19 @@ export interface SideSummary {
   lead: Species;
   dealt: number;
   units: SideUnit[];
+  /**
+   * The alliance it fought under, and which of that alliance's teams
+   * it was, counted from 0: the order the snapshots were published in,
+   * so a side can be told which frozen team it is
+   */
+  alliance: number;
+  nth: number;
 }
 
 /** One pokemon's part in a settled fight */
 export interface SideUnit {
+  /** Its place in its team, counted from 0, as the snapshot lists it */
+  seat: number;
   species: Species;
   level: number;
   shiny: boolean;
@@ -90,19 +100,40 @@ export function readContributions(built: RaidBattle): Contribution[] {
  */
 export function readSides(built: RaidBattle): SideSummary[] {
   const teams = new Map<Team, SideSummary>();
+  const numbers = new Map<Alliance, number>();
+  /** How many teams of each alliance have been met */
+  const met = new Map<number, number>();
+
+  for (const [number, alliance] of built.alliances) {
+    numbers.set(alliance, number);
+  }
 
   for (const fielded of built.units.values()) {
     for (const unit of fielded) {
       let side = teams.get(unit.team);
 
       if (side == null) {
-        side = { player: unit.team.player, lead: unit.species, dealt: 0, units: [] };
+        const alliance = numbers.get(unit.team.alliance) ?? 0;
+        const nth = met.get(alliance) ?? 0;
+
+        met.set(alliance, nth + 1);
+        side = {
+          player: unit.team.player,
+          lead: unit.species,
+          dealt: 0,
+          units: [],
+          alliance,
+          nth,
+        };
         teams.set(unit.team, side);
       }
       side.dealt += unit.dealt;
       const most = unit.checkStat(Stats.HP, 0);
 
       side.units.push({
+        // A team's units are fielded in the snapshot's order, so the
+        // count so far is this one's place in it
+        seat: side.units.length,
         species: unit.species,
         level: unit.level,
         shiny: unit.shiny,

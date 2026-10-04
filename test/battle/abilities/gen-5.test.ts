@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { Stages } from '../../../src/data/constants/stats';
+import { Stages, Stats } from '../../../src/data/constants/stats';
 import { Types } from '../../../src/data/constants/types';
 import Abilities from '../../../src/data/ids/abilities';
 import { MoveCategories, Moves } from '../../../src/data/ids/moves';
@@ -8,6 +8,39 @@ import { MoveTargetType } from '../../../src/battle/events';
 import turns from '../../../src/battle/turn';
 import { createBattle, createUnit, pinRandom } from '../harness';
 import { dealDamage } from './signature/helpers';
+
+describe('Defeatist', () => {
+  it('halves Attack and Special Attack at half HP or under', () => {
+    const { battle, teamA } = createBattle();
+    const archen = createUnit(battle, teamA);
+
+    archen.enter();
+    archen.addAbility(Abilities.Defeatist);
+
+    const attack = archen.checkStat(Stats.Attack, 0);
+    const special = archen.checkStat(Stats.SpecialAttack, 0);
+    const defense = archen.checkStat(Stats.Defense, 0);
+
+    archen.setHealth(Math.floor(archen.checkStat(Stats.HP, 0) / 2));
+
+    expect(archen.checkStat(Stats.Attack, 0)).toBeCloseTo(attack / 2, 5);
+    expect(archen.checkStat(Stats.SpecialAttack, 0)).toBeCloseTo(special / 2, 5);
+    expect(archen.checkStat(Stats.Defense, 0)).toBe(defense);
+  });
+
+  it('leaves it whole above half HP', () => {
+    const { battle, teamA } = createBattle();
+    const archen = createUnit(battle, teamA);
+
+    archen.enter();
+    const attack = archen.checkStat(Stats.Attack, 0);
+
+    archen.addAbility(Abilities.Defeatist);
+    archen.setHealth(Math.ceil(archen.checkStat(Stats.HP, 0) / 2) + 1);
+
+    expect(archen.checkStat(Stats.Attack, 0)).toBe(attack);
+  });
+});
 
 describe('Victory Star', () => {
   it('lifts the aim of its whole team, itself included', () => {

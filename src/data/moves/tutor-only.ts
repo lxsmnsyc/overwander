@@ -9,6 +9,7 @@ export const TUTOR_ONLY_MOVES = new Set<Moves>([
   Moves.DragonAscent,
   Moves.SecretSword,
   Moves.RelicSong,
+  Moves.CoreEnforcer,
 ]);
 
 export function isTutorOnlyMove(move: Moves): boolean {

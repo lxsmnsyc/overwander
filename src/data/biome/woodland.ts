@@ -53,6 +53,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Cherubi, weight: 22 },
         { species: Species.Buneary, weight: 25 },
         { species: Species.Glameow, weight: 25 },
+        { species: Species.Spritzee, weight: 24 },
       ],
       rare: [
         { species: Species.Floette, weight: 8 },
@@ -101,6 +102,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Togekiss, weight: 6 },
         { species: Species.Lickilicky, weight: 6 },
         { species: Species.Leafeon, weight: 6 },
+        { species: Species.Aromatisse, weight: 6 },
       ],
       elusive: [
         { species: Species.Dedenne, weight: 6 },
@@ -196,6 +198,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Cherubi, weight: 22 },
         { species: Species.Buneary, weight: 25 },
         { species: Species.Glameow, weight: 25 },
+        { species: Species.Spritzee, weight: 24 },
       ],
       rare: [
         { species: Species.Floette, weight: 8 },
@@ -244,6 +247,7 @@ export default function registerWoodlandSpawns(): void {
         { species: Species.Togekiss, weight: 6 },
         { species: Species.Lickilicky, weight: 6 },
         { species: Species.Leafeon, weight: 6 },
+        { species: Species.Aromatisse, weight: 6 },
       ],
       elusive: [
         { species: Species.Dedenne, weight: 6 },

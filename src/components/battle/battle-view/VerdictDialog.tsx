@@ -45,7 +45,6 @@ export interface VerdictDialogProps {
   opponent: { name: string; sprite: string } | null;
   /** The teams as they were frozen for a raid, for its own summary */
   teams: string[] | null;
-  shares: Map<string, number>;
   replay: boolean;
   onLeave: () => void;
 }
@@ -188,7 +187,7 @@ export default function VerdictDialog(props: VerdictDialogProps): JSX.Element {
           title={said().title}
           description={said().said}
           terse
-          width={props.raiding ? undefined : 'wide'}
+          width="wide"
         >
           {/* What the fight paid, laid out rather than said in passing */}
           <Show when={paid()}>
@@ -321,21 +320,25 @@ export default function VerdictDialog(props: VerdictDialogProps): JSX.Element {
                 )}
               </For>
             </div>
-
-            <Show when={best()}>
-              {(top) => (
-                <Meta class="text-center">
-                  ★ Best: {getSpeciesData(top().unit.species).name} ({sideName(top().side)}) —{' '}
-                  {Math.round(top().unit.dealt).toLocaleString()} damage
-                </Meta>
-              )}
-            </Show>
           </Show>
 
-          {/* The teams as they were frozen for a raid, with each player's share */}
+          {/* The teams as they were frozen for a raid, each as the fight
+              left it, ranked by what it dealt */}
           <Show when={props.raiding ? props.teams : null}>
             {(stamped) => (
-              <TeamsPreview teams={stamped()} player={props.player} dealt={props.shares} />
+              <div class="flex flex-col gap-1.5">
+                <span class="text-xs font-semibold text-muted uppercase">Damage dealt</span>
+                <TeamsPreview teams={stamped()} player={props.player} sides={props.sides} />
+              </div>
+            )}
+          </Show>
+
+          <Show when={best()}>
+            {(top) => (
+              <Meta class="text-center">
+                ★ Best: {getSpeciesData(top().unit.species).name} ({sideName(top().side)}),{' '}
+                {Math.round(top().unit.dealt).toLocaleString()} damage
+              </Meta>
             )}
           </Show>
 

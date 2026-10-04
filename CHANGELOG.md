@@ -1,5 +1,55 @@
 # overwander
 
+## 4.31.0
+
+### Minor Changes
+
+- c98800e: The families Hano Beach and Mount Hokulani turn up:
+  
+  - Sandygast and Palossand live on the beach and in the desert at any hour.
+  - Pyukumuku lives on the beach and the rocky coast at any hour.
+  - Minior lives on the mountain and the alpine tundra at any hour. It is met in its shell, and each one has its own core colour.
+  - Togedemaru lives on the mountain and the grassland at any hour.
+  - Each family has a signature ability. Castle Drain takes 1/8 of the HP of whoever lands a contact move on it and heals it that much. Tossed Back leaves it on 1 HP from the first blow that would knock it out and sends it off the field for its strongest teammate, once per battle. Starfall casts its first move after each entrance 50% faster. Charged Spines makes its next Electric move that lands hit 1.5x after a contact move lands on it.
+  - Water Compaction raises its holder's Defense 2 stages for each Water move that lands on it.
+  - Sand Spit casts Sandstorm whenever a damaging move lands on its holder.
+  - Innards Out deals whoever knocks its holder out with a move as much damage as the holder had HP left.
+  - Shields Down keeps a Minior in its shell above 1/2 HP, where no major status gets through, and cracks it open to its core at or below 1/2 HP.
+  - Palossand can also be born with Sand Spit or Cursed Body, Pyukumuku with Regenerator or Liquid Ooze, Minior with Weak Armor, Magic Guard or Sturdy, and Togedemaru with Static.
+  - All of them learn their moves by level, machine, tutor and egg, as they do in Sun, Moon, Ultra Sun and Ultra Moon.
+- 95f108f: The families the Lush Jungle turns up:
+  
+  - Comfey lives in the tropical rainforest, the tropical seasonal forest and the grassland by morning and day.
+  - Morelull and Shiinotic, Oranguru and Passimian are written but not met in the wild yet: they wait on art for Shiinotic and Oranguru, and Passimian waits on its counterpart.
+  - Each family has a signature ability. Drowsy Glow casts Yawn on what it hits 20% of the time. Lei Gift gives its worst hurt teammate a lei as it arrives, healing them 1/16 of their HP each time they act. Sage's Call makes its strongest teammate cast their next move 25% faster each time it acts. Rush Pass makes its moves hit 1.3x whenever they are cast faster than they would be on their own.
+  - Receiver takes a fainted teammate's ability in its place.
+  - Shiinotic can also be born with Dry Skin, Comfey with Aroma Veil, Oranguru with Forewarn, and Passimian with Guts or Pickup.
+  - All of them learn their moves by level, machine, tutor and egg, as they do in Sun, Moon, Ultra Sun and Ultra Moon.
+- 4592c2a: The families Route 8 and Wela Volcano Park turn up:
+  
+  - Mareanie and Toxapex live in the water of the coral reef, the rocky coast and the beach at any hour.
+  - Salandit and Salazzle live on the volcano and in the badlands at any hour. Only a female Salandit evolves.
+  - Stufful and Bewear live in the grassland, the tropical seasonal forest and the woodland at any hour.
+  - Wimpod and Golisopod live on the beach and the rocky coast at any hour.
+  - Each family has a signature ability. Toxic Dome takes the first hit after each entrance at 0.5x and casts Toxic at the attacker. Fume Flare makes its Fire moves poison 20% of the time. Fond Crush makes its moves hit 1.3x against an infatuated target. Opening Slash makes the first move it lands after each entrance hit 1.5x.
+  - Corrosion can poison Poison and Steel types.
+  - Fluffy takes contact moves at 0.5x and Fire moves at 2x.
+  - Emergency Exit sends its holder off the field for its strongest teammate when damage drops it below 1/2 HP, as Wimp Out does.
+  - Toxapex can also be born with Poison Point, Salazzle with Flame Body or Poison Touch, and Golisopod with Battle Armor, Sharpness or Swift Swim.
+  - All of them learn their moves by level, machine, tutor and egg, as they do in Sun, Moon, Ultra Sun and Ultra Moon.
+
+### Patch Changes
+
+- bfa318f: Core Enforcer is taught only by the Move Tutor, like the other signature moves. Its TM is no longer sold, and a vendor buys one back for what it cost.
+- 1016398: The AI weighing its moves no longer changes the fight:
+  
+  - Three Heads no longer bites the enemy team before Hydreigon has cast anything.
+  - Glidewake no longer gains Evasion while Emolga's AI thinks.
+  - Bluff, Doom Mark, Lock-On and Guard Spec are no longer used up by a move that was only weighed.
+  - Protect and the team guards are no longer broken by a Feint that was only weighed.
+  - Ability, item and status cues no longer play while the AI thinks, and the AI no longer learns a foe's ability from them.
+  - The AI now weighs Flail, Reversal, Return, Frustration, Present, Magnitude, Gyro Ball, Electro Ball, Heavy Slam, Heat Crash and the other moves whose power is worked out in the fight, where it used to score them as doing nothing.
+
 ## 4.30.0
 
 ### Minor Changes

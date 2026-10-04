@@ -746,14 +746,20 @@ describe('world', () => {
     }
 
     expect(moves).toHaveLength(mostSlots(Slots.Move));
-    expect(attacks).toHaveLength(BOSS_ATTACK_COUNT);
-    expect(types.size).toBe(attacks.length);
+    // At least its five hardest, one to a type; a slot no status fills
+    // may take another of what it levels into
+    expect(attacks.length).toBeGreaterThanOrEqual(BOSS_ATTACK_COUNT);
+    expect(types.size).toBeGreaterThanOrEqual(BOSS_ATTACK_COUNT);
     // Its signature, not the delayed or self-felling ones it could know
     expect(moves).toContain(Moves.Psystrike);
     expect(moves).not.toContain(Moves.FutureSight);
     expect(moves).not.toContain(Moves.SelfDestruct);
-    // And what it says to the whole party at once
-    expect(moves).toContain(Moves.ThunderWave);
+    // Machines teach Toxic and Thunder Wave to nearly everything, so a
+    // boss only throws the statuses it levels into
+    expect(moves).not.toContain(Moves.Toxic);
+    expect(moves).not.toContain(Moves.ThunderWave);
+    expect(getBossMoves(Species.Zapdos)).toContain(Moves.ThunderWave);
+    expect(getBossMoves(Species.Darkrai)).toContain(Moves.Haze);
   });
 
   it('never stages a Ditto, or anything with nothing left to cast', () => {

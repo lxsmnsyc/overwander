@@ -23,7 +23,7 @@ import { RECHARGE_MOVES } from '../data/moves/recharge';
 import { Z_MOVES } from '../data/moves/z-moves';
 import { Species } from '../data/ids/species';
 import { getMoveData } from '../data/moves';
-import { getReachableMoves, getSpeciesData } from '../data/species';
+import { getLevelUpMoves, getReachableMoves, getSpeciesData } from '../data/species';
 import { deriveAbility, deriveGender, deriveMoves, deriveNature, deriveSize } from './encounter';
 
 /**
@@ -153,16 +153,19 @@ function attackWorth(species: Species, move: Moves): number {
   const data = getMoveData(move);
   const { stats, types } = getSpeciesData(species);
   const stab = types.includes(data.type) ? 1.5 : 1;
-  const stat = stats[data.category === MoveCategories.Physical ? Stats.Attack : Stats.SpecialAttack];
+  const stat =
+    stats[data.category === MoveCategories.Physical ? Stats.Attack : Stats.SpecialAttack];
 
   return ((data.power ?? 0) * stab * stat * (data.accuracy ?? 100)) / (data.steps ?? 1);
 }
 
 /**
- * The 8 moves a boss is staged with, drawn from everything its line
- * can learn less the ones a boss may never have: its hardest attacks,
- * one to a type, then the status moves it knows that a party has to
- * answer. A species short of either fills up from what it levels into
+ * The 8 moves a boss is staged with, less the ones a boss may never
+ * have: its hardest attacks from everything its line can learn, one
+ * to a type, then the status moves it levels into that a party has to
+ * answer. A machine teaches Toxic and Thunder Wave to nearly everything,
+ * so drawing statuses from machines too gave every boss the same two.
+ * A species short of either fills up from what it levels into
  */
 export function getBossMoves(species: Species): Moves[] {
   const banned = getBannedBossMoves(species);
@@ -201,11 +204,13 @@ export function getBossMoves(species: Species): Moves[] {
       chosen.push(move);
     }
   }
+  const levelled = new Set(getLevelUpMoves(species, RAID_BOSS_LEVEL));
+
   for (const move of BOSS_STATUS_MOVES) {
     if (chosen.length >= mostSlots(Slots.Move)) {
       break;
     }
-    if (pool.has(move)) {
+    if (pool.has(move) && levelled.has(move)) {
       chosen.push(move);
     }
   }
@@ -213,7 +218,7 @@ export function getBossMoves(species: Species): Moves[] {
     if (chosen.length >= mostSlots(Slots.Move)) {
       break;
     }
-    if (!chosen.includes(move)) {
+    if (!chosen.includes(move) && !BOSS_UNFIT_ATTACKS.has(move)) {
       chosen.push(move);
     }
   }

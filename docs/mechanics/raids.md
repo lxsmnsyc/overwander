@@ -51,10 +51,10 @@ one. Its raid form gives it:
 - Single-target moves that strike every enemy at once.
 - The sharpest trainer's judgement: it never misplays and never hesitates.
 
-A boss is staged with **eight moves drawn from everything its line can learn**,
-machines and tutors included: its five hardest attacks, one to a type, and the
-status moves it knows that a party has to answer, such as Will-O-Wisp, Thunder
-Wave, Toxic, Haze and Yawn. Each of those goes out to the whole party. It is
+A boss is staged with **eight moves**: its five hardest attacks, one to a type,
+from everything its line can learn, machines and tutors included, and the status
+moves it levels into that a party has to answer, such as Darkrai's Haze, Zapdos'
+Thunder Wave or Zygarde's Glare. Each of those goes out to the whole party. It is
 never staged with an attack that costs it the fight's pace or only works under a
 condition, such as Explosion, Future Sight, Hyper Beam, Outrage or Focus Punch.
 

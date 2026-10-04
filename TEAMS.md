@@ -38,8 +38,9 @@ Every species, move, ability and item below was checked against the registries i
 ### Raid bosses
 
 - A boss has 110x HP and doubled stats, and its single-target moves hit your whole side.
-- It casts with machine and tutor moves, not just level-up ones, and carries status moves
-  (Will-O-Wisp, Thunder Wave, Toxic, Haze, Yawn) that land on all six of you.
+- Its attacks come from machine and tutor moves too, not just level-up ones. The status
+  moves it levels into (Darkrai's Haze, Zapdos' Thunder Wave, Zygarde's Glare) land on all
+  six of you.
 - At half HP and again at a quarter it clears its status, its stat drops, Leech Seed and
   Curse. Plan to reapply the burn and Charm twice.
 - It is immune to sleep, freeze, flinch, trapping, infatuation, Taunt, Encore, Torment

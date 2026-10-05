@@ -14,6 +14,8 @@ export default function registerAlpineTundraSpawns(): void {
         { species: Species.Swinub, weight: 25 },
       ],
       uncommon: [
+        { species: Species.VulpixAlola, weight: 22 },
+        { species: Species.SandshrewAlola, weight: 22 },
         { species: Species.Bergmite, weight: 24 },
         { species: Species.Snorunt, weight: 22 },
         { species: Species.Bronzor, weight: 20 },
@@ -25,6 +27,8 @@ export default function registerAlpineTundraSpawns(): void {
         { species: Species.Piloswine, weight: 5 },
       ],
       scarce: [
+        { species: Species.NinetalesAlola, weight: 6 },
+        { species: Species.SandslashAlola, weight: 6 },
         { species: Species.Crabominable, weight: 6 },
         { species: Species.Avalugg, weight: 6 },
         { species: Species.Glalie, weight: 6 },
@@ -34,6 +38,7 @@ export default function registerAlpineTundraSpawns(): void {
         { species: Species.Glaceon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Drampa, weight: 5 },
         { species: Species.Minior, weight: 5 },
         { species: Species.Vivillon, weight: 5 },
         { species: Species.Machamp, weight: 5 },
@@ -57,6 +62,8 @@ export default function registerAlpineTundraSpawns(): void {
         { species: Species.Swinub, weight: 25 },
       ],
       uncommon: [
+        { species: Species.VulpixAlola, weight: 22 },
+        { species: Species.SandshrewAlola, weight: 22 },
         { species: Species.Bergmite, weight: 24 },
         { species: Species.Snorunt, weight: 22 },
         { species: Species.Bronzor, weight: 20 },
@@ -69,6 +76,8 @@ export default function registerAlpineTundraSpawns(): void {
         { species: Species.Piloswine, weight: 5 },
       ],
       scarce: [
+        { species: Species.NinetalesAlola, weight: 6 },
+        { species: Species.SandslashAlola, weight: 6 },
         { species: Species.Crabominable, weight: 6 },
         { species: Species.Avalugg, weight: 6 },
         { species: Species.Glalie, weight: 6 },
@@ -78,6 +87,7 @@ export default function registerAlpineTundraSpawns(): void {
         { species: Species.Glaceon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Drampa, weight: 5 },
         { species: Species.Minior, weight: 5 },
         { species: Species.Vivillon, weight: 5 },
         { species: Species.Salamence, weight: 2 },
@@ -100,6 +110,8 @@ export default function registerAlpineTundraSpawns(): void {
         { species: Species.Swinub, weight: 25 },
       ],
       uncommon: [
+        { species: Species.VulpixAlola, weight: 22 },
+        { species: Species.SandshrewAlola, weight: 22 },
         { species: Species.Bergmite, weight: 24 },
         { species: Species.Snorunt, weight: 22 },
         { species: Species.Sneasel, weight: 5 },
@@ -111,6 +123,8 @@ export default function registerAlpineTundraSpawns(): void {
         { species: Species.Piloswine, weight: 5 },
       ],
       scarce: [
+        { species: Species.NinetalesAlola, weight: 6 },
+        { species: Species.SandslashAlola, weight: 6 },
         { species: Species.Crabominable, weight: 6 },
         { species: Species.Avalugg, weight: 6 },
         { species: Species.Glalie, weight: 6 },
@@ -121,6 +135,7 @@ export default function registerAlpineTundraSpawns(): void {
         { species: Species.Glaceon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Drampa, weight: 5 },
         { species: Species.Minior, weight: 5 },
         { species: Species.Cryogonal, weight: 4 },
         { species: Species.Salamence, weight: 2 },
@@ -138,6 +153,8 @@ export default function registerAlpineTundraSpawns(): void {
     [TimeOfDay.Night]: {
       base: [{ species: Species.Swinub, weight: 25 }],
       uncommon: [
+        { species: Species.VulpixAlola, weight: 22 },
+        { species: Species.SandshrewAlola, weight: 22 },
         { species: Species.Bergmite, weight: 24 },
         { species: Species.Snorunt, weight: 22 },
         { species: Species.Sneasel, weight: 5 },
@@ -146,6 +163,8 @@ export default function registerAlpineTundraSpawns(): void {
       ],
       rare: [{ species: Species.Piloswine, weight: 5 }],
       scarce: [
+        { species: Species.NinetalesAlola, weight: 6 },
+        { species: Species.SandslashAlola, weight: 6 },
         { species: Species.Crabominable, weight: 6 },
         { species: Species.Avalugg, weight: 6 },
         { species: Species.Glalie, weight: 6 },
@@ -156,6 +175,7 @@ export default function registerAlpineTundraSpawns(): void {
         { species: Species.Glaceon, weight: 6 },
       ],
       elusive: [
+        { species: Species.Drampa, weight: 5 },
         { species: Species.Minior, weight: 5 },
         { species: Species.Cryogonal, weight: 4 },
         { species: Species.Delibird, weight: 5 },

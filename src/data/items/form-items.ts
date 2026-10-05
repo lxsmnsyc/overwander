@@ -115,8 +115,7 @@ export const FORM_ITEMS = new Map<Items, Species[]>([
   // is all the mainline means by a Genesect form
   ...GENESECT_DRIVES,
   // The seventeen Memories, each of which already sets a Multi-Attack's
-  // type. Holding one makes a Silvally that type, which is the
-  // mainline's RKS System
+  // type. Holding one sets a Silvally's own, which RKS System answers for
   ...SILVALLY_MEMORIES,
 ]);
 

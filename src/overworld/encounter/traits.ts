@@ -4,7 +4,7 @@ import type Natures from '../../data/ids/natures';
 import type { Items } from '../../data/ids/items';
 import { Genders } from '../../data/ids/species';
 import type { Species } from '../../data/ids/species';
-import { getSignatureAbility } from '../../data/abilities';
+import { getSpeciesSignature } from '../../data/abilities';
 import { getSpeciesAbilityPools, getSpeciesData } from '../../data/species';
 import { getSpeciesHeldItems, pickHeldItem } from '../../data/species/held-items';
 import {
@@ -150,7 +150,7 @@ export function deriveSignature(
   if (new AleaRNG(`${traitValue}:signature`).random() >= chance) {
     return null;
   }
-  return getSignatureAbility(getSpeciesData(species).family);
+  return getSpeciesSignature(species);
 }
 
 /**

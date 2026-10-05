@@ -1,6 +1,7 @@
 import Abilities from '../ids/abilities';
 import Families from '../ids/families';
-import { registerSignature } from './__create';
+import { Species } from '../ids/species';
+import { registerFormSignature, registerSignature } from './__create';
 
 /**
  * One invented ability per evolution family, themed on what the line
@@ -2341,5 +2342,79 @@ export default function registerSignatureAbilities(): void {
     name: 'Charged Spines',
     description:
       'A contact move landing on it charges it, and its next Electric move that lands hits 1.5x.',
+  });
+
+  registerSignature(Families.Komala, Abilities.NapTime, {
+    name: 'Nap Time',
+    description: 'Every 3rd time it acts, it heals 1/4 of its HP.',
+  });
+
+  // Turtonator and Drampa, the Sun and Moon pair: each answers one kind of blow on its team
+  registerSignature(Families.Turtonator, Abilities.BlastShell, {
+    name: 'Blast Shell',
+    description:
+      'A physical move landing on it or a teammate charges it, and its next Fire move that lands hits 1.5x.',
+  });
+  registerSignature(Families.Drampa, Abilities.EldersIre, {
+    name: 'Elder’s Ire',
+    description:
+      'A special move landing on it or a teammate charges it, and its next Dragon move that lands hits 1.5x.',
+  });
+
+  registerSignature(Families.Mimikyu, Abilities.GrudgeShroud, {
+    name: 'Grudge Shroud',
+    description: 'The first time each enemy lands a move on it, it casts Spite at them.',
+  });
+
+  registerSignature(Families.TypeNull, Abilities.MemoryEcho, {
+    name: 'Memory Echo',
+    description: 'Its super-effective moves hit 1.2x.',
+  });
+  registerSignature(Families.Bruxish, Abilities.PsychicGnash, {
+    name: 'Psychic Gnash',
+    description: 'Its biting moves confuse the target 20% of the time.',
+  });
+  registerSignature(Families.Dhelmise, Abilities.GhostShip, {
+    name: 'Ghost Ship',
+    description: 'Its Ghost and Grass moves hit 1.3x while rain falls.',
+  });
+  registerSignature(Families.JangmoO, Abilities.WarClangor, {
+    name: 'War Clangor',
+    description: 'Each sound move it lands raises its Defense 1 stage, up to 3 stages.',
+  });
+
+  // The Alolan lines whose every stage is regional carry their own
+  registerFormSignature([Species.RattataAlola, Species.RaticateAlola], Abilities.RichDiet, {
+    name: 'Rich Diet',
+    description: 'Each Berry it eats raises its Attack 1 stage.',
+  });
+  registerFormSignature([Species.SandshrewAlola, Species.SandslashAlola], Abilities.Frostforged, {
+    name: 'Frostforged',
+    description: 'Fire and Fighting moves hit it at 0.75x.',
+  });
+  registerFormSignature([Species.VulpixAlola, Species.NinetalesAlola], Abilities.AuroraCrown, {
+    name: 'Aurora Crown',
+    description:
+      'It casts Aurora Veil over its party as it arrives on the field while hail or snow falls.',
+  });
+  registerFormSignature([Species.DiglettAlola, Species.DugtrioAlola], Abilities.WireSnare, {
+    name: 'Wire Snare',
+    description: 'The first contact move to land on it after each entrance binds the attacker.',
+  });
+  registerFormSignature([Species.MeowthAlola, Species.PersianAlola], Abilities.TauntingGaze, {
+    name: 'Taunting Gaze',
+    description: 'It casts Taunt at an enemy as it arrives on the field.',
+  });
+  registerFormSignature(
+    [Species.GeodudeAlola, Species.GravelerAlola, Species.GolemAlola],
+    Abilities.MagnetFloat,
+    {
+      name: 'Magnet Float',
+      description: 'It casts Magnet Rise on itself as it arrives on the field.',
+    },
+  );
+  registerFormSignature([Species.GrimerAlola, Species.MukAlola], Abilities.CrystalToxin, {
+    name: 'Crystal Toxin',
+    description: 'Poison it puts on an enemy cannot be cured.',
   });
 }

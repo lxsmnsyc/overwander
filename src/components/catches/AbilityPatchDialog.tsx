@@ -12,7 +12,7 @@ import { useAbilityPatch } from '../../auth/ability-items';
 import { type CaughtPokemon, getCaught } from '../../auth/caught';
 import { getCatchSlots, isShiny } from '../../auth/caught-record';
 import { isEgg } from '../../auth/egg';
-import { getAbilityData, getSignatureAbility } from '../../data/abilities';
+import { getAbilityData, getSpeciesSignature } from '../../data/abilities';
 import { Slots, countAbilitySlots, countsAgainstSlots } from '../../data/constants/slots';
 import type Abilities from '../../data/ids/abilities';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
@@ -90,7 +90,7 @@ function PatchBody(
   const signature = (): Abilities | null => {
     const record = props.caught();
 
-    return record == null ? null : getSignatureAbility(getSpeciesData(record.species).family);
+    return record == null ? null : getSpeciesSignature(record.species);
   };
 
   /** Whether a slot is standing empty, so nothing has to be given up */

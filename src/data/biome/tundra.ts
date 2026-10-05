@@ -15,6 +15,8 @@ export default function registerTundraSpawns(): void {
         { species: Species.Vanillite, weight: 24 },
       ],
       uncommon: [
+        { species: Species.VulpixAlola, weight: 22 },
+        { species: Species.SandshrewAlola, weight: 22 },
         { species: Species.Snover, weight: 20 },
         { species: Species.Cubchoo, weight: 20 },
       ],
@@ -25,6 +27,8 @@ export default function registerTundraSpawns(): void {
         { species: Species.Vanillish, weight: 10 },
       ],
       scarce: [
+        { species: Species.NinetalesAlola, weight: 6 },
+        { species: Species.SandslashAlola, weight: 6 },
         { species: Species.Beartic, weight: 6 },
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Abomasnow, weight: 6 },
@@ -57,6 +61,8 @@ export default function registerTundraSpawns(): void {
         { species: Species.Vanillite, weight: 24 },
       ],
       uncommon: [
+        { species: Species.VulpixAlola, weight: 22 },
+        { species: Species.SandshrewAlola, weight: 22 },
         { species: Species.Snover, weight: 20 },
         { species: Species.Cubchoo, weight: 20 },
       ],
@@ -67,6 +73,8 @@ export default function registerTundraSpawns(): void {
         { species: Species.Vanillish, weight: 10 },
       ],
       scarce: [
+        { species: Species.NinetalesAlola, weight: 6 },
+        { species: Species.SandslashAlola, weight: 6 },
         { species: Species.Beartic, weight: 6 },
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Abomasnow, weight: 6 },
@@ -94,11 +102,15 @@ export default function registerTundraSpawns(): void {
     [TimeOfDay.Evening]: {
       base: [{ species: Species.Swinub, weight: 25 }],
       uncommon: [
+        { species: Species.VulpixAlola, weight: 22 },
+        { species: Species.SandshrewAlola, weight: 22 },
         { species: Species.Sneasel, weight: 5 },
         { species: Species.Snover, weight: 20 },
       ],
       rare: [{ species: Species.Piloswine, weight: 5 }],
       scarce: [
+        { species: Species.NinetalesAlola, weight: 6 },
+        { species: Species.SandslashAlola, weight: 6 },
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Abomasnow, weight: 6 },
         { species: Species.Weavile, weight: 6 },
@@ -123,11 +135,15 @@ export default function registerTundraSpawns(): void {
     [TimeOfDay.Night]: {
       base: [{ species: Species.Swinub, weight: 25 }],
       uncommon: [
+        { species: Species.VulpixAlola, weight: 22 },
+        { species: Species.SandshrewAlola, weight: 22 },
         { species: Species.Sneasel, weight: 5 },
         { species: Species.Snover, weight: 20 },
       ],
       rare: [{ species: Species.Piloswine, weight: 5 }],
       scarce: [
+        { species: Species.NinetalesAlola, weight: 6 },
+        { species: Species.SandslashAlola, weight: 6 },
         { species: Species.Dewgong, weight: 10 },
         { species: Species.Abomasnow, weight: 6 },
         { species: Species.Weavile, weight: 6 },

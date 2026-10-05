@@ -467,6 +467,7 @@ export const EVERY_LAIR: Lairs[] = [
   Lairs.MtTensei,
   Lairs.FulaForest,
   Lairs.GoPark,
+  Lairs.AetherParadise,
 ];
 
 /**
@@ -524,7 +525,7 @@ const BIOME_LAIRS: { [key in Biome]?: Lairs[] } = {
     Lairs.IronRuins,
     Lairs.SkyPillar,
   ],
-  [Biome.Beach]: [Lairs.EmbeddedTower],
+  [Biome.Beach]: [Lairs.EmbeddedTower, Lairs.AetherParadise],
   [Biome.PolarOcean]: [Lairs.SeafoamIslands, Lairs.IslandCave],
   [Biome.Glacier]: [Lairs.SnowpointTemple, Lairs.GiantChasm],
   [Biome.Grassland]: [Lairs.PowerPlant, Lairs.BurnedTower, Lairs.LakeValor, Lairs.AbundantShrine],

@@ -25,6 +25,24 @@ import registerSandygastSpecies from './sandygast';
 import registerPyukumukuSpecies from './pyukumuku';
 import registerMiniorSpecies from './minior';
 import registerTogedemaruSpecies from './togedemaru';
+import registerKomalaSpecies from './komala';
+import registerTurtonatorSpecies from './turtonator';
+import registerMimikyuSpecies from './mimikyu';
+import registerDrampaSpecies from './drampa';
+import registerTypeNullSpecies from './type-null';
+import registerBruxishSpecies from './bruxish';
+import registerDhelmiseSpecies from './dhelmise';
+import registerJangmoOSpecies from './jangmo-o';
+import registerAlolanRattataSpecies from './alolan-rattata';
+import registerAlolanRaichuSpecies from './alolan-raichu';
+import registerAlolanSandshrewSpecies from './alolan-sandshrew';
+import registerAlolanVulpixSpecies from './alolan-vulpix';
+import registerAlolanDiglettSpecies from './alolan-diglett';
+import registerAlolanMeowthSpecies from './alolan-meowth';
+import registerAlolanGeodudeSpecies from './alolan-geodude';
+import registerAlolanGrimerSpecies from './alolan-grimer';
+import registerAlolanExeggutorSpecies from './alolan-exeggutor';
+import registerAlolanMarowakSpecies from './alolan-marowak';
 
 /** Alola, as far as it is written */
 export default function registerGen7Species(): void {
@@ -55,4 +73,22 @@ export default function registerGen7Species(): void {
   registerPyukumukuSpecies();
   registerMiniorSpecies();
   registerTogedemaruSpecies();
+  registerKomalaSpecies();
+  registerTurtonatorSpecies();
+  registerMimikyuSpecies();
+  registerDrampaSpecies();
+  registerTypeNullSpecies();
+  registerBruxishSpecies();
+  registerDhelmiseSpecies();
+  registerJangmoOSpecies();
+  registerAlolanRattataSpecies();
+  registerAlolanRaichuSpecies();
+  registerAlolanSandshrewSpecies();
+  registerAlolanVulpixSpecies();
+  registerAlolanDiglettSpecies();
+  registerAlolanMeowthSpecies();
+  registerAlolanGeodudeSpecies();
+  registerAlolanGrimerSpecies();
+  registerAlolanExeggutorSpecies();
+  registerAlolanMarowakSpecies();
 }

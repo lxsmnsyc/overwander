@@ -5,19 +5,22 @@ import { Types } from '../../data/constants/types';
 import Abilities from '../../data/ids/abilities';
 import { DamageFlags, MoveCategories, MoveFlags, Moves } from '../../data/ids/moves';
 import { MINIOR_FORMS, Species, getBaseFormSpecies } from '../../data/ids/species';
-import { NON_VOLATILE_STATUSES, Statuses } from '../../data/ids/status';
+import { NON_VOLATILE_STATUSES, Statuses, Terrains } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
-import { abilitiesOf } from '../moves/ability-moves';
 import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import { MergedLifecycle } from '../lifecycle';
 import type Unit from '../unit';
-import { isPrimalWeather, onUnitActs } from '../utils';
+import { isOwnBerry, isPrimalWeather, onUnitActs } from '../utils';
 import {
   createAbility,
+  createGooeyAbility,
   createLimberAbility,
   createNoContactAbility,
+  createQueenlyMajestyAbility,
+  createReceiverAbility,
   createRetreatAbility,
+  createSandRushAbility,
   createThickFatAbility,
   createTypeShiftAbility,
 } from './__create';
@@ -36,6 +39,15 @@ export const WATER_BUBBLE_SCALE = 2;
 
 /** What a Water move packs onto the sand's Defense */
 export const WATER_COMPACTION_STAGES = 2;
+
+/** What breaking the rag costs the Mimikyu under it */
+export const DISGUISE_CHIP = 1 / 8;
+
+/** What the charge is worth to a Normal move it turned Electric */
+export const GALVANIZE_SCALE = 1.2;
+
+/** What a berry does for a Ripen holder that eats it */
+export const RIPEN_SCALE = 2;
 
 /** The share of its HP a Minior keeps its shell above */
 export const SHIELDS_DOWN_THRESHOLD = 1 / 2;
@@ -60,25 +72,6 @@ export function getMiniorCore(unit: Unit): Species {
 
   return MINIOR_FORMS[1 + (hashString(key) % (MINIOR_FORMS.length - 1))];
 }
-
-/**
- * What Receiver will not take up: the ones that copy in their own
- * right, and the ones only a particular shape can use
- */
-const UNRECEIVABLE = new Set<Abilities>([
-  Abilities.Receiver,
-  Abilities.Trace,
-  Abilities.Forecast,
-  Abilities.FlowerGift,
-  Abilities.Multitype,
-  Abilities.Illusion,
-  Abilities.WonderGuard,
-  Abilities.ZenMode,
-  Abilities.Imposter,
-  Abilities.StanceChange,
-  Abilities.PowerConstruct,
-  Abilities.Schooling,
-]);
 
 /** Whether a move is carried on sound, which is what a voice can wet */
 function isSound(move: Moves): boolean {
@@ -235,32 +228,10 @@ const setupAbilities = [
     }),
   ),
 
-  /**
-   * Passimian: a fallen teammate's ability is picked up where Receiver
-   * was, the first one it does not already carry. Once it has, there is
-   * no Receiver left to take another
-   * https://bulbapedia.bulbagarden.net/wiki/Receiver_(Ability)
-   */
-  createAbility(Abilities.Receiver, (battle) =>
-    battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
-      const fallen = event.source;
-
-      for (const holder of fallen.team.units) {
-        if (holder === fallen || !holder.alive || !holder.hasAbility(Abilities.Receiver)) {
-          continue;
-        }
-
-        for (const ability of abilitiesOf(fallen)) {
-          if (!UNRECEIVABLE.has(ability) && !holder.hasAbility(ability)) {
-            holder.triggerAbility(Abilities.Receiver);
-            holder.removeAbility(Abilities.Receiver);
-            holder.addAbility(ability);
-            return;
-          }
-        }
-      }
-    }),
-  ),
+  // Passimian, and Alolan Grimer under another name: a fallen teammate's
+  // ability is picked up in its place
+  createReceiverAbility(Abilities.Receiver),
+  createReceiverAbility(Abilities.PowerOfAlchemy),
 
   // Wimpod and Golisopod: one bolt under two names. A trap holds it,
   // and what it spent on purpose does not count
@@ -394,6 +365,98 @@ const setupAbilities = [
       }),
     ]);
   }),
+
+  // Alolan Raichu: it rides the current the way a surfer rides a wave
+  // https://bulbapedia.bulbagarden.net/wiki/Surge_Surfer_(Ability)
+  createSandRushAbility(Abilities.SurgeSurfer, (unit) => unit.checkTerrain() === Terrains.Electric),
+
+  // Alolan Diglett: its metal hair slows whatever touches it, as Gooey does
+  createGooeyAbility(Abilities.TanglingHair),
+
+  // Alolan Raticate: a berry it eats itself does twice the good, both
+  // the HP it gives back and the stages it raises
+  // https://bulbapedia.bulbagarden.net/wiki/Ripen_(Ability)
+  createAbility(
+    Abilities.Ripen,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.UnitHeal, EventPriority.Pre, (event) => {
+          const eater = event.target;
+
+          if (
+            event.value > 0 &&
+            isOwnBerry(event.cause, eater) &&
+            eater.hasAbility(Abilities.Ripen)
+          ) {
+            eater.triggerAbility(Abilities.Ripen);
+            event.value *= RIPEN_SCALE;
+          }
+        }),
+        battle.on(BattleEvents.UnitAddStage, EventPriority.Pre, (event) => {
+          const eater = event.source;
+
+          if (
+            event.value > 0 &&
+            isOwnBerry(event.cause, eater) &&
+            eater.hasAbility(Abilities.Ripen)
+          ) {
+            eater.triggerAbility(Abilities.Ripen);
+            event.value *= RIPEN_SCALE;
+          }
+        }),
+      ]),
+  ),
+
+  // Alolan Geodude: what it throws goes out charged
+  // https://bulbapedia.bulbagarden.net/wiki/Galvanize_(Ability)
+  createTypeShiftAbility(Abilities.Galvanize, Types.Normal, Types.Electric, GALVANIZE_SCALE),
+
+  /**
+   * Mimikyu: the rag takes the first blow and gives way, costing the one
+   * under it 1/8 of its HP, as it does from Sword and Shield on. It stays
+   * broken for the rest of the fight
+   * https://bulbapedia.bulbagarden.net/wiki/Disguise_(Ability)
+   */
+  createAbility(
+    Abilities.Disguise,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.CheckUnitCanDamage, EventPriority.Post, (event) => {
+          const { cause, target } = event;
+
+          if (
+            !event.success ||
+            event.flags & DamageFlags.Indirect ||
+            cause.type !== EffectType.Move ||
+            cause.unit === target ||
+            target.species !== Species.Mimikyu ||
+            !target.hasAbility(Abilities.Disguise)
+          ) {
+            return;
+          }
+          event.success = false;
+          target.triggerAbility(Abilities.Disguise);
+        }),
+        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+          const unit = event.source;
+
+          if (event.ability !== Abilities.Disguise || unit.species !== Species.Mimikyu) {
+            return;
+          }
+          unit.setSpecies(Species.MimikyuBusted);
+          unit.damage(
+            { type: EffectType.Ability, ability: Abilities.Disguise, unit },
+            unit,
+            unit.checkStat(Stats.HP, 0) * DISGUISE_CHIP,
+            DamageFlags.Indirect,
+          );
+        }),
+      ]),
+  ),
+
+  // Bruxish: its glare turns away whatever tries to cut in ahead, the way
+  // Queenly Majesty does
+  createQueenlyMajestyAbility(Abilities.Dazzling),
 ];
 
 export default function setupGen7Abilities(battle: Battle): void {

@@ -28,6 +28,7 @@ import Biome, { TimeOfDay, WILD_BIOMES } from '../../src/data/ids/biome';
 import { Moves } from '../../src/data/ids/moves';
 import {
   AEGISLASH_FORMS,
+  ALOLAN_FORMS,
   ARCEUS_FORMS,
   BASCULIN_FORMS,
   BURMY_FORMS,
@@ -52,6 +53,7 @@ import {
   LYCANROC_FORMS,
   MELOETTA_FORMS,
   MEOWSTIC_FORMS,
+  MIMIKYU_FORMS,
   MINIOR_FORMS,
   ORICORIO_FORMS,
   PALKIA_FORMS,
@@ -61,6 +63,7 @@ import {
   SAWSBUCK_FORMS,
   SHAYMIN_FORMS,
   SHELLOS_FORMS,
+  SILVALLY_FORMS,
   Species,
   THUNDURUS_FORMS,
   TORNADUS_FORMS,
@@ -455,6 +458,9 @@ describe('species forms', () => {
       ...LYCANROC_FORMS.slice(1),
       ...WISHIWASHI_FORMS.slice(1),
       ...MINIOR_FORMS.slice(1),
+      ...SILVALLY_FORMS.slice(1),
+      ...MIMIKYU_FORMS.slice(1),
+      ...ALOLAN_FORMS,
       // The true shadows, which are forms of the birds they are the
       // shadow of rather than pokemon of their own
       ...listTrueShadows(),

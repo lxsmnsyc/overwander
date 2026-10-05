@@ -1926,3 +1926,52 @@ export function createAudienceAbility(
     }),
   );
 }
+
+/** What a stored hit-back charge is worth to the move it is spent on */
+export const HIT_BACK_SCALE = 1.5;
+
+/**
+ * What Turtonator and Drampa share: a blow of one category landing on
+ * the holder's team charges it, and its next landed move of its own type
+ * hits back harder. The Sun one answers physical blows with fire and the
+ * Moon one special blows with dragon breath, so together they cover both
+ */
+export function createHitBackAbility(
+  ability: Abilities,
+  category: MoveCategories,
+  type: Types,
+): ((battle: Battle) => void) & { ability: Abilities } {
+  return createAbility(ability, (battle) => {
+    const { state: charged, lifecycles } = createUnitState<boolean>(battle);
+
+    return new MergedLifecycle([
+      ...lifecycles,
+      battle.on(BattleEvents.UnitAttack, AttackPriority.Post, (event) => {
+        const { source, target } = event;
+
+        if (event.success && source.team.alliance !== target.team.alliance) {
+          if (event.category === category) {
+            for (const holder of target.team.units) {
+              if (holder.alive && charged.get(holder) !== true && holder.hasAbility(ability)) {
+                charged.set(holder, true);
+                holder.triggerAbility(ability);
+              }
+            }
+          }
+          if (event.type === type && charged.get(source) === true) {
+            charged.delete(source);
+          }
+        }
+      }),
+      battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
+        if (
+          event.power != null &&
+          charged.get(event.source) === true &&
+          event.source.checkMoveType(event.move, event.target) === type
+        ) {
+          event.power *= HIT_BACK_SCALE;
+        }
+      }),
+    ]);
+  });
+}

@@ -81,4 +81,46 @@ export default function registerGen7Abilities(): void {
     description:
       'Above 1/2 HP it fights in its shell, which no major status gets through. At or below 1/2 HP it fights as its faster, frailer core.',
   });
+  // Alolan Raichu
+  registerAbility(Abilities.SurgeSurfer, {
+    name: 'Surge Surfer',
+    description: 'Its Speed is 2x on Electric Terrain.',
+  });
+  // Alolan Diglett
+  registerAbility(Abilities.TanglingHair, {
+    name: 'Tangling Hair',
+    description: 'Whoever lands a contact move on it loses 1 stage of Speed.',
+  });
+  // Alolan Raticate
+  registerAbility(Abilities.Ripen, {
+    name: 'Ripen',
+    description: 'Berries it eats heal it 2x as much and raise its stats 2x as many stages.',
+  });
+  // Alolan Geodude
+  registerAbility(Abilities.Galvanize, {
+    name: 'Galvanize',
+    description: 'Its Normal moves are Electric moves instead, and hit 1.2x.',
+  });
+  // Alolan Grimer
+  registerAbility(Abilities.PowerOfAlchemy, {
+    name: 'Power of Alchemy',
+    description: 'When a teammate faints, it takes that teammate’s ability in place of this one.',
+  });
+  // Mimikyu
+  registerAbility(Abilities.Disguise, {
+    name: 'Disguise',
+    description:
+      'The first move to hit it deals no damage and breaks its disguise, which costs it 1/8 of its HP.',
+  });
+  // Silvally
+  registerAbility(Abilities.RksSystem, {
+    name: 'RKS System',
+    description: 'It is whatever type the Memory in its hands is.',
+  });
+  // Bruxish
+  registerAbility(Abilities.Dazzling, {
+    name: 'Dazzling',
+    description:
+      'Nothing on its side can be struck by an enemy move whose priority quickens its wind-up.',
+  });
 }

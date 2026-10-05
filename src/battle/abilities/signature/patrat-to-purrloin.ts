@@ -5,7 +5,7 @@ import { MoveAttackFlags } from '../../../data/ids/moves';
 import { BattleEvents, EffectType, MoveTargetType } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
 import type Unit from '../../unit';
-import { hasFreeItemSlot, stealableItem } from '../../utils';
+import { hasFreeItemSlot, isConsumable, stealableItem } from '../../utils';
 import { createAbility } from '../__create';
 
 /**
@@ -114,11 +114,11 @@ const setupAbilities = [
         }
         taken.add(event.source);
         event.source.triggerAbility(Abilities.CatBurglar);
-        event.target.removeItem(item, {
-          type: EffectType.Ability,
-          ability: Abilities.CatBurglar,
-          unit: event.source,
-        });
+        event.target.removeItem(
+          item,
+          { type: EffectType.Ability, ability: Abilities.CatBurglar, unit: event.source },
+          isConsumable(item),
+        );
         event.source.addItem(item);
       }),
 

@@ -1,4 +1,4 @@
-import { For, type JSX, Show, createResource, createSignal } from 'solid-js';
+import { For, type JSX, createResource, createSignal } from 'solid-js';
 import {
   type ReleaseGrace,
   getCatchName,
@@ -8,7 +8,7 @@ import {
 import createClientSignal from '../../app/client-signal';
 import { useGame } from '../../app/game-context';
 import { answered } from '../../app/resource-reads';
-import { Button, List, ListRow, useToast } from '../../styled';
+import { Button, List, ListRow, Meta, useToast } from '../../styled';
 
 /** What a refused take-back says, by why */
 const REFUSED: Record<string, string> = {
@@ -16,12 +16,19 @@ const REFUSED: Record<string, string> = {
   'no-candy': 'The candy it paid has been spent, so it cannot come back.',
 };
 
+/** What was let go today, and the way to take one back */
+export interface Released {
+  letGo: () => ReleaseGrace['released'];
+  busy: () => boolean;
+  takeBack: (catchId: string, name: string) => void;
+}
+
 /**
- * What the player let go today, while it can still be taken back. It
- * is only drawn on a server that holds releases for a day, and only
- * while there is something to take back
+ * What the player let go today, while it can still be taken back. Only
+ * a server that holds releases for a day has any, and the rail counts
+ * them as well as the list showing them, so both read this once
  */
-export default function ReleasedList(): JSX.Element {
+export function createReleased(): Released {
   const game = useGame();
   const toast = useToast();
   const [busy, setBusy] = createSignal(false);
@@ -33,8 +40,7 @@ export default function ReleasedList(): JSX.Element {
     () => (client() ? { revision: game.records() } : false),
     async (): Promise<ReleaseGrace> => getReleaseGrace(),
   );
-  // Read with `answered`, since this body declares it: the list is
-  // simply absent until it is known, rather than holding the box
+
   const letGo = (): ReleaseGrace['released'] => {
     const known = answered(grace);
 
@@ -63,35 +69,41 @@ export default function ReleasedList(): JSX.Element {
       });
   };
 
-  return (
-    <Show when={letGo().length > 0}>
-      <section class="flex flex-col gap-2">
-        <h3 class="m-0 text-sm font-bold text-muted">Let go today, and can still come back</h3>
-        <List>
-          <For each={letGo()}>
-            {(released) => {
-              const name = getCatchName(released);
+  return { letGo, busy, takeBack };
+}
 
-              return (
-                <ListRow class="flex items-center justify-between gap-2">
-                  <span class="min-w-0 truncate font-bold">
-                    {name} <span class="text-muted">Lv. {released.level}</span>
-                  </span>
-                  <Button
-                    class="shrink-0"
-                    disabled={busy()}
-                    onClick={() => {
-                      takeBack(released.id, name);
-                    }}
-                  >
-                    Take back for {released.candy} candy
-                  </Button>
-                </ListRow>
-              );
-            }}
-          </For>
-        </List>
-      </section>
-    </Show>
+/** The list itself, standing where a box would */
+export default function ReleasedList(props: { released: Released }): JSX.Element {
+  return (
+    <section class="flex flex-col gap-3">
+      <div class="flex flex-col gap-0.5">
+        <h3 class="m-0 text-2xl font-black">Let go today</h3>
+        <Meta>Each can still come back today, for the candy it paid.</Meta>
+      </div>
+      <List>
+        <For each={props.released.letGo()} fallback={<Meta>Nothing let go today.</Meta>}>
+          {(released) => {
+            const name = getCatchName(released);
+
+            return (
+              <ListRow class="flex items-center justify-between gap-2">
+                <span class="min-w-0 truncate font-bold">
+                  {name} <span class="text-muted">Lv. {released.level}</span>
+                </span>
+                <Button
+                  class="shrink-0"
+                  disabled={props.released.busy()}
+                  onClick={() => {
+                    props.released.takeBack(released.id, name);
+                  }}
+                >
+                  Take back for {released.candy} candy
+                </Button>
+              </ListRow>
+            );
+          }}
+        </For>
+      </List>
+    </section>
   );
 }

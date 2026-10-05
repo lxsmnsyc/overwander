@@ -89,6 +89,12 @@ export default class Battle extends EventEngine<BattleEventMap> {
    */
   speed = 1;
 
+  /**
+   * Whether the AI is weighing its moves. What it asks is a guess, so
+   * nothing a question answers while this holds may change the fight
+   */
+  estimating = false;
+
   constructor(seed: string, mode = BattleModes.PvP, limits?: number, biome?: Biome, timeLimit = 0) {
     super();
     this.rng = new AleaRNG(seed);

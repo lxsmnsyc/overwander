@@ -770,6 +770,17 @@ describe('world', () => {
     expect(getBossMoves(Species.Darkrai)).toContain(Moves.Haze);
   });
 
+  it('fills a boss from its whole learn set, not only its latest moves', () => {
+    // Azelf's last eight are mostly unfit (Uproar, Future Sight, Last
+    // Resort, Natural Gift, Explosion), so the slots come from earlier
+    const moves = getBossMoves(Species.Azelf);
+
+    expect(moves).toContain(Moves.Detect);
+    expect(moves).toContain(Moves.Imprison);
+    expect(moves).toContain(Moves.Confusion);
+    expect(moves).toHaveLength(6);
+  });
+
   it('never stages a Ditto, or anything with nothing left to cast', () => {
     // Ditto is barred by name: what it does is become something
     // else, and a boss is the one thing that must not

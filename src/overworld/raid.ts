@@ -211,7 +211,13 @@ export function getBossMoves(species: Species): Moves[] {
       chosen.push(move);
     }
   }
-  for (const move of deriveMoves(species, RAID_BOSS_LEVEL, banned, mostSlots(Slots.Move))) {
+  // The whole learn set, latest first: taking only the last few would
+  // leave a boss whose recent moves are all unfit with empty slots
+  const learned = deriveMoves(species, RAID_BOSS_LEVEL, banned, pool.size);
+
+  for (let at = learned.length - 1; at >= 0; at--) {
+    const move = learned[at];
+
     if (chosen.length >= mostSlots(Slots.Move)) {
       break;
     }

@@ -17,7 +17,7 @@ import { MergedLifecycle } from '../lifecycle';
 import type Battle from '../core';
 import { BattleEvents, type EffectCause, EffectType, MoveTargetType } from '../events';
 import type Unit from '../unit';
-import { hasFreeItemSlot, stealableItem, unitTarget } from '../utils';
+import { hasFreeItemSlot, isConsumable, stealableItem, unitTarget } from '../utils';
 import { HEALING_MOVES } from '../moves/recover';
 import { fieldHolder } from './signature/__create';
 import {
@@ -214,11 +214,11 @@ const setupAbilities = [
       }
 
       thief.triggerAbility(Abilities.Magician);
-      event.target.removeItem(item, {
-        type: EffectType.Ability,
-        ability: Abilities.Magician,
-        unit: thief,
-      });
+      event.target.removeItem(
+        item,
+        { type: EffectType.Ability, ability: Abilities.Magician, unit: thief },
+        isConsumable(item),
+      );
       thief.addItem(item);
     }),
   ),

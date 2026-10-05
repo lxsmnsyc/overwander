@@ -46,7 +46,7 @@ test.describe('boxes', () => {
     await expect(rail.getByRole('button', { name: /^Default\s*1$/ })).toBeVisible();
 
     await boxes.getByRole('button', { name: 'New box', exact: true }).click();
-    await rail.getByLabel('Name').fill('Starters');
+    await rail.getByRole('textbox', { name: 'New box' }).fill('Starters');
     await rail.getByRole('button', { name: 'Make it' }).click();
 
     // Made and opened, and empty
@@ -60,7 +60,7 @@ test.describe('boxes', () => {
 
     await box.getByRole('button').first().click();
     await boxes.getByRole('button', { name: 'Move 1 to' }).click();
-    await page.getByRole('menuitem', { name: 'Starters', exact: true }).click();
+    await page.getByRole('menuitem', { name: /^Starters/ }).click();
 
     await expect(rail.getByRole('button', { name: /^Starters\s*1$/ })).toBeVisible();
     await expect(rail.getByRole('button', { name: /^Default\s*0$/ })).toBeVisible();

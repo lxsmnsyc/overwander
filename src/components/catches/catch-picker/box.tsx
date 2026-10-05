@@ -27,6 +27,7 @@ import {
   createSignal,
   untrack,
 } from 'solid-js';
+import { isServer } from 'solid-js/web';
 import type { CatchOption, CatchPickerProps } from './options';
 import { titleCatch } from '../../details';
 
@@ -69,6 +70,12 @@ export default function PickerBox(
      */
     search: string;
     onSearch: (value: string) => void;
+    /** The box switcher, before the search */
+    lead?: () => JSX.Element;
+    /** What the search says it searches */
+    placeholder?: string;
+    /** A line under the search */
+    remark?: string;
     onHandled: () => void;
     onDone: () => void;
   },
@@ -126,14 +133,18 @@ export default function PickerBox(
 
   /**
    * Which box each square lives in, said on the square while every box
-   * is showing at once. Said for nobody who has made no box: everything
-   * of theirs is in Default and the label would say so thirty times
+   * is showing at once on the Boxes screen. Said for nobody who has made
+   * no box: everything of theirs is in Default and the label would say
+   * so thirty times
    */
   const places = createMemo(() => {
     const made = answered(props.boxes) ?? [];
     const named = new Map<string, { name: string; tone: string }>();
 
-    if (props.box !== null || made.length === 0) {
+    // Only where the squares are wide enough to read a name on: the
+    // Boxes screen's search across every box. On a picker's squares
+    // it shrank to a letter or two and said nothing
+    if (props.box !== null || made.length === 0 || props.fill !== true) {
       return null;
     }
     for (const [id, box] of made) {
@@ -272,6 +283,11 @@ export default function PickerBox(
     props.onOptions?.(offered());
   });
 
+  // And what is showing of it, which a caller counts by box
+  createEffect(() => {
+    props.onShown?.(options());
+  });
+
   const limit = (): number =>
     props.multiple === true ? (props.max ?? Number.POSITIVE_INFINITY) : 1;
 
@@ -390,7 +406,37 @@ export default function PickerBox(
   const asksTwice = (option: CatchOption): boolean =>
     typeof props.confirm === 'function' ? props.confirm(option) : props.confirm === true;
 
-  const press = (option: CatchOption): void => {
+  /** The last square pressed while picking, which a Shift-press runs from */
+  let runFrom: string | null = null;
+
+  /**
+   * Every pokemon from the last press to this one, in the order they
+   * are showing, drafted together. One that is refused is stepped over
+   * rather than ending the run
+   */
+  const pickRun = (option: CatchOption): boolean => {
+    const shown = options();
+    const from = shown.findIndex((one) => one.id === runFrom);
+    const to = shown.findIndex((one) => one.id === option.id);
+
+    if (from < 0 || to < 0) {
+      return false;
+    }
+    const taken = [...draft()];
+
+    for (const one of shown.slice(Math.min(from, to), Math.max(from, to) + 1)) {
+      if (taken.length >= limit()) {
+        break;
+      }
+      if (props.reason?.(one) == null && !taken.includes(one.id)) {
+        taken.push(one.id);
+      }
+    }
+    setDraft(taken);
+    return true;
+  };
+
+  const press = (option: CatchOption, shift = false): void => {
     if (props.reason?.(option) != null) {
       return;
     }
@@ -401,6 +447,14 @@ export default function PickerBox(
       return;
     }
     if (props.multiple === true) {
+      if (shift && runFrom != null && pickRun(option)) {
+        runFrom = option.id;
+        if (props.live === true) {
+          props.onPick(draft());
+        }
+        return;
+      }
+      runFrom = option.id;
       if (isDrafted(option.id)) {
         const rest: string[] = [];
 
@@ -449,7 +503,6 @@ export default function PickerBox(
    */
   const withGaps = (made: CatchGridEntry[]): (CatchGridEntry | BoxGap)[] => {
     const columns = settings().boxColumns;
-    const page = boxSizeOf(columns);
     const laid: (CatchGridEntry | BoxGap)[] = [];
     let next = 0;
 
@@ -463,7 +516,9 @@ export default function PickerBox(
       next = slot + 1;
     }
 
-    const end = Math.ceil((next + columns) / page) * page;
+    // Always one empty row past the last pokemon to place into, and
+    // never less than a box's worth
+    const end = Math.max(boxSizeOf(columns), Math.ceil((next + columns) / columns) * columns);
 
     for (; next < end; next++) {
       laid.push({ gap: next });
@@ -525,13 +580,21 @@ export default function PickerBox(
     return props.verb ?? 'Pick';
   };
 
-  const pressById = (id: string): void => {
+  const pressById = (id: string, shift = false): void => {
     const option = optionById().get(id);
 
     if (option != null && props.disabled !== true) {
-      press(option);
+      press(option, shift);
     }
   };
+
+  /**
+   * Whether the squares carry their cards. Not where a held finger is
+   * the caller's, on a screen a finger is the only pointer of: the
+   * hold would open the card as well
+   */
+  const carded = (): boolean =>
+    props.onHold == null || isServer || !globalThis.matchMedia('(pointer: coarse)').matches;
 
   /**
    * The button that takes the picks.
@@ -575,6 +638,9 @@ export default function PickerBox(
       <CatchGrid
         entries={entries()}
         aside={props.aside}
+        lead={props.lead}
+        placeholder={props.placeholder}
+        note={props.remark}
         search={query()}
         onSearch={(typed) => {
           props.onSearch(typed);
@@ -584,13 +650,25 @@ export default function PickerBox(
         // first, and anything that costs something confirms on its
         // own terms — a listing opens its dialog, a double pick asks
         // "Sure?"
-        onOpen={pressById}
+        onOpen={(id, pressed) => {
+          pressById(id, pressed.shift);
+        }}
+        onHold={props.onHold}
+        numbered={slotted()}
+        fill={props.fill}
+        say={props.say}
+        // Every box, Default and each made one are three different places
+        rewind={props.box == null ? '*' : (props.box.box ?? '')}
+        onPlace={slotted() ? props.onPlace : undefined}
+        placeLabel={props.placeLabel}
+        results={props.results}
+        emptyCard={slotted() ? props.emptyCard : undefined}
         onDragStart={props.onDragStart}
         onDropOn={props.onDropOn}
         empty={props.empty ?? 'You have nothing for this.'}
         noMatch={`None of ${props.viewOnly === true ? 'theirs' : 'yours'} match that.`}
         cell={(entry) => (
-          <Show when={optionById().get(entry().id)}>
+          <Show when={carded() && optionById().get(entry().id)}>
             {(option) => (
               <HoverCard
                 class="block size-full"

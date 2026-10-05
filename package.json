@@ -1,6 +1,6 @@
 {
   "name": "overwander",
-  "version": "4.29.0",
+  "version": "4.31.0",
   "private": true,
   "type": "module",
   "publishConfig": {
@@ -82,7 +82,8 @@
     "tailwindcss": "^4.3.3",
     "typescript": "^7.0.2",
     "vite-plugin-solid-marked": "^0.8.0",
-    "vitest": "^5.0.1"
+    "vitest": "^5.0.1",
+    "wrangler": "^4.147.0"
   },
   "engines": {
     "node": ">=22"

@@ -137,6 +137,41 @@ describe('spent items', () => {
     expect(holder.items[Items.CheriBerry]).toBe(true);
     expect(holder.consumed.size).toBe(0);
   });
+
+  it('returns what a foe knocked off or swapped away', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const foe = createUnit(battle, teamA);
+    const knocked = createUnit(battle, teamB);
+    const swapped = createUnit(battle, teamB);
+    knocked.addItem(Items.ToxicOrb);
+    swapped.addItem(Items.SitrusBerry);
+
+    foe.triggerMoveTarget(Moves.KnockOff, { type: MoveTargetType.Unit, unit: knocked }, 0);
+    foe.triggerMoveEffect(Moves.Trick, { type: MoveTargetType.Unit, unit: swapped }, 0);
+
+    expect(knocked.items[Items.ToxicOrb]).toBeFalsy();
+    expect(knocked.consumed.size).toBe(0);
+    expect(swapped.consumed.size).toBe(0);
+  });
+
+  it('loses a stolen item only when it is one that gets used up', () => {
+    const { battle, teamA, teamB } = createBattle();
+    pinRandom(battle, 0);
+    const thief = createUnit(battle, teamA);
+    const orb = createUnit(battle, teamB);
+    const berry = createUnit(battle, teamB);
+    orb.addItem(Items.ToxicOrb);
+    berry.addItem(Items.SitrusBerry);
+
+    thief.triggerMoveTarget(Moves.Thief, { type: MoveTargetType.Unit, unit: orb }, 0);
+    expect(thief.items[Items.ToxicOrb]).toBe(true);
+    expect(orb.consumed.size).toBe(0);
+
+    thief.removeItem(Items.ToxicOrb, NONE_CAUSE);
+    thief.triggerMoveTarget(Moves.Thief, { type: MoveTargetType.Unit, unit: berry }, 0);
+    expect([...berry.consumed]).toStrictEqual([Items.SitrusBerry]);
+  });
 });
 
 describe('gems', () => {

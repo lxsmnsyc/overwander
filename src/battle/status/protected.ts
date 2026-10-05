@@ -74,7 +74,9 @@ export default function setupProtectedStatus(battle: Battle): void {
 
     // The guard does not survive being walked through
     if (event.source.checkMoveGuard(event.move, event.target)) {
-      target.removeStatus(Statuses.Protected, guard);
+      if (!battle.estimating) {
+        target.removeStatus(Statuses.Protected, guard);
+      }
       return;
     }
 

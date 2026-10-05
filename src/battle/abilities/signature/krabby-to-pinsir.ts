@@ -17,7 +17,7 @@ import type Battle from '../../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
 import type Unit from '../../unit';
-import { isWeatherRainy, onUnitActs, unitTarget } from '../../utils';
+import { isConsumable, isWeatherRainy, onUnitActs, unitTarget } from '../../utils';
 import { createAbility, getAbilityHolders } from '../__create';
 import { createUnitCounter, enemyHolder, isPhysicalMove, sideHolder } from './__create';
 
@@ -258,7 +258,7 @@ const krabbyToPinsir = [
       } as const;
 
       source.triggerAbility(Abilities.TasteEverything);
-      target.removeItem(berry, cause);
+      target.removeItem(berry, cause, isConsumable(berry));
 
       const restores = BERRY_HEALS.get(berry);
 

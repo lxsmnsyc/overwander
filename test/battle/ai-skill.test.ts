@@ -53,7 +53,8 @@ describe('trainer skill', () => {
     expect(skillOf(team('', [Abilities.Static], [Items.Leftovers]), false)).toBe(GYM_SKILL);
     expect(skillOf(team('', [Abilities.Static], [], 50), false)).toBe(GYM_SKILL);
     expect(skillOf(team('', [Abilities.Static, Abilities.Intimidate]), false)).toBe(TOP_SKILL);
-    expect(skillOf(team('', [Abilities.Static, Abilities.Intimidate]), true)).toBe(BASIC_SKILL);
+    // A raid boss is a legend, and fights like one
+    expect(skillOf(team('', [Abilities.Static]), true)).toBe(TOP_SKILL);
   });
 
   it('gives a slower trainer time to think before a free unit acts', () => {

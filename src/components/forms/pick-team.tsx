@@ -10,14 +10,11 @@ import { type TeamPresetRecord, listTeamPresets } from '../../auth/team-presets'
 import { type FormProps, defineForm } from './form';
 import { useAuth } from '../../auth/context';
 import CatchPicker, { type CatchOption } from '../catches/catch-picker';
-import TeamStrip from '../catches/TeamStrip';
+import TeamRow, { TeamRows } from '../catches/TeamRow';
 import {
   Badge,
   Button,
   DialogActions,
-  List,
-  ListRow,
-  Meta,
   Note,
   TabBar,
   TabButton,
@@ -101,18 +98,14 @@ function SavedTeam(props: {
   };
 
   return (
-    <ListRow title={props.preset.name}>
-      <span class="flex min-w-0 grow flex-col gap-1">
-        <span class="flex items-center gap-2">
-          <span class="truncate font-bold">{props.preset.name}</span>
-          <Show when={short() > 0}>
-            <Meta>{short()} cannot come</Meta>
-          </Show>
-        </span>
-        <TeamStrip catches={party.latest ?? []} />
-      </span>
+    <TeamRow name={props.preset.name} catches={party.latest ?? []}>
+      <span class="truncate font-bold">{props.preset.name}</span>
+      <Show when={short() > 0}>
+        <Badge tone="ember">{short()} cannot come</Badge>
+      </Show>
+      <span class="grow" />
       <Button onClick={props.onUse}>Load</Button>
-    </ListRow>
+    </TeamRow>
   );
 }
 
@@ -305,7 +298,7 @@ function PickTeamView(props: FormProps<PickTeamInput, string[]>): JSX.Element {
             when={saved().length > 0}
             fallback={<Note>You have saved no teams. The profile is where they are made.</Note>}
           >
-            <List>
+            <TeamRows>
               <For each={saved()}>
                 {([, preset]) => (
                   <SavedTeam
@@ -317,7 +310,7 @@ function PickTeamView(props: FormProps<PickTeamInput, string[]>): JSX.Element {
                   />
                 )}
               </For>
-            </List>
+            </TeamRows>
           </Show>
         </TabPane>
       </TabGroup>

@@ -42,6 +42,10 @@ function swappableAbilities(unit: Unit): Abilities[] {
 /** How far a Darmanitan has to fall before it sits down */
 export const ZEN_MODE_THRESHOLD = 1 / 2;
 
+/** How far an Archen has to fall before it loses heart, and what that costs it */
+const DEFEATIST_THRESHOLD = 1 / 2;
+const DEFEATIST_SCALE = 0.5;
+
 /** What a coat thick enough to turn a blow is worth against one */
 const FUR_COAT_SCALE = 0.5;
 
@@ -243,6 +247,26 @@ const setupAbilities = [
       }),
     ]);
   }),
+
+  /**
+   * Defeatist: at half its HP or under, it hits with half its Attack
+   * and Special Attack. Written on the stat, so anything asking what
+   * it hits like hears the same answer as the move does
+   * https://bulbapedia.bulbagarden.net/wiki/Defeatist_(Ability)
+   */
+  createAbility(Abilities.Defeatist, (battle) =>
+    battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+      const unit = event.source;
+
+      if (
+        (event.stat === Stats.Attack || event.stat === Stats.SpecialAttack) &&
+        unit.hasAbility(Abilities.Defeatist) &&
+        unit.health <= unit.checkStat(Stats.HP, 0) * DEFEATIST_THRESHOLD
+      ) {
+        event.value *= DEFEATIST_SCALE;
+      }
+    }),
+  ),
 
   /** Fur Coat: the coat turns a blow, and answers nothing thrown at it */
   createAbility(Abilities.FurCoat, (battle) =>

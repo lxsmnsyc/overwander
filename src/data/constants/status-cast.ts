@@ -77,8 +77,8 @@ export default function pickStatusCast(
       }
     }
     // The status is the one being drawn and the sheet has none of its
-    // clips. The last is the common one, which is the hole the shim
-    // patches
+    // clips. The last is the common one, which the battle canvas
+    // stands in for with Idle
     return cast.at(-1) ?? null;
   }
   return null;

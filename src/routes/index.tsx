@@ -173,25 +173,12 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
           {/* The two that came out of the profile. Each is one list and
               nothing else, so each is its own panel rather than a tab
               of a page about somebody */}
-          <Dialog
+          {/* Its own dialog: what stands in its header changes as it is used */}
+          <CatchesList
             isOpen={showing(GameDialog.Catches)}
+            player={props.user.uid}
             onClose={close}
-            width="wide"
-            terse
-            title={TITLES[GameDialog.Catches]}
-            description={DESCRIPTIONS[GameDialog.Catches]}
-          >
-            {/* The list draws the dialog's foot itself, since picking puts its actions there */}
-            <BattleData
-              fallback={
-                <DialogActions>
-                  <Button onClick={close}>Close</Button>
-                </DialogActions>
-              }
-            >
-              <CatchesList player={props.user.uid} onClose={close} />
-            </BattleData>
-          </Dialog>
+          />
 
           {/* The dex: what there is, beside the box of what they have */}
           <Dialog

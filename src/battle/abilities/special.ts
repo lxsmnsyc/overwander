@@ -280,10 +280,7 @@ const setupAbilities = [
 
     /** What indirect damage this boss may still take, and what taking it costs */
     function takeWear(unit: Unit, wanted: number): number {
-      const taken = Math.max(
-        0,
-        Math.min(wanted, BOSS_DAMAGE_CAP - (worn.get(unit) ?? 0)),
-      );
+      const taken = Math.max(0, Math.min(wanted, BOSS_DAMAGE_CAP - (worn.get(unit) ?? 0)));
 
       worn.set(unit, (worn.get(unit) ?? 0) + taken);
       return taken;

@@ -619,10 +619,10 @@ export default class Unit {
   items: { [key in Items]?: boolean } = {};
 
   /**
-   * Every item that has left this unit's grip during the battle — a
-   * berry it ate, or anything else a removal took away. The battle
-   * itself does nothing with the set; it is what the fight reports
-   * afterwards, so a consumed item comes off the catch record too
+   * Every item this unit lost for good during the battle: one it used
+   * up, or a consumable a foe ate, stole or flung. The battle itself
+   * does nothing with the set; it is what the fight reports afterwards,
+   * so the item comes off the catch record too
    */
   consumed = new Set<Items>();
 
@@ -649,13 +649,18 @@ export default class Unit {
     });
   }
 
-  removeItem(item: Items, cause: EffectCause): void {
+  /**
+   * Take the item off the unit. `lost` says whether the catch record
+   * loses it too; anything not used up goes back after the battle
+   */
+  removeItem(item: Items, cause: EffectCause, lost = false): void {
     this.battle.emit(BattleEvents.UnitRemoveItem, {
       id: 'UnitRemoveItem',
       disabled: false,
       source: this,
       item,
       cause,
+      lost,
     });
   }
 

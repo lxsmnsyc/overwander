@@ -2003,9 +2003,9 @@ export function CatchSheetBody(
           and nothing takes the points back, so it asks which before it
           leaves the bag */}
       {/* Folding a dragon in asks which one, the way a machine asks
-          which move: the splicers are not spent and the dragon is not
-          gone, but it goes out of sight until the pair comes apart, so
-          the choice is the player's rather than a roll */}
+          which move: the dragon is not gone, but it goes out of sight
+          until the pair comes apart, so the choice is the player's
+          rather than a roll */}
       <CatchPicker
         open={folding() != null}
         value={null}

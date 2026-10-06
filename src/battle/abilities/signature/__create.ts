@@ -11,7 +11,7 @@ import {
   type Moves,
 } from '../../../data/ids/moves';
 import { getMoveData, getWeatherMove } from '../../../data/moves';
-import { Statuses, TeamStatuses, type Weathers } from '../../../data/ids/status';
+import { Statuses, TeamStatuses, Terrains, type Weathers } from '../../../data/ids/status';
 import type Battle from '../../core';
 import {
   BattleEvents,
@@ -1974,4 +1974,91 @@ export function createHitBackAbility(
       }),
     ]);
   });
+}
+
+/** What a Tapu's terrain makes its team's blessed stat count for */
+export const BLESSING_SCALE = 1.25;
+
+/**
+ * What the Tapus share: while a guardian's own terrain is down, one
+ * stat of each unit on its team counts for more. The field is read
+ * rather than the unit, so a teammate in the air is blessed too, and
+ * two holders on one team still bless it once
+ */
+export function createBlessingAbility(
+  ability: Abilities,
+  terrain: Terrains,
+  stat: Stats,
+): ((battle: Battle) => void) & { ability: Abilities } {
+  return createAbility(ability, (battle) =>
+    battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+      const unit = event.source;
+      const laid =
+        battle.terrain.current === Terrains.None
+          ? unit.team.terrain.current
+          : battle.terrain.current;
+
+      if (event.stat !== stat || laid !== terrain) {
+        return;
+      }
+
+      for (const mate of unit.team.units) {
+        if (mate.alive && mate.hasAbility(ability)) {
+          event.value *= BLESSING_SCALE;
+          return;
+        }
+      }
+    }),
+  );
+}
+
+/** The most the light trio's moves are lifted by, at the far end of their health */
+export const SKY_ARC_RISE = 0.3;
+
+/**
+ * What the light trio share: its damaging moves are lifted in a
+ * straight line by how much health it has. `rising` holders burn
+ * brightest whole, the rest brightest broken
+ */
+export function createSkyArcAbility(
+  ability: Abilities,
+  rising: boolean,
+): ((battle: Battle) => void) & { ability: Abilities } {
+  return createAbility(ability, (battle) =>
+    battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
+      const unit = event.source;
+
+      if (event.power == null || event.power <= 0 || !unit.hasAbility(ability)) {
+        return;
+      }
+
+      const full = unit.checkStat(Stats.HP, 0);
+      const share = full > 0 ? Math.min(1, unit.health / full) : 0;
+
+      event.power *= 1 + SKY_ARC_RISE * (rising ? share : 1 - share);
+    }),
+  );
+}
+
+/**
+ * What the Ultra Beasts share: one type this world would beat it with
+ * lands only as hard as any other. The weakness goes the way Strong
+ * Winds takes a Flying type's, one defending type at a time, so it is
+ * never turned into a resistance
+ */
+export function createForeignBodyAbility(
+  ability: Abilities,
+  type: Types,
+): ((battle: Battle) => void) & { ability: Abilities } {
+  return createAbility(ability, (battle) =>
+    battle.on(BattleEvents.UnitAttackResolveEffectiveness, EventPriority.Post, (event) => {
+      if (
+        event.multiplier > 1 &&
+        event.parent.type === type &&
+        event.parent.target.hasAbility(ability)
+      ) {
+        event.multiplier = 1;
+      }
+    }),
+  );
 }

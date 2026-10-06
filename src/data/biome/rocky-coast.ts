@@ -49,7 +49,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Empoleon, weight: 2 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [],
+      special: [{ species: Species.TapuFini, weight: 10 }],
       mythical: [{ species: Species.Victini, weight: 10 }],
     },
     [TimeOfDay.Day]: {
@@ -94,7 +94,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Empoleon, weight: 2 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [],
+      special: [{ species: Species.TapuFini, weight: 10 }],
       mythical: [{ species: Species.Victini, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
@@ -122,7 +122,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Shuckle, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [],
+      special: [{ species: Species.TapuFini, weight: 10 }],
       mythical: [{ species: Species.Victini, weight: 10 }],
     },
     [TimeOfDay.Night]: {
@@ -150,7 +150,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Shuckle, weight: 5 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [],
+      special: [{ species: Species.TapuFini, weight: 10 }],
       mythical: [{ species: Species.Victini, weight: 10 }],
     },
   });
@@ -188,7 +188,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Corsola, weight: 10 },
         { species: Species.Kingdra, weight: 2 },
       ],
-      special: [],
+      special: [{ species: Species.TapuFini, weight: 10 }],
     },
     [TimeOfDay.Day]: {
       base: [
@@ -223,7 +223,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Corsola, weight: 10 },
         { species: Species.Kingdra, weight: 2 },
       ],
-      special: [],
+      special: [{ species: Species.TapuFini, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
       base: [{ species: Species.Horsea, weight: 10 }],
@@ -250,7 +250,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Corsola, weight: 10 },
         { species: Species.Kingdra, weight: 2 },
       ],
-      special: [],
+      special: [{ species: Species.TapuFini, weight: 10 }],
     },
     [TimeOfDay.Night]: {
       base: [{ species: Species.Horsea, weight: 10 }],
@@ -277,7 +277,7 @@ export default function registerRockyCoastSpawns(): void {
         { species: Species.Corsola, weight: 10 },
         { species: Species.Kingdra, weight: 2 },
       ],
-      special: [],
+      special: [{ species: Species.TapuFini, weight: 10 }],
     },
   });
 }

@@ -9625,6 +9625,30 @@
         "bytes": 8478
       }
     },
+    "public/sprites/pokemon/alola/1080003/regular.png": {
+      "digest": "e23fbb0542532a82",
+      "bytes": 31653,
+      "width": 302,
+      "height": 666,
+      "compact": {
+        "at": "2026-09-30T05:46:51Z",
+        "as": "already compact",
+        "was": 31653,
+        "bytes": 31653
+      }
+    },
+    "public/sprites/pokemon/alola/1080003/shiny.png": {
+      "digest": "b587510d5659da27",
+      "bytes": 31653,
+      "width": 302,
+      "height": 666,
+      "compact": {
+        "at": "2026-09-30T05:46:51Z",
+        "as": "already compact",
+        "was": 31653,
+        "bytes": 31653
+      }
+    },
     "public/sprites/pokemon/alola/722/regular.png": {
       "digest": "a17c5f608ca64d26",
       "bytes": 4989,
@@ -11039,6 +11063,486 @@
         "as": "already compact",
         "was": 17417,
         "bytes": 17417
+      }
+    },
+    "public/sprites/pokemon/alola/785/regular.png": {
+      "digest": "159f496ffd615136",
+      "bytes": 13216,
+      "width": 178,
+      "height": 398,
+      "compact": {
+        "at": "2026-09-30T05:44:00Z",
+        "as": "already compact",
+        "was": 13216,
+        "bytes": 13216
+      }
+    },
+    "public/sprites/pokemon/alola/785/shiny.png": {
+      "digest": "763ac2f2c962e14f",
+      "bytes": 13216,
+      "width": 178,
+      "height": 398,
+      "compact": {
+        "at": "2026-09-30T05:44:00Z",
+        "as": "already compact",
+        "was": 13216,
+        "bytes": 13216
+      }
+    },
+    "public/sprites/pokemon/alola/786/regular.png": {
+      "digest": "cd09274cf60b00c1",
+      "bytes": 3641,
+      "width": 144,
+      "height": 111,
+      "compact": {
+        "at": "2026-09-30T05:44:00Z",
+        "as": "already compact",
+        "was": 3641,
+        "bytes": 3641
+      }
+    },
+    "public/sprites/pokemon/alola/786/shiny.png": {
+      "digest": "7ad5c0b8872840c1",
+      "bytes": 3641,
+      "width": 144,
+      "height": 111,
+      "compact": {
+        "at": "2026-09-30T05:44:00Z",
+        "as": "already compact",
+        "was": 3641,
+        "bytes": 3641
+      }
+    },
+    "public/sprites/pokemon/alola/787/regular.png": {
+      "digest": "18b348161451ff32",
+      "bytes": 6577,
+      "width": 162,
+      "height": 351,
+      "compact": {
+        "at": "2026-09-30T05:44:00Z",
+        "as": "already compact",
+        "was": 6577,
+        "bytes": 6577
+      }
+    },
+    "public/sprites/pokemon/alola/787/shiny.png": {
+      "digest": "c727c0e31d6e7f69",
+      "bytes": 6577,
+      "width": 162,
+      "height": 351,
+      "compact": {
+        "at": "2026-09-30T05:44:00Z",
+        "as": "already compact",
+        "was": 6577,
+        "bytes": 6577
+      }
+    },
+    "public/sprites/pokemon/alola/788/regular.png": {
+      "digest": "725f892509495277",
+      "bytes": 7493,
+      "width": 224,
+      "height": 213,
+      "compact": {
+        "at": "2026-09-30T05:44:00Z",
+        "as": "already compact",
+        "was": 7493,
+        "bytes": 7493
+      }
+    },
+    "public/sprites/pokemon/alola/788/shiny.png": {
+      "digest": "e8cd8f73fcedb30e",
+      "bytes": 7499,
+      "width": 224,
+      "height": 213,
+      "compact": {
+        "at": "2026-09-30T05:44:00Z",
+        "as": "already compact",
+        "was": 7499,
+        "bytes": 7499
+      }
+    },
+    "public/sprites/pokemon/alola/789/regular.png": {
+      "digest": "de0999271650bef4",
+      "bytes": 4027,
+      "width": 144,
+      "height": 161,
+      "compact": {
+        "at": "2026-09-30T05:46:51Z",
+        "as": "already compact",
+        "was": 4027,
+        "bytes": 4027
+      }
+    },
+    "public/sprites/pokemon/alola/789/shiny.png": {
+      "digest": "2658e784c8930ce6",
+      "bytes": 4020,
+      "width": 144,
+      "height": 161,
+      "compact": {
+        "at": "2026-09-30T05:46:51Z",
+        "as": "already compact",
+        "was": 4020,
+        "bytes": 4020
+      }
+    },
+    "public/sprites/pokemon/alola/790/regular.png": {
+      "digest": "daa1fdd221dced69",
+      "bytes": 1287,
+      "width": 22,
+      "height": 230,
+      "compact": {
+        "at": "2026-09-30T05:46:51Z",
+        "as": "already compact",
+        "was": 1287,
+        "bytes": 1287
+      }
+    },
+    "public/sprites/pokemon/alola/790/shiny.png": {
+      "digest": "3ce4d08fd9888bc9",
+      "bytes": 1227,
+      "width": 22,
+      "height": 230,
+      "compact": {
+        "at": "2026-09-30T05:46:51Z",
+        "as": "already compact",
+        "was": 1227,
+        "bytes": 1227
+      }
+    },
+    "public/sprites/pokemon/alola/791/regular.png": {
+      "digest": "437b57d3f2aa0064",
+      "bytes": 7904,
+      "width": 189,
+      "height": 262,
+      "compact": {
+        "at": "2026-09-30T05:46:51Z",
+        "as": "already compact",
+        "was": 7904,
+        "bytes": 7904
+      }
+    },
+    "public/sprites/pokemon/alola/791/shiny.png": {
+      "digest": "0df3b362d57eeb9a",
+      "bytes": 7904,
+      "width": 189,
+      "height": 262,
+      "compact": {
+        "at": "2026-09-30T05:46:51Z",
+        "as": "already compact",
+        "was": 7904,
+        "bytes": 7904
+      }
+    },
+    "public/sprites/pokemon/alola/792/regular.png": {
+      "digest": "dc3c6091bcaf2955",
+      "bytes": 23690,
+      "width": 382,
+      "height": 343,
+      "compact": {
+        "at": "2026-09-30T05:46:51Z",
+        "as": "already compact",
+        "was": 23690,
+        "bytes": 23690
+      }
+    },
+    "public/sprites/pokemon/alola/792/shiny.png": {
+      "digest": "ab2d1e938f51e56a",
+      "bytes": 23464,
+      "width": 382,
+      "height": 343,
+      "compact": {
+        "at": "2026-09-30T05:46:51Z",
+        "as": "already compact",
+        "was": 23464,
+        "bytes": 23464
+      }
+    },
+    "public/sprites/pokemon/alola/793/regular.png": {
+      "digest": "1eb7fe16bc4d64bb",
+      "bytes": 6222,
+      "width": 162,
+      "height": 180,
+      "compact": {
+        "at": "2026-09-30T05:50:17Z",
+        "as": "already compact",
+        "was": 6222,
+        "bytes": 6222
+      }
+    },
+    "public/sprites/pokemon/alola/793/shiny.png": {
+      "digest": "ba9276a24c0f5971",
+      "bytes": 6309,
+      "width": 162,
+      "height": 180,
+      "compact": {
+        "at": "2026-09-30T05:50:17Z",
+        "as": "already compact",
+        "was": 6309,
+        "bytes": 6309
+      }
+    },
+    "public/sprites/pokemon/alola/794/regular.png": {
+      "digest": "20e753c6e49e9832",
+      "bytes": 16520,
+      "width": 421,
+      "height": 179,
+      "compact": {
+        "at": "2026-09-30T05:50:17Z",
+        "as": "already compact",
+        "was": 16520,
+        "bytes": 16520
+      }
+    },
+    "public/sprites/pokemon/alola/794/shiny.png": {
+      "digest": "08ebba5251597411",
+      "bytes": 16520,
+      "width": 421,
+      "height": 179,
+      "compact": {
+        "at": "2026-09-30T05:50:17Z",
+        "as": "already compact",
+        "was": 16520,
+        "bytes": 16520
+      }
+    },
+    "public/sprites/pokemon/alola/795/regular.png": {
+      "digest": "ca6c28c82d1d283f",
+      "bytes": 14665,
+      "width": 560,
+      "height": 156,
+      "compact": {
+        "at": "2026-09-30T05:50:17Z",
+        "as": "already compact",
+        "was": 14665,
+        "bytes": 14665
+      }
+    },
+    "public/sprites/pokemon/alola/795/shiny.png": {
+      "digest": "a8ba3287d9b52461",
+      "bytes": 14553,
+      "width": 560,
+      "height": 156,
+      "compact": {
+        "at": "2026-09-30T05:50:17Z",
+        "as": "already compact",
+        "was": 14553,
+        "bytes": 14553
+      }
+    },
+    "public/sprites/pokemon/alola/796/regular.png": {
+      "digest": "f5152e53ac12e9be",
+      "bytes": 13331,
+      "width": 43,
+      "height": 1560,
+      "compact": {
+        "at": "2026-09-30T05:50:17Z",
+        "as": "already compact",
+        "was": 13331,
+        "bytes": 13331
+      }
+    },
+    "public/sprites/pokemon/alola/796/shiny.png": {
+      "digest": "841b00d0c767eb29",
+      "bytes": 13331,
+      "width": 43,
+      "height": 1560,
+      "compact": {
+        "at": "2026-09-30T05:50:17Z",
+        "as": "already compact",
+        "was": 13331,
+        "bytes": 13331
+      }
+    },
+    "public/sprites/pokemon/alola/797/regular.png": {
+      "digest": "3f4efc9bb49ce4b4",
+      "bytes": 37629,
+      "width": 347,
+      "height": 794,
+      "compact": {
+        "at": "2026-09-30T05:50:17Z",
+        "as": "already compact",
+        "was": 37629,
+        "bytes": 37629
+      }
+    },
+    "public/sprites/pokemon/alola/797/shiny.png": {
+      "digest": "af1629ebc19e71ce",
+      "bytes": 37256,
+      "width": 347,
+      "height": 794,
+      "compact": {
+        "at": "2026-09-30T05:50:17Z",
+        "as": "already compact",
+        "was": 37256,
+        "bytes": 37256
+      }
+    },
+    "public/sprites/pokemon/alola/798/regular.png": {
+      "digest": "b39f9e84c4347f65",
+      "bytes": 3093,
+      "width": 104,
+      "height": 141,
+      "compact": {
+        "at": "2026-09-30T05:50:17Z",
+        "as": "already compact",
+        "was": 3093,
+        "bytes": 3093
+      }
+    },
+    "public/sprites/pokemon/alola/798/shiny.png": {
+      "digest": "fd92826e10cec799",
+      "bytes": 3225,
+      "width": 104,
+      "height": 141,
+      "compact": {
+        "at": "2026-09-30T05:50:17Z",
+        "as": "already compact",
+        "was": 3225,
+        "bytes": 3225
+      }
+    },
+    "public/sprites/pokemon/alola/799/regular.png": {
+      "digest": "60cd6e9501b68fbb",
+      "bytes": 26665,
+      "width": 342,
+      "height": 618,
+      "compact": {
+        "at": "2026-09-30T05:50:17Z",
+        "as": "already compact",
+        "was": 26665,
+        "bytes": 26665
+      }
+    },
+    "public/sprites/pokemon/alola/799/shiny.png": {
+      "digest": "7244e20f09081a36",
+      "bytes": 26775,
+      "width": 342,
+      "height": 618,
+      "compact": {
+        "at": "2026-09-30T05:50:17Z",
+        "as": "already compact",
+        "was": 26775,
+        "bytes": 26775
+      }
+    },
+    "public/sprites/pokemon/alola/800/regular.png": {
+      "digest": "a9bc0c4b32e58c34",
+      "bytes": 23914,
+      "width": 405,
+      "height": 440,
+      "compact": {
+        "at": "2026-09-30T05:46:51Z",
+        "as": "already compact",
+        "was": 23914,
+        "bytes": 23914
+      }
+    },
+    "public/sprites/pokemon/alola/800/shiny.png": {
+      "digest": "732933166a279973",
+      "bytes": 23631,
+      "width": 405,
+      "height": 440,
+      "compact": {
+        "at": "2026-09-30T05:46:51Z",
+        "as": "already compact",
+        "was": 23631,
+        "bytes": 23631
+      }
+    },
+    "public/sprites/pokemon/alola/803/regular.png": {
+      "digest": "9ca07a1d6c0347e5",
+      "bytes": 2937,
+      "width": 167,
+      "height": 96,
+      "compact": {
+        "at": "2026-09-30T05:50:17Z",
+        "as": "already compact",
+        "was": 2937,
+        "bytes": 2937
+      }
+    },
+    "public/sprites/pokemon/alola/803/shiny.png": {
+      "digest": "0216b5c95675b1b7",
+      "bytes": 2933,
+      "width": 167,
+      "height": 96,
+      "compact": {
+        "at": "2026-09-30T05:50:17Z",
+        "as": "already compact",
+        "was": 2933,
+        "bytes": 2933
+      }
+    },
+    "public/sprites/pokemon/alola/804/regular.png": {
+      "digest": "bfd1ce6858ab43e7",
+      "bytes": 12950,
+      "width": 247,
+      "height": 281,
+      "compact": {
+        "at": "2026-09-30T05:50:17Z",
+        "as": "already compact",
+        "was": 12950,
+        "bytes": 12950
+      }
+    },
+    "public/sprites/pokemon/alola/804/shiny.png": {
+      "digest": "99905778848486bb",
+      "bytes": 12950,
+      "width": 247,
+      "height": 281,
+      "compact": {
+        "at": "2026-09-30T05:50:17Z",
+        "as": "already compact",
+        "was": 12950,
+        "bytes": 12950
+      }
+    },
+    "public/sprites/pokemon/alola/805/regular.png": {
+      "digest": "cf95ace899f314dc",
+      "bytes": 39979,
+      "width": 310,
+      "height": 937,
+      "compact": {
+        "at": "2026-09-30T05:50:17Z",
+        "as": "already compact",
+        "was": 39979,
+        "bytes": 39979
+      }
+    },
+    "public/sprites/pokemon/alola/805/shiny.png": {
+      "digest": "3905706c1269b87e",
+      "bytes": 39979,
+      "width": 310,
+      "height": 937,
+      "compact": {
+        "at": "2026-09-30T05:50:17Z",
+        "as": "already compact",
+        "was": 39979,
+        "bytes": 39979
+      }
+    },
+    "public/sprites/pokemon/alola/806/regular.png": {
+      "digest": "23a71854e8b89e22",
+      "bytes": 16174,
+      "width": 304,
+      "height": 386,
+      "compact": {
+        "at": "2026-09-30T05:50:17Z",
+        "as": "already compact",
+        "was": 16174,
+        "bytes": 16174
+      }
+    },
+    "public/sprites/pokemon/alola/806/shiny.png": {
+      "digest": "83873b558fe63f1a",
+      "bytes": 16194,
+      "width": 304,
+      "height": 386,
+      "compact": {
+        "at": "2026-09-30T05:50:17Z",
+        "as": "already compact",
+        "was": 16194,
+        "bytes": 16194
       }
     },
     "public/sprites/pokemon/hoenn/1025401/regular.png": {
@@ -33686,15 +34190,15 @@
       }
     },
     "public/sprites/ui/candies/alola/image.png": {
-      "digest": "5e57a55b2b3bb2b4",
-      "bytes": 5579,
-      "width": 96,
-      "height": 96,
+      "digest": "6058fc535aaf7b15",
+      "bytes": 8149,
+      "width": 128,
+      "height": 112,
       "compact": {
-        "at": "2026-09-30T05:41:10Z",
+        "at": "2026-09-30T05:50:17Z",
         "as": "already compact",
-        "was": 5579,
-        "bytes": 5579
+        "was": 8149,
+        "bytes": 8149
       }
     },
     "public/sprites/ui/candies/hoenn/image.png": {

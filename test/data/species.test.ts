@@ -1,5 +1,10 @@
 import type { EvolutionData } from '../../src/data/species';
-import { getFoldedDragon, getFusedShape, isFusedSpecies } from '../../src/data/species/fusion';
+import {
+  getFoldedDragon,
+  getFusedShape,
+  getWornPartner,
+  isFusedSpecies,
+} from '../../src/data/species/fusion';
 import { describe, expect, it } from 'vitest';
 import registerBiomeSpawns, {
   BIOME_NAMES,
@@ -55,6 +60,7 @@ import {
   MEOWSTIC_FORMS,
   MIMIKYU_FORMS,
   MINIOR_FORMS,
+  NECROZMA_FORMS,
   ORICORIO_FORMS,
   PALKIA_FORMS,
   PICHU_FORMS,
@@ -459,6 +465,7 @@ describe('species forms', () => {
       ...WISHIWASHI_FORMS.slice(1),
       ...MINIOR_FORMS.slice(1),
       ...SILVALLY_FORMS.slice(1),
+      ...NECROZMA_FORMS.slice(1),
       ...MIMIKYU_FORMS.slice(1),
       ...ALOLAN_FORMS,
       // The true shadows, which are forms of the birds they are the
@@ -698,6 +705,21 @@ describe('fusions', () => {
       expect(road.method).toBe(EvolutionMethod.UsedItem);
       expect(road.item).toBe(Items.DnaSplicers);
     }
+  });
+
+  it('folds the sun and the moon into Necrozma with an item each', () => {
+    const roads = getSpeciesData(Species.Necrozma).evolvesInto ?? [];
+
+    expect(roads.map((road) => [road.species, road.item])).toEqual([
+      [Species.NecrozmaDuskMane, Items.NSolarizer],
+      [Species.NecrozmaDawnWings, Items.NLunarizer],
+    ]);
+    expect(getFoldedDragon(Species.NecrozmaDuskMane)).toBe(Species.Solgaleo);
+    expect(getFoldedDragon(Species.NecrozmaDawnWings)).toBe(Species.Lunala);
+    expect(getFusedShape(Species.Solgaleo)).toBe(Species.NecrozmaDuskMane);
+    // The prism keeps its own armour whatever it has absorbed
+    expect(getWornPartner(Species.NecrozmaDuskMane)).toBeNull();
+    expect(getWornPartner(Species.KyuremBlack)).toBe(Species.Zekrom);
   });
 
   it('gives a fused shape the ability of the dragon inside it', () => {

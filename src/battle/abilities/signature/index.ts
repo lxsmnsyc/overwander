@@ -73,6 +73,9 @@ import sandygastToTogedemaru from './sandygast-to-togedemaru';
 import alolanRattataToMeowth from './alolan-rattata-to-meowth';
 import komalaToDrampa from './komala-to-drampa';
 import typeNullToJangmoO from './type-null-to-jangmo-o';
+import tapus from './tapus';
+import lightTrio from './light-trio';
+import ultraBeasts from './ultra-beasts';
 
 /**
  * The invented abilities, one per evolution family, in the order the
@@ -149,6 +152,9 @@ const setupAbilities = [
   ...alolanRattataToMeowth,
   ...komalaToDrampa,
   ...typeNullToJangmoO,
+  ...tapus,
+  ...lightTrio,
+  ...ultraBeasts,
   ...deerling,
   ...emolga,
   ...tirtougaToBouffalant,

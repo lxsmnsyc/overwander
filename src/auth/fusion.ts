@@ -4,15 +4,15 @@ import { fuseCatch as fuseOnServerSide, unfuseCatch as unfuseOnServerSide } from
 import getIdToken from './session';
 
 /**
- * Folding a dragon into a Kyurem, and taking it back out.
+ * Folding a partner into its husk, and taking it back out.
  *
  * Which shapes may be joined, which halves are busy and whether the
- * player holds the splicers are all settled on the server against the
+ * player holds the item are all settled on the server against the
  * stored rows: the dialog only says which two pokemon.
  */
 
 /**
- * Fold the dragon into the Kyurem. Resolves the shape the Kyurem now
+ * Fold the partner into its husk. Resolves the shape the husk now
  * stands in, or null when the fusion was refused
  */
 export async function fuseCatch(
@@ -24,7 +24,7 @@ export async function fuseCatch(
 }
 
 /**
- * Take the fused Kyurem apart. Resolves the shape it falls back to,
+ * Take the fused shape apart. Resolves the shape it falls back to,
  * or null when it was refused
  */
 export async function unfuseCatch(catchId: string): Promise<Species | null> {

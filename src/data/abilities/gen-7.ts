@@ -6,6 +6,42 @@ import { registerAbility } from './__create';
  * the mainline's
  */
 export default function registerGen7Abilities(): void {
+  // The Tapus
+  registerAbility(Abilities.ElectricSurge, {
+    name: 'Electric Surge',
+    description: 'Lays Electric Terrain as it takes the field.',
+  });
+  registerAbility(Abilities.PsychicSurge, {
+    name: 'Psychic Surge',
+    description: 'Lays Psychic Terrain as it takes the field.',
+  });
+  registerAbility(Abilities.GrassySurge, {
+    name: 'Grassy Surge',
+    description: 'Lays Grassy Terrain as it takes the field.',
+  });
+  // The light trio. The first three are older abilities that nothing
+  // which ignores abilities can see past
+  registerAbility(Abilities.FullMetalBody, {
+    name: 'Full Metal Body',
+    description: 'Refuses every stat drop from anybody else, even through Mold Breaker.',
+  });
+  registerAbility(Abilities.ShadowShield, {
+    name: 'Shadow Shield',
+    description: 'Halves any blow that lands on it at full health, even through Mold Breaker.',
+  });
+  registerAbility(Abilities.PrismArmor, {
+    name: 'Prism Armor',
+    description: 'Super-effective blows on it hit 1/4 softer, even through Mold Breaker.',
+  });
+  // The Ultra Beasts
+  registerAbility(Abilities.BeastBoost, {
+    name: 'Beast Boost',
+    description: '+1 to its highest stat whenever it knocks something out.',
+  });
+  registerAbility(Abilities.Neuroforce, {
+    name: 'Neuroforce',
+    description: 'Its super-effective moves hit 1.25x.',
+  });
   // Rowlet
   registerAbility(Abilities.LongReach, {
     name: 'Long Reach',

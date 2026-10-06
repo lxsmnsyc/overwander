@@ -1,5 +1,6 @@
 import { EventPriority } from '../../core/event-emitter';
 import Abilities from '../../data/ids/abilities';
+import { Items } from '../../data/ids/items';
 import { FORM_ITEMS } from '../../data/items/form-items';
 import { Species, getBaseFormSpecies } from '../../data/ids/species';
 import type Battle from '../core';
@@ -33,6 +34,25 @@ const SHAPE_NEEDS = new Map<Species, Abilities>([
   [Species.Arceus, Abilities.Multitype],
   [Species.Silvally, Abilities.RksSystem],
 ]);
+
+/** The shapes of Necrozma that can let their light out */
+const ULTRA_BURST_FROM = new Set<Species>([Species.NecrozmaDuskMane, Species.NecrozmaDawnWings]);
+
+/**
+ * Ultra Burst: a fused Necrozma holding its crystal takes the field as
+ * Ultra Necrozma. Only a fused shape bursts, so a Necrozma alone keeps
+ * its own shape whatever it holds
+ */
+const ultraBurst = createHeldItem(Items.UltranecroziumZ, (battle) =>
+  battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+    const unit = event.source;
+
+    if (ULTRA_BURST_FROM.has(unit.species) && holds(unit, Items.UltranecroziumZ)) {
+      unit.setSpecies(Species.NecrozmaUltra);
+      unit.wearAbility(Abilities.Neuroforce);
+    }
+  }),
+);
 
 /**
  * The form items: a held thing that decides which shape its holder
@@ -91,6 +111,8 @@ export default function setupFormItems(battle: Battle): void {
       ),
     );
   }
+
+  setups.push(ultraBurst);
 
   for (const setup of setups) {
     setup(battle);

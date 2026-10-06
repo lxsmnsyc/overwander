@@ -28,6 +28,7 @@ export default function registerOceanSpawns(): void {
       ],
       prized: [...UNOWN_SPAWNS],
       special: [
+        { species: Species.Nihilego, weight: 10 },
         { species: Species.Latias, weight: 10 },
         { species: Species.Latios, weight: 10 },
         { species: Species.Lugia, weight: 10 },
@@ -56,6 +57,7 @@ export default function registerOceanSpawns(): void {
       ],
       prized: [...UNOWN_SPAWNS],
       special: [
+        { species: Species.Nihilego, weight: 10 },
         { species: Species.Latias, weight: 10 },
         { species: Species.Latios, weight: 10 },
         { species: Species.Lugia, weight: 10 },
@@ -74,6 +76,7 @@ export default function registerOceanSpawns(): void {
       elusive: [{ species: Species.Dragonite, weight: 2 }],
       prized: [...UNOWN_SPAWNS],
       special: [
+        { species: Species.Nihilego, weight: 10 },
         { species: Species.Latias, weight: 10 },
         { species: Species.Latios, weight: 10 },
         { species: Species.Lugia, weight: 10 },
@@ -93,6 +96,7 @@ export default function registerOceanSpawns(): void {
       elusive: [{ species: Species.Dragonite, weight: 2 }],
       prized: [...UNOWN_SPAWNS],
       special: [
+        { species: Species.Nihilego, weight: 10 },
         { species: Species.Latias, weight: 10 },
         { species: Species.Latios, weight: 10 },
         { species: Species.Lugia, weight: 10 },
@@ -148,7 +152,7 @@ export default function registerOceanSpawns(): void {
         { species: Species.Relicanth, weight: 5 },
       ],
       prized: [{ species: Species.Mantyke, weight: PRIZED_WEIGHT }],
-      special: [],
+      special: [{ species: Species.Nihilego, weight: 10 }],
     },
     [TimeOfDay.Day]: {
       base: [{ species: Species.Horsea, weight: 20 }],
@@ -194,7 +198,7 @@ export default function registerOceanSpawns(): void {
         { species: Species.Relicanth, weight: 5 },
       ],
       prized: [{ species: Species.Mantyke, weight: PRIZED_WEIGHT }],
-      special: [],
+      special: [{ species: Species.Nihilego, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
       base: [{ species: Species.Horsea, weight: 20 }],
@@ -236,7 +240,7 @@ export default function registerOceanSpawns(): void {
         { species: Species.Qwilfish, weight: 15 },
       ],
       prized: [{ species: Species.Mantyke, weight: PRIZED_WEIGHT }],
-      special: [],
+      special: [{ species: Species.Nihilego, weight: 10 }],
     },
     [TimeOfDay.Night]: {
       base: [{ species: Species.Horsea, weight: 20 }],
@@ -278,7 +282,7 @@ export default function registerOceanSpawns(): void {
         { species: Species.Qwilfish, weight: 15 },
       ],
       prized: [{ species: Species.Mantyke, weight: PRIZED_WEIGHT }],
-      special: [],
+      special: [{ species: Species.Nihilego, weight: 10 }],
       mythical: [],
     },
   });

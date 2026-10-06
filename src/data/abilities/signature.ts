@@ -2383,6 +2383,92 @@ export default function registerSignatureAbilities(): void {
     description: 'Each sound move it lands raises its Defense 1 stage, up to 3 stages.',
   });
 
+  // The Tapus, on one axis: each guardian blesses its own team while
+  // its own terrain is down
+  registerSignature(Families.TapuKoko, Abilities.StormBlessing, {
+    name: 'Storm Blessing',
+    description: "Its team's Speed counts 1.25x while Electric Terrain is on the field.",
+  });
+
+  registerSignature(Families.TapuLele, Abilities.MindBlessing, {
+    name: 'Mind Blessing',
+    description: "Its team's Special Attack counts 1.25x while Psychic Terrain is on the field.",
+  });
+
+  registerSignature(Families.TapuBulu, Abilities.WildBlessing, {
+    name: 'Wild Blessing',
+    description: "Its team's Attack counts 1.25x while Grassy Terrain is on the field.",
+  });
+
+  registerSignature(Families.TapuFini, Abilities.MistBlessing, {
+    name: 'Mist Blessing',
+    description: "Its team's Special Defense counts 1.25x while Misty Terrain is on the field.",
+  });
+
+  // The light trio, on one axis: the pair burns brightest whole, and
+  // the prism that lost its light burns brightest broken
+  registerSignature(Families.Cosmog, Abilities.Zenith, {
+    name: 'Zenith',
+    description: 'Its damaging moves hit up to 1.3x the fuller its HP, and 1x near none.',
+  });
+
+  registerSignature(Families.Necrozma, Abilities.Nadir, {
+    name: 'Nadir',
+    description: 'Its damaging moves hit up to 1.3x the lower its HP, and 1x at full.',
+  });
+
+  // The Ultra Beasts, on one axis: each came from another world, so one
+  // type this world would beat it with lands only as hard as any other
+  registerSignature(Families.Nihilego, Abilities.Earthless, {
+    name: 'Earthless',
+    description: 'Ground moves hit it for neutral damage rather than super effective.',
+  });
+
+  registerSignature(Families.Buzzwole, Abilities.Windbreak, {
+    name: 'Windbreak',
+    description: 'Flying moves hit it for neutral damage rather than super effective.',
+  });
+
+  registerSignature(Families.Pheromosa, Abilities.GaleWard, {
+    name: 'Gale Ward',
+    description: 'Flying moves hit it for neutral damage rather than super effective.',
+  });
+
+  registerSignature(Families.Xurkitree, Abilities.Unearthed, {
+    name: 'Unearthed',
+    description: 'Ground moves hit it for neutral damage rather than super effective.',
+  });
+
+  registerSignature(Families.Celesteela, Abilities.HeatShield, {
+    name: 'Heat Shield',
+    description: 'Fire moves hit it for neutral damage rather than super effective.',
+  });
+
+  registerSignature(Families.Kartana, Abilities.Fireproof, {
+    name: 'Fireproof',
+    description: 'Fire moves hit it for neutral damage rather than super effective.',
+  });
+
+  registerSignature(Families.Guzzlord, Abilities.Unenchanted, {
+    name: 'Unenchanted',
+    description: 'Fairy moves hit it for neutral damage rather than super effective.',
+  });
+
+  registerSignature(Families.Poipole, Abilities.ClosedMind, {
+    name: 'Closed Mind',
+    description: 'Psychic moves hit it for neutral damage rather than super effective.',
+  });
+
+  registerSignature(Families.Stakataka, Abilities.DeepFooting, {
+    name: 'Deep Footing',
+    description: 'Ground moves hit it for neutral damage rather than super effective.',
+  });
+
+  registerSignature(Families.Blacephalon, Abilities.DryFuse, {
+    name: 'Dry Fuse',
+    description: 'Water moves hit it for neutral damage rather than super effective.',
+  });
+
   // The Alolan lines whose every stage is regional carry their own
   registerFormSignature([Species.RattataAlola, Species.RaticateAlola], Abilities.RichDiet, {
     name: 'Rich Diet',

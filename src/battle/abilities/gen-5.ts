@@ -6,7 +6,7 @@ import { MoveCategories, Moves } from '../../data/ids/moves';
 import { Species, getBaseFormSpecies } from '../../data/ids/species';
 import { Statuses } from '../../data/ids/status';
 import { getSpeciesData } from '../../data/species';
-import { getFoldedDragon } from '../../data/species/fusion';
+import { getWornPartner } from '../../data/species/fusion';
 import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import { MergedLifecycle } from '../lifecycle';
@@ -374,7 +374,7 @@ const setupAbilities = [
 function setupFoldedDragons(battle: Battle): void {
   battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
     const unit = event.source;
-    const dragon = getFoldedDragon(unit.species);
+    const dragon = getWornPartner(unit.species);
 
     if (dragon == null) {
       return;

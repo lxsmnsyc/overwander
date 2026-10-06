@@ -445,9 +445,10 @@ describe('world', () => {
       return;
     }
 
-    // A mountain holds eight: the volcano, the cave under it, the
+    // A mountain holds ten: the volcano, the cave under it, the
     // tower on it, the tomb cut into it, the two chambers the swords
-    // keep, the frozen cavern and the cave the cells gather in. Every
+    // keep, the frozen cavern, the cave the cells gather in and the
+    // hill the prism waits in and the crater a rocket launched from. Every
     // window stages one of them, and whoever is at home in it
     const hosted = new Set(getBiomeLairs(Biome.Mountain));
 
@@ -461,6 +462,8 @@ describe('world', () => {
         Lairs.TrialChamber,
         Lairs.FrostCavern,
         Lairs.TerminusCave,
+        Lairs.TenCaratHill,
+        Lairs.UltraCrater,
       ]),
     );
 

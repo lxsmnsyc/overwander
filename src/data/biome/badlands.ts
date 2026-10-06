@@ -105,6 +105,10 @@ export default function registerBadlandsSpawns(): void {
       ],
       prized: [...UNOWN_SPAWNS],
       special: [
+        { species: Species.Xurkitree, weight: 10 },
+        { species: Species.Guzzlord, weight: 10 },
+        { species: Species.Solgaleo, weight: 10 },
+        { species: Species.Lunala, weight: 10 },
         { species: Species.ZygardeTenPercent, weight: 5 },
         { species: Species.Zygarde, weight: 5 },
         { species: Species.Terrakion, weight: 10 },
@@ -218,6 +222,10 @@ export default function registerBadlandsSpawns(): void {
       ],
       prized: [...UNOWN_SPAWNS],
       special: [
+        { species: Species.Xurkitree, weight: 10 },
+        { species: Species.Guzzlord, weight: 10 },
+        { species: Species.Solgaleo, weight: 10 },
+        { species: Species.Lunala, weight: 10 },
         { species: Species.ZygardeTenPercent, weight: 5 },
         { species: Species.Zygarde, weight: 5 },
         { species: Species.Terrakion, weight: 10 },
@@ -309,6 +317,10 @@ export default function registerBadlandsSpawns(): void {
       ],
       prized: [...UNOWN_SPAWNS],
       special: [
+        { species: Species.Xurkitree, weight: 10 },
+        { species: Species.Guzzlord, weight: 10 },
+        { species: Species.Solgaleo, weight: 10 },
+        { species: Species.Lunala, weight: 10 },
         { species: Species.ZygardeTenPercent, weight: 5 },
         { species: Species.Zygarde, weight: 5 },
         { species: Species.Terrakion, weight: 10 },
@@ -406,6 +418,10 @@ export default function registerBadlandsSpawns(): void {
       ],
       prized: [...UNOWN_SPAWNS],
       special: [
+        { species: Species.Xurkitree, weight: 10 },
+        { species: Species.Guzzlord, weight: 10 },
+        { species: Species.Solgaleo, weight: 10 },
+        { species: Species.Lunala, weight: 10 },
         { species: Species.ZygardeTenPercent, weight: 5 },
         { species: Species.Zygarde, weight: 5 },
         { species: Species.Terrakion, weight: 10 },

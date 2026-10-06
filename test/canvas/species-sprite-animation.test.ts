@@ -3,6 +3,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { describe, expect, it, vi } from 'vitest';
 import SpeciesSpriteAnimation, { SPRITE_TICK } from '../../src/canvas/species-sprite-animation';
 import {
+  isStandIn,
   spriteFramesPath,
   spriteImagePath,
   spriteSheetPath,
@@ -1190,5 +1191,15 @@ describe('a form drawn on another sheet', () => {
     expect(spriteImagePath(Species.MeowsticFemale, true)).toBe(
       spriteImagePath(Species.Meowstic, true, true),
     );
+  });
+
+  it('draws a fused Necrozma as the pokemon inside it until it has art', () => {
+    expect(isStandIn(Species.NecrozmaDuskMane)).toBe(true);
+    expect(spriteSheetPath(Species.NecrozmaDuskMane)).toBe(spriteSheetPath(Species.Solgaleo));
+    expect(spriteImagePath(Species.NecrozmaDawnWings, true)).toBe(
+      spriteImagePath(Species.Lunala, true),
+    );
+    // Ultra Necrozma is drawn, so it stands as itself
+    expect(isStandIn(Species.NecrozmaUltra)).toBe(false);
   });
 });

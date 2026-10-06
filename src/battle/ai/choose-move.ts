@@ -368,10 +368,17 @@ export function setupChooseMoveAI(battle: Battle): void {
       if (HEALTH_SCALED_MOVES.has(move)) {
         flags |= MoveAttackFlags.HealthScaled;
       }
-    } else if (data.power == null || data.category === MoveCategories.Status) {
+    } else if (data.category === MoveCategories.Status) {
       return 0;
     } else {
-      value = source.checkMovePower(move, moveTarget) ?? data.power;
+      // Asked before the table: a Flail or a Gyro Ball carries no
+      // power there, only what it works out against this target
+      const power = source.checkMovePower(move, moveTarget) ?? data.power;
+
+      if (power == null) {
+        return 0;
+      }
+      value = power;
       flags |= MoveAttackFlags.Critical;
     }
 

@@ -59,7 +59,7 @@ import { isPurifyingGem } from '../../../data/items/purifying-gem';
 import { getFamilyName, getSpeciesData } from '../../../data/species';
 import { getFusionHusk, getFusionPartner, isFusedSpecies } from '../../../data/species/fusion';
 
-import { ActionsIcon, HeartIcon, LockIcon, SparklesIcon, StarIcon } from '../../icons';
+import { HeartIcon, LockIcon, SparklesIcon, StarIcon } from '../../icons';
 import TypeBadge from '../../sprites/TypeBadge';
 import { GENDER_LABELS, GENDER_MARKS } from '../catch-summary';
 import InventoryPicker from '../../items/InventoryPicker';
@@ -1414,14 +1414,34 @@ export function CatchSheetBody(
   };
 
   /**
-   * The badges and the Actions menu, in the heading row beside the
-   * nameplate rather than a bar of their own under it
+   * The box chip, the badges and the Actions menu, in the heading row
+   * beside the nameplate rather than a bar of their own under it
    */
   const actionsRow = (): JSX.Element => (
     <div class="flex flex-wrap items-center justify-end gap-2">
+      {/* Which box it is filed in, and where else it could go, first
+          in the row as the box it is in is the first thing about it */}
+      <Show when={owned() != null && props.catchId != null && view()}>
+        {(record) => (
+          <BoxChip
+            player={props.player}
+            catchId={props.catchId ?? ''}
+            box={record().box}
+            revision={record().box}
+            onMoved={(message) => {
+              say(message, 'leaf');
+              props.onRecordChanged();
+              props.onChange?.();
+            }}
+            onFailed={(message) => {
+              say(message, 'ember');
+            }}
+          />
+        )}
+      </Show>
       <Show when={view()}>
         {(record) => (
-          <span class="mr-auto flex min-w-0 flex-wrap items-center gap-2 text-left">
+          <span class="flex min-w-0 flex-wrap items-center gap-2 text-left">
             <Show when={isFavorite(record())}>
               <Badge tone="gold">
                 <StarIcon class="size-3.5" aria-hidden="true" />
@@ -1446,27 +1466,8 @@ export function CatchSheetBody(
           </span>
         )}
       </Show>
-      {/* Which box it is filed in, and where else it could go */}
-      <Show when={owned() != null && props.catchId != null && view()}>
-        {(record) => (
-          <BoxChip
-            player={props.player}
-            catchId={props.catchId ?? ''}
-            box={record().box}
-            revision={record().box}
-            onMoved={(message) => {
-              say(message, 'leaf');
-              props.onRecordChanged();
-              props.onChange?.();
-            }}
-            onFailed={(message) => {
-              say(message, 'ember');
-            }}
-          />
-        )}
-      </Show>
       <Show when={owned() != null || props.onDex != null}>
-        <Menu label="Actions" icon={ActionsIcon} actions={menuActions()} />
+        <Menu label="Actions" actions={menuActions()} />
       </Show>
     </div>
   );

@@ -18,7 +18,7 @@ import registerBiomeSpawns, {
 } from '../../src/data/biome';
 import EggGroups from '../../src/data/ids/egg-groups';
 import Families from '../../src/data/ids/families';
-import registerAbilities from '../../src/data/abilities';
+import registerAbilities, { getRegisteredAbilities } from '../../src/data/abilities';
 import Abilities from '../../src/data/ids/abilities';
 import { Items } from '../../src/data/ids/items';
 import {
@@ -317,6 +317,19 @@ describe('species abilities', () => {
         previous = getSpeciesData(previous).evolvesFrom;
       }
     }
+  });
+  it('names and describes every ability a species can carry', () => {
+    // An id with no entry is drawn as "Ability #200" on every card
+    const missing: string[] = [];
+
+    for (const species of getRegisteredSpecies()) {
+      for (const ability of getSpeciesAbilities(species)) {
+        if (!getRegisteredAbilities().includes(ability)) {
+          missing.push(`${getSpeciesData(species).name}: ability #${ability}`);
+        }
+      }
+    }
+    expect(missing).toEqual([]);
   });
 });
 

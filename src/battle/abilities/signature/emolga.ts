@@ -1,7 +1,7 @@
 import { AttackPriority, EventPriority } from '../../../core/event-emitter';
 import { Stages } from '../../../data/constants/stats';
 import Abilities from '../../../data/ids/abilities';
-import { DamageFlags } from '../../../data/ids/moves';
+import { DamageFlags, MoveAttackFlags } from '../../../data/ids/moves';
 import { BattleEvents, EffectType } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
 import type Unit from '../../unit';
@@ -44,7 +44,12 @@ const setupAbilities = [
         const holder = event.parent.source;
         const held = wake.get(holder) ?? 0;
 
-        if (event.value <= 0 || held >= GLIDEWAKE_CAP || !holder.hasAbility(Abilities.Glidewake)) {
+        if (
+          event.value <= 0 ||
+          event.parent.flags & MoveAttackFlags.Simulated ||
+          held >= GLIDEWAKE_CAP ||
+          !holder.hasAbility(Abilities.Glidewake)
+        ) {
           return;
         }
 

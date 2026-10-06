@@ -716,8 +716,11 @@ const spoinkToDeoxys = [
         const target = event.parent.target;
 
         if (marks.has(target)) {
-          marks.delete(target);
           event.value *= DOOM_MARK_SCALE;
+
+          if (!(event.parent.flags & MoveAttackFlags.Simulated)) {
+            marks.delete(target);
+          }
         }
       }),
       battle.on(BattleEvents.UnitAttack, AttackPriority.Post, (event) => {

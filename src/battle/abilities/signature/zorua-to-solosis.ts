@@ -1,6 +1,6 @@
 import { AttackPriority, EventPriority } from '../../../core/event-emitter';
 import Abilities from '../../../data/ids/abilities';
-import { DamageFlags } from '../../../data/ids/moves';
+import { DamageFlags, MoveAttackFlags } from '../../../data/ids/moves';
 import { TeamStatuses } from '../../../data/ids/status';
 import { BattleEvents, EffectType, type UnitAttackEvent } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
@@ -59,9 +59,13 @@ const setupAbilities = [
           return;
         }
 
-        spent.add(target);
         event.value = 0;
-        target.triggerAbility(Abilities.Bluff);
+
+        // An estimate sees the dodge coming, only a real blow spends it
+        if (!(event.parent.flags & MoveAttackFlags.Simulated)) {
+          spent.add(target);
+          target.triggerAbility(Abilities.Bluff);
+        }
       }),
 
       battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {

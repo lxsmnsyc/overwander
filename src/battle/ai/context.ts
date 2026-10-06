@@ -232,11 +232,14 @@ const current = new WeakMap<Battle, AIContext>();
 /** Run a decision with one context shared by every question it asks */
 export function withAIContext<T>(battle: Battle, source: Unit, decide: () => T): T {
   const previous = current.get(battle);
+  const estimating = battle.estimating;
 
   current.set(battle, new AIContext(battle, source));
+  battle.estimating = true;
   try {
     return decide();
   } finally {
+    battle.estimating = estimating;
     if (previous == null) {
       current.delete(battle);
     } else {

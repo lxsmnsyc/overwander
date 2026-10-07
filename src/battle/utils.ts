@@ -60,6 +60,15 @@ export function hasFreeItemSlot(unit: Unit): boolean {
 }
 
 /**
+ * Whether the item is used up by its effect, which is what decides
+ * whether a foe eating, stealing or flinging it costs the catch record
+ * the item once the battle ends
+ */
+export function isConsumable(item: Items): boolean {
+  return (getItemData(item).flags & ItemFlags.Consumable) !== 0;
+}
+
+/**
  * The one item a thief could walk off with, or nothing when the unit's
  * hands are empty.
  *

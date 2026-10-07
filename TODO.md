@@ -298,6 +298,59 @@ What is still short of the mainline, in rough order of how much it matters:
 
 ## 7. Ideas, not committed to
 
+### Dungeons
+
+Landmarks with floors, cleared once per window: syndicate hideouts going down
+to the boss, dungeons ending in a legendary of the biome, and the Battle
+Frontier houses as seven-floor towers. Floors are walked on the board like the
+caves, with layout rules (spinners, warp pads, ice, cracked floors, obstacles,
+locked doors, barriers, ledges) and dark floors. The party is locked in at the
+entrance, and only the player's own medicine heals it.
+
+It was built as PR #141 (`add: dungeons`, 74 files) and parked on 2026-10-03,
+about 430 commits behind `main`. The last commit is `cca72e31c`, and
+`git fetch origin pull/141/head:dungeons` brings the branch back. Its design
+is in the branch's `docs/mechanics/dungeons.md` and `docs/database/dungeons.md`.
+
+Most of it still fits: the floor generator, the walk and the server's game
+rules were already server functions on `getSql()`. What moved underneath it:
+
+- [ ] **Migration.** `supabase/migrations/20260924000100_dungeon_runs.sql`
+      becomes the next `db/migrations/NNNN_dungeon_runs.sql`: `player`
+      references `public.users`, and the row policy goes, since the server is
+      the only door. The hourly `cron.schedule` sweep stays.
+- [ ] **Standings.** `src/auth/landmark-standings.ts` read `dungeon_runs` with
+      the Supabase client. Cleared runs join the server read instead: a `runs`
+      list in `StandingIds`, `STANDING_IDS` and `readStandingRows` in
+      `src/server/landmark-standings.ts`.
+- [ ] **Healing locks.** A catch locked into a live run mends only on its own
+      medicine. The check (`runLockedCatches` in `src/server/dungeon-lock.ts`)
+      goes back into `src/server/candy.ts`, which now takes `opensRun` and
+      returns `{ from, level }`, and into Nurse Joy, now a `createNpc` folder in
+      `src/overworld/npcs/nurse-joy`. New server function parameters go at the
+      end (`server-function-order`).
+- [ ] **Stops.** `src/server/stops.ts` reads weather through
+      `getWorldOfChunk(...)` now, and the boss no longer standing on a Team
+      Rocket cell has to be redone there.
+- [ ] **World generation.** The branch moved the first generation's
+      fingerprint, and the first generation is frozen. Hideouts and dungeons
+      either go to the second generation only, behind named
+      `world.draws(...)` rolls, or are read off what already stands (the
+      Frontier towers already are). The fingerprint test must not move.
+- [ ] **Chunk snapshot.** `src/overworld/chunk-snapshot.ts` and the board demo
+      conflict in four places. Main has since added lairs on the water and
+      spawns placed by surface, so re-check what a dungeon cell may stand on.
+- [ ] **Tests.** `test/rls/dungeons.test.ts` becomes a `test/db` suite on the
+      dev database, through the server functions.
+- [ ] **Art.** Regenerate rather than merge: `scripts/dungeon-terrain.ts`,
+      `scripts/landmarks.ts`, then `sprite-stamps`. The tileset review sheets
+      under `tileset-review/dungeon` do not need to come back.
+- [ ] **The cliff hover ring.** The branch also carried a small fix, the hover
+      ring lying on a cliff tile's slope (`.changeset/cliff-hover-ring.md`).
+      Take it on its own first.
+- [ ] **Land it as a stack.** Data and generation, then the migration and the
+      server, then the board and the dialog, linked with `gh stack link`.
+
 ### Open world gimmicks
 
 Secret bases are deliberately left out: they were already on the table when this

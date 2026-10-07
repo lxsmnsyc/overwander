@@ -15,6 +15,7 @@ import { FORCED_SWITCH_MOVES } from '../moves/switch-out';
 import { MAJOR_STATUS_CONDITIONS } from '../status';
 import {
   hasFreeItemSlot,
+  isConsumable,
   isWeatherSunny,
   onUnitActs,
   slipsTraps,
@@ -464,11 +465,11 @@ const setupAbilities = [
           }
 
           thief.triggerAbility(Abilities.Pickpocket);
-          victim.removeItem(item, {
-            type: EffectType.Ability,
-            ability: Abilities.Pickpocket,
-            unit: thief,
-          });
+          victim.removeItem(
+            item,
+            { type: EffectType.Ability, ability: Abilities.Pickpocket, unit: thief },
+            isConsumable(item),
+          );
           thief.addItem(item);
         }),
         // Touching it costs something, so the AI is told before it

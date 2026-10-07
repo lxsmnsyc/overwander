@@ -13,7 +13,7 @@ export interface TrainerSkill {
   misplay: number;
 }
 
-/** Players, the Elite, champions and legends: nothing missed, nothing late */
+/** Players, the Elite, champions, legends and raid bosses: nothing missed, nothing late */
 export const TOP_SKILL: TrainerSkill = {
   think: 0,
   reaction: 0,
@@ -29,7 +29,7 @@ export const GYM_SKILL: TrainerSkill = {
   misplay: 0.05,
 };
 
-/** Grunts, ordinary trainers and raid bosses */
+/** Grunts and ordinary trainers */
 export const BASIC_SKILL: TrainerSkill = {
   think: 500,
   reaction: 600,

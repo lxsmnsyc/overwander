@@ -101,6 +101,9 @@ Hawlucha:
       - ZenHeadbutt
       - LaserFocus
       - ThroatChop
+      - BodyPress
+      - Coaching
+      - DualWingbeat
     egg:
       - Agility
       - AllySwitch
@@ -195,6 +198,7 @@ Dedenne:
       - UTurn
       - VoltSwitch
       - WildCharge
+      - RisingVoltage
     egg: [Covet, EerieImpulse, HelpingHand, MagnetRise, NaturalGift, TearfulLook]
 Carbink:
   Carbink:
@@ -282,6 +286,10 @@ Carbink:
       - TrickRoom
       - WonderRoom
       - StompingTantrum
+      - BodyPress
+      - MeteorBeam
+      - MistyExplosion
+      - TerrainPulse
 Goomy:
   family-teachable:
     - Attract
@@ -320,6 +328,7 @@ Goomy:
     - Thunderbolt
     - Toxic
     - WaterPulse
+    - SkitterSmack
   Goomy:
     level:
       1: [Tackle, Bubble, Absorb]
@@ -336,7 +345,8 @@ Goomy:
       38: [MuddyWater]
       41: [Curse]
       43: [Curse]
-    egg: [AcidArmor, Counter, Curse, Endure, IronTail, PoisonTail]
+      34: [Shelter]
+    egg: [AcidArmor, Counter, Curse, Endure, IronTail, PoisonTail, LifeDew]
   Sliggoo:
     level:
       1: [Tackle, Bubble, Absorb, WaterGun, AcidSpray, AcidArmor, DragonBreath]
@@ -407,6 +417,8 @@ Goomy:
       - BrutalSwing
       - StompingTantrum
       - LaserFocus
+      - BodyPress
+      - BreakingSwipe
 Klefki:
   Klefki:
     level:
@@ -467,6 +479,7 @@ Klefki:
       - ThunderWave
       - Torment
       - Toxic
+      - SteelBeam
     egg: [IronDefense, LockOn, Switcheroo, Thief]
 Phantump:
   family-teachable:
@@ -532,6 +545,9 @@ Phantump:
     - VenomDrench
     - WillOWisp
     - WorrySeed
+    - GrassyGlide
+    - SkitterSmack
+    - Poltergeist
   Phantump:
     level:
       1: [Tackle, ConfuseRay, Astonish]
@@ -545,6 +561,7 @@ Phantump:
       36: [PhantomForce]
       39: [DestinyBond]
       44: [WoodHammer]
+      4: [BranchPoke]
     egg:
       - AllySwitch
       - Bestow
@@ -556,7 +573,7 @@ Phantump:
       - VenomDrench
   Trevenant:
     level:
-      1: [Tackle, ConfuseRay, Astonish, Growth, LeechSeed, HornLeech, ShadowClaw]
+      1: [Tackle, ConfuseRay, Astonish, Growth, LeechSeed, HornLeech, ShadowClaw, BranchPoke]
       13: [Ingrain]
       16: [WillOWisp]
       19: [FeintAttack]
@@ -645,6 +662,9 @@ Pumpkaboo:
     - TrickRoom
     - WillOWisp
     - WorrySeed
+    - GrassyGlide
+    - SkitterSmack
+    - Poltergeist
   Pumpkaboo:
     level:
       1: [Astonish, ConfuseRay, Trick, TrickOrTreat]
@@ -808,6 +828,7 @@ Bergmite:
       - ScaryFace
       - Superpower
       - StompingTantrum
+      - BodyPress
 Noibat:
   family-teachable:
     - Acrobatics
@@ -870,6 +891,7 @@ Noibat:
     - WaterPulse
     - WildCharge
     - XScissor
+    - DualWingbeat
   Noibat:
     level:
       1: [Tackle, Absorb, Supersonic, Screech]
@@ -997,6 +1019,8 @@ Xerneas:
       - WonderRoom
       - ZenHeadbutt
       - LaserFocus
+      - MistyExplosion
+      - TerrainPulse
 Yveltal:
   Yveltal:
     level:
@@ -1073,6 +1097,8 @@ Yveltal:
       - UTurn
       - ZenHeadbutt
       - LaserFocus
+      - LashOut
+      - DualWingbeat
 Zygarde:
   family-teachable:
     - Bind
@@ -1128,6 +1154,10 @@ Zygarde:
     - Swift
     - Toxic
     - ZenHeadbutt
+    - BreakingSwipe
+    - ScaleShot
+    - SkitterSmack
+    - ScorchingSands
   Zygarde:
     level:
       1: [Bind, Bite, Bulldoze, DragonBreath, Glare, ThousandArrows, ThousandWaves]
@@ -1269,6 +1299,10 @@ Diancie:
       - Toxic
       - TrickRoom
       - WonderRoom
+      - BodyPress
+      - MeteorBeam
+      - MistyExplosion
+      - TerrainPulse
 Hoopa:
   family-teachable:
     - AllySwitch
@@ -1476,3 +1510,5 @@ Volcanion:
       - WillOWisp
       - StompingTantrum
       - Liquidation
+      - BodyPress
+      - ScorchingSands

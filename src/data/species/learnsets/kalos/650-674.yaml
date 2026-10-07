@@ -500,6 +500,7 @@ Bunnelby:
       - Uproar
       - BrutalSwing
       - StompingTantrum
+      - ScorchingSands
 Fletchling:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -534,6 +535,7 @@ Fletchling:
     - Thief
     - Toxic
     - UTurn
+    - DualWingbeat
   Fletchling:
     level:
       1: [Tackle, Growl]
@@ -2272,6 +2274,8 @@ Pancham:
     - Uproar
     - WorkUp
     - ZenHeadbutt
+    - LashOut
+    - Coaching
   Pancham:
     level:
       1: [Tackle, Leer]

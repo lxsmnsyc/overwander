@@ -110,6 +110,7 @@ Espurr:
     - TrickRoom
     - WonderRoom
     - ZenHeadbutt
+    - ExpandingForce
   Espurr:
     level:
       1: [Scratch, Leer]
@@ -199,6 +200,7 @@ Honedge:
     - Toxic
     - BrutalSwing
     - LaserFocus
+    - SteelBeam
   Honedge:
     level:
       1: [SwordsDance, Tackle]
@@ -323,6 +325,7 @@ Spritzee:
     - Torment
     - Toxic
     - TrickRoom
+    - MistyExplosion
   Spritzee:
     level:
       1: [FairyWind, SweetScent]
@@ -411,6 +414,7 @@ Swirlix:
     - Thief
     - Thunderbolt
     - Toxic
+    - MistyExplosion
   Swirlix:
     level:
       1: [Tackle, SweetScent]
@@ -510,6 +514,8 @@ Inkay:
     - Toxic
     - Trick
     - TrickRoom
+    - ExpandingForce
+    - LashOut
   Inkay:
     level:
       1: [Tackle, Peck, Constrict]
@@ -667,6 +673,7 @@ Binacle:
       - Superpower
       - BrutalSwing
       - LaserFocus
+      - MeteorBeam
 Skrelp:
   family-teachable:
     - AquaTail
@@ -705,6 +712,8 @@ Skrelp:
     - Venoshock
     - WaterPulse
     - Waterfall
+    - ScaleShot
+    - FlipTurn
   Skrelp:
     level:
       1: [Tackle, WaterGun, SmokeScreen]
@@ -781,6 +790,8 @@ Clauncher:
     - Venoshock
     - WaterPulse
     - Waterfall
+    - TerrainPulse
+    - FlipTurn
   Clauncher:
     level:
       1: [WaterGun, Splash]
@@ -872,6 +883,8 @@ Helioptile:
     - UTurn
     - VoltSwitch
     - WildCharge
+    - ScaleShot
+    - RisingVoltage
   Helioptile:
     level:
       1: [Pound, TailWhip, MudSlap]
@@ -924,6 +937,7 @@ Helioptile:
       - ThunderPunch
       - WeatherBall
       - BrutalSwing
+      - BreakingSwipe
 Tyrunt:
   # TM, HM and tutor moves shared by the whole family
 
@@ -976,6 +990,9 @@ Tyrunt:
     - Toxic
     - ZenHeadbutt
     - StompingTantrum
+    - ScaleShot
+    - MeteorBeam
+    - LashOut
   Tyrunt:
     level:
       1: [Tackle, TailWhip]
@@ -1012,7 +1029,7 @@ Tyrunt:
       58: [HeadSmash]
       68: [RockSlide]
       75: [GigaImpact]
-    teachable: [GigaImpact, HyperBeam, BrutalSwing]
+    teachable: [GigaImpact, HyperBeam, BrutalSwing, BreakingSwipe]
 Amaura:
   # TM, HM and tutor moves shared by the whole family
 
@@ -1075,6 +1092,7 @@ Amaura:
     - Toxic
     - WaterPulse
     - ZenHeadbutt
+    - MeteorBeam
   Amaura:
     level:
       1: [Growl, PowderSnow]

@@ -46,11 +46,11 @@ whether now is the moment:
 
 Each trainer has a skill ([`src/battle/ai/skill.ts`](../../src/battle/ai/skill.ts)):
 
-| Skill | Think  | Reaction | Waits up to | Misplays | Who                                    |
-| ----- | ------ | -------- | ----------- | -------- | -------------------------------------- |
-| Top   | 0 ms   | 0 ms     | 1 turn      | 0%       | Players, the Elite, champions, legends |
-| Gym   | 250 ms | 300 ms   | 1 turn      | 5%       | Gym leaders, Ace Trainers              |
-| Basic | 500 ms | 600 ms   | half a turn | 15%      | Grunts, ordinary trainers, raid bosses |
+| Skill | Think  | Reaction | Waits up to | Misplays | Who                                                 |
+| ----- | ------ | -------- | ----------- | -------- | --------------------------------------------------- |
+| Top   | 0 ms   | 0 ms     | 1 turn      | 0%       | Players, the Elite, champions, legends, raid bosses |
+| Gym   | 250 ms | 300 ms   | 1 turn      | 5%       | Gym leaders, Ace Trainers                           |
+| Basic | 500 ms | 600 ms   | half a turn | 15%      | Grunts, ordinary trainers                           |
 
 - **Think** is how long a unit stands free before its trainer orders it.
 - **Reaction** is how far into a foe's cast the trainer is before it reacts to
@@ -191,17 +191,38 @@ or Big Pecks.
 
 ## A simulated check leaves no cue
 
-Every `Check*` event carries `simulated`, which is true while the AI is weighing
-a move it has not cast. A listener may still answer the question, and must do
-nothing else: **no cue, no stage of its own, nothing a watcher could see.** An
-ability that blocks a stat drop shows its cue when the drop is really aimed at
-it, not each time the AI weighs a move.
+The AI asks its questions through the engine's own resolvers, for every move it
+carries against every target, many times a second. A listener may answer the
+question, and must do nothing else: **no damage, no stage, no spent charge or
+guard, no draw from the fight's random stream, and no cue.** Three signals say
+that a question is a guess:
+
+- `battle.estimating` is true for the whole of a decision, since
+  `withAIContext` sets it. Any listener can read it, whatever the event.
+- A damage estimate's attack carries `MoveAttackFlags.Simulated`, so the
+  `UnitAttackResolve*` listeners can tell it apart from a blow that lands.
+- `CheckUnitCanAddStage` carries `simulated` for a stage change asked about
+  speculatively.
+
+Cues are dropped centrally: `triggerAbility`, `triggerItem` and `triggerStatus`
+do nothing while `battle.estimating` holds. A cue played during a guess would
+also tell the fog what a foe holds. An ability that answers a guess still
+changes the estimate (a Bluff the AI knows about zeroes the damage), and only a
+real blow spends it.
+
+[`test/battle/ai-estimates.test.ts`](../../test/battle/ai-estimates.test.ts)
+holds the rule: it runs AI decisions around every registered ability and every
+held item and berry, on each side of the field, and fails on any event that is
+not a question or any draw from the random stream while the AI is estimating. It
+also asks every move's immunity, accuracy, power and damage against every unit
+before and after the decisions, so state a listener keeps to itself (a spent
+Bluff, a Lock-On's aim) cannot change unnoticed.
 
 ## A raid boss does not set up
 
 A raid boss never scores a self boost. It does not have to survive a long fight,
-and its casts are already doubled. A boss cast spent winding up a Withdraw is an
-opening handed to the lobby.
+and its casts already wind up two and a half times as long. A boss cast spent
+winding up a Withdraw is an opening handed to the lobby.
 
 ## Move roles
 

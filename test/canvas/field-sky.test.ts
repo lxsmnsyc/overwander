@@ -30,7 +30,6 @@ function slot(unit: Unit, x: number, y: number): Slot {
     facing: 'Down',
     depth: 1,
     offset: [0, 0],
-    spin: 0,
     visible: true,
   };
 }

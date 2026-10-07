@@ -373,7 +373,19 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Darters', Moves.DragonDarts],
   ['Lance', Moves.GlacialLance],
   ['Astral', Moves.AstralBarrage],
-  ['Squall', Moves.WildboltStorm],
+  ['Bleakwind', Moves.BleakwindStorm],
+  ['Wildbolt', Moves.WildboltStorm],
+  ['Sandsear', Moves.SandsearStorm],
+  ['Springtide', Moves.SpringtideStorm],
+  ['Dragonforce', Moves.DragonEnergy],
+  ['Glaring', Moves.FreezingGlare],
+  ['Thunderkick', Moves.ThunderousKick],
+  ['Wrath', Moves.FieryWrath],
+  ['Singlestrike', Moves.WickedBlow],
+  ['Rapidstrike', Moves.SurgingStrikes],
+  ['Jungle', Moves.JungleHealing],
+  ['Maxcannon', Moves.DynamaxCannon],
+  ['Mystic', Moves.MysticalPower],
   ['Cage', Moves.ThunderCage],
   ['Blitz', Moves.BreakneckBlitz],
   ['Pummel', Moves.AllOutPummeling],
@@ -671,9 +683,6 @@ describe('a painted move', () => {
     expect(effectShapeFor(Moves.TripleArrows)).toBe('Arrows');
     expect(effectShapeFor(Moves.WaveCrash)).toBe('Torrent');
     expect(effectShapeFor(Moves.SteelBeam)).toBe('Blaster');
-    // The four forces of nature share one storm, painted in each one's type
-    expect(effectShapeFor(Moves.SandsearStorm)).toBe('Squall');
-    expect(effectShapeFor(Moves.SpringtideStorm)).toBe('Squall');
     // Charged and thrown the way the earlier moves of their kind are
     expect(delayShapeFor(Moves.MeteorBeam, 1)).toBe('Charge');
     expect(delayShapeFor(Moves.PyroBall, 0)).toBe('Lobbed');

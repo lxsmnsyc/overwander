@@ -306,7 +306,19 @@ export type EffectShape =
   | 'Darters'
   | 'Lance'
   | 'Astral'
-  | 'Squall'
+  | 'Bleakwind'
+  | 'Wildbolt'
+  | 'Sandsear'
+  | 'Springtide'
+  | 'Dragonforce'
+  | 'Glaring'
+  | 'Thunderkick'
+  | 'Wrath'
+  | 'Singlestrike'
+  | 'Rapidstrike'
+  | 'Jungle'
+  | 'Maxcannon'
+  | 'Mystic'
   | 'Cage'
   | 'Whiff';
 
@@ -575,7 +587,19 @@ export const SPANS: Record<EffectShape, number> = {
   Darters: 900,
   Lance: 1000,
   Astral: 1100,
-  Squall: 1200,
+  Bleakwind: 1200,
+  Wildbolt: 1200,
+  Sandsear: 1200,
+  Springtide: 1200,
+  Dragonforce: 1100,
+  Glaring: 1000,
+  Thunderkick: 800,
+  Wrath: 1000,
+  Singlestrike: 800,
+  Rapidstrike: 1000,
+  Jungle: 1000,
+  Maxcannon: 1200,
+  Mystic: 1100,
   Cage: 1000,
   Whiff: 320,
 };

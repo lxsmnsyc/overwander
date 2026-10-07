@@ -575,7 +575,15 @@ const ARRIVES_ITSELF = new Set<EffectShape>([
   'Astral',
   'Dynamax',
   'Lance',
-  'Squall',
+  'Bleakwind',
+  'Wildbolt',
+  'Sandsear',
+  'Springtide',
+  'Dragonforce',
+  'Glaring',
+  'Maxcannon',
+  'Mystic',
+  'Wrath',
   'Cage',
 ]);
 

@@ -34,7 +34,14 @@ export const BY_TYPE: Partial<Record<Types, EffectShape>> = {
  *
  * Moves that share a shape are still told apart by what the shape is
  * given: Scratch rakes three thin marks and Slash one heavy one,
- * because the count and the width come off the move's power
+ * because the count and the width come off the move's power.
+ *
+ * Every legendary or mythical signature move, in every region, has a
+ * shape of its own, painted in `effect/<region>.ts` and `lit/<region>.ts`.
+ * Two signatures of one pokemon are two shapes (Behemoth Blade and
+ * Behemoth Bash), and a themed group gets one each (the four forces of
+ * nature's storms). Only other moves reuse an earlier shape. The steps
+ * for adding a region are in `.claude/skills/move-visuals/SKILL.md`
  */
 export const NAMED: Partial<Record<Moves, EffectShape>> = {
   // Beams: the picture is the line between the two of them
@@ -766,14 +773,22 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.BehemothBlade]: 'Behemoth',
   [Moves.BehemothBash]: 'Bulwark',
   [Moves.Eternabeam]: 'Dynamax',
-  [Moves.DynamaxCannon]: 'Dynamax',
+  [Moves.DynamaxCannon]: 'Maxcannon',
   [Moves.DragonDarts]: 'Darters',
   [Moves.GlacialLance]: 'Lance',
   [Moves.AstralBarrage]: 'Astral',
-  [Moves.SpringtideStorm]: 'Squall',
-  [Moves.WildboltStorm]: 'Squall',
-  [Moves.BleakwindStorm]: 'Squall',
-  [Moves.SandsearStorm]: 'Squall',
+  [Moves.SpringtideStorm]: 'Springtide',
+  [Moves.WildboltStorm]: 'Wildbolt',
+  [Moves.BleakwindStorm]: 'Bleakwind',
+  [Moves.SandsearStorm]: 'Sandsear',
+  [Moves.DragonEnergy]: 'Dragonforce',
+  [Moves.FreezingGlare]: 'Glaring',
+  [Moves.ThunderousKick]: 'Thunderkick',
+  [Moves.FieryWrath]: 'Wrath',
+  [Moves.WickedBlow]: 'Singlestrike',
+  [Moves.SurgingStrikes]: 'Rapidstrike',
+  [Moves.JungleHealing]: 'Jungle',
+  [Moves.MysticalPower]: 'Mystic',
   [Moves.ThunderCage]: 'Cage',
   // Moves that are an earlier move's picture in all but name
   [Moves.BodyPress]: 'Tonnage',
@@ -794,13 +809,9 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.ClangorousSoul]: 'Howl',
   [Moves.EerieSpell]: 'Song',
   [Moves.SpiritBreak]: 'Haymaker',
-  [Moves.WickedBlow]: 'Haymaker',
-  [Moves.SurgingStrikes]: 'Flurry',
-  [Moves.ThunderousKick]: 'Kicks',
   [Moves.TripleAxel]: 'Kicks',
   [Moves.StrangeSteam]: 'Steam',
   [Moves.LifeDew]: 'Mend',
-  [Moves.JungleHealing]: 'Mend',
   [Moves.LunarBlessing]: 'Moonlit',
   [Moves.Obstruct]: 'Shell',
   [Moves.Shelter]: 'Sheen',
@@ -816,14 +827,12 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.TripleArrows]: 'Arrows',
   [Moves.PowerShift]: 'Exchange',
   [Moves.CourtChange]: 'Exchange',
-  [Moves.MysticalPower]: 'Warp',
   [Moves.EsperWing]: 'Sickles',
   [Moves.ExpandingForce]: 'Surge',
   [Moves.RagingFury]: 'Rampage',
   [Moves.WaveCrash]: 'Torrent',
   [Moves.Chloroblast]: 'Blaster',
   [Moves.SteelBeam]: 'Blaster',
-  [Moves.DragonEnergy]: 'Blaster',
   [Moves.MeteorBeam]: 'Beam',
   [Moves.SnipeShot]: 'Beam',
   [Moves.MountainGale]: 'Rocks',
@@ -845,9 +854,7 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.SkitterSmack]: 'Buzz',
   [Moves.BurningJealousy]: 'Scorch',
   [Moves.ScorchingSands]: 'Scorch',
-  [Moves.FieryWrath]: 'Scorch',
   [Moves.LashOut]: 'Lash',
   [Moves.BreakingSwipe]: 'Lash',
   [Moves.AuraWheel]: 'Wheel',
-  [Moves.FreezingGlare]: 'Stare',
 };

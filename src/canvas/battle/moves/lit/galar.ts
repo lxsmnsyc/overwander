@@ -1,5 +1,6 @@
 import type EffectBatch from '../../../three/effect-batch';
 import type { Spot } from '../../../three/effect-batch';
+import type { LitStage } from '../__painted';
 import { decay, lighten, mix, noise, spread, swell } from '../__paint';
 import {
   ASTRAL,
@@ -8,20 +9,41 @@ import {
   BEHEMOTH_GOLD,
   BEHEMOTH_LANDS,
   BEHEMOTH_STEEL,
+  BLEAKWIND,
   BULWARK_LANDS,
   BULWARK_RED,
   CAGE_BARS,
   CAGE_CLOSES,
   DARTS_LAND,
+  DRAGONFORCE_FIRE,
+  DRAGON_GREEN,
+  DRAGON_VIOLET,
   DREEPY,
   DYNAMAX_DARK,
   DYNAMAX_FIRE,
   DYNAMAX_RED,
+  EMBER_ORANGE,
   GLACIAL,
+  GLARE_FIRE,
+  GLARE_VIOLET,
+  JUNGLE_GREEN,
+  JUNGLE_LIGHT,
+  KICK_ORANGE,
   LANCE_LANDS,
+  MYSTIC_FIRE,
+  MYSTIC_GEMS,
+  RAPID_BLUE,
+  RAPID_LANDS,
   RIME,
+  SAND,
+  SIGNATURE_SCALE,
+  SPRINGTIDE_PINK,
+  STRIKE_DARK,
+  STRIKE_RED,
+  WRATH_DARK,
+  WRATH_PINK,
 } from '../effect/galar';
-import { type EffectShape, many } from '../effect/shapes';
+import { type Draw, type EffectShape, many } from '../effect/shapes';
 import { TAU, bolt, debris, gathering, sickle, smoke, sparks } from './pieces';
 import {
   type LitShapePainter,
@@ -57,6 +79,44 @@ function hexagon(
       colour,
       alpha,
     );
+  }
+}
+
+/** The storm the four forces of nature share, with each one's own weather falling out of it */
+function storm(
+  kit: EffectBatch,
+  stage: LitStage,
+  share: number,
+  { paint, seed, weight }: Draw,
+  falling: (eye: Spot, target: Spot, index: number, strength: number, reach: number) => void,
+): void {
+  const reach = reachOf(stage, weight);
+  const targets = stage.targets.length > 0 ? stage.targets : [stage.source];
+  const pale = lighten(paint.color, 0.5);
+  const strength = swell(share);
+
+  for (const [index, target] of targets.entries()) {
+    const eye = aside(kit, target, 0, reach * 1.4);
+
+    // Dark behind the swirl, so the element reads on bright ground
+    kit.puff(aside(kit, eye, 0, reach * 0.6), reach * 2.6, '#2a2f45', strength * 0.55);
+    for (let band = 0; band < 4; band += 1) {
+      const start = share * 8 + band * 1.6 + index;
+
+      sickle(
+        kit,
+        eye,
+        reach * (1 + band * 0.55),
+        start,
+        start + 2.2,
+        reach * 0.5,
+        band % 2 === 0 ? paint.color : pale,
+        strength * (1 - band * 0.12),
+      );
+    }
+    falling(eye, target, index, strength, reach);
+    kit.glow(target, reach * 2, paint.color, strength * 0.6);
+    smoke(kit, floorOf(target), reach * 1.6, 4, seed + index, share, pale, strength * 0.3);
   }
 }
 
@@ -285,54 +345,6 @@ const galar = {
     }
   },
 
-  Squall(kit, stage, share, { paint, seed, weight }) {
-    const reach = reachOf(stage, weight);
-    const targets = stage.targets.length > 0 ? stage.targets : [stage.source];
-    const pale = lighten(paint.color, 0.5);
-    const strength = swell(share);
-
-    for (const [index, target] of targets.entries()) {
-      const eye = aside(kit, target, 0, reach * 1.4);
-
-      // A dark cloud behind the storm, so the element reads on bright ground
-      kit.puff(aside(kit, eye, 0, reach * 0.6), reach * 2.6, '#2a2f45', strength * 0.55);
-
-      for (let band = 0; band < 4; band += 1) {
-        const start = share * 8 + band * 1.6 + index;
-
-        sickle(
-          kit,
-          eye,
-          reach * (1 + band * 0.55),
-          start,
-          start + 2.2,
-          reach * 0.5,
-          band % 2 === 0 ? paint.color : pale,
-          strength * (1 - band * 0.12),
-        );
-      }
-      for (let streak = 0; streak < many(10, weight); streak += 1) {
-        const drop = (share * 3 + noise(seed + index, streak + 10)) % 1;
-        const top = aside(
-          kit,
-          target,
-          spread(seed + index, streak) * reach * 2.4,
-          reach * 3 - drop * reach * 3,
-        );
-
-        kit.trail(
-          top,
-          aside(kit, top, -reach * 0.4, -reach * 0.9),
-          reach * 0.14,
-          paint.color,
-          strength,
-        );
-      }
-      kit.glow(target, reach * 2, paint.color, strength * 0.6);
-      smoke(kit, floorOf(target), reach * 1.6, 4, seed + index, share, pale, strength * 0.3);
-    }
-  },
-
   Cage(kit, stage, share, { paint, seed, weight }) {
     const at = landed(stage);
     const reach = reachOf(stage, weight);
@@ -365,6 +377,369 @@ const galar = {
 
       kit.glow(at, reach * (1 + snap * 1.4), paint.color, decay(snap) * 0.8);
       sparks(kit, at, reach * 2, 12, seed, snap, pale, decay(snap));
+    }
+  },
+  Bleakwind(kit, stage, share, draw) {
+    storm(kit, stage, share, draw, (_eye, target, index, strength, reach) => {
+      for (let gust = 0; gust < many(6, draw.weight); gust += 1) {
+        const run = (share * 2.4 + noise(draw.seed + index, gust)) % 1;
+        const at = aside(
+          kit,
+          target,
+          -reach * 3 + run * reach * 6,
+          reach * (0.4 + noise(draw.seed + index, gust + 20) * 2.4),
+        );
+
+        kit.trail(
+          aside(kit, at, -reach * 1.6, 0),
+          at,
+          reach * 0.3,
+          BLEAKWIND,
+          strength * swell(run),
+        );
+      }
+    });
+  },
+
+  Wildbolt(kit, stage, share, draw) {
+    storm(kit, stage, share, draw, (eye, target, index, strength, reach) => {
+      const flash = Math.floor(share * 10);
+
+      for (let strike = 0; strike < 3; strike += 1) {
+        bolt(
+          kit,
+          aside(kit, eye, spread(draw.seed + flash, strike) * reach * 1.6),
+          aside(kit, floorOf(target), spread(draw.seed + flash, strike + 9) * reach),
+          draw.seed + flash * 3 + strike + index,
+          reach,
+          reach * 0.12,
+          strike === 0 ? '#ffffff' : draw.paint.color,
+          strength * (noise(draw.seed + flash, strike + 30) > 0.3 ? 1 : 0.3),
+        );
+      }
+    });
+  },
+
+  Sandsear(kit, stage, share, draw) {
+    storm(kit, stage, share, draw, (eye, target, index, strength, reach) => {
+      sparks(kit, eye, reach * 3, many(24, draw.weight), draw.seed + index, share, SAND, strength);
+      for (let ember = 0; ember < many(10, draw.weight); ember += 1) {
+        const rise = (share * 2 + noise(draw.seed + index, ember)) % 1;
+
+        kit.glow(
+          aside(
+            kit,
+            floorOf(target),
+            spread(draw.seed + index, ember + 40) * reach * 1.8,
+            rise * reach * 3,
+          ),
+          reach * 0.22,
+          EMBER_ORANGE,
+          strength * decay(rise),
+        );
+      }
+    });
+  },
+
+  Springtide(kit, stage, share, draw) {
+    storm(kit, stage, share, draw, (_eye, target, index, strength, reach) => {
+      for (let piece = 0; piece < many(12, draw.weight); piece += 1) {
+        const drop = (share * 1.8 + noise(draw.seed + index, piece)) % 1;
+        const spot = aside(
+          kit,
+          target,
+          spread(draw.seed + index, piece + 20) * reach * 2.4 + Math.sin(drop * 6) * reach * 0.4,
+          reach * 3 - drop * reach * 3.4,
+        );
+
+        if (piece % 3 === 0) {
+          kit.heart(spot, reach * 0.35, drop * 2, SPRINGTIDE_PINK, strength);
+        } else {
+          kit.leaf(spot, reach * 0.4, drop * 6 + piece, lighten(SPRINGTIDE_PINK, 0.4), strength);
+        }
+      }
+    });
+  },
+
+  Dragonforce(kit, stage, share, { seed, weight }) {
+    const at = landed(stage);
+    const reach = reachOf(stage, weight);
+
+    if (share < DRAGONFORCE_FIRE) {
+      const gather = share / DRAGONFORCE_FIRE;
+
+      kit.glow(stage.source, reach * (0.6 + gather), DRAGON_GREEN, gather);
+      gathering(kit, stage.source, reach * 3, 14, seed, gather, DRAGON_VIOLET);
+      return;
+    }
+    const fire = (share - DRAGONFORCE_FIRE) / (1 - DRAGONFORCE_FIRE);
+    const far = Math.min(1, fire * 2.5);
+    const head = toward(stage.source, at, far);
+    const kept = late(fire, 0.6);
+
+    kit.ribbon([stage.source, head], reach * (1 + far * 2.4), DRAGON_VIOLET, kept * 0.6, fire * 4);
+    kit.ribbon([stage.source, head], reach * (0.5 + far * 1.2), DRAGON_GREEN, kept, fire * 4);
+    sickle(kit, head, reach * 1.6, -2.6, -0.5, reach * 0.4, DRAGON_GREEN, kept);
+    sickle(kit, head, reach * 1.6, 0.5, 2.6, reach * 0.4, DRAGON_GREEN, kept);
+    if (far >= 1) {
+      const hit = Math.min(1, (fire - 0.4) / 0.6);
+
+      kit.glow(at, reach * (1.4 + hit * 2), DRAGON_GREEN, decay(hit) * 0.8);
+      sparks(kit, at, reach * 2.6, 14, seed, hit, DRAGON_VIOLET, decay(hit));
+    }
+  },
+
+  Glaring(kit, stage, share, { seed, weight }) {
+    const at = landed(stage);
+    const reach = reachOf(stage, weight);
+    const open = Math.min(1, share / GLARE_FIRE);
+    const kept = late(share, 0.65);
+
+    for (const side of [-1, 1]) {
+      const eye = aside(kit, stage.source, side * reach * 0.6, reach * 1.2);
+
+      kit.glow(eye, reach * 0.45 * open, '#ffffff', kept);
+      kit.ring(eye, reach * 0.6 * open, 0.2, GLARE_VIOLET, kept);
+      if (share >= GLARE_FIRE) {
+        kit.trail(
+          eye,
+          toward(eye, at, Math.min(1, (share - GLARE_FIRE) * 4)),
+          reach * 0.18,
+          GLARE_VIOLET,
+          kept,
+        );
+      }
+    }
+    if (share < GLARE_FIRE + 0.2) {
+      return;
+    }
+    const freeze = (share - GLARE_FIRE - 0.2) / (1 - GLARE_FIRE - 0.2);
+
+    kit.glow(at, reach * (1.2 + freeze * 1.4), GLACIAL, decay(freeze) * 0.7);
+    for (let shard = 0; shard < many(12, weight); shard += 1) {
+      kit.shard(
+        thrown(at, seed, shard, 1 - freeze, reach * 1.4, reach * 0.6),
+        reach * 0.4,
+        noise(seed, shard + 50) * TAU,
+        GLACIAL,
+        kept,
+      );
+    }
+    kit.ring(at, reach * (0.8 + freeze * 2.2), 0.1, lighten(GLARE_VIOLET, 0.4), decay(freeze));
+  },
+
+  Thunderkick(kit, stage, share, { seed, weight }) {
+    const at = landed(stage);
+    const reach = reachOf(stage, weight) * SIGNATURE_SCALE;
+    const rake = Math.min(1, share / 0.3);
+    const from = aside(kit, at, -reach * 2, reach * 1.6);
+    const to = aside(kit, at, reach * 2, -reach * 1.2);
+
+    kit.trail(from, toward(from, to, rake), reach * 0.8, KICK_ORANGE, late(share, 0.4));
+    kit.trail(from, toward(from, to, rake), reach * 0.3, '#ffffff', late(share, 0.4));
+    if (share < 0.25) {
+      return;
+    }
+    const hit = (share - 0.25) / 0.75;
+
+    kit.glow(at, reach * (1.2 + hit * 1.6), KICK_ORANGE, decay(hit) * 0.8);
+    for (let spark = 0; spark < 6; spark += 1) {
+      const angle = (spark / 6) * TAU + noise(seed, spark);
+      const out = reach * (1 + hit * 2);
+
+      bolt(
+        kit,
+        at,
+        aside(kit, at, Math.cos(angle) * out, Math.sin(angle) * out),
+        seed + spark,
+        reach,
+        reach * 0.1,
+        spark % 2 === 0 ? KICK_ORANGE : '#ffffff',
+        decay(hit),
+      );
+    }
+  },
+
+  Wrath(kit, stage, share, { seed, weight }) {
+    const reach = reachOf(stage, weight);
+    const targets = stage.targets.length > 0 ? stage.targets : [stage.source];
+    const rise = swell(share);
+
+    for (const [index, target] of targets.entries()) {
+      const floor = floorOf(target);
+
+      kit.glow(target, reach * 2, WRATH_DARK, rise * 0.5);
+      for (let tongue = 0; tongue < many(7, weight); tongue += 1) {
+        const base = aside(kit, floor, spread(seed + index, tongue) * reach * 1.6);
+        const height = reach * (1.6 + noise(seed + index, tongue + 10) * 1.8) * rise;
+        const sway = Math.sin(share * 12 + tongue) * reach * 0.3;
+
+        kit.trail(base, aside(kit, base, sway, height), reach * 0.35, WRATH_DARK, rise);
+        kit.trail(base, aside(kit, base, sway, height * 0.7), reach * 0.15, WRATH_PINK, rise);
+      }
+      kit.ripple(floor, reach * (1.4 + share * 1.6), 0.1, WRATH_PINK, rise * 0.8);
+      smoke(kit, floor, reach * 1.6, 4, seed + index, share, WRATH_DARK, rise * 0.4);
+    }
+  },
+
+  Singlestrike(kit, stage, share, { seed, weight }) {
+    const at = landed(stage);
+    const reach = reachOf(stage, weight);
+    const hit = Math.min(1, share / 0.2);
+    const after = Math.max(0, (share - 0.2) / 0.8);
+
+    kit.puff(at, reach * (0.6 + hit * 1.2), STRIKE_DARK, decay(after));
+    kit.glow(at, reach * (1.6 + after * 2), STRIKE_RED, decay(after) * 0.6);
+    sparks(kit, at, reach * (1.4 + after * 1.8), 10, seed, after, STRIKE_RED, decay(after));
+    for (let wave = 0; wave < 2; wave += 1) {
+      const held = Math.max(0, Math.min(1, after * 1.5 - wave * 0.3));
+
+      kit.ring(at, reach * (1 + held * 3), 0.12, wave === 0 ? '#ffffff' : STRIKE_RED, decay(held));
+    }
+    kit.star(at, reach * 2 * decay(after), 0, '#ffffff', decay(Math.min(1, after * 2)));
+  },
+
+  Rapidstrike(kit, stage, share, { seed, weight }) {
+    const at = landed(stage);
+    const reach = reachOf(stage, weight) * SIGNATURE_SCALE;
+
+    for (const [index, lands] of RAPID_LANDS.entries()) {
+      if (share < lands) {
+        continue;
+      }
+      const hit = Math.min(1, (share - lands) / 0.4);
+      const spot = aside(kit, at, (index - 1) * reach * 0.9, spread(seed, index) * reach * 0.4);
+
+      sickle(
+        kit,
+        spot,
+        reach * (1 + hit),
+        -Math.PI + index,
+        -0.4 + index,
+        reach * 0.4,
+        RAPID_BLUE,
+        decay(hit),
+      );
+      kit.glow(spot, reach * (0.6 + hit * 1.2), RAPID_BLUE, decay(hit));
+      kit.puff(spot, reach * (0.4 + hit * 0.8), lighten(RAPID_BLUE, 0.5), decay(hit) * 0.8);
+      kit.ring(spot, reach * (0.5 + hit * 1.6), 0.12, '#ffffff', decay(hit));
+      sparks(kit, spot, reach * 1.8, 8, seed + index, hit, lighten(RAPID_BLUE, 0.4), decay(hit));
+    }
+  },
+
+  Jungle(kit, stage, share, { seed, weight }) {
+    const reach = reachOf(stage, weight);
+    const targets = stage.targets.length > 0 ? stage.targets : [stage.source];
+    const grow = Math.min(1, share / 0.4);
+    const kept = late(share, 0.6);
+
+    for (const [index, target] of targets.entries()) {
+      kit.glow(target, reach * 1.8, JUNGLE_GREEN, kept * 0.4);
+      for (let vine = 0; vine < 3; vine += 1) {
+        const start = vine * 2.1 + share * 2;
+
+        sickle(
+          kit,
+          target,
+          reach * (1 + vine * 0.35),
+          start,
+          start + 2.4 * grow,
+          reach * 0.25,
+          vine % 2 === 0 ? JUNGLE_GREEN : JUNGLE_LIGHT,
+          kept,
+        );
+      }
+      for (let leaf = 0; leaf < many(8, weight); leaf += 1) {
+        const lift = (share * 1.4 + noise(seed + index, leaf)) % 1;
+
+        kit.leaf(
+          aside(
+            kit,
+            floorOf(target),
+            spread(seed + index, leaf + 20) * reach * 1.8,
+            lift * reach * 3,
+          ),
+          reach * 0.4,
+          lift * 5 + leaf,
+          JUNGLE_LIGHT,
+          kept * swell(lift),
+        );
+      }
+    }
+  },
+
+  Maxcannon(kit, stage, share, { seed, weight }) {
+    const at = landed(stage);
+    const reach = reachOf(stage, weight);
+    const core = aside(kit, stage.source, 0, reach * 0.6);
+    const charge = Math.min(1, share / DYNAMAX_FIRE);
+    const kept = late(share, 0.7);
+
+    kit.glow(core, reach * (0.8 + charge * 1.2), DYNAMAX_RED, kept);
+    kit.ring(core, reach * (2.4 - charge * 1.4), 0.1, DYNAMAX_RED, charge * kept);
+    if (share < DYNAMAX_FIRE) {
+      return;
+    }
+    const fire = (share - DYNAMAX_FIRE) / (1 - DYNAMAX_FIRE);
+    const far = Math.min(1, fire * 3);
+    const head = toward(core, at, far);
+
+    kit.ribbon([core, head], reach * 2.4 * decay(fire), DYNAMAX_RED, kept * 0.7, fire * 4);
+    kit.ribbon([core, head], reach * 0.9 * decay(fire), '#ffffff', kept, fire * 4);
+    for (let pulse = 0; pulse < 4; pulse += 1) {
+      const along = (fire * 3 + pulse / 4) % 1;
+
+      if (along <= far) {
+        kit.ring(toward(core, at, along), reach * 1.4, 0.12, lighten(DYNAMAX_RED, 0.3), kept * 0.8);
+      }
+    }
+    if (far >= 1) {
+      kit.glow(at, reach * (1.6 + fire * 2), DYNAMAX_RED, decay(fire));
+      kit.ripple(floorOf(at), reach * (1 + fire * 3.6), 0.1, DYNAMAX_RED, decay(fire));
+      sparks(kit, at, reach * 2.6, 16, seed, fire, lighten(DYNAMAX_RED, 0.5), decay(fire));
+    }
+  },
+
+  Mystic(kit, stage, share, { seed, weight }) {
+    const at = landed(stage);
+    const reach = reachOf(stage, weight);
+    const landing = MYSTIC_FIRE + 0.35;
+
+    for (const [index, colour] of MYSTIC_GEMS.entries()) {
+      const turn = share * 9 + (index / 3) * TAU;
+
+      if (share < MYSTIC_FIRE) {
+        const spot = aside(
+          kit,
+          stage.source,
+          Math.cos(turn) * reach * 1.4,
+          reach * 0.8 + Math.sin(turn) * reach * 0.6,
+        );
+
+        kit.glow(spot, reach * 0.55, colour, 1);
+        kit.glow(spot, reach * 0.22, '#ffffff', 1);
+        continue;
+      }
+      const flight = Math.min(1, (share - MYSTIC_FIRE) / 0.35);
+      const spot = aside(
+        kit,
+        toward(stage.source, at, flight),
+        Math.cos(turn) * reach * 0.9 * decay(flight),
+        Math.sin(turn) * reach * 0.9 * decay(flight),
+      );
+
+      kit.glow(spot, reach * 0.55, colour, late(share, 0.7));
+      if (share >= landing) {
+        const hit = (share - landing) / (1 - landing);
+
+        kit.ring(at, reach * (0.8 + hit * 2.4 + index * 0.4), 0.1, colour, decay(hit));
+      }
+    }
+    if (share >= landing) {
+      const hit = (share - landing) / (1 - landing);
+
+      kit.glow(at, reach * (1.2 + hit * 1.6), '#ffffff', decay(hit) * 0.6);
+      sparks(kit, at, reach * 2.6, 12, seed, hit, MYSTIC_GEMS[0], decay(hit));
     }
   },
 } satisfies Partial<Record<EffectShape, LitShapePainter>>;

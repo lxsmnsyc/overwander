@@ -53,6 +53,8 @@ Natu:
     - AllySwitch
     - Confide
     - DazzlingGleam
+    - ExpandingForce
+    - DualWingbeat
   Natu:
     level:
       1: [Leer, Peck]
@@ -282,6 +284,8 @@ Marill:
       - PowerUpPunch
       - RockSmash
       - Strength
+      - SteelRoller
+      - MistyExplosion
   Azumarill:
     level:
       1: [Tackle, DefenseCurl, TailWhip, WaterGun]
@@ -350,6 +354,8 @@ Marill:
       - GigaImpact
       - Bulldoze
       - Liquidation
+      - SteelRoller
+      - MistyExplosion
   Azurill:
     # The whole line's inheritance, since the egg is laid as an
     # Azurill: what a Marill used to carry is carried here
@@ -486,6 +492,8 @@ Sudowoodo:
       - Confide
       - PowerUpPunch
       - StompingTantrum
+      - BodyPress
+      - MeteorBeam
   Bonsly:
     level:
       1: [Copycat, FakeTears]

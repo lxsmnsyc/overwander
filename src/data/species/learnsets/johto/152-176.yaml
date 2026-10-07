@@ -469,6 +469,7 @@ Hoothoot:
     - EchoedVoice
     - WorkUp
     - Confide
+    - DualWingbeat
   Hoothoot:
     level:
       1: [Tackle, Growl]
@@ -716,6 +717,7 @@ Chinchou:
     - WildCharge
     - Confide
     - DazzlingGleam
+    - RisingVoltage
   Chinchou:
     level:
       1: [Bubble, ThunderWave]
@@ -763,6 +765,7 @@ Togepi:
       41: [BatonPass]
       51: [LastResort]
       53: [AfterYou]
+      8: [LifeDew]
     teachable:
       - Toxic
       - Psychic
@@ -836,7 +839,7 @@ Togepi:
       - StoredPower
   Togetic:
     level:
-      1: [Charm, Growl, MagicalLeaf]
+      1: [Charm, Growl, MagicalLeaf, LifeDew]
       7: [Metronome]
       14: [FairyWind]
       16: [Yawn]
@@ -924,9 +927,10 @@ Togepi:
       - Tailwind
       - Retaliate
       - SmartStrike
+      - DualWingbeat
   Togekiss:
     level:
-      1: [AirSlash, AuraSphere, ExtremeSpeed, SkyAttack]
+      1: [AirSlash, AuraSphere, ExtremeSpeed, SkyAttack, LifeDew]
     teachable:
       - AerialAce
       - AirCutter
@@ -992,3 +996,4 @@ Togepi:
       - Confide
       - DazzlingGleam
       - LaserFocus
+      - DualWingbeat

@@ -62,6 +62,9 @@ Skarmory:
       - Round
       - SkyDrop
       - Confide
+      - BodyPress
+      - SteelBeam
+      - DualWingbeat
     egg: [DrillPeck, Pursuit, SkyAttack, Whirlwind, Assurance, BraveBird, GuardSwap]
 Houndour:
   # TM, HM and tutor moves shared by the whole family
@@ -262,6 +265,7 @@ Stantler:
       40: [TakeDown]
       49: [ConfuseRay, CalmMind, Captivate]
       53: [MeFirst]
+      21: [PsyshieldBash]
     teachable:
       - Attract
       - Curse
@@ -425,6 +429,8 @@ Miltank:
       - Confide
       - PowerUpPunch
       - StompingTantrum
+      - BodyPress
+      - SteelRoller
     egg:
       - Present
       - Reversal
@@ -503,6 +509,7 @@ Raikou:
       - WildCharge
       - LaserFocus
       - ThroatChop
+      - RisingVoltage
 Entei:
   Entei:
     level:
@@ -569,6 +576,7 @@ Entei:
       - Incinerate
       - StompingTantrum
       - LaserFocus
+      - ScorchingSands
 Suicune:
   Suicune:
     level:
@@ -778,6 +786,9 @@ Larvitar:
       - DragonTail
       - BrutalSwing
       - StompingTantrum
+      - BodyPress
+      - BreakingSwipe
+      - LashOut
 Lugia:
   Lugia:
     level:
@@ -876,6 +887,8 @@ Lugia:
       - Telekinesis
       - DragonTail
       - LaserFocus
+      - ScaleShot
+      - DualWingbeat
 HoOh:
   HoOh:
     level:
@@ -892,6 +905,7 @@ HoOh:
       77: [Whirlwind]
       88: [AncientPower]
       99: [FutureSight]
+      9: [LifeDew]
     teachable:
       - Toxic
       - Fly
@@ -962,6 +976,8 @@ HoOh:
       - FlameCharge
       - Incinerate
       - LaserFocus
+      - DualWingbeat
+      - ScorchingSands
 Celebi:
   Celebi:
     level:
@@ -969,7 +985,7 @@ Celebi:
       10: [Safeguard]
       20: [AncientPower]
       30: [FutureSight]
-      40: [BatonPass]
+      40: [BatonPass, LifeDew]
       46: [NaturalGift]
       50: [PerishSong]
       55: [HealBlock]
@@ -1041,3 +1057,6 @@ Celebi:
       - Confide
       - DazzlingGleam
       - LaserFocus
+      - ExpandingForce
+      - GrassyGlide
+      - DualWingbeat

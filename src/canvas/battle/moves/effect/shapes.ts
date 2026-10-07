@@ -301,6 +301,7 @@ export type EffectShape =
   | 'Pollen'
   | 'Detonate'
   | 'Behemoth'
+  | 'Bulwark'
   | 'Dynamax'
   | 'Darters'
   | 'Lance'
@@ -569,6 +570,7 @@ export const SPANS: Record<EffectShape, number> = {
   Pollen: 1000,
   Detonate: 1000,
   Behemoth: 1000,
+  Bulwark: 1000,
   Dynamax: 1200,
   Darters: 900,
   Lance: 1000,

@@ -368,6 +368,7 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Detonate', Moves.MindBlown],
   // Galar and Hisui's signatures
   ['Behemoth', Moves.BehemothBlade],
+  ['Bulwark', Moves.BehemothBash],
   ['Dynamax', Moves.Eternabeam],
   ['Darters', Moves.DragonDarts],
   ['Lance', Moves.GlacialLance],

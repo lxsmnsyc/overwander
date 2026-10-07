@@ -23,7 +23,7 @@ import {
 import type { EffectShape, ShapePainter } from './shapes';
 import { REACH, landing, many } from './shapes';
 
-/** Behemoth Blade and Bash: the share the weapon has come down by */
+/** Behemoth Blade: the share the blade has come down by */
 export const BEHEMOTH_LANDS = 0.4;
 
 /** Eternabeam and Dynamax Cannon: the share the core has charged by and fires */
@@ -43,6 +43,12 @@ export const CAGE_CLOSES = 0.35;
 
 /** Zacian's and Zamazenta's steel, and the gold it is trimmed with */
 export const BEHEMOTH_STEEL = '#cfe0ff';
+
+/** Behemoth Bash: the share the shield has been driven in by */
+export const BULWARK_LANDS = 0.45;
+
+/** Zamazenta's shield, red with a gold rim */
+export const BULWARK_RED = '#e8505b';
 export const BEHEMOTH_GOLD = '#ffd25a';
 
 /** Eternatus' crimson core and the dark round it */
@@ -91,7 +97,7 @@ function hexagon(
 }
 
 const galar = {
-  // A giant blade or shield of light rising over the caster and brought down on the target
+  // A giant blade of light rising over the caster and brought down on the target
   Behemoth(context, stage, share, { paint, seed, weight }) {
     const at = landing(stage);
     const size = REACH * stage.scale * weight;
@@ -136,6 +142,46 @@ const galar = {
     });
     shards(context, at, size * 2.2, many(8, weight), seed, hit, {
       color: steel,
+      alpha: late(hit, 0.5),
+    });
+  },
+
+  // A broad shield of light carried across in front of the caster and driven into the target
+  Bulwark(context, stage, share, { seed, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+
+    if (share < BULWARK_LANDS) {
+      const push = (share / BULWARK_LANDS) ** 2;
+      const front = between(stage.source, at, push * 0.9);
+
+      orb(context, front, size * 2.2, { color: BULWARK_RED, alpha: 0.5 });
+      hexagon(context, front, size * 1.8, Math.PI / 6, BEHEMOTH_GOLD, 1, 4 * stage.scale);
+      hexagon(context, front, size * 1.1, Math.PI / 6, '#ffffff', 0.8, 2 * stage.scale);
+      orb(context, front, size * 0.6, { color: BEHEMOTH_GOLD, alpha: 0.9 });
+      return;
+    }
+    const hit = (share - BULWARK_LANDS) / (1 - BULWARK_LANDS);
+    const foot: Point = [at[0], at[1] + size * 0.9];
+
+    hexagon(context, at, size * (1.8 + hit * 1.6), Math.PI / 6, BEHEMOTH_GOLD, decay(hit), 4);
+    orb(context, at, size * (1.6 + hit * 1.8), { color: BULWARK_RED, alpha: decay(hit) * 0.8 });
+    for (let wave = 0; wave < 3; wave += 1) {
+      const held = Math.max(0, Math.min(1, hit * 1.6 - wave * 0.25));
+
+      ripple(context, foot, size * (1 + held * 3.4), {
+        color: wave === 1 ? BULWARK_RED : BEHEMOTH_GOLD,
+        alpha: decay(held),
+        width: 3 * stage.scale,
+      });
+    }
+    burst(context, at, size * (1.8 + hit * 1.4), 10, seed, {
+      color: BEHEMOTH_GOLD,
+      alpha: decay(hit),
+      width: 3 * stage.scale,
+    });
+    shards(context, at, size * 2.4, many(10, weight), seed, hit, {
+      color: lighten(BULWARK_RED, 0.3),
       alpha: late(hit, 0.5),
     });
   },

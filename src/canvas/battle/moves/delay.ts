@@ -569,6 +569,14 @@ const ARRIVES_ITSELF = new Set<EffectShape>([
   'Lunar',
   'Converge',
   'Tri',
+  // Galar and Hisui: darts and riders cross by themselves, a beam leaves the caster, and a
+  // lance, a storm and a cage come down on the target
+  'Darters',
+  'Astral',
+  'Dynamax',
+  'Lance',
+  'Squall',
+  'Cage',
 ]);
 
 const BY_LANDING: Partial<Record<EffectShape, DelayShape>> = {

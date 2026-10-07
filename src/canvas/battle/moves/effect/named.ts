@@ -764,7 +764,7 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
 
   // Galar and Hisui. Signatures with a picture of their own
   [Moves.BehemothBlade]: 'Behemoth',
-  [Moves.BehemothBash]: 'Behemoth',
+  [Moves.BehemothBash]: 'Bulwark',
   [Moves.Eternabeam]: 'Dynamax',
   [Moves.DynamaxCannon]: 'Dynamax',
   [Moves.DragonDarts]: 'Darters',

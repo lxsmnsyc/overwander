@@ -8,6 +8,8 @@ import {
   BEHEMOTH_GOLD,
   BEHEMOTH_LANDS,
   BEHEMOTH_STEEL,
+  BULWARK_LANDS,
+  BULWARK_RED,
   CAGE_BARS,
   CAGE_CLOSES,
   DARTS_LAND,
@@ -97,6 +99,49 @@ const galar = {
     kit.ripple(floorOf(at), reach * (1 + hit * 2.6), 0.1, BEHEMOTH_GOLD, decay(hit));
     debris(kit, at, reach * 2.2, many(8, weight), seed, hit, steel, late(hit, 0.5));
     sparks(kit, at, reach * 1.6, 12, seed, hit, steel, decay(hit));
+  },
+
+  Bulwark(kit, stage, share, { seed, weight }) {
+    const at = landed(stage);
+    const reach = reachOf(stage, weight);
+
+    if (share < BULWARK_LANDS) {
+      const push = (share / BULWARK_LANDS) ** 2;
+      const front = toward(stage.source, at, push * 0.9);
+
+      kit.glow(front, reach * 2.2, BULWARK_RED, 0.5);
+      hexagon(kit, front, reach * 1.8, Math.PI / 6, BEHEMOTH_GOLD, 1);
+      hexagon(kit, front, reach * 1.1, Math.PI / 6, '#ffffff', 0.8);
+      kit.glow(front, reach * 0.6, BEHEMOTH_GOLD, 0.9);
+      return;
+    }
+    const hit = (share - BULWARK_LANDS) / (1 - BULWARK_LANDS);
+    const floor = floorOf(at);
+
+    hexagon(kit, at, reach * (1.8 + hit * 1.6), Math.PI / 6, BEHEMOTH_GOLD, decay(hit));
+    kit.glow(at, reach * (1.6 + hit * 1.8), BULWARK_RED, decay(hit) * 0.8);
+    for (let wave = 0; wave < 3; wave += 1) {
+      const held = Math.max(0, Math.min(1, hit * 1.6 - wave * 0.25));
+
+      kit.ripple(
+        floor,
+        reach * (1 + held * 3.4),
+        0.1,
+        wave === 1 ? BULWARK_RED : BEHEMOTH_GOLD,
+        decay(held),
+      );
+    }
+    sparks(kit, at, reach * 1.8, 10, seed, hit, BEHEMOTH_GOLD, decay(hit));
+    debris(
+      kit,
+      at,
+      reach * 2.4,
+      many(10, weight),
+      seed,
+      hit,
+      lighten(BULWARK_RED, 0.3),
+      late(hit, 0.5),
+    );
   },
 
   Dynamax(kit, stage, share, { seed, weight }) {

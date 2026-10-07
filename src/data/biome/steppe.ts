@@ -9,6 +9,7 @@ export default function registerSteppeSpawns(): void {
   registerSpawnPool(Biome.Steppe, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.GeodudeAlola, weight: 22 },
         { species: Species.FlabebeYellow, weight: 24 },
         { species: Species.Scatterbug, weight: 24 },
         { species: Species.Snivy, weight: 3 },
@@ -37,6 +38,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Patrat, weight: 30 },
       ],
       rare: [
+        { species: Species.GravelerAlola, weight: 8 },
         { species: Species.FloetteYellow, weight: 8 },
         { species: Species.Spewpa, weight: 8 },
         { species: Species.Servine, weight: 2 },
@@ -63,6 +65,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Electivire, weight: 6 },
       ],
       elusive: [
+        { species: Species.GolemAlola, weight: 4 },
         { species: Species.FlorgesYellow, weight: 5 },
         { species: Species.Vivillon, weight: 5 },
         { species: Species.Bouffalant, weight: 6 },
@@ -83,6 +86,7 @@ export default function registerSteppeSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.GeodudeAlola, weight: 22 },
         { species: Species.FlabebeYellow, weight: 24 },
         { species: Species.Scatterbug, weight: 24 },
         { species: Species.Snivy, weight: 3 },
@@ -112,6 +116,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Patrat, weight: 30 },
       ],
       rare: [
+        { species: Species.GravelerAlola, weight: 8 },
         { species: Species.FloetteYellow, weight: 8 },
         { species: Species.Spewpa, weight: 8 },
         { species: Species.Servine, weight: 2 },
@@ -139,6 +144,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Electivire, weight: 6 },
       ],
       elusive: [
+        { species: Species.GolemAlola, weight: 4 },
         { species: Species.FlorgesYellow, weight: 5 },
         { species: Species.Vivillon, weight: 5 },
         { species: Species.Bouffalant, weight: 6 },
@@ -159,6 +165,7 @@ export default function registerSteppeSpawns(): void {
     },
     [TimeOfDay.Evening]: {
       base: [
+        { species: Species.GeodudeAlola, weight: 22 },
         { species: Species.Litten, weight: 2 },
         { species: Species.Magnemite, weight: 20 },
       ],
@@ -176,6 +183,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Skorupi, weight: 20 },
       ],
       rare: [
+        { species: Species.GravelerAlola, weight: 8 },
         { species: Species.Torracat, weight: 2 },
         { species: Species.Magneton, weight: 10 },
       ],
@@ -193,6 +201,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Watchog, weight: 8 },
       ],
       elusive: [
+        { species: Species.GolemAlola, weight: 4 },
         { species: Species.Incineroar, weight: 2 },
         { species: Species.Castform, weight: 10 },
         { species: Species.Seviper, weight: 8 },
@@ -204,6 +213,7 @@ export default function registerSteppeSpawns(): void {
     },
     [TimeOfDay.Night]: {
       base: [
+        { species: Species.GeodudeAlola, weight: 22 },
         { species: Species.Litten, weight: 2 },
         { species: Species.Magnemite, weight: 20 },
       ],
@@ -221,6 +231,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Skorupi, weight: 20 },
       ],
       rare: [
+        { species: Species.GravelerAlola, weight: 8 },
         { species: Species.Torracat, weight: 2 },
         { species: Species.Magneton, weight: 10 },
       ],
@@ -238,6 +249,7 @@ export default function registerSteppeSpawns(): void {
         { species: Species.Watchog, weight: 8 },
       ],
       elusive: [
+        { species: Species.GolemAlola, weight: 4 },
         { species: Species.Incineroar, weight: 2 },
         { species: Species.Castform, weight: 10 },
         { species: Species.Seviper, weight: 8 },

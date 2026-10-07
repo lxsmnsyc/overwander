@@ -8,7 +8,7 @@ import {
   Moves,
   affectsFoesOnly,
 } from '../../data/ids/moves';
-import { Statuses } from '../../data/ids/status';
+import { NON_VOLATILE_STATUSES, Statuses } from '../../data/ids/status';
 import type Battle from '../core';
 import {
   BattleEvents,
@@ -20,7 +20,9 @@ import {
 import { ABILITY_MOVES } from '../moves/ability-moves';
 import { STAGE_SWAP_MOVES } from '../moves/stage-swaps';
 import { FORCED_SWITCH_MOVES } from '../moves/switch-out';
+import type Team from '../team';
 import type Unit from '../unit';
+import { getTotemAura } from '../../data/overworld/totems';
 import { MergedLifecycle } from '../lifecycle';
 import { createAbility } from './__create';
 
@@ -29,16 +31,22 @@ import PROTECTED_ABILITIES from './protected';
 export { default as PROTECTED_ABILITIES } from './protected';
 
 /**
- * A Boss' health is sixtyfold what the species would otherwise have,
+ * A Boss' health is this many times what the species would otherwise have,
  * so a raid takes a party to bring down and a bulky boss is a longer
  * fight than a frail one all the way up
  */
-export const BOSS_HEALTH_SCALE = 60;
+export const BOSS_HEALTH_SCALE = 110;
 
 /**
  * Every other stat simply doubles
  */
 export const BOSS_STAT_SCALE = 2;
+
+/**
+ * How much longer a boss winds up than anything else. The wind-up is
+ * the party's warning, long enough to see what is coming and answer it
+ */
+export const BOSS_CAST_SCALE = 2.5;
 
 /**
  * The most one indirect or share-of-HP hit takes off a boss, whatever
@@ -48,9 +56,34 @@ export const BOSS_STAT_SCALE = 2;
 export const BOSS_DAMAGE_CAP = 200;
 
 /**
+ * The shares of its pool at which a boss shakes off what the party has
+ * hung on it: its status, its stat drops, and the seeds, curses and
+ * confusion riding it. A party built on keeping a boss burned and
+ * charmed has to put it all back, twice
+ */
+export const BOSS_PHASES = [0.5, 0.25];
+
+/** What a boss sheds as it crosses into a new phase */
+const BOSS_SHED_STATUSES: readonly Statuses[] = [
+  ...NON_VOLATILE_STATUSES,
+  Statuses.Seeding,
+  Statuses.Confused,
+  Statuses.Cursed,
+  Statuses.Nightmared,
+];
+
+/**
+ * How fast a boss' allowance for indirect and share-of-HP damage
+ * refills, per second. Every source draws on the one allowance, which
+ * holds `BOSS_DAMAGE_CAP` when full: one clock pays its cap, and five
+ * ticking together are worth no more than one would be
+ */
+export const BOSS_INDIRECT_RATE = 50;
+
+/**
  * A share of a unit's max HP, for an effect measured against it: a
  * floor under a hit, a cut-off under which a blow does nothing. A
- * boss' pool is sixtyfold, so its share is held to the same cap as
+ * boss' pool is raid-sized, so its share is held to the same cap as
  * any other share-of-HP hit on it
  */
 export function healthShare(unit: Unit, share: number): number {
@@ -179,15 +212,16 @@ function refusesStatus(status: Statuses, cause: EffectCause, source: unknown): b
 
 const setupAbilities = [
   /**
-   * Boss: a raid-style stat wall, sixtyfold HP and doubled
+   * Boss: a raid-style stat wall, `BOSS_HEALTH_SCALE` times the HP and doubled
    * everything else, immune to forced switch-outs and Spite, to
    * trapping and disruption statuses (unless self-inflicted), to the
    * moves that move abilities or stages about, to a Perish Song
    * whoever sang it, and to anything that would fell it while its
-   * pool still holds. Indirect and share-of-HP damage lands for at
-   * most `BOSS_DAMAGE_CAP`, and it heals at most `BOSS_HEAL_CAP` a
-   * second. Its single-target
-   * enemy moves strike every enemy instead.
+   * pool still holds. Indirect and share-of-HP damage draws on one
+   * allowance of `BOSS_DAMAGE_CAP` refilling at `BOSS_INDIRECT_RATE` a
+   * second, it heals at most `BOSS_HEAL_CAP` a second, and it sheds
+   * what the party hung on it at each of `BOSS_PHASES`. Its
+   * single-target enemy moves strike every enemy instead.
    */
   createAbility(Abilities.Boss, (battle) => {
     // Units that already went through their first-entry dormancy
@@ -196,6 +230,39 @@ const setupAbilities = [
     // fight runs, so healing is capped by the second rather than by
     // the heal: ten drains landing at once are worth one
     const spent = new Map<Unit, number>();
+    // The same for the indirect damage it takes
+    const worn = new Map<Unit, number>();
+    // How many of the phases each boss has crossed into
+    const phases = new Map<Unit, number>();
+
+    /** Shed everything the party hung on it, once for each phase it crossed */
+    function shed(unit: Unit, health: number): void {
+      const crossed = phases.get(unit) ?? 0;
+      let reached = crossed;
+
+      while (
+        reached < BOSS_PHASES.length &&
+        health <= unit.checkStat(Stats.HP, 0) * BOSS_PHASES[reached]
+      ) {
+        reached++;
+      }
+      if (reached === crossed) {
+        return;
+      }
+      phases.set(unit, reached);
+
+      const cause = { type: EffectType.Ability, ability: Abilities.Boss, unit } as const;
+
+      unit.triggerAbility(Abilities.Boss);
+      for (const status of BOSS_SHED_STATUSES) {
+        const held = unit.status[status];
+
+        if (held != null) {
+          unit.removeStatus(status, held);
+        }
+      }
+      unit.resetStages(cause);
+    }
 
     /** Whether either end of this move is a raid boss */
     function touchesBoss(event: { source: Unit; target: MoveTarget }): boolean {
@@ -213,17 +280,30 @@ const setupAbilities = [
       return taken;
     }
 
+    /** What indirect damage this boss may still take, and what taking it costs */
+    function takeWear(unit: Unit, wanted: number): number {
+      const taken = Math.max(0, Math.min(wanted, BOSS_DAMAGE_CAP - (worn.get(unit) ?? 0)));
+
+      worn.set(unit, (worn.get(unit) ?? 0) + taken);
+      return taken;
+    }
+
+    function refill(used: Map<Unit, number>, rate: number, duration: number): void {
+      for (const [unit, amount] of used) {
+        const refilled = amount - rate * duration;
+
+        if (refilled <= 0) {
+          used.delete(unit);
+        } else {
+          used.set(unit, refilled);
+        }
+      }
+    }
+
     return new MergedLifecycle([
       battle.on(BattleEvents.Tick, EventPriority.Post, (event) => {
-        for (const [unit, used] of spent) {
-          const refilled = used - (BOSS_HEAL_CAP * event.duration) / BOSS_HEAL_WINDOW;
-
-          if (refilled <= 0) {
-            spent.delete(unit);
-          } else {
-            spent.set(unit, refilled);
-          }
-        }
+        refill(spent, BOSS_HEAL_CAP / BOSS_HEAL_WINDOW, event.duration);
+        refill(worn, BOSS_INDIRECT_RATE / 1000, event.duration);
       }),
       battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
         if (event.source.hasAbility(Abilities.Boss)) {
@@ -250,6 +330,11 @@ const setupAbilities = [
           });
         }
       }),
+      battle.on(BattleEvents.UnitSetHealth, EventPriority.Post, (event) => {
+        if (event.source.alive && event.source.hasAbility(Abilities.Boss)) {
+          shed(event.source, event.value);
+        }
+      }),
       // Half health rouses it early: a party that hits hard enough
       // buys the fight instead of waiting the warm-up out
       battle.on(BattleEvents.UnitSetHealth, EventPriority.Post, (event) => {
@@ -266,10 +351,10 @@ const setupAbilities = [
         }
       }),
 
-      // Boss moves wind up slowly: casts take twice as long
+      // Boss moves wind up slowly
       battle.on(BattleEvents.CheckUnitMoveCastTime, EventPriority.Post, (event) => {
         if (event.source.hasAbility(Abilities.Boss)) {
-          event.duration *= 2;
+          event.duration *= BOSS_CAST_SCALE;
         }
       }),
       // Nothing short of fainting interrupts a boss cast (the faint
@@ -334,7 +419,7 @@ const setupAbilities = [
           return;
         }
         if (event.flags & (DamageFlags.Indirect | DamageFlags.HealthScaled)) {
-          event.value = Math.min(event.value, BOSS_DAMAGE_CAP);
+          event.value = takeWear(event.target, event.value);
         }
       }),
       // A boss may put health back, up to the heal cap a second.
@@ -474,7 +559,86 @@ const setupAbilities = [
       }
     }),
   ),
+
+  /**
+   * Totem: the aura it starts the fight in, and the one ally of its
+   * own line it calls at half HP. The ally is built with the fight and
+   * held off the field until then, so it can neither be hit early nor
+   * keep the boss side standing; once the Totem falls, it flees
+   */
+  createAbility(Abilities.Totem, (battle) => {
+    const auraed = new Set<Unit>();
+    /** Each Totem's ally once called, so its fall can send it off */
+    const called = new Map<Unit, Unit>();
+
+    return new MergedLifecycle([
+      battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+        const totem = event.source;
+
+        if (!totem.hasAbility(Abilities.Totem) || auraed.has(totem)) {
+          return;
+        }
+        auraed.add(totem);
+        totem.triggerAbility(Abilities.Totem);
+
+        const cause = { type: EffectType.Ability, ability: Abilities.Totem, unit: totem } as const;
+
+        for (const [stage, raised] of Object.entries(getTotemAura(totem.species))) {
+          totem.addStage(Number(stage), raised, cause);
+        }
+      }),
+      battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+        const totem = event.target;
+
+        if (
+          !totem.alive ||
+          called.has(totem) ||
+          !totem.hasAbility(Abilities.Totem) ||
+          totem.health > totem.checkStat(Stats.HP, 0) / 2
+        ) {
+          return;
+        }
+
+        const ally = takeTotemAlly(totem.team);
+
+        if (ally == null) {
+          return;
+        }
+        called.set(totem, ally);
+        totem.triggerAbility(Abilities.Totem);
+        totem.team.addUnit(ally);
+        ally.enter();
+      }),
+      battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
+        const ally = called.get(event.source);
+
+        if (ally == null || !ally.team.units.has(ally)) {
+          return;
+        }
+        if (ally.alive) {
+          ally.leave();
+        }
+        ally.team.removeUnit(ally);
+      }),
+    ]);
+  }),
 ];
+
+/** The allies waiting to be called, by the boss team that holds them */
+const waitingAllies = new WeakMap<Team, Unit[]>();
+
+/**
+ * Keep a Totem's ally ready but off the field. The battle builder
+ * hands it over as it fields the boss side, and the Totem takes it
+ * when it calls
+ */
+export function holdTotemAlly(team: Team, ally: Unit): void {
+  waitingAllies.set(team, [...(waitingAllies.get(team) ?? []), ally]);
+}
+
+function takeTotemAlly(team: Team): Unit | undefined {
+  return waitingAllies.get(team)?.shift();
+}
 
 export default function setupSpecialAbilities(battle: Battle): void {
   // Always active: special-tier abilities cannot be switched off

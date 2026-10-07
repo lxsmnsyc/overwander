@@ -852,7 +852,12 @@ export default function GameProvider(props: ParentProps): JSX.Element {
           if (collected == null) {
             return;
           }
-          pay({ ...NOTHING, gold: collected.gold, waiting: collected.encounter.species });
+          pay({
+            ...NOTHING,
+            gold: collected.gold,
+            items: collected.items,
+            waiting: collected.encounter.species,
+          });
           setEncounter(collected.encounter);
         })
         .catch(() => {

@@ -2,7 +2,7 @@ import 'server-only';
 import BattleOutcome from '../../auth/battle-outcome';
 import { UNLIMITED_BATTLE_LIMITS } from '../../data/constants/battle-limits';
 import { RaidKind, type RaidRecord, asRaidRecord, mythicalRelicOf } from '../../auth/raid-record';
-import { BOSS_ALLIANCE, PLAYER_ALLIANCE, createRaidBossSnapshot } from '../../overworld/raid';
+import { BOSS_ALLIANCE, PLAYER_ALLIANCE, createRaidBossTeam } from '../../overworld/raid';
 import { getSql, jsonOf, newDocId, tx } from '../db';
 import { foughtBattle, readBattle, readRaid, type readTeam, readTeams } from '../raid-io';
 import { consumeItem } from '../inventory';
@@ -99,9 +99,15 @@ export async function startRaid(uid: string, lobby: string, now: number): Promis
   await tx(async (transaction) => {
     await transaction`
       insert into team_snapshots (id, player, alliance, catches)
-      values (${bossId}, null, ${BOSS_ALLIANCE}, ${jsonOf(transaction, [
-        createRaidBossSnapshot(raid.species, raid.traitValue, raid.kind === RaidKind.Shadow),
-      ])})
+      values (${bossId}, null, ${BOSS_ALLIANCE}, ${jsonOf(
+        transaction,
+        createRaidBossTeam(
+          raid.species,
+          raid.traitValue,
+          raid.kind === RaidKind.Shadow,
+          raid.kind === RaidKind.Totem,
+        ),
+      )})
     `;
     await transaction`
       insert into battles (id, raid_id, species, outcome, started_at, biome, limits)

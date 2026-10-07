@@ -64,7 +64,9 @@ export {
   RaidKind,
   asRaidRecord,
   deriveRaidReward,
+  getLairKind,
   getRaidTitle,
+  getTotemTitle,
   raidId,
 } from './raid-record';
 export type { RaidRecord, RaidView } from './raid-record';

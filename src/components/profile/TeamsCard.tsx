@@ -13,7 +13,7 @@ import { NICKNAME_LIMIT, asNickname } from '../../auth/nickname';
 import { TEAM_SIZE } from '../../auth/teams';
 import BattleData from '../app/battle-data';
 import CatchPicker, { type CatchOption } from '../catches/catch-picker';
-import TeamStrip from '../catches/TeamStrip';
+import TeamRow, { TeamRows } from '../catches/TeamRow';
 import {
   Button,
   Card,
@@ -22,8 +22,6 @@ import {
   Field,
   Hint,
   HintList,
-  List,
-  ListRow,
   Meta,
   Note,
   Row,
@@ -89,21 +87,17 @@ function PresetRow(props: {
   const gone = (): number => props.preset.catches.length - (party.latest?.length ?? 0);
 
   return (
-    <ListRow title={props.preset.name}>
-      <span class="min-w-0 grow">
-        <span class="flex items-center gap-2">
-          <span class="truncate font-bold">{props.preset.name}</span>
-          <Show when={gone() > 0}>
-            <Meta>{gone()} no longer yours</Meta>
-          </Show>
-        </span>
-        <TeamStrip catches={party.latest ?? []} />
-      </span>
+    <TeamRow name={props.preset.name} catches={party.latest ?? []}>
+      <span class="truncate font-bold">{props.preset.name}</span>
+      <Show when={gone() > 0}>
+        <Meta>{gone()} no longer yours</Meta>
+      </Show>
+      <span class="grow" />
       <Button onClick={props.onEdit}>Edit</Button>
-      <Button tone="danger" onClick={props.onDelete}>
+      <Button tone="caution" onClick={props.onDelete}>
         Delete
       </Button>
-    </ListRow>
+    </TeamRow>
   );
 }
 
@@ -195,7 +189,7 @@ export default function TeamsCard(props: TeamsCardProps): JSX.Element {
     >
       <Show when={held().length > 0} fallback={<Note>You have saved no teams yet.</Note>}>
         <BattleData>
-          <List>
+          <TeamRows>
             <For each={held()}>
               {([id, preset]) => (
                 <PresetRow
@@ -210,7 +204,7 @@ export default function TeamsCard(props: TeamsCardProps): JSX.Element {
                 />
               )}
             </For>
-          </List>
+          </TeamRows>
         </BattleData>
       </Show>
       <Status message={status()} />

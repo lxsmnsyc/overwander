@@ -8,7 +8,7 @@ import {
   GROVE_HEAL_FRACTION,
   GROWTH_MAX_STAGES,
 } from '../../../../src/battle/abilities/signature/__create';
-import { AttackPriority, EventPriority } from '../../../../src/core/event-emitter';
+import { AttackPriority } from '../../../../src/core/event-emitter';
 import { BattleEvents, EffectType, MoveTargetType } from '../../../../src/battle/events';
 import { Stages, Stats, StatsKind } from '../../../../src/data/constants/stats';
 import { Types } from '../../../../src/data/constants/types';
@@ -1025,7 +1025,7 @@ describe('Stored Bounce', () => {
 
     let bounced = 0;
 
-    battle.on(BattleEvents.UnitDamage, EventPriority.Post, (event) => {
+    battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
       if (
         event.cause.type === EffectType.Ability &&
         event.cause.ability === Abilities.StoredBounce

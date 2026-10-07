@@ -1,6 +1,6 @@
 import Biome, { TimeOfDay } from '../ids/biome';
 import { Species } from '../ids/species';
-import { UNOWN_SPAWNS, registerSpawnPool, registerWaterPool } from './__create';
+import { PRIZED_WEIGHT, UNOWN_SPAWNS, registerSpawnPool, registerWaterPool } from './__create';
 
 /**
  * Beach spawn pool, grouped by day-cycle period and rarity band
@@ -14,6 +14,9 @@ export default function registerBeachSpawns(): void {
         { species: Species.Squirtle, weight: 2 },
       ],
       uncommon: [
+        { species: Species.GrimerAlola, weight: 22 },
+        { species: Species.Sandygast, weight: 22 },
+        { species: Species.Wimpod, weight: 22 },
         { species: Species.Crabrawler, weight: 24 },
         { species: Species.Binacle, weight: 24 },
         { species: Species.Psyduck, weight: 20 },
@@ -30,6 +33,10 @@ export default function registerBeachSpawns(): void {
         { species: Species.Wartortle, weight: 1 },
       ],
       scarce: [
+        { species: Species.ExeggutorAlola, weight: 6 },
+        { species: Species.MukAlola, weight: 6 },
+        { species: Species.Palossand, weight: 6 },
+        { species: Species.Golisopod, weight: 6 },
         { species: Species.Barbaracle, weight: 6 },
         { species: Species.Golduck, weight: 10 },
         { species: Species.Slowbro, weight: 10 },
@@ -42,13 +49,16 @@ export default function registerBeachSpawns(): void {
         { species: Species.Floatzel, weight: 8 },
       ],
       elusive: [
+        { species: Species.RaichuAlola, weight: 4 },
+        { species: Species.Pyukumuku, weight: 5 },
         { species: Species.OricorioPau, weight: 5 },
         { species: Species.Primarina, weight: 2 },
         { species: Species.Vivillon, weight: 5 },
         { species: Species.Blastoise, weight: 2 },
       ],
-      prized: [...UNOWN_SPAWNS],
+      prized: [...UNOWN_SPAWNS, { species: Species.TypeNull, weight: PRIZED_WEIGHT }],
       special: [
+        { species: Species.Silvally, weight: 10 },
         { species: Species.Groudon, weight: 10 },
         { species: Species.Rayquaza, weight: 10 },
       ],
@@ -61,6 +71,9 @@ export default function registerBeachSpawns(): void {
         { species: Species.Squirtle, weight: 2 },
       ],
       uncommon: [
+        { species: Species.GrimerAlola, weight: 22 },
+        { species: Species.Sandygast, weight: 22 },
+        { species: Species.Wimpod, weight: 22 },
         { species: Species.Crabrawler, weight: 24 },
         { species: Species.Binacle, weight: 24 },
         { species: Species.Psyduck, weight: 20 },
@@ -77,6 +90,10 @@ export default function registerBeachSpawns(): void {
         { species: Species.Wartortle, weight: 1 },
       ],
       scarce: [
+        { species: Species.ExeggutorAlola, weight: 6 },
+        { species: Species.MukAlola, weight: 6 },
+        { species: Species.Palossand, weight: 6 },
+        { species: Species.Golisopod, weight: 6 },
         { species: Species.Barbaracle, weight: 6 },
         { species: Species.Golduck, weight: 10 },
         { species: Species.Slowbro, weight: 10 },
@@ -89,13 +106,16 @@ export default function registerBeachSpawns(): void {
         { species: Species.Floatzel, weight: 8 },
       ],
       elusive: [
+        { species: Species.RaichuAlola, weight: 4 },
+        { species: Species.Pyukumuku, weight: 5 },
         { species: Species.OricorioPau, weight: 5 },
         { species: Species.Primarina, weight: 2 },
         { species: Species.Vivillon, weight: 5 },
         { species: Species.Blastoise, weight: 2 },
       ],
-      prized: [...UNOWN_SPAWNS],
+      prized: [...UNOWN_SPAWNS, { species: Species.TypeNull, weight: PRIZED_WEIGHT }],
       special: [
+        { species: Species.Silvally, weight: 10 },
         { species: Species.Groudon, weight: 10 },
         { species: Species.Rayquaza, weight: 10 },
       ],
@@ -104,6 +124,9 @@ export default function registerBeachSpawns(): void {
     [TimeOfDay.Evening]: {
       base: [],
       uncommon: [
+        { species: Species.GrimerAlola, weight: 22 },
+        { species: Species.Sandygast, weight: 22 },
+        { species: Species.Wimpod, weight: 22 },
         { species: Species.Crabrawler, weight: 24 },
         { species: Species.Inkay, weight: 24 },
         { species: Species.Krabby, weight: 20 },
@@ -113,6 +136,10 @@ export default function registerBeachSpawns(): void {
       ],
       rare: [],
       scarce: [
+        { species: Species.ExeggutorAlola, weight: 6 },
+        { species: Species.MukAlola, weight: 6 },
+        { species: Species.Palossand, weight: 6 },
+        { species: Species.Golisopod, weight: 6 },
         { species: Species.Malamar, weight: 6 },
         { species: Species.Kingler, weight: 10 },
         { species: Species.Vaporeon, weight: 5 },
@@ -120,9 +147,13 @@ export default function registerBeachSpawns(): void {
         { species: Species.WormadamSandy, weight: 4 },
         { species: Species.Floatzel, weight: 8 },
       ],
-      elusive: [],
-      prized: [...UNOWN_SPAWNS],
+      elusive: [
+        { species: Species.RaichuAlola, weight: 4 },
+        { species: Species.Pyukumuku, weight: 5 },
+      ],
+      prized: [...UNOWN_SPAWNS, { species: Species.TypeNull, weight: PRIZED_WEIGHT }],
       special: [
+        { species: Species.Silvally, weight: 10 },
         { species: Species.Groudon, weight: 10 },
         { species: Species.Rayquaza, weight: 10 },
       ],
@@ -131,6 +162,9 @@ export default function registerBeachSpawns(): void {
     [TimeOfDay.Night]: {
       base: [],
       uncommon: [
+        { species: Species.GrimerAlola, weight: 22 },
+        { species: Species.Sandygast, weight: 22 },
+        { species: Species.Wimpod, weight: 22 },
         { species: Species.Crabrawler, weight: 24 },
         { species: Species.Inkay, weight: 24 },
         { species: Species.Krabby, weight: 20 },
@@ -140,6 +174,10 @@ export default function registerBeachSpawns(): void {
       ],
       rare: [],
       scarce: [
+        { species: Species.ExeggutorAlola, weight: 6 },
+        { species: Species.MukAlola, weight: 6 },
+        { species: Species.Palossand, weight: 6 },
+        { species: Species.Golisopod, weight: 6 },
         { species: Species.Malamar, weight: 6 },
         { species: Species.Kingler, weight: 10 },
         { species: Species.Vaporeon, weight: 5 },
@@ -147,9 +185,13 @@ export default function registerBeachSpawns(): void {
         { species: Species.WormadamSandy, weight: 4 },
         { species: Species.Floatzel, weight: 8 },
       ],
-      elusive: [],
-      prized: [...UNOWN_SPAWNS],
+      elusive: [
+        { species: Species.RaichuAlola, weight: 4 },
+        { species: Species.Pyukumuku, weight: 5 },
+      ],
+      prized: [...UNOWN_SPAWNS, { species: Species.TypeNull, weight: PRIZED_WEIGHT }],
       special: [
+        { species: Species.Silvally, weight: 10 },
         { species: Species.Groudon, weight: 10 },
         { species: Species.Rayquaza, weight: 10 },
       ],
@@ -163,6 +205,7 @@ export default function registerBeachSpawns(): void {
         { species: Species.Horsea, weight: 10 },
       ],
       uncommon: [
+        { species: Species.Mareanie, weight: 22 },
         { species: Species.Shellder, weight: 20 },
         { species: Species.Krabby, weight: 20 },
         { species: Species.Tentacool, weight: 20 },
@@ -175,6 +218,7 @@ export default function registerBeachSpawns(): void {
         { species: Species.Seadra, weight: 5 },
       ],
       scarce: [
+        { species: Species.Toxapex, weight: 6 },
         { species: Species.Cloyster, weight: 10 },
         { species: Species.Kingler, weight: 10 },
         { species: Species.Tentacruel, weight: 8 },
@@ -196,6 +240,7 @@ export default function registerBeachSpawns(): void {
         { species: Species.Horsea, weight: 10 },
       ],
       uncommon: [
+        { species: Species.Mareanie, weight: 22 },
         { species: Species.Shellder, weight: 20 },
         { species: Species.Krabby, weight: 20 },
         { species: Species.Tentacool, weight: 20 },
@@ -208,6 +253,7 @@ export default function registerBeachSpawns(): void {
         { species: Species.Seadra, weight: 5 },
       ],
       scarce: [
+        { species: Species.Toxapex, weight: 6 },
         { species: Species.Cloyster, weight: 10 },
         { species: Species.Kingler, weight: 10 },
         { species: Species.Tentacruel, weight: 8 },
@@ -226,6 +272,7 @@ export default function registerBeachSpawns(): void {
     [TimeOfDay.Evening]: {
       base: [{ species: Species.Horsea, weight: 10 }],
       uncommon: [
+        { species: Species.Mareanie, weight: 22 },
         { species: Species.Inkay, weight: 24 },
         { species: Species.Shellder, weight: 20 },
         { species: Species.Krabby, weight: 20 },
@@ -236,6 +283,7 @@ export default function registerBeachSpawns(): void {
       ],
       rare: [{ species: Species.Seadra, weight: 5 }],
       scarce: [
+        { species: Species.Toxapex, weight: 6 },
         { species: Species.Malamar, weight: 6 },
         { species: Species.Cloyster, weight: 10 },
         { species: Species.Kingler, weight: 10 },
@@ -253,6 +301,7 @@ export default function registerBeachSpawns(): void {
     [TimeOfDay.Night]: {
       base: [{ species: Species.Horsea, weight: 10 }],
       uncommon: [
+        { species: Species.Mareanie, weight: 22 },
         { species: Species.Inkay, weight: 24 },
         { species: Species.Shellder, weight: 20 },
         { species: Species.Krabby, weight: 20 },
@@ -263,6 +312,7 @@ export default function registerBeachSpawns(): void {
       ],
       rare: [{ species: Species.Seadra, weight: 5 }],
       scarce: [
+        { species: Species.Toxapex, weight: 6 },
         { species: Species.Malamar, weight: 6 },
         { species: Species.Cloyster, weight: 10 },
         { species: Species.Kingler, weight: 10 },

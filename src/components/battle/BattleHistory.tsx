@@ -222,7 +222,7 @@ function HistoryRow(props: {
       class="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-2"
       title={OUTCOME_LABELS[props.record.outcome]}
     >
-      <div class="w-full max-w-60 shrink-0">
+      <div class="w-full shrink-0 sm:w-80">
         <Suspense fallback={<Note>Reading the team…</Note>}>
           <OwnStrip fought={fought} />
         </Suspense>
@@ -330,6 +330,7 @@ const WAITING_KINDS: Partial<Record<EncounterType, string>> = {
   [EncounterType.LegendaryRaid]: 'Raid prize',
   [EncounterType.ShadowRaid]: 'Shadow raid prize',
   [EncounterType.MythicalRaid]: 'Mythical raid prize',
+  [EncounterType.TotemRaid]: 'Totem raid prize',
   [EncounterType.Rocket]: 'Left behind',
   [EncounterType.Fateful]: 'Gift',
   [EncounterType.Revived]: 'Revived fossil',

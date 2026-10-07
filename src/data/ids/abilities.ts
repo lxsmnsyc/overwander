@@ -578,6 +578,11 @@ const enum Abilities {
    */
   Purified = 100003,
   /**
+   * What makes a raid boss a Totem: the aura it starts in, and the one
+   * ally of its own line it calls at half HP
+   */
+  Totem = 100004,
+  /**
    * Signature (one per family, granted rather than rolled at birth).
    * They sit outside the pools walk, so a line's four ordinary
    * abilities stay four
@@ -1012,6 +1017,84 @@ const enum Abilities {
   OrchidGuise = 200379,
   // Bounsweet
   TropStride = 200380,
+  // Morelull
+  DrowsyGlow = 200381,
+  // Comfey
+  LeiGift = 200382,
+  // Oranguru
+  SagesCall = 200383,
+  // Passimian
+  RushPass = 200384,
+  // Mareanie
+  ToxicDome = 200385,
+  // Salandit
+  FumeFlare = 200386,
+  // Stufful
+  FondCrush = 200387,
+  // Wimpod
+  OpeningSlash = 200388,
+  // Sandygast
+  CastleDrain = 200389,
+  // Pyukumuku
+  TossedBack = 200390,
+  // Minior
+  Starfall = 200391,
+  // Togedemaru
+  ChargedSpines = 200392,
+  // Alolan Rattata
+  RichDiet = 200393,
+  // Alolan Sandshrew
+  Frostforged = 200394,
+  // Alolan Vulpix
+  AuroraCrown = 200395,
+  // Alolan Diglett
+  WireSnare = 200396,
+  // Alolan Meowth
+  TauntingGaze = 200397,
+  // Alolan Geodude
+  MagnetFloat = 200398,
+  // Alolan Grimer
+  CrystalToxin = 200399,
+  // Komala
+  NapTime = 200400,
+  // Turtonator
+  BlastShell = 200401,
+  // Mimikyu
+  GrudgeShroud = 200402,
+  // Drampa
+  EldersIre = 200403,
+  // Type: Null
+  MemoryEcho = 200404,
+  // Bruxish
+  PsychicGnash = 200405,
+  // Dhelmise
+  GhostShip = 200406,
+  // Jangmo-o
+  WarClangor = 200407,
+  // The Tapus: each island's guardian blesses its own under its terrain
+  StormBlessing = 200408,
+  MindBlessing = 200409,
+  WildBlessing = 200410,
+  MistBlessing = 200411,
+  // The light trio: one reads its health from the top, one from the bottom
+  Zenith = 200412,
+  Nadir = 200413,
+  // The Ultra Beasts: each shrugs off one weakness this world has for it
+  Earthless = 200414,
+  Windbreak = 200415,
+  GaleWard = 200416,
+  Unearthed = 200417,
+  HeatShield = 200418,
+  Fireproof = 200419,
+  Unenchanted = 200420,
+  ClosedMind = 200421,
+  DeepFooting = 200422,
+  DryFuse = 200423,
+  // Alola's mythicals, one each
+  SoulRelay = 200424,
+  UmbralStrike = 200425,
+  IonField = 200426,
+  MetalEater = 200427,
 }
 
 export default Abilities;

@@ -21,6 +21,8 @@ export default function registerTropicalSeasonalForestSpawns(): void {
         { species: Species.Treecko, weight: 2 },
       ],
       uncommon: [
+        { species: Species.MeowthAlola, weight: 22 },
+        { species: Species.Stufful, weight: 22 },
         { species: Species.Fomantis, weight: 22 },
         { species: Species.Cutiefly, weight: 24 },
         { species: Species.Pancham, weight: 24 },
@@ -36,6 +38,8 @@ export default function registerTropicalSeasonalForestSpawns(): void {
         { species: Species.Grovyle, weight: 1 },
       ],
       scarce: [
+        { species: Species.PersianAlola, weight: 6 },
+        { species: Species.Bewear, weight: 6 },
         { species: Species.Lurantis, weight: 6 },
         { species: Species.Ribombee, weight: 6 },
         { species: Species.Pangoro, weight: 6 },
@@ -44,6 +48,9 @@ export default function registerTropicalSeasonalForestSpawns(): void {
         { species: Species.Lickilicky, weight: 6 },
       ],
       elusive: [
+        { species: Species.Komala, weight: 5 },
+        { species: Species.RaichuAlola, weight: 4 },
+        { species: Species.Comfey, weight: 5 },
         { species: Species.Tsareena, weight: 4 },
         { species: Species.Vikavolt, weight: 4 },
         { species: Species.FlorgesOrange, weight: 5 },
@@ -55,7 +62,11 @@ export default function registerTropicalSeasonalForestSpawns(): void {
         { species: Species.Tropius, weight: 8 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [],
+      special: [
+        { species: Species.Stakataka, weight: 10 },
+        { species: Species.Blacephalon, weight: 10 },
+        { species: Species.TapuKoko, weight: 10 },
+      ],
     },
     [TimeOfDay.Day]: {
       base: [
@@ -67,6 +78,8 @@ export default function registerTropicalSeasonalForestSpawns(): void {
         { species: Species.Treecko, weight: 2 },
       ],
       uncommon: [
+        { species: Species.MeowthAlola, weight: 22 },
+        { species: Species.Stufful, weight: 22 },
         { species: Species.Fomantis, weight: 22 },
         { species: Species.Cutiefly, weight: 24 },
         { species: Species.Pancham, weight: 24 },
@@ -82,6 +95,8 @@ export default function registerTropicalSeasonalForestSpawns(): void {
         { species: Species.Grovyle, weight: 1 },
       ],
       scarce: [
+        { species: Species.PersianAlola, weight: 6 },
+        { species: Species.Bewear, weight: 6 },
         { species: Species.Lurantis, weight: 6 },
         { species: Species.Ribombee, weight: 6 },
         { species: Species.Pangoro, weight: 6 },
@@ -90,6 +105,9 @@ export default function registerTropicalSeasonalForestSpawns(): void {
         { species: Species.Lickilicky, weight: 6 },
       ],
       elusive: [
+        { species: Species.Komala, weight: 5 },
+        { species: Species.RaichuAlola, weight: 4 },
+        { species: Species.Comfey, weight: 5 },
         { species: Species.Tsareena, weight: 4 },
         { species: Species.Vikavolt, weight: 4 },
         { species: Species.FlorgesOrange, weight: 5 },
@@ -101,41 +119,73 @@ export default function registerTropicalSeasonalForestSpawns(): void {
         { species: Species.Tropius, weight: 8 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [],
+      special: [
+        { species: Species.Stakataka, weight: 10 },
+        { species: Species.Blacephalon, weight: 10 },
+        { species: Species.TapuKoko, weight: 10 },
+      ],
     },
     [TimeOfDay.Evening]: {
       base: [{ species: Species.Rowlet, weight: 2 }],
       uncommon: [
+        { species: Species.MeowthAlola, weight: 22 },
+        { species: Species.RattataAlola, weight: 22 },
+        { species: Species.Stufful, weight: 22 },
         { species: Species.Pancham, weight: 24 },
         { species: Species.Exeggcute, weight: 20 },
         { species: Species.Cherubi, weight: 22 },
       ],
       rare: [{ species: Species.Dartrix, weight: 2 }],
       scarce: [
+        { species: Species.PersianAlola, weight: 6 },
+        { species: Species.RaticateAlola, weight: 6 },
+        { species: Species.Bewear, weight: 6 },
         { species: Species.Pangoro, weight: 6 },
         { species: Species.Exeggutor, weight: 10 },
         { species: Species.Cherrim, weight: 6 },
         { species: Species.Lickilicky, weight: 6 },
       ],
-      elusive: [{ species: Species.Decidueye, weight: 2 }],
+      elusive: [
+        { species: Species.Komala, weight: 5 },
+        { species: Species.RaichuAlola, weight: 4 },
+        { species: Species.Decidueye, weight: 2 },
+      ],
       prized: [...UNOWN_SPAWNS],
-      special: [],
+      special: [
+        { species: Species.Stakataka, weight: 10 },
+        { species: Species.Blacephalon, weight: 10 },
+        { species: Species.TapuKoko, weight: 10 },
+      ],
     },
     [TimeOfDay.Night]: {
       base: [{ species: Species.Rowlet, weight: 2 }],
       uncommon: [
+        { species: Species.MeowthAlola, weight: 22 },
+        { species: Species.RattataAlola, weight: 22 },
+        { species: Species.Stufful, weight: 22 },
         { species: Species.Exeggcute, weight: 20 },
         { species: Species.Cherubi, weight: 22 },
       ],
       rare: [{ species: Species.Dartrix, weight: 2 }],
       scarce: [
+        { species: Species.PersianAlola, weight: 6 },
+        { species: Species.RaticateAlola, weight: 6 },
+        { species: Species.Bewear, weight: 6 },
         { species: Species.Exeggutor, weight: 10 },
         { species: Species.Cherrim, weight: 6 },
         { species: Species.Lickilicky, weight: 6 },
       ],
-      elusive: [{ species: Species.Decidueye, weight: 2 }],
+      elusive: [
+        { species: Species.Komala, weight: 5 },
+        { species: Species.RaichuAlola, weight: 4 },
+        { species: Species.Decidueye, weight: 2 },
+      ],
       prized: [...UNOWN_SPAWNS],
-      special: [],
+      special: [
+        { species: Species.Stakataka, weight: 10 },
+        { species: Species.Blacephalon, weight: 10 },
+        { species: Species.TapuKoko, weight: 10 },
+      ],
     },
   });
   registerWaterPool(Biome.TropicalSeasonalForest, {

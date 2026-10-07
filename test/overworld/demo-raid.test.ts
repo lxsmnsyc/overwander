@@ -17,8 +17,8 @@ import { createRaidBattle } from '../../src/overworld/raid-battle';
 import { Species } from '../../src/data/ids/species';
 import Abilities from '../../src/data/ids/abilities';
 import { PERFECT_IVS } from '../../src/data/constants/stats';
-import { getSignatureAbility } from '../../src/data/abilities';
-import { getSpeciesData, isFullyEvolved } from '../../src/data/species';
+import { getSpeciesSignature } from '../../src/data/abilities';
+import { isFullyEvolved } from '../../src/data/species';
 
 // The demo rolls species out of the registry, so the registry has to
 // be filled the way the page fills it
@@ -45,7 +45,7 @@ describe('demo raid', () => {
     // signature rather than a rolled one
     expect(boss.catches[0].abilities).toEqual([
       Abilities.Boss,
-      getSignatureAbility(getSpeciesData(boss.catches[0].species).family),
+      getSpeciesSignature(boss.catches[0].species),
     ]);
 
     // The parties share the other alliance, so the whole lobby is
@@ -68,9 +68,7 @@ describe('demo raid', () => {
         // The page is where the signatures can be watched, so every
         // rolled pokemon is granted its family's instead of rolling
         // one out of its pool
-        expect(rolled.abilities).toEqual([
-          getSignatureAbility(getSpeciesData(rolled.species).family),
-        ]);
+        expect(rolled.abilities).toEqual([getSpeciesSignature(rolled.species)]);
         // At level 70 a pokemon with somewhere left to evolve to is a
         // pokemon that would have got there long ago
         expect(isFullyEvolved(rolled.species)).toBe(true);

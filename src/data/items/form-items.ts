@@ -115,8 +115,7 @@ export const FORM_ITEMS = new Map<Items, Species[]>([
   // is all the mainline means by a Genesect form
   ...GENESECT_DRIVES,
   // The seventeen Memories, each of which already sets a Multi-Attack's
-  // type. Holding one makes a Silvally that type, which is the
-  // mainline's RKS System
+  // type. Holding one sets a Silvally's own, which RKS System answers for
   ...SILVALLY_MEMORIES,
 ]);
 
@@ -227,11 +226,11 @@ export default function registerFormItems(): void {
 
   registerItem(Items.DnaSplicers, {
     name: 'DNA Splicers',
-    description: 'Folds a dragon into a Kyurem, and pulls it back out. Never spent.',
+    description: 'Folds a dragon into a Kyurem, or pulls it back out. Spent on each use.',
     type: ItemTypes.Evolution,
     // Drawn on the key sheet, which is where the collection packed it
     icon: 'key/dna-splicers',
-    flags: ItemFlags.Usable,
+    flags: ItemFlags.Usable | ItemFlags.Consumable,
     buy: 0,
     sell: SPLICERS_PRICE / 2,
   });
@@ -251,11 +250,11 @@ export default function registerFormItems(): void {
   for (const [item, name, icon, into] of PRISMS) {
     registerItem(item, {
       name,
-      description: `Folds ${into} into a Necrozma, and pulls it back out. Never spent.`,
+      description: `Folds ${into} into a Necrozma, or pulls it back out. Spent on each use.`,
       type: ItemTypes.Evolution,
       // Drawn on the key sheet, which is where the collection packed it
       icon: `key/${icon}`,
-      flags: ItemFlags.Usable,
+      flags: ItemFlags.Usable | ItemFlags.Consumable,
       buy: 0,
       sell: SPLICERS_PRICE / 2,
     });

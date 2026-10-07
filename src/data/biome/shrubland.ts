@@ -12,6 +12,7 @@ export default function registerShrublandSpawns(): void {
   registerSpawnPool(Biome.Shrubland, {
     [TimeOfDay.Morning]: {
       base: [
+        { species: Species.GeodudeAlola, weight: 22 },
         { species: Species.FlabebeOrange, weight: 24 },
         { species: Species.Scatterbug, weight: 24 },
         { species: Species.Solosis, weight: 24 },
@@ -35,6 +36,7 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Cottonee, weight: 24 },
       ],
       rare: [
+        { species: Species.GravelerAlola, weight: 8 },
         { species: Species.FloetteOrange, weight: 8 },
         { species: Species.Spewpa, weight: 8 },
         { species: Species.Duosion, weight: 10 },
@@ -59,6 +61,7 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Whimsicott, weight: 7 },
       ],
       elusive: [
+        { species: Species.GolemAlola, weight: 4 },
         { species: Species.Klefki, weight: 5 },
         { species: Species.Furfrou, weight: 5 },
         { species: Species.FlorgesOrange, weight: 5 },
@@ -80,6 +83,7 @@ export default function registerShrublandSpawns(): void {
     },
     [TimeOfDay.Day]: {
       base: [
+        { species: Species.GeodudeAlola, weight: 22 },
         { species: Species.FlabebeOrange, weight: 24 },
         { species: Species.Scatterbug, weight: 24 },
         { species: Species.Fennekin, weight: 2 },
@@ -104,6 +108,7 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Cottonee, weight: 24 },
       ],
       rare: [
+        { species: Species.GravelerAlola, weight: 8 },
         { species: Species.FloetteOrange, weight: 8 },
         { species: Species.Spewpa, weight: 8 },
         { species: Species.Braixen, weight: 2 },
@@ -129,6 +134,7 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Whimsicott, weight: 7 },
       ],
       elusive: [
+        { species: Species.GolemAlola, weight: 4 },
         { species: Species.Klefki, weight: 5 },
         { species: Species.Furfrou, weight: 5 },
         { species: Species.FlorgesOrange, weight: 5 },
@@ -151,6 +157,7 @@ export default function registerShrublandSpawns(): void {
     },
     [TimeOfDay.Evening]: {
       base: [
+        { species: Species.GeodudeAlola, weight: 22 },
         { species: Species.Fennekin, weight: 2 },
         { species: Species.Gothita, weight: 24 },
         { species: Species.Seedot, weight: 20 },
@@ -167,6 +174,7 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Skorupi, weight: 20 },
       ],
       rare: [
+        { species: Species.GravelerAlola, weight: 8 },
         { species: Species.Braixen, weight: 2 },
         { species: Species.Gothorita, weight: 10 },
         { species: Species.Nuzleaf, weight: 10 },
@@ -184,6 +192,7 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Roserade, weight: 6 },
       ],
       elusive: [
+        { species: Species.GolemAlola, weight: 4 },
         { species: Species.Furfrou, weight: 5 },
         { species: Species.Delphox, weight: 2 },
         { species: Species.Gothitelle, weight: 5 },
@@ -200,6 +209,7 @@ export default function registerShrublandSpawns(): void {
     },
     [TimeOfDay.Night]: {
       base: [
+        { species: Species.GeodudeAlola, weight: 22 },
         { species: Species.Gothita, weight: 24 },
         { species: Species.Seedot, weight: 20 },
         { species: Species.Shinx, weight: 25 },
@@ -215,6 +225,7 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Skorupi, weight: 20 },
       ],
       rare: [
+        { species: Species.GravelerAlola, weight: 8 },
         { species: Species.Gothorita, weight: 10 },
         { species: Species.Nuzleaf, weight: 10 },
         { species: Species.Luxio, weight: 5 },
@@ -231,6 +242,7 @@ export default function registerShrublandSpawns(): void {
         { species: Species.Roserade, weight: 6 },
       ],
       elusive: [
+        { species: Species.GolemAlola, weight: 4 },
         { species: Species.Gothitelle, weight: 5 },
         { species: Species.Smeargle, weight: 5 },
         { species: Species.Shiftry, weight: 5 },

@@ -30,13 +30,18 @@ export {
   CONTACT_RECOIL_FRACTION,
   createContactRecoilAbility,
   createFilterAbility,
+  createGooeyAbility,
   createKeenEyeAbility,
   createLimberAbility,
+  createMultiscaleAbility,
+  createQueenlyMajestyAbility,
   createRestageAbility,
   createShellArmorAbility,
   createThickFatAbility,
 } from './guard';
 export { default as createMoldBreakerAbility } from './pierce';
+export { default as createReceiverAbility } from './receive';
+export { RETREAT_THRESHOLD, createRetreatAbility } from './retreat';
 export {
   chipImmunity,
   createCloudNineAbility,

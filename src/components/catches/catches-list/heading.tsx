@@ -1,6 +1,6 @@
 import { type JSX, Match, Show, Switch, createSignal } from 'solid-js';
 import type { BoxLayout } from '../../../auth/boxes';
-import { ActionsIcon } from '../../icons';
+import { ActionsIcon, PlusIcon } from '../../icons';
 import { Badge, Button, Menu, Meta, Row, Select } from '../../styled';
 import BoxForm from './box-form';
 import type { RailBox } from './rail';
@@ -27,12 +27,14 @@ export interface BoxHeadingProps {
   onLayOut: (layout: BoxLayout) => void;
   onEmpty: (to: string | null) => void;
   onDelete: () => void;
-  /** What stands beside the menu: the toggles that change what the box shows */
-  controls?: JSX.Element;
+  /** Whether presses pick, which changes what the line under the name says */
+  selecting: boolean;
+  /** Open the picker that fills this box from every other */
+  onAdd: () => void;
 }
 
 /** What the heading is asking about, if anything, under the name */
-type Asking = 'edit' | 'empty' | 'delete' | null;
+type Asking = 'edit' | 'colour' | 'empty' | 'delete' | null;
 
 /** The destination value for Default, which no box id can be */
 const TO_DEFAULT = '';
@@ -45,15 +47,23 @@ export default function BoxHeading(props: BoxHeadingProps): JSX.Element {
 
   /** What the line under the name says about how full the box is */
   const fill = (): string => {
+    if (props.selecting) {
+      const place = props.id == null ? '' : ' Then press an empty square to put them there.';
+
+      return `Press to pick. Shift-press picks a run, and picks carry across boxes and searches.${place}`;
+    }
     const pokemon = `${props.count} pokemon`;
 
     if (props.id == null) {
       return `${pokemon}. Anything not filed in a box waits here, and new catches land here first.`;
     }
+    if (props.count === 0) {
+      return 'Empty for now';
+    }
     if (gaps() === 0) {
       return `${pokemon}.`;
     }
-    return `${pokemon} over ${props.span} squares, ${gaps()} gap${gaps() === 1 ? '' : 's'} left to fill.`;
+    return `${pokemon} over ${props.span} slots. ${gaps()} gap${gaps() === 1 ? '' : 's'} left to fill.`;
   };
 
   const destinations = (): { value: string; label: string }[] => {
@@ -69,32 +79,49 @@ export default function BoxHeading(props: BoxHeadingProps): JSX.Element {
 
   return (
     <div class="flex flex-col gap-2">
-      <div class="flex items-start justify-between gap-3">
-        <div class="flex min-w-0 flex-col">
-          <div class="flex items-center gap-2">
-            <span class="size-3.5 shrink-0 rounded-sm" style={{ background: props.tone }} />
-            <h3 class="m-0 truncate text-xl font-black">{props.name}</h3>
+      <div class="flex items-end justify-between gap-3">
+        <div class="flex min-w-0 flex-col gap-0.5">
+          <div class="flex items-center gap-2.5">
+            {/* Default is the box everything starts in, and wears no colour of its own */}
+            <Show when={props.id != null}>
+              <span class="size-4 shrink-0 rounded-[5px]" style={{ background: props.tone }} />
+            </Show>
+            <h3 class="m-0 truncate text-2xl font-black">{props.name}</h3>
             <Show when={props.id == null}>
-              <Badge>Built in</Badge>
+              <Badge tone="tide" class="tracking-wide uppercase">
+                Built in
+              </Badge>
             </Show>
           </div>
           <Meta>{fill()}</Meta>
         </div>
         <div class="flex shrink-0 items-center gap-2">
-          {props.controls}
+          <Show when={props.id != null && props.count === 0 && !props.selecting}>
+            <Button tone="accent" disabled={props.busy} onClick={props.onAdd}>
+              <PlusIcon class="size-4" aria-hidden="true" />
+              Add pokemon
+            </Button>
+          </Show>
           <Show when={props.id != null}>
             <Menu
               label={`${props.name} menu`}
               icon={ActionsIcon}
               actions={[
                 {
-                  label: 'Rename or recolour',
+                  label: 'Rename',
                   onSelect: () => {
                     setAsking('edit');
                   },
                 },
                 {
+                  label: 'Change colour',
+                  onSelect: () => {
+                    setAsking('colour');
+                  },
+                },
+                {
                   label: 'Lay out by dex number',
+                  hint: 'Puts each pokemon in the slot of its number',
                   separated: true,
                   disabled: props.busy || props.count === 0,
                   onSelect: () => {
@@ -103,6 +130,7 @@ export default function BoxHeading(props: BoxHeadingProps): JSX.Element {
                 },
                 {
                   label: 'Close up the gaps',
+                  hint: 'Slides everything forward, keeping its order',
                   disabled: props.busy || gaps() === 0,
                   onSelect: () => {
                     props.onLayOut('packed');
@@ -132,9 +160,10 @@ export default function BoxHeading(props: BoxHeadingProps): JSX.Element {
       </div>
 
       <Switch>
-        <Match when={asking() === 'edit'}>
+        <Match when={asking() === 'edit' || asking() === 'colour'}>
           <div class="max-w-sm">
             <BoxForm
+              heading={asking() === 'edit' ? `Rename ${props.name}` : `Colour of ${props.name}`}
               name={props.name}
               colour={props.colour}
               verb="Save"

@@ -14,7 +14,7 @@ interface Fusion {
   husk: Species;
   /** The pokemon kept inside it */
   partner: Species;
-  /** What joins and parts the pair, and is never spent */
+  /** What joins and parts the pair, one spent each time */
   item: Items;
   /**
    * Whether the shape fights with the partner's abilities too. Kyurem's

@@ -1,9 +1,10 @@
-import { For, type JSX, Show, createEffect, createSignal, onCleanup } from 'solid-js';
+import { For, type JSX, Show, createSignal } from 'solid-js';
 import { Portal } from 'solid-js/web';
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions, Transition } from 'terracotta';
 import { FieldFrame } from './form';
 import { SHEER } from './transition';
 import dismissOutside from './dismiss';
+import useDropdown from './dropdown';
 import { usePortalHost } from './portal-host';
 
 /**
@@ -19,6 +20,8 @@ export interface SelectOption<V> {
   value: V;
   label: string;
   disabled?: boolean;
+  /** A colour drawn as a swatch before the label, for choices that are told apart by one */
+  tone?: string;
 }
 
 export interface SelectProps<V> {
@@ -34,6 +37,24 @@ export interface SelectProps<V> {
   required?: boolean;
   disabled?: boolean;
   class?: string;
+  /** Drawn before the label while the chosen option has no swatch of its own */
+  icon?: JSX.Element;
+  /**
+   * Drawn in the accent colour, for a control that decides what the
+   * whole screen under it shows rather than one field of a form
+   */
+  accent?: boolean;
+}
+
+/** The small square of colour an option carries */
+function Swatch(props: { tone: string }): JSX.Element {
+  return (
+    <span
+      aria-hidden="true"
+      class="size-2.5 shrink-0 rounded-[3px]"
+      style={{ background: props.tone }}
+    />
+  );
 }
 
 const BUTTON =
@@ -43,14 +64,11 @@ const BUTTON =
   ' focus-visible:outline-offset-2 focus-visible:outline-tide aria-disabled:cursor-not-allowed' +
   ' aria-disabled:bg-line-soft aria-disabled:text-muted aria-disabled:hover:border-line';
 
-/** How far below its button the list hangs, the same as the combobox's */
-const DROP_GAP = 6;
-
-/** The tallest the list grows before it scrolls, which was `max-h-64` */
-const LIST_HEIGHT = 256;
+/** The accented look, laid over the ordinary one */
+const ACCENT = 'border-tide bg-tide-soft font-black';
 
 const OPTION =
-  'cursor-pointer rounded-lg px-2 py-1 text-sm font-semibold transition-colors' +
+  'flex items-center gap-2 cursor-pointer rounded-lg px-2 py-1 text-sm font-semibold transition-colors' +
   ' hover:bg-tide-soft aria-selected:bg-tide aria-selected:text-on-accent' +
   ' aria-selected:hover:bg-tide-dark aria-disabled:cursor-not-allowed aria-disabled:opacity-50' +
   ' aria-disabled:hover:bg-transparent [&[tc-active]]:bg-tide-soft' +
@@ -64,17 +82,11 @@ export default function Select<V>(props: SelectProps<V>): JSX.Element {
   const [panel, setPanel] = createSignal<HTMLElement>();
   const host = usePortalHost();
   /**
-   * Where the list hangs: under the button, or over it when the window
-   * has no room below, and never taller than the room it has
+   * Where the list hangs, kept on screen as the page moves under it.
+   * Drawn in place, a list near the foot of a dialog was cut off by the
+   * panel and hidden behind its dock
    */
-  const [spot, setSpot] = createSignal<{
-    left: number;
-    width: number;
-    top: number;
-    /** Hung from above the button rather than below it */
-    up?: boolean;
-    room: number;
-  } | null>(null);
+  const floating = useDropdown({ open, placement: 'bottom-start', matchWidth: true });
 
   dismissOutside(
     root,
@@ -85,46 +97,17 @@ export default function Select<V>(props: SelectProps<V>): JSX.Element {
     panel,
   );
 
-  // Placed under the button while it is open, and again whenever the
-  // page moves under it. Drawn in place, a list near the foot of a
-  // dialog was cut off by the panel and hidden behind its dock
-  createEffect(() => {
-    const anchor = root();
-
-    if (!open() || anchor == null) {
-      return;
-    }
-
-    const put = (): void => {
-      const rect = anchor.getBoundingClientRect();
-      const below = window.innerHeight - rect.bottom - DROP_GAP * 2;
-      const above = rect.top - DROP_GAP * 2;
-
-      setSpot(
-        below >= LIST_HEIGHT || below >= above
-          ? { left: rect.left, width: rect.width, top: rect.bottom + DROP_GAP, room: below }
-          : { left: rect.left, width: rect.width, top: rect.top - DROP_GAP, room: above, up: true },
-      );
-    };
-
-    put();
-    // Captured, so a scroll inside a dialog counts as well as the window's own
-    window.addEventListener('scroll', put, true);
-    window.addEventListener('resize', put);
-    onCleanup(() => {
-      window.removeEventListener('scroll', put, true);
-      window.removeEventListener('resize', put);
-    });
-  });
-  /** The name of what is chosen, or the placeholder standing in for it */
-  const showing = (): string => {
+  /** What is chosen, if anything is */
+  const chosen = (): SelectOption<V> | undefined => {
     for (const option of props.options) {
       if (option.value === props.value) {
-        return option.label;
+        return option;
       }
     }
-    return props.placeholder ?? 'Choose…';
+    return undefined;
   };
+  /** The name of what is chosen, or the placeholder standing in for it */
+  const showing = (): string => chosen()?.label ?? props.placeholder ?? 'Choose…';
 
   return (
     <FieldFrame
@@ -138,6 +121,7 @@ export default function Select<V>(props: SelectProps<V>): JSX.Element {
         <Listbox
           ref={(element: HTMLElement) => {
             setRoot(element);
+            floating.refs.setReference(element);
           }}
           isOpen={open()}
           onDisclosureChange={(state) => {
@@ -161,47 +145,52 @@ export default function Select<V>(props: SelectProps<V>): JSX.Element {
             aria-describedby={parts.describedBy}
             aria-invalid={props.error == null ? undefined : true}
             aria-required={props.required}
-            class={`${BUTTON} ${props.error == null ? '' : 'border-ember'} ${
-              props.value == null ? 'text-muted' : ''
-            }`}
+            class={`${BUTTON} ${props.accent === true ? ACCENT : ''} ${
+              props.error == null ? '' : 'border-ember'
+            } ${props.value == null ? 'text-muted' : ''}`}
           >
-            {showing()}
+            <span class="flex min-w-0 items-center gap-2">
+              <Show when={chosen()?.tone} fallback={props.icon}>
+                {(tone) => <Swatch tone={tone()} />}
+              </Show>
+              <span class="truncate">{showing()}</span>
+            </span>
             <span aria-hidden="true">▾</span>
           </ListboxButton>
           <Portal mount={host()}>
-            <Transition
-              ref={(element: HTMLElement) => {
+            {/* Placed by the outer box and faded by the inner one, so the
+                fade never fights the placement over the transform */}
+            <div
+              ref={(element) => {
                 setPanel(element);
+                floating.refs.setFloating(element);
               }}
-              show={open()}
-              {...SHEER}
-              class="fixed z-40"
+              class="z-40 flex"
               style={{
-                left: `${spot()?.left ?? 0}px`,
-                top: `${spot()?.top ?? 0}px`,
-                width: `${spot()?.width ?? 0}px`,
-                // Its own height up from the top of the button, whatever that height is
-                transform: spot()?.up === true ? 'translateY(-100%)' : undefined,
+                ...floating.floatingStyles,
+                visibility: floating.isPositioned ? 'visible' : 'hidden',
               }}
             >
-              <ListboxOptions
-                unmount={false}
-                style={{ 'max-height': `${Math.min(LIST_HEIGHT, spot()?.room ?? LIST_HEIGHT)}px` }}
-                class="flex w-full list-none flex-col gap-0.5 overflow-y-auto rounded-xl border-2
-                border-line bg-paper p-1 shadow-float"
-              >
-                <For each={props.options}>
-                  {(option) => (
-                    <ListboxOption class={OPTION} value={option.value} disabled={option.disabled}>
-                      {option.label}
-                    </ListboxOption>
-                  )}
-                </For>
-                <Show when={props.options.length === 0}>
-                  <li class="px-2 py-1 text-sm text-muted">Nothing to choose from.</li>
-                </Show>
-              </ListboxOptions>
-            </Transition>
+              <Transition show={open()} {...SHEER} class="flex w-full">
+                <ListboxOptions
+                  unmount={false}
+                  class="flex max-h-[min(16rem,var(--drop-room,16rem))] w-full list-none flex-col
+                gap-0.5 overflow-y-auto rounded-xl border-2 border-line bg-paper p-1 shadow-float"
+                >
+                  <For each={props.options}>
+                    {(option) => (
+                      <ListboxOption class={OPTION} value={option.value} disabled={option.disabled}>
+                        <Show when={option.tone}>{(tone) => <Swatch tone={tone()} />}</Show>
+                        {option.label}
+                      </ListboxOption>
+                    )}
+                  </For>
+                  <Show when={props.options.length === 0}>
+                    <li class="px-2 py-1 text-sm text-muted">Nothing to choose from.</li>
+                  </Show>
+                </ListboxOptions>
+              </Transition>
+            </div>
           </Portal>
         </Listbox>
       )}

@@ -1,7 +1,7 @@
 import { Stats } from '../../constants/stats';
 import { Types } from '../../constants/types';
 import Abilities from '../../ids/abilities';
-import { TimeOfDay } from '../../ids/biome';
+import Biome, { TimeOfDay } from '../../ids/biome';
 import EggGroups from '../../ids/egg-groups';
 import Families from '../../ids/families';
 import { Items } from '../../ids/items';
@@ -77,10 +77,11 @@ const FAMILY_LEVEL = {
 };
 
 /**
- * The perfume bird and the fragrance it becomes. Nothing is staged
- * yet: Aromatisse has only two of its animations drawn, so the line
- * waits for the rest
+ * The perfume bird and the fragrance it becomes, met where flowers
+ * grow under trees: the woodland and forest counterpart of Swirlix,
+ * which keeps to the open grass
  */
+const FAMILY_BIOMES = [Biome.Woodland, Biome.TemperateForest];
 export default function registerSpritzeeSpecies(): void {
   registerSpecies(Species.Spritzee, {
     dexNumber: 682,
@@ -110,7 +111,7 @@ export default function registerSpritzeeSpecies(): void {
     eggGroups: [EggGroups.Fairy],
     genderRatio: [1, 1],
     catchRate: 200,
-    biomes: [],
+    biomes: [...FAMILY_BIOMES],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {
@@ -157,7 +158,7 @@ export default function registerSpritzeeSpecies(): void {
     eggGroups: [EggGroups.Fairy],
     genderRatio: [1, 1],
     catchRate: 140,
-    biomes: [],
+    biomes: [...FAMILY_BIOMES],
     activeTimes: TimeOfDay.Morning | TimeOfDay.Day,
     learnSet: {
       level: {

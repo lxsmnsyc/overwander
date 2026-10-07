@@ -52,7 +52,7 @@ export const BOX_COLOURS: readonly { name: string; tone: string }[] = [
 ];
 
 /** The tone Default is drawn in */
-export const DEFAULT_BOX_TONE = '#1f2a44';
+export const DEFAULT_BOX_TONE = '#2a75bb';
 
 /** A stored colour as something to paint, falling back to the first for one this build lacks */
 export function boxTone(colour: number): string {

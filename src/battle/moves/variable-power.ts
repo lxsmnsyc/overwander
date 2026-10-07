@@ -173,6 +173,9 @@ function weightPower(source: Unit, target: Unit): number {
   return bandPower(WEIGHT_BANDS, source.checkWeight() / Math.max(0.1, target.checkWeight()));
 }
 
+/** The roll an AI estimate takes in place of a draw: the middle of the range */
+const ESTIMATED_ROLL = 0.5;
+
 /**
  * What each of them comes to. A table rather than a switch, so the
  * list of moves that work their power out is one place
@@ -232,8 +235,10 @@ export default function setupVariablePowerMoves(battle: Battle): void {
   battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Exact, (event) => {
     const worked = VARIABLE_POWER[event.move];
 
+    // The AI takes the middle of the range rather than a draw, so how
+    // much it weighs does not move the fight's random stream
     if (worked != null) {
-      event.power = worked(event.source, battle.random());
+      event.power = worked(event.source, battle.estimating ? ESTIMATED_ROLL : battle.random());
       return;
     }
 

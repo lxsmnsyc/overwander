@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 import { Stages, Stats, StatsKind } from '../../../../src/data/constants/stats';
 import { Types } from '../../../../src/data/constants/types';
 import Abilities from '../../../../src/data/ids/abilities';
-import { MoveCategories, Moves } from '../../../../src/data/ids/moves';
+import { MoveAttackFlags, MoveCategories, Moves } from '../../../../src/data/ids/moves';
 import { Items } from '../../../../src/data/ids/items';
 import { Genders, Species } from '../../../../src/data/ids/species';
 import { Statuses, TeamStatuses, Weathers } from '../../../../src/data/ids/status';
@@ -1453,6 +1453,31 @@ describe('what the dragon tower holds', () => {
 
     hydreigon.attack(bitten, Moves.DragonPulse, 40, Types.Dragon, MoveCategories.Special, 0);
     expect(other.health).toBe(alone);
+  });
+
+  it('leaves the AI weighing a move without biting anyone', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const hydreigon = createUnit(battle, teamA);
+    const bitten = createUnit(battle, teamB);
+    const other = createUnit(battle, teamB);
+
+    pinRandom(battle, 0);
+    hydreigon.addAbility(Abilities.ThreeHeads);
+    hydreigon.enter();
+    bitten.enter();
+    other.enter();
+
+    const side = other.health;
+
+    hydreigon.attack(
+      bitten,
+      Moves.DragonPulse,
+      40,
+      Types.Dragon,
+      MoveCategories.Special,
+      MoveAttackFlags.Simulated,
+    );
+    expect(other.health).toBe(side);
   });
 });
 

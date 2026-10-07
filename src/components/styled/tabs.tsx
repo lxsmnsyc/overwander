@@ -1,12 +1,4 @@
-import {
-  type JSX,
-  type ParentProps,
-  Suspense,
-  createContext,
-  createSignal,
-  onCleanup,
-  useContext,
-} from 'solid-js';
+import { type JSX, type ParentProps, Suspense } from 'solid-js';
 import { TabGroup as HeadlessTabGroup, Tab, TabList, TabPanel } from 'terracotta';
 import { Note } from './feedback';
 
@@ -38,59 +30,17 @@ export interface TabGroupProps extends ParentProps {
   class?: string;
 }
 
-/** What a closing panel tells its group, so the group can hold its place */
-interface TabGuard {
-  closing: () => void;
-}
-
-const TabGuardContext = createContext<TabGuard>();
-
 export function TabGroup(props: TabGroupProps): JSX.Element {
-  // Held here even when the caller does not hold it, so every change
-  // goes through the one gate below
-  const [own, setOwn] = createSignal(props.defaultValue ?? 0);
-  let closing = false;
+  const change = props.onChange;
 
-  /**
-   * A panel being closed can hand focus back to a tab. Its listboxes
-   * and popovers return focus on cleanup to whatever had it when they
-   * were built, which is often the tab that opened the panel, and a
-   * tab that gains focus selects itself: pressing another tab would
-   * bounce straight back. So the group ignores changes while a panel
-   * closes, then puts focus back on the tab that was pressed.
-   * Reported as https://github.com/lxsmnsyc/terracotta/issues/47
-   */
-  const guard: TabGuard = {
-    closing() {
-      if (closing) {
-        return;
-      }
-      closing = true;
-
-      const pressed = document.activeElement;
-
-      queueMicrotask(() => {
-        if (pressed instanceof HTMLElement && pressed.isConnected) {
-          pressed.focus();
-        }
-        closing = false;
-      });
-    },
-  };
-
-  return (
-    <TabGuardContext.Provider value={guard}>
+  if (change != null) {
+    return (
       <HeadlessTabGroup
         horizontal={props.horizontal === true}
-        value={props.onChange == null ? own() : props.value}
+        value={props.value}
         onChange={(value?: number) => {
-          if (value == null || closing) {
-            return;
-          }
-          if (props.onChange == null) {
-            setOwn(value);
-          } else {
-            props.onChange(value);
+          if (value != null) {
+            change(value);
           }
         }}
         toggleable={false}
@@ -98,21 +48,18 @@ export function TabGroup(props: TabGroupProps): JSX.Element {
       >
         {props.children}
       </HeadlessTabGroup>
-    </TabGuardContext.Provider>
+    );
+  }
+  return (
+    <HeadlessTabGroup
+      horizontal={props.horizontal === true}
+      defaultValue={props.defaultValue}
+      toggleable={false}
+      class={props.class}
+    >
+      {props.children}
+    </HeadlessTabGroup>
   );
-}
-
-/**
- * Tells the group its panel is closing. It is the panel's last child,
- * so it is cleaned up before anything in the panel can move focus
- */
-function ClosingMark(): JSX.Element {
-  const guard = useContext(TabGuardContext);
-
-  onCleanup(() => {
-    guard?.closing();
-  });
-  return null;
 }
 
 /**
@@ -187,7 +134,6 @@ export function TabPane(props: ParentProps<{ value: number }>): JSX.Element {
   return (
     <TabPanel value={props.value}>
       <Suspense fallback={<Note>Loading…</Note>}>{props.children}</Suspense>
-      <ClosingMark />
     </TabPanel>
   );
 }

@@ -8,9 +8,11 @@ import type { Items } from '../data/ids/items';
 import type Lairs from '../data/overworld/lair';
 import { getLairTitle } from '../data/overworld/lair';
 import type { Species } from '../data/ids/species';
+import { getSpeciesData } from '../data/species/__create';
 import type Chunk from '../overworld/chunk';
 import { WORLD_GENERATION } from '../overworld/current';
 import { Generation } from '../overworld/world';
+import type ChunkSnapshot from '../overworld/chunk-snapshot';
 import type { Spawn } from '../overworld/chunk-snapshot';
 import { asNumber, asRecord, asString, asStringArray } from './__normalize';
 import { toZoneKey } from './local-time';
@@ -49,6 +51,12 @@ export const enum RaidKind {
    * outcome
    */
   Mythical = 2,
+  /**
+   * A Totem standing in a lair this window instead of its legendary
+   * or its shadow: a final stage of a line the tile's biome spawns,
+   * oversized and wrapped in an aura
+   */
+  Totem = 3,
 }
 
 /**
@@ -184,7 +192,23 @@ export interface RaidView {
  * two of the same word for different things
  */
 export function getRaidTitle(raid: RaidRecord): string {
+  if (raid.kind === RaidKind.Totem) {
+    return getTotemTitle(raid.species);
+  }
   return getLairTitle(raid.lair, raid.biome, raid.kind === RaidKind.Shadow);
+}
+
+/** What the lair at this cell stages this window: a Totem, a shadow, or its legendary */
+export function getLairKind(snapshot: ChunkSnapshot, cell: number): RaidKind {
+  if (snapshot.isTotemLair(cell)) {
+    return RaidKind.Totem;
+  }
+  return snapshot.isShadowLair(cell) ? RaidKind.Shadow : RaidKind.Legendary;
+}
+
+/** What a Totem's lobby is called: the Totem itself, since it stands in no lair of its own */
+export function getTotemTitle(species: Species): string {
+  return `Totem ${getSpeciesData(species).name}`;
 }
 
 /**
@@ -219,6 +243,14 @@ function generationTag(): string {
   return WORLD_GENERATION === Generation.First ? '' : `#${WORLD_GENERATION}`;
 }
 
+/** What names each kind in a lobby id. A mythical's lobby is minted elsewhere, so it shares the legendary's */
+const RAID_ID_TAGS: Record<RaidKind, string> = {
+  [RaidKind.Legendary]: 'raid',
+  [RaidKind.Shadow]: 'shadow',
+  [RaidKind.Mythical]: 'raid',
+  [RaidKind.Totem]: 'totem',
+};
+
 /**
  * The lobby id of a raid landmark in a given raid window. The kind is
  * part of it, so the two landmark types never collide on a cell
@@ -230,7 +262,7 @@ export function raidId(
   kind: RaidKind = RaidKind.Legendary,
   offset = 0,
 ): string {
-  const tag = kind === RaidKind.Shadow ? 'shadow' : 'raid';
+  const tag = RAID_ID_TAGS[kind];
 
   // The zone is part of the id because the window is local: two zones
   // can floor to the same window, and what they stage there is not the

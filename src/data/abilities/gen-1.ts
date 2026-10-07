@@ -682,6 +682,11 @@ export default function registerGen1Abilities(): void {
     name: 'Shadow',
     description: '1.25x Attack and Special Attack, 0.75x Defense and Special Defense.',
   });
+  registerAbility(Abilities.Totem, {
+    name: 'Totem',
+    description:
+      'Starts the fight with its aura raising its stats, and calls one of its own line to its side at 1/2 HP. Its ally flees when it falls.',
+  });
   registerAbility(Abilities.Purified, {
     name: 'Purified',
     description:

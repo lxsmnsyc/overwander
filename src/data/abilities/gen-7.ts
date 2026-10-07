@@ -33,6 +33,11 @@ export default function registerGen7Abilities(): void {
     name: 'Prism Armor',
     description: 'Super-effective blows on it hit 1/4 softer, even through Mold Breaker.',
   });
+  // Magearna
+  registerAbility(Abilities.SoulHeart, {
+    name: 'Soul-Heart',
+    description: '+1 Special Attack whenever any other pokemon on the field faints.',
+  });
   // The Ultra Beasts
   registerAbility(Abilities.BeastBoost, {
     name: 'Beast Boost',
@@ -57,6 +62,12 @@ export default function registerGen7Abilities(): void {
     name: 'Stakeout',
     description:
       'Its moves hit 2x against an enemy that has not acted since it came onto the field.',
+  });
+  // Greninja
+  registerAbility(Abilities.BattleBond, {
+    name: 'Battle Bond',
+    description:
+      'The first time its move knocks out an enemy, it becomes Ash-Greninja for the rest of the fight, and its Water Shuriken always strikes 3 times at 20 power.',
   });
   // Wishiwashi
   registerAbility(Abilities.Schooling, {

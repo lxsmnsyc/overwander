@@ -118,6 +118,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Mesprit, weight: 10 },
       ],
       mythical: [
+        { species: Species.Zeraora, weight: 10 },
         { species: Species.Celebi, weight: 10 },
         { species: Species.PichuSpikyEared, weight: 10 },
       ],
@@ -233,6 +234,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Mesprit, weight: 10 },
       ],
       mythical: [
+        { species: Species.Zeraora, weight: 10 },
         { species: Species.Celebi, weight: 10 },
         { species: Species.PichuSpikyEared, weight: 10 },
       ],
@@ -318,6 +320,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Mesprit, weight: 10 },
       ],
       mythical: [
+        { species: Species.Zeraora, weight: 10 },
         { species: Species.Celebi, weight: 10 },
         { species: Species.PichuSpikyEared, weight: 10 },
       ],
@@ -405,6 +408,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Mesprit, weight: 10 },
       ],
       mythical: [
+        { species: Species.Zeraora, weight: 10 },
         { species: Species.Celebi, weight: 10 },
         { species: Species.PichuSpikyEared, weight: 10 },
       ],

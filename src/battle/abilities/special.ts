@@ -20,7 +20,9 @@ import {
 import { ABILITY_MOVES } from '../moves/ability-moves';
 import { STAGE_SWAP_MOVES } from '../moves/stage-swaps';
 import { FORCED_SWITCH_MOVES } from '../moves/switch-out';
+import type Team from '../team';
 import type Unit from '../unit';
+import { getTotemAura } from '../../data/overworld/totems';
 import { MergedLifecycle } from '../lifecycle';
 import { createAbility } from './__create';
 
@@ -557,7 +559,86 @@ const setupAbilities = [
       }
     }),
   ),
+
+  /**
+   * Totem: the aura it starts the fight in, and the one ally of its
+   * own line it calls at half HP. The ally is built with the fight and
+   * held off the field until then, so it can neither be hit early nor
+   * keep the boss side standing; once the Totem falls, it flees
+   */
+  createAbility(Abilities.Totem, (battle) => {
+    const auraed = new Set<Unit>();
+    /** Each Totem's ally once called, so its fall can send it off */
+    const called = new Map<Unit, Unit>();
+
+    return new MergedLifecycle([
+      battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+        const totem = event.source;
+
+        if (!totem.hasAbility(Abilities.Totem) || auraed.has(totem)) {
+          return;
+        }
+        auraed.add(totem);
+        totem.triggerAbility(Abilities.Totem);
+
+        const cause = { type: EffectType.Ability, ability: Abilities.Totem, unit: totem } as const;
+
+        for (const [stage, raised] of Object.entries(getTotemAura(totem.species))) {
+          totem.addStage(Number(stage), raised, cause);
+        }
+      }),
+      battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+        const totem = event.target;
+
+        if (
+          !totem.alive ||
+          called.has(totem) ||
+          !totem.hasAbility(Abilities.Totem) ||
+          totem.health > totem.checkStat(Stats.HP, 0) / 2
+        ) {
+          return;
+        }
+
+        const ally = takeTotemAlly(totem.team);
+
+        if (ally == null) {
+          return;
+        }
+        called.set(totem, ally);
+        totem.triggerAbility(Abilities.Totem);
+        totem.team.addUnit(ally);
+        ally.enter();
+      }),
+      battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
+        const ally = called.get(event.source);
+
+        if (ally == null || !ally.team.units.has(ally)) {
+          return;
+        }
+        if (ally.alive) {
+          ally.leave();
+        }
+        ally.team.removeUnit(ally);
+      }),
+    ]);
+  }),
 ];
+
+/** The allies waiting to be called, by the boss team that holds them */
+const waitingAllies = new WeakMap<Team, Unit[]>();
+
+/**
+ * Keep a Totem's ally ready but off the field. The battle builder
+ * hands it over as it fields the boss side, and the Totem takes it
+ * when it calls
+ */
+export function holdTotemAlly(team: Team, ally: Unit): void {
+  waitingAllies.set(team, [...(waitingAllies.get(team) ?? []), ally]);
+}
+
+function takeTotemAlly(team: Team): Unit | undefined {
+  return waitingAllies.get(team)?.shift();
+}
 
 export default function setupSpecialAbilities(battle: Battle): void {
   // Always active: special-tier abilities cannot be switched off

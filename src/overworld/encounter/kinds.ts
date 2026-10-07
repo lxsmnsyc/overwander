@@ -41,6 +41,12 @@ export const enum EncounterType {
    * lived in for a very long time
    */
   Revived = 7,
+  /**
+   * Fought and caught in a Totem raid: a final stage at Totem size,
+   * with the one ability and the three perfect stats a Totem-sized
+   * pokemon comes with
+   */
+  TotemRaid = 8,
 }
 
 /**
@@ -66,7 +72,8 @@ export function isRaidEncounter(type: EncounterType): boolean {
   return (
     type === EncounterType.LegendaryRaid ||
     type === EncounterType.ShadowRaid ||
-    type === EncounterType.MythicalRaid
+    type === EncounterType.MythicalRaid ||
+    type === EncounterType.TotemRaid
   );
 }
 
@@ -82,6 +89,7 @@ export function isShadowableEncounter(type: EncounterType): boolean {
   return (
     type === EncounterType.Wild ||
     type === EncounterType.LegendaryRaid ||
+    type === EncounterType.TotemRaid ||
     type === EncounterType.Hatched ||
     type === EncounterType.Revived
   );
@@ -108,4 +116,5 @@ export const ENCOUNTER_TYPE_NAMES: Record<EncounterType, string> = {
   [EncounterType.ShadowRaid]: 'Shadow Raid',
   [EncounterType.MythicalRaid]: 'Mythical Raid',
   [EncounterType.Revived]: 'Revived from a fossil',
+  [EncounterType.TotemRaid]: 'Totem Raid',
 };

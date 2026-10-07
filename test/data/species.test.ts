@@ -56,6 +56,7 @@ import {
   KYUREM_FORMS,
   LANDORUS_FORMS,
   LYCANROC_FORMS,
+  MAGEARNA_FORMS,
   MELOETTA_FORMS,
   MEOWSTIC_FORMS,
   MIMIKYU_FORMS,
@@ -466,6 +467,7 @@ describe('species forms', () => {
       ...MINIOR_FORMS.slice(1),
       ...SILVALLY_FORMS.slice(1),
       ...NECROZMA_FORMS.slice(1),
+      ...MAGEARNA_FORMS.slice(1),
       ...MIMIKYU_FORMS.slice(1),
       ...ALOLAN_FORMS,
       // The true shadows, which are forms of the birds they are the
@@ -473,6 +475,7 @@ describe('species forms', () => {
       ...listTrueShadows(),
       ...listMegas(),
       Species.KyogrePrimal,
+      Species.GreninjaAsh,
       Species.GroudonPrimal,
     ]);
 

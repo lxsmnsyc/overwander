@@ -1,7 +1,7 @@
 import type { MoveTarget } from '../../../battle/events';
 import type Unit from '../../../battle/unit';
 import type { FieldVisual } from '../../../canvas/battle/moves/__painted';
-import { type SpriteShim, shimFor } from '../../../canvas/battle/sprite-shim';
+import { standInFor } from '../../../canvas/battle/stand-in';
 import type SpeciesSpriteAnimation from '../../../canvas/species-sprite-animation';
 import { isLoopingCast, pickCast } from '../../../data/constants/cast';
 import pickStatusCast from '../../../data/constants/status-cast';
@@ -90,11 +90,6 @@ export interface Performance {
    */
   duration: number | null;
   loop: boolean;
-  /**
-   * The movement standing in for a clip this sheet has not got, or
-   * nothing where it has the one it was asked for
-   */
-  shim: SpriteShim | null;
   /** Whether the clip is held on one frame rather than played */
   still: boolean;
 }
@@ -111,16 +106,15 @@ function performed(
   duration: number | null,
   loop: boolean,
 ): Performance {
-  const shimmed = shimFor(wanted, (name) => sprite.has(name));
+  const standIn = standInFor(wanted, (name) => sprite.has(name));
 
   return {
-    animation: shimmed.animation,
+    animation: standIn.animation,
     // Stretching only means anything for the clip that was asked for:
     // a stand-in is a loop at its own speed
-    duration: shimmed.animation === wanted ? duration : null,
-    loop: shimmed.animation === wanted ? loop : true,
-    shim: shimmed.shim,
-    still: shimmed.still,
+    duration: standIn.animation === wanted ? duration : null,
+    loop: standIn.animation === wanted ? loop : true,
+    still: standIn.still,
   };
 }
 

@@ -30,7 +30,7 @@ Meteorite:
   description: Rearranges the Deoxys it is used on into another of its shapes. Spent on each change.
 DnaSplicers:
   name: DNA Splicers
-  description: Folds a dragon into a Kyurem, and pulls it back out. Never spent.
+  description: Folds a dragon into a Kyurem, or pulls it back out. Spent on each use.
 RedNectar:
   name: Red Nectar
   description: Dances the Oricorio it is used on into its Baile Style. Spent on each change.
@@ -45,7 +45,7 @@ PurpleNectar:
   description: Dances the Oricorio it is used on into its Sensu Style. Spent on each change.
 NSolarizer:
   name: N-Solarizer
-  description: Folds a Solgaleo into a Necrozma, and pulls it back out. Never spent.
+  description: Folds a Solgaleo into a Necrozma, or pulls it back out. Spent on each use.
 NLunarizer:
   name: N-Lunarizer
-  description: Folds a Lunala into a Necrozma, and pulls it back out. Never spent.
+  description: Folds a Lunala into a Necrozma, or pulls it back out. Spent on each use.

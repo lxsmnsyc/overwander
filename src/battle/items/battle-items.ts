@@ -123,6 +123,13 @@ const setupGuardSpec = createHeldItem(Items.GuardSpec, (battle) => {
     ) {
       return;
     }
+    // A guess sees the drop refused, and only a real one spends it
+    if (event.simulated || battle.estimating) {
+      if (event.source.checkCanConsumeItem(Items.GuardSpec)) {
+        event.success = false;
+      }
+      return;
+    }
     if (spendItem(event.source, Items.GuardSpec)) {
       event.success = false;
     }

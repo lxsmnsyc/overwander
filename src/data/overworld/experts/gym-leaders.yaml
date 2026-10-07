@@ -228,25 +228,22 @@ Volkner:
 # Striaton's three, one gym and three fights
 # One gym, three people, one badge between them, whichever of the three
 # fights a challenger
-# Striaton's three each close with an elemental monkey, and those three
-# lines are written but staged nowhere while Simisear and Simipour are
-# undrawn. A leader may not field what nobody can meet, so each stands
-# with another of their own fight until then
+# Striaton's three each close with their elemental monkey
 Cilan:
   type: Grass
   badge: TrioBadge
   sheets: [characters/b2w2/cilan]
-  signature: Lilligant
+  signature: Simisage
 Chili:
   type: Fire
   badge: TrioBadge
   sheets: [characters/b2w2/chili]
-  signature: Emboar
+  signature: Simisear
 Cress:
   type: Water
   badge: TrioBadge
   sheets: [characters/b2w2/cress]
-  signature: Seismitoad
+  signature: Simipour
 # Lenora and Elesa are each drawn twice, once for Black and White and once
 # for the sequels, and both looks are the same era
 Lenora:
@@ -305,13 +302,11 @@ Roxie:
   badge: ToxicBadge
   sheets: [characters/b2w2/roxie]
   signature: Garbodor
-# The Jellicent he closes with is unwritten, and the Wailord is his in the
-# same team
 Marlon:
   type: Water
   badge: WaveBadge
   sheets: [characters/b2w2/marlon]
-  signature: Wailord
+  signature: Jellicent
 
 # Kalos
 

@@ -5,16 +5,18 @@ import type Families from '../../../data/ids/families';
 import { getFamilyName, getSpeciesData } from '../../../data/species';
 import CandySprite from '../../sprites/CandySprite';
 import type { CatchOption } from '../catch-picker';
-import { Badge, Button, Menu, type MenuAction, Meta, Row } from '../../styled';
+import { BoxIcon } from '../../icons';
+import { Badge, Button, Menu, type MenuAction, Meta } from '../../styled';
 import type { RailBox } from './rail';
 
 /**
  * What to do with a handful of pokemon at once.
  *
- * The bar under the box, drawn only while something is picked. It is
- * three buttons rather than six: whether a press marks or unmarks is
- * read off what is picked, since a player who has selected six
- * favorites means to unfavorite them.
+ * The green strip under the heading while picking: how many are
+ * picked, then where to move them, the two marks, letting them go and
+ * clearing the lot. Whether a press marks or unmarks is read off what
+ * is picked, since a player who has selected six favorites means to
+ * unfavorite them.
  */
 
 export interface CatchActionsProps {
@@ -30,8 +32,6 @@ export interface CatchActionsProps {
   onMoveToNew: () => void;
   /** While a round trip is in the air, so nothing is asked for twice */
   busy?: boolean;
-  /** Drawn last on the row of buttons: the dialog's way out */
-  trailing?: JSX.Element;
 }
 
 /**
@@ -144,7 +144,9 @@ export default function CatchActions(props: CatchActionsProps): JSX.Element {
         }
       }
       actions.push({
-        label: already ? `${box.name} (here now)` : box.name,
+        label: box.name,
+        swatch: box.tone,
+        note: already ? 'here now' : String(box.count),
         disabled: already,
         onSelect: () => {
           props.onMove(box.id);
@@ -152,7 +154,7 @@ export default function CatchActions(props: CatchActionsProps): JSX.Element {
       });
     }
     actions.push({
-      label: `New box with these ${count()}`,
+      label: `＋ New box with these ${count()}`,
       separated: true,
       onSelect: props.onMoveToNew,
     });
@@ -169,10 +171,77 @@ export default function CatchActions(props: CatchActionsProps): JSX.Element {
   };
 
   return (
-    <div class="flex w-full min-w-0 flex-col items-center gap-1">
-      {/* The price sits over the buttons, read before the second press */}
+    <div
+      class="flex w-full min-w-0 flex-col gap-1.5 rounded-xl border-2 border-leaf/40 bg-leaf-soft
+        px-3 py-2"
+    >
+      {/* Wraps on a phone rather than scrolling an action off the end */}
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <span class="text-base font-black text-leaf-dark tabular-nums">{count()} selected</span>
+        <div class="flex flex-wrap items-center justify-end gap-2">
+          <Show when={count() > 0 && props.busy !== true}>
+            <Menu
+              label={`Move ${count()} to`}
+              tone="accent"
+              sheet
+              heading={`Move ${count()} to`}
+              face={
+                <span class="inline-flex items-center gap-1.5">
+                  <BoxIcon class="size-4" aria-hidden="true" />
+                  Move {count()} to
+                </span>
+              }
+              actions={destinations()}
+            />
+          </Show>
+          <Button
+            disabled={props.busy === true || count() === 0}
+            onClick={() => {
+              props.onFavorite(favoriting());
+            }}
+          >
+            {favoriting() ? 'Favorite' : 'Unfavorite'} {count()}
+          </Button>
+          <Button
+            disabled={props.busy === true || count() === 0}
+            onClick={() => {
+              props.onGuard(guarding());
+            }}
+          >
+            {guarding() ? 'Lock' : 'Unlock'} {count()}
+          </Button>
+          {/* Two presses, the way the sheet asks: the second says what
+              it is doing and what it pays */}
+          <Button
+            tone={releasing() ? 'danger' : 'caution'}
+            disabled={props.busy === true || going().length === 0}
+            onClick={release}
+          >
+            {releasing() ? `Let ${going().length} go?` : `Release ${going().length}`}
+          </Button>
+          <Show
+            when={releasing()}
+            fallback={
+              <Button tone="quiet" disabled={count() === 0} onClick={props.onClear}>
+                Clear
+              </Button>
+            }
+          >
+            <Button
+              tone="quiet"
+              onClick={() => {
+                setReleasing(false);
+              }}
+            >
+              Keep them
+            </Button>
+          </Show>
+        </div>
+      </div>
+
+      {/* The price, read before the second press */}
       <Show when={releasing() && going().length > 0}>
-        <Row class="justify-center">
+        <div class="flex flex-wrap items-center justify-end gap-2">
           <For each={candyPiles(going())}>
             {([family, paid]) => (
               <Badge tone="gold">
@@ -181,74 +250,24 @@ export default function CatchActions(props: CatchActionsProps): JSX.Element {
               </Badge>
             )}
           </For>
-        </Row>
-        {/* The half a player forgets: a released pokemon hands back
-            whatever it was carrying, and there is no undoing either */}
-        <Show when={holding(going()) > 0}>
-          <Meta>
-            {holding(going())} held item{holding(going()) === 1 ? '' : 's'} come
-            {holding(going()) === 1 ? 's' : ''} back to the bag.
-          </Meta>
-        </Show>
+          {/* The half a player forgets: a released pokemon hands back
+              whatever it was carrying, and there is no undoing either */}
+          <Show when={holding(going()) > 0}>
+            <Meta>
+              {holding(going())} held item{holding(going()) === 1 ? '' : 's'} come
+              {holding(going()) === 1 ? 's' : ''} back to the bag.
+            </Meta>
+          </Show>
+        </div>
       </Show>
 
       {/* Which of the picked ones Release will step over, and why. The
-          other two buttons take them all, so this is about Release
-          alone */}
+          other buttons take them all, so this is about Release alone */}
       <Show when={tally(props.chosen) !== ''}>
-        <Meta>
+        <Meta class="text-right">
           {count() - going().length} of these cannot be released: {tally(props.chosen)}
         </Meta>
       </Show>
-      {/* Wraps on a phone, so the way out is never scrolled off the end */}
-      <Row class="justify-center sm:flex-nowrap">
-        <Meta class="shrink-0 basis-full text-center tabular-nums sm:basis-auto">
-          {count()} selected
-        </Meta>
-        <Show when={count() > 0 && props.busy !== true}>
-          <Menu label={`Move ${count()} to`} actions={destinations()} />
-        </Show>
-        <Button
-          disabled={props.busy === true || count() === 0}
-          onClick={() => {
-            props.onFavorite(favoriting());
-          }}
-        >
-          {favoriting() ? 'Favorite' : 'Unfavorite'} {count()}
-        </Button>
-        <Button
-          disabled={props.busy === true || count() === 0}
-          onClick={() => {
-            props.onGuard(guarding());
-          }}
-        >
-          {guarding() ? 'Lock' : 'Unlock'} {count()}
-        </Button>
-        {/* Two presses, the way the sheet asks: the second says what
-            it is doing and what it pays */}
-        <Button
-          tone="danger"
-          disabled={props.busy === true || going().length === 0}
-          onClick={release}
-        >
-          {releasing() ? `Let ${going().length} go?` : `Release ${going().length}`}
-        </Button>
-        <Show when={releasing()}>
-          <Button
-            onClick={() => {
-              setReleasing(false);
-            }}
-          >
-            Keep them
-          </Button>
-        </Show>
-        <Show when={!releasing()}>
-          <Button disabled={count() === 0} onClick={props.onClear}>
-            Clear
-          </Button>
-        </Show>
-        {props.trailing}
-      </Row>
     </div>
   );
 }

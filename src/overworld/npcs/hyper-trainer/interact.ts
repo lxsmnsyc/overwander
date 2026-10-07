@@ -5,62 +5,57 @@ import { MAX_IV, STAT_NAMES, STAT_ORDER, type Stats, getIV } from '../../../data
 import { hyperTrainingCost } from '../../../data/overworld/npc';
 import playEffect, { Effect } from '../../../components/app/sound';
 import type { Choice } from '../../../components/forms/choice';
-import { PickCatchForm } from '../../../components/forms/pick-catch';
+import { pickCatchThenForm } from '../../../components/forms/pick-catch-then';
 import { goldHeld } from '../shared';
 import type { NpcScript } from '../create';
 
+/** The pokemon and the value, asked on one screen */
+const TrainForm = pickCatchThenForm<Stats>();
+
 /**
- * The Hyper Trainer: a pokemon, then the value to take to the top. The
- * price is the points it has left, so each value says its own
+ * The Hyper Trainer: a pokemon and the value to take to the top, on one
+ * screen. The price is the points it has left, so each value says its own
  */
 const hyper: NpcScript = async (visit) => {
   const gold = await visit.gold();
-  const picked = await visit.form(PickCatchForm, {
+  const picked = await visit.form(TrainForm, {
     player: visit.player,
-    action: 'Next',
     verb: 'Pick',
+    action: 'Train',
     have: goldHeld(gold),
     empty: 'You have nothing to train.',
     filter: (option) => !isEgg(option.caught) && !option.fighting && !isGuarded(option.caught),
+    step: 'Choose a value',
+    choices: (option) => {
+      const values: Choice<Stats>[] = [];
+
+      for (const stat of STAT_ORDER) {
+        const iv = getIV(option.caught.ivs, stat);
+        const cost = hyperTrainingCost(iv);
+        let refused: string | null = null;
+
+        if (iv >= MAX_IV) {
+          refused = 'At the top';
+        } else if (cost > gold) {
+          refused = `${cost.toLocaleString('en-US')} gold`;
+        }
+        values.push({
+          label: `${STAT_NAMES[stat]}  ${iv} → ${MAX_IV}`,
+          value: stat,
+          detail: `${cost.toLocaleString('en-US')} gold`,
+          refused,
+          cost: { gold: cost },
+        });
+      }
+      return values;
+    },
   });
 
   if (picked == null) {
     return;
   }
 
-  const [option] = picked;
-  const choices: Choice<Stats>[] = [];
-
-  for (const stat of STAT_ORDER) {
-    const iv = getIV(option.caught.ivs, stat);
-    const cost = hyperTrainingCost(iv);
-    let refused: string | null = null;
-
-    if (iv >= MAX_IV) {
-      refused = 'At the top';
-    } else if (cost > gold) {
-      refused = `${cost.toLocaleString('en-US')} gold`;
-    }
-    choices.push({
-      label: `${STAT_NAMES[stat]}  ${iv} → ${MAX_IV}`,
-      value: stat,
-      detail: `${cost.toLocaleString('en-US')} gold`,
-      refused,
-      cost: { gold: cost },
-    });
-  }
-
-  const stat = await visit.ask('Which value do I take to the top?', choices, {
-    list: true,
-    step: 'Choose a value',
-    action: 'Train',
-    have: goldHeld(gold),
-  });
-
-  if (stat == null) {
-    return;
-  }
-
+  const [option, stat] = picked;
   const cost = hyperTrainingCost(getIV(option.caught.ivs, stat));
 
   if ((await hyperTrain(visit.snapshot, visit.cell, option.id, stat)) == null) {

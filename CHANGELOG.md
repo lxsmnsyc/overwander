@@ -1,5 +1,160 @@
 # overwander
 
+## 4.32.0
+
+### Minor Changes
+
+- 2d515ca: The families Poni and the sea turn up:
+  
+  - Type: Null is met on the beach, rarely, at any hour. It evolves into Silvally with friendship.
+  - Silvally stands in its lair, Aether Paradise, on the beach, where it can be raided.
+  - Bruxish swims in the coral reef and the kelp forest at any hour.
+  - Dhelmise drifts in the ocean and the kelp forest at any hour.
+  - Jangmo-o, Hakamo-o and Kommo-o live in the badlands and on the mountain at any hour.
+  - Each family has a signature ability. Memory Echo makes its super-effective moves hit 1.2x. Psychic Gnash makes its biting moves confuse 20% of the time. Ghost Ship makes its Ghost and Grass moves hit 1.3x in rain. War Clangor raises its Defense 1 stage for each sound move it lands, up to 3.
+  - RKS System makes a Silvally the type of the Memory it holds. A Silvally born with another ability stays Normal.
+  - The seventeen Memories can be dug up in the prized band.
+  - Dazzling turns away enemy moves that cut the queue, as Queenly Majesty does.
+  - Receiver and Power of Alchemy no longer take up Shields Down, Comatose, Disguise or RKS System.
+  - Soak no longer changes the type of a pokemon with RKS System.
+  - Silvally can also be born with Adaptability or Download, Bruxish with Swift Swim, Dhelmise with Heavy Metal, Cursed Body or Shadow Tag, and Kommo-o with Justified.
+  - All of them learn their moves by level, machine, tutor and egg, as they do in Sun, Moon, Ultra Sun and Ultra Moon.
+- 1838b04: The families Ula'ula's roads turn up:
+  
+  - Komala lives in the tropical seasonal forest and the savanna at any hour.
+  - Turtonator lives on the volcano and in the badlands at any hour.
+  - Mimikyu lives in the woodland and the bog by evening and night.
+  - Drampa lives on the mountain and the alpine tundra at any hour.
+  - Each family has a signature ability. Nap Time heals 1/4 of its HP every 3rd time it acts. Grudge Shroud casts Spite at each enemy the first time they land a move on it.
+  - Turtonator and Drampa share a pair of signatures. Blast Shell makes its next Fire move hit 1.5x after a physical move lands on it or a teammate. Elder's Ire makes its next Dragon move hit 1.5x after a special move lands on it or a teammate.
+  - Disguise takes the first move that hits Mimikyu for 1/8 of its HP instead, and leaves it busted for the rest of the fight.
+  - Komala can also be born with Oblivious, Unaware or Sticky Hold, Turtonator with Flame Body, Rough Skin or Magma Armor, Mimikyu with Infiltrator, Rattled or Perish Body, and Drampa with Fluffy.
+  - All of them learn their moves by level, machine, tutor and egg, as they do in Sun, Moon, Ultra Sun and Ultra Moon.
+- 3ad2fb0: The first Alolan forms:
+  
+  - Alolan Rattata and Raticate live in the tropical seasonal forest and the tropical rainforest by evening and night. An Alolan Rattata evolves only at night.
+  - Alolan Sandshrew and Sandslash, and Alolan Vulpix and Ninetales, live in the alpine tundra, the glacier and the tundra at any hour. Each evolves with an Ice Stone.
+  - Alolan Diglett and Dugtrio live on the volcano and in the badlands at any hour.
+  - Alolan Meowth and Persian live in the tropical seasonal forest and the tropical rainforest at any hour.
+  - Alolan Raichu lives on the beach and in the tropical seasonal forest at any hour. A Pikachu given a Thunder Stone can become either Raichu.
+  - Each Alolan form shares its Kanto family's candy.
+  - A line whose every stage is Alolan has its own signature ability. Rich Diet raises its Attack 1 stage for each Berry it eats. Frostforged takes Fire and Fighting moves at 0.75x. Aurora Crown casts Aurora Veil as it arrives while hail or snow falls. Wire Snare binds the first to land a contact move on it after each entrance. Taunting Gaze casts Taunt at an enemy as it arrives.
+  - Alolan Raichu keeps the Pikachu family's signature ability.
+  - Surge Surfer doubles its holder's Speed on Electric Terrain.
+  - Tangling Hair takes 1 stage of Speed off whoever lands a contact move on its holder.
+  - Ripen makes Berries its holder eats heal 2x as much and raise 2x as many stages.
+  - Alolan Raticate can also be born with Ripen, Alolan Sandslash with Iron Barbs or Ice Body, Alolan Ninetales with Ice Body or Refrigerate, and Alolan Dugtrio with Steelworker, and Alolan Raichu with Levitate.
+  - All of them learn their moves by level, machine, tutor and egg, as they do in Sun, Moon, Ultra Sun and Ultra Moon.
+- 8b9fde2: The rest of the Alolan forms:
+  
+  - Alolan Geodude, Graveler and Golem live on the steppe and in the shrubland at any hour. An Alolan Graveler evolves by trade.
+  - Alolan Grimer and Muk live on the beach and in the mangrove at any hour.
+  - Alolan Exeggutor lives on the beach at any hour. An Exeggcute given a Leaf Stone can become either Exeggutor.
+  - Alolan Marowak lives on the volcano by evening and night. A Cubone becomes a Kanto Marowak by morning or day, and an Alolan Marowak by evening or night.
+  - Each Alolan form shares its Kanto family's candy.
+  - Magnet Float casts Magnet Rise on its holder as it arrives on the field.
+  - Crystal Toxin keeps the poison its holder puts on an enemy from being cured.
+  - Alolan Exeggutor and Alolan Marowak keep their family's signature ability.
+  - Galvanize makes its holder's Normal moves Electric moves, and they hit 1.2x.
+  - Power of Alchemy takes up a fainted teammate's ability in its place, as Receiver does.
+  - Alolan Golem can also be born with Heavy Metal, Alolan Muk with Pickpocket, and Alolan Exeggutor with Leaf Guard.
+  - All of them learn their moves by level, machine, tutor and egg, as they do in Sun, Moon, Ultra Sun and Ultra Moon.
+- 21db04a: Raid bosses fight back:
+  
+  - A boss has 110 times its species' HP, up from 60.
+  - Indirect and share-of-HP damage share one allowance that holds 200 and refills at 50 a second, so stacked poison, burns, seeds and curses no longer add up.
+  - At half HP and again at a quarter, a boss clears its status, its stat drops, and any seed, curse or confusion on it.
+  - A boss is staged with its five hardest attacks, one to a type, from everything its line can learn, plus the status moves it knows that hit the whole party.
+  - A boss thinks as sharply as a player's team, and winds up two and a half times as long as anything else.
+- c801af9: - Spritzee and Aromatisse are met in woodland and temperate forest, mornings and days.
+  - Cilan, Chili and Cress close with Simisage, Simisear and Simipour, and Marlon closes with Jellicent.
+
+### Patch Changes
+
+- cec7809: A raid boss fights only with the moves its species levels into: no machine, tutor or egg move, since it is met in the wild.
+- 9e7794e: A raid boss throws only the status moves its line levels into, rather than the Toxic and Thunder Wave a machine teaches nearly everything.
+- 7bbc301: A raid boss fills its move slots from everything it levels into, not only its latest moves, so Azelf no longer fights with 3.
+- 39a6cf8: On a dark day, a legendary lair that a true shadow's counterpart is at home in now holds the true shadow as a shadow raid. Before, only shadow lairs did.
+- 94450d2: Sprites refreshed from SpriteCollab's new build:
+  
+  - Every sheet now has Swing, and Jellicent, Simipour and Amoonguss gain the clips nobody drew, made from their standing pose.
+  - Aromatisse, Toucannon, Mega Slowbro, Mega Sceptile and Mega Sharpedo get their sheets.
+  - The battle field no longer moves a pokemon to stand in for a clip its sheet lacks.
+- 5b0d284: A held item taken away in a raid or an NPC battle now comes back afterwards, unless it was used up.
+  
+  - Knock Off, Trick, Switcheroo, Bestow, Symbiosis, Cutpurse, Corrosive Ooze and Sticky Barb no longer cost the catch its item.
+  - Thief, Covet, Pickpocket, Magician, Cat Burglar, Fling, Incinerate, Pluck, Bug Bite and Taste Everything cost it only when the item is a consumable, such as a berry or a gem.
+
+## 4.31.0
+
+### Minor Changes
+
+- c98800e: The families Hano Beach and Mount Hokulani turn up:
+  
+  - Sandygast and Palossand live on the beach and in the desert at any hour.
+  - Pyukumuku lives on the beach and the rocky coast at any hour.
+  - Minior lives on the mountain and the alpine tundra at any hour. It is met in its shell, and each one has its own core colour.
+  - Togedemaru lives on the mountain and the grassland at any hour.
+  - Each family has a signature ability. Castle Drain takes 1/8 of the HP of whoever lands a contact move on it and heals it that much. Tossed Back leaves it on 1 HP from the first blow that would knock it out and sends it off the field for its strongest teammate, once per battle. Starfall casts its first move after each entrance 50% faster. Charged Spines makes its next Electric move that lands hit 1.5x after a contact move lands on it.
+  - Water Compaction raises its holder's Defense 2 stages for each Water move that lands on it.
+  - Sand Spit casts Sandstorm whenever a damaging move lands on its holder.
+  - Innards Out deals whoever knocks its holder out with a move as much damage as the holder had HP left.
+  - Shields Down keeps a Minior in its shell above 1/2 HP, where no major status gets through, and cracks it open to its core at or below 1/2 HP.
+  - Palossand can also be born with Sand Spit or Cursed Body, Pyukumuku with Regenerator or Liquid Ooze, Minior with Weak Armor, Magic Guard or Sturdy, and Togedemaru with Static.
+  - All of them learn their moves by level, machine, tutor and egg, as they do in Sun, Moon, Ultra Sun and Ultra Moon.
+- 95f108f: The families the Lush Jungle turns up:
+  
+  - Comfey lives in the tropical rainforest, the tropical seasonal forest and the grassland by morning and day.
+  - Morelull and Shiinotic, Oranguru and Passimian are written but not met in the wild yet: they wait on art for Shiinotic and Oranguru, and Passimian waits on its counterpart.
+  - Each family has a signature ability. Drowsy Glow casts Yawn on what it hits 20% of the time. Lei Gift gives its worst hurt teammate a lei as it arrives, healing them 1/16 of their HP each time they act. Sage's Call makes its strongest teammate cast their next move 25% faster each time it acts. Rush Pass makes its moves hit 1.3x whenever they are cast faster than they would be on their own.
+  - Receiver takes a fainted teammate's ability in its place.
+  - Shiinotic can also be born with Dry Skin, Comfey with Aroma Veil, Oranguru with Forewarn, and Passimian with Guts or Pickup.
+  - All of them learn their moves by level, machine, tutor and egg, as they do in Sun, Moon, Ultra Sun and Ultra Moon.
+- 4592c2a: The families Route 8 and Wela Volcano Park turn up:
+  
+  - Mareanie and Toxapex live in the water of the coral reef, the rocky coast and the beach at any hour.
+  - Salandit and Salazzle live on the volcano and in the badlands at any hour. Only a female Salandit evolves.
+  - Stufful and Bewear live in the grassland, the tropical seasonal forest and the woodland at any hour.
+  - Wimpod and Golisopod live on the beach and the rocky coast at any hour.
+  - Each family has a signature ability. Toxic Dome takes the first hit after each entrance at 0.5x and casts Toxic at the attacker. Fume Flare makes its Fire moves poison 20% of the time. Fond Crush makes its moves hit 1.3x against an infatuated target. Opening Slash makes the first move it lands after each entrance hit 1.5x.
+  - Corrosion can poison Poison and Steel types.
+  - Fluffy takes contact moves at 0.5x and Fire moves at 2x.
+  - Emergency Exit sends its holder off the field for its strongest teammate when damage drops it below 1/2 HP, as Wimp Out does.
+  - Toxapex can also be born with Poison Point, Salazzle with Flame Body or Poison Touch, and Golisopod with Battle Armor, Sharpness or Swift Swim.
+  - All of them learn their moves by level, machine, tutor and egg, as they do in Sun, Moon, Ultra Sun and Ultra Moon.
+
+### Patch Changes
+
+- bfa318f: Core Enforcer is taught only by the Move Tutor, like the other signature moves. Its TM is no longer sold, and a vendor buys one back for what it cost.
+- 1016398: The AI weighing its moves no longer changes the fight:
+  
+  - Three Heads no longer bites the enemy team before Hydreigon has cast anything.
+  - Glidewake no longer gains Evasion while Emolga's AI thinks.
+  - Bluff, Doom Mark, Lock-On and Guard Spec are no longer used up by a move that was only weighed.
+  - Protect and the team guards are no longer broken by a Feint that was only weighed.
+  - Ability, item and status cues no longer play while the AI thinks, and the AI no longer learns a foe's ability from them.
+  - The AI now weighs Flail, Reversal, Return, Frustration, Present, Magnitude, Gyro Ball, Electro Ball, Heavy Slam, Heat Crash and the other moves whose power is worked out in the fight, where it used to score them as doing nothing.
+
+## 4.30.0
+
+### Minor Changes
+
+- 434ee22: The Boxes screen is laid out as designed. It opens wide, with New box and Select at the top. Picking turns the top into a green bar to move, mark, release or clear what is picked. The rail counts each box in a pill, takes a drag to put your boxes in order, and holds today's let-go list. An empty box shows its numbered squares with Add pokemon, a box's menu says what laying out and closing up do, and searching every box counts the matches in each. On a phone a long press starts picking, and Move to opens as a sheet from the bottom. Pickers open wide, and a box's name no longer shrinks to one letter on its squares.
+
+### Patch Changes
+
+- ee1c738: Dragging a box to a new place in the list works again; it was refused with "Invalid length". A box dragged down the list now lands after the one it is dropped on, so a box can be moved to the bottom.
+- 37dfc5a: Picking a pokemon in Select mode no longer scrolls the box back to the top.
+- 4278a35: Boxes scroll instead of turning pages, so a pokemon can be moved anywhere in a box. Only the rows in sight are drawn, so a box of hundreds opens as fast as a box of thirty. Dragging a pokemon to the top or bottom edge scrolls the box, and while picking, pressing an empty square puts the picked pokemon there, which works with a finger. Every picker box scrolls the same way. On a phone, the Boxes screen's squares are square again so the sprites can be seen.
+- e15fe4b: Counters are one screen again. A vendor, chef or geologist opens on the crate with Buy and Sell as tabs, so buying is one press. The move tutor, the move reminder and the hyper trainer ask for the pokemon and the move or value together, with the button at the foot. Pickers no longer print a box name on each square, which was too small to read.
+- 7fced22: Archen and Archeops showed "Ability #200" in place of their ability. Defeatist now has its name and description and works in battle: at half HP or less, its Attack and Special Attack drop to 0.5x.
+- 0fa660e: Dropdowns and menus float over the dialog they are opened from rather than being cut off by it or its bottom bar, flip above their button when there is no room below, and never grow taller than the room they have.
+- 5de328b: Every picker of your own pokemon (Form a team, Nurse Joy, Use item, the breeder and the rest) opens with a box switcher before the search, on All boxes, with each box in its colour. The search says which box it looks through, a team picker says it is strongest first, and picks made in one box stay picked while another is showing.
+- fe2d9c3: The summary after a raid is laid out team first. Each party is a full-size row of six, drawn as the fight left it with the fainted greyed and each one's HP where it ended. Beside it, a plate says where the team placed, who fielded it, how much it dealt and its share of the damage, with your own row in green. The boss stands last with what it dealt back, and the best single pokemon is named under the list.
+- 3333111: The catch sheet shows which box a pokemon is in as a chip in its colour, first in the heading row, for every player. Its Move to menu lists each box with a tick on the current one, and New box makes a box and moves the pokemon into it.
+- ec25007: Saved teams, in the profile and in Form a team, show the team first with its name and buttons on a plate beside it, the way the battle history does.
+- 2f637a1: Saved teams, the battle history and lobby parties draw each team as a plain row of squares wide enough to see who is in it: each pokemon fills its square, with only a thin HP line under it, and its level in the card that opens over it.
+
 ## 4.29.0
 
 ### Minor Changes

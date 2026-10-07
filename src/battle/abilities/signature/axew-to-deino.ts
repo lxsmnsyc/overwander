@@ -1,7 +1,7 @@
 import { AttackPriority, EventPriority } from '../../../core/event-emitter';
 import { Stages } from '../../../data/constants/stats';
 import Abilities from '../../../data/ids/abilities';
-import { DamageFlags, MoveCategories } from '../../../data/ids/moves';
+import { DamageFlags, MoveAttackFlags, MoveCategories } from '../../../data/ids/moves';
 import { Weathers } from '../../../data/ids/status';
 import { BattleEvents, EffectType } from '../../events';
 import { createAbility } from '../__create';
@@ -66,14 +66,20 @@ const setupAbilities = [
   /**
    * Three Heads: whatever the middle one bit, a side head reaches for
    * something else. The share is dealt directly rather than as a
-   * second attack, so nothing that answers a blow answers it twice
+   * second attack, so nothing that answers a blow answers it twice.
+   * The AI's estimates run this resolver too, and must not bite
    */
   createAbility(Abilities.ThreeHeads, (battle) =>
     battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
       const parent = event.parent;
       const source = parent.source;
 
-      if (event.value <= 0 || !source.alive || !source.hasAbility(Abilities.ThreeHeads)) {
+      if (
+        event.value <= 0 ||
+        parent.flags & MoveAttackFlags.Simulated ||
+        !source.alive ||
+        !source.hasAbility(Abilities.ThreeHeads)
+      ) {
         return;
       }
 

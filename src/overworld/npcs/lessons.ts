@@ -4,15 +4,17 @@ import type { LearnResult } from '../../auth/learn-refusal';
 import type { Items } from '../../data/ids/items';
 import type { Moves } from '../../data/ids/moves';
 import type { CatchOption } from '../../components/catches/catch-picker';
-import { PickCatchForm } from '../../components/forms/pick-catch';
-import { PickMoveForm } from '../../components/forms/pick-move';
+import type { Choice } from '../../components/forms/choice';
+import { pickCatchThenForm } from '../../components/forms/pick-catch-then';
+import { getMoveData } from '../../data/moves';
 import { TeachMoveForm } from '../../components/forms/teach-move';
 import { scalesHeld } from './shared';
 import type { NpcVisit } from './create';
 
 /**
  * The two who sell a move, the reminder and the tutor: one Heart Scale,
- * which pokemon, which move, and then the same teaching a machine asks
+ * which pokemon and which move on one screen, and then the same teaching
+ * a machine asks
  */
 export interface Lesson {
   fee: Items;
@@ -31,12 +33,15 @@ export interface Lesson {
   done: string;
 }
 
+/** The pokemon and the move, asked on one screen */
+const LessonForm = pickCatchThenForm<Moves>();
+
 export default async function giveLesson(visit: NpcVisit, lesson: Lesson): Promise<void> {
   const scales = await visit.carrying(lesson.fee);
-  const picked = await visit.form(PickCatchForm, {
+  const picked = await visit.form(LessonForm, {
     player: visit.player,
-    action: 'Next',
     verb: lesson.verb,
+    action: lesson.verb,
     cost: { item: lesson.fee },
     have: scalesHeld(scales),
     empty: lesson.empty,
@@ -44,26 +49,28 @@ export default async function giveLesson(visit: NpcVisit, lesson: Lesson): Promi
       !isEgg(option.caught) && !option.fighting && lesson.movesOf(option).length > 0,
     reason: (option) => (isGuarded(option.caught) ? 'locked' : null),
     note: (option) => `${lesson.movesOf(option).length} ${lesson.counted}`,
+    step: lesson.heading,
+    move: (move) => move,
+    choices: (option) => {
+      const offered: Choice<Moves>[] = [];
+
+      for (const move of lesson.movesOf(option)) {
+        offered.push({
+          label: getMoveData(move).name,
+          value: move,
+          refused: lesson.refuses?.(option, move) ?? null,
+        });
+      }
+      return offered;
+    },
   });
 
   if (picked == null) {
     return;
   }
 
-  const [option] = picked;
-  const move = await visit.form(PickMoveForm, {
-    moves: lesson.movesOf(option),
-    step: lesson.heading,
-    action: lesson.verb,
-    cost: { item: lesson.fee },
-    have: scalesHeld(scales),
-    refuses: (offered) => lesson.refuses?.(option, offered) ?? null,
-  });
-
-  if (move == null) {
-    return;
-  }
-
+  const [option, move] = picked;
+  // Which move it forgets, or the room it has: the teaching a machine asks too
   const taught = await visit.form(TeachMoveForm, {
     catchId: option.id,
     move,

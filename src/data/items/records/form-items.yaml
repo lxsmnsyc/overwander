@@ -70,7 +70,7 @@ Meteorite:
 DnaSplicers:
   type: Evolution
   icon: key/dna-splicers
-  flags: [Usable]
+  flags: [Usable, Consumable]
   sell: 6000
 
 # A flower's worth (2,000), since the island grows them
@@ -101,11 +101,11 @@ PurpleNectar:
 NSolarizer:
   type: Evolution
   icon: key/n-solarizer
-  flags: [Usable]
+  flags: [Usable, Consumable]
   sell: 6000
 
 NLunarizer:
   type: Evolution
   icon: key/n-lunarizer
-  flags: [Usable]
+  flags: [Usable, Consumable]
   sell: 6000

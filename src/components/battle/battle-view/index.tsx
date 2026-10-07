@@ -432,16 +432,6 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
   /** Whether this fight ranks whole teams rather than single pokemon */
   const raiding = (): boolean => instance()?.battle.mode === BattleModes.Raid;
 
-  /** The raid's damage shares, keyed by who dealt them — the boss under '' */
-  const shares = (): Map<string, number> => {
-    const dealt = new Map<string, number>();
-
-    for (const row of contributions()) {
-      dealt.set(row.player, row.dealt);
-    }
-    return dealt;
-  };
-
   /**
    * Whether the end has been heard. `outcome` is read on every nudge
    * of the fight, and a verdict is a thing that happens once
@@ -834,7 +824,6 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
         player={auth.user()?.uid ?? ''}
         opponent={opponent()}
         teams={raiding() ? (record()?.teams ?? null) : null}
-        shares={shares()}
         replay={props.active.replay}
         onLeave={leave}
       />

@@ -43,6 +43,7 @@ Wingull:
     - Scald
     - Confide
     - Liquidation
+    - DualWingbeat
   Wingull:
     level:
       1: [Growl, WaterGun]
@@ -80,7 +81,7 @@ Ralts:
       11: [DoubleTeam, DisarmingVoice]
       16: [Teleport]
       17: [LuckyChant]
-      21: [CalmMind]
+      21: [CalmMind, LifeDew]
       22: [DrainingKiss]
       23: [HealPulse]
       26: [Psychic]
@@ -149,6 +150,7 @@ Ralts:
       - Confide
       - DazzlingGleam
       - Captivate
+      - ExpandingForce
     egg:
       - Disable
       - MeanLook
@@ -164,7 +166,7 @@ Ralts:
       11: [DisarmingVoice]
       17: [LuckyChant]
       21: [CalmMind]
-      23: [DrainingKiss]
+      23: [DrainingKiss, LifeDew]
       25: [HealPulse]
       26: [Psychic]
       33: [Imprison]
@@ -232,12 +234,14 @@ Ralts:
       - Confide
       - DazzlingGleam
       - Captivate
+      - ExpandingForce
+      - TripleAxel
   Gardevoir:
     level:
       1: [Growl, Confusion, DoubleTeam, Teleport, HealingWish, MistyTerrain]
       11: [DisarmingVoice]
       21: [CalmMind]
-      23: [DrainingKiss]
+      23: [DrainingKiss, LifeDew]
       25: [HealPulse]
       26: [Psychic]
       33: [Imprison]
@@ -311,9 +315,12 @@ Ralts:
       - FocusBlast
       - GigaImpact
       - LaserFocus
+      - ExpandingForce
+      - MistyExplosion
+      - TripleAxel
   Gallade:
     level:
-      1: [Confusion, DoubleTeam, LeafBlade, Leer, NightSlash, Teleport]
+      1: [Confusion, DoubleTeam, LeafBlade, Leer, NightSlash, Teleport, LifeDew]
       6: [Confusion]
       10: [DoubleTeam]
       12: [Teleport]
@@ -404,6 +411,9 @@ Ralts:
       - PowerUpPunch
       - LaserFocus
       - ThroatChop
+      - ExpandingForce
+      - Coaching
+      - TripleAxel
 Surskit:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -708,6 +718,7 @@ Nincada:
     - Round
     - StruggleBug
     - Confide
+    - SkitterSmack
   Nincada:
     level:
       1: [Scratch, Harden]
@@ -745,6 +756,7 @@ Nincada:
       - Roost
       - UTurn
       - LaserFocus
+      - DualWingbeat
   Shedinja:
     level:
       1: [Scratch, Harden]
@@ -767,6 +779,7 @@ Nincada:
       - SuckerPunch
       - XScissor
       - Telekinesis
+      - Poltergeist
 Whismur:
   family-teachable:
     - WaterPulse
@@ -893,6 +906,7 @@ Whismur:
       - GigaImpact
       - RockClimb
       - StompingTantrum
+      - TerrainPulse
 Makuhita:
   # TM and tutor moves both stages share
   family-teachable:
@@ -1087,6 +1101,7 @@ Nosepass:
       67: [ZapCannon]
       73: [LockOn]
       79: [EarthPower]
+      50: [BodyPress]
     teachable:
       - AncientPower
       - Attract

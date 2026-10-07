@@ -253,6 +253,8 @@ Duskull:
       - Confide
       - Infestation
       - Gravity
+      - SkitterSmack
+      - Poltergeist
     egg: [DestinyBond, FeintAttack, Grudge, Imprison, Memento]
   Dusclops:
     level:
@@ -337,6 +339,8 @@ Duskull:
       - GigaImpact
       - Bulldoze
       - PowerUpPunch
+      - SkitterSmack
+      - Poltergeist
   Dusknoir:
     level:
       1: [Bind, Disable, FirePunch, Gravity, IcePunch, Leer, NightShade, ThunderPunch]
@@ -415,6 +419,8 @@ Duskull:
       - Infestation
       - PowerUpPunch
       - LaserFocus
+      - SkitterSmack
+      - Poltergeist
 Tropius:
   Tropius:
     level:
@@ -820,6 +826,7 @@ Snorunt:
       - Payback
       - Bulldoze
       - LaserFocus
+      - SteelRoller
   Froslass:
     level:
       1: [Astonish, DoubleTeam, Leer, PowderSnow]
@@ -890,6 +897,8 @@ Snorunt:
       - Confide
       - AuroraVeil
       - LaserFocus
+      - Poltergeist
+      - TripleAxel
 Spheal:
   # TM, HM and tutor moves the whole line shares
   family-teachable:
@@ -938,6 +947,7 @@ Spheal:
     - Bulldoze
     - FrostBreath
     - Confide
+    - SteelRoller
   Spheal:
     level:
       1: [Growl, WaterGun, PowderSnow]
@@ -972,7 +982,7 @@ Spheal:
       44: [IceFang]
       50: [Blizzard]
       61: [SheerCold]
-    teachable: [Roar, HyperBeam, Avalanche, GigaImpact, IronHead, StompingTantrum]
+    teachable: [Roar, HyperBeam, Avalanche, GigaImpact, IronHead, StompingTantrum, BodyPress]
 Clamperl:
   # TM, HM and tutor moves the whole line shares
 
@@ -1129,6 +1139,9 @@ Relicanth:
       - Bulldoze
       - Confide
       - StompingTantrum
+      - BodyPress
+      - ScaleShot
+      - MeteorBeam
     egg: [Amnesia, SkullBash, Magnitude, WaterSport]
 Luvdisc:
   Luvdisc:
@@ -1291,11 +1304,13 @@ Bagon:
       - DragonTail
       - BrutalSwing
       - LaserFocus
+      - BreakingSwipe
+      - DualWingbeat
 Beldum:
   Beldum:
     level:
       1: [TakeDown]
-    teachable: [IronHead, ZenHeadbutt]
+    teachable: [IronHead, ZenHeadbutt, SteelBeam]
   Metang:
     level:
       1: [TakeDown, MagnetRise]
@@ -1370,6 +1385,10 @@ Beldum:
       - NaturalGift
       - RockPolish
       - StealthRock
+      - SteelBeam
+      - ExpandingForce
+      - SteelRoller
+      - MeteorBeam
   Metagross:
     level:
       1: [TakeDown, Confusion, MetalClaw, ScaryFace, MagnetRise]
@@ -1446,3 +1465,8 @@ Beldum:
       - StealthRock
       - StompingTantrum
       - LaserFocus
+      - BodyPress
+      - SteelBeam
+      - ExpandingForce
+      - SteelRoller
+      - MeteorBeam

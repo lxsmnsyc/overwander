@@ -56,6 +56,7 @@ Treecko:
     - GrassPledge
     - Confide
     - PowerUpPunch
+    - GrassyGlide
   Treecko:
     level:
       1: [Pound, Leer]
@@ -119,6 +120,8 @@ Treecko:
       - BrutalSwing
       - LaserFocus
       - ThroatChop
+      - BreakingSwipe
+      - ScaleShot
 Torchic:
   family-teachable:
     - Toxic
@@ -218,6 +221,7 @@ Torchic:
       - FocusBlast
       - PoisonJab
       - VacuumWave
+      - Coaching
   Blaziken:
     level:
       1: [Scratch, Growl, FocusEnergy, Ember, FirePunch]
@@ -256,6 +260,8 @@ Torchic:
       - Acrobatics
       - Bulldoze
       - LaserFocus
+      - Coaching
+      - ScorchingSands
 Mudkip:
   family-teachable:
     - WaterPulse
@@ -378,6 +384,8 @@ Mudkip:
       - StealthRock
       - StoneEdge
       - StompingTantrum
+      - BodyPress
+      - FlipTurn
 Poochyena:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -733,6 +741,7 @@ Lotad:
     - EchoedVoice
     - Scald
     - Confide
+    - GrassyGlide
   Lotad:
     level:
       1: [Astonish]
@@ -848,6 +857,7 @@ Seedot:
     - Round
     - Retaliate
     - Confide
+    - GrassyGlide
   Seedot:
     level:
       1: [Bide]
@@ -900,6 +910,7 @@ Seedot:
       - Embargo
       - Fling
       - Payback
+      - LashOut
   Shiftry:
     level:
       1: [Pound, Harden, Growth, NaturePower, NastyPlot]
@@ -935,6 +946,7 @@ Seedot:
       - XScissor
       - BrutalSwing
       - ThroatChop
+      - LashOut
 Taillow:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:

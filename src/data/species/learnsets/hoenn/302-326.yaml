@@ -90,6 +90,8 @@ Sableye:
       - Confide
       - DazzlingGleam
       - PowerUpPunch
+      - LashOut
+      - Poltergeist
     egg: [Moonlight, Recover, Feint, NastyPlot]
 Mawile:
   Mawile:
@@ -171,6 +173,7 @@ Mawile:
       - Confide
       - PowerUpPunch
       - LaserFocus
+      - SteelBeam
     egg:
       - AncientPower
       - FalseSwipe
@@ -233,6 +236,9 @@ Aron:
     - Round
     - Bulldoze
     - Confide
+    - BodyPress
+    - SteelBeam
+    - SteelRoller
   Aron:
     level:
       1: [Tackle]
@@ -320,6 +326,7 @@ Aron:
       - BrutalSwing
       - StompingTantrum
       - SmartStrike
+      - MeteorBeam
 Meditite:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -457,6 +464,7 @@ Electrike:
     - WildCharge
     - Snarl
     - Confide
+    - RisingVoltage
   Electrike:
     level:
       1: [Tackle]
@@ -791,7 +799,7 @@ Illumise:
       - PowerUpPunch
     egg: [BatonPass, Growth, SilverWind]
 Roselia:
-  family-teachable: [Attract]
+  family-teachable: [Attract, GrassyGlide]
   Roselia:
     level:
       1: [Absorb]
@@ -907,6 +915,7 @@ Roselia:
       - SleepPowder
       - Spikes
       - Synthesis
+      - LifeDew
   Roserade:
     level:
       1:
@@ -1088,6 +1097,8 @@ Carvanha:
     - Retaliate
     - Snarl
     - Confide
+    - ScaleShot
+    - FlipTurn
   Carvanha:
     level:
       1: [Leer, Bite]
@@ -1172,6 +1183,8 @@ Wailmer:
     - Scald
     - Bulldoze
     - Confide
+    - BodyPress
+    - SteelRoller
   Wailmer:
     level:
       1: [Splash]
@@ -1344,6 +1357,9 @@ Torkoal:
       - Bulldoze
       - Confide
       - StompingTantrum
+      - BodyPress
+      - BurningJealousy
+      - ScorchingSands
     egg: [Yawn, Eruption, FlameBurst, ClearSmog]
 Spoink:
   # TM and tutor moves both stages share

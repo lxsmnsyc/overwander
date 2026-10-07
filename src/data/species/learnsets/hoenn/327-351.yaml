@@ -131,6 +131,7 @@ Trapinch:
     - StruggleBug
     - Bulldoze
     - Confide
+    - ScorchingSands
   Trapinch:
     level:
       1: [Bite]
@@ -168,6 +169,7 @@ Trapinch:
       - Tailwind
       - UTurn
       - ThroatChop
+      - DualWingbeat
   Flygon:
     level:
       1: [Bite, SandAttack, FeintAttack, SandTomb]
@@ -205,6 +207,9 @@ Trapinch:
       - BrutalSwing
       - LaserFocus
       - ThroatChop
+      - BreakingSwipe
+      - ScaleShot
+      - DualWingbeat
 Cacnea:
   # TM and tutor moves both stages share
   family-teachable:
@@ -336,6 +341,7 @@ Swablu:
     - EchoedVoice
     - Confide
     - DazzlingGleam
+    - DualWingbeat
   Swablu:
     level:
       1: [Growl, Peck]
@@ -385,6 +391,7 @@ Swablu:
       - WonderRoom
       - Incinerate
       - Bulldoze
+      - BreakingSwipe
 Zangoose:
   Zangoose:
     level:
@@ -626,6 +633,7 @@ Lunatone:
       - Confide
       - StompingTantrum
       - LaserFocus
+      - MeteorBeam
 Solrock:
   Solrock:
     level:
@@ -706,6 +714,7 @@ Solrock:
       - Confide
       - StompingTantrum
       - LaserFocus
+      - MeteorBeam
 Barboach:
   # TM, HM and tutor moves both stages share
   family-teachable:
@@ -866,6 +875,7 @@ Corphish:
       - Retaliate
       - Snarl
       - Liquidation
+      - LashOut
 Baltoy:
   # TM and tutor moves both stages share
   family-teachable:
@@ -923,6 +933,8 @@ Baltoy:
     - DrillRun
     - Confide
     - DazzlingGleam
+    - ExpandingForce
+    - ScorchingSands
   Baltoy:
     level:
       1: [Confusion]
@@ -954,7 +966,7 @@ Baltoy:
       55: [Explosion]
       62: [EarthPower]
       73: [HealBlock]
-    teachable: [HyperBeam, Strength, RockSmash, GigaImpact, StoneEdge]
+    teachable: [HyperBeam, Strength, RockSmash, GigaImpact, StoneEdge, BodyPress]
 Lileep:
   # TM and tutor moves both stages share
   family-teachable:
@@ -997,6 +1009,7 @@ Lileep:
     - Round
     - Confide
     - Infestation
+    - MeteorBeam
   Lileep:
     level:
       1: [Astonish]
@@ -1073,6 +1086,7 @@ Anorith:
     - Round
     - StruggleBug
     - Confide
+    - MeteorBeam
   Anorith:
     level:
       1: [Scratch]
@@ -1145,6 +1159,7 @@ Feebas:
     - Round
     - Scald
     - Confide
+    - ScaleShot
   Feebas:
     level:
       1: [Splash]
@@ -1159,7 +1174,7 @@ Feebas:
       10: [WaterSport]
       11: [DisarmingVoice]
       15: [Refresh]
-      20: [WaterPulse]
+      20: [WaterPulse, LifeDew]
       25: [Twister, Captivate]
       29: [AquaTail]
       30: [Recover]
@@ -1183,6 +1198,10 @@ Feebas:
       - DragonTail
       - BrutalSwing
       - LaserFocus
+      - BreakingSwipe
+      - SkitterSmack
+      - FlipTurn
+      - TripleAxel
 Castform:
   family-teachable:
     - WaterPulse

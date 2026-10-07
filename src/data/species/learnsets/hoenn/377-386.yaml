@@ -76,6 +76,8 @@ Regirock:
       - StealthRock
       - SmackDown
       - StompingTantrum
+      - BodyPress
+      - MeteorBeam
 Regice:
   Regice:
     level:
@@ -230,6 +232,10 @@ Registeel:
       - StealthRock
       - HoneClaws
       - StompingTantrum
+      - BodyPress
+      - SteelBeam
+      - SteelRoller
+      - MeteorBeam
 Latias:
   Latias:
     level:
@@ -323,6 +329,9 @@ Latias:
       - Tailwind
       - MagicRoom
       - LaserFocus
+      - BreakingSwipe
+      - ScaleShot
+      - DualWingbeat
 Latios:
   Latios:
     level:
@@ -414,6 +423,9 @@ Latios:
       - Tailwind
       - WonderRoom
       - LaserFocus
+      - BreakingSwipe
+      - ScaleShot
+      - DualWingbeat
 Kyogre:
   family-teachable:
     - Roar
@@ -588,6 +600,8 @@ Groudon:
       60: [Fissure]
       65: [SolarBeam, EarthPower]
       75: [Eruption]
+    teachable:
+      - ScorchingSands
   GroudonPrimal:
     level:
       1: [MudShot]
@@ -691,6 +705,9 @@ Rayquaza:
       - DragonTail
       - DragonAscent
       - BrutalSwing
+      - BreakingSwipe
+      - ScaleShot
+      - MeteorBeam
 Jirachi:
   Jirachi:
     level:
@@ -705,6 +722,7 @@ Jirachi:
       45: [CosmicPower, Gravity]
       50: [DoomDesire, HealingWish]
       65: [LastResort]
+      21: [LifeDew]
     teachable:
       - CalmMind
       - Toxic
@@ -751,6 +769,9 @@ Jirachi:
       - Confide
       - DazzlingGleam
       - PowerUpPunch
+      - SteelBeam
+      - ExpandingForce
+      - MeteorBeam
 Deoxys:
   family-teachable:
     - FocusPunch

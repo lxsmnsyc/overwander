@@ -37,44 +37,54 @@ export interface PickItemInput {
   refuse?: (item: Items, amount: number) => string | null;
 }
 
+/** The tray itself, and what is said over it, for a form that holds one or two */
+export function ItemTray(props: {
+  input: PickItemInput;
+  onPick: (picked: ItemAmount) => void;
+}): JSX.Element {
+  return (
+    <>
+      <Show when={props.input.have}>{(have) => <CounterTerms have={have()} />}</Show>
+      <Show
+        when={
+          props.input.entries == null || props.input.entries.length > 0 || props.input.none == null
+        }
+        fallback={<Note>{props.input.none}</Note>}
+      >
+        <Show when={props.input.intro}>{(intro) => <Meta class="block">{intro()}</Meta>}</Show>
+        <Show when={props.input.step}>{(step) => <CounterStep>{step()}</CounterStep>}</Show>
+        <InventoryPicker
+          inline
+          player={props.input.player}
+          verb={props.input.verb}
+          entries={props.input.entries}
+          value={null}
+          counts={props.input.counts}
+          empty={props.input.empty}
+          filter={props.input.filter}
+          blocked={props.input.blocked}
+          note={props.input.note}
+          card={props.input.card}
+          carried={props.input.carried}
+          most={props.input.most}
+          sum={props.input.sum}
+          refuse={props.input.refuse}
+          onPick={(item, amount) => {
+            if (item != null && amount > 0) {
+              props.onPick([item, amount]);
+            }
+          }}
+        />
+      </Show>
+    </>
+  );
+}
+
 function PickItemView(props: FormProps<PickItemInput, ItemAmount>): JSX.Element {
   return (
     <>
       <DialogSection class="flex flex-col gap-3">
-        <Show when={props.input.have}>{(have) => <CounterTerms have={have()} />}</Show>
-        <Show
-          when={
-            props.input.entries == null ||
-            props.input.entries.length > 0 ||
-            props.input.none == null
-          }
-          fallback={<Note>{props.input.none}</Note>}
-        >
-          <Show when={props.input.intro}>{(intro) => <Meta class="block">{intro()}</Meta>}</Show>
-          <Show when={props.input.step}>{(step) => <CounterStep>{step()}</CounterStep>}</Show>
-          <InventoryPicker
-            inline
-            player={props.input.player}
-            verb={props.input.verb}
-            entries={props.input.entries}
-            value={null}
-            counts={props.input.counts}
-            empty={props.input.empty}
-            filter={props.input.filter}
-            blocked={props.input.blocked}
-            note={props.input.note}
-            card={props.input.card}
-            carried={props.input.carried}
-            most={props.input.most}
-            sum={props.input.sum}
-            refuse={props.input.refuse}
-            onPick={(item, amount) => {
-              if (item != null && amount > 0) {
-                props.submit([item, amount]);
-              }
-            }}
-          />
-        </Show>
+        <ItemTray input={props.input} onPick={props.submit} />
       </DialogSection>
       <DialogActions>
         <Button onClick={props.cancel}>{props.leave}</Button>

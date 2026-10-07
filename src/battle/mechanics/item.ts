@@ -27,9 +27,11 @@ export default function setupItemMechanics(battle: Battle): void {
   });
   battle.on(BattleEvents.UnitRemoveItem, EventPriority.Exact, (event) => {
     event.source.items[event.item] = undefined;
-    // Remembered after the item is gone: what a unit spent in a
-    // battle is what its catch record loses when the battle ends
-    event.source.consumed.add(event.item);
+    // Remembered after the item is gone: what a unit lost for good in
+    // a battle is what its catch record loses when the battle ends
+    if (event.lost) {
+      event.source.consumed.add(event.item);
+    }
   });
   battle.on(BattleEvents.UnitEnableItem, EventPriority.Exact, (event) => {
     event.source.items[event.item] = true;

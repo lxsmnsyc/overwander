@@ -108,7 +108,7 @@ export default function setupTeamGuards(battle: Battle): void {
 
     // What walks through a Protect breaks a team guard the same way
     if (event.source.checkMoveGuard(event.move, event.target)) {
-      if (cause != null) {
+      if (cause != null && !battle.estimating) {
         team.removeStatus(guard, cause);
       }
       return;

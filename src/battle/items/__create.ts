@@ -171,7 +171,7 @@ export function spendItem(unit: Unit, item: Items): EffectCause | undefined {
 
   unit.disableItem(item);
   unit.triggerItem(item);
-  unit.removeItem(item, cause);
+  unit.removeItem(item, cause, true);
 
   return cause;
 }

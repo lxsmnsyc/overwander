@@ -52,15 +52,32 @@ const BORROWED_COATS = new Map<Species, { sheet: Species; female: boolean }>([
 ]);
 
 /**
+ * Shapes the collection has not drawn yet, standing in as the pokemon
+ * they are made of until it does. A fused Necrozma is drawn as the
+ * Solgaleo or Lunala inside it, and the battle floats the prism over
+ * it so a watcher can tell the shape has changed
+ */
+const STAND_INS = new Map<Species, Species>([
+  [Species.NecrozmaDuskMane, Species.Solgaleo],
+  [Species.NecrozmaDawnWings, Species.Lunala],
+]);
+
+/** Whether this shape is drawn as another pokemon until it has art of its own */
+export function isStandIn(species: Species): boolean {
+  return STAND_INS.has(species);
+}
+
+/**
  * Which sheet this one is drawn from and which coat it wears there.
  * Anything with a sheet of its own comes back unchanged
  */
 export function drawnAs(species: Species, female = false): { species: Species; female: boolean } {
   const borrowed = BORROWED_COATS.get(species);
 
-  return borrowed == null
-    ? { species, female }
-    : { species: borrowed.sheet, female: borrowed.female };
+  if (borrowed != null) {
+    return { species: borrowed.sheet, female: borrowed.female };
+  }
+  return { species: STAND_INS.get(species) ?? species, female };
 }
 
 /**

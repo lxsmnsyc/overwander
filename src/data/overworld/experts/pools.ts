@@ -215,13 +215,10 @@ export const GYM_LEADER_SIGNATURES: Record<GymLeader, Species> = {
   // Not the Raichu he opens with: Lt. Surge is already remembered for
   // that one, and the Luxray is what Sunyshore closes with anyway
   [GymLeader.Volkner]: Species.Luxray,
-  // Striaton's three each close with an elemental monkey, and those
-  // three lines are written but staged nowhere while Simisear and
-  // Simipour are undrawn. A leader may not field what nobody can
-  // meet, so each stands with another of their own fight until then
-  [GymLeader.Cilan]: Species.Lilligant,
-  [GymLeader.Chili]: Species.Emboar,
-  [GymLeader.Cress]: Species.Seismitoad,
+  // Striaton's three each close with their elemental monkey
+  [GymLeader.Cilan]: Species.Simisage,
+  [GymLeader.Chili]: Species.Simisear,
+  [GymLeader.Cress]: Species.Simipour,
   [GymLeader.Lenora]: Species.Watchog,
   [GymLeader.Burgh]: Species.Leavanny,
   [GymLeader.Elesa]: Species.Emolga,
@@ -231,9 +228,7 @@ export const GYM_LEADER_SIGNATURES: Record<GymLeader, Species> = {
   [GymLeader.Drayden]: Species.Haxorus,
   [GymLeader.Cheren]: Species.Stoutland,
   [GymLeader.Roxie]: Species.Garbodor,
-  // The Jellicent he closes with is unwritten, and the Wailord is
-  // his in the same team
-  [GymLeader.Marlon]: Species.Wailord,
+  [GymLeader.Marlon]: Species.Jellicent,
   [GymLeader.Viola]: Species.Vivillon,
   // The fossil he closes with in X, a first stage like Roark's Cranidos
   [GymLeader.Grant]: Species.Tyrunt,

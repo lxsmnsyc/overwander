@@ -38,6 +38,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Cherubi, weight: 22 },
         { species: Species.Buneary, weight: 25 },
         { species: Species.Petilil, weight: 24 },
+        { species: Species.Spritzee, weight: 24 },
       ],
       rare: [
         { species: Species.Floette, weight: 8 },
@@ -74,6 +75,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Togekiss, weight: 6 },
         { species: Species.Leafeon, weight: 6 },
         { species: Species.Lilligant, weight: 7 },
+        { species: Species.Aromatisse, weight: 6 },
       ],
       elusive: [
         { species: Species.Florges, weight: 5 },
@@ -152,6 +154,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Cherubi, weight: 22 },
         { species: Species.Buneary, weight: 25 },
         { species: Species.Petilil, weight: 24 },
+        { species: Species.Spritzee, weight: 24 },
       ],
       rare: [
         { species: Species.Floette, weight: 8 },
@@ -188,6 +191,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Togekiss, weight: 6 },
         { species: Species.Leafeon, weight: 6 },
         { species: Species.Lilligant, weight: 7 },
+        { species: Species.Aromatisse, weight: 6 },
       ],
       elusive: [
         { species: Species.Florges, weight: 5 },

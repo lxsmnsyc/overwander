@@ -1,13 +1,20 @@
 import { type Accessor, type JSX, Show, children, createMemo, createSignal } from 'solid-js';
 import { type CaughtPokemon, findDuplicates } from '../../auth/caught';
 import matchesCatch, { CATCH_VOCABULARY, orderCatches } from '../../auth/catch-search';
-import CatchBox, { type BoxEntry, type BoxGap, type BoxSquare, boxSizeOf, isGap } from './CatchBox';
+import CatchBox, {
+  type BoxEntry,
+  type BoxGap,
+  type BoxSquare,
+  type BoxView,
+  type SquarePress,
+  isGap,
+} from './CatchBox';
 import settings from '../app/settings';
-import { Note, Row, Search, createPager } from '../styled';
+import { Meta, Note, Row, Search } from '../styled';
 
 /**
- * A box of squares with its furniture — the search over it, the pages
- * under it, and what to say when it is empty. It is `ItemGrid`, for
+ * A box of squares with its furniture — the search over it, where in
+ * the box the player is, and what to say when it is empty. It is `ItemGrid`, for
  * catches: `CatchBox` stays the dumb grid, and every screen that shows
  * pokemon as squares wraps it in this instead of hand-rolling the same
  * search and pager beside it.
@@ -31,7 +38,32 @@ export interface CatchGridProps {
    */
   bare?: boolean;
   cardOnly?: boolean;
-  onOpen?: (id: string) => void;
+  onOpen?: (id: string, press: SquarePress) => void;
+  /** A finger held on a pokemon's square, passed to the box */
+  onHold?: (id: string) => void;
+  /** Whether empty squares say which slot they are, passed to the box */
+  numbered?: boolean;
+  /** Whether the box takes the whole width, passed to the box */
+  fill?: boolean;
+  /**
+   * How the squares in sight are said, over a box long enough to
+   * scroll. One box scrolled rather than paged, so a pokemon can be
+   * carried from its first row to its last
+   */
+  say?: (view: BoxView) => string;
+  /** Changed to send the box back to its first row, passed to the box with the search */
+  rewind?: string;
+  /** Putting the picked ones in an empty square, passed to the box */
+  onPlace?: (slot: number) => void;
+  placeLabel?: (slot: number) => string;
+  /** A line under the search about what it found */
+  results?: JSX.Element;
+  /**
+   * What stands over a box with nothing in it yet but its squares: a
+   * box the player made is drawn empty, slots and all, with this on
+   * top saying how to fill it
+   */
+  emptyCard?: JSX.Element;
   cell?: (entry: Accessor<BoxEntry>) => JSX.Element;
   /** Said when there is nothing at all, before any search */
   empty?: string;
@@ -52,6 +84,12 @@ export interface CatchGridProps {
    * caller that rebuilds its own props as the box changes under it
    */
   aside?: () => JSX.Element;
+  /** What stands before the search: which box it is searching */
+  lead?: () => JSX.Element;
+  /** What the search says it searches, while nothing is typed */
+  placeholder?: string;
+  /** A line under the search, about the box as a whole */
+  note?: string;
   /** Picking a pokemon up to file it, passed to the box */
   onDragStart?: (id: string, event: DragEvent) => void;
   /** Something dropped on a square of a box that keeps gaps, by its slot */
@@ -123,13 +161,22 @@ export default function CatchGrid(props: CatchGridProps): JSX.Element {
     return false;
   };
 
-  // A box the player has set eight wide holds forty, so the page has
-  // to be the box rather than a constant beside it
-  const shelf = createPager(matched, () => boxSizeOf(settings().boxColumns), 'Box');
+  const [view, setView] = createSignal<BoxView | null>(null);
+
+  /** Where in the box the player is, while it scrolls */
+  const where = (): string | null => {
+    const spot = view();
+
+    if (spot == null || !spot.scrolls) {
+      return null;
+    }
+    return props.say?.(spot) ?? `${spot.from} to ${spot.to} of ${spot.total}`;
+  };
 
   // Resolved once: a prop holding markup is a getter, and reading it
   // twice builds what it describes twice
   const aside = children(() => props.aside?.());
+  const lead = children(() => props.lead?.());
 
   return (
     <div class="flex w-full flex-col gap-3">
@@ -139,11 +186,12 @@ export default function CatchGrid(props: CatchGridProps): JSX.Element {
       <Show when={props.bare !== true}>
         {/* On a phone the controls beside it drop under the search rather than squeezing it */}
         <Row class="items-center gap-2 sm:flex-nowrap">
+          {lead()}
           <div class="min-w-48 grow basis-full sm:basis-0">
             <Search
               vocabulary={CATCH_VOCABULARY}
               example="type:fire"
-              placeholder="Name, or type:fire is:shiny"
+              placeholder={props.placeholder ?? 'Name, or type:fire is:shiny'}
               value={query()}
               onChange={(value) => {
                 if (props.onSearch == null) {
@@ -160,10 +208,12 @@ export default function CatchGrid(props: CatchGridProps): JSX.Element {
               changes is what a square does */}
           {aside()}
         </Row>
+        <Show when={props.note}>{(note) => <Meta>{note()}</Meta>}</Show>
+        {props.results}
       </Show>
 
       <Show
-        when={showing()}
+        when={showing() || (props.emptyCard != null && query().trim() === '')}
         fallback={
           <Note>
             {query().length === 0
@@ -172,20 +222,46 @@ export default function CatchGrid(props: CatchGridProps): JSX.Element {
           </Note>
         }
       >
-        {/* Above the box: five rows of squares fill a laptop screen, and
-            paging under them is paging a player has to scroll to */}
-        {shelf.controls({ range: true })}
-        <CatchBox
-          entries={shelf.shown()}
-          columns={settings().boxColumns}
-          onOpen={props.onOpen}
-          cardOnly={props.cardOnly}
-          cell={props.cell}
-          onDragStart={props.onDragStart}
-          // Only while the gaps are drawn: a searched list is packed,
-          // and a square in it is not the slot it stands in
-          onDropOn={query().trim() === '' ? props.onDropOn : undefined}
-        />
+        {/* Above the box: five rows of squares fill a laptop screen,
+            and a line under them is a line a player has to scroll to */}
+        <Show when={where()}>
+          {(said) => <Meta class="font-extrabold tabular-nums">{said()}</Meta>}
+        </Show>
+        <div class="relative">
+          <CatchBox
+            entries={matched()}
+            scroll
+            rewind={`${props.rewind ?? ''}|${query()}`}
+            onView={(spot) => {
+              setView(spot);
+            }}
+            columns={settings().boxColumns}
+            onOpen={props.onOpen}
+            onHold={props.onHold}
+            numbered={props.numbered}
+            fill={props.fill}
+            cardOnly={props.cardOnly}
+            cell={props.cell}
+            onDragStart={props.onDragStart}
+            // Only while the gaps are drawn: a searched list is packed,
+            // and a square in it is not the slot it stands in
+            onDropOn={query().trim() === '' ? props.onDropOn : undefined}
+            onPlace={query().trim() === '' ? props.onPlace : undefined}
+            placeLabel={props.placeLabel}
+          />
+          <Show when={!showing() && props.emptyCard}>
+            {(card) => (
+              <div class="pointer-events-none absolute inset-0 flex items-center justify-center p-4">
+                <div
+                  class="pointer-events-auto flex max-w-sm flex-col gap-1.5 rounded-2xl border-2
+                  border-line bg-paper px-6 py-5 text-center shadow-pop"
+                >
+                  {card()}
+                </div>
+              </div>
+            )}
+          </Show>
+        </div>
       </Show>
     </div>
   );

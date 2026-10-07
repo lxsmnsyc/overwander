@@ -10,7 +10,7 @@ import { tx } from './db';
 import { isCatchLocked } from './locks';
 import { recordFoundSpecies } from './pokedex';
 import { asNumber } from './read';
-import { readStackIn } from './stacks';
+import { readStackIn, spendStackIn } from './stacks';
 
 /**
  * Folding a partner into its husk (a dragon into a Kyurem, the sun or
@@ -19,8 +19,8 @@ import { readStackIn } from './stacks';
  *
  * Both halves survive a fusion: the husk takes the new shape and the
  * dragon is kept, hidden and pointed at what it went into, which is
- * what lets the pair come apart again. The item is held rather than
- * spent, so the only thing checked about it is that the player has one
+ * what lets the pair come apart again. Each joining and each parting
+ * spends one of the item, so a bag full of them is worth its count
  */
 
 /** A catch nobody may fold in or take apart: busy, fragile or spoken for */
@@ -87,7 +87,9 @@ export async function fuseCatch(
     if (await isBuddy(transaction, uid, partnerId)) {
       return null;
     }
-    if ((await readStackIn(transaction, ITEM_STACKS, uid, item)) < 1) {
+    const held = await readStackIn(transaction, ITEM_STACKS, uid, item);
+
+    if (!(await spendStackIn(transaction, ITEM_STACKS, uid, item, held))) {
       return null;
     }
     const record = asCaughtPokemon(caught);
@@ -136,9 +138,6 @@ export async function unfuseCatch(uid: string, catchId: string): Promise<Species
     if (husk == null || item == null) {
       return null;
     }
-    if ((await readStackIn(transaction, ITEM_STACKS, uid, item)) < 1) {
-      return null;
-    }
     const partnerId: unknown = caught.fusedWith;
 
     if (typeof partnerId !== 'string') {
@@ -149,6 +148,11 @@ export async function unfuseCatch(uid: string, catchId: string): Promise<Species
     // The dragon is handed back to whoever holds the shape it is in,
     // and only out of a row that is really in there
     if (partner == null || partner.owner !== uid || partner.hidden !== true) {
+      return null;
+    }
+    const held = await readStackIn(transaction, ITEM_STACKS, uid, item);
+
+    if (!(await spendStackIn(transaction, ITEM_STACKS, uid, item, held))) {
       return null;
     }
     const record = asCaughtPokemon(caught);

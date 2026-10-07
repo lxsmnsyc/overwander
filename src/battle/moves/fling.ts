@@ -3,7 +3,7 @@ import { Moves } from '../../data/ids/moves';
 import { isBerry } from '../../data/items/berries';
 import type Battle from '../core';
 import { BattleEvents, EffectType } from '../events';
-import { stealableItem } from '../utils';
+import { isConsumable, stealableItem } from '../utils';
 
 /**
  * Fling throws whatever the user is holding, and the item is gone
@@ -53,7 +53,11 @@ export default function setupFling(battle: Battle): void {
     const held = stealableItem(source);
 
     if (held != null) {
-      source.removeItem(held, { type: EffectType.Move, move: Moves.Fling, unit: source });
+      source.removeItem(
+        held,
+        { type: EffectType.Move, move: Moves.Fling, unit: source },
+        isConsumable(held),
+      );
     }
   });
 

@@ -251,7 +251,7 @@ export async function chooseAction(page: Page, sheet: Locator, action: string): 
  * button is in there, so it is taken the way a player takes one:
  * hover, wait for the card, press it
  */
-async function claimGift(
+export async function claimGift(
   page: Page,
   square: Locator,
   landed?: () => Promise<boolean>,

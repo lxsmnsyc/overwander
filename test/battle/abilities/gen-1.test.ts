@@ -9,9 +9,13 @@ import {
   type UnitAttackResolveCriticalEvent,
 } from '../../../src/battle/events';
 import {
+  BOSS_CAST_SCALE,
   BOSS_DAMAGE_CAP,
+  BOSS_HEALTH_SCALE,
   BOSS_HEAL_CAP,
   BOSS_HEAL_WINDOW,
+  BOSS_INDIRECT_RATE,
+  BOSS_PHASES,
   SHADOW_DEFENSE_SCALE,
   SHADOW_OFFENSE_SCALE,
 } from '../../../src/battle/abilities/special';
@@ -1978,13 +1982,13 @@ describe('Weak Armor', () => {
 });
 
 describe('Boss', () => {
-  it('multiplies stats: sixtyfold HP, doubled otherwise', () => {
+  it('multiplies stats: its pool by the boss scale, doubled otherwise', () => {
     const { battle, teamA } = createBattle();
     const boss = createUnit(battle, teamA);
     boss.addAbility(Abilities.Boss);
 
-    // 160 * 60, so a raid is as long as the species is bulky
-    expect(boss.checkStat(Stats.HP, 0)).toBe(9600);
+    // A scale of 160, so a raid is as long as the species is bulky
+    expect(boss.checkStat(Stats.HP, 0)).toBe(160 * BOSS_HEALTH_SCALE);
     expect(boss.checkStat(Stats.Attack, 0)).toBe(210);
     expect(boss.checkStat(Stats.Speed, 0)).toBe(210);
   });
@@ -2089,7 +2093,12 @@ describe('Boss', () => {
     attacker.triggerMoveEffect(Moves.SuperFang, { type: MoveTargetType.Unit, unit: boss }, 0);
     expect(boss.health).toBe(pool - BOSS_DAMAGE_CAP);
 
-    // And so does a one-hit KO
+    // A one-hit KO right behind it finds the allowance spent, and once
+    // it has refilled lands for the cap too
+    attacker.triggerMoveEffect(Moves.Guillotine, { type: MoveTargetType.Unit, unit: boss }, 0);
+    expect(boss.health).toBe(pool - BOSS_DAMAGE_CAP);
+
+    battle.tick((1000 * BOSS_DAMAGE_CAP) / BOSS_INDIRECT_RATE);
     attacker.triggerMoveEffect(Moves.Guillotine, { type: MoveTargetType.Unit, unit: boss }, 0);
     expect(boss.health).toBe(pool - 2 * BOSS_DAMAGE_CAP);
 
@@ -2114,13 +2123,14 @@ describe('Boss', () => {
     attacker.damage(NONE_CAUSE, boss, 10, DamageFlags.Indirect);
     expect(boss.health).toBe(pool - 10);
 
+    // Both draw on the one allowance, so together they take the cap
     attacker.damage(NONE_CAUSE, boss, pool / 8, DamageFlags.Indirect | DamageFlags.HealthScaled);
-    expect(boss.health).toBe(pool - 10 - BOSS_DAMAGE_CAP);
+    expect(boss.health).toBe(pool - BOSS_DAMAGE_CAP);
 
     // What a boss spends on purpose it pays in full: a Substitute's
     // price and an Explosion's own life are costs, not damage
     boss.damage(NONE_CAUSE, boss, 500, DamageFlags.Indirect | DamageFlags.Cost);
-    expect(boss.health).toBe(pool - 510 - BOSS_DAMAGE_CAP);
+    expect(boss.health).toBe(pool - 500 - BOSS_DAMAGE_CAP);
   });
 
   it('takes a bad poisoning for no more than the cap, however far it has climbed', () => {
@@ -2135,11 +2145,16 @@ describe('Boss', () => {
     attacker.triggerMoveEffect(Moves.Toxic, { type: MoveTargetType.Unit, unit: boss }, 0);
     expect(boss.status[Statuses.BadlyPoisoned]).toBeDefined();
 
-    // A sixteenth of a raid pool is already past the cap, and every
-    // bite after climbs further
-    for (let bite = 1; bite <= 4; bite += 1) {
+    // A sixteenth of a raid pool is already past the cap, so the first
+    // bite takes it, and every bite after only what refilled meanwhile
+    battle.tick(RESIDUAL_TICK);
+    expect(boss.health).toBe(pool - BOSS_DAMAGE_CAP);
+
+    const refill = (BOSS_INDIRECT_RATE * RESIDUAL_TICK) / 1000;
+
+    for (let bite = 1; bite <= 3; bite += 1) {
       battle.tick(RESIDUAL_TICK);
-      expect(boss.health).toBe(pool - bite * BOSS_DAMAGE_CAP);
+      expect(boss.health).toBeCloseTo(pool - BOSS_DAMAGE_CAP - bite * refill, 5);
     }
   });
 
@@ -2158,6 +2173,62 @@ describe('Boss', () => {
     boss.addMove(Moves.Tackle);
     boss.cast(Moves.Tackle, { type: MoveTargetType.Unit, unit: ghost });
     expect(boss.health).toBe(pool - BOSS_DAMAGE_CAP);
+  });
+
+  it('lets every indirect source share one allowance', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA);
+    const other = createUnit(battle, teamA);
+    const boss = createUnit(battle, teamB);
+    boss.addAbility(Abilities.Boss);
+
+    const pool = boss.checkStat(Stats.HP, 0);
+
+    boss.setHealth(pool);
+
+    // Two sources at once are worth no more than one
+    attacker.damage(NONE_CAUSE, boss, BOSS_DAMAGE_CAP, DamageFlags.Indirect);
+    other.damage(NONE_CAUSE, boss, BOSS_DAMAGE_CAP, DamageFlags.Indirect);
+    expect(boss.health).toBe(pool - BOSS_DAMAGE_CAP);
+
+    // A second later, the rate is what has come back
+    battle.tick(1000);
+    other.damage(NONE_CAUSE, boss, BOSS_DAMAGE_CAP, DamageFlags.Indirect);
+    expect(boss.health).toBeCloseTo(pool - BOSS_DAMAGE_CAP - BOSS_INDIRECT_RATE, 5);
+  });
+
+  it('sheds what the party hung on it as it crosses each phase', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const attacker = createUnit(battle, teamA);
+    const boss = createUnit(battle, teamB);
+    boss.addAbility(Abilities.Boss);
+
+    const pool = boss.checkStat(Stats.HP, 0);
+    const cause = { type: EffectType.Move, move: Moves.Charm, unit: attacker } as const;
+
+    boss.setHealth(pool);
+    attacker.triggerMoveEffect(Moves.WillOWisp, { type: MoveTargetType.Unit, unit: boss }, 0);
+    boss.addStage(Stages.Attack, -2, cause);
+    expect(boss.status[Statuses.Burned]).toBeDefined();
+
+    // Above the first phase, nothing is shed
+    attacker.damage(NONE_CAUSE, boss, pool * (1 - BOSS_PHASES[0]) - 1, 0);
+    expect(boss.status[Statuses.Burned]).toBeDefined();
+    expect(boss.stages[Stages.Attack]).toBe(-2);
+
+    // Across it, the burn and the drop are gone
+    attacker.damage(NONE_CAUSE, boss, 2, 0);
+    expect(boss.status[Statuses.Burned]).toBeUndefined();
+    expect(boss.stages[Stages.Attack]).toBe(0);
+
+    // Hung on again, and shed again at the next one, once only
+    boss.addStage(Stages.Attack, -2, cause);
+    attacker.damage(NONE_CAUSE, boss, pool * (BOSS_PHASES[0] - BOSS_PHASES[1]), 0);
+    expect(boss.stages[Stages.Attack]).toBe(0);
+
+    boss.addStage(Stages.Attack, -2, cause);
+    attacker.damage(NONE_CAUSE, boss, 10, 0);
+    expect(boss.stages[Stages.Attack]).toBe(-2);
   });
 
   it('shrugs off disruption statuses unless self-inflicted', () => {
@@ -2256,7 +2327,7 @@ describe('Boss', () => {
     expect(boss.moves[Moves.Tackle]?.cooldown).toBeUndefined();
   });
 
-  it('casts twice as slowly but cannot be interrupted', () => {
+  it('casts more slowly but cannot be interrupted', () => {
     const { battle, teamA, teamB } = createBattle();
     const boss = createUnit(battle, teamA);
     const plain = createUnit(battle, teamA);
@@ -2267,7 +2338,7 @@ describe('Boss', () => {
     const target = { type: MoveTargetType.Unit, unit: enemy } as const;
 
     expect(boss.checkMoveCastTime(Moves.Tackle, target)).toBe(
-      plain.checkMoveCastTime(Moves.Tackle, target) * 2,
+      plain.checkMoveCastTime(Moves.Tackle, target) * BOSS_CAST_SCALE,
     );
 
     boss.cast(Moves.Tackle, target);

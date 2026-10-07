@@ -272,6 +272,59 @@ describe('where a true shadow is met', () => {
     expect(taken).toBeGreaterThan(0);
   });
 
+  it('takes over a legendary lair its counterpart is at home in', () => {
+    const world = new World('overworld');
+    const homes = new Set<Lairs>();
+
+    for (const shadow of listTrueShadows()) {
+      for (const lair of getSpeciesLairs(shadow)) {
+        homes.add(lair);
+      }
+    }
+    const dark = findDarkDay(
+      world,
+      (chunk) => {
+        for (const [cell, landmark] of chunk.getLandmarkCells()) {
+          if (landmark !== Landmark.LegendaryLair) {
+            continue;
+          }
+          for (const lair of getBiomeLairs(chunk.getCellBiomes()[cell])) {
+            if (homes.has(lair)) {
+              return true;
+            }
+          }
+        }
+        return false;
+      },
+      (window) => (window * WEATHER_INTERVAL) % RAID_INTERVAL === 0,
+    );
+
+    expect(dark).not.toBeNull();
+
+    const { x, y, window } = dark ?? { x: 0, y: 0, window: 0 };
+    const chunk = world.getChunk(x, y);
+    const snapshot = new ChunkSnapshot(chunk, window * WEATHER_INTERVAL);
+    const legendary = snapshot.getLegendaryLairs();
+    const shadow = snapshot.getShadowLairs();
+    let taken = 0;
+
+    for (const [cell, landmark] of chunk.getLandmarkCells()) {
+      if (landmark !== Landmark.LegendaryLair) {
+        continue;
+      }
+      const roll = shadow.get(cell);
+
+      if (roll != null && isTrueShadow(roll.species)) {
+        taken++;
+        // It stands as a shadow lair, not beside the legendary one
+        expect(legendary.has(cell)).toBe(false);
+        expect(snapshot.isShadowLair(cell)).toBe(true);
+        expect(getSpeciesLairs(roll.species)).toContain(roll.lair);
+      }
+    }
+    expect(taken).toBeGreaterThan(0);
+  });
+
   it('is at home where its counterpart is', () => {
     for (const shadow of listTrueShadows()) {
       const counterpart = getTrueShadowCounterpart(shadow) ?? shadow;

@@ -64,7 +64,11 @@ export default function setupLockOn(battle: Battle): void {
     }
 
     event.accuracy = undefined;
-    aims.delete(event.source);
+
+    // The AI asking whether it would land is not the move landing
+    if (!battle.estimating) {
+      aims.delete(event.source);
+    }
   });
 
   battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {

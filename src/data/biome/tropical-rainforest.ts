@@ -9,7 +9,13 @@ export default function registerTropicalRainforestSpawns(): void {
   // The Pikipek line is written but waits on sprites, since the
   // collection has drawn no Trumbeak and no finished Toucannon. Once it
   // does, mornings and days take Pikipek in base at 24, Trumbeak in
-  // rare at 8 and Toucannon in elusive at 5
+  // rare at 8 and Toucannon in elusive at 5.
+  //
+  // The Lush Jungle waits the same way. With no Shiinotic drawn,
+  // evenings and nights will take Morelull in uncommon at 22 and
+  // Shiinotic in scarce at 6. With no Oranguru drawn, mornings, days and
+  // evenings will take both it and its counterpart Passimian in elusive
+  // at 5, and so will the tropical seasonal forest
   registerSpawnPool(Biome.TropicalRainforest, {
     [TimeOfDay.Morning]: {
       base: [
@@ -20,6 +26,7 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Slakoth, weight: 20 },
       ],
       uncommon: [
+        { species: Species.MeowthAlola, weight: 22 },
         { species: Species.Fomantis, weight: 22 },
         { species: Species.Exeggcute, weight: 20 },
         { species: Species.Pineco, weight: 20 },
@@ -33,6 +40,7 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Vigoroth, weight: 10 },
       ],
       scarce: [
+        { species: Species.PersianAlola, weight: 6 },
         { species: Species.Lurantis, weight: 6 },
         { species: Species.Exeggutor, weight: 10 },
         { species: Species.Forretress, weight: 5 },
@@ -41,6 +49,7 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Tangrowth, weight: 6 },
       ],
       elusive: [
+        { species: Species.Comfey, weight: 5 },
         { species: Species.Tsareena, weight: 4 },
         { species: Species.OricorioSensu, weight: 5 },
         { species: Species.Vikavolt, weight: 4 },
@@ -53,7 +62,10 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Tropius, weight: 8 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [],
+      special: [
+        { species: Species.Buzzwole, weight: 10 },
+        { species: Species.TapuLele, weight: 10 },
+      ],
       mythical: [{ species: Species.Mew, weight: 10 }],
     },
     [TimeOfDay.Day]: {
@@ -65,6 +77,7 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Slakoth, weight: 20 },
       ],
       uncommon: [
+        { species: Species.MeowthAlola, weight: 22 },
         { species: Species.Fomantis, weight: 22 },
         { species: Species.Exeggcute, weight: 20 },
         { species: Species.Pineco, weight: 20 },
@@ -78,6 +91,7 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Vigoroth, weight: 10 },
       ],
       scarce: [
+        { species: Species.PersianAlola, weight: 6 },
         { species: Species.Lurantis, weight: 6 },
         { species: Species.Exeggutor, weight: 10 },
         { species: Species.Forretress, weight: 5 },
@@ -86,6 +100,7 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Tangrowth, weight: 6 },
       ],
       elusive: [
+        { species: Species.Comfey, weight: 5 },
         { species: Species.Tsareena, weight: 4 },
         { species: Species.OricorioSensu, weight: 5 },
         { species: Species.Vikavolt, weight: 4 },
@@ -98,12 +113,17 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Tropius, weight: 8 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [],
+      special: [
+        { species: Species.Buzzwole, weight: 10 },
+        { species: Species.TapuLele, weight: 10 },
+      ],
       mythical: [{ species: Species.Mew, weight: 10 }],
     },
     [TimeOfDay.Evening]: {
       base: [{ species: Species.Rowlet, weight: 2 }],
       uncommon: [
+        { species: Species.MeowthAlola, weight: 22 },
+        { species: Species.RattataAlola, weight: 22 },
         { species: Species.Noibat, weight: 24 },
         { species: Species.Exeggcute, weight: 20 },
         { species: Species.Spinarak, weight: 20 },
@@ -113,6 +133,8 @@ export default function registerTropicalRainforestSpawns(): void {
       ],
       rare: [{ species: Species.Dartrix, weight: 2 }],
       scarce: [
+        { species: Species.PersianAlola, weight: 6 },
+        { species: Species.RaticateAlola, weight: 6 },
         { species: Species.Noivern, weight: 6 },
         { species: Species.Exeggutor, weight: 10 },
         { species: Species.Ariados, weight: 8 },
@@ -128,12 +150,17 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Carnivine, weight: 6 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [],
+      special: [
+        { species: Species.Buzzwole, weight: 10 },
+        { species: Species.TapuLele, weight: 10 },
+      ],
       mythical: [{ species: Species.Mew, weight: 10 }],
     },
     [TimeOfDay.Night]: {
       base: [{ species: Species.Rowlet, weight: 2 }],
       uncommon: [
+        { species: Species.MeowthAlola, weight: 22 },
+        { species: Species.RattataAlola, weight: 22 },
         { species: Species.Noibat, weight: 24 },
         { species: Species.Exeggcute, weight: 20 },
         { species: Species.Spinarak, weight: 20 },
@@ -143,6 +170,8 @@ export default function registerTropicalRainforestSpawns(): void {
       ],
       rare: [{ species: Species.Dartrix, weight: 2 }],
       scarce: [
+        { species: Species.PersianAlola, weight: 6 },
+        { species: Species.RaticateAlola, weight: 6 },
         { species: Species.Noivern, weight: 6 },
         { species: Species.Exeggutor, weight: 10 },
         { species: Species.Ariados, weight: 8 },
@@ -157,7 +186,10 @@ export default function registerTropicalRainforestSpawns(): void {
         { species: Species.Carnivine, weight: 6 },
       ],
       prized: [...UNOWN_SPAWNS],
-      special: [],
+      special: [
+        { species: Species.Buzzwole, weight: 10 },
+        { species: Species.TapuLele, weight: 10 },
+      ],
       mythical: [{ species: Species.Mew, weight: 10 }],
     },
   });

@@ -29,6 +29,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Lillipup, weight: 28 },
       ],
       uncommon: [
+        { species: Species.Stufful, weight: 22 },
         { species: Species.Fomantis, weight: 22 },
         { species: Species.Mudbray, weight: 22 },
         { species: Species.Cutiefly, weight: 24 },
@@ -84,6 +85,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Herdier, weight: 12 },
       ],
       scarce: [
+        { species: Species.Bewear, weight: 6 },
         { species: Species.Lurantis, weight: 6 },
         { species: Species.Mudsdale, weight: 6 },
         { species: Species.Ribombee, weight: 6 },
@@ -123,6 +125,8 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Lilligant, weight: 7 },
       ],
       elusive: [
+        { species: Species.Togedemaru, weight: 5 },
+        { species: Species.Comfey, weight: 5 },
         { species: Species.OricorioPomPom, weight: 5 },
         { species: Species.Dedenne, weight: 6 },
         { species: Species.Furfrou, weight: 5 },
@@ -158,6 +162,9 @@ export default function registerGrasslandSpawns(): void {
       ],
       prized: [
         ...UNOWN_SPAWNS,
+        { species: Species.Cosmog, weight: PRIZED_WEIGHT },
+        { species: Species.Cosmoem, weight: PRIZED_WEIGHT },
+        { species: Species.Poipole, weight: PRIZED_WEIGHT },
         { species: Species.Togepi, weight: PRIZED_WEIGHT },
         { species: Species.Tyrogue, weight: PRIZED_WEIGHT },
         { species: Species.Elekid, weight: PRIZED_WEIGHT },
@@ -198,6 +205,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Lillipup, weight: 28 },
       ],
       uncommon: [
+        { species: Species.Stufful, weight: 22 },
         { species: Species.Fomantis, weight: 22 },
         { species: Species.Mudbray, weight: 22 },
         { species: Species.Cutiefly, weight: 24 },
@@ -255,6 +263,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Herdier, weight: 12 },
       ],
       scarce: [
+        { species: Species.Bewear, weight: 6 },
         { species: Species.Lurantis, weight: 6 },
         { species: Species.Mudsdale, weight: 6 },
         { species: Species.Ribombee, weight: 6 },
@@ -295,6 +304,8 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Lilligant, weight: 7 },
       ],
       elusive: [
+        { species: Species.Togedemaru, weight: 5 },
+        { species: Species.Comfey, weight: 5 },
         { species: Species.OricorioPomPom, weight: 5 },
         { species: Species.Dedenne, weight: 6 },
         { species: Species.Furfrou, weight: 5 },
@@ -332,6 +343,9 @@ export default function registerGrasslandSpawns(): void {
       ],
       prized: [
         ...UNOWN_SPAWNS,
+        { species: Species.Cosmog, weight: PRIZED_WEIGHT },
+        { species: Species.Cosmoem, weight: PRIZED_WEIGHT },
+        { species: Species.Poipole, weight: PRIZED_WEIGHT },
         { species: Species.Togepi, weight: PRIZED_WEIGHT },
         { species: Species.Tyrogue, weight: PRIZED_WEIGHT },
         { species: Species.Elekid, weight: PRIZED_WEIGHT },
@@ -362,6 +376,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Shinx, weight: 25 },
       ],
       uncommon: [
+        { species: Species.Stufful, weight: 22 },
         { species: Species.Mudbray, weight: 22 },
         { species: Species.Rockruff, weight: 22 },
         { species: Species.Pumpkaboo, weight: 12 },
@@ -390,6 +405,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Luxio, weight: 5 },
       ],
       scarce: [
+        { species: Species.Bewear, weight: 6 },
         { species: Species.Mudsdale, weight: 6 },
         { species: Species.LycanrocDusk, weight: 6 },
         { species: Species.Sylveon, weight: 6 },
@@ -414,6 +430,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Musharna, weight: 6 },
       ],
       elusive: [
+        { species: Species.Togedemaru, weight: 5 },
         { species: Species.Incineroar, weight: 2 },
         { species: Species.Dedenne, weight: 6 },
         { species: Species.Furfrou, weight: 5 },
@@ -430,6 +447,9 @@ export default function registerGrasslandSpawns(): void {
       ],
       prized: [
         ...UNOWN_SPAWNS,
+        { species: Species.Cosmog, weight: PRIZED_WEIGHT },
+        { species: Species.Cosmoem, weight: PRIZED_WEIGHT },
+        { species: Species.Poipole, weight: PRIZED_WEIGHT },
         { species: Species.Igglybuff, weight: PRIZED_WEIGHT },
         { species: Species.Elekid, weight: PRIZED_WEIGHT },
         { species: Species.Wynaut, weight: PRIZED_WEIGHT },
@@ -459,6 +479,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Shinx, weight: 25 },
       ],
       uncommon: [
+        { species: Species.Stufful, weight: 22 },
         { species: Species.Mudbray, weight: 22 },
         { species: Species.Rockruff, weight: 22 },
         { species: Species.Pumpkaboo, weight: 12 },
@@ -489,6 +510,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Luxio, weight: 5 },
       ],
       scarce: [
+        { species: Species.Bewear, weight: 6 },
         { species: Species.Mudsdale, weight: 6 },
         { species: Species.LycanrocMidnight, weight: 6 },
         { species: Species.Sylveon, weight: 6 },
@@ -515,6 +537,7 @@ export default function registerGrasslandSpawns(): void {
         { species: Species.Musharna, weight: 6 },
       ],
       elusive: [
+        { species: Species.Togedemaru, weight: 5 },
         { species: Species.Incineroar, weight: 2 },
         { species: Species.Dedenne, weight: 6 },
         { species: Species.Gothitelle, weight: 5 },
@@ -530,6 +553,9 @@ export default function registerGrasslandSpawns(): void {
       ],
       prized: [
         ...UNOWN_SPAWNS,
+        { species: Species.Cosmog, weight: PRIZED_WEIGHT },
+        { species: Species.Cosmoem, weight: PRIZED_WEIGHT },
+        { species: Species.Poipole, weight: PRIZED_WEIGHT },
         { species: Species.Igglybuff, weight: PRIZED_WEIGHT },
         { species: Species.Elekid, weight: PRIZED_WEIGHT },
         { species: Species.Wynaut, weight: PRIZED_WEIGHT },

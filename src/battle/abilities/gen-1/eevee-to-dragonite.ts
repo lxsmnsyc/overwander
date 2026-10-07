@@ -21,6 +21,7 @@ import {
   createAbility,
   createDrizzleAbility,
   createLimberAbility,
+  createMultiscaleAbility,
   createToughClawsAbility,
   createWaterAbsorbAbility,
 } from '../__create';
@@ -355,21 +356,7 @@ const eeveeToDragonite = [
   ),
 
   // Dragonite
-  // https://bulbapedia.bulbagarden.net/wiki/Multiscale_(Ability)
-  createAbility(Abilities.Multiscale, (battle) =>
-    // Mutates the in-flight damage resolution, so the effect stays
-    // inline
-    battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
-      const target = event.parent.target;
-
-      if (
-        target.hasAbility(Abilities.Multiscale) &&
-        target.health >= target.checkStat(Stats.HP, 0)
-      ) {
-        event.value *= 0.5;
-      }
-    }),
-  ),
+  createMultiscaleAbility(Abilities.Multiscale),
 
   /**
    * Protean: the holder takes the type of whatever it is about to use,

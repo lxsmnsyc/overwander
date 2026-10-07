@@ -6,8 +6,10 @@ import type { Species } from '../../../data/ids/species';
 import { getItemData } from '../../../data/items';
 import { FORM_ITEMS } from '../../../data/items/form-items';
 import { MEGA_STONES, getMegaStone } from '../../../data/items/mega-stones';
+import { getFusionItem } from '../../../data/species/fusion';
 import { isMegaSpecies } from '../../../data/species/megas';
 import { getShadowlessSpecies } from '../../../data/species/true-shadow';
+import { isStandIn } from '../../../canvas/species-sprites';
 import type { SlotBatch } from './draw';
 
 /**
@@ -59,7 +61,9 @@ function sheetOf(name: string): BasicSprite | null {
 function iconOf(worn: Species): { sheet: string; name: string } | null {
   // A true shadow's shape wears what its counterpart's does
   const species = getShadowlessSpecies(worn) ?? worn;
-  const item = SHAPE_ITEMS.get(species);
+  // A fusion drawn as its partner wears the item that joined them, until
+  // the shape is drawn
+  const item = SHAPE_ITEMS.get(species) ?? (isStandIn(species) ? getFusionItem(species) : null);
 
   if (item != null) {
     // An item's icon is written as its sheet and its name

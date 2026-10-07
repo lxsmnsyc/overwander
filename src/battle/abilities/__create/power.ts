@@ -187,7 +187,7 @@ export const ABSORB_HEAL_FRACTION = 1 / 4;
 export function createWaterAbsorbAbility(
   targetAbility: Abilities,
   targetType: Types,
-): (battle: Battle) => void {
+): ((battle: Battle) => void) & { ability: Abilities } {
   return createAbility(
     targetAbility,
     (battle) =>

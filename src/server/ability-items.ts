@@ -2,12 +2,11 @@ import 'server-only';
 import { Metric } from '../auth/quest-record';
 import { ITEM_STACKS } from '../auth/stacks';
 import { countAbilitySlots, getSlots } from '../data/constants/slots';
-import { getSignatureAbility } from '../data/abilities';
+import { getSpeciesSignature } from '../data/abilities';
 import type Abilities from '../data/ids/abilities';
 import { Items } from '../data/ids/items';
 import type { Species } from '../data/ids/species';
 import { ABILITY_CAPSULE_SLOT } from '../data/items/ability-items';
-import { getSpeciesData } from '../data/species';
 import awakenAbility, { type Awakening } from './awaken';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
 import { readCaughtIn, updateCaughtIn } from './caught-io';
@@ -36,7 +35,7 @@ function unavailable(caught: Record<string, unknown>, uid: string): boolean {
 
 /** The signature this species is owed, or null where its family has none */
 function speciesSignature(species: Species): Abilities | null {
-  return getSignatureAbility(getSpeciesData(species).family);
+  return getSpeciesSignature(species);
 }
 
 /**

@@ -1,6 +1,6 @@
 import Regions from '../ids/regions';
 import type { Species } from '../ids/species';
-import { speciesDexNumber } from '../ids/species';
+import { ALOLAN_FORMS, speciesDexNumber } from '../ids/species';
 import { getRegisteredSpecies } from './__create';
 
 /**
@@ -65,9 +65,21 @@ export function getRegionSpan(region: Regions): [from: number, to: number] | nul
   return null;
 }
 
+/** Regional forms, which belong to the region that shaped them rather than their dex number's */
+const REGIONAL_FORMS = new Map<Species, Regions>();
+
+for (const form of ALOLAN_FORMS) {
+  REGIONAL_FORMS.set(form, Regions.Alola);
+}
+
 export function getSpeciesRegion(species: Species): Regions {
-  // A form is of the same region as the species it is a form of, so
-  // the ranges are asked about the dex number rather than the id
+  const regional = REGIONAL_FORMS.get(species);
+
+  if (regional != null) {
+    return regional;
+  }
+  // Any other form is of the same region as the species it is a form
+  // of, so the ranges are asked about the dex number rather than the id
   const dex = speciesDexNumber(species);
 
   for (const range of RANGES) {

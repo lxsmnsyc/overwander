@@ -16,6 +16,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Gible, weight: 2 },
       ],
       uncommon: [
+        { species: Species.Sandygast, weight: 22 },
         { species: Species.Helioptile, weight: 24 },
         { species: Species.Dwebble, weight: 22 },
         { species: Species.Vullaby, weight: 16 },
@@ -36,6 +37,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Gabite, weight: 1 },
       ],
       scarce: [
+        { species: Species.Palossand, weight: 6 },
         { species: Species.Heliolisk, weight: 6 },
         { species: Species.Crustle, weight: 7 },
         { species: Species.Mandibuzz, weight: 6 },
@@ -63,6 +65,8 @@ export default function registerDesertSpawns(): void {
         { species: Species.Larvesta, weight: PRIZED_WEIGHT },
       ],
       special: [
+        { species: Species.Pheromosa, weight: 10 },
+        { species: Species.TapuBulu, weight: 10 },
         { species: Species.Volcarona, weight: 10 },
         { species: Species.Regirock, weight: 10 },
       ],
@@ -81,6 +85,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Gible, weight: 2 },
       ],
       uncommon: [
+        { species: Species.Sandygast, weight: 22 },
         { species: Species.Helioptile, weight: 24 },
         { species: Species.Dwebble, weight: 22 },
         { species: Species.Vullaby, weight: 16 },
@@ -103,6 +108,7 @@ export default function registerDesertSpawns(): void {
         { species: Species.Gabite, weight: 1 },
       ],
       scarce: [
+        { species: Species.Palossand, weight: 6 },
         { species: Species.Heliolisk, weight: 6 },
         { species: Species.Crustle, weight: 7 },
         { species: Species.Mandibuzz, weight: 6 },
@@ -131,6 +137,8 @@ export default function registerDesertSpawns(): void {
         { species: Species.Larvesta, weight: PRIZED_WEIGHT },
       ],
       special: [
+        { species: Species.Pheromosa, weight: 10 },
+        { species: Species.TapuBulu, weight: 10 },
         { species: Species.Volcarona, weight: 10 },
         { species: Species.Regirock, weight: 10 },
       ],
@@ -142,6 +150,7 @@ export default function registerDesertSpawns(): void {
     [TimeOfDay.Evening]: {
       base: [{ species: Species.Gible, weight: 2 }],
       uncommon: [
+        { species: Species.Sandygast, weight: 22 },
         { species: Species.Elgyem, weight: 20 },
         { species: Species.Yamask, weight: 22 },
         { species: Species.Baltoy, weight: 22 },
@@ -154,6 +163,7 @@ export default function registerDesertSpawns(): void {
       ],
       rare: [{ species: Species.Gabite, weight: 1 }],
       scarce: [
+        { species: Species.Palossand, weight: 6 },
         { species: Species.Beheeyem, weight: 7 },
         { species: Species.Cofagrigus, weight: 7 },
         { species: Species.Cacturne, weight: 6 },
@@ -167,7 +177,11 @@ export default function registerDesertSpawns(): void {
       ],
       elusive: [{ species: Species.Garchomp, weight: 2 }],
       prized: [...UNOWN_SPAWNS, { species: Species.Magby, weight: PRIZED_WEIGHT }],
-      special: [{ species: Species.Regirock, weight: 10 }],
+      special: [
+        { species: Species.Pheromosa, weight: 10 },
+        { species: Species.TapuBulu, weight: 10 },
+        { species: Species.Regirock, weight: 10 },
+      ],
       mythical: [
         { species: Species.Hoopa, weight: 10 },
         { species: Species.Genesect, weight: 10 },
@@ -176,6 +190,7 @@ export default function registerDesertSpawns(): void {
     [TimeOfDay.Night]: {
       base: [{ species: Species.Gible, weight: 2 }],
       uncommon: [
+        { species: Species.Sandygast, weight: 22 },
         { species: Species.Elgyem, weight: 20 },
         { species: Species.Yamask, weight: 22 },
         { species: Species.Baltoy, weight: 22 },
@@ -188,6 +203,7 @@ export default function registerDesertSpawns(): void {
       ],
       rare: [{ species: Species.Gabite, weight: 1 }],
       scarce: [
+        { species: Species.Palossand, weight: 6 },
         { species: Species.Beheeyem, weight: 7 },
         { species: Species.Cofagrigus, weight: 7 },
         { species: Species.Cacturne, weight: 6 },
@@ -201,7 +217,11 @@ export default function registerDesertSpawns(): void {
       ],
       elusive: [{ species: Species.Garchomp, weight: 2 }],
       prized: [...UNOWN_SPAWNS, { species: Species.Magby, weight: PRIZED_WEIGHT }],
-      special: [{ species: Species.Regirock, weight: 10 }],
+      special: [
+        { species: Species.Pheromosa, weight: 10 },
+        { species: Species.TapuBulu, weight: 10 },
+        { species: Species.Regirock, weight: 10 },
+      ],
       mythical: [
         { species: Species.Hoopa, weight: 10 },
         { species: Species.Genesect, weight: 10 },

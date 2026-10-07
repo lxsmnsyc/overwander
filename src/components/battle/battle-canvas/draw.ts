@@ -15,8 +15,6 @@ import type EffectBatch from '../../../canvas/three/effect-batch';
 import type { Spot } from '../../../canvas/three/effect-batch';
 import { litPurifiedAura, litShadowAura, litSparkle } from '../../../canvas/battle/decor';
 import { cornersOf, shadowCorners } from '../../../canvas/placement';
-import { facingVector } from '../../../canvas/facing';
-import { SHIM_SPANS, shimMotion } from '../../../canvas/battle/sprite-shim';
 import { SHADOW_STAMP, bakeShadowDisc, paintSparkle } from '../../overworld/chunk-canvas/scenery';
 import drawSparkle, { SPARKLE_LIFE } from '../../../canvas/sparkle';
 import type { Point } from '../../../canvas/sprite-sheet';
@@ -159,35 +157,6 @@ function fractionOf(progress: ProgressData): number {
  * How much bigger than the sheet a pokemon in this slot is drawn
  */
 /**
- * A quad turned about a point. The batch takes four corners rather
- * than a rectangle, so a rotation is the corners moved and nothing
- * else
- */
-function turned(
-  quad: { x: number; y: number }[],
-  x: number,
-  y: number,
-  angle: number,
-): { x: number; y: number }[] {
-  if (angle === 0) {
-    return quad;
-  }
-
-  const cos = Math.cos(angle);
-  const sin = Math.sin(angle);
-
-  const rotated: { x: number; y: number }[] = [];
-
-  for (const corner of quad) {
-    rotated.push({
-      x: x + (corner.x - x) * cos - (corner.y - y) * sin,
-      y: y + (corner.x - x) * sin + (corner.y - y) * cos,
-    });
-  }
-  return rotated;
-}
-
-/**
  * How many marks run from a caster to what it is aiming at, how long
  * one takes to travel the whole way, and how long each one is as a
  * share of the gap
@@ -255,13 +224,20 @@ function baseScaleOf(slot: Slot): number {
   return slot.radius / SPRITE_SCALE_DIVISOR;
 }
 
+/** How much bigger a Totem is drawn than its species */
+const TOTEM_DRAW_SCALE = 1.5;
+
 export function scaleOf(slot: Slot): number {
   const sprite = slot.sprite;
 
   // The doll has no species data to size it by, so it keeps the base scale
-  return sprite == null || slot.unit.appearance === Species.Substitute
-    ? baseScaleOf(slot)
-    : baseScaleOf(slot) * speciesSize(slot.unit.appearance, sprite);
+  if (sprite == null || slot.unit.appearance === Species.Substitute) {
+    return baseScaleOf(slot);
+  }
+  // A Totem towers over the rest of its kind
+  const towering = slot.unit.hasAbility(Abilities.Totem) ? TOTEM_DRAW_SCALE : 1;
+
+  return baseScaleOf(slot) * speciesSize(slot.unit.appearance, sprite) * towering;
 }
 
 /**
@@ -628,30 +604,6 @@ export function drawSlot(
       if (wanted.still) {
         sprite.stop();
       }
-      // A clip the sheet has not got is stood in for by moving the
-      // body the way that clip would have. It is written into the
-      // slot's offset, which is what moves a pokemon without taking
-      // its bar and its name along with it
-      if (wanted.shim != null) {
-        const span = SHIM_SPANS[wanted.shim];
-        // A move runs its stand-in once, over the window the engine
-        // holds it for; a status loops it for as long as it is carried
-        const through =
-          strike == null
-            ? (clock % span) / span
-            : Math.min(1, (strike.elapsed ?? 0) / Math.max(1, strike.window));
-        const motion = shimMotion(wanted.shim, through);
-        const size = sprite.frameSize;
-        const scale = scaleOf(slot);
-        const [ahead, down] = facingVector(slot.facing);
-        const reach = motion.along * size.width * scale;
-
-        slot.offset = [
-          slot.offset[0] + ahead * reach,
-          slot.offset[1] + down * reach - motion.lift * size.height * scale,
-        ];
-        slot.spin = motion.spin;
-      }
       // Its body over the middle of the slot, which is the point
       // everything else on the field is measured from: the bars, the
       // name, and whatever a move draws on it.
@@ -706,14 +658,6 @@ export function drawSlot(
       const quad = onto == null ? null : sprite.quadOf(x, y, placement);
 
       if (onto == null || quad == null) {
-        // Turned about the point it stands on, so a spinning pokemon
-        // stays on its own spot rather than orbiting it
-        if (slot.spin !== 0) {
-          context.save();
-          context.translate(x, y);
-          context.rotate(slot.spin);
-          context.translate(-x, -y);
-        }
         sprite.draw(context, x, y, placement);
         // A transformation's flash, laid over the body it is lighting
         if ((slot.glow ?? 0) > 0) {
@@ -723,13 +667,10 @@ export function drawSlot(
           sprite.draw(context, x, y, placement);
           context.restore();
         }
-        if (slot.spin !== 0) {
-          context.restore();
-        }
       } else {
         // The one picture that hides a move effect passing behind it
         onto.solid?.(true);
-        const body = turned(cornersOf(quad), x, y, slot.spin);
+        const body = cornersOf(quad);
 
         onto.batch.quad(quad.sheet, quad.source, body, alpha);
         // A transformation's flash: the body screened over itself, twice

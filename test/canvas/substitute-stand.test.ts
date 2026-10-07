@@ -97,7 +97,6 @@ function slotOf(unit: Unit, sprite: SpeciesSpriteAnimation, stand: Stand | null)
     facing: 'Down',
     depth: 1,
     offset: [0, 0],
-    spin: 0,
     visible: true,
   };
 }

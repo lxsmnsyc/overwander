@@ -2,7 +2,7 @@ import { EventPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
 import type Battle from '../core';
 import { BattleEvents, EffectType } from '../events';
-import { stealableItem } from '../utils';
+import { isConsumable, stealableItem } from '../utils';
 
 /**
  * Thief and Covet take what the target is holding, and only into a
@@ -27,7 +27,11 @@ export default function setupThief(battle: Battle): void {
       return;
     }
 
-    target.removeItem(item, { type: EffectType.Move, move: event.parent.move, unit: source });
+    target.removeItem(
+      item,
+      { type: EffectType.Move, move: event.parent.move, unit: source },
+      isConsumable(item),
+    );
     source.addItem(item);
   });
 

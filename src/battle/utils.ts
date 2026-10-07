@@ -1,12 +1,14 @@
 import { type EventListenerLifecycle, EventPriority } from '../core/event-emitter';
 import { Slots } from '../data/constants/slots';
 import { Types } from '../data/constants/types';
-import { ItemFlags, type Items } from '../data/ids/items';
+import { ItemFlags, ItemTypes, type Items } from '../data/ids/items';
 import { getItemData } from '../data/items';
 import { type Statuses, Weathers } from '../data/ids/status';
 import type Battle from './core';
 import {
   BattleEvents,
+  type EffectCause,
+  EffectType,
   type MoveTarget,
   MoveTargetType,
   type UnitCastEvent,
@@ -55,6 +57,15 @@ export function countHeldItems(unit: Unit): number {
  */
 export function hasFreeItemSlot(unit: Unit): boolean {
   return countHeldItems(unit) < unit.checkSlots(Slots.Item);
+}
+
+/**
+ * Whether the item is used up by its effect, which is what decides
+ * whether a foe eating, stealing or flinging it costs the catch record
+ * the item once the battle ends
+ */
+export function isConsumable(item: Items): boolean {
+  return (getItemData(item).flags & ItemFlags.Consumable) !== 0;
 }
 
 /**
@@ -197,4 +208,13 @@ export function isWeatherSandstorm(unit: Unit): boolean {
 export function isWeatherHail(unit: Unit): boolean {
   const weather = unit.checkWeather();
   return weather === Weathers.Hail || weather === Weathers.Snow;
+}
+
+/** Whether a berry the unit ate itself caused this */
+export function isOwnBerry(cause: EffectCause, eater: Unit): boolean {
+  return (
+    cause.type === EffectType.Item &&
+    cause.unit === eater &&
+    getItemData(cause.item).type === ItemTypes.Berry
+  );
 }

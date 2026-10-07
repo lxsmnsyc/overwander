@@ -16,6 +16,11 @@ export default function registerGen5Abilities(): void {
     name: 'Iron Barbs',
     description: 'Whoever lands a contact move on it loses 1/8 of their HP to the spikes.',
   });
+  // Archen
+  registerAbility(Abilities.Defeatist, {
+    name: 'Defeatist',
+    description: 'At 1/2 HP or less, its Attack and Special Attack drop to 0.5x.',
+  });
   // Zorua
   registerAbility(Abilities.Illusion, {
     name: 'Illusion',

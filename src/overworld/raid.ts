@@ -9,11 +9,22 @@ import {
   packSlots,
 } from '../data/constants/slots';
 import { getBannedBossMoves } from '../data/overworld/boss-moves';
+import { getTotemAlly, getTotemSize } from '../data/overworld/totems';
 import { MAX_LEVEL } from '../data/constants/levels';
 import { MAX_EFFORT_PER_STAT, MAX_IV, PERFECT_IVS, Stats } from '../data/constants/stats';
 import Abilities from '../data/ids/abilities';
-import type { Moves } from '../data/ids/moves';
+import { CRASH_MOVES } from '../battle/moves/crash';
+import { OHKO_MOVES } from '../battle/moves/fixed-damage';
+import { DELAYED_MOVES } from '../battle/moves/future-sight';
+import { RAMPAGE_MOVES } from '../battle/moves/rampage';
+import { ROLLING_MOVES } from '../battle/moves/rolling';
+import { SELF_DESTRUCT_MOVES } from '../battle/moves/self-destruct';
+import { MoveCategories, Moves } from '../data/ids/moves';
+import { RECHARGE_MOVES } from '../data/moves/recharge';
+import { Z_MOVES } from '../data/moves/z-moves';
 import { Species } from '../data/ids/species';
+import { getMoveData } from '../data/moves';
+import { getLevelUpMoves, getSpeciesData } from '../data/species';
 import { deriveAbility, deriveGender, deriveMoves, deriveNature, deriveSize } from './encounter';
 
 /**
@@ -37,6 +48,8 @@ export const PLAYER_ALLIANCE = 1;
  */
 export const LEGENDARY_RAID_REWARD_LEVEL = 50;
 export const SHADOW_RAID_REWARD_LEVEL = 25;
+/** A Totem is handed over between the two: a strong pokemon, but no legendary */
+export const TOTEM_RAID_REWARD_LEVEL = 40;
 
 /**
  * What clearing one pays, on top of the pokemon.
@@ -55,6 +68,8 @@ export const SHADOW_RAID_REWARD_LEVEL = 25;
  */
 export const SHADOW_RAID_GOLD = 35000;
 export const LEGENDARY_RAID_GOLD = 80000;
+/** A Totem pays between a shadow and a legendary */
+export const TOTEM_RAID_GOLD = 50000;
 export const MYTHICAL_RAID_GOLD = 200000;
 
 /**
@@ -85,14 +100,149 @@ function maxEffortValues(): Record<Stats, number> {
   };
 }
 
+/** Nothing spent on any stat, for what nobody raised */
+function noEffortValues(): Record<Stats, number> {
+  return {
+    [Stats.HP]: 0,
+    [Stats.Attack]: 0,
+    [Stats.Defense]: 0,
+    [Stats.SpecialAttack]: 0,
+    [Stats.SpecialDefense]: 0,
+    [Stats.Speed]: 0,
+  };
+}
+
+/** How many of a boss' moves are attacks, the rest being status moves */
+export const BOSS_ATTACK_COUNT = 5;
+
 /**
- * The up to 8 moves a boss is staged with: what its species knows at
- * `RAID_BOSS_LEVEL`, less the ones a boss may never have. The ban is
- * applied before the moves are taken, so a species with more to draw
- * on still comes with a full set
+ * The status moves worth a boss' cast. Each one it aims at a single
+ * foe goes out to the whole party, so these are what make a party
+ * answer rather than only hit: a status to cure, a stat drop to wait
+ * out, setup thrown away. Sleep is left to Yawn, the one a party sees
+ * coming: a Spore across six pokemon would end the fight on its own
+ */
+const BOSS_STATUS_MOVES: readonly Moves[] = [
+  Moves.WillOWisp,
+  Moves.ThunderWave,
+  Moves.Glare,
+  Moves.Toxic,
+  Moves.Haze,
+  Moves.Yawn,
+  Moves.StunSpore,
+  Moves.Screech,
+  Moves.FakeTears,
+  Moves.Taunt,
+];
+
+/**
+ * Attacks a boss is not built around: the ones that cost it the fight's
+ * pace (a recharge, a lock, a delay, a crash), the ones that only work
+ * under a condition it cannot arrange, and the ones that answer a hit
+ * rather than land one. A boss may still level into any of them
+ */
+const BOSS_UNFIT_ATTACKS = new Set<Moves>([
+  ...SELF_DESTRUCT_MOVES,
+  ...DELAYED_MOVES,
+  ...RECHARGE_MOVES,
+  ...RAMPAGE_MOVES,
+  ...ROLLING_MOVES,
+  ...CRASH_MOVES,
+  ...OHKO_MOVES,
+  ...Z_MOVES,
+  Moves.FocusPunch,
+  Moves.DreamEater,
+  Moves.Snore,
+  Moves.Belch,
+  Moves.LastResort,
+  Moves.NaturalGift,
+  Moves.Fling,
+  Moves.Synchronoise,
+  Moves.Counter,
+  Moves.MirrorCoat,
+  Moves.MetalBurst,
+  Moves.ShellTrap,
+  Moves.BeakBlast,
+]);
+
+/** What an attack is worth to this species: power, the bonus for its own type, and the hit rate */
+function attackWorth(species: Species, move: Moves): number {
+  const data = getMoveData(move);
+  const { stats, types } = getSpeciesData(species);
+  const stab = types.includes(data.type) ? 1.5 : 1;
+  const stat =
+    stats[data.category === MoveCategories.Physical ? Stats.Attack : Stats.SpecialAttack];
+
+  return ((data.power ?? 0) * stab * stat * (data.accuracy ?? 100)) / (data.steps ?? 1);
+}
+
+/**
+ * The 8 moves a boss is staged with, from the moves its species levels
+ * into and none a boss may never have: a boss is met in the wild, and
+ * nothing in the wild was taught by a machine, a tutor or its parents.
+ * Its hardest attacks first, one to a type, then the status moves a
+ * party has to answer, then whatever else it levels into
  */
 export function getBossMoves(species: Species): Moves[] {
-  return deriveMoves(species, RAID_BOSS_LEVEL, getBannedBossMoves(species), mostSlots(Slots.Move));
+  const banned = getBannedBossMoves(species);
+  const pool = new Set<Moves>();
+
+  for (const move of getLevelUpMoves(species, RAID_BOSS_LEVEL)) {
+    if (!banned.has(move)) {
+      pool.add(move);
+    }
+  }
+
+  const attacks: Moves[] = [];
+
+  for (const move of pool) {
+    const data = getMoveData(move);
+
+    if (
+      data.category !== MoveCategories.Status &&
+      (data.power ?? 0) > 0 &&
+      !BOSS_UNFIT_ATTACKS.has(move)
+    ) {
+      attacks.push(move);
+    }
+  }
+  attacks.sort((a, b) => attackWorth(species, b) - attackWorth(species, a));
+
+  const chosen: Moves[] = [];
+  const covered = new Set<number>();
+
+  for (const move of attacks) {
+    if (chosen.length >= BOSS_ATTACK_COUNT) {
+      break;
+    }
+    if (!covered.has(getMoveData(move).type)) {
+      covered.add(getMoveData(move).type);
+      chosen.push(move);
+    }
+  }
+  for (const move of BOSS_STATUS_MOVES) {
+    if (chosen.length >= mostSlots(Slots.Move)) {
+      break;
+    }
+    if (pool.has(move)) {
+      chosen.push(move);
+    }
+  }
+  // The whole learn set, latest first: taking only the last few would
+  // leave a boss whose recent moves are all unfit with empty slots
+  const learned = deriveMoves(species, RAID_BOSS_LEVEL, banned, pool.size);
+
+  for (let at = learned.length - 1; at >= 0; at--) {
+    const move = learned[at];
+
+    if (chosen.length >= mostSlots(Slots.Move)) {
+      break;
+    }
+    if (!chosen.includes(move) && !BOSS_UNFIT_ATTACKS.has(move)) {
+      chosen.push(move);
+    }
+  }
+  return chosen;
 }
 
 /**
@@ -123,7 +273,7 @@ export function canStageBoss(species: Species): boolean {
 /**
  * The raid boss as a catch snapshot, so a battle builds it from the
  * same shape as a player's party. Its individual values are perfect
- * and its effort values zero; the nature and ability come from the
+ * and its effort values maxed; the nature and ability come from the
  * raid's trait value, which every player in the lobby shares. It
  * belongs to no catch record, so its `caught` id is empty. A shadow
  * boss carries the Shadow ability on top of the Boss one
@@ -132,10 +282,19 @@ export function createRaidBossSnapshot(
   species: Species,
   traitValue: number,
   shadow = false,
+  totem = false,
 ): CatchSnapshot {
   // The lobby shares the raid's trait value, so every player fights a
-  // boss of exactly the same build
-  const size = deriveSize(species, traitValue);
+  // boss of exactly the same build. A Totem stands at its own size
+  const size = totem ? getTotemSize(species) : deriveSize(species, traitValue);
+  const marks = [Abilities.Boss];
+
+  if (shadow) {
+    marks.push(Abilities.Shadow);
+  }
+  if (totem) {
+    marks.push(Abilities.Totem);
+  }
 
   return {
     caught: '',
@@ -162,9 +321,7 @@ export function createRaidBossSnapshot(
     // The Boss ability is what makes it a raid: the health pool, the
     // stage immunities and the sweeping single-target moves all ride
     // on it, alongside the species' own rolled ability
-    abilities: shadow
-      ? [Abilities.Boss, Abilities.Shadow, deriveAbility(species, traitValue)]
-      : [Abilities.Boss, deriveAbility(species, traitValue)],
+    abilities: [...marks, deriveAbility(species, traitValue)],
     items: [],
     // The Boss ability and the shadow are both special, so all a boss
     // needs room for is the one it rolled, and every move it knows
@@ -181,6 +338,60 @@ export function createRaidBossSnapshot(
     friendship: BASE_FRIENDSHIP,
     statuses: 0,
   };
+}
+
+/**
+ * The ally a Totem calls: the first stage of its line, or another of
+ * itself, at the raid's level with nothing spent on it. It is no boss,
+ * so it fights on an ordinary health pool, and it is marked as called
+ * so the battle keeps it off the field until the Totem asks for it
+ */
+export function createTotemAllySnapshot(totem: Species, traitValue: number): CatchSnapshot {
+  const species = getTotemAlly(totem);
+  const size = deriveSize(species, traitValue);
+
+  return {
+    caught: '',
+    species,
+    level: RAID_BOSS_LEVEL,
+    ivs: PERFECT_IVS,
+    effortValues: noEffortValues(),
+    nature: deriveNature(traitValue),
+    gender: deriveGender(species, traitValue),
+    height: size.height,
+    weight: size.weight,
+    shiny: false,
+    shadow: false,
+    moves: getBossMoves(species),
+    movePoints: {},
+    abilities: [deriveAbility(species, traitValue)],
+    items: [],
+    slots: packSlots(DEFAULT_ABILITY_SLOTS, DEFAULT_ITEM_SLOTS, mostSlots(Slots.Move)),
+    health: getMaxHealth({
+      species,
+      level: RAID_BOSS_LEVEL,
+      ivs: PERFECT_IVS,
+      effortValues: noEffortValues(),
+    }),
+    friendship: BASE_FRIENDSHIP,
+    statuses: 0,
+    called: true,
+  };
+}
+
+/**
+ * The boss side of a raid, as the catches its team snapshot holds: the
+ * boss alone, or a Totem with the ally it will call
+ */
+export function createRaidBossTeam(
+  species: Species,
+  traitValue: number,
+  shadow: boolean,
+  totem: boolean,
+): CatchSnapshot[] {
+  const boss = createRaidBossSnapshot(species, traitValue, shadow, totem);
+
+  return totem ? [boss, createTotemAllySnapshot(species, traitValue)] : [boss];
 }
 
 /**

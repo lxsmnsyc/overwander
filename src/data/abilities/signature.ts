@@ -1,6 +1,7 @@
 import Abilities from '../ids/abilities';
 import Families from '../ids/families';
-import { registerSignature } from './__create';
+import { Species } from '../ids/species';
+import { registerFormSignature, registerSignature } from './__create';
 
 /**
  * One invented ability per evolution family, themed on what the line
@@ -2281,5 +2282,246 @@ export default function registerSignatureAbilities(): void {
   registerSignature(Families.Bounsweet, Abilities.TropStride, {
     name: 'Trop Stride',
     description: 'Its kicking moves hit 1.3x.',
+  });
+
+  // The Lush Jungle
+  registerSignature(Families.Morelull, Abilities.DrowsyGlow, {
+    name: 'Drowsy Glow',
+    description: 'Each damaging move it lands casts Yawn on the target 20% of the time.',
+  });
+
+  registerSignature(Families.Comfey, Abilities.LeiGift, {
+    name: 'Lei Gift',
+    description:
+      'As it arrives, its worst hurt teammate is given a lei, and heals 1/16 of their HP each time they act for the fight.',
+  });
+
+  registerSignature(Families.Oranguru, Abilities.SagesCall, {
+    name: 'Sage’s Call',
+    description:
+      'Each time it acts, its teammate with the highest Attack or Special Attack casts its next move 25% faster.',
+  });
+
+  registerSignature(Families.Passimian, Abilities.RushPass, {
+    name: 'Rush Pass',
+    description:
+      'Its moves hit 1.3x whenever they are cast faster than they would be on their own.',
+  });
+  registerSignature(Families.Mareanie, Abilities.ToxicDome, {
+    name: 'Toxic Dome',
+    description:
+      'The first hit it takes after each entrance hits it at 0.5x, and it casts Toxic at the attacker.',
+  });
+  registerSignature(Families.Salandit, Abilities.FumeFlare, {
+    name: 'Fume Flare',
+    description: 'Its Fire moves poison the target 20% of the time.',
+  });
+  registerSignature(Families.Stufful, Abilities.FondCrush, {
+    name: 'Fond Crush',
+    description: 'Its moves hit 1.3x against an infatuated target.',
+  });
+  registerSignature(Families.Wimpod, Abilities.OpeningSlash, {
+    name: 'Opening Slash',
+    description: 'The first move it lands after each entrance hits 1.5x.',
+  });
+  registerSignature(Families.Sandygast, Abilities.CastleDrain, {
+    name: 'Castle Drain',
+    description:
+      'Whoever lands a contact move on it loses 1/8 of their HP, and it heals that much.',
+  });
+  registerSignature(Families.Pyukumuku, Abilities.TossedBack, {
+    name: 'Tossed Back',
+    description:
+      'The first blow that would knock it out leaves it on 1 HP and sends it off the field for its strongest teammate. Once per battle.',
+  });
+  registerSignature(Families.Minior, Abilities.Starfall, {
+    name: 'Starfall',
+    description: 'The first move it casts after each entrance is cast 50% faster.',
+  });
+  registerSignature(Families.Togedemaru, Abilities.ChargedSpines, {
+    name: 'Charged Spines',
+    description:
+      'A contact move landing on it charges it, and its next Electric move that lands hits 1.5x.',
+  });
+
+  registerSignature(Families.Komala, Abilities.NapTime, {
+    name: 'Nap Time',
+    description: 'Every 3rd time it acts, it heals 1/4 of its HP.',
+  });
+
+  // Turtonator and Drampa, the Sun and Moon pair: each answers one kind of blow on its team
+  registerSignature(Families.Turtonator, Abilities.BlastShell, {
+    name: 'Blast Shell',
+    description:
+      'A physical move landing on it or a teammate charges it, and its next Fire move that lands hits 1.5x.',
+  });
+  registerSignature(Families.Drampa, Abilities.EldersIre, {
+    name: 'Elder’s Ire',
+    description:
+      'A special move landing on it or a teammate charges it, and its next Dragon move that lands hits 1.5x.',
+  });
+
+  registerSignature(Families.Mimikyu, Abilities.GrudgeShroud, {
+    name: 'Grudge Shroud',
+    description: 'The first time each enemy lands a move on it, it casts Spite at them.',
+  });
+
+  registerSignature(Families.TypeNull, Abilities.MemoryEcho, {
+    name: 'Memory Echo',
+    description: 'Its super-effective moves hit 1.2x.',
+  });
+  registerSignature(Families.Bruxish, Abilities.PsychicGnash, {
+    name: 'Psychic Gnash',
+    description: 'Its biting moves confuse the target 20% of the time.',
+  });
+  registerSignature(Families.Dhelmise, Abilities.GhostShip, {
+    name: 'Ghost Ship',
+    description: 'Its Ghost and Grass moves hit 1.3x while rain falls.',
+  });
+  registerSignature(Families.JangmoO, Abilities.WarClangor, {
+    name: 'War Clangor',
+    description: 'Each sound move it lands raises its Defense 1 stage, up to 3 stages.',
+  });
+
+  // The Tapus, on one axis: each guardian blesses its own team while
+  // its own terrain is down
+  registerSignature(Families.TapuKoko, Abilities.StormBlessing, {
+    name: 'Storm Blessing',
+    description: "Its team's Speed counts 1.25x while Electric Terrain is on the field.",
+  });
+
+  registerSignature(Families.TapuLele, Abilities.MindBlessing, {
+    name: 'Mind Blessing',
+    description: "Its team's Special Attack counts 1.25x while Psychic Terrain is on the field.",
+  });
+
+  registerSignature(Families.TapuBulu, Abilities.WildBlessing, {
+    name: 'Wild Blessing',
+    description: "Its team's Attack counts 1.25x while Grassy Terrain is on the field.",
+  });
+
+  registerSignature(Families.TapuFini, Abilities.MistBlessing, {
+    name: 'Mist Blessing',
+    description: "Its team's Special Defense counts 1.25x while Misty Terrain is on the field.",
+  });
+
+  // The light trio, on one axis: the pair burns brightest whole, and
+  // the prism that lost its light burns brightest broken
+  registerSignature(Families.Cosmog, Abilities.Zenith, {
+    name: 'Zenith',
+    description: 'Its damaging moves hit up to 1.3x the fuller its HP, and 1x near none.',
+  });
+
+  registerSignature(Families.Necrozma, Abilities.Nadir, {
+    name: 'Nadir',
+    description: 'Its damaging moves hit up to 1.3x the lower its HP, and 1x at full.',
+  });
+
+  // The Ultra Beasts, on one axis: each came from another world, so one
+  // type this world would beat it with lands only as hard as any other
+  registerSignature(Families.Nihilego, Abilities.Earthless, {
+    name: 'Earthless',
+    description: 'Ground moves hit it for neutral damage rather than super effective.',
+  });
+
+  registerSignature(Families.Buzzwole, Abilities.Windbreak, {
+    name: 'Windbreak',
+    description: 'Flying moves hit it for neutral damage rather than super effective.',
+  });
+
+  registerSignature(Families.Pheromosa, Abilities.GaleWard, {
+    name: 'Gale Ward',
+    description: 'Flying moves hit it for neutral damage rather than super effective.',
+  });
+
+  registerSignature(Families.Xurkitree, Abilities.Unearthed, {
+    name: 'Unearthed',
+    description: 'Ground moves hit it for neutral damage rather than super effective.',
+  });
+
+  registerSignature(Families.Celesteela, Abilities.HeatShield, {
+    name: 'Heat Shield',
+    description: 'Fire moves hit it for neutral damage rather than super effective.',
+  });
+
+  registerSignature(Families.Kartana, Abilities.Fireproof, {
+    name: 'Fireproof',
+    description: 'Fire moves hit it for neutral damage rather than super effective.',
+  });
+
+  registerSignature(Families.Guzzlord, Abilities.Unenchanted, {
+    name: 'Unenchanted',
+    description: 'Fairy moves hit it for neutral damage rather than super effective.',
+  });
+
+  registerSignature(Families.Poipole, Abilities.ClosedMind, {
+    name: 'Closed Mind',
+    description: 'Psychic moves hit it for neutral damage rather than super effective.',
+  });
+
+  registerSignature(Families.Stakataka, Abilities.DeepFooting, {
+    name: 'Deep Footing',
+    description: 'Ground moves hit it for neutral damage rather than super effective.',
+  });
+
+  registerSignature(Families.Blacephalon, Abilities.DryFuse, {
+    name: 'Dry Fuse',
+    description: 'Water moves hit it for neutral damage rather than super effective.',
+  });
+
+  // Alola's mythicals, which the mainline does not present as a set
+  registerSignature(Families.Magearna, Abilities.SoulRelay, {
+    name: 'Soul Relay',
+    description: 'When a teammate faints, it takes on every stat stage that teammate had raised.',
+  });
+
+  registerSignature(Families.Marshadow, Abilities.UmbralStrike, {
+    name: 'Umbral Strike',
+    description: 'Its moves hit 1.25x against a target with any stat stage raised.',
+  });
+
+  registerSignature(Families.Zeraora, Abilities.IonField, {
+    name: 'Ion Field',
+    description: "Enemies' Normal moves are Electric moves while it is on the field.",
+  });
+
+  registerSignature(Families.Meltan, Abilities.MetalEater, {
+    name: 'Metal Eater',
+    description: 'Steel moves heal it 1/4 of its max HP rather than hurting it.',
+  });
+
+  // The Alolan lines whose every stage is regional carry their own
+  registerFormSignature([Species.RattataAlola, Species.RaticateAlola], Abilities.RichDiet, {
+    name: 'Rich Diet',
+    description: 'Each Berry it eats raises its Attack 1 stage.',
+  });
+  registerFormSignature([Species.SandshrewAlola, Species.SandslashAlola], Abilities.Frostforged, {
+    name: 'Frostforged',
+    description: 'Fire and Fighting moves hit it at 0.75x.',
+  });
+  registerFormSignature([Species.VulpixAlola, Species.NinetalesAlola], Abilities.AuroraCrown, {
+    name: 'Aurora Crown',
+    description:
+      'It casts Aurora Veil over its party as it arrives on the field while hail or snow falls.',
+  });
+  registerFormSignature([Species.DiglettAlola, Species.DugtrioAlola], Abilities.WireSnare, {
+    name: 'Wire Snare',
+    description: 'The first contact move to land on it after each entrance binds the attacker.',
+  });
+  registerFormSignature([Species.MeowthAlola, Species.PersianAlola], Abilities.TauntingGaze, {
+    name: 'Taunting Gaze',
+    description: 'It casts Taunt at an enemy as it arrives on the field.',
+  });
+  registerFormSignature(
+    [Species.GeodudeAlola, Species.GravelerAlola, Species.GolemAlola],
+    Abilities.MagnetFloat,
+    {
+      name: 'Magnet Float',
+      description: 'It casts Magnet Rise on itself as it arrives on the field.',
+    },
+  );
+  registerFormSignature([Species.GrimerAlola, Species.MukAlola], Abilities.CrystalToxin, {
+    name: 'Crystal Toxin',
+    description: 'Poison it puts on an enemy cannot be cured.',
   });
 }

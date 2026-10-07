@@ -10,8 +10,8 @@ import type { Items } from '../data/ids/items';
 import { Species, getBaseFormSpecies } from '../data/ids/species';
 import { MEGA_STONES } from '../data/items/mega-stones';
 import type Abilities from '../data/ids/abilities';
-import { getSignatureAbility } from '../data/abilities';
-import { getRegisteredSpecies, getSpeciesData, isFullyEvolved, isWornForm } from '../data/species';
+import { getSpeciesSignature } from '../data/abilities';
+import { getRegisteredSpecies, isFullyEvolved, isWornForm } from '../data/species';
 import { deriveAbility, deriveGender, deriveMoves, deriveNature, deriveSize } from './encounter';
 import { BOSS_ALLIANCE, PLAYER_ALLIANCE, canStageBoss, createRaidBossSnapshot } from './raid';
 
@@ -81,7 +81,7 @@ function getRollableSpecies(): Species[] {
  * none falls back to what it would have rolled
  */
 function demoAbility(species: Species, traitValue: number): Abilities {
-  return getSignatureAbility(getSpeciesData(species).family) ?? deriveAbility(species, traitValue);
+  return getSpeciesSignature(species) ?? deriveAbility(species, traitValue);
 }
 
 /**

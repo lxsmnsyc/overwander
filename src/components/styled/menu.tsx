@@ -1,5 +1,5 @@
 import { type ComponentProps, For, type JSX, Show, createSignal } from 'solid-js';
-import { Dynamic } from 'solid-js/web';
+import { Dynamic, Portal, isServer } from 'solid-js/web';
 import {
   Menu as HeadlessMenu,
   MenuItem,
@@ -8,6 +8,8 @@ import {
   PopoverPanel,
   Transition,
 } from 'terracotta';
+import useDropdown from './dropdown';
+import { usePortalHost } from './portal-host';
 import { SHEER } from './transition';
 
 /**
@@ -34,6 +36,17 @@ export interface MenuAction {
   tone?: 'danger';
   /** Whether a rule sets it apart from the entries above it */
   separated?: boolean;
+  /** A colour drawn as a swatch before the label */
+  swatch?: string;
+  /**
+   * Whether it is the one that holds now, ticked. A menu of places to
+   * move something to ticks where it is
+   */
+  checked?: boolean;
+  /** A line under the label, saying what picking it does */
+  hint?: string;
+  /** A word at the right end: how many are there, or that it is here now */
+  note?: string;
 }
 
 export interface MenuProps {
@@ -50,10 +63,29 @@ export interface MenuProps {
   icon?: (iconProps: ComponentProps<'svg'>) => JSX.Element;
   actions: MenuAction[];
   class?: string;
+  /**
+   * What the button shows in place of the label, which still names it
+   * for a screen reader. Drawn in the accent colour, since a button
+   * that shows something of its own is a chip rather than a word
+   */
+  face?: JSX.Element;
+  /** A word over the entries, saying what picking one does */
+  heading?: string;
+  /** `accent` draws the button solid blue, for the act a bar is built around */
+  tone?: 'accent';
+  /**
+   * Whether a phone gets the entries as a sheet up from the bottom of
+   * the screen rather than a list hung from the button: a list of
+   * places to send something wants room for a thumb
+   */
+  sheet?: boolean;
 }
 
+/** Narrower than this, a menu that may be a sheet is one */
+const PHONE = '(max-width: 639px)';
+
 const ITEM =
-  'cursor-pointer rounded-lg border-0 bg-transparent px-2 py-1 text-left text-sm font-semibold' +
+  'flex items-center gap-2 cursor-pointer rounded-lg border-0 bg-transparent px-2 py-1 text-left text-sm font-semibold' +
   ' shadow-none transition-colors hover:border-0 hover:bg-tide-soft hover:text-tide-dark' +
   ' active:translate-y-0 aria-disabled:cursor-not-allowed aria-disabled:opacity-50' +
   ' aria-disabled:hover:bg-transparent aria-disabled:hover:text-muted' +
@@ -61,72 +93,164 @@ const ITEM =
 
 export default function Menu(props: MenuProps): JSX.Element {
   const [open, setOpen] = createSignal(false);
+  /** How the button is drawn: solid, a chip, or a plain word */
+  const look = (): string => {
+    if (props.tone === 'accent') {
+      return 'border-tide-dark bg-tide font-black text-on-accent hover:bg-tide-dark';
+    }
+    return props.face == null
+      ? 'border-line bg-paper font-bold hover:border-tide hover:text-tide-dark'
+      : 'border-tide bg-tide-soft font-black hover:text-tide-dark';
+  };
+  /** Whether it opened as a sheet, read as it opens */
+  const [asSheet, setAsSheet] = createSignal(false);
+  const host = usePortalHost();
+  // Hung from the button's right edge: the button is usually pinned to
+  // the right of a dialog header, and a panel laid out rightwards from
+  // there runs off the screen. Drawn in the portal container, so the
+  // panel and its dock no longer cut it off
+  const floating = useDropdown({ open, placement: 'bottom-end' });
 
   return (
     <Popover
       isOpen={open()}
       onChange={(state) => {
+        setAsSheet(props.sheet === true && !isServer && globalThis.matchMedia(PHONE).matches);
         setOpen(state);
       }}
       class={`relative inline-flex ${props.class ?? ''}`}
     >
       <PopoverButton
-        aria-label={props.icon == null ? undefined : props.label}
-        class={`inline-flex items-center gap-1.5 rounded-xl border-2 border-line bg-paper py-1
-          text-sm font-bold shadow-pop-sm transition-colors hover:border-tide hover:text-tide-dark
-          focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tide ${
-            props.icon == null ? 'px-3' : 'px-2'
-          }`}
+        ref={(element: HTMLElement) => {
+          floating.refs.setReference(element);
+        }}
+        aria-label={props.icon == null && props.face == null ? undefined : props.label}
+        class={`inline-flex items-center gap-1.5 rounded-xl border-2 py-1 text-sm shadow-pop-sm
+          transition-colors focus-visible:outline-2
+          focus-visible:outline-offset-2 focus-visible:outline-tide ${look()} ${props.icon == null ? 'px-3' : 'px-2'}`}
       >
-        <Show when={props.icon} fallback={props.label}>
+        <Show when={props.icon} fallback={props.face ?? props.label}>
           {(icon) => <Dynamic component={icon()} class="size-5" aria-hidden="true" />}
         </Show>
         <Show when={props.icon == null}>
           <span aria-hidden="true">▾</span>
         </Show>
       </PopoverButton>
-      {/* Hung from the button's right edge rather than its left.
-          The button that opens it is pinned to the right of a dialog
-          header, so a panel laid out rightwards from there runs off
-          the side of the screen — and a menu you have to scroll the
-          page sideways to read is a menu with nothing in it */}
-      {/* The fade is the wrapper's and the panel inside it is plain,
-          which keeps the transform off the panel the list is measured
-          from */}
-      <Transition show={open()} {...SHEER} class="absolute top-full right-0 z-30 mt-1.5 w-max">
-        <PopoverPanel class="min-w-44 rounded-xl border-2 border-line bg-paper p-1 shadow-float">
-          <HeadlessMenu class="flex list-none flex-col gap-0.5">
-            <For each={props.actions}>
-              {(action) => (
-                <>
-                  <Show when={action.separated === true}>
-                    <div aria-hidden="true" class="my-0.5 h-px bg-line-soft" />
-                  </Show>
-                  <MenuItem
-                    as="button"
-                    type="button"
+      <Portal mount={host()}>
+        {/* Placed by the outer box and faded by the inner one, so the
+            fade never fights the placement over the transform */}
+        <div
+          ref={(element) => {
+            floating.refs.setFloating(element);
+          }}
+          class="z-40"
+          style={
+            asSheet()
+              ? { position: 'fixed', left: '0', right: '0', bottom: '0' }
+              : {
+                  ...floating.floatingStyles,
+                  visibility: floating.isPositioned ? 'visible' : 'hidden',
+                }
+          }
+        >
+          <Transition show={open()} {...SHEER} class={asSheet() ? 'w-full' : 'w-max'}>
+            <PopoverPanel
+              class={
+                asSheet()
+                  ? 'max-h-[80vh] overflow-y-auto rounded-t-3xl border-2 border-b-0 border-line bg-paper px-3 pt-2 pb-4 shadow-float'
+                  : 'max-h-[var(--drop-room,24rem)] min-w-44 overflow-y-auto rounded-xl border-2 border-line bg-paper p-1 shadow-float'
+              }
+            >
+              <Show when={asSheet()}>
+                <div aria-hidden="true" class="mx-auto mb-2 h-1.5 w-10 rounded-full bg-line" />
+              </Show>
+              <Show when={props.heading}>
+                {(heading) => (
+                  <p
                     class={
-                      action.tone === 'danger'
-                        ? `${ITEM} text-ember-dark hover:bg-ember-soft hover:text-ember-dark [&[tc-active]]:bg-ember-soft [&[tc-active]]:text-ember-dark`
-                        : ITEM
+                      asSheet()
+                        ? 'm-0 px-2 pb-2 text-lg font-black'
+                        : 'm-0 px-2 pt-1 pb-0.5 text-xs font-black tracking-wide text-muted uppercase'
                     }
-                    aria-disabled={action.disabled === true}
-                    onClick={() => {
-                      if (action.disabled === true) {
-                        return;
-                      }
-                      setOpen(false);
-                      action.onSelect();
-                    }}
                   >
-                    {action.label}
-                  </MenuItem>
-                </>
-              )}
-            </For>
-          </HeadlessMenu>
-        </PopoverPanel>
-      </Transition>
+                    {heading()}
+                  </p>
+                )}
+              </Show>
+              <HeadlessMenu class="flex list-none flex-col gap-0.5">
+                <For each={props.actions}>
+                  {(action) => (
+                    <>
+                      <Show when={action.separated === true}>
+                        <div aria-hidden="true" class="my-0.5 h-px bg-line-soft" />
+                      </Show>
+                      <MenuItem
+                        as="button"
+                        type="button"
+                        class={`${ITEM} ${asSheet() ? 'min-h-12 bg-line-soft text-base' : ''} ${
+                          action.tone === 'danger'
+                            ? 'text-ember-dark hover:bg-ember-soft hover:text-ember-dark [&[tc-active]]:bg-ember-soft [&[tc-active]]:text-ember-dark'
+                            : ''
+                        } ${action.checked === true ? 'bg-tide-soft' : ''}`}
+                        aria-disabled={action.disabled === true}
+                        onClick={() => {
+                          if (action.disabled === true) {
+                            return;
+                          }
+                          setOpen(false);
+                          action.onSelect();
+                        }}
+                      >
+                        <Show when={action.swatch}>
+                          {(swatch) => (
+                            <span
+                              aria-hidden="true"
+                              class="size-3 shrink-0 rounded-[4px]"
+                              style={{ background: swatch() }}
+                            />
+                          )}
+                        </Show>
+                        <span class="flex grow flex-col">
+                          <span>{action.label}</span>
+                          <Show when={action.hint}>
+                            {(hint) => (
+                              <span class="text-xs font-semibold text-muted">{hint()}</span>
+                            )}
+                          </Show>
+                        </span>
+                        <Show when={action.note}>
+                          {(note) => (
+                            <span class="shrink-0 text-xs font-extrabold text-muted tabular-nums">
+                              {note()}
+                            </span>
+                          )}
+                        </Show>
+                        <Show when={action.checked === true}>
+                          <span aria-hidden="true" class="font-black text-tide-dark">
+                            ✓
+                          </span>
+                        </Show>
+                      </MenuItem>
+                    </>
+                  )}
+                </For>
+              </HeadlessMenu>
+              <Show when={asSheet()}>
+                <button
+                  type="button"
+                  class="mt-3 w-full cursor-pointer rounded-xl border-2 border-line bg-paper py-2.5
+                    text-base font-bold text-ink"
+                  onClick={() => {
+                    setOpen(false);
+                  }}
+                >
+                  Never mind
+                </button>
+              </Show>
+            </PopoverPanel>
+          </Transition>
+        </div>
+      </Portal>
     </Popover>
   );
 }

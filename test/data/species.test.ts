@@ -1,5 +1,10 @@
 import type { EvolutionData } from '../../src/data/species';
-import { getFoldedDragon, getFusedShape, isFusedSpecies } from '../../src/data/species/fusion';
+import {
+  getFoldedDragon,
+  getFusedShape,
+  getWornPartner,
+  isFusedSpecies,
+} from '../../src/data/species/fusion';
 import { describe, expect, it } from 'vitest';
 import registerBiomeSpawns, {
   BIOME_NAMES,
@@ -13,7 +18,7 @@ import registerBiomeSpawns, {
 } from '../../src/data/biome';
 import EggGroups from '../../src/data/ids/egg-groups';
 import Families from '../../src/data/ids/families';
-import registerAbilities from '../../src/data/abilities';
+import registerAbilities, { getRegisteredAbilities } from '../../src/data/abilities';
 import Abilities from '../../src/data/ids/abilities';
 import { Items } from '../../src/data/ids/items';
 import {
@@ -28,6 +33,7 @@ import Biome, { TimeOfDay, WILD_BIOMES } from '../../src/data/ids/biome';
 import { Moves } from '../../src/data/ids/moves';
 import {
   AEGISLASH_FORMS,
+  ALOLAN_FORMS,
   ARCEUS_FORMS,
   BASCULIN_FORMS,
   BURMY_FORMS,
@@ -50,8 +56,12 @@ import {
   KYUREM_FORMS,
   LANDORUS_FORMS,
   LYCANROC_FORMS,
+  MAGEARNA_FORMS,
   MELOETTA_FORMS,
   MEOWSTIC_FORMS,
+  MIMIKYU_FORMS,
+  MINIOR_FORMS,
+  NECROZMA_FORMS,
   ORICORIO_FORMS,
   PALKIA_FORMS,
   PICHU_FORMS,
@@ -60,6 +70,7 @@ import {
   SAWSBUCK_FORMS,
   SHAYMIN_FORMS,
   SHELLOS_FORMS,
+  SILVALLY_FORMS,
   Species,
   THUNDURUS_FORMS,
   TORNADUS_FORMS,
@@ -308,6 +319,19 @@ describe('species abilities', () => {
       }
     }
   });
+  it('names and describes every ability a species can carry', () => {
+    // An id with no entry is drawn as "Ability #200" on every card
+    const missing: string[] = [];
+
+    for (const species of getRegisteredSpecies()) {
+      for (const ability of getSpeciesAbilities(species)) {
+        if (!getRegisteredAbilities().includes(ability)) {
+          missing.push(`${getSpeciesData(species).name}: ability #${ability}`);
+        }
+      }
+    }
+    expect(missing).toEqual([]);
+  });
 });
 
 describe('what a family is called', () => {
@@ -440,11 +464,18 @@ describe('species forms', () => {
       ...ORICORIO_FORMS.slice(1),
       ...LYCANROC_FORMS.slice(1),
       ...WISHIWASHI_FORMS.slice(1),
+      ...MINIOR_FORMS.slice(1),
+      ...SILVALLY_FORMS.slice(1),
+      ...NECROZMA_FORMS.slice(1),
+      ...MAGEARNA_FORMS.slice(1),
+      ...MIMIKYU_FORMS.slice(1),
+      ...ALOLAN_FORMS,
       // The true shadows, which are forms of the birds they are the
       // shadow of rather than pokemon of their own
       ...listTrueShadows(),
       ...listMegas(),
       Species.KyogrePrimal,
+      Species.GreninjaAsh,
       Species.GroudonPrimal,
     ]);
 
@@ -677,6 +708,21 @@ describe('fusions', () => {
       expect(road.method).toBe(EvolutionMethod.UsedItem);
       expect(road.item).toBe(Items.DnaSplicers);
     }
+  });
+
+  it('folds the sun and the moon into Necrozma with an item each', () => {
+    const roads = getSpeciesData(Species.Necrozma).evolvesInto ?? [];
+
+    expect(roads.map((road) => [road.species, road.item])).toEqual([
+      [Species.NecrozmaDuskMane, Items.NSolarizer],
+      [Species.NecrozmaDawnWings, Items.NLunarizer],
+    ]);
+    expect(getFoldedDragon(Species.NecrozmaDuskMane)).toBe(Species.Solgaleo);
+    expect(getFoldedDragon(Species.NecrozmaDawnWings)).toBe(Species.Lunala);
+    expect(getFusedShape(Species.Solgaleo)).toBe(Species.NecrozmaDuskMane);
+    // The prism keeps its own armour whatever it has absorbed
+    expect(getWornPartner(Species.NecrozmaDuskMane)).toBeNull();
+    expect(getWornPartner(Species.KyuremBlack)).toBe(Species.Zekrom);
   });
 
   it('gives a fused shape the ability of the dragon inside it', () => {

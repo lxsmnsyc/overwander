@@ -189,7 +189,6 @@ export function pickCast(
     }
   }
   // Named rather than checked. A sheet without even this is a sheet
-  // with a hole in it, and a hole is the shim's business: it stands in
-  // with Idle and moves the body the way the missing clip would have
+  // with a hole in it, and the battle canvas stands in with Idle
   return DEFAULT_CAST;
 }

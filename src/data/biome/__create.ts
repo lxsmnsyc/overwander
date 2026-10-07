@@ -805,6 +805,26 @@ const LEGENDARY_SPECIES = new Set<Species>([
   Species.Tornadus,
   Species.Thundurus,
   Species.Landorus,
+  // Staged by its lair and raided there. Type: Null below it is prized
+  // instead: the line is made rather than born, so it is never common
+  Species.Silvally,
+  Species.TapuKoko,
+  Species.TapuLele,
+  Species.TapuBulu,
+  Species.TapuFini,
+  Species.Solgaleo,
+  Species.Lunala,
+  Species.Necrozma,
+  // The Ultra Beasts, staged by their lairs the way a legendary is
+  Species.Nihilego,
+  Species.Buzzwole,
+  Species.Pheromosa,
+  Species.Xurkitree,
+  Species.Celesteela,
+  Species.Kartana,
+  Species.Guzzlord,
+  Species.Stakataka,
+  Species.Blacephalon,
 ]);
 
 /**
@@ -903,7 +923,17 @@ const UNOWN_SPECIES = new Set<Species>(UNOWN_FORMS);
  * The fancy Vivillon is the other: no country grows those wings, so a
  * town is the only place one is ever met
  */
-const PRIZED_BY_HAND = new Set<Species>([Species.Larvesta, Species.VivillonFancy]);
+const PRIZED_BY_HAND = new Set<Species>([
+  Species.Larvesta,
+  Species.VivillonFancy,
+  Species.TypeNull,
+  // The nebula and the protostar are the light pair before it grows,
+  // so they are as rare as the line is
+  Species.Cosmog,
+  Species.Cosmoem,
+  // A gift in the mainline, so it is as rare here as the made ones
+  Species.Poipole,
+]);
 
 /** Met as rarely as a mythical, but no relic calls it and no raid stages it */
 const MYTHICAL_BY_HAND = new Set<Species>([

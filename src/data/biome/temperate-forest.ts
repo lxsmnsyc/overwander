@@ -38,6 +38,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Cherubi, weight: 22 },
         { species: Species.Buneary, weight: 25 },
         { species: Species.Petilil, weight: 24 },
+        { species: Species.Spritzee, weight: 24 },
       ],
       rare: [
         { species: Species.Floette, weight: 8 },
@@ -74,6 +75,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Togekiss, weight: 6 },
         { species: Species.Leafeon, weight: 6 },
         { species: Species.Lilligant, weight: 7 },
+        { species: Species.Aromatisse, weight: 6 },
       ],
       elusive: [
         { species: Species.Florges, weight: 5 },
@@ -110,11 +112,13 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Happiny, weight: PRIZED_WEIGHT },
       ],
       special: [
+        { species: Species.Kartana, weight: 10 },
         { species: Species.Xerneas, weight: 10 },
         { species: Species.Virizion, weight: 10 },
         { species: Species.Mesprit, weight: 10 },
       ],
       mythical: [
+        { species: Species.Zeraora, weight: 10 },
         { species: Species.Celebi, weight: 10 },
         { species: Species.PichuSpikyEared, weight: 10 },
       ],
@@ -150,6 +154,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Cherubi, weight: 22 },
         { species: Species.Buneary, weight: 25 },
         { species: Species.Petilil, weight: 24 },
+        { species: Species.Spritzee, weight: 24 },
       ],
       rare: [
         { species: Species.Floette, weight: 8 },
@@ -186,6 +191,7 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Togekiss, weight: 6 },
         { species: Species.Leafeon, weight: 6 },
         { species: Species.Lilligant, weight: 7 },
+        { species: Species.Aromatisse, weight: 6 },
       ],
       elusive: [
         { species: Species.Florges, weight: 5 },
@@ -222,11 +228,13 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Happiny, weight: PRIZED_WEIGHT },
       ],
       special: [
+        { species: Species.Kartana, weight: 10 },
         { species: Species.Xerneas, weight: 10 },
         { species: Species.Virizion, weight: 10 },
         { species: Species.Mesprit, weight: 10 },
       ],
       mythical: [
+        { species: Species.Zeraora, weight: 10 },
         { species: Species.Celebi, weight: 10 },
         { species: Species.PichuSpikyEared, weight: 10 },
       ],
@@ -306,11 +314,13 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Happiny, weight: PRIZED_WEIGHT },
       ],
       special: [
+        { species: Species.Kartana, weight: 10 },
         { species: Species.Xerneas, weight: 10 },
         { species: Species.Virizion, weight: 10 },
         { species: Species.Mesprit, weight: 10 },
       ],
       mythical: [
+        { species: Species.Zeraora, weight: 10 },
         { species: Species.Celebi, weight: 10 },
         { species: Species.PichuSpikyEared, weight: 10 },
       ],
@@ -392,11 +402,13 @@ export default function registerTemperateForestSpawns(): void {
         { species: Species.Happiny, weight: PRIZED_WEIGHT },
       ],
       special: [
+        { species: Species.Kartana, weight: 10 },
         { species: Species.Xerneas, weight: 10 },
         { species: Species.Virizion, weight: 10 },
         { species: Species.Mesprit, weight: 10 },
       ],
       mythical: [
+        { species: Species.Zeraora, weight: 10 },
         { species: Species.Celebi, weight: 10 },
         { species: Species.PichuSpikyEared, weight: 10 },
       ],

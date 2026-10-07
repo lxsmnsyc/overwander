@@ -1551,7 +1551,66 @@ export const LYCANROC_FORMS: Species[] = [
 ];
 
 /** A Wishiwashi alone, and the school it calls together from level 20 */
+/** The Alolan forms written so far, each a variant of the Kanto species it is named after */
+export const ALOLAN_FORMS: Species[] = [
+  Species.RattataAlola,
+  Species.RaticateAlola,
+  Species.RaichuAlola,
+  Species.SandshrewAlola,
+  Species.SandslashAlola,
+  Species.VulpixAlola,
+  Species.NinetalesAlola,
+  Species.DiglettAlola,
+  Species.DugtrioAlola,
+  Species.MeowthAlola,
+  Species.PersianAlola,
+  Species.GeodudeAlola,
+  Species.GravelerAlola,
+  Species.GolemAlola,
+  Species.GrimerAlola,
+  Species.MukAlola,
+  Species.ExeggutorAlola,
+  Species.MarowakAlola,
+];
+
 export const WISHIWASHI_FORMS: Species[] = [Species.Wishiwashi, Species.WishiwashiSchool];
+
+/** Silvally, and the seventeen types a Memory sets it to, in the Memories' order */
+export const SILVALLY_FORMS: Species[] = [
+  Species.Silvally,
+  Species.SilvallyFighting,
+  Species.SilvallyFlying,
+  Species.SilvallyPoison,
+  Species.SilvallyGround,
+  Species.SilvallyRock,
+  Species.SilvallyBug,
+  Species.SilvallyGhost,
+  Species.SilvallySteel,
+  Species.SilvallyFire,
+  Species.SilvallyWater,
+  Species.SilvallyGrass,
+  Species.SilvallyElectric,
+  Species.SilvallyPsychic,
+  Species.SilvallyIce,
+  Species.SilvallyDragon,
+  Species.SilvallyDark,
+  Species.SilvallyFairy,
+];
+
+/** Mimikyu under its rag, and the rag once a blow has broken it */
+export const MIMIKYU_FORMS: Species[] = [Species.Mimikyu, Species.MimikyuBusted];
+
+/** Minior in its shell, and the seven cores Shields Down can crack it open to */
+export const MINIOR_FORMS: Species[] = [
+  Species.Minior,
+  Species.MiniorRed,
+  Species.MiniorOrange,
+  Species.MiniorYellow,
+  Species.MiniorGreen,
+  Species.MiniorBlue,
+  Species.MiniorIndigo,
+  Species.MiniorViolet,
+];
 
 /** Rotom and the five machines it gets into */
 export const ROTOM_FORMS: Species[] = [
@@ -1590,6 +1649,17 @@ export const SHAYMIN_FORMS: Species[] = [Species.Shaymin, Species.ShayminSky];
 
 /** The husk and the two shapes a dragon folded into it puts it in */
 export const KYUREM_FORMS: Species[] = [Species.Kyurem, Species.KyuremBlack, Species.KyuremWhite];
+
+/** Magearna as it is met, then in the colours it was first painted in */
+export const MAGEARNA_FORMS: Species[] = [Species.Magearna, Species.MagearnaOriginal];
+
+/** Necrozma alone, with the sun or the moon inside it, and its light let out */
+export const NECROZMA_FORMS: Species[] = [
+  Species.Necrozma,
+  Species.NecrozmaDuskMane,
+  Species.NecrozmaDawnWings,
+  Species.NecrozmaUltra,
+];
 
 export const DEOXYS_FORMS: Species[] = [
   Species.Deoxys,

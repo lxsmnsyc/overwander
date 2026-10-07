@@ -171,7 +171,7 @@ export interface SafariDialogProps {
 function SafariBody(
   props: SafariDialogProps & {
     bag: Resource<InventoryEntry[]>;
-    /** Whether this player has ever owned the species standing there */
+    /** Whether this player has ever owned the species standing there, a shiny one for a shiny */
     owned: Resource<boolean>;
     /** One of this item left the bag on the server */
     onSpent: (item: Items) => void;
@@ -894,10 +894,22 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
     () => (props.session == null ? null : props.user.uid),
     getInventory,
   );
+  // A shiny counts as caught only once a shiny of the species has been:
+  // owning the plain one says nothing about the sparkling one
   const [owned] = createResource(
     () =>
-      props.session == null ? null : ([props.user.uid, props.session.encounter.species] as const),
-    async ([uid, species]) => (await getSpeciesDexEntry(uid, species)).owned,
+      props.session == null
+        ? null
+        : ([
+            props.user.uid,
+            props.session.encounter.species,
+            isShiny(props.session.encounter),
+          ] as const),
+    async ([uid, species, shiny]) => {
+      const entry = await getSpeciesDexEntry(uid, species);
+
+      return shiny ? entry.shiny : entry.owned;
+    },
   );
 
   return (

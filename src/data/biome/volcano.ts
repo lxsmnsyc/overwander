@@ -21,6 +21,8 @@ export default function registerVolcanoSpawns(): void {
         { species: Species.Torchic, weight: 2 },
       ],
       uncommon: [
+        { species: Species.DiglettAlola, weight: 22 },
+        { species: Species.Salandit, weight: 22 },
         { species: Species.Numel, weight: 20 },
         { species: Species.Growlithe, weight: 20 },
         { species: Species.Slugma, weight: 20 },
@@ -34,12 +36,15 @@ export default function registerVolcanoSpawns(): void {
         { species: Species.Combusken, weight: 1 },
       ],
       scarce: [
+        { species: Species.DugtrioAlola, weight: 6 },
+        { species: Species.Salazzle, weight: 6 },
         { species: Species.Camerupt, weight: 6 },
         { species: Species.Arcanine, weight: 5 },
         { species: Species.Magcargo, weight: 5 },
         { species: Species.Magmortar, weight: 6 },
       ],
       elusive: [
+        { species: Species.Turtonator, weight: 5 },
         { species: Species.Vivillon, weight: 5 },
         { species: Species.Charizard, weight: 3 },
         { species: Species.Golem, weight: 5 },
@@ -64,6 +69,8 @@ export default function registerVolcanoSpawns(): void {
         { species: Species.Torchic, weight: 2 },
       ],
       uncommon: [
+        { species: Species.DiglettAlola, weight: 22 },
+        { species: Species.Salandit, weight: 22 },
         { species: Species.Numel, weight: 20 },
         { species: Species.Growlithe, weight: 20 },
         { species: Species.Ponyta, weight: 20 },
@@ -79,6 +86,8 @@ export default function registerVolcanoSpawns(): void {
         { species: Species.Combusken, weight: 1 },
       ],
       scarce: [
+        { species: Species.DugtrioAlola, weight: 6 },
+        { species: Species.Salazzle, weight: 6 },
         { species: Species.Camerupt, weight: 6 },
         { species: Species.Arcanine, weight: 5 },
         { species: Species.Rapidash, weight: 5 },
@@ -86,6 +95,7 @@ export default function registerVolcanoSpawns(): void {
         { species: Species.Magmortar, weight: 6 },
       ],
       elusive: [
+        { species: Species.Turtonator, weight: 5 },
         { species: Species.Vivillon, weight: 5 },
         { species: Species.Charizard, weight: 3 },
         { species: Species.Golem, weight: 5 },
@@ -104,17 +114,23 @@ export default function registerVolcanoSpawns(): void {
     [TimeOfDay.Evening]: {
       base: [{ species: Species.Deino, weight: 2 }],
       uncommon: [
+        { species: Species.DiglettAlola, weight: 22 },
+        { species: Species.Salandit, weight: 22 },
         { species: Species.Vulpix, weight: 20 },
         { species: Species.Slugma, weight: 20 },
         { species: Species.Magmar, weight: 10 },
       ],
       rare: [{ species: Species.Zweilous, weight: 1 }],
       scarce: [
+        { species: Species.MarowakAlola, weight: 6 },
+        { species: Species.DugtrioAlola, weight: 6 },
+        { species: Species.Salazzle, weight: 6 },
         { species: Species.Ninetales, weight: 5 },
         { species: Species.Magcargo, weight: 10 },
         { species: Species.Magmortar, weight: 6 },
       ],
       elusive: [
+        { species: Species.Turtonator, weight: 5 },
         { species: Species.Hydreigon, weight: 2 },
         { species: Species.Heatmor, weight: 6 },
       ],
@@ -129,6 +145,8 @@ export default function registerVolcanoSpawns(): void {
     [TimeOfDay.Night]: {
       base: [{ species: Species.Deino, weight: 2 }],
       uncommon: [
+        { species: Species.DiglettAlola, weight: 22 },
+        { species: Species.Salandit, weight: 22 },
         { species: Species.Vulpix, weight: 20 },
         { species: Species.Koffing, weight: 20 },
         { species: Species.Slugma, weight: 20 },
@@ -136,12 +154,16 @@ export default function registerVolcanoSpawns(): void {
       ],
       rare: [{ species: Species.Zweilous, weight: 1 }],
       scarce: [
+        { species: Species.MarowakAlola, weight: 6 },
+        { species: Species.DugtrioAlola, weight: 6 },
+        { species: Species.Salazzle, weight: 6 },
         { species: Species.Weezing, weight: 5 },
         { species: Species.Ninetales, weight: 5 },
         { species: Species.Magcargo, weight: 5 },
         { species: Species.Magmortar, weight: 6 },
       ],
       elusive: [
+        { species: Species.Turtonator, weight: 5 },
         { species: Species.Hydreigon, weight: 2 },
         { species: Species.Heatmor, weight: 6 },
       ],

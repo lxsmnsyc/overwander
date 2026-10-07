@@ -12,7 +12,7 @@ import type { Items } from '../data/ids/items';
 import type { Moves } from '../data/ids/moves';
 import type Natures from '../data/ids/natures';
 import type { Genders, Species } from '../data/ids/species';
-import { EncounterType, deriveSize } from '../overworld/encounter';
+import { EncounterType, deriveCatchSize } from '../overworld/encounter';
 import {
   asBoolean,
   asNumber,
@@ -92,6 +92,12 @@ export interface CatchSnapshot {
    * and Frustration read it, so a fight has to carry it
    */
   friendship: number;
+  /**
+   * Set on a Totem's ally: it is built with the fight but kept off the
+   * field until the Totem calls it, so it stands in nobody's way and
+   * holds no side up before then
+   */
+  called?: boolean;
 }
 
 /**
@@ -152,7 +158,7 @@ export function previewSnapshot(snapshot: CatchSnapshot): CaughtPokemon {
 export function createCatchSnapshot(id: string, caught: CaughtPokemon): CatchSnapshot {
   // Size is derived from the trait value against the species standing
   // now, so an evolution taken before the raid is already reflected
-  const size = deriveSize(caught.species, caught.traitValue);
+  const size = deriveCatchSize(caught.species, caught.traitValue, caught.type);
 
   return {
     caught: id,
@@ -216,6 +222,7 @@ export function asCatchSnapshot(value: unknown): CatchSnapshot {
     // A snapshot written before the field existed reads as a stranger's
     // catch, which is what Return and Frustration answer to
     friendship: data.friendship == null ? BASE_FRIENDSHIP : asNumber(data.friendship),
+    ...(data.called === true ? { called: true } : {}),
   };
 }
 

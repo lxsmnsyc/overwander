@@ -17,12 +17,12 @@ import { MergedLifecycle } from '../lifecycle';
 import type Battle from '../core';
 import { BattleEvents, type EffectCause, EffectType, MoveTargetType } from '../events';
 import type Unit from '../unit';
-import { hasFreeItemSlot, stealableItem, unitTarget } from '../utils';
+import { hasFreeItemSlot, isConsumable, stealableItem, unitTarget } from '../utils';
 import { HEALING_MOVES } from '../moves/recover';
 import { fieldHolder } from './signature/__create';
 import {
   createAbility,
-  createContactHazard,
+  createGooeyAbility,
   createPrimalWeatherAbility,
   createSurgeAbility,
   createTypeShiftAbility,
@@ -214,11 +214,11 @@ const setupAbilities = [
       }
 
       thief.triggerAbility(Abilities.Magician);
-      event.target.removeItem(item, {
-        type: EffectType.Ability,
-        ability: Abilities.Magician,
-        unit: thief,
-      });
+      event.target.removeItem(
+        item,
+        { type: EffectType.Ability, ability: Abilities.Magician, unit: thief },
+        isConsumable(item),
+      );
       thief.addItem(item);
     }),
   ),
@@ -308,9 +308,6 @@ const setupAbilities = [
 
   // Florges: the mist comes up with it
   createSurgeAbility(Abilities.MistySurge, Moves.MistyTerrain),
-
-  // Spiky-eared Pichu: the charge in its ears spills into the ground
-  createSurgeAbility(Abilities.ElectricSurge, Moves.ElectricTerrain),
 
   // Clauncher: the claw is a barrel, so anything fired down it lands
   // harder, and the one pulse that mends rather than hurts mends more
@@ -447,34 +444,7 @@ const setupAbilities = [
 
   // Goomy: the slime comes off on whatever touches it, and a foot
   // in it is a foot that is slower afterwards
-  createAbility(
-    Abilities.Gooey,
-    (battle) =>
-      new MergedLifecycle([
-        battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
-          if (
-            !event.success ||
-            (event.flags & DamageFlags.Indirect) !== 0 ||
-            event.cause.type !== EffectType.Move ||
-            event.cause.unit === event.target ||
-            !event.target.hasAbility(Abilities.Gooey) ||
-            !event.cause.unit.checkMoveContact(event.cause.move, unitTarget(event.target))
-          ) {
-            return;
-          }
-
-          event.target.triggerAbility(Abilities.Gooey);
-          event.cause.unit.addStage(Stages.Speed, -1, {
-            type: EffectType.Ability,
-            ability: Abilities.Gooey,
-            unit: event.target,
-          });
-        }),
-        // Touching it costs something, so the AI is told before it
-        // decides to
-        createContactHazard(battle, Abilities.Gooey),
-      ]),
-  ),
+  createGooeyAbility(Abilities.Gooey),
 
   // Honedge: the sword is a shield until it swings. Both shapes carry
   // their own stats and share an HP stat, so turning over moves

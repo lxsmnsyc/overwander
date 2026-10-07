@@ -8,7 +8,7 @@ import { Balls, type Items } from '../data/ids/items';
 import type { Moves } from '../data/ids/moves';
 import { Genders, type Species } from '../data/ids/species';
 import type { EvolutionContext, EvolutionData } from '../data/species';
-import { FUSION_ITEM } from '../data/species/fusion';
+import { FUSION_ITEMS } from '../data/species/fusion';
 import {
   getConsumedItem,
   getSpeciesData,
@@ -78,7 +78,11 @@ export default async function evolveCatch(
       // A husk is only ever left beside another evolution, and a
       // fusion is two pokemon rather than one, so it has a road of its
       // own in `src/server/fusion.ts` and never comes through here
-      if (entry.species === into && entry.shed !== true && entry.item !== FUSION_ITEM) {
+      if (
+        entry.species === into &&
+        entry.shed !== true &&
+        (entry.item == null || !FUSION_ITEMS.has(entry.item))
+      ) {
         roads.push(entry);
       }
     }

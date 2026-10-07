@@ -22,7 +22,7 @@ import { feedEffortBerry, useEffortItem } from '../../auth/training';
 import { MAX_LEVEL } from '../../data/constants/levels';
 import { MAX_EFFORT_PER_STAT, type Stats } from '../../data/constants/stats';
 import { MAX_SLOTS, countAbilitySlots, mostSlots } from '../../data/constants/slots';
-import { getAbilityData, getSignatureAbility } from '../../data/abilities';
+import { getAbilityData, getSpeciesSignature } from '../../data/abilities';
 import { getAwakenableAbilities } from '../../data/overworld/npc';
 import { Items, getBall, getMachineMove, isMachineItem } from '../../data/ids/items';
 import type { Moves } from '../../data/ids/moves';
@@ -123,7 +123,7 @@ export function isUsableOn(item: Items, caught: CaughtPokemon): boolean {
   // A patch is offered where the family has a signature and this one
   // is not already keeping it
   if (isAbilityPatch(item)) {
-    const signature = getSignatureAbility(getSpeciesData(caught.species).family);
+    const signature = getSpeciesSignature(caught.species);
 
     return signature != null && !new Set(caught.abilities).has(signature);
   }

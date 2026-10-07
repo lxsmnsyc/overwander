@@ -103,6 +103,7 @@ import Weather, {
 import getWorld from './current';
 import type Chunk from './chunk';
 import { canStageBoss } from './raid';
+import { getTotemsOf } from '../data/overworld/totems';
 import { CELL_COUNT, CHUNK_CELLS, PLACEMENT_AREA, centeredCells } from './chunk';
 import { Depth } from './depth';
 import type { PhenomenonReward } from './landmarks';
@@ -310,6 +311,12 @@ export const MAX_PHENOMENA = 2;
  * rarer spawn bands run on
  */
 export const SHADOW_RAID_LEGENDARY_CHANCE = 1 / 8;
+
+/**
+ * How often a lair stands as a Totem's in a window, whatever it would
+ * otherwise have held: one window in four
+ */
+export const TOTEM_LAIR_CHANCE = 1 / 4;
 
 /**
  * What a lair landmark is staging: the lair, who is at home in it, and
@@ -803,19 +810,23 @@ export default class ChunkSnapshot {
    * legendaries in its spawn pool: a lair is a place, and the place
    * decides who is at home in it. A biome with no lair to its name
    * stages none — which is most of them, since a legendary the whole
-   * world could walk to is not a legendary
+   * world could walk to is not a legendary.
+   *
+   * Under a dark day, a lair a true shadow is at home in holds that
+   * true shadow instead, as a shadow raid
    */
   getLegendaryLairs(): Map<number, RaidRoll> {
     if (this.raids == null) {
       const raids = new Map<number, RaidRoll>();
+      const dark = this.raidWeather === Weather.DarkDay;
 
       for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
-        if (landmark !== Landmark.LegendaryLair) {
+        if (landmark !== Landmark.LegendaryLair || this.isTotemLair(cell)) {
           continue;
         }
         const lairs = this.stageableLairs(cell);
 
-        if (lairs.length === 0) {
+        if (lairs.length === 0 || (dark && this.trueShadowsAt(cell).length > 0)) {
           continue;
         }
         const rng = new AleaRNG(`${this.key}${this.raidTimestamp}raid${cell}`);
@@ -837,9 +848,9 @@ export default class ChunkSnapshot {
   private fallenLairs: Set<number> | null = null;
 
   /**
-   * The legendary lairs with no legendary to host this window, because
-   * no lair of the tile's biome has a resident that can stand on it.
-   * Each stands as a shadow lair instead rather than empty
+   * The legendary lairs with no legendary to host this window: no lair
+   * of the tile's biome has a resident that can stand on it, or a dark
+   * day hands the lair to a true shadow. Each stands as a shadow lair
    */
   getFallenLairs(): Set<number> {
     if (this.fallenLairs == null) {
@@ -847,7 +858,7 @@ export default class ChunkSnapshot {
       const fallen = new Set<number>();
 
       for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
-        if (landmark === Landmark.LegendaryLair && !hosted.has(cell)) {
+        if (landmark === Landmark.LegendaryLair && !hosted.has(cell) && !this.isTotemLair(cell)) {
           fallen.add(cell);
         }
       }
@@ -856,12 +867,101 @@ export default class ChunkSnapshot {
     return this.fallenLairs;
   }
 
+  /**
+   * The true shadows at home on this cell, each with the lair it is
+   * named for: its counterpart's lair has to be one the tile hosts
+   */
+  private trueShadowsAt(cell: number): [Species, Lairs][] {
+    const hosts = this.hostsAt(cell);
+    const local = new Set(this.lairsAt(cell));
+    const shadows: [Species, Lairs][] = [];
+
+    for (const species of listTrueShadows()) {
+      if (!hosts(species)) {
+        continue;
+      }
+      for (const lair of getSpeciesLairs(species)) {
+        if (local.has(lair)) {
+          shadows.push([species, lair]);
+          break;
+        }
+      }
+    }
+    return shadows;
+  }
+
   /** Whether the lair at this cell stages a shadow raid this window */
   isShadowLair(cell: number): boolean {
     return (
-      this.chunk.getLandmarkCells().get(cell) === Landmark.ShadowLair ||
+      (this.chunk.getLandmarkCells().get(cell) === Landmark.ShadowLair &&
+        !this.isTotemLair(cell)) ||
       this.getFallenLairs().has(cell)
     );
+  }
+
+  /** Whether the lair at this cell stands as a Totem's this window */
+  isTotemLair(cell: number): boolean {
+    return this.getTotemLairs().has(cell);
+  }
+
+  private totemRaids: Map<number, RaidRoll> | null = null;
+
+  /**
+   * The window's Totem lairs, keyed by the landmark cell.
+   *
+   * Any lair, legendary or shadow, stands as a Totem's one window in
+   * four. The Totem is a final stage of a line the tile's own biome
+   * spawns, standing on the tile's own surface, so a Totem is what
+   * grows up around it. A lair whose tile has none keeps what it would
+   * otherwise have held
+   */
+  getTotemLairs(): Map<number, RaidRoll> {
+    if (this.totemRaids == null) {
+      const raids = new Map<number, RaidRoll>();
+      const time = getTimeOfDay(this.raidTimestamp);
+
+      for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
+        if (landmark !== Landmark.LegendaryLair && landmark !== Landmark.ShadowLair) {
+          continue;
+        }
+        const rng = new AleaRNG(`${this.key}${this.raidTimestamp}totem${cell}`);
+
+        // The draws land in order: whether it is a Totem's at all, the
+        // Totem, then the trait value its nature and ability derive from
+        if (rng.random() >= TOTEM_LAIR_CHANCE) {
+          continue;
+        }
+
+        const hosts = this.hostsAt(cell);
+        const totems = new Set<Species>();
+        const pool = getSpawnPool(
+          this.biomeAt(cell),
+          time,
+          this.depth === Depth.Cave,
+          this.drawnSurface(cell),
+        );
+
+        for (const rank of spawnRanks(pool)) {
+          for (const entry of rank) {
+            for (const totem of getTotemsOf(entry.species)) {
+              if (hosts(totem)) {
+                totems.add(totem);
+              }
+            }
+          }
+        }
+        if (totems.size === 0) {
+          continue;
+        }
+
+        const choices = [...totems];
+        const species = choices[Math.floor(rng.random() * choices.length)];
+
+        raids.set(cell, { lair: null, species, traitValue: rng.int32() });
+      }
+      this.totemRaids = raids;
+    }
+    return this.totemRaids;
   }
 
   /** The biome's lairs, only its underground ones in a cave */
@@ -945,27 +1045,9 @@ export default class ChunkSnapshot {
           }
         }
 
-        // Under a dark day a shadow lair holds a true shadow instead, but
-        // only one at home here: its counterpart's lair has to be one this
-        // tile hosts, and the raid is named for that lair. With
-        // none, the lair falls back to an ordinary shadow raid
-        const shadows: [Species, Lairs][] = [];
-
-        if (dark) {
-          const local = new Set(this.lairsAt(cell));
-
-          for (const species of listTrueShadows()) {
-            if (!hosts(species)) {
-              continue;
-            }
-            for (const lair of getSpeciesLairs(species)) {
-              if (local.has(lair)) {
-                shadows.push([species, lair]);
-                break;
-              }
-            }
-          }
-        }
+        // Under a dark day a shadow lair holds a true shadow instead. With
+        // none at home here, it falls back to an ordinary shadow raid
+        const shadows = dark ? this.trueShadowsAt(cell) : [];
 
         const rng = new AleaRNG(`${this.key}${this.raidTimestamp}shadow${cell}`);
 

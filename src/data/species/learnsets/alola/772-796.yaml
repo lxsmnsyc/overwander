@@ -37,6 +37,7 @@ TypeNull:
     - UTurn
     - WorkUp
     - XScissor
+    - TerrainPulse
   TypeNull:
     level:
       1: [Tackle]
@@ -106,6 +107,7 @@ TypeNull:
       - Tailwind
       - Thunderbolt
       - ZenHeadbutt
+      - SteelBeam
   SilvallyFighting:
     level:
       1:
@@ -155,6 +157,7 @@ TypeNull:
       - Tailwind
       - Thunderbolt
       - ZenHeadbutt
+      - SteelBeam
   SilvallyFlying:
     level:
       1:
@@ -204,6 +207,7 @@ TypeNull:
       - Tailwind
       - Thunderbolt
       - ZenHeadbutt
+      - SteelBeam
   SilvallyPoison:
     level:
       1:
@@ -253,6 +257,7 @@ TypeNull:
       - Tailwind
       - Thunderbolt
       - ZenHeadbutt
+      - SteelBeam
   SilvallyGround:
     level:
       1:
@@ -302,6 +307,7 @@ TypeNull:
       - Tailwind
       - Thunderbolt
       - ZenHeadbutt
+      - SteelBeam
   SilvallyRock:
     level:
       1:
@@ -351,6 +357,7 @@ TypeNull:
       - Tailwind
       - Thunderbolt
       - ZenHeadbutt
+      - SteelBeam
   SilvallyBug:
     level:
       1:
@@ -400,6 +407,7 @@ TypeNull:
       - Tailwind
       - Thunderbolt
       - ZenHeadbutt
+      - SteelBeam
   SilvallyGhost:
     level:
       1:
@@ -449,6 +457,7 @@ TypeNull:
       - Tailwind
       - Thunderbolt
       - ZenHeadbutt
+      - SteelBeam
   SilvallySteel:
     level:
       1:
@@ -498,6 +507,7 @@ TypeNull:
       - Tailwind
       - Thunderbolt
       - ZenHeadbutt
+      - SteelBeam
   SilvallyFire:
     level:
       1:
@@ -547,6 +557,7 @@ TypeNull:
       - Tailwind
       - Thunderbolt
       - ZenHeadbutt
+      - SteelBeam
   SilvallyWater:
     level:
       1:
@@ -596,6 +607,7 @@ TypeNull:
       - Tailwind
       - Thunderbolt
       - ZenHeadbutt
+      - SteelBeam
   SilvallyGrass:
     level:
       1:
@@ -645,6 +657,7 @@ TypeNull:
       - Tailwind
       - Thunderbolt
       - ZenHeadbutt
+      - SteelBeam
   SilvallyElectric:
     level:
       1:
@@ -694,6 +707,7 @@ TypeNull:
       - Tailwind
       - Thunderbolt
       - ZenHeadbutt
+      - SteelBeam
   SilvallyPsychic:
     level:
       1:
@@ -743,6 +757,7 @@ TypeNull:
       - Tailwind
       - Thunderbolt
       - ZenHeadbutt
+      - SteelBeam
   SilvallyIce:
     level:
       1:
@@ -792,6 +807,7 @@ TypeNull:
       - Tailwind
       - Thunderbolt
       - ZenHeadbutt
+      - SteelBeam
   SilvallyDragon:
     level:
       1:
@@ -841,6 +857,7 @@ TypeNull:
       - Tailwind
       - Thunderbolt
       - ZenHeadbutt
+      - SteelBeam
   SilvallyDark:
     level:
       1:
@@ -890,6 +907,7 @@ TypeNull:
       - Tailwind
       - Thunderbolt
       - ZenHeadbutt
+      - SteelBeam
   SilvallyFairy:
     level:
       1:
@@ -939,6 +957,7 @@ TypeNull:
       - Tailwind
       - Thunderbolt
       - ZenHeadbutt
+      - SteelBeam
 Minior:
   family-teachable:
     - Acrobatics
@@ -1248,6 +1267,11 @@ Turtonator:
       - Venoshock
       - WillOWisp
       - WorkUp
+      - BodyPress
+      - ScaleShot
+      - BurningJealousy
+      - LashOut
+      - ScorchingSands
     egg: [FireSpin, HeadSmash, Revenge, WideGuard]
 Togedemaru:
   Togedemaru:
@@ -1313,6 +1337,9 @@ Togedemaru:
       - WildCharge
       - WorkUp
       - ZenHeadbutt
+      - SteelBeam
+      - SteelRoller
+      - RisingVoltage
     egg:
       - DisarmingVoice
       - Encore
@@ -1379,6 +1406,7 @@ Mimikyu:
     - WillOWisp
     - WorkUp
     - XScissor
+    - BurningJealousy
   Mimikyu:
     level:
       1: [Astonish, Copycat, Scratch, Splash, WoodHammer]
@@ -1564,6 +1592,9 @@ Drampa:
       - Uproar
       - WaterPulse
       - WorkUp
+      - BreakingSwipe
+      - ScaleShot
+      - LashOut
     egg: [DragonRush, Hurricane, Mist, PlayRough, RazorWind]
 Dhelmise:
   Dhelmise:
@@ -1633,6 +1664,10 @@ Dhelmise:
       - Telekinesis
       - Thief
       - Toxic
+      - BodyPress
+      - SteelRoller
+      - GrassyGlide
+      - Poltergeist
 JangmoO:
   # TM and tutor moves shared by the whole family
   family-teachable:
@@ -1682,6 +1717,7 @@ JangmoO:
     - Uproar
     - WorkUp
     - XScissor
+    - ScaleShot
   JangmoO:
     level:
       1: [Tackle]
@@ -1713,7 +1749,7 @@ JangmoO:
       53: [DragonDance]
       58: [Outrage]
       63: [CloseCombat]
-    teachable: [BrutalSwing, DrainPunch, Fling]
+    teachable: [BrutalSwing, DrainPunch, Fling, Coaching]
   KommoO:
     level:
       1:
@@ -1736,6 +1772,7 @@ JangmoO:
       59: [DragonDance]
       67: [Outrage]
       75: [CloseCombat]
+      68: [ClangorousSoul]
     teachable:
       - BrutalSwing
       - DrainPunch
@@ -1758,6 +1795,9 @@ JangmoO:
       - Superpower
       - ThunderPunch
       - WaterPulse
+      - BodyPress
+      - BreakingSwipe
+      - Coaching
 TapuKoko:
   TapuKoko:
     level:
@@ -2119,6 +2159,10 @@ Cosmog:
       - WildCharge
       - WorkUp
       - ZenHeadbutt
+      - SteelBeam
+      - ExpandingForce
+      - SteelRoller
+      - MeteorBeam
   Lunala:
     level:
       1: [Confusion, CosmicPower, Hypnosis, MoongeistBeam, Teleport]
@@ -2193,6 +2237,10 @@ Cosmog:
       - WillOWisp
       - WonderRoom
       - WorkUp
+      - ExpandingForce
+      - MeteorBeam
+      - Poltergeist
+      - DualWingbeat
 Nihilego:
   Nihilego:
     level:
@@ -2259,6 +2307,8 @@ Nihilego:
       - WonderRoom
       - WorrySeed
       - ZenHeadbutt
+      - MeteorBeam
+      - CorrosiveGas
 Buzzwole:
   Buzzwole:
     level:
@@ -2329,6 +2379,8 @@ Buzzwole:
       - ThunderPunch
       - Toxic
       - WorkUp
+      - Coaching
+      - DualWingbeat
 Pheromosa:
   Pheromosa:
     level:
@@ -2390,6 +2442,9 @@ Pheromosa:
       - Torment
       - Toxic
       - UTurn
+      - SkitterSmack
+      - Coaching
+      - TripleAxel
 Xurkitree:
   Xurkitree:
     level:
@@ -2450,3 +2505,4 @@ Xurkitree:
       - Toxic
       - VoltSwitch
       - WildCharge
+      - RisingVoltage

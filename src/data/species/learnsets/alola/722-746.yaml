@@ -38,6 +38,8 @@ Rowlet:
     - Toxic
     - WorkUp
     - WorrySeed
+    - GrassyGlide
+    - DualWingbeat
   Rowlet:
     level:
       1: [Tackle, Leafage]
@@ -106,6 +108,8 @@ Rowlet:
       - Tailwind
       - UTurn
       - LaserFocus
+      - SkitterSmack
+      - Poltergeist
 Litten:
   # TM and tutor moves shared by the whole family
   family-teachable:
@@ -222,6 +226,9 @@ Litten:
       - ThunderPunch
       - BrutalSwing
       - StompingTantrum
+      - BurningJealousy
+      - LashOut
+      - ScorchingSands
 Popplio:
   # TM and tutor moves shared by the whole family
   family-teachable:
@@ -260,6 +267,8 @@ Popplio:
     - Waterfall
     - WonderRoom
     - WorkUp
+    - FlipTurn
+    - TripleAxel
   Popplio:
     level:
       1: [Pound, WaterGun]
@@ -277,7 +286,7 @@ Popplio:
       39: [Captivate]
       43: [HydroPump]
       46: [MistyTerrain]
-    egg: [Amnesia, AquaRing, AromaticMist, Charm, PerishSong, WonderRoom]
+    egg: [Amnesia, AquaRing, AromaticMist, Charm, PerishSong, WonderRoom, LifeDew]
   Brionne:
     level:
       1: [DisarmingVoice, Growl, Pound, WaterGun]
@@ -320,6 +329,7 @@ Popplio:
       - Reflect
       - ShadowBall
       - Liquidation
+      - MistyExplosion
 Pikipek:
   # TM and tutor moves shared by the whole family
   family-teachable:
@@ -511,6 +521,8 @@ Grubbin:
     - VoltSwitch
     - WildCharge
     - XScissor
+    - RisingVoltage
+    - SkitterSmack
   Grubbin:
     level:
       1: [ViceGrip]
@@ -559,6 +571,7 @@ Grubbin:
       - SkyDrop
       - SolarBeam
       - Thunder
+      - DualWingbeat
 Crabrawler:
   # TM and tutor moves shared by the whole family
   family-teachable:
@@ -796,6 +809,7 @@ Cutiefly:
     - Trick
     - UTurn
     - WonderRoom
+    - DualWingbeat
   Cutiefly:
     level:
       1: [Absorb]
@@ -921,6 +935,7 @@ Rockruff:
       - ThroatChop
       - ThunderPunch
       - Uproar
+      - LashOut
   LycanrocDusk:
     level:
       1: [Accelerock, Bite, Counter, Leer, SandAttack, Tackle, Thrash]
@@ -968,6 +983,8 @@ Wishiwashi:
     - UTurn
     - WaterPulse
     - Waterfall
+    - ScaleShot
+    - FlipTurn
   Wishiwashi:
     level:
       1: [Growl, WaterGun]

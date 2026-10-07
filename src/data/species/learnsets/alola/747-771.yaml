@@ -136,7 +136,7 @@ Mudbray:
       47: [Earthquake]
       55: [MegaKick]
       60: [Superpower]
-    teachable: [FocusBlast, GigaImpact]
+    teachable: [FocusBlast, GigaImpact, BodyPress, LashOut]
 Dewpider:
   # TM and tutor moves shared by the whole family
   family-teachable:
@@ -176,6 +176,7 @@ Dewpider:
     - Waterfall
     - WonderRoom
     - XScissor
+    - SkitterSmack
   Dewpider:
     level:
       1: [Bubble, WaterSport]
@@ -244,6 +245,7 @@ Fomantis:
     - Toxic
     - WorrySeed
     - XScissor
+    - GrassyGlide
   Fomantis:
     level:
       1: [FuryCutter]
@@ -390,6 +392,8 @@ Salandit:
     - Toxic
     - Venoshock
     - WillOWisp
+    - ScaleShot
+    - SkitterSmack
   Salandit:
     level:
       1: [PoisonGas, Scratch]
@@ -428,7 +432,7 @@ Salandit:
       44: [Flamethrower]
       51: [VenomDrench]
       56: [DragonPulse]
-    teachable: [Acrobatics, DragonTail, LaserFocus]
+    teachable: [Acrobatics, DragonTail, LaserFocus, BreakingSwipe, CorrosiveGas]
 Stufful:
   # TM and tutor moves shared by the whole family
   family-teachable:
@@ -474,6 +478,7 @@ Stufful:
     - Toxic
     - WorkUp
     - ZenHeadbutt
+    - Coaching
   Stufful:
     level:
       1: [Leer, Tackle]
@@ -510,7 +515,7 @@ Stufful:
       49: [PainSplit]
       56: [DoubleEdge]
       62: [Superpower]
-    teachable: [DragonClaw, DrainPunch, GigaImpact, HyperBeam, LowKick, ShadowClaw]
+    teachable: [DragonClaw, DrainPunch, GigaImpact, HyperBeam, LowKick, ShadowClaw, BodyPress]
 Bounsweet:
   # TM and tutor moves shared by the whole family
   family-teachable:
@@ -547,6 +552,7 @@ Bounsweet:
     - Toxic
     - WorrySeed
     - ZenHeadbutt
+    - GrassyGlide
   Bounsweet:
     level:
       1: [Splash]
@@ -570,7 +576,7 @@ Bounsweet:
       37: [Captivate]
       41: [Aromatherapy]
       45: [LeafStorm]
-    teachable: [Fling, KnockOff, LowSweep, Payback]
+    teachable: [Fling, KnockOff, LowSweep, Payback, TripleAxel]
   Tsareena:
     level:
       1: [DoubleSlap, Punishment, RapidSpin, RazorLeaf, Splash, Swagger, TropKick]
@@ -594,6 +600,7 @@ Bounsweet:
       - LowSweep
       - Payback
       - UTurn
+      - TripleAxel
 Comfey:
   Comfey:
     level:
@@ -665,6 +672,7 @@ Comfey:
       - TrickRoom
       - UTurn
       - WorrySeed
+      - GrassyGlide
     egg: [AfterYou, Amnesia, Endure, LuckyChant]
 Oranguru:
   Oranguru:
@@ -745,6 +753,8 @@ Oranguru:
       - WonderRoom
       - WorkUp
       - ZenHeadbutt
+      - ExpandingForce
+      - TerrainPulse
     egg: [Extrasensory, PsychicTerrain, WonderRoom]
 Passimian:
   Passimian:
@@ -821,6 +831,7 @@ Passimian:
       - UTurn
       - Uproar
       - WorkUp
+      - Coaching
     egg: [Feint, IronHead, QuickAttack, QuickGuard, SeismicToss, VitalThrow]
 Wimpod:
   # TM and tutor moves shared by the whole family
@@ -847,6 +858,7 @@ Wimpod:
     - Taunt
     - Toxic
     - Waterfall
+    - SkitterSmack
   Wimpod:
     level:
       1: [SandAttack, StruggleBug]
@@ -943,6 +955,8 @@ Sandygast:
     - Swagger
     - Toxic
     - Trick
+    - Poltergeist
+    - ScorchingSands
   Sandygast:
     level:
       1: [Absorb, Harden]
@@ -972,7 +986,7 @@ Sandygast:
       47: [EarthPower]
       54: [ShoreUp]
       60: [Sandstorm]
-    teachable: [Embargo, Fling, GigaImpact, Quash, SludgeBomb]
+    teachable: [Embargo, Fling, GigaImpact, Quash, SludgeBomb, TerrainPulse]
 Pyukumuku:
   Pyukumuku:
     level:

@@ -61,6 +61,9 @@ Celesteela:
       - Swagger
       - Toxic
       - ZenHeadbutt
+      - SteelBeam
+      - SteelRoller
+      - MeteorBeam
 Kartana:
   Kartana:
     level:
@@ -108,6 +111,7 @@ Kartana:
       - Tailwind
       - Toxic
       - XScissor
+      - SteelBeam
 Guzzlord:
   Guzzlord:
     level:
@@ -177,6 +181,10 @@ Guzzlord:
       - Substitute
       - Thief
       - Toxic
+      - BodyPress
+      - SteelRoller
+      - LashOut
+      - CorrosiveGas
 Necrozma:
   # Every shape learns the same, since each is the one Necrozma
   family-teachable:
@@ -256,6 +264,10 @@ Necrozma:
       59: [IronDefense]
       67: [WringOut]
       73: [PrismaticLaser]
+    teachable:
+      - BreakingSwipe
+      - ExpandingForce
+      - MeteorBeam
   NecrozmaDuskMane:
     level:
       1: [ChargeBeam, Confusion, MetalClaw, MirrorShot, Moonlight, MorningSun]
@@ -272,6 +284,10 @@ Necrozma:
       59: [IronDefense]
       67: [WringOut]
       73: [PrismaticLaser]
+    teachable:
+      - BreakingSwipe
+      - ExpandingForce
+      - MeteorBeam
   NecrozmaDawnWings:
     level:
       1: [ChargeBeam, Confusion, MetalClaw, MirrorShot, Moonlight, MorningSun]
@@ -288,6 +304,10 @@ Necrozma:
       59: [IronDefense]
       67: [WringOut]
       73: [PrismaticLaser]
+    teachable:
+      - BreakingSwipe
+      - ExpandingForce
+      - MeteorBeam
   NecrozmaUltra:
     level:
       1: [ChargeBeam, Confusion, MetalClaw, MirrorShot, Moonlight, MorningSun]
@@ -352,6 +372,9 @@ Magearna:
     - TrickRoom
     - VoltSwitch
     - ZenHeadbutt
+    - SteelBeam
+    - SteelRoller
+    - MistyExplosion
   Magearna:
     level:
       1:
@@ -480,6 +503,9 @@ Marshadow:
       - WillOWisp
       - WorkUp
       - ZenHeadbutt
+      - SkitterSmack
+      - Poltergeist
+      - Coaching
 Poipole:
   Poipole:
     # Dragon Pulse is the mainline's reminder-only first move. Left
@@ -589,6 +615,9 @@ Poipole:
       - Uproar
       - Venoshock
       - XScissor
+      - BreakingSwipe
+      - ScaleShot
+      - DualWingbeat
 Stakataka:
   Stakataka:
     level:
@@ -651,6 +680,10 @@ Stakataka:
       - TrickRoom
       - WonderRoom
       - ZenHeadbutt
+      - BodyPress
+      - SteelBeam
+      - SteelRoller
+      - MeteorBeam
 Blacephalon:
   Blacephalon:
     level:
@@ -712,6 +745,7 @@ Blacephalon:
       - Trick
       - Uproar
       - WillOWisp
+      - ExpandingForce
 Zeraora:
   Zeraora:
     level:
@@ -782,6 +816,8 @@ Zeraora:
       - VoltSwitch
       - WildCharge
       - WorkUp
+      - RisingVoltage
+      - Coaching
 Meltan:
   Meltan:
     level:
@@ -800,6 +836,7 @@ Meltan:
       - ThunderWave
       - Thunderbolt
       - Toxic
+      - SteelBeam
   Melmetal:
     level:
       1: [Harden, Headbutt, TailWhip, ThunderPunch, ThunderWave]
@@ -834,3 +871,6 @@ Meltan:
       - ThunderWave
       - Thunderbolt
       - Toxic
+      - BodyPress
+      - SteelBeam
+      - SteelRoller

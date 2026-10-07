@@ -33,6 +33,7 @@ Cottonee:
     - WorrySeed
     - Confide
     - DazzlingGleam
+    - GrassyGlide
   Cottonee:
     level:
       1: [Absorb, FairyWind]
@@ -114,6 +115,7 @@ Petilil:
     - WorrySeed
     - Confide
     - LaserFocus
+    - GrassyGlide
   Petilil:
     level:
       1: [Absorb]
@@ -204,6 +206,8 @@ Basculin:
     - ZenHeadbutt
     - Confide
     - Liquidation
+    - ScaleShot
+    - FlipTurn
   Basculin:
     level:
       1: [Tackle, Thrash, TailWhip, WaterGun, Flail]
@@ -327,6 +331,9 @@ Sandile:
     - Toxic
     - Uproar
     - Confide
+    - SkitterSmack
+    - LashOut
+    - ScorchingSands
   Sandile:
     level:
       1: [Leer, Rage]
@@ -438,6 +445,7 @@ Sandile:
       - BrutalSwing
       - StompingTantrum
       - ThroatChop
+      - ScaleShot
 Darumaka:
   family-teachable:
     - Attract
@@ -561,6 +569,10 @@ Darumaka:
       - Torment
       - Trick
       - LaserFocus
+      - BodyPress
+      - ExpandingForce
+      - BurningJealousy
+      - LashOut
   DarmanitanZen:
     level:
       1: [Tackle, Bite, Ember, Rage, Rollout, Taunt]
@@ -596,6 +608,10 @@ Darumaka:
       - Torment
       - Trick
       - LaserFocus
+      - BodyPress
+      - ExpandingForce
+      - BurningJealousy
+      - LashOut
 Maractus:
   Maractus:
     level:
@@ -660,6 +676,7 @@ Maractus:
       - WorrySeed
       - Confide
       - ThroatChop
+      - GrassyGlide
     egg:
       - Bounce
       - BulletSeed
@@ -721,6 +738,7 @@ Dwebble:
     - Toxic
     - XScissor
     - Confide
+    - SkitterSmack
   Dwebble:
     level:
       1: [SandAttack, FuryCutter]
@@ -759,7 +777,7 @@ Dwebble:
       24: [RockSlide, StealthRock]
       38: [XScissor]
       55: [RockWrecker]
-    teachable: [GigaImpact, HeavySlam, HyperBeam, StompingTantrum]
+    teachable: [GigaImpact, HeavySlam, HyperBeam, StompingTantrum, BodyPress, MeteorBeam]
 Scraggy:
   # TM, HM and tutor moves shared by the whole family
 
@@ -848,6 +866,8 @@ Scraggy:
     - ZenHeadbutt
     - Confide
     - PowerUpPunch
+    - LashOut
+    - Coaching
   Scraggy:
     level:
       1: [Headbutt, Leer, LowKick]
@@ -989,6 +1009,8 @@ Sigilyph:
       - ZenHeadbutt
       - Confide
       - DazzlingGleam
+      - ExpandingForce
+      - DualWingbeat
     egg:
       - AncientPower
       - FutureSight
@@ -1056,6 +1078,7 @@ Yamask:
     - ZenHeadbutt
     - Confide
     - Infestation
+    - Poltergeist
   Yamask:
     level:
       1: [Protect, Astonish]
@@ -1105,8 +1128,9 @@ Yamask:
       - Revenge
       - ScaryFace
       - ShadowClaw
+      - BodyPress
 Tirtouga:
-  family-teachable: [AquaTail, Attract, Blizzard, Block]
+  family-teachable: [AquaTail, Attract, Blizzard, Block, MeteorBeam]
   Tirtouga:
     level:
       1: [Bide, WaterGun, Withdraw]
@@ -1243,7 +1267,7 @@ Tirtouga:
       - Confide
       - Liquidation
 Archen:
-  family-teachable: [Acrobatics, AerialAce, AquaTail, Attract, Bounce, Bulldoze, Cut]
+  family-teachable: [Acrobatics, AerialAce, AquaTail, Attract, Bounce, Bulldoze, Cut, MeteorBeam, LashOut, DualWingbeat]
   Archen:
     level:
       1: [Leer, QuickAttack, WingAttack]
@@ -1429,6 +1453,7 @@ Trubbish:
     - Venoshock
     - Confide
     - Infestation
+    - CorrosiveGas
   Trubbish:
     level:
       1: [Pound, PoisonGas]
@@ -1485,3 +1510,4 @@ Trubbish:
       - SolarBeam
       - Thunderbolt
       - StompingTantrum
+      - BodyPress

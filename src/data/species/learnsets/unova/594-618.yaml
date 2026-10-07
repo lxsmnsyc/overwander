@@ -120,6 +120,8 @@ Joltik:
     - XScissor
     - Confide
     - Infestation
+    - RisingVoltage
+    - SkitterSmack
   Joltik:
     level:
       1: [Absorb, StringShot, LeechLife, SpiderWeb, FuryCutter]
@@ -216,6 +218,8 @@ Ferroseed:
     - Toxic
     - WorrySeed
     - Confide
+    - SteelBeam
+    - SteelRoller
   Ferroseed:
     level:
       1: [Tackle, Harden]
@@ -269,6 +273,7 @@ Ferroseed:
       - Strength
       - SwordsDance
       - Thunder
+      - BodyPress
 Klink:
   # TM, HM and tutor moves shared by the whole family
 
@@ -313,6 +318,9 @@ Klink:
     - VoltSwitch
     - WildCharge
     - Confide
+    - SteelBeam
+    - SteelRoller
+    - RisingVoltage
   Klink:
     level:
       1: [ViceGrip, ThunderShock]
@@ -560,6 +568,8 @@ Elgyem:
     - WonderRoom
     - ZenHeadbutt
     - Confide
+    - ExpandingForce
+    - MeteorBeam
   Elgyem:
     level:
       1: [Growl, Confusion]
@@ -671,6 +681,9 @@ Litwick:
     - TrickRoom
     - WillOWisp
     - Confide
+    - SkitterSmack
+    - BurningJealousy
+    - Poltergeist
   Litwick:
     level:
       1: [Ember, Smog, Astonish]
@@ -788,6 +801,8 @@ Axew:
     - Toxic
     - XScissor
     - Confide
+    - BreakingSwipe
+    - ScaleShot
   Axew:
     level:
       1: [Scratch, Leer]
@@ -1002,6 +1017,7 @@ Cubchoo:
       - StoneEdge
       - SwordsDance
       - ThroatChop
+      - BodyPress
 Cryogonal:
   Cryogonal:
     level:
@@ -1062,9 +1078,10 @@ Cryogonal:
       - Confide
       - AuroraVeil
       - LaserFocus
+      - TripleAxel
     egg: [Explosion, FrostBreath]
 Shelmet:
-  family-teachable: [Attract]
+  family-teachable: [Attract, SkitterSmack]
   Shelmet:
     level:
       1: [LeechLife]
@@ -1236,6 +1253,7 @@ Stunfisk:
       - Confide
       - Infestation
       - StompingTantrum
+      - LashOut
     egg:
       - Astonish
       - Curse

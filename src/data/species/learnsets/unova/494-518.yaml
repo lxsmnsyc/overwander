@@ -103,6 +103,8 @@ Victini:
       - DazzlingGleam
       - PowerUpPunch
       - LaserFocus
+      - ExpandingForce
+      - ScorchingSands
 Snivy:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -689,6 +691,7 @@ Purrloin:
     - Torment
     - Toxic
     - Confide
+    - LashOut
   Purrloin:
     level:
       1: [Scratch]
@@ -728,7 +731,7 @@ Purrloin:
       50: [NastyPlot]
       55: [SuckerPunch]
       58: [PlayRough]
-    teachable: [GigaImpact, HyperBeam, RockSmash, LaserFocus, ThroatChop]
+    teachable: [GigaImpact, HyperBeam, RockSmash, LaserFocus, ThroatChop, SkitterSmack, BurningJealousy]
 Pansage:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -1087,6 +1090,7 @@ Munna:
     - ZenHeadbutt
     - Confide
     - DazzlingGleam
+    - ExpandingForce
   Munna:
     level:
       1: [DefenseCurl, Psywave]
@@ -1111,4 +1115,4 @@ Munna:
     # it knew as a Munna
     level:
       1: [DefenseCurl, Hypnosis, LuckyChant, Psybeam, PsychicTerrain]
-    teachable: [GigaImpact, HyperBeam]
+    teachable: [GigaImpact, HyperBeam, MistyExplosion]

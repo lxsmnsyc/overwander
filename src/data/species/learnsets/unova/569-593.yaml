@@ -69,6 +69,9 @@ Zorua:
     - UTurn
     - Uproar
     - Confide
+    - SkitterSmack
+    - BurningJealousy
+    - LashOut
   Zorua:
     level:
       1: [Scratch, Leer]
@@ -195,6 +198,7 @@ Minccino:
     - WorkUp
     - Confide
     - DazzlingGleam
+    - TripleAxel
   Minccino:
     level:
       1: [Pound]
@@ -328,6 +332,7 @@ Gothita:
     - Uproar
     - ZenHeadbutt
     - Confide
+    - ExpandingForce
   Gothita:
     level:
       1: [Pound, Confusion]
@@ -473,6 +478,8 @@ Solosis:
     - ZenHeadbutt
     - Confide
     - Infestation
+    - ExpandingForce
+    - SteelRoller
   Solosis:
     level:
       1: [Confusion, Psywave, Protect]
@@ -960,6 +967,8 @@ Emolga:
       - VoltSwitch
       - WildCharge
       - Confide
+      - RisingVoltage
+      - DualWingbeat
     egg: [IonDeluge, SpeedSwap]
 Karrablast:
   family-teachable: [AerialAce, Attract, BugBite, Cut, DoubleTeam, EnergyBall, Facade, FalseSwipe]
@@ -1064,6 +1073,7 @@ Karrablast:
       - BrutalSwing
       - LaserFocus
       - SmartStrike
+      - SteelBeam
 Foongus:
   family-teachable: [AfterYou, Attract]
   Foongus:
@@ -1189,6 +1199,7 @@ Frillish:
     - Flash
     - Frustration
     - GigaDrain
+    - Poltergeist
   Frillish:
     level:
       1: [Bubble, WaterSport]

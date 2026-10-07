@@ -74,6 +74,11 @@ Zekrom:
       - WildCharge
       - BrutalSwing
       - LaserFocus
+      - BodyPress
+      - BreakingSwipe
+      - ScaleShot
+      - RisingVoltage
+      - DualWingbeat
 Landorus:
   family-teachable:
     - Attract
@@ -167,6 +172,7 @@ Landorus:
       49: [Earthquake]
       50: [StoneEdge]
       55: [Sandstorm]
+      52: [SandsearStorm]
   LandorusTherian:
     level:
       1:
@@ -252,6 +258,10 @@ Kyurem:
     - Confide
     - BrutalSwing
     - LaserFocus
+    - BodyPress
+    - BreakingSwipe
+    - ScaleShot
+    - DualWingbeat
   Kyurem:
     level:
       1: [DragonRage, IcyWind]
@@ -347,6 +357,8 @@ Keldeo:
     - XScissor
     - Confide
     - Liquidation
+    - Coaching
+    - FlipTurn
   Keldeo:
     level:
       1: [AquaJet, Leer]
@@ -570,6 +582,7 @@ Genesect:
     - ZenHeadbutt
     - Confide
     - Infestation
+    - SteelBeam
   Genesect:
     level:
       1:

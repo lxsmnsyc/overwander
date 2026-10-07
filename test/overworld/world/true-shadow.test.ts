@@ -10,6 +10,7 @@ import {
   getSpeciesData,
   getTrueShadow,
   getTrueShadowCounterpart,
+  getTrueShadowShape,
   isTrueShadow,
   listTrueShadows,
   registerSpecies,
@@ -88,6 +89,24 @@ describe('what a true shadow is', () => {
     }
   });
 
+  it('has its own Primal and Mega shapes, ten points better than the ordinary ones', () => {
+    for (const [shape, shadow] of [
+      [Species.KyogrePrimal, Species.KyogreShadowPrimal],
+      [Species.GroudonPrimal, Species.GroudonShadowPrimal],
+      [Species.RayquazaMega, Species.RayquazaShadowMega],
+    ] as const) {
+      const base = getSpeciesData(shape);
+      const data = getSpeciesData(shadow);
+
+      expect(getTrueShadowShape(shape)).toBe(shadow);
+      expect(data.worn).toBe(true);
+      expect(data.stats[Stats.Attack]).toBe(base.stats[Stats.Attack] + TRUE_SHADOW_BONUS);
+    }
+    expect(getSpeciesData(Species.KyogreShadowPrimal).name).toBe('Primal XD-382');
+    expect(getSpeciesData(Species.RayquazaShadowMega).name).toBe('Mega XD-384');
+    expect(getTrueShadowShape(Species.MewtwoMegaX)).toBeNull();
+  });
+
   it('goes by its dex number rather than by the bird it is the shadow of', () => {
     expect(getSpeciesData(Species.ArticunoShadow).name).toBe('XD-144');
     expect(getSpeciesData(Species.ZapdosShadow).name).toBe('XD-145');
@@ -98,6 +117,14 @@ describe('what a true shadow is', () => {
     expect(getSpeciesData(Species.SuicuneShadow).name).toBe('XD-245');
     expect(getSpeciesData(Species.LugiaShadow).name).toBe('XD-249');
     expect(getSpeciesData(Species.HoOhShadow).name).toBe('XD-250');
+    expect(getSpeciesData(Species.RegirockShadow).name).toBe('XD-377');
+    expect(getSpeciesData(Species.RegiceShadow).name).toBe('XD-378');
+    expect(getSpeciesData(Species.RegisteelShadow).name).toBe('XD-379');
+    expect(getSpeciesData(Species.LatiasShadow).name).toBe('XD-380');
+    expect(getSpeciesData(Species.LatiosShadow).name).toBe('XD-381');
+    expect(getSpeciesData(Species.KyogreShadow).name).toBe('XD-382');
+    expect(getSpeciesData(Species.GroudonShadow).name).toBe('XD-383');
+    expect(getSpeciesData(Species.RayquazaShadow).name).toBe('XD-384');
   });
 
   it('pairs each bird with its own shadow, and nothing else', () => {
@@ -141,8 +168,11 @@ describe('where a true shadow is met', () => {
     const cell = centeredCells(PLACEMENT_AREA)[0];
     const staged = new Set(spawnBand(under.getCellPool(cell), 'special').map((e) => e.species));
 
+    // Each one that can stand on the cell, so XD-382 keeps to the water
+    const surface = chunk.getCellSurface(cell);
+
     for (const shadow of listTrueShadows()) {
-      expect(staged.has(shadow)).toBe(true);
+      expect(staged.has(shadow)).toBe(fitsSurface(shadow, surface));
     }
 
     // The same chunk in an hour the sky is ordinary stages none of them

@@ -69,8 +69,10 @@ export { getSeasonalCoat } from './gen-5/deerling';
 export {
   TRUE_SHADOW_BONUS,
   TRUE_SHADOW_WEIGHT,
+  getShadowlessSpecies,
   getTrueShadow,
   getTrueShadowCounterpart,
+  getTrueShadowShape,
   isTrueShadow,
   listTrueShadows,
   trueShadowName,

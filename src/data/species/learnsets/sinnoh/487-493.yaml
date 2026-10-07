@@ -66,6 +66,9 @@ Giratina:
     - SteelWing
     - WillOWisp
     - BrutalSwing
+    - BreakingSwipe
+    - Poltergeist
+    - DualWingbeat
   Giratina:
     level:
       1: [DragonBreath, ScaryFace]
@@ -99,7 +102,7 @@ Cresselia:
       29: [AuroraBeam]
       38: [FutureSight]
       47: [Slash]
-      57: [Moonlight]
+      57: [Moonlight, LunarBlessing]
       66: [PsychoCut]
       75: [PsychoShift]
       84: [LunarDance]
@@ -154,6 +157,7 @@ Cresselia:
       - SolarBeam
       - TrickRoom
       - ZenHeadbutt
+      - ExpandingForce
 Manaphy:
   family-teachable:
     - AncientPower
@@ -205,7 +209,7 @@ Manaphy:
       24: [BubbleBeam]
       31: [AcidArmor]
       39: [Whirlpool]
-      46: [WaterPulse]
+      46: [WaterPulse, TakeHeart]
       54: [AquaRing]
       61: [Dive]
       69: [RainDance]
@@ -218,7 +222,7 @@ Manaphy:
       24: [BubbleBeam]
       31: [AcidArmor]
       39: [Whirlpool]
-      46: [WaterPulse]
+      46: [WaterPulse, TakeHeart]
       54: [AquaRing]
       61: [Dive]
       69: [RainDance]

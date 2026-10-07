@@ -41,6 +41,8 @@ Rotom:
     - Uproar
     - WillOWisp
     - Confide
+    - RisingVoltage
+    - Poltergeist
   Rotom:
     level:
       1: [Astonish, ConfuseRay, ThunderShock, ThunderWave, Trick]
@@ -110,7 +112,7 @@ Uxie:
       21: [Swift]
       31: [Yawn]
       36: [FutureSight]
-      46: [Amnesia]
+      46: [Amnesia, MysticalPower]
       51: [Extrasensory]
       61: [Flail]
       66: [NaturalGift]
@@ -176,6 +178,7 @@ Uxie:
       - GigaDrain
       - SolarBeam
       - LaserFocus
+      - ExpandingForce
 Mesprit:
   Mesprit:
     level:
@@ -185,7 +188,7 @@ Mesprit:
       21: [Swift]
       31: [LuckyChant]
       36: [FutureSight]
-      46: [Charm]
+      46: [Charm, MysticalPower]
       51: [Extrasensory]
       61: [Copycat]
       66: [NaturalGift]
@@ -251,6 +254,7 @@ Mesprit:
       - Blizzard
       - IceBeam
       - LaserFocus
+      - ExpandingForce
 Azelf:
   Azelf:
     level:
@@ -260,7 +264,7 @@ Azelf:
       21: [Swift]
       31: [Uproar]
       36: [FutureSight]
-      46: [NastyPlot]
+      46: [NastyPlot, MysticalPower]
       51: [Extrasensory]
       61: [LastResort]
       66: [NaturalGift]
@@ -332,6 +336,7 @@ Azelf:
       - Torment
       - Uproar
       - LaserFocus
+      - ExpandingForce
 Dialga:
   family-teachable:
     - AerialAce
@@ -409,6 +414,11 @@ Dialga:
       70: [Slash]
       80: [FlashCannon]
       90: [AuraSphere]
+    teachable:
+      - BodyPress
+      - BreakingSwipe
+      - SteelBeam
+      - ScaleShot
   DialgaOrigin:
     level:
       1: [DragonBreath, ScaryFace]
@@ -501,6 +511,11 @@ Palkia:
       70: [Slash]
       80: [AquaTail]
       90: [AuraSphere]
+    teachable:
+      - BodyPress
+      - BreakingSwipe
+      - ScaleShot
+      - DualWingbeat
   PalkiaOrigin:
     level:
       1: [DragonBreath, ScaryFace]
@@ -581,6 +596,11 @@ Heatran:
       - WillOWisp
       - Confide
       - StompingTantrum
+      - BodyPress
+      - SteelBeam
+      - SteelRoller
+      - BurningJealousy
+      - ScorchingSands
 Regigigas:
   Regigigas:
     level:
@@ -596,6 +616,7 @@ Regigigas:
       50: [ZenHeadbutt]
       75: [CrushGrip]
       100: [GigaImpact]
+      42: [BodyPress]
     teachable:
       - AerialAce
       - AncientPower
@@ -648,3 +669,5 @@ Regigigas:
       - Confide
       - PowerUpPunch
       - StompingTantrum
+      - BodyPress
+      - TerrainPulse

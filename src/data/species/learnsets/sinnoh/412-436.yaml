@@ -193,6 +193,7 @@ Burmy:
       - IronHead
       - MagnetRise
       - StealthRock
+      - SteelBeam
   Mothim:
     level:
       1: [Tackle]
@@ -266,6 +267,7 @@ Combee:
     - StringShot
     - Swift
     - Tailwind
+    - DualWingbeat
   Combee:
     level:
       1: [Gust, SweetScent]
@@ -508,6 +510,7 @@ Cherubi:
     - WorrySeed
     - Confide
     - DazzlingGleam
+    - GrassyGlide
   Cherubi:
     level:
       1: [Tackle]
@@ -597,6 +600,7 @@ Shellos:
     - Whirlpool
     - Confide
     - Infestation
+    - SkitterSmack
   Shellos:
     level:
       1: [MudSlap]
@@ -839,6 +843,7 @@ Buneary:
     - WaterPulse
     - Confide
     - PowerUpPunch
+    - TripleAxel
   Buneary:
     level:
       1: [DefenseCurl, Foresight, Pound, Splash]
@@ -1023,6 +1028,8 @@ Stunky:
     - Toxic
     - Confide
     - ThroatChop
+    - LashOut
+    - CorrosiveGas
   Stunky:
     level:
       1: [FocusEnergy, Scratch]
@@ -1062,7 +1069,7 @@ Stunky:
       42: [Memento]
       52: [Explosion]
       56: [Belch]
-    teachable: [GigaImpact, HyperBeam, PoisonJab, Strength]
+    teachable: [GigaImpact, HyperBeam, PoisonJab, Strength, BurningJealousy]
 Bronzor:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -1112,6 +1119,9 @@ Bronzor:
     - Trick
     - TrickRoom
     - Confide
+    - SteelBeam
+    - ExpandingForce
+    - SteelRoller
   Bronzor:
     level:
       1: [Confusion, Tackle]
@@ -1141,4 +1151,4 @@ Bronzor:
       50: [FeintAttack]
       61: [Payback]
       67: [HealBlock]
-    teachable: [Explosion, GigaImpact, HyperBeam, IronHead, RockSmash, Strength, ZenHeadbutt]
+    teachable: [Explosion, GigaImpact, HyperBeam, IronHead, RockSmash, Strength, ZenHeadbutt, BodyPress, MeteorBeam]

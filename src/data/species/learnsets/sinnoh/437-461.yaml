@@ -111,6 +111,9 @@ Spiritomb:
       - WillOWisp
       - Confide
       - Infestation
+      - BurningJealousy
+      - LashOut
+      - Poltergeist
 Gible:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -160,6 +163,8 @@ Gible:
     - Toxic
     - Twister
     - Confide
+    - ScaleShot
+    - ScorchingSands
   Gible:
     level:
       1: [Tackle]
@@ -223,6 +228,7 @@ Gible:
       - BrutalSwing
       - StompingTantrum
       - LaserFocus
+      - BreakingSwipe
 Riolu:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -275,6 +281,7 @@ Riolu:
     - ZenHeadbutt
     - Confide
     - PowerUpPunch
+    - Coaching
   Riolu:
     level:
       1: [Endure, Foresight, QuickAttack]
@@ -301,7 +308,7 @@ Riolu:
       - VacuumWave
   Lucario:
     level:
-      1: [DarkPulse, Detect, Foresight, MetalClaw, QuickAttack, LaserFocus]
+      1: [DarkPulse, Detect, Foresight, MetalClaw, QuickAttack, LaserFocus, LifeDew]
       6: [Counter]
       11: [ForcePalm]
       15: [Feint, PowerUpPunch]
@@ -325,6 +332,8 @@ Riolu:
       - ShadowBall
       - StoneEdge
       - WaterPulse
+      - SteelBeam
+      - TerrainPulse
 Hippopotas:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -361,6 +370,7 @@ Hippopotas:
     - WaterPulse
     - Confide
     - StompingTantrum
+    - ScorchingSands
   Hippopotas:
     level:
       1: [SandAttack, Tackle]
@@ -384,7 +394,7 @@ Hippopotas:
       40: [Earthquake]
       50: [DoubleEdge]
       60: [Fissure]
-    teachable: [GigaImpact, HyperBeam, IronHead, StoneEdge]
+    teachable: [GigaImpact, HyperBeam, IronHead, StoneEdge, BodyPress]
 Skorupi:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -434,6 +444,7 @@ Skorupi:
     - XScissor
     - Confide
     - Infestation
+    - SkitterSmack
   Skorupi:
     level:
       1: [Bite, Leer, PoisonSting]
@@ -480,6 +491,7 @@ Skorupi:
       - BrutalSwing
       - StompingTantrum
       - ThroatChop
+      - LashOut
 Croagunk:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -539,6 +551,8 @@ Croagunk:
     - XScissor
     - Confide
     - PowerUpPunch
+    - LashOut
+    - Coaching
   Croagunk:
     level:
       1: [Astonish]
@@ -585,7 +599,7 @@ Croagunk:
       49: [SludgeBomb]
       54: [Flatter]
       58: [Belch]
-    teachable: [Cut, GigaImpact, HyperBeam, StoneEdge, SwordsDance, ThroatChop]
+    teachable: [Cut, GigaImpact, HyperBeam, StoneEdge, SwordsDance, ThroatChop, CorrosiveGas]
 Carnivine:
   Carnivine:
     level:
@@ -760,6 +774,7 @@ Snover:
     - Toxic
     - WaterPulse
     - Confide
+    - GrassyGlide
   Snover:
     level:
       1: [Leer, PowderSnow]

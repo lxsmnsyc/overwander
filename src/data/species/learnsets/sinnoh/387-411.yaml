@@ -100,7 +100,7 @@ Turtwig:
       39: [Synthesis]
       45: [Crunch]
       51: [GigaDrain]
-      57: [LeafStorm]
+      57: [LeafStorm, HeadlongRush]
     teachable:
       - Block
       - Earthquake
@@ -230,6 +230,7 @@ Chimchar:
       45: [FireSpin]
       53: [CalmMind]
       57: [FlareBlitz]
+      46: [RagingFury]
     teachable:
       - BlastBurn
       - CalmMind
@@ -350,6 +351,7 @@ Piplup:
       46: [Mist]
       52: [DrillPeck]
       59: [HydroPump]
+      57: [WaveCrash]
     teachable:
       - Avalanche
       - Earthquake
@@ -659,6 +661,7 @@ Shinx:
     - Thunderbolt
     - Toxic
     - Confide
+    - RisingVoltage
   Shinx:
     level:
       1: [Tackle]

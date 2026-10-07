@@ -782,7 +782,7 @@ describe('world', () => {
     expect(moves).toContain(Moves.Detect);
     expect(moves).toContain(Moves.Imprison);
     expect(moves).toContain(Moves.Confusion);
-    expect(moves).toHaveLength(6);
+    expect(moves).toHaveLength(7);
   });
 
   it('never stages a Ditto, or anything with nothing left to cast', () => {

@@ -300,6 +300,13 @@ export type EffectShape =
   | 'Spotlight'
   | 'Pollen'
   | 'Detonate'
+  | 'Behemoth'
+  | 'Dynamax'
+  | 'Darters'
+  | 'Lance'
+  | 'Astral'
+  | 'Squall'
+  | 'Cage'
   | 'Whiff';
 
 /** How long Wish's star rings where it lands, after the heal */
@@ -561,6 +568,13 @@ export const SPANS: Record<EffectShape, number> = {
   Spotlight: 1000,
   Pollen: 1000,
   Detonate: 1000,
+  Behemoth: 1000,
+  Dynamax: 1200,
+  Darters: 900,
+  Lance: 1000,
+  Astral: 1100,
+  Squall: 1200,
+  Cage: 1000,
   Whiff: 320,
 };
 

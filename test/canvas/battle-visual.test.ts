@@ -366,6 +366,14 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Spotlight', Moves.Spotlight],
   ['Pollen', Moves.PollenPuff],
   ['Detonate', Moves.MindBlown],
+  // Galar and Hisui's signatures
+  ['Behemoth', Moves.BehemothBlade],
+  ['Dynamax', Moves.Eternabeam],
+  ['Darters', Moves.DragonDarts],
+  ['Lance', Moves.GlacialLance],
+  ['Astral', Moves.AstralBarrage],
+  ['Squall', Moves.WildboltStorm],
+  ['Cage', Moves.ThunderCage],
   ['Blitz', Moves.BreakneckBlitz],
   ['Pummel', Moves.AllOutPummeling],
   ['Skystrike', Moves.SupersonicSkystrike],
@@ -408,7 +416,10 @@ const SHAPES: [shape: string, move: Moves][] = [
  * lands as. A U-turn's blow is its first step and its leaving is its
  * last, so neither picture is the move's landing
  */
-const STEP_SHAPES: [shape: string, move: Moves, steps: number][] = [['Dart', Moves.UTurn, 1]];
+const STEP_SHAPES: [shape: string, move: Moves, steps: number][] = [
+  ['Dart', Moves.UTurn, 1],
+  ['Dart', Moves.FlipTurn, 1],
+];
 
 describe('a painted move', () => {
   it('has a move to draw for every shape there is', () => {
@@ -648,6 +659,23 @@ describe('a painted move', () => {
     expect(effectShapeFor(Moves.Round)).toBe('Song');
     expect(effectShapeFor(Moves.SmackDown)).toBe('Rocks');
     expect(effectShapeFor(Moves.HeartStamp)).toBe('Hearts');
+  });
+
+  it('draws the Galar and Hisui moves that are an earlier move in all but name', () => {
+    expect(effectShapeFor(Moves.BodyPress)).toBe('Tonnage');
+    expect(effectShapeFor(Moves.FlipTurn)).toBe('Relay');
+    expect(effectShapeFor(Moves.LifeDew)).toBe('Mend');
+    expect(effectShapeFor(Moves.Obstruct)).toBe('Shell');
+    expect(effectShapeFor(Moves.TripleAxel)).toBe('Kicks');
+    expect(effectShapeFor(Moves.TripleArrows)).toBe('Arrows');
+    expect(effectShapeFor(Moves.WaveCrash)).toBe('Torrent');
+    expect(effectShapeFor(Moves.SteelBeam)).toBe('Blaster');
+    // The four forces of nature share one storm, painted in each one's type
+    expect(effectShapeFor(Moves.SandsearStorm)).toBe('Squall');
+    expect(effectShapeFor(Moves.SpringtideStorm)).toBe('Squall');
+    // Charged and thrown the way the earlier moves of their kind are
+    expect(delayShapeFor(Moves.MeteorBeam, 1)).toBe('Charge');
+    expect(delayShapeFor(Moves.PyroBall, 0)).toBe('Lobbed');
   });
 
   it('draws a U-turn as the blow and then as the leaving', () => {

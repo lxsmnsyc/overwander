@@ -24,6 +24,7 @@ import zElements from './z-elements';
 import zPartners from './z-partners';
 import zLegends from './z-legends';
 import alola from './alola';
+import galar from './galar';
 
 import {
   EXACT_SPANS,
@@ -73,6 +74,7 @@ const WINDING_UP = new Set<Moves>([
  */
 const WINDING_AS: Partial<Record<Moves, EffectShape>> = {
   [Moves.UTurn]: 'Dart',
+  [Moves.FlipTurn]: 'Dart',
 };
 
 /**
@@ -114,6 +116,7 @@ const PAINTERS: Record<EffectShape, ShapePainter> = {
   ...zPartners,
   ...zLegends,
   ...alola,
+  ...galar,
 };
 
 /**

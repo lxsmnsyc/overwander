@@ -521,6 +521,17 @@ const NAMED: Partial<Record<Moves, [winding?: DelayShape, striking?: DelayShape]
   [Moves.BouncyBubble]: [undefined, 'Bubbles'],
   [Moves.ShadowBone]: [undefined, 'Spun'],
   [Moves.AuroraVeil]: [undefined, 'Brace'],
+
+  // Galar and Hisui. A rock charged up the way Skull Bash is, beams drawn up the way Fleur
+  // Cannon's is, a fireball kicked and apples dropped in an arc
+  [Moves.MeteorBeam]: ['Charge', 'Charge'],
+  [Moves.Eternabeam]: [undefined, 'Charge'],
+  [Moves.DynamaxCannon]: [undefined, 'Charge'],
+  [Moves.SteelBeam]: [undefined, 'Charge'],
+  [Moves.DragonEnergy]: [undefined, 'Charge'],
+  [Moves.PyroBall]: [undefined, 'Lobbed'],
+  [Moves.AppleAcid]: [undefined, 'Lobbed'],
+  [Moves.GravApple]: [undefined, 'Lobbed'],
 };
 
 /**

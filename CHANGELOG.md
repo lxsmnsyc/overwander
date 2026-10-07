@@ -1,5 +1,102 @@
 # overwander
 
+## 4.33.0
+
+### Minor Changes
+
+- 28bc8f7: Alola's light trio turns up:
+  
+  - Cosmog and Cosmoem are met rarely in the grassland at any hour, by the Lake of the Sunne. Cosmog evolves into Cosmoem at 43. Cosmoem evolves at 53 into Solgaleo by day and into Lunala by night.
+  - Solgaleo stands in its lair, the Altar of the Sunne, and Lunala in its lair, the Altar of the Moone, both in the badlands.
+  - Necrozma stands in its lair, Ten Carat Hill, on the mountain.
+  - The N-Solarizer folds a Solgaleo into a Necrozma as Dusk Mane Necrozma, and the N-Lunarizer folds a Lunala into one as Dawn Wings Necrozma. Either item takes the pair apart again and is never spent. The two shapes are drawn as Necrozma until their own art exists.
+  - A Dusk Mane or Dawn Wings Necrozma holding Ultranecrozium Z takes the field as Ultra Necrozma, with Neuroforce.
+  - Full Metal Body, Shadow Shield and Prism Armor work as Clear Body, Multiscale and Filter do, and Mold Breaker cannot ignore them. Neuroforce makes super-effective moves hit 1.25x.
+  - The Cosmog line's signature, Zenith, makes its damaging moves hit harder the fuller its HP, from 1x near 0 HP up to 1.3x at full. Necrozma's signature, Nadir, is the reverse, from 1x at full HP up to 1.3x near 0.
+  - Solgaleo can also be born with Heavy Metal, Lunala with Infiltrator, and Necrozma with Tinted Lens, Mirror Armor or Levitate.
+  - The fusion dialog names the pokemon being folded in and the one it goes into, rather than always a dragon and a Kyurem.
+  - All of them learn their moves by level, machine and tutor, as they do in Ultra Sun and Ultra Moon.
+- cb4ec20: Alola's four mythicals turn up:
+  
+  - Each is called by its relic at its lair, and is met now and then in its home country:
+    - Magearna answers the Ancient Poke Ball at the Azoth Kingdom, and lives on the mountain. It comes in both its colours, the Original Color as rare as the other.
+    - Marshadow answers the Hero's Charm at Mt. Tensei, and lives on the mountain.
+    - Zeraora answers the Windmill Charm at the Fula Forest, and lives in the temperate forest.
+    - Meltan answers the Mystery Box at the GO Park, and lives in the badlands.
+  - The four relics now turn up in the special band.
+  - Meltan evolves into Melmetal at 40.
+  - Soul-Heart is built: Magearna gains 1 stage of Special Attack whenever any other pokemon on the field faints.
+  - Each family has a signature ability:
+    - Soul Relay: when a teammate faints, Magearna takes on every stat stage that teammate had raised.
+    - Umbral Strike: Marshadow's moves hit 1.25x against a target with any stat stage raised.
+    - Ion Field: while Zeraora is on the field, its enemies' Normal moves are Electric moves.
+    - Metal Eater: Steel moves heal Meltan and Melmetal 1/4 of their max HP rather than hurting them.
+  - Each can also be born with more abilities:
+    - Magearna: Download, Analytic or Clear Body.
+    - Marshadow: Infiltrator, Pickpocket or Cursed Body.
+    - Zeraora: Iron Fist, Speed Boost or Lightning Rod.
+    - Melmetal: Heavy Metal or Steelworker.
+  - Magearna, Marshadow and Zeraora learn their moves as they do in Ultra Sun and Ultra Moon, and Meltan and Melmetal as they do in Let's Go.
+- 82f4330: The four Tapus, Alola's island guardians, turn up:
+  
+  - Tapu Koko stands in its lair, the Ruins of Conflict, in the tropical seasonal forest.
+  - Tapu Lele stands in its lair, the Ruins of Life, in the tropical rainforest.
+  - Tapu Bulu stands in its lair, the Ruins of Abundance, in the desert.
+  - Tapu Fini stands in its lair, the Ruins of Hope, on the rocky coast, on land and in the water.
+  - Each can be met rarely at any hour in its own biome, and raided at its lair.
+  - Electric Surge, Psychic Surge and Grassy Surge lay their terrain as the pokemon takes the field, as Misty Surge already does.
+  - Each Tapu has a signature ability that raises one stat of every pokemon on its team by 1.25x while its own terrain is on the field. Storm Blessing raises Speed under Electric Terrain. Mind Blessing raises Special Attack under Psychic Terrain. Wild Blessing raises Attack under Grassy Terrain. Mist Blessing raises Special Defense under Misty Terrain.
+  - Each Tapu can also be born with Telepathy. Tapu Koko can be born with Lightning Rod or Static, Tapu Lele with Magic Guard or Synchronize, Tapu Bulu with Grass Pelt or Sap Sipper, and Tapu Fini with Water Absorb or Regenerator.
+  - All four learn their moves by level, machine and tutor, as they do in Ultra Sun and Ultra Moon.
+- 6241a7d: The Ultra Beasts come through the wormholes:
+  
+  - Each stands in a lair named for its own world, and can be met rarely there at any hour and raided:
+    - Nihilego in the Ultra Deep Sea, in the ocean, on land and in the water.
+    - Buzzwole in the Ultra Jungle, in the tropical rainforest.
+    - Pheromosa in the Ultra Desert, in the desert.
+    - Xurkitree in the Ultra Plant, and Guzzlord in the Ultra Ruin, both in the badlands.
+    - Celesteela in the Ultra Crater, on the mountain.
+    - Kartana in the Ultra Forest, in the temperate forest.
+    - Stakataka and Blacephalon in Poni Grove, in the tropical seasonal forest.
+  - Poipole is met rarely in the grassland. It can evolve into Naganadel once it knows Dragon Pulse, which is taught rather than learned by level.
+  - Beast Boost is built: each knockout raises the holder's highest stat 1 stage.
+  - Each family's signature makes one type that would be super effective on it hit for neutral damage instead:
+    - Ground for Nihilego (Earthless), Xurkitree (Unearthed) and Stakataka (Deep Footing).
+    - Flying for Buzzwole (Windbreak) and Pheromosa (Gale Ward).
+    - Fire for Celesteela (Heat Shield) and Kartana (Fireproof).
+    - Fairy for Guzzlord (Unenchanted).
+    - Psychic for Poipole and Naganadel (Closed Mind).
+    - Water for Blacephalon (Dry Fuse).
+  - Each can also be born with three more abilities:
+    - Nihilego: Levitate, Poison Touch or Merciless.
+    - Buzzwole: Iron Fist, Guts or Moxie.
+    - Pheromosa: Speed Boost, Queenly Majesty or Tinted Lens.
+    - Xurkitree: Lightning Rod, Volt Absorb or Static.
+    - Celesteela: Heavy Metal, Sturdy or Weak Armor.
+    - Kartana: Sharpness, Super Luck or Sniper.
+    - Guzzlord: Gluttony, Thick Fat or Ripen.
+    - Naganadel: Corrosion, Poison Point or Infiltrator.
+    - Stakataka: Sturdy, Solid Rock or Stamina.
+    - Blacephalon: Magic Guard, Aftermath or Flash Fire.
+  - All of them learn their moves by level, machine and tutor, as they do in Ultra Sun and Ultra Moon.
+- d139ed1: - Battle Bond is in, as one of Greninja's hidden abilities. Froakie and Frogadier can't be born with it.
+  - The first time a Battle Bond Greninja's move knocks out an enemy, it becomes Ash-Greninja for the rest of the fight: 72/145/67/153/71/132, and its Water Shuriken always strikes 3 times at 20 power.
+  - Ash-Greninja has no art of its own yet, so it is drawn as Greninja.
+- b6d7925: Totem raids:
+  
+  - A lair can stand as a Totem's for a window instead of holding its legendary or its shadow, one window in four. The Totem is a final stage of a line that lives on the lair's own tile.
+  - A Totem starts the fight wrapped in an aura that raises its stats, and calls one ally of its own line at 1/2 HP: the line's first stage, or another of itself for a one-stage family. The ally flees once the Totem falls.
+  - Alola's twelve trial Totems use the games' own auras and sizes. Every other Totem raises its highest stat by 2 when its family is one stage long, or its two highest by 1 when it evolved.
+  - Beating a Totem pays gold and the Totem itself at Totem size, with its hidden ability, at least 3 perfect stats, and never shiny. The first time you beat a given Totem it also leaves a Z-Crystal: the trial's own, or the one for its first type. After that, 1 time in 4.
+
+### Patch Changes
+
+- dbc04c2: The DNA Splicers, the N-Solarizer and the N-Lunarizer are spent on use: one each time a pair is joined, and one each time it is taken apart.
+- 2faea37: Dusk Mane and Dawn Wings Necrozma are drawn as the Solgaleo or Lunala inside them until they have art of their own, and in battle the N-Solarizer or N-Lunarizer floats above them.
+- 796383e: A shiny encounter is marked as caught before only when a shiny of that species has been caught, not when only its regular form has.
+- 2029d5b: Pressing a tab no longer bounces back to the one before it. Forming a team's Teams tab returned to "Your pokemon" when the box's sort menu handed focus back as it closed.
+- cfbe9c5: terracotta 1.3.1, which fixes tabs bouncing back when a closing panel handed focus back. The game's own workaround for it is gone.
+
 ## 4.32.0
 
 ### Minor Changes

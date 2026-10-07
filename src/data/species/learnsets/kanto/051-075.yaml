@@ -82,6 +82,7 @@ Meowth:
       - WorkUp
       - Confide
       - ThroatChop
+      - LashOut
     egg: [Hypnosis, Amnesia, Spite, Charm, Assist, Punishment, FoulPlay]
   Persian:
     level:
@@ -170,6 +171,8 @@ Meowth:
       - Roar
       - Embargo
       - GigaImpact
+      - SkitterSmack
+      - LashOut
   MeowthAlola:
     level:
       1: [Growl, Scratch]
@@ -237,6 +240,7 @@ Meowth:
       - Uproar
       - WaterPulse
       - WorkUp
+      - LashOut
     egg:
       - Amnesia
       - Assist
@@ -319,6 +323,9 @@ Meowth:
       - HyperBeam
       - Roar
       - Snarl
+      - SkitterSmack
+      - BurningJealousy
+      - LashOut
 Psyduck:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -433,6 +440,7 @@ Psyduck:
       - LowSweep
       - Liquidation
       - LaserFocus
+      - FlipTurn
 Mankey:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -641,6 +649,7 @@ Growlithe:
       - RockClimb
       - Bulldoze
       - LaserFocus
+      - ScorchingSands
 # The evolved forms grow arms: fighting-style TMs and HM Strength
 Poliwag:
   Poliwag:
@@ -857,6 +866,7 @@ Poliwag:
       - LowSweep
       - WorkUp
       - ThroatChop
+      - Coaching
   Politoed:
     level:
       1: [DoubleSlap, Hypnosis, PerishSong, WaterGun]
@@ -1030,7 +1040,7 @@ Abra:
       38: [Psychic]
       42: [Reflect]
       43: [Trick]
-    teachable: [Dig, CalmMind, LightScreen]
+    teachable: [Dig, CalmMind, LightScreen, ExpandingForce]
   Alakazam:
     level:
       1: [Teleport, Kinesis, Confusion, Disable]
@@ -1044,7 +1054,7 @@ Abra:
       38: [Psychic]
       42: [Reflect]
       43: [Trick]
-    teachable: [HyperBeam, Dig, LightScreen, FocusBlast, GigaImpact, LaserFocus]
+    teachable: [HyperBeam, Dig, LightScreen, FocusBlast, GigaImpact, LaserFocus, ExpandingForce]
 Machop:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -1116,6 +1126,7 @@ Machop:
     - DualChop
     - Confide
     - PowerUpPunch
+    - Coaching
   Machop:
     level:
       1: [KarateChop, LowKick, Leer]
@@ -1340,7 +1351,7 @@ Tentacool:
       50: [HydroPump]
       55: [WringOut]
       56: [SludgeWave]
-    teachable: [HyperBeam, GigaImpact]
+    teachable: [HyperBeam, GigaImpact, CorrosiveGas]
 Geodude:
   Geodude:
     level:

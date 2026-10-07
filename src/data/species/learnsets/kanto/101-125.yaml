@@ -65,6 +65,7 @@ Exeggcute:
       - Infestation
       - Strength
       - SeedBomb
+      - GrassyGlide
     egg:
       - Reflect
       - MegaDrain
@@ -145,6 +146,9 @@ Exeggcute:
       - ZenHeadbutt
       - Psyshock
       - StompingTantrum
+      - ExpandingForce
+      - GrassyGlide
+      - TerrainPulse
   ExeggutorAlola:
     level:
       1: [Barrage, Confusion, DragonHammer, Hypnosis, SeedBomb]
@@ -211,6 +215,9 @@ Exeggcute:
       - TrickRoom
       - WorrySeed
       - ZenHeadbutt
+      - BreakingSwipe
+      - GrassyGlide
+      - TerrainPulse
 Cubone:
   Cubone:
     level:
@@ -294,6 +301,7 @@ Cubone:
       - Confide
       - PowerUpPunch
       - BrutalSwing
+      - ScorchingSands
     egg:
       - Screech
       - SkullBash
@@ -393,6 +401,7 @@ Cubone:
       - StoneEdge
       - LaserFocus
       - ThroatChop
+      - ScorchingSands
   MarowakAlola:
     level:
       1: [BoneClub, FlameWheel, Growl, TailWhip]
@@ -476,6 +485,9 @@ Cubone:
       - Toxic
       - Uproar
       - WillOWisp
+      - BurningJealousy
+      - Poltergeist
+      - ScorchingSands
 Tyrogue:
   # TM, HM and tutor moves shared by the whole family
   family-teachable: [Toxic]
@@ -555,6 +567,7 @@ Tyrogue:
       - SuckerPunch
       - VacuumWave
       - StompingTantrum
+      - Coaching
   Hitmonchan:
     level:
       1: [CometPunch, Agility, Revenge]
@@ -631,6 +644,7 @@ Tyrogue:
       - BrickBreak
       - DrainPunch
       - ThroatChop
+      - Coaching
   Tyrogue:
     level:
       1: [Tackle]
@@ -741,6 +755,8 @@ Tyrogue:
       - StoneEdge
       - SuckerPunch
       - DrillRun
+      - Coaching
+      - TripleAxel
 Lickitung:
   Lickitung:
     level:
@@ -845,6 +861,9 @@ Lickitung:
       - PowerUpPunch
       - BrutalSwing
       - StompingTantrum
+      - BodyPress
+      - SteelRoller
+      - TerrainPulse
     egg: [BodySlam, BellyDrum, Magnitude, SmellingSalts, HammerArm, Belch]
   Lickilicky:
     level:
@@ -929,6 +948,9 @@ Lickitung:
       - PowerUpPunch
       - BrutalSwing
       - StompingTantrum
+      - BodyPress
+      - SteelRoller
+      - TerrainPulse
 Koffing:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -976,6 +998,7 @@ Koffing:
     - Incinerate
     - Confide
     - Infestation
+    - CorrosiveGas
   Koffing:
     level:
       1: [Tackle, Smog, PoisonGas]
@@ -1080,6 +1103,7 @@ Rhyhorn:
       - Thunder
       - IceBeam
       - Thunderbolt
+      - ScorchingSands
     egg:
       - RockSlide
       - Thrash
@@ -1204,6 +1228,10 @@ Rhyhorn:
       - DragonTail
       - PowerUpPunch
       - BrutalSwing
+      - BodyPress
+      - BreakingSwipe
+      - MeteorBeam
+      - ScorchingSands
   Rhyperior:
     level:
       1: [FuryAttack, HornAttack, PoisonJab, Stomp, TailWhip]
@@ -1295,6 +1323,10 @@ Rhyhorn:
       - BrutalSwing
       - StompingTantrum
       - SmartStrike
+      - BodyPress
+      - BreakingSwipe
+      - MeteorBeam
+      - ScorchingSands
 Chansey:
   Chansey:
     level:
@@ -1312,6 +1344,7 @@ Chansey:
       42: [HealingWish]
       48: [LightScreen]
       54: [DoubleEdge]
+      12: [LifeDew]
     teachable:
       - Toxic
       - MegaPunch
@@ -1426,6 +1459,7 @@ Chansey:
       40: [LightScreen]
       42: [HealingWish]
       47: [DoubleEdge]
+      12: [LifeDew]
     teachable:
       - Attract
       - Blizzard
@@ -1636,6 +1670,7 @@ Tangela:
       - Round
       - Confide
       - Infestation
+      - GrassyGlide
     egg:
       - MegaDrain
       - Confusion
@@ -1719,6 +1754,7 @@ Tangela:
       - Confide
       - Infestation
       - StompingTantrum
+      - GrassyGlide
 Kangaskhan:
   Kangaskhan:
     level:
@@ -1818,6 +1854,7 @@ Kangaskhan:
       - WorkUp
       - Confide
       - PowerUpPunch
+      - TerrainPulse
     egg:
       - Stomp
       - Disable
@@ -1883,6 +1920,8 @@ Horsea:
       - Round
       - Scald
       - Confide
+      - ScaleShot
+      - FlipTurn
     egg: [AuroraBeam, Disable, Splash, DragonRage, Flail, Octazooka, ClearSmog]
   Seadra:
     level:
@@ -1939,6 +1978,8 @@ Horsea:
       - HyperBeam
       - GigaImpact
       - LaserFocus
+      - ScaleShot
+      - FlipTurn
   Kingdra:
     level:
       1: [Bubble, Leer, SmokeScreen, WaterGun]
@@ -1995,6 +2036,9 @@ Horsea:
       - Quash
       - Confide
       - LaserFocus
+      - BreakingSwipe
+      - ScaleShot
+      - FlipTurn
 Goldeen:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -2041,6 +2085,8 @@ Goldeen:
     - Confide
     - SmartStrike
     - ThroatChop
+    - ScaleShot
+    - FlipTurn
   Goldeen:
     level:
       1: [Peck, TailWhip, WaterSport]
@@ -2125,6 +2171,7 @@ Staryu:
     - Scald
     - Confide
     - DazzlingGleam
+    - FlipTurn
   Staryu:
     level:
       1: [Tackle, Harden]
@@ -2157,6 +2204,8 @@ Staryu:
       - WonderRoom
       - Psyshock
       - Telekinesis
+      - ExpandingForce
+      - MeteorBeam
 MrMime:
   MrMime:
     level:
@@ -2264,6 +2313,7 @@ MrMime:
       - DazzlingGleam
       - Infestation
       - PowerUpPunch
+      - ExpandingForce
   MimeJr:
     level:
       1: [Barrier, Confusion, Tickle]
@@ -2412,6 +2462,7 @@ Scyther:
       - Confide
       - BrutalSwing
       - LaserFocus
+      - DualWingbeat
     egg:
       - Counter
       - LightScreen
@@ -2488,6 +2539,8 @@ Scyther:
       - Confide
       - BrutalSwing
       - LaserFocus
+      - SteelBeam
+      - DualWingbeat
 Jynx:
   Jynx:
     level:
@@ -2583,6 +2636,8 @@ Jynx:
       - Confide
       - PowerUpPunch
       - AuroraVeil
+      - ExpandingForce
+      - TripleAxel
   Smoochum:
     level:
       1: [Lick, Pound]
@@ -2739,6 +2794,7 @@ Electabuzz:
       - DualChop
       - Confide
       - PowerUpPunch
+      - RisingVoltage
   Elekid:
     level:
       1: [Leer, QuickAttack]
@@ -2878,3 +2934,4 @@ Electabuzz:
       - Confide
       - PowerUpPunch
       - StompingTantrum
+      - RisingVoltage

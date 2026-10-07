@@ -69,7 +69,7 @@ Ponyta:
       50: [Bounce]
       56: [FlareBlitz]
       61: [FireBlast]
-    teachable: [HyperBeam, GigaImpact, DrillRun, ThroatChop, SmartStrike]
+    teachable: [HyperBeam, GigaImpact, DrillRun, ThroatChop, SmartStrike, ScorchingSands]
 # Slowbro's claws open up the fighting-style TMs
 Slowpoke:
   Slowpoke:
@@ -156,6 +156,7 @@ Slowpoke:
       - Incinerate
       - Bulldoze
       - Confide
+      - ExpandingForce
     egg:
       - Stomp
       - BellyDrum
@@ -265,6 +266,8 @@ Slowpoke:
       - FocusBlast
       - GigaImpact
       - FoulPlay
+      - BodyPress
+      - ExpandingForce
   Slowking:
     level:
       1: [Curse, Tackle, Yawn, PowerGem]
@@ -364,6 +367,7 @@ Slowpoke:
       - Confide
       - PowerUpPunch
       - LaserFocus
+      - ExpandingForce
 Magnemite:
   Magnemite:
     level:
@@ -424,6 +428,8 @@ Magnemite:
       - Electroweb
       - WildCharge
       - Confide
+      - SteelBeam
+      - RisingVoltage
   Magneton:
     level:
       1: [Tackle, SonicBoom, ThunderShock, Supersonic, MetalSound, ElectricTerrain]
@@ -482,6 +488,8 @@ Magnemite:
       - Confide
       - HyperBeam
       - GigaImpact
+      - SteelBeam
+      - RisingVoltage
   Magnezone:
     level:
       1:
@@ -546,6 +554,10 @@ Magnemite:
       - Thunderbolt
       - Toxic
       - Confide
+      - BodyPress
+      - SteelBeam
+      - SteelRoller
+      - RisingVoltage
 Farfetchd:
   Farfetchd:
     level:
@@ -614,6 +626,7 @@ Farfetchd:
       - BrutalSwing
       - LaserFocus
       - ThroatChop
+      - DualWingbeat
     egg:
       - Gust
       - QuickAttack
@@ -1129,7 +1142,7 @@ Shellder:
       44: [Brine]
       49: [IceBeam]
       56: [ShellSmash]
-    egg: [BubbleBeam, TakeDown, Barrier, Screech, RapidSpin]
+    egg: [BubbleBeam, TakeDown, Barrier, Screech, RapidSpin, LifeDew]
   Cloyster:
     level:
       1: [Withdraw, Supersonic, Clamp, AuroraBeam, Protect, ToxicSpikes]
@@ -1145,6 +1158,7 @@ Shellder:
       - PoisonJab
       - FrostBreath
       - SmartStrike
+      - SteelRoller
 Gastly:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -1201,6 +1215,9 @@ Gastly:
     - Confide
     - DazzlingGleam
     - Infestation
+    - SkitterSmack
+    - Poltergeist
+    - CorrosiveGas
   Gastly:
     level:
       1: [Lick, ConfuseRay, NightShade, Hypnosis]
@@ -1348,6 +1365,10 @@ Onix:
       - Confide
       - BrutalSwing
       - StompingTantrum
+      - BodyPress
+      - BreakingSwipe
+      - MeteorBeam
+      - ScorchingSands
     egg: [RockSlide, Flail, Block, HeavySlam, Rototiller]
   Steelix:
     level:
@@ -1423,6 +1444,12 @@ Onix:
       - Confide
       - BrutalSwing
       - StompingTantrum
+      - BodyPress
+      - BreakingSwipe
+      - SteelBeam
+      - SteelRoller
+      - MeteorBeam
+      - ScorchingSands
 Drowzee:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:

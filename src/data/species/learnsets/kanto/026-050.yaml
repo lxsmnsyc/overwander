@@ -73,6 +73,8 @@ Sandshrew:
       - Bulldoze
       - Confide
       - StompingTantrum
+      - SteelRoller
+      - ScorchingSands
     egg:
       - Counter
       - Swift
@@ -161,6 +163,8 @@ Sandshrew:
       - FocusBlast
       - GigaImpact
       - StoneEdge
+      - SteelRoller
+      - ScorchingSands
   SandshrewAlola:
     level:
       1: [DefenseCurl, Scratch]
@@ -227,6 +231,9 @@ Sandshrew:
       - Toxic
       - WorkUp
       - XScissor
+      - SteelBeam
+      - SteelRoller
+      - TripleAxel
     egg:
       - Amnesia
       - ChipAway
@@ -295,6 +302,9 @@ Sandshrew:
       - FocusBlast
       - GigaImpact
       - HyperBeam
+      - SteelBeam
+      - SteelRoller
+      - TripleAxel
 NidoranF:
   # TM, HM and tutor moves shared by the whole family
 
@@ -445,6 +455,8 @@ NidoranF:
       - DragonTail
       - StompingTantrum
       - ThroatChop
+      - BodyPress
+      - ScorchingSands
 NidoranM:
   # TM, HM and tutor moves shared by the whole family
 
@@ -597,6 +609,8 @@ NidoranM:
       - DragonTail
       - StompingTantrum
       - ThroatChop
+      - BodyPress
+      - ScorchingSands
 Clefairy:
   Clefairy:
     level:
@@ -617,6 +631,7 @@ Clefairy:
       46: [HealingWish, Moonblast]
       48: [LightScreen]
       58: [AfterYou]
+      16: [LifeDew]
     teachable:
       - MegaPunch
       - MegaKick
@@ -710,9 +725,12 @@ Clefairy:
       - Confide
       - DazzlingGleam
       - PowerUpPunch
+      - MeteorBeam
+      - MistyExplosion
+      - DualWingbeat
   Clefable:
     level:
-      1: [Sing, DoubleSlap, Minimize, Metronome, Moonlight, DisarmingVoice, Spotlight]
+      1: [Sing, DoubleSlap, Minimize, Metronome, Moonlight, DisarmingVoice, Spotlight, LifeDew]
     teachable:
       - MegaPunch
       - MegaKick
@@ -812,6 +830,9 @@ Clefairy:
       - GigaImpact
       - Gravity
       - LaserFocus
+      - MeteorBeam
+      - MistyExplosion
+      - DualWingbeat
   Cleffa:
     level:
       1: [Charm, Pound]
@@ -952,6 +973,7 @@ Vulpix:
       - Round
       - Incinerate
       - Confide
+      - BurningJealousy
     egg:
       - Hypnosis
       - Disable
@@ -1019,6 +1041,8 @@ Vulpix:
       - Payback
       - Psyshock
       - LaserFocus
+      - BurningJealousy
+      - ScorchingSands
   VulpixAlola:
     level:
       1: [PowderSnow]
@@ -1141,6 +1165,7 @@ Vulpix:
       - LaserFocus
       - Psyshock
       - WonderRoom
+      - TripleAxel
 Jigglypuff:
   Jigglypuff:
     level:
@@ -1246,6 +1271,8 @@ Jigglypuff:
       - Confide
       - DazzlingGleam
       - PowerUpPunch
+      - SteelRoller
+      - MistyExplosion
   Wigglytuff:
     level:
       1: [Sing, Disable, DefenseCurl, DoubleSlap, PlayRough]
@@ -1342,6 +1369,9 @@ Jigglypuff:
       - GyroBall
       - MagicRoom
       - LaserFocus
+      - ExpandingForce
+      - SteelRoller
+      - MistyExplosion
   Igglybuff:
     level:
       1: [Charm, Sing]
@@ -1475,6 +1505,7 @@ Zubat:
       - Round
       - Acrobatics
       - Confide
+      - DualWingbeat
     egg:
       - QuickAttack
       - Gust
@@ -1548,6 +1579,7 @@ Zubat:
       - Confide
       - HyperBeam
       - GigaImpact
+      - DualWingbeat
   Crobat:
     level:
       1: [LeechLife, Screech, Supersonic, Astonish, CrossPoison]
@@ -1611,6 +1643,7 @@ Zubat:
       - Round
       - Acrobatics
       - Confide
+      - DualWingbeat
 Oddish:
   Oddish:
     level:
@@ -1671,6 +1704,7 @@ Oddish:
       - Confide
       - DazzlingGleam
       - Infestation
+      - GrassyGlide
     egg:
       - SwordsDance
       - RazorLeaf
@@ -1737,6 +1771,7 @@ Oddish:
       - Infestation
       - DrainPunch
       - Fling
+      - GrassyGlide
   Vileplume:
     level:
       1: [Absorb, PoisonPowder, PetalDance, StunSpore, SweetScent, Aromatherapy]
@@ -1791,6 +1826,8 @@ Oddish:
       - Fling
       - GigaImpact
       - NaturalGift
+      - GrassyGlide
+      - CorrosiveGas
   Bellossom:
     level:
       1: [Absorb, PetalDance, StunSpore, SweetScent, MagicalLeaf]
@@ -1844,6 +1881,7 @@ Oddish:
       - DazzlingGleam
       - Infestation
       - LaserFocus
+      - GrassyGlide
 Paras:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -2074,6 +2112,7 @@ Diglett:
       - Bulldoze
       - Confide
       - StompingTantrum
+      - ScorchingSands
     egg: [Screech, FeintAttack, Pursuit, AncientPower, BeatUp, Uproar, FinalGambit]
   Dugtrio:
     level:
@@ -2137,6 +2176,7 @@ Diglett:
       - GigaImpact
       - StoneEdge
       - SludgeWave
+      - ScorchingSands
   DiglettAlola:
     level:
       1: [MetalClaw, SandAttack]
@@ -2186,6 +2226,8 @@ Diglett:
       - Thief
       - Toxic
       - WorkUp
+      - SteelBeam
+      - ScorchingSands
     egg:
       - AncientPower
       - BeatUp
@@ -2250,3 +2292,5 @@ Diglett:
       - HyperBeam
       - SludgeWave
       - StoneEdge
+      - SteelBeam
+      - ScorchingSands

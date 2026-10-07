@@ -49,6 +49,7 @@ Bulbasaur:
     - EchoedVoice
     - GrassPledge
     - Confide
+    - GrassyGlide
   Bulbasaur:
     level:
       1: [Tackle, Growl]
@@ -107,6 +108,7 @@ Bulbasaur:
       - SeedBomb
       - Bulldoze
       - StompingTantrum
+      - TerrainPulse
 Charmander:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -255,6 +257,10 @@ Charmander:
       - Bulldoze
       - DragonTail
       - BrutalSwing
+      - BreakingSwipe
+      - ScaleShot
+      - DualWingbeat
+      - ScorchingSands
 Squirtle:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -322,6 +328,7 @@ Squirtle:
     - WaterPledge
     - Confide
     - PowerUpPunch
+    - FlipTurn
   Squirtle:
     level:
       1: [Tackle, TailWhip]
@@ -346,6 +353,7 @@ Squirtle:
       - Yawn
       - AquaJet
       - AquaRing
+      - LifeDew
   Wartortle:
     level:
       1: [Tackle, TailWhip, Bubble]
@@ -381,6 +389,8 @@ Squirtle:
       - Bulldoze
       - DragonTail
       - Liquidation
+      - BodyPress
+      - TerrainPulse
 Caterpie:
   Caterpie:
     level:
@@ -462,6 +472,7 @@ Caterpie:
       - Electroweb
       - Confide
       - Infestation
+      - DualWingbeat
 Weedle:
   Weedle:
     level:
@@ -1149,6 +1160,7 @@ Pikachu:
       - WildCharge
       - Confide
       - LaserFocus
+      - RisingVoltage
   Raichu:
     level:
       1: [ThunderShock, Growl, ThunderWave, TailWhip, Thunderbolt, QuickAttack]
@@ -1220,6 +1232,7 @@ Pikachu:
       - LightScreen
       - FocusBlast
       - GigaImpact
+      - RisingVoltage
   Pichu:
     level:
       1: [Charm, ThunderShock]
@@ -1410,3 +1423,5 @@ Pikachu:
       - Toxic
       - VoltSwitch
       - WildCharge
+      - ExpandingForce
+      - RisingVoltage

@@ -728,7 +728,7 @@ describe('world', () => {
 
     // Clefable would otherwise take Metronome, which can call
     // anything registered — Transform included
-    expect(deriveMoves(Species.Clefable, RAID_BOSS_LEVEL)).toContain(Moves.Metronome);
+    expect(getLevelUpMoves(Species.Clefable, RAID_BOSS_LEVEL)).toContain(Moves.Metronome);
     expect(createRaidBossSnapshot(Species.Clefable, 0x12345678).moves).not.toContain(
       Moves.Metronome,
     );

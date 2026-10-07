@@ -71,6 +71,8 @@ Magmar:
       - DualChop
       - Confide
       - PowerUpPunch
+      - BurningJealousy
+      - ScorchingSands
   Magby:
     level:
       1: [Ember]
@@ -196,6 +198,8 @@ Magmar:
       - Confide
       - PowerUpPunch
       - StompingTantrum
+      - BurningJealousy
+      - ScorchingSands
 Pinsir:
   Pinsir:
     level:
@@ -342,6 +346,7 @@ Tauros:
       - Confide
       - StompingTantrum
       - SmartStrike
+      - LashOut
 Magikarp:
   Magikarp:
     level:
@@ -427,13 +432,15 @@ Magikarp:
       - DragonTail
       - Confide
       - BrutalSwing
+      - ScaleShot
+      - LashOut
 Lapras:
   Lapras:
     level:
       1: [WaterGun, Growl, Sing]
       8: [Mist]
       10: [IceShard]
-      15: [BodySlam]
+      15: [BodySlam, LifeDew]
       22: [ConfuseRay]
       29: [PerishSong]
       36: [IceBeam]
@@ -509,6 +516,7 @@ Lapras:
       - DrillRun
       - Confide
       - SmartStrike
+      - BodyPress
     egg: [AuroraBeam, Foresight, DragonDance, HornDrill, Refresh, Tickle, FreezeDry]
 Ditto:
   Ditto:
@@ -637,6 +645,7 @@ Eevee:
       - Brine
       - GigaImpact
       - Scald
+      - FlipTurn
   Jolteon:
     level:
       1: [Tackle, SandAttack, QuickAttack, ThunderShock, TailWhip, HelpingHand]
@@ -703,6 +712,7 @@ Eevee:
       - MagnetRise
       - VoltSwitch
       - WildCharge
+      - RisingVoltage
   Flareon:
     level:
       1: [Tackle, SandAttack, QuickAttack, Ember, TailWhip, HelpingHand]
@@ -765,6 +775,8 @@ Eevee:
       - GigaImpact
       - FlameCharge
       - Incinerate
+      - BurningJealousy
+      - ScorchingSands
   Espeon:
     level:
       1: [Tackle, TailWhip, HelpingHand]
@@ -835,6 +847,7 @@ Eevee:
       - Confide
       - DazzlingGleam
       - LaserFocus
+      - ExpandingForce
   Umbreon:
     level:
       1: [Tackle, TailWhip, HelpingHand]
@@ -905,6 +918,7 @@ Eevee:
       - Confide
       - LaserFocus
       - ThroatChop
+      - LashOut
   Leafeon:
     level:
       1: [HelpingHand, Tackle, TailWhip]
@@ -966,6 +980,7 @@ Eevee:
       - XScissor
       - Confide
       - LaserFocus
+      - GrassyGlide
   Glaceon:
     level:
       1: [HelpingHand, Tackle, TailWhip]
@@ -1023,6 +1038,7 @@ Eevee:
       - Confide
       - AuroraVeil
       - LaserFocus
+      - TripleAxel
   Sylveon:
     level:
       1: [Tackle, TailWhip, HelpingHand, Charm, BatonPass, DisarmingVoice, FairyWind]
@@ -1103,6 +1119,7 @@ Eevee:
       - WeatherBall
       - WorkUp
       - LaserFocus
+      - MistyExplosion
 Porygon:
   Porygon:
     level:
@@ -1358,6 +1375,7 @@ Omanyte:
     - Round
     - Scald
     - Confide
+    - MeteorBeam
   Omanyte:
     level:
       1: [WaterGun, Withdraw, Constrict]
@@ -1458,6 +1476,7 @@ Kabuto:
     - Round
     - Scald
     - Confide
+    - MeteorBeam
   Kabuto:
     level:
       1: [Scratch, Harden]
@@ -1510,6 +1529,7 @@ Kabuto:
       - StoneEdge
       - XScissor
       - Liquidation
+      - FlipTurn
 Aerodactyl:
   Aerodactyl:
     level:
@@ -1594,6 +1614,8 @@ Aerodactyl:
       - Confide
       - BrutalSwing
       - LaserFocus
+      - MeteorBeam
+      - DualWingbeat
     egg: [Whirlwind, Foresight, SteelWing, Pursuit, Assurance]
 Snorlax:
   Snorlax:
@@ -1705,6 +1727,9 @@ Snorlax:
       - Confide
       - PowerUpPunch
       - StompingTantrum
+      - BodyPress
+      - SteelRoller
+      - TerrainPulse
   Munchlax:
     level:
       1: [Metronome, OdorSleuth, Tackle]
@@ -1859,6 +1884,8 @@ Articuno:
       - FrostBreath
       - AuroraVeil
       - LaserFocus
+      - TripleAxel
+      - DualWingbeat
 Zapdos:
   Zapdos:
     level:
@@ -1928,6 +1955,8 @@ Zapdos:
       - VoltSwitch
       - WildCharge
       - LaserFocus
+      - RisingVoltage
+      - DualWingbeat
 Moltres:
   Moltres:
     level:
@@ -1996,6 +2025,9 @@ Moltres:
       - FlameCharge
       - Incinerate
       - LaserFocus
+      - BurningJealousy
+      - DualWingbeat
+      - ScorchingSands
 Dratini:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -2052,6 +2084,8 @@ Dratini:
     - DragonTail
     - Confide
     - BrutalSwing
+    - BreakingSwipe
+    - ScaleShot
   Dratini:
     level:
       1: [Wrap, Leer]
@@ -2126,10 +2160,12 @@ Dratini:
       - SkyDrop
       - Bulldoze
       - PowerUpPunch
+      - BodyPress
+      - DualWingbeat
 Mewtwo:
   Mewtwo:
     level:
-      1: [Confusion, Disable, Swift, LaserFocus]
+      1: [Confusion, Disable, Swift, LaserFocus, LifeDew]
       11: [Barrier]
       33: [PsychUp]
       36: [MiracleEye]
@@ -2255,6 +2291,7 @@ Mewtwo:
       - Confide
       - PowerUpPunch
       - BrutalSwing
+      - ExpandingForce
 Mew:
   Mew:
     level:
@@ -2262,7 +2299,7 @@ Mew:
       10: [Transform]
       20: [MegaPunch]
       30: [Metronome]
-      40: [Psychic]
+      40: [Psychic, LifeDew]
       50: [AncientPower]
       70: [MeFirst]
       90: [NastyPlot]
@@ -2470,3 +2507,23 @@ Mew:
       - LaserFocus
       - ThroatChop
       - SmartStrike
+      - BodyPress
+      - BreakingSwipe
+      - ExpandingForce
+      - SteelRoller
+      - ScaleShot
+      - MeteorBeam
+      - MistyExplosion
+      - GrassyGlide
+      - RisingVoltage
+      - TerrainPulse
+      - SkitterSmack
+      - BurningJealousy
+      - LashOut
+      - Poltergeist
+      - CorrosiveGas
+      - Coaching
+      - FlipTurn
+      - TripleAxel
+      - DualWingbeat
+      - ScorchingSands

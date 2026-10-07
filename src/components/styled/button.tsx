@@ -15,7 +15,14 @@ import { Button as HeadlessButton } from 'terracotta';
  * makes Enter and Space press a button that is not a `<button>` — so a
  * button rendered as something else stays a button to a keyboard.
  */
-export type ButtonTone = 'primary' | 'ghost' | 'danger';
+export type ButtonTone =
+  | 'primary'
+  | 'ghost'
+  | 'danger'
+  | 'accent'
+  | 'caution'
+  | 'quiet'
+  | 'pressed';
 
 const TONES: Record<ButtonTone, string> = {
   primary:
@@ -23,6 +30,18 @@ const TONES: Record<ButtonTone, string> = {
   ghost: 'border-line bg-paper text-ink shadow-pop hover:border-tide hover:text-tide-dark',
   danger:
     'border-ember-dark bg-ember text-on-accent shadow-pop hover:bg-ember-dark hover:text-on-accent',
+  // The blue of the screen's own furniture, for the act a screen is
+  // built around where green would read as finishing it
+  accent:
+    'border-tide-dark bg-tide text-on-accent shadow-pop hover:bg-tide-dark hover:text-on-accent',
+  // Something that cannot be undone, offered among ordinary buttons:
+  // red enough to be read before it is pressed, not loud enough to be
+  // the thing the eye lands on
+  caution: 'border-ember/40 bg-ember-soft text-ember-dark hover:border-ember',
+  // A way to step back out, which needs no edge to be found
+  quiet: 'border-transparent bg-transparent text-muted hover:text-ink',
+  // A toggle that is on: the panel it opened is showing
+  pressed: 'border-tide bg-tide-soft text-tide-dark',
 };
 
 /**

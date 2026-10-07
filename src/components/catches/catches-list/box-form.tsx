@@ -1,6 +1,6 @@
 import { For, type JSX, createSignal } from 'solid-js';
 import { BOX_COLOURS, BOX_NAME_LIMIT } from '../../../auth/box-record';
-import { Button, Row, TextField } from '../../styled';
+import { Button, TextField } from '../../styled';
 
 /**
  * A box's name and colour, for making one and for changing one. The
@@ -13,6 +13,8 @@ export interface BoxFormProps {
   colour?: number;
   /** What the button that keeps it says: "Make it", "Save" */
   verb: string;
+  /** What the form is for, over it: "New box", "Rename Water" */
+  heading?: string;
   busy?: boolean;
   onSubmit: (name: string, colour: number) => void;
   onCancel: () => void;
@@ -30,9 +32,11 @@ export default function BoxForm(props: BoxFormProps): JSX.Element {
   };
 
   return (
-    <div class="flex flex-col gap-2 rounded-xl border-2 border-tide bg-paper p-2.5">
+    <div class="flex flex-col gap-2 rounded-xl border-2 border-tide bg-tide-soft p-2.5">
       <TextField
-        label="Name"
+        label={props.heading ?? 'Name'}
+        class="[&>label]:px-1 [&>label]:text-xs [&>label]:font-black [&>label]:tracking-wide
+          [&>label]:text-tide-dark [&>label]:uppercase"
         value={name()}
         placeholder="Water team"
         onChange={(typed) => {
@@ -40,7 +44,7 @@ export default function BoxForm(props: BoxFormProps): JSX.Element {
         }}
         onEnter={submit}
       />
-      <div role="radiogroup" aria-label="Colour" class="flex flex-wrap gap-1.5">
+      <div role="radiogroup" aria-label="Colour" class="flex flex-wrap gap-1.5 px-0.5">
         <For each={BOX_COLOURS}>
           {(swatch, at) => (
             <button
@@ -48,9 +52,9 @@ export default function BoxForm(props: BoxFormProps): JSX.Element {
               role="radio"
               aria-checked={colour() === at()}
               aria-label={swatch.name}
-              class={`size-6 cursor-pointer rounded-md border-2 ${
+              class={`size-7 cursor-pointer rounded-lg border-[3px] ${
                 colour() === at() ? 'border-ink' : 'border-paper'
-              } shadow-pop-sm`}
+              }`}
               style={{ background: swatch.tone }}
               onClick={() => {
                 setColour(at());
@@ -59,16 +63,17 @@ export default function BoxForm(props: BoxFormProps): JSX.Element {
           )}
         </For>
       </div>
-      <Row>
+      <div class="flex gap-1.5">
         <Button
-          tone="primary"
+          tone="accent"
+          class="grow justify-center"
           disabled={props.busy === true || name().trim() === ''}
           onClick={submit}
         >
           {props.verb}
         </Button>
         <Button onClick={props.onCancel}>Never mind</Button>
-      </Row>
+      </div>
     </div>
   );
 }

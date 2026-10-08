@@ -97,7 +97,7 @@ The numbers a fight reads off each move live apart from the move, in `src/data/b
 
 ## Abilities
 
-An ability is a name and a line, so all of it is text: `text/en/abilities/gen-N.yaml`, grouped under a comment naming the line that introduces it, and `text/en/abilities/signature/<region>.yaml` for the signatures. Which family is granted which signature is `src/data/abilities/signatures/<region>.yaml`, under `families:`, with a regional line's own under `forms:`. A family is filed under the region its species files are.
+An ability is a name and a line, so all of it is text: `text/en/abilities/gen-N.yaml`, grouped under a comment naming the line that introduces it, `text/en/abilities/signature/<region>.yaml` for the signatures, and `text/en/abilities/special.yaml` for the marks of what a pokemon is (Boss, Shadow, Totem, Totem Ally, Purified). Which family is granted which signature is `src/data/abilities/signatures/<region>.yaml`, under `families:`, with a regional line's own under `forms:`. A family is filed under the region its species files are.
 
 ## Items
 

@@ -10,7 +10,8 @@ import type { AbilityData } from './__create';
  * The abilities, read out of their YAML.
  *
  * An ability is a name and a line saying what it does, so all of it is
- * text: `text/<locale>/abilities/` holds one file per generation and
+ * text: `text/<locale>/abilities/` holds one file per generation, one
+ * for the special abilities (Boss, Shadow, Totem and the rest), and
  * one per region for the signatures. Which family is granted which
  * signature is `signatures/<region>.yaml`. What any of them does in a
  * fight is code, in `src/battle/abilities/`

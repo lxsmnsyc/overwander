@@ -509,20 +509,3 @@ Multiscale:
 Protean:
   name: Protean
   description: Takes the type of every move it uses, so all of them are same-type.
-
-# Special (non-standard abilities outside the regular pool)
-Boss:
-  name: Boss
-  description: 110x its own HP and 2x every other stat, but its casts wind up 2x slower. A move aimed at one enemy hits them all, only fainting interrupts it, and it takes at most 200 from an indirect or share-of-HP hit and heals at most 1,000 HP a second.
-Shadow:
-  name: Shadow
-  description: 1.25x Attack and Special Attack, 0.75x Defense and Special Defense.
-Totem:
-  name: Totem
-  description: Starts the fight with its aura raising its stats, and calls one of its own line to its side at 1/2 HP. Its ally flees when it falls.
-TotemAlly:
-  name: Totem Ally
-  description: 50x its own HP and 1.5x every other stat. Flees when the Totem that called it falls.
-Purified:
-  name: Purified
-  description: The mark of a shadow put right, worth nothing in a fight. As a buddy, 1.5x the catch chance on a wild shadow.

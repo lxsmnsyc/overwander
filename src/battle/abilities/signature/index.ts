@@ -77,6 +77,8 @@ import tapus from './tapus';
 import lightTrio from './light-trio';
 import ultraBeasts from './ultra-beasts';
 import alolaMythicals from './alola-mythicals';
+import applinToPincurchin from './applin-to-pincurchin';
+import sinisteaToMilcery from './sinistea-to-milcery';
 
 /**
  * The invented abilities, one per evolution family, in the order the
@@ -161,6 +163,8 @@ const setupAbilities = [
   ...emolga,
   ...tirtougaToBouffalant,
   ...forcesOfNature,
+  ...applinToPincurchin,
+  ...sinisteaToMilcery,
 ];
 
 /**

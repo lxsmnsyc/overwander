@@ -194,6 +194,27 @@ export function allyHolder(battle: Battle, unit: Unit, ability: Abilities): Unit
   return undefined;
 }
 
+/** The standing teammate with the smallest share of its HP left, itself excluded */
+export function worstHurtMate(unit: Unit): Unit | undefined {
+  let worst: Unit | undefined;
+  let lowest = Infinity;
+
+  for (const mate of unit.team.units) {
+    if (mate === unit || !mate.alive) {
+      continue;
+    }
+
+    const share = mate.health / mate.checkStat(Stats.HP, 0);
+
+    if (share < lowest) {
+      worst = mate;
+      lowest = share;
+    }
+  }
+
+  return worst;
+}
+
 /** Whether this is a physical move the pokemon actually chose */
 export function isPhysicalMove(move: Moves): boolean {
   return !PSEUDO_MOVES.has(move) && getMoveData(move).category === MoveCategories.Physical;

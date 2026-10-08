@@ -35,7 +35,7 @@ Zoomies:
   description: Each time its Speed rises, it casts Charge on itself.
 SharedHarvest:
   name: Shared Harvest
-  description: Whenever it eats a Berry, its worst-hurt teammate gets that Berry's effect too.
+  description: Whenever it eats a Berry, its worst-hurt teammate gets that Berry's heal, cure or boost too.
 CoilBurrow:
   name: Coil Burrow
   description: While a sandstorm is up, its Ground moves strike every enemy instead of one.
@@ -62,10 +62,10 @@ LastPour:
   description: When it faints, it casts Healing Wish on its worst-hurt teammate.
 SilentWrath:
   name: Silent Wrath
-  description: An enemy loses 1/8 of its HP each time it raises a stat of its own, unless a Despair Feast holder stands on the field.
+  description: An enemy loses 1/8 of its HP for each stat it raises itself, unless a Despair Feast holder stands on the field.
 DespairFeast:
   name: Despair Feast
-  description: It heals 1/8 of its HP each time an enemy loses a stat stage, unless a Silent Wrath holder stands on the field.
+  description: It heals 1/8 of its HP each time an enemy's stat falls, unless a Silent Wrath holder stands on the field.
 Sugarcoat:
   name: Sugarcoat
   description: Each status move it casts on a teammate casts Decorate on them as well.

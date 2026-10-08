@@ -343,8 +343,9 @@ export function createRaidBossSnapshot(
 /**
  * The ally a Totem calls: the first stage of its line, or another of
  * itself, at the raid's level with nothing spent on it. It is no boss,
- * so it fights on an ordinary health pool, and it is marked as called
- * so the battle keeps it off the field until the Totem asks for it
+ * but its Totem Ally mark gives it a raid-sized share of HP and stats.
+ * It is marked as called so the battle keeps it off the field until
+ * the Totem asks for it
  */
 export function createTotemAllySnapshot(totem: Species, traitValue: number): CatchSnapshot {
   const species = getTotemAlly(totem);
@@ -364,7 +365,7 @@ export function createTotemAllySnapshot(totem: Species, traitValue: number): Cat
     shadow: false,
     moves: getBossMoves(species),
     movePoints: {},
-    abilities: [deriveAbility(species, traitValue)],
+    abilities: [deriveAbility(species, traitValue), Abilities.TotemAlly],
     items: [],
     slots: packSlots(DEFAULT_ABILITY_SLOTS, DEFAULT_ITEM_SLOTS, mostSlots(Slots.Move)),
     health: getMaxHealth({

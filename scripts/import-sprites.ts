@@ -53,6 +53,24 @@ const REGIONS: Partial<Record<string, string>> = {
 };
 
 /**
+ * Dex numbers the collection files under another region than the game
+ * does. It keeps Hisui's new species, and their forms, with Galar's
+ */
+const REFILED: { from: number; to: number; under: string }[] = [
+  { from: 899, to: 905, under: 'hisui' },
+];
+
+/** The folder a slot goes under here, by its dex number where the collection differs */
+function folderOf(slot: Slot, region: string): string {
+  for (const refiled of REFILED) {
+    if (slot.dex >= refiled.from && slot.dex <= refiled.to) {
+      return refiled.under;
+    }
+  }
+  return region;
+}
+
+/**
  * The three drawn like pokemon without being pokemon, by the form the
  * collection files them under. Their ids are in
  * [`src/data/ids/species.ts`](../src/data/ids/species.ts)
@@ -259,7 +277,7 @@ function wanted(root: string, slot: Slot, known: Set<number>, shadows: Set<numbe
   if (!known.has(species) || shadows.has(species) !== isShadowSlot(root, slot)) {
     return null;
   }
-  return { ...slot, species, under: region };
+  return { ...slot, species, under: folderOf(slot, region) };
 }
 
 /** What the clips are called, for a line somebody has to read. */

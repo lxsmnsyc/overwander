@@ -12,6 +12,8 @@ describe('Galar and Hisui', () => {
     expect(getSpeciesRegion(Species.Calyrex)).toBe(Regions.Galar);
     expect(getSpeciesRegion(Species.Wyrdeer)).toBe(Regions.Hisui);
     expect(getSpeciesRegion(Species.BasculegionFemale)).toBe(Regions.Hisui);
+    expect(getSpeciesRegion(Species.IndeedeeFemale)).toBe(Regions.Galar);
+    expect(getSpeciesRegion(Species.AlcremieRibbon)).toBe(Regions.Galar);
   });
 
   it('file each regional form under the region that shaped it', () => {

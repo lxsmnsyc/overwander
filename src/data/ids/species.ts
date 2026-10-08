@@ -1403,8 +1403,19 @@ export const enum Species {
   /** The calm key a Toxtricity is born into by its nature, Amped at the base */
   ToxtricityLowKey = 1084901,
 
+  /** The six other Sweets an Alcremie can carry, on its Vanilla Cream. Strawberry is the base */
+  AlcremieBerry = 1086901,
+  AlcremieLove = 1086902,
+  AlcremieStar = 1086903,
+  AlcremieClover = 1086904,
+  AlcremieFlower = 1086905,
+  AlcremieRibbon = 1086906,
+
   /** The head an Eiscue is left with once its ice is gone */
   EiscueNoice = 1087501,
+
+  /** The female of the line, drawn apart from the male the way Meowstic's is */
+  IndeedeeFemale = 1087601,
 
   /** The mood a Morpeko swings into each time it acts */
   MorpekoHangry = 1087701,

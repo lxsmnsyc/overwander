@@ -1411,6 +1411,13 @@ export const enum Species {
   AlcremieFlower = 1086905,
   AlcremieRibbon = 1086906,
 
+  /**
+   * The Brass that leads a Falinks troop. Not a pokemon of its own:
+   * the collection draws the troop only as its pieces, so Falinks is
+   * drawn as its Brass until it has a sheet of its own
+   */
+  FalinksBrass = 1087002,
+
   /** The head an Eiscue is left with once its ice is gone */
   EiscueNoice = 1087501,
 

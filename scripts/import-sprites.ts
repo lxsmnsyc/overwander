@@ -107,6 +107,9 @@ const IDS = 'src/data/ids/species.ts';
 /** Where the species themselves are written, a file per line */
 const SPECIES = 'src/data/species';
 
+/** Where the stand-in sheets are listed */
+const STAND_IN_TABLE = 'src/canvas/species-sprites.ts';
+
 /**
  * Where form ids start, matching `SPECIES_FORM_BAND` in
  * [`src/data/ids/species.ts`](../src/data/ids/species.ts). Repeated
@@ -217,7 +220,30 @@ function writtenSpecies(): Set<number> {
       }
     }
   }
+  // A sheet that stands in for a pokemon the collection has not drawn
+  // (Falinks drawn as its Brass) is shipped though no data names it
+  for (const id of standInSheets(numbered)) {
+    ids.add(id);
+  }
   return ids;
+}
+
+/** The sheets `STAND_INS` draws other pokemon as, read as text like the rest */
+function standInSheets(numbered: Map<string, number>): number[] {
+  const source = readFileSync(STAND_IN_TABLE, 'utf8');
+  const table = source.slice(source.indexOf('const STAND_INS'));
+  const sheets: number[] = [];
+
+  for (const [, sheet] of table
+    .slice(0, table.indexOf(']);'))
+    .matchAll(/\[Species\.\w+, Species\.(\w+)\]/g)) {
+    const id = numbered.get(sheet);
+
+    if (id != null) {
+      sheets.push(id);
+    }
+  }
+  return sheets;
 }
 
 /**

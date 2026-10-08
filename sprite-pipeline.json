@@ -11857,6 +11857,30 @@
         "bytes": 6068
       }
     },
+    "public/sprites/pokemon/galar/1087002/regular.png": {
+      "digest": "f1bc3a995cd211f5",
+      "bytes": 2514,
+      "width": 59,
+      "height": 177,
+      "compact": {
+        "at": "2026-10-08T11:46:26Z",
+        "as": "already compact",
+        "was": 2514,
+        "bytes": 2514
+      }
+    },
+    "public/sprites/pokemon/galar/1087002/shiny.png": {
+      "digest": "feab6363eedf6b8e",
+      "bytes": 2514,
+      "width": 59,
+      "height": 177,
+      "compact": {
+        "at": "2026-10-08T11:46:26Z",
+        "as": "already compact",
+        "was": 2514,
+        "bytes": 2514
+      }
+    },
     "public/sprites/pokemon/galar/1087501/regular.png": {
       "digest": "b71c10cdf99c6242",
       "bytes": 4334,
@@ -36167,6 +36191,18 @@
         "as": "already compact",
         "was": 8718,
         "bytes": 8718
+      }
+    },
+    "public/sprites/ui/candies/galar/image.png": {
+      "digest": "72b2c4ac96f985dd",
+      "bytes": 5574,
+      "width": 96,
+      "height": 96,
+      "compact": {
+        "at": "2026-10-08T11:51:22Z",
+        "as": "already compact",
+        "was": 5574,
+        "bytes": 5574
       }
     },
     "public/sprites/ui/candies/hoenn/image.png": {

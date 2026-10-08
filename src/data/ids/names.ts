@@ -1227,6 +1227,7 @@ export const SPECIES_IDS = {
   AlcremieClover: Species.AlcremieClover,
   AlcremieFlower: Species.AlcremieFlower,
   AlcremieRibbon: Species.AlcremieRibbon,
+  FalinksBrass: Species.FalinksBrass,
   EiscueNoice: Species.EiscueNoice,
   IndeedeeFemale: Species.IndeedeeFemale,
   MorpekoHangry: Species.MorpekoHangry,

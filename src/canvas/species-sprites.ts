@@ -60,6 +60,9 @@ const BORROWED_COATS = new Map<Species, { sheet: Species; female: boolean }>([
 const STAND_INS = new Map<Species, Species>([
   [Species.NecrozmaDuskMane, Species.Solgaleo],
   [Species.NecrozmaDawnWings, Species.Lunala],
+  // A Cramorant with its catch is drawn as the bird alone
+  [Species.CramorantGulping, Species.Cramorant],
+  [Species.CramorantGorging, Species.Cramorant],
 ]);
 
 /** Whether this shape is drawn as another pokemon until it has art of its own */

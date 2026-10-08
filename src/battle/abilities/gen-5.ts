@@ -14,6 +14,7 @@ import type Unit from '../unit';
 import {
   createAbility,
   createContactRecoilAbility,
+  createFurCoatAbility,
   createMoldBreakerAbility,
   getAbilityHolders,
 } from './__create';
@@ -279,18 +280,7 @@ const setupAbilities = [
   ),
 
   /** Fur Coat: the coat turns a blow, and answers nothing thrown at it */
-  createAbility(Abilities.FurCoat, (battle) =>
-    battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
-      const parent = event.parent;
-
-      if (
-        parent.category === MoveCategories.Physical &&
-        parent.target.hasAbility(Abilities.FurCoat)
-      ) {
-        event.value *= FUR_COAT_SCALE;
-      }
-    }),
-  ),
+  createFurCoatAbility(Abilities.FurCoat, MoveCategories.Physical, FUR_COAT_SCALE),
 
   /**
    * Victory Star: the whole team aims better for having it there,

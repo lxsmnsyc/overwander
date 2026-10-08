@@ -426,7 +426,11 @@ describe('world', () => {
     expect(getSpeciesLairs(Species.Kyogre)).toEqual([Lairs.MarineCave, Lairs.EmbeddedTower]);
     expect(getSpeciesLairs(Species.Groudon)).toEqual([Lairs.TerraCave, Lairs.EmbeddedTower]);
     expect(getSpeciesLairs(Species.Rayquaza)).toEqual([Lairs.SkyPillar, Lairs.EmbeddedTower]);
-    expect(getBiomeLairs(Biome.Beach)).toEqual([Lairs.EmbeddedTower, Lairs.AetherParadise]);
+    expect(getBiomeLairs(Biome.Beach)).toEqual([
+      Lairs.EmbeddedTower,
+      Lairs.AetherParadise,
+      Lairs.IsleOfArmor,
+    ]);
     expect(getBiomeLairs(Biome.Badlands)).toContain(Lairs.RockPeakRuins);
     expect(getBiomeLairs(Biome.Tundra)).toContain(Lairs.IcebergRuins);
     expect(getBiomeLairs(Biome.Ocean)).toContain(Lairs.IronRuins);
@@ -446,11 +450,12 @@ describe('world', () => {
       return;
     }
 
-    // A mountain holds ten: the volcano, the cave under it, the
+    // A mountain holds eleven: the volcano, the cave under it, the
     // tower on it, the tomb cut into it, the two chambers the swords
-    // keep, the frozen cavern, the cave the cells gather in and the
-    // hill the prism waits in and the crater a rocket launched from. Every
-    // window stages one of them, and whoever is at home in it
+    // keep, the frozen cavern, the cave the cells gather in, the hill
+    // the prism waits in, the crater a rocket launched from and the
+    // tower of the dark style. Every window stages one of them, and
+    // whoever is at home in it
     const hosted = new Set(getBiomeLairs(Biome.Mountain));
 
     expect(hosted).toEqual(
@@ -465,6 +470,7 @@ describe('world', () => {
         Lairs.TerminusCave,
         Lairs.TenCaratHill,
         Lairs.UltraCrater,
+        Lairs.TowerOfDarkness,
       ]),
     );
 

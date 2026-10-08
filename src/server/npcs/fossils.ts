@@ -10,7 +10,7 @@ import {
 import AleaRNG from '../../core/alea';
 import { Balls, type Items, getApricornBall } from '../../data/ids/items';
 import type { Species } from '../../data/ids/species';
-import { FOSSIL_SPECIES } from '../../data/items/fossils';
+import { FOSSIL_SPECIES, getFossilPairSpecies } from '../../data/items/fossils';
 import deriveEncounter, { EncounterType } from '../../overworld/encounter';
 import { writeCaughtRecord } from '../caught';
 import { consumeItem, grantItem } from '../inventory';
@@ -95,12 +95,16 @@ export interface RevivedFossil {
  * how many fossils have been dug up, and turning away the second of
  * two would only be a walk to the next cell to do the same thing.
  *
+ * A Galar fossil is two halves, `item` and `pair`, and both are
+ * spent on each pokemon. `pair` is null for every whole fossil.
+ *
  * The fossil leaves the bag first and is put back if the record is
  * never written, since a fossil spent on nothing is the one outcome
  * that cannot be walked off.
  *
  * Resolves what came out, or null when he is not standing there, the
- * item is not a fossil, or the player is not carrying one
+ * item is not a fossil, the halves are not a pair, or the player is
+ * not carrying them
  */
 /**
  * Kurt's counter: apricorns in, the balls their colours make out.
@@ -155,13 +159,14 @@ export async function reviveFossil(
   y: number,
   cell: number,
   item: Items,
+  pair: Items | null,
   amount: number,
   now: number,
   offset: number,
   locale: string,
 ): Promise<RevivedFossil[] | null> {
   const snapshot = resolveNpc(x, y, cell, now, offset, Npc.FossilScientist);
-  const species = FOSSIL_SPECIES.get(item);
+  const species = pair == null ? FOSSIL_SPECIES.get(item) : getFossilPairSpecies(item, pair);
 
   if (snapshot == null || species == null || amount < 1 || amount > FOSSIL_BENCH_LIMIT) {
     return null;
@@ -176,8 +181,24 @@ export async function reviveFossil(
     if (!(await consumeItem(uid, item))) {
       break;
     }
+    if (pair != null && !(await consumeItem(uid, pair))) {
+      // Half a fossil revives nothing, so the first half goes back
+      await grantItem(uid, item);
+      break;
+    }
 
-    const opened = await openRock(uid, snapshot, cell, item, species, rock, now, offset, locale);
+    const opened = await openRock(
+      uid,
+      snapshot,
+      cell,
+      item,
+      pair,
+      species,
+      rock,
+      now,
+      offset,
+      locale,
+    );
 
     revived.push(opened);
   }
@@ -194,17 +215,20 @@ async function openRock(
   snapshot: ChunkSnapshot,
   cell: number,
   item: Items,
+  pair: Items | null,
   species: Species,
   rock: number,
   now: number,
   offset: number,
   locale: string,
 ): Promise<RevivedFossil> {
+  // A whole fossil keeps the key it always had, so its draws are unchanged
+  const fossil = pair == null ? `${item}` : `${item}+${pair}`;
   // Seeded by the player, the fossil and the instant: two of the same
   // rock opened one after the other are two different pokemon, and
   // re-running a call that failed on the way out gives the same one
   const rng = new AleaRNG(
-    `${snapshot.key}${snapshot.npcTimestamp}revive${cell}:${uid}:${item}:${now}:${rock}`,
+    `${snapshot.key}${snapshot.npcTimestamp}revive${cell}:${uid}:${fossil}:${now}:${rock}`,
   );
   const encounter = deriveEncounter(snapshot, [species, rng.int32(), rng.int32()], uid, {
     type: EncounterType.Revived,
@@ -221,7 +245,7 @@ async function openRock(
     // arrived without a throw is written under
     const catchId = await writeCaughtRecord(
       uid,
-      { ...encounter, spawn: `fossil${cell}:${uid}:${item}:${now}:${rock}`, player: uid },
+      { ...encounter, spawn: `fossil${cell}:${uid}:${fossil}:${now}:${rock}`, player: uid },
       Balls.PremierBall,
       Acquisition.Revived,
       now,
@@ -238,6 +262,9 @@ async function openRock(
   } catch (error) {
     // The rock bought nothing, so the player keeps the rock
     await grantItem(uid, item);
+    if (pair != null) {
+      await grantItem(uid, pair);
+    }
     throw error;
   }
 }

@@ -75,7 +75,21 @@ import {
   getFossilPrice,
   rollFossilOffer,
 } from '../../src/data/overworld/fossil';
-import { FOSSIL_SPECIES, isFossil, listFossils } from '../../src/data/items/fossils';
+import {
+  FOSSIL_BOTTOMS,
+  FOSSIL_PAIRS,
+  FOSSIL_SPECIES,
+  FOSSIL_TOPS,
+  getFossilPairSpecies,
+  getFossilPartners,
+  getSpeciesFossil,
+  isFossil,
+  isFossilBottom,
+  isFossilHalf,
+  isFossilTop,
+  listFossils,
+  listRevivedSpecies,
+} from '../../src/data/items/fossils';
 import {
   VENDOR_KINDS,
   VENDOR_KIND_NAMES,
@@ -340,7 +354,9 @@ describe('item data', () => {
   });
 
   it('buries the fossils and leaves what is in them nowhere else', () => {
-    expect(listFossils().length).toBe(FOSSIL_SPECIES.size);
+    expect(listFossils().length).toBe(
+      FOSSIL_SPECIES.size + FOSSIL_TOPS.length + FOSSIL_BOTTOMS.length,
+    );
     expect([...FOSSIL_SPECIES.values()]).toEqual([
       Species.Omanyte,
       Species.Kabuto,
@@ -403,11 +419,73 @@ describe('item data', () => {
     expect(FOSSIL_REVIVE_LEVEL).toBeGreaterThan(0);
   });
 
+  it('revives a Galar fossil from one top half and one bottom half', () => {
+    expect(FOSSIL_TOPS).toEqual([Items.FossilizedBird, Items.FossilizedFish]);
+    expect(FOSSIL_BOTTOMS).toEqual([Items.FossilizedDrake, Items.FossilizedDino]);
+
+    expect(getFossilPairSpecies(Items.FossilizedBird, Items.FossilizedDrake)).toBe(
+      Species.Dracozolt,
+    );
+    expect(getFossilPairSpecies(Items.FossilizedBird, Items.FossilizedDino)).toBe(
+      Species.Arctozolt,
+    );
+    expect(getFossilPairSpecies(Items.FossilizedFish, Items.FossilizedDrake)).toBe(
+      Species.Dracovish,
+    );
+    expect(getFossilPairSpecies(Items.FossilizedFish, Items.FossilizedDino)).toBe(
+      Species.Arctovish,
+    );
+    // The bench reads either order
+    expect(getFossilPairSpecies(Items.FossilizedDino, Items.FossilizedFish)).toBe(
+      Species.Arctovish,
+    );
+
+    // Two tops, two bottoms, the same half twice or a whole fossil are no pair
+    expect(getFossilPairSpecies(Items.FossilizedBird, Items.FossilizedFish)).toBeNull();
+    expect(getFossilPairSpecies(Items.FossilizedDrake, Items.FossilizedDino)).toBeNull();
+    expect(getFossilPairSpecies(Items.FossilizedBird, Items.FossilizedBird)).toBeNull();
+    expect(getFossilPairSpecies(Items.HelixFossil, Items.FossilizedDrake)).toBeNull();
+
+    const revived = new Set<Species>();
+
+    for (const [top, bottom, species] of FOSSIL_PAIRS) {
+      expect(isFossilTop(top)).toBe(true);
+      expect(isFossilBottom(bottom)).toBe(true);
+      expect(getFossilPartners(top)).toContain(bottom);
+      expect(getFossilPartners(bottom)).toContain(top);
+      // A pair species maps back to its two halves, and is met nowhere else
+      expect(getSpeciesFossil(species)).toEqual([top, bottom]);
+      expect(listSpeciesHabitats(species).length).toBe(0);
+      revived.add(species);
+    }
+    // Every top meets every bottom, and no species is named twice
+    expect(FOSSIL_PAIRS.length).toBe(FOSSIL_TOPS.length * FOSSIL_BOTTOMS.length);
+    expect(revived.size).toBe(FOSSIL_PAIRS.length);
+    expect(new Set(listRevivedSpecies()).size).toBe(FOSSIL_SPECIES.size + FOSSIL_PAIRS.length);
+
+    for (const half of [...FOSSIL_TOPS, ...FOSSIL_BOTTOMS]) {
+      const data = getItemData(half);
+
+      // A half is a fossil in every way but what it revives alone
+      expect(isFossil(half)).toBe(true);
+      expect(isFossilHalf(half)).toBe(true);
+      expect(FOSSIL_SPECIES.has(half)).toBe(false);
+      expect(data.type).toBe(ItemTypes.Fossil);
+      expect(isMarketable(half)).toBe(false);
+      expect(getFossilPrice(half)).toBe(getFossilPrice(Items.HelixFossil));
+    }
+
+    expect(getSpeciesFossil(Species.Omanyte)).toEqual([Items.HelixFossil]);
+    expect(getSpeciesFossil(Species.Pikachu)).toBeNull();
+    expect(isFossilHalf(Items.HelixFossil)).toBe(false);
+    expect(getFossilPartners(Items.HelixFossil)).toEqual([]);
+  });
+
   it('has the maniac carry two of them, never the same one twice', () => {
     const rng = new AleaRNG('fossils');
     const pairs = new Set<string>();
 
-    for (let at = 0; at < 400; at++) {
+    for (let at = 0; at < 2000; at++) {
       const offer = rollFossilOffer(() => rng.random());
 
       expect(offer.length).toBe(FOSSIL_OFFER_KINDS);

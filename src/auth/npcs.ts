@@ -16,6 +16,7 @@ import check, {
   GAME_ID,
   ID,
   LOCALE,
+  MAYBE_GAME_ID,
   NPC,
   OFFSET,
   PARENTS,
@@ -627,7 +628,9 @@ async function buyFossilOnServer(
  * fixed, so nothing about the outcome is the client's to name.
  *
  * He is the one wanderer besides the vendor who is not once a window:
- * a player carrying three fossils may open all three.
+ * a player carrying three fossils may open all three. A Galar fossil
+ * is a top and a bottom, `item` and `pair`, and each pokemon spends
+ * one of both; `pair` is null for a whole fossil.
  *
  * Resolves what came out, or null when he refuses — he is not
  * standing there, or the fossil is not in the bag
@@ -690,6 +693,7 @@ export async function reviveFossil(
   snapshot: ChunkSnapshot,
   cell: number,
   item: Items,
+  pair: Items | null,
   amount: number,
 ): Promise<RevivedFossil[] | null> {
   return reviveOnServer(
@@ -698,6 +702,7 @@ export async function reviveFossil(
     snapshot.chunk.y,
     cell,
     item,
+    pair,
     amount,
     snapshot.offset,
     getLocale(),
@@ -710,6 +715,7 @@ async function reviveOnServer(
   y: number,
   cell: number,
   item: Items,
+  pair: Items | null,
   amount: number,
   offset: number,
   locale: string,
@@ -720,6 +726,7 @@ async function reviveOnServer(
   check(CHUNK_COORDINATE, y);
   check(CELL, cell);
   check(GAME_ID, item);
+  check(MAYBE_GAME_ID, pair);
   check(COUNT, amount);
   check(OFFSET, offset);
   check(LOCALE, locale);
@@ -734,6 +741,7 @@ async function reviveOnServer(
       y,
       cell,
       item,
+      pair,
       amount,
       await syncServerClock(),
       offset,

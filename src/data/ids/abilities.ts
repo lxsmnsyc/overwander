@@ -583,6 +583,11 @@ const enum Abilities {
    */
   Totem = 100004,
   /**
+   * The ally a Totem calls: a raid-sized pokemon of its line, though
+   * a smaller one than the Totem itself
+   */
+  TotemAlly = 100005,
+  /**
    * Signature (one per family, granted rather than rolled at birth).
    * They sit outside the pools walk, so a line's four ordinary
    * abilities stay four

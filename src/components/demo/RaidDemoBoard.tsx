@@ -70,16 +70,25 @@ export default function RaidDemoBoard(): JSX.Element {
   // The seed lives in the URL rather than in a signal, so the fight
   // on screen is a link somebody else can open and watch the same
   // frames of
-  const [params, setParams] = useSearchParams<{ seed?: string; shadow?: string; biome?: string }>();
+  const [params, setParams] = useSearchParams<{
+    seed?: string;
+    shadow?: string;
+    totem?: string;
+    biome?: string;
+  }>();
   const seed = (): string => params.seed ?? DEFAULT_SEED;
   // The shadow raid, staged on request: it is the fight the field
   // paints a haze under, and nothing else on this page is a shadow
   const shadow = (): boolean => params.shadow === '1';
+  const totem = (): boolean => params.totem === '1';
   const [built, setBuilt] = createSignal<RaidBattle | null>(null);
   const [revision, setRevision] = createSignal(0);
 
   createEffect(() => {
-    const staged = createRaidBattle(`demo:${seed()}`, createDemoRaidTeams(seed(), shadow()));
+    const staged = createRaidBattle(
+      `demo:${seed()}`,
+      createDemoRaidTeams(seed(), shadow(), totem()),
+    );
 
     // Initialized but not started: the canvas starts it once it has
     // every sheet, the way a real fight waits
@@ -161,6 +170,15 @@ export default function RaidDemoBoard(): JSX.Element {
         checked={shadow()}
         onChange={(on) => {
           setParams({ shadow: on ? '1' : undefined });
+        }}
+      />
+
+      <Switch
+        label="Totem raid"
+        description="Stages a Totem, which calls its ally to its side at 1/2 HP."
+        checked={totem()}
+        onChange={(on) => {
+          setParams({ totem: on ? '1' : undefined });
         }}
       />
 

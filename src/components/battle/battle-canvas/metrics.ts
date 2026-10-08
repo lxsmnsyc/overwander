@@ -37,6 +37,9 @@ export const PARTY_SLOT = FIELD_UNIT * 2.6;
  */
 export const BOSS_RADIUS = FIELD_UNIT * 5.6;
 
+/** How much bigger a Totem is drawn than its species */
+export const TOTEM_DRAW_SCALE = 1.5;
+
 /**
  * How small a slot is allowed to draw its pokemon. Below this a sprite
  * is a smudge, so a crowded far side lets them overlap rather than

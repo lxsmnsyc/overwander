@@ -18,7 +18,7 @@ Only what the collection has built ships (`../SpriteCollab/compact`, checked aga
 Checked against the collection synced on 5 October 2026.
 
 - **Not drawn, so held back:**
-  - whole families: Rolycoly, Cufant (Copperajah is drawn, but not its first stage), Zarude, and Falinks (drawn only as its Brass and Trooper pieces, with no base sheet);
+  - whole families: Rolycoly, Cufant (Copperajah is drawn, but not its first stage), and Zarude;
   - evolutions: Mr. Rime, so Galarian Mr. Mime ships as its line's end, marked `awaiting: evolution`;
   - forms: Stunfisk-Galar, Darmanitan-Galar Zen, Cramorant Gulping and Gorging, Calyrex Ice and Shadow Rider, Zarude Dada, and every Gigantamax.
 - **Drawn short and filled out from the standing pose**, the way Jellicent and Toucannon already ship: Sirfetch'd, Stonjourner, Arctovish, Morpeko Hangry and Eternatus Eternamax. All of them ship.
@@ -28,6 +28,7 @@ Checked against the collection synced on 5 October 2026.
   - all 16 Hisuian forms and Hisui's seven new species;
   - every Galarian form except Stunfisk and Darmanitan Zen;
   - Basculegion's and Indeedee's females, as female coats on the male's sheet, the way Meowstic's is.
+- **Falinks ships drawn as its Brass, for now.** The collection has only the troop's pieces (Brass, the leader, and Trooper) and no sheet for Falinks itself. Brass gets a hidden id so the import takes its sheet, and a stand-in rule draws Falinks with it. When a base sheet is drawn, the stand-in and the hidden id are removed.
 - **No shiny coat**, which ships anyway and draws in the regular colours: Galarian Meowth, Galarian Darumaka, Greedent, Milcery, Barraskewda, Glastrier and Eternamax.
 - **Alcremie ships its seven Sweets on Vanilla Cream only** (`AlcremieBerry` to `AlcremieRibbon`, Strawberry being the base). The other eight creams are left out on purpose, not for lack of art.
 - **The collection files Hisui's new species under `galar/`.** `scripts/import-sprites.ts` refiles dex 899 to 905 under `hisui`, where the game looks for them.
@@ -52,7 +53,7 @@ Same as Alola: ids, then moves, then the moves on older species, then each famil
 | 6 | Galar Mine and Route 4 | Applin (with Tart and Sweet Apple), Silicobra, Cramorant, Arrokuda |
 | 7 | Route 5 and Hulbury | Toxel, Sizzlipede, Clobbopus, Pincurchin |
 | 8 | Glimwood Tangle | Sinistea (with the Pots), Hatenna, Impidimp, Milcery (Alcremie's seven Sweets) |
-| 9 | Route 8 to Circhester | Snom, Eiscue, Indeedee |
+| 9 | Route 8 to Circhester | Snom, Eiscue, Indeedee, Falinks (drawn as Brass) |
 | 10 | Spikemuth and the late routes | Morpeko, Duraludon, Dreepy, Stonjourner |
 | 11 | Fossils | Dracozolt, Arctozolt, Dracovish, Arctovish |
 | 12 | Galarian forms, first half | Meowth to Perrserker, Farfetch'd, Mr. Mime, Corsola to Cursola, Zigzagoon to Obstagoon, Yamask to Runerigus |
@@ -186,6 +187,7 @@ Hatenna and Impidimp are a cancelling pair: each listener checks for the other's
 | --- | --- | --- |
 | Snom | **Mirror Scales**: The added effects of moves that hit it, such as a burn, a flinch or a stat drop, land on whoever threw them instead. | Frosmoth: Snow Cloak, Tinted Lens |
 | Eiscue | **Chipped Ice**: A physical hit that lands on it casts Hail, if no weather is up. | Swift Swim, Ice Body, Slush Rush |
+| Falinks | **Rank and File**: A trooper takes the hit: the first 5 hits it takes each land at 0.5x. Drawn as Brass until it has a sheet of its own. | Steadfast, Intimidate |
 | Indeedee | **Attendant**: When a teammate takes a super-effective hit, it casts Heal Pulse on them, once every 8 seconds. | Telepathy |
 | Morpeko | **Hangry Spark**: Whenever an enemy eats a Berry, it casts Nuzzle at them. | Cheek Pouch, Gluttony, Anger Point |
 | Duraludon | **Overhang**: An enemy move that would strike several of its party strikes it alone instead. | Not final (Archaludon), so not filled |
@@ -275,7 +277,6 @@ The finals that keep their family's signature still need fillers:
 | --- | --- | --- |
 | Rolycoly, Carkol, Coalossal | **Tar Coat**: Each Fire move it lands casts Tar Shot on the target. Waits for Tar Shot (batch 1). | Coalossal is full |
 | Cufant, Copperajah | **Patina**: Each hit it takes turns it greener: +1 Special Defense, up to +3. | Copperajah: Thick Fat, Steelworker |
-| Falinks | **Rank and File**: A trooper takes the hit: the first 5 hits it takes each land at 0.5x. | Steadfast, Intimidate |
 | Zarude | **Vine Swing**: Its moves wind up 30% faster against the last enemy that hit it. | Pickpocket, Tough Claws, Sap Sipper |
 | Galarian Stunfisk | **Bear Trap**: The first contact move each enemy lands on it snaps shut: that enemy cannot act for 1 second. | Strong Jaw, Iron Barbs, Limber |
 | Mr. Rime | Joins the Mime family's signature. | Full |

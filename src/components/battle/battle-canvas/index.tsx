@@ -186,19 +186,26 @@ function arenasOf(standings: Standing[], field: { middle: Unit[] }, battle: Batt
   const arenas: Arena[] = [];
 
   // A terrain over the whole field outranks a side's own, as weather does
-  for (const { team, places } of groups.values()) {
+  for (const [key, { team, places }] of groups) {
     const terrain =
       battle.terrain.current === Terrains.None ? team.terrain.current : battle.terrain.current;
 
     let x = 0;
     let z = 0;
 
-    for (const place of places) {
-      x += place.x;
-      z += place.z;
+    // The boss side is centred on the boss, which is the first of it,
+    // so its ring stays put when a Totem's ally arrives
+    if (key === 'middle') {
+      x = places[0].x;
+      z = places[0].z;
+    } else {
+      for (const place of places) {
+        x += place.x;
+        z += place.z;
+      }
+      x /= places.length;
+      z /= places.length;
     }
-    x /= places.length;
-    z /= places.length;
 
     let radius = 0;
 

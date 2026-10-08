@@ -1,9 +1,17 @@
-import { BOSS_RADIUS, COLORS, MIN_RADIUS, PARTY_SLOT } from './metrics';
+import {
+  BOSS_RADIUS,
+  COLORS,
+  FIELD_UNIT,
+  MIN_RADIUS,
+  PARTY_SLOT,
+  TOTEM_DRAW_SCALE,
+} from './metrics';
 import type { Striking } from './motion';
 import type Alliance from '../../../battle/alliance';
 import type Battle from '../../../battle/core';
 import { type MoveTarget, MoveTargetType } from '../../../battle/events';
 import type Team from '../../../battle/team';
+import Abilities from '../../../data/ids/abilities';
 import { Weathers } from '../../../data/ids/status';
 import type Unit from '../../../battle/unit';
 import projectField, {
@@ -236,6 +244,12 @@ const LOBBY_GAP = 21;
 const NEAREST = -Math.PI / 2;
 
 /**
+ * How far a Totem's ally stands from the Totem, in field units: clear
+ * of a Totem drawn larger than its kind, with room for its own slot
+ */
+const ALLY_REACH = (BOSS_RADIUS * TOTEM_DRAW_SCALE + PARTY_SLOT) / FIELD_UNIT;
+
+/**
  * How far back the camera stands for a lobby, and how wide its ring
  * is.
  *
@@ -309,16 +323,42 @@ export function ringStandings(
   // is drawn smaller for it: the camera has stepped back with the ring
   const { radius, zoom } = lobbyCamera(field.teams.length);
 
+  // The boss side holds the boss and, once a Totem calls it, its ally.
+  // The boss keeps the origin, so the ally arriving moves nobody
+  const bosses: Unit[] = [];
+  const allies: Unit[] = [];
+
+  for (const unit of field.middle) {
+    if (unit.hasAbility(Abilities.Boss)) {
+      bosses.push(unit);
+    } else {
+      allies.push(unit);
+    }
+  }
+
   // Normally one. Two would be a raid nothing stages yet, so they
   // stand side by side rather than on top of one another
-  for (const [at, unit] of field.middle.entries()) {
+  for (const [at, unit] of bosses.entries()) {
     standings.push({
       unit,
-      place: { x: (at - (field.middle.length - 1) / 2) * 4, z: 0 },
+      place: { x: (at - (bosses.length - 1) / 2) * 4, z: 0 },
       // Nothing of its own to look at until it aims at something, so
       // it faces the camera
       look: { x: 0, z: -radius },
       radius: BOSS_RADIUS * zoom,
+      color: COLORS.boss,
+      sprite: spriteFor(unit),
+      stand: standFor(unit),
+    });
+  }
+
+  // An ally is an ordinary pokemon, so it is drawn at a party's size
+  for (const [at, unit] of allies.entries()) {
+    standings.push({
+      unit,
+      place: { x: ALLY_REACH * (at + 1), z: 0 },
+      look: { x: 0, z: -radius },
+      radius: PARTY_SLOT * zoom,
       color: COLORS.boss,
       sprite: spriteFor(unit),
       stand: standFor(unit),

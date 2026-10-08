@@ -39,7 +39,7 @@ IceScales:
 # Stonjourner
 PowerSpot:
   name: Power Spot
-  description: Its teammates’ moves hit 1.3x.
+  description: Its teammates' moves hit 1.3x.
 
 # Eiscue
 IceFace:

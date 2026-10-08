@@ -37058,15 +37058,15 @@
       }
     },
     "public/sprites/ui/candies/galar/image.png": {
-      "digest": "72b2c4ac96f985dd",
-      "bytes": 5574,
-      "width": 96,
-      "height": 96,
+      "digest": "8aa70701be23386b",
+      "bytes": 6815,
+      "width": 112,
+      "height": 112,
       "compact": {
-        "at": "2026-10-08T11:51:22Z",
+        "at": "2026-10-08T14:58:04Z",
         "as": "already compact",
-        "was": 5574,
-        "bytes": 5574
+        "was": 6815,
+        "bytes": 6815
       }
     },
     "public/sprites/ui/candies/hoenn/image.png": {
@@ -37368,15 +37368,15 @@
       }
     },
     "public/sprites/ui/items/other/image.png": {
-      "digest": "eb0adc5452b1b4cf",
-      "bytes": 7145,
-      "width": 107,
-      "height": 119,
+      "digest": "3f4f528623da6a76",
+      "bytes": 7438,
+      "width": 85,
+      "height": 155,
       "compact": {
-        "at": "2026-08-17T06:50:23Z",
-        "as": "truecolour, none",
-        "was": 13255,
-        "bytes": 7145
+        "at": "2026-10-08T14:58:04Z",
+        "as": "already compact",
+        "was": 7438,
+        "bytes": 7438
       }
     },
     "public/sprites/ui/items/partner/image.png": {

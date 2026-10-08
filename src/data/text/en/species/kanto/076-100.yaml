@@ -1,16 +1,23 @@
 Ponyta:
   Ponyta: { name: Ponyta, category: Fire Horse Pokemon }
   Rapidash: { name: Rapidash, category: Fire Horse Pokemon }
+  PonytaGalar: { name: Galarian Ponyta, category: Unique Horn Pokemon }
+  RapidashGalar: { name: Galarian Rapidash, category: Unique Horn Pokemon }
 Slowpoke:
   Slowpoke: { name: Slowpoke, category: Dopey Pokemon }
   Slowbro: { name: Slowbro, category: Hermit Crab Pokemon }
   Slowking: { name: Slowking, category: Royal Pokemon }
+  SlowpokeGalar: { name: Galarian Slowpoke, category: Dopey Pokemon }
+  SlowbroGalar: { name: Galarian Slowbro, category: Hermit Crab Pokemon }
+  SlowkingGalar: { name: Galarian Slowking, category: Royal Pokemon }
 Magnemite:
   Magnemite: { name: Magnemite, category: Magnet Pokemon }
   Magneton: { name: Magneton, category: Magnet Pokemon }
   Magnezone: { name: Magnezone, category: Magnet Area Pokemon }
 Farfetchd:
   Farfetchd: { name: Farfetch'd, category: Wild Duck Pokemon }
+  FarfetchdGalar: { name: Galarian Farfetch'd, category: Wild Duck Pokemon }
+  Sirfetchd: { name: Sirfetch'd, category: Wild Duck Pokemon }
 Doduo:
   Doduo: { name: Doduo, category: Twin Bird Pokemon }
   Dodrio: { name: Dodrio, category: Triple Bird Pokemon }

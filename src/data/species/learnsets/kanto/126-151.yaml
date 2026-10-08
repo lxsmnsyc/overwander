@@ -1886,6 +1886,63 @@ Articuno:
       - LaserFocus
       - TripleAxel
       - DualWingbeat
+  ArticunoGalar:
+    level:
+      1: [Gust, PsychoShift]
+      5: [Confusion]
+      10: [Reflect]
+      15: [Hypnosis]
+      20: [Agility]
+      25: [AncientPower]
+      30: [Tailwind]
+      35: [PsychoCut]
+      40: [Recover]
+      45: [FreezingGlare]
+      50: [DreamEater]
+      55: [Hurricane]
+      60: [MindReader]
+      65: [FutureSight]
+      70: [TrickRoom]
+    teachable:
+      [
+        Agility,
+        AirSlash,
+        AllySwitch,
+        BraveBird,
+        CalmMind,
+        DualWingbeat,
+        Endure,
+        ExpandingForce,
+        Facade,
+        Fly,
+        FutureSight,
+        GigaImpact,
+        GuardSwap,
+        Hurricane,
+        HyperBeam,
+        HyperVoice,
+        Imprison,
+        LightScreen,
+        PowerSwap,
+        Protect,
+        Psychic,
+        PsychoCut,
+        Psyshock,
+        Reflect,
+        Rest,
+        Round,
+        ScaryFace,
+        ShadowBall,
+        SkillSwap,
+        SleepTalk,
+        Snore,
+        SteelWing,
+        StoredPower,
+        Substitute,
+        Swift,
+        TrickRoom,
+        UTurn,
+      ]
 Zapdos:
   Zapdos:
     level:
@@ -1957,6 +2014,67 @@ Zapdos:
       - LaserFocus
       - RisingVoltage
       - DualWingbeat
+  ZapdosGalar:
+    level:
+      1: [Peck, FocusEnergy]
+      5: [RockSmash]
+      10: [LightScreen]
+      15: [Pluck]
+      20: [Agility]
+      25: [AncientPower]
+      30: [BrickBreak]
+      35: [DrillPeck]
+      40: [QuickGuard]
+      45: [ThunderousKick]
+      50: [BulkUp]
+      55: [Counter]
+      60: [Detect]
+      65: [CloseCombat]
+      70: [Reversal]
+    teachable:
+      [
+        Acrobatics,
+        Agility,
+        Assurance,
+        BlazeKick,
+        Bounce,
+        BraveBird,
+        BrickBreak,
+        BulkUp,
+        CloseCombat,
+        Coaching,
+        DualWingbeat,
+        Endure,
+        Facade,
+        Fly,
+        FocusEnergy,
+        GigaImpact,
+        Hurricane,
+        HyperBeam,
+        LightScreen,
+        LowKick,
+        LowSweep,
+        MegaKick,
+        Payback,
+        Protect,
+        Rest,
+        Retaliate,
+        Revenge,
+        Reversal,
+        Round,
+        ScaryFace,
+        Screech,
+        SleepTalk,
+        Snore,
+        SteelWing,
+        StompingTantrum,
+        Substitute,
+        Superpower,
+        Swift,
+        Taunt,
+        ThroatChop,
+        UTurn,
+      ]
 Moltres:
   Moltres:
     level:
@@ -2028,6 +2146,59 @@ Moltres:
       - BurningJealousy
       - DualWingbeat
       - ScorchingSands
+  MoltresGalar:
+    level:
+      1: [Gust, Leer]
+      5: [Payback]
+      10: [Safeguard]
+      15: [WingAttack]
+      20: [Agility]
+      25: [AncientPower]
+      30: [SuckerPunch]
+      35: [AirSlash]
+      40: [AfterYou]
+      45: [FieryWrath]
+      50: [NastyPlot]
+      55: [Hurricane]
+      60: [Endure]
+      65: [Memento]
+      70: [SkyAttack]
+    teachable:
+      [
+        Agility,
+        AirSlash,
+        Assurance,
+        BraveBird,
+        DarkPulse,
+        DualWingbeat,
+        Endure,
+        Facade,
+        Fly,
+        FoulPlay,
+        GigaImpact,
+        Hex,
+        Hurricane,
+        HyperBeam,
+        HyperVoice,
+        Imprison,
+        LashOut,
+        NastyPlot,
+        Payback,
+        Protect,
+        Rest,
+        Round,
+        Safeguard,
+        ScaryFace,
+        ShadowBall,
+        SleepTalk,
+        Snarl,
+        Snore,
+        SteelWing,
+        Substitute,
+        Swift,
+        Taunt,
+        UTurn,
+      ]
 Dratini:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:

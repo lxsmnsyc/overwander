@@ -1,13 +1,13 @@
 land:
   morning:
     base:
-      Roggenrola: 779
-      JangmoO: 714
-      Klink: 649
-      Mankey: 649
-      Machop: 649
-      Geodude: 649
-      Aron: 649
+      Roggenrola: 777
+      JangmoO: 713
+      Klink: 648
+      Mankey: 648
+      Machop: 648
+      Geodude: 648
+      Aron: 648
       Axew: 162
       Chimchar: 97
       Charmander: 65
@@ -108,6 +108,8 @@ land:
       Registeel: 10
       Moltres: 10
       HoOh: 10
+      Urshifu: 10
+      Kubfu: 10
     mythical:
       Magearna: 5
       MagearnaOriginal: 5
@@ -115,13 +117,13 @@ land:
       Diancie: 10
   day:
     base:
-      Roggenrola: 764
-      JangmoO: 701
-      Klink: 637
-      Mankey: 637
-      Machop: 637
-      Geodude: 637
-      Aron: 637
+      Roggenrola: 762
+      JangmoO: 700
+      Klink: 636
+      Mankey: 636
+      Machop: 636
+      Geodude: 636
+      Aron: 636
       Axew: 159
       Bagon: 95
       Chimchar: 95
@@ -225,6 +227,8 @@ land:
       Registeel: 10
       Moltres: 10
       HoOh: 10
+      Urshifu: 10
+      Kubfu: 10
     mythical:
       Magearna: 5
       MagearnaOriginal: 5
@@ -232,56 +236,58 @@ land:
       Diancie: 10
   evening:
     base:
-      Zubat: 1264
-      Honedge: 1011
-      JangmoO: 926
-      Geodude: 842
-      Tynamo: 758
-      Bagon: 126
-      Larvitar: 84
-      Gible: 84
-      Dreepy: 60
+      Zubat: 1239
+      Honedge: 991
+      JangmoO: 907
+      Geodude: 825
+      Tynamo: 743
+      Bagon: 123
+      Larvitar: 82
+      Gible: 82
+      Dreepy: 59
     uncommon:
-      Diglett: 255
-      Slugma: 255
-      Nosepass: 255
-      BurmyTrash: 255
-      Bronzor: 255
-      Woobat: 255
-      Joltik: 229
-      Ferroseed: 204
-      Sizzlipede: 200
-      Onix: 127
-      Dunsparce: 127
-      Magmar: 64
-      Murkrow: 64
-      Gligar: 64
+      Diglett: 250
+      Slugma: 250
+      Nosepass: 250
+      BurmyTrash: 250
+      Bronzor: 250
+      Woobat: 250
+      Joltik: 224
+      Ferroseed: 200
+      Sizzlipede: 196
+      MeowthGalar: 150
+      Onix: 124
+      Dunsparce: 124
+      Magmar: 63
+      Murkrow: 63
+      Gligar: 63
     rare:
-      Golbat: 294
-      HakamoO: 235
-      Doublade: 235
-      Eelektrik: 205
-      Graveler: 146
-      Shelgon: 29
-      Pupitar: 29
-      Gabite: 29
+      Golbat: 288
+      HakamoO: 230
+      Doublade: 230
+      Eelektrik: 201
+      Graveler: 143
+      Shelgon: 28
+      Pupitar: 28
+      Gabite: 28
       Drakloak: 15
     scarce:
-      Dugtrio: 90
-      Swoobat: 72
-      Galvantula: 54
-      Bronzong: 54
-      Probopass: 54
-      Honchkrow: 54
-      Gliscor: 54
-      Ferrothorn: 45
-      Steelix: 45
-      Magcargo: 45
-      WormadamTrash: 36
-      Centiskorch: 25
+      Dugtrio: 88
+      Swoobat: 71
+      Galvantula: 53
+      Bronzong: 53
+      Probopass: 53
+      Honchkrow: 53
+      Gliscor: 53
+      Ferrothorn: 44
+      Steelix: 44
+      Magcargo: 44
+      WormadamTrash: 35
+      Perrserker: 30
+      Centiskorch: 24
     elusive:
-      Falinks: 30
-      Duraludon: 30
+      Falinks: 29
+      Duraludon: 29
       Carbink: 20
       Drampa: 16
       Minior: 16
@@ -320,6 +326,8 @@ land:
       Registeel: 10
       Moltres: 10
       HoOh: 10
+      Urshifu: 10
+      Kubfu: 10
     mythical:
       Magearna: 5
       MagearnaOriginal: 5
@@ -327,62 +335,64 @@ land:
       Diancie: 10
   night:
     base:
-      Zubat: 1107
-      Honedge: 886
-      JangmoO: 812
-      Geodude: 738
-      Gastly: 738
-      Tynamo: 665
-      Larvitar: 74
-      Gible: 74
-      Dreepy: 60
+      Zubat: 1085
+      Honedge: 868
+      JangmoO: 796
+      Geodude: 723
+      Gastly: 723
+      Tynamo: 652
+      Larvitar: 73
+      Gible: 73
+      Dreepy: 59
     uncommon:
-      Diglett: 220
-      Cubone: 220
-      Slugma: 220
-      Nosepass: 220
-      BurmyTrash: 220
-      Bronzor: 220
-      Woobat: 220
-      Sizzlipede: 200
-      Joltik: 198
-      Ferroseed: 176
-      Onix: 110
-      Dunsparce: 110
-      Clefairy: 55
-      Magmar: 55
-      Murkrow: 55
-      Misdreavus: 55
-      Gligar: 55
+      Diglett: 216
+      Cubone: 216
+      Slugma: 216
+      Nosepass: 216
+      BurmyTrash: 216
+      Bronzor: 216
+      Woobat: 216
+      Sizzlipede: 196
+      Joltik: 194
+      Ferroseed: 172
+      MeowthGalar: 150
+      Onix: 108
+      Dunsparce: 108
+      Clefairy: 54
+      Magmar: 54
+      Murkrow: 54
+      Misdreavus: 54
+      Gligar: 54
     rare:
-      Golbat: 268
-      HakamoO: 214
-      Doublade: 214
-      Eelektrik: 187
-      Graveler: 134
-      Haunter: 134
-      Pupitar: 27
-      Gabite: 27
+      Golbat: 263
+      HakamoO: 210
+      Doublade: 210
+      Eelektrik: 183
+      Graveler: 131
+      Haunter: 131
+      Pupitar: 26
+      Gabite: 26
       Drakloak: 15
     scarce:
-      Dugtrio: 68
-      Marowak: 68
-      Swoobat: 55
-      Galvantula: 41
-      Bronzong: 41
-      Probopass: 41
-      Mismagius: 41
-      Honchkrow: 41
-      Gliscor: 41
-      Ferrothorn: 35
-      Clefable: 35
-      Steelix: 35
-      Magcargo: 35
-      WormadamTrash: 27
-      Centiskorch: 25
+      Dugtrio: 67
+      Marowak: 67
+      Swoobat: 54
+      Galvantula: 40
+      Bronzong: 40
+      Probopass: 40
+      Mismagius: 40
+      Honchkrow: 40
+      Gliscor: 40
+      Ferrothorn: 34
+      Clefable: 34
+      Steelix: 34
+      Magcargo: 34
+      Perrserker: 30
+      WormadamTrash: 26
+      Centiskorch: 24
     elusive:
-      Falinks: 30
-      Duraludon: 30
+      Falinks: 29
+      Duraludon: 29
       Carbink: 19
       Drampa: 16
       Minior: 16
@@ -423,6 +433,8 @@ land:
       Moltres: 10
       Mewtwo: 10
       HoOh: 10
+      Urshifu: 10
+      Kubfu: 10
     mythical:
       Magearna: 5
       MagearnaOriginal: 5

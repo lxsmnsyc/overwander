@@ -1397,6 +1397,146 @@ Corsola:
       - ConfuseRay
       - IcicleSpear
       - Ingrain
+  CorsolaGalar:
+    level:
+      1: [Tackle, Harden]
+      5: [Astonish]
+      10: [Disable]
+      15: [Spite]
+      20: [AncientPower]
+      25: [Hex]
+      30: [Curse]
+      35: [StrengthSap]
+      40: [PowerGem]
+      45: [NightShade]
+      50: [Grudge]
+      55: [MirrorCoat]
+    teachable:
+      [
+        Amnesia,
+        Attract,
+        Blizzard,
+        BodySlam,
+        Brine,
+        Bulldoze,
+        CalmMind,
+        Dig,
+        EarthPower,
+        Earthquake,
+        Endure,
+        Facade,
+        GigaDrain,
+        Hail,
+        Hex,
+        HydroPump,
+        IceBeam,
+        IcicleSpear,
+        IcyWind,
+        IronDefense,
+        LightScreen,
+        Liquidation,
+        MeteorBeam,
+        PowerGem,
+        Protect,
+        Psychic,
+        RainDance,
+        Reflect,
+        Rest,
+        RockBlast,
+        RockSlide,
+        RockTomb,
+        Round,
+        Safeguard,
+        Sandstorm,
+        Scald,
+        Screech,
+        SelfDestruct,
+        ShadowBall,
+        SleepTalk,
+        Snore,
+        StealthRock,
+        StompingTantrum,
+        StoneEdge,
+        Substitute,
+        SunnyDay,
+        Surf,
+        ThroatChop,
+        Whirlpool,
+        WillOWisp,
+      ]
+    egg: [ConfuseRay, DestinyBond, Haze, HeadSmash, NaturePower, WaterPulse]
+  Cursola:
+    level:
+      1: [Tackle, Disable, Harden, PerishSong, Astonish]
+      15: [Spite]
+      20: [AncientPower]
+      25: [Hex]
+      30: [Curse]
+      35: [StrengthSap]
+      40: [PowerGem]
+      45: [NightShade]
+      50: [Grudge]
+      55: [MirrorCoat]
+    teachable:
+      [
+        Amnesia,
+        Attract,
+        Blizzard,
+        BodySlam,
+        Brine,
+        Bulldoze,
+        BurningJealousy,
+        CalmMind,
+        Dig,
+        EarthPower,
+        Earthquake,
+        Endure,
+        Facade,
+        GigaDrain,
+        GigaImpact,
+        Hail,
+        Hex,
+        HydroPump,
+        HyperBeam,
+        IceBeam,
+        IcicleSpear,
+        IcyWind,
+        IronDefense,
+        LeechLife,
+        LightScreen,
+        Liquidation,
+        MeteorBeam,
+        PinMissile,
+        Poltergeist,
+        PowerGem,
+        Protect,
+        Psychic,
+        RainDance,
+        Reflect,
+        Rest,
+        Revenge,
+        RockBlast,
+        RockSlide,
+        RockTomb,
+        Round,
+        Safeguard,
+        Sandstorm,
+        Scald,
+        Screech,
+        SelfDestruct,
+        ShadowBall,
+        SleepTalk,
+        Snore,
+        StealthRock,
+        StompingTantrum,
+        StoneEdge,
+        Substitute,
+        SunnyDay,
+        Surf,
+        ThroatChop,
+        Whirlpool,
+        WillOWisp,
+      ]
 Remoraid:
   family-teachable:
     - Toxic

@@ -60,3 +60,7 @@ families:
   Lugia: SilverAegis
   HoOh: RainbowRekindling
   Celebi: TimelineSplit
+
+forms:
+  # Galar's regional lines whose every stage is regional carry their own
+  CoralHusk: [CorsolaGalar, Cursola]

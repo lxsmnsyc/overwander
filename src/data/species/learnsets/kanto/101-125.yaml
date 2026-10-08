@@ -954,50 +954,28 @@ Lickitung:
 Koffing:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
-    - Toxic
-    - Rage
     - Thunderbolt
     - Thunder
-    - Mimic
-    - DoubleTeam
-    - Bide
     - SelfDestruct
     - FireBlast
     - Rest
-    - Explosion
     - Substitute
     - Thief
     - Snore
-    - Curse
     - Protect
     - SludgeBomb
-    - ZapCannon
     - Endure
-    - Rollout
-    - Swagger
     - Attract
     - SleepTalk
-    - Return
-    - Frustration
-    - HiddenPower
     - SunnyDay
     - Flamethrower
     - Facade
-    - Flash
-    - SecretPower
     - ShadowBall
-    - ShockWave
     - Taunt
-    - Torment
-    - Captivate
     - DarkPulse
-    - NaturalGift
     - Payback
     - Venoshock
     - Round
-    - Incinerate
-    - Confide
-    - Infestation
     - CorrosiveGas
   Koffing:
     level:
@@ -1012,6 +990,31 @@ Koffing:
       45: [DestinyBond]
       49: [Memento]
     egg: [Psywave, Screech, Psybeam, DestinyBond, PainSplit, WillOWisp]
+    teachable:
+      [
+        Bide,
+        Captivate,
+        Confide,
+        Curse,
+        DoubleTeam,
+        Explosion,
+        Flash,
+        Frustration,
+        HiddenPower,
+        Incinerate,
+        Infestation,
+        Mimic,
+        NaturalGift,
+        Rage,
+        Return,
+        Rollout,
+        SecretPower,
+        ShockWave,
+        Swagger,
+        Torment,
+        Toxic,
+        ZapCannon,
+      ]
   Weezing:
     level:
       1: [Tackle, Smog, Sludge, SelfDestruct, PoisonGas]
@@ -1021,7 +1024,84 @@ Koffing:
       44: [Explosion]
       51: [DestinyBond, Belch]
       58: [Memento]
-    teachable: [HyperBeam, GigaImpact, GyroBall]
+    teachable:
+      [
+        Bide,
+        Captivate,
+        Confide,
+        Curse,
+        DoubleTeam,
+        Explosion,
+        Flash,
+        Frustration,
+        GigaImpact,
+        GyroBall,
+        HiddenPower,
+        HyperBeam,
+        Incinerate,
+        Infestation,
+        Mimic,
+        NaturalGift,
+        Rage,
+        Return,
+        Rollout,
+        SecretPower,
+        ShockWave,
+        Swagger,
+        Torment,
+        Toxic,
+        ZapCannon,
+      ]
+  WeezingGalar:
+    level:
+      1:
+        [
+          Tackle,
+          SmokeScreen,
+          Haze,
+          Smog,
+          PoisonGas,
+          HeatWave,
+          Defog,
+          DoubleHit,
+          FairyWind,
+          AromaticMist,
+          StrangeSteam,
+        ]
+      12: [ClearSmog]
+      16: [Assurance]
+      20: [Sludge]
+      24: [Aromatherapy]
+      28: [SelfDestruct]
+      32: [SludgeBomb]
+      38: [Toxic]
+      44: [Belch]
+      50: [Explosion]
+      56: [Memento]
+      62: [DestinyBond]
+      68: [MistyTerrain]
+    teachable:
+      [
+        Assurance,
+        BrutalSwing,
+        DazzlingGleam,
+        GigaImpact,
+        GyroBall,
+        HeatWave,
+        HyperBeam,
+        MistyExplosion,
+        MistyTerrain,
+        Overheat,
+        PlayRough,
+        RainDance,
+        Screech,
+        SludgeWave,
+        ToxicSpikes,
+        Uproar,
+        VenomDrench,
+        WillOWisp,
+        WonderRoom,
+      ]
 Rhyhorn:
   Rhyhorn:
     level:
@@ -2398,6 +2478,110 @@ MrMime:
       - Trick
       - WakeUpSlap
       - PsychicTerrain
+  MrMimeGalar:
+    level:
+      1:
+        [
+          Pound,
+          Mimic,
+          LightScreen,
+          Reflect,
+          Protect,
+          Safeguard,
+          BatonPass,
+          Encore,
+          RapidSpin,
+          RolePlay,
+          Recycle,
+          Copycat,
+          IceShard,
+          MistyTerrain,
+          DazzlingGleam,
+        ]
+      12: [Confusion]
+      16: [AllySwitch]
+      20: [IcyWind]
+      24: [DoubleKick]
+      28: [Psybeam]
+      32: [Hypnosis]
+      36: [MirrorCoat]
+      40: [SuckerPunch]
+      44: [FreezeDry]
+      48: [Psychic]
+      52: [TeeterDance]
+    teachable:
+      [
+        AllySwitch,
+        Attract,
+        Avalanche,
+        BatonPass,
+        Blizzard,
+        BodySlam,
+        BrickBreak,
+        CalmMind,
+        Charm,
+        DazzlingGleam,
+        DrainPunch,
+        Encore,
+        Endure,
+        EnergyBall,
+        ExpandingForce,
+        Facade,
+        Fling,
+        FocusBlast,
+        FoulPlay,
+        FutureSight,
+        GigaImpact,
+        GrassKnot,
+        GuardSwap,
+        Hail,
+        HelpingHand,
+        HyperBeam,
+        IceBeam,
+        IcePunch,
+        IcicleSpear,
+        IcyWind,
+        IronDefense,
+        LightScreen,
+        MagicRoom,
+        MegaKick,
+        MegaPunch,
+        Metronome,
+        MistyTerrain,
+        NastyPlot,
+        Payback,
+        PowerSwap,
+        Protect,
+        Psychic,
+        PsychicTerrain,
+        Psyshock,
+        RainDance,
+        Reflect,
+        Rest,
+        Round,
+        Safeguard,
+        Screech,
+        ShadowBall,
+        SkillSwap,
+        SleepTalk,
+        Snore,
+        SolarBeam,
+        StompingTantrum,
+        StoredPower,
+        Substitute,
+        SunnyDay,
+        Taunt,
+        Thief,
+        Thunder,
+        ThunderWave,
+        Thunderbolt,
+        Trick,
+        TrickRoom,
+        TripleAxel,
+        Uproar,
+        WonderRoom,
+        ZenHeadbutt,
+      ]
 Scyther:
   Scyther:
     level:

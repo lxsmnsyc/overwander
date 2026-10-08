@@ -5,60 +5,61 @@
 land:
   morning:
     base:
-      Pidove: 356
-      Pidgey: 356
-      Starly: 356
-      Lillipup: 333
-      Fletchling: 309
-      Mareep: 297
-      Hoppip: 297
-      Shinx: 297
-      Flabebe: 285
-      Scatterbug: 285
-      Solosis: 285
-      NidoranF: 238
-      NidoranM: 238
-      Poliwag: 238
-      Rookidee: 180
-      Scorbunny: 47
+      Pidove: 351
+      Pidgey: 351
+      Starly: 351
+      Lillipup: 328
+      Fletchling: 304
+      Mareep: 293
+      Hoppip: 293
+      Shinx: 293
+      Flabebe: 281
+      Scatterbug: 281
+      Solosis: 281
+      NidoranF: 234
+      NidoranM: 234
+      Poliwag: 234
+      Rookidee: 177
+      Scorbunny: 46
       Bulbasaur: 24
       Chikorita: 24
     uncommon:
-      Wooloo: 350
-      Skwovet: 300
-      Gossifleur: 300
-      Yamper: 300
-      Milcery: 150
-      Rattata: 78
-      Patrat: 78
-      Bunnelby: 68
-      Minccino: 68
-      Blitzle: 65
-      Sentret: 65
-      Sunkern: 65
-      Zigzagoon: 65
-      Taillow: 65
-      Skitty: 65
-      Buneary: 65
-      Glameow: 65
-      Surskit: 65
-      Cutiefly: 63
-      Swirlix: 63
-      Skiddo: 63
-      Cottonee: 63
-      Petilil: 63
-      Stufful: 57
-      Fomantis: 57
-      Mudbray: 57
-      Rockruff: 57
-      Swablu: 57
-      Ledyba: 52
-      Natu: 52
-      Snubbull: 52
-      Roselia: 52
-      Marill: 52
-      Psyduck: 52
-      Deerling: 47
+      Wooloo: 345
+      Skwovet: 295
+      Gossifleur: 295
+      Yamper: 295
+      Milcery: 148
+      FarfetchdGalar: 120
+      Rattata: 77
+      Patrat: 77
+      Bunnelby: 67
+      Minccino: 67
+      Blitzle: 64
+      Sentret: 64
+      Sunkern: 64
+      Zigzagoon: 64
+      Taillow: 64
+      Skitty: 64
+      Buneary: 64
+      Glameow: 64
+      Surskit: 64
+      Cutiefly: 62
+      Swirlix: 62
+      Skiddo: 62
+      Cottonee: 62
+      Petilil: 62
+      Stufful: 56
+      Fomantis: 56
+      Mudbray: 56
+      Rockruff: 56
+      Swablu: 56
+      Ledyba: 51
+      Natu: 51
+      Snubbull: 51
+      Roselia: 51
+      Marill: 51
+      Psyduck: 51
+      Deerling: 46
       Growlithe: 26
       Ponyta: 26
       Tangela: 26
@@ -70,29 +71,30 @@ land:
       Eevee: 6
       Chansey: 6
     rare:
-      Tranquill: 120
-      Herdier: 120
-      Duosion: 100
-      Floette: 80
-      Spewpa: 80
-      Fletchinder: 80
-      Corvisquire: 70
-      Pidgeotto: 50
-      Nidorina: 50
-      Nidorino: 50
-      Flaaffy: 50
-      Skiploom: 50
-      Staravia: 50
-      Luxio: 50
-      Poliwhirl: 50
+      Tranquill: 118
+      Herdier: 118
+      Duosion: 98
+      Floette: 79
+      Spewpa: 79
+      Fletchinder: 79
+      Corvisquire: 69
+      Pidgeotto: 49
+      Nidorina: 49
+      Nidorino: 49
+      Flaaffy: 49
+      Skiploom: 49
+      Staravia: 49
+      Luxio: 49
+      Poliwhirl: 49
       Raboot: 14
       Ivysaur: 10
       Bayleef: 10
     scarce:
-      Eldegoss: 40
-      Dubwool: 40
-      Boltund: 35
+      Eldegoss: 39
+      Dubwool: 39
+      Boltund: 34
       Greedent: 30
+      Sirfetchd: 20
       Raticate: 18
       Rapidash: 18
       Furret: 18
@@ -135,7 +137,7 @@ land:
       Espeon: 6
       Blissey: 6
     elusive:
-      Morpeko: 120
+      Morpeko: 118
       Corviknight: 25
       Stonjourner: 15
       Spinda: 14
@@ -196,66 +198,68 @@ land:
       Zapdos: 10
       Entei: 10
       Suicune: 10
+      ZapdosGalar: 10
     mythical:
       Shaymin: 10
   day:
     base:
-      Pidove: 348
-      Pidgey: 348
-      Starly: 348
-      Lillipup: 325
-      Fletchling: 301
-      Mareep: 289
-      Hoppip: 289
-      Shinx: 289
-      Flabebe: 278
-      Scatterbug: 278
-      Solosis: 278
-      NidoranF: 232
-      NidoranM: 232
-      Poliwag: 232
-      Rookidee: 180
-      Abra: 116
-      Scorbunny: 47
+      Pidove: 343
+      Pidgey: 343
+      Starly: 343
+      Lillipup: 320
+      Fletchling: 296
+      Mareep: 285
+      Hoppip: 285
+      Shinx: 285
+      Flabebe: 274
+      Scatterbug: 274
+      Solosis: 274
+      NidoranF: 229
+      NidoranM: 229
+      Poliwag: 229
+      Rookidee: 177
+      Abra: 114
+      Scorbunny: 46
       Bulbasaur: 23
       Chikorita: 23
     uncommon:
-      Wooloo: 350
-      Skwovet: 300
-      Gossifleur: 300
-      Yamper: 300
-      Milcery: 150
-      Rattata: 77
-      Patrat: 77
-      Bunnelby: 66
-      Minccino: 66
-      Blitzle: 64
-      Sentret: 64
-      Sunkern: 64
-      Zigzagoon: 64
-      Taillow: 64
-      Skitty: 64
-      Buneary: 64
-      Glameow: 64
-      Surskit: 64
-      Cutiefly: 61
-      Swirlix: 61
-      Skiddo: 61
-      Cottonee: 61
-      Petilil: 61
-      Stufful: 56
-      Fomantis: 56
-      Mudbray: 56
-      Rockruff: 56
-      Swablu: 56
-      Ekans: 51
-      Ledyba: 51
-      Natu: 51
-      Snubbull: 51
-      Roselia: 51
-      Marill: 51
-      Psyduck: 51
-      Deerling: 45
+      Wooloo: 345
+      Skwovet: 295
+      Gossifleur: 295
+      Yamper: 295
+      Milcery: 148
+      FarfetchdGalar: 120
+      Rattata: 76
+      Patrat: 76
+      Bunnelby: 65
+      Minccino: 65
+      Blitzle: 63
+      Sentret: 63
+      Sunkern: 63
+      Zigzagoon: 63
+      Taillow: 63
+      Skitty: 63
+      Buneary: 63
+      Glameow: 63
+      Surskit: 63
+      Cutiefly: 60
+      Swirlix: 60
+      Skiddo: 60
+      Cottonee: 60
+      Petilil: 60
+      Stufful: 55
+      Fomantis: 55
+      Mudbray: 55
+      Rockruff: 55
+      Swablu: 55
+      Ekans: 50
+      Ledyba: 50
+      Natu: 50
+      Snubbull: 50
+      Roselia: 50
+      Marill: 50
+      Psyduck: 50
+      Deerling: 44
       Growlithe: 26
       Ponyta: 26
       Tangela: 26
@@ -267,30 +271,31 @@ land:
       Eevee: 5
       Chansey: 5
     rare:
-      Tranquill: 114
-      Herdier: 114
-      Duosion: 95
-      Floette: 76
-      Spewpa: 76
-      Fletchinder: 76
-      Corvisquire: 70
-      Pidgeotto: 48
-      Nidorina: 48
-      Nidorino: 48
-      Kadabra: 48
-      Flaaffy: 48
-      Skiploom: 48
-      Staravia: 48
-      Luxio: 48
-      Poliwhirl: 48
+      Tranquill: 112
+      Herdier: 112
+      Duosion: 94
+      Floette: 75
+      Spewpa: 75
+      Fletchinder: 75
+      Corvisquire: 69
+      Pidgeotto: 47
+      Nidorina: 47
+      Nidorino: 47
+      Kadabra: 47
+      Flaaffy: 47
+      Skiploom: 47
+      Staravia: 47
+      Luxio: 47
+      Poliwhirl: 47
       Raboot: 14
       Ivysaur: 10
       Bayleef: 10
     scarce:
-      Eldegoss: 40
-      Dubwool: 40
-      Boltund: 35
+      Eldegoss: 39
+      Dubwool: 39
+      Boltund: 34
       Greedent: 30
+      Sirfetchd: 20
       Raticate: 18
       Arbok: 18
       Rapidash: 18
@@ -334,7 +339,7 @@ land:
       Espeon: 5
       Blissey: 5
     elusive:
-      Morpeko: 120
+      Morpeko: 118
       Corviknight: 25
       Stonjourner: 15
       Spinda: 14
@@ -397,91 +402,95 @@ land:
       Zapdos: 10
       Entei: 10
       Suicune: 10
+      ZapdosGalar: 10
     mythical:
       Shaymin: 10
   evening:
     base:
-      Shinx: 977
-      Gothita: 938
-      NidoranF: 780
-      NidoranM: 780
-      Oddish: 780
-      Poliwag: 780
-      Litten: 78
+      Shinx: 942
+      Gothita: 904
+      NidoranF: 752
+      NidoranM: 752
+      Oddish: 752
+      Poliwag: 752
+      ZigzagoonGalar: 250
+      Litten: 75
     uncommon:
-      Rattata: 197
-      Nickit: 170
-      Zigzagoon: 164
-      Buneary: 164
-      Glameow: 164
-      Purrloin: 164
-      Munna: 164
-      Stufful: 145
-      Mudbray: 145
-      Rockruff: 145
-      Stunky: 145
-      Ekans: 131
-      Roselia: 131
-      Marill: 131
-      Deerling: 119
-      Pumpkaboo: 79
-      PumpkabooSuper: 79
-      Jigglypuff: 66
-      Electabuzz: 33
-      Girafarig: 33
-      Eevee: 14
+      Rattata: 190
+      Nickit: 164
+      Zigzagoon: 158
+      Buneary: 158
+      Glameow: 158
+      Purrloin: 158
+      Munna: 158
+      Stufful: 140
+      Mudbray: 140
+      Rockruff: 140
+      Stunky: 140
+      Ekans: 126
+      Roselia: 126
+      Marill: 126
+      Deerling: 115
+      Pumpkaboo: 76
+      PumpkabooSuper: 76
+      Jigglypuff: 64
+      Electabuzz: 32
+      Girafarig: 32
+      Eevee: 13
     rare:
-      Gothorita: 327
-      Nidorina: 163
-      Nidorino: 163
-      Gloom: 163
-      Luxio: 163
-      Poliwhirl: 163
-      Torracat: 66
+      Gothorita: 315
+      Nidorina: 157
+      Nidorino: 157
+      Gloom: 157
+      Luxio: 157
+      Poliwhirl: 157
+      LinooneGalar: 80
+      Torracat: 64
     scarce:
-      Raticate: 40
-      Arbok: 40
-      Linoone: 40
-      Thievul: 35
-      Lopunny: 31
-      Purugly: 31
-      Skuntank: 31
-      Watchog: 31
-      Sawsbuck: 27
-      Bewear: 23
-      Mudsdale: 23
-      LycanrocDusk: 23
-      Roserade: 23
-      Lickilicky: 23
-      Electivire: 23
-      Liepard: 23
-      Musharna: 23
-      Wigglytuff: 19
-      Jolteon: 19
-      Flareon: 19
-      Vespiquen: 19
-      Azumarill: 19
-      Sylveon: 14
+      Raticate: 39
+      Arbok: 39
+      Linoone: 39
+      Thievul: 34
+      Lopunny: 30
+      Purugly: 30
+      Skuntank: 30
+      Watchog: 30
+      Sawsbuck: 26
+      Bewear: 22
+      Mudsdale: 22
+      LycanrocDusk: 22
+      Roserade: 22
+      Lickilicky: 22
+      Electivire: 22
+      Liepard: 22
+      Musharna: 22
+      Wigglytuff: 18
+      Jolteon: 18
+      Flareon: 18
+      Vespiquen: 18
+      Azumarill: 18
+      Sylveon: 13
       Gourgeist: 12
       GourgeistSuper: 12
     elusive:
-      Morpeko: 120
-      Castform: 35
-      Ditto: 35
-      Dedenne: 21
-      Togedemaru: 17
-      Furfrou: 17
-      Gothitelle: 17
-      Nidoqueen: 17
-      Nidoking: 17
-      Vileplume: 17
-      Smeargle: 17
-      Wobbuffet: 17
-      Bellossom: 17
-      Poliwrath: 17
-      Politoed: 17
-      Stonjourner: 15
-      Luxray: 14
+      Morpeko: 116
+      Castform: 34
+      Ditto: 34
+      Dedenne: 20
+      Obstagoon: 20
+      Togedemaru: 16
+      Furfrou: 16
+      Gothitelle: 16
+      Nidoqueen: 16
+      Nidoking: 16
+      Vileplume: 16
+      Smeargle: 16
+      Wobbuffet: 16
+      Bellossom: 16
+      Poliwrath: 16
+      Politoed: 16
+      Stonjourner: 14
+      Luxray: 13
       Incineroar: 7
     prized:
       Unown: forms
@@ -503,94 +512,98 @@ land:
       Zapdos: 10
       Entei: 10
       Suicune: 10
+      ZapdosGalar: 10
     mythical:
       Shaymin: 10
   night:
     base:
-      Shinx: 975
-      Gothita: 936
-      NidoranF: 779
-      NidoranM: 779
-      Oddish: 779
-      Poliwag: 779
-      Litten: 78
+      Shinx: 940
+      Gothita: 902
+      NidoranF: 751
+      NidoranM: 751
+      Oddish: 751
+      Poliwag: 751
+      ZigzagoonGalar: 250
+      Litten: 75
     uncommon:
-      Rattata: 178
-      Nickit: 170
-      Zigzagoon: 149
-      Buneary: 149
-      Glameow: 149
-      Purrloin: 149
-      Munna: 149
-      Stufful: 130
-      Mudbray: 130
-      Rockruff: 130
-      Stunky: 130
-      Ekans: 119
-      Meowth: 119
-      Drowzee: 119
-      Roselia: 119
-      Marill: 119
-      Deerling: 107
-      Pumpkaboo: 71
-      PumpkabooSuper: 71
-      Jigglypuff: 59
-      Electabuzz: 30
-      Girafarig: 30
+      Rattata: 172
+      Nickit: 164
+      Zigzagoon: 144
+      Buneary: 144
+      Glameow: 144
+      Purrloin: 144
+      Munna: 144
+      Stufful: 125
+      Mudbray: 125
+      Rockruff: 125
+      Stunky: 125
+      Ekans: 115
+      Meowth: 115
+      Drowzee: 115
+      Roselia: 115
+      Marill: 115
+      Deerling: 103
+      Pumpkaboo: 68
+      PumpkabooSuper: 68
+      Jigglypuff: 57
+      Electabuzz: 29
+      Girafarig: 29
       Eevee: 12
     rare:
-      Gothorita: 326
-      Nidorina: 163
-      Nidorino: 163
-      Gloom: 163
-      Luxio: 163
-      Poliwhirl: 163
-      Torracat: 66
+      Gothorita: 314
+      Nidorina: 157
+      Nidorino: 157
+      Gloom: 157
+      Luxio: 157
+      Poliwhirl: 157
+      LinooneGalar: 80
+      Torracat: 64
     scarce:
-      Raticate: 35
-      Arbok: 35
-      Persian: 35
-      Hypno: 35
-      Linoone: 35
-      Thievul: 35
-      Lopunny: 28
-      Purugly: 28
-      Skuntank: 28
-      Watchog: 28
-      Sawsbuck: 24
-      Bewear: 21
-      Mudsdale: 21
-      LycanrocMidnight: 21
-      Roserade: 21
-      Lickilicky: 21
-      Electivire: 21
-      Liepard: 21
-      Musharna: 21
-      Wigglytuff: 17
-      Jolteon: 17
-      Flareon: 17
-      Vespiquen: 17
-      Azumarill: 17
+      Raticate: 34
+      Arbok: 34
+      Persian: 34
+      Hypno: 34
+      Linoone: 34
+      Thievul: 34
+      Lopunny: 27
+      Purugly: 27
+      Skuntank: 27
+      Watchog: 27
+      Sawsbuck: 23
+      Bewear: 20
+      Mudsdale: 20
+      LycanrocMidnight: 20
+      Roserade: 20
+      Lickilicky: 20
+      Electivire: 20
+      Liepard: 20
+      Musharna: 20
+      Wigglytuff: 16
+      Jolteon: 16
+      Flareon: 16
+      Vespiquen: 16
+      Azumarill: 16
       Sylveon: 12
       Gourgeist: 11
       GourgeistSuper: 11
     elusive:
-      Morpeko: 120
-      Castform: 37
-      Ditto: 37
-      Dedenne: 22
-      Togedemaru: 18
-      Gothitelle: 18
-      Nidoqueen: 18
-      Nidoking: 18
-      Vileplume: 18
-      Smeargle: 18
-      Wobbuffet: 18
-      Bellossom: 18
-      Poliwrath: 18
-      Politoed: 18
-      Stonjourner: 15
-      Luxray: 14
+      Morpeko: 116
+      Castform: 36
+      Ditto: 36
+      Dedenne: 21
+      Obstagoon: 20
+      Togedemaru: 17
+      Gothitelle: 17
+      Nidoqueen: 17
+      Nidoking: 17
+      Vileplume: 17
+      Smeargle: 17
+      Wobbuffet: 17
+      Bellossom: 17
+      Poliwrath: 17
+      Politoed: 17
+      Stonjourner: 14
+      Luxray: 13
       Incineroar: 8
     prized:
       Unown: forms
@@ -612,6 +625,7 @@ land:
       Zapdos: 10
       Entei: 10
       Suicune: 10
+      ZapdosGalar: 10
     mythical:
       Shaymin: 10
 

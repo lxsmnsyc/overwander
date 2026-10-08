@@ -40,10 +40,13 @@ Snorlax:
   Munchlax: { name: Munchlax, category: Big Eater Pokemon }
 Articuno:
   Articuno: { name: Articuno, category: Freeze Pokemon }
+  ArticunoGalar: { name: Galarian Articuno, category: Cruel Pokemon }
 Zapdos:
   Zapdos: { name: Zapdos, category: Electric Pokemon }
+  ZapdosGalar: { name: Galarian Zapdos, category: Strong Legs Pokemon }
 Moltres:
   Moltres: { name: Moltres, category: Flame Pokemon }
+  MoltresGalar: { name: Galarian Moltres, category: Malevolent Pokemon }
 Dratini:
   Dratini: { name: Dratini, category: Dragon Pokemon }
   Dragonair: { name: Dragonair, category: Dragon Pokemon }

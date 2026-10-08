@@ -18,3 +18,99 @@ Dreepy:
     height: 3
     weight: 50
     gender: [1, 1]
+Zacian:
+  Zacian:
+    stats: { HP: 92, Attack: 120, Defense: 115, SpecialAttack: 80, SpecialDefense: 115, Speed: 138 }
+    catch-rate: 10
+    height: 2.8
+    weight: 110
+    gender: genderless
+    egg-cycles: 120
+  ZacianCrowned:
+    stats: { HP: 92, Attack: 150, Defense: 115, SpecialAttack: 80, SpecialDefense: 115, Speed: 148 }
+    catch-rate: 10
+    height: 2.8
+    weight: 355
+    gender: genderless
+Zamazenta:
+  Zamazenta:
+    stats: { HP: 92, Attack: 120, Defense: 115, SpecialAttack: 80, SpecialDefense: 115, Speed: 138 }
+    catch-rate: 10
+    height: 2.9
+    weight: 210
+    gender: genderless
+    egg-cycles: 120
+  ZamazentaCrowned:
+    stats: { HP: 92, Attack: 120, Defense: 140, SpecialAttack: 80, SpecialDefense: 140, Speed: 128 }
+    catch-rate: 10
+    height: 2.9
+    weight: 785
+    gender: genderless
+Eternatus:
+  Eternatus:
+    stats: { HP: 140, Attack: 85, Defense: 95, SpecialAttack: 145, SpecialDefense: 95, Speed: 130 }
+    catch-rate: 255
+    height: 20
+    weight: 950
+    gender: genderless
+    egg-cycles: 120
+Kubfu:
+  Kubfu:
+    stats: { HP: 60, Attack: 90, Defense: 60, SpecialAttack: 53, SpecialDefense: 50, Speed: 72 }
+    catch-rate: 3
+    height: 0.6
+    weight: 12
+    gender: [7, 1]
+    egg-cycles: 120
+  Urshifu:
+    stats: { HP: 100, Attack: 130, Defense: 100, SpecialAttack: 63, SpecialDefense: 60, Speed: 97 }
+    catch-rate: 3
+    height: 1.9
+    weight: 105
+    gender: [7, 1]
+  UrshifuRapidStrike:
+    stats: { HP: 100, Attack: 130, Defense: 100, SpecialAttack: 63, SpecialDefense: 60, Speed: 97 }
+    catch-rate: 3
+    height: 1.9
+    weight: 105
+    gender: [7, 1]
+Regieleki:
+  Regieleki:
+    stats: { HP: 80, Attack: 100, Defense: 50, SpecialAttack: 100, SpecialDefense: 50, Speed: 200 }
+    catch-rate: 3
+    height: 1.2
+    weight: 145
+    gender: genderless
+    egg-cycles: 120
+Regidrago:
+  Regidrago:
+    stats: { HP: 200, Attack: 100, Defense: 50, SpecialAttack: 100, SpecialDefense: 50, Speed: 80 }
+    catch-rate: 3
+    height: 2.1
+    weight: 200
+    gender: genderless
+    egg-cycles: 120
+Glastrier:
+  Glastrier:
+    stats: { HP: 100, Attack: 145, Defense: 130, SpecialAttack: 65, SpecialDefense: 110, Speed: 30 }
+    catch-rate: 3
+    height: 2.2
+    weight: 800
+    gender: genderless
+    egg-cycles: 120
+Spectrier:
+  Spectrier:
+    stats: { HP: 100, Attack: 65, Defense: 60, SpecialAttack: 145, SpecialDefense: 80, Speed: 130 }
+    catch-rate: 3
+    height: 2
+    weight: 44.5
+    gender: genderless
+    egg-cycles: 120
+Calyrex:
+  Calyrex:
+    stats: { HP: 100, Attack: 80, Defense: 80, SpecialAttack: 80, SpecialDefense: 80, Speed: 80 }
+    catch-rate: 3
+    height: 1.1
+    weight: 7.7
+    gender: genderless
+    egg-cycles: 120

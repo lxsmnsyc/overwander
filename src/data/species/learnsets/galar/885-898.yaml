@@ -34,7 +34,35 @@ Dreepy:
       61: [DragonRush]
       66: [DoubleEdge]
       72: [LastResort]
-    teachable: [Acrobatics, Agility, AllySwitch, Assurance, BeatUp, BreakingSwipe, Brine, Dive, DragonDance, DragonPulse, FireBlast, Flamethrower, Hex, HydroPump, Outrage, PhantomForce, PsychicFangs, Scald, ShadowBall, SteelWing, Surf, Thief, Thunder, Thunderbolt, UTurn, WillOWisp]
+    teachable:
+      [
+        Acrobatics,
+        Agility,
+        AllySwitch,
+        Assurance,
+        BeatUp,
+        BreakingSwipe,
+        Brine,
+        Dive,
+        DragonDance,
+        DragonPulse,
+        FireBlast,
+        Flamethrower,
+        Hex,
+        HydroPump,
+        Outrage,
+        PhantomForce,
+        PsychicFangs,
+        Scald,
+        ShadowBall,
+        SteelWing,
+        Surf,
+        Thief,
+        Thunder,
+        Thunderbolt,
+        UTurn,
+        WillOWisp,
+      ]
   Dragapult:
     level:
       1: [Bite, QuickAttack, DragonBreath, Astonish, SuckerPunch, Infestation, DragonDarts]
@@ -50,4 +78,644 @@ Dreepy:
       63: [DragonRush]
       70: [DoubleEdge]
       78: [LastResort]
-    teachable: [Acrobatics, Agility, AllySwitch, Assurance, BeatUp, BodySlam, BreakingSwipe, Brine, Dive, DragonClaw, DragonDance, DragonPulse, FireBlast, Flamethrower, Fly, GigaImpact, Hex, HydroPump, HyperBeam, LightScreen, Outrage, PhantomForce, PsychicFangs, Reflect, Scald, ShadowBall, SolarBeam, SteelWing, Surf, Thief, Thunder, Thunderbolt, TriAttack, UTurn, WillOWisp]
+    teachable:
+      [
+        Acrobatics,
+        Agility,
+        AllySwitch,
+        Assurance,
+        BeatUp,
+        BodySlam,
+        BreakingSwipe,
+        Brine,
+        Dive,
+        DragonClaw,
+        DragonDance,
+        DragonPulse,
+        FireBlast,
+        Flamethrower,
+        Fly,
+        GigaImpact,
+        Hex,
+        HydroPump,
+        HyperBeam,
+        LightScreen,
+        Outrage,
+        PhantomForce,
+        PsychicFangs,
+        Reflect,
+        Scald,
+        ShadowBall,
+        SolarBeam,
+        SteelWing,
+        Surf,
+        Thief,
+        Thunder,
+        Thunderbolt,
+        TriAttack,
+        UTurn,
+        WillOWisp,
+      ]
+Zacian:
+  family-teachable:
+    # TM, TR and tutor moves shared by the whole family
+    - Agility
+    - AirSlash
+    - Assurance
+    - BrickBreak
+    - BrutalSwing
+    - CloseCombat
+    - Crunch
+    - Dig
+    - Endure
+    - Facade
+    - FalseSwipe
+    - FireFang
+    - FocusBlast
+    - FocusEnergy
+    - GigaImpact
+    - HelpingHand
+    - HyperBeam
+    - HyperVoice
+    - IceFang
+    - Imprison
+    - IronHead
+    - IronTail
+    - PlayRough
+    - Protect
+    - PsychicFangs
+    - PsychoCut
+    - Rest
+    - Retaliate
+    - Revenge
+    - Reversal
+    - Round
+    - ScaryFace
+    - SleepTalk
+    - Snarl
+    - Snore
+    - SolarBlade
+    - SteelBeam
+    - Substitute
+    - Swift
+    - SwordsDance
+    - TailSlap
+    - ThunderFang
+    - WildCharge
+    - WorkUp
+  Zacian:
+    level:
+      1: [Bite, QuickAttack, MetalClaw, Howl, QuickGuard, SacredSword]
+      11: [Slash]
+      22: [SwordsDance]
+      33: [IronHead]
+      44: [LaserFocus]
+      55: [Crunch]
+      66: [Moonblast]
+      77: [CloseCombat]
+      88: [GigaImpact]
+  ZacianCrowned:
+    level:
+      1: [Bite, QuickAttack, MetalClaw, Howl, QuickGuard, SacredSword]
+      11: [Slash]
+      22: [SwordsDance]
+      33: [IronHead]
+      44: [LaserFocus]
+      55: [Crunch]
+      66: [Moonblast]
+      77: [CloseCombat]
+      88: [GigaImpact]
+Zamazenta:
+  family-teachable:
+    # TM, TR and tutor moves shared by the whole family
+    - Agility
+    - CloseCombat
+    - Coaching
+    - Crunch
+    - DazzlingGleam
+    - Dig
+    - Endure
+    - Facade
+    - FireFang
+    - FlashCannon
+    - FocusBlast
+    - FocusEnergy
+    - GigaImpact
+    - GuardSwap
+    - HelpingHand
+    - HyperBeam
+    - HyperVoice
+    - IceFang
+    - Imprison
+    - IronDefense
+    - IronHead
+    - IronTail
+    - LightScreen
+    - Payback
+    - PlayRough
+    - PowerSwap
+    - Protect
+    - PsychicFangs
+    - Reflect
+    - Rest
+    - Retaliate
+    - Revenge
+    - Reversal
+    - Round
+    - Safeguard
+    - ScaryFace
+    - SleepTalk
+    - Snarl
+    - Snore
+    - SolarBeam
+    - SteelBeam
+    - Substitute
+    - Swift
+    - TailSlap
+    - ThunderFang
+    - WildCharge
+    - WorkUp
+  Zamazenta:
+    level:
+      1: [Bite, QuickAttack, MetalClaw, Howl, MetalBurst, WideGuard]
+      11: [Slash]
+      22: [IronDefense]
+      33: [IronHead]
+      44: [LaserFocus]
+      55: [Crunch]
+      66: [Moonblast]
+      77: [CloseCombat]
+      88: [GigaImpact]
+  ZamazentaCrowned:
+    level:
+      1: [Bite, QuickAttack, MetalClaw, Howl, MetalBurst, WideGuard]
+      11: [Slash]
+      22: [IronDefense]
+      33: [IronHead]
+      44: [LaserFocus]
+      55: [Crunch]
+      66: [Moonblast]
+      77: [CloseCombat]
+      88: [GigaImpact]
+Eternatus:
+  Eternatus:
+    level:
+      1: [Agility, ConfuseRay, PoisonTail, DragonTail]
+      8: [Toxic]
+      16: [Venoshock]
+      24: [DragonDance]
+      32: [CrossPoison]
+      40: [DragonPulse]
+      48: [Flamethrower]
+      56: [DynamaxCannon]
+      64: [CosmicPower]
+      72: [Recover]
+      80: [HyperBeam]
+      88: [Eternabeam]
+    teachable:
+      [
+        Agility,
+        Assurance,
+        BrutalSwing,
+        CosmicPower,
+        CrossPoison,
+        DracoMeteor,
+        DragonDance,
+        DragonPulse,
+        Endure,
+        Facade,
+        Flamethrower,
+        FlashCannon,
+        Fly,
+        GigaImpact,
+        HyperBeam,
+        LightScreen,
+        MeteorBeam,
+        MysticalFire,
+        Payback,
+        PoisonJab,
+        Protect,
+        Reflect,
+        Rest,
+        Round,
+        ScaryFace,
+        Screech,
+        ShadowBall,
+        SleepTalk,
+        SludgeBomb,
+        SludgeWave,
+        Snore,
+        SolarBeam,
+        Substitute,
+        ToxicSpikes,
+        VenomDrench,
+        Venoshock,
+      ]
+Kubfu:
+  family-teachable:
+    # TM, TR and tutor moves shared by the whole family
+    - Acrobatics
+    - Attract
+    - BodySlam
+    - BrickBreak
+    - BulkUp
+    - CloseCombat
+    - Coaching
+    - Dig
+    - Endure
+    - Facade
+    - FirePunch
+    - FocusEnergy
+    - HelpingHand
+    - IcePunch
+    - IronHead
+    - LowKick
+    - LowSweep
+    - MegaKick
+    - MegaPunch
+    - Protect
+    - Rest
+    - Retaliate
+    - Revenge
+    - Reversal
+    - Round
+    - ScaryFace
+    - SleepTalk
+    - Snore
+    - Substitute
+    - Superpower
+    - ThunderPunch
+    - UTurn
+    - WorkUp
+    - ZenHeadbutt
+  Kubfu:
+    level:
+      1: [Leer, RockSmash]
+      4: [Endure]
+      8: [FocusEnergy]
+      12: [AerialAce]
+      16: [ScaryFace]
+      20: [Headbutt]
+      24: [BrickBreak]
+      28: [Detect]
+      32: [BulkUp]
+      36: [IronHead]
+      40: [DynamicPunch]
+      44: [Counter]
+      48: [CloseCombat]
+      52: [FocusPunch]
+  Urshifu:
+    level:
+      1: [Leer, FocusEnergy, Endure, RockSmash, SuckerPunch, WickedBlow]
+      12: [AerialAce]
+      16: [ScaryFace]
+      20: [Headbutt]
+      24: [BrickBreak]
+      28: [Detect]
+      32: [BulkUp]
+      36: [IronHead]
+      40: [DynamicPunch]
+      44: [Counter]
+      48: [CloseCombat]
+      52: [FocusPunch]
+    teachable:
+      [
+        Assurance,
+        AuraSphere,
+        BeatUp,
+        BodyPress,
+        Crunch,
+        DarkPulse,
+        DarkestLariat,
+        DrainPunch,
+        FalseSwipe,
+        Fling,
+        FocusBlast,
+        FoulPlay,
+        GigaImpact,
+        IronDefense,
+        LashOut,
+        Payback,
+        PoisonJab,
+        RockSlide,
+        RockTomb,
+        Snarl,
+        StoneEdge,
+        Swift,
+        Taunt,
+        ThroatChop,
+      ]
+  UrshifuRapidStrike:
+    level:
+      1: [Leer, FocusEnergy, Endure, RockSmash, AquaJet, SurgingStrikes]
+      12: [AerialAce]
+      16: [ScaryFace]
+      20: [Headbutt]
+      24: [BrickBreak]
+      28: [Detect]
+      32: [BulkUp]
+      36: [IronHead]
+      40: [DynamicPunch]
+      44: [Counter]
+      48: [CloseCombat]
+      52: [FocusPunch]
+    teachable:
+      [
+        AuraSphere,
+        BodyPress,
+        Brine,
+        Dive,
+        DrainPunch,
+        FalseSwipe,
+        FocusBlast,
+        GigaImpact,
+        IronDefense,
+        Liquidation,
+        PoisonJab,
+        RainDance,
+        RockSlide,
+        RockTomb,
+        Scald,
+        StoneEdge,
+        Swift,
+        Taunt,
+        Waterfall,
+        Whirlpool,
+      ]
+Regieleki:
+  Regieleki:
+    level:
+      1: [ThunderShock, RapidSpin]
+      6: [Electroweb]
+      12: [AncientPower]
+      18: [ShockWave]
+      24: [ThunderWave]
+      30: [ExtremeSpeed]
+      36: [ThunderCage]
+      42: [Thunderbolt]
+      48: [MagnetRise]
+      54: [Thrash]
+      60: [LockOn]
+      66: [ZapCannon]
+      72: [HyperBeam]
+      78: [Explosion]
+    teachable:
+      [
+        Acrobatics,
+        Agility,
+        Assurance,
+        BodySlam,
+        Bounce,
+        EerieImpulse,
+        ElectricTerrain,
+        ElectroBall,
+        Electroweb,
+        Endure,
+        Facade,
+        GigaImpact,
+        HyperBeam,
+        LightScreen,
+        Protect,
+        RainDance,
+        Reflect,
+        Rest,
+        RisingVoltage,
+        Round,
+        Screech,
+        SelfDestruct,
+        SleepTalk,
+        Snore,
+        Substitute,
+        Swift,
+        Thunder,
+        ThunderWave,
+        Thunderbolt,
+        VoltSwitch,
+        WildCharge,
+      ]
+Regidrago:
+  Regidrago:
+    level:
+      1: [ViceGrip, Twister]
+      6: [Bite]
+      12: [AncientPower]
+      18: [DragonBreath]
+      24: [FocusEnergy]
+      30: [Crunch]
+      36: [DragonClaw]
+      42: [HammerArm]
+      48: [DragonDance]
+      54: [Thrash]
+      60: [LaserFocus]
+      66: [DragonEnergy]
+      72: [HyperBeam]
+      78: [Explosion]
+    teachable:
+      [
+        BodySlam,
+        BreakingSwipe,
+        Crunch,
+        DracoMeteor,
+        DragonClaw,
+        DragonDance,
+        DragonPulse,
+        Endure,
+        Facade,
+        FireFang,
+        FocusEnergy,
+        GigaImpact,
+        HyperBeam,
+        LightScreen,
+        Outrage,
+        Protect,
+        Reflect,
+        Rest,
+        Reversal,
+        Round,
+        ScaleShot,
+        SelfDestruct,
+        SleepTalk,
+        Snore,
+        Substitute,
+        ThunderFang,
+      ]
+Glastrier:
+  Glastrier:
+    level:
+      1: [Tackle, TailWhip]
+      6: [DoubleKick]
+      12: [Avalanche]
+      18: [Stomp]
+      24: [Torment]
+      30: [Mist]
+      36: [IcicleCrash]
+      42: [TakeDown]
+      48: [IronDefense]
+      54: [Thrash]
+      60: [Taunt]
+      66: [DoubleEdge]
+      72: [SwordsDance]
+    teachable:
+      [
+        Assurance,
+        Avalanche,
+        Blizzard,
+        BodyPress,
+        BodySlam,
+        Bulldoze,
+        CloseCombat,
+        Crunch,
+        Endure,
+        Facade,
+        GigaImpact,
+        Hail,
+        HeavySlam,
+        HighHorsepower,
+        HyperBeam,
+        IceBeam,
+        IcicleSpear,
+        IcyWind,
+        IronDefense,
+        LashOut,
+        Megahorn,
+        MudShot,
+        Outrage,
+        Payback,
+        Protect,
+        Rest,
+        Round,
+        ScaryFace,
+        SleepTalk,
+        SmartStrike,
+        Snarl,
+        Snore,
+        StompingTantrum,
+        Substitute,
+        Superpower,
+        SwordsDance,
+        Taunt,
+        ThroatChop,
+        Uproar,
+      ]
+Spectrier:
+  Spectrier:
+    level:
+      1: [Tackle, TailWhip]
+      6: [DoubleKick]
+      12: [Hex]
+      18: [Stomp]
+      24: [ConfuseRay]
+      30: [Haze]
+      36: [ShadowBall]
+      42: [TakeDown]
+      48: [Agility]
+      54: [Thrash]
+      60: [Disable]
+      66: [DoubleEdge]
+      72: [NastyPlot]
+    teachable:
+      [
+        Agility,
+        Assurance,
+        BodySlam,
+        Bulldoze,
+        CalmMind,
+        Crunch,
+        DarkPulse,
+        Endure,
+        Facade,
+        FoulPlay,
+        GigaImpact,
+        Hex,
+        HyperBeam,
+        LashOut,
+        MudShot,
+        NastyPlot,
+        Payback,
+        PhantomForce,
+        Protect,
+        PsychoCut,
+        Rest,
+        Round,
+        ScaryFace,
+        ShadowBall,
+        SleepTalk,
+        Snarl,
+        Snore,
+        StompingTantrum,
+        Substitute,
+        Swift,
+        Taunt,
+        Uproar,
+        WillOWisp,
+      ]
+Calyrex:
+  Calyrex:
+    level:
+      1: [Pound, MegaDrain, Growth, Confusion]
+      8: [LifeDew]
+      16: [GigaDrain]
+      24: [Psyshock]
+      32: [HelpingHand]
+      40: [Aromatherapy]
+      48: [EnergyBall]
+      56: [Psychic]
+      64: [LeechSeed]
+      72: [HealPulse]
+      80: [SolarBeam]
+      88: [FutureSight]
+    teachable:
+      [
+        Agility,
+        AllySwitch,
+        BatonPass,
+        BulletSeed,
+        CalmMind,
+        DrainingKiss,
+        Encore,
+        Endure,
+        EnergyBall,
+        ExpandingForce,
+        Facade,
+        FutureSight,
+        GigaDrain,
+        GigaImpact,
+        GrassKnot,
+        GrassyTerrain,
+        GuardSwap,
+        HelpingHand,
+        HyperBeam,
+        Imprison,
+        LeafStorm,
+        LightScreen,
+        MagicRoom,
+        MagicalLeaf,
+        Metronome,
+        PayDay,
+        PollenPuff,
+        PowerSwap,
+        Protect,
+        Psychic,
+        PsychicTerrain,
+        Psyshock,
+        Reflect,
+        Rest,
+        Round,
+        Safeguard,
+        SeedBomb,
+        SkillSwap,
+        SleepTalk,
+        Snore,
+        SolarBeam,
+        SolarBlade,
+        SpeedSwap,
+        StoredPower,
+        Substitute,
+        SunnyDay,
+        Swift,
+        TriAttack,
+        Trick,
+        TrickRoom,
+        WonderRoom,
+        ZenHeadbutt,
+      ]

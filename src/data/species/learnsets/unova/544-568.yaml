@@ -451,58 +451,41 @@ Darumaka:
     - Attract
     - BrickBreak
     - Dig
-    - DoubleTeam
     - Encore
-    - Endeavor
     - Endure
     - Facade
     - FireBlast
     - FireFang
     - FirePunch
     - FireSpin
-    - FlameCharge
     - Flamethrower
     - FlareBlitz
     - Fling
     - FocusEnergy
-    - FocusPunch
-    - Frustration
     - GrassKnot
     - GyroBall
     - HeatWave
-    - HiddenPower
-    - Incinerate
     - MegaKick
     - MegaPunch
     - Overheat
     - Protect
     - Rest
-    - Return
-    - Roar
     - RockSlide
-    - RockSmash
     - RockTomb
     - Round
-    - SecretPower
     - SleepTalk
-    - Snatch
     - Snore
     - SolarBeam
-    - Strength
     - Substitute
     - SunnyDay
     - Superpower
-    - Swagger
     - Taunt
     - Thief
-    - Toxic
     - UTurn
     - Uproar
     - WillOWisp
     - WorkUp
     - ZenHeadbutt
-    - Confide
-    - PowerUpPunch
   Darumaka:
     level:
       1: [Tackle, Ember]
@@ -534,6 +517,26 @@ Darumaka:
       - Snatch
       - TakeDown
       - Yawn
+    teachable:
+      [
+        Confide,
+        DoubleTeam,
+        Endeavor,
+        FlameCharge,
+        FocusPunch,
+        Frustration,
+        HiddenPower,
+        Incinerate,
+        PowerUpPunch,
+        Return,
+        Roar,
+        RockSmash,
+        SecretPower,
+        Snatch,
+        Strength,
+        Swagger,
+        Toxic,
+      ]
   Darmanitan:
     level:
       1: [Tackle, Bite, Ember, Rage, Rollout, Taunt]
@@ -549,30 +552,49 @@ Darumaka:
       47: [Superpower]
       54: [Overheat]
     teachable:
-      - BodySlam
-      - BulkUp
-      - Bulldoze
-      - Earthquake
-      - FocusBlast
-      - FutureSight
-      - GigaImpact
-      - GuardSwap
-      - HyperBeam
-      - IronDefense
-      - IronHead
-      - Payback
-      - PowerSwap
-      - Psychic
-      - Reversal
-      - SmackDown
-      - StoneEdge
-      - Torment
-      - Trick
-      - LaserFocus
-      - BodyPress
-      - ExpandingForce
-      - BurningJealousy
-      - LashOut
+      [
+        BodyPress,
+        BodySlam,
+        BulkUp,
+        Bulldoze,
+        BurningJealousy,
+        Confide,
+        DoubleTeam,
+        Earthquake,
+        Endeavor,
+        ExpandingForce,
+        FlameCharge,
+        FocusBlast,
+        FocusPunch,
+        Frustration,
+        FutureSight,
+        GigaImpact,
+        GuardSwap,
+        HiddenPower,
+        HyperBeam,
+        Incinerate,
+        IronDefense,
+        IronHead,
+        LaserFocus,
+        LashOut,
+        Payback,
+        PowerSwap,
+        PowerUpPunch,
+        Psychic,
+        Return,
+        Reversal,
+        Roar,
+        RockSmash,
+        SecretPower,
+        SmackDown,
+        Snatch,
+        StoneEdge,
+        Strength,
+        Swagger,
+        Torment,
+        Toxic,
+        Trick,
+      ]
   DarmanitanZen:
     level:
       1: [Tackle, Bite, Ember, Rage, Rollout, Taunt]
@@ -588,30 +610,103 @@ Darumaka:
       47: [Superpower]
       54: [Overheat]
     teachable:
-      - BodySlam
-      - BulkUp
-      - Bulldoze
-      - Earthquake
-      - FocusBlast
-      - FutureSight
-      - GigaImpact
-      - GuardSwap
-      - HyperBeam
-      - IronDefense
-      - IronHead
-      - Payback
-      - PowerSwap
-      - Psychic
-      - Reversal
-      - SmackDown
-      - StoneEdge
-      - Torment
-      - Trick
-      - LaserFocus
-      - BodyPress
-      - ExpandingForce
-      - BurningJealousy
-      - LashOut
+      [
+        BodyPress,
+        BodySlam,
+        BulkUp,
+        Bulldoze,
+        BurningJealousy,
+        Confide,
+        DoubleTeam,
+        Earthquake,
+        Endeavor,
+        ExpandingForce,
+        FlameCharge,
+        FocusBlast,
+        FocusPunch,
+        Frustration,
+        FutureSight,
+        GigaImpact,
+        GuardSwap,
+        HiddenPower,
+        HyperBeam,
+        Incinerate,
+        IronDefense,
+        IronHead,
+        LaserFocus,
+        LashOut,
+        Payback,
+        PowerSwap,
+        PowerUpPunch,
+        Psychic,
+        Return,
+        Reversal,
+        Roar,
+        RockSmash,
+        SecretPower,
+        SmackDown,
+        Snatch,
+        StoneEdge,
+        Strength,
+        Swagger,
+        Torment,
+        Toxic,
+        Trick,
+      ]
+  DarumakaGalar:
+    level:
+      1: [Tackle, PowderSnow]
+      4: [Taunt]
+      8: [Bite]
+      12: [Avalanche]
+      16: [WorkUp]
+      20: [IceFang]
+      24: [Headbutt]
+      28: [IcePunch]
+      32: [Uproar]
+      36: [BellyDrum]
+      40: [Blizzard]
+      44: [Thrash]
+      48: [Superpower]
+    teachable: [Avalanche, Blizzard, IceBeam, IceFang, IcePunch]
+    egg: [FlameWheel, FocusPunch, FreezeDry, HammerArm, Incinerate, PowerUpPunch, TakeDown, Yawn]
+  DarmanitanGalar:
+    level:
+      1: [Tackle, Bite, PowderSnow, Taunt, IcicleCrash]
+      12: [Avalanche]
+      16: [WorkUp]
+      20: [IceFang]
+      24: [Headbutt]
+      28: [IcePunch]
+      32: [Uproar]
+      38: [BellyDrum]
+      44: [Blizzard]
+      50: [Thrash]
+      56: [Superpower]
+    teachable:
+      [
+        Avalanche,
+        Blizzard,
+        BodyPress,
+        BodySlam,
+        BulkUp,
+        Bulldoze,
+        BurningJealousy,
+        Earthquake,
+        FocusBlast,
+        GigaImpact,
+        HyperBeam,
+        IceBeam,
+        IceFang,
+        IcePunch,
+        IronDefense,
+        IronHead,
+        LashOut,
+        Payback,
+        Psychic,
+        Reversal,
+        StoneEdge,
+      ]
 Maractus:
   Maractus:
     level:
@@ -1024,60 +1119,37 @@ Yamask:
 
   # What it does whether it is carrying the mask or wearing the coffin
   family-teachable:
-    - AfterYou
     - AllySwitch
     - Attract
-    - Block
     - CalmMind
     - DarkPulse
-    - DoubleTeam
-    - DreamEater
-    - Embargo
     - Endure
     - EnergyBall
     - Facade
     - FakeTears
-    - Flash
-    - Frustration
     - Hex
-    - HiddenPower
     - Imprison
     - IronDefense
-    - KnockOff
-    - MagicCoat
     - NastyPlot
-    - PainSplit
     - Payback
     - Protect
-    - PsychUp
     - Psychic
     - RainDance
     - Rest
-    - Return
-    - RolePlay
     - Round
     - Safeguard
-    - SecretPower
     - ShadowBall
-    - ShockWave
     - SkillSwap
     - SleepTalk
-    - Snatch
     - Snore
-    - Spite
     - Substitute
-    - Swagger
-    - Telekinesis
     - Thief
-    - Toxic
     - ToxicSpikes
     - Trick
     - TrickRoom
     - WillOWisp
     - WonderRoom
     - ZenHeadbutt
-    - Confide
-    - Infestation
     - Poltergeist
   Yamask:
     level:
@@ -1106,6 +1178,32 @@ Yamask:
       - NastyPlot
       - Nightmare
       - ToxicSpikes
+    teachable:
+      [
+        AfterYou,
+        Block,
+        Confide,
+        DoubleTeam,
+        DreamEater,
+        Embargo,
+        Flash,
+        Frustration,
+        HiddenPower,
+        Infestation,
+        KnockOff,
+        MagicCoat,
+        PainSplit,
+        PsychUp,
+        Return,
+        RolePlay,
+        SecretPower,
+        ShockWave,
+        Snatch,
+        Spite,
+        Swagger,
+        Telekinesis,
+        Toxic,
+      ]
   Cofagrigus:
     level:
       1: [Disable, NightShade, Haze, Protect, Astonish, ScaryFace, ShadowClaw]
@@ -1120,15 +1218,99 @@ Yamask:
       50: [DarkPulse]
       57: [DestinyBond]
     teachable:
-      - GigaImpact
-      - GrassKnot
-      - GuardSwap
-      - HyperBeam
-      - PowerSwap
-      - Revenge
-      - ScaryFace
-      - ShadowClaw
-      - BodyPress
+      [
+        AfterYou,
+        Block,
+        BodyPress,
+        Confide,
+        DoubleTeam,
+        DreamEater,
+        Embargo,
+        Flash,
+        Frustration,
+        GigaImpact,
+        GrassKnot,
+        GuardSwap,
+        HiddenPower,
+        HyperBeam,
+        Infestation,
+        KnockOff,
+        MagicCoat,
+        PainSplit,
+        PowerSwap,
+        PsychUp,
+        Return,
+        Revenge,
+        RolePlay,
+        ScaryFace,
+        SecretPower,
+        ShadowClaw,
+        ShockWave,
+        Snatch,
+        Spite,
+        Swagger,
+        Telekinesis,
+        Toxic,
+      ]
+  YamaskGalar:
+    level:
+      1: [Protect, Astonish]
+      4: [Haze]
+      8: [NightShade]
+      12: [Disable]
+      16: [BrutalSwing]
+      20: [CraftyShield]
+      24: [Hex]
+      28: [MeanLook]
+      32: [Slam]
+      36: [Curse]
+      40: [ShadowBall]
+      44: [Earthquake]
+      48: [GuardSplit, PowerSplit]
+      52: [DestinyBond]
+    teachable: [BrutalSwing, EarthPower, Earthquake, RockSlide, RockTomb, Sandstorm]
+    egg: [Memento]
+  Runerigus:
+    level:
+      1: [NightShade, Haze, Protect, ScaryFace, Astonish, ShadowClaw]
+      12: [Disable]
+      16: [BrutalSwing]
+      20: [CraftyShield]
+      24: [Hex]
+      28: [MeanLook]
+      32: [Slam]
+      38: [Curse]
+      44: [ShadowBall]
+      50: [Earthquake]
+      56: [GuardSplit, PowerSplit]
+      62: [DestinyBond]
+    teachable:
+      [
+        Amnesia,
+        BodyPress,
+        BrutalSwing,
+        Bulldoze,
+        DragonPulse,
+        EarthPower,
+        Earthquake,
+        GigaImpact,
+        GrassKnot,
+        GuardSwap,
+        HyperBeam,
+        PhantomForce,
+        PowerSwap,
+        Revenge,
+        RockBlast,
+        RockSlide,
+        RockTomb,
+        SandTomb,
+        Sandstorm,
+        ScaryFace,
+        ShadowClaw,
+        StealthRock,
+        StoneEdge,
+        Taunt,
+      ]
 Tirtouga:
   family-teachable: [AquaTail, Attract, Blizzard, Block, MeteorBeam]
   Tirtouga:
@@ -1267,7 +1449,19 @@ Tirtouga:
       - Confide
       - Liquidation
 Archen:
-  family-teachable: [Acrobatics, AerialAce, AquaTail, Attract, Bounce, Bulldoze, Cut, MeteorBeam, LashOut, DualWingbeat]
+  family-teachable:
+    [
+      Acrobatics,
+      AerialAce,
+      AquaTail,
+      Attract,
+      Bounce,
+      Bulldoze,
+      Cut,
+      MeteorBeam,
+      LashOut,
+      DualWingbeat,
+    ]
   Archen:
     level:
       1: [Leer, QuickAttack, WingAttack]

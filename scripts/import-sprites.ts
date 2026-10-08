@@ -163,6 +163,9 @@ function slotsOf(root: string): Slot[] {
  * `Species.Name` in the code beside it, and so does a form list the
  * ids file exports
  */
+/** The one file under the species folder that names every regional form list */
+const REGION_TABLE = join(SPECIES, 'regions.ts');
+
 function writtenSpecies(): Set<number> {
   const source = readFileSync(IDS, 'utf8');
   const body = source.slice(source.indexOf('export const enum Species {'));
@@ -204,8 +207,10 @@ function writtenSpecies(): Set<number> {
         ids.add(id);
       }
     }
+    // The region table files every regional form by its region, written
+    // or not, so naming a form list there does not write its species
     for (const [list, held] of lists) {
-      if (text.includes(list)) {
+      if (file !== REGION_TABLE && text.includes(list)) {
         for (const id of held) {
           ids.add(id);
         }

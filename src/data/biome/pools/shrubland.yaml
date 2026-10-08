@@ -5,125 +5,59 @@
 land:
   morning:
     base:
-      Mareep: 689
-      Hoppip: 689
-      Shinx: 689
-      FlabebeOrange: 661
-      Scatterbug: 661
-      Solosis: 661
-      GeodudeAlola: 606
-      Poliwag: 551
-      Snivy: 83
+      Mareep: 651
+      Hoppip: 651
+      Shinx: 651
+      FlabebeOrange: 624
+      Scatterbug: 624
+      Solosis: 624
+      GeodudeAlola: 572
+      Poliwag: 520
+      Snivy: 78
+      Scorbunny: 47
     uncommon:
-      Minccino: 218
-      Sunkern: 210
-      Skitty: 210
-      Glameow: 210
-      Surskit: 210
-      Swirlix: 201
-      Skiddo: 201
-      Cottonee: 201
-      Spoink: 168
-      Spearow: 168
-      Natu: 168
-      Snubbull: 168
-      Roselia: 168
+      Gossifleur: 300
+      Minccino: 206
+      Sunkern: 198
+      Skitty: 198
+      Glameow: 198
+      Surskit: 198
+      Swirlix: 190
+      Skiddo: 190
+      Cottonee: 190
+      Spoink: 159
+      Spearow: 159
+      Natu: 159
+      Snubbull: 159
+      Roselia: 159
+      Milcery: 150
     rare:
-      Duosion: 223
-      GravelerAlola: 179
-      FloetteOrange: 179
-      Spewpa: 179
-      Flaaffy: 112
-      Skiploom: 112
-      Luxio: 112
-      Poliwhirl: 112
-      Servine: 45
+      Duosion: 211
+      GravelerAlola: 169
+      FloetteOrange: 169
+      Spewpa: 169
+      Flaaffy: 106
+      Skiploom: 106
+      Luxio: 106
+      Poliwhirl: 106
+      Servine: 42
+      Raboot: 14
     scarce:
-      Fearow: 65
-      Delcatty: 65
-      Masquerain: 65
-      Purugly: 52
-      Cinccino: 46
-      Whimsicott: 46
-      Slurpuff: 39
-      Gogoat: 39
-      Grumpig: 39
-      Roserade: 39
-      Flareon: 33
-      Xatu: 33
-      Sunflora: 33
-      Granbull: 33
-    elusive:
-      Klefki: 26
-      Furfrou: 26
-      FlorgesOrange: 26
-      Vivillon: 26
-      Reuniclus: 26
-      Smeargle: 26
-      Miltank: 26
-      Ampharos: 26
-      Jumpluff: 26
-      Poliwrath: 26
-      GolemAlola: 21
-      Luxray: 21
-      Serperior: 10
-    prized:
-      Unown: forms
-      Budew: prized
-      Happiny: prized
-    special: {}
-  day:
-    base:
-      Mareep: 681
-      Hoppip: 681
-      Shinx: 681
-      FlabebeOrange: 654
-      Scatterbug: 654
-      Solosis: 654
-      GeodudeAlola: 600
-      Poliwag: 545
-      Snivy: 82
-      Fennekin: 55
-    uncommon:
-      Minccino: 218
-      Sunkern: 210
-      Skitty: 210
-      Glameow: 210
-      Surskit: 210
-      Swirlix: 201
-      Skiddo: 201
-      Cottonee: 201
-      Spoink: 168
-      Spearow: 168
-      Natu: 168
-      Snubbull: 168
-      Roselia: 168
-    rare:
-      Duosion: 216
-      GravelerAlola: 172
-      FloetteOrange: 172
-      Spewpa: 172
-      Flaaffy: 108
-      Skiploom: 108
-      Luxio: 108
-      Poliwhirl: 108
-      Braixen: 43
-      Servine: 43
-    scarce:
-      Fearow: 65
-      Delcatty: 65
-      Masquerain: 65
-      Purugly: 52
-      Cinccino: 46
-      Whimsicott: 46
-      Slurpuff: 39
-      Gogoat: 39
-      Grumpig: 39
-      Roserade: 39
-      Flareon: 33
-      Xatu: 33
-      Sunflora: 33
-      Granbull: 33
+      Fearow: 61
+      Delcatty: 61
+      Masquerain: 61
+      Purugly: 49
+      Cinccino: 43
+      Whimsicott: 43
+      Eldegoss: 40
+      Slurpuff: 37
+      Gogoat: 37
+      Grumpig: 37
+      Roserade: 37
+      Flareon: 31
+      Xatu: 31
+      Sunflora: 31
+      Granbull: 31
     elusive:
       Klefki: 25
       Furfrou: 25
@@ -137,8 +71,86 @@ land:
       Poliwrath: 25
       GolemAlola: 20
       Luxray: 20
-      Delphox: 10
-      Serperior: 10
+      Serperior: 9
+      Cinderace: 4
+    prized:
+      Unown: forms
+      Budew: prized
+      Happiny: prized
+    special: {}
+  day:
+    base:
+      Mareep: 643
+      Hoppip: 643
+      Shinx: 643
+      FlabebeOrange: 618
+      Scatterbug: 618
+      Solosis: 618
+      GeodudeAlola: 567
+      Poliwag: 515
+      Snivy: 77
+      Fennekin: 52
+      Scorbunny: 47
+    uncommon:
+      Gossifleur: 300
+      Minccino: 206
+      Sunkern: 198
+      Skitty: 198
+      Glameow: 198
+      Surskit: 198
+      Swirlix: 190
+      Skiddo: 190
+      Cottonee: 190
+      Spoink: 159
+      Spearow: 159
+      Natu: 159
+      Snubbull: 159
+      Roselia: 159
+      Milcery: 150
+    rare:
+      Duosion: 204
+      GravelerAlola: 162
+      FloetteOrange: 162
+      Spewpa: 162
+      Flaaffy: 102
+      Skiploom: 102
+      Luxio: 102
+      Poliwhirl: 102
+      Braixen: 41
+      Servine: 41
+      Raboot: 14
+    scarce:
+      Fearow: 61
+      Delcatty: 61
+      Masquerain: 61
+      Purugly: 49
+      Cinccino: 43
+      Whimsicott: 43
+      Eldegoss: 40
+      Slurpuff: 37
+      Gogoat: 37
+      Grumpig: 37
+      Roserade: 37
+      Flareon: 31
+      Xatu: 31
+      Sunflora: 31
+      Granbull: 31
+    elusive:
+      Klefki: 24
+      Furfrou: 24
+      FlorgesOrange: 24
+      Vivillon: 24
+      Reuniclus: 24
+      Smeargle: 24
+      Miltank: 24
+      Ampharos: 24
+      Jumpluff: 24
+      Poliwrath: 24
+      GolemAlola: 19
+      Luxray: 19
+      Delphox: 9
+      Serperior: 9
+      Cinderace: 4
     prized:
       Unown: forms
       Budew: prized

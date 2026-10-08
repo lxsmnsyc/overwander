@@ -30,26 +30,28 @@ land:
       Regice: 10
   day: *land-morning
   evening:
-    base: { Swinub: 2993 }
+    base: { Swinub: 2924 }
     uncommon:
-      Snover: 1241
-      Seel: 1241
-      Vulpix: 621
-      Stantler: 310
-      Sneasel: 310
-    rare: { Piloswine: 1862 }
+      Snover: 1212
+      Seel: 1212
+      Vulpix: 607
+      Stantler: 303
+      Sneasel: 303
+      Snom: 200
+    rare: { Piloswine: 1819 }
     scarce:
-      Dewgong: 282
-      Abomasnow: 170
-      Glaceon: 170
-      Weavile: 170
-      Ninetales: 142
+      Dewgong: 275
+      Abomasnow: 166
+      Glaceon: 166
+      Weavile: 166
+      Ninetales: 139
+      Frosmoth: 30
     elusive:
-      Pachirisu: 133
-      Jynx: 83
-      Snorlax: 83
-      Mamoswine: 83
-      Delibird: 83
+      Pachirisu: 130
+      Jynx: 81
+      Snorlax: 81
+      Mamoswine: 81
+      Delibird: 81
     prized:
       Unown: forms
       Smoochum: prized
@@ -59,28 +61,30 @@ land:
       Uxie: 10
       Regice: 10
   night:
-    base: { Swinub: 2994 }
+    base: { Swinub: 2925 }
     uncommon:
-      Paras: 931
-      Snover: 931
-      Seel: 931
-      Vulpix: 466
-      Stantler: 232
-      Sneasel: 232
-    rare: { Piloswine: 1863 }
+      Paras: 910
+      Snover: 910
+      Seel: 910
+      Vulpix: 455
+      Stantler: 227
+      Sneasel: 227
+      Snom: 200
+    rare: { Piloswine: 1820 }
     scarce:
-      Parasect: 216
-      Dewgong: 216
-      Abomasnow: 130
-      Glaceon: 130
-      Weavile: 130
-      Ninetales: 109
+      Parasect: 211
+      Dewgong: 211
+      Abomasnow: 127
+      Glaceon: 127
+      Weavile: 127
+      Ninetales: 106
+      Frosmoth: 30
     elusive:
-      Pachirisu: 133
-      Jynx: 83
-      Snorlax: 83
-      Mamoswine: 83
-      Delibird: 83
+      Pachirisu: 130
+      Jynx: 81
+      Snorlax: 81
+      Mamoswine: 81
+      Delibird: 81
     prized:
       Unown: forms
       Smoochum: prized

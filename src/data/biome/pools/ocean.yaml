@@ -145,47 +145,50 @@ land:
 water:
   morning: &water-morning
     base:
-      Horsea: 4806
-      Dratini: 481
+      Horsea: 4522
+      Dratini: 453
     uncommon:
-      Tentacool: 290
-      Magikarp: 290
-      Clauncher: 232
-      Frillish: 193
-      Carvanha: 193
-      Clamperl: 193
-      Seel: 193
-      Shellder: 193
-      Chinchou: 193
-      Remoraid: 193
-      Finneon: 193
-      Wailmer: 145
+      Arrokuda: 400
+      Tentacool: 273
+      Magikarp: 273
+      Clauncher: 218
+      Frillish: 182
+      Carvanha: 182
+      Clamperl: 182
+      Seel: 182
+      Shellder: 182
+      Chinchou: 182
+      Remoraid: 182
+      Finneon: 182
+      Wailmer: 136
     rare:
-      Seadra: 1136
-      Dragonair: 114
+      Seadra: 1069
+      Dragonair: 107
     scarce:
-      Tentacruel: 68
-      Dewgong: 68
-      Cloyster: 68
-      Gyarados: 68
-      Lanturn: 68
-      Octillery: 68
-      Clawitzer: 41
-      Sharpedo: 41
-      Lumineon: 41
-      Jellicent: 34
-      Vaporeon: 34
-      Wailord: 27
+      Tentacruel: 64
+      Dewgong: 64
+      Cloyster: 64
+      Gyarados: 64
+      Lanturn: 64
+      Octillery: 64
+      Barraskewda: 40
+      Clawitzer: 39
+      Sharpedo: 39
+      Lumineon: 39
+      Jellicent: 32
+      Vaporeon: 32
+      Wailord: 25
     elusive:
-      Corsola: 82
-      Qwilfish: 62
-      Alomomola: 29
-      Wishiwashi: 21
-      Lapras: 21
-      Mantine: 21
-      Kingdra: 21
-      Relicanth: 21
-      Vivillon: 21
+      Cramorant: 150
+      Corsola: 77
+      Qwilfish: 58
+      Alomomola: 27
+      Wishiwashi: 20
+      Lapras: 20
+      Mantine: 20
+      Kingdra: 20
+      Relicanth: 20
+      Vivillon: 20
       Blastoise: 8
       Dragonite: 8
     prized:
@@ -195,88 +198,94 @@ water:
   day: *water-morning
   evening:
     base:
-      Horsea: 4807
-      Dratini: 481
+      Horsea: 4523
+      Dratini: 453
     uncommon:
-      Tentacool: 319
-      Magikarp: 319
-      Frillish: 213
-      Carvanha: 213
-      Clamperl: 213
-      Seel: 213
-      Shellder: 213
-      Chinchou: 213
-      Remoraid: 213
-      Finneon: 213
-      Wailmer: 160
+      Arrokuda: 400
+      Tentacool: 300
+      Magikarp: 300
+      Frillish: 200
+      Carvanha: 200
+      Clamperl: 200
+      Seel: 200
+      Shellder: 200
+      Chinchou: 200
+      Remoraid: 200
+      Finneon: 200
+      Wailmer: 151
     rare:
-      Seadra: 1136
-      Dragonair: 114
+      Seadra: 1069
+      Dragonair: 107
     scarce:
-      Tentacruel: 73
-      Dewgong: 73
-      Cloyster: 73
-      Gyarados: 73
-      Lanturn: 73
-      Octillery: 73
-      Sharpedo: 44
-      Lumineon: 44
-      Jellicent: 36
-      Vaporeon: 36
-      Wailord: 29
+      Tentacruel: 69
+      Dewgong: 69
+      Cloyster: 69
+      Gyarados: 69
+      Lanturn: 69
+      Octillery: 69
+      Sharpedo: 41
+      Lumineon: 41
+      Barraskewda: 40
+      Jellicent: 34
+      Vaporeon: 34
+      Wailord: 27
     elusive:
-      Corsola: 98
-      Qwilfish: 73
-      Alomomola: 34
-      Wishiwashi: 24
-      Lapras: 24
-      Mantine: 24
-      Kingdra: 24
-      Dragonite: 10
+      Cramorant: 150
+      Corsola: 92
+      Qwilfish: 69
+      Alomomola: 32
+      Wishiwashi: 23
+      Lapras: 23
+      Mantine: 23
+      Kingdra: 23
+      Dragonite: 9
     prized:
       Mantyke: prized
     special:
       Nihilego: 10
   night:
     base:
-      Horsea: 4807
-      Dratini: 481
+      Horsea: 4523
+      Dratini: 453
     uncommon:
-      Tentacool: 319
-      Magikarp: 319
-      Frillish: 213
-      Carvanha: 213
-      Clamperl: 213
-      Seel: 213
-      Shellder: 213
-      Chinchou: 213
-      Remoraid: 213
-      Finneon: 213
-      Wailmer: 160
+      Arrokuda: 400
+      Tentacool: 300
+      Magikarp: 300
+      Frillish: 200
+      Carvanha: 200
+      Clamperl: 200
+      Seel: 200
+      Shellder: 200
+      Chinchou: 200
+      Remoraid: 200
+      Finneon: 200
+      Wailmer: 151
     rare:
-      Seadra: 1136
-      Dragonair: 114
+      Seadra: 1069
+      Dragonair: 107
     scarce:
-      Tentacruel: 73
-      Dewgong: 73
-      Cloyster: 73
-      Gyarados: 73
-      Lanturn: 73
-      Octillery: 73
-      Sharpedo: 44
-      Lumineon: 44
-      Jellicent: 36
-      Vaporeon: 36
-      Wailord: 29
+      Tentacruel: 69
+      Dewgong: 69
+      Cloyster: 69
+      Gyarados: 69
+      Lanturn: 69
+      Octillery: 69
+      Sharpedo: 41
+      Lumineon: 41
+      Barraskewda: 40
+      Jellicent: 34
+      Vaporeon: 34
+      Wailord: 27
     elusive:
-      Corsola: 98
-      Qwilfish: 73
-      Alomomola: 34
-      Wishiwashi: 24
-      Lapras: 24
-      Mantine: 24
-      Kingdra: 24
-      Dragonite: 10
+      Cramorant: 150
+      Corsola: 92
+      Qwilfish: 69
+      Alomomola: 32
+      Wishiwashi: 23
+      Lapras: 23
+      Mantine: 23
+      Kingdra: 23
+      Dragonite: 9
     prized:
       Mantyke: prized
     special:

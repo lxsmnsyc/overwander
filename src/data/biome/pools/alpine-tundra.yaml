@@ -90,37 +90,39 @@ land:
       Arceus: 10
   evening:
     base:
-      Swinub: 4696
-      Bagon: 564
+      Swinub: 4588
+      Bagon: 551
     uncommon:
-      Bergmite: 442
-      VulpixAlola: 405
-      SandshrewAlola: 405
-      Snorunt: 405
-      Bronzor: 368
-      Snover: 368
-      Sneasel: 92
+      Bergmite: 432
+      VulpixAlola: 396
+      SandshrewAlola: 396
+      Snorunt: 396
+      Bronzor: 360
+      Snover: 360
+      Snom: 200
+      Sneasel: 90
     rare:
-      Piloswine: 1036
-      Shelgon: 207
+      Piloswine: 1012
+      Shelgon: 202
     scarce:
-      NinetalesAlola: 69
-      SandslashAlola: 69
-      Avalugg: 69
-      Glalie: 69
-      Bronzong: 69
-      Abomasnow: 69
-      Froslass: 69
-      Weavile: 69
-      Glaceon: 69
-      Crabominable: 63
+      NinetalesAlola: 67
+      SandslashAlola: 67
+      Avalugg: 67
+      Glalie: 67
+      Bronzong: 67
+      Abomasnow: 67
+      Froslass: 67
+      Weavile: 67
+      Glaceon: 67
+      Crabominable: 62
+      Frosmoth: 30
     elusive:
-      Drampa: 50
-      Minior: 50
-      Delibird: 50
-      Absol: 50
-      Mamoswine: 50
-      Cryogonal: 40
+      Drampa: 49
+      Minior: 49
+      Delibird: 49
+      Absol: 49
+      Mamoswine: 49
+      Cryogonal: 39
       Salamence: 20
     prized:
       Unown: forms
@@ -131,35 +133,37 @@ land:
       Arceus: 10
   night:
     base:
-      Swinub: 2965
+      Swinub: 2897
     uncommon:
-      Bergmite: 656
-      VulpixAlola: 601
-      SandshrewAlola: 601
-      Snorunt: 601
-      Bronzor: 547
-      Snover: 547
-      Sneasel: 137
+      Bergmite: 641
+      VulpixAlola: 587
+      SandshrewAlola: 587
+      Snorunt: 587
+      Bronzor: 534
+      Snover: 534
+      Snom: 200
+      Sneasel: 134
     rare:
-      Piloswine: 1847
+      Piloswine: 1804
     scarce:
-      NinetalesAlola: 102
-      SandslashAlola: 102
-      Avalugg: 102
-      Glalie: 102
-      Bronzong: 102
-      Abomasnow: 102
-      Froslass: 102
-      Weavile: 102
-      Glaceon: 102
-      Crabominable: 93
+      NinetalesAlola: 100
+      SandslashAlola: 100
+      Avalugg: 100
+      Glalie: 100
+      Bronzong: 100
+      Abomasnow: 100
+      Froslass: 100
+      Weavile: 100
+      Glaceon: 100
+      Crabominable: 91
+      Frosmoth: 30
     elusive:
-      Drampa: 80
-      Minior: 80
-      Delibird: 80
-      Absol: 80
-      Mamoswine: 80
-      Cryogonal: 64
+      Drampa: 78
+      Minior: 78
+      Delibird: 78
+      Absol: 78
+      Mamoswine: 78
+      Cryogonal: 63
     prized:
       Unown: forms
     special:

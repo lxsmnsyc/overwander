@@ -1,51 +1,53 @@
 land:
   morning:
     base:
-      Sandile: 1787
-      Scatterbug: 1715
-      Trapinch: 1429
-      Tepig: 214
-      Gible: 143
+      Sandile: 1727
+      Scatterbug: 1657
+      Trapinch: 1381
+      Tepig: 207
+      Gible: 138
     uncommon:
-      Helioptile: 262
-      Sandygast: 240
-      Dwebble: 240
-      Darumaka: 240
-      Baltoy: 240
-      Cacnea: 218
-      Diglett: 218
-      BurmySandy: 218
-      Hippopotas: 218
-      Vullaby: 175
-      Drilbur: 175
-      Magmar: 55
+      Silicobra: 300
+      Helioptile: 253
+      Sandygast: 232
+      Dwebble: 232
+      Darumaka: 232
+      Baltoy: 232
+      Cacnea: 211
+      Diglett: 211
+      BurmySandy: 211
+      Hippopotas: 211
+      Vullaby: 169
+      Drilbur: 169
+      Magmar: 53
     rare:
-      Krokorok: 403
-      Vibrava: 403
-      Spewpa: 323
-      Pignite: 81
-      Gabite: 40
+      Krokorok: 389
+      Vibrava: 389
+      Spewpa: 312
+      Pignite: 78
+      Gabite: 39
     scarce:
-      Dugtrio: 87
-      Excadrill: 69
-      Crustle: 61
-      Darmanitan: 61
-      Palossand: 52
-      Heliolisk: 52
-      Mandibuzz: 52
-      Claydol: 52
-      Hippowdon: 52
-      Magmortar: 52
-      WormadamSandy: 35
+      Dugtrio: 84
+      Excadrill: 67
+      Crustle: 59
+      Darmanitan: 59
+      Palossand: 50
+      Heliolisk: 50
+      Mandibuzz: 50
+      Claydol: 50
+      Hippowdon: 50
+      Magmortar: 50
+      Sandaconda: 35
+      WormadamSandy: 34
     elusive:
-      Maractus: 66
-      Sigilyph: 49
-      Vivillon: 41
-      Krookodile: 41
-      Flygon: 41
-      Solrock: 41
-      Emboar: 16
-      Garchomp: 16
+      Maractus: 64
+      Sigilyph: 47
+      Vivillon: 40
+      Krookodile: 40
+      Flygon: 40
+      Solrock: 40
+      Emboar: 15
+      Garchomp: 15
     prized:
       Unown: forms
       Magby: prized
@@ -60,55 +62,57 @@ land:
       Genesect: 10
   day:
     base:
-      Sandile: 1406
-      Scatterbug: 1350
-      Rhyhorn: 1125
-      Trapinch: 1125
-      Tepig: 169
-      Gible: 113
+      Sandile: 1359
+      Scatterbug: 1305
+      Rhyhorn: 1087
+      Trapinch: 1087
+      Tepig: 163
+      Gible: 109
     uncommon:
-      Helioptile: 241
-      Sandygast: 221
-      Dwebble: 221
-      Darumaka: 221
-      Baltoy: 221
-      Cacnea: 201
-      Sandshrew: 201
-      Diglett: 201
-      BurmySandy: 201
-      Hippopotas: 201
-      Vullaby: 161
-      Drilbur: 161
-      Magmar: 50
+      Silicobra: 300
+      Helioptile: 233
+      Sandygast: 214
+      Dwebble: 214
+      Darumaka: 214
+      Baltoy: 214
+      Cacnea: 194
+      Sandshrew: 194
+      Diglett: 194
+      BurmySandy: 194
+      Hippopotas: 194
+      Vullaby: 156
+      Drilbur: 156
+      Magmar: 48
     rare:
-      Krokorok: 305
-      Vibrava: 305
-      Rhydon: 305
-      Spewpa: 244
-      Pignite: 61
-      Gabite: 30
+      Krokorok: 295
+      Vibrava: 295
+      Rhydon: 295
+      Spewpa: 236
+      Pignite: 59
+      Gabite: 29
     scarce:
-      Sandslash: 76
-      Dugtrio: 76
-      Excadrill: 61
-      Crustle: 53
-      Darmanitan: 53
-      Palossand: 46
-      Heliolisk: 46
-      Mandibuzz: 46
-      Claydol: 46
-      Hippowdon: 46
-      Magmortar: 46
-      WormadamSandy: 30
+      Sandslash: 73
+      Dugtrio: 73
+      Excadrill: 59
+      Crustle: 51
+      Darmanitan: 51
+      Palossand: 44
+      Heliolisk: 44
+      Mandibuzz: 44
+      Claydol: 44
+      Hippowdon: 44
+      Magmortar: 44
+      Sandaconda: 35
+      WormadamSandy: 29
     elusive:
-      Maractus: 66
-      Sigilyph: 49
-      Vivillon: 41
-      Krookodile: 41
-      Flygon: 41
-      Solrock: 41
-      Emboar: 16
-      Garchomp: 16
+      Maractus: 64
+      Sigilyph: 47
+      Vivillon: 40
+      Krookodile: 40
+      Flygon: 40
+      Solrock: 40
+      Emboar: 15
+      Garchomp: 15
     prized:
       Unown: forms
       Magby: prized

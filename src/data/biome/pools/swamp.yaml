@@ -1,58 +1,60 @@
 land:
   morning: &land-morning
     base:
-      FlabebeBlue: 2046
-      Poliwag: 1705
-      Goomy: 1024
-      Squirtle: 171
-      Totodile: 171
-      Mudkip: 171
+      FlabebeBlue: 1977
+      Poliwag: 1648
+      Goomy: 990
+      Squirtle: 165
+      Totodile: 165
+      Mudkip: 165
     uncommon:
-      Corphish: 246
-      Wooper: 246
-      Bidoof: 246
-      Surskit: 246
-      Gulpin: 217
-      Dewpider: 217
-      Ducklett: 197
-      Psyduck: 197
-      Slowpoke: 197
-      Marill: 197
-      Croagunk: 197
-      Lickitung: 49
-      Yanma: 49
+      Chewtle: 300
+      Corphish: 238
+      Wooper: 238
+      Bidoof: 238
+      Surskit: 238
+      Gulpin: 210
+      Dewpider: 210
+      Ducklett: 190
+      Psyduck: 190
+      Slowpoke: 190
+      Marill: 190
+      Croagunk: 190
+      Lickitung: 47
+      Yanma: 47
     rare:
-      FloetteBlue: 476
-      Sliggoo: 298
-      Poliwhirl: 298
-      Wartortle: 60
-      Croconaw: 60
-      Marshtomp: 60
+      FloetteBlue: 460
+      Sliggoo: 288
+      Poliwhirl: 288
+      Wartortle: 58
+      Croconaw: 58
+      Marshtomp: 58
     scarce:
-      Golduck: 63
-      Slowbro: 63
-      Masquerain: 63
-      Bibarel: 63
-      Crawdaunt: 50
-      Swalot: 44
-      Swanna: 38
-      Toxicroak: 38
-      Yanmega: 38
-      Tangrowth: 38
-      Araquanid: 38
-      Azumarill: 31
-      Slowking: 31
-      Quagsire: 31
+      Golduck: 61
+      Slowbro: 61
+      Masquerain: 61
+      Bibarel: 61
+      Crawdaunt: 48
+      Swalot: 43
+      Swanna: 37
+      Toxicroak: 37
+      Yanmega: 37
+      Tangrowth: 37
+      Araquanid: 37
+      Drednaw: 35
+      Azumarill: 30
+      Slowking: 30
+      Quagsire: 30
     elusive:
-      Stunfisk: 48
-      Carnivine: 48
-      FlorgesBlue: 40
-      Poliwrath: 40
-      Farfetchd: 40
-      Politoed: 40
-      Goodra: 24
-      Feraligatr: 16
-      Swampert: 16
+      Stunfisk: 46
+      Carnivine: 46
+      FlorgesBlue: 39
+      Poliwrath: 39
+      Farfetchd: 39
+      Politoed: 39
+      Goodra: 23
+      Feraligatr: 15
+      Swampert: 15
     prized:
       Unown: forms
       Azurill: prized
@@ -60,92 +62,100 @@ land:
   day: *land-morning
   evening:
     base:
-      Tympole: 2241
-      Poliwag: 1793
-      Goomy: 1076
-      Froakie: 179
+      Tympole: 2155
+      Poliwag: 1724
+      Goomy: 1034
+      Froakie: 172
     uncommon:
-      Corphish: 340
-      Wooper: 340
-      Bidoof: 340
-      Gulpin: 299
-      Dewpider: 299
-      Shelmet: 272
-      Marill: 272
-      Croagunk: 272
-      Yanma: 68
+      Corphish: 327
+      Wooper: 327
+      Bidoof: 327
+      Chewtle: 300
+      Gulpin: 287
+      Dewpider: 287
+      Shelmet: 262
+      Marill: 262
+      Croagunk: 262
+      Yanma: 65
     rare:
-      Palpitoad: 568
-      Sliggoo: 284
-      Poliwhirl: 284
-      Frogadier: 114
+      Palpitoad: 546
+      Sliggoo: 273
+      Poliwhirl: 273
+      Frogadier: 110
     scarce:
-      Bibarel: 98
-      Crawdaunt: 78
-      Swalot: 68
-      Toxicroak: 59
-      Yanmega: 59
-      Tangrowth: 59
-      Araquanid: 59
-      Accelgor: 49
-      Azumarill: 49
-      Quagsire: 49
+      Bibarel: 94
+      Crawdaunt: 75
+      Swalot: 65
+      Toxicroak: 57
+      Yanmega: 57
+      Tangrowth: 57
+      Araquanid: 57
+      Accelgor: 47
+      Azumarill: 47
+      Quagsire: 47
+      Drednaw: 35
+      Toxtricity: 25
+      ToxtricityLowKey: 25
     elusive:
-      Stunfisk: 59
-      Carnivine: 59
-      Seismitoad: 49
-      Poliwrath: 49
-      Politoed: 49
-      Goodra: 29
-      Greninja: 20
+      Stunfisk: 57
+      Carnivine: 57
+      Seismitoad: 47
+      Poliwrath: 47
+      Politoed: 47
+      Goodra: 28
+      Greninja: 19
     prized:
       Unown: forms
       Azurill: prized
     special: {}
   night:
     base:
-      Tympole: 2242
-      Poliwag: 1793
-      Goomy: 1076
-      Froakie: 179
+      Tympole: 2156
+      Poliwag: 1724
+      Goomy: 1034
+      Froakie: 172
     uncommon:
-      Corphish: 279
-      Wooper: 279
-      Bidoof: 279
-      Gulpin: 246
-      Dewpider: 246
-      Shelmet: 223
-      Grimer: 223
-      Koffing: 223
-      Marill: 223
-      Croagunk: 223
-      Yanma: 56
+      Chewtle: 300
+      Corphish: 268
+      Wooper: 268
+      Bidoof: 268
+      Gulpin: 237
+      Dewpider: 237
+      Shelmet: 214
+      Grimer: 214
+      Koffing: 214
+      Marill: 214
+      Croagunk: 214
+      Yanma: 54
     rare:
-      Palpitoad: 568
-      Sliggoo: 284
-      Poliwhirl: 284
-      Frogadier: 114
+      Palpitoad: 546
+      Sliggoo: 273
+      Poliwhirl: 273
+      Frogadier: 110
     scarce:
-      Muk: 74
-      Weezing: 74
-      Bibarel: 74
-      Crawdaunt: 60
-      Swalot: 52
-      Toxicroak: 45
-      Yanmega: 45
-      Tangrowth: 45
-      Araquanid: 45
-      Accelgor: 37
-      Azumarill: 37
-      Quagsire: 37
+      Muk: 71
+      Weezing: 71
+      Bibarel: 71
+      Crawdaunt: 58
+      Swalot: 50
+      Toxicroak: 43
+      Yanmega: 43
+      Tangrowth: 43
+      Araquanid: 43
+      Accelgor: 36
+      Azumarill: 36
+      Quagsire: 36
+      Drednaw: 35
+      Toxtricity: 25
+      ToxtricityLowKey: 25
     elusive:
-      Stunfisk: 59
-      Carnivine: 59
-      Seismitoad: 49
-      Poliwrath: 49
-      Politoed: 49
-      Goodra: 29
-      Greninja: 20
+      Stunfisk: 57
+      Carnivine: 57
+      Seismitoad: 47
+      Poliwrath: 47
+      Politoed: 47
+      Goodra: 28
+      Greninja: 19
     prized:
       Unown: forms
       Azurill: prized
@@ -154,133 +164,139 @@ land:
 water:
   morning: &water-morning
     base:
-      Poliwag: 4077
-      Squirtle: 408
-      Totodile: 408
-      Mudkip: 408
+      Poliwag: 3940
+      Squirtle: 394
+      Totodile: 394
+      Mudkip: 394
     uncommon:
-      Magikarp: 258
-      Barboach: 214
-      Corphish: 214
-      Wooper: 214
-      Surskit: 214
-      Bidoof: 214
-      Dewpider: 188
-      Psyduck: 171
-      Slowpoke: 171
-      Goldeen: 171
-      Marill: 171
-      Ducklett: 171
-      Feebas: 86
-      Yanma: 43
+      Chewtle: 300
+      Magikarp: 249
+      Barboach: 207
+      Corphish: 207
+      Wooper: 207
+      Surskit: 207
+      Bidoof: 207
+      Dewpider: 182
+      Psyduck: 165
+      Slowpoke: 165
+      Goldeen: 165
+      Marill: 165
+      Ducklett: 165
+      Feebas: 83
+      Yanma: 42
     rare:
-      Poliwhirl: 783
-      Wartortle: 156
-      Croconaw: 156
-      Marshtomp: 156
+      Poliwhirl: 757
+      Wartortle: 151
+      Croconaw: 151
+      Marshtomp: 151
     scarce:
-      Golduck: 63
-      Slowbro: 63
-      Seaking: 63
-      Masquerain: 63
-      Bibarel: 63
-      Whiscash: 51
-      Crawdaunt: 51
-      Araquanid: 38
-      Yanmega: 38
-      Swanna: 38
-      Azumarill: 32
-      Slowking: 32
-      Quagsire: 32
+      Golduck: 61
+      Slowbro: 61
+      Seaking: 61
+      Masquerain: 61
+      Bibarel: 61
+      Whiscash: 49
+      Crawdaunt: 49
+      Araquanid: 37
+      Yanmega: 37
+      Swanna: 37
+      Drednaw: 35
+      Azumarill: 31
+      Slowking: 31
+      Quagsire: 31
+    elusive:
+      BasculinBlue: 43
+      Basculin: 43
+      Stunfisk: 43
+      Carnivine: 43
+      Poliwrath: 35
+      Politoed: 35
+      Farfetchd: 35
+      Feraligatr: 14
+      Swampert: 14
+    special: {}
+  day: *water-morning
+  evening:
+    base:
+      Tympole: 2725
+      Poliwag: 2179
+      Froakie: 217
+    uncommon:
+      Magikarp: 351
+      Chewtle: 300
+      Barboach: 293
+      Corphish: 293
+      Wooper: 293
+      Bidoof: 293
+      Dewpider: 258
+      Goldeen: 235
+      Marill: 235
+      Feebas: 117
+      Yanma: 58
+    rare:
+      Palpitoad: 712
+      Poliwhirl: 357
+      Frogadier: 142
+    scarce:
+      Seaking: 104
+      Bibarel: 104
+      Whiscash: 83
+      Crawdaunt: 83
+      Araquanid: 63
+      Yanmega: 63
+      Azumarill: 52
+      Quagsire: 52
+      Drednaw: 35
     elusive:
       BasculinBlue: 44
       Basculin: 44
       Stunfisk: 44
       Carnivine: 44
-      Poliwrath: 36
-      Politoed: 36
-      Farfetchd: 36
-      Feraligatr: 15
-      Swampert: 15
-    special: {}
-  day: *water-morning
-  evening:
-    base:
-      Tympole: 2819
-      Poliwag: 2255
-      Froakie: 225
-    uncommon:
-      Magikarp: 363
-      Barboach: 303
-      Corphish: 303
-      Wooper: 303
-      Bidoof: 303
-      Dewpider: 267
-      Goldeen: 243
-      Marill: 243
-      Feebas: 121
-      Yanma: 60
-    rare:
-      Palpitoad: 737
-      Poliwhirl: 369
-      Frogadier: 147
-    scarce:
-      Seaking: 108
-      Bibarel: 108
-      Whiscash: 86
-      Crawdaunt: 86
-      Araquanid: 65
-      Yanmega: 65
-      Azumarill: 54
-      Quagsire: 54
-    elusive:
-      BasculinBlue: 46
-      Basculin: 46
-      Stunfisk: 46
-      Carnivine: 46
-      Poliwrath: 38
-      Politoed: 38
-      Seismitoad: 38
-      Greninja: 15
+      Poliwrath: 37
+      Politoed: 37
+      Seismitoad: 37
+      Greninja: 14
     special: {}
   night:
     base:
-      Tympole: 2820
-      Poliwag: 2256
-      Froakie: 226
+      Tympole: 2726
+      Poliwag: 2180
+      Froakie: 218
     uncommon:
-      Magikarp: 331
-      Barboach: 276
-      Corphish: 276
-      Wooper: 276
-      Bidoof: 276
-      Dewpider: 243
-      Goldeen: 221
-      Marill: 221
-      Koffing: 221
-      Feebas: 110
-      Yanma: 55
+      Magikarp: 320
+      Chewtle: 300
+      Barboach: 267
+      Corphish: 267
+      Wooper: 267
+      Bidoof: 267
+      Dewpider: 235
+      Goldeen: 214
+      Marill: 214
+      Koffing: 214
+      Feebas: 106
+      Yanma: 53
     rare:
-      Palpitoad: 737
-      Poliwhirl: 369
-      Frogadier: 147
+      Palpitoad: 712
+      Poliwhirl: 357
+      Frogadier: 142
     scarce:
-      Seaking: 92
-      Bibarel: 92
-      Weezing: 92
-      Whiscash: 74
-      Crawdaunt: 74
-      Araquanid: 55
-      Yanmega: 55
-      Azumarill: 46
-      Quagsire: 46
+      Seaking: 89
+      Bibarel: 89
+      Weezing: 89
+      Whiscash: 72
+      Crawdaunt: 72
+      Araquanid: 53
+      Yanmega: 53
+      Azumarill: 44
+      Quagsire: 44
+      Drednaw: 35
     elusive:
-      BasculinBlue: 46
-      Basculin: 46
-      Stunfisk: 46
-      Carnivine: 46
-      Poliwrath: 38
-      Politoed: 38
-      Seismitoad: 38
-      Greninja: 15
+      BasculinBlue: 44
+      Basculin: 44
+      Stunfisk: 44
+      Carnivine: 44
+      Poliwrath: 37
+      Politoed: 37
+      Seismitoad: 37
+      Greninja: 14
     special: {}

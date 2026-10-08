@@ -52,77 +52,81 @@ land:
 water:
   morning: &water-morning
     base:
-      Horsea: 4601
-      Oshawott: 690
+      Horsea: 4449
+      Oshawott: 667
     uncommon:
-      Magikarp: 301
-      Shellos: 251
-      Wingull: 251
-      Buizel: 251
-      Skrelp: 241
-      Tentacool: 201
-      Chinchou: 201
-      Remoraid: 201
-      Finneon: 201
-      Krabby: 201
-      Seel: 201
+      Arrokuda: 300
+      Magikarp: 291
+      Shellos: 243
+      Wingull: 243
+      Buizel: 243
+      Skrelp: 233
+      Tentacool: 194
+      Chinchou: 194
+      Remoraid: 194
+      Finneon: 194
+      Krabby: 194
+      Seel: 194
     rare:
-      Seadra: 1043
-      Dewott: 208
+      Seadra: 1009
+      Dewott: 201
     scarce:
-      Tentacruel: 67
-      Lanturn: 67
-      Octillery: 67
-      Kingler: 67
-      Dewgong: 67
-      Gastrodon: 67
-      Pelipper: 67
-      Floatzel: 54
-      Dragalge: 40
-      Lumineon: 40
-      Milotic: 20
+      Tentacruel: 65
+      Lanturn: 65
+      Octillery: 65
+      Kingler: 65
+      Dewgong: 65
+      Gastrodon: 65
+      Pelipper: 65
+      Floatzel: 52
+      Dragalge: 39
+      Lumineon: 39
+      Barraskewda: 30
+      Milotic: 19
     elusive:
-      Qwilfish: 174
-      Bruxish: 58
-      Mantine: 58
-      Samurott: 23
+      Qwilfish: 168
+      Bruxish: 56
+      Mantine: 56
+      Samurott: 22
     prized:
       Mantyke: prized
     special: {}
   day: *water-morning
   evening: &water-evening
     base:
-      Horsea: 2994
+      Horsea: 2895
     uncommon:
-      Magikarp: 458
-      Shellos: 382
-      Buizel: 382
-      Inkay: 367
-      Tentacool: 306
-      Staryu: 306
-      Chinchou: 306
-      Remoraid: 306
-      Finneon: 306
-      Krabby: 306
-      Seel: 306
+      Magikarp: 443
+      Shellos: 369
+      Buizel: 369
+      Inkay: 355
+      Arrokuda: 300
+      Tentacool: 296
+      Staryu: 296
+      Chinchou: 296
+      Remoraid: 296
+      Finneon: 296
+      Krabby: 296
+      Seel: 296
     rare:
-      Seadra: 1863
+      Seadra: 1801
     scarce:
-      Tentacruel: 100
-      Starmie: 100
-      Lanturn: 100
-      Octillery: 100
-      Kingler: 100
-      Dewgong: 100
-      Gastrodon: 100
-      Floatzel: 80
-      Malamar: 60
-      Lumineon: 60
-      Milotic: 30
+      Tentacruel: 97
+      Starmie: 97
+      Lanturn: 97
+      Octillery: 97
+      Kingler: 97
+      Dewgong: 97
+      Gastrodon: 97
+      Floatzel: 77
+      Malamar: 58
+      Lumineon: 58
+      Barraskewda: 30
+      Milotic: 29
     elusive:
-      Qwilfish: 280
-      Bruxish: 94
-      Mantine: 94
+      Qwilfish: 271
+      Bruxish: 91
+      Mantine: 91
     prized:
       Mantyke: prized
     special: {}

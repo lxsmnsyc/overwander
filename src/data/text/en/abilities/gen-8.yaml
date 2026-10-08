@@ -55,3 +55,73 @@ HungerSwitch:
 Stalwart:
   name: Stalwart
   description: Its moves land on whoever it aimed at, whatever draws attacks away.
+
+# Galarian Meowth
+SteelySpirit:
+  name: Steely Spirit
+  description: Its team's Steel moves hit 1.5x, its own included.
+
+# Galarian Ponyta
+PastelVeil:
+  name: Pastel Veil
+  description: It and its teammates cannot be poisoned, and a poisoned teammate is cured when it enters.
+
+# Galarian Slowpoke
+QuickDraw:
+  name: Quick Draw
+  description: Its damaging moves have a 30% chance to go off with no wind-up.
+
+# Galarian Slowking
+CuriousMedicine:
+  name: Curious Medicine
+  description: When it enters, its teammates' stat stages are reset to 0.
+
+# Galarian Mr. Mime
+ScreenCleaner:
+  name: Screen Cleaner
+  description: When it enters, Reflect, Light Screen and Aurora Veil come down on both sides.
+
+# Galarian Darmanitan
+GorillaTactics:
+  name: Gorilla Tactics
+  description: 1.5x Attack, but it is locked into the first move it uses until it leaves the field.
+
+# Galarian Yamask
+WanderingSpirit:
+  name: Wandering Spirit
+  description: A contact move that hits it trades this ability for one of the attacker's.
+
+# Zacian
+IntrepidSword:
+  name: Intrepid Sword
+  description: +1 Attack the first time it enters a battle.
+
+# Zamazenta
+DauntlessShield:
+  name: Dauntless Shield
+  description: +1 Defense the first time it enters a battle.
+
+# Kubfu
+UnseenFist:
+  name: Unseen Fist
+  description: Its contact moves go through Protect, Detect and the other guards, breaking them.
+
+# Regieleki
+Transistor:
+  name: Transistor
+  description: Its Electric moves hit 1.3x.
+
+# Regidrago
+DragonsMaw:
+  name: Dragon's Maw
+  description: Its Dragon moves hit 1.5x.
+
+# Glastrier
+ChillingNeigh:
+  name: Chilling Neigh
+  description: +1 Attack whenever it knocks something out.
+
+# Spectrier
+GrimNeigh:
+  name: Grim Neigh
+  description: +1 Special Attack whenever it knocks something out.

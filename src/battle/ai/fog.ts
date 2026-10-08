@@ -16,8 +16,8 @@ interface Revealed {
   moves: Set<Moves>;
 }
 
-/** Abilities nobody has to see cue to know about: a raid boss is plainly one */
-const ALWAYS_KNOWN = new Set<Abilities>([Abilities.Boss]);
+/** Abilities nobody has to see cue to know about: a raid boss, or the ally a Totem calls, is plainly one */
+const ALWAYS_KNOWN = new Set<Abilities>([Abilities.Boss, Abilities.TotemAlly]);
 
 /** Moves every unit carries, so knowing a foe has them gives nothing away */
 const ALWAYS_CARRIED = new Set<Moves>([Moves.Attack, Moves.Struggle]);

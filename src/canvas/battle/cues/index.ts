@@ -19,6 +19,7 @@ const ABILITY_CUES: Partial<Record<Abilities, CueKind>> = {
   [Abilities.EffectSpore]: 'Ail',
   [Abilities.CuteCharm]: 'Ail',
   [Abilities.RoughSkin]: 'Barb',
+  [Abilities.GulpMissile]: 'Barb',
 
   // Something rose
   [Abilities.AngerPoint]: 'Rise',
@@ -52,6 +53,7 @@ const ABILITY_CUES: Partial<Record<Abilities, CueKind>> = {
   [Abilities.Frisk]: 'Notice',
   [Abilities.Trace]: 'Notice',
   [Abilities.Pickup]: 'Notice',
+  [Abilities.BallFetch]: 'Notice',
   [Abilities.Harvest]: 'Notice',
 
   // Something weighs on the other side of the field

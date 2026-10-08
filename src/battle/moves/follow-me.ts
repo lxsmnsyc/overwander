@@ -7,6 +7,7 @@ import { Statuses } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
 import type Battle from '../core';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
+import { isCentered } from '../status/centered';
 import type Unit from '../unit';
 
 /**
@@ -53,9 +54,34 @@ function aimsPast(caster: Unit, centre: Unit): boolean {
 }
 
 export default function setupFollowMe(battle: Battle): void {
+  // The centre is Follow Me's own answer to who a move lands on, so
+  // anything that keeps a move on its aim ends the question first
+  battle.on(BattleEvents.CheckUnitMoveRedirect, EventPriority.Exact, (event) => {
+    const caster = event.source;
+    const aimed = event.redirect;
+
+    if (aimed.type !== MoveTargetType.Unit || aimed.unit.team === caster.team) {
+      return;
+    }
+
+    const centre = centreOf(aimed.unit.team);
+
+    // Snipe Shot is aimed past whatever is calling for attention
+    if (
+      centre != null &&
+      centre !== aimed.unit &&
+      event.move !== Moves.SnipeShot &&
+      isSingleTarget(event.move) &&
+      !aimsPast(caster, centre)
+    ) {
+      event.redirect = { type: MoveTargetType.Unit, unit: centre };
+    }
+  });
+
   /**
    * Turns a cast in progress onto the centre, if it is aimed at
-   * somebody else on that centre's side
+   * somebody else on that centre's side. A rod's pull waits for the
+   * landing, so only a centre turns the cast
    */
   function redirect(caster: Unit): void {
     const casting = caster.casting;
@@ -64,21 +90,14 @@ export default function setupFollowMe(battle: Battle): void {
       return;
     }
 
-    const aimed = casting.target.unit;
+    const drawn = caster.checkMoveRedirect(casting.move, casting.target);
 
-    // Snipe Shot is aimed past whatever is calling for attention
     if (
-      aimed.team === caster.team ||
-      !isSingleTarget(casting.move) ||
-      casting.move === Moves.SnipeShot
+      drawn.type === MoveTargetType.Unit &&
+      drawn.unit !== casting.target.unit &&
+      isCentered(drawn.unit)
     ) {
-      return;
-    }
-
-    const centre = centreOf(aimed.team);
-
-    if (centre != null && centre !== aimed && !aimsPast(caster, centre)) {
-      caster.updateCast({ target: { type: MoveTargetType.Unit, unit: centre } });
+      caster.updateCast({ target: drawn });
     }
   }
 

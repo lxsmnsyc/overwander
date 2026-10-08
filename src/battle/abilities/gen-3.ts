@@ -15,6 +15,7 @@ import type Unit from '../unit';
 import {
   createAbility,
   createAbsorbStageAbility,
+  createBatteryAbility,
   createClearBodyAbility,
   createCloudNineAbility,
   createHugePowerAbility,
@@ -220,20 +221,7 @@ const setupAbilities = [
    * themselves
    * https://bulbapedia.bulbagarden.net/wiki/Battery_(Ability)
    */
-  createAbility(Abilities.Battery, (battle) =>
-    battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
-      if (event.power == null || getMoveData(event.move).category !== MoveCategories.Special) {
-        return;
-      }
-
-      for (const ally of event.source.team.units) {
-        if (ally !== event.source && ally.alive && ally.hasAbility(Abilities.Battery)) {
-          event.power *= BATTERY_BOOST;
-          return;
-        }
-      }
-    }),
-  ),
+  createBatteryAbility(Abilities.Battery, MoveCategories.Special, BATTERY_BOOST),
 
   // https://bulbapedia.bulbagarden.net/wiki/Heavy_Metal_(Ability)
   createWeightAbility(Abilities.HeavyMetal, 2),

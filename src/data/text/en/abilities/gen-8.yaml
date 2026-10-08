@@ -1,0 +1,57 @@
+# What Galar's routes brought, described in this engine's terms rather
+# than the mainline's
+
+# Scorbunny
+Libero:
+  name: Libero
+  description: Becomes the type of each move it uses, just before the move goes off.
+
+# Gossifleur
+CottonDown:
+  name: Cotton Down
+  description: Whenever a damaging move lands on it, every other pokemon on the field loses 1 stage of Speed.
+
+# Yamper
+BallFetch:
+  name: Ball Fetch
+  description: The first item anybody else throws with Fling in a fight, it catches and holds, if it has a hand free.
+
+# Cramorant
+GulpMissile:
+  name: Gulp Missile
+  description: Surf or Dive brings it back up with a catch, which it spits at whoever next hits it for 1/4 of their HP. Caught above 1/2 HP it also costs them 1 stage of Defense, and at or below it paralyses them.
+
+# Arrokuda
+PropellerTail:
+  name: Propeller Tail
+  description: Its moves land on whoever it aimed at, whatever draws attacks away.
+
+# Toxtricity
+PunkRock:
+  name: Punk Rock
+  description: Its sound moves hit 1.3x, and sound moves hit it at 0.5x.
+
+# Snom
+IceScales:
+  name: Ice Scales
+  description: Special moves hit it at 0.5x.
+
+# Stonjourner
+PowerSpot:
+  name: Power Spot
+  description: Its teammates’ moves hit 1.3x.
+
+# Eiscue
+IceFace:
+  name: Ice Face
+  description: The first physical move to hit it deals no damage and breaks the ice, leaving a faster, frailer face. Hail or snow freezes it back over.
+
+# Morpeko
+HungerSwitch:
+  name: Hunger Switch
+  description: Each time it acts it swings between Full Belly and Hangry Mode, which turns its Aura Wheel between Electric and Dark.
+
+# Duraludon
+Stalwart:
+  name: Stalwart
+  description: Its moves land on whoever it aimed at, whatever draws attacks away.

@@ -218,13 +218,13 @@ FullBelly:
   description: It heals 1/16 of its HP every time it acts, and its cast times are 25% longer.
 Frostwing:
   name: Frostwing
-  description: Every enemy loses a stage of Speed as it arrives on the field.
+  description: Every enemy loses a stage of Speed as it arrives on the field. Against a Glarewing holder neither wingbeat lands.
 Stormwing:
   name: Stormwing
-  description: Every enemy loses a stage of Special Defense as it arrives on the field.
+  description: Every enemy loses a stage of Special Defense as it arrives on the field. Against a Strikewing holder neither wingbeat lands.
 Emberwing:
   name: Emberwing
-  description: Every enemy loses a stage of Defense as it arrives on the field.
+  description: Every enemy loses a stage of Defense as it arrives on the field. Against a Wrathwing holder neither wingbeat lands.
 SereneStorm:
   name: Serene Storm
   description: Weather it calls up never clears on its own, and its party takes no damage from any weather.

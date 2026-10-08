@@ -110,7 +110,7 @@ SwornBlade:
   description: The first time it or a teammate falls below 1/2 HP, it casts Sacred Sword at whoever did it. Once per unit.
 SwornShield:
   name: Sworn Shield
-  description: The first time a teammate falls below 1/2 HP, it casts Follow Me to draw the enemy's moves off them. Once per teammate.
+  description: The first time an enemy leaves a teammate below 1/2 HP, it casts Follow Me to draw the enemy's moves off them. Once per teammate.
 DarkestDay:
   name: Darkest Day
   description: While it stands, every enemy loses 1/16 of its HP each time it acts, and it heals what they lose.

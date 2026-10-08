@@ -671,7 +671,49 @@ const TINTS: Tint[] = [
       '#ffc529': '#ffc529',
     },
   },
+  scroll(
+    'other/scroll-of-darkness',
+    'the scroll a Kubfu trains on in the Tower of Darkness',
+    // Charcoal with a pale mark, so the body still reads off the outline
+    { light: '#5a5a66', body: '#3a3a44', mark: '#c8c8d4', outline: '#141418' },
+  ),
+  scroll('other/scroll-of-waters', 'the scroll a Kubfu trains on in the Tower of Waters', {
+    light: '#62b4f6',
+    body: '#2a62b4',
+    mark: '#e6f6ff',
+    outline: '#18223a',
+  }),
 ];
+
+/**
+ * A training scroll is the rolled Gen 3 town map in a colour of its
+ * own: the gold bands and silver caps are kept, and the body and the
+ * mark on it are what say which tower it is from
+ */
+function scroll(
+  to: string,
+  why: string,
+  colours: { light: string; body: string; mark: string; outline: string },
+): Tint {
+  return {
+    from: 'key/town-map-gen3',
+    to,
+    why: `${why}, and no sheet draws one`,
+    swaps: {
+      '#303030': colours.outline,
+      '#e88828': colours.light,
+      '#906028': colours.body,
+      '#585048': colours.mark,
+      '#e8f0f8': '#e8f0f8',
+      '#98a0b8': '#98a0b8',
+      '#c8d8e8': '#c8d8e8',
+      '#908098': '#908098',
+      '#f0e028': '#f0e028',
+      '#c0b028': '#c0b028',
+      '#807828': '#807828',
+    },
+  };
+}
 
 /** The colour every Max item is marked in */
 const MAX_VIOLET = { dark: '#6a3194', mid: '#a462de', light: '#e6b4ff' };

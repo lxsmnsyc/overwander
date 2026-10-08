@@ -77,6 +77,8 @@ import tapus from './tapus';
 import lightTrio from './light-trio';
 import ultraBeasts from './ultra-beasts';
 import alolaMythicals from './alola-mythicals';
+import grookeyToSobble from './grookey-to-sobble';
+import skwovetToYamper from './skwovet-to-yamper';
 
 /**
  * The invented abilities, one per evolution family, in the order the
@@ -161,6 +163,8 @@ const setupAbilities = [
   ...emolga,
   ...tirtougaToBouffalant,
   ...forcesOfNature,
+  ...grookeyToSobble,
+  ...skwovetToYamper,
 ];
 
 /**

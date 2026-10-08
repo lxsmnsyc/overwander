@@ -898,6 +898,9 @@ describe('world', () => {
     party[1].addStatus(Statuses.Poisoned, { type: EffectType.None });
     // Confusion ends with the battle, so it is never carried out
     party[0].addStatus(Statuses.Confused, { type: EffectType.None });
+    // What a battle feat reads travels with it
+    party[1].criticals = 3;
+    party[1].taken = 49.5;
 
     const reported = collectAftermath(built, 'trainer-uid');
 
@@ -917,6 +920,8 @@ describe('world', () => {
         health: 12,
         statuses: packStatuses([Statuses.Poisoned, Statuses.Burned]),
         coins: 0,
+        criticals: 3,
+        taken: 49,
       },
     ]);
     expect(collectAftermath(built, 'other-uid')).toEqual([

@@ -9,6 +9,7 @@ import type { Items } from '../data/ids/items';
 import BattleOutcome from '../auth/battle-outcome';
 import type Families from '../data/ids/families';
 import { getSpeciesData } from '../data/species';
+import { meetsBattleFeat } from '../data/species/feats';
 import { Metric } from '../auth/quest-record';
 import { grantCandies } from './candy';
 import { getSql, tx } from './db';
@@ -295,9 +296,23 @@ export default async function recordAftermath(
         }
       }
 
+      // A feat opens the evolution it is asked for. The numbers are the
+      // client's word like the health beside them; what the server
+      // holds is that the catch fought as the species the feat is for
+      // and is still that species now
+      const species = fielded.get(target.caught)?.species;
+      const feat =
+        species === record.species &&
+        meetsBattleFeat(record.species, {
+          criticals: target.criticals ?? 0,
+          taken: target.taken ?? 0,
+          health,
+        });
+
       await updateCaughtIn(transaction, target.caught, {
         health,
         statuses,
+        ...(feat ? { canEvolve: true } : {}),
         ...(drawn == null ? {} : { moves: drawn, movePoints: points }),
         ...(taken.size > 0 ? { items: remaining } : {}),
         // A pokemon that was carried out of the fight thinks a little

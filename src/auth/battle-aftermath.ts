@@ -49,4 +49,10 @@ export default interface BattleAftermath {
    * against another player is a sketch that ends with the battle
    */
   sketched?: Moves;
+  /**
+   * The critical hits it landed and the health it took, which is what
+   * a battle feat (`BATTLE_FEATS`) is measured with
+   */
+  criticals?: number;
+  taken?: number;
 }

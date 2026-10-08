@@ -12,6 +12,7 @@ import { getNatureFactor } from '../../../data/ids/natures';
 import { EvolutionMethod, GENDER_NAMES } from '../../../data/ids/species';
 import { getLairTitle } from '../../../data/overworld/lair';
 import { type EvolutionData, SUPPORTED_METHODS, getSpeciesData } from '../../../data/species';
+import { describeFeat, featOfEvolution } from '../../../data/species/feats';
 import {
   ENCOUNTER_TYPE_NAMES,
   EncounterType,
@@ -182,6 +183,9 @@ export function describeHistory(caught: CaughtPokemon): string {
 function isMeasurableEvolution(evolution: EvolutionData): boolean {
   const { method } = evolution;
 
+  if ((method & EvolutionMethod.Special) !== 0 && featOfEvolution(evolution) == null) {
+    return false;
+  }
   return method !== 0 && (method & ~SUPPORTED_METHODS) === 0;
 }
 
@@ -326,6 +330,9 @@ export function EvolutionCondition(props: { evolution: EvolutionData }): JSX.Ele
         <Show when={has(EvolutionMethod.TimeOfDay) ? timesOf(props.evolution.time) : null}>
           {(when) => <span>at {when()}</span>}
         </Show>
+        <Show when={has(EvolutionMethod.Special) ? featOfEvolution(props.evolution) : null}>
+          {(feat) => <span>{describeFeat(feat())}</span>}
+        </Show>
       </span>
     </Show>
   );
@@ -393,6 +400,11 @@ export function describeEvolutionMethod(evolution: EvolutionData, covered = fals
   }
   if ((method & EvolutionMethod.TimeOfDay) !== 0 && evolution.time != null) {
     steps.push(`do it at ${timesOf(evolution.time).toLowerCase()}`);
+  }
+  const feat = (method & EvolutionMethod.Special) === 0 ? undefined : featOfEvolution(evolution);
+
+  if (feat != null) {
+    steps.push(describeFeat(feat));
   }
   if (steps.length === 0) {
     return 'It evolves on its own.';

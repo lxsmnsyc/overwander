@@ -283,3 +283,86 @@ describe('the party after a fight', () => {
     }
   });
 });
+
+describe('a battle feat', () => {
+  const FEAT = 'feat-mine';
+
+  /** One catch of the species, fielded alone against the usual three */
+  async function stageFeat(species: Species, recorded: Species = species): Promise<void> {
+    await sql`insert into caught ${sql({ ...caughtRow(FEAT, player.uid), species: recorded })}`;
+    await sql`
+      insert into team_snapshots (id, player, alliance, catches)
+      values (${MINE}, ${player.uid}, 0, ${jsonOf(sql, [snapshot(FEAT, species)])})
+    `;
+    await sql`
+      insert into team_snapshots (id, player, alliance, catches)
+      values (${THEIRS}, null, 1,
+              ${jsonOf(
+                sql,
+                AGAINST.map((one, at) => snapshot(`${THEIRS}-${at}`, one)),
+              )})
+    `;
+    await sql`
+      insert into battles (id, raid_id, species, outcome, started_at, limits)
+      values (${BATTLE}, null, 0, ${BattleOutcome.Unfinished}, 1000, 0)
+    `;
+    await sql`
+      insert into battle_teams (battle_id, position, snapshot_id, player)
+      values (${BATTLE}, 0, ${THEIRS}, null), (${BATTLE}, 1, ${MINE}, ${player.uid})
+    `;
+  }
+
+  /** Settle one report for the catch and read back whether it may evolve */
+  async function settle(measure: {
+    criticals?: number;
+    taken?: number;
+    health: number;
+  }): Promise<unknown> {
+    await recordAftermath(
+      player.uid,
+      BATTLE,
+      [{ caught: FEAT, items: [], statuses: 0, coins: 0, ...measure }],
+      0,
+      BattleOutcome.Won,
+    );
+    const rows = await sql`select can_evolve from caught where id = ${FEAT}`;
+
+    return rows[0]?.can_evolve;
+  }
+
+  it("opens Sirfetch'd for a Galarian Farfetch'd that landed three criticals", async () => {
+    await stageFeat(Species.FarfetchdGalar);
+
+    expect(await settle({ criticals: 3, health: 10 })).toBe(true);
+  });
+
+  it('keeps it shut for two', async () => {
+    await stageFeat(Species.FarfetchdGalar);
+
+    expect(await settle({ criticals: 2, health: 10 })).toBe(false);
+  });
+
+  it('opens Runerigus for a Galarian Yamask that took 49 and stood', async () => {
+    await stageFeat(Species.YamaskGalar);
+
+    expect(await settle({ taken: 49, health: 5 })).toBe(true);
+  });
+
+  it('keeps it shut for a Yamask carried out fainted', async () => {
+    await stageFeat(Species.YamaskGalar);
+
+    expect(await settle({ taken: 80, health: 0 })).toBe(false);
+  });
+
+  it('opens nothing for a species with no feat', async () => {
+    await stageFeat(Species.Pidgey);
+
+    expect(await settle({ criticals: 9, taken: 99, health: 10 })).toBe(false);
+  });
+
+  it('opens nothing for a catch that is no longer what fought', async () => {
+    await stageFeat(Species.FarfetchdGalar, Species.Sirfetchd);
+
+    expect(await settle({ criticals: 3, health: 10 })).toBe(false);
+  });
+});

@@ -263,7 +263,7 @@ MendingHorn:
   description: Its Fairy moves heal its worst-hurt teammate for 1/2 of the damage they deal.
 SlowVenom:
   name: Slow Venom
-  description: Each enemy is badly poisoned by the third move it lands on them.
+  description: Every third move it lands on the same enemy badly poisons them.
 LeekShield:
   name: Leek Shield
   description: Each attack it lands raises its leek as a shield, so the next blow it takes lands at 0.6x.

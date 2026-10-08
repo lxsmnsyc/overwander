@@ -155,4 +155,4 @@ TimelineSplit:
   description: The first time it drops below 1/2 HP, every stat drop on it is undone and every status cleared.
 CoralHusk:
   name: Coral Husk
-  description: When it faints, its husk stays standing for 6 seconds and draws every enemy single-target move.
+  description: When it faints, its husk stays standing for 6 seconds and draws every enemy single-target move aimed at its team, which hits nothing.

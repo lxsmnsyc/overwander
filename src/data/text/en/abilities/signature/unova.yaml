@@ -251,4 +251,4 @@ ColdSink:
   description: Ice moves aimed at its teammates are drawn onto it, and each one that reaches it raises its Attack 1 stage instead of hurting it.
 CarvedGrudge:
   name: Carved Grudge
-  description: When it faints, every enemy that landed a move on it loses 1/8 of its HP.
+  description: When it faints, every enemy that damaged it with a move loses 1/8 of its HP.

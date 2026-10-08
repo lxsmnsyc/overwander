@@ -89,13 +89,14 @@ export async function listEvolutionOptions(
     friendship: caught.friendship,
     time: getTimeOfDay(localNow()),
     gender: caught.gender,
+    nature: caught.nature,
   };
 
   const options: EvolutionOption[] = [];
 
   for (const evolution of getSpeciesData(caught.species).evolvesInto ?? []) {
     // A husk comes out beside another evolution, so it is no row of its own
-    if (evolution.shed !== true && canEverEvolve(evolution, caught.gender)) {
+    if (evolution.shed !== true && canEverEvolve(evolution, caught.gender, caught.nature)) {
       options.push({
         evolution,
         available: meetsEvolutionCriteria(evolution, context),

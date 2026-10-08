@@ -1796,6 +1796,36 @@ export const HISUIAN_FORMS: Species[] = [
   Species.DecidueyeHisui,
 ];
 
+/** A Cramorant, and what it comes back up with after a dive: the small catch, then the big one */
+export const CRAMORANT_FORMS: Species[] = [
+  Species.Cramorant,
+  Species.CramorantGulping,
+  Species.CramorantGorging,
+];
+
+/** The two keys a Toxtricity is born into by its nature, Amped at the base */
+export const TOXTRICITY_FORMS: Species[] = [Species.Toxtricity, Species.ToxtricityLowKey];
+
+/** Alcremie's seven Sweets on Vanilla Cream, Strawberry at the base */
+export const ALCREMIE_FORMS: Species[] = [
+  Species.Alcremie,
+  Species.AlcremieBerry,
+  Species.AlcremieLove,
+  Species.AlcremieStar,
+  Species.AlcremieClover,
+  Species.AlcremieFlower,
+  Species.AlcremieRibbon,
+];
+
+/** An Eiscue with its ice, and the face it is left with once the ice breaks */
+export const EISCUE_FORMS: Species[] = [Species.Eiscue, Species.EiscueNoice];
+
+/** The two Indeedee, the male first */
+export const INDEEDEE_FORMS: Species[] = [Species.Indeedee, Species.IndeedeeFemale];
+
+/** A Morpeko full, and the hungry mood it swings into */
+export const MORPEKO_FORMS: Species[] = [Species.Morpeko, Species.MorpekoHangry];
+
 /** A Wishiwashi alone, and the school it calls together from level 20 */
 export const WISHIWASHI_FORMS: Species[] = [Species.Wishiwashi, Species.WishiwashiSchool];
 

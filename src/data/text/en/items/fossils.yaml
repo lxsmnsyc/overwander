@@ -35,3 +35,15 @@ JawFossil:
 SailFossil:
   name: Sail Fossil
   description: Something ancient is still in the rock. The Fossil Scientist revives it at level 20, spending the fossil.
+FossilizedBird:
+  name: Fossilized Bird
+  description: Half of something ancient, the top half. The Fossil Scientist revives it at level 20 with a bottom half, spending both.
+FossilizedFish:
+  name: Fossilized Fish
+  description: Half of something ancient, the top half. The Fossil Scientist revives it at level 20 with a bottom half, spending both.
+FossilizedDrake:
+  name: Fossilized Drake
+  description: Half of something ancient, the bottom half. The Fossil Scientist revives it at level 20 with a top half, spending both.
+FossilizedDino:
+  name: Fossilized Dino
+  description: Half of something ancient, the bottom half. The Fossil Scientist revives it at level 20 with a top half, spending both.

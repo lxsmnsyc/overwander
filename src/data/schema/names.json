@@ -1221,6 +1221,35 @@
         "Female"
       ]
     },
+    "nature": {
+      "enum": [
+        "Hardy",
+        "Lonely",
+        "Brave",
+        "Adamant",
+        "Naughty",
+        "Bold",
+        "Docile",
+        "Relaxed",
+        "Impish",
+        "Lax",
+        "Timid",
+        "Hasty",
+        "Serious",
+        "Jolly",
+        "Naive",
+        "Modest",
+        "Mild",
+        "Quiet",
+        "Bashful",
+        "Rash",
+        "Calm",
+        "Gentle",
+        "Sassy",
+        "Careful",
+        "Quirky"
+      ]
+    },
     "habitat": {
       "enum": [
         "Ground",
@@ -2830,7 +2859,42 @@
         "SoulRelay",
         "UmbralStrike",
         "IonField",
-        "MetalEater"
+        "MetalEater",
+        "DrumCue",
+        "KickCue",
+        "ScopeCue",
+        "PantryRaid",
+        "SteelEscort",
+        "EarlyWarning",
+        "Fence",
+        "CottonCradle",
+        "Shorn",
+        "ShellSnap",
+        "Zoomies",
+        "SharedHarvest",
+        "CoilBurrow",
+        "ThroatPouch",
+        "Spearhead",
+        "VenomCharge",
+        "CinderCoils",
+        "ArmLock",
+        "LiveSpines",
+        "LastPour",
+        "SilentWrath",
+        "DespairFeast",
+        "Sugarcoat",
+        "MirrorScales",
+        "ChippedIce",
+        "RankAndFile",
+        "Attendant",
+        "HangrySpark",
+        "Overhang",
+        "DreepyLaunch",
+        "Solstice",
+        "Boltdrake",
+        "Boltfrost",
+        "Gilldrake",
+        "Gillfrost"
       ]
     },
     "item": {
@@ -3434,7 +3498,11 @@
         "ScrollOfWaters",
         "BlackAugurite",
         "PeatBlock",
-        "DadasScarf"
+        "DadasScarf",
+        "FossilizedBird",
+        "FossilizedFish",
+        "FossilizedDrake",
+        "FossilizedDino"
       ]
     },
     "biome": {

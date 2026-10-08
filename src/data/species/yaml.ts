@@ -13,6 +13,7 @@ import {
   EVOLUTION_METHOD_IDS,
   FAMILY_IDS,
   GENDER_IDS,
+  NATURE_IDS,
   HABITAT_IDS,
   ITEM_IDS,
   MOVE_IDS,
@@ -79,6 +80,7 @@ const WORLD = v.object({
         time: v.optional(NAMES),
         gender: v.optional(NAME),
         move: v.optional(NAME),
+        natures: v.optional(NAMES),
         compare: v.optional(
           v.object({
             stat: NAME,
@@ -189,6 +191,9 @@ function readEvolutions(
     }
     if (road.move != null) {
       evolution.move = idOf(MOVE_IDS, road.move, where);
+    }
+    if (road.natures != null) {
+      evolution.natures = new Set(idsOf(NATURE_IDS, road.natures, where));
     }
     if (road.compare != null) {
       const compare: StatComparison = {

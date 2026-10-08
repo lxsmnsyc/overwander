@@ -3,6 +3,7 @@ import type { TimeOfDay } from '../ids/biome';
 import type { Stats } from '../constants/stats';
 import { Items } from '../ids/items';
 import type { Moves } from '../ids/moves';
+import type Natures from '../ids/natures';
 import { EvolutionMethod, type Genders, type Species } from '../ids/species';
 import {
   type EvolutionData,
@@ -83,6 +84,11 @@ export interface EvolutionContext {
    * pokemon takes never changes under it
    */
   gender: Genders;
+  /**
+   * The nature it was born with. Toxel is the only line that reads it.
+   * Left out, a road that asks for a nature stays shut
+   */
+  nature?: Natures;
 }
 
 /**
@@ -205,6 +211,12 @@ export function meetsEvolutionCriteria(
       return false;
     }
   }
+  if (
+    evolution.natures != null &&
+    (context.nature == null || !evolution.natures.has(context.nature))
+  ) {
+    return false;
+  }
   if ((method & EvolutionMethod.StatComparison) !== 0) {
     if (evolution.compare == null || !comparesStats(evolution.compare, context)) {
       return false;
@@ -228,7 +240,14 @@ export function meetsEvolutionCriteria(
  * born as and nothing changes it, so the branch it cannot take is
  * left out rather than refused forever
  */
-export function canEverEvolve(evolution: EvolutionData, gender: Genders): boolean {
+export function canEverEvolve(
+  evolution: EvolutionData,
+  gender: Genders,
+  nature?: Natures,
+): boolean {
+  if (evolution.natures != null && nature != null && !evolution.natures.has(nature)) {
+    return false;
+  }
   return (evolution.method & EvolutionMethod.Gender) === 0 || evolution.gender === gender;
 }
 

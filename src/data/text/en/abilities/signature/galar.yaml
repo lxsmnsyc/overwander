@@ -1,0 +1,107 @@
+# The signature abilities of the families filed under Galar
+
+DrumCue:
+  name: Drum Cue
+  description: Each Grass move it lands casts Helping Hand on the teammate with the highest Attack or Special Attack, at most once every 8 seconds.
+KickCue:
+  name: Kick Cue
+  description: Each Fire move it lands casts After You on a teammate winding up a move, at most once every 8 seconds.
+ScopeCue:
+  name: Scope Cue
+  description: Each Water move it lands casts Spotlight on that target, drawing its team's single-target moves there, at most once every 8 seconds.
+PantryRaid:
+  name: Pantry Raid
+  description: While it stands, any Berry an enemy would eat goes into its own cheeks instead, healing or curing it as the Berry would.
+SteelEscort:
+  name: Steel Escort
+  description: When an enemy starts winding up a move that hits its whole side, it casts Wide Guard, at most once every 10 seconds.
+EarlyWarning:
+  name: Early Warning
+  description: When an enemy starts winding up a single-target move at a teammate, that teammate casts Detect, at most once every 10 seconds.
+Fence:
+  name: Fence
+  description: Any item it steals goes to its teammate lowest on HP with empty hands, so its own hands stay free.
+CottonCradle:
+  name: Cotton Cradle
+  description: While it stands, its team regains 1.5x from Leech Seed, Ingrain and Grassy Terrain.
+Shorn:
+  name: Shorn
+  description: 'The first Fire move to land on it each fight singes the fleece off: any burn is cured and it casts Agility.'
+ShellSnap:
+  name: Shell Snap
+  description: Its biting moves break Reflect, Light Screen and Aurora Veil on the target's side, as Brick Break does.
+Zoomies:
+  name: Zoomies
+  description: Each time its Speed rises, it casts Charge on itself.
+SharedHarvest:
+  name: Shared Harvest
+  description: Whenever it eats a Berry, its worst-hurt teammate gets that Berry's effect too.
+CoilBurrow:
+  name: Coil Burrow
+  description: While a sandstorm is up, its Ground moves strike every enemy instead of one.
+ThroatPouch:
+  name: Throat Pouch
+  description: Each Water move it lands casts Stockpile on it.
+Spearhead:
+  name: Spearhead
+  description: When an enemy starts winding up a move at it, it casts Aqua Jet at that enemy, at most once every 6 seconds.
+VenomCharge:
+  name: Venom Charge
+  description: Each time poison costs an enemy HP, it casts Charge on itself, at most once every 6 seconds.
+CinderCoils:
+  name: Cinder Coils
+  description: Each Fire move it lands burns up the target's held Berry, as Incinerate does.
+ArmLock:
+  name: Arm Lock
+  description: Its contact moves catch the target in Octolock, if it is not already holding someone.
+LiveSpines:
+  name: Live Spines
+  description: Whoever lands a contact move on it is struck back with Thunder Shock.
+LastPour:
+  name: Last Pour
+  description: When it faints, it casts Healing Wish on its worst-hurt teammate.
+SilentWrath:
+  name: Silent Wrath
+  description: An enemy loses 1/8 of its HP each time it raises a stat of its own, unless a Despair Feast holder stands on the field.
+DespairFeast:
+  name: Despair Feast
+  description: It heals 1/8 of its HP each time an enemy loses a stat stage, unless a Silent Wrath holder stands on the field.
+Sugarcoat:
+  name: Sugarcoat
+  description: Each status move it casts on a teammate casts Decorate on them as well.
+MirrorScales:
+  name: Mirror Scales
+  description: The added effects of moves that hit it, such as a burn, a flinch or a stat drop, land on whoever threw them instead.
+ChippedIce:
+  name: Chipped Ice
+  description: A physical hit that lands on it casts Hail, if no weather is up.
+RankAndFile:
+  name: Rank and File
+  description: 'A trooper takes the hit: the first 5 hits it takes each land at 0.5x.'
+Attendant:
+  name: Attendant
+  description: When a teammate takes a super-effective hit, it casts Heal Pulse on them, at most once every 8 seconds.
+HangrySpark:
+  name: Hangry Spark
+  description: Whenever an enemy eats a Berry, it casts Nuzzle at them.
+Overhang:
+  name: Overhang
+  description: An enemy move that would strike several of its party strikes it alone instead.
+DreepyLaunch:
+  name: Dreepy Launch
+  description: A Dragon move it lands launches a Dreepy, which casts Dragon Darts at a second enemy, at most once every 10 seconds.
+Solstice:
+  name: Solstice
+  description: Every 30 seconds, its team's moves hit 1.3x for 6 seconds.
+Boltdrake:
+  name: Boltdrake
+  description: Its Electric moves strike as Dragon moves against any target Dragon hits harder.
+Boltfrost:
+  name: Boltfrost
+  description: Its Electric moves strike as Ice moves against any target Ice hits harder.
+Gilldrake:
+  name: Gilldrake
+  description: Its Water moves strike as Dragon moves against any target Dragon hits harder.
+Gillfrost:
+  name: Gillfrost
+  description: Its Water moves strike as Ice moves against any target Ice hits harder.

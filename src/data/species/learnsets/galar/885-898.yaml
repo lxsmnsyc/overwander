@@ -1,0 +1,53 @@
+Dreepy:
+  # TM, TR and tutor moves shared by the whole family
+  family-teachable:
+    - Attract
+    - BatonPass
+    - DracoMeteor
+    - Endure
+    - Facade
+    - HelpingHand
+    - Protect
+    - Rest
+    - Round
+    - SleepTalk
+    - Snore
+    - Substitute
+    - Swift
+    - ThunderWave
+  Dreepy:
+    level:
+      1: [Bite, QuickAttack, Astonish, Infestation]
+    egg: [ConfuseRay, Curse, Disable, DoubleTeam, DragonTail, Grudge, SuckerPunch]
+  Drakloak:
+    level:
+      1: [Bite, QuickAttack, Astonish, DragonPulse, Infestation]
+      6: [LockOn]
+      12: [Assurance]
+      18: [Hex]
+      24: [Agility]
+      30: [DoubleHit]
+      36: [UTurn]
+      42: [DragonDance]
+      48: [PhantomForce]
+      54: [TakeDown]
+      61: [DragonRush]
+      66: [DoubleEdge]
+      72: [LastResort]
+    teachable: [Acrobatics, Agility, AllySwitch, Assurance, BeatUp, BreakingSwipe, Brine, Dive, DragonDance, DragonPulse, FireBlast, Flamethrower, Hex, HydroPump, Outrage, PhantomForce, PsychicFangs, Scald, ShadowBall, SteelWing, Surf, Thief, Thunder, Thunderbolt, UTurn, WillOWisp]
+  Dragapult:
+    level:
+      1: [Bite, QuickAttack, DragonBreath, Astonish, SuckerPunch, Infestation, DragonDarts]
+      6: [LockOn]
+      12: [Assurance]
+      18: [Hex]
+      24: [Agility]
+      30: [DoubleHit]
+      36: [UTurn]
+      42: [DragonDance]
+      48: [PhantomForce]
+      54: [TakeDown]
+      63: [DragonRush]
+      70: [DoubleEdge]
+      78: [LastResort]
+    teachable: [Acrobatics, Agility, AllySwitch, Assurance, BeatUp, BodySlam, BreakingSwipe, Brine, Dive, DragonClaw, DragonDance, DragonPulse, FireBlast, Flamethrower, Fly, GigaImpact, Hex, HydroPump, HyperBeam, LightScreen, Outrage, PhantomForce, PsychicFangs, Reflect, Scald, ShadowBall, SolarBeam, SteelWing, Surf, Thief, Thunder, Thunderbolt, TriAttack, UTurn, WillOWisp]

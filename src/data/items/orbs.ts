@@ -1,5 +1,4 @@
-import { ItemFlags, ItemTypes, Items } from '../ids/items';
-import { nameToIcon, registerItem } from './__create';
+import { Items } from '../ids/items';
 
 /**
  * The orbs: held for what they do to their own holder.
@@ -14,45 +13,4 @@ import { nameToIcon, registerItem } from './__create';
  * The battle side lives in
  * [`src/battle/items/orbs.ts`](../../battle/items/orbs.ts).
  */
-export const ORBS = new Map<Items, [name: string, description: string]>([
-  [
-    Items.FlameOrb,
-    [
-      'Flame Orb',
-      'Burns its holder after 5 seconds of holding it, and again once the burn is cured.',
-    ],
-  ],
-  [
-    Items.ToxicOrb,
-    [
-      'Toxic Orb',
-      'Badly poisons its holder after 5 seconds of holding it, and again once the poison is cured.',
-    ],
-  ],
-  [
-    Items.LifeOrb,
-    ['Life Orb', '1.3x damage, and its holder pays 1/10 of its own HP for every blow.'],
-  ],
-]);
-
-export const ORB_PRICE = 6000;
-
-const ORB_RESALE = 0.5;
-
-/**
- * Register the orbs. None of them is consumed: an orb keeps doing
- * what it does for as long as it is carried, which is the point of it
- */
-export default function registerOrbs(): void {
-  for (const [item, [name, description]] of ORBS) {
-    registerItem(item, {
-      name,
-      description,
-      type: ItemTypes.Held,
-      icon: nameToIcon('held', name),
-      flags: ItemFlags.Holdable | ItemFlags.Marketable,
-      buy: ORB_PRICE,
-      sell: ORB_PRICE * ORB_RESALE,
-    });
-  }
-}
+export const ORBS: Set<Items> = new Set([Items.FlameOrb, Items.ToxicOrb, Items.LifeOrb]);

@@ -1,0 +1,80 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Syndicates",
+  "type": "object",
+  "propertyNames": {
+    "$ref": "names.json#/definitions/syndicate"
+  },
+  "additionalProperties": {
+    "type": "object",
+    "properties": {
+      "grunt": {
+        "type": "object",
+        "properties": {
+          "sheets": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "description": "The charsets they are met in"
+          },
+          "honor": {
+            "$ref": "names.json#/definitions/award",
+            "description": "The mark putting them down pays"
+          }
+        },
+        "required": [
+          "sheets",
+          "honor"
+        ],
+        "additionalProperties": false,
+        "description": "The rank and file"
+      },
+      "executives": {
+        "type": "array",
+        "items": {
+          "$ref": "names.json#/definitions/executive"
+        },
+        "description": "Who answers to the boss"
+      },
+      "boss": {
+        "type": "object",
+        "properties": {
+          "sheets": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "description": "The charsets they are met in"
+          },
+          "honor": {
+            "$ref": "names.json#/definitions/award",
+            "description": "The mark putting them down pays"
+          }
+        },
+        "required": [
+          "sheets",
+          "honor"
+        ],
+        "additionalProperties": false,
+        "description": "The boss"
+      },
+      "biomes": {
+        "type": "array",
+        "items": {
+          "$ref": "names.json#/definitions/biome"
+        },
+        "description": "What it holds; a biome nobody holds is Rocket's"
+      }
+    },
+    "required": [
+      "grunt",
+      "executives",
+      "boss",
+      "biomes"
+    ],
+    "additionalProperties": false
+  }
+}

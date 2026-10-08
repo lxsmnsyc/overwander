@@ -1,0 +1,35 @@
+Treecko:
+  Treecko: { name: Treecko, category: Wood Gecko Pokemon }
+  Grovyle: { name: Grovyle, category: Wood Gecko Pokemon }
+  Sceptile: { name: Sceptile, category: Forest Pokemon }
+Torchic:
+  Torchic: { name: Torchic, category: Chick Pokemon }
+  Combusken: { name: Combusken, category: Young Fowl Pokemon }
+  Blaziken: { name: Blaziken, category: Blaze Pokemon }
+Mudkip:
+  Mudkip: { name: Mudkip, category: Mud Fish Pokemon }
+  Marshtomp: { name: Marshtomp, category: Mud Fish Pokemon }
+  Swampert: { name: Swampert, category: Mud Fish Pokemon }
+Poochyena:
+  Poochyena: { name: Poochyena, category: Bite Pokemon }
+  Mightyena: { name: Mightyena, category: Bite Pokemon }
+Zigzagoon:
+  Zigzagoon: { name: Zigzagoon, category: Tiny Raccoon Pokemon }
+  Linoone: { name: Linoone, category: Rushing Pokemon }
+Wurmple:
+  Wurmple: { name: Wurmple, category: Worm Pokemon }
+  Silcoon: { name: Silcoon, category: Cocoon Pokemon }
+  Beautifly: { name: Beautifly, category: Butterfly Pokemon }
+  Cascoon: { name: Cascoon, category: Cocoon Pokemon }
+  Dustox: { name: Dustox, category: Poison Moth Pokemon }
+Lotad:
+  Lotad: { name: Lotad, category: Water Weed Pokemon }
+  Lombre: { name: Lombre, category: Jolly Pokemon }
+  Ludicolo: { name: Ludicolo, category: Carefree Pokemon }
+Seedot:
+  Seedot: { name: Seedot, category: Acorn Pokemon }
+  Nuzleaf: { name: Nuzleaf, category: Wily Pokemon }
+  Shiftry: { name: Shiftry, category: Wicked Pokemon }
+Taillow:
+  Taillow: { name: Taillow, category: Tiny Swallow Pokemon }
+  Swellow: { name: Swellow, category: Swallow Pokemon }

@@ -940,10 +940,10 @@ describe('type experts', () => {
     // Accuracy is rolled against evasion, so a written 100 is a
     // promise a Double Team breaks and a move with no accuracy is
     // not. Read flat the two tied, and the older move id won
-    const scyther = getBestMoves(Species.Scyther, [Abilities.Swarm]);
+    const starly = getBestMoves(Species.Starly, [Abilities.KeenEye]);
 
-    expect(scyther).toContain(Moves.AerialAce);
-    expect(scyther).not.toContain(Moves.WingAttack);
+    expect(starly).toContain(Moves.AerialAce);
+    expect(starly).not.toContain(Moves.WingAttack);
   });
 
   it('does not hand the same move to half the party', () => {
@@ -1174,8 +1174,8 @@ describe('type experts', () => {
     expect(getBestMoves(Species.Gyarados, [Abilities.Intimidate])).not.toContain(Moves.GigaImpact);
 
     // A move whose power the engine works out at the cast is still
-    // worth something: Snorlax throws its own weight
-    expect(getBestMoves(Species.Snorlax, [Abilities.Immunity])).toContain(Moves.HeavySlam);
+    // worth something: Golem throws its own weight
+    expect(getBestMoves(Species.Golem, [Abilities.Sturdy])).toContain(Moves.HeavySlam);
 
     // Every strike counts, and Skill Link lands the lot, which is what
     // makes five strikes of 25 worth a slot

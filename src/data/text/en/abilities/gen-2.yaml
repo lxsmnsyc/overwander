@@ -1,0 +1,119 @@
+# Abilities the Gen 2 species brought that no Gen 1 species carries.
+# The grouping is by the line that introduces it, as in gen-1.ts.
+
+# Cyndaquil
+Berserk:
+  name: Berserk
+  description: +1 Special Attack whenever a hit takes it under half its HP.
+
+# Natu
+MagicBounce:
+  name: Magic Bounce
+  description: A status move aimed at it is cast back at whoever used it.
+
+# Mareep
+Plus:
+  name: Plus
+  description: 1.5x Special Attack while a living teammate has Plus or Minus.
+MotorDrive:
+  name: Motor Drive
+  description: Electric moves cannot touch it, and raise its Speed a stage instead. As a buddy, 1.5x the catch chance on wild Electric types.
+
+# Sunkern
+FlowerGift:
+  name: Flower Gift
+  description: 1.5x Attack and Special Defense for its whole team in sunlight.
+
+# Slugma
+MagmaArmor:
+  name: Magma Armor
+  description: Cannot be frozen. An egg found while it is the buddy hatches in half the walk.
+
+# Remoraid
+SuctionCups:
+  name: Suction Cups
+  description: Nothing can drag it off the field.
+Moody:
+  name: Moody
+  description: Each time it acts, one stat rises two stages and another falls one.
+
+# Phanpy
+Stamina:
+  name: Stamina
+  description: +1 Defense every time a hit lands on it.
+
+# Togepi
+SuperLuck:
+  name: Super Luck
+  description: Its moves land critical hits a stage more often. As a buddy, a throw comes out critical 2x as often.
+
+# Shuckle
+Contrary:
+  name: Contrary
+  description: Every stat change it takes lands the other way round.
+
+# Corsola
+StormDrain:
+  name: Storm Drain
+  description: Water moves cannot touch it, and raise its Special Attack a stage instead. As a buddy, 1.5x the catch chance on wild Water types.
+
+# Skarmory
+MirrorArmor:
+  name: Mirror Armor
+  description: A stat drop aimed at it lands on whoever aimed it.
+
+# Smeargle
+Prankster:
+  name: Prankster
+  description: Its status moves get 1 more priority, so they wind up faster.
+
+# Larvitar
+SandStream:
+  name: Sand Stream
+  description: Whips up a sandstorm when it reaches the field.
+
+# Heracross
+SapSipper:
+  name: Sap Sipper
+  description: Grass moves cannot touch it, and raise its Attack a stage instead. As a buddy, 1.5x the catch chance on wild Grass types.
+
+# Teddiursa
+HoneyGather:
+  name: Honey Gather
+  description: Comes up with a Honey the first time it acts, if it has a hand free. As a buddy, finds a berry every 384 steps walked.
+
+# Marill
+HugePower:
+  name: Huge Power
+  description: Doubles its Attack.
+
+# Yanma
+SpeedBoost:
+  name: Speed Boost
+  description: +1 Speed every time it acts.
+
+# Sneasel
+Pickpocket:
+  name: Pickpocket
+  description: Takes the item off whoever touches it, if it has a hand free. As a buddy, a wild pokemon that flees leaves what it was carrying.
+
+# Wobbuffet
+ShadowTag:
+  name: Shadow Tag
+  description: Nothing on the far side can flee, ghosts aside. As a buddy, a wild pokemon is half as likely to flee.
+Telepathy:
+  name: Telepathy
+  description: Sees an ally's attack coming and takes nothing from it.
+
+# Scizor
+LightMetal:
+  name: Light Metal
+  description: Weighs half what it looks like.
+
+# Unown
+QueenlyMajesty:
+  name: Queenly Majesty
+  description: Nothing on its side can be struck by an enemy move whose priority quickens its wind-up.
+Comatose:
+  name: Comatose
+  description: 'Always asleep and still acting: no status lands on it, and whatever hunts a sleeper finds one.'

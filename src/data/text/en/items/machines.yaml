@@ -1,0 +1,6 @@
+# The machines are made from the moves they teach rather than written
+# out, so their words are all templates
+templates:
+  name: TM {move}
+  stocked: Teaches {move} to a pokemon that can learn it. Spent on use.
+  withdrawn: Teaches {move} to a pokemon that can learn it. No longer sold; a vendor buys it back for what it cost.

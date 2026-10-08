@@ -1,0 +1,39 @@
+DynamaxCannon:
+  name: Dynamax Cannon
+  description: A beam of Eternatus's own power, at full strength against anything.
+SnipeShot:
+  name: Snipe Shot
+  description: More likely to land a critical, and goes where it is aimed whatever draws attacks away.
+JawLock:
+  name: Jaw Lock
+  description: Locks the user and the target together, so neither can swap out while both stand.
+StuffCheeks:
+  name: Stuff Cheeks
+  description: Eats the user's held berry and raises its Defense 2 stages. Fails without a berry.
+NoRetreat:
+  name: No Retreat
+  description: Raises all of the user's stats a stage, but it can no longer swap out. Works once.
+TarShot:
+  name: Tar Shot
+  description: Drops the target's Speed a stage, and Fire moves hit it 2x for the rest of the fight.
+MagicPowder:
+  name: Magic Powder
+  description: Makes the target pure Psychic-type.
+DragonDarts:
+  name: Dragon Darts
+  description: Strikes 2 times.
+Teatime:
+  name: Teatime
+  description: Every pokemon on the field eats its held berry at once.
+Octolock:
+  name: Octolock
+  description: Holds the target so it cannot swap out, dropping its Defense and Special Defense a stage each time it acts.
+BoltBeak:
+  name: Bolt Beak
+  description: 2x power if the target has not begun a cast in the last 2 seconds.
+FishiousRend:
+  name: Fishious Rend
+  description: 2x power if the target has not begun a cast in the last 2 seconds.
+CourtChange:
+  name: Court Change
+  description: 'Swaps everything laid on each side of the field: hazards, screens, Mist, Safeguard and Tailwind.'

@@ -1,0 +1,119 @@
+Sandshrew:
+  Sandshrew:
+    abilities: [SandVeil]
+    hidden: [SandRush]
+  Sandslash:
+    abilities: [SandVeil]
+    hidden: [SandRush, SandForce, RoughSkin]
+  SandshrewAlola:
+    abilities: [SnowCloak]
+    hidden: [SlushRush]
+  SandslashAlola:
+    abilities: [SnowCloak]
+    hidden: [SlushRush, IronBarbs, IceBody]
+NidoranF:
+  NidoranF:
+    abilities: [PoisonPoint, Rivalry]
+    hidden: [Hustle]
+  Nidorina:
+    abilities: [PoisonPoint, Rivalry]
+    hidden: [Hustle]
+  Nidoqueen:
+    abilities: [PoisonPoint, Rivalry]
+    hidden: [SheerForce]
+NidoranM:
+  NidoranM:
+    abilities: [PoisonPoint, Rivalry]
+    hidden: [Hustle]
+  Nidorino:
+    abilities: [PoisonPoint, Rivalry]
+    hidden: [Hustle]
+  Nidoking:
+    abilities: [PoisonPoint, Rivalry]
+    hidden: [SheerForce]
+Clefairy:
+  Clefairy:
+    abilities: [CuteCharm, MagicGuard]
+    hidden: [FriendGuard]
+  Clefable:
+    abilities: [CuteCharm, MagicGuard]
+    hidden: [Unaware]
+  Cleffa:
+    abilities: [CuteCharm, MagicGuard]
+    hidden: [FriendGuard]
+Vulpix:
+  Vulpix:
+    abilities: [FlashFire]
+    hidden: [Drought]
+  Ninetales:
+    abilities: [FlashFire]
+    hidden: [Drought, FlameBody, Forewarn]
+  VulpixAlola:
+    abilities: [SnowCloak]
+    hidden: [SnowWarning]
+  NinetalesAlola:
+    abilities: [SnowCloak]
+    hidden: [SnowWarning, IceBody, Refrigerate]
+Jigglypuff:
+  Jigglypuff:
+    abilities: [CuteCharm, Competitive]
+    hidden: [FriendGuard]
+  Wigglytuff:
+    abilities: [CuteCharm, Competitive]
+    hidden: [Frisk]
+  Igglybuff:
+    abilities: [CuteCharm, Competitive]
+    hidden: [FriendGuard]
+Zubat:
+  Zubat:
+    abilities: [InnerFocus]
+    hidden: [Infiltrator]
+  Golbat:
+    abilities: [InnerFocus]
+    hidden: [Infiltrator]
+  Crobat:
+    abilities: [InnerFocus]
+    # Poison Touch and Tinted Lens are this registry's rather than
+    # the mainline's, filling it to four: it bites, and half the dex
+    # shrugs its poison off
+    hidden: [Infiltrator, PoisonTouch, TintedLens]
+Oddish:
+  Oddish:
+    abilities: [Chlorophyll]
+    hidden: [RunAway]
+  Gloom:
+    abilities: [Chlorophyll]
+    hidden: [Stench]
+  Vileplume:
+    abilities: [Chlorophyll]
+    hidden: [EffectSpore]
+  Bellossom:
+    abilities: [Chlorophyll]
+    hidden: [Healer]
+Paras:
+  Paras:
+    abilities: [EffectSpore, DrySkin]
+    hidden: [Damp]
+  Parasect:
+    abilities: [EffectSpore, DrySkin]
+    hidden: [Damp, Technician]
+Venonat:
+  Venonat:
+    abilities: [CompoundEyes, TintedLens]
+    hidden: [RunAway]
+  Venomoth:
+    abilities: [ShieldDust, TintedLens]
+    hidden: [WonderSkin]
+Diglett:
+  Diglett:
+    abilities: [SandVeil, ArenaTrap]
+    hidden: [SandForce]
+  Dugtrio:
+    abilities: [SandVeil, ArenaTrap]
+    hidden: [SandForce, SandRush]
+  DiglettAlola:
+    abilities: [SandVeil, TanglingHair]
+    hidden: [SandForce]
+  DugtrioAlola:
+    abilities: [SandVeil, TanglingHair]
+    hidden: [SandForce, Steelworker]

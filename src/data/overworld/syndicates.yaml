@@ -1,0 +1,120 @@
+# The syndicates that keep the crime landmark, each by its enum name. One
+# landmark, six organisations: the cell, the ranks, the shadows and the
+# purse are the same wherever it stands, and which team stands there is
+# the biome's answer rather than the roll's. Each has its rank and file
+# (`grunt`: the uniform `sheets` and the one `honor` clearing a cell
+# pays, since a grunt is a uniform rather than a person), the
+# `executives` who answer to its boss, rolled apart from the rank so a
+# team with two is no likelier to field one than a team with four, its
+# `boss`, and the `biomes` it holds. What each is called and says is
+# text/en.
+
+# Rocket has no ambition beyond the money and holds everywhere the others
+# have not claimed, so a biome added later belongs to Rocket until
+# somebody says otherwise. His Heart Gold coat is the one he runs Team
+# Rocket in; the Fire Red one belongs to the gym he keeps in Kanto
+Rocket:
+  grunt:
+    sheets:
+      - characters/hgss/rocket-f
+      - characters/hgss/rocket-m
+    honor: RocketGruntDefeated
+  executives: [Archer, Ariana, Proton, Petrel]
+  boss:
+    sheets: [characters/hgss/giovanni]
+    honor: GiovanniDefeated
+  biomes: []
+# Magma wants the land raised: fire and raised ground
+Magma:
+  grunt:
+    sheets:
+      - characters/rse/magma-grunt-f
+      - characters/rse/magma-grunt-m
+    honor: MagmaGruntDefeated
+  executives: [Tabitha, Courtney]
+  boss:
+    sheets: [characters/oras/maxie]
+    honor: MaxieDefeated
+  biomes: [Volcano, Mountain, AlpineTundra, Badlands, Desert, ColdDesert]
+# Aqua wants it drowned, and holds everything the water already has
+Aqua:
+  grunt:
+    sheets:
+      - characters/rse/aqua-grunt-f
+      - characters/rse/aqua-grunt-m
+    honor: AquaGruntDefeated
+  executives: [Matt, Shelly]
+  boss:
+    sheets:
+      - characters/oras/archie
+      - characters/rse/archie
+    honor: ArchieDefeated
+  biomes:
+    - DeepOcean
+    - Ocean
+    - PolarOcean
+    - CoralReef
+    - KelpForest
+    - Beach
+    - RockyCoast
+    - Mangrove
+    - Swamp
+    - Bog
+# Galactic wants it unmade, and holds the cold and the thin: the snow
+# country a player crosses to reach the top of the world, and the Beyond,
+# where it wears through. Its three commanders; Charon is an administrator
+# rather than one of them and never fights in his own games, so he keeps
+# no cell
+Galactic:
+  grunt:
+    sheets:
+      - characters/dppt/galactic-f
+      - characters/dppt/galactic-m
+    honor: GalacticGruntDefeated
+  executives: [Mars, Jupiter, Saturn]
+  boss:
+    sheets: [characters/dppt/cyrus]
+    honor: CyrusDefeated
+  biomes: [Glacier, Tundra, Taiga, MontaneForest, Beyond]
+# Plasma wants every pokemon let go and holds the woods: a pokemon let go
+# walks into the trees rather than into a town. Both uniforms it has worn,
+# the robes it marched in and the fatigues it came back in. The two of its
+# own that fight; Rood is a sage rather than a soldier and never raises a
+# hand, and the Shadow Triad answer to Ghetsis alone. The robed sage and
+# the man underneath it
+Plasma:
+  grunt:
+    sheets:
+      - characters/b2w2/plasma-f
+      - characters/b2w2/plasma-m
+      - characters/b2w2/neo-plasma-f
+      - characters/b2w2/neo-plasma-m
+    honor: PlasmaGruntDefeated
+  executives: [Colress, Zinzolin]
+  boss:
+    sheets:
+      - characters/b2w2/ghetsis-1
+      - characters/b2w2/ghetsis-2
+    honor: GhetsisDefeated
+  biomes:
+    - TemperateForest
+    - TemperateRainforest
+    - TropicalRainforest
+    - TropicalSeasonalForest
+    - Woodland
+# Flare wants a beautiful world kept for the few and holds the flower
+# meadows. The red suits, and the admins who wear the same colour a rank
+# up; its five scientists, who each fight in their own games
+Flare:
+  grunt:
+    sheets:
+      - characters/xy/flare-grunt-f
+      - characters/xy/flare-grunt-m
+      - characters/xy/flare-admin-f
+      - characters/xy/flare-admin
+    honor: FlareGruntDefeated
+  executives: [Xerosic, Aliana, Bryony, Celosia, Mable]
+  boss:
+    sheets: [characters/xy/lysandre]
+    honor: LysandreDefeated
+  biomes: [Grassland, Shrubland]

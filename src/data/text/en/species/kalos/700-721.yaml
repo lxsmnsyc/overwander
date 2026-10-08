@@ -1,0 +1,41 @@
+Hawlucha:
+  Hawlucha: { name: Hawlucha, category: Wrestling Pokemon }
+Dedenne:
+  Dedenne: { name: Dedenne, category: Antenna Pokemon }
+Carbink:
+  Carbink: { name: Carbink, category: Jewel Pokemon }
+Goomy:
+  Goomy: { name: Goomy, category: Soft Tissue Pokemon }
+  Sliggoo: { name: Sliggoo, category: Soft Tissue Pokemon }
+  Goodra: { name: Goodra, category: Dragon Pokemon }
+Klefki:
+  Klefki: { name: Klefki, category: Key Ring Pokemon }
+Phantump:
+  Phantump: { name: Phantump, category: Stump Pokemon }
+  Trevenant: { name: Trevenant, category: Elder Tree Pokemon }
+Pumpkaboo:
+  Pumpkaboo: { name: Pumpkaboo, category: Pumpkin Pokemon }
+  Gourgeist: { name: Gourgeist, category: Pumpkin Pokemon }
+  PumpkabooSuper: { name: Super Pumpkaboo, category: Pumpkin Pokemon }
+  GourgeistSuper: { name: Super Gourgeist, category: Pumpkin Pokemon }
+Bergmite:
+  Bergmite: { name: Bergmite, category: Ice Chunk Pokemon }
+  Avalugg: { name: Avalugg, category: Iceberg Pokemon }
+Noibat:
+  Noibat: { name: Noibat, category: Sound Wave Pokemon }
+  Noivern: { name: Noivern, category: Sound Wave Pokemon }
+Xerneas:
+  Xerneas: { name: Xerneas, category: Life Pokemon }
+Yveltal:
+  Yveltal: { name: Yveltal, category: Destruction Pokemon }
+Zygarde:
+  Zygarde: { name: Zygarde, category: Order Pokemon }
+  ZygardeTenPercent: { name: Zygarde 10%, category: Order Pokemon }
+  ZygardeComplete: { name: Zygarde Complete, category: Order Pokemon }
+Diancie:
+  Diancie: { name: Diancie, category: Jewel Pokemon }
+Hoopa:
+  Hoopa: { name: Hoopa, category: Mischief Pokemon }
+  HoopaUnbound: { name: Hoopa Unbound, category: Djinn Pokemon }
+Volcanion:
+  Volcanion: { name: Volcanion, category: Steam Pokemon }

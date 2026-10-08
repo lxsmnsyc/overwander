@@ -1,0 +1,54 @@
+ShellTrap:
+  name: Shell Trap
+  description: A long wind-up that only goes off, at once, when a physical move hits the user. Hits everything opposite.
+FleurCannon:
+  name: Fleur Cannon
+  description: Drops the user's Special Attack 2 stages after it lands.
+PsychicFangs:
+  name: Psychic Fangs
+  description: Breaks Reflect and Light Screen on the target's side, then bites.
+StompingTantrum:
+  name: Stomping Tantrum
+  description: 2x after the user's last move failed.
+ShadowBone:
+  name: Shadow Bone
+  description: 20% to drop the target's Defense a stage.
+Accelerock:
+  name: Accelerock
+  description: Winds up faster than an ordinary move.
+Liquidation:
+  name: Liquidation
+  description: 20% to drop the target's Defense a stage.
+PrismaticLaser:
+  name: Prismatic Laser
+  description: The user must recharge for 2 seconds after it lands.
+SpectralThief:
+  name: Spectral Thief
+  description: Takes every stage the target has raised before it hits.
+SunsteelStrike:
+  name: Sunsteel Strike
+  description: Ignores the target's abilities.
+MoongeistBeam:
+  name: Moongeist Beam
+  description: Ignores the target's abilities.
+TearfulLook:
+  name: Tearful Look
+  description: Drops the target's Attack and Special Attack a stage each. A guard does not stop it.
+ZingZap:
+  name: Zing Zap
+  description: 30% to make the target flinch.
+NaturesMadness:
+  name: Nature's Madness
+  description: Halves whatever health the target has left.
+MultiAttack:
+  name: Multi-Attack
+  description: Thrown as the type of the Memory the user is holding.
+MindBlown:
+  name: Mind Blown
+  description: Hits everything opposite and the user's teammates, and costs the user 1/2 its HP.
+PlasmaFists:
+  name: Plasma Fists
+  description: Every Normal move thrown in the next 2 seconds lands as Electric.
+PhotonGeyser:
+  name: Photon Geyser
+  description: Physical when the user's Attack is higher. Ignores the target's abilities.

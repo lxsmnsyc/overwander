@@ -1,0 +1,60 @@
+ClangorousSoul:
+  name: Clangorous Soul
+  description: Spends 1/3 of the user's HP to raise all of its stats a stage.
+BodyPress:
+  name: Body Press
+  description: Hits with the user's Defense and its stages rather than its Attack.
+Decorate:
+  name: Decorate
+  description: Raises a teammate's Attack and Special Attack 2 stages.
+DrumBeating:
+  name: Drum Beating
+  description: Drops the target's Speed a stage.
+SnapTrap:
+  name: Snap Trap
+  description: 'Snaps shut on the target: 1/8 of its HP every 2 seconds for 8 seconds, and no escape, ghosts aside.'
+PyroBall:
+  name: Pyro Ball
+  description: 10% to burn. Thaws the user.
+BehemothBlade:
+  name: Behemoth Blade
+  description: The sword Zacian is known for, at full strength against anything.
+BehemothBash:
+  name: Behemoth Bash
+  description: The shield Zamazenta is known for, at full strength against anything.
+AuraWheel:
+  name: Aura Wheel
+  description: Morpeko's own, which no other pokemon can use. Raises its Speed a stage, and turns Dark-type while it is Hangry.
+BreakingSwipe:
+  name: Breaking Swipe
+  description: Hits everything opposite and drops their Attack a stage.
+BranchPoke:
+  name: Branch Poke
+  description: A plain jab with a sharp branch.
+Overdrive:
+  name: Overdrive
+  description: Hits everything opposite.
+AppleAcid:
+  name: Apple Acid
+  description: Drops the target's Special Defense a stage.
+GravApple:
+  name: Grav Apple
+  description: Drops the target's Defense a stage, and hits 1.5x while Gravity is up.
+SpiritBreak:
+  name: Spirit Break
+  description: Drops the target's Special Attack a stage.
+StrangeSteam:
+  name: Strange Steam
+  description: 20% to confuse.
+LifeDew:
+  name: Life Dew
+  description: Heals the user and its teammates 1/4 of their HP.
+Obstruct:
+  name: Obstruct
+  description: Blocks every damaging move aimed at the user for 2 seconds, and drops the Defense of anything that touches it 2 stages. Status moves pass. It fails if used twice over.
+FalseSurrender:
+  name: False Surrender
+  description: Never misses.
+MeteorAssault:
+  name: Meteor Assault
+  description: The user must recharge for 2 seconds after it lands.

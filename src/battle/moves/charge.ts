@@ -13,6 +13,8 @@ const CHARGE_STAGE_MOVES: {
 } = {
   // https://bulbapedia.bulbagarden.net/wiki/Skull_Bash_(move)
   [Moves.SkullBash]: { stage: Stages.Defense, value: 1 },
+  // https://bulbapedia.bulbagarden.net/wiki/Meteor_Beam_(move)
+  [Moves.MeteorBeam]: { stage: Stages.SpecialAttack, value: 1 },
 };
 
 export default function setupChargeMoves(battle: Battle): void {

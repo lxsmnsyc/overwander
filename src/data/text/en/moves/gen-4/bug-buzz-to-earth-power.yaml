@@ -1,0 +1,30 @@
+BugBuzz:
+  name: Bug Buzz
+  description: 10% to drop the target's Special Defense 1 stage.
+DragonPulse:
+  name: Dragon Pulse
+  description: Plain damage from a distance.
+DragonRush:
+  name: Dragon Rush
+  description: 20% to make the target flinch.
+PowerGem:
+  name: Power Gem
+  description: Plain damage from a distance.
+DrainPunch:
+  name: Drain Punch
+  description: Heals the user for 1/2 of what it deals.
+VacuumWave:
+  name: Vacuum Wave
+  description: A shorter wind-up than most.
+FocusBlast:
+  name: Focus Blast
+  description: 10% to drop the target's Special Defense 1 stage.
+EnergyBall:
+  name: Energy Ball
+  description: 10% to drop the target's Special Defense 1 stage.
+BraveBird:
+  name: Brave Bird
+  description: The user takes 1/3 of what it deals.
+EarthPower:
+  name: Earth Power
+  description: 10% to drop the target's Special Defense 1 stage.

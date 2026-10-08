@@ -1,0 +1,260 @@
+Mienfoo:
+  # The martial artists: the fur on a Mienshao's forelegs is the weapon,
+  # and it is thrown in combinations too fast to follow rather than one
+  # blow at a time
+  Mienfoo:
+    types: [Fighting]
+    egg-groups: [Field, HumanLike]
+    biomes: [Mountain, MontaneForest]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Mienshao
+        method: [Level]
+        level: 50
+  Mienshao:
+    types: [Fighting]
+    egg-groups: [Field, HumanLike]
+    biomes: [Mountain, MontaneForest]
+    active: [Morning, Day]
+    evolves-from: Mienfoo
+Druddigon:
+  # The cave dragon: it runs the tunnels rather than flying them, and it
+  # has to come out and lie in the sun before its body will work
+  Druddigon:
+    types: [Dragon]
+    egg-groups: [Monster, Dragon]
+    biomes: [Mountain, Badlands]
+    active: [Morning, Day]
+Golett:
+  # The automatons: the clay was fired five thousand years ago and
+  # whatever was put inside it is still following the order it was given
+  Golett:
+    types: [Ground, Ghost]
+    egg-groups: [Mineral]
+    biomes: [Badlands, Steppe]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Golurk
+        method: [Level]
+        level: 43
+  Golurk:
+    types: [Ground, Ghost]
+    egg-groups: [Mineral]
+    biomes: [Badlands, Steppe]
+    active: [Evening, Night]
+    evolves-from: Golett
+Pawniard:
+  # The blades: a troop of Pawniard corners what it hunts and the
+  # Bisharp behind them never has to move until the end
+  Pawniard:
+    types: [Dark, Steel]
+    egg-groups: [HumanLike]
+    biomes: [Badlands, Shrubland]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Bisharp
+        method: [Level]
+        level: 52
+  Bisharp:
+    types: [Dark, Steel]
+    egg-groups: [HumanLike]
+    biomes: [Badlands, Shrubland]
+    active: [Evening, Night]
+    evolves-from: Pawniard
+Bouffalant:
+  # The bull that settles everything head first, and keeps the rest of
+  # the herd at its back while it does
+  Bouffalant:
+    types: [Normal]
+    egg-groups: [Field]
+    # The open grass it charges through, by day
+    biomes: [Grassland, Steppe]
+    active: [Morning, Day]
+Rufflet:
+  # The eagle: every Rufflet is male, and it will pick a fight with
+  # anything at all so long as it has something to prove
+  Rufflet:
+    types: [Normal, Flying]
+    egg-groups: [Flying]
+    biomes: [Mountain, Steppe]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Braviary
+        method: [Level]
+        level: 54
+  Braviary:
+    types: [Normal, Flying]
+    egg-groups: [Flying]
+    biomes: [Mountain, Steppe]
+    active: [Morning, Day]
+    evolves-from: Rufflet
+Vullaby:
+  # The vulture: every Vullaby is female, and the bone it wears is not
+  # armour it grew but armour it found and liked the fit of
+  Vullaby:
+    types: [Dark, Flying]
+    egg-groups: [Flying]
+    biomes: [Badlands, Desert]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Mandibuzz
+        method: [Level]
+        level: 54
+  Mandibuzz:
+    types: [Dark, Flying]
+    egg-groups: [Flying]
+    biomes: [Badlands, Desert]
+    active: [Morning, Day]
+    evolves-from: Vullaby
+Heatmor:
+  # The anteater: the flame at the end of its tongue is what it opens a
+  # nest with, and the nest it opens is a Durant's
+  Heatmor:
+    types: [Fire]
+    egg-groups: [Field]
+    # The same badlands the ants work, after they have gone in
+    biomes: [Badlands, Volcano]
+    active: [Evening, Night]
+Durant:
+  # The iron ant: it nests in colonies and armours itself against the
+  # one thing that comes for the nest, which is a Heatmor
+  Durant:
+    types: [Bug, Steel]
+    egg-groups: [Bug]
+    biomes: [Badlands, Mountain]
+    active: [Morning, Day]
+Deino:
+  # The three heads: a Deino cannot see at all, so it bites whatever is
+  # in front of it to find out what it was, and never fully stops
+  Deino:
+    types: [Dark, Dragon]
+    egg-groups: [Dragon]
+    biomes: [Badlands, Volcano]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Zweilous
+        method: [Level]
+        level: 50
+  Zweilous:
+    types: [Dark, Dragon]
+    egg-groups: [Dragon]
+    biomes: [Badlands, Volcano]
+    active: [Evening, Night]
+    evolves-from: Deino
+    evolves-into:
+      - species: Hydreigon
+        method: [Level]
+        level: 64
+  Hydreigon:
+    types: [Dark, Dragon]
+    egg-groups: [Dragon]
+    biomes: [Badlands, Volcano]
+    active: [Evening, Night]
+    evolves-from: Zweilous
+Larvesta:
+  # The torch: a Larvesta carries five small fires on its head, and the
+  # moth it becomes was taken for the sun itself once
+  Larvesta:
+    types: [Bug, Fire]
+    egg-groups: [Bug]
+    biomes: [Desert]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Volcarona
+        method: [Level]
+        level: 59
+    # Met as rarely as a baby: half of what the games make of the moth the
+    # desert once mistook for the sun. The other half is Volcarona
+    rank: prized
+  Volcarona:
+    types: [Bug, Fire]
+    egg-groups: [Bug]
+    biomes: [Desert]
+    active: [Morning, Day]
+    evolves-from: Larvesta
+    # Not one-per-world the way the rest are, but it answers to the Relic
+    # Castle, and what a raid stages is the legendary set
+    rank: legendary
+# The three that stood between the pokemon and a burning forest, and
+# have kept standing since. They are built to one plan: the same
+# fourteen moves at the same levels, the same 580 spread turned a
+# different way, and one of them carries Sacred Sword for the others
+Cobalion:
+  Cobalion:
+    types: [Steel, Fighting]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Mountain]
+    active: any
+    rank: legendary
+Terrakion:
+  Terrakion:
+    types: [Rock, Fighting]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Mountain, Badlands]
+    active: any
+    rank: legendary
+Virizion:
+  Virizion:
+    types: [Grass, Fighting]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [TemperateForest, Woodland]
+    active: any
+    rank: legendary
+Tornadus:
+  # What the tornadus knows, in either shape
+
+  # What the thundurus knows, in either shape
+
+  # What the landorus knows, in either shape
+
+  # The three that ride the storm clouds. Two of them wreck the fields
+  # they pass over and the third makes the soil rich from what they
+  # left, which is the whole of what the region says about them.
+
+  # Each carries a second shape, and the mirror that turns one into the
+  # other is **not** written yet: it works the way the Meteorite does
+  # for a Deoxys, spent on each change, and it waits until the art for
+  # the other two shapes lands
+  Tornadus:
+    types: [Flying]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Grassland]
+    active: any
+    rank: legendary
+  # The other shape each one takes. It carries the ability that shape
+  # is known by and nothing else, the way the mainline has it, and
+  # nothing hands a catch one of these until the mirror is written
+  TornadusTherian:
+    types: [Flying]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+Thundurus:
+  Thundurus:
+    types: [Electric, Flying]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Grassland]
+    active: any
+    rank: legendary
+  ThundurusTherian:
+    types: [Electric, Flying]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+# The dragon that was one and was torn in three: the white half that
+# kept the truth, the black half that kept the ideal, and the husk
+# the two were pulled out of, which has wanted them back ever since
+
+# The two shapes a dragon folded into the husk puts it in. A fusion
+# is kept rather than worn, so each is a species of its own: it takes
+# the swallowed dragon's ability, its two attacking moves, and the
+# stats that dragon was built on
+
+# Fused into rather than met, so no pool stages one
+Reshiram:
+  Reshiram:
+    types: [Dragon, Fire]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Taiga, Tundra]
+    active: any
+    rank: legendary

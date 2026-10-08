@@ -1,0 +1,135 @@
+# From Sketch to Protect: what Johto added at the front of its list,
+# the first of its signature moves among them
+
+Sketch:
+  type: Normal
+  category: Status
+  pp: 1
+  target: Unit
+  affects: [Unit, Own, Enemy]
+
+TripleKick:
+  type: Fighting
+  category: Physical
+  power: 10
+  accuracy: 90
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+Thief:
+  type: Dark
+  category: Physical
+  power: 60
+  accuracy: 100
+  pp: 25
+  target: Unit
+  flags: [Contact]
+
+SpiderWeb:
+  type: Bug
+  category: Status
+  pp: 10
+  target: Unit
+  projectile: true
+
+MindReader:
+  type: Normal
+  category: Status
+  pp: 5
+  target: Unit
+
+Nightmare:
+  type: Ghost
+  category: Status
+  accuracy: 100
+  pp: 15
+  target: Unit
+
+FlameWheel:
+  type: Fire
+  category: Physical
+  power: 60
+  accuracy: 100
+  pp: 25
+  target: Unit
+  flags: [Contact]
+
+Snore:
+  type: Normal
+  category: Special
+  power: 50
+  accuracy: 100
+  pp: 15
+  target: Unit
+  flags: [Sound]
+
+Curse:
+  type: Ghost
+  category: Status
+  pp: 10
+  target: Unit
+
+Flail:
+  type: Normal
+  category: Physical
+  accuracy: 100
+  pp: 15
+  target: Unit
+  flags: [Contact]
+
+Conversion2:
+  type: Normal
+  category: Status
+  pp: 30
+  target: Unit
+
+Aeroblast:
+  type: Flying
+  category: Special
+  power: 100
+  accuracy: 95
+  pp: 5
+  target: Unit
+  projectile: true
+
+CottonSpore:
+  type: Grass
+  category: Status
+  accuracy: 100
+  pp: 40
+  target: None
+  affects: [Unit, Enemy]
+  flags: [Powder]
+
+Reversal:
+  type: Fighting
+  category: Physical
+  accuracy: 100
+  pp: 15
+  target: Unit
+  flags: [Contact]
+
+Spite:
+  type: Ghost
+  category: Status
+  accuracy: 100
+  pp: 10
+  target: Unit
+
+PowderSnow:
+  type: Ice
+  category: Special
+  power: 40
+  accuracy: 100
+  pp: 25
+  target: None
+  affects: [Unit, Enemy]
+  projectile: true
+
+Protect:
+  type: Normal
+  category: Status
+  priority: 4
+  pp: 10
+  target: None

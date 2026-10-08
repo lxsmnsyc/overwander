@@ -1,0 +1,7 @@
+CrossPoison: [Slice, Scratch, Attack]
+GunkShot: [Shoot, Gas, Attack]
+IronHead: [Slam, RearUp, Attack]
+MagnetBomb: [Shoot, Emit, Attack]
+StoneEdge: [Shoot, Strike, Attack]
+Captivate: [Appeal, Dance, Charge]
+StealthRock: [RaiseArms, Emit, Charge]

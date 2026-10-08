@@ -1,4 +1,10 @@
-import Biome from '../ids/biome';
+import * as v from 'valibot';
+import type Biome from '../ids/biome';
+import { BIOME_IDS, PHENOMENON_IDS } from '../ids/names';
+import Phenomenon from '../ids/phenomena';
+import namesFile from '../text/en/phenomena.yaml';
+import { idOf, idsOf } from '../yaml';
+import biomesFile from './biome-phenomena.yaml';
 import { ItemTypes, Items } from '../ids/items';
 import { listItemsByType } from '../items';
 import { GEMS } from '../items/gems';
@@ -11,99 +17,33 @@ import { type ItemPoolEntry, type ItemRarityGroups, getItemBand, getItemOdds } f
 import { EvolutionMethod } from '../ids/species';
 import { getRegisteredSpecies, getSpeciesData } from '../species';
 
-/**
- * Something happening on a patch of ground rather than something
- * buried in it.
- *
- * A phenomenon is the one landmark whose *kind* is rolled rather than
- * fixed: the cell is the chunk's own like every other landmark, but
- * what is going on there is drawn from what the biome can host and
- * changes every hour. Water ripples where there is water; dust rises
- * where there is dust; a shadow passes over open country.
- *
- * Every one of them can turn out to be a pokemon — the uncommon and
- * rare bands only, so a phenomenon is worth walking to — and every one
- * but the grotto can turn out to be something to carry home instead.
- * What that something is is the phenomenon's own: what a dust cloud
- * kicks up is not what washes up on a ripple
- */
-const enum Phenomenon {
-  /**
-   * A tucked-away hollow. It is the only one with no item in it at
-   * all: what a grotto hides is a pokemon, and once in a great while
-   * an egg of the biome's own
-   */
-  HiddenGrotto = 0,
-  /**
-   * Dust rising off dry ground. The richest of them: what it kicks up
-   * is anything the ground had in it — a gem, a stone, a plate or a
-   * valuable
-   */
-  DustCloud = 1,
-  /**
-   * A ring spreading on open water. What surfaces is a valuable: the
-   * pearls and star pieces the sea keeps
-   */
-  RipplingWater = 2,
-  /**
-   * Something passing overhead. What it drops is a wing, which is the
-   * only training a pokemon ever gets that its levels did not pay for
-   */
-  FlyingShadow = 3,
-}
-
 export default Phenomenon;
 
-export const PHENOMENON_NAMES: Record<Phenomenon, string> = {
-  [Phenomenon.HiddenGrotto]: 'Hidden Grotto',
-  [Phenomenon.DustCloud]: 'Dust Cloud',
-  [Phenomenon.RipplingWater]: 'Rippling Water',
-  [Phenomenon.FlyingShadow]: 'Flying Shadow',
-};
+/** What each phenomenon is called, out of `text/en/phenomena.yaml` */
+export const PHENOMENON_NAMES: Record<number, string> = {};
+
+for (const [name, title] of Object.entries(v.parse(v.record(v.string(), v.string()), namesFile))) {
+  PHENOMENON_NAMES[idOf<Phenomenon>(PHENOMENON_IDS, name, `text/en/phenomena.yaml: ${name}`)] =
+    title;
+}
 
 /**
- * What each biome can host, drawn from uniformly every window.
- *
- * It is the ground that decides: open water ripples and does nothing
- * else, a desert raises dust and nothing else, and the places that are
- * two things at once — a beach, a mangrove — host both of theirs. A
- * biome with an empty list never shows one at all, which is what
- * `Beyond` is: nothing lives there to be startled
+ * What each biome can host, drawn from uniformly every window, out of
+ * `biome-phenomena.yaml`. A biome with an empty list never shows one
  */
-export const BIOME_PHENOMENA: Record<Biome, Phenomenon[]> = {
-  [Biome.DeepOcean]: [Phenomenon.RipplingWater],
-  [Biome.Ocean]: [Phenomenon.RipplingWater],
-  [Biome.CoralReef]: [Phenomenon.RipplingWater],
-  // Sand and sea, so both
-  [Biome.Beach]: [Phenomenon.RipplingWater, Phenomenon.DustCloud],
-  [Biome.Mangrove]: [Phenomenon.RipplingWater, Phenomenon.HiddenGrotto],
-  [Biome.Swamp]: [Phenomenon.RipplingWater, Phenomenon.HiddenGrotto],
-  [Biome.TropicalRainforest]: [Phenomenon.HiddenGrotto, Phenomenon.FlyingShadow],
-  [Biome.TropicalSeasonalForest]: [Phenomenon.HiddenGrotto, Phenomenon.FlyingShadow],
-  [Biome.Savanna]: [Phenomenon.DustCloud, Phenomenon.FlyingShadow],
-  [Biome.Desert]: [Phenomenon.DustCloud],
-  [Biome.Shrubland]: [Phenomenon.HiddenGrotto, Phenomenon.DustCloud],
-  [Biome.Grassland]: [Phenomenon.HiddenGrotto, Phenomenon.FlyingShadow],
-  [Biome.TemperateForest]: [Phenomenon.HiddenGrotto, Phenomenon.FlyingShadow],
-  [Biome.TemperateRainforest]: [Phenomenon.HiddenGrotto, Phenomenon.RipplingWater],
-  [Biome.ColdDesert]: [Phenomenon.DustCloud],
-  [Biome.Taiga]: [Phenomenon.HiddenGrotto, Phenomenon.FlyingShadow],
-  [Biome.Tundra]: [Phenomenon.DustCloud, Phenomenon.FlyingShadow],
-  [Biome.Mountain]: [Phenomenon.DustCloud, Phenomenon.FlyingShadow],
-  [Biome.AlpineTundra]: [Phenomenon.DustCloud, Phenomenon.FlyingShadow],
-  [Biome.Volcano]: [Phenomenon.DustCloud, Phenomenon.FlyingShadow],
-  [Biome.Glacier]: [Phenomenon.DustCloud],
-  [Biome.Woodland]: [Phenomenon.HiddenGrotto, Phenomenon.FlyingShadow],
-  [Biome.Steppe]: [Phenomenon.DustCloud, Phenomenon.FlyingShadow],
-  [Biome.MontaneForest]: [Phenomenon.HiddenGrotto, Phenomenon.FlyingShadow],
-  [Biome.PolarOcean]: [Phenomenon.RipplingWater],
-  [Biome.Badlands]: [Phenomenon.DustCloud, Phenomenon.FlyingShadow],
-  [Biome.RockyCoast]: [Phenomenon.RipplingWater, Phenomenon.FlyingShadow],
-  [Biome.Bog]: [Phenomenon.RipplingWater, Phenomenon.HiddenGrotto],
-  [Biome.KelpForest]: [Phenomenon.RipplingWater],
-  // Nothing lives beyond the map, so nothing is startled out of it
-  [Biome.Beyond]: [],
-};
+export const BIOME_PHENOMENA: Record<number, Phenomenon[]> = {};
+
+for (const [name, hosted] of Object.entries(
+  v.parse(v.record(v.string(), v.array(v.string())), biomesFile),
+)) {
+  const where = `biome-phenomena.yaml: ${name}`;
+
+  BIOME_PHENOMENA[idOf<Biome>(BIOME_IDS, name, where)] = idsOf<Phenomenon>(
+    PHENOMENON_IDS,
+    hosted,
+    where,
+  );
+}
 
 /**
  * How often a phenomenon turns out to be something to pick up rather

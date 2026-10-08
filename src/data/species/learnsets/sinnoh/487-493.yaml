@@ -1,0 +1,731 @@
+Giratina:
+  family-teachable:
+    - AerialAce
+    - AncientPower
+    - Cut
+    - DoubleTeam
+    - DracoMeteor
+    - DragonClaw
+    - DragonPulse
+    - EarthPower
+    - Earthquake
+    - Endure
+    - Facade
+    - Frustration
+    - FuryCutter
+    - GigaImpact
+    - HiddenPower
+    - HyperBeam
+    - MudSlap
+    - NaturalGift
+    - Outrage
+    - Protect
+    - PsychUp
+    - RainDance
+    - Rest
+    - Return
+    - Roar
+    - RockSmash
+    - Safeguard
+    - SecretPower
+    - ShadowClaw
+    - ShockWave
+    - SleepTalk
+    - Snore
+    - StoneEdge
+    - Strength
+    - Substitute
+    - SunnyDay
+    - Swagger
+    - Swift
+    - Thunder
+    - ThunderWave
+    - Thunderbolt
+    - Toxic
+    - Twister
+    - Confide
+    - AirCutter
+    - AquaTail
+    - CalmMind
+    - ChargeBeam
+    - DarkPulse
+    - Defog
+    - DreamEater
+    - EnergyBall
+    - Fly
+    - IcyWind
+    - IronHead
+    - IronTail
+    - OminousWind
+    - Payback
+    - Psychic
+    - RockClimb
+    - ShadowBall
+    - SilverWind
+    - Spite
+    - SteelWing
+    - WillOWisp
+    - BrutalSwing
+    - BreakingSwipe
+    - Poltergeist
+    - DualWingbeat
+  Giratina:
+    level:
+      1: [DragonBreath, ScaryFace]
+      10: [OminousWind]
+      20: [AncientPower]
+      30: [DragonClaw]
+      40: [ShadowForce]
+      50: [HealBlock]
+      60: [EarthPower]
+      70: [Slash]
+      80: [ShadowClaw]
+      90: [AuraSphere]
+  GiratinaOrigin:
+    level:
+      1: [DragonBreath, ScaryFace]
+      10: [OminousWind]
+      20: [AncientPower]
+      30: [DragonClaw]
+      40: [ShadowForce]
+      50: [HealBlock]
+      60: [EarthPower]
+      70: [Slash]
+      80: [ShadowClaw]
+      90: [AuraSphere]
+Cresselia:
+  Cresselia:
+    level:
+      1: [Confusion, DoubleTeam]
+      11: [Safeguard]
+      20: [Mist]
+      29: [AuroraBeam]
+      38: [FutureSight]
+      47: [Slash]
+      57: [Moonlight, LunarBlessing]
+      66: [PsychoCut]
+      75: [PsychoShift]
+      84: [LunarDance]
+      93: [Psychic]
+      99: [Moonblast]
+    teachable:
+      - CalmMind
+      - ChargeBeam
+      - DoubleTeam
+      - DreamEater
+      - Endure
+      - Facade
+      - Flash
+      - Frustration
+      - GigaImpact
+      - HiddenPower
+      - HyperBeam
+      - IceBeam
+      - IcyWind
+      - MudSlap
+      - NaturalGift
+      - Protect
+      - PsychUp
+      - Psychic
+      - RainDance
+      - Rest
+      - Return
+      - SecretPower
+      - ShadowBall
+      - SleepTalk
+      - Snore
+      - Substitute
+      - SunnyDay
+      - Swagger
+      - Swift
+      - ThunderWave
+      - Toxic
+      - Trick
+      - Confide
+      - Attract
+      - Captivate
+      - EnergyBall
+      - FuryCutter
+      - GrassKnot
+      - HelpingHand
+      - LightScreen
+      - Recycle
+      - Reflect
+      - Safeguard
+      - SignalBeam
+      - SkillSwap
+      - SolarBeam
+      - TrickRoom
+      - ZenHeadbutt
+      - ExpandingForce
+Manaphy:
+  family-teachable:
+    - AncientPower
+    - Blizzard
+    - Bounce
+    - Brine
+    - Dive
+    - DoubleTeam
+    - Endure
+    - Facade
+    - Fling
+    - Frustration
+    - GrassKnot
+    - Hail
+    - HelpingHand
+    - HiddenPower
+    - IceBeam
+    - IcyWind
+    - KnockOff
+    - LastResort
+    - MudSlap
+    - NaturalGift
+    - Protect
+    - PsychUp
+    - RainDance
+    - Rest
+    - Return
+    - Safeguard
+    - SecretPower
+    - SignalBeam
+    - SleepTalk
+    - Snore
+    - Substitute
+    - Surf
+    - Swagger
+    - Swift
+    - Toxic
+    - UTurn
+    - Uproar
+    - WaterPulse
+    - Waterfall
+    - Confide
+    - DazzlingGleam
+  Phione:
+    level:
+      1: [Bubble, WaterSport]
+      9: [Charm]
+      16: [Supersonic]
+      24: [BubbleBeam]
+      31: [AcidArmor]
+      39: [Whirlpool]
+      46: [WaterPulse, TakeHeart]
+      54: [AquaRing]
+      61: [Dive]
+      69: [RainDance]
+    teachable: [Liquidation]
+  Manaphy:
+    level:
+      1: [Bubble, TailGlow, WaterSport]
+      9: [Charm]
+      16: [Supersonic]
+      24: [BubbleBeam]
+      31: [AcidArmor]
+      39: [Whirlpool]
+      46: [WaterPulse, TakeHeart]
+      54: [AquaRing]
+      61: [Dive]
+      69: [RainDance]
+      76: [HeartSwap]
+    teachable:
+      - CalmMind
+      - EnergyBall
+      - Flash
+      - GigaImpact
+      - HyperBeam
+      - LightScreen
+      - Psychic
+      - Reflect
+      - ShadowBall
+      - SkillSwap
+      - Liquidation
+Darkrai:
+  Darkrai:
+    level:
+      1: [Disable, OminousWind]
+      11: [QuickAttack]
+      20: [Hypnosis]
+      29: [FeintAttack]
+      38: [Nightmare]
+      47: [DoubleTeam]
+      57: [Haze]
+      66: [DarkVoid]
+      75: [NastyPlot]
+      84: [DreamEater]
+      93: [DarkPulse]
+    teachable:
+      - CalmMind
+      - ChargeBeam
+      - DoubleTeam
+      - DreamEater
+      - Endure
+      - Facade
+      - Flash
+      - Frustration
+      - GigaImpact
+      - HiddenPower
+      - HyperBeam
+      - IceBeam
+      - IcyWind
+      - MudSlap
+      - NaturalGift
+      - Protect
+      - PsychUp
+      - Psychic
+      - RainDance
+      - Rest
+      - Return
+      - SecretPower
+      - ShadowBall
+      - SleepTalk
+      - Snore
+      - Substitute
+      - SunnyDay
+      - Swagger
+      - Swift
+      - ThunderWave
+      - Toxic
+      - Trick
+      - Confide
+      - AerialAce
+      - Blizzard
+      - BrickBreak
+      - Cut
+      - DarkPulse
+      - DrainPunch
+      - Embargo
+      - Fling
+      - FocusBlast
+      - FocusPunch
+      - KnockOff
+      - LastResort
+      - OminousWind
+      - Payback
+      - PoisonJab
+      - RockClimb
+      - RockSlide
+      - RockSmash
+      - RockTomb
+      - ShadowClaw
+      - ShockWave
+      - SludgeBomb
+      - Snatch
+      - Spite
+      - Strength
+      - SuckerPunch
+      - SwordsDance
+      - Taunt
+      - Thief
+      - Thunder
+      - Thunderbolt
+      - Torment
+      - WillOWisp
+      - XScissor
+      - PowerUpPunch
+      - ThroatChop
+Shaymin:
+  family-teachable:
+    - BulletSeed
+    - DoubleTeam
+    - Endure
+    - EnergyBall
+    - Facade
+    - Flash
+    - Frustration
+    - GigaDrain
+    - GigaImpact
+    - GrassKnot
+    - HiddenPower
+    - HyperBeam
+    - LastResort
+    - MudSlap
+    - NaturalGift
+    - Protect
+    - PsychUp
+    - Psychic
+    - Rest
+    - Return
+    - Safeguard
+    - SecretPower
+    - SeedBomb
+    - SleepTalk
+    - Snore
+    - SolarBeam
+    - Substitute
+    - SunnyDay
+    - Swagger
+    - Swift
+    - SwordsDance
+    - Synthesis
+    - Toxic
+    - ZenHeadbutt
+    - Confide
+    - DazzlingGleam
+  Shaymin:
+    level:
+      1: [Growth]
+      10: [MagicalLeaf]
+      19: [LeechSeed]
+      28: [Synthesis]
+      37: [SweetScent]
+      46: [NaturalGift]
+      55: [WorrySeed]
+      64: [Aromatherapy]
+      73: [EnergyBall]
+      82: [SweetKiss]
+      91: [HealingWish]
+      100: [SeedFlare]
+    teachable: [EarthPower, Endeavor, LaserFocus]
+  ShayminSky:
+    level:
+      1: [Growth]
+      10: [MagicalLeaf]
+      19: [LeechSeed]
+      28: [QuickAttack]
+      37: [SweetScent]
+      46: [NaturalGift]
+      55: [WorrySeed]
+      64: [AirSlash]
+      73: [EnergyBall]
+      82: [SweetKiss]
+      91: [LeafStorm]
+      100: [SeedFlare]
+    teachable: [AirCutter, OminousWind, LaserFocus]
+Arceus:
+  family-teachable:
+    - AerialAce
+    - AncientPower
+    - AquaTail
+    - Avalanche
+    - Blizzard
+    - BrickBreak
+    - Brine
+    - BulletSeed
+    - CalmMind
+    - ChargeBeam
+    - Cut
+    - DarkPulse
+    - Defog
+    - Dive
+    - DoubleTeam
+    - DracoMeteor
+    - DragonClaw
+    - DragonPulse
+    - DreamEater
+    - EarthPower
+    - Earthquake
+    - Endure
+    - EnergyBall
+    - Facade
+    - FireBlast
+    - Flamethrower
+    - Flash
+    - FlashCannon
+    - Fly
+    - FocusBlast
+    - Frustration
+    - FuryCutter
+    - GigaDrain
+    - GigaImpact
+    - GrassKnot
+    - Hail
+    - HeatWave
+    - HiddenPower
+    - HyperBeam
+    - IceBeam
+    - IcyWind
+    - IronDefense
+    - IronHead
+    - IronTail
+    - LastResort
+    - LightScreen
+    - MudSlap
+    - NaturalGift
+    - OminousWind
+    - Outrage
+    - Overheat
+    - Payback
+    - PoisonJab
+    - Protect
+    - PsychUp
+    - Psychic
+    - RainDance
+    - Recycle
+    - Reflect
+    - Rest
+    - Return
+    - Roar
+    - RockClimb
+    - RockSlide
+    - RockSmash
+    - RockTomb
+    - Safeguard
+    - Sandstorm
+    - SecretPower
+    - ShadowBall
+    - ShadowClaw
+    - ShockWave
+    - SignalBeam
+    - SilverWind
+    - SleepTalk
+    - SludgeBomb
+    - Snore
+    - SolarBeam
+    - StealthRock
+    - StoneEdge
+    - Strength
+    - Substitute
+    - SunnyDay
+    - Surf
+    - Swagger
+    - Swift
+    - SwordsDance
+    - Thunder
+    - ThunderWave
+    - Thunderbolt
+    - Toxic
+    - Trick
+    - TrickRoom
+    - Twister
+    - WaterPulse
+    - Waterfall
+    - WillOWisp
+    - XScissor
+    - ZenHeadbutt
+    - Confide
+    - Liquidation
+    - LaserFocus
+  Arceus:
+    level:
+      1: [CosmicPower, NaturalGift, Punishment, SeismicToss]
+      10: [Gravity]
+      20: [EarthPower]
+      30: [HyperVoice]
+      40: [ExtremeSpeed]
+      50: [Refresh]
+      60: [FutureSight]
+      70: [Recover]
+      80: [HyperBeam]
+      90: [PerishSong]
+      100: [Judgment]
+  ArceusBug:
+    level:
+      1: [CosmicPower, NaturalGift, Punishment, SeismicToss]
+      10: [Gravity]
+      20: [EarthPower]
+      30: [HyperVoice]
+      40: [ExtremeSpeed]
+      50: [Refresh]
+      60: [FutureSight]
+      70: [Recover]
+      80: [HyperBeam]
+      90: [PerishSong]
+      100: [Judgment]
+  ArceusDark:
+    level:
+      1: [CosmicPower, NaturalGift, Punishment, SeismicToss]
+      10: [Gravity]
+      20: [EarthPower]
+      30: [HyperVoice]
+      40: [ExtremeSpeed]
+      50: [Refresh]
+      60: [FutureSight]
+      70: [Recover]
+      80: [HyperBeam]
+      90: [PerishSong]
+      100: [Judgment]
+  ArceusDragon:
+    level:
+      1: [CosmicPower, NaturalGift, Punishment, SeismicToss]
+      10: [Gravity]
+      20: [EarthPower]
+      30: [HyperVoice]
+      40: [ExtremeSpeed]
+      50: [Refresh]
+      60: [FutureSight]
+      70: [Recover]
+      80: [HyperBeam]
+      90: [PerishSong]
+      100: [Judgment]
+  ArceusElectric:
+    level:
+      1: [CosmicPower, NaturalGift, Punishment, SeismicToss]
+      10: [Gravity]
+      20: [EarthPower]
+      30: [HyperVoice]
+      40: [ExtremeSpeed]
+      50: [Refresh]
+      60: [FutureSight]
+      70: [Recover]
+      80: [HyperBeam]
+      90: [PerishSong]
+      100: [Judgment]
+  ArceusFighting:
+    level:
+      1: [CosmicPower, NaturalGift, Punishment, SeismicToss]
+      10: [Gravity]
+      20: [EarthPower]
+      30: [HyperVoice]
+      40: [ExtremeSpeed]
+      50: [Refresh]
+      60: [FutureSight]
+      70: [Recover]
+      80: [HyperBeam]
+      90: [PerishSong]
+      100: [Judgment]
+  ArceusFire:
+    level:
+      1: [CosmicPower, NaturalGift, Punishment, SeismicToss]
+      10: [Gravity]
+      20: [EarthPower]
+      30: [HyperVoice]
+      40: [ExtremeSpeed]
+      50: [Refresh]
+      60: [FutureSight]
+      70: [Recover]
+      80: [HyperBeam]
+      90: [PerishSong]
+      100: [Judgment]
+  ArceusFlying:
+    level:
+      1: [CosmicPower, NaturalGift, Punishment, SeismicToss]
+      10: [Gravity]
+      20: [EarthPower]
+      30: [HyperVoice]
+      40: [ExtremeSpeed]
+      50: [Refresh]
+      60: [FutureSight]
+      70: [Recover]
+      80: [HyperBeam]
+      90: [PerishSong]
+      100: [Judgment]
+  ArceusGhost:
+    level:
+      1: [CosmicPower, NaturalGift, Punishment, SeismicToss]
+      10: [Gravity]
+      20: [EarthPower]
+      30: [HyperVoice]
+      40: [ExtremeSpeed]
+      50: [Refresh]
+      60: [FutureSight]
+      70: [Recover]
+      80: [HyperBeam]
+      90: [PerishSong]
+      100: [Judgment]
+  ArceusGrass:
+    level:
+      1: [CosmicPower, NaturalGift, Punishment, SeismicToss]
+      10: [Gravity]
+      20: [EarthPower]
+      30: [HyperVoice]
+      40: [ExtremeSpeed]
+      50: [Refresh]
+      60: [FutureSight]
+      70: [Recover]
+      80: [HyperBeam]
+      90: [PerishSong]
+      100: [Judgment]
+  ArceusGround:
+    level:
+      1: [CosmicPower, NaturalGift, Punishment, SeismicToss]
+      10: [Gravity]
+      20: [EarthPower]
+      30: [HyperVoice]
+      40: [ExtremeSpeed]
+      50: [Refresh]
+      60: [FutureSight]
+      70: [Recover]
+      80: [HyperBeam]
+      90: [PerishSong]
+      100: [Judgment]
+  ArceusIce:
+    level:
+      1: [CosmicPower, NaturalGift, Punishment, SeismicToss]
+      10: [Gravity]
+      20: [EarthPower]
+      30: [HyperVoice]
+      40: [ExtremeSpeed]
+      50: [Refresh]
+      60: [FutureSight]
+      70: [Recover]
+      80: [HyperBeam]
+      90: [PerishSong]
+      100: [Judgment]
+  ArceusPoison:
+    level:
+      1: [CosmicPower, NaturalGift, Punishment, SeismicToss]
+      10: [Gravity]
+      20: [EarthPower]
+      30: [HyperVoice]
+      40: [ExtremeSpeed]
+      50: [Refresh]
+      60: [FutureSight]
+      70: [Recover]
+      80: [HyperBeam]
+      90: [PerishSong]
+      100: [Judgment]
+  ArceusPsychic:
+    level:
+      1: [CosmicPower, NaturalGift, Punishment, SeismicToss]
+      10: [Gravity]
+      20: [EarthPower]
+      30: [HyperVoice]
+      40: [ExtremeSpeed]
+      50: [Refresh]
+      60: [FutureSight]
+      70: [Recover]
+      80: [HyperBeam]
+      90: [PerishSong]
+      100: [Judgment]
+  ArceusRock:
+    level:
+      1: [CosmicPower, NaturalGift, Punishment, SeismicToss]
+      10: [Gravity]
+      20: [EarthPower]
+      30: [HyperVoice]
+      40: [ExtremeSpeed]
+      50: [Refresh]
+      60: [FutureSight]
+      70: [Recover]
+      80: [HyperBeam]
+      90: [PerishSong]
+      100: [Judgment]
+  ArceusSteel:
+    level:
+      1: [CosmicPower, NaturalGift, Punishment, SeismicToss]
+      10: [Gravity]
+      20: [EarthPower]
+      30: [HyperVoice]
+      40: [ExtremeSpeed]
+      50: [Refresh]
+      60: [FutureSight]
+      70: [Recover]
+      80: [HyperBeam]
+      90: [PerishSong]
+      100: [Judgment]
+  ArceusWater:
+    level:
+      1: [CosmicPower, NaturalGift, Punishment, SeismicToss]
+      10: [Gravity]
+      20: [EarthPower]
+      30: [HyperVoice]
+      40: [ExtremeSpeed]
+      50: [Refresh]
+      60: [FutureSight]
+      70: [Recover]
+      80: [HyperBeam]
+      90: [PerishSong]
+      100: [Judgment]
+  ArceusFairy:
+    level:
+      1: [CosmicPower, NaturalGift, Punishment, SeismicToss]
+      10: [Gravity]
+      20: [EarthPower]
+      30: [HyperVoice]
+      40: [ExtremeSpeed]
+      50: [Refresh]
+      60: [FutureSight]
+      70: [Recover]
+      80: [HyperBeam]
+      90: [PerishSong]
+      100: [Judgment]

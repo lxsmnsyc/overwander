@@ -18,7 +18,15 @@ const AGAINST_DEFENSE = new Set<Moves>([Moves.Psyshock, Moves.Psystrike, Moves.S
 /** Blind to the target's stages, its evasion included */
 const IGNORES_STAGES = new Set<Moves>([Moves.ChipAway, Moves.SacredSword, Moves.DarkestLariat]);
 
-const ALWAYS_CRITICAL = new Set<Moves>([Moves.StormThrow, Moves.FrostBreath]);
+const ALWAYS_CRITICAL = new Set<Moves>([
+  Moves.StormThrow,
+  Moves.FrostBreath,
+  Moves.WickedBlow,
+  Moves.SurgingStrikes,
+]);
+
+/** Swung with the user's own Defense and its stages in place of its Attack */
+const DEFENSE_AS_ATTACK = new Set<Moves>([Moves.BodyPress]);
 
 export default function setupStatReadingMoves(battle: Battle): void {
   battle.on(BattleEvents.UnitAttackResolveStat, EventPriority.Exact, (event) => {
@@ -30,6 +38,13 @@ export default function setupStatReadingMoves(battle: Battle): void {
       event.stat === Stats.Attack
     ) {
       event.value = parent.target.resolveStat(Stats.Attack, StatFlags.Attack);
+    }
+    if (
+      DEFENSE_AS_ATTACK.has(parent.move) &&
+      event.unit === parent.source &&
+      event.stat === Stats.Attack
+    ) {
+      event.value = parent.source.resolveStat(Stats.Defense, StatFlags.Attack);
     }
     if (
       AGAINST_DEFENSE.has(parent.move) &&

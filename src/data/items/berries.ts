@@ -1,8 +1,8 @@
 import { STAGE_NAMES, STAT_NAMES, Stages, Stats } from '../constants/stats';
 import { TYPE_NAMES, Types } from '../constants/types';
-import { ItemFlags, ItemTypes, Items } from '../ids/items';
+import { Items } from '../ids/items';
 import { Statuses } from '../ids/status';
-import { registerItem } from './__create';
+import { itemText } from './__create';
 
 /**
  * The berries, and what each one is for.
@@ -225,21 +225,21 @@ export const BERRY_EFFORT_DROP = 10;
  * handed to a wild pokemon to talk it round, and worth a little more
  * for the throw than a cure berry is
  */
-export const BAIT_BERRY_NAMES = new Map<Items, string>([
-  [Items.RazzBerry, 'Razz Berry'],
-  [Items.BlukBerry, 'Bluk Berry'],
-  [Items.NanabBerry, 'Nanab Berry'],
-  [Items.WepearBerry, 'Wepear Berry'],
-  [Items.PinapBerry, 'Pinap Berry'],
-  [Items.CornnBerry, 'Cornn Berry'],
-  [Items.MagostBerry, 'Magost Berry'],
-  [Items.RabutaBerry, 'Rabuta Berry'],
-  [Items.NomelBerry, 'Nomel Berry'],
-  [Items.SpelonBerry, 'Spelon Berry'],
-  [Items.PamtreBerry, 'Pamtre Berry'],
-  [Items.WatmelBerry, 'Watmel Berry'],
-  [Items.DurinBerry, 'Durin Berry'],
-  [Items.BelueBerry, 'Belue Berry'],
+export const BAIT_BERRIES = new Set<Items>([
+  Items.RazzBerry,
+  Items.BlukBerry,
+  Items.NanabBerry,
+  Items.WepearBerry,
+  Items.PinapBerry,
+  Items.CornnBerry,
+  Items.MagostBerry,
+  Items.RabutaBerry,
+  Items.NomelBerry,
+  Items.SpelonBerry,
+  Items.PamtreBerry,
+  Items.WatmelBerry,
+  Items.DurinBerry,
+  Items.BelueBerry,
 ]);
 
 /**
@@ -250,23 +250,17 @@ export const BAIT_BERRY_NAMES = new Map<Items, string>([
 export const BAIT_CATCH_BONUS = 1.5;
 
 /**
- * A flavour berry sells for what a cure does. It is not scarce and it
- * settles no fight, so nothing about it is worth the rare price
- */
-const BAIT_BERRY_SELL = 20;
-
-/**
  * The prize berries: the same three fruits a patch bears, grown silver
  * or gold. Every one of them is fed rather than held, and each family
  * buys a different thing with the feeding
  */
-export const PRIZE_BERRY_NAMES = new Map<Items, string>([
-  [Items.SilverRazzBerry, 'Silver Razz Berry'],
-  [Items.GoldenRazzBerry, 'Golden Razz Berry'],
-  [Items.SilverNanabBerry, 'Silver Nanab Berry'],
-  [Items.GoldenNanabBerry, 'Golden Nanab Berry'],
-  [Items.SilverPinapBerry, 'Silver Pinap Berry'],
-  [Items.GoldenPinapBerry, 'Golden Pinap Berry'],
+export const PRIZE_BERRIES = new Set<Items>([
+  Items.SilverRazzBerry,
+  Items.GoldenRazzBerry,
+  Items.SilverNanabBerry,
+  Items.GoldenNanabBerry,
+  Items.SilverPinapBerry,
+  Items.GoldenPinapBerry,
 ]);
 
 /**
@@ -305,13 +299,6 @@ export const PINAP_CANDY_HELPINGS = new Map<Items, number>([
 ]);
 
 /**
- * What a prize berry fetches. Rarer than anything else a patch bears
- * and spent on one meeting, so it is worth more to a seller than the
- * berries that settle a fight
- */
-const PRIZE_BERRY_SELL = 300;
-
-/**
  * The berries that answer to no table: each one is the only thing
  * that does what it does
  */
@@ -327,66 +314,6 @@ const OTHER_BERRIES = new Set<Items>([
 ]);
 
 /**
- * What a berry that does more than cure a status fetches. A cure sells
- * for twenty; these are found in the same patches and are worth
- * carrying for what they do, so they are worth more to somebody who
- * would rather have the gold
- */
-export const RARE_BERRY_SELL = 80;
-
-/**
- * The berries added after the ten the game started with, and what
- * each is called. They are registered from this rather than one by
- * one: they cost the same, are held the same way, and differ only in
- * what the tables above say about them
- */
-const BERRY_NAMES = new Map<Items, string>([
-  [Items.OccaBerry, 'Occa Berry'],
-  [Items.PasshoBerry, 'Passho Berry'],
-  [Items.WacanBerry, 'Wacan Berry'],
-  [Items.RindoBerry, 'Rindo Berry'],
-  [Items.YacheBerry, 'Yache Berry'],
-  [Items.ChopleBerry, 'Chople Berry'],
-  [Items.KebiaBerry, 'Kebia Berry'],
-  [Items.ShucaBerry, 'Shuca Berry'],
-  [Items.CobaBerry, 'Coba Berry'],
-  [Items.PayapaBerry, 'Payapa Berry'],
-  [Items.TangaBerry, 'Tanga Berry'],
-  [Items.ChartiBerry, 'Charti Berry'],
-  [Items.KasibBerry, 'Kasib Berry'],
-  [Items.HabanBerry, 'Haban Berry'],
-  [Items.ColburBerry, 'Colbur Berry'],
-  [Items.BabiriBerry, 'Babiri Berry'],
-  [Items.ChilanBerry, 'Chilan Berry'],
-  [Items.RoseliBerry, 'Roseli Berry'],
-  [Items.LiechiBerry, 'Liechi Berry'],
-  [Items.GanlonBerry, 'Ganlon Berry'],
-  [Items.SalacBerry, 'Salac Berry'],
-  [Items.PetayaBerry, 'Petaya Berry'],
-  [Items.ApicotBerry, 'Apicot Berry'],
-  [Items.LansatBerry, 'Lansat Berry'],
-  [Items.StarfBerry, 'Starf Berry'],
-  [Items.CustapBerry, 'Custap Berry'],
-  [Items.MicleBerry, 'Micle Berry'],
-  [Items.FigyBerry, 'Figy Berry'],
-  [Items.WikiBerry, 'Wiki Berry'],
-  [Items.MagoBerry, 'Mago Berry'],
-  [Items.AguavBerry, 'Aguav Berry'],
-  [Items.IapapaBerry, 'Iapapa Berry'],
-  [Items.EnigmaBerry, 'Enigma Berry'],
-  [Items.KeeBerry, 'Kee Berry'],
-  [Items.MarangaBerry, 'Maranga Berry'],
-  [Items.JabocaBerry, 'Jaboca Berry'],
-  [Items.RowapBerry, 'Rowap Berry'],
-  [Items.PomegBerry, 'Pomeg Berry'],
-  [Items.KelpsyBerry, 'Kelpsy Berry'],
-  [Items.QualotBerry, 'Qualot Berry'],
-  [Items.HondewBerry, 'Hondew Berry'],
-  [Items.GrepaBerry, 'Grepa Berry'],
-  [Items.TamatoBerry, 'Tamato Berry'],
-]);
-
-/**
  * Whether the item is a berry at all
  */
 export function isBerry(item: Items): boolean {
@@ -398,23 +325,10 @@ export function isBerry(item: Items): boolean {
     BERRY_NATURE_HEALS.has(item) ||
     BERRY_BRACE_STAGES.has(item) ||
     BERRY_EFFORT_DROPS.has(item) ||
-    BAIT_BERRY_NAMES.has(item) ||
-    PRIZE_BERRY_NAMES.has(item) ||
+    BAIT_BERRIES.has(item) ||
+    PRIZE_BERRIES.has(item) ||
     OTHER_BERRIES.has(item)
   );
-}
-
-/**
- * The picture of a berry.
- *
- * Every berry sits on the one `berries` sheet under the bare half of
- * its name — a Cheri Berry is `cheri` — so the sprite is derived from
- * the name rather than written out fifty-three more times. The sheet
- * covers every berry the game has, and one it did not cover would
- * draw nothing rather than draw the wrong fruit
- */
-function berryIcon(name: string): string {
-  return `berries/${berryFruit(name)}`;
 }
 
 /**
@@ -430,238 +344,63 @@ export function berryFruit(name: string): string {
 }
 
 /**
- * The berries whose line cannot be worked out of a table, because
- * what they do is their own
- */
-const BERRY_DESCRIPTIONS: { [key in Items]?: string } = {
-  [Items.CheriBerry]: 'Cures paralysis the moment it lands.',
-  [Items.ChestoBerry]: 'Wakes its holder the moment it falls asleep.',
-  [Items.PechaBerry]: 'Cures poison the moment it lands.',
-  [Items.RawstBerry]: 'Cures a burn the moment it lands.',
-  [Items.AspearBerry]: 'Thaws its holder the moment it freezes.',
-  [Items.PersimBerry]: 'Cures confusion the moment it lands.',
-  [Items.LumBerry]: 'Cures any status the moment it lands.',
-  [Items.LeppaBerry]: 'Clears the cooldown of the first move its holder uses.',
-  [Items.OranBerry]: 'Restores 10 HP at 1/2 HP.',
-  [Items.SitrusBerry]: 'Restores 1/4 of max HP at 1/2 HP.',
-  [Items.LansatBerry]: 'Sharpens its holder’s criticals by 2 stages at 1/4 HP.',
-  [Items.StarfBerry]: '+2 to 1 random stat at 1/4 HP.',
-  [Items.CustapBerry]: 'Its holder’s next move winds up a bracket faster, at 1/4 HP.',
-  [Items.MicleBerry]: '1.2x accuracy on its holder’s next move, at 1/4 HP.',
-  [Items.EnigmaBerry]: 'Restores 1/4 of max HP after a super-effective blow lands.',
-  [Items.JabocaBerry]: 'A physical attacker pays 1/8 of its own HP.',
-  [Items.RowapBerry]: 'A special attacker pays 1/8 of its own HP.',
-  [Items.KeeBerry]: '+1 Defense after a physical blow lands on its holder.',
-  [Items.MarangaBerry]: '+1 Sp. Defense after a special blow lands on its holder.',
-};
-
-/**
- * What a berry does, in one line. Most of it is read off the tables
- * above rather than written out again, so a berry moved from one
- * table to another describes itself correctly without being edited
+ * What a berry does, in one line, for the berries whose line is read
+ * off the tables above. A berry moved from one table to another
+ * describes itself correctly without being edited; the ones that do
+ * their own thing are written out in the text file
  */
 export function describeBerry(item: Items): string {
-  const own = BERRY_DESCRIPTIONS[item];
-
-  if (own != null) {
-    return own;
-  }
-
-  if (BAIT_BERRY_NAMES.has(item)) {
-    return `Fed to a wild pokemon for ${BAIT_CATCH_BONUS}x catch odds.`;
+  if (BAIT_BERRIES.has(item)) {
+    return itemText('berries', 'bait', { bonus: BAIT_CATCH_BONUS });
   }
 
   const razz = RAZZ_CATCH_BONUS.get(item);
 
   if (razz != null) {
-    return `Fed to a wild pokemon for ${razz}x catch odds.`;
+    return itemText('berries', 'bait', { bonus: razz });
   }
 
   const calm = NANAB_FLEE_FACTOR.get(item);
 
   if (calm != null) {
-    return calm === 0
-      ? `Fed to a wild pokemon for ${BAIT_CATCH_BONUS}x catch odds, and stops it bolting from the next ball.`
-      : `Fed to a wild pokemon for ${BAIT_CATCH_BONUS}x catch odds, and halves its chance of bolting from the next ball.`;
+    return itemText('berries', calm === 0 ? 'nanabStop' : 'nanabHalve', {
+      bonus: BAIT_CATCH_BONUS,
+    });
   }
 
   const helpings = PINAP_CANDY_HELPINGS.get(item);
 
   if (helpings != null) {
-    return `Fed to a wild pokemon for ${BAIT_CATCH_BONUS}x catch odds. Catching it pays ${helpings === 1 ? 'one extra helping' : `${helpings} extra helpings`} of its candy.`;
+    return itemText('berries', helpings === 1 ? 'pinapOne' : 'pinap', {
+      bonus: BAIT_CATCH_BONUS,
+      helpings,
+    });
   }
 
   const resisted = BERRY_RESIST_TYPES.get(item);
 
-  if (resisted === Types.Normal) {
-    return 'Halves the first Normal blow to land on its holder.';
-  }
-
   if (resisted != null) {
-    return `Halves one ${TYPE_NAMES[resisted]} blow that was landing hard.`;
+    return itemText('berries', resisted === Types.Normal ? 'resistNormal' : 'resist', {
+      type: TYPE_NAMES[resisted],
+    });
   }
 
   const pinch = BERRY_PINCH_STAGES.get(item);
 
   if (pinch != null) {
-    return `+1 ${STAGE_NAMES[pinch]} at 1/4 HP.`;
+    return itemText('berries', 'pinch', { stat: STAGE_NAMES[pinch] });
   }
 
   const nature = BERRY_NATURE_HEALS.get(item);
 
   if (nature != null) {
-    return `Restores 1/3 of max HP at 1/2 HP. Confuses a pokemon whose nature lowers ${STAT_NAMES[nature]}.`;
+    return itemText('berries', 'nature', { stat: STAT_NAMES[nature] });
   }
 
   const effort = BERRY_EFFORT_DROPS.get(item);
 
-  return effort == null ? '' : `Takes 10 ${STAT_NAMES[effort]} effort off a pokemon it is fed to.`;
-}
-
-export default function registerBattleBerries(): void {
-  // Cures paralysis
-  registerItem(Items.CheriBerry, {
-    name: 'Cheri Berry',
-    description: describeBerry(Items.CheriBerry),
-    type: ItemTypes.Berry,
-    icon: 'berries/cheri',
-    flags: ItemFlags.Holdable | ItemFlags.Consumable,
-    buy: 0,
-    sell: 20,
-  });
-  // Cures sleep
-  registerItem(Items.ChestoBerry, {
-    name: 'Chesto Berry',
-    description: describeBerry(Items.ChestoBerry),
-    type: ItemTypes.Berry,
-    icon: 'berries/chesto',
-    flags: ItemFlags.Holdable | ItemFlags.Consumable,
-    buy: 0,
-    sell: 20,
-  });
-  // Cures poison
-  registerItem(Items.PechaBerry, {
-    name: 'Pecha Berry',
-    description: describeBerry(Items.PechaBerry),
-    type: ItemTypes.Berry,
-    icon: 'berries/pecha',
-    flags: ItemFlags.Holdable | ItemFlags.Consumable,
-    buy: 0,
-    sell: 20,
-  });
-  // Cures a burn
-  registerItem(Items.RawstBerry, {
-    name: 'Rawst Berry',
-    description: describeBerry(Items.RawstBerry),
-    type: ItemTypes.Berry,
-    icon: 'berries/rawst',
-    flags: ItemFlags.Holdable | ItemFlags.Consumable,
-    buy: 0,
-    sell: 20,
-  });
-  // Thaws the holder
-  registerItem(Items.AspearBerry, {
-    name: 'Aspear Berry',
-    description: describeBerry(Items.AspearBerry),
-    type: ItemTypes.Berry,
-    icon: 'berries/aspear',
-    flags: ItemFlags.Holdable | ItemFlags.Consumable,
-    buy: 0,
-    sell: 20,
-  });
-  // Restores PP of a depleted move
-  registerItem(Items.LeppaBerry, {
-    name: 'Leppa Berry',
-    description: describeBerry(Items.LeppaBerry),
-    type: ItemTypes.Berry,
-    icon: 'berries/leppa',
-    flags: ItemFlags.Holdable | ItemFlags.Consumable,
-    buy: 0,
-    sell: 20,
-  });
-  // Restores a small amount of health when low
-  registerItem(Items.OranBerry, {
-    name: 'Oran Berry',
-    description: describeBerry(Items.OranBerry),
-    type: ItemTypes.Berry,
-    icon: 'berries/oran',
-    flags: ItemFlags.Holdable | ItemFlags.Consumable,
-    buy: 0,
-    sell: 20,
-  });
-  // Cures confusion
-  registerItem(Items.PersimBerry, {
-    name: 'Persim Berry',
-    description: describeBerry(Items.PersimBerry),
-    type: ItemTypes.Berry,
-    icon: 'berries/persim',
-    flags: ItemFlags.Holdable | ItemFlags.Consumable,
-    buy: 0,
-    sell: 20,
-  });
-  // Cures any status condition
-  registerItem(Items.LumBerry, {
-    name: 'Lum Berry',
-    description: describeBerry(Items.LumBerry),
-    type: ItemTypes.Berry,
-    icon: 'berries/lum',
-    flags: ItemFlags.Holdable | ItemFlags.Consumable,
-    buy: 0,
-    sell: 20,
-  });
-  // Restores a quarter of max health when low
-  registerItem(Items.SitrusBerry, {
-    name: 'Sitrus Berry',
-    description: describeBerry(Items.SitrusBerry),
-    type: ItemTypes.Berry,
-    icon: 'berries/sitrus',
-    flags: ItemFlags.Holdable | ItemFlags.Consumable,
-    buy: 0,
-    sell: 20,
-  });
-
-  // The rest of them are written as one line each: what a berry is
-  // worth is the same for all of them, and what each one does is
-  // already said by the table it is in
-  for (const [item, name] of BERRY_NAMES) {
-    registerItem(item, {
-      name,
-      description: describeBerry(item),
-      type: ItemTypes.Berry,
-      icon: berryIcon(name),
-      flags: ItemFlags.Holdable | ItemFlags.Consumable,
-      buy: 0,
-      // The scarcer berries are worth more to a seller than the cures
-      // are, which is most of what makes them worth digging up
-      sell: RARE_BERRY_SELL,
-    });
+  if (effort != null) {
+    return itemText('berries', 'effort', { stat: STAT_NAMES[effort] });
   }
-
-  // Bait is not held and triggers on nothing, so it carries neither
-  // the holdable flag nor the rare price
-  for (const [item, name] of BAIT_BERRY_NAMES) {
-    registerItem(item, {
-      name,
-      description: describeBerry(item),
-      type: ItemTypes.Berry,
-      icon: berryIcon(name),
-      flags: ItemFlags.Consumable,
-      buy: 0,
-      sell: BAIT_BERRY_SELL,
-    });
-  }
-
-  // The grades are fed the same way and differ only in what the
-  // feeding buys, so they are registered off one table too
-  for (const [item, name] of PRIZE_BERRY_NAMES) {
-    registerItem(item, {
-      name,
-      description: describeBerry(item),
-      type: ItemTypes.Berry,
-      icon: berryIcon(name),
-      flags: ItemFlags.Consumable,
-      buy: 0,
-      sell: PRIZE_BERRY_SELL,
-    });
-  }
+  throw new Error(`No berry line is worked out for item ${item}`);
 }

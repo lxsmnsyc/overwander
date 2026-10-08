@@ -1,0 +1,14 @@
+# The share of the damage a move deals that its user takes back
+
+TakeDown: 1/4
+DoubleEdge: 1/3
+Submission: 1/4
+VoltTackle: 1/3
+FlareBlitz: 1/3
+BraveBird: 1/3
+WoodHammer: 1/3
+HeadSmash: 1/2
+WildCharge: 1/4
+HeadCharge: 1/4
+LightOfRuin: 1/2
+WaveCrash: 1/3

@@ -1,0 +1,104 @@
+# Johto's trainer classes, each by its enum name: `types` it fields
+# (an empty list is every type), the `sheets` it may stand in, and the
+# `trade` it is one region's version of, left out where it is its own.
+# What each is called and says is text/en/trainers.
+
+# The tower's sages and the two elders who keep it, who are the same
+# people a few decades apart
+Sage:
+  types: [Grass]
+  sheets:
+    - characters/hgss/sage
+    - characters/hgss/sage-1
+    - characters/hgss/sage-2
+    - characters/hgss/elder-1
+    - characters/hgss/elder-2
+Skier:
+  types: [Ice]
+  sheets: [characters/hgss/skier]
+Scientist:
+  types: [Steel]
+  sheets:
+    - characters/hgss/scientist
+    - characters/lgpe/scientist
+# Johto's two answer the types Kanto has nobody for: the Den's maniacs
+# keep dragons, and its burglars work after dark
+JohtoPokeManiac:
+  types: [Dragon]
+  sheets: [characters/hgss/poke-maniac]
+  trade: PokeManiac
+JohtoBurglar:
+  types: [Dark]
+  sheets: [characters/hgss/burglar]
+  trade: Burglar
+JohtoAceTrainer:
+  types: []
+  sheets:
+    - characters/hgss/ace-trainer
+    - characters/hgss/ace-trainer-f
+  trade: AceTrainer
+JohtoLass:
+  types: [Normal]
+  sheets: [characters/hgss/lass]
+  trade: Lass
+JohtoBlackBelt:
+  types: [Fighting]
+  sheets: [characters/hgss/black-belt]
+  trade: BlackBelt
+JohtoBirdKeeper:
+  types: [Flying]
+  sheets: [characters/hgss/bird-keeper]
+  trade: BirdKeeper
+JohtoBiker:
+  types: [Poison]
+  sheets: [characters/hgss/biker]
+  trade: Biker
+JohtoBugCatcher:
+  types: [Bug]
+  sheets: [characters/hgss/bug-catcher]
+  trade: BugCatcher
+JohtoSwimmer:
+  types: [Water]
+  sheets:
+    - characters/hgss/swimmer
+    - characters/hgss/swimmer-f
+  trade: Swimmer
+Firebreather:
+  types: [Fire]
+  sheets: [characters/hgss/firebreather]
+Medium:
+  types: [Ghost]
+  sheets: [characters/hgss/medium]
+Teacher:
+  types: [Psychic]
+  sheets: [characters/hgss/teacher]
+SchoolKid:
+  types: [Electric]
+  sheets: [characters/hgss/school-kid]
+Youngster:
+  types: [Ground]
+  sheets: [characters/hgss/youngster]
+# The two halves of one trade, the way the Black Belt keeps the Crush
+# Girl's sheet
+Camper:
+  types: [Rock]
+  sheets:
+    - characters/lgpe/camper
+    - characters/lgpe/picnicker
+JohtoGentleman:
+  types: [Fire, Electric]
+  sheets:
+    - characters/hgss/gentleman
+    - characters/hgss/gentleman-2
+  trade: Gentleman
+JohtoSuperNerd:
+  types: [Poison, Electric]
+  sheets: [characters/hgss/super-nerd]
+  trade: SuperNerd
+JohtoJuggler:
+  types: [Psychic]
+  sheets: [characters/hgss/juggler]
+  trade: Juggler
+Boarder:
+  types: [Ice]
+  sheets: [characters/hgss/boarder]

@@ -1,0 +1,41 @@
+Meowth:
+  Meowth: { name: Meowth, category: Scratch Cat Pokemon }
+  Persian: { name: Persian, category: Classy Cat Pokemon }
+  MeowthAlola: { name: Alolan Meowth, category: Scratch Cat Pokemon }
+  PersianAlola: { name: Alolan Persian, category: Classy Cat Pokemon }
+Psyduck:
+  Psyduck: { name: Psyduck, category: Duck Pokemon }
+  Golduck: { name: Golduck, category: Duck Pokemon }
+Mankey:
+  Mankey: { name: Mankey, category: Pig Monkey Pokemon }
+  Primeape: { name: Primeape, category: Pig Monkey Pokemon }
+Growlithe:
+  Growlithe: { name: Growlithe, category: Puppy Pokemon }
+  Arcanine: { name: Arcanine, category: Legendary Pokemon }
+Poliwag:
+  Poliwag: { name: Poliwag, category: Tadpole Pokemon }
+  Poliwhirl: { name: Poliwhirl, category: Tadpole Pokemon }
+  Poliwrath: { name: Poliwrath, category: Tadpole Pokemon }
+  Politoed: { name: Politoed, category: Frog Pokemon }
+Abra:
+  Abra: { name: Abra, category: Psi Pokemon }
+  Kadabra: { name: Kadabra, category: Psi Pokemon }
+  Alakazam: { name: Alakazam, category: Psi Pokemon }
+Machop:
+  Machop: { name: Machop, category: Superpower Pokemon }
+  Machoke: { name: Machoke, category: Superpower Pokemon }
+  Machamp: { name: Machamp, category: Superpower Pokemon }
+Bellsprout:
+  Bellsprout: { name: Bellsprout, category: Flower Pokemon }
+  Weepinbell: { name: Weepinbell, category: Flycatcher Pokemon }
+  Victreebel: { name: Victreebel, category: Flycatcher Pokemon }
+Tentacool:
+  Tentacool: { name: Tentacool, category: Jellyfish Pokemon }
+  Tentacruel: { name: Tentacruel, category: Jellyfish Pokemon }
+Geodude:
+  Geodude: { name: Geodude, category: Rock Pokemon }
+  Graveler: { name: Graveler, category: Rock Pokemon }
+  Golem: { name: Golem, category: Megaton Pokemon }
+  GeodudeAlola: { name: Alolan Geodude, category: Rock Pokemon }
+  GravelerAlola: { name: Alolan Graveler, category: Rock Pokemon }
+  GolemAlola: { name: Alolan Golem, category: Megaton Pokemon }

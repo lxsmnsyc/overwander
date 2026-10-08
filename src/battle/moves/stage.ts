@@ -1,7 +1,8 @@
 import { AttackPriority } from '../../core/event-emitter';
-import { MAX_STAGE, MIN_STAGE, Stages } from '../../data/constants/stats';
+import { MAX_STAGE, MIN_STAGE } from '../../data/constants/stats';
 import Abilities from '../../data/ids/abilities';
 import { MoveAffects, Moves } from '../../data/ids/moves';
+import { STAGE_MOVES, type StageMoveEffect } from '../../data/battle';
 import { getMoveData } from '../../data/moves';
 import type Battle from '../core';
 import { USELESS_PENALTY } from '../ai/score';
@@ -15,156 +16,23 @@ import {
 import resolveMoveTargets from '../mechanics/move/targeting';
 import type Unit from '../unit';
 
-type StageMovesConfig = { [key in Moves]?: number };
+export type { StageMoveEffect };
 
-function createStageMove(stage: Stages, config: StageMovesConfig) {
-  return (battle: Battle) => {
-    battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
-      let target = event.source;
-      if (event.target.type === MoveTargetType.Unit) {
-        target = event.target.unit;
-      }
-      const move = event.move;
-      if (move in config) {
-        target.addStage(stage, config[move] ?? 0, {
-          type: EffectType.Move,
-          unit: event.source,
-          move: event.move,
-        });
-      }
-    });
-  };
+function setupStageChanges(battle: Battle): void {
+  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
+    let target = event.source;
+    if (event.target.type === MoveTargetType.Unit) {
+      target = event.target.unit;
+    }
+    for (const { stage, value } of getStageMoveEffects(event.move)) {
+      target.addStage(stage, value, {
+        type: EffectType.Move,
+        unit: event.source,
+        move: event.move,
+      });
+    }
+  });
 }
-
-const STAGE_MOVE_GROUPS: [Stages, StageMovesConfig][] = [
-  [
-    Stages.Attack,
-    {
-      [Moves.Growl]: -1,
-      [Moves.SwordsDance]: 2,
-      [Moves.Meditate]: 1,
-      [Moves.Sharpen]: 1,
-      [Moves.Charm]: -2,
-      // The target is flattered into swinging harder while it is too
-      // confused to aim
-      [Moves.Swagger]: 2,
-      [Moves.Howl]: 1,
-      [Moves.BulkUp]: 1,
-      [Moves.DragonDance]: 1,
-      [Moves.Tickle]: -1,
-      [Moves.FeatherDance]: -2,
-      [Moves.Memento]: -2,
-      [Moves.HoneClaws]: 1,
-      [Moves.Coil]: 1,
-      [Moves.ShellSmash]: 2,
-      [Moves.WorkUp]: 1,
-      [Moves.ShiftGear]: 1,
-      [Moves.NobleRoar]: -1,
-      [Moves.PlayNice]: -1,
-      [Moves.BabyDollEyes]: -1,
-      [Moves.TearfulLook]: -1,
-      [Moves.ExtremeEvoboost]: 2,
-    },
-  ],
-  [
-    Stages.SpecialAttack,
-    {
-      [Moves.Growth]: 1,
-      [Moves.TailGlow]: 3,
-      [Moves.NastyPlot]: 2,
-      [Moves.CalmMind]: 1,
-      // Flattery: the target is talked into leaning on a stat it
-      // cannot aim with
-      [Moves.Flatter]: 1,
-      [Moves.Memento]: -2,
-      [Moves.QuiverDance]: 1,
-      [Moves.ShellSmash]: 2,
-      [Moves.WorkUp]: 1,
-      [Moves.NobleRoar]: -1,
-      [Moves.Confide]: -1,
-      [Moves.EerieImpulse]: -2,
-      [Moves.TearfulLook]: -1,
-      [Moves.ExtremeEvoboost]: 2,
-    },
-  ],
-  [
-    Stages.SpecialDefense,
-    {
-      [Moves.Amnesia]: 2,
-      [Moves.DefendOrder]: 1,
-      [Moves.CalmMind]: 1,
-      [Moves.CosmicPower]: 1,
-      [Moves.Stockpile]: 1,
-      [Moves.Charge]: 1,
-      [Moves.MetalSound]: -2,
-      [Moves.FakeTears]: -2,
-      [Moves.QuiverDance]: 1,
-      [Moves.ShellSmash]: -1,
-      [Moves.AromaticMist]: 1,
-      [Moves.ExtremeEvoboost]: 2,
-    },
-  ],
-  [
-    Stages.Defense,
-    {
-      [Moves.Leer]: -1,
-      [Moves.DefendOrder]: 1,
-      [Moves.TailWhip]: -1,
-      [Moves.Withdraw]: 1,
-      [Moves.Harden]: 1,
-      [Moves.Screech]: -2,
-      [Moves.DefenseCurl]: 1,
-      [Moves.Barrier]: 2,
-      [Moves.AcidArmor]: 2,
-      [Moves.IronDefense]: 2,
-      [Moves.BulkUp]: 1,
-      [Moves.CosmicPower]: 1,
-      [Moves.Stockpile]: 1,
-      [Moves.Tickle]: -1,
-      [Moves.Coil]: 1,
-      [Moves.ShellSmash]: -1,
-      [Moves.CottonGuard]: 3,
-      [Moves.ExtremeEvoboost]: 2,
-    },
-  ],
-  [
-    Stages.Speed,
-    {
-      [Moves.StringShot]: -2,
-      [Moves.RockPolish]: 2,
-      [Moves.Agility]: 2,
-      [Moves.ScaryFace]: -2,
-      [Moves.CottonSpore]: -2,
-      [Moves.DragonDance]: 1,
-      [Moves.Autotomize]: 2,
-      [Moves.QuiverDance]: 1,
-      [Moves.ShellSmash]: 2,
-      [Moves.ShiftGear]: 2,
-      [Moves.ToxicThread]: -1,
-      [Moves.ExtremeEvoboost]: 2,
-    },
-  ],
-  [
-    Stages.Accuracy,
-    {
-      [Moves.Flash]: -1,
-      [Moves.SandAttack]: -1,
-      [Moves.SmokeScreen]: -1,
-      [Moves.Kinesis]: -1,
-      [Moves.HoneClaws]: 1,
-      [Moves.Coil]: 1,
-    },
-  ],
-  [
-    Stages.Evasion,
-    {
-      [Moves.DoubleTeam]: 1,
-      [Moves.Minimize]: 2,
-      [Moves.SweetScent]: -2,
-      [Moves.Defog]: -1,
-    },
-  ],
-];
 
 /**
  * Whether the two are on the same side of the field
@@ -173,27 +41,13 @@ function isAlly(one: Unit, other: Unit): boolean {
   return one !== other && one.team.alliance === other.team.alliance;
 }
 
-export interface StageMoveEffect {
-  stage: Stages;
-  value: number;
-}
-
 /**
  * Every stage change a move applies, empty for a move that applies
  * none. All of them rather than the first: a Shell Smash is three
  * rises and two drops, and a pinned Attack says nothing about the rest
  */
 export function getStageMoveEffects(move: Moves): StageMoveEffect[] {
-  const effects: StageMoveEffect[] = [];
-
-  for (const [stage, config] of STAGE_MOVE_GROUPS) {
-    const value = config[move];
-
-    if (value != null) {
-      effects.push({ stage, value });
-    }
-  }
-  return effects;
+  return STAGE_MOVES[move] ?? [];
 }
 
 /** The first stage change a move applies, for what shows only one */
@@ -327,9 +181,7 @@ function movesAnyStage(battle: Battle, source: Unit, move: Moves, target: MoveTa
 export default function setupStageMoves(battle: Battle): void {
   setupFriendlyDrops(battle);
 
-  for (const [stage, config] of STAGE_MOVE_GROUPS) {
-    createStageMove(stage, config)(battle);
-  }
+  setupStageChanges(battle);
 
   // A stage that will not move is a cast spent changing nothing. It is
   // pinned at the end it is being pushed towards, or something is

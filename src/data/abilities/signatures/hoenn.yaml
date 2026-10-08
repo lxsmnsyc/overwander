@@ -1,0 +1,117 @@
+# The signature abilities granted to the families filed under Hoenn
+
+families:
+  # The Hoenn starters share one signature: each grows through the
+  # fight in the stat its line is built on, up to three stages of its
+  # own making
+  Treecko: SapSurge
+  Torchic: EmberSurge
+  Mudkip: SiltSurge
+  Poochyena: PackHunt
+  Zigzagoon: CrookedRun
+  Wurmple: Cocoon
+
+  # Lotad and Seedot are counterparts, so each calls up its own sky on
+  # taking the field and lives off it. Whichever arrived last owns the
+  # weather, which is what makes the two cancel
+  Lotad: WaterBloom
+  Seedot: SunRoot
+  Taillow: MigrantsWind
+  Wingull: GullsGreed
+  Ralts: Empath
+  Surskit: SurfaceWalk
+  Shroomish: Mycelium
+  Slakoth: WideSwing
+  Nincada: VanishingAct
+  Whismur: EchoChamber
+  Makuhita: Shove
+  Nosepass: Magnetize
+  Skitty: KittenPace
+
+  # Sableye and Mawile are counterparts, and both work on what the far
+  # side has built up: Sableye knocks a raised stage off, Mawile takes
+  # that stage for itself
+  Sableye: ShadowTax
+  Mawile: JawClaim
+  Aron: OreHunger
+  Meditite: MindOverBody
+  Electrike: JoltStart
+
+  # Plusle and Minun are counterparts, and each works one end of the
+  # field as it acts: Plusle lifts the teammate that needs it, Minun takes
+  # the strongest enemy down a step
+  Plusle: CheerOn
+  Minun: JeerAt
+
+  # Volbeat and Illumise are counterparts, and each hangs an aura over
+  # the far side for as long as it stands: the light leaves nowhere to
+  # hide, the scent leaves nobody quick
+  Volbeat: TailLight
+  Illumise: LureScent
+  Roselia: Perennial
+  Gulpin: Bottomless
+  Carvanha: FeedingFrenzy
+  Wailmer: Spout
+  Numel: MagmaVent
+  Torkoal: BodyHeat
+  Spoink: StoredBounce
+  Spinda: UniqueSpots
+  Trapinch: AntlionPit
+  Cacnea: PatientStalk
+  Swablu: CloudStep
+
+  # Zangoose and Seviper are counterparts feuding over one thing: the
+  # venom. Seviper's every touch poisons, and poison anywhere is what
+  # Zangoose hunts, being the one thing venom does nothing to
+  Zangoose: FeudClaws
+  Seviper: DeepeningVenom
+
+  # Lunatone and Solrock are counterparts, and each hangs an aura over
+  # the field that the other's presence blots out: with both standing,
+  # neither aura applies
+  Lunatone: MoonPull
+  Solrock: SunGlare
+  Barboach: SiltBed
+  Corphish: DirtyFighter
+  Baltoy: SpinBalance
+
+  # Lileep and Anorith are Hoenn's two fossils, so they are counterparts:
+  # the one that anchors what it touches, and the one that runs down
+  # whatever cannot get away
+  Lileep: RootHold
+  Anorith: ClawRush
+  Feebas: ScarredBeauty
+  Castform: WeatherWorn
+  Kecleon: BlendIn
+  Shuppet: MalicePool
+  Duskull: SoulHarvest
+  Tropius: FruitCrop
+  Chimecho: RingingHead
+  Absol: DoomMark
+  Snorunt: ColdSnap
+  Spheal: Applause
+  Clamperl: PearlGuard
+  Relicanth: Unchanged
+  Luvdisc: SharedHeart
+  Bagon: SkullCharge
+  Beldum: HiveMind
+
+  # The three Regis share the seal they were shut behind: each stands
+  # half-strength for its first seconds on the field and then wakes for
+  # good, a quarter harder and two stages up in its own stat
+  Regirock: StoneSeal
+  Regice: FrostSeal
+  Registeel: IronSeal
+
+  # Latias and Latios are counterparts: the sister flies over her side
+  # and the brother flies through whatever the far side put up
+  Latias: EonShield
+  Latios: EonLance
+
+  # The three superancient pokemon share the waking: each is holding
+  # back until it drops below half, and what comes out then stays out
+  Kyogre: PrimalSea
+  Groudon: PrimalLand
+  Rayquaza: PrimalSky
+  Jirachi: SevenWishes
+  Deoxys: FormDrift

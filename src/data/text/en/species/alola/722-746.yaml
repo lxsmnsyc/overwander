@@ -1,0 +1,42 @@
+Rowlet:
+  Rowlet: { name: Rowlet, category: Grass Quill Pokemon }
+  Dartrix: { name: Dartrix, category: Blade Quill Pokemon }
+  Decidueye: { name: Decidueye, category: Arrow Quill Pokemon }
+Litten:
+  Litten: { name: Litten, category: Fire Cat Pokemon }
+  Torracat: { name: Torracat, category: Fire Cat Pokemon }
+  Incineroar: { name: Incineroar, category: Heel Pokemon }
+Popplio:
+  Popplio: { name: Popplio, category: Sea Lion Pokemon }
+  Brionne: { name: Brionne, category: Pop Star Pokemon }
+  Primarina: { name: Primarina, category: Soloist Pokemon }
+Pikipek:
+  Pikipek: { name: Pikipek, category: Woodpecker Pokemon }
+  Trumbeak: { name: Trumbeak, category: Bugle Beak Pokemon }
+  Toucannon: { name: Toucannon, category: Cannon Pokemon }
+Yungoos:
+  Yungoos: { name: Yungoos, category: Loitering Pokemon }
+  Gumshoos: { name: Gumshoos, category: Stakeout Pokemon }
+Grubbin:
+  Grubbin: { name: Grubbin, category: Larva Pokemon }
+  Charjabug: { name: Charjabug, category: Battery Pokemon }
+  Vikavolt: { name: Vikavolt, category: Stag Beetle Pokemon }
+Crabrawler:
+  Crabrawler: { name: Crabrawler, category: Boxing Pokemon }
+  Crabominable: { name: Crabominable, category: Woolly Crab Pokemon }
+Oricorio:
+  Oricorio: { name: Oricorio, category: Dancing Pokemon }
+  OricorioPomPom: { name: Pom-Pom Oricorio, category: Dancing Pokemon }
+  OricorioPau: { name: Pa'u Oricorio, category: Dancing Pokemon }
+  OricorioSensu: { name: Sensu Oricorio, category: Dancing Pokemon }
+Cutiefly:
+  Cutiefly: { name: Cutiefly, category: Bee Fly Pokemon }
+  Ribombee: { name: Ribombee, category: Bee Fly Pokemon }
+Rockruff:
+  Rockruff: { name: Rockruff, category: Puppy Pokemon }
+  Lycanroc: { name: Lycanroc, category: Wolf Pokemon }
+  LycanrocMidnight: { name: Midnight Lycanroc, category: Wolf Pokemon }
+  LycanrocDusk: { name: Dusk Lycanroc, category: Wolf Pokemon }
+Wishiwashi:
+  Wishiwashi: { name: Wishiwashi, category: Small Fry Pokemon }
+  WishiwashiSchool: { name: Wishiwashi School, category: Small Fry Pokemon }

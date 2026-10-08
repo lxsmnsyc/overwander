@@ -1,0 +1,58 @@
+# The statuses a move puts down, by move. What each status does is in
+# `src/battle/status/`
+
+# What a status move puts on what it is aimed at
+target:
+  PoisonPowder: Poisoned
+  PoisonGas: Poisoned
+  LovelyKiss: Sleeping
+  SleepPowder: Sleeping
+  Toxic: BadlyPoisoned
+  DarkVoid: Sleeping
+  StunSpore: Paralyzed
+  Supersonic: Confused
+  ThunderWave: Paralyzed
+  Glare: Paralyzed
+  Sing: Sleeping
+  ConfuseRay: Confused
+  Spore: Sleeping
+  Hypnosis: Sleeping
+  SweetKiss: Confused
+  Attract: Infatuated
+  Swagger: Confused
+  WillOWisp: Burned
+  GrassWhistle: Sleeping
+  TeeterDance: Confused
+  Flatter: Confused
+  Taunt: Taunted
+  Torment: Tormented
+  Yawn: Drowsy
+  Imprison: Imprisoned
+  HelpingHand: Helped
+  ToxicThread: Poisoned
+
+  # Follow Me's pull, put on the target rather than taken on
+  Spotlight: Centered
+
+# What a move puts on its own user
+self:
+  FocusEnergy: FocusEnergy
+  Minimize: Minimized
+  FollowMe: Centered
+  MagicCoat: Coated
+  Snatch: Snatching
+  Grudge: Grudging
+  Ingrain: Rooted
+  RagePowder: Centered
+
+# What a move lays over its own side of the field
+team:
+  Reflect: Reflect
+  LightScreen: LightScreen
+  AuroraVeil: AuroraVeil
+
+  # The partner moves that leave a screen behind as they land
+  GlitzyGlow: LightScreen
+  BaddyBad: Reflect
+  Mist: Mist
+  Safeguard: Safeguard

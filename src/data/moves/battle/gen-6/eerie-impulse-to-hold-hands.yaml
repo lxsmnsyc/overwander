@@ -1,0 +1,72 @@
+# From Eerie Impulse to Hold Hands
+
+EerieImpulse:
+  type: Electric
+  category: Status
+  accuracy: 100
+  pp: 15
+  target: Unit
+
+VenomDrench:
+  type: Poison
+  category: Status
+  accuracy: 100
+  pp: 20
+  target: None
+  affects: [Unit, Enemy]
+
+Powder:
+  type: Bug
+  category: Status
+  accuracy: 100
+  priority: 1
+  pp: 20
+  target: Unit
+  flags: [Powder]
+
+Geomancy:
+  type: Fairy
+  category: Status
+  pp: 10
+  target: None
+  steps: 1
+
+MagneticFlux:
+  type: Electric
+  category: Status
+  pp: 20
+  target: None
+
+HappyHour:
+  type: Normal
+  category: Status
+  pp: 30
+  target: None
+
+ElectricTerrain:
+  type: Electric
+  category: Status
+  pp: 10
+  target: None
+
+DazzlingGleam:
+  type: Fairy
+  category: Special
+  power: 80
+  accuracy: 100
+  pp: 10
+  target: None
+  affects: [Unit, Enemy]
+
+Celebrate:
+  type: Normal
+  category: Status
+  pp: 40
+  target: None
+
+HoldHands:
+  type: Normal
+  category: Status
+  pp: 40
+  target: Unit
+  affects: [Unit, Own]

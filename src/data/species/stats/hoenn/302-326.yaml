@@ -1,0 +1,178 @@
+Sableye:
+  Sableye:
+    stats: { HP: 50, Attack: 75, Defense: 75, SpecialAttack: 65, SpecialDefense: 65, Speed: 50 }
+    catch-rate: 45
+    height: 0.5
+    weight: 11
+    gender: [1, 1]
+Mawile:
+  Mawile:
+    stats: { HP: 50, Attack: 85, Defense: 85, SpecialAttack: 55, SpecialDefense: 55, Speed: 50 }
+    catch-rate: 45
+    height: 0.6
+    weight: 11.5
+    gender: [1, 1]
+Aron:
+  Aron:
+    stats: { HP: 50, Attack: 70, Defense: 100, SpecialAttack: 40, SpecialDefense: 40, Speed: 30 }
+    catch-rate: 180
+    height: 0.4
+    weight: 60
+    gender: [1, 1]
+  Lairon:
+    stats: { HP: 60, Attack: 90, Defense: 140, SpecialAttack: 50, SpecialDefense: 50, Speed: 40 }
+    catch-rate: 90
+    height: 0.9
+    weight: 120
+    gender: [1, 1]
+  Aggron:
+    stats: { HP: 70, Attack: 110, Defense: 180, SpecialAttack: 60, SpecialDefense: 60, Speed: 50 }
+    catch-rate: 45
+    height: 2.1
+    weight: 360
+    gender: [1, 1]
+Meditite:
+  Meditite:
+    stats: { HP: 30, Attack: 40, Defense: 55, SpecialAttack: 40, SpecialDefense: 55, Speed: 60 }
+    catch-rate: 180
+    height: 0.6
+    weight: 11.2
+    gender: [1, 1]
+  Medicham:
+    stats: { HP: 60, Attack: 60, Defense: 75, SpecialAttack: 60, SpecialDefense: 75, Speed: 80 }
+    catch-rate: 90
+    height: 1.3
+    weight: 31.5
+    gender: [1, 1]
+Electrike:
+  Electrike:
+    stats: { HP: 40, Attack: 45, Defense: 40, SpecialAttack: 65, SpecialDefense: 40, Speed: 65 }
+    catch-rate: 120
+    height: 0.6
+    weight: 15.2
+    gender: [1, 1]
+  Manectric:
+    stats: { HP: 70, Attack: 75, Defense: 60, SpecialAttack: 105, SpecialDefense: 60, Speed: 105 }
+    catch-rate: 45
+    height: 1.5
+    weight: 40.2
+    gender: [1, 1]
+Plusle:
+  Plusle:
+    stats: { HP: 60, Attack: 50, Defense: 40, SpecialAttack: 85, SpecialDefense: 75, Speed: 95 }
+    catch-rate: 200
+    height: 0.4
+    weight: 4.2
+    gender: [1, 1]
+Minun:
+  Minun:
+    stats: { HP: 60, Attack: 40, Defense: 50, SpecialAttack: 75, SpecialDefense: 85, Speed: 95 }
+    catch-rate: 200
+    height: 0.4
+    weight: 4.2
+    gender: [1, 1]
+Volbeat:
+  Volbeat:
+    stats: { HP: 65, Attack: 73, Defense: 75, SpecialAttack: 47, SpecialDefense: 85, Speed: 85 }
+    catch-rate: 150
+    height: 0.7
+    weight: 17.7
+    gender: [1, 0]
+Illumise:
+  Illumise:
+    stats: { HP: 65, Attack: 47, Defense: 75, SpecialAttack: 73, SpecialDefense: 85, Speed: 85 }
+    catch-rate: 150
+    height: 0.6
+    weight: 17.7
+    gender: [0, 1]
+Roselia:
+  Roselia:
+    stats: { HP: 50, Attack: 60, Defense: 45, SpecialAttack: 100, SpecialDefense: 80, Speed: 65 }
+    catch-rate: 150
+    height: 0.3
+    weight: 2
+    gender: [1, 1]
+  Budew:
+    stats: { HP: 40, Attack: 30, Defense: 35, SpecialAttack: 50, SpecialDefense: 70, Speed: 55 }
+    catch-rate: 255
+    height: 0.2
+    weight: 1.2
+    gender: [1, 1]
+  Roserade:
+    stats: { HP: 60, Attack: 70, Defense: 65, SpecialAttack: 125, SpecialDefense: 105, Speed: 90 }
+    catch-rate: 75
+    height: 0.9
+    weight: 14.5
+    gender: [1, 1]
+Gulpin:
+  Gulpin:
+    stats: { HP: 70, Attack: 43, Defense: 53, SpecialAttack: 43, SpecialDefense: 53, Speed: 40 }
+    catch-rate: 225
+    height: 0.4
+    weight: 10.3
+    gender: [1, 1]
+  Swalot:
+    stats: { HP: 100, Attack: 73, Defense: 83, SpecialAttack: 73, SpecialDefense: 83, Speed: 55 }
+    catch-rate: 75
+    height: 1.7
+    weight: 80
+    gender: [1, 1]
+Carvanha:
+  Carvanha:
+    stats: { HP: 45, Attack: 90, Defense: 20, SpecialAttack: 65, SpecialDefense: 20, Speed: 65 }
+    catch-rate: 225
+    height: 0.8
+    weight: 20.8
+    gender: [1, 1]
+  Sharpedo:
+    stats: { HP: 70, Attack: 120, Defense: 40, SpecialAttack: 95, SpecialDefense: 40, Speed: 95 }
+    catch-rate: 60
+    height: 1.8
+    weight: 88.8
+    gender: [1, 1]
+Wailmer:
+  Wailmer:
+    stats: { HP: 130, Attack: 70, Defense: 35, SpecialAttack: 70, SpecialDefense: 35, Speed: 60 }
+    catch-rate: 125
+    height: 2
+    weight: 130
+    gender: [1, 1]
+  Wailord:
+    stats: { HP: 170, Attack: 90, Defense: 45, SpecialAttack: 90, SpecialDefense: 45, Speed: 60 }
+    catch-rate: 60
+    height: 14.5
+    weight: 398
+    gender: [1, 1]
+Numel:
+  Numel:
+    stats: { HP: 60, Attack: 60, Defense: 40, SpecialAttack: 65, SpecialDefense: 45, Speed: 35 }
+    catch-rate: 255
+    height: 0.7
+    weight: 24
+    gender: [1, 1]
+  Camerupt:
+    stats: { HP: 70, Attack: 100, Defense: 70, SpecialAttack: 105, SpecialDefense: 75, Speed: 40 }
+    catch-rate: 150
+    height: 1.9
+    weight: 220
+    gender: [1, 1]
+Torkoal:
+  Torkoal:
+    stats: { HP: 70, Attack: 85, Defense: 140, SpecialAttack: 85, SpecialDefense: 70, Speed: 20 }
+    catch-rate: 90
+    height: 0.5
+    weight: 80.4
+    gender: [1, 1]
+Spoink:
+  Spoink:
+    stats: { HP: 60, Attack: 25, Defense: 35, SpecialAttack: 70, SpecialDefense: 80, Speed: 60 }
+    catch-rate: 255
+    height: 0.7
+    weight: 30.6
+    gender: [1, 1]
+  Grumpig:
+    stats: { HP: 80, Attack: 45, Defense: 65, SpecialAttack: 90, SpecialDefense: 110, Speed: 80 }
+    catch-rate: 60
+    height: 0.9
+    weight: 71.5
+    gender: [1, 1]

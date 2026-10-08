@@ -17,6 +17,7 @@ export const GUARD_MOVES: { [key in Moves]?: Statuses } = {
   [Moves.SpikyShield]: Statuses.Protected,
   [Moves.KingsShield]: Statuses.Protected,
   [Moves.BanefulBunker]: Statuses.Protected,
+  [Moves.Obstruct]: Statuses.Protected,
 };
 
 /** What a Spiky Shield costs whatever touches it, as a share of its HP */
@@ -24,6 +25,9 @@ export const SPIKY_SHIELD_SHARE = 1 / 8;
 
 /** What a King's Shield takes off whatever touches it */
 export const KINGS_SHIELD_STAGES = 1;
+
+/** And what an Obstruct takes off the Defense of whatever touches it */
+export const OBSTRUCT_STAGES = 2;
 
 /**
  * Which move raised the guard a unit is standing behind. The guard is
@@ -95,7 +99,8 @@ export default function setupProtectMoves(battle: Battle): void {
     if (
       (guard !== Moves.SpikyShield &&
         guard !== Moves.KingsShield &&
-        guard !== Moves.BanefulBunker) ||
+        guard !== Moves.BanefulBunker &&
+        guard !== Moves.Obstruct) ||
       !source.checkMoveContact(move, target)
     ) {
       return;
@@ -114,6 +119,10 @@ export default function setupProtectMoves(battle: Battle): void {
         source.checkStat(Stats.HP, 0) * SPIKY_SHIELD_SHARE,
         DamageFlags.Indirect | DamageFlags.HealthScaled,
       );
+      return;
+    }
+    if (guard === Moves.Obstruct) {
+      source.addStage(Stages.Defense, -OBSTRUCT_STAGES, cause);
       return;
     }
     source.addStage(Stages.Attack, -KINGS_SHIELD_STAGES, cause);

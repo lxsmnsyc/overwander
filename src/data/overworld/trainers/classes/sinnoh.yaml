@@ -1,0 +1,205 @@
+# Sinnoh's trainer classes, each by its enum name: `types` it fields
+# (an empty list is every type), the `sheets` it may stand in, and the
+# `trade` it is one region's version of, left out where it is its own.
+# What each is called and says is text/en/trainers.
+
+# Sinnoh's own fifteen, which are the trades nobody had before it: the
+# ranger who keeps the country, the worker out of the tunnel under the
+# mountain, and the rest of the road it fills
+Ranger:
+  types: [Grass, Bug]
+  sheets:
+    - characters/dppt/ranger-f
+    - characters/dppt/ranger-m
+Worker:
+  types: [Rock, Steel]
+  sheets: [characters/dppt/worker]
+Rancher:
+  types: [Normal, Ground]
+  sheets:
+    - characters/dppt/rancher
+    - characters/dppt/cowgirl
+Cyclist:
+  types: [Electric]
+  sheets:
+    - characters/dppt/cyclist
+    - characters/dppt/cyclist-f
+PokeKid:
+  types: [Normal]
+  sheets: [characters/dppt/poke-kid]
+Collector:
+  types: [Rock, Ghost]
+  sheets: [characters/dppt/collector]
+Artist:
+  types: [Normal]
+  sheets: [characters/dppt/artist]
+Reporter:
+  types: [Normal, Electric]
+  sheets:
+    - characters/dppt/reporter
+    - characters/dppt/cameraman
+RichBoy:
+  types: [Normal, Flying]
+  sheets:
+    - characters/dppt/rich-boy
+    - characters/dppt/lady
+Waiter:
+  types: [Normal, Fire]
+  sheets:
+    - characters/dppt/waiter
+    - characters/dppt/waitress
+ParasolLady:
+  types: [Water]
+  sheets: [characters/dppt/parasol-lady]
+Twins:
+  types: [Normal, Psychic]
+  sheets: [characters/dppt/twins]
+Policeman:
+  types: [Fire, Dark]
+  sheets: [characters/dppt/policeman]
+Jogger:
+  types: [Normal, Fighting]
+  sheets: [characters/dppt/jogger]
+Breeder:
+  types: [Normal, Grass]
+  sheets:
+    - characters/dppt/breeder-f
+    - characters/dppt/breeder-m
+# And its own of the trades already on the road
+SinnohAceTrainer:
+  types: []
+  sheets:
+    - characters/dppt/ace-trainer-f
+    - characters/dppt/ace-trainer-f-2
+    - characters/dppt/ace-trainer-m
+    - characters/dppt/ace-trainer-m-2
+  trade: AceTrainer
+SinnohLass:
+  types: [Normal]
+  sheets: [characters/dppt/lass]
+  trade: Lass
+SinnohBugCatcher:
+  types: [Bug]
+  sheets: [characters/dppt/bug-catcher]
+  trade: BugCatcher
+SinnohSwimmer:
+  types: [Water]
+  sheets:
+    - characters/dppt/swimmer-f
+    - characters/dppt/swimmer-m
+  trade: Swimmer
+SinnohYoungster:
+  types: [Ground]
+  sheets: [characters/dppt/youngster]
+  trade: Youngster
+SinnohSchoolKid:
+  types: [Electric]
+  sheets:
+    - characters/dppt/schoolkid-f
+    - characters/dppt/schoolkid-m
+  trade: SchoolKid
+SinnohCamper:
+  types: [Rock]
+  sheets:
+    - characters/dppt/camper
+    - characters/dppt/picnicker
+  trade: Camper
+SinnohBeauty:
+  types: [Normal, Water]
+  sheets:
+    - characters/dppt/beauty
+    - characters/dppt/idol
+  trade: Beauty
+SinnohFisherman:
+  types: [Water]
+  sheets: [characters/dppt/fisher]
+  trade: Fisherman
+SinnohSailor:
+  types: [Water, Fighting]
+  sheets: [characters/dppt/sailor]
+  trade: Sailor
+SinnohGentleman:
+  types: [Fire, Electric]
+  sheets:
+    - characters/dppt/gentleman
+    - characters/dppt/socialite
+  trade: Gentleman
+SinnohScientist:
+  types: [Steel]
+  sheets: [characters/dppt/scientist]
+  trade: Scientist
+SinnohBirdKeeper:
+  types: [Flying]
+  sheets: [characters/dppt/bird-keeper]
+  trade: BirdKeeper
+SinnohHiker:
+  types: [Ground]
+  sheets: [characters/dppt/hiker]
+  trade: Hiker
+SinnohPsychic:
+  types: [Psychic]
+  sheets:
+    - characters/dppt/psychic-f
+    - characters/dppt/psychic-m
+    - characters/dppt/expert
+  trade: Psychic
+SinnohSkier:
+  types: [Ice]
+  sheets:
+    - characters/dppt/skier-f
+    - characters/dppt/skier-m
+  trade: Skier
+SinnohBlackBelt:
+  types: [Fighting]
+  sheets:
+    - characters/dppt/black-belt
+    - characters/dppt/battle-girl
+  trade: BlackBelt
+SinnohDragonTamer:
+  types: [Dragon]
+  sheets: [characters/dppt/dragon-tamer]
+  trade: Tamer
+SinnohGuitarist:
+  types: [Electric]
+  sheets: [characters/dppt/guitarist]
+  trade: Rocker
+SinnohAromaLady:
+  types: [Grass]
+  sheets: [characters/dppt/aroma-lady]
+  trade: Sage
+SinnohRuinManiac:
+  types: [Rock, Ground]
+  sheets: [characters/dppt/ruin-maniac]
+  trade: PokeManiac
+SinnohNinjaBoy:
+  types: [Poison, Ghost]
+  sheets: [characters/dppt/ninja-boy]
+  trade: NinjaBoy
+SinnohTuber:
+  types: [Water, Ice]
+  sheets:
+    - characters/dppt/tuber-f
+    - characters/dppt/tuber-m
+  trade: Tuber
+SinnohPokeFan:
+  types: [Normal, Electric]
+  sheets:
+    - characters/dppt/poke-fan-f
+    - characters/dppt/poke-fan-m
+  trade: PokeFan
+SinnohRoughneck:
+  types: [Poison]
+  sheets: [characters/dppt/roughneck]
+  trade: Biker
+SinnohClown:
+  types: [Psychic]
+  sheets:
+    - characters/dppt/clown
+    - characters/dppt/clown-f
+  trade: Juggler
+SinnohCouple:
+  types: [Bug, Psychic]
+  sheets:
+    - characters/dppt/couple-f
+    - characters/dppt/couple-m
+  trade: Couple

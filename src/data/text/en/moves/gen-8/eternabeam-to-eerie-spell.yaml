@@ -1,0 +1,96 @@
+Eternabeam:
+  name: Eternabeam
+  description: The user must recharge for 2 seconds after it lands.
+SteelBeam:
+  name: Steel Beam
+  description: Costs the user 1/2 its HP however it lands.
+ExpandingForce:
+  name: Expanding Force
+  description: While the user stands on Psychic Terrain, hits 1.5x and reaches everything opposite.
+SteelRoller:
+  name: Steel Roller
+  description: Rolls the terrain flat, ending it. Fails while there is no terrain.
+ScaleShot:
+  name: Scale Shot
+  description: Strikes 2 to 5 times, then raises the user's Speed a stage and drops its Defense one.
+MeteorBeam:
+  name: Meteor Beam
+  description: Winds up first, raising the user's Special Attack a stage as it does.
+ShellSideArm:
+  name: Shell Side Arm
+  description: Physical or special, whichever hits the target harder. 20% to poison.
+MistyExplosion:
+  name: Misty Explosion
+  description: Hits everything around the user and knocks it out. 1.5x on Misty Terrain.
+GrassyGlide:
+  name: Grassy Glide
+  description: Winds up faster than an ordinary move while the user stands on Grassy Terrain.
+RisingVoltage:
+  name: Rising Voltage
+  description: 2x power against a grounded target on Electric Terrain.
+TerrainPulse:
+  name: Terrain Pulse
+  description: Takes the type of the terrain the user stands on, with 2x power, while there is one.
+SkitterSmack:
+  name: Skitter Smack
+  description: Drops the target's Special Attack a stage.
+BurningJealousy:
+  name: Burning Jealousy
+  description: Hits everything opposite, and burns any of them whose stats rose in the last 2 seconds.
+LashOut:
+  name: Lash Out
+  description: 2x power if the user's stats were dropped in the last 2 seconds.
+Poltergeist:
+  name: Poltergeist
+  description: Turns the target's own held item on it. Fails if it holds nothing.
+CorrosiveGas:
+  name: Corrosive Gas
+  description: Melts away the held items of everything around the user.
+Coaching:
+  name: Coaching
+  description: Raises the Attack and Defense of the user's teammates a stage.
+FlipTurn:
+  name: Flip Turn
+  description: The user swaps out for a teammate once it lands.
+TripleAxel:
+  name: Triple Axel
+  description: Strikes 3 times, harder each time, each strike rolling to land on its own.
+DualWingbeat:
+  name: Dual Wingbeat
+  description: Strikes 2 times.
+ScorchingSands:
+  name: Scorching Sands
+  description: 30% to burn. Thaws the user and the target.
+JungleHealing:
+  name: Jungle Healing
+  description: Heals the user and its teammates 1/4 of their HP, and cures their status conditions.
+WickedBlow:
+  name: Wicked Blow
+  description: Always lands a critical.
+SurgingStrikes:
+  name: Surging Strikes
+  description: Strikes 3 times, every strike a critical.
+ThunderCage:
+  name: Thunder Cage
+  description: 'Cages the target: 1/8 of its HP every 2 seconds for 8 seconds, and no escape, ghosts aside.'
+DragonEnergy:
+  name: Dragon Energy
+  description: Hits everything opposite, weaker the less HP the user has left.
+FreezingGlare:
+  name: Freezing Glare
+  description: 10% to freeze.
+FieryWrath:
+  name: Fiery Wrath
+  description: Hits everything opposite, 20% to flinch.
+ThunderousKick:
+  name: Thunderous Kick
+  description: Drops the target's Defense a stage.
+GlacialLance:
+  name: Glacial Lance
+  description: Hits everything opposite.
+AstralBarrage:
+  name: Astral Barrage
+  description: Hits everything opposite.
+EerieSpell:
+  name: Eerie Spell
+  description: Puts the target's last move on a 4x longer cooldown.

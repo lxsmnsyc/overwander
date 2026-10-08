@@ -1,0 +1,345 @@
+land:
+  morning: &land-morning
+    base:
+      Caterpie: 699
+      Starly: 699
+      Sewaddle: 652
+      Timburr: 582
+      Flabebe: 559
+      Scatterbug: 559
+      Bellsprout: 466
+      Ralts: 466
+      Poliwag: 466
+      Chespin: 47
+      Bulbasaur: 47
+      Chikorita: 47
+    uncommon:
+      Bidoof: 202
+      Buneary: 202
+      Wooper: 202
+      Cutiefly: 194
+      Petilil: 194
+      Spritzee: 194
+      Panpour: 178
+      Pansear: 178
+      Pansage: 178
+      Cherubi: 178
+      Karrablast: 162
+      Ledyba: 162
+      Pineco: 162
+      Deerling: 146
+      Scyther: 40
+      Pikachu: 40
+      Stantler: 40
+      Togetic: 40
+    rare:
+      Metapod: 216
+      Swadloon: 172
+      Gurdurr: 144
+      Kirlia: 144
+      Floette: 115
+      Spewpa: 115
+      Weepinbell: 72
+      Ursaring: 72
+      Staravia: 72
+      Poliwhirl: 72
+      Quilladin: 29
+      Ivysaur: 14
+      Bayleef: 14
+    scarce:
+      Bibarel: 48
+      Ledian: 39
+      Lopunny: 39
+      Simipour: 34
+      Simisear: 34
+      Simisage: 34
+      Sawsbuck: 34
+      Lilligant: 34
+      Ribombee: 29
+      Cherrim: 29
+      Ambipom: 29
+      Togekiss: 29
+      Leafeon: 29
+      Aromatisse: 29
+      Escavalier: 24
+      Raichu: 24
+      Scizor: 24
+      Forretress: 24
+      Vespiquen: 24
+      Quagsire: 24
+      Wormadam: 19
+      Mothim: 19
+    elusive:
+      Butterfree: 23
+      Beedrill: 23
+      Beautifly: 23
+      Emolga: 18
+      Audino: 18
+      Pachirisu: 18
+      Chatot: 14
+      Rotom: 14
+      Leavanny: 14
+      Florges: 11
+      Vivillon: 11
+      Sawk: 11
+      Throh: 11
+      Conkeldurr: 11
+      Victreebel: 11
+      Snorlax: 11
+      Sudowoodo: 11
+      Gardevoir: 11
+      Staraptor: 11
+      Gallade: 11
+      Politoed: 11
+      Chesnaught: 5
+      Venusaur: 5
+      Meganium: 5
+    prized:
+      Unown: forms
+      Togepi: prized
+      Pichu: prized
+      Bonsly: prized
+      MimeJr: prized
+      Happiny: prized
+    special:
+      Kartana: 10
+      Xerneas: 10
+      Virizion: 10
+      Mesprit: 10
+    mythical:
+      Zeraora: 10
+      Celebi: 10
+      PichuSpikyEared: 10
+  day: *land-morning
+  evening:
+    base:
+      Venipede: 2082
+      Oddish: 1601
+      Poliwag: 1601
+    uncommon:
+      Hoothoot: 170
+      Kricketot: 170
+      Bidoof: 170
+      Buneary: 170
+      Wooper: 170
+      Phantump: 163
+      Espurr: 163
+      Cherubi: 149
+      Foongus: 136
+      Shelmet: 136
+      Zorua: 136
+      Shuppet: 136
+      Venonat: 136
+      Spinarak: 136
+      Pineco: 136
+      Deerling: 122
+      Pikachu: 34
+      Murkrow: 34
+      Stantler: 34
+    rare:
+      Whirlipede: 682
+      Gloom: 284
+      Poliwhirl: 284
+    scarce:
+      Venomoth: 44
+      Noctowl: 44
+      Kricketune: 44
+      Bibarel: 44
+      Ariados: 35
+      Lopunny: 35
+      Sawsbuck: 31
+      Trevenant: 26
+      Amoonguss: 26
+      Banette: 26
+      Cherrim: 26
+      Ambipom: 26
+      Honchkrow: 26
+      Accelgor: 22
+      Zoroark: 22
+      Raichu: 22
+      Forretress: 22
+      Vespiquen: 22
+      Quagsire: 22
+      Wormadam: 17
+      Mothim: 17
+      Meowstic: 13
+      MeowsticFemale: 13
+    elusive:
+      Dustox: 40
+      Emolga: 32
+      Pachirisu: 32
+      Volbeat: 32
+      Illumise: 32
+      Rotom: 24
+      Scolipede: 24
+      Vileplume: 20
+      Snorlax: 20
+      Sudowoodo: 20
+      Bellossom: 20
+      Politoed: 20
+    prized:
+      Unown: forms
+      Pichu: prized
+      Bonsly: prized
+      MimeJr: prized
+      Happiny: prized
+    special:
+      Kartana: 10
+      Xerneas: 10
+      Virizion: 10
+      Mesprit: 10
+    mythical:
+      Zeraora: 10
+      Celebi: 10
+      PichuSpikyEared: 10
+  night:
+    base:
+      Venipede: 2082
+      Oddish: 1601
+      Poliwag: 1601
+    uncommon:
+      Hoothoot: 161
+      Kricketot: 161
+      Bidoof: 161
+      Buneary: 161
+      Wooper: 161
+      Phantump: 155
+      Espurr: 155
+      Cherubi: 142
+      Foongus: 129
+      Shelmet: 129
+      Zorua: 129
+      Shuppet: 129
+      Paras: 129
+      Venonat: 129
+      Spinarak: 129
+      Pineco: 129
+      Deerling: 116
+      Pikachu: 32
+      Murkrow: 32
+      Stantler: 32
+    rare:
+      Whirlipede: 682
+      Gloom: 284
+      Poliwhirl: 284
+    scarce:
+      Parasect: 41
+      Venomoth: 41
+      Noctowl: 41
+      Kricketune: 41
+      Bibarel: 41
+      Ariados: 33
+      Lopunny: 33
+      Sawsbuck: 29
+      Trevenant: 25
+      Amoonguss: 25
+      Banette: 25
+      Cherrim: 25
+      Ambipom: 25
+      Honchkrow: 25
+      Accelgor: 20
+      Zoroark: 20
+      Raichu: 20
+      Forretress: 20
+      Vespiquen: 20
+      Quagsire: 20
+      Wormadam: 16
+      Mothim: 16
+      Meowstic: 12
+      MeowsticFemale: 12
+    elusive:
+      Dustox: 40
+      Emolga: 32
+      Pachirisu: 32
+      Volbeat: 32
+      Illumise: 32
+      Rotom: 24
+      Scolipede: 24
+      Vileplume: 20
+      Snorlax: 20
+      Sudowoodo: 20
+      Bellossom: 20
+      Politoed: 20
+    prized:
+      Unown: forms
+      Pichu: prized
+      Bonsly: prized
+      MimeJr: prized
+      Happiny: prized
+    special:
+      Kartana: 10
+      Xerneas: 10
+      Virizion: 10
+      Mesprit: 10
+    mythical:
+      Zeraora: 10
+      Celebi: 10
+      PichuSpikyEared: 10
+
+water:
+  morning: &water-morning
+    base:
+      Starly: 3181
+      Poliwag: 2120
+    uncommon:
+      Magikarp: 494
+      Wooper: 412
+      Bidoof: 412
+      Panpour: 363
+      Goldeen: 330
+      Ledyba: 330
+      Scyther: 82
+      Togetic: 82
+    rare:
+      Poliwhirl: 627
+      Staravia: 627
+    scarce:
+      Seaking: 106
+      Bibarel: 106
+      Ledian: 85
+      Simipour: 74
+      Togekiss: 64
+      Quagsire: 53
+      Vespiquen: 53
+      Gyarados: 42
+      Mothim: 42
+    elusive:
+      Butterfree: 57
+      Beautifly: 57
+      Emolga: 45
+      Chatot: 34
+      Rotom: 34
+      Politoed: 28
+      Vivillon: 28
+      Staraptor: 28
+    special:
+      Mesprit: 10
+  day: *water-morning
+  evening: &water-evening
+    base:
+      Poliwag: 3000
+    uncommon:
+      Magikarp: 861
+      Wooper: 718
+      Hoothoot: 718
+      Bidoof: 718
+      Goldeen: 575
+      Murkrow: 143
+    rare:
+      Poliwhirl: 1865
+    scarce:
+      Seaking: 173
+      Bibarel: 173
+      Noctowl: 173
+      Honchkrow: 103
+      Quagsire: 87
+      Vespiquen: 87
+      Gyarados: 69
+      Mothim: 69
+    elusive:
+      Emolga: 197
+      Rotom: 148
+      Politoed: 122
+    special:
+      Mesprit: 10
+  night: *water-evening

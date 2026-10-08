@@ -4,9 +4,10 @@ import { TYPE_EFFECTIVENESS, TYPE_EFFECTIVENESS_FACTOR, Types } from '../../data
 import { DamageFlags, Moves } from '../../data/ids/moves';
 import { TeamStatuses } from '../../data/ids/status';
 import type Battle from '../core';
-import { BattleEvents, EffectType, MoveTargetType } from '../events';
+import { BattleEvents, type EffectCause, EffectType, MoveTargetType } from '../events';
 import type Team from '../team';
 import type Unit from '../unit';
+import { registerSideCondition } from '../mechanics/side-conditions';
 import walksOverHazards from './hazards';
 
 /**
@@ -42,6 +43,22 @@ export function clearStealthRock(team: Team): boolean {
   return true;
 }
 
+/**
+ * Hang stones over a side, or take them down, from something other
+ * than Stealth Rock itself: a Stone Axe leaving them behind it, or a
+ * Court Change carrying them across
+ */
+export function setStealthRock(team: Team, hung: boolean, cause: EffectCause): void {
+  if (!hung) {
+    clearStealthRock(team);
+    return;
+  }
+  if (!HUNG.has(team)) {
+    HUNG.add(team);
+    team.addStatus(TeamStatuses.StealthRock, cause);
+  }
+}
+
 /** What a Rock move is worth against this unit, as a multiplier */
 function rockAgainst(unit: Unit): number {
   let factor = 1;
@@ -57,6 +74,13 @@ function rockAgainst(unit: Unit): number {
 }
 
 export default function setupStealthRock(battle: Battle): void {
+  registerSideCondition(battle, {
+    read: (team) => (stonesOver(team) ? 1 : undefined),
+    write: (team, value, cause) => {
+      setStealthRock(team, value != null, cause);
+    },
+  });
+
   battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
     if (
       event.usable &&

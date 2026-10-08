@@ -1,225 +1,31 @@
-import Regions from '../../ids/regions';
-
-/**
- * The people who stand at a duelling landmark: the Ace Trainer, who
- * fields the best of anything, and the type experts, who each field
- * one type and nothing else.
- *
- * A class is rolled per stop per window the way a grunt's party is,
- * so the same cell is a Bug Catcher one afternoon and a Channeler the
- * next, out of the ones that country puts on the road. What a player
- * has put down is counted for life, and that count is what the
- * class' own title is worn off.
- */
-
-const enum TrainerClass {
-  /** No specialty and the strongest roadside party there is */
-  AceTrainer = 0,
-  Lass = 1,
-  BlackBelt = 2,
-  BirdKeeper = 3,
-  Biker = 4,
-  Hiker = 5,
-  PokeManiac = 6,
-  BugCatcher = 7,
-  Channeler = 8,
-  Burglar = 9,
-  Swimmer = 10,
-  Rocker = 11,
-  Psychic = 12,
-  Sage = 13,
-  Skier = 14,
-  Scientist = 15,
-  /** Johto's own of the trades Kanto already put on the road */
-  JohtoPokeManiac = 16,
-  JohtoBurglar = 17,
-  JohtoAceTrainer = 18,
-  JohtoLass = 19,
-  JohtoBlackBelt = 20,
-  JohtoBirdKeeper = 21,
-  JohtoBiker = 22,
-  JohtoBugCatcher = 23,
-  JohtoSwimmer = 24,
-  Firebreather = 25,
-  Medium = 26,
-  Teacher = 27,
-  SchoolKid = 28,
-  Youngster = 29,
-  Camper = 30,
-  Beauty = 31,
-  Fisherman = 32,
-  Sailor = 33,
-  Gentleman = 34,
-  SuperNerd = 35,
-  Juggler = 36,
-  Tamer = 37,
-  Engineer = 38,
-  Gambler = 39,
-  JohtoGentleman = 40,
-  JohtoSuperNerd = 41,
-  JohtoJuggler = 42,
-  Boarder = 43,
-
-  /**
-   * Hoenn's own three, and the only new **trades** it brings. A trade
-   * carries a title numbered `300 + trade * 2`, and the professors'
-   * titles start at 400, so a trade past 49 would answer to one of
-   * theirs: new trades take the free low numbers, and every class
-   * after them is one region's version of a trade that already exists
-   */
-  NinjaBoy = 44,
-  Tuber = 45,
-  PokeFan = 46,
-  /** Hoenn's own of the trades already on the road, under its name for them */
-  HoennAceTrainer = 47,
-  HoennLass = 48,
-  HoennBirdKeeper = 49,
-  HoennBugCatcher = 50,
-  HoennSwimmer = 51,
-  HoennYoungster = 52,
-  HoennSchoolKid = 53,
-  HoennCamper = 54,
-  HoennBeauty = 55,
-  HoennFisherman = 56,
-  HoennSailor = 57,
-  HoennGentleman = 58,
-  HoennScientist = 59,
-  // The same trades under Hoenn's own names: a guitarist is a
-  // rocker, an aroma lady a sage, a street thug a burglar
-  Guitarist = 60,
-  Kindler = 61,
-  BattleGirl = 62,
-  Expert = 63,
-  RuinManiac = 64,
-  StreetThug = 65,
-  DragonTamer = 66,
-  AromaLady = 67,
-
-  /**
-   * Sinnoh's own trades, which are the first to sit above the 50 the
-   * old title band held: a trade past that carries its title in the
-   * second band rather than in the professors' numbers. See
-   * `trainerTitle` in src/data/ids/titles.ts
-   */
-  Ranger = 68,
-  Worker = 69,
-  Rancher = 70,
-  Cyclist = 71,
-  PokeKid = 72,
-  Collector = 73,
-  Artist = 74,
-  Reporter = 75,
-  RichBoy = 76,
-  Waiter = 77,
-  ParasolLady = 78,
-  Twins = 79,
-  Policeman = 80,
-  Jogger = 81,
-  Breeder = 82,
-  /** And its own of the trades already on the road */
-  SinnohAceTrainer = 83,
-  SinnohLass = 84,
-  SinnohBugCatcher = 85,
-  SinnohSwimmer = 86,
-  SinnohYoungster = 87,
-  SinnohSchoolKid = 88,
-  SinnohCamper = 89,
-  SinnohBeauty = 90,
-  SinnohFisherman = 91,
-  SinnohSailor = 92,
-  SinnohGentleman = 93,
-  SinnohScientist = 94,
-  SinnohBirdKeeper = 95,
-  SinnohHiker = 96,
-  SinnohPsychic = 97,
-  SinnohSkier = 98,
-  SinnohBlackBelt = 99,
-  SinnohDragonTamer = 100,
-  SinnohGuitarist = 101,
-  SinnohAromaLady = 102,
-  SinnohRuinManiac = 103,
-  SinnohNinjaBoy = 104,
-  SinnohTuber = 105,
-  SinnohPokeFan = 106,
-  SinnohRoughneck = 107,
-  SinnohClown = 108,
-
-  /**
-   * The Young Couple, who both later regions put on the road, and
-   * Hoenn's own of the trades Sinnoh turned out to have brought
-   * first: the art for all seven shipped with Hoenn and was worn by
-   * nobody
-   */
-  Couple = 109,
-  HoennBreeder = 110,
-  HoennRanger = 111,
-  HoennCollector = 112,
-  HoennReporter = 113,
-  HoennRichBoy = 114,
-  HoennParasolLady = 115,
-  SinnohCouple = 116,
-
-  /**
-   * Unova's own trades, which are the city ones the road never had:
-   * the counter, the depot, the ball court and the stage. Its
-   * numbers sit in the second title band with Sinnoh’s
-   */
-  Backpacker = 117,
-  Baker = 118,
-  Clerk = 119,
-  Dancer = 120,
-  DepotAgent = 121,
-  Doctor = 122,
-  Harlequin = 123,
-  Hoopster = 124,
-  Infielder = 125,
-  Janitor = 126,
-  Lady = 127,
-  Linebacker = 128,
-  Maid = 129,
-  Musician = 130,
-  NurseryAide = 131,
-  Pilot = 132,
-  Smasher = 133,
-  Socialite = 134,
-  Striker = 135,
-  SuitActor = 136,
-  Veteran = 137,
-  Backers = 138,
-  /** And its own of the trades already on the road */
-  UnovaAceTrainer = 139,
-  UnovaArtist = 140,
-  UnovaBattleGirl = 141,
-  UnovaBeauty = 142,
-  UnovaBiker = 143,
-  UnovaBlackBelt = 144,
-  UnovaBreeder = 145,
-  UnovaCyclist = 146,
-  UnovaFisherman = 147,
-  UnovaGentleman = 148,
-  UnovaGuitarist = 149,
-  UnovaHiker = 150,
-  UnovaLass = 151,
-  UnovaParasolLady = 152,
-  UnovaPokeFan = 153,
-  UnovaPoliceman = 154,
-  UnovaPsychic = 155,
-  UnovaRanger = 156,
-  UnovaRichBoy = 157,
-  UnovaRoughneck = 158,
-  UnovaSchoolKid = 159,
-  UnovaScientist = 160,
-  UnovaSwimmer = 161,
-  UnovaWaiter = 162,
-  UnovaWorker = 163,
-  UnovaYoungster = 164,
-}
+import * as v from 'valibot';
+import type { Types } from '../../constants/types';
+import { REGION_IDS, TRAINER_IDS, TYPE_IDS } from '../../ids/names';
+import type Regions from '../../ids/regions';
+import TrainerClass from '../../ids/trainers';
+import hoennText from '../../text/en/trainers/hoenn.yaml';
+import johtoText from '../../text/en/trainers/johto.yaml';
+import kalosText from '../../text/en/trainers/kalos.yaml';
+import kantoText from '../../text/en/trainers/kanto.yaml';
+import sinnohText from '../../text/en/trainers/sinnoh.yaml';
+import unovaText from '../../text/en/trainers/unova.yaml';
+import { idOf, idsOf } from '../../yaml';
+import hoennFile from './classes/hoenn.yaml';
+import johtoFile from './classes/johto.yaml';
+import kalosFile from './classes/kalos.yaml';
+import kantoFile from './classes/kanto.yaml';
+import sinnohFile from './classes/sinnoh.yaml';
+import unovaFile from './classes/unova.yaml';
 
 export { TrainerClass };
 
 /**
+ * The trainer classes, read out of their region's files: what each
+ * fields, the sheets it stands in, the trade it is one region's version
+ * of, and what it is called and says. The numbers are `ids/trainers.ts`.
+ *
  * A class belongs to a region, and a trade several regions have is
- * here once for each: a Swimmer met on Kanto's water, on Johto's and
+ * written once for each: a Swimmer met on Kanto's water, on Johto's and
  * on Hoenn's is the same trade in three places, drawn differently and
  * fielding what its own region grows.
  *
@@ -229,173 +35,26 @@ export { TrainerClass };
  * names, so its guitarist is the rocker's trade and its aroma lady
  * the sage's
  */
-export const TRAINER_CLASSES: TrainerClass[] = [
-  TrainerClass.AceTrainer,
-  TrainerClass.Lass,
-  TrainerClass.BlackBelt,
-  TrainerClass.BirdKeeper,
-  TrainerClass.Biker,
-  TrainerClass.Hiker,
-  TrainerClass.PokeManiac,
-  TrainerClass.BugCatcher,
-  TrainerClass.Channeler,
-  TrainerClass.Burglar,
-  TrainerClass.Swimmer,
-  TrainerClass.Rocker,
-  TrainerClass.Psychic,
-  TrainerClass.Sage,
-  TrainerClass.Skier,
-  TrainerClass.Scientist,
-  TrainerClass.JohtoPokeManiac,
-  TrainerClass.JohtoBurglar,
-  TrainerClass.JohtoAceTrainer,
-  TrainerClass.JohtoLass,
-  TrainerClass.JohtoBlackBelt,
-  TrainerClass.JohtoBirdKeeper,
-  TrainerClass.JohtoBiker,
-  TrainerClass.JohtoBugCatcher,
-  TrainerClass.JohtoSwimmer,
-  TrainerClass.Firebreather,
-  TrainerClass.Medium,
-  TrainerClass.Teacher,
-  TrainerClass.SchoolKid,
-  TrainerClass.Youngster,
-  TrainerClass.Camper,
-  TrainerClass.Beauty,
-  TrainerClass.Fisherman,
-  TrainerClass.Sailor,
-  TrainerClass.Gentleman,
-  TrainerClass.SuperNerd,
-  TrainerClass.Juggler,
-  TrainerClass.Tamer,
-  TrainerClass.Engineer,
-  TrainerClass.Gambler,
-  TrainerClass.JohtoGentleman,
-  TrainerClass.JohtoSuperNerd,
-  TrainerClass.JohtoJuggler,
-  TrainerClass.Boarder,
-  TrainerClass.NinjaBoy,
-  TrainerClass.Tuber,
-  TrainerClass.PokeFan,
-  TrainerClass.HoennAceTrainer,
-  TrainerClass.HoennLass,
-  TrainerClass.HoennBirdKeeper,
-  TrainerClass.HoennBugCatcher,
-  TrainerClass.HoennSwimmer,
-  TrainerClass.HoennYoungster,
-  TrainerClass.HoennSchoolKid,
-  TrainerClass.HoennCamper,
-  TrainerClass.HoennBeauty,
-  TrainerClass.HoennFisherman,
-  TrainerClass.HoennSailor,
-  TrainerClass.HoennGentleman,
-  TrainerClass.HoennScientist,
-  TrainerClass.Guitarist,
-  TrainerClass.Kindler,
-  TrainerClass.BattleGirl,
-  TrainerClass.Expert,
-  TrainerClass.RuinManiac,
-  TrainerClass.StreetThug,
-  TrainerClass.DragonTamer,
-  TrainerClass.AromaLady,
-  TrainerClass.Ranger,
-  TrainerClass.Worker,
-  TrainerClass.Rancher,
-  TrainerClass.Cyclist,
-  TrainerClass.PokeKid,
-  TrainerClass.Collector,
-  TrainerClass.Artist,
-  TrainerClass.Reporter,
-  TrainerClass.RichBoy,
-  TrainerClass.Waiter,
-  TrainerClass.ParasolLady,
-  TrainerClass.Twins,
-  TrainerClass.Policeman,
-  TrainerClass.Jogger,
-  TrainerClass.Breeder,
-  TrainerClass.SinnohAceTrainer,
-  TrainerClass.SinnohLass,
-  TrainerClass.SinnohBugCatcher,
-  TrainerClass.SinnohSwimmer,
-  TrainerClass.SinnohYoungster,
-  TrainerClass.SinnohSchoolKid,
-  TrainerClass.SinnohCamper,
-  TrainerClass.SinnohBeauty,
-  TrainerClass.SinnohFisherman,
-  TrainerClass.SinnohSailor,
-  TrainerClass.SinnohGentleman,
-  TrainerClass.SinnohScientist,
-  TrainerClass.SinnohBirdKeeper,
-  TrainerClass.SinnohHiker,
-  TrainerClass.SinnohPsychic,
-  TrainerClass.SinnohSkier,
-  TrainerClass.SinnohBlackBelt,
-  TrainerClass.SinnohDragonTamer,
-  TrainerClass.SinnohGuitarist,
-  TrainerClass.SinnohAromaLady,
-  TrainerClass.SinnohRuinManiac,
-  TrainerClass.SinnohNinjaBoy,
-  TrainerClass.SinnohTuber,
-  TrainerClass.SinnohPokeFan,
-  TrainerClass.SinnohRoughneck,
-  TrainerClass.SinnohClown,
-  TrainerClass.Couple,
-  TrainerClass.HoennBreeder,
-  TrainerClass.HoennRanger,
-  TrainerClass.HoennCollector,
-  TrainerClass.HoennReporter,
-  TrainerClass.HoennRichBoy,
-  TrainerClass.HoennParasolLady,
-  TrainerClass.SinnohCouple,
-  TrainerClass.Backpacker,
-  TrainerClass.Baker,
-  TrainerClass.Clerk,
-  TrainerClass.Dancer,
-  TrainerClass.DepotAgent,
-  TrainerClass.Doctor,
-  TrainerClass.Harlequin,
-  TrainerClass.Hoopster,
-  TrainerClass.Infielder,
-  TrainerClass.Janitor,
-  TrainerClass.Lady,
-  TrainerClass.Linebacker,
-  TrainerClass.Maid,
-  TrainerClass.Musician,
-  TrainerClass.NurseryAide,
-  TrainerClass.Pilot,
-  TrainerClass.Smasher,
-  TrainerClass.Socialite,
-  TrainerClass.Striker,
-  TrainerClass.SuitActor,
-  TrainerClass.Veteran,
-  TrainerClass.Backers,
-  TrainerClass.UnovaAceTrainer,
-  TrainerClass.UnovaArtist,
-  TrainerClass.UnovaBattleGirl,
-  TrainerClass.UnovaBeauty,
-  TrainerClass.UnovaBiker,
-  TrainerClass.UnovaBlackBelt,
-  TrainerClass.UnovaBreeder,
-  TrainerClass.UnovaCyclist,
-  TrainerClass.UnovaFisherman,
-  TrainerClass.UnovaGentleman,
-  TrainerClass.UnovaGuitarist,
-  TrainerClass.UnovaHiker,
-  TrainerClass.UnovaLass,
-  TrainerClass.UnovaParasolLady,
-  TrainerClass.UnovaPokeFan,
-  TrainerClass.UnovaPoliceman,
-  TrainerClass.UnovaPsychic,
-  TrainerClass.UnovaRanger,
-  TrainerClass.UnovaRichBoy,
-  TrainerClass.UnovaRoughneck,
-  TrainerClass.UnovaSchoolKid,
-  TrainerClass.UnovaScientist,
-  TrainerClass.UnovaSwimmer,
-  TrainerClass.UnovaWaiter,
-  TrainerClass.UnovaWorker,
-  TrainerClass.UnovaYoungster,
+const CLASS = v.object({
+  types: v.array(v.string()),
+  sheets: v.array(v.string()),
+  trade: v.optional(v.string()),
+});
+
+const TEXT = v.object({ name: v.string(), quote: v.string() });
+
+/** Each region's files, the class a file is filed under being its region */
+const REGION_FILES: [region: string, classes: unknown, text: unknown][] = [
+  ['kanto', kantoFile, kantoText],
+  ['johto', johtoFile, johtoText],
+  ['hoenn', hoennFile, hoennText],
+  ['sinnoh', sinnohFile, sinnohText],
+  ['unova', unovaFile, unovaText],
+  ['kalos', kalosFile, kalosText],
 ];
+
+/** Every class, in the order they are numbered */
+export const TRAINER_CLASSES: TrainerClass[] = [];
 
 /**
  * Which region's road each stands on, and whose species they field.
@@ -403,170 +62,81 @@ export const TRAINER_CLASSES: TrainerClass[] = [
  * world is one map, and a Johto Swimmer brings Johto's water
  * wherever the water is
  */
-export const TRAINER_REGIONS: Record<TrainerClass, Regions> = {
-  [TrainerClass.AceTrainer]: Regions.Kanto,
-  [TrainerClass.Lass]: Regions.Kanto,
-  [TrainerClass.BlackBelt]: Regions.Kanto,
-  [TrainerClass.BirdKeeper]: Regions.Kanto,
-  [TrainerClass.Biker]: Regions.Kanto,
-  [TrainerClass.Hiker]: Regions.Kanto,
-  [TrainerClass.PokeManiac]: Regions.Kanto,
-  [TrainerClass.BugCatcher]: Regions.Kanto,
-  [TrainerClass.Channeler]: Regions.Kanto,
-  [TrainerClass.Burglar]: Regions.Kanto,
-  [TrainerClass.Swimmer]: Regions.Kanto,
-  [TrainerClass.Rocker]: Regions.Kanto,
-  [TrainerClass.Psychic]: Regions.Kanto,
-  [TrainerClass.Sage]: Regions.Johto,
-  [TrainerClass.Skier]: Regions.Johto,
-  [TrainerClass.Scientist]: Regions.Johto,
-  [TrainerClass.JohtoPokeManiac]: Regions.Johto,
-  [TrainerClass.JohtoBurglar]: Regions.Johto,
-  [TrainerClass.JohtoAceTrainer]: Regions.Johto,
-  [TrainerClass.JohtoLass]: Regions.Johto,
-  [TrainerClass.JohtoBlackBelt]: Regions.Johto,
-  [TrainerClass.JohtoBirdKeeper]: Regions.Johto,
-  [TrainerClass.JohtoBiker]: Regions.Johto,
-  [TrainerClass.JohtoBugCatcher]: Regions.Johto,
-  [TrainerClass.JohtoSwimmer]: Regions.Johto,
-  [TrainerClass.Firebreather]: Regions.Johto,
-  [TrainerClass.Medium]: Regions.Johto,
-  [TrainerClass.Teacher]: Regions.Johto,
-  [TrainerClass.SchoolKid]: Regions.Johto,
-  [TrainerClass.Youngster]: Regions.Johto,
-  [TrainerClass.Camper]: Regions.Johto,
-  [TrainerClass.Beauty]: Regions.Kanto,
-  [TrainerClass.Fisherman]: Regions.Kanto,
-  [TrainerClass.Sailor]: Regions.Kanto,
-  [TrainerClass.Gentleman]: Regions.Kanto,
-  [TrainerClass.SuperNerd]: Regions.Kanto,
-  [TrainerClass.Juggler]: Regions.Kanto,
-  [TrainerClass.Tamer]: Regions.Kanto,
-  [TrainerClass.Engineer]: Regions.Kanto,
-  [TrainerClass.Gambler]: Regions.Kanto,
-  [TrainerClass.JohtoGentleman]: Regions.Johto,
-  [TrainerClass.JohtoSuperNerd]: Regions.Johto,
-  [TrainerClass.JohtoJuggler]: Regions.Johto,
-  [TrainerClass.Boarder]: Regions.Johto,
-  [TrainerClass.NinjaBoy]: Regions.Hoenn,
-  [TrainerClass.Tuber]: Regions.Hoenn,
-  [TrainerClass.PokeFan]: Regions.Hoenn,
-  [TrainerClass.HoennAceTrainer]: Regions.Hoenn,
-  [TrainerClass.HoennLass]: Regions.Hoenn,
-  [TrainerClass.HoennBirdKeeper]: Regions.Hoenn,
-  [TrainerClass.HoennBugCatcher]: Regions.Hoenn,
-  [TrainerClass.HoennSwimmer]: Regions.Hoenn,
-  [TrainerClass.HoennYoungster]: Regions.Hoenn,
-  [TrainerClass.HoennSchoolKid]: Regions.Hoenn,
-  [TrainerClass.HoennCamper]: Regions.Hoenn,
-  [TrainerClass.HoennBeauty]: Regions.Hoenn,
-  [TrainerClass.HoennFisherman]: Regions.Hoenn,
-  [TrainerClass.HoennSailor]: Regions.Hoenn,
-  [TrainerClass.HoennGentleman]: Regions.Hoenn,
-  [TrainerClass.HoennScientist]: Regions.Hoenn,
-  [TrainerClass.Guitarist]: Regions.Hoenn,
-  [TrainerClass.Kindler]: Regions.Hoenn,
-  [TrainerClass.BattleGirl]: Regions.Hoenn,
-  [TrainerClass.Expert]: Regions.Hoenn,
-  [TrainerClass.RuinManiac]: Regions.Hoenn,
-  [TrainerClass.StreetThug]: Regions.Hoenn,
-  [TrainerClass.DragonTamer]: Regions.Hoenn,
-  [TrainerClass.AromaLady]: Regions.Hoenn,
-  [TrainerClass.Ranger]: Regions.Sinnoh,
-  [TrainerClass.Worker]: Regions.Sinnoh,
-  [TrainerClass.Rancher]: Regions.Sinnoh,
-  [TrainerClass.Cyclist]: Regions.Sinnoh,
-  [TrainerClass.PokeKid]: Regions.Sinnoh,
-  [TrainerClass.Collector]: Regions.Sinnoh,
-  [TrainerClass.Artist]: Regions.Sinnoh,
-  [TrainerClass.Reporter]: Regions.Sinnoh,
-  [TrainerClass.RichBoy]: Regions.Sinnoh,
-  [TrainerClass.Waiter]: Regions.Sinnoh,
-  [TrainerClass.ParasolLady]: Regions.Sinnoh,
-  [TrainerClass.Twins]: Regions.Sinnoh,
-  [TrainerClass.Policeman]: Regions.Sinnoh,
-  [TrainerClass.Jogger]: Regions.Sinnoh,
-  [TrainerClass.Breeder]: Regions.Sinnoh,
-  [TrainerClass.SinnohAceTrainer]: Regions.Sinnoh,
-  [TrainerClass.SinnohLass]: Regions.Sinnoh,
-  [TrainerClass.SinnohBugCatcher]: Regions.Sinnoh,
-  [TrainerClass.SinnohSwimmer]: Regions.Sinnoh,
-  [TrainerClass.SinnohYoungster]: Regions.Sinnoh,
-  [TrainerClass.SinnohSchoolKid]: Regions.Sinnoh,
-  [TrainerClass.SinnohCamper]: Regions.Sinnoh,
-  [TrainerClass.SinnohBeauty]: Regions.Sinnoh,
-  [TrainerClass.SinnohFisherman]: Regions.Sinnoh,
-  [TrainerClass.SinnohSailor]: Regions.Sinnoh,
-  [TrainerClass.SinnohGentleman]: Regions.Sinnoh,
-  [TrainerClass.SinnohScientist]: Regions.Sinnoh,
-  [TrainerClass.SinnohBirdKeeper]: Regions.Sinnoh,
-  [TrainerClass.SinnohHiker]: Regions.Sinnoh,
-  [TrainerClass.SinnohPsychic]: Regions.Sinnoh,
-  [TrainerClass.SinnohSkier]: Regions.Sinnoh,
-  [TrainerClass.SinnohBlackBelt]: Regions.Sinnoh,
-  [TrainerClass.SinnohDragonTamer]: Regions.Sinnoh,
-  [TrainerClass.SinnohGuitarist]: Regions.Sinnoh,
-  [TrainerClass.SinnohAromaLady]: Regions.Sinnoh,
-  [TrainerClass.SinnohRuinManiac]: Regions.Sinnoh,
-  [TrainerClass.SinnohNinjaBoy]: Regions.Sinnoh,
-  [TrainerClass.SinnohTuber]: Regions.Sinnoh,
-  [TrainerClass.SinnohPokeFan]: Regions.Sinnoh,
-  [TrainerClass.SinnohRoughneck]: Regions.Sinnoh,
-  [TrainerClass.SinnohClown]: Regions.Sinnoh,
-  [TrainerClass.Couple]: Regions.Hoenn,
-  [TrainerClass.HoennBreeder]: Regions.Hoenn,
-  [TrainerClass.HoennRanger]: Regions.Hoenn,
-  [TrainerClass.HoennCollector]: Regions.Hoenn,
-  [TrainerClass.HoennReporter]: Regions.Hoenn,
-  [TrainerClass.HoennRichBoy]: Regions.Hoenn,
-  [TrainerClass.HoennParasolLady]: Regions.Hoenn,
-  [TrainerClass.SinnohCouple]: Regions.Sinnoh,
-  [TrainerClass.Backpacker]: Regions.Unova,
-  [TrainerClass.Baker]: Regions.Unova,
-  [TrainerClass.Clerk]: Regions.Unova,
-  [TrainerClass.Dancer]: Regions.Unova,
-  [TrainerClass.DepotAgent]: Regions.Unova,
-  [TrainerClass.Doctor]: Regions.Unova,
-  [TrainerClass.Harlequin]: Regions.Unova,
-  [TrainerClass.Hoopster]: Regions.Unova,
-  [TrainerClass.Infielder]: Regions.Unova,
-  [TrainerClass.Janitor]: Regions.Unova,
-  [TrainerClass.Lady]: Regions.Unova,
-  [TrainerClass.Linebacker]: Regions.Unova,
-  [TrainerClass.Maid]: Regions.Unova,
-  [TrainerClass.Musician]: Regions.Unova,
-  [TrainerClass.NurseryAide]: Regions.Unova,
-  [TrainerClass.Pilot]: Regions.Unova,
-  [TrainerClass.Smasher]: Regions.Unova,
-  [TrainerClass.Socialite]: Regions.Unova,
-  [TrainerClass.Striker]: Regions.Unova,
-  [TrainerClass.SuitActor]: Regions.Unova,
-  [TrainerClass.Veteran]: Regions.Unova,
-  [TrainerClass.Backers]: Regions.Unova,
-  [TrainerClass.UnovaAceTrainer]: Regions.Unova,
-  [TrainerClass.UnovaArtist]: Regions.Unova,
-  [TrainerClass.UnovaBattleGirl]: Regions.Unova,
-  [TrainerClass.UnovaBeauty]: Regions.Unova,
-  [TrainerClass.UnovaBiker]: Regions.Unova,
-  [TrainerClass.UnovaBlackBelt]: Regions.Unova,
-  [TrainerClass.UnovaBreeder]: Regions.Unova,
-  [TrainerClass.UnovaCyclist]: Regions.Unova,
-  [TrainerClass.UnovaFisherman]: Regions.Unova,
-  [TrainerClass.UnovaGentleman]: Regions.Unova,
-  [TrainerClass.UnovaGuitarist]: Regions.Unova,
-  [TrainerClass.UnovaHiker]: Regions.Unova,
-  [TrainerClass.UnovaLass]: Regions.Unova,
-  [TrainerClass.UnovaParasolLady]: Regions.Unova,
-  [TrainerClass.UnovaPokeFan]: Regions.Unova,
-  [TrainerClass.UnovaPoliceman]: Regions.Unova,
-  [TrainerClass.UnovaPsychic]: Regions.Unova,
-  [TrainerClass.UnovaRanger]: Regions.Unova,
-  [TrainerClass.UnovaRichBoy]: Regions.Unova,
-  [TrainerClass.UnovaRoughneck]: Regions.Unova,
-  [TrainerClass.UnovaSchoolKid]: Regions.Unova,
-  [TrainerClass.UnovaScientist]: Regions.Unova,
-  [TrainerClass.UnovaSwimmer]: Regions.Unova,
-  [TrainerClass.UnovaWaiter]: Regions.Unova,
-  [TrainerClass.UnovaWorker]: Regions.Unova,
-  [TrainerClass.UnovaYoungster]: Regions.Unova,
-};
+export const TRAINER_REGIONS: Record<number, Regions> = {};
+
+/**
+ * What each class fields, as the types that count as theirs. Most
+ * bring one, some bring the pair the mainline gives them, and the Aces
+ * bring an empty list, which is every type there is: that is what
+ * makes them the hard fight of the road
+ */
+export const TRAINER_TYPES: Record<number, Types[]> = {};
+
+/**
+ * The charsets a class may be standing in, rolled per stop the way a
+ * wanderer's style is
+ */
+export const TRAINER_CHARSETS: Record<number, string[]> = {};
+
+/**
+ * The trade a class is one region's version of, which is itself for a
+ * class that stands for its trade.
+ *
+ * What is counted about a trade is counted once: the wins add up to
+ * one line and one title. The coats do not, since a coat is one
+ * region's own, and beating Kanto's swimmers never dressed anybody as
+ * a Johto one
+ */
+export const TRAINER_TRADE: Record<number, TrainerClass> = {};
+
+/**
+ * What the mainline calls each of them. Two regions' worth of the
+ * same trade share a name here; `TRAINER_NAMES` is what tells them
+ * apart on a screen
+ */
+export const TRAINER_BASE_NAMES: Record<number, string> = {};
+
+/** What each says as the duel is put to the player */
+export const TRAINER_QUOTES: Record<number, string> = {};
+
+for (const [file, classes, text] of REGION_FILES) {
+  const region = idOf<Regions>(
+    REGION_IDS,
+    `${file.slice(0, 1).toUpperCase()}${file.slice(1)}`,
+    file,
+  );
+
+  for (const [name, written] of Object.entries(v.parse(v.record(v.string(), CLASS), classes))) {
+    const where = `trainers/classes/${file}.yaml: ${name}`;
+    const trainer = idOf<TrainerClass>(TRAINER_IDS, name, where);
+
+    TRAINER_CLASSES.push(trainer);
+    TRAINER_REGIONS[trainer] = region;
+    TRAINER_TYPES[trainer] = idsOf<Types>(TYPE_IDS, written.types, where);
+    TRAINER_CHARSETS[trainer] = written.sheets;
+    TRAINER_TRADE[trainer] =
+      written.trade == null ? trainer : idOf<TrainerClass>(TRAINER_IDS, written.trade, where);
+  }
+  for (const [name, said] of Object.entries(v.parse(v.record(v.string(), TEXT), text))) {
+    const trainer = idOf<TrainerClass>(TRAINER_IDS, name, `text/en/trainers/${file}.yaml: ${name}`);
+
+    TRAINER_BASE_NAMES[trainer] = said.name;
+    TRAINER_QUOTES[trainer] = said.quote;
+  }
+}
+
+// Filed by region, numbered across them: the number is the order
+TRAINER_CLASSES.sort((one, two) => one - two);
+
+// Every class the enum has is written down, so none stands nameless,
+// bare or dressed in nothing
+for (const [name, trainer] of Object.entries(TRAINER_IDS)) {
+  if (!Object.hasOwn(TRAINER_REGIONS, trainer) || !Object.hasOwn(TRAINER_BASE_NAMES, trainer)) {
+    throw new Error(
+      `${name} needs a record under trainers/classes and a name under text/en/trainers`,
+    );
+  }
+  if (TRAINER_CHARSETS[trainer].length === 0) {
+    throw new Error(`${name} needs at least one sheet to stand in`);
+  }
+}

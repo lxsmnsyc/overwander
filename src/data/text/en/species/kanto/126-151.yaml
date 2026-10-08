@@ -1,0 +1,54 @@
+Magmar:
+  Magmar: { name: Magmar, category: Spitfire Pokemon }
+  Magby: { name: Magby, category: Live Coal Pokemon }
+  Magmortar: { name: Magmortar, category: Blast Pokemon }
+Pinsir:
+  Pinsir: { name: Pinsir, category: Stag Beetle Pokemon }
+Tauros:
+  Tauros: { name: Tauros, category: Wild Bull Pokemon }
+Magikarp:
+  Magikarp: { name: Magikarp, category: Fish Pokemon }
+  Gyarados: { name: Gyarados, category: Atrocious Pokemon }
+Lapras:
+  Lapras: { name: Lapras, category: Transport Pokemon }
+Ditto:
+  Ditto: { name: Ditto, category: Transform Pokemon }
+Eevee:
+  Eevee: { name: Eevee, category: Evolution Pokemon }
+  Vaporeon: { name: Vaporeon, category: Bubble Jet Pokemon }
+  Jolteon: { name: Jolteon, category: Lightning Pokemon }
+  Flareon: { name: Flareon, category: Flame Pokemon }
+  Espeon: { name: Espeon, category: Sun Pokemon }
+  Umbreon: { name: Umbreon, category: Moonlight Pokemon }
+  Leafeon: { name: Leafeon, category: Verdant Pokemon }
+  Glaceon: { name: Glaceon, category: Fresh Snow Pokemon }
+  Sylveon: { name: Sylveon, category: Intertwining Pokemon }
+Porygon:
+  Porygon: { name: Porygon, category: Virtual Pokemon }
+  Porygon2: { name: Porygon2, category: Virtual Pokemon }
+  PorygonZ: { name: PorygonZ, category: Virtual Pokemon }
+Omanyte:
+  Omanyte: { name: Omanyte, category: Spiral Pokemon }
+  Omastar: { name: Omastar, category: Spiral Pokemon }
+Kabuto:
+  Kabuto: { name: Kabuto, category: Shellfish Pokemon }
+  Kabutops: { name: Kabutops, category: Shellfish Pokemon }
+Aerodactyl:
+  Aerodactyl: { name: Aerodactyl, category: Fossil Pokemon }
+Snorlax:
+  Snorlax: { name: Snorlax, category: Sleeping Pokemon }
+  Munchlax: { name: Munchlax, category: Big Eater Pokemon }
+Articuno:
+  Articuno: { name: Articuno, category: Freeze Pokemon }
+Zapdos:
+  Zapdos: { name: Zapdos, category: Electric Pokemon }
+Moltres:
+  Moltres: { name: Moltres, category: Flame Pokemon }
+Dratini:
+  Dratini: { name: Dratini, category: Dragon Pokemon }
+  Dragonair: { name: Dragonair, category: Dragon Pokemon }
+  Dragonite: { name: Dragonite, category: Dragon Pokemon }
+Mewtwo:
+  Mewtwo: { name: Mewtwo, category: Genetic Pokemon }
+Mew:
+  Mew: { name: Mew, category: New Species Pokemon }

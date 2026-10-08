@@ -1,0 +1,281 @@
+Ponyta:
+  Ponyta:
+    types: [Fire]
+    egg-groups: [Field]
+    biomes: [Grassland, Steppe, Volcano]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Rapidash
+        method: [Level]
+        level: 40
+    held: { common: RawstBerry, uncommon: Charcoal, rare: QuickClaw }
+  Rapidash:
+    types: [Fire]
+    egg-groups: [Field]
+    biomes: [Grassland, Steppe, Volcano]
+    active: [Morning, Day]
+    evolves-from: Ponyta
+    held: { common: RawstBerry, uncommon: Charcoal, rare: QuickClaw }
+Slowpoke:
+  Slowpoke:
+    types: [Water, Psychic]
+    egg-groups: [Monster, Water1]
+    habitat: Amphibious
+    biomes: [Beach, Swamp, Mangrove, RockyCoast, CoralReef, DeepOcean]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Slowbro
+        method: [Level]
+        level: 37
+      - species: Slowking
+        method: [HeldItem, Trade]
+        item: KingsRock
+    held: { common: OranBerry, uncommon: KingsRock, rare: MysticWater }
+  Slowbro:
+    types: [Water, Psychic]
+    egg-groups: [Monster, Water1]
+    habitat: Amphibious
+    biomes: [Beach, Swamp, Mangrove, RockyCoast, CoralReef, DeepOcean]
+    active: [Morning, Day]
+    evolves-from: Slowpoke
+    held: { common: OranBerry, uncommon: KingsRock, rare: MysticWater }
+  Slowking:
+    types: [Water, Psychic]
+    egg-groups: [Monster, Water1]
+    habitat: Amphibious
+    biomes: [Beach, Swamp, Mangrove, CoralReef, DeepOcean]
+    active: [Morning, Day]
+    evolves-from: Slowpoke
+Magnemite:
+  Magnemite:
+    types: [Electric, Steel]
+    egg-groups: [Mineral]
+    biomes: [Grassland, Steppe]
+    active: any
+    evolves-into:
+      - species: Magneton
+        method: [Level]
+        level: 30
+    held: { common: OranBerry, uncommon: MetalCoat, rare: Magnet }
+  Magneton:
+    types: [Electric, Steel]
+    egg-groups: [Mineral]
+    biomes: [Grassland, Steppe]
+    active: any
+    evolves-from: Magnemite
+    # A Thunder Stone rather than a magnetic field, the way Nosepass
+    # asks for one
+    evolves-into:
+      - species: Magnezone
+        method: [UsedItem]
+        item: ThunderStone
+    held: { common: OranBerry, uncommon: MetalCoat, rare: Magnet }
+  # Three magnets that agreed to be one thing: a Magnezone puts out a
+  # field strong enough to pull the ground up around it
+  Magnezone:
+    types: [Electric, Steel]
+    egg-groups: [Mineral]
+    biomes: [Mountain, Badlands, Steppe]
+    active: any
+    evolves-from: Magneton
+Farfetchd:
+  Farfetchd:
+    types: [Normal, Flying]
+    egg-groups: [Flying, Field]
+    biomes: [Grassland, Swamp, Mangrove]
+    active: [Morning, Day]
+    held: { common: OranBerry, uncommon: SharpBeak, rare: Stick }
+Doduo:
+  Doduo:
+    types: [Normal, Flying]
+    egg-groups: [Flying]
+    biomes: [Savanna, Steppe]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Dodrio
+        method: [Level]
+        level: 31
+    held: { common: OranBerry, uncommon: SharpBeak, rare: QuickClaw }
+  Dodrio:
+    types: [Normal, Flying]
+    egg-groups: [Flying]
+    biomes: [Savanna, Steppe]
+    active: [Morning, Day]
+    evolves-from: Doduo
+    held: { common: OranBerry, uncommon: SharpBeak, rare: QuickClaw }
+Seel:
+  Seel:
+    types: [Water]
+    egg-groups: [Water1, Field]
+    habitat: Amphibious
+    biomes: [Ocean, PolarOcean, RockyCoast, Taiga, Tundra, Glacier, KelpForest, DeepOcean]
+    active: any
+    evolves-into:
+      - species: Dewgong
+        method: [Level]
+        level: 34
+    held: { common: AspearBerry, uncommon: NeverMeltIce, rare: MysticWater }
+  Dewgong:
+    types: [Water, Ice]
+    egg-groups: [Water1, Field]
+    habitat: Amphibious
+    biomes: [Ocean, PolarOcean, Tundra, RockyCoast, Taiga, Glacier, KelpForest, DeepOcean]
+    active: any
+    evolves-from: Seel
+    held: { common: AspearBerry, uncommon: NeverMeltIce, rare: MysticWater }
+Grimer:
+  Grimer:
+    types: [Poison]
+    egg-groups: [Amorphous]
+    biomes: [Swamp, Bog]
+    active: [Night]
+    evolves-into:
+      - species: Muk
+        method: [Level]
+        level: 38
+    held: { common: PechaBerry, uncommon: Nugget, rare: BlackSludge }
+  Muk:
+    types: [Poison]
+    egg-groups: [Amorphous]
+    biomes: [Swamp, Bog]
+    active: [Night]
+    evolves-from: Grimer
+    held: { common: PechaBerry, uncommon: Nugget, rare: BlackSludge }
+  GrimerAlola:
+    types: [Poison, Dark]
+    egg-groups: [Amorphous]
+    biomes: [Beach, Mangrove]
+    active: any
+    base-form: false
+    evolves-into:
+      - species: MukAlola
+        method: [Level]
+        level: 38
+  MukAlola:
+    types: [Poison, Dark]
+    egg-groups: [Amorphous]
+    biomes: [Beach, Mangrove]
+    active: any
+    base-form: false
+    evolves-from: GrimerAlola
+Shellder:
+  Shellder:
+    types: [Water]
+    egg-groups: [Water3]
+    habitat: Water
+    biomes: [Ocean, Beach, RockyCoast]
+    active: any
+    evolves-into:
+      - species: Cloyster
+        method: [UsedItem]
+        item: WaterStone
+    held: { common: Pearl, uncommon: BigPearl, rare: PearlString }
+  Cloyster:
+    types: [Water, Ice]
+    egg-groups: [Water3]
+    habitat: Water
+    biomes: [Ocean, PolarOcean, RockyCoast, Beach]
+    active: any
+    evolves-from: Shellder
+    held: { common: Pearl, uncommon: BigPearl, rare: PearlString }
+Gastly:
+  Gastly:
+    types: [Ghost, Poison]
+    egg-groups: [Amorphous]
+    biomes: [Mountain, Bog]
+    active: [Night]
+    evolves-into:
+      - species: Haunter
+        method: [Level]
+        level: 25
+    held: { common: OranBerry, uncommon: SpellTag, rare: SmokeBall }
+  Haunter:
+    types: [Ghost, Poison]
+    egg-groups: [Amorphous]
+    biomes: [Mountain, Bog]
+    active: [Night]
+    evolves-from: Gastly
+    evolves-into:
+      - species: Gengar
+        method: [Trade]
+    held: { common: OranBerry, uncommon: SpellTag, rare: SmokeBall }
+  Gengar:
+    types: [Ghost, Poison]
+    egg-groups: [Amorphous]
+    biomes: [Mountain, Bog]
+    active: [Night]
+    evolves-from: Haunter
+    held: { common: OranBerry, uncommon: SpellTag, rare: SmokeBall }
+Onix:
+  Onix:
+    types: [Rock, Ground]
+    egg-groups: [Mineral]
+    biomes: [Mountain, ColdDesert, Volcano]
+    active: any
+    evolves-into:
+      - species: Steelix
+        method: [HeldItem, Trade]
+        item: MetalCoat
+    held: { common: TinyMushroom, uncommon: MetalCoat, rare: HardStone }
+  Steelix:
+    types: [Steel, Ground]
+    egg-groups: [Mineral]
+    biomes: [Mountain, ColdDesert]
+    active: any
+    evolves-from: Onix
+Drowzee:
+  Drowzee:
+    types: [Psychic]
+    egg-groups: [HumanLike]
+    biomes: [Grassland, Woodland]
+    active: [Night]
+    evolves-into:
+      - species: Hypno
+        method: [Level]
+        level: 26
+    held: { common: ChestoBerry, uncommon: TwistedSpoon, rare: BigRoot }
+  Hypno:
+    types: [Psychic]
+    egg-groups: [HumanLike]
+    biomes: [Grassland, Woodland]
+    active: [Night]
+    evolves-from: Drowzee
+    held: { common: ChestoBerry, uncommon: TwistedSpoon, rare: BigRoot }
+Krabby:
+  Krabby:
+    types: [Water]
+    egg-groups: [Water3]
+    habitat: Amphibious
+    biomes: [Beach, Mangrove, RockyCoast, CoralReef, KelpForest, DeepOcean, Ocean]
+    active: any
+    evolves-into:
+      - species: Kingler
+        method: [Level]
+        level: 28
+    held: { common: Pearl, uncommon: BigPearl }
+  Kingler:
+    types: [Water]
+    egg-groups: [Water3]
+    habitat: Amphibious
+    biomes: [Beach, Mangrove, RockyCoast, CoralReef, KelpForest, DeepOcean, Ocean]
+    active: any
+    evolves-from: Krabby
+    held: { common: Pearl, uncommon: BigPearl }
+Voltorb:
+  Voltorb:
+    types: [Electric]
+    egg-groups: [Mineral]
+    biomes: [Grassland, Steppe]
+    active: any
+    evolves-into:
+      - species: Electrode
+        method: [Level]
+        level: 30
+    held: { common: OranBerry, uncommon: Magnet, rare: CellBattery }
+  Electrode:
+    types: [Electric]
+    egg-groups: [Mineral]
+    biomes: [Grassland, Steppe]
+    active: any
+    evolves-from: Voltorb
+    held: { common: OranBerry, uncommon: Magnet, rare: CellBattery }

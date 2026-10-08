@@ -4,9 +4,10 @@ import { Types } from '../../data/constants/types';
 import { Moves } from '../../data/ids/moves';
 import { TeamStatuses } from '../../data/ids/status';
 import type Battle from '../core';
-import { BattleEvents, EffectType, MoveTargetType } from '../events';
+import { BattleEvents, type EffectCause, EffectType, MoveTargetType } from '../events';
 import type Team from '../team';
 import type Unit from '../unit';
+import { registerSideCondition } from '../mechanics/side-conditions';
 import walksOverHazards from './hazards';
 
 /**
@@ -39,11 +40,30 @@ export function clearStickyWeb(team: Team): boolean {
   return true;
 }
 
+/** Weave a side's web, or tear it down */
+export function setStickyWeb(team: Team, woven: boolean, cause: EffectCause): void {
+  if (!woven) {
+    clearStickyWeb(team);
+    return;
+  }
+  if (!WOVEN.has(team)) {
+    WOVEN.add(team);
+    team.addStatus(TeamStatuses.StickyWeb, cause);
+  }
+}
+
 function walksOn(unit: Unit): boolean {
   return unit.checkGrounded() && !unit.types.has(Types.Flying);
 }
 
 export default function setupStickyWeb(battle: Battle): void {
+  registerSideCondition(battle, {
+    read: (team) => (webOver(team) ? 1 : undefined),
+    write: (team, value, cause) => {
+      setStickyWeb(team, value != null, cause);
+    },
+  });
+
   battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
     if (
       event.usable &&

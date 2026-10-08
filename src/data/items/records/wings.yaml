@@ -1,0 +1,71 @@
+# The wings are drawn on the medicine sheet, since that is what they
+# are: something a pokemon swallows for what it does to it
+
+# Found on the wind rather than stocked: a shop that sold them would
+# sell training by the gold piece
+HealthWing:
+  type: Training
+  icon: medicine/health-wing
+  flags: [Consumable, Usable]
+  sell: 100
+
+MuscleWing:
+  type: Training
+  icon: medicine/muscle-wing
+  flags: [Consumable, Usable]
+  sell: 100
+
+ResistWing:
+  type: Training
+  icon: medicine/resist-wing
+  flags: [Consumable, Usable]
+  sell: 100
+
+GeniusWing:
+  type: Training
+  icon: medicine/genius-wing
+  flags: [Consumable, Usable]
+  sell: 100
+
+CleverWing:
+  type: Training
+  icon: medicine/clever-wing
+  flags: [Consumable, Usable]
+  sell: 100
+
+SwiftWing:
+  type: Training
+  icon: medicine/swift-wing
+  flags: [Consumable, Usable]
+  sell: 100
+
+# Only a flying shadow drops a Max wing
+HealthWingMax:
+  type: Training
+  icon: medicine/health-wing-max
+  flags: [Consumable, Usable]
+
+MuscleWingMax:
+  type: Training
+  icon: medicine/muscle-wing-max
+  flags: [Consumable, Usable]
+
+ResistWingMax:
+  type: Training
+  icon: medicine/resist-wing-max
+  flags: [Consumable, Usable]
+
+GeniusWingMax:
+  type: Training
+  icon: medicine/genius-wing-max
+  flags: [Consumable, Usable]
+
+CleverWingMax:
+  type: Training
+  icon: medicine/clever-wing-max
+  flags: [Consumable, Usable]
+
+SwiftWingMax:
+  type: Training
+  icon: medicine/swift-wing-max
+  flags: [Consumable, Usable]

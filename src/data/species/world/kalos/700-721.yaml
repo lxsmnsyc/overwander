@@ -1,0 +1,246 @@
+Hawlucha:
+  # The bird that wrestles. It fights off the canopy rather than on the
+  # ground, and everything it does is a drop onto something heavier
+  # than itself
+  Hawlucha:
+    types: [Fighting, Flying]
+    egg-groups: [Flying, HumanLike]
+    biomes: [TropicalRainforest, MontaneForest]
+    active: [Morning, Day, Evening]
+Dedenne:
+  # The mouse with whiskers for antennas. It is already moving by the
+  # time anything else has decided to, which its signature pays for in
+  # cast time rather than in cooldowns
+  Dedenne:
+    types: [Electric, Fairy]
+    egg-groups: [Field, Fairy]
+    biomes: [Grassland, Woodland]
+    active: any
+Carbink:
+  # The jewel that formed underground and kept growing. It waits out a
+  # fight rather than winning it quickly, and thickens by a layer for
+  # every stretch it is left standing
+  Carbink:
+    types: [Rock, Fairy]
+    egg-groups: [Fairy, Mineral]
+    biomes: [Mountain, Badlands]
+    active: any
+Goomy:
+  # The wet ground the slugs keep to
+
+  # The weakest dragon there is, and what it grows into. The slime is
+  # the point: a blow sinks into it rather than landing, and what it
+  # costs arrives a moment later
+  Goomy:
+    types: [Dragon]
+    egg-groups: [Dragon]
+    habitat: Amphibious
+    biomes: [Bog, Swamp]
+    active: any
+    evolves-into:
+      - species: Sliggoo
+        method: [Level]
+        level: 40
+  Sliggoo:
+    types: [Dragon]
+    egg-groups: [Dragon]
+    habitat: Amphibious
+    biomes: [Bog, Swamp]
+    active: any
+    evolves-from: Goomy
+    # The mainline asks for rain as well, which nothing here can
+    # measure yet, so the level is the whole condition
+    evolves-into:
+      - species: Goodra
+        method: [Level]
+        level: 50
+  Goodra:
+    types: [Dragon]
+    egg-groups: [Dragon]
+    habitat: Amphibious
+    biomes: [Bog, Swamp]
+    active: any
+    evolves-from: Sliggoo
+Klefki:
+  # The key ring. It collects keys it has no lock for and rattles them
+  # at anything that comes close
+  Klefki:
+    types: [Steel, Fairy]
+    egg-groups: [Mineral]
+    biomes: [Shrubland, Badlands]
+    active: [Morning, Day]
+Phantump:
+  # The old wood both shapes haunt
+
+  # The stump a lost child grew into, and the tree it becomes. What it
+  # hits it takes into the wood with it, which is the curse the forest
+  # is named for
+  Phantump:
+    types: [Ghost, Grass]
+    egg-groups: [Grass, Amorphous]
+    biomes: [Woodland, TemperateForest]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Trevenant
+        method: [Trade]
+  Trevenant:
+    types: [Ghost, Grass]
+    egg-groups: [Grass, Amorphous]
+    biomes: [Woodland, TemperateForest]
+    active: [Evening, Night]
+    evolves-from: Phantump
+Pumpkaboo:
+  Pumpkaboo:
+    types: [Ghost, Grass]
+    egg-groups: [Amorphous]
+    biomes: [Grassland, Woodland]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Gourgeist
+        method: [Trade]
+  Gourgeist:
+    types: [Ghost, Grass]
+    egg-groups: [Amorphous]
+    biomes: [Grassland, Woodland]
+    active: [Evening, Night]
+    evolves-from: Pumpkaboo
+  PumpkabooSuper:
+    types: [Ghost, Grass]
+    egg-groups: [Amorphous]
+    biomes: [Grassland, Woodland]
+    active: [Evening, Night]
+    base-form: false
+    evolves-into:
+      - species: GourgeistSuper
+        method: [Trade]
+  GourgeistSuper:
+    types: [Ghost, Grass]
+    egg-groups: [Amorphous]
+    biomes: [Grassland, Woodland]
+    active: [Evening, Night]
+    base-form: false
+    evolves-from: PumpkabooSuper
+Bergmite:
+  # The ice both shapes grind across
+
+  # The ice that grows a body. An Avalugg is a floe with a head on it,
+  # and the wall it carries is what it hits with rather than anything
+  # it swings
+  Bergmite:
+    types: [Ice]
+    egg-groups: [Monster, Mineral]
+    biomes: [Glacier, AlpineTundra]
+    active: any
+    evolves-into:
+      - species: Avalugg
+        method: [Level]
+        level: 37
+  Avalugg:
+    types: [Ice]
+    egg-groups: [Monster, Mineral]
+    biomes: [Glacier, AlpineTundra]
+    active: any
+    evolves-from: Bergmite
+Noibat:
+  # The caves the colony hangs in, and the wood it hunts over
+
+  # The bat that hunts by sound and outruns whatever it finds. A
+  # Noivern at 123 Speed is faster than nearly everything it meets,
+  # which is the whole of what its signature reads
+  Noibat:
+    types: [Flying, Dragon]
+    egg-groups: [Flying, Dragon]
+    biomes: [Woodland, TropicalRainforest, Ocean]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Noivern
+        method: [Level]
+        level: 48
+  Noivern:
+    types: [Flying, Dragon]
+    egg-groups: [Flying, Dragon]
+    biomes: [Woodland, TropicalRainforest, Ocean]
+    active: [Evening, Night]
+    evolves-from: Noibat
+Xerneas:
+  # The rock and high ground the swarm keeps to, above the cave it
+  # gathers in
+
+  # Kalos's three: the stag that gives life, the bird that takes it,
+  # and the swarm in the ground that will have neither side get far
+  # ahead of the other
+  Xerneas:
+    types: [Fairy]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [TemperateForest, Woodland]
+    active: any
+    rank: legendary
+Yveltal:
+  Yveltal:
+    types: [Dark, Flying]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Mountain, Tundra]
+    active: any
+    rank: legendary
+Zygarde:
+  Zygarde:
+    types: [Dragon, Ground]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Mountain, Badlands]
+    active: any
+    # The cube holds the cells, so the two shapes are a switch rather
+    # than a ladder: it scatters half of one down to a tenth, and
+    # gathers a tenth back up to half. A cube is spent either way
+    evolves-into:
+      - species: ZygardeTenPercent
+        method: [UsedItem]
+        item: ZygardeCube
+    rank: legendary
+  ZygardeTenPercent:
+    types: [Dragon, Ground]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Mountain, Badlands]
+    active: any
+    base-form: false
+    # The half it was cut from is the shape it walks back to
+    evolves-from: Zygarde
+    evolves-into:
+      - species: Zygarde
+        method: [UsedItem]
+        item: ZygardeCube
+    rank: legendary
+  ZygardeComplete:
+    types: [Dragon, Ground]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+Diancie:
+  # Kalos's three mythicals. None of them is staged: a relic is the
+  # only way to a fight with one, and each still names the country it
+  # came out of so a catch can say where it was met
+  Diancie:
+    types: [Rock, Fairy]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Mountain]
+    active: any
+    rank: mythical
+Hoopa:
+  Hoopa:
+    types: [Psychic, Ghost]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Desert]
+    active: any
+    # The bound shape only: unbound is worn while the bottle is held
+    rank: mythical
+  HoopaUnbound:
+    types: [Psychic, Dark]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+Volcanion:
+  Volcanion:
+    types: [Fire, Water]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Volcano]
+    active: any
+    rank: mythical

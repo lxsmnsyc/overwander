@@ -1,0 +1,355 @@
+# The gym leaders, each by their enum name: the `type` they field, the
+# `badge` beating them pays, the `sheets` they are seen in, the `signature`
+# that stands sixth whatever the other five roll, and the coats a badge pays
+# that they are never seen in: `prize` ones, and `later` ones that ask for
+# the next league's crown as well. What each is called is text/en.
+
+# Kanto
+
+Brock:
+  type: Rock
+  badge: BoulderBadge
+  sheets:
+    - characters/frlg/brock
+    - characters/lgpe/brock
+  later: [characters/hgss/brock]
+  signature: Onix
+Misty:
+  type: Water
+  badge: CascadeBadge
+  sheets:
+    - characters/frlg/misty
+    - characters/lgpe/misty
+  later: [characters/hgss/misty]
+  signature: Starmie
+LtSurge:
+  type: Electric
+  badge: ThunderBadge
+  sheets:
+    - characters/frlg/surge
+    - characters/lgpe/surge
+  later: [characters/hgss/surge]
+  signature: Raichu
+Erika:
+  type: Grass
+  badge: RainbowBadge
+  sheets:
+    - characters/frlg/erika
+    - characters/lgpe/erika
+  later: [characters/hgss/erika]
+  signature: Vileplume
+Koga:
+  type: Poison
+  badge: SoulBadge
+  sheets:
+    - characters/frlg/koga
+    - characters/lgpe/koga
+  later: [characters/hgss/janine]
+  signature: Weezing
+Sabrina:
+  type: Psychic
+  badge: MarshBadge
+  sheets:
+    - characters/frlg/sabrina
+    - characters/lgpe/sabrina
+  later: [characters/hgss/sabrina]
+  signature: Alakazam
+Blaine:
+  type: Fire
+  badge: VolcanoBadge
+  sheets:
+    - characters/frlg/blaine
+    - characters/lgpe/blaine
+  later: [characters/hgss/blaine]
+  signature: Arcanine
+Giovanni:
+  type: Ground
+  badge: EarthBadge
+  sheets: [characters/frlg/giovanni]
+  prize: [characters/lgpe/giovanni]
+  signature: Rhydon
+
+# Johto
+
+Falkner:
+  type: Flying
+  badge: ZephyrBadge
+  sheets: [characters/hgss/falkner]
+  signature: Pidgeotto
+Bugsy:
+  type: Bug
+  badge: HiveBadge
+  sheets: [characters/hgss/bugsy]
+  signature: Scyther
+Whitney:
+  type: Normal
+  badge: PlainBadge
+  sheets: [characters/hgss/whitney]
+  signature: Miltank
+Morty:
+  type: Ghost
+  badge: FogBadge
+  sheets: [characters/hgss/morty]
+  signature: Gengar
+Chuck:
+  type: Fighting
+  badge: StormBadge
+  sheets: [characters/hgss/chuck]
+  signature: Poliwrath
+Jasmine:
+  type: Steel
+  badge: MineralBadge
+  sheets: [characters/hgss/jasmine]
+  signature: Steelix
+Pryce:
+  type: Ice
+  badge: GlacierBadge
+  sheets: [characters/hgss/pryce]
+  signature: Piloswine
+Clair:
+  type: Dragon
+  badge: RisingBadge
+  sheets: [characters/hgss/clair]
+  signature: Kingdra
+
+# Hoenn
+
+Roxanne:
+  type: Rock
+  badge: StoneBadge
+  sheets:
+    - characters/rse/roxanne
+    - characters/oras/roxanne
+  signature: Nosepass
+Brawly:
+  type: Fighting
+  badge: KnuckleBadge
+  sheets: [characters/rse/brawly]
+  signature: Hariyama
+Wattson:
+  type: Electric
+  badge: DynamoBadge
+  sheets: [characters/rse/wattson]
+  signature: Manectric
+Flannery:
+  type: Fire
+  badge: HeatBadge
+  sheets:
+    - characters/rse/flannery
+    - characters/oras/flannery
+  signature: Torkoal
+Norman:
+  type: Normal
+  badge: BalanceBadge
+  sheets: [characters/rse/norman]
+  signature: Slaking
+Winona:
+  type: Flying
+  badge: FeatherBadge
+  sheets: [characters/rse/winona]
+  signature: Altaria
+# One gym, two people: whichever of them a chunk seats, the badge that gym
+# pays is the same one
+Tate:
+  type: Psychic
+  badge: MindBadge
+  sheets:
+    - characters/rse/tate
+    - characters/oras/tate
+  signature: Solrock
+Liza:
+  type: Psychic
+  badge: MindBadge
+  sheets:
+    - characters/rse/liza
+    - characters/oras/liza
+  signature: Lunatone
+# The same ace Clair brings, which is the mainline's own doing: two
+# water-and-dragon gyms, one Kingdra between them
+Juan:
+  type: Water
+  badge: RainBadge
+  sheets: [characters/rse/juan]
+  signature: Kingdra
+
+# Sinnoh
+
+# Roark's ace is a first stage with a Rampardos above it, which is Brock's
+# Onix again: the pokemon the gym is remembered for rather than the
+# strongest thing its keeper could field
+Roark:
+  type: Rock
+  badge: CoalBadge
+  sheets: [characters/dppt/roark]
+  signature: Cranidos
+Gardenia:
+  type: Grass
+  badge: ForestBadge
+  sheets: [characters/dppt/gardenia]
+  signature: Roserade
+Maylene:
+  type: Fighting
+  badge: CobbleBadge
+  sheets: [characters/dppt/maylene]
+  signature: Lucario
+# The name he goes by in his own gym, and the one on the badge case
+CrasherWake:
+  type: Water
+  badge: FenBadge
+  sheets: [characters/dppt/crasher-wake]
+  signature: Floatzel
+# The ghost she closes with in Diamond and Pearl, which is the league this
+# badge order is read from
+Fantina:
+  type: Ghost
+  badge: RelicBadge
+  sheets: [characters/dppt/fantina]
+  signature: Drifblim
+Byron:
+  type: Steel
+  badge: MineBadge
+  sheets: [characters/dppt/byron]
+  signature: Bastiodon
+Candice:
+  type: Ice
+  badge: IcicleBadge
+  sheets: [characters/dppt/candice]
+  signature: Abomasnow
+# Not the Raichu he opens with: Lt. Surge is already remembered for that
+# one, and the Luxray is what Sunyshore closes with anyway
+Volkner:
+  type: Electric
+  badge: BeaconBadge
+  sheets: [characters/dppt/volkner]
+  signature: Luxray
+
+# Unova
+
+# Striaton's three, one gym and three fights
+# One gym, three people, one badge between them, whichever of the three
+# fights a challenger
+# Striaton's three each close with their elemental monkey
+Cilan:
+  type: Grass
+  badge: TrioBadge
+  sheets: [characters/b2w2/cilan]
+  signature: Simisage
+Chili:
+  type: Fire
+  badge: TrioBadge
+  sheets: [characters/b2w2/chili]
+  signature: Simisear
+Cress:
+  type: Water
+  badge: TrioBadge
+  sheets: [characters/b2w2/cress]
+  signature: Simipour
+# Lenora and Elesa are each drawn twice, once for Black and White and once
+# for the sequels, and both looks are the same era
+Lenora:
+  type: Normal
+  badge: BasicBadge
+  sheets:
+    - characters/b2w2/lenora-1
+    - characters/b2w2/lenora-2
+  signature: Watchog
+Burgh:
+  type: Bug
+  badge: InsectBadge
+  sheets: [characters/b2w2/burgh]
+  signature: Leavanny
+Elesa:
+  type: Electric
+  badge: BoltBadge
+  sheets:
+    - characters/b2w2/elesa-1
+    - characters/b2w2/elesa-2
+  signature: Emolga
+Clay:
+  type: Ground
+  badge: QuakeBadge
+  sheets: [characters/b2w2/clay]
+  signature: Excadrill
+Skyla:
+  type: Flying
+  badge: JetBadge
+  sheets: [characters/b2w2/skyla]
+  signature: Swanna
+Brycen:
+  type: Ice
+  badge: FreezeBadge
+  sheets: [characters/b2w2/brycen]
+  signature: Cryogonal
+# Opelucid is kept by him in Black and by Iris in White, and she is the
+# one who goes on to be champion, so the gym is his here
+Drayden:
+  type: Dragon
+  badge: LegendBadge
+  sheets: [characters/b2w2/drayden]
+  signature: Haxorus
+# The three the sequels seat: Cheren takes Lenora's fight in another town,
+# and the other two are gyms the first league never ran
+# Aspertia pays what Nacrene paid: the same fight, a league later
+Cheren:
+  type: Normal
+  badge: BasicBadge
+  sheets:
+    - characters/b2w2/cheren-1
+    - characters/b2w2/cheren-2
+  signature: Stoutland
+Roxie:
+  type: Poison
+  badge: ToxicBadge
+  sheets: [characters/b2w2/roxie]
+  signature: Garbodor
+Marlon:
+  type: Water
+  badge: WaveBadge
+  sheets: [characters/b2w2/marlon]
+  signature: Jellicent
+
+# Kalos
+
+Viola:
+  type: Bug
+  badge: BugBadge
+  sheets: [characters/xy/viola]
+  signature: Vivillon
+# The fossil he closes with in X, a first stage like Roark's Cranidos
+Grant:
+  type: Rock
+  badge: CliffBadge
+  sheets: [characters/xy/grant]
+  signature: Tyrunt
+# Her gym ace rather than the Lucario she Mega Evolves on the tower, which
+# is Maylene's already
+Korrina:
+  type: Fighting
+  badge: RumbleBadge
+  sheets: [characters/xy/korrina]
+  signature: Hawlucha
+Ramos:
+  type: Grass
+  badge: PlantBadge
+  sheets: [characters/xy/ramos]
+  signature: Gogoat
+Clemont:
+  type: Electric
+  badge: VoltageBadge
+  sheets: [characters/xy/clemont]
+  signature: Heliolisk
+Valerie:
+  type: Fairy
+  badge: FairyBadge
+  sheets: [characters/xy/valerie]
+  signature: Sylveon
+Olympia:
+  type: Psychic
+  badge: PsychicBadge
+  sheets: [characters/xy/olympia]
+  signature: Meowstic
+Wulfric:
+  type: Ice
+  badge: IcebergBadge
+  sheets: [characters/xy/wulfric]
+  signature: Avalugg

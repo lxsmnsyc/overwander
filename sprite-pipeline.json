@@ -34370,15 +34370,15 @@
       }
     },
     "public/sprites/ui/candies/kalos/image.png": {
-      "digest": "0b05b4c0be688eb4",
-      "bytes": 5750,
+      "digest": "a4df0fbbd94afa4a",
+      "bytes": 5743,
       "width": 112,
       "height": 96,
       "compact": {
-        "at": "2026-09-30T05:32:21Z",
+        "at": "2026-10-02T03:11:41Z",
         "as": "already compact",
-        "was": 5750,
-        "bytes": 5750
+        "was": 5743,
+        "bytes": 5743
       }
     },
     "public/sprites/ui/candies/kanto/image.png": {

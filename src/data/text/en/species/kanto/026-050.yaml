@@ -1,0 +1,46 @@
+Sandshrew:
+  Sandshrew: { name: Sandshrew, category: Mouse Pokemon }
+  Sandslash: { name: Sandslash, category: Mouse Pokemon }
+  SandshrewAlola: { name: Alolan Sandshrew, category: Mouse Pokemon }
+  SandslashAlola: { name: Alolan Sandslash, category: Mouse Pokemon }
+NidoranF:
+  NidoranF: { name: Nidoran F, category: Poison Pin Pokemon }
+  Nidorina: { name: Nidorina, category: Poison Pin Pokemon }
+  Nidoqueen: { name: Nidoqueen, category: Drill Pokemon }
+NidoranM:
+  NidoranM: { name: Nidoran M, category: Poison Pin Pokemon }
+  Nidorino: { name: Nidorino, category: Poison Pin Pokemon }
+  Nidoking: { name: Nidoking, category: Drill Pokemon }
+Clefairy:
+  Clefairy: { name: Clefairy, category: Fairy Pokemon }
+  Clefable: { name: Clefable, category: Fairy Pokemon }
+  Cleffa: { name: Cleffa, category: Star Shape Pokemon }
+Vulpix:
+  Vulpix: { name: Vulpix, category: Fox Pokemon }
+  Ninetales: { name: Ninetales, category: Fox Pokemon }
+  VulpixAlola: { name: Alolan Vulpix, category: Fox Pokemon }
+  NinetalesAlola: { name: Alolan Ninetales, category: Fox Pokemon }
+Jigglypuff:
+  Jigglypuff: { name: Jigglypuff, category: Balloon Pokemon }
+  Wigglytuff: { name: Wigglytuff, category: Balloon Pokemon }
+  Igglybuff: { name: Igglybuff, category: Balloon Pokemon }
+Zubat:
+  Zubat: { name: Zubat, category: Bat Pokemon }
+  Golbat: { name: Golbat, category: Bat Pokemon }
+  Crobat: { name: Crobat, category: Bat Pokemon }
+Oddish:
+  Oddish: { name: Oddish, category: Weed Pokemon }
+  Gloom: { name: Gloom, category: Weed Pokemon }
+  Vileplume: { name: Vileplume, category: Flower Pokemon }
+  Bellossom: { name: Bellossom, category: Flower Pokemon }
+Paras:
+  Paras: { name: Paras, category: Mushroom Pokemon }
+  Parasect: { name: Parasect, category: Mushroom Pokemon }
+Venonat:
+  Venonat: { name: Venonat, category: Insect Pokemon }
+  Venomoth: { name: Venomoth, category: Poison Moth Pokemon }
+Diglett:
+  Diglett: { name: Diglett, category: Mole Pokemon }
+  Dugtrio: { name: Dugtrio, category: Mole Pokemon }
+  DiglettAlola: { name: Alolan Diglett, category: Mole Pokemon }
+  DugtrioAlola: { name: Alolan Dugtrio, category: Mole Pokemon }

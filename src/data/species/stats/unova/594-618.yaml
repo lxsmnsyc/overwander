@@ -1,0 +1,162 @@
+Alomomola:
+  Alomomola:
+    stats: { HP: 165, Attack: 75, Defense: 80, SpecialAttack: 40, SpecialDefense: 45, Speed: 65 }
+    catch-rate: 75
+    height: 1.2
+    weight: 31.6
+    gender: [1, 1]
+Joltik:
+  Joltik:
+    stats: { HP: 50, Attack: 47, Defense: 50, SpecialAttack: 57, SpecialDefense: 50, Speed: 65 }
+    catch-rate: 190
+    height: 0.1
+    weight: 0.6
+    gender: [1, 1]
+  Galvantula:
+    stats: { HP: 70, Attack: 77, Defense: 60, SpecialAttack: 97, SpecialDefense: 60, Speed: 108 }
+    catch-rate: 75
+    height: 0.8
+    weight: 14.3
+    gender: [1, 1]
+Ferroseed:
+  Ferroseed:
+    stats: { HP: 44, Attack: 50, Defense: 91, SpecialAttack: 24, SpecialDefense: 86, Speed: 10 }
+    catch-rate: 255
+    height: 0.6
+    weight: 18.8
+    gender: [1, 1]
+  Ferrothorn:
+    stats: { HP: 74, Attack: 94, Defense: 131, SpecialAttack: 54, SpecialDefense: 116, Speed: 20 }
+    catch-rate: 90
+    height: 1
+    weight: 110
+    gender: [1, 1]
+Klink:
+  Klink:
+    stats: { HP: 40, Attack: 55, Defense: 70, SpecialAttack: 45, SpecialDefense: 60, Speed: 30 }
+    catch-rate: 130
+    height: 0.3
+    weight: 21
+    gender: genderless
+  Klang:
+    stats: { HP: 60, Attack: 80, Defense: 95, SpecialAttack: 70, SpecialDefense: 85, Speed: 50 }
+    catch-rate: 60
+    height: 0.6
+    weight: 51
+    gender: genderless
+  Klinklang:
+    stats: { HP: 60, Attack: 100, Defense: 115, SpecialAttack: 70, SpecialDefense: 85, Speed: 90 }
+    catch-rate: 30
+    height: 0.6
+    weight: 81
+    gender: genderless
+Tynamo:
+  Tynamo:
+    stats: { HP: 35, Attack: 55, Defense: 40, SpecialAttack: 45, SpecialDefense: 40, Speed: 60 }
+    catch-rate: 190
+    height: 0.2
+    weight: 0.3
+    gender: [1, 1]
+  Eelektrik:
+    stats: { HP: 65, Attack: 85, Defense: 70, SpecialAttack: 75, SpecialDefense: 70, Speed: 40 }
+    catch-rate: 60
+    height: 1.2
+    weight: 22
+    gender: [1, 1]
+  Eelektross:
+    stats: { HP: 85, Attack: 115, Defense: 80, SpecialAttack: 105, SpecialDefense: 80, Speed: 50 }
+    catch-rate: 30
+    height: 2.1
+    weight: 80.5
+    gender: [1, 1]
+Elgyem:
+  Elgyem:
+    stats: { HP: 55, Attack: 55, Defense: 55, SpecialAttack: 85, SpecialDefense: 55, Speed: 30 }
+    catch-rate: 255
+    height: 0.5
+    weight: 9
+    gender: [1, 1]
+  Beheeyem:
+    stats: { HP: 75, Attack: 75, Defense: 75, SpecialAttack: 125, SpecialDefense: 95, Speed: 40 }
+    catch-rate: 90
+    height: 1
+    weight: 34.5
+    gender: [1, 1]
+Litwick:
+  Litwick:
+    stats: { HP: 50, Attack: 30, Defense: 55, SpecialAttack: 65, SpecialDefense: 55, Speed: 20 }
+    catch-rate: 190
+    height: 0.3
+    weight: 3.1
+    gender: [1, 1]
+  Lampent:
+    stats: { HP: 60, Attack: 40, Defense: 60, SpecialAttack: 95, SpecialDefense: 60, Speed: 55 }
+    catch-rate: 90
+    height: 0.6
+    weight: 13
+    gender: [1, 1]
+  Chandelure:
+    stats: { HP: 60, Attack: 55, Defense: 90, SpecialAttack: 145, SpecialDefense: 90, Speed: 80 }
+    catch-rate: 45
+    height: 1
+    weight: 34.3
+    gender: [1, 1]
+Axew:
+  Axew:
+    stats: { HP: 46, Attack: 87, Defense: 60, SpecialAttack: 30, SpecialDefense: 40, Speed: 57 }
+    catch-rate: 75
+    height: 0.6
+    weight: 18
+    gender: [1, 1]
+  Fraxure:
+    stats: { HP: 66, Attack: 117, Defense: 70, SpecialAttack: 40, SpecialDefense: 50, Speed: 67 }
+    catch-rate: 60
+    height: 1
+    weight: 36
+    gender: [1, 1]
+  Haxorus:
+    stats: { HP: 76, Attack: 147, Defense: 90, SpecialAttack: 60, SpecialDefense: 70, Speed: 97 }
+    catch-rate: 45
+    height: 1.8
+    weight: 105.5
+    gender: [1, 1]
+Cubchoo:
+  Cubchoo:
+    stats: { HP: 55, Attack: 70, Defense: 40, SpecialAttack: 60, SpecialDefense: 40, Speed: 40 }
+    catch-rate: 120
+    height: 0.5
+    weight: 8.5
+    gender: [1, 1]
+  Beartic:
+    stats: { HP: 95, Attack: 130, Defense: 80, SpecialAttack: 70, SpecialDefense: 80, Speed: 50 }
+    catch-rate: 60
+    height: 2.6
+    weight: 260
+    gender: [1, 1]
+Cryogonal:
+  Cryogonal:
+    stats: { HP: 80, Attack: 50, Defense: 50, SpecialAttack: 95, SpecialDefense: 135, Speed: 105 }
+    catch-rate: 25
+    height: 1.1
+    weight: 148
+    gender: genderless
+Shelmet:
+  Shelmet:
+    stats: { HP: 50, Attack: 40, Defense: 85, SpecialAttack: 40, SpecialDefense: 65, Speed: 25 }
+    catch-rate: 200
+    height: 0.4
+    weight: 7.7
+    gender: [1, 1]
+  Accelgor:
+    stats: { HP: 80, Attack: 70, Defense: 40, SpecialAttack: 100, SpecialDefense: 60, Speed: 145 }
+    catch-rate: 75
+    height: 0.8
+    weight: 25.3
+    gender: [1, 1]
+Stunfisk:
+  Stunfisk:
+    stats: { HP: 109, Attack: 66, Defense: 84, SpecialAttack: 81, SpecialDefense: 99, Speed: 32 }
+    catch-rate: 75
+    height: 0.7
+    weight: 11
+    gender: [1, 1]

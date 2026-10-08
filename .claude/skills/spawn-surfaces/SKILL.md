@@ -1,6 +1,6 @@
 ---
 name: spawn-surfaces
-description: A biome's pools are mixed into one roster, and each cell cuts it by surface. A species' kind (ground, water or flying) decides which surfaces it stands on, and only an amphibious water species leaves the water. Applies whenever adding or editing a spawn pool, a species' habitat, egg groups or biomes, or how spawns and phenomena are placed.
+description: Each surface of a biome draws from its own pool, cut to what can stand there, and a surface with no pool of its own draws from the land pool. A species' kind (ground, water or flying) decides which surfaces it stands on, and only an amphibious water species leaves the water. Applies whenever adding or editing a spawn pool, a species' habitat, egg groups or biomes, or how spawns and phenomena are placed.
 ---
 
 # Spawns stand on a surface
@@ -11,9 +11,13 @@ Every overworld cell is one of three surfaces (`Chunk.getCellSurface`, `SpawnSur
 - **Water** is a water cell in any biome, the open sea included.
 - **Ice** is a water cell in a biome whose water is drawn frozen (`isIceBiome`). Ice is walked like ground.
 
-## One roster, cut by surface
+## A pool per surface, cut by what stands there
 
-A biome's file under `src/data/biome/` may still register a land, water and ice pool, but they are mixed into one **roster** (`getBiomeRoster`), a species listed twice counting once at its heavier weight. A cell's pool is that roster cut to what can stand on its surface (`getSpawnPool`). Which of the biome's pools a species was written in does not decide where it appears.
+A biome's file in `src/data/biome/pools/` holds a `land` pool and may hold `water` and `ice` pools. A cell draws from **its own surface's pool**, cut to what can stand on that surface (`getSpawnPool`), so a water pool lists everything met on water and its weights are shares of water rolls. Nothing is borrowed from another surface.
+
+A surface with no pool of its own draws from the land pool, cut the same way: a lake in a field meets the field's swimmers and fliers. Ice with no pool of its own is walked like land outright (`drawnSurface` in `chunk-snapshot.ts`), and a volcano's water is lava that nothing stands on.
+
+`getBiomeRoster` still merges a biome's surfaces, a species listed twice counting once at its heavier weight, for what reads a biome as a whole: the dex's habitats, the egg pool, the landmarks' ranks.
 
 ## Three kinds
 
@@ -33,4 +37,4 @@ Rippling water startles the water kind, a flying shadow the flying kind and a du
 
 ## Amphibious
 
-`habitat: Habitat.Amphibious` only matters for the water kind. Mark a water species amphibious when it is met on land as readily as in the water: frogs, turtles, crabs, otters, seals, the water starters. Fish, jellies, shellfish and whales stay water-only, and so does a water species with no habitat at all.
+`habitat: Amphibious` (in the species' `world/` YAML) only matters for the water kind. Mark a water species amphibious when it is met on land as readily as in the water: frogs, turtles, crabs, otters, seals, the water starters. Fish, jellies, shellfish and whales stay water-only, and so does a water species with no habitat at all.

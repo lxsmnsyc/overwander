@@ -1,0 +1,290 @@
+land:
+  morning:
+    base:
+      Mareep: 924
+      Whismur: 924
+      FlabebeYellow: 888
+      Scatterbug: 888
+      GeodudeAlola: 814
+      Magnemite: 740
+      Snivy: 111
+    uncommon:
+      Patrat: 200
+      Bunnelby: 173
+      Blitzle: 167
+      Sentret: 167
+      Electrike: 167
+      Wooper: 167
+      Skiddo: 160
+      Mudbray: 147
+      Rockruff: 147
+      Spearow: 133
+      Doduo: 133
+      Phanpy: 133
+      Voltorb: 133
+      BurmyTrash: 133
+      Rufflet: 107
+      Growlithe: 67
+      Ponyta: 67
+      Dunsparce: 67
+      Girafarig: 33
+    rare:
+      Loudred: 245
+      Magneton: 245
+      GravelerAlola: 196
+      FloetteYellow: 196
+      Spewpa: 196
+      Flaaffy: 123
+      Servine: 49
+    scarce:
+      Fearow: 50
+      Rapidash: 50
+      Dodrio: 50
+      Electrode: 50
+      Furret: 50
+      Manectric: 50
+      Donphan: 50
+      Mudsdale: 30
+      Lycanroc: 30
+      Gogoat: 30
+      Diggersby: 30
+      Zebstrika: 30
+      Braviary: 30
+      Electivire: 30
+      Arcanine: 25
+      Quagsire: 25
+      WormadamTrash: 20
+    elusive:
+      Castform: 34
+      Tauros: 34
+      Ampharos: 34
+      Zangoose: 27
+      Bouffalant: 21
+      Stoutland: 21
+      FlorgesYellow: 17
+      Vivillon: 17
+      Kangaskhan: 17
+      Miltank: 17
+      Exploud: 17
+      Magnezone: 17
+      Rhyperior: 17
+      GolemAlola: 14
+      Serperior: 7
+    prized:
+      Unown: forms
+    special:
+      Zapdos: 10
+  day:
+    base:
+      Mareep: 924
+      Whismur: 924
+      FlabebeYellow: 888
+      Scatterbug: 888
+      GeodudeAlola: 814
+      Magnemite: 740
+      Snivy: 111
+    uncommon:
+      Patrat: 190
+      Bunnelby: 165
+      Blitzle: 158
+      Sentret: 158
+      Electrike: 158
+      Wooper: 158
+      Skiddo: 152
+      Mudbray: 139
+      Rockruff: 139
+      Spearow: 127
+      Ekans: 127
+      Doduo: 127
+      Phanpy: 127
+      Voltorb: 127
+      BurmyTrash: 127
+      Rufflet: 101
+      Growlithe: 63
+      Ponyta: 63
+      Dunsparce: 63
+      Girafarig: 32
+    rare:
+      Loudred: 245
+      Magneton: 245
+      GravelerAlola: 196
+      FloetteYellow: 196
+      Spewpa: 196
+      Flaaffy: 123
+      Servine: 49
+    scarce:
+      Fearow: 46
+      Arbok: 46
+      Rapidash: 46
+      Dodrio: 46
+      Electrode: 46
+      Furret: 46
+      Manectric: 46
+      Donphan: 46
+      Mudsdale: 28
+      Lycanroc: 28
+      Gogoat: 28
+      Diggersby: 28
+      Zebstrika: 28
+      Braviary: 28
+      Electivire: 28
+      Arcanine: 23
+      Quagsire: 23
+      WormadamTrash: 18
+    elusive:
+      Castform: 34
+      Tauros: 34
+      Ampharos: 34
+      Zangoose: 27
+      Bouffalant: 21
+      Stoutland: 21
+      FlorgesYellow: 17
+      Vivillon: 17
+      Kangaskhan: 17
+      Miltank: 17
+      Exploud: 17
+      Magnezone: 17
+      Rhyperior: 17
+      GolemAlola: 14
+      Serperior: 7
+    prized:
+      Unown: forms
+    special:
+      Zapdos: 10
+  evening:
+    base:
+      GeodudeAlola: 2645
+      Magnemite: 2405
+      Litten: 240
+    uncommon:
+      Wooper: 277
+      Mudbray: 243
+      Rockruff: 243
+      Scraggy: 243
+      Golett: 221
+      Ekans: 221
+      Voltorb: 221
+      BurmyTrash: 221
+      Drifloon: 221
+      Skorupi: 221
+      Dunsparce: 111
+      Girafarig: 55
+    rare:
+      Magneton: 625
+      GravelerAlola: 500
+      Torracat: 125
+    scarce:
+      Arbok: 78
+      Electrode: 78
+      Watchog: 63
+      Scrafty: 55
+      Mudsdale: 47
+      LycanrocDusk: 47
+      Golurk: 47
+      Drifblim: 47
+      Drapion: 47
+      Electivire: 47
+      Quagsire: 39
+      WormadamTrash: 31
+    elusive:
+      Castform: 92
+      Seviper: 74
+      Magnezone: 46
+      Rhyperior: 46
+      GolemAlola: 37
+      Incineroar: 18
+    prized:
+      Unown: forms
+    special:
+      Zapdos: 10
+  night:
+    base:
+      GeodudeAlola: 2645
+      Magnemite: 2405
+      Litten: 240
+    uncommon:
+      Wooper: 277
+      Mudbray: 243
+      Rockruff: 243
+      Scraggy: 243
+      Golett: 221
+      Ekans: 221
+      Voltorb: 221
+      BurmyTrash: 221
+      Drifloon: 221
+      Skorupi: 221
+      Dunsparce: 111
+      Girafarig: 55
+    rare:
+      Magneton: 625
+      GravelerAlola: 500
+      Torracat: 125
+    scarce:
+      Arbok: 78
+      Electrode: 78
+      Watchog: 63
+      Scrafty: 55
+      Mudsdale: 47
+      LycanrocMidnight: 47
+      Golurk: 47
+      Drifblim: 47
+      Drapion: 47
+      Electivire: 47
+      Quagsire: 39
+      WormadamTrash: 31
+    elusive:
+      Castform: 92
+      Seviper: 74
+      Magnezone: 46
+      Rhyperior: 46
+      GolemAlola: 37
+      Incineroar: 18
+    prized:
+      Unown: forms
+    special:
+      Zapdos: 10
+
+water:
+  morning: &water-morning
+    base: {}
+    uncommon:
+      Magikarp: 2075
+      Wooper: 1729
+      Goldeen: 1383
+      Spearow: 1383
+      Doduo: 1383
+      Rufflet: 1107
+    rare: {}
+    scarce:
+      Seaking: 114
+      Fearow: 114
+      Dodrio: 114
+      Electrode: 114
+      Braviary: 68
+      Quagsire: 57
+      Gyarados: 45
+    special: {}
+    elusive:
+      Castform: 156
+      Vivillon: 78
+      Magnezone: 78
+  day: *water-morning
+  evening: &water-evening
+    base: {}
+    uncommon:
+      Magikarp: 2861
+      Wooper: 2384
+      Goldeen: 1908
+      Drifloon: 1908
+    rare: {}
+    scarce:
+      Seaking: 179
+      Electrode: 179
+      Drifblim: 107
+      Quagsire: 89
+      Gyarados: 71
+    special: {}
+    elusive:
+      Castform: 209
+      Magnezone: 104
+  night: *water-evening

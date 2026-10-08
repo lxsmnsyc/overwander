@@ -1,0 +1,87 @@
+# From Flying Press to Parabolic Charge: the start of Kalos's list
+
+FlyingPress:
+  type: Fighting
+  category: Physical
+  power: 100
+  accuracy: 95
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+MatBlock:
+  type: Fighting
+  category: Status
+  pp: 10
+  target: Team
+  affects: [Team, Own]
+
+Belch:
+  type: Poison
+  category: Special
+  power: 120
+  accuracy: 90
+  pp: 10
+  target: Unit
+
+Rototiller:
+  type: Ground
+  category: Status
+  pp: 10
+  target: None
+
+StickyWeb:
+  type: Bug
+  category: Status
+  pp: 20
+  target: Team
+
+FellStinger:
+  type: Bug
+  category: Physical
+  power: 50
+  accuracy: 100
+  pp: 25
+  target: Unit
+  flags: [Contact]
+
+PhantomForce:
+  type: Ghost
+  category: Physical
+  power: 90
+  accuracy: 100
+  pp: 10
+  target: Unit
+  flags: [Contact]
+  steps: 1
+
+TrickOrTreat:
+  type: Ghost
+  category: Status
+  accuracy: 100
+  pp: 20
+  target: Unit
+
+NobleRoar:
+  type: Normal
+  category: Status
+  accuracy: 100
+  pp: 30
+  target: Unit
+  flags: [Sound]
+
+IonDeluge:
+  type: Electric
+  category: Status
+  priority: 1
+  pp: 25
+  target: None
+
+ParabolicCharge:
+  type: Electric
+  category: Special
+  power: 65
+  accuracy: 100
+  pp: 20
+  target: None
+  affects: [Unit, Own, Enemy]

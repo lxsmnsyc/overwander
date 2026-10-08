@@ -48,13 +48,12 @@ export function getAbilityData(ability: Abilities): AbilityData {
 const SIGNATURE_ABILITIES = new Map<Families, Abilities>();
 
 /**
- * Register a family's signature. It is an ability like any other, so
- * it goes in the same store; the family is kept beside it because a
- * signature is granted, and something has to be able to ask which one
- * a line is owed
+ * Record a family's signature. The ability itself is registered like
+ * any other; the family is kept beside it because a signature is
+ * granted, and something has to be able to ask which one a line is
+ * owed
  */
-export function registerSignature(family: Families, ability: Abilities, data: AbilityData): void {
-  registerAbility(ability, data);
+export function registerSignature(family: Families, ability: Abilities): void {
   SIGNATURE_ABILITIES.set(family, ability);
 }
 
@@ -73,12 +72,7 @@ export function getSignatureAbility(family: Families): Abilities | null {
  */
 const FORM_SIGNATURES = new Map<Species, Abilities>();
 
-export function registerFormSignature(
-  forms: Species[],
-  ability: Abilities,
-  data: AbilityData,
-): void {
-  registerAbility(ability, data);
+export function registerFormSignature(forms: Species[], ability: Abilities): void {
   for (const form of forms) {
     FORM_SIGNATURES.set(form, ability);
   }

@@ -1,0 +1,91 @@
+# From Forest's Curse to Electrify, where the terrains arrive
+
+ForestsCurse:
+  type: Grass
+  category: Status
+  accuracy: 100
+  pp: 20
+  target: Unit
+
+PetalBlizzard:
+  type: Grass
+  category: Physical
+  power: 90
+  accuracy: 100
+  pp: 15
+  target: None
+  affects: [Unit, Own, Enemy]
+  flags: [Wind]
+
+FreezeDry:
+  type: Ice
+  category: Special
+  power: 70
+  accuracy: 100
+  pp: 20
+  target: Unit
+
+DisarmingVoice:
+  type: Fairy
+  category: Special
+  power: 40
+  pp: 15
+  target: None
+  affects: [Unit, Enemy]
+  flags: [Sound]
+
+PartingShot:
+  type: Dark
+  category: Status
+  accuracy: 100
+  pp: 20
+  target: Unit
+  flags: [Sound]
+  steps: 1
+
+TopsyTurvy:
+  type: Dark
+  category: Status
+  pp: 20
+  target: Unit
+
+DrainingKiss:
+  type: Fairy
+  category: Special
+  power: 50
+  accuracy: 100
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+CraftyShield:
+  type: Fairy
+  category: Status
+  priority: 3
+  pp: 10
+  target: Team
+  affects: [Team, Own]
+
+FlowerShield:
+  type: Fairy
+  category: Status
+  pp: 10
+  target: None
+
+GrassyTerrain:
+  type: Grass
+  category: Status
+  pp: 10
+  target: None
+
+MistyTerrain:
+  type: Fairy
+  category: Status
+  pp: 10
+  target: None
+
+Electrify:
+  type: Electric
+  category: Status
+  pp: 20
+  target: Unit

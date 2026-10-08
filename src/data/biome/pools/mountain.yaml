@@ -1,0 +1,534 @@
+land:
+  morning:
+    base:
+      Roggenrola: 784
+      JangmoO: 718
+      Klink: 653
+      Mankey: 653
+      Machop: 653
+      Geodude: 653
+      Aron: 653
+      Axew: 163
+      Chimchar: 98
+      Charmander: 65
+      Cyndaquil: 65
+      Larvitar: 65
+      Gible: 65
+    uncommon:
+      Meditite: 235
+      Swablu: 207
+      Makuhita: 188
+      Spoink: 188
+      Diglett: 188
+      Slugma: 188
+      Nosepass: 188
+      BurmyTrash: 188
+      Bronzor: 188
+      Psyduck: 188
+      Mienfoo: 169
+      Rufflet: 150
+      Onix: 94
+      Dunsparce: 94
+      Magmar: 47
+    rare:
+      Boldore: 224
+      Lairon: 187
+      Primeape: 187
+      HakamoO: 149
+      Klang: 149
+      Machoke: 93
+      Graveler: 93
+      Fraxure: 56
+      Monferno: 37
+      Charmeleon: 19
+      Quilava: 19
+      Pupitar: 19
+      Gabite: 19
+    scarce:
+      Dugtrio: 74
+      Medicham: 74
+      Golduck: 74
+      Mienshao: 44
+      Braviary: 44
+      Hariyama: 44
+      Grumpig: 44
+      Bronzong: 44
+      Probopass: 44
+      Altaria: 37
+      Steelix: 37
+      Magcargo: 37
+      WormadamTrash: 29
+    elusive:
+      Torkoal: 27
+      Mawile: 18
+      Carbink: 13
+      Durant: 13
+      Gigalith: 13
+      Drampa: 11
+      Minior: 11
+      Togedemaru: 11
+      Druddigon: 11
+      Machamp: 11
+      Golem: 11
+      Snorlax: 11
+      Shuckle: 11
+      Skarmory: 11
+      Sudowoodo: 11
+      Wobbuffet: 11
+      Aggron: 11
+      Chimecho: 11
+      Lucario: 11
+      Magnezone: 11
+      Rhyperior: 11
+      KommoO: 9
+      Klinklang: 9
+      Haxorus: 7
+      Charizard: 4
+      Typhlosion: 4
+      Tyranitar: 4
+      Infernape: 4
+      Garchomp: 4
+    prized:
+      Unown: forms
+      Magby: prized
+      Wynaut: prized
+      Riolu: prized
+      Chingling: prized
+      Bonsly: prized
+    special:
+      Celesteela: 10
+      Necrozma: 10
+      ZygardeTenPercent: 5
+      Zygarde: 5
+      Yveltal: 10
+      Terrakion: 10
+      Cobalion: 10
+      Registeel: 10
+      Moltres: 10
+      HoOh: 10
+    mythical:
+      Magearna: 5
+      MagearnaOriginal: 5
+      Marshadow: 10
+      Diancie: 10
+  day:
+    base:
+      Roggenrola: 769
+      JangmoO: 705
+      Klink: 641
+      Mankey: 641
+      Machop: 641
+      Geodude: 641
+      Aron: 641
+      Axew: 160
+      Bagon: 96
+      Chimchar: 96
+      Charmander: 64
+      Cyndaquil: 64
+      Larvitar: 64
+      Gible: 64
+    uncommon:
+      Meditite: 235
+      Swablu: 207
+      Makuhita: 188
+      Spoink: 188
+      Diglett: 188
+      Slugma: 188
+      Nosepass: 188
+      BurmyTrash: 188
+      Bronzor: 188
+      Psyduck: 188
+      Mienfoo: 169
+      Rufflet: 150
+      Onix: 94
+      Dunsparce: 94
+      Magmar: 47
+    rare:
+      Boldore: 221
+      Lairon: 184
+      Primeape: 184
+      HakamoO: 147
+      Klang: 147
+      Machoke: 92
+      Graveler: 92
+      Fraxure: 55
+      Monferno: 37
+      Shelgon: 18
+      Charmeleon: 18
+      Quilava: 18
+      Pupitar: 18
+      Gabite: 18
+    scarce:
+      Dugtrio: 74
+      Medicham: 74
+      Golduck: 74
+      Mienshao: 44
+      Braviary: 44
+      Hariyama: 44
+      Grumpig: 44
+      Bronzong: 44
+      Probopass: 44
+      Altaria: 37
+      Steelix: 37
+      Magcargo: 37
+      WormadamTrash: 29
+    elusive:
+      Torkoal: 27
+      Mawile: 18
+      Carbink: 13
+      Durant: 13
+      Gigalith: 13
+      Drampa: 11
+      Minior: 11
+      Togedemaru: 11
+      Druddigon: 11
+      Machamp: 11
+      Golem: 11
+      Snorlax: 11
+      Shuckle: 11
+      Skarmory: 11
+      Sudowoodo: 11
+      Wobbuffet: 11
+      Aggron: 11
+      Chimecho: 11
+      Lucario: 11
+      Magnezone: 11
+      Rhyperior: 11
+      KommoO: 9
+      Klinklang: 9
+      Haxorus: 7
+      Salamence: 4
+      Charizard: 4
+      Typhlosion: 4
+      Tyranitar: 4
+      Infernape: 4
+      Garchomp: 4
+    prized:
+      Unown: forms
+      Magby: prized
+      Wynaut: prized
+      Riolu: prized
+      Chingling: prized
+      Bonsly: prized
+    special:
+      Celesteela: 10
+      Necrozma: 10
+      ZygardeTenPercent: 5
+      Zygarde: 5
+      Yveltal: 10
+      Terrakion: 10
+      Cobalion: 10
+      Registeel: 10
+      Moltres: 10
+      HoOh: 10
+    mythical:
+      Magearna: 5
+      MagearnaOriginal: 5
+      Marshadow: 10
+      Diancie: 10
+  evening:
+    base:
+      Zubat: 1312
+      Honedge: 1049
+      JangmoO: 961
+      Geodude: 874
+      Tynamo: 787
+      Bagon: 131
+      Larvitar: 87
+      Gible: 87
+    uncommon:
+      Diglett: 265
+      Slugma: 265
+      Nosepass: 265
+      BurmyTrash: 265
+      Bronzor: 265
+      Woobat: 265
+      Joltik: 238
+      Ferroseed: 212
+      Onix: 132
+      Dunsparce: 132
+      Magmar: 66
+      Murkrow: 66
+      Gligar: 66
+    rare:
+      Golbat: 305
+      HakamoO: 244
+      Doublade: 244
+      Eelektrik: 213
+      Graveler: 152
+      Shelgon: 30
+      Pupitar: 30
+      Gabite: 30
+    scarce:
+      Dugtrio: 93
+      Swoobat: 75
+      Galvantula: 56
+      Bronzong: 56
+      Probopass: 56
+      Honchkrow: 56
+      Gliscor: 56
+      Ferrothorn: 47
+      Steelix: 47
+      Magcargo: 47
+      WormadamTrash: 37
+    elusive:
+      Carbink: 21
+      Drampa: 17
+      Minior: 17
+      Togedemaru: 17
+      Aegislash: 17
+      Golem: 17
+      Snorlax: 17
+      Shuckle: 17
+      Sudowoodo: 17
+      Wobbuffet: 17
+      Crobat: 17
+      Absol: 17
+      Chimecho: 17
+      Magnezone: 17
+      Rhyperior: 17
+      KommoO: 14
+      Eelektross: 14
+      Salamence: 7
+      Tyranitar: 7
+      Garchomp: 7
+    prized:
+      Unown: forms
+      Magby: prized
+      Wynaut: prized
+      Chingling: prized
+      Bonsly: prized
+    special:
+      Celesteela: 10
+      Necrozma: 10
+      ZygardeTenPercent: 5
+      Zygarde: 5
+      Yveltal: 10
+      Terrakion: 10
+      Cobalion: 10
+      Registeel: 10
+      Moltres: 10
+      HoOh: 10
+    mythical:
+      Magearna: 5
+      MagearnaOriginal: 5
+      Marshadow: 10
+      Diancie: 10
+  night:
+    base:
+      Zubat: 1149
+      Honedge: 920
+      JangmoO: 843
+      Geodude: 766
+      Gastly: 766
+      Tynamo: 690
+      Larvitar: 77
+      Gible: 77
+    uncommon:
+      Diglett: 228
+      Cubone: 228
+      Slugma: 228
+      Nosepass: 228
+      BurmyTrash: 228
+      Bronzor: 228
+      Woobat: 228
+      Joltik: 205
+      Ferroseed: 183
+      Onix: 114
+      Dunsparce: 114
+      Clefairy: 57
+      Magmar: 57
+      Murkrow: 57
+      Misdreavus: 57
+      Gligar: 57
+    rare:
+      Golbat: 278
+      HakamoO: 222
+      Doublade: 222
+      Eelektrik: 194
+      Graveler: 139
+      Haunter: 139
+      Pupitar: 28
+      Gabite: 28
+    scarce:
+      Dugtrio: 71
+      Marowak: 71
+      Swoobat: 57
+      Galvantula: 43
+      Bronzong: 43
+      Probopass: 43
+      Mismagius: 43
+      Honchkrow: 43
+      Gliscor: 43
+      Ferrothorn: 36
+      Clefable: 36
+      Steelix: 36
+      Magcargo: 36
+      WormadamTrash: 28
+    elusive:
+      Carbink: 20
+      Drampa: 17
+      Minior: 17
+      Togedemaru: 17
+      Aegislash: 17
+      Golem: 17
+      Gengar: 17
+      Snorlax: 17
+      Shuckle: 17
+      Sudowoodo: 17
+      Wobbuffet: 17
+      Crobat: 17
+      Absol: 17
+      Chimecho: 17
+      Magnezone: 17
+      Rhyperior: 17
+      KommoO: 13
+      Eelektross: 13
+      Tyranitar: 7
+      Garchomp: 7
+    prized:
+      Unown: forms
+      Cleffa: prized
+      Magby: prized
+      Wynaut: prized
+      Chingling: prized
+      Bonsly: prized
+    special:
+      Celesteela: 10
+      Necrozma: 10
+      ZygardeTenPercent: 5
+      Zygarde: 5
+      Yveltal: 10
+      Terrakion: 10
+      Cobalion: 10
+      Registeel: 10
+      Moltres: 10
+      Mewtwo: 10
+      HoOh: 10
+    mythical:
+      Magearna: 5
+      MagearnaOriginal: 5
+      Marshadow: 10
+      Diancie: 10
+
+water:
+  morning:
+    base: {}
+    uncommon:
+      Magikarp: 2123
+      Swablu: 1557
+      Goldeen: 1415
+      Psyduck: 1415
+      Bronzor: 1415
+      Rufflet: 1133
+    rare: {}
+    scarce:
+      Seaking: 106
+      Golduck: 106
+      Medicham: 106
+      Gyarados: 64
+      Braviary: 64
+      Bronzong: 64
+      Probopass: 64
+      Altaria: 53
+    special: {}
+    elusive:
+      Carbink: 67
+      Minior: 56
+      Skarmory: 56
+      Chimecho: 56
+      Magnezone: 56
+      Charizard: 22
+  day:
+    base: {}
+    uncommon:
+      Magikarp: 2123
+      Swablu: 1557
+      Goldeen: 1415
+      Psyduck: 1415
+      Bronzor: 1415
+      Rufflet: 1133
+    rare: {}
+    scarce:
+      Seaking: 106
+      Golduck: 106
+      Medicham: 106
+      Gyarados: 64
+      Braviary: 64
+      Bronzong: 64
+      Probopass: 64
+      Altaria: 53
+    special: {}
+    elusive:
+      Carbink: 63
+      Minior: 52
+      Skarmory: 52
+      Chimecho: 52
+      Magnezone: 52
+      Salamence: 21
+      Charizard: 21
+  evening:
+    base: { Zubat: 3313, Tynamo: 1988 }
+    uncommon:
+      Magikarp: 752
+      Goldeen: 501
+      Bronzor: 501
+      Woobat: 501
+      Murkrow: 125
+      Gligar: 125
+    rare: { Golbat: 737, Eelektrik: 516 }
+    scarce:
+      Seaking: 130
+      Swoobat: 104
+      Gyarados: 78
+      Bronzong: 78
+      Probopass: 78
+      Honchkrow: 78
+      Gliscor: 78
+    special: {}
+    elusive:
+      Carbink: 59
+      Minior: 49
+      Crobat: 49
+      Chimecho: 49
+      Magnezone: 49
+      Eelektross: 39
+      Salamence: 20
+  night:
+    base:
+      Zubat: 2339
+      Gastly: 1559
+      Tynamo: 1404
+    uncommon:
+      Magikarp: 716
+      Goldeen: 477
+      Bronzor: 477
+      Woobat: 477
+      Murkrow: 119
+      Misdreavus: 119
+      Gligar: 119
+    rare:
+      Golbat: 569
+      Eelektrik: 399
+      Haunter: 285
+    scarce:
+      Seaking: 116
+      Swoobat: 93
+      Gyarados: 69
+      Bronzong: 69
+      Probopass: 69
+      Mismagius: 69
+      Honchkrow: 69
+      Gliscor: 69
+    special: {}
+    elusive:
+      Carbink: 54
+      Minior: 45
+      Gengar: 45
+      Crobat: 45
+      Chimecho: 45
+      Magnezone: 45
+      Eelektross: 36
+
+# The legendaries met wild in the caves under it
+cave-legends: { Mewtwo: 10, Registeel: 10, Cobalion: 10, Terrakion: 10 }

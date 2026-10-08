@@ -1,0 +1,107 @@
+# The signature abilities granted to the families filed under Kanto
+
+families:
+  # The Kanto starters share one signature: each tilts the field toward
+  # its own type and away from the one that type beats, both sides
+  # included
+  Bulbasaur: VerdantField
+  Charmander: EmberField
+  Squirtle: DelugeField
+  Caterpie: PowderBurst
+  Weedle: TwinStinger
+  Pidgey: Slipstream
+  Rattata: Nibble
+  Spearow: Relentless
+  Ekans: Squeeze
+  Pikachu: ChainLightning
+  Sandshrew: CurlUp
+
+  # The two Nidoran lines are counterparts, so both are paid in poison:
+  # every poisoned enemy lifts the holder, the female on the defending
+  # side of a blow and the male on the attacking one
+  NidoranF: QueensCourt
+  NidoranM: KingsCourt
+  Clefairy: WishingWell
+  Vulpix: NineTails
+  Jigglypuff: Lullaby
+  Zubat: Bloodthirst
+  Oddish: DeepRoots
+  Paras: FungalBloom
+  Venonat: DustStorm
+  Diglett: Undermine
+  Meowth: Cutpurse
+  Psyduck: HeadacheBurst
+  Mankey: BlindRage
+  Growlithe: ChaseDown
+  Poliwag: HypnoticSpiral
+  Abra: TeleportGuard
+  Machop: OverheadThrow
+  Bellsprout: Digest
+  Tentacool: TentacleGrasp
+  Geodude: SolidCore
+  Ponyta: Gallop
+  Slowpoke: DelayedReaction
+  Magnemite: RepulsionField
+  Farfetchd: LeekDuelist
+  Doduo: SecondHead
+  Seel: SleekHide
+  Grimer: CorrosiveOoze
+  Shellder: SpikeShell
+  Gastly: NightTerror
+  Onix: LivingTunnel
+  Drowzee: DreamFeast
+  Krabby: HeavyPincer
+  Voltorb: Overload
+  Exeggcute: Psyseed
+  Cubone: MourningBone
+  Tyrogue: SecondWind
+  Lickitung: TasteEverything
+  Koffing: SmogScreen
+  Rhyhorn: Corkscrew
+  Chansey: Cushioned
+  Tangela: VineWeb
+  Kangaskhan: MothersShield
+  Horsea: WhirlCurrent
+  Goldeen: Upstream
+  Staryu: CoreReset
+  MrMime: MimedBarrier
+  Scyther: CleanCut
+  Jynx: IcyCharm
+  Electabuzz: StaticField
+  Magmar: BlastFurnace
+  Pinsir: Snapjaw
+  Tauros: Bullheaded
+  Magikarp: LateBloomer
+  Lapras: SafePassage
+  Ditto: Formless
+  Eevee: LatentPotential
+  Porygon: Rollback
+
+  # The two Kanto fossils are counterparts, and both are written on the
+  # defending side of a blow: the shell raises its own defences and the
+  # blade cuts into whatever it strikes, so each answers the other
+  Omanyte: HelixShell
+  Kabuto: DomeBlade
+  Aerodactyl: PredatorsDive
+  Snorlax: FullBelly
+
+  # The three birds share one signature: the beat of the wings as one
+  # takes the field, told in the stat its own weather works on
+  Articuno: Frostwing
+  Zapdos: Stormwing
+  Moltres: Emberwing
+  Dratini: SereneStorm
+  Mewtwo: GeneticApex
+  Mew: AncestralMemory
+
+# A regional line given its own signature in place of its family's, by
+# the forms that carry it
+forms:
+  # The Alolan lines whose every stage is regional carry their own
+  RichDiet: [RattataAlola, RaticateAlola]
+  Frostforged: [SandshrewAlola, SandslashAlola]
+  AuroraCrown: [VulpixAlola, NinetalesAlola]
+  WireSnare: [DiglettAlola, DugtrioAlola]
+  TauntingGaze: [MeowthAlola, PersianAlola]
+  MagnetFloat: [GeodudeAlola, GravelerAlola, GolemAlola]
+  CrystalToxin: [GrimerAlola, MukAlola]

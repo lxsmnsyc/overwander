@@ -1,0 +1,159 @@
+land:
+  morning: &land-morning
+    base:
+      Oshawott: 1983
+      Piplup: 1983
+      Popplio: 1322
+    uncommon:
+      Wingull: 311
+      Shellos: 311
+      Buizel: 311
+      Binacle: 299
+      Wimpod: 274
+      Krabby: 249
+      Seel: 249
+      Slowpoke: 249
+      BurmySandy: 249
+    rare:
+      Brionne: 417
+      Dewott: 417
+      Prinplup: 417
+    scarce:
+      Kingler: 84
+      Dewgong: 84
+      Slowbro: 84
+      Pelipper: 84
+      Gastrodon: 84
+      Floatzel: 68
+      Golisopod: 51
+      Barbaracle: 51
+      WormadamSandy: 34
+    elusive:
+      Pyukumuku: 98
+      Shuckle: 98
+      Primarina: 39
+      Samurott: 39
+      Empoleon: 39
+    prized:
+      Unown: forms
+    special:
+      TapuFini: 10
+    mythical:
+      Victini: 10
+  day: *land-morning
+  evening: &land-evening
+    base: {}
+    uncommon:
+      Shellos: 1712
+      Buizel: 1712
+      Wimpod: 1506
+      Krabby: 1369
+      Seel: 1369
+      BurmySandy: 1369
+    rare: {}
+    scarce:
+      Kingler: 130
+      Dewgong: 130
+      Gastrodon: 130
+      Floatzel: 104
+      Golisopod: 78
+      WormadamSandy: 52
+    elusive:
+      Pyukumuku: 156
+      Shuckle: 156
+    prized:
+      Unown: forms
+    special:
+      TapuFini: 10
+    mythical:
+      Victini: 10
+  night: *land-evening
+
+water:
+  morning: &water-morning
+    base:
+      Horsea: 2945
+      Oshawott: 883
+      Piplup: 883
+      Popplio: 589
+    uncommon:
+      Magikarp: 238
+      Wingull: 197
+      Shellos: 197
+      Buizel: 197
+      Crabrawler: 189
+      Binacle: 189
+      Mareanie: 174
+      Wimpod: 174
+      Krabby: 158
+      Shellder: 158
+      Tentacool: 158
+      Remoraid: 158
+      Seel: 158
+      Slowpoke: 158
+    rare:
+      Seadra: 569
+      Brionne: 228
+      Dewott: 228
+      Prinplup: 228
+    scarce:
+      Kingler: 61
+      Cloyster: 61
+      Dewgong: 61
+      Slowbro: 61
+      Pelipper: 61
+      Gastrodon: 61
+      Tentacruel: 49
+      Octillery: 49
+      Floatzel: 49
+      Toxapex: 37
+      Golisopod: 37
+      Barbaracle: 37
+    elusive:
+      Qwilfish: 123
+      Corsola: 82
+      Pyukumuku: 41
+      Primarina: 16
+      Samurott: 16
+      Kingdra: 16
+      Empoleon: 16
+    special:
+      TapuFini: 10
+  day: *water-morning
+  evening: &water-evening
+    base:
+      Horsea: 2999
+    uncommon:
+      Magikarp: 418
+      Shellos: 348
+      Buizel: 348
+      Crabrawler: 334
+      Mareanie: 306
+      Wimpod: 306
+      Krabby: 279
+      Shellder: 279
+      Tentacool: 279
+      Remoraid: 279
+      Staryu: 279
+      Seel: 279
+    rare:
+      Seadra: 1864
+    scarce:
+      Kingler: 109
+      Cloyster: 109
+      Starmie: 109
+      Dewgong: 109
+      Gastrodon: 109
+      Tentacruel: 87
+      Octillery: 87
+      Floatzel: 87
+      Toxapex: 66
+      Golisopod: 66
+    elusive:
+      Qwilfish: 218
+      Corsola: 146
+      Pyukumuku: 73
+      Kingdra: 30
+    special:
+      TapuFini: 10
+  night: *water-evening

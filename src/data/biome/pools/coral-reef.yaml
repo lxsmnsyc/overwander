@@ -1,0 +1,124 @@
+land:
+  morning: &land-morning
+    base:
+      Scatterbug: 2994
+    uncommon:
+      Corphish: 810
+      Wingull: 810
+      Shellos: 810
+      Krabby: 649
+      Slowpoke: 649
+    rare:
+      Spewpa: 1864
+    scarce:
+      Kingler: 194
+      Pelipper: 194
+      Gastrodon: 194
+      Slowbro: 194
+      Crawdaunt: 155
+    elusive:
+      Vivillon: 155
+      Shuckle: 155
+      Slowking: 155
+    prized:
+      Unown: forms
+    special: {}
+  day: *land-morning
+  evening: &land-evening
+    base: {}
+    uncommon:
+      Corphish: 3229
+      Shellos: 3229
+      Krabby: 2583
+    rare: {}
+    scarce:
+      Kingler: 223
+      Gastrodon: 223
+      Crawdaunt: 179
+    elusive:
+      Shuckle: 313
+    prized:
+      Unown: forms
+    special: {}
+  night: *land-evening
+
+water:
+  morning: &water-morning
+    base:
+      Horsea: 2995
+    uncommon:
+      Corphish: 352
+      Wingull: 352
+      Shellos: 352
+      Clauncher: 337
+      Skrelp: 337
+      Mareanie: 310
+      Carvanha: 282
+      Clamperl: 282
+      Remoraid: 282
+      Finneon: 282
+      Krabby: 282
+      Slowpoke: 282
+    rare:
+      Seadra: 1862
+    scarce:
+      Kingler: 112
+      Pelipper: 112
+      Gastrodon: 112
+      Slowbro: 112
+      Crawdaunt: 89
+      Toxapex: 67
+      Clawitzer: 67
+      Dragalge: 67
+      Sharpedo: 67
+      Lumineon: 67
+      Octillery: 57
+    elusive:
+      Corsola: 130
+      Luvdisc: 97
+      Alomomola: 45
+      Bruxish: 33
+      Wishiwashi: 33
+      Mantine: 33
+      Kingdra: 33
+      Vivillon: 33
+      Slowking: 33
+    prized:
+      Mantyke: prized
+    special: {}
+  day: *water-morning
+  evening: &water-evening
+    base:
+      Horsea: 2994
+    uncommon:
+      Corphish: 486
+      Shellos: 486
+      Mareanie: 426
+      Carvanha: 388
+      Clamperl: 388
+      Staryu: 388
+      Remoraid: 388
+      Finneon: 388
+      Krabby: 388
+    rare:
+      Seadra: 1863
+    scarce:
+      Starmie: 142
+      Octillery: 142
+      Kingler: 142
+      Gastrodon: 142
+      Crawdaunt: 113
+      Toxapex: 85
+      Sharpedo: 85
+      Lumineon: 85
+    elusive:
+      Corsola: 198
+      Alomomola: 70
+      Bruxish: 49
+      Wishiwashi: 49
+      Mantine: 49
+      Kingdra: 49
+    prized:
+      Mantyke: prized
+    special: {}
+  night: *water-evening

@@ -43,17 +43,12 @@ export default function setupSpite(battle: Battle): void {
     }
   });
 
-  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
-    if (event.move !== Moves.Spite || event.target.type !== MoveTargetType.Unit) {
-      return;
-    }
-
-    const target = event.target.unit;
+  /** Stretches the target's last move's wait, or says there was nothing to stretch */
+  function spite(target: Unit): boolean {
     const move = getSpitedMove(target);
 
     if (move === undefined) {
-      event.source.triggerMoveEffectFailed(event.move, event.target, event.steps);
-      return;
+      return false;
     }
 
     // A move already cooling has its wait stretched; one that is ready
@@ -66,6 +61,30 @@ export default function setupSpite(battle: Battle): void {
 
     if (cooldown != null) {
       target.updateCooldown(move, { duration: cooldown.duration * COOLDOWN_FACTOR });
+    }
+    return true;
+  }
+
+  battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
+    if (event.move !== Moves.Spite || event.target.type !== MoveTargetType.Unit) {
+      return;
+    }
+
+    if (!spite(event.target.unit)) {
+      event.source.triggerMoveEffectFailed(event.move, event.target, event.steps);
+    }
+  });
+
+  // Eerie Spell does the same to whatever it lands on, every time it lands
+  battle.on(BattleEvents.CheckUnitAttackEffectChance, EventPriority.Post, (event) => {
+    if (event.parent.move === Moves.EerieSpell) {
+      event.value = 100;
+    }
+  });
+
+  battle.on(BattleEvents.UnitAttackEffect, EventPriority.Exact, (event) => {
+    if (event.parent.move === Moves.EerieSpell && event.parent.target.alive) {
+      spite(event.parent.target);
     }
   });
 }

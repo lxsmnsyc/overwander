@@ -1,0 +1,69 @@
+Pound:
+  name: Pound
+  description: Plain contact damage.
+Sing:
+  name: Sing
+  description: Puts the target to sleep. It is a sound.
+DoubleSlap:
+  name: Double Slap
+  description: Strikes 2 to 5 times.
+Minimize:
+  name: Minimize
+  description: Raises the user's evasion 2 stages, but Body Slam and Stomp then never miss it and hit 2x.
+Metronome:
+  name: Metronome
+  description: Casts a move at random, bar itself, Mirror Move, Sketch and the three nobody learns.
+DefenseCurl:
+  name: Defense Curl
+  description: Raises the user's Defense a stage.
+LightScreen:
+  name: Light Screen
+  description: Cuts special damage against the user's side by 1/3 for 10 seconds.
+Roar:
+  name: Roar
+  description: Throws the target off the field and drags its weakest teammate in. Slow, and a sound.
+ConfuseRay:
+  name: Confuse Ray
+  description: Confuses the target.
+Disable:
+  name: Disable
+  description: Shuts off the move the target is using or last used, for 8 seconds. A move in progress is interrupted.
+LeechLife:
+  name: Leech Life
+  description: Heals the user for 1/2 the damage dealt.
+Haze:
+  name: Haze
+  description: Resets every stat stage on the field, the user's included.
+Absorb:
+  name: Absorb
+  description: Heals the user for 1/2 the damage dealt.
+PetalDance:
+  name: Petal Dance
+  description: Lands the same hit 3 times over, and leaves the user confused.
+Spore:
+  name: Spore
+  description: Puts the target to sleep. A powder, so Grass ignores it.
+KarateChop:
+  name: Karate Chop
+  description: Crits more readily.
+Hypnosis:
+  name: Hypnosis
+  description: Puts the target to sleep.
+Amnesia:
+  name: Amnesia
+  description: Raises the user's Special Defense 2 stages.
+Recover:
+  name: Recover
+  description: Heals the user 1/2 its HP.
+LowKick:
+  name: Low Kick
+  description: 'Hits for what the target weighs: 20 power under 10 kg, rising to 120 at 200 kg and over.'
+Slam:
+  name: Slam
+  description: Plain contact damage.
+Constrict:
+  name: Constrict
+  description: 10% to drop the target's Speed a stage.
+Barrier:
+  name: Barrier
+  description: Raises the user's Defense 2 stages.

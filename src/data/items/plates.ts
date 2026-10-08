@@ -1,6 +1,6 @@
 import { TYPE_NAMES, Types } from '../constants/types';
-import { ItemFlags, ItemTypes, Items } from '../ids/items';
-import { registerItem } from './__create';
+import { Items } from '../ids/items';
+import { itemText } from './__create';
 
 /**
  * The plates: old stone tablets, one for every type but Normal, each
@@ -36,48 +36,11 @@ export const PLATES = new Map<Items, Types>([
   [Items.PixiePlate, Types.Fairy],
 ]);
 
-const NAMES: { [key in Items]?: string } = {
-  [Items.FistPlate]: 'Fist Plate',
-  [Items.SkyPlate]: 'Sky Plate',
-  [Items.ToxicPlate]: 'Toxic Plate',
-  [Items.EarthPlate]: 'Earth Plate',
-  [Items.StonePlate]: 'Stone Plate',
-  [Items.InsectPlate]: 'Insect Plate',
-  [Items.SpookyPlate]: 'Spooky Plate',
-  [Items.IronPlate]: 'Iron Plate',
-  [Items.FlamePlate]: 'Flame Plate',
-  [Items.SplashPlate]: 'Splash Plate',
-  [Items.MeadowPlate]: 'Meadow Plate',
-  [Items.ZapPlate]: 'Zap Plate',
-  [Items.MindPlate]: 'Mind Plate',
-  [Items.IciclePlate]: 'Icicle Plate',
-  [Items.DracoPlate]: 'Draco Plate',
-  [Items.DreadPlate]: 'Dread Plate',
-  [Items.PixiePlate]: 'Pixie Plate',
-};
+export function describePlate(item: Items): string {
+  const type = PLATES.get(item);
 
-/**
- * What a plate fetches from a shop that will never stock one
- */
-export const PLATE_RESALE = 2000;
-
-/**
- * Register the plates. Held, never spent, and never listed: a plate
- * is dug up rather than bought
- */
-export default function registerPlates(): void {
-  for (const [item, type] of PLATES) {
-    registerItem(item, {
-      name: NAMES[item] ?? `Item #${item}`,
-      type: ItemTypes.Held,
-      description: `${TYPE_NAMES[type]} moves hit 1.2x for as long as it is held. Also makes Judgment ${TYPE_NAMES[type]} and puts an Arceus with Multitype in its ${TYPE_NAMES[type]} shape.`,
-      // A plate is not named for its type — a Fist Plate is Fighting
-      // — so the picture is taken from the plate's own first word,
-      // which is what the `plates` sheet names them by
-      icon: `plates/${(NAMES[item] ?? '').split(' ')[0].toLowerCase()}`,
-      flags: ItemFlags.Holdable,
-      buy: 0,
-      sell: PLATE_RESALE,
-    });
+  if (type == null) {
+    throw new Error(`Item #${item} is not a plate`);
   }
+  return itemText('plates', 'plate', { type: TYPE_NAMES[type] });
 }

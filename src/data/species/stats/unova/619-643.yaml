@@ -1,0 +1,184 @@
+Mienfoo:
+  Mienfoo:
+    stats: { HP: 45, Attack: 85, Defense: 50, SpecialAttack: 55, SpecialDefense: 50, Speed: 65 }
+    catch-rate: 180
+    height: 0.9
+    weight: 20
+    gender: [1, 1]
+  Mienshao:
+    stats: { HP: 65, Attack: 125, Defense: 60, SpecialAttack: 95, SpecialDefense: 60, Speed: 105 }
+    catch-rate: 45
+    height: 1.4
+    weight: 35.5
+    gender: [1, 1]
+Druddigon:
+  Druddigon:
+    stats: { HP: 77, Attack: 120, Defense: 90, SpecialAttack: 60, SpecialDefense: 90, Speed: 48 }
+    catch-rate: 45
+    height: 1.6
+    weight: 139
+    gender: [1, 1]
+Golett:
+  Golett:
+    stats: { HP: 59, Attack: 74, Defense: 50, SpecialAttack: 35, SpecialDefense: 50, Speed: 35 }
+    catch-rate: 190
+    height: 1
+    weight: 92
+    gender: genderless
+  Golurk:
+    stats: { HP: 89, Attack: 124, Defense: 80, SpecialAttack: 55, SpecialDefense: 80, Speed: 55 }
+    catch-rate: 90
+    height: 2.8
+    weight: 330
+    gender: genderless
+Pawniard:
+  Pawniard:
+    stats: { HP: 45, Attack: 85, Defense: 70, SpecialAttack: 40, SpecialDefense: 40, Speed: 60 }
+    catch-rate: 120
+    height: 0.5
+    weight: 10.2
+    gender: [1, 1]
+  Bisharp:
+    stats: { HP: 65, Attack: 125, Defense: 100, SpecialAttack: 60, SpecialDefense: 70, Speed: 70 }
+    catch-rate: 45
+    height: 1.6
+    weight: 70
+    gender: [1, 1]
+Bouffalant:
+  Bouffalant:
+    stats: { HP: 95, Attack: 110, Defense: 95, SpecialAttack: 40, SpecialDefense: 95, Speed: 55 }
+    catch-rate: 45
+    height: 1.6
+    weight: 94.6
+    gender: [1, 1]
+Rufflet:
+  Rufflet:
+    stats: { HP: 70, Attack: 83, Defense: 50, SpecialAttack: 37, SpecialDefense: 50, Speed: 60 }
+    catch-rate: 190
+    height: 0.5
+    weight: 10.5
+    # Male only, the way its counterpart on the far side of the ridge
+    # is female only
+    gender: [1, 0]
+  Braviary:
+    stats: { HP: 100, Attack: 123, Defense: 75, SpecialAttack: 57, SpecialDefense: 75, Speed: 80 }
+    catch-rate: 60
+    height: 1.5
+    weight: 41
+    gender: [1, 0]
+Vullaby:
+  Vullaby:
+    stats: { HP: 70, Attack: 55, Defense: 75, SpecialAttack: 45, SpecialDefense: 65, Speed: 60 }
+    catch-rate: 190
+    height: 0.5
+    weight: 9
+    # Female only, the way its counterpart on the far side of the ridge
+    # is male only
+    gender: [0, 1]
+  Mandibuzz:
+    stats: { HP: 110, Attack: 65, Defense: 105, SpecialAttack: 55, SpecialDefense: 95, Speed: 80 }
+    catch-rate: 60
+    height: 1.2
+    weight: 39.5
+    gender: [0, 1]
+Heatmor:
+  Heatmor:
+    stats: { HP: 85, Attack: 97, Defense: 66, SpecialAttack: 105, SpecialDefense: 66, Speed: 65 }
+    catch-rate: 90
+    height: 1.4
+    weight: 58
+    gender: [1, 1]
+Durant:
+  Durant:
+    stats: { HP: 58, Attack: 109, Defense: 112, SpecialAttack: 48, SpecialDefense: 48, Speed: 109 }
+    catch-rate: 90
+    height: 0.3
+    weight: 33
+    gender: [1, 1]
+Deino:
+  Deino:
+    stats: { HP: 52, Attack: 65, Defense: 50, SpecialAttack: 45, SpecialDefense: 50, Speed: 38 }
+    catch-rate: 45
+    height: 0.8
+    weight: 17.3
+    gender: [1, 1]
+  Zweilous:
+    stats: { HP: 72, Attack: 85, Defense: 70, SpecialAttack: 65, SpecialDefense: 70, Speed: 58 }
+    catch-rate: 45
+    height: 1.4
+    weight: 50
+    gender: [1, 1]
+  Hydreigon:
+    stats: { HP: 92, Attack: 105, Defense: 90, SpecialAttack: 125, SpecialDefense: 90, Speed: 98 }
+    catch-rate: 45
+    height: 1.8
+    weight: 160
+    gender: [1, 1]
+Larvesta:
+  Larvesta:
+    stats: { HP: 55, Attack: 85, Defense: 55, SpecialAttack: 50, SpecialDefense: 55, Speed: 60 }
+    catch-rate: 45
+    height: 1.1
+    weight: 28.8
+    gender: [1, 1]
+  Volcarona:
+    stats: { HP: 85, Attack: 60, Defense: 65, SpecialAttack: 135, SpecialDefense: 105, Speed: 100 }
+    catch-rate: 15
+    height: 1.6
+    weight: 46
+    gender: [1, 1]
+Cobalion:
+  Cobalion:
+    stats: { HP: 91, Attack: 90, Defense: 129, SpecialAttack: 90, SpecialDefense: 72, Speed: 108 }
+    catch-rate: 3
+    height: 2.1
+    weight: 250
+    gender: genderless
+Terrakion:
+  Terrakion:
+    stats: { HP: 91, Attack: 129, Defense: 90, SpecialAttack: 72, SpecialDefense: 90, Speed: 108 }
+    catch-rate: 3
+    height: 1.9
+    weight: 260
+    gender: genderless
+Virizion:
+  Virizion:
+    stats: { HP: 91, Attack: 90, Defense: 72, SpecialAttack: 90, SpecialDefense: 129, Speed: 108 }
+    catch-rate: 3
+    height: 2
+    weight: 200
+    gender: genderless
+Tornadus:
+  Tornadus:
+    stats: { HP: 79, Attack: 115, Defense: 70, SpecialAttack: 125, SpecialDefense: 80, Speed: 111 }
+    catch-rate: 3
+    height: 1.5
+    weight: 63
+    gender: [1, 0]
+  TornadusTherian:
+    stats: { HP: 79, Attack: 100, Defense: 80, SpecialAttack: 110, SpecialDefense: 90, Speed: 121 }
+    catch-rate: 3
+    height: 1.4
+    weight: 63
+    gender: [1, 0]
+Thundurus:
+  Thundurus:
+    stats: { HP: 79, Attack: 115, Defense: 70, SpecialAttack: 125, SpecialDefense: 80, Speed: 111 }
+    catch-rate: 3
+    height: 1.5
+    weight: 61
+    gender: [1, 0]
+  ThundurusTherian:
+    stats: { HP: 79, Attack: 105, Defense: 70, SpecialAttack: 145, SpecialDefense: 80, Speed: 101 }
+    catch-rate: 3
+    height: 3
+    weight: 61
+    gender: [1, 0]
+Reshiram:
+  Reshiram:
+    stats:
+      { HP: 100, Attack: 120, Defense: 100, SpecialAttack: 150, SpecialDefense: 120, Speed: 90 }
+    catch-rate: 3
+    height: 3.2
+    weight: 330
+    gender: genderless

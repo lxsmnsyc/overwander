@@ -1,0 +1,165 @@
+Victini:
+  Victini:
+    stats:
+      { HP: 100, Attack: 100, Defense: 100, SpecialAttack: 100, SpecialDefense: 100, Speed: 100 }
+    catch-rate: 3
+    height: 0.4
+    weight: 4
+    gender: genderless
+Snivy:
+  Snivy:
+    stats: { HP: 45, Attack: 45, Defense: 55, SpecialAttack: 45, SpecialDefense: 55, Speed: 63 }
+    catch-rate: 45
+    height: 0.6
+    weight: 8.1
+    gender: [7, 1]
+  Servine:
+    stats: { HP: 60, Attack: 60, Defense: 75, SpecialAttack: 60, SpecialDefense: 75, Speed: 83 }
+    catch-rate: 45
+    height: 0.8
+    weight: 16
+    gender: [7, 1]
+  Serperior:
+    stats: { HP: 75, Attack: 75, Defense: 95, SpecialAttack: 75, SpecialDefense: 95, Speed: 113 }
+    catch-rate: 45
+    height: 3.3
+    weight: 63
+    gender: [7, 1]
+Tepig:
+  Tepig:
+    stats: { HP: 65, Attack: 63, Defense: 45, SpecialAttack: 45, SpecialDefense: 45, Speed: 45 }
+    catch-rate: 45
+    height: 0.5
+    weight: 9.9
+    gender: [7, 1]
+  Pignite:
+    stats: { HP: 90, Attack: 93, Defense: 55, SpecialAttack: 70, SpecialDefense: 55, Speed: 55 }
+    catch-rate: 45
+    height: 1
+    weight: 55.5
+    gender: [7, 1]
+  Emboar:
+    stats: { HP: 110, Attack: 123, Defense: 65, SpecialAttack: 100, SpecialDefense: 65, Speed: 65 }
+    catch-rate: 45
+    height: 1.6
+    weight: 150
+    gender: [7, 1]
+Oshawott:
+  Oshawott:
+    stats: { HP: 55, Attack: 55, Defense: 45, SpecialAttack: 63, SpecialDefense: 45, Speed: 45 }
+    catch-rate: 45
+    height: 0.5
+    weight: 5.9
+    gender: [7, 1]
+  Dewott:
+    stats: { HP: 75, Attack: 75, Defense: 60, SpecialAttack: 83, SpecialDefense: 60, Speed: 60 }
+    catch-rate: 45
+    height: 0.8
+    weight: 24.5
+    gender: [7, 1]
+  Samurott:
+    stats: { HP: 95, Attack: 100, Defense: 85, SpecialAttack: 108, SpecialDefense: 70, Speed: 70 }
+    catch-rate: 45
+    height: 1.5
+    weight: 94.6
+    gender: [7, 1]
+Patrat:
+  Patrat:
+    stats: { HP: 45, Attack: 55, Defense: 39, SpecialAttack: 35, SpecialDefense: 39, Speed: 42 }
+    catch-rate: 255
+    height: 0.5
+    weight: 11.6
+    gender: [1, 1]
+  Watchog:
+    stats: { HP: 60, Attack: 85, Defense: 69, SpecialAttack: 60, SpecialDefense: 69, Speed: 77 }
+    catch-rate: 255
+    height: 1.1
+    weight: 27
+    gender: [1, 1]
+Lillipup:
+  Lillipup:
+    stats: { HP: 45, Attack: 60, Defense: 45, SpecialAttack: 25, SpecialDefense: 45, Speed: 55 }
+    catch-rate: 255
+    height: 0.4
+    weight: 4.1
+    gender: [1, 1]
+  Herdier:
+    stats: { HP: 65, Attack: 80, Defense: 65, SpecialAttack: 35, SpecialDefense: 65, Speed: 60 }
+    catch-rate: 120
+    height: 0.9
+    weight: 14.7
+    gender: [1, 1]
+  Stoutland:
+    stats: { HP: 85, Attack: 110, Defense: 90, SpecialAttack: 45, SpecialDefense: 90, Speed: 80 }
+    catch-rate: 45
+    height: 1.2
+    weight: 61
+    gender: [1, 1]
+Purrloin:
+  Purrloin:
+    stats: { HP: 41, Attack: 50, Defense: 37, SpecialAttack: 50, SpecialDefense: 37, Speed: 66 }
+    catch-rate: 255
+    height: 0.4
+    weight: 10.1
+    gender: [1, 1]
+  Liepard:
+    stats: { HP: 64, Attack: 88, Defense: 50, SpecialAttack: 88, SpecialDefense: 50, Speed: 106 }
+    catch-rate: 90
+    height: 1.1
+    weight: 37.5
+    gender: [1, 1]
+Pansage:
+  Pansage:
+    stats: { HP: 50, Attack: 53, Defense: 48, SpecialAttack: 53, SpecialDefense: 48, Speed: 64 }
+    catch-rate: 190
+    height: 0.6
+    weight: 10.5
+    # Seven males to every female, the way the whole trio is handed out
+    gender: [7, 1]
+  Simisage:
+    stats: { HP: 75, Attack: 98, Defense: 63, SpecialAttack: 98, SpecialDefense: 63, Speed: 101 }
+    catch-rate: 75
+    height: 1.1
+    weight: 30.5
+    gender: [7, 1]
+Pansear:
+  Pansear:
+    stats: { HP: 50, Attack: 53, Defense: 48, SpecialAttack: 53, SpecialDefense: 48, Speed: 64 }
+    catch-rate: 190
+    height: 0.6
+    weight: 11
+    # Seven males to every female, the way the whole trio is handed out
+    gender: [7, 1]
+  Simisear:
+    stats: { HP: 75, Attack: 98, Defense: 63, SpecialAttack: 98, SpecialDefense: 63, Speed: 101 }
+    catch-rate: 75
+    height: 1
+    weight: 28
+    gender: [7, 1]
+Panpour:
+  Panpour:
+    stats: { HP: 50, Attack: 53, Defense: 48, SpecialAttack: 53, SpecialDefense: 48, Speed: 64 }
+    catch-rate: 190
+    height: 0.6
+    weight: 13.5
+    # Seven males to every female, the way the whole trio is handed out
+    gender: [7, 1]
+  Simipour:
+    stats: { HP: 75, Attack: 98, Defense: 63, SpecialAttack: 98, SpecialDefense: 63, Speed: 101 }
+    catch-rate: 75
+    height: 1
+    weight: 29
+    gender: [7, 1]
+Munna:
+  Munna:
+    stats: { HP: 76, Attack: 25, Defense: 45, SpecialAttack: 67, SpecialDefense: 55, Speed: 24 }
+    catch-rate: 190
+    height: 0.6
+    weight: 23.3
+    gender: [1, 1]
+  Musharna:
+    stats: { HP: 116, Attack: 55, Defense: 85, SpecialAttack: 107, SpecialDefense: 95, Speed: 29 }
+    catch-rate: 75
+    height: 1.1
+    weight: 60.5
+    gender: [1, 1]

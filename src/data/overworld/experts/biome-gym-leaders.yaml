@@ -1,0 +1,336 @@
+# Which gym leaders keep the gyms of each biome. The country is the map to
+# the badges: a player hunting Blaine walks to fire country. The order is
+# part of the shared world, since the chunk's own roll picks from it. The
+# open seas never roll a people landmark, and are listed only so the table
+# stays total.
+
+DeepOcean:
+  - Misty
+  - Falkner
+  - Winona
+  - Juan
+  - CrasherWake
+  - Cress
+  - Skyla
+  - Marlon
+Ocean:
+  - Misty
+  - Falkner
+  - Winona
+  - Juan
+  - CrasherWake
+  - Cress
+  - Skyla
+  - Marlon
+CoralReef:
+  - Misty
+  - Juan
+  - CrasherWake
+  - Cress
+  - Marlon
+Beach:
+  - Misty
+  - Falkner
+  - Whitney
+  - Juan
+  - Winona
+  - Norman
+  - Brawly
+  - CrasherWake
+  - Maylene
+  - Cress
+  - Lenora
+  - Skyla
+  - Cheren
+  - Marlon
+  - Korrina
+Mangrove:
+  - Koga
+  - Bugsy
+  - Norman
+  - Burgh
+  - Roxie
+  - Viola
+Swamp:
+  - Koga
+  - Morty
+  - Bugsy
+  - Norman
+  - Fantina
+  - Burgh
+  - Roxie
+  - Viola
+TropicalRainforest:
+  - Bugsy
+  - Erika
+  - Norman
+  - Gardenia
+  - Cilan
+  - Burgh
+  - Viola
+  - Ramos
+TropicalSeasonalForest:
+  - Erika
+  - Bugsy
+  - Whitney
+  - Falkner
+  - Norman
+  - Winona
+  - Gardenia
+  - Cilan
+  - Lenora
+  - Burgh
+  - Skyla
+  - Cheren
+  - Viola
+  - Ramos
+Savanna:
+  - LtSurge
+  - Falkner
+  - Chuck
+  - Giovanni
+  - Wattson
+  - Winona
+  - Brawly
+  - Maylene
+  - Volkner
+  - Elesa
+  - Clay
+  - Skyla
+  - Korrina
+  - Clemont
+Desert:
+  - Blaine
+  - Giovanni
+  - Flannery
+  - Chili
+  - Clay
+Shrubland:
+  - Whitney
+  - Bugsy
+  - Norman
+  - Wattson
+  - Volkner
+  - Lenora
+  - Burgh
+  - Elesa
+  - Cheren
+  - Viola
+  - Clemont
+Grassland:
+  - Erika
+  - Whitney
+  - Bugsy
+  - Falkner
+  - Norman
+  - Winona
+  - Gardenia
+  - Cilan
+  - Lenora
+  - Burgh
+  - Skyla
+  - Cheren
+  - Viola
+  - Ramos
+  - Valerie
+TemperateForest:
+  - Erika
+  - Bugsy
+  - Whitney
+  - Morty
+  - Norman
+  - Gardenia
+  - Fantina
+  - Cilan
+  - Lenora
+  - Burgh
+  - Cheren
+  - Viola
+  - Ramos
+  - Valerie
+TemperateRainforest:
+  - Sabrina
+  - Bugsy
+  - Morty
+  - Tate
+  - Liza
+  - Fantina
+  - Burgh
+  - Viola
+  - Olympia
+ColdDesert:
+  - Brock
+  - Pryce
+  - Jasmine
+  - Giovanni
+  - Roxanne
+  - Roark
+  - Byron
+  - Candice
+  - Clay
+  - Brycen
+  - Grant
+  - Wulfric
+Taiga:
+  - Bugsy
+  - Falkner
+  - Pryce
+  - Winona
+  - Candice
+  - Burgh
+  - Skyla
+  - Brycen
+  - Viola
+  - Wulfric
+Tundra:
+  - Misty
+  - Pryce
+  - Falkner
+  - Whitney
+  - Juan
+  - Winona
+  - Norman
+  - CrasherWake
+  - Candice
+  - Cress
+  - Lenora
+  - Skyla
+  - Brycen
+  - Cheren
+  - Marlon
+  - Wulfric
+Mountain:
+  - Brock
+  - Chuck
+  - Jasmine
+  - Clair
+  - Giovanni
+  - Roxanne
+  - Brawly
+  - Roark
+  - Maylene
+  - Byron
+  - Clay
+  - Drayden
+  - Grant
+  - Korrina
+AlpineTundra:
+  - Brock
+  - Pryce
+  - Falkner
+  - Clair
+  - Roxanne
+  - Winona
+  - Roark
+  - Candice
+  - Skyla
+  - Brycen
+  - Drayden
+  - Grant
+  - Wulfric
+Glacier:
+  - Misty
+  - Pryce
+  - Juan
+  - CrasherWake
+  - Candice
+  - Cress
+  - Brycen
+  - Marlon
+  - Wulfric
+Woodland:
+  - Erika
+  - Bugsy
+  - Whitney
+  - Norman
+  - Gardenia
+  - Cilan
+  - Lenora
+  - Burgh
+  - Cheren
+  - Viola
+  - Ramos
+  - Valerie
+Steppe:
+  - LtSurge
+  - Falkner
+  - Giovanni
+  - Wattson
+  - Winona
+  - Volkner
+  - Elesa
+  - Clay
+  - Skyla
+  - Clemont
+MontaneForest:
+  - Sabrina
+  - Bugsy
+  - Tate
+  - Liza
+  - Burgh
+  - Viola
+  - Valerie
+  - Olympia
+PolarOcean:
+  - Misty
+  - Falkner
+  - Pryce
+  - Winona
+  - Juan
+  - CrasherWake
+  - Candice
+  - Cress
+  - Skyla
+  - Brycen
+  - Marlon
+  - Wulfric
+Beyond:
+  - Sabrina
+  - Morty
+  - Clair
+  - Tate
+  - Liza
+  - Fantina
+  - Drayden
+  - Olympia
+Volcano:
+  - Blaine
+  - Jasmine
+  - Clair
+  - Flannery
+  - Byron
+  - Chili
+  - Drayden
+Badlands:
+  - Brock
+  - Chuck
+  - Jasmine
+  - Giovanni
+  - Roxanne
+  - Brawly
+  - Roark
+  - Maylene
+  - Byron
+  - Clay
+  - Grant
+  - Korrina
+RockyCoast:
+  - Brock
+  - Falkner
+  - Roxanne
+  - Winona
+  - Roark
+  - Skyla
+  - Grant
+Bog:
+  - Koga
+  - Morty
+  - Norman
+  - Fantina
+  - Roxie
+KelpForest:
+  - Misty
+  - Juan
+  - CrasherWake
+  - Cress
+  - Marlon

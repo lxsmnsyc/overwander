@@ -728,7 +728,7 @@ describe('world', () => {
 
     // Clefable would otherwise take Metronome, which can call
     // anything registered — Transform included
-    expect(deriveMoves(Species.Clefable, RAID_BOSS_LEVEL)).toContain(Moves.Metronome);
+    expect(getLevelUpMoves(Species.Clefable, RAID_BOSS_LEVEL)).toContain(Moves.Metronome);
     expect(createRaidBossSnapshot(Species.Clefable, 0x12345678).moves).not.toContain(
       Moves.Metronome,
     );
@@ -782,7 +782,7 @@ describe('world', () => {
     expect(moves).toContain(Moves.Detect);
     expect(moves).toContain(Moves.Imprison);
     expect(moves).toContain(Moves.Confusion);
-    expect(moves).toHaveLength(6);
+    expect(moves).toHaveLength(7);
   });
 
   it('never stages a Ditto, or anything with nothing left to cast', () => {

@@ -1,0 +1,2338 @@
+Chespin:
+  # TM, HM and tutor moves shared by the whole family
+  family-teachable:
+    - AerialAce
+    - Attract
+    - BrickBreak
+    - BulkUp
+    - Bulldoze
+    - Confide
+    - Cut
+    - Dig
+    - DoubleTeam
+    - DrainPunch
+    - DualChop
+    - Endeavor
+    - EnergyBall
+    - Facade
+    - Flash
+    - Fling
+    - FocusPunch
+    - Frustration
+    - GigaDrain
+    - GrassKnot
+    - GrassPledge
+    - GyroBall
+    - HelpingHand
+    - HiddenPower
+    - IronDefense
+    - IronHead
+    - IronTail
+    - LowKick
+    - LowSweep
+    - NaturePower
+    - PainSplit
+    - Payback
+    - PoisonJab
+    - PowerUpPunch
+    - Protect
+    - Reflect
+    - Rest
+    - Retaliate
+    - Return
+    - Roar
+    - RockSlide
+    - RockSmash
+    - RockTomb
+    - Round
+    - SecretPower
+    - SeedBomb
+    - ShadowClaw
+    - SleepTalk
+    - SludgeBomb
+    - SmackDown
+    - Snore
+    - SolarBeam
+    - StoneEdge
+    - Strength
+    - Substitute
+    - SunnyDay
+    - SuperFang
+    - Superpower
+    - Swagger
+    - SwordsDance
+    - Synthesis
+    - Taunt
+    - ThunderPunch
+    - Toxic
+    - WorrySeed
+    - ZenHeadbutt
+    - StompingTantrum
+  Chespin:
+    level:
+      1: [Tackle, Growl]
+      5: [VineWhip]
+      8: [Rollout]
+      11: [Bite]
+      15: [LeechSeed]
+      18: [PinMissile]
+      27: [TakeDown]
+      32: [SeedBomb]
+      35: [MudShot]
+      39: [BulkUp]
+      42: [BodySlam]
+      45: [PainSplit]
+      48: [WoodHammer]
+    egg: [BellyDrum, Curse, DefenseCurl, QuickGuard, Rollout, Spikes, Synthesis]
+  Quilladin:
+    level:
+      1: [Tackle, Growl]
+      5: [VineWhip]
+      8: [Rollout]
+      11: [Bite]
+      15: [LeechSeed]
+      20: [PinMissile]
+      26: [NeedleArm]
+      30: [TakeDown]
+      35: [SeedBomb]
+      39: [MudShot]
+      44: [BulkUp]
+      48: [BodySlam]
+      52: [PainSplit]
+      55: [WoodHammer]
+    teachable: [HoneClaws]
+  Chesnaught:
+    level:
+      1: [Tackle, Growl, BellyDrum, Feint]
+      5: [VineWhip]
+      8: [Rollout]
+      11: [Bite]
+      15: [LeechSeed]
+      20: [PinMissile]
+      26: [NeedleArm]
+      30: [TakeDown]
+      35: [SeedBomb]
+      41: [MudShot]
+      44: [BulkUp]
+      48: [BodySlam]
+      52: [PainSplit]
+      55: [WoodHammer]
+      60: [HammerArm]
+      70: [GigaImpact]
+      75: [SpikyShield]
+    teachable:
+      - Block
+      - DragonClaw
+      - Earthquake
+      - FocusBlast
+      - FrenzyPlant
+      - GigaImpact
+      - HoneClaws
+      - HyperBeam
+Fennekin:
+  # TM, HM and tutor moves shared by the whole family
+  family-teachable:
+    - Attract
+    - Confide
+    - Covet
+    - Cut
+    - DoubleTeam
+    - DreamEater
+    - EchoedVoice
+    - Embargo
+    - Facade
+    - FireBlast
+    - FirePledge
+    - FlameCharge
+    - Flamethrower
+    - FoulPlay
+    - Frustration
+    - GrassKnot
+    - HeatWave
+    - HiddenPower
+    - Incinerate
+    - IronTail
+    - LightScreen
+    - MagicCoat
+    - MagicRoom
+    - Overheat
+    - PowerUpPunch
+    - Protect
+    - PsychUp
+    - Psychic
+    - Psyshock
+    - RainDance
+    - Rest
+    - Return
+    - Round
+    - Safeguard
+    - SecretPower
+    - SleepTalk
+    - Snore
+    - SolarBeam
+    - Substitute
+    - SunnyDay
+    - Swagger
+    - Thief
+    - Toxic
+    - WillOWisp
+  Fennekin:
+    level:
+      1: [Scratch, TailWhip]
+      5: [Ember]
+      11: [Howl]
+      14: [FlameCharge]
+      17: [Psybeam]
+      20: [FireSpin]
+      25: [LuckyChant]
+      27: [LightScreen]
+      31: [Psyshock]
+      35: [Flamethrower]
+      38: [WillOWisp]
+      41: [Psychic]
+      43: [SunnyDay]
+      46: [MagicRoom]
+      48: [FireBlast]
+    egg: [HeatWave, Hypnosis, MagicCoat, Wish, PsychicTerrain]
+  Braixen:
+    level:
+      1: [Scratch, TailWhip]
+      5: [Ember]
+      11: [Howl]
+      14: [FlameCharge]
+      18: [Psybeam]
+      22: [FireSpin]
+      27: [LuckyChant]
+      30: [LightScreen]
+      34: [Psyshock]
+      41: [Flamethrower]
+      45: [WillOWisp]
+      48: [Psychic]
+      51: [SunnyDay]
+      53: [MagicRoom]
+      55: [FireBlast]
+    teachable:
+      - FirePunch
+      - LowKick
+      - Recycle
+      - ShockWave
+      - SkillSwap
+      - Snatch
+      - ThunderPunch
+      - Trick
+      - WonderRoom
+      - ZenHeadbutt
+      - LaserFocus
+  Delphox:
+    level:
+      1: [Scratch, TailWhip, ShadowBall, RolePlay, Switcheroo]
+      5: [Ember]
+      11: [Howl]
+      14: [FlameCharge]
+      18: [Psybeam]
+      22: [FireSpin]
+      27: [LuckyChant]
+      30: [LightScreen]
+      34: [Psyshock]
+      42: [Flamethrower]
+      47: [WillOWisp]
+      51: [Psychic]
+      55: [SunnyDay]
+      58: [MagicRoom]
+      61: [FireBlast]
+      69: [FutureSight]
+      75: [MysticalFire]
+    teachable:
+      - BlastBurn
+      - CalmMind
+      - DazzlingGleam
+      - FirePunch
+      - GigaImpact
+      - HyperBeam
+      - LowKick
+      - Recycle
+      - RolePlay
+      - ShadowBall
+      - ShockWave
+      - SignalBeam
+      - SkillSwap
+      - Snatch
+      - ThunderPunch
+      - Trick
+      - TrickRoom
+      - WonderRoom
+      - ZenHeadbutt
+      - LaserFocus
+Froakie:
+  # TM, HM and tutor moves shared by the whole family
+  family-teachable:
+    - Acrobatics
+    - AerialAce
+    - Attract
+    - Blizzard
+    - Bounce
+    - Confide
+    - Cut
+    - Dig
+    - Dive
+    - DoubleTeam
+    - EchoedVoice
+    - Facade
+    - Fling
+    - Frustration
+    - GrassKnot
+    - HiddenPower
+    - IceBeam
+    - IcyWind
+    - PowerUpPunch
+    - Protect
+    - RainDance
+    - Rest
+    - Return
+    - RockSlide
+    - RockSmash
+    - RockTomb
+    - RolePlay
+    - Round
+    - Scald
+    - SecretPower
+    - SleepTalk
+    - SmackDown
+    - Snatch
+    - Snore
+    - Spite
+    - Strength
+    - Substitute
+    - Surf
+    - Swagger
+    - Taunt
+    - Thief
+    - Toxic
+    - UTurn
+    - WaterPledge
+    - WaterPulse
+    - Waterfall
+  Froakie:
+    level:
+      1: [Pound, Growl]
+      5: [Bubble]
+      8: [QuickAttack]
+      10: [Lick]
+      14: [WaterPulse]
+      18: [SmokeScreen]
+      21: [Round]
+      25: [Fling]
+      29: [SmackDown]
+      35: [Substitute]
+      39: [Bounce]
+      43: [DoubleTeam]
+      48: [HydroPump]
+    egg: [Bestow, Camouflage, MindReader, MudSport, ToxicSpikes, WaterSport]
+  Frogadier:
+    level:
+      1: [Pound, Growl]
+      5: [Bubble]
+      8: [QuickAttack]
+      10: [Lick]
+      14: [WaterPulse]
+      20: [SmokeScreen]
+      23: [Round]
+      28: [Fling]
+      33: [SmackDown]
+      38: [Substitute]
+      44: [Bounce]
+      48: [DoubleTeam]
+      55: [HydroPump]
+    teachable: [DarkPulse, GunkShot, IcePunch, LowKick]
+  Greninja:
+    level:
+      1: [Pound, Growl, RolePlay, MatBlock]
+      5: [Bubble]
+      8: [QuickAttack]
+      10: [Lick]
+      14: [WaterPulse]
+      20: [SmokeScreen]
+      23: [ShadowSneak]
+      28: [Spikes]
+      33: [FeintAttack]
+      43: [Substitute]
+      49: [Extrasensory]
+      52: [DoubleTeam]
+      56: [Haze]
+      60: [HydroPump]
+      70: [NightSlash]
+      75: [WaterShuriken]
+    teachable:
+      - DarkPulse
+      - GigaImpact
+      - GunkShot
+      - HydroCannon
+      - HyperBeam
+      - IcePunch
+      - LowKick
+      - BrutalSwing
+  GreninjaAsh:
+    level:
+      1: [Pound, Growl, RolePlay, MatBlock]
+      5: [Bubble]
+      8: [QuickAttack]
+      10: [Lick]
+      14: [WaterPulse]
+      20: [SmokeScreen]
+      23: [ShadowSneak]
+      28: [Spikes]
+      33: [FeintAttack]
+      43: [Substitute]
+      49: [Extrasensory]
+      52: [DoubleTeam]
+      56: [Haze]
+      60: [HydroPump]
+      70: [NightSlash]
+      75: [WaterShuriken]
+    teachable:
+      - DarkPulse
+      - GigaImpact
+      - GunkShot
+      - HydroCannon
+      - HyperBeam
+      - IcePunch
+      - LowKick
+      - BrutalSwing
+Bunnelby:
+  # TM, HM and tutor moves shared by the whole family
+  family-teachable:
+    - Attract
+    - Bounce
+    - BrickBreak
+    - BulkUp
+    - Bulldoze
+    - Confide
+    - Cut
+    - Dig
+    - DoubleTeam
+    - Earthquake
+    - Endeavor
+    - Facade
+    - Fling
+    - Frustration
+    - GrassKnot
+    - HiddenPower
+    - IronHead
+    - IronTail
+    - LastResort
+    - NaturePower
+    - Payback
+    - PowerUpPunch
+    - Protect
+    - Recycle
+    - Rest
+    - Return
+    - RockSlide
+    - RockSmash
+    - RockTomb
+    - Round
+    - Sandstorm
+    - SecretPower
+    - SleepTalk
+    - SludgeBomb
+    - SmackDown
+    - Snore
+    - StoneEdge
+    - Strength
+    - Substitute
+    - SuperFang
+    - Surf
+    - Swagger
+    - Thief
+    - Torment
+    - Toxic
+    - UTurn
+    - WildCharge
+  Bunnelby:
+    level:
+      1: [Tackle, Leer, Agility]
+      7: [QuickAttack]
+      10: [DoubleSlap]
+      13: [MudSlap]
+      15: [TakeDown]
+      18: [MudShot]
+      20: [DoubleKick]
+      25: [OdorSleuth]
+      29: [Flail]
+      33: [Dig]
+      38: [Bounce]
+      42: [SuperFang]
+      47: [Facade]
+      49: [Earthquake]
+    egg: [DefenseCurl, Rollout, Spikes]
+  Diggersby:
+    level:
+      1: [SwordsDance, Tackle, Leer, Agility, Bulldoze, Rototiller]
+      7: [QuickAttack]
+      13: [MudSlap]
+      15: [TakeDown]
+      18: [MudShot]
+      20: [DoubleKick]
+      26: [OdorSleuth]
+      31: [Flail]
+      37: [Dig]
+      42: [Bounce]
+      48: [SuperFang]
+      53: [Facade]
+      57: [Earthquake]
+      60: [HammerArm]
+    teachable:
+      - EarthPower
+      - FirePunch
+      - FocusPunch
+      - FoulPlay
+      - GastroAcid
+      - GigaImpact
+      - GunkShot
+      - HyperBeam
+      - IcePunch
+      - KnockOff
+      - LowKick
+      - Snatch
+      - Superpower
+      - SwordsDance
+      - ThunderPunch
+      - Uproar
+      - BrutalSwing
+      - StompingTantrum
+      - ScorchingSands
+Fletchling:
+  # TM, HM and tutor moves shared by the whole family
+  family-teachable:
+    - Acrobatics
+    - AerialAce
+    - Attract
+    - Confide
+    - DoubleTeam
+    - Facade
+    - FlameCharge
+    - Fly
+    - Frustration
+    - HeatWave
+    - HiddenPower
+    - Overheat
+    - Protect
+    - Rest
+    - Return
+    - Roost
+    - Round
+    - SecretPower
+    - SleepTalk
+    - Snatch
+    - Snore
+    - SteelWing
+    - Substitute
+    - SunnyDay
+    - Swagger
+    - SwordsDance
+    - Tailwind
+    - Taunt
+    - Thief
+    - Toxic
+    - UTurn
+    - DualWingbeat
+  Fletchling:
+    level:
+      1: [Tackle, Growl]
+      6: [QuickAttack]
+      10: [Peck]
+      13: [Agility]
+      16: [Flail]
+      21: [Roost]
+      25: [RazorWind]
+      29: [NaturalGift]
+      34: [FlameCharge]
+      39: [Acrobatics]
+      41: [MeFirst]
+      45: [Tailwind]
+      48: [SteelWing]
+    egg: [QuickGuard, Snatch, Tailwind]
+  Fletchinder:
+    level:
+      1: [Tackle, Growl]
+      6: [QuickAttack]
+      10: [Peck]
+      13: [Agility]
+      16: [Flail]
+      17: [Ember]
+      25: [Roost]
+      27: [RazorWind]
+      31: [NaturalGift]
+      38: [FlameCharge]
+      42: [Acrobatics]
+      46: [MeFirst]
+      51: [Tailwind]
+      55: [SteelWing]
+    teachable: [FireBlast, Flamethrower, Incinerate, WillOWisp]
+  Talonflame:
+    level:
+      1: [Tackle, Growl, FlareBlitz]
+      6: [QuickAttack]
+      10: [Peck]
+      13: [Agility]
+      16: [Flail]
+      17: [Ember]
+      25: [Roost]
+      27: [RazorWind]
+      31: [NaturalGift]
+      39: [FlameCharge]
+      44: [Acrobatics]
+      49: [MeFirst]
+      55: [Tailwind]
+      60: [SteelWing]
+      64: [BraveBird]
+    teachable:
+      - BulkUp
+      - FireBlast
+      - Flamethrower
+      - GigaImpact
+      - HoneClaws
+      - HyperBeam
+      - Incinerate
+      - SolarBeam
+      - WillOWisp
+Scatterbug:
+  family-teachable: [BugBite]
+  Scatterbug:
+    level:
+      1: [Tackle, StringShot]
+      6: [StunSpore]
+      15: [BugBite]
+    egg: [PoisonPowder, RagePowder, StunSpore]
+  Spewpa:
+    level:
+      1: [Harden]
+      9: [Protect]
+    teachable: [Electroweb, IronDefense, Protect]
+  Vivillon:
+    level:
+      1: [Gust, PoisonPowder, StunSpore, SleepPowder, LightScreen]
+      12: [StruggleBug]
+      17: [Psybeam]
+      21: [Supersonic]
+      25: [DrainingKiss]
+      31: [Aromatherapy]
+      35: [BugBuzz]
+      41: [Safeguard]
+      45: [QuiverDance]
+      50: [Hurricane]
+      55: [Powder]
+    teachable:
+      - Acrobatics
+      - AerialAce
+      - Attract
+      - CalmMind
+      - Confide
+      - DoubleTeam
+      - DreamEater
+      - Electroweb
+      - Endeavor
+      - EnergyBall
+      - Facade
+      - Flash
+      - Frustration
+      - GigaDrain
+      - GigaImpact
+      - HiddenPower
+      - HyperBeam
+      - Infestation
+      - LightScreen
+      - Protect
+      - PsychUp
+      - Psychic
+      - RainDance
+      - Rest
+      - Return
+      - Roost
+      - Round
+      - Safeguard
+      - SecretPower
+      - SignalBeam
+      - SleepTalk
+      - Snore
+      - SolarBeam
+      - StruggleBug
+      - Substitute
+      - SunnyDay
+      - Swagger
+      - Tailwind
+      - Thief
+      - Toxic
+      - UTurn
+      - LaserFocus
+  VivillonIcySnow:
+    level:
+      1: [Gust, PoisonPowder, StunSpore, SleepPowder, LightScreen]
+      12: [StruggleBug]
+      17: [Psybeam]
+      21: [Supersonic]
+      25: [DrainingKiss]
+      31: [Aromatherapy]
+      35: [BugBuzz]
+      41: [Safeguard]
+      45: [QuiverDance]
+      50: [Hurricane]
+      55: [Powder]
+    teachable:
+      - Acrobatics
+      - AerialAce
+      - Attract
+      - CalmMind
+      - Confide
+      - DoubleTeam
+      - DreamEater
+      - Electroweb
+      - Endeavor
+      - EnergyBall
+      - Facade
+      - Flash
+      - Frustration
+      - GigaDrain
+      - GigaImpact
+      - HiddenPower
+      - HyperBeam
+      - Infestation
+      - LightScreen
+      - Protect
+      - PsychUp
+      - Psychic
+      - RainDance
+      - Rest
+      - Return
+      - Roost
+      - Round
+      - Safeguard
+      - SecretPower
+      - SignalBeam
+      - SleepTalk
+      - Snore
+      - SolarBeam
+      - StruggleBug
+      - Substitute
+      - SunnyDay
+      - Swagger
+      - Tailwind
+      - Thief
+      - Toxic
+      - UTurn
+      - LaserFocus
+  VivillonPolar:
+    level:
+      1: [Gust, PoisonPowder, StunSpore, SleepPowder, LightScreen]
+      12: [StruggleBug]
+      17: [Psybeam]
+      21: [Supersonic]
+      25: [DrainingKiss]
+      31: [Aromatherapy]
+      35: [BugBuzz]
+      41: [Safeguard]
+      45: [QuiverDance]
+      50: [Hurricane]
+      55: [Powder]
+    teachable:
+      - Acrobatics
+      - AerialAce
+      - Attract
+      - CalmMind
+      - Confide
+      - DoubleTeam
+      - DreamEater
+      - Electroweb
+      - Endeavor
+      - EnergyBall
+      - Facade
+      - Flash
+      - Frustration
+      - GigaDrain
+      - GigaImpact
+      - HiddenPower
+      - HyperBeam
+      - Infestation
+      - LightScreen
+      - Protect
+      - PsychUp
+      - Psychic
+      - RainDance
+      - Rest
+      - Return
+      - Roost
+      - Round
+      - Safeguard
+      - SecretPower
+      - SignalBeam
+      - SleepTalk
+      - Snore
+      - SolarBeam
+      - StruggleBug
+      - Substitute
+      - SunnyDay
+      - Swagger
+      - Tailwind
+      - Thief
+      - Toxic
+      - UTurn
+      - LaserFocus
+  VivillonTundra:
+    level:
+      1: [Gust, PoisonPowder, StunSpore, SleepPowder, LightScreen]
+      12: [StruggleBug]
+      17: [Psybeam]
+      21: [Supersonic]
+      25: [DrainingKiss]
+      31: [Aromatherapy]
+      35: [BugBuzz]
+      41: [Safeguard]
+      45: [QuiverDance]
+      50: [Hurricane]
+      55: [Powder]
+    teachable:
+      - Acrobatics
+      - AerialAce
+      - Attract
+      - CalmMind
+      - Confide
+      - DoubleTeam
+      - DreamEater
+      - Electroweb
+      - Endeavor
+      - EnergyBall
+      - Facade
+      - Flash
+      - Frustration
+      - GigaDrain
+      - GigaImpact
+      - HiddenPower
+      - HyperBeam
+      - Infestation
+      - LightScreen
+      - Protect
+      - PsychUp
+      - Psychic
+      - RainDance
+      - Rest
+      - Return
+      - Roost
+      - Round
+      - Safeguard
+      - SecretPower
+      - SignalBeam
+      - SleepTalk
+      - Snore
+      - SolarBeam
+      - StruggleBug
+      - Substitute
+      - SunnyDay
+      - Swagger
+      - Tailwind
+      - Thief
+      - Toxic
+      - UTurn
+      - LaserFocus
+  VivillonContinental:
+    level:
+      1: [Gust, PoisonPowder, StunSpore, SleepPowder, LightScreen]
+      12: [StruggleBug]
+      17: [Psybeam]
+      21: [Supersonic]
+      25: [DrainingKiss]
+      31: [Aromatherapy]
+      35: [BugBuzz]
+      41: [Safeguard]
+      45: [QuiverDance]
+      50: [Hurricane]
+      55: [Powder]
+    teachable:
+      - Acrobatics
+      - AerialAce
+      - Attract
+      - CalmMind
+      - Confide
+      - DoubleTeam
+      - DreamEater
+      - Electroweb
+      - Endeavor
+      - EnergyBall
+      - Facade
+      - Flash
+      - Frustration
+      - GigaDrain
+      - GigaImpact
+      - HiddenPower
+      - HyperBeam
+      - Infestation
+      - LightScreen
+      - Protect
+      - PsychUp
+      - Psychic
+      - RainDance
+      - Rest
+      - Return
+      - Roost
+      - Round
+      - Safeguard
+      - SecretPower
+      - SignalBeam
+      - SleepTalk
+      - Snore
+      - SolarBeam
+      - StruggleBug
+      - Substitute
+      - SunnyDay
+      - Swagger
+      - Tailwind
+      - Thief
+      - Toxic
+      - UTurn
+      - LaserFocus
+  VivillonGarden:
+    level:
+      1: [Gust, PoisonPowder, StunSpore, SleepPowder, LightScreen]
+      12: [StruggleBug]
+      17: [Psybeam]
+      21: [Supersonic]
+      25: [DrainingKiss]
+      31: [Aromatherapy]
+      35: [BugBuzz]
+      41: [Safeguard]
+      45: [QuiverDance]
+      50: [Hurricane]
+      55: [Powder]
+    teachable:
+      - Acrobatics
+      - AerialAce
+      - Attract
+      - CalmMind
+      - Confide
+      - DoubleTeam
+      - DreamEater
+      - Electroweb
+      - Endeavor
+      - EnergyBall
+      - Facade
+      - Flash
+      - Frustration
+      - GigaDrain
+      - GigaImpact
+      - HiddenPower
+      - HyperBeam
+      - Infestation
+      - LightScreen
+      - Protect
+      - PsychUp
+      - Psychic
+      - RainDance
+      - Rest
+      - Return
+      - Roost
+      - Round
+      - Safeguard
+      - SecretPower
+      - SignalBeam
+      - SleepTalk
+      - Snore
+      - SolarBeam
+      - StruggleBug
+      - Substitute
+      - SunnyDay
+      - Swagger
+      - Tailwind
+      - Thief
+      - Toxic
+      - UTurn
+      - LaserFocus
+  VivillonElegant:
+    level:
+      1: [Gust, PoisonPowder, StunSpore, SleepPowder, LightScreen]
+      12: [StruggleBug]
+      17: [Psybeam]
+      21: [Supersonic]
+      25: [DrainingKiss]
+      31: [Aromatherapy]
+      35: [BugBuzz]
+      41: [Safeguard]
+      45: [QuiverDance]
+      50: [Hurricane]
+      55: [Powder]
+    teachable:
+      - Acrobatics
+      - AerialAce
+      - Attract
+      - CalmMind
+      - Confide
+      - DoubleTeam
+      - DreamEater
+      - Electroweb
+      - Endeavor
+      - EnergyBall
+      - Facade
+      - Flash
+      - Frustration
+      - GigaDrain
+      - GigaImpact
+      - HiddenPower
+      - HyperBeam
+      - Infestation
+      - LightScreen
+      - Protect
+      - PsychUp
+      - Psychic
+      - RainDance
+      - Rest
+      - Return
+      - Roost
+      - Round
+      - Safeguard
+      - SecretPower
+      - SignalBeam
+      - SleepTalk
+      - Snore
+      - SolarBeam
+      - StruggleBug
+      - Substitute
+      - SunnyDay
+      - Swagger
+      - Tailwind
+      - Thief
+      - Toxic
+      - UTurn
+      - LaserFocus
+  VivillonModern:
+    level:
+      1: [Gust, PoisonPowder, StunSpore, SleepPowder, LightScreen]
+      12: [StruggleBug]
+      17: [Psybeam]
+      21: [Supersonic]
+      25: [DrainingKiss]
+      31: [Aromatherapy]
+      35: [BugBuzz]
+      41: [Safeguard]
+      45: [QuiverDance]
+      50: [Hurricane]
+      55: [Powder]
+    teachable:
+      - Acrobatics
+      - AerialAce
+      - Attract
+      - CalmMind
+      - Confide
+      - DoubleTeam
+      - DreamEater
+      - Electroweb
+      - Endeavor
+      - EnergyBall
+      - Facade
+      - Flash
+      - Frustration
+      - GigaDrain
+      - GigaImpact
+      - HiddenPower
+      - HyperBeam
+      - Infestation
+      - LightScreen
+      - Protect
+      - PsychUp
+      - Psychic
+      - RainDance
+      - Rest
+      - Return
+      - Roost
+      - Round
+      - Safeguard
+      - SecretPower
+      - SignalBeam
+      - SleepTalk
+      - Snore
+      - SolarBeam
+      - StruggleBug
+      - Substitute
+      - SunnyDay
+      - Swagger
+      - Tailwind
+      - Thief
+      - Toxic
+      - UTurn
+      - LaserFocus
+  VivillonMarine:
+    level:
+      1: [Gust, PoisonPowder, StunSpore, SleepPowder, LightScreen]
+      12: [StruggleBug]
+      17: [Psybeam]
+      21: [Supersonic]
+      25: [DrainingKiss]
+      31: [Aromatherapy]
+      35: [BugBuzz]
+      41: [Safeguard]
+      45: [QuiverDance]
+      50: [Hurricane]
+      55: [Powder]
+    teachable:
+      - Acrobatics
+      - AerialAce
+      - Attract
+      - CalmMind
+      - Confide
+      - DoubleTeam
+      - DreamEater
+      - Electroweb
+      - Endeavor
+      - EnergyBall
+      - Facade
+      - Flash
+      - Frustration
+      - GigaDrain
+      - GigaImpact
+      - HiddenPower
+      - HyperBeam
+      - Infestation
+      - LightScreen
+      - Protect
+      - PsychUp
+      - Psychic
+      - RainDance
+      - Rest
+      - Return
+      - Roost
+      - Round
+      - Safeguard
+      - SecretPower
+      - SignalBeam
+      - SleepTalk
+      - Snore
+      - SolarBeam
+      - StruggleBug
+      - Substitute
+      - SunnyDay
+      - Swagger
+      - Tailwind
+      - Thief
+      - Toxic
+      - UTurn
+      - LaserFocus
+  VivillonArchipelago:
+    level:
+      1: [Gust, PoisonPowder, StunSpore, SleepPowder, LightScreen]
+      12: [StruggleBug]
+      17: [Psybeam]
+      21: [Supersonic]
+      25: [DrainingKiss]
+      31: [Aromatherapy]
+      35: [BugBuzz]
+      41: [Safeguard]
+      45: [QuiverDance]
+      50: [Hurricane]
+      55: [Powder]
+    teachable:
+      - Acrobatics
+      - AerialAce
+      - Attract
+      - CalmMind
+      - Confide
+      - DoubleTeam
+      - DreamEater
+      - Electroweb
+      - Endeavor
+      - EnergyBall
+      - Facade
+      - Flash
+      - Frustration
+      - GigaDrain
+      - GigaImpact
+      - HiddenPower
+      - HyperBeam
+      - Infestation
+      - LightScreen
+      - Protect
+      - PsychUp
+      - Psychic
+      - RainDance
+      - Rest
+      - Return
+      - Roost
+      - Round
+      - Safeguard
+      - SecretPower
+      - SignalBeam
+      - SleepTalk
+      - Snore
+      - SolarBeam
+      - StruggleBug
+      - Substitute
+      - SunnyDay
+      - Swagger
+      - Tailwind
+      - Thief
+      - Toxic
+      - UTurn
+      - LaserFocus
+  VivillonHighPlains:
+    level:
+      1: [Gust, PoisonPowder, StunSpore, SleepPowder, LightScreen]
+      12: [StruggleBug]
+      17: [Psybeam]
+      21: [Supersonic]
+      25: [DrainingKiss]
+      31: [Aromatherapy]
+      35: [BugBuzz]
+      41: [Safeguard]
+      45: [QuiverDance]
+      50: [Hurricane]
+      55: [Powder]
+    teachable:
+      - Acrobatics
+      - AerialAce
+      - Attract
+      - CalmMind
+      - Confide
+      - DoubleTeam
+      - DreamEater
+      - Electroweb
+      - Endeavor
+      - EnergyBall
+      - Facade
+      - Flash
+      - Frustration
+      - GigaDrain
+      - GigaImpact
+      - HiddenPower
+      - HyperBeam
+      - Infestation
+      - LightScreen
+      - Protect
+      - PsychUp
+      - Psychic
+      - RainDance
+      - Rest
+      - Return
+      - Roost
+      - Round
+      - Safeguard
+      - SecretPower
+      - SignalBeam
+      - SleepTalk
+      - Snore
+      - SolarBeam
+      - StruggleBug
+      - Substitute
+      - SunnyDay
+      - Swagger
+      - Tailwind
+      - Thief
+      - Toxic
+      - UTurn
+      - LaserFocus
+  VivillonSandstorm:
+    level:
+      1: [Gust, PoisonPowder, StunSpore, SleepPowder, LightScreen]
+      12: [StruggleBug]
+      17: [Psybeam]
+      21: [Supersonic]
+      25: [DrainingKiss]
+      31: [Aromatherapy]
+      35: [BugBuzz]
+      41: [Safeguard]
+      45: [QuiverDance]
+      50: [Hurricane]
+      55: [Powder]
+    teachable:
+      - Acrobatics
+      - AerialAce
+      - Attract
+      - CalmMind
+      - Confide
+      - DoubleTeam
+      - DreamEater
+      - Electroweb
+      - Endeavor
+      - EnergyBall
+      - Facade
+      - Flash
+      - Frustration
+      - GigaDrain
+      - GigaImpact
+      - HiddenPower
+      - HyperBeam
+      - Infestation
+      - LightScreen
+      - Protect
+      - PsychUp
+      - Psychic
+      - RainDance
+      - Rest
+      - Return
+      - Roost
+      - Round
+      - Safeguard
+      - SecretPower
+      - SignalBeam
+      - SleepTalk
+      - Snore
+      - SolarBeam
+      - StruggleBug
+      - Substitute
+      - SunnyDay
+      - Swagger
+      - Tailwind
+      - Thief
+      - Toxic
+      - UTurn
+      - LaserFocus
+  VivillonRiver:
+    level:
+      1: [Gust, PoisonPowder, StunSpore, SleepPowder, LightScreen]
+      12: [StruggleBug]
+      17: [Psybeam]
+      21: [Supersonic]
+      25: [DrainingKiss]
+      31: [Aromatherapy]
+      35: [BugBuzz]
+      41: [Safeguard]
+      45: [QuiverDance]
+      50: [Hurricane]
+      55: [Powder]
+    teachable:
+      - Acrobatics
+      - AerialAce
+      - Attract
+      - CalmMind
+      - Confide
+      - DoubleTeam
+      - DreamEater
+      - Electroweb
+      - Endeavor
+      - EnergyBall
+      - Facade
+      - Flash
+      - Frustration
+      - GigaDrain
+      - GigaImpact
+      - HiddenPower
+      - HyperBeam
+      - Infestation
+      - LightScreen
+      - Protect
+      - PsychUp
+      - Psychic
+      - RainDance
+      - Rest
+      - Return
+      - Roost
+      - Round
+      - Safeguard
+      - SecretPower
+      - SignalBeam
+      - SleepTalk
+      - Snore
+      - SolarBeam
+      - StruggleBug
+      - Substitute
+      - SunnyDay
+      - Swagger
+      - Tailwind
+      - Thief
+      - Toxic
+      - UTurn
+      - LaserFocus
+  VivillonMonsoon:
+    level:
+      1: [Gust, PoisonPowder, StunSpore, SleepPowder, LightScreen]
+      12: [StruggleBug]
+      17: [Psybeam]
+      21: [Supersonic]
+      25: [DrainingKiss]
+      31: [Aromatherapy]
+      35: [BugBuzz]
+      41: [Safeguard]
+      45: [QuiverDance]
+      50: [Hurricane]
+      55: [Powder]
+    teachable:
+      - Acrobatics
+      - AerialAce
+      - Attract
+      - CalmMind
+      - Confide
+      - DoubleTeam
+      - DreamEater
+      - Electroweb
+      - Endeavor
+      - EnergyBall
+      - Facade
+      - Flash
+      - Frustration
+      - GigaDrain
+      - GigaImpact
+      - HiddenPower
+      - HyperBeam
+      - Infestation
+      - LightScreen
+      - Protect
+      - PsychUp
+      - Psychic
+      - RainDance
+      - Rest
+      - Return
+      - Roost
+      - Round
+      - Safeguard
+      - SecretPower
+      - SignalBeam
+      - SleepTalk
+      - Snore
+      - SolarBeam
+      - StruggleBug
+      - Substitute
+      - SunnyDay
+      - Swagger
+      - Tailwind
+      - Thief
+      - Toxic
+      - UTurn
+      - LaserFocus
+  VivillonSavannah:
+    level:
+      1: [Gust, PoisonPowder, StunSpore, SleepPowder, LightScreen]
+      12: [StruggleBug]
+      17: [Psybeam]
+      21: [Supersonic]
+      25: [DrainingKiss]
+      31: [Aromatherapy]
+      35: [BugBuzz]
+      41: [Safeguard]
+      45: [QuiverDance]
+      50: [Hurricane]
+      55: [Powder]
+    teachable:
+      - Acrobatics
+      - AerialAce
+      - Attract
+      - CalmMind
+      - Confide
+      - DoubleTeam
+      - DreamEater
+      - Electroweb
+      - Endeavor
+      - EnergyBall
+      - Facade
+      - Flash
+      - Frustration
+      - GigaDrain
+      - GigaImpact
+      - HiddenPower
+      - HyperBeam
+      - Infestation
+      - LightScreen
+      - Protect
+      - PsychUp
+      - Psychic
+      - RainDance
+      - Rest
+      - Return
+      - Roost
+      - Round
+      - Safeguard
+      - SecretPower
+      - SignalBeam
+      - SleepTalk
+      - Snore
+      - SolarBeam
+      - StruggleBug
+      - Substitute
+      - SunnyDay
+      - Swagger
+      - Tailwind
+      - Thief
+      - Toxic
+      - UTurn
+      - LaserFocus
+  VivillonSun:
+    level:
+      1: [Gust, PoisonPowder, StunSpore, SleepPowder, LightScreen]
+      12: [StruggleBug]
+      17: [Psybeam]
+      21: [Supersonic]
+      25: [DrainingKiss]
+      31: [Aromatherapy]
+      35: [BugBuzz]
+      41: [Safeguard]
+      45: [QuiverDance]
+      50: [Hurricane]
+      55: [Powder]
+    teachable:
+      - Acrobatics
+      - AerialAce
+      - Attract
+      - CalmMind
+      - Confide
+      - DoubleTeam
+      - DreamEater
+      - Electroweb
+      - Endeavor
+      - EnergyBall
+      - Facade
+      - Flash
+      - Frustration
+      - GigaDrain
+      - GigaImpact
+      - HiddenPower
+      - HyperBeam
+      - Infestation
+      - LightScreen
+      - Protect
+      - PsychUp
+      - Psychic
+      - RainDance
+      - Rest
+      - Return
+      - Roost
+      - Round
+      - Safeguard
+      - SecretPower
+      - SignalBeam
+      - SleepTalk
+      - Snore
+      - SolarBeam
+      - StruggleBug
+      - Substitute
+      - SunnyDay
+      - Swagger
+      - Tailwind
+      - Thief
+      - Toxic
+      - UTurn
+      - LaserFocus
+  VivillonOcean:
+    level:
+      1: [Gust, PoisonPowder, StunSpore, SleepPowder, LightScreen]
+      12: [StruggleBug]
+      17: [Psybeam]
+      21: [Supersonic]
+      25: [DrainingKiss]
+      31: [Aromatherapy]
+      35: [BugBuzz]
+      41: [Safeguard]
+      45: [QuiverDance]
+      50: [Hurricane]
+      55: [Powder]
+    teachable:
+      - Acrobatics
+      - AerialAce
+      - Attract
+      - CalmMind
+      - Confide
+      - DoubleTeam
+      - DreamEater
+      - Electroweb
+      - Endeavor
+      - EnergyBall
+      - Facade
+      - Flash
+      - Frustration
+      - GigaDrain
+      - GigaImpact
+      - HiddenPower
+      - HyperBeam
+      - Infestation
+      - LightScreen
+      - Protect
+      - PsychUp
+      - Psychic
+      - RainDance
+      - Rest
+      - Return
+      - Roost
+      - Round
+      - Safeguard
+      - SecretPower
+      - SignalBeam
+      - SleepTalk
+      - Snore
+      - SolarBeam
+      - StruggleBug
+      - Substitute
+      - SunnyDay
+      - Swagger
+      - Tailwind
+      - Thief
+      - Toxic
+      - UTurn
+      - LaserFocus
+  VivillonJungle:
+    level:
+      1: [Gust, PoisonPowder, StunSpore, SleepPowder, LightScreen]
+      12: [StruggleBug]
+      17: [Psybeam]
+      21: [Supersonic]
+      25: [DrainingKiss]
+      31: [Aromatherapy]
+      35: [BugBuzz]
+      41: [Safeguard]
+      45: [QuiverDance]
+      50: [Hurricane]
+      55: [Powder]
+    teachable:
+      - Acrobatics
+      - AerialAce
+      - Attract
+      - CalmMind
+      - Confide
+      - DoubleTeam
+      - DreamEater
+      - Electroweb
+      - Endeavor
+      - EnergyBall
+      - Facade
+      - Flash
+      - Frustration
+      - GigaDrain
+      - GigaImpact
+      - HiddenPower
+      - HyperBeam
+      - Infestation
+      - LightScreen
+      - Protect
+      - PsychUp
+      - Psychic
+      - RainDance
+      - Rest
+      - Return
+      - Roost
+      - Round
+      - Safeguard
+      - SecretPower
+      - SignalBeam
+      - SleepTalk
+      - Snore
+      - SolarBeam
+      - StruggleBug
+      - Substitute
+      - SunnyDay
+      - Swagger
+      - Tailwind
+      - Thief
+      - Toxic
+      - UTurn
+      - LaserFocus
+  VivillonFancy:
+    level:
+      1: [Gust, PoisonPowder, StunSpore, SleepPowder, LightScreen]
+      12: [StruggleBug]
+      17: [Psybeam]
+      21: [Supersonic]
+      25: [DrainingKiss]
+      31: [Aromatherapy]
+      35: [BugBuzz]
+      41: [Safeguard]
+      45: [QuiverDance]
+      50: [Hurricane]
+      55: [Powder]
+    teachable:
+      - Acrobatics
+      - AerialAce
+      - Attract
+      - CalmMind
+      - Confide
+      - DoubleTeam
+      - DreamEater
+      - Electroweb
+      - Endeavor
+      - EnergyBall
+      - Facade
+      - Flash
+      - Frustration
+      - GigaDrain
+      - GigaImpact
+      - HiddenPower
+      - HyperBeam
+      - Infestation
+      - LightScreen
+      - Protect
+      - PsychUp
+      - Psychic
+      - RainDance
+      - Rest
+      - Return
+      - Roost
+      - Round
+      - Safeguard
+      - SecretPower
+      - SignalBeam
+      - SleepTalk
+      - Snore
+      - SolarBeam
+      - StruggleBug
+      - Substitute
+      - SunnyDay
+      - Swagger
+      - Tailwind
+      - Thief
+      - Toxic
+      - UTurn
+      - LaserFocus
+  VivillonPokeBall:
+    level:
+      1: [Gust, PoisonPowder, StunSpore, SleepPowder, LightScreen]
+      12: [StruggleBug]
+      17: [Psybeam]
+      21: [Supersonic]
+      25: [DrainingKiss]
+      31: [Aromatherapy]
+      35: [BugBuzz]
+      41: [Safeguard]
+      45: [QuiverDance]
+      50: [Hurricane]
+      55: [Powder]
+    teachable:
+      - Acrobatics
+      - AerialAce
+      - Attract
+      - CalmMind
+      - Confide
+      - DoubleTeam
+      - DreamEater
+      - Electroweb
+      - Endeavor
+      - EnergyBall
+      - Facade
+      - Flash
+      - Frustration
+      - GigaDrain
+      - GigaImpact
+      - HiddenPower
+      - HyperBeam
+      - Infestation
+      - LightScreen
+      - Protect
+      - PsychUp
+      - Psychic
+      - RainDance
+      - Rest
+      - Return
+      - Roost
+      - Round
+      - Safeguard
+      - SecretPower
+      - SignalBeam
+      - SleepTalk
+      - Snore
+      - SolarBeam
+      - StruggleBug
+      - Substitute
+      - SunnyDay
+      - Swagger
+      - Tailwind
+      - Thief
+      - Toxic
+      - UTurn
+      - LaserFocus
+Litleo:
+  # TM, HM and tutor moves shared by cub and king
+
+  # What the pride knows at either age
+  family-teachable:
+    - Acrobatics
+    - Attract
+    - BodySlam
+    - Bulldoze
+    - Confide
+    - Crunch
+    - DarkPulse
+    - Dig
+    - DoubleEdge
+    - DoubleTeam
+    - EchoedVoice
+    - Endeavor
+    - Endure
+    - Facade
+    - FireBlast
+    - FireFang
+    - FireSpin
+    - FlameCharge
+    - Flamethrower
+    - FlareBlitz
+    - Frustration
+    - HeatWave
+    - HelpingHand
+    - HiddenPower
+    - HyperVoice
+    - Incinerate
+    - IronTail
+    - MudSlap
+    - Overheat
+    - Payback
+    - Protect
+    - RainDance
+    - Rest
+    - Retaliate
+    - Return
+    - Roar
+    - RockSmash
+    - Round
+    - SecretPower
+    - SleepTalk
+    - Snarl
+    - Snatch
+    - Snore
+    - SolarBeam
+    - Strength
+    - Substitute
+    - SunnyDay
+    - Swagger
+    - Swift
+    - TakeDown
+    - Taunt
+    - Thief
+    - ThunderFang
+    - Toxic
+    - WildCharge
+    - WillOWisp
+    - WorkUp
+  Litleo:
+    level:
+      1: [Leer, Tackle]
+      5: [Ember]
+      8: [WorkUp]
+      11: [Headbutt]
+      15: [NobleRoar]
+      20: [TakeDown]
+      23: [FireFang]
+      28: [Endeavor]
+      33: [EchoedVoice]
+      36: [Flamethrower]
+      39: [Crunch]
+      43: [HyperVoice]
+      46: [Incinerate]
+      50: [Overheat]
+    egg: [Entrainment, FireSpin, FlareBlitz, Snatch, Yawn]
+  Pyroar:
+    level:
+      1: [Ember, HyperBeam, Leer, Tackle, WorkUp]
+      11: [Headbutt]
+      15: [NobleRoar]
+      20: [TakeDown]
+      23: [FireFang]
+      28: [Endeavor]
+      33: [EchoedVoice]
+      38: [Flamethrower]
+      42: [Crunch]
+      48: [HyperVoice]
+      51: [Incinerate]
+      57: [Overheat]
+    teachable: [Bounce, GigaImpact, HyperBeam]
+Flabebe:
+  family-teachable:
+    - AfterYou
+    - Attract
+    - CalmMind
+    - Confide
+    - Covet
+    - DazzlingGleam
+    - DoubleTeam
+    - EchoedVoice
+    - Endeavor
+    - EnergyBall
+    - Facade
+    - Flash
+    - Frustration
+    - GigaDrain
+    - GrassKnot
+    - HealBell
+    - HelpingHand
+    - HiddenPower
+    - MagicCoat
+    - NaturePower
+    - Protect
+    - Psychic
+    - RainDance
+    - Rest
+    - Return
+    - Round
+    - Safeguard
+    - SecretPower
+    - SeedBomb
+    - SleepTalk
+    - Snore
+    - SolarBeam
+    - Substitute
+    - SunnyDay
+    - Swagger
+    - Synthesis
+    - Toxic
+    - WorrySeed
+  Flabebe:
+    level:
+      1: [VineWhip, Tackle]
+      6: [FairyWind]
+      10: [LuckyChant]
+      15: [RazorLeaf]
+      20: [Wish]
+      22: [MagicalLeaf]
+      24: [GrassyTerrain]
+      28: [PetalBlizzard]
+      33: [Aromatherapy]
+      37: [MistyTerrain]
+      41: [Moonblast]
+      45: [PetalDance]
+      48: [SolarBeam]
+    egg: [Camouflage, Captivate, Copycat, TearfulLook]
+  Floette:
+    level:
+      1: [VineWhip, Tackle]
+      6: [FairyWind]
+      10: [LuckyChant]
+      15: [RazorLeaf]
+      20: [Wish]
+      25: [MagicalLeaf]
+      27: [GrassyTerrain]
+      33: [PetalBlizzard]
+      38: [Aromatherapy]
+      43: [MistyTerrain]
+      46: [Moonblast]
+      51: [PetalDance]
+      58: [SolarBeam]
+  Florges:
+    level:
+      1:
+        - PetalDance
+        - Wish
+        - Aromatherapy
+        - MagicalLeaf
+        - LuckyChant
+        - GrassKnot
+        - PetalBlizzard
+        - DisarmingVoice
+        - FlowerShield
+        - GrassyTerrain
+        - MistyTerrain
+        - Moonblast
+    teachable: [GigaImpact, HyperBeam, LightScreen]
+  FlabebeYellow:
+    level:
+      1: [VineWhip, Tackle]
+      6: [FairyWind]
+      10: [LuckyChant]
+      15: [RazorLeaf]
+      20: [Wish]
+      22: [MagicalLeaf]
+      24: [GrassyTerrain]
+      28: [PetalBlizzard]
+      33: [Aromatherapy]
+      37: [MistyTerrain]
+      41: [Moonblast]
+      45: [PetalDance]
+      48: [SolarBeam]
+    egg: [Camouflage, Captivate, Copycat, TearfulLook]
+  FloetteYellow:
+    level:
+      1: [VineWhip, Tackle]
+      6: [FairyWind]
+      10: [LuckyChant]
+      15: [RazorLeaf]
+      20: [Wish]
+      25: [MagicalLeaf]
+      27: [GrassyTerrain]
+      33: [PetalBlizzard]
+      38: [Aromatherapy]
+      43: [MistyTerrain]
+      46: [Moonblast]
+      51: [PetalDance]
+      58: [SolarBeam]
+  FlorgesYellow:
+    level:
+      1:
+        - PetalDance
+        - Wish
+        - Aromatherapy
+        - MagicalLeaf
+        - LuckyChant
+        - GrassKnot
+        - PetalBlizzard
+        - DisarmingVoice
+        - FlowerShield
+        - GrassyTerrain
+        - MistyTerrain
+        - Moonblast
+    teachable: [GigaImpact, HyperBeam, LightScreen]
+  FlabebeOrange:
+    level:
+      1: [VineWhip, Tackle]
+      6: [FairyWind]
+      10: [LuckyChant]
+      15: [RazorLeaf]
+      20: [Wish]
+      22: [MagicalLeaf]
+      24: [GrassyTerrain]
+      28: [PetalBlizzard]
+      33: [Aromatherapy]
+      37: [MistyTerrain]
+      41: [Moonblast]
+      45: [PetalDance]
+      48: [SolarBeam]
+    egg: [Camouflage, Captivate, Copycat, TearfulLook]
+  FloetteOrange:
+    level:
+      1: [VineWhip, Tackle]
+      6: [FairyWind]
+      10: [LuckyChant]
+      15: [RazorLeaf]
+      20: [Wish]
+      25: [MagicalLeaf]
+      27: [GrassyTerrain]
+      33: [PetalBlizzard]
+      38: [Aromatherapy]
+      43: [MistyTerrain]
+      46: [Moonblast]
+      51: [PetalDance]
+      58: [SolarBeam]
+  FlorgesOrange:
+    level:
+      1:
+        - PetalDance
+        - Wish
+        - Aromatherapy
+        - MagicalLeaf
+        - LuckyChant
+        - GrassKnot
+        - PetalBlizzard
+        - DisarmingVoice
+        - FlowerShield
+        - GrassyTerrain
+        - MistyTerrain
+        - Moonblast
+    teachable: [GigaImpact, HyperBeam, LightScreen]
+  FlabebeBlue:
+    level:
+      1: [VineWhip, Tackle]
+      6: [FairyWind]
+      10: [LuckyChant]
+      15: [RazorLeaf]
+      20: [Wish]
+      22: [MagicalLeaf]
+      24: [GrassyTerrain]
+      28: [PetalBlizzard]
+      33: [Aromatherapy]
+      37: [MistyTerrain]
+      41: [Moonblast]
+      45: [PetalDance]
+      48: [SolarBeam]
+    egg: [Camouflage, Captivate, Copycat, TearfulLook]
+  FloetteBlue:
+    level:
+      1: [VineWhip, Tackle]
+      6: [FairyWind]
+      10: [LuckyChant]
+      15: [RazorLeaf]
+      20: [Wish]
+      25: [MagicalLeaf]
+      27: [GrassyTerrain]
+      33: [PetalBlizzard]
+      38: [Aromatherapy]
+      43: [MistyTerrain]
+      46: [Moonblast]
+      51: [PetalDance]
+      58: [SolarBeam]
+  FlorgesBlue:
+    level:
+      1:
+        - PetalDance
+        - Wish
+        - Aromatherapy
+        - MagicalLeaf
+        - LuckyChant
+        - GrassKnot
+        - PetalBlizzard
+        - DisarmingVoice
+        - FlowerShield
+        - GrassyTerrain
+        - MistyTerrain
+        - Moonblast
+    teachable: [GigaImpact, HyperBeam, LightScreen]
+  FlabebeWhite:
+    level:
+      1: [VineWhip, Tackle]
+      6: [FairyWind]
+      10: [LuckyChant]
+      15: [RazorLeaf]
+      20: [Wish]
+      22: [MagicalLeaf]
+      24: [GrassyTerrain]
+      28: [PetalBlizzard]
+      33: [Aromatherapy]
+      37: [MistyTerrain]
+      41: [Moonblast]
+      45: [PetalDance]
+      48: [SolarBeam]
+    egg: [Camouflage, Captivate, Copycat, TearfulLook]
+  FloetteWhite:
+    level:
+      1: [VineWhip, Tackle]
+      6: [FairyWind]
+      10: [LuckyChant]
+      15: [RazorLeaf]
+      20: [Wish]
+      25: [MagicalLeaf]
+      27: [GrassyTerrain]
+      33: [PetalBlizzard]
+      38: [Aromatherapy]
+      43: [MistyTerrain]
+      46: [Moonblast]
+      51: [PetalDance]
+      58: [SolarBeam]
+  FlorgesWhite:
+    level:
+      1:
+        - PetalDance
+        - Wish
+        - Aromatherapy
+        - MagicalLeaf
+        - LuckyChant
+        - GrassKnot
+        - PetalBlizzard
+        - DisarmingVoice
+        - FlowerShield
+        - GrassyTerrain
+        - MistyTerrain
+        - Moonblast
+    teachable: [GigaImpact, HyperBeam, LightScreen]
+  FloetteEternal:
+    level:
+      1: [VineWhip, Tackle]
+      6: [FairyWind]
+      10: [LuckyChant]
+      15: [RazorLeaf]
+      20: [Wish]
+      25: [MagicalLeaf]
+      27: [GrassyTerrain]
+      33: [PetalBlizzard]
+      38: [Aromatherapy]
+      43: [MistyTerrain]
+      46: [Moonblast]
+      50: [LightOfRuin]
+      51: [PetalDance]
+      58: [SolarBeam]
+Skiddo:
+  family-teachable:
+    - Attract
+    - BrickBreak
+    - BulkUp
+    - Bulldoze
+    - Confide
+    - Dig
+    - DoubleTeam
+    - EnergyBall
+    - Facade
+    - Frustration
+    - GigaDrain
+    - GrassKnot
+    - HiddenPower
+    - IronTail
+    - NaturePower
+    - Payback
+    - Protect
+    - RainDance
+    - Rest
+    - Retaliate
+    - Return
+    - Roar
+    - RockSlide
+    - RockSmash
+    - Round
+    - SecretPower
+    - SeedBomb
+    - SleepTalk
+    - Snore
+    - SolarBeam
+    - Strength
+    - Substitute
+    - SunnyDay
+    - Surf
+    - Swagger
+    - Synthesis
+    - Toxic
+    - WildCharge
+    - WorrySeed
+    - ZenHeadbutt
+  Skiddo:
+    level:
+      1: [Tackle, Growth]
+      7: [VineWhip]
+      9: [TailWhip]
+      12: [LeechSeed]
+      13: [RazorLeaf]
+      16: [WorrySeed]
+      20: [Synthesis]
+      22: [TakeDown]
+      26: [Bulldoze]
+      30: [SeedBomb]
+      34: [BulkUp]
+      38: [DoubleEdge]
+      42: [HornLeech]
+      45: [LeafBlade]
+      50: [MilkDrink]
+    egg: [DefenseCurl, MilkDrink, Rollout]
+  Gogoat:
+    level:
+      1: [Tackle, Growth]
+      7: [VineWhip]
+      9: [TailWhip]
+      12: [LeechSeed]
+      13: [RazorLeaf]
+      16: [WorrySeed]
+      20: [Synthesis]
+      22: [TakeDown]
+      26: [Bulldoze]
+      30: [SeedBomb]
+      34: [BulkUp]
+      40: [DoubleEdge]
+      47: [HornLeech]
+      55: [LeafBlade]
+      58: [MilkDrink]
+      60: [Earthquake]
+      65: [AerialAce]
+    teachable:
+      - AerialAce
+      - Bounce
+      - Earthquake
+      - GigaImpact
+      - HyperBeam
+      - Superpower
+      - StompingTantrum
+Pancham:
+  family-teachable:
+    - AerialAce
+    - Attract
+    - Block
+    - BodySlam
+    - BrickBreak
+    - BulkUp
+    - Bulldoze
+    - Confide
+    - Covet
+    - Crunch
+    - Cut
+    - DarkPulse
+    - Dig
+    - DoubleTeam
+    - DrainPunch
+    - DualChop
+    - EchoedVoice
+    - Endeavor
+    - Endure
+    - Facade
+    - FalseSwipe
+    - FirePunch
+    - Fling
+    - FocusPunch
+    - FoulPlay
+    - Frustration
+    - GrassKnot
+    - GunkShot
+    - HelpingHand
+    - HiddenPower
+    - IcePunch
+    - IronHead
+    - KnockOff
+    - LowKick
+    - LowSweep
+    - MegaKick
+    - MegaPunch
+    - Payback
+    - PowerUpPunch
+    - Protect
+    - RainDance
+    - Rest
+    - Retaliate
+    - Return
+    - Roar
+    - RockSlide
+    - RockSmash
+    - RockTomb
+    - Round
+    - SecretPower
+    - ShadowClaw
+    - SleepTalk
+    - SludgeBomb
+    - Snatch
+    - Snore
+    - Spite
+    - StoneEdge
+    - Strength
+    - Substitute
+    - SunnyDay
+    - Superpower
+    - Surf
+    - Swagger
+    - SwordsDance
+    - Taunt
+    - ThunderPunch
+    - Torment
+    - Toxic
+    - Uproar
+    - WorkUp
+    - ZenHeadbutt
+    - LashOut
+    - Coaching
+  Pancham:
+    level:
+      1: [Tackle, Leer]
+      4: [ArmThrust]
+      8: [Taunt]
+      10: [WorkUp]
+      12: [CircleThrow, KarateChop]
+      15: [CometPunch]
+      16: [LowSweep]
+      20: [Slash]
+      27: [VitalThrow]
+      33: [BodySlam, Crunch]
+      40: [PartingShot]
+      42: [Entrainment]
+      48: [SkyUppercut]
+    egg: [FoulPlay, MeFirst, Quash, QuickGuard, SeismicToss, StormThrow, PowerTrip]
+  Pangoro:
+    level:
+      1:
+        - Tackle
+        - Leer
+        - ArmThrust
+        - Taunt
+        - WorkUp
+        - LowSweep
+        - Entrainment
+        - HammerArm
+        - BulletPunch
+        - NightSlash
+      12: [CircleThrow, KarateChop]
+      15: [CometPunch]
+      20: [Slash]
+      27: [VitalThrow]
+      35: [BodySlam, Crunch]
+      46: [PartingShot]
+      52: [SkyUppercut]
+    teachable:
+      - BeatUp
+      - CloseCombat
+      - DragonClaw
+      - Earthquake
+      - Embargo
+      - FocusBlast
+      - FocusEnergy
+      - GigaImpact
+      - HoneClaws
+      - HyperBeam
+      - Infestation
+      - Outrage
+      - PoisonJab
+      - Quash
+      - Revenge
+      - Reversal
+      - ScaryFace
+      - Snarl
+      - Thief
+      - XScissor
+      - StompingTantrum
+      - LaserFocus
+      - ThroatChop

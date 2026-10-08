@@ -1,5 +1,5 @@
-import { ItemFlags, ItemTypes, Items } from '../ids/items';
-import { registerItem } from './__create';
+import { Items } from '../ids/items';
+import { itemText } from './__create';
 
 /**
  * Honey: lathered on a honey tree to draw out what lives in it, or
@@ -19,14 +19,9 @@ export const HONEY_THRESHOLD = 0.25;
  */
 export const HONEY_RESTORE = 40;
 
-export default function registerHoney(): void {
-  registerItem(Items.Honey, {
-    name: 'Honey',
-    description: `Restores ${HONEY_RESTORE} HP to the pokemon holding it once it drops to a quarter. Also spread on a Honey Tree to draw out what lives there.`,
-    type: ItemTypes.Held,
-    icon: 'other/honey',
-    flags: ItemFlags.Holdable | ItemFlags.Consumable | ItemFlags.Marketable,
-    buy: 200,
-    sell: 100,
-  });
+export function describeHoney(item: Items): string {
+  if (item !== Items.Honey) {
+    throw new Error(`No honey description for item ${item}`);
+  }
+  return itemText('honey', 'honey', { restore: HONEY_RESTORE });
 }

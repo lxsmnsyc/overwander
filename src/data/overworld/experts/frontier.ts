@@ -1,104 +1,45 @@
+import * as v from 'valibot';
 import turns from '../../../battle/turn';
-import Awards from '../../ids/awards';
-import Weather from '../weather/kinds';
-import { Species } from '../../ids/species';
+import type Awards from '../../ids/awards';
+import FrontierBrain, { FrontierRule } from '../../ids/frontier';
+import { AWARD_IDS, FRONTIER_BRAIN_IDS, FRONTIER_RULE_IDS, SPECIES_IDS } from '../../ids/names';
+import type { Species } from '../../ids/species';
 import { Statuses } from '../../ids/status';
+import namesFile from '../../text/en/frontier.yaml';
+import Weather from '../weather/kinds';
+import { idOf, idsOf } from '../../yaml';
+import frontierFile from './frontier.yaml';
 import { getWorldExpertPool } from './pools';
 
+export { FrontierBrain, FrontierRule };
+
 /**
- * The Frontier Brains: the house champion of a facility, and the
- * rank above the league.
- *
- * What sets them apart from every seat below is not the party but the
- * **rule**. A gym is a type, an elite is a type with a widener, a
- * champion is a fixed six; a Brain is a fight held under the house's
- * own terms, and the party is only what those terms are demonstrated
- * with. All seven are open
+ * The Frontier Brains, read out of `frontier.yaml` and
+ * `text/en/frontier.yaml`; the numbers and the house rules are
+ * `ids/frontier.ts`. What the rules do is the battle's, and the
+ * Pike's curtains and the Arcade's panels are below
  */
-const enum FrontierBrain {
-  Brandon = 0,
-  Greta = 1,
-  Lucy = 2,
-  Noland = 3,
-  Anabel = 4,
-  Spenser = 5,
-  Tucker = 6,
-  Palmer = 7,
-  Thorton = 8,
-  Dahlia = 9,
-  // The Castle is kept by two: the lady who owns it and the valet who
-  // fights for her, and either of them pays the one print
-  Darach = 10,
-  Caitlin = 11,
-  Argenta = 12,
-}
+const BRAIN = v.object({
+  rule: v.string(),
+  crown: v.string(),
+  sheets: v.array(v.string()),
+  symbols: v.tuple([v.string(), v.string()]),
+  party: v.array(v.string()),
+  'gold-party': v.array(v.string()),
+});
 
-export { FrontierBrain };
+const TEXT = v.object({ name: v.string(), house: v.string() });
 
-export const FRONTIER_BRAINS: FrontierBrain[] = [
-  FrontierBrain.Brandon,
-  FrontierBrain.Greta,
-  FrontierBrain.Lucy,
-  FrontierBrain.Noland,
-  FrontierBrain.Anabel,
-  FrontierBrain.Spenser,
-  FrontierBrain.Tucker,
-  FrontierBrain.Palmer,
-  FrontierBrain.Thorton,
-  FrontierBrain.Dahlia,
-  FrontierBrain.Darach,
-  FrontierBrain.Caitlin,
-  FrontierBrain.Argenta,
-];
+/** Every Brain, in the order they are numbered */
+export const FRONTIER_BRAINS: FrontierBrain[] = [];
 
-export const FRONTIER_BRAIN_NAMES: Record<FrontierBrain, string> = {
-  [FrontierBrain.Brandon]: 'Brandon',
-  [FrontierBrain.Greta]: 'Greta',
-  [FrontierBrain.Lucy]: 'Lucy',
-  [FrontierBrain.Noland]: 'Noland',
-  [FrontierBrain.Anabel]: 'Anabel',
-  [FrontierBrain.Spenser]: 'Spenser',
-  [FrontierBrain.Tucker]: 'Tucker',
-  [FrontierBrain.Palmer]: 'Palmer',
-  [FrontierBrain.Thorton]: 'Thorton',
-  [FrontierBrain.Dahlia]: 'Dahlia',
-  [FrontierBrain.Darach]: 'Darach',
-  [FrontierBrain.Caitlin]: 'Caitlin',
-  [FrontierBrain.Argenta]: 'Argenta',
-};
+export const FRONTIER_BRAIN_NAMES: Record<number, string> = {};
 
 /** The house each of them keeps, which is what the rule is named for */
-export const FRONTIER_FACILITY_NAMES: Record<FrontierBrain, string> = {
-  [FrontierBrain.Brandon]: 'Battle Pyramid',
-  [FrontierBrain.Greta]: 'Battle Arena',
-  [FrontierBrain.Lucy]: 'Battle Pike',
-  [FrontierBrain.Noland]: 'Battle Factory',
-  [FrontierBrain.Anabel]: 'Battle Tower',
-  [FrontierBrain.Spenser]: 'Battle Palace',
-  [FrontierBrain.Tucker]: 'Battle Dome',
-  [FrontierBrain.Palmer]: 'Battle Tower',
-  [FrontierBrain.Thorton]: 'Battle Factory',
-  [FrontierBrain.Dahlia]: 'Battle Arcade',
-  [FrontierBrain.Darach]: 'Battle Castle',
-  [FrontierBrain.Caitlin]: 'Battle Castle',
-  [FrontierBrain.Argenta]: 'Battle Hall',
-};
+export const FRONTIER_FACILITY_NAMES: Record<number, string> = {};
 
-export const FRONTIER_BRAIN_CHARSETS: Record<FrontierBrain, string[]> = {
-  [FrontierBrain.Brandon]: ['characters/rse/brandon'],
-  [FrontierBrain.Greta]: ['characters/rse/greta'],
-  [FrontierBrain.Lucy]: ['characters/rse/lucy'],
-  [FrontierBrain.Noland]: ['characters/rse/noland'],
-  [FrontierBrain.Anabel]: ['characters/rse/anabel'],
-  [FrontierBrain.Spenser]: ['characters/rse/spenser'],
-  [FrontierBrain.Tucker]: ['characters/rse/tucker'],
-  [FrontierBrain.Palmer]: ['characters/dppt/palmer'],
-  [FrontierBrain.Thorton]: ['characters/dppt/thorton'],
-  [FrontierBrain.Dahlia]: ['characters/dppt/dahlia'],
-  [FrontierBrain.Darach]: ['characters/dppt/darach'],
-  [FrontierBrain.Caitlin]: ['characters/dppt/caitlin'],
-  [FrontierBrain.Argenta]: ['characters/dppt/argenta'],
-};
+/** The sheets each is seen in */
+export const FRONTIER_BRAIN_CHARSETS: Record<number, string[]> = {};
 
 /**
  * The pair each facility hangs on the shelf.
@@ -108,94 +49,61 @@ export const FRONTIER_BRAIN_CHARSETS: Record<FrontierBrain, string[]> = {
  * one: the two symbols are two different fights rather than one
  * fight scored two ways
  */
-export const FRONTIER_BRAIN_SYMBOLS: Record<FrontierBrain, [silver: Awards, gold: Awards]> = {
-  [FrontierBrain.Brandon]: [Awards.SilverBraveSymbol, Awards.GoldBraveSymbol],
-  [FrontierBrain.Greta]: [Awards.SilverGutsSymbol, Awards.GoldGutsSymbol],
-  [FrontierBrain.Lucy]: [Awards.SilverLuckSymbol, Awards.GoldLuckSymbol],
-  [FrontierBrain.Noland]: [Awards.SilverKnowledgeSymbol, Awards.GoldKnowledgeSymbol],
-  [FrontierBrain.Anabel]: [Awards.SilverAbilitySymbol, Awards.GoldAbilitySymbol],
-  [FrontierBrain.Spenser]: [Awards.SilverSpiritsSymbol, Awards.GoldSpiritsSymbol],
-  [FrontierBrain.Tucker]: [Awards.SilverTacticsSymbol, Awards.GoldTacticsSymbol],
-  [FrontierBrain.Palmer]: [Awards.SilverTowerPrint, Awards.GoldTowerPrint],
-  [FrontierBrain.Thorton]: [Awards.SilverFactoryPrint, Awards.GoldFactoryPrint],
-  [FrontierBrain.Dahlia]: [Awards.SilverArcadePrint, Awards.GoldArcadePrint],
-  // One house, two keepers: whichever of them a chunk seats, the
-  // Castle Print is what it pays
-  [FrontierBrain.Darach]: [Awards.SilverCastlePrint, Awards.GoldCastlePrint],
-  [FrontierBrain.Caitlin]: [Awards.SilverCastlePrint, Awards.GoldCastlePrint],
-  [FrontierBrain.Argenta]: [Awards.SilverHallPrint, Awards.GoldHallPrint],
-};
+export const FRONTIER_BRAIN_SYMBOLS: Record<number, [silver: Awards, gold: Awards]> = {};
 
 /**
- * The three they field.
- *
- * Three rather than six is the Frontier's own shape, and it is the
- * whole reason a house rule bites: fighting bare across three
- * pokemon is a constraint, across six it is a nuisance. Both are the
- * teams they defend their houses with in Emerald
+ * The three they field the first time. Three rather than six is the
+ * Frontier's own shape, and it is the whole reason a house rule bites:
+ * fighting bare across three pokemon is a constraint, across six it is
+ * a nuisance
  */
-export const FRONTIER_BRAIN_PARTIES: Record<FrontierBrain, Species[]> = {
-  // The Pyramid King fields the three that were sealed in chambers,
-  // which is the one party in the game a legendary belongs to
-  [FrontierBrain.Brandon]: [Species.Regirock, Species.Regice, Species.Registeel],
-  [FrontierBrain.Greta]: [Species.Umbreon, Species.Hariyama, Species.Shedinja],
-  [FrontierBrain.Lucy]: [Species.Seviper, Species.Shuckle, Species.Milotic],
-  // Nobody's: the Factory rents to its own keeper too, so his three
-  // are rolled out of the same crate the challenger's come from
-  [FrontierBrain.Noland]: [],
-  // The Tower's own three, and the hardest hand in the game: an
-  // Entei among them, which is what a house with no rule has instead
-  // of one
-  [FrontierBrain.Anabel]: [Species.Alakazam, Species.Entei, Species.Snorlax],
-  // Three that read as three different temperaments, which is what
-  // the Palace is asking about
-  [FrontierBrain.Spenser]: [Species.Crobat, Species.Slaking, Species.Lapras],
-  // Nobody's either, and for the opposite reason to Noland's: the
-  // Dome names nobody until the challenger has, and then answers them
-  [FrontierBrain.Tucker]: [],
-  // The Tower's own three either time. What its keeper changes
-  // between the two meetings is how they are built, not who they are
-  [FrontierBrain.Palmer]: [Species.Rhyperior, Species.Dragonite, Species.Milotic],
-  // Nobody's: the Factory rents to its own keeper here too
-  [FrontierBrain.Thorton]: [],
-  // Three built on chance, which is what the Arcade is about: a
-  // Serene Grace flincher, a ghost that carries Aftermath and a
-  // Rattled runner
-  [FrontierBrain.Dahlia]: [Species.Togekiss, Species.Drifblim, Species.Lopunny],
-  // The valet's three, and the lady's, since he is the one who
-  // fights for the house
-  [FrontierBrain.Darach]: [Species.Staraptor, Species.Houndoom, Species.Gallade],
-  [FrontierBrain.Caitlin]: [Species.Staraptor, Species.Houndoom, Species.Gallade],
-  // Nobody's: the Hall answers the one that walked in
-  [FrontierBrain.Argenta]: [],
-};
+export const FRONTIER_BRAIN_PARTIES: Record<number, Species[]> = {};
 
 /**
- * And the second hand, fielded once the challenger holds that
- * house's silver symbol.
- *
- * A Brain is fought twice in the mainline and the second meeting is
- * its own fight rather than a rematch, so it is its own party here
- * too. Brandon's three are the same either time, which is the
- * mainline's own answer: what he changes between them is the level
- * and the loadout, not who is in the crate. Noland names nobody
- * twice over, since the Factory rents both meetings
+ * And the second hand, fielded once the challenger holds that house's
+ * silver symbol. A Brain is fought twice in the mainline and the
+ * second meeting is its own fight rather than a rematch
  */
-export const FRONTIER_BRAIN_GOLD_PARTIES: Record<FrontierBrain, Species[]> = {
-  [FrontierBrain.Brandon]: [Species.Regirock, Species.Regice, Species.Registeel],
-  [FrontierBrain.Greta]: [Species.Gengar, Species.Breloom, Species.Umbreon],
-  [FrontierBrain.Lucy]: [Species.Seviper, Species.Steelix, Species.Gyarados],
-  [FrontierBrain.Noland]: [],
-  [FrontierBrain.Anabel]: [Species.Raikou, Species.Snorlax, Species.Latios],
-  [FrontierBrain.Spenser]: [Species.Arcanine, Species.Slaking, Species.Suicune],
-  [FrontierBrain.Tucker]: [],
-  [FrontierBrain.Palmer]: [Species.Rhyperior, Species.Dragonite, Species.Milotic],
-  [FrontierBrain.Thorton]: [],
-  [FrontierBrain.Dahlia]: [Species.Togekiss, Species.Gengar, Species.Gliscor],
-  [FrontierBrain.Darach]: [Species.Staraptor, Species.Milotic, Species.Roserade],
-  [FrontierBrain.Caitlin]: [Species.Staraptor, Species.Milotic, Species.Roserade],
-  [FrontierBrain.Argenta]: [],
-};
+export const FRONTIER_BRAIN_GOLD_PARTIES: Record<number, Species[]> = {};
+
+/** The rule each house is fought under */
+export const FRONTIER_BRAIN_RULES: Record<number, FrontierRule> = {};
+
+/**
+ * What a Brain asks to see: the crown of the region their house
+ * stands in. The Frontier is what a league is walked to reach, so
+ * nobody is admitted who has not taken one
+ */
+export const FRONTIER_BRAIN_TITLES: Record<number, Awards> = {};
+
+for (const [name, written] of Object.entries(v.parse(v.record(v.string(), BRAIN), frontierFile))) {
+  const where = `frontier.yaml: ${name}`;
+  const brain = idOf<FrontierBrain>(FRONTIER_BRAIN_IDS, name, where);
+  const [silver, gold] = idsOf<Awards>(AWARD_IDS, written.symbols, where);
+
+  FRONTIER_BRAINS.push(brain);
+  FRONTIER_BRAIN_RULES[brain] = idOf<FrontierRule>(FRONTIER_RULE_IDS, written.rule, where);
+  FRONTIER_BRAIN_TITLES[brain] = idOf<Awards>(AWARD_IDS, written.crown, where);
+  FRONTIER_BRAIN_CHARSETS[brain] = written.sheets;
+  FRONTIER_BRAIN_SYMBOLS[brain] = [silver, gold];
+  FRONTIER_BRAIN_PARTIES[brain] = idsOf<Species>(SPECIES_IDS, written.party, where);
+  FRONTIER_BRAIN_GOLD_PARTIES[brain] = idsOf<Species>(SPECIES_IDS, written['gold-party'], where);
+}
+FRONTIER_BRAINS.sort((one, two) => one - two);
+
+for (const [name, said] of Object.entries(v.parse(v.record(v.string(), TEXT), namesFile))) {
+  const brain = idOf<FrontierBrain>(FRONTIER_BRAIN_IDS, name, `text/en/frontier.yaml: ${name}`);
+
+  FRONTIER_BRAIN_NAMES[brain] = said.name;
+  FRONTIER_FACILITY_NAMES[brain] = said.house;
+}
+
+// Every Brain the enum has is written down, so no house stands empty or nameless
+for (const [name, brain] of Object.entries(FRONTIER_BRAIN_IDS)) {
+  if (!Object.hasOwn(FRONTIER_BRAIN_RULES, brain) || !Object.hasOwn(FRONTIER_BRAIN_NAMES, brain)) {
+    throw new Error(`${name} needs a record in frontier.yaml and a name in text/en`);
+  }
+}
 
 /**
  * What a house fields against this challenger: its second three where
@@ -212,98 +120,6 @@ export function getFrontierParty(brain: FrontierBrain, gold: boolean): Species[]
 export const FRONTIER_TEAM_SIZE = 3;
 
 /**
- * The house rules, one per facility.
- *
- * A rule is stored on the battle it was fought under, the way the
- * limits and the sky are, so a fight replays as the fight it was
- */
-export const enum FrontierRule {
-  /** No rule at all: the fight is the ordinary one */
-  None = 0,
-  /**
-   * The Pyramid, walked with nothing in hand. Neither side holds an
-   * item, so a Focus Sash and a bag of berries are worth nothing and
-   * the three pokemon are the whole of what was brought
-   */
-  Bare = 1,
-  /**
-   * The Arena, judged. The fight is stopped on the clock, and the
-   * side with the greater share of its health still standing takes
-   * it, which is the closest a real-time fight comes to being scored
-   */
-  Timed = 2,
-  /**
-   * The Pike, walked through a curtain. What is behind it is rolled
-   * when the challenge is taken and it lands on the challenger's
-   * party alone: the house is not walking through its own rooms
-   */
-  Curtained = 3,
-  /**
-   * The Factory, fought with three the house lends. Neither side
-   * brings its own, so nothing of the challenger's is on the field
-   * and nothing of theirs comes off it: no health lost, no item
-   * spent, no candy earned. What is being tested is what they can do
-   * with three pokemon they have never met
-   */
-  Rented = 4,
-  /**
-   * The Palace, fought on temperament. Every pokemon on the field
-   * picks by its own nature rather than on the merits of the move,
-   * so which three are brought is a question of who they are and not
-   * of what they cover
-   */
-  Natured = 5,
-  /**
-   * The Dome, answered. The house names nobody until the challenger
-   * has: its three are drawn once the party is frozen, one apiece
-   * against what was brought, so a team that covers everything covers
-   * nothing here
-   */
-  Countered = 6,
-  /**
-   * The Arcade, rolled. One panel is drawn when the challenge is
-   * taken and lands on **both** sides as the fight opens: a sky for
-   * the whole fight, every held item on the field shut off, everybody
-   * poisoned, or everybody mended. Stored with the fight the way the
-   * curtain is, so a replay is the fight that happened
-   */
-  Rolled = 7,
-  /**
-   * The Castle, where the service is the house's. Nothing puts health
-   * back on the challenger's three: no potion, no berry, no drain and
-   * no held item, for the whole fight. The house's own heal normally,
-   * which is the point of it
-   */
-  Unhealed = 8,
-  /**
-   * The Hall, one against one. A single pokemon a side, and the
-   * house's is drawn against whatever walked in, so nothing can cover
-   * for anything else
-   */
-  Singled = 9,
-}
-
-export const FRONTIER_BRAIN_RULES: Record<FrontierBrain, FrontierRule> = {
-  [FrontierBrain.Brandon]: FrontierRule.Bare,
-  [FrontierBrain.Greta]: FrontierRule.Timed,
-  [FrontierBrain.Lucy]: FrontierRule.Curtained,
-  [FrontierBrain.Noland]: FrontierRule.Rented,
-  // The Tower asks nothing, which is the point of it: it is the
-  // fight the other four are read against
-  [FrontierBrain.Anabel]: FrontierRule.None,
-  [FrontierBrain.Spenser]: FrontierRule.Natured,
-  [FrontierBrain.Tucker]: FrontierRule.Countered,
-  // Sinnoh's Tower asks nothing either, and its Factory rents the
-  // same way Hoenn's does
-  [FrontierBrain.Palmer]: FrontierRule.None,
-  [FrontierBrain.Thorton]: FrontierRule.Rented,
-  [FrontierBrain.Dahlia]: FrontierRule.Rolled,
-  [FrontierBrain.Darach]: FrontierRule.Unhealed,
-  [FrontierBrain.Caitlin]: FrontierRule.Unhealed,
-  [FrontierBrain.Argenta]: FrontierRule.Singled,
-};
-
-/**
  * How long the Arena gives a fight before it is judged. Ten mainline
  * turns, which is the shape the facility judges in: long enough for
  * three a side to commit to something, short enough that stalling is
@@ -311,27 +127,6 @@ export const FRONTIER_BRAIN_RULES: Record<FrontierBrain, FrontierRule> = {
  */
 export const FRONTIER_TIME_TURNS = 10;
 export const FRONTIER_TIME_LIMIT = turns(FRONTIER_TIME_TURNS);
-
-/**
- * What a Brain asks to see: the crown of the region their house
- * stands in. The Frontier is what a league is walked to reach, so
- * nobody is admitted who has not taken one
- */
-export const FRONTIER_BRAIN_TITLES: Record<FrontierBrain, Awards> = {
-  [FrontierBrain.Brandon]: Awards.HoennChampion,
-  [FrontierBrain.Greta]: Awards.HoennChampion,
-  [FrontierBrain.Lucy]: Awards.HoennChampion,
-  [FrontierBrain.Noland]: Awards.HoennChampion,
-  [FrontierBrain.Anabel]: Awards.HoennChampion,
-  [FrontierBrain.Spenser]: Awards.HoennChampion,
-  [FrontierBrain.Tucker]: Awards.HoennChampion,
-  [FrontierBrain.Palmer]: Awards.SinnohChampion,
-  [FrontierBrain.Thorton]: Awards.SinnohChampion,
-  [FrontierBrain.Dahlia]: Awards.SinnohChampion,
-  [FrontierBrain.Darach]: Awards.SinnohChampion,
-  [FrontierBrain.Caitlin]: Awards.SinnohChampion,
-  [FrontierBrain.Argenta]: Awards.SinnohChampion,
-};
 
 /**
  * What is behind the Pike's curtain.

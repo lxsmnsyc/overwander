@@ -1,0 +1,239 @@
+Victini:
+  # The one that brings a win to whoever it stands with. It is a
+  # mythical, so a relic calls it rather than a lair staging it, and
+  # the rocky little island it keeps to is where it is called from
+  Victini:
+    types: [Psychic, Fire]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [RockyCoast]
+    active: any
+    rank: mythical
+Snivy:
+  # The grass starter of Unova, a snake that stands on its tail: a
+  # Serperior fights by looking at what it fights, and the sunlight it
+  # gathers in its leaf is what the rest of it runs on
+  Snivy:
+    types: [Grass]
+    egg-groups: [Field, Grass]
+    biomes: [Shrubland, Steppe]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Servine
+        method: [Level]
+        level: 17
+  Servine:
+    types: [Grass]
+    egg-groups: [Field, Grass]
+    biomes: [Shrubland, Steppe]
+    active: [Morning, Day]
+    evolves-from: Snivy
+    evolves-into:
+      - species: Serperior
+        method: [Level]
+        level: 36
+  Serperior:
+    types: [Grass]
+    egg-groups: [Field, Grass]
+    biomes: [Shrubland, Steppe]
+    active: [Morning, Day]
+    evolves-from: Servine
+Tepig:
+  # The fire starter of Unova, a pig that blows smoke from its snout
+  # and ends up fighting with its fists: an Emboar lights its beard
+  # and throws the fire along with the punch
+  Tepig:
+    types: [Fire]
+    egg-groups: [Field]
+    biomes: [Badlands, Desert]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Pignite
+        method: [Level]
+        level: 17
+  Pignite:
+    types: [Fire, Fighting]
+    egg-groups: [Field]
+    biomes: [Badlands, Desert]
+    active: [Morning, Day]
+    evolves-from: Tepig
+    evolves-into:
+      - species: Emboar
+        method: [Level]
+        level: 36
+  Emboar:
+    types: [Fire, Fighting]
+    egg-groups: [Field]
+    biomes: [Badlands, Desert]
+    active: [Morning, Day]
+    evolves-from: Pignite
+Oshawott:
+  # The water starter of Unova, an otter that fights with the shell on
+  # its belly: a Samurott draws the two seamitars on its forelegs and
+  # settles the fight in the time it takes to say so
+  Oshawott:
+    types: [Water]
+    egg-groups: [Field]
+    habitat: Amphibious
+    biomes: [KelpForest, RockyCoast]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Dewott
+        method: [Level]
+        level: 17
+  Dewott:
+    types: [Water]
+    egg-groups: [Field]
+    habitat: Amphibious
+    biomes: [KelpForest, RockyCoast]
+    active: [Morning, Day]
+    evolves-from: Oshawott
+    evolves-into:
+      - species: Samurott
+        method: [Level]
+        level: 36
+  Samurott:
+    types: [Water]
+    egg-groups: [Field]
+    habitat: Amphibious
+    biomes: [KelpForest, RockyCoast]
+    active: [Morning, Day]
+    evolves-from: Dewott
+Patrat:
+  # The scouts of the open country: a Patrat posts itself where it can
+  # see, and a Watchog lights its stripes at whatever it catches coming
+  Patrat:
+    types: [Normal]
+    egg-groups: [Field]
+    biomes: [Grassland, Steppe]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Watchog
+        method: [Level]
+        level: 20
+  Watchog:
+    types: [Normal]
+    egg-groups: [Field]
+    biomes: [Grassland, Steppe]
+    active: [Evening, Night]
+    evolves-from: Patrat
+Lillipup:
+  # The dogs of Unova: a Lillipup reads a face before it reads a fight,
+  # a Herdier stands in front of what it is told to, and a Stoutland has
+  # pulled people out of snow for as long as anybody has kept dogs
+  Lillipup:
+    types: [Normal]
+    egg-groups: [Field]
+    biomes: [Grassland, Woodland]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Herdier
+        method: [Level]
+        level: 16
+  Herdier:
+    types: [Normal]
+    egg-groups: [Field]
+    biomes: [Grassland, Woodland]
+    active: [Morning, Day]
+    evolves-from: Lillipup
+    evolves-into:
+      - species: Stoutland
+        method: [Level]
+        level: 32
+  Stoutland:
+    types: [Normal]
+    egg-groups: [Field]
+    biomes: [Grassland, Steppe, Tundra]
+    active: [Morning, Day]
+    evolves-from: Herdier
+Purrloin:
+  # The thieves: a Purrloin takes what it wants and looks sweet about
+  # it, and a Liepard is gone with it before anybody has turned round
+  Purrloin:
+    types: [Dark]
+    egg-groups: [Field]
+    biomes: [Woodland, Grassland]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Liepard
+        method: [Level]
+        level: 20
+  Liepard:
+    types: [Dark]
+    egg-groups: [Field]
+    biomes: [Woodland, Grassland]
+    active: [Evening, Night]
+    evolves-from: Purrloin
+Pansage:
+  # The grass monkey: the leaf on its head is medicine to anybody who
+  # eats it, and a Simisage swings the thorny tail it grows into
+  Pansage:
+    types: [Grass]
+    egg-groups: [Field]
+    biomes: [TemperateForest, Woodland]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Simisage
+        method: [UsedItem]
+        item: LeafStone
+  Simisage:
+    types: [Grass]
+    egg-groups: [Field]
+    biomes: [TemperateForest, Woodland]
+    active: [Morning, Day]
+    evolves-from: Pansage
+Pansear:
+  # The fire monkey: the tuft on its head is the fire, and a Simisear
+  # throws off enough of it to be felt across the room
+  Pansear:
+    types: [Fire]
+    egg-groups: [Field]
+    biomes: [TemperateForest, Woodland]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Simisear
+        method: [UsedItem]
+        item: FireStone
+  Simisear:
+    types: [Fire]
+    egg-groups: [Field]
+    biomes: [TemperateForest, Woodland]
+    active: [Morning, Day]
+    evolves-from: Pansear
+Panpour:
+  # The water monkey: it keeps its water in the tuft on its tail, and a
+  # Simipour puts it out under enough pressure to cut
+  Panpour:
+    types: [Water]
+    egg-groups: [Field]
+    habitat: Amphibious
+    biomes: [TemperateForest, Woodland]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Simipour
+        method: [UsedItem]
+        item: WaterStone
+  Simipour:
+    types: [Water]
+    egg-groups: [Field]
+    habitat: Amphibious
+    biomes: [TemperateForest, Woodland]
+    active: [Morning, Day]
+    evolves-from: Panpour
+Munna:
+  # The dreamers: a Munna eats what somebody is dreaming, and a
+  # Musharna breathes the pink mist of it back out
+  Munna:
+    types: [Psychic]
+    egg-groups: [Field]
+    biomes: [Grassland, Woodland]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Musharna
+        method: [UsedItem]
+        item: MoonStone
+  Musharna:
+    types: [Psychic]
+    egg-groups: [Field]
+    biomes: [Grassland, Woodland]
+    active: [Evening, Night]
+    evolves-from: Munna

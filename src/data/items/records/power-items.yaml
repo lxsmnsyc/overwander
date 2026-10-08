@@ -1,0 +1,54 @@
+# Twice the gear price: a piece of gear wins a fight that is happening,
+# and one of these decides what a player's next fifty pokemon are made of.
+#
+# The `ev-items` sheet is named for what the mainline uses these for
+# rather than for what they do here.
+
+MachoBrace:
+  type: Held
+  icon: ev-items/macho-brace
+  flags: [Holdable, Marketable]
+  buy: 10000
+  sell: 5000
+
+PowerWeight:
+  type: Held
+  icon: ev-items/power-weight
+  flags: [Holdable, Marketable]
+  buy: 10000
+  sell: 5000
+
+PowerBracer:
+  type: Held
+  icon: ev-items/power-bracer
+  flags: [Holdable, Marketable]
+  buy: 10000
+  sell: 5000
+
+PowerBelt:
+  type: Held
+  icon: ev-items/power-belt
+  flags: [Holdable, Marketable]
+  buy: 10000
+  sell: 5000
+
+PowerLens:
+  type: Held
+  icon: ev-items/power-lens
+  flags: [Holdable, Marketable]
+  buy: 10000
+  sell: 5000
+
+PowerBand:
+  type: Held
+  icon: ev-items/power-band
+  flags: [Holdable, Marketable]
+  buy: 10000
+  sell: 5000
+
+PowerAnklet:
+  type: Held
+  icon: ev-items/power-anklet
+  flags: [Holdable, Marketable]
+  buy: 10000
+  sell: 5000

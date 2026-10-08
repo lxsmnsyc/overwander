@@ -1,0 +1,97 @@
+# From Entrainment to Heal Pulse: the moves that answer what somebody
+# else on the field is doing
+
+Entrainment:
+  type: Normal
+  category: Status
+  accuracy: 100
+  pp: 15
+  target: Unit
+
+AfterYou:
+  type: Normal
+  category: Status
+  pp: 15
+  target: Unit
+  affects: [Unit, Own]
+
+Round:
+  type: Normal
+  category: Special
+  power: 60
+  accuracy: 100
+  pp: 15
+  target: Unit
+  flags: [Sound]
+
+EchoedVoice:
+  type: Normal
+  category: Special
+  power: 40
+  accuracy: 100
+  pp: 15
+  target: Unit
+  flags: [Sound]
+
+ChipAway:
+  type: Normal
+  category: Physical
+  power: 70
+  accuracy: 100
+  pp: 20
+  target: Unit
+  flags: [Contact]
+
+ClearSmog:
+  type: Poison
+  category: Special
+  power: 50
+  pp: 15
+  target: Unit
+  projectile: true
+
+StoredPower:
+  type: Psychic
+  category: Special
+  power: 20
+  accuracy: 100
+  pp: 10
+  target: Unit
+
+QuickGuard:
+  type: Fighting
+  category: Status
+  priority: 3
+  pp: 15
+  target: Team
+  affects: [Team, Own]
+
+AllySwitch:
+  type: Psychic
+  category: Status
+  priority: 2
+  pp: 15
+  target: Unit
+  affects: [Unit, Own]
+
+Scald:
+  type: Water
+  category: Special
+  power: 80
+  accuracy: 100
+  pp: 15
+  target: Unit
+  projectile: true
+
+ShellSmash:
+  type: Normal
+  category: Status
+  pp: 15
+  target: None
+
+HealPulse:
+  type: Psychic
+  category: Status
+  pp: 10
+  target: Unit
+  affects: [Unit, Own]

@@ -1,0 +1,42 @@
+# Where a pokemon is from, by its dex number: the stretch each region
+# covers, ends included. A generation added later takes the next one.
+#
+# A region with `milestones` has a dex chain: how many of its own each
+# rung asks the dex to hold, and the `medal` the last rung hangs on the
+# shelf. Its quests and their ids follow from the row, and a rung keeps
+# its number for good, so milestones are appended rather than inserted.
+# A region whose species are not all written yet has no chain.
+
+Kanto:
+  dex: [1, 151]
+  # 151 to find. A sixth of them, half of them, and all but Mew, who is
+  # nobody's to walk into
+  milestones: [25, 75, 150]
+  medal: KantoDexMedal
+Johto:
+  dex: [152, 251]
+  # 100 more, and the same shape: a fifth, half, and all but Celebi
+  milestones: [20, 50, 99]
+  medal: JohtoDexMedal
+Hoenn:
+  dex: [252, 386]
+  # 135 more: a fifth, half, and all but the two mythicals, since a relic
+  # is not something a walk turns up
+  milestones: [27, 68, 133]
+  medal: HoennDexMedal
+Sinnoh:
+  dex: [387, 493]
+  # 107 more: a fifth, half, and all but the four a relic calls, which is
+  # Darkrai, Manaphy, Shaymin and Arceus
+  milestones: [21, 54, 103]
+  medal: SinnohDexMedal
+Unova:
+  dex: [494, 649]
+  # 156 more, the widest yet: a fifth, half, and all but the four a relic
+  # calls, which is Victini, Keldeo, Meloetta and Genesect
+  milestones: [31, 78, 152]
+  medal: UnovaDexMedal
+Kalos:
+  dex: [650, 721]
+Alola:
+  dex: [722, 809]

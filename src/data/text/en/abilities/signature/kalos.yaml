@@ -1,0 +1,113 @@
+# The signature abilities of the families filed under Kalos
+
+SpineBond:
+  name: Spine Bond
+  description: Its team, itself included, takes 0.85x from physical moves while it stands.
+EmberBond:
+  name: Ember Bond
+  description: Its team, itself included, deals 1.15x with special moves while it stands.
+LoosenedEarth:
+  name: Loosened Earth
+  description: Its Ground moves ignore whatever Defense the target has built up.
+Stoop:
+  name: Stoop
+  description: Its Flying moves hit 1.3x a target that is casting or channelling.
+Wingscale:
+  name: Wingscale
+  description: Each move it lands drops that target's Accuracy a stage, to 2 stages from this dust.
+Hothouse:
+  name: Hothouse
+  description: A teammate defends special moves with its Special Defense whenever theirs is lower.
+SaddleBurden:
+  name: Saddle Burden
+  description: A status aimed at a teammate lands on it instead, while it is above 1/2 HP and carries none.
+PedigreeCoat:
+  name: Pedigree Coat
+  description: Special moves hit it at 0.8x while it is at or above 1/2 HP.
+Restraint:
+  name: Restraint
+  description: Its first 3 moves each fight hit 0.8x, and every move after them hits 1.25x.
+TurnTheBlade:
+  name: Turn the Blade
+  description: The first blow it takes in each stance lands at 0.5x.
+Keyring:
+  name: Keyring
+  description: It has room for 1 held item more than it was born with, as far as the fight allows.
+ManyHands:
+  name: Many Hands
+  description: Every stat stage it holds counts 1.5x, raises and drops alike.
+DeepKelp:
+  name: Deep Kelp
+  description: A blow that would take less than 1/8 of its HP does nothing at all.
+RangingShot:
+  name: Ranging Shot
+  description: Its special moves deal at least 1/8 of the target's HP, however they are resisted.
+JawSnap:
+  name: Jaw Snap
+  description: A move it lands cancels whatever the target was casting or channelling, once every 8 seconds per target.
+Frostbound:
+  name: Frostbound
+  description: A target it damages casts and channels 30% slower for the next 6 seconds.
+Overturn:
+  name: Overturn
+  description: A move it lands flips every stat stage the target holds, once every 10 seconds per target.
+Backfeed:
+  name: Backfeed
+  description: Each Electric move it lands heals its whole team 1/16 of the damage it dealt.
+TopRope:
+  name: Top Rope
+  description: Its contact moves hit 10% harder for each 50 kg the target weighs, up to 1.5x.
+Undergrowth:
+  name: Undergrowth
+  description: A move it lands adds the Grass type to the target, once per target.
+Hollowing:
+  name: Hollowing
+  description: A move it lands adds the Ghost type to the target, once per target.
+Deadweight:
+  name: Deadweight
+  description: Its physical moves use its Defense in place of its Attack while it is higher.
+Seepage:
+  name: Seepage
+  description: 40% of every direct blow it takes is paid over the next 4 seconds instead.
+Echolocation:
+  name: Echolocation
+  description: 'An enemy that lands a move on it is heard: its next damaging move at that enemy is a critical hit.'
+Begrudge:
+  name: Begrudge
+  description: It gains 1 stage of Attack every time an enemy is healed.
+SugarRush:
+  name: Sugar Rush
+  description: Its whole team gains 1 stage of Speed whenever it uses up its own held item.
+QuickWhiskers:
+  name: Quick Whiskers
+  description: Its moves cast at 1 step higher priority. Cooldowns are untouched.
+CrystalGrowth:
+  name: Crystal Growth
+  description: It gains 1 stage of Defense and 1 of Special Defense every 10 seconds, up to 3 of each.
+Quickening:
+  name: Quickening
+  description: Every stat rise on its team is 1 stage bigger.
+Withering:
+  name: Withering
+  description: Every stat drop it lands on an enemy is 1 stage deeper.
+EvenKeel:
+  name: Even Keel
+  description: Every stat stage on the field counts 0.5x, its own included.
+Regalia:
+  name: Regalia
+  description: Its whole team gains 1 stage of Defense every 10 seconds, up to 3.
+Ringback:
+  name: Ringback
+  description: 20% of single-target moves aimed at it are turned back on whoever threw them.
+Boiler:
+  name: Boiler
+  description: Its Fire moves hit 1.15x in rain and its Water moves hit 1.15x in sunlight.
+PrideCall:
+  name: Pride Call
+  description: It casts Noble Roar at an enemy as it arrives on the field.
+CalmingScent:
+  name: Calming Scent
+  description: The enemy side loses 1 stage of Speed whenever it uses up its own held item.
+ShadeBond:
+  name: Shade Bond
+  description: Its team, itself included, casts and channels at 0.85x the time while it stands. Cooldowns are untouched.

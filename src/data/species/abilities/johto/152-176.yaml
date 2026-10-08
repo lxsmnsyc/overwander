@@ -1,0 +1,106 @@
+Chikorita:
+  Chikorita:
+    abilities: [Overgrow]
+    hidden: [LeafGuard]
+  Bayleef:
+    abilities: [Overgrow]
+    hidden: [LeafGuard]
+  Meganium:
+    abilities: [Overgrow]
+    # Natural Cure and Healer are this registry's rather than the
+    # mainline's: a line whose own moves are Aromatherapy and
+    # Safeguard reads as the one that mends, and a final evolution is
+    # filled to four
+    hidden: [LeafGuard, NaturalCure, Healer]
+Cyndaquil:
+  Cyndaquil:
+    abilities: [Blaze]
+    hidden: [FlashFire]
+  Quilava:
+    abilities: [Blaze]
+    hidden: [FlashFire]
+  Typhlosion:
+    abilities: [Blaze]
+    # Flame Body and Berserk are this registry's rather than the
+    # mainline's, filling a final evolution to four: the neck vents
+    # burn what touches them, and the flames go up when it is cornered
+    hidden: [FlashFire, FlameBody, Berserk]
+Totodile:
+  Totodile:
+    abilities: [Torrent]
+    hidden: [SheerForce]
+  Croconaw:
+    abilities: [Torrent]
+    hidden: [SheerForce]
+  Feraligatr:
+    abilities: [Torrent]
+    # Strong Jaw and Moxie are this registry's rather than the
+    # mainline's, filling a final evolution to four: Bite, Crunch and
+    # Screech are what the Big Jaw Pokemon has always fought with, and
+    # 105 Attack is what it fights with once something falls
+    hidden: [SheerForce, StrongJaw, Moxie]
+Sentret:
+  Sentret:
+    abilities: [RunAway, KeenEye]
+    hidden: [Frisk]
+  Furret:
+    abilities: [RunAway, KeenEye]
+    # Scrappy is this registry's rather than the mainline's, filling a
+    # final evolution to four: a scout walks up to whatever is there,
+    # and it is the one thing that gives a pure Normal type a ghost to
+    # hit
+    hidden: [Frisk, Scrappy]
+Hoothoot:
+  Hoothoot:
+    abilities: [Insomnia, KeenEye]
+    hidden: [TintedLens]
+  Noctowl:
+    abilities: [Insomnia, KeenEye]
+    # Infiltrator is this registry's rather than the mainline's,
+    # filling a final evolution to four: an owl is quiet enough to
+    # arrive behind whatever was put up in the way
+    hidden: [TintedLens, Infiltrator]
+Ledyba:
+  Ledyba:
+    abilities: [Swarm, EarlyBird]
+    hidden: [Rattled]
+  Ledian:
+    abilities: [Swarm, EarlyBird]
+    # The one of these four already carrying its fourth: Iron Fist is
+    # its own, and Ledyba's Rattled walks up the line to meet it
+    hidden: [IronFist]
+Spinarak:
+  Spinarak:
+    abilities: [Swarm, Insomnia]
+    hidden: [Sniper]
+  Ariados:
+    abilities: [Swarm, Insomnia]
+    # Poison Touch is this registry's rather than the mainline's,
+    # filling a final evolution to four: what a poison spider does to
+    # whatever it gets hold of
+    hidden: [Sniper, PoisonTouch]
+Chinchou:
+  Chinchou:
+    abilities: [VoltAbsorb, Illuminate]
+    hidden: [WaterAbsorb]
+  Lanturn:
+    abilities: [VoltAbsorb, Illuminate]
+    # Hydration is this registry's rather than the mainline's,
+    # filling a final evolution to four: the deep water it lives in
+    # washes off whatever it picked up nearer the surface
+    hidden: [WaterAbsorb, Hydration]
+Togepi:
+  Togepi:
+    abilities: [Hustle, SereneGrace]
+    hidden: [SuperLuck]
+  Togetic:
+    abilities: [Hustle, SereneGrace]
+    # Nothing invented here: Togetic gains Togekiss in a later
+    # generation, so it is not a final evolution to fill
+    hidden: [SuperLuck]
+  Togekiss:
+    abilities: [Hustle, SereneGrace]
+    # Friend Guard is this registry's rather than the mainline's: the
+    # line reaches three abilities and needs four, and standing
+    # between somebody and a blow is the whole of what it is for
+    hidden: [SuperLuck, FriendGuard]

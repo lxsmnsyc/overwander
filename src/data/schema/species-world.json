@@ -1,0 +1,202 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Species: world",
+  "type": "object",
+  "propertyNames": {
+    "$ref": "names.json#/definitions/family"
+  },
+  "additionalProperties": {
+    "type": "object",
+    "description": "A family, with each of its species beneath it",
+    "properties": {},
+    "propertyNames": {
+      "$ref": "names.json#/definitions/species"
+    },
+    "additionalProperties": {
+      "type": "object",
+      "properties": {
+        "types": {
+          "type": "array",
+          "items": {
+            "$ref": "names.json#/definitions/type"
+          },
+          "description": "One or two types"
+        },
+        "egg-groups": {
+          "type": "array",
+          "items": {
+            "$ref": "names.json#/definitions/egg-group"
+          }
+        },
+        "habitat": {
+          "$ref": "names.json#/definitions/habitat",
+          "description": "Ground when absent"
+        },
+        "biomes": {
+          "type": "array",
+          "items": {
+            "$ref": "names.json#/definitions/biome"
+          },
+          "description": "Where it spawns"
+        },
+        "active": {
+          "anyOf": [
+            {
+              "const": "any"
+            },
+            {
+              "type": "array",
+              "items": {
+                "$ref": "names.json#/definitions/time-of-day"
+              }
+            }
+          ],
+          "description": "The hours it is about, or `any`"
+        },
+        "base-form": {
+          "type": "boolean",
+          "description": "`false` for a variant form"
+        },
+        "worn": {
+          "type": "boolean",
+          "description": "A shape put on mid-fight, never met or caught"
+        },
+        "dex": {
+          "type": "number",
+          "minimum": 0,
+          "description": "The dex number, where it differs from the id"
+        },
+        "evolves-from": {
+          "$ref": "names.json#/definitions/species"
+        },
+        "evolves-into": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "species": {
+                "$ref": "names.json#/definitions/species",
+                "description": "What it evolves into"
+              },
+              "method": {
+                "type": "array",
+                "items": {
+                  "$ref": "names.json#/definitions/evolution-method"
+                },
+                "description": "Every condition the evolution needs"
+              },
+              "level": {
+                "type": "number",
+                "minimum": 0,
+                "description": "The level it evolves at"
+              },
+              "item": {
+                "$ref": "names.json#/definitions/item",
+                "description": "The item used on it or held by it"
+              },
+              "partner": {
+                "$ref": "names.json#/definitions/species",
+                "description": "The species that has to come the other way in a trade"
+              },
+              "time": {
+                "type": "array",
+                "items": {
+                  "$ref": "names.json#/definitions/time-of-day"
+                },
+                "description": "The hours it evolves in"
+              },
+              "gender": {
+                "$ref": "names.json#/definitions/gender",
+                "description": "The gender that evolves"
+              },
+              "move": {
+                "$ref": "names.json#/definitions/move",
+                "description": "The move it has to know"
+              },
+              "compare": {
+                "type": "object",
+                "properties": {
+                  "stat": {
+                    "$ref": "names.json#/definitions/stat"
+                  },
+                  "against": {
+                    "$ref": "names.json#/definitions/stat"
+                  },
+                  "order": {
+                    "enum": [
+                      "greater",
+                      "lesser",
+                      "equal"
+                    ]
+                  }
+                },
+                "required": [
+                  "stat",
+                  "against",
+                  "order"
+                ],
+                "additionalProperties": false
+              },
+              "shed": {
+                "type": "boolean",
+                "description": "Left behind beside the evolution taken, as Shedinja"
+              }
+            },
+            "required": [
+              "species",
+              "method"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "egg-species": {
+          "$ref": "names.json#/definitions/species",
+          "description": "What its eggs hatch into, when not the bottom of its line"
+        },
+        "held": {
+          "type": "object",
+          "properties": {
+            "common": {
+              "$ref": "names.json#/definitions/item",
+              "description": "Carried by half of them"
+            },
+            "uncommon": {
+              "$ref": "names.json#/definitions/item",
+              "description": "One in twenty"
+            },
+            "rare": {
+              "$ref": "names.json#/definitions/item",
+              "description": "One in a hundred"
+            }
+          },
+          "required": [],
+          "additionalProperties": false,
+          "description": "What a wild one carries when it is met"
+        },
+        "rank": {
+          "enum": [
+            "legendary",
+            "mythical",
+            "baby",
+            "prized",
+            "mythical-odds"
+          ],
+          "description": "A hand-kept class the shape of its line cannot say"
+        },
+        "awaiting": {
+          "enum": [
+            "baby",
+            "evolution"
+          ],
+          "description": "A stage of its line a later generation adds that is not registered yet"
+        }
+      },
+      "required": [
+        "types",
+        "egg-groups",
+        "active"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

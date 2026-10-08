@@ -1,0 +1,54 @@
+DragonClaw:
+  name: Dragon Claw
+  description: Plain contact damage.
+FrenzyPlant:
+  name: Frenzy Plant
+  description: The user has to recharge for 2 seconds afterwards.
+BulkUp:
+  name: Bulk Up
+  description: Raises the user's Attack and Defense a stage each.
+Bounce:
+  name: Bounce
+  description: Springs up out of reach, like Fly, then comes down on the target. 30% to paralyse.
+MudShot:
+  name: Mud Shot
+  description: Always drops the target's Speed a stage.
+PoisonTail:
+  name: Poison Tail
+  description: Crits more readily. 10% to poison.
+Covet:
+  name: Covet
+  description: Takes the target's held item if the user is carrying nothing.
+VoltTackle:
+  name: Volt Tackle
+  description: The user takes 1/3 of the damage it deals. 10% to paralyse.
+MagicalLeaf:
+  name: Magical Leaf
+  description: Never misses.
+WaterSport:
+  name: Water Sport
+  description: For 10 seconds Fire moves hit for 1/2.
+CalmMind:
+  name: Calm Mind
+  description: Raises the user's Special Attack and Special Defense a stage each.
+LeafBlade:
+  name: Leaf Blade
+  description: Crits more readily.
+DragonDance:
+  name: Dragon Dance
+  description: Raises the user's Attack and Speed a stage each.
+RockBlast:
+  name: Rock Blast
+  description: Strikes 2 to 5 times.
+ShockWave:
+  name: Shock Wave
+  description: Never misses.
+WaterPulse:
+  name: Water Pulse
+  description: 20% to confuse.
+DoomDesire:
+  name: Doom Desire
+  description: Lands 4 seconds after it is cast, wherever the target is by then.
+PsychoBoost:
+  name: Psycho Boost
+  description: Drops the user's Special Attack 2 stages after it lands.

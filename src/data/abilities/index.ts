@@ -1,11 +1,5 @@
-import registerGen1Abilities from './gen-1';
-import registerGen2Abilities from './gen-2';
-import registerGen3Abilities from './gen-3';
-import registerGen4Abilities from './gen-4';
-import registerGen5Abilities from './gen-5';
-import registerGen6Abilities from './gen-6';
-import registerGen7Abilities from './gen-7';
-import registerSignatureAbilities from './signature';
+import { registerAbility, registerFormSignature, registerSignature } from './__create';
+import { readAbilities, readSignatures } from './yaml';
 
 export {
   getAbilityData,
@@ -19,12 +13,23 @@ export {
 export type { AbilityData } from './__create';
 
 export default function registerAbilities(): void {
-  registerGen1Abilities();
-  registerGen2Abilities();
-  registerGen3Abilities();
-  registerGen4Abilities();
-  registerGen5Abilities();
-  registerGen6Abilities();
-  registerGen7Abilities();
-  registerSignatureAbilities();
+  // Written as YAML: the abilities are all text, the grants a file per region (see ./yaml.ts)
+  const abilities = readAbilities(
+    import.meta.glob('../text/en/abilities/**/*.yaml', { eager: true, import: 'default' }),
+  );
+
+  for (const [ability, data] of abilities) {
+    registerAbility(ability, data);
+  }
+
+  const grants = readSignatures(
+    import.meta.glob('./signatures/*.yaml', { eager: true, import: 'default' }),
+  );
+
+  for (const [family, ability] of grants.families) {
+    registerSignature(family, ability);
+  }
+  for (const [forms, ability] of grants.forms) {
+    registerFormSignature(forms, ability);
+  }
 }

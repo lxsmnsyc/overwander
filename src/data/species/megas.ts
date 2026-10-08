@@ -578,6 +578,12 @@ export default function registerMegaSpecies(): void {
       evolvesInto: undefined,
       eggSpecies: undefined,
       biomes: [],
+      // Nobody meets one in the wild, and it is no rank of its own:
+      // a Mega Mewtwo is staged by nothing
+      heldItems: undefined,
+      eggCycles: undefined,
+      rank: undefined,
+      awaiting: undefined,
     });
   }
 }

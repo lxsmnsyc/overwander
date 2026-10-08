@@ -1,0 +1,141 @@
+Chikorita:
+  Chikorita:
+    stats: { HP: 45, Attack: 49, Defense: 65, SpecialAttack: 49, SpecialDefense: 65, Speed: 45 }
+    catch-rate: 45
+    height: 0.9
+    weight: 6.4
+    gender: [7, 1]
+  Bayleef:
+    stats: { HP: 60, Attack: 62, Defense: 80, SpecialAttack: 63, SpecialDefense: 80, Speed: 60 }
+    catch-rate: 45
+    height: 1.2
+    weight: 15.8
+    gender: [7, 1]
+  Meganium:
+    stats: { HP: 80, Attack: 82, Defense: 100, SpecialAttack: 83, SpecialDefense: 100, Speed: 80 }
+    catch-rate: 45
+    height: 1.8
+    weight: 100.5
+    gender: [7, 1]
+Cyndaquil:
+  Cyndaquil:
+    stats: { HP: 39, Attack: 52, Defense: 43, SpecialAttack: 60, SpecialDefense: 50, Speed: 65 }
+    catch-rate: 45
+    height: 0.5
+    weight: 7.9
+    gender: [7, 1]
+  Quilava:
+    stats: { HP: 58, Attack: 64, Defense: 58, SpecialAttack: 80, SpecialDefense: 65, Speed: 80 }
+    catch-rate: 45
+    height: 0.9
+    weight: 19
+    gender: [7, 1]
+  Typhlosion:
+    stats: { HP: 78, Attack: 84, Defense: 78, SpecialAttack: 109, SpecialDefense: 85, Speed: 100 }
+    catch-rate: 45
+    height: 1.7
+    weight: 79.5
+    gender: [7, 1]
+Totodile:
+  Totodile:
+    stats: { HP: 50, Attack: 65, Defense: 64, SpecialAttack: 44, SpecialDefense: 48, Speed: 43 }
+    catch-rate: 45
+    height: 0.6
+    weight: 9.5
+    gender: [7, 1]
+  Croconaw:
+    stats: { HP: 65, Attack: 80, Defense: 80, SpecialAttack: 59, SpecialDefense: 63, Speed: 58 }
+    catch-rate: 45
+    height: 1.1
+    weight: 25
+    gender: [7, 1]
+  Feraligatr:
+    stats: { HP: 85, Attack: 105, Defense: 100, SpecialAttack: 79, SpecialDefense: 83, Speed: 78 }
+    catch-rate: 45
+    height: 2.3
+    weight: 88.8
+    gender: [7, 1]
+Sentret:
+  Sentret:
+    stats: { HP: 35, Attack: 46, Defense: 34, SpecialAttack: 35, SpecialDefense: 45, Speed: 20 }
+    catch-rate: 255
+    height: 0.8
+    weight: 6
+    gender: [1, 1]
+  Furret:
+    stats: { HP: 85, Attack: 76, Defense: 64, SpecialAttack: 45, SpecialDefense: 55, Speed: 90 }
+    catch-rate: 90
+    height: 1.8
+    weight: 32.5
+    gender: [1, 1]
+Hoothoot:
+  Hoothoot:
+    stats: { HP: 60, Attack: 30, Defense: 30, SpecialAttack: 36, SpecialDefense: 56, Speed: 50 }
+    catch-rate: 255
+    height: 0.7
+    weight: 21.2
+    gender: [1, 1]
+  Noctowl:
+    stats: { HP: 100, Attack: 50, Defense: 50, SpecialAttack: 86, SpecialDefense: 96, Speed: 70 }
+    catch-rate: 90
+    height: 1.6
+    weight: 40.8
+    gender: [1, 1]
+Ledyba:
+  Ledyba:
+    stats: { HP: 40, Attack: 20, Defense: 30, SpecialAttack: 40, SpecialDefense: 80, Speed: 55 }
+    catch-rate: 255
+    height: 1
+    weight: 10.8
+    gender: [1, 1]
+  Ledian:
+    stats: { HP: 55, Attack: 35, Defense: 50, SpecialAttack: 55, SpecialDefense: 110, Speed: 85 }
+    catch-rate: 90
+    height: 1.4
+    weight: 35.6
+    gender: [1, 1]
+Spinarak:
+  Spinarak:
+    stats: { HP: 40, Attack: 60, Defense: 40, SpecialAttack: 40, SpecialDefense: 40, Speed: 30 }
+    catch-rate: 255
+    height: 0.5
+    weight: 8.5
+    gender: [1, 1]
+  Ariados:
+    stats: { HP: 70, Attack: 90, Defense: 70, SpecialAttack: 60, SpecialDefense: 70, Speed: 40 }
+    catch-rate: 90
+    height: 1.1
+    weight: 33.5
+    gender: [1, 1]
+Chinchou:
+  Chinchou:
+    stats: { HP: 75, Attack: 38, Defense: 38, SpecialAttack: 56, SpecialDefense: 56, Speed: 67 }
+    catch-rate: 190
+    height: 0.5
+    weight: 12
+    gender: [1, 1]
+  Lanturn:
+    stats: { HP: 125, Attack: 58, Defense: 58, SpecialAttack: 76, SpecialDefense: 76, Speed: 67 }
+    catch-rate: 75
+    height: 1.2
+    weight: 22.5
+    gender: [1, 1]
+Togepi:
+  Togepi:
+    stats: { HP: 35, Attack: 20, Defense: 65, SpecialAttack: 40, SpecialDefense: 65, Speed: 20 }
+    catch-rate: 190
+    height: 0.3
+    weight: 1.5
+    gender: [7, 1]
+  Togetic:
+    stats: { HP: 55, Attack: 40, Defense: 85, SpecialAttack: 80, SpecialDefense: 105, Speed: 40 }
+    catch-rate: 75
+    height: 0.6
+    weight: 3.2
+    gender: [7, 1]
+  Togekiss:
+    stats: { HP: 85, Attack: 50, Defense: 95, SpecialAttack: 120, SpecialDefense: 115, Speed: 80 }
+    catch-rate: 30
+    height: 1.5
+    weight: 38
+    gender: [7, 1]

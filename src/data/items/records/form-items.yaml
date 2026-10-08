@@ -1,0 +1,111 @@
+# Never sold in a shop, and sold back for half of what each would cost
+# if one were. An orb is priced dear (12,000) because it is the only way
+# to the shape it holds. The orbs, the Prison Bottle and the Reveal Glass
+# share that price.
+#
+# The orbs are drawn on the held sheet, and everything else here with a
+# key/ icon on the key sheet: that is where the collection packed them.
+
+AdamantOrb:
+  type: Held
+  icon: held/adamant-orb
+  flags: [Holdable]
+  sell: 6000
+
+LustrousOrb:
+  type: Held
+  icon: held/lustrous-orb
+  flags: [Holdable]
+  sell: 6000
+
+GriseousOrb:
+  type: Held
+  icon: held/griseous-orb
+  flags: [Holdable]
+  sell: 6000
+
+BlueOrb:
+  type: Held
+  icon: held/blue-orb
+  flags: [Holdable]
+  sell: 6000
+
+RedOrb:
+  type: Held
+  icon: held/red-orb
+  flags: [Holdable]
+  sell: 6000
+
+PrisonBottle:
+  type: Held
+  icon: key/prison-bottle
+  flags: [Holdable]
+  sell: 6000
+
+RevealGlass:
+  type: Held
+  icon: key/reveal-glass
+  flags: [Holdable]
+  sell: 6000
+
+# Less than an orb (8,000), since a Gracidea is a thing that grows rather
+# than a thing the world was made with
+Gracidea:
+  type: Held
+  icon: key/gracidea
+  flags: [Holdable]
+  sell: 4000
+
+# Dear as an orb (12,000): it is the only way to any shape but the one a
+# Deoxys arrives in, and it is spent on every rearrangement rather than
+# held through them
+Meteorite:
+  type: Evolution
+  icon: key/meteorite
+  flags: [Usable]
+  sell: 6000
+
+# Dear as an orb (12,000): the splicers and the prisms are the only way to
+# put a dragon inside the husk, and the only way to get it back out
+DnaSplicers:
+  type: Evolution
+  icon: key/dna-splicers
+  flags: [Usable, Consumable]
+  sell: 6000
+
+# A flower's worth (2,000), since the island grows them
+RedNectar:
+  type: Evolution
+  icon: other/red-nectar
+  flags: [Usable]
+  sell: 1000
+
+YellowNectar:
+  type: Evolution
+  icon: other/yellow-nectar
+  flags: [Usable]
+  sell: 1000
+
+PinkNectar:
+  type: Evolution
+  icon: other/pink-nectar
+  flags: [Usable]
+  sell: 1000
+
+PurpleNectar:
+  type: Evolution
+  icon: other/purple-nectar
+  flags: [Usable]
+  sell: 1000
+
+NSolarizer:
+  type: Evolution
+  icon: key/n-solarizer
+  flags: [Usable, Consumable]
+  sell: 6000
+
+NLunarizer:
+  type: Evolution
+  icon: key/n-lunarizer
+  flags: [Usable, Consumable]
+  sell: 6000

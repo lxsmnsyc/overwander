@@ -1,0 +1,164 @@
+# Poke Ball variants. A ball is spent by the throw itself, so they
+# are consumable and usable, never held. The catch multipliers live
+# with the safari session (BALL_MODIFIERS), not here.
+
+# The plain ball, no modifier
+PokeBall:
+  type: PokeBall
+  icon: balls/poke
+  flags: [Consumable, Usable, Marketable]
+  buy: 200
+  sell: 100
+
+GreatBall:
+  type: PokeBall
+  icon: balls/great
+  flags: [Consumable, Usable, Marketable]
+  buy: 600
+  sell: 300
+
+UltraBall:
+  type: PokeBall
+  icon: balls/ultra
+  flags: [Consumable, Usable, Marketable]
+  buy: 1200
+  sell: 600
+
+# Never fails
+MasterBall:
+  type: PokeBall
+  icon: balls/master
+  flags: [Consumable, Usable]
+
+# A commemorative Poke Ball; catches like the plain one
+PremierBall:
+  type: PokeBall
+  icon: balls/premier
+  flags: [Consumable, Usable, Marketable]
+  buy: 200
+  sell: 100
+
+# Heals the buddy on a catch
+HealBall:
+  type: PokeBall
+  icon: balls/heal
+  flags: [Consumable, Usable, Marketable]
+  buy: 300
+  sell: 150
+
+# Grows friendship faster
+LuxuryBall:
+  type: PokeBall
+  icon: balls/luxury
+  flags: [Consumable, Usable, Marketable]
+  buy: 1000
+  sell: 500
+
+# Better against Bug and Water types
+NetBall:
+  type: PokeBall
+  icon: balls/net
+  flags: [Consumable, Usable, Marketable]
+  buy: 1000
+  sell: 500
+
+# Better underwater
+DiveBall:
+  type: PokeBall
+  icon: balls/dive
+  flags: [Consumable, Usable, Marketable]
+  buy: 1000
+  sell: 500
+
+# Better against low-level pokemon
+NestBall:
+  type: PokeBall
+  icon: balls/nest
+  flags: [Consumable, Usable, Marketable]
+  buy: 1000
+  sell: 500
+
+# Better against species already caught
+RepeatBall:
+  type: PokeBall
+  icon: balls/repeat
+  flags: [Consumable, Usable, Marketable]
+  buy: 1000
+  sell: 500
+
+# Grows with every throw or feeding at the encounter
+TimerBall:
+  type: PokeBall
+  icon: balls/timer
+  flags: [Consumable, Usable, Marketable]
+  buy: 1000
+  sell: 500
+
+# Strongest before anything has been thrown or fed
+QuickBall:
+  type: PokeBall
+  icon: balls/quick
+  flags: [Consumable, Usable, Marketable]
+  buy: 1000
+  sell: 500
+
+# Kurt's seven. Nothing sells them, so they carry no price and no
+# Marketable flag: they are turned out of apricorns, and an
+# apricorn is picked rather than bought
+
+# Better the further the buddy is above what it is thrown at
+LevelBall:
+  type: PokeBall
+  icon: balls/level
+  flags: [Consumable, Usable]
+
+# Better on whatever a ripple brought up
+LureBall:
+  type: PokeBall
+  icon: balls/lure
+  flags: [Consumable, Usable]
+
+# Better on the line a Moon Stone answers
+MoonBall:
+  type: PokeBall
+  icon: balls/moon
+  flags: [Consumable, Usable]
+
+# Catches no better, and what it catches arrives already fond
+FriendBall:
+  type: PokeBall
+  icon: balls/friend
+  flags: [Consumable, Usable]
+
+# Better on the buddy's own species, the other way round
+LoveBall:
+  type: PokeBall
+  icon: balls/love
+  flags: [Consumable, Usable]
+
+# Better the heavier the thing it is thrown at
+HeavyBall:
+  type: PokeBall
+  icon: balls/heavy
+  flags: [Consumable, Usable]
+
+# Better on whatever would outrun it
+FastBall:
+  type: PokeBall
+  icon: balls/fast
+  flags: [Consumable, Usable]
+
+# Made for the Ultra Beasts, and poor at anything else
+BeastBall:
+  type: PokeBall
+  icon: balls/beast
+  flags: [Consumable, Usable]
+  sell: 500
+
+# Better at night and in caves
+DuskBall:
+  type: PokeBall
+  icon: balls/dusk
+  flags: [Consumable, Usable, Marketable]
+  buy: 1000
+  sell: 500

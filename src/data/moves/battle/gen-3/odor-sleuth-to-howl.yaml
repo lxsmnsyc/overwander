@@ -1,0 +1,169 @@
+# From Odor Sleuth to Howl: the machines Hoenn handed out, and the
+# multi-hit moves among them
+
+OdorSleuth:
+  type: Normal
+  category: Status
+  pp: 40
+  target: Unit
+
+RockTomb:
+  type: Rock
+  category: Physical
+  power: 60
+  accuracy: 95
+  pp: 15
+  target: Unit
+  projectile: true
+
+SilverWind:
+  type: Bug
+  category: Special
+  power: 60
+  accuracy: 100
+  pp: 5
+  target: Unit
+  flags: [Wind]
+
+MetalSound:
+  type: Steel
+  category: Status
+  accuracy: 85
+  pp: 40
+  target: Unit
+  affects: [Unit, Own, Enemy]
+  flags: [Sound]
+
+GrassWhistle:
+  type: Grass
+  category: Status
+  accuracy: 55
+  pp: 15
+  target: Unit
+  flags: [Sound]
+
+Tickle:
+  type: Normal
+  category: Status
+  accuracy: 100
+  pp: 20
+  target: Unit
+  affects: [Unit, Own, Enemy]
+  flags: [Contact]
+
+CosmicPower:
+  type: Psychic
+  category: Status
+  pp: 20
+  target: None
+
+WaterSpout:
+  type: Water
+  category: Special
+  power: 150
+  accuracy: 100
+  pp: 5
+  target: None
+  affects: [Unit, Enemy]
+
+SignalBeam:
+  type: Bug
+  category: Special
+  power: 75
+  accuracy: 100
+  pp: 15
+  target: Unit
+
+ShadowPunch:
+  type: Ghost
+  category: Physical
+  power: 60
+  pp: 20
+  target: Unit
+  flags: [Contact]
+
+Extrasensory:
+  type: Psychic
+  category: Special
+  power: 80
+  accuracy: 100
+  pp: 20
+  target: Unit
+
+SkyUppercut:
+  type: Fighting
+  category: Physical
+  power: 85
+  accuracy: 90
+  pp: 15
+  target: Unit
+  flags: [Contact]
+
+SandTomb:
+  type: Ground
+  category: Physical
+  power: 35
+  accuracy: 85
+  pp: 15
+  target: Unit
+
+SheerCold:
+  type: Ice
+  category: Special
+  accuracy: 30
+  pp: 5
+  target: Unit
+
+MuddyWater:
+  type: Water
+  category: Special
+  power: 90
+  accuracy: 85
+  pp: 10
+  target: None
+  affects: [Unit, Enemy]
+
+BulletSeed:
+  type: Grass
+  category: Physical
+  power: 25
+  accuracy: 100
+  pp: 30
+  target: Unit
+  projectile: true
+
+AerialAce:
+  type: Flying
+  category: Physical
+  power: 60
+  pp: 20
+  target: Unit
+  flags: [Contact, Slicing]
+
+IcicleSpear:
+  type: Ice
+  category: Physical
+  power: 25
+  accuracy: 100
+  pp: 30
+  target: Unit
+  projectile: true
+
+IronDefense:
+  type: Steel
+  category: Status
+  pp: 15
+  target: None
+
+Block:
+  type: Normal
+  category: Status
+  pp: 5
+  target: Unit
+
+Howl:
+  type: Normal
+  category: Status
+  pp: 40
+  target: None
+  flags: [Sound]

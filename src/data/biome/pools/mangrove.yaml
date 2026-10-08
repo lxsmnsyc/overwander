@@ -1,0 +1,116 @@
+land:
+  morning: &land-morning
+    base:
+      FlabebeBlue: 2761
+      Lotad: 2300
+      Totodile: 230
+    uncommon:
+      Corphish: 349
+      Wooper: 349
+      Shellos: 349
+      GrimerAlola: 307
+      Dewpider: 307
+      Slowpoke: 279
+      Krabby: 279
+      Croagunk: 279
+    rare:
+      Lombre: 658
+      FloetteBlue: 526
+      Croconaw: 66
+    scarce:
+      Slowbro: 88
+      Kingler: 88
+      Quagsire: 88
+      Gastrodon: 88
+      Crawdaunt: 70
+      MukAlola: 53
+      Toxicroak: 53
+      Araquanid: 53
+      Slowking: 44
+    elusive:
+      Carnivine: 82
+      FlorgesBlue: 68
+      Farfetchd: 68
+      Ludicolo: 68
+      Feraligatr: 27
+    prized:
+      Unown: forms
+    special: {}
+  day: *land-morning
+  evening: &land-evening
+    base: {}
+    uncommon:
+      Corphish: 1421
+      Wooper: 1421
+      Shellos: 1421
+      GrimerAlola: 1251
+      Dewpider: 1251
+      Krabby: 1137
+      Croagunk: 1137
+    rare: {}
+    scarce:
+      Kingler: 112
+      Quagsire: 112
+      Gastrodon: 112
+      Crawdaunt: 89
+      MukAlola: 67
+      Toxicroak: 67
+      Araquanid: 67
+    elusive:
+      Carnivine: 313
+    prized:
+      Unown: forms
+    special: {}
+  night: *land-evening
+
+water:
+  morning: &water-morning
+    base:
+      Lotad: 4819
+      Totodile: 482
+    uncommon:
+      Corphish: 457
+      Wooper: 457
+      Shellos: 457
+      Dewpider: 402
+      Slowpoke: 366
+      Krabby: 366
+    rare:
+      Lombre: 1139
+      Croconaw: 114
+    scarce:
+      Slowbro: 106
+      Kingler: 106
+      Quagsire: 106
+      Gastrodon: 106
+      Crawdaunt: 85
+      Araquanid: 64
+      Slowking: 53
+    elusive:
+      Carnivine: 82
+      Wishiwashi: 68
+      Ludicolo: 68
+      Farfetchd: 68
+      Feraligatr: 27
+    special: {}
+  day: *water-morning
+  evening: &water-evening
+    base: {}
+    uncommon:
+      Corphish: 1936
+      Wooper: 1936
+      Shellos: 1936
+      Dewpider: 1703
+      Krabby: 1549
+    rare: {}
+    scarce:
+      Kingler: 142
+      Quagsire: 142
+      Gastrodon: 142
+      Crawdaunt: 114
+      Araquanid: 85
+    elusive:
+      Carnivine: 170
+      Wishiwashi: 142
+    special: {}
+  night: *water-evening

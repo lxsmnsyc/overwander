@@ -1,0 +1,37 @@
+# What is in the rock is not written on it. The bench is where a player
+# finds out, and a description that named the species would settle it
+# before they ever paid for one.
+
+HelixFossil:
+  name: Helix Fossil
+  description: Something ancient is still in the rock. The Fossil Scientist revives it at level 20, spending the fossil.
+DomeFossil:
+  name: Dome Fossil
+  description: Something ancient is still in the rock. The Fossil Scientist revives it at level 20, spending the fossil.
+OldAmber:
+  name: Old Amber
+  description: Something ancient is still in the rock. The Fossil Scientist revives it at level 20, spending the fossil.
+RootFossil:
+  name: Root Fossil
+  description: Something ancient is still in the rock. The Fossil Scientist revives it at level 20, spending the fossil.
+ClawFossil:
+  name: Claw Fossil
+  description: Something ancient is still in the rock. The Fossil Scientist revives it at level 20, spending the fossil.
+SkullFossil:
+  name: Skull Fossil
+  description: Something ancient is still in the rock. The Fossil Scientist revives it at level 20, spending the fossil.
+ArmorFossil:
+  name: Armor Fossil
+  description: Something ancient is still in the rock. The Fossil Scientist revives it at level 20, spending the fossil.
+CoverFossil:
+  name: Cover Fossil
+  description: Something ancient is still in the rock. The Fossil Scientist revives it at level 20, spending the fossil.
+PlumeFossil:
+  name: Plume Fossil
+  description: Something ancient is still in the rock. The Fossil Scientist revives it at level 20, spending the fossil.
+JawFossil:
+  name: Jaw Fossil
+  description: Something ancient is still in the rock. The Fossil Scientist revives it at level 20, spending the fossil.
+SailFossil:
+  name: Sail Fossil
+  description: Something ancient is still in the rock. The Fossil Scientist revives it at level 20, spending the fossil.

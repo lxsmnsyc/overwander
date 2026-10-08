@@ -22,6 +22,10 @@ const WEATHER_ACCURACY_MOVES: { [key in Moves]?: WeatherAccuracyConfig } = {
   [Moves.Blizzard]: { hail: null },
   // https://bulbapedia.bulbagarden.net/wiki/Hurricane_(move)
   [Moves.Hurricane]: { rain: null, sun: 50 },
+  // Hisui's three storms, which only the rain makes sure of
+  [Moves.BleakwindStorm]: { rain: null },
+  [Moves.WildboltStorm]: { rain: null },
+  [Moves.SandsearStorm]: { rain: null },
 };
 
 export default function setupWeatherAccuracyMoves(battle: Battle): void {

@@ -1,0 +1,328 @@
+Meowth:
+  Meowth:
+    types: [Normal]
+    egg-groups: [Field]
+    biomes: [Grassland, Woodland]
+    active: [Night]
+    evolves-into:
+      - species: Persian
+        method: [Level]
+        level: 28
+    held: { common: OranBerry, uncommon: Stardust, rare: Nugget }
+  Persian:
+    types: [Normal]
+    egg-groups: [Field]
+    biomes: [Grassland, Woodland]
+    active: [Night]
+    evolves-from: Meowth
+    held: { common: OranBerry, uncommon: Stardust, rare: Nugget }
+  MeowthAlola:
+    types: [Dark]
+    egg-groups: [Field]
+    biomes: [TropicalSeasonalForest, TropicalRainforest]
+    active: any
+    base-form: false
+    evolves-into:
+      - species: PersianAlola
+        method: [Friendship]
+  PersianAlola:
+    types: [Dark]
+    egg-groups: [Field]
+    biomes: [TropicalSeasonalForest, TropicalRainforest]
+    active: any
+    base-form: false
+    evolves-from: MeowthAlola
+Psyduck:
+  Psyduck:
+    types: [Water]
+    egg-groups: [Water1, Field]
+    habitat: Amphibious
+    biomes:
+      [Swamp, Beach, TropicalSeasonalForest, Savanna, Grassland, Mountain, Woodland, DeepOcean]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Golduck
+        method: [Level]
+        level: 33
+    held: { common: OranBerry, uncommon: MysticWater, rare: TwistedSpoon }
+  Golduck:
+    types: [Water]
+    egg-groups: [Water1, Field]
+    habitat: Amphibious
+    biomes:
+      [Swamp, Beach, TropicalSeasonalForest, Savanna, Grassland, Mountain, Woodland, DeepOcean]
+    active: [Morning, Day]
+    evolves-from: Psyduck
+    held: { common: OranBerry, uncommon: MysticWater, rare: TwistedSpoon }
+Mankey:
+  Mankey:
+    types: [Fighting]
+    egg-groups: [Field]
+    biomes: [Mountain, MontaneForest, Badlands]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Primeape
+        method: [Level]
+        level: 28
+    held: { common: OranBerry, uncommon: BlackBelt, rare: FocusBand }
+  Primeape:
+    types: [Fighting]
+    egg-groups: [Field]
+    biomes: [Mountain, MontaneForest, Badlands]
+    active: [Morning, Day]
+    evolves-from: Mankey
+    awaiting: evolution
+    held: { common: OranBerry, uncommon: BlackBelt, rare: FocusBand }
+Growlithe:
+  Growlithe:
+    types: [Fire]
+    egg-groups: [Field]
+    biomes: [Grassland, Savanna, Steppe, Volcano]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Arcanine
+        method: [UsedItem]
+        item: FireStone
+    held: { common: RawstBerry, uncommon: Charcoal }
+  Arcanine:
+    types: [Fire]
+    egg-groups: [Field]
+    biomes: [Grassland, Savanna, Steppe, Volcano]
+    active: [Morning, Day]
+    evolves-from: Growlithe
+    held: { common: RawstBerry, uncommon: Charcoal }
+Poliwag:
+  Poliwag:
+    types: [Water]
+    egg-groups: [Water1]
+    habitat: Amphibious
+    biomes:
+      - Swamp
+      - Bog
+      - TropicalRainforest
+      - TropicalSeasonalForest
+      - Shrubland
+      - Grassland
+      - TemperateForest
+      - TemperateRainforest
+      - Woodland
+      - MontaneForest
+    active: any
+    evolves-into:
+      - species: Poliwhirl
+        method: [Level]
+        level: 25
+    held: { common: OranBerry, uncommon: KingsRock, rare: MysticWater }
+  Poliwhirl:
+    types: [Water]
+    egg-groups: [Water1]
+    habitat: Amphibious
+    biomes:
+      - Swamp
+      - Bog
+      - TropicalSeasonalForest
+      - Shrubland
+      - Grassland
+      - TemperateForest
+      - TemperateRainforest
+      - Woodland
+      - MontaneForest
+    active: any
+    evolves-from: Poliwag
+    evolves-into:
+      - species: Poliwrath
+        method: [UsedItem]
+        item: WaterStone
+      - species: Politoed
+        method: [HeldItem, Trade]
+        item: KingsRock
+    held: { common: OranBerry, uncommon: KingsRock, rare: MysticWater }
+  Poliwrath:
+    types: [Water, Fighting]
+    egg-groups: [Water1]
+    habitat: Amphibious
+    biomes: [Swamp, Bog, Shrubland, Grassland, MontaneForest]
+    active: any
+    evolves-from: Poliwhirl
+    held: { common: OranBerry, uncommon: KingsRock, rare: MysticWater }
+  Politoed:
+    types: [Water]
+    egg-groups: [Water1]
+    habitat: Amphibious
+    biomes:
+      - Swamp
+      - TropicalSeasonalForest
+      - Grassland
+      - TemperateForest
+      - TemperateRainforest
+      - Woodland
+    active: any
+    evolves-from: Poliwhirl
+# What a Kadabra comes out of the evolution knowing, taken across
+# both halves of the generation: Red and Blue start it with
+# Teleport, Confusion and Disable, and Yellow drops the latter two
+# from the first level and starts it with Kinesis instead — the
+# spoon-bending it is named for, which nothing at all could learn
+# in Red and Blue. There is one Kadabra here rather than two, so it
+# knows what a Gen 1 Kadabra could know. Johto brings the rest
+# forward a few levels and adds the Future Sight
+Abra:
+  Abra:
+    types: [Psychic]
+    egg-groups: [HumanLike]
+    biomes: [Grassland]
+    active: [Day]
+    evolves-into:
+      - species: Kadabra
+        method: [Level]
+        level: 16
+    held: { common: OranBerry, uncommon: TwistedSpoon }
+  Kadabra:
+    types: [Psychic]
+    egg-groups: [HumanLike]
+    biomes: [Grassland]
+    active: [Day]
+    evolves-from: Abra
+    evolves-into:
+      - species: Alakazam
+        method: [Trade]
+    held: { common: OranBerry, uncommon: TwistedSpoon }
+  Alakazam:
+    types: [Psychic]
+    egg-groups: [HumanLike]
+    biomes: [Grassland]
+    active: [Day]
+    evolves-from: Kadabra
+    held: { common: OranBerry, uncommon: TwistedSpoon }
+Machop:
+  Machop:
+    types: [Fighting]
+    egg-groups: [HumanLike]
+    biomes: [Mountain, AlpineTundra]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Machoke
+        method: [Level]
+        level: 28
+    held: { common: OranBerry, uncommon: BlackBelt, rare: FocusBand }
+  Machoke:
+    types: [Fighting]
+    egg-groups: [HumanLike]
+    biomes: [Mountain, AlpineTundra]
+    active: [Morning, Day]
+    evolves-from: Machop
+    evolves-into:
+      - species: Machamp
+        method: [Trade]
+    held: { common: OranBerry, uncommon: BlackBelt, rare: FocusBand }
+  Machamp:
+    types: [Fighting]
+    egg-groups: [HumanLike]
+    biomes: [Mountain, AlpineTundra]
+    active: [Morning, Day]
+    evolves-from: Machoke
+    held: { common: OranBerry, uncommon: BlackBelt, rare: FocusBand }
+Bellsprout:
+  Bellsprout:
+    types: [Grass, Poison]
+    egg-groups: [Grass]
+    biomes: [TemperateForest, TropicalSeasonalForest, TemperateRainforest, Bog]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Weepinbell
+        method: [Level]
+        level: 21
+    held: { common: OranBerry, uncommon: MiracleSeed, rare: BigRoot }
+  Weepinbell:
+    types: [Grass, Poison]
+    egg-groups: [Grass]
+    biomes: [TemperateForest, TropicalSeasonalForest, TemperateRainforest, Bog]
+    active: [Morning, Day]
+    evolves-from: Bellsprout
+    evolves-into:
+      - species: Victreebel
+        method: [UsedItem]
+        item: LeafStone
+    held: { common: OranBerry, uncommon: MiracleSeed, rare: BigRoot }
+  Victreebel:
+    types: [Grass, Poison]
+    egg-groups: [Grass]
+    biomes: [TemperateForest, TropicalSeasonalForest, TemperateRainforest, Bog]
+    active: [Morning, Day]
+    evolves-from: Weepinbell
+    held: { common: OranBerry, uncommon: MiracleSeed, rare: BigRoot }
+Tentacool:
+  Tentacool:
+    types: [Water, Poison]
+    egg-groups: [Water3]
+    habitat: Water
+    biomes: [Ocean, DeepOcean, KelpForest, Beach, RockyCoast]
+    active: any
+    evolves-into:
+      - species: Tentacruel
+        method: [Level]
+        level: 30
+    held: { common: PechaBerry, uncommon: PoisonBarb, rare: MysticWater }
+  Tentacruel:
+    types: [Water, Poison]
+    egg-groups: [Water3]
+    habitat: Water
+    biomes: [Ocean, KelpForest, Beach, RockyCoast]
+    active: any
+    evolves-from: Tentacool
+    held: { common: PechaBerry, uncommon: PoisonBarb, rare: MysticWater }
+Geodude:
+  Geodude:
+    types: [Rock, Ground]
+    egg-groups: [Mineral]
+    biomes: [Mountain, ColdDesert, Volcano, Badlands]
+    active: any
+    evolves-into:
+      - species: Graveler
+        method: [Level]
+        level: 25
+    held: { common: TinyMushroom, uncommon: Everstone, rare: HardStone }
+  Graveler:
+    types: [Rock, Ground]
+    egg-groups: [Mineral]
+    biomes: [Mountain, ColdDesert, Volcano, Badlands]
+    active: any
+    evolves-from: Geodude
+    evolves-into:
+      - species: Golem
+        method: [Trade]
+    held: { common: TinyMushroom, uncommon: Everstone, rare: HardStone }
+  Golem:
+    types: [Rock, Ground]
+    egg-groups: [Mineral]
+    biomes: [Mountain, ColdDesert, Volcano]
+    active: any
+    evolves-from: Graveler
+    held: { common: TinyMushroom, uncommon: Everstone, rare: HardStone }
+  GeodudeAlola:
+    types: [Rock, Electric]
+    egg-groups: [Mineral]
+    biomes: [Steppe, Shrubland]
+    active: any
+    base-form: false
+    evolves-into:
+      - species: GravelerAlola
+        method: [Level]
+        level: 25
+  GravelerAlola:
+    types: [Rock, Electric]
+    egg-groups: [Mineral]
+    biomes: [Steppe, Shrubland]
+    active: any
+    base-form: false
+    evolves-from: GeodudeAlola
+    evolves-into:
+      - species: GolemAlola
+        method: [Trade]
+  GolemAlola:
+    types: [Rock, Electric]
+    egg-groups: [Mineral]
+    biomes: [Steppe, Shrubland]
+    active: any
+    base-form: false
+    evolves-from: GravelerAlola

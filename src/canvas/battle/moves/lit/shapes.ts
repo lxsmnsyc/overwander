@@ -96,6 +96,14 @@ export const JOLTS: Partial<Record<EffectShape, number>> = {
   Origin: 3,
   Lunar: 2,
   Steam: 2,
+  Behemoth: 3,
+  Singlestrike: 3,
+  Maxcannon: 2.5,
+  Thunderkick: 2,
+  Bulwark: 3.5,
+  Dynamax: 2.5,
+  Lance: 3,
+  Astral: 2,
 };
 
 /** Where the effect is happening: the first body it landed on. */

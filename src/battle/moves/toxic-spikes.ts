@@ -3,9 +3,10 @@ import { Types } from '../../data/constants/types';
 import { Moves } from '../../data/ids/moves';
 import { Statuses, TeamStatuses } from '../../data/ids/status';
 import type Battle from '../core';
-import { BattleEvents, EffectType, MoveTargetType } from '../events';
+import { BattleEvents, type EffectCause, EffectType, MoveTargetType } from '../events';
 import type Team from '../team';
 import type Unit from '../unit';
+import { registerSideCondition } from '../mechanics/side-conditions';
 import walksOverHazards from './hazards';
 
 /**
@@ -40,12 +41,33 @@ export function clearToxicSpikes(team: Team): boolean {
   return true;
 }
 
+/** Lay a side's caltrops at this many layers, none clearing them */
+export function setToxicSpikes(team: Team, layers: number, cause: EffectCause): void {
+  const kept = Math.max(0, Math.min(MAX_LAYERS, layers));
+
+  if (kept === 0) {
+    clearToxicSpikes(team);
+    return;
+  }
+  LAYERS.set(team, kept);
+  if (team.status[TeamStatuses.ToxicSpikes] == null) {
+    team.addStatus(TeamStatuses.ToxicSpikes, cause);
+  }
+}
+
 /** Whether the caltrops reach this unit at all: they lie on the floor */
 function walksOn(unit: Unit): boolean {
   return unit.checkGrounded() && !unit.types.has(Types.Flying);
 }
 
 export default function setupToxicSpikes(battle: Battle): void {
+  registerSideCondition(battle, {
+    read: (team) => toxicLayersUnder(team) || undefined,
+    write: (team, value, cause) => {
+      setToxicSpikes(team, value ?? 0, cause);
+    },
+  });
+
   battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
     if (
       event.usable &&

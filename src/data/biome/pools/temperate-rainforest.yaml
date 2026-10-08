@@ -1,0 +1,94 @@
+land:
+  morning: &land-morning
+    base:
+      Bellsprout: 1680
+      Poliwag: 1680
+      Lotad: 1680
+      Turtwig: 252
+    uncommon:
+      Wooper: 781
+      Surskit: 781
+      Marill: 625
+      Tangela: 313
+    rare:
+      Lombre: 568
+      Weepinbell: 284
+      Poliwhirl: 284
+      Grotle: 114
+    scarce:
+      Masquerain: 195
+      Tangrowth: 117
+      Leafeon: 117
+      Azumarill: 98
+      Quagsire: 98
+    elusive:
+      Victreebel: 92
+      Politoed: 92
+      Ludicolo: 92
+      Torterra: 37
+    prized:
+      Unown: forms
+      Azurill: prized
+    special: {}
+  day: *land-morning
+  evening: &land-evening
+    base: { Poliwag: 2995 }
+    uncommon:
+      Shroomish: 1034
+      Wooper: 1034
+      Venonat: 828
+      Marill: 828
+    rare: { Poliwhirl: 1862 }
+    scarce:
+      Venomoth: 259
+      Breloom: 259
+      Tangrowth: 155
+      Azumarill: 130
+      Quagsire: 130
+    elusive: { Politoed: 466 }
+    prized:
+      Unown: forms
+      Azurill: prized
+    special: {}
+  night: *land-evening
+
+water:
+  morning: &water-morning
+    base:
+      Poliwag: 2651
+      Lotad: 2651
+    uncommon:
+      Magikarp: 752
+      Wooper: 627
+      Surskit: 627
+      Marill: 501
+    rare:
+      Lombre: 835
+      Poliwhirl: 418
+    scarce:
+      Masquerain: 261
+      Azumarill: 130
+      Quagsire: 130
+      Gyarados: 104
+    elusive:
+      Politoed: 156
+      Ludicolo: 156
+    special: {}
+  day: *water-morning
+  evening: &water-evening
+    base:
+      Poliwag: 3000
+    uncommon:
+      Magikarp: 1493
+      Wooper: 1244
+      Marill: 996
+    rare:
+      Poliwhirl: 1867
+    scarce:
+      Azumarill: 333
+      Quagsire: 333
+      Gyarados: 267
+    elusive:
+      Politoed: 467
+    special: {}
+  night: *water-evening

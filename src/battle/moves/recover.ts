@@ -1,4 +1,5 @@
 import { AttackPriority } from '../../core/event-emitter';
+import { HEAL_FRACTION } from '../../data/battle';
 import { Stats } from '../../data/constants/stats';
 import { Moves } from '../../data/ids/moves';
 import { Statuses, Terrains, Weathers } from '../../data/ids/status';
@@ -9,35 +10,13 @@ import { BattleEvents, EffectType, type MoveTarget, MoveTargetType } from '../ev
 import { isWeatherSandstorm, isWeatherSunny } from '../utils';
 
 /**
- * Self-healing moves and the fraction of max health they restore
- */
-export const HEAL_FRACTION: { [key in Moves]?: number } = {
-  // https://bulbapedia.bulbagarden.net/wiki/Recover_(move)
-  [Moves.Recover]: 0.5,
-  // Chansey's own Recover, down to the fraction
-  // https://bulbapedia.bulbagarden.net/wiki/Soft-Boiled_(move)
-  [Moves.SoftBoiled]: 0.5,
-  // https://bulbapedia.bulbagarden.net/wiki/Milk_Drink_(move)
-  [Moves.MilkDrink]: 0.5,
-  // https://bulbapedia.bulbagarden.net/wiki/Slack_Off_(move)
-  [Moves.SlackOff]: 0.5,
-  // The one that pays for itself: see `status/roosting.ts` for what
-  // being on the ground costs
-  // https://bulbapedia.bulbagarden.net/wiki/Roost_(move)
-  [Moves.Roost]: 0.5,
-  [Moves.HealOrder]: 0.5,
-  // Cast at a teammate, which `healedUnit` below already reads
-  [Moves.HealPulse]: 0.5,
-  // Both read the field; see `healFraction`
-  [Moves.ShoreUp]: 0.5,
-  [Moves.FloralHealing]: 0.5,
-};
-
-/**
  * The heals that read the sky: full measure under a clear one, more
  * in the sun, and little enough under anything else that the weather
  * is worth changing first
  */
+/** Self-healing moves and the share of max HP they restore (`src/data/battle/heal.yaml`) */
+export { HEAL_FRACTION };
+
 export const WEATHER_HEALS = new Set<Moves>([Moves.MorningSun, Moves.Synthesis, Moves.Moonlight]);
 
 /**

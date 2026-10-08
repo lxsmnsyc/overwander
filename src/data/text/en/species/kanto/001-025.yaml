@@ -1,0 +1,41 @@
+Bulbasaur:
+  Bulbasaur: { name: Bulbasaur, category: Seed Pokemon }
+  Ivysaur: { name: Ivysaur, category: Seed Pokemon }
+  Venusaur: { name: Venusaur, category: Seed Pokemon }
+Charmander:
+  Charmander: { name: Charmander, category: Lizard Pokemon }
+  Charmeleon: { name: Charmeleon, category: Flame Pokemon }
+  Charizard: { name: Charizard, category: Flame Pokemon }
+Squirtle:
+  Squirtle: { name: Squirtle, category: Tiny Turtle Pokemon }
+  Wartortle: { name: Wartortle, category: Turtle Pokemon }
+  Blastoise: { name: Blastoise, category: Shellfish Pokemon }
+Caterpie:
+  Caterpie: { name: Caterpie, category: Worm Pokemon }
+  Metapod: { name: Metapod, category: Cocoon Pokemon }
+  Butterfree: { name: Butterfree, category: Butterfly Pokemon }
+Weedle:
+  Weedle: { name: Weedle, category: Hairy Bug Pokemon }
+  Kakuna: { name: Kakuna, category: Cocoon Pokemon }
+  Beedrill: { name: Beedrill, category: Poison Bee Pokemon }
+Pidgey:
+  Pidgey: { name: Pidgey, category: Tiny Bird Pokemon }
+  Pidgeotto: { name: Pidgeotto, category: Bird Pokemon }
+  Pidgeot: { name: Pidgeot, category: Bird Pokemon }
+Rattata:
+  Rattata: { name: Rattata, category: Mouse Pokemon }
+  Raticate: { name: Raticate, category: Mouse Pokemon }
+  RattataAlola: { name: Alolan Rattata, category: Mouse Pokemon }
+  RaticateAlola: { name: Alolan Raticate, category: Mouse Pokemon }
+Spearow:
+  Spearow: { name: Spearow, category: Tiny Bird Pokemon }
+  Fearow: { name: Fearow, category: Beak Pokemon }
+Ekans:
+  Ekans: { name: Ekans, category: Snake Pokemon }
+  Arbok: { name: Arbok, category: Cobra Pokemon }
+Pikachu:
+  Pikachu: { name: Pikachu, category: Mouse Pokemon }
+  Raichu: { name: Raichu, category: Mouse Pokemon }
+  Pichu: { name: Pichu, category: Tiny Mouse Pokemon }
+  PichuSpikyEared: { name: Spiky-eared Pichu, category: Tiny Mouse Pokemon }
+  RaichuAlola: { name: Alolan Raichu, category: Mouse Pokemon }

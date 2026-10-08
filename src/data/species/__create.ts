@@ -211,6 +211,44 @@ export interface SpeciesData {
    * Learn Set
    */
   learnSet: LearnSetData;
+  /**
+   * What a wild one is carrying when it is met, by slot. Left out for a
+   * species that carries nothing
+   */
+  heldItems?: WildHeldItems;
+  /**
+   * How many hatch cycles its egg takes, where it is not the default.
+   * Only the stage a line hatches at is asked
+   */
+  eggCycles?: number;
+  /**
+   * Which hand-kept class it is in, where the shape of its line cannot
+   * say: a legendary, a mythical, a baby, or one staged as rarely as a
+   * prized or a mythical find without being one
+   */
+  rank?: SpeciesRank;
+  /**
+   * What a later generation adds to its line that this game has not
+   * registered yet: a baby below it, or an evolution above. Each
+   * leaves the moment the missing stage is written down
+   */
+  awaiting?: 'baby' | 'evolution';
+}
+
+/**
+ * The hand-kept classes. `prized` and `mythical-odds` are rarity alone:
+ * no relic calls a `mythical-odds` species and no raid stages it
+ */
+export type SpeciesRank = 'legendary' | 'mythical' | 'baby' | 'prized' | 'mythical-odds';
+
+/** What a wild pokemon of a species may carry, by slot */
+export interface WildHeldItems {
+  /** Carried by half of them, and worth the least */
+  common?: Items;
+  /** One in twenty */
+  uncommon?: Items;
+  /** One in a hundred, and always the one worth having */
+  rare?: Items;
 }
 
 const SPECIES_MAP = new Map<Species, SpeciesData>();
@@ -285,6 +323,11 @@ export function getSpeciesByBiome(biome: Biome): Species[] {
     }
   }
   return biomeIndex.get(biome) ?? [];
+}
+
+/** The species' record, or undefined for one nothing registered (Missingno, an egg) */
+export function findSpeciesData(species: Species): SpeciesData | undefined {
+  return SPECIES_MAP.get(species);
 }
 
 export function getSpeciesData(species: Species): SpeciesData {

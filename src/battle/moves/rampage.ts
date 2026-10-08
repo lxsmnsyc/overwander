@@ -21,10 +21,16 @@ export const RAMPAGE_MOVES = new Set<Moves>([
   Moves.PetalDance,
   Moves.Outrage,
   Moves.Uproar,
+  Moves.RagingFury,
 ]);
 
 /** The ones that leave the user reeling when they finally stop */
-const FATIGUING_MOVES = new Set<Moves>([Moves.Thrash, Moves.PetalDance, Moves.Outrage]);
+const FATIGUING_MOVES = new Set<Moves>([
+  Moves.Thrash,
+  Moves.PetalDance,
+  Moves.Outrage,
+  Moves.RagingFury,
+]);
 
 export default function setupRampageMoves(battle: Battle): void {
   battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {

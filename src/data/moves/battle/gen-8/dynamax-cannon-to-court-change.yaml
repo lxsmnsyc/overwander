@@ -1,0 +1,104 @@
+# From Dynamax Cannon to Court Change: Sword and Shield's own. There is no
+# Dynamax here, so the Max Moves and Max Guard are left out and Dynamax
+# Cannon is the beam it is against anything else
+
+DynamaxCannon:
+  type: Dragon
+  category: Special
+  power: 100
+  accuracy: 100
+  pp: 5
+  target: Unit
+  projectile: true
+
+SnipeShot:
+  type: Water
+  category: Special
+  power: 80
+  accuracy: 100
+  pp: 15
+  target: Unit
+  projectile: true
+
+JawLock:
+  type: Dark
+  category: Physical
+  power: 80
+  accuracy: 100
+  pp: 10
+  target: Unit
+  flags: [Contact, Bite]
+
+StuffCheeks:
+  type: Normal
+  category: Status
+  pp: 10
+  target: None
+
+NoRetreat:
+  type: Fighting
+  category: Status
+  pp: 5
+  target: None
+
+TarShot:
+  type: Rock
+  category: Status
+  accuracy: 100
+  pp: 15
+  target: Unit
+
+MagicPowder:
+  type: Psychic
+  category: Status
+  accuracy: 100
+  pp: 20
+  target: Unit
+  flags: [Powder]
+
+DragonDarts:
+  type: Dragon
+  category: Physical
+  power: 50
+  accuracy: 100
+  pp: 10
+  target: Unit
+  projectile: true
+
+Teatime:
+  type: Normal
+  category: Status
+  pp: 10
+  target: None
+
+Octolock:
+  type: Fighting
+  category: Status
+  accuracy: 100
+  pp: 15
+  target: Unit
+
+BoltBeak:
+  type: Electric
+  category: Physical
+  power: 85
+  accuracy: 100
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+FishiousRend:
+  type: Water
+  category: Physical
+  power: 85
+  accuracy: 100
+  pp: 10
+  target: Unit
+  flags: [Contact, Bite]
+
+CourtChange:
+  type: Normal
+  category: Status
+  accuracy: 100
+  pp: 10
+  target: None

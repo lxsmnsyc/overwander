@@ -1,0 +1,249 @@
+Treecko:
+  Treecko:
+    types: [Grass]
+    egg-groups: [Monster, Dragon]
+    biomes: [TropicalRainforest, TropicalSeasonalForest]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Grovyle
+        method: [Level]
+        level: 16
+  Grovyle:
+    types: [Grass]
+    egg-groups: [Monster, Dragon]
+    biomes: [TropicalRainforest, TropicalSeasonalForest]
+    active: [Morning, Day]
+    evolves-from: Treecko
+    evolves-into:
+      - species: Sceptile
+        method: [Level]
+        level: 36
+  Sceptile:
+    types: [Grass]
+    egg-groups: [Monster, Dragon]
+    biomes: [TropicalRainforest, TropicalSeasonalForest]
+    active: [Morning, Day]
+    evolves-from: Grovyle
+# What the two above the base pick up: the machines and tutors that
+Torchic:
+  Torchic:
+    types: [Fire]
+    egg-groups: [Field]
+    biomes: [Savanna, Volcano]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Combusken
+        method: [Level]
+        level: 16
+  Combusken:
+    types: [Fire, Fighting]
+    egg-groups: [Field]
+    biomes: [Savanna, Volcano]
+    active: [Morning, Day]
+    evolves-from: Torchic
+    evolves-into:
+      - species: Blaziken
+        method: [Level]
+        level: 36
+  Blaziken:
+    types: [Fire, Fighting]
+    egg-groups: [Field]
+    biomes: [Savanna, Volcano]
+    active: [Morning, Day]
+    evolves-from: Combusken
+# What the two above the base pick up: the machines and tutors that
+Mudkip:
+  Mudkip:
+    types: [Water]
+    egg-groups: [Monster, Water1]
+    habitat: Amphibious
+    biomes: [Swamp, Bog, TropicalRainforest]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Marshtomp
+        method: [Level]
+        level: 16
+  Marshtomp:
+    types: [Water, Ground]
+    egg-groups: [Monster, Water1]
+    habitat: Amphibious
+    biomes: [Swamp, Bog, TropicalRainforest]
+    active: [Morning, Day]
+    evolves-from: Mudkip
+    evolves-into:
+      - species: Swampert
+        method: [Level]
+        level: 36
+  Swampert:
+    types: [Water, Ground]
+    egg-groups: [Monster, Water1]
+    habitat: Amphibious
+    biomes: [Swamp, Bog, TropicalRainforest]
+    active: [Morning, Day]
+    evolves-from: Marshtomp
+Poochyena:
+  Poochyena:
+    types: [Dark]
+    egg-groups: [Field]
+    biomes: [Savanna, Shrubland]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Mightyena
+        method: [Level]
+        level: 18
+  Mightyena:
+    types: [Dark]
+    egg-groups: [Field]
+    biomes: [Savanna, Shrubland]
+    active: [Evening, Night]
+    evolves-from: Poochyena
+Zigzagoon:
+  Zigzagoon:
+    types: [Normal]
+    egg-groups: [Field]
+    biomes: [Grassland, Woodland]
+    active: any
+    evolves-into:
+      - species: Linoone
+        method: [Level]
+        level: 20
+  Linoone:
+    types: [Normal]
+    egg-groups: [Field]
+    biomes: [Grassland, Woodland]
+    active: any
+    evolves-from: Zigzagoon
+Wurmple:
+  Wurmple:
+    types: [Bug]
+    egg-groups: [Bug]
+    active: any
+    # The mainline reads a hidden number nobody is shown; here the
+    # split follows what it was born as, which the catch sheet says
+    evolves-into:
+      - species: Silcoon
+        method: [Level, Gender]
+        level: 7
+        gender: Male
+      - species: Cascoon
+        method: [Level, Gender]
+        level: 7
+        gender: Female
+  Silcoon:
+    types: [Bug]
+    egg-groups: [Bug]
+    active: [Morning, Day]
+    evolves-from: Wurmple
+    evolves-into:
+      - species: Beautifly
+        method: [Level]
+        level: 10
+  Beautifly:
+    types: [Bug, Flying]
+    egg-groups: [Bug]
+    biomes: [Woodland, TemperateForest]
+    active: [Morning, Day]
+    evolves-from: Silcoon
+  Cascoon:
+    types: [Bug]
+    egg-groups: [Bug]
+    active: [Evening, Night]
+    evolves-from: Wurmple
+    evolves-into:
+      - species: Dustox
+        method: [Level]
+        level: 10
+  Dustox:
+    types: [Bug, Poison]
+    egg-groups: [Bug]
+    biomes: [Woodland, TemperateForest]
+    active: [Evening, Night]
+    evolves-from: Cascoon
+# What the two above the base pick up: a lily pad has no arms to
+Lotad:
+  Lotad:
+    types: [Water, Grass]
+    egg-groups: [Water1, Grass]
+    habitat: Amphibious
+    biomes:
+      - Bog
+      - Mangrove
+      - TropicalRainforest
+      - TropicalSeasonalForest
+      - TemperateRainforest
+    active: [Morning, Day]
+    evolves-into:
+      - species: Lombre
+        method: [Level]
+        level: 14
+  Lombre:
+    types: [Water, Grass]
+    egg-groups: [Water1, Grass]
+    habitat: Amphibious
+    biomes:
+      - Bog
+      - Mangrove
+      - TropicalRainforest
+      - TropicalSeasonalForest
+      - TemperateRainforest
+    active: [Morning, Day]
+    evolves-from: Lotad
+    evolves-into:
+      - species: Ludicolo
+        method: [UsedItem]
+        item: WaterStone
+  Ludicolo:
+    types: [Water, Grass]
+    egg-groups: [Water1, Grass]
+    habitat: Amphibious
+    biomes:
+      - Bog
+      - Mangrove
+      - TropicalRainforest
+      - TropicalSeasonalForest
+      - TemperateRainforest
+    active: [Morning, Day]
+    evolves-from: Lombre
+# What the two above the base pick up: an acorn hanging in a tree
+Seedot:
+  Seedot:
+    types: [Grass]
+    egg-groups: [Field, Grass]
+    biomes: [Woodland, Shrubland]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Nuzleaf
+        method: [Level]
+        level: 14
+  Nuzleaf:
+    types: [Grass, Dark]
+    egg-groups: [Field, Grass]
+    biomes: [Woodland, Shrubland]
+    active: [Evening, Night]
+    evolves-from: Seedot
+    evolves-into:
+      - species: Shiftry
+        method: [UsedItem]
+        item: LeafStone
+  Shiftry:
+    types: [Grass, Dark]
+    egg-groups: [Field, Grass]
+    biomes: [Woodland, Shrubland]
+    active: [Evening, Night]
+    evolves-from: Nuzleaf
+Taillow:
+  Taillow:
+    types: [Normal, Flying]
+    egg-groups: [Flying]
+    biomes: [Grassland, Savanna]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Swellow
+        method: [Level]
+        level: 22
+  Swellow:
+    types: [Normal, Flying]
+    egg-groups: [Flying]
+    biomes: [Grassland, Savanna]
+    active: [Morning, Day]
+    evolves-from: Taillow

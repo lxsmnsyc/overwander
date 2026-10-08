@@ -1,34 +1,4 @@
-import registerAlpineTundraSpawns from './alpine-tundra';
-import registerBadlandsSpawns from './badlands';
-import registerBeachSpawns from './beach';
-import registerBogSpawns from './bog';
-import registerCaveSpawns from './cave';
-import registerColdDesertSpawns from './cold-desert';
-import registerCoralReefSpawns from './coral-reef';
-import registerDeepOceanSpawns from './deep-ocean';
-import registerDesertSpawns from './desert';
-import registerGlacierSpawns from './glacier';
-import registerGrasslandSpawns from './grassland';
-import registerKelpForestSpawns from './kelp-forest';
-import registerMangroveSpawns from './mangrove';
-import registerMontaneForestSpawns from './montane-forest';
-import registerMountainSpawns from './mountain';
-import registerOceanSpawns from './ocean';
-import registerPolarOceanSpawns from './polar-ocean';
-import registerRockyCoastSpawns from './rocky-coast';
-import registerSavannaSpawns from './savanna';
-import registerShrublandSpawns from './shrubland';
-import registerSteppeSpawns from './steppe';
-import registerSwampSpawns from './swamp';
-import registerTaigaSpawns from './taiga';
-import registerTemperateForestSpawns from './temperate-forest';
-import registerTemperateRainforestSpawns from './temperate-rainforest';
-import registerTropicalRainforestSpawns from './tropical-rainforest';
-import registerTropicalSeasonalForestSpawns from './tropical-seasonal-forest';
-import registerTownSpawns from './town';
-import registerTundraSpawns from './tundra';
-import registerVolcanoSpawns from './volcano';
-import registerWoodlandSpawns from './woodland';
+import registerPools from './yaml';
 
 export {
   boostFamilyEntries,
@@ -62,13 +32,13 @@ export {
   MYTHICAL_SPAWN_ODDS,
   PRIZED_SPAWN_ODDS,
   PRIZED_WEIGHT,
-  RARE_SPAWN_ODDS,
   registerCavePool,
   registerIcePool,
   registerSpawnPool,
   registerTownPool,
   registerWaterPool,
   spawnBand,
+  spawnOdds,
   spawnRanks,
   SPAWN_BAND_KEYS,
   SPECIAL_SPAWN_ODDS,
@@ -78,37 +48,6 @@ export type { SpawnEntry, SpawnPool, SpawnRarityGroups, SpeciesHabitat } from '.
 export { BIOME_COLORS, BIOME_NAMES, SPAWN_RARITY_NAMES, TIME_OF_DAY_NAMES } from './names';
 
 export default function registerBiomeSpawns(): void {
-  registerAlpineTundraSpawns();
-  registerBadlandsSpawns();
-  registerBeachSpawns();
-  registerBogSpawns();
-  // Not a biome: the one pool the whole of underground draws from
-  registerCaveSpawns();
-  // Nor this: the one pool every town's streets draw from
-  registerTownSpawns();
-  registerColdDesertSpawns();
-  registerCoralReefSpawns();
-  registerDeepOceanSpawns();
-  registerDesertSpawns();
-  registerGlacierSpawns();
-  registerGrasslandSpawns();
-  registerKelpForestSpawns();
-  registerMangroveSpawns();
-  registerMontaneForestSpawns();
-  registerMountainSpawns();
-  registerOceanSpawns();
-  registerPolarOceanSpawns();
-  registerRockyCoastSpawns();
-  registerSavannaSpawns();
-  registerShrublandSpawns();
-  registerSteppeSpawns();
-  registerSwampSpawns();
-  registerTaigaSpawns();
-  registerTemperateForestSpawns();
-  registerTemperateRainforestSpawns();
-  registerTropicalRainforestSpawns();
-  registerTropicalSeasonalForestSpawns();
-  registerTundraSpawns();
-  registerVolcanoSpawns();
-  registerWoodlandSpawns();
+  // Written as YAML, a file per biome plus the cave's and the towns' (see ./yaml.ts)
+  registerPools(import.meta.glob('./pools/*.yaml', { eager: true, import: 'default' }));
 }

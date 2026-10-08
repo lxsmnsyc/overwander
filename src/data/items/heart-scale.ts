@@ -1,5 +1,4 @@
-import { ItemFlags, ItemTypes, Items } from '../ids/items';
-import { registerItem } from './__create';
+import { Items } from '../ids/items';
 
 /**
  * The Heart Scale: what the Move Reminder is paid in.
@@ -17,19 +16,7 @@ import { registerItem } from './__create';
  * bought.
  */
 
+// Named, as the other families' checks are
 export function isHeartScale(item: Items): boolean {
   return item === Items.HeartScale;
-}
-
-export default function registerHeartScale(): void {
-  registerItem(Items.HeartScale, {
-    name: 'Heart Scale',
-    description:
-      'Paid to the move reminder or the move tutor for a move, or to the Channeler for an ability.',
-    type: ItemTypes.Valuable,
-    icon: 'other/heart-scale',
-    flags: ItemFlags.Consumable,
-    buy: 0,
-    sell: 0,
-  });
 }

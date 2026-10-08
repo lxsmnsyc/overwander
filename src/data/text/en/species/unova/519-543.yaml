@@ -1,0 +1,39 @@
+Pidove:
+  Pidove: { name: Pidove, category: Tiny Pigeon Pokemon }
+  Tranquill: { name: Tranquill, category: Wild Pigeon Pokemon }
+  Unfezant: { name: Unfezant, category: Proud Pokemon }
+Blitzle:
+  Blitzle: { name: Blitzle, category: Electrified Pokemon }
+  Zebstrika: { name: Zebstrika, category: Thunderbolt Pokemon }
+Roggenrola:
+  Roggenrola: { name: Roggenrola, category: Mantle Pokemon }
+  Boldore: { name: Boldore, category: Ore Pokemon }
+  Gigalith: { name: Gigalith, category: Compressed Pokemon }
+Woobat:
+  Woobat: { name: Woobat, category: Bat Pokemon }
+  Swoobat: { name: Swoobat, category: Courting Pokemon }
+Drilbur:
+  Drilbur: { name: Drilbur, category: Mole Pokemon }
+  Excadrill: { name: Excadrill, category: Subterrene Pokemon }
+Audino:
+  Audino: { name: Audino, category: Hearing Pokemon }
+Timburr:
+  Timburr: { name: Timburr, category: Muscular Pokemon }
+  Gurdurr: { name: Gurdurr, category: Muscular Pokemon }
+  Conkeldurr: { name: Conkeldurr, category: Muscular Pokemon }
+Tympole:
+  Tympole: { name: Tympole, category: Tadpole Pokemon }
+  Palpitoad: { name: Palpitoad, category: Vibration Pokemon }
+  Seismitoad: { name: Seismitoad, category: Vibration Pokemon }
+Throh:
+  Throh: { name: Throh, category: Judo Pokemon }
+Sawk:
+  Sawk: { name: Sawk, category: Karate Pokemon }
+Sewaddle:
+  Sewaddle: { name: Sewaddle, category: Sewing Pokemon }
+  Swadloon: { name: Swadloon, category: Leaf-Wrapped Pokemon }
+  Leavanny: { name: Leavanny, category: Nurturing Pokemon }
+Venipede:
+  Venipede: { name: Venipede, category: Centipede Pokemon }
+  Whirlipede: { name: Whirlipede, category: Curlipede Pokemon }
+  Scolipede: { name: Scolipede, category: Megapede Pokemon }

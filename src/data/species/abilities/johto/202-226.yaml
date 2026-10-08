@@ -1,0 +1,133 @@
+Wobbuffet:
+  Wobbuffet:
+    abilities: [ShadowTag]
+    # Unaware and Magic Bounce are this registry's rather than the
+    # mainline's, filling it to four: it gives back what it is given
+    # and counts none of what was built up against it
+    hidden: [Telepathy, Unaware, MagicBounce]
+  Wynaut:
+    abilities: [ShadowTag]
+    hidden: [Telepathy]
+Girafarig:
+  Girafarig:
+    abilities: [InnerFocus, EarlyBird]
+    hidden: [SapSipper]
+Pineco:
+  Pineco:
+    abilities: [Sturdy]
+    hidden: [Overcoat]
+  Forretress:
+    abilities: [Sturdy]
+    # Aftermath and Filter are this registry's rather than the
+    # mainline's, filling a final evolution to four: it goes off when
+    # it goes down, and the shell blunts what the shell is weak to
+    hidden: [Overcoat, Aftermath, Filter]
+Dunsparce:
+  Dunsparce:
+    abilities: [SereneGrace, RunAway]
+    hidden: [Rattled]
+Gligar:
+  Gligar:
+    abilities: [HyperCutter, SandVeil]
+    hidden: [Immunity]
+  Gliscor:
+    abilities: [HyperCutter, SandVeil]
+    hidden: [PoisonHeal]
+Snubbull:
+  Snubbull:
+    abilities: [Intimidate, RunAway]
+    hidden: [Rattled]
+  Granbull:
+    abilities: [Intimidate, QuickFeet]
+    hidden: [Rattled]
+Qwilfish:
+  Qwilfish:
+    abilities: [PoisonPoint, SwiftSwim]
+    # Rough Skin is this registry's rather than the mainline's,
+    # filling it to four: the spines are the whole animal, and
+    # whatever grabs it finds them
+    hidden: [Intimidate, RoughSkin]
+Shuckle:
+  Shuckle:
+    abilities: [Sturdy, Gluttony]
+    # Harvest is this registry's rather than the mainline's, filling
+    # it to four: the berries it hoards in its shell come back, which
+    # is what the shell is for
+    hidden: [Contrary, Harvest]
+Heracross:
+  Heracross:
+    abilities: [Swarm, Guts]
+    # Sap Sipper is this registry's rather than the mainline's,
+    # filling it to four: tree sap is what it spends the night
+    # fighting over
+    hidden: [Moxie, SapSipper]
+Sneasel:
+  Sneasel:
+    abilities: [InnerFocus, KeenEye]
+    hidden: [Pickpocket]
+  Weavile:
+    abilities: [Pressure]
+    hidden: [Pickpocket]
+Teddiursa:
+  Teddiursa:
+    abilities: [Pickup, QuickFeet]
+    hidden: [HoneyGather]
+  Ursaring:
+    abilities: [Guts, QuickFeet]
+    # Nothing invented here: Teddiursa's Pickup and Honey Gather walk
+    # up to meet its own three, and Ursaluna lands above it later
+    hidden: [Unnerve]
+Slugma:
+  Slugma:
+    abilities: [MagmaArmor, FlameBody]
+    hidden: [WeakArmor]
+  Magcargo:
+    abilities: [MagmaArmor, FlameBody]
+    # Solid Rock is this registry's rather than the mainline's,
+    # filling a final evolution to four: the crust it cools into is
+    # what the water and the ground have to get through
+    hidden: [WeakArmor, SolidRock]
+Swinub:
+  Swinub:
+    abilities: [Oblivious, SnowCloak]
+    hidden: [ThickFat]
+  Piloswine:
+    abilities: [Oblivious, SnowCloak]
+    # Nothing invented here: Piloswine gains Mamoswine in a later
+    # generation, so it is not a final evolution to fill
+    hidden: [ThickFat]
+  Mamoswine:
+    abilities: [Oblivious, SnowCloak]
+    # Slush Rush is this registry's rather than the mainline's: the
+    # line reaches three abilities and needs four, and 80 Speed is
+    # what holds 130 Attack back
+    hidden: [ThickFat, SlushRush]
+Corsola:
+  Corsola:
+    abilities: [Hustle, NaturalCure]
+    # Storm Drain is this registry's rather than the mainline's,
+    # filling it to four: a reef is what the current runs into
+    hidden: [Regenerator, StormDrain]
+Remoraid:
+  Remoraid:
+    abilities: [Hustle, Sniper]
+    hidden: [Moody]
+  Octillery:
+    abilities: [SuctionCups, Sniper]
+    hidden: [Moody]
+Delibird:
+  Delibird:
+    abilities: [VitalSpirit, Hustle]
+    # Gale Wings is this registry's rather than the mainline's,
+    # filling it to four: a delivery is only worth anything if it
+    # gets there first
+    hidden: [Insomnia, GaleWings]
+Mantine:
+  Mantine:
+    abilities: [SwiftSwim, WaterAbsorb]
+    # Hydration is this registry's rather than the mainline's,
+    # filling it to four: rain is the water it already lives in
+    hidden: [WaterVeil, Hydration]
+  Mantyke:
+    abilities: [SwiftSwim, WaterAbsorb]
+    hidden: [WaterVeil]

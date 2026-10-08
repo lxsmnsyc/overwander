@@ -1,3 +1,8 @@
+import * as v from 'valibot';
+import VendorKind from '../ids/vendor-kinds';
+import { VENDOR_KIND_IDS } from '../ids/names';
+import stallsFile from '../text/en/vendor-stalls.yaml';
+import { idOf } from '../yaml';
 import { BALL_ITEMS, ItemFlags, Items, getMachineItem } from '../ids/items';
 import { getItemData } from '../items';
 import { BATTLE_ITEMS } from '../items/battle-items';
@@ -32,31 +37,7 @@ import { PP_ITEMS, VITAMIN_STATS } from '../items/vitamins';
  * from him and sold back at a profit.
  */
 
-/**
- * The counters a vendor may be standing behind. Which one he set up
- * is the window's roll, like the coat he turned up in
- */
-export const enum VendorKind {
-  Medicine = 0,
-  Vitamins = 1,
-  Incenses = 2,
-  BattleItems = 3,
-  /**
-   * Split off the medicine counter, which carried thirty kinds where
-   * the others carry eight or nine. Six drawn out of thirty showed a
-   * fifth of the shelf, so a player after a Dusk Ball and a player
-   * after a Revive were both told to come back later
-   */
-  Balls = 4,
-  /**
-   * The machines, which nothing else sells: a gym hands one over, and
-   * until now that was the whole of how a player came by them. His
-   * crate is twice everybody else's, since the shelf holds one machine
-   * per teachable move in the game and six off a shelf that long is
-   * too thin a slice to plan a walk around
-   */
-  Moves = 5,
-}
+export { VendorKind };
 
 export const VENDOR_KINDS: VendorKind[] = [
   VendorKind.Balls,
@@ -69,16 +50,16 @@ export const VENDOR_KINDS: VendorKind[] = [
 
 /**
  * What each counter is called on the board. It is the stall's name
- * from across the chunk, so it says the shelf rather than the trade
+ * from across the chunk, so it says the shelf rather than the trade.
+ * The words are `text/en/vendor-stalls.yaml`
  */
-export const VENDOR_KIND_NAMES: Record<VendorKind, string> = {
-  [VendorKind.Balls]: 'Ball Stall',
-  [VendorKind.Medicine]: 'Medicine Stall',
-  [VendorKind.Vitamins]: 'Vitamin Stall',
-  [VendorKind.Incenses]: 'Incense Stall',
-  [VendorKind.BattleItems]: 'Battle Item Stall',
-  [VendorKind.Moves]: 'Machine Stall',
-};
+export const VENDOR_KIND_NAMES: Record<number, string> = {};
+
+for (const [name, title] of Object.entries(v.parse(v.record(v.string(), v.string()), stallsFile))) {
+  VENDOR_KIND_NAMES[
+    idOf<VendorKind>(VENDOR_KIND_IDS, name, `text/en/vendor-stalls.yaml: ${name}`)
+  ] = title;
+}
 
 /**
  * How many kinds one crate holds. Six was too thin a slice of any

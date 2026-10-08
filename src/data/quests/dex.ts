@@ -1,7 +1,7 @@
-import Awards from '../ids/awards';
+import type Awards from '../ids/awards';
 import { Items } from '../ids/items';
-import Regions from '../ids/regions';
-import { REGIONS, REGION_NAMES } from '../species/regions';
+import type Regions from '../ids/regions';
+import { REGIONS, REGION_DEXES, REGION_NAMES } from '../species/regions';
 import {
   type ChainData,
   type Chains,
@@ -11,6 +11,8 @@ import {
   RequirementKind,
 } from './types';
 
+export { REGION_DEXES, type RegionDex } from '../species/regions';
+
 /**
  * The dex chain, one per region.
  *
@@ -18,38 +20,12 @@ import {
  * it is generated rather than written out: a region declares how many
  * caught each rung asks for and which medal the last one hangs on the
  * shelf, and its chain, its quests and their ids all follow. Adding a
- * region is adding a row here, not three quests, a chain and a name
- * apiece.
+ * region is adding `milestones` and a `medal` to its row in
+ * `species/regions.yaml`, not three quests, a chain and a name apiece.
  *
  * Only regions with an entry get a chain. Nothing is invented for a
  * region whose species are not written yet
  */
-
-export interface RegionDex {
-  /** How many of the region's own each rung asks the dex to hold */
-  milestones: number[];
-  /** What the last rung hangs on the shelf */
-  medal: Awards;
-}
-
-export const REGION_DEXES: Partial<Record<Regions, RegionDex>> = {
-  // 151 to find. A sixth of them, half of them, and all but Mew, who
-  // is nobody's to walk into
-  [Regions.Kanto]: { milestones: [25, 75, 150], medal: Awards.KantoDexMedal },
-  // 100 more, and the same shape: a fifth, half, and all but Celebi
-  [Regions.Johto]: { milestones: [20, 50, 99], medal: Awards.JohtoDexMedal },
-  // 135 more, and the same shape again: a fifth, half, and all but
-  // the two mythicals, since a relic is not something a walk turns up
-  [Regions.Hoenn]: { milestones: [27, 68, 133], medal: Awards.HoennDexMedal },
-  // 107 more, and the same shape once more: a fifth, half, and all but
-  // the four a relic calls, which is Darkrai, Manaphy, Shaymin and
-  // Arceus
-  [Regions.Sinnoh]: { milestones: [21, 54, 103], medal: Awards.SinnohDexMedal },
-  // 156 more, the widest yet, and the same shape: a fifth, half, and
-  // all but the four a relic calls, which is Victini, Keldeo,
-  // Meloetta and Genesect
-  [Regions.Unova]: { milestones: [31, 78, 152], medal: Awards.UnovaDexMedal },
-};
 
 /**
  * Where the generated ids live: high above the written quests and the

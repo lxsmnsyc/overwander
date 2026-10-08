@@ -1,0 +1,27 @@
+# The share of its max HP a healing move restores
+
+# https://bulbapedia.bulbagarden.net/wiki/Recover_(move)
+Recover: 0.5
+
+# Chansey's own Recover, down to the fraction
+# https://bulbapedia.bulbagarden.net/wiki/Soft-Boiled_(move)
+SoftBoiled: 0.5
+
+# https://bulbapedia.bulbagarden.net/wiki/Milk_Drink_(move)
+MilkDrink: 0.5
+
+# https://bulbapedia.bulbagarden.net/wiki/Slack_Off_(move)
+SlackOff: 0.5
+
+# The one that pays for itself: see `status/roosting.ts` for what
+# being on the ground costs
+# https://bulbapedia.bulbagarden.net/wiki/Roost_(move)
+Roost: 0.5
+HealOrder: 0.5
+
+# Cast at a teammate, which `healedUnit` below already reads
+HealPulse: 0.5
+
+# Both read the field; see `healFraction`
+ShoreUp: 0.5
+FloralHealing: 0.5

@@ -1,0 +1,19 @@
+# The Soothe Bell: a pokemon that carries it warms to its trainer
+# twice as fast.
+
+# Friendship is gained by levelling, by walking and by being fed a
+# berry, and a Luxury Ball already doubles all three for the pokemon
+# caught in one. The bell is the same bargain made after the catch,
+# for a pokemon caught in anything: it is what a player reaches for
+# when the evolution they want asks for a friendship they did not
+# start building at the ball.
+
+# The two stack, which is the point of carrying one on a pokemon that
+# was already comfortable. The gains themselves are worked out in
+# `src/data/constants/friendship.ts`
+
+SootheBell:
+  type: Held
+  icon: other/soothe-bell
+  flags: [Holdable]
+  sell: 1000

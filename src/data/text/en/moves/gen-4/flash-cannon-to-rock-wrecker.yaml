@@ -1,0 +1,30 @@
+FlashCannon:
+  name: Flash Cannon
+  description: 10% to drop the target's Special Defense 1 stage.
+RockClimb:
+  name: Rock Climb
+  description: 20% to confuse.
+Defog:
+  name: Defog
+  description: Clears Spikes, Toxic Spikes and Stealth Rock from both sides, and Reflect, Light Screen, Mist, Safeguard and Lucky Chant from the target's. Drops its Evasion 1 stage.
+TrickRoom:
+  name: Trick Room
+  description: For 10 seconds every wind-up on the field is read the other way round. Casting it again ends it.
+DracoMeteor:
+  name: Draco Meteor
+  description: Drops the user's Special Attack 2 stages after it lands.
+Discharge:
+  name: Discharge
+  description: 30% to paralyse.
+LavaPlume:
+  name: Lava Plume
+  description: 30% to burn.
+LeafStorm:
+  name: Leaf Storm
+  description: Drops the user's Special Attack 2 stages after it lands.
+PowerWhip:
+  name: Power Whip
+  description: Plain contact damage.
+RockWrecker:
+  name: Rock Wrecker
+  description: The user must recharge for 2 seconds after it lands.

@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Items: text",
+  "type": "object",
+  "properties": {
+    "templates": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "Sentences the family's code fills in, with `{placeholders}`"
+    }
+  },
+  "propertyNames": {
+    "anyOf": [
+      {
+        "$ref": "names.json#/definitions/item"
+      },
+      {
+        "const": "templates"
+      }
+    ]
+  },
+  "additionalProperties": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "description": {
+        "type": "string",
+        "description": "One player-facing line, ending in a full stop. Left out where the family's code writes it from a template"
+      }
+    },
+    "required": [
+      "name"
+    ],
+    "additionalProperties": false
+  }
+}

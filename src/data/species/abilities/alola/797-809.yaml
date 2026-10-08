@@ -1,0 +1,73 @@
+Celesteela:
+  Celesteela:
+    abilities: [BeastBoost]
+    # Beast Boost is all the mainline gives it, so these are this registry's
+    hidden: [HeavyMetal, Sturdy, WeakArmor]
+Kartana:
+  Kartana:
+    abilities: [BeastBoost]
+    # Beast Boost is all the mainline gives it, so these are this registry's
+    hidden: [Sharpness, SuperLuck, Sniper]
+Guzzlord:
+  Guzzlord:
+    abilities: [BeastBoost]
+    # Beast Boost is all the mainline gives it, so these are this registry's
+    hidden: [Gluttony, ThickFat, Ripen]
+Necrozma:
+  Necrozma:
+    abilities: [PrismArmor]
+    # Prism Armor is all the mainline gives it, so the other three are
+    # this registry's
+    hidden: [TintedLens, MirrorArmor, Levitate]
+  NecrozmaDuskMane:
+    abilities: [PrismArmor]
+    hidden: [TintedLens, MirrorArmor, Levitate]
+  NecrozmaDawnWings:
+    abilities: [PrismArmor]
+    hidden: [TintedLens, MirrorArmor, Levitate]
+  NecrozmaUltra:
+    abilities: [PrismArmor]
+    hidden: [TintedLens, MirrorArmor, Levitate]
+Magearna:
+  Magearna:
+    abilities: [SoulHeart]
+    # Soul-Heart is all the mainline gives it, so these are this registry's
+    hidden: [Download, Analytic, ClearBody]
+  MagearnaOriginal:
+    abilities: [SoulHeart]
+    # Soul-Heart is all the mainline gives it, so these are this registry's
+    hidden: [Download, Analytic, ClearBody]
+Marshadow:
+  Marshadow:
+    abilities: [Technician]
+    # The mainline's one, and these are this registry's
+    hidden: [Infiltrator, Pickpocket, CursedBody]
+Poipole:
+  Poipole:
+    abilities: [BeastBoost]
+  Naganadel:
+    abilities: [BeastBoost]
+    # Beast Boost is all the mainline gives it, so these are this registry's
+    hidden: [Corrosion, PoisonPoint, Infiltrator]
+Stakataka:
+  Stakataka:
+    abilities: [BeastBoost]
+    # Beast Boost is all the mainline gives it, so these are this registry's
+    hidden: [Sturdy, SolidRock, Stamina]
+Blacephalon:
+  Blacephalon:
+    abilities: [BeastBoost]
+    # Beast Boost is all the mainline gives it, so these are this registry's
+    hidden: [MagicGuard, Aftermath, FlashFire]
+Zeraora:
+  Zeraora:
+    abilities: [VoltAbsorb]
+    # The mainline's one, and these are this registry's
+    hidden: [IronFist, SpeedBoost, LightningRod]
+Meltan:
+  Meltan:
+    abilities: [MagnetPull]
+  Melmetal:
+    abilities: [IronFist]
+    # Magnet Pull comes up from Meltan, so two of this registry's make four
+    hidden: [HeavyMetal, Steelworker]

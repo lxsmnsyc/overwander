@@ -1,0 +1,24 @@
+GastroAcid:
+  name: Gastro Acid
+  description: Shuts off 1 of the target's abilities, picked at random, for the rest of the fight.
+LuckyChant:
+  name: Lucky Chant
+  description: Nothing lands a critical on the user's team for 10 seconds.
+MeFirst:
+  name: Me First
+  description: Cuts off the move the target is casting and fires it back at 1.5x power.
+Copycat:
+  name: Copycat
+  description: Casts whatever move was used last, by anybody.
+PowerSwap:
+  name: Power Swap
+  description: Trades the user's Attack and Special Attack stages for the target's.
+GuardSwap:
+  name: Guard Swap
+  description: Trades the user's Defense and Special Defense stages for the target's.
+Punishment:
+  name: Punishment
+  description: The more stages the target has raised, the harder it hits, up to 200 power.
+LastResort:
+  name: Last Resort
+  description: Only usable once every other move the user knows has been cast this fight.

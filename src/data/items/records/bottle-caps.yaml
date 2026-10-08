@@ -1,0 +1,9 @@
+GoldenBottleCap:
+  type: Training
+  icon: other/gold-bottle-cap
+  flags: [Consumable, Usable]
+
+BottleCap:
+  type: Training
+  icon: other/bottle-cap
+  flags: [Consumable, Usable]

@@ -10,20 +10,30 @@ import { BattleEvents, EffectType } from '../events';
  * the mark is what says which. What the swap does to a stat is in
  * `status/power-tricked.ts`
  * https://bulbapedia.bulbagarden.net/wiki/Power_Trick_(move)
+ *
+ * Power Shift is the same trick across both pairs: Special Attack and
+ * Special Defense change places too
  */
+const TRICKS = new Map<Moves, Statuses>([
+  [Moves.PowerTrick, Statuses.PowerTricked],
+  [Moves.PowerShift, Statuses.PowerShifted],
+]);
+
 export default function setupPowerTrick(battle: Battle): void {
   battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
-    if (event.move !== Moves.PowerTrick) {
+    const status = TRICKS.get(event.move);
+
+    if (status == null) {
       return;
     }
 
     const cause = { type: EffectType.Move, move: event.move, unit: event.source } as const;
-    const tricked = event.source.status[Statuses.PowerTricked];
+    const tricked = event.source.status[status];
 
     if (tricked == null) {
-      event.source.addStatus(Statuses.PowerTricked, cause);
+      event.source.addStatus(status, cause);
     } else {
-      event.source.removeStatus(Statuses.PowerTricked, tricked);
+      event.source.removeStatus(status, tricked);
     }
   });
 }

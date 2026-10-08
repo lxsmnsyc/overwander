@@ -1,0 +1,367 @@
+# The rest of Kanto, Geodude to Mew: the heavy ground, the punches
+# and what the last few keep to themselves
+
+RockThrow:
+  type: Rock
+  category: Physical
+  power: 50
+  accuracy: 90
+  pp: 15
+  target: Unit
+  projectile: true
+
+SelfDestruct:
+  type: Normal
+  category: Physical
+  power: 200
+  accuracy: 100
+  pp: 5
+  target: None
+  affects: [Self, Unit, Own, Enemy]
+
+Explosion:
+  type: Normal
+  category: Physical
+  power: 250
+  accuracy: 100
+  pp: 5
+  target: None
+  affects: [Self, Unit, Own, Enemy]
+
+Stomp:
+  type: Normal
+  category: Physical
+  power: 65
+  accuracy: 100
+  pp: 20
+  target: Unit
+  flags: [Contact]
+
+Headbutt:
+  type: Normal
+  category: Physical
+  power: 70
+  accuracy: 100
+  pp: 15
+  target: Unit
+  flags: [Contact]
+
+SonicBoom:
+  type: Normal
+  category: Special
+  accuracy: 90
+  pp: 20
+  target: Unit
+  projectile: true
+
+TriAttack:
+  type: Normal
+  category: Special
+  power: 80
+  accuracy: 100
+  pp: 10
+  target: Unit
+  projectile: true
+
+AuroraBeam:
+  type: Ice
+  category: Special
+  power: 65
+  accuracy: 100
+  pp: 20
+  target: Unit
+
+PoisonGas:
+  type: Poison
+  category: Status
+  accuracy: 90
+  pp: 40
+  target: Unit
+
+Sludge:
+  type: Poison
+  category: Special
+  power: 65
+  accuracy: 100
+  pp: 20
+  target: Unit
+  projectile: true
+
+Clamp:
+  type: Water
+  category: Physical
+  power: 35
+  accuracy: 85
+  pp: 15
+  target: Unit
+  flags: [Contact]
+
+SpikeCannon:
+  type: Normal
+  category: Physical
+  power: 20
+  accuracy: 100
+  pp: 15
+  target: Unit
+  projectile: true
+
+Lick:
+  type: Ghost
+  category: Physical
+  power: 30
+  accuracy: 100
+  pp: 30
+  target: Unit
+  flags: [Contact]
+
+NightShade:
+  type: Ghost
+  category: Special
+  accuracy: 100
+  pp: 15
+  target: Unit
+
+DreamEater:
+  type: Psychic
+  category: Special
+  power: 100
+  accuracy: 100
+  pp: 15
+  target: Unit
+
+Bind:
+  type: Normal
+  category: Physical
+  power: 15
+  accuracy: 85
+  pp: 20
+  target: Unit
+  flags: [Contact]
+
+Meditate:
+  type: Psychic
+  category: Status
+  pp: 40
+  target: None
+
+ViceGrip:
+  type: Normal
+  category: Physical
+  power: 55
+  accuracy: 100
+  pp: 30
+  target: Unit
+  flags: [Contact]
+
+Guillotine:
+  type: Normal
+  category: Physical
+  accuracy: 30
+  pp: 5
+  target: Unit
+  flags: [Contact]
+
+Crabhammer:
+  type: Water
+  category: Physical
+  power: 100
+  accuracy: 90
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+Barrage:
+  type: Normal
+  category: Physical
+  power: 15
+  accuracy: 85
+  pp: 20
+  target: Unit
+  projectile: true
+
+EggBomb:
+  type: Normal
+  category: Physical
+  power: 100
+  accuracy: 75
+  pp: 10
+  target: Unit
+  projectile: true
+
+BoneClub:
+  type: Ground
+  category: Physical
+  power: 65
+  accuracy: 85
+  pp: 20
+  target: Unit
+
+Bonemerang:
+  type: Ground
+  category: Physical
+  power: 50
+  accuracy: 90
+  pp: 10
+  target: Unit
+  projectile: true
+
+CometPunch:
+  type: Normal
+  category: Physical
+  power: 18
+  accuracy: 85
+  pp: 15
+  target: Unit
+  flags: [Contact]
+
+FirePunch:
+  type: Fire
+  category: Physical
+  power: 75
+  accuracy: 100
+  pp: 15
+  target: Unit
+  flags: [Contact]
+
+IcePunch:
+  type: Ice
+  category: Physical
+  power: 75
+  accuracy: 100
+  pp: 15
+  target: Unit
+  flags: [Contact]
+
+ThunderPunch:
+  type: Electric
+  category: Physical
+  power: 75
+  accuracy: 100
+  pp: 15
+  target: Unit
+  flags: [Contact]
+
+RollingKick:
+  type: Fighting
+  category: Physical
+  power: 60
+  accuracy: 85
+  pp: 15
+  target: Unit
+  flags: [Contact]
+
+JumpKick:
+  type: Fighting
+  category: Physical
+  power: 100
+  accuracy: 95
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+HiJumpKick:
+  type: Fighting
+  category: Physical
+  power: 130
+  accuracy: 90
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+Smog:
+  type: Poison
+  category: Special
+  power: 30
+  accuracy: 70
+  pp: 20
+  target: Unit
+
+SmokeScreen:
+  type: Normal
+  category: Status
+  accuracy: 100
+  pp: 20
+  target: Unit
+  affects: [Unit, Own, Enemy]
+
+DizzyPunch:
+  type: Normal
+  category: Physical
+  power: 70
+  accuracy: 100
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+Waterfall:
+  type: Water
+  category: Physical
+  power: 80
+  accuracy: 100
+  pp: 15
+  target: Unit
+  flags: [Contact]
+
+LovelyKiss:
+  type: Normal
+  category: Status
+  accuracy: 75
+  pp: 10
+  target: Unit
+
+# Famously does nothing at all
+Splash:
+  type: Normal
+  category: Status
+  pp: 40
+  target: None
+
+Mist:
+  type: Ice
+  category: Status
+  pp: 30
+  target: Team
+  affects: [Team, Own]
+
+Transform:
+  type: Normal
+  category: Status
+  pp: 10
+  target: Unit
+  affects: [Unit, Own, Enemy]
+
+AcidArmor:
+  type: Poison
+  category: Status
+  pp: 20
+  target: None
+
+Sharpen:
+  type: Normal
+  category: Status
+  pp: 30
+  target: None
+
+# https://bulbapedia.bulbagarden.net/wiki/Conversion_(move)
+Conversion:
+  type: Normal
+  category: Status
+  pp: 30
+  target: None
+
+# https://bulbapedia.bulbagarden.net/wiki/Kinesis_(move)
+Kinesis:
+  type: Psychic
+  category: Status
+  accuracy: 80
+  pp: 15
+  target: Unit
+  affects: [Unit, Own, Enemy]
+
+# https://bulbapedia.bulbagarden.net/wiki/Soft-Boiled_(move)
+SoftBoiled:
+  type: Normal
+  category: Status
+  pp: 10
+  target: Unit
+  affects: [Unit, Self, Own]

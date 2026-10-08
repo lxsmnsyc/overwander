@@ -1,0 +1,144 @@
+# The trade items: what the mainline hands a pokemon before passing it to
+# somebody else, and what this game will ask for alongside a trade.
+#
+# Most of them are held, not used. The mainline reads them at the moment of
+# the trade, which has nowhere to live in a game where an evolution is
+# something a player asks for from the catch sheet; what this game has
+# instead is a catch that remembers having changed hands. So a Kingdra is a
+# Seadra that has been traded and is holding a Dragon Scale, and both
+# halves are conditions the record can answer for itself. That is why they
+# carry Holdable rather than Usable: the evolution asks what the pokemon is
+# holding, and a pokemon can only be handed a holdable item.
+#
+# Metal Coat is deliberately absent: it is already registered as the Steel
+# type booster it also is, so the evolution reads the same id the battle
+# does rather than a second copy of it.
+
+# Three that are not trade items at all. A Razor Claw, a Razor Fang and an
+# Oval Stone are held through a level: that is how a Sneasel becomes a
+# Weavile at night, a Gligar a Gliscor, and a Happiny a Chansey in
+# daylight. None is handed over before a trade, so none is Usable, and the
+# evolution spends it. They keep their pictures with the evolution items
+# because that is where the sheet packs them. Each description leads with
+# the fight where there is one, the way every other held item's does.
+#
+# On the shelf for the same reason the stocked trade items are: a line that
+# asks for a held item is shut without one.
+RazorClaw:
+  type: Held
+  icon: evolutions/razor-claw
+  flags: [Holdable, Marketable]
+  buy: 3000
+  sell: 1500
+
+RazorFang:
+  type: Held
+  icon: evolutions/razor-fang
+  flags: [Holdable, Marketable]
+  buy: 3000
+  sell: 1500
+
+OvalStone:
+  type: Held
+  icon: evolutions/oval-stone
+  flags: [Holdable, Marketable]
+  buy: 3000
+  sell: 1500
+
+# Not handed to a pokemon before a trade, but used instead of one. Priced
+# and listed like an evolution stone, because that is what it is used as.
+LinkingCord:
+  type: Evolution
+  icon: evolutions/linking-cord
+  flags: [Usable, Marketable]
+  buy: 3000
+  sell: 1500
+
+# Held through a trade and worn off a wild pokemon of the line that wants
+# it. None is priced: the market does not stock what a pokemon is carrying
+# about. The ones no line asks for yet carry no price and no listing for the
+# same reason the latent stones do not.
+KingsRock:
+  type: Evolution
+  icon: evolutions/kings-rock
+  flags: [Holdable]
+
+DragonScale:
+  type: Evolution
+  icon: evolutions/dragon-scale
+  flags: [Holdable]
+
+UpGrade:
+  type: Evolution
+  icon: evolutions/up-grade
+  flags: [Holdable]
+
+Sachet:
+  type: Evolution
+  icon: evolutions/sachet
+  flags: [Holdable]
+
+WhippedDream:
+  type: Evolution
+  icon: evolutions/whipped-dream
+  flags: [Holdable]
+
+# Stocked, since what they gate is a choice a player can actually make.
+# Held like every other trade item, and on the shelf besides: the evolution
+# reads what the pokemon is holding, so an item that could be bought and
+# never handed over would gate the line shut.
+DeepSeaTooth:
+  type: Evolution
+  icon: evolutions/deep-sea-tooth
+  flags: [Holdable, Marketable]
+  buy: 3000
+  sell: 1500
+
+DeepSeaScale:
+  type: Evolution
+  icon: evolutions/deep-sea-scale
+  flags: [Holdable, Marketable]
+  buy: 3000
+  sell: 1500
+
+PrismScale:
+  type: Evolution
+  icon: evolutions/prism-scale
+  flags: [Holdable, Marketable]
+  buy: 3000
+  sell: 1500
+
+Protector:
+  type: Evolution
+  icon: evolutions/protector
+  flags: [Holdable, Marketable]
+  buy: 3000
+  sell: 1500
+
+Electirizer:
+  type: Evolution
+  icon: evolutions/electirizer
+  flags: [Holdable, Marketable]
+  buy: 3000
+  sell: 1500
+
+Magmarizer:
+  type: Evolution
+  icon: evolutions/magmarizer
+  flags: [Holdable, Marketable]
+  buy: 3000
+  sell: 1500
+
+ReaperCloth:
+  type: Evolution
+  icon: evolutions/reaper-cloth
+  flags: [Holdable, Marketable]
+  buy: 3000
+  sell: 1500
+
+DubiousDisc:
+  type: Evolution
+  icon: evolutions/dubious-disc
+  flags: [Holdable, Marketable]
+  buy: 3000
+  sell: 1500

@@ -1,0 +1,287 @@
+land:
+  morning:
+    base:
+      Scatterbug: 2332
+    uncommon:
+      Seel: 2901
+      Wingull: 605
+      Exeggcute: 428
+      Krabby: 323
+      Wimpod: 318
+      Sandygast: 279
+    rare:
+      Spewpa: 1451
+    scarce:
+      Vaporeon: 241
+      Dewgong: 139
+      Pelipper: 139
+      Kingler: 102
+      Palossand: 61
+      Golisopod: 60
+      ExeggutorAlola: 43
+    elusive:
+      Vivillon: 130
+      Dhelmise: 130
+      Pyukumuku: 114
+      OricorioPau: 79
+      Dragonite: 60
+      Blastoise: 52
+    prized:
+      Unown: forms
+    special:
+      Nihilego: 10
+      Latias: 10
+      Latios: 10
+      Lugia: 10
+      Rayquaza: 10
+      Registeel: 10
+  day:
+    base:
+      Scatterbug: 2339
+    uncommon:
+      Seel: 2909
+      Wingull: 606
+      Exeggcute: 429
+      Krabby: 324
+      Wimpod: 319
+      Sandygast: 261
+    rare:
+      Spewpa: 1454
+    scarce:
+      Vaporeon: 243
+      Dewgong: 139
+      Pelipper: 139
+      Kingler: 102
+      Golisopod: 60
+      Palossand: 53
+      ExeggutorAlola: 43
+    elusive:
+      Vivillon: 131
+      Dhelmise: 131
+      Pyukumuku: 114
+      OricorioPau: 79
+      Dragonite: 60
+      Blastoise: 52
+    prized:
+      Unown: forms
+    special:
+      Nihilego: 10
+      Latias: 10
+      Latios: 10
+      Lugia: 10
+      Rayquaza: 10
+      Registeel: 10
+  evening:
+    base: {}
+    uncommon:
+      Wimpod: 1878
+      Seel: 1871
+      Krabby: 1707
+      Sandygast: 1378
+      Salandit: 729
+      Noibat: 414
+      Exeggcute: 396
+    rare: {}
+    scarce:
+      Vaporeon: 260
+      Dewgong: 162
+      Kingler: 162
+      Salazzle: 120
+      Golisopod: 98
+      Palossand: 69
+      ExeggutorAlola: 69
+      Noivern: 60
+    elusive:
+      Dhelmise: 278
+      Pyukumuku: 216
+      Dragonite: 60
+    prized:
+      Unown: forms
+    special:
+      Nihilego: 10
+      Latias: 10
+      Latios: 10
+      Lugia: 10
+      Cresselia: 10
+      Rayquaza: 10
+      Registeel: 10
+  night:
+    base: {}
+    uncommon:
+      Wimpod: 1887
+      Seel: 1880
+      Krabby: 1716
+      Sandygast: 1384
+      Salandit: 605
+      Exeggcute: 472
+      Noibat: 417
+    rare: {}
+    scarce:
+      Vaporeon: 261
+      Dewgong: 162
+      Kingler: 162
+      Salazzle: 120
+      Golisopod: 98
+      Palossand: 71
+      ExeggutorAlola: 71
+      Noivern: 60
+    elusive:
+      Dhelmise: 279
+      Pyukumuku: 219
+      Dragonite: 60
+    prized:
+      Unown: forms
+    special:
+      Nihilego: 10
+      Latias: 10
+      Latios: 10
+      Lugia: 10
+      Cresselia: 10
+      Rayquaza: 10
+      Registeel: 10
+    mythical:
+      Darkrai: 10
+
+water:
+  morning: &water-morning
+    base:
+      Horsea: 4806
+      Dratini: 481
+    uncommon:
+      Tentacool: 290
+      Magikarp: 290
+      Clauncher: 232
+      Frillish: 193
+      Carvanha: 193
+      Clamperl: 193
+      Seel: 193
+      Shellder: 193
+      Chinchou: 193
+      Remoraid: 193
+      Finneon: 193
+      Wailmer: 145
+    rare:
+      Seadra: 1136
+      Dragonair: 114
+    scarce:
+      Tentacruel: 68
+      Dewgong: 68
+      Cloyster: 68
+      Gyarados: 68
+      Lanturn: 68
+      Octillery: 68
+      Clawitzer: 41
+      Sharpedo: 41
+      Lumineon: 41
+      Jellicent: 34
+      Vaporeon: 34
+      Wailord: 27
+    elusive:
+      Corsola: 82
+      Qwilfish: 62
+      Alomomola: 29
+      Wishiwashi: 21
+      Lapras: 21
+      Mantine: 21
+      Kingdra: 21
+      Relicanth: 21
+      Vivillon: 21
+      Blastoise: 8
+      Dragonite: 8
+    prized:
+      Mantyke: prized
+    special:
+      Nihilego: 10
+  day: *water-morning
+  evening:
+    base:
+      Horsea: 4807
+      Dratini: 481
+    uncommon:
+      Tentacool: 319
+      Magikarp: 319
+      Frillish: 213
+      Carvanha: 213
+      Clamperl: 213
+      Seel: 213
+      Shellder: 213
+      Chinchou: 213
+      Remoraid: 213
+      Finneon: 213
+      Wailmer: 160
+    rare:
+      Seadra: 1136
+      Dragonair: 114
+    scarce:
+      Tentacruel: 73
+      Dewgong: 73
+      Cloyster: 73
+      Gyarados: 73
+      Lanturn: 73
+      Octillery: 73
+      Sharpedo: 44
+      Lumineon: 44
+      Jellicent: 36
+      Vaporeon: 36
+      Wailord: 29
+    elusive:
+      Corsola: 98
+      Qwilfish: 73
+      Alomomola: 34
+      Wishiwashi: 24
+      Lapras: 24
+      Mantine: 24
+      Kingdra: 24
+      Dragonite: 10
+    prized:
+      Mantyke: prized
+    special:
+      Nihilego: 10
+  night:
+    base:
+      Horsea: 4807
+      Dratini: 481
+    uncommon:
+      Tentacool: 319
+      Magikarp: 319
+      Frillish: 213
+      Carvanha: 213
+      Clamperl: 213
+      Seel: 213
+      Shellder: 213
+      Chinchou: 213
+      Remoraid: 213
+      Finneon: 213
+      Wailmer: 160
+    rare:
+      Seadra: 1136
+      Dragonair: 114
+    scarce:
+      Tentacruel: 73
+      Dewgong: 73
+      Cloyster: 73
+      Gyarados: 73
+      Lanturn: 73
+      Octillery: 73
+      Sharpedo: 44
+      Lumineon: 44
+      Jellicent: 36
+      Vaporeon: 36
+      Wailord: 29
+    elusive:
+      Corsola: 98
+      Qwilfish: 73
+      Alomomola: 34
+      Wishiwashi: 24
+      Lapras: 24
+      Mantine: 24
+      Kingdra: 24
+      Dragonite: 10
+    prized:
+      Mantyke: prized
+    special:
+      Nihilego: 10
+    mythical: {}
+
+# The legendaries met wild in the caves under it
+cave-legends: { Lugia: 10, Registeel: 10 }

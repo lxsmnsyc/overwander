@@ -1,0 +1,107 @@
+Victini:
+  Victini:
+    abilities: [VictoryStar]
+    # Flash Fire, Inner Focus and Magic Guard are this registry's
+    # rather than the mainline's: a thing made of fire and will is
+    # not put out, put off, or worn down from the side
+    hidden: [FlashFire, InnerFocus, MagicGuard]
+Snivy:
+  Snivy:
+    abilities: [Overgrow]
+    hidden: [Contrary]
+  Servine:
+    abilities: [Overgrow]
+    hidden: [Contrary]
+  Serperior:
+    abilities: [Overgrow]
+    # Infiltrator and Unnerve are this registry's rather than the
+    # mainline's: what a court cannot hide behind, it does not hide behind
+    hidden: [Contrary, Infiltrator, Unnerve]
+Tepig:
+  Tepig:
+    abilities: [Blaze]
+    hidden: [ThickFat]
+  Pignite:
+    abilities: [Blaze]
+    hidden: [ThickFat]
+  Emboar:
+    abilities: [Blaze]
+    # Iron Fist is this registry's rather than the mainline's: the fists
+    # are what it evolved into having, and both its punches are tutored
+    hidden: [Reckless, IronFist]
+Oshawott:
+  Oshawott:
+    abilities: [Torrent]
+    hidden: [ShellArmor]
+  Dewott:
+    abilities: [Torrent]
+    hidden: [ShellArmor]
+  Samurott:
+    abilities: [Torrent]
+    # Swift Swim and Sniper are this registry's rather than the
+    # mainline's: rain is what its 70 Speed is waiting for, and the
+    # seamitars are drawn to cut at one place
+    hidden: [ShellArmor, SwiftSwim, Sniper]
+Patrat:
+  Patrat:
+    abilities: [RunAway, KeenEye]
+    hidden: [Analytic]
+  Watchog:
+    abilities: [Illuminate, KeenEye]
+    hidden: [Analytic, RunAway]
+Lillipup:
+  Lillipup:
+    abilities: [VitalSpirit, Pickup]
+    hidden: [RunAway]
+  Herdier:
+    abilities: [Intimidate, SandRush]
+    hidden: [Scrappy, VitalSpirit, Pickup, RunAway]
+  Stoutland:
+    abilities: [Intimidate, SandRush]
+    hidden: [Scrappy, VitalSpirit, Pickup, RunAway]
+Purrloin:
+  Purrloin:
+    abilities: [Limber, Unburden]
+    hidden: [Prankster]
+  Liepard:
+    abilities: [Limber, Unburden]
+    hidden: [Prankster, Technician]
+Pansage:
+  Pansage:
+    abilities: [Gluttony]
+    hidden: [Overgrow]
+  Simisage:
+    abilities: [Gluttony]
+    # The line reaches only two, so both of the last slots are
+    # invented: Sap Sipper is the monkey drinking its own element, the
+    # way its brothers do, and Harvest answers what Gluttony spends
+    hidden: [Overgrow, SapSipper, Harvest]
+Pansear:
+  Pansear:
+    abilities: [Gluttony]
+    hidden: [Blaze]
+  Simisear:
+    abilities: [Gluttony]
+    # The line reaches only two, so both of the last slots are
+    # invented: Flash Fire is the monkey drinking its own element, and
+    # Moxie is what 98 Attack at 101 Speed is built to do
+    hidden: [Blaze, FlashFire, Moxie]
+Panpour:
+  Panpour:
+    abilities: [Gluttony]
+    hidden: [Torrent]
+  Simipour:
+    abilities: [Gluttony]
+    # The line reaches only two, so both of the last slots are
+    # invented: Water Absorb is the monkey drinking its own element,
+    # and Analytic is a geyser waiting for the moment to go off
+    hidden: [Torrent, WaterAbsorb, Analytic]
+Munna:
+  Munna:
+    abilities: [Forewarn, Synchronize]
+    hidden: [Telepathy]
+  Musharna:
+    abilities: [Forewarn, Synchronize]
+    # Comatose is the invented fourth: the line reaches three, and a
+    # pokemon that never wakes is what a Musharna is
+    hidden: [Telepathy, Comatose]

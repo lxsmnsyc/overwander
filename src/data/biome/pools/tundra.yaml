@@ -1,0 +1,165 @@
+land:
+  morning: &land-morning
+    base:
+      Swinub: 1085
+      Spheal: 1085
+      FlabebeWhite: 1041
+      Scatterbug: 1041
+      Vanillite: 1041
+    uncommon:
+      VulpixAlola: 437
+      SandshrewAlola: 437
+      Snorunt: 437
+      Snover: 397
+      Cubchoo: 397
+      Seel: 397
+    rare:
+      Piloswine: 284
+      Vanillish: 284
+      FloetteWhite: 227
+      Spewpa: 227
+      Sealeo: 227
+    scarce:
+      Dewgong: 120
+      NinetalesAlola: 72
+      SandslashAlola: 72
+      Beartic: 72
+      Abomasnow: 72
+      Glaceon: 72
+      Glalie: 72
+      Froslass: 72
+    elusive:
+      Stoutland: 52
+      FlorgesWhite: 43
+      Vivillon: 43
+      Vanilluxe: 43
+      Delibird: 43
+      Mamoswine: 43
+      Walrein: 43
+    prized:
+      Unown: forms
+    special:
+      Yveltal: 10
+      Reshiram: 10
+      Zekrom: 10
+      Kyurem: 10
+      Uxie: 10
+      Regigigas: 10
+      Regice: 10
+  day: *land-morning
+  evening: &land-evening
+    base:
+      Swinub: 2646
+      Spheal: 2646
+    uncommon:
+      VulpixAlola: 495
+      SandshrewAlola: 495
+      Snorunt: 495
+      Snover: 450
+      Seel: 450
+      Sneasel: 113
+    rare:
+      Sealeo: 769
+      Piloswine: 481
+    scarce:
+      Dewgong: 120
+      NinetalesAlola: 72
+      SandslashAlola: 72
+      Abomasnow: 72
+      Weavile: 72
+      Glaceon: 72
+      Glalie: 72
+      Froslass: 72
+    elusive:
+      Jynx: 78
+      Delibird: 78
+      Mamoswine: 78
+      Walrein: 78
+    prized:
+      Unown: forms
+      Smoochum: prized
+    special:
+      Yveltal: 10
+      Reshiram: 10
+      Zekrom: 10
+      Kyurem: 10
+      Uxie: 10
+      Regigigas: 10
+      Regice: 10
+  night: *land-evening
+
+ice:
+  morning: &ice-morning
+    base:
+      Spheal: 1087
+      Swinub: 1087
+      Vanillite: 1043
+      FlabebeWhite: 1043
+      Scatterbug: 1043
+    uncommon:
+      Snorunt: 438
+      VulpixAlola: 438
+      SandshrewAlola: 438
+      Cubchoo: 398
+      Seel: 398
+      Snover: 398
+    rare:
+      Vanillish: 285
+      Piloswine: 285
+      Sealeo: 228
+      FloetteWhite: 228
+      Spewpa: 228
+    scarce:
+      Dewgong: 120
+      Beartic: 72
+      Glalie: 72
+      Froslass: 72
+      Glaceon: 72
+      NinetalesAlola: 72
+      SandslashAlola: 72
+      Abomasnow: 72
+    elusive:
+      Stoutland: 52
+      Vanilluxe: 43
+      Walrein: 43
+      Mamoswine: 43
+      FlorgesWhite: 43
+      Vivillon: 43
+      Delibird: 43
+    special:
+      Uxie: 10
+  day: *ice-morning
+  evening: &ice-evening
+    base:
+      Spheal: 2651
+      Swinub: 2651
+    uncommon:
+      Snorunt: 496
+      VulpixAlola: 496
+      SandshrewAlola: 496
+      Seel: 451
+      Snover: 451
+      Sneasel: 113
+    rare:
+      Sealeo: 771
+      Piloswine: 482
+    scarce:
+      Dewgong: 120
+      Glalie: 72
+      Froslass: 72
+      Glaceon: 72
+      NinetalesAlola: 72
+      SandslashAlola: 72
+      Abomasnow: 72
+      Weavile: 72
+    elusive:
+      Walrein: 78
+      Mamoswine: 78
+      Jynx: 78
+      Delibird: 78
+    special:
+      Uxie: 10
+  night: *ice-evening
+
+# The legendaries met wild in the caves under it
+cave-legends: { Regigigas: 10, Regice: 10, Kyurem: 10 }

@@ -102,6 +102,7 @@ export const STATUS_COLORS: Record<Statuses, string> = {
   [Statuses.AquaRinged]: '#6bb8d6',
   [Statuses.Telekinetic]: '#d68ad6',
   [Statuses.SkyDropped]: '#8ab4e0',
+  [Statuses.PowerShifted]: '#d69a5a',
 };
 
 /**

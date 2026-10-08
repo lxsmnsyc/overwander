@@ -14,6 +14,7 @@ import zElements from './z-elements';
 import zPartners from './z-partners';
 import zLegends from './z-legends';
 import alola from './alola';
+import galar from './galar';
 
 export { JOLTS, reachOf } from './shapes';
 
@@ -33,4 +34,5 @@ export const LIT: Partial<Record<EffectShape, LitShapePainter>> = {
   ...zPartners,
   ...zLegends,
   ...alola,
+  ...galar,
 };

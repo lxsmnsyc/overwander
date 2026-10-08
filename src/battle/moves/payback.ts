@@ -23,6 +23,9 @@ const PAID_BACK = 2;
 /** The two that wait on the target, so the check below is one lookup */
 const WAITING = new Set<Moves>([Moves.Payback, Moves.Assurance]);
 
+/** The two that want the target not to have begun yet */
+const FIRST_STRIKES = new Set<Moves>([Moves.BoltBeak, Moves.FishiousRend]);
+
 export default function setupPayback(battle: Battle): void {
   /** How long is left of each unit's window, in milliseconds */
   const cast = new Map<Unit, number>();
@@ -70,6 +73,22 @@ export default function setupPayback(battle: Battle): void {
     const window = event.move === Moves.Payback ? cast : hurt;
 
     if (WAITING.has(event.move) && window.has(event.target.unit)) {
+      event.power *= PAID_BACK;
+    }
+  });
+
+  /**
+   * Bolt Beak and Fishious Rend read the cast window the other way
+   * round: they hit hardest when they catch the target before it has
+   * begun anything, which is "moving first" in a fight with no turns
+   */
+  battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
+    if (
+      event.power != null &&
+      FIRST_STRIKES.has(event.move) &&
+      event.target.type === MoveTargetType.Unit &&
+      !cast.has(event.target.unit)
+    ) {
       event.power *= PAID_BACK;
     }
   });

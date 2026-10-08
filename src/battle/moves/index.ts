@@ -78,6 +78,8 @@ import setupPollenPuff from './pollen-puff';
 import setupWindUpTraps from './wind-up-traps';
 import setupStompingTantrum from './stomping-tantrum';
 import setupSpectralThief from './spectral-thief';
+import setupHazardMoves from './court-change';
+import setupGalarMoves from './galar';
 import setupMindBlown from './mind-blown';
 import setupPiercingMoves from './piercing-moves';
 import setupInstruct from './instruct';
@@ -222,6 +224,8 @@ export default function setupMoves(battle: Battle): void {
   setupWindUpTraps(battle);
   setupStompingTantrum(battle);
   setupSpectralThief(battle);
+  setupHazardMoves(battle);
+  setupGalarMoves(battle);
   setupMindBlown(battle);
   setupPiercingMoves(battle);
   setupInstruct(battle);

@@ -1,0 +1,114 @@
+Cottonee:
+  Cottonee:
+    abilities: [Prankster, Infiltrator]
+    hidden: [Chlorophyll]
+  Whimsicott:
+    abilities: [Prankster, Infiltrator]
+    # Magic Bounce is the invented fourth: the line reaches three, and
+    # a trickster that hands a status back is what it already plays at
+    hidden: [Chlorophyll, MagicBounce]
+Petilil:
+  Petilil:
+    abilities: [Chlorophyll, OwnTempo]
+    hidden: [LeafGuard]
+  Lilligant:
+    abilities: [Chlorophyll, OwnTempo]
+    # Serene Grace is the invented fourth: the line reaches three, and
+    # what it throws is powder and petals, all of it added effect
+    hidden: [LeafGuard, SereneGrace]
+Basculin:
+  Basculin:
+    abilities: [Reckless, Adaptability]
+    # Swift Swim is the invented fourth, and both stripes take it: the
+    # line reaches three either way, and what they do is run a river
+    hidden: [MoldBreaker, SwiftSwim]
+  BasculinBlue:
+    # The blue school takes the landing rather than the throw, which
+    # is the whole difference between them
+    abilities: [RockHead, Adaptability]
+    hidden: [MoldBreaker, SwiftSwim]
+Sandile:
+  Sandile:
+    abilities: [Intimidate, Moxie]
+    hidden: [AngerPoint]
+  Krokorok:
+    abilities: [Intimidate, Moxie]
+    hidden: [AngerPoint]
+  Krookodile:
+    abilities: [Intimidate, Moxie]
+    # Rough Skin is the invented fourth: the line reaches three, and
+    # a crocodile is not a thing anybody wants to take hold of
+    hidden: [AngerPoint, RoughSkin]
+Darumaka:
+  Darumaka:
+    abilities: [Hustle]
+    hidden: [InnerFocus]
+  Darmanitan:
+    abilities: [SheerForce]
+    hidden: [ZenMode]
+  DarmanitanZen:
+    abilities: [SheerForce]
+    hidden: [ZenMode]
+Maractus:
+  Maractus:
+    abilities: [WaterAbsorb, Chlorophyll]
+    # Rattled is the invented fourth: the line reaches three, and what
+    # it does with its arms is rattle them at whatever creeps up
+    hidden: [StormDrain, Rattled]
+Dwebble:
+  Dwebble:
+    abilities: [Sturdy, ShellArmor]
+    hidden: [WeakArmor]
+  Crustle:
+    abilities: [Sturdy, ShellArmor]
+    # Solid Rock is the invented fourth: the line reaches three, and
+    # the slab on its back is what the worst of a hit lands on
+    hidden: [WeakArmor, SolidRock]
+Scraggy:
+  Scraggy:
+    abilities: [ShedSkin, Moxie]
+    hidden: [Intimidate]
+  Scrafty:
+    abilities: [ShedSkin, Moxie]
+    # Guts is the invented fourth: the line reaches three, and a thug
+    # that fights better hurt is what it already looks like
+    hidden: [Intimidate, Guts]
+Sigilyph:
+  Sigilyph:
+    abilities: [WonderSkin, MagicGuard]
+    # Compound Eyes is the invented fourth: the line reaches three, and
+    # the whole thing is eyes, beside the Tinted Lens it already has
+    hidden: [TintedLens, CompoundEyes]
+Yamask:
+  Yamask:
+    abilities: [Mummy]
+    hidden: []
+  Cofagrigus:
+    abilities: [Mummy]
+    # The line reaches only Mummy, so three of the four are invented:
+    # a coffin takes the weapon off whoever opens it, wears out anybody
+    # who keeps trying, and takes the robber down with it
+    hidden: [CursedBody, Pressure, PerishBody]
+Tirtouga:
+  Tirtouga:
+    abilities: [SolidRock, Sturdy]
+    hidden: [SwiftSwim]
+  Carracosta:
+    abilities: [SolidRock, Sturdy]
+    hidden: [SwiftSwim, BattleArmor]
+Archen:
+  Archen:
+    abilities: [Defeatist]
+    hidden: []
+  Archeops:
+    abilities: [Defeatist]
+    hidden: [RockHead, SheerForce, BigPecks]
+Trubbish:
+  Trubbish:
+    abilities: [Stench, StickyHold]
+    hidden: [Aftermath]
+  Garbodor:
+    # Sticky Hold walks up from Trubbish, so the line reaches four
+    # without an invention
+    abilities: [Stench, WeakArmor]
+    hidden: [Aftermath]

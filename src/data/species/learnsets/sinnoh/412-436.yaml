@@ -1,0 +1,1154 @@
+Burmy:
+  # TM, HM and tutor moves shared by the whole family
+
+  # And what all three cloaks carry on top of it
+  family-teachable: [BugBite, Snore, StringShot]
+  Burmy:
+    level:
+      1: [Protect]
+      10: [Tackle]
+      15: [BugBite]
+      20: [HiddenPower]
+  BurmySandy:
+    level:
+      1: [Protect]
+      10: [Tackle]
+      15: [BugBite]
+      20: [HiddenPower]
+  BurmyTrash:
+    level:
+      1: [Protect]
+      10: [Tackle]
+      15: [BugBite]
+      20: [HiddenPower]
+  Wormadam:
+    level:
+      1: [Tackle]
+      10: [Protect]
+      15: [BugBite]
+      20: [HiddenPower]
+      23: [Confusion]
+      26: [RazorLeaf]
+      29: [Growth]
+      32: [Psybeam]
+      35: [Captivate]
+      38: [Flail]
+      41: [Attract]
+      44: [Psychic]
+      47: [LeafStorm]
+    teachable:
+      - Attract
+      - Captivate
+      - DoubleTeam
+      - DreamEater
+      - Endeavor
+      - Endure
+      - Facade
+      - Flash
+      - Frustration
+      - GigaImpact
+      - HiddenPower
+      - HyperBeam
+      - NaturalGift
+      - Protect
+      - PsychUp
+      - Psychic
+      - RainDance
+      - Rest
+      - Return
+      - Safeguard
+      - SecretPower
+      - ShadowBall
+      - SignalBeam
+      - SkillSwap
+      - SleepTalk
+      - Substitute
+      - SuckerPunch
+      - SunnyDay
+      - Swagger
+      - Thief
+      - Toxic
+      - Uproar
+      - Confide
+      - Infestation
+      - BulletSeed
+      - EnergyBall
+      - GigaDrain
+      - GrassKnot
+      - SeedBomb
+      - SolarBeam
+      - Synthesis
+      - WorrySeed
+  WormadamSandy:
+    level:
+      1: [Tackle]
+      10: [Protect]
+      15: [BugBite]
+      20: [HiddenPower]
+      23: [Confusion]
+      26: [RockBlast]
+      29: [Harden]
+      32: [Psybeam]
+      35: [Captivate]
+      38: [Flail]
+      41: [Attract]
+      44: [Psychic]
+      47: [Fissure]
+    teachable:
+      - Attract
+      - Captivate
+      - DoubleTeam
+      - DreamEater
+      - Endeavor
+      - Endure
+      - Facade
+      - Flash
+      - Frustration
+      - GigaImpact
+      - HiddenPower
+      - HyperBeam
+      - NaturalGift
+      - Protect
+      - PsychUp
+      - Psychic
+      - RainDance
+      - Rest
+      - Return
+      - Safeguard
+      - SecretPower
+      - ShadowBall
+      - SignalBeam
+      - SkillSwap
+      - SleepTalk
+      - Substitute
+      - SuckerPunch
+      - SunnyDay
+      - Swagger
+      - Thief
+      - Toxic
+      - Uproar
+      - Confide
+      - Infestation
+      - Dig
+      - EarthPower
+      - Earthquake
+      - MudSlap
+      - RockTomb
+      - Rollout
+      - Sandstorm
+  WormadamTrash:
+    level:
+      1: [Tackle]
+      10: [Protect]
+      15: [BugBite]
+      20: [HiddenPower]
+      23: [Confusion]
+      26: [MirrorShot]
+      29: [MetalSound]
+      32: [Psybeam]
+      35: [Captivate]
+      38: [Flail]
+      41: [Attract]
+      44: [Psychic]
+      47: [IronHead]
+    teachable:
+      - Attract
+      - Captivate
+      - DoubleTeam
+      - DreamEater
+      - Endeavor
+      - Endure
+      - Facade
+      - Flash
+      - Frustration
+      - GigaImpact
+      - HiddenPower
+      - HyperBeam
+      - NaturalGift
+      - Protect
+      - PsychUp
+      - Psychic
+      - RainDance
+      - Rest
+      - Return
+      - Safeguard
+      - SecretPower
+      - ShadowBall
+      - SignalBeam
+      - SkillSwap
+      - SleepTalk
+      - Substitute
+      - SuckerPunch
+      - SunnyDay
+      - Swagger
+      - Thief
+      - Toxic
+      - Uproar
+      - Confide
+      - Infestation
+      - FlashCannon
+      - GunkShot
+      - GyroBall
+      - IronDefense
+      - IronHead
+      - MagnetRise
+      - StealthRock
+      - SteelBeam
+  Mothim:
+    level:
+      1: [Tackle]
+      10: [Protect]
+      15: [BugBite]
+      20: [HiddenPower]
+      23: [Confusion]
+      26: [Gust]
+      29: [PoisonPowder]
+      32: [Psybeam]
+      35: [Camouflage]
+      38: [SilverWind]
+      41: [AirSlash]
+      44: [Psychic]
+      47: [BugBuzz, Lunge]
+    teachable:
+      - AerialAce
+      - AirCutter
+      - Attract
+      - Captivate
+      - Defog
+      - DoubleTeam
+      - DreamEater
+      - Endure
+      - EnergyBall
+      - Facade
+      - Flash
+      - Frustration
+      - GigaDrain
+      - GigaImpact
+      - HiddenPower
+      - HyperBeam
+      - MudSlap
+      - NaturalGift
+      - OminousWind
+      - Protect
+      - PsychUp
+      - Psychic
+      - RainDance
+      - Rest
+      - Return
+      - Roost
+      - Safeguard
+      - SecretPower
+      - ShadowBall
+      - SignalBeam
+      - SilverWind
+      - SkillSwap
+      - SleepTalk
+      - SolarBeam
+      - Substitute
+      - SunnyDay
+      - Swagger
+      - Swift
+      - Tailwind
+      - Thief
+      - Toxic
+      - Twister
+      - UTurn
+      - Confide
+      - Infestation
+Combee:
+  # TM, HM and tutor moves shared by the whole family
+  family-teachable:
+    - AirCutter
+    - BugBite
+    - Endeavor
+    - MudSlap
+    - OminousWind
+    - Snore
+    - StringShot
+    - Swift
+    - Tailwind
+    - DualWingbeat
+  Combee:
+    level:
+      1: [Gust, SweetScent]
+      13: [BugBite]
+  Vespiquen:
+    level:
+      1: [Gust, SweetScent]
+      3: [PoisonSting]
+      7: [ConfuseRay]
+      9: [FuryCutter]
+      13: [DefendOrder]
+      15: [Pursuit]
+      19: [FurySwipes]
+      21: [PowerGem]
+      25: [HealOrder]
+      27: [Toxic]
+      31: [Slash]
+      33: [Captivate]
+      37: [AttackOrder]
+      39: [Swagger]
+      43: [DestinyBond]
+      57: [FellStinger]
+    teachable:
+      - AerialAce
+      - Attract
+      - Captivate
+      - Cut
+      - Defog
+      - DoubleTeam
+      - Endure
+      - Facade
+      - Flash
+      - Fling
+      - Frustration
+      - FuryCutter
+      - GigaImpact
+      - HiddenPower
+      - HyperBeam
+      - NaturalGift
+      - Protect
+      - RainDance
+      - Rest
+      - Return
+      - Roost
+      - SecretPower
+      - SignalBeam
+      - SilverWind
+      - SleepTalk
+      - SludgeBomb
+      - Substitute
+      - SunnyDay
+      - Swagger
+      - Thief
+      - Toxic
+      - UTurn
+      - XScissor
+      - Confide
+      - Infestation
+      - LaserFocus
+Pachirisu:
+  Pachirisu:
+    level:
+      1: [Bide, Growl]
+      5: [QuickAttack]
+      9: [Charm]
+      13: [Spark]
+      17: [Endure]
+      19: [Nuzzle]
+      21: [Swift]
+      25: [SweetKiss]
+      29: [Discharge]
+      33: [SuperFang]
+      37: [LastResort]
+    teachable:
+      - Attract
+      - Captivate
+      - ChargeBeam
+      - Cut
+      - Dig
+      - DoubleTeam
+      - Endure
+      - Facade
+      - Flash
+      - Fling
+      - Frustration
+      - GrassKnot
+      - GunkShot
+      - HelpingHand
+      - HiddenPower
+      - IronTail
+      - LastResort
+      - LightScreen
+      - MagnetRise
+      - MudSlap
+      - NaturalGift
+      - Protect
+      - RainDance
+      - Rest
+      - Return
+      - Rollout
+      - SecretPower
+      - SeedBomb
+      - ShockWave
+      - SleepTalk
+      - Snore
+      - Substitute
+      - Swagger
+      - Swift
+      - Thunder
+      - ThunderPunch
+      - ThunderWave
+      - Thunderbolt
+      - Toxic
+      - UTurn
+      - Uproar
+      - Confide
+      - LaserFocus
+    egg: [IonDeluge]
+Buizel:
+  # TM, HM and tutor moves shared by the whole family
+  family-teachable:
+    - Attract
+    - Blizzard
+    - BrickBreak
+    - Brine
+    - BulkUp
+    - Captivate
+    - Dig
+    - Dive
+    - DoubleTeam
+    - Endure
+    - Facade
+    - FocusPunch
+    - Frustration
+    - Hail
+    - HiddenPower
+    - IceBeam
+    - IcePunch
+    - IcyWind
+    - IronTail
+    - NaturalGift
+    - Protect
+    - RainDance
+    - Rest
+    - Return
+    - RockSmash
+    - RockTomb
+    - SecretPower
+    - SleepTalk
+    - Snore
+    - Strength
+    - Substitute
+    - Surf
+    - Swagger
+    - Swift
+    - Toxic
+    - WaterPulse
+    - Waterfall
+    - Whirlpool
+    - Confide
+    - PowerUpPunch
+  Buizel:
+    level:
+      1: [Growl, SonicBoom, WaterSport]
+      3: [QuickAttack]
+      6: [WaterGun]
+      10: [Pursuit]
+      15: [Swift]
+      21: [AquaJet]
+      28: [Agility]
+      36: [Whirlpool]
+      45: [RazorWind]
+    egg:
+      - BatonPass
+      - DoubleSlap
+      - FuryCutter
+      - FurySwipes
+      - Headbutt
+      - MudSlap
+      - OdorSleuth
+      - Slash
+  Floatzel:
+    level:
+      1: [Growl, IceFang, QuickAttack, SonicBoom, WaterSport]
+      3: [QuickAttack]
+      6: [WaterGun]
+      10: [Pursuit]
+      15: [Swift]
+      21: [AquaJet]
+      26: [Crunch]
+      29: [Agility]
+      39: [Whirlpool]
+      50: [RazorWind]
+    teachable:
+      - AquaTail
+      - FocusBlast
+      - GigaImpact
+      - Headbutt
+      - HyperBeam
+      - LowKick
+      - MudSlap
+      - Payback
+      - Roar
+      - Taunt
+      - Torment
+      - Liquidation
+Cherubi:
+  # TM, HM and tutor moves shared by the whole family
+  family-teachable:
+    - Attract
+    - BulletSeed
+    - Captivate
+    - DoubleTeam
+    - Endure
+    - EnergyBall
+    - Facade
+    - Flash
+    - Frustration
+    - GigaDrain
+    - GrassKnot
+    - HelpingHand
+    - HiddenPower
+    - NaturalGift
+    - Protect
+    - Rest
+    - Return
+    - Rollout
+    - Safeguard
+    - SecretPower
+    - SeedBomb
+    - SleepTalk
+    - Snore
+    - SolarBeam
+    - Substitute
+    - SunnyDay
+    - Swagger
+    - SwordsDance
+    - Synthesis
+    - Toxic
+    - WorrySeed
+    - Confide
+    - DazzlingGleam
+    - GrassyGlide
+  Cherubi:
+    level:
+      1: [Tackle]
+      7: [Growth]
+      10: [LeechSeed]
+      13: [HelpingHand]
+      19: [MagicalLeaf]
+      22: [SunnyDay]
+      28: [WorrySeed]
+      31: [TakeDown]
+      37: [SolarBeam]
+      40: [LuckyChant]
+      47: [PetalBlizzard]
+    egg:
+      - Aromatherapy
+      - GrassWhistle
+      - NaturePower
+      - RazorLeaf
+      - SweetScent
+      - Tickle
+      - WeatherBall
+      - FlowerShield
+  Cherrim:
+    level:
+      1: [Growth, Tackle]
+      7: [Growth]
+      10: [LeechSeed]
+      13: [HelpingHand]
+      19: [MagicalLeaf]
+      22: [SunnyDay]
+      25: [PetalDance]
+      30: [WorrySeed]
+      35: [TakeDown]
+      43: [SolarBeam]
+      48: [LuckyChant]
+      50: [PetalBlizzard]
+    teachable: [GigaImpact, HyperBeam, LaserFocus]
+  CherrimSunshine:
+    level:
+      1: [Growth, Tackle]
+      7: [Growth]
+      10: [LeechSeed]
+      13: [HelpingHand]
+      19: [MagicalLeaf]
+      22: [SunnyDay]
+      25: [PetalDance]
+      30: [WorrySeed]
+      35: [TakeDown]
+      43: [SolarBeam]
+      48: [LuckyChant]
+      50: [PetalBlizzard]
+    teachable: [GigaImpact, HyperBeam, LaserFocus]
+Shellos:
+  family-teachable:
+    - AncientPower
+    - Attract
+    - Blizzard
+    - Brine
+    - Captivate
+    - Dive
+    - DoubleTeam
+    - EarthPower
+    - Endure
+    - Facade
+    - Frustration
+    - Hail
+    - Headbutt
+    - HiddenPower
+    - IceBeam
+    - IcyWind
+    - MudSlap
+    - NaturalGift
+    - PainSplit
+    - Protect
+    - RainDance
+    - Rest
+    - Return
+    - SecretPower
+    - SleepTalk
+    - Snore
+    - StringShot
+    - Substitute
+    - Surf
+    - Swagger
+    - Toxic
+    - WaterPulse
+    - Whirlpool
+    - Confide
+    - Infestation
+    - SkitterSmack
+  Shellos:
+    level:
+      1: [MudSlap]
+      2: [MudSport]
+      4: [Harden]
+      7: [WaterPulse]
+      11: [MudBomb]
+      16: [HiddenPower]
+      22: [RainDance]
+      29: [BodySlam]
+      37: [MuddyWater]
+      46: [Recover]
+    egg:
+      - Amnesia
+      - Counter
+      - Curse
+      - Fissure
+      - Memento
+      - MirrorCoat
+      - Sludge
+      - SpitUp
+      - Stockpile
+      - Swallow
+      - TrumpCard
+      - Yawn
+  ShellosEast:
+    level:
+      1: [MudSlap]
+      2: [MudSport]
+      4: [Harden]
+      7: [WaterPulse]
+      11: [MudBomb]
+      16: [HiddenPower]
+      22: [RainDance]
+      29: [BodySlam]
+      37: [MuddyWater]
+      46: [Recover]
+    egg:
+      - Amnesia
+      - Counter
+      - Curse
+      - Fissure
+      - Memento
+      - MirrorCoat
+      - Sludge
+      - SpitUp
+      - Stockpile
+      - Swallow
+      - TrumpCard
+      - Yawn
+  Gastrodon:
+    level:
+      1: [Harden, MudSlap, MudSport, WaterPulse]
+      2: [MudSport]
+      4: [Harden]
+      7: [WaterPulse]
+      11: [MudBomb]
+      16: [HiddenPower]
+      22: [RainDance]
+      29: [BodySlam]
+      41: [MuddyWater]
+      54: [Recover]
+    teachable:
+      - Block
+      - Dig
+      - Earthquake
+      - Flash
+      - GigaImpact
+      - HyperBeam
+      - RockSlide
+      - RockSmash
+      - RockTomb
+      - Sandstorm
+      - SludgeBomb
+      - StoneEdge
+      - Strength
+      - Waterfall
+      - StompingTantrum
+  GastrodonEast:
+    level:
+      1: [Harden, MudSlap, MudSport, WaterPulse]
+      2: [MudSport]
+      4: [Harden]
+      7: [WaterPulse]
+      11: [MudBomb]
+      16: [HiddenPower]
+      22: [RainDance]
+      29: [BodySlam]
+      41: [MuddyWater]
+      54: [Recover]
+    teachable:
+      - Block
+      - Dig
+      - Earthquake
+      - Flash
+      - GigaImpact
+      - HyperBeam
+      - RockSlide
+      - RockSmash
+      - RockTomb
+      - Sandstorm
+      - SludgeBomb
+      - StoneEdge
+      - Strength
+      - Waterfall
+      - StompingTantrum
+Drifloon:
+  # TM, HM and tutor moves shared by the whole family
+  family-teachable:
+    - AirCutter
+    - Attract
+    - CalmMind
+    - Captivate
+    - ChargeBeam
+    - Cut
+    - Defog
+    - DoubleTeam
+    - DreamEater
+    - Embargo
+    - Endure
+    - Explosion
+    - Facade
+    - Flash
+    - Frustration
+    - GyroBall
+    - HiddenPower
+    - IcyWind
+    - KnockOff
+    - MagicCoat
+    - MudSlap
+    - NaturalGift
+    - OminousWind
+    - PainSplit
+    - Payback
+    - Protect
+    - PsychUp
+    - Psychic
+    - RainDance
+    - Recycle
+    - Rest
+    - Return
+    - Rollout
+    - SecretPower
+    - ShadowBall
+    - ShockWave
+    - SilverWind
+    - SkillSwap
+    - SleepTalk
+    - Snore
+    - Spite
+    - Substitute
+    - SuckerPunch
+    - SunnyDay
+    - Swagger
+    - Swift
+    - Tailwind
+    - Thief
+    - Thunder
+    - ThunderWave
+    - Thunderbolt
+    - Toxic
+    - Trick
+    - WillOWisp
+    - Confide
+  Drifloon:
+    level:
+      1: [Constrict, Minimize]
+      6: [Astonish]
+      11: [Gust]
+      14: [FocusEnergy]
+      17: [Payback]
+      22: [Stockpile]
+      27: [SpitUp, Swallow]
+      30: [OminousWind]
+      33: [BatonPass]
+      38: [ShadowBall]
+      43: [Explosion]
+    egg: [BodySlam, DestinyBond, Disable, Haze, Hypnosis, Memento, WeatherBall]
+  Drifblim:
+    level:
+      1: [Astonish, Constrict, Gust, Minimize]
+      6: [Astonish]
+      11: [Gust]
+      14: [FocusEnergy]
+      17: [Payback]
+      22: [Stockpile]
+      27: [SpitUp, Swallow]
+      32: [OminousWind]
+      37: [BatonPass]
+      44: [ShadowBall]
+      51: [Explosion]
+      65: [PhantomForce]
+    teachable: [Fly, GigaImpact, HyperBeam]
+Buneary:
+  # TM, HM and tutor moves shared by the whole family
+  family-teachable:
+    - Bounce
+    - Captivate
+    - ChargeBeam
+    - Cut
+    - Dig
+    - DoubleTeam
+    - DrainPunch
+    - Endeavor
+    - Endure
+    - Facade
+    - Fling
+    - FocusPunch
+    - Frustration
+    - GrassKnot
+    - Headbutt
+    - HealBell
+    - HelpingHand
+    - HiddenPower
+    - IceBeam
+    - IronTail
+    - LastResort
+    - MagicCoat
+    - MudSlap
+    - NaturalGift
+    - Protect
+    - RainDance
+    - Rest
+    - Return
+    - RockSmash
+    - SecretPower
+    - ShadowBall
+    - ShockWave
+    - SleepTalk
+    - Snore
+    - SolarBeam
+    - Substitute
+    - SunnyDay
+    - Swagger
+    - Swift
+    - ThunderWave
+    - Thunderbolt
+    - Toxic
+    - Uproar
+    - WaterPulse
+    - Confide
+    - PowerUpPunch
+    - TripleAxel
+  Buneary:
+    level:
+      1: [DefenseCurl, Foresight, Pound, Splash]
+      6: [Endure]
+      10: [BabyDollEyes]
+      13: [Frustration]
+      16: [QuickAttack]
+      23: [JumpKick]
+      26: [BatonPass]
+      33: [Agility]
+      36: [DizzyPunch]
+      43: [Charm]
+      46: [Bounce]
+      53: [HealingWish]
+    egg:
+      - Attract
+      - DoubleHit
+      - Encore
+      - FakeOut
+      - FakeTears
+      - FirePunch
+      - Flail
+      - IcePunch
+      - LowKick
+      - SkyUppercut
+      - SweetKiss
+      - Switcheroo
+      - ThunderPunch
+  Lopunny:
+    level:
+      1: [DefenseCurl, Foresight, MagicCoat, MirrorCoat, Pound, Splash, Rototiller]
+      6: [Endure]
+      13: [Return]
+      16: [QuickAttack]
+      23: [JumpKick]
+      26: [BatonPass]
+      33: [Agility]
+      36: [DizzyPunch]
+      43: [Charm]
+      46: [Bounce]
+      53: [HealingWish]
+    teachable:
+      - Attract
+      - Blizzard
+      - FirePunch
+      - FocusBlast
+      - FuryCutter
+      - GigaImpact
+      - HyperBeam
+      - IcePunch
+      - LowKick
+      - Strength
+      - Thunder
+      - ThunderPunch
+      - BrutalSwing
+      - LaserFocus
+Glameow:
+  # TM, HM and tutor moves shared by the whole family
+  family-teachable:
+    - AerialAce
+    - Attract
+    - Captivate
+    - Cut
+    - Dig
+    - DoubleTeam
+    - DreamEater
+    - Endure
+    - Facade
+    - Flash
+    - Frustration
+    - FuryCutter
+    - Headbutt
+    - HiddenPower
+    - IronTail
+    - KnockOff
+    - LastResort
+    - MudSlap
+    - NaturalGift
+    - Payback
+    - Protect
+    - PsychUp
+    - RainDance
+    - Rest
+    - Return
+    - SecretPower
+    - ShadowBall
+    - ShadowClaw
+    - ShockWave
+    - SleepTalk
+    - Snatch
+    - Snore
+    - Substitute
+    - SuckerPunch
+    - SunnyDay
+    - SuperFang
+    - Swagger
+    - Swift
+    - Taunt
+    - Thief
+    - Thunder
+    - Thunderbolt
+    - Torment
+    - Toxic
+    - UTurn
+    - WaterPulse
+    - Confide
+  Glameow:
+    level:
+      1: [FakeOut]
+      5: [Scratch]
+      8: [Growl]
+      13: [Hypnosis]
+      17: [FeintAttack]
+      20: [FurySwipes]
+      25: [Charm]
+      29: [Assist]
+      32: [Captivate]
+      37: [Slash]
+      41: [SuckerPunch]
+      45: [Attract]
+      50: [PlayRough]
+    egg: [Assurance, Bite, FakeTears, Flail, QuickAttack, SandAttack, TailWhip]
+  Purugly:
+    level:
+      1: [FakeOut, Growl, Scratch]
+      5: [Scratch]
+      8: [Growl]
+      13: [Hypnosis]
+      17: [FeintAttack]
+      20: [FurySwipes]
+      25: [Charm]
+      29: [Assist]
+      32: [Captivate]
+      37: [Slash]
+      38: [Swagger]
+      45: [BodySlam]
+      53: [Attract]
+    teachable: [GigaImpact, HyperBeam, Roar, Rollout, StompingTantrum, ThroatChop]
+Stunky:
+  # TM, HM and tutor moves shared by the whole family
+  family-teachable:
+    - Attract
+    - Captivate
+    - Cut
+    - DarkPulse
+    - Defog
+    - Dig
+    - DoubleTeam
+    - Endure
+    - Explosion
+    - Facade
+    - FireBlast
+    - Flamethrower
+    - Frustration
+    - FuryCutter
+    - HiddenPower
+    - IronTail
+    - MudSlap
+    - NaturalGift
+    - Payback
+    - Protect
+    - RainDance
+    - Rest
+    - Return
+    - Roar
+    - RockSmash
+    - SecretPower
+    - ShadowBall
+    - ShadowClaw
+    - SleepTalk
+    - SludgeBomb
+    - Snatch
+    - Snore
+    - Substitute
+    - SuckerPunch
+    - SunnyDay
+    - Swagger
+    - Swift
+    - Taunt
+    - Thief
+    - Torment
+    - Toxic
+    - Confide
+    - ThroatChop
+    - LashOut
+    - CorrosiveGas
+  Stunky:
+    level:
+      1: [FocusEnergy, Scratch]
+      4: [PoisonGas]
+      7: [Screech]
+      10: [FurySwipes]
+      14: [SmokeScreen]
+      18: [Feint]
+      22: [Slash]
+      27: [Toxic]
+      32: [NightSlash]
+      38: [Memento]
+      44: [Explosion]
+      46: [Belch]
+    egg:
+      - Astonish
+      - Crunch
+      - DoubleEdge
+      - Leer
+      - Punishment
+      - Pursuit
+      - ScaryFace
+      - Smog
+      - PlayRough
+  Skuntank:
+    level:
+      1: [FocusEnergy, PoisonGas, Scratch]
+      4: [PoisonGas]
+      7: [Screech]
+      10: [FurySwipes]
+      14: [SmokeScreen]
+      18: [Feint]
+      22: [Slash]
+      27: [Toxic]
+      32: [NightSlash]
+      34: [Flamethrower]
+      42: [Memento]
+      52: [Explosion]
+      56: [Belch]
+    teachable: [GigaImpact, HyperBeam, PoisonJab, Strength, BurningJealousy]
+Bronzor:
+  # TM, HM and tutor moves shared by the whole family
+  family-teachable:
+    - AncientPower
+    - CalmMind
+    - ChargeBeam
+    - DoubleTeam
+    - DreamEater
+    - Earthquake
+    - Endure
+    - Facade
+    - Flash
+    - FlashCannon
+    - Frustration
+    - GrassKnot
+    - GyroBall
+    - HiddenPower
+    - LightScreen
+    - NaturalGift
+    - Payback
+    - Protect
+    - PsychUp
+    - Psychic
+    - RainDance
+    - Recycle
+    - Reflect
+    - Rest
+    - Return
+    - RockPolish
+    - RockSlide
+    - RockTomb
+    - Rollout
+    - Safeguard
+    - Sandstorm
+    - SecretPower
+    - ShadowBall
+    - SignalBeam
+    - SkillSwap
+    - SleepTalk
+    - Snore
+    - SolarBeam
+    - StealthRock
+    - Substitute
+    - SunnyDay
+    - Swagger
+    - Toxic
+    - Trick
+    - TrickRoom
+    - Confide
+    - SteelBeam
+    - ExpandingForce
+    - SteelRoller
+  Bronzor:
+    level:
+      1: [Confusion, Tackle]
+      7: [Hypnosis]
+      12: [Imprison]
+      14: [ConfuseRay]
+      19: [Extrasensory]
+      26: [IronDefense]
+      30: [Safeguard]
+      35: [GyroBall]
+      37: [FutureSight]
+      41: [FeintAttack]
+      49: [Payback]
+      52: [HealBlock]
+  Bronzong:
+    level:
+      1: [Confusion, Hypnosis, Imprison, RainDance, SunnyDay, Tackle]
+      7: [Hypnosis]
+      12: [Imprison]
+      14: [ConfuseRay]
+      19: [Extrasensory]
+      26: [IronDefense]
+      30: [Safeguard]
+      33: [Block]
+      38: [GyroBall]
+      43: [FutureSight]
+      50: [FeintAttack]
+      61: [Payback]
+      67: [HealBlock]
+    teachable: [Explosion, GigaImpact, HyperBeam, IronHead, RockSmash, Strength, ZenHeadbutt, BodyPress, MeteorBeam]

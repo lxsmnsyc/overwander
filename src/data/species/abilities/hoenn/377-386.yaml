@@ -1,0 +1,75 @@
+Regirock:
+  Regirock:
+    abilities: [ClearBody]
+    # Solid Rock and Sand Force are this registry's rather than the
+    # mainline's: a wall of boulders takes the worst of a blow, and
+    # the desert it was sealed in is where it hits hardest
+    hidden: [Sturdy, SolidRock, SandForce]
+Regice:
+  Regice:
+    abilities: [ClearBody]
+    # Filter and Slush Rush are this registry's: an iceberg takes the
+    # worst of a blow, and hail is the one thing that moves it
+    hidden: [IceBody, Filter, SlushRush]
+Registeel:
+  Registeel:
+    abilities: [ClearBody]
+    # Steelworker and Filter are this registry's: a body hammered out
+    # of one metal swings it hardest, and takes the worst of a blow
+    hidden: [LightMetal, Steelworker, Filter]
+Latias:
+  Latias:
+    abilities: [Levitate]
+    # All three are this registry's: the sister is the one that
+    # shields, unmarked while it is whole and faster the longer it
+    # stays in the air
+    hidden: [Healer, Multiscale, SpeedBoost]
+Latios:
+  Latios:
+    abilities: [Levitate]
+    # All three are this registry's: the brother turns a status move
+    # back on whoever cast it, and is the same untouched-and-climbing
+    # flier his sister is
+    hidden: [MagicBounce, Multiscale, SpeedBoost]
+Kyogre:
+  Kyogre:
+    abilities: [Drizzle]
+    # All three are this registry's: it swims in the rain it brought,
+    # drinks what is thrown at it, and is expensive to fight at all
+    hidden: [SwiftSwim, WaterAbsorb, Pressure]
+  KyogrePrimal:
+    abilities: [Drizzle, PrimordialSea]
+    hidden: [SwiftSwim, WaterAbsorb, Pressure]
+Groudon:
+  Groudon:
+    abilities: [Drought]
+    # All three are this registry's: nothing freezes what it is made
+    # of, every blow settles it deeper, and it is expensive to fight
+    hidden: [MagmaArmor, Stamina, Pressure]
+  GroudonPrimal:
+    abilities: [Drought, DesolateLand]
+    hidden: [MagmaArmor, Stamina, Pressure]
+Rayquaza:
+  Rayquaza:
+    abilities: [AirLock]
+    # All three are this registry's: it is expensive to fight, what
+    # it comes down on thinks better of swinging, and nothing gets
+    # through the first blow at full strength
+    hidden: [Pressure, Intimidate, Multiscale]
+Jirachi:
+  Jirachi:
+    abilities: [SereneGrace]
+    # Levitate, Healer and Magic Bounce are this registry's rather
+    # than the mainline's: it never touches the ground, a wish is
+    # granted for somebody else, and what is aimed at a charm comes
+    # back
+    hidden: [Levitate, Healer, MagicBounce]
+Deoxys:
+  Deoxys:
+    abilities: [Pressure]
+  DeoxysAttack:
+    abilities: [Pressure]
+  DeoxysDefense:
+    abilities: [Pressure]
+  DeoxysSpeed:
+    abilities: [Pressure]

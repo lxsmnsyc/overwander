@@ -1,0 +1,185 @@
+Burmy:
+  Burmy:
+    stats: { HP: 40, Attack: 29, Defense: 45, SpecialAttack: 29, SpecialDefense: 45, Speed: 36 }
+    catch-rate: 120
+    height: 0.2
+    weight: 3.4
+    gender: [1, 1]
+  BurmySandy:
+    stats: { HP: 40, Attack: 29, Defense: 45, SpecialAttack: 29, SpecialDefense: 45, Speed: 36 }
+    catch-rate: 120
+    height: 0.2
+    weight: 3.4
+    gender: [1, 1]
+  BurmyTrash:
+    stats: { HP: 40, Attack: 29, Defense: 45, SpecialAttack: 29, SpecialDefense: 45, Speed: 36 }
+    catch-rate: 120
+    height: 0.2
+    weight: 3.4
+    gender: [1, 1]
+  Wormadam:
+    stats: { HP: 60, Attack: 59, Defense: 85, SpecialAttack: 79, SpecialDefense: 105, Speed: 36 }
+    catch-rate: 45
+    height: 0.5
+    weight: 6.5
+    gender: [0, 1]
+  WormadamSandy:
+    stats: { HP: 60, Attack: 79, Defense: 105, SpecialAttack: 59, SpecialDefense: 85, Speed: 36 }
+    catch-rate: 45
+    height: 0.5
+    weight: 6.5
+    gender: [0, 1]
+  WormadamTrash:
+    stats: { HP: 60, Attack: 69, Defense: 95, SpecialAttack: 69, SpecialDefense: 95, Speed: 36 }
+    catch-rate: 45
+    height: 0.5
+    weight: 6.5
+    gender: [0, 1]
+  Mothim:
+    stats: { HP: 70, Attack: 94, Defense: 50, SpecialAttack: 94, SpecialDefense: 50, Speed: 66 }
+    catch-rate: 45
+    height: 0.9
+    weight: 23.3
+    gender: [1, 0]
+Combee:
+  Combee:
+    stats: { HP: 30, Attack: 30, Defense: 42, SpecialAttack: 30, SpecialDefense: 42, Speed: 70 }
+    catch-rate: 120
+    height: 0.3
+    weight: 5.5
+    gender: [7, 1]
+  Vespiquen:
+    stats: { HP: 70, Attack: 80, Defense: 102, SpecialAttack: 80, SpecialDefense: 102, Speed: 40 }
+    catch-rate: 45
+    height: 1.2
+    weight: 38.5
+    gender: [0, 1]
+Pachirisu:
+  Pachirisu:
+    stats: { HP: 60, Attack: 45, Defense: 70, SpecialAttack: 45, SpecialDefense: 90, Speed: 95 }
+    catch-rate: 200
+    height: 0.4
+    weight: 3.9
+    gender: [1, 1]
+Buizel:
+  Buizel:
+    stats: { HP: 55, Attack: 65, Defense: 35, SpecialAttack: 60, SpecialDefense: 30, Speed: 85 }
+    catch-rate: 190
+    height: 0.7
+    weight: 29.5
+    gender: [1, 1]
+  Floatzel:
+    stats: { HP: 85, Attack: 105, Defense: 55, SpecialAttack: 85, SpecialDefense: 50, Speed: 115 }
+    catch-rate: 75
+    height: 1.1
+    weight: 33.5
+    gender: [1, 1]
+Cherubi:
+  Cherubi:
+    stats: { HP: 45, Attack: 35, Defense: 45, SpecialAttack: 62, SpecialDefense: 53, Speed: 35 }
+    catch-rate: 190
+    height: 0.4
+    weight: 3.3
+    gender: [1, 1]
+  Cherrim:
+    stats: { HP: 70, Attack: 60, Defense: 70, SpecialAttack: 87, SpecialDefense: 78, Speed: 85 }
+    catch-rate: 75
+    height: 0.5
+    weight: 9.3
+    gender: [1, 1]
+  CherrimSunshine:
+    stats: { HP: 70, Attack: 60, Defense: 70, SpecialAttack: 87, SpecialDefense: 78, Speed: 85 }
+    catch-rate: 75
+    height: 0.5
+    weight: 9.3
+    gender: [1, 1]
+Shellos:
+  Shellos:
+    stats: { HP: 76, Attack: 48, Defense: 48, SpecialAttack: 57, SpecialDefense: 62, Speed: 34 }
+    catch-rate: 190
+    height: 0.3
+    weight: 6.3
+    gender: [1, 1]
+  ShellosEast:
+    stats: { HP: 76, Attack: 48, Defense: 48, SpecialAttack: 57, SpecialDefense: 62, Speed: 34 }
+    catch-rate: 190
+    height: 0.3
+    weight: 6.3
+    gender: [1, 1]
+  Gastrodon:
+    stats: { HP: 111, Attack: 83, Defense: 68, SpecialAttack: 92, SpecialDefense: 82, Speed: 39 }
+    catch-rate: 75
+    height: 0.9
+    weight: 29.9
+    gender: [1, 1]
+  GastrodonEast:
+    stats: { HP: 111, Attack: 83, Defense: 68, SpecialAttack: 92, SpecialDefense: 82, Speed: 39 }
+    catch-rate: 75
+    height: 0.9
+    weight: 29.9
+    gender: [1, 1]
+Drifloon:
+  Drifloon:
+    stats: { HP: 90, Attack: 50, Defense: 34, SpecialAttack: 60, SpecialDefense: 44, Speed: 70 }
+    catch-rate: 125
+    height: 0.4
+    weight: 1.2
+    gender: [1, 1]
+  Drifblim:
+    stats: { HP: 150, Attack: 80, Defense: 44, SpecialAttack: 90, SpecialDefense: 54, Speed: 80 }
+    catch-rate: 60
+    height: 1.2
+    weight: 15
+    gender: [1, 1]
+Buneary:
+  Buneary:
+    stats: { HP: 55, Attack: 66, Defense: 44, SpecialAttack: 44, SpecialDefense: 56, Speed: 85 }
+    catch-rate: 190
+    height: 0.4
+    weight: 5.5
+    gender: [1, 1]
+  Lopunny:
+    stats: { HP: 65, Attack: 76, Defense: 84, SpecialAttack: 54, SpecialDefense: 96, Speed: 105 }
+    catch-rate: 60
+    height: 1.2
+    weight: 33.3
+    gender: [1, 1]
+Glameow:
+  Glameow:
+    stats: { HP: 49, Attack: 55, Defense: 42, SpecialAttack: 42, SpecialDefense: 37, Speed: 85 }
+    catch-rate: 190
+    height: 0.5
+    weight: 3.9
+    gender: [1, 3]
+  Purugly:
+    stats: { HP: 71, Attack: 82, Defense: 64, SpecialAttack: 64, SpecialDefense: 59, Speed: 112 }
+    catch-rate: 75
+    height: 1
+    weight: 43.8
+    gender: [1, 3]
+Stunky:
+  Stunky:
+    stats: { HP: 63, Attack: 63, Defense: 47, SpecialAttack: 41, SpecialDefense: 41, Speed: 74 }
+    catch-rate: 225
+    height: 0.4
+    weight: 19.2
+    gender: [1, 1]
+  Skuntank:
+    stats: { HP: 103, Attack: 93, Defense: 67, SpecialAttack: 71, SpecialDefense: 61, Speed: 84 }
+    catch-rate: 60
+    height: 1
+    weight: 38
+    gender: [1, 1]
+Bronzor:
+  Bronzor:
+    stats: { HP: 57, Attack: 24, Defense: 86, SpecialAttack: 24, SpecialDefense: 86, Speed: 23 }
+    catch-rate: 255
+    height: 0.5
+    weight: 60.5
+    gender: genderless
+  Bronzong:
+    stats: { HP: 67, Attack: 89, Defense: 116, SpecialAttack: 79, SpecialDefense: 116, Speed: 33 }
+    catch-rate: 90
+    height: 1.3
+    weight: 187
+    gender: genderless

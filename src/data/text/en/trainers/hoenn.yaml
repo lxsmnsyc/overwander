@@ -1,0 +1,97 @@
+# What Hoenn's trainer classes are called, and what each says as a duel
+# is put to the player. Two regions' worth of one trade share a name; the
+# screen adds the region where they do.
+
+NinjaBoy:
+  name: Ninja Boy
+  quote: You walked past me twice. My pokemon did not move either time.
+Tuber:
+  name: Tuber
+  quote: I am not getting out of the water. Battle me from the shore!
+PokeFan:
+  name: Poké Fan
+  quote: I have a photograph of every one of these. Would you like to be in one?
+HoennAceTrainer:
+  name: Ace Trainer
+  quote: I have crossed this region on foot. Nothing on the road has surprised me yet.
+HoennLass:
+  name: Lass
+  quote: Mum said not to talk to strangers. She said nothing about battling them.
+HoennBirdKeeper:
+  name: Bird Keeper
+  quote: Mine ride the sea wind. Yours have only felt the one off the road.
+HoennBugCatcher:
+  name: Bug Catcher
+  quote: The woods here are thick with them. I took the best three.
+HoennSwimmer:
+  name: Swimmer
+  quote: The current out here does half the work. The rest of it is mine.
+HoennYoungster:
+  name: Youngster
+  quote: I dug this one out from under the ash. I bet you have never seen one.
+HoennSchoolKid:
+  name: School Kid
+  quote: We are testing conductivity today. You are the experiment.
+HoennCamper:
+  name: Camper
+  quote: Three nights on this rock and the only thing I have missed is a battle.
+HoennBeauty:
+  name: Beauty
+  quote: The sea air keeps them glossy. Do not let that fool you.
+HoennFisherman:
+  name: Fisherman
+  quote: Cast since dawn and caught nothing. You will do.
+HoennSailor:
+  name: Sailor
+  quote: I have crossed to Slateport in worse weather than this. Try me.
+HoennGentleman:
+  name: Gentleman
+  quote: I keep a house on the coast and a temper on the road.
+HoennScientist:
+  name: Scientist
+  quote: Devon pays for this field work. Consider yourself data.
+Guitarist:
+  name: Guitarist
+  quote: Plug in and stand back. This one gets loud.
+Kindler:
+  name: Kindler
+  quote: The mountain is hot enough already. My pokemon make it worse.
+BattleGirl:
+  name: Battle Girl
+  quote: I train under the falls at Dewford. You are about to feel it.
+Expert:
+  name: Expert
+  quote: I saw how this ends before you spoke. Come on anyway.
+RuinManiac:
+  name: Ruin Maniac
+  quote: I dug these tunnels myself. Look what was sleeping in one.
+StreetThug:
+  name: Street Thug
+  quote: This road is ours after dark. You are paying the toll in wins.
+DragonTamer:
+  name: Dragon Tamer
+  quote: Raised from an egg out in the sand. It listens to me and nobody else.
+AromaLady:
+  name: Aroma Lady
+  quote: Breathe in. My pokemon grew up in this, and they are stronger for it.
+Couple:
+  name: Young Couple
+  quote: We battle together or not at all. You are welcome to try the pair of us.
+HoennBreeder:
+  name: Pokémon Breeder
+  quote: The eggs hatch faster on the cycling road. These three were this morning.
+HoennRanger:
+  name: Pokémon Ranger
+  quote: This route is mine to keep. Nothing crosses it without meeting me.
+HoennCollector:
+  name: Collector
+  quote: I have dug up every oddity on this coast. You would round out the shelf.
+HoennReporter:
+  name: Reporter
+  quote: We are filming a piece on roadside battles. Say something for the camera.
+HoennRichBoy:
+  name: Rich Boy
+  quote: Father keeps a yacht at Lilycove. I keep a team worth rather more.
+HoennParasolLady:
+  name: Parasol Lady
+  quote: It rains here six days in seven. I have never once been wet.

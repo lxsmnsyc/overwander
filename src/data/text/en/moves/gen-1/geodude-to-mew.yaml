@@ -1,0 +1,132 @@
+RockThrow:
+  name: Rock Throw
+  description: Plain damage.
+SelfDestruct:
+  name: Self-Destruct
+  description: Hits everything opposite and the user's teammates, and costs the user 200 HP.
+Explosion:
+  name: Explosion
+  description: Hits everything opposite and the user's teammates, and costs the user 250 HP.
+Stomp:
+  name: Stomp
+  description: 30% to flinch. Never misses a minimized target, and hits 2x on it.
+Headbutt:
+  name: Headbutt
+  description: 30% to flinch.
+SonicBoom:
+  name: Sonic Boom
+  description: Deals a flat 20 damage.
+TriAttack:
+  name: Tri Attack
+  description: 20% to burn, freeze or paralyse, rolled evenly between the three.
+AuroraBeam:
+  name: Aurora Beam
+  description: 10% to drop the target's Attack a stage.
+PoisonGas:
+  name: Poison Gas
+  description: Poisons the target.
+Sludge:
+  name: Sludge
+  description: 30% to poison.
+Clamp:
+  name: Clamp
+  description: 'Binds the target: 1/8 of its HP every 2 seconds for 8 seconds, and no escape, ghosts aside.'
+SpikeCannon:
+  name: Spike Cannon
+  description: Strikes 2 to 5 times.
+Lick:
+  name: Lick
+  description: 30% to paralyse.
+NightShade:
+  name: Night Shade
+  description: Deals the user's level in damage, whatever the stats say.
+DreamEater:
+  name: Dream Eater
+  description: Only works on a sleeping target. Heals the user for 1/2 the damage dealt.
+Bind:
+  name: Bind
+  description: 'Binds the target: 1/8 of its HP every 2 seconds for 8 seconds, and no escape, ghosts aside.'
+Meditate:
+  name: Meditate
+  description: Raises the user's Attack a stage.
+ViceGrip:
+  name: Vice Grip
+  description: Plain contact damage.
+Guillotine:
+  name: Guillotine
+  description: Takes the target's whole health, at 30% accuracy. Sturdy shrugs it off.
+Crabhammer:
+  name: Crabhammer
+  description: Crits more readily.
+Barrage:
+  name: Barrage
+  description: Strikes 2 to 5 times.
+EggBomb:
+  name: Egg Bomb
+  description: Plain damage.
+BoneClub:
+  name: Bone Club
+  description: 10% to flinch.
+Bonemerang:
+  name: Bonemerang
+  description: Strikes 2 times.
+CometPunch:
+  name: Comet Punch
+  description: Strikes 2 to 5 times.
+FirePunch:
+  name: Fire Punch
+  description: 10% to burn.
+IcePunch:
+  name: Ice Punch
+  description: 10% to freeze.
+ThunderPunch:
+  name: Thunder Punch
+  description: 10% to paralyse.
+RollingKick:
+  name: Rolling Kick
+  description: 30% to flinch.
+JumpKick:
+  name: Jump Kick
+  description: A miss costs the user 1/2 its HP.
+HiJumpKick:
+  name: High Jump Kick
+  description: A miss costs the user 1/2 its HP.
+Smog:
+  name: Smog
+  description: 40% to poison.
+SmokeScreen:
+  name: Smokescreen
+  description: Drops the target's accuracy a stage.
+DizzyPunch:
+  name: Dizzy Punch
+  description: 20% to confuse.
+Waterfall:
+  name: Waterfall
+  description: 20% to flinch.
+LovelyKiss:
+  name: Lovely Kiss
+  description: Puts the target to sleep.
+Splash:
+  name: Splash
+  description: Does nothing whatsoever.
+Mist:
+  name: Mist
+  description: For 10 seconds, nobody else can lower a stat stage on the user's side.
+Transform:
+  name: Transform
+  description: Copies the target's look, types, stats bar health, stages and moves until the user leaves.
+AcidArmor:
+  name: Acid Armor
+  description: Raises the user's Defense 2 stages.
+Sharpen:
+  name: Sharpen
+  description: Raises the user's Attack a stage.
+Conversion:
+  name: Conversion
+  description: The user becomes the type of the first move it carries, and drops the types it had.
+Kinesis:
+  name: Kinesis
+  description: Drops the target's accuracy a stage.
+SoftBoiled:
+  name: Soft-Boiled
+  description: Heals the user or a party member 1/2 its HP.

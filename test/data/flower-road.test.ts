@@ -22,8 +22,8 @@ import { getSpeciesData, registerSpecies } from '../../src/data/species';
 
 registerMoves();
 registerAbilities();
-registerItems();
 registerSpecies();
+registerItems();
 registerBiomeSpawns();
 
 /** The five colours, stage by stage, the red one first */

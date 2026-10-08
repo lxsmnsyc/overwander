@@ -676,7 +676,7 @@ export default function registerGen1Abilities(): void {
   registerAbility(Abilities.Boss, {
     name: 'Boss',
     description:
-      '60x its own HP and 2x every other stat, but its casts wind up 2x slower. A move aimed at one enemy hits them all, only fainting interrupts it, and it takes at most 200 from an indirect or share-of-HP hit and heals at most 1,000 HP a second.',
+      '110x its own HP and 2x every other stat, but its casts wind up 2x slower. A move aimed at one enemy hits them all, only fainting interrupts it, and it takes at most 200 from an indirect or share-of-HP hit and heals at most 1,000 HP a second.',
   });
   registerAbility(Abilities.Shadow, {
     name: 'Shadow',
@@ -686,6 +686,11 @@ export default function registerGen1Abilities(): void {
     name: 'Totem',
     description:
       'Starts the fight with its aura raising its stats, and calls one of its own line to its side at 1/2 HP. Its ally flees when it falls.',
+  });
+  registerAbility(Abilities.TotemAlly, {
+    name: 'Totem Ally',
+    description:
+      '50x its own HP and 1.5x every other stat. Flees when the Totem that called it falls.',
   });
   registerAbility(Abilities.Purified, {
     name: 'Purified',

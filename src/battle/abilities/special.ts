@@ -43,6 +43,13 @@ export const BOSS_HEALTH_SCALE = 110;
 export const BOSS_STAT_SCALE = 2;
 
 /**
+ * A Totem's ally is raid-sized as well, but smaller than the Totem, so
+ * the party can still choose to bring it down first
+ */
+export const TOTEM_ALLY_HEALTH_SCALE = 50;
+export const TOTEM_ALLY_STAT_SCALE = 1.5;
+
+/**
  * How much longer a boss winds up than anything else. The wind-up is
  * the party's warning, long enough to see what is coming and answer it
  */
@@ -622,6 +629,18 @@ const setupAbilities = [
       }),
     ]);
   }),
+
+  /**
+   * Totem Ally: `TOTEM_ALLY_HEALTH_SCALE` times the HP and
+   * `TOTEM_ALLY_STAT_SCALE` times every other stat
+   */
+  createAbility(Abilities.TotemAlly, (battle) =>
+    battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+      if (event.source.hasAbility(Abilities.TotemAlly)) {
+        event.value *= event.stat === Stats.HP ? TOTEM_ALLY_HEALTH_SCALE : TOTEM_ALLY_STAT_SCALE;
+      }
+    }),
+  ),
 ];
 
 /** The allies waiting to be called, by the boss team that holds them */

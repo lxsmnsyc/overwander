@@ -61,6 +61,31 @@ describe('Totem raids', () => {
     expect(totem.stages[Stages.Speed]).toBe(2);
   });
 
+  it('gives the ally 50x its HP and 1.5x every other stat', () => {
+    const ally = createRaidBossTeam(Species.Salazzle, 0x12345678, false, true)[1];
+
+    // The same pokemon fielded with and without the mark
+    function fielded(abilities: Abilities[]): Unit {
+      const { battle, units } = createRaidBattle('ally-seed', [
+        {
+          player: '',
+          alliance: BOSS_ALLIANCE,
+          catches: [{ ...ally, abilities, called: undefined }],
+        },
+      ]);
+
+      battle.initialize();
+      battle.start();
+      return [...(units.get(BOSS_ALLIANCE) ?? [])][0];
+    }
+
+    const plain = fielded([]);
+    const marked = fielded([Abilities.TotemAlly]);
+
+    expect(marked.checkStat(Stats.HP, 0)).toBe(plain.checkStat(Stats.HP, 0) * 50);
+    expect(marked.checkStat(Stats.Attack, 0)).toBeCloseTo(plain.checkStat(Stats.Attack, 0) * 1.5);
+  });
+
   it('calls its ally at half HP, once, and the ally flees when it falls', () => {
     const { totem, player, battle } = totemRaid(Species.Salazzle);
     const hit = { type: EffectType.Move, move: Moves.Tackle, unit: player } as const;
@@ -72,8 +97,10 @@ describe('Totem raids', () => {
 
     expect(called).toHaveLength(1);
     expect(called[0].species).toBe(Species.Salandit);
-    // An ordinary pokemon, not a second boss
+    // Not a second boss, but raid-sized all the same
     expect(called[0].hasAbility(Abilities.Boss)).toBe(false);
+    expect(called[0].hasAbility(Abilities.TotemAlly)).toBe(true);
+    expect(called[0].health).toBe(called[0].checkStat(Stats.HP, 0));
 
     // A second blow under half calls nobody else
     player.damage(hit, totem, 10, 0);

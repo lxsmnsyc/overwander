@@ -79,6 +79,8 @@ import ultraBeasts from './ultra-beasts';
 import alolaMythicals from './alola-mythicals';
 import applinToPincurchin from './applin-to-pincurchin';
 import sinisteaToMilcery from './sinistea-to-milcery';
+import snomToStonjourner from './snom-to-stonjourner';
+import galarFossils from './galar-fossils';
 
 /**
  * The invented abilities, one per evolution family, in the order the
@@ -165,6 +167,8 @@ const setupAbilities = [
   ...forcesOfNature,
   ...applinToPincurchin,
   ...sinisteaToMilcery,
+  ...snomToStonjourner,
+  ...galarFossils,
 ];
 
 /**

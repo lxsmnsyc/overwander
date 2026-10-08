@@ -1,7 +1,7 @@
 import { AttackPriority, EventPriority } from '../../../core/event-emitter';
 import { Stages, Stats } from '../../../data/constants/stats';
 import type Abilities from '../../../data/ids/abilities';
-import type { Types } from '../../../data/constants/types';
+import { type Types, getTypeFactor } from '../../../data/constants/types';
 import {
   DamageFlags,
   MoveAttackFlags,
@@ -2079,6 +2079,37 @@ export function createForeignBodyAbility(
         event.parent.target.hasAbility(ability)
       ) {
         event.multiplier = 1;
+      }
+    }),
+  );
+}
+
+/**
+ * What Galar's fossils share: two halves stitched together. A move of
+ * the head's type strikes as the tail's against any target the tail's
+ * type hits harder, so the swap is asked per target, never per cast
+ */
+export function createStitchedAbility(
+  ability: Abilities,
+  head: Types,
+  tail: Types,
+): ((battle: Battle) => void) & { ability: Abilities } {
+  return createAbility(ability, (battle) =>
+    battle.on(BattleEvents.CheckUnitMoveType, EventPriority.Post, (event) => {
+      const aimed = event.target;
+
+      if (
+        event.type !== head ||
+        aimed.type !== MoveTargetType.Unit ||
+        !event.source.hasAbility(ability)
+      ) {
+        return;
+      }
+
+      const types = [...aimed.unit.types];
+
+      if (getTypeFactor(tail, types) > getTypeFactor(head, types)) {
+        event.type = tail;
       }
     }),
   );

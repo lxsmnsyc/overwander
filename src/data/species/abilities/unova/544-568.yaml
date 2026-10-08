@@ -19,8 +19,10 @@ Petilil:
 Basculin:
   Basculin:
     abilities: [Reckless, Adaptability]
-    # Swift Swim is the invented fourth, and both stripes take it: the
-    # line reaches three either way, and what they do is run a river
+    # Swift Swim is the invented fourth, and the red and blue stripes
+    # take it: the line reaches three either way, and what they do is
+    # run a river. The white stripe does not, since Swift Swim is
+    # Basculegion's own and the white stripe evolves into it
     hidden: [MoldBreaker, SwiftSwim]
   BasculinBlue:
     # The blue school takes the landing rather than the throw, which

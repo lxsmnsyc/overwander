@@ -34,7 +34,10 @@ Magnemite:
 Farfetchd:
   Farfetchd:
     abilities: [KeenEye, InnerFocus]
-    hidden: [Defiant]
+    # Sharpness is this registry's rather than the mainline's, filling
+    # it to four: it fights with the leek it carries. The line never
+    # evolves, since Sirfetch'd comes from the Galarian form
+    hidden: [Defiant, Sharpness]
 Doduo:
   Doduo:
     abilities: [RunAway, EarlyBird]

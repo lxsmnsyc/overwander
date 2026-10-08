@@ -1230,6 +1230,7 @@ export const SPECIES_IDS = {
   CalyrexIce: Species.CalyrexIce,
   CalyrexShadow: Species.CalyrexShadow,
   EnamorusTherian: Species.EnamorusTherian,
+  BasculegionFemale: Species.BasculegionFemale,
 } as const satisfies Record<string, Species>;
 
 export const GENDER_IDS = {
@@ -4209,6 +4210,8 @@ export const REGION_IDS = {
   Unova: Regions.Unova,
   Kalos: Regions.Kalos,
   Alola: Regions.Alola,
+  Galar: Regions.Galar,
+  Hisui: Regions.Hisui,
 } as const satisfies Record<string, Regions>;
 
 export const AWARD_IDS = {

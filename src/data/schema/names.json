@@ -1203,7 +1203,8 @@
         "ZarudeDada",
         "CalyrexIce",
         "CalyrexShadow",
-        "EnamorusTherian"
+        "EnamorusTherian",
+        "BasculegionFemale"
       ]
     },
     "gender": {
@@ -4205,7 +4206,9 @@
         "Sinnoh",
         "Unova",
         "Kalos",
-        "Alola"
+        "Alola",
+        "Galar",
+        "Hisui"
       ]
     },
     "award": {

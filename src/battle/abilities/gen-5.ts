@@ -3,7 +3,7 @@ import { countsAgainstSlots } from '../../data/constants/slots';
 import { Stats } from '../../data/constants/stats';
 import Abilities from '../../data/ids/abilities';
 import { MoveCategories, Moves } from '../../data/ids/moves';
-import { Species, getBaseFormSpecies } from '../../data/ids/species';
+import { Species } from '../../data/ids/species';
 import { Statuses } from '../../data/ids/status';
 import { getSpeciesData } from '../../data/species';
 import { getWornPartner } from '../../data/species/fusion';
@@ -41,6 +41,18 @@ function swappableAbilities(unit: Unit): Abilities[] {
 
 /** How far a Darmanitan has to fall before it sits down */
 export const ZEN_MODE_THRESHOLD = 1 / 2;
+
+/**
+ * Each Darmanitan's standing shape and the Zen shape it sits down
+ * into, by either of the two. Galarian Darmanitan has a Zen shape of
+ * its own but no sprite for it yet, so it is left out until it does
+ */
+const ZEN_SHAPES = new Map<Species, { standing: Species; zen: Species }>();
+
+for (const shapes of [{ standing: Species.Darmanitan, zen: Species.DarmanitanZen }]) {
+  ZEN_SHAPES.set(shapes.standing, shapes);
+  ZEN_SHAPES.set(shapes.zen, shapes);
+}
 
 /** How far an Archen has to fall before it loses heart, and what that costs it */
 const DEFEATIST_THRESHOLD = 1 / 2;
@@ -214,16 +226,14 @@ const setupAbilities = [
    */
   createAbility(Abilities.ZenMode, (battle) => {
     function settle(unit: Unit): void {
-      if (
-        !unit.alive ||
-        !unit.hasAbility(Abilities.ZenMode) ||
-        getBaseFormSpecies(unit.species) !== Species.Darmanitan
-      ) {
+      const shapes = ZEN_SHAPES.get(unit.species);
+
+      if (!unit.alive || !unit.hasAbility(Abilities.ZenMode) || shapes == null) {
         return;
       }
 
       const low = unit.health < unit.checkStat(Stats.HP, 0) * ZEN_MODE_THRESHOLD;
-      const shape = low ? Species.DarmanitanZen : Species.Darmanitan;
+      const shape = low ? shapes.zen : shapes.standing;
 
       if (unit.species === shape) {
         return;

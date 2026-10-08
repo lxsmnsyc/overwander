@@ -5,7 +5,7 @@ import Regions from '../ids/regions';
 import { idOf } from '../yaml';
 import regionsFile from './regions.yaml';
 import type { Species } from '../ids/species';
-import { ALOLAN_FORMS, speciesDexNumber } from '../ids/species';
+import { ALOLAN_FORMS, GALARIAN_FORMS, HISUIAN_FORMS, speciesDexNumber } from '../ids/species';
 import { getRegisteredSpecies } from './__create';
 
 /**
@@ -58,6 +58,8 @@ export const REGION_NAMES: Record<Regions, string> = {
   [Regions.Unova]: 'unova',
   [Regions.Kalos]: 'kalos',
   [Regions.Alola]: 'alola',
+  [Regions.Galar]: 'galar',
+  [Regions.Hisui]: 'hisui',
 };
 
 for (const [name, written] of Object.entries(v.parse(v.record(v.string(), REGION), regionsFile))) {
@@ -99,6 +101,12 @@ const REGIONAL_FORMS = new Map<Species, Regions>();
 
 for (const form of ALOLAN_FORMS) {
   REGIONAL_FORMS.set(form, Regions.Alola);
+}
+for (const form of GALARIAN_FORMS) {
+  REGIONAL_FORMS.set(form, Regions.Galar);
+}
+for (const form of HISUIAN_FORMS) {
+  REGIONAL_FORMS.set(form, Regions.Hisui);
 }
 
 export function getSpeciesRegion(species: Species): Regions {

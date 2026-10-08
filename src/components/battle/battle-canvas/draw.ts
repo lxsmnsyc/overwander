@@ -2,7 +2,7 @@ import type SpeciesSpriteAnimation from '../../../canvas/species-sprite-animatio
 import type { Slot } from './field';
 import { type CastLabels, drawCastLabel } from './cast-label';
 import drawFormMark from './form-mark';
-import { COLORS, HIT_REACH, NAMED_RADIUS } from './metrics';
+import { COLORS, HIT_REACH, NAMED_RADIUS, TOTEM_DRAW_SCALE } from './metrics';
 import speciesSize from '../../../canvas/species-size';
 import { type Striking, animationFor } from './motion';
 import type { ProgressData } from '../../../battle/events';
@@ -223,9 +223,6 @@ export function drawAim(
 function baseScaleOf(slot: Slot): number {
   return slot.radius / SPRITE_SCALE_DIVISOR;
 }
-
-/** How much bigger a Totem is drawn than its species */
-const TOTEM_DRAW_SCALE = 1.5;
 
 export function scaleOf(slot: Slot): number {
   const sprite = slot.sprite;

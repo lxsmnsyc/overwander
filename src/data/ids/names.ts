@@ -2498,6 +2498,7 @@ export const ABILITY_IDS = {
   Shadow: Abilities.Shadow,
   Purified: Abilities.Purified,
   Totem: Abilities.Totem,
+  TotemAlly: Abilities.TotemAlly,
   VerdantField: Abilities.VerdantField,
   EmberField: Abilities.EmberField,
   DelugeField: Abilities.DelugeField,

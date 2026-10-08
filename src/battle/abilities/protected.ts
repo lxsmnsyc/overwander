@@ -5,7 +5,12 @@ import Abilities from '../../data/ids/abilities';
  * Neutralizing Gas or Mold Breaker). Kept in a leaf of its own so the
  * factories may read it without importing the abilities that use it
  */
-const PROTECTED_ABILITIES = new Set<Abilities>([Abilities.Boss, Abilities.Shadow, Abilities.Totem]);
+const PROTECTED_ABILITIES = new Set<Abilities>([
+  Abilities.Boss,
+  Abilities.Shadow,
+  Abilities.Totem,
+  Abilities.TotemAlly,
+]);
 
 /**
  * The ones Mold Breaker and the moves that pierce like it cannot see

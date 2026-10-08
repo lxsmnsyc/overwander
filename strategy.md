@@ -29,7 +29,7 @@ Checked against the collection as of 8 October 2026.
   - every Galarian form except Stunfisk and Darmanitan Zen;
   - Basculegion's and Indeedee's females, as female coats on the male's sheet, the way Meowstic's is.
 - **Falinks ships drawn as its Brass, for now.** The collection has only the troop's pieces (Brass, the leader, and Trooper) and no sheet for Falinks itself. Brass gets a hidden id so the import takes its sheet, and a stand-in rule draws Falinks with it. When a base sheet is drawn, the stand-in and the hidden id are removed.
-- **No shiny coat**, which ships anyway and draws in the regular colours: Eternamax. Every other Gen 8 species and form has one, Alcremie's seven Sweets included.
+- **Every Gen 8 species and form that can be shiny has a shiny coat**, Alcremie's seven Sweets included. Eternamax is shiny-locked in the games, so it has none and needs none.
 - **Alcremie ships its seven Sweets on Vanilla Cream only** (`AlcremieBerry` to `AlcremieRibbon`, Strawberry being the base). The other eight creams are left out on purpose, not for lack of art.
 - **The collection files Hisui's new species under `galar/`.** `scripts/import-sprites.ts` refiles dex 899 to 905 under `hisui`, where the game looks for them.
 - **What follows from the gaps:**

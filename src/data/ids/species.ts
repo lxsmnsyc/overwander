@@ -1428,6 +1428,9 @@ export const enum Species {
 
   /** The shape Enamorus takes when the Reveal Glass shows its other self */
   EnamorusTherian = 1090501,
+
+  /** The female of the line, drawn apart from the male the way Meowstic's is */
+  BasculegionFemale = 1090201,
 }
 
 /**
@@ -1713,7 +1716,6 @@ export const LYCANROC_FORMS: Species[] = [
   Species.LycanrocDusk,
 ];
 
-/** A Wishiwashi alone, and the school it calls together from level 20 */
 /** The Alolan forms written so far, each a variant of the Kanto species it is named after */
 export const ALOLAN_FORMS: Species[] = [
   Species.RattataAlola,
@@ -1736,6 +1738,54 @@ export const ALOLAN_FORMS: Species[] = [
   Species.MarowakAlola,
 ];
 
+/**
+ * The Galarian forms, each a variant of the older species it is named
+ * after. They belong to Galar whichever dex number they share
+ */
+export const GALARIAN_FORMS: Species[] = [
+  Species.MeowthGalar,
+  Species.PonytaGalar,
+  Species.RapidashGalar,
+  Species.SlowpokeGalar,
+  Species.SlowbroGalar,
+  Species.FarfetchdGalar,
+  Species.WeezingGalar,
+  Species.MrMimeGalar,
+  Species.ArticunoGalar,
+  Species.ZapdosGalar,
+  Species.MoltresGalar,
+  Species.SlowkingGalar,
+  Species.CorsolaGalar,
+  Species.ZigzagoonGalar,
+  Species.LinooneGalar,
+  Species.DarumakaGalar,
+  Species.DarmanitanGalar,
+  Species.DarmanitanGalarZen,
+  Species.YamaskGalar,
+  Species.StunfiskGalar,
+];
+
+/** The Hisuian forms, the same way */
+export const HISUIAN_FORMS: Species[] = [
+  Species.GrowlitheHisui,
+  Species.ArcanineHisui,
+  Species.VoltorbHisui,
+  Species.ElectrodeHisui,
+  Species.TyphlosionHisui,
+  Species.QwilfishHisui,
+  Species.SneaselHisui,
+  Species.SamurottHisui,
+  Species.LilligantHisui,
+  Species.ZoruaHisui,
+  Species.ZoroarkHisui,
+  Species.BraviaryHisui,
+  Species.SliggooHisui,
+  Species.GoodraHisui,
+  Species.AvaluggHisui,
+  Species.DecidueyeHisui,
+];
+
+/** A Wishiwashi alone, and the school it calls together from level 20 */
 export const WISHIWASHI_FORMS: Species[] = [Species.Wishiwashi, Species.WishiwashiSchool];
 
 /** Silvally, and the seventeen types a Memory sets it to, in the Memories' order */

@@ -1179,8 +1179,8 @@ describe('type experts', () => {
 
     // Every strike counts, and Skill Link lands the lot, which is what
     // makes five strikes of 25 worth a slot
-    expect(getBestMoves(Species.Cloyster, [Abilities.ShellArmor])).not.toContain(Moves.SpikeCannon);
-    expect(getBestMoves(Species.Cloyster, [Abilities.SkillLink])).toContain(Moves.SpikeCannon);
+    expect(getBestMoves(Species.Cloyster, [Abilities.ShellArmor])).not.toContain(Moves.RockBlast);
+    expect(getBestMoves(Species.Cloyster, [Abilities.SkillLink])).toContain(Moves.RockBlast);
   });
 
   it('never awakens an ability the sheet never asks for', () => {
@@ -1328,11 +1328,11 @@ describe('type experts', () => {
   });
 
   it('prefers a healer that mends over a frailer one that only boosts', () => {
-    // Lucario only has Helping Hand, so Chansey heals despite its bulk
+    // Hitmontop only has Helping Hand, so Chansey heals despite its bulk
     const roles = assignBuildRoles([
       Species.Gengar,
       Species.Machamp,
-      Species.Lucario,
+      Species.Hitmontop,
       Species.Chansey,
       Species.Skarmory,
       Species.Tyranitar,

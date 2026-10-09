@@ -29,16 +29,18 @@ function pokemon(fields: Record<string, unknown>): ReturnType<typeof asCaughtPok
 
 describe('the moves a run of levels offers', () => {
   it('hands over every level crossed, in the order they were grown through', () => {
-    // Bulbasaur learns at 7, 10, 15, 20 and 25, so a jump from five to
-    // twenty-five crosses all of them
+    // Bulbasaur learns at 3, then every third level from 6 to 24, so a
+    // jump from five to twenty-five crosses all of those
     const caught = pokemon({ level: 5, moves: [Moves.Tackle, Moves.Growl] });
 
     expect(getLevelMovesBetween(caught, 6, 25)).toEqual([
+      Moves.Growth,
       Moves.LeechSeed,
-      Moves.VineWhip,
+      Moves.RazorLeaf,
       Moves.PoisonPowder,
       Moves.SleepPowder,
-      Moves.RazorLeaf,
+      Moves.SeedBomb,
+      Moves.TakeDown,
       Moves.SweetScent,
     ]);
   });
@@ -57,9 +59,12 @@ describe('the moves a run of levels offers', () => {
     const caught = pokemon({ level: 5, moves: [Moves.VineWhip, Moves.RazorLeaf] });
 
     expect(getLevelMovesBetween(caught, 6, 25)).toEqual([
+      Moves.Growth,
       Moves.LeechSeed,
       Moves.PoisonPowder,
       Moves.SleepPowder,
+      Moves.SeedBomb,
+      Moves.TakeDown,
       Moves.SweetScent,
     ]);
   });
@@ -79,9 +84,9 @@ describe('the moves a run of levels offers', () => {
   });
 
   it('offers nothing for a run that crosses no threshold', () => {
-    const caught = pokemon({ level: 20, moves: [] });
+    const caught = pokemon({ level: 21, moves: [] });
 
-    expect(getLevelMovesBetween(caught, 21, 24)).toEqual([]);
+    expect(getLevelMovesBetween(caught, 22, 23)).toEqual([]);
   });
 
   it('offers nothing at all for an egg, however far it is carried', () => {
@@ -100,22 +105,22 @@ describe('the moves a run of levels offers', () => {
  * of them goes over in one call
  */
 describe('the next level that asks a question', () => {
-  // Bulbasaur learns at 1, 7, 10, 15, 20, 25, 32, 39 and 46
+  // Bulbasaur learns at 1, 3, and every third level from 6 to 36
   it('names the next threshold above the level given', () => {
     const caught = pokemon({ level: 5, moves: [Moves.Tackle, Moves.Growl] });
 
-    expect(nextOfferLevel(caught, 5)).toBe(7);
-    expect(nextOfferLevel(caught, 7)).toBe(10);
-    expect(nextOfferLevel(caught, 24)).toBe(25);
+    expect(nextOfferLevel(caught, 5)).toBe(6);
+    expect(nextOfferLevel(caught, 6)).toBe(9);
+    expect(nextOfferLevel(caught, 23)).toBe(24);
   });
 
   it('steps over a threshold whose move the pokemon already knows', () => {
-    // Everything level 7 offers is already on it, so the run has no
+    // Everything level 6 offers is already on it, so the run has no
     // reason to stop there
-    const knows = getLevelMoves(pokemon({ level: 5, moves: [] }), 7);
+    const knows = getLevelMoves(pokemon({ level: 5, moves: [] }), 6);
     const caught = pokemon({ level: 5, moves: knows });
 
-    expect(nextOfferLevel(caught, 5)).toBe(10);
+    expect(nextOfferLevel(caught, 5)).toBe(9);
   });
 
   it('answers null once nothing above asks anything', () => {
@@ -145,7 +150,7 @@ describe('the next level that asks a question', () => {
       stops.push(asks);
       at = asks;
     }
-    expect(stops).toEqual([7, 10, 15, 20, 25]);
+    expect(stops).toEqual([6, 9, 12, 15, 18, 21, 24]);
     // And every one of them has something to offer
     for (const stop of stops) {
       expect(getLevelMoves(caught, stop).length).toBeGreaterThan(0);

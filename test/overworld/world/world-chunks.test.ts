@@ -626,18 +626,9 @@ describe('world', () => {
   });
 
   it('never derives the same move twice', () => {
-    // A learn set lists a move at every level it is offered at, and
-    // Kadabra is offered Confusion at 1 and again at 16, Disable at 1
-    // and again at 20. Run together that is four slots holding two
-    // moves — a pokemon that cannot do half of what its card says
-    const kadabra = deriveMoves(Species.Kadabra, 30);
-
-    expect(new Set(kadabra).size).toBe(kadabra.length);
-
-    // ...and it is the *latest* of each that is kept, so the four are
-    // still the four most recently learned
-    expect(kadabra).toContain(Moves.Psybeam);
-
+    // A move can be offered at more than one level, its own and a
+    // pre-evolution's, and run together that is two slots holding one
+    // move: a pokemon that cannot do half of what its card says
     // Every species, at every level one of them can be met at
     for (const species of getRegisteredSpecies()) {
       for (const level of [1, 10, 25, 50, MAX_LEVEL]) {
@@ -781,14 +772,15 @@ describe('world', () => {
   });
 
   it('fills a boss from its whole learn set, not only its latest moves', () => {
-    // Azelf's last eight are mostly unfit (Uproar, Future Sight, Last
-    // Resort, Natural Gift, Explosion), so the slots come from earlier
+    // Four of Azelf's last eight are unfit (Uproar, Future Sight, Last
+    // Resort, Explosion), so those slots come from earlier
     const moves = getBossMoves(Species.Azelf);
 
     expect(moves).toContain(Moves.Detect);
     expect(moves).toContain(Moves.Imprison);
-    expect(moves).toContain(Moves.Confusion);
-    expect(moves).toHaveLength(7);
+    expect(moves).toContain(Moves.Swift);
+    expect(moves).not.toContain(Moves.Explosion);
+    expect(moves).toHaveLength(8);
   });
 
   it('never stages a Ditto, or anything with nothing left to cast', () => {

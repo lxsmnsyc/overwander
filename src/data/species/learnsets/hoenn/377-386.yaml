@@ -1,17 +1,20 @@
 Regirock:
   Regirock:
     level:
-      1: [Explosion]
-      9: [RockThrow]
-      17: [Curse]
-      25: [Superpower]
-      33: [AncientPower]
-      41: [IronDefense]
-      49: [ZapCannon, ChargeBeam]
-      57: [LockOn]
-      65: [HyperBeam]
-      73: [StoneEdge]
-      81: [HammerArm]
+      1: [RockThrow, ChargeBeam]
+      6: [Bulldoze]
+      12: [AncientPower]
+      18: [Stomp]
+      24: [RockSlide]
+      30: [Curse]
+      36: [IronDefense]
+      42: [HammerArm]
+      48: [StoneEdge]
+      54: [Superpower]
+      60: [LockOn]
+      66: [ZapCannon]
+      72: [HyperBeam]
+      78: [Explosion]
     teachable:
       - FocusPunch
       - Toxic
@@ -78,19 +81,32 @@ Regirock:
       - StompingTantrum
       - BodyPress
       - MeteorBeam
+      - ChargeBeam
+      - FlashCannon
+      - HeavySlam
+      - IronDefense
+      - RockBlast
+      - SandTomb
+      - SelfDestruct
+      - StoneEdge
+      - Superpower
 Regice:
   Regice:
     level:
-      1: [Explosion]
-      9: [IcyWind]
-      17: [Curse]
-      25: [Superpower]
-      33: [AncientPower]
-      41: [Amnesia]
-      49: [ZapCannon, ChargeBeam]
-      57: [LockOn]
-      65: [HyperBeam]
-      81: [HammerArm]
+      1: [IcyWind, ChargeBeam]
+      6: [Bulldoze]
+      12: [AncientPower]
+      18: [Stomp]
+      24: [IceBeam]
+      30: [Curse]
+      36: [Amnesia]
+      42: [HammerArm]
+      48: [Blizzard]
+      54: [Superpower]
+      60: [LockOn]
+      66: [ZapCannon]
+      72: [HyperBeam]
+      78: [Explosion]
     teachable:
       - FocusPunch
       - Toxic
@@ -155,20 +171,30 @@ Regice:
       - FrostBreath
       - AuroraVeil
       - StompingTantrum
+      - Amnesia
+      - ChargeBeam
+      - HeavySlam
+      - IcicleSpear
+      - RockTomb
+      - SelfDestruct
+      - Superpower
 Registeel:
   Registeel:
     level:
-      1: [Explosion]
-      9: [MetalClaw]
-      17: [Curse]
-      25: [Superpower]
-      33: [AncientPower]
-      41: [Amnesia, IronDefense]
-      49: [ZapCannon, ChargeBeam]
-      57: [LockOn]
-      65: [HyperBeam]
-      73: [FlashCannon, IronHead]
-      81: [HammerArm]
+      1: [MetalClaw, ChargeBeam]
+      6: [Bulldoze]
+      12: [AncientPower]
+      18: [Stomp]
+      24: [FlashCannon, IronHead]
+      30: [Curse]
+      36: [Amnesia, IronDefense]
+      42: [HammerArm]
+      48: [HeavySlam]
+      54: [Superpower]
+      60: [LockOn]
+      66: [ZapCannon]
+      72: [HyperBeam]
+      78: [Explosion]
     teachable:
       - FocusPunch
       - Toxic
@@ -236,24 +262,34 @@ Registeel:
       - SteelBeam
       - SteelRoller
       - MeteorBeam
+      - Amnesia
+      - ChargeBeam
+      - FlashCannon
+      - HeavySlam
+      - IronDefense
+      - IronHead
+      - SandTomb
+      - SelfDestruct
+      - Superpower
 Latias:
   Latias:
     level:
-      1: [Psywave]
-      5: [Wish]
-      10: [HelpingHand]
-      15: [Safeguard]
-      20: [DragonBreath]
-      25: [WaterSport]
-      30: [Refresh]
+      1: [Charm, StoredPower, Psywave]
+      5: [HelpingHand]
+      10: [Recover]
+      15: [Confusion, Safeguard]
+      20: [Tailwind]
+      25: [DragonBreath, WaterSport]
+      30: [Wish, Refresh]
       35: [MistBall]
-      40: [Psychic, ZenHeadbutt]
-      45: [Recover]
-      50: [Charm, PsychoShift]
-      60: [HealingWish]
-      65: [HealPulse]
-      70: [DragonPulse, ReflectType]
-      75: [GuardSplit]
+      40: [ZenHeadbutt]
+      45: [DragonPulse]
+      50: [HealPulse]
+      55: [ReflectType]
+      60: [Psychic]
+      65: [GuardSplit]
+      70: [HealingWish]
+      75: [PsychoShift]
     teachable:
       - DragonClaw
       - WaterPulse
@@ -332,23 +368,43 @@ Latias:
       - BreakingSwipe
       - ScaleShot
       - DualWingbeat
+      - Agility
+      - AirSlash
+      - AllySwitch
+      - AuraSphere
+      - BatonPass
+      - Charm
+      - DragonDance
+      - DragonPulse
+      - FutureSight
+      - HelpingHand
+      - MysticalFire
+      - Outrage
+      - PsychoCut
+      - StoredPower
+      - TriAttack
+      - Trick
+      - Whirlpool
+      - ZenHeadbutt
 Latios:
   Latios:
     level:
-      1: [Psywave]
-      5: [Memento, HealBlock]
-      10: [HelpingHand]
-      15: [Safeguard]
-      20: [DragonBreath]
-      25: [Protect]
-      30: [Refresh]
+      1: [DragonDance, StoredPower, Psywave]
+      5: [HelpingHand, HealBlock]
+      10: [Recover]
+      15: [Confusion, Safeguard]
+      20: [Tailwind]
+      25: [DragonBreath, Protect]
+      30: [AllySwitch, Refresh]
       35: [LusterPurge]
-      40: [Psychic, ZenHeadbutt]
-      45: [Recover]
-      50: [DragonDance, PsychoShift]
-      65: [HealPulse]
-      70: [DragonPulse, Telekinesis]
-      75: [PowerSplit]
+      40: [ZenHeadbutt]
+      45: [DragonPulse]
+      50: [HealPulse]
+      55: [SimpleBeam]
+      60: [Psychic]
+      65: [PowerSplit]
+      70: [Memento, Telekinesis]
+      75: [PsychoShift]
     teachable:
       - DragonClaw
       - WaterPulse
@@ -426,6 +482,23 @@ Latios:
       - BreakingSwipe
       - ScaleShot
       - DualWingbeat
+      - Agility
+      - AirSlash
+      - AllySwitch
+      - AuraSphere
+      - BatonPass
+      - DragonDance
+      - DragonPulse
+      - FutureSight
+      - HelpingHand
+      - MysticalFire
+      - Outrage
+      - PsychoCut
+      - StoredPower
+      - TriAttack
+      - Trick
+      - Whirlpool
+      - ZenHeadbutt
 Kyogre:
   family-teachable:
     - Roar
@@ -484,17 +557,25 @@ Kyogre:
     - Liquidation
   Kyogre:
     level:
-      1: [WaterPulse]
-      5: [ScaryFace]
-      15: [AncientPower]
-      20: [BodySlam]
-      30: [CalmMind, AquaRing]
-      35: [IceBeam]
-      45: [HydroPump, OriginPulse]
+      1: [BodySlam, ScaryFace, AncientPower, WaterPulse]
+      9: [AquaTail]
+      18: [CalmMind]
+      27: [MuddyWater]
+      36: [IceBeam]
+      45: [SheerCold]
       50: [Rest]
-      60: [SheerCold]
-      65: [DoubleEdge, AquaTail]
-      75: [WaterSpout]
+      54: [AquaRing]
+      63: [OriginPulse]
+      72: [HydroPump]
+      81: [DoubleEdge]
+      90: [WaterSpout]
+    teachable:
+      - HeavySlam
+      - HydroPump
+      - MuddyWater
+      - ScaryFace
+      - Uproar
+      - Whirlpool
   KyogrePrimal:
     level:
       1: [WaterPulse]
@@ -589,19 +670,27 @@ Groudon:
     - StompingTantrum
   Groudon:
     level:
-      1: [MudShot]
-      5: [ScaryFace]
-      15: [AncientPower, LavaPlume]
-      20: [Slash, HammerArm]
-      30: [BulkUp]
-      35: [Earthquake]
-      45: [FireBlast, PrecipiceBlades]
-      50: [Rest]
-      60: [Fissure]
-      65: [SolarBeam, EarthPower]
-      75: [Eruption]
+      1: [ScaryFace, AncientPower, MudShot, LavaPlume]
+      9: [EarthPower]
+      18: [BulkUp]
+      20: [Slash]
+      27: [Earthquake]
+      36: [HammerArm]
+      45: [Fissure]
+      54: [Rest]
+      63: [PrecipiceBlades]
+      72: [FireBlast]
+      81: [SolarBeam]
+      90: [Eruption]
     teachable:
       - ScorchingSands
+      - EarthPower
+      - HeatCrash
+      - HeavySlam
+      - HighHorsepower
+      - MudShot
+      - ScaryFace
+      - Uproar
   GroudonPrimal:
     level:
       1: [MudShot]
@@ -618,17 +707,18 @@ Groudon:
 Rayquaza:
   Rayquaza:
     level:
-      1: [Twister]
-      5: [ScaryFace]
-      15: [AncientPower]
+      1: [ScaryFace, Twister, AncientPower, AirSlash, DragonAscent]
+      9: [Crunch]
+      18: [DragonDance]
       20: [DragonClaw]
-      30: [DragonDance]
-      35: [Crunch, AirSlash]
-      45: [Fly]
-      50: [Rest]
-      60: [ExtremeSpeed]
-      65: [Outrage]
-      75: [HyperBeam, DragonPulse]
+      27: [ExtremeSpeed]
+      36: [DragonPulse]
+      45: [HyperVoice]
+      54: [Rest]
+      63: [Fly]
+      72: [Hurricane]
+      81: [Outrage]
+      90: [HyperBeam]
     teachable:
       - Roar
       - Toxic
@@ -708,21 +798,39 @@ Rayquaza:
       - BreakingSwipe
       - ScaleShot
       - MeteorBeam
+      - AirSlash
+      - CosmicPower
+      - Crunch
+      - DragonDance
+      - DragonPulse
+      - Hurricane
+      - HydroPump
+      - HyperVoice
+      - Outrage
+      - RockTomb
+      - ScaryFace
+      - SwordsDance
+      - Uproar
+      - Whirlpool
 Jirachi:
   Jirachi:
     level:
-      1: [Wish, Confusion]
-      5: [Rest]
-      10: [Swift]
-      15: [HelpingHand]
-      20: [Psychic]
-      25: [Refresh]
-      35: [DoubleEdge, ZenHeadbutt]
-      40: [FutureSight]
-      45: [CosmicPower, Gravity]
-      50: [DoomDesire, HealingWish]
-      65: [LastResort]
+      1: [Confusion, Wish]
+      7: [Swift]
+      14: [HelpingHand]
       21: [LifeDew]
+      25: [Refresh]
+      28: [ZenHeadbutt]
+      35: [Gravity]
+      42: [Psychic]
+      49: [MeteorMash]
+      56: [HealingWish]
+      63: [Rest]
+      70: [FutureSight]
+      77: [DoubleEdge]
+      84: [CosmicPower]
+      91: [LastResort]
+      98: [DoomDesire]
     teachable:
       - CalmMind
       - Toxic
@@ -772,6 +880,40 @@ Jirachi:
       - SteelBeam
       - ExpandingForce
       - MeteorBeam
+      - AllySwitch
+      - Amnesia
+      - AuraSphere
+      - BatonPass
+      - BodySlam
+      - Charm
+      - CosmicPower
+      - DreamEater
+      - Encore
+      - Endure
+      - FirePunch
+      - FutureSight
+      - HelpingHand
+      - IcePunch
+      - IcyWind
+      - Imprison
+      - IronDefense
+      - MegaKick
+      - MegaPunch
+      - Metronome
+      - PlayRough
+      - PsychUp
+      - Recycle
+      - SleepTalk
+      - Snore
+      - StoredPower
+      - Substitute
+      - Swagger
+      - Swift
+      - ThunderPunch
+      - ThunderWave
+      - Trick
+      - Uproar
+      - ZenHeadbutt
 Deoxys:
   family-teachable:
     - FocusPunch

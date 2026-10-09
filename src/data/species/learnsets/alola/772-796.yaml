@@ -40,53 +40,61 @@ TypeNull:
     - TerrainPulse
   TypeNull:
     level:
-      1: [Tackle]
-      5: [Rage]
-      10: [Pursuit]
-      15: [Imprison]
-      20: [AerialAce]
+      1: [Tackle, Imprison]
+      5: [AerialAce, Rage]
+      10: [ScaryFace, Pursuit]
+      15: [DoubleHit]
+      20: [MetalSound]
       25: [CrushClaw]
-      30: [ScaryFace]
-      35: [XScissor]
-      40: [TakeDown]
-      45: [MetalSound]
-      50: [IronHead]
-      55: [DoubleHit]
-      60: [AirSlash]
+      30: [AirSlash]
+      35: [TriAttack]
+      40: [XScissor]
+      45: [IronHead]
+      50: [TakeDown]
+      55: [DoubleEdge]
       65: [Punishment]
       70: [RazorWind]
-      75: [TriAttack]
-      80: [DoubleEdge]
       85: [HealBlock]
+    teachable:
+      - AirSlash
+      - Endure
+      - HyperBeam
+      - Imprison
+      - ScaryFace
+      - Swift
+      - TriAttack
   Silvally:
     level:
       1:
-        - FireFang
-        - HealBlock
-        - IceFang
-        - Imprison
-        - IronHead
-        - MultiAttack
-        - PoisonFang
-        - Tackle
-        - ThunderFang
+        [
+          Tackle,
+          Bite,
+          Explosion,
+          ScaryFace,
+          Imprison,
+          PoisonFang,
+          AerialAce,
+          ThunderFang,
+          IceFang,
+          FireFang,
+          IronHead,
+          MultiAttack,
+          HealBlock,
+        ]
       5: [Rage]
       10: [Pursuit]
-      15: [Bite]
-      20: [AerialAce]
+      15: [DoubleHit]
+      20: [MetalSound]
       25: [CrushClaw]
-      30: [ScaryFace]
-      35: [XScissor]
-      40: [TakeDown]
-      45: [MetalSound]
-      50: [Crunch]
-      55: [DoubleHit]
-      60: [AirSlash]
+      30: [AirSlash]
+      35: [TriAttack]
+      40: [XScissor]
+      45: [Crunch]
+      50: [TakeDown]
+      55: [DoubleEdge]
+      60: [PartingShot]
       65: [Punishment]
       70: [RazorWind]
-      75: [TriAttack]
-      80: [DoubleEdge]
-      85: [PartingShot]
     teachable:
       - Defog
       - DracoMeteor
@@ -108,35 +116,53 @@ TypeNull:
       - Thunderbolt
       - ZenHeadbutt
       - SteelBeam
+      - AirSlash
+      - Crunch
+      - Endure
+      - FireFang
+      - FirePledge
+      - IceFang
+      - Imprison
+      - PsychicFangs
+      - Reversal
+      - ScaryFace
+      - SelfDestruct
+      - Swift
+      - ThunderFang
+      - TriAttack
+      - WaterPledge
   SilvallyFighting:
     level:
       1:
-        - FireFang
-        - HealBlock
-        - IceFang
-        - Imprison
-        - IronHead
-        - MultiAttack
-        - PoisonFang
-        - Tackle
-        - ThunderFang
+        [
+          Tackle,
+          Bite,
+          Explosion,
+          ScaryFace,
+          Imprison,
+          PoisonFang,
+          AerialAce,
+          ThunderFang,
+          IceFang,
+          FireFang,
+          IronHead,
+          MultiAttack,
+          HealBlock,
+        ]
       5: [Rage]
       10: [Pursuit]
-      15: [Bite]
-      20: [AerialAce]
+      15: [DoubleHit]
+      20: [MetalSound]
       25: [CrushClaw]
-      30: [ScaryFace]
-      35: [XScissor]
-      40: [TakeDown]
-      45: [MetalSound]
-      50: [Crunch]
-      55: [DoubleHit]
-      60: [AirSlash]
+      30: [AirSlash]
+      35: [TriAttack]
+      40: [XScissor]
+      45: [Crunch]
+      50: [TakeDown]
+      55: [DoubleEdge]
+      60: [PartingShot]
       65: [Punishment]
       70: [RazorWind]
-      75: [TriAttack]
-      80: [DoubleEdge]
-      85: [PartingShot]
     teachable:
       - Defog
       - DracoMeteor
@@ -158,35 +184,53 @@ TypeNull:
       - Thunderbolt
       - ZenHeadbutt
       - SteelBeam
+      - AirSlash
+      - Crunch
+      - Endure
+      - FireFang
+      - FirePledge
+      - IceFang
+      - Imprison
+      - PsychicFangs
+      - Reversal
+      - ScaryFace
+      - SelfDestruct
+      - Swift
+      - ThunderFang
+      - TriAttack
+      - WaterPledge
   SilvallyFlying:
     level:
       1:
-        - FireFang
-        - HealBlock
-        - IceFang
-        - Imprison
-        - IronHead
-        - MultiAttack
-        - PoisonFang
-        - Tackle
-        - ThunderFang
+        [
+          Tackle,
+          Bite,
+          Explosion,
+          ScaryFace,
+          Imprison,
+          PoisonFang,
+          AerialAce,
+          ThunderFang,
+          IceFang,
+          FireFang,
+          IronHead,
+          MultiAttack,
+          HealBlock,
+        ]
       5: [Rage]
       10: [Pursuit]
-      15: [Bite]
-      20: [AerialAce]
+      15: [DoubleHit]
+      20: [MetalSound]
       25: [CrushClaw]
-      30: [ScaryFace]
-      35: [XScissor]
-      40: [TakeDown]
-      45: [MetalSound]
-      50: [Crunch]
-      55: [DoubleHit]
-      60: [AirSlash]
+      30: [AirSlash]
+      35: [TriAttack]
+      40: [XScissor]
+      45: [Crunch]
+      50: [TakeDown]
+      55: [DoubleEdge]
+      60: [PartingShot]
       65: [Punishment]
       70: [RazorWind]
-      75: [TriAttack]
-      80: [DoubleEdge]
-      85: [PartingShot]
     teachable:
       - Defog
       - DracoMeteor
@@ -208,35 +252,53 @@ TypeNull:
       - Thunderbolt
       - ZenHeadbutt
       - SteelBeam
+      - AirSlash
+      - Crunch
+      - Endure
+      - FireFang
+      - FirePledge
+      - IceFang
+      - Imprison
+      - PsychicFangs
+      - Reversal
+      - ScaryFace
+      - SelfDestruct
+      - Swift
+      - ThunderFang
+      - TriAttack
+      - WaterPledge
   SilvallyPoison:
     level:
       1:
-        - FireFang
-        - HealBlock
-        - IceFang
-        - Imprison
-        - IronHead
-        - MultiAttack
-        - PoisonFang
-        - Tackle
-        - ThunderFang
+        [
+          Tackle,
+          Bite,
+          Explosion,
+          ScaryFace,
+          Imprison,
+          PoisonFang,
+          AerialAce,
+          ThunderFang,
+          IceFang,
+          FireFang,
+          IronHead,
+          MultiAttack,
+          HealBlock,
+        ]
       5: [Rage]
       10: [Pursuit]
-      15: [Bite]
-      20: [AerialAce]
+      15: [DoubleHit]
+      20: [MetalSound]
       25: [CrushClaw]
-      30: [ScaryFace]
-      35: [XScissor]
-      40: [TakeDown]
-      45: [MetalSound]
-      50: [Crunch]
-      55: [DoubleHit]
-      60: [AirSlash]
+      30: [AirSlash]
+      35: [TriAttack]
+      40: [XScissor]
+      45: [Crunch]
+      50: [TakeDown]
+      55: [DoubleEdge]
+      60: [PartingShot]
       65: [Punishment]
       70: [RazorWind]
-      75: [TriAttack]
-      80: [DoubleEdge]
-      85: [PartingShot]
     teachable:
       - Defog
       - DracoMeteor
@@ -258,35 +320,53 @@ TypeNull:
       - Thunderbolt
       - ZenHeadbutt
       - SteelBeam
+      - AirSlash
+      - Crunch
+      - Endure
+      - FireFang
+      - FirePledge
+      - IceFang
+      - Imprison
+      - PsychicFangs
+      - Reversal
+      - ScaryFace
+      - SelfDestruct
+      - Swift
+      - ThunderFang
+      - TriAttack
+      - WaterPledge
   SilvallyGround:
     level:
       1:
-        - FireFang
-        - HealBlock
-        - IceFang
-        - Imprison
-        - IronHead
-        - MultiAttack
-        - PoisonFang
-        - Tackle
-        - ThunderFang
+        [
+          Tackle,
+          Bite,
+          Explosion,
+          ScaryFace,
+          Imprison,
+          PoisonFang,
+          AerialAce,
+          ThunderFang,
+          IceFang,
+          FireFang,
+          IronHead,
+          MultiAttack,
+          HealBlock,
+        ]
       5: [Rage]
       10: [Pursuit]
-      15: [Bite]
-      20: [AerialAce]
+      15: [DoubleHit]
+      20: [MetalSound]
       25: [CrushClaw]
-      30: [ScaryFace]
-      35: [XScissor]
-      40: [TakeDown]
-      45: [MetalSound]
-      50: [Crunch]
-      55: [DoubleHit]
-      60: [AirSlash]
+      30: [AirSlash]
+      35: [TriAttack]
+      40: [XScissor]
+      45: [Crunch]
+      50: [TakeDown]
+      55: [DoubleEdge]
+      60: [PartingShot]
       65: [Punishment]
       70: [RazorWind]
-      75: [TriAttack]
-      80: [DoubleEdge]
-      85: [PartingShot]
     teachable:
       - Defog
       - DracoMeteor
@@ -308,35 +388,53 @@ TypeNull:
       - Thunderbolt
       - ZenHeadbutt
       - SteelBeam
+      - AirSlash
+      - Crunch
+      - Endure
+      - FireFang
+      - FirePledge
+      - IceFang
+      - Imprison
+      - PsychicFangs
+      - Reversal
+      - ScaryFace
+      - SelfDestruct
+      - Swift
+      - ThunderFang
+      - TriAttack
+      - WaterPledge
   SilvallyRock:
     level:
       1:
-        - FireFang
-        - HealBlock
-        - IceFang
-        - Imprison
-        - IronHead
-        - MultiAttack
-        - PoisonFang
-        - Tackle
-        - ThunderFang
+        [
+          Tackle,
+          Bite,
+          Explosion,
+          ScaryFace,
+          Imprison,
+          PoisonFang,
+          AerialAce,
+          ThunderFang,
+          IceFang,
+          FireFang,
+          IronHead,
+          MultiAttack,
+          HealBlock,
+        ]
       5: [Rage]
       10: [Pursuit]
-      15: [Bite]
-      20: [AerialAce]
+      15: [DoubleHit]
+      20: [MetalSound]
       25: [CrushClaw]
-      30: [ScaryFace]
-      35: [XScissor]
-      40: [TakeDown]
-      45: [MetalSound]
-      50: [Crunch]
-      55: [DoubleHit]
-      60: [AirSlash]
+      30: [AirSlash]
+      35: [TriAttack]
+      40: [XScissor]
+      45: [Crunch]
+      50: [TakeDown]
+      55: [DoubleEdge]
+      60: [PartingShot]
       65: [Punishment]
       70: [RazorWind]
-      75: [TriAttack]
-      80: [DoubleEdge]
-      85: [PartingShot]
     teachable:
       - Defog
       - DracoMeteor
@@ -358,35 +456,53 @@ TypeNull:
       - Thunderbolt
       - ZenHeadbutt
       - SteelBeam
+      - AirSlash
+      - Crunch
+      - Endure
+      - FireFang
+      - FirePledge
+      - IceFang
+      - Imprison
+      - PsychicFangs
+      - Reversal
+      - ScaryFace
+      - SelfDestruct
+      - Swift
+      - ThunderFang
+      - TriAttack
+      - WaterPledge
   SilvallyBug:
     level:
       1:
-        - FireFang
-        - HealBlock
-        - IceFang
-        - Imprison
-        - IronHead
-        - MultiAttack
-        - PoisonFang
-        - Tackle
-        - ThunderFang
+        [
+          Tackle,
+          Bite,
+          Explosion,
+          ScaryFace,
+          Imprison,
+          PoisonFang,
+          AerialAce,
+          ThunderFang,
+          IceFang,
+          FireFang,
+          IronHead,
+          MultiAttack,
+          HealBlock,
+        ]
       5: [Rage]
       10: [Pursuit]
-      15: [Bite]
-      20: [AerialAce]
+      15: [DoubleHit]
+      20: [MetalSound]
       25: [CrushClaw]
-      30: [ScaryFace]
-      35: [XScissor]
-      40: [TakeDown]
-      45: [MetalSound]
-      50: [Crunch]
-      55: [DoubleHit]
-      60: [AirSlash]
+      30: [AirSlash]
+      35: [TriAttack]
+      40: [XScissor]
+      45: [Crunch]
+      50: [TakeDown]
+      55: [DoubleEdge]
+      60: [PartingShot]
       65: [Punishment]
       70: [RazorWind]
-      75: [TriAttack]
-      80: [DoubleEdge]
-      85: [PartingShot]
     teachable:
       - Defog
       - DracoMeteor
@@ -408,35 +524,53 @@ TypeNull:
       - Thunderbolt
       - ZenHeadbutt
       - SteelBeam
+      - AirSlash
+      - Crunch
+      - Endure
+      - FireFang
+      - FirePledge
+      - IceFang
+      - Imprison
+      - PsychicFangs
+      - Reversal
+      - ScaryFace
+      - SelfDestruct
+      - Swift
+      - ThunderFang
+      - TriAttack
+      - WaterPledge
   SilvallyGhost:
     level:
       1:
-        - FireFang
-        - HealBlock
-        - IceFang
-        - Imprison
-        - IronHead
-        - MultiAttack
-        - PoisonFang
-        - Tackle
-        - ThunderFang
+        [
+          Tackle,
+          Bite,
+          Explosion,
+          ScaryFace,
+          Imprison,
+          PoisonFang,
+          AerialAce,
+          ThunderFang,
+          IceFang,
+          FireFang,
+          IronHead,
+          MultiAttack,
+          HealBlock,
+        ]
       5: [Rage]
       10: [Pursuit]
-      15: [Bite]
-      20: [AerialAce]
+      15: [DoubleHit]
+      20: [MetalSound]
       25: [CrushClaw]
-      30: [ScaryFace]
-      35: [XScissor]
-      40: [TakeDown]
-      45: [MetalSound]
-      50: [Crunch]
-      55: [DoubleHit]
-      60: [AirSlash]
+      30: [AirSlash]
+      35: [TriAttack]
+      40: [XScissor]
+      45: [Crunch]
+      50: [TakeDown]
+      55: [DoubleEdge]
+      60: [PartingShot]
       65: [Punishment]
       70: [RazorWind]
-      75: [TriAttack]
-      80: [DoubleEdge]
-      85: [PartingShot]
     teachable:
       - Defog
       - DracoMeteor
@@ -458,35 +592,53 @@ TypeNull:
       - Thunderbolt
       - ZenHeadbutt
       - SteelBeam
+      - AirSlash
+      - Crunch
+      - Endure
+      - FireFang
+      - FirePledge
+      - IceFang
+      - Imprison
+      - PsychicFangs
+      - Reversal
+      - ScaryFace
+      - SelfDestruct
+      - Swift
+      - ThunderFang
+      - TriAttack
+      - WaterPledge
   SilvallySteel:
     level:
       1:
-        - FireFang
-        - HealBlock
-        - IceFang
-        - Imprison
-        - IronHead
-        - MultiAttack
-        - PoisonFang
-        - Tackle
-        - ThunderFang
+        [
+          Tackle,
+          Bite,
+          Explosion,
+          ScaryFace,
+          Imprison,
+          PoisonFang,
+          AerialAce,
+          ThunderFang,
+          IceFang,
+          FireFang,
+          IronHead,
+          MultiAttack,
+          HealBlock,
+        ]
       5: [Rage]
       10: [Pursuit]
-      15: [Bite]
-      20: [AerialAce]
+      15: [DoubleHit]
+      20: [MetalSound]
       25: [CrushClaw]
-      30: [ScaryFace]
-      35: [XScissor]
-      40: [TakeDown]
-      45: [MetalSound]
-      50: [Crunch]
-      55: [DoubleHit]
-      60: [AirSlash]
+      30: [AirSlash]
+      35: [TriAttack]
+      40: [XScissor]
+      45: [Crunch]
+      50: [TakeDown]
+      55: [DoubleEdge]
+      60: [PartingShot]
       65: [Punishment]
       70: [RazorWind]
-      75: [TriAttack]
-      80: [DoubleEdge]
-      85: [PartingShot]
     teachable:
       - Defog
       - DracoMeteor
@@ -508,35 +660,53 @@ TypeNull:
       - Thunderbolt
       - ZenHeadbutt
       - SteelBeam
+      - AirSlash
+      - Crunch
+      - Endure
+      - FireFang
+      - FirePledge
+      - IceFang
+      - Imprison
+      - PsychicFangs
+      - Reversal
+      - ScaryFace
+      - SelfDestruct
+      - Swift
+      - ThunderFang
+      - TriAttack
+      - WaterPledge
   SilvallyFire:
     level:
       1:
-        - FireFang
-        - HealBlock
-        - IceFang
-        - Imprison
-        - IronHead
-        - MultiAttack
-        - PoisonFang
-        - Tackle
-        - ThunderFang
+        [
+          Tackle,
+          Bite,
+          Explosion,
+          ScaryFace,
+          Imprison,
+          PoisonFang,
+          AerialAce,
+          ThunderFang,
+          IceFang,
+          FireFang,
+          IronHead,
+          MultiAttack,
+          HealBlock,
+        ]
       5: [Rage]
       10: [Pursuit]
-      15: [Bite]
-      20: [AerialAce]
+      15: [DoubleHit]
+      20: [MetalSound]
       25: [CrushClaw]
-      30: [ScaryFace]
-      35: [XScissor]
-      40: [TakeDown]
-      45: [MetalSound]
-      50: [Crunch]
-      55: [DoubleHit]
-      60: [AirSlash]
+      30: [AirSlash]
+      35: [TriAttack]
+      40: [XScissor]
+      45: [Crunch]
+      50: [TakeDown]
+      55: [DoubleEdge]
+      60: [PartingShot]
       65: [Punishment]
       70: [RazorWind]
-      75: [TriAttack]
-      80: [DoubleEdge]
-      85: [PartingShot]
     teachable:
       - Defog
       - DracoMeteor
@@ -558,35 +728,53 @@ TypeNull:
       - Thunderbolt
       - ZenHeadbutt
       - SteelBeam
+      - AirSlash
+      - Crunch
+      - Endure
+      - FireFang
+      - FirePledge
+      - IceFang
+      - Imprison
+      - PsychicFangs
+      - Reversal
+      - ScaryFace
+      - SelfDestruct
+      - Swift
+      - ThunderFang
+      - TriAttack
+      - WaterPledge
   SilvallyWater:
     level:
       1:
-        - FireFang
-        - HealBlock
-        - IceFang
-        - Imprison
-        - IronHead
-        - MultiAttack
-        - PoisonFang
-        - Tackle
-        - ThunderFang
+        [
+          Tackle,
+          Bite,
+          Explosion,
+          ScaryFace,
+          Imprison,
+          PoisonFang,
+          AerialAce,
+          ThunderFang,
+          IceFang,
+          FireFang,
+          IronHead,
+          MultiAttack,
+          HealBlock,
+        ]
       5: [Rage]
       10: [Pursuit]
-      15: [Bite]
-      20: [AerialAce]
+      15: [DoubleHit]
+      20: [MetalSound]
       25: [CrushClaw]
-      30: [ScaryFace]
-      35: [XScissor]
-      40: [TakeDown]
-      45: [MetalSound]
-      50: [Crunch]
-      55: [DoubleHit]
-      60: [AirSlash]
+      30: [AirSlash]
+      35: [TriAttack]
+      40: [XScissor]
+      45: [Crunch]
+      50: [TakeDown]
+      55: [DoubleEdge]
+      60: [PartingShot]
       65: [Punishment]
       70: [RazorWind]
-      75: [TriAttack]
-      80: [DoubleEdge]
-      85: [PartingShot]
     teachable:
       - Defog
       - DracoMeteor
@@ -608,35 +796,53 @@ TypeNull:
       - Thunderbolt
       - ZenHeadbutt
       - SteelBeam
+      - AirSlash
+      - Crunch
+      - Endure
+      - FireFang
+      - FirePledge
+      - IceFang
+      - Imprison
+      - PsychicFangs
+      - Reversal
+      - ScaryFace
+      - SelfDestruct
+      - Swift
+      - ThunderFang
+      - TriAttack
+      - WaterPledge
   SilvallyGrass:
     level:
       1:
-        - FireFang
-        - HealBlock
-        - IceFang
-        - Imprison
-        - IronHead
-        - MultiAttack
-        - PoisonFang
-        - Tackle
-        - ThunderFang
+        [
+          Tackle,
+          Bite,
+          Explosion,
+          ScaryFace,
+          Imprison,
+          PoisonFang,
+          AerialAce,
+          ThunderFang,
+          IceFang,
+          FireFang,
+          IronHead,
+          MultiAttack,
+          HealBlock,
+        ]
       5: [Rage]
       10: [Pursuit]
-      15: [Bite]
-      20: [AerialAce]
+      15: [DoubleHit]
+      20: [MetalSound]
       25: [CrushClaw]
-      30: [ScaryFace]
-      35: [XScissor]
-      40: [TakeDown]
-      45: [MetalSound]
-      50: [Crunch]
-      55: [DoubleHit]
-      60: [AirSlash]
+      30: [AirSlash]
+      35: [TriAttack]
+      40: [XScissor]
+      45: [Crunch]
+      50: [TakeDown]
+      55: [DoubleEdge]
+      60: [PartingShot]
       65: [Punishment]
       70: [RazorWind]
-      75: [TriAttack]
-      80: [DoubleEdge]
-      85: [PartingShot]
     teachable:
       - Defog
       - DracoMeteor
@@ -658,35 +864,53 @@ TypeNull:
       - Thunderbolt
       - ZenHeadbutt
       - SteelBeam
+      - AirSlash
+      - Crunch
+      - Endure
+      - FireFang
+      - FirePledge
+      - IceFang
+      - Imprison
+      - PsychicFangs
+      - Reversal
+      - ScaryFace
+      - SelfDestruct
+      - Swift
+      - ThunderFang
+      - TriAttack
+      - WaterPledge
   SilvallyElectric:
     level:
       1:
-        - FireFang
-        - HealBlock
-        - IceFang
-        - Imprison
-        - IronHead
-        - MultiAttack
-        - PoisonFang
-        - Tackle
-        - ThunderFang
+        [
+          Tackle,
+          Bite,
+          Explosion,
+          ScaryFace,
+          Imprison,
+          PoisonFang,
+          AerialAce,
+          ThunderFang,
+          IceFang,
+          FireFang,
+          IronHead,
+          MultiAttack,
+          HealBlock,
+        ]
       5: [Rage]
       10: [Pursuit]
-      15: [Bite]
-      20: [AerialAce]
+      15: [DoubleHit]
+      20: [MetalSound]
       25: [CrushClaw]
-      30: [ScaryFace]
-      35: [XScissor]
-      40: [TakeDown]
-      45: [MetalSound]
-      50: [Crunch]
-      55: [DoubleHit]
-      60: [AirSlash]
+      30: [AirSlash]
+      35: [TriAttack]
+      40: [XScissor]
+      45: [Crunch]
+      50: [TakeDown]
+      55: [DoubleEdge]
+      60: [PartingShot]
       65: [Punishment]
       70: [RazorWind]
-      75: [TriAttack]
-      80: [DoubleEdge]
-      85: [PartingShot]
     teachable:
       - Defog
       - DracoMeteor
@@ -708,35 +932,53 @@ TypeNull:
       - Thunderbolt
       - ZenHeadbutt
       - SteelBeam
+      - AirSlash
+      - Crunch
+      - Endure
+      - FireFang
+      - FirePledge
+      - IceFang
+      - Imprison
+      - PsychicFangs
+      - Reversal
+      - ScaryFace
+      - SelfDestruct
+      - Swift
+      - ThunderFang
+      - TriAttack
+      - WaterPledge
   SilvallyPsychic:
     level:
       1:
-        - FireFang
-        - HealBlock
-        - IceFang
-        - Imprison
-        - IronHead
-        - MultiAttack
-        - PoisonFang
-        - Tackle
-        - ThunderFang
+        [
+          Tackle,
+          Bite,
+          Explosion,
+          ScaryFace,
+          Imprison,
+          PoisonFang,
+          AerialAce,
+          ThunderFang,
+          IceFang,
+          FireFang,
+          IronHead,
+          MultiAttack,
+          HealBlock,
+        ]
       5: [Rage]
       10: [Pursuit]
-      15: [Bite]
-      20: [AerialAce]
+      15: [DoubleHit]
+      20: [MetalSound]
       25: [CrushClaw]
-      30: [ScaryFace]
-      35: [XScissor]
-      40: [TakeDown]
-      45: [MetalSound]
-      50: [Crunch]
-      55: [DoubleHit]
-      60: [AirSlash]
+      30: [AirSlash]
+      35: [TriAttack]
+      40: [XScissor]
+      45: [Crunch]
+      50: [TakeDown]
+      55: [DoubleEdge]
+      60: [PartingShot]
       65: [Punishment]
       70: [RazorWind]
-      75: [TriAttack]
-      80: [DoubleEdge]
-      85: [PartingShot]
     teachable:
       - Defog
       - DracoMeteor
@@ -758,35 +1000,53 @@ TypeNull:
       - Thunderbolt
       - ZenHeadbutt
       - SteelBeam
+      - AirSlash
+      - Crunch
+      - Endure
+      - FireFang
+      - FirePledge
+      - IceFang
+      - Imprison
+      - PsychicFangs
+      - Reversal
+      - ScaryFace
+      - SelfDestruct
+      - Swift
+      - ThunderFang
+      - TriAttack
+      - WaterPledge
   SilvallyIce:
     level:
       1:
-        - FireFang
-        - HealBlock
-        - IceFang
-        - Imprison
-        - IronHead
-        - MultiAttack
-        - PoisonFang
-        - Tackle
-        - ThunderFang
+        [
+          Tackle,
+          Bite,
+          Explosion,
+          ScaryFace,
+          Imprison,
+          PoisonFang,
+          AerialAce,
+          ThunderFang,
+          IceFang,
+          FireFang,
+          IronHead,
+          MultiAttack,
+          HealBlock,
+        ]
       5: [Rage]
       10: [Pursuit]
-      15: [Bite]
-      20: [AerialAce]
+      15: [DoubleHit]
+      20: [MetalSound]
       25: [CrushClaw]
-      30: [ScaryFace]
-      35: [XScissor]
-      40: [TakeDown]
-      45: [MetalSound]
-      50: [Crunch]
-      55: [DoubleHit]
-      60: [AirSlash]
+      30: [AirSlash]
+      35: [TriAttack]
+      40: [XScissor]
+      45: [Crunch]
+      50: [TakeDown]
+      55: [DoubleEdge]
+      60: [PartingShot]
       65: [Punishment]
       70: [RazorWind]
-      75: [TriAttack]
-      80: [DoubleEdge]
-      85: [PartingShot]
     teachable:
       - Defog
       - DracoMeteor
@@ -808,35 +1068,53 @@ TypeNull:
       - Thunderbolt
       - ZenHeadbutt
       - SteelBeam
+      - AirSlash
+      - Crunch
+      - Endure
+      - FireFang
+      - FirePledge
+      - IceFang
+      - Imprison
+      - PsychicFangs
+      - Reversal
+      - ScaryFace
+      - SelfDestruct
+      - Swift
+      - ThunderFang
+      - TriAttack
+      - WaterPledge
   SilvallyDragon:
     level:
       1:
-        - FireFang
-        - HealBlock
-        - IceFang
-        - Imprison
-        - IronHead
-        - MultiAttack
-        - PoisonFang
-        - Tackle
-        - ThunderFang
+        [
+          Tackle,
+          Bite,
+          Explosion,
+          ScaryFace,
+          Imprison,
+          PoisonFang,
+          AerialAce,
+          ThunderFang,
+          IceFang,
+          FireFang,
+          IronHead,
+          MultiAttack,
+          HealBlock,
+        ]
       5: [Rage]
       10: [Pursuit]
-      15: [Bite]
-      20: [AerialAce]
+      15: [DoubleHit]
+      20: [MetalSound]
       25: [CrushClaw]
-      30: [ScaryFace]
-      35: [XScissor]
-      40: [TakeDown]
-      45: [MetalSound]
-      50: [Crunch]
-      55: [DoubleHit]
-      60: [AirSlash]
+      30: [AirSlash]
+      35: [TriAttack]
+      40: [XScissor]
+      45: [Crunch]
+      50: [TakeDown]
+      55: [DoubleEdge]
+      60: [PartingShot]
       65: [Punishment]
       70: [RazorWind]
-      75: [TriAttack]
-      80: [DoubleEdge]
-      85: [PartingShot]
     teachable:
       - Defog
       - DracoMeteor
@@ -858,35 +1136,53 @@ TypeNull:
       - Thunderbolt
       - ZenHeadbutt
       - SteelBeam
+      - AirSlash
+      - Crunch
+      - Endure
+      - FireFang
+      - FirePledge
+      - IceFang
+      - Imprison
+      - PsychicFangs
+      - Reversal
+      - ScaryFace
+      - SelfDestruct
+      - Swift
+      - ThunderFang
+      - TriAttack
+      - WaterPledge
   SilvallyDark:
     level:
       1:
-        - FireFang
-        - HealBlock
-        - IceFang
-        - Imprison
-        - IronHead
-        - MultiAttack
-        - PoisonFang
-        - Tackle
-        - ThunderFang
+        [
+          Tackle,
+          Bite,
+          Explosion,
+          ScaryFace,
+          Imprison,
+          PoisonFang,
+          AerialAce,
+          ThunderFang,
+          IceFang,
+          FireFang,
+          IronHead,
+          MultiAttack,
+          HealBlock,
+        ]
       5: [Rage]
       10: [Pursuit]
-      15: [Bite]
-      20: [AerialAce]
+      15: [DoubleHit]
+      20: [MetalSound]
       25: [CrushClaw]
-      30: [ScaryFace]
-      35: [XScissor]
-      40: [TakeDown]
-      45: [MetalSound]
-      50: [Crunch]
-      55: [DoubleHit]
-      60: [AirSlash]
+      30: [AirSlash]
+      35: [TriAttack]
+      40: [XScissor]
+      45: [Crunch]
+      50: [TakeDown]
+      55: [DoubleEdge]
+      60: [PartingShot]
       65: [Punishment]
       70: [RazorWind]
-      75: [TriAttack]
-      80: [DoubleEdge]
-      85: [PartingShot]
     teachable:
       - Defog
       - DracoMeteor
@@ -908,35 +1204,53 @@ TypeNull:
       - Thunderbolt
       - ZenHeadbutt
       - SteelBeam
+      - AirSlash
+      - Crunch
+      - Endure
+      - FireFang
+      - FirePledge
+      - IceFang
+      - Imprison
+      - PsychicFangs
+      - Reversal
+      - ScaryFace
+      - SelfDestruct
+      - Swift
+      - ThunderFang
+      - TriAttack
+      - WaterPledge
   SilvallyFairy:
     level:
       1:
-        - FireFang
-        - HealBlock
-        - IceFang
-        - Imprison
-        - IronHead
-        - MultiAttack
-        - PoisonFang
-        - Tackle
-        - ThunderFang
+        [
+          Tackle,
+          Bite,
+          Explosion,
+          ScaryFace,
+          Imprison,
+          PoisonFang,
+          AerialAce,
+          ThunderFang,
+          IceFang,
+          FireFang,
+          IronHead,
+          MultiAttack,
+          HealBlock,
+        ]
       5: [Rage]
       10: [Pursuit]
-      15: [Bite]
-      20: [AerialAce]
+      15: [DoubleHit]
+      20: [MetalSound]
       25: [CrushClaw]
-      30: [ScaryFace]
-      35: [XScissor]
-      40: [TakeDown]
-      45: [MetalSound]
-      50: [Crunch]
-      55: [DoubleHit]
-      60: [AirSlash]
+      30: [AirSlash]
+      35: [TriAttack]
+      40: [XScissor]
+      45: [Crunch]
+      50: [TakeDown]
+      55: [DoubleEdge]
+      60: [PartingShot]
       65: [Punishment]
       70: [RazorWind]
-      75: [TriAttack]
-      80: [DoubleEdge]
-      85: [PartingShot]
     teachable:
       - Defog
       - DracoMeteor
@@ -958,6 +1272,21 @@ TypeNull:
       - Thunderbolt
       - ZenHeadbutt
       - SteelBeam
+      - AirSlash
+      - Crunch
+      - Endure
+      - FireFang
+      - FirePledge
+      - IceFang
+      - Imprison
+      - PsychicFangs
+      - Reversal
+      - ScaryFace
+      - SelfDestruct
+      - Swift
+      - ThunderFang
+      - TriAttack
+      - WaterPledge
 Minior:
   family-teachable:
     - Acrobatics
@@ -1196,20 +1525,20 @@ Komala:
 Turtonator:
   Turtonator:
     level:
-      1: [Ember, Tackle]
-      5: [Smog]
-      9: [Protect]
-      13: [Incinerate]
-      17: [Flail]
-      21: [Endure]
-      25: [IronDefense]
-      29: [Flamethrower]
-      33: [BodySlam]
-      37: [ShellSmash]
-      41: [DragonPulse]
-      45: [ShellTrap]
-      49: [Overheat]
-      53: [Explosion]
+      1: [Tackle, Smog]
+      4: [Ember]
+      8: [Protect]
+      12: [Endure]
+      16: [Flail]
+      20: [Incinerate]
+      24: [IronDefense]
+      28: [DragonPulse]
+      32: [BodySlam]
+      36: [Flamethrower]
+      40: [ShellTrap]
+      44: [ShellSmash]
+      48: [Overheat]
+      52: [Explosion]
     teachable:
       - Attract
       - Block
@@ -1272,24 +1601,32 @@ Turtonator:
       - BurningJealousy
       - LashOut
       - ScorchingSands
-    egg: [FireSpin, HeadSmash, Revenge, WideGuard]
+      - BodySlam
+      - Endure
+      - FireSpin
+      - HeatCrash
+      - HeavySlam
+      - MegaKick
+      - MegaPunch
+      - Revenge
+    egg: [FireSpin, HeadSmash, Revenge, WideGuard, Curse, RapidSpin]
 Togedemaru:
   Togedemaru:
     level:
-      1: [Tackle, ThunderShock]
+      1: [Tackle, Nuzzle]
       5: [DefenseCurl]
       9: [Rollout]
-      13: [Charge]
-      17: [Spark]
-      21: [Nuzzle]
-      25: [MagnetRise]
-      29: [Discharge]
-      33: [ZingZap]
-      37: [ElectricTerrain]
-      41: [WildCharge]
-      45: [PinMissile]
-      49: [SpikyShield]
-      53: [FellStinger]
+      10: [Charge]
+      15: [ThunderShock]
+      20: [FellStinger]
+      25: [Spark]
+      30: [PinMissile]
+      35: [MagnetRise]
+      40: [ZingZap]
+      45: [Discharge]
+      50: [ElectricTerrain]
+      55: [WildCharge]
+      60: [SpikyShield]
     teachable:
       - AfterYou
       - Attract
@@ -1340,6 +1677,17 @@ Togedemaru:
       - SteelBeam
       - SteelRoller
       - RisingVoltage
+      - Agility
+      - Assurance
+      - EerieImpulse
+      - ElectricTerrain
+      - ElectroBall
+      - Encore
+      - Endure
+      - HyperBeam
+      - PinMissile
+      - Reversal
+      - Swift
     egg:
       - DisarmingVoice
       - Encore
@@ -1409,34 +1757,54 @@ Mimikyu:
     - BurningJealousy
   Mimikyu:
     level:
-      1: [Astonish, Copycat, Scratch, Splash, WoodHammer]
-      5: [DoubleTeam]
-      10: [BabyDollEyes]
-      14: [ShadowSneak]
-      19: [Mimic]
+      1: [Scratch, Splash, Astonish, Copycat, WoodHammer]
+      6: [ShadowSneak]
+      12: [DoubleTeam]
+      18: [BabyDollEyes]
       23: [FeintAttack]
-      28: [Charm]
-      32: [Slash]
-      37: [ShadowClaw]
-      41: [HoneClaws]
-      46: [PlayRough]
-      50: [PainSplit]
+      24: [Mimic]
+      30: [HoneClaws]
+      36: [Slash]
+      42: [ShadowClaw]
+      48: [Charm]
+      54: [PlayRough]
+      60: [PainSplit]
     egg: [Curse, DestinyBond, Grudge, Nightmare]
+    teachable:
+      - BeatUp
+      - Charm
+      - DrainingKiss
+      - Endure
+      - GigaImpact
+      - Hex
+      - PhantomForce
+      - PlayRough
+      - Screech
   MimikyuBusted:
     level:
-      1: [Astonish, Copycat, Scratch, Splash, WoodHammer]
-      5: [DoubleTeam]
-      10: [BabyDollEyes]
-      14: [ShadowSneak]
-      19: [Mimic]
+      1: [Scratch, Splash, Astonish, Copycat, WoodHammer]
+      6: [ShadowSneak]
+      12: [DoubleTeam]
+      18: [BabyDollEyes]
       23: [FeintAttack]
-      28: [Charm]
-      32: [Slash]
-      37: [ShadowClaw]
-      41: [HoneClaws]
-      46: [PlayRough]
-      50: [PainSplit]
+      24: [Mimic]
+      30: [HoneClaws]
+      36: [Slash]
+      42: [ShadowClaw]
+      48: [Charm]
+      54: [PlayRough]
+      60: [PainSplit]
     egg: [Curse, DestinyBond, Grudge, Nightmare]
+    teachable:
+      - BeatUp
+      - Charm
+      - DrainingKiss
+      - Endure
+      - GigaImpact
+      - Hex
+      - PhantomForce
+      - PlayRough
+      - Screech
 Bruxish:
   Bruxish:
     level:
@@ -1512,18 +1880,17 @@ Drampa:
     level:
       1: [EchoedVoice, PlayNice]
       5: [Twister]
-      9: [Protect]
-      13: [Glare]
-      17: [LightScreen]
+      10: [Protect]
+      15: [Glare]
+      20: [Safeguard]
       21: [DragonRage]
-      25: [NaturalGift]
-      29: [DragonBreath]
-      33: [Safeguard]
-      37: [Extrasensory]
-      41: [DragonPulse]
+      25: [DragonBreath, NaturalGift]
+      30: [Extrasensory]
+      35: [DragonPulse]
+      40: [LightScreen]
       45: [Fly]
-      49: [HyperVoice]
-      53: [Outrage]
+      50: [HyperVoice]
+      55: [Outrage]
     teachable:
       - Attract
       - Blizzard
@@ -1595,24 +1962,34 @@ Drampa:
       - BreakingSwipe
       - ScaleShot
       - LashOut
-    egg: [DragonRush, Hurricane, Mist, PlayRough, RazorWind]
+      - Amnesia
+      - DragonDance
+      - Endure
+      - Hurricane
+      - HydroPump
+      - PlayRough
+      - Swift
+    egg: [DragonRush, Hurricane, Mist, PlayRough, RazorWind, Tickle]
 Dhelmise:
   Dhelmise:
     level:
-      1: [Absorb, Astonish, Growth, RapidSpin, Switcheroo]
-      5: [MegaDrain]
-      9: [Wrap]
-      14: [GyroBall]
-      18: [MetalSound]
-      23: [GigaDrain]
-      27: [Whirlpool]
-      32: [AnchorShot]
-      36: [ShadowBall]
-      41: [EnergyBall]
-      45: [Slam]
-      50: [HeavySlam]
-      54: [PhantomForce]
-      59: [PowerWhip]
+      1: [Absorb, RapidSpin]
+      4: [Astonish]
+      8: [Wrap]
+      12: [MegaDrain]
+      16: [Growth]
+      20: [GyroBall]
+      24: [Switcheroo]
+      28: [GigaDrain]
+      32: [Whirlpool]
+      36: [HeavySlam]
+      40: [Slam]
+      44: [ShadowBall]
+      48: [MetalSound]
+      52: [AnchorShot]
+      56: [EnergyBall]
+      60: [PhantomForce]
+      64: [PowerWhip]
     teachable:
       - AerialAce
       - AllySwitch
@@ -1668,6 +2045,18 @@ Dhelmise:
       - SteelRoller
       - GrassyGlide
       - Poltergeist
+      - Assurance
+      - Brine
+      - Endure
+      - HeavySlam
+      - Hex
+      - HydroPump
+      - Liquidation
+      - MuddyWater
+      - PhantomForce
+      - PowerWhip
+      - SolarBlade
+      - Whirlpool
 JangmoO:
   # TM and tutor moves shared by the whole family
   family-teachable:
@@ -1720,59 +2109,81 @@ JangmoO:
     - ScaleShot
   JangmoO:
     level:
-      1: [Tackle]
-      5: [Leer]
+      1: [Tackle, Leer]
+      4: [Protect]
+      8: [DragonTail]
       9: [Bide]
-      13: [Protect]
-      17: [DragonTail]
-      21: [ScaryFace]
-      25: [Headbutt]
-      29: [WorkUp]
-      33: [Screech]
-      37: [IronDefense]
-      41: [DragonClaw]
-      45: [NobleRoar]
-      49: [DragonDance]
-      53: [Outrage]
-    egg: [Counter, DragonBreath, Reversal]
+      12: [ScaryFace]
+      16: [Headbutt]
+      20: [WorkUp]
+      24: [Screech]
+      28: [IronDefense]
+      32: [DragonClaw]
+      36: [NobleRoar]
+      40: [DragonDance]
+      44: [Outrage]
+    egg: [Counter, DragonBreath, Reversal, FocusPunch]
+    teachable:
+      - DragonDance
+      - Endure
+      - Fling
+      - Reversal
+      - ScaryFace
+      - Screech
   HakamoO:
     level:
-      1: [Autotomize, Bide, Leer, Protect, SkyUppercut, Tackle]
-      17: [DragonTail]
-      21: [ScaryFace]
-      25: [Headbutt]
-      29: [WorkUp]
-      33: [Screech]
-      38: [IronDefense]
-      43: [DragonClaw]
-      48: [NobleRoar]
-      53: [DragonDance]
-      58: [Outrage]
-      63: [CloseCombat]
-    teachable: [BrutalSwing, DrainPunch, Fling, Coaching]
+      1: [Tackle, Leer, Protect, Autotomize, DragonTail, Bide, SkyUppercut]
+      12: [ScaryFace]
+      16: [Headbutt]
+      20: [WorkUp]
+      24: [Screech]
+      28: [IronDefense]
+      32: [DragonClaw]
+      38: [NobleRoar]
+      44: [DragonDance]
+      50: [Outrage]
+      56: [CloseCombat]
+    teachable:
+      [
+        BrutalSwing,
+        DrainPunch,
+        Fling,
+        Coaching,
+        CloseCombat,
+        DragonDance,
+        Endure,
+        MegaKick,
+        MegaPunch,
+        Reversal,
+        ScaryFace,
+        Screech,
+      ]
   KommoO:
     level:
       1:
-        - Autotomize
-        - BellyDrum
-        - Bide
-        - ClangingScales
-        - Leer
-        - Protect
-        - SkyUppercut
-        - Tackle
-      17: [DragonTail]
-      21: [ScaryFace]
-      25: [Headbutt]
-      29: [WorkUp]
-      33: [Screech]
-      38: [IronDefense]
-      43: [DragonClaw]
-      51: [NobleRoar]
-      59: [DragonDance]
-      67: [Outrage]
-      75: [CloseCombat]
+        [
+          Tackle,
+          Leer,
+          Protect,
+          BellyDrum,
+          Autotomize,
+          DragonTail,
+          ClangingScales,
+          Bide,
+          SkyUppercut,
+        ]
+      12: [ScaryFace]
+      16: [Headbutt]
+      20: [WorkUp]
+      24: [Screech]
+      28: [IronDefense]
+      32: [DragonClaw]
+      38: [NobleRoar]
+      44: [DragonDance]
+      52: [Outrage]
+      60: [CloseCombat]
       68: [ClangorousSoul]
+      76: [Boomburst]
     teachable:
       - BrutalSwing
       - DrainPunch
@@ -1798,28 +2209,37 @@ JangmoO:
       - BodyPress
       - BreakingSwipe
       - Coaching
+      - AuraSphere
+      - CloseCombat
+      - DragonDance
+      - Endure
+      - MegaKick
+      - MegaPunch
+      - Revenge
+      - Reversal
+      - ScaryFace
+      - Screech
 TapuKoko:
   TapuKoko:
     level:
-      1:
-        - BraveBird
-        - ElectricTerrain
-        - FalseSwipe
-        - MeanLook
-        - PowerSwap
-        - QuickAttack
-        - ThunderShock
-        - Withdraw
-      8: [Spark]
-      14: [ShockWave]
-      20: [Screech]
-      26: [Charge]
-      32: [WildCharge]
+      1: [ThunderShock, QuickAttack]
+      5: [Withdraw]
+      10: [FairyWind]
+      15: [FalseSwipe]
+      20: [Spark]
+      25: [ShockWave]
+      30: [Charge]
+      35: [Agility]
       38: [MirrorMove]
-      43: [NaturesMadness]
-      48: [Discharge]
-      53: [Agility]
+      40: [Screech]
+      45: [Discharge]
+      50: [MeanLook]
+      55: [NaturesMadness]
       58: [ElectroBall]
+      60: [WildCharge]
+      65: [BraveBird]
+      70: [PowerSwap]
+      75: [ElectricTerrain]
     teachable:
       - Acrobatics
       - AerialAce
@@ -1873,28 +2293,38 @@ TapuKoko:
       - VoltSwitch
       - WildCharge
       - WorkUp
+      - Agility
+      - Assurance
+      - BraveBird
+      - EerieImpulse
+      - ElectricTerrain
+      - ElectroBall
+      - Endure
+      - PowerSwap
+      - Rest
+      - Screech
+      - StoredPower
+      - Swift
 TapuLele:
   TapuLele:
     level:
-      1:
-        - Aromatherapy
-        - AromaticMist
-        - Astonish
-        - Confusion
-        - DrainingKiss
-        - MeanLook
-        - PsychicTerrain
-        - Withdraw
+      1: [Confusion, Astonish]
+      5: [Withdraw]
       8: [Psywave]
-      14: [Psybeam]
-      20: [SweetScent]
-      26: [SkillSwap]
-      32: [Psyshock]
-      38: [Tickle]
-      43: [NaturesMadness]
-      48: [Extrasensory]
-      53: [Flatter]
-      58: [Moonblast]
+      10: [Aromatherapy]
+      15: [DrainingKiss]
+      20: [Psybeam]
+      25: [Flatter]
+      30: [AromaticMist]
+      35: [SweetScent]
+      40: [Extrasensory]
+      45: [Psyshock]
+      50: [MeanLook]
+      55: [NaturesMadness]
+      60: [Moonblast]
+      65: [Tickle]
+      70: [SkillSwap]
+      75: [PsychicTerrain]
     teachable:
       - AllySwitch
       - CalmMind
@@ -1941,28 +2371,39 @@ TapuLele:
       - Torment
       - Toxic
       - WonderRoom
+      - Charm
+      - DrainingKiss
+      - Endure
+      - FutureSight
+      - GuardSwap
+      - PlayRough
+      - PowerSwap
+      - PsychicTerrain
+      - PsychoCut
+      - Rest
+      - SpeedSwap
+      - StoredPower
 TapuBulu:
   TapuBulu:
     level:
-      1:
-        - Disable
-        - GrassyTerrain
-        - Leafage
-        - MeanLook
-        - Superpower
-        - Whirlwind
-        - Withdraw
-        - WoodHammer
-      8: [HornAttack]
+      1: [RockSmash, Leafage, Superpower]
+      5: [Withdraw]
+      10: [Disable]
       14: [GigaDrain]
-      20: [ScaryFace]
-      26: [LeechSeed]
-      32: [HornLeech]
+      15: [LeechSeed]
+      20: [MegaDrain]
+      25: [Whirlwind]
+      30: [HornAttack]
+      35: [ScaryFace]
       38: [Rototiller]
-      43: [NaturesMadness]
-      48: [ZenHeadbutt]
-      53: [Megahorn]
-      58: [SkullBash]
+      40: [HornLeech]
+      45: [ZenHeadbutt]
+      50: [MeanLook]
+      55: [NaturesMadness]
+      60: [WoodHammer]
+      65: [Megahorn]
+      70: [SkullBash]
+      75: [GrassyTerrain]
     teachable:
       - BrickBreak
       - BrutalSwing
@@ -2017,20 +2458,41 @@ TapuBulu:
       - WorkUp
       - WorrySeed
       - ZenHeadbutt
+      - BulletSeed
+      - CloseCombat
+      - DarkestLariat
+      - Endure
+      - GrassyTerrain
+      - GuardSwap
+      - HighHorsepower
+      - MegaPunch
+      - Megahorn
+      - PowerSwap
+      - Rest
+      - Revenge
+      - ScaryFace
+      - StoredPower
 TapuFini:
   TapuFini:
     level:
-      1: [Haze, HealPulse, MeanLook, Mist, MistyTerrain, Moonblast, WaterGun, Withdraw]
-      8: [WaterPulse]
+      1: [WaterGun, DisarmingVoice]
+      5: [Withdraw]
+      10: [Mist, Haze]
       14: [Whirlpool]
-      20: [Soak]
+      15: [AquaRing]
+      20: [WaterPulse]
+      25: [Brine]
       26: [Refresh]
-      32: [Brine]
-      38: [Defog]
-      43: [NaturesMadness]
-      48: [MuddyWater]
-      53: [AquaRing]
-      58: [HydroPump]
+      30: [Defog]
+      35: [HealPulse]
+      40: [Surf]
+      45: [MuddyWater]
+      50: [MeanLook]
+      55: [NaturesMadness]
+      60: [Moonblast]
+      65: [HydroPump]
+      70: [Soak]
+      75: [MistyTerrain]
     teachable:
       - Blizzard
       - CalmMind
@@ -2079,30 +2541,43 @@ TapuFini:
       - WaterPulse
       - Waterfall
       - WonderRoom
+      - Brine
+      - Dive
+      - DrainingKiss
+      - Endure
+      - GuardSwap
+      - HydroPump
+      - MistyTerrain
+      - MuddyWater
+      - PlayRough
+      - Rest
+      - StoredPower
+      - Whirlpool
 Cosmog:
   Cosmog:
     # Nothing can be taught to a nebula
     level:
-      1: [Splash]
-      23: [Teleport]
+      1: [Teleport, Splash]
   Cosmoem:
     level:
-      1: [CosmicPower, Teleport]
+      1: [Teleport, CosmicPower]
+    teachable:
+      - CosmicPower
   Solgaleo:
     level:
-      1: [CosmicPower, MetalClaw, SunsteelStrike, Teleport, WakeUpSlap]
+      1: [Teleport, MetalClaw, CosmicPower, NobleRoar, SunsteelStrike, WakeUpSlap]
       7: [IronHead]
-      13: [MetalSound]
-      19: [ZenHeadbutt]
-      23: [FlashCannon]
-      31: [MorningSun]
-      37: [Crunch]
-      43: [MetalBurst]
-      47: [SolarBeam]
-      59: [NobleRoar]
-      61: [FlareBlitz]
-      67: [WideGuard]
-      73: [GigaImpact]
+      14: [MetalSound]
+      21: [ZenHeadbutt]
+      28: [FlashCannon]
+      35: [MorningSun]
+      42: [Crunch]
+      49: [MetalBurst]
+      56: [WildCharge]
+      63: [SolarBeam]
+      70: [FlareBlitz]
+      77: [WideGuard]
+      84: [GigaImpact]
     teachable:
       - Bulldoze
       - CalmMind
@@ -2163,21 +2638,36 @@ Cosmog:
       - ExpandingForce
       - SteelRoller
       - MeteorBeam
+      - Agility
+      - CloseCombat
+      - CosmicPower
+      - Crunch
+      - Endure
+      - FireSpin
+      - FlareBlitz
+      - FutureSight
+      - HeatCrash
+      - HeavySlam
+      - HelpingHand
+      - MysticalFire
+      - PsychicFangs
+      - ScaryFace
+      - Swift
   Lunala:
     level:
-      1: [Confusion, CosmicPower, Hypnosis, MoongeistBeam, Teleport]
+      1: [Confusion, Hypnosis, Teleport, CosmicPower, MoongeistBeam]
       7: [NightShade]
-      13: [ConfuseRay]
-      19: [AirSlash]
-      23: [ShadowBall]
-      31: [Moonlight]
-      37: [NightDaze]
-      43: [MagicCoat]
-      47: [Moonblast]
-      59: [DreamEater]
-      61: [PhantomForce]
-      67: [WideGuard]
-      73: [HyperBeam]
+      14: [ConfuseRay]
+      21: [AirSlash]
+      28: [ShadowBall]
+      35: [Moonlight]
+      42: [NightDaze]
+      49: [MagicCoat]
+      56: [Moonblast]
+      63: [PhantomForce]
+      70: [DreamEater]
+      77: [WideGuard]
+      84: [HyperBeam]
     teachable:
       - Acrobatics
       - AerialAce
@@ -2241,23 +2731,37 @@ Cosmog:
       - MeteorBeam
       - Poltergeist
       - DualWingbeat
+      - Agility
+      - AirSlash
+      - CosmicPower
+      - Endure
+      - FutureSight
+      - HelpingHand
+      - Hex
+      - PhantomForce
+      - PsychoCut
+      - ScaryFace
+      - Swift
 Nihilego:
   Nihilego:
     level:
-      1: [Acid, Constrict, GuardSplit, Pound, PowerSplit, Tickle]
-      7: [ClearSmog]
+      1: [Pound, Wrap, Constrict]
+      5: [Acid]
+      10: [Tickle]
       13: [Psywave]
-      19: [Headbutt]
-      23: [Venoshock]
-      29: [ToxicSpikes]
+      15: [AcidSpray]
+      20: [ClearSmog]
+      25: [GuardSplit, PowerSplit]
+      30: [Venoshock]
       31: [Safeguard]
-      37: [PowerGem]
-      43: [MirrorCoat]
-      47: [AcidSpray]
-      53: [VenomDrench]
-      59: [StealthRock]
-      67: [WonderRoom]
-      73: [HeadSmash]
+      35: [Headbutt]
+      40: [ToxicSpikes]
+      45: [VenomDrench]
+      50: [PowerGem]
+      55: [StealthRock]
+      60: [MirrorCoat]
+      65: [WonderRoom]
+      70: [HeadSmash]
     teachable:
       - AllySwitch
       - Bind
@@ -2309,30 +2813,35 @@ Nihilego:
       - ZenHeadbutt
       - MeteorBeam
       - CorrosiveGas
+      - BodySlam
+      - CrossPoison
+      - Endure
+      - Hex
+      - PowerGem
+      - RockSlide
+      - RockTomb
+      - ToxicSpikes
+      - VenomDrench
 Buzzwole:
   Buzzwole:
     level:
-      1:
-        - FellStinger
-        - FocusEnergy
-        - Harden
-        - IcePunch
-        - PowerUpPunch
-        - Reversal
-        - ThunderPunch
+      1: [Harden, PowerUpPunch, IcePunch, ThunderPunch]
+      5: [Taunt]
       7: [CometPunch]
-      13: [BulkUp]
-      19: [VitalThrow]
-      23: [Endure]
+      10: [FellStinger]
+      15: [VitalThrow]
+      20: [BulkUp]
+      25: [Endure]
       29: [LeechLife]
-      31: [Taunt]
-      37: [MegaPunch]
-      43: [Counter]
-      47: [HammerArm]
-      53: [Lunge]
-      59: [DynamicPunch]
-      67: [Superpower]
-      73: [FocusPunch]
+      30: [Reversal]
+      35: [MegaPunch]
+      40: [Lunge]
+      45: [FocusEnergy]
+      50: [DynamicPunch]
+      55: [Counter]
+      60: [HammerArm]
+      65: [Superpower]
+      70: [FocusPunch]
     teachable:
       - Bounce
       - BrickBreak
@@ -2381,23 +2890,37 @@ Buzzwole:
       - WorkUp
       - Coaching
       - DualWingbeat
+      - BodySlam
+      - CloseCombat
+      - DarkestLariat
+      - Endure
+      - FocusEnergy
+      - HighHorsepower
+      - MegaPunch
+      - Revenge
+      - Reversal
 Pheromosa:
   Pheromosa:
     level:
-      1: [DoubleKick, Leer, LowKick, QuickGuard, QuiverDance, RapidSpin]
+      1: [RapidSpin, Feint]
+      5: [Leer]
       7: [Swift]
-      13: [Stomp]
-      19: [Feint]
+      10: [QuickGuard]
+      15: [BugBite]
+      20: [LowKick]
       23: [SilverWind]
-      29: [Bounce]
+      25: [DoubleKick]
+      30: [TripleKick]
       31: [JumpKick]
-      37: [Agility]
-      43: [TripleKick]
-      47: [Lunge]
-      53: [BugBuzz]
+      35: [Stomp]
+      40: [Agility]
+      45: [Lunge]
+      50: [Bounce]
+      55: [SpeedSwap]
       59: [MeFirst]
-      67: [HiJumpKick]
-      73: [SpeedSwap]
+      60: [BugBuzz]
+      65: [QuiverDance]
+      70: [HiJumpKick]
     teachable:
       - Blizzard
       - Block
@@ -2445,23 +2968,33 @@ Pheromosa:
       - SkitterSmack
       - Coaching
       - TripleAxel
+      - Agility
+      - Assurance
+      - BugBuzz
+      - CloseCombat
+      - Endure
+      - SpeedSwap
+      - Swift
 Xurkitree:
   Xurkitree:
     level:
-      1: [Charge, Spark, TailGlow, ThunderShock, Wrap]
-      7: [ThunderWave]
-      13: [ShockWave]
-      19: [Ingrain]
-      23: [ThunderPunch]
-      29: [EerieImpulse]
+      1: [Wrap, ThunderShock, TailGlow]
+      5: [Charge]
+      10: [ThunderWave]
+      15: [Ingrain]
+      20: [Spark]
+      25: [ShockWave]
+      30: [Hypnosis]
       31: [SignalBeam]
-      37: [Thunderbolt]
-      43: [Hypnosis]
-      47: [Discharge]
-      53: [ElectricTerrain]
-      59: [PowerWhip]
+      35: [EerieImpulse]
+      40: [ThunderPunch]
+      45: [Discharge]
+      50: [MagnetRise]
+      55: [Thunderbolt]
+      60: [ElectricTerrain]
+      65: [PowerWhip]
       67: [IonDeluge]
-      73: [ZapCannon]
+      70: [ZapCannon]
     teachable:
       - Bind
       - BrutalSwing
@@ -2506,3 +3039,8 @@ Xurkitree:
       - VoltSwitch
       - WildCharge
       - RisingVoltage
+      - EerieImpulse
+      - ElectricTerrain
+      - ElectroBall
+      - Endure
+      - PowerWhip

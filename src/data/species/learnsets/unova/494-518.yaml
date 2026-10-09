@@ -1,26 +1,21 @@
 Victini:
   Victini:
     level:
-      1:
-        - Confusion
-        - QuickAttack
-        - FocusEnergy
-        - FlameCharge
-        - Incinerate
-        - SearingShot
-        - VCreate
+      1: [Confusion, QuickAttack, FocusEnergy, FlameCharge, VCreate]
       7: [WorkUp]
-      9: [Endure]
-      17: [Headbutt]
+      14: [Incinerate]
       21: [StoredPower]
-      33: [Reversal]
+      28: [Headbutt]
+      35: [Endure]
       41: [FlameBurst]
       42: [ZenHeadbutt]
       49: [Inferno]
-      65: [DoubleEdge]
-      73: [FlareBlitz]
-      81: [FinalGambit]
+      56: [Reversal]
+      63: [SearingShot]
+      70: [DoubleEdge]
+      77: [FlareBlitz]
       84: [Overheat]
+      91: [FinalGambit]
     teachable:
       - BatonPass
       - BlazeKick
@@ -105,6 +100,8 @@ Victini:
       - LaserFocus
       - ExpandingForce
       - ScorchingSands
+      - MysticalFire
+      - SpeedSwap
 Snivy:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -664,19 +661,19 @@ Lillipup:
   Lillipup:
     level:
       1: [Tackle, Leer]
+      4: [WorkUp]
       5: [OdorSleuth]
       8: [Bite]
-      10: [BabyDollEyes]
-      12: [HelpingHand]
-      15: [TakeDown]
-      19: [WorkUp]
-      22: [Crunch]
-      26: [Roar]
-      29: [Retaliate]
-      33: [Reversal]
-      36: [LastResort]
-      40: [GigaImpact]
-      45: [PlayRough]
+      12: [Retaliate]
+      17: [BabyDollEyes]
+      20: [PlayRough]
+      24: [Crunch]
+      28: [TakeDown]
+      32: [HelpingHand]
+      36: [Reversal]
+      40: [Roar]
+      44: [LastResort]
+      48: [GigaImpact]
     egg:
       - Charm
       - Endure
@@ -690,38 +687,97 @@ Lillipup:
       - ThunderFang
       - Yawn
       - PsychicFangs
+      - AfterYou
+      - Covet
+    teachable:
+      - Charm
+      - Crunch
+      - Endure
+      - FireFang
+      - HelpingHand
+      - HyperVoice
+      - IceFang
+      - Payback
+      - PlayRough
+      - PsychicFangs
+      - Reversal
+      - SleepTalk
+      - Snore
+      - ThunderFang
+      - Uproar
   Herdier:
     level:
-      1: [Tackle, Leer, Bite, OdorSleuth]
+      1: [Tackle, Leer, Bite, WorkUp]
       5: [OdorSleuth]
-      8: [Bite]
-      12: [HelpingHand]
-      15: [TakeDown]
-      20: [WorkUp]
-      24: [Crunch]
-      29: [Roar]
-      33: [Retaliate]
-      38: [Reversal]
-      42: [LastResort]
-      47: [GigaImpact]
-      52: [PlayRough]
-    teachable: [Payback, Strength, Surf]
+      12: [Retaliate]
+      19: [BabyDollEyes]
+      24: [PlayRough]
+      30: [Crunch]
+      36: [TakeDown]
+      42: [HelpingHand]
+      48: [Reversal]
+      54: [Roar]
+      60: [LastResort]
+      66: [GigaImpact]
+    teachable:
+      [
+        Payback,
+        Strength,
+        Surf,
+        Charm,
+        Crunch,
+        Endure,
+        FireFang,
+        HelpingHand,
+        HyperVoice,
+        IceFang,
+        PlayRough,
+        PsychicFangs,
+        Reversal,
+        SleepTalk,
+        Snore,
+        ThunderFang,
+        Uproar,
+      ]
   Stoutland:
     level:
-      1: [Tackle, Leer, Bite, OdorSleuth, ThunderFang, IceFang, FireFang]
+      1: [Tackle, Leer, Bite, ThunderFang, IceFang, FireFang, WorkUp]
       5: [OdorSleuth]
-      8: [Bite]
-      12: [HelpingHand]
-      15: [TakeDown]
-      20: [WorkUp]
-      24: [Crunch]
-      29: [Roar]
-      36: [Retaliate]
-      42: [Reversal]
-      51: [LastResort]
-      59: [GigaImpact]
-      63: [PlayRough]
-    teachable: [HyperBeam, Payback, Strength, Surf, Thunder, StompingTantrum]
+      12: [Retaliate]
+      19: [BabyDollEyes]
+      24: [PlayRough]
+      30: [Crunch]
+      38: [TakeDown]
+      46: [HelpingHand]
+      54: [Reversal]
+      62: [Roar]
+      70: [LastResort]
+      78: [GigaImpact]
+    teachable:
+      [
+        HyperBeam,
+        Payback,
+        Strength,
+        Surf,
+        Thunder,
+        StompingTantrum,
+        Charm,
+        Crunch,
+        Endure,
+        FireFang,
+        HelpingHand,
+        HyperVoice,
+        IceFang,
+        IronHead,
+        PlayRough,
+        PsychicFangs,
+        Reversal,
+        SleepTalk,
+        Snore,
+        Superpower,
+        ThunderFang,
+        Uproar,
+      ]
 Purrloin:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -759,45 +815,106 @@ Purrloin:
     - LashOut
   Purrloin:
     level:
-      1: [Scratch]
-      3: [Growl]
+      1: [Scratch, Growl]
+      4: [SandAttack]
+      5: [FakeOut]
       6: [Assist]
-      10: [SandAttack]
       12: [FurySwipes]
       15: [Pursuit]
-      19: [Torment]
-      21: [FakeOut]
+      16: [Torment]
+      21: [Assurance]
       24: [HoneClaws]
-      28: [Assurance]
+      28: [SuckerPunch]
       30: [Slash]
+      32: [NastyPlot]
       33: [Captivate]
-      37: [NightSlash]
+      36: [NightSlash]
       39: [Snatch]
-      42: [NastyPlot]
-      46: [SuckerPunch]
-      49: [PlayRough]
-    egg: [Charm, Covet, Encore, FakeTears, FeintAttack, FoulPlay, PayDay, Yawn]
+      40: [PlayRough]
+    egg:
+      [
+        Charm,
+        Covet,
+        Encore,
+        FakeTears,
+        FeintAttack,
+        FoulPlay,
+        PayDay,
+        Yawn,
+        Copycat,
+        DoubleTeam,
+        QuickAttack,
+        Slash,
+      ]
+    teachable:
+      - Assurance
+      - BatonPass
+      - Charm
+      - DarkPulse
+      - Encore
+      - Endure
+      - FakeTears
+      - FoulPlay
+      - GunkShot
+      - HyperVoice
+      - IronTail
+      - NastyPlot
+      - PayDay
+      - PlayRough
+      - Screech
+      - SeedBomb
+      - SleepTalk
+      - Snore
+      - Swift
+      - Trick
+      - UTurn
   Liepard:
     level:
-      1: [Scratch, SandAttack, Growl, Assist]
-      3: [Growl]
+      1: [Scratch, SandAttack, Growl, FakeOut]
       6: [Assist]
-      10: [SandAttack]
       12: [FurySwipes]
       15: [Pursuit]
-      19: [Torment]
-      22: [FakeOut]
-      26: [HoneClaws]
-      31: [Assurance]
-      34: [Slash]
+      16: [Torment]
+      23: [Assurance]
+      28: [HoneClaws]
+      34: [SuckerPunch, Slash]
       38: [Taunt]
-      43: [NightSlash]
+      40: [NastyPlot]
+      46: [NightSlash]
       47: [Snatch]
-      50: [NastyPlot]
-      55: [SuckerPunch]
-      58: [PlayRough]
+      52: [PlayRough]
     teachable:
-      [GigaImpact, HyperBeam, RockSmash, LaserFocus, ThroatChop, SkitterSmack, BurningJealousy]
+      [
+        GigaImpact,
+        HyperBeam,
+        RockSmash,
+        LaserFocus,
+        ThroatChop,
+        SkitterSmack,
+        BurningJealousy,
+        Assurance,
+        BatonPass,
+        Charm,
+        DarkPulse,
+        Encore,
+        Endure,
+        FakeTears,
+        FoulPlay,
+        GunkShot,
+        HyperVoice,
+        IronTail,
+        NastyPlot,
+        PayDay,
+        PlayRough,
+        PsychoCut,
+        Screech,
+        SeedBomb,
+        SleepTalk,
+        Snore,
+        Swift,
+        Trick,
+        UTurn,
+      ]
 Pansage:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -1159,26 +1276,72 @@ Munna:
     - ExpandingForce
   Munna:
     level:
-      1: [DefenseCurl, Psywave]
+      1: [DefenseCurl, StoredPower, Psywave]
+      4: [Hypnosis]
       5: [LuckyChant]
-      7: [Yawn]
-      11: [Psybeam]
-      13: [Imprison]
-      17: [Moonlight]
-      19: [Hypnosis]
-      23: [ZenHeadbutt]
+      8: [Psybeam]
+      12: [Imprison]
+      16: [Moonlight]
+      20: [MagicCoat]
+      24: [ZenHeadbutt]
       25: [Synchronoise]
+      28: [CalmMind]
       29: [Nightmare]
-      31: [FutureSight]
-      35: [CalmMind]
-      37: [Psychic]
-      41: [DreamEater]
+      32: [Yawn]
+      36: [Psychic]
+      40: [Moonblast]
       43: [Telekinesis]
-      47: [StoredPower]
-    egg: [Barrier, BatonPass, Curse, SecretPower, SonicBoom, Swift]
+      44: [DreamEater]
+      48: [FutureSight]
+      52: [WonderRoom]
+    egg: [Barrier, BatonPass, Curse, SecretPower, SonicBoom, Swift, HealingWish]
+    teachable:
+      - AllySwitch
+      - Amnesia
+      - Endure
+      - FutureSight
+      - GuardSwap
+      - Imprison
+      - PowerSwap
+      - StoredPower
+      - Swift
   Musharna:
     # A stone evolution learns nothing further: everything it knows
     # it knew as a Munna
     level:
-      1: [DefenseCurl, Hypnosis, LuckyChant, Psybeam, PsychicTerrain]
-    teachable: [GigaImpact, HyperBeam, MistyExplosion]
+      1:
+        [
+          Psybeam,
+          Psychic,
+          Hypnosis,
+          DefenseCurl,
+          DreamEater,
+          Moonlight,
+          FutureSight,
+          MagicCoat,
+          Yawn,
+          Imprison,
+          CalmMind,
+          ZenHeadbutt,
+          WonderRoom,
+          StoredPower,
+          Moonblast,
+          PsychicTerrain,
+          LuckyChant,
+        ]
+    teachable:
+      [
+        GigaImpact,
+        HyperBeam,
+        MistyExplosion,
+        AllySwitch,
+        Amnesia,
+        Endure,
+        FutureSight,
+        GuardSwap,
+        Imprison,
+        PowerSwap,
+        PsychicTerrain,
+        StoredPower,
+        Swift,
+      ]

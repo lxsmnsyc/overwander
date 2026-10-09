@@ -7,14 +7,13 @@ exports[`how a fight opens > kanto classics 1`] = `
   "b Blastoise: Yawn",
   "a Gengar: Shadow Ball",
   "a Snorlax: Protect",
+  "a Clefable: Helping Hand",
   "a Clefable: Misty Explosion",
-  "a Snorlax: Earthquake",
+  "a Snorlax: Heat Crash",
   "b Blastoise: Toxic",
-  "b Machamp: Heavy Slam",
+  "b Machamp: Light Screen",
   "a Clefable: Soft-Boiled",
   "a Snorlax: Substitute",
-  "b Blastoise: Earthquake",
-  "a Clefable: Wish",
 ]
 `;
 
@@ -23,14 +22,15 @@ exports[`how a fight opens > walls against sweepers 1`] = `
   "a Starmie: Power Gem",
   "a Venusaur: Toxic",
   "b Charizard: Fire Blast",
+  "b Gyarados: Power Whip",
   "b Tyranitar: Thunder Wave",
-  "b Gyarados: Dragon Dance",
   "a Skarmory: Protect",
-  "a Skarmory: Steel Wing",
+  "a Skarmory: Iron Head",
   "a Venusaur: Leaf Storm",
-  "a Starmie: Psychic",
+  "b Gyarados: Dragon Dance",
   "b Tyranitar: Screech",
-  "b Gyarados: Iron Head",
   "a Skarmory: Drill Peck",
+  "a Venusaur: Sleep Powder",
+  "b Gyarados: Aqua Tail",
 ]
 `;

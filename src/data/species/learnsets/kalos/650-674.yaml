@@ -450,37 +450,43 @@ Bunnelby:
     - WildCharge
   Bunnelby:
     level:
-      1: [Tackle, Leer, Agility]
-      7: [QuickAttack]
-      10: [DoubleSlap]
-      13: [MudSlap]
-      15: [TakeDown]
-      18: [MudShot]
-      20: [DoubleKick]
-      25: [OdorSleuth]
-      29: [Flail]
-      33: [Dig]
-      38: [Bounce]
-      42: [SuperFang]
-      47: [Facade]
-      49: [Earthquake]
+      1: [Leer, MudSlap]
+      3: [Tackle]
+      6: [LaserFocus]
+      9: [QuickAttack]
+      12: [MudShot]
+      15: [Flail]
+      18: [DoubleKick]
+      21: [Bulldoze]
+      24: [Dig]
+      27: [Bounce]
+      30: [TakeDown]
+      33: [SwordsDance]
+      36: [Earthquake]
+      39: [SuperFang]
     egg: [DefenseCurl, Rollout, Spikes]
+    teachable:
+      - Agility
+      - Endure
+      - MudShot
+      - Spikes
+      - SwordsDance
+      - WorkUp
   Diggersby:
     level:
-      1: [SwordsDance, Tackle, Leer, Agility, Bulldoze, Rototiller]
-      7: [QuickAttack]
-      13: [MudSlap]
-      15: [TakeDown]
-      18: [MudShot]
-      20: [DoubleKick]
-      26: [OdorSleuth]
-      31: [Flail]
-      37: [Dig]
-      42: [Bounce]
-      48: [SuperFang]
-      53: [Facade]
-      57: [Earthquake]
-      60: [HammerArm]
+      1: [Tackle, Leer, MudSlap, LaserFocus]
+      9: [QuickAttack]
+      12: [MudShot]
+      15: [Flail]
+      18: [DoubleKick]
+      23: [Bulldoze]
+      28: [Dig]
+      33: [Bounce]
+      38: [TakeDown]
+      43: [SwordsDance]
+      48: [Earthquake]
+      53: [SuperFang]
+      58: [HammerArm]
     teachable:
       - EarthPower
       - FirePunch
@@ -501,6 +507,16 @@ Bunnelby:
       - BrutalSwing
       - StompingTantrum
       - ScorchingSands
+      - Agility
+      - BodySlam
+      - Endure
+      - HighHorsepower
+      - MegaKick
+      - MegaPunch
+      - MudShot
+      - SandTomb
+      - Spikes
+      - WorkUp
 Fletchling:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -538,54 +554,49 @@ Fletchling:
     - DualWingbeat
   Fletchling:
     level:
-      1: [Tackle, Growl]
-      6: [QuickAttack]
-      10: [Peck]
-      13: [Agility]
-      16: [Flail]
-      21: [Roost]
-      25: [RazorWind]
-      29: [NaturalGift]
-      34: [FlameCharge]
-      39: [Acrobatics]
-      41: [MeFirst]
-      45: [Tailwind]
-      48: [SteelWing]
-    egg: [QuickGuard, Snatch, Tailwind]
+      1: [Growl, Peck]
+      5: [QuickAttack]
+      10: [Ember]
+      15: [Flail]
+      20: [Acrobatics]
+      25: [Agility]
+      30: [AerialAce]
+      35: [Tailwind]
+      40: [SteelWing]
+      45: [Roost]
+      50: [Fly]
+    egg: [QuickGuard, Snatch, Tailwind, Defog, FlameCharge]
+    teachable:
+      - Agility
+      - Endure
+      - Swift
+      - WillOWisp
+      - WorkUp
   Fletchinder:
     level:
-      1: [Tackle, Growl]
-      6: [QuickAttack]
-      10: [Peck]
-      13: [Agility]
-      16: [Flail]
-      17: [Ember]
-      25: [Roost]
-      27: [RazorWind]
-      31: [NaturalGift]
-      38: [FlameCharge]
-      42: [Acrobatics]
-      46: [MeFirst]
-      51: [Tailwind]
-      55: [SteelWing]
-    teachable: [FireBlast, Flamethrower, Incinerate, WillOWisp]
+      1: [Growl, Ember, Peck, QuickAttack, Feint, FlameCharge]
+      15: [Flail]
+      22: [Acrobatics]
+      29: [Agility]
+      36: [AerialAce]
+      43: [Tailwind]
+      50: [SteelWing]
+      57: [Roost]
+      64: [Fly]
+    teachable:
+      [FireBlast, Flamethrower, Incinerate, WillOWisp, Agility, Endure, FireSpin, Swift, WorkUp]
   Talonflame:
     level:
-      1: [Tackle, Growl, FlareBlitz]
-      6: [QuickAttack]
-      10: [Peck]
-      13: [Agility]
-      16: [Flail]
-      17: [Ember]
-      25: [Roost]
-      27: [RazorWind]
-      31: [NaturalGift]
-      39: [FlameCharge]
-      44: [Acrobatics]
-      49: [MeFirst]
-      55: [Tailwind]
-      60: [SteelWing]
-      64: [BraveBird]
+      1: [Growl, Ember, Peck, QuickAttack, Feint, FlareBlitz, FlameCharge]
+      15: [Flail]
+      22: [Acrobatics]
+      29: [Agility]
+      38: [AerialAce]
+      47: [Tailwind]
+      56: [SteelWing]
+      65: [Roost]
+      74: [Fly]
+      83: [BraveBird]
     teachable:
       - BulkUp
       - FireBlast
@@ -596,6 +607,14 @@ Fletchling:
       - Incinerate
       - SolarBeam
       - WillOWisp
+      - Agility
+      - BraveBird
+      - Endure
+      - FireSpin
+      - FlareBlitz
+      - Hurricane
+      - Swift
+      - WorkUp
 Scatterbug:
   family-teachable: [BugBite]
   Scatterbug:
@@ -2281,37 +2300,31 @@ Pancham:
       1: [Tackle, Leer]
       4: [ArmThrust]
       8: [Taunt]
-      10: [WorkUp]
-      12: [CircleThrow, KarateChop]
-      15: [CometPunch]
+      12: [CircleThrow]
       16: [LowSweep]
-      20: [Slash]
-      27: [VitalThrow]
-      33: [BodySlam, Crunch]
+      20: [WorkUp]
+      24: [Slash]
+      28: [VitalThrow]
+      33: [Crunch]
+      36: [BodySlam]
       40: [PartingShot]
-      42: [Entrainment]
-      48: [SkyUppercut]
+      44: [Entrainment]
     egg: [FoulPlay, MeFirst, Quash, QuickGuard, SeismicToss, StormThrow, PowerTrip]
+    teachable:
+      - HyperVoice
   Pangoro:
     level:
-      1:
-        - Tackle
-        - Leer
-        - ArmThrust
-        - Taunt
-        - WorkUp
-        - LowSweep
-        - Entrainment
-        - HammerArm
-        - BulletPunch
-        - NightSlash
-      12: [CircleThrow, KarateChop]
-      15: [CometPunch]
-      20: [Slash]
-      27: [VitalThrow]
-      35: [BodySlam, Crunch]
+      1: [Tackle, Leer, Taunt, ArmThrust, NightSlash, BulletPunch]
+      12: [CircleThrow]
+      16: [LowSweep]
+      20: [WorkUp]
+      24: [Slash]
+      28: [VitalThrow]
+      35: [Crunch]
+      40: [BodySlam]
       46: [PartingShot]
-      52: [SkyUppercut]
+      52: [Entrainment]
+      58: [HammerArm]
     teachable:
       - BeatUp
       - CloseCombat
@@ -2336,3 +2349,5 @@ Pancham:
       - StompingTantrum
       - LaserFocus
       - ThroatChop
+      - DarkestLariat
+      - HyperVoice

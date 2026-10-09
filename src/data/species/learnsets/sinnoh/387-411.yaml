@@ -46,7 +46,8 @@ Turtwig:
     level:
       1: [Tackle]
       5: [Withdraw]
-      9: [Absorb]
+      6: [Leafage]
+      10: [Growth]
       13: [RazorLeaf]
       17: [Curse]
       21: [Bite]
@@ -71,11 +72,16 @@ Turtwig:
       - Tickle
       - WorrySeed
       - GrassyTerrain
+      - EarthPower
+      - HeavySlam
+      - WideGuard
+    teachable:
+      - WorkUp
   Grotle:
     level:
-      1: [Tackle, Withdraw]
-      5: [Withdraw]
-      9: [Absorb]
+      1: [Tackle, Absorb, Withdraw]
+      6: [Leafage]
+      10: [Growth]
       13: [RazorLeaf]
       17: [Curse]
       22: [Bite]
@@ -85,17 +91,15 @@ Turtwig:
       42: [Crunch]
       47: [GigaDrain]
       52: [LeafStorm]
-    teachable: [WorrySeed]
+    teachable: [WorrySeed, WorkUp]
   Torterra:
     level:
-      1: [Absorb, RazorLeaf, Tackle, Withdraw, WoodHammer]
-      5: [Withdraw]
-      9: [Absorb]
-      13: [RazorLeaf]
+      1: [Tackle, Absorb, RazorLeaf, Earthquake, Withdraw, WoodHammer]
+      6: [Leafage]
+      10: [Growth]
       17: [Curse]
       22: [Bite]
       27: [MegaDrain]
-      32: [Earthquake]
       33: [LeechSeed]
       39: [Synthesis]
       45: [Crunch]
@@ -117,6 +121,8 @@ Turtwig:
       - StoneEdge
       - WorrySeed
       - StompingTantrum
+      - Bulldoze
+      - WorkUp
 Chimchar:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -177,18 +183,20 @@ Chimchar:
     - PowerUpPunch
   Chimchar:
     level:
-      1: [Leer, Scratch]
-      7: [Ember]
+      1: [Scratch, Leer]
+      6: [Ember]
       9: [Taunt]
+      12: [PowerUpPunch]
       15: [FurySwipes]
       17: [FlameWheel]
       23: [NastyPlot]
       25: [Torment]
       31: [Facade]
       33: [FireSpin]
-      39: [SlackOff]
-      41: [Flamethrower]
-    teachable: [Uproar]
+      39: [Acrobatics]
+      41: [SlackOff]
+      47: [Flamethrower]
+    teachable: [Uproar, LowSweep, NastyPlot, WorkUp]
     egg:
       - Assist
       - BlazeKick
@@ -201,36 +209,50 @@ Chimchar:
       - HeatWave
       - HelpingHand
       - ThunderPunch
+      - PowerUpPunch
+      - QuickGuard
+      - Submission
   Monferno:
     level:
-      1: [Ember, Leer, Scratch]
-      7: [Ember]
+      1: [Scratch, Leer, Ember, Flamethrower, MachPunch, Facade, NastyPlot]
       9: [Taunt]
-      14: [MachPunch]
+      12: [PowerUpPunch]
       16: [FurySwipes]
       19: [FlameWheel]
       26: [Feint]
       29: [Torment]
       36: [CloseCombat]
       39: [FireSpin]
-      46: [SlackOff]
-      49: [FlareBlitz]
-    teachable: [FocusBlast, PoisonJab, RockSlide, RockTomb]
+      46: [Acrobatics]
+      49: [SlackOff]
+      56: [FlareBlitz]
+    teachable: [FocusBlast, PoisonJab, RockSlide, RockTomb, LowSweep, NastyPlot, WorkUp]
   Infernape:
     level:
-      1: [Ember, Leer, Scratch, Taunt]
-      7: [Ember]
-      9: [Taunt]
-      14: [MachPunch]
-      17: [FurySwipes]
-      21: [FlameWheel]
-      29: [Feint]
-      33: [Punishment]
-      41: [CloseCombat]
-      45: [FireSpin]
-      53: [CalmMind]
-      57: [FlareBlitz]
+      1:
+        [
+          Scratch,
+          Leer,
+          Ember,
+          Flamethrower,
+          MachPunch,
+          Torment,
+          Facade,
+          Taunt,
+          SlackOff,
+          CloseCombat,
+          FlareBlitz,
+          NastyPlot,
+        ]
+      12: [PowerUpPunch]
+      16: [FurySwipes]
+      19: [FlameWheel]
+      26: [Feint]
+      29: [UTurn]
+      42: [FireSpin]
       46: [RagingFury]
+      52: [Acrobatics]
+      58: [CalmMind]
     teachable:
       - BlastBurn
       - CalmMind
@@ -245,6 +267,10 @@ Chimchar:
       - SolarBeam
       - StoneEdge
       - LaserFocus
+      - Bulldoze
+      - LowSweep
+      - NastyPlot
+      - WorkUp
 Piplup:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -293,11 +319,11 @@ Piplup:
     level:
       1: [Pound]
       4: [Growl]
-      8: [Bubble]
-      11: [WaterSport]
+      6: [WaterGun]
+      11: [Charm]
       15: [Peck]
       18: [BubbleBeam]
-      22: [Bide]
+      22: [Swagger]
       25: [FuryAttack]
       29: [Brine]
       32: [Whirlpool]
@@ -317,41 +343,40 @@ Piplup:
       - Supersonic
       - Yawn
       - PowerTrip
+      - IcyWind
+    teachable:
+      - Scald
+      - WorkUp
   Prinplup:
     level:
-      1: [Growl, Tackle]
-      4: [Growl]
-      8: [Bubble]
-      11: [WaterSport]
+      1: [Pound, Tackle, Growl, MetalClaw]
+      8: [WaterGun]
+      11: [Charm]
       15: [Peck]
-      16: [MetalClaw]
       19: [BubbleBeam]
-      24: [Bide]
+      24: [Swagger]
       28: [FuryAttack]
       33: [Brine]
       37: [Whirlpool]
       42: [Mist]
       46: [DrillPeck]
-      51: [HydroPump]
-    teachable: [RockSmash, ShadowClaw, Strength]
+      50: [HydroPump]
+    teachable: [RockSmash, ShadowClaw, Strength, Scald, WorkUp]
   Empoleon:
     level:
-      1: [Bubble, Growl, Tackle]
-      4: [Growl]
-      8: [Bubble]
+      1: [Pound, Tackle, Growl, Charm, MetalClaw, AquaJet]
+      8: [WaterGun]
       11: [SwordsDance]
       15: [Peck]
-      16: [MetalClaw]
       19: [BubbleBeam]
       24: [Swagger]
       28: [FuryAttack]
       33: [Brine]
-      36: [AquaJet]
       39: [Whirlpool]
       46: [Mist]
       52: [DrillPeck]
-      59: [HydroPump]
       57: [WaveCrash]
+      59: [HydroPump]
     teachable:
       - Avalanche
       - Earthquake
@@ -373,6 +398,9 @@ Piplup:
       - Liquidation
       - LaserFocus
       - ThroatChop
+      - Bulldoze
+      - Scald
+      - WorkUp
 Starly:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -414,7 +442,7 @@ Starly:
     - Confide
   Starly:
     level:
-      1: [Growl, Tackle]
+      1: [Tackle, Growl]
       5: [QuickAttack]
       9: [WingAttack]
       13: [DoubleTeam]
@@ -424,6 +452,7 @@ Starly:
       29: [TakeDown]
       33: [Agility]
       37: [BraveBird]
+      41: [FinalGambit]
     egg:
       - Astonish
       - DoubleEdge
@@ -432,10 +461,14 @@ Starly:
       - FuryAttack
       - Pursuit
       - SandAttack
+      - Detect
+      - Revenge
+      - Uproar
+    teachable:
+      - WorkUp
   Staravia:
     level:
-      1: [Growl, QuickAttack, Tackle]
-      5: [QuickAttack]
+      1: [Tackle, Growl, QuickAttack]
       9: [WingAttack]
       13: [DoubleTeam]
       18: [Endeavor]
@@ -444,20 +477,21 @@ Starly:
       33: [TakeDown]
       38: [Agility]
       43: [BraveBird]
+      48: [FinalGambit]
+    teachable:
+      - WorkUp
   Staraptor:
     level:
-      1: [Growl, QuickAttack, Tackle, WingAttack]
-      5: [QuickAttack]
-      9: [WingAttack]
+      1: [WingAttack, Tackle, Growl, QuickAttack, CloseCombat]
       13: [DoubleTeam]
       18: [Endeavor]
       23: [Whirlwind]
       28: [AerialAce]
       33: [TakeDown]
-      34: [CloseCombat]
       41: [Agility]
       49: [BraveBird]
-    teachable: [GigaImpact, HyperBeam, SkyAttack, LaserFocus]
+      57: [FinalGambit]
+    teachable: [GigaImpact, HyperBeam, SkyAttack, LaserFocus, WorkUp]
 Bidoof:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -508,18 +542,19 @@ Bidoof:
     - Confide
   Bidoof:
     level:
-      1: [Tackle]
-      5: [Growl]
-      9: [DefenseCurl]
-      13: [Rollout]
-      17: [Headbutt]
-      21: [HyperFang]
-      25: [Yawn]
-      29: [Amnesia]
-      33: [TakeDown]
-      37: [SuperFang]
-      41: [Superpower]
-      45: [Curse]
+      1: [Tackle, Growl]
+      5: [DefenseCurl]
+      9: [Rollout]
+      13: [Headbutt]
+      17: [Taunt]
+      21: [Yawn]
+      25: [Crunch]
+      29: [TakeDown]
+      33: [SuperFang]
+      37: [SwordsDance]
+      41: [Amnesia]
+      45: [Superpower]
+      49: [Curse]
     egg:
       - AquaTail
       - DefenseCurl
@@ -529,21 +564,25 @@ Bidoof:
       - QuickAttack
       - Rollout
       - WaterSport
+      - SkullBash
+    teachable:
+      - SwordsDance
+      - WorkUp
   Bibarel:
     level:
-      1: [Growl, Tackle, Rototiller]
-      5: [Growl]
-      9: [DefenseCurl]
-      13: [Rollout]
-      15: [WaterGun]
-      18: [Headbutt]
-      23: [HyperFang]
-      28: [Yawn]
-      33: [Amnesia]
-      38: [TakeDown]
-      43: [SuperFang]
-      48: [Superpower]
-      53: [Curse]
+      1: [Tackle, Growl, WaterGun, AquaJet]
+      5: [DefenseCurl]
+      9: [Rollout]
+      13: [Headbutt]
+      18: [Taunt]
+      23: [Yawn]
+      28: [Crunch]
+      33: [TakeDown]
+      38: [SuperFang]
+      43: [SwordsDance]
+      48: [Amnesia]
+      53: [Superpower]
+      58: [Curse]
     teachable:
       - AquaTail
       - Dive
@@ -560,18 +599,22 @@ Bidoof:
       - Whirlpool
       - StompingTantrum
       - Liquidation
+      - Bulldoze
+      - Scald
+      - SwordsDance
+      - WorkUp
 Kricketot:
   # TM, HM and tutor moves shared by the whole family
   family-teachable: [BugBite, Endeavor, MudSlap, Snore, StringShot, Uproar]
   Kricketot:
     level:
-      1: [Bide, Growl]
+      1: [Pound, Growl]
+      6: [StruggleBug]
       16: [BugBite]
   Kricketune:
     level:
-      1: [Bide, Growl]
-      10: [FuryCutter]
-      14: [LeechLife]
+      1: [Pound, Growl, FuryCutter, BugBite, StruggleBug]
+      14: [Absorb]
       18: [Sing]
       22: [FocusEnergy]
       26: [Slash]
@@ -622,6 +665,7 @@ Kricketot:
       - PowerUpPunch
       - LaserFocus
       - ThroatChop
+      - BugBuzz
 Shinx:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -664,18 +708,19 @@ Shinx:
     - RisingVoltage
   Shinx:
     level:
-      1: [Tackle]
-      5: [Leer]
-      9: [Charge]
-      11: [BabyDollEyes]
-      13: [Spark]
-      17: [Bite]
-      21: [Roar]
-      25: [Swagger]
-      29: [ThunderFang]
-      33: [Crunch]
-      37: [ScaryFace]
-      41: [Discharge]
+      1: [Tackle, Leer]
+      4: [ThunderShock]
+      8: [Charge]
+      12: [Bite]
+      16: [Spark]
+      20: [Roar]
+      24: [VoltSwitch]
+      28: [ScaryFace]
+      32: [ThunderWave]
+      36: [Crunch]
+      40: [Discharge]
+      44: [Swagger]
+      48: [WildCharge]
     egg:
       - FireFang
       - Howl
@@ -685,34 +730,95 @@ Shinx:
       - TakeDown
       - ThunderFang
       - EerieImpulse
+      - BabyDollEyes
+      - DoubleKick
+      - FakeTears
+      - HelpingHand
+      - ShockWave
+      - Swift
+    teachable:
+      - Crunch
+      - EerieImpulse
+      - ElectroBall
+      - FakeTears
+      - FireFang
+      - HelpingHand
+      - IceFang
+      - PlayRough
+      - PsychicFangs
+      - Round
+      - ScaryFace
+      - Snarl
+      - ThunderFang
+      - VoltSwitch
+      - WildCharge
   Luxio:
     level:
-      1: [Leer, Tackle]
-      5: [Leer]
-      9: [Charge]
-      13: [Spark]
-      18: [Bite]
-      23: [Roar]
-      28: [Swagger]
-      33: [ThunderFang]
-      38: [Crunch]
-      43: [ScaryFace]
-      48: [Discharge]
+      1: [Tackle, Leer, ThunderShock, Charge]
+      12: [Bite]
+      18: [Spark]
+      24: [Roar]
+      31: [VoltSwitch]
+      36: [ScaryFace]
+      42: [ThunderWave]
+      48: [Crunch]
+      54: [Discharge]
+      60: [Swagger]
+      68: [WildCharge]
+    teachable:
+      - Crunch
+      - EerieImpulse
+      - ElectroBall
+      - FakeTears
+      - FireFang
+      - HelpingHand
+      - IceFang
+      - PlayRough
+      - PsychicFangs
+      - Round
+      - ScaryFace
+      - Snarl
+      - ThunderFang
+      - VoltSwitch
+      - WildCharge
   Luxray:
     level:
-      1: [Charge, Leer, Tackle]
-      5: [Leer]
-      9: [Charge]
-      13: [Spark]
-      18: [Bite]
-      23: [Roar]
-      28: [Swagger]
-      35: [ThunderFang]
-      42: [Crunch]
-      49: [ScaryFace]
-      56: [Discharge]
-      67: [ElectricTerrain]
-    teachable: [GigaImpact, HyperBeam, Superpower, LaserFocus, ThroatChop]
+      1: [Tackle, Leer, ThunderShock, Charge, ElectricTerrain]
+      12: [Bite]
+      18: [Spark]
+      24: [Roar]
+      33: [VoltSwitch]
+      40: [ScaryFace]
+      48: [ThunderWave]
+      56: [Crunch]
+      64: [Discharge]
+      72: [Swagger]
+      80: [WildCharge]
+    teachable:
+      [
+        GigaImpact,
+        HyperBeam,
+        Superpower,
+        LaserFocus,
+        ThroatChop,
+        Agility,
+        Crunch,
+        EerieImpulse,
+        ElectricTerrain,
+        ElectroBall,
+        FakeTears,
+        FireFang,
+        HelpingHand,
+        IceFang,
+        PlayRough,
+        PsychicFangs,
+        Round,
+        ScaryFace,
+        Snarl,
+        ThunderFang,
+        VoltSwitch,
+        WildCharge,
+      ]
 Cranidos:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -778,28 +884,30 @@ Cranidos:
     level:
       1: [Headbutt, Leer]
       6: [FocusEnergy]
-      10: [Pursuit]
+      10: [RockPolish]
       15: [TakeDown]
       19: [ScaryFace]
       24: [Assurance]
-      28: [AncientPower]
-      33: [ZenHeadbutt]
-      37: [Screech]
-      43: [HeadSmash]
-    egg: [Crunch, Curse, DoubleEdge, HammerArm, Leer, Slam, Stomp, Thrash, Whirlwind]
+      28: [SwordsDance]
+      33: [AncientPower]
+      37: [ZenHeadbutt]
+      42: [Screech]
+      46: [HeadSmash]
+    egg: [Crunch, Curse, DoubleEdge, HammerArm, Leer, Slam, Stomp, Thrash, Whirlwind, IronHead]
+    teachable:
+      - Bulldoze
   Rampardos:
     level:
-      1: [Headbutt, Leer]
-      6: [FocusEnergy]
-      10: [Pursuit]
+      1: [Headbutt, Leer, FocusEnergy, Endeavor]
+      10: [RockPolish]
       15: [TakeDown]
       19: [ScaryFace]
       24: [Assurance]
-      28: [AncientPower]
-      30: [Endeavor]
-      36: [ZenHeadbutt]
-      43: [Screech]
-      52: [HeadSmash]
+      28: [SwordsDance]
+      36: [AncientPower]
+      43: [ZenHeadbutt]
+      51: [Screech]
+      58: [HeadSmash]
     teachable:
       - Avalanche
       - BrickBreak
@@ -814,6 +922,7 @@ Cranidos:
       - Whirlpool
       - StompingTantrum
       - LaserFocus
+      - Bulldoze
 Shieldon:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -867,7 +976,7 @@ Shieldon:
     - Confide
   Shieldon:
     level:
-      1: [Protect, Tackle]
+      1: [Tackle, Protect]
       6: [Taunt]
       10: [MetalSound]
       15: [TakeDown]
@@ -876,7 +985,8 @@ Shieldon:
       28: [AncientPower]
       33: [Endure]
       37: [MetalBurst]
-      43: [IronHead]
+      42: [IronHead]
+      46: [HeavySlam]
     egg:
       - BodySlam
       - Counter
@@ -888,19 +998,21 @@ Shieldon:
       - RockBlast
       - ScaryFace
       - Screech
+      - GuardSplit
+      - WideGuard
+    teachable:
+      - Bulldoze
   Bastiodon:
     level:
-      1: [MetalSound, Protect, Tackle, Taunt]
-      6: [Taunt]
-      10: [MetalSound]
+      1: [Tackle, Protect, Taunt, MetalSound, Block]
       15: [TakeDown]
       19: [IronDefense]
       24: [Swagger]
       28: [AncientPower]
-      30: [Block]
       36: [Endure]
       43: [MetalBurst]
-      52: [IronHead]
+      51: [IronHead]
+      58: [HeavySlam]
     teachable:
       - Avalanche
       - Block
@@ -910,3 +1022,4 @@ Shieldon:
       - MagicCoat
       - Outrage
       - StompingTantrum
+      - Bulldoze

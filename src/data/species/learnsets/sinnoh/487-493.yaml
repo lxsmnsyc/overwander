@@ -71,43 +71,69 @@ Giratina:
     - DualWingbeat
   Giratina:
     level:
-      1: [DragonBreath, ScaryFace]
-      10: [OminousWind]
-      20: [AncientPower]
-      30: [DragonClaw]
-      40: [ShadowForce]
-      50: [HealBlock]
-      60: [EarthPower]
-      70: [Slash]
-      80: [ShadowClaw]
-      90: [AuraSphere]
+      1: [ShadowSneak, Defog]
+      7: [DragonBreath]
+      14: [AncientPower]
+      21: [Hex]
+      28: [Slash]
+      35: [ScaryFace]
+      42: [ShadowClaw]
+      49: [PainSplit]
+      56: [AuraSphere]
+      63: [DragonClaw]
+      70: [EarthPower]
+      77: [ShadowForce]
+      84: [DestinyBond]
+    teachable:
+      - AuraSphere
+      - BodySlam
+      - Bulldoze
+      - Hex
+      - HyperVoice
+      - PhantomForce
+      - Round
+      - ScaryFace
   GiratinaOrigin:
     level:
-      1: [DragonBreath, ScaryFace]
-      10: [OminousWind]
-      20: [AncientPower]
-      30: [DragonClaw]
-      40: [ShadowForce]
-      50: [HealBlock]
-      60: [EarthPower]
-      70: [Slash]
-      80: [ShadowClaw]
-      90: [AuraSphere]
+      1: [ShadowSneak, Defog]
+      7: [DragonBreath]
+      14: [AncientPower]
+      21: [Hex]
+      28: [Slash]
+      35: [ScaryFace]
+      42: [ShadowClaw]
+      49: [PainSplit]
+      56: [AuraSphere]
+      63: [DragonClaw]
+      70: [EarthPower]
+      77: [ShadowForce]
+      84: [DestinyBond]
+    teachable:
+      - AuraSphere
+      - BodySlam
+      - Bulldoze
+      - Hex
+      - HyperVoice
+      - PhantomForce
+      - Round
+      - ScaryFace
 Cresselia:
   Cresselia:
     level:
       1: [Confusion, DoubleTeam]
-      11: [Safeguard]
-      20: [Mist]
-      29: [AuroraBeam]
-      38: [FutureSight]
-      47: [Slash]
-      57: [Moonlight, LunarBlessing]
-      66: [PsychoCut]
-      75: [PsychoShift]
-      84: [LunarDance]
-      93: [Psychic]
-      99: [Moonblast]
+      6: [Mist]
+      12: [AuroraBeam]
+      18: [Psybeam]
+      24: [PsychoShift]
+      30: [Slash]
+      36: [PsychoCut]
+      42: [Moonlight]
+      48: [Safeguard]
+      54: [Psychic]
+      57: [LunarBlessing]
+      60: [Moonblast]
+      66: [FutureSight]
+      72: [LunarDance]
     teachable:
       - CalmMind
       - ChargeBeam
@@ -158,6 +184,16 @@ Cresselia:
       - TrickRoom
       - ZenHeadbutt
       - ExpandingForce
+      - AllySwitch
+      - BodySlam
+      - FutureSight
+      - GuardSwap
+      - MagicRoom
+      - PowerSwap
+      - PsychoCut
+      - Psyshock
+      - Round
+      - StoredPower
 Manaphy:
   family-teachable:
     - AncientPower
@@ -216,7 +252,7 @@ Manaphy:
     teachable: [Liquidation]
   Manaphy:
     level:
-      1: [Bubble, TailGlow, WaterSport]
+      1: [WaterGun, TailGlow]
       9: [Charm]
       16: [Supersonic]
       24: [BubbleBeam]
@@ -239,6 +275,7 @@ Manaphy:
       - ShadowBall
       - SkillSwap
       - Liquidation
+      - Scald
 Darkrai:
   Darkrai:
     level:
@@ -375,7 +412,17 @@ Shaymin:
       82: [SweetKiss]
       91: [HealingWish]
       100: [SeedFlare]
-    teachable: [EarthPower, Endeavor, LaserFocus]
+    teachable:
+      [
+        EarthPower,
+        Endeavor,
+        LaserFocus,
+        AerialAce,
+        BabyDollEyes,
+        MagicalLeaf,
+        OminousWind,
+        PlayRough,
+      ]
   ShayminSky:
     level:
       1: [Growth]
@@ -390,7 +437,17 @@ Shaymin:
       82: [SweetKiss]
       91: [LeafStorm]
       100: [SeedFlare]
-    teachable: [AirCutter, OminousWind, LaserFocus]
+    teachable:
+      [
+        AirCutter,
+        OminousWind,
+        LaserFocus,
+        AerialAce,
+        BabyDollEyes,
+        EarthPower,
+        MagicalLeaf,
+        PlayRough,
+      ]
 Arceus:
   family-teachable:
     - AerialAce

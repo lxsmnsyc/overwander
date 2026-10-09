@@ -69,19 +69,18 @@ Mienfoo:
   Mienfoo:
     level:
       1: [Pound, Detect]
-      5: [Meditate, FakeOut]
+      5: [FakeOut]
       10: [Reversal]
       15: [FurySwipes]
-      17: [DoubleSlap]
       20: [QuickGuard]
-      21: [Swift]
-      25: [CalmMind, ForcePalm]
+      25: [ForcePalm]
       30: [UTurn]
-      33: [DrainPunch]
-      37: [JumpKick]
+      35: [DrainPunch]
       40: [HoneClaws]
       45: [AuraSphere]
-      49: [Bounce]
+      51: [Bounce]
+      55: [CalmMind]
+      60: [HiJumpKick]
     egg:
       - AllySwitch
       - BatonPass
@@ -95,17 +94,17 @@ Mienfoo:
       - VitalThrow
   Mienshao:
     level:
-      1: [Pound, Meditate, Reversal, Detect, FakeOut, AuraSphere, QuickGuard]
+      1: [Pound, Reversal, Detect, FakeOut, QuickGuard]
       15: [FurySwipes]
-      17: [DoubleSlap]
       20: [WideGuard]
-      21: [Swift]
-      25: [CalmMind, ForcePalm]
+      25: [ForcePalm]
       30: [UTurn]
-      33: [DrainPunch]
-      37: [JumpKick]
+      35: [DrainPunch]
       40: [HoneClaws]
-      49: [Bounce]
+      45: [AuraSphere]
+      53: [Bounce]
+      59: [CalmMind]
+      66: [HiJumpKick]
     teachable:
       - Assurance
       - BlazeKick
@@ -114,23 +113,20 @@ Mienfoo:
       - HyperBeam
       - VacuumWave
       - LaserFocus
+      - BrutalSwing
 Druddigon:
   Druddigon:
     level:
       1: [Scratch, Leer]
-      5: [Bite, HoneClaws]
+      5: [Bite]
       10: [DragonTail]
-      13: [ScaryFace]
       15: [MetalClaw]
-      18: [DragonRage]
-      21: [Slash]
-      25: [Crunch]
-      27: [DragonClaw]
-      31: [ChipAway]
-      35: [Revenge]
-      40: [NightSlash]
+      20: [ScaryFace]
+      25: [Slash]
+      30: [DragonClaw]
+      35: [HoneClaws]
+      40: [Crunch]
       45: [IronHead]
-      49: [RockClimb]
       50: [Outrage]
       55: [Superpower]
     teachable:
@@ -206,6 +202,7 @@ Druddigon:
       - ScaleShot
       - LashOut
       - DualWingbeat
+      - DracoMeteor
     egg:
       - CrushClaw
       - FeintAttack
@@ -300,35 +297,39 @@ Golett:
     - ScorchingSands
   Golett:
     level:
-      1: [Pound, DefenseCurl, MudSlap, Astonish]
-      9: [Rollout]
+      1: [MudSlap, Astonish]
+      4: [DefenseCurl]
+      8: [Pound]
       12: [ShadowPunch]
       16: [Curse]
-      17: [IronDefense]
       20: [NightShade]
-      21: [StompingTantrum]
-      25: [Magnitude]
-      30: [DynamicPunch]
+      24: [StompingTantrum]
+      28: [IronDefense]
+      32: [MegaPunch]
       36: [ShadowBall]
       40: [HeavySlam]
-      45: [Earthquake]
+      44: [PhantomForce]
       48: [HammerArm]
-      55: [FocusPunch]
+      52: [Earthquake]
+      56: [DynamicPunch]
+    teachable:
+      - PhantomForce
+      - StompingTantrum
   Golurk:
     level:
-      1: [Pound, DefenseCurl, MudSlap, FocusPunch, Astonish, HeavySlam, HighHorsepower]
-      9: [Rollout]
+      1: [Pound, DefenseCurl, MudSlap, FocusPunch, Astonish, HighHorsepower]
       12: [ShadowPunch]
       16: [Curse]
-      17: [IronDefense]
       20: [NightShade]
-      21: [StompingTantrum]
-      25: [Magnitude]
-      30: [DynamicPunch]
+      24: [StompingTantrum]
+      28: [IronDefense]
+      32: [MegaPunch]
       36: [ShadowBall]
-      50: [Earthquake]
+      40: [HeavySlam]
+      46: [PhantomForce]
       52: [HammerArm]
-      75: [PhantomForce]
+      58: [Earthquake]
+      64: [DynamicPunch]
     teachable:
       - ChargeBeam
       - CloseCombat
@@ -343,6 +344,10 @@ Golett:
       - Trick
       - ZenHeadbutt
       - BodyPress
+      - DarkestLariat
+      - HighHorsepower
+      - PhantomForce
+      - StompingTantrum
 Pawniard:
   # TM and tutor moves shared by the whole family
 
@@ -418,18 +423,17 @@ Pawniard:
       1: [Scratch, Leer]
       5: [FuryCutter]
       10: [MetalClaw]
-      14: [Torment]
-      17: [FeintAttack]
+      15: [Torment]
       20: [ScaryFace]
       25: [Assurance]
-      30: [Slash, MetalSound]
+      30: [MetalSound]
+      35: [Slash]
       40: [NightSlash]
-      41: [Embargo]
       45: [IronDefense]
-      50: [Retaliate]
-      54: [IronHead]
-      57: [SwordsDance]
-      62: [Guillotine]
+      50: [LaserFocus]
+      55: [IronHead]
+      60: [SwordsDance]
+      65: [Guillotine]
     egg:
       - Headbutt
       - MeanLook
@@ -441,41 +445,34 @@ Pawniard:
       - SuckerPunch
   Bisharp:
     level:
-      1:
-        - Scratch
-        - Guillotine
-        - Leer
-        - FuryCutter
-        - MetalClaw
-        - Torment
-        - MetalBurst
-        - IronHead
-      17: [FeintAttack]
+      1: [Scratch, Leer, FuryCutter, MetalClaw, MetalBurst]
+      15: [Torment]
       20: [ScaryFace]
       25: [Assurance]
-      30: [Slash, MetalSound]
+      30: [MetalSound]
+      35: [Slash]
       40: [NightSlash]
-      41: [Embargo]
       45: [IronDefense]
-      50: [Retaliate]
-      63: [SwordsDance]
+      50: [LaserFocus]
+      57: [IronHead]
+      64: [SwordsDance]
+      71: [Guillotine]
     teachable: [FocusBlast, GigaImpact, HyperBeam, Reversal, LaserFocus, ThroatChop]
 Bouffalant:
   Bouffalant:
     level:
-      1: [Leer, Pursuit]
-      6: [Rage]
-      11: [FuryAttack]
-      16: [HornAttack]
-      21: [ScaryFace]
-      26: [Revenge]
-      31: [HeadCharge]
-      36: [FocusEnergy]
-      41: [Megahorn]
-      46: [Reversal]
-      51: [Thrash]
-      56: [SwordsDance]
-      61: [GigaImpact]
+      1: [Tackle, Leer]
+      5: [FocusEnergy]
+      10: [FuryAttack]
+      15: [Revenge]
+      20: [ScaryFace]
+      25: [HornAttack]
+      30: [Reversal]
+      35: [ThroatChop]
+      40: [HeadCharge]
+      45: [SwordsDance]
+      50: [Megahorn]
+      55: [GigaImpact]
     teachable:
       - AerialAce
       - Amnesia
@@ -523,6 +520,17 @@ Bouffalant:
       - StompingTantrum
       - SmartStrike
       - LashOut
+      - Assurance
+      - BodySlam
+      - CloseCombat
+      - Endure
+      - FocusEnergy
+      - HighHorsepower
+      - Megahorn
+      - Revenge
+      - Reversal
+      - ScaryFace
+      - ThroatChop
     egg:
       - Amnesia
       - Belch
@@ -598,44 +606,33 @@ Rufflet:
     - DualWingbeat
   Rufflet:
     level:
-      1: [Leer, Peck, QuickAttack]
-      5: [FuryAttack]
-      6: [AerialAce, HoneClaws]
-      10: [WingAttack]
-      11: [Twister]
+      1: [Leer, Peck]
+      6: [HoneClaws]
+      12: [WingAttack]
       18: [Tailwind]
-      19: [ScaryFace]
-      20: [AirSlash]
-      25: [Roost]
-      32: [Defog]
-      34: [DoubleEdge]
+      24: [ScaryFace]
+      30: [AerialAce]
+      36: [Slash]
       42: [Whirlwind]
-      43: [BraveBird]
-      46: [CrushClaw]
-      50: [SkyDrop]
-      64: [Thrash]
+      48: [CrushClaw]
+      55: [AirSlash]
+      60: [Defog]
+      66: [Thrash]
+      72: [BraveBird]
     egg: [RockSmash, Roost]
   Braviary:
     level:
-      1:
-        - WingAttack
-        - Whirlwind
-        - FuryAttack
-        - Thrash
-        - Leer
-        - Peck
-        - SkyAttack
-        - BraveBird
-        - HoneClaws
-        - Superpower
+      1: [WingAttack, Leer, Peck, SkyAttack, Superpower, HoneClaws]
       18: [Tailwind]
-      19: [ScaryFace]
-      23: [AerialAce]
-      28: [Slash]
-      32: [Defog]
-      41: [AirSlash]
-      46: [CrushClaw]
-      50: [SkyDrop]
+      24: [ScaryFace]
+      30: [AerialAce]
+      36: [Slash]
+      42: [Whirlwind]
+      48: [CrushClaw]
+      57: [AirSlash]
+      64: [Defog]
+      72: [Thrash]
+      80: [BraveBird]
     teachable: [GigaImpact, HyperBeam, IronHead, MetalClaw, Reversal, LaserFocus]
 Vullaby:
   # TM and tutor moves shared by the whole family
@@ -704,65 +701,48 @@ Vullaby:
   Vullaby:
     level:
       1: [Gust, Leer]
-      5: [FuryAttack]
       6: [Flatter]
-      10: [Pluck]
-      14: [NastyPlot]
+      12: [Pluck]
       18: [Tailwind]
-      23: [FeintAttack]
       24: [KnockOff]
-      28: [Punishment]
       30: [IronDefense]
-      32: [Defog]
       36: [Whirlwind]
-      41: [AirSlash]
-      46: [DarkPulse]
-      50: [Embargo]
-      59: [BraveBird]
-      64: [MirrorMove]
+      42: [AirSlash]
+      48: [DarkPulse]
+      54: [NastyPlot]
+      60: [Defog]
       66: [Attract]
+      72: [BraveBird]
     egg: [FakeTears, FoulPlay, KnockOff, MeanLook, Roost, ScaryFace, SteelWing, Toxic]
   Mandibuzz:
     level:
-      1:
-        - Gust
-        - Whirlwind
-        - FuryAttack
-        - Leer
-        - Toxic
-        - MirrorMove
-        - SkyAttack
-        - Flatter
-        - Pluck
-        - BraveBird
-        - BoneRush
-      14: [NastyPlot]
+      1: [Gust, Leer, Toxic, SkyAttack, BoneRush, Flatter, Pluck]
       18: [Tailwind]
-      23: [FeintAttack]
       24: [KnockOff]
-      28: [Punishment]
       30: [IronDefense]
-      32: [Defog]
-      41: [AirSlash]
-      46: [DarkPulse]
-      50: [Embargo]
+      36: [Whirlwind]
+      42: [AirSlash]
+      48: [DarkPulse]
+      57: [NastyPlot]
+      64: [Defog]
       72: [Attract]
+      80: [BraveBird]
     teachable: [Acrobatics, GigaImpact, Hurricane, HyperBeam, Sandstorm]
 Heatmor:
   Heatmor:
     level:
-      1: [Tackle, Lick, HoneClaws, Incinerate, Inferno]
+      1: [Tackle, Lick]
       5: [FurySwipes]
-      6: [OdorSleuth]
-      11: [Bind]
+      10: [Incinerate]
       15: [BugBite]
-      16: [FireSpin]
       20: [Stockpile, SpitUp, Swallow]
       25: [Slash]
-      26: [Snatch]
-      31: [FlameBurst]
-      44: [Amnesia, FireLash]
-      47: [Flamethrower]
+      30: [Bind]
+      35: [FireLash]
+      40: [HoneClaws]
+      45: [Amnesia]
+      50: [FireSpin]
+      55: [Inferno]
       60: [FlareBlitz]
     teachable:
       - AerialAce
@@ -818,6 +798,7 @@ Heatmor:
       - ThroatChop
       - BurningJealousy
       - ScorchingSands
+      - BrutalSwing
     egg:
       - BodySlam
       - Curse
@@ -833,16 +814,21 @@ Heatmor:
 Durant:
   Durant:
     level:
-      1: [ViceGrip, Guillotine, SandAttack, Bite, FuryCutter, MetalSound, IronDefense]
-      6: [Agility]
+      1: [SandAttack, FuryCutter]
+      4: [ViceGrip]
       8: [MetalClaw]
       12: [BeatUp]
       16: [BugBite]
-      21: [Crunch]
-      26: [IronHead]
+      20: [Bite]
+      24: [Agility]
       28: [Dig]
       32: [XScissor]
-      36: [Entrainment]
+      36: [Crunch]
+      40: [MetalSound]
+      44: [IronHead]
+      48: [Entrainment]
+      52: [IronDefense]
+      56: [Guillotine]
     teachable:
       - AerialAce
       - Agility
@@ -892,6 +878,7 @@ Durant:
       - Confide
       - SteelBeam
       - SkitterSmack
+      - StompingTantrum
     egg:
       - BatonPass
       - Endure
@@ -902,6 +889,8 @@ Durant:
       - Screech
       - StruggleBug
       - ThunderFang
+      - FirstImpression
+      - Infestation
 Deino:
   # TM and tutor moves shared by the whole family
 
@@ -961,19 +950,20 @@ Deino:
     - Confide
   Deino:
     level:
-      1: [Tackle, DragonRage, FocusEnergy]
+      1: [Tackle, FocusEnergy]
       4: [DragonBreath]
       8: [Bite]
-      12: [Headbutt, Roar]
+      12: [Roar]
       16: [Assurance]
+      20: [Headbutt]
       24: [WorkUp]
-      25: [Crunch]
       28: [Slam]
-      32: [DragonPulse]
+      32: [Crunch]
       36: [ScaryFace]
-      42: [DragonRush]
+      40: [DragonPulse]
       44: [BodySlam]
       48: [HyperVoice]
+      52: [DragonRush]
       56: [NastyPlot]
       60: [Outrage]
     egg:
@@ -987,44 +977,40 @@ Deino:
       - IceFang
       - Screech
       - ThunderFang
+      - Belch
   Zweilous:
     level:
-      1: [Tackle, Bite, DragonRage, FocusEnergy, DragonBreath, DoubleHit]
-      12: [Headbutt, Roar]
+      1: [Tackle, Bite, FocusEnergy, DragonBreath, DoubleHit]
+      12: [Roar]
       16: [Assurance]
+      20: [Headbutt]
       24: [WorkUp]
-      25: [Crunch]
       28: [Slam]
-      32: [DragonPulse]
+      32: [Crunch]
       36: [ScaryFace]
-      42: [DragonRush]
+      40: [DragonPulse]
       44: [BodySlam]
       48: [HyperVoice]
+      54: [DragonRush]
       60: [NastyPlot]
       66: [Outrage]
     teachable: [BeatUp, HelpingHand]
   Hydreigon:
     level:
-      1:
-        - Tackle
-        - Bite
-        - DragonRage
-        - FocusEnergy
-        - TriAttack
-        - Outrage
-        - DragonBreath
-        - HyperVoice
-        - DoubleHit
-      12: [Headbutt, Roar]
+      1: [Tackle, Bite, FocusEnergy, TriAttack, DragonBreath, DoubleHit]
+      12: [Roar]
       16: [Assurance]
+      20: [Headbutt]
       24: [WorkUp]
-      25: [Crunch]
       28: [Slam]
-      32: [DragonPulse]
+      32: [Crunch]
       36: [ScaryFace]
-      42: [DragonRush]
+      40: [DragonPulse]
       44: [BodySlam]
+      48: [HyperVoice]
+      54: [DragonRush]
       60: [NastyPlot]
+      68: [Outrage]
       76: [HyperBeam]
     teachable:
       - Acrobatics
@@ -1117,17 +1103,16 @@ Larvesta:
     level:
       1: [Ember, StringShot]
       6: [FlameCharge]
-      10: [Absorb, LeechLife]
       12: [StruggleBug]
       18: [FlameWheel]
-      20: [TakeDown]
       24: [BugBite]
       30: [Screech]
+      36: [LeechLife]
       42: [BugBuzz]
-      50: [DoubleEdge]
+      48: [TakeDown]
       54: [Amnesia]
+      60: [DoubleEdge]
       66: [FlareBlitz]
-      90: [Thrash]
     egg:
       - Absorb
       - Endure
@@ -1141,31 +1126,30 @@ Larvesta:
   Volcarona:
     level:
       1:
-        - QuiverDance
-        - Gust
-        - Whirlwind
-        - TakeDown
-        - Thrash
-        - DoubleEdge
-        - Ember
-        - Absorb
-        - StringShot
-        - FireSpin
-        - Amnesia
-        - LeechLife
-        - FlameWheel
-        - HeatWave
-        - FlareBlitz
-        - BugBuzz
-        - RagePowder
-        - FlameCharge
-        - StruggleBug
-        - Hurricane
-        - FieryDance
+        [
+          Gust,
+          Whirlwind,
+          TakeDown,
+          DoubleEdge,
+          Ember,
+          StringShot,
+          FireSpin,
+          FlareBlitz,
+          QuiverDance,
+          FlameCharge,
+          StruggleBug,
+          FieryDance,
+        ]
+      18: [FlameWheel]
       24: [BugBite]
       30: [Screech]
-      50: [SilverWind]
+      36: [LeechLife]
+      42: [BugBuzz]
+      48: [HeatWave]
+      54: [Amnesia]
+      62: [Hurricane]
       70: [FireBlast]
+      78: [RagePowder]
     teachable:
       - AerialAce
       - AirCutter
@@ -1179,22 +1163,21 @@ Larvesta:
       - Roost
       - Tailwind
       - DualWingbeat
+      - MysticalFire
 Cobalion:
   Cobalion:
     level:
-      1: [Leer, QuickAttack]
-      7: [DoubleKick]
-      13: [MetalClaw]
-      19: [TakeDown]
-      25: [HelpingHand]
-      31: [Retaliate]
-      37: [IronHead]
-      42: [SacredSword]
-      49: [SwordsDance]
-      55: [QuickGuard]
-      61: [WorkUp]
-      67: [MetalBurst]
-      73: [CloseCombat]
+      1: [Leer, QuickAttack, HelpingHand, WorkUp]
+      7: [MetalClaw]
+      14: [QuickGuard]
+      21: [DoubleKick]
+      28: [Retaliate]
+      35: [MetalBurst]
+      42: [TakeDown]
+      49: [SacredSword]
+      56: [SwordsDance]
+      63: [IronHead]
+      70: [CloseCombat]
     teachable:
       - AerialAce
       - Block
@@ -1248,22 +1231,30 @@ Cobalion:
       - LaserFocus
       - SteelBeam
       - Coaching
+      - AirSlash
+      - BrickBreak
+      - CloseCombat
+      - Endure
+      - Megahorn
+      - Revenge
+      - Reversal
+      - ScaryFace
+      - SmartStrike
+      - Swift
 Terrakion:
   Terrakion:
     level:
-      1: [Leer, QuickAttack]
-      7: [DoubleKick]
-      13: [SmackDown]
-      19: [TakeDown]
-      25: [HelpingHand]
-      31: [Retaliate]
-      37: [RockSlide]
-      42: [SacredSword]
-      49: [SwordsDance]
-      55: [QuickGuard]
-      61: [WorkUp]
-      67: [StoneEdge]
-      73: [CloseCombat]
+      1: [Leer, QuickAttack, HelpingHand, WorkUp]
+      7: [SmackDown]
+      14: [QuickGuard]
+      21: [DoubleKick]
+      28: [Retaliate]
+      35: [RockSlide]
+      42: [TakeDown]
+      49: [SacredSword]
+      56: [SwordsDance]
+      63: [StoneEdge]
+      70: [CloseCombat]
     teachable:
       - AerialAce
       - Block
@@ -1316,22 +1307,31 @@ Terrakion:
       - StompingTantrum
       - LaserFocus
       - Coaching
+      - AirSlash
+      - BrickBreak
+      - CloseCombat
+      - Endure
+      - Megahorn
+      - Revenge
+      - Reversal
+      - RockBlast
+      - ScaryFace
+      - SmartStrike
+      - Swift
 Virizion:
   Virizion:
     level:
-      1: [Leer, QuickAttack]
-      7: [DoubleKick]
-      13: [MagicalLeaf]
-      19: [TakeDown]
-      25: [HelpingHand]
-      31: [Retaliate]
-      37: [GigaDrain]
-      42: [SacredSword]
-      49: [SwordsDance]
-      55: [QuickGuard]
-      61: [WorkUp]
-      67: [LeafBlade]
-      73: [CloseCombat]
+      1: [Leer, QuickAttack, HelpingHand, WorkUp]
+      7: [MagicalLeaf]
+      14: [QuickGuard]
+      21: [DoubleKick]
+      28: [Retaliate]
+      35: [GigaDrain]
+      42: [TakeDown]
+      49: [SacredSword]
+      56: [SwordsDance]
+      63: [LeafBlade]
+      70: [CloseCombat]
     teachable:
       - AerialAce
       - Block
@@ -1384,6 +1384,19 @@ Virizion:
       - LaserFocus
       - GrassyGlide
       - Coaching
+      - AirSlash
+      - BrickBreak
+      - CloseCombat
+      - Endure
+      - LeafBlade
+      - LeafStorm
+      - MagicalLeaf
+      - Megahorn
+      - Revenge
+      - Reversal
+      - SmartStrike
+      - SolarBlade
+      - Swift
 Tornadus:
   family-teachable:
     - Attract
@@ -1457,51 +1470,39 @@ Tornadus:
     - LashOut
   Tornadus:
     level:
-      1:
-        - Gust
-        - Tackle
-        - Thrash
-        - Swagger
-        - Uproar
-        - Astonish
-        - HammerArm
-        - Tailwind
-        - Hurricane
+      1: [Gust, Astonish]
       5: [Leer]
-      7: [Bite]
-      11: [Twister]
-      13: [Revenge]
-      14: [AirCutter]
-      22: [NastyPlot]
-      25: [Extrasensory]
+      10: [Swagger]
+      15: [Bite]
+      20: [AirCutter]
+      25: [Agility]
+      30: [Tailwind]
       35: [AirSlash]
       40: [Crunch]
-      55: [RainDance]
-      67: [DarkPulse]
+      45: [Extrasensory]
+      50: [Uproar]
       52: [BleakwindStorm]
+      55: [HammerArm]
+      60: [RainDance]
+      65: [Hurricane]
+      70: [Thrash]
   TornadusTherian:
     level:
-      1:
-        - Gust
-        - Tackle
-        - Thrash
-        - Swagger
-        - Uproar
-        - Astonish
-        - HammerArm
-        - Tailwind
-        - Hurricane
+      1: [Gust, Astonish]
       5: [Leer]
-      7: [Bite]
-      11: [Twister]
-      13: [Revenge]
-      14: [AirCutter]
-      22: [NastyPlot]
-      25: [Extrasensory]
+      10: [Swagger]
+      15: [Bite]
+      20: [AirCutter]
+      25: [Agility]
+      30: [Tailwind]
       35: [AirSlash]
       40: [Crunch]
-      55: [RainDance]
-      67: [DarkPulse]
+      45: [Extrasensory]
+      50: [Uproar]
+      55: [HammerArm]
+      60: [RainDance]
+      65: [Hurricane]
+      70: [Thrash]
 Thundurus:
   family-teachable:
     - Attract
@@ -1580,74 +1581,58 @@ Thundurus:
     - LashOut
   Thundurus:
     level:
-      1:
-        - Tackle
-        - Thrash
-        - ThunderShock
-        - Swagger
-        - Uproar
-        - Charge
-        - Astonish
-        - HammerArm
-        - NastyPlot
+      1: [ThunderShock, Astonish]
       5: [Leer]
-      7: [Bite]
-      11: [Twister]
-      13: [Revenge]
-      14: [Spark]
-      19: [ShockWave]
-      25: [Extrasensory]
-      31: [Extrasensory]
+      10: [Swagger]
+      15: [Bite]
+      20: [ShockWave]
+      25: [Agility]
+      30: [Charge]
       35: [VoltSwitch]
-      37: [Discharge]
       40: [Crunch]
-      47: [Thunder]
-      60: [RainDance]
-      67: [DarkPulse]
+      45: [Discharge]
+      50: [Uproar]
       52: [WildboltStorm]
+      55: [HammerArm]
+      60: [RainDance]
+      65: [Thunder]
+      70: [Thrash]
+    teachable:
+      - EerieImpulse
   ThundurusTherian:
     level:
-      1:
-        - Tackle
-        - Thrash
-        - ThunderShock
-        - Swagger
-        - Uproar
-        - Charge
-        - Astonish
-        - HammerArm
-        - NastyPlot
+      1: [ThunderShock, Astonish]
       5: [Leer]
-      7: [Bite]
-      11: [Twister]
-      13: [Revenge]
-      14: [Spark]
-      19: [ShockWave]
-      25: [Extrasensory]
-      31: [Extrasensory]
+      10: [Swagger]
+      15: [Bite]
+      20: [ShockWave]
+      25: [Agility]
+      30: [Charge]
       35: [VoltSwitch]
-      37: [Discharge]
       40: [Crunch]
-      47: [Thunder]
+      45: [Discharge]
+      50: [Uproar]
+      55: [HammerArm]
       60: [RainDance]
-      67: [DarkPulse]
+      65: [Thunder]
+      70: [Thrash]
+    teachable:
+      - EerieImpulse
 Reshiram:
   Reshiram:
     level:
-      1: [DragonRage, FireFang]
-      8: [Imprison]
-      15: [AncientPower]
-      22: [Flamethrower]
-      29: [DragonBreath]
-      36: [Slash]
-      43: [Extrasensory]
-      50: [FusionFlare]
-      54: [DragonPulse]
-      71: [Crunch]
-      78: [FireBlast]
-      85: [Outrage]
-      92: [HyperVoice]
-      100: [BlueFlare]
+      1: [DragonBreath, AncientPower, FireFang, NobleRoar]
+      8: [Slash]
+      16: [Crunch]
+      24: [Extrasensory]
+      32: [DragonPulse]
+      40: [Flamethrower]
+      48: [FusionFlare]
+      56: [HyperVoice]
+      64: [FireBlast]
+      72: [Imprison]
+      80: [Outrage]
+      88: [BlueFlare]
     teachable:
       - Cut
       - DoubleTeam
@@ -1709,3 +1694,16 @@ Reshiram:
       - ScaleShot
       - DualWingbeat
       - ScorchingSands
+      - Crunch
+      - DragonDance
+      - Endure
+      - FireFang
+      - FlareBlitz
+      - HeatCrash
+      - HelpingHand
+      - Imprison
+      - MysticalFire
+      - RainDance
+      - SteelWing
+      - Swift
+      - WeatherBall

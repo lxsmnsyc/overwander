@@ -1,20 +1,21 @@
 Celesteela:
   Celesteela:
     level:
-      1: [Absorb, AirSlash, Harden, Ingrain, Tackle, WideGuard]
-      7: [SmackDown]
-      13: [MegaDrain]
-      19: [LeechSeed]
-      23: [MetalSound]
-      29: [IronHead]
-      31: [GigaDrain]
-      37: [FlashCannon]
-      43: [Autotomize]
-      47: [SeedBomb]
-      53: [SkullBash]
-      59: [IronDefense]
-      67: [HeavySlam]
-      73: [DoubleEdge]
+      1: [Tackle, Absorb]
+      5: [Harden]
+      10: [WideGuard]
+      15: [MegaDrain]
+      20: [SmackDown]
+      25: [Ingrain]
+      30: [Autotomize]
+      35: [GigaDrain]
+      40: [FlashCannon]
+      45: [MetalSound]
+      50: [IronDefense]
+      55: [LeechSeed]
+      60: [HeavySlam]
+      65: [DoubleEdge]
+      70: [SkullBash]
     teachable:
       - Acrobatics
       - Block
@@ -64,23 +65,30 @@ Celesteela:
       - SteelBeam
       - SteelRoller
       - MeteorBeam
+      - AirSlash
+      - BodySlam
+      - Endure
+      - HeavySlam
+      - Megahorn
+      - SelfDestruct
 Kartana:
   Kartana:
     level:
-      1: [AirCutter, Cut, Defog, FuryCutter, SacredSword, VacuumWave]
-      7: [FalseSwipe]
-      13: [RazorLeaf]
-      19: [Synthesis]
-      23: [AerialAce]
-      29: [LaserFocus]
-      31: [NightSlash]
-      37: [SwordsDance]
-      43: [LeafBlade]
-      47: [XScissor]
-      53: [Detect]
-      59: [AirSlash]
-      67: [PsychoCut]
-      73: [Guillotine]
+      1: [FuryCutter, VacuumWave]
+      5: [RazorLeaf]
+      10: [FalseSwipe]
+      15: [Cut]
+      20: [AirCutter]
+      25: [AerialAce]
+      30: [Detect]
+      35: [NightSlash]
+      40: [Synthesis]
+      45: [LaserFocus]
+      50: [Defog]
+      55: [LeafBlade]
+      60: [SacredSword]
+      65: [SwordsDance]
+      70: [Guillotine]
     teachable:
       - AerialAce
       - BrickBreak
@@ -112,23 +120,30 @@ Kartana:
       - Toxic
       - XScissor
       - SteelBeam
+      - AirSlash
+      - Endure
+      - LeafBlade
+      - PsychoCut
+      - Screech
+      - SolarBlade
 Guzzlord:
   Guzzlord:
     level:
-      1: [Belch, Bite, DragonRage, Stockpile, Swallow, WideGuard]
-      7: [Stomp]
-      13: [BrutalSwing]
-      19: [Steamroller]
-      23: [DragonTail]
-      29: [IronTail]
-      31: [StompingTantrum]
-      37: [Crunch]
-      43: [HammerArm]
-      47: [Thrash]
-      53: [GastroAcid]
-      59: [HeavySlam]
-      67: [WringOut]
-      73: [DragonRush]
+      1: [Bite, DragonTail]
+      5: [Stockpile, Swallow]
+      10: [KnockOff]
+      15: [Stomp]
+      20: [StompingTantrum]
+      25: [WideGuard]
+      30: [Crunch]
+      35: [BodySlam]
+      40: [GastroAcid]
+      45: [HammerArm]
+      50: [HeavySlam]
+      55: [DragonRush]
+      60: [Belch]
+      65: [Thrash]
+      70: [GigaImpact]
     teachable:
       - BrickBreak
       - BrutalSwing
@@ -185,6 +200,15 @@ Guzzlord:
       - SteelRoller
       - LashOut
       - CorrosiveGas
+      - Amnesia
+      - BodySlam
+      - Crunch
+      - Endure
+      - HeatCrash
+      - HeavySlam
+      - HighHorsepower
+      - MegaKick
+      - MegaPunch
 Necrozma:
   # Every shape learns the same, since each is the one Necrozma
   family-teachable:
@@ -250,64 +274,91 @@ Necrozma:
     - XScissor
   Necrozma:
     level:
-      1: [ChargeBeam, Confusion, MetalClaw, MirrorShot, Moonlight, MorningSun]
-      7: [Slash]
-      13: [StoredPower]
-      19: [RockBlast]
-      23: [NightSlash]
-      31: [Gravity]
-      37: [PsychoCut]
-      43: [PowerGem]
-      47: [Autotomize]
-      50: [PhotonGeyser]
-      53: [StealthRock]
-      59: [IronDefense]
-      67: [WringOut]
-      73: [PrismaticLaser]
+      1: [Confusion, MetalClaw, MorningSun, Moonlight, Gravity, ChargeBeam]
+      8: [StealthRock]
+      16: [Slash]
+      24: [NightSlash]
+      32: [PsychoCut]
+      40: [StoredPower]
+      48: [RockBlast]
+      56: [IronDefense]
+      64: [PowerGem]
+      72: [PhotonGeyser]
+      80: [Autotomize]
+      88: [PrismaticLaser]
     teachable:
       - BreakingSwipe
       - ExpandingForce
       - MeteorBeam
+      - CosmicPower
+      - DragonDance
+      - Endure
+      - FutureSight
+      - Imprison
+      - PowerGem
+      - PsychicFangs
+      - PsychoCut
+      - RockBlast
+      - ScaryFace
+      - StoredPower
   NecrozmaDuskMane:
     level:
-      1: [ChargeBeam, Confusion, MetalClaw, MirrorShot, Moonlight, MorningSun]
-      7: [Slash]
-      13: [StoredPower]
-      19: [RockBlast]
-      23: [NightSlash]
-      31: [Gravity]
-      37: [PsychoCut]
-      43: [PowerGem]
-      47: [Autotomize]
-      50: [PhotonGeyser]
-      53: [StealthRock]
-      59: [IronDefense]
-      67: [WringOut]
-      73: [PrismaticLaser]
+      1: [Confusion, MetalClaw, MorningSun, Moonlight, Gravity, ChargeBeam]
+      8: [StealthRock]
+      16: [Slash]
+      24: [NightSlash]
+      32: [PsychoCut]
+      40: [StoredPower]
+      48: [RockBlast]
+      56: [IronDefense]
+      64: [PowerGem]
+      72: [PhotonGeyser]
+      80: [Autotomize]
+      88: [PrismaticLaser]
     teachable:
       - BreakingSwipe
       - ExpandingForce
       - MeteorBeam
+      - CosmicPower
+      - DragonDance
+      - Endure
+      - FutureSight
+      - Imprison
+      - PowerGem
+      - PsychicFangs
+      - PsychoCut
+      - RockBlast
+      - ScaryFace
+      - StoredPower
   NecrozmaDawnWings:
     level:
-      1: [ChargeBeam, Confusion, MetalClaw, MirrorShot, Moonlight, MorningSun]
-      7: [Slash]
-      13: [StoredPower]
-      19: [RockBlast]
-      23: [NightSlash]
-      31: [Gravity]
-      37: [PsychoCut]
-      43: [PowerGem]
-      47: [Autotomize]
-      50: [PhotonGeyser]
-      53: [StealthRock]
-      59: [IronDefense]
-      67: [WringOut]
-      73: [PrismaticLaser]
+      1: [Confusion, MetalClaw, MorningSun, Moonlight, Gravity, ChargeBeam]
+      8: [StealthRock]
+      16: [Slash]
+      24: [NightSlash]
+      32: [PsychoCut]
+      40: [StoredPower]
+      48: [RockBlast]
+      56: [IronDefense]
+      60: [Autotomize]
+      64: [PowerGem]
+      66: [PrismaticLaser]
+      72: [PhotonGeyser]
     teachable:
       - BreakingSwipe
       - ExpandingForce
       - MeteorBeam
+      - CosmicPower
+      - DragonDance
+      - Endure
+      - FutureSight
+      - Imprison
+      - PowerGem
+      - PsychicFangs
+      - PsychoCut
+      - RockBlast
+      - ScaryFace
+      - StoredPower
   NecrozmaUltra:
     level:
       1: [ChargeBeam, Confusion, MetalClaw, MirrorShot, Moonlight, MorningSun]
@@ -377,75 +428,93 @@ Magearna:
     - MistyExplosion
   Magearna:
     level:
-      1:
-        - CraftyShield
-        - DefenseCurl
-        - GearUp
-        - HelpingHand
-        - IronHead
-        - Psybeam
-        - ShiftGear
-        - SonicBoom
-      9: [LuckyChant]
-      17: [AuroraBeam]
-      25: [MirrorShot]
-      33: [MindReader]
-      41: [FlashCannon]
-      49: [FleurCannon]
-      57: [IronDefense]
-      65: [PainSplit]
-      73: [Synchronoise]
-      81: [AuraSphere]
-      89: [HeartSwap]
-      97: [TrumpCard]
+      1: [HelpingHand, GyroBall]
+      6: [DefenseCurl]
+      12: [Rollout]
+      18: [IronDefense]
+      24: [GearUp]
+      30: [Psybeam]
+      36: [AuroraBeam]
+      42: [MindReader]
+      48: [ShiftGear]
+      54: [CraftyShield]
+      60: [IronHead]
+      66: [AuraSphere]
+      72: [FlashCannon]
+      78: [PainSplit]
+      84: [ZapCannon]
+      90: [FleurCannon]
+    teachable:
+      - Agility
+      - AuraSphere
+      - BatonPass
+      - DrainingKiss
+      - EerieImpulse
+      - ElectroBall
+      - Electroweb
+      - Encore
+      - Endure
+      - GuardSwap
+      - Imprison
+      - PowerSwap
+      - Rest
+      - SelfDestruct
+      - SpeedSwap
+      - StoredPower
+      - TriAttack
+      - Trick
   MagearnaOriginal:
     level:
-      1:
-        - CraftyShield
-        - DefenseCurl
-        - GearUp
-        - HelpingHand
-        - IronHead
-        - Psybeam
-        - ShiftGear
-        - SonicBoom
-      9: [LuckyChant]
-      17: [AuroraBeam]
-      25: [MirrorShot]
-      33: [MindReader]
-      41: [FlashCannon]
-      49: [FleurCannon]
-      57: [IronDefense]
-      65: [PainSplit]
-      73: [Synchronoise]
-      81: [AuraSphere]
-      89: [HeartSwap]
-      97: [TrumpCard]
+      1: [HelpingHand, GyroBall]
+      6: [DefenseCurl]
+      12: [Rollout]
+      18: [IronDefense]
+      24: [GearUp]
+      30: [Psybeam]
+      36: [AuroraBeam]
+      42: [MindReader]
+      48: [ShiftGear]
+      54: [CraftyShield]
+      60: [IronHead]
+      66: [AuraSphere]
+      72: [FlashCannon]
+      78: [PainSplit]
+      84: [ZapCannon]
+      90: [FleurCannon]
+    teachable:
+      - Agility
+      - AuraSphere
+      - BatonPass
+      - DrainingKiss
+      - EerieImpulse
+      - ElectroBall
+      - Electroweb
+      - Encore
+      - Endure
+      - GuardSwap
+      - Imprison
+      - PowerSwap
+      - Rest
+      - SelfDestruct
+      - SpeedSwap
+      - StoredPower
+      - TriAttack
+      - Trick
 Marshadow:
   Marshadow:
     level:
-      1:
-        - Assurance
-        - Counter
-        - DrainPunch
-        - FirePunch
-        - IcePunch
-        - LaserFocus
-        - Pursuit
-        - ShadowSneak
-        - ThunderPunch
-      5: [ForcePalm]
-      11: [Feint]
-      15: [RollingKick]
-      20: [Copycat]
-      26: [ShadowPunch]
-      30: [RolePlay]
-      35: [JumpKick]
-      41: [PsychUp]
-      45: [SpectralThief]
-      50: [CloseCombat]
-      56: [SuckerPunch]
-      60: [Endeavor]
+      1: [FirePunch, IcePunch, ThunderPunch, Counter, Feint, Copycat, ShadowSneak]
+      9: [RolePlay]
+      18: [ShadowPunch]
+      27: [ForcePalm]
+      36: [Assurance]
+      45: [SuckerPunch]
+      54: [DrainPunch]
+      63: [PsychUp]
+      72: [SpectralThief]
+      81: [LaserFocus]
+      90: [Endeavor]
+      99: [CloseCombat]
     teachable:
       - Acrobatics
       - Bounce
@@ -506,21 +575,36 @@ Marshadow:
       - SkitterSmack
       - Poltergeist
       - Coaching
+      - Agility
+      - Assurance
+      - AuraSphere
+      - BlazeKick
+      - CloseCombat
+      - Endure
+      - Hex
+      - HyperBeam
+      - MegaKick
+      - MegaPunch
+      - PhantomForce
+      - Revenge
+      - Reversal
+      - Swift
 Poipole:
   Poipole:
     # Dragon Pulse is the mainline's reminder-only first move. Left
     # here, every Poipole would know it and evolve at once, so it
     # is taught instead
     level:
-      1: [Acid, Growl, HelpingHand, Peck]
+      1: [Growl, Acid, Peck, HelpingHand, DragonPulse]
       7: [FuryAttack]
-      13: [Venoshock]
-      19: [Charm]
-      23: [VenomDrench]
-      31: [NastyPlot]
-      37: [PoisonJab]
-      41: [Toxic]
-      47: [FellStinger]
+      14: [FellStinger]
+      21: [Charm]
+      28: [Venoshock]
+      35: [VenomDrench]
+      42: [NastyPlot]
+      49: [PoisonJab]
+      56: [GastroAcid]
+      63: [Toxic]
     teachable:
       - Confide
       - Covet
@@ -548,19 +632,25 @@ Poipole:
       - Toxic
       - Uproar
       - Venoshock
+      - Charm
+      - Endure
+      - NastyPlot
+      - PinMissile
+      - ToxicSpikes
+      - VenomDrench
   Naganadel:
     level:
-      1: [Acid, AirCutter, DragonPulse, Growl, HelpingHand, Peck]
+      1: [Growl, Acid, Peck, HelpingHand, AirCutter, AirSlash, DragonPulse]
       7: [FuryAttack]
-      13: [Venoshock]
-      19: [Charm]
-      23: [VenomDrench]
-      31: [NastyPlot]
-      37: [PoisonJab]
-      41: [Toxic]
-      47: [FellStinger]
-      53: [AirSlash]
-      61: [DragonPulse]
+      14: [FellStinger]
+      21: [Charm]
+      28: [Venoshock]
+      35: [VenomDrench]
+      42: [NastyPlot]
+      49: [PoisonJab]
+      56: [GastroAcid]
+      63: [Toxic]
+      70: [DragonRush]
     teachable:
       - Acrobatics
       - AerialAce
@@ -618,21 +708,38 @@ Poipole:
       - BreakingSwipe
       - ScaleShot
       - DualWingbeat
+      - AirSlash
+      - Assurance
+      - Charm
+      - CrossPoison
+      - DragonDance
+      - Endure
+      - GigaImpact
+      - Hex
+      - NastyPlot
+      - PinMissile
+      - Spikes
+      - Swift
+      - ToxicSpikes
+      - VenomDrench
 Stakataka:
   Stakataka:
     level:
-      1: [Protect, Tackle]
-      5: [RockSlide]
-      11: [StealthRock]
-      17: [Bide]
-      19: [TakeDown]
-      23: [RockThrow]
-      31: [Autotomize]
-      37: [IronDefense]
-      43: [IronHead]
-      47: [RockBlast]
-      53: [WideGuard]
-      61: [DoubleEdge]
+      1: [Tackle, Harden]
+      5: [RockThrow]
+      10: [Protect]
+      15: [Stomp]
+      20: [Block]
+      25: [RockSlide]
+      30: [WideGuard]
+      35: [Autotomize]
+      40: [RockBlast]
+      45: [MagnetRise]
+      50: [IronDefense]
+      55: [IronHead]
+      60: [TakeDown]
+      65: [StealthRock]
+      70: [DoubleEdge]
     teachable:
       - AllySwitch
       - Bind
@@ -684,20 +791,31 @@ Stakataka:
       - SteelBeam
       - SteelRoller
       - MeteorBeam
+      - BodySlam
+      - Endure
+      - HeatCrash
+      - HeavySlam
+      - HighHorsepower
+      - MegaKick
+      - RockBlast
 Blacephalon:
   Blacephalon:
     level:
-      1: [Astonish, Ember]
-      7: [MagicCoat]
-      13: [StoredPower]
-      17: [FlameBurst]
-      23: [NightShade]
-      29: [LightScreen]
-      31: [CalmMind]
-      37: [FireBlast]
-      41: [ShadowBall]
-      47: [Trick]
-      59: [MindBlown]
+      1: [FireSpin, Astonish]
+      5: [LightScreen]
+      10: [Ember]
+      15: [NightShade]
+      20: [ConfuseRay]
+      25: [MagicCoat]
+      30: [Incinerate]
+      35: [Hypnosis]
+      40: [MysticalFire]
+      45: [ShadowBall]
+      50: [CalmMind]
+      55: [WillOWisp]
+      60: [Trick]
+      65: [FireBlast]
+      70: [MindBlown]
     teachable:
       - AfterYou
       - CalmMind
@@ -746,24 +864,32 @@ Blacephalon:
       - Uproar
       - WillOWisp
       - ExpandingForce
+      - Encore
+      - Endure
+      - FirePunch
+      - FireSpin
+      - MysticalFire
+      - RockBlast
+      - SelfDestruct
+      - SolarBeam
+      - StoredPower
+      - ZenHeadbutt
 Zeraora:
   Zeraora:
     level:
-      1: [Scratch, Spark]
-      5: [HoneClaws]
-      8: [QuickAttack]
-      12: [FurySwipes]
-      15: [VoltSwitch]
-      19: [Snarl]
-      22: [FakeOut]
-      26: [Charge]
-      29: [ThunderPunch]
-      33: [Slash]
-      36: [WildCharge]
-      40: [QuickGuard]
-      43: [PlasmaFists]
-      47: [CloseCombat]
-      50: [Discharge]
+      1: [Scratch, QuickAttack, Spark, FakeOut, Snarl, PowerUpPunch]
+      8: [FurySwipes]
+      16: [QuickGuard]
+      24: [Slash]
+      32: [VoltSwitch]
+      40: [Charge]
+      48: [ThunderPunch]
+      56: [HoneClaws]
+      64: [Discharge]
+      72: [WildCharge]
+      80: [Agility]
+      88: [PlasmaFists]
+      96: [CloseCombat]
     teachable:
       - Acrobatics
       - AerialAce
@@ -818,15 +944,33 @@ Zeraora:
       - WorkUp
       - RisingVoltage
       - Coaching
+      - Agility
+      - Assurance
+      - AuraSphere
+      - BlazeKick
+      - CloseCombat
+      - ElectricTerrain
+      - ElectroBall
+      - Endure
+      - HelpingHand
+      - HyperBeam
+      - MegaKick
+      - MegaPunch
+      - PayDay
+      - PlayRough
+      - Revenge
+      - Reversal
+      - ScaryFace
+      - Swift
 Meltan:
   Meltan:
     level:
-      1: [Harden, Headbutt]
-      9: [TailWhip]
-      18: [ThunderWave]
-      27: [ThunderShock]
-      36: [AcidArmor]
-      45: [FlashCannon]
+      1: [ThunderShock, Harden]
+      8: [TailWhip]
+      16: [Headbutt]
+      24: [ThunderWave]
+      32: [AcidArmor]
+      40: [FlashCannon]
     teachable:
       - FlashCannon
       - Headbutt
@@ -837,19 +981,26 @@ Meltan:
       - Thunderbolt
       - Toxic
       - SteelBeam
+      - Endure
+      - Facade
+      - GyroBall
+      - IronDefense
+      - Round
+      - SleepTalk
+      - Snore
   Melmetal:
     level:
-      1: [Harden, Headbutt, TailWhip, ThunderPunch, ThunderWave]
-      9: [TailWhip]
-      18: [ThunderWave]
-      27: [ThunderShock]
-      36: [AcidArmor]
-      45: [FlashCannon]
-      54: [MegaPunch]
-      63: [Protect]
-      72: [DoubleIronBash]
-      81: [Superpower]
-      90: [HyperBeam]
+      1: [ThunderPunch, Headbutt, TailWhip, ThunderShock, Harden]
+      24: [ThunderWave]
+      32: [AcidArmor]
+      40: [FlashCannon]
+      48: [MegaPunch]
+      56: [Protect]
+      64: [Discharge]
+      72: [DynamicPunch]
+      80: [Superpower]
+      88: [DoubleIronBash]
+      96: [HyperBeam]
     teachable:
       - BrickBreak
       - Earthquake
@@ -874,3 +1025,20 @@ Meltan:
       - BodyPress
       - SteelBeam
       - SteelRoller
+      - BodySlam
+      - BrutalSwing
+      - DarkestLariat
+      - ElectricTerrain
+      - Endure
+      - GigaImpact
+      - GyroBall
+      - HeavySlam
+      - HighHorsepower
+      - IronDefense
+      - IronHead
+      - MegaKick
+      - MegaPunch
+      - RockTomb
+      - Round
+      - SleepTalk
+      - Snore

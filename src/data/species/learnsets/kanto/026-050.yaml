@@ -1,14 +1,22 @@
 Sandshrew:
   Sandshrew:
     level:
-      1: [Scratch]
-      6: [DefenseCurl]
-      10: [SandAttack]
-      17: [Slash, PoisonSting]
-      30: [Swift]
-      33: [GyroBall]
-      37: [FurySwipes]
-      45: [Sandstorm, SandTomb]
+      1: [Scratch, DefenseCurl]
+      3: [PoisonSting]
+      6: [SandAttack]
+      9: [Rollout]
+      12: [FuryCutter]
+      15: [RapidSpin]
+      18: [Bulldoze]
+      21: [Swift]
+      24: [FurySwipes]
+      27: [Agility]
+      30: [Slash]
+      33: [Dig]
+      36: [GyroBall]
+      39: [SwordsDance]
+      42: [Sandstorm]
+      45: [Earthquake]
     teachable:
       - SwordsDance
       - Toxic
@@ -75,6 +83,15 @@ Sandshrew:
       - StompingTantrum
       - SteelRoller
       - ScorchingSands
+      - Agility
+      - Amnesia
+      - GyroBall
+      - LeechLife
+      - MudShot
+      - Safeguard
+      - SandTomb
+      - ThroatChop
+      - WorkUp
     egg:
       - Counter
       - Swift
@@ -86,14 +103,25 @@ Sandshrew:
       - NightSlash
       - ChipAway
       - Rototiller
+      - HoneClaws
+      - MudShot
+      - MudSlap
   Sandslash:
     level:
-      1: [Scratch, SandAttack, DefenseCurl]
-      17: [Slash, PoisonSting]
-      33: [Swift]
-      42: [FurySwipes]
-      45: [GyroBall]
-      52: [Sandstorm, SandTomb]
+      1: [Scratch, SandAttack, PoisonSting, DefenseCurl, CrushClaw]
+      9: [Rollout]
+      12: [FuryCutter]
+      15: [RapidSpin]
+      18: [Bulldoze]
+      21: [Swift]
+      26: [FurySwipes]
+      31: [SandTomb]
+      36: [Slash]
+      41: [Dig]
+      46: [GyroBall]
+      51: [SwordsDance]
+      56: [Sandstorm]
+      61: [Earthquake]
     teachable:
       - SwordsDance
       - Toxic
@@ -165,24 +193,36 @@ Sandshrew:
       - StoneEdge
       - SteelRoller
       - ScorchingSands
+      - Agility
+      - Amnesia
+      - DrillRun
+      - GyroBall
+      - LeechLife
+      - MudShot
+      - PinMissile
+      - Safeguard
+      - SandTomb
+      - Spikes
+      - ThroatChop
+      - WorkUp
   SandshrewAlola:
     level:
-      1: [DefenseCurl, Scratch]
-      3: [Bide]
-      5: [PowderSnow]
-      7: [IceBall]
-      9: [RapidSpin]
-      11: [FuryCutter]
-      14: [MetalClaw]
-      17: [Swift]
-      20: [FurySwipes]
-      23: [IronDefense]
-      26: [Slash]
-      30: [IronHead]
-      34: [GyroBall]
-      38: [SwordsDance]
+      1: [Scratch, DefenseCurl]
+      3: [Mist]
+      6: [PowderSnow]
+      9: [Rollout]
+      12: [FuryCutter]
+      15: [RapidSpin]
+      18: [MetalClaw]
+      21: [Swift]
+      24: [FurySwipes]
+      27: [IronDefense]
+      30: [Slash]
+      33: [IronHead]
+      36: [GyroBall]
+      39: [SwordsDance]
       42: [Hail]
-      46: [Blizzard]
+      45: [Blizzard]
     teachable:
       - AerialAce
       - AquaTail
@@ -234,6 +274,14 @@ Sandshrew:
       - SteelBeam
       - SteelRoller
       - TripleAxel
+      - Amnesia
+      - Avalanche
+      - BodySlam
+      - Dig
+      - Endure
+      - IcicleSpear
+      - RockTomb
+      - Swift
     egg:
       - Amnesia
       - ChipAway
@@ -249,7 +297,29 @@ Sandshrew:
       - NightSlash
   SandslashAlola:
     level:
-      1: [DefenseCurl, IceBall, IcicleCrash, IcicleSpear, MetalBurst, MetalClaw, Slash]
+      1:
+        [
+          Scratch,
+          SwordsDance,
+          Mist,
+          Blizzard,
+          DefenseCurl,
+          Swift,
+          FurySwipes,
+          Slash,
+          PowderSnow,
+          Rollout,
+          FuryCutter,
+          RapidSpin,
+          MetalClaw,
+          Hail,
+          IcicleSpear,
+          IronDefense,
+          GyroBall,
+          MetalBurst,
+          IronHead,
+          IcicleCrash,
+        ]
     teachable:
       - AerialAce
       - AquaTail
@@ -305,6 +375,17 @@ Sandshrew:
       - SteelBeam
       - SteelRoller
       - TripleAxel
+      - Agility
+      - Amnesia
+      - Avalanche
+      - BodySlam
+      - Dig
+      - Endure
+      - IcicleSpear
+      - PinMissile
+      - RockTomb
+      - Spikes
+      - Swift
 NidoranF:
   # TM, HM and tutor moves shared by the whole family
 
@@ -361,19 +442,33 @@ NidoranF:
     - Confide
   NidoranF:
     level:
-      1: [Growl, Tackle]
-      8: [Scratch]
-      12: [DoubleKick]
-      14: [PoisonSting]
-      21: [TailWhip]
-      23: [HelpingHand]
-      29: [Bite]
-      31: [ToxicSpikes]
-      36: [FurySwipes]
-      38: [Flatter]
-      43: [Captivate]
-      47: [Crunch]
-    teachable: [Dig, IceBeam, RockSmash, Strength]
+      1: [PoisonSting, Growl]
+      5: [Scratch]
+      10: [TailWhip]
+      15: [FurySwipes]
+      20: [ToxicSpikes]
+      25: [DoubleKick]
+      30: [Bite]
+      35: [HelpingHand]
+      40: [Toxic]
+      45: [Flatter]
+      50: [Crunch]
+      55: [EarthPower]
+    teachable:
+      [
+        Dig,
+        IceBeam,
+        RockSmash,
+        Strength,
+        BeatUp,
+        Charm,
+        Crunch,
+        EarthPower,
+        FocusEnergy,
+        HelpingHand,
+        ToxicSpikes,
+        VenomDrench,
+      ]
     egg:
       - Supersonic
       - Disable
@@ -384,26 +479,58 @@ NidoranF:
       - BeatUp
       - ChipAway
       - VenomDrench
+      - PoisonFang
+      - PoisonTail
+      - SkullBash
   Nidorina:
     level:
-      1: [Growl, Tackle, Scratch]
-      12: [DoubleKick]
-      14: [PoisonSting]
-      23: [TailWhip]
-      26: [HelpingHand]
-      32: [Bite]
-      35: [ToxicSpikes]
-      41: [FurySwipes]
-      43: [Flatter]
-      50: [Captivate]
-      53: [Crunch]
-    teachable: [Strength, RockSmash, IceBeam, Counter, Dig, EchoedVoice, StompingTantrum]
+      1: [Scratch, TailWhip, PoisonSting, Growl]
+      15: [FurySwipes]
+      22: [ToxicSpikes]
+      29: [DoubleKick]
+      36: [Bite]
+      43: [HelpingHand]
+      50: [Toxic]
+      57: [Flatter]
+      64: [Crunch]
+      71: [EarthPower]
+    teachable:
+      [
+        Strength,
+        RockSmash,
+        IceBeam,
+        Counter,
+        Dig,
+        EchoedVoice,
+        StompingTantrum,
+        BeatUp,
+        Charm,
+        Crunch,
+        EarthPower,
+        FocusEnergy,
+        HelpingHand,
+        ToxicSpikes,
+        VenomDrench,
+      ]
   Nidoqueen:
     level:
-      1: [Tackle, Scratch, TailWhip, DoubleKick]
-      14: [PoisonSting]
-      23: [BodySlam, ChipAway]
-      43: [Superpower, EarthPower]
+      1:
+        [
+          Scratch,
+          DoubleKick,
+          TailWhip,
+          PoisonSting,
+          Bite,
+          Growl,
+          Toxic,
+          FurySwipes,
+          Crunch,
+          Flatter,
+          HelpingHand,
+          Superpower,
+          ToxicSpikes,
+          EarthPower,
+        ]
     teachable:
       - MegaPunch
       - MegaKick
@@ -457,6 +584,25 @@ NidoranF:
       - ThroatChop
       - BodyPress
       - ScorchingSands
+      - BeatUp
+      - Charm
+      - Crunch
+      - DrillRun
+      - EarthPower
+      - FocusEnergy
+      - HelpingHand
+      - Hex
+      - HighHorsepower
+      - MudShot
+      - Outrage
+      - PayDay
+      - RockBlast
+      - SandTomb
+      - Superpower
+      - ToxicSpikes
+      - Uproar
+      - VenomDrench
+      - Whirlpool
 NidoranM:
   # TM, HM and tutor moves shared by the whole family
 
@@ -516,19 +662,33 @@ NidoranM:
     - SmartStrike
   NidoranM:
     level:
-      1: [Leer, Tackle, Peck]
-      8: [HornAttack]
-      12: [DoubleKick]
-      14: [PoisonSting]
-      21: [FocusEnergy]
-      23: [HelpingHand]
-      29: [FuryAttack]
-      31: [ToxicSpikes]
-      36: [HornDrill]
-      37: [PoisonJab]
-      38: [Flatter]
-      43: [Captivate]
-    teachable: [Dig, IceBeam, RockSmash, Strength]
+      1: [PoisonSting, Leer]
+      5: [Peck]
+      10: [FocusEnergy]
+      15: [FuryAttack]
+      20: [ToxicSpikes]
+      25: [DoubleKick]
+      30: [HornAttack]
+      35: [HelpingHand]
+      40: [Toxic]
+      45: [Flatter]
+      50: [PoisonJab]
+      55: [EarthPower]
+    teachable:
+      [
+        Dig,
+        IceBeam,
+        RockSmash,
+        Strength,
+        Amnesia,
+        BeatUp,
+        EarthPower,
+        FocusEnergy,
+        HelpingHand,
+        PoisonJab,
+        ToxicSpikes,
+        VenomDrench,
+      ]
     egg:
       - Supersonic
       - Disable
@@ -540,24 +700,58 @@ NidoranM:
       - HeadSmash
       - ChipAway
       - VenomDrench
+      - HornDrill
+      - PoisonTail
+      - SuckerPunch
+      - Thrash
   Nidorino:
     level:
-      1: [Leer, Tackle, HornAttack, Peck]
-      12: [DoubleKick]
-      14: [PoisonSting]
-      23: [FocusEnergy]
-      26: [HelpingHand]
-      32: [FuryAttack]
-      35: [ToxicSpikes]
-      41: [HornDrill]
-      43: [Flatter, PoisonJab]
-      50: [Captivate]
-    teachable: [Strength, RockSmash, IceBeam, Counter, Dig, StompingTantrum]
+      1: [PoisonSting, Leer, Peck, FocusEnergy]
+      15: [FuryAttack]
+      22: [ToxicSpikes]
+      29: [DoubleKick]
+      36: [HornAttack]
+      43: [HelpingHand]
+      50: [Toxic]
+      57: [Flatter]
+      64: [PoisonJab]
+      71: [EarthPower]
+    teachable:
+      [
+        Strength,
+        RockSmash,
+        IceBeam,
+        Counter,
+        Dig,
+        StompingTantrum,
+        Amnesia,
+        BeatUp,
+        EarthPower,
+        FocusEnergy,
+        HelpingHand,
+        PoisonJab,
+        ToxicSpikes,
+        VenomDrench,
+      ]
   Nidoking:
     level:
-      1: [Tackle, HornAttack, PoisonSting, DoubleKick, FocusEnergy, Peck]
-      23: [Thrash, ChipAway]
-      43: [Megahorn, EarthPower]
+      1:
+        [
+          DoubleKick,
+          HornAttack,
+          FuryAttack,
+          PoisonSting,
+          Leer,
+          Peck,
+          Toxic,
+          FocusEnergy,
+          Megahorn,
+          Flatter,
+          HelpingHand,
+          ToxicSpikes,
+          PoisonJab,
+          EarthPower,
+        ]
     teachable:
       - MegaPunch
       - MegaKick
@@ -611,27 +805,41 @@ NidoranM:
       - ThroatChop
       - BodyPress
       - ScorchingSands
+      - Amnesia
+      - BeatUp
+      - EarthPower
+      - FocusEnergy
+      - HelpingHand
+      - Hex
+      - HighHorsepower
+      - Megahorn
+      - MudShot
+      - Outrage
+      - PayDay
+      - RockBlast
+      - SandTomb
+      - Superpower
+      - ToxicSpikes
+      - Uproar
+      - VenomDrench
+      - Whirlpool
 Clefairy:
   Clefairy:
     level:
-      1: [Pound, Growl, DisarmingVoice, Spotlight]
-      4: [Encore]
-      8: [Sing]
-      13: [DoubleSlap]
-      17: [FollowMe]
-      19: [Minimize, Bestow]
-      22: [WakeUpSlap]
-      26: [DefenseCurl]
-      28: [LuckyChant, StoredPower]
-      31: [Metronome]
-      33: [CosmicPower]
-      34: [Gravity]
-      43: [Moonlight]
-      45: [MeteorMash]
-      46: [HealingWish, Moonblast]
-      48: [LightScreen]
-      58: [AfterYou]
+      1:
+        [Pound, Growl, Sing, DefenseCurl, Splash, SweetKiss, Charm, Encore, Copycat, DisarmingVoice]
+      4: [StoredPower]
+      8: [Minimize]
+      12: [AfterYou]
       16: [LifeDew]
+      20: [Metronome]
+      24: [Moonlight]
+      28: [Gravity]
+      32: [MeteorMash]
+      36: [FollowMe]
+      40: [CosmicPower]
+      44: [Moonblast]
+      48: [HealingWish]
     teachable:
       - MegaPunch
       - MegaKick
@@ -728,9 +936,58 @@ Clefairy:
       - MeteorBeam
       - MistyExplosion
       - DualWingbeat
+      - AllySwitch
+      - Amnesia
+      - BatonPass
+      - Bounce
+      - Charm
+      - CosmicPower
+      - DrainingKiss
+      - Encore
+      - FakeTears
+      - HelpingHand
+      - HyperVoice
+      - IcyWind
+      - Imprison
+      - LightScreen
+      - MagicalLeaf
+      - Metronome
+      - MistyTerrain
+      - MysticalFire
+      - PlayRough
+      - Recycle
+      - RockSmash
+      - StoredPower
+      - TriAttack
+      - Trick
+      - Uproar
   Clefable:
     level:
-      1: [Sing, DoubleSlap, Minimize, Metronome, Moonlight, DisarmingVoice, Spotlight, LifeDew]
+      1:
+        [
+          Pound,
+          Growl,
+          Sing,
+          Minimize,
+          DefenseCurl,
+          Metronome,
+          Splash,
+          SweetKiss,
+          Charm,
+          Encore,
+          Moonlight,
+          FollowMe,
+          MeteorMash,
+          CosmicPower,
+          Gravity,
+          HealingWish,
+          Copycat,
+          AfterYou,
+          StoredPower,
+          DisarmingVoice,
+          Moonblast,
+          LifeDew,
+        ]
     teachable:
       - MegaPunch
       - MegaKick
@@ -833,13 +1090,38 @@ Clefairy:
       - MeteorBeam
       - MistyExplosion
       - DualWingbeat
+      - AllySwitch
+      - Amnesia
+      - BatonPass
+      - Bounce
+      - Charm
+      - CosmicPower
+      - DrainingKiss
+      - Encore
+      - FakeTears
+      - HelpingHand
+      - HyperVoice
+      - IcyWind
+      - Imprison
+      - MagicalLeaf
+      - Metronome
+      - MistyTerrain
+      - MysticalFire
+      - PlayRough
+      - Recycle
+      - RockSmash
+      - StoredPower
+      - TriAttack
+      - Trick
+      - Uproar
   Cleffa:
     level:
-      1: [Charm, Pound]
-      4: [Encore]
-      8: [Sing]
-      13: [SweetKiss, Copycat]
-      17: [MagicalLeaf]
+      1: [Pound, Splash, Copycat]
+      4: [Sing]
+      8: [SweetKiss]
+      12: [DisarmingVoice]
+      16: [Encore]
+      20: [Charm]
     teachable:
       - Attract
       - Curse
@@ -905,6 +1187,22 @@ Clefairy:
       - Incinerate
       - WorkUp
       - Confide
+      - Amnesia
+      - Charm
+      - DrainingKiss
+      - Encore
+      - FakeTears
+      - HelpingHand
+      - HyperVoice
+      - MagicalLeaf
+      - Metronome
+      - MistyTerrain
+      - PlayRough
+      - Recycle
+      - StoredPower
+      - Substitute
+      - Trick
+      - Uproar
     egg:
       - Amnesia
       - BellyDrum
@@ -916,21 +1214,29 @@ Clefairy:
       - Wish
       - StoredPower
       - MistyTerrain
+      - Aromatherapy
+      - Covet
+      - FakeTears
+      - HealPulse
+      - Tickle
 Vulpix:
   Vulpix:
     level:
-      1: [Ember, TailWhip]
-      7: [QuickAttack]
-      9: [BabyDollEyes]
-      13: [Roar]
-      17: [WillOWisp]
-      19: [ConfuseRay]
-      23: [FlameBurst]
-      25: [Safeguard, Imprison]
-      28: [Hex]
-      31: [Flamethrower, Payback]
-      37: [FireSpin, Grudge, Captivate]
-      50: [Inferno]
+      1: [TailWhip, Ember]
+      4: [Disable]
+      8: [QuickAttack]
+      12: [Spite]
+      16: [Incinerate]
+      20: [ConfuseRay]
+      24: [WillOWisp]
+      28: [Extrasensory]
+      32: [Flamethrower]
+      36: [Imprison]
+      40: [FireSpin]
+      44: [Safeguard]
+      48: [Inferno]
+      52: [Grudge]
+      56: [FireBlast]
     teachable:
       - Toxic
       - BodySlam
@@ -974,6 +1280,24 @@ Vulpix:
       - Incinerate
       - Confide
       - BurningJealousy
+      - Agility
+      - BabyDollEyes
+      - Encore
+      - EnergyBall
+      - FireSpin
+      - FlareBlitz
+      - HeatWave
+      - Hex
+      - Imprison
+      - MysticalFire
+      - Payback
+      - PowerSwap
+      - PsychUp
+      - Roar
+      - Safeguard
+      - TailSlap
+      - WeatherBall
+      - WillOWisp
     egg:
       - Hypnosis
       - Disable
@@ -988,10 +1312,33 @@ Vulpix:
       - PowerSwap
       - Hex
       - TailSlap
+      - BabyDollEyes
+      - Extrasensory
+      - FlameCharge
+      - Memento
+      - Roar
   Ninetales:
     level:
-      1: [Ember, TailWhip, QuickAttack, Roar, ConfuseRay, Safeguard, NastyPlot]
-      43: [FireSpin]
+      1:
+        [
+          TailWhip,
+          Disable,
+          Ember,
+          Flamethrower,
+          FireSpin,
+          QuickAttack,
+          ConfuseRay,
+          FireBlast,
+          Spite,
+          Safeguard,
+          WillOWisp,
+          Imprison,
+          Grudge,
+          Extrasensory,
+          NastyPlot,
+          Incinerate,
+          Inferno,
+        ]
     teachable:
       - Toxic
       - BodySlam
@@ -1043,28 +1390,46 @@ Vulpix:
       - LaserFocus
       - BurningJealousy
       - ScorchingSands
+      - Agility
+      - BabyDollEyes
+      - CalmMind
+      - DreamEater
+      - Encore
+      - EnergyBall
+      - FakeTears
+      - FireSpin
+      - FlareBlitz
+      - HeatWave
+      - Hex
+      - Imprison
+      - MysticalFire
+      - NastyPlot
+      - PowerSwap
+      - PsychUp
+      - Safeguard
+      - ShadowBall
+      - SolarBeam
+      - StoredPower
+      - TailSlap
+      - WeatherBall
+      - WillOWisp
   VulpixAlola:
     level:
-      1: [PowderSnow]
-      4: [TailWhip]
-      7: [Roar]
-      9: [BabyDollEyes]
-      10: [IceShard]
-      12: [ConfuseRay]
-      15: [IcyWind]
-      18: [Payback]
-      20: [Mist]
-      23: [FeintAttack]
-      26: [Hex]
-      28: [AuroraBeam]
-      31: [Extrasensory]
-      34: [Safeguard]
-      36: [IceBeam]
-      39: [Imprison]
-      42: [Blizzard]
-      44: [Grudge]
-      47: [Captivate]
-      50: [SheerCold]
+      1: [TailWhip, PowderSnow]
+      4: [Disable]
+      8: [IceShard]
+      12: [Spite]
+      16: [IcyWind]
+      20: [ConfuseRay]
+      24: [AuroraBeam]
+      28: [Extrasensory]
+      32: [IceBeam]
+      36: [Imprison]
+      40: [Mist]
+      44: [AuroraVeil]
+      48: [SheerCold]
+      52: [Grudge]
+      56: [Blizzard]
     teachable:
       - AquaTail
       - Attract
@@ -1102,6 +1467,23 @@ Vulpix:
       - Swagger
       - Toxic
       - ZenHeadbutt
+      - Agility
+      - BabyDollEyes
+      - BodySlam
+      - Charm
+      - DazzlingGleam
+      - Dig
+      - DrainingKiss
+      - Encore
+      - Endure
+      - EnergyBall
+      - Hex
+      - IceFang
+      - Imprison
+      - PowerSwap
+      - Swift
+      - TailSlap
+      - WeatherBall
     egg:
       - Agility
       - Charm
@@ -1117,9 +1499,31 @@ Vulpix:
       - SecretPower
       - Spite
       - TailSlap
+      - BabyDollEyes
+      - Roar
   NinetalesAlola:
     level:
-      1: [ConfuseRay, DazzlingGleam, IceBeam, IceShard, Imprison, NastyPlot, Safeguard]
+      1:
+        [
+          TailWhip,
+          Disable,
+          Mist,
+          IceBeam,
+          Blizzard,
+          AuroraBeam,
+          ConfuseRay,
+          Spite,
+          PowderSnow,
+          IcyWind,
+          Imprison,
+          Grudge,
+          Extrasensory,
+          SheerCold,
+          NastyPlot,
+          IceShard,
+          DazzlingGleam,
+          AuroraVeil,
+        ]
     teachable:
       - AquaTail
       - Attract
@@ -1166,24 +1570,43 @@ Vulpix:
       - Psyshock
       - WonderRoom
       - TripleAxel
+      - Agility
+      - Avalanche
+      - BabyDollEyes
+      - BodySlam
+      - Charm
+      - Dig
+      - DrainingKiss
+      - Encore
+      - Endure
+      - EnergyBall
+      - FakeTears
+      - Hex
+      - IceFang
+      - Imprison
+      - MistyTerrain
+      - NastyPlot
+      - PowerSwap
+      - SolarBeam
+      - StoredPower
+      - Swift
+      - TailSlap
+      - WeatherBall
 Jigglypuff:
   Jigglypuff:
     level:
-      1: [Sing]
-      4: [DefenseCurl]
-      8: [PlayNice]
-      9: [Pound]
-      11: [DisarmingVoice]
-      14: [Disable]
-      17: [Round]
-      19: [Rollout]
-      24: [DoubleSlap]
-      29: [Rest]
-      33: [GyroBall]
-      34: [BodySlam]
-      37: [WakeUpSlap]
-      39: [DoubleEdge]
-      44: [HyperVoice]
+      1: [Pound, Sing, Disable, DefenseCurl, SweetKiss, Charm, Copycat, DisarmingVoice]
+      4: [EchoedVoice]
+      8: [Covet]
+      12: [Stockpile, SpitUp, Swallow]
+      16: [Round]
+      20: [Rest]
+      24: [BodySlam]
+      28: [Mimic]
+      32: [GyroBall]
+      36: [HyperVoice]
+      40: [PlayRough]
+      44: [DoubleEdge]
     teachable:
       - MegaPunch
       - MegaKick
@@ -1273,9 +1696,49 @@ Jigglypuff:
       - PowerUpPunch
       - SteelRoller
       - MistyExplosion
+      - AllySwitch
+      - BatonPass
+      - Bounce
+      - Charm
+      - DrainingKiss
+      - FakeTears
+      - GyroBall
+      - HelpingHand
+      - HyperVoice
+      - IcyWind
+      - MistyTerrain
+      - PlayRough
+      - Recycle
+      - Screech
+      - SelfDestruct
+      - TriAttack
+      - Uproar
   Wigglytuff:
     level:
-      1: [Sing, Disable, DefenseCurl, DoubleSlap, PlayRough]
+      1:
+        [
+          Pound,
+          BodySlam,
+          DoubleEdge,
+          Sing,
+          Disable,
+          Mimic,
+          DefenseCurl,
+          Rest,
+          SweetKiss,
+          Charm,
+          Stockpile,
+          SpitUp,
+          Swallow,
+          HyperVoice,
+          Covet,
+          GyroBall,
+          Copycat,
+          Round,
+          EchoedVoice,
+          DisarmingVoice,
+          PlayRough,
+        ]
     teachable:
       - MegaPunch
       - MegaKick
@@ -1372,13 +1835,30 @@ Jigglypuff:
       - ExpandingForce
       - SteelRoller
       - MistyExplosion
+      - AllySwitch
+      - BatonPass
+      - Bounce
+      - Charm
+      - DrainingKiss
+      - FakeTears
+      - HelpingHand
+      - HyperVoice
+      - IcyWind
+      - MistyTerrain
+      - PlayRough
+      - Recycle
+      - Screech
+      - SelfDestruct
+      - TriAttack
+      - Uproar
   Igglybuff:
     level:
-      1: [Charm, Sing]
+      1: [Pound, Sing, Copycat]
       4: [DefenseCurl]
-      9: [Pound]
-      14: [SweetKiss]
-      17: [Copycat]
+      8: [SweetKiss]
+      12: [DisarmingVoice]
+      16: [Disable]
+      20: [Charm]
     teachable:
       - Attract
       - Curse
@@ -1440,20 +1920,46 @@ Jigglypuff:
       - WorkUp
       - WildCharge
       - Confide
-    egg: [FeintAttack, PerishSong, Present, FakeTears, Wish, MistyTerrain]
+      - Bounce
+      - Charm
+      - DrainingKiss
+      - FakeTears
+      - HelpingHand
+      - HyperVoice
+      - MistyTerrain
+      - PlayRough
+      - Recycle
+      - Screech
+      - Uproar
+    egg:
+      [
+        FeintAttack,
+        PerishSong,
+        Present,
+        FakeTears,
+        Wish,
+        MistyTerrain,
+        Covet,
+        Gravity,
+        HealPulse,
+        LastResort,
+        Rollout,
+      ]
 Zubat:
   Zubat:
     level:
-      1: [LeechLife]
-      6: [Supersonic]
-      11: [Astonish]
-      12: [Bite]
-      19: [ConfuseRay]
-      27: [WingAttack]
-      30: [Acrobatics]
-      31: [AirCutter]
-      36: [Haze, MeanLook]
-      41: [PoisonFang, AirSlash]
+      1: [Supersonic, Absorb]
+      5: [Astonish]
+      10: [MeanLook]
+      15: [PoisonFang]
+      20: [QuickGuard]
+      25: [AirCutter]
+      30: [Bite]
+      35: [Haze]
+      40: [Venoshock]
+      45: [ConfuseRay]
+      50: [AirSlash]
+      55: [LeechLife]
     teachable:
       - RazorWind
       - Whirlwind
@@ -1506,6 +2012,18 @@ Zubat:
       - Acrobatics
       - Confide
       - DualWingbeat
+      - Agility
+      - AirSlash
+      - Assurance
+      - BraveBird
+      - Crunch
+      - Fly
+      - HeatWave
+      - LeechLife
+      - NastyPlot
+      - RainDance
+      - Uproar
+      - VenomDrench
     egg:
       - QuickAttack
       - Gust
@@ -1515,17 +2033,23 @@ Zubat:
       - BraveBird
       - NastyPlot
       - VenomDrench
+      - Curse
+      - Defog
+      - Hypnosis
+      - WingAttack
+      - ZenHeadbutt
   Golbat:
     level:
-      1: [Screech, LeechLife, Bite, Supersonic, Astonish]
-      19: [ConfuseRay]
-      30: [WingAttack]
-      33: [Acrobatics]
-      35: [AirCutter]
-      42: [MeanLook]
-      43: [Haze]
-      49: [PoisonFang]
-      51: [AirSlash]
+      1: [Supersonic, Absorb, Screech, MeanLook, Astonish]
+      15: [PoisonFang]
+      20: [QuickGuard]
+      27: [AirCutter]
+      34: [Bite]
+      41: [Haze]
+      48: [Venoshock]
+      55: [ConfuseRay]
+      62: [AirSlash]
+      69: [LeechLife]
     teachable:
       - RazorWind
       - Whirlwind
@@ -1580,19 +2104,31 @@ Zubat:
       - HyperBeam
       - GigaImpact
       - DualWingbeat
+      - Agility
+      - AirSlash
+      - Assurance
+      - BraveBird
+      - Crunch
+      - Fly
+      - HeatWave
+      - LeechLife
+      - NastyPlot
+      - RainDance
+      - Screech
+      - Uproar
+      - VenomDrench
   Crobat:
     level:
-      1: [LeechLife, Screech, Supersonic, Astonish, CrossPoison]
-      6: [Supersonic]
-      12: [Bite]
-      19: [ConfuseRay]
-      30: [WingAttack]
-      33: [Acrobatics]
-      35: [AirCutter]
-      42: [MeanLook]
-      49: [PoisonFang]
-      51: [AirSlash]
-      55: [Haze]
+      1: [Supersonic, Absorb, Toxic, Screech, MeanLook, Astonish, Tailwind, CrossPoison]
+      15: [PoisonFang]
+      20: [QuickGuard]
+      27: [AirCutter]
+      34: [Bite]
+      41: [Haze]
+      48: [Venoshock]
+      55: [ConfuseRay]
+      62: [AirSlash]
+      69: [LeechLife]
     teachable:
       - Attract
       - Curse
@@ -1644,22 +2180,37 @@ Zubat:
       - Acrobatics
       - Confide
       - DualWingbeat
+      - Agility
+      - AirSlash
+      - Assurance
+      - BraveBird
+      - CrossPoison
+      - Crunch
+      - HeatWave
+      - Hex
+      - Hurricane
+      - LeechLife
+      - NastyPlot
+      - RainDance
+      - Screech
+      - Uproar
+      - VenomDrench
 Oddish:
   Oddish:
     level:
-      1: [Absorb]
-      7: [SweetScent]
+      1: [Absorb, Growth]
+      4: [Acid]
+      8: [SweetScent]
+      12: [MegaDrain]
       14: [PoisonPowder]
       16: [StunSpore]
       18: [SleepPowder]
-      23: [Acid]
-      25: [LuckyChant]
-      29: [NaturalGift]
-      32: [Moonlight]
-      33: [PetalDance]
-      43: [Moonblast]
-      46: [SolarBeam]
-      47: [GrassyTerrain]
+      20: [GigaDrain]
+      24: [Toxic]
+      28: [Moonblast]
+      32: [GrassyTerrain]
+      36: [Moonlight]
+      40: [PetalDance]
     teachable:
       - SwordsDance
       - Toxic
@@ -1705,6 +2256,8 @@ Oddish:
       - DazzlingGleam
       - Infestation
       - GrassyGlide
+      - Charm
+      - GrassyTerrain
     egg:
       - SwordsDance
       - RazorLeaf
@@ -1714,17 +2267,23 @@ Oddish:
       - Ingrain
       - AfterYou
       - StrengthSap
+      - LeechSeed
+      - NaturePower
+      - TeeterDance
+      - Tickle
   Gloom:
     level:
-      1: [Absorb, PoisonPowder, StunSpore, SweetScent]
+      1: [Acid, Absorb, Growth, SweetScent]
+      12: [MegaDrain]
+      14: [PoisonPowder]
+      16: [StunSpore]
       18: [SleepPowder]
-      24: [Acid]
-      29: [LuckyChant]
-      35: [Moonlight, NaturalGift]
-      38: [PetalDance]
-      49: [PetalBlizzard]
-      52: [SolarBeam]
-      54: [GrassyTerrain]
+      20: [GigaDrain]
+      26: [Toxic]
+      32: [Moonblast]
+      38: [GrassyTerrain]
+      44: [Moonlight]
+      50: [PetalDance]
     teachable:
       - SwordsDance
       - Toxic
@@ -1772,10 +2331,29 @@ Oddish:
       - DrainPunch
       - Fling
       - GrassyGlide
+      - Charm
+      - GrassyTerrain
   Vileplume:
     level:
-      1: [Absorb, PoisonPowder, PetalDance, StunSpore, SweetScent, Aromatherapy]
-      49: [PetalBlizzard]
+      1:
+        [
+          Acid,
+          Absorb,
+          MegaDrain,
+          Growth,
+          PoisonPowder,
+          StunSpore,
+          SleepPowder,
+          PetalDance,
+          Toxic,
+          GigaDrain,
+          SweetScent,
+          Moonlight,
+          Aromatherapy,
+          PetalBlizzard,
+          GrassyTerrain,
+          Moonblast,
+        ]
     teachable:
       - SwordsDance
       - Toxic
@@ -1828,12 +2406,32 @@ Oddish:
       - NaturalGift
       - GrassyGlide
       - CorrosiveGas
+      - Charm
+      - GrassyTerrain
+      - PollenPuff
+      - Safeguard
+      - SludgeWave
   Bellossom:
     level:
-      1: [Absorb, PetalDance, StunSpore, SweetScent, MagicalLeaf]
-      49: [PetalBlizzard]
-      53: [LeafStorm]
-      55: [SolarBeam]
+      1:
+        [
+          Acid,
+          Absorb,
+          MegaDrain,
+          Growth,
+          PoisonPowder,
+          StunSpore,
+          SleepPowder,
+          PetalDance,
+          Toxic,
+          GigaDrain,
+          SweetScent,
+          Moonlight,
+          QuiverDance,
+          PetalBlizzard,
+          GrassyTerrain,
+          Moonblast,
+        ]
     teachable:
       - Attract
       - Curse
@@ -1882,6 +2480,15 @@ Oddish:
       - Infestation
       - LaserFocus
       - GrassyGlide
+      - BatonPass
+      - Charm
+      - GrassyTerrain
+      - HelpingHand
+      - LeafBlade
+      - LeafStorm
+      - MagicalLeaf
+      - PlayRough
+      - Uproar
 Paras:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -1939,14 +2546,16 @@ Paras:
   Paras:
     level:
       1: [Scratch]
-      7: [StunSpore]
-      13: [PoisonPowder]
-      19: [LeechLife]
-      25: [Spore]
-      31: [Slash]
-      37: [Growth]
-      43: [GigaDrain, XScissor]
-      49: [Aromatherapy, RagePowder]
+      6: [PoisonPowder, StunSpore]
+      11: [Absorb]
+      17: [FuryCutter]
+      22: [Spore]
+      27: [Slash]
+      33: [Growth]
+      38: [GigaDrain]
+      43: [Aromatherapy]
+      49: [RagePowder]
+      54: [XScissor]
     egg:
       - Screech
       - Counter
@@ -1959,15 +2568,30 @@ Paras:
       - CrossPoison
       - Rototiller
       - FellStinger
+      - Agility
+      - BugBite
+      - GrassyTerrain
+      - LeechSeed
+      - MetalClaw
+      - WideGuard
+    teachable:
+      - BrickBreak
+      - FalseSwipe
+      - LightScreen
+      - XScissor
   Parasect:
     level:
-      1: [Scratch, StunSpore, LeechLife, PoisonPowder, CrossPoison]
-      28: [Spore]
-      37: [Slash]
-      46: [Growth]
-      55: [GigaDrain, XScissor]
-      59: [Aromatherapy, RagePowder]
-    teachable: [HyperBeam, Counter, GigaImpact, ThroatChop]
+      1: [Scratch, Absorb, PoisonPowder, StunSpore, CrossPoison]
+      17: [FuryCutter]
+      22: [Spore]
+      29: [Slash]
+      37: [Growth]
+      44: [GigaDrain]
+      51: [Aromatherapy]
+      59: [RagePowder]
+      66: [XScissor]
+    teachable:
+      [HyperBeam, Counter, GigaImpact, ThroatChop, BrickBreak, FalseSwipe, LightScreen, XScissor]
 Venonat:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -2014,31 +2638,44 @@ Venonat:
     - Infestation
   Venonat:
     level:
-      1: [Tackle, Disable, Foresight]
-      9: [Supersonic]
-      17: [Confusion]
-      20: [PoisonPowder]
-      25: [LeechLife]
-      28: [StunSpore]
-      33: [Psybeam]
-      36: [SleepPowder]
+      1: [Tackle, Disable, StruggleBug]
+      5: [Supersonic]
+      11: [Confusion]
+      13: [PoisonPowder]
+      17: [Psybeam]
+      23: [StunSpore]
+      25: [MegaDrain]
+      29: [SleepPowder]
+      35: [LeechLife]
       37: [ZenHeadbutt]
-      41: [Psychic]
+      41: [PoisonFang]
+      47: [Psychic]
     teachable: [Flash]
-    egg: [Screech, GigaDrain, BatonPass, SignalBeam, ToxicSpikes, RagePowder]
+    egg:
+      [
+        Screech,
+        GigaDrain,
+        BatonPass,
+        SignalBeam,
+        ToxicSpikes,
+        RagePowder,
+        Agility,
+        BugBite,
+        MorningSun,
+      ]
   Venomoth:
     level:
-      1: [Tackle, Disable, PoisonPowder, Supersonic, Foresight, SilverWind]
-      17: [Confusion]
-      25: [LeechLife]
-      28: [StunSpore]
-      31: [Gust]
-      36: [Psybeam]
+      1: [Gust, Whirlwind, Tackle, Supersonic, Disable, BugBuzz, QuiverDance, StruggleBug]
+      11: [Confusion]
+      13: [PoisonPowder]
+      17: [Psybeam]
+      23: [StunSpore]
+      25: [MegaDrain]
+      29: [SleepPowder]
+      37: [LeechLife]
       41: [ZenHeadbutt]
-      42: [SleepPowder]
-      50: [Psychic]
-      59: [BugBuzz]
-      63: [QuiverDance]
+      47: [PoisonFang]
+      55: [Psychic]
     teachable:
       - HyperBeam
       - Flash
@@ -2051,22 +2688,22 @@ Venonat:
       - Tailwind
       - UTurn
       - Acrobatics
+      - BugBuzz
 Diglett:
   Diglett:
     level:
-      1: [Scratch]
-      5: [Growl]
-      9: [Magnitude]
-      17: [Dig]
-      18: [Bulldoze]
-      21: [FurySwipes]
-      23: [SuckerPunch]
-      24: [SandAttack]
-      26: [EarthPower]
-      29: [MudBomb]
-      31: [Slash]
+      1: [Scratch, SandAttack]
+      4: [Growl]
+      8: [Astonish]
+      12: [MudSlap]
+      16: [Bulldoze]
+      20: [SuckerPunch]
+      24: [Slash]
+      28: [Sandstorm]
+      32: [Dig]
+      36: [EarthPower]
       40: [Earthquake]
-      49: [Fissure]
+      44: [Fissure]
     teachable:
       - Toxic
       - TakeDown
@@ -2113,20 +2750,43 @@ Diglett:
       - Confide
       - StompingTantrum
       - ScorchingSands
-    egg: [Screech, FeintAttack, Pursuit, AncientPower, BeatUp, Uproar, FinalGambit]
+      - Agility
+      - AllySwitch
+      - Assurance
+      - BeatUp
+      - EarthPower
+      - Reversal
+      - Sandstorm
+      - Screech
+      - Uproar
+      - WorkUp
+    egg:
+      [
+        Screech,
+        FeintAttack,
+        Pursuit,
+        AncientPower,
+        BeatUp,
+        Uproar,
+        FinalGambit,
+        Astonish,
+        Headbutt,
+        HoneClaws,
+        Memento,
+        Reversal,
+      ]
   Dugtrio:
     level:
-      1: [Scratch, Growl, Dig, TriAttack, Magnitude, NightSlash, Rototiller]
-      18: [Bulldoze]
-      21: [FurySwipes]
-      23: [SuckerPunch]
-      24: [SandAttack]
-      26: [SandTomb]
-      28: [EarthPower]
-      33: [MudBomb]
-      35: [Slash]
-      47: [Earthquake]
-      61: [Fissure]
+      1: [Scratch, SandAttack, Growl, TriAttack, Astonish, SandTomb, NightSlash]
+      12: [MudSlap]
+      16: [Bulldoze]
+      20: [SuckerPunch]
+      24: [Slash]
+      30: [Sandstorm]
+      36: [Dig]
+      42: [EarthPower]
+      48: [Earthquake]
+      54: [Fissure]
     teachable:
       - Toxic
       - TakeDown
@@ -2177,21 +2837,33 @@ Diglett:
       - StoneEdge
       - SludgeWave
       - ScorchingSands
+      - Agility
+      - AllySwitch
+      - Assurance
+      - BeatUp
+      - EarthPower
+      - HighHorsepower
+      - Reversal
+      - SandTomb
+      - Sandstorm
+      - Screech
+      - TriAttack
+      - Uproar
+      - WorkUp
   DiglettAlola:
     level:
-      1: [MetalClaw, SandAttack]
+      1: [SandAttack, MetalClaw]
       4: [Growl]
-      7: [Astonish]
-      10: [MudSlap]
-      14: [Magnitude]
-      18: [Bulldoze]
-      22: [SuckerPunch]
-      25: [MudBomb]
-      28: [EarthPower]
-      31: [Dig]
-      35: [IronHead]
-      39: [Earthquake]
-      43: [Fissure]
+      8: [Astonish]
+      12: [MudSlap]
+      16: [Bulldoze]
+      20: [SuckerPunch]
+      24: [IronHead]
+      28: [Sandstorm]
+      32: [Dig]
+      36: [EarthPower]
+      40: [Earthquake]
+      44: [Fissure]
     teachable:
       - AerialAce
       - Attract
@@ -2228,6 +2900,16 @@ Diglett:
       - WorkUp
       - SteelBeam
       - ScorchingSands
+      - Agility
+      - AllySwitch
+      - Assurance
+      - BeatUp
+      - BodySlam
+      - Dig
+      - Endure
+      - Reversal
+      - Screech
+      - Uproar
     egg:
       - AncientPower
       - BeatUp
@@ -2240,20 +2922,19 @@ Diglett:
       - Pursuit
       - Reversal
       - Thrash
+      - HoneClaws
   DugtrioAlola:
     level:
-      1: [Growl, MetalClaw, NightSlash, Rototiller, SandAttack, SandTomb, TriAttack]
-      7: [Astonish]
-      10: [MudSlap]
-      14: [Magnitude]
-      18: [Bulldoze]
-      22: [SuckerPunch]
-      25: [MudBomb]
-      30: [EarthPower]
-      35: [Dig]
-      41: [IronHead]
-      47: [Earthquake]
-      53: [Fissure]
+      1: [SandAttack, Growl, TriAttack, MetalClaw, Astonish, SandTomb, NightSlash]
+      12: [MudSlap]
+      16: [Bulldoze]
+      20: [SuckerPunch]
+      24: [IronHead]
+      30: [Sandstorm]
+      36: [Dig]
+      42: [EarthPower]
+      48: [Earthquake]
+      54: [Fissure]
     teachable:
       - AerialAce
       - Attract
@@ -2294,3 +2975,16 @@ Diglett:
       - StoneEdge
       - SteelBeam
       - ScorchingSands
+      - Agility
+      - AllySwitch
+      - Assurance
+      - BeatUp
+      - BodySlam
+      - Dig
+      - Endure
+      - HighHorsepower
+      - Reversal
+      - SandTomb
+      - Screech
+      - TriAttack
+      - Uproar

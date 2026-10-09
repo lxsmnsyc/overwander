@@ -114,54 +114,101 @@ Espurr:
   Espurr:
     level:
       1: [Scratch, Leer]
-      5: [Covet]
+      3: [FakeOut]
+      6: [DisarmingVoice]
       9: [Confusion]
-      13: [LightScreen]
-      17: [Psybeam]
-      19: [FakeOut]
-      22: [DisarmingVoice]
-      25: [Psyshock]
-    egg: [Assist, Barrier, Trick, Yawn]
+      18: [Covet]
+      21: [Psybeam]
+      30: [LightScreen, Reflect]
+      33: [Psyshock]
+    egg: [Assist, Barrier, Trick, Yawn, Tickle]
+    teachable:
+      - AllySwitch
+      - Endure
+      - FakeTears
+      - NastyPlot
+      - PayDay
+      - PlayRough
+      - SkillSwap
+      - Swift
+      - WorkUp
   Meowstic:
     level:
-      1: [Scratch, Leer, MeanLook, HelpingHand]
-      5: [Covet]
+      1: [Scratch, Leer, MeanLook, FakeOut, DisarmingVoice]
       9: [Confusion]
-      13: [LightScreen]
-      17: [Psybeam]
-      19: [FakeOut]
-      22: [DisarmingVoice]
-      25: [Psyshock]
-      28: [Charm]
-      31: [MiracleEye]
-      35: [Reflect]
-      40: [Psychic]
-      43: [RolePlay]
-      45: [Imprison]
-      48: [SuckerPunch]
-      50: [MistyTerrain]
-      53: [QuickGuard]
-    teachable: [Dig, GigaImpact, HyperBeam, PowerUpPunch, ShadowBall]
+      12: [HelpingHand]
+      15: [Charm]
+      18: [Covet]
+      21: [Psybeam]
+      24: [SuckerPunch]
+      29: [RolePlay]
+      34: [LightScreen, Reflect]
+      39: [Psyshock]
+      44: [Imprison]
+      49: [QuickGuard]
+      54: [Psychic]
+      59: [MistyTerrain]
+    teachable:
+      [
+        Dig,
+        GigaImpact,
+        HyperBeam,
+        PowerUpPunch,
+        ShadowBall,
+        AllySwitch,
+        Charm,
+        Endure,
+        FakeTears,
+        Imprison,
+        MistyTerrain,
+        NastyPlot,
+        PayDay,
+        PlayRough,
+        PsychicTerrain,
+        SkillSwap,
+        Swift,
+        TailSlap,
+        WorkUp,
+      ]
   MeowsticFemale:
     level:
-      1: [Scratch, Leer, MagicalLeaf, MeFirst]
-      5: [Covet]
+      1: [Scratch, Leer, FakeOut, MagicalLeaf, DisarmingVoice]
       9: [Confusion]
-      13: [LightScreen]
-      17: [Psybeam]
-      19: [FakeOut]
-      22: [DisarmingVoice]
-      25: [Psyshock]
-      28: [ChargeBeam]
-      31: [ShadowBall]
-      35: [Extrasensory]
-      40: [Psychic]
-      43: [RolePlay]
-      45: [SignalBeam]
-      48: [SuckerPunch]
-      50: [FutureSight]
-      53: [StoredPower]
-    teachable: [Dig, GigaImpact, HyperBeam, PowerUpPunch, ShadowBall]
+      12: [StoredPower]
+      15: [ChargeBeam]
+      18: [Covet]
+      21: [Psybeam]
+      24: [SuckerPunch]
+      29: [RolePlay]
+      34: [LightScreen, Reflect]
+      39: [Psyshock]
+      44: [Extrasensory]
+      49: [ShadowBall]
+      54: [Psychic]
+      59: [FutureSight]
+    teachable:
+      [
+        Dig,
+        GigaImpact,
+        HyperBeam,
+        PowerUpPunch,
+        ShadowBall,
+        AllySwitch,
+        Charm,
+        Endure,
+        FakeTears,
+        FutureSight,
+        MagicalLeaf,
+        NastyPlot,
+        PayDay,
+        PlayRough,
+        PsychicTerrain,
+        SkillSwap,
+        StoredPower,
+        Swift,
+        TailSlap,
+        WorkUp,
+      ]
 Honedge:
   family-teachable:
     - AerialAce
@@ -203,73 +250,123 @@ Honedge:
     - SteelBeam
   Honedge:
     level:
-      1: [SwordsDance, Tackle]
-      5: [FuryCutter]
-      8: [MetalSound]
-      13: [Pursuit]
-      18: [Autotomize]
-      20: [ShadowSneak]
-      22: [AerialAce]
-      26: [Retaliate]
-      29: [Slash]
+      1: [Tackle, FuryCutter]
+      4: [ShadowSneak]
+      8: [Autotomize]
+      12: [AerialAce]
+      16: [MetalSound]
+      20: [Slash]
+      24: [NightSlash]
+      28: [Retaliate]
       32: [IronDefense]
-      35: [NightSlash]
-      39: [PowerTrick]
-      42: [IronHead]
-      47: [SacredSword]
-    egg: [DestinyBond, MetalSound, ShadowSneak, WideGuard]
+      36: [IronHead]
+      40: [PowerTrick]
+      44: [SwordsDance]
+      48: [SacredSword]
+    egg: [DestinyBond, MetalSound, ShadowSneak, WideGuard, Block]
+    teachable:
+      - CloseCombat
+      - Endure
+      - PsychoCut
+      - Reversal
+      - Round
+      - Screech
+      - SolarBlade
   Doublade:
     level:
-      1: [SwordsDance, Tackle]
-      5: [FuryCutter]
-      8: [MetalSound]
-      13: [Pursuit]
-      18: [Autotomize]
-      20: [ShadowSneak]
-      22: [AerialAce]
-      26: [Retaliate]
-      29: [Slash]
+      1: [Tackle, FuryCutter, ShadowSneak, Autotomize]
+      12: [AerialAce]
+      16: [MetalSound]
+      20: [Slash]
+      24: [NightSlash]
+      28: [Retaliate]
       32: [IronDefense]
-      36: [NightSlash]
-      41: [PowerTrick]
-      45: [IronHead]
-      51: [SacredSword]
+      38: [IronHead]
+      44: [PowerTrick]
+      50: [SwordsDance]
+      56: [SacredSword]
+    teachable:
+      - CloseCombat
+      - Endure
+      - PsychoCut
+      - Reversal
+      - Round
+      - Screech
+      - SolarBlade
   Aegislash:
     level:
       1:
-        - SwordsDance
-        - Slash
-        - FuryCutter
-        - Pursuit
-        - AerialAce
-        - IronDefense
-        - PowerTrick
-        - NightSlash
-        - ShadowSneak
-        - IronHead
-        - HeadSmash
-        - Autotomize
-        - SacredSword
-        - KingsShield
-    teachable: [Block, GigaImpact, HyperBeam, Round, ShadowBall, SunnyDay]
+        [
+          SwordsDance,
+          Tackle,
+          Slash,
+          FuryCutter,
+          MetalSound,
+          AerialAce,
+          IronDefense,
+          PowerTrick,
+          NightSlash,
+          ShadowSneak,
+          IronHead,
+          HeadSmash,
+          Autotomize,
+          Retaliate,
+          SacredSword,
+          KingsShield,
+        ]
+    teachable:
+      [
+        Block,
+        GigaImpact,
+        HyperBeam,
+        Round,
+        ShadowBall,
+        SunnyDay,
+        AirSlash,
+        CloseCombat,
+        Endure,
+        PsychoCut,
+        Reversal,
+        Screech,
+        SolarBlade,
+      ]
   AegislashBlade:
     level:
       1:
-        - SwordsDance
-        - Slash
-        - FuryCutter
-        - Pursuit
-        - AerialAce
-        - IronDefense
-        - PowerTrick
-        - NightSlash
-        - ShadowSneak
-        - IronHead
-        - HeadSmash
-        - Autotomize
-        - SacredSword
-        - KingsShield
-    teachable: [Block, GigaImpact, HyperBeam, Round, ShadowBall, SunnyDay]
+        [
+          SwordsDance,
+          Tackle,
+          Slash,
+          FuryCutter,
+          MetalSound,
+          AerialAce,
+          IronDefense,
+          PowerTrick,
+          NightSlash,
+          ShadowSneak,
+          IronHead,
+          HeadSmash,
+          Autotomize,
+          Retaliate,
+          SacredSword,
+          KingsShield,
+        ]
+    teachable:
+      [
+        Block,
+        GigaImpact,
+        HyperBeam,
+        Round,
+        ShadowBall,
+        SunnyDay,
+        AirSlash,
+        CloseCombat,
+        Endure,
+        PsychoCut,
+        Reversal,
+        Screech,
+        SolarBlade,
+      ]
 Spritzee:
   # TM and tutor moves shared by both scents
 
@@ -328,45 +425,35 @@ Spritzee:
     - MistyExplosion
   Spritzee:
     level:
-      1: [FairyWind, SweetScent]
+      1: [SweetScent, FairyWind]
       3: [SweetKiss]
       6: [EchoedVoice]
-      8: [OdorSleuth]
       9: [DrainingKiss]
       12: [Aromatherapy]
-      17: [CalmMind]
       18: [Attract]
       21: [Flail]
       24: [MistyTerrain]
       27: [Psychic]
       30: [Charm]
-      31: [Moonblast]
+      33: [CalmMind]
+      36: [Moonblast]
       39: [SkillSwap]
-      50: [DisarmingVoice]
     egg: [AfterYou, Captivate, Disable, NastyPlot, Refresh, Wish]
   Aromatisse:
     level:
-      1:
-        - AromaticMist
-        - EchoedVoice
-        - FairyWind
-        - HealPulse
-        - OdorSleuth
-        - SweetKiss
-        - SweetScent
+      1: [SweetKiss, SweetScent, EchoedVoice, HealPulse, FairyWind, AromaticMist]
       9: [DisarmingVoice]
       12: [Aromatherapy]
       15: [DrainingKiss]
-      17: [CalmMind]
       18: [Attract]
       21: [Flail]
       24: [MistyTerrain]
       27: [Psychic]
       30: [Charm]
-      31: [Moonblast]
+      33: [CalmMind]
+      36: [Moonblast]
       39: [SkillSwap]
       42: [PsychUp]
-      57: [Reflect]
     teachable: [DrainPunch, GigaImpact, HyperBeam, Metronome, Psyshock, Thunder]
 Swirlix:
   family-teachable:
@@ -419,36 +506,34 @@ Swirlix:
     level:
       1: [Tackle, SweetScent]
       3: [PlayNice]
-      5: [FairyWind]
+      6: [FairyWind]
       9: [Aromatherapy]
-      10: [FakeTears]
       12: [DrainingKiss]
-      13: [Round]
-      17: [CottonSpore]
-      21: [Endeavor, StringShot]
+      15: [FakeTears]
+      18: [Round]
+      21: [StringShot]
+      24: [CottonSpore]
       27: [EnergyBall]
       30: [Wish]
       33: [PlayRough]
       36: [CottonGuard]
-      58: [LightScreen]
-      67: [Safeguard]
+      39: [Endeavor]
     egg: [AfterYou, BellyDrum, Copycat, StickyWeb, Yawn]
   Slurpuff:
     level:
-      1: [Tackle, SweetScent, PlayNice, FairyWind]
+      1: [Tackle, SweetScent, FairyWind, PlayNice]
       9: [Aromatherapy]
-      10: [FakeTears]
       12: [DrainingKiss]
-      13: [Round]
-      17: [CottonSpore]
-      21: [Endeavor, StringShot]
+      15: [FakeTears]
+      18: [Round]
+      21: [StringShot]
+      24: [CottonSpore]
       27: [EnergyBall]
       30: [Wish]
       33: [PlayRough]
       36: [CottonGuard]
+      39: [Endeavor]
       42: [StickyWeb]
-      58: [LightScreen]
-      67: [Safeguard]
     teachable: [DrainPunch, GigaImpact, HyperBeam, Metronome, Thunder]
 Inkay:
   family-teachable:
@@ -518,20 +603,19 @@ Inkay:
     - LashOut
   Inkay:
     level:
-      1: [Tackle, Peck, Constrict]
+      1: [Tackle, Peck]
       3: [Hypnosis]
-      4: [Reflect]
       6: [Wrap]
-      8: [FoulPlay]
       9: [Payback]
-      12: [Pluck, Swagger]
-      13: [Psywave]
-      15: [Psybeam, TopsyTurvy]
+      12: [Pluck]
+      15: [Psybeam]
+      18: [Swagger]
       21: [Slash]
-      23: [Switcheroo]
       24: [NightSlash]
       27: [PsychoCut]
-      31: [LightScreen]
+      31: [Switcheroo]
+      33: [FoulPlay]
+      36: [TopsyTurvy]
       39: [Superpower]
     egg:
       - Acupressure
@@ -541,19 +625,22 @@ Inkay:
       - GuardSwap
       - PowerSplit
       - SimpleBeam
+    teachable:
+      - Liquidation
   Malamar:
     level:
-      1: [Tackle, Peck, Constrict, Hypnosis, Reflect, Wrap, Superpower, Reversal]
-      8: [FoulPlay]
+      1: [Tackle, Wrap, Peck, Hypnosis, Reversal]
       9: [Payback]
-      12: [Pluck, Swagger]
-      13: [Psywave]
-      15: [Psybeam, TopsyTurvy]
+      12: [Pluck]
+      15: [Psybeam]
+      18: [Swagger]
       21: [Slash]
-      23: [Switcheroo]
       24: [NightSlash]
       27: [PsychoCut]
-      31: [LightScreen]
+      33: [Switcheroo]
+      37: [FoulPlay]
+      42: [TopsyTurvy]
+      47: [Superpower]
     teachable:
       - Block
       - GigaImpact
@@ -563,6 +650,7 @@ Inkay:
       - SignalBeam
       - BrutalSwing
       - ThroatChop
+      - Liquidation
 Binacle:
   family-teachable:
     - AerialAce
@@ -629,39 +717,41 @@ Binacle:
     - Liquidation
   Binacle:
     level:
-      1: [Scratch, SandAttack, ShellSmash]
-      4: [WaterGun]
-      7: [Withdraw]
-      10: [FurySwipes]
-      13: [Slash]
-      18: [MudSlap]
-      20: [Clamp]
+      1: [Scratch, MudSlap]
+      4: [Withdraw]
+      8: [WaterGun]
+      12: [FuryCutter]
+      16: [FurySwipes]
+      20: [AncientPower]
       24: [RockPolish]
-      28: [AncientPower]
+      28: [Slash]
       32: [HoneClaws]
-      37: [FuryCutter]
-      41: [NightSlash]
-      45: [RazorShell]
-      49: [CrossChop]
-    egg: [HelpingHand, Switcheroo, Tickle, WaterSport]
+      36: [RazorShell]
+      40: [ShellSmash]
+      44: [CrossChop]
+    egg: [HelpingHand, Switcheroo, Tickle, WaterSport, NightSlash, SandAttack]
+    teachable:
+      - Assurance
+      - BeatUp
+      - Endure
+      - MudShot
+      - RazorShell
+      - RockBlast
+      - Screech
+      - Uproar
   Barbaracle:
     level:
-      1: [Scratch, SandAttack, ShellSmash]
-      4: [WaterGun]
-      7: [Withdraw]
-      10: [FurySwipes]
-      13: [Slash]
-      18: [MudSlap]
-      20: [Clamp]
+      1: [Scratch, WaterGun, Withdraw, SkullBash, MudSlap]
+      12: [FuryCutter]
+      16: [FurySwipes]
+      20: [AncientPower]
       24: [RockPolish]
-      28: [AncientPower]
+      28: [Slash]
       32: [HoneClaws]
-      37: [FuryCutter]
-      44: [NightSlash]
-      48: [RazorShell]
-      55: [CrossChop]
-      60: [StoneEdge]
-      65: [SkullBash]
+      36: [RazorShell]
+      42: [ShellSmash]
+      48: [CrossChop]
+      54: [StoneEdge]
     teachable:
       - BulkUp
       - DragonClaw
@@ -674,6 +764,17 @@ Binacle:
       - BrutalSwing
       - LaserFocus
       - MeteorBeam
+      - Assurance
+      - BeatUp
+      - Dive
+      - Endure
+      - MudShot
+      - MuddyWater
+      - RazorShell
+      - RockBlast
+      - Screech
+      - Uproar
+      - Whirlpool
 Skrelp:
   family-teachable:
     - AquaTail
@@ -716,40 +817,52 @@ Skrelp:
     - FlipTurn
   Skrelp:
     level:
-      1: [Tackle, WaterGun, SmokeScreen]
-      5: [FeintAttack]
-      9: [TailWhip]
-      12: [Bubble]
-      15: [Acid]
-      19: [Camouflage]
-      23: [PoisonTail]
-      25: [WaterPulse]
-      28: [DoubleTeam]
-      32: [Toxic]
-      35: [AquaTail]
-      38: [SludgeBomb]
-      42: [HydroPump]
-      49: [DragonPulse]
-    egg: [AcidArmor, Haze, PlayRough, ToxicSpikes, VenomDrench]
+      1: [Tackle, SmokeScreen]
+      5: [Acid]
+      10: [WaterGun]
+      15: [TailWhip]
+      20: [DoubleTeam]
+      25: [PoisonTail]
+      30: [WaterPulse]
+      35: [Toxic]
+      40: [DragonPulse]
+      45: [AquaTail]
+      50: [SludgeBomb]
+      55: [HydroPump]
+    egg: [AcidArmor, Haze, PlayRough, ToxicSpikes, VenomDrench, DragonTail, Twister]
+    teachable:
+      - Endure
+      - HydroPump
+      - PlayRough
+      - ToxicSpikes
+      - VenomDrench
   Dragalge:
     level:
-      1: [Tackle, WaterGun, SmokeScreen]
-      5: [FeintAttack]
-      9: [TailWhip]
-      12: [Bubble]
-      15: [Acid]
-      19: [Camouflage]
-      23: [PoisonTail]
-      25: [WaterPulse]
-      28: [DoubleTeam]
-      32: [Toxic]
-      35: [AquaTail]
-      38: [SludgeBomb]
-      42: [HydroPump]
-      53: [DragonPulse]
-      59: [DragonTail]
-      67: [Twister]
-    teachable: [DracoMeteor, DragonTail, FocusBlast, GigaImpact, HyperBeam, Thunder]
+      1: [Tackle, Acid, WaterGun, SmokeScreen]
+      15: [TailWhip]
+      20: [DoubleTeam]
+      25: [PoisonTail]
+      30: [WaterPulse]
+      35: [Toxic]
+      40: [DragonPulse]
+      45: [AquaTail]
+      52: [SludgeBomb]
+      59: [HydroPump]
+      66: [Outrage]
+    teachable:
+      [
+        DracoMeteor,
+        DragonTail,
+        FocusBlast,
+        GigaImpact,
+        HyperBeam,
+        Thunder,
+        Endure,
+        HydroPump,
+        PlayRough,
+        ToxicSpikes,
+        VenomDrench,
+      ]
 Clauncher:
   family-teachable:
     - AquaTail
@@ -795,35 +908,34 @@ Clauncher:
   Clauncher:
     level:
       1: [WaterGun, Splash]
-      7: [WaterSport]
-      9: [ViceGrip]
-      12: [Bubble]
-      16: [Flail]
-      20: [BubbleBeam]
-      25: [SwordsDance]
-      30: [Crabhammer]
-      34: [WaterPulse]
-      39: [SmackDown]
-      43: [AquaJet]
-      48: [MuddyWater]
-    egg: [AquaJet, Crabhammer, Endure, Entrainment, HelpingHand]
+      5: [ViceGrip]
+      10: [Flail]
+      15: [AquaJet]
+      20: [SmackDown]
+      25: [HoneClaws]
+      30: [WaterPulse]
+      35: [SwordsDance]
+      40: [AuraSphere]
+      45: [Bounce]
+      50: [MuddyWater]
+      55: [Crabhammer]
+    egg: [AquaJet, Crabhammer, Endure, Entrainment, HelpingHand, AquaTail, BubbleBeam]
+    teachable:
+      - AuraSphere
+      - Endure
+      - MuddyWater
   Clawitzer:
     level:
-      1: [WaterGun, Splash, HealPulse]
-      7: [WaterSport]
-      9: [ViceGrip]
-      12: [Bubble]
-      16: [Flail]
-      20: [BubbleBeam]
-      25: [SwordsDance]
-      30: [Crabhammer]
-      34: [WaterPulse]
-      42: [SmackDown]
-      47: [AquaJet]
-      53: [MuddyWater]
-      57: [DarkPulse]
-      63: [DragonPulse]
-      67: [AuraSphere]
+      1: [ViceGrip, WaterGun, Splash, Flail, DarkPulse, DragonPulse, HealPulse]
+      15: [AquaJet]
+      20: [SmackDown]
+      25: [HoneClaws]
+      30: [WaterPulse]
+      35: [SwordsDance]
+      42: [AuraSphere]
+      49: [Bounce]
+      56: [MuddyWater]
+      63: [Crabhammer]
     teachable:
       - DarkPulse
       - FocusBlast
@@ -832,6 +944,9 @@ Clauncher:
       - ShadowBall
       - Liquidation
       - LaserFocus
+      - AuraSphere
+      - Endure
+      - MuddyWater
 Helioptile:
   family-teachable:
     - Agility
@@ -887,15 +1002,15 @@ Helioptile:
     - RisingVoltage
   Helioptile:
     level:
-      1: [Pound, TailWhip, MudSlap]
-      6: [ThunderShock]
-      11: [Charge]
+      1: [TailWhip, MudSlap]
+      4: [Pound]
+      8: [ThunderShock]
       12: [QuickAttack]
+      16: [Charge]
       20: [Bulldoze]
-      22: [RazorWind]
       24: [VoltSwitch]
-      25: [ParabolicCharge]
-      31: [ThunderWave]
+      28: [ParabolicCharge]
+      32: [ThunderWave]
       36: [Thunderbolt]
       40: [Electrify]
       44: [Thunder]
@@ -905,22 +1020,23 @@ Helioptile:
     # mainline hands a stone evolution its moves
     level:
       1:
-        - Pound
-        - TailWhip
-        - MudSlap
-        - ThunderShock
-        - Charge
-        - QuickAttack
-        - Bulldoze
-        - RazorWind
-        - VoltSwitch
-        - ParabolicCharge
-        - ThunderWave
-        - Thunderbolt
-        - Electrify
-        - Thunder
-        - Discharge
-        - EerieImpulse
+        [
+          Pound,
+          TailWhip,
+          ThunderShock,
+          Thunderbolt,
+          ThunderWave,
+          Thunder,
+          QuickAttack,
+          MudSlap,
+          Charge,
+          Discharge,
+          VoltSwitch,
+          Bulldoze,
+          ParabolicCharge,
+          Electrify,
+          EerieImpulse,
+        ]
     teachable:
       - DragonPulse
       - EerieImpulse
@@ -996,40 +1112,71 @@ Tyrunt:
   Tyrunt:
     level:
       1: [Tackle, TailWhip]
-      6: [Roar]
-      10: [Stomp]
-      12: [Bide]
-      15: [StealthRock]
-      17: [Bite]
-      20: [Charm]
-      26: [AncientPower]
-      30: [DragonTail]
-      34: [Crunch]
-      37: [DragonClaw]
+      4: [Roar]
+      8: [AncientPower]
+      12: [Charm]
+      16: [Bite]
+      20: [DragonTail]
+      24: [Stomp]
+      28: [RockSlide]
+      32: [Crunch]
+      36: [DragonClaw]
       40: [Thrash]
       44: [Earthquake]
-      49: [HornDrill]
-    egg: [Curse, DragonDance, FireFang, IceFang, PoisonFang, RockPolish, ThunderFang]
+      48: [HornDrill]
+    egg: [Curse, DragonDance, FireFang, IceFang, PoisonFang, RockPolish, ThunderFang, RockThrow]
+    teachable:
+      - Assurance
+      - BodySlam
+      - Charm
+      - CloseCombat
+      - Crunch
+      - DragonDance
+      - Endure
+      - FireFang
+      - IceFang
+      - PlayRough
+      - PsychicFangs
+      - RockBlast
+      - ScaryFace
+      - ThunderFang
   Tyrantrum:
     level:
-      1: [Tackle, TailWhip]
-      6: [Roar]
-      10: [Stomp]
-      12: [Bide]
-      15: [StealthRock]
-      17: [Bite]
-      20: [Charm]
-      26: [AncientPower]
-      30: [DragonTail]
-      34: [Crunch]
-      37: [DragonClaw]
+      1: [Tackle, TailWhip, Roar, AncientPower]
+      12: [Charm]
+      16: [Bite]
+      20: [DragonTail]
+      24: [Stomp]
+      28: [RockSlide]
+      32: [Crunch]
+      36: [DragonClaw]
       42: [Thrash]
-      47: [Earthquake]
-      53: [HornDrill]
-      58: [HeadSmash]
-      68: [RockSlide]
-      75: [GigaImpact]
-    teachable: [GigaImpact, HyperBeam, BrutalSwing, BreakingSwipe]
+      48: [Earthquake]
+      54: [HornDrill]
+      60: [GigaImpact]
+      66: [HeadSmash]
+    teachable:
+      [
+        GigaImpact,
+        HyperBeam,
+        BrutalSwing,
+        BreakingSwipe,
+        Assurance,
+        BodySlam,
+        Charm,
+        CloseCombat,
+        Crunch,
+        DragonDance,
+        Endure,
+        FireFang,
+        HighHorsepower,
+        IceFang,
+        PlayRough,
+        PsychicFangs,
+        RockBlast,
+        ScaryFace,
+        ThunderFang,
+      ]
 Amaura:
   # TM, HM and tutor moves shared by the whole family
 
@@ -1096,41 +1243,56 @@ Amaura:
   Amaura:
     level:
       1: [Growl, PowderSnow]
-      5: [ThunderWave]
-      10: [RockThrow]
-      13: [IcyWind]
-      15: [TakeDown]
-      18: [Mist]
-      20: [AuroraBeam]
-      26: [AncientPower]
-      30: [Round]
-      34: [Avalanche]
-      38: [Hail]
-      41: [NaturePower]
-      44: [Encore]
-      47: [LightScreen]
-      50: [IceBeam]
-      57: [HyperBeam]
-      65: [Blizzard]
-    egg: [Barrier, Discharge, Haze, MagnetRise, MirrorCoat]
+      4: [Encore]
+      8: [AncientPower]
+      12: [IcyWind]
+      16: [Round]
+      20: [Mist]
+      24: [AuroraBeam]
+      28: [ThunderWave]
+      32: [NaturePower]
+      36: [FreezeDry]
+      40: [IceBeam]
+      44: [LightScreen]
+      48: [Hail]
+      52: [Blizzard]
+      56: [HyperBeam]
+    egg: [Barrier, Discharge, Haze, MagnetRise, MirrorCoat, AuroraVeil, RockThrow, TakeDown]
+    teachable:
+      - Avalanche
+      - BodySlam
+      - Encore
+      - Endure
+      - MudShot
+      - RockBlast
+      - WeatherBall
   Aurorus:
     level:
-      1: [Growl, PowderSnow]
-      5: [ThunderWave]
-      10: [RockThrow]
-      13: [IcyWind]
-      15: [TakeDown]
-      18: [Mist]
-      20: [AuroraBeam]
-      26: [AncientPower]
-      30: [Round]
-      34: [Avalanche]
-      38: [Hail]
-      43: [NaturePower]
-      46: [Encore]
-      50: [LightScreen]
-      56: [IceBeam]
-      63: [HyperBeam]
-      74: [Blizzard]
-      77: [FreezeDry]
-    teachable: [Earthquake, GigaImpact, Psychic, Thunder]
+      1: [Growl, PowderSnow, Encore, AncientPower]
+      12: [IcyWind]
+      16: [Round]
+      20: [Mist]
+      24: [AuroraBeam]
+      28: [ThunderWave]
+      32: [NaturePower]
+      36: [FreezeDry]
+      42: [IceBeam]
+      48: [LightScreen]
+      54: [Hail]
+      60: [Blizzard]
+      66: [HyperBeam]
+    teachable:
+      [
+        Earthquake,
+        GigaImpact,
+        Psychic,
+        Thunder,
+        Avalanche,
+        BodySlam,
+        Encore,
+        Endure,
+        IcicleSpear,
+        MudShot,
+        RockBlast,
+        WeatherBall,
+      ]

@@ -1,18 +1,21 @@
 Hawlucha:
   Hawlucha:
     level:
-      1: [Tackle, HoneClaws, Detect]
-      4: [KarateChop, WingAttack]
-      12: [AerialAce, Roost]
+      1: [Tackle, HoneClaws]
+      4: [WingAttack]
+      8: [Detect]
+      12: [AerialAce]
       16: [Encore]
       20: [FeatherDance]
-      24: [BrickBreak, Fling, Submission]
-      28: [Bounce, FlyingPress]
+      24: [Submission]
+      28: [Bounce]
       32: [Taunt]
-      36: [Endeavor]
+      36: [Roost]
       40: [SwordsDance]
-      48: [SkyAttack]
-      55: [SkyDrop]
+      44: [FlyingPress]
+      48: [HiJumpKick]
+      52: [Endeavor]
+      56: [SkyAttack]
     teachable:
       - Acrobatics
       - AerialAce
@@ -119,21 +122,19 @@ Hawlucha:
 Dedenne:
   Dedenne:
     level:
-      1: [Tackle, TailWhip, Nuzzle]
-      7: [ThunderShock]
+      1: [TailWhip, Nuzzle]
+      5: [Tackle]
       10: [Charge]
-      14: [Charm]
-      17: [ParabolicCharge]
-      23: [ThunderWave]
-      26: [VoltSwitch]
-      30: [Rest]
-      31: [Snore]
-      34: [ChargeBeam]
-      39: [Entrainment]
+      15: [ThunderShock]
+      20: [Charm]
+      25: [ParabolicCharge]
+      30: [VoltSwitch]
+      35: [Rest, Snore]
       40: [Discharge]
-      42: [PlayRough]
-      45: [Thunder]
+      45: [PlayRough]
       50: [SuperFang]
+      55: [Entrainment]
+      60: [Thunder]
     teachable:
       - AerialAce
       - Agility
@@ -204,21 +205,18 @@ Carbink:
   Carbink:
     level:
       1: [Tackle, Harden]
-      5: [RockThrow, GuardSplit]
-      8: [Sharpen]
+      5: [GuardSplit]
       10: [SmackDown]
       15: [Flail]
-      18: [Reflect]
       20: [AncientPower]
-      21: [StealthRock]
       25: [RockPolish]
       30: [LightScreen]
       35: [RockSlide]
       40: [SkillSwap]
       45: [PowerGem]
-      49: [StoneEdge]
-      50: [Moonblast]
-      70: [Safeguard]
+      50: [StealthRock]
+      55: [Moonblast]
+      60: [StoneEdge]
     teachable:
       - AfterYou
       - AllySwitch
@@ -331,56 +329,54 @@ Goomy:
     - SkitterSmack
   Goomy:
     level:
-      1: [Tackle, Bubble, Absorb]
+      1: [Tackle, Absorb]
       5: [WaterGun]
-      6: [AcidSpray]
-      9: [Protect]
       10: [DragonBreath]
-      11: [AcidArmor]
-      13: [Bide]
-      18: [WaterPulse]
+      15: [Protect]
       20: [Flail]
-      25: [RainDance, WaterPulse]
-      32: [BodySlam]
-      38: [MuddyWater]
-      41: [Curse]
-      43: [Curse]
+      25: [WaterPulse]
+      30: [RainDance]
       34: [Shelter]
+      35: [DragonPulse]
+      41: [Curse]
+      45: [BodySlam]
+      50: [MuddyWater]
     egg: [AcidArmor, Counter, Curse, Endure, IronTail, PoisonTail, LifeDew]
   Sliggoo:
     level:
-      1: [Tackle, Bubble, Absorb, WaterGun, AcidSpray, AcidArmor, DragonBreath]
-      9: [Protect]
-      13: [Bide]
+      1: [Tackle, WaterGun, Absorb, DragonBreath, AcidSpray]
+      15: [Protect]
       20: [Flail]
-      25: [RainDance, WaterPulse]
-      32: [BodySlam]
+      25: [WaterPulse]
+      30: [RainDance]
       35: [DragonPulse]
-      38: [MuddyWater]
       43: [Curse]
+      49: [BodySlam]
+      56: [MuddyWater]
     teachable: [AcidSpray, Blizzard, IceBeam, Thunder]
   Goodra:
     level:
       1:
-        - Tackle
-        - Bubble
-        - Absorb
-        - WaterGun
-        - AcidSpray
-        - DragonBreath
-        - Protect
-        - Feint
-        - Outrage
-        - PoisonTail
-        - AquaTail
-      13: [Bide]
+        [
+          Tackle,
+          WaterGun,
+          Absorb,
+          DragonBreath,
+          PoisonTail,
+          Feint,
+          AquaTail,
+          AcidSpray,
+          TearfulLook,
+        ]
+      15: [Protect]
       20: [Flail]
-      25: [RainDance, WaterPulse]
-      32: [BodySlam]
+      25: [WaterPulse]
+      30: [RainDance]
       35: [DragonPulse]
-      38: [MuddyWater]
       43: [Curse]
-      50: [PowerWhip]
+      49: [BodySlam]
+      58: [MuddyWater]
+      67: [PowerWhip]
     teachable:
       - AcidSpray
       - AquaTail
@@ -422,21 +418,20 @@ Goomy:
 Klefki:
   Klefki:
     level:
-      1: [Tackle, FairyLock]
-      5: [FairyWind]
-      8: [Astonish]
-      12: [MetalSound]
-      15: [Spikes]
-      18: [DrainingKiss]
-      23: [CraftyShield]
-      27: [FoulPlay]
-      32: [Torment]
-      34: [MirrorShot]
-      36: [Imprison]
-      40: [Recycle]
-      43: [PlayRough]
+      1: [Astonish, FairyLock]
+      4: [Tackle]
+      8: [FairyWind]
+      12: [Torment]
+      16: [CraftyShield]
+      20: [MetalSound]
+      24: [DrainingKiss]
+      28: [Recycle]
+      32: [Imprison]
+      36: [FlashCannon]
+      40: [PlayRough]
       44: [MagicRoom]
-      50: [HealBlock]
+      48: [FoulPlay]
+      52: [LastResort]
     teachable:
       - Attract
       - CalmMind
@@ -480,7 +475,14 @@ Klefki:
       - Torment
       - Toxic
       - SteelBeam
-    egg: [IronDefense, LockOn, Switcheroo, Thief]
+      - DrainingKiss
+      - Endure
+      - Imprison
+      - MistyTerrain
+      - PlayRough
+      - Spikes
+      - StoredPower
+    egg: [IronDefense, LockOn, Switcheroo, Thief, MagnetRise]
 Phantump:
   family-teachable:
     - AllySwitch
@@ -550,18 +552,20 @@ Phantump:
     - Poltergeist
   Phantump:
     level:
-      1: [Tackle, ConfuseRay, Astonish]
-      8: [Growth, LeechSeed]
-      13: [Ingrain]
-      16: [WillOWisp]
-      19: [FeintAttack]
-      20: [Hex]
-      28: [Curse, HornLeech]
-      35: [ForestsCurse]
-      36: [PhantomForce]
-      39: [DestinyBond]
-      44: [WoodHammer]
+      1: [Tackle, Astonish]
       4: [BranchPoke]
+      8: [LeechSeed]
+      12: [ConfuseRay]
+      16: [WillOWisp]
+      20: [Hex]
+      24: [Growth]
+      28: [HornLeech]
+      32: [Curse]
+      36: [PhantomForce]
+      40: [Ingrain]
+      44: [WoodHammer]
+      48: [DestinyBond]
+      52: [ForestsCurse]
     egg:
       - AllySwitch
       - Bestow
@@ -573,16 +577,18 @@ Phantump:
       - VenomDrench
   Trevenant:
     level:
-      1: [Tackle, ConfuseRay, Astonish, Growth, LeechSeed, HornLeech, ShadowClaw, BranchPoke]
-      13: [Ingrain]
+      1: [Tackle, LeechSeed, Astonish, ShadowClaw, BranchPoke]
+      12: [ConfuseRay]
       16: [WillOWisp]
-      19: [FeintAttack]
       20: [Hex]
-      28: [Curse]
-      35: [ForestsCurse]
+      24: [Growth]
+      28: [HornLeech]
+      32: [Curse]
       36: [PhantomForce]
-      39: [DestinyBond]
+      40: [Ingrain]
       44: [WoodHammer]
+      48: [DestinyBond]
+      52: [ForestsCurse]
     teachable:
       - Block
       - CalmMind
@@ -667,68 +673,62 @@ Pumpkaboo:
     - Poltergeist
   Pumpkaboo:
     level:
-      1: [Astonish, ConfuseRay, Trick, TrickOrTreat]
-      4: [ScaryFace, ShadowSneak]
-      11: [WorrySeed]
+      1: [Astonish, TrickOrTreat]
+      4: [ShadowSneak]
+      8: [ConfuseRay]
       12: [RazorLeaf]
       16: [LeechSeed]
       20: [BulletSeed]
+      24: [ScaryFace]
+      28: [WorrySeed]
       32: [SeedBomb]
       36: [ShadowBall]
-      42: [PainSplit]
+      40: [Trick]
+      44: [PainSplit]
     egg: [Bestow, Curse, DestinyBond, Disable]
   Gourgeist:
     level:
-      1:
-        - Astonish
-        - ConfuseRay
-        - Trick
-        - TrickOrTreat
-        - ScaryFace
-        - ShadowSneak
-        - Explosion
-        - Moonblast
-        - PhantomForce
-      11: [WorrySeed]
+      1: [ConfuseRay, Explosion, Astonish, ShadowSneak, TrickOrTreat, Moonblast]
       12: [RazorLeaf]
       16: [LeechSeed]
       20: [BulletSeed]
+      24: [ScaryFace]
+      28: [WorrySeed]
       32: [SeedBomb]
       36: [ShadowBall]
-      42: [PainSplit]
-    teachable: [FocusBlast, GigaImpact, HyperBeam, NastyPlot, PhantomForce, PowerWhip]
+      40: [Trick]
+      44: [PainSplit]
+      48: [PhantomForce]
+    teachable: [FocusBlast, GigaImpact, HyperBeam, NastyPlot, PhantomForce, PowerWhip, BrutalSwing]
   PumpkabooSuper:
     level:
-      1: [Astonish, ConfuseRay, Trick, TrickOrTreat]
-      4: [ScaryFace, ShadowSneak]
-      11: [WorrySeed]
+      1: [Astonish, TrickOrTreat]
+      4: [ShadowSneak]
+      8: [ConfuseRay]
       12: [RazorLeaf]
       16: [LeechSeed]
       20: [BulletSeed]
+      24: [ScaryFace]
+      28: [WorrySeed]
       32: [SeedBomb]
       36: [ShadowBall]
-      42: [PainSplit]
+      40: [Trick]
+      44: [PainSplit]
     egg: [Bestow, Curse, DestinyBond, Disable]
   GourgeistSuper:
     level:
-      1:
-        - Astonish
-        - ConfuseRay
-        - Trick
-        - TrickOrTreat
-        - ScaryFace
-        - ShadowSneak
-        - Explosion
-        - Moonblast
-        - PhantomForce
-      11: [WorrySeed]
+      1: [ConfuseRay, Explosion, Astonish, ShadowSneak, TrickOrTreat, Moonblast]
       12: [RazorLeaf]
       16: [LeechSeed]
       20: [BulletSeed]
+      24: [ScaryFace]
+      28: [WorrySeed]
       32: [SeedBomb]
       36: [ShadowBall]
-      42: [PainSplit]
-    teachable: [FocusBlast, GigaImpact, HyperBeam, NastyPlot, PhantomForce, PowerWhip]
+      40: [Trick]
+      44: [PainSplit]
+      48: [PhantomForce]
+    teachable: [FocusBlast, GigaImpact, HyperBeam, NastyPlot, PhantomForce, PowerWhip, BrutalSwing]
 Bergmite:
   family-teachable:
     - AfterYou
@@ -779,43 +779,38 @@ Bergmite:
     - WaterPulse
   Bergmite:
     level:
-      1: [Tackle, Harden, Bite, RapidSpin]
-      5: [PowderSnow]
-      9: [Curse, IceShard]
-      10: [IcyWind]
-      15: [Protect, TakeDown]
+      1: [Harden, RapidSpin]
+      3: [Tackle]
+      6: [PowderSnow]
+      9: [Curse]
+      12: [IcyWind]
+      15: [Protect]
       18: [Avalanche]
-      20: [Sharpen]
-      21: [IronDefense]
+      21: [Bite]
       24: [IceFang]
-      29: [Crunch]
-      30: [IceBall, Recover]
-      37: [Blizzard]
+      27: [IronDefense]
+      30: [Recover]
+      33: [Crunch]
+      36: [TakeDown]
+      39: [Blizzard]
       42: [DoubleEdge]
-    egg: [Barrier, MirrorCoat, Mist, Recover]
+    egg: [Barrier, MirrorCoat, Mist, Recover, AuroraVeil]
   Avalugg:
     level:
-      1:
-        - Tackle
-        - Harden
-        - Bite
-        - RapidSpin
-        - PowderSnow
-        - Crunch
-        - IronDefense
-        - SkullBash
-        - WideGuard
-        - BodySlam
+      1: [Tackle, BodySlam, Harden, PowderSnow, RapidSpin, WideGuard]
       9: [Curse]
-      10: [IcyWind]
-      15: [Protect, TakeDown]
+      12: [IcyWind]
+      15: [Protect]
       18: [Avalanche]
-      20: [Sharpen]
+      21: [Bite]
       24: [IceFang]
-      30: [IceBall, Recover]
+      27: [IronDefense]
+      30: [Recover]
+      33: [Crunch]
+      36: [TakeDown]
       41: [Blizzard]
       46: [DoubleEdge]
-      51: [IcicleCrash]
+      51: [SkullBash]
     teachable:
       - Block
       - Earthquake
@@ -829,6 +824,7 @@ Bergmite:
       - Superpower
       - StompingTantrum
       - BodyPress
+      - HighHorsepower
 Noibat:
   family-teachable:
     - Acrobatics
@@ -894,46 +890,36 @@ Noibat:
     - DualWingbeat
   Noibat:
     level:
-      1: [Tackle, Absorb, Supersonic, Screech]
+      1: [Tackle, Absorb]
       4: [Gust]
-      5: [LeechLife]
+      8: [Supersonic]
       12: [DoubleTeam]
-      13: [Bite]
       16: [WingAttack]
-      18: [Agility]
-      23: [AirCutter]
-      27: [Roost]
+      20: [Bite]
+      24: [AirCutter]
       28: [Whirlwind]
-      31: [RazorWind]
       32: [SuperFang]
-      35: [Tailwind]
       36: [AirSlash]
+      40: [Screech]
+      44: [Roost]
+      49: [Tailwind]
       52: [Hurricane]
     egg: [Defog, DragonRush, Outrage, Snatch, Switcheroo, Tailwind]
   Noivern:
     level:
-      1:
-        - Tackle
-        - Absorb
-        - Supersonic
-        - Screech
-        - Gust
-        - Boomburst
-        - Hurricane
-        - Moonlight
-        - DragonPulse
-      5: [LeechLife]
+      1: [Gust, Tackle, Supersonic, Absorb, Moonlight, DragonPulse]
       12: [DoubleTeam]
-      13: [Bite]
       16: [WingAttack]
-      18: [Agility]
-      23: [AirCutter]
-      27: [Roost]
+      20: [Bite]
+      24: [AirCutter]
       28: [Whirlwind]
-      31: [RazorWind]
       32: [SuperFang]
-      35: [Tailwind]
       36: [AirSlash]
+      40: [Screech]
+      44: [Roost]
+      51: [Tailwind]
+      56: [Hurricane]
+      62: [Boomburst]
     teachable:
       - BodySlam
       - DoubleEdge
@@ -949,16 +935,21 @@ Noibat:
 Xerneas:
   Xerneas:
     level:
-      1: [Tackle, TakeDown, Aromatherapy, Gravity, HealPulse, Ingrain]
+      1: [Tackle, Gravity]
       5: [LightScreen]
       10: [AuroraBeam]
       15: [NaturePower]
       20: [NightSlash]
-      26: [Geomancy]
+      25: [Aromatherapy]
       30: [PsychUp]
-      35: [HornLeech, Moonblast]
+      35: [HornLeech]
       40: [MistyTerrain]
-      44: [Megahorn]
+      45: [Ingrain]
+      50: [TakeDown]
+      55: [Geomancy]
+      60: [Moonblast]
+      65: [HealPulse]
+      70: [Megahorn]
       75: [CloseCombat]
       80: [Outrage]
       85: [GigaImpact]
@@ -1021,21 +1012,26 @@ Xerneas:
       - LaserFocus
       - MistyExplosion
       - TerrainPulse
+      - SmartStrike
 Yveltal:
   Yveltal:
     level:
-      1: [Gust, DoubleTeam, RazorWind, Roost, Taunt, Hurricane]
-      10: [AirSlash, Snarl]
+      1: [Gust, DoubleTeam]
+      5: [Taunt]
+      10: [Snarl]
       15: [Disable]
       20: [SuckerPunch]
       25: [Tailwind]
-      26: [OblivionWing]
+      30: [Roost]
+      35: [AirSlash]
       40: [DarkPulse]
       45: [Psychic]
-      51: [FoulPlay]
+      50: [OblivionWing]
       55: [PhantomForce]
-      63: [DragonRush]
-      72: [FocusBlast]
+      60: [FoulPlay]
+      65: [DragonRush]
+      70: [Hurricane]
+      75: [FocusBlast]
       80: [SkyAttack]
       85: [HyperBeam]
     teachable:
@@ -1160,70 +1156,69 @@ Zygarde:
     - ScorchingSands
   Zygarde:
     level:
-      1: [Bind, Bite, Bulldoze, DragonBreath, Glare, ThousandArrows, ThousandWaves]
-      5: [Safeguard]
+      1: [Bind, Bite, DragonBreath, Bulldoze, ThousandArrows, ThousandWaves, CoreEnforcer]
       8: [Haze]
-      10: [Dig]
-      26: [LandsWrath]
+      16: [Dig]
+      24: [Safeguard]
       32: [Crunch]
-      35: [Sandstorm]
       40: [DragonPulse]
-      55: [Earthquake]
-      59: [Camouflage]
-      72: [Coil, DragonDance]
-      80: [Outrage]
-      88: [ExtremeSpeed]
-    teachable: [CoreEnforcer, StompingTantrum]
+      48: [LandsWrath]
+      56: [Glare]
+      64: [Sandstorm]
+      72: [Coil]
+      80: [Earthquake]
+      88: [Outrage]
+    teachable: [CoreEnforcer, StompingTantrum, HighHorsepower]
   ZygardeTenPercent:
     level:
-      1: [Bind, Bite, Bulldoze, DragonBreath, Glare, ThousandArrows, ThousandWaves]
-      5: [Safeguard]
+      1: [Bind, Bite, DragonBreath, Bulldoze, ThousandArrows, ThousandWaves, CoreEnforcer]
       8: [Haze]
-      10: [Dig]
-      26: [LandsWrath]
+      16: [Dig]
+      24: [Safeguard]
       32: [Crunch]
-      35: [Sandstorm]
       40: [DragonPulse]
-      55: [Earthquake]
-      59: [Camouflage]
-      72: [Coil, DragonDance]
-      80: [Outrage]
-      88: [ExtremeSpeed]
+      48: [LandsWrath]
+      56: [Glare]
+      64: [Sandstorm]
+      72: [Coil]
+      80: [Earthquake]
+      88: [Outrage]
+    teachable:
+      - HighHorsepower
+      - StompingTantrum
   ZygardeComplete:
     level:
-      1: [Bind, Bite, Bulldoze, DragonBreath, Glare, ThousandArrows, ThousandWaves]
-      5: [Safeguard]
+      1: [Bind, Bite, DragonBreath, Bulldoze, ThousandArrows, ThousandWaves, CoreEnforcer]
       8: [Haze]
-      10: [Dig]
-      26: [LandsWrath]
+      16: [Dig]
+      24: [Safeguard]
       32: [Crunch]
-      35: [Sandstorm]
       40: [DragonPulse]
-      55: [Earthquake]
-      59: [Camouflage]
-      72: [Coil, DragonDance]
-      80: [Outrage]
-      88: [ExtremeSpeed]
-    teachable: [CoreEnforcer, StompingTantrum]
+      48: [LandsWrath]
+      56: [Glare]
+      64: [Sandstorm]
+      72: [Coil]
+      80: [Earthquake]
+      88: [Outrage]
+    teachable: [CoreEnforcer, StompingTantrum, HighHorsepower]
 # What Hoopa knows in either shape, rings out or rings in
 Diancie:
   Diancie:
     level:
-      1: [Tackle, Harden, RockThrow, DiamondStorm]
-      5: [Sharpen]
+      1: [Tackle, Harden]
       7: [GuardSplit]
-      8: [SmackDown]
-      12: [Reflect]
-      18: [StealthRock]
+      14: [SmackDown]
       21: [Flail]
-      27: [AncientPower]
-      35: [RockPolish, SkillSwap]
-      40: [PowerGem]
+      28: [AncientPower]
+      35: [RockPolish]
       42: [LightScreen]
-      46: [TrickRoom]
-      49: [RockSlide, StoneEdge]
-      50: [Moonblast]
-      70: [Safeguard]
+      49: [RockSlide]
+      56: [SkillSwap]
+      63: [PowerGem]
+      70: [StealthRock]
+      77: [Moonblast]
+      84: [StoneEdge]
+      91: [DiamondStorm]
     teachable:
       - AfterYou
       - AllySwitch
@@ -1420,21 +1415,22 @@ Hoopa:
 Volcanion:
   Volcanion:
     level:
-      1: [WaterGun, TakeDown, FireSpin, FlareBlitz, SteamEruption]
+      1: [WaterGun, FireSpin]
       6: [Leer]
-      8: [Mist]
-      11: [Haze]
       12: [WeatherBall]
-      15: [FlameCharge]
-      21: [WaterPulse]
-      28: [Stomp]
+      18: [FlameCharge]
+      24: [WaterPulse]
       30: [ScaryFace]
-      32: [Scald]
       36: [Incinerate]
-      46: [BodySlam]
-      50: [HydroPump]
-      65: [Overheat]
-      76: [Explosion]
+      42: [Stomp]
+      48: [Scald]
+      54: [TakeDown]
+      60: [Mist, Haze]
+      66: [HydroPump]
+      72: [SteamEruption]
+      78: [FlareBlitz]
+      84: [Overheat]
+      90: [Explosion]
     teachable:
       - BodySlam
       - BrickBreak

@@ -53,16 +53,18 @@ Bulbasaur:
   Bulbasaur:
     level:
       1: [Tackle, Growl]
-      7: [LeechSeed]
-      10: [VineWhip]
+      3: [VineWhip]
+      6: [Growth]
+      9: [LeechSeed]
+      12: [RazorLeaf]
       15: [PoisonPowder, SleepPowder]
-      20: [RazorLeaf]
-      25: [SweetScent]
-      31: [WorrySeed]
-      32: [Growth]
-      37: [SeedBomb]
-      39: [Synthesis]
-      46: [SolarBeam]
+      18: [SeedBomb]
+      21: [TakeDown]
+      24: [SweetScent]
+      27: [Synthesis]
+      30: [WorrySeed]
+      33: [DoubleEdge]
+      36: [SolarBeam]
     egg:
       - LightScreen
       - SkullBash
@@ -75,29 +77,68 @@ Bulbasaur:
       - LeafStorm
       - PowerWhip
       - GrassyTerrain
+      - Amnesia
+      - Curse
+      - Ingrain
+      - NaturePower
+      - Sludge
+      - Toxic
+    teachable:
+      - Amnesia
+      - Charm
+      - FalseSwipe
+      - GrassyTerrain
+      - HelpingHand
+      - LeafStorm
+      - LightScreen
+      - MagicalLeaf
+      - PowerWhip
+      - Safeguard
+      - SeedBomb
+      - WeatherBall
+      - WorkUp
   Ivysaur:
     level:
-      1: [Tackle, Growl, LeechSeed]
-      10: [VineWhip]
+      1: [VineWhip, Tackle, Growl, Growth]
+      9: [LeechSeed]
+      12: [RazorLeaf]
       15: [PoisonPowder, SleepPowder]
-      22: [RazorLeaf]
-      29: [SweetScent]
-      36: [WorrySeed]
-      38: [Growth]
-      47: [Synthesis]
-      54: [SolarBeam]
-    teachable: [SeedBomb]
+      20: [SeedBomb]
+      25: [TakeDown]
+      30: [SweetScent]
+      35: [Synthesis]
+      40: [WorrySeed]
+      45: [DoubleEdge]
+      50: [SolarBeam]
+    teachable:
+      [
+        SeedBomb,
+        Amnesia,
+        Charm,
+        FalseSwipe,
+        GrassyTerrain,
+        HelpingHand,
+        LeafStorm,
+        LightScreen,
+        MagicalLeaf,
+        PowerWhip,
+        Safeguard,
+        WeatherBall,
+        WorkUp,
+      ]
   Venusaur:
     level:
-      1: [Tackle, Growl, LeechSeed, VineWhip]
+      1: [VineWhip, Tackle, Growl, Growth, PetalDance, PetalBlizzard]
+      9: [LeechSeed]
+      12: [RazorLeaf]
       15: [PoisonPowder, SleepPowder]
-      22: [RazorLeaf]
-      29: [SweetScent]
-      39: [WorrySeed]
-      41: [Growth]
-      50: [PetalBlizzard]
-      53: [Synthesis]
-      65: [SolarBeam]
+      20: [SeedBomb]
+      25: [TakeDown]
+      30: [SweetScent]
+      37: [Synthesis]
+      44: [WorrySeed]
+      51: [DoubleEdge]
+      58: [SolarBeam]
     teachable:
       - HyperBeam
       - Roar
@@ -109,6 +150,20 @@ Bulbasaur:
       - Bulldoze
       - StompingTantrum
       - TerrainPulse
+      - Amnesia
+      - Charm
+      - EarthPower
+      - FalseSwipe
+      - GrassyTerrain
+      - HelpingHand
+      - LeafStorm
+      - LightScreen
+      - MagicalLeaf
+      - Outrage
+      - PowerWhip
+      - Safeguard
+      - WeatherBall
+      - WorkUp
 Charmander:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -178,17 +233,39 @@ Charmander:
   Charmander:
     level:
       1: [Scratch, Growl]
-      7: [Ember]
-      13: [SmokeScreen, MetalClaw]
-      15: [Leer]
-      19: [Rage]
-      25: [ScaryFace, FireFang]
-      28: [FlameBurst]
-      30: [Slash]
-      31: [Flamethrower]
-      43: [DragonRage]
-      46: [FireSpin, Inferno]
-    teachable: [ShadowClaw]
+      4: [Ember]
+      8: [SmokeScreen]
+      12: [DragonBreath]
+      17: [FireFang]
+      20: [Slash]
+      24: [Flamethrower]
+      28: [ScaryFace]
+      32: [FireSpin]
+      36: [Inferno]
+      40: [FlareBlitz]
+    teachable:
+      [
+        ShadowClaw,
+        Acrobatics,
+        BeatUp,
+        Crunch,
+        DragonDance,
+        DragonPulse,
+        FalseSwipe,
+        FireFang,
+        FireSpin,
+        FlareBlitz,
+        HeatWave,
+        HelpingHand,
+        Outrage,
+        RockSlide,
+        RockTomb,
+        ScaryFace,
+        ThunderPunch,
+        WeatherBall,
+        WillOWisp,
+        WorkUp,
+      ]
     egg:
       - RockSlide
       - Bite
@@ -199,43 +276,57 @@ Charmander:
       - DragonDance
       - DragonRush
       - FlareBlitz
+      - AirCutter
+      - Counter
+      - Crunch
+      - DragonTail
+      - MetalClaw
+      - WingAttack
   Charmeleon:
     level:
-      1: [Scratch, Growl, Ember]
-      13: [SmokeScreen, MetalClaw]
-      15: [Leer]
-      20: [Rage]
-      27: [ScaryFace]
-      28: [FireFang]
-      32: [FlameBurst]
-      33: [Slash]
-      34: [Flamethrower]
-      48: [DragonRage]
-      54: [Inferno]
-      55: [FireSpin]
-    teachable: [RockSlide, ShadowClaw]
+      1: [Scratch, Growl, Ember, SmokeScreen]
+      12: [DragonBreath]
+      19: [FireFang]
+      24: [Slash]
+      30: [Flamethrower]
+      37: [ScaryFace]
+      42: [FireSpin]
+      48: [Inferno]
+      54: [FlareBlitz]
+    teachable:
+      [
+        RockSlide,
+        ShadowClaw,
+        Acrobatics,
+        BeatUp,
+        Crunch,
+        DragonDance,
+        DragonPulse,
+        FalseSwipe,
+        FireFang,
+        FireSpin,
+        FlareBlitz,
+        HeatWave,
+        HelpingHand,
+        Outrage,
+        RockTomb,
+        ScaryFace,
+        ThunderPunch,
+        WeatherBall,
+        WillOWisp,
+        WorkUp,
+      ]
   Charizard:
     level:
-      1:
-        - Scratch
-        - Growl
-        - Ember
-        - Leer
-        - SmokeScreen
-        - HeatWave
-        - MetalClaw
-        - AirSlash
-        - ShadowClaw
-      20: [Rage]
-      27: [ScaryFace]
-      28: [FireFang]
-      32: [FlameBurst]
-      34: [Flamethrower]
-      36: [Slash, WingAttack]
-      54: [DragonRage]
-      55: [FireSpin]
-      62: [Inferno]
-      66: [FlareBlitz]
+      1: [Scratch, Growl, Ember, SmokeScreen, HeatWave, DragonClaw, AirSlash]
+      12: [DragonBreath]
+      19: [FireFang]
+      24: [Slash]
+      30: [Flamethrower]
+      39: [ScaryFace]
+      46: [FireSpin]
+      54: [Inferno]
+      62: [FlareBlitz]
     teachable:
       - HyperBeam
       - Earthquake
@@ -261,6 +352,30 @@ Charmander:
       - ScaleShot
       - DualWingbeat
       - ScorchingSands
+      - Acrobatics
+      - AirSlash
+      - BeatUp
+      - BlazeKick
+      - Crunch
+      - DragonDance
+      - FalseSwipe
+      - FireFang
+      - FireSpin
+      - FlareBlitz
+      - HeatCrash
+      - HeatWave
+      - HelpingHand
+      - Hurricane
+      - MysticalFire
+      - Outrage
+      - RockTomb
+      - ScaryFace
+      - ShadowClaw
+      - SolarBeam
+      - ThunderPunch
+      - WeatherBall
+      - WillOWisp
+      - WorkUp
 Squirtle:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -332,15 +447,18 @@ Squirtle:
   Squirtle:
     level:
       1: [Tackle, TailWhip]
-      7: [Bubble]
-      10: [Withdraw]
-      13: [WaterGun]
-      18: [Bite]
-      23: [RapidSpin]
-      28: [Protect, AquaTail]
-      33: [RainDance]
-      35: [SkullBash]
-      42: [HydroPump]
+      3: [WaterGun]
+      6: [Withdraw]
+      9: [RapidSpin]
+      12: [Bite]
+      15: [WaterPulse]
+      18: [Protect]
+      21: [RainDance]
+      24: [AquaTail]
+      27: [ShellSmash]
+      30: [IronDefense]
+      33: [HydroPump]
+      36: [SkullBash]
     egg:
       - Haze
       - Mist
@@ -354,27 +472,60 @@ Squirtle:
       - AquaJet
       - AquaRing
       - LifeDew
+      - AuraSphere
+      - FakeOut
+      - MuddyWater
+      - WaterSpout
+    teachable:
+      - AuraSphere
+      - DragonPulse
+      - FalseSwipe
+      - Hail
+      - HelpingHand
+      - HydroPump
+      - IronDefense
+      - MuddyWater
+      - RockTomb
+      - WeatherBall
+      - WorkUp
   Wartortle:
     level:
-      1: [Tackle, TailWhip, Bubble]
-      10: [Withdraw]
-      13: [WaterGun]
-      19: [Bite]
-      25: [RapidSpin]
-      31: [Protect]
-      32: [AquaTail]
-      37: [RainDance]
-      39: [SkullBash]
-      47: [HydroPump]
+      1: [Tackle, TailWhip, WaterGun, Withdraw]
+      9: [RapidSpin]
+      12: [Bite]
+      15: [WaterPulse]
+      20: [Protect]
+      25: [RainDance]
+      30: [AquaTail]
+      35: [ShellSmash]
+      40: [IronDefense]
+      45: [HydroPump]
+      50: [SkullBash]
+    teachable:
+      - AuraSphere
+      - DragonPulse
+      - FalseSwipe
+      - Hail
+      - HelpingHand
+      - HydroPump
+      - IronDefense
+      - MuddyWater
+      - RockTomb
+      - WeatherBall
+      - WorkUp
   Blastoise:
     level:
-      1: [Tackle, TailWhip, Bubble, WaterGun, Withdraw, FlashCannon]
-      19: [Bite]
-      25: [RapidSpin]
-      31: [Protect]
-      32: [AquaTail]
-      42: [SkullBash, RainDance]
-      52: [HydroPump]
+      1: [Tackle, TailWhip, WaterGun, Withdraw, FlashCannon]
+      9: [RapidSpin]
+      12: [Bite]
+      15: [WaterPulse]
+      20: [Protect]
+      25: [RainDance]
+      30: [AquaTail]
+      35: [ShellSmash]
+      42: [IronDefense]
+      49: [HydroPump]
+      56: [SkullBash]
     teachable:
       - HyperBeam
       - Earthquake
@@ -391,32 +542,46 @@ Squirtle:
       - Liquidation
       - BodyPress
       - TerrainPulse
+      - AuraSphere
+      - Crunch
+      - DarkPulse
+      - DragonPulse
+      - FalseSwipe
+      - FlashCannon
+      - Hail
+      - HelpingHand
+      - HydroPump
+      - IronDefense
+      - MuddyWater
+      - Outrage
+      - RockSlide
+      - RockTomb
+      - WeatherBall
+      - WorkUp
 Caterpie:
   Caterpie:
     level:
       1: [Tackle, StringShot]
-      15: [BugBite]
+      9: [BugBite]
     teachable: [Electroweb]
   Metapod:
     level:
       1: [Harden]
-    teachable: [BugBite, Electroweb]
+    teachable: [BugBite, Electroweb, IronDefense]
   Butterfree:
     level:
-      1: [Confusion]
-      13: [PoisonPowder]
-      14: [StunSpore]
-      15: [SleepPowder]
-      18: [Supersonic]
-      23: [Whirlwind]
-      28: [Gust]
-      30: [Tailwind]
-      32: [Psybeam]
-      34: [RagePowder]
-      36: [Captivate]
-      40: [Safeguard, BugBuzz]
-      46: [QuiverDance]
-      47: [SilverWind]
+      1: [Gust, Tackle, StringShot, Harden, BugBite]
+      4: [Supersonic]
+      8: [Confusion]
+      12: [PoisonPowder, StunSpore, SleepPowder]
+      16: [Psybeam]
+      20: [Whirlwind]
+      24: [AirSlash]
+      28: [Safeguard]
+      32: [BugBuzz]
+      36: [Tailwind]
+      40: [RagePowder]
+      44: [QuiverDance]
     teachable:
       - Toxic
       - TakeDown
@@ -473,11 +638,21 @@ Caterpie:
       - Confide
       - Infestation
       - DualWingbeat
+      - AirSlash
+      - BatonPass
+      - BugBuzz
+      - DrainingKiss
+      - Hurricane
+      - IronDefense
+      - PollenPuff
+      - PsychUp
+      - RainDance
+      - Safeguard
 Weedle:
   Weedle:
     level:
       1: [PoisonSting, StringShot]
-      15: [BugBite]
+      9: [BugBite]
     teachable: [Electroweb]
   Kakuna:
     level:
@@ -485,15 +660,18 @@ Weedle:
     teachable: [BugBite, Electroweb]
   Beedrill:
     level:
-      1: [FuryAttack]
-      15: [FocusEnergy]
-      20: [Twineedle]
-      25: [Rage, ToxicSpikes]
-      30: [PinMissile, Pursuit]
-      34: [Assurance]
-      35: [Agility]
-      37: [PoisonJab]
-      45: [Endeavor, FellStinger]
+      1: [FuryAttack, PoisonSting, StringShot, Harden, BugBite]
+      11: [FuryCutter]
+      14: [LaserFocus]
+      20: [FocusEnergy]
+      23: [Venoshock]
+      26: [Assurance]
+      29: [ToxicSpikes]
+      32: [PinMissile]
+      35: [PoisonJab]
+      38: [Agility]
+      41: [Endeavor]
+      44: [FellStinger]
     teachable:
       - SwordsDance
       - Toxic
@@ -554,6 +732,9 @@ Weedle:
       - BrutalSwing
       - LaserFocus
       - ThroatChop
+      - FalseSwipe
+      - Flash
+      - PoisonJab
 Pidgey:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -601,56 +782,69 @@ Pidgey:
     - Confide
   Pidgey:
     level:
-      1: [Gust, Tackle]
+      1: [Tackle]
       5: [SandAttack]
-      12: [QuickAttack]
-      19: [Whirlwind]
-      28: [WingAttack]
-      31: [FeatherDance]
-      36: [Agility]
+      9: [Gust]
+      13: [QuickAttack]
+      17: [Whirlwind]
+      21: [Twister]
+      25: [FeatherDance]
+      29: [Agility]
+      33: [WingAttack]
       37: [Roost]
       41: [Tailwind]
-      44: [MirrorMove]
+      45: [AerialAce]
       49: [AirSlash]
       53: [Hurricane]
-    egg: [FeintAttack, Foresight, SteelWing, Pursuit, AirCutter, BraveBird]
+    egg: [FeintAttack, Foresight, SteelWing, Pursuit, AirCutter, BraveBird, AirSlash, Uproar]
+    teachable:
+      - RainDance
+      - Roost
   Pidgeotto:
     level:
       1: [Gust, SandAttack, Tackle]
-      12: [QuickAttack]
-      21: [Whirlwind]
-      31: [WingAttack]
-      34: [FeatherDance]
-      40: [Agility]
+      13: [QuickAttack]
+      17: [Whirlwind]
+      22: [Twister]
+      27: [FeatherDance]
+      32: [Agility]
+      37: [WingAttack]
       42: [Roost]
       47: [Tailwind]
-      49: [MirrorMove]
+      52: [AerialAce]
       57: [AirSlash]
       62: [Hurricane]
+    teachable:
+      - RainDance
+      - Roost
   Pidgeot:
     level:
-      1: [Gust, SandAttack, QuickAttack, Tackle]
-      21: [Whirlwind]
-      31: [WingAttack]
-      34: [FeatherDance]
-      44: [Agility, Roost]
+      1: [Gust, SandAttack, Tackle, QuickAttack, Hurricane]
+      17: [Whirlwind]
+      22: [Twister]
+      27: [FeatherDance]
+      32: [Agility]
+      38: [WingAttack]
+      44: [Roost]
       50: [Tailwind]
-      54: [MirrorMove]
+      56: [AerialAce]
       62: [AirSlash]
-      68: [Hurricane]
-    teachable: [HyperBeam, GigaImpact, LaserFocus]
+    teachable: [HyperBeam, GigaImpact, LaserFocus, RainDance, Roost]
 Rattata:
   Rattata:
     level:
       1: [Tackle, TailWhip]
-      7: [QuickAttack]
-      13: [HyperFang]
-      19: [SuckerPunch]
-      20: [FocusEnergy]
-      25: [Assurance]
-      27: [Pursuit]
-      34: [SuperFang]
-      41: [Endeavor]
+      4: [QuickAttack]
+      7: [FocusEnergy]
+      10: [Bite]
+      13: [LaserFocus]
+      16: [TakeDown]
+      19: [Assurance]
+      22: [Crunch]
+      25: [SuckerPunch]
+      28: [SuperFang]
+      31: [DoubleEdge]
+      34: [Endeavor]
     teachable:
       - Toxic
       - BodySlam
@@ -709,6 +903,8 @@ Rattata:
       - Confide
       - Cut
       - IceBeam
+      - RainDance
+      - SludgeBomb
     egg:
       - Screech
       - Bite
@@ -719,17 +915,20 @@ Rattata:
       - Uproar
       - MeFirst
       - FinalGambit
+      - LastResort
+      - Revenge
   Raticate:
     level:
-      1: [Tackle, TailWhip, QuickAttack]
-      13: [HyperFang]
-      19: [SuckerPunch]
-      20: [ScaryFace]
-      27: [FocusEnergy]
-      29: [Assurance]
-      30: [Pursuit]
-      40: [SuperFang]
-      50: [Endeavor]
+      1: [SwordsDance, Tackle, TailWhip, QuickAttack, FocusEnergy, ScaryFace]
+      10: [Bite]
+      13: [LaserFocus]
+      16: [TakeDown]
+      19: [Assurance]
+      24: [Crunch]
+      29: [SuckerPunch]
+      34: [SuperFang]
+      39: [DoubleEdge]
+      44: [Endeavor]
     teachable:
       - Toxic
       - BodySlam
@@ -795,6 +994,9 @@ Rattata:
       - GigaImpact
       - StompingTantrum
       - ThroatChop
+      - RainDance
+      - SludgeBomb
+      - SwordsDance
   RattataAlola:
     level:
       1: [Tackle, TailWhip]
@@ -975,27 +1177,55 @@ Spearow:
     - Confide
   Spearow:
     level:
-      1: [Peck, Growl]
-      7: [Leer]
-      13: [FuryAttack]
-      22: [MirrorMove]
-      25: [Pursuit, AerialAce]
-      29: [DrillPeck, Assurance]
-      33: [Roost]
-      36: [Agility]
-    teachable: [Pluck]
-    egg: [QuickAttack, TriAttack, ScaryFace, FeintAttack, FalseSwipe, Astonish]
+      1: [Growl, Peck]
+      4: [Leer]
+      8: [Assurance]
+      11: [FuryAttack]
+      15: [AerialAce]
+      18: [WingAttack]
+      22: [TakeDown]
+      25: [Agility]
+      29: [FocusEnergy]
+      32: [Roost]
+      36: [DrillPeck]
+    teachable: [Pluck, AerialAce, FalseSwipe, RainDance, Roost]
+    egg:
+      [
+        QuickAttack,
+        TriAttack,
+        ScaryFace,
+        FeintAttack,
+        FalseSwipe,
+        Astonish,
+        FeatherDance,
+        SkyAttack,
+        Uproar,
+        Whirlwind,
+      ]
   Fearow:
     level:
-      1: [Peck, Growl, Leer, FuryAttack, Pluck]
-      25: [MirrorMove]
-      26: [Pursuit]
-      34: [DrillPeck]
-      35: [Assurance]
-      41: [Roost]
-      43: [Agility]
-      53: [DrillRun]
-    teachable: [HyperBeam, AerialAce, GigaImpact, LaserFocus, ThroatChop]
+      1: [Leer, Growl, Peck, Pluck, DrillRun]
+      8: [Assurance]
+      11: [FuryAttack]
+      15: [AerialAce]
+      18: [WingAttack]
+      23: [TakeDown]
+      27: [Agility]
+      32: [FocusEnergy]
+      36: [Roost]
+      41: [DrillPeck]
+    teachable:
+      [
+        HyperBeam,
+        AerialAce,
+        GigaImpact,
+        LaserFocus,
+        ThroatChop,
+        FalseSwipe,
+        Pluck,
+        RainDance,
+        Roost,
+      ]
 Ekans:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -1054,49 +1284,66 @@ Ekans:
   Ekans:
     level:
       1: [Wrap, Leer]
-      9: [PoisonSting]
-      15: [Bite]
-      23: [Glare]
-      28: [MudBomb, AcidSpray]
-      29: [Screech]
-      33: [GastroAcid]
-      37: [Acid, SpitUp, Stockpile, Swallow]
+      4: [PoisonSting]
+      9: [Bite]
+      12: [Glare]
+      17: [Screech]
+      20: [Acid]
+      25: [Stockpile, SpitUp, Swallow]
+      28: [AcidSpray]
+      33: [SludgeBomb]
+      36: [GastroAcid]
       38: [Belch]
-      41: [GunkShot]
-      43: [Haze]
+      41: [Haze]
       44: [Coil]
-    egg: [Slam, Spite, Pursuit, Crunch, BeatUp, PoisonFang, Switcheroo]
+      49: [GunkShot]
+    egg:
+      [
+        Slam,
+        Spite,
+        Pursuit,
+        Crunch,
+        BeatUp,
+        PoisonFang,
+        Switcheroo,
+        Disable,
+        PoisonTail,
+        ScaryFace,
+        SuckerPunch,
+      ]
+    teachable:
+      - RainDance
+      - RockTomb
   Arbok:
     level:
-      1: [Wrap, Leer, PoisonSting, Bite, FireFang, IceFang, ThunderFang]
-      25: [Glare]
+      1: [Wrap, PoisonSting, Leer, Bite, Crunch, ThunderFang, IceFang, FireFang]
+      12: [Glare]
+      17: [Screech]
+      20: [Acid]
+      27: [Stockpile, SpitUp, Swallow]
       32: [AcidSpray]
-      33: [Screech]
-      34: [MudBomb]
-      42: [GastroAcid]
-      43: [Acid]
-      46: [SpitUp, Stockpile, Swallow]
+      39: [SludgeBomb]
+      44: [GastroAcid]
       48: [Belch]
       51: [Haze]
-      56: [GunkShot, Coil]
-    teachable: [HyperBeam, GigaImpact, DragonTail, StompingTantrum, ThroatChop]
+      56: [Coil]
+      63: [GunkShot]
+    teachable: [HyperBeam, GigaImpact, DragonTail, StompingTantrum, ThroatChop, RainDance, RockTomb]
 Pikachu:
   Pikachu:
     level:
-      1: [ThunderShock, Growl]
-      6: [TailWhip]
-      7: [PlayNice]
-      8: [ThunderWave]
-      11: [QuickAttack]
-      15: [DoubleTeam]
-      18: [ElectroBall]
-      20: [Slam]
-      26: [Swift, Thunderbolt]
-      29: [Feint, Nuzzle]
-      33: [Agility]
-      37: [Discharge]
-      41: [Thunder]
-      50: [LightScreen]
+      1: [TailWhip, Growl, ThunderShock, QuickAttack, SweetKiss, Charm, NastyPlot, PlayNice, Nuzzle]
+      4: [ThunderWave]
+      8: [DoubleTeam]
+      12: [ElectroBall]
+      16: [Feint]
+      20: [Spark]
+      24: [Agility]
+      28: [Slam]
+      32: [Discharge]
+      36: [Thunderbolt]
+      40: [LightScreen]
+      44: [Thunder]
     teachable:
       - MegaPunch
       - MegaKick
@@ -1161,9 +1408,47 @@ Pikachu:
       - Confide
       - LaserFocus
       - RisingVoltage
+      - Agility
+      - Charm
+      - DrainingKiss
+      - ElectricTerrain
+      - ElectroBall
+      - Electroweb
+      - Encore
+      - HelpingHand
+      - LightScreen
+      - NastyPlot
+      - PlayRough
+      - Reversal
+      - Surf
+      - Thief
+      - Uproar
   Raichu:
     level:
-      1: [ThunderShock, Growl, ThunderWave, TailWhip, Thunderbolt, QuickAttack]
+      1:
+        [
+          ThunderPunch,
+          Slam,
+          TailWhip,
+          Growl,
+          ThunderShock,
+          Thunderbolt,
+          ThunderWave,
+          Thunder,
+          Agility,
+          QuickAttack,
+          DoubleTeam,
+          LightScreen,
+          SweetKiss,
+          Charm,
+          Spark,
+          Feint,
+          NastyPlot,
+          Discharge,
+          ElectroBall,
+          PlayNice,
+          Nuzzle,
+        ]
     teachable:
       - MegaPunch
       - MegaKick
@@ -1233,13 +1518,31 @@ Pikachu:
       - FocusBlast
       - GigaImpact
       - RisingVoltage
+      - Agility
+      - BrutalSwing
+      - Charm
+      - DrainingKiss
+      - EerieImpulse
+      - ElectricTerrain
+      - ElectroBall
+      - Electroweb
+      - Encore
+      - HelpingHand
+      - NastyPlot
+      - PlayRough
+      - Reversal
+      - Safeguard
+      - SpeedSwap
+      - Surf
+      - Uproar
   Pichu:
     level:
-      1: [Charm, ThunderShock]
-      6: [TailWhip]
-      8: [ThunderWave]
-      11: [SweetKiss]
-      18: [NastyPlot]
+      1: [TailWhip, ThunderShock]
+      4: [PlayNice]
+      8: [SweetKiss]
+      12: [Nuzzle]
+      16: [NastyPlot]
+      20: [Charm]
     teachable:
       - Attract
       - Curse
@@ -1289,6 +1592,19 @@ Pikachu:
       - VoltSwitch
       - WildCharge
       - Confide
+      - Charm
+      - ElectricTerrain
+      - Electroweb
+      - Encore
+      - HelpingHand
+      - NastyPlot
+      - PlayRough
+      - Reflect
+      - Reversal
+      - Surf
+      - ThunderPunch
+      - ThunderWave
+      - Uproar
     egg:
       - Bide
       - DoubleSlap
@@ -1300,13 +1616,19 @@ Pikachu:
       - Wish
       - Bestow
       - DisarmingVoice
+      - ElectricTerrain
+      - FakeOut
+      - Flail
+      - ThunderPunch
+      - Tickle
   PichuSpikyEared:
     level:
-      1: [Charm, ThunderShock]
-      6: [TailWhip]
-      8: [ThunderWave]
-      11: [SweetKiss]
-      18: [NastyPlot]
+      1: [TailWhip, ThunderShock]
+      4: [PlayNice]
+      8: [SweetKiss]
+      12: [Nuzzle]
+      16: [NastyPlot]
+      20: [Charm]
     teachable:
       - Attract
       - Curse
@@ -1356,6 +1678,19 @@ Pikachu:
       - VoltSwitch
       - WildCharge
       - Confide
+      - Charm
+      - ElectricTerrain
+      - Electroweb
+      - Encore
+      - HelpingHand
+      - NastyPlot
+      - PlayRough
+      - Reflect
+      - Reversal
+      - Surf
+      - ThunderPunch
+      - ThunderWave
+      - Uproar
     egg:
       - Bide
       - DoubleSlap
@@ -1367,9 +1702,37 @@ Pikachu:
       - Wish
       - Bestow
       - DisarmingVoice
+      - ElectricTerrain
+      - FakeOut
+      - Flail
+      - ThunderPunch
+      - Tickle
   RaichuAlola:
     level:
-      1: [Psychic, QuickAttack, SpeedSwap, TailWhip, ThunderShock, Thunderbolt]
+      1:
+        [
+          Slam,
+          TailWhip,
+          Growl,
+          ThunderShock,
+          Thunderbolt,
+          ThunderWave,
+          Thunder,
+          Psychic,
+          Agility,
+          QuickAttack,
+          DoubleTeam,
+          LightScreen,
+          SweetKiss,
+          Charm,
+          Spark,
+          Feint,
+          NastyPlot,
+          Discharge,
+          ElectroBall,
+          PlayNice,
+          Nuzzle,
+        ]
     teachable:
       - AllySwitch
       - Attract
@@ -1425,3 +1788,24 @@ Pikachu:
       - WildCharge
       - ExpandingForce
       - RisingVoltage
+      - Agility
+      - BodySlam
+      - Charm
+      - Dig
+      - DrainingKiss
+      - ElectricTerrain
+      - ElectroBall
+      - Encore
+      - Endure
+      - FutureSight
+      - MegaKick
+      - MegaPunch
+      - NastyPlot
+      - PayDay
+      - PlayRough
+      - Reversal
+      - SpeedSwap
+      - StoredPower
+      - Surf
+      - Swift
+      - Uproar

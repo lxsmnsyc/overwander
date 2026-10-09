@@ -45,78 +45,188 @@ Rotom:
     - Poltergeist
   Rotom:
     level:
-      1: [Astonish, ConfuseRay, ThunderShock, ThunderWave, Trick]
-      8: [Uproar]
-      15: [DoubleTeam]
-      22: [ShockWave]
-      29: [OminousWind]
-      36: [Substitute]
-      43: [Charge]
+      1: [DoubleTeam, Astonish]
+      5: [ThunderShock]
+      10: [ConfuseRay]
+      15: [Charge]
+      20: [ElectroBall]
+      25: [ThunderWave]
+      30: [ShockWave]
+      35: [Hex]
+      40: [Substitute]
+      45: [Trick]
       50: [Discharge]
+      55: [Uproar]
+    teachable:
+      - AllySwitch
+      - EerieImpulse
+      - ElectricTerrain
+      - ElectroBall
+      - Electroweb
+      - FoulPlay
+      - HelpingHand
+      - Hex
+      - HyperVoice
+      - NastyPlot
+      - Round
+      - StoredPower
+      - VoltSwitch
   RotomHeat:
     level:
-      1: [Astonish, ConfuseRay, Overheat, ThunderShock, ThunderWave, Trick]
-      8: [Uproar]
-      15: [DoubleTeam]
-      22: [ShockWave]
-      29: [OminousWind]
-      36: [Substitute]
-      43: [Charge]
+      1: [DoubleTeam, Astonish]
+      5: [ThunderShock]
+      10: [ConfuseRay]
+      15: [Charge]
+      20: [ElectroBall]
+      25: [ThunderWave]
+      30: [ShockWave]
+      35: [Hex]
+      40: [Substitute]
+      45: [Trick]
       50: [Discharge]
+      55: [Uproar]
+    teachable:
+      - AllySwitch
+      - EerieImpulse
+      - ElectricTerrain
+      - ElectroBall
+      - Electroweb
+      - FoulPlay
+      - HelpingHand
+      - Hex
+      - HyperVoice
+      - NastyPlot
+      - Round
+      - StoredPower
+      - VoltSwitch
   RotomWash:
     level:
-      1: [Astonish, ConfuseRay, HydroPump, ThunderShock, ThunderWave, Trick]
-      8: [Uproar]
-      15: [DoubleTeam]
-      22: [ShockWave]
-      29: [OminousWind]
-      36: [Substitute]
-      43: [Charge]
+      1: [DoubleTeam, Astonish]
+      5: [ThunderShock]
+      10: [ConfuseRay]
+      15: [Charge]
+      20: [ElectroBall]
+      25: [ThunderWave]
+      30: [ShockWave]
+      35: [Hex]
+      40: [Substitute]
+      45: [Trick]
       50: [Discharge]
+      55: [Uproar]
+    teachable:
+      - AllySwitch
+      - EerieImpulse
+      - ElectricTerrain
+      - ElectroBall
+      - Electroweb
+      - FoulPlay
+      - HelpingHand
+      - Hex
+      - HyperVoice
+      - NastyPlot
+      - Round
+      - StoredPower
+      - VoltSwitch
   RotomFrost:
     level:
-      1: [Astonish, Blizzard, ConfuseRay, ThunderShock, ThunderWave, Trick]
-      8: [Uproar]
-      15: [DoubleTeam]
-      22: [ShockWave]
-      29: [OminousWind]
-      36: [Substitute]
-      43: [Charge]
+      1: [DoubleTeam, Astonish]
+      5: [ThunderShock]
+      10: [ConfuseRay]
+      15: [Charge]
+      20: [ElectroBall]
+      25: [ThunderWave]
+      30: [ShockWave]
+      35: [Hex]
+      40: [Substitute]
+      45: [Trick]
       50: [Discharge]
+      55: [Uproar]
+    teachable:
+      - AllySwitch
+      - EerieImpulse
+      - ElectricTerrain
+      - ElectroBall
+      - Electroweb
+      - FoulPlay
+      - HelpingHand
+      - Hex
+      - HyperVoice
+      - NastyPlot
+      - Round
+      - StoredPower
+      - VoltSwitch
   RotomFan:
     level:
-      1: [AirSlash, Astonish, ConfuseRay, ThunderShock, ThunderWave, Trick]
-      8: [Uproar]
-      15: [DoubleTeam]
-      22: [ShockWave]
-      29: [OminousWind]
-      36: [Substitute]
-      43: [Charge]
+      1: [DoubleTeam, Astonish]
+      5: [ThunderShock]
+      10: [ConfuseRay]
+      15: [Charge]
+      20: [ElectroBall]
+      25: [ThunderWave]
+      30: [ShockWave]
+      35: [Hex]
+      40: [Substitute]
+      45: [Trick]
       50: [Discharge]
+      55: [Uproar]
+    teachable:
+      - AllySwitch
+      - EerieImpulse
+      - ElectricTerrain
+      - ElectroBall
+      - Electroweb
+      - FoulPlay
+      - HelpingHand
+      - Hex
+      - HyperVoice
+      - NastyPlot
+      - Round
+      - StoredPower
+      - VoltSwitch
   RotomMow:
     level:
-      1: [Astonish, ConfuseRay, LeafStorm, ThunderShock, ThunderWave, Trick]
-      8: [Uproar]
-      15: [DoubleTeam]
-      22: [ShockWave]
-      29: [OminousWind]
-      36: [Substitute]
-      43: [Charge]
+      1: [DoubleTeam, Astonish]
+      5: [ThunderShock]
+      10: [ConfuseRay]
+      15: [Charge]
+      20: [ElectroBall]
+      25: [ThunderWave]
+      30: [ShockWave]
+      35: [Hex]
+      40: [Substitute]
+      45: [Trick]
       50: [Discharge]
+      55: [Uproar]
+    teachable:
+      - AllySwitch
+      - EerieImpulse
+      - ElectricTerrain
+      - ElectroBall
+      - Electroweb
+      - FoulPlay
+      - HelpingHand
+      - Hex
+      - HyperVoice
+      - NastyPlot
+      - Round
+      - StoredPower
+      - VoltSwitch
 Uxie:
   Uxie:
     level:
       1: [Confusion, Rest]
-      6: [Imprison]
-      16: [Endure]
-      21: [Swift]
-      31: [Yawn]
-      36: [FutureSight]
-      46: [Amnesia, MysticalPower]
-      51: [Extrasensory]
-      61: [Flail]
-      66: [NaturalGift]
-      76: [Memento]
+      7: [Swift]
+      14: [Endure]
+      21: [Psybeam]
+      28: [Imprison]
+      35: [Extrasensory]
+      42: [Amnesia]
+      46: [MysticalPower]
+      49: [Psychic]
+      56: [Yawn]
+      63: [FutureSight]
+      70: [Flail]
+      77: [Memento]
     teachable:
       - CalmMind
       - ChargeBeam
@@ -179,20 +289,42 @@ Uxie:
       - SolarBeam
       - LaserFocus
       - ExpandingForce
+      - Acrobatics
+      - AllySwitch
+      - Amnesia
+      - BatonPass
+      - DrainPunch
+      - DrainingKiss
+      - Encore
+      - FoulPlay
+      - FutureSight
+      - Imprison
+      - MagicRoom
+      - Metronome
+      - NastyPlot
+      - PlayRough
+      - PsychoCut
+      - Psyshock
+      - Round
+      - StoredPower
+      - TriAttack
+      - WonderRoom
 Mesprit:
   Mesprit:
     level:
       1: [Confusion, Rest]
-      6: [Imprison]
-      16: [Protect]
-      21: [Swift]
-      31: [LuckyChant]
-      36: [FutureSight]
-      46: [Charm, MysticalPower]
-      51: [Extrasensory]
-      61: [Copycat]
-      66: [NaturalGift]
-      76: [HealingWish]
+      7: [Swift]
+      14: [Protect]
+      21: [Psybeam]
+      28: [Imprison]
+      35: [Extrasensory]
+      42: [Charm]
+      46: [MysticalPower]
+      49: [Psychic]
+      56: [Flatter]
+      63: [FutureSight]
+      70: [Copycat]
+      77: [HealingWish]
     teachable:
       - CalmMind
       - ChargeBeam
@@ -255,20 +387,41 @@ Mesprit:
       - IceBeam
       - LaserFocus
       - ExpandingForce
+      - Acrobatics
+      - AllySwitch
+      - BatonPass
+      - Charm
+      - DrainPunch
+      - DrainingKiss
+      - Encore
+      - FutureSight
+      - Imprison
+      - MagicRoom
+      - Metronome
+      - NastyPlot
+      - PlayRough
+      - PsychoCut
+      - Psyshock
+      - Round
+      - StoredPower
+      - TriAttack
+      - WonderRoom
 Azelf:
   Azelf:
     level:
       1: [Confusion, Rest]
-      6: [Imprison]
-      16: [Detect]
-      21: [Swift]
-      31: [Uproar]
-      36: [FutureSight]
-      46: [NastyPlot, MysticalPower]
-      51: [Extrasensory]
-      61: [LastResort]
-      66: [NaturalGift]
-      76: [Explosion]
+      7: [Swift]
+      14: [Detect]
+      21: [Psybeam]
+      28: [Imprison]
+      35: [Extrasensory]
+      42: [NastyPlot]
+      46: [MysticalPower]
+      49: [Psychic]
+      56: [Uproar]
+      63: [FutureSight]
+      70: [LastResort]
+      77: [Explosion]
     teachable:
       - CalmMind
       - ChargeBeam
@@ -337,6 +490,26 @@ Azelf:
       - Uproar
       - LaserFocus
       - ExpandingForce
+      - Acrobatics
+      - AllySwitch
+      - Assurance
+      - BatonPass
+      - DrainPunch
+      - DrainingKiss
+      - Encore
+      - FutureSight
+      - Imprison
+      - MagicRoom
+      - Metronome
+      - NastyPlot
+      - PlayRough
+      - PsychoCut
+      - Psyshock
+      - Round
+      - SelfDestruct
+      - StoredPower
+      - TriAttack
+      - WonderRoom
 Dialga:
   family-teachable:
     - AerialAce
@@ -404,21 +577,31 @@ Dialga:
     - StompingTantrum
   Dialga:
     level:
-      1: [DragonBreath, ScaryFace]
-      10: [MetalClaw]
-      20: [AncientPower]
-      30: [DragonClaw]
-      40: [RoarOfTime]
-      50: [HealBlock]
-      60: [EarthPower]
-      70: [Slash]
-      80: [FlashCannon]
-      90: [AuraSphere]
+      1: [ScaryFace, MetalClaw]
+      8: [DragonBreath]
+      16: [AncientPower]
+      24: [Slash]
+      32: [FlashCannon]
+      40: [DragonClaw]
+      48: [AuraSphere]
+      56: [PowerGem]
+      64: [MetalBurst]
+      72: [EarthPower]
+      80: [IronTail]
+      88: [RoarOfTime]
     teachable:
       - BodyPress
       - BreakingSwipe
       - SteelBeam
       - ScaleShot
+      - AuraSphere
+      - BodySlam
+      - Bulldoze
+      - HeavySlam
+      - HyperVoice
+      - PowerGem
+      - Round
+      - ScaryFace
   DialgaOrigin:
     level:
       1: [DragonBreath, ScaryFace]
@@ -501,21 +684,33 @@ Palkia:
     - Liquidation
   Palkia:
     level:
-      1: [DragonBreath, ScaryFace]
-      10: [WaterPulse]
-      20: [AncientPower]
-      30: [DragonClaw]
-      40: [SpacialRend]
-      50: [HealBlock]
-      60: [EarthPower]
-      70: [Slash]
-      80: [AquaTail]
-      90: [AuraSphere]
+      1: [ScaryFace, WaterPulse]
+      8: [DragonBreath]
+      16: [AncientPower]
+      24: [Slash]
+      32: [AquaRing]
+      40: [DragonClaw]
+      48: [AuraSphere]
+      56: [PowerGem]
+      64: [AquaTail]
+      72: [EarthPower]
+      80: [SpacialRend]
+      88: [HydroPump]
     teachable:
       - BodyPress
       - BreakingSwipe
       - ScaleShot
       - DualWingbeat
+      - AuraSphere
+      - BodySlam
+      - Bulldoze
+      - HeavySlam
+      - HydroPump
+      - HyperVoice
+      - PowerGem
+      - Round
+      - ScaryFace
+      - Whirlpool
   PalkiaOrigin:
     level:
       1: [DragonBreath, ScaryFace]
@@ -531,19 +726,19 @@ Palkia:
 Heatran:
   Heatran:
     level:
-      1: [AncientPower]
-      9: [Leer]
-      17: [FireFang]
-      25: [MetalSound]
-      33: [Crunch]
-      41: [ScaryFace]
-      49: [LavaPlume]
-      57: [FireSpin]
-      65: [IronHead]
-      73: [EarthPower]
-      81: [HeatWave]
-      88: [StoneEdge]
-      96: [MagmaStorm]
+      1: [Leer, FireSpin]
+      6: [MetalClaw]
+      12: [AncientPower]
+      18: [FireFang]
+      24: [ScaryFace]
+      30: [IronHead]
+      36: [Crunch]
+      42: [LavaPlume]
+      48: [MetalSound]
+      54: [EarthPower]
+      60: [HeatWave]
+      66: [StoneEdge]
+      72: [MagmaStorm]
     teachable:
       - AncientPower
       - Attract
@@ -601,22 +796,33 @@ Heatran:
       - SteelRoller
       - BurningJealousy
       - ScorchingSands
+      - BodySlam
+      - Bulldoze
+      - Crunch
+      - FireFang
+      - FireSpin
+      - HeatCrash
+      - HeavySlam
+      - Round
+      - ScaryFace
+      - SelfDestruct
 Regigigas:
   Regigigas:
     level:
-      1:
-        - ConfuseRay
-        - DizzyPunch
-        - FirePunch
-        - Foresight
-        - IcePunch
-        - KnockOff
-        - ThunderPunch
-      25: [Revenge]
-      50: [ZenHeadbutt]
-      75: [CrushGrip]
-      100: [GigaImpact]
+      1: [Pound, ConfuseRay]
+      6: [Payback]
+      12: [Revenge]
+      18: [Stomp]
+      24: [Protect]
+      30: [KnockOff]
+      36: [MegaPunch]
       42: [BodyPress]
+      48: [WideGuard]
+      54: [ZenHeadbutt]
+      60: [HeavySlam]
+      66: [HammerArm]
+      72: [GigaImpact]
+      78: [CrushGrip]
     teachable:
       - AerialAce
       - AncientPower
@@ -671,3 +877,17 @@ Regigigas:
       - StompingTantrum
       - BodyPress
       - TerrainPulse
+      - BodySlam
+      - Bulldoze
+      - DarkestLariat
+      - HeatCrash
+      - HeavySlam
+      - HighHorsepower
+      - MegaKick
+      - MegaPunch
+      - Payback
+      - Protect
+      - Rest
+      - Retaliate
+      - Revenge
+      - Round

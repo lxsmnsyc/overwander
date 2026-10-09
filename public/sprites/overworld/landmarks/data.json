@@ -1,13 +1,13 @@
 {
   "compact": true,
-  "width": 144,
-  "height": 86,
+  "width": 128,
+  "height": 115,
   "stands": 24,
   "images": [
     {
       "name": "alpha.png",
-      "x": 103,
-      "y": 0,
+      "x": 0,
+      "y": 86,
       "width": 40,
       "height": 28,
       "sourceWidth": 44,
@@ -23,8 +23,8 @@
     },
     {
       "name": "board.png",
-      "x": 103,
-      "y": 55,
+      "x": 41,
+      "y": 86,
       "width": 34,
       "height": 24,
       "sourceWidth": 44,
@@ -40,8 +40,8 @@
     },
     {
       "name": "cache-taken.png",
-      "x": 87,
-      "y": 33,
+      "x": 103,
+      "y": 70,
       "width": 15,
       "height": 14,
       "sourceWidth": 44,
@@ -57,8 +57,8 @@
     },
     {
       "name": "cache.png",
-      "x": 87,
-      "y": 48,
+      "x": 76,
+      "y": 86,
       "width": 15,
       "height": 12,
       "sourceWidth": 44,
@@ -159,8 +159,8 @@
     },
     {
       "name": "nest.png",
-      "x": 120,
-      "y": 29,
+      "x": 87,
+      "y": 70,
       "width": 15,
       "height": 15,
       "sourceWidth": 44,
@@ -175,9 +175,26 @@
       ]
     },
     {
-      "name": "portal.png",
+      "name": "noble.png",
       "x": 87,
       "y": 0,
+      "width": 40,
+      "height": 36,
+      "sourceWidth": 44,
+      "sourceHeight": 44,
+      "trim": [
+        2,
+        8
+      ],
+      "base": [
+        22,
+        32
+      ]
+    },
+    {
+      "name": "portal.png",
+      "x": 87,
+      "y": 37,
       "width": 15,
       "height": 32,
       "sourceWidth": 44,
@@ -194,7 +211,7 @@
     {
       "name": "seat.png",
       "x": 103,
-      "y": 29,
+      "y": 37,
       "width": 16,
       "height": 25,
       "sourceWidth": 44,

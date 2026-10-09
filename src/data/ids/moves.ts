@@ -1130,4 +1130,14 @@ export const enum Moves {
   GMaxDepletion = 862,
   GMaxOneBlow = 863,
   GMaxRapidFlow = 864,
+
+  // The Frenzy bursts: what a frenzied Noble unleashes on the whole
+  // party between its staggers. Hisui's five have one each, and every
+  // other Noble throws the plain burst in its own type
+  FrenzyStoneAxe = 865,
+  FrenzyPetalStorm = 866,
+  FrenzyWildfire = 867,
+  FrenzyBlast = 868,
+  FrenzyIceberg = 869,
+  FrenzyBurst = 870,
 }

@@ -85,6 +85,7 @@ const ITEM_FAMILIES = [
   'ability-items',
   'purifying-gem',
   'max-mushrooms',
+  'balms',
   'sacred-ash',
   'soothe-bell',
   'escape-rope',

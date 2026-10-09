@@ -856,9 +856,12 @@ export default function GameProvider(props: ParentProps): JSX.Element {
             ...NOTHING,
             gold: collected.gold,
             items: collected.items,
-            waiting: collected.encounter.species,
+            waiting: collected.encounter?.species ?? null,
           });
-          setEncounter(collected.encounter);
+          // A calmed Noble leaves items and gold, and nobody waiting
+          if (collected.encounter != null) {
+            setEncounter(collected.encounter);
+          }
         })
         .catch(() => {
           // Nothing is lost by a claim that failed: the raid keeps

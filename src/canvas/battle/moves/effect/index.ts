@@ -28,6 +28,7 @@ import galar from './galar';
 import maxMoves from './max-moves';
 import gMaxMoves from './g-max-moves';
 import gMaxGalar from './g-max-galar';
+import hisui from './hisui';
 
 import {
   EXACT_SPANS,
@@ -123,6 +124,7 @@ const PAINTERS: Record<EffectShape, ShapePainter> = {
   ...maxMoves,
   ...gMaxMoves,
   ...gMaxGalar,
+  ...hisui,
 };
 
 /**

@@ -1,0 +1,20 @@
+# Each line opens on who unleashes it, since a burst belongs to a Noble,
+# then says what it leaves behind
+FrenzyStoneAxe:
+  name: Frenzied Stone Axe
+  description: Frenzied Kleavor's burst, striking every foe after a windup. Leaves splinters of rock on each side it hits, as Stealth Rock does.
+FrenzyPetalStorm:
+  name: Frenzied Petal Storm
+  description: Frenzied Hisuian Lilligant's burst, striking every foe after a windup. Drops the Speed of each one hit a stage.
+FrenzyWildfire:
+  name: Frenzied Wildfire
+  description: Frenzied Hisuian Arcanine's burst, striking every foe after a windup. Sets the ground of each side it hits alight for 8 seconds, and burns 30% of the time.
+FrenzyBlast:
+  name: Frenzied Blast
+  description: Frenzied Hisuian Electrode's burst, a charge blown at every foe after a windup. It hits harder than any other burst, and the Noble does not faint from it.
+FrenzyIceberg:
+  name: Frenzied Iceberg
+  description: Frenzied Hisuian Avalugg's burst, an iceberg dropped on every foe after a windup. Makes each one hit flinch 30% of the time.
+FrenzyBurst:
+  name: Frenzy Burst
+  description: A frenzied Noble's burst in its own first type, striking every foe after a windup. What it leaves behind is the type's own.

@@ -1,6 +1,7 @@
 # The special abilities: marks of what a pokemon is (a raid boss, a
-# shadow, a Totem and its ally, an Alpha, a purified shadow) rather than abilities
-# of any generation. None of them is rolled or granted at birth.
+# shadow, a Totem and its ally, an Alpha, a Noble, a purified shadow)
+# rather than abilities of any generation. None of them is rolled or
+# granted at birth.
 
 Boss:
   name: Boss
@@ -17,6 +18,9 @@ TotemAlly:
 Alpha:
   name: Alpha
   description: 80x its own HP and 1.5x every other stat in place of a boss's. At 3/4, 1/2 and 1/4 HP it brings its side back to 6 of its kind, healing any still standing, and they flee when it falls.
+Noble:
+  name: Noble
+  description: Cannot faint. Its HP is its Frenzy, and once that is drained it is calmed and leaves. At 3/4, 1/2 and 1/4 it staggers for 4 seconds, unable to act and taking 1.5x from attacks, and every 10 seconds in between it bursts on every foe after a 1.8 second windup.
 Purified:
   name: Purified
   description: The mark of a shadow put right, worth nothing in a fight. As a buddy, 1.5x the catch chance on a wild shadow.

@@ -68,6 +68,12 @@ export const enum RaidKind {
    * down
    */
   Alpha = 5,
+  /**
+   * A Noble raid: a frenzied lord of the tile's biome, one of Hisui's
+   * five or a final stage by rule, calmed rather than beaten. Nothing
+   * is caught: the calmers are paid in items and gold
+   */
+  Noble = 6,
 }
 
 /**
@@ -212,17 +218,21 @@ export function getRaidTitle(raid: RaidRecord | RaidView): string {
   if (raid.kind === RaidKind.Alpha) {
     return getAlphaRaidTitle(raid.species);
   }
+  if (raid.kind === RaidKind.Noble) {
+    return getNobleRaidTitle(raid.species);
+  }
   return getLairTitle(raid.lair, raid.biome, raid.kind === RaidKind.Shadow);
 }
 
-/** Whether a landmark stages a raid: either lair, a Totem, a Max Raid or an Alpha */
+/** Whether a landmark stages a raid: either lair, a Totem, a Max Raid, an Alpha or a Noble */
 export function isRaidLandmark(landmark: Landmark): boolean {
   return (
     landmark === Landmark.LegendaryLair ||
     landmark === Landmark.ShadowLair ||
     landmark === Landmark.Totem ||
     landmark === Landmark.MaxRaid ||
-    landmark === Landmark.AlphaRaid
+    landmark === Landmark.AlphaRaid ||
+    landmark === Landmark.NobleArena
   );
 }
 
@@ -243,6 +253,9 @@ export function getRaidKindAt(snapshot: ChunkSnapshot, cell: number): RaidKind |
   if (landmark === Landmark.AlphaRaid) {
     return RaidKind.Alpha;
   }
+  if (landmark === Landmark.NobleArena) {
+    return RaidKind.Noble;
+  }
   if (landmark !== Landmark.LegendaryLair && landmark !== Landmark.ShadowLair) {
     return null;
   }
@@ -262,6 +275,11 @@ export function getMaxRaidTitle(species: Species): string {
 /** What an Alpha raid's lobby is called, after the Alpha in it */
 export function getAlphaRaidTitle(species: Species): string {
   return `Alpha Raid ${getSpeciesData(species).name}`;
+}
+
+/** What a Noble raid's lobby is called, after the Noble in it */
+export function getNobleRaidTitle(species: Species): string {
+  return `Noble ${getSpeciesData(species).name}`;
 }
 
 /**
@@ -304,6 +322,7 @@ const RAID_ID_TAGS: Record<RaidKind, string> = {
   [RaidKind.Totem]: 'totem',
   [RaidKind.Max]: 'max',
   [RaidKind.Alpha]: 'alpha',
+  [RaidKind.Noble]: 'noble',
 };
 
 /**

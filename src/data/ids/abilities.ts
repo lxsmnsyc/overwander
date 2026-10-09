@@ -593,6 +593,12 @@ const enum Abilities {
    */
   Alpha = 100006,
   /**
+   * What makes a raid boss a frenzied Noble: it is calmed rather than
+   * felled, staggers as its Frenzy drains and bursts on the whole party
+   * in between
+   */
+  Noble = 100007,
+  /**
    * Signature (one per family, granted rather than rolled at birth).
    * They sit outside the pools walk, so a line's four ordinary
    * abilities stay four

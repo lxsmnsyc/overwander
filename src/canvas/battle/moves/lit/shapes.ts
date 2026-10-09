@@ -143,6 +143,11 @@ export const JOLTS: Partial<Record<EffectShape, number>> = {
   GMaxSteelsurge: 2,
   GMaxOneBlow: 4,
   GMaxRapidFlow: 2.5,
+  Splinters: 3,
+  PetalStorm: 1.5,
+  Wildfire: 2,
+  ChargedBlast: 3.5,
+  Iceberg: 3.5,
 };
 
 /** Where the effect is happening: the first body it landed on. */

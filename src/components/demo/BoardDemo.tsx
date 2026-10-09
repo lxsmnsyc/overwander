@@ -351,7 +351,7 @@ function scenery(world: World, originX: number, originY: number): Map<number, De
 /**
  * The landmarks over the window, carried out of their chunks the way
  * the scenery is, how each Max Raid's pillar burns at this moment, and
- * the fight aura over each Alpha at home
+ * the aura over each Alpha and Noble at home
  */
 function landmarksOver(
   world: World,
@@ -375,6 +375,7 @@ function landmarksOver(
       const snapshot = new ChunkSnapshot(chunk, now);
       const raids = snapshot.getMaxRaids();
       const alphas = snapshot.getAlphaRaids();
+      const nobles = snapshot.getNobleRaids();
 
       for (const [cell, what] of chunk.getLandmarkCells()) {
         const bx = (cell % CHUNK_CELLS) + shiftX;
@@ -386,6 +387,9 @@ function landmarksOver(
         landmarks.set(by * BOARD_CELLS + bx, what);
         if (alphas.has(cell)) {
           auras.set(by * BOARD_CELLS + bx, CellAura.Fight);
+        }
+        if (nobles.has(cell)) {
+          auras.set(by * BOARD_CELLS + bx, CellAura.Legend);
         }
 
         const roll = raids.get(cell);
@@ -408,6 +412,7 @@ const enum Site {
   Gigantamax = 1,
   Totem = 2,
   Alpha = 3,
+  Noble = 4,
 }
 
 const SITE_OPTIONS: { value: Site; label: string }[] = [
@@ -415,6 +420,7 @@ const SITE_OPTIONS: { value: Site; label: string }[] = [
   { value: Site.Gigantamax, label: 'Gigantamax Max Raid' },
   { value: Site.Totem, label: 'Totem' },
   { value: Site.Alpha, label: 'Alpha' },
+  { value: Site.Noble, label: 'Noble Arena' },
 ];
 
 /** The landmark each site stands on; a Gigantamax is a Max Raid's */
@@ -423,6 +429,7 @@ const SITE_LANDMARKS: Record<Site, Landmark> = {
   [Site.Gigantamax]: Landmark.MaxRaid,
   [Site.Totem]: Landmark.Totem,
   [Site.Alpha]: Landmark.AlphaRaid,
+  [Site.Noble]: Landmark.NobleArena,
 };
 
 /** How far out, in chunks, the search for a raid site reaches */

@@ -10,6 +10,8 @@ import {
   MAX_RAID_REWARD_LEVEL,
   MYTHICAL_RAID_GOLD,
   MYTHICAL_RAID_REWARD_LEVEL,
+  NOBLE_RAID_GOLD,
+  NOBLE_RAID_REWARD_LEVEL,
   SHADOW_RAID_GOLD,
   SHADOW_RAID_REWARD_LEVEL,
   TOTEM_RAID_GOLD,
@@ -27,6 +29,7 @@ export const RAID_GOLD: Record<RaidKind, number> = {
   [RaidKind.Totem]: TOTEM_RAID_GOLD,
   [RaidKind.Max]: MAX_RAID_GOLD,
   [RaidKind.Alpha]: ALPHA_RAID_GOLD,
+  [RaidKind.Noble]: NOBLE_RAID_GOLD,
 };
 
 export const RAID_REWARD_LEVELS: Record<RaidKind, number> = {
@@ -36,6 +39,7 @@ export const RAID_REWARD_LEVELS: Record<RaidKind, number> = {
   [RaidKind.Totem]: TOTEM_RAID_REWARD_LEVEL,
   [RaidKind.Max]: MAX_RAID_REWARD_LEVEL,
   [RaidKind.Alpha]: ALPHA_RAID_REWARD_LEVEL,
+  [RaidKind.Noble]: NOBLE_RAID_REWARD_LEVEL,
 };
 
 /** A raid prize sparkles 8x as often as a wild meeting, on top of every other boost */
@@ -48,4 +52,5 @@ export const RAID_ENCOUNTER_TYPES: Record<RaidKind, EncounterType> = {
   [RaidKind.Totem]: EncounterType.TotemRaid,
   [RaidKind.Max]: EncounterType.MaxRaid,
   [RaidKind.Alpha]: EncounterType.AlphaRaid,
+  [RaidKind.Noble]: EncounterType.NobleRaid,
 };

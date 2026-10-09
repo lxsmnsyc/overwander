@@ -111,10 +111,10 @@ describe('a beaten Alpha raid', () => {
 
     expect(reward?.gold).toBe(ALPHA_RAID_GOLD);
     expect(reward?.items).toEqual([]);
-    expect(reward?.encounter.type).toBe(EncounterType.AlphaRaid);
-    expect(reward?.encounter.species).toBe(found.roll.species);
+    expect(reward?.encounter?.type).toBe(EncounterType.AlphaRaid);
+    expect(reward?.encounter?.species).toBe(found.roll.species);
 
-    const encounter = reward!.encounter;
+    const encounter = reward!.encounter!;
     // The three the prize's own values pick, the same way the claim did
     const rng = new AleaRNG(`${encounter.individualValue}:${encounter.traitValue}:alpha`);
     const perfect = pickAlphaPerfectStats(() => rng.random());

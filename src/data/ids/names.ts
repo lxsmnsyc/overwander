@@ -2137,6 +2137,12 @@ export const MOVE_IDS = {
   GMaxDepletion: Moves.GMaxDepletion,
   GMaxOneBlow: Moves.GMaxOneBlow,
   GMaxRapidFlow: Moves.GMaxRapidFlow,
+  FrenzyStoneAxe: Moves.FrenzyStoneAxe,
+  FrenzyPetalStorm: Moves.FrenzyPetalStorm,
+  FrenzyWildfire: Moves.FrenzyWildfire,
+  FrenzyBlast: Moves.FrenzyBlast,
+  FrenzyIceberg: Moves.FrenzyIceberg,
+  FrenzyBurst: Moves.FrenzyBurst,
 } as const satisfies Record<string, Moves>;
 
 export const MOVE_CATEGORY_IDS = {
@@ -2542,6 +2548,7 @@ export const ABILITY_IDS = {
   Totem: Abilities.Totem,
   TotemAlly: Abilities.TotemAlly,
   Alpha: Abilities.Alpha,
+  Noble: Abilities.Noble,
   VerdantField: Abilities.VerdantField,
   EmberField: Abilities.EmberField,
   DelugeField: Abilities.DelugeField,
@@ -3639,6 +3646,7 @@ export const ITEM_IDS = {
   FossilizedDrake: Items.FossilizedDrake,
   FossilizedDino: Items.FossilizedDino,
   DynamaxBand: Items.DynamaxBand,
+  Balm: Items.Balm,
 } as const satisfies Record<string, Items>;
 
 export const ITEM_TYPE_IDS = {
@@ -4287,6 +4295,7 @@ export const STATUS_IDS = {
   Telekinetic: Statuses.Telekinetic,
   SkyDropped: Statuses.SkyDropped,
   PowerShifted: Statuses.PowerShifted,
+  Staggered: Statuses.Staggered,
 } as const satisfies Record<string, Statuses>;
 
 export const TEAM_STATUS_IDS = {
@@ -5026,6 +5035,7 @@ export const LANDMARK_IDS = {
   MaxRaid: Landmark.MaxRaid,
   Totem: Landmark.Totem,
   AlphaRaid: Landmark.AlphaRaid,
+  NobleArena: Landmark.NobleArena,
 } as const satisfies Record<string, Landmark>;
 
 export const PHENOMENON_IDS = {

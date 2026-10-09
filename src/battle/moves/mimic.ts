@@ -1,6 +1,7 @@
 import { MAX_MOVES } from '../../data/moves/max-moves';
 import { Z_MOVES } from '../../data/moves/z-moves';
 import { G_MAX_MOVES } from '../../data/moves/gmax-moves';
+import { FRENZY_MOVES } from '../../data/moves/frenzy-moves';
 import { AttackPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
 import type Battle from '../core';
@@ -24,6 +25,7 @@ const BANNED_MOVES = new Set<Moves>([
   ...Z_MOVES,
   ...MAX_MOVES,
   ...G_MAX_MOVES,
+  ...FRENZY_MOVES,
 ]);
 
 export default function setupMimic(battle: Battle): void {

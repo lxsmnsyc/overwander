@@ -24,6 +24,7 @@ import BATTLE_TIMEOUT from '../auth/battle-lock';
 import { canCallHappyHour, payDayCeiling } from '../battle/moves/pay-day';
 import { Z_MOVES } from '../data/moves/z-moves';
 import { G_MAX_MOVES, getGMaxMove } from '../data/moves/gmax-moves';
+import { FRENZY_MOVES } from '../data/moves/frenzy-moves';
 import { moveGoldIn } from './profile';
 
 /**
@@ -42,7 +43,8 @@ function settleSketch(record: CaughtPokemon, sketched: Moves | undefined): Moves
     record.moves.includes(sketched) ||
     !new Set(getRegisteredMoves()).has(sketched) ||
     Z_MOVES.has(sketched) ||
-    G_MAX_MOVES.has(sketched)
+    G_MAX_MOVES.has(sketched) ||
+    FRENZY_MOVES.has(sketched)
   ) {
     return undefined;
   }

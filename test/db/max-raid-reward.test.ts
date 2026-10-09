@@ -124,7 +124,7 @@ describe('a beaten Max Raid', () => {
     const band = rng.random() < MAX_RAID_BAND_CHANCE;
 
     expect(first?.gold).toBe(MAX_RAID_GOLD);
-    expect(first?.encounter.type).toBe(EncounterType.MaxRaid);
+    expect(first?.encounter?.type).toBe(EncounterType.MaxRaid);
     expect(first?.items).toEqual([
       { item: Items.MaxMushrooms, amount: mushrooms },
       ...(band ? [{ item: Items.DynamaxBand, amount: 1 }] : []),
@@ -155,7 +155,7 @@ describe('a beaten Max Raid', () => {
 
     const caught = await writeCaughtRecord(
       fighter.uid,
-      giant!.encounter,
+      giant!.encounter!,
       Balls.PokeBall,
       Acquisition.Caught,
       NOW,
@@ -164,7 +164,7 @@ describe('a beaten Max Raid', () => {
     );
     const other = await writeCaughtRecord(
       fighter.uid,
-      plain!.encounter,
+      plain!.encounter!,
       Balls.PokeBall,
       Acquisition.Caught,
       NOW,

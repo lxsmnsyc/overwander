@@ -468,6 +468,16 @@ describe('the landmarks that ship', () => {
     expect(alpha.width).toBeLessThanOrEqual(alpha.sourceWidth);
   });
 
+  it('draws the Noble Arena as a ring of its own, standing on a tile', () => {
+    expect(landmarkPicture(Landmark.NobleArena)).toBe('noble');
+
+    const [noble] = packed(LANDMARK_SHEET).filter((one) => one.name === 'noble');
+
+    // A raised ring with a gate at the back, no wider than its cell
+    expect(noble.width).toBeGreaterThan(noble.height);
+    expect(noble.width).toBeLessThanOrEqual(noble.sourceWidth);
+  });
+
   it('opens a cache this player has already dug up', () => {
     expect(landmarkPicture(Landmark.ItemCache)).toBe('cache');
     expect(landmarkPicture(Landmark.ItemCache, true)).toBe('cache-taken');

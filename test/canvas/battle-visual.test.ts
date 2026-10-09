@@ -19,10 +19,12 @@ import attackMarkVisual from '../../src/canvas/battle/attack';
 import { LIT } from '../../src/canvas/battle/moves/lit';
 import type { Stage } from '../../src/canvas/battle/stage';
 import { Types } from '../../src/data/constants/types';
+import { getMoveData } from '../../src/data/moves';
 import Abilities from '../../src/data/ids/abilities';
 import { Items } from '../../src/data/ids/items';
 import { Moves } from '../../src/data/ids/moves';
 import { G_MAX_MOVES } from '../../src/data/moves/gmax-moves';
+import { CANON_BURSTS, FRENZY_MOVES, getBurstStandIn } from '../../src/data/moves/frenzy-moves';
 import { MAX_MOVES } from '../../src/data/moves/max-moves';
 import { SPANS } from '../../src/canvas/battle/moves/effect/shapes';
 import { WISH_LANDS } from '../../src/canvas/battle/moves/effect/care';
@@ -477,6 +479,11 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['GMaxDepletion', Moves.GMaxDepletion],
   ['GMaxOneBlow', Moves.GMaxOneBlow],
   ['GMaxRapidFlow', Moves.GMaxRapidFlow],
+  ['Splinters', Moves.FrenzyStoneAxe],
+  ['PetalStorm', Moves.FrenzyPetalStorm],
+  ['Wildfire', Moves.FrenzyWildfire],
+  ['ChargedBlast', Moves.FrenzyBlast],
+  ['Iceberg', Moves.FrenzyIceberg],
 ];
 
 /**
@@ -819,6 +826,21 @@ describe('a painted move', () => {
     // Every one of them named above, and no two sharing a picture
     expect(owned.length).toBe(G_MAX_MOVES.size);
     expect(shapes.size).toBe(G_MAX_MOVES.size);
+  });
+
+  it("draws each of Hisui's Nobles' bursts as a shape of its own, and the plain one as its type's strongest move", () => {
+    const shapes = new Set<string>();
+
+    for (const move of CANON_BURSTS.values()) {
+      shapes.add(effectShapeFor(move));
+    }
+    expect(shapes.size).toBe(CANON_BURSTS.size);
+
+    // The plain burst is never named: it borrows by type at the field
+    expect(getBurstStandIn(Types.Fire)).not.toBe(Moves.FrenzyBurst);
+    expect(FRENZY_MOVES.has(getBurstStandIn(Types.Ice))).toBe(false);
+    expect(getMoveData(getBurstStandIn(Types.Water)).type).toBe(Types.Water);
+    expect(moveEffectVisual(getBurstStandIn(Types.Dragon))).not.toBeNull();
   });
 
   it('draws a U-turn as the blow and then as the leaving', () => {

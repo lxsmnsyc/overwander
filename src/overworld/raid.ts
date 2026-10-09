@@ -32,6 +32,7 @@ import { MoveCategories, Moves } from '../data/ids/moves';
 import { RECHARGE_MOVES } from '../data/moves/recharge';
 import { Z_MOVES } from '../data/moves/z-moves';
 import { G_MAX_MOVES, canGigantamax } from '../data/moves/gmax-moves';
+import { FRENZY_MOVES } from '../data/moves/frenzy-moves';
 import { Species } from '../data/ids/species';
 import { getMoveData } from '../data/moves';
 import { getLevelUpMoves, getSpeciesData } from '../data/species';
@@ -71,6 +72,8 @@ export const TOTEM_RAID_REWARD_LEVEL = 40;
 export const MAX_RAID_REWARD_LEVEL = 40;
 /** And an Alpha's, whatever stage it is: its three perfect stats are the prize */
 export const ALPHA_RAID_REWARD_LEVEL = 40;
+/** A Noble is calmed, never caught, so its level is only what a record would say */
+export const NOBLE_RAID_REWARD_LEVEL = 40;
 
 /**
  * What clearing one pays, on top of the pokemon.
@@ -93,6 +96,8 @@ export const LEGENDARY_RAID_GOLD = 80000;
 export const TOTEM_RAID_GOLD = 50000;
 export const MAX_RAID_GOLD = 50000;
 export const ALPHA_RAID_GOLD = 50000;
+/** A Noble pays a Totem's purse and a tenth more, since nobody catches it */
+export const NOBLE_RAID_GOLD = 55000;
 export const MYTHICAL_RAID_GOLD = 200000;
 
 /**
@@ -174,6 +179,7 @@ const BOSS_UNFIT_ATTACKS = new Set<Moves>([
   ...OHKO_MOVES,
   ...Z_MOVES,
   ...G_MAX_MOVES,
+  ...FRENZY_MOVES,
   Moves.FocusPunch,
   Moves.DreamEater,
   Moves.Snore,
@@ -326,6 +332,7 @@ export function createRaidBossSnapshot(
   totem = false,
   max = false,
   alpha = false,
+  noble = false,
 ): CatchSnapshot {
   // The lobby shares the raid's trait value, so every player fights a
   // boss of exactly the same build. A Totem and an Alpha stand at
@@ -347,6 +354,9 @@ export function createRaidBossSnapshot(
   }
   if (alpha) {
     marks.push(Abilities.Alpha);
+  }
+  if (noble) {
+    marks.push(Abilities.Noble);
   }
 
   return {
@@ -502,8 +512,9 @@ export function createRaidBossTeam(
   totem: boolean,
   max = false,
   alpha = false,
+  noble = false,
 ): CatchSnapshot[] {
-  const boss = createRaidBossSnapshot(species, traitValue, shadow, totem, max, alpha);
+  const boss = createRaidBossSnapshot(species, traitValue, shadow, totem, max, alpha, noble);
 
   if (alpha) {
     return [boss, ...createAlphaCopySnapshots(species, traitValue)];

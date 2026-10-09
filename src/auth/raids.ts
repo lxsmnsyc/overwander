@@ -66,6 +66,7 @@ export {
   deriveRaidReward,
   getAlphaRaidTitle,
   getMaxRaidTitle,
+  getNobleRaidTitle,
   getRaidKindAt,
   getRaidTitle,
   getTotemTitle,

@@ -8,6 +8,7 @@ const MARKS = new Set<Abilities>([
   Abilities.Boss,
   Abilities.TotemAlly,
   Abilities.Alpha,
+  Abilities.Noble,
 ]);
 
 /**

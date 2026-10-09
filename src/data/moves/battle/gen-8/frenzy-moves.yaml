@@ -1,0 +1,57 @@
+# The Frenzy bursts, which nobody learns: a frenzied Noble telegraphs one
+# on a cadence and unleashes it on every foe at once. They never miss, so
+# the windup is the dodge: a Protect, a Detect, a Max Guard or a Wide Guard
+# raised in time turns one away. What each leaves behind is in
+# `src/battle/abilities/noble.ts`
+
+FrenzyStoneAxe:
+  type: Rock
+  category: Physical
+  power: 100
+  pp: 1
+  target: None
+  affects: [Unit, Enemy]
+  flags: [Slicing]
+
+FrenzyPetalStorm:
+  type: Grass
+  category: Physical
+  power: 100
+  pp: 1
+  target: None
+  affects: [Unit, Enemy]
+  flags: [Wind]
+
+FrenzyWildfire:
+  type: Fire
+  category: Physical
+  power: 90
+  pp: 1
+  target: None
+  affects: [Unit, Enemy]
+
+FrenzyBlast:
+  type: Electric
+  category: Special
+  power: 130
+  pp: 1
+  target: None
+  affects: [Unit, Enemy]
+
+FrenzyIceberg:
+  type: Ice
+  category: Physical
+  power: 110
+  pp: 1
+  target: None
+  affects: [Unit, Enemy]
+
+# Thrown in the Noble's own first type, from whichever of its Attack and
+# Special Attack is higher
+FrenzyBurst:
+  type: Normal
+  category: Physical
+  power: 90
+  pp: 1
+  target: None
+  affects: [Unit, Enemy]

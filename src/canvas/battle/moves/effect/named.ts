@@ -911,4 +911,12 @@ export const NAMED: Partial<Record<Moves, EffectShape>> = {
   [Moves.MaxQuake]: 'MaxQuake',
   [Moves.MaxAirstream]: 'MaxAirstream',
   [Moves.MaxGuard]: 'MaxGuard',
+
+  // The Frenzy bursts of Hisui's five Nobles. The plain burst is drawn
+  // as its type's strongest move instead: see `getBurstStandIn`
+  [Moves.FrenzyStoneAxe]: 'Splinters',
+  [Moves.FrenzyPetalStorm]: 'PetalStorm',
+  [Moves.FrenzyWildfire]: 'Wildfire',
+  [Moves.FrenzyBlast]: 'ChargedBlast',
+  [Moves.FrenzyIceberg]: 'Iceberg',
 };

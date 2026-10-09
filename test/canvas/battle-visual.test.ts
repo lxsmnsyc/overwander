@@ -23,6 +23,7 @@ import Abilities from '../../src/data/ids/abilities';
 import { Items } from '../../src/data/ids/items';
 import { Moves } from '../../src/data/ids/moves';
 import { G_MAX_MOVES } from '../../src/data/moves/gmax-moves';
+import { MAX_MOVES } from '../../src/data/moves/max-moves';
 import { SPANS } from '../../src/canvas/battle/moves/effect/shapes';
 import { WISH_LANDS } from '../../src/canvas/battle/moves/effect/care';
 import { STARFALL_DROP } from '../../src/canvas/battle/moves/effect/legends';
@@ -423,6 +424,26 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Moonraze', Moves.MenacingMoonrazeMaelstrom],
   ['Stormshards', Moves.SplinteredStormshards],
   ['Soulblaze', Moves.ClangorousSoulblaze],
+  // The Max Moves
+  ['MaxFlare', Moves.MaxFlare],
+  ['MaxGeyser', Moves.MaxGeyser],
+  ['MaxHailstorm', Moves.MaxHailstorm],
+  ['MaxRockfall', Moves.MaxRockfall],
+  ['MaxLightning', Moves.MaxLightning],
+  ['MaxOvergrowth', Moves.MaxOvergrowth],
+  ['MaxMindstorm', Moves.MaxMindstorm],
+  ['MaxStarfall', Moves.MaxStarfall],
+  ['MaxStrike', Moves.MaxStrike],
+  ['MaxFlutterby', Moves.MaxFlutterby],
+  ['MaxPhantasm', Moves.MaxPhantasm],
+  ['MaxWyrmwind', Moves.MaxWyrmwind],
+  ['MaxDarkness', Moves.MaxDarkness],
+  ['MaxKnuckle', Moves.MaxKnuckle],
+  ['MaxSteelspike', Moves.MaxSteelspike],
+  ['MaxOoze', Moves.MaxOoze],
+  ['MaxQuake', Moves.MaxQuake],
+  ['MaxAirstream', Moves.MaxAirstream],
+  ['MaxGuard', Moves.MaxGuard],
 ];
 
 /**
@@ -689,26 +710,35 @@ describe('a painted move', () => {
     expect(delayShapeFor(Moves.PyroBall, 0)).toBe('Lobbed');
   });
 
-  it('draws each Max Move as the strongest older move of its type', () => {
-    expect(effectShapeFor(Moves.MaxFlare)).toBe(effectShapeFor(Moves.FireBlast));
-    expect(effectShapeFor(Moves.MaxGeyser)).toBe(effectShapeFor(Moves.HydroPump));
-    expect(effectShapeFor(Moves.MaxHailstorm)).toBe(effectShapeFor(Moves.Blizzard));
-    expect(effectShapeFor(Moves.MaxRockfall)).toBe(effectShapeFor(Moves.StoneEdge));
-    expect(effectShapeFor(Moves.MaxLightning)).toBe(effectShapeFor(Moves.Thunder));
-    expect(effectShapeFor(Moves.MaxOvergrowth)).toBe(effectShapeFor(Moves.SolarBeam));
-    expect(effectShapeFor(Moves.MaxMindstorm)).toBe(effectShapeFor(Moves.Psychic));
-    expect(effectShapeFor(Moves.MaxStarfall)).toBe(effectShapeFor(Moves.Moonblast));
-    expect(effectShapeFor(Moves.MaxStrike)).toBe(effectShapeFor(Moves.HyperBeam));
-    expect(effectShapeFor(Moves.MaxFlutterby)).toBe(effectShapeFor(Moves.BugBuzz));
-    expect(effectShapeFor(Moves.MaxPhantasm)).toBe(effectShapeFor(Moves.ShadowBall));
-    expect(effectShapeFor(Moves.MaxWyrmwind)).toBe(effectShapeFor(Moves.DracoMeteor));
-    expect(effectShapeFor(Moves.MaxDarkness)).toBe(effectShapeFor(Moves.DarkPulse));
-    expect(effectShapeFor(Moves.MaxKnuckle)).toBe(effectShapeFor(Moves.CloseCombat));
-    expect(effectShapeFor(Moves.MaxSteelspike)).toBe(effectShapeFor(Moves.FlashCannon));
-    expect(effectShapeFor(Moves.MaxOoze)).toBe(effectShapeFor(Moves.SludgeBomb));
-    expect(effectShapeFor(Moves.MaxQuake)).toBe(effectShapeFor(Moves.Earthquake));
-    expect(effectShapeFor(Moves.MaxAirstream)).toBe(effectShapeFor(Moves.Hurricane));
-    expect(effectShapeFor(Moves.MaxGuard)).toBe(effectShapeFor(Moves.Protect));
+  it('draws each Max Move as a picture of its own', () => {
+    const shapes = new Set<string>();
+
+    for (const move of MAX_MOVES) {
+      shapes.add(effectShapeFor(move));
+    }
+    expect(shapes.size).toBe(MAX_MOVES.size);
+    expect(effectShapeFor(Moves.MaxFlare)).toBe('MaxFlare');
+    expect(effectShapeFor(Moves.MaxGeyser)).toBe('MaxGeyser');
+    expect(effectShapeFor(Moves.MaxHailstorm)).toBe('MaxHailstorm');
+    expect(effectShapeFor(Moves.MaxRockfall)).toBe('MaxRockfall');
+    expect(effectShapeFor(Moves.MaxLightning)).toBe('MaxLightning');
+    expect(effectShapeFor(Moves.MaxOvergrowth)).toBe('MaxOvergrowth');
+    expect(effectShapeFor(Moves.MaxMindstorm)).toBe('MaxMindstorm');
+    expect(effectShapeFor(Moves.MaxStarfall)).toBe('MaxStarfall');
+    expect(effectShapeFor(Moves.MaxStrike)).toBe('MaxStrike');
+    expect(effectShapeFor(Moves.MaxFlutterby)).toBe('MaxFlutterby');
+    expect(effectShapeFor(Moves.MaxPhantasm)).toBe('MaxPhantasm');
+    expect(effectShapeFor(Moves.MaxWyrmwind)).toBe('MaxWyrmwind');
+    expect(effectShapeFor(Moves.MaxDarkness)).toBe('MaxDarkness');
+    expect(effectShapeFor(Moves.MaxKnuckle)).toBe('MaxKnuckle');
+    expect(effectShapeFor(Moves.MaxSteelspike)).toBe('MaxSteelspike');
+    expect(effectShapeFor(Moves.MaxOoze)).toBe('MaxOoze');
+    expect(effectShapeFor(Moves.MaxQuake)).toBe('MaxQuake');
+    expect(effectShapeFor(Moves.MaxAirstream)).toBe('MaxAirstream');
+    expect(effectShapeFor(Moves.MaxGuard)).toBe('MaxGuard');
+    // A barrier, but not Protect's
+    expect(effectShapeFor(Moves.MaxGuard)).not.toBe(effectShapeFor(Moves.Protect));
+    expect(delayShapeFor(Moves.MaxGuard, 0)).toBe('Brace');
   });
 
   it('draws each G-Max Move as an earlier move', () => {

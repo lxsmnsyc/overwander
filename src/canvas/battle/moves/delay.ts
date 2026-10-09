@@ -585,6 +585,25 @@ const ARRIVES_ITSELF = new Set<EffectShape>([
   'Mystic',
   'Wrath',
   'Cage',
+  // The Max Moves come down on the target out of the cloud over it
+  'MaxFlare',
+  'MaxGeyser',
+  'MaxHailstorm',
+  'MaxRockfall',
+  'MaxLightning',
+  'MaxOvergrowth',
+  'MaxMindstorm',
+  'MaxStarfall',
+  'MaxStrike',
+  'MaxFlutterby',
+  'MaxPhantasm',
+  'MaxWyrmwind',
+  'MaxDarkness',
+  'MaxKnuckle',
+  'MaxSteelspike',
+  'MaxOoze',
+  'MaxQuake',
+  'MaxAirstream',
 ]);
 
 const BY_LANDING: Partial<Record<EffectShape, DelayShape>> = {
@@ -639,6 +658,7 @@ const BY_LANDING: Partial<Record<EffectShape, DelayShape>> = {
   Gears: 'Focus',
   Windup: 'Focus',
   Shed: 'Focus',
+  MaxGuard: 'Brace',
 };
 
 /**

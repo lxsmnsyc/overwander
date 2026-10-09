@@ -320,7 +320,26 @@ export type EffectShape =
   | 'Maxcannon'
   | 'Mystic'
   | 'Cage'
-  | 'Whiff';
+  | 'Whiff'
+  | 'MaxFlare'
+  | 'MaxGeyser'
+  | 'MaxHailstorm'
+  | 'MaxRockfall'
+  | 'MaxLightning'
+  | 'MaxOvergrowth'
+  | 'MaxMindstorm'
+  | 'MaxStarfall'
+  | 'MaxStrike'
+  | 'MaxFlutterby'
+  | 'MaxPhantasm'
+  | 'MaxWyrmwind'
+  | 'MaxDarkness'
+  | 'MaxKnuckle'
+  | 'MaxSteelspike'
+  | 'MaxOoze'
+  | 'MaxQuake'
+  | 'MaxAirstream'
+  | 'MaxGuard';
 
 /** How long Wish's star rings where it lands, after the heal */
 export const WISH_TAIL = 400;
@@ -602,6 +621,26 @@ export const SPANS: Record<EffectShape, number> = {
   Mystic: 1100,
   Cage: 1000,
   Whiff: 320,
+  // The Max Moves: the cloud, the blast and what the type leaves behind
+  MaxFlare: 1200,
+  MaxGeyser: 1200,
+  MaxHailstorm: 1200,
+  MaxRockfall: 1200,
+  MaxLightning: 1200,
+  MaxOvergrowth: 1200,
+  MaxMindstorm: 1200,
+  MaxStarfall: 1200,
+  MaxStrike: 1200,
+  MaxFlutterby: 1200,
+  MaxPhantasm: 1200,
+  MaxWyrmwind: 1200,
+  MaxDarkness: 1200,
+  MaxKnuckle: 1200,
+  MaxSteelspike: 1200,
+  MaxOoze: 1200,
+  MaxQuake: 1200,
+  MaxAirstream: 1200,
+  MaxGuard: 1000,
 };
 
 /**

@@ -2,14 +2,8 @@ import type SpeciesSpriteAnimation from '../../../canvas/species-sprite-animatio
 import type { Slot } from './field';
 import { type CastLabels, drawCastLabel } from './cast-label';
 import drawFormMark from './form-mark';
-import {
-  COLORS,
-  DYNAMAX_DRAW_SCALE,
-  DYNAMAX_GLOW,
-  HIT_REACH,
-  NAMED_RADIUS,
-  TOTEM_DRAW_SCALE,
-} from './metrics';
+import { type GiantBody, drawGiantBehind, drawGiantOver, giantLookOf } from './dynamax';
+import { COLORS, DYNAMAX_DRAW_SCALE, HIT_REACH, NAMED_RADIUS, TOTEM_DRAW_SCALE } from './metrics';
 import speciesSize from '../../../canvas/species-size';
 import { type Striking, animationFor } from './motion';
 import type { ProgressData } from '../../../battle/events';
@@ -89,28 +83,8 @@ function corners(x: number, y: number, across: number, down: number): QuadPoint[
   ];
 }
 
-/** How long one pulse of a Dynamax's glow takes, over 2 pi, and how far it reaches */
-const DYNAMAX_PULSE = 260;
+/** How far a Dynamax's soft glow reaches on the 2D context */
 const DYNAMAX_BLUR = 18;
-const DYNAMAX_SPREAD = 1.08;
-
-/** Four corners pushed out from their own middle by a factor */
-function spreadCorners(points: QuadPoint[], factor: number): QuadPoint[] {
-  let cx = 0;
-  let cy = 0;
-
-  for (const point of points) {
-    cx += point.x / points.length;
-    cy += point.y / points.length;
-  }
-
-  const spread: QuadPoint[] = [];
-
-  for (const point of points) {
-    spread.push({ x: cx + (point.x - cx) * factor, y: cy + (point.y - cy) * factor });
-  }
-  return spread;
-}
 
 /**
  * The round patch under a pokemon, stamped from the one baked disc.
@@ -684,21 +658,30 @@ export function drawSlot(
       } else if (!shade(sprite.shadowOf(x, y, placement), onto, alpha)) {
         sprite.drawShadow(context, x, y, placement);
       }
-      const quad = onto == null ? null : sprite.quadOf(x, y, placement);
-
-      const giant = slot.giant ?? 0;
-      // A Dynamax's red glow, pulsing gently while it lasts
-      const blaze = giant * (0.75 + 0.25 * Math.sin(clock / DYNAMAX_PULSE));
+      // Asked for on both renderers: the Dynamax look is drawn off the frame
+      const quad = sprite.quadOf(x, y, placement);
+      const look = giantLookOf(slot.giant ?? 0, unit.gigantamax, clock);
+      const giant: GiantBody | null =
+        look == null || quad == null
+          ? null
+          : {
+              quad,
+              foot: [x, y],
+              middle: sprite.locate('center', x, y, placement),
+              reach: sprite.shadowRadius(placement.scale).x,
+            };
 
       if (onto == null || quad == null) {
-        if (blaze > 0) {
+        if (giant != null && look != null) {
+          drawGiantBehind(context, giant, look, clock, alpha);
           context.save();
-          context.shadowColor = DYNAMAX_GLOW;
-          context.shadowBlur = DYNAMAX_BLUR * blaze;
+          context.shadowColor = look.tint;
+          context.shadowBlur = DYNAMAX_BLUR * look.share;
         }
         sprite.draw(context, x, y, placement);
-        if (blaze > 0) {
+        if (giant != null && look != null) {
           context.restore();
+          drawGiantOver(context, giant, look, clock, alpha);
         }
         // A transformation's flash, laid over the body it is lighting
         if ((slot.glow ?? 0) > 0) {
@@ -709,31 +692,18 @@ export function drawSlot(
           context.restore();
         }
       } else {
-        // The one picture that hides a move effect passing behind it
-        onto.solid?.(true);
         const body = cornersOf(quad);
 
-        // The glow: the body tinted red and spread a little wider behind itself
-        if (blaze > 0) {
-          onto.batch.quad(
-            quad.sheet,
-            quad.source,
-            spreadCorners(body, DYNAMAX_SPREAD),
-            alpha * blaze * 0.6,
-            DYNAMAX_GLOW,
-          );
+        // Behind the body and hiding nothing: the far clouds and the glow
+        if (giant != null && look != null) {
+          drawGiantBehind(context, giant, look, clock, alpha, onto);
         }
+        // The one picture that hides a move effect passing behind it
+        onto.solid?.(true);
         onto.batch.quad(quad.sheet, quad.source, body, alpha);
-        if (blaze > 0) {
-          onto.batch.quad(
-            quad.sheet,
-            quad.source,
-            body,
-            alpha * blaze * 0.35,
-            DYNAMAX_GLOW,
-            'pixels',
-            'screen',
-          );
+        onto.solid?.(false);
+        if (giant != null && look != null) {
+          drawGiantOver(context, giant, look, clock, alpha, onto);
         }
         // A transformation's flash: the body screened over itself, twice
         // at the peak, so it reads as a burst of light
@@ -752,7 +722,6 @@ export function drawSlot(
             );
           }
         }
-        onto.solid?.(false);
       }
       if (unit.shiny && onto?.lit !== true) {
         sparkle(context, slot, x, y, clock, onto);

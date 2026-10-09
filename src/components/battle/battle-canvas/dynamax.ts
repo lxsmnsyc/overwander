@@ -42,8 +42,8 @@ const PUFF_BREATH = 650;
 const TAIL = 8;
 const TAIL_STEP = 0.15;
 const TAIL_END = 0.2;
-/** How solid a cloud is at most, so the body shows through it */
-const CLOUD_ALPHA = 0.62;
+/** Clouds are solid: the tail thins by size, never by fading */
+const CLOUD_ALPHA = 1;
 const GLOW_ALPHA = 0.5;
 /** How fast the red light inside them flickers */
 const FLICKER = 170;
@@ -143,8 +143,6 @@ export interface Puff {
   y: number;
   size: number;
   front: boolean;
-  /** How solid it is, 1 at a head and fading down its tail */
-  weight: number;
   /** From 0 to 1, the flare of the red light, which lives in the heads only */
   flicker: number;
 }
@@ -178,7 +176,6 @@ export function cloudsOf(body: GiantBody, clock: number): Puff[][] {
         y: cy + Math.sin(angle) * ry,
         size: rx * swell * 2 * taper,
         front: Math.sin(angle) > 0,
-        weight: back === 0 ? 1 : 0.85 * taper,
         flicker: back === 0 ? flare : 0,
       });
     }
@@ -245,10 +242,7 @@ function drawClouds(
       if (puff.front !== front) {
         continue;
       }
-      // The far side is a shade lighter, so the orbit reads as round
-      const solid = shown * puff.weight * (front ? 1 : 0.8);
-
-      stampPuff(context, onto, piece, puff.x, puff.y, puff.size, CLOUD, solid * CLOUD_ALPHA, false);
+      stampPuff(context, onto, piece, puff.x, puff.y, puff.size, CLOUD, shown * CLOUD_ALPHA, false);
       // The red light inside, flaring now and then
       stampPuff(
         context,
@@ -258,7 +252,7 @@ function drawClouds(
         puff.y + puff.size * 0.12,
         puff.size * 0.75,
         look.tint,
-        solid * GLOW_ALPHA * (0.6 + 0.4 * puff.flicker),
+        shown * GLOW_ALPHA * (0.6 + 0.4 * puff.flicker),
         true,
       );
     }

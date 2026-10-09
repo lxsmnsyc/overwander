@@ -335,16 +335,14 @@ describe('the storm clouds over a Dynamaxed pokemon', () => {
     }
   });
 
-  it('gives each a solid head and a tail that thins out behind it', () => {
+  it('gives each a head and a tail that thins out behind it', () => {
     for (const cloud of cloudsOf(bodyOf(PARTY_SLOT), 900)) {
       expect(cloud.length).toBeGreaterThan(2);
-      expect(headOf(cloud).weight).toBe(1);
       let last: Puff | null = null;
 
       for (const piece of cloud) {
         if (last != null) {
           expect(last.size).toBeLessThan(piece.size);
-          expect(last.weight).toBeLessThan(piece.weight);
         }
         last = piece;
       }

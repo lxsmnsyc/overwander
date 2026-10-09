@@ -50,6 +50,13 @@ on. There is no Dynamax yet, so the Max Moves are not among them.
 level, machine, tutor and egg, the way Sword and Shield, Brilliant Diamond and
 Shining Pearl, and Legends: Arceus teach them.
 
+- **Level-up moves follow the Gen 8 games**, at those games' levels, so
+  Rayquaza learns Hurricane at 72.
+- **Nothing learned by level is taken away.** A move the Gen 8 games dropped
+  stays at its old level.
+- **Every pokemon can be taught** the Gen 8 machines, records and tutor moves
+  its games teach it, and hatches with their egg moves.
+
 ## See also
 
 - [The seventh generation's moves](seventh-generation-moves.md), which this

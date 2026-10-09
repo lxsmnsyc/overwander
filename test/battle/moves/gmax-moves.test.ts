@@ -24,8 +24,8 @@ import {
   GMAX_SPECIES,
   G_MAX_MOVES,
   canGigantamax,
-  getGMaxMove,
   gMaxPowerOf,
+  getGMaxMove,
 } from '../../../src/data/moves/gmax-moves';
 import { takesGigantamaxFactor } from '../../../src/data/items/max-mushrooms';
 import { getSpeciesData } from '../../../src/data/species';

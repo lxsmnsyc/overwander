@@ -7,6 +7,7 @@ import { Statuses, TeamStatuses } from '../../data/ids/status';
 import { getItemData } from '../../data/items';
 import { getMoveData } from '../../data/moves';
 import { FIXED_G_MAX_MOVES, G_MAX_MOVES, gMaxPowerOf } from '../../data/moves/gmax-moves';
+import { isMaxMove } from '../../data/moves/max-moves';
 import type Battle from '../core';
 import { BattleEvents, type EffectCause, EffectType } from '../events';
 import { registerSideCondition } from '../mechanics/side-conditions';
@@ -121,7 +122,8 @@ export default function setupGMaxMoves(battle: Battle): void {
   const eaten = new Map<Unit, Items>();
 
   battle.on(BattleEvents.UnitTriggerMove, AttackPriority.Prepare, (event) => {
-    if (event.steps === 0 && !G_MAX_MOVES.has(event.move)) {
+    // A Max Move is what the base became, never a base of its own
+    if (event.steps === 0 && !G_MAX_MOVES.has(event.move) && !isMaxMove(event.move)) {
       bases.set(event.source, event.move);
     }
   });

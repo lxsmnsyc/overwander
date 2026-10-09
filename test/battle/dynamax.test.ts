@@ -229,18 +229,46 @@ describe('Dynamax', () => {
     const foe = createUnit(battle, teamB);
     const thrown = watchThrows(battle);
 
-    vi.spyOn(gmax, 'getGMaxMove').mockImplementation((species, type) =>
-      species === Species.Charizard && type === Types.Fire ? Moves.MaxGeyser : null,
-    );
     giant.setSpecies(Species.Charizard);
     giant.setHealth(giant.checkStat(Stats.HP, 0));
     giant.gigantamax = true;
     dynamax(giant);
     act(battle, giant, Moves.Flamethrower, at(foe));
+    expect(giant.checkMovePower(Moves.GMaxWildfire, at(foe))).toBe(maxPowerOf(Moves.Flamethrower));
     act(battle, giant, Moves.AirSlash, at(foe));
 
-    // A registered stand-in for the G-Max Move the table names
-    expect(thrown.get(giant)).toEqual([Moves.MaxGeyser, Moves.MaxAirstream]);
+    // Only its Fire moves turn G-Max; the rest stay Max Moves
+    expect(thrown.get(giant)).toEqual([Moves.GMaxWildfire, Moves.MaxAirstream]);
+  });
+
+  it('keeps a fixed G-Max Move at 160 whatever it replaced', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const giant = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+    const thrown = watchThrows(battle);
+
+    giant.setSpecies(Species.Cinderace);
+    giant.setHealth(giant.checkStat(Stats.HP, 0));
+    giant.gigantamax = true;
+    dynamax(giant);
+    act(battle, giant, Moves.Ember, at(foe));
+
+    expect(thrown.get(giant)).toEqual([Moves.GMaxFireball]);
+    expect(giant.checkMovePower(Moves.GMaxFireball, at(foe))).toBe(160);
+  });
+
+  it('throws a plain Max Move without the factor, G-Max line or not', () => {
+    expect(gmax.getGMaxMove(Species.Charizard, Types.Fire)).toBe(Moves.GMaxWildfire);
+    const { battle, teamA, teamB } = createBattle();
+    const giant = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+    const thrown = watchThrows(battle);
+
+    giant.setSpecies(Species.Charizard);
+    dynamax(giant);
+    act(battle, giant, Moves.Flamethrower, at(foe));
+
+    expect(thrown.get(giant)).toEqual([Moves.MaxFlare]);
   });
 
   it('calls up weather and lays terrain', () => {

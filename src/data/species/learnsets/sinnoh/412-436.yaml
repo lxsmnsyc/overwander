@@ -1151,4 +1151,15 @@ Bronzor:
       50: [FeintAttack]
       61: [Payback]
       67: [HealBlock]
-    teachable: [Explosion, GigaImpact, HyperBeam, IronHead, RockSmash, Strength, ZenHeadbutt, BodyPress, MeteorBeam]
+    teachable:
+      [
+        Explosion,
+        GigaImpact,
+        HyperBeam,
+        IronHead,
+        RockSmash,
+        Strength,
+        ZenHeadbutt,
+        BodyPress,
+        MeteorBeam,
+      ]

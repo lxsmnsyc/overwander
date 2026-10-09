@@ -212,6 +212,77 @@ Cyndaquil:
       - StompingTantrum
       - LaserFocus
       - ThroatChop
+  TyphlosionHisui:
+    level:
+      1: [Tackle, DoubleEdge, Leer, Ember, SmokeScreen, Eruption, GyroBall, InfernalParade]
+      13: [QuickAttack]
+      20: [FlameWheel]
+      24: [DefenseCurl]
+      31: [Swift]
+      35: [FlameCharge]
+      43: [LavaPlume]
+      48: [Flamethrower]
+      56: [Inferno]
+      61: [Rollout]
+      74: [Overheat]
+    teachable:
+      [
+        AerialAce,
+        BlastBurn,
+        BodySlam,
+        BrickBreak,
+        Bulldoze,
+        BurningJealousy,
+        CalmMind,
+        ConfuseRay,
+        Curse,
+        Dig,
+        DoubleEdge,
+        Earthquake,
+        Endeavor,
+        Endure,
+        Facade,
+        FireBlast,
+        FireFang,
+        FirePledge,
+        FirePunch,
+        FireSpin,
+        FlameCharge,
+        Flamethrower,
+        FlareBlitz,
+        FocusBlast,
+        FocusPunch,
+        GigaImpact,
+        GyroBall,
+        HeatWave,
+        Hex,
+        HyperBeam,
+        IronHead,
+        LowKick,
+        NightShade,
+        Overheat,
+        PlayRough,
+        Poltergeist,
+        Protect,
+        Rest,
+        Reversal,
+        Roar,
+        RockSlide,
+        ShadowBall,
+        ShadowClaw,
+        SleepTalk,
+        SolarBeam,
+        Spite,
+        StompingTantrum,
+        Substitute,
+        SunnyDay,
+        Swift,
+        TakeDown,
+        ThunderPunch,
+        WildCharge,
+        WillOWisp,
+        ZenHeadbutt,
+      ]
 Totodile:
   family-teachable:
     - IcePunch

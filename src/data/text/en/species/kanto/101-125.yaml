@@ -48,6 +48,7 @@ MrMime:
 Scyther:
   Scyther: { name: Scyther, category: Mantis Pokemon }
   Scizor: { name: Scizor, category: Pincer Pokemon }
+  Kleavor: { name: Kleavor, category: Axe Pokemon }
 Jynx:
   Jynx: { name: Jynx, category: Human Shape Pokemon }
   Smoochum: { name: Smoochum, category: Kiss Pokemon }

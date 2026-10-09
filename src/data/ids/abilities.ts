@@ -1157,6 +1157,14 @@ const enum Abilities {
   Frostreign = 200480,
   Shadereign = 200481,
   Crownreign = 200482,
+  // Hisui's regional lines, then Enamorus
+  Watchfire = 200483,
+  HuskBurst = 200484,
+  VenomFeast = 200485,
+  NerveVenom = 200486,
+  Afterhaunt = 200487,
+  SoulCloak = 200488,
+  Bloomfall = 200489,
 }
 
 export default Abilities;

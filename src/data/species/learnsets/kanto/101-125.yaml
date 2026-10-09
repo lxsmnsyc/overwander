@@ -2725,6 +2725,67 @@ Scyther:
       - LaserFocus
       - SteelBeam
       - DualWingbeat
+  Kleavor:
+    level:
+      1: [Leer, QuickAttack, StoneAxe]
+      4: [FuryCutter]
+      8: [FalseSwipe]
+      12: [SmackDown]
+      16: [DoubleTeam]
+      20: [DoubleHit]
+      24: [Slash]
+      28: [FocusEnergy]
+      32: [Agility]
+      36: [RockSlide]
+      40: [XScissor]
+      44: [SwordsDance]
+    teachable:
+      [
+        Acrobatics,
+        AerialAce,
+        Agility,
+        AirCutter,
+        AirSlash,
+        BatonPass,
+        BrickBreak,
+        BugBite,
+        BugBuzz,
+        CloseCombat,
+        DoubleEdge,
+        DualWingbeat,
+        Endure,
+        Facade,
+        FalseSwipe,
+        GigaImpact,
+        HelpingHand,
+        HyperBeam,
+        LightScreen,
+        Lunge,
+        Protect,
+        Rest,
+        Reversal,
+        RockBlast,
+        RockSlide,
+        RockTomb,
+        Sandstorm,
+        ScaryFace,
+        SkitterSmack,
+        SleepTalk,
+        SmackDown,
+        StealthRock,
+        StoneEdge,
+        StruggleBug,
+        Substitute,
+        SunnyDay,
+        Swift,
+        SwordsDance,
+        Tailwind,
+        TakeDown,
+        Thief,
+        UTurn,
+        VacuumWave,
+        XScissor,
+      ]
 Jynx:
   Jynx:
     level:

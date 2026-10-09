@@ -42,37 +42,41 @@ land:
 water:
   morning: &water-morning
     base:
-      Spheal: 4662
-      Piplup: 559
+      Spheal: 4580
+      Piplup: 549
     uncommon:
-      Seel: 2468
+      Seel: 2425
+      QwilfishHisui: 150
     rare:
-      Sealeo: 987
-      Prinplup: 247
+      Sealeo: 970
+      Prinplup: 243
     scarce:
-      Dewgong: 309
-      Cloyster: 309
+      Dewgong: 304
+      Cloyster: 304
+      Overqwil: 25
     elusive:
-      Eiscue: 150
-      Walrein: 128
-      Lapras: 128
-      Empoleon: 51
+      Eiscue: 147
+      Walrein: 126
+      Lapras: 126
+      Empoleon: 50
     special: {}
   day: *water-morning
   evening: &water-evening
     base:
-      Spheal: 2955
+      Spheal: 2903
     uncommon:
-      Seel: 3677
+      Seel: 3613
+      QwilfishHisui: 150
     rare:
-      Sealeo: 1839
+      Sealeo: 1807
     scarce:
-      Dewgong: 460
-      Cloyster: 460
+      Dewgong: 452
+      Cloyster: 452
+      Overqwil: 25
     elusive:
-      Walrein: 230
-      Lapras: 230
-      Eiscue: 150
+      Walrein: 226
+      Lapras: 226
+      Eiscue: 147
     special: {}
   night: *water-evening
 

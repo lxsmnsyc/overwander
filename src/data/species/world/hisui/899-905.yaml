@@ -1,0 +1,12 @@
+Enamorus:
+  Enamorus:
+    types: [Fairy, Flying]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Bog]
+    active: any
+    rank: legendary
+  EnamorusTherian:
+    types: [Fairy, Flying]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false

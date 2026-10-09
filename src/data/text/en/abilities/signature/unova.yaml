@@ -252,3 +252,9 @@ ColdSink:
 CarvedGrudge:
   name: Carved Grudge
   description: When it faints, every enemy that damaged it with a move loses 1/8 of its HP.
+Afterhaunt:
+  name: Afterhaunt
+  description: The first time it would faint it lingers for 4 seconds, untouchable and still fighting, then falls. Once per fight.
+SoulCloak:
+  name: Soul Cloak
+  description: Each teammate that faints wraps it in their soul, so the next blow it takes lands at 1/2.

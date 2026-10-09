@@ -1,77 +1,79 @@
 land:
   morning:
     base:
-      Sandile: 608
-      Whismur: 608
-      Scatterbug: 583
-      Roggenrola: 583
-      JangmoO: 535
-      Mankey: 487
-      Geodude: 487
-      Aron: 487
-      Trapinch: 487
-      Tepig: 73
-      Beldum: 49
-      Larvitar: 49
-      Gible: 49
+      Sandile: 597
+      Whismur: 597
+      Scatterbug: 573
+      Roggenrola: 573
+      JangmoO: 526
+      Mankey: 478
+      Geodude: 478
+      Aron: 478
+      Trapinch: 478
+      Tepig: 72
+      Beldum: 48
+      Larvitar: 48
+      Gible: 48
     uncommon:
-      Silicobra: 250
-      Corphish: 166
-      Helioptile: 159
-      DiglettAlola: 146
-      Salandit: 146
-      Rockruff: 146
-      Dwebble: 146
-      Darumaka: 146
-      Baltoy: 146
-      Numel: 133
-      Slugma: 133
-      Phanpy: 133
-      Nosepass: 133
-      BurmyTrash: 133
-      Bronzor: 133
-      Hippopotas: 133
-      Vullaby: 106
-      Drilbur: 106
-      Dunsparce: 66
+      Silicobra: 246
+      Corphish: 163
+      Helioptile: 156
+      GrowlitheHisui: 150
+      DiglettAlola: 143
+      Salandit: 143
+      Rockruff: 143
+      Dwebble: 143
+      Darumaka: 143
+      Baltoy: 143
+      Numel: 131
+      Slugma: 131
+      Phanpy: 131
+      Nosepass: 131
+      BurmyTrash: 131
+      Bronzor: 131
+      Hippopotas: 131
+      Vullaby: 104
+      Drilbur: 104
+      Dunsparce: 65
     rare:
-      Boldore: 164
-      Krokorok: 137
-      Loudred: 137
-      Lairon: 137
-      Vibrava: 137
-      Primeape: 137
-      HakamoO: 110
-      Spewpa: 110
-      Graveler: 68
+      Boldore: 161
+      Krokorok: 135
+      Loudred: 135
+      Lairon: 135
+      Vibrava: 135
+      Primeape: 135
+      HakamoO: 108
+      Spewpa: 108
+      Graveler: 67
       Pignite: 27
       Metang: 13
       Pupitar: 13
       Gabite: 13
     scarce:
-      Excadrill: 43
-      Crawdaunt: 43
-      Crustle: 38
-      Darmanitan: 38
-      DugtrioAlola: 33
-      Salazzle: 33
-      Lycanroc: 33
-      Heliolisk: 33
-      Mandibuzz: 33
-      Camerupt: 33
-      Claydol: 33
-      Bronzong: 33
-      Hippowdon: 33
-      Probopass: 33
-      Magmortar: 33
-      Sandaconda: 30
+      Excadrill: 42
+      Crawdaunt: 42
+      Crustle: 37
+      Darmanitan: 37
+      DugtrioAlola: 32
+      Salazzle: 32
+      Lycanroc: 32
+      Heliolisk: 32
+      Mandibuzz: 32
+      Camerupt: 32
+      Claydol: 32
+      Bronzong: 32
+      Hippowdon: 32
+      Probopass: 32
+      Magmortar: 32
+      Sandaconda: 29
       Donphan: 27
       Magcargo: 27
+      ArcanineHisui: 25
       WormadamTrash: 22
     elusive:
-      Falinks: 35
-      Stonjourner: 30
-      Duraludon: 30
+      Falinks: 34
+      Stonjourner: 29
+      Duraludon: 29
       Maractus: 20
       Mawile: 20
       Carbink: 14
@@ -116,67 +118,68 @@ land:
       Jirachi: 10
   day:
     base:
-      Sandile: 580
-      Whismur: 580
-      Scatterbug: 557
-      Roggenrola: 557
-      JangmoO: 510
-      Mankey: 465
-      Geodude: 465
-      Aron: 465
-      Trapinch: 465
-      Rhyhorn: 232
-      Tepig: 69
-      Beldum: 46
-      Larvitar: 46
-      Gible: 46
+      Sandile: 570
+      Whismur: 570
+      Scatterbug: 547
+      Roggenrola: 547
+      JangmoO: 501
+      Mankey: 457
+      Geodude: 457
+      Aron: 457
+      Trapinch: 457
+      Rhyhorn: 228
+      Tepig: 68
+      Beldum: 45
+      Larvitar: 45
+      Gible: 45
     uncommon:
-      Silicobra: 250
-      Corphish: 149
-      Helioptile: 143
-      DiglettAlola: 131
-      Salandit: 131
-      Rockruff: 131
-      Dwebble: 131
-      Darumaka: 131
-      Baltoy: 131
-      Numel: 119
-      Sandshrew: 119
-      Ekans: 119
-      Slugma: 119
-      Phanpy: 119
-      Nosepass: 119
-      BurmyTrash: 119
-      Bronzor: 119
-      Hippopotas: 119
-      Vullaby: 95
-      Drilbur: 95
-      Dunsparce: 60
+      Silicobra: 246
+      GrowlitheHisui: 150
+      Corphish: 146
+      Helioptile: 140
+      DiglettAlola: 129
+      Salandit: 129
+      Rockruff: 129
+      Dwebble: 129
+      Darumaka: 129
+      Baltoy: 129
+      Numel: 117
+      Sandshrew: 117
+      Ekans: 117
+      Slugma: 117
+      Phanpy: 117
+      Nosepass: 117
+      BurmyTrash: 117
+      Bronzor: 117
+      Hippopotas: 117
+      Vullaby: 93
+      Drilbur: 93
+      Dunsparce: 59
     rare:
-      Boldore: 155
-      Krokorok: 129
-      Loudred: 129
-      Lairon: 129
-      Vibrava: 129
-      Primeape: 129
-      HakamoO: 104
-      Spewpa: 104
-      Graveler: 64
-      Rhydon: 64
+      Boldore: 152
+      Krokorok: 127
+      Loudred: 127
+      Lairon: 127
+      Vibrava: 127
+      Primeape: 127
+      HakamoO: 102
+      Spewpa: 102
+      Graveler: 63
+      Rhydon: 63
       Pignite: 26
       Metang: 13
       Pupitar: 13
       Gabite: 13
     scarce:
-      Sandslash: 43
-      Arbok: 43
-      Donphan: 43
-      Magcargo: 43
-      Excadrill: 35
-      Crawdaunt: 35
-      Crustle: 30
-      Darmanitan: 30
-      Sandaconda: 30
+      Sandslash: 42
+      Arbok: 42
+      Donphan: 42
+      Magcargo: 42
+      Excadrill: 34
+      Crawdaunt: 34
+      Crustle: 29
+      Darmanitan: 29
+      Sandaconda: 29
       DugtrioAlola: 26
       Salazzle: 26
       Lycanroc: 26
@@ -188,11 +191,12 @@ land:
       Hippowdon: 26
       Probopass: 26
       Magmortar: 26
+      ArcanineHisui: 25
       WormadamTrash: 17
     elusive:
-      Falinks: 35
-      Stonjourner: 30
-      Duraludon: 30
+      Falinks: 34
+      Stonjourner: 29
+      Duraludon: 29
       Maractus: 20
       Mawile: 20
       Carbink: 14

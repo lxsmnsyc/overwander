@@ -777,6 +777,145 @@ Growlithe:
       - Bulldoze
       - LaserFocus
       - ScorchingSands
+  GrowlitheHisui:
+    level:
+      1: [Leer, Ember]
+      4: [Howl]
+      8: [Bite]
+      12: [FlameWheel]
+      16: [HelpingHand]
+      24: [FireFang]
+      28: [Retaliate]
+      32: [Crunch]
+      36: [TakeDown]
+      40: [Flamethrower]
+      44: [Roar]
+      48: [RockSlide]
+      52: [Reversal]
+      56: [FlareBlitz]
+    teachable:
+      [
+        Agility,
+        BodySlam,
+        CloseCombat,
+        Crunch,
+        Dig,
+        DoubleEdge,
+        Endure,
+        Facade,
+        FireBlast,
+        FireFang,
+        FireSpin,
+        FlameCharge,
+        Flamethrower,
+        FlareBlitz,
+        HeatWave,
+        HelpingHand,
+        Outrage,
+        Overheat,
+        PowerGem,
+        Protect,
+        PsychicFangs,
+        Rest,
+        Reversal,
+        Roar,
+        RockBlast,
+        RockSlide,
+        RockTomb,
+        Sandstorm,
+        ScaryFace,
+        ScorchingSands,
+        SleepTalk,
+        SmackDown,
+        SmartStrike,
+        StealthRock,
+        StoneEdge,
+        Substitute,
+        SunnyDay,
+        TakeDown,
+        ThunderFang,
+        WillOWisp,
+      ]
+    egg: [Covet, DoubleEdge, DoubleKick, HeadSmash, MorningSun, Thrash]
+  ArcanineHisui:
+    level:
+      1:
+        [
+          TakeDown,
+          Leer,
+          Bite,
+          Roar,
+          Ember,
+          RockThrow,
+          Agility,
+          RockSlide,
+          FlameWheel,
+          Reversal,
+          Crunch,
+          ExtremeSpeed,
+          HelpingHand,
+          Howl,
+          FlareBlitz,
+          FireFang,
+          Retaliate,
+        ]
+      5: [Flamethrower]
+      64: [RagingFury]
+    teachable:
+      [
+        AerialAce,
+        Agility,
+        BodySlam,
+        Bulldoze,
+        CloseCombat,
+        Crunch,
+        Dig,
+        DoubleEdge,
+        DragonPulse,
+        Endure,
+        Facade,
+        FireBlast,
+        FireFang,
+        FireSpin,
+        FlameCharge,
+        Flamethrower,
+        FlareBlitz,
+        GigaImpact,
+        HeatCrash,
+        HeatWave,
+        HelpingHand,
+        HyperBeam,
+        HyperVoice,
+        IronHead,
+        Outrage,
+        Overheat,
+        PowerGem,
+        Protect,
+        PsychicFangs,
+        Rest,
+        Reversal,
+        Roar,
+        RockBlast,
+        RockSlide,
+        RockTomb,
+        Sandstorm,
+        ScaryFace,
+        ScorchingSands,
+        SleepTalk,
+        SmackDown,
+        SmartStrike,
+        Snarl,
+        SolarBeam,
+        StealthRock,
+        StoneEdge,
+        Substitute,
+        SunnyDay,
+        TakeDown,
+        Thief,
+        ThunderFang,
+        WildCharge,
+        WillOWisp,
+      ]
 # The evolved forms grow arms: fighting-style TMs and HM Strength
 Poliwag:
   Poliwag:

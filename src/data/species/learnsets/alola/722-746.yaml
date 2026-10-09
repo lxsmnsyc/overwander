@@ -110,6 +110,79 @@ Rowlet:
       - LaserFocus
       - SkitterSmack
       - Poltergeist
+  DecidueyeHisui:
+    level:
+      1: [Tackle, Growl, UTurn, LeafStorm, Leafage, TripleArrows]
+      9: [Peck]
+      12: [ShadowSneak]
+      15: [RazorLeaf]
+      20: [Synthesis]
+      25: [Pluck]
+      30: [BulkUp]
+      37: [SuckerPunch]
+      44: [LeafBlade]
+      51: [FeatherDance]
+      58: [BraveBird]
+    teachable:
+      [
+        AerialAce,
+        AirCutter,
+        AirSlash,
+        AuraSphere,
+        BatonPass,
+        BraveBird,
+        BrickBreak,
+        BulkUp,
+        BulletSeed,
+        CloseCombat,
+        Coaching,
+        ConfuseRay,
+        DualWingbeat,
+        Endure,
+        EnergyBall,
+        Facade,
+        FalseSwipe,
+        FeatherDance,
+        FocusBlast,
+        FocusPunch,
+        FrenzyPlant,
+        GigaDrain,
+        GigaImpact,
+        GrassKnot,
+        GrassPledge,
+        GrassyGlide,
+        GrassyTerrain,
+        Haze,
+        HelpingHand,
+        HyperBeam,
+        KnockOff,
+        LeafStorm,
+        LightScreen,
+        LowKick,
+        LowSweep,
+        MagicalLeaf,
+        NastyPlot,
+        NightShade,
+        Protect,
+        RainDance,
+        Rest,
+        Reversal,
+        RockTomb,
+        ScaryFace,
+        SeedBomb,
+        ShadowClaw,
+        SleepTalk,
+        SmackDown,
+        SolarBeam,
+        Substitute,
+        SunnyDay,
+        Swift,
+        SwordsDance,
+        Tailwind,
+        TakeDown,
+        Taunt,
+        UTurn,
+      ]
 Litten:
   # TM and tutor moves shared by the whole family
   family-teachable:

@@ -133,3 +133,11 @@ Voltorb:
   Electrode:
     abilities: [Soundproof, Static]
     hidden: [Aftermath, Levitate]
+  VoltorbHisui:
+    abilities: [Soundproof, Static]
+    hidden: [Aftermath]
+  ElectrodeHisui:
+    abilities: [Soundproof, Static]
+    # Grassy Surge is this registry's rather than the mainline's, filling it
+    # to four: the seeds packed in its shell sprout where it lands
+    hidden: [Aftermath, GrassySurge]

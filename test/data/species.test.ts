@@ -36,6 +36,7 @@ import {
   ALCREMIE_FORMS,
   ALOLAN_FORMS,
   ARCEUS_FORMS,
+  BASCULEGION_FORMS,
   BASCULIN_FORMS,
   BURMY_FORMS,
   CASTFORM_FORMS,
@@ -46,6 +47,7 @@ import {
   DEOXYS_FORMS,
   DIALGA_FORMS,
   EISCUE_FORMS,
+  ENAMORUS_FORMS,
   EvolutionMethod,
   FLABEBE_FORMS,
   FLOETTE_FORMS,
@@ -55,6 +57,7 @@ import {
   GENESECT_FORMS,
   GIRATINA_FORMS,
   GOURGEIST_FORMS,
+  HISUIAN_FORMS,
   HOOPA_FORMS,
   INDEEDEE_FORMS,
   KELDEO_FORMS,
@@ -490,6 +493,9 @@ describe('species forms', () => {
       ...ZACIAN_FORMS.slice(1),
       ...ZAMAZENTA_FORMS.slice(1),
       ...URSHIFU_FORMS.slice(1),
+      ...HISUIAN_FORMS,
+      ...BASCULEGION_FORMS.slice(1),
+      ...ENAMORUS_FORMS.slice(1),
       // The true shadows, which are forms of the birds they are the
       // shadow of rather than pokemon of their own
       ...listTrueShadows(),

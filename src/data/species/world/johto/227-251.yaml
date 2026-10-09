@@ -42,7 +42,17 @@ Stantler:
     egg-groups: [Field]
     biomes: [TemperateForest, Taiga, MontaneForest]
     active: any
-    awaiting: evolution
+    # Wyrdeer grows out of the one that has landed Psyshield Bash 20
+    # times
+    evolves-into:
+      - species: Wyrdeer
+        method: [Special]
+  Wyrdeer:
+    types: [Normal, Psychic]
+    egg-groups: [Field]
+    biomes: [TemperateForest, Taiga, MontaneForest]
+    active: any
+    evolves-from: Stantler
 Smeargle:
   Smeargle:
     types: [Normal]

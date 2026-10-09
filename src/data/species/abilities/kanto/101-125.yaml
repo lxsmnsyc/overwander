@@ -131,6 +131,9 @@ Scyther:
   Scizor:
     abilities: [Swarm, Technician]
     hidden: [LightMetal]
+  Kleavor:
+    abilities: [Swarm, SheerForce]
+    hidden: [Sharpness]
 Jynx:
   Jynx:
     abilities: [Oblivious, Forewarn]

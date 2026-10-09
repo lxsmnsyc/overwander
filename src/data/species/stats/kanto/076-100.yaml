@@ -234,3 +234,15 @@ Voltorb:
     height: 1.2
     weight: 66.6
     gender: genderless
+  VoltorbHisui:
+    stats: { HP: 40, Attack: 30, Defense: 50, SpecialAttack: 55, SpecialDefense: 55, Speed: 100 }
+    catch-rate: 190
+    height: 0.5
+    weight: 13
+    gender: genderless
+  ElectrodeHisui:
+    stats: { HP: 60, Attack: 50, Defense: 70, SpecialAttack: 80, SpecialDefense: 80, Speed: 150 }
+    catch-rate: 60
+    height: 1.2
+    weight: 71
+    gender: genderless

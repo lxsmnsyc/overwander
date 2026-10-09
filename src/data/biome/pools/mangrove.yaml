@@ -97,11 +97,11 @@ water:
   evening: &water-evening
     base: {}
     uncommon:
-      Corphish: 1936
-      Wooper: 1936
-      Shellos: 1936
-      Dewpider: 1703
-      Krabby: 1549
+      Corphish: 1932
+      Wooper: 1932
+      Shellos: 1932
+      Dewpider: 1700
+      Krabby: 1546
     rare: {}
     scarce:
       Kingler: 142
@@ -112,5 +112,6 @@ water:
     elusive:
       Carnivine: 170
       Wishiwashi: 142
+      SamurottHisui: 20
     special: {}
   night: *water-evening

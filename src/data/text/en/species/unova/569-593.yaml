@@ -1,6 +1,8 @@
 Zorua:
   Zorua: { name: Zorua, category: Tricky Fox Pokemon }
   Zoroark: { name: Zoroark, category: Illusion Fox Pokemon }
+  ZoruaHisui: { name: Hisuian Zorua, category: Spiteful Fox Pokemon }
+  ZoroarkHisui: { name: Hisuian Zoroark, category: Baneful Fox Pokemon }
 Minccino:
   Minccino: { name: Minccino, category: Chinchilla Pokemon }
   Cinccino: { name: Cinccino, category: Scarf Pokemon }

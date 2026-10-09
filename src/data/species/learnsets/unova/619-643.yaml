@@ -637,6 +637,76 @@ Rufflet:
       46: [CrushClaw]
       50: [SkyDrop]
     teachable: [GigaImpact, HyperBeam, IronHead, MetalClaw, Reversal, LaserFocus]
+  BraviaryHisui:
+    level:
+      1: [WingAttack, Leer, Peck, SkyAttack, Superpower, HoneClaws, EsperWing]
+      18: [Tailwind]
+      24: [ScaryFace]
+      30: [AerialAce]
+      36: [Slash]
+      42: [Whirlwind]
+      48: [CrushClaw]
+      57: [AirSlash]
+      64: [Defog]
+      72: [Thrash]
+      80: [Hurricane]
+    teachable:
+      [
+        Acrobatics,
+        AerialAce,
+        Agility,
+        AirCutter,
+        AirSlash,
+        BodySlam,
+        BraveBird,
+        BulkUp,
+        CalmMind,
+        CloseCombat,
+        ConfuseRay,
+        DazzlingGleam,
+        DoubleEdge,
+        DualWingbeat,
+        Endure,
+        ExpandingForce,
+        Facade,
+        FeatherDance,
+        Fly,
+        FutureSight,
+        GigaImpact,
+        HeatWave,
+        HelpingHand,
+        Hurricane,
+        HyperBeam,
+        HyperVoice,
+        IcyWind,
+        MetalClaw,
+        NightShade,
+        Protect,
+        Psybeam,
+        PsychUp,
+        Psychic,
+        PsychicTerrain,
+        Psyshock,
+        RainDance,
+        Rest,
+        Reversal,
+        RockSlide,
+        RockTomb,
+        ScaryFace,
+        ShadowBall,
+        ShadowClaw,
+        SleepTalk,
+        Snarl,
+        StoredPower,
+        Substitute,
+        SunnyDay,
+        Swift,
+        Tailwind,
+        TakeDown,
+        UTurn,
+        VacuumWave,
+        ZenHeadbutt,
+      ]
 Vullaby:
   # TM and tutor moves shared by the whole family
 

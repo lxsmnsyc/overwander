@@ -17,6 +17,12 @@ Rowlet:
     height: 1.6
     weight: 36.6
     gender: [7, 1]
+  DecidueyeHisui:
+    stats: { HP: 88, Attack: 112, Defense: 80, SpecialAttack: 95, SpecialDefense: 95, Speed: 60 }
+    catch-rate: 45
+    height: 1.6
+    weight: 37
+    gender: [7, 1]
 Litten:
   Litten:
     stats: { HP: 45, Attack: 65, Defense: 40, SpecialAttack: 60, SpecialDefense: 40, Speed: 70 }

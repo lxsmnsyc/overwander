@@ -114,3 +114,6 @@ forms:
   Glarewing: [ArticunoGalar]
   Strikewing: [ZapdosGalar]
   Wrathwing: [MoltresGalar]
+  # Hisui's regional lines whose every stage is regional
+  Watchfire: [GrowlitheHisui, ArcanineHisui]
+  HuskBurst: [VoltorbHisui, ElectrodeHisui]

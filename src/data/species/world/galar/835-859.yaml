@@ -107,11 +107,40 @@ Toxel:
       - species: Toxtricity
         method: [Level]
         level: 30
-        natures: [Hardy, Brave, Adamant, Naughty, Docile, Impish, Lax, Hasty, Jolly, Naive, Rash, Sassy, Quirky]
+        natures:
+          [
+            Hardy,
+            Brave,
+            Adamant,
+            Naughty,
+            Docile,
+            Impish,
+            Lax,
+            Hasty,
+            Jolly,
+            Naive,
+            Rash,
+            Sassy,
+            Quirky,
+          ]
       - species: ToxtricityLowKey
         method: [Level]
         level: 30
-        natures: [Lonely, Bold, Relaxed, Timid, Serious, Modest, Mild, Quiet, Bashful, Calm, Gentle, Careful]
+        natures:
+          [
+            Lonely,
+            Bold,
+            Relaxed,
+            Timid,
+            Serious,
+            Modest,
+            Mild,
+            Quiet,
+            Bashful,
+            Calm,
+            Gentle,
+            Careful,
+          ]
     rank: baby
   Toxtricity:
     types: [Electric, Poison]

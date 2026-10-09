@@ -84,6 +84,7 @@ import setupMindBlown from './mind-blown';
 import setupPiercingMoves from './piercing-moves';
 import setupInstruct from './instruct';
 import setupZMoves from './z-moves';
+import setupMaxMoves from './max-moves';
 import setupFocusPunch from './focus-punch';
 import setupFollowMe from './follow-me';
 import setupImprison from './imprison';
@@ -230,6 +231,7 @@ export default function setupMoves(battle: Battle): void {
   setupPiercingMoves(battle);
   setupInstruct(battle);
   setupZMoves(battle);
+  setupMaxMoves(battle);
   setupFocusPunch(battle);
   setupFollowMe(battle);
   setupStockpile(battle);

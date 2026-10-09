@@ -40,6 +40,15 @@ export const BOSS_RADIUS = FIELD_UNIT * 5.6;
 /** How much bigger a Totem is drawn than its species */
 export const TOTEM_DRAW_SCALE = 1.5;
 
+/** How much bigger a Dynamaxed pokemon is drawn than its species */
+export const DYNAMAX_DRAW_SCALE = 1.8;
+
+/** How long a Dynamaxed pokemon takes to grow or shrink, in milliseconds */
+export const DYNAMAX_GROW_SPAN = 500;
+
+/** The glow a Dynamaxed pokemon stands in */
+export const DYNAMAX_GLOW = '#ff2a3c';
+
 /**
  * How small a slot is allowed to draw its pokemon. Below this a sprite
  * is a smudge, so a crowded far side lets them overlap rather than

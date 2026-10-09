@@ -688,6 +688,28 @@ describe('a painted move', () => {
     expect(delayShapeFor(Moves.PyroBall, 0)).toBe('Lobbed');
   });
 
+  it('draws each Max Move as the strongest older move of its type', () => {
+    expect(effectShapeFor(Moves.MaxFlare)).toBe(effectShapeFor(Moves.FireBlast));
+    expect(effectShapeFor(Moves.MaxGeyser)).toBe(effectShapeFor(Moves.HydroPump));
+    expect(effectShapeFor(Moves.MaxHailstorm)).toBe(effectShapeFor(Moves.Blizzard));
+    expect(effectShapeFor(Moves.MaxRockfall)).toBe(effectShapeFor(Moves.StoneEdge));
+    expect(effectShapeFor(Moves.MaxLightning)).toBe(effectShapeFor(Moves.Thunder));
+    expect(effectShapeFor(Moves.MaxOvergrowth)).toBe(effectShapeFor(Moves.SolarBeam));
+    expect(effectShapeFor(Moves.MaxMindstorm)).toBe(effectShapeFor(Moves.Psychic));
+    expect(effectShapeFor(Moves.MaxStarfall)).toBe(effectShapeFor(Moves.Moonblast));
+    expect(effectShapeFor(Moves.MaxStrike)).toBe(effectShapeFor(Moves.HyperBeam));
+    expect(effectShapeFor(Moves.MaxFlutterby)).toBe(effectShapeFor(Moves.BugBuzz));
+    expect(effectShapeFor(Moves.MaxPhantasm)).toBe(effectShapeFor(Moves.ShadowBall));
+    expect(effectShapeFor(Moves.MaxWyrmwind)).toBe(effectShapeFor(Moves.DracoMeteor));
+    expect(effectShapeFor(Moves.MaxDarkness)).toBe(effectShapeFor(Moves.DarkPulse));
+    expect(effectShapeFor(Moves.MaxKnuckle)).toBe(effectShapeFor(Moves.CloseCombat));
+    expect(effectShapeFor(Moves.MaxSteelspike)).toBe(effectShapeFor(Moves.FlashCannon));
+    expect(effectShapeFor(Moves.MaxOoze)).toBe(effectShapeFor(Moves.SludgeBomb));
+    expect(effectShapeFor(Moves.MaxQuake)).toBe(effectShapeFor(Moves.Earthquake));
+    expect(effectShapeFor(Moves.MaxAirstream)).toBe(effectShapeFor(Moves.Hurricane));
+    expect(effectShapeFor(Moves.MaxGuard)).toBe(effectShapeFor(Moves.Protect));
+  });
+
   it('draws a U-turn as the blow and then as the leaving', () => {
     // The engine deals the damage on the wind-up step and swaps the
     // pokemon out on the last one, so the two steps are two pictures

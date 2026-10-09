@@ -1,3 +1,4 @@
+import { MAX_MOVES } from '../../data/moves/max-moves';
 import { Z_MOVES } from '../../data/moves/z-moves';
 import { AttackPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
@@ -26,6 +27,7 @@ const NOT_BORROWED = new Set<Moves>([
   Moves.MirrorCoat,
   Moves.FocusPunch,
   ...Z_MOVES,
+  ...MAX_MOVES,
   Moves.Thief,
   Moves.Covet,
   Moves.Trick,

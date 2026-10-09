@@ -32,11 +32,11 @@ function damageOf(source: Unit, move: Moves, target: Unit): number {
 }
 
 describe("Galar's and Hisui's moves on the shared tables", () => {
-  it('registers every one of them, and none of the Max Moves', () => {
+  it('registers every one of them, the Max Moves among them', () => {
     createBattle();
     expect(getMoveData(Moves.BodyPress).power).toBe(80);
     expect(getMoveData(Moves.TakeHeart).name).toBe('Take Heart');
-    expect(() => getMoveData(Moves.MaxFlare)).toThrow();
+    expect(getMoveData(Moves.MaxFlare).name).toBe('Max Flare');
   });
 
   it('drops a stage as it lands with Breaking Swipe, and raises the user with Aura Wheel', () => {

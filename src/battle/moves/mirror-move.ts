@@ -1,3 +1,4 @@
+import { MAX_MOVES } from '../../data/moves/max-moves';
 import { Z_MOVES } from '../../data/moves/z-moves';
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
@@ -12,6 +13,7 @@ const NOT_MIRRORED = new Set<Moves>([
   Moves.Attack,
   Moves.Sketch,
   ...Z_MOVES,
+  ...MAX_MOVES,
 ]);
 
 // https://bulbapedia.bulbagarden.net/wiki/Mirror_Move_(move)

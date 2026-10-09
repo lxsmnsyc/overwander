@@ -1,6 +1,7 @@
 import {
   BOSS_RADIUS,
   COLORS,
+  DYNAMAX_DRAW_SCALE,
   FIELD_UNIT,
   MIN_RADIUS,
   PARTY_SLOT,
@@ -61,6 +62,8 @@ export interface Slot {
   glow?: number;
   /** How much a transformation is swelling it, as a share of its size */
   swell?: number;
+  /** How far it is through growing into a Dynamax, from 0 to 1 */
+  giant?: number;
   /**
    * Which way it is facing: at whatever it is aiming at, worked out
    * after the camera has turned rather than fixed to a side of the
@@ -272,6 +275,41 @@ export function lobbyCamera(teams: number): { radius: number; zoom: number } {
 }
 
 /**
+ * Where each of a side stands. A Dynamaxed pokemon cannot be sent off
+ * the field, so it holds the middle while it lasts and the rest ring
+ * round it, out far enough to stand clear of its size
+ */
+export function placesOf(units: Unit[], centre: FieldPoint, radius: number): FieldPoint[] {
+  let giant = -1;
+
+  for (const [at, unit] of units.entries()) {
+    if (unit.dynamaxed && giant < 0) {
+      giant = at;
+    }
+  }
+  if (giant < 0 || units.length < 2) {
+    return ringOf(units.length, centre, radius);
+  }
+
+  const reach = radius * DYNAMAX_DRAW_SCALE;
+  // A ring of one is its own middle, so a lone neighbour stands on the near edge instead
+  const around =
+    units.length === 2
+      ? [{ x: centre.x, z: centre.z - reach }]
+      : ringOf(units.length - 1, centre, reach);
+  const places: FieldPoint[] = [];
+
+  for (const [at] of units.entries()) {
+    if (at === giant) {
+      places.push(centre);
+    } else {
+      places.push(around[at < giant ? at : at - 1]);
+    }
+  }
+  return places;
+}
+
+/**
  * A side of a fight: a ring of pokemon around a point, each looking at
  * whatever it is up against by default — until it is aiming at
  * something, which `project` lets it turn to
@@ -287,8 +325,9 @@ export function side(
   standFor: (unit: Unit) => Stand | null = () => null,
 ): Standing[] {
   const standings: Standing[] = [];
+  const places = placesOf(units, centre, radius);
 
-  for (const [at, place] of ringOf(units.length, centre, radius).entries()) {
+  for (const [at, place] of places.entries()) {
     standings.push({
       unit: units[at],
       place,

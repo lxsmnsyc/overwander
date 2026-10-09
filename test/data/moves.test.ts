@@ -1,3 +1,4 @@
+import { TYPE_MAX_MOVES } from '../../src/data/moves/max-moves';
 import { GENERIC_Z_MOVES } from '../../src/data/moves/z-moves';
 import { describe, expect, it } from 'vitest';
 import registerBiomeSpawns from '../../src/data/biome';
@@ -322,6 +323,8 @@ describe('move damage', () => {
     // target's health for Guardian of Alola
     ...GENERIC_Z_MOVES,
     Moves.GuardianOfAlola,
+    // And the Max Moves read theirs off the move they replace
+    ...TYPE_MAX_MOVES.values(),
   ]);
 
   it('gives every damaging move something to hit with', () => {

@@ -118,3 +118,6 @@ HeavyDutyBoots:
 StickyBarb:
   name: Sticky Barb
   description: Costs its holder 1/8 of its HP per move, and sticks to whoever touches it.
+DynamaxBand:
+  name: Dynamax Band
+  description: The first time its holder drops below 1/2 HP it Dynamaxes for its next 3 moves, once a side. Not with a Mega Stone or a Z-Crystal.

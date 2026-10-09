@@ -6,6 +6,7 @@ import Battle, { type BattleModes } from '../../src/battle/core';
 import setupItems from '../../src/battle/items';
 import setupAbilityMechanics from '../../src/battle/mechanics/ability';
 import setupAllianceMechanics from '../../src/battle/mechanics/alliance';
+import setupDynamaxMechanics from '../../src/battle/mechanics/dynamax';
 import setupItemMechanics from '../../src/battle/mechanics/item';
 import {
   setupAttackMechanics,
@@ -65,6 +66,7 @@ export function createBattle(
   setupItemMechanics(battle);
   setupWeatherMechanics(battle);
   setupTerrainMechanics(battle);
+  setupDynamaxMechanics(battle);
   setupMoveMechanics(battle);
   setupCastingMechanics(battle);
   setupChannelingMechanics(battle);

@@ -2,7 +2,14 @@ import type SpeciesSpriteAnimation from '../../../canvas/species-sprite-animatio
 import type { Slot } from './field';
 import { type CastLabels, drawCastLabel } from './cast-label';
 import drawFormMark from './form-mark';
-import { COLORS, HIT_REACH, NAMED_RADIUS, TOTEM_DRAW_SCALE } from './metrics';
+import {
+  COLORS,
+  DYNAMAX_DRAW_SCALE,
+  DYNAMAX_GLOW,
+  HIT_REACH,
+  NAMED_RADIUS,
+  TOTEM_DRAW_SCALE,
+} from './metrics';
 import speciesSize from '../../../canvas/species-size';
 import { type Striking, animationFor } from './motion';
 import type { ProgressData } from '../../../battle/events';
@@ -80,6 +87,29 @@ function corners(x: number, y: number, across: number, down: number): QuadPoint[
     { x: x + across, y: y + down },
     { x, y: y + down },
   ];
+}
+
+/** How long one pulse of a Dynamax's glow takes, over 2 pi, and how far it reaches */
+const DYNAMAX_PULSE = 260;
+const DYNAMAX_BLUR = 18;
+const DYNAMAX_SPREAD = 1.08;
+
+/** Four corners pushed out from their own middle by a factor */
+function spreadCorners(points: QuadPoint[], factor: number): QuadPoint[] {
+  let cx = 0;
+  let cy = 0;
+
+  for (const point of points) {
+    cx += point.x / points.length;
+    cy += point.y / points.length;
+  }
+
+  const spread: QuadPoint[] = [];
+
+  for (const point of points) {
+    spread.push({ x: cx + (point.x - cx) * factor, y: cy + (point.y - cy) * factor });
+  }
+  return spread;
 }
 
 /**
@@ -233,8 +263,10 @@ export function scaleOf(slot: Slot): number {
   }
   // A Totem towers over the rest of its kind
   const towering = slot.unit.hasAbility(Abilities.Totem) ? TOTEM_DRAW_SCALE : 1;
+  // And a Dynamax grows into its size rather than jumping to it
+  const giant = 1 + (DYNAMAX_DRAW_SCALE - 1) * (slot.giant ?? 0);
 
-  return baseScaleOf(slot) * speciesSize(slot.unit.appearance, sprite) * towering;
+  return baseScaleOf(slot) * speciesSize(slot.unit.appearance, sprite) * towering * giant;
 }
 
 /**
@@ -654,8 +686,20 @@ export function drawSlot(
       }
       const quad = onto == null ? null : sprite.quadOf(x, y, placement);
 
+      const giant = slot.giant ?? 0;
+      // A Dynamax's red glow, pulsing gently while it lasts
+      const blaze = giant * (0.75 + 0.25 * Math.sin(clock / DYNAMAX_PULSE));
+
       if (onto == null || quad == null) {
+        if (blaze > 0) {
+          context.save();
+          context.shadowColor = DYNAMAX_GLOW;
+          context.shadowBlur = DYNAMAX_BLUR * blaze;
+        }
         sprite.draw(context, x, y, placement);
+        if (blaze > 0) {
+          context.restore();
+        }
         // A transformation's flash, laid over the body it is lighting
         if ((slot.glow ?? 0) > 0) {
           context.save();
@@ -669,7 +713,28 @@ export function drawSlot(
         onto.solid?.(true);
         const body = cornersOf(quad);
 
+        // The glow: the body tinted red and spread a little wider behind itself
+        if (blaze > 0) {
+          onto.batch.quad(
+            quad.sheet,
+            quad.source,
+            spreadCorners(body, DYNAMAX_SPREAD),
+            alpha * blaze * 0.6,
+            DYNAMAX_GLOW,
+          );
+        }
         onto.batch.quad(quad.sheet, quad.source, body, alpha);
+        if (blaze > 0) {
+          onto.batch.quad(
+            quad.sheet,
+            quad.source,
+            body,
+            alpha * blaze * 0.35,
+            DYNAMAX_GLOW,
+            'pixels',
+            'screen',
+          );
+        }
         // A transformation's flash: the body screened over itself, twice
         // at the peak, so it reads as a burst of light
         for (let pass = 0; pass < 2; pass += 1) {

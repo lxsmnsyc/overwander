@@ -45,33 +45,56 @@ Mareanie:
     - WaterPulse
   Mareanie:
     level:
-      1: [PoisonSting]
-      5: [Peck]
-      9: [Bite]
-      13: [ToxicSpikes]
-      17: [WideGuard]
-      21: [Toxic]
-      25: [Venoshock]
+      1: [PoisonSting, Peck]
+      5: [WideGuard]
+      10: [Bite]
+      15: [Venoshock]
+      20: [Recover]
+      25: [PinMissile]
       29: [SpikeCannon]
-      33: [Recover]
-      37: [PoisonJab]
-      41: [VenomDrench]
-      45: [PinMissile]
-      49: [Liquidation]
-    egg: [Haze, SpitUp, Stockpile, Swallow]
+      30: [ToxicSpikes]
+      35: [Liquidation]
+      40: [VenomDrench]
+      45: [PoisonJab]
+      50: [Toxic]
+    egg: [Haze, SpitUp, Stockpile, Swallow, Infestation]
+    teachable:
+      - Brine
+      - Endure
+      - HydroPump
+      - MudShot
+      - MuddyWater
+      - PinMissile
+      - ToxicSpikes
+      - VenomDrench
   Toxapex:
     level:
-      1: [BanefulBunker, Bite, Peck, PoisonSting, ToxicSpikes]
-      17: [WideGuard]
-      21: [Toxic]
-      25: [Venoshock]
+      1: [PoisonSting, Bite, Peck, WideGuard, BanefulBunker]
+      15: [Venoshock]
+      20: [Recover]
+      25: [PinMissile]
       29: [SpikeCannon]
-      33: [Recover]
-      37: [PoisonJab]
-      44: [VenomDrench]
-      51: [PinMissile]
-      58: [Liquidation]
-    teachable: [Block, LightScreen, SmackDown]
+      30: [ToxicSpikes]
+      35: [Liquidation]
+      42: [VenomDrench]
+      49: [PoisonJab]
+      56: [Toxic]
+    teachable:
+      [
+        Block,
+        LightScreen,
+        SmackDown,
+        Brine,
+        CrossPoison,
+        Endure,
+        Hex,
+        HydroPump,
+        MudShot,
+        MuddyWater,
+        PinMissile,
+        ToxicSpikes,
+        VenomDrench,
+      ]
 Mudbray:
   # TM and tutor moves shared by the whole family
   family-teachable:
@@ -108,35 +131,60 @@ Mudbray:
     - Toxic
   Mudbray:
     level:
-      1: [MudSlap]
+      1: [MudSlap, RockSmash]
       3: [MudSport]
-      8: [Rototiller]
-      10: [Bulldoze]
-      15: [DoubleKick]
-      17: [Stomp]
+      4: [IronDefense]
+      8: [DoubleKick, Rototiller]
+      12: [Bulldoze]
+      16: [Stomp]
+      20: [Strength]
       22: [Bide]
-      24: [HighHorsepower]
-      29: [IronDefense]
-      31: [HeavySlam]
-      36: [Counter]
-      38: [Earthquake]
-      43: [MegaKick]
-      45: [Superpower]
-    egg: [BodySlam, CloseCombat, DoubleEdge, Magnitude, MudBomb]
+      24: [Counter]
+      28: [HighHorsepower]
+      32: [HeavySlam]
+      36: [Earthquake]
+      40: [MegaKick]
+      44: [Superpower]
+    egg: [BodySlam, CloseCombat, DoubleEdge, Magnitude, MudBomb, Fissure, Roar, SmackDown]
+    teachable:
+      - BodySlam
+      - CloseCombat
+      - Endure
+      - HeavySlam
+      - HighHorsepower
+      - MegaKick
+      - SandTomb
   Mudsdale:
     level:
-      1: [Bulldoze, MudSlap, MudSport, Rototiller]
-      15: [DoubleKick]
-      17: [Stomp]
+      1: [DoubleKick, MudSlap, RockSmash, IronDefense, MudSport, Rototiller]
+      12: [Bulldoze]
+      16: [Stomp]
+      20: [Strength]
       22: [Bide]
-      24: [HighHorsepower]
-      29: [IronDefense]
+      24: [Counter]
+      28: [HighHorsepower]
       34: [HeavySlam]
-      42: [Counter]
-      47: [Earthquake]
-      55: [MegaKick]
-      60: [Superpower]
-    teachable: [FocusBlast, GigaImpact, BodyPress, LashOut]
+      40: [Earthquake]
+      46: [MegaKick]
+      52: [Superpower]
+    teachable:
+      [
+        FocusBlast,
+        GigaImpact,
+        BodyPress,
+        LashOut,
+        BodySlam,
+        CloseCombat,
+        Endure,
+        HeavySlam,
+        HighHorsepower,
+        HyperBeam,
+        MegaKick,
+        MudShot,
+        Revenge,
+        SandTomb,
+        ScaryFace,
+      ]
 Dewpider:
   # TM and tutor moves shared by the whole family
   family-teachable:
@@ -179,33 +227,38 @@ Dewpider:
     - SkitterSmack
   Dewpider:
     level:
-      1: [Bubble, WaterSport]
-      5: [Infestation]
-      8: [SpiderWeb]
-      13: [BugBite]
-      16: [BubbleBeam]
-      21: [Bite]
-      24: [AquaRing]
-      29: [LeechLife]
-      32: [Crunch]
-      37: [Lunge]
-      40: [MirrorCoat]
-      45: [Liquidation]
-      48: [Entrainment]
+      1: [WaterGun, Infestation, Bubble, WaterSport]
+      4: [BugBite]
+      8: [Bite, SpiderWeb]
+      12: [BubbleBeam]
+      16: [AquaRing]
+      20: [Headbutt]
+      24: [Crunch]
+      28: [Soak]
+      32: [Entrainment]
+      36: [Lunge]
+      40: [Liquidation]
+      44: [LeechLife]
+      48: [MirrorCoat]
     egg: [AuroraBeam, PowerSplit, SpitUp, StickyWeb, Stockpile]
+    teachable:
+      - BugBuzz
+      - Crunch
+      - Endure
   Araquanid:
     level:
-      1: [Bubble, BugBite, Infestation, Soak, SpiderWeb, WideGuard]
-      16: [BubbleBeam]
-      21: [Bite]
-      26: [AquaRing]
-      33: [LeechLife]
-      38: [Crunch]
-      45: [Lunge]
-      50: [MirrorCoat]
-      57: [Liquidation]
-      62: [Entrainment]
-    teachable: [LaserFocus, Reflect, Safeguard]
+      1: [Bite, WaterGun, BugBite, WideGuard, Infestation, Bubble, SpiderWeb]
+      12: [BubbleBeam]
+      16: [AquaRing]
+      20: [Headbutt]
+      26: [Crunch]
+      32: [Soak]
+      38: [Entrainment]
+      44: [Lunge]
+      50: [Liquidation]
+      56: [LeechLife]
+      62: [MirrorCoat]
+    teachable: [LaserFocus, Reflect, Safeguard, BugBuzz, Crunch, Dive, Endure, HydroPump]
 Fomantis:
   # TM and tutor moves shared by the whole family
   family-teachable:
@@ -248,28 +301,36 @@ Fomantis:
     - GrassyGlide
   Fomantis:
     level:
-      1: [FuryCutter]
-      5: [Leafage]
-      10: [RazorLeaf]
-      14: [Growth]
-      19: [Ingrain]
-      23: [LeafBlade]
-      28: [Synthesis]
-      32: [Slash]
-      37: [SweetScent]
-      41: [SolarBeam]
-      46: [SunnyDay]
-    egg: [Aromatherapy, Defog, GigaDrain, LeafStorm, WeatherBall]
+      1: [FuryCutter, Leafage]
+      5: [Growth]
+      10: [Ingrain]
+      15: [RazorLeaf]
+      20: [SweetScent]
+      25: [Slash]
+      30: [XScissor]
+      35: [Synthesis]
+      40: [LeafBlade]
+      45: [SunnyDay]
+      50: [SolarBeam]
+    egg: [Aromatherapy, Defog, GigaDrain, LeafStorm, WeatherBall, WorrySeed]
+    teachable:
+      - BulletSeed
+      - Endure
+      - LeafBlade
+      - LeafStorm
+      - MagicalLeaf
+      - WeatherBall
   Lurantis:
     level:
-      1: [FuryCutter, Growth, Leafage, NightSlash, PetalBlizzard, RazorLeaf, XScissor]
-      19: [Ingrain]
-      23: [LeafBlade]
-      28: [Synthesis]
-      32: [Slash]
-      40: [SweetScent]
-      47: [SolarBlade]
-      55: [SunnyDay]
+      1: [Growth, SolarBeam, FuryCutter, Ingrain, NightSlash, DualChop, PetalBlizzard, Leafage]
+      15: [RazorLeaf]
+      20: [SweetScent]
+      25: [Slash]
+      30: [XScissor]
+      37: [Synthesis]
+      44: [LeafBlade]
+      51: [SunnyDay]
+      63: [SolarBlade]
     teachable:
       - AerialAce
       - BrickBreak
@@ -279,6 +340,16 @@ Fomantis:
       - LaserFocus
       - LowSweep
       - Superpower
+      - BulletSeed
+      - CrossPoison
+      - Endure
+      - GrassyTerrain
+      - LeafBlade
+      - LeafStorm
+      - MagicalLeaf
+      - PsychoCut
+      - SolarBlade
+      - WeatherBall
 Morelull:
   # TM and tutor moves shared by the whole family
   family-teachable:
@@ -319,35 +390,53 @@ Morelull:
     - WorrySeed
   Morelull:
     level:
-      1: [Absorb]
-      4: [Astonish]
-      8: [Flash]
-      11: [Moonlight]
-      15: [MegaDrain]
-      18: [SleepPowder]
-      22: [Ingrain]
-      25: [ConfuseRay]
-      29: [GigaDrain]
-      32: [StrengthSap]
+      1: [Absorb, Astonish]
+      4: [ConfuseRay]
+      8: [Ingrain, Flash]
+      12: [MegaDrain]
+      16: [SleepPowder]
+      20: [Moonlight]
+      25: [StrengthSap]
+      28: [GigaDrain]
+      32: [DazzlingGleam]
       36: [Spore]
-      39: [Moonblast]
-      43: [DreamEater]
+      40: [Moonblast]
+      44: [DreamEater]
       46: [Spotlight]
     egg: [Amnesia, Growth, LeechSeed, PoisonPowder, StunSpore]
+    teachable:
+      - Amnesia
+      - DrainingKiss
+      - Endure
+      - Facade
+      - PollenPuff
   Shiinotic:
     level:
-      1: [Absorb, Astonish, Flash, Ingrain]
-      11: [Moonlight]
-      15: [MegaDrain]
-      18: [SleepPowder]
-      26: [ConfuseRay]
-      31: [GigaDrain]
-      35: [StrengthSap]
-      40: [Spore]
-      44: [Moonblast]
-      49: [DreamEater]
+      1: [Absorb, ConfuseRay, Ingrain, Astonish, Flash]
+      12: [MegaDrain]
+      16: [SleepPowder]
+      20: [Moonlight]
+      27: [StrengthSap]
+      32: [GigaDrain]
+      38: [DazzlingGleam]
+      44: [Spore]
+      50: [Moonblast]
       53: [Spotlight]
-    teachable: [ChargeBeam, GigaImpact]
+      56: [DreamEater]
+    teachable:
+      [
+        ChargeBeam,
+        GigaImpact,
+        Amnesia,
+        DrainPunch,
+        DrainingKiss,
+        Endure,
+        Facade,
+        HyperBeam,
+        PollenPuff,
+        RainDance,
+        WeatherBall,
+      ]
 Salandit:
   # TM and tutor moves shared by the whole family
   family-teachable:
@@ -396,43 +485,79 @@ Salandit:
     - SkitterSmack
   Salandit:
     level:
-      1: [PoisonGas, Scratch]
-      5: [Ember]
-      8: [SweetScent]
+      1: [Scratch, PoisonGas]
+      5: [Smog]
+      10: [Ember]
       13: [DragonRage]
-      16: [Smog]
+      15: [PoisonFang]
+      20: [SweetScent]
       21: [DoubleSlap]
       24: [FlameBurst]
-      29: [Toxic]
-      32: [NastyPlot]
-      37: [Venoshock]
-      40: [Flamethrower]
+      25: [NastyPlot]
+      30: [Incinerate]
+      35: [Venoshock]
+      40: [DragonPulse]
       45: [VenomDrench]
-      48: [DragonPulse]
-    egg: [Belch, FakeOut, KnockOff, SandAttack, Snatch]
+      50: [Flamethrower]
+      55: [Toxic]
+      60: [Endeavor]
+    egg: [Belch, FakeOut, KnockOff, SandAttack, Snatch, MudSlap]
+    teachable:
+      - BeatUp
+      - Endure
+      - NastyPlot
+      - Swift
+      - ThunderWave
+      - VenomDrench
   Salazzle:
     level:
       1:
-        - Captivate
-        - Disable
-        - Ember
-        - Encore
-        - PoisonGas
-        - Pound
-        - Swagger
-        - SweetScent
-        - Torment
+        [
+          Pound,
+          Scratch,
+          Disable,
+          Ember,
+          Smog,
+          PoisonGas,
+          Swagger,
+          Encore,
+          Torment,
+          KnockOff,
+          Endeavor,
+          FireLash,
+          Captivate,
+        ]
       13: [DragonRage]
-      16: [Smog]
+      15: [PoisonFang]
+      20: [SweetScent]
       21: [DoubleSlap]
       24: [FlameBurst]
-      29: [Toxic]
-      32: [NastyPlot]
-      39: [Venoshock]
-      44: [Flamethrower]
+      25: [NastyPlot]
+      30: [Incinerate]
+      37: [Venoshock]
+      44: [DragonPulse]
       51: [VenomDrench]
-      56: [DragonPulse]
-    teachable: [Acrobatics, DragonTail, LaserFocus, BreakingSwipe, CorrosiveGas]
+      58: [Flamethrower]
+      65: [Toxic]
+    teachable:
+      [
+        Acrobatics,
+        DragonTail,
+        LaserFocus,
+        BreakingSwipe,
+        CorrosiveGas,
+        BeatUp,
+        CrossPoison,
+        DragonDance,
+        Encore,
+        Endure,
+        FakeTears,
+        FlareBlitz,
+        NastyPlot,
+        Swift,
+        ThunderWave,
+        VenomDrench,
+      ]
 Stufful:
   # TM and tutor moves shared by the whole family
   family-teachable:
@@ -481,18 +606,20 @@ Stufful:
     - Coaching
   Stufful:
     level:
-      1: [Leer, Tackle]
+      1: [Tackle, Leer]
+      4: [BabyDollEyes]
       5: [Bide]
-      10: [BabyDollEyes]
-      14: [BrutalSwing]
-      19: [Flail]
-      23: [Payback]
-      28: [TakeDown]
+      8: [Payback]
+      12: [BrutalSwing]
+      16: [Endure]
+      20: [Strength]
+      24: [TakeDown]
+      28: [Flail]
       32: [HammerArm]
-      37: [Thrash]
-      41: [PainSplit]
-      46: [DoubleEdge]
-      50: [Superpower]
+      36: [Thrash]
+      40: [PainSplit]
+      44: [DoubleEdge]
+      48: [Superpower]
     egg:
       - Endure
       - ForcePalm
@@ -501,21 +628,48 @@ Stufful:
       - StompingTantrum
       - ThunderPunch
       - WideGuard
+      - DefenseCurl
+      - Rollout
+      - Stomp
+    teachable:
+      - Charm
+      - Endure
+      - MegaKick
+      - MegaPunch
   Bewear:
     level:
-      1: [Bind, Leer, Tackle]
+      1: [Bind, Tackle, Leer, Payback, BabyDollEyes]
       5: [Bide]
-      10: [BabyDollEyes]
-      14: [BrutalSwing]
-      19: [Flail]
-      23: [Payback]
-      30: [TakeDown]
+      12: [BrutalSwing]
+      16: [Endure]
+      20: [Strength]
+      24: [TakeDown]
+      30: [Flail]
       36: [HammerArm]
-      43: [Thrash]
-      49: [PainSplit]
-      56: [DoubleEdge]
-      62: [Superpower]
-    teachable: [DragonClaw, DrainPunch, GigaImpact, HyperBeam, LowKick, ShadowClaw, BodyPress]
+      42: [Thrash]
+      48: [PainSplit]
+      54: [DoubleEdge]
+      60: [Superpower]
+    teachable:
+      [
+        DragonClaw,
+        DrainPunch,
+        GigaImpact,
+        HyperBeam,
+        LowKick,
+        ShadowClaw,
+        BodyPress,
+        BodySlam,
+        Charm,
+        CloseCombat,
+        DarkestLariat,
+        Endure,
+        HighHorsepower,
+        MegaKick,
+        MegaPunch,
+        Revenge,
+        Reversal,
+      ]
 Bounsweet:
   # TM and tutor moves shared by the whole family
   family-teachable:
@@ -556,40 +710,71 @@ Bounsweet:
   Bounsweet:
     level:
       1: [Splash]
-      5: [PlayNice]
-      9: [RapidSpin]
-      13: [RazorLeaf]
-      17: [SweetScent]
-      21: [MagicalLeaf]
-      25: [TeeterDance]
-      29: [Flail]
-      33: [AromaticMist]
-    egg: [Acupressure, Charm, Feint, GrassWhistle, PlayRough, Synthesis]
+      4: [PlayNice]
+      8: [RapidSpin]
+      12: [RazorLeaf]
+      16: [SweetScent]
+      20: [MagicalLeaf]
+      24: [Flail]
+      28: [TeeterDance]
+      32: [AromaticMist]
+      36: [Aromatherapy]
+    egg: [Acupressure, Charm, Feint, GrassWhistle, PlayRough, Synthesis, Endeavor]
+    teachable:
+      - Charm
+      - DrainingKiss
+      - Endure
+      - MagicalLeaf
+      - PlayRough
   Steenee:
     level:
-      1: [DoubleSlap, PlayNice, RapidSpin, RazorLeaf, Splash]
-      17: [SweetScent]
-      21: [MagicalLeaf]
-      25: [TeeterDance]
-      29: [Stomp]
-      33: [AromaticMist]
+      1: [RazorLeaf, Splash, Flail, RapidSpin, PlayNice, DoubleSlap]
+      16: [SweetScent]
+      22: [MagicalLeaf]
+      28: [Stomp]
+      34: [TeeterDance]
       37: [Captivate]
-      41: [Aromatherapy]
-      45: [LeafStorm]
-    teachable: [Fling, KnockOff, LowSweep, Payback, TripleAxel]
+      40: [AromaticMist]
+      46: [Aromatherapy]
+      52: [LeafStorm]
+    teachable:
+      [
+        Fling,
+        KnockOff,
+        LowSweep,
+        Payback,
+        TripleAxel,
+        Charm,
+        DrainingKiss,
+        Endure,
+        LeafStorm,
+        MagicalLeaf,
+        PlayRough,
+      ]
   Tsareena:
     level:
-      1: [DoubleSlap, Punishment, RapidSpin, RazorLeaf, Splash, Swagger, TropKick]
-      17: [SweetScent]
-      21: [MagicalLeaf]
-      25: [TeeterDance]
-      29: [Stomp]
-      33: [AromaticMist]
+      1:
+        [
+          RazorLeaf,
+          Splash,
+          Flail,
+          Swagger,
+          RapidSpin,
+          PowerWhip,
+          PlayNice,
+          TropKick,
+          DoubleSlap,
+          Punishment,
+        ]
+      16: [SweetScent]
+      22: [MagicalLeaf]
+      28: [Stomp]
+      34: [TeeterDance]
       37: [Captivate]
-      41: [Aromatherapy]
-      45: [LeafStorm]
-      49: [HiJumpKick]
-      53: [PowerWhip]
+      40: [AromaticMist]
+      46: [Aromatherapy]
+      52: [LeafStorm]
+      58: [HiJumpKick]
     teachable:
       - Acrobatics
       - Fling
@@ -601,26 +786,38 @@ Bounsweet:
       - Payback
       - UTurn
       - TripleAxel
+      - Charm
+      - DrainingKiss
+      - Endure
+      - HyperBeam
+      - LeafStorm
+      - MagicalLeaf
+      - MegaKick
+      - PlayRough
+      - PowerWhip
+      - SolarBlade
+      - Taunt
 Comfey:
   Comfey:
     level:
-      1: [FlowerShield, HelpingHand, VineWhip]
-      4: [LeechSeed]
-      7: [DrainingKiss]
-      10: [MagicalLeaf]
-      13: [Growth]
-      16: [Wrap]
-      19: [SweetKiss]
+      1: [Wrap, Growth]
+      3: [VineWhip]
+      6: [HelpingHand]
+      9: [DrainingKiss]
+      12: [FlowerShield]
+      15: [MagicalLeaf]
+      18: [Synthesis]
+      21: [LeechSeed]
       22: [NaturalGift]
-      25: [PetalBlizzard]
-      28: [Synthesis]
-      31: [SweetScent]
-      34: [GrassKnot]
-      37: [FloralHealing]
-      40: [PetalDance]
-      43: [Aromatherapy]
-      46: [GrassyTerrain]
-      49: [PlayRough]
+      24: [GrassKnot]
+      27: [SweetKiss]
+      30: [FloralHealing]
+      33: [PetalBlizzard]
+      36: [Aromatherapy]
+      39: [PlayRough]
+      42: [SweetScent]
+      45: [PetalDance]
+      48: [GrassyTerrain]
     teachable:
       - Acrobatics
       - AfterYou
@@ -673,25 +870,35 @@ Comfey:
       - UTurn
       - WorrySeed
       - GrassyGlide
-    egg: [AfterYou, Amnesia, Endure, LuckyChant]
+      - Amnesia
+      - BulletSeed
+      - Charm
+      - DrainingKiss
+      - Encore
+      - Endure
+      - GrassyTerrain
+      - MagicalLeaf
+      - PlayRough
+      - PollenPuff
+      - StoredPower
+    egg: [AfterYou, Amnesia, Endure, LuckyChant, LeafTornado, WorrySeed]
 Oranguru:
   Oranguru:
     level:
-      1: [Confusion]
-      4: [AfterYou]
-      8: [Taunt]
-      11: [Quash]
+      1: [Confusion, Taunt]
+      5: [AfterYou]
+      10: [CalmMind]
       15: [StoredPower]
-      18: [PsychUp]
+      20: [PsychUp]
       22: [FeintAttack]
-      25: [NastyPlot]
-      29: [ZenHeadbutt]
-      32: [Instruct]
-      36: [FoulPlay]
-      39: [CalmMind]
-      43: [Psychic]
-      46: [FutureSight]
-      50: [TrickRoom]
+      25: [Quash]
+      30: [NastyPlot]
+      35: [ZenHeadbutt]
+      40: [TrickRoom]
+      45: [Psychic]
+      50: [Instruct]
+      55: [FoulPlay]
+      60: [FutureSight]
     teachable:
       - AfterYou
       - AllySwitch
@@ -755,25 +962,34 @@ Oranguru:
       - ZenHeadbutt
       - ExpandingForce
       - TerrainPulse
-    egg: [Extrasensory, PsychicTerrain, WonderRoom]
+      - Attract
+      - Encore
+      - Endure
+      - FutureSight
+      - HyperBeam
+      - Imprison
+      - MegaKick
+      - MegaPunch
+      - NastyPlot
+      - PsychicTerrain
+      - StoredPower
+    egg: [Extrasensory, PsychicTerrain, WonderRoom, DreamEater, LastResort, Yawn]
 Passimian:
   Passimian:
     level:
-      1: [Tackle]
-      4: [Leer]
-      8: [RockSmash]
-      11: [FocusEnergy]
+      1: [Tackle, Leer]
+      5: [RockSmash]
+      10: [FocusEnergy]
       15: [BeatUp]
-      18: [ScaryFace]
-      22: [TakeDown]
-      25: [Bestow]
-      29: [Thrash]
-      32: [BulkUp]
-      36: [DoubleEdge]
-      39: [Fling]
-      43: [CloseCombat]
-      46: [Reversal]
-      50: [GigaImpact]
+      20: [ScaryFace]
+      25: [TakeDown, Bestow]
+      30: [Fling]
+      35: [BulkUp]
+      40: [Thrash]
+      45: [DoubleEdge]
+      50: [CloseCombat]
+      55: [Reversal]
+      60: [GigaImpact]
     teachable:
       - Acrobatics
       - AerialAce
@@ -832,7 +1048,18 @@ Passimian:
       - Uproar
       - WorkUp
       - Coaching
-    egg: [Feint, IronHead, QuickAttack, QuickGuard, SeismicToss, VitalThrow]
+      - Assurance
+      - BeatUp
+      - CloseCombat
+      - Endure
+      - FocusEnergy
+      - MegaKick
+      - MegaPunch
+      - Retaliate
+      - Revenge
+      - Reversal
+      - ScaryFace
+    egg: [Feint, IronHead, QuickAttack, QuickGuard, SeismicToss, VitalThrow, Counter, KnockOff]
 Wimpod:
   # TM and tutor moves shared by the whole family
   family-teachable:
@@ -861,20 +1088,30 @@ Wimpod:
     - SkitterSmack
   Wimpod:
     level:
-      1: [SandAttack, StruggleBug]
-    egg: [AquaJet, Harden, MetalClaw, Spikes, WideGuard]
+      1: [SandAttack, DefenseCurl, StruggleBug]
+    egg: [AquaJet, Harden, MetalClaw, Spikes, WideGuard, Rollout]
+    teachable:
+      - Assurance
+      - BugBuzz
+      - Endure
+      - MudShot
+      - Screech
+      - Spikes
+      - Swift
   Golisopod:
     level:
-      1: [FirstImpression, FuryCutter, RockSmash, SandAttack, StruggleBug]
-      10: [BugBite]
-      13: [Spite]
-      16: [SwordsDance]
-      21: [Slash]
-      26: [RazorShell]
-      31: [SuckerPunch]
-      36: [IronDefense]
-      41: [PinMissile]
-      48: [Liquidation]
+      1: [SandAttack, DefenseCurl, Spite, StruggleBug, FirstImpression]
+      4: [RockSmash]
+      8: [FuryCutter]
+      12: [MudShot]
+      16: [BugBite]
+      20: [IronDefense]
+      24: [SuckerPunch]
+      28: [Slash]
+      32: [RazorShell]
+      36: [PinMissile]
+      40: [SwordsDance]
+      44: [Liquidation]
     teachable:
       - AerialAce
       - Blizzard
@@ -913,6 +1150,19 @@ Wimpod:
       - Venoshock
       - WaterPulse
       - XScissor
+      - Assurance
+      - BugBuzz
+      - CloseCombat
+      - Dive
+      - Endure
+      - HyperBeam
+      - MudShot
+      - MuddyWater
+      - PinMissile
+      - RazorShell
+      - Screech
+      - Spikes
+      - Swift
 Sandygast:
   # TM and tutor moves shared by the whole family
   family-teachable:
@@ -961,48 +1211,68 @@ Sandygast:
     level:
       1: [Absorb, Harden]
       5: [Astonish]
-      9: [SandAttack]
-      14: [SandTomb]
-      18: [MegaDrain]
-      23: [Bulldoze]
-      27: [Hypnosis]
-      32: [IronDefense]
-      36: [GigaDrain]
-      41: [ShadowBall]
-      45: [EarthPower]
-      50: [ShoreUp]
-      54: [Sandstorm]
+      10: [SandTomb]
+      15: [MegaDrain]
+      20: [SandAttack]
+      25: [Bulldoze]
+      30: [Hypnosis]
+      35: [GigaDrain]
+      40: [IronDefense]
+      45: [ShadowBall]
+      50: [EarthPower]
+      55: [ShoreUp]
+      60: [Sandstorm]
     egg: [Amnesia, AncientPower, Curse, DestinyBond, SpitUp, Stockpile, Swallow]
+    teachable:
+      - Amnesia
+      - Brine
+      - Endure
+      - MudShot
+      - SandTomb
+      - SludgeBomb
   Palossand:
     level:
-      1: [Absorb, Astonish, Harden, SandAttack]
-      14: [SandTomb]
-      18: [MegaDrain]
-      23: [Bulldoze]
-      27: [Hypnosis]
-      32: [IronDefense]
-      36: [GigaDrain]
-      41: [ShadowBall]
-      47: [EarthPower]
-      54: [ShoreUp]
-      60: [Sandstorm]
-    teachable: [Embargo, Fling, GigaImpact, Quash, SludgeBomb, TerrainPulse]
+      1: [Absorb, Harden, Astonish, SandTomb]
+      15: [MegaDrain]
+      20: [SandAttack]
+      25: [Bulldoze]
+      30: [Hypnosis]
+      35: [GigaDrain]
+      40: [IronDefense]
+      47: [ShadowBall]
+      54: [EarthPower]
+      61: [ShoreUp]
+      68: [Sandstorm]
+    teachable:
+      [
+        Embargo,
+        Fling,
+        GigaImpact,
+        Quash,
+        SludgeBomb,
+        TerrainPulse,
+        Amnesia,
+        Brine,
+        Endure,
+        MudShot,
+        SandTomb,
+      ]
 Pyukumuku:
   Pyukumuku:
     level:
-      1: [BatonPass, Bide, Harden, MudSport, WaterSport]
+      1: [Harden, BatonPass, Bide, MudSport, WaterSport]
       5: [HelpingHand]
-      9: [Taunt]
-      13: [Safeguard]
-      17: [Counter]
-      21: [Purify]
-      25: [Curse]
-      29: [GastroAcid]
-      33: [PainSplit]
-      37: [Recover]
-      41: [Soak]
-      45: [Toxic]
-      49: [Memento]
+      10: [Taunt]
+      15: [Safeguard]
+      20: [Counter]
+      25: [Purify]
+      30: [Curse]
+      35: [GastroAcid]
+      40: [PainSplit]
+      45: [Recover]
+      50: [Soak]
+      55: [Toxic]
+      60: [Memento]
     teachable:
       - Attract
       - Block
@@ -1027,4 +1297,8 @@ Pyukumuku:
       - Swagger
       - Taunt
       - Toxic
-    egg: [Bestow, Endure, Spite, Tickle, VenomDrench]
+      - BatonPass
+      - Endure
+      - Screech
+      - VenomDrench
+    egg: [Bestow, Endure, Spite, Tickle, VenomDrench, MirrorCoat, Swagger]

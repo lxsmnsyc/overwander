@@ -1,0 +1,38 @@
+Yamper:
+  Yamper: { name: Yamper, category: Puppy Pokemon }
+  Boltund: { name: Boltund, category: Dog Pokemon }
+Applin:
+  Applin: { name: Applin, category: Apple Core Pokemon }
+  Flapple: { name: Flapple, category: Apple Wing Pokemon }
+  Appletun: { name: Appletun, category: Apple Nectar Pokemon }
+Silicobra:
+  Silicobra: { name: Silicobra, category: Sand Snake Pokemon }
+  Sandaconda: { name: Sandaconda, category: Sand Snake Pokemon }
+Cramorant:
+  Cramorant: { name: Cramorant, category: Gulp Pokemon }
+  CramorantGulping: { name: Gulping Cramorant, category: Gulp Pokemon }
+  CramorantGorging: { name: Gorging Cramorant, category: Gulp Pokemon }
+Arrokuda:
+  Arrokuda: { name: Arrokuda, category: Rush Pokemon }
+  Barraskewda: { name: Barraskewda, category: Skewer Pokemon }
+Toxel:
+  Toxel: { name: Toxel, category: Baby Pokemon }
+  Toxtricity: { name: Toxtricity, category: Punk Pokemon }
+  ToxtricityLowKey: { name: Low Key Toxtricity, category: Punk Pokemon }
+Sizzlipede:
+  Sizzlipede: { name: Sizzlipede, category: Radiator Pokemon }
+  Centiskorch: { name: Centiskorch, category: Radiator Pokemon }
+Clobbopus:
+  Clobbopus: { name: Clobbopus, category: Tantrum Pokemon }
+  Grapploct: { name: Grapploct, category: Jujitsu Pokemon }
+Sinistea:
+  Sinistea: { name: Sinistea, category: Black Tea Pokemon }
+  Polteageist: { name: Polteageist, category: Black Tea Pokemon }
+Hatenna:
+  Hatenna: { name: Hatenna, category: Calm Pokemon }
+  Hattrem: { name: Hattrem, category: Serene Pokemon }
+  Hatterene: { name: Hatterene, category: Silent Pokemon }
+Impidimp:
+  Impidimp: { name: Impidimp, category: Wily Pokemon }
+  Morgrem: { name: Morgrem, category: Devious Pokemon }
+  Grimmsnarl: { name: Grimmsnarl, category: Bulk Up Pokemon }

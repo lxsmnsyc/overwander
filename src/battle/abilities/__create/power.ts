@@ -1,7 +1,7 @@
-import { EventPriority } from '../../../core/event-emitter';
+import { AttackPriority, EventPriority } from '../../../core/event-emitter';
 import { Stats } from '../../../data/constants/stats';
-import type { Types } from '../../../data/constants/types';
-import type { MoveFlags, Moves } from '../../../data/ids/moves';
+import { Types } from '../../../data/constants/types';
+import type { MoveCategories, MoveFlags, Moves } from '../../../data/ids/moves';
 import { getMoveData } from '../../../data/moves';
 import Abilities from '../../../data/ids/abilities';
 import type Battle from '../../core';
@@ -308,5 +308,70 @@ export function createTypeShiftAbility(
               }),
             ]),
       ]),
+  );
+}
+
+/**
+ * Meta ability for the ones that become whatever they are about to
+ * use (Protean, Libero), so everything they cast is same-type.
+ *
+ * Set before the move resolves, which is what puts the new type in
+ * reach of its own STAB
+ * https://bulbapedia.bulbagarden.net/wiki/Protean_(Ability)
+ */
+export function createProteanAbility(targetAbility: Abilities): (battle: Battle) => void {
+  return createAbility(targetAbility, (battle) =>
+    battle.on(BattleEvents.UnitTriggerMove, AttackPriority.Pre, (event) => {
+      if (!event.source.hasAbility(targetAbility)) {
+        return;
+      }
+
+      const type = event.source.checkMoveType(event.move, event.target);
+
+      if (
+        type === Types.Unknown ||
+        (event.source.types.size === 1 && event.source.types.has(type))
+      ) {
+        return;
+      }
+
+      event.source.triggerAbility(targetAbility);
+
+      for (const worn of [...event.source.types]) {
+        event.source.removeType(worn);
+      }
+      event.source.addType(type);
+    }),
+  );
+}
+
+/**
+ * Meta ability for the ones that lift what everybody else on the side
+ * throws, never the holder's own (Battery, Power Spot). `category`
+ * narrows it to one kind of move, or null for any. A pair of them
+ * stand behind each other rather than stacking on a third
+ * https://bulbapedia.bulbagarden.net/wiki/Battery_(Ability)
+ */
+export function createBatteryAbility(
+  targetAbility: Abilities,
+  category: MoveCategories | null,
+  factor: number,
+): (battle: Battle) => void {
+  return createAbility(targetAbility, (battle) =>
+    battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
+      if (
+        event.power == null ||
+        (category != null && getMoveData(event.move).category !== category)
+      ) {
+        return;
+      }
+
+      for (const ally of event.source.team.units) {
+        if (ally !== event.source && ally.alive && ally.hasAbility(targetAbility)) {
+          event.power *= factor;
+          return;
+        }
+      }
+    }),
   );
 }

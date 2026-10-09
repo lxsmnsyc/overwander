@@ -17,7 +17,7 @@ import {
 import { BIOME_NAMES, TIME_OF_DAY_NAMES } from '../../src/data/biome/names';
 import Biome, { SpawnSurface, isIceBiome } from '../../src/data/ids/biome';
 import EggGroups from '../../src/data/ids/egg-groups';
-import { FOSSIL_SPECIES } from '../../src/data/items/fossils';
+import { listRevivedSpecies } from '../../src/data/items/fossils';
 import { HONEY_TREE_SPECIES } from '../../src/data/overworld/honey-tree';
 import { Species } from '../../src/data/ids/species';
 import { getRegisteredSpecies, getSpeciesData } from '../../src/data/species';
@@ -184,7 +184,7 @@ describe('spawn balance', () => {
   });
 
   it('gives every wild line somewhere to be met, once all of it is drawn', () => {
-    const fossils = new Set<Species>(FOSSIL_SPECIES.values());
+    const fossils = new Set<Species>(listRevivedSpecies());
     const hatched = new Set<Species>();
 
     for (const species of getRegisteredSpecies()) {

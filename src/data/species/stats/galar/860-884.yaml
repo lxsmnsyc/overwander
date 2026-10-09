@@ -1,0 +1,168 @@
+Milcery:
+  Milcery:
+    stats: { HP: 45, Attack: 40, Defense: 40, SpecialAttack: 50, SpecialDefense: 61, Speed: 34 }
+    catch-rate: 200
+    height: 0.2
+    weight: 0.3
+    gender: [0, 1]
+  Alcremie:
+    stats: { HP: 65, Attack: 60, Defense: 75, SpecialAttack: 110, SpecialDefense: 121, Speed: 64 }
+    catch-rate: 100
+    height: 0.3
+    weight: 0.5
+    gender: [0, 1]
+  AlcremieBerry:
+    stats: { HP: 65, Attack: 60, Defense: 75, SpecialAttack: 110, SpecialDefense: 121, Speed: 64 }
+    catch-rate: 100
+    height: 0.3
+    weight: 0.5
+    gender: [0, 1]
+  AlcremieLove:
+    stats: { HP: 65, Attack: 60, Defense: 75, SpecialAttack: 110, SpecialDefense: 121, Speed: 64 }
+    catch-rate: 100
+    height: 0.3
+    weight: 0.5
+    gender: [0, 1]
+  AlcremieStar:
+    stats: { HP: 65, Attack: 60, Defense: 75, SpecialAttack: 110, SpecialDefense: 121, Speed: 64 }
+    catch-rate: 100
+    height: 0.3
+    weight: 0.5
+    gender: [0, 1]
+  AlcremieClover:
+    stats: { HP: 65, Attack: 60, Defense: 75, SpecialAttack: 110, SpecialDefense: 121, Speed: 64 }
+    catch-rate: 100
+    height: 0.3
+    weight: 0.5
+    gender: [0, 1]
+  AlcremieFlower:
+    stats: { HP: 65, Attack: 60, Defense: 75, SpecialAttack: 110, SpecialDefense: 121, Speed: 64 }
+    catch-rate: 100
+    height: 0.3
+    weight: 0.5
+    gender: [0, 1]
+  AlcremieRibbon:
+    stats: { HP: 65, Attack: 60, Defense: 75, SpecialAttack: 110, SpecialDefense: 121, Speed: 64 }
+    catch-rate: 100
+    height: 0.3
+    weight: 0.5
+    gender: [0, 1]
+Falinks:
+  Falinks:
+    stats: { HP: 65, Attack: 100, Defense: 100, SpecialAttack: 70, SpecialDefense: 60, Speed: 75 }
+    catch-rate: 45
+    height: 3
+    weight: 62
+    gender: genderless
+    egg-cycles: 25
+Pincurchin:
+  Pincurchin:
+    stats: { HP: 48, Attack: 101, Defense: 95, SpecialAttack: 91, SpecialDefense: 85, Speed: 15 }
+    catch-rate: 75
+    height: 0.3
+    weight: 1
+    gender: [1, 1]
+Snom:
+  Snom:
+    stats: { HP: 30, Attack: 25, Defense: 35, SpecialAttack: 45, SpecialDefense: 30, Speed: 20 }
+    catch-rate: 190
+    height: 0.3
+    weight: 3.8
+    gender: [1, 1]
+  Frosmoth:
+    stats: { HP: 70, Attack: 65, Defense: 60, SpecialAttack: 125, SpecialDefense: 90, Speed: 65 }
+    catch-rate: 75
+    height: 1.3
+    weight: 42
+    gender: [1, 1]
+Stonjourner:
+  Stonjourner:
+    stats: { HP: 100, Attack: 125, Defense: 135, SpecialAttack: 20, SpecialDefense: 20, Speed: 70 }
+    catch-rate: 60
+    height: 2.5
+    weight: 520
+    gender: [1, 1]
+    egg-cycles: 25
+Eiscue:
+  Eiscue:
+    stats: { HP: 75, Attack: 80, Defense: 110, SpecialAttack: 65, SpecialDefense: 90, Speed: 50 }
+    catch-rate: 60
+    height: 1.4
+    weight: 89
+    gender: [1, 1]
+    egg-cycles: 25
+  EiscueNoice:
+    stats: { HP: 75, Attack: 80, Defense: 70, SpecialAttack: 65, SpecialDefense: 50, Speed: 130 }
+    catch-rate: 60
+    height: 1.4
+    weight: 89
+    gender: [1, 1]
+Indeedee:
+  Indeedee:
+    stats: { HP: 60, Attack: 65, Defense: 55, SpecialAttack: 105, SpecialDefense: 95, Speed: 95 }
+    catch-rate: 30
+    height: 0.9
+    weight: 28
+    gender: [1, 0]
+    egg-cycles: 40
+  IndeedeeFemale:
+    stats: { HP: 70, Attack: 55, Defense: 65, SpecialAttack: 95, SpecialDefense: 105, Speed: 85 }
+    catch-rate: 30
+    height: 0.9
+    weight: 28
+    gender: [0, 1]
+    egg-cycles: 40
+Morpeko:
+  Morpeko:
+    stats: { HP: 58, Attack: 95, Defense: 58, SpecialAttack: 70, SpecialDefense: 58, Speed: 97 }
+    catch-rate: 180
+    height: 0.3
+    weight: 3
+    gender: [1, 1]
+    egg-cycles: 10
+  MorpekoHangry:
+    stats: { HP: 58, Attack: 95, Defense: 58, SpecialAttack: 70, SpecialDefense: 58, Speed: 97 }
+    catch-rate: 180
+    height: 0.3
+    weight: 3
+    gender: [1, 1]
+Dracozolt:
+  Dracozolt:
+    stats: { HP: 90, Attack: 100, Defense: 90, SpecialAttack: 80, SpecialDefense: 70, Speed: 75 }
+    catch-rate: 45
+    height: 1.8
+    weight: 190
+    gender: genderless
+    egg-cycles: 35
+Arctozolt:
+  Arctozolt:
+    stats: { HP: 90, Attack: 100, Defense: 90, SpecialAttack: 90, SpecialDefense: 80, Speed: 55 }
+    catch-rate: 45
+    height: 2.3
+    weight: 150
+    gender: genderless
+    egg-cycles: 35
+Dracovish:
+  Dracovish:
+    stats: { HP: 90, Attack: 90, Defense: 100, SpecialAttack: 70, SpecialDefense: 80, Speed: 75 }
+    catch-rate: 45
+    height: 2.3
+    weight: 215
+    gender: genderless
+    egg-cycles: 35
+Arctovish:
+  Arctovish:
+    stats: { HP: 90, Attack: 90, Defense: 100, SpecialAttack: 80, SpecialDefense: 90, Speed: 55 }
+    catch-rate: 45
+    height: 2
+    weight: 175
+    gender: genderless
+    egg-cycles: 35
+Duraludon:
+  Duraludon:
+    stats: { HP: 70, Attack: 95, Defense: 115, SpecialAttack: 120, SpecialDefense: 50, Speed: 85 }
+    catch-rate: 45
+    height: 1.8
+    weight: 40
+    gender: [1, 1]
+    egg-cycles: 30

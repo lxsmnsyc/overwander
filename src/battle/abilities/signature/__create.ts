@@ -1,7 +1,7 @@
 import { AttackPriority, EventPriority } from '../../../core/event-emitter';
 import { Stages, Stats } from '../../../data/constants/stats';
 import type Abilities from '../../../data/ids/abilities';
-import type { Types } from '../../../data/constants/types';
+import { type Types, getTypeFactor } from '../../../data/constants/types';
 import {
   DamageFlags,
   MoveAttackFlags,
@@ -24,6 +24,7 @@ import { type Lifecycle, MergedLifecycle } from '../../lifecycle';
 import type Unit from '../../unit';
 import { isPrimalWeather, onUnitActs, slipsTraps, unitTarget } from '../../utils';
 import { createAbility, getAbilityHolders } from '../__create';
+import turns from '../../turn';
 import { PSEUDO_MOVES } from '../../../data/moves/pseudo';
 
 export { isPseudoMove } from '../../../data/moves/pseudo';
@@ -192,6 +193,27 @@ export function allyHolder(battle: Battle, unit: Unit, ability: Abilities): Unit
   }
 
   return undefined;
+}
+
+/** The standing teammate with the smallest share of its HP left, itself excluded */
+export function worstHurtMate(unit: Unit): Unit | undefined {
+  let worst: Unit | undefined;
+  let lowest = Infinity;
+
+  for (const mate of unit.team.units) {
+    if (mate === unit || !mate.alive) {
+      continue;
+    }
+
+    const share = mate.health / mate.checkStat(Stats.HP, 0);
+
+    if (share < lowest) {
+      worst = mate;
+      lowest = share;
+    }
+  }
+
+  return worst;
 }
 
 /** Whether this is a physical move the pokemon actually chose */
@@ -2061,4 +2083,84 @@ export function createForeignBodyAbility(
       }
     }),
   );
+}
+
+/**
+ * What Galar's fossils share: two halves stitched together. A move of
+ * the head's type strikes as the tail's against any target the tail's
+ * type hits harder, so the swap is asked per target, never per cast
+ */
+export function createStitchedAbility(
+  ability: Abilities,
+  head: Types,
+  tail: Types,
+): ((battle: Battle) => void) & { ability: Abilities } {
+  return createAbility(ability, (battle) =>
+    battle.on(BattleEvents.CheckUnitMoveType, EventPriority.Post, (event) => {
+      const aimed = event.target;
+
+      if (
+        event.type !== head ||
+        aimed.type !== MoveTargetType.Unit ||
+        !event.source.hasAbility(ability)
+      ) {
+        return;
+      }
+
+      const types = [...aimed.unit.types];
+
+      if (getTypeFactor(tail, types) > getTypeFactor(head, types)) {
+        event.type = tail;
+      }
+    }),
+  );
+}
+
+/** How long a Galar starter waits before it can cue again */
+export const CUE_COOLDOWN = turns(4);
+
+/**
+ * What the Galar starters share: each plays for the team, so a move of
+ * its own type it lands on an enemy cues an assist move for its side.
+ * Who the assist goes to is the family's own, and a cue with nobody to
+ * go to is not spent
+ */
+export function createCueAbility(
+  ability: Abilities,
+  type: Types,
+  move: Moves,
+  pick: (holder: Unit, target: Unit) => Unit | undefined,
+): ((battle: Battle) => void) & { ability: Abilities } {
+  return createAbility(ability, (battle) => {
+    const resting = createTimedMarks(battle);
+
+    return new MergedLifecycle([
+      ...resting.lifecycles,
+      battle.on(BattleEvents.UnitAttack, AttackPriority.Post, (event) => {
+        const source = event.source;
+
+        if (
+          !event.success ||
+          event.type !== type ||
+          event.flags & MoveAttackFlags.Simulated ||
+          source.team.alliance === event.target.team.alliance ||
+          !source.alive ||
+          resting.has(source) ||
+          !source.hasAbility(ability)
+        ) {
+          return;
+        }
+
+        const cued = pick(source, event.target);
+
+        if (cued == null) {
+          return;
+        }
+
+        resting.mark(source, CUE_COOLDOWN);
+        source.triggerAbility(ability);
+        source.triggerMove(move, unitTarget(cued), 0);
+      }),
+    ]);
+  });
 }

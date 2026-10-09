@@ -1,0 +1,102 @@
+Grookey:
+  Grookey:
+    abilities: [Overgrow]
+    hidden: [GrassySurge]
+  Thwackey:
+    abilities: [Overgrow]
+    hidden: [GrassySurge]
+  Rillaboom:
+    abilities: [Overgrow]
+    # Grass Pelt and Punk Rock are this registry's rather than the
+    # mainline's, filling it to four: it drums on a stump of its own grass,
+    # and the beat is loud
+    hidden: [GrassySurge, GrassPelt, PunkRock]
+Scorbunny:
+  Scorbunny:
+    abilities: [Blaze]
+    hidden: [Libero]
+  Raboot:
+    abilities: [Blaze]
+    hidden: [Libero]
+  Cinderace:
+    abilities: [Blaze]
+    # Reckless and Quick Feet are this registry's rather than the
+    # mainline's, filling it to four: it runs and kicks without holding
+    # anything back
+    hidden: [Libero, Reckless, QuickFeet]
+Sobble:
+  Sobble:
+    abilities: [Torrent]
+    hidden: [Sniper]
+  Drizzile:
+    abilities: [Torrent]
+    hidden: [Sniper]
+  Inteleon:
+    abilities: [Torrent]
+    # Infiltrator and Super Luck are this registry's rather than the
+    # mainline's, filling it to four: a spy slips past screens and finds the
+    # weak spot
+    hidden: [Sniper, Infiltrator, SuperLuck]
+Skwovet:
+  Skwovet:
+    abilities: [CheekPouch]
+    hidden: [Gluttony]
+  Greedent:
+    abilities: [CheekPouch]
+    # Ripen and Harvest are this registry's rather than the mainline's,
+    # filling it to four: it hoards berries and grows more of them
+    hidden: [Gluttony, Ripen, Harvest]
+Rookidee:
+  Rookidee:
+    abilities: [KeenEye, Unnerve]
+    hidden: [BigPecks]
+  Corvisquire:
+    abilities: [KeenEye, Unnerve]
+    hidden: [BigPecks]
+  Corviknight:
+    abilities: [Pressure, Unnerve]
+    hidden: [MirrorArmor]
+Blipbug:
+  Blipbug:
+    abilities: [Swarm, CompoundEyes]
+    hidden: [Telepathy]
+  Dottler:
+    abilities: [Swarm, CompoundEyes]
+    hidden: [Telepathy]
+  Orbeetle:
+    abilities: [Swarm, Frisk]
+    hidden: [Telepathy]
+Nickit:
+  Nickit:
+    abilities: [RunAway, Unburden]
+    hidden: [Stakeout]
+  Thievul:
+    abilities: [RunAway, Unburden]
+    # Pickpocket is this registry's rather than the mainline's, filling it
+    # to four: it lives off what it lifts from others
+    hidden: [Stakeout, Pickpocket]
+Gossifleur:
+  Gossifleur:
+    abilities: [CottonDown, Regenerator]
+    hidden: [EffectSpore]
+  Eldegoss:
+    abilities: [CottonDown, Regenerator]
+    # Wind Rider is this registry's rather than the mainline's, filling it
+    # to four: its cotton seeds ride the wind
+    hidden: [EffectSpore, WindRider]
+Wooloo:
+  Wooloo:
+    abilities: [Fluffy, RunAway]
+    hidden: [Bulletproof]
+  Dubwool:
+    abilities: [Fluffy, Steadfast]
+    hidden: [Bulletproof]
+Chewtle:
+  Chewtle:
+    abilities: [StrongJaw, ShellArmor]
+    hidden: [SwiftSwim]
+  Drednaw:
+    abilities: [StrongJaw, ShellArmor]
+    # Rock Head is this registry's rather than the mainline's, filling it to
+    # four: it rams with the horn on its rock-hard head
+    hidden: [SwiftSwim, RockHead]

@@ -45,38 +45,39 @@ land:
 water:
   morning: &water-morning
     base:
-      Horsea: 2995
+      Horsea: 2950
     uncommon:
-      Corphish: 352
-      Wingull: 352
-      Shellos: 352
-      Clauncher: 337
-      Skrelp: 337
-      Mareanie: 310
-      Carvanha: 282
-      Clamperl: 282
-      Remoraid: 282
-      Finneon: 282
-      Krabby: 282
-      Slowpoke: 282
+      Corphish: 347
+      Wingull: 347
+      Shellos: 347
+      Clauncher: 332
+      Skrelp: 332
+      Mareanie: 305
+      Carvanha: 278
+      Clamperl: 278
+      Remoraid: 278
+      Finneon: 278
+      Krabby: 278
+      Slowpoke: 278
     rare:
-      Seadra: 1862
+      Seadra: 1834
     scarce:
-      Kingler: 112
-      Pelipper: 112
-      Gastrodon: 112
-      Slowbro: 112
-      Crawdaunt: 89
-      Toxapex: 67
-      Clawitzer: 67
-      Dragalge: 67
-      Sharpedo: 67
-      Lumineon: 67
-      Octillery: 57
+      Kingler: 110
+      Pelipper: 110
+      Gastrodon: 110
+      Slowbro: 110
+      Crawdaunt: 88
+      Toxapex: 66
+      Clawitzer: 66
+      Dragalge: 66
+      Sharpedo: 66
+      Lumineon: 66
+      Octillery: 56
     elusive:
-      Corsola: 130
-      Luvdisc: 97
-      Alomomola: 45
+      Pincurchin: 150
+      Corsola: 128
+      Luvdisc: 96
+      Alomomola: 44
       Bruxish: 33
       Wishiwashi: 33
       Mantine: 33
@@ -89,35 +90,36 @@ water:
   day: *water-morning
   evening: &water-evening
     base:
-      Horsea: 2994
+      Horsea: 2949
     uncommon:
-      Corphish: 486
-      Shellos: 486
-      Mareanie: 426
-      Carvanha: 388
-      Clamperl: 388
-      Staryu: 388
-      Remoraid: 388
-      Finneon: 388
-      Krabby: 388
+      Corphish: 479
+      Shellos: 479
+      Mareanie: 420
+      Carvanha: 382
+      Clamperl: 382
+      Staryu: 382
+      Remoraid: 382
+      Finneon: 382
+      Krabby: 382
     rare:
-      Seadra: 1863
+      Seadra: 1835
     scarce:
-      Starmie: 142
-      Octillery: 142
-      Kingler: 142
-      Gastrodon: 142
-      Crawdaunt: 113
-      Toxapex: 85
-      Sharpedo: 85
-      Lumineon: 85
+      Starmie: 140
+      Octillery: 140
+      Kingler: 140
+      Gastrodon: 140
+      Crawdaunt: 111
+      Toxapex: 84
+      Sharpedo: 84
+      Lumineon: 84
     elusive:
-      Corsola: 198
-      Alomomola: 70
-      Bruxish: 49
-      Wishiwashi: 49
-      Mantine: 49
-      Kingdra: 49
+      Corsola: 195
+      Pincurchin: 150
+      Alomomola: 69
+      Bruxish: 48
+      Wishiwashi: 48
+      Mantine: 48
+      Kingdra: 48
     prized:
       Mantyke: prized
     special: {}

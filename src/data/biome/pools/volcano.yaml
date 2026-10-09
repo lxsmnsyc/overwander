@@ -90,26 +90,28 @@ land:
       Volcanion: 10
   evening:
     base:
-      Deino: 388
+      Deino: 377
     uncommon:
-      DiglettAlola: 1566
-      Salandit: 1566
-      Vulpix: 1424
-      Slugma: 1424
-      Magmar: 712
+      DiglettAlola: 1522
+      Salandit: 1522
+      Vulpix: 1384
+      Slugma: 1384
+      Magmar: 692
+      Sizzlipede: 250
     rare:
-      Zweilous: 388
+      Zweilous: 377
     scarce:
-      Magcargo: 428
-      MarowakAlola: 257
-      DugtrioAlola: 257
-      Salazzle: 257
-      Magmortar: 257
-      Ninetales: 214
+      Magcargo: 416
+      MarowakAlola: 250
+      DugtrioAlola: 250
+      Salazzle: 250
+      Magmortar: 250
+      Ninetales: 208
+      Centiskorch: 30
     elusive:
-      Heatmor: 386
-      Turtonator: 321
-      Hydreigon: 129
+      Heatmor: 375
+      Turtonator: 312
+      Hydreigon: 125
     prized:
       Unown: forms
     special:
@@ -120,28 +122,30 @@ land:
       Volcanion: 10
   night:
     base:
-      Deino: 388
+      Deino: 377
     uncommon:
-      DiglettAlola: 1290
-      Salandit: 1290
-      Vulpix: 1175
-      Koffing: 1175
-      Slugma: 1175
-      Magmar: 586
+      DiglettAlola: 1254
+      Salandit: 1254
+      Vulpix: 1142
+      Koffing: 1142
+      Slugma: 1142
+      Magmar: 570
+      Sizzlipede: 250
     rare:
-      Zweilous: 388
+      Zweilous: 377
     scarce:
-      MarowakAlola: 257
-      DugtrioAlola: 257
-      Salazzle: 257
-      Magmortar: 257
-      Weezing: 214
-      Ninetales: 214
-      Magcargo: 214
+      MarowakAlola: 250
+      DugtrioAlola: 250
+      Salazzle: 250
+      Magmortar: 250
+      Weezing: 208
+      Ninetales: 208
+      Magcargo: 208
+      Centiskorch: 30
     elusive:
-      Heatmor: 386
-      Turtonator: 321
-      Hydreigon: 129
+      Heatmor: 375
+      Turtonator: 312
+      Hydreigon: 125
     prized:
       Unown: forms
     special:

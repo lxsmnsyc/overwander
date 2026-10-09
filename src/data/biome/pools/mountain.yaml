@@ -1,43 +1,43 @@
 land:
   morning:
     base:
-      Roggenrola: 784
-      JangmoO: 718
-      Klink: 653
-      Mankey: 653
-      Machop: 653
-      Geodude: 653
-      Aron: 653
-      Axew: 163
-      Chimchar: 98
+      Roggenrola: 779
+      JangmoO: 714
+      Klink: 649
+      Mankey: 649
+      Machop: 649
+      Geodude: 649
+      Aron: 649
+      Axew: 162
+      Chimchar: 97
       Charmander: 65
       Cyndaquil: 65
       Larvitar: 65
       Gible: 65
     uncommon:
-      Meditite: 235
-      Swablu: 207
-      Makuhita: 188
-      Spoink: 188
-      Diglett: 188
-      Slugma: 188
-      Nosepass: 188
-      BurmyTrash: 188
-      Bronzor: 188
-      Psyduck: 188
-      Mienfoo: 169
-      Rufflet: 150
-      Onix: 94
-      Dunsparce: 94
+      Meditite: 234
+      Swablu: 206
+      Makuhita: 187
+      Spoink: 187
+      Diglett: 187
+      Slugma: 187
+      Nosepass: 187
+      BurmyTrash: 187
+      Bronzor: 187
+      Psyduck: 187
+      Mienfoo: 168
+      Rufflet: 149
+      Onix: 93
+      Dunsparce: 93
       Magmar: 47
     rare:
-      Boldore: 224
-      Lairon: 187
-      Primeape: 187
-      HakamoO: 149
-      Klang: 149
-      Machoke: 93
-      Graveler: 93
+      Boldore: 223
+      Lairon: 186
+      Primeape: 186
+      HakamoO: 148
+      Klang: 148
+      Machoke: 92
+      Graveler: 92
       Fraxure: 56
       Monferno: 37
       Charmeleon: 19
@@ -59,6 +59,8 @@ land:
       Magcargo: 37
       WormadamTrash: 29
     elusive:
+      Falinks: 30
+      Duraludon: 30
       Torkoal: 27
       Mawile: 18
       Carbink: 13
@@ -113,44 +115,44 @@ land:
       Diancie: 10
   day:
     base:
-      Roggenrola: 769
-      JangmoO: 705
-      Klink: 641
-      Mankey: 641
-      Machop: 641
-      Geodude: 641
-      Aron: 641
-      Axew: 160
-      Bagon: 96
-      Chimchar: 96
+      Roggenrola: 764
+      JangmoO: 701
+      Klink: 637
+      Mankey: 637
+      Machop: 637
+      Geodude: 637
+      Aron: 637
+      Axew: 159
+      Bagon: 95
+      Chimchar: 95
       Charmander: 64
       Cyndaquil: 64
       Larvitar: 64
       Gible: 64
     uncommon:
-      Meditite: 235
-      Swablu: 207
-      Makuhita: 188
-      Spoink: 188
-      Diglett: 188
-      Slugma: 188
-      Nosepass: 188
-      BurmyTrash: 188
-      Bronzor: 188
-      Psyduck: 188
-      Mienfoo: 169
-      Rufflet: 150
-      Onix: 94
-      Dunsparce: 94
+      Meditite: 234
+      Swablu: 206
+      Makuhita: 187
+      Spoink: 187
+      Diglett: 187
+      Slugma: 187
+      Nosepass: 187
+      BurmyTrash: 187
+      Bronzor: 187
+      Psyduck: 187
+      Mienfoo: 168
+      Rufflet: 149
+      Onix: 93
+      Dunsparce: 93
       Magmar: 47
     rare:
-      Boldore: 221
-      Lairon: 184
-      Primeape: 184
-      HakamoO: 147
-      Klang: 147
-      Machoke: 92
-      Graveler: 92
+      Boldore: 220
+      Lairon: 183
+      Primeape: 183
+      HakamoO: 146
+      Klang: 146
+      Machoke: 91
+      Graveler: 91
       Fraxure: 55
       Monferno: 37
       Shelgon: 18
@@ -173,6 +175,8 @@ land:
       Magcargo: 37
       WormadamTrash: 29
     elusive:
+      Falinks: 30
+      Duraludon: 30
       Torkoal: 27
       Mawile: 18
       Carbink: 13
@@ -228,70 +232,77 @@ land:
       Diancie: 10
   evening:
     base:
-      Zubat: 1312
-      Honedge: 1049
-      JangmoO: 961
-      Geodude: 874
-      Tynamo: 787
-      Bagon: 131
-      Larvitar: 87
-      Gible: 87
+      Zubat: 1264
+      Honedge: 1011
+      JangmoO: 926
+      Geodude: 842
+      Tynamo: 758
+      Bagon: 126
+      Larvitar: 84
+      Gible: 84
+      Dreepy: 60
     uncommon:
-      Diglett: 265
-      Slugma: 265
-      Nosepass: 265
-      BurmyTrash: 265
-      Bronzor: 265
-      Woobat: 265
-      Joltik: 238
-      Ferroseed: 212
-      Onix: 132
-      Dunsparce: 132
-      Magmar: 66
-      Murkrow: 66
-      Gligar: 66
+      Diglett: 255
+      Slugma: 255
+      Nosepass: 255
+      BurmyTrash: 255
+      Bronzor: 255
+      Woobat: 255
+      Joltik: 229
+      Ferroseed: 204
+      Sizzlipede: 200
+      Onix: 127
+      Dunsparce: 127
+      Magmar: 64
+      Murkrow: 64
+      Gligar: 64
     rare:
-      Golbat: 305
-      HakamoO: 244
-      Doublade: 244
-      Eelektrik: 213
-      Graveler: 152
-      Shelgon: 30
-      Pupitar: 30
-      Gabite: 30
+      Golbat: 294
+      HakamoO: 235
+      Doublade: 235
+      Eelektrik: 205
+      Graveler: 146
+      Shelgon: 29
+      Pupitar: 29
+      Gabite: 29
+      Drakloak: 15
     scarce:
-      Dugtrio: 93
-      Swoobat: 75
-      Galvantula: 56
-      Bronzong: 56
-      Probopass: 56
-      Honchkrow: 56
-      Gliscor: 56
-      Ferrothorn: 47
-      Steelix: 47
-      Magcargo: 47
-      WormadamTrash: 37
+      Dugtrio: 90
+      Swoobat: 72
+      Galvantula: 54
+      Bronzong: 54
+      Probopass: 54
+      Honchkrow: 54
+      Gliscor: 54
+      Ferrothorn: 45
+      Steelix: 45
+      Magcargo: 45
+      WormadamTrash: 36
+      Centiskorch: 25
     elusive:
-      Carbink: 21
-      Drampa: 17
-      Minior: 17
-      Togedemaru: 17
-      Aegislash: 17
-      Golem: 17
-      Snorlax: 17
-      Shuckle: 17
-      Sudowoodo: 17
-      Wobbuffet: 17
-      Crobat: 17
-      Absol: 17
-      Chimecho: 17
-      Magnezone: 17
-      Rhyperior: 17
-      KommoO: 14
-      Eelektross: 14
+      Falinks: 30
+      Duraludon: 30
+      Carbink: 20
+      Drampa: 16
+      Minior: 16
+      Togedemaru: 16
+      Aegislash: 16
+      Golem: 16
+      Snorlax: 16
+      Shuckle: 16
+      Sudowoodo: 16
+      Wobbuffet: 16
+      Crobat: 16
+      Absol: 16
+      Chimecho: 16
+      Magnezone: 16
+      Rhyperior: 16
+      KommoO: 13
+      Eelektross: 13
       Salamence: 7
       Tyranitar: 7
       Garchomp: 7
+      Dragapult: 5
     prized:
       Unown: forms
       Magby: prized
@@ -316,76 +327,83 @@ land:
       Diancie: 10
   night:
     base:
-      Zubat: 1149
-      Honedge: 920
-      JangmoO: 843
-      Geodude: 766
-      Gastly: 766
-      Tynamo: 690
-      Larvitar: 77
-      Gible: 77
+      Zubat: 1107
+      Honedge: 886
+      JangmoO: 812
+      Geodude: 738
+      Gastly: 738
+      Tynamo: 665
+      Larvitar: 74
+      Gible: 74
+      Dreepy: 60
     uncommon:
-      Diglett: 228
-      Cubone: 228
-      Slugma: 228
-      Nosepass: 228
-      BurmyTrash: 228
-      Bronzor: 228
-      Woobat: 228
-      Joltik: 205
-      Ferroseed: 183
-      Onix: 114
-      Dunsparce: 114
-      Clefairy: 57
-      Magmar: 57
-      Murkrow: 57
-      Misdreavus: 57
-      Gligar: 57
+      Diglett: 220
+      Cubone: 220
+      Slugma: 220
+      Nosepass: 220
+      BurmyTrash: 220
+      Bronzor: 220
+      Woobat: 220
+      Sizzlipede: 200
+      Joltik: 198
+      Ferroseed: 176
+      Onix: 110
+      Dunsparce: 110
+      Clefairy: 55
+      Magmar: 55
+      Murkrow: 55
+      Misdreavus: 55
+      Gligar: 55
     rare:
-      Golbat: 278
-      HakamoO: 222
-      Doublade: 222
-      Eelektrik: 194
-      Graveler: 139
-      Haunter: 139
-      Pupitar: 28
-      Gabite: 28
+      Golbat: 268
+      HakamoO: 214
+      Doublade: 214
+      Eelektrik: 187
+      Graveler: 134
+      Haunter: 134
+      Pupitar: 27
+      Gabite: 27
+      Drakloak: 15
     scarce:
-      Dugtrio: 71
-      Marowak: 71
-      Swoobat: 57
-      Galvantula: 43
-      Bronzong: 43
-      Probopass: 43
-      Mismagius: 43
-      Honchkrow: 43
-      Gliscor: 43
-      Ferrothorn: 36
-      Clefable: 36
-      Steelix: 36
-      Magcargo: 36
-      WormadamTrash: 28
+      Dugtrio: 68
+      Marowak: 68
+      Swoobat: 55
+      Galvantula: 41
+      Bronzong: 41
+      Probopass: 41
+      Mismagius: 41
+      Honchkrow: 41
+      Gliscor: 41
+      Ferrothorn: 35
+      Clefable: 35
+      Steelix: 35
+      Magcargo: 35
+      WormadamTrash: 27
+      Centiskorch: 25
     elusive:
-      Carbink: 20
-      Drampa: 17
-      Minior: 17
-      Togedemaru: 17
-      Aegislash: 17
-      Golem: 17
-      Gengar: 17
-      Snorlax: 17
-      Shuckle: 17
-      Sudowoodo: 17
-      Wobbuffet: 17
-      Crobat: 17
-      Absol: 17
-      Chimecho: 17
-      Magnezone: 17
-      Rhyperior: 17
+      Falinks: 30
+      Duraludon: 30
+      Carbink: 19
+      Drampa: 16
+      Minior: 16
+      Togedemaru: 16
+      Aegislash: 16
+      Golem: 16
+      Gengar: 16
+      Snorlax: 16
+      Shuckle: 16
+      Sudowoodo: 16
+      Wobbuffet: 16
+      Crobat: 16
+      Absol: 16
+      Chimecho: 16
+      Magnezone: 16
+      Rhyperior: 16
       KommoO: 13
       Eelektross: 13
       Tyranitar: 7
       Garchomp: 7
+      Dragapult: 5
     prized:
       Unown: forms
       Cleffa: prized

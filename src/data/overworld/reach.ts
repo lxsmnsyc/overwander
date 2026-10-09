@@ -1,11 +1,11 @@
 import { listSpeciesHabitats, listTownHabitats } from '../biome';
-import { FOSSIL_SPECIES } from '../items/fossils';
+import { listRevivedSpecies } from '../items/fossils';
 import type { Species } from '../ids/species';
 import { getRegisteredSpecies, getSpeciesData } from '../species';
 import { HONEY_TREE_SPECIES } from './honey-tree';
 
 /** Everything a bench brings back out of a rock */
-const REVIVED_SPECIES = new Set<Species>(FOSSIL_SPECIES.values());
+const REVIVED_SPECIES = new Set<Species>(listRevivedSpecies());
 
 /**
  * Who lays each one, for the few that hatch out of something other

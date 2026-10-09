@@ -1,0 +1,53 @@
+# The signature abilities granted to the families filed under Galar
+
+families:
+  # Galar's three starters, each playing for the team: a move of its
+  # own type cues an assist move for its side
+  Grookey: DrumCue
+  Scorbunny: KickCue
+  Sobble: ScopeCue
+
+  # Postwick, Route 1 and the Wild Area
+  Skwovet: PantryRaid
+  Rookidee: SteelEscort
+  Blipbug: EarlyWarning
+  Nickit: Fence
+  Gossifleur: CottonCradle
+  Wooloo: Shorn
+  Chewtle: ShellSnap
+  Yamper: Zoomies
+
+  # Galar Mine to Hulbury
+  Applin: SharedHarvest
+  # Kept knowing it overlaps the Water signature that reaches every enemy
+  Silicobra: CoilBurrow
+  Cramorant: ThroatPouch
+  Arrokuda: Spearhead
+  Toxel: VenomCharge
+  Sizzlipede: CinderCoils
+  Clobbopus: ArmLock
+  Pincurchin: LiveSpines
+
+  # Glimwood Tangle. Hatenna and Impidimp cancel each other: each one's
+  # effect stops while the other's holder stands on the field
+  Sinistea: LastPour
+  Hatenna: SilentWrath
+  Impidimp: DespairFeast
+  Milcery: Sugarcoat
+
+  # Circhester, Spikemuth and the late routes
+  Snom: MirrorScales
+  Eiscue: ChippedIce
+  Falinks: RankAndFile
+  Indeedee: Attendant
+  Morpeko: HangrySpark
+  Duraludon: Overhang
+  Dreepy: DreepyLaunch
+  Stonjourner: Solstice
+
+  # The fossils, stitched from two halves: the head's type strikes as
+  # the tail's against anything the tail hits harder
+  Dracozolt: Boltdrake
+  Arctozolt: Boltfrost
+  Dracovish: Gilldrake
+  Arctovish: Gillfrost

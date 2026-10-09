@@ -58,3 +58,23 @@ SailFossil:
   type: Fossil
   icon: fossils/sail
   flags: [Consumable]
+
+FossilizedBird:
+  type: Fossil
+  icon: fossils/bird
+  flags: [Consumable]
+
+FossilizedFish:
+  type: Fossil
+  icon: fossils/fish
+  flags: [Consumable]
+
+FossilizedDrake:
+  type: Fossil
+  icon: fossils/drake
+  flags: [Consumable]
+
+FossilizedDino:
+  type: Fossil
+  icon: fossils/dino
+  flags: [Consumable]

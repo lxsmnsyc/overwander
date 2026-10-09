@@ -31,7 +31,19 @@ import { readItems } from './yaml';
 export { getItemData, listItemsByType, registerItem } from './__create';
 export type { ItemData } from './__create';
 export { getTeachableMoves } from './machines';
-export { FOSSIL_SPECIES, getSpeciesFossil, isFossil, listFossils } from './fossils';
+export {
+  FOSSIL_PAIRS,
+  FOSSIL_SPECIES,
+  getFossilPairSpecies,
+  getFossilPartners,
+  getSpeciesFossil,
+  isFossil,
+  isFossilBottom,
+  isFossilHalf,
+  isFossilTop,
+  listFossils,
+  listRevivedSpecies,
+} from './fossils';
 export { FORM_ITEMS, getItemForms } from './form-items';
 export { MEGA_STONES, getMegaStone, getStoneMega } from './mega-stones';
 export { ITEM_TYPE_NAMES, ITEM_TYPE_ORDER } from './names';

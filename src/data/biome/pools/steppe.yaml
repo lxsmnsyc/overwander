@@ -1,126 +1,53 @@
 land:
   morning:
     base:
-      Mareep: 924
-      Whismur: 924
-      FlabebeYellow: 888
-      Scatterbug: 888
-      GeodudeAlola: 814
-      Magnemite: 740
-      Snivy: 111
+      Mareep: 858
+      Whismur: 858
+      FlabebeYellow: 824
+      Scatterbug: 824
+      GeodudeAlola: 756
+      Magnemite: 687
+      Snivy: 103
     uncommon:
-      Patrat: 200
-      Bunnelby: 173
-      Blitzle: 167
-      Sentret: 167
-      Electrike: 167
-      Wooper: 167
-      Skiddo: 160
-      Mudbray: 147
-      Rockruff: 147
-      Spearow: 133
-      Doduo: 133
-      Phanpy: 133
-      Voltorb: 133
-      BurmyTrash: 133
-      Rufflet: 107
-      Growlithe: 67
-      Ponyta: 67
-      Dunsparce: 67
-      Girafarig: 33
+      Wooloo: 300
+      Yamper: 280
+      Patrat: 186
+      Bunnelby: 161
+      Blitzle: 155
+      Sentret: 155
+      Electrike: 155
+      Wooper: 155
+      Skiddo: 149
+      Mudbray: 136
+      Rockruff: 136
+      Spearow: 123
+      Doduo: 123
+      Phanpy: 123
+      Voltorb: 123
+      BurmyTrash: 123
+      Rufflet: 99
+      Growlithe: 62
+      Ponyta: 62
+      Dunsparce: 62
+      Girafarig: 31
     rare:
-      Loudred: 245
-      Magneton: 245
-      GravelerAlola: 196
-      FloetteYellow: 196
-      Spewpa: 196
-      Flaaffy: 123
-      Servine: 49
-    scarce:
-      Fearow: 50
-      Rapidash: 50
-      Dodrio: 50
-      Electrode: 50
-      Furret: 50
-      Manectric: 50
-      Donphan: 50
-      Mudsdale: 30
-      Lycanroc: 30
-      Gogoat: 30
-      Diggersby: 30
-      Zebstrika: 30
-      Braviary: 30
-      Electivire: 30
-      Arcanine: 25
-      Quagsire: 25
-      WormadamTrash: 20
-    elusive:
-      Castform: 34
-      Tauros: 34
-      Ampharos: 34
-      Zangoose: 27
-      Bouffalant: 21
-      Stoutland: 21
-      FlorgesYellow: 17
-      Vivillon: 17
-      Kangaskhan: 17
-      Miltank: 17
-      Exploud: 17
-      Magnezone: 17
-      Rhyperior: 17
-      GolemAlola: 14
-      Serperior: 7
-    prized:
-      Unown: forms
-    special:
-      Zapdos: 10
-  day:
-    base:
-      Mareep: 924
-      Whismur: 924
-      FlabebeYellow: 888
-      Scatterbug: 888
-      GeodudeAlola: 814
-      Magnemite: 740
-      Snivy: 111
-    uncommon:
-      Patrat: 190
-      Bunnelby: 165
-      Blitzle: 158
-      Sentret: 158
-      Electrike: 158
-      Wooper: 158
-      Skiddo: 152
-      Mudbray: 139
-      Rockruff: 139
-      Spearow: 127
-      Ekans: 127
-      Doduo: 127
-      Phanpy: 127
-      Voltorb: 127
-      BurmyTrash: 127
-      Rufflet: 101
-      Growlithe: 63
-      Ponyta: 63
-      Dunsparce: 63
-      Girafarig: 32
-    rare:
-      Loudred: 245
-      Magneton: 245
-      GravelerAlola: 196
-      FloetteYellow: 196
-      Spewpa: 196
-      Flaaffy: 123
-      Servine: 49
+      Loudred: 227
+      Magneton: 227
+      GravelerAlola: 182
+      FloetteYellow: 182
+      Spewpa: 182
+      Flaaffy: 114
+      Servine: 45
     scarce:
       Fearow: 46
-      Arbok: 46
       Rapidash: 46
       Dodrio: 46
       Electrode: 46
       Furret: 46
       Manectric: 46
       Donphan: 46
+      Dubwool: 35
+      Boltund: 30
       Mudsdale: 28
       Lycanroc: 28
       Gogoat: 28
@@ -130,52 +57,137 @@ land:
       Electivire: 28
       Arcanine: 23
       Quagsire: 23
-      WormadamTrash: 18
+      WormadamTrash: 19
     elusive:
-      Castform: 34
-      Tauros: 34
-      Ampharos: 34
-      Zangoose: 27
-      Bouffalant: 21
-      Stoutland: 21
-      FlorgesYellow: 17
-      Vivillon: 17
-      Kangaskhan: 17
-      Miltank: 17
-      Exploud: 17
-      Magnezone: 17
-      Rhyperior: 17
-      GolemAlola: 14
-      Serperior: 7
+      Falinks: 40
+      Castform: 32
+      Tauros: 32
+      Ampharos: 32
+      Stonjourner: 30
+      Zangoose: 25
+      Bouffalant: 19
+      Stoutland: 19
+      FlorgesYellow: 16
+      Vivillon: 16
+      Kangaskhan: 16
+      Miltank: 16
+      Exploud: 16
+      Magnezone: 16
+      Rhyperior: 16
+      GolemAlola: 13
+      Serperior: 6
+    prized:
+      Unown: forms
+    special:
+      Zapdos: 10
+  day:
+    base:
+      Mareep: 858
+      Whismur: 858
+      FlabebeYellow: 824
+      Scatterbug: 824
+      GeodudeAlola: 756
+      Magnemite: 687
+      Snivy: 103
+    uncommon:
+      Wooloo: 300
+      Yamper: 280
+      Patrat: 176
+      Bunnelby: 153
+      Blitzle: 147
+      Sentret: 147
+      Electrike: 147
+      Wooper: 147
+      Skiddo: 141
+      Mudbray: 129
+      Rockruff: 129
+      Spearow: 118
+      Ekans: 118
+      Doduo: 118
+      Phanpy: 118
+      Voltorb: 118
+      BurmyTrash: 118
+      Rufflet: 94
+      Growlithe: 58
+      Ponyta: 58
+      Dunsparce: 58
+      Girafarig: 30
+    rare:
+      Loudred: 227
+      Magneton: 227
+      GravelerAlola: 182
+      FloetteYellow: 182
+      Spewpa: 182
+      Flaaffy: 114
+      Servine: 45
+    scarce:
+      Fearow: 43
+      Arbok: 43
+      Rapidash: 43
+      Dodrio: 43
+      Electrode: 43
+      Furret: 43
+      Manectric: 43
+      Donphan: 43
+      Dubwool: 35
+      Boltund: 30
+      Mudsdale: 26
+      Lycanroc: 26
+      Gogoat: 26
+      Diggersby: 26
+      Zebstrika: 26
+      Braviary: 26
+      Electivire: 26
+      Arcanine: 21
+      Quagsire: 21
+      WormadamTrash: 17
+    elusive:
+      Falinks: 40
+      Castform: 32
+      Tauros: 32
+      Ampharos: 32
+      Stonjourner: 30
+      Zangoose: 25
+      Bouffalant: 19
+      Stoutland: 19
+      FlorgesYellow: 16
+      Vivillon: 16
+      Kangaskhan: 16
+      Miltank: 16
+      Exploud: 16
+      Magnezone: 16
+      Rhyperior: 16
+      GolemAlola: 13
+      Serperior: 6
     prized:
       Unown: forms
     special:
       Zapdos: 10
   evening:
     base:
-      GeodudeAlola: 2645
-      Magnemite: 2405
-      Litten: 240
+      GeodudeAlola: 2626
+      Magnemite: 2388
+      Litten: 238
     uncommon:
-      Wooper: 277
-      Mudbray: 243
-      Rockruff: 243
-      Scraggy: 243
-      Golett: 221
-      Ekans: 221
-      Voltorb: 221
-      BurmyTrash: 221
-      Drifloon: 221
-      Skorupi: 221
-      Dunsparce: 111
+      Wooper: 275
+      Mudbray: 241
+      Rockruff: 241
+      Scraggy: 241
+      Golett: 219
+      Ekans: 219
+      Voltorb: 219
+      BurmyTrash: 219
+      Drifloon: 219
+      Skorupi: 219
+      Dunsparce: 110
       Girafarig: 55
     rare:
-      Magneton: 625
-      GravelerAlola: 500
-      Torracat: 125
+      Magneton: 621
+      GravelerAlola: 496
+      Torracat: 124
     scarce:
-      Arbok: 78
-      Electrode: 78
+      Arbok: 77
+      Electrode: 77
       Watchog: 63
       Scrafty: 55
       Mudsdale: 47
@@ -187,11 +199,13 @@ land:
       Quagsire: 39
       WormadamTrash: 31
     elusive:
-      Castform: 92
-      Seviper: 74
+      Castform: 91
+      Seviper: 73
       Magnezone: 46
       Rhyperior: 46
+      Falinks: 40
       GolemAlola: 37
+      Stonjourner: 30
       Incineroar: 18
     prized:
       Unown: forms
@@ -199,29 +213,29 @@ land:
       Zapdos: 10
   night:
     base:
-      GeodudeAlola: 2645
-      Magnemite: 2405
-      Litten: 240
+      GeodudeAlola: 2626
+      Magnemite: 2388
+      Litten: 238
     uncommon:
-      Wooper: 277
-      Mudbray: 243
-      Rockruff: 243
-      Scraggy: 243
-      Golett: 221
-      Ekans: 221
-      Voltorb: 221
-      BurmyTrash: 221
-      Drifloon: 221
-      Skorupi: 221
-      Dunsparce: 111
+      Wooper: 275
+      Mudbray: 241
+      Rockruff: 241
+      Scraggy: 241
+      Golett: 219
+      Ekans: 219
+      Voltorb: 219
+      BurmyTrash: 219
+      Drifloon: 219
+      Skorupi: 219
+      Dunsparce: 110
       Girafarig: 55
     rare:
-      Magneton: 625
-      GravelerAlola: 500
-      Torracat: 125
+      Magneton: 621
+      GravelerAlola: 496
+      Torracat: 124
     scarce:
-      Arbok: 78
-      Electrode: 78
+      Arbok: 77
+      Electrode: 77
       Watchog: 63
       Scrafty: 55
       Mudsdale: 47
@@ -233,11 +247,13 @@ land:
       Quagsire: 39
       WormadamTrash: 31
     elusive:
-      Castform: 92
-      Seviper: 74
+      Castform: 91
+      Seviper: 73
       Magnezone: 46
       Rhyperior: 46
+      Falinks: 40
       GolemAlola: 37
+      Stonjourner: 30
       Incineroar: 18
     prized:
       Unown: forms

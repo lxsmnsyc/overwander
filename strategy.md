@@ -331,6 +331,6 @@ Batch 20, built the way Megas and Z-Moves were: automatic, once per side, with n
 
 ## Pace
 
-- **One batch per PR, stacked.**
+- **One group of batches per PR, stacked.** The remaining batches are four groups: Galar's routes (3 to 11, with batch 1's release page), the Galarian forms and the legends (12 to 16), Hisui (17 to 19), and Dynamax (20).
 - **Release pages:** one per group: Galar's routes (3 to 11), the forms (12 and 13), the legends (14 to 16), Hisui (17 to 19), and Dynamax (20). Each gets a row in `docs/update.md`.
 - **Batches 3 onward each wait on your signature approval**, so I will propose the concepts for the next batch while the current one is in review.

@@ -11689,6 +11689,1854 @@
         "bytes": 10978
       }
     },
+    "public/sprites/pokemon/galar/1084901/regular.png": {
+      "digest": "7a18cf53e2299394",
+      "bytes": 11200,
+      "width": 54,
+      "height": 1257,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 11200,
+        "bytes": 11200
+      }
+    },
+    "public/sprites/pokemon/galar/1084901/shiny.png": {
+      "digest": "5f90ee83308755b7",
+      "bytes": 11210,
+      "width": 54,
+      "height": 1257,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 11210,
+        "bytes": 11210
+      }
+    },
+    "public/sprites/pokemon/galar/1086901/regular.png": {
+      "digest": "34ed8856f9541923",
+      "bytes": 5914,
+      "width": 135,
+      "height": 187,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 5914,
+        "bytes": 5914
+      }
+    },
+    "public/sprites/pokemon/galar/1086901/shiny.png": {
+      "digest": "30e236236b1c2f1d",
+      "bytes": 6073,
+      "width": 135,
+      "height": 187,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 6073,
+        "bytes": 6073
+      }
+    },
+    "public/sprites/pokemon/galar/1086902/regular.png": {
+      "digest": "59eefbe99a0e08e2",
+      "bytes": 5934,
+      "width": 135,
+      "height": 187,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 5934,
+        "bytes": 5934
+      }
+    },
+    "public/sprites/pokemon/galar/1086902/shiny.png": {
+      "digest": "e27a8b322e2e1cfe",
+      "bytes": 6092,
+      "width": 135,
+      "height": 187,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 6092,
+        "bytes": 6092
+      }
+    },
+    "public/sprites/pokemon/galar/1086903/regular.png": {
+      "digest": "7494ee1ff64028d4",
+      "bytes": 5962,
+      "width": 135,
+      "height": 187,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 5962,
+        "bytes": 5962
+      }
+    },
+    "public/sprites/pokemon/galar/1086903/shiny.png": {
+      "digest": "2d5039f20a0aebc0",
+      "bytes": 6122,
+      "width": 135,
+      "height": 187,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 6122,
+        "bytes": 6122
+      }
+    },
+    "public/sprites/pokemon/galar/1086904/regular.png": {
+      "digest": "f4cb2edcb45629dd",
+      "bytes": 5978,
+      "width": 135,
+      "height": 187,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 5978,
+        "bytes": 5978
+      }
+    },
+    "public/sprites/pokemon/galar/1086904/shiny.png": {
+      "digest": "26adc4a6cfa56076",
+      "bytes": 6128,
+      "width": 135,
+      "height": 187,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 6128,
+        "bytes": 6128
+      }
+    },
+    "public/sprites/pokemon/galar/1086905/regular.png": {
+      "digest": "e7cc36374f9a1209",
+      "bytes": 5872,
+      "width": 135,
+      "height": 187,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 5872,
+        "bytes": 5872
+      }
+    },
+    "public/sprites/pokemon/galar/1086905/shiny.png": {
+      "digest": "931eec9d8e91a736",
+      "bytes": 6035,
+      "width": 135,
+      "height": 187,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 6035,
+        "bytes": 6035
+      }
+    },
+    "public/sprites/pokemon/galar/1086906/regular.png": {
+      "digest": "b026649f2223960f",
+      "bytes": 5904,
+      "width": 135,
+      "height": 187,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 5904,
+        "bytes": 5904
+      }
+    },
+    "public/sprites/pokemon/galar/1086906/shiny.png": {
+      "digest": "dd74b962be9d8ec6",
+      "bytes": 6068,
+      "width": 135,
+      "height": 187,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 6068,
+        "bytes": 6068
+      }
+    },
+    "public/sprites/pokemon/galar/1087002/regular.png": {
+      "digest": "f1bc3a995cd211f5",
+      "bytes": 2514,
+      "width": 59,
+      "height": 177,
+      "compact": {
+        "at": "2026-10-08T11:46:26Z",
+        "as": "already compact",
+        "was": 2514,
+        "bytes": 2514
+      }
+    },
+    "public/sprites/pokemon/galar/1087002/shiny.png": {
+      "digest": "feab6363eedf6b8e",
+      "bytes": 2514,
+      "width": 59,
+      "height": 177,
+      "compact": {
+        "at": "2026-10-08T11:46:26Z",
+        "as": "already compact",
+        "was": 2514,
+        "bytes": 2514
+      }
+    },
+    "public/sprites/pokemon/galar/1087501/regular.png": {
+      "digest": "b71c10cdf99c6242",
+      "bytes": 4334,
+      "width": 170,
+      "height": 153,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 4334,
+        "bytes": 4334
+      }
+    },
+    "public/sprites/pokemon/galar/1087501/shiny.png": {
+      "digest": "3c218c44258a04e9",
+      "bytes": 4352,
+      "width": 170,
+      "height": 153,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 4352,
+        "bytes": 4352
+      }
+    },
+    "public/sprites/pokemon/galar/1087701/regular.png": {
+      "digest": "a0bbb9713be4ad3b",
+      "bytes": 2744,
+      "width": 112,
+      "height": 102,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 2744,
+        "bytes": 2744
+      }
+    },
+    "public/sprites/pokemon/galar/1087701/shiny.png": {
+      "digest": "8bfce90f715d9b55",
+      "bytes": 2744,
+      "width": 112,
+      "height": 102,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 2744,
+        "bytes": 2744
+      }
+    },
+    "public/sprites/pokemon/galar/810/regular.png": {
+      "digest": "e6f5c69584629b82",
+      "bytes": 4403,
+      "width": 188,
+      "height": 103,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 4403,
+        "bytes": 4403
+      }
+    },
+    "public/sprites/pokemon/galar/810/shiny.png": {
+      "digest": "9f3d7430ca5b341a",
+      "bytes": 4403,
+      "width": 188,
+      "height": 103,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 4403,
+        "bytes": 4403
+      }
+    },
+    "public/sprites/pokemon/galar/811/regular.png": {
+      "digest": "1a9dd80768e83c7d",
+      "bytes": 10615,
+      "width": 482,
+      "height": 127,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 10615,
+        "bytes": 10615
+      }
+    },
+    "public/sprites/pokemon/galar/811/shiny.png": {
+      "digest": "25dbaa747c56b171",
+      "bytes": 10686,
+      "width": 482,
+      "height": 127,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 10686,
+        "bytes": 10686
+      }
+    },
+    "public/sprites/pokemon/galar/812/regular.png": {
+      "digest": "96d3f26112636ca8",
+      "bytes": 17999,
+      "width": 403,
+      "height": 262,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 17999,
+        "bytes": 17999
+      }
+    },
+    "public/sprites/pokemon/galar/812/shiny.png": {
+      "digest": "50b2f0e38d16bbb6",
+      "bytes": 17999,
+      "width": 403,
+      "height": 262,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 17999,
+        "bytes": 17999
+      }
+    },
+    "public/sprites/pokemon/galar/813/regular.png": {
+      "digest": "1ccd38143b1faaeb",
+      "bytes": 5915,
+      "width": 147,
+      "height": 198,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 5915,
+        "bytes": 5915
+      }
+    },
+    "public/sprites/pokemon/galar/813/shiny.png": {
+      "digest": "20c1e71662b4c2c0",
+      "bytes": 6090,
+      "width": 147,
+      "height": 198,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 6090,
+        "bytes": 6090
+      }
+    },
+    "public/sprites/pokemon/galar/814/regular.png": {
+      "digest": "78b71b50cfc1359a",
+      "bytes": 4319,
+      "width": 140,
+      "height": 153,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 4319,
+        "bytes": 4319
+      }
+    },
+    "public/sprites/pokemon/galar/814/shiny.png": {
+      "digest": "0848d2843ad3b5ba",
+      "bytes": 4222,
+      "width": 140,
+      "height": 153,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 4222,
+        "bytes": 4222
+      }
+    },
+    "public/sprites/pokemon/galar/815/regular.png": {
+      "digest": "8196bd62445c0c49",
+      "bytes": 6609,
+      "width": 100,
+      "height": 292,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 6609,
+        "bytes": 6609
+      }
+    },
+    "public/sprites/pokemon/galar/815/shiny.png": {
+      "digest": "b3ce16e470f25e0d",
+      "bytes": 6673,
+      "width": 100,
+      "height": 292,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 6673,
+        "bytes": 6673
+      }
+    },
+    "public/sprites/pokemon/galar/816/regular.png": {
+      "digest": "d811ac568a674e32",
+      "bytes": 4121,
+      "width": 167,
+      "height": 127,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 4121,
+        "bytes": 4121
+      }
+    },
+    "public/sprites/pokemon/galar/816/shiny.png": {
+      "digest": "83996fa9bd242151",
+      "bytes": 4035,
+      "width": 167,
+      "height": 127,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 4035,
+        "bytes": 4035
+      }
+    },
+    "public/sprites/pokemon/galar/817/regular.png": {
+      "digest": "87655e08981b073a",
+      "bytes": 5329,
+      "width": 151,
+      "height": 163,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 5329,
+        "bytes": 5329
+      }
+    },
+    "public/sprites/pokemon/galar/817/shiny.png": {
+      "digest": "a59bda76dac76c61",
+      "bytes": 5349,
+      "width": 151,
+      "height": 163,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 5349,
+        "bytes": 5349
+      }
+    },
+    "public/sprites/pokemon/galar/818/regular.png": {
+      "digest": "beddc8b775087279",
+      "bytes": 10130,
+      "width": 140,
+      "height": 301,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 10130,
+        "bytes": 10130
+      }
+    },
+    "public/sprites/pokemon/galar/818/shiny.png": {
+      "digest": "829ca3ca2e9302e1",
+      "bytes": 9963,
+      "width": 140,
+      "height": 301,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 9963,
+        "bytes": 9963
+      }
+    },
+    "public/sprites/pokemon/galar/819/regular.png": {
+      "digest": "e572ef266aab2b1f",
+      "bytes": 3427,
+      "width": 72,
+      "height": 218,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 3427,
+        "bytes": 3427
+      }
+    },
+    "public/sprites/pokemon/galar/819/shiny.png": {
+      "digest": "de9fea37ba73924c",
+      "bytes": 3442,
+      "width": 72,
+      "height": 218,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 3442,
+        "bytes": 3442
+      }
+    },
+    "public/sprites/pokemon/galar/820/regular.png": {
+      "digest": "716839f1cee7c19d",
+      "bytes": 5263,
+      "width": 143,
+      "height": 156,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 5263,
+        "bytes": 5263
+      }
+    },
+    "public/sprites/pokemon/galar/820/shiny.png": {
+      "digest": "a1da3909964fd817",
+      "bytes": 5263,
+      "width": 143,
+      "height": 156,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 5263,
+        "bytes": 5263
+      }
+    },
+    "public/sprites/pokemon/galar/821/regular.png": {
+      "digest": "d8245a3e0ad8a5cc",
+      "bytes": 3343,
+      "width": 114,
+      "height": 124,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 3343,
+        "bytes": 3343
+      }
+    },
+    "public/sprites/pokemon/galar/821/shiny.png": {
+      "digest": "d6e2a292b2437de9",
+      "bytes": 3295,
+      "width": 114,
+      "height": 124,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 3295,
+        "bytes": 3295
+      }
+    },
+    "public/sprites/pokemon/galar/822/regular.png": {
+      "digest": "4cb09f0e7071aafd",
+      "bytes": 5843,
+      "width": 94,
+      "height": 279,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 5843,
+        "bytes": 5843
+      }
+    },
+    "public/sprites/pokemon/galar/822/shiny.png": {
+      "digest": "bd24fbd2577b4208",
+      "bytes": 5843,
+      "width": 94,
+      "height": 279,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 5843,
+        "bytes": 5843
+      }
+    },
+    "public/sprites/pokemon/galar/823/regular.png": {
+      "digest": "097e7e3d6471f901",
+      "bytes": 7915,
+      "width": 187,
+      "height": 208,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 7915,
+        "bytes": 7915
+      }
+    },
+    "public/sprites/pokemon/galar/823/shiny.png": {
+      "digest": "36bc853e3d6b2132",
+      "bytes": 8117,
+      "width": 187,
+      "height": 208,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 8117,
+        "bytes": 8117
+      }
+    },
+    "public/sprites/pokemon/galar/824/regular.png": {
+      "digest": "c787bdb2326cd066",
+      "bytes": 2706,
+      "width": 127,
+      "height": 99,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 2706,
+        "bytes": 2706
+      }
+    },
+    "public/sprites/pokemon/galar/824/shiny.png": {
+      "digest": "c26463c68355d3c9",
+      "bytes": 2706,
+      "width": 127,
+      "height": 99,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 2706,
+        "bytes": 2706
+      }
+    },
+    "public/sprites/pokemon/galar/825/regular.png": {
+      "digest": "a7a8ea9cf4918ea8",
+      "bytes": 2487,
+      "width": 81,
+      "height": 133,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 2487,
+        "bytes": 2487
+      }
+    },
+    "public/sprites/pokemon/galar/825/shiny.png": {
+      "digest": "6da22209c1dbc1a1",
+      "bytes": 2487,
+      "width": 81,
+      "height": 133,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 2487,
+        "bytes": 2487
+      }
+    },
+    "public/sprites/pokemon/galar/826/regular.png": {
+      "digest": "f579df73efad0bbd",
+      "bytes": 5241,
+      "width": 136,
+      "height": 189,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 5241,
+        "bytes": 5241
+      }
+    },
+    "public/sprites/pokemon/galar/826/shiny.png": {
+      "digest": "ab15d2c82cb0a114",
+      "bytes": 5236,
+      "width": 136,
+      "height": 189,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 5236,
+        "bytes": 5236
+      }
+    },
+    "public/sprites/pokemon/galar/827/regular.png": {
+      "digest": "290f6a48e3147ad9",
+      "bytes": 4630,
+      "width": 106,
+      "height": 181,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 4630,
+        "bytes": 4630
+      }
+    },
+    "public/sprites/pokemon/galar/827/shiny.png": {
+      "digest": "2511690b33aece62",
+      "bytes": 4630,
+      "width": 106,
+      "height": 181,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 4630,
+        "bytes": 4630
+      }
+    },
+    "public/sprites/pokemon/galar/828/regular.png": {
+      "digest": "5735e6b0f7d0d8cb",
+      "bytes": 6499,
+      "width": 166,
+      "height": 225,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 6499,
+        "bytes": 6499
+      }
+    },
+    "public/sprites/pokemon/galar/828/shiny.png": {
+      "digest": "9fb64ac721d7aebf",
+      "bytes": 6499,
+      "width": 166,
+      "height": 225,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 6499,
+        "bytes": 6499
+      }
+    },
+    "public/sprites/pokemon/galar/829/regular.png": {
+      "digest": "eea0ce9cc5b24c12",
+      "bytes": 6149,
+      "width": 134,
+      "height": 238,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 6149,
+        "bytes": 6149
+      }
+    },
+    "public/sprites/pokemon/galar/829/shiny.png": {
+      "digest": "7fe4b8d7dd4b70e5",
+      "bytes": 6138,
+      "width": 134,
+      "height": 238,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 6138,
+        "bytes": 6138
+      }
+    },
+    "public/sprites/pokemon/galar/830/regular.png": {
+      "digest": "9939ed62ed5f7acd",
+      "bytes": 3152,
+      "width": 91,
+      "height": 156,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 3152,
+        "bytes": 3152
+      }
+    },
+    "public/sprites/pokemon/galar/830/shiny.png": {
+      "digest": "435f02e17c53bd92",
+      "bytes": 3151,
+      "width": 91,
+      "height": 156,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 3151,
+        "bytes": 3151
+      }
+    },
+    "public/sprites/pokemon/galar/831/regular.png": {
+      "digest": "8c0c0d717de9f74a",
+      "bytes": 3672,
+      "width": 102,
+      "height": 178,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 3672,
+        "bytes": 3672
+      }
+    },
+    "public/sprites/pokemon/galar/831/shiny.png": {
+      "digest": "2ed03cab9c09e0b2",
+      "bytes": 3673,
+      "width": 102,
+      "height": 178,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 3673,
+        "bytes": 3673
+      }
+    },
+    "public/sprites/pokemon/galar/832/regular.png": {
+      "digest": "a08fdc0d74630a32",
+      "bytes": 12887,
+      "width": 335,
+      "height": 180,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 12887,
+        "bytes": 12887
+      }
+    },
+    "public/sprites/pokemon/galar/832/shiny.png": {
+      "digest": "042bf2f0b05b9b06",
+      "bytes": 12923,
+      "width": 335,
+      "height": 180,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 12923,
+        "bytes": 12923
+      }
+    },
+    "public/sprites/pokemon/galar/833/regular.png": {
+      "digest": "0f855daffab186fa",
+      "bytes": 2858,
+      "width": 139,
+      "height": 93,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 2858,
+        "bytes": 2858
+      }
+    },
+    "public/sprites/pokemon/galar/833/shiny.png": {
+      "digest": "c4e0429aa5b7cd1f",
+      "bytes": 2875,
+      "width": 139,
+      "height": 93,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 2875,
+        "bytes": 2875
+      }
+    },
+    "public/sprites/pokemon/galar/834/regular.png": {
+      "digest": "df74a6b37b62837d",
+      "bytes": 7030,
+      "width": 134,
+      "height": 236,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 7030,
+        "bytes": 7030
+      }
+    },
+    "public/sprites/pokemon/galar/834/shiny.png": {
+      "digest": "2366f2639c664b88",
+      "bytes": 7025,
+      "width": 134,
+      "height": 236,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 7025,
+        "bytes": 7025
+      }
+    },
+    "public/sprites/pokemon/galar/835/regular.png": {
+      "digest": "efb1840bab7744bd",
+      "bytes": 6200,
+      "width": 149,
+      "height": 204,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 6200,
+        "bytes": 6200
+      }
+    },
+    "public/sprites/pokemon/galar/835/shiny.png": {
+      "digest": "d5a5cd4f18302896",
+      "bytes": 6200,
+      "width": 149,
+      "height": 204,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 6200,
+        "bytes": 6200
+      }
+    },
+    "public/sprites/pokemon/galar/836/regular.png": {
+      "digest": "0e126cf77fd5acca",
+      "bytes": 10323,
+      "width": 222,
+      "height": 242,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 10323,
+        "bytes": 10323
+      }
+    },
+    "public/sprites/pokemon/galar/836/shiny.png": {
+      "digest": "4782cdd50cb6a8ba",
+      "bytes": 10323,
+      "width": 222,
+      "height": 242,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 10323,
+        "bytes": 10323
+      }
+    },
+    "public/sprites/pokemon/galar/840/regular.png": {
+      "digest": "c46f4c1d805e5c55",
+      "bytes": 2932,
+      "width": 103,
+      "height": 116,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 2932,
+        "bytes": 2932
+      }
+    },
+    "public/sprites/pokemon/galar/840/shiny.png": {
+      "digest": "783cc0088bba5057",
+      "bytes": 2989,
+      "width": 103,
+      "height": 116,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 2989,
+        "bytes": 2989
+      }
+    },
+    "public/sprites/pokemon/galar/841/regular.png": {
+      "digest": "9daa9351293049fe",
+      "bytes": 3635,
+      "width": 108,
+      "height": 150,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 3635,
+        "bytes": 3635
+      }
+    },
+    "public/sprites/pokemon/galar/841/shiny.png": {
+      "digest": "2844e779116b70ed",
+      "bytes": 3635,
+      "width": 108,
+      "height": 150,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 3635,
+        "bytes": 3635
+      }
+    },
+    "public/sprites/pokemon/galar/842/regular.png": {
+      "digest": "cbb7cb769c778f70",
+      "bytes": 6731,
+      "width": 173,
+      "height": 195,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 6731,
+        "bytes": 6731
+      }
+    },
+    "public/sprites/pokemon/galar/842/shiny.png": {
+      "digest": "b00a6b3c77b9af02",
+      "bytes": 6740,
+      "width": 173,
+      "height": 195,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 6740,
+        "bytes": 6740
+      }
+    },
+    "public/sprites/pokemon/galar/843/regular.png": {
+      "digest": "5b38f71779acea00",
+      "bytes": 7711,
+      "width": 248,
+      "height": 163,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 7711,
+        "bytes": 7711
+      }
+    },
+    "public/sprites/pokemon/galar/843/shiny.png": {
+      "digest": "53d9bb949774e0a3",
+      "bytes": 7984,
+      "width": 248,
+      "height": 163,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 7984,
+        "bytes": 7984
+      }
+    },
+    "public/sprites/pokemon/galar/844/regular.png": {
+      "digest": "c928509182c4e332",
+      "bytes": 10674,
+      "width": 240,
+      "height": 226,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 10674,
+        "bytes": 10674
+      }
+    },
+    "public/sprites/pokemon/galar/844/shiny.png": {
+      "digest": "002c1cba0006cfec",
+      "bytes": 10678,
+      "width": 240,
+      "height": 226,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 10678,
+        "bytes": 10678
+      }
+    },
+    "public/sprites/pokemon/galar/845/regular.png": {
+      "digest": "56e53a37e6a8dafb",
+      "bytes": 5185,
+      "width": 106,
+      "height": 245,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 5185,
+        "bytes": 5185
+      }
+    },
+    "public/sprites/pokemon/galar/845/shiny.png": {
+      "digest": "35642339fe561317",
+      "bytes": 5231,
+      "width": 106,
+      "height": 245,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 5231,
+        "bytes": 5231
+      }
+    },
+    "public/sprites/pokemon/galar/846/regular.png": {
+      "digest": "67a964e22a0a7149",
+      "bytes": 2324,
+      "width": 72,
+      "height": 159,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 2324,
+        "bytes": 2324
+      }
+    },
+    "public/sprites/pokemon/galar/846/shiny.png": {
+      "digest": "b8ec2ad39207391a",
+      "bytes": 2334,
+      "width": 72,
+      "height": 159,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 2334,
+        "bytes": 2334
+      }
+    },
+    "public/sprites/pokemon/galar/847/regular.png": {
+      "digest": "f3b338fac3afe99a",
+      "bytes": 5694,
+      "width": 99,
+      "height": 302,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 5694,
+        "bytes": 5694
+      }
+    },
+    "public/sprites/pokemon/galar/847/shiny.png": {
+      "digest": "c1ea864839e08b8a",
+      "bytes": 5694,
+      "width": 99,
+      "height": 302,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 5694,
+        "bytes": 5694
+      }
+    },
+    "public/sprites/pokemon/galar/848/regular.png": {
+      "digest": "10949ec89c0f629b",
+      "bytes": 4892,
+      "width": 231,
+      "height": 111,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 4892,
+        "bytes": 4892
+      }
+    },
+    "public/sprites/pokemon/galar/848/shiny.png": {
+      "digest": "9945d630abd6d84d",
+      "bytes": 4892,
+      "width": 231,
+      "height": 111,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 4892,
+        "bytes": 4892
+      }
+    },
+    "public/sprites/pokemon/galar/849/regular.png": {
+      "digest": "752adab8b8ba84af",
+      "bytes": 11647,
+      "width": 54,
+      "height": 1254,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 11647,
+        "bytes": 11647
+      }
+    },
+    "public/sprites/pokemon/galar/849/shiny.png": {
+      "digest": "ace1dcbad654f66c",
+      "bytes": 11659,
+      "width": 54,
+      "height": 1254,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 11659,
+        "bytes": 11659
+      }
+    },
+    "public/sprites/pokemon/galar/850/regular.png": {
+      "digest": "9f6b523e2a4718e1",
+      "bytes": 3078,
+      "width": 156,
+      "height": 103,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 3078,
+        "bytes": 3078
+      }
+    },
+    "public/sprites/pokemon/galar/850/shiny.png": {
+      "digest": "8dce92d46da42bf1",
+      "bytes": 3078,
+      "width": 156,
+      "height": 103,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 3078,
+        "bytes": 3078
+      }
+    },
+    "public/sprites/pokemon/galar/851/regular.png": {
+      "digest": "d14c373de1816f06",
+      "bytes": 14118,
+      "width": 238,
+      "height": 317,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 14118,
+        "bytes": 14118
+      }
+    },
+    "public/sprites/pokemon/galar/851/shiny.png": {
+      "digest": "97ab263dc69beda1",
+      "bytes": 14097,
+      "width": 238,
+      "height": 317,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 14097,
+        "bytes": 14097
+      }
+    },
+    "public/sprites/pokemon/galar/852/regular.png": {
+      "digest": "e569a101d2555c45",
+      "bytes": 8105,
+      "width": 112,
+      "height": 334,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 8105,
+        "bytes": 8105
+      }
+    },
+    "public/sprites/pokemon/galar/852/shiny.png": {
+      "digest": "15d08deb74a0fcf1",
+      "bytes": 8034,
+      "width": 112,
+      "height": 334,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 8034,
+        "bytes": 8034
+      }
+    },
+    "public/sprites/pokemon/galar/853/regular.png": {
+      "digest": "bb116fe5e0b130c8",
+      "bytes": 14693,
+      "width": 277,
+      "height": 249,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 14693,
+        "bytes": 14693
+      }
+    },
+    "public/sprites/pokemon/galar/853/shiny.png": {
+      "digest": "fe291ffad78fc11f",
+      "bytes": 14705,
+      "width": 277,
+      "height": 249,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 14705,
+        "bytes": 14705
+      }
+    },
+    "public/sprites/pokemon/galar/854/regular.png": {
+      "digest": "8b3c0add64d807ab",
+      "bytes": 4234,
+      "width": 90,
+      "height": 197,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 4234,
+        "bytes": 4234
+      }
+    },
+    "public/sprites/pokemon/galar/854/shiny.png": {
+      "digest": "fbcd3a1896585b93",
+      "bytes": 4259,
+      "width": 90,
+      "height": 197,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 4259,
+        "bytes": 4259
+      }
+    },
+    "public/sprites/pokemon/galar/855/regular.png": {
+      "digest": "8f78c0c2fe32800a",
+      "bytes": 4156,
+      "width": 117,
+      "height": 157,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 4156,
+        "bytes": 4156
+      }
+    },
+    "public/sprites/pokemon/galar/855/shiny.png": {
+      "digest": "b5a5a94ac07e8c67",
+      "bytes": 4156,
+      "width": 117,
+      "height": 157,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 4156,
+        "bytes": 4156
+      }
+    },
+    "public/sprites/pokemon/galar/856/regular.png": {
+      "digest": "c093ecb806cbdcba",
+      "bytes": 4054,
+      "width": 292,
+      "height": 75,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 4054,
+        "bytes": 4054
+      }
+    },
+    "public/sprites/pokemon/galar/856/shiny.png": {
+      "digest": "cba3e00bfae5f81e",
+      "bytes": 4054,
+      "width": 292,
+      "height": 75,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 4054,
+        "bytes": 4054
+      }
+    },
+    "public/sprites/pokemon/galar/857/regular.png": {
+      "digest": "fbf3fe721e8c12cf",
+      "bytes": 6696,
+      "width": 192,
+      "height": 179,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 6696,
+        "bytes": 6696
+      }
+    },
+    "public/sprites/pokemon/galar/857/shiny.png": {
+      "digest": "8e5a06f59a6b821c",
+      "bytes": 6726,
+      "width": 192,
+      "height": 179,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 6726,
+        "bytes": 6726
+      }
+    },
+    "public/sprites/pokemon/galar/858/regular.png": {
+      "digest": "24a6767f6b2d68d1",
+      "bytes": 9433,
+      "width": 210,
+      "height": 235,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 9433,
+        "bytes": 9433
+      }
+    },
+    "public/sprites/pokemon/galar/858/shiny.png": {
+      "digest": "219c5f86d0b67f9b",
+      "bytes": 9446,
+      "width": 210,
+      "height": 235,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 9446,
+        "bytes": 9446
+      }
+    },
+    "public/sprites/pokemon/galar/859/regular.png": {
+      "digest": "66a16b64420efff9",
+      "bytes": 2900,
+      "width": 119,
+      "height": 132,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 2900,
+        "bytes": 2900
+      }
+    },
+    "public/sprites/pokemon/galar/859/shiny.png": {
+      "digest": "cce7dbc9d9b73b4a",
+      "bytes": 2935,
+      "width": 119,
+      "height": 132,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 2935,
+        "bytes": 2935
+      }
+    },
+    "public/sprites/pokemon/galar/860/regular.png": {
+      "digest": "2bee21064532044c",
+      "bytes": 5743,
+      "width": 101,
+      "height": 305,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 5743,
+        "bytes": 5743
+      }
+    },
+    "public/sprites/pokemon/galar/860/shiny.png": {
+      "digest": "094d7e652659ded5",
+      "bytes": 5752,
+      "width": 101,
+      "height": 305,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 5752,
+        "bytes": 5752
+      }
+    },
+    "public/sprites/pokemon/galar/861/regular.png": {
+      "digest": "f594415e1b155a46",
+      "bytes": 14147,
+      "width": 361,
+      "height": 202,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 14147,
+        "bytes": 14147
+      }
+    },
+    "public/sprites/pokemon/galar/861/shiny.png": {
+      "digest": "cc0dee52e4fababb",
+      "bytes": 14030,
+      "width": 361,
+      "height": 202,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 14030,
+        "bytes": 14030
+      }
+    },
+    "public/sprites/pokemon/galar/868/regular.png": {
+      "digest": "db362f4be42c9905",
+      "bytes": 3904,
+      "width": 92,
+      "height": 275,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 3904,
+        "bytes": 3904
+      }
+    },
+    "public/sprites/pokemon/galar/868/shiny.png": {
+      "digest": "57e77b7b8d3494ae",
+      "bytes": 3984,
+      "width": 92,
+      "height": 275,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 3984,
+        "bytes": 3984
+      }
+    },
+    "public/sprites/pokemon/galar/869/regular.png": {
+      "digest": "2381e5aed914fb08",
+      "bytes": 5952,
+      "width": 135,
+      "height": 187,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 5952,
+        "bytes": 5952
+      }
+    },
+    "public/sprites/pokemon/galar/869/shiny.png": {
+      "digest": "5bfd50bd9c5f5df5",
+      "bytes": 6094,
+      "width": 135,
+      "height": 187,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 6094,
+        "bytes": 6094
+      }
+    },
+    "public/sprites/pokemon/galar/871/regular.png": {
+      "digest": "ba82c0fb3b1f10ce",
+      "bytes": 4947,
+      "width": 138,
+      "height": 186,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 4947,
+        "bytes": 4947
+      }
+    },
+    "public/sprites/pokemon/galar/871/shiny.png": {
+      "digest": "c50f9f5d6d3ffec9",
+      "bytes": 4959,
+      "width": 138,
+      "height": 186,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 4959,
+        "bytes": 4959
+      }
+    },
+    "public/sprites/pokemon/galar/872/regular.png": {
+      "digest": "9787906b2d3bb69e",
+      "bytes": 1501,
+      "width": 79,
+      "height": 88,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 1501,
+        "bytes": 1501
+      }
+    },
+    "public/sprites/pokemon/galar/872/shiny.png": {
+      "digest": "4f663e75be4a81d7",
+      "bytes": 1525,
+      "width": 79,
+      "height": 88,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 1525,
+        "bytes": 1525
+      }
+    },
+    "public/sprites/pokemon/galar/873/regular.png": {
+      "digest": "e4d11e1bd05ba1c2",
+      "bytes": 5458,
+      "width": 88,
+      "height": 265,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 5458,
+        "bytes": 5458
+      }
+    },
+    "public/sprites/pokemon/galar/873/shiny.png": {
+      "digest": "2d47a5f3a53b22f1",
+      "bytes": 5458,
+      "width": 88,
+      "height": 265,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 5458,
+        "bytes": 5458
+      }
+    },
+    "public/sprites/pokemon/galar/874/regular.png": {
+      "digest": "63a724fa3136bf94",
+      "bytes": 11949,
+      "width": 186,
+      "height": 405,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 11949,
+        "bytes": 11949
+      }
+    },
+    "public/sprites/pokemon/galar/874/shiny.png": {
+      "digest": "ddc317762bfff281",
+      "bytes": 12022,
+      "width": 186,
+      "height": 405,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 12022,
+        "bytes": 12022
+      }
+    },
+    "public/sprites/pokemon/galar/875/regular.png": {
+      "digest": "8e89c84edf577b03",
+      "bytes": 5800,
+      "width": 333,
+      "height": 98,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 5800,
+        "bytes": 5800
+      }
+    },
+    "public/sprites/pokemon/galar/875/shiny.png": {
+      "digest": "5d98080c8503fab8",
+      "bytes": 5855,
+      "width": 333,
+      "height": 98,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 5855,
+        "bytes": 5855
+      }
+    },
+    "public/sprites/pokemon/galar/876/female.png": {
+      "digest": "0276d7850d2f4f91",
+      "bytes": 3548,
+      "width": 121,
+      "height": 162,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 3548,
+        "bytes": 3548
+      }
+    },
+    "public/sprites/pokemon/galar/876/regular.png": {
+      "digest": "bc59410b72ef2515",
+      "bytes": 3615,
+      "width": 121,
+      "height": 162,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 3615,
+        "bytes": 3615
+      }
+    },
+    "public/sprites/pokemon/galar/876/shiny.png": {
+      "digest": "5e2d8a6c8a678131",
+      "bytes": 3610,
+      "width": 121,
+      "height": 162,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 3610,
+        "bytes": 3610
+      }
+    },
+    "public/sprites/pokemon/galar/876/shiny_female.png": {
+      "digest": "01780087ad881875",
+      "bytes": 3548,
+      "width": 121,
+      "height": 162,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 3548,
+        "bytes": 3548
+      }
+    },
+    "public/sprites/pokemon/galar/877/regular.png": {
+      "digest": "2ea0cdc3ebbc8b53",
+      "bytes": 8007,
+      "width": 188,
+      "height": 207,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 8007,
+        "bytes": 8007
+      }
+    },
+    "public/sprites/pokemon/galar/877/shiny.png": {
+      "digest": "55fa3171216966e4",
+      "bytes": 7874,
+      "width": 188,
+      "height": 207,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 7874,
+        "bytes": 7874
+      }
+    },
+    "public/sprites/pokemon/galar/880/regular.png": {
+      "digest": "dce5e52cbf79d772",
+      "bytes": 7935,
+      "width": 206,
+      "height": 197,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 7935,
+        "bytes": 7935
+      }
+    },
+    "public/sprites/pokemon/galar/880/shiny.png": {
+      "digest": "b2ce5a82cc49965f",
+      "bytes": 7926,
+      "width": 206,
+      "height": 197,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 7926,
+        "bytes": 7926
+      }
+    },
+    "public/sprites/pokemon/galar/881/regular.png": {
+      "digest": "d79bd384d128f24f",
+      "bytes": 12157,
+      "width": 189,
+      "height": 330,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 12157,
+        "bytes": 12157
+      }
+    },
+    "public/sprites/pokemon/galar/881/shiny.png": {
+      "digest": "b13900eafd81873e",
+      "bytes": 12196,
+      "width": 189,
+      "height": 330,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 12196,
+        "bytes": 12196
+      }
+    },
+    "public/sprites/pokemon/galar/882/regular.png": {
+      "digest": "f2ce5cf2707d9956",
+      "bytes": 7006,
+      "width": 172,
+      "height": 197,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 7006,
+        "bytes": 7006
+      }
+    },
+    "public/sprites/pokemon/galar/882/shiny.png": {
+      "digest": "fb447447e61784e3",
+      "bytes": 6948,
+      "width": 172,
+      "height": 197,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 6948,
+        "bytes": 6948
+      }
+    },
+    "public/sprites/pokemon/galar/883/regular.png": {
+      "digest": "50054d1cea6786b1",
+      "bytes": 3556,
+      "width": 125,
+      "height": 114,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 3556,
+        "bytes": 3556
+      }
+    },
+    "public/sprites/pokemon/galar/883/shiny.png": {
+      "digest": "0969af9a7874d9bc",
+      "bytes": 3550,
+      "width": 125,
+      "height": 114,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 3550,
+        "bytes": 3550
+      }
+    },
+    "public/sprites/pokemon/galar/884/regular.png": {
+      "digest": "6be2179395d61f9a",
+      "bytes": 9322,
+      "width": 326,
+      "height": 159,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 9322,
+        "bytes": 9322
+      }
+    },
+    "public/sprites/pokemon/galar/884/shiny.png": {
+      "digest": "b323851bc2cbc573",
+      "bytes": 9300,
+      "width": 326,
+      "height": 159,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 9300,
+        "bytes": 9300
+      }
+    },
+    "public/sprites/pokemon/galar/885/regular.png": {
+      "digest": "cb4b54651b6fefae",
+      "bytes": 2137,
+      "width": 69,
+      "height": 155,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 2137,
+        "bytes": 2137
+      }
+    },
+    "public/sprites/pokemon/galar/885/shiny.png": {
+      "digest": "565afb9efa1cd4de",
+      "bytes": 2174,
+      "width": 69,
+      "height": 155,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 2174,
+        "bytes": 2174
+      }
+    },
+    "public/sprites/pokemon/galar/886/regular.png": {
+      "digest": "eb2d6c4b3f572898",
+      "bytes": 2963,
+      "width": 120,
+      "height": 137,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 2963,
+        "bytes": 2963
+      }
+    },
+    "public/sprites/pokemon/galar/886/shiny.png": {
+      "digest": "7086db80faedf659",
+      "bytes": 2642,
+      "width": 120,
+      "height": 137,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 2642,
+        "bytes": 2642
+      }
+    },
+    "public/sprites/pokemon/galar/887/regular.png": {
+      "digest": "5554132a0a0d07dc",
+      "bytes": 16952,
+      "width": 199,
+      "height": 602,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 16952,
+        "bytes": 16952
+      }
+    },
+    "public/sprites/pokemon/galar/887/shiny.png": {
+      "digest": "902311bcd927a703",
+      "bytes": 16912,
+      "width": 199,
+      "height": 602,
+      "compact": {
+        "at": "2026-10-08T10:56:26Z",
+        "as": "already compact",
+        "was": 16912,
+        "bytes": 16912
+      }
+    },
     "public/sprites/pokemon/hoenn/1025401/regular.png": {
       "digest": "05a4721534f291ee",
       "bytes": 3935,
@@ -34343,6 +36191,18 @@
         "as": "already compact",
         "was": 8718,
         "bytes": 8718
+      }
+    },
+    "public/sprites/ui/candies/galar/image.png": {
+      "digest": "72b2c4ac96f985dd",
+      "bytes": 5574,
+      "width": 96,
+      "height": 96,
+      "compact": {
+        "at": "2026-10-08T11:51:22Z",
+        "as": "already compact",
+        "was": 5574,
+        "bytes": 5574
       }
     },
     "public/sprites/ui/candies/hoenn/image.png": {

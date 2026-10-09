@@ -49,6 +49,7 @@ export const SPRITE_ROOT = spriteUrl('/sprites/pokemon');
  */
 const BORROWED_COATS = new Map<Species, { sheet: Species; female: boolean }>([
   [Species.MeowsticFemale, { sheet: Species.Meowstic, female: true }],
+  [Species.IndeedeeFemale, { sheet: Species.Indeedee, female: true }],
 ]);
 
 /**
@@ -60,6 +61,12 @@ const BORROWED_COATS = new Map<Species, { sheet: Species; female: boolean }>([
 const STAND_INS = new Map<Species, Species>([
   [Species.NecrozmaDuskMane, Species.Solgaleo],
   [Species.NecrozmaDawnWings, Species.Lunala],
+  // A Cramorant with its catch is drawn as the bird alone
+  [Species.CramorantGulping, Species.Cramorant],
+  [Species.CramorantGorging, Species.Cramorant],
+  // The collection draws the troop only as its pieces, so Falinks is
+  // drawn as the Brass that leads it
+  [Species.Falinks, Species.FalinksBrass],
 ]);
 
 /** Whether this shape is drawn as another pokemon until it has art of its own */

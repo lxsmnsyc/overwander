@@ -49,6 +49,11 @@ export const FOSSIL_PRICES = new Map<Items, number>([
   [Items.PlumeFossil, 12_000],
   [Items.JawFossil, 12_000],
   [Items.SailFossil, 12_000],
+  // A half is a rock like any other, though a pokemon takes two
+  [Items.FossilizedBird, 12_000],
+  [Items.FossilizedFish, 12_000],
+  [Items.FossilizedDrake, 12_000],
+  [Items.FossilizedDino, 12_000],
 ]);
 
 /**

@@ -1,51 +1,63 @@
 land:
   morning: &land-morning
     base:
-      Bellsprout: 1680
-      Poliwag: 1680
-      Lotad: 1680
-      Turtwig: 252
+      Bellsprout: 1576
+      Poliwag: 1576
+      Lotad: 1576
+      Turtwig: 236
+      Hatenna: 150
+      Sobble: 47
     uncommon:
-      Wooper: 781
-      Surskit: 781
-      Marill: 625
-      Tangela: 313
+      Wooper: 733
+      Surskit: 733
+      Marill: 586
+      Chewtle: 300
+      Tangela: 294
     rare:
-      Lombre: 568
-      Weepinbell: 284
-      Poliwhirl: 284
-      Grotle: 114
+      Lombre: 533
+      Weepinbell: 266
+      Poliwhirl: 266
+      Grotle: 107
+      Hattrem: 50
+      Drizzile: 14
     scarce:
-      Masquerain: 195
-      Tangrowth: 117
-      Leafeon: 117
-      Azumarill: 98
-      Quagsire: 98
+      Masquerain: 183
+      Tangrowth: 110
+      Leafeon: 110
+      Azumarill: 92
+      Quagsire: 92
+      Drednaw: 35
     elusive:
-      Victreebel: 92
-      Politoed: 92
-      Ludicolo: 92
-      Torterra: 37
+      Victreebel: 86
+      Politoed: 86
+      Ludicolo: 86
+      Torterra: 35
+      Hatterene: 15
+      Inteleon: 4
     prized:
       Unown: forms
       Azurill: prized
     special: {}
   day: *land-morning
   evening: &land-evening
-    base: { Poliwag: 2995 }
+    base: { Poliwag: 2660, Impidimp: 170, Hatenna: 150, Dreepy: 60, Sobble: 47 }
     uncommon:
-      Shroomish: 1034
-      Wooper: 1034
-      Venonat: 828
-      Marill: 828
-    rare: { Poliwhirl: 1862 }
+      Shroomish: 918
+      Wooper: 918
+      Venonat: 735
+      Marill: 735
+      Chewtle: 300
+      Sinistea: 150
+    rare: { Poliwhirl: 1654, Morgrem: 60, Hattrem: 50, Drakloak: 15, Drizzile: 14 }
     scarce:
-      Venomoth: 259
-      Breloom: 259
-      Tangrowth: 155
-      Azumarill: 130
-      Quagsire: 130
-    elusive: { Politoed: 466 }
+      Venomoth: 230
+      Breloom: 230
+      Tangrowth: 138
+      Azumarill: 115
+      Quagsire: 115
+      Drednaw: 35
+      Polteageist: 25
+    elusive: { Politoed: 414, Hatterene: 15, Grimmsnarl: 15, Dragapult: 5, Inteleon: 4 }
     prized:
       Unown: forms
       Azurill: prized
@@ -55,40 +67,48 @@ land:
 water:
   morning: &water-morning
     base:
-      Poliwag: 2651
-      Lotad: 2651
+      Poliwag: 2546
+      Lotad: 2546
+      Sobble: 47
     uncommon:
-      Magikarp: 752
-      Wooper: 627
-      Surskit: 627
-      Marill: 501
+      Magikarp: 722
+      Wooper: 602
+      Surskit: 602
+      Marill: 481
+      Chewtle: 300
     rare:
-      Lombre: 835
-      Poliwhirl: 418
+      Lombre: 802
+      Poliwhirl: 401
+      Drizzile: 14
     scarce:
-      Masquerain: 261
-      Azumarill: 130
-      Quagsire: 130
-      Gyarados: 104
+      Masquerain: 251
+      Azumarill: 125
+      Quagsire: 125
+      Gyarados: 100
+      Drednaw: 35
     elusive:
-      Politoed: 156
-      Ludicolo: 156
+      Politoed: 150
+      Ludicolo: 150
     special: {}
   day: *water-morning
   evening: &water-evening
     base:
-      Poliwag: 3000
+      Poliwag: 2881
+      Sobble: 47
     uncommon:
-      Magikarp: 1493
-      Wooper: 1244
-      Marill: 996
+      Magikarp: 1434
+      Wooper: 1195
+      Marill: 957
+      Chewtle: 300
     rare:
-      Poliwhirl: 1867
+      Poliwhirl: 1793
+      Drizzile: 14
     scarce:
-      Azumarill: 333
-      Quagsire: 333
-      Gyarados: 267
+      Azumarill: 320
+      Quagsire: 320
+      Gyarados: 256
+      Drednaw: 35
     elusive:
-      Politoed: 467
+      Politoed: 449
     special: {}
   night: *water-evening

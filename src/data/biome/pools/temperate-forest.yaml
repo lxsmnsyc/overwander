@@ -1,71 +1,73 @@
 land:
   morning: &land-morning
     base:
-      Caterpie: 589
-      Starly: 589
-      Sewaddle: 550
-      Timburr: 491
-      Flabebe: 471
-      Scatterbug: 471
-      Bellsprout: 393
-      Ralts: 393
-      Poliwag: 393
-      Blipbug: 250
-      Rookidee: 180
-      Hatenna: 150
-      Grookey: 47
-      Chespin: 40
-      Bulbasaur: 40
-      Chikorita: 40
+      Caterpie: 577
+      Starly: 577
+      Sewaddle: 539
+      Timburr: 481
+      Flabebe: 462
+      Scatterbug: 462
+      Bellsprout: 385
+      Ralts: 385
+      Poliwag: 385
+      Blipbug: 245
+      Rookidee: 176
+      Hatenna: 147
+      Grookey: 46
+      Chespin: 39
+      Bulbasaur: 39
+      Chikorita: 39
     uncommon:
-      Skwovet: 300
-      Bidoof: 170
-      Buneary: 170
-      Wooper: 170
-      Cutiefly: 164
-      Petilil: 164
-      Spritzee: 164
-      Panpour: 150
-      Pansear: 150
-      Pansage: 150
-      Cherubi: 150
-      Applin: 150
-      Karrablast: 137
-      Ledyba: 137
-      Pineco: 137
-      Deerling: 123
-      Scyther: 34
-      Pikachu: 34
-      Stantler: 34
-      Togetic: 34
+      Skwovet: 294
+      Bidoof: 167
+      Buneary: 167
+      Wooper: 167
+      Cutiefly: 161
+      Petilil: 161
+      Spritzee: 161
+      PonytaGalar: 150
+      Panpour: 147
+      Pansear: 147
+      Pansage: 147
+      Cherubi: 147
+      Applin: 147
+      Karrablast: 134
+      Ledyba: 134
+      Pineco: 134
+      Deerling: 121
+      Scyther: 33
+      Pikachu: 33
+      Stantler: 33
+      Togetic: 33
     rare:
-      Metapod: 182
-      Swadloon: 145
-      Gurdurr: 121
-      Kirlia: 121
-      Floette: 97
-      Spewpa: 97
-      Dottler: 80
-      Corvisquire: 70
-      Weepinbell: 61
-      Ursaring: 61
-      Staravia: 61
-      Poliwhirl: 61
-      Hattrem: 50
+      Metapod: 178
+      Swadloon: 142
+      Gurdurr: 119
+      Kirlia: 119
+      Floette: 95
+      Spewpa: 95
+      Dottler: 78
+      Corvisquire: 69
+      Weepinbell: 60
+      Ursaring: 60
+      Staravia: 60
+      Poliwhirl: 60
+      Hattrem: 49
       Quilladin: 24
       Thwackey: 14
       Ivysaur: 12
       Bayleef: 12
     scarce:
-      Bibarel: 40
-      Ledian: 33
-      Lopunny: 33
-      Greedent: 30
-      Simipour: 29
-      Simisear: 29
-      Simisage: 29
-      Sawsbuck: 29
-      Lilligant: 29
+      Bibarel: 39
+      Ledian: 32
+      Lopunny: 32
+      RapidashGalar: 30
+      Greedent: 29
+      Simipour: 28
+      Simisear: 28
+      Simisage: 28
+      Sawsbuck: 28
+      Lilligant: 28
       Ribombee: 24
       Cherrim: 24
       Ambipom: 24
@@ -83,8 +85,8 @@ land:
       Flapple: 15
       Appletun: 15
     elusive:
-      Indeedee: 90
-      IndeedeeFemale: 90
+      Indeedee: 88
+      IndeedeeFemale: 88
       Corviknight: 25
       Orbeetle: 25
       Butterfree: 19
@@ -125,6 +127,8 @@ land:
       Xerneas: 10
       Virizion: 10
       Mesprit: 10
+      Zacian: 10
+      Zamazenta: 10
     mythical:
       Zeraora: 10
       Celebi: 10
@@ -132,10 +136,10 @@ land:
   day: *land-morning
   evening:
     base:
-      Venipede: 1883
-      Oddish: 1448
-      Poliwag: 1448
-      Blipbug: 250
+      Venipede: 1879
+      Oddish: 1445
+      Poliwag: 1445
+      Blipbug: 249
       Hatenna: 150
     uncommon:
       Nickit: 170
@@ -159,9 +163,9 @@ land:
       Murkrow: 31
       Stantler: 31
     rare:
-      Whirlipede: 617
-      Gloom: 257
-      Poliwhirl: 257
+      Whirlipede: 616
+      Gloom: 256
+      Poliwhirl: 256
       Dottler: 80
       Hattrem: 50
     scarce:
@@ -217,16 +221,18 @@ land:
       Xerneas: 10
       Virizion: 10
       Mesprit: 10
+      Zacian: 10
+      Zamazenta: 10
     mythical:
       Zeraora: 10
       Celebi: 10
       PichuSpikyEared: 10
   night:
     base:
-      Venipede: 1883
-      Oddish: 1448
-      Poliwag: 1448
-      Blipbug: 250
+      Venipede: 1879
+      Oddish: 1445
+      Poliwag: 1445
+      Blipbug: 249
       Hatenna: 150
     uncommon:
       Nickit: 170
@@ -251,9 +257,9 @@ land:
       Murkrow: 29
       Stantler: 29
     rare:
-      Whirlipede: 617
-      Gloom: 257
-      Poliwhirl: 257
+      Whirlipede: 616
+      Gloom: 256
+      Poliwhirl: 256
       Dottler: 80
       Hattrem: 50
     scarce:
@@ -310,6 +316,8 @@ land:
       Xerneas: 10
       Virizion: 10
       Mesprit: 10
+      Zacian: 10
+      Zamazenta: 10
     mythical:
       Zeraora: 10
       Celebi: 10

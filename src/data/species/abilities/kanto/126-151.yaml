@@ -101,14 +101,29 @@ Articuno:
   Articuno:
     abilities: [Pressure]
     hidden: [SnowCloak, IceBody, SnowWarning]
+  ArticunoGalar:
+    abilities: [Competitive]
+    hidden:
+      # Telepathy, Synchronize and Magic Bounce are this registry's rather than the mainline's, filling it to four: it reads minds and turns them back
+      [Telepathy, Synchronize, MagicBounce]
 Zapdos:
   Zapdos:
     abilities: [Pressure]
     hidden: [Static, LightningRod, Drizzle]
+  ZapdosGalar:
+    abilities: [Defiant]
+    hidden:
+      # Scrappy, Guts and Quick Feet are this registry's rather than the mainline's, filling it to four: it runs and kicks its way through anything
+      [Scrappy, Guts, QuickFeet]
 Moltres:
   Moltres:
     abilities: [Pressure]
     hidden: [FlameBody, Drought, FlashFire]
+  MoltresGalar:
+    abilities: [Berserk]
+    hidden:
+      # Merciless, Infiltrator and Unnerve are this registry's rather than the mainline's, filling it to four: its malice slips past guards and saps the nerve
+      [Merciless, Infiltrator, Unnerve]
 Dratini:
   Dratini:
     abilities: [ShedSkin]

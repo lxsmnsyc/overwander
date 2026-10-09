@@ -15,6 +15,8 @@ Darumaka:
   Darumaka: { name: Darumaka, category: Zen Charm Pokemon }
   Darmanitan: { name: Darmanitan, category: Blazing Pokemon }
   DarmanitanZen: { name: Darmanitan Zen, category: Blazing Pokemon }
+  DarumakaGalar: { name: Galarian Darumaka, category: Zen Charm Pokemon }
+  DarmanitanGalar: { name: Galarian Darmanitan, category: Blazing Pokemon }
 Maractus:
   Maractus: { name: Maractus, category: Cactus Pokemon }
 Dwebble:
@@ -28,6 +30,8 @@ Sigilyph:
 Yamask:
   Yamask: { name: Yamask, category: Spirit Pokemon }
   Cofagrigus: { name: Cofagrigus, category: Coffin Pokemon }
+  YamaskGalar: { name: Galarian Yamask, category: Spirit Pokemon }
+  Runerigus: { name: Runerigus, category: Grudge Pokemon }
 Tirtouga:
   Tirtouga: { name: Tirtouga, category: Prototurtle Pokemon }
   Carracosta: { name: Carracosta, category: Prototurtle Pokemon }

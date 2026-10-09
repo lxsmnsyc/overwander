@@ -49,3 +49,9 @@ NSolarizer:
 NLunarizer:
   name: N-Lunarizer
   description: Folds a Lunala into a Necrozma, or pulls it back out. Spent on each use.
+RustedSword:
+  name: Rusted Sword
+  description: A Zacian holding it fights crowned, and its Iron Head becomes Behemoth Blade.
+RustedShield:
+  name: Rusted Shield
+  description: A Zamazenta holding it fights crowned, and its Iron Head becomes Behemoth Bash.

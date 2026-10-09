@@ -24,3 +24,106 @@ Dreepy:
     biomes: [TemperateRainforest, Mountain]
     active: [Evening, Night]
     evolves-from: Drakloak
+Zacian:
+  Zacian:
+    types: [Fairy]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [TemperateForest]
+    active: any
+    rank: legendary
+  ZacianCrowned:
+    # Worn with the Rusted Sword, so it is never met this way
+    types: [Fairy, Steel]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    worn: true
+    evolves-from: Zacian
+    rank: legendary
+Zamazenta:
+  Zamazenta:
+    types: [Fighting]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [TemperateForest]
+    active: any
+    rank: legendary
+  ZamazentaCrowned:
+    # Worn with the Rusted Shield, so it is never met this way
+    types: [Fighting, Steel]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    worn: true
+    evolves-from: Zamazenta
+    rank: legendary
+Eternatus:
+  Eternatus:
+    types: [Poison, Dragon]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Badlands]
+    active: any
+    rank: legendary
+Kubfu:
+  Kubfu:
+    types: [Fighting]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Mountain, RockyCoast]
+    active: any
+    evolves-into:
+      - species: Urshifu
+        method: [UsedItem]
+        item: ScrollOfDarkness
+      - species: UrshifuRapidStrike
+        method: [UsedItem]
+        item: ScrollOfWaters
+    rank: legendary
+  Urshifu:
+    types: [Fighting, Dark]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Mountain]
+    active: any
+    evolves-from: Kubfu
+    rank: legendary
+  UrshifuRapidStrike:
+    types: [Fighting, Water]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [RockyCoast]
+    active: any
+    base-form: false
+    evolves-from: Kubfu
+    rank: legendary
+Regieleki:
+  Regieleki:
+    types: [Electric]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Tundra]
+    active: any
+    rank: legendary
+Regidrago:
+  Regidrago:
+    types: [Dragon]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Tundra]
+    active: any
+    rank: legendary
+Glastrier:
+  Glastrier:
+    types: [Ice]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [AlpineTundra]
+    active: any
+    rank: legendary
+Spectrier:
+  Spectrier:
+    types: [Ghost]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Tundra]
+    active: any
+    rank: legendary
+Calyrex:
+  Calyrex:
+    types: [Psychic, Grass]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Taiga]
+    active: any
+    rank: legendary

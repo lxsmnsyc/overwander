@@ -261,6 +261,9 @@ export function collectAftermath(built: RaidBattle, player: string): BattleAfter
         health: Math.max(0, Math.floor(unit.health)),
         statuses: carriedStatuses(unit),
         coins: Math.max(0, Math.floor(unit.coins)),
+        // Only what a feat could read, so most reports carry neither
+        ...(unit.criticals > 0 ? { criticals: unit.criticals } : {}),
+        ...(unit.taken >= 1 ? { taken: Math.floor(unit.taken) } : {}),
         ...(unit.sketched == null ? {} : { sketched: unit.sketched }),
       });
     }

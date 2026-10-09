@@ -246,3 +246,9 @@ Shockmud:
 HerdBond:
   name: Herd Bond
   description: Attack rises 10% for each other pokemon on its team still standing.
+ColdSink:
+  name: Cold Sink
+  description: Ice moves aimed at its teammates are drawn onto it, and each one that reaches it raises its Attack 1 stage instead of hurting it.
+CarvedGrudge:
+  name: Carved Grudge
+  description: When it faints, every enemy that damaged it with a move loses 1/8 of its HP.

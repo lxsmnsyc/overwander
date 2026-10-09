@@ -1,51 +1,52 @@
 land:
   morning:
     base:
-      Mareep: 858
-      Whismur: 858
-      FlabebeYellow: 824
-      Scatterbug: 824
-      GeodudeAlola: 756
-      Magnemite: 687
-      Snivy: 103
+      Mareep: 846
+      Whismur: 846
+      FlabebeYellow: 812
+      Scatterbug: 812
+      GeodudeAlola: 745
+      Magnemite: 677
+      Snivy: 102
     uncommon:
-      Wooloo: 300
-      Yamper: 280
-      Patrat: 186
-      Bunnelby: 161
-      Blitzle: 155
-      Sentret: 155
-      Electrike: 155
-      Wooper: 155
-      Skiddo: 149
-      Mudbray: 136
-      Rockruff: 136
-      Spearow: 123
-      Doduo: 123
-      Phanpy: 123
-      Voltorb: 123
-      BurmyTrash: 123
-      Rufflet: 99
-      Growlithe: 62
-      Ponyta: 62
-      Dunsparce: 62
+      Wooloo: 296
+      Yamper: 276
+      Patrat: 183
+      Bunnelby: 159
+      Blitzle: 153
+      Sentret: 153
+      Electrike: 153
+      Wooper: 153
+      Skiddo: 147
+      Mudbray: 134
+      Rockruff: 134
+      Spearow: 121
+      Doduo: 121
+      Phanpy: 121
+      Voltorb: 121
+      BurmyTrash: 121
+      FarfetchdGalar: 120
+      Rufflet: 98
+      Growlithe: 61
+      Ponyta: 61
+      Dunsparce: 61
       Girafarig: 31
     rare:
-      Loudred: 227
-      Magneton: 227
-      GravelerAlola: 182
-      FloetteYellow: 182
-      Spewpa: 182
-      Flaaffy: 114
-      Servine: 45
+      Loudred: 224
+      Magneton: 224
+      GravelerAlola: 179
+      FloetteYellow: 179
+      Spewpa: 179
+      Flaaffy: 112
+      Servine: 44
     scarce:
-      Fearow: 46
-      Rapidash: 46
-      Dodrio: 46
-      Electrode: 46
-      Furret: 46
-      Manectric: 46
-      Donphan: 46
+      Fearow: 45
+      Rapidash: 45
+      Dodrio: 45
+      Electrode: 45
+      Furret: 45
+      Manectric: 45
+      Donphan: 45
       Dubwool: 35
       Boltund: 30
       Mudsdale: 28
@@ -57,9 +58,10 @@ land:
       Electivire: 28
       Arcanine: 23
       Quagsire: 23
+      Sirfetchd: 20
       WormadamTrash: 19
     elusive:
-      Falinks: 40
+      Falinks: 39
       Castform: 32
       Tauros: 32
       Ampharos: 32
@@ -82,53 +84,54 @@ land:
       Zapdos: 10
   day:
     base:
-      Mareep: 858
-      Whismur: 858
-      FlabebeYellow: 824
-      Scatterbug: 824
-      GeodudeAlola: 756
-      Magnemite: 687
-      Snivy: 103
+      Mareep: 846
+      Whismur: 846
+      FlabebeYellow: 812
+      Scatterbug: 812
+      GeodudeAlola: 745
+      Magnemite: 677
+      Snivy: 102
     uncommon:
-      Wooloo: 300
-      Yamper: 280
-      Patrat: 176
-      Bunnelby: 153
-      Blitzle: 147
-      Sentret: 147
-      Electrike: 147
-      Wooper: 147
-      Skiddo: 141
-      Mudbray: 129
-      Rockruff: 129
-      Spearow: 118
-      Ekans: 118
-      Doduo: 118
-      Phanpy: 118
-      Voltorb: 118
-      BurmyTrash: 118
-      Rufflet: 94
-      Growlithe: 58
-      Ponyta: 58
-      Dunsparce: 58
+      Wooloo: 296
+      Yamper: 276
+      Patrat: 174
+      Bunnelby: 151
+      Blitzle: 145
+      Sentret: 145
+      Electrike: 145
+      Wooper: 145
+      Skiddo: 139
+      Mudbray: 127
+      Rockruff: 127
+      FarfetchdGalar: 120
+      Spearow: 116
+      Ekans: 116
+      Doduo: 116
+      Phanpy: 116
+      Voltorb: 116
+      BurmyTrash: 116
+      Rufflet: 93
+      Growlithe: 57
+      Ponyta: 57
+      Dunsparce: 57
       Girafarig: 30
     rare:
-      Loudred: 227
-      Magneton: 227
-      GravelerAlola: 182
-      FloetteYellow: 182
-      Spewpa: 182
-      Flaaffy: 114
-      Servine: 45
+      Loudred: 224
+      Magneton: 224
+      GravelerAlola: 179
+      FloetteYellow: 179
+      Spewpa: 179
+      Flaaffy: 112
+      Servine: 44
     scarce:
-      Fearow: 43
-      Arbok: 43
-      Rapidash: 43
-      Dodrio: 43
-      Electrode: 43
-      Furret: 43
-      Manectric: 43
-      Donphan: 43
+      Fearow: 42
+      Arbok: 42
+      Rapidash: 42
+      Dodrio: 42
+      Electrode: 42
+      Furret: 42
+      Manectric: 42
+      Donphan: 42
       Dubwool: 35
       Boltund: 30
       Mudsdale: 26
@@ -140,9 +143,10 @@ land:
       Electivire: 26
       Arcanine: 21
       Quagsire: 21
+      Sirfetchd: 20
       WormadamTrash: 17
     elusive:
-      Falinks: 40
+      Falinks: 39
       Castform: 32
       Tauros: 32
       Ampharos: 32

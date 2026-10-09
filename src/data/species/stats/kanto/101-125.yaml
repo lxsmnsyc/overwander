@@ -88,6 +88,12 @@ Koffing:
     height: 1.2
     weight: 9.5
     gender: [1, 1]
+  WeezingGalar:
+    stats: { HP: 65, Attack: 90, Defense: 120, SpecialAttack: 85, SpecialDefense: 70, Speed: 60 }
+    catch-rate: 60
+    height: 3
+    weight: 16
+    gender: [1, 1]
 Rhyhorn:
   Rhyhorn:
     stats: { HP: 80, Attack: 85, Defense: 95, SpecialAttack: 30, SpecialDefense: 30, Speed: 25 }
@@ -206,6 +212,12 @@ MrMime:
     weight: 13
     gender: [1, 1]
     egg-cycles: 25
+  MrMimeGalar:
+    stats: { HP: 50, Attack: 65, Defense: 65, SpecialAttack: 90, SpecialDefense: 90, Speed: 100 }
+    catch-rate: 45
+    height: 1.4
+    weight: 56.8
+    gender: [1, 1]
 Scyther:
   Scyther:
     stats: { HP: 70, Attack: 110, Defense: 80, SpecialAttack: 55, SpecialDefense: 80, Speed: 105 }

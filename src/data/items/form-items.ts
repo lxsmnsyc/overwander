@@ -104,6 +104,9 @@ export const FORM_ITEMS = new Map<Items, Species[]>([
   // every holder takes the shape, with no limit to a team
   [Items.BlueOrb, [Species.KyogrePrimal]],
   [Items.RedOrb, [Species.GroudonPrimal]],
+  // Galar's heroes take up their relics and fight crowned
+  [Items.RustedSword, [Species.ZacianCrowned]],
+  [Items.RustedShield, [Species.ZamazentaCrowned]],
   // The seventeen Plates, each of which is already a type booster.
   // Holding one paints an Arceus the type it lifts, which is what the
   // mainline calls Multitype: there is no battle code behind it, only

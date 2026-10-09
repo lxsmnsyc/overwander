@@ -116,3 +116,30 @@ CrackedPot:
   flags: [Usable, Marketable]
   buy: 3000
   sell: 1500
+
+# The Galarica twigs a Galarian Slowpoke evolves on, used rather than
+# held: the cuff for Slowbro and the wreath for Slowking.
+GalaricaCuff:
+  type: Evolution
+  icon: evolutions/galarica-cuff
+  flags: [Usable, Marketable]
+  buy: 3000
+  sell: 1500
+GalaricaWreath:
+  type: Evolution
+  icon: evolutions/galarica-wreath
+  flags: [Usable, Marketable]
+  buy: 3000
+  sell: 1500
+# The scrolls a Kubfu trains under, which decide the style its Urshifu
+# fights in. Never stocked: a scroll is only ever dug up.
+ScrollOfDarkness:
+  type: Evolution
+  icon: other/scroll-of-darkness
+  flags: [Usable]
+  sell: 6000
+ScrollOfWaters:
+  type: Evolution
+  icon: other/scroll-of-waters
+  flags: [Usable]
+  sell: 6000

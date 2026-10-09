@@ -28,6 +28,10 @@ const ABILITY_CUES: Partial<Record<Abilities, CueKind>> = {
   [Abilities.Defiant]: 'Rise',
   [Abilities.Competitive]: 'Rise',
   [Abilities.Download]: 'Rise',
+  [Abilities.ChillingNeigh]: 'Rise',
+  [Abilities.GrimNeigh]: 'Rise',
+  [Abilities.IntrepidSword]: 'Rise',
+  [Abilities.DauntlessShield]: 'Rise',
 
   // Something got faster
   [Abilities.Rattled]: 'Rush',
@@ -37,6 +41,7 @@ const ABILITY_CUES: Partial<Record<Abilities, CueKind>> = {
   [Abilities.RunAway]: 'Rush',
   [Abilities.SwiftSwim]: 'Rush',
   [Abilities.Chlorophyll]: 'Rush',
+  [Abilities.QuickDraw]: 'Rush',
 
   // Something mended
   [Abilities.Regenerator]: 'Mend',
@@ -46,6 +51,8 @@ const ABILITY_CUES: Partial<Record<Abilities, CueKind>> = {
   [Abilities.ShedSkin]: 'Mend',
   [Abilities.NaturalCure]: 'Mend',
   [Abilities.Healer]: 'Mend',
+  [Abilities.PastelVeil]: 'Mend',
+  [Abilities.CuriousMedicine]: 'Mend',
 
   // Something was noticed before it happened
   [Abilities.Anticipation]: 'Notice',
@@ -64,6 +71,7 @@ const ABILITY_CUES: Partial<Record<Abilities, CueKind>> = {
   [Abilities.Intimidate]: 'Menace',
   [Abilities.CursedBody]: 'Menace',
   [Abilities.BadDreams]: 'Menace',
+  [Abilities.ScreenCleaner]: 'Menace',
   [Abilities.Boss]: 'Menace',
 };
 

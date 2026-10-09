@@ -16,6 +16,23 @@ Ponyta:
     active: [Morning, Day]
     evolves-from: Ponyta
     held: { common: RawstBerry, uncommon: Charcoal, rare: QuickClaw }
+  PonytaGalar:
+    types: [Psychic]
+    egg-groups: [Field]
+    biomes: [TemperateForest, Woodland]
+    active: [Morning, Day]
+    base-form: false
+    evolves-into:
+      - species: RapidashGalar
+        method: [Level]
+        level: 40
+  RapidashGalar:
+    types: [Psychic, Fairy]
+    egg-groups: [Field]
+    biomes: [TemperateForest, Woodland]
+    active: [Morning, Day]
+    base-form: false
+    evolves-from: PonytaGalar
 Slowpoke:
   Slowpoke:
     types: [Water, Psychic]
@@ -46,6 +63,36 @@ Slowpoke:
     biomes: [Beach, Swamp, Mangrove, CoralReef, DeepOcean]
     active: [Morning, Day]
     evolves-from: Slowpoke
+  SlowpokeGalar:
+    types: [Psychic]
+    egg-groups: [Monster, Water1]
+    habitat: Amphibious
+    biomes: [Beach, TemperateRainforest]
+    active: [Morning, Day]
+    base-form: false
+    evolves-into:
+      - species: SlowbroGalar
+        method: [UsedItem]
+        item: GalaricaCuff
+      - species: SlowkingGalar
+        method: [UsedItem]
+        item: GalaricaWreath
+  SlowbroGalar:
+    types: [Poison, Psychic]
+    egg-groups: [Monster, Water1]
+    habitat: Amphibious
+    biomes: [Beach, TemperateRainforest]
+    active: [Morning, Day]
+    base-form: false
+    evolves-from: SlowpokeGalar
+  SlowkingGalar:
+    types: [Poison, Psychic]
+    egg-groups: [Monster, Water1]
+    habitat: Amphibious
+    biomes: [Beach, TemperateRainforest]
+    active: [Morning, Day]
+    base-form: false
+    evolves-from: SlowpokeGalar
 Magnemite:
   Magnemite:
     types: [Electric, Steel]
@@ -85,6 +132,22 @@ Farfetchd:
     biomes: [Grassland, Swamp, Mangrove]
     active: [Morning, Day]
     held: { common: OranBerry, uncommon: SharpBeak, rare: Stick }
+  FarfetchdGalar:
+    # Sirfetch'd grows out of the one that lands 3 critical hits in one fight
+    types: [Fighting]
+    egg-groups: [Flying, Field]
+    biomes: [Grassland, Steppe]
+    active: [Morning, Day]
+    base-form: false
+    evolves-into:
+      - species: Sirfetchd
+        method: [Special]
+  Sirfetchd:
+    types: [Fighting]
+    egg-groups: [Flying, Field]
+    biomes: [Grassland, Steppe]
+    active: [Morning, Day]
+    evolves-from: FarfetchdGalar
 Doduo:
   Doduo:
     types: [Normal, Flying]

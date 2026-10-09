@@ -258,24 +258,21 @@ UltraRuin:
 PoniGrove:
   species: [Stakataka, Blacephalon]
 
-# Galar's and Hisui's, reserved until their batch stages them
+# Galar's and Hisui's. The ones still reserved wait for their batch
 #
 # The misty forest the two heroes of Galar sleep in
 SlumberingWeald:
   species: [Zacian, Zamazenta]
-  reserved: true
 # The plant under Hammerlocke that fed on the Darkest Day's power
 EnergyPlant:
   species: [Eternatus]
-  reserved: true
 # The tower of the dark style, which is the Single Strike Urshifu's
 TowerOfDarkness:
-  species: [Urshifu]
-  reserved: true
+  # Kubfu trains at both towers before it picks a style
+  species: [Urshifu, Kubfu]
 # The tower of the water style, which is the Rapid Strike Urshifu's
 TowerOfWaters:
-  species: [UrshifuRapidStrike]
-  reserved: true
+  species: [UrshifuRapidStrike, Kubfu]
 # The jungle the Zarude keep, where one of them raised a child
 ForestOfOkoya:
   species: [Zarude]
@@ -283,31 +280,24 @@ ForestOfOkoya:
 # The ruin on the Crown Tundra that wakes one of two Regis
 SplitDecisionRuins:
   species: [Regieleki, Regidrago]
-  reserved: true
 # The shrine the king of bountiful harvests was once worshipped at
 CrownShrine:
   species: [Calyrex]
-  reserved: true
 # The slope the Iceroot Carrot grows on, which draws Glastrier
 SnowslideSlope:
   species: [Glastrier]
-  reserved: true
 # The cemetery the Shaderoot Carrot grows in, which draws Spectrier
 OldCemetery:
   species: [Spectrier]
-  reserved: true
 # The frozen land the Galarian Articuno roams
 CrownTundra:
   species: [ArticunoGalar]
-  reserved: true
 # The open country the Galarian Zapdos runs across
 WildArea:
   species: [ZapdosGalar]
-  reserved: true
 # The island the Galarian Moltres circles
 IsleOfArmor:
   species: [MoltresGalar]
-  reserved: true
 # The bog in Hisui's Crimson Mirelands the fourth force of nature blows over
 ScarletBog:
   species: [Enamorus]

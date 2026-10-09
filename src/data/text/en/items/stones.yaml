@@ -43,3 +43,15 @@ SweetApple:
 CrackedPot:
   name: Cracked Pot
   description: A Sinistea it is used on moves into the pot and becomes a Polteageist.
+GalaricaCuff:
+  name: Galarica Cuff
+  description: A Galarian Slowpoke it is used on becomes a Galarian Slowbro.
+GalaricaWreath:
+  name: Galarica Wreath
+  description: A Galarian Slowpoke it is used on becomes a Galarian Slowking.
+ScrollOfDarkness:
+  name: Scroll of Darkness
+  description: A Kubfu it is used on masters the dark style and becomes a Single Strike Urshifu.
+ScrollOfWaters:
+  name: Scroll of Waters
+  description: A Kubfu it is used on masters the water style and becomes a Rapid Strike Urshifu.

@@ -8,3 +8,4 @@
 - A Dynamaxed pokemon cannot flinch, be sent away, be held by Encore, Disable, Torment, Instruct or a Choice item, and shrugs off OHKO and weight moves.
 - Behemoth Blade, Behemoth Bash and Dynamax Cannon hit a Dynamaxed target 2x.
 - A Dynamaxed pokemon is drawn larger, with a red glow.
+- The Dynamax Band is dug up beside the Mega Stones and turns up in dust clouds.

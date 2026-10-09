@@ -249,6 +249,7 @@ function buildPool(phenomenon: Phenomenon): Items[] {
       ...MEGA_STONES.keys(),
       ...TYPE_CRYSTALS.keys(),
       ...SIGNATURE_CRYSTALS.keys(),
+      Items.DynamaxBand,
       ...listItemsByType(ItemTypes.Valuable),
     ];
   }

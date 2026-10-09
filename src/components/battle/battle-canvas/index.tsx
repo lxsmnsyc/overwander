@@ -78,6 +78,7 @@ import {
 import { type CastLabels, interruptCast, trackCast } from './cast-label';
 import {
   COLORS,
+  DYNAMAX_GROW_SPAN,
   FIELD_UNIT,
   HEIGHT,
   JOLT_BEAT,
@@ -247,6 +248,24 @@ interface Appearance {
 
 /** How long a transformation takes, in milliseconds */
 const MORPH = 600;
+
+/** How grown each unit is drawn, from 0 to 1, and the clock it was last read at */
+const grown = new WeakMap<Unit, { share: number; at: number }>();
+
+/**
+ * How far a unit is through growing into a Dynamax or shrinking out
+ * of one, eased toward whichever it is now
+ */
+function growthOf(unit: Unit, clock: number): number {
+  const wanted = unit.dynamaxed ? 1 : 0;
+  const held = grown.get(unit) ?? { share: wanted, at: clock };
+  const step = Math.max(0, clock - held.at) / DYNAMAX_GROW_SPAN;
+  const share =
+    held.share < wanted ? Math.min(wanted, held.share + step) : Math.max(wanted, held.share - step);
+
+  grown.set(unit, { share, at: clock });
+  return share * share * (3 - 2 * share);
+}
 
 /**
  * How far through a transformation a unit is: a flash that brightens
@@ -751,6 +770,7 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
 
       for (const slot of slots) {
         at.set(slot.unit, slot);
+        slot.giant = growthOf(slot.unit, clock);
       }
 
       // Whoever is throwing itself at somebody is drawn part of the

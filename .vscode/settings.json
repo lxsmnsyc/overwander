@@ -38,6 +38,7 @@
       "src/data/battle/heal.yaml"
     ],
     "./src/data/schema/battle-z-power.json": "src/data/battle/z-power.yaml",
+    "./src/data/schema/battle-max-power.json": "src/data/battle/max-power.yaml",
     "./src/data/schema/biome-pools.json": "src/data/biome/pools/*.yaml",
     "./src/data/schema/regions.json": "src/data/species/regions.yaml",
     "./src/data/schema/lairs.json": "src/data/overworld/lairs.yaml",

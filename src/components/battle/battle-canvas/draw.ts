@@ -2,7 +2,8 @@ import type SpeciesSpriteAnimation from '../../../canvas/species-sprite-animatio
 import type { Slot } from './field';
 import { type CastLabels, drawCastLabel } from './cast-label';
 import drawFormMark from './form-mark';
-import { COLORS, HIT_REACH, NAMED_RADIUS, TOTEM_DRAW_SCALE } from './metrics';
+import { type GiantBody, drawGiantBehind, drawGiantOver, giantLookOf } from './dynamax';
+import { COLORS, DYNAMAX_DRAW_SCALE, HIT_REACH, NAMED_RADIUS, TOTEM_DRAW_SCALE } from './metrics';
 import speciesSize from '../../../canvas/species-size';
 import { type Striking, animationFor } from './motion';
 import type { ProgressData } from '../../../battle/events';
@@ -81,6 +82,9 @@ function corners(x: number, y: number, across: number, down: number): QuadPoint[
     { x, y: y + down },
   ];
 }
+
+/** How far a Dynamax's soft glow reaches on the 2D context */
+const DYNAMAX_BLUR = 18;
 
 /**
  * The round patch under a pokemon, stamped from the one baked disc.
@@ -233,8 +237,10 @@ export function scaleOf(slot: Slot): number {
   }
   // A Totem towers over the rest of its kind
   const towering = slot.unit.hasAbility(Abilities.Totem) ? TOTEM_DRAW_SCALE : 1;
+  // And a Dynamax grows into its size rather than jumping to it
+  const giant = 1 + (DYNAMAX_DRAW_SCALE - 1) * (slot.giant ?? 0);
 
-  return baseScaleOf(slot) * speciesSize(slot.unit.appearance, sprite) * towering;
+  return baseScaleOf(slot) * speciesSize(slot.unit.appearance, sprite) * towering * giant;
 }
 
 /**
@@ -652,10 +658,31 @@ export function drawSlot(
       } else if (!shade(sprite.shadowOf(x, y, placement), onto, alpha)) {
         sprite.drawShadow(context, x, y, placement);
       }
-      const quad = onto == null ? null : sprite.quadOf(x, y, placement);
+      // Asked for on both renderers: the Dynamax look is drawn off the frame
+      const quad = sprite.quadOf(x, y, placement);
+      const look = giantLookOf(slot.giant ?? 0, unit.gigantamax, clock);
+      const giant: GiantBody | null =
+        look == null || quad == null
+          ? null
+          : {
+              quad,
+              foot: [x, y],
+              middle: sprite.locate('center', x, y, placement),
+              reach: sprite.shadowRadius(placement.scale).x,
+            };
 
       if (onto == null || quad == null) {
+        if (giant != null && look != null) {
+          drawGiantBehind(context, giant, look, clock, alpha);
+          context.save();
+          context.shadowColor = look.tint;
+          context.shadowBlur = DYNAMAX_BLUR * look.share;
+        }
         sprite.draw(context, x, y, placement);
+        if (giant != null && look != null) {
+          context.restore();
+          drawGiantOver(context, giant, look, clock, alpha);
+        }
         // A transformation's flash, laid over the body it is lighting
         if ((slot.glow ?? 0) > 0) {
           context.save();
@@ -665,11 +692,19 @@ export function drawSlot(
           context.restore();
         }
       } else {
-        // The one picture that hides a move effect passing behind it
-        onto.solid?.(true);
         const body = cornersOf(quad);
 
+        // Behind the body and hiding nothing: the far clouds and the glow
+        if (giant != null && look != null) {
+          drawGiantBehind(context, giant, look, clock, alpha, onto);
+        }
+        // The one picture that hides a move effect passing behind it
+        onto.solid?.(true);
         onto.batch.quad(quad.sheet, quad.source, body, alpha);
+        onto.solid?.(false);
+        if (giant != null && look != null) {
+          drawGiantOver(context, giant, look, clock, alpha, onto);
+        }
         // A transformation's flash: the body screened over itself, twice
         // at the peak, so it reads as a burst of light
         for (let pass = 0; pass < 2; pass += 1) {
@@ -687,7 +722,6 @@ export function drawSlot(
             );
           }
         }
-        onto.solid?.(false);
       }
       if (unit.shiny && onto?.lit !== true) {
         sparkle(context, slot, x, y, clock, onto);

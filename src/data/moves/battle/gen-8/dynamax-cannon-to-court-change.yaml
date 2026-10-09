@@ -1,6 +1,5 @@
-# From Dynamax Cannon to Court Change: Sword and Shield's own. There is no
-# Dynamax here, so the Max Moves and Max Guard are left out and Dynamax
-# Cannon is the beam it is against anything else
+# From Dynamax Cannon to Court Change: Sword and Shield's own. The Max
+# Moves and Max Guard are filed apart, in `max-moves.yaml`
 
 DynamaxCannon:
   type: Dragon

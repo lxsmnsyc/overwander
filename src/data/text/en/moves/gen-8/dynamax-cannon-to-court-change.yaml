@@ -1,6 +1,6 @@
 DynamaxCannon:
   name: Dynamax Cannon
-  description: A beam of Eternatus's own power, at full strength against anything.
+  description: A beam of Eternatus's own power, and 2x power against a Dynamaxed target.
 SnipeShot:
   name: Snipe Shot
   description: More likely to land a critical, and goes where it is aimed whatever draws attacks away.

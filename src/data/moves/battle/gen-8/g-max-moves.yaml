@@ -1,0 +1,206 @@
+# The G-Max Moves, which nobody learns: a Gigantamax throws one in place of
+# the Max Move of its type. They never miss, and all but Drum Solo, Fireball
+# and Hydrosnipe take their power and whether they are physical or special
+# from the move they replace; see `src/data/moves/gmax-moves.ts`. The
+# category written here is the one a cast with no move behind it falls back on
+
+GMaxVineLash:
+  type: Grass
+  category: Physical
+  pp: 1
+  target: Unit
+
+GMaxWildfire:
+  type: Fire
+  category: Special
+  pp: 1
+  target: Unit
+
+GMaxCannonade:
+  type: Water
+  category: Special
+  pp: 1
+  target: Unit
+
+GMaxBefuddle:
+  type: Bug
+  category: Special
+  pp: 1
+  target: Unit
+
+GMaxVoltCrash:
+  type: Electric
+  category: Special
+  pp: 1
+  target: Unit
+
+GMaxGoldRush:
+  type: Normal
+  category: Physical
+  pp: 1
+  target: Unit
+
+GMaxChiStrike:
+  type: Fighting
+  category: Physical
+  pp: 1
+  target: Unit
+
+GMaxTerror:
+  type: Ghost
+  category: Special
+  pp: 1
+  target: Unit
+
+GMaxFoamBurst:
+  type: Water
+  category: Physical
+  pp: 1
+  target: Unit
+
+GMaxResonance:
+  type: Ice
+  category: Special
+  pp: 1
+  target: Unit
+
+GMaxCuddle:
+  type: Normal
+  category: Physical
+  pp: 1
+  target: Unit
+
+GMaxReplenish:
+  type: Normal
+  category: Physical
+  pp: 1
+  target: Unit
+
+GMaxMalodor:
+  type: Poison
+  category: Physical
+  pp: 1
+  target: Unit
+
+GMaxMeltdown:
+  type: Steel
+  category: Physical
+  pp: 1
+  target: Unit
+
+GMaxDrumSolo:
+  type: Grass
+  category: Physical
+  power: 160
+  pp: 1
+  target: Unit
+
+GMaxFireball:
+  type: Fire
+  category: Physical
+  power: 160
+  pp: 1
+  target: Unit
+
+GMaxHydrosnipe:
+  type: Water
+  category: Special
+  power: 160
+  pp: 1
+  target: Unit
+
+GMaxWindRage:
+  type: Flying
+  category: Physical
+  pp: 1
+  target: Unit
+
+GMaxGravitas:
+  type: Psychic
+  category: Special
+  pp: 1
+  target: Unit
+
+GMaxStonesurge:
+  type: Water
+  category: Physical
+  pp: 1
+  target: Unit
+
+GMaxVolcalith:
+  type: Rock
+  category: Physical
+  pp: 1
+  target: Unit
+
+GMaxTartness:
+  type: Grass
+  category: Physical
+  pp: 1
+  target: Unit
+
+GMaxSweetness:
+  type: Grass
+  category: Special
+  pp: 1
+  target: Unit
+
+GMaxSandblast:
+  type: Ground
+  category: Physical
+  pp: 1
+  target: Unit
+
+GMaxStunShock:
+  type: Electric
+  category: Special
+  pp: 1
+  target: Unit
+
+GMaxCentiferno:
+  type: Fire
+  category: Physical
+  pp: 1
+  target: Unit
+
+GMaxSmite:
+  type: Fairy
+  category: Special
+  pp: 1
+  target: Unit
+
+GMaxSnooze:
+  type: Dark
+  category: Physical
+  pp: 1
+  target: Unit
+
+GMaxFinale:
+  type: Fairy
+  category: Special
+  pp: 1
+  target: Unit
+
+GMaxSteelsurge:
+  type: Steel
+  category: Physical
+  pp: 1
+  target: Unit
+
+GMaxDepletion:
+  type: Dragon
+  category: Special
+  pp: 1
+  target: Unit
+
+GMaxOneBlow:
+  type: Dark
+  category: Physical
+  pp: 1
+  target: Unit
+
+GMaxRapidFlow:
+  type: Water
+  category: Physical
+  pp: 1
+  target: Unit

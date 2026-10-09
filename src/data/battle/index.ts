@@ -13,6 +13,7 @@ import recoilFile from './recoil.yaml';
 import stagesFile from './stages.yaml';
 import statusesFile from './statuses.yaml';
 import zPowerFile from './z-power.yaml';
+import maxPowerFile from './max-power.yaml';
 
 /**
  * The numbers the battle reads off each move, out of their YAML: what
@@ -183,3 +184,9 @@ export const HEAL_FRACTION = table(healFile, 'heal.yaml', SHARE, (share) => shar
  * wrong
  */
 export const Z_POWER_OVERRIDES = table(zPowerFile, 'z-power.yaml', COUNT, (power) => power);
+
+/**
+ * What a Max Move hits with, for the moves the table by power gets
+ * wrong
+ */
+export const MAX_POWER_OVERRIDES = table(maxPowerFile, 'max-power.yaml', COUNT, (power) => power);

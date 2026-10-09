@@ -22,6 +22,8 @@ import { Types } from '../../src/data/constants/types';
 import Abilities from '../../src/data/ids/abilities';
 import { Items } from '../../src/data/ids/items';
 import { Moves } from '../../src/data/ids/moves';
+import { G_MAX_MOVES } from '../../src/data/moves/gmax-moves';
+import { MAX_MOVES } from '../../src/data/moves/max-moves';
 import { SPANS } from '../../src/canvas/battle/moves/effect/shapes';
 import { WISH_LANDS } from '../../src/canvas/battle/moves/effect/care';
 import { STARFALL_DROP } from '../../src/canvas/battle/moves/effect/legends';
@@ -422,6 +424,59 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Moonraze', Moves.MenacingMoonrazeMaelstrom],
   ['Stormshards', Moves.SplinteredStormshards],
   ['Soulblaze', Moves.ClangorousSoulblaze],
+  // The Max Moves
+  ['MaxFlare', Moves.MaxFlare],
+  ['MaxGeyser', Moves.MaxGeyser],
+  ['MaxHailstorm', Moves.MaxHailstorm],
+  ['MaxRockfall', Moves.MaxRockfall],
+  ['MaxLightning', Moves.MaxLightning],
+  ['MaxOvergrowth', Moves.MaxOvergrowth],
+  ['MaxMindstorm', Moves.MaxMindstorm],
+  ['MaxStarfall', Moves.MaxStarfall],
+  ['MaxStrike', Moves.MaxStrike],
+  ['MaxFlutterby', Moves.MaxFlutterby],
+  ['MaxPhantasm', Moves.MaxPhantasm],
+  ['MaxWyrmwind', Moves.MaxWyrmwind],
+  ['MaxDarkness', Moves.MaxDarkness],
+  ['MaxKnuckle', Moves.MaxKnuckle],
+  ['MaxSteelspike', Moves.MaxSteelspike],
+  ['MaxOoze', Moves.MaxOoze],
+  ['MaxQuake', Moves.MaxQuake],
+  ['MaxAirstream', Moves.MaxAirstream],
+  ['MaxGuard', Moves.MaxGuard],
+  ['GMaxVineLash', Moves.GMaxVineLash],
+  ['GMaxWildfire', Moves.GMaxWildfire],
+  ['GMaxCannonade', Moves.GMaxCannonade],
+  ['GMaxBefuddle', Moves.GMaxBefuddle],
+  ['GMaxVoltCrash', Moves.GMaxVoltCrash],
+  ['GMaxGoldRush', Moves.GMaxGoldRush],
+  ['GMaxChiStrike', Moves.GMaxChiStrike],
+  ['GMaxTerror', Moves.GMaxTerror],
+  ['GMaxFoamBurst', Moves.GMaxFoamBurst],
+  ['GMaxResonance', Moves.GMaxResonance],
+  ['GMaxCuddle', Moves.GMaxCuddle],
+  ['GMaxReplenish', Moves.GMaxReplenish],
+  ['GMaxMalodor', Moves.GMaxMalodor],
+  ['GMaxMeltdown', Moves.GMaxMeltdown],
+  ['GMaxDrumSolo', Moves.GMaxDrumSolo],
+  ['GMaxFireball', Moves.GMaxFireball],
+  ['GMaxHydrosnipe', Moves.GMaxHydrosnipe],
+  ['GMaxWindRage', Moves.GMaxWindRage],
+  ['GMaxGravitas', Moves.GMaxGravitas],
+  ['GMaxStonesurge', Moves.GMaxStonesurge],
+  ['GMaxVolcalith', Moves.GMaxVolcalith],
+  ['GMaxTartness', Moves.GMaxTartness],
+  ['GMaxSweetness', Moves.GMaxSweetness],
+  ['GMaxSandblast', Moves.GMaxSandblast],
+  ['GMaxStunShock', Moves.GMaxStunShock],
+  ['GMaxCentiferno', Moves.GMaxCentiferno],
+  ['GMaxSmite', Moves.GMaxSmite],
+  ['GMaxSnooze', Moves.GMaxSnooze],
+  ['GMaxFinale', Moves.GMaxFinale],
+  ['GMaxSteelsurge', Moves.GMaxSteelsurge],
+  ['GMaxDepletion', Moves.GMaxDepletion],
+  ['GMaxOneBlow', Moves.GMaxOneBlow],
+  ['GMaxRapidFlow', Moves.GMaxRapidFlow],
 ];
 
 /**
@@ -686,6 +741,84 @@ describe('a painted move', () => {
     // Charged and thrown the way the earlier moves of their kind are
     expect(delayShapeFor(Moves.MeteorBeam, 1)).toBe('Charge');
     expect(delayShapeFor(Moves.PyroBall, 0)).toBe('Lobbed');
+  });
+
+  it('draws each Max Move as a picture of its own', () => {
+    const shapes = new Set<string>();
+
+    for (const move of MAX_MOVES) {
+      shapes.add(effectShapeFor(move));
+    }
+    expect(shapes.size).toBe(MAX_MOVES.size);
+    expect(effectShapeFor(Moves.MaxFlare)).toBe('MaxFlare');
+    expect(effectShapeFor(Moves.MaxGeyser)).toBe('MaxGeyser');
+    expect(effectShapeFor(Moves.MaxHailstorm)).toBe('MaxHailstorm');
+    expect(effectShapeFor(Moves.MaxRockfall)).toBe('MaxRockfall');
+    expect(effectShapeFor(Moves.MaxLightning)).toBe('MaxLightning');
+    expect(effectShapeFor(Moves.MaxOvergrowth)).toBe('MaxOvergrowth');
+    expect(effectShapeFor(Moves.MaxMindstorm)).toBe('MaxMindstorm');
+    expect(effectShapeFor(Moves.MaxStarfall)).toBe('MaxStarfall');
+    expect(effectShapeFor(Moves.MaxStrike)).toBe('MaxStrike');
+    expect(effectShapeFor(Moves.MaxFlutterby)).toBe('MaxFlutterby');
+    expect(effectShapeFor(Moves.MaxPhantasm)).toBe('MaxPhantasm');
+    expect(effectShapeFor(Moves.MaxWyrmwind)).toBe('MaxWyrmwind');
+    expect(effectShapeFor(Moves.MaxDarkness)).toBe('MaxDarkness');
+    expect(effectShapeFor(Moves.MaxKnuckle)).toBe('MaxKnuckle');
+    expect(effectShapeFor(Moves.MaxSteelspike)).toBe('MaxSteelspike');
+    expect(effectShapeFor(Moves.MaxOoze)).toBe('MaxOoze');
+    expect(effectShapeFor(Moves.MaxQuake)).toBe('MaxQuake');
+    expect(effectShapeFor(Moves.MaxAirstream)).toBe('MaxAirstream');
+    expect(effectShapeFor(Moves.MaxGuard)).toBe('MaxGuard');
+    // A barrier, but not Protect's
+    expect(effectShapeFor(Moves.MaxGuard)).not.toBe(effectShapeFor(Moves.Protect));
+    expect(delayShapeFor(Moves.MaxGuard, 0)).toBe('Brace');
+  });
+
+  it('draws each G-Max Move as a picture of its own', () => {
+    const owned: [move: Moves, shape: string][] = [
+      [Moves.GMaxVineLash, 'GMaxVineLash'],
+      [Moves.GMaxWildfire, 'GMaxWildfire'],
+      [Moves.GMaxCannonade, 'GMaxCannonade'],
+      [Moves.GMaxBefuddle, 'GMaxBefuddle'],
+      [Moves.GMaxVoltCrash, 'GMaxVoltCrash'],
+      [Moves.GMaxGoldRush, 'GMaxGoldRush'],
+      [Moves.GMaxChiStrike, 'GMaxChiStrike'],
+      [Moves.GMaxTerror, 'GMaxTerror'],
+      [Moves.GMaxFoamBurst, 'GMaxFoamBurst'],
+      [Moves.GMaxResonance, 'GMaxResonance'],
+      [Moves.GMaxCuddle, 'GMaxCuddle'],
+      [Moves.GMaxReplenish, 'GMaxReplenish'],
+      [Moves.GMaxMalodor, 'GMaxMalodor'],
+      [Moves.GMaxMeltdown, 'GMaxMeltdown'],
+      [Moves.GMaxDrumSolo, 'GMaxDrumSolo'],
+      [Moves.GMaxFireball, 'GMaxFireball'],
+      [Moves.GMaxHydrosnipe, 'GMaxHydrosnipe'],
+      [Moves.GMaxWindRage, 'GMaxWindRage'],
+      [Moves.GMaxGravitas, 'GMaxGravitas'],
+      [Moves.GMaxStonesurge, 'GMaxStonesurge'],
+      [Moves.GMaxVolcalith, 'GMaxVolcalith'],
+      [Moves.GMaxTartness, 'GMaxTartness'],
+      [Moves.GMaxSweetness, 'GMaxSweetness'],
+      [Moves.GMaxSandblast, 'GMaxSandblast'],
+      [Moves.GMaxStunShock, 'GMaxStunShock'],
+      [Moves.GMaxCentiferno, 'GMaxCentiferno'],
+      [Moves.GMaxSmite, 'GMaxSmite'],
+      [Moves.GMaxSnooze, 'GMaxSnooze'],
+      [Moves.GMaxFinale, 'GMaxFinale'],
+      [Moves.GMaxSteelsurge, 'GMaxSteelsurge'],
+      [Moves.GMaxDepletion, 'GMaxDepletion'],
+      [Moves.GMaxOneBlow, 'GMaxOneBlow'],
+      [Moves.GMaxRapidFlow, 'GMaxRapidFlow'],
+    ];
+    const shapes = new Set<string>();
+
+    for (const [move, shape] of owned) {
+      expect(effectShapeFor(move), shape).toBe(shape);
+      shapes.add(shape);
+    }
+    // Every one of them named above, and no two sharing a picture
+    expect(owned.length).toBe(G_MAX_MOVES.size);
+    expect(shapes.size).toBe(G_MAX_MOVES.size);
   });
 
   it('draws a U-turn as the blow and then as the leaving', () => {

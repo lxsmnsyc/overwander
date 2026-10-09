@@ -1,0 +1,57 @@
+MaxGuard:
+  name: Max Guard
+  description: What a Dynamaxed pokemon's status moves become. Guards it like Protect, against Max Moves as well.
+MaxFlare:
+  name: Max Flare
+  description: "A Dynamaxed pokemon's Fire moves become this, as strong as the move replaced and never missing. Turns the sky sunny."
+MaxFlutterby:
+  name: Max Flutterby
+  description: "A Dynamaxed pokemon's Bug moves become this, as strong as the move replaced and never missing. Drops every foe's Special Attack a stage."
+MaxLightning:
+  name: Max Lightning
+  description: "A Dynamaxed pokemon's Electric moves become this, as strong as the move replaced and never missing. Lays Electric Terrain."
+MaxStrike:
+  name: Max Strike
+  description: "A Dynamaxed pokemon's Normal moves become this, as strong as the move replaced and never missing. Drops every foe's Speed a stage."
+MaxKnuckle:
+  name: Max Knuckle
+  description: "A Dynamaxed pokemon's Fighting moves become this, as strong as the move replaced and never missing. Raises its side's Attack a stage."
+MaxPhantasm:
+  name: Max Phantasm
+  description: "A Dynamaxed pokemon's Ghost moves become this, as strong as the move replaced and never missing. Drops every foe's Defense a stage."
+MaxHailstorm:
+  name: Max Hailstorm
+  description: "A Dynamaxed pokemon's Ice moves become this, as strong as the move replaced and never missing. Calls up hail."
+MaxOoze:
+  name: Max Ooze
+  description: "A Dynamaxed pokemon's Poison moves become this, as strong as the move replaced and never missing. Raises its side's Special Attack a stage."
+MaxGeyser:
+  name: Max Geyser
+  description: "A Dynamaxed pokemon's Water moves become this, as strong as the move replaced and never missing. Calls up rain."
+MaxAirstream:
+  name: Max Airstream
+  description: "A Dynamaxed pokemon's Flying moves become this, as strong as the move replaced and never missing. Raises its side's Speed a stage."
+MaxStarfall:
+  name: Max Starfall
+  description: "A Dynamaxed pokemon's Fairy moves become this, as strong as the move replaced and never missing. Lays Misty Terrain."
+MaxWyrmwind:
+  name: Max Wyrmwind
+  description: "A Dynamaxed pokemon's Dragon moves become this, as strong as the move replaced and never missing. Drops every foe's Attack a stage."
+MaxMindstorm:
+  name: Max Mindstorm
+  description: "A Dynamaxed pokemon's Psychic moves become this, as strong as the move replaced and never missing. Lays Psychic Terrain."
+MaxRockfall:
+  name: Max Rockfall
+  description: "A Dynamaxed pokemon's Rock moves become this, as strong as the move replaced and never missing. Calls up a sandstorm."
+MaxQuake:
+  name: Max Quake
+  description: "A Dynamaxed pokemon's Ground moves become this, as strong as the move replaced and never missing. Raises its side's Special Defense a stage."
+MaxDarkness:
+  name: Max Darkness
+  description: "A Dynamaxed pokemon's Dark moves become this, as strong as the move replaced and never missing. Drops every foe's Special Defense a stage."
+MaxOvergrowth:
+  name: Max Overgrowth
+  description: "A Dynamaxed pokemon's Grass moves become this, as strong as the move replaced and never missing. Lays Grassy Terrain."
+MaxSteelspike:
+  name: Max Steelspike
+  description: "A Dynamaxed pokemon's Steel moves become this, as strong as the move replaced and never missing. Raises its side's Defense a stage."

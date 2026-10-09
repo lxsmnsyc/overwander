@@ -18,10 +18,12 @@ import { type ProgressBump, bumpProgress } from './quest-progress';
 import { asNumber, asNumberArray } from './read';
 import type { CaughtPokemon } from '../auth/caught';
 import { Moves } from '../data/ids/moves';
+import { Types } from '../data/constants/types';
 import { getRegisteredMoves } from '../data/moves';
 import BATTLE_TIMEOUT from '../auth/battle-lock';
 import { canCallHappyHour, payDayCeiling } from '../battle/moves/pay-day';
 import { Z_MOVES } from '../data/moves/z-moves';
+import { G_MAX_MOVES, getGMaxMove } from '../data/moves/gmax-moves';
 import { moveGoldIn } from './profile';
 
 /**
@@ -39,7 +41,8 @@ function settleSketch(record: CaughtPokemon, sketched: Moves | undefined): Moves
     !record.moves.includes(Moves.Sketch) ||
     record.moves.includes(sketched) ||
     !new Set(getRegisteredMoves()).has(sketched) ||
-    Z_MOVES.has(sketched)
+    Z_MOVES.has(sketched) ||
+    G_MAX_MOVES.has(sketched)
   ) {
     return undefined;
   }
@@ -222,7 +225,16 @@ export default async function recordAftermath(
     const ceiling =
       snapshot == null
         ? 0
-        : payDayCeiling(snapshot.level, snapshot.moves, snapshot.abilities, lasted, happy);
+        : payDayCeiling(
+            snapshot.level,
+            snapshot.moves,
+            snapshot.abilities,
+            lasted,
+            happy,
+            // G-Max Gold Rush scatters coins as Pay Day does
+            snapshot.gigantamax === true &&
+              getGMaxMove(snapshot.species, Types.Normal) === Moves.GMaxGoldRush,
+          );
 
     coins += Math.min(Math.max(0, Math.floor(entry.coins)), ceiling);
   }

@@ -1,6 +1,6 @@
 import { getTimeOfDay } from '../data/ids/biome';
 import type { Items } from '../data/ids/items';
-import type { Species } from '../data/ids/species';
+import { EvolutionMethod, type Species } from '../data/ids/species';
 import {
   canEverEvolve,
   coveredByHandover,
@@ -8,6 +8,7 @@ import {
   meetsEvolutionCriteria,
 } from '../data/species';
 import type { EvolutionData } from '../data/species';
+import { featOfEvolution } from '../data/species/feats';
 import evolveOnServerSide from '../server/evolution';
 import { requireUid } from '../server/auth';
 import check, { GAME_ID, ID, LOCALE, OFFSET, TOKEN } from '../server/validate';
@@ -35,6 +36,8 @@ export interface EvolutionOption {
    * swap happened and took the item it wanted with it
    */
   covered: boolean;
+  /** How far along a feat counted across fights is, where it asks one */
+  progress?: number;
 }
 
 /**
@@ -101,6 +104,10 @@ export async function listEvolutionOptions(
         evolution,
         available: meetsEvolutionCriteria(evolution, context),
         covered: coveredByHandover(evolution, context),
+        ...((evolution.method & EvolutionMethod.Special) !== 0 &&
+        featOfEvolution(evolution)?.cumulative === true
+          ? { progress: caught.featProgress }
+          : {}),
       });
     }
   }

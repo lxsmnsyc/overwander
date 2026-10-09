@@ -125,6 +125,7 @@ export function previewSnapshot(snapshot: CatchSnapshot): CaughtPokemon {
     guarded: false,
     traded: false,
     canEvolve: false,
+    featProgress: 0,
     auctionable: false,
     moves: snapshot.moves,
     movePoints: snapshot.movePoints,

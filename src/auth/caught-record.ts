@@ -130,6 +130,11 @@ export interface CaughtPokemon {
    */
   canEvolve: boolean;
   /**
+   * The running total of a battle feat counted across fights (see
+   * `BATTLE_FEATS`), cleared with `canEvolve`
+   */
+  featProgress: number;
+  /**
    * Whether somebody would pay for it — see `isAuctionableCatch`.
    *
    * Derived from `ivs`, `shiny` and `species`, and stored anyway: "any
@@ -612,6 +617,7 @@ export function asCaughtPokemon(value: unknown): CaughtPokemon {
     // trading was a thing
     traded: asBoolean(data.traded),
     canEvolve: asBoolean(data.canEvolve),
+    featProgress: asNumber(data.featProgress),
     auctionable: asBoolean(data.auctionable),
     moves: asNumberArray(data.moves) as Moves[],
     movePoints: asMovePoints(data.movePoints),

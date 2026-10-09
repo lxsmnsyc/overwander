@@ -9,7 +9,7 @@ import type { Items } from '../data/ids/items';
 import BattleOutcome from '../auth/battle-outcome';
 import type Families from '../data/ids/families';
 import { getSpeciesData } from '../data/species';
-import { meetsBattleFeat } from '../data/species/feats';
+import { settleBattleFeat } from '../data/species/feats';
 import { Metric } from '../auth/quest-record';
 import { grantCandies } from './candy';
 import { getSql, tx } from './db';
@@ -299,20 +299,30 @@ export default async function recordAftermath(
       // A feat opens the evolution it is asked for. The numbers are the
       // client's word like the health beside them; what the server
       // holds is that the catch fought as the species the feat is for
-      // and is still that species now
+      // and is still that species now. A feat counted across fights
+      // adds this one to the total the catch carries
       const species = fielded.get(target.caught)?.species;
+      const progress = asNumber(data.featProgress);
       const feat =
-        species === record.species &&
-        meetsBattleFeat(record.species, {
-          criticals: target.criticals ?? 0,
-          taken: target.taken ?? 0,
-          health,
-        });
+        species === record.species
+          ? settleBattleFeat(
+              record.species,
+              {
+                criticals: target.criticals ?? 0,
+                taken: target.taken ?? 0,
+                landed: target.landed ?? 0,
+                recoil: target.recoil ?? 0,
+                health,
+              },
+              progress,
+            )
+          : { progress, met: false };
 
       await updateCaughtIn(transaction, target.caught, {
         health,
         statuses,
-        ...(feat ? { canEvolve: true } : {}),
+        ...(feat.met ? { canEvolve: true } : {}),
+        ...(feat.progress === progress ? {} : { featProgress: feat.progress }),
         ...(drawn == null ? {} : { moves: drawn, movePoints: points }),
         ...(taken.size > 0 ? { items: remaining } : {}),
         // A pokemon that was carried out of the fight thinks a little

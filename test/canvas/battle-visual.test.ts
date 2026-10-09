@@ -22,6 +22,7 @@ import { Types } from '../../src/data/constants/types';
 import Abilities from '../../src/data/ids/abilities';
 import { Items } from '../../src/data/ids/items';
 import { Moves } from '../../src/data/ids/moves';
+import { G_MAX_MOVES } from '../../src/data/moves/gmax-moves';
 import { SPANS } from '../../src/canvas/battle/moves/effect/shapes';
 import { WISH_LANDS } from '../../src/canvas/battle/moves/effect/care';
 import { STARFALL_DROP } from '../../src/canvas/battle/moves/effect/legends';
@@ -686,6 +687,19 @@ describe('a painted move', () => {
     // Charged and thrown the way the earlier moves of their kind are
     expect(delayShapeFor(Moves.MeteorBeam, 1)).toBe('Charge');
     expect(delayShapeFor(Moves.PyroBall, 0)).toBe('Lobbed');
+  });
+
+  it('draws each G-Max Move as an earlier move', () => {
+    expect(effectShapeFor(Moves.GMaxVineLash)).toBe('Lash');
+    expect(effectShapeFor(Moves.GMaxStonesurge)).toBe('Caltrops');
+    expect(effectShapeFor(Moves.GMaxSteelsurge)).toBe('Caltrops');
+    expect(effectShapeFor(Moves.GMaxGravitas)).toBe('Press');
+    expect(effectShapeFor(Moves.GMaxWindRage)).toBe('Clear');
+    expect(effectShapeFor(Moves.GMaxOneBlow)).toBe('Singlestrike');
+    expect(effectShapeFor(Moves.GMaxRapidFlow)).toBe('Rapidstrike');
+    for (const move of G_MAX_MOVES) {
+      expect(effectShapeFor(move) in SPANS, `${move}`).toBe(true);
+    }
   });
 
   it('draws a U-turn as the blow and then as the leaving', () => {

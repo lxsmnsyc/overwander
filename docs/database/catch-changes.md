@@ -131,6 +131,23 @@ still an egg.
 The gem is not the only way. **Nurse Joy** purifies for free, along with the
 healing, once per NPC window. See [Wandering NPCs](town-npcs.md#wandering-npcs).
 
+## Max Mushrooms
+
+The Gigantamax Factor is the `gigantamax` flag on the catch. **Max Mushrooms**,
+a rare find in the overworld item pool that is never stocked, set it, in one
+transaction with the mushrooms leaving the bag
+([`src/server/max-mushrooms.ts`](../../src/server/max-mushrooms.ts)).
+
+- Only a species with a Gigantamax form takes it (`GMAX_SPECIES` in
+  [`src/data/moves/gmax-moves.ts`](../../src/data/moves/gmax-moves.ts)).
+- A catch that already has it is refused, as is one that is not the player's,
+  is locked into a battle, is guarded, or is still an egg.
+- Nothing clears it. It stays through a trade, an auction and an evolution, so
+  an Eevee that has it keeps it as a Vaporeon, where it does nothing.
+
+The flag rides into a fight on the team snapshot, and a unit built from it
+throws its species' G-Max Move when it Dynamaxes.
+
 ## Releasing
 
 `releaseCatch` ([`src/server/caught.ts`](../../src/server/caught.ts))

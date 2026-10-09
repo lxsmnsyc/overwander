@@ -1,0 +1,7 @@
+# Spent on a pokemon to change what it is, the way a bottle cap is. Found
+# rather than stocked, like the belt: a factor is one pokemon's whole build.
+
+MaxMushrooms:
+  type: Training
+  icon: battle-items/max-mushrooms
+  flags: [Consumable, Usable]

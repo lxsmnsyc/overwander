@@ -34,6 +34,7 @@ import PlayerPicker from './PlayerPicker';
 import { getAbilityData } from '../../data/abilities';
 import { getMoveData, getRegisteredMoves } from '../../data/moves';
 import { Z_MOVES } from '../../data/moves/z-moves';
+import { G_MAX_MOVES } from '../../data/moves/gmax-moves';
 import { getRegisteredSpecies, getSpeciesAbilities, getSpeciesData } from '../../data/species';
 import {
   DEFAULT_ABILITY_SLOTS,
@@ -171,7 +172,7 @@ export default function GiftForm(props: GiftFormProps): JSX.Element {
 
     for (const entry of getRegisteredMoves()) {
       // A Z-Move is what a crystal makes of a move, never one to hand over
-      if (!Z_MOVES.has(entry)) {
+      if (!Z_MOVES.has(entry) && !G_MAX_MOVES.has(entry)) {
         options.push({ value: entry, label: getMoveData(entry).name });
       }
     }

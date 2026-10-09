@@ -1,4 +1,5 @@
 import { Z_MOVES } from '../../data/moves/z-moves';
+import { G_MAX_MOVES } from '../../data/moves/gmax-moves';
 import { AttackPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
 import type Battle from '../core';
@@ -20,6 +21,7 @@ const BANNED_MOVES = new Set<Moves>([
   Moves.Sketch,
   // A Z-Move is what a crystal made of a move, not a move to carry
   ...Z_MOVES,
+  ...G_MAX_MOVES,
 ]);
 
 export default function setupMimic(battle: Battle): void {

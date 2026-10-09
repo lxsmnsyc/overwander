@@ -87,6 +87,13 @@ export default class Unit {
    */
   sketched?: Moves;
 
+  /**
+   * Whether it carries the Gigantamax Factor, copied off its record:
+   * when it Dynamaxes, its species' G-Max Move stands in for that
+   * type's Max Move
+   */
+  gigantamax = false;
+
   setLevel(value: number): void {
     this.battle.emit(BattleEvents.UnitSetLevel, {
       id: 'UnitSetLevel',

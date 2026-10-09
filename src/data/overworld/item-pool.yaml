@@ -348,6 +348,9 @@ prized:
   RustedShield: 4
   ScrollOfDarkness: 4
   ScrollOfWaters: 4
+  # The Gigantamax Factor, on the belt's terms: it changes one pokemon
+  # for good, and only a few dozen species can take it
+  MaxMushrooms: 4
 special:
   MasterBall: 10
   ShinyCharm: 10

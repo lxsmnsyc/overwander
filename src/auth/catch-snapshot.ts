@@ -61,6 +61,11 @@ export interface CatchSnapshot {
    */
   shiny: boolean;
   shadow: boolean;
+  /**
+   * Whether it carries the Gigantamax Factor. Left out reads as false,
+   * which is what every snapshot written before the factor was
+   */
+  gigantamax?: boolean;
   moves: Moves[];
   /**
    * What has been spent on each of those moves, keyed by move id. It
@@ -125,6 +130,7 @@ export function previewSnapshot(snapshot: CatchSnapshot): CaughtPokemon {
     guarded: false,
     traded: false,
     canEvolve: false,
+    gigantamax: snapshot.gigantamax === true,
     featProgress: 0,
     auctionable: false,
     moves: snapshot.moves,
@@ -173,6 +179,7 @@ export function createCatchSnapshot(id: string, caught: CaughtPokemon): CatchSna
     weight: size.weight,
     shiny: caught.shiny,
     shadow: caught.shadow,
+    ...(caught.gigantamax ? { gigantamax: true } : {}),
     moves: caught.moves,
     movePoints: caught.movePoints,
     abilities: caught.abilities,
@@ -223,6 +230,7 @@ export function asCatchSnapshot(value: unknown): CatchSnapshot {
     // A snapshot written before the field existed reads as a stranger's
     // catch, which is what Return and Frustration answer to
     friendship: data.friendship == null ? BASE_FRIENDSHIP : asNumber(data.friendship),
+    ...(data.gigantamax === true ? { gigantamax: true } : {}),
     ...(data.called === true ? { called: true } : {}),
   };
 }

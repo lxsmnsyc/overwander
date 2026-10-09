@@ -84,6 +84,7 @@ const ITEM_FAMILIES = [
   'skill-book',
   'ability-items',
   'purifying-gem',
+  'max-mushrooms',
   'sacred-ash',
   'soothe-bell',
   'escape-rope',

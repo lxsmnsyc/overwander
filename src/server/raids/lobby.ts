@@ -38,6 +38,9 @@ function lairRolls(snapshot: ChunkSnapshot, kind: RaidKind): Map<number, RaidRol
   if (kind === RaidKind.Max) {
     return snapshot.getMaxRaids();
   }
+  if (kind === RaidKind.Alpha) {
+    return snapshot.getAlphaRaids();
+  }
   return kind === RaidKind.Shadow ? snapshot.getShadowLairs() : snapshot.getLegendaryLairs();
 }
 

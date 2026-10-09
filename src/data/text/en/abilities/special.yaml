@@ -1,5 +1,5 @@
 # The special abilities: marks of what a pokemon is (a raid boss, a
-# shadow, a Totem and its ally, a purified shadow) rather than abilities
+# shadow, a Totem and its ally, an Alpha, a purified shadow) rather than abilities
 # of any generation. None of them is rolled or granted at birth.
 
 Boss:
@@ -14,6 +14,9 @@ Totem:
 TotemAlly:
   name: Totem Ally
   description: 50x its own HP and 1.5x every other stat. Flees when the Totem that called it falls.
+Alpha:
+  name: Alpha
+  description: 80x its own HP and 1.5x every other stat in place of a boss's. At 3/4, 1/2 and 1/4 HP it brings its side back to 6 of its kind, healing any still standing, and they flee when it falls.
 Purified:
   name: Purified
   description: The mark of a shadow put right, worth nothing in a fight. As a buddy, 1.5x the catch chance on a wild shadow.

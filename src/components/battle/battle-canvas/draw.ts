@@ -235,8 +235,11 @@ export function scaleOf(slot: Slot): number {
   if (sprite == null || slot.unit.appearance === Species.Substitute) {
     return baseScaleOf(slot);
   }
-  // A Totem towers over the rest of its kind
-  const towering = slot.unit.hasAbility(Abilities.Totem) ? TOTEM_DRAW_SCALE : 1;
+  // A Totem or an Alpha towers over the rest of its kind
+  const towering =
+    slot.unit.hasAbility(Abilities.Totem) || slot.unit.hasAbility(Abilities.Alpha)
+      ? TOTEM_DRAW_SCALE
+      : 1;
   // And a Dynamax grows into its size rather than jumping to it
   const giant = 1 + (DYNAMAX_DRAW_SCALE - 1) * (slot.giant ?? 0);
 

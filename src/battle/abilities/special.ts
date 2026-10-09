@@ -23,6 +23,7 @@ import { FORCED_SWITCH_MOVES } from '../moves/switch-out';
 import type Team from '../team';
 import type Unit from '../unit';
 import { getTotemAura } from '../../data/overworld/totems';
+import { ALPHA_COPIES } from '../../data/overworld/alphas';
 import { MergedLifecycle } from '../lifecycle';
 import { createAbility } from './__create';
 
@@ -48,6 +49,20 @@ export const BOSS_STAT_SCALE = 2;
  */
 export const TOTEM_ALLY_HEALTH_SCALE = 50;
 export const TOTEM_ALLY_STAT_SCALE = 1.5;
+
+/**
+ * An Alpha's own scale, which stands in for the Boss one: it shares the
+ * fight with six of its kind, so it is smaller than a lone boss but
+ * still far past any copy at its side
+ */
+export const ALPHA_HEALTH_SCALE = 80;
+export const ALPHA_STAT_SCALE = 1.5;
+
+/**
+ * The shares of its HP at which an Alpha brings its side back to
+ * `ALPHA_COPIES` of its kind
+ */
+export const ALPHA_THRESHOLDS = [0.75, 0.5, 0.25];
 
 /**
  * How much longer a boss winds up than anything else. The wind-up is
@@ -312,8 +327,9 @@ const setupAbilities = [
         refill(spent, BOSS_HEAL_CAP / BOSS_HEAL_WINDOW, event.duration);
         refill(worn, BOSS_INDIRECT_RATE / 1000, event.duration);
       }),
+      // An Alpha's own scale stands in for this one
       battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
-        if (event.source.hasAbility(Abilities.Boss)) {
+        if (event.source.hasAbility(Abilities.Boss) && !event.source.hasAbility(Abilities.Alpha)) {
           event.value =
             event.stat === Stats.HP
               ? event.value * BOSS_HEALTH_SCALE
@@ -631,6 +647,99 @@ const setupAbilities = [
   }),
 
   /**
+   * Alpha: `ALPHA_HEALTH_SCALE` times the HP and `ALPHA_STAT_SCALE`
+   * times every other stat in place of a boss's, and each time its HP
+   * falls past one of `ALPHA_THRESHOLDS` it brings its side back to
+   * `ALPHA_COPIES` of its kind: a copy still up is healed to full and
+   * a fallen or missing one is summoned anew. A hit past two
+   * thresholds refills once, since a second refill would find six
+   * standing, and healing back over one does not open it again. The
+   * copies leave when it falls
+   */
+  createAbility(Abilities.Alpha, (battle) => {
+    /** How many of the thresholds each Alpha has fallen past */
+    const crossed = new Map<Unit, number>();
+    /** Each Alpha's copies by place, the latest one summoned to each */
+    const sides = new Map<Unit, (Unit | undefined)[]>();
+
+    /** Six standing again, healing who is up and summoning who is not */
+    function refill(alpha: Unit): void {
+      const team = alpha.team;
+      const side = sides.get(alpha) ?? [];
+
+      sides.set(alpha, side);
+      for (let place = 0; place < ALPHA_COPIES; place++) {
+        const copy = side[place];
+
+        if (copy != null && copy.alive && team.units.has(copy)) {
+          copy.setHealth(copy.checkStat(Stats.HP, 0));
+          continue;
+        }
+
+        const fresh = summonAlphaCopy(team, place);
+
+        if (fresh == null) {
+          continue;
+        }
+        // The fallen one makes way, so the side counts six again
+        if (copy != null && team.units.has(copy)) {
+          team.removeUnit(copy);
+        }
+        side[place] = fresh;
+        team.addUnit(fresh);
+        fresh.enter();
+      }
+    }
+
+    return new MergedLifecycle([
+      battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+        if (event.source.hasAbility(Abilities.Alpha)) {
+          event.value *= event.stat === Stats.HP ? ALPHA_HEALTH_SCALE : ALPHA_STAT_SCALE;
+        }
+      }),
+      battle.on(BattleEvents.UnitSetHealth, EventPriority.Post, (event) => {
+        const alpha = event.source;
+
+        if (!alpha.alive || !alpha.hasAbility(Abilities.Alpha)) {
+          return;
+        }
+
+        const before = crossed.get(alpha) ?? 0;
+        const max = alpha.checkStat(Stats.HP, 0);
+        let reached = before;
+
+        while (
+          reached < ALPHA_THRESHOLDS.length &&
+          event.value <= max * ALPHA_THRESHOLDS[reached]
+        ) {
+          reached++;
+        }
+        if (reached > before) {
+          crossed.set(alpha, reached);
+          alpha.triggerAbility(Abilities.Alpha);
+        }
+      }),
+      battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+        if (event.ability === Abilities.Alpha) {
+          refill(event.source);
+        }
+      }),
+      battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
+        for (const copy of sides.get(event.source) ?? []) {
+          if (copy == null || !copy.team.units.has(copy)) {
+            continue;
+          }
+          if (copy.alive) {
+            copy.leave();
+          }
+          copy.team.removeUnit(copy);
+        }
+        sides.delete(event.source);
+      }),
+    ]);
+  }),
+
+  /**
    * Totem Ally: `TOTEM_ALLY_HEALTH_SCALE` times the HP and
    * `TOTEM_ALLY_STAT_SCALE` times every other stat
    */
@@ -657,6 +766,22 @@ export function holdTotemAlly(team: Team, ally: Unit): void {
 
 function takeTotemAlly(team: Team): Unit | undefined {
   return waitingAllies.get(team)?.shift();
+}
+
+/** The copies waiting to be built, by the Alpha's team, one builder to a place */
+const alphaCopies = new WeakMap<Team, (() => Unit)[]>();
+
+/**
+ * Keep the builder of one of an Alpha's copies. The battle builder
+ * hands each place's over as it fields the boss side, and the Alpha
+ * builds that place's copy each time it summons one
+ */
+export function holdAlphaCopy(team: Team, build: () => Unit): void {
+  alphaCopies.set(team, [...(alphaCopies.get(team) ?? []), build]);
+}
+
+function summonAlphaCopy(team: Team, place: number): Unit | undefined {
+  return alphaCopies.get(team)?.[place]?.();
 }
 
 export default function setupSpecialAbilities(battle: Battle): void {

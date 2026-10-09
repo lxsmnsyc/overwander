@@ -2541,6 +2541,7 @@ export const ABILITY_IDS = {
   Purified: Abilities.Purified,
   Totem: Abilities.Totem,
   TotemAlly: Abilities.TotemAlly,
+  Alpha: Abilities.Alpha,
   VerdantField: Abilities.VerdantField,
   EmberField: Abilities.EmberField,
   DelugeField: Abilities.DelugeField,
@@ -5024,6 +5025,7 @@ export const LANDMARK_IDS = {
   HoneyTree: Landmark.HoneyTree,
   MaxRaid: Landmark.MaxRaid,
   Totem: Landmark.Totem,
+  AlphaRaid: Landmark.AlphaRaid,
 } as const satisfies Record<string, Landmark>;
 
 export const PHENOMENON_IDS = {

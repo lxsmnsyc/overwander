@@ -73,6 +73,7 @@ const ABILITY_CUES: Partial<Record<Abilities, CueKind>> = {
   [Abilities.BadDreams]: 'Menace',
   [Abilities.ScreenCleaner]: 'Menace',
   [Abilities.Boss]: 'Menace',
+  [Abilities.Alpha]: 'Menace',
 };
 
 export default function abilityCueFor(ability: Abilities): PaintedVisual {

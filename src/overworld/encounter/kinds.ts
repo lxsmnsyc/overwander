@@ -52,6 +52,11 @@ export const enum EncounterType {
    * the Gigantamax Factor
    */
   MaxRaid = 9,
+  /**
+   * Fought and caught in an Alpha raid: the species at its own size,
+   * with three perfect stats
+   */
+  AlphaRaid = 10,
 }
 
 /**
@@ -79,7 +84,8 @@ export function isRaidEncounter(type: EncounterType): boolean {
     type === EncounterType.ShadowRaid ||
     type === EncounterType.MythicalRaid ||
     type === EncounterType.TotemRaid ||
-    type === EncounterType.MaxRaid
+    type === EncounterType.MaxRaid ||
+    type === EncounterType.AlphaRaid
   );
 }
 
@@ -97,6 +103,7 @@ export function isShadowableEncounter(type: EncounterType): boolean {
     type === EncounterType.LegendaryRaid ||
     type === EncounterType.TotemRaid ||
     type === EncounterType.MaxRaid ||
+    type === EncounterType.AlphaRaid ||
     type === EncounterType.Hatched ||
     type === EncounterType.Revived
   );
@@ -125,4 +132,5 @@ export const ENCOUNTER_TYPE_NAMES: Record<EncounterType, string> = {
   [EncounterType.Revived]: 'Revived from a fossil',
   [EncounterType.TotemRaid]: 'Totem Raid',
   [EncounterType.MaxRaid]: 'Max Raid',
+  [EncounterType.AlphaRaid]: 'Alpha Raid',
 };

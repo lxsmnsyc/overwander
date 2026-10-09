@@ -10,6 +10,7 @@ const PROTECTED_ABILITIES = new Set<Abilities>([
   Abilities.Shadow,
   Abilities.Totem,
   Abilities.TotemAlly,
+  Abilities.Alpha,
 ]);
 
 /**

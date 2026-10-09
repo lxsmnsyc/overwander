@@ -107,6 +107,7 @@ export async function startRaid(uid: string, lobby: string, now: number): Promis
           raid.kind === RaidKind.Shadow,
           raid.kind === RaidKind.Totem,
           raid.kind === RaidKind.Max,
+          raid.kind === RaidKind.Alpha,
         ),
       )})
     `;

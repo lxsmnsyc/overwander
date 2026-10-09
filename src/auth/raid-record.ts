@@ -62,6 +62,12 @@ export const enum RaidKind {
    * for the whole fight, and Gigantamaxed where its species can be
    */
   Max = 4,
+  /**
+   * An Alpha raid: an oversized wild pokemon of the tile's biome, any
+   * stage, that brings six of its own kind to its side as it is worn
+   * down
+   */
+  Alpha = 5,
 }
 
 /**
@@ -203,16 +209,20 @@ export function getRaidTitle(raid: RaidRecord | RaidView): string {
   if (raid.kind === RaidKind.Max) {
     return getMaxRaidTitle(raid.species);
   }
+  if (raid.kind === RaidKind.Alpha) {
+    return getAlphaRaidTitle(raid.species);
+  }
   return getLairTitle(raid.lair, raid.biome, raid.kind === RaidKind.Shadow);
 }
 
-/** Whether a landmark stages a raid: either lair, a Totem, or a Max Raid */
+/** Whether a landmark stages a raid: either lair, a Totem, a Max Raid or an Alpha */
 export function isRaidLandmark(landmark: Landmark): boolean {
   return (
     landmark === Landmark.LegendaryLair ||
     landmark === Landmark.ShadowLair ||
     landmark === Landmark.Totem ||
-    landmark === Landmark.MaxRaid
+    landmark === Landmark.MaxRaid ||
+    landmark === Landmark.AlphaRaid
   );
 }
 
@@ -230,6 +240,9 @@ export function getRaidKindAt(snapshot: ChunkSnapshot, cell: number): RaidKind |
   if (landmark === Landmark.MaxRaid) {
     return RaidKind.Max;
   }
+  if (landmark === Landmark.AlphaRaid) {
+    return RaidKind.Alpha;
+  }
   if (landmark !== Landmark.LegendaryLair && landmark !== Landmark.ShadowLair) {
     return null;
   }
@@ -244,6 +257,11 @@ export function getTotemTitle(species: Species): string {
 /** What a Max Raid's lobby is called, after the boss in it */
 export function getMaxRaidTitle(species: Species): string {
   return `Max Raid ${getSpeciesData(species).name}`;
+}
+
+/** What an Alpha raid's lobby is called, after the Alpha in it */
+export function getAlphaRaidTitle(species: Species): string {
+  return `Alpha Raid ${getSpeciesData(species).name}`;
 }
 
 /**
@@ -285,6 +303,7 @@ const RAID_ID_TAGS: Record<RaidKind, string> = {
   [RaidKind.Mythical]: 'raid',
   [RaidKind.Totem]: 'totem',
   [RaidKind.Max]: 'max',
+  [RaidKind.Alpha]: 'alpha',
 };
 
 /**

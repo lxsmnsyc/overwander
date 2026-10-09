@@ -72,3 +72,8 @@ MaxRaid:
   weight: 0
 Totem:
   weight: 0
+# Carved from the cache rolls like the Max Raid, but drawn off the sheet:
+# a trampled clearing with a red-eyed mark scratched into its rock
+AlphaRaid:
+  weight: 0
+  picture: alpha

@@ -1167,6 +1167,9 @@ export default function OverworldBoard(props: {
       if (isRaidLandmark(landmark)) {
         if (read.cleared.has(inChunk)) {
           next.set(at, CellAura.Cleared);
+        } else if (landmark === Landmark.AlphaRaid && snapshot.getAlphaRaids().has(inChunk)) {
+          // An Alpha at home glows like a fight waiting, since that is what it is
+          next.set(at, CellAura.Fight);
         }
       } else if (landmark === Landmark.GymSeat) {
         const holder = read.seats.get(inChunk);

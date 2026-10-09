@@ -105,6 +105,11 @@ export interface CatchSnapshot {
   called?: boolean;
   /** Set on a Max Raid's boss: it fights Dynamaxed from start to end */
   dynamaxed?: boolean;
+  /**
+   * Set, beside `called`, on a copy an Alpha summons. It is built
+   * each time the Alpha calls one, so a fallen copy can be replaced
+   */
+  alphaCopy?: boolean;
 }
 
 /**
@@ -235,6 +240,7 @@ export function asCatchSnapshot(value: unknown): CatchSnapshot {
     ...(data.gigantamax === true ? { gigantamax: true } : {}),
     ...(data.called === true ? { called: true } : {}),
     ...(data.dynamaxed === true ? { dynamaxed: true } : {}),
+    ...(data.alphaCopy === true ? { alphaCopy: true } : {}),
   };
 }
 

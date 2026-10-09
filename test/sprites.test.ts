@@ -458,6 +458,16 @@ describe('the landmarks that ship', () => {
     expect(shadow.height).toBe(legendary.height);
   });
 
+  it("draws an Alpha's ground as a clearing of its own, standing on a tile", () => {
+    expect(landmarkPicture(Landmark.AlphaRaid)).toBe('alpha');
+
+    const [alpha] = packed(LANDMARK_SHEET).filter((one) => one.name === 'alpha');
+
+    // Wider than it is tall: ground trampled flat, with a boulder at the back
+    expect(alpha.width).toBeGreaterThan(alpha.height);
+    expect(alpha.width).toBeLessThanOrEqual(alpha.sourceWidth);
+  });
+
   it('opens a cache this player has already dug up', () => {
     expect(landmarkPicture(Landmark.ItemCache)).toBe('cache');
     expect(landmarkPicture(Landmark.ItemCache, true)).toBe('cache-taken');

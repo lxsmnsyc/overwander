@@ -48,6 +48,9 @@ function describeRaid(view: RaidView): string {
       ? 'A Max Raid: it is Gigantamaxed for the whole fight. Beaten, it leaves Max Mushrooms and keeps its Gigantamax Factor when caught.'
       : 'A Max Raid: it is Dynamaxed for the whole fight. Beaten, it leaves Max Mushrooms, and now and then a Dynamax Band.';
   }
+  if (view.kind === RaidKind.Alpha) {
+    return 'An Alpha raid: it brings six of its kind back to its side at 3/4, 1/2 and 1/4 HP. Beaten, it waits with three perfect stats.';
+  }
   return 'A raid takes a party. Beaten, it waits in the overworld for whoever fought it.';
 }
 

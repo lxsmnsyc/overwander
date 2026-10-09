@@ -58,6 +58,35 @@ brighter. The prize comes at level 40, with a purse of 50,000, one or two
 **Max Mushrooms**, and a **Dynamax Band** one clear in ten. A Gigantamax boss
 caught from the raid **keeps the Gigantamax Factor**.
 
+## Alpha raids
+
+An **Alpha** stands on a trampled clearing in open country, a boulder raked by
+claws with a red-eyed beast daubed on it, glowing red while the Alpha is home.
+Its boss is **any species the tile's own biome spawns there, at any stage**,
+that can stand on the cell, short of a legendary, a mythical, an Ultra Beast or
+a true shadow. A new Alpha is picked each raid window, and none stands
+underground.
+
+The Alpha is a raid boss drawn half again as large as its kind, at twice its
+height and four times its weight. Its own scale stands in for the boss one:
+**80x its HP and 1.5x every other stat**, against a lone boss's 110x and 2x,
+since it never fights alone.
+
+- Each time its HP falls past **3/4, 1/2 and 1/4**, it brings its side back to
+  **6 of its own kind**: copies still standing are healed to full, and fallen
+  or missing ones are summoned anew.
+- A blow past two thresholds refills once, and healing back over a threshold
+  does not open it again. Past 1/4 nothing more comes.
+- A copy is a plain wild pokemon of the same species at the Alpha's level, with
+  a nature, an ability and individual values of its own, no Boss or Alpha mark,
+  and nothing a party can catch. The copies flee when the Alpha falls.
+- Only the Alpha decides the raid and counts as beaten: the copies are not part
+  of the reward.
+
+Beaten, an Alpha pays 50,000 and waits at level 40 at its species' own size and
+abilities, with **3 different stats at 31**, picked at random from the prize's
+own rolls. The other three are rolled as any raid prize's are.
+
 ## The raid boss
 
 A boss is a **maxed legendary, perfect in every individual stat and trained to

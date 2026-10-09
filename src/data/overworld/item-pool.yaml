@@ -221,6 +221,9 @@ rare:
   memories: 1
   type-crystals: 1
   signature-crystals: 1
+  # The Dynamax Band, held for its own once-a-side change the way a
+  # stone or a crystal is, on the same terms
+  DynamaxBand: 1
   # The strongest gear, on the plates' terms: thin slots, so the
   # band stays the stones' and finding a Choice Band stays an event
   orbs: 1

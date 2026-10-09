@@ -1,5 +1,73 @@
 # overwander
 
+## 4.34.0
+
+### Minor Changes
+
+- b3206f4: Galar's fossils can be revived:
+  
+  - The Fossil Scientist takes a top half (Fossilized Bird or Fish) and a bottom half (Fossilized Drake or Dino) and revives Dracozolt, Arctozolt, Dracovish or Arctovish, spending both.
+  - The Fossil Maniac can offer the halves at 12,000 gold each, and they can be dug up in the prized band like the other fossils.
+  - A revived Galar species' dex entry names both halves.
+- 9f91b1e: The moves Sword and Shield and Legends: Arceus brought are in the game: 65 from Galar and 24 from Hisui, at the numbers Scarlet and Violet settled them on. Most ride what was already there (Flip Turn swaps out like U-turn, Wicked Blow always lands a critical, Meteor Beam winds up like Skull Bash), and the rest have rules of their own: Jaw Lock and Octolock hold a pokemon on the field, Body Press hits with Defense, Bolt Beak and Fishious Rend double against a target that has not begun a cast, Tar Shot makes Fire hit 2x, Stone Axe and Ceaseless Edge leave hazards behind them, Court Change swaps hazards, screens, Mist, Safeguard and Tailwind between the sides with the time each had left, Power Shift swaps both pairs of attacking and defending stats, Expanding Force reaches everything opposite on Psychic Terrain, Aura Wheel is Morpeko's alone and turns Dark while it is Hangry, and Life Dew, Jungle Healing and Lunar Blessing mend the whole team. Each has a picture. Every legendary and mythical signature is drawn as its own (Behemoth Blade and Behemoth Bash, Eternabeam and Dynamax Cannon, Glacial Lance, Astral Barrage, Thunder Cage, Dragon Energy, the Galarian birds' three, Urshifu's two, Jungle Healing, Mystical Power and each of the four storms), as is Dragon Darts, and the rest look like the earlier move they take after. There is no Dynamax, so the Max Moves are not among them. The pokemon of Kanto to Alola learn the ones they learn in Sword and Shield, Brilliant Diamond and Shining Pearl, and Legends: Arceus, by level, machine, tutor or egg; the moves of Galar's and Hisui's own pokemon wait for them.
+- 9c3eadb: - Libero, Punk Rock, Cotton Down, Ball Fetch, Gulp Missile, Propeller Tail,
+    Ice Scales, Ice Face, Hunger Switch, Stalwart and Power Spot now work in
+    battle.
+  - Cramorant, Eiscue and Morpeko change form in battle the way their abilities
+    say.
+- 518896b: Galar's pokemon arrive, from the starters to the fossils, each family with a signature ability:
+  
+  - Grookey, Scorbunny and Sobble, whose moves of their own type cue Helping Hand, After You or Spotlight for their team.
+  - Skwovet eats the enemy's Berries, Rookidee casts Wide Guard against spread moves, and Blipbug warns a teammate with Detect.
+  - Nickit hands what it steals to a teammate, Gossifleur makes its team's grass healing 1.5x, and Wooloo's fleece singes off into Agility.
+  - Chewtle's bites break screens, and Yamper casts Charge whenever its Speed rises.
+  - Applin shares its Berries, Silicobra's Ground moves hit every enemy in a sandstorm, and Cramorant Stockpiles with each Water move.
+  - Arrokuda answers a wind-up with Aqua Jet, Toxel charges up on poison, and Sizzlipede burns up Berries.
+  - Clobbopus locks its target in Octolock, and Pincurchin shocks whoever touches it.
+  - Sinistea leaves a Healing Wish when it faints, and Hatenna and Impidimp cancel each other out.
+  - Milcery decorates the teammates it helps, and Alcremie comes in its seven Sweets.
+  - Snom turns added effects back on whoever threw them, Eiscue calls hail when struck, and Falinks halves its first 5 hits.
+  - Indeedee casts Heal Pulse on a teammate hit hard, Morpeko Nuzzles enemies that eat Berries, and Duraludon takes spread moves alone.
+  - Dreepy launches Dragon Darts at a second enemy, and Stonjourner powers up its team every 30 seconds.
+  - Dracozolt, Arctozolt, Dracovish and Arctovish strike with their tail's type where it hits harder.
+  - Toxel grows into the Amped or the Low Key Toxtricity by its nature.
+  - Tart Apple, Sweet Apple, Cracked Pot and the seven Sweets are stocked.
+- 0b47969: - Every pokemon in Sword and Shield or Brilliant Diamond and Shining Pearl learns by level what that game teaches it, at that game's levels, so Rayquaza learns Hurricane at 72.
+  - Nothing a pokemon already learned by level is taken away: a move the Gen 8 games dropped stays at its old level.
+  - Every pokemon can also be taught the Gen 8 machines, records and tutor moves its games teach it, and hatches with their egg moves.
+- fb8b6ef: Kalos trainers are on the road. 41 classes join the duelling stops, drawn in their XY sheets and fielding Kalos pokemon. 35 are Kalos's own takes on trades already met, from the Ace Trainer to the Hex Maniac, the Garçon and the Roller Skater. Six are trades nobody had before, each with its own achievement line and titles: the Sky Trainer, the Fairy Tale Girl, the Furisode Girl, the Butler, the Tourist and the Rising Star. The Kalos Ace travels everywhere the other Aces do. Stops in most biomes now roll from a longer list, so who stands at a given stop changes.
+- c88aa09: Spawn weights are now plain shares of every roll, so a species' weight is how often it is met, whatever band it is filed in. A water pool now lists everything met on water. With that, the pools are rebalanced: no common species is more than half of a pool any more (a lone Poliwag on a river at night, a lone Horsea at sea), a rare starter or pseudo-legendary is never the only thing in a place (Deino in the volcano at night, Gible in the desert, Oshawott in the kelp forest), evolutions are never met much more often than what they evolve from (the Eeveelutions, Blissey, Dartrix, Gabite, Garchomp), and the sea's islands are worth landing on: the deep sea's rocky islands keep Zubat, Slowpoke, Psyduck, Seel, Krabby, Wingull and Exeggcute lines and a rare Sableye, and the open sea's tropical ones Sandygast, Wimpod, Krabby, Salandit, Noibat, Wingull and Exeggcute lines, with Pyukumuku and Oricorio.
+- b809b22: - A Totem's ally now has the Totem Ally ability: 50x its HP and 1.5x every other stat.
+  - A Totem's ally stands beside it at a party pokemon's size, and the Totem stays at the centre.
+  - The Boss ability's description now gives the right HP figure (110x).
+  - The raid demo can stage a Totem raid.
+
+### Patch Changes
+
+- 0faf229: The numbers a fight reads off each move (the status it puts down and the chance, the stages it pushes, how many times it strikes, its recoil, drain and heal shares, and the Z-Move power overrides) are now written as YAML in their own files, one per mechanic, apart from the moves themselves. Nothing about any move changes.
+- 8a0aeba: The skies each biome can show are written in a data file.
+- 07e5936: Champions and legends are data now: each one's title or mark, league, sheets, prize coats and six are in `experts/champions.yaml` and `experts/legends.yaml`, with their names under `text/en/`. Nothing a player sees changes.
+- 578b989: Scenery is data now: what each biome grows, what blocks a cell, what grows on its islands and how it draws each kind are in `biome-decorations.yaml`, each kind's sheet and pictures in `decorations.yaml`, the snowy trees in `snow-trees.yaml`, and their names under `text/en/`. Every chunk keeps the scenery it had.
+- 724da9b: The Frontier Brains are data now: each one's house rule, crown, sheets, symbols and both parties are in `experts/frontier.yaml`, with their names and houses under `text/en/`. Nothing a player sees changes.
+- 7946fba: - Farfetch'd can be born with Sharpness.
+  - Zen Mode only switches a Darmanitan into its own line's Zen form.
+- c74368e: The sprite import files Hisui's new species under Hisui, where the game looks for them.
+- 5be6d8a: What the ground hides, band by band, is written in a data file.
+- e09267c: Items are now written as YAML: each family's records (type, picture, flags, prices) in one file and its names in another. Lines that follow a table, like a gem's type or a drink's restore, are written as templates the game fills in, so they still change with the numbers. Nothing about any item changes.
+- 64765f0: Each lair's residents, names and the biomes that host it are written in data files.
+- 28d5669: Landmarks and phenomena are data now: each landmark's weight and pictures are in `landmarks.yaml`, which phenomena each biome hosts is `biome-phenomena.yaml`, and their names are under `text/en/`. Every chunk keeps what it had.
+- 057a852: Gym leaders and the Elite Four are data now. Each person's type, badge or mark, sheets, ace and pool live in `experts/gym-leaders.yaml` and `experts/elite.yaml`, with their names under `text/en/`. Which of them each biome seats is in `biome-gym-leaders.yaml` and `biome-elite.yaml`. Nothing a player sees changes.
+- 978ac00: Moves and abilities are now written as YAML on the same pipeline as the species: a move's battle numbers, its cast clips and its words each in their own folder, an ability's name and line as text, and each region's signature grants in a file of its own. The species names moved into blocks beside the rest of their data. Nothing about any move or ability changes, and the editor schemas cover the new files.
+- 7d98142: The syndicates, their executives and the people's words are data now. Each team's grunts, boss, executives and biomes are in `syndicates.yaml`, each executive's sheets and mark in `executives.yaml`, and every name, title and quote under `text/en/` (`syndicates`, `executives`, `npcs`, `vendor-stalls`). Nothing a player sees changes.
+- a0aea62: Shiny Pa'u and Sensu Oricorio have their own colours on the wing tips and beak.
+- e589131: The spawn pools are now written as YAML, a file per biome plus the caves' and the towns' pools, with times of day that share a pool written once. Nothing about what spawns where changes. Rotom was listed twice in the temperate forest and the woodland, where the second entry was never read; it is now listed once.
+- 9ae2eda: The Boss, Shadow, Totem, Totem Ally and Purified abilities are written in a file of their own rather than with Gen 1.
+- d86c7d4: - What a wild pokemon carries, its egg cycles, and whether it is a legendary, a mythical or a baby are written beside each species in its data files.
+  - Each region's dex numbers and its dex chain are written in one data file.
+- 27543ce: The species data is now written as YAML: a folder per field (`world`, `stats`, `abilities`, `learnsets`), with each region's families filed in blocks of 25 dex numbers, and names in `src/data/text/en/species.yaml`. Nothing about the species themselves changes. The build checks every name in the files against the game's own ids, so a typo fails the build instead of reaching a fight. In the editor, JSON Schemas generated from the same ids give completion and squiggles while the YAML is written.
+- 1a0253e: Town names are built from words in `text/en/town-names.yaml`: each biome's heads, the tails, titles, marks and county names. Every town keeps the name it had.
+- c480f64: Trainer classes are data now. Each region's classes are a YAML file saying what each fields, which sheets it stands in and which trade it belongs to. Their names and challenge lines live under `text/en/trainers/`, and which classes each biome puts on the road is `trainers/biomes.yaml`. Nothing a player sees changes.
+
 ## 4.33.0
 
 ### Minor Changes

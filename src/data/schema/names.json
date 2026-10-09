@@ -2109,7 +2109,40 @@
         "WildboltStorm",
         "SandsearStorm",
         "LunarBlessing",
-        "TakeHeart"
+        "TakeHeart",
+        "GMaxVineLash",
+        "GMaxWildfire",
+        "GMaxCannonade",
+        "GMaxBefuddle",
+        "GMaxVoltCrash",
+        "GMaxGoldRush",
+        "GMaxChiStrike",
+        "GMaxTerror",
+        "GMaxFoamBurst",
+        "GMaxResonance",
+        "GMaxCuddle",
+        "GMaxReplenish",
+        "GMaxMalodor",
+        "GMaxMeltdown",
+        "GMaxDrumSolo",
+        "GMaxFireball",
+        "GMaxHydrosnipe",
+        "GMaxWindRage",
+        "GMaxGravitas",
+        "GMaxStonesurge",
+        "GMaxVolcalith",
+        "GMaxTartness",
+        "GMaxSweetness",
+        "GMaxSandblast",
+        "GMaxStunShock",
+        "GMaxCentiferno",
+        "GMaxSmite",
+        "GMaxSnooze",
+        "GMaxFinale",
+        "GMaxSteelsurge",
+        "GMaxDepletion",
+        "GMaxOneBlow",
+        "GMaxRapidFlow"
       ]
     },
     "ability": {
@@ -3529,7 +3562,8 @@
         "FossilizedBird",
         "FossilizedFish",
         "FossilizedDrake",
-        "FossilizedDino"
+        "FossilizedDino",
+        "DynamaxBand"
       ]
     },
     "biome": {

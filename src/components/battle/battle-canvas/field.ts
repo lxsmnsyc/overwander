@@ -253,6 +253,30 @@ const NEAREST = -Math.PI / 2;
 const ALLY_REACH = (BOSS_RADIUS * TOTEM_DRAW_SCALE + PARTY_SLOT) / FIELD_UNIT;
 
 /**
+ * How wide the arc of several allies is, either side of the near point.
+ * The far third of a ring stands behind a boss drawn larger than its
+ * kind, where the camera cannot see it, so the arc leaves it out
+ */
+const ALLY_ARC = (Math.PI * 2) / 3;
+
+/** How far several allies stand from the boss, clear of a Totem- or Alpha-sized one */
+const ALLY_RING = ALLY_REACH * 1.3;
+
+/**
+ * Where the boss side's `at`th ally stands: a lone one beside the boss,
+ * and several spread along an arc round its front and sides
+ */
+function allyPlace(at: number, count: number): FieldPoint {
+  if (count < 2) {
+    return { x: ALLY_REACH * (at + 1), z: 0 };
+  }
+
+  const around = NEAREST - ALLY_ARC + (at * 2 * ALLY_ARC) / (count - 1);
+
+  return { x: Math.cos(around) * ALLY_RING, z: Math.sin(around) * ALLY_RING };
+}
+
+/**
  * How far back the camera stands for a lobby, and how wide its ring
  * is.
  *
@@ -362,8 +386,9 @@ export function ringStandings(
   // is drawn smaller for it: the camera has stepped back with the ring
   const { radius, zoom } = lobbyCamera(field.teams.length);
 
-  // The boss side holds the boss and, once a Totem calls it, its ally.
-  // The boss keeps the origin, so the ally arriving moves nobody
+  // The boss side holds the boss and, once called, a Totem's ally or
+  // an Alpha's copies. The boss keeps the origin, so an arrival moves
+  // nobody
   const bosses: Unit[] = [];
   const allies: Unit[] = [];
 
@@ -395,7 +420,7 @@ export function ringStandings(
   for (const [at, unit] of allies.entries()) {
     standings.push({
       unit,
-      place: { x: ALLY_REACH * (at + 1), z: 0 },
+      place: allyPlace(at, allies.length),
       look: { x: 0, z: -radius },
       radius: PARTY_SLOT * zoom,
       color: COLORS.boss,

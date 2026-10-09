@@ -7,7 +7,7 @@ import { BIOME_NAMES } from '../../data/biome';
 import type Decoration from '../../data/overworld/decoration';
 import Weather, { DARK_DAY_LAMP_CELLS, WEATHER_NAMES } from '../../data/overworld/weather';
 import ChunkCanvas from '../overworld/chunk-canvas';
-import { type SpawnCoat, rankOf } from '../overworld/chunk-canvas/scenery';
+import { CellAura, type SpawnCoat, rankOf } from '../overworld/chunk-canvas/scenery';
 import { BOARD_CELLS, BOARD_CENTER, boardIndexOf, viewFor } from '../../canvas/board';
 import { SLIDE_PACE } from '../overworld/chunk-canvas/metrics';
 import { findPathNear } from '../../overworld/path';
@@ -350,23 +350,31 @@ function scenery(world: World, originX: number, originY: number): Map<number, De
 
 /**
  * The landmarks over the window, carried out of their chunks the way
- * the scenery is, and how each Max Raid's pillar burns at this moment
+ * the scenery is, how each Max Raid's pillar burns at this moment, and
+ * the fight aura over each Alpha at home
  */
 function landmarksOver(
   world: World,
   originX: number,
   originY: number,
   now: number,
-): { landmarks: Map<number, Landmark>; beacons: Map<number, RaidBeacon> } {
+): {
+  landmarks: Map<number, Landmark>;
+  beacons: Map<number, RaidBeacon>;
+  auras: Map<number, CellAura>;
+} {
   const landmarks = new Map<number, Landmark>();
   const beacons = new Map<number, RaidBeacon>();
+  const auras = new Map<number, CellAura>();
 
   for (let y = chunkOfCell(originY); y <= chunkOfCell(originY + BOARD_CELLS - 1); y += 1) {
     for (let x = chunkOfCell(originX); x <= chunkOfCell(originX + BOARD_CELLS - 1); x += 1) {
       const chunk = world.getChunk(x, y);
       const shiftX = x * CHUNK_CELLS - originX;
       const shiftY = y * CHUNK_CELLS - originY;
-      const raids = new ChunkSnapshot(chunk, now).getMaxRaids();
+      const snapshot = new ChunkSnapshot(chunk, now);
+      const raids = snapshot.getMaxRaids();
+      const alphas = snapshot.getAlphaRaids();
 
       for (const [cell, what] of chunk.getLandmarkCells()) {
         const bx = (cell % CHUNK_CELLS) + shiftX;
@@ -376,6 +384,9 @@ function landmarksOver(
           continue;
         }
         landmarks.set(by * BOARD_CELLS + bx, what);
+        if (alphas.has(cell)) {
+          auras.set(by * BOARD_CELLS + bx, CellAura.Fight);
+        }
 
         const roll = raids.get(cell);
 
@@ -388,7 +399,7 @@ function landmarksOver(
       }
     }
   }
-  return { landmarks, beacons };
+  return { landmarks, beacons, auras };
 }
 
 /** The raid sites the demo can go looking for */
@@ -396,13 +407,23 @@ const enum Site {
   MaxRaid = 0,
   Gigantamax = 1,
   Totem = 2,
+  Alpha = 3,
 }
 
 const SITE_OPTIONS: { value: Site; label: string }[] = [
   { value: Site.MaxRaid, label: 'Max Raid' },
   { value: Site.Gigantamax, label: 'Gigantamax Max Raid' },
   { value: Site.Totem, label: 'Totem' },
+  { value: Site.Alpha, label: 'Alpha' },
 ];
+
+/** The landmark each site stands on; a Gigantamax is a Max Raid's */
+const SITE_LANDMARKS: Record<Site, Landmark> = {
+  [Site.MaxRaid]: Landmark.MaxRaid,
+  [Site.Gigantamax]: Landmark.MaxRaid,
+  [Site.Totem]: Landmark.Totem,
+  [Site.Alpha]: Landmark.AlphaRaid,
+};
 
 /** How far out, in chunks, the search for a raid site reaches */
 const SITE_RINGS = 96;
@@ -413,7 +434,7 @@ const SITE_RINGS = 96;
  * a chunk at a time
  */
 function findSite(world: World, biome: Biome, site: Site, now: number): [number, number] | null {
-  const kind = site === Site.Totem ? Landmark.Totem : Landmark.MaxRaid;
+  const kind = SITE_LANDMARKS[site];
 
   for (let ring = 0; ring <= SITE_RINGS; ring += 1) {
     for (let y = -ring; y <= ring; y += 1) {
@@ -894,7 +915,7 @@ export default function BoardDemo(): JSX.Element {
           berries={NOTHING_MAPPED}
           picked={NOTHING_SET}
           dug={NOTHING_SET}
-          auras={NOTHING_MAPPED}
+          auras={sites().auras}
           decorations={decorations()}
           spawns={windowed(spawns(), at())}
           goal={queued().at(-1) ?? null}

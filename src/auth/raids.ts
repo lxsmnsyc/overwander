@@ -64,6 +64,7 @@ export {
   RaidKind,
   asRaidRecord,
   deriveRaidReward,
+  getAlphaRaidTitle,
   getMaxRaidTitle,
   getRaidKindAt,
   getRaidTitle,

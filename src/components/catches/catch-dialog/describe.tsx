@@ -128,9 +128,15 @@ function describeOrigin(caught: CaughtPokemon): string | null {
  * own line further up
  */
 function describeMet(caught: CaughtPokemon): string {
-  // Neither stands in a lair, so neither has a place's name to give
-  if (caught.type === EncounterType.TotemRaid || caught.type === EncounterType.MaxRaid) {
-    return `Caught in a ${ENCOUNTER_TYPE_NAMES[caught.type]}`;
+  // None stands in a lair, so none has a place's name to give
+  if (
+    caught.type === EncounterType.TotemRaid ||
+    caught.type === EncounterType.MaxRaid ||
+    caught.type === EncounterType.AlphaRaid
+  ) {
+    const name = ENCOUNTER_TYPE_NAMES[caught.type];
+
+    return `Caught in ${/^[AEIOU]/.test(name) ? 'an' : 'a'} ${name}`;
   }
   if (isRaidEncounter(caught.type)) {
     return `Caught at ${getLairTitle(

@@ -11,7 +11,7 @@ import type Biome from '../data/ids/biome';
 import createBattle from '../battle/setup';
 import Team from '../battle/team';
 import Unit from '../battle/unit';
-import { holdTotemAlly } from '../battle/abilities/special';
+import { holdAlphaCopy, holdTotemAlly } from '../battle/abilities/special';
 import { dynamax } from '../battle/mechanics/dynamax';
 import { UNLIMITED_BATTLE_LIMITS } from '../data/constants/battle-limits';
 import { STAT_ORDER, Stats, StatsKind, getIV } from '../data/constants/stats';
@@ -42,7 +42,7 @@ function addUnit(battle: Battle, team: Team, snapshot: CatchSnapshot): Unit {
   // record — the empty string travels through unchanged
   const unit = new Unit(battle, team, snapshot.caught);
 
-  // A Totem's ally is built now but joins its team only when called
+  // A Totem's ally and an Alpha's copies join their team only when called
   if (snapshot.called !== true) {
     team.addUnit(unit);
   }
@@ -196,6 +196,13 @@ export function fieldTeams(
     const party: Unit[] = [];
 
     for (const snapshot of record.catches) {
+      // Built when summoned rather than now, and again for each one
+      // that replaces it
+      if (snapshot.alphaCopy === true) {
+        holdAlphaCopy(team, () => addUnit(battle, team, snapshot));
+        continue;
+      }
+
       const unit = addUnit(battle, team, snapshot);
 
       if (snapshot.called === true) {

@@ -104,6 +104,7 @@ import getWorld from './current';
 import type Chunk from './chunk';
 import { canStageBoss } from './raid';
 import { getTotemsOf } from '../data/overworld/totems';
+import { isAlphaSpecies } from '../data/overworld/alphas';
 import { CELL_COUNT, CHUNK_CELLS, PLACEMENT_AREA, centeredCells } from './chunk';
 import { Depth } from './depth';
 import type { PhenomenonReward } from './landmarks';
@@ -914,6 +915,59 @@ export default class ChunkSnapshot {
   getMaxRaids(): Map<number, RaidRoll> {
     this.maxRaids ??= this.rollFinalStages(Landmark.MaxRaid, 'max');
     return this.maxRaids;
+  }
+
+  private alphaRaids: Map<number, RaidRoll> | null = null;
+
+  /**
+   * The window's Alphas, keyed by the landmark's cell: any species the
+   * tile's own biome spawns that can stand on the cell, at whatever
+   * stage it spawns at, short of a legendary or a mythical. A site
+   * whose tile has none holds nothing this window
+   */
+  getAlphaRaids(): Map<number, RaidRoll> {
+    if (this.alphaRaids == null) {
+      const raids = new Map<number, RaidRoll>();
+      const time = getTimeOfDay(this.raidTimestamp);
+
+      for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
+        if (landmark !== Landmark.AlphaRaid) {
+          continue;
+        }
+        const hosts = this.hostsAt(cell);
+        const species = new Set<Species>();
+        const pool = getSpawnPool(
+          this.biomeAt(cell),
+          time,
+          this.depth === Depth.Cave,
+          this.drawnSurface(cell),
+        );
+
+        for (const rank of spawnRanks(pool)) {
+          for (const entry of rank) {
+            if (isAlphaSpecies(entry.species) && hosts(entry.species)) {
+              species.add(entry.species);
+            }
+          }
+        }
+        if (species.size === 0) {
+          continue;
+        }
+
+        // The draws land in order: the Alpha, then the trait value its
+        // nature, ability and copies derive from
+        const rng = new AleaRNG(`${this.key}${this.raidTimestamp}alpha${cell}`);
+        const choices = [...species];
+
+        raids.set(cell, {
+          lair: null,
+          species: choices[Math.floor(rng.random() * choices.length)],
+          traitValue: rng.int32(),
+        });
+      }
+      this.alphaRaids = raids;
+    }
+    return this.alphaRaids;
   }
 
   /** One boss per landmark of this kind, from the final stages the tile's biome grows into */

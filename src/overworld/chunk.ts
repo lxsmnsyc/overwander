@@ -72,6 +72,8 @@ const MAX_LANDMARKS = 4;
  * The landmarks carved out of another one's rolls rather than rolled
  * themselves: `share` of the rolls that land on `from` become this one
  * instead, where the cell is dry ground and the chunk holds none yet.
+ * Two carved from one landmark take its band in the order listed, so
+ * adding a later one never moves an earlier one's share.
  *
  * Carving rather than weighing them into the pool keeps every other
  * roll where it was: a weight of their own would move the band every
@@ -82,6 +84,9 @@ const CARVED_LANDMARKS: { kind: Landmark; from: Landmark; share: number; caves: 
   { kind: Landmark.MaxRaid, from: Landmark.ItemCache, share: 3 / 15, caves: false },
   // Worth 2 of the duel's 10: a trial is a trainer's challenge
   { kind: Landmark.Totem, from: Landmark.Trainer, share: 2 / 10, caves: true },
+  // The next 2 of the cache's 15, which leaves the cache 10. Open
+  // country only: an Alpha roams under the sky
+  { kind: Landmark.AlphaRaid, from: Landmark.ItemCache, share: 2 / 15, caves: false },
 ];
 
 /**
@@ -89,10 +94,16 @@ const CARVED_LANDMARKS: { kind: Landmark; from: Landmark; share: number; caves: 
  * fell (0 to 1). Null where it stays itself
  */
 function carvedFrom(kind: Landmark, within: number, depth: Depth): Landmark | null {
+  let floor = 0;
+
   for (const carved of CARVED_LANDMARKS) {
-    if (carved.from === kind && within < carved.share && (carved.caves || depth !== Depth.Cave)) {
-      return carved.kind;
+    if (carved.from !== kind) {
+      continue;
     }
+    if (within >= floor && within < floor + carved.share) {
+      return carved.caves || depth !== Depth.Cave ? carved.kind : null;
+    }
+    floor += carved.share;
   }
   return null;
 }

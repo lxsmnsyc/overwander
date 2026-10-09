@@ -14,6 +14,7 @@ import { getSpeciesSignature } from '../data/abilities';
 import { getRegisteredSpecies, isFullyEvolved, isWornForm } from '../data/species';
 import { deriveAbility, deriveGender, deriveMoves, deriveNature, deriveSize } from './encounter';
 import { isTotemSpecies } from '../data/overworld/totems';
+import { isAlphaSpecies } from '../data/overworld/alphas';
 import {
   BOSS_ALLIANCE,
   PLAYER_ALLIANCE,
@@ -188,8 +189,9 @@ function rollCatch(random: () => number, index: number, mega = false): CatchSnap
  * `DEMO_TEAMS` parties sharing the other one, exactly as a real lobby
  * publishes them. `shadow` stages the shadow raid, which is the one
  * fight the battle field has a shadow's haze to draw, `totem` a
- * Totem with the ally it calls, and `max` a Max Raid's boss, Dynamaxed
- * throughout and drawn from the lines that Gigantamax.
+ * Totem with the ally it calls, `max` a Max Raid's boss, Dynamaxed
+ * throughout and drawn from the lines that Gigantamax, and `alpha` an
+ * Alpha with the copies it summons.
  *
  * The parties are separate **teams** rather than one big party
  * because that is what a lobby is — five players who happen to be
@@ -201,6 +203,7 @@ export function createDemoRaidTeams(
   shadow = false,
   totem = false,
   max = false,
+  alpha = false,
 ): TeamSnapshotRecord[] {
   const rng = new AleaRNG(`demo-raid:${seed}`);
   const random = (): number => rng.random();
@@ -210,14 +213,15 @@ export function createDemoRaidTeams(
     if (
       canStageBoss(species) &&
       (!totem || isTotemSpecies(species)) &&
-      (!max || (isTotemSpecies(species) && isGigantamaxBoss(species)))
+      (!max || (isTotemSpecies(species) && isGigantamaxBoss(species))) &&
+      (!alpha || isAlphaSpecies(species))
     ) {
       bosses.push(species);
     }
   }
   const boss = pick(bosses, random);
   const bossTrait = Math.floor(random() * 0x1_0000_0000);
-  const [staged, ...allies] = createRaidBossTeam(boss, bossTrait, shadow, totem, max);
+  const [staged, ...allies] = createRaidBossTeam(boss, bossTrait, shadow, totem, max, alpha);
 
   const teams: TeamSnapshotRecord[] = [
     {

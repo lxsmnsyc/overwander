@@ -588,6 +588,11 @@ const enum Abilities {
    */
   TotemAlly = 100005,
   /**
+   * What makes a raid boss an Alpha: an oversized wild pokemon that
+   * brings its side back to six of its own kind as it is worn down
+   */
+  Alpha = 100006,
+  /**
    * Signature (one per family, granted rather than rolled at birth).
    * They sit outside the pools walk, so a line's four ordinary
    * abilities stay four

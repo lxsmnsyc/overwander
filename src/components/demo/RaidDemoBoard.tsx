@@ -75,6 +75,7 @@ export default function RaidDemoBoard(): JSX.Element {
     shadow?: string;
     totem?: string;
     max?: string;
+    alpha?: string;
     biome?: string;
   }>();
   const seed = (): string => params.seed ?? DEFAULT_SEED;
@@ -83,13 +84,14 @@ export default function RaidDemoBoard(): JSX.Element {
   const shadow = (): boolean => params.shadow === '1';
   const totem = (): boolean => params.totem === '1';
   const max = (): boolean => params.max === '1';
+  const alpha = (): boolean => params.alpha === '1';
   const [built, setBuilt] = createSignal<RaidBattle | null>(null);
   const [revision, setRevision] = createSignal(0);
 
   createEffect(() => {
     const staged = createRaidBattle(
       `demo:${seed()}`,
-      createDemoRaidTeams(seed(), shadow(), totem(), max()),
+      createDemoRaidTeams(seed(), shadow(), totem(), max(), alpha()),
     );
 
     // Initialized but not started: the canvas starts it once it has
@@ -190,6 +192,15 @@ export default function RaidDemoBoard(): JSX.Element {
         checked={max()}
         onChange={(on) => {
           setParams({ max: on ? '1' : undefined });
+        }}
+      />
+
+      <Switch
+        label="Alpha"
+        description="Stages an Alpha that brings six of its kind back at 3/4, 1/2 and 1/4 HP."
+        checked={alpha()}
+        onChange={(on) => {
+          setParams({ alpha: on ? '1' : undefined });
         }}
       />
 

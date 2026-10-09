@@ -152,6 +152,13 @@ const enum Landmark {
    * share of the trainer rolls the way a Max Raid takes the caches'
    */
   Totem = 22,
+  /**
+   * An Alpha's ground: a trampled clearing in open country holding an
+   * oversized wild pokemon of the tile's biome, any stage, that calls
+   * its own kind to its side. It takes a share of the item cache rolls
+   * beside the Max Raid's
+   */
+  AlphaRaid = 23,
 }
 
 export { Landmark };

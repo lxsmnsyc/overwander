@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import decode, { type Image } from '../src/server/sprites/png.ts';
 import writeAtlas, { type Cut, type Drawn, assertWhole, cut, tighten } from './atlas.ts';
+import drawAlphaSite from './landmark-alpha.ts';
 
 /**
  * The landmarks, cut out of an overworld rip.
@@ -14,6 +15,9 @@ import writeAtlas, { type Cut, type Drawn, assertWhole, cut, tighten } from './a
  * A cave mouth is the one landmark drawn twice, since it is the one
  * that stands on both layers: the hole in the hillside from above, and
  * the way back out from below.
+ *
+ * The Alpha's ground is the one drawn on a grid rather than cut, since
+ * the rip has nothing like it (`landmark-alpha.ts`).
  *
  * A shortlist rather than a decision. Several landmarks have more than
  * one candidate here, since which of them reads as a portal or a claimed
@@ -134,24 +138,45 @@ function shade(image: Image, swaps: Record<string, string>): Image {
   return out;
 }
 
-const sheet = decode(readFileSync(SOURCE));
+/** The pieces drawn here rather than cut, each placed off its own crop */
+function drawnPieces(): Drawn[] {
+  const pieces: Drawn[] = [];
 
-for (const area of CUTS) {
-  assertWhole(sheet, area);
+  for (const draw of [drawAlphaSite]) {
+    const { name, image, base } = draw();
+    const crop = tighten(image);
+
+    pieces.push({
+      name,
+      image: crop.image,
+      ...(base == null ? {} : { base: [base[0] - crop.left, base[1] - crop.top] }),
+    });
+  }
+  return pieces;
 }
 
-const art: Drawn[] = CUTS.map((area) => ({
-  name: area.name,
-  image: tighten(cut(sheet, area)).image,
-}));
+/** Every piece cut from the rip, out of the rip itself */
+function cutPieces(): Drawn[] {
+  const sheet = decode(readFileSync(SOURCE));
 
-// The shadow lair is the legendary one recoloured rather than a cut of
-// its own, so the two can never drift apart
-const lair = art.find((one) => one.name === 'lair');
+  for (const area of CUTS) {
+    assertWhole(sheet, area);
+  }
 
-if (lair == null) {
-  throw new Error('no lair to shade');
+  const art: Drawn[] = CUTS.map((area) => ({
+    name: area.name,
+    image: tighten(cut(sheet, area)).image,
+  }));
+
+  // The shadow lair is the legendary one recoloured rather than a cut of
+  // its own, so the two can never drift apart
+  const lair = art.find((one) => one.name === 'lair');
+
+  if (lair == null) {
+    throw new Error('no lair to shade');
+  }
+  art.push({ name: 'lair-rubble', image: shade(lair.image, SHADOW_STONE) });
+  return art;
 }
-art.push({ name: 'lair-rubble', image: shade(lair.image, SHADOW_STONE) });
 
-writeAtlas('landmarks', art, STANDS);
+writeAtlas('landmarks', [...cutPieces(), ...drawnPieces()], STANDS);

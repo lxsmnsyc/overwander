@@ -2466,6 +2466,7 @@
         "Purified",
         "Totem",
         "TotemAlly",
+        "Alpha",
         "VerdantField",
         "EmberField",
         "DelugeField",
@@ -5035,7 +5036,8 @@
         "CaveMouth",
         "HoneyTree",
         "MaxRaid",
-        "Totem"
+        "Totem",
+        "AlphaRaid"
       ]
     },
     "phenomenon": {

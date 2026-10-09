@@ -332,6 +332,7 @@ const WAITING_KINDS: Partial<Record<EncounterType, string>> = {
   [EncounterType.MythicalRaid]: 'Mythical raid prize',
   [EncounterType.TotemRaid]: 'Totem raid prize',
   [EncounterType.MaxRaid]: 'Max raid prize',
+  [EncounterType.AlphaRaid]: 'Alpha raid prize',
   [EncounterType.Rocket]: 'Left behind',
   [EncounterType.Fateful]: 'Gift',
   [EncounterType.Revived]: 'Revived fossil',

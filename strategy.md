@@ -4,39 +4,37 @@ How Galar and Hisui go in, batch by batch, on top of `gen-8-data`.
 
 ## Where things stand
 
-- **Reserved, nothing more.** `gen-8-data` holds the Gen 8 ids and nothing else:
-  - species 810-905, families 420-467, and the Galarian and Hisuian form ids;
-  - the gen 8 items and abilities, as enum entries only;
-  - 13 lairs (`SlumberingWeald` to `ScarletBog`), held back with `reserved: true`.
-- **Missing:**
-  - No species YAML, sprites or region row.
-  - No Galar or Hisui member in `ids/regions.ts`.
-  - No `galar`/`hisui` key in `scripts/import-sprites.ts`.
-  - No ability or item behaviour.
-- **`gen-8-moves` is 2 commits ahead.** It has the 89 Galar and Hisui moves with their numbers and behaviour, plus a side-condition registry. Still missing:
-  - move visuals (`src/canvas/battle/moves/*/galar.ts`);
-  - the new moves taught to species already in the game;
-  - a release page.
-- **`main` is 27 commits ahead of `gen-8-data`.** These are the AI-estimate and raid-boss fixes, the Core Enforcer tutor rule, and the last Alola merges. Several of them edit TypeScript data files that `gen-8-data` has since moved to YAML, so those merges have to be redone by hand rather than taken as they are.
+- **Batches 0 and 2 are merged.** `main` has the Gen 8 ids, the Galar and Hisui regions, the form lists and the ability-pool audit.
+- **Batch 1 is merged except its release page.** The 89 Galar and Hisui moves have their behaviour and pictures, and every region's species learn them.
+- **Left from the audit for later batches:**
+  - Stantler's and Ursaring's `awaiting: evolution` marks come off in batch 18.
+  - Mime Jr.'s second evolution lands with Galarian Mr. Mime in batch 12.
+  - Galarian Darmanitan's Zen Mode stays off until its Zen form is drawn.
 
 ## What SpriteCollab has
 
 Only what the collection has built ships (`../SpriteCollab/compact`, checked against `GAPS.md`). Anything missing keeps its reserved id and waits for upstream.
 
-- **Not drawn, or below the bare minimum, so held back:**
-  - whole families: Rolycoly, Stonjourner, Cufant, Arctovish, Zarude, and Falinks (drawn only as Brass and Trooper);
-  - evolutions: Sirfetch'd and Mr. Rime, so Galarian Farfetch'd and Galarian Mr. Mime ship as their line's end, marked `awaiting: evolution`;
-  - forms: Stunfisk-Galar, Darmanitan-Galar Zen, Cramorant Gulping and Gorging, Morpeko Hangry, Calyrex Ice and Shadow Rider, Eternatus Eternamax, and every Gigantamax.
-- **Drawn forms worth naming:** Eiscue's Noice Face.
+Checked against the collection as of 8 October 2026.
+
+- **Not drawn, so held back:**
+  - whole families: Rolycoly, Cufant (Copperajah is drawn, but not its first stage), and Zarude;
+  - evolutions: Mr. Rime, so Galarian Mr. Mime ships as its line's end, marked `awaiting: evolution`;
+  - forms: Stunfisk-Galar, Darmanitan-Galar Zen, Cramorant Gulping and Gorging, Calyrex Ice and Shadow Rider, Zarude Dada, and every Gigantamax.
+- **Drawn short and filled out from the standing pose**, the way Jellicent and Toucannon already ship: Sirfetch'd, Stonjourner, Arctovish, Morpeko Hangry and Eternatus Eternamax. All of them ship.
 - **Drawn:**
-  - every other Galar species;
+  - every other Galar species, and Eiscue's Noice Face;
   - Zacian and Zamazenta Crowned, both Urshifu styles, Enamorus Therian;
-  - all 16 Hisuian forms and Hisui's six new evolutions;
-  - every Galarian form except Stunfisk;
-  - all 63 Alcremie forms, regular coat only.
+  - all 16 Hisuian forms and Hisui's seven new species;
+  - every Galarian form except Stunfisk and Darmanitan Zen;
+  - Basculegion's and Indeedee's females, as female coats on the male's sheet, the way Meowstic's is.
+- **Falinks ships drawn as its Brass, for now.** The collection has only the troop's pieces (Brass, the leader, and Trooper) and no sheet for Falinks itself. Brass gets a hidden id so the import takes its sheet, and a stand-in rule draws Falinks with it. When a base sheet is drawn, the stand-in and the hidden id are removed.
+- **Every Gen 8 species and form that can be shiny has a shiny coat**, Alcremie's seven Sweets included. Eternamax is shiny-locked in the games, so it has none and needs none.
+- **Alcremie ships its seven Sweets on Vanilla Cream only** (`AlcremieBerry` to `AlcremieRibbon`, Strawberry being the base). The other eight creams are left out on purpose, not for lack of art.
+- **The collection files Hisui's new species under `galar/`.** `scripts/import-sprites.ts` refiles dex 899 to 905 under `hisui`, where the game looks for them.
 - **What follows from the gaps:**
   - The Zarude lair and relic stay reserved.
-  - The fossil set ships three of four.
+  - The fossil set ships all four.
   - Calyrex's fusion waits for its riders to be drawn.
 - **A gap is not a reason to rework a design.** A signature stays written for the whole line or set, so the missing member slots in the day it is drawn.
 
@@ -54,10 +52,10 @@ Same as Alola: ids, then moves, then the moves on older species, then each famil
 | 5 | Route 2 and the Wild Area | Wooloo, Chewtle, Yamper |
 | 6 | Galar Mine and Route 4 | Applin (with Tart and Sweet Apple), Silicobra, Cramorant, Arrokuda |
 | 7 | Route 5 and Hulbury | Toxel, Sizzlipede, Clobbopus, Pincurchin |
-| 8 | Glimwood Tangle | Sinistea (with the Pots), Hatenna, Impidimp, Milcery (all 63 Alcremie) |
-| 9 | Route 8 to Circhester | Snom, Eiscue, Indeedee |
-| 10 | Spikemuth and the late routes | Morpeko, Duraludon, Dreepy |
-| 11 | Fossils | Dracozolt, Arctozolt, Dracovish (Arctovish when drawn) |
+| 8 | Glimwood Tangle | Sinistea (with the Pots), Hatenna, Impidimp, Milcery (Alcremie's seven Sweets) |
+| 9 | Route 8 to Circhester | Snom, Eiscue, Indeedee, Falinks (drawn as Brass) |
+| 10 | Spikemuth and the late routes | Morpeko, Duraludon, Dreepy, Stonjourner |
+| 11 | Fossils | Dracozolt, Arctozolt, Dracovish, Arctovish |
 | 12 | Galarian forms, first half | Meowth to Perrserker, Farfetch'd, Mr. Mime, Corsola to Cursola, Zigzagoon to Obstagoon, Yamask to Runerigus |
 | 13 | Galarian forms, second half | Ponyta, Slowpoke line (with Galarica Cuff and Wreath), Weezing, Darumaka |
 | 14 | The heroes and Eternatus | Zacian, Zamazenta (Rusted Sword and Shield), Eternatus |
@@ -189,14 +187,16 @@ Hatenna and Impidimp are a cancelling pair: each listener checks for the other's
 | --- | --- | --- |
 | Snom | **Mirror Scales**: The added effects of moves that hit it, such as a burn, a flinch or a stat drop, land on whoever threw them instead. | Frosmoth: Snow Cloak, Tinted Lens |
 | Eiscue | **Chipped Ice**: A physical hit that lands on it casts Hail, if no weather is up. | Swift Swim, Ice Body, Slush Rush |
+| Falinks | **Rank and File**: A trooper takes the hit: the first 5 hits it takes each land at 0.5x. Drawn as Brass until it has a sheet of its own. | Steadfast, Intimidate |
 | Indeedee | **Attendant**: When a teammate takes a super-effective hit, it casts Heal Pulse on them, once every 8 seconds. | Telepathy |
 | Morpeko | **Hangry Spark**: Whenever an enemy eats a Berry, it casts Nuzzle at them. | Cheek Pouch, Gluttony, Anger Point |
 | Duraludon | **Overhang**: An enemy move that would strike several of its party strikes it alone instead. | Not final (Archaludon), so not filled |
 | Dreepy | **Dreepy Launch**: Once every 10 seconds, a Dragon move it lands launches a Dreepy: it casts Dragon Darts at a second enemy. Waits for Dragon Darts (batch 1). | Dragapult: Levitate |
+| Stonjourner | **Solstice**: Every 30 seconds, its team's moves hit 1.3x for 6 seconds. | Sturdy, Solid Rock, Clear Body |
 | Dracozolt | **Boltdrake**: Its Electric moves strike as Dragon moves against any target Dragon hits harder. | Sheer Force |
 | Arctozolt | **Boltfrost**: Its Electric moves strike as Ice moves against any target Ice hits harder. | Ice Body |
 | Dracovish | **Gilldrake**: Its Water moves strike as Dragon moves against any target Dragon hits harder. | Swift Swim |
-| Arctovish | **Gillfrost**: Its Water moves strike as Ice moves against any target Ice hits harder. Designed now, ships when SpriteCollab draws it. | Water Veil |
+| Arctovish | **Gillfrost**: Its Water moves strike as Ice moves against any target Ice hits harder. | Water Veil |
 
 ### Batches 12 and 13: the Galarian forms
 
@@ -214,7 +214,7 @@ All of them still read sensibly.
 | Meowth, Perrserker | **War Spoils**: Any enemy it knocks out leaves it their held item, or the item goes to an empty-handed teammate if its own hands are full. | Perrserker is full |
 | Ponyta, Rapidash | **Mending Horn**: Its Fairy moves heal its worst-hurt teammate for 1/2 of the damage they deal. | Rapidash: Misty Surge |
 | Slowpoke, Slowbro, Slowking | **Slow Venom**: Each enemy is badly poisoned by the third move it lands on them. | Full |
-| Farfetch'd | **Leek Shield**: Each attack it lands raises its leek as a shield: the next blow it takes lands at 0.6x. | Not filled, `awaiting: evolution` for Sirfetch'd |
+| Farfetch'd, Sirfetch'd | **Leek Shield**: Each attack it lands raises its leek as a shield: the next blow it takes lands at 0.6x. | Sirfetch'd: Sharpness, Super Luck |
 | Corsola, Cursola | **Coral Husk**: When it faints, its husk stays standing for 6 seconds and draws every enemy single-target move. | Cursola: Liquid Ooze |
 | Zigzagoon, Linoone, Obstagoon | **Blockade**: A contact move that lands on it while it is not casting or channelling takes 2 stages of Defense off the attacker. | Obstagoon is full |
 | Darumaka, Darmanitan | **Cold Sink**: Ice moves aimed at its teammates are drawn onto it, and each one that reaches it raises its Attack 1 stage instead of hurting it. | Full, Zen Mode kept |
@@ -276,12 +276,9 @@ The finals that keep their family's signature still need fillers:
 | Line | Signature | Fillers |
 | --- | --- | --- |
 | Rolycoly, Carkol, Coalossal | **Tar Coat**: Each Fire move it lands casts Tar Shot on the target. Waits for Tar Shot (batch 1). | Coalossal is full |
-| Stonjourner | **Solstice**: Every 30 seconds, its team's moves hit 1.3x for 6 seconds. | Sturdy, Solid Rock, Clear Body |
 | Cufant, Copperajah | **Patina**: Each hit it takes turns it greener: +1 Special Defense, up to +3. | Copperajah: Thick Fat, Steelworker |
-| Falinks | **Rank and File**: A trooper takes the hit: the first 5 hits it takes each land at 0.5x. | Steadfast, Intimidate |
 | Zarude | **Vine Swing**: Its moves wind up 30% faster against the last enemy that hit it. | Pickpocket, Tough Claws, Sap Sipper |
 | Galarian Stunfisk | **Bear Trap**: The first contact move each enemy lands on it snaps shut: that enemy cannot act for 1 second. | Strong Jaw, Iron Barbs, Limber |
-| Sirfetch'd | Joins Galarian Farfetch'd's Leek Shield. | Sharpness, Super Luck |
 | Mr. Rime | Joins the Mime family's signature. | Full |
 
 ### Mainline abilities to build first
@@ -334,6 +331,6 @@ Batch 20, built the way Megas and Z-Moves were: automatic, once per side, with n
 
 ## Pace
 
-- **One batch per PR, stacked.**
+- **One group of batches per PR, stacked.** The remaining batches are four groups: Galar's routes (3 to 11, with batch 1's release page), the Galarian forms and the legends (12 to 16), Hisui (17 to 19), and Dynamax (20).
 - **Release pages:** one per group: Galar's routes (3 to 11), the forms (12 and 13), the legends (14 to 16), Hisui (17 to 19), and Dynamax (20). Each gets a row in `docs/update.md`.
 - **Batches 3 onward each wait on your signature approval**, so I will propose the concepts for the next batch while the current one is in review.

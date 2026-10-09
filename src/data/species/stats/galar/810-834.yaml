@@ -1,0 +1,164 @@
+Grookey:
+  Grookey:
+    stats: { HP: 50, Attack: 65, Defense: 50, SpecialAttack: 40, SpecialDefense: 40, Speed: 65 }
+    catch-rate: 45
+    height: 0.3
+    weight: 5
+    gender: [7, 1]
+  Thwackey:
+    stats: { HP: 70, Attack: 85, Defense: 70, SpecialAttack: 55, SpecialDefense: 60, Speed: 80 }
+    catch-rate: 45
+    height: 0.7
+    weight: 14
+    gender: [7, 1]
+  Rillaboom:
+    stats: { HP: 100, Attack: 125, Defense: 90, SpecialAttack: 60, SpecialDefense: 70, Speed: 85 }
+    catch-rate: 45
+    height: 2.1
+    weight: 90
+    gender: [7, 1]
+Scorbunny:
+  Scorbunny:
+    stats: { HP: 50, Attack: 71, Defense: 40, SpecialAttack: 40, SpecialDefense: 40, Speed: 69 }
+    catch-rate: 45
+    height: 0.3
+    weight: 4.5
+    gender: [7, 1]
+  Raboot:
+    stats: { HP: 65, Attack: 86, Defense: 60, SpecialAttack: 55, SpecialDefense: 60, Speed: 94 }
+    catch-rate: 45
+    height: 0.6
+    weight: 9
+    gender: [7, 1]
+  Cinderace:
+    stats: { HP: 80, Attack: 116, Defense: 75, SpecialAttack: 65, SpecialDefense: 75, Speed: 119 }
+    catch-rate: 45
+    height: 1.4
+    weight: 33
+    gender: [7, 1]
+Sobble:
+  Sobble:
+    stats: { HP: 50, Attack: 40, Defense: 40, SpecialAttack: 70, SpecialDefense: 40, Speed: 70 }
+    catch-rate: 45
+    height: 0.3
+    weight: 4
+    gender: [7, 1]
+  Drizzile:
+    stats: { HP: 65, Attack: 60, Defense: 55, SpecialAttack: 95, SpecialDefense: 55, Speed: 90 }
+    catch-rate: 45
+    height: 0.7
+    weight: 11.5
+    gender: [7, 1]
+  Inteleon:
+    stats: { HP: 70, Attack: 85, Defense: 65, SpecialAttack: 125, SpecialDefense: 65, Speed: 120 }
+    catch-rate: 45
+    height: 1.9
+    weight: 45.2
+    gender: [7, 1]
+Skwovet:
+  Skwovet:
+    stats: { HP: 70, Attack: 55, Defense: 55, SpecialAttack: 35, SpecialDefense: 35, Speed: 25 }
+    catch-rate: 255
+    height: 0.3
+    weight: 2.5
+    gender: [1, 1]
+  Greedent:
+    stats: { HP: 120, Attack: 95, Defense: 95, SpecialAttack: 55, SpecialDefense: 75, Speed: 20 }
+    catch-rate: 90
+    height: 0.6
+    weight: 6
+    gender: [1, 1]
+Rookidee:
+  Rookidee:
+    stats: { HP: 38, Attack: 47, Defense: 35, SpecialAttack: 33, SpecialDefense: 35, Speed: 57 }
+    catch-rate: 255
+    height: 0.2
+    weight: 1.8
+    gender: [1, 1]
+    egg-cycles: 15
+  Corvisquire:
+    stats: { HP: 68, Attack: 67, Defense: 55, SpecialAttack: 43, SpecialDefense: 55, Speed: 77 }
+    catch-rate: 120
+    height: 0.8
+    weight: 16
+    gender: [1, 1]
+  Corviknight:
+    stats: { HP: 98, Attack: 87, Defense: 105, SpecialAttack: 53, SpecialDefense: 85, Speed: 67 }
+    catch-rate: 45
+    height: 2.2
+    weight: 75
+    gender: [1, 1]
+Blipbug:
+  Blipbug:
+    stats: { HP: 25, Attack: 20, Defense: 20, SpecialAttack: 25, SpecialDefense: 45, Speed: 45 }
+    catch-rate: 255
+    height: 0.4
+    weight: 8
+    gender: [1, 1]
+    egg-cycles: 15
+  Dottler:
+    stats: { HP: 50, Attack: 35, Defense: 80, SpecialAttack: 50, SpecialDefense: 90, Speed: 30 }
+    catch-rate: 120
+    height: 0.4
+    weight: 19.5
+    gender: [1, 1]
+  Orbeetle:
+    stats: { HP: 60, Attack: 45, Defense: 110, SpecialAttack: 80, SpecialDefense: 120, Speed: 90 }
+    catch-rate: 45
+    height: 0.4
+    weight: 40.8
+    gender: [1, 1]
+Nickit:
+  Nickit:
+    stats: { HP: 40, Attack: 28, Defense: 28, SpecialAttack: 47, SpecialDefense: 52, Speed: 50 }
+    catch-rate: 255
+    height: 0.6
+    weight: 8.9
+    gender: [1, 1]
+    egg-cycles: 15
+  Thievul:
+    stats: { HP: 70, Attack: 58, Defense: 58, SpecialAttack: 87, SpecialDefense: 92, Speed: 90 }
+    catch-rate: 127
+    height: 1.2
+    weight: 19.9
+    gender: [1, 1]
+Gossifleur:
+  Gossifleur:
+    stats: { HP: 40, Attack: 40, Defense: 60, SpecialAttack: 40, SpecialDefense: 60, Speed: 10 }
+    catch-rate: 190
+    height: 0.4
+    weight: 2.2
+    gender: [1, 1]
+  Eldegoss:
+    stats: { HP: 60, Attack: 50, Defense: 90, SpecialAttack: 80, SpecialDefense: 120, Speed: 60 }
+    catch-rate: 75
+    height: 0.5
+    weight: 2.5
+    gender: [1, 1]
+Wooloo:
+  Wooloo:
+    stats: { HP: 42, Attack: 40, Defense: 55, SpecialAttack: 40, SpecialDefense: 45, Speed: 48 }
+    catch-rate: 255
+    height: 0.6
+    weight: 6
+    gender: [1, 1]
+    egg-cycles: 15
+  Dubwool:
+    stats: { HP: 72, Attack: 80, Defense: 100, SpecialAttack: 60, SpecialDefense: 90, Speed: 88 }
+    catch-rate: 127
+    height: 1.3
+    weight: 43
+    gender: [1, 1]
+Chewtle:
+  Chewtle:
+    stats: { HP: 50, Attack: 64, Defense: 50, SpecialAttack: 38, SpecialDefense: 38, Speed: 44 }
+    catch-rate: 255
+    height: 0.3
+    weight: 8.5
+    gender: [1, 1]
+  Drednaw:
+    stats: { HP: 90, Attack: 115, Defense: 90, SpecialAttack: 48, SpecialDefense: 68, Speed: 74 }
+    catch-rate: 75
+    height: 1
+    weight: 115.5
+    gender: [1, 1]

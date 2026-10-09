@@ -1,4 +1,4 @@
-import { AttackPriority, EventPriority } from '../../../core/event-emitter';
+import { EventPriority } from '../../../core/event-emitter';
 import { Stages, Stats } from '../../../data/constants/stats';
 import {
   TYPE_EFFECTIVENESS,
@@ -22,6 +22,7 @@ import {
   createDrizzleAbility,
   createLimberAbility,
   createMultiscaleAbility,
+  createProteanAbility,
   createToughClawsAbility,
   createWaterAbsorbAbility,
 } from '../__create';
@@ -358,37 +359,8 @@ const eeveeToDragonite = [
   // Dragonite
   createMultiscaleAbility(Abilities.Multiscale),
 
-  /**
-   * Protean: the holder takes the type of whatever it is about to use,
-   * so everything it casts is same-type.
-   *
-   * Set before the move resolves, which is what puts the new type in
-   * reach of its own STAB
-   * https://bulbapedia.bulbagarden.net/wiki/Protean_(Ability)
-   */
-  createAbility(Abilities.Protean, (battle) =>
-    battle.on(BattleEvents.UnitTriggerMove, AttackPriority.Pre, (event) => {
-      if (!event.source.hasAbility(Abilities.Protean)) {
-        return;
-      }
-
-      const type = event.source.checkMoveType(event.move, event.target);
-
-      if (
-        type === Types.Unknown ||
-        (event.source.types.size === 1 && event.source.types.has(type))
-      ) {
-        return;
-      }
-
-      event.source.triggerAbility(Abilities.Protean);
-
-      for (const worn of [...event.source.types]) {
-        event.source.removeType(worn);
-      }
-      event.source.addType(type);
-    }),
-  ),
+  // https://bulbapedia.bulbagarden.net/wiki/Protean_(Ability)
+  createProteanAbility(Abilities.Protean),
 ];
 
 export default eeveeToDragonite;

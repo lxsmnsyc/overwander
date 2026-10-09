@@ -16,6 +16,7 @@ type Schema = Record<string, unknown>;
 const DEFINITIONS: [enumName: string, definition: string][] = [
   ['Species', 'species'],
   ['Genders', 'gender'],
+  ['Natures', 'nature'],
   ['Habitat', 'habitat'],
   ['EvolutionMethod', 'evolution-method'],
   ['Moves', 'move'],
@@ -114,6 +115,7 @@ const EVOLUTION = part(
     time: names('time-of-day', 'The hours it evolves in'),
     gender: described(name('gender'), 'The gender that evolves'),
     move: described(name('move'), 'The move it has to know'),
+    natures: names('nature', 'The natures that evolve this way, where the nature decides'),
     compare: part(
       {
         stat: name('stat'),

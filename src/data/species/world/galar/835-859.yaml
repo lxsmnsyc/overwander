@@ -1,0 +1,232 @@
+Yamper:
+  Yamper:
+    types: [Electric]
+    egg-groups: [Field]
+    biomes: [Grassland, Steppe]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Boltund
+        method: [Level]
+        level: 25
+  Boltund:
+    types: [Electric]
+    egg-groups: [Field]
+    biomes: [Grassland, Steppe]
+    active: [Morning, Day]
+    evolves-from: Yamper
+Applin:
+  Applin:
+    types: [Grass, Dragon]
+    egg-groups: [Grass, Dragon]
+    biomes: [TemperateForest, Woodland]
+    active: [Morning, Day]
+    # Dipplin grows out of it in a later generation
+    evolves-into:
+      - species: Flapple
+        method: [UsedItem]
+        item: TartApple
+      - species: Appletun
+        method: [UsedItem]
+        item: SweetApple
+    awaiting: evolution
+  Flapple:
+    types: [Grass, Dragon]
+    egg-groups: [Grass, Dragon]
+    biomes: [TemperateForest, Woodland]
+    active: [Morning, Day]
+    evolves-from: Applin
+  Appletun:
+    types: [Grass, Dragon]
+    egg-groups: [Grass, Dragon]
+    biomes: [TemperateForest, Woodland]
+    active: [Morning, Day]
+    evolves-from: Applin
+Silicobra:
+  Silicobra:
+    types: [Ground]
+    egg-groups: [Field, Dragon]
+    biomes: [Desert, Badlands]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Sandaconda
+        method: [Level]
+        level: 36
+  Sandaconda:
+    types: [Ground]
+    egg-groups: [Field, Dragon]
+    biomes: [Desert, Badlands]
+    active: [Morning, Day]
+    evolves-from: Silicobra
+Cramorant:
+  Cramorant:
+    types: [Flying, Water]
+    egg-groups: [Water1, Flying]
+    biomes: [RockyCoast, Beach, Ocean]
+    active: any
+  CramorantGulping:
+    types: [Flying, Water]
+    egg-groups: [Water1, Flying]
+    active: any
+    # The catch it comes back up with after a dive, so it is never met
+    # this way. Drawn as Cramorant until SpriteCollab draws the form
+    base-form: false
+    worn: true
+  CramorantGorging:
+    types: [Flying, Water]
+    egg-groups: [Water1, Flying]
+    active: any
+    # The big catch, which only a badly hurt Cramorant dives for
+    base-form: false
+    worn: true
+Arrokuda:
+  Arrokuda:
+    types: [Water]
+    egg-groups: [Water2]
+    habitat: Water
+    biomes: [Ocean, RockyCoast, KelpForest]
+    active: any
+    evolves-into:
+      - species: Barraskewda
+        method: [Level]
+        level: 26
+  Barraskewda:
+    types: [Water]
+    egg-groups: [Water2]
+    habitat: Water
+    biomes: [Ocean, RockyCoast, KelpForest]
+    active: any
+    evolves-from: Arrokuda
+Toxel:
+  Toxel:
+    types: [Electric, Poison]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    # Never met in the wild: it hatches from a Toxtricity's egg, and the
+    # nature it is born with decides which Toxtricity it grows into
+    evolves-into:
+      - species: Toxtricity
+        method: [Level]
+        level: 30
+        natures: [Hardy, Brave, Adamant, Naughty, Docile, Impish, Lax, Hasty, Jolly, Naive, Rash, Sassy, Quirky]
+      - species: ToxtricityLowKey
+        method: [Level]
+        level: 30
+        natures: [Lonely, Bold, Relaxed, Timid, Serious, Modest, Mild, Quiet, Bashful, Calm, Gentle, Careful]
+    rank: baby
+  Toxtricity:
+    types: [Electric, Poison]
+    egg-groups: [HumanLike]
+    biomes: [Swamp, Bog]
+    active: [Evening, Night]
+    evolves-from: Toxel
+  ToxtricityLowKey:
+    types: [Electric, Poison]
+    egg-groups: [HumanLike]
+    biomes: [Swamp, Bog]
+    active: [Evening, Night]
+    # The calm key, its own pokemon rather than a coat: born Minus where
+    # the Amped one is born Plus
+    base-form: false
+    evolves-from: Toxel
+Sizzlipede:
+  Sizzlipede:
+    types: [Fire, Bug]
+    egg-groups: [Bug]
+    biomes: [Volcano, Mountain]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Centiskorch
+        method: [Level]
+        level: 28
+  Centiskorch:
+    types: [Fire, Bug]
+    egg-groups: [Bug]
+    biomes: [Volcano, Mountain]
+    active: [Evening, Night]
+    evolves-from: Sizzlipede
+Clobbopus:
+  Clobbopus:
+    types: [Fighting]
+    egg-groups: [Water1, HumanLike]
+    habitat: Amphibious
+    biomes: [RockyCoast, Beach]
+    active: any
+    evolves-into:
+      - species: Grapploct
+        method: [KnownMove]
+        move: Taunt
+  Grapploct:
+    types: [Fighting]
+    egg-groups: [Water1, HumanLike]
+    habitat: Amphibious
+    biomes: [RockyCoast, Beach]
+    active: any
+    evolves-from: Clobbopus
+Sinistea:
+  Sinistea:
+    types: [Ghost]
+    egg-groups: [Mineral, Amorphous]
+    biomes: [TemperateRainforest, Woodland]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Polteageist
+        method: [UsedItem]
+        item: CrackedPot
+  Polteageist:
+    types: [Ghost]
+    egg-groups: [Mineral, Amorphous]
+    biomes: [TemperateRainforest, Woodland]
+    active: [Evening, Night]
+    evolves-from: Sinistea
+Hatenna:
+  Hatenna:
+    types: [Psychic]
+    egg-groups: [Fairy]
+    biomes: [TemperateRainforest, TemperateForest]
+    active: any
+    evolves-into:
+      - species: Hattrem
+        method: [Level]
+        level: 32
+  Hattrem:
+    types: [Psychic]
+    egg-groups: [Fairy]
+    biomes: [TemperateRainforest, TemperateForest]
+    active: any
+    evolves-from: Hatenna
+    evolves-into:
+      - species: Hatterene
+        method: [Level]
+        level: 42
+  Hatterene:
+    types: [Psychic, Fairy]
+    egg-groups: [Fairy]
+    biomes: [TemperateRainforest, TemperateForest]
+    active: any
+    evolves-from: Hattrem
+Impidimp:
+  Impidimp:
+    types: [Dark, Fairy]
+    egg-groups: [Fairy, HumanLike]
+    biomes: [TemperateRainforest, Woodland]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Morgrem
+        method: [Level]
+        level: 32
+  Morgrem:
+    types: [Dark, Fairy]
+    egg-groups: [Fairy, HumanLike]
+    biomes: [TemperateRainforest, Woodland]
+    active: [Evening, Night]
+    evolves-from: Impidimp
+    evolves-into:
+      - species: Grimmsnarl
+        method: [Level]
+        level: 42
+  Grimmsnarl:
+    types: [Dark, Fairy]
+    egg-groups: [Fairy, HumanLike]
+    biomes: [TemperateRainforest, Woodland]
+    active: [Evening, Night]
+    evolves-from: Morgrem

@@ -1,0 +1,35 @@
+Grookey:
+  Grookey: { name: Grookey, category: Chimp Pokemon }
+  Thwackey: { name: Thwackey, category: Beat Pokemon }
+  Rillaboom: { name: Rillaboom, category: Drummer Pokemon }
+Scorbunny:
+  Scorbunny: { name: Scorbunny, category: Rabbit Pokemon }
+  Raboot: { name: Raboot, category: Rabbit Pokemon }
+  Cinderace: { name: Cinderace, category: Striker Pokemon }
+Sobble:
+  Sobble: { name: Sobble, category: Water Lizard Pokemon }
+  Drizzile: { name: Drizzile, category: Water Lizard Pokemon }
+  Inteleon: { name: Inteleon, category: Secret Agent Pokemon }
+Skwovet:
+  Skwovet: { name: Skwovet, category: Cheeky Pokemon }
+  Greedent: { name: Greedent, category: Greedy Pokemon }
+Rookidee:
+  Rookidee: { name: Rookidee, category: Tiny Bird Pokemon }
+  Corvisquire: { name: Corvisquire, category: Raven Pokemon }
+  Corviknight: { name: Corviknight, category: Raven Pokemon }
+Blipbug:
+  Blipbug: { name: Blipbug, category: Larva Pokemon }
+  Dottler: { name: Dottler, category: Radome Pokemon }
+  Orbeetle: { name: Orbeetle, category: Seven Spot Pokemon }
+Nickit:
+  Nickit: { name: Nickit, category: Fox Pokemon }
+  Thievul: { name: Thievul, category: Fox Pokemon }
+Gossifleur:
+  Gossifleur: { name: Gossifleur, category: Flowering Pokemon }
+  Eldegoss: { name: Eldegoss, category: Cotton Bloom Pokemon }
+Wooloo:
+  Wooloo: { name: Wooloo, category: Sheep Pokemon }
+  Dubwool: { name: Dubwool, category: Sheep Pokemon }
+Chewtle:
+  Chewtle: { name: Chewtle, category: Snapping Pokemon }
+  Drednaw: { name: Drednaw, category: Bite Pokemon }

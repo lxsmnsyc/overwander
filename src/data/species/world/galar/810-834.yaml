@@ -1,0 +1,215 @@
+Grookey:
+  Grookey:
+    types: [Grass]
+    egg-groups: [Field, Grass]
+    biomes: [TemperateForest, Woodland]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Thwackey
+        method: [Level]
+        level: 16
+  Thwackey:
+    types: [Grass]
+    egg-groups: [Field, Grass]
+    biomes: [TemperateForest, Woodland]
+    active: [Morning, Day]
+    evolves-from: Grookey
+    evolves-into:
+      - species: Rillaboom
+        method: [Level]
+        level: 35
+  Rillaboom:
+    types: [Grass]
+    egg-groups: [Field, Grass]
+    biomes: [TemperateForest, Woodland]
+    active: [Morning, Day]
+    evolves-from: Thwackey
+Scorbunny:
+  Scorbunny:
+    types: [Fire]
+    egg-groups: [Field, HumanLike]
+    biomes: [Grassland, Shrubland]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Raboot
+        method: [Level]
+        level: 16
+  Raboot:
+    types: [Fire]
+    egg-groups: [Field, HumanLike]
+    biomes: [Grassland, Shrubland]
+    active: [Morning, Day]
+    evolves-from: Scorbunny
+    evolves-into:
+      - species: Cinderace
+        method: [Level]
+        level: 35
+  Cinderace:
+    types: [Fire]
+    egg-groups: [Field, HumanLike]
+    biomes: [Grassland, Shrubland]
+    active: [Morning, Day]
+    evolves-from: Raboot
+Sobble:
+  Sobble:
+    types: [Water]
+    egg-groups: [Water1, Field]
+    habitat: Amphibious
+    biomes: [Bog, TemperateRainforest]
+    active: any
+    evolves-into:
+      - species: Drizzile
+        method: [Level]
+        level: 16
+  Drizzile:
+    types: [Water]
+    egg-groups: [Water1, Field]
+    habitat: Amphibious
+    biomes: [Bog, TemperateRainforest]
+    active: any
+    evolves-from: Sobble
+    evolves-into:
+      - species: Inteleon
+        method: [Level]
+        level: 35
+  Inteleon:
+    types: [Water]
+    egg-groups: [Water1, Field]
+    habitat: Amphibious
+    biomes: [Bog, TemperateRainforest]
+    active: any
+    evolves-from: Drizzile
+Skwovet:
+  Skwovet:
+    types: [Normal]
+    egg-groups: [Field]
+    biomes: [Woodland, TemperateForest, Grassland]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Greedent
+        method: [Level]
+        level: 24
+  Greedent:
+    types: [Normal]
+    egg-groups: [Field]
+    biomes: [Woodland, TemperateForest, Grassland]
+    active: [Morning, Day]
+    evolves-from: Skwovet
+Rookidee:
+  Rookidee:
+    types: [Flying]
+    egg-groups: [Flying]
+    biomes: [Grassland, Woodland, TemperateForest]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Corvisquire
+        method: [Level]
+        level: 18
+  Corvisquire:
+    types: [Flying]
+    egg-groups: [Flying]
+    biomes: [Grassland, Woodland, TemperateForest]
+    active: [Morning, Day]
+    evolves-from: Rookidee
+    evolves-into:
+      - species: Corviknight
+        method: [Level]
+        level: 38
+  Corviknight:
+    types: [Flying, Steel]
+    egg-groups: [Flying]
+    biomes: [Grassland, Woodland, TemperateForest]
+    active: [Morning, Day]
+    evolves-from: Corvisquire
+Blipbug:
+  Blipbug:
+    types: [Bug]
+    egg-groups: [Bug]
+    biomes: [TemperateForest, Woodland]
+    active: any
+    evolves-into:
+      - species: Dottler
+        method: [Level]
+        level: 10
+  Dottler:
+    types: [Bug, Psychic]
+    egg-groups: [Bug]
+    biomes: [TemperateForest, Woodland]
+    active: any
+    evolves-from: Blipbug
+    evolves-into:
+      - species: Orbeetle
+        method: [Level]
+        level: 30
+  Orbeetle:
+    types: [Bug, Psychic]
+    egg-groups: [Bug]
+    biomes: [TemperateForest, Woodland]
+    active: any
+    evolves-from: Dottler
+Nickit:
+  Nickit:
+    types: [Dark]
+    egg-groups: [Field]
+    biomes: [Woodland, TemperateForest, Grassland]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Thievul
+        method: [Level]
+        level: 18
+  Thievul:
+    types: [Dark]
+    egg-groups: [Field]
+    biomes: [Woodland, TemperateForest, Grassland]
+    active: [Evening, Night]
+    evolves-from: Nickit
+Gossifleur:
+  Gossifleur:
+    types: [Grass]
+    egg-groups: [Grass]
+    biomes: [Grassland, Shrubland]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Eldegoss
+        method: [Level]
+        level: 20
+  Eldegoss:
+    types: [Grass]
+    egg-groups: [Grass]
+    biomes: [Grassland, Shrubland]
+    active: [Morning, Day]
+    evolves-from: Gossifleur
+Wooloo:
+  Wooloo:
+    types: [Normal]
+    egg-groups: [Field]
+    biomes: [Grassland, Steppe]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Dubwool
+        method: [Level]
+        level: 24
+  Dubwool:
+    types: [Normal]
+    egg-groups: [Field]
+    biomes: [Grassland, Steppe]
+    active: [Morning, Day]
+    evolves-from: Wooloo
+Chewtle:
+  Chewtle:
+    types: [Water]
+    egg-groups: [Monster, Water1]
+    habitat: Amphibious
+    biomes: [Bog, Swamp, TemperateRainforest]
+    active: any
+    evolves-into:
+      - species: Drednaw
+        method: [Level]
+        level: 22
+  Drednaw:
+    types: [Water, Rock]
+    egg-groups: [Monster, Water1]
+    habitat: Amphibious
+    biomes: [Bog, Swamp, TemperateRainforest]
+    active: any
+    evolves-from: Chewtle

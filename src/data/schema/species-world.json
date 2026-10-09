@@ -113,6 +113,13 @@
                 "$ref": "names.json#/definitions/move",
                 "description": "The move it has to know"
               },
+              "natures": {
+                "type": "array",
+                "items": {
+                  "$ref": "names.json#/definitions/nature"
+                },
+                "description": "The natures that evolve this way, where the nature decides"
+              },
               "compare": {
                 "type": "object",
                 "properties": {

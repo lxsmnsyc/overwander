@@ -1,0 +1,12 @@
+Dreepy:
+  Dreepy:
+    abilities: [ClearBody, Infiltrator]
+    hidden: [CursedBody]
+  Drakloak:
+    abilities: [ClearBody, Infiltrator]
+    hidden: [CursedBody]
+  Dragapult:
+    abilities: [ClearBody, Infiltrator]
+    # Levitate is this registry's rather than the mainline's, filling it to
+    # four: it flies, and the Dreepy it carries never touch the ground
+    hidden: [CursedBody, Levitate]

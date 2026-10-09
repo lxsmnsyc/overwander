@@ -336,6 +336,12 @@ prized:
   # them: finding a mint is ordinary, finding the one a player came
   # for is not, and the chef is who they go to when it matters
   mints: 1
+  # Galar's fossil halves, on the whole fossils' terms. Written here
+  # rather than beside them so the band's order stays as it was
+  FossilizedBird: 8
+  FossilizedFish: 8
+  FossilizedDrake: 8
+  FossilizedDino: 8
 special:
   MasterBall: 10
   ShinyCharm: 10

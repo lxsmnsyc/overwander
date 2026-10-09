@@ -49,3 +49,24 @@ ReaperCloth:
 DubiousDisc:
   name: Dubious Disc
   description: A Porygon2 traded holding it comes back wrong, and faster for it.
+StrawberrySweet:
+  name: Strawberry Sweet
+  description: A Milcery that evolves holding it becomes an Alcremie with a Strawberry Sweet.
+BerrySweet:
+  name: Berry Sweet
+  description: A Milcery that evolves holding it becomes an Alcremie with a Berry Sweet.
+LoveSweet:
+  name: Love Sweet
+  description: A Milcery that evolves holding it becomes an Alcremie with a Love Sweet.
+StarSweet:
+  name: Star Sweet
+  description: A Milcery that evolves holding it becomes an Alcremie with a Star Sweet.
+CloverSweet:
+  name: Clover Sweet
+  description: A Milcery that evolves holding it becomes an Alcremie with a Clover Sweet.
+FlowerSweet:
+  name: Flower Sweet
+  description: A Milcery that evolves holding it becomes an Alcremie with a Flower Sweet.
+RibbonSweet:
+  name: Ribbon Sweet
+  description: A Milcery that evolves holding it becomes an Alcremie with a Ribbon Sweet.

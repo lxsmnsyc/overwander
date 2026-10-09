@@ -682,11 +682,34 @@ function sheetOf(species: number, dex: number): Image | null {
   if (region == null) {
     return null;
   }
+  // A pokemon drawn as another until it has a sheet of its own is
+  // painted from the sheet it is drawn as
+  const drawn = standIns.get(species) ?? species;
+
   try {
-    return decode(readFileSync(join(SPRITE_ROOT, region, String(species), 'regular.png')));
+    return decode(readFileSync(join(SPRITE_ROOT, region, String(drawn), 'regular.png')));
   } catch {
     return null;
   }
+}
+
+/** Which sheet each stand-in in `species-sprites.ts` is drawn as, by id */
+function standInsOf(ids: Map<string, number>): Map<number, number> {
+  const source = readFileSync('src/canvas/species-sprites.ts', 'utf8');
+  const table = source.slice(source.indexOf('const STAND_INS'));
+  const found = new Map<number, number>();
+
+  for (const [, shape, sheet] of table
+    .slice(0, table.indexOf(']);'))
+    .matchAll(/\[Species\.(\w+), Species\.(\w+)\]/g)) {
+    const from = ids.get(shape);
+    const to = ids.get(sheet);
+
+    if (from != null && to != null) {
+      found.set(from, to);
+    }
+  }
+  return found;
 }
 
 /** One sheet of candies, written out. */
@@ -750,6 +773,7 @@ function write(region: string, candies: Candy[]): void {
 }
 
 const species = idsOf(IDS.species, 'Species');
+const standIns = standInsOf(species);
 const families = idsOf(IDS.families, 'Families');
 /** The enum's own name for each family, which is the pokemon it is called after */
 const familyKeys = new Map([...families].map(([key, id]) => [id, key]));

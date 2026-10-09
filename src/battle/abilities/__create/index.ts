@@ -11,16 +11,23 @@ export {
   getAbilityHolders,
 } from './create';
 export { createFeedScoring, createHealFeedScoring, createStageFeedScoring } from './scoring';
-export { createAbsorbStageAbility, createClearBodyAbility, createRodAbility } from './absorb';
+export {
+  createAbsorbStageAbility,
+  createClearBodyAbility,
+  createRodAbility,
+  createStalwartAbility,
+} from './absorb';
 export { movesFlagged, movesOfType } from './matchers';
 export type { AbsorbMatcher } from './matchers';
 export {
   ABSORB_HEAL_FRACTION,
+  createBatteryAbility,
   createBlazeAbility,
   createHugePowerAbility,
   createStatusBoostAbility,
   createHydrationAbility,
   createPolarityAbility,
+  createProteanAbility,
   createWaterAbsorbAbility,
   createToughClawsAbility,
   createTypeShiftAbility,
@@ -30,6 +37,7 @@ export {
   CONTACT_RECOIL_FRACTION,
   createContactRecoilAbility,
   createFilterAbility,
+  createFurCoatAbility,
   createGooeyAbility,
   createKeenEyeAbility,
   createLimberAbility,

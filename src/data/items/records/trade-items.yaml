@@ -142,3 +142,48 @@ DubiousDisc:
   flags: [Holdable, Marketable]
   buy: 3000
   sell: 1500
+
+# The Sweets a Milcery evolves holding, one per decoration on the
+# Alcremie it becomes. Stocked, since which one is a choice a player makes.
+StrawberrySweet:
+  type: Evolution
+  icon: evolutions/strawberry-sweet
+  flags: [Holdable, Marketable]
+  buy: 3000
+  sell: 1500
+BerrySweet:
+  type: Evolution
+  icon: evolutions/berry-sweet
+  flags: [Holdable, Marketable]
+  buy: 3000
+  sell: 1500
+LoveSweet:
+  type: Evolution
+  icon: evolutions/love-sweet
+  flags: [Holdable, Marketable]
+  buy: 3000
+  sell: 1500
+StarSweet:
+  type: Evolution
+  icon: evolutions/star-sweet
+  flags: [Holdable, Marketable]
+  buy: 3000
+  sell: 1500
+CloverSweet:
+  type: Evolution
+  icon: evolutions/clover-sweet
+  flags: [Holdable, Marketable]
+  buy: 3000
+  sell: 1500
+FlowerSweet:
+  type: Evolution
+  icon: evolutions/flower-sweet
+  flags: [Holdable, Marketable]
+  buy: 3000
+  sell: 1500
+RibbonSweet:
+  type: Evolution
+  icon: evolutions/ribbon-sweet
+  flags: [Holdable, Marketable]
+  buy: 3000
+  sell: 1500

@@ -1160,6 +1160,15 @@ export const enum Items {
 
   /** The relic Galar's mythical leaves behind it: the scarf the Zarude that raised a child wears */
   DadasScarf = 599,
+
+  /**
+   * Galar's fossils, each half a pokemon: a top (the bird or the fish)
+   * and a bottom (the drake or the dino), revived as a pair
+   */
+  FossilizedBird = 600,
+  FossilizedFish = 601,
+  FossilizedDrake = 602,
+  FossilizedDino = 603,
 }
 
 /**

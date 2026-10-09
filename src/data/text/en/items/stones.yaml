@@ -34,3 +34,12 @@ RotomCatalog:
 ZygardeCube:
   name: Zygarde Cube
   description: Puts the Zygarde it is used on into its other shape. Spent on each change.
+TartApple:
+  name: Tart Apple
+  description: An Applin it is used on grows wings and becomes a Flapple.
+SweetApple:
+  name: Sweet Apple
+  description: An Applin it is used on fills out and becomes an Appletun.
+CrackedPot:
+  name: Cracked Pot
+  description: A Sinistea it is used on moves into the pot and becomes a Polteageist.

@@ -1,3 +1,4 @@
+import type Natures from '../ids/natures';
 import { STAT_ORDER, type Stats } from '../constants/stats';
 import type { Types } from '../constants/types';
 import type Abilities from '../ids/abilities';
@@ -66,6 +67,13 @@ export interface EvolutionData {
    * fallback
    */
   compare?: StatComparison;
+  /**
+   * The natures the evolution is open to. Toxel is the only line that
+   * asks: the nature it was born with decides whether it grows into
+   * the Amped Toxtricity or the Low Key one. Like gender it never
+   * changes, so a branch it cannot take is left out rather than shown
+   */
+  natures?: ReadonlySet<Natures>;
   /**
    * Left behind beside whichever evolution is taken, rather than taken
    * instead of one: a Nincada that becomes a Ninjask with a Poke Ball in

@@ -12,6 +12,7 @@ import { Types } from '../constants/types';
 import { Stages, Stats } from '../constants/stats';
 import { Statuses, TeamStatuses } from './status';
 import Regions from './regions';
+import Natures from './natures';
 import Awards from './awards';
 import Lairs from './lairs';
 import TrainerClass from './trainers';
@@ -1220,7 +1221,15 @@ export const SPECIES_IDS = {
   CramorantGulping: Species.CramorantGulping,
   CramorantGorging: Species.CramorantGorging,
   ToxtricityLowKey: Species.ToxtricityLowKey,
+  AlcremieBerry: Species.AlcremieBerry,
+  AlcremieLove: Species.AlcremieLove,
+  AlcremieStar: Species.AlcremieStar,
+  AlcremieClover: Species.AlcremieClover,
+  AlcremieFlower: Species.AlcremieFlower,
+  AlcremieRibbon: Species.AlcremieRibbon,
+  FalinksBrass: Species.FalinksBrass,
   EiscueNoice: Species.EiscueNoice,
+  IndeedeeFemale: Species.IndeedeeFemale,
   MorpekoHangry: Species.MorpekoHangry,
   ZacianCrowned: Species.ZacianCrowned,
   ZamazentaCrowned: Species.ZamazentaCrowned,
@@ -2927,6 +2936,41 @@ export const ABILITY_IDS = {
   UmbralStrike: Abilities.UmbralStrike,
   IonField: Abilities.IonField,
   MetalEater: Abilities.MetalEater,
+  DrumCue: Abilities.DrumCue,
+  KickCue: Abilities.KickCue,
+  ScopeCue: Abilities.ScopeCue,
+  PantryRaid: Abilities.PantryRaid,
+  SteelEscort: Abilities.SteelEscort,
+  EarlyWarning: Abilities.EarlyWarning,
+  Fence: Abilities.Fence,
+  CottonCradle: Abilities.CottonCradle,
+  Shorn: Abilities.Shorn,
+  ShellSnap: Abilities.ShellSnap,
+  Zoomies: Abilities.Zoomies,
+  SharedHarvest: Abilities.SharedHarvest,
+  CoilBurrow: Abilities.CoilBurrow,
+  ThroatPouch: Abilities.ThroatPouch,
+  Spearhead: Abilities.Spearhead,
+  VenomCharge: Abilities.VenomCharge,
+  CinderCoils: Abilities.CinderCoils,
+  ArmLock: Abilities.ArmLock,
+  LiveSpines: Abilities.LiveSpines,
+  LastPour: Abilities.LastPour,
+  SilentWrath: Abilities.SilentWrath,
+  DespairFeast: Abilities.DespairFeast,
+  Sugarcoat: Abilities.Sugarcoat,
+  MirrorScales: Abilities.MirrorScales,
+  ChippedIce: Abilities.ChippedIce,
+  RankAndFile: Abilities.RankAndFile,
+  Attendant: Abilities.Attendant,
+  HangrySpark: Abilities.HangrySpark,
+  Overhang: Abilities.Overhang,
+  DreepyLaunch: Abilities.DreepyLaunch,
+  Solstice: Abilities.Solstice,
+  Boltdrake: Abilities.Boltdrake,
+  Boltfrost: Abilities.Boltfrost,
+  Gilldrake: Abilities.Gilldrake,
+  Gillfrost: Abilities.Gillfrost,
 } as const satisfies Record<string, Abilities>;
 
 export const ITEM_IDS = {
@@ -3530,6 +3574,10 @@ export const ITEM_IDS = {
   BlackAugurite: Items.BlackAugurite,
   PeatBlock: Items.PeatBlock,
   DadasScarf: Items.DadasScarf,
+  FossilizedBird: Items.FossilizedBird,
+  FossilizedFish: Items.FossilizedFish,
+  FossilizedDrake: Items.FossilizedDrake,
+  FossilizedDino: Items.FossilizedDino,
 } as const satisfies Record<string, Items>;
 
 export const ITEM_TYPE_IDS = {
@@ -4213,6 +4261,34 @@ export const REGION_IDS = {
   Galar: Regions.Galar,
   Hisui: Regions.Hisui,
 } as const satisfies Record<string, Regions>;
+
+export const NATURE_IDS = {
+  Hardy: Natures.Hardy,
+  Lonely: Natures.Lonely,
+  Brave: Natures.Brave,
+  Adamant: Natures.Adamant,
+  Naughty: Natures.Naughty,
+  Bold: Natures.Bold,
+  Docile: Natures.Docile,
+  Relaxed: Natures.Relaxed,
+  Impish: Natures.Impish,
+  Lax: Natures.Lax,
+  Timid: Natures.Timid,
+  Hasty: Natures.Hasty,
+  Serious: Natures.Serious,
+  Jolly: Natures.Jolly,
+  Naive: Natures.Naive,
+  Modest: Natures.Modest,
+  Mild: Natures.Mild,
+  Quiet: Natures.Quiet,
+  Bashful: Natures.Bashful,
+  Rash: Natures.Rash,
+  Calm: Natures.Calm,
+  Gentle: Natures.Gentle,
+  Sassy: Natures.Sassy,
+  Careful: Natures.Careful,
+  Quirky: Natures.Quirky,
+} as const satisfies Record<string, Natures>;
 
 export const AWARD_IDS = {
   BoulderBadge: Awards.BoulderBadge,

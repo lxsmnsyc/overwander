@@ -1,0 +1,26 @@
+Dreepy:
+  Dreepy:
+    types: [Dragon, Ghost]
+    egg-groups: [Amorphous, Dragon]
+    biomes: [TemperateRainforest, Mountain]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Drakloak
+        method: [Level]
+        level: 50
+  Drakloak:
+    types: [Dragon, Ghost]
+    egg-groups: [Amorphous, Dragon]
+    biomes: [TemperateRainforest, Mountain]
+    active: [Evening, Night]
+    evolves-from: Dreepy
+    evolves-into:
+      - species: Dragapult
+        method: [Level]
+        level: 60
+  Dragapult:
+    types: [Dragon, Ghost]
+    egg-groups: [Amorphous, Dragon]
+    biomes: [TemperateRainforest, Mountain]
+    active: [Evening, Night]
+    evolves-from: Drakloak

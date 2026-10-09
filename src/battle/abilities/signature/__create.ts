@@ -1663,11 +1663,12 @@ export const TUFT_THRESHOLD = 1 / 2;
  * The elemental monkeys each carry their element in a tuft and spend
  * it once, on the whole enemy side, the first time a blow takes them
  * under half. What each one leaves behind is a status that keeps
- * costing: a burn, a whirlpool, a seed
+ * costing: a burn, a whirlpool, a seed. A line that spends a move
+ * rather than a status passes what it does to each enemy instead
  */
 export function createTuftAbility(
   ability: Abilities,
-  status: Statuses,
+  burst: Statuses | ((holder: Unit, enemy: Unit) => void),
 ): ((battle: Battle) => void) & { ability: Abilities } {
   return createAbility(ability, (battle) => {
     /** Which holders have already spent theirs */
@@ -1693,8 +1694,14 @@ export function createTuftAbility(
         const cause = { type: EffectType.Ability, ability, unit: holder } as const;
 
         for (const enemy of battle.units(holder.team.alliance)) {
-          if (enemy.alive) {
-            enemy.addStatus(status, cause);
+          if (!enemy.alive) {
+            continue;
+          }
+
+          if (typeof burst === 'function') {
+            burst(holder, enemy);
+          } else {
+            enemy.addStatus(burst, cause);
           }
         }
       }),

@@ -1,7 +1,7 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { MoveCategories, Moves } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
-import { getGMaxMove } from '../../data/moves/gmax-moves';
+import { FIXED_G_MAX_MOVES, getGMaxMove } from '../../data/moves/gmax-moves';
 import {
   MAX_MOVE_ALLY_STAGES,
   MAX_MOVE_FOE_STAGES,
@@ -83,7 +83,8 @@ export default function setupMaxMoves(battle: Battle): void {
   battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Exact, (event) => {
     const turned = replaced.get(event.source);
 
-    if (turned?.max === event.move) {
+    // The three fixed G-Max Moves keep their own 160
+    if (turned?.max === event.move && !FIXED_G_MAX_MOVES.has(event.move)) {
       event.power = maxPowerOf(turned.base);
     }
   });

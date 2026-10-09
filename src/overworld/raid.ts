@@ -22,6 +22,7 @@ import { SELF_DESTRUCT_MOVES } from '../battle/moves/self-destruct';
 import { MoveCategories, Moves } from '../data/ids/moves';
 import { RECHARGE_MOVES } from '../data/moves/recharge';
 import { Z_MOVES } from '../data/moves/z-moves';
+import { G_MAX_MOVES } from '../data/moves/gmax-moves';
 import { Species } from '../data/ids/species';
 import { getMoveData } from '../data/moves';
 import { getLevelUpMoves, getSpeciesData } from '../data/species';
@@ -150,6 +151,7 @@ const BOSS_UNFIT_ATTACKS = new Set<Moves>([
   ...CRASH_MOVES,
   ...OHKO_MOVES,
   ...Z_MOVES,
+  ...G_MAX_MOVES,
   Moves.FocusPunch,
   Moves.DreamEater,
   Moves.Snore,

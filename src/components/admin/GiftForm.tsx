@@ -35,6 +35,7 @@ import { getAbilityData } from '../../data/abilities';
 import { getMoveData, getRegisteredMoves } from '../../data/moves';
 import { MAX_MOVES } from '../../data/moves/max-moves';
 import { Z_MOVES } from '../../data/moves/z-moves';
+import { G_MAX_MOVES } from '../../data/moves/gmax-moves';
 import { getRegisteredSpecies, getSpeciesAbilities, getSpeciesData } from '../../data/species';
 import {
   DEFAULT_ABILITY_SLOTS,
@@ -171,8 +172,8 @@ export default function GiftForm(props: GiftFormProps): JSX.Element {
     const options: { value: Moves; label: string }[] = [];
 
     for (const entry of getRegisteredMoves()) {
-      // A Z-Move or a Max Move is what a move becomes, never one to hand over
-      if (!Z_MOVES.has(entry) && !MAX_MOVES.has(entry)) {
+      // A Z-Move, a Max Move or a G-Max Move is what a move becomes, never one to hand over
+      if (!Z_MOVES.has(entry) && !MAX_MOVES.has(entry) && !G_MAX_MOVES.has(entry)) {
         options.push({ value: entry, label: getMoveData(entry).name });
       }
     }

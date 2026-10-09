@@ -85,6 +85,8 @@ import setupPiercingMoves from './piercing-moves';
 import setupInstruct from './instruct';
 import setupZMoves from './z-moves';
 import setupMaxMoves from './max-moves';
+import setupGMaxMoves from './gmax-moves';
+import setupSteelsurge from './steelsurge';
 import setupFocusPunch from './focus-punch';
 import setupFollowMe from './follow-me';
 import setupImprison from './imprison';
@@ -268,6 +270,7 @@ export default function setupMoves(battle: Battle): void {
   setupFangs(battle);
   setupTrickRoom(battle);
   setupStealthRock(battle);
+  setupSteelsurge(battle);
   setupStickyWeb(battle);
   setupFairyLock(battle);
   setupTypeMatchups(battle);
@@ -296,6 +299,9 @@ export default function setupMoves(battle: Battle): void {
   setupSynchronoise(battle);
   setupFlameBurst(battle);
   setupSecretSword(battle);
+
+  // Galar's G-Max Moves, what each leaves behind once it lands
+  setupGMaxMoves(battle);
 
   // Last, because they are what is left: both fallbacks only answer
   // when every resolver above has declined to pick anything. Attack

@@ -41,6 +41,7 @@ export default function setupRecoilMoves(battle: Battle): void {
 
       if (recoilFactor != null) {
         const amount = event.value * recoilFactor;
+        const before = event.source.health;
 
         event.source.damage(
           {
@@ -50,6 +51,10 @@ export default function setupRecoilMoves(battle: Battle): void {
           amount,
           DamageFlags.Indirect,
         );
+        // Health actually lost, which is what a recoil feat counts
+        if (!battle.estimating) {
+          event.source.recoil += Math.max(0, before - event.source.health);
+        }
       }
     }
   });

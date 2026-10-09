@@ -415,6 +415,8 @@ export const AFTERMATHS = listOf(
     sketched: v.optional(GAME_ID),
     criticals: v.optional(COUNT),
     taken: v.optional(COUNT),
+    landed: v.optional(COUNT),
+    recoil: v.optional(COUNT),
   }),
   TEAM_SIZE,
 );

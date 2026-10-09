@@ -230,6 +230,7 @@ function evolutionKey(caught: CaughtPokemon | null | undefined): string {
     caught.level,
     caught.friendship,
     caught.canEvolve,
+    caught.featProgress,
     caught.items.join(','),
     caught.moves.join(','),
     stats.join(','),

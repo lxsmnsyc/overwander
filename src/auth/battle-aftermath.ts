@@ -55,4 +55,8 @@ export default interface BattleAftermath {
    */
   criticals?: number;
   taken?: number;
+  /** Uses landed of the move its species' feat counts */
+  landed?: number;
+  /** Recoil it took from its own moves */
+  recoil?: number;
 }

@@ -38,6 +38,7 @@ catch is on the pages beside it:
 | `shiny`, `shadow`, `egg`              | `boolean`   | What it is                                             |
 | `traded`                              | `boolean`   | Has changed hands; what the box search reads           |
 | `can_evolve`                          | `boolean`   | A handover has met what a trade evolution asks         |
+| `feat_progress`                       | `integer`   | The running total of a feat counted across fights      |
 | `favorite`, `guarded`                 | `boolean`   | See [What the player sets][player-sets]                |
 | `auctionable`                         | `boolean`   | Advisory; the opener re-derives it                     |
 | `hidden`                              | `boolean`   | Folded into a fusion; nothing reads it yet             |

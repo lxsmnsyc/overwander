@@ -384,6 +384,8 @@ export async function claimAuction(
         // shut
         traded: true,
         canEvolve: sale.opens,
+        // A change of hands drops a feat not yet used, and the count towards one
+        featProgress: 0,
         ...(sale.spends == null ? {} : { items: withoutHeld(record.items, sale.spends) }),
       });
     }

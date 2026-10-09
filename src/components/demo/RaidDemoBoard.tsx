@@ -10,8 +10,6 @@ import { Badge, Button, Meta, Note, Switch } from '../../components/styled';
 import { DEMO_TEAMS, DEMO_TEAM_SIZE, createDemoRaidTeams } from '../../overworld/demo-raid';
 import { BOSS_ALLIANCE, PLAYER_ALLIANCE } from '../../overworld/raid';
 import { type RaidBattle, createRaidBattle } from '../../overworld/raid-battle';
-import { dynamax } from '../../battle/mechanics/dynamax';
-import { canGigantamax } from '../../data/moves/gmax-moves';
 
 /**
  * A raid to look at: a boss, five parties, and nothing else, staged
@@ -76,7 +74,7 @@ export default function RaidDemoBoard(): JSX.Element {
     seed?: string;
     shadow?: string;
     totem?: string;
-    giant?: string;
+    max?: string;
     biome?: string;
   }>();
   const seed = (): string => params.seed ?? DEFAULT_SEED;
@@ -84,23 +82,15 @@ export default function RaidDemoBoard(): JSX.Element {
   // paints a haze under, and nothing else on this page is a shadow
   const shadow = (): boolean => params.shadow === '1';
   const totem = (): boolean => params.totem === '1';
-  const giant = (): boolean => params.giant === '1';
+  const max = (): boolean => params.max === '1';
   const [built, setBuilt] = createSignal<RaidBattle | null>(null);
   const [revision, setRevision] = createSignal(0);
 
   createEffect(() => {
     const staged = createRaidBattle(
       `demo:${seed()}`,
-      createDemoRaidTeams(seed(), shadow(), totem()),
+      createDemoRaidTeams(seed(), shadow(), totem(), max()),
     );
-
-    // Grown from the first moment to the last, as a Max Raid's boss is
-    if (giant()) {
-      for (const boss of staged.units.get(BOSS_ALLIANCE) ?? []) {
-        boss.gigantamax = canGigantamax(boss.species);
-        dynamax(boss, { permanent: true });
-      }
-    }
 
     // Initialized but not started: the canvas starts it once it has
     // every sheet, the way a real fight waits
@@ -195,11 +185,11 @@ export default function RaidDemoBoard(): JSX.Element {
       />
 
       <Switch
-        label="Dynamaxed boss"
-        description="Stages the boss Dynamaxed for the whole fight, to watch how a giant is drawn."
-        checked={giant()}
+        label="Max Raid"
+        description="Stages a Gigantamax boss, Dynamaxed for the whole fight."
+        checked={max()}
         onChange={(on) => {
-          setParams({ giant: on ? '1' : undefined });
+          setParams({ max: on ? '1' : undefined });
         }}
       />
 

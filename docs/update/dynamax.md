@@ -54,13 +54,33 @@ guard but Max Guard, breaking it.
 
 The Dynamax Band is dug up beside the Mega Stones, and turns up in dust clouds.
 
+## Max Raids
+
+- **A new landmark, the Max Raid**, stands out in the country: a ring of rock
+  round a hole with a pillar of red light rising out of it, purple and brighter
+  over a Gigantamax. The light carries at night and goes dark once you have
+  cleared it for the window.
+- **The boss is a final stage of a line the biome spawns**, a new one every raid
+  window, **Dynamaxed for the whole fight**. When its species can Gigantamax it
+  always does, so its G-Max Move goes off.
+- **The lobby works like a lair's.** Up to 20 players, the host starts it.
+- **Clearing one pays 50,000 gold** and the boss at level 40, plus 1 or 2 Max
+  Mushrooms and, one clear in 10, a Dynamax Band. A Gigantamax boss caught from
+  the raid keeps the Gigantamax Factor.
+- **Totems have a landmark of their own**, a trial site with the Totem's gold
+  aura over it, holding a Totem every window. Lairs always hold their own
+  legendary or shadow again.
+- **World generation:** both landmarks take a share of rolls that were already
+  landmarks, at most one of each to a chunk. About one item cache in five on dry
+  ground above ground is now a Max Raid, and about one trainer in five on dry
+  ground is now a Totem. Nothing else on any map moves.
+
 ## Not here yet
 
 - **Gigantamax shapes** wait for the collection to draw them. A Gigantamax
   pokemon is drawn as its own shape, larger.
 - **Coalossal's G-Max Volcalith and Copperajah's G-Max Steelsurge** are ready
   for the day their lines are drawn.
-- **Max Raids** come next.
 
 ## See also
 

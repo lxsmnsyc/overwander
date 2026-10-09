@@ -31,6 +31,8 @@ sells for 10,000, so nothing worth beating pays less than tripping over one.
 | **Elite Four**        | 50,000 to 110,000            | Their mark, and an item                                |
 | **Champion**          | 150,000 to 300,000           | The league's title, and an item                        |
 | **Shadow raid**       | 35,000                       | A shadow, at level 25                                  |
+| **Totem raid**        | 50,000                       | The Totem at Totem size, at level 40, and its Z-Crystal the first time |
+| **Max Raid**          | 50,000                       | The boss at level 40, 1 or 2 Max Mushrooms, and a Dynamax Band one clear in 10 |
 | **Legendary raid**    | 80,000                       | The legendary, at level 50                             |
 | **Mythical raid**     | 200,000                      | The mythical, at level 30                              |
 | **Gym seat**          | A tenth of the loser's purse | The cell, if you want to sit on it                     |

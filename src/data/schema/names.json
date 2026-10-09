@@ -5033,7 +5033,9 @@
         "FrontierBrain",
         "PokemonCenter",
         "CaveMouth",
-        "HoneyTree"
+        "HoneyTree",
+        "MaxRaid",
+        "Totem"
       ]
     },
     "phenomenon": {

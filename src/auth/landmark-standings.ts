@@ -2,7 +2,7 @@ import { readOnly } from '../utils/server-calls';
 import Landmark from '../data/overworld/landmark';
 import { NPC_VISIT_TAGS } from '../overworld/npcs';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
-import { getLairKind, raidId } from './raid-record';
+import { getRaidKindAt, raidId } from './raid-record';
 import { seatId } from './gym-seat-record';
 import { stopIdOf } from './stop-record';
 import getIdToken from './session';
@@ -56,9 +56,9 @@ export async function readLandmarkStandings(
   const visits = new Map<string, number>();
 
   for (const [cell, landmark] of chunk.getLandmarkCells()) {
-    if (landmark === Landmark.LegendaryLair || landmark === Landmark.ShadowLair) {
-      const kind = getLairKind(snapshot, cell);
+    const kind = getRaidKindAt(snapshot, cell);
 
+    if (kind != null) {
       lairs.set(raidId(chunk, snapshot.raidTimestamp, cell, kind, offset), cell);
     } else if (landmark === Landmark.GymSeat) {
       seats.set(seatId(chunk, cell), cell);

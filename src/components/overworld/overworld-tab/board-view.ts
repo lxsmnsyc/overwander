@@ -25,6 +25,8 @@ import { DARK_DAY_LAMP_CELLS } from '../../../data/overworld/weather';
 import { CAVE_DARK_CELLS } from '../../../data/overworld/cave';
 import { Depth } from '../../../overworld/depth';
 import createOverworld from '../../../overworld/setup';
+import { isGigantamaxBoss } from '../../../overworld/raid';
+import { RaidBeacon } from '../../overworld/chunk-canvas/beacon';
 import settings from '../../app/settings';
 import { BOARD_CELLS, BOARD_CENTER, BOARD_RADIUS, PUBLISHED_SPAWNS, boardMargin } from './metrics';
 
@@ -130,6 +132,18 @@ export interface BoardView {
   berries: Map<number, ItemStack>;
   wanderers: Map<number, Npc>;
   coats: Map<number, string>;
+  /** How each Max Raid's pillar burns this window: purple over a Gigantamax */
+  beacons: Map<number, RaidBeacon>;
+}
+
+/** The window's Max Raids by the colour their pillar burns */
+function raidBeacons(snapshot: ChunkSnapshot): Map<number, RaidBeacon> {
+  const beacons = new Map<number, RaidBeacon>();
+
+  for (const [cell, roll] of snapshot.getMaxRaids()) {
+    beacons.set(cell, isGigantamaxBoss(roll.species) ? RaidBeacon.Gigantamax : RaidBeacon.Max);
+  }
+  return beacons;
 }
 
 /** Where a board is, in the words the game names it by */
@@ -280,6 +294,7 @@ export function buildBoardView(
   const berries = new Map<number, ItemStack>();
   const wanderers = new Map<number, Npc>();
   const coats = new Map<number, string>();
+  const beacons = new Map<number, RaidBeacon>();
   const chunks: BoardChunk[] = [];
   const covering = new Map<string, ChunkSnapshot>();
 
@@ -336,6 +351,7 @@ export function buildBoardView(
 
         carry(derived.getWanderingNpcs(), wanderers);
         carry(derived.getWandererCoats(), coats);
+        carry(raidBeacons(derived), beacons);
         standFallenLairs(derived);
       }
       continue;
@@ -363,6 +379,7 @@ export function buildBoardView(
     carry(snapshot.getApricornTrees(), berries);
     carry(snapshot.getWanderingNpcs(), wanderers);
     carry(snapshot.getWandererCoats(), coats);
+    carry(raidBeacons(snapshot), beacons);
     standFallenLairs(snapshot);
 
     const cells = [...snapshot.getSpawnCells()];
@@ -506,5 +523,6 @@ export function buildBoardView(
     berries,
     wanderers,
     coats,
+    beacons,
   };
 }

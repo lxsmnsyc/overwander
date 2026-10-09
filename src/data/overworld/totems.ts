@@ -11,14 +11,14 @@ import { isTrueShadow } from '../species/true-shadow';
 import { isUltraBeast } from '../species/ultra-beasts';
 
 /**
- * Totem Pokémon: an oversized boss that stands in a lair some windows
- * instead of the legendary or the shadow it would otherwise hold.
+ * Totem Pokémon: an oversized boss standing at a Totem landmark, an
+ * Alolan trial site of its own.
  *
  * It starts the fight wrapped in an aura that raises its stats, calls
  * one ally of its own line once it is down to half, and leaves the
  * trial's Z-Crystal behind. Alola's twelve are written out as the
  * games had them (Ultra Sun and Ultra Moon where the two differ);
- * every other final stage is a Totem by rule, so a lair in any biome
+ * every other final stage is a Totem by rule, so a site in any biome
  * can hold the Totem of a line that lives there.
  */
 

@@ -22,11 +22,18 @@ import { SELF_DESTRUCT_MOVES } from '../battle/moves/self-destruct';
 import { MoveCategories, Moves } from '../data/ids/moves';
 import { RECHARGE_MOVES } from '../data/moves/recharge';
 import { Z_MOVES } from '../data/moves/z-moves';
-import { G_MAX_MOVES } from '../data/moves/gmax-moves';
+import { G_MAX_MOVES, canGigantamax } from '../data/moves/gmax-moves';
 import { Species } from '../data/ids/species';
 import { getMoveData } from '../data/moves';
 import { getLevelUpMoves, getSpeciesData } from '../data/species';
-import { deriveAbility, deriveGender, deriveMoves, deriveNature, deriveSize } from './encounter';
+import {
+  EncounterType,
+  deriveAbility,
+  deriveGender,
+  deriveMoves,
+  deriveNature,
+  deriveSize,
+} from './encounter';
 
 /**
  * A raid boss is a maxed legendary: the fight is meant to need a
@@ -51,6 +58,8 @@ export const LEGENDARY_RAID_REWARD_LEVEL = 50;
 export const SHADOW_RAID_REWARD_LEVEL = 25;
 /** A Totem is handed over between the two: a strong pokemon, but no legendary */
 export const TOTEM_RAID_REWARD_LEVEL = 40;
+/** A Max Raid's prize too: the same kind of boss, a final stage of the biome */
+export const MAX_RAID_REWARD_LEVEL = 40;
 
 /**
  * What clearing one pays, on top of the pokemon.
@@ -69,8 +78,9 @@ export const TOTEM_RAID_REWARD_LEVEL = 40;
  */
 export const SHADOW_RAID_GOLD = 35000;
 export const LEGENDARY_RAID_GOLD = 80000;
-/** A Totem pays between a shadow and a legendary */
+/** A Totem pays between a shadow and a legendary, and so does a Max Raid */
 export const TOTEM_RAID_GOLD = 50000;
+export const MAX_RAID_GOLD = 50000;
 export const MYTHICAL_RAID_GOLD = 200000;
 
 /**
@@ -273,6 +283,23 @@ export function canStageBoss(species: Species): boolean {
 }
 
 /**
+ * Whether a Max Raid's boss of this species is Gigantamaxed: always,
+ * where the species has a Gigantamax form. The species alone decides
+ * it, so the prize's factor needs nothing stored beside the raid
+ */
+export function isGigantamaxBoss(species: Species): boolean {
+  return canGigantamax(species);
+}
+
+/** Whether a prize carries the Gigantamax Factor: one out of a Gigantamax Max Raid boss */
+export function keepsGigantamaxFactor(encounter: {
+  type: EncounterType;
+  species: Species;
+}): boolean {
+  return encounter.type === EncounterType.MaxRaid && isGigantamaxBoss(encounter.species);
+}
+
+/**
  * The raid boss as a catch snapshot, so a battle builds it from the
  * same shape as a player's party. Its individual values are perfect
  * and its effort values maxed; the nature and ability come from the
@@ -285,6 +312,7 @@ export function createRaidBossSnapshot(
   traitValue: number,
   shadow = false,
   totem = false,
+  max = false,
 ): CatchSnapshot {
   // The lobby shares the raid's trait value, so every player fights a
   // boss of exactly the same build. A Totem stands at its own size
@@ -339,6 +367,9 @@ export function createRaidBossSnapshot(
     // Nothing has raised it, so it thinks of nobody
     friendship: BASE_FRIENDSHIP,
     statuses: 0,
+    // A Max Raid's boss is a giant from the first moment to the last
+    ...(max ? { dynamaxed: true } : {}),
+    ...(max && isGigantamaxBoss(species) ? { gigantamax: true } : {}),
   };
 }
 
@@ -391,8 +422,9 @@ export function createRaidBossTeam(
   traitValue: number,
   shadow: boolean,
   totem: boolean,
+  max = false,
 ): CatchSnapshot[] {
-  const boss = createRaidBossSnapshot(species, traitValue, shadow, totem);
+  const boss = createRaidBossSnapshot(species, traitValue, shadow, totem, max);
 
   return totem ? [boss, createTotemAllySnapshot(species, traitValue)] : [boss];
 }

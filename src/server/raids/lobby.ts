@@ -30,10 +30,13 @@ import { asOutcome, isBattleLost, isRaidLost } from './outcome';
  * The lobby itself: looking at one, opening one, leaving one, and
  * watching one from outside
  */
-/** The rolls standing on lairs of this kind this window */
+/** The rolls standing on raid landmarks of this kind this window */
 function lairRolls(snapshot: ChunkSnapshot, kind: RaidKind): Map<number, RaidRoll> {
   if (kind === RaidKind.Totem) {
-    return snapshot.getTotemLairs();
+    return snapshot.getTotems();
+  }
+  if (kind === RaidKind.Max) {
+    return snapshot.getMaxRaids();
   }
   return kind === RaidKind.Shadow ? snapshot.getShadowLairs() : snapshot.getLegendaryLairs();
 }

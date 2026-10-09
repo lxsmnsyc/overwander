@@ -50,6 +50,7 @@ import speciesSize from '../../../canvas/species-size';
 import {
   batchAmbient,
   batchSkybox,
+  getAmbient,
   getSkybox,
   paintAmbient,
   paintSkybox,
@@ -188,12 +189,16 @@ import {
   phenomenonSpan,
   plantCallOut,
 } from './scenery';
+import { RaidBeacon, beaconCorners, drawRaidBeacon, paintRaidBeacon } from './beacon';
 
 /**
  * How near the viewer the backdrop is drawn, in the scene's own clip
  * space: behind the country, which is all there is behind it
  */
 const BEHIND = 0.99;
+
+/** How much of the night a raid site's light lifts, against how deep the night is */
+const BEACON_NIGHT_LIFT = 1.6;
 
 /** How far a mark spreads past the cell it belongs to, in cells */
 const RING_SPREAD = 2;
@@ -340,6 +345,11 @@ export interface ChunkCanvasProps {
    * not yet visited
    */
   auras: Map<number, CellAura>;
+  /**
+   * What a Max Raid's pillar burns as this window, by cell. A Max Raid
+   * left out burns red; a Totem site needs no word
+   */
+  beacons?: Map<number, RaidBeacon>;
   /**
    * The chunk's scenery by cell. It is drawn and nothing else: a tree
    * cannot be pressed, and standing on one does nothing
@@ -2960,6 +2970,66 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         );
       };
 
+      /** Which raid site a cell is painted as, if it is one */
+      const beaconOn = (index: number): RaidBeacon | null => {
+        const landmark = props.landmarks.get(index);
+
+        if (landmark === Landmark.Totem) {
+          return RaidBeacon.Totem;
+        }
+        if (landmark !== Landmark.MaxRaid) {
+          return null;
+        }
+        // Won this window: the light goes out until the next boss
+        if (props.auras.get(index) === CellAura.Cleared) {
+          return RaidBeacon.Spent;
+        }
+        return props.beacons?.get(index) ?? RaidBeacon.Max;
+      };
+
+      /** The lit raid sites, stamped again over the night so their light carries */
+      const glowing: { middle: ProjectedPoint; beacon: RaidBeacon }[] = [];
+
+      /** One half of a raid site, if the cell is one */
+      const stampBeacon = (
+        index: number,
+        middle: ProjectedPoint,
+        part: AuraPart,
+        alpha = 1,
+      ): void => {
+        const beacon = beaconOn(index);
+
+        if (beacon == null) {
+          return;
+        }
+        if (part === 'air' && alpha === 1 && beacon !== RaidBeacon.Spent) {
+          glowing.push({ middle, beacon });
+        }
+        animating = true;
+        const squash = shadowSquash();
+        const picture = batch == null ? null : paintRaidBeacon(beacon, part, clock, squash);
+
+        if (picture == null || batch == null) {
+          context.save();
+          context.globalAlpha = alpha;
+          drawRaidBeacon(context, middle, beacon, part, clock, magnify, squash);
+          context.restore();
+          return;
+        }
+        if (!repaintedAuras.has(`beacon${beacon}:${part}`)) {
+          batch.invalidate(picture);
+          repaintedAuras.add(`beacon${beacon}:${part}`);
+        }
+        batch.quad(
+          picture,
+          { x: 0, y: 0, width: picture.width, height: picture.height },
+          beaconCorners(middle, magnify),
+          alpha,
+          undefined,
+          'smooth',
+        );
+      };
+
       /** The cell the cursor is over, once this frame */
       const under = hovered();
       /**
@@ -3680,6 +3750,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           // The ring and its light lie under the landmark and whoever
           // stands on it; the glints are drawn over them further down
           stampAura(index, middle, 'ground');
+          stampBeacon(index, middle, 'ground');
           standPiece(
             context,
             sceneryOn(index),
@@ -3858,6 +3929,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
 
         if (!loading()) {
           stampAura(index, middle, 'air');
+          stampBeacon(index, middle, 'air');
         }
 
         if (standing != null) {
@@ -4099,6 +4171,33 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         batchWash(batch, width, height, skies.to, clock, risen, null, sky);
         batchSky(batch, width, height, skies.from, clock, 1 - risen, sky);
         batchSky(batch, width, height, skies.to, clock, risen, sky);
+      }
+
+      // A raid site's light is its own, so the night is lifted off it
+      // by as much as the night took
+      const night = props.underground ? 0 : getAmbient(worldTime(), props.latitude).depth;
+
+      if (night > 0) {
+        for (const { middle, beacon } of glowing) {
+          const picture =
+            batch == null ? null : paintRaidBeacon(beacon, 'air', clock, shadowSquash());
+
+          if (picture == null || batch == null) {
+            context.save();
+            context.globalAlpha = Math.min(1, night * BEACON_NIGHT_LIFT);
+            drawRaidBeacon(context, middle, beacon, 'air', clock, magnify, shadowSquash());
+            context.restore();
+            continue;
+          }
+          batch.quad(
+            picture,
+            { x: 0, y: 0, width: picture.width, height: picture.height },
+            beaconCorners(middle, magnify),
+            Math.min(1, night * BEACON_NIGHT_LIFT),
+            undefined,
+            'smooth',
+          );
+        }
       }
 
       /**

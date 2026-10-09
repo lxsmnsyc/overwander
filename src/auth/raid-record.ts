@@ -7,6 +7,7 @@ import type Biome from '../data/ids/biome';
 import type { Items } from '../data/ids/items';
 import type Lairs from '../data/overworld/lair';
 import { getLairTitle } from '../data/overworld/lair';
+import Landmark from '../data/overworld/landmark';
 import type { Species } from '../data/ids/species';
 import { getSpeciesData } from '../data/species/__create';
 import type Chunk from '../overworld/chunk';
@@ -52,11 +53,15 @@ export const enum RaidKind {
    */
   Mythical = 2,
   /**
-   * A Totem standing in a lair this window instead of its legendary
-   * or its shadow: a final stage of a line the tile's biome spawns,
-   * oversized and wrapped in an aura
+   * A Totem at a Totem landmark: a final stage of a line the tile's
+   * biome spawns, oversized and wrapped in an aura
    */
   Totem = 3,
+  /**
+   * A Max Raid: a final stage picked the way a Totem is, Dynamaxed
+   * for the whole fight, and Gigantamaxed where its species can be
+   */
+  Max = 4,
 }
 
 /**
@@ -191,17 +196,42 @@ export interface RaidView {
  * whoever is at home in it, and two Articuno raids in one chunk were
  * two of the same word for different things
  */
-export function getRaidTitle(raid: RaidRecord): string {
+export function getRaidTitle(raid: RaidRecord | RaidView): string {
   if (raid.kind === RaidKind.Totem) {
     return getTotemTitle(raid.species);
+  }
+  if (raid.kind === RaidKind.Max) {
+    return getMaxRaidTitle(raid.species);
   }
   return getLairTitle(raid.lair, raid.biome, raid.kind === RaidKind.Shadow);
 }
 
-/** What the lair at this cell stages this window: a Totem, a shadow, or its legendary */
-export function getLairKind(snapshot: ChunkSnapshot, cell: number): RaidKind {
-  if (snapshot.isTotemLair(cell)) {
+/** Whether a landmark stages a raid: either lair, a Totem, or a Max Raid */
+export function isRaidLandmark(landmark: Landmark): boolean {
+  return (
+    landmark === Landmark.LegendaryLair ||
+    landmark === Landmark.ShadowLair ||
+    landmark === Landmark.Totem ||
+    landmark === Landmark.MaxRaid
+  );
+}
+
+/**
+ * What the raid landmark at this cell stages this window. A legendary
+ * lair with nobody to host stands as a shadow one; null for a cell
+ * holding no raid landmark
+ */
+export function getRaidKindAt(snapshot: ChunkSnapshot, cell: number): RaidKind | null {
+  const landmark = snapshot.chunk.getLandmarkCells().get(cell);
+
+  if (landmark === Landmark.Totem) {
     return RaidKind.Totem;
+  }
+  if (landmark === Landmark.MaxRaid) {
+    return RaidKind.Max;
+  }
+  if (landmark !== Landmark.LegendaryLair && landmark !== Landmark.ShadowLair) {
+    return null;
   }
   return snapshot.isShadowLair(cell) ? RaidKind.Shadow : RaidKind.Legendary;
 }
@@ -209,6 +239,11 @@ export function getLairKind(snapshot: ChunkSnapshot, cell: number): RaidKind {
 /** What a Totem's lobby is called: the Totem itself, since it stands in no lair of its own */
 export function getTotemTitle(species: Species): string {
   return `Totem ${getSpeciesData(species).name}`;
+}
+
+/** What a Max Raid's lobby is called, after the boss in it */
+export function getMaxRaidTitle(species: Species): string {
+  return `Max Raid ${getSpeciesData(species).name}`;
 }
 
 /**
@@ -249,6 +284,7 @@ const RAID_ID_TAGS: Record<RaidKind, string> = {
   [RaidKind.Shadow]: 'shadow',
   [RaidKind.Mythical]: 'raid',
   [RaidKind.Totem]: 'totem',
+  [RaidKind.Max]: 'max',
 };
 
 /**

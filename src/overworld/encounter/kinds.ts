@@ -47,6 +47,11 @@ export const enum EncounterType {
    * pokemon comes with
    */
   TotemRaid = 8,
+  /**
+   * Fought and caught in a Max Raid. A Gigantamax boss's prize keeps
+   * the Gigantamax Factor
+   */
+  MaxRaid = 9,
 }
 
 /**
@@ -73,7 +78,8 @@ export function isRaidEncounter(type: EncounterType): boolean {
     type === EncounterType.LegendaryRaid ||
     type === EncounterType.ShadowRaid ||
     type === EncounterType.MythicalRaid ||
-    type === EncounterType.TotemRaid
+    type === EncounterType.TotemRaid ||
+    type === EncounterType.MaxRaid
   );
 }
 
@@ -90,6 +96,7 @@ export function isShadowableEncounter(type: EncounterType): boolean {
     type === EncounterType.Wild ||
     type === EncounterType.LegendaryRaid ||
     type === EncounterType.TotemRaid ||
+    type === EncounterType.MaxRaid ||
     type === EncounterType.Hatched ||
     type === EncounterType.Revived
   );
@@ -117,4 +124,5 @@ export const ENCOUNTER_TYPE_NAMES: Record<EncounterType, string> = {
   [EncounterType.MythicalRaid]: 'Mythical Raid',
   [EncounterType.Revived]: 'Revived from a fossil',
   [EncounterType.TotemRaid]: 'Totem Raid',
+  [EncounterType.MaxRaid]: 'Max Raid',
 };

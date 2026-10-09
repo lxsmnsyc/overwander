@@ -65,3 +65,10 @@ CaveMouth:
 HoneyTree:
   weight: 15
   picture: honey-tree
+# Both raid sites are drawn in code rather than off the sheet, and take
+# their share of another landmark's rolls (`chunk.ts`) rather than a
+# weight of their own
+MaxRaid:
+  weight: 0
+Totem:
+  weight: 0

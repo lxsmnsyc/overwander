@@ -1,6 +1,6 @@
 import { For, type JSX, Show, createSignal } from 'solid-js';
-import { RaidAction, RaidKind, type RaidView, enterRaid, getTotemTitle } from '../../auth/raids';
-import { getLairTitle } from '../../data/overworld/lair';
+import { RaidAction, RaidKind, type RaidView, enterRaid, getRaidTitle } from '../../auth/raids';
+import { isGigantamaxBoss } from '../../overworld/raid';
 import { getSpeciesData } from '../../data/species';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
 import { Button, Dialog, DialogActions, Meta, useToast } from '../styled';
@@ -42,6 +42,11 @@ function describeRaid(view: RaidView): string {
   }
   if (view.kind === RaidKind.Totem) {
     return 'A Totem raid: it starts boosted and calls an ally at half HP. Beaten, it leaves a Z-Crystal and waits at Totem size.';
+  }
+  if (view.kind === RaidKind.Max) {
+    return isGigantamaxBoss(view.species)
+      ? 'A Max Raid: it is Gigantamaxed for the whole fight. Beaten, it leaves Max Mushrooms and keeps its Gigantamax Factor when caught.'
+      : 'A Max Raid: it is Dynamaxed for the whole fight. Beaten, it leaves Max Mushrooms, and now and then a Dynamax Band.';
   }
   return 'A raid takes a party. Beaten, it waits in the overworld for whoever fought it.';
 }
@@ -111,10 +116,7 @@ export default function RaidDialog(props: RaidDialogProps): JSX.Element {
     if (standing == null) {
       return 'Lair';
     }
-    if (standing.kind === RaidKind.Totem) {
-      return getTotemTitle(standing.species);
-    }
-    return getLairTitle(standing.lair, standing.biome, standing.kind === RaidKind.Shadow);
+    return getRaidTitle(standing);
   };
 
   /**

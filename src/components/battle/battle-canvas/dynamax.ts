@@ -8,7 +8,7 @@ import { DYNAMAX_GLOW, GIGANTAMAX_GLOW } from './metrics';
 
 /**
  * How a Dynamaxed pokemon looks beyond its size: a red glow round it,
- * its body washed red, and storm clouds turning over its head. Both
+ * its body washed red, and three storm clouds swirling over its head. Both
  * renderers draw it, the batch through `wash` quads and baked puffs and
  * the 2D context with a scratch canvas and gradients.
  */
@@ -26,16 +26,25 @@ const HALO = [
 const WASH_LOW = 0.5;
 const WASH_HIGH = 0.66;
 
-/** The clouds: how many puffs ring the head and how long a radian of turn takes */
-const PUFFS = 12;
-const TURN = 2400;
-/** How wide the ring is against the body, and how flat it looks from the camera */
-const RING_REACH = 1.6;
-const RING_TILT = 0.36;
-/** Each puff against the ring, and how far it swells and how fast */
-const PUFF_SIZE = 0.52;
-const PUFF_SWELL = 0.08;
+/** The clouds: three comets over the head, and how long a radian of turn takes */
+export const CLOUDS = 3;
+const TURN = 900;
+/** How wide the orbit is against the body, and how flat it looks from the camera */
+const RING_REACH = 1.1;
+const RING_TILT = 0.34;
+/** How far above the crown the orbit's middle sits, against its own depth */
+const RING_LIFT = 0.9;
+/** Each cloud's head against the orbit, and how far it swells and how fast */
+const PUFF_SIZE = 0.34;
+const PUFF_SWELL = 0.04;
 const PUFF_BREATH = 650;
+/** The tail: how many puffs trail each head, how far apart in radians, and how thin it ends */
+const TAIL = 8;
+const TAIL_STEP = 0.15;
+const TAIL_END = 0.2;
+/** How solid a cloud is at most, so the body shows through it */
+const CLOUD_ALPHA = 0.62;
+const GLOW_ALPHA = 0.5;
 /** How fast the red light inside them flickers */
 const FLICKER = 170;
 
@@ -129,36 +138,53 @@ function bakePuff(onto: SlotBatch): Baked | null {
   });
 }
 
-interface Puff {
+export interface Puff {
   x: number;
   y: number;
   size: number;
   front: boolean;
+  /** How solid it is, 1 at a head and fading down its tail */
+  weight: number;
+  /** From 0 to 1, the flare of the red light, which lives in the heads only */
   flicker: number;
 }
 
-/** The ring of puffs over the head at this instant */
-function puffsOf(body: GiantBody, clock: number): Puff[] {
+/**
+ * The three cloud comets over the head at this instant: each a head
+ * trailing a tapering tail along the orbit. Tails come first, so a head
+ * is drawn over its own wisp.
+ */
+export function cloudsOf(body: GiantBody, clock: number): Puff[][] {
   const rx = body.reach * RING_REACH;
   const ry = rx * RING_TILT;
   // A packed picture is cut to its pixels, so its top is the crown
   const cx = body.middle?.[0] ?? body.foot[0];
-  const cy = body.quad.top + ry * 0.4;
-  const puffs: Puff[] = [];
+  const cy = body.quad.top - ry * RING_LIFT;
+  const clouds: Puff[][] = [];
 
-  for (let at = 0; at < PUFFS; at++) {
-    const angle = (at / PUFFS) * Math.PI * 2 + clock / TURN;
+  for (let at = 0; at < CLOUDS; at++) {
+    const lead = (at / CLOUDS) * Math.PI * 2 + clock / TURN;
     const swell = PUFF_SIZE + PUFF_SWELL * Math.sin(clock / PUFF_BREATH + at * 2.3);
+    const flare = Math.max(0, Math.sin(clock / FLICKER + at * 4.1)) ** 6;
+    const cloud: Puff[] = [];
 
-    puffs.push({
-      x: cx + Math.cos(angle) * rx,
-      y: cy + Math.sin(angle) * ry,
-      size: rx * swell * 2,
-      front: Math.sin(angle) > 0,
-      flicker: Math.max(0, Math.sin(clock / FLICKER + at * 4.1)) ** 6,
-    });
+    for (let back = TAIL; back >= 0; back--) {
+      // The angle grows with the clock, so the tail lies behind at smaller angles
+      const angle = lead - back * TAIL_STEP;
+      const taper = 1 - (1 - TAIL_END) * (back / TAIL);
+
+      cloud.push({
+        x: cx + Math.cos(angle) * rx,
+        y: cy + Math.sin(angle) * ry,
+        size: rx * swell * 2 * taper,
+        front: Math.sin(angle) > 0,
+        weight: back === 0 ? 1 : 0.85 * taper,
+        flicker: back === 0 ? flare : 0,
+      });
+    }
+    clouds.push(cloud);
   }
-  return puffs;
+  return clouds;
 }
 
 /** A puff in a colour, on whichever renderer is drawing */
@@ -201,7 +227,7 @@ function stampPuff(
   context.restore();
 }
 
-/** The half of the ring behind the head or the half in front of it */
+/** The pieces of the clouds behind the head, or the pieces in front of it */
 function drawClouds(
   context: CanvasRenderingContext2D,
   body: GiantBody,
@@ -214,26 +240,28 @@ function drawClouds(
   const piece = onto == null ? null : bakePuff(onto);
   const shown = alpha * look.share;
 
-  for (const puff of puffsOf(body, clock)) {
-    if (puff.front !== front) {
-      continue;
-    }
-    // The far side is a shade lighter, so the ring reads as round
-    const dark = front ? 0.92 : 0.78;
+  for (const cloud of cloudsOf(body, clock)) {
+    for (const puff of cloud) {
+      if (puff.front !== front) {
+        continue;
+      }
+      // The far side is a shade lighter, so the orbit reads as round
+      const solid = shown * puff.weight * (front ? 1 : 0.8);
 
-    stampPuff(context, onto, piece, puff.x, puff.y, puff.size, CLOUD, shown * dark, false);
-    // The red light underneath, flaring now and then
-    stampPuff(
-      context,
-      onto,
-      piece,
-      puff.x,
-      puff.y + puff.size * 0.18,
-      puff.size * 0.7,
-      look.tint,
-      shown * (0.6 + 0.4 * puff.flicker),
-      true,
-    );
+      stampPuff(context, onto, piece, puff.x, puff.y, puff.size, CLOUD, solid * CLOUD_ALPHA, false);
+      // The red light inside, flaring now and then
+      stampPuff(
+        context,
+        onto,
+        piece,
+        puff.x,
+        puff.y + puff.size * 0.12,
+        puff.size * 0.75,
+        look.tint,
+        solid * GLOW_ALPHA * (0.6 + 0.4 * puff.flicker),
+        true,
+      );
+    }
   }
 }
 

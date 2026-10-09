@@ -12,11 +12,17 @@ import {
 } from '../../src/components/battle/battle-canvas/metrics';
 import { createBattle, createUnit } from '../battle/harness';
 import type Unit from '../../src/battle/unit';
+import {
+  CLOUDS,
+  type GiantBody,
+  type Puff,
+  cloudsOf,
+} from '../../src/components/battle/battle-canvas/dynamax';
 
 /**
  * A Dynamaxed pokemon is drawn washed in red, ringed by a glow and
- * crowned with storm clouds, on both renderers and at every instant,
- * whether it is a party member or a raid boss.
+ * crowned with three swirling storm clouds, on both renderers and at
+ * every instant, whether it is a party member or a raid boss.
  */
 
 /** The frame every sheet here draws, and the baked puff */
@@ -221,7 +227,7 @@ describe('a Dynamaxed pokemon', () => {
       expect(behind.washes).toBeGreaterThanOrEqual(2);
       expect(over.washes).toBeGreaterThanOrEqual(1);
       expect(washColours(quads)).toEqual(new Set([DYNAMAX_GLOW]));
-      // Clouds on both sides of it: the far half behind, the near half in front
+      // Clouds on both sides of it: the far pieces behind, the near ones in front
       expect(behind.puffs).toBeGreaterThan(0);
       expect(over.puffs).toBeGreaterThan(0);
     }
@@ -282,6 +288,93 @@ describe('a Dynamaxed pokemon', () => {
       drawSlot(grown.context, slotOf(unit, BOSS_RADIUS, 1), new Map(), clock, new Map());
       drawSlot(plain.context, slotOf(unit, BOSS_RADIUS, 0), new Map(), clock, new Map());
       expect(grown.arcs()).toBeGreaterThan(plain.arcs());
+    }
+  });
+});
+
+/** A body placed as the test sheet places it, a slot's radius wide */
+function bodyOf(radius: number): GiantBody {
+  const quad = sheet(radius).quadOf(300, 300);
+
+  if (quad == null) {
+    throw new Error('the test sheet places every frame');
+  }
+  return { quad, foot: [300, 300], middle: [300, 300 - radius], reach: radius };
+}
+
+/** The head of a cloud, which is drawn last over its own tail */
+function headOf(cloud: Puff[] | undefined): Puff {
+  const head = cloud?.at(-1);
+
+  if (head == null) {
+    throw new Error('a cloud with no pieces');
+  }
+  return head;
+}
+
+describe('the storm clouds over a Dynamaxed pokemon', () => {
+  it('are three comets evenly spaced on an orbit above the head', () => {
+    const body = bodyOf(PARTY_SLOT);
+
+    expect(CLOUDS).toBe(3);
+    for (const clock of INSTANTS) {
+      const clouds = cloudsOf(body, clock);
+      let x = 0;
+      let y = 0;
+
+      expect(clouds).toHaveLength(CLOUDS);
+      for (const cloud of clouds) {
+        const head = headOf(cloud);
+
+        x += head.x / CLOUDS;
+        y += head.y / CLOUDS;
+      }
+      // Evenly spaced heads balance out on the orbit's middle, which sits over the crown
+      expect(x).toBeCloseTo(300, 6);
+      expect(y).toBeLessThan(body.quad.top);
+    }
+  });
+
+  it('gives each a solid head and a tail that thins out behind it', () => {
+    for (const cloud of cloudsOf(bodyOf(PARTY_SLOT), 900)) {
+      expect(cloud.length).toBeGreaterThan(2);
+      expect(headOf(cloud).weight).toBe(1);
+      let last: Puff | null = null;
+
+      for (const piece of cloud) {
+        if (last != null) {
+          expect(last.size).toBeLessThan(piece.size);
+          expect(last.weight).toBeLessThan(piece.weight);
+        }
+        last = piece;
+      }
+    }
+  });
+
+  it('keeps some behind the head and some in front of it at every instant', () => {
+    for (const clock of INSTANTS) {
+      let front = 0;
+      let behind = 0;
+
+      for (const cloud of cloudsOf(bodyOf(PARTY_SLOT), clock)) {
+        for (const piece of cloud) {
+          front += piece.front ? 1 : 0;
+          behind += piece.front ? 0 : 1;
+        }
+      }
+      expect(front).toBeGreaterThan(0);
+      expect(behind).toBeGreaterThan(0);
+    }
+  });
+
+  it('stays small against the body, and scales with it', () => {
+    for (const clock of INSTANTS) {
+      const party = headOf(cloudsOf(bodyOf(PARTY_SLOT), clock)[0]);
+      const boss = headOf(cloudsOf(bodyOf(BOSS_RADIUS), clock)[0]);
+
+      // A head is well under the body's width, so the pokemon shows between them
+      expect(party.size).toBeLessThan(PARTY_SLOT);
+      expect(boss.size / party.size).toBeCloseTo(BOSS_RADIUS / PARTY_SLOT, 6);
     }
   });
 });

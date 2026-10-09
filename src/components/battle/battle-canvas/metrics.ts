@@ -46,8 +46,11 @@ export const DYNAMAX_DRAW_SCALE = 1.8;
 /** How long a Dynamaxed pokemon takes to grow or shrink, in milliseconds */
 export const DYNAMAX_GROW_SPAN = 500;
 
-/** The glow a Dynamaxed pokemon stands in */
+/** The glow a Dynamaxed pokemon stands in, and the red its body is washed in */
 export const DYNAMAX_GLOW = '#ff2a3c';
+
+/** A Gigantamax's, deeper and toward magenta so the two are told apart */
+export const GIGANTAMAX_GLOW = '#e8187e';
 
 /**
  * How small a slot is allowed to draw its pokemon. Below this a sprite

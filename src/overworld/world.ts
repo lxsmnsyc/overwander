@@ -309,6 +309,15 @@ export default class World {
   }
 
   /**
+   * Whether a town may be sited over lakes and wetland, which its
+   * ground drains anyway. The first generation refused any water, which
+   * kept towns out of nearly every swamp, bog and mangrove
+   */
+  get sitesTownsOnWater(): boolean {
+    return this.generation !== Generation.First;
+  }
+
+  /**
    * The rolls one decision of the world takes, keyed by `key`. The
    * first generation reads them as the stream it always did; the
    * second keys each on the name the roll is asked by

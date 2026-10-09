@@ -74,6 +74,7 @@ export default function RaidDemoBoard(): JSX.Element {
     seed?: string;
     shadow?: string;
     totem?: string;
+    max?: string;
     biome?: string;
   }>();
   const seed = (): string => params.seed ?? DEFAULT_SEED;
@@ -81,13 +82,14 @@ export default function RaidDemoBoard(): JSX.Element {
   // paints a haze under, and nothing else on this page is a shadow
   const shadow = (): boolean => params.shadow === '1';
   const totem = (): boolean => params.totem === '1';
+  const max = (): boolean => params.max === '1';
   const [built, setBuilt] = createSignal<RaidBattle | null>(null);
   const [revision, setRevision] = createSignal(0);
 
   createEffect(() => {
     const staged = createRaidBattle(
       `demo:${seed()}`,
-      createDemoRaidTeams(seed(), shadow(), totem()),
+      createDemoRaidTeams(seed(), shadow(), totem(), max()),
     );
 
     // Initialized but not started: the canvas starts it once it has
@@ -179,6 +181,15 @@ export default function RaidDemoBoard(): JSX.Element {
         checked={totem()}
         onChange={(on) => {
           setParams({ totem: on ? '1' : undefined });
+        }}
+      />
+
+      <Switch
+        label="Max Raid"
+        description="Stages a Gigantamax boss, Dynamaxed for the whole fight."
+        checked={max()}
+        onChange={(on) => {
+          setParams({ max: on ? '1' : undefined });
         }}
       />
 

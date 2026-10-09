@@ -141,6 +141,9 @@ const DRAWN_AS_PEOPLE = new Set<Landmark>([
 /** And the ones that grow their own picture */
 const GROWS_ITS_OWN = new Set<Landmark>([Landmark.BerryPatch, Landmark.ApricornTree]);
 
+/** And the raid sites painted in code: a den's pillar of light and a trial site */
+const PAINTED_IN_CODE = new Set<Landmark>([Landmark.MaxRaid, Landmark.Totem]);
+
 describe('the sheet stamps', () => {
   it('match every sheet as it is committed', () => {
     // A sheet repacked without a fresh stamp is served from the cache as
@@ -404,7 +407,7 @@ describe('the landmarks that ship', () => {
   it('leaves the landmarks somebody stands on to their charsets', () => {
     // A market is its vendor and a gym is its leader. A picture as well
     // would be the cell saying the same thing twice
-    for (const kind of [...DRAWN_AS_PEOPLE, ...GROWS_ITS_OWN]) {
+    for (const kind of [...DRAWN_AS_PEOPLE, ...GROWS_ITS_OWN, ...PAINTED_IN_CODE]) {
       expect(hasLandmarkPicture(kind), LANDMARK_NAMES[kind]).toBe(false);
       expect(landmarkPicture(kind), LANDMARK_NAMES[kind]).toBe(null);
     }
@@ -426,7 +429,10 @@ describe('the landmarks that ship', () => {
     // mouth shipped with no art
     for (const kind of LANDMARKS) {
       expect(
-        hasLandmarkPicture(kind) || DRAWN_AS_PEOPLE.has(kind) || GROWS_ITS_OWN.has(kind),
+        hasLandmarkPicture(kind) ||
+          DRAWN_AS_PEOPLE.has(kind) ||
+          GROWS_ITS_OWN.has(kind) ||
+          PAINTED_IN_CODE.has(kind),
         LANDMARK_NAMES[kind],
       ).toBe(true);
     }

@@ -26,6 +26,10 @@ import { isRouteAt, routesNear } from '../../overworld/route';
 import { blocksWalk } from '../../overworld/cliff';
 import { levelAt, terraceTop } from '../../overworld/terrace';
 import { Species } from '../../data/ids/species';
+import Landmark from '../../data/overworld/landmark';
+import ChunkSnapshot from '../../overworld/chunk-snapshot';
+import { isGigantamaxBoss } from '../../overworld/raid';
+import { RaidBeacon } from '../overworld/chunk-canvas/beacon';
 
 /**
  * The board on its own, at whatever shape of screen you like.
@@ -344,6 +348,109 @@ function scenery(world: World, originX: number, originY: number): Map<number, De
   return seen;
 }
 
+/**
+ * The landmarks over the window, carried out of their chunks the way
+ * the scenery is, and how each Max Raid's pillar burns at this moment
+ */
+function landmarksOver(
+  world: World,
+  originX: number,
+  originY: number,
+  now: number,
+): { landmarks: Map<number, Landmark>; beacons: Map<number, RaidBeacon> } {
+  const landmarks = new Map<number, Landmark>();
+  const beacons = new Map<number, RaidBeacon>();
+
+  for (let y = chunkOfCell(originY); y <= chunkOfCell(originY + BOARD_CELLS - 1); y += 1) {
+    for (let x = chunkOfCell(originX); x <= chunkOfCell(originX + BOARD_CELLS - 1); x += 1) {
+      const chunk = world.getChunk(x, y);
+      const shiftX = x * CHUNK_CELLS - originX;
+      const shiftY = y * CHUNK_CELLS - originY;
+      const raids = new ChunkSnapshot(chunk, now).getMaxRaids();
+
+      for (const [cell, what] of chunk.getLandmarkCells()) {
+        const bx = (cell % CHUNK_CELLS) + shiftX;
+        const by = Math.floor(cell / CHUNK_CELLS) + shiftY;
+
+        if (bx < 0 || by < 0 || bx >= BOARD_CELLS || by >= BOARD_CELLS) {
+          continue;
+        }
+        landmarks.set(by * BOARD_CELLS + bx, what);
+
+        const roll = raids.get(cell);
+
+        if (roll != null) {
+          beacons.set(
+            by * BOARD_CELLS + bx,
+            isGigantamaxBoss(roll.species) ? RaidBeacon.Gigantamax : RaidBeacon.Max,
+          );
+        }
+      }
+    }
+  }
+  return { landmarks, beacons };
+}
+
+/** The raid sites the demo can go looking for */
+const enum Site {
+  MaxRaid = 0,
+  Gigantamax = 1,
+  Totem = 2,
+}
+
+const SITE_OPTIONS: { value: Site; label: string }[] = [
+  { value: Site.MaxRaid, label: 'Max Raid' },
+  { value: Site.Gigantamax, label: 'Gigantamax Max Raid' },
+  { value: Site.Totem, label: 'Totem' },
+];
+
+/** How far out, in chunks, the search for a raid site reaches */
+const SITE_RINGS = 96;
+
+/**
+ * The nearest raid site of this kind in this country (any country,
+ * for a Gigantamax), as the world cell it stands on, searched outward
+ * a chunk at a time
+ */
+function findSite(world: World, biome: Biome, site: Site, now: number): [number, number] | null {
+  const kind = site === Site.Totem ? Landmark.Totem : Landmark.MaxRaid;
+
+  for (let ring = 0; ring <= SITE_RINGS; ring += 1) {
+    for (let y = -ring; y <= ring; y += 1) {
+      for (let x = -ring; x <= ring; x += 1) {
+        if (Math.max(Math.abs(x), Math.abs(y)) !== ring) {
+          continue;
+        }
+        const chunk = world.getChunk(x, y);
+
+        for (const [cell, what] of chunk.getLandmarkCells()) {
+          const spot: [number, number] = [
+            worldCell(x, cell % CHUNK_CELLS),
+            worldCell(y, Math.floor(cell / CHUNK_CELLS)),
+          ];
+
+          // A Gigantamax is rare enough to be looked for in any country
+          if (
+            what !== kind ||
+            (site !== Site.Gigantamax && world.getCellBiome(spot[0], spot[1]) !== biome)
+          ) {
+            continue;
+          }
+          if (site === Site.Gigantamax) {
+            const roll = new ChunkSnapshot(chunk, now).getMaxRaids().get(cell);
+
+            if (roll == null || !isGigantamaxBoss(roll.species)) {
+              continue;
+            }
+          }
+          return spot;
+        }
+      }
+    }
+  }
+  return null;
+}
+
 /** Which way a key steps, in cells across and back */
 const STEPS = new Map<string, [number, number]>([
   ['ArrowUp', [0, -1]],
@@ -442,6 +549,29 @@ export default function BoardDemo(): JSX.Element {
     return scenery(world(), originX, originY);
   });
   const biome = (): Biome => world().getCellBiome(at()[0], at()[1]);
+  /** The instant the raid sites are read at, fixed so a Gigantamax found stays one */
+  const [readAt] = createSignal(Date.now());
+  const sites = createMemo(() => {
+    const [originX, originY] = origin();
+
+    return landmarksOver(world(), originX, originY, readAt());
+  });
+  const [site, setSite] = createSignal<Site>(Site.MaxRaid);
+  const [siteNote, setSiteNote] = createSignal<string | null>(null);
+
+  /** Stand a few cells in front of the nearest raid site of the kind asked for */
+  const goToSite = (): void => {
+    const found = findSite(world(), wanted(), site(), readAt());
+
+    if (found == null) {
+      setSiteNote('None in reach');
+      return;
+    }
+    setSiteNote(`${found[0]}, ${found[1]}`);
+    setQueued([]);
+    setAt([found[0], found[1] + 3]);
+    setSpawns([]);
+  };
 
   /**
    * The nearest mouth's cell on one side of it. A cave is only ever
@@ -718,6 +848,20 @@ export default function BoardDemo(): JSX.Element {
         <Badge>{seed()}</Badge>
       </Row>
 
+      <Row>
+        <Select
+          label="Raid site"
+          class="w-56"
+          value={site()}
+          options={SITE_OPTIONS}
+          onChange={(chosen) => {
+            setSite(chosen);
+          }}
+        />
+        <Button onClick={goToSite}>Nearest raid site</Button>
+        <Badge tone="neutral">{siteNote() ?? 'Not looked for'}</Badge>
+      </Row>
+
       {/* The board takes the whole of whatever it is put in, so the
           frame is what decides its shape and therefore which of the two
           ways it is drawn */}
@@ -741,7 +885,8 @@ export default function BoardDemo(): JSX.Element {
           at={at()}
           origin={origin()}
           facing={facing()}
-          landmarks={NOTHING_MAPPED}
+          landmarks={sites().landmarks}
+          beacons={sites().beacons}
           phenomena={NOTHING_MAPPED}
           ground={ground()}
           wanderers={NOTHING_MAPPED}

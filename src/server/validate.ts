@@ -320,6 +320,7 @@ export const RAID_KIND = v.picklist([
   RaidKind.Shadow,
   RaidKind.Mythical,
   RaidKind.Totem,
+  RaidKind.Max,
 ]);
 
 /** How a battle ended */

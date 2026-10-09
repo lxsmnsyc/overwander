@@ -5022,6 +5022,8 @@ export const LANDMARK_IDS = {
   PokemonCenter: Landmark.PokemonCenter,
   CaveMouth: Landmark.CaveMouth,
   HoneyTree: Landmark.HoneyTree,
+  MaxRaid: Landmark.MaxRaid,
+  Totem: Landmark.Totem,
 } as const satisfies Record<string, Landmark>;
 
 export const PHENOMENON_IDS = {

@@ -313,12 +313,6 @@ export const MAX_PHENOMENA = 2;
 export const SHADOW_RAID_LEGENDARY_CHANCE = 1 / 8;
 
 /**
- * How often a lair stands as a Totem's in a window, whatever it would
- * otherwise have held: one window in four
- */
-export const TOTEM_LAIR_CHANCE = 1 / 4;
-
-/**
  * What a lair landmark is staging: the lair, who is at home in it, and
  * the trait value their nature and ability derive from. The lair is
  * null only for a shadow lair holding one of the biome's rare species,
@@ -821,7 +815,7 @@ export default class ChunkSnapshot {
       const dark = this.raidWeather === Weather.DarkDay;
 
       for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
-        if (landmark !== Landmark.LegendaryLair || this.isTotemLair(cell)) {
+        if (landmark !== Landmark.LegendaryLair) {
           continue;
         }
         const lairs = this.stageableLairs(cell);
@@ -858,7 +852,7 @@ export default class ChunkSnapshot {
       const fallen = new Set<number>();
 
       for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
-        if (landmark === Landmark.LegendaryLair && !hosted.has(cell) && !this.isTotemLair(cell)) {
+        if (landmark === Landmark.LegendaryLair && !hosted.has(cell)) {
           fallen.add(cell);
         }
       }
@@ -893,75 +887,75 @@ export default class ChunkSnapshot {
   /** Whether the lair at this cell stages a shadow raid this window */
   isShadowLair(cell: number): boolean {
     return (
-      (this.chunk.getLandmarkCells().get(cell) === Landmark.ShadowLair &&
-        !this.isTotemLair(cell)) ||
+      this.chunk.getLandmarkCells().get(cell) === Landmark.ShadowLair ||
       this.getFallenLairs().has(cell)
     );
-  }
-
-  /** Whether the lair at this cell stands as a Totem's this window */
-  isTotemLair(cell: number): boolean {
-    return this.getTotemLairs().has(cell);
   }
 
   private totemRaids: Map<number, RaidRoll> | null = null;
 
   /**
-   * The window's Totem lairs, keyed by the landmark cell.
-   *
-   * Any lair, legendary or shadow, stands as a Totem's one window in
-   * four. The Totem is a final stage of a line the tile's own biome
-   * spawns, standing on the tile's own surface, so a Totem is what
-   * grows up around it. A lair whose tile has none keeps what it would
-   * otherwise have held
+   * The window's Totems, keyed by the Totem landmark's cell: a final
+   * stage of a line the tile's own biome spawns, standing on the tile's
+   * own surface. A site whose tile has none holds nothing this window
    */
-  getTotemLairs(): Map<number, RaidRoll> {
-    if (this.totemRaids == null) {
-      const raids = new Map<number, RaidRoll>();
-      const time = getTimeOfDay(this.raidTimestamp);
+  getTotems(): Map<number, RaidRoll> {
+    this.totemRaids ??= this.rollFinalStages(Landmark.Totem, 'totem');
+    return this.totemRaids;
+  }
 
-      for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
-        if (landmark !== Landmark.LegendaryLair && landmark !== Landmark.ShadowLair) {
-          continue;
-        }
-        const rng = new AleaRNG(`${this.key}${this.raidTimestamp}totem${cell}`);
+  private maxRaids: Map<number, RaidRoll> | null = null;
 
-        // The draws land in order: whether it is a Totem's at all, the
-        // Totem, then the trait value its nature and ability derive from
-        if (rng.random() >= TOTEM_LAIR_CHANCE) {
-          continue;
-        }
+  /**
+   * The window's Max Raids, keyed by the landmark's cell. The boss is
+   * picked the way a Totem is, and fights Dynamaxed: see
+   * `createRaidBossSnapshot`
+   */
+  getMaxRaids(): Map<number, RaidRoll> {
+    this.maxRaids ??= this.rollFinalStages(Landmark.MaxRaid, 'max');
+    return this.maxRaids;
+  }
 
-        const hosts = this.hostsAt(cell);
-        const totems = new Set<Species>();
-        const pool = getSpawnPool(
-          this.biomeAt(cell),
-          time,
-          this.depth === Depth.Cave,
-          this.drawnSurface(cell),
-        );
+  /** One boss per landmark of this kind, from the final stages the tile's biome grows into */
+  private rollFinalStages(kind: Landmark, salt: string): Map<number, RaidRoll> {
+    const raids = new Map<number, RaidRoll>();
+    const time = getTimeOfDay(this.raidTimestamp);
 
-        for (const rank of spawnRanks(pool)) {
-          for (const entry of rank) {
-            for (const totem of getTotemsOf(entry.species)) {
-              if (hosts(totem)) {
-                totems.add(totem);
-              }
+    for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
+      if (landmark !== kind) {
+        continue;
+      }
+      const hosts = this.hostsAt(cell);
+      const finals = new Set<Species>();
+      const pool = getSpawnPool(
+        this.biomeAt(cell),
+        time,
+        this.depth === Depth.Cave,
+        this.drawnSurface(cell),
+      );
+
+      for (const rank of spawnRanks(pool)) {
+        for (const entry of rank) {
+          for (const final of getTotemsOf(entry.species)) {
+            if (hosts(final)) {
+              finals.add(final);
             }
           }
         }
-        if (totems.size === 0) {
-          continue;
-        }
-
-        const choices = [...totems];
-        const species = choices[Math.floor(rng.random() * choices.length)];
-
-        raids.set(cell, { lair: null, species, traitValue: rng.int32() });
       }
-      this.totemRaids = raids;
+      if (finals.size === 0) {
+        continue;
+      }
+
+      // The draws land in order: the boss, then the trait value its
+      // nature and ability derive from
+      const rng = new AleaRNG(`${this.key}${this.raidTimestamp}${salt}${cell}`);
+      const choices = [...finals];
+      const species = choices[Math.floor(rng.random() * choices.length)];
+
+      raids.set(cell, { lair: null, species, traitValue: rng.int32() });
     }
-    return this.totemRaids;
+    return raids;
   }
 
   /** The biome's lairs, only its underground ones in a cave */

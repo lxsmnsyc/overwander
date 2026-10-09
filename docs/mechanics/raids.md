@@ -38,6 +38,26 @@ the island it admits one passenger to.
 A **shadow raid** usually stages one of the biome's rare species, but one time
 in eight it reaches past them and stages a legendary instead.
 
+## Totems and Max Raids
+
+Two raids stand at landmarks of their own rather than in a lair, and both stage
+a **final stage of a line the tile's own biome spawns** that can stand on the
+cell. A new boss is picked each raid window.
+
+A **Totem** stands at a trial site: four standing stones round a floor, under
+the Totem's gold aura. A Totem starts the fight with its aura raising its stats,
+calls one ally of its line at half HP, and leaves its Z-Crystal the first time a
+player beats it (one time in four after that). A lair never holds a Totem: it
+always holds its own legendary or shadow.
+
+A **Max Raid** is a hole in the ground with a pillar of red light rising out of
+it. Its boss is **Dynamaxed for the whole fight**: twice the HP, every move
+thrown as a Max Move. When its species has a Gigantamax form it is always
+**Gigantamaxed**, throws its G-Max Move, and the pillar burns purple and
+brighter. The prize comes at level 40, with a purse of 50,000, one or two
+**Max Mushrooms**, and a **Dynamax Band** one clear in ten. A Gigantamax boss
+caught from the raid **keeps the Gigantamax Factor**.
+
 ## The raid boss
 
 A boss is a **maxed legendary, perfect in every individual stat and trained to

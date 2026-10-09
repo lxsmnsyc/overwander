@@ -29,7 +29,7 @@ function findTotem(): { x: number; y: number; cell: number; snapshot: ChunkSnaps
   for (let x = 0; x < 48; x++) {
     for (let y = 0; y < 48; y++) {
       const snapshot = new ChunkSnapshot(world.getChunk(x, y), toLocalTime(NOW, asOffset(0)));
-      const first = snapshot.getTotemLairs().keys().next();
+      const first = snapshot.getTotems().keys().next();
 
       if (first.done !== true) {
         return { x, y, cell: first.value, snapshot };
@@ -51,7 +51,7 @@ afterAll(async () => {
 describe('a beaten Totem', () => {
   it('hands over its crystal on the first clear, and pays a claim once', async () => {
     const { x, y, cell, snapshot } = findTotem();
-    const roll = snapshot.getTotemLairs().get(cell)!;
+    const roll = snapshot.getTotems().get(cell)!;
     const lobby = raidId(snapshot.chunk, snapshot.raidTimestamp, cell, RaidKind.Totem, 0);
 
     await tx(async (transaction) => {

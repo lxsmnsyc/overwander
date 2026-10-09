@@ -30,7 +30,8 @@ import {
   RaidAction,
   type RaidView,
   canJoinRaids,
-  getLairKind,
+  getRaidKindAt,
+  isRaidLandmark,
   peekRaid,
 } from '../../../auth/raids';
 import { type StopRecord, stopIdOf } from '../../../auth/stop-record';
@@ -1163,7 +1164,7 @@ export default function OverworldBoard(props: {
       }
       const inChunk = spot.cell;
 
-      if (landmark === Landmark.LegendaryLair || landmark === Landmark.ShadowLair) {
+      if (isRaidLandmark(landmark)) {
         if (read.cleared.has(inChunk)) {
           next.set(at, CellAura.Cleared);
         }
@@ -1944,8 +1945,9 @@ export default function OverworldBoard(props: {
       setPortal(spot);
       return null;
     }
-    if (landmark === Landmark.LegendaryLair || landmark === Landmark.ShadowLair) {
-      const kind = getLairKind(spot.snapshot, spot.cell);
+    const kind = getRaidKindAt(spot.snapshot, spot.cell);
+
+    if (kind != null) {
       // Looked at rather than walked into: nothing is staged until the
       // dialog's button is pressed, so a player who thinks better of it
       // leaves no lobby standing behind them
@@ -2955,6 +2957,7 @@ export default function OverworldBoard(props: {
                 picked={pickedHere()}
                 dug={dugHere()}
                 auras={auras()}
+                beacons={loaded().beacons}
                 decorations={loaded().decorations}
                 spawns={standingHere()}
                 goal={walkGoal()}

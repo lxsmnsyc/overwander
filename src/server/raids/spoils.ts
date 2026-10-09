@@ -4,6 +4,8 @@ import { EncounterType } from '../../overworld/encounter';
 import {
   LEGENDARY_RAID_GOLD,
   LEGENDARY_RAID_REWARD_LEVEL,
+  MAX_RAID_GOLD,
+  MAX_RAID_REWARD_LEVEL,
   MYTHICAL_RAID_GOLD,
   MYTHICAL_RAID_REWARD_LEVEL,
   SHADOW_RAID_GOLD,
@@ -21,6 +23,7 @@ export const RAID_GOLD: Record<RaidKind, number> = {
   [RaidKind.Shadow]: SHADOW_RAID_GOLD,
   [RaidKind.Mythical]: MYTHICAL_RAID_GOLD,
   [RaidKind.Totem]: TOTEM_RAID_GOLD,
+  [RaidKind.Max]: MAX_RAID_GOLD,
 };
 
 export const RAID_REWARD_LEVELS: Record<RaidKind, number> = {
@@ -28,6 +31,7 @@ export const RAID_REWARD_LEVELS: Record<RaidKind, number> = {
   [RaidKind.Shadow]: SHADOW_RAID_REWARD_LEVEL,
   [RaidKind.Mythical]: MYTHICAL_RAID_REWARD_LEVEL,
   [RaidKind.Totem]: TOTEM_RAID_REWARD_LEVEL,
+  [RaidKind.Max]: MAX_RAID_REWARD_LEVEL,
 };
 
 /** A raid prize sparkles 8x as often as a wild meeting, on top of every other boost */
@@ -38,4 +42,5 @@ export const RAID_ENCOUNTER_TYPES: Record<RaidKind, EncounterType> = {
   [RaidKind.Shadow]: EncounterType.ShadowRaid,
   [RaidKind.Mythical]: EncounterType.MythicalRaid,
   [RaidKind.Totem]: EncounterType.TotemRaid,
+  [RaidKind.Max]: EncounterType.MaxRaid,
 };

@@ -103,6 +103,8 @@ export interface CatchSnapshot {
    * holds no side up before then
    */
   called?: boolean;
+  /** Set on a Max Raid's boss: it fights Dynamaxed from start to end */
+  dynamaxed?: boolean;
 }
 
 /**
@@ -232,6 +234,7 @@ export function asCatchSnapshot(value: unknown): CatchSnapshot {
     friendship: data.friendship == null ? BASE_FRIENDSHIP : asNumber(data.friendship),
     ...(data.gigantamax === true ? { gigantamax: true } : {}),
     ...(data.called === true ? { called: true } : {}),
+    ...(data.dynamaxed === true ? { dynamaxed: true } : {}),
   };
 }
 

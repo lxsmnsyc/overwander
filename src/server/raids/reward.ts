@@ -19,6 +19,7 @@ import { grantItem } from '../inventory';
 import AleaRNG from '../../core/alea';
 import type { ItemStack } from '../../data/overworld/item-pool';
 import { getTotemCrystal } from '../../data/overworld/totems';
+import { Items } from '../../data/ids/items';
 import { asOutcome } from './outcome';
 import { RAID_ENCOUNTER_TYPES, RAID_GOLD, RAID_REWARD_LEVELS, RAID_SHINY_BOOST } from './spoils';
 
@@ -30,7 +31,7 @@ import { RAID_ENCOUNTER_TYPES, RAID_GOLD, RAID_REWARD_LEVELS, RAID_SHINY_BOOST }
 export interface RaidReward {
   encounter: EncounterRecord;
   gold: number;
-  /** What else it left: a Totem's Z-Crystal, where it dropped one */
+  /** What else it left: a Totem's Z-Crystal, or a Max Raid's mushrooms and band */
   items: ItemStack[];
 }
 
@@ -66,6 +67,37 @@ async function totemCrystal(uid: string, lobby: string, raid: RaidRecord): Promi
 
   await grantItem(uid, item);
   return [{ item, amount: 1 }];
+}
+
+/** How often a cleared Max Raid hands a fighter a Dynamax Band */
+export const MAX_RAID_BAND_CHANCE = 1 / 10;
+
+/** The Max Mushrooms every fighter takes from a cleared Max Raid, and how often one more */
+export const MAX_RAID_MUSHROOMS = 1;
+export const MAX_RAID_EXTRA_MUSHROOM_CHANCE = 1 / 2;
+
+/**
+ * What a cleared Max Raid leaves this player beside the pokemon: a
+ * Max Mushroom or two, and a Dynamax Band one clear in ten. Rolled off
+ * the lobby and the player, so a claim asked twice answers the same
+ */
+async function maxRaidSpoils(uid: string, lobby: string, raid: RaidRecord): Promise<ItemStack[]> {
+  if (raid.kind !== RaidKind.Max) {
+    return [];
+  }
+
+  // The draws land in order: the extra mushroom, then the band
+  const rng = new AleaRNG(`${lobby}:${uid}:max`);
+  const mushrooms = MAX_RAID_MUSHROOMS + (rng.random() < MAX_RAID_EXTRA_MUSHROOM_CHANCE ? 1 : 0);
+  const band = rng.random() < MAX_RAID_BAND_CHANCE;
+  const items: ItemStack[] = [{ item: Items.MaxMushrooms, amount: mushrooms }];
+
+  await grantItem(uid, Items.MaxMushrooms, mushrooms);
+  if (band) {
+    await grantItem(uid, Items.DynamaxBand);
+    items.push({ item: Items.DynamaxBand, amount: 1 });
+  }
+  return items;
 }
 
 /**
@@ -118,7 +150,10 @@ export async function claimRaidReward(uid: string, lobby: string): Promise<RaidR
   await grantGold(uid, gold, 'raid-reward');
   await bumpProgress(uid, [[Metric.GoldEarned, 0, gold]]);
 
-  const items = await totemCrystal(uid, lobby, raid);
+  const items = [
+    ...(await totemCrystal(uid, lobby, raid)),
+    ...(await maxRaidSpoils(uid, lobby, raid)),
+  ];
 
   // The raid's own world, so a cave lair's prize remembers the cave
   const chunk = getChunkOfSeed(raid.chunk.x, raid.chunk.y, raid.chunk.seed);

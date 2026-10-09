@@ -12,6 +12,7 @@ import createBattle from '../battle/setup';
 import Team from '../battle/team';
 import Unit from '../battle/unit';
 import { holdTotemAlly } from '../battle/abilities/special';
+import { dynamax } from '../battle/mechanics/dynamax';
 import { UNLIMITED_BATTLE_LIMITS } from '../data/constants/battle-limits';
 import { STAT_ORDER, Stats, StatsKind, getIV } from '../data/constants/stats';
 import {
@@ -102,6 +103,10 @@ function addUnit(battle: Battle, team: Team, snapshot: CatchSnapshot): Unit {
   // before the first turn, both of which are the right answers
   for (const status of unpackStatuses(snapshot.statuses)) {
     unit.addStatus(status, { type: EffectType.None });
+  }
+  // After its health, which growing doubles
+  if (snapshot.dynamaxed === true) {
+    dynamax(unit, { permanent: true });
   }
 
   return unit;

@@ -185,6 +185,8 @@ marked below.
 | **Nest**            | An egg of a local species                                       |
 | **Legendary Raid**  | A legendary's lair; the raid is named after the place           |
 | **Shadow Raid**     | A lair holding a shadow pokemon                                 |
+| **Max Raid**        | A hole in the ground under a pillar of red light, holding a Dynamaxed pokemon of the biome. Purple and brighter over a Gigantamax. One to a chunk, never underground |
+| **Totem**           | An Alolan trial site holding a Totem every raid window. One to a chunk |
 | **Wandering NPC**   | Whoever is passing through: a breeder, a nurse, a chef          |
 | **Market**          | A vendor's stall, behind one of the trade's four counters       |
 | **Auction Board**   | The region's lots, and the only way to them. One to a chunk     |

@@ -364,6 +364,8 @@ describe('the caves', () => {
           Landmark.Trainer,
           Landmark.LegendaryLair,
           Landmark.ShadowLair,
+          // A trial site may be underground, taking a duel's place
+          Landmark.Totem,
         ],
         String(kind),
       ).toContain(kind);

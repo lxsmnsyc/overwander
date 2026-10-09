@@ -140,6 +140,18 @@ const enum Landmark {
    * the spot, and nothing in its pool spawns anywhere else
    */
   HoneyTree = 20,
+  /**
+   * A Max Raid: a hole in open country with a pillar of light over it,
+   * holding a Dynamaxed final stage of a line the tile's biome spawns.
+   * Not rolled on its own: it takes a share of the item cache rolls,
+   * so the rest of a chunk's landmarks stand where they did
+   */
+  MaxRaid = 21,
+  /**
+   * An Alolan trial site holding a Totem every raid window. It takes a
+   * share of the trainer rolls the way a Max Raid takes the caches'
+   */
+  Totem = 22,
 }
 
 export { Landmark };

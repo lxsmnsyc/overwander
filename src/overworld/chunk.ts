@@ -69,16 +69,49 @@ const MIN_LANDMARKS = 2;
 const MAX_LANDMARKS = 4;
 
 /**
+ * The landmarks carved out of another one's rolls rather than rolled
+ * themselves: `share` of the rolls that land on `from` become this one
+ * instead, where the cell is dry ground and the chunk holds none yet.
+ *
+ * Carving rather than weighing them into the pool keeps every other
+ * roll where it was: a weight of their own would move the band every
+ * later landmark is read from, and with it every chunk's landmarks
+ */
+const CARVED_LANDMARKS: { kind: Landmark; from: Landmark; share: number; caves: boolean }[] = [
+  // Worth 3 of the cache's 15, which leaves the cache 12
+  { kind: Landmark.MaxRaid, from: Landmark.ItemCache, share: 3 / 15, caves: false },
+  // Worth 2 of the duel's 10: a trial is a trainer's challenge
+  { kind: Landmark.Totem, from: Landmark.Trainer, share: 2 / 10, caves: true },
+];
+
+/**
+ * What a rolled landmark becomes, given where in its own band the roll
+ * fell (0 to 1). Null where it stays itself
+ */
+function carvedFrom(kind: Landmark, within: number, depth: Depth): Landmark | null {
+  for (const carved of CARVED_LANDMARKS) {
+    if (carved.from === kind && within < carved.share && (carved.caves || depth !== Depth.Cave)) {
+      return carved.kind;
+    }
+  }
+  return null;
+}
+
+/**
  * What the open country still holds: everything a town does not, less
  * the cave mouths, which are cut where the ground has a hillside to
- * cut them into rather than rolled anywhere
+ * cut them into rather than rolled anywhere, and the carved ones
  */
 const WILD_LANDMARKS = ((): Landmark[] => {
   const town = new Set(TOWN_LANDMARKS);
+  const carved = new Set<Landmark>();
   const wild: Landmark[] = [];
 
+  for (const entry of CARVED_LANDMARKS) {
+    carved.add(entry.kind);
+  }
   for (const kind of LANDMARKS) {
-    if (!town.has(kind) && kind !== Landmark.CaveMouth) {
+    if (!town.has(kind) && kind !== Landmark.CaveMouth && !carved.has(kind)) {
       wild.push(kind);
     }
   }
@@ -716,12 +749,16 @@ export default class Chunk {
         // them equally common
         let target = draws.random('kind') * total;
         let landmark = pool[pool.length - 1];
+        // Where in its own band the roll fell, which is what a carved
+        // landmark takes its share of. No new draw, so nothing moves
+        let within = 1;
 
         for (const kind of pool) {
           target -= LANDMARK_WEIGHTS[kind];
 
           if (target < 0) {
             landmark = kind;
+            within = 1 + target / LANDMARK_WEIGHTS[kind];
             break;
           }
         }
@@ -769,6 +806,14 @@ export default class Chunk {
         // the chunk given up on, since the next kind may still fit
         if (cell == null) {
           continue;
+        }
+
+        // Chosen after the cell, so the cell is the one the rolled kind
+        // would have taken. Dry ground only, and one of each to a chunk
+        const carved = carvedFrom(landmark, within, this.world.depth);
+
+        if (carved != null && !rolled.has(carved) && this.getCellRole(cell) === 'ground') {
+          landmark = carved;
         }
         cells.set(cell, landmark);
         rolled.add(landmark);

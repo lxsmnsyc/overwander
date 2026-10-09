@@ -1,20 +1,18 @@
 Zekrom:
   Zekrom:
     level:
-      1: [DragonRage, ThunderFang]
-      8: [Imprison]
-      15: [AncientPower]
-      22: [Thunderbolt]
-      29: [DragonBreath]
-      36: [Slash]
-      43: [ZenHeadbutt]
-      50: [FusionBolt]
-      54: [DragonClaw]
-      71: [Crunch]
-      78: [Thunder]
-      85: [Outrage]
-      92: [HyperVoice]
-      100: [BoltStrike]
+      1: [DragonBreath, AncientPower, ThunderFang, NobleRoar, DragonRage]
+      8: [Slash]
+      16: [Crunch]
+      24: [ZenHeadbutt]
+      32: [DragonClaw]
+      40: [Thunderbolt]
+      48: [FusionBolt]
+      56: [HyperVoice]
+      64: [Thunder]
+      72: [Imprison]
+      80: [Outrage]
+      88: [BoltStrike]
     teachable:
       - Cut
       - DoubleTeam
@@ -79,6 +77,16 @@ Zekrom:
       - ScaleShot
       - RisingVoltage
       - DualWingbeat
+      - Crunch
+      - DragonDance
+      - ElectroBall
+      - Endure
+      - HelpingHand
+      - Imprison
+      - SteelWing
+      - Swift
+      - ThunderFang
+      - WeatherBall
 Landorus:
   family-teachable:
     - Attract
@@ -147,59 +155,53 @@ Landorus:
     - BrutalSwing
   Landorus:
     level:
-      1:
-        - Tackle
-        - RockThrow
-        - Fissure
-        - Outrage
-        - Imprison
-        - RockTomb
-        - SandTomb
-        - Block
-        - MudShot
-        - HammerArm
-        - SmackDown
+      1: [RockThrow, SandTomb, Tackle, MudShot, SmackDown]
       5: [Leer]
       7: [Bite, Punishment]
+      10: [Block]
       11: [Twister]
-      13: [Bulldoze]
+      15: [Bulldoze]
+      20: [RockTomb]
       22: [BulkUp]
-      25: [SwordsDance, Extrasensory]
+      25: [SwordsDance]
+      30: [Imprison]
       35: [RockSlide]
-      37: [EarthPower]
-      40: [Crunch]
+      40: [EarthPower]
       41: [Crunch]
-      49: [Earthquake]
+      45: [Extrasensory]
       50: [StoneEdge]
-      55: [Sandstorm]
       52: [SandsearStorm]
+      55: [HammerArm]
+      60: [Sandstorm]
+      65: [Earthquake]
+      70: [Outrage]
+      75: [Fissure]
+    teachable:
+      - MudShot
   LandorusTherian:
     level:
-      1:
-        - Tackle
-        - RockThrow
-        - Fissure
-        - Outrage
-        - Imprison
-        - RockTomb
-        - SandTomb
-        - Block
-        - MudShot
-        - HammerArm
-        - SmackDown
+      1: [RockThrow, SandTomb, Tackle, MudShot, SmackDown]
       5: [Leer]
       7: [Bite, Punishment]
+      10: [Block]
       11: [Twister]
-      13: [Bulldoze]
+      15: [Bulldoze]
+      20: [RockTomb]
       22: [BulkUp]
-      25: [SwordsDance, Extrasensory]
+      25: [SwordsDance]
+      30: [Imprison]
       35: [RockSlide]
-      37: [EarthPower]
-      40: [Crunch]
+      40: [EarthPower]
       41: [Crunch]
-      49: [Earthquake]
+      45: [Extrasensory]
       50: [StoneEdge]
-      55: [Sandstorm]
+      55: [HammerArm]
+      60: [Sandstorm]
+      65: [Earthquake]
+      70: [Outrage]
+      75: [Fissure]
+    teachable:
+      - MudShot
 Kyurem:
   family-teachable:
     - Cut
@@ -264,49 +266,76 @@ Kyurem:
     - DualWingbeat
   Kyurem:
     level:
-      1: [DragonRage, IcyWind]
-      8: [Imprison]
-      15: [AncientPower]
-      22: [IceBeam]
-      29: [DragonBreath]
-      36: [Slash]
-      43: [ScaryFace]
-      50: [Glaciate]
-      57: [DragonPulse]
-      71: [Endeavor]
-      78: [Blizzard]
-      85: [Outrage]
-      92: [HyperVoice]
+      1: [DragonBreath, AncientPower, NobleRoar, FreezeDry, DragonRage, IcyWind]
+      8: [Slash]
+      16: [Endeavor]
+      24: [DragonPulse]
+      32: [IceBeam]
+      40: [HyperVoice]
+      48: [ScaryFace]
+      56: [Blizzard]
+      64: [Imprison]
+      72: [Outrage]
+      80: [Glaciate]
+      88: [SheerCold]
+    teachable:
+      - DragonDance
+      - Endure
+      - HelpingHand
+      - IcicleSpear
+      - Imprison
+      - ScaryFace
+      - SteelWing
+      - Swift
+      - WeatherBall
   KyuremBlack:
     level:
-      1: [DragonRage, IcyWind]
-      8: [Imprison]
-      15: [AncientPower]
-      22: [IceBeam]
-      29: [DragonBreath]
-      36: [Slash]
-      43: [FusionBolt]
-      50: [FreezeShock]
-      57: [DragonPulse]
-      71: [Endeavor]
-      78: [Blizzard]
-      85: [Outrage]
-      92: [HyperVoice]
+      1: [DragonBreath, AncientPower, NobleRoar, FreezeDry, DragonRage, IcyWind]
+      8: [Slash]
+      16: [Endeavor]
+      24: [DragonPulse]
+      32: [IceBeam]
+      40: [HyperVoice]
+      48: [FusionBolt]
+      56: [Blizzard]
+      64: [Imprison]
+      72: [Outrage]
+      80: [FreezeShock]
+      88: [SheerCold]
+    teachable:
+      - DragonDance
+      - Endure
+      - HelpingHand
+      - IcicleSpear
+      - Imprison
+      - ScaryFace
+      - SteelWing
+      - Swift
+      - WeatherBall
   KyuremWhite:
     level:
-      1: [DragonRage, IcyWind]
-      8: [Imprison]
-      15: [AncientPower]
-      22: [IceBeam]
-      29: [DragonBreath]
-      36: [Slash]
-      43: [FusionFlare]
-      50: [IceBurn]
-      57: [DragonPulse]
-      71: [Endeavor]
-      78: [Blizzard]
-      85: [Outrage]
-      92: [HyperVoice]
+      1: [DragonBreath, AncientPower, NobleRoar, FreezeDry, DragonRage, IcyWind]
+      8: [Slash]
+      16: [Endeavor]
+      24: [DragonPulse]
+      32: [IceBeam]
+      40: [HyperVoice]
+      48: [FusionFlare]
+      56: [Blizzard]
+      64: [Imprison]
+      72: [Outrage]
+      80: [IceBurn]
+      88: [SheerCold]
+    teachable:
+      - DragonDance
+      - Endure
+      - HelpingHand
+      - IcicleSpear
+      - Imprison
+      - ScaryFace
+      - SteelWing
+      - Swift
+      - WeatherBall
 Keldeo:
   family-teachable:
     - AerialAce
@@ -361,34 +390,60 @@ Keldeo:
     - FlipTurn
   Keldeo:
     level:
-      1: [AquaJet, Leer]
-      7: [DoubleKick]
-      13: [BubbleBeam]
-      19: [TakeDown]
-      25: [HelpingHand]
-      31: [Retaliate]
-      37: [AquaTail]
-      43: [SacredSword]
-      49: [SwordsDance]
-      55: [QuickGuard]
-      61: [WorkUp]
-      67: [HydroPump]
-      73: [CloseCombat]
+      1: [Leer, HelpingHand, AquaJet, WorkUp, SecretSword]
+      7: [BubbleBeam]
+      14: [QuickGuard]
+      21: [DoubleKick]
+      28: [Retaliate]
+      35: [AquaTail]
+      42: [TakeDown]
+      49: [SacredSword]
+      56: [SwordsDance]
+      63: [HydroPump]
+      70: [CloseCombat]
+    teachable:
+      - AirSlash
+      - AuraSphere
+      - BrickBreak
+      - CloseCombat
+      - Endure
+      - HydroPump
+      - LowKick
+      - Megahorn
+      - MuddyWater
+      - Revenge
+      - Reversal
+      - SmartStrike
+      - SunnyDay
+      - Swift
   KeldeoResolute:
     level:
-      1: [AquaJet, Leer]
-      7: [DoubleKick]
-      13: [BubbleBeam]
-      19: [TakeDown]
-      25: [HelpingHand]
-      31: [Retaliate]
-      37: [AquaTail]
-      43: [SacredSword]
-      49: [SwordsDance]
-      55: [QuickGuard]
-      61: [WorkUp]
-      67: [HydroPump]
-      73: [CloseCombat]
+      1: [Leer, HelpingHand, AquaJet, WorkUp, SecretSword]
+      7: [BubbleBeam]
+      14: [QuickGuard]
+      21: [DoubleKick]
+      28: [Retaliate]
+      35: [AquaTail]
+      42: [TakeDown]
+      49: [SacredSword]
+      56: [SwordsDance]
+      63: [HydroPump]
+      70: [CloseCombat]
+    teachable:
+      - AirSlash
+      - AuraSphere
+      - BrickBreak
+      - CloseCombat
+      - Endure
+      - HydroPump
+      - LowKick
+      - Megahorn
+      - MuddyWater
+      - Revenge
+      - Reversal
+      - SmartStrike
+      - SunnyDay
+      - Swift
 Meloetta:
   family-teachable:
     - Acrobatics
@@ -585,116 +640,106 @@ Genesect:
     - SteelBeam
   Genesect:
     level:
-      1:
-        - QuickAttack
-        - Screech
-        - FuryCutter
-        - MetalClaw
-        - MagnetRise
-        - TechnoBlast
-        - FellStinger
-      11: [LockOn]
-      18: [FlameCharge]
+      1: [QuickAttack, FuryCutter]
+      7: [Screech]
+      14: [MetalClaw]
+      21: [FellStinger]
       22: [MagnetBomb]
+      28: [FlameCharge]
       29: [Slash]
-      33: [MetalSound]
+      35: [MetalSound]
       40: [SignalBeam]
       42: [XScissor]
       44: [TriAttack]
-      55: [BugBuzz]
-      62: [SimpleBeam]
-      66: [ZapCannon]
+      49: [MagnetRise]
+      56: [BugBuzz]
+      63: [SimpleBeam]
+      70: [ZapCannon]
       73: [HyperBeam]
-      77: [SelfDestruct]
+      77: [LockOn]
+      84: [TechnoBlast]
+      91: [SelfDestruct]
   GenesectDouse:
     level:
-      1:
-        - QuickAttack
-        - Screech
-        - FuryCutter
-        - MetalClaw
-        - MagnetRise
-        - TechnoBlast
-        - FellStinger
-      11: [LockOn]
-      18: [FlameCharge]
+      1: [QuickAttack, FuryCutter]
+      7: [Screech]
+      14: [MetalClaw]
+      21: [FellStinger]
       22: [MagnetBomb]
+      28: [FlameCharge]
       29: [Slash]
-      33: [MetalSound]
+      35: [MetalSound]
       40: [SignalBeam]
       42: [XScissor]
       44: [TriAttack]
-      55: [BugBuzz]
-      62: [SimpleBeam]
-      66: [ZapCannon]
+      49: [MagnetRise]
+      56: [BugBuzz]
+      63: [SimpleBeam]
+      70: [ZapCannon]
       73: [HyperBeam]
-      77: [SelfDestruct]
+      77: [LockOn]
+      84: [TechnoBlast]
+      91: [SelfDestruct]
   GenesectShock:
     level:
-      1:
-        - QuickAttack
-        - Screech
-        - FuryCutter
-        - MetalClaw
-        - MagnetRise
-        - TechnoBlast
-        - FellStinger
-      11: [LockOn]
-      18: [FlameCharge]
+      1: [QuickAttack, FuryCutter]
+      7: [Screech]
+      14: [MetalClaw]
+      21: [FellStinger]
       22: [MagnetBomb]
+      28: [FlameCharge]
       29: [Slash]
-      33: [MetalSound]
+      35: [MetalSound]
       40: [SignalBeam]
       42: [XScissor]
       44: [TriAttack]
-      55: [BugBuzz]
-      62: [SimpleBeam]
-      66: [ZapCannon]
+      49: [MagnetRise]
+      56: [BugBuzz]
+      63: [SimpleBeam]
+      70: [ZapCannon]
       73: [HyperBeam]
-      77: [SelfDestruct]
+      77: [LockOn]
+      84: [TechnoBlast]
+      91: [SelfDestruct]
   GenesectBurn:
     level:
-      1:
-        - QuickAttack
-        - Screech
-        - FuryCutter
-        - MetalClaw
-        - MagnetRise
-        - TechnoBlast
-        - FellStinger
-      11: [LockOn]
-      18: [FlameCharge]
+      1: [QuickAttack, FuryCutter]
+      7: [Screech]
+      14: [MetalClaw]
+      21: [FellStinger]
       22: [MagnetBomb]
+      28: [FlameCharge]
       29: [Slash]
-      33: [MetalSound]
+      35: [MetalSound]
       40: [SignalBeam]
       42: [XScissor]
       44: [TriAttack]
-      55: [BugBuzz]
-      62: [SimpleBeam]
-      66: [ZapCannon]
+      49: [MagnetRise]
+      56: [BugBuzz]
+      63: [SimpleBeam]
+      70: [ZapCannon]
       73: [HyperBeam]
-      77: [SelfDestruct]
+      77: [LockOn]
+      84: [TechnoBlast]
+      91: [SelfDestruct]
   GenesectChill:
     level:
-      1:
-        - QuickAttack
-        - Screech
-        - FuryCutter
-        - MetalClaw
-        - MagnetRise
-        - TechnoBlast
-        - FellStinger
-      11: [LockOn]
-      18: [FlameCharge]
+      1: [QuickAttack, FuryCutter]
+      7: [Screech]
+      14: [MetalClaw]
+      21: [FellStinger]
       22: [MagnetBomb]
+      28: [FlameCharge]
       29: [Slash]
-      33: [MetalSound]
+      35: [MetalSound]
       40: [SignalBeam]
       42: [XScissor]
       44: [TriAttack]
-      55: [BugBuzz]
-      62: [SimpleBeam]
-      66: [ZapCannon]
+      49: [MagnetRise]
+      56: [BugBuzz]
+      63: [SimpleBeam]
+      70: [ZapCannon]
       73: [HyperBeam]
-      77: [SelfDestruct]
+      77: [LockOn]
+      84: [TechnoBlast]
+      91: [SelfDestruct]

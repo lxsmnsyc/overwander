@@ -34,6 +34,7 @@ sells for 10,000, so nothing worth beating pays less than tripping over one.
 | **Totem raid**        | 50,000                       | The Totem at Totem size, at level 40, and its Z-Crystal the first time |
 | **Max Raid**          | 50,000                       | The boss at level 40, 1 or 2 Max Mushrooms, and a Dynamax Band one clear in 10 |
 | **Alpha raid**        | 50,000                       | The Alpha at level 40 and its own size, with 3 random stats at 31 |
+| **Noble raid**        | 55,000                       | Nothing to catch: 2 or 3 Balms, and a canon Noble's treasure |
 | **Legendary raid**    | 80,000                       | The legendary, at level 50                             |
 | **Mythical raid**     | 200,000                      | The mythical, at level 30                              |
 | **Gym seat**          | A tenth of the loser's purse | The cell, if you want to sit on it                     |

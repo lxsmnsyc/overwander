@@ -87,6 +87,71 @@ Beaten, an Alpha pays 50,000 and waits at level 40 at its species' own size and
 abilities, with **3 different stats at 31**, picked at random from the prize's
 own rolls. The other three are rolled as any raid prize's are.
 
+## Noble raids
+
+A **Noble Arena** is a raised stone ring under a red shrine gate, a brazier
+burning either side of its front, glowing white while its Noble is home. None
+stands underground. Each raid window it holds one of two kinds of Noble:
+
+- One of **Hisui's five**, where the tile's biome is one of its own biomes and
+  it can stand on the cell: **Kleavor**, **Hisuian Lilligant**, **Hisuian
+  Arcanine**, **Hisuian Electrode** and **Hisuian Avalugg**. Where one of them
+  is at home, it holds the arena **half the time**.
+- Otherwise any **final stage of a line the tile's biome spawns** there, the way
+  a Totem is picked. The five can come up this way too, so in their own biomes
+  they hold the arena a little more than half the time.
+
+A Noble is a raid boss with the boss's pool and stats, and it is **calmed, never
+beaten**. It cannot faint: its HP bar is its **Frenzy**, and when the Frenzy is
+drained it leaves the field calm and the raid is won.
+
+- **Staggers.** Each time the Frenzy falls past **3/4, 1/2 and 1/4**, the Noble
+  reels for **4 seconds**: it cannot act, whatever it was winding up is lost,
+  and every attack on it lands for **1.5x**. Gold stars turn over its head. A
+  blow past two thresholds staggers it once, and healing back over one does not
+  open it again.
+- **Bursts.** Every **10 seconds** it spends able to act, it unleashes a burst on
+  the whole party. A burst is telegraphed for **1.8 seconds**: a ring closes on
+  the Noble and a red mark blinks over every pokemon it will reach. The burst
+  never misses, so the windup is the dodge: a Protect, a Detect, a Max Guard or
+  a Wide Guard up in time turns it away, and a pokemon that carries one raises
+  it when it sees the burst coming. A cast already under way finishes first.
+- **Balms.** A party that packed [Balms](items.md#balms) throws one every 10
+  seconds, each soothing 1/50 of the Frenzy.
+
+Each canon Noble has a burst of its own:
+
+| Noble             | Burst                | Power | What it leaves                               |
+| ----------------- | -------------------- | ----- | -------------------------------------------- |
+| Kleavor           | Frenzied Stone Axe   | 100   | Stealth Rock splinters on each side it hits  |
+| Hisuian Lilligant | Frenzied Petal Storm | 100   | Every pokemon hit loses a stage of Speed     |
+| Hisuian Arcanine  | Frenzied Wildfire    | 90    | A sea of fire on each side for 8 seconds, and a burn 30% of the time |
+| Hisuian Electrode | Frenzied Blast       | 130   | Nothing more; the Noble does not faint from it |
+| Hisuian Avalugg   | Frenzied Iceberg     | 110   | A flinch 30% of the time                     |
+
+Every other Noble throws a **Frenzy Burst** of 90 power in its own first type,
+physical or special by whichever of its Attack and Special Attack is higher,
+with an effect read off that type:
+
+| Type                    | What it leaves               |
+| ----------------------- | ---------------------------- |
+| Fire                    | A burn 30% of the time       |
+| Electric                | Paralysis 30% of the time    |
+| Ice                     | A freeze 10% of the time     |
+| Poison                  | Poison 30% of the time       |
+| Psychic                 | Confusion 30% of the time    |
+| Dark, Rock              | A flinch 30% of the time     |
+| Water, Grass, Flying    | A stage of Speed lost        |
+| Ground                  | A stage of accuracy lost     |
+| Normal, Fighting, Steel | A stage of Defense lost      |
+| Bug, Ghost              | A stage of Special Defense lost |
+| Dragon, Fairy           | A stage of Attack lost       |
+
+Nothing is caught: a calmed Noble pays **55,000**, **2 or 3 Balms**, and a canon
+Noble its treasure on top: a **Black Augurite** from Kleavor, a **Sun Stone**
+from Lilligant, a **Fire Stone** from Arcanine, a **Leaf Stone** from Electrode
+and a piece of **Never-Melt Ice** from Avalugg.
+
 ## The raid boss
 
 A boss is a **maxed legendary, perfect in every individual stat and trained to

@@ -16,7 +16,19 @@ import {
   swell,
 } from '../moves/__paint';
 import type PaintedVisual from '../moves/__painted';
-import { type Cue, LIFT, REACH, bitten, orbiting, over, played, rising, stalled } from './shapes';
+import { STAGGER_DURATION } from '../../../battle/status/staggered';
+import {
+  type Cue,
+  LIFT,
+  REACH,
+  STAGGER_TURN,
+  bitten,
+  orbiting,
+  over,
+  played,
+  rising,
+  stalled,
+} from './shapes';
 import { LIT_STATUS, LIT_TRIGGERS } from './lit/status';
 
 /** What a status looks like as it lands, and again each time it bites */
@@ -96,6 +108,30 @@ export const STATUS_CUES: Partial<Record<Statuses, Cue>> = {
     span: 900,
   },
   [Statuses.Confused]: { paint: orbiting(3), color: '#ef70ef', span: 900 },
+  // Reeling for the whole of it: gold stars round the head, turning
+  // once every `STAGGER_TURN`, gone the moment it can act again
+  [Statuses.Staggered]: {
+    paint: (context, stage, share, paint) => {
+      const at = over(stage, LIFT * 0.5);
+      const size = REACH * stage.scale * 1.5;
+      const turned = (share * STAGGER_DURATION) / STAGGER_TURN;
+      const alpha = Math.min(1, share / 0.05, (1 - share) / 0.08);
+
+      for (let mark = 0; mark < 4; mark += 1) {
+        const angle = turned * Math.PI * 2 + (mark / 4) * Math.PI * 2;
+
+        star(
+          context,
+          [at[0] + Math.cos(angle) * size, at[1] + Math.sin(angle) * size * 0.4],
+          size * 0.34,
+          angle * 2,
+          { ...paint, alpha },
+        );
+      }
+    },
+    color: '#ffd84a',
+    span: STAGGER_DURATION,
+  },
   [Statuses.Flinched]: {
     paint: (context, stage, share, paint) => {
       burst(context, over(stage), REACH * stage.scale * (0.6 + share), 6, 23, {
@@ -652,6 +688,7 @@ export const STATUS_TRIGGERS: Partial<Record<Statuses, Cue>> = {
   [Statuses.Flinched]: { paint: stalled(), color: '#e6ecf5', span: 420 },
   [Statuses.Recharging]: { paint: stalled(), color: '#8f9ba8', span: 480 },
   [Statuses.Dormant]: { paint: stalled(), color: '#6a7fa8', span: 620 },
+  [Statuses.Staggered]: { paint: stalled(), color: '#ffd84a', span: 420 },
 
   // It went for somebody it likes instead
   [Statuses.Infatuated]: {

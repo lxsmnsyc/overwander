@@ -2142,7 +2142,13 @@
         "GMaxSteelsurge",
         "GMaxDepletion",
         "GMaxOneBlow",
-        "GMaxRapidFlow"
+        "GMaxRapidFlow",
+        "FrenzyStoneAxe",
+        "FrenzyPetalStorm",
+        "FrenzyWildfire",
+        "FrenzyBlast",
+        "FrenzyIceberg",
+        "FrenzyBurst"
       ]
     },
     "ability": {
@@ -2467,6 +2473,7 @@
         "Totem",
         "TotemAlly",
         "Alpha",
+        "Noble",
         "VerdantField",
         "EmberField",
         "DelugeField",
@@ -3564,7 +3571,8 @@
         "FossilizedFish",
         "FossilizedDrake",
         "FossilizedDino",
-        "DynamaxBand"
+        "DynamaxBand",
+        "Balm"
       ]
     },
     "biome": {
@@ -4309,7 +4317,8 @@
         "AquaRinged",
         "Telekinetic",
         "SkyDropped",
-        "PowerShifted"
+        "PowerShifted",
+        "Staggered"
       ]
     },
     "team-status": {
@@ -5037,7 +5046,8 @@
         "HoneyTree",
         "MaxRaid",
         "Totem",
-        "AlphaRaid"
+        "AlphaRaid",
+        "NobleArena"
       ]
     },
     "phenomenon": {

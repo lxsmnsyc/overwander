@@ -48,6 +48,9 @@ function describeRaid(view: RaidView): string {
       ? 'A Max Raid: it is Gigantamaxed for the whole fight. Beaten, it leaves Max Mushrooms and keeps its Gigantamax Factor when caught.'
       : 'A Max Raid: it is Dynamaxed for the whole fight. Beaten, it leaves Max Mushrooms, and now and then a Dynamax Band.';
   }
+  if (view.kind === RaidKind.Noble) {
+    return 'A Noble raid: its HP is its Frenzy, and it staggers at 3/4, 1/2 and 1/4 and bursts on the whole party in between. Calmed, it leaves Balms and gold rather than waiting to be caught. Each player packs up to 3 Balms from their bag.';
+  }
   if (view.kind === RaidKind.Alpha) {
     return 'An Alpha raid: it brings six of its kind back to its side at 3/4, 1/2 and 1/4 HP. Beaten, it waits with three perfect stats.';
   }

@@ -193,6 +193,11 @@ export const enum Statuses {
    * the field (Power Shift)
    */
   PowerShifted = 53,
+  /**
+   * A frenzied Noble knocked off its feet as its Frenzy drains past a
+   * quarter: it cannot act and takes more from every blow
+   */
+  Staggered = 54,
 }
 
 /**

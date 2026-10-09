@@ -19,6 +19,7 @@ import { grantItem } from '../inventory';
 import AleaRNG from '../../core/alea';
 import type { ItemStack } from '../../data/overworld/item-pool';
 import { getTotemCrystal } from '../../data/overworld/totems';
+import { getNobleTreasure } from '../../data/overworld/nobles';
 import { Items } from '../../data/ids/items';
 import { asOutcome } from './outcome';
 import { RAID_ENCOUNTER_TYPES, RAID_GOLD, RAID_REWARD_LEVELS, RAID_SHINY_BOOST } from './spoils';
@@ -29,9 +30,10 @@ import { RAID_ENCOUNTER_TYPES, RAID_GOLD, RAID_REWARD_LEVELS, RAID_SHINY_BOOST }
  * them, and the purse that came with it
  */
 export interface RaidReward {
-  encounter: EncounterRecord;
+  /** The pokemon waiting, null for a calmed Noble, which nobody catches */
+  encounter: EncounterRecord | null;
   gold: number;
-  /** What else it left: a Totem's Z-Crystal, or a Max Raid's mushrooms and band */
+  /** What else it left: a Totem's Z-Crystal, a Max Raid's mushrooms and band, a Noble's Balms */
   items: ItemStack[];
 }
 
@@ -100,6 +102,33 @@ async function maxRaidSpoils(uid: string, lobby: string, raid: RaidRecord): Prom
   return items;
 }
 
+/** The Balms every calmer takes from a Noble, and how often one more */
+export const NOBLE_RAID_BALMS = 2;
+export const NOBLE_RAID_EXTRA_BALM_CHANCE = 1 / 2;
+
+/**
+ * What a calmed Noble leaves this player: two or three Balms, and a
+ * canon Noble's own treasure. Rolled off the lobby and the player, so
+ * a claim asked twice answers the same
+ */
+async function nobleSpoils(uid: string, lobby: string, raid: RaidRecord): Promise<ItemStack[]> {
+  if (raid.kind !== RaidKind.Noble) {
+    return [];
+  }
+
+  const rng = new AleaRNG(`${lobby}:${uid}:noble`);
+  const balms = NOBLE_RAID_BALMS + (rng.random() < NOBLE_RAID_EXTRA_BALM_CHANCE ? 1 : 0);
+  const items: ItemStack[] = [{ item: Items.Balm, amount: balms }];
+  const treasure = getNobleTreasure(raid.species);
+
+  await grantItem(uid, Items.Balm, balms);
+  if (treasure != null) {
+    await grantItem(uid, treasure);
+    items.push({ item: treasure, amount: 1 });
+  }
+  return items;
+}
+
 /**
  * Collect what a cleared raid owes. The claim marker at
  * raidRewards/{raidId}:{uid} guards it, so the raid pays each fighter
@@ -145,6 +174,10 @@ export async function claimRaidReward(uid: string, lobby: string): Promise<RaidR
   `;
 
   if (claimed.count === 0) {
+    // Nothing waits behind a Noble, so a second claim has nothing to reopen
+    if (raid.kind === RaidKind.Noble) {
+      return null;
+    }
     return reopenReward(uid, deriveRaidReward(raid, lobby, uid)[0]);
   }
   await grantGold(uid, gold, 'raid-reward');
@@ -153,7 +186,13 @@ export async function claimRaidReward(uid: string, lobby: string): Promise<RaidR
   const items = [
     ...(await totemCrystal(uid, lobby, raid)),
     ...(await maxRaidSpoils(uid, lobby, raid)),
+    ...(await nobleSpoils(uid, lobby, raid)),
   ];
+
+  // Calmed, not caught: the purse and the items are the whole prize
+  if (raid.kind === RaidKind.Noble) {
+    return { encounter: null, gold, items };
+  }
 
   // The raid's own world, so a cave lair's prize remembers the cave
   const chunk = getChunkOfSeed(raid.chunk.x, raid.chunk.y, raid.chunk.seed);

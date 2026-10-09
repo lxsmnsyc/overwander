@@ -336,6 +336,25 @@ interface Tint {
 
 const TINTS: Tint[] = [
   {
+    from: 'key/powder-jar',
+    to: 'key/balm',
+    why: 'the Balm a Noble is calmed with is its own item, and no sheet draws it',
+    // The jar under a linen cloth tied at the neck, full of a pale green
+    // salve with a cream leaf pressed on the front
+    swaps: {
+      '#303030': '#28302a',
+      '#70f070': '#f4efe2',
+      '#48b850': '#cfc5aa',
+      '#604830': '#5a4a36',
+      '#806030': '#8c7350',
+      '#888030': '#4f7a58',
+      '#d0a830': '#8fc89a',
+      '#f8e848': '#d6f4cf',
+      '#e0c838': '#b2e0b2',
+      '#f8b030': '#f2e4b0',
+    },
+  },
+  {
     from: 'key/silver-wing',
     to: 'held/fairy-feather',
     why: 'the boosters are one object each, and the silver wing is its own item',

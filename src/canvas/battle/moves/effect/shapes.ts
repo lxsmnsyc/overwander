@@ -372,7 +372,12 @@ export type EffectShape =
   | 'GMaxSteelsurge'
   | 'GMaxDepletion'
   | 'GMaxOneBlow'
-  | 'GMaxRapidFlow';
+  | 'GMaxRapidFlow'
+  | 'Splinters'
+  | 'PetalStorm'
+  | 'Wildfire'
+  | 'ChargedBlast'
+  | 'Iceberg';
 
 /** How long Wish's star rings where it lands, after the heal */
 export const WISH_TAIL = 400;
@@ -708,6 +713,13 @@ export const SPANS: Record<EffectShape, number> = {
   GMaxDepletion: 1300,
   GMaxOneBlow: 1300,
   GMaxRapidFlow: 1300,
+  // The Frenzy bursts: each is a whole moment, a fall or a gathering
+  // and then what it does
+  Splinters: 1400,
+  PetalStorm: 1300,
+  Wildfire: 1400,
+  ChargedBlast: 1300,
+  Iceberg: 1400,
 };
 
 /**

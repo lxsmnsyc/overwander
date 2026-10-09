@@ -6,7 +6,16 @@ import BattleField from '../../components/battle/BattleField';
 import BattleParty from '../../components/battle/BattleParty';
 import BattleTopBar from '../../components/battle/BattleTopBar';
 import BiomePicker, { biomeFrom } from './BiomePicker';
-import { Badge, Button, Meta, Note, Switch } from '../../components/styled';
+import { Badge, Button, Meta, Note, Select, Switch } from '../../components/styled';
+import type { Species } from '../../data/ids/species';
+import { Stats } from '../../data/constants/stats';
+import { EffectType, MoveTargetType } from '../../battle/events';
+import { NOBLE_THRESHOLDS } from '../../battle/abilities/noble';
+import { Statuses } from '../../data/ids/status';
+import { FRENZY_MOVES, getNobleBurst } from '../../data/moves/frenzy-moves';
+import { getMoveData } from '../../data/moves';
+import { getSpeciesData } from '../../data/species';
+import { CANON_NOBLES } from '../../data/overworld/nobles';
 import { DEMO_TEAMS, DEMO_TEAM_SIZE, createDemoRaidTeams } from '../../overworld/demo-raid';
 import { BOSS_ALLIANCE, PLAYER_ALLIANCE } from '../../overworld/raid';
 import { type RaidBattle, createRaidBattle } from '../../overworld/raid-battle';
@@ -66,7 +75,84 @@ function firstParty(battle: Battle): string {
   return '';
 }
 
+/** The canon Noble picker's way of saying "any species by rule" */
+const NOBODY = 0;
+
+/** Any Noble, or one of Hisui's five pinned */
+function nobleOptions(): { value: number; label: string }[] {
+  const options = [{ value: NOBODY, label: 'Any, by the seed' }];
+
+  for (const species of CANON_NOBLES.keys()) {
+    options.push({ value: species, label: getSpeciesData(species).name });
+  }
+  return options;
+}
+
+/** What the Noble is doing right now, for watching a burst or a stagger come */
+function nobleState(staged: RaidBattle, _revision: number): string {
+  const noble = (staged.units.get(BOSS_ALLIANCE) ?? []).at(0);
+
+  if (noble == null) {
+    return 'No Noble';
+  }
+  if (!noble.alive || noble.health <= 0) {
+    return 'Calmed';
+  }
+
+  const frenzy = Math.round((noble.health / noble.checkStat(Stats.HP, 0)) * 100);
+
+  if (noble.status[Statuses.Staggered] != null) {
+    return `Staggered, Frenzy ${frenzy}%`;
+  }
+  if (noble.casting != null && FRENZY_MOVES.has(noble.casting.move)) {
+    return `Winding up ${getMoveData(noble.casting.move).name}, Frenzy ${frenzy}%`;
+  }
+  return `Raging, Frenzy ${frenzy}%`;
+}
+
+/** Have the Noble wind up its burst at once, dropping whatever it was casting */
+function burstNow(staged: RaidBattle): void {
+  const noble = (staged.units.get(BOSS_ALLIANCE) ?? []).at(0);
+
+  if (noble == null || !noble.alive) {
+    return;
+  }
+  noble.stopCast();
+  noble.stopChannel();
+  noble.cast(getNobleBurst(noble.species), { type: MoveTargetType.None });
+}
+
+/**
+ * Take a Noble's Frenzy to just under its next stagger, so a stagger
+ * can be watched without waiting the fight out
+ */
+function drainToStagger(staged: RaidBattle): void {
+  const noble = (staged.units.get(BOSS_ALLIANCE) ?? []).at(0);
+  const hitter = (staged.units.get(PLAYER_ALLIANCE) ?? []).at(0);
+
+  if (noble == null || hitter == null || !noble.alive) {
+    return;
+  }
+
+  const max = noble.checkStat(Stats.HP, 0);
+  let below = 0;
+
+  for (const share of NOBLE_THRESHOLDS) {
+    if (noble.health > max * share) {
+      below = share;
+      break;
+    }
+  }
+  hitter.damage(
+    { type: EffectType.None },
+    noble,
+    Math.max(1, noble.health - Math.floor(max * below) + 1),
+    0,
+  );
+}
+
 export default function RaidDemoBoard(): JSX.Element {
+  const choices = nobleOptions();
   // The seed lives in the URL rather than in a signal, so the fight
   // on screen is a link somebody else can open and watch the same
   // frames of
@@ -76,6 +162,7 @@ export default function RaidDemoBoard(): JSX.Element {
     totem?: string;
     max?: string;
     alpha?: string;
+    noble?: string;
     biome?: string;
   }>();
   const seed = (): string => params.seed ?? DEFAULT_SEED;
@@ -85,13 +172,20 @@ export default function RaidDemoBoard(): JSX.Element {
   const totem = (): boolean => params.totem === '1';
   const max = (): boolean => params.max === '1';
   const alpha = (): boolean => params.alpha === '1';
+  // Any truthy value stages a Noble; a species id pins which one
+  const noble = (): boolean => params.noble != null;
+  const pinned = (): Species | null => {
+    const id = Number(params.noble);
+
+    return Number.isInteger(id) && id > 1 ? id : null;
+  };
   const [built, setBuilt] = createSignal<RaidBattle | null>(null);
   const [revision, setRevision] = createSignal(0);
 
   createEffect(() => {
     const staged = createRaidBattle(
       `demo:${seed()}`,
-      createDemoRaidTeams(seed(), shadow(), totem(), max(), alpha()),
+      createDemoRaidTeams(seed(), shadow(), totem(), max(), alpha(), noble(), pinned()),
     );
 
     // Initialized but not started: the canvas starts it once it has
@@ -204,6 +298,25 @@ export default function RaidDemoBoard(): JSX.Element {
         }}
       />
 
+      <Switch
+        label="Noble"
+        description="Stages a frenzied Noble that staggers at 3/4, 1/2 and 1/4 and bursts between, with every party packing Balms."
+        checked={noble()}
+        onChange={(on) => {
+          setParams({ noble: on ? '1' : undefined });
+        }}
+      />
+
+      <Select
+        label="Canon Noble"
+        class="w-64"
+        value={pinned() ?? NOBODY}
+        options={choices}
+        onChange={(chosen) => {
+          setParams({ noble: chosen === NOBODY ? '1' : String(chosen) });
+        }}
+      />
+
       <BiomePicker
         value={biomeFrom(params.biome)}
         onChange={(biome) => {
@@ -253,6 +366,38 @@ export default function RaidDemoBoard(): JSX.Element {
                 pokemon, and here that is whoever went in first */}
             <BattleParty battle={staged.battle} player={firstParty(staged.battle)} />
           </>
+        )}
+      </Show>
+
+      <Show when={noble() ? built() : null}>
+        {(staged) => (
+          <Badge tone="neutral" data-noble-state="">
+            {nobleState(staged(), revision())}
+          </Badge>
+        )}
+      </Show>
+
+      <Show when={noble() ? built() : null}>
+        {(staged) => (
+          <Button
+            onClick={() => {
+              drainToStagger(staged());
+            }}
+          >
+            Drain the Frenzy to the next stagger
+          </Button>
+        )}
+      </Show>
+
+      <Show when={noble() ? built() : null}>
+        {(staged) => (
+          <Button
+            onClick={() => {
+              burstNow(staged());
+            }}
+          >
+            Unleash a burst now
+          </Button>
         )}
       </Show>
 

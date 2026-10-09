@@ -12,6 +12,7 @@ import createBattle from '../battle/setup';
 import Team from '../battle/team';
 import Unit from '../battle/unit';
 import { holdAlphaCopy, holdTotemAlly } from '../battle/abilities/special';
+import { holdBalms } from '../battle/abilities/noble';
 import { dynamax } from '../battle/mechanics/dynamax';
 import { UNLIMITED_BATTLE_LIMITS } from '../data/constants/battle-limits';
 import { STAT_ORDER, Stats, StatsKind, getIV } from '../data/constants/stats';
@@ -205,6 +206,9 @@ export function fieldTeams(
 
       const unit = addUnit(battle, team, snapshot);
 
+      if (snapshot.balms != null) {
+        holdBalms(team, snapshot.balms);
+      }
       if (snapshot.called === true) {
         holdTotemAlly(team, unit);
       } else {

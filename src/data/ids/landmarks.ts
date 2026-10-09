@@ -159,6 +159,12 @@ const enum Landmark {
    * beside the Max Raid's
    */
   AlphaRaid = 23,
+  /**
+   * A Noble's arena: a raised stone ring in open country where a
+   * frenzied lord of the land is calmed rather than beaten. It takes a
+   * share of the trainer rolls beside the Totem's
+   */
+  NobleArena = 24,
 }
 
 export { Landmark };

@@ -10,6 +10,8 @@ import abilityCueFor, {
   statusTriggerFor,
 } from '../../../canvas/battle/cues';
 import morphCue from '../../../canvas/battle/cues/morph';
+import { frenzyGathering, frenzyWarning } from '../../../canvas/battle/cues/frenzy';
+import { FRENZY_MOVES, getBurstStandIn } from '../../../data/moves/frenzy-moves';
 import pixelRatio from '../../../canvas/ratio';
 import createTwist from '../../../canvas/twist';
 import createLongPress from '../../styled/long-press';
@@ -31,7 +33,7 @@ import Bakery from '../../../canvas/bakery';
 import Biome from '../../../data/ids/biome';
 
 import loadSpeciesSprite from '../../../canvas/species-sprites';
-import { BattleEvents, MoveTargetType } from '../../../battle/events';
+import { BattleEvents, EffectType, type MoveTarget, MoveTargetType } from '../../../battle/events';
 import type Abilities from '../../../data/ids/abilities';
 import type Team from '../../../battle/team';
 import type Unit from '../../../battle/unit';
@@ -41,11 +43,11 @@ import { AI_REST_PERIOD } from '../../../battle/ai/idle';
 import { isLoopingCast, pickCast } from '../../../data/constants/cast';
 
 import { Stats } from '../../../data/constants/stats';
-import { MoveFlags } from '../../../data/ids/moves';
+import { MoveFlags, Moves } from '../../../data/ids/moves';
 import { Genders, Species, getBaseFormSpecies } from '../../../data/ids/species';
 import { getItemForms } from '../../../data/items/form-items';
 import { getStoneMega } from '../../../data/items/mega-stones';
-import type { Items } from '../../../data/ids/items';
+import { Items } from '../../../data/ids/items';
 
 import { Statuses, Terrains } from '../../../data/ids/status';
 import { TYPE_COLORS, Types } from '../../../data/constants/types';
@@ -291,6 +293,14 @@ function morphOf(held: Appearance | undefined, clock: number): { glow: number; s
  * standing in for, and to step back off when it breaks
  */
 const STAND_FADE = 320;
+
+/**
+ * The move a picture is drawn for: itself, but for a Noble's plain
+ * burst, which is drawn as the strongest move of the type it is thrown in
+ */
+function shownAs(source: Unit, move: Moves, target: MoveTarget): Moves {
+  return move === Moves.FrenzyBurst ? getBurstStandIn(source.checkMoveType(move, target)) : move;
+}
 
 export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
   let canvas: HTMLCanvasElement | undefined;
@@ -1061,7 +1071,8 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
 
       // What fills the gap, for exactly as long as the engine holds
       // it. A contact move fills it with the pokemon and draws nothing
-      const shape = delayShapeFor(event.move, event.steps);
+      const shown = shownAs(event.source, event.move, event.target);
+      const shape = delayShapeFor(shown, event.steps);
 
       // A step that takes the caster off the field takes its sprite
       // with it, and any other step puts it back: the strike of a Dig
@@ -1072,7 +1083,7 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
         gone.delete(event.source);
       }
 
-      const gap = moveDelayVisual(event.move, event.steps, window);
+      const gap = moveDelayVisual(shown, event.steps, window);
 
       if (gap != null) {
         paint(gap, event.source, crossing);
@@ -1103,8 +1114,10 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
         // Nothing on a step that was only the wind-up: what happened
         // is that the caster went underground, which the gap drew
         // The sky is read only by a shape made of it, and only as it lands
-        const landing = moveEffectVisual(event.move, event.steps, () =>
-          event.source.checkWeather(),
+        const landing = moveEffectVisual(
+          shownAs(event.source, event.move, event.target),
+          event.steps,
+          () => event.source.checkWeather(),
         );
 
         if (landing != null) {
@@ -1258,6 +1271,34 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
         event.source,
         [event.target],
       );
+    });
+
+    // A Noble winding up its burst: the whole field is warned, since
+    // the windup is the party's chance to raise a guard
+    const telegraphing = props.battle.on(BattleEvents.UnitCast, EventPriority.Post, (event) => {
+      if (!FRENZY_MOVES.has(event.move) || event.source.casting == null) {
+        return;
+      }
+
+      const windup = event.source.casting.time.duration;
+
+      paint(frenzyGathering(windup), event.source, []);
+      for (const foe of props.battle.units(event.source.team.alliance)) {
+        if (foe.alive) {
+          paint(frenzyWarning(windup), foe, []);
+        }
+      }
+    });
+
+    // A Balm landing on a Noble, drawn on the Noble it soothed
+    const soothing = props.battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+      if (
+        event.success &&
+        event.cause.type === EffectType.Item &&
+        event.cause.item === Items.Balm
+      ) {
+        paint(itemCueFor(Items.Balm), event.target, []);
+      }
     });
 
     // A held item going off: a berry eaten, a band that took the blow,
@@ -1734,6 +1775,8 @@ export default function BattleCanvas(props: BattleCanvasProps): JSX.Element {
       biting.stop();
       triggering.stop();
       spending.stop();
+      telegraphing.stop();
+      soothing.stop();
       typing.stop();
       critting.stop();
       blowing.stop();

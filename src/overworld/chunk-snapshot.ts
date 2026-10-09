@@ -19,6 +19,7 @@ import {
   getFeaturedFamilies,
   getSeasonalCoat,
   getShoreForm,
+  getSpeciesData,
   getWingPattern,
   listTrueShadows,
 } from '../data/species';
@@ -105,6 +106,7 @@ import type Chunk from './chunk';
 import { canStageBoss } from './raid';
 import { getTotemsOf } from '../data/overworld/totems';
 import { isAlphaSpecies } from '../data/overworld/alphas';
+import { CANON_NOBLES, CANON_NOBLE_SHARE } from '../data/overworld/nobles';
 import { CELL_COUNT, CHUNK_CELLS, PLACEMENT_AREA, centeredCells } from './chunk';
 import { Depth } from './depth';
 import type { PhenomenonReward } from './landmarks';
@@ -973,30 +975,13 @@ export default class ChunkSnapshot {
   /** One boss per landmark of this kind, from the final stages the tile's biome grows into */
   private rollFinalStages(kind: Landmark, salt: string): Map<number, RaidRoll> {
     const raids = new Map<number, RaidRoll>();
-    const time = getTimeOfDay(this.raidTimestamp);
 
     for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
       if (landmark !== kind) {
         continue;
       }
-      const hosts = this.hostsAt(cell);
-      const finals = new Set<Species>();
-      const pool = getSpawnPool(
-        this.biomeAt(cell),
-        time,
-        this.depth === Depth.Cave,
-        this.drawnSurface(cell),
-      );
+      const finals = this.finalStagesAt(cell);
 
-      for (const rank of spawnRanks(pool)) {
-        for (const entry of rank) {
-          for (const final of getTotemsOf(entry.species)) {
-            if (hosts(final)) {
-              finals.add(final);
-            }
-          }
-        }
-      }
       if (finals.size === 0) {
         continue;
       }
@@ -1010,6 +995,80 @@ export default class ChunkSnapshot {
       raids.set(cell, { lair: null, species, traitValue: rng.int32() });
     }
     return raids;
+  }
+
+  /** The final stages of every line the cell's biome spawns there, that can stand on it */
+  private finalStagesAt(cell: number): Set<Species> {
+    const hosts = this.hostsAt(cell);
+    const finals = new Set<Species>();
+    const pool = getSpawnPool(
+      this.biomeAt(cell),
+      getTimeOfDay(this.raidTimestamp),
+      this.depth === Depth.Cave,
+      this.drawnSurface(cell),
+    );
+
+    for (const rank of spawnRanks(pool)) {
+      for (const entry of rank) {
+        for (const final of getTotemsOf(entry.species)) {
+          if (hosts(final)) {
+            finals.add(final);
+          }
+        }
+      }
+    }
+    return finals;
+  }
+
+  private nobleRaids: Map<number, RaidRoll> | null = null;
+
+  /**
+   * The window's Nobles, keyed by the arena's cell: a final stage of
+   * the tile's biome by rule, or, `CANON_NOBLE_SHARE` of the time, one
+   * of Hisui's five whose own biomes name the tile's and that can
+   * stand on the cell. A site with nobody holds nothing this window
+   */
+  getNobleRaids(): Map<number, RaidRoll> {
+    if (this.nobleRaids == null) {
+      const raids = new Map<number, RaidRoll>();
+
+      for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
+        if (landmark !== Landmark.NobleArena) {
+          continue;
+        }
+        const hosts = this.hostsAt(cell);
+        const biome = this.biomeAt(cell);
+        const canon: Species[] = [];
+
+        for (const noble of CANON_NOBLES.keys()) {
+          if (getSpeciesData(noble).biomes.includes(biome) && hosts(noble)) {
+            canon.push(noble);
+          }
+        }
+
+        const finals = this.finalStagesAt(cell);
+
+        for (const noble of canon) {
+          finals.add(noble);
+        }
+        if (finals.size === 0) {
+          continue;
+        }
+
+        // The draws land in order: whether a canon Noble is home, the
+        // Noble, then the trait value its nature and ability derive from
+        const rng = new AleaRNG(`${this.key}${this.raidTimestamp}noble${cell}`);
+        const choices = canon.length > 0 && rng.random() < CANON_NOBLE_SHARE ? canon : [...finals];
+
+        raids.set(cell, {
+          lair: null,
+          species: choices[Math.floor(rng.random() * choices.length)],
+          traitValue: rng.int32(),
+        });
+      }
+      this.nobleRaids = raids;
+    }
+    return this.nobleRaids;
   }
 
   /** The biome's lairs, only its underground ones in a cave */

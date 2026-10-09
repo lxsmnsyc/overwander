@@ -77,3 +77,8 @@ Totem:
 AlphaRaid:
   weight: 0
   picture: alpha
+# Carved from the trainer rolls like the Totem, and drawn off the sheet: a
+# raised stone ring with braziers and a shrine gate
+NobleArena:
+  weight: 0
+  picture: noble

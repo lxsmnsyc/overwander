@@ -87,6 +87,9 @@ const CARVED_LANDMARKS: { kind: Landmark; from: Landmark; share: number; caves: 
   // The next 2 of the cache's 15, which leaves the cache 10. Open
   // country only: an Alpha roams under the sky
   { kind: Landmark.AlphaRaid, from: Landmark.ItemCache, share: 2 / 15, caves: false },
+  // The next 1 of the duel's 10, which leaves the duel 7. Open country
+  // only: a Noble is a lord of the land under the sky
+  { kind: Landmark.NobleArena, from: Landmark.Trainer, share: 1 / 10, caves: false },
 ];
 
 /**

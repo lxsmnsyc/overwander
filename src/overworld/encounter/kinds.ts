@@ -57,6 +57,11 @@ export const enum EncounterType {
    * with three perfect stats
    */
   AlphaRaid = 10,
+  /**
+   * A Noble raid. A calmed Noble is never caught, so no record carries
+   * it: it names the lobby's kind where every raid kind is listed
+   */
+  NobleRaid = 11,
 }
 
 /**
@@ -85,7 +90,8 @@ export function isRaidEncounter(type: EncounterType): boolean {
     type === EncounterType.MythicalRaid ||
     type === EncounterType.TotemRaid ||
     type === EncounterType.MaxRaid ||
-    type === EncounterType.AlphaRaid
+    type === EncounterType.AlphaRaid ||
+    type === EncounterType.NobleRaid
   );
 }
 
@@ -133,4 +139,5 @@ export const ENCOUNTER_TYPE_NAMES: Record<EncounterType, string> = {
   [EncounterType.TotemRaid]: 'Totem Raid',
   [EncounterType.MaxRaid]: 'Max Raid',
   [EncounterType.AlphaRaid]: 'Alpha Raid',
+  [EncounterType.NobleRaid]: 'Noble Raid',
 };

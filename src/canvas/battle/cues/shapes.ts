@@ -27,6 +27,9 @@ export const REACH = 15;
 /** How high above the body a mark hangs. */
 export const LIFT = 22;
 
+/** How long a staggered pokemon's stars take to go once round its head */
+export const STAGGER_TURN = 900;
+
 /** One cue, as a picture. */
 export interface Cue {
   paint: (context: CanvasRenderingContext2D, stage: Stage, share: number, draw: Painted) => void;

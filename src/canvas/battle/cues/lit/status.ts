@@ -5,7 +5,8 @@ import type { LitStage } from '../../moves/__painted';
 import { decay, lighten, mix, noise, spread, swell } from '../../moves/__paint';
 import { TAU, bolt, chevron, dome, gathering, sparks } from '../../moves/lit/pieces';
 import { aside } from '../../moves/lit/shapes';
-import { LIFT } from '../shapes';
+import { LIFT, STAGGER_TURN } from '../shapes';
+import { STAGGER_DURATION } from '../../../../battle/status/staggered';
 import {
   type LitCue,
   footOf,
@@ -199,6 +200,30 @@ export const LIT_STATUS: Partial<Record<Statuses, LitCue>> = {
   },
 
   [Statuses.Confused]: litOrbiting(3),
+
+  // Gold stars reeling round the head for the whole stagger
+  [Statuses.Staggered]: (kit, stage, share, colour, strength) => {
+    const head = headOf(kit, stage, LIFT * 0.5);
+    const size = sizeOf(stage) * 1.5;
+    const turned = (share * STAGGER_DURATION) / STAGGER_TURN;
+    const alpha = Math.min(1, share / 0.05, (1 - share) / 0.08) * strength;
+
+    // A halo for the stars to turn on, so they read as one ring over a
+    // crowded field rather than as stray glints
+    kit.near(0);
+    kit.ripple(head, size, 0.08, colour, alpha * 0.6);
+    for (let mark = 0; mark < 5; mark += 1) {
+      const angle = turned * TAU + (mark / 5) * TAU;
+      const spot: Spot = [
+        head[0] + Math.cos(angle) * size,
+        head[1],
+        head[2] + Math.sin(angle) * size,
+      ];
+
+      kit.glow(spot, size * 0.35, colour, 0.5 * alpha, 0.3);
+      kit.star(spot, size * 0.5, angle * 2, lighten(colour, 0.3), alpha);
+    }
+  },
 
   [Statuses.Flinched]: (kit, stage, share, colour, strength) => {
     const head = headOf(kit, stage);
@@ -735,6 +760,7 @@ export const LIT_TRIGGERS: Partial<Record<Statuses, LitCue>> = {
   [Statuses.Flinched]: litStalled(),
   [Statuses.Recharging]: litStalled(),
   [Statuses.Dormant]: litStalled(),
+  [Statuses.Staggered]: litStalled(),
 
   // It went for somebody it likes instead
   [Statuses.Infatuated]: litStalled((kit, stage, share, colour, strength) => {

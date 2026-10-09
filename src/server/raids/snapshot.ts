@@ -85,6 +85,8 @@ export async function publishTeamSnapshot(
      * too, since it is fielded healed
      */
     healed?: boolean;
+    /** The Balms its player packed for a Noble raid, carried by its lead */
+    balms?: number;
   },
 ): Promise<string | null> {
   if (catches.length === 0) {
@@ -125,6 +127,9 @@ export async function publishTeamSnapshot(
 
     if (fielded.length === 0) {
       return null;
+    }
+    if ((options?.balms ?? 0) > 0) {
+      fielded[0] = { ...fielded[0], balms: options?.balms };
     }
 
     await transaction`

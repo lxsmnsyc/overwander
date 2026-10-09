@@ -1,6 +1,7 @@
 import { MAX_MOVES } from '../../data/moves/max-moves';
 import { Z_MOVES } from '../../data/moves/z-moves';
 import { G_MAX_MOVES } from '../../data/moves/gmax-moves';
+import { FRENZY_MOVES } from '../../data/moves/frenzy-moves';
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { MoveCategories, Moves } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
@@ -23,6 +24,7 @@ const NOT_A_MOVE = new Set<Moves>([
   ...Z_MOVES,
   ...MAX_MOVES,
   ...G_MAX_MOVES,
+  ...FRENZY_MOVES,
 ]);
 
 /** How many more times the locked move plays after its own cast */

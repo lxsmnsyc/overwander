@@ -110,6 +110,12 @@ export interface CatchSnapshot {
    * each time the Alpha calls one, so a fallen copy can be replaced
    */
   alphaCopy?: boolean;
+  /**
+   * The Balms its player packed for a Noble raid, set on the first
+   * pokemon of their first party only. The server takes them from the
+   * bag as the raid starts
+   */
+  balms?: number;
 }
 
 /**
@@ -241,6 +247,7 @@ export function asCatchSnapshot(value: unknown): CatchSnapshot {
     ...(data.called === true ? { called: true } : {}),
     ...(data.dynamaxed === true ? { dynamaxed: true } : {}),
     ...(data.alphaCopy === true ? { alphaCopy: true } : {}),
+    ...(typeof data.balms === 'number' && data.balms > 0 ? { balms: Math.floor(data.balms) } : {}),
   };
 }
 

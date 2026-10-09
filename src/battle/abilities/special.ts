@@ -26,6 +26,7 @@ import { getTotemAura } from '../../data/overworld/totems';
 import { ALPHA_COPIES } from '../../data/overworld/alphas';
 import { MergedLifecycle } from '../lifecycle';
 import { createAbility } from './__create';
+import setupNobleAbility from './noble';
 
 import PROTECTED_ABILITIES from './protected';
 
@@ -795,4 +796,6 @@ export default function setupSpecialAbilities(battle: Battle): void {
   for (const setup of setupAbilities) {
     setup(battle);
   }
+  // After the Boss, whose scale and refusals it builds on
+  setupNobleAbility(battle);
 }

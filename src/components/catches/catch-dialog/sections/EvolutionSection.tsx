@@ -76,7 +76,11 @@ export default function EvolutionSection(props: EvolutionSectionProps): JSX.Elem
                   // The shorthand on the row spelled out,
                   // for anyone who stops on it and for
                   // anything that reads it aloud
-                  title={describeEvolutionMethod(option().evolution, option().covered)}
+                  title={describeEvolutionMethod(
+                    option().evolution,
+                    option().covered,
+                    option().progress,
+                  )}
                 >
                   {/* What it turns into, drawn rather than named, and
                       drawn to what the reader has earned of it the way
@@ -131,7 +135,10 @@ export default function EvolutionSection(props: EvolutionSectionProps): JSX.Elem
                     fallback={<span class="grow text-left text-sm text-muted">ready</span>}
                   >
                     <span class="flex grow items-center gap-1 text-left text-sm text-muted">
-                      <EvolutionCondition evolution={option().evolution} />
+                      <EvolutionCondition
+                        evolution={option().evolution}
+                        progress={option().progress}
+                      />
                     </span>
                   </Show>
                   <Show when={props.owned}>

@@ -8,6 +8,15 @@ Zorua:
     # invented: a fox that goes through your bag, gets there before you
     # have understood it, and does not stop at copying the shape
     hidden: [Pickpocket, Prankster, Trace]
+  ZoruaHisui:
+    abilities: [Illusion]
+    hidden: []
+  ZoroarkHisui:
+    abilities: [Illusion]
+    # Cursed Body, Infiltrator and Anger Point are this registry's rather
+    # than the mainline's, filling it to four: a spirit of spite that slips
+    # past defences and curses what it touches
+    hidden: [CursedBody, Infiltrator, AngerPoint]
 Minccino:
   Minccino:
     abilities: [CuteCharm, Technician]

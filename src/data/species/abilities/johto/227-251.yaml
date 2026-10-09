@@ -29,6 +29,11 @@ Stantler:
   Stantler:
     abilities: [Intimidate, Frisk]
     hidden: [SapSipper]
+  Wyrdeer:
+    abilities: [Intimidate, Frisk]
+    # Telepathy is this registry's rather than the mainline's, filling it to
+    # four: its antlers read the thoughts of the herd around it
+    hidden: [SapSipper, Telepathy]
 Smeargle:
   Smeargle:
     abilities: [OwnTempo, Technician]

@@ -428,6 +428,122 @@ Goomy:
       - LaserFocus
       - BodyPress
       - BreakingSwipe
+  SliggooHisui:
+    level:
+      1: [Tackle, WaterGun, Absorb, AcidArmor, DragonBreath, Shelter]
+      15: [Protect]
+      20: [Flail]
+      25: [WaterPulse]
+      30: [RainDance]
+      35: [DragonPulse]
+      43: [Curse]
+      49: [IronHead]
+      56: [MuddyWater]
+    teachable:
+      [
+        AcidSpray,
+        Blizzard,
+        BodySlam,
+        Charm,
+        Curse,
+        DracoMeteor,
+        DragonPulse,
+        Endure,
+        Facade,
+        FlashCannon,
+        GyroBall,
+        HeavySlam,
+        IceBeam,
+        IronHead,
+        MudShot,
+        MuddyWater,
+        Outrage,
+        Protect,
+        RainDance,
+        Rest,
+        RockSlide,
+        RockTomb,
+        Sandstorm,
+        SkitterSmack,
+        SleepTalk,
+        SludgeBomb,
+        SludgeWave,
+        SteelBeam,
+        Substitute,
+        SunnyDay,
+        TakeDown,
+        Thunder,
+        Thunderbolt,
+        WaterPulse,
+      ]
+  GoodraHisui:
+    level:
+      1: [Tackle, WaterGun, Absorb, DragonBreath, IronTail, Feint, AcidSpray, TearfulLook, Shelter]
+      15: [Protect]
+      20: [Flail]
+      25: [WaterPulse]
+      30: [RainDance]
+      35: [DragonPulse]
+      43: [Curse]
+      49: [BodySlam, IronHead]
+      58: [MuddyWater]
+      67: [HeavySlam]
+    teachable:
+      [
+        AcidSpray,
+        Blizzard,
+        BodyPress,
+        BodySlam,
+        BreakingSwipe,
+        Bulldoze,
+        Charm,
+        Curse,
+        DracoMeteor,
+        DragonClaw,
+        DragonPulse,
+        DragonTail,
+        Earthquake,
+        Endure,
+        Facade,
+        FireBlast,
+        FirePunch,
+        Flamethrower,
+        FlashCannon,
+        GigaImpact,
+        GyroBall,
+        HeavySlam,
+        HydroPump,
+        HyperBeam,
+        IceBeam,
+        IronHead,
+        KnockOff,
+        LashOut,
+        MudShot,
+        MuddyWater,
+        Outrage,
+        Protect,
+        RainDance,
+        Rest,
+        RockSlide,
+        RockTomb,
+        Sandstorm,
+        ScaryFace,
+        SkitterSmack,
+        SleepTalk,
+        SludgeBomb,
+        SludgeWave,
+        SteelBeam,
+        StompingTantrum,
+        Substitute,
+        SunnyDay,
+        Surf,
+        TakeDown,
+        Thunder,
+        ThunderPunch,
+        Thunderbolt,
+        WaterPulse,
+        WeatherBall,
+      ]
 Klefki:
   Klefki:
     level:
@@ -845,6 +961,64 @@ Bergmite:
       - StompingTantrum
       - BodyPress
       - HighHorsepower
+  AvaluggHisui:
+    level:
+      1: [Tackle, Harden, RockSlide, PowderSnow, RapidSpin, WideGuard]
+      9: [Curse]
+      12: [IcyWind]
+      15: [Protect]
+      18: [Avalanche]
+      21: [Bite]
+      24: [IceFang]
+      27: [IronDefense]
+      30: [Recover]
+      33: [Crunch]
+      36: [TakeDown]
+      41: [Blizzard]
+      46: [DoubleEdge]
+      51: [StoneEdge]
+      61: [MountainGale]
+    teachable:
+      [
+        Avalanche,
+        Blizzard,
+        BodyPress,
+        BodySlam,
+        Bulldoze,
+        Crunch,
+        Curse,
+        Dig,
+        DoubleEdge,
+        Earthquake,
+        Endure,
+        Facade,
+        GigaImpact,
+        GyroBall,
+        HeavySlam,
+        HighHorsepower,
+        HyperBeam,
+        IceBeam,
+        IceFang,
+        IcicleSpear,
+        IcyWind,
+        IronDefense,
+        IronHead,
+        MeteorBeam,
+        Protect,
+        RainDance,
+        Rest,
+        RockBlast,
+        RockSlide,
+        RockTomb,
+        Sandstorm,
+        ScaryFace,
+        SleepTalk,
+        StealthRock,
+        StompingTantrum,
+        StoneEdge,
+        Substitute,
+        TakeDown,
+      ]
 Noibat:
   family-teachable:
     - Acrobatics

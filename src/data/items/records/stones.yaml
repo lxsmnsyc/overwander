@@ -131,6 +131,20 @@ GalaricaWreath:
   flags: [Usable, Marketable]
   buy: 3000
   sell: 1500
+# Hisui's: the black stone a Scyther splits into an axe on, and the
+# peat an Ursaring digs up under the moon.
+BlackAugurite:
+  type: Evolution
+  icon: evolutions/black-augurite
+  flags: [Usable, Marketable]
+  buy: 3000
+  sell: 1500
+PeatBlock:
+  type: Evolution
+  icon: evolutions/peat-block
+  flags: [Usable, Marketable]
+  buy: 3000
+  sell: 1500
 # The scrolls a Kubfu trains under, which decide the style its Urshifu
 # fights in. Never stocked: a scroll is only ever dug up.
 ScrollOfDarkness:

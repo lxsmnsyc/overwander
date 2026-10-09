@@ -2736,3 +2736,118 @@ Voltorb:
       54: [GyroBall]
       58: [MirrorCoat]
     teachable: [HyperBeam, GigaImpact, ChargeBeam, GyroBall, LightScreen]
+  VoltorbHisui:
+    level:
+      1: [Tackle, Charge]
+      4: [ThunderShock]
+      6: [StunSpore]
+      9: [BulletSeed]
+      11: [Rollout]
+      13: [Screech]
+      16: [ChargeBeam]
+      20: [Swift]
+      22: [ElectroBall]
+      26: [SelfDestruct]
+      29: [EnergyBall]
+      34: [SeedBomb, Discharge]
+      41: [Explosion]
+      46: [GyroBall]
+      50: [GrassyTerrain]
+    teachable:
+      [
+        Agility,
+        BulletSeed,
+        Charge,
+        ChargeBeam,
+        DoubleEdge,
+        ElectricTerrain,
+        ElectroBall,
+        Electroweb,
+        Endure,
+        EnergyBall,
+        Facade,
+        FoulPlay,
+        GigaDrain,
+        GrassKnot,
+        GrassyGlide,
+        GrassyTerrain,
+        GyroBall,
+        LeafStorm,
+        Protect,
+        RainDance,
+        Reflect,
+        Rest,
+        SeedBomb,
+        SleepTalk,
+        SolarBeam,
+        Substitute,
+        Swift,
+        TakeDown,
+        Taunt,
+        Thief,
+        Thunder,
+        ThunderWave,
+        Thunderbolt,
+        VoltSwitch,
+        WildCharge,
+      ]
+    egg: [LeechSeed, Recycle, WorrySeed]
+  ElectrodeHisui:
+    level:
+      1: [Tackle, Charge, Chloroblast]
+      4: [ThunderShock]
+      6: [StunSpore]
+      9: [BulletSeed]
+      11: [Rollout]
+      13: [Screech]
+      16: [ChargeBeam]
+      20: [Swift]
+      22: [ElectroBall]
+      26: [SelfDestruct]
+      29: [EnergyBall]
+      34: [SeedBomb, Discharge]
+      41: [Explosion]
+      46: [GyroBall]
+      50: [GrassyTerrain]
+    teachable:
+      [
+        Agility,
+        BulletSeed,
+        Charge,
+        ChargeBeam,
+        Curse,
+        DoubleEdge,
+        ElectricTerrain,
+        ElectroBall,
+        Electroweb,
+        Endure,
+        EnergyBall,
+        Facade,
+        FoulPlay,
+        GigaDrain,
+        GigaImpact,
+        GrassKnot,
+        GrassyGlide,
+        GrassyTerrain,
+        GyroBall,
+        HyperBeam,
+        LeafStorm,
+        Protect,
+        RainDance,
+        Reflect,
+        Rest,
+        ScaryFace,
+        SeedBomb,
+        SleepTalk,
+        SolarBeam,
+        Substitute,
+        Swift,
+        TakeDown,
+        Taunt,
+        Thief,
+        Thunder,
+        ThunderWave,
+        Thunderbolt,
+        VoltSwitch,
+        WildCharge,
+      ]

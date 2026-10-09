@@ -28,19 +28,31 @@ Petilil:
       - species: Lilligant
         method: [UsedItem]
         item: SunStone
+      # The Hisuian one, as the old country grew it: both are offered,
+      # and the player picks
+      - species: LilligantHisui
+        method: [UsedItem]
+        item: SunStone
   Lilligant:
     types: [Grass]
     egg-groups: [Grass]
     biomes: [TemperateForest, Grassland]
     active: [Morning, Day]
     evolves-from: Petilil
+  LilligantHisui:
+    types: [Grass, Fighting]
+    egg-groups: [Grass]
+    biomes: [MontaneForest, Mountain]
+    active: [Morning, Day]
+    base-form: false
+    evolves-from: Petilil
 Basculin:
   # The two schools share everything but the stripe and the ability
   # behind it: one throws itself about, the other takes the landing
 
   # The two schools: they look the same to anybody but each other, and
-  # they will not share a river. The white stripe is left out until the
-  # generation that gives it somewhere to go
+  # they will not share a river. The white stripe is Hisui's, and the
+  # only one that grows into anything
   Basculin:
     types: [Water]
     egg-groups: [Water2]
@@ -54,6 +66,37 @@ Basculin:
     biomes: [Bog, Swamp]
     active: any
     base-form: false
+  BasculinWhite:
+    # Basculegion grows out of the one that has taken 294 recoil damage
+    # without fainting, a fight it faints in counting for nothing
+    types: [Water]
+    egg-groups: [Water2]
+    habitat: Water
+    biomes: [Taiga, TemperateRainforest]
+    active: any
+    base-form: false
+    evolves-into:
+      - species: Basculegion
+        method: [Special, Gender]
+        gender: Male
+      - species: BasculegionFemale
+        method: [Special, Gender]
+        gender: Female
+  Basculegion:
+    types: [Water, Ghost]
+    egg-groups: [Water2]
+    habitat: Water
+    biomes: [Taiga, TemperateRainforest]
+    active: any
+    evolves-from: BasculinWhite
+  BasculegionFemale:
+    types: [Water, Ghost]
+    egg-groups: [Water2]
+    habitat: Water
+    biomes: [Taiga, TemperateRainforest]
+    active: any
+    base-form: false
+    evolves-from: BasculinWhite
 Sandile:
   # The desert crocs: they swim through the sand with only the eyes out,
   # and the black film over those eyes is what lets them look into the

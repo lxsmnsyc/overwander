@@ -167,3 +167,6 @@ forms:
   # Galar's regional lines whose every stage is regional carry their own
   ColdSink: [DarumakaGalar, DarmanitanGalar]
   CarvedGrudge: [YamaskGalar, Runerigus]
+  # Hisui's regional lines whose every stage is regional
+  Afterhaunt: [ZoruaHisui, ZoroarkHisui]
+  SoulCloak: [BasculinWhite, Basculegion, BasculegionFemale]

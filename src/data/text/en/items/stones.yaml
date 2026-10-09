@@ -49,6 +49,12 @@ GalaricaCuff:
 GalaricaWreath:
   name: Galarica Wreath
   description: A Galarian Slowpoke it is used on becomes a Galarian Slowking.
+BlackAugurite:
+  name: Black Augurite
+  description: A Scyther it is used on splits it into axes and becomes a Kleavor.
+PeatBlock:
+  name: Peat Block
+  description: An Ursaring it is used on at night becomes an Ursaluna.
 ScrollOfDarkness:
   name: Scroll of Darkness
   description: A Kubfu it is used on masters the dark style and becomes a Single Strike Urshifu.

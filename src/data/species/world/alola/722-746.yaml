@@ -18,11 +18,23 @@ Rowlet:
       - species: Decidueye
         method: [Level]
         level: 34
+      # The Hisuian one, as the old country grew it: both are offered,
+      # and the player picks
+      - species: DecidueyeHisui
+        method: [Level]
+        level: 34
   Decidueye:
     types: [Grass, Ghost]
     egg-groups: [Flying]
     biomes: [TropicalSeasonalForest, TropicalRainforest]
     active: [Evening, Night]
+    evolves-from: Dartrix
+  DecidueyeHisui:
+    types: [Grass, Fighting]
+    egg-groups: [Flying]
+    biomes: [MontaneForest, TemperateForest]
+    active: [Evening, Night]
+    base-form: false
     evolves-from: Dartrix
 Litten:
   Litten:

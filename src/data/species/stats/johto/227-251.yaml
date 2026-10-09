@@ -38,6 +38,12 @@ Stantler:
     height: 1.4
     weight: 71.2
     gender: [1, 1]
+  Wyrdeer:
+    stats: { HP: 103, Attack: 105, Defense: 72, SpecialAttack: 105, SpecialDefense: 75, Speed: 65 }
+    catch-rate: 135
+    height: 1.8
+    weight: 95.1
+    gender: [1, 1]
 Smeargle:
   Smeargle:
     stats: { HP: 55, Attack: 20, Defense: 35, SpecialAttack: 20, SpecialDefense: 45, Speed: 75 }

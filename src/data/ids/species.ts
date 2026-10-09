@@ -1431,7 +1431,6 @@ export const enum Species {
   ZacianCrowned = 1088801,
   ZamazentaCrowned = 1088901,
 
-
   /** The style an Urshifu masters in the tower of water, Single Strike at the base */
   UrshifuRapidStrike = 1089201,
 
@@ -1564,8 +1563,8 @@ export const SHELLOS_FORMS = [Species.Shellos, Species.ShellosEast];
 
 export const GASTRODON_FORMS = [Species.Gastrodon, Species.GastrodonEast];
 
-/** The two schools of Basculin, the red stripe first */
-export const BASCULIN_FORMS = [Species.Basculin, Species.BasculinBlue];
+/** The three schools of Basculin, the red stripe first and Hisui's white last */
+export const BASCULIN_FORMS = [Species.Basculin, Species.BasculinBlue, Species.BasculinWhite];
 
 /** Each genie's two shapes, the one it is usually met in first */
 export const TORNADUS_FORMS = [Species.Tornadus, Species.TornadusTherian];
@@ -1839,6 +1838,12 @@ export const ZAMAZENTA_FORMS: Species[] = [Species.Zamazenta, Species.ZamazentaC
 
 /** The two styles an Urshifu fights in, Single Strike at the base */
 export const URSHIFU_FORMS: Species[] = [Species.Urshifu, Species.UrshifuRapidStrike];
+
+/** The two Basculegion, the male first */
+export const BASCULEGION_FORMS: Species[] = [Species.Basculegion, Species.BasculegionFemale];
+
+/** Enamorus, and the Therian shape the Reveal Glass shows */
+export const ENAMORUS_FORMS: Species[] = [Species.Enamorus, Species.EnamorusTherian];
 
 /** A Wishiwashi alone, and the school it calls together from level 20 */
 export const WISHIWASHI_FORMS: Species[] = [Species.Wishiwashi, Species.WishiwashiSchool];

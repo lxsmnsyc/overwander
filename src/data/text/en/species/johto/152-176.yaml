@@ -6,6 +6,7 @@ Cyndaquil:
   Cyndaquil: { name: Cyndaquil, category: Fire Mouse Pokemon }
   Quilava: { name: Quilava, category: Volcano Pokemon }
   Typhlosion: { name: Typhlosion, category: Volcano Pokemon }
+  TyphlosionHisui: { name: Hisuian Typhlosion, category: Ghost Flame Pokemon }
 Totodile:
   Totodile: { name: Totodile, category: Big Jaw Pokemon }
   Croconaw: { name: Croconaw, category: Big Jaw Pokemon }

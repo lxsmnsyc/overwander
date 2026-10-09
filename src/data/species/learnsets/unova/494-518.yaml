@@ -475,6 +475,71 @@ Oshawott:
       - Superpower
       - Liquidation
       - SmartStrike
+  SamurottHisui:
+    level:
+      1: [Tackle, TailWhip, WaterGun, Slash, Megahorn, SuckerPunch, CeaselessEdge]
+      13: [FocusEnergy]
+      18: [RazorShell]
+      21: [FuryCutter]
+      25: [WaterPulse]
+      29: [AerialAce]
+      34: [AquaJet]
+      39: [Encore]
+      46: [AquaTail]
+      51: [Retaliate]
+      58: [SwordsDance]
+      63: [HydroPump]
+    teachable:
+      [
+        AerialAce,
+        AirSlash,
+        Avalanche,
+        Blizzard,
+        BodySlam,
+        BrickBreak,
+        Bulldoze,
+        DarkPulse,
+        Dig,
+        DrillRun,
+        Encore,
+        Endure,
+        Facade,
+        FalseSwipe,
+        Fling,
+        FlipTurn,
+        GigaImpact,
+        GrassKnot,
+        HelpingHand,
+        HydroCannon,
+        HydroPump,
+        HyperBeam,
+        IceBeam,
+        IcyWind,
+        KnockOff,
+        LashOut,
+        Liquidation,
+        Protect,
+        RainDance,
+        Rest,
+        ScaryFace,
+        SleepTalk,
+        SmartStrike,
+        Snarl,
+        Substitute,
+        Surf,
+        Swift,
+        SwordsDance,
+        TakeDown,
+        Taunt,
+        Thief,
+        ThroatChop,
+        VacuumWave,
+        WaterPledge,
+        WaterPulse,
+        Waterfall,
+        Whirlpool,
+        XScissor,
+      ]
 Patrat:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:

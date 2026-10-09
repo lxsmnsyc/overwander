@@ -8,6 +8,11 @@ Rowlet:
   Decidueye:
     abilities: [Overgrow]
     hidden: [LongReach, Sniper, KeenEye]
+  DecidueyeHisui:
+    abilities: [Overgrow]
+    # Super Luck is this registry's rather than the mainline's, filling it
+    # to four: an archer that finds the gap
+    hidden: [Scrappy, SuperLuck]
 Litten:
   Litten:
     abilities: [Blaze]

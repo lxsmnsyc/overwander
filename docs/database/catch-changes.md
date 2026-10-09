@@ -35,6 +35,13 @@ item a second time. `traded` is separate and stays: it says the pokemon has
 changed hands, which is what the box search reads, and it is true of a Machop
 that no trade evolution was ever open to.
 
+A `Special` evolution is a **battle feat** (`BATTLE_FEATS` in
+[`src/data/species/feats.ts`](../../src/data/species/feats.ts)), and it sets
+`can_evolve` too. A feat met in one fight sets it when that fight settles. A
+feat counted across fights adds each fight's measure to `feat_progress` and sets
+`can_evolve` once the total reaches the goal. A handover and the evolution clear
+both.
+
 An **Everstone** refuses every evolution while it is held, and it answers here
 rather than at the moment of evolving, so the catch sheet stops offering what
 the stone would refuse.

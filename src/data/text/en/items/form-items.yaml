@@ -21,7 +21,7 @@ PrisonBottle:
   description: A Hoopa holding it fights unbound, with its rings let out.
 RevealGlass:
   name: Reveal Glass
-  description: A Tornadus, Thundurus or Landorus holding it fights in its Therian shape, which also brings Regenerator, Volt Absorb or Intimidate.
+  description: A Tornadus, Thundurus, Landorus or Enamorus holding it fights in its Therian shape, which also brings Regenerator, Volt Absorb, Intimidate or Overcoat.
 Gracidea:
   name: Gracidea
   description: A Shaymin holding it fights in its other shape, which also brings Serene Grace.

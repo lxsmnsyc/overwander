@@ -57,36 +57,38 @@ land:
   day: *land-morning
   evening: &land-evening
     base:
-      Swinub: 2516
-      Spheal: 2516
+      Swinub: 2472
+      Spheal: 2472
     uncommon:
-      VulpixAlola: 471
-      SandshrewAlola: 471
-      Snorunt: 471
-      Snover: 428
-      Seel: 428
-      Snom: 248
-      Sneasel: 107
+      VulpixAlola: 463
+      SandshrewAlola: 463
+      Snorunt: 463
+      Snover: 420
+      Seel: 420
+      Snom: 244
+      ZoruaHisui: 150
+      Sneasel: 105
     rare:
-      Sealeo: 731
-      Piloswine: 457
+      Sealeo: 718
+      Piloswine: 449
     scarce:
-      Dewgong: 114
-      NinetalesAlola: 69
-      SandslashAlola: 69
-      Abomasnow: 69
-      Weavile: 69
-      Glaceon: 69
-      Glalie: 69
-      Froslass: 69
-      Frosmoth: 30
+      Dewgong: 112
+      NinetalesAlola: 68
+      SandslashAlola: 68
+      Abomasnow: 68
+      Weavile: 68
+      Glaceon: 68
+      Glalie: 68
+      Froslass: 68
+      Frosmoth: 29
       MrMimeGalar: 25
+      ZoroarkHisui: 25
     elusive:
-      Eiscue: 149
-      Jynx: 75
-      Delibird: 75
-      Mamoswine: 75
-      Walrein: 75
+      Eiscue: 146
+      Jynx: 74
+      Delibird: 74
+      Mamoswine: 74
+      Walrein: 74
     prized:
       Unown: forms
       Smoochum: prized

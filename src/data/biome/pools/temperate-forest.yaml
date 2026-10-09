@@ -1,73 +1,76 @@
 land:
   morning: &land-morning
     base:
-      Caterpie: 577
-      Starly: 577
-      Sewaddle: 539
-      Timburr: 481
-      Flabebe: 462
-      Scatterbug: 462
-      Bellsprout: 385
-      Ralts: 385
-      Poliwag: 385
-      Blipbug: 245
-      Rookidee: 176
-      Hatenna: 147
-      Grookey: 46
-      Chespin: 39
-      Bulbasaur: 39
-      Chikorita: 39
+      Caterpie: 566
+      Starly: 566
+      Sewaddle: 528
+      Timburr: 472
+      Flabebe: 453
+      Scatterbug: 453
+      Bellsprout: 377
+      Ralts: 377
+      Poliwag: 377
+      Blipbug: 240
+      Rookidee: 173
+      Hatenna: 144
+      Grookey: 45
+      Chespin: 38
+      Bulbasaur: 38
+      Chikorita: 38
     uncommon:
-      Skwovet: 294
-      Bidoof: 167
-      Buneary: 167
-      Wooper: 167
-      Cutiefly: 161
-      Petilil: 161
-      Spritzee: 161
-      PonytaGalar: 150
-      Panpour: 147
-      Pansear: 147
-      Pansage: 147
-      Cherubi: 147
-      Applin: 147
-      Karrablast: 134
-      Ledyba: 134
-      Pineco: 134
-      Deerling: 121
-      Scyther: 33
-      Pikachu: 33
-      Stantler: 33
-      Togetic: 33
+      Skwovet: 288
+      Bidoof: 164
+      Buneary: 164
+      Wooper: 164
+      Cutiefly: 158
+      Petilil: 158
+      Spritzee: 158
+      VoltorbHisui: 150
+      PonytaGalar: 147
+      Panpour: 144
+      Pansear: 144
+      Pansage: 144
+      Cherubi: 144
+      Applin: 144
+      Karrablast: 131
+      Ledyba: 131
+      Pineco: 131
+      Deerling: 119
+      Scyther: 32
+      Pikachu: 32
+      Stantler: 32
+      Togetic: 32
     rare:
-      Metapod: 178
-      Swadloon: 142
-      Gurdurr: 119
-      Kirlia: 119
-      Floette: 95
-      Spewpa: 95
-      Dottler: 78
-      Corvisquire: 69
-      Weepinbell: 60
-      Ursaring: 60
-      Staravia: 60
-      Poliwhirl: 60
-      Hattrem: 49
+      Metapod: 175
+      Swadloon: 139
+      Gurdurr: 117
+      Kirlia: 117
+      Floette: 93
+      Spewpa: 93
+      Dottler: 76
+      Corvisquire: 68
+      Weepinbell: 59
+      Ursaring: 59
+      Staravia: 59
+      Poliwhirl: 59
+      Hattrem: 48
       Quilladin: 24
       Thwackey: 14
       Ivysaur: 12
       Bayleef: 12
     scarce:
-      Bibarel: 39
-      Ledian: 32
-      Lopunny: 32
-      RapidashGalar: 30
-      Greedent: 29
-      Simipour: 28
-      Simisear: 28
-      Simisage: 28
-      Sawsbuck: 28
-      Lilligant: 28
+      Bibarel: 38
+      Ledian: 31
+      Lopunny: 31
+      RapidashGalar: 29
+      Greedent: 28
+      Simipour: 27
+      Simisear: 27
+      Simisage: 27
+      Sawsbuck: 27
+      Lilligant: 27
+      ElectrodeHisui: 25
+      Wyrdeer: 25
       Ribombee: 24
       Cherrim: 24
       Ambipom: 24
@@ -85,8 +88,8 @@ land:
       Flapple: 15
       Appletun: 15
     elusive:
-      Indeedee: 88
-      IndeedeeFemale: 88
+      Indeedee: 86
+      IndeedeeFemale: 86
       Corviknight: 25
       Orbeetle: 25
       Butterfree: 19
@@ -136,53 +139,56 @@ land:
   day: *land-morning
   evening:
     base:
-      Venipede: 1879
-      Oddish: 1445
-      Poliwag: 1445
-      Blipbug: 249
-      Hatenna: 150
+      Venipede: 1838
+      Oddish: 1413
+      Poliwag: 1413
+      Blipbug: 244
+      Hatenna: 147
     uncommon:
-      Nickit: 170
-      Hoothoot: 154
-      Kricketot: 154
-      Bidoof: 154
-      Buneary: 154
-      Wooper: 154
-      Phantump: 147
-      Espurr: 147
-      Cherubi: 135
-      Foongus: 123
-      Shelmet: 123
-      Zorua: 123
-      Shuppet: 123
-      Venonat: 123
-      Spinarak: 123
-      Pineco: 123
-      Deerling: 110
-      Pikachu: 31
-      Murkrow: 31
-      Stantler: 31
+      Nickit: 166
+      Hoothoot: 151
+      Kricketot: 151
+      Bidoof: 151
+      Buneary: 151
+      Wooper: 151
+      VoltorbHisui: 150
+      Phantump: 144
+      Espurr: 144
+      Cherubi: 132
+      Foongus: 120
+      Shelmet: 120
+      Zorua: 120
+      Shuppet: 120
+      Venonat: 120
+      Spinarak: 120
+      Pineco: 120
+      Deerling: 108
+      Pikachu: 30
+      Murkrow: 30
+      Stantler: 30
     rare:
-      Whirlipede: 616
-      Gloom: 256
-      Poliwhirl: 256
-      Dottler: 80
-      Hattrem: 50
+      Whirlipede: 602
+      Gloom: 250
+      Poliwhirl: 250
+      Dottler: 78
+      Hattrem: 49
     scarce:
-      Venomoth: 40
-      Noctowl: 40
-      Kricketune: 40
-      Bibarel: 40
-      Thievul: 35
-      Ariados: 32
-      Lopunny: 32
-      Sawsbuck: 28
-      Trevenant: 24
-      Amoonguss: 24
-      Banette: 24
-      Cherrim: 24
-      Ambipom: 24
-      Honchkrow: 24
+      Venomoth: 39
+      Noctowl: 39
+      Kricketune: 39
+      Bibarel: 39
+      Thievul: 34
+      Ariados: 31
+      Lopunny: 31
+      Sawsbuck: 27
+      ElectrodeHisui: 25
+      Wyrdeer: 25
+      Trevenant: 23
+      Amoonguss: 23
+      Banette: 23
+      Cherrim: 23
+      Ambipom: 23
+      Honchkrow: 23
       Accelgor: 20
       Zoroark: 20
       Raichu: 20
@@ -194,16 +200,17 @@ land:
       Meowstic: 12
       MeowsticFemale: 12
     elusive:
-      Indeedee: 90
-      IndeedeeFemale: 90
-      Dustox: 36
-      Emolga: 29
-      Pachirisu: 29
-      Volbeat: 29
-      Illumise: 29
-      Orbeetle: 25
+      Indeedee: 88
+      IndeedeeFemale: 88
+      Dustox: 35
+      Emolga: 28
+      Pachirisu: 28
+      Volbeat: 28
+      Illumise: 28
+      Orbeetle: 24
       Rotom: 22
       Scolipede: 22
+      DecidueyeHisui: 20
       Vileplume: 18
       Snorlax: 18
       Sudowoodo: 18
@@ -229,55 +236,58 @@ land:
       PichuSpikyEared: 10
   night:
     base:
-      Venipede: 1879
-      Oddish: 1445
-      Poliwag: 1445
-      Blipbug: 249
-      Hatenna: 150
+      Venipede: 1838
+      Oddish: 1413
+      Poliwag: 1413
+      Blipbug: 244
+      Hatenna: 147
     uncommon:
-      Nickit: 170
-      Hoothoot: 146
-      Kricketot: 146
-      Bidoof: 146
-      Buneary: 146
-      Wooper: 146
-      Phantump: 140
-      Espurr: 140
-      Cherubi: 128
-      Foongus: 117
-      Shelmet: 117
-      Zorua: 117
-      Shuppet: 117
-      Paras: 117
-      Venonat: 117
-      Spinarak: 117
-      Pineco: 117
-      Deerling: 105
-      Pikachu: 29
-      Murkrow: 29
-      Stantler: 29
+      Nickit: 166
+      VoltorbHisui: 150
+      Hoothoot: 143
+      Kricketot: 143
+      Bidoof: 143
+      Buneary: 143
+      Wooper: 143
+      Phantump: 137
+      Espurr: 137
+      Cherubi: 125
+      Foongus: 114
+      Shelmet: 114
+      Zorua: 114
+      Shuppet: 114
+      Paras: 114
+      Venonat: 114
+      Spinarak: 114
+      Pineco: 114
+      Deerling: 103
+      Pikachu: 28
+      Murkrow: 28
+      Stantler: 28
     rare:
-      Whirlipede: 616
-      Gloom: 256
-      Poliwhirl: 256
-      Dottler: 80
-      Hattrem: 50
+      Whirlipede: 602
+      Gloom: 250
+      Poliwhirl: 250
+      Dottler: 78
+      Hattrem: 49
     scarce:
-      Parasect: 37
-      Venomoth: 37
-      Noctowl: 37
-      Kricketune: 37
-      Bibarel: 37
-      Thievul: 35
-      Ariados: 30
-      Lopunny: 30
-      Sawsbuck: 26
-      Trevenant: 23
-      Amoonguss: 23
-      Banette: 23
-      Cherrim: 23
-      Ambipom: 23
-      Honchkrow: 23
+      Parasect: 36
+      Venomoth: 36
+      Noctowl: 36
+      Kricketune: 36
+      Bibarel: 36
+      Thievul: 34
+      Ariados: 29
+      Lopunny: 29
+      Sawsbuck: 25
+      ElectrodeHisui: 25
+      Wyrdeer: 25
+      Trevenant: 22
+      Amoonguss: 22
+      Banette: 22
+      Cherrim: 22
+      Ambipom: 22
+      Honchkrow: 22
       Accelgor: 18
       Zoroark: 18
       Raichu: 18
@@ -289,16 +299,17 @@ land:
       Meowstic: 11
       MeowsticFemale: 11
     elusive:
-      Indeedee: 90
-      IndeedeeFemale: 90
-      Dustox: 36
-      Emolga: 29
-      Pachirisu: 29
-      Volbeat: 29
-      Illumise: 29
-      Orbeetle: 25
+      Indeedee: 88
+      IndeedeeFemale: 88
+      Dustox: 35
+      Emolga: 28
+      Pachirisu: 28
+      Volbeat: 28
+      Illumise: 28
+      Orbeetle: 24
       Rotom: 22
       Scolipede: 22
+      DecidueyeHisui: 20
       Vileplume: 18
       Snorlax: 18
       Sudowoodo: 18

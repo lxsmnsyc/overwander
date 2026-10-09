@@ -261,7 +261,11 @@ const COMPARE_WORDS = { greater: 'higher than', lesser: 'lower than', equal: 'eq
  * this is what the player is working towards rather than a complaint
  * about today — the button beside it is what reports availability
  */
-export function EvolutionCondition(props: { evolution: EvolutionData }): JSX.Element {
+export function EvolutionCondition(props: {
+  evolution: EvolutionData;
+  /** A cumulative feat's running total, on a catch's own sheet */
+  progress?: number;
+}): JSX.Element {
   const method = (): number => props.evolution.method;
   const item = (): Items | null => props.evolution.item ?? null;
   const has = (flag: EvolutionMethod): boolean => (method() & flag) !== 0;
@@ -331,7 +335,7 @@ export function EvolutionCondition(props: { evolution: EvolutionData }): JSX.Ele
           {(when) => <span>at {when()}</span>}
         </Show>
         <Show when={has(EvolutionMethod.Special) ? featOfEvolution(props.evolution) : null}>
-          {(feat) => <span>{describeFeat(feat())}</span>}
+          {(feat) => <span>{describeFeat(feat(), props.progress)}</span>}
         </Show>
       </span>
     </Show>
@@ -347,7 +351,11 @@ export function EvolutionCondition(props: { evolution: EvolutionData }): JSX.Ele
  * given, since a line of pictures and half-sentences is not something
  * that reads aloud
  */
-export function describeEvolutionMethod(evolution: EvolutionData, covered = false): string {
+export function describeEvolutionMethod(
+  evolution: EvolutionData,
+  covered = false,
+  progress?: number,
+): string {
   if (!isMeasurableEvolution(evolution)) {
     return 'This evolution is not possible here.';
   }
@@ -404,7 +412,7 @@ export function describeEvolutionMethod(evolution: EvolutionData, covered = fals
   const feat = (method & EvolutionMethod.Special) === 0 ? undefined : featOfEvolution(evolution);
 
   if (feat != null) {
-    steps.push(describeFeat(feat));
+    steps.push(describeFeat(feat, progress));
   }
   if (steps.length === 0) {
     return 'It evolves on its own.';

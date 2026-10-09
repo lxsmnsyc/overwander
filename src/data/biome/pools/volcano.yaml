@@ -1,36 +1,38 @@
 land:
   morning:
     base:
-      Scatterbug: 2188
-      Geodude: 1823
-      Charmander: 547
-      Cyndaquil: 547
-      Torchic: 182
+      Scatterbug: 2150
+      Geodude: 1791
+      Charmander: 537
+      Cyndaquil: 537
+      Torchic: 179
     uncommon:
-      DiglettAlola: 482
-      Salandit: 482
-      Numel: 439
-      Growlithe: 439
-      Slugma: 439
-      Magmar: 219
+      DiglettAlola: 474
+      Salandit: 474
+      Numel: 431
+      Growlithe: 431
+      Slugma: 431
+      Magmar: 215
+      GrowlitheHisui: 150
     rare:
-      Spewpa: 500
-      Graveler: 313
-      Charmeleon: 188
-      Quilava: 188
-      Combusken: 63
+      Spewpa: 491
+      Graveler: 308
+      Charmeleon: 185
+      Quilava: 185
+      Combusken: 62
     scarce:
-      DugtrioAlola: 110
-      Salazzle: 110
-      Camerupt: 110
-      Magmortar: 110
-      Arcanine: 92
-      Magcargo: 92
+      DugtrioAlola: 108
+      Salazzle: 108
+      Camerupt: 108
+      Magmortar: 108
+      Arcanine: 90
+      Magcargo: 90
+      ArcanineHisui: 25
     elusive:
-      Torkoal: 107
-      Turtonator: 45
-      Vivillon: 45
-      Golem: 45
+      Torkoal: 105
+      Turtonator: 44
+      Vivillon: 44
+      Golem: 44
       Charizard: 27
       Typhlosion: 27
       Blaziken: 18
@@ -44,39 +46,41 @@ land:
       Volcanion: 10
   day:
     base:
-      Scatterbug: 2188
-      Geodude: 1823
-      Charmander: 547
-      Cyndaquil: 547
-      Torchic: 182
+      Scatterbug: 2150
+      Geodude: 1791
+      Charmander: 537
+      Cyndaquil: 537
+      Torchic: 179
     uncommon:
-      DiglettAlola: 382
-      Salandit: 382
-      Numel: 347
-      Growlithe: 347
-      Ponyta: 347
-      Slugma: 347
-      Onix: 174
-      Magmar: 174
+      DiglettAlola: 375
+      Salandit: 375
+      Numel: 341
+      Growlithe: 341
+      Ponyta: 341
+      Slugma: 341
+      Onix: 171
+      Magmar: 171
+      GrowlitheHisui: 150
     rare:
-      Spewpa: 500
-      Graveler: 313
-      Charmeleon: 188
-      Quilava: 188
-      Combusken: 63
+      Spewpa: 491
+      Graveler: 308
+      Charmeleon: 185
+      Quilava: 185
+      Combusken: 62
     scarce:
-      DugtrioAlola: 96
-      Salazzle: 96
-      Camerupt: 96
-      Magmortar: 96
-      Arcanine: 80
-      Rapidash: 80
-      Magcargo: 80
+      DugtrioAlola: 94
+      Salazzle: 94
+      Camerupt: 94
+      Magmortar: 94
+      Arcanine: 79
+      Rapidash: 79
+      Magcargo: 79
+      ArcanineHisui: 25
     elusive:
-      Torkoal: 107
-      Turtonator: 45
-      Vivillon: 45
-      Golem: 45
+      Torkoal: 105
+      Turtonator: 44
+      Vivillon: 44
+      Golem: 44
       Charizard: 27
       Typhlosion: 27
       Blaziken: 18
@@ -90,28 +94,29 @@ land:
       Volcanion: 10
   evening:
     base:
-      Deino: 377
+      Deino: 376
     uncommon:
-      DiglettAlola: 1522
-      Salandit: 1522
-      Vulpix: 1384
-      Slugma: 1384
-      Magmar: 692
-      Sizzlipede: 250
+      DiglettAlola: 1519
+      Salandit: 1519
+      Vulpix: 1381
+      Slugma: 1381
+      Magmar: 691
+      Sizzlipede: 249
     rare:
-      Zweilous: 377
+      Zweilous: 376
     scarce:
-      Magcargo: 416
-      MarowakAlola: 250
-      DugtrioAlola: 250
-      Salazzle: 250
-      Magmortar: 250
+      Magcargo: 415
+      MarowakAlola: 249
+      DugtrioAlola: 249
+      Salazzle: 249
+      Magmortar: 249
       Ninetales: 208
       Centiskorch: 30
     elusive:
-      Heatmor: 375
-      Turtonator: 312
+      Heatmor: 374
+      Turtonator: 311
       Hydreigon: 125
+      TyphlosionHisui: 20
     prized:
       Unown: forms
     special:
@@ -122,30 +127,31 @@ land:
       Volcanion: 10
   night:
     base:
-      Deino: 377
+      Deino: 376
     uncommon:
-      DiglettAlola: 1254
-      Salandit: 1254
-      Vulpix: 1142
-      Koffing: 1142
-      Slugma: 1142
-      Magmar: 570
-      Sizzlipede: 250
+      DiglettAlola: 1251
+      Salandit: 1251
+      Vulpix: 1140
+      Koffing: 1140
+      Slugma: 1140
+      Magmar: 569
+      Sizzlipede: 249
     rare:
-      Zweilous: 377
+      Zweilous: 376
     scarce:
-      MarowakAlola: 250
-      DugtrioAlola: 250
-      Salazzle: 250
-      Magmortar: 250
+      MarowakAlola: 249
+      DugtrioAlola: 249
+      Salazzle: 249
+      Magmortar: 249
       Weezing: 208
       Ninetales: 208
       Magcargo: 208
       Centiskorch: 30
     elusive:
-      Heatmor: 375
-      Turtonator: 312
+      Heatmor: 374
+      Turtonator: 311
       Hydreigon: 125
+      TyphlosionHisui: 20
     prized:
       Unown: forms
     special:

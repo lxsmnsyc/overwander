@@ -369,11 +369,20 @@ Scyther:
       - species: Scizor
         method: [HeldItem, Trade]
         item: MetalCoat
+      - species: Kleavor
+        method: [UsedItem]
+        item: BlackAugurite
     held: { common: OranBerry, uncommon: MetalCoat, rare: SilverPowder }
   Scizor:
     types: [Bug, Steel]
     egg-groups: [Bug]
     biomes: [Grassland, TemperateForest, Woodland]
+    active: [Morning, Day]
+    evolves-from: Scyther
+  Kleavor:
+    types: [Bug, Rock]
+    egg-groups: [Bug]
+    biomes: [Woodland, Mountain]
     active: [Morning, Day]
     evolves-from: Scyther
 Jynx:

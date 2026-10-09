@@ -423,6 +423,39 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Moonraze', Moves.MenacingMoonrazeMaelstrom],
   ['Stormshards', Moves.SplinteredStormshards],
   ['Soulblaze', Moves.ClangorousSoulblaze],
+  ['GMaxVineLash', Moves.GMaxVineLash],
+  ['GMaxWildfire', Moves.GMaxWildfire],
+  ['GMaxCannonade', Moves.GMaxCannonade],
+  ['GMaxBefuddle', Moves.GMaxBefuddle],
+  ['GMaxVoltCrash', Moves.GMaxVoltCrash],
+  ['GMaxGoldRush', Moves.GMaxGoldRush],
+  ['GMaxChiStrike', Moves.GMaxChiStrike],
+  ['GMaxTerror', Moves.GMaxTerror],
+  ['GMaxFoamBurst', Moves.GMaxFoamBurst],
+  ['GMaxResonance', Moves.GMaxResonance],
+  ['GMaxCuddle', Moves.GMaxCuddle],
+  ['GMaxReplenish', Moves.GMaxReplenish],
+  ['GMaxMalodor', Moves.GMaxMalodor],
+  ['GMaxMeltdown', Moves.GMaxMeltdown],
+  ['GMaxDrumSolo', Moves.GMaxDrumSolo],
+  ['GMaxFireball', Moves.GMaxFireball],
+  ['GMaxHydrosnipe', Moves.GMaxHydrosnipe],
+  ['GMaxWindRage', Moves.GMaxWindRage],
+  ['GMaxGravitas', Moves.GMaxGravitas],
+  ['GMaxStonesurge', Moves.GMaxStonesurge],
+  ['GMaxVolcalith', Moves.GMaxVolcalith],
+  ['GMaxTartness', Moves.GMaxTartness],
+  ['GMaxSweetness', Moves.GMaxSweetness],
+  ['GMaxSandblast', Moves.GMaxSandblast],
+  ['GMaxStunShock', Moves.GMaxStunShock],
+  ['GMaxCentiferno', Moves.GMaxCentiferno],
+  ['GMaxSmite', Moves.GMaxSmite],
+  ['GMaxSnooze', Moves.GMaxSnooze],
+  ['GMaxFinale', Moves.GMaxFinale],
+  ['GMaxSteelsurge', Moves.GMaxSteelsurge],
+  ['GMaxDepletion', Moves.GMaxDepletion],
+  ['GMaxOneBlow', Moves.GMaxOneBlow],
+  ['GMaxRapidFlow', Moves.GMaxRapidFlow],
 ];
 
 /**
@@ -711,17 +744,51 @@ describe('a painted move', () => {
     expect(effectShapeFor(Moves.MaxGuard)).toBe(effectShapeFor(Moves.Protect));
   });
 
-  it('draws each G-Max Move as an earlier move', () => {
-    expect(effectShapeFor(Moves.GMaxVineLash)).toBe('Lash');
-    expect(effectShapeFor(Moves.GMaxStonesurge)).toBe('Caltrops');
-    expect(effectShapeFor(Moves.GMaxSteelsurge)).toBe('Caltrops');
-    expect(effectShapeFor(Moves.GMaxGravitas)).toBe('Press');
-    expect(effectShapeFor(Moves.GMaxWindRage)).toBe('Clear');
-    expect(effectShapeFor(Moves.GMaxOneBlow)).toBe('Singlestrike');
-    expect(effectShapeFor(Moves.GMaxRapidFlow)).toBe('Rapidstrike');
-    for (const move of G_MAX_MOVES) {
-      expect(effectShapeFor(move) in SPANS, `${move}`).toBe(true);
+  it('draws each G-Max Move as a picture of its own', () => {
+    const owned: [move: Moves, shape: string][] = [
+      [Moves.GMaxVineLash, 'GMaxVineLash'],
+      [Moves.GMaxWildfire, 'GMaxWildfire'],
+      [Moves.GMaxCannonade, 'GMaxCannonade'],
+      [Moves.GMaxBefuddle, 'GMaxBefuddle'],
+      [Moves.GMaxVoltCrash, 'GMaxVoltCrash'],
+      [Moves.GMaxGoldRush, 'GMaxGoldRush'],
+      [Moves.GMaxChiStrike, 'GMaxChiStrike'],
+      [Moves.GMaxTerror, 'GMaxTerror'],
+      [Moves.GMaxFoamBurst, 'GMaxFoamBurst'],
+      [Moves.GMaxResonance, 'GMaxResonance'],
+      [Moves.GMaxCuddle, 'GMaxCuddle'],
+      [Moves.GMaxReplenish, 'GMaxReplenish'],
+      [Moves.GMaxMalodor, 'GMaxMalodor'],
+      [Moves.GMaxMeltdown, 'GMaxMeltdown'],
+      [Moves.GMaxDrumSolo, 'GMaxDrumSolo'],
+      [Moves.GMaxFireball, 'GMaxFireball'],
+      [Moves.GMaxHydrosnipe, 'GMaxHydrosnipe'],
+      [Moves.GMaxWindRage, 'GMaxWindRage'],
+      [Moves.GMaxGravitas, 'GMaxGravitas'],
+      [Moves.GMaxStonesurge, 'GMaxStonesurge'],
+      [Moves.GMaxVolcalith, 'GMaxVolcalith'],
+      [Moves.GMaxTartness, 'GMaxTartness'],
+      [Moves.GMaxSweetness, 'GMaxSweetness'],
+      [Moves.GMaxSandblast, 'GMaxSandblast'],
+      [Moves.GMaxStunShock, 'GMaxStunShock'],
+      [Moves.GMaxCentiferno, 'GMaxCentiferno'],
+      [Moves.GMaxSmite, 'GMaxSmite'],
+      [Moves.GMaxSnooze, 'GMaxSnooze'],
+      [Moves.GMaxFinale, 'GMaxFinale'],
+      [Moves.GMaxSteelsurge, 'GMaxSteelsurge'],
+      [Moves.GMaxDepletion, 'GMaxDepletion'],
+      [Moves.GMaxOneBlow, 'GMaxOneBlow'],
+      [Moves.GMaxRapidFlow, 'GMaxRapidFlow'],
+    ];
+    const shapes = new Set<string>();
+
+    for (const [move, shape] of owned) {
+      expect(effectShapeFor(move), shape).toBe(shape);
+      shapes.add(shape);
     }
+    // Every one of them named above, and no two sharing a picture
+    expect(owned.length).toBe(G_MAX_MOVES.size);
+    expect(shapes.size).toBe(G_MAX_MOVES.size);
   });
 
   it('draws a U-turn as the blow and then as the leaving', () => {

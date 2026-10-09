@@ -15,6 +15,8 @@ import zPartners from './z-partners';
 import zLegends from './z-legends';
 import alola from './alola';
 import galar from './galar';
+import gMaxMoves from './g-max-moves';
+import gMaxGalar from './g-max-galar';
 
 export { JOLTS, reachOf } from './shapes';
 
@@ -35,4 +37,6 @@ export const LIT: Partial<Record<EffectShape, LitShapePainter>> = {
   ...zLegends,
   ...alola,
   ...galar,
+  ...gMaxMoves,
+  ...gMaxGalar,
 };

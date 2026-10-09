@@ -25,6 +25,8 @@ import zPartners from './z-partners';
 import zLegends from './z-legends';
 import alola from './alola';
 import galar from './galar';
+import gMaxMoves from './g-max-moves';
+import gMaxGalar from './g-max-galar';
 
 import {
   EXACT_SPANS,
@@ -117,6 +119,8 @@ const PAINTERS: Record<EffectShape, ShapePainter> = {
   ...zLegends,
   ...alola,
   ...galar,
+  ...gMaxMoves,
+  ...gMaxGalar,
 };
 
 /**

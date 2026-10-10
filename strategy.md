@@ -36,7 +36,7 @@ Checked against the collection as of 8 October 2026.
 - **What follows from the gaps:**
   - The Zarude lair and relic stay reserved.
   - The fossil set ships all four.
-  - Calyrex's fusion waits for its riders to be drawn.
+  - Calyrex's riders ship drawn as their steeds, as a fused Necrozma is drawn as Solgaleo or Lunala.
 - **A gap is not a reason to rework a design.** A signature stays written for the whole line or set, so the missing member slots in the day it is drawn.
 
 ## The order

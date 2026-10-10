@@ -81,3 +81,11 @@ Calyrex:
     hidden:
       # Harvest, Telepathy and Flower Veil are this registry's rather than the mainline's, filling it to four: the king of bountiful harvests speaks without words
       [Harvest, Telepathy, FlowerVeil]
+  # A rider keeps the king's own, and wears its steed's neigh on top,
+  # which is As One: Unnerve and the neigh together
+  CalyrexIce:
+    abilities: [Unnerve]
+    hidden: [Harvest, Telepathy, FlowerVeil]
+  CalyrexShadow:
+    abilities: [Unnerve]
+    hidden: [Harvest, Telepathy, FlowerVeil]

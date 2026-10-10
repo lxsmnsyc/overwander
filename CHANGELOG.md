@@ -1,5 +1,57 @@
 # overwander
 
+## 4.35.0
+
+### Minor Changes
+
+- - The Reins of Unity seat a Calyrex on a Glastrier or a Spectrier, as the Ice Rider or the Shadow Rider, and take the pair apart again. Each use spends the reins, and they are dug up in the prized band.
+  - A rider keeps Calyrex's own ability and wears its steed's neigh on top, which is As One.
+  - The riders learn Glacial Lance and Astral Barrage, and the moves Sword and Shield teach them.
+  - Until the riders are drawn, each is drawn as its steed, with the reins floating over it.
+- 2e0485d: - Battle feats open two evolutions: a Galarian Farfetch'd that lands 3 critical hits in one fight can become Sirfetch'd, and a Galarian Yamask that takes 49 damage in one fight without fainting can become Runerigus.
+  - Zacian holding the Rusted Sword and Zamazenta holding the Rusted Shield fight crowned, and their Iron Head becomes Behemoth Blade or Behemoth Bash.
+  - The Scroll of Darkness and the Scroll of Waters have pictures of their own.
+- e0797e6: Galar's regional forms and its legends arrive, each line with a signature ability:
+  
+  - Galarian Meowth and Perrserker take the item of any enemy they knock out.
+  - Galarian Ponyta and Rapidash heal their worst-hurt teammate with their Fairy moves.
+  - Galarian Slowpoke, Slowbro and Slowking badly poison an enemy with every third move they land on it. The Galarica Cuff and Wreath are stocked.
+  - Galarian Farfetch'd and Sirfetch'd raise a leek shield with each attack they land.
+  - Galarian Corsola and Cursola leave a husk that draws the enemy's moves for 6 seconds after fainting.
+  - Galarian Zigzagoon, Linoone and Obstagoon take 2 stages of Defense off whoever touches them.
+  - Galarian Darumaka and Darmanitan draw Ice moves onto themselves and grow stronger from them.
+  - Galarian Yamask and Runerigus curse every enemy that hurt them as they faint.
+  - Galarian Weezing and Galarian Mr. Mime are offered beside the older evolution.
+  - The Galarian birds cancel the Kanto birds they mirror.
+  - Zacian and Zamazenta answer a teammate brought low, Eternatus drains every enemy that acts, Kubfu builds up with every third move, Regieleki and Regidrago break their seals, and Calyrex, Glastrier and Spectrier lift the whole team with each knockout.
+  - The Slumbering Weald, the Energy Plant, both towers, the Split-Decision Ruins, the Crown Shrine, the Snowslide Slope, the Old Cemetery, the Crown Tundra, the Wild Area and the Isle of Armor stand in the world, and their legends walk the biomes around them.
+  - The Rusted Sword, the Rusted Shield and both scrolls are dug up in the prized band.
+- be8a9b7: The Gen 8 abilities of Galar's regional forms and legends now work in battle:
+  
+  - Steely Spirit lifts its team's Steel moves 1.5x.
+  - Pastel Veil keeps poison off its side and cures a poisoned teammate.
+  - Quick Draw gives its attacks a 30% chance to go off with no wind-up.
+  - Curious Medicine resets its teammates' stat stages when it enters.
+  - Screen Cleaner takes Reflect, Light Screen and Aurora Veil down on both sides when it enters.
+  - Gorilla Tactics gives 1.5x Attack and locks it into its first move until it leaves the field.
+  - Wandering Spirit trades itself for one of a contact attacker's abilities.
+  - Intrepid Sword and Dauntless Shield give +1 Attack or +1 Defense on the first entry of a battle.
+  - Unseen Fist sends its contact moves through Protect and the other guards.
+  - Transistor lifts Electric moves 1.3x and Dragon's Maw lifts Dragon moves 1.5x.
+  - Chilling Neigh and Grim Neigh give +1 Attack or +1 Special Attack on a knockout.
+
+### Patch Changes
+
+- 9f629d0: - Kubfu is met in the wild as rarely as Cosmog and Type: Null, rather than as a legend at the towers, which now hold only their Urshifu.
+- 65a561a: - The Move Reminder, the Move Tutor, the Dojo Master and Nurse Joy keep the conversation open after each lesson, training or heal, until you step back.
+  - A shop's search stays as you typed it after a purchase or a sale.
+- 246e606: Towns can now stand in swamps, bogs, mangroves and over lakes. A region
+  whose only sites are wet is given a town instead of being left empty, and
+  every town that already stood keeps its place.
+  
+  This changes world generation: the second generation gains towns where it
+  had none.
+
 ## 4.34.0
 
 ### Minor Changes

@@ -110,6 +110,12 @@ NLunarizer:
   flags: [Usable, Consumable]
   sell: 6000
 
+ReinsOfUnity:
+  type: Evolution
+  icon: key/reins-of-unity
+  flags: [Usable, Consumable]
+  sell: 6000
+
 # The relics Galar's heroes take up. Drawn on the held sheet.
 RustedSword:
   type: Held

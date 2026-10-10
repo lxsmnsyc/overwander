@@ -123,9 +123,38 @@ Spectrier:
     active: any
     rank: legendary
 Calyrex:
+  # The king, and the two shapes it takes astride a steed the Reins of
+  # Unity have joined it to
   Calyrex:
     types: [Psychic, Grass]
     egg-groups: [NoEggsDiscovered]
     biomes: [Taiga]
     active: any
+    evolves-into:
+      - species: CalyrexIce
+        method: [UsedItem]
+        item: ReinsOfUnity
+      - species: CalyrexShadow
+        method: [UsedItem]
+        item: ReinsOfUnity
     rank: legendary
+  CalyrexIce:
+    types: [Psychic, Ice]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    evolves-from: Calyrex
+    evolves-into:
+      - species: Calyrex
+        method: [UsedItem]
+        item: ReinsOfUnity
+  CalyrexShadow:
+    types: [Psychic, Ghost]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    evolves-from: Calyrex
+    evolves-into:
+      - species: Calyrex
+        method: [UsedItem]
+        item: ReinsOfUnity

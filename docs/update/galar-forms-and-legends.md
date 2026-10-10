@@ -9,23 +9,23 @@ the fourteen Gen 8 abilities they bring all work in battle.
 Each form is its own pokemon, met in Galar's country rather than its old one.
 The lines that are regional all the way down carry a signature of their own.
 
-- **Galarian Meowth and Perrserker** take the held item of any enemy they knock
+- **Galarian Meowth and Perrserker** (War Spoils) take the held item of any enemy they knock
   out, or hand it to a teammate with empty hands.
-- **Galarian Ponyta and Rapidash** heal their worst-hurt teammate for 1/2 of
+- **Galarian Ponyta and Rapidash** (Mending Horn) heal their worst-hurt teammate for 1/2 of
   the damage their Fairy moves deal.
-- **Galarian Slowpoke, Slowbro and Slowking** badly poison an enemy with every
+- **Galarian Slowpoke, Slowbro and Slowking** (Slow Venom) badly poison an enemy with every
   third move they land on it. The Galarica Cuff and Galarica Wreath evolve them,
   and both are stocked.
-- **Galarian Farfetch'd and Sirfetch'd** raise a leek shield with each attack
+- **Galarian Farfetch'd and Sirfetch'd** (Leek Shield) raise a leek shield with each attack
   they land, so the next blow lands at 0.6x.
-- **Galarian Corsola and Cursola** leave a husk standing for 6 seconds after
+- **Galarian Corsola and Cursola** (Coral Husk) leave a husk standing for 6 seconds after
   fainting. It draws every enemy single-target move aimed at the team, and the
   moves hit nothing.
-- **Galarian Zigzagoon, Linoone and Obstagoon** take 2 stages of Defense off
+- **Galarian Zigzagoon, Linoone and Obstagoon** (Blockade) take 2 stages of Defense off
   anything that touches them while they are not casting.
-- **Galarian Darumaka and Darmanitan** draw Ice moves onto themselves and gain
+- **Galarian Darumaka and Darmanitan** (Cold Sink) draw Ice moves onto themselves and gain
   Attack from each one instead of being hurt.
-- **Galarian Yamask and Runerigus** curse every enemy that damaged them: each
+- **Galarian Yamask and Runerigus** (Carved Grudge) curse every enemy that damaged them: each
   loses 1/8 of its HP as they faint.
 - **Galarian Weezing and Galarian Mr. Mime** keep their family's signature. A
   Koffing or a Mime Jr. ready to evolve is offered both shapes.
@@ -57,25 +57,35 @@ The catch sheet offers the evolution once the fight is over.
 
 Each legend also walks the biome its lair stands in.
 
-- **Zacian and Zamazenta are sworn to their side.** The first time an enemy
-  leaves one of the team below 1/2 HP, Zacian casts Sacred Sword at it and
+- **Zacian and Zamazenta are sworn to their side.** With Sworn Blade and Sworn
+  Shield, the first time an enemy leaves one of the team below 1/2 HP, Zacian
+  casts Sacred Sword at it and
   Zamazenta casts Follow Me to cover them.
 - **The Rusted Sword and the Rusted Shield** crown Zacian and Zamazenta, and
   turn their Iron Head into Behemoth Blade or Behemoth Bash.
-- **Eternatus** drains every enemy that acts by 1/16 of its HP and heals what
+- **Eternatus** (Darkest Day) drains every enemy that acts by 1/16 of its HP and heals what
   they lose.
-- **Kubfu** casts Bulk Up with every third move it lands. The Scroll of Darkness
+- **Kubfu** (Kata) casts Bulk Up with every third move it lands. The Scroll of Darkness
   or the Scroll of Waters makes it an Urshifu of that style. It is met in the
   wild on mountains and rocky coasts, as rarely as Cosmog or Type: Null, rather
   than at the towers.
-- **Regieleki and Regidrago** break a seal like the older Regis: 8 seconds at
+- **Regieleki and Regidrago** (Volt Seal and Wyrm Seal) break a seal like the older Regis: 8 seconds at
   half power, then 1.25x with 2 stages of Speed or Special Attack.
-- **Calyrex, Glastrier and Spectrier** lift the whole team with each knockout:
+- **Calyrex, Glastrier and Spectrier** (Crownreign, Frostreign and
+  Shadereign) lift the whole team with each knockout:
   healing, Attack or Special Attack.
-- **The Galarian birds mirror the Kanto birds.** Each takes a stage off every
+- **The Galarian birds mirror the Kanto birds.** Glarewing, Strikewing and
+  Wrathwing each take a stage off every
   enemy that arrives, and the two cancel when they meet.
 
-The relics and the scrolls are dug up in the prized band.
+**The Reins of Unity seat Calyrex on a steed.** Used on a Calyrex with a
+Glastrier or a Spectrier, they make it the Ice Rider or the Shadow Rider, and
+take the pair apart again. Each use spends the reins. A rider keeps Calyrex's
+own ability and wears its steed's neigh on top, which is As One. Until the
+collection draws the riders, each is drawn as its steed, with the reins
+floating over it.
+
+The relics, the scrolls and the reins are dug up in the prized band.
 
 ## Gen 8 abilities
 
@@ -100,7 +110,6 @@ The relics and the scrolls are dug up in the prized band.
 
 - **Galarian Stunfisk, Mr. Rime and Zarude** wait for the collection to draw
   them, and Galarian Darmanitan's Zen Mode waits for its Zen shape.
-- **Calyrex's riders** wait for theirs, and the Reins of Unity with them.
 
 ## See also
 

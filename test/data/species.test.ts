@@ -38,6 +38,7 @@ import {
   ARCEUS_FORMS,
   BASCULIN_FORMS,
   BURMY_FORMS,
+  CALYREX_FORMS,
   CASTFORM_FORMS,
   CHERRIM_FORMS,
   CRAMORANT_FORMS,
@@ -490,6 +491,7 @@ describe('species forms', () => {
       ...ZACIAN_FORMS.slice(1),
       ...ZAMAZENTA_FORMS.slice(1),
       ...URSHIFU_FORMS.slice(1),
+      ...CALYREX_FORMS.slice(1),
       // The true shadows, which are forms of the birds they are the
       // shadow of rather than pokemon of their own
       ...listTrueShadows(),
@@ -743,6 +745,21 @@ describe('fusions', () => {
     // The prism keeps its own armour whatever it has absorbed
     expect(getWornPartner(Species.NecrozmaDuskMane)).toBeNull();
     expect(getWornPartner(Species.KyuremBlack)).toBe(Species.Zekrom);
+  });
+
+  it('seats Calyrex on either steed with one pair of reins', () => {
+    const roads = getSpeciesData(Species.Calyrex).evolvesInto ?? [];
+
+    expect(roads.map((road) => [road.species, road.item])).toEqual([
+      [Species.CalyrexIce, Items.ReinsOfUnity],
+      [Species.CalyrexShadow, Items.ReinsOfUnity],
+    ]);
+    expect(getFoldedDragon(Species.CalyrexIce)).toBe(Species.Glastrier);
+    expect(getFusedShape(Species.Spectrier)).toBe(Species.CalyrexShadow);
+    // The steed's neigh beside the king's Unnerve is As One
+    expect(getWornPartner(Species.CalyrexIce)).toBe(Species.Glastrier);
+    expect(getWornPartner(Species.CalyrexShadow)).toBe(Species.Spectrier);
+    expect(getSpeciesData(Species.CalyrexIce).abilities).toEqual([Abilities.Unnerve]);
   });
 
   it('gives a fused shape the ability of the dragon inside it', () => {

@@ -1840,6 +1840,9 @@ export const ZAMAZENTA_FORMS: Species[] = [Species.Zamazenta, Species.ZamazentaC
 /** The two styles an Urshifu fights in, Single Strike at the base */
 export const URSHIFU_FORMS: Species[] = [Species.Urshifu, Species.UrshifuRapidStrike];
 
+/** Calyrex alone, then astride Glastrier or Spectrier */
+export const CALYREX_FORMS: Species[] = [Species.Calyrex, Species.CalyrexIce, Species.CalyrexShadow];
+
 /** A Wishiwashi alone, and the school it calls together from level 20 */
 export const WISHIWASHI_FORMS: Species[] = [Species.Wishiwashi, Species.WishiwashiSchool];
 

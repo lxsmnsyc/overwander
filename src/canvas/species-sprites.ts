@@ -54,13 +54,16 @@ const BORROWED_COATS = new Map<Species, { sheet: Species; female: boolean }>([
 
 /**
  * Shapes the collection has not drawn yet, standing in as the pokemon
- * they are made of until it does. A fused Necrozma is drawn as the
- * Solgaleo or Lunala inside it, and the battle floats the prism over
- * it so a watcher can tell the shape has changed
+ * they are made of until it does. A fusion is drawn as the partner
+ * inside it, which a watcher tells from the husk at a glance, and the
+ * battle floats the item that joined them over it so the shape still
+ * reads as changed
  */
 const STAND_INS = new Map<Species, Species>([
   [Species.NecrozmaDuskMane, Species.Solgaleo],
   [Species.NecrozmaDawnWings, Species.Lunala],
+  [Species.CalyrexIce, Species.Glastrier],
+  [Species.CalyrexShadow, Species.Spectrier],
   // A Cramorant with its catch is drawn as the bird alone
   [Species.CramorantGulping, Species.Cramorant],
   [Species.CramorantGorging, Species.Cramorant],

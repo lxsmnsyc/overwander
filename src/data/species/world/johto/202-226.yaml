@@ -188,6 +188,24 @@ Corsola:
     habitat: Water
     biomes: [CoralReef, Ocean, Beach, RockyCoast]
     active: any
+  CorsolaGalar:
+    types: [Ghost]
+    egg-groups: [Water1, Water3]
+    habitat: Amphibious
+    biomes: [Beach, RockyCoast]
+    active: any
+    base-form: false
+    evolves-into:
+      - species: Cursola
+        method: [Level]
+        level: 38
+  Cursola:
+    types: [Ghost]
+    egg-groups: [Water1, Water3]
+    habitat: Amphibious
+    biomes: [Beach, RockyCoast]
+    active: any
+    evolves-from: CorsolaGalar
 # The three beams all land together, at the same level up the line
 Remoraid:
   Remoraid:

@@ -1,78 +1,86 @@
 land:
   morning: &land-morning
     base:
-      Oshawott: 1862
-      Piplup: 1862
-      Popplio: 1241
+      Oshawott: 1826
+      Piplup: 1826
+      Popplio: 1217
     uncommon:
-      Wingull: 292
-      Shellos: 292
-      Buizel: 292
-      Binacle: 281
-      Wimpod: 257
-      Clobbopus: 250
-      Krabby: 234
-      Seel: 234
-      Slowpoke: 234
-      BurmySandy: 234
+      Wingull: 286
+      Shellos: 286
+      Buizel: 286
+      Binacle: 276
+      Wimpod: 252
+      Clobbopus: 245
+      Krabby: 229
+      Seel: 229
+      Slowpoke: 229
+      BurmySandy: 229
+      CorsolaGalar: 150
     rare:
-      Brionne: 392
-      Dewott: 392
-      Prinplup: 392
+      Brionne: 384
+      Dewott: 384
+      Prinplup: 384
     scarce:
-      Kingler: 79
-      Dewgong: 79
-      Slowbro: 79
-      Pelipper: 79
-      Gastrodon: 79
-      Floatzel: 64
-      Golisopod: 48
-      Barbaracle: 48
-      WormadamSandy: 32
-      Grapploct: 30
+      Kingler: 77
+      Dewgong: 77
+      Slowbro: 77
+      Pelipper: 77
+      Gastrodon: 77
+      Floatzel: 63
+      Golisopod: 47
+      Barbaracle: 47
+      WormadamSandy: 31
+      Grapploct: 29
+      Cursola: 25
     elusive:
-      Cramorant: 180
-      Pincurchin: 150
-      Pyukumuku: 92
-      Shuckle: 92
-      Primarina: 37
-      Samurott: 37
-      Empoleon: 37
+      Cramorant: 176
+      Pincurchin: 147
+      Pyukumuku: 90
+      Shuckle: 90
+      Primarina: 36
+      Samurott: 36
+      Empoleon: 36
     prized:
       Unown: forms
     special:
       TapuFini: 10
+      UrshifuRapidStrike: 10
+      Kubfu: 10
     mythical:
       Victini: 10
   day: *land-morning
   evening: &land-evening
     base: {}
     uncommon:
-      Shellos: 1607
-      Buizel: 1607
-      Wimpod: 1414
-      Krabby: 1285
-      Seel: 1285
-      BurmySandy: 1285
-      Clobbopus: 250
+      Shellos: 1576
+      Buizel: 1576
+      Wimpod: 1386
+      Krabby: 1260
+      Seel: 1260
+      BurmySandy: 1260
+      Clobbopus: 245
+      CorsolaGalar: 150
     rare: {}
     scarce:
-      Kingler: 122
-      Dewgong: 122
-      Gastrodon: 122
-      Floatzel: 98
-      Golisopod: 73
-      WormadamSandy: 49
-      Grapploct: 30
+      Kingler: 120
+      Dewgong: 120
+      Gastrodon: 120
+      Floatzel: 96
+      Golisopod: 72
+      WormadamSandy: 48
+      Grapploct: 29
+      Cursola: 25
     elusive:
-      Cramorant: 180
-      Pincurchin: 150
-      Pyukumuku: 146
-      Shuckle: 146
+      Cramorant: 176
+      Pincurchin: 147
+      Pyukumuku: 143
+      Shuckle: 143
     prized:
       Unown: forms
     special:
       TapuFini: 10
+      UrshifuRapidStrike: 10
+      Kubfu: 10
     mythical:
       Victini: 10
   night: *land-evening
@@ -80,100 +88,106 @@ land:
 water:
   morning: &water-morning
     base:
-      Horsea: 2686
-      Oshawott: 805
-      Piplup: 805
-      Popplio: 537
+      Horsea: 2645
+      Oshawott: 793
+      Piplup: 793
+      Popplio: 528
     uncommon:
-      Arrokuda: 400
-      Magikarp: 217
-      Wingull: 180
-      Shellos: 180
-      Buizel: 180
-      Crabrawler: 172
-      Binacle: 172
-      Mareanie: 159
-      Wimpod: 159
-      Clobbopus: 150
-      Krabby: 144
-      Shellder: 144
-      Tentacool: 144
-      Remoraid: 144
-      Seel: 144
-      Slowpoke: 144
+      Arrokuda: 394
+      Magikarp: 214
+      Wingull: 177
+      Shellos: 177
+      Buizel: 177
+      Crabrawler: 170
+      Binacle: 170
+      Mareanie: 157
+      Wimpod: 157
+      Clobbopus: 148
+      Krabby: 142
+      Shellder: 142
+      Tentacool: 142
+      Remoraid: 142
+      Seel: 142
+      Slowpoke: 142
+      CorsolaGalar: 120
     rare:
-      Seadra: 519
-      Brionne: 208
-      Dewott: 208
-      Prinplup: 208
+      Seadra: 511
+      Brionne: 205
+      Dewott: 205
+      Prinplup: 205
     scarce:
-      Kingler: 56
-      Cloyster: 56
-      Dewgong: 56
-      Slowbro: 56
-      Pelipper: 56
-      Gastrodon: 56
-      Tentacruel: 45
-      Octillery: 45
-      Floatzel: 45
-      Barraskewda: 40
+      Kingler: 55
+      Cloyster: 55
+      Dewgong: 55
+      Slowbro: 55
+      Pelipper: 55
+      Gastrodon: 55
+      Tentacruel: 44
+      Octillery: 44
+      Floatzel: 44
+      Barraskewda: 39
       Toxapex: 34
       Golisopod: 34
       Barbaracle: 34
       Grapploct: 20
+      Cursola: 20
     elusive:
-      Cramorant: 150
-      Pincurchin: 120
-      Qwilfish: 112
-      Corsola: 75
-      Pyukumuku: 37
+      Cramorant: 148
+      Pincurchin: 118
+      Qwilfish: 110
+      Corsola: 74
+      Pyukumuku: 36
       Primarina: 15
       Samurott: 15
       Kingdra: 15
       Empoleon: 15
     special:
       TapuFini: 10
+      UrshifuRapidStrike: 10
   day: *water-morning
   evening: &water-evening
     base:
-      Horsea: 2735
+      Horsea: 2694
     uncommon:
-      Arrokuda: 400
-      Magikarp: 381
-      Shellos: 317
-      Buizel: 317
-      Crabrawler: 305
-      Mareanie: 279
-      Wimpod: 279
-      Krabby: 254
-      Shellder: 254
-      Tentacool: 254
-      Remoraid: 254
-      Staryu: 254
-      Seel: 254
-      Clobbopus: 150
+      Arrokuda: 394
+      Magikarp: 376
+      Shellos: 313
+      Buizel: 313
+      Crabrawler: 301
+      Mareanie: 275
+      Wimpod: 275
+      Krabby: 250
+      Shellder: 250
+      Tentacool: 250
+      Remoraid: 250
+      Staryu: 250
+      Seel: 250
+      Clobbopus: 148
+      CorsolaGalar: 120
     rare:
-      Seadra: 1700
+      Seadra: 1674
     scarce:
-      Kingler: 99
-      Cloyster: 99
-      Starmie: 99
-      Dewgong: 99
-      Gastrodon: 99
-      Tentacruel: 79
-      Octillery: 79
-      Floatzel: 79
-      Toxapex: 60
-      Golisopod: 60
-      Barraskewda: 40
+      Kingler: 98
+      Cloyster: 98
+      Starmie: 98
+      Dewgong: 98
+      Gastrodon: 98
+      Tentacruel: 78
+      Octillery: 78
+      Floatzel: 78
+      Toxapex: 59
+      Golisopod: 59
+      Barraskewda: 39
       Grapploct: 20
+      Cursola: 20
     elusive:
-      Qwilfish: 199
-      Cramorant: 150
-      Corsola: 133
-      Pincurchin: 120
-      Pyukumuku: 67
+      Qwilfish: 196
+      Cramorant: 148
+      Corsola: 131
+      Pincurchin: 118
+      Pyukumuku: 66
       Kingdra: 27
     special:
       TapuFini: 10
+      UrshifuRapidStrike: 10
   night: *water-evening

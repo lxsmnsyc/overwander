@@ -50,6 +50,9 @@ Koffing:
   Weezing:
     abilities: [Levitate, NeutralizingGas]
     hidden: [Stench, Aftermath]
+  WeezingGalar:
+    abilities: [Levitate, NeutralizingGas]
+    hidden: [MistySurge]
 Rhyhorn:
   Rhyhorn:
     abilities: [LightningRod, RockHead]
@@ -118,6 +121,9 @@ MrMime:
   MimeJr:
     abilities: [Soundproof, Filter]
     hidden: [Technician]
+  MrMimeGalar:
+    abilities: [VitalSpirit, ScreenCleaner]
+    hidden: [IceBody]
 Scyther:
   Scyther:
     abilities: [Swarm, Technician]

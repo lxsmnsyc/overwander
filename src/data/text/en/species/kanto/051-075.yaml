@@ -3,6 +3,8 @@ Meowth:
   Persian: { name: Persian, category: Classy Cat Pokemon }
   MeowthAlola: { name: Alolan Meowth, category: Scratch Cat Pokemon }
   PersianAlola: { name: Alolan Persian, category: Classy Cat Pokemon }
+  MeowthGalar: { name: Galarian Meowth, category: Scratch Cat Pokemon }
+  Perrserker: { name: Perrserker, category: Viking Pokemon }
 Psyduck:
   Psyduck: { name: Psyduck, category: Duck Pokemon }
   Golduck: { name: Golduck, category: Duck Pokemon }

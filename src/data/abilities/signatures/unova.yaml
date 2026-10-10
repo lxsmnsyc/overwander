@@ -162,3 +162,8 @@ families:
 
   # A herd is worth more than the bull in front of it
   Bouffalant: HerdBond
+
+forms:
+  # Galar's regional lines whose every stage is regional carry their own
+  ColdSink: [DarumakaGalar, DarmanitanGalar]
+  CarvedGrudge: [YamaskGalar, Runerigus]

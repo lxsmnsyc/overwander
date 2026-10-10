@@ -342,6 +342,12 @@ prized:
   FossilizedFish: 8
   FossilizedDrake: 8
   FossilizedDino: 8
+  # Galar's legends' relics and Kubfu's scrolls, on the Reveal Glass's
+  # terms: each is the only way to the shape it holds
+  RustedSword: 4
+  RustedShield: 4
+  ScrollOfDarkness: 4
+  ScrollOfWaters: 4
 special:
   MasterBall: 10
   ShinyCharm: 10

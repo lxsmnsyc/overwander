@@ -109,3 +109,16 @@ NLunarizer:
   icon: key/n-lunarizer
   flags: [Usable, Consumable]
   sell: 6000
+
+# The relics Galar's heroes take up. Drawn on the held sheet.
+RustedSword:
+  type: Held
+  icon: held/rusted-sword
+  flags: [Holdable]
+  sell: 6000
+
+RustedShield:
+  type: Held
+  icon: held/rusted-shield
+  flags: [Holdable]
+  sell: 6000

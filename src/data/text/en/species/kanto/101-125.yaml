@@ -17,6 +17,7 @@ Lickitung:
 Koffing:
   Koffing: { name: Koffing, category: Poison Gas Pokemon }
   Weezing: { name: Weezing, category: Poison Gas Pokemon }
+  WeezingGalar: { name: Galarian Weezing, category: Poison Gas Pokemon }
 Rhyhorn:
   Rhyhorn: { name: Rhyhorn, category: Spikes Pokemon }
   Rhydon: { name: Rhydon, category: Drill Pokemon }
@@ -43,6 +44,7 @@ Staryu:
 MrMime:
   MrMime: { name: Mr. Mime, category: Barrier Pokemon }
   MimeJr: { name: MimeJr, category: Mime Pokemon }
+  MrMimeGalar: { name: Galarian Mr. Mime, category: Dancing Pokemon }
 Scyther:
   Scyther: { name: Scyther, category: Mantis Pokemon }
   Scizor: { name: Scizor, category: Pincer Pokemon }

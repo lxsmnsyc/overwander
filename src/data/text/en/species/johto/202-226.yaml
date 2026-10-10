@@ -35,6 +35,8 @@ Swinub:
   Mamoswine: { name: Mamoswine, category: Twin Tusk Pokemon }
 Corsola:
   Corsola: { name: Corsola, category: Coral Pokemon }
+  CorsolaGalar: { name: Galarian Corsola, category: Coral Pokemon }
+  Cursola: { name: Cursola, category: Coral Pokemon }
 Remoraid:
   Remoraid: { name: Remoraid, category: Jet Pokemon }
   Octillery: { name: Octillery, category: Jet Pokemon }

@@ -1136,6 +1136,27 @@ const enum Abilities {
   Boltfrost = 200460,
   Gilldrake = 200461,
   Gillfrost = 200462,
+  // Galar's regional lines, then its legends
+  WarSpoils = 200463,
+  MendingHorn = 200464,
+  SlowVenom = 200465,
+  LeekShield = 200466,
+  CoralHusk = 200467,
+  Blockade = 200468,
+  ColdSink = 200469,
+  CarvedGrudge = 200470,
+  Glarewing = 200471,
+  Strikewing = 200472,
+  Wrathwing = 200473,
+  SwornBlade = 200474,
+  SwornShield = 200475,
+  DarkestDay = 200476,
+  Kata = 200477,
+  VoltSeal = 200478,
+  WyrmSeal = 200479,
+  Frostreign = 200480,
+  Shadereign = 200481,
+  Crownreign = 200482,
 }
 
 export default Abilities;

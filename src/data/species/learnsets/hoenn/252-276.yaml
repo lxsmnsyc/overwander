@@ -714,59 +714,35 @@ Poochyena:
 Zigzagoon:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
-    - WaterPulse
-    - Toxic
-    - HiddenPower
     - SunnyDay
     - IceBeam
     - Blizzard
     - Protect
     - RainDance
-    - Frustration
     - IronTail
     - Thunderbolt
     - Thunder
-    - Return
     - Dig
     - ShadowBall
-    - DoubleTeam
-    - ShockWave
     - Facade
-    - SecretPower
     - Rest
     - Attract
     - Thief
-    - Cut
     - Surf
-    - RockSmash
     - BodySlam
-    - DoubleEdge
-    - Mimic
     - Substitute
     - ThunderWave
-    - Rollout
     - Snore
     - IcyWind
     - Endure
-    - MudSlap
-    - Swagger
-    - FuryCutter
     - SleepTalk
-    - DefenseCurl
     - Swift
-    - Captivate
-    - ChargeBeam
     - GrassKnot
     - GunkShot
-    - LastResort
-    - NaturalGift
     - SeedBomb
-    - HoneClaws
     - Round
-    - EchoedVoice
     - Retaliate
     - WorkUp
-    - Confide
   Zigzagoon:
     level:
       1: [Tackle, Growl]
@@ -785,15 +761,41 @@ Zigzagoon:
       36: [DoubleEdge]
     egg: [Charm, Pursuit, Tickle, Trick, SimpleBeam, ExtremeSpeed, HelpingHand, MudSlap]
     teachable:
-      - Charm
-      - Fling
-      - HelpingHand
-      - HyperVoice
-      - MudShot
-      - PinMissile
-      - TailSlap
-      - Trick
-      - Whirlpool
+      [
+        Captivate,
+        ChargeBeam,
+        Confide,
+        Cut,
+        DefenseCurl,
+        DoubleEdge,
+        DoubleTeam,
+        EchoedVoice,
+        Frustration,
+        FuryCutter,
+        HiddenPower,
+        HoneClaws,
+        LastResort,
+        Mimic,
+        MudSlap,
+        NaturalGift,
+        Return,
+        RockSmash,
+        Rollout,
+        SecretPower,
+        ShockWave,
+        Swagger,
+        Toxic,
+        WaterPulse,
+        Charm,
+        Fling,
+        HelpingHand,
+        HyperVoice,
+        MudShot,
+        PinMissile,
+        TailSlap,
+        Trick,
+        Whirlpool,
+      ]
   Linoone:
     level:
       1:
@@ -822,23 +824,185 @@ Zigzagoon:
       43: [BellyDrum]
       48: [DoubleEdge]
     teachable:
-      - Roar
-      - HyperBeam
-      - Strength
-      - GigaImpact
-      - ShadowClaw
-      - StompingTantrum
-      - ThroatChop
-      - Charm
-      - Fling
-      - HelpingHand
-      - HyperVoice
-      - MudShot
-      - PinMissile
-      - PlayRough
-      - TailSlap
-      - Trick
-      - Whirlpool
+      [
+        Captivate,
+        ChargeBeam,
+        Confide,
+        Cut,
+        DefenseCurl,
+        DoubleEdge,
+        DoubleTeam,
+        EchoedVoice,
+        Frustration,
+        FuryCutter,
+        GigaImpact,
+        HiddenPower,
+        HoneClaws,
+        HyperBeam,
+        LastResort,
+        Mimic,
+        MudSlap,
+        NaturalGift,
+        Return,
+        Roar,
+        RockSmash,
+        Rollout,
+        SecretPower,
+        ShadowClaw,
+        ShockWave,
+        StompingTantrum,
+        Strength,
+        Swagger,
+        ThroatChop,
+        Toxic,
+        WaterPulse,
+        Charm,
+        Fling,
+        HelpingHand,
+        HyperVoice,
+        MudShot,
+        PinMissile,
+        PlayRough,
+        TailSlap,
+        Trick,
+        Whirlpool,
+      ]
+  ZigzagoonGalar:
+    level:
+      1: [Tackle, Leer]
+      3: [SandAttack]
+      6: [Lick]
+      9: [Snarl]
+      12: [Headbutt]
+      15: [BabyDollEyes]
+      18: [PinMissile]
+      21: [Rest]
+      24: [TakeDown]
+      27: [ScaryFace]
+      30: [Counter]
+      33: [Taunt]
+      36: [DoubleEdge]
+    teachable:
+      [
+        Assurance,
+        FakeTears,
+        Fling,
+        HelpingHand,
+        HyperVoice,
+        LashOut,
+        MudShot,
+        Payback,
+        PinMissile,
+        ScaryFace,
+        Screech,
+        Snarl,
+        Taunt,
+        Trick,
+        Whirlpool,
+      ]
+    egg: [KnockOff, PartingShot, QuickGuard]
+  LinooneGalar:
+    level:
+      1: [SandAttack, Tackle, PinMissile, Leer, Lick, NightSlash, Switcheroo, BabyDollEyes]
+      9: [Snarl]
+      12: [Headbutt]
+      15: [HoneClaws]
+      18: [FurySwipes]
+      23: [Rest]
+      28: [TakeDown]
+      33: [ScaryFace]
+      38: [Counter]
+      43: [Taunt]
+      48: [DoubleEdge]
+    teachable:
+      [
+        Assurance,
+        BodyPress,
+        FakeTears,
+        Fling,
+        GigaImpact,
+        HelpingHand,
+        HyperBeam,
+        HyperVoice,
+        LashOut,
+        MudShot,
+        Payback,
+        PinMissile,
+        ScaryFace,
+        Screech,
+        ShadowClaw,
+        Snarl,
+        StompingTantrum,
+        Taunt,
+        ThroatChop,
+        Trick,
+        Whirlpool,
+      ]
+  Obstagoon:
+    level:
+      1:
+        [
+          SandAttack,
+          Tackle,
+          PinMissile,
+          Leer,
+          Submission,
+          Lick,
+          CrossChop,
+          NightSlash,
+          Switcheroo,
+          BabyDollEyes,
+          Obstruct,
+        ]
+      9: [Snarl]
+      12: [Headbutt]
+      15: [HoneClaws]
+      18: [FurySwipes]
+      23: [Rest]
+      28: [TakeDown]
+      35: [ScaryFace]
+      42: [Counter]
+      49: [Taunt]
+      56: [DoubleEdge]
+    teachable:
+      [
+        Assurance,
+        BodyPress,
+        BrickBreak,
+        BulkUp,
+        CloseCombat,
+        CrossPoison,
+        FakeTears,
+        FirePunch,
+        Fling,
+        FocusEnergy,
+        GigaImpact,
+        HelpingHand,
+        HyperBeam,
+        HyperVoice,
+        IcePunch,
+        IronDefense,
+        LashOut,
+        LowKick,
+        MegaKick,
+        MegaPunch,
+        MudShot,
+        Payback,
+        PinMissile,
+        Revenge,
+        Reversal,
+        ScaryFace,
+        Screech,
+        ShadowClaw,
+        Snarl,
+        StompingTantrum,
+        Taunt,
+        ThroatChop,
+        ThunderPunch,
+        Trick,
+        Whirlpool,
+        XScissor,
+      ]
 # The caterpillar and its two cocoons learn nothing but what they
 # level into, so only the two that come out with wings have a list
 Wurmple:

@@ -16,6 +16,9 @@ Poochyena:
 Zigzagoon:
   Zigzagoon: { name: Zigzagoon, category: Tiny Raccoon Pokemon }
   Linoone: { name: Linoone, category: Rushing Pokemon }
+  ZigzagoonGalar: { name: Galarian Zigzagoon, category: Tiny Raccoon Pokemon }
+  LinooneGalar: { name: Galarian Linoone, category: Rushing Pokemon }
+  Obstagoon: { name: Obstagoon, category: Blocking Pokemon }
 Wurmple:
   Wurmple: { name: Wurmple, category: Worm Pokemon }
   Silcoon: { name: Silcoon, category: Cocoon Pokemon }

@@ -81,6 +81,25 @@ Zigzagoon:
     height: 0.5
     weight: 32.5
     gender: [1, 1]
+  ZigzagoonGalar:
+    stats: { HP: 38, Attack: 30, Defense: 41, SpecialAttack: 30, SpecialDefense: 41, Speed: 60 }
+    catch-rate: 255
+    height: 0.4
+    weight: 17.5
+    gender: [1, 1]
+    egg-cycles: 15
+  LinooneGalar:
+    stats: { HP: 78, Attack: 70, Defense: 61, SpecialAttack: 50, SpecialDefense: 61, Speed: 100 }
+    catch-rate: 90
+    height: 0.5
+    weight: 32.5
+    gender: [1, 1]
+  Obstagoon:
+    stats: { HP: 93, Attack: 90, Defense: 101, SpecialAttack: 60, SpecialDefense: 81, Speed: 95 }
+    catch-rate: 45
+    height: 1.6
+    weight: 46
+    gender: [1, 1]
 Wurmple:
   Wurmple:
     stats: { HP: 45, Attack: 45, Defense: 35, SpecialAttack: 20, SpecialDefense: 30, Speed: 20 }

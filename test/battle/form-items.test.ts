@@ -5,6 +5,7 @@ import { Stages, Stats } from '../../src/data/constants/stats';
 import { Types } from '../../src/data/constants/types';
 import Abilities from '../../src/data/ids/abilities';
 import { Items } from '../../src/data/ids/items';
+import { Moves } from '../../src/data/ids/moves';
 import { Species } from '../../src/data/ids/species';
 import { createBattle, createUnit } from './harness';
 
@@ -242,5 +243,45 @@ describe('Worn abilities and slots', () => {
 
     expect(sea.species).toBe(Species.KyogrePrimal);
     expect(ghost.species).toBe(Species.GengarMega);
+  });
+
+  it('crowns Zacian with the Rusted Sword and turns its Iron Head to Behemoth Blade', () => {
+    const { battle, teamA } = createBattle();
+    const hero = createUnit(battle, teamA);
+    hero.setSpecies(Species.Zacian);
+    hero.addMove(Moves.IronHead);
+    hero.addMove(Moves.PlayRough);
+    hero.setMovePoints(Moves.IronHead, 2);
+    hero.addItem(Items.RustedSword);
+
+    hero.enter();
+
+    expect(hero.species).toBe(Species.ZacianCrowned);
+    expect([...hero.types]).toEqual([Types.Fairy, Types.Steel]);
+    expect(hero.moves[Moves.IronHead]).toBeUndefined();
+    expect(hero.moves[Moves.BehemothBlade]?.points).toBe(2);
+    expect(hero.moves[Moves.PlayRough]).toBeDefined();
+  });
+
+  it('crowns Zamazenta with the Rusted Shield and turns its Iron Head to Behemoth Bash', () => {
+    const { battle, teamA } = createBattle();
+    const hero = createUnit(battle, teamA);
+    const other = createUnit(battle, teamA);
+    hero.setSpecies(Species.Zamazenta);
+    hero.addMove(Moves.IronHead);
+    hero.addItem(Items.RustedShield);
+    // The shield is Zamazenta's own: a Zacian holding it stays as it is
+    other.setSpecies(Species.Zacian);
+    other.addMove(Moves.IronHead);
+    other.addItem(Items.RustedShield);
+
+    hero.enter();
+    other.enter();
+
+    expect(hero.species).toBe(Species.ZamazentaCrowned);
+    expect(hero.moves[Moves.IronHead]).toBeUndefined();
+    expect(hero.moves[Moves.BehemothBash]).toBeDefined();
+    expect(other.species).toBe(Species.Zacian);
+    expect(other.moves[Moves.IronHead]).toBeDefined();
   });
 });

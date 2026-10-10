@@ -51,6 +51,12 @@ Darumaka:
   DarmanitanZen:
     abilities: [SheerForce]
     hidden: [ZenMode]
+  DarumakaGalar:
+    abilities: [Hustle]
+    hidden: [InnerFocus]
+  DarmanitanGalar:
+    abilities: [GorillaTactics]
+    hidden: [ZenMode]
 Maractus:
   Maractus:
     abilities: [WaterAbsorb, Chlorophyll]
@@ -91,6 +97,13 @@ Yamask:
     # a coffin takes the weapon off whoever opens it, wears out anybody
     # who keeps trying, and takes the robber down with it
     hidden: [CursedBody, Pressure, PerishBody]
+  YamaskGalar:
+    abilities: [WanderingSpirit]
+  Runerigus:
+    abilities: [WanderingSpirit]
+    hidden:
+      # Cursed Body, Solid Rock and Shadow Tag are this registry's rather than the mainline's, filling it to four: the curse carved into its stone holds whatever touches it
+      [CursedBody, SolidRock, ShadowTag]
 Tirtouga:
   Tirtouga:
     abilities: [SolidRock, Sturdy]

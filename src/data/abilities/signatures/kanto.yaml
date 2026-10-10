@@ -105,3 +105,12 @@ forms:
   TauntingGaze: [MeowthAlola, PersianAlola]
   MagnetFloat: [GeodudeAlola, GravelerAlola, GolemAlola]
   CrystalToxin: [GrimerAlola, MukAlola]
+  # Galar's regional lines whose every stage is regional carry their own,
+  # and the Galarian birds, which cancel their Kanto counterparts
+  WarSpoils: [MeowthGalar, Perrserker]
+  MendingHorn: [PonytaGalar, RapidashGalar]
+  SlowVenom: [SlowpokeGalar, SlowbroGalar, SlowkingGalar]
+  LeekShield: [FarfetchdGalar, Sirfetchd]
+  Glarewing: [ArticunoGalar]
+  Strikewing: [ZapdosGalar]
+  Wrathwing: [MoltresGalar]

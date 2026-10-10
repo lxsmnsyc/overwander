@@ -218,13 +218,13 @@ FullBelly:
   description: It heals 1/16 of its HP every time it acts, and its cast times are 25% longer.
 Frostwing:
   name: Frostwing
-  description: Every enemy loses a stage of Speed as it arrives on the field.
+  description: Every enemy loses a stage of Speed as it arrives on the field. Against a Glarewing holder neither wingbeat lands.
 Stormwing:
   name: Stormwing
-  description: Every enemy loses a stage of Special Defense as it arrives on the field.
+  description: Every enemy loses a stage of Special Defense as it arrives on the field. Against a Strikewing holder neither wingbeat lands.
 Emberwing:
   name: Emberwing
-  description: Every enemy loses a stage of Defense as it arrives on the field.
+  description: Every enemy loses a stage of Defense as it arrives on the field. Against a Wrathwing holder neither wingbeat lands.
 SereneStorm:
   name: Serene Storm
   description: Weather it calls up never clears on its own, and its party takes no damage from any weather.
@@ -255,3 +255,24 @@ MagnetFloat:
 CrystalToxin:
   name: Crystal Toxin
   description: Poison it puts on an enemy cannot be cured.
+WarSpoils:
+  name: War Spoils
+  description: Any enemy it knocks out leaves it their held item, or the item goes to an empty-handed teammate if its own hands are full.
+MendingHorn:
+  name: Mending Horn
+  description: Its Fairy moves heal its worst-hurt teammate for 1/2 of the damage they deal.
+SlowVenom:
+  name: Slow Venom
+  description: Every third move it lands on the same enemy badly poisons them.
+LeekShield:
+  name: Leek Shield
+  description: Each attack it lands raises its leek as a shield, so the next blow it takes lands at 0.6x.
+Glarewing:
+  name: Glarewing
+  description: Every enemy loses a stage of Speed as it arrives on the field. Against a Frostwing holder neither wingbeat lands.
+Strikewing:
+  name: Strikewing
+  description: Every enemy loses a stage of Special Defense as it arrives on the field. Against a Stormwing holder neither wingbeat lands.
+Wrathwing:
+  name: Wrathwing
+  description: Every enemy loses a stage of Defense as it arrives on the field. Against an Emberwing holder neither wingbeat lands.

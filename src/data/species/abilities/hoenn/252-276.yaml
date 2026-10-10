@@ -54,6 +54,15 @@ Zigzagoon:
     # rummages with Pickup, Covet and Thief, and a final evolution is
     # filled to four
     hidden: [QuickFeet, Frisk]
+  ZigzagoonGalar:
+    abilities: [Pickup, Gluttony]
+    hidden: [QuickFeet]
+  LinooneGalar:
+    abilities: [Pickup, Gluttony]
+    hidden: [QuickFeet]
+  Obstagoon:
+    abilities: [Reckless, Guts]
+    hidden: [Defiant]
 Wurmple:
   Wurmple:
     abilities: [ShieldDust]

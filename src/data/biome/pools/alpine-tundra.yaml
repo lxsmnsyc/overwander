@@ -1,9 +1,9 @@
 land:
   morning:
     base:
-      Swinub: 1903
-      Scatterbug: 1826
-      Machop: 1523
+      Swinub: 1901
+      Scatterbug: 1824
+      Machop: 1521
     uncommon:
       Bergmite: 459
       VulpixAlola: 420
@@ -12,7 +12,7 @@ land:
       Bronzor: 382
       Snover: 382
     rare:
-      Spewpa: 552
+      Spewpa: 551
       Machoke: 345
       Piloswine: 345
     scarce:
@@ -40,13 +40,14 @@ land:
     special:
       Dialga: 10
       Palkia: 10
+      Glastrier: 10
     mythical:
       Arceus: 10
   day:
     base:
-      Swinub: 1824
-      Scatterbug: 1751
-      Machop: 1459
+      Swinub: 1822
+      Scatterbug: 1749
+      Machop: 1458
       Bagon: 219
     uncommon:
       Bergmite: 459
@@ -56,7 +57,7 @@ land:
       Bronzor: 382
       Snover: 382
     rare:
-      Spewpa: 522
+      Spewpa: 521
       Machoke: 327
       Piloswine: 327
       Shelgon: 66
@@ -86,12 +87,13 @@ land:
     special:
       Dialga: 10
       Palkia: 10
+      Glastrier: 10
     mythical:
       Arceus: 10
   evening:
     base:
-      Swinub: 4588
-      Bagon: 551
+      Swinub: 4583
+      Bagon: 550
     uncommon:
       Bergmite: 432
       VulpixAlola: 396
@@ -102,7 +104,7 @@ land:
       Snom: 200
       Sneasel: 90
     rare:
-      Piloswine: 1012
+      Piloswine: 1011
       Shelgon: 202
     scarce:
       NinetalesAlola: 67
@@ -129,22 +131,23 @@ land:
     special:
       Dialga: 10
       Palkia: 10
+      Glastrier: 10
     mythical:
       Arceus: 10
   night:
     base:
-      Swinub: 2897
+      Swinub: 2894
     uncommon:
-      Bergmite: 641
-      VulpixAlola: 587
-      SandshrewAlola: 587
-      Snorunt: 587
-      Bronzor: 534
-      Snover: 534
+      Bergmite: 640
+      VulpixAlola: 586
+      SandshrewAlola: 586
+      Snorunt: 586
+      Bronzor: 533
+      Snover: 533
       Snom: 200
       Sneasel: 134
     rare:
-      Piloswine: 1804
+      Piloswine: 1802
     scarce:
       NinetalesAlola: 100
       SandslashAlola: 100
@@ -170,6 +173,7 @@ land:
       Dialga: 10
       Palkia: 10
       Mewtwo: 10
+      Glastrier: 10
     mythical:
       Arceus: 10
 

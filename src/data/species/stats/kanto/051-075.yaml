@@ -23,6 +23,18 @@ Meowth:
     height: 1.1
     weight: 33
     gender: [4, 4]
+  MeowthGalar:
+    stats: { HP: 50, Attack: 65, Defense: 55, SpecialAttack: 40, SpecialDefense: 40, Speed: 40 }
+    catch-rate: 255
+    height: 0.4
+    weight: 7.5
+    gender: [1, 1]
+  Perrserker:
+    stats: { HP: 70, Attack: 110, Defense: 100, SpecialAttack: 50, SpecialDefense: 60, Speed: 50 }
+    catch-rate: 90
+    height: 0.8
+    weight: 28
+    gender: [1, 1]
 Psyduck:
   Psyduck:
     stats: { HP: 50, Attack: 52, Defense: 48, SpecialAttack: 65, SpecialDefense: 50, Speed: 55 }

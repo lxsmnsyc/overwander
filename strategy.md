@@ -21,7 +21,7 @@ Checked against the collection as of 8 October 2026.
   - whole families: Rolycoly, Cufant (Copperajah is drawn, but not its first stage), and Zarude;
   - evolutions: Mr. Rime, so Galarian Mr. Mime ships as its line's end, marked `awaiting: evolution`;
   - forms: Stunfisk-Galar, Darmanitan-Galar Zen, Cramorant Gulping and Gorging, Calyrex Ice and Shadow Rider, Zarude Dada, and every Gigantamax.
-- **Drawn short and filled out from the standing pose**, the way Jellicent and Toucannon already ship: Sirfetch'd, Stonjourner, Arctovish, Morpeko Hangry and Eternatus Eternamax. All of them ship.
+- **Drawn short and filled out from the standing pose**, the way Jellicent and Toucannon already ship: Sirfetch'd, Stonjourner, Arctovish, and Morpeko Hangry. All of them ship.
 - **Drawn:**
   - every other Galar species, and Eiscue's Noice Face;
   - Zacian and Zamazenta Crowned, both Urshifu styles, Enamorus Therian;
@@ -29,7 +29,8 @@ Checked against the collection as of 8 October 2026.
   - every Galarian form except Stunfisk and Darmanitan Zen;
   - Basculegion's and Indeedee's females, as female coats on the male's sheet, the way Meowstic's is.
 - **Falinks ships drawn as its Brass, for now.** The collection has only the troop's pieces (Brass, the leader, and Trooper) and no sheet for Falinks itself. Brass gets a hidden id so the import takes its sheet, and a stand-in rule draws Falinks with it. When a base sheet is drawn, the stand-in and the hidden id are removed.
-- **Every Gen 8 species and form that can be shiny has a shiny coat**, Alcremie's seven Sweets included. Eternamax is shiny-locked in the games, so it has none and needs none.
+- **Every Gen 8 species and form that can be shiny has a shiny coat**, Alcremie's seven Sweets included.
+- **Eternamax is left out.** It is only ever the final battle's boss in the mainline, and nothing here could stage it.
 - **Alcremie ships its seven Sweets on Vanilla Cream only** (`AlcremieBerry` to `AlcremieRibbon`, Strawberry being the base). The other eight creams are left out on purpose, not for lack of art.
 - **The collection files Hisui's new species under `galar/`.** `scripts/import-sprites.ts` refiles dex 899 to 905 under `hisui`, where the game looks for them.
 - **What follows from the gaps:**

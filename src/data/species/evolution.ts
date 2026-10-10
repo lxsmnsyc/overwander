@@ -5,6 +5,7 @@ import { Items } from '../ids/items';
 import type { Moves } from '../ids/moves';
 import type Natures from '../ids/natures';
 import { EvolutionMethod, type Genders, type Species } from '../ids/species';
+import { BATTLE_FEATS } from './feats';
 import {
   type EvolutionData,
   type StatComparison,
@@ -27,7 +28,8 @@ export const SUPPORTED_METHODS =
   EvolutionMethod.TimeOfDay |
   EvolutionMethod.Gender |
   EvolutionMethod.KnownMove |
-  EvolutionMethod.StatComparison;
+  EvolutionMethod.StatComparison |
+  EvolutionMethod.Special;
 
 /**
  * What an evolution check is measured against: the catch itself, its
@@ -53,7 +55,11 @@ export interface EvolutionContext {
    * this game has nowhere to put: an evolution here is something a
    * player asks for from the catch sheet. So a handover opens the
    * evolution rather than performing it, and the answer is worked out
-   * once, there, by `settleHandover`
+   * once, there, by `settleHandover`.
+   *
+   * A battle feat sets it too, for a species that evolves on one (see
+   * `BATTLE_FEATS`). No species evolves both ways, so the flag never
+   * has to say which of the two opened it
    */
   canEvolve: boolean;
   /**
@@ -229,7 +235,20 @@ export function meetsEvolutionCriteria(
   ) {
     return false;
   }
+  if ((method & EvolutionMethod.Special) !== 0 && !meetsFeat(context)) {
+    return false;
+  }
   return true;
+}
+
+/**
+ * Whether a battle feat has opened a `Special` evolution. Only a
+ * species with a feat in `BATTLE_FEATS` reads the flag this way, so a
+ * `Special` with nothing to measure stays shut and a trade never
+ * stands in for a feat
+ */
+function meetsFeat(context: EvolutionContext): boolean {
+  return context.canEvolve && BATTLE_FEATS.has(context.species);
 }
 
 /**

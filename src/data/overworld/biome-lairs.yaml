@@ -4,20 +4,31 @@
 
 DeepOcean: [SeafoamIslands, WhirlIslands, MarineCave, NavelRock]
 Ocean: [WhirlIslands, SouthernIsland, FullmoonIsland, IronRuins, SkyPillar, UltraDeepSea]
-Beach: [EmbeddedTower, AetherParadise]
+Beach: [EmbeddedTower, AetherParadise, IsleOfArmor]
 PolarOcean: [SeafoamIslands, IslandCave]
 Glacier: [SnowpointTemple, GiantChasm]
-Grassland: [PowerPlant, BurnedTower, LakeValor, AbundantShrine]
+Grassland: [PowerPlant, BurnedTower, LakeValor, AbundantShrine, WildArea]
 Bog: [LakeValor, TurnbackCave]
-TemperateForest: [LakeVerity, RuminationField, WindingWoods, UltraForest]
+TemperateForest: [LakeVerity, RuminationField, WindingWoods, UltraForest, SlumberingWeald]
 Woodland: [BurnedTower, LakeVerity, RuminationField, WindingWoods]
-Taiga: [LakeAcuity, IcebergRuins, DragonspiralTower]
-Tundra: [LakeAcuity, SnowpointTemple, IcebergRuins, DragonspiralTower, GiantChasm, FrostCavern]
+Taiga: [LakeAcuity, IcebergRuins, DragonspiralTower, CrownShrine]
+Tundra:
+  [
+    LakeAcuity,
+    SnowpointTemple,
+    IcebergRuins,
+    DragonspiralTower,
+    GiantChasm,
+    FrostCavern,
+    SplitDecisionRuins,
+    OldCemetery,
+    CrownTundra,
+  ]
 Steppe: [PowerPlant]
 Desert: [DesertRuins, RockPeakRuins, RelicCastle, RuinsOfAbundance, UltraDesert]
 TropicalSeasonalForest: [RuinsOfConflict, PoniGrove]
 TropicalRainforest: [RuinsOfLife, UltraJungle]
-RockyCoast: [RuinsOfHope]
+RockyCoast: [RuinsOfHope, TowerOfWaters]
 Badlands:
   [
     DesertRuins,
@@ -30,6 +41,7 @@ Badlands:
     AltarOfTheMoone,
     UltraPlant,
     UltraRuin,
+    EnergyPlant,
   ]
 Mountain:
   [
@@ -43,6 +55,7 @@ Mountain:
     TerminusCave,
     TenCaratHill,
     UltraCrater,
+    TowerOfDarkness,
   ]
-AlpineTundra: [CeruleanCave, SpearPillar]
+AlpineTundra: [CeruleanCave, SpearPillar, SnowslideSlope]
 Volcano: [MtEmber, TerraCave, StarkMountain]

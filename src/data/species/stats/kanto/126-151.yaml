@@ -199,6 +199,13 @@ Articuno:
     # Nothing lays these, so the figure only reaches a nest egg or a raid
     # prize, but a legendary out of a shell should cost a walk
     egg-cycles: 80
+  ArticunoGalar:
+    stats: { HP: 90, Attack: 85, Defense: 85, SpecialAttack: 125, SpecialDefense: 100, Speed: 95 }
+    catch-rate: 3
+    height: 1.7
+    weight: 50.9
+    gender: genderless
+    egg-cycles: 80
 Zapdos:
   Zapdos:
     stats: { HP: 90, Attack: 90, Defense: 85, SpecialAttack: 125, SpecialDefense: 90, Speed: 100 }
@@ -207,12 +214,26 @@ Zapdos:
     weight: 52.6
     gender: genderless
     egg-cycles: 80
+  ZapdosGalar:
+    stats: { HP: 90, Attack: 125, Defense: 90, SpecialAttack: 85, SpecialDefense: 90, Speed: 100 }
+    catch-rate: 3
+    height: 1.6
+    weight: 58.2
+    gender: genderless
+    egg-cycles: 80
 Moltres:
   Moltres:
     stats: { HP: 90, Attack: 100, Defense: 90, SpecialAttack: 125, SpecialDefense: 85, Speed: 90 }
     catch-rate: 3
     height: 2
     weight: 60
+    gender: genderless
+    egg-cycles: 80
+  MoltresGalar:
+    stats: { HP: 90, Attack: 85, Defense: 90, SpecialAttack: 100, SpecialDefense: 125, Speed: 90 }
+    catch-rate: 3
+    height: 2
+    weight: 66
     gender: genderless
     egg-cycles: 80
 Dratini:

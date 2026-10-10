@@ -8,18 +8,29 @@ Every line whose stages are all Hisuian has a signature ability of its own.
 Each form is its own pokemon, met in the cold and the high country rather than
 its old home.
 
-- **Hisuian Growlithe and Arcanine** watch over their team: when an enemy starts
-  casting at a teammate, their own next move at that enemy casts 40% faster.
-- **Hisuian Voltorb and Electrode** burst open the first time they drop below
-  1/2 HP and cast Leech Seed on every enemy.
-- **Hisuian Qwilfish and Overqwil** heal 1/2 of whatever poison costs the enemy
-  side while they stand.
-- **Hisuian Sneasel and Sneasler** paralyse a poisoned target with 30% of their
-  contact moves, and the poison stays.
-- **Hisuian Zorua and Zoroark** linger for 4 seconds the first time they would
-  faint, untouchable and still fighting, then fall.
-- **White-striped Basculin and Basculegion** are wrapped in the soul of each
-  teammate that faints, so the next blow they take lands at 1/2.
+| Form                                | Where                                                  | When              |
+| ----------------------------------- | ------------------------------------------------------ | ----------------- |
+| Hisuian Growlithe, Arcanine         | The volcano, the mountain and the badlands             | Morning and day   |
+| Hisuian Voltorb, Electrode          | The temperate forest and the woodland                  | Any hour          |
+| Hisuian Qwilfish, Overqwil          | The ocean, the rocky coast and the polar ocean         | Any hour          |
+| Hisuian Sneasel, Sneasler           | The montane forest, the mountain and the alpine tundra | Morning and day   |
+| Hisuian Zorua, Zoroark              | The tundra, the taiga and the alpine tundra            | Evening and night |
+| White-striped Basculin, Basculegion | The water of the taiga and the temperate rainforest    | Any hour          |
+
+Every line whose stages are all Hisuian has a signature of its own:
+
+- **Watchfire**, Hisuian Arcanine's. When an enemy starts casting at a
+  teammate, its own next move at that enemy casts 40% faster.
+- **Husk Burst**, Hisuian Electrode's. The first time it drops below 1/2 HP, it
+  casts Leech Seed on every enemy.
+- **Venom Feast**, Overqwil's. It heals 1/2 of whatever poison costs the enemy
+  side while it stands.
+- **Nerve Venom**, Sneasler's. Its contact moves paralyse a poisoned target 30%
+  of the time, and the poison stays.
+- **Afterhaunt**, Hisuian Zoroark's. The first time it would faint, it lingers
+  for 4 seconds, untouchable and still fighting, then falls.
+- **Soul Cloak**, Basculegion's. Each teammate that faints wraps it in their
+  soul, so the next blow it takes lands at 1/2.
 
 ### The finals of older lines
 
@@ -38,8 +49,8 @@ They keep their family's signature.
 - **White-striped Basculin** becomes Basculegion once it has taken 294 recoil
   damage without fainting. A fight it faints in counts for nothing.
 
-The last three count across fights, and the catch sheet offers the evolution
-once the count is reached. Wyrdeer, Kleavor and Ursaluna keep their family's
+The last three count across fights. The catch sheet shows how far along each
+feat is, and offers the evolution once the count is reached. Wyrdeer, Kleavor and Ursaluna keep their family's
 signature.
 
 The Black Augurite and the Peat Block are stocked.

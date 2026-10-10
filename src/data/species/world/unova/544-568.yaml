@@ -112,6 +112,23 @@ Darumaka:
     # it thinks with, and it is far harder to shift
     base-form: false
     evolves-from: Darumaka
+  DarumakaGalar:
+    types: [Ice]
+    egg-groups: [Field]
+    biomes: [Tundra, Taiga]
+    active: [Morning, Day]
+    base-form: false
+    evolves-into:
+      - species: DarmanitanGalar
+        method: [UsedItem]
+        item: IceStone
+  DarmanitanGalar:
+    types: [Ice]
+    egg-groups: [Field]
+    biomes: [Tundra, Taiga]
+    active: [Morning, Day]
+    base-form: false
+    evolves-from: DarumakaGalar
 Maractus:
   # The cactus: it keeps the desert's water for the months there is
   # none, and it rattles its arms to put the birds off
@@ -184,6 +201,23 @@ Yamask:
     biomes: [Desert, Badlands]
     active: [Evening, Night]
     evolves-from: Yamask
+  YamaskGalar:
+    # Runerigus grows out of the one that takes 49 damage in one fight
+    # and is still standing at the end
+    types: [Ground, Ghost]
+    egg-groups: [Mineral, Amorphous]
+    biomes: [Desert, Badlands]
+    active: [Evening, Night]
+    base-form: false
+    evolves-into:
+      - species: Runerigus
+        method: [Special]
+  Runerigus:
+    types: [Ground, Ghost]
+    egg-groups: [Mineral, Amorphous]
+    biomes: [Desert, Badlands]
+    active: [Evening, Night]
+    evolves-from: YamaskGalar
 Tirtouga:
   # The prehistoric turtle out of the Cover Fossil. Nothing that comes
   # out of a fossil spawns, so its biomes are empty on purpose

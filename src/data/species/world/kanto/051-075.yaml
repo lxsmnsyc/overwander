@@ -32,6 +32,22 @@ Meowth:
     active: any
     base-form: false
     evolves-from: MeowthAlola
+  MeowthGalar:
+    types: [Steel]
+    egg-groups: [Field]
+    biomes: [Mountain, Badlands]
+    active: [Evening, Night]
+    base-form: false
+    evolves-into:
+      - species: Perrserker
+        method: [Level]
+        level: 28
+  Perrserker:
+    types: [Steel]
+    egg-groups: [Field]
+    biomes: [Mountain, Badlands]
+    active: [Evening, Night]
+    evolves-from: MeowthGalar
 Psyduck:
   Psyduck:
     types: [Water]

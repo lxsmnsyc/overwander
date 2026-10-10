@@ -640,6 +640,14 @@ export default class Unit {
    */
   dealt = 0;
 
+  /**
+   * The critical hits this unit has landed, and the health it has
+   * taken from anything. Like `dealt`, the battle decides nothing by
+   * them: they are what a battle feat is measured with
+   */
+  criticals = 0;
+  taken = 0;
+
   addItem(item: Items): void {
     this.battle.emit(BattleEvents.UnitAddItem, {
       id: 'UnitAddItem',

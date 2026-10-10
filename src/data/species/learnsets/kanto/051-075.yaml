@@ -389,6 +389,133 @@ Meowth:
       - Retaliate
       - Screech
       - Swift
+  MeowthGalar:
+    level:
+      1: [Growl, FakeOut]
+      4: [HoneClaws]
+      8: [Scratch]
+      12: [PayDay]
+      16: [MetalClaw]
+      20: [Taunt]
+      24: [Swagger]
+      29: [FurySwipes]
+      32: [Screech]
+      36: [Slash]
+      40: [MetalSound]
+      44: [Thrash]
+    teachable:
+      [
+        Amnesia,
+        Assurance,
+        Attract,
+        BodySlam,
+        Crunch,
+        DarkPulse,
+        Dig,
+        Endure,
+        Facade,
+        FoulPlay,
+        GunkShot,
+        GyroBall,
+        HyperVoice,
+        IronDefense,
+        IronHead,
+        IronTail,
+        LashOut,
+        NastyPlot,
+        PayDay,
+        Payback,
+        PlayRough,
+        Protect,
+        RainDance,
+        Rest,
+        Retaliate,
+        Round,
+        Screech,
+        SeedBomb,
+        ShadowBall,
+        ShadowClaw,
+        SleepTalk,
+        Snore,
+        SteelBeam,
+        Substitute,
+        SunnyDay,
+        SwordsDance,
+        Taunt,
+        Thief,
+        ThroatChop,
+        Thunder,
+        Thunderbolt,
+        UTurn,
+        Uproar,
+        WorkUp,
+      ]
+    egg: [Covet, Curse, DoubleEdge, Flail, NightSlash, Spite]
+  Perrserker:
+    level:
+      1: [Scratch, Growl, FakeOut, IronDefense, MetalBurst, IronHead, HoneClaws]
+      12: [PayDay]
+      16: [MetalClaw]
+      20: [Taunt]
+      24: [Swagger]
+      31: [FurySwipes]
+      36: [Screech]
+      42: [Slash]
+      48: [MetalSound]
+      54: [Thrash]
+    teachable:
+      [
+        Amnesia,
+        Assurance,
+        Attract,
+        BatonPass,
+        BodySlam,
+        CloseCombat,
+        Crunch,
+        DarkPulse,
+        Dig,
+        Endure,
+        Facade,
+        Fling,
+        FoulPlay,
+        GigaImpact,
+        GunkShot,
+        GyroBall,
+        HeavySlam,
+        HyperBeam,
+        HyperVoice,
+        IronDefense,
+        IronHead,
+        IronTail,
+        LashOut,
+        NastyPlot,
+        PayDay,
+        Payback,
+        PlayRough,
+        Protect,
+        RainDance,
+        Rest,
+        Retaliate,
+        Round,
+        Screech,
+        SeedBomb,
+        ShadowBall,
+        ShadowClaw,
+        SleepTalk,
+        Snore,
+        SteelBeam,
+        Substitute,
+        SunnyDay,
+        SwordsDance,
+        Taunt,
+        Thief,
+        ThroatChop,
+        Thunder,
+        Thunderbolt,
+        UTurn,
+        Uproar,
+        WorkUp,
+      ]
 Psyduck:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:

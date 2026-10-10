@@ -219,3 +219,6 @@ SevenWishes:
 FormDrift:
   name: Form Drift
   description: Every 6 seconds it gains a stage in its highest battle stat and loses one in its lowest.
+Blockade:
+  name: Blockade
+  description: A contact move that lands on it while it is not casting or channelling takes 2 stages of Defense off the attacker.

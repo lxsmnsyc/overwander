@@ -1,47 +1,19 @@
 Ponyta:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
-    - Toxic
     - BodySlam
-    - TakeDown
-    - DoubleEdge
-    - Rage
-    - Mimic
-    - DoubleTeam
-    - Reflect
-    - Bide
-    - FireBlast
     - Swift
-    - SkullBash
     - Rest
     - Substitute
-    - Headbutt
     - Snore
-    - Curse
     - Protect
     - Endure
-    - Swagger
     - Attract
     - SleepTalk
-    - Return
-    - Frustration
     - IronTail
-    - HiddenPower
-    - SunnyDay
-    - Flamethrower
     - Facade
-    - Overheat
-    - SecretPower
-    - SolarBeam
-    - Strength
-    - Captivate
-    - NaturalGift
-    - FlameCharge
     - Round
-    - EchoedVoice
-    - Incinerate
     - WildCharge
-    - Confide
   Ponyta:
     level:
       1: [Tackle, Growl]
@@ -72,19 +44,49 @@ Ponyta:
         MorningSun,
       ]
     teachable:
-      - Agility
-      - AllySwitch
-      - Bounce
-      - Charm
-      - FireSpin
-      - FlareBlitz
-      - HeatWave
-      - HighHorsepower
-      - LowKick
-      - MysticalFire
-      - PlayRough
-      - SolarBlade
-      - WillOWisp
+      [
+        Bide,
+        Captivate,
+        Confide,
+        Curse,
+        DoubleEdge,
+        DoubleTeam,
+        EchoedVoice,
+        FireBlast,
+        FlameCharge,
+        Flamethrower,
+        Frustration,
+        Headbutt,
+        HiddenPower,
+        Incinerate,
+        Mimic,
+        NaturalGift,
+        Overheat,
+        Rage,
+        Reflect,
+        Return,
+        SecretPower,
+        SkullBash,
+        SolarBeam,
+        Strength,
+        SunnyDay,
+        Swagger,
+        TakeDown,
+        Toxic,
+        Agility,
+        AllySwitch,
+        Bounce,
+        Charm,
+        FireSpin,
+        FlareBlitz,
+        HeatWave,
+        HighHorsepower,
+        LowKick,
+        MysticalFire,
+        PlayRough,
+        SolarBlade,
+        WillOWisp,
+      ]
   Rapidash:
     level:
       1: [Tackle, TailWhip, Growl, Ember, QuickAttack, Megahorn, PoisonJab, SmartStrike]
@@ -101,12 +103,40 @@ Ponyta:
       63: [FlareBlitz]
     teachable:
       [
-        HyperBeam,
-        GigaImpact,
+        Bide,
+        Captivate,
+        Confide,
+        Curse,
+        DoubleEdge,
+        DoubleTeam,
         DrillRun,
-        ThroatChop,
-        SmartStrike,
+        EchoedVoice,
+        FireBlast,
+        FlameCharge,
+        Flamethrower,
+        Frustration,
+        GigaImpact,
+        Headbutt,
+        HiddenPower,
+        HyperBeam,
+        Incinerate,
+        Mimic,
+        NaturalGift,
+        Overheat,
+        Rage,
+        Reflect,
+        Return,
         ScorchingSands,
+        SecretPower,
+        SkullBash,
+        SmartStrike,
+        SolarBeam,
+        Strength,
+        SunnyDay,
+        Swagger,
+        TakeDown,
+        ThroatChop,
+        Toxic,
         Agility,
         AllySwitch,
         BatonPass,
@@ -125,6 +155,86 @@ Ponyta:
         SolarBlade,
         SwordsDance,
         WillOWisp,
+      ]
+  PonytaGalar:
+    level:
+      1: [Tackle, Growl]
+      5: [TailWhip]
+      10: [Confusion]
+      15: [FairyWind]
+      20: [Agility]
+      25: [Psybeam]
+      30: [Stomp]
+      35: [HealPulse]
+      41: [TakeDown]
+      45: [DazzlingGleam]
+      50: [Psychic]
+      55: [HealingWish]
+    teachable:
+      [
+        Agility,
+        AllySwitch,
+        Bounce,
+        CalmMind,
+        Charm,
+        DazzlingGleam,
+        ExpandingForce,
+        FutureSight,
+        HighHorsepower,
+        Imprison,
+        LowKick,
+        MysticalFire,
+        PlayRough,
+        Psychic,
+        StoredPower,
+        ZenHeadbutt,
+      ]
+    egg: [DoubleEdge, DoubleKick, HornDrill, Hypnosis, MorningSun, Thrash]
+  RapidashGalar:
+    level:
+      1: [Tackle, TailWhip, Growl, Confusion, QuickAttack, Megahorn, PsychoCut]
+      15: [FairyWind]
+      20: [Agility]
+      25: [Psybeam]
+      30: [Stomp]
+      35: [HealPulse]
+      43: [TakeDown]
+      49: [DazzlingGleam]
+      56: [Psychic]
+      63: [HealingWish]
+    teachable:
+      [
+        Agility,
+        AllySwitch,
+        BatonPass,
+        Bounce,
+        CalmMind,
+        Charm,
+        DazzlingGleam,
+        DrillRun,
+        ExpandingForce,
+        FutureSight,
+        GigaImpact,
+        HighHorsepower,
+        HyperBeam,
+        Imprison,
+        LowKick,
+        MagicRoom,
+        Megahorn,
+        MistyTerrain,
+        MysticalFire,
+        PayDay,
+        PlayRough,
+        Psychic,
+        PsychicTerrain,
+        PsychoCut,
+        SmartStrike,
+        StoredPower,
+        SwordsDance,
+        ThroatChop,
+        TrickRoom,
+        WonderRoom,
+        ZenHeadbutt,
       ]
 # Slowbro's claws open up the fighting-style TMs
 Slowpoke:
@@ -505,6 +615,267 @@ Slowpoke:
       - Trick
       - WeatherBall
       - ZenHeadbutt
+  SlowpokeGalar:
+    level:
+      1: [Tackle, Curse]
+      3: [Growl]
+      6: [Acid]
+      9: [Yawn]
+      12: [Confusion]
+      15: [Disable]
+      18: [WaterPulse]
+      21: [Headbutt]
+      24: [ZenHeadbutt]
+      27: [Amnesia]
+      30: [Surf]
+      33: [SlackOff]
+      36: [Psychic]
+      39: [PsychUp]
+      42: [RainDance]
+      45: [HealPulse]
+    teachable:
+      [
+        Amnesia,
+        Attract,
+        Blizzard,
+        BodySlam,
+        Brine,
+        Bulldoze,
+        CalmMind,
+        Dig,
+        Dive,
+        Earthquake,
+        Endure,
+        ExpandingForce,
+        Facade,
+        FireBlast,
+        Flamethrower,
+        FoulPlay,
+        FutureSight,
+        GrassKnot,
+        Hail,
+        HydroPump,
+        IceBeam,
+        IcyWind,
+        Imprison,
+        IronTail,
+        LightScreen,
+        Liquidation,
+        MudShot,
+        PayDay,
+        Protect,
+        Psychic,
+        PsychicTerrain,
+        Psyshock,
+        RainDance,
+        Rest,
+        Round,
+        Safeguard,
+        Scald,
+        ShadowBall,
+        SkillSwap,
+        SleepTalk,
+        Snore,
+        StoredPower,
+        Substitute,
+        SunnyDay,
+        Surf,
+        Swift,
+        ThunderWave,
+        TriAttack,
+        Trick,
+        TrickRoom,
+        WeatherBall,
+        Whirlpool,
+        WonderRoom,
+        ZenHeadbutt,
+      ]
+    egg: [Belch, BellyDrum, Block, Stomp]
+  SlowbroGalar:
+    level:
+      1: [Tackle, Growl, Acid, Withdraw, Curse, ShellSideArm]
+      9: [Yawn]
+      12: [Confusion]
+      15: [Disable]
+      18: [WaterPulse]
+      21: [Headbutt]
+      24: [ZenHeadbutt]
+      27: [Amnesia]
+      30: [Surf]
+      33: [SlackOff]
+      36: [Psychic]
+      39: [PsychUp]
+      42: [RainDance]
+      45: [HealPulse]
+    teachable:
+      [
+        Amnesia,
+        Attract,
+        Avalanche,
+        Blizzard,
+        BodySlam,
+        BrickBreak,
+        Brine,
+        BrutalSwing,
+        Bulldoze,
+        CalmMind,
+        Dig,
+        Dive,
+        DrainPunch,
+        Earthquake,
+        Endure,
+        ExpandingForce,
+        Facade,
+        FireBlast,
+        Flamethrower,
+        Fling,
+        FocusBlast,
+        FoulPlay,
+        FutureSight,
+        GigaImpact,
+        GrassKnot,
+        Hail,
+        HydroPump,
+        HyperBeam,
+        IceBeam,
+        IcePunch,
+        IcyWind,
+        Imprison,
+        IronDefense,
+        IronTail,
+        LightScreen,
+        Liquidation,
+        MegaKick,
+        MegaPunch,
+        MudShot,
+        MuddyWater,
+        NastyPlot,
+        PayDay,
+        PoisonJab,
+        Protect,
+        Psychic,
+        PsychicTerrain,
+        Psyshock,
+        RainDance,
+        RazorShell,
+        Rest,
+        Round,
+        Safeguard,
+        Scald,
+        ShadowBall,
+        SkillSwap,
+        SleepTalk,
+        SludgeBomb,
+        SludgeWave,
+        Snore,
+        StoredPower,
+        Substitute,
+        SunnyDay,
+        Surf,
+        Swift,
+        ThunderWave,
+        TriAttack,
+        Trick,
+        TrickRoom,
+        Venoshock,
+        WeatherBall,
+        Whirlpool,
+        WonderRoom,
+        ZenHeadbutt,
+      ]
+  SlowkingGalar:
+    level:
+      1: [Tackle, Growl, Acid, Curse, Swagger, PowerGem, NastyPlot, EerieSpell]
+      9: [Yawn]
+      12: [Confusion]
+      15: [Disable]
+      18: [WaterPulse]
+      21: [Headbutt]
+      24: [ZenHeadbutt]
+      27: [Amnesia]
+      30: [Surf]
+      33: [SlackOff]
+      36: [Psychic]
+      39: [PsychUp]
+      42: [RainDance]
+      45: [HealPulse]
+    teachable:
+      [
+        Amnesia,
+        Attract,
+        Avalanche,
+        Blizzard,
+        BodySlam,
+        BrickBreak,
+        Brine,
+        Bulldoze,
+        CalmMind,
+        Dig,
+        Dive,
+        DrainPunch,
+        Earthquake,
+        Endure,
+        ExpandingForce,
+        Facade,
+        FireBlast,
+        Flamethrower,
+        Fling,
+        FocusBlast,
+        FoulPlay,
+        FutureSight,
+        GigaImpact,
+        GrassKnot,
+        Hail,
+        Hex,
+        HydroPump,
+        HyperBeam,
+        IceBeam,
+        IcePunch,
+        IcyWind,
+        Imprison,
+        IronDefense,
+        IronTail,
+        LightScreen,
+        Liquidation,
+        MegaKick,
+        MegaPunch,
+        MudShot,
+        MuddyWater,
+        NastyPlot,
+        PayDay,
+        PowerGem,
+        Protect,
+        Psychic,
+        PsychicTerrain,
+        Psyshock,
+        RainDance,
+        RazorShell,
+        Rest,
+        Round,
+        Safeguard,
+        Scald,
+        ShadowBall,
+        SkillSwap,
+        SleepTalk,
+        SludgeBomb,
+        SludgeWave,
+        Snore,
+        StoredPower,
+        Substitute,
+        SunnyDay,
+        Surf,
+        Swift,
+        ThunderWave,
+        TriAttack,
+        Trick,
+        TrickRoom,
+        VenomDrench,
+        Venoshock,
+        WeatherBall,
+        Whirlpool,
+        WonderRoom,
+        ZenHeadbutt,
+      ]
 Magnemite:
   Magnemite:
     level:
@@ -841,6 +1212,118 @@ Farfetchd:
       - Roost
       - SimpleBeam
       - SkyAttack
+  FarfetchdGalar:
+    level:
+      1: [SandAttack, Peck]
+      5: [Leer]
+      10: [FuryCutter]
+      15: [RockSmash]
+      20: [BrutalSwing]
+      25: [Detect]
+      30: [KnockOff]
+      35: [Defog]
+      40: [BrickBreak]
+      45: [SwordsDance]
+      50: [Slam]
+      55: [LeafBlade]
+      60: [FinalGambit]
+      65: [BraveBird]
+    teachable:
+      [
+        Assurance,
+        Attract,
+        BodySlam,
+        BraveBird,
+        BrickBreak,
+        BrutalSwing,
+        CloseCombat,
+        DualWingbeat,
+        Endure,
+        Facade,
+        FocusEnergy,
+        HelpingHand,
+        LeafBlade,
+        PoisonJab,
+        Protect,
+        Rest,
+        Retaliate,
+        Revenge,
+        Round,
+        SleepTalk,
+        Snore,
+        SolarBlade,
+        SteelWing,
+        Substitute,
+        SunnyDay,
+        Superpower,
+        SwordsDance,
+        ThroatChop,
+        WorkUp,
+      ]
+    egg:
+      [
+        Counter,
+        Covet,
+        Curse,
+        DoubleEdge,
+        Feint,
+        Flail,
+        NightSlash,
+        QuickAttack,
+        QuickGuard,
+        SimpleBeam,
+        SkyAttack,
+      ]
+  Sirfetchd:
+    level:
+      1: [SandAttack, Leer, Peck, FuryCutter, IronDefense, FirstImpression]
+      15: [RockSmash]
+      20: [BrutalSwing]
+      25: [Detect]
+      30: [KnockOff]
+      35: [Defog]
+      40: [BrickBreak]
+      45: [SwordsDance]
+      50: [Slam]
+      55: [LeafBlade]
+      60: [FinalGambit]
+      65: [BraveBird]
+      70: [MeteorAssault]
+    teachable:
+      [
+        Assurance,
+        Attract,
+        BodySlam,
+        BraveBird,
+        BrickBreak,
+        BrutalSwing,
+        CloseCombat,
+        Coaching,
+        DualWingbeat,
+        Endure,
+        Facade,
+        FocusEnergy,
+        GrassyGlide,
+        HelpingHand,
+        IronDefense,
+        LeafBlade,
+        PoisonJab,
+        Protect,
+        Rest,
+        Retaliate,
+        Revenge,
+        Round,
+        SleepTalk,
+        Snore,
+        SolarBlade,
+        SteelWing,
+        Substitute,
+        SunnyDay,
+        Superpower,
+        SwordsDance,
+        ThroatChop,
+        WorkUp,
+      ]
 Doduo:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:

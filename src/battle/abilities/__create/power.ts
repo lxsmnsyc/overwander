@@ -375,3 +375,27 @@ export function createBatteryAbility(
     }),
   );
 }
+
+/**
+ * Meta ability for the ones that lift one type of their holder's own
+ * moves (Steelworker, Transistor, Dragon's Maw). It reads the type the
+ * move goes out as, so a move rewritten into the type is lifted too
+ * https://bulbapedia.bulbagarden.net/wiki/Steelworker_(Ability)
+ */
+export function createSteelworkerAbility(
+  targetAbility: Abilities,
+  type: Types,
+  factor: number,
+): (battle: Battle) => void {
+  return createAbility(targetAbility, (battle) =>
+    battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
+      if (
+        event.power != null &&
+        event.source.hasAbility(targetAbility) &&
+        event.source.checkMoveType(event.move, event.target) === type
+      ) {
+        event.power *= factor;
+      }
+    }),
+  );
+}

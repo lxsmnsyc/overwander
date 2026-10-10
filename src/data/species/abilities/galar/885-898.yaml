@@ -10,3 +10,74 @@ Dreepy:
     # Levitate is this registry's rather than the mainline's, filling it to
     # four: it flies, and the Dreepy it carries never touch the ground
     hidden: [CursedBody, Levitate]
+Zacian:
+  Zacian:
+    abilities: [IntrepidSword]
+    hidden:
+      # Justified, Sharpness and Defiant are this registry's rather than the mainline's, filling it to four: a hero's sword answers every wrong
+      [Justified, Sharpness, Defiant]
+  ZacianCrowned:
+    abilities: [IntrepidSword]
+    hidden:
+      # Justified, Sharpness and Defiant are this registry's rather than the mainline's, filling it to four: the same as its uncrowned shape
+      [Justified, Sharpness, Defiant]
+Zamazenta:
+  Zamazenta:
+    abilities: [DauntlessShield]
+    hidden:
+      # Justified, Bulletproof and Sturdy are this registry's rather than the mainline's, filling it to four: a hero's shield stands against everything
+      [Justified, Bulletproof, Sturdy]
+  ZamazentaCrowned:
+    abilities: [DauntlessShield]
+    hidden:
+      # Justified, Bulletproof and Sturdy are this registry's rather than the mainline's, filling it to four: the same as its uncrowned shape
+      [Justified, Bulletproof, Sturdy]
+Eternatus:
+  Eternatus:
+    abilities: [Pressure]
+    hidden:
+      # Corrosion, Levitate and Neutralizing Gas are this registry's rather than the mainline's, filling it to four: it floats in a miasma that eats through anything
+      [Corrosion, Levitate, NeutralizingGas]
+Kubfu:
+  Kubfu:
+    abilities: [InnerFocus]
+  Urshifu:
+    abilities: [UnseenFist]
+    hidden:
+      # Sniper and Iron Fist are this registry's rather than the mainline's, filling it to four: a master's blows land where they hurt
+      [Sniper, IronFist]
+  UrshifuRapidStrike:
+    abilities: [UnseenFist]
+    hidden:
+      # Sniper and Iron Fist are this registry's rather than the mainline's, filling it to four: a master's blows land where they hurt
+      [Sniper, IronFist]
+Regieleki:
+  Regieleki:
+    abilities: [Transistor]
+    hidden:
+      # Clear Body, Galvanize and Lightning Rod are this registry's rather than the mainline's, filling it to four: it is pure electricity held in a shell
+      [ClearBody, Galvanize, LightningRod]
+Regidrago:
+  Regidrago:
+    abilities: [DragonsMaw]
+    hidden:
+      # Clear Body, Multiscale and Berserk are this registry's rather than the mainline's, filling it to four: a dragon's power held in a shell, and its fury when it cracks
+      [ClearBody, Multiscale, Berserk]
+Glastrier:
+  Glastrier:
+    abilities: [ChillingNeigh]
+    hidden:
+      # Slush Rush, Ice Body and Stamina are this registry's rather than the mainline's, filling it to four: it charges through the snow it lives on
+      [SlushRush, IceBody, Stamina]
+Spectrier:
+  Spectrier:
+    abilities: [GrimNeigh]
+    hidden:
+      # Infiltrator, Cursed Body and Speed Boost are this registry's rather than the mainline's, filling it to four: it slips through anything and only gets faster
+      [Infiltrator, CursedBody, SpeedBoost]
+Calyrex:
+  Calyrex:
+    abilities: [Unnerve]
+    hidden:
+      # Harvest, Telepathy and Flower Veil are this registry's rather than the mainline's, filling it to four: the king of bountiful harvests speaks without words
+      [Harvest, Telepathy, FlowerVeil]

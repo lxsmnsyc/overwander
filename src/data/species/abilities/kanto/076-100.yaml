@@ -5,6 +5,14 @@ Ponyta:
   Rapidash:
     abilities: [RunAway, FlashFire]
     hidden: [FlameBody, Reckless]
+  PonytaGalar:
+    abilities: [RunAway, PastelVeil]
+    hidden: [Anticipation]
+  RapidashGalar:
+    abilities: [RunAway, PastelVeil]
+    hidden:
+      # Misty Surge is this registry's rather than the mainline's, filling it to four: its mane trails a fairy mist
+      [Anticipation, MistySurge]
 Slowpoke:
   Slowpoke:
     abilities: [Oblivious, OwnTempo]
@@ -18,6 +26,15 @@ Slowpoke:
     # filling it to four: 30 Speed means it is always the one thinking
     # last
     hidden: [Regenerator, Analytic]
+  SlowpokeGalar:
+    abilities: [Gluttony, OwnTempo]
+    hidden: [Regenerator]
+  SlowbroGalar:
+    abilities: [QuickDraw, OwnTempo]
+    hidden: [Regenerator]
+  SlowkingGalar:
+    abilities: [CuriousMedicine, OwnTempo]
+    hidden: [Regenerator]
 Magnemite:
   Magnemite:
     abilities: [MagnetPull, Sturdy]
@@ -38,6 +55,14 @@ Farfetchd:
     # it to four: it fights with the leek it carries. The line never
     # evolves, since Sirfetch'd comes from the Galarian form
     hidden: [Defiant, Sharpness]
+  FarfetchdGalar:
+    abilities: [Steadfast]
+    hidden: [Scrappy]
+  Sirfetchd:
+    abilities: [Steadfast]
+    hidden:
+      # Sharpness and Super Luck are this registry's rather than the mainline's, filling it to four: it fights with a leek it keeps honed, and its thrusts find the gap
+      [Scrappy, Sharpness, SuperLuck]
 Doduo:
   Doduo:
     abilities: [RunAway, EarlyBird]

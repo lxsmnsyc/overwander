@@ -130,6 +130,11 @@ Koffing:
       - species: Weezing
         method: [Level]
         level: 35
+      # The Galarian one, in the smog over Galar's towns: both are
+      # offered, and the player picks
+      - species: WeezingGalar
+        method: [Level]
+        level: 35
     held: { common: PechaBerry, uncommon: SmokeBall, rare: BlackSludge }
   Weezing:
     types: [Poison]
@@ -138,6 +143,13 @@ Koffing:
     active: [Night]
     evolves-from: Koffing
     held: { common: PechaBerry, uncommon: SmokeBall, rare: BlackSludge }
+  WeezingGalar:
+    types: [Poison, Fairy]
+    egg-groups: [Amorphous]
+    biomes: [Swamp]
+    active: [Night]
+    base-form: false
+    evolves-from: Koffing
 Rhyhorn:
   Rhyhorn:
     types: [Ground, Rock]
@@ -333,7 +345,20 @@ MrMime:
         method: [Level, KnownMove]
         level: 20
         move: Mimic
+      # The Galarian one, which tap-dances on ice: both are offered
+      - species: MrMimeGalar
+        method: [Level, KnownMove]
+        level: 20
+        move: Mimic
     rank: baby
+  MrMimeGalar:
+    types: [Ice, Psychic]
+    egg-groups: [HumanLike]
+    biomes: [Tundra, Taiga]
+    active: any
+    base-form: false
+    evolves-from: MimeJr
+    awaiting: evolution
 Scyther:
   Scyther:
     types: [Bug, Flying]

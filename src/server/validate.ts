@@ -413,6 +413,8 @@ export const AFTERMATHS = listOf(
     statuses: COUNT,
     coins: COUNT,
     sketched: v.optional(GAME_ID),
+    criticals: v.optional(COUNT),
+    taken: v.optional(COUNT),
   }),
   TEAM_SIZE,
 );

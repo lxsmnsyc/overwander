@@ -1,42 +1,45 @@
 land:
   morning: &land-morning
     base:
-      Swinub: 1069
-      Spheal: 1069
-      FlabebeWhite: 1025
-      Scatterbug: 1025
-      Vanillite: 1025
+      Swinub: 1043
+      Spheal: 1043
+      FlabebeWhite: 1000
+      Scatterbug: 1000
+      Vanillite: 1000
     uncommon:
-      VulpixAlola: 430
-      SandshrewAlola: 430
-      Snorunt: 430
-      Snover: 391
-      Cubchoo: 391
-      Seel: 391
+      VulpixAlola: 420
+      SandshrewAlola: 420
+      Snorunt: 420
+      Snover: 382
+      Cubchoo: 382
+      Seel: 382
+      DarumakaGalar: 150
     rare:
-      Piloswine: 280
-      Vanillish: 280
-      FloetteWhite: 224
-      Spewpa: 224
-      Sealeo: 224
+      Piloswine: 273
+      Vanillish: 273
+      FloetteWhite: 219
+      Spewpa: 219
+      Sealeo: 219
     scarce:
-      Dewgong: 118
-      NinetalesAlola: 71
-      SandslashAlola: 71
-      Beartic: 71
-      Abomasnow: 71
-      Glaceon: 71
-      Glalie: 71
-      Froslass: 71
+      Dewgong: 115
+      NinetalesAlola: 69
+      SandslashAlola: 69
+      Beartic: 69
+      Abomasnow: 69
+      Glaceon: 69
+      Glalie: 69
+      Froslass: 69
+      MrMimeGalar: 25
+      DarmanitanGalar: 25
     elusive:
-      Eiscue: 150
-      Stoutland: 51
-      FlorgesWhite: 42
-      Vivillon: 42
-      Vanilluxe: 42
-      Delibird: 42
-      Mamoswine: 42
-      Walrein: 42
+      Eiscue: 146
+      Stoutland: 50
+      FlorgesWhite: 41
+      Vivillon: 41
+      Vanilluxe: 41
+      Delibird: 41
+      Mamoswine: 41
+      Walrein: 41
     prized:
       Unown: forms
     special:
@@ -47,24 +50,28 @@ land:
       Uxie: 10
       Regigigas: 10
       Regice: 10
+      Regieleki: 10
+      Regidrago: 10
+      Spectrier: 10
+      ArticunoGalar: 10
   day: *land-morning
   evening: &land-evening
     base:
-      Swinub: 2532
-      Spheal: 2532
+      Swinub: 2516
+      Spheal: 2516
     uncommon:
-      VulpixAlola: 474
-      SandshrewAlola: 474
-      Snorunt: 474
-      Snover: 431
-      Seel: 431
-      Snom: 250
-      Sneasel: 108
+      VulpixAlola: 471
+      SandshrewAlola: 471
+      Snorunt: 471
+      Snover: 428
+      Seel: 428
+      Snom: 248
+      Sneasel: 107
     rare:
-      Sealeo: 736
-      Piloswine: 460
+      Sealeo: 731
+      Piloswine: 457
     scarce:
-      Dewgong: 115
+      Dewgong: 114
       NinetalesAlola: 69
       SandslashAlola: 69
       Abomasnow: 69
@@ -73,8 +80,9 @@ land:
       Glalie: 69
       Froslass: 69
       Frosmoth: 30
+      MrMimeGalar: 25
     elusive:
-      Eiscue: 150
+      Eiscue: 149
       Jynx: 75
       Delibird: 75
       Mamoswine: 75
@@ -90,6 +98,10 @@ land:
       Uxie: 10
       Regigigas: 10
       Regice: 10
+      Regieleki: 10
+      Regidrago: 10
+      Spectrier: 10
+      ArticunoGalar: 10
   night: *land-evening
 
 ice:

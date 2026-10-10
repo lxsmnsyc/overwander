@@ -113,6 +113,34 @@ Zigzagoon:
     biomes: [Grassland, Woodland]
     active: any
     evolves-from: Zigzagoon
+  ZigzagoonGalar:
+    types: [Dark, Normal]
+    egg-groups: [Field]
+    biomes: [Grassland, Woodland]
+    active: [Evening, Night]
+    base-form: false
+    evolves-into:
+      - species: LinooneGalar
+        method: [Level]
+        level: 20
+  LinooneGalar:
+    types: [Dark, Normal]
+    egg-groups: [Field]
+    biomes: [Grassland, Woodland]
+    active: [Evening, Night]
+    base-form: false
+    evolves-from: ZigzagoonGalar
+    evolves-into:
+      - species: Obstagoon
+        method: [Level, TimeOfDay]
+        level: 35
+        time: [Evening, Night]
+  Obstagoon:
+    types: [Dark, Normal]
+    egg-groups: [Field]
+    biomes: [Grassland, Woodland]
+    active: [Evening, Night]
+    evolves-from: LinooneGalar
 Wurmple:
   Wurmple:
     types: [Bug]

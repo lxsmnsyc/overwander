@@ -1,37 +1,40 @@
 land:
   morning: &land-morning
     base:
-      Bellsprout: 1576
-      Poliwag: 1576
-      Lotad: 1576
-      Turtwig: 236
-      Hatenna: 150
-      Sobble: 47
+      Bellsprout: 1548
+      Poliwag: 1548
+      Lotad: 1548
+      Turtwig: 232
+      Hatenna: 147
+      Sobble: 46
     uncommon:
-      Wooper: 733
-      Surskit: 733
-      Marill: 586
-      Chewtle: 300
-      Tangela: 294
+      Wooper: 720
+      Surskit: 720
+      Marill: 575
+      Chewtle: 295
+      Tangela: 289
+      SlowpokeGalar: 150
     rare:
-      Lombre: 533
-      Weepinbell: 266
-      Poliwhirl: 266
-      Grotle: 107
-      Hattrem: 50
+      Lombre: 523
+      Weepinbell: 261
+      Poliwhirl: 261
+      Grotle: 105
+      Hattrem: 49
       Drizzile: 14
     scarce:
-      Masquerain: 183
-      Tangrowth: 110
-      Leafeon: 110
-      Azumarill: 92
-      Quagsire: 92
-      Drednaw: 35
+      Masquerain: 180
+      Tangrowth: 108
+      Leafeon: 108
+      Azumarill: 90
+      Quagsire: 90
+      Drednaw: 34
+      SlowbroGalar: 15
+      SlowkingGalar: 15
     elusive:
-      Victreebel: 86
-      Politoed: 86
-      Ludicolo: 86
-      Torterra: 35
+      Victreebel: 84
+      Politoed: 84
+      Ludicolo: 84
+      Torterra: 34
       Hatterene: 15
       Inteleon: 4
     prized:

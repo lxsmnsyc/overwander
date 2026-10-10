@@ -127,34 +127,36 @@ land:
       Genesect: 10
   evening:
     base:
-      Gible: 417
+      Gible: 410
     uncommon:
-      Sandygast: 829
-      Yamask: 829
-      Baltoy: 829
-      Elgyem: 754
-      Sandshrew: 754
-      Diglett: 754
-      BurmySandy: 754
-      Skorupi: 754
-      Hippopotas: 754
-      Magmar: 187
+      Sandygast: 814
+      Yamask: 814
+      Baltoy: 814
+      Elgyem: 741
+      Sandshrew: 741
+      Diglett: 741
+      BurmySandy: 741
+      Skorupi: 741
+      Hippopotas: 741
+      Magmar: 184
+      YamaskGalar: 150
     rare:
-      Gabite: 417
+      Gabite: 410
     scarce:
-      Sandslash: 242
-      Dugtrio: 242
-      Beheeyem: 170
-      Cofagrigus: 170
-      Palossand: 147
-      Cacturne: 147
-      Claydol: 147
-      Drapion: 147
-      Hippowdon: 147
-      Magmortar: 147
-      WormadamSandy: 98
+      Sandslash: 238
+      Dugtrio: 238
+      Beheeyem: 167
+      Cofagrigus: 167
+      Palossand: 144
+      Cacturne: 144
+      Claydol: 144
+      Drapion: 144
+      Hippowdon: 144
+      Magmortar: 144
+      WormadamSandy: 96
+      Runerigus: 25
     elusive:
-      Garchomp: 144
+      Garchomp: 141
     prized:
       Unown: forms
       Magby: prized
@@ -167,34 +169,36 @@ land:
       Genesect: 10
   night:
     base:
-      Gible: 417
+      Gible: 410
     uncommon:
-      Sandygast: 829
-      Yamask: 829
-      Baltoy: 829
-      Elgyem: 754
-      Diglett: 754
-      Cubone: 754
-      BurmySandy: 754
-      Skorupi: 754
-      Hippopotas: 754
-      Magmar: 187
+      Sandygast: 814
+      Yamask: 814
+      Baltoy: 814
+      Elgyem: 741
+      Diglett: 741
+      Cubone: 741
+      BurmySandy: 741
+      Skorupi: 741
+      Hippopotas: 741
+      Magmar: 184
+      YamaskGalar: 150
     rare:
-      Gabite: 417
+      Gabite: 410
     scarce:
-      Dugtrio: 242
-      Marowak: 242
-      Beheeyem: 170
-      Cofagrigus: 170
-      Palossand: 147
-      Cacturne: 147
-      Claydol: 147
-      Drapion: 147
-      Hippowdon: 147
-      Magmortar: 147
-      WormadamSandy: 98
+      Dugtrio: 238
+      Marowak: 238
+      Beheeyem: 167
+      Cofagrigus: 167
+      Palossand: 144
+      Cacturne: 144
+      Claydol: 144
+      Drapion: 144
+      Hippowdon: 144
+      Magmortar: 144
+      WormadamSandy: 96
+      Runerigus: 25
     elusive:
-      Garchomp: 144
+      Garchomp: 141
     prized:
       Unown: forms
       Magby: prized

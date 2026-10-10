@@ -110,27 +110,27 @@ land:
     special: {}
   night:
     base:
-      Tympole: 2156
-      Poliwag: 1724
-      Goomy: 1034
+      Tympole: 2151
+      Poliwag: 1720
+      Goomy: 1031
       Froakie: 172
     uncommon:
-      Chewtle: 300
-      Corphish: 268
-      Wooper: 268
-      Bidoof: 268
-      Gulpin: 237
-      Dewpider: 237
-      Shelmet: 214
-      Grimer: 214
-      Koffing: 214
-      Marill: 214
-      Croagunk: 214
+      Chewtle: 299
+      Corphish: 267
+      Wooper: 267
+      Bidoof: 267
+      Gulpin: 236
+      Dewpider: 236
+      Shelmet: 213
+      Grimer: 213
+      Koffing: 213
+      Marill: 213
+      Croagunk: 213
       Yanma: 54
     rare:
-      Palpitoad: 546
-      Sliggoo: 273
-      Poliwhirl: 273
+      Palpitoad: 545
+      Sliggoo: 272
+      Poliwhirl: 272
       Frogadier: 110
     scarce:
       Muk: 71
@@ -148,6 +148,7 @@ land:
       Drednaw: 35
       Toxtricity: 25
       ToxtricityLowKey: 25
+      WeezingGalar: 25
     elusive:
       Stunfisk: 57
       Carnivine: 57

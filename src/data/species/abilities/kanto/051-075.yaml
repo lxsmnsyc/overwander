@@ -11,6 +11,12 @@ Meowth:
   PersianAlola:
     abilities: [FurCoat, Technician]
     hidden: [Rattled]
+  MeowthGalar:
+    abilities: [Pickup, ToughClaws]
+    hidden: [Unnerve]
+  Perrserker:
+    abilities: [BattleArmor, ToughClaws]
+    hidden: [SteelySpirit]
 Psyduck:
   Psyduck:
     abilities: [Damp, CloudNine]

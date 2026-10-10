@@ -2,3 +2,25 @@ Dreepy:
   Dreepy: { name: Dreepy, category: Lingering Pokemon }
   Drakloak: { name: Drakloak, category: Caretaker Pokemon }
   Dragapult: { name: Dragapult, category: Stealth Pokemon }
+Zacian:
+  Zacian: { name: Zacian, category: Warrior Pokemon }
+  ZacianCrowned: { name: Crowned Zacian, category: Warrior Pokemon }
+Zamazenta:
+  Zamazenta: { name: Zamazenta, category: Warrior Pokemon }
+  ZamazentaCrowned: { name: Crowned Zamazenta, category: Warrior Pokemon }
+Eternatus:
+  Eternatus: { name: Eternatus, category: Gigantic Pokemon }
+Kubfu:
+  Kubfu: { name: Kubfu, category: Wushu Pokemon }
+  Urshifu: { name: Urshifu, category: Wushu Pokemon }
+  UrshifuRapidStrike: { name: Rapid Strike Urshifu, category: Wushu Pokemon }
+Regieleki:
+  Regieleki: { name: Regieleki, category: Electron Pokemon }
+Regidrago:
+  Regidrago: { name: Regidrago, category: Dragon Orb Pokemon }
+Glastrier:
+  Glastrier: { name: Glastrier, category: Wild Horse Pokemon }
+Spectrier:
+  Spectrier: { name: Spectrier, category: Swift Horse Pokemon }
+Calyrex:
+  Calyrex: { name: Calyrex, category: King Pokemon }

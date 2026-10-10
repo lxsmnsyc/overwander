@@ -24,6 +24,7 @@ import {
   createKeenEyeAbility,
   createLimberAbility,
   createMoldBreakerAbility,
+  createMoxieAbility,
   createShellArmorAbility,
 } from '../__create';
 import { MergedLifecycle } from '../../lifecycle';
@@ -540,35 +541,7 @@ const krabbyToPinsir = [
 
   // Pinsir
   // https://bulbapedia.bulbagarden.net/wiki/Moxie_(Ability)
-  createAbility(
-    Abilities.Moxie,
-    (battle) =>
-      new MergedLifecycle([
-        // Detection: a direct move knocked the target out
-        battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
-          if (
-            event.success &&
-            !event.target.alive &&
-            !(event.flags & DamageFlags.Indirect) &&
-            event.cause.type === EffectType.Move &&
-            event.cause.unit !== event.target &&
-            event.cause.unit.hasAbility(Abilities.Moxie)
-          ) {
-            event.cause.unit.triggerAbility(Abilities.Moxie);
-          }
-        }),
-        // Effect: the Attack surge rides the trigger
-        battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
-          if (event.ability === Abilities.Moxie) {
-            event.source.addStage(Stages.Attack, 1, {
-              type: EffectType.Ability,
-              ability: Abilities.Moxie,
-              unit: event.source,
-            });
-          }
-        }),
-      ]),
-  ),
+  createMoxieAbility(Abilities.Moxie, Stages.Attack),
 
   createMoldBreakerAbility(Abilities.MoldBreaker),
 ];

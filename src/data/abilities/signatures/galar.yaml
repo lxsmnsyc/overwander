@@ -51,3 +51,16 @@ families:
   Arctozolt: Boltfrost
   Dracovish: Gilldrake
   Arctovish: Gillfrost
+
+  # The legends. Zacian and Zamazenta are sworn to each other's side,
+  # the Regis extend the trio's seal, and Calyrex and its steeds reign
+  # over the team with each knockout
+  Zacian: SwornBlade
+  Zamazenta: SwornShield
+  Eternatus: DarkestDay
+  Kubfu: Kata
+  Regieleki: VoltSeal
+  Regidrago: WyrmSeal
+  Glastrier: Frostreign
+  Spectrier: Shadereign
+  Calyrex: Crownreign

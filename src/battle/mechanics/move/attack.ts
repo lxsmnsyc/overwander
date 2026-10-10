@@ -40,6 +40,10 @@ export function criticalChance(stage: number): number {
 
 /** A blow landing: what it is worth, what it is doubled or halved by, and what it leaves behind */
 export default function setupAttackMechanics(battle: Battle): void {
+  // The blows that rolled a real critical, read once the damage lands
+  // so a feat counts only a critical that hit something
+  const criticals = new WeakSet<UnitAttackEvent>();
+
   function resolveCriticalHitRatio(parent: UnitAttackEvent): number {
     const event: UnitAttackResolveAmountEvent = {
       id: 'UnitAttackCheckCriticalRatio',
@@ -58,6 +62,9 @@ export default function setupAttackMechanics(battle: Battle): void {
       critical: false,
     };
     battle.emit(BattleEvents.UnitAttackResolveCriticalHit, event);
+    if (event.critical && !(parent.flags & MoveAttackFlags.Simulated)) {
+      criticals.add(parent);
+    }
     return event.critical;
   }
 
@@ -324,6 +331,10 @@ export default function setupAttackMechanics(battle: Battle): void {
         amount,
         flags,
       );
+
+      if (event.success && criticals.has(event) && !battle.estimating) {
+        event.source.criticals += 1;
+      }
 
       if (checkUnitAttackEffect(event)) {
         const chance = checkUnitAttackEffectChance(event);

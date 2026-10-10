@@ -1,26 +1,29 @@
 land:
   morning: &land-morning
     base:
-      Swinub: 2699
-      FlabebeWhite: 2591
+      Swinub: 2642
+      FlabebeWhite: 2536
     uncommon:
-      Snover: 1111
-      Seel: 1111
-      Stantler: 278
+      Snover: 1088
+      Seel: 1088
+      Stantler: 272
+      DarumakaGalar: 150
     rare:
-      FloetteWhite: 556
-      Ursaring: 347
-      Piloswine: 347
+      FloetteWhite: 544
+      Ursaring: 340
+      Piloswine: 340
     scarce:
-      Dewgong: 284
-      Abomasnow: 170
-      Glaceon: 170
+      Dewgong: 278
+      Abomasnow: 166
+      Glaceon: 166
+      MrMimeGalar: 25
+      DarmanitanGalar: 25
     elusive:
-      Pachirisu: 89
-      FlorgesWhite: 56
-      Snorlax: 56
-      Mamoswine: 56
-      Delibird: 56
+      Pachirisu: 87
+      FlorgesWhite: 55
+      Snorlax: 55
+      Mamoswine: 55
+      Delibird: 55
     prized:
       Unown: forms
     special:
@@ -28,24 +31,26 @@ land:
       Zekrom: 10
       Uxie: 10
       Regice: 10
+      Calyrex: 10
   day: *land-morning
   evening:
-    base: { Swinub: 2924 }
+    base: { Swinub: 2914 }
     uncommon:
-      Snover: 1212
-      Seel: 1212
-      Vulpix: 607
-      Stantler: 303
-      Sneasel: 303
-      Snom: 200
-    rare: { Piloswine: 1819 }
+      Snover: 1208
+      Seel: 1208
+      Vulpix: 605
+      Stantler: 302
+      Sneasel: 302
+      Snom: 199
+    rare: { Piloswine: 1813 }
     scarce:
-      Dewgong: 275
-      Abomasnow: 166
-      Glaceon: 166
-      Weavile: 166
+      Dewgong: 274
+      Abomasnow: 165
+      Glaceon: 165
+      Weavile: 165
       Ninetales: 139
       Frosmoth: 30
+      MrMimeGalar: 25
     elusive:
       Pachirisu: 130
       Jynx: 81
@@ -60,25 +65,27 @@ land:
       Zekrom: 10
       Uxie: 10
       Regice: 10
+      Calyrex: 10
   night:
-    base: { Swinub: 2925 }
+    base: { Swinub: 2915 }
     uncommon:
-      Paras: 910
-      Snover: 910
-      Seel: 910
-      Vulpix: 455
-      Stantler: 227
-      Sneasel: 227
-      Snom: 200
-    rare: { Piloswine: 1820 }
+      Paras: 907
+      Snover: 907
+      Seel: 907
+      Vulpix: 453
+      Stantler: 226
+      Sneasel: 226
+      Snom: 199
+    rare: { Piloswine: 1814 }
     scarce:
-      Parasect: 211
-      Dewgong: 211
+      Parasect: 210
+      Dewgong: 210
       Abomasnow: 127
       Glaceon: 127
       Weavile: 127
       Ninetales: 106
       Frosmoth: 30
+      MrMimeGalar: 25
     elusive:
       Pachirisu: 130
       Jynx: 81
@@ -93,6 +100,7 @@ land:
       Zekrom: 10
       Uxie: 10
       Regice: 10
+      Calyrex: 10
 
 ice:
   morning: &ice-morning

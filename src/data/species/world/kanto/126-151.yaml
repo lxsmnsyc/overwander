@@ -294,6 +294,13 @@ Articuno:
     biomes: [PolarOcean, DeepOcean]
     active: any
     rank: legendary
+  ArticunoGalar:
+    types: [Psychic, Flying]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Tundra]
+    active: any
+    base-form: false
+    rank: legendary
 Zapdos:
   Zapdos:
     types: [Electric, Flying]
@@ -301,12 +308,26 @@ Zapdos:
     biomes: [Grassland, Steppe]
     active: any
     rank: legendary
+  ZapdosGalar:
+    types: [Fighting, Flying]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Grassland]
+    active: any
+    base-form: false
+    rank: legendary
 Moltres:
   Moltres:
     types: [Fire, Flying]
     egg-groups: [NoEggsDiscovered]
     biomes: [Mountain, Volcano]
     active: any
+    rank: legendary
+  MoltresGalar:
+    types: [Dark, Flying]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Beach]
+    active: any
+    base-form: false
     rank: legendary
 Dratini:
   Dratini:

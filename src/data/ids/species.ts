@@ -1431,8 +1431,6 @@ export const enum Species {
   ZacianCrowned = 1088801,
   ZamazentaCrowned = 1088901,
 
-  /** The shape Eternatus takes at the height of its power */
-  EternatusEternamax = 1089001,
 
   /** The style an Urshifu masters in the tower of water, Single Strike at the base */
   UrshifuRapidStrike = 1089201,
@@ -1832,6 +1830,15 @@ export const INDEEDEE_FORMS: Species[] = [Species.Indeedee, Species.IndeedeeFema
 
 /** A Morpeko full, and the hungry mood it swings into */
 export const MORPEKO_FORMS: Species[] = [Species.Morpeko, Species.MorpekoHangry];
+
+/** Zacian, and the crowned shape it takes up the Rusted Sword in */
+export const ZACIAN_FORMS: Species[] = [Species.Zacian, Species.ZacianCrowned];
+
+/** Zamazenta, and the crowned shape it takes up the Rusted Shield in */
+export const ZAMAZENTA_FORMS: Species[] = [Species.Zamazenta, Species.ZamazentaCrowned];
+
+/** The two styles an Urshifu fights in, Single Strike at the base */
+export const URSHIFU_FORMS: Species[] = [Species.Urshifu, Species.UrshifuRapidStrike];
 
 /** A Wishiwashi alone, and the school it calls together from level 20 */
 export const WISHIWASHI_FORMS: Species[] = [Species.Wishiwashi, Species.WishiwashiSchool];

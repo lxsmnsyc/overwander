@@ -83,6 +83,8 @@ import applinToPincurchin from './applin-to-pincurchin';
 import sinisteaToMilcery from './sinistea-to-milcery';
 import snomToStonjourner from './snom-to-stonjourner';
 import galarFossils from './galar-fossils';
+import galarianForms from './galarian-forms';
+import galarLegends from './galar-legends';
 
 /**
  * The invented abilities, one per evolution family, in the order the
@@ -173,6 +175,8 @@ const setupAbilities = [
   ...sinisteaToMilcery,
   ...snomToStonjourner,
   ...galarFossils,
+  ...galarianForms,
+  ...galarLegends,
 ];
 
 /**

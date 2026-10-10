@@ -41,19 +41,19 @@ The catch sheet offers the evolution once the fight is over.
 
 ## The legends
 
-| Lair                 | Where            | Who                         |
-| -------------------- | ---------------- | --------------------------- |
-| Slumbering Weald     | Temperate forest | Zacian, Zamazenta           |
-| Energy Plant         | Badlands         | Eternatus                   |
-| Tower of Darkness    | Mountain         | Urshifu, Kubfu              |
-| Tower of Waters      | Rocky coast      | Rapid Strike Urshifu, Kubfu |
-| Split-Decision Ruins | Tundra           | Regieleki, Regidrago        |
-| Crown Shrine         | Taiga            | Calyrex                     |
-| Snowslide Slope      | Alpine tundra    | Glastrier                   |
-| Old Cemetery         | Tundra           | Spectrier                   |
-| Crown Tundra         | Tundra           | Galarian Articuno           |
-| Wild Area            | Grassland        | Galarian Zapdos             |
-| Isle of Armor        | Beach            | Galarian Moltres            |
+| Lair                 | Where            | Who                  |
+| -------------------- | ---------------- | -------------------- |
+| Slumbering Weald     | Temperate forest | Zacian, Zamazenta    |
+| Energy Plant         | Badlands         | Eternatus            |
+| Tower of Darkness    | Mountain         | Urshifu              |
+| Tower of Waters      | Rocky coast      | Rapid Strike Urshifu |
+| Split-Decision Ruins | Tundra           | Regieleki, Regidrago |
+| Crown Shrine         | Taiga            | Calyrex              |
+| Snowslide Slope      | Alpine tundra    | Glastrier            |
+| Old Cemetery         | Tundra           | Spectrier            |
+| Crown Tundra         | Tundra           | Galarian Articuno    |
+| Wild Area            | Grassland        | Galarian Zapdos      |
+| Isle of Armor        | Beach            | Galarian Moltres     |
 
 Each legend also walks the biome its lair stands in.
 
@@ -65,7 +65,9 @@ Each legend also walks the biome its lair stands in.
 - **Eternatus** drains every enemy that acts by 1/16 of its HP and heals what
   they lose.
 - **Kubfu** casts Bulk Up with every third move it lands. The Scroll of Darkness
-  or the Scroll of Waters makes it an Urshifu of that style.
+  or the Scroll of Waters makes it an Urshifu of that style. It is met in the
+  wild on mountains and rocky coasts, as rarely as Cosmog or Type: Null, rather
+  than at the towers.
 - **Regieleki and Regidrago** break a seal like the older Regis: 8 seconds at
   half power, then 1.25x with 2 stages of Speed or Special Attack.
 - **Calyrex, Glastrier and Spectrier** lift the whole team with each knockout:

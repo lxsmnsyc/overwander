@@ -97,6 +97,7 @@ land:
       Riolu: prized
       Chingling: prized
       Bonsly: prized
+      Kubfu: prized
     special:
       Celesteela: 10
       Necrozma: 10
@@ -109,7 +110,6 @@ land:
       Moltres: 10
       HoOh: 10
       Urshifu: 10
-      Kubfu: 10
     mythical:
       Magearna: 5
       MagearnaOriginal: 5
@@ -216,6 +216,7 @@ land:
       Riolu: prized
       Chingling: prized
       Bonsly: prized
+      Kubfu: prized
     special:
       Celesteela: 10
       Necrozma: 10
@@ -228,7 +229,6 @@ land:
       Moltres: 10
       HoOh: 10
       Urshifu: 10
-      Kubfu: 10
     mythical:
       Magearna: 5
       MagearnaOriginal: 5
@@ -315,6 +315,7 @@ land:
       Wynaut: prized
       Chingling: prized
       Bonsly: prized
+      Kubfu: prized
     special:
       Celesteela: 10
       Necrozma: 10
@@ -327,7 +328,6 @@ land:
       Moltres: 10
       HoOh: 10
       Urshifu: 10
-      Kubfu: 10
     mythical:
       Magearna: 5
       MagearnaOriginal: 5
@@ -421,6 +421,7 @@ land:
       Wynaut: prized
       Chingling: prized
       Bonsly: prized
+      Kubfu: prized
     special:
       Celesteela: 10
       Necrozma: 10
@@ -434,7 +435,6 @@ land:
       Mewtwo: 10
       HoOh: 10
       Urshifu: 10
-      Kubfu: 10
     mythical:
       Magearna: 5
       MagearnaOriginal: 5

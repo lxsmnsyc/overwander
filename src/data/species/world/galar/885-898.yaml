@@ -76,7 +76,9 @@ Kubfu:
       - species: UrshifuRapidStrike
         method: [UsedItem]
         item: ScrollOfWaters
-    rank: legendary
+    # A first stage of a legendary line, met in the wild the way Cosmog
+    # and Type: Null are, rather than at a lair
+    rank: prized
   Urshifu:
     types: [Fighting, Dark]
     egg-groups: [NoEggsDiscovered]

@@ -42,10 +42,10 @@ land:
       Empoleon: 36
     prized:
       Unown: forms
+      Kubfu: prized
     special:
       TapuFini: 10
       UrshifuRapidStrike: 10
-      Kubfu: 10
     mythical:
       Victini: 10
   day: *land-morning
@@ -77,10 +77,10 @@ land:
       Shuckle: 143
     prized:
       Unown: forms
+      Kubfu: prized
     special:
       TapuFini: 10
       UrshifuRapidStrike: 10
-      Kubfu: 10
     mythical:
       Victini: 10
   night: *land-evening

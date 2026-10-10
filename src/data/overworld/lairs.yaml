@@ -268,11 +268,10 @@ EnergyPlant:
   species: [Eternatus]
 # The tower of the dark style, which is the Single Strike Urshifu's
 TowerOfDarkness:
-  # Kubfu trains at both towers before it picks a style
-  species: [Urshifu, Kubfu]
+  species: [Urshifu]
 # The tower of the water style, which is the Rapid Strike Urshifu's
 TowerOfWaters:
-  species: [UrshifuRapidStrike, Kubfu]
+  species: [UrshifuRapidStrike]
 # The jungle the Zarude keep, where one of them raised a child
 ForestOfOkoya:
   species: [Zarude]

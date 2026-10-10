@@ -191,6 +191,9 @@ interface InventoryPickerCommonProps {
    * bumps it so the list catches up
    */
   revision?: unknown;
+  /** The tray's search, kept by a caller that draws the tray again (see `ItemGrid`) */
+  query?: string;
+  onQuery?: (typed: string) => void;
 }
 
 export type InventoryPickerProps = InventoryPickerCommonProps &
@@ -450,6 +453,8 @@ function PickerList(
           verb={props.verb}
           disabled={props.disabled}
           cardOnly={props.cardOnly}
+          query={props.query}
+          onQuery={props.onQuery}
           onPress={(item) => {
             const entry = offeredOf(item);
 

@@ -36,37 +36,67 @@ export interface Lesson {
 /** The pokemon and the move, asked on one screen */
 const LessonForm = pickCatchThenForm<Moves>();
 
+/**
+ * One lesson after another until the player steps back: a pokemon has
+ * more than one move to learn, and a party more than one pokemon
+ */
 export default async function giveLesson(visit: NpcVisit, lesson: Lesson): Promise<void> {
-  const scales = await visit.carrying(lesson.fee);
-  const picked = await visit.form(LessonForm, {
-    player: visit.player,
-    verb: lesson.verb,
-    action: lesson.verb,
-    cost: { item: lesson.fee },
-    have: scalesHeld(scales),
-    empty: lesson.empty,
-    filter: (option) =>
-      !isEgg(option.caught) && !option.fighting && lesson.movesOf(option).length > 0,
-    reason: (option) => (isGuarded(option.caught) ? 'locked' : null),
-    note: (option) => `${lesson.movesOf(option).length} ${lesson.counted}`,
-    step: lesson.heading,
-    move: (move) => move,
-    choices: (option) => {
-      const offered: Choice<Moves>[] = [];
+  let line: string | undefined;
 
-      for (const move of lesson.movesOf(option)) {
-        offered.push({
-          label: getMoveData(move).name,
-          value: move,
-          refused: lesson.refuses?.(option, move) ?? null,
-        });
-      }
-      return offered;
+  for (;;) {
+    const taught = await teachOnce(visit, lesson, line);
+
+    if (taught == null) {
+      return;
+    }
+    line = taught;
+  }
+}
+
+/**
+ * One lesson: what they say over the next one once it took, the line
+ * that stands when the player backs out of the teaching, or null once
+ * they step back altogether
+ */
+async function teachOnce(
+  visit: NpcVisit,
+  lesson: Lesson,
+  line: string | undefined,
+): Promise<string | undefined | null> {
+  const scales = await visit.carrying(lesson.fee);
+  const picked = await visit.form(
+    LessonForm,
+    {
+      player: visit.player,
+      verb: lesson.verb,
+      action: lesson.verb,
+      cost: { item: lesson.fee },
+      have: scalesHeld(scales),
+      empty: lesson.empty,
+      filter: (option) =>
+        !isEgg(option.caught) && !option.fighting && lesson.movesOf(option).length > 0,
+      reason: (option) => (isGuarded(option.caught) ? 'locked' : null),
+      note: (option) => `${lesson.movesOf(option).length} ${lesson.counted}`,
+      step: lesson.heading,
+      move: (move) => move,
+      choices: (option) => {
+        const offered: Choice<Moves>[] = [];
+
+        for (const move of lesson.movesOf(option)) {
+          offered.push({
+            label: getMoveData(move).name,
+            value: move,
+            refused: lesson.refuses?.(option, move) ?? null,
+          });
+        }
+        return offered;
+      },
     },
-  });
+    { line },
+  );
 
   if (picked == null) {
-    return;
+    return null;
   }
 
   const [option, move] = picked;
@@ -80,8 +110,8 @@ export default async function giveLesson(visit: NpcVisit, lesson: Lesson): Promi
   });
 
   if (taught == null) {
-    return;
+    return line;
   }
   visit.changed();
-  await visit.say(lesson.done);
+  return lesson.done;
 }

@@ -143,12 +143,19 @@ export interface ItemGridProps {
    * otherwise have three of them
    */
   bare?: boolean;
+  /**
+   * What the search starts on, and where each change is told. A tray
+   * drawn again after every trade would otherwise forget what the
+   * player was looking for
+   */
+  query?: string;
+  onQuery?: (typed: string) => void;
   onPress?: (item: Items) => void;
 }
 
 export default function ItemGrid(props: ItemGridProps): JSX.Element {
   const [page, setPage] = createSignal(0);
-  const [query, setQuery] = createSignal('');
+  const [query, setQuery] = createSignal(props.query ?? '');
 
   // A `sort:` is applied last, over whatever the search left
   const narrowed = (): ItemCell[] => {
@@ -333,6 +340,7 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
             value={query()}
             onChange={(typed) => {
               setQuery(typed);
+              props.onQuery?.(typed);
             }}
           />
         </Row>

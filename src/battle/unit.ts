@@ -129,6 +129,15 @@ export default class Unit {
    */
   shiny = false;
 
+  /**
+   * Whether it carries the Gigantamax Factor, copied off its record:
+   * Dynamaxed, it throws its species' G-Max Move where it has one
+   */
+  gigantamax = false;
+
+  /** Whether it is Dynamaxed right now. Set and cleared by `dynamax` and `revertDynamax` */
+  dynamaxed = false;
+
   gender = Genders.Genderless;
 
   setGender(gender: Genders): void {

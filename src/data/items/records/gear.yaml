@@ -278,3 +278,13 @@ StickyBarb:
   icon: held/sticky-barb
   flags: [Holdable]
   sell: 1000
+
+# Lets its pokemon Dynamax, so it is priced with the Choice items, the
+# strongest held items on the shelf. The behaviour is the Dynamax
+# mechanic's, in `src/battle/mechanics/dynamax.ts`
+DynamaxBand:
+  type: Held
+  icon: key/dynamax-band
+  flags: [Holdable, Marketable]
+  buy: 8000
+  sell: 4000

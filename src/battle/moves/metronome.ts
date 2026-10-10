@@ -1,4 +1,6 @@
+import { MAX_MOVES } from '../../data/moves/max-moves';
 import { Z_MOVES } from '../../data/moves/z-moves';
+import { G_MAX_MOVES } from '../../data/moves/gmax-moves';
 import { AttackPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
 import { getRegisteredMoves } from '../../data/moves';
@@ -26,6 +28,8 @@ const EXCLUDED = new Set<Moves>([
   Moves.Sketch,
   // Z-Moves are what a crystal makes of a move, never a move of their own
   ...Z_MOVES,
+  ...MAX_MOVES,
+  ...G_MAX_MOVES,
 ]);
 
 // https://bulbapedia.bulbagarden.net/wiki/Metronome_(move)

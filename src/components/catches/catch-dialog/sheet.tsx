@@ -1457,6 +1457,9 @@ export function CatchSheetBody(
             <Show when={isShadow(record())}>
               <Badge>Shadow</Badge>
             </Show>
+            <Show when={record().gigantamax}>
+              <Badge tone="arcane">Gigantamax</Badge>
+            </Show>
             <Show when={props.buddy.latest === props.catchId}>
               <Badge tone="leaf">Buddy</Badge>
             </Show>

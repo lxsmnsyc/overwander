@@ -1,0 +1,101 @@
+# Each line opens on who throws it, since a G-Max Move belongs to one
+# Gigantamax, then says what it leaves behind
+GMaxVineLash:
+  name: G-Max Vine Lash
+  description: "Gigantamax Venusaur's Grass move, as strong as the move it replaces. Lashes every foe that is not Grass: 1/6 of its HP every 2 seconds for 8 seconds."
+GMaxWildfire:
+  name: G-Max Wildfire
+  description: "Gigantamax Charizard's Fire move, as strong as the move it replaces. Burns every foe that is not Fire: 1/6 of its HP every 2 seconds for 8 seconds."
+GMaxCannonade:
+  name: G-Max Cannonade
+  description: "Gigantamax Blastoise's Water move, as strong as the move it replaces. Pounds every foe that is not Water: 1/6 of its HP every 2 seconds for 8 seconds."
+GMaxBefuddle:
+  name: G-Max Befuddle
+  description: Gigantamax Butterfree's Bug move, as strong as the move it replaces. Poisons, paralyses or puts to sleep every foe.
+GMaxVoltCrash:
+  name: G-Max Volt Crash
+  description: Gigantamax Pikachu's Electric move, as strong as the move it replaces. Paralyses every foe.
+GMaxGoldRush:
+  name: G-Max Gold Rush
+  description: Gigantamax Meowth's Normal move, as strong as the move it replaces. Confuses every foe and scatters coins as Pay Day does.
+GMaxChiStrike:
+  name: G-Max Chi Strike
+  description: Gigantamax Machamp's Fighting move, as strong as the move it replaces. Raises the critical hit ratio of the user's whole side a stage, up to 3, until each leaves the field.
+GMaxTerror:
+  name: G-Max Terror
+  description: Gigantamax Gengar's Ghost move, as strong as the move it replaces. No foe can escape or be swapped out.
+GMaxFoamBurst:
+  name: G-Max Foam Burst
+  description: Gigantamax Kingler's Water move, as strong as the move it replaces. Drops every foe's Speed 2 stages.
+GMaxResonance:
+  name: G-Max Resonance
+  description: Gigantamax Lapras's Ice move, as strong as the move it replaces. Puts up Aurora Veil over the user's side, hail or not.
+GMaxCuddle:
+  name: G-Max Cuddle
+  description: Gigantamax Eevee's Normal move, as strong as the move it replaces. Infatuates every foe of the other gender.
+GMaxReplenish:
+  name: G-Max Replenish
+  description: Gigantamax Snorlax's Normal move, as strong as the move it replaces. Each of the user's side has a 50% chance to get back the last Berry it ate.
+GMaxMalodor:
+  name: G-Max Malodor
+  description: Gigantamax Garbodor's Poison move, as strong as the move it replaces. Poisons every foe.
+GMaxMeltdown:
+  name: G-Max Meltdown
+  description: Gigantamax Melmetal's Steel move, as strong as the move it replaces. For 10 seconds no foe can cast the same move twice over.
+GMaxDrumSolo:
+  name: G-Max Drum Solo
+  description: Gigantamax Rillaboom's Grass move. Hits at 160 whatever it replaces, and straight through the target's ability.
+GMaxFireball:
+  name: G-Max Fireball
+  description: Gigantamax Cinderace's Fire move. Hits at 160 whatever it replaces, and straight through the target's ability.
+GMaxHydrosnipe:
+  name: G-Max Hydrosnipe
+  description: Gigantamax Inteleon's Water move. Hits at 160 whatever it replaces, and straight through the target's ability.
+GMaxWindRage:
+  name: G-Max Wind Rage
+  description: Gigantamax Corviknight's Flying move, as strong as the move it replaces. Clears every hazard from both sides and the screens from the target's.
+GMaxGravitas:
+  name: G-Max Gravitas
+  description: Gigantamax Orbeetle's Psychic move, as strong as the move it replaces. Calls up Gravity for 10 seconds.
+GMaxStonesurge:
+  name: G-Max Stonesurge
+  description: Gigantamax Drednaw's Water move, as strong as the move it replaces. Leaves stones hanging over the target's side, as Stealth Rock does.
+GMaxVolcalith:
+  name: G-Max Volcalith
+  description: "Gigantamax Coalossal's Rock move, as strong as the move it replaces. Pelts every foe that is not Rock: 1/6 of its HP every 2 seconds for 8 seconds."
+GMaxTartness:
+  name: G-Max Tartness
+  description: Gigantamax Flapple's Grass move, as strong as the move it replaces. Drops every foe's Evasion a stage.
+GMaxSweetness:
+  name: G-Max Sweetness
+  description: Gigantamax Appletun's Grass move, as strong as the move it replaces. Cures the status of everybody on the user's side.
+GMaxSandblast:
+  name: G-Max Sandblast
+  description: Gigantamax Sandaconda's Ground move, as strong as the move it replaces. Binds every foe as Sand Tomb does.
+GMaxStunShock:
+  name: G-Max Stun Shock
+  description: Gigantamax Toxtricity's Electric move, as strong as the move it replaces. Poisons or paralyses every foe.
+GMaxCentiferno:
+  name: G-Max Centiferno
+  description: Gigantamax Centiskorch's Fire move, as strong as the move it replaces. Binds every foe as Fire Spin does.
+GMaxSmite:
+  name: G-Max Smite
+  description: Gigantamax Hatterene's Fairy move, as strong as the move it replaces. Confuses every foe.
+GMaxSnooze:
+  name: G-Max Snooze
+  description: Gigantamax Grimmsnarl's Dark move, as strong as the move it replaces. 50% to make the target drowsy, and asleep 4 seconds later.
+GMaxFinale:
+  name: G-Max Finale
+  description: Gigantamax Alcremie's Fairy move, as strong as the move it replaces. Heals everybody on the user's side 1/6 of their HP.
+GMaxSteelsurge:
+  name: G-Max Steelsurge
+  description: Gigantamax Copperajah's Steel move, as strong as the move it replaces. Leaves steel spikes over the target's side, which cut whatever comes in as a Steel move would.
+GMaxDepletion:
+  name: G-Max Depletion
+  description: Gigantamax Duraludon's Dragon move, as strong as the move it replaces. Puts every foe's last move on a 4x longer cooldown.
+GMaxOneBlow:
+  name: G-Max One Blow
+  description: Gigantamax Single Strike Urshifu's Dark move, as strong as the move it replaces. Goes through Protect and every other guard.
+GMaxRapidFlow:
+  name: G-Max Rapid Flow
+  description: Gigantamax Rapid Strike Urshifu's Water move, as strong as the move it replaces. Goes through Protect and every other guard.

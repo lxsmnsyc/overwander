@@ -53,6 +53,8 @@ function addUnit(battle: Battle, team: Team, snapshot: CatchSnapshot): Unit {
   // Drawn from the shiny sheet, so a sparkling pokemon fights looking
   // like itself
   unit.shiny = snapshot.shiny;
+  // The factor travels with the catch, so its G-Max Move does too
+  unit.gigantamax = snapshot.gigantamax === true;
   // What it thinks of its owner, which is what Return and Frustration
   // are worth in its hands
   unit.friendship = snapshot.friendship;

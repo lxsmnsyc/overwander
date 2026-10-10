@@ -3,10 +3,11 @@ import { Moves } from '../../data/ids/moves';
 import { TeamStatuses } from '../../data/ids/status';
 import { USELESS_PENALTY } from '../ai/score';
 import type Battle from '../core';
-import { BattleEvents, EffectType, MoveTargetType } from '../events';
+import { BattleEvents, type EffectCause, EffectType, MoveTargetType } from '../events';
 import type Team from '../team';
 import { clearSpikes, layersUnder } from './spikes';
 import { clearStealthRock, stonesOver } from './stealth-rock';
+import { clearSteelsurge, steelOver } from './steelsurge';
 import { clearStickyWeb, webOver } from './sticky-web';
 import { clearToxicSpikes, toxicLayersUnder } from './toxic-spikes';
 
@@ -30,7 +31,13 @@ const SCREENS = [
 ];
 
 function hazardsUnder(team: Team): boolean {
-  return layersUnder(team) > 0 || toxicLayersUnder(team) > 0 || stonesOver(team) || webOver(team);
+  return (
+    layersUnder(team) > 0 ||
+    toxicLayersUnder(team) > 0 ||
+    stonesOver(team) ||
+    steelOver(team) ||
+    webOver(team)
+  );
 }
 
 function screensOver(team: Team): boolean {
@@ -42,24 +49,35 @@ function screensOver(team: Team): boolean {
   return false;
 }
 
+/**
+ * The wind itself: every hazard off both sides, and the screens off
+ * the one it is aimed at. G-Max Wind Rage blows the same wind
+ */
+export function blowAway(battle: Battle, aimed: Team, cause: EffectCause): void {
+  for (const team of battle.teams()) {
+    clearSpikes(team);
+    clearToxicSpikes(team);
+    clearStealthRock(team);
+    clearSteelsurge(team);
+    clearStickyWeb(team);
+  }
+
+  for (const screen of SCREENS) {
+    aimed.removeStatus(screen, cause);
+  }
+}
+
 export default function setupDefog(battle: Battle): void {
   battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     if (event.move !== Moves.Defog || event.target.type !== MoveTargetType.Unit) {
       return;
     }
 
-    for (const team of battle.teams()) {
-      clearSpikes(team);
-      clearToxicSpikes(team);
-      clearStealthRock(team);
-      clearStickyWeb(team);
-    }
-
-    const cause = { type: EffectType.Move, move: event.move, unit: event.source } as const;
-
-    for (const screen of SCREENS) {
-      event.target.unit.team.removeStatus(screen, cause);
-    }
+    blowAway(battle, event.target.unit.team, {
+      type: EffectType.Move,
+      move: event.move,
+      unit: event.source,
+    });
   });
 
   // Worth more than the Evasion drop when there is something to sweep

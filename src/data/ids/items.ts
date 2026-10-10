@@ -750,9 +750,7 @@ export const enum Items {
   /** Walks its holder over whatever was laid at its feet */
   HeavyDutyBoots = 351,
 
-  /**
-   * TODO: blocked on Dynamax, which this game has none of
-   */
+  /** Gives a pokemon whose line can Gigantamax the Gigantamax Factor */
   MaxMushrooms = 354,
 
   /**
@@ -1169,6 +1167,12 @@ export const enum Items {
   FossilizedFish = 601,
   FossilizedDrake = 602,
   FossilizedDino = 603,
+
+  /**
+   * Held, it lets its pokemon Dynamax the first time it drops below
+   * half its HP, once per side
+   */
+  DynamaxBand = 604,
 }
 
 /**

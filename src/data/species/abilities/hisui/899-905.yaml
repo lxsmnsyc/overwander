@@ -1,0 +1,9 @@
+Enamorus:
+  Enamorus:
+    abilities: [CuteCharm]
+    # Misty Surge and Fairy Aura are this registry's rather than the
+    # mainline's, filling it to four: spring arrives with it in a fairy mist
+    hidden: [Contrary, MistySurge, FairyAura]
+  EnamorusTherian:
+    abilities: [Overcoat]
+    hidden: []

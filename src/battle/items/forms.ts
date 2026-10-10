@@ -25,6 +25,7 @@ const SHAPE_ABILITIES = new Map<Species, Abilities>([
   [Species.TornadusTherian, Abilities.Regenerator],
   [Species.ThundurusTherian, Abilities.VoltAbsorb],
   [Species.LandorusTherian, Abilities.Intimidate],
+  [Species.EnamorusTherian, Abilities.Overcoat],
 ]);
 
 /**

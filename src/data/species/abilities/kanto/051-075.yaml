@@ -38,6 +38,15 @@ Growlithe:
   Arcanine:
     abilities: [Intimidate, FlashFire]
     hidden: [Justified, Reckless]
+  GrowlitheHisui:
+    abilities: [Intimidate, FlashFire]
+    hidden: [RockHead]
+  ArcanineHisui:
+    abilities: [Intimidate, FlashFire]
+    # Justified is this registry's rather than the mainline's, filling it to
+    # four: the old guardian of the volcano answers whoever wrongs its
+    # charges
+    hidden: [RockHead, Justified]
 Poliwag:
   Poliwag:
     abilities: [WaterAbsorb, Damp]

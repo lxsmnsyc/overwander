@@ -107,6 +107,23 @@ Growlithe:
     active: [Morning, Day]
     evolves-from: Growlithe
     held: { common: RawstBerry, uncommon: Charcoal }
+  GrowlitheHisui:
+    types: [Fire, Rock]
+    egg-groups: [Field]
+    biomes: [Volcano, Mountain, Badlands]
+    active: [Morning, Day]
+    base-form: false
+    evolves-into:
+      - species: ArcanineHisui
+        method: [UsedItem]
+        item: FireStone
+  ArcanineHisui:
+    types: [Fire, Rock]
+    egg-groups: [Field]
+    biomes: [Volcano, Mountain, Badlands]
+    active: [Morning, Day]
+    base-form: false
+    evolves-from: GrowlitheHisui
 Poliwag:
   Poliwag:
     types: [Water]

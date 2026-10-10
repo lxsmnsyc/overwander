@@ -1,29 +1,33 @@
 land:
   morning: &land-morning
     base:
-      Swinub: 2642
-      FlabebeWhite: 2536
+      Swinub: 2589
+      FlabebeWhite: 2485
     uncommon:
-      Snover: 1088
-      Seel: 1088
-      Stantler: 272
-      DarumakaGalar: 150
+      Snover: 1066
+      Seel: 1066
+      Stantler: 267
+      BasculinWhite: 150
+      DarumakaGalar: 147
     rare:
-      FloetteWhite: 544
-      Ursaring: 340
-      Piloswine: 340
+      FloetteWhite: 533
+      Ursaring: 333
+      Piloswine: 333
     scarce:
-      Dewgong: 278
-      Abomasnow: 166
-      Glaceon: 166
-      MrMimeGalar: 25
-      DarmanitanGalar: 25
+      Dewgong: 272
+      Abomasnow: 163
+      Glaceon: 163
+      Wyrdeer: 25
+      MrMimeGalar: 24
+      DarmanitanGalar: 24
+      Basculegion: 13
+      BasculegionFemale: 13
     elusive:
-      Pachirisu: 87
-      FlorgesWhite: 55
-      Snorlax: 55
-      Mamoswine: 55
-      Delibird: 55
+      Pachirisu: 85
+      FlorgesWhite: 54
+      Snorlax: 54
+      Mamoswine: 54
+      Delibird: 54
     prized:
       Unown: forms
     special:
@@ -34,29 +38,36 @@ land:
       Calyrex: 10
   day: *land-morning
   evening:
-    base: { Swinub: 2914 }
+    base: { Swinub: 2798 }
     uncommon:
-      Snover: 1208
-      Seel: 1208
-      Vulpix: 605
-      Stantler: 302
-      Sneasel: 302
-      Snom: 199
-    rare: { Piloswine: 1813 }
+      Snover: 1160
+      Seel: 1160
+      Vulpix: 581
+      Stantler: 290
+      Sneasel: 290
+      Snom: 191
+      BasculinWhite: 150
+      ZoruaHisui: 150
+    rare: { Piloswine: 1741 }
     scarce:
-      Dewgong: 274
-      Abomasnow: 165
-      Glaceon: 165
-      Weavile: 165
-      Ninetales: 139
-      Frosmoth: 30
-      MrMimeGalar: 25
+      Dewgong: 263
+      Abomasnow: 158
+      Glaceon: 158
+      Weavile: 158
+      Ninetales: 133
+      Frosmoth: 29
+      Wyrdeer: 25
+      ZoroarkHisui: 25
+      MrMimeGalar: 24
+      Basculegion: 13
+      BasculegionFemale: 13
     elusive:
-      Pachirisu: 130
-      Jynx: 81
-      Snorlax: 81
-      Mamoswine: 81
-      Delibird: 81
+      Pachirisu: 125
+      Jynx: 78
+      Snorlax: 78
+      Mamoswine: 78
+      Delibird: 78
+      Ursaluna: 20
     prized:
       Unown: forms
       Smoochum: prized
@@ -67,31 +78,38 @@ land:
       Regice: 10
       Calyrex: 10
   night:
-    base: { Swinub: 2915 }
+    base: { Swinub: 2799 }
     uncommon:
-      Paras: 907
-      Snover: 907
-      Seel: 907
-      Vulpix: 453
-      Stantler: 226
-      Sneasel: 226
-      Snom: 199
-    rare: { Piloswine: 1814 }
+      Paras: 871
+      Snover: 871
+      Seel: 871
+      Vulpix: 435
+      Stantler: 217
+      Sneasel: 217
+      Snom: 191
+      BasculinWhite: 150
+      ZoruaHisui: 150
+    rare: { Piloswine: 1742 }
     scarce:
-      Parasect: 210
-      Dewgong: 210
-      Abomasnow: 127
-      Glaceon: 127
-      Weavile: 127
-      Ninetales: 106
-      Frosmoth: 30
-      MrMimeGalar: 25
+      Parasect: 202
+      Dewgong: 202
+      Abomasnow: 122
+      Glaceon: 122
+      Weavile: 122
+      Ninetales: 102
+      Frosmoth: 29
+      Wyrdeer: 25
+      ZoroarkHisui: 25
+      MrMimeGalar: 24
+      Basculegion: 13
+      BasculegionFemale: 13
     elusive:
-      Pachirisu: 130
-      Jynx: 81
-      Snorlax: 81
-      Mamoswine: 81
-      Delibird: 81
+      Pachirisu: 125
+      Jynx: 78
+      Snorlax: 78
+      Mamoswine: 78
+      Delibird: 78
+      Ursaluna: 20
     prized:
       Unown: forms
       Smoochum: prized

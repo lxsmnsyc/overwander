@@ -89,6 +89,24 @@ Qwilfish:
     habitat: Water
     biomes: [Ocean, KelpForest, RockyCoast]
     active: any
+  QwilfishHisui:
+    # Overqwil grows out of the one that has landed Barb Barrage 20 times
+    types: [Dark, Poison]
+    egg-groups: [Water2]
+    habitat: Water
+    biomes: [Ocean, RockyCoast, PolarOcean]
+    active: any
+    base-form: false
+    evolves-into:
+      - species: Overqwil
+        method: [Special]
+  Overqwil:
+    types: [Dark, Poison]
+    egg-groups: [Water2]
+    habitat: Water
+    biomes: [Ocean, RockyCoast, PolarOcean]
+    active: any
+    evolves-from: QwilfishHisui
 Shuckle:
   Shuckle:
     types: [Bug, Rock]
@@ -120,6 +138,24 @@ Sneasel:
     biomes: [AlpineTundra, Tundra, Glacier, ColdDesert, Taiga]
     active: [Evening, Night]
     evolves-from: Sneasel
+  SneaselHisui:
+    types: [Fighting, Poison]
+    egg-groups: [Field]
+    biomes: [MontaneForest, Mountain, AlpineTundra]
+    active: [Morning, Day]
+    base-form: false
+    evolves-into:
+      - species: Sneasler
+        method: [Level, HeldItem, TimeOfDay]
+        level: 35
+        item: RazorClaw
+        time: [Morning, Day]
+  Sneasler:
+    types: [Fighting, Poison]
+    egg-groups: [Field]
+    biomes: [MontaneForest, Mountain, AlpineTundra]
+    active: [Morning, Day]
+    evolves-from: SneaselHisui
 Teddiursa:
   Teddiursa:
     types: [Normal]
@@ -135,7 +171,19 @@ Teddiursa:
     biomes: [Taiga, MontaneForest, TemperateForest]
     active: [Morning, Day]
     evolves-from: Teddiursa
-    awaiting: evolution
+    # The mainline asks for a full moon, which the clock cannot tell
+    # apart from any other night, so the night is the whole condition
+    evolves-into:
+      - species: Ursaluna
+        method: [UsedItem, TimeOfDay]
+        item: PeatBlock
+        time: [Night]
+  Ursaluna:
+    types: [Ground, Normal]
+    egg-groups: [Field]
+    biomes: [Taiga, MontaneForest]
+    active: [Evening, Night]
+    evolves-from: Ursaring
 Slugma:
   Slugma:
     types: [Fire]

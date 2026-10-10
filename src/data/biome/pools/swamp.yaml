@@ -1,31 +1,32 @@
 land:
   morning: &land-morning
     base:
-      FlabebeBlue: 1977
-      Poliwag: 1648
-      Goomy: 990
-      Squirtle: 165
-      Totodile: 165
-      Mudkip: 165
+      FlabebeBlue: 1961
+      Poliwag: 1635
+      Goomy: 982
+      Squirtle: 164
+      Totodile: 164
+      Mudkip: 164
     uncommon:
-      Chewtle: 300
-      Corphish: 238
-      Wooper: 238
-      Bidoof: 238
-      Surskit: 238
-      Gulpin: 210
-      Dewpider: 210
-      Ducklett: 190
-      Psyduck: 190
-      Slowpoke: 190
-      Marill: 190
-      Croagunk: 190
+      Chewtle: 298
+      Corphish: 236
+      Wooper: 236
+      Bidoof: 236
+      Surskit: 236
+      Gulpin: 208
+      Dewpider: 208
+      Ducklett: 188
+      Psyduck: 188
+      Slowpoke: 188
+      Marill: 188
+      Croagunk: 188
       Lickitung: 47
       Yanma: 47
     rare:
-      FloetteBlue: 460
-      Sliggoo: 288
-      Poliwhirl: 288
+      FloetteBlue: 456
+      Sliggoo: 286
+      Poliwhirl: 286
+      SliggooHisui: 60
       Wartortle: 58
       Croconaw: 58
       Marshtomp: 58
@@ -53,6 +54,7 @@ land:
       Farfetchd: 39
       Politoed: 39
       Goodra: 23
+      GoodraHisui: 20
       Feraligatr: 15
       Swampert: 15
     prized:
@@ -62,30 +64,31 @@ land:
   day: *land-morning
   evening:
     base:
-      Tympole: 2155
-      Poliwag: 1724
-      Goomy: 1034
-      Froakie: 172
+      Tympole: 2138
+      Poliwag: 1710
+      Goomy: 1026
+      Froakie: 171
     uncommon:
-      Corphish: 327
-      Wooper: 327
-      Bidoof: 327
-      Chewtle: 300
-      Gulpin: 287
-      Dewpider: 287
-      Shelmet: 262
-      Marill: 262
-      Croagunk: 262
-      Yanma: 65
+      Corphish: 324
+      Wooper: 324
+      Bidoof: 324
+      Chewtle: 298
+      Gulpin: 285
+      Dewpider: 285
+      Shelmet: 260
+      Marill: 260
+      Croagunk: 260
+      Yanma: 64
     rare:
-      Palpitoad: 546
-      Sliggoo: 273
-      Poliwhirl: 273
-      Frogadier: 110
+      Palpitoad: 542
+      Sliggoo: 271
+      Poliwhirl: 271
+      Frogadier: 109
+      SliggooHisui: 60
     scarce:
-      Bibarel: 94
-      Crawdaunt: 75
-      Swalot: 65
+      Bibarel: 93
+      Crawdaunt: 74
+      Swalot: 64
       Toxicroak: 57
       Yanmega: 57
       Tangrowth: 57
@@ -103,6 +106,7 @@ land:
       Poliwrath: 47
       Politoed: 47
       Goodra: 28
+      GoodraHisui: 20
       Greninja: 19
     prized:
       Unown: forms
@@ -110,32 +114,33 @@ land:
     special: {}
   night:
     base:
-      Tympole: 2151
-      Poliwag: 1720
-      Goomy: 1031
-      Froakie: 172
+      Tympole: 2134
+      Poliwag: 1706
+      Goomy: 1023
+      Froakie: 171
     uncommon:
-      Chewtle: 299
-      Corphish: 267
-      Wooper: 267
-      Bidoof: 267
-      Gulpin: 236
-      Dewpider: 236
-      Shelmet: 213
-      Grimer: 213
-      Koffing: 213
-      Marill: 213
-      Croagunk: 213
+      Chewtle: 297
+      Corphish: 265
+      Wooper: 265
+      Bidoof: 265
+      Gulpin: 234
+      Dewpider: 234
+      Shelmet: 211
+      Grimer: 211
+      Koffing: 211
+      Marill: 211
+      Croagunk: 211
       Yanma: 54
     rare:
-      Palpitoad: 545
-      Sliggoo: 272
-      Poliwhirl: 272
-      Frogadier: 110
+      Palpitoad: 541
+      Sliggoo: 270
+      Poliwhirl: 270
+      Frogadier: 109
+      SliggooHisui: 60
     scarce:
-      Muk: 71
-      Weezing: 71
-      Bibarel: 71
+      Muk: 70
+      Weezing: 70
+      Bibarel: 70
       Crawdaunt: 58
       Swalot: 50
       Toxicroak: 43
@@ -156,6 +161,7 @@ land:
       Poliwrath: 47
       Politoed: 47
       Goodra: 28
+      GoodraHisui: 20
       Greninja: 19
     prized:
       Unown: forms

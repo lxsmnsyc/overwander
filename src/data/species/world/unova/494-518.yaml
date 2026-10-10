@@ -91,12 +91,25 @@ Oshawott:
       - species: Samurott
         method: [Level]
         level: 36
+      # The Hisuian one, as the old country grew it: both are offered,
+      # and the player picks
+      - species: SamurottHisui
+        method: [Level]
+        level: 36
   Samurott:
     types: [Water]
     egg-groups: [Field]
     habitat: Amphibious
     biomes: [KelpForest, RockyCoast]
     active: [Morning, Day]
+    evolves-from: Dewott
+  SamurottHisui:
+    types: [Water, Dark]
+    egg-groups: [Field]
+    habitat: Amphibious
+    biomes: [RockyCoast, Mangrove]
+    active: [Evening, Night]
+    base-form: false
     evolves-from: Dewott
 Patrat:
   # The scouts of the open country: a Patrat posts itself where it can

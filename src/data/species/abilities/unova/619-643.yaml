@@ -46,6 +46,9 @@ Rufflet:
     # Four without inventing anything: Hustle walks up from the Rufflet
     # below it and Defiant is its own
     hidden: [Defiant]
+  BraviaryHisui:
+    abilities: [KeenEye, SheerForce]
+    hidden: [TintedLens]
 Vullaby:
   Vullaby:
     abilities: [BigPecks, Overcoat]

@@ -85,6 +85,7 @@ import snomToStonjourner from './snom-to-stonjourner';
 import galarFossils from './galar-fossils';
 import galarianForms from './galarian-forms';
 import galarLegends from './galar-legends';
+import hisuianForms from './hisuian-forms';
 
 /**
  * The invented abilities, one per evolution family, in the order the
@@ -177,6 +178,7 @@ const setupAbilities = [
   ...galarFossils,
   ...galarianForms,
   ...galarLegends,
+  ...hisuianForms,
 ];
 
 /**

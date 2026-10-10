@@ -12,6 +12,7 @@ Oshawott:
   Oshawott: { name: Oshawott, category: Sea Otter Pokemon }
   Dewott: { name: Dewott, category: Discipline Pokemon }
   Samurott: { name: Samurott, category: Formidable Pokemon }
+  SamurottHisui: { name: Hisuian Samurott, category: Formidable Pokemon }
 Patrat:
   Patrat: { name: Patrat, category: Scout Pokemon }
   Watchog: { name: Watchog, category: Lookout Pokemon }

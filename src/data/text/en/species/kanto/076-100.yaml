@@ -48,3 +48,5 @@ Krabby:
 Voltorb:
   Voltorb: { name: Voltorb, category: Ball Pokemon }
   Electrode: { name: Electrode, category: Ball Pokemon }
+  VoltorbHisui: { name: Hisuian Voltorb, category: Sphere Pokemon }
+  ElectrodeHisui: { name: Hisuian Electrode, category: Sphere Pokemon }

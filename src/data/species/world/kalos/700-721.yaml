@@ -41,6 +41,11 @@ Goomy:
       - species: Sliggoo
         method: [Level]
         level: 40
+      # The Hisuian one, as the old country grew it: both are offered,
+      # and the player picks
+      - species: SliggooHisui
+        method: [Level]
+        level: 40
   Sliggoo:
     types: [Dragon]
     egg-groups: [Dragon]
@@ -61,6 +66,26 @@ Goomy:
     biomes: [Bog, Swamp]
     active: any
     evolves-from: Sliggoo
+  SliggooHisui:
+    types: [Steel, Dragon]
+    egg-groups: [Dragon]
+    habitat: Amphibious
+    biomes: [Bog, Swamp]
+    active: any
+    base-form: false
+    evolves-from: Goomy
+    evolves-into:
+      - species: GoodraHisui
+        method: [Level]
+        level: 50
+  GoodraHisui:
+    types: [Steel, Dragon]
+    egg-groups: [Dragon]
+    habitat: Amphibious
+    biomes: [Bog, Swamp]
+    active: any
+    base-form: false
+    evolves-from: SliggooHisui
 Klefki:
   # The key ring. It collects keys it has no lock for and rattles them
   # at anything that comes close
@@ -135,11 +160,23 @@ Bergmite:
       - species: Avalugg
         method: [Level]
         level: 37
+      # The Hisuian one, as the old country grew it: both are offered,
+      # and the player picks
+      - species: AvaluggHisui
+        method: [Level]
+        level: 37
   Avalugg:
     types: [Ice]
     egg-groups: [Monster, Mineral]
     biomes: [Glacier, AlpineTundra]
     active: any
+    evolves-from: Bergmite
+  AvaluggHisui:
+    types: [Ice, Rock]
+    egg-groups: [Monster, Mineral]
+    biomes: [Glacier, AlpineTundra, Mountain]
+    active: any
+    base-form: false
     evolves-from: Bergmite
 Noibat:
   # The caves the colony hangs in, and the wood it hunts over

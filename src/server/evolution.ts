@@ -182,6 +182,7 @@ export default async function evolveCatch(
       // change of shape: a handover earned by one species is never
       // read by the next one up
       canEvolve: false,
+      featProgress: 0,
       // No Gen 1 line evolves into a legendary, so this changes
       // nothing today. It is written anyway because the day a line
       // does, a silent wrong answer here would be very hard to see

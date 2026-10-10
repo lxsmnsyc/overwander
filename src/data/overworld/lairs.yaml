@@ -301,4 +301,3 @@ IsleOfArmor:
 # The bog in Hisui's Crimson Mirelands the fourth force of nature blows over
 ScarletBog:
   species: [Enamorus]
-  reserved: true

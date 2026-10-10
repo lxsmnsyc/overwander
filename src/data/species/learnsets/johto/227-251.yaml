@@ -418,6 +418,79 @@ Stantler:
         Thrash,
         ZenHeadbutt,
       ]
+  Wyrdeer:
+    level:
+      1: [Tackle, PsyshieldBash]
+      3: [Leer]
+      7: [Astonish]
+      10: [Hypnosis]
+      13: [Stomp]
+      16: [SandAttack]
+      21: [TakeDown]
+      23: [ConfuseRay]
+      27: [CalmMind]
+      32: [RolePlay]
+      37: [ZenHeadbutt]
+      49: [Imprison]
+      55: [DoubleEdge]
+      62: [Megahorn]
+    teachable:
+      [
+        Agility,
+        BodySlam,
+        Bulldoze,
+        CalmMind,
+        ChargeBeam,
+        ConfuseRay,
+        Curse,
+        Dig,
+        DoubleEdge,
+        EarthPower,
+        Earthquake,
+        Endure,
+        EnergyBall,
+        ExpandingForce,
+        Facade,
+        FutureSight,
+        GigaImpact,
+        Gravity,
+        HelpingHand,
+        HighHorsepower,
+        HyperBeam,
+        Imprison,
+        LightScreen,
+        Lunge,
+        Protect,
+        Psybeam,
+        PsychUp,
+        Psychic,
+        Psyshock,
+        RainDance,
+        Reflect,
+        Rest,
+        Roar,
+        ScaryFace,
+        ShadowBall,
+        SkillSwap,
+        SleepTalk,
+        SolarBeam,
+        Spite,
+        StoredPower,
+        Substitute,
+        SunnyDay,
+        Swift,
+        TakeDown,
+        Thief,
+        ThroatChop,
+        Thunder,
+        ThunderWave,
+        Thunderbolt,
+        Trick,
+        TrickRoom,
+        Uproar,
+        WildCharge,
+        ZenHeadbutt,
+      ]
 Smeargle:
   Smeargle:
     # Sketch and nothing else, over and over: no machine teaches it

@@ -1,43 +1,47 @@
 land:
   morning: &land-morning
     base:
-      Mankey: 1491
-      Ralts: 1491
-      Poliwag: 1491
-      Axew: 372
-      Chimchar: 223
-      Turtwig: 223
+      Mankey: 1457
+      Ralts: 1457
+      Poliwag: 1457
+      Axew: 364
+      Chimchar: 218
+      Turtwig: 218
     uncommon:
-      Meditite: 534
-      Wooper: 534
-      Skiddo: 513
-      Makuhita: 427
-      Mienfoo: 385
-      Stantler: 107
+      Meditite: 522
+      Wooper: 522
+      Skiddo: 501
+      Makuhita: 417
+      Mienfoo: 376
+      SneaselHisui: 150
+      Stantler: 105
     rare:
-      Kirlia: 338
-      Primeape: 338
-      Ursaring: 169
-      Poliwhirl: 169
-      Fraxure: 101
-      Monferno: 68
-      Grotle: 68
+      Kirlia: 330
+      Primeape: 330
+      Ursaring: 165
+      Poliwhirl: 165
+      Fraxure: 99
+      Monferno: 66
+      Grotle: 66
     scarce:
-      Medicham: 152
-      Gogoat: 91
-      Mienshao: 91
-      Hariyama: 91
-      Quagsire: 76
-      Wormadam: 61
-      Mothim: 61
+      Medicham: 149
+      Gogoat: 89
+      Mienshao: 89
+      Hariyama: 89
+      Quagsire: 74
+      Wormadam: 60
+      Mothim: 60
+      Sneasler: 25
+      Wyrdeer: 25
+      LilligantHisui: 25
     elusive:
-      Spinda: 75
-      Hawlucha: 38
-      Gardevoir: 31
-      Chimecho: 31
-      Lucario: 31
-      Gallade: 31
-      Poliwrath: 31
+      Spinda: 73
+      Hawlucha: 37
+      Gardevoir: 30
+      Chimecho: 30
+      Lucario: 30
+      Gallade: 30
+      Poliwrath: 30
       Haxorus: 19
       Infernape: 13
       Torterra: 13
@@ -49,61 +53,67 @@ land:
   day: *land-morning
   evening:
     base:
-      Zubat: 3174
-      Poliwag: 2116
+      Zubat: 3153
+      Poliwag: 2102
     uncommon:
-      Hoothoot: 625
-      Kricketot: 625
-      Wooper: 625
-      Woobat: 500
-      Stantler: 125
+      Hoothoot: 621
+      Kricketot: 621
+      Wooper: 621
+      Woobat: 497
+      Stantler: 124
     rare:
-      Golbat: 833
-      Poliwhirl: 417
+      Golbat: 828
+      Poliwhirl: 414
     scarce:
-      Noctowl: 202
-      Swoobat: 161
-      Quagsire: 101
-      Wormadam: 81
-      Mothim: 81
+      Noctowl: 201
+      Swoobat: 160
+      Quagsire: 100
+      Wormadam: 80
+      Mothim: 80
+      Wyrdeer: 25
     elusive:
-      Kricketune: 80
+      Kricketune: 79
       Sableye: 64
       Hawlucha: 48
       Crobat: 40
       Chimecho: 40
       Poliwrath: 40
+      Ursaluna: 20
+      DecidueyeHisui: 20
     prized:
       Unown: forms
       Chingling: prized
     special: {}
   night:
     base:
-      Zubat: 3174
-      Poliwag: 2116
+      Zubat: 3153
+      Poliwag: 2102
     uncommon:
-      Hoothoot: 521
-      Kricketot: 521
-      Wooper: 521
-      Paras: 417
-      Woobat: 417
-      Stantler: 104
+      Hoothoot: 518
+      Kricketot: 518
+      Wooper: 518
+      Paras: 414
+      Woobat: 414
+      Stantler: 103
     rare:
-      Golbat: 833
-      Poliwhirl: 417
+      Golbat: 828
+      Poliwhirl: 414
     scarce:
-      Parasect: 123
-      Noctowl: 123
-      Kricketune: 123
-      Swoobat: 98
+      Parasect: 122
+      Noctowl: 122
+      Kricketune: 122
+      Swoobat: 97
       Quagsire: 61
       Wormadam: 49
       Mothim: 49
+      Wyrdeer: 25
     elusive:
-      Sableye: 109
+      Sableye: 108
       Crobat: 68
       Chimecho: 68
       Poliwrath: 68
+      Ursaluna: 20
+      DecidueyeHisui: 20
     prized:
       Unown: forms
       Chingling: prized

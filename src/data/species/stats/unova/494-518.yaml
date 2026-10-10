@@ -63,6 +63,12 @@ Oshawott:
     height: 1.5
     weight: 94.6
     gender: [7, 1]
+  SamurottHisui:
+    stats: { HP: 90, Attack: 108, Defense: 80, SpecialAttack: 100, SpecialDefense: 65, Speed: 85 }
+    catch-rate: 45
+    height: 1.5
+    weight: 58.2
+    gender: [7, 1]
 Patrat:
   Patrat:
     stats: { HP: 45, Attack: 55, Defense: 39, SpecialAttack: 35, SpecialDefense: 39, Speed: 42 }

@@ -232,6 +232,12 @@ Scyther:
     height: 1.8
     weight: 118
     gender: [1, 1]
+  Kleavor:
+    stats: { HP: 70, Attack: 135, Defense: 95, SpecialAttack: 45, SpecialDefense: 70, Speed: 85 }
+    catch-rate: 115
+    height: 1.8
+    weight: 89
+    gender: [1, 1]
 Jynx:
   Jynx:
     stats: { HP: 65, Attack: 50, Defense: 35, SpecialAttack: 115, SpecialDefense: 95, Speed: 95 }

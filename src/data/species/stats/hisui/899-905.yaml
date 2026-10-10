@@ -1,0 +1,13 @@
+Enamorus:
+  Enamorus:
+    stats: { HP: 74, Attack: 115, Defense: 70, SpecialAttack: 135, SpecialDefense: 80, Speed: 106 }
+    catch-rate: 3
+    height: 1.6
+    weight: 48
+    gender: [0, 1]
+  EnamorusTherian:
+    stats: { HP: 74, Attack: 115, Defense: 110, SpecialAttack: 135, SpecialDefense: 100, Speed: 46 }
+    catch-rate: 3
+    height: 1.6
+    weight: 48
+    gender: [0, 1]

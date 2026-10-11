@@ -87,7 +87,7 @@ import { Depth } from '../../../overworld/depth';
 import { throughMouth } from '../../../overworld/cave';
 import { townAt, townName } from '../../../overworld/town';
 import { discoverTown } from '../../../auth/towns';
-import { findPathBeside, findPathNear } from '../../../overworld/path';
+import { canStep, findPathBeside, findPathNear } from '../../../overworld/path';
 import type SafariSession from '../../../overworld/safari';
 import { isInWorld } from '../../../overworld/world';
 import Biome, { isIceBiome } from '../../../data/ids/biome';
@@ -2493,10 +2493,11 @@ export default function OverworldBoard(props: {
       Math.floor(next / BOARD_CELLS) - Math.floor(here / BOARD_CELLS),
     ];
 
-    // A route is a run of single straight steps and nothing else. A
-    // walk is what carries the egg and what the world is seen from, so
-    // one that jumped would be a teleport with a walk's name on it
-    if (Math.abs(step[0]) + Math.abs(step[1]) !== 1) {
+    // A route is a run of single steps, a diagonal included, and
+    // nothing else. A walk is what carries the egg and what the world is
+    // seen from, so one that jumped would be a teleport with a walk's
+    // name on it
+    if (Math.max(Math.abs(step[0]), Math.abs(step[1])) !== 1) {
       setJourney(null);
       return;
     }
@@ -2623,29 +2624,38 @@ export default function OverworldBoard(props: {
    * A step taken on the keyboard: turn that way, and walk if the
    * ground there can be stood on.
    *
-   * A step into a landmark or a boulder turns without moving, which is
-   * what a mainline game does and what leaves the interact key
-   * something to act on. Held to the same pace as a pressed walk, so
-   * neither a held key nor a mashed one outruns the other
+   * The ways are tried in order: two keys held together walk the
+   * diagonal, and where that corner is shut the newer key's straight
+   * step slides along it instead. A step into a landmark or a boulder
+   * turns without moving, which is what a mainline game does and what
+   * leaves the interact key something to act on. Held to the same pace
+   * as a pressed walk, so neither a held key nor a mashed one outruns
+   * the other
    */
-  const stepBy = (step: [number, number]): void => {
+  const stepBy = (ways: [number, number][]): void => {
     const loaded = view();
+    const first = ways.at(0);
 
-    if (loaded == null || engaged() || Date.now() - steppedAt < STEP_PACE) {
+    if (loaded == null || first == null || engaged() || Date.now() - steppedAt < STEP_PACE) {
       return;
     }
-    setFacing(step);
     // The keyboard is the player walking themselves, so a walk they
     // pressed for is dropped rather than raced
     setJourney(null);
 
-    // A step into something standing there turns the player and
-    // nothing more, which is what leaves the interact key an answer
-    if (!standable(loaded, ahead(step))) {
-      return;
+    const passable = (index: number): boolean => standable(loaded, index);
+
+    for (const way of ways) {
+      if (canStep(cell(), way[0], way[1], passable)) {
+        setFacing(way);
+        steppedAt = Date.now();
+        move(way[0], way[1]);
+        return;
+      }
     }
-    steppedAt = Date.now();
-    move(step[0], step[1]);
+    // Nowhere to go turns the player and nothing more, which is what
+    // leaves the interact key an answer
+    setFacing(first);
   };
 
   /**
@@ -2684,14 +2694,41 @@ export default function OverworldBoard(props: {
       }
     };
 
-    const onward = (): void => {
-      const going = held.at(-1);
+    /**
+     * The ways the held keys walk, best first: the newest key on each
+     * axis together, then each of those alone, the newer first. Two
+     * keys on one axis are the newer one, so rolling from left onto
+     * right turns round rather than stopping dead
+     */
+    const ways = (): [number, number][] => {
+      let across: Direction | null = null;
+      let along: Direction | null = null;
 
-      if (going == null) {
+      for (const one of held) {
+        if (STEPS[one][0] === 0) {
+          along = one;
+        } else {
+          across = one;
+        }
+      }
+      if (across == null || along == null) {
+        const only = across ?? along;
+
+        return only == null ? [] : [STEPS[only]];
+      }
+
+      const newer = held.lastIndexOf(across) > held.lastIndexOf(along) ? across : along;
+      const older = newer === across ? along : across;
+
+      return [[STEPS[across][0], STEPS[along][1]], STEPS[newer], STEPS[older]];
+    };
+
+    const onward = (): void => {
+      if (held.length === 0) {
         stop();
         return;
       }
-      stepBy(STEPS[going]);
+      stepBy(ways());
     };
 
     const down = (event: KeyboardEvent): void => {
@@ -2723,7 +2760,7 @@ export default function OverworldBoard(props: {
       }
       pressed.push(action);
       held = pressed;
-      stepBy(STEPS[action]);
+      stepBy(ways());
       pacing ??= setInterval(onward, STEP_PACE);
     };
 

@@ -12,23 +12,42 @@ import { BOARD_CELLS, BOARD_COUNT } from './board';
  * than teleported along: a step is a step, and the egg being carried
  * counts them. This is that route, plain A* over the board's own grid.
  *
- * Straight steps only. Nothing in this game moves diagonally: a cell is
- * north, south, east or west of its neighbour, which is also what makes
- * a route legible when it is being walked one cell at a time.
+ * A step goes to any of the eight cells around, the diagonals included,
+ * and a diagonal is one step like any other. It never cuts a corner:
+ * both cells it passes between have to be open, so a diagonal reaches
+ * nothing two straight steps could not, and a gap between two trees or
+ * two cliff faces stays shut.
  */
 
 /**
- * The four ways out of a cell, in the order a route prefers them when
- * two are equally good — up and down before left and right, which is
- * arbitrary but has to be *something* so that the same press always
- * walks the same way
+ * The eight ways out of a cell, in the order a route prefers them when
+ * two are equally good: straight before diagonal, which keeps a route
+ * from zigzagging along a straight line
  */
-export const CARDINALS: readonly [number, number][] = [
+export const STEPS: readonly [number, number][] = [
   [0, -1],
   [1, 0],
   [0, 1],
   [-1, 0],
+  [1, -1],
+  [1, 1],
+  [-1, 1],
+  [-1, -1],
 ];
+
+/**
+ * Whether one step from a cell is allowed: onto open ground, and, for a
+ * diagonal, without cutting the corner of anything on either side
+ */
+export function canStep(from: number, dx: number, dy: number, passable: Passable): boolean {
+  const x = (from % BOARD_CELLS) + dx;
+  const y = Math.floor(from / BOARD_CELLS) + dy;
+
+  if (x < 0 || y < 0 || x >= BOARD_CELLS || y >= BOARD_CELLS || !passable(y * BOARD_CELLS + x)) {
+    return false;
+  }
+  return dx === 0 || dy === 0 || (passable(from + dx) && passable(from + dy * BOARD_CELLS));
+}
 
 /**
  * Whether a cell may be walked on. What counts is the caller's:
@@ -38,32 +57,29 @@ export const CARDINALS: readonly [number, number][] = [
  */
 export type Passable = (cell: number) => boolean;
 
-function neighbors(cell: number): number[] {
-  const x = cell % BOARD_CELLS;
-  const y = Math.floor(cell / BOARD_CELLS);
+/** The cells one step away that may be stepped onto */
+function neighbors(cell: number, passable: Passable): number[] {
   const found: number[] = [];
 
-  for (const [dx, dy] of CARDINALS) {
-    const nx = x + dx;
-    const ny = y + dy;
-
-    if (nx >= 0 && ny >= 0 && nx < BOARD_CELLS && ny < BOARD_CELLS) {
-      found.push(ny * BOARD_CELLS + nx);
+  for (const [dx, dy] of STEPS) {
+    if (canStep(cell, dx, dy, passable)) {
+      found.push(cell + dy * BOARD_CELLS + dx);
     }
   }
   return found;
 }
 
 /**
- * How many straight steps apart two cells are with nothing in the way.
- * It is the distance the grid is actually walked in, which is what
- * makes it safe to steer the search by: it never over-estimates, so the
- * first route found to a cell is the shortest one
+ * How many steps apart two cells are with nothing in the way, a
+ * diagonal counting as one. It is the distance the grid is actually
+ * walked in, which is what makes it safe to steer the search by: it
+ * never over-estimates, so the first route found to a cell is the
+ * shortest one
  */
 export function stepsBetween(one: number, other: number): number {
-  return (
-    Math.abs((one % BOARD_CELLS) - (other % BOARD_CELLS)) +
-    Math.abs(Math.floor(one / BOARD_CELLS) - Math.floor(other / BOARD_CELLS))
+  return Math.max(
+    Math.abs((one % BOARD_CELLS) - (other % BOARD_CELLS)),
+    Math.abs(Math.floor(one / BOARD_CELLS) - Math.floor(other / BOARD_CELLS)),
   );
 }
 
@@ -140,13 +156,10 @@ function search(
 
     const spent = (cost.get(cell) ?? 0) + 1;
 
-    for (const next of neighbors(cell)) {
-      // The cell being walked to is checked for what is standing on it
-      // rather than the one being left, so a player who somehow ends up
-      // on an occupied cell can still walk off it
-      if (!passable(next)) {
-        continue;
-      }
+    // The cell being walked to is checked for what is standing on it
+    // rather than the one being left, so a player who somehow ends up
+    // on an occupied cell can still walk off it
+    for (const next of neighbors(cell, passable)) {
       const known = cost.get(next) ?? Number.POSITIVE_INFINITY;
       const parent = cameFrom.get(next);
 
@@ -209,8 +222,8 @@ export function findPathNear(from: number, to: number, passable: Passable): numb
   const queue = [from];
 
   for (let at = 0; at < queue.length; at++) {
-    for (const next of neighbors(queue[at])) {
-      if (passable(next) && !reached.has(next)) {
+    for (const next of neighbors(queue[at], passable)) {
+      if (!reached.has(next)) {
         reached.add(next);
         queue.push(next);
       }
@@ -256,10 +269,9 @@ export function findPathBeside(from: number, to: number, passable: Passable): nu
   return search(
     from,
     beside,
-    // Two off the straight distance, because the nearest cell that
-    // counts as beside is the diagonal one — and a guess that is too
-    // high is a route that is not the shortest
-    (cell) => Math.max(0, stepsBetween(cell, to) - 2),
+    // One short of the distance, since the ring around it is one step
+    // nearer than the cell itself
+    (cell) => Math.max(0, stepsBetween(cell, to) - 1),
     strayFrom(from, to),
     passable,
   );

@@ -61,27 +61,35 @@ export const PLAYBACK_DELAY = 2500;
 /** How many strangers are drawn at once, nearest first */
 export const MAX_STRANGERS = 30;
 
+/**
+ * One letter a step. The diagonals are the corner keys around WASD, and
+ * a screen too old to know them drops the run rather than misreading it
+ */
 const STEP_LETTERS = new Map<string, Facing>([
   ['U', [0, -1]],
   ['D', [0, 1]],
   ['L', [-1, 0]],
   ['R', [1, 0]],
+  ['Q', [-1, -1]],
+  ['E', [1, -1]],
+  ['Z', [-1, 1]],
+  ['C', [1, 1]],
 ]);
+
+/** A step's letter, keyed by its offsets shifted to 0..2 */
+const LETTER_OF = new Map<number, string>();
+
+for (const [letter, [dx, dy]] of STEP_LETTERS) {
+  LETTER_OF.set((dy + 1) * 3 + (dx + 1), letter);
+}
 
 /** A run of steps as a string of letters, one byte a step */
 export function encodeSteps(steps: Facing[]): string {
   let written = '';
 
   for (const [dx, dy] of steps) {
-    if (dy < 0) {
-      written += 'U';
-    } else if (dy > 0) {
-      written += 'D';
-    } else if (dx < 0) {
-      written += 'L';
-    } else {
-      written += 'R';
-    }
+    // Anything that is not a step faces down, as a standing player does
+    written += LETTER_OF.get((Math.sign(dy) + 1) * 3 + (Math.sign(dx) + 1)) ?? 'D';
   }
   return written;
 }

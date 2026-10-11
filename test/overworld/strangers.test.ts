@@ -42,6 +42,18 @@ describe('steps on the wire', () => {
     expect(decodeSteps('UDLR')).toEqual(steps);
   });
 
+  it('carry the diagonals too', () => {
+    const steps: Facing[] = [
+      [-1, -1],
+      [1, -1],
+      [-1, 1],
+      [1, 1],
+    ];
+
+    expect(encodeSteps(steps)).toBe('QEZC');
+    expect(decodeSteps('QEZC')).toEqual(steps);
+  });
+
   it('refuse anything a walk could not have been', () => {
     expect(decodeSteps('')).toBeNull();
     expect(decodeSteps('UX')).toBeNull();

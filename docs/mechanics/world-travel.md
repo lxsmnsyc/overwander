@@ -6,8 +6,9 @@ through a portal.
 ## Movement
 
 A player clicks where they want to go and their character walks there one cell
-at a time, in straight lines only. Nothing moves diagonally. A cell takes a
-quarter of a second to cross. The route is recalculated at every step, so a
+at a time, diagonals included. A diagonal is one step, and it never cuts a
+corner: both cells it passes between have to be open. A cell takes a quarter of
+a second to cross. The route is recalculated at every step, so a
 pokemon appearing in the way, or a landmark changing mid-walk, never strands
 anybody.
 

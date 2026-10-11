@@ -1193,13 +1193,25 @@ describe('a form drawn on another sheet', () => {
     );
   });
 
-  it('draws a fused Necrozma as the pokemon inside it until it has art', () => {
-    expect(isStandIn(Species.NecrozmaDuskMane)).toBe(true);
-    expect(spriteSheetPath(Species.NecrozmaDuskMane)).toBe(spriteSheetPath(Species.Solgaleo));
-    expect(spriteImagePath(Species.NecrozmaDawnWings, true)).toBe(
+  it('draws a fusion as the pokemon inside it until it has art', () => {
+    expect(isStandIn(Species.CalyrexIce)).toBe(true);
+    expect(spriteSheetPath(Species.CalyrexIce)).toBe(spriteSheetPath(Species.Glastrier));
+    expect(spriteImagePath(Species.CalyrexShadow, true)).toBe(
+      spriteImagePath(Species.Spectrier, true),
+    );
+  });
+
+  it('draws every fused Necrozma as itself, now that each has a sheet', () => {
+    for (const form of [
+      Species.NecrozmaDuskMane,
+      Species.NecrozmaDawnWings,
+      Species.NecrozmaUltra,
+    ]) {
+      expect(isStandIn(form)).toBe(false);
+    }
+    expect(spriteSheetPath(Species.NecrozmaDuskMane)).not.toBe(spriteSheetPath(Species.Solgaleo));
+    expect(spriteImagePath(Species.NecrozmaDawnWings, true)).not.toBe(
       spriteImagePath(Species.Lunala, true),
     );
-    // Ultra Necrozma is drawn, so it stands as itself
-    expect(isStandIn(Species.NecrozmaUltra)).toBe(false);
   });
 });

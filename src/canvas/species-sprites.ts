@@ -61,8 +61,6 @@ const BORROWED_COATS = new Map<Species, { sheet: Species; female: boolean }>([
  * reads as changed
  */
 const STAND_INS = new Map<Species, Species>([
-  [Species.NecrozmaDuskMane, Species.Solgaleo],
-  [Species.NecrozmaDawnWings, Species.Lunala],
   [Species.CalyrexIce, Species.Glastrier],
   [Species.CalyrexShadow, Species.Spectrier],
   // A Cramorant with its catch is drawn as the bird alone

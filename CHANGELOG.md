@@ -1,5 +1,30 @@
 # overwander
 
+## 4.36.0
+
+### Minor Changes
+
+- a8a0835: - Stantler evolves into Wyrdeer after landing Psyshield Bash 20 times, Hisuian Qwilfish into Overqwil after landing Barb Barrage 20 times, and white-striped Basculin into Basculegion after taking 294 recoil damage without fainting, counted across fights.
+  - The catch sheet shows how far along those feats are.
+  - Black Augurite and Peat Block have pictures.
+- 8ee7e32: Hisui's regional forms, its new evolutions and Enamorus arrive:
+  
+  - Hisuian Growlithe and Arcanine cast faster at an enemy that targets a teammate.
+  - Hisuian Voltorb and Electrode cast Leech Seed on every enemy when they drop below half HP.
+  - Hisuian Qwilfish and Overqwil heal from the poison the enemy side takes.
+  - Hisuian Sneasel and Sneasler paralyse poisoned targets with their contact moves.
+  - Hisuian Zorua and Zoroark linger for 4 seconds the first time they would faint.
+  - White-striped Basculin and Basculegion take the next blow at half after a teammate faints.
+  - Hisuian Typhlosion, Samurott, Decidueye, Lilligant, Braviary, Sliggoo, Goodra and Avalugg are offered beside the older evolution.
+  - Kleavor (Black Augurite), Ursaluna (Peat Block at night) and Sneasler (Razor Claw by day) evolve the mainline way, and the two new items are stocked.
+  - Wyrdeer, Overqwil and Basculegion open after feats counted across fights.
+  - Enamorus stands in the Scarlet Bog and lifts its team's Fairy moves, and the Reveal Glass shows its Therian shape.
+- 58ae85a: The Selling tab names who leads or won each lot, and pressing the name opens their profile.
+
+### Patch Changes
+
+- 819f2fd: The admin dashboard no longer plays the game for the staff member on it: no position is read or written, and no notice chimes or quest toasts arrive there.
+
 ## 4.35.0
 
 ### Minor Changes

@@ -755,6 +755,150 @@ Qwilfish:
       - ToxicSpikes
       - VenomDrench
     egg: [BubbleBeam, Flail, Haze, Supersonic, Astonish, AquaJet, AcidSpray, WaterPulse]
+  QwilfishHisui:
+    level:
+      1: [Tackle, PoisonSting]
+      4: [Harden]
+      8: [Bite]
+      12: [FellStinger]
+      16: [Minimize]
+      20: [Spikes]
+      24: [Brine]
+      28: [BarbBarrage]
+      32: [PinMissile]
+      36: [ToxicSpikes]
+      40: [Stockpile, SpitUp]
+      44: [Toxic]
+      48: [Crunch]
+      52: [Acupressure]
+      56: [DestinyBond]
+    teachable:
+      [
+        AcidSpray,
+        Agility,
+        Blizzard,
+        Crunch,
+        Curse,
+        DarkPulse,
+        DoubleEdge,
+        Endure,
+        Facade,
+        GigaImpact,
+        GunkShot,
+        GyroBall,
+        Haze,
+        Hex,
+        HydroPump,
+        IceBeam,
+        IcyWind,
+        LashOut,
+        Liquidation,
+        MudShot,
+        PainSplit,
+        PoisonJab,
+        PoisonTail,
+        Protect,
+        RainDance,
+        Rest,
+        Reversal,
+        ScaleShot,
+        ScaryFace,
+        ShadowBall,
+        SleepTalk,
+        SludgeBomb,
+        Spikes,
+        Spite,
+        Substitute,
+        Surf,
+        Swift,
+        SwordsDance,
+        TakeDown,
+        Taunt,
+        ThroatChop,
+        Toxic,
+        ToxicSpikes,
+        Venoshock,
+        WaterPulse,
+        Waterfall,
+      ]
+    egg:
+      [
+        AcidSpray,
+        AquaJet,
+        AquaTail,
+        Astonish,
+        BubbleBeam,
+        Flail,
+        Haze,
+        SelfDestruct,
+        Supersonic,
+        WaterPulse,
+      ]
+  Overqwil:
+    level:
+      1: [Tackle, PoisonSting]
+      4: [Harden]
+      8: [Bite]
+      12: [FellStinger]
+      16: [Minimize]
+      20: [Spikes]
+      24: [Brine]
+      28: [BarbBarrage]
+      32: [PinMissile]
+      36: [ToxicSpikes]
+      40: [Stockpile, SpitUp]
+      44: [Toxic]
+      48: [Crunch]
+      52: [Acupressure]
+      56: [DestinyBond]
+    teachable:
+      [
+        Agility,
+        Blizzard,
+        Crunch,
+        Curse,
+        DarkPulse,
+        DoubleEdge,
+        Endure,
+        Facade,
+        GigaImpact,
+        GunkShot,
+        GyroBall,
+        Haze,
+        HydroPump,
+        HyperBeam,
+        IceBeam,
+        IcyWind,
+        LashOut,
+        Liquidation,
+        MudShot,
+        PainSplit,
+        PoisonJab,
+        PoisonTail,
+        Protect,
+        RainDance,
+        Rest,
+        Reversal,
+        ScaleShot,
+        ScaryFace,
+        ShadowBall,
+        SleepTalk,
+        SludgeBomb,
+        SludgeWave,
+        SmartStrike,
+        Spikes,
+        Spite,
+        Substitute,
+        Surf,
+        SwordsDance,
+        TakeDown,
+        Taunt,
+        ThroatChop,
+        Toxic,
+        ToxicSpikes,
+        Venoshock,
+        Waterfall,
+      ]
 Shuckle:
   Shuckle:
     level:
@@ -1187,6 +1331,141 @@ Sneasel:
       - Screech
       - Snarl
       - Whirlpool
+  SneaselHisui:
+    level:
+      1: [Scratch, Leer, RockSmash]
+      6: [Taunt]
+      12: [QuickAttack]
+      18: [MetalClaw]
+      24: [PoisonJab]
+      30: [BrickBreak]
+      36: [HoneClaws]
+      42: [Slash]
+      48: [Agility]
+      54: [Screech]
+      60: [CloseCombat]
+    teachable:
+      [
+        AcidSpray,
+        AerialAce,
+        Agility,
+        BrickBreak,
+        BulkUp,
+        CalmMind,
+        CloseCombat,
+        Coaching,
+        Dig,
+        Endure,
+        Facade,
+        FalseSwipe,
+        Fling,
+        FocusBlast,
+        FocusPunch,
+        GigaImpact,
+        GrassKnot,
+        GunkShot,
+        LashOut,
+        LowKick,
+        LowSweep,
+        MetalClaw,
+        NastyPlot,
+        PoisonJab,
+        PoisonTail,
+        Protect,
+        RainDance,
+        Rest,
+        Reversal,
+        ShadowBall,
+        ShadowClaw,
+        SleepTalk,
+        SludgeBomb,
+        SludgeWave,
+        Spite,
+        Substitute,
+        SunnyDay,
+        Swift,
+        SwordsDance,
+        TakeDown,
+        Taunt,
+        Thief,
+        ThroatChop,
+        Toxic,
+        ToxicSpikes,
+        VacuumWave,
+        Venoshock,
+        XScissor,
+      ]
+    egg: [Counter, DoubleHit, FakeOut, Feint, NightSlash, QuickGuard, Switcheroo]
+  Sneasler:
+    level:
+      1: [Scratch, Leer, RockSmash, Fling, DireClaw]
+      6: [Taunt]
+      12: [QuickAttack]
+      18: [MetalClaw]
+      24: [PoisonJab]
+      30: [BrickBreak]
+      36: [HoneClaws]
+      42: [Slash]
+      48: [Agility]
+      54: [Screech]
+      60: [CloseCombat]
+    teachable:
+      [
+        AcidSpray,
+        Acrobatics,
+        AerialAce,
+        Agility,
+        BrickBreak,
+        BulkUp,
+        CalmMind,
+        CloseCombat,
+        Coaching,
+        Dig,
+        Endure,
+        Facade,
+        FalseSwipe,
+        FirePunch,
+        Fling,
+        FocusBlast,
+        FocusPunch,
+        GigaImpact,
+        GrassKnot,
+        GunkShot,
+        HyperBeam,
+        LashOut,
+        LowKick,
+        LowSweep,
+        MetalClaw,
+        NastyPlot,
+        PoisonJab,
+        PoisonTail,
+        Protect,
+        RainDance,
+        Rest,
+        Reversal,
+        RockSlide,
+        RockTomb,
+        ShadowBall,
+        ShadowClaw,
+        SleepTalk,
+        SludgeBomb,
+        SludgeWave,
+        Spite,
+        Substitute,
+        SunnyDay,
+        Swift,
+        SwordsDance,
+        TakeDown,
+        Taunt,
+        Thief,
+        ThroatChop,
+        Toxic,
+        ToxicSpikes,
+        UTurn,
+        VacuumWave,
+        Venoshock,
+        XScissor,
+      ]
 Teddiursa:
   # TM, HM and tutor moves shared by the whole family
 
@@ -1315,6 +1594,81 @@ Teddiursa:
       - LaserFocus
       - ThroatChop
       - RainDance
+  Ursaluna:
+    level:
+      1: [Scratch, Leer, Lick, FakeTears, Covet, HeadlongRush]
+      8: [FurySwipes]
+      13: [Payback]
+      17: [SweetScent]
+      22: [Slash]
+      25: [PlayNice]
+      29: [PlayRough]
+      35: [ScaryFace]
+      41: [Rest, Snore]
+      48: [HighHorsepower]
+      56: [Thrash]
+      64: [HammerArm]
+    teachable:
+      [
+        AerialAce,
+        Avalanche,
+        BodyPress,
+        BodySlam,
+        BrickBreak,
+        BulkUp,
+        Bulldoze,
+        Charm,
+        CloseCombat,
+        Crunch,
+        Curse,
+        Dig,
+        DoubleEdge,
+        DrainPunch,
+        EarthPower,
+        Earthquake,
+        Endure,
+        Facade,
+        FakeTears,
+        FirePunch,
+        Fling,
+        FocusPunch,
+        GigaImpact,
+        GunkShot,
+        HeavySlam,
+        HelpingHand,
+        HighHorsepower,
+        HyperBeam,
+        HyperVoice,
+        IcePunch,
+        LowKick,
+        MetalClaw,
+        Metronome,
+        PlayRough,
+        Protect,
+        RainDance,
+        Rest,
+        Roar,
+        RockSlide,
+        RockTomb,
+        ScaryFace,
+        SeedBomb,
+        ShadowClaw,
+        SleepTalk,
+        SmackDown,
+        StompingTantrum,
+        StoneEdge,
+        Substitute,
+        SunnyDay,
+        Swift,
+        SwordsDance,
+        TakeDown,
+        Taunt,
+        Thief,
+        ThroatChop,
+        ThunderPunch,
+        Uproar,
+        VacuumWave,
+      ]
 Slugma:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:

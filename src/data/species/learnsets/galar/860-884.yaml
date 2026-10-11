@@ -42,7 +42,31 @@ Milcery:
       40: [Recover]
       45: [MistyTerrain]
       50: [Entrainment]
-    teachable: [CalmMind, DrainPunch, Encore, EnergyBall, FakeTears, GigaDrain, GigaImpact, HyperBeam, Imprison, LightScreen, MagicRoom, MagicalLeaf, Metronome, MistyExplosion, MysticalFire, PlayRough, Psychic, Psyshock, Safeguard, SolarBeam, TriAttack, WonderRoom]
+    teachable:
+      [
+        CalmMind,
+        DrainPunch,
+        Encore,
+        EnergyBall,
+        FakeTears,
+        GigaDrain,
+        GigaImpact,
+        HyperBeam,
+        Imprison,
+        LightScreen,
+        MagicRoom,
+        MagicalLeaf,
+        Metronome,
+        MistyExplosion,
+        MysticalFire,
+        PlayRough,
+        Psychic,
+        Psyshock,
+        Safeguard,
+        SolarBeam,
+        TriAttack,
+        WonderRoom,
+      ]
   AlcremieBerry:
     level:
       1: [Tackle, SweetKiss, SweetScent, AromaticMist, Decorate]
@@ -54,7 +78,31 @@ Milcery:
       40: [Recover]
       45: [MistyTerrain]
       50: [Entrainment]
-    teachable: [CalmMind, DrainPunch, Encore, EnergyBall, FakeTears, GigaDrain, GigaImpact, HyperBeam, Imprison, LightScreen, MagicRoom, MagicalLeaf, Metronome, MistyExplosion, MysticalFire, PlayRough, Psychic, Psyshock, Safeguard, SolarBeam, TriAttack, WonderRoom]
+    teachable:
+      [
+        CalmMind,
+        DrainPunch,
+        Encore,
+        EnergyBall,
+        FakeTears,
+        GigaDrain,
+        GigaImpact,
+        HyperBeam,
+        Imprison,
+        LightScreen,
+        MagicRoom,
+        MagicalLeaf,
+        Metronome,
+        MistyExplosion,
+        MysticalFire,
+        PlayRough,
+        Psychic,
+        Psyshock,
+        Safeguard,
+        SolarBeam,
+        TriAttack,
+        WonderRoom,
+      ]
   AlcremieLove:
     level:
       1: [Tackle, SweetKiss, SweetScent, AromaticMist, Decorate]
@@ -66,7 +114,31 @@ Milcery:
       40: [Recover]
       45: [MistyTerrain]
       50: [Entrainment]
-    teachable: [CalmMind, DrainPunch, Encore, EnergyBall, FakeTears, GigaDrain, GigaImpact, HyperBeam, Imprison, LightScreen, MagicRoom, MagicalLeaf, Metronome, MistyExplosion, MysticalFire, PlayRough, Psychic, Psyshock, Safeguard, SolarBeam, TriAttack, WonderRoom]
+    teachable:
+      [
+        CalmMind,
+        DrainPunch,
+        Encore,
+        EnergyBall,
+        FakeTears,
+        GigaDrain,
+        GigaImpact,
+        HyperBeam,
+        Imprison,
+        LightScreen,
+        MagicRoom,
+        MagicalLeaf,
+        Metronome,
+        MistyExplosion,
+        MysticalFire,
+        PlayRough,
+        Psychic,
+        Psyshock,
+        Safeguard,
+        SolarBeam,
+        TriAttack,
+        WonderRoom,
+      ]
   AlcremieStar:
     level:
       1: [Tackle, SweetKiss, SweetScent, AromaticMist, Decorate]
@@ -78,7 +150,31 @@ Milcery:
       40: [Recover]
       45: [MistyTerrain]
       50: [Entrainment]
-    teachable: [CalmMind, DrainPunch, Encore, EnergyBall, FakeTears, GigaDrain, GigaImpact, HyperBeam, Imprison, LightScreen, MagicRoom, MagicalLeaf, Metronome, MistyExplosion, MysticalFire, PlayRough, Psychic, Psyshock, Safeguard, SolarBeam, TriAttack, WonderRoom]
+    teachable:
+      [
+        CalmMind,
+        DrainPunch,
+        Encore,
+        EnergyBall,
+        FakeTears,
+        GigaDrain,
+        GigaImpact,
+        HyperBeam,
+        Imprison,
+        LightScreen,
+        MagicRoom,
+        MagicalLeaf,
+        Metronome,
+        MistyExplosion,
+        MysticalFire,
+        PlayRough,
+        Psychic,
+        Psyshock,
+        Safeguard,
+        SolarBeam,
+        TriAttack,
+        WonderRoom,
+      ]
   AlcremieClover:
     level:
       1: [Tackle, SweetKiss, SweetScent, AromaticMist, Decorate]
@@ -90,7 +186,31 @@ Milcery:
       40: [Recover]
       45: [MistyTerrain]
       50: [Entrainment]
-    teachable: [CalmMind, DrainPunch, Encore, EnergyBall, FakeTears, GigaDrain, GigaImpact, HyperBeam, Imprison, LightScreen, MagicRoom, MagicalLeaf, Metronome, MistyExplosion, MysticalFire, PlayRough, Psychic, Psyshock, Safeguard, SolarBeam, TriAttack, WonderRoom]
+    teachable:
+      [
+        CalmMind,
+        DrainPunch,
+        Encore,
+        EnergyBall,
+        FakeTears,
+        GigaDrain,
+        GigaImpact,
+        HyperBeam,
+        Imprison,
+        LightScreen,
+        MagicRoom,
+        MagicalLeaf,
+        Metronome,
+        MistyExplosion,
+        MysticalFire,
+        PlayRough,
+        Psychic,
+        Psyshock,
+        Safeguard,
+        SolarBeam,
+        TriAttack,
+        WonderRoom,
+      ]
   AlcremieFlower:
     level:
       1: [Tackle, SweetKiss, SweetScent, AromaticMist, Decorate]
@@ -102,7 +222,31 @@ Milcery:
       40: [Recover]
       45: [MistyTerrain]
       50: [Entrainment]
-    teachable: [CalmMind, DrainPunch, Encore, EnergyBall, FakeTears, GigaDrain, GigaImpact, HyperBeam, Imprison, LightScreen, MagicRoom, MagicalLeaf, Metronome, MistyExplosion, MysticalFire, PlayRough, Psychic, Psyshock, Safeguard, SolarBeam, TriAttack, WonderRoom]
+    teachable:
+      [
+        CalmMind,
+        DrainPunch,
+        Encore,
+        EnergyBall,
+        FakeTears,
+        GigaDrain,
+        GigaImpact,
+        HyperBeam,
+        Imprison,
+        LightScreen,
+        MagicRoom,
+        MagicalLeaf,
+        Metronome,
+        MistyExplosion,
+        MysticalFire,
+        PlayRough,
+        Psychic,
+        Psyshock,
+        Safeguard,
+        SolarBeam,
+        TriAttack,
+        WonderRoom,
+      ]
   AlcremieRibbon:
     level:
       1: [Tackle, SweetKiss, SweetScent, AromaticMist, Decorate]
@@ -114,7 +258,31 @@ Milcery:
       40: [Recover]
       45: [MistyTerrain]
       50: [Entrainment]
-    teachable: [CalmMind, DrainPunch, Encore, EnergyBall, FakeTears, GigaDrain, GigaImpact, HyperBeam, Imprison, LightScreen, MagicRoom, MagicalLeaf, Metronome, MistyExplosion, MysticalFire, PlayRough, Psychic, Psyshock, Safeguard, SolarBeam, TriAttack, WonderRoom]
+    teachable:
+      [
+        CalmMind,
+        DrainPunch,
+        Encore,
+        EnergyBall,
+        FakeTears,
+        GigaDrain,
+        GigaImpact,
+        HyperBeam,
+        Imprison,
+        LightScreen,
+        MagicRoom,
+        MagicalLeaf,
+        Metronome,
+        MistyExplosion,
+        MysticalFire,
+        PlayRough,
+        Psychic,
+        Psyshock,
+        Safeguard,
+        SolarBeam,
+        TriAttack,
+        WonderRoom,
+      ]
 Falinks:
   Falinks:
     level:
@@ -131,7 +299,46 @@ Falinks:
       50: [CloseCombat]
       55: [Megahorn]
       60: [Counter]
-    teachable: [Agility, Assurance, BeatUp, BrickBreak, BulkUp, CloseCombat, Coaching, Endure, Facade, FalseSwipe, FocusBlast, FocusEnergy, GigaImpact, HelpingHand, HyperBeam, IronDefense, IronHead, Megahorn, Payback, PoisonJab, Protect, Rest, Retaliate, Revenge, Reversal, RockSlide, RockTomb, Round, Screech, SleepTalk, SmartStrike, Snore, Substitute, Superpower, SwordsDance, ThroatChop, ZenHeadbutt]
+    teachable:
+      [
+        Agility,
+        Assurance,
+        BeatUp,
+        BrickBreak,
+        BulkUp,
+        CloseCombat,
+        Coaching,
+        Endure,
+        Facade,
+        FalseSwipe,
+        FocusBlast,
+        FocusEnergy,
+        GigaImpact,
+        HelpingHand,
+        HyperBeam,
+        IronDefense,
+        IronHead,
+        Megahorn,
+        Payback,
+        PoisonJab,
+        Protect,
+        Rest,
+        Retaliate,
+        Revenge,
+        Reversal,
+        RockSlide,
+        RockTomb,
+        Round,
+        Screech,
+        SleepTalk,
+        SmartStrike,
+        Snore,
+        Substitute,
+        Superpower,
+        SwordsDance,
+        ThroatChop,
+        ZenHeadbutt,
+      ]
 Pincurchin:
   Pincurchin:
     level:
@@ -148,7 +355,42 @@ Pincurchin:
       50: [ZingZap]
       55: [Acupressure]
       60: [Discharge]
-    teachable: [Assurance, Attract, Brine, ElectricTerrain, Endure, Facade, Hex, HydroPump, Liquidation, MuddyWater, Payback, PinMissile, PoisonJab, Protect, RainDance, Rest, Reversal, RisingVoltage, Round, Scald, SelfDestruct, SleepTalk, Snore, Spikes, Substitute, Surf, ThroatChop, Thunder, ThunderWave, Thunderbolt, ToxicSpikes, VenomDrench, Venoshock]
+    teachable:
+      [
+        Assurance,
+        Attract,
+        Brine,
+        ElectricTerrain,
+        Endure,
+        Facade,
+        Hex,
+        HydroPump,
+        Liquidation,
+        MuddyWater,
+        Payback,
+        PinMissile,
+        PoisonJab,
+        Protect,
+        RainDance,
+        Rest,
+        Reversal,
+        RisingVoltage,
+        Round,
+        Scald,
+        SelfDestruct,
+        SleepTalk,
+        Snore,
+        Spikes,
+        Substitute,
+        Surf,
+        ThroatChop,
+        Thunder,
+        ThunderWave,
+        Thunderbolt,
+        ToxicSpikes,
+        VenomDrench,
+        Venoshock,
+      ]
     egg: [Memento, SuckerPunch]
 Snom:
   # TM, TR and tutor moves shared by the whole family
@@ -186,7 +428,32 @@ Snom:
       44: [Tailwind]
       48: [WideGuard]
       52: [QuiverDance]
-    teachable: [Acrobatics, AirSlash, Avalanche, Blizzard, CalmMind, DazzlingGleam, DualWingbeat, GigaDrain, GigaImpact, Hail, HelpingHand, Hurricane, HyperBeam, IceBeam, Imprison, LeechLife, LightScreen, PlayRough, Reflect, Safeguard, TripleAxel, UTurn, WeatherBall]
+    teachable:
+      [
+        Acrobatics,
+        AirSlash,
+        Avalanche,
+        Blizzard,
+        CalmMind,
+        DazzlingGleam,
+        DualWingbeat,
+        GigaDrain,
+        GigaImpact,
+        Hail,
+        HelpingHand,
+        Hurricane,
+        HyperBeam,
+        IceBeam,
+        Imprison,
+        LeechLife,
+        LightScreen,
+        PlayRough,
+        Reflect,
+        Safeguard,
+        TripleAxel,
+        UTurn,
+        WeatherBall,
+      ]
 Stonjourner:
   Stonjourner:
     level:
@@ -202,7 +469,45 @@ Stonjourner:
       54: [HeavySlam]
       60: [StoneEdge]
       66: [MegaKick]
-    teachable: [Assurance, Attract, BodyPress, BodySlam, BrutalSwing, Bulldoze, EarthPower, Earthquake, Endure, Facade, GigaImpact, HeatCrash, HeavySlam, HyperBeam, Imprison, IronDefense, MegaKick, MeteorBeam, Protect, Rest, RockBlast, RockSlide, RockTomb, Round, Safeguard, SandTomb, Sandstorm, SelfDestruct, SleepTalk, Snore, StealthRock, StompingTantrum, StoneEdge, Substitute, Superpower, WonderRoom]
+    teachable:
+      [
+        Assurance,
+        Attract,
+        BodyPress,
+        BodySlam,
+        BrutalSwing,
+        Bulldoze,
+        EarthPower,
+        Earthquake,
+        Endure,
+        Facade,
+        GigaImpact,
+        HeatCrash,
+        HeavySlam,
+        HyperBeam,
+        Imprison,
+        IronDefense,
+        MegaKick,
+        MeteorBeam,
+        Protect,
+        Rest,
+        RockBlast,
+        RockSlide,
+        RockTomb,
+        Round,
+        Safeguard,
+        SandTomb,
+        Sandstorm,
+        SelfDestruct,
+        SleepTalk,
+        Snore,
+        StealthRock,
+        StompingTantrum,
+        StoneEdge,
+        Substitute,
+        Superpower,
+        WonderRoom,
+      ]
     egg: [AncientPower, Curse]
 Eiscue:
   # TM, TR and tutor moves shared by the whole family
@@ -428,7 +733,55 @@ Dracozolt:
       63: [BoltBeak]
       70: [DragonPulse]
       77: [DragonRush]
-    teachable: [BodySlam, BreakingSwipe, BrutalSwing, Bulldoze, DracoMeteor, DragonClaw, DragonPulse, EarthPower, Earthquake, ElectroBall, Endure, Facade, FireBlast, FireFang, FireSpin, Flamethrower, GigaImpact, HighHorsepower, HyperBeam, IronTail, LowKick, MegaKick, MegaPunch, MeteorBeam, Outrage, Protect, RainDance, Rest, RisingVoltage, RockBlast, RockSlide, RockTomb, Round, SleepTalk, Snore, StompingTantrum, StoneEdge, Substitute, SunnyDay, Taunt, Thunder, ThunderFang, ThunderPunch, ThunderWave, Thunderbolt, WildCharge]
+    teachable:
+      [
+        BodySlam,
+        BreakingSwipe,
+        BrutalSwing,
+        Bulldoze,
+        DracoMeteor,
+        DragonClaw,
+        DragonPulse,
+        EarthPower,
+        Earthquake,
+        ElectroBall,
+        Endure,
+        Facade,
+        FireBlast,
+        FireFang,
+        FireSpin,
+        Flamethrower,
+        GigaImpact,
+        HighHorsepower,
+        HyperBeam,
+        IronTail,
+        LowKick,
+        MegaKick,
+        MegaPunch,
+        MeteorBeam,
+        Outrage,
+        Protect,
+        RainDance,
+        Rest,
+        RisingVoltage,
+        RockBlast,
+        RockSlide,
+        RockTomb,
+        Round,
+        SleepTalk,
+        Snore,
+        StompingTantrum,
+        StoneEdge,
+        Substitute,
+        SunnyDay,
+        Taunt,
+        Thunder,
+        ThunderFang,
+        ThunderPunch,
+        ThunderWave,
+        Thunderbolt,
+        WildCharge,
+      ]
 Arctozolt:
   Arctozolt:
     level:
@@ -444,7 +797,52 @@ Arctozolt:
       63: [BoltBeak]
       70: [IcicleCrash]
       77: [Blizzard]
-    teachable: [Avalanche, Blizzard, BodySlam, Bulldoze, ElectroBall, Endure, Facade, GigaImpact, Hail, HydroPump, HyperBeam, HyperVoice, IceBeam, IceFang, IcicleSpear, IcyWind, IronTail, LowKick, MegaKick, MegaPunch, MeteorBeam, Payback, Protect, RainDance, Rest, RisingVoltage, RockBlast, RockSlide, RockTomb, Round, SleepTalk, Snore, StompingTantrum, StoneEdge, Substitute, Surf, Taunt, Thunder, ThunderFang, ThunderPunch, ThunderWave, Thunderbolt, WildCharge]
+    teachable:
+      [
+        Avalanche,
+        Blizzard,
+        BodySlam,
+        Bulldoze,
+        ElectroBall,
+        Endure,
+        Facade,
+        GigaImpact,
+        Hail,
+        HydroPump,
+        HyperBeam,
+        HyperVoice,
+        IceBeam,
+        IceFang,
+        IcicleSpear,
+        IcyWind,
+        IronTail,
+        LowKick,
+        MegaKick,
+        MegaPunch,
+        MeteorBeam,
+        Payback,
+        Protect,
+        RainDance,
+        Rest,
+        RisingVoltage,
+        RockBlast,
+        RockSlide,
+        RockTomb,
+        Round,
+        SleepTalk,
+        Snore,
+        StompingTantrum,
+        StoneEdge,
+        Substitute,
+        Surf,
+        Taunt,
+        Thunder,
+        ThunderFang,
+        ThunderPunch,
+        ThunderWave,
+        Thunderbolt,
+        WildCharge,
+      ]
 Dracovish:
   Dracovish:
     level:
@@ -460,7 +858,50 @@ Dracovish:
       63: [FishiousRend]
       70: [DragonPulse]
       77: [DragonRush]
-    teachable: [BodySlam, Brine, BrutalSwing, Bulldoze, Crunch, Dive, DracoMeteor, DragonPulse, EarthPower, Earthquake, Endure, Facade, GigaImpact, HydroPump, HyperBeam, IceFang, IronHead, LeechLife, Liquidation, LowKick, MegaKick, MeteorBeam, Outrage, Protect, PsychicFangs, RainDance, Rest, RockBlast, RockSlide, RockTomb, Round, Scald, SleepTalk, Snore, StompingTantrum, StoneEdge, Substitute, Surf, Waterfall, Whirlpool, ZenHeadbutt]
+    teachable:
+      [
+        BodySlam,
+        Brine,
+        BrutalSwing,
+        Bulldoze,
+        Crunch,
+        Dive,
+        DracoMeteor,
+        DragonPulse,
+        EarthPower,
+        Earthquake,
+        Endure,
+        Facade,
+        GigaImpact,
+        HydroPump,
+        HyperBeam,
+        IceFang,
+        IronHead,
+        LeechLife,
+        Liquidation,
+        LowKick,
+        MegaKick,
+        MeteorBeam,
+        Outrage,
+        Protect,
+        PsychicFangs,
+        RainDance,
+        Rest,
+        RockBlast,
+        RockSlide,
+        RockTomb,
+        Round,
+        Scald,
+        SleepTalk,
+        Snore,
+        StompingTantrum,
+        StoneEdge,
+        Substitute,
+        Surf,
+        Waterfall,
+        Whirlpool,
+        ZenHeadbutt,
+      ]
 Arctovish:
   Arctovish:
     level:
@@ -476,7 +917,45 @@ Arctovish:
       63: [FishiousRend]
       70: [IcicleCrash]
       77: [Blizzard]
-    teachable: [Avalanche, Blizzard, BodySlam, Brine, Crunch, Dive, Endure, Facade, GigaImpact, Hail, HydroPump, HyperBeam, IceBeam, IceFang, IcicleSpear, IcyWind, IronDefense, IronHead, Liquidation, MeteorBeam, Protect, PsychicFangs, RainDance, Rest, RockBlast, RockSlide, RockTomb, Round, SleepTalk, Snore, StoneEdge, Substitute, Surf, Waterfall, Whirlpool, ZenHeadbutt]
+    teachable:
+      [
+        Avalanche,
+        Blizzard,
+        BodySlam,
+        Brine,
+        Crunch,
+        Dive,
+        Endure,
+        Facade,
+        GigaImpact,
+        Hail,
+        HydroPump,
+        HyperBeam,
+        IceBeam,
+        IceFang,
+        IcicleSpear,
+        IcyWind,
+        IronDefense,
+        IronHead,
+        Liquidation,
+        MeteorBeam,
+        Protect,
+        PsychicFangs,
+        RainDance,
+        Rest,
+        RockBlast,
+        RockSlide,
+        RockTomb,
+        Round,
+        SleepTalk,
+        Snore,
+        StoneEdge,
+        Substitute,
+        Surf,
+        Waterfall,
+        Whirlpool,
+        ZenHeadbutt,
+      ]
 Duraludon:
   Duraludon:
     level:
@@ -492,5 +971,50 @@ Duraludon:
       54: [FlashCannon]
       60: [MetalBurst]
       66: [HyperBeam]
-    teachable: [Attract, BodyPress, BodySlam, BreakingSwipe, BrickBreak, DarkPulse, DracoMeteor, DragonClaw, DragonPulse, Endure, Facade, FlashCannon, FoulPlay, GigaImpact, GyroBall, HeavySlam, HyperBeam, IronDefense, IronHead, LightScreen, Outrage, Protect, Reflect, Rest, RockSlide, RockTomb, Round, ScaryFace, Screech, SleepTalk, Snarl, Snore, SolarBeam, StealthRock, SteelBeam, SteelRoller, StompingTantrum, StoneEdge, Substitute, SwordsDance, Thunder, ThunderWave, Thunderbolt]
+    teachable:
+      [
+        Attract,
+        BodyPress,
+        BodySlam,
+        BreakingSwipe,
+        BrickBreak,
+        DarkPulse,
+        DracoMeteor,
+        DragonClaw,
+        DragonPulse,
+        Endure,
+        Facade,
+        FlashCannon,
+        FoulPlay,
+        GigaImpact,
+        GyroBall,
+        HeavySlam,
+        HyperBeam,
+        IronDefense,
+        IronHead,
+        LightScreen,
+        Outrage,
+        Protect,
+        Reflect,
+        Rest,
+        RockSlide,
+        RockTomb,
+        Round,
+        ScaryFace,
+        Screech,
+        SleepTalk,
+        Snarl,
+        Snore,
+        SolarBeam,
+        StealthRock,
+        SteelBeam,
+        SteelRoller,
+        StompingTantrum,
+        StoneEdge,
+        Substitute,
+        SwordsDance,
+        Thunder,
+        ThunderWave,
+        Thunderbolt,
+      ]
     egg: [MirrorCoat, NightSlash, Slash]

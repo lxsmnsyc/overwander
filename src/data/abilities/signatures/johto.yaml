@@ -64,3 +64,6 @@ families:
 forms:
   # Galar's regional lines whose every stage is regional carry their own
   CoralHusk: [CorsolaGalar, Cursola]
+  # Hisui's regional lines whose every stage is regional
+  VenomFeast: [QwilfishHisui, Overqwil]
+  NerveVenom: [SneaselHisui, Sneasler]

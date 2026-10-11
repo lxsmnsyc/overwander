@@ -1,0 +1,119 @@
+Enamorus:
+  Enamorus:
+    level:
+      1: [Astonish, FairyWind]
+      5: [Torment]
+      10: [Flatter]
+      15: [Twister]
+      20: [DrainingKiss]
+      25: [IronDefense]
+      30: [Imprison]
+      35: [MysticalFire]
+      40: [DazzlingGleam]
+      45: [Extrasensory]
+      50: [Uproar]
+      55: [Superpower]
+      60: [HealingWish]
+      65: [Moonblast]
+      70: [Outrage]
+      75: [SpringtideStorm]
+    teachable:
+      [
+        Agility,
+        BodySlam,
+        CalmMind,
+        DazzlingGleam,
+        DisarmingVoice,
+        DrainingKiss,
+        EarthPower,
+        Endure,
+        Facade,
+        Fly,
+        FocusBlast,
+        GigaImpact,
+        GrassKnot,
+        GrassyTerrain,
+        HyperBeam,
+        Imprison,
+        IronDefense,
+        IronHead,
+        MistyExplosion,
+        MistyTerrain,
+        Outrage,
+        PlayRough,
+        Protect,
+        PsychUp,
+        Psychic,
+        RainDance,
+        Rest,
+        ScaryFace,
+        SleepTalk,
+        SludgeBomb,
+        Substitute,
+        SunnyDay,
+        Tailwind,
+        TakeDown,
+        Taunt,
+        Uproar,
+        WeatherBall,
+        ZenHeadbutt,
+      ]
+  EnamorusTherian:
+    level:
+      1: [Astonish, FairyWind]
+      5: [Torment]
+      10: [Flatter]
+      15: [Twister]
+      20: [DrainingKiss]
+      25: [IronDefense]
+      30: [Imprison]
+      35: [MysticalFire]
+      40: [DazzlingGleam]
+      45: [Extrasensory]
+      50: [Uproar]
+      55: [Superpower]
+      60: [HealingWish]
+      65: [Moonblast]
+      70: [Outrage]
+      75: [SpringtideStorm]
+    teachable:
+      [
+        Agility,
+        BodySlam,
+        CalmMind,
+        DazzlingGleam,
+        DisarmingVoice,
+        DrainingKiss,
+        EarthPower,
+        Endure,
+        Facade,
+        Fly,
+        FocusBlast,
+        GigaImpact,
+        GrassKnot,
+        GrassyTerrain,
+        HyperBeam,
+        Imprison,
+        IronDefense,
+        IronHead,
+        MistyExplosion,
+        MistyTerrain,
+        Outrage,
+        PlayRough,
+        Protect,
+        PsychUp,
+        Psychic,
+        RainDance,
+        Rest,
+        ScaryFace,
+        SleepTalk,
+        SludgeBomb,
+        Substitute,
+        SunnyDay,
+        Tailwind,
+        TakeDown,
+        Taunt,
+        Uproar,
+        WeatherBall,
+        ZenHeadbutt,
+      ]

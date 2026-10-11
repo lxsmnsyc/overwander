@@ -12,6 +12,18 @@ Zorua:
     height: 1.6
     weight: 81.1
     gender: [7, 1]
+  ZoruaHisui:
+    stats: { HP: 35, Attack: 60, Defense: 40, SpecialAttack: 85, SpecialDefense: 40, Speed: 70 }
+    catch-rate: 75
+    height: 0.7
+    weight: 12.5
+    gender: [7, 1]
+  ZoroarkHisui:
+    stats: { HP: 55, Attack: 100, Defense: 60, SpecialAttack: 125, SpecialDefense: 60, Speed: 110 }
+    catch-rate: 45
+    height: 1.6
+    weight: 73
+    gender: [7, 1]
 Minccino:
   Minccino:
     stats: { HP: 55, Attack: 50, Defense: 40, SpecialAttack: 40, SpecialDefense: 40, Speed: 75 }

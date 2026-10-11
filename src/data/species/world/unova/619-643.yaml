@@ -82,11 +82,23 @@ Rufflet:
       - species: Braviary
         method: [Level]
         level: 54
+      # The Hisuian one, as the old country grew it: both are offered,
+      # and the player picks
+      - species: BraviaryHisui
+        method: [Level]
+        level: 54
   Braviary:
     types: [Normal, Flying]
     egg-groups: [Flying]
     biomes: [Mountain, Steppe]
     active: [Morning, Day]
+    evolves-from: Rufflet
+  BraviaryHisui:
+    types: [Psychic, Flying]
+    egg-groups: [Flying]
+    biomes: [Mountain, AlpineTundra]
+    active: [Morning, Day]
+    base-form: false
     evolves-from: Rufflet
 Vullaby:
   # The vulture: every Vullaby is female, and the bone it wears is not

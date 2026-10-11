@@ -31,6 +31,12 @@ Goomy:
     # the slug Sap Sipper, Hydration and Gooey, and Hisuian Goodra's
     # Shell Armor belongs to that form rather than to this one
     hidden: [Gooey, WaterAbsorb]
+  SliggooHisui:
+    abilities: [SapSipper, ShellArmor]
+    hidden: [Gooey]
+  GoodraHisui:
+    abilities: [SapSipper, ShellArmor]
+    hidden: [Gooey]
 Klefki:
   Klefki:
     abilities: [Prankster]
@@ -69,6 +75,9 @@ Bergmite:
     # the floe Own Tempo, Ice Body and Sturdy, and Hisuian Avalugg's
     # Strong Jaw belongs to that form rather than to this one
     hidden: [Sturdy, SnowWarning]
+  AvaluggHisui:
+    abilities: [StrongJaw, IceBody]
+    hidden: [Sturdy]
 Noibat:
   Noibat:
     abilities: [Frisk, Infiltrator]

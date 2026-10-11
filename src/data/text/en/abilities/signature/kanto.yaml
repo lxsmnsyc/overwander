@@ -276,3 +276,9 @@ Strikewing:
 Wrathwing:
   name: Wrathwing
   description: Every enemy loses a stage of Defense as it arrives on the field. Against an Emberwing holder neither wingbeat lands.
+Watchfire:
+  name: Watchfire
+  description: When an enemy starts casting at one of its teammates, its own next move at that enemy casts 40% faster.
+HuskBurst:
+  name: Husk Burst
+  description: The first time it drops below 1/2 HP, it casts Leech Seed on every enemy.

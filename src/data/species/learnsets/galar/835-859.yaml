@@ -51,7 +51,18 @@ Yamper:
       48: [WildCharge]
       55: [PlayRough]
       62: [ElectricTerrain]
-    teachable: [Agility, BulkUp, EerieImpulse, ElectricTerrain, FocusEnergy, GigaImpact, HyperBeam, HyperVoice, PsychicFangs]
+    teachable:
+      [
+        Agility,
+        BulkUp,
+        EerieImpulse,
+        ElectricTerrain,
+        FocusEnergy,
+        GigaImpact,
+        HyperBeam,
+        HyperVoice,
+        PsychicFangs,
+      ]
 Applin:
   # TM, TR and tutor moves shared by the whole family
   family-teachable:
@@ -76,7 +87,38 @@ Applin:
       36: [IronDefense]
       40: [Fly]
       44: [DragonRush]
-    teachable: [Acrobatics, AirSlash, BulletSeed, DragonDance, DragonPulse, DualWingbeat, Endure, EnergyBall, Facade, Fly, FocusEnergy, GigaDrain, GigaImpact, GrassKnot, HeavySlam, HyperBeam, IronDefense, Outrage, Protect, Rest, Round, ScaryFace, SeedBomb, SleepTalk, Snore, SolarBeam, Substitute, SunnyDay, UTurn]
+    teachable:
+      [
+        Acrobatics,
+        AirSlash,
+        BulletSeed,
+        DragonDance,
+        DragonPulse,
+        DualWingbeat,
+        Endure,
+        EnergyBall,
+        Facade,
+        Fly,
+        FocusEnergy,
+        GigaDrain,
+        GigaImpact,
+        GrassKnot,
+        HeavySlam,
+        HyperBeam,
+        IronDefense,
+        Outrage,
+        Protect,
+        Rest,
+        Round,
+        ScaryFace,
+        SeedBomb,
+        SleepTalk,
+        Snore,
+        SolarBeam,
+        Substitute,
+        SunnyDay,
+        UTurn,
+      ]
   Appletun:
     level:
       1: [Headbutt, Growth, Withdraw, SweetScent, Recycle, Astonish]
@@ -91,7 +133,42 @@ Applin:
       36: [IronDefense]
       40: [DragonPulse]
       44: [EnergyBall]
-    teachable: [Amnesia, BodyPress, BodySlam, Bulldoze, BulletSeed, DragonPulse, Earthquake, Endure, EnergyBall, Facade, GigaDrain, GigaImpact, GrassKnot, GyroBall, HeavySlam, HighHorsepower, HyperBeam, IronDefense, LightScreen, Outrage, Payback, Protect, Reflect, Rest, Round, Safeguard, SeedBomb, SleepTalk, Snore, SolarBeam, Substitute, SunnyDay, Superpower]
+    teachable:
+      [
+        Amnesia,
+        BodyPress,
+        BodySlam,
+        Bulldoze,
+        BulletSeed,
+        DragonPulse,
+        Earthquake,
+        Endure,
+        EnergyBall,
+        Facade,
+        GigaDrain,
+        GigaImpact,
+        GrassKnot,
+        GyroBall,
+        HeavySlam,
+        HighHorsepower,
+        HyperBeam,
+        IronDefense,
+        LightScreen,
+        Outrage,
+        Payback,
+        Protect,
+        Reflect,
+        Rest,
+        Round,
+        Safeguard,
+        SeedBomb,
+        SleepTalk,
+        Snore,
+        SolarBeam,
+        Substitute,
+        SunnyDay,
+        Superpower,
+      ]
 Silicobra:
   # TM, TR and tutor moves shared by the whole family
   family-teachable:
@@ -142,7 +219,24 @@ Silicobra:
       42: [Slam]
       49: [Coil]
       51: [SandTomb]
-    teachable: [BodyPress, FireFang, GigaImpact, HighHorsepower, Hurricane, HyperBeam, IronDefense, IronHead, Outrage, RockBlast, RockSlide, RockTomb, StealthRock, StoneEdge, ZenHeadbutt]
+    teachable:
+      [
+        BodyPress,
+        FireFang,
+        GigaImpact,
+        HighHorsepower,
+        Hurricane,
+        HyperBeam,
+        IronDefense,
+        IronHead,
+        Outrage,
+        RockBlast,
+        RockSlide,
+        RockTomb,
+        StealthRock,
+        StoneEdge,
+        ZenHeadbutt,
+      ]
 Cramorant:
   # TM, TR and tutor moves shared by the whole family
   family-teachable:
@@ -289,7 +383,21 @@ Toxel:
     egg: [Endeavor, MetalSound, PowerUpPunch]
   Toxtricity:
     level:
-      1: [Leer, Growl, Acid, ThunderShock, Flail, Spark, AcidSpray, Belch, NobleRoar, EerieImpulse, Nuzzle, TearfulLook]
+      1:
+        [
+          Leer,
+          Growl,
+          Acid,
+          ThunderShock,
+          Flail,
+          Spark,
+          AcidSpray,
+          Belch,
+          NobleRoar,
+          EerieImpulse,
+          Nuzzle,
+          TearfulLook,
+        ]
       4: [Charge]
       8: [ShockWave]
       12: [ScaryFace]
@@ -303,10 +411,58 @@ Toxel:
       44: [Overdrive]
       48: [Boomburst]
       52: [ShiftGear]
-    teachable: [DrainPunch, EerieImpulse, ElectroBall, FirePunch, Fling, GigaImpact, GunkShot, Hex, HyperBeam, HyperVoice, MegaKick, MegaPunch, Payback, PoisonJab, RisingVoltage, ScaryFace, Screech, SludgeBomb, SludgeWave, Snarl, StoredPower, Swift, Taunt, ThroatChop, Thunder, ThunderPunch, ThunderWave, Thunderbolt, Uproar, Venoshock, VoltSwitch, WildCharge]
+    teachable:
+      [
+        DrainPunch,
+        EerieImpulse,
+        ElectroBall,
+        FirePunch,
+        Fling,
+        GigaImpact,
+        GunkShot,
+        Hex,
+        HyperBeam,
+        HyperVoice,
+        MegaKick,
+        MegaPunch,
+        Payback,
+        PoisonJab,
+        RisingVoltage,
+        ScaryFace,
+        Screech,
+        SludgeBomb,
+        SludgeWave,
+        Snarl,
+        StoredPower,
+        Swift,
+        Taunt,
+        ThroatChop,
+        Thunder,
+        ThunderPunch,
+        ThunderWave,
+        Thunderbolt,
+        Uproar,
+        Venoshock,
+        VoltSwitch,
+        WildCharge,
+      ]
   ToxtricityLowKey:
     level:
-      1: [Leer, Growl, Acid, ThunderShock, Flail, Spark, AcidSpray, Belch, NobleRoar, EerieImpulse, Nuzzle, TearfulLook]
+      1:
+        [
+          Leer,
+          Growl,
+          Acid,
+          ThunderShock,
+          Flail,
+          Spark,
+          AcidSpray,
+          Belch,
+          NobleRoar,
+          EerieImpulse,
+          Nuzzle,
+          TearfulLook,
+        ]
       4: [Charge]
       8: [ShockWave]
       12: [ScaryFace]
@@ -320,7 +476,41 @@ Toxel:
       44: [Overdrive]
       48: [Boomburst]
       52: [MagneticFlux]
-    teachable: [DrainPunch, EerieImpulse, ElectroBall, FirePunch, Fling, GigaImpact, GunkShot, Hex, HyperBeam, HyperVoice, MegaKick, MegaPunch, Payback, PoisonJab, RisingVoltage, ScaryFace, Screech, SludgeBomb, SludgeWave, Snarl, StoredPower, Swift, Taunt, ThroatChop, Thunder, ThunderPunch, ThunderWave, Thunderbolt, Uproar, VenomDrench, VoltSwitch, WildCharge]
+    teachable:
+      [
+        DrainPunch,
+        EerieImpulse,
+        ElectroBall,
+        FirePunch,
+        Fling,
+        GigaImpact,
+        GunkShot,
+        Hex,
+        HyperBeam,
+        HyperVoice,
+        MegaKick,
+        MegaPunch,
+        Payback,
+        PoisonJab,
+        RisingVoltage,
+        ScaryFace,
+        Screech,
+        SludgeBomb,
+        SludgeWave,
+        Snarl,
+        StoredPower,
+        Swift,
+        Taunt,
+        ThroatChop,
+        Thunder,
+        ThunderPunch,
+        ThunderWave,
+        Thunderbolt,
+        Uproar,
+        VenomDrench,
+        VoltSwitch,
+        WildCharge,
+      ]
 Sizzlipede:
   # TM, TR and tutor moves shared by the whole family
   family-teachable:
@@ -373,7 +563,21 @@ Sizzlipede:
       53: [FireLash]
       60: [Lunge]
       67: [BurnUp]
-    teachable: [FireBlast, FireFang, Flamethrower, FlareBlitz, GigaImpact, HyperBeam, MysticalFire, Overheat, SolarBeam, ThunderFang, WillOWisp, XScissor]
+    teachable:
+      [
+        FireBlast,
+        FireFang,
+        Flamethrower,
+        FlareBlitz,
+        GigaImpact,
+        HyperBeam,
+        MysticalFire,
+        Overheat,
+        SolarBeam,
+        ThunderFang,
+        WillOWisp,
+        XScissor,
+      ]
 Clobbopus:
   # TM, TR and tutor moves shared by the whole family
   family-teachable:
@@ -431,7 +635,20 @@ Clobbopus:
       40: [Reversal]
       45: [Superpower]
       50: [TopsyTurvy]
-    teachable: [BrutalSwing, Dig, DrainPunch, GigaImpact, HydroPump, HyperBeam, ScaryFace, SkitterSmack, StompingTantrum, Surf, Whirlpool]
+    teachable:
+      [
+        BrutalSwing,
+        Dig,
+        DrainPunch,
+        GigaImpact,
+        HydroPump,
+        HyperBeam,
+        ScaryFace,
+        SkitterSmack,
+        StompingTantrum,
+        Surf,
+        Whirlpool,
+      ]
 Sinistea:
   # TM, TR and tutor moves shared by the whole family
   family-teachable:
@@ -555,7 +772,24 @@ Hatenna:
       46: [Psychic]
       55: [HealingWish]
       64: [MagicPowder]
-    teachable: [BrutalSwing, FutureSight, GigaImpact, GuardSwap, HyperBeam, MagicRoom, MistyExplosion, PowerSwap, PowerWhip, PsychoCut, ShadowBall, ShadowClaw, SwordsDance, TrickRoom, WonderRoom]
+    teachable:
+      [
+        BrutalSwing,
+        FutureSight,
+        GigaImpact,
+        GuardSwap,
+        HyperBeam,
+        MagicRoom,
+        MistyExplosion,
+        PowerSwap,
+        PowerWhip,
+        PsychoCut,
+        ShadowBall,
+        ShadowClaw,
+        SwordsDance,
+        TrickRoom,
+        WonderRoom,
+      ]
 Impidimp:
   # TM, TR and tutor moves shared by the whole family
   family-teachable:
@@ -631,4 +865,30 @@ Impidimp:
       48: [PlayRough]
       56: [FoulPlay]
       64: [HammerArm]
-    teachable: [BodyPress, BodySlam, BrickBreak, BulkUp, Crunch, DarkestLariat, FirePunch, FocusBlast, FocusEnergy, GigaImpact, HyperBeam, IcePunch, LightScreen, LowSweep, PowerSwap, PowerWhip, Reflect, ScaryFace, ShadowClaw, StompingTantrum, Superpower, ThroatChop, ThunderPunch, WonderRoom]
+    teachable:
+      [
+        BodyPress,
+        BodySlam,
+        BrickBreak,
+        BulkUp,
+        Crunch,
+        DarkestLariat,
+        FirePunch,
+        FocusBlast,
+        FocusEnergy,
+        GigaImpact,
+        HyperBeam,
+        IcePunch,
+        LightScreen,
+        LowSweep,
+        PowerSwap,
+        PowerWhip,
+        Reflect,
+        ScaryFace,
+        ShadowClaw,
+        StompingTantrum,
+        Superpower,
+        ThroatChop,
+        ThunderPunch,
+        WonderRoom,
+      ]

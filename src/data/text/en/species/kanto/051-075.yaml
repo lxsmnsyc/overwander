@@ -14,6 +14,8 @@ Mankey:
 Growlithe:
   Growlithe: { name: Growlithe, category: Puppy Pokemon }
   Arcanine: { name: Arcanine, category: Legendary Pokemon }
+  GrowlitheHisui: { name: Hisuian Growlithe, category: Scout Pokemon }
+  ArcanineHisui: { name: Hisuian Arcanine, category: Legendary Pokemon }
 Poliwag:
   Poliwag: { name: Poliwag, category: Tadpole Pokemon }
   Poliwhirl: { name: Poliwhirl, category: Tadpole Pokemon }

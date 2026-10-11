@@ -17,6 +17,23 @@ Zorua:
     biomes: [TemperateForest, Woodland]
     active: [Evening, Night]
     evolves-from: Zorua
+  ZoruaHisui:
+    types: [Normal, Ghost]
+    egg-groups: [Field]
+    biomes: [Tundra, Taiga, AlpineTundra]
+    active: [Evening, Night]
+    base-form: false
+    evolves-into:
+      - species: ZoroarkHisui
+        method: [Level]
+        level: 30
+  ZoroarkHisui:
+    types: [Normal, Ghost]
+    egg-groups: [Field]
+    biomes: [Tundra, Taiga, AlpineTundra]
+    active: [Evening, Night]
+    base-form: false
+    evolves-from: ZoruaHisui
 Minccino:
   # The chinchillas: a Minccino cleans everything it can reach with its
   # tail, and a Cinccino's scarf is oiled enough that nothing sticks to

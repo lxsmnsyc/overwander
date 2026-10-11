@@ -156,3 +156,9 @@ TimelineSplit:
 CoralHusk:
   name: Coral Husk
   description: When it faints, its husk stays standing for 6 seconds and draws every enemy single-target move aimed at its team, which hits nothing.
+VenomFeast:
+  name: Venom Feast
+  description: It heals 1/2 of whatever poison costs the enemy side while it stands.
+NerveVenom:
+  name: Nerve Venom
+  description: Its contact moves paralyse a poisoned target 30% of the time, and the poison stays.

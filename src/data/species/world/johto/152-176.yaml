@@ -46,11 +46,23 @@ Cyndaquil:
       - species: Typhlosion
         method: [Level]
         level: 36
+      # The Hisuian one, as the old country grew it: both are offered,
+      # and the player picks
+      - species: TyphlosionHisui
+        method: [Level]
+        level: 36
   Typhlosion:
     types: [Fire]
     egg-groups: [Field]
     biomes: [Mountain, Volcano]
     active: [Morning, Day]
+    evolves-from: Quilava
+  TyphlosionHisui:
+    types: [Fire, Ghost]
+    egg-groups: [Field]
+    biomes: [Mountain, Volcano]
+    active: [Evening, Night]
+    base-form: false
     evolves-from: Quilava
 # What the two above the base pick up: the machines that ask for a
 Totodile:

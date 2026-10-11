@@ -8,6 +8,7 @@ Phanpy:
   Donphan: { name: Donphan, category: Armor Pokemon }
 Stantler:
   Stantler: { name: Stantler, category: Big Horn Pokemon }
+  Wyrdeer: { name: Wyrdeer, category: Big Horn Pokemon }
 Smeargle:
   Smeargle: { name: Smeargle, category: Painter Pokemon }
 Miltank:

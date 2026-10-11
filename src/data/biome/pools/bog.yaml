@@ -1,42 +1,43 @@
 land:
   morning: &land-morning
     base:
-      FlabebeBlue: 998
-      Scatterbug: 998
-      Poliwag: 832
-      Bellsprout: 832
-      Lotad: 832
-      Goomy: 499
-      Mudkip: 84
+      FlabebeBlue: 989
+      Scatterbug: 989
+      Poliwag: 824
+      Bellsprout: 824
+      Lotad: 824
+      Goomy: 494
+      Mudkip: 83
       Sobble: 47
     uncommon:
-      Wooper: 321
-      Bidoof: 321
-      Buizel: 321
-      Surskit: 321
-      Chewtle: 300
-      Gulpin: 282
-      Ducklett: 256
-      Marill: 256
-      Croagunk: 256
-      Yanma: 64
+      Wooper: 318
+      Bidoof: 318
+      Buizel: 318
+      Surskit: 318
+      Chewtle: 297
+      Gulpin: 279
+      Ducklett: 254
+      Marill: 254
+      Croagunk: 254
+      Yanma: 63
     rare:
-      Lombre: 286
-      FloetteBlue: 228
-      Spewpa: 228
-      Sliggoo: 143
-      Poliwhirl: 143
-      Weepinbell: 143
+      Lombre: 283
+      FloetteBlue: 226
+      Spewpa: 226
+      Sliggoo: 142
+      Poliwhirl: 142
+      Weepinbell: 142
+      SliggooHisui: 60
       Marshtomp: 29
       Drizzile: 14
     scarce:
-      Masquerain: 95
-      Bibarel: 95
-      Floatzel: 76
-      Swalot: 66
-      Swanna: 58
-      Toxicroak: 58
-      Yanmega: 58
+      Masquerain: 94
+      Bibarel: 94
+      Floatzel: 75
+      Swalot: 65
+      Swanna: 57
+      Toxicroak: 57
+      Yanmega: 57
       Azumarill: 48
       Quagsire: 48
       Drednaw: 35
@@ -48,6 +49,7 @@ land:
       Victreebel: 41
       Ludicolo: 41
       Goodra: 25
+      GoodraHisui: 20
       Swampert: 16
       Inteleon: 4
     prized:
@@ -56,44 +58,46 @@ land:
     special:
       Azelf: 10
       Giratina: 10
+      Enamorus: 10
     mythical:
       Keldeo: 10
   day: *land-morning
   evening:
     base:
-      Tympole: 1275
-      Litwick: 1122
-      Poliwag: 1020
-      Tynamo: 918
-      Goomy: 612
-      Froakie: 102
+      Tympole: 1264
+      Litwick: 1112
+      Poliwag: 1011
+      Tynamo: 910
+      Goomy: 606
+      Froakie: 101
       Sobble: 47
     uncommon:
-      Chewtle: 300
-      Wooper: 292
-      Bidoof: 292
-      Buizel: 292
-      Trubbish: 258
-      Gulpin: 258
-      Venonat: 234
-      Marill: 234
-      Drifloon: 234
-      Croagunk: 234
-      Yanma: 58
+      Chewtle: 297
+      Wooper: 289
+      Bidoof: 289
+      Buizel: 289
+      Trubbish: 256
+      Gulpin: 256
+      Venonat: 232
+      Marill: 232
+      Drifloon: 232
+      Croagunk: 232
+      Yanma: 57
     rare:
-      Palpitoad: 323
-      Lampent: 258
-      Eelektrik: 225
-      Sliggoo: 161
-      Poliwhirl: 161
-      Frogadier: 65
+      Palpitoad: 320
+      Lampent: 256
+      Eelektrik: 223
+      Sliggoo: 160
+      Poliwhirl: 160
+      Frogadier: 64
+      SliggooHisui: 60
       Drizzile: 14
     scarce:
-      Venomoth: 85
-      Bibarel: 85
-      Floatzel: 68
-      Garbodor: 60
-      Swalot: 60
+      Venomoth: 84
+      Bibarel: 84
+      Floatzel: 67
+      Garbodor: 59
+      Swalot: 59
       Drifblim: 52
       Toxicroak: 52
       Yanmega: 52
@@ -111,6 +115,7 @@ land:
       Seismitoad: 30
       Spiritomb: 30
       Eelektross: 24
+      GoodraHisui: 20
       Goodra: 17
       Greninja: 11
       Inteleon: 4
@@ -120,47 +125,49 @@ land:
     special:
       Azelf: 10
       Giratina: 10
+      Enamorus: 10
     mythical:
       Keldeo: 10
   night:
     base:
-      Tympole: 908
-      Litwick: 799
-      Poliwag: 727
-      Oddish: 727
-      Gastly: 727
-      Tynamo: 654
-      Goomy: 436
-      Froakie: 73
+      Tympole: 900
+      Litwick: 792
+      Poliwag: 720
+      Oddish: 720
+      Gastly: 720
+      Tynamo: 648
+      Goomy: 432
+      Froakie: 72
       Sobble: 47
     uncommon:
-      Chewtle: 300
-      Wooper: 292
-      Bidoof: 292
-      Buizel: 292
-      Trubbish: 258
-      Gulpin: 258
-      Grimer: 234
-      Marill: 234
-      Drifloon: 234
-      Croagunk: 234
-      Yanma: 58
+      Chewtle: 297
+      Wooper: 289
+      Bidoof: 289
+      Buizel: 289
+      Trubbish: 256
+      Gulpin: 256
+      Grimer: 232
+      Marill: 232
+      Drifloon: 232
+      Croagunk: 232
+      Yanma: 57
     rare:
-      Palpitoad: 254
-      Lampent: 203
-      Eelektrik: 178
-      Sliggoo: 127
-      Poliwhirl: 127
-      Gloom: 127
-      Haunter: 127
+      Palpitoad: 252
+      Lampent: 201
+      Eelektrik: 176
+      Sliggoo: 126
+      Poliwhirl: 126
+      Gloom: 126
+      Haunter: 126
+      SliggooHisui: 60
       Frogadier: 51
       Drizzile: 14
     scarce:
-      Muk: 85
-      Bibarel: 85
-      Floatzel: 68
-      Garbodor: 60
-      Swalot: 60
+      Muk: 84
+      Bibarel: 84
+      Floatzel: 67
+      Garbodor: 59
+      Swalot: 59
       Drifblim: 52
       Toxicroak: 52
       Yanmega: 52
@@ -180,6 +187,7 @@ land:
       Poliwrath: 23
       Vileplume: 23
       Gengar: 23
+      GoodraHisui: 20
       Eelektross: 18
       Goodra: 13
       Greninja: 9
@@ -190,6 +198,7 @@ land:
     special:
       Azelf: 10
       Giratina: 10
+      Enamorus: 10
     mythical:
       Keldeo: 10
 

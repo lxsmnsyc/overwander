@@ -342,3 +342,20 @@ Voltorb:
     active: any
     evolves-from: Voltorb
     held: { common: OranBerry, uncommon: Magnet, rare: CellBattery }
+  VoltorbHisui:
+    types: [Electric, Grass]
+    egg-groups: [Mineral]
+    biomes: [TemperateForest, Woodland]
+    active: any
+    base-form: false
+    evolves-into:
+      - species: ElectrodeHisui
+        method: [UsedItem]
+        item: LeafStone
+  ElectrodeHisui:
+    types: [Electric, Grass]
+    egg-groups: [Mineral]
+    biomes: [TemperateForest, Woodland]
+    active: any
+    base-form: false
+    evolves-from: VoltorbHisui

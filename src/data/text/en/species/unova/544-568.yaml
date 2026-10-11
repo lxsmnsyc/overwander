@@ -4,9 +4,13 @@ Cottonee:
 Petilil:
   Petilil: { name: Petilil, category: Bulb Pokemon }
   Lilligant: { name: Lilligant, category: Flowering Pokemon }
+  LilligantHisui: { name: Hisuian Lilligant, category: Spinning Pokemon }
 Basculin:
   Basculin: { name: Basculin, category: Hostile Pokemon }
   BasculinBlue: { name: Basculin Blue, category: Hostile Pokemon }
+  BasculinWhite: { name: Basculin White, category: Mean Fish Pokemon }
+  Basculegion: { name: Basculegion, category: Big Fish Pokemon }
+  BasculegionFemale: { name: Basculegion, category: Big Fish Pokemon }
 Sandile:
   Sandile: { name: Sandile, category: Desert Croc Pokemon }
   Krokorok: { name: Krokorok, category: Desert Croc Pokemon }

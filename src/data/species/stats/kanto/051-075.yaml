@@ -74,6 +74,18 @@ Growlithe:
     height: 1.9
     weight: 155
     gender: [3, 1]
+  GrowlitheHisui:
+    stats: { HP: 60, Attack: 75, Defense: 45, SpecialAttack: 65, SpecialDefense: 50, Speed: 55 }
+    catch-rate: 190
+    height: 0.8
+    weight: 22.7
+    gender: [3, 1]
+  ArcanineHisui:
+    stats: { HP: 95, Attack: 115, Defense: 80, SpecialAttack: 95, SpecialDefense: 80, Speed: 90 }
+    catch-rate: 75
+    height: 2
+    weight: 168
+    gender: [3, 1]
 Poliwag:
   Poliwag:
     stats: { HP: 40, Attack: 50, Defense: 40, SpecialAttack: 40, SpecialDefense: 40, Speed: 90 }

@@ -4,6 +4,7 @@ import BattleOutcome from '../../src/auth/battle-outcome';
 import { Species } from '../../src/data/ids/species';
 import registerData from '../../src/data';
 import recordAftermath from '../../src/server/battles';
+import evolveCatch from '../../src/server/evolution';
 import { finishBattle } from '../../src/server/raids';
 import { jsonOf } from '../../src/server/db';
 import { Moves } from '../../src/data/ids/moves';
@@ -316,6 +317,8 @@ describe('a battle feat', () => {
   async function settle(measure: {
     criticals?: number;
     taken?: number;
+    landed?: number;
+    recoil?: number;
     health: number;
   }): Promise<unknown> {
     await recordAftermath(
@@ -364,5 +367,72 @@ describe('a battle feat', () => {
     await stageFeat(Species.FarfetchdGalar, Species.Sirfetchd);
 
     expect(await settle({ criticals: 3, health: 10 })).toBe(false);
+  });
+
+  /** The running total the catch carries */
+  async function progress(): Promise<unknown> {
+    const rows = await sql`select feat_progress from caught where id = ${FEAT}`;
+
+    return rows[0]?.feat_progress;
+  }
+
+  /** The next fight: the same catch, staged again under a fresh marker */
+  async function again(species: Species): Promise<void> {
+    await sql`delete from battle_aftermaths`;
+    await sql`delete from battle_teams`;
+    await sql`delete from battles`;
+    await sql`delete from team_snapshots`;
+    await sql`
+      insert into team_snapshots (id, player, alliance, catches)
+      values (${MINE}, ${player.uid}, 0, ${jsonOf(sql, [snapshot(FEAT, species)])})
+    `;
+    await sql`
+      insert into team_snapshots (id, player, alliance, catches)
+      values (${THEIRS}, null, 1, ${jsonOf(sql, [snapshot(`${THEIRS}-0`, Species.Zubat)])})
+    `;
+    await sql`
+      insert into battles (id, raid_id, species, outcome, started_at, limits)
+      values (${BATTLE}, null, 0, ${BattleOutcome.Unfinished}, 1000, 0)
+    `;
+    await sql`
+      insert into battle_teams (battle_id, position, snapshot_id, player)
+      values (${BATTLE}, 0, ${THEIRS}, null), (${BATTLE}, 1, ${MINE}, ${player.uid})
+    `;
+  }
+
+  it("adds up a Stantler's Psyshield Bashes across fights and opens Wyrdeer at 20", async () => {
+    await stageFeat(Species.Stantler);
+
+    expect(await settle({ landed: 12, health: 10 })).toBe(false);
+    expect(await progress()).toBe(12);
+
+    await again(Species.Stantler);
+    expect(await settle({ landed: 12, health: 10 })).toBe(true);
+    // Capped at the goal
+    expect(await progress()).toBe(20);
+
+    // Spent by the evolution it opened
+    expect(await evolveCatch(player.uid, FEAT, Species.Wyrdeer)).toBe(Species.Wyrdeer);
+    expect(await progress()).toBe(0);
+  });
+
+  it('adds nothing for a Basculin fight it fainted in', async () => {
+    await stageFeat(Species.BasculinWhite);
+
+    expect(await settle({ recoil: 200, health: 10 })).toBe(false);
+    await again(Species.BasculinWhite);
+    expect(await settle({ recoil: 200, health: 0 })).toBe(false);
+    expect(await progress()).toBe(200);
+
+    await again(Species.BasculinWhite);
+    expect(await settle({ recoil: 94, health: 10 })).toBe(true);
+    expect(await progress()).toBe(294);
+  });
+
+  it('counts nothing towards a catch that is no longer what fought', async () => {
+    await stageFeat(Species.Stantler, Species.Wyrdeer);
+
+    expect(await settle({ landed: 20, health: 10 })).toBe(false);
+    expect(await progress()).toBe(0);
   });
 });

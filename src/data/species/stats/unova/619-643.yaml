@@ -66,6 +66,12 @@ Rufflet:
     height: 1.5
     weight: 41
     gender: [1, 0]
+  BraviaryHisui:
+    stats: { HP: 110, Attack: 83, Defense: 70, SpecialAttack: 112, SpecialDefense: 70, Speed: 65 }
+    catch-rate: 60
+    height: 1.7
+    weight: 43.4
+    gender: [1, 0]
 Vullaby:
   Vullaby:
     stats: { HP: 70, Attack: 55, Defense: 75, SpecialAttack: 45, SpecialDefense: 65, Speed: 60 }

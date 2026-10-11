@@ -97,9 +97,17 @@ export const FORM_ITEMS = new Map<Items, Species[]>([
   [Items.GriseousOrb, [Species.GiratinaOrigin]],
   [Items.Gracidea, [Species.ShayminSky]],
   [Items.PrisonBottle, [Species.HoopaUnbound]],
-  // One mirror for the three genies: each holder takes its own Therian
-  // shape, so it is still a switch rather than a roll
-  [Items.RevealGlass, [Species.TornadusTherian, Species.ThundurusTherian, Species.LandorusTherian]],
+  // One mirror for the four forces of nature: each holder takes its own
+  // Therian shape, so it is still a switch rather than a roll
+  [
+    Items.RevealGlass,
+    [
+      Species.TornadusTherian,
+      Species.ThundurusTherian,
+      Species.LandorusTherian,
+      Species.EnamorusTherian,
+    ],
+  ],
   // Primal Reversion is an Origin forme's rule rather than a Mega's:
   // every holder takes the shape, with no limit to a team
   [Items.BlueOrb, [Species.KyogrePrimal]],

@@ -20,6 +20,7 @@ import {
   settleStatuses,
   unpackStatuses,
 } from '../data/ids/status';
+import { featMove } from '../data/species/feats';
 import { BOSS_ALLIANCE } from './raid';
 import { setTrainerSkill } from '../battle/ai/skill';
 import skillOf from './trainer-skill';
@@ -264,12 +265,21 @@ export function collectAftermath(built: RaidBattle, player: string): BattleAfter
         // Only what a feat could read, so most reports carry neither
         ...(unit.criticals > 0 ? { criticals: unit.criticals } : {}),
         ...(unit.taken >= 1 ? { taken: Math.floor(unit.taken) } : {}),
+        ...(landedForFeat(unit) > 0 ? { landed: landedForFeat(unit) } : {}),
+        ...(unit.recoil >= 1 ? { recoil: Math.floor(unit.recoil) } : {}),
         ...(unit.sketched == null ? {} : { sketched: unit.sketched }),
       });
     }
   }
 
   return report;
+}
+
+/** Uses landed of the one move its species' feat counts */
+function landedForFeat(unit: Unit): number {
+  const move = featMove(unit.species);
+
+  return move == null ? 0 : (unit.landed.get(move) ?? 0);
 }
 
 /**

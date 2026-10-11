@@ -42,6 +42,11 @@ Oshawott:
     # mainline's: rain is what its 70 Speed is waiting for, and the
     # seamitars are drawn to cut at one place
     hidden: [ShellArmor, SwiftSwim, Sniper]
+  SamurottHisui:
+    abilities: [Torrent]
+    # Moxie is this registry's rather than the mainline's, filling it to
+    # four: its blade gets bolder with every foe it fells
+    hidden: [Sharpness, Moxie]
 Patrat:
   Patrat:
     abilities: [RunAway, KeenEye]

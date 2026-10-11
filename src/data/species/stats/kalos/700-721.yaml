@@ -38,6 +38,18 @@ Goomy:
     height: 2
     weight: 150.5
     gender: [1, 1]
+  SliggooHisui:
+    stats: { HP: 58, Attack: 75, Defense: 83, SpecialAttack: 83, SpecialDefense: 113, Speed: 40 }
+    catch-rate: 45
+    height: 0.7
+    weight: 68.5
+    gender: [1, 1]
+  GoodraHisui:
+    stats: { HP: 80, Attack: 100, Defense: 100, SpecialAttack: 110, SpecialDefense: 150, Speed: 60 }
+    catch-rate: 45
+    height: 1.7
+    weight: 334.1
+    gender: [1, 1]
 Klefki:
   Klefki:
     stats: { HP: 57, Attack: 80, Defense: 91, SpecialAttack: 80, SpecialDefense: 87, Speed: 75 }
@@ -95,6 +107,12 @@ Bergmite:
     catch-rate: 55
     height: 2
     weight: 505
+    gender: [1, 1]
+  AvaluggHisui:
+    stats: { HP: 95, Attack: 127, Defense: 184, SpecialAttack: 34, SpecialDefense: 36, Speed: 38 }
+    catch-rate: 55
+    height: 1.4
+    weight: 262.4
     gender: [1, 1]
 Noibat:
   Noibat:

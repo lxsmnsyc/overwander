@@ -47,6 +47,14 @@ Qwilfish:
     # filling it to four: the spines are the whole animal, and
     # whatever grabs it finds them
     hidden: [Intimidate, RoughSkin]
+  QwilfishHisui:
+    abilities: [PoisonPoint, SwiftSwim]
+    hidden: [Intimidate]
+  Overqwil:
+    abilities: [PoisonPoint, SwiftSwim]
+    # Merciless is this registry's rather than the mainline's, filling it to
+    # four: it drives its spines into whatever is already poisoned
+    hidden: [Intimidate, Merciless]
 Shuckle:
   Shuckle:
     abilities: [Sturdy, Gluttony]
@@ -68,6 +76,12 @@ Sneasel:
   Weavile:
     abilities: [Pressure]
     hidden: [Pickpocket]
+  SneaselHisui:
+    abilities: [InnerFocus, KeenEye]
+    hidden: [Pickpocket]
+  Sneasler:
+    abilities: [Pressure, Unburden]
+    hidden: [PoisonTouch]
 Teddiursa:
   Teddiursa:
     abilities: [Pickup, QuickFeet]
@@ -75,7 +89,10 @@ Teddiursa:
   Ursaring:
     abilities: [Guts, QuickFeet]
     # Nothing invented here: Teddiursa's Pickup and Honey Gather walk
-    # up to meet its own three, and Ursaluna lands above it later
+    # up to meet its own three, and Ursaluna's Bulletproof above it
+    hidden: [Unnerve]
+  Ursaluna:
+    abilities: [Guts, Bulletproof]
     hidden: [Unnerve]
 Slugma:
   Slugma:

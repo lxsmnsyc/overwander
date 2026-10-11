@@ -233,6 +233,79 @@ Petilil:
         PollenPuff,
         SolarBlade,
       ]
+  LilligantHisui:
+    level:
+      1:
+        [
+          MegaKick,
+          Absorb,
+          MegaDrain,
+          LeechSeed,
+          Growth,
+          StunSpore,
+          SleepPowder,
+          GigaDrain,
+          Synthesis,
+          SunnyDay,
+          HelpingHand,
+          TeeterDance,
+          MagicalLeaf,
+          LeafBlade,
+          EnergyBall,
+          Defog,
+          LeafStorm,
+          Entrainment,
+          AfterYou,
+          PetalBlizzard,
+          SolarBlade,
+          VictoryDance,
+        ]
+    teachable:
+      [
+        Acrobatics,
+        AerialAce,
+        AirSlash,
+        BrickBreak,
+        BulletSeed,
+        Charm,
+        CloseCombat,
+        Coaching,
+        Encore,
+        Endure,
+        EnergyBall,
+        Facade,
+        GigaDrain,
+        GigaImpact,
+        GrassKnot,
+        GrassyGlide,
+        GrassyTerrain,
+        HelpingHand,
+        Hurricane,
+        HyperBeam,
+        LeafStorm,
+        LowKick,
+        LowSweep,
+        MagicalLeaf,
+        Metronome,
+        PetalBlizzard,
+        PoisonJab,
+        PollenPuff,
+        Protect,
+        PsychUp,
+        RainDance,
+        Rest,
+        SeedBomb,
+        SleepTalk,
+        SolarBeam,
+        SolarBlade,
+        Substitute,
+        SunnyDay,
+        SwordsDance,
+        TakeDown,
+        TripleAxel,
+        VacuumWave,
+        WeatherBall,
+      ]
 Basculin:
   family-teachable:
     - Agility
@@ -356,6 +429,173 @@ Basculin:
       - Whirlpool
     teachable:
       - PsychicFangs
+  BasculinWhite:
+    level:
+      1: [TailWhip, WaterGun]
+      4: [Tackle]
+      8: [Flail]
+      12: [AquaJet]
+      16: [Bite]
+      20: [ScaryFace]
+      24: [Headbutt]
+      28: [Soak]
+      32: [Crunch]
+      36: [TakeDown]
+      40: [Uproar]
+      44: [WaveCrash]
+      48: [Thrash]
+      52: [DoubleEdge]
+      56: [HeadSmash]
+    teachable:
+      [
+        Agility,
+        Blizzard,
+        Crunch,
+        DoubleEdge,
+        Endeavor,
+        Endure,
+        Facade,
+        FlipTurn,
+        HydroPump,
+        IceBeam,
+        IceFang,
+        IcyWind,
+        Liquidation,
+        MudShot,
+        MuddyWater,
+        Protect,
+        PsychicFangs,
+        RainDance,
+        Rest,
+        ScaleShot,
+        ScaryFace,
+        SleepTalk,
+        Substitute,
+        Surf,
+        Swift,
+        TakeDown,
+        WaterPulse,
+        Waterfall,
+        Whirlpool,
+        ZenHeadbutt,
+      ]
+    egg: [Endeavor]
+  Basculegion:
+    level:
+      1: [TailWhip, WaterGun, ShadowBall, PhantomForce]
+      4: [Tackle]
+      8: [Flail]
+      12: [AquaJet]
+      16: [Bite]
+      20: [ScaryFace]
+      24: [Headbutt]
+      28: [Soak]
+      32: [Crunch]
+      36: [TakeDown]
+      40: [Uproar]
+      44: [WaveCrash]
+      48: [Thrash]
+      52: [DoubleEdge]
+      56: [HeadSmash]
+    teachable:
+      [
+        Agility,
+        Blizzard,
+        ConfuseRay,
+        Crunch,
+        DoubleEdge,
+        Endeavor,
+        Facade,
+        FlipTurn,
+        GigaImpact,
+        Hex,
+        HydroPump,
+        HyperBeam,
+        IceBeam,
+        IceFang,
+        IcyWind,
+        Liquidation,
+        MudShot,
+        MuddyWater,
+        NightShade,
+        Outrage,
+        PainSplit,
+        PhantomForce,
+        Protect,
+        PsychicFangs,
+        RainDance,
+        Rest,
+        ScaleShot,
+        ScaryFace,
+        ShadowBall,
+        SleepTalk,
+        Spite,
+        Substitute,
+        Surf,
+        TakeDown,
+        Uproar,
+        WaterPulse,
+        Waterfall,
+        Whirlpool,
+      ]
+  BasculegionFemale:
+    level:
+      1: [TailWhip, WaterGun, ShadowBall, PhantomForce]
+      4: [Tackle]
+      8: [Flail]
+      12: [AquaJet]
+      16: [Bite]
+      20: [ScaryFace]
+      24: [Headbutt]
+      28: [Soak]
+      32: [Crunch]
+      36: [TakeDown]
+      40: [Uproar]
+      44: [WaveCrash]
+      48: [Thrash]
+      52: [DoubleEdge]
+      56: [HeadSmash]
+    teachable:
+      [
+        Agility,
+        Blizzard,
+        ConfuseRay,
+        Crunch,
+        DoubleEdge,
+        Endeavor,
+        Facade,
+        FlipTurn,
+        GigaImpact,
+        Hex,
+        HydroPump,
+        HyperBeam,
+        IceBeam,
+        IceFang,
+        IcyWind,
+        Liquidation,
+        MudShot,
+        MuddyWater,
+        NightShade,
+        Outrage,
+        PainSplit,
+        PhantomForce,
+        Protect,
+        PsychicFangs,
+        RainDance,
+        Rest,
+        ScaleShot,
+        ScaryFace,
+        ShadowBall,
+        SleepTalk,
+        Spite,
+        Substitute,
+        Surf,
+        TakeDown,
+        Uproar,
+        WaterPulse,
+        Waterfall,
+        Whirlpool,
+      ]
 Sandile:
   # TM, HM and tutor moves shared by the whole family
 

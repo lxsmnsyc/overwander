@@ -69,7 +69,32 @@ Grookey:
       46: [WoodHammer]
       54: [Endeavor]
       62: [Boomburst]
-    teachable: [BodyPress, BodySlam, BrickBreak, BrutalSwing, BulkUp, Bulldoze, BulletSeed, DarkestLariat, EarthPower, Earthquake, FocusBlast, FrenzyPlant, GigaImpact, GrassyTerrain, HighHorsepower, HyperBeam, HyperVoice, LeafStorm, MudShot, ScaryFace, Snarl, StompingTantrum, Superpower]
+    teachable:
+      [
+        BodyPress,
+        BodySlam,
+        BrickBreak,
+        BrutalSwing,
+        BulkUp,
+        Bulldoze,
+        BulletSeed,
+        DarkestLariat,
+        EarthPower,
+        Earthquake,
+        FocusBlast,
+        FrenzyPlant,
+        GigaImpact,
+        GrassyTerrain,
+        HighHorsepower,
+        HyperBeam,
+        HyperVoice,
+        LeafStorm,
+        MudShot,
+        ScaryFace,
+        Snarl,
+        StompingTantrum,
+        Superpower,
+      ]
 Scorbunny:
   # TM, TR and tutor moves shared by the whole family
   family-teachable:
@@ -143,7 +168,25 @@ Scorbunny:
       46: [Bounce]
       54: [DoubleEdge]
       62: [CourtChange]
-    teachable: [BlastBurn, BulkUp, Coaching, FirePunch, FireSpin, FlareBlitz, FocusBlast, GigaImpact, HelpingHand, HyperBeam, IronHead, Revenge, ScorchingSands, ShadowBall, Snarl, ZenHeadbutt]
+    teachable:
+      [
+        BlastBurn,
+        BulkUp,
+        Coaching,
+        FirePunch,
+        FireSpin,
+        FlareBlitz,
+        FocusBlast,
+        GigaImpact,
+        HelpingHand,
+        HyperBeam,
+        IronHead,
+        Revenge,
+        ScorchingSands,
+        ShadowBall,
+        Snarl,
+        ZenHeadbutt,
+      ]
 Sobble:
   # TM, TR and tutor moves shared by the whole family
   family-teachable:
@@ -208,7 +251,30 @@ Sobble:
       46: [Soak]
       54: [RainDance]
       62: [HydroPump]
-    teachable: [Acrobatics, Agility, AirSlash, Blizzard, BreakingSwipe, DarkPulse, Fling, FocusEnergy, GigaImpact, HydroCannon, HydroPump, HyperBeam, IceBeam, IcicleSpear, IcyWind, Metronome, Scald, ScaleShot, ShadowBall, SwordsDance, Waterfall]
+    teachable:
+      [
+        Acrobatics,
+        Agility,
+        AirSlash,
+        Blizzard,
+        BreakingSwipe,
+        DarkPulse,
+        Fling,
+        FocusEnergy,
+        GigaImpact,
+        HydroCannon,
+        HydroPump,
+        HyperBeam,
+        IceBeam,
+        IcicleSpear,
+        IcyWind,
+        Metronome,
+        Scald,
+        ScaleShot,
+        ShadowBall,
+        SwordsDance,
+        Waterfall,
+      ]
 Skwovet:
   # TM, TR and tutor moves shared by the whole family
   family-teachable:
@@ -261,7 +327,21 @@ Skwovet:
       41: [BulletSeed]
       48: [SuperFang]
       55: [Belch]
-    teachable: [BodyPress, Earthquake, FireFang, GigaImpact, HyperBeam, IceFang, PsychicFangs, StompingTantrum, Superpower, SwordsDance, ThunderFang, WildCharge]
+    teachable:
+      [
+        BodyPress,
+        Earthquake,
+        FireFang,
+        GigaImpact,
+        HyperBeam,
+        IceFang,
+        PsychicFangs,
+        StompingTantrum,
+        Superpower,
+        SwordsDance,
+        ThunderFang,
+        WildCharge,
+      ]
 Rookidee:
   # TM, TR and tutor moves shared by the whole family
   family-teachable:
@@ -326,7 +406,24 @@ Rookidee:
       34: [DrillPeck]
       42: [Swagger]
       50: [BraveBird]
-    teachable: [BodyPress, BodySlam, BulkUp, FlashCannon, GigaImpact, HeavySlam, Hurricane, HyperBeam, IronDefense, IronHead, LightScreen, Reflect, Screech, SteelBeam, SteelWing]
+    teachable:
+      [
+        BodyPress,
+        BodySlam,
+        BulkUp,
+        FlashCannon,
+        GigaImpact,
+        HeavySlam,
+        Hurricane,
+        HyperBeam,
+        IronDefense,
+        IronHead,
+        LightScreen,
+        Reflect,
+        Screech,
+        SteelBeam,
+        SteelWing,
+      ]
 Blipbug:
   Blipbug:
     level:
@@ -335,7 +432,47 @@ Blipbug:
   Dottler:
     level:
       1: [Confusion, LightScreen, Reflect, StruggleBug]
-    teachable: [AllySwitch, Attract, BodyPress, BugBuzz, CalmMind, Endure, EnergyBall, ExpandingForce, Facade, FutureSight, GuardSwap, HelpingHand, Imprison, IronDefense, LeechLife, LightScreen, MagicRoom, Payback, PowerSwap, Protect, Psychic, PsychicTerrain, Psyshock, Reflect, Rest, Round, Safeguard, ShadowBall, SkillSwap, SleepTalk, Snore, SolarBeam, StoredPower, Substitute, Trick, TrickRoom, WonderRoom, ZenHeadbutt]
+    teachable:
+      [
+        AllySwitch,
+        Attract,
+        BodyPress,
+        BugBuzz,
+        CalmMind,
+        Endure,
+        EnergyBall,
+        ExpandingForce,
+        Facade,
+        FutureSight,
+        GuardSwap,
+        HelpingHand,
+        Imprison,
+        IronDefense,
+        LeechLife,
+        LightScreen,
+        MagicRoom,
+        Payback,
+        PowerSwap,
+        Protect,
+        Psychic,
+        PsychicTerrain,
+        Psyshock,
+        Reflect,
+        Rest,
+        Round,
+        Safeguard,
+        ShadowBall,
+        SkillSwap,
+        SleepTalk,
+        Snore,
+        SolarBeam,
+        StoredPower,
+        Substitute,
+        Trick,
+        TrickRoom,
+        WonderRoom,
+        ZenHeadbutt,
+      ]
   Orbeetle:
     level:
       1: [Confusion, LightScreen, Reflect, StruggleBug]
@@ -351,7 +488,54 @@ Blipbug:
       40: [AfterYou]
       44: [CalmMind]
       48: [PsychicTerrain]
-    teachable: [Agility, AllySwitch, Attract, BatonPass, BodyPress, BugBuzz, CalmMind, Endure, EnergyBall, ExpandingForce, Facade, FutureSight, GigaDrain, GigaImpact, GuardSwap, HelpingHand, HyperBeam, Imprison, IronDefense, LeechLife, LightScreen, MagicRoom, Payback, PowerSwap, Protect, Psychic, PsychicTerrain, PsychoCut, Psyshock, Reflect, Rest, Round, Safeguard, ShadowBall, SkillSwap, SleepTalk, Snore, SolarBeam, StoredPower, Substitute, Trick, TrickRoom, UTurn, WonderRoom, ZenHeadbutt]
+    teachable:
+      [
+        Agility,
+        AllySwitch,
+        Attract,
+        BatonPass,
+        BodyPress,
+        BugBuzz,
+        CalmMind,
+        Endure,
+        EnergyBall,
+        ExpandingForce,
+        Facade,
+        FutureSight,
+        GigaDrain,
+        GigaImpact,
+        GuardSwap,
+        HelpingHand,
+        HyperBeam,
+        Imprison,
+        IronDefense,
+        LeechLife,
+        LightScreen,
+        MagicRoom,
+        Payback,
+        PowerSwap,
+        Protect,
+        Psychic,
+        PsychicTerrain,
+        PsychoCut,
+        Psyshock,
+        Reflect,
+        Rest,
+        Round,
+        Safeguard,
+        ShadowBall,
+        SkillSwap,
+        SleepTalk,
+        Snore,
+        SolarBeam,
+        StoredPower,
+        Substitute,
+        Trick,
+        TrickRoom,
+        UTurn,
+        WonderRoom,
+        ZenHeadbutt,
+      ]
 Nickit:
   # TM, TR and tutor moves shared by the whole family
   family-teachable:
@@ -405,7 +589,23 @@ Nickit:
       40: [TailSlap]
       46: [FoulPlay]
       52: [PartingShot]
-    teachable: [Acrobatics, BurningJealousy, Crunch, DarkPulse, FireFang, GigaImpact, GrassKnot, HyperBeam, IceFang, Psychic, ShadowBall, ShadowClaw, ThunderFang, UTurn]
+    teachable:
+      [
+        Acrobatics,
+        BurningJealousy,
+        Crunch,
+        DarkPulse,
+        FireFang,
+        GigaImpact,
+        GrassKnot,
+        HyperBeam,
+        IceFang,
+        Psychic,
+        ShadowBall,
+        ShadowClaw,
+        ThunderFang,
+        UTurn,
+      ]
 Gossifleur:
   # TM, TR and tutor moves shared by the whole family
   family-teachable:
@@ -504,7 +704,19 @@ Wooloo:
       44: [CottonGuard]
       50: [DoubleEdge]
       56: [LastResort]
-    teachable: [BatonPass, BodyPress, BodySlam, Bounce, GigaImpact, HyperBeam, MegaKick, Retaliate, SwordsDance, ZenHeadbutt]
+    teachable:
+      [
+        BatonPass,
+        BodyPress,
+        BodySlam,
+        Bounce,
+        GigaImpact,
+        HyperBeam,
+        MegaKick,
+        Retaliate,
+        SwordsDance,
+        ZenHeadbutt,
+      ]
 Chewtle:
   # TM, TR and tutor moves shared by the whole family
   family-teachable:
@@ -551,4 +763,40 @@ Chewtle:
       48: [Liquidation]
       57: [BodySlam]
       66: [HeadSmash]
-    teachable: [Blizzard, BodyPress, Bulldoze, Crunch, Dig, EarthPower, Earthquake, FalseSwipe, GigaImpact, HighHorsepower, HyperBeam, IceBeam, IronDefense, IronTail, Megahorn, MeteorBeam, MuddyWater, PoisonJab, RazorShell, RockBlast, RockSlide, RockTomb, SandTomb, Sandstorm, Scald, ScaryFace, SmartStrike, StealthRock, StompingTantrum, StoneEdge, Superpower, SwordsDance, ThroatChop, Waterfall]
+    teachable:
+      [
+        Blizzard,
+        BodyPress,
+        Bulldoze,
+        Crunch,
+        Dig,
+        EarthPower,
+        Earthquake,
+        FalseSwipe,
+        GigaImpact,
+        HighHorsepower,
+        HyperBeam,
+        IceBeam,
+        IronDefense,
+        IronTail,
+        Megahorn,
+        MeteorBeam,
+        MuddyWater,
+        PoisonJab,
+        RazorShell,
+        RockBlast,
+        RockSlide,
+        RockTomb,
+        SandTomb,
+        Sandstorm,
+        Scald,
+        ScaryFace,
+        SmartStrike,
+        StealthRock,
+        StompingTantrum,
+        StoneEdge,
+        Superpower,
+        SwordsDance,
+        ThroatChop,
+        Waterfall,
+      ]

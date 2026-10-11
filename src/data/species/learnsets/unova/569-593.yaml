@@ -133,6 +133,145 @@ Zorua:
       - RockSmash
       - LaserFocus
       - ThroatChop
+  ZoruaHisui:
+    level:
+      1: [Scratch, Leer]
+      4: [Torment]
+      8: [HoneClaws]
+      12: [ShadowSneak]
+      16: [Curse]
+      20: [Taunt]
+      24: [KnockOff]
+      28: [Spite]
+      32: [Agility]
+      36: [ShadowBall]
+      40: [BitterMalice]
+      44: [NastyPlot]
+      48: [FoulPlay]
+    teachable:
+      [
+        Agility,
+        BurningJealousy,
+        CalmMind,
+        ConfuseRay,
+        Curse,
+        DarkPulse,
+        Dig,
+        Endure,
+        Facade,
+        FakeTears,
+        Fling,
+        FocusPunch,
+        FoulPlay,
+        GigaImpact,
+        Hex,
+        HyperBeam,
+        IcyWind,
+        Imprison,
+        KnockOff,
+        LashOut,
+        NastyPlot,
+        NightShade,
+        PainSplit,
+        PhantomForce,
+        Protect,
+        PsychUp,
+        RainDance,
+        Rest,
+        Roar,
+        ShadowBall,
+        ShadowClaw,
+        SkitterSmack,
+        SleepTalk,
+        SludgeBomb,
+        Snarl,
+        Spite,
+        Substitute,
+        Swift,
+        TakeDown,
+        Taunt,
+        Thief,
+        Trick,
+        UTurn,
+        WillOWisp,
+      ]
+    egg: [Detect, Extrasensory, Memento]
+  ZoroarkHisui:
+    level:
+      1: [Scratch, Leer, Torment, UTurn, ShadowClaw, HoneClaws]
+      12: [ShadowSneak]
+      16: [Curse]
+      20: [Taunt]
+      24: [KnockOff]
+      28: [Spite]
+      34: [Agility]
+      40: [ShadowBall]
+      46: [BitterMalice]
+      52: [NastyPlot]
+      58: [FoulPlay]
+    teachable:
+      [
+        AerialAce,
+        Agility,
+        BodySlam,
+        BrickBreak,
+        BurningJealousy,
+        CalmMind,
+        ConfuseRay,
+        Crunch,
+        Curse,
+        DarkPulse,
+        Dig,
+        Endure,
+        Facade,
+        FakeTears,
+        Flamethrower,
+        Fling,
+        FocusBlast,
+        FocusPunch,
+        FoulPlay,
+        GigaImpact,
+        GrassKnot,
+        HelpingHand,
+        Hex,
+        HyperBeam,
+        HyperVoice,
+        IcyWind,
+        Imprison,
+        KnockOff,
+        LashOut,
+        LowKick,
+        LowSweep,
+        NastyPlot,
+        NightShade,
+        PainSplit,
+        PhantomForce,
+        Poltergeist,
+        Protect,
+        PsychUp,
+        Psychic,
+        RainDance,
+        Rest,
+        Roar,
+        ScaryFace,
+        ShadowBall,
+        ShadowClaw,
+        SkitterSmack,
+        SleepTalk,
+        SludgeBomb,
+        Snarl,
+        Spite,
+        Substitute,
+        Swift,
+        SwordsDance,
+        TakeDown,
+        Taunt,
+        Thief,
+        ThroatChop,
+        Trick,
+        UTurn,
+        WillOWisp,
+      ]
 Minccino:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:

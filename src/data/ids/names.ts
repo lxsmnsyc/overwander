@@ -2990,6 +2990,13 @@ export const ABILITY_IDS = {
   Frostreign: Abilities.Frostreign,
   Shadereign: Abilities.Shadereign,
   Crownreign: Abilities.Crownreign,
+  Watchfire: Abilities.Watchfire,
+  HuskBurst: Abilities.HuskBurst,
+  VenomFeast: Abilities.VenomFeast,
+  NerveVenom: Abilities.NerveVenom,
+  Afterhaunt: Abilities.Afterhaunt,
+  SoulCloak: Abilities.SoulCloak,
+  Bloomfall: Abilities.Bloomfall,
 } as const satisfies Record<string, Abilities>;
 
 export const ITEM_IDS = {

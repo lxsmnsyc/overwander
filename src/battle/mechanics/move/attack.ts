@@ -335,6 +335,9 @@ export default function setupAttackMechanics(battle: Battle): void {
       if (event.success && criticals.has(event) && !battle.estimating) {
         event.source.criticals += 1;
       }
+      if (event.success && !(event.flags & MoveAttackFlags.Simulated) && !battle.estimating) {
+        event.source.landed.set(event.move, (event.source.landed.get(event.move) ?? 0) + 1);
+      }
 
       if (checkUnitAttackEffect(event)) {
         const chance = checkUnitAttackEffectChance(event);

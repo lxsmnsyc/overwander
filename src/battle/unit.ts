@@ -647,6 +647,10 @@ export default class Unit {
    */
   criticals = 0;
   taken = 0;
+  /** Hits landed, by move, for a feat that counts one move's uses */
+  landed = new Map<Moves, number>();
+  /** Recoil taken from its own moves */
+  recoil = 0;
 
   addItem(item: Items): void {
     this.battle.emit(BattleEvents.UnitAddItem, {

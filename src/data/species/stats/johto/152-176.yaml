@@ -36,6 +36,12 @@ Cyndaquil:
     height: 1.7
     weight: 79.5
     gender: [7, 1]
+  TyphlosionHisui:
+    stats: { HP: 73, Attack: 84, Defense: 78, SpecialAttack: 119, SpecialDefense: 85, Speed: 95 }
+    catch-rate: 45
+    height: 1.6
+    weight: 69.8
+    gender: [7, 1]
 Totodile:
   Totodile:
     stats: { HP: 50, Attack: 65, Defense: 64, SpecialAttack: 44, SpecialDefense: 48, Speed: 43 }

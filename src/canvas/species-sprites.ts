@@ -50,6 +50,7 @@ export const SPRITE_ROOT = spriteUrl('/sprites/pokemon');
 const BORROWED_COATS = new Map<Species, { sheet: Species; female: boolean }>([
   [Species.MeowsticFemale, { sheet: Species.Meowstic, female: true }],
   [Species.IndeedeeFemale, { sheet: Species.Indeedee, female: true }],
+  [Species.BasculegionFemale, { sheet: Species.Basculegion, female: true }],
 ]);
 
 /**

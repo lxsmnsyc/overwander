@@ -98,6 +98,7 @@ export async function fuseCatch(
     await updateCaughtIn(transaction, catchId, {
       species: into,
       canEvolve: false,
+      featProgress: 0,
       auctionable: isAuctionableCatch({ ...record, species: into }),
       health: rescaleHealth(record.health, getMaxHealth(record), whole),
       maxHealth: whole,
@@ -161,6 +162,7 @@ export async function unfuseCatch(uid: string, catchId: string): Promise<Species
     await updateCaughtIn(transaction, catchId, {
       species: husk,
       canEvolve: false,
+      featProgress: 0,
       auctionable: isAuctionableCatch({ ...record, species: husk }),
       health: rescaleHealth(record.health, getMaxHealth(record), whole),
       maxHealth: whole,

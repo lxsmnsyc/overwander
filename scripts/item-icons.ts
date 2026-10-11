@@ -683,6 +683,43 @@ const TINTS: Tint[] = [
     mark: '#e6f6ff',
     outline: '#18223a',
   }),
+  {
+    from: 'evolutions/ice-stone',
+    to: 'evolutions/black-augurite',
+    why: 'the stone a Scyther evolves on is its own item, and no sheet draws it',
+    // The facets kept and taken to black, with the brightest glint left
+    // pale so it still reads glossy
+    swaps: {
+      '#202020': '#050507',
+      '#f6ffff': '#e8e8f4',
+      '#eeffff': '#6e6e82',
+      '#def6ff': '#5a5a6c',
+      '#d5eef6': '#4e4e5e',
+      '#bdeef6': '#42424f',
+      '#94d5de': '#33333e',
+      '#62bdcd': '#26262f',
+      '#399cb4': '#1b1b22',
+      '#186a94': '#111116',
+    },
+  },
+  {
+    from: 'key/parcel',
+    to: 'evolutions/peat-block',
+    why: 'the block an Ursaring evolves on is its own item, and no sheet draws it',
+    // The parcel's box in dark earth: the string becomes the seams of
+    // the compacted peat and the label goes into the front face
+    swaps: {
+      '#202020': '#100b07',
+      '#f6de83': '#5e4230',
+      '#c5c552': '#4e3624',
+      '#a4a431': '#36261a',
+      '#cdb45a': '#402c1e',
+      '#737318': '#2a1c12',
+      '#947b20': '#2e2016',
+      '#735a10': '#22170f',
+      '#cd5210': '#402c1e',
+    },
+  },
 ];
 
 /**

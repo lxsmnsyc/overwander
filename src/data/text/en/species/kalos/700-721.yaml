@@ -8,6 +8,8 @@ Goomy:
   Goomy: { name: Goomy, category: Soft Tissue Pokemon }
   Sliggoo: { name: Sliggoo, category: Soft Tissue Pokemon }
   Goodra: { name: Goodra, category: Dragon Pokemon }
+  SliggooHisui: { name: Hisuian Sliggoo, category: Snail Pokemon }
+  GoodraHisui: { name: Hisuian Goodra, category: Shell Bunker Pokemon }
 Klefki:
   Klefki: { name: Klefki, category: Key Ring Pokemon }
 Phantump:
@@ -21,6 +23,7 @@ Pumpkaboo:
 Bergmite:
   Bergmite: { name: Bergmite, category: Ice Chunk Pokemon }
   Avalugg: { name: Avalugg, category: Iceberg Pokemon }
+  AvaluggHisui: { name: Hisuian Avalugg, category: Iceberg Pokemon }
 Noibat:
   Noibat: { name: Noibat, category: Sound Wave Pokemon }
   Noivern: { name: Noivern, category: Sound Wave Pokemon }

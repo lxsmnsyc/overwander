@@ -16,6 +16,8 @@ Snubbull:
   Granbull: { name: Granbull, category: Fairy Pokemon }
 Qwilfish:
   Qwilfish: { name: Qwilfish, category: Balloon Pokemon }
+  QwilfishHisui: { name: Hisuian Qwilfish, category: Balloon Pokemon }
+  Overqwil: { name: Overqwil, category: Pin Cluster Pokemon }
 Shuckle:
   Shuckle: { name: Shuckle, category: Mold Pokemon }
 Heracross:
@@ -23,9 +25,12 @@ Heracross:
 Sneasel:
   Sneasel: { name: Sneasel, category: Sharp Claw Pokemon }
   Weavile: { name: Weavile, category: Sharp Claw Pokemon }
+  SneaselHisui: { name: Hisuian Sneasel, category: Sharp Claw Pokemon }
+  Sneasler: { name: Sneasler, category: Free Climb Pokemon }
 Teddiursa:
   Teddiursa: { name: Teddiursa, category: Little Bear Pokemon }
   Ursaring: { name: Ursaring, category: Hibernator Pokemon }
+  Ursaluna: { name: Ursaluna, category: Peat Pokemon }
 Slugma:
   Slugma: { name: Slugma, category: Lava Pokemon }
   Magcargo: { name: Magcargo, category: Lava Pokemon }

@@ -2,6 +2,7 @@ Rowlet:
   Rowlet: { name: Rowlet, category: Grass Quill Pokemon }
   Dartrix: { name: Dartrix, category: Blade Quill Pokemon }
   Decidueye: { name: Decidueye, category: Arrow Quill Pokemon }
+  DecidueyeHisui: { name: Hisuian Decidueye, category: Arrow Quill Pokemon }
 Litten:
   Litten: { name: Litten, category: Fire Cat Pokemon }
   Torracat: { name: Torracat, category: Fire Cat Pokemon }

@@ -113,26 +113,28 @@ export const CLOCK_STEP = 50;
 
 /**
  * How far the slide moves this frame, in cells, with `span` still to
- * cover and `elapsed` milliseconds gone.
+ * cover, `elapsed` milliseconds gone and `stride` the length of the
+ * step being walked: 1 straight, √2 diagonally.
  *
- * One cell per pace is the walking speed, and on its own it is a
+ * One step per pace is the walking speed, and on its own it is a
  * speed the slide can never make up ground at: the walk lays down a
  * step in exactly that time, so a frame lost to a chunk arriving was
  * lost for good and the arrears piled up over a long walk until they
- * passed `SNAP_CELLS` and the walker jumped. So whatever it is behind
- * by beyond the one cell it owes is walked off **on top** of the
- * normal speed, which puts it back in step within a pace and leaves
- * the snap for the jumps it is meant for
+ * passed the snap and the walker jumped. So whatever it is behind by
+ * beyond the step it owes is walked off **on top** of the normal
+ * speed, which puts it back in step within a pace and leaves the snap
+ * for the jumps it is meant for. The speed is the step's length, or a
+ * diagonal would fall a little further behind every step
  */
-export function slideGain(span: number, elapsed: number): number {
-  return Math.min(span, (elapsed / SLIDE_PACE) * (1 + Math.max(0, span - 1)));
+export function slideGain(span: number, elapsed: number, stride = 1): number {
+  return Math.min(span, (elapsed / SLIDE_PACE) * Math.max(stride, span));
 }
 
 /**
- * A jump of more than this many cells is not a walk: a crossing or a
+ * A jump of more than this many steps is not a walk: a crossing or a
  * portal moved the player, and the slide teleports with them
  */
-export const SNAP_CELLS = 2;
+export const SNAP_STEPS = 2;
 
 /**
  * World pixels one cell is worth to a charset's walk cycle: a full

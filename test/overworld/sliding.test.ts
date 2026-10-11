@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { slideGain } from '../../src/components/overworld/chunk-canvas';
-import { SLIDE_PACE, SNAP_CELLS } from '../../src/components/overworld/chunk-canvas/metrics';
+import { SLIDE_PACE, SNAP_STEPS } from '../../src/components/overworld/chunk-canvas/metrics';
 import { STEP_PACE } from '../../src/components/overworld/overworld-tab/metrics';
 
 describe('the walker sliding after the cell it is walking to', () => {
@@ -39,7 +39,7 @@ describe('the walker sliding after the cell it is walking to', () => {
   it('holds a long walk under the snap, hitches and all', () => {
     // What the bug was: a hitch every few steps, each one leaving the
     // slide a little further behind, until after a few chunks of
-    // walking the arrears passed SNAP_CELLS and the walker jumped
+    // walking the arrears passed the snap and the walker jumped
     let span = 0;
     let worst = 0;
 
@@ -54,6 +54,40 @@ describe('the walker sliding after the cell it is walking to', () => {
       }
       worst = Math.max(worst, span);
     }
-    expect(worst).toBeLessThan(SNAP_CELLS);
+    expect(worst).toBeLessThan(SNAP_STEPS);
+  });
+
+  it('keeps a diagonal walk in step rather than snapping every few steps', () => {
+    // A diagonal is √2 cells laid down a pace: at one cell a pace the
+    // arrears just after a step settled past the snap, and the walker
+    // stopped and jumped every few steps
+    const peak = (hitch: number): number => {
+      let span = 0;
+      let worst = 0;
+
+      for (let step = 0; step < 400; step += 1) {
+        // Measured as the step lands, which is when the snap is closest
+        span += Math.SQRT2;
+        worst = Math.max(worst, span);
+
+        for (let gone = step % 8 === 0 ? hitch : 0; gone < SLIDE_PACE; gone += FRAME) {
+          span -= slideGain(span, FRAME, Math.SQRT2);
+        }
+      }
+      return worst;
+    };
+
+    // Smooth walking never trails by more than the step it owes
+    expect(peak(0)).toBeCloseTo(Math.SQRT2, 2);
+    expect(peak(180)).toBeLessThan(SNAP_STEPS * Math.SQRT2);
+  });
+
+  it('crosses a diagonal in one pace', () => {
+    let span = Math.SQRT2;
+
+    for (let gone = 0; gone < SLIDE_PACE; gone += FRAME) {
+      span -= slideGain(span, FRAME, Math.SQRT2);
+    }
+    expect(span).toBeCloseTo(0, 2);
   });
 });

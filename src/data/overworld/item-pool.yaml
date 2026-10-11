@@ -300,6 +300,8 @@ prized:
   # The prisms, on the orbs' terms: each names one pokemon
   NSolarizer: 3
   NLunarizer: 3
+  # One pair of reins for both steeds, as the splicers serve both dragons
+  ReinsOfUnity: 3
   # The nectars, spent the way the meteorite is and as thin: four
   # styles of one pokemon share them
   RedNectar: 1

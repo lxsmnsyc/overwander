@@ -1845,6 +1845,13 @@ export const BASCULEGION_FORMS: Species[] = [Species.Basculegion, Species.Bascul
 /** Enamorus, and the Therian shape the Reveal Glass shows */
 export const ENAMORUS_FORMS: Species[] = [Species.Enamorus, Species.EnamorusTherian];
 
+/** Calyrex alone, then astride Glastrier or Spectrier */
+export const CALYREX_FORMS: Species[] = [
+  Species.Calyrex,
+  Species.CalyrexIce,
+  Species.CalyrexShadow,
+];
+
 /** A Wishiwashi alone, and the school it calls together from level 20 */
 export const WISHIWASHI_FORMS: Species[] = [Species.Wishiwashi, Species.WishiwashiSchool];
 

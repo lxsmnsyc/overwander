@@ -196,13 +196,13 @@ export default function SellingList(props: SellingListProps): JSX.Element {
                       <AuctionLotLabel auction={lot} />
                     </span>
                     <Meta>{describeLot(lot, state(), Date.now())}</Meta>
-                    <Show when={lot.bidder !== ''}>
-                      <span class="flex items-center gap-2">
-                        <Meta>{state() === LotState.Running ? 'Leading' : 'Won by'}</Meta>
-                        <BidderPlate uid={lot.bidder} />
-                      </span>
-                    </Show>
                   </div>
+                  <Show when={lot.bidder !== ''}>
+                    <span class="flex min-w-0 items-center gap-2">
+                      <Meta>{state() === LotState.Running ? 'Leading' : 'Won by'}</Meta>
+                      <BidderPlate uid={lot.bidder} />
+                    </span>
+                  </Show>
                   <Badge tone={LOT_STATE_TONES[state()]}>{LOT_STATE_LABELS[state()]}</Badge>
                   {/* Nothing hands an unsold lot back on its own, so
                       this is the only way it ever returns */}

@@ -306,15 +306,21 @@ const setupAbilities = [
    * Dancer: whoever dances, it dances too, straight after and for
    * free. A dance aimed at the dancer itself is re-aimed at the
    * holder, so a Swords Dance sharpens the copier rather than the
-   * one it copied
+   * one it copied. A copy is never copied in turn, as in the mainline,
+   * or a field of dancers would keep answering each other forever
    */
   createAbility(Abilities.Dancer, (battle) => {
     /** Holders part way through a copy, so a copy never copies itself */
     const dancing = new Set<Unit>();
+    /**
+     * The dance each holder last copied. It lands after the copy is
+     * thrown, so it is kept until the holder casts something of its own
+     */
+    const copied = new Map<Unit, Moves>();
 
     return new MergedLifecycle([
       battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Post, (event) => {
-        if (!DANCE_MOVES.has(event.move)) {
+        if (!DANCE_MOVES.has(event.move) || copied.get(event.source) === event.move) {
           return;
         }
 
@@ -333,6 +339,7 @@ const setupAbilities = [
 
           holder.triggerAbility(Abilities.Dancer);
           dancing.add(holder);
+          copied.set(holder, event.move);
 
           const steps = holder.checkMoveSteps(event.move, back);
 
@@ -345,11 +352,16 @@ const setupAbilities = [
           dancing.delete(holder);
         }
       }),
+      battle.on(BattleEvents.UnitCast, EventPriority.Pre, (event) => {
+        copied.delete(event.source);
+      }),
       battle.on(BattleEvents.UnitLeavesField, EventPriority.Post, (event) => {
         dancing.delete(event.source);
+        copied.delete(event.source);
       }),
       battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
         dancing.delete(event.source);
+        copied.delete(event.source);
       }),
     ]);
   }),

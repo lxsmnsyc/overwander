@@ -1,10 +1,12 @@
 import { describe, expect, it } from 'vitest';
+import { EventPriority } from '../../../src/core/event-emitter';
 import { Stages, Stats } from '../../../src/data/constants/stats';
 import { Types } from '../../../src/data/constants/types';
 import Abilities from '../../../src/data/ids/abilities';
 import { MoveCategories, Moves } from '../../../src/data/ids/moves';
 import { Species } from '../../../src/data/ids/species';
-import { MoveTargetType } from '../../../src/battle/events';
+import { BattleEvents, MoveTargetType } from '../../../src/battle/events';
+import type Unit from '../../../src/battle/unit';
 import turns from '../../../src/battle/turn';
 import { createBattle, createUnit, pinRandom } from '../harness';
 import { dealDamage } from './signature/helpers';
@@ -115,6 +117,37 @@ describe('Dancer', () => {
     battle.tick(turns(1));
 
     expect(copier.stages[Stages.Attack]).toBe(2);
+  });
+
+  it('copies a dance once each, never a copy, with six dancers on the field', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const dancers: Unit[] = [];
+
+    for (const team of [teamA, teamA, teamA, teamB, teamB, teamB]) {
+      const dancer = createUnit(battle, team);
+
+      dancer.addAbility(Abilities.Dancer);
+      dancer.enter();
+      dancers.push(dancer);
+    }
+    pinRandom(battle, 1);
+
+    const [lead] = dancers;
+    let copies = 0;
+
+    battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Post, (event) => {
+      if (event.ability === Abilities.Dancer) {
+        copies += 1;
+      }
+    });
+    lead.triggerMoveTarget(Moves.SwordsDance, { type: MoveTargetType.Unit, unit: lead }, 0);
+    battle.tick(turns(4));
+
+    // The lead's own dance, then one copy from each of the other five
+    expect(copies).toBe(5);
+    for (const dancer of dancers) {
+      expect(dancer.stages[Stages.Attack]).toBe(2);
+    }
   });
 
   it('leaves Rain Dance alone, which is not a dance', () => {

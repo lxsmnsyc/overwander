@@ -24,7 +24,7 @@ import createClientSignal from '../../app/client-signal';
 import playEffect, { Effect } from '../../app/sound';
 import { forTheGame } from '../../app/keys';
 import { answered } from '../../app/resource-reads';
-import { PLAYER_ALLIANCE, clearRaid, getRaid, getRaidTitle } from '../../../auth/raids';
+import { PLAYER_ALLIANCE, RaidKind, clearRaid, getRaid, getRaidTitle } from '../../../auth/raids';
 import { BattleModes } from '../../../battle/core';
 import BattleKind, { getBattleKind } from '../../../auth/battle-kind';
 import {
@@ -331,6 +331,9 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
     return found == null ? null : getRaidTitle(found);
   };
 
+  /** A Max Raid's name already says what the fight is, so it goes up alone */
+  const standsAlone = (): boolean => answered(staged)?.kind === RaidKind.Max;
+
   /**
    * Who the other side was, where it belonged to nobody.
    *
@@ -363,7 +366,10 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
 
     const named = lair();
 
-    return named == null ? 'Raid Battle' : `Raid Battle: ${named}`;
+    if (named == null) {
+      return 'Raid Battle';
+    }
+    return standsAlone() ? named : `Raid Battle: ${named}`;
   };
 
   /**

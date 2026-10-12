@@ -46,6 +46,9 @@ const SPAN_CELLS = 4.4;
 const PAINTED_CELL = PAINTED_WIDTH / SPAN_CELLS;
 const HOLE = PAINTED_CELL * 0.72;
 
+/** How wide the beam stands against the hole: a shaft of light rather than a wall of it */
+const BEAM = 0.5;
+
 /** How long a mote takes to climb, a shimmer to pass, and a flame to flicker, in ms */
 const MOTE_RISE = 2600;
 const SHIMMER = 1400;
@@ -195,9 +198,9 @@ function paintDenBeam(
 
   // Halo, body and core, each narrower and brighter than the last
   for (const [width, alpha, colour] of [
-    [HOLE * 1.5, 0.35, ink.glow],
-    [HOLE * 0.95, 0.6, ink.glow],
-    [HOLE * 0.34, 0.95, ink.core],
+    [HOLE * 1.5 * BEAM, 0.35, ink.glow],
+    [HOLE * 0.95 * BEAM, 0.6, ink.glow],
+    [HOLE * 0.34 * BEAM, 0.95, ink.core],
   ] as const) {
     const half = width * (1 + shimmer * 0.06) * (beacon === RaidBeacon.Gigantamax ? 1.2 : 1);
     const column = context.createLinearGradient(0, y, 0, top);
@@ -219,20 +222,25 @@ function paintDenBeam(
   // A brighter band climbing the beam, so it reads as moving rather than painted on
   const band = (now / (SHIMMER * 2)) % 1;
   const bandY = y - band * (y - top);
-  const bandGlow = context.createRadialGradient(x, bandY, 0, x, bandY, HOLE * 1.1);
+  const bandGlow = context.createRadialGradient(x, bandY, 0, x, bandY, HOLE * 1.1 * BEAM);
 
   bandGlow.addColorStop(0, rgba(ink.core, 0.35 * (1 - band) * ink.strength));
   bandGlow.addColorStop(1, rgba(ink.core, 0));
   context.fillStyle = bandGlow;
-  context.fillRect(x - HOLE * 1.2, bandY - HOLE * 1.2, HOLE * 2.4, HOLE * 2.4);
+  context.fillRect(
+    x - HOLE * 1.2 * BEAM,
+    bandY - HOLE * 1.2 * BEAM,
+    HOLE * 2.4 * BEAM,
+    HOLE * 2.4 * BEAM,
+  );
 
   // Motes drifting up out of the hole
   const motes = beacon === RaidBeacon.Gigantamax ? MOTES + 4 : MOTES;
 
   for (let mote = 0; mote < motes; mote++) {
     const phase = (now / MOTE_RISE + mote / motes) % 1;
-    const sway = Math.sin(now / 600 + mote * 2.3) * HOLE * 0.6;
-    const mx = x + (jitter(mote + 3) - 0.5) * HOLE * 1.8 + sway * phase;
+    const sway = Math.sin(now / 600 + mote * 2.3) * HOLE * 0.6 * BEAM;
+    const mx = x + (jitter(mote + 3) - 0.5) * HOLE * 1.8 * BEAM + sway * phase;
     const my = y - phase * (y - top) * 0.75;
     const size = HOLE * 0.13 * (1 - phase * 0.5);
 

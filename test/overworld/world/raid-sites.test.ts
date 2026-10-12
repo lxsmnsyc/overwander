@@ -213,7 +213,11 @@ describe('raid sites', () => {
       cleared: false,
     };
 
-    expect(getRaidTitle({ ...base, kind: RaidKind.Max })).toBe('Max Raid Snorlax');
+    // G-Max where the boss Gigantamaxes, D-Max where it only Dynamaxes
+    expect(getRaidTitle({ ...base, kind: RaidKind.Max })).toBe('G-Max Snorlax');
+    expect(getRaidTitle({ ...base, species: Species.Dragonite, kind: RaidKind.Max })).toBe(
+      'D-Max Dragonite',
+    );
     expect(getRaidTitle({ ...base, kind: RaidKind.Totem })).toBe('Totem Snorlax');
   });
 });

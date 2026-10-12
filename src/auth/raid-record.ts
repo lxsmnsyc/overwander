@@ -9,6 +9,7 @@ import type Lairs from '../data/overworld/lair';
 import { getLairTitle } from '../data/overworld/lair';
 import Landmark from '../data/overworld/landmark';
 import type { Species } from '../data/ids/species';
+import { canGigantamax } from '../data/moves/gmax-moves';
 import { getSpeciesData } from '../data/species/__create';
 import type Chunk from '../overworld/chunk';
 import { WORLD_GENERATION } from '../overworld/current';
@@ -267,9 +268,13 @@ export function getTotemTitle(species: Species): string {
   return `Totem ${getSpeciesData(species).name}`;
 }
 
-/** What a Max Raid's lobby is called, after the boss in it */
+/**
+ * What a Max Raid's lobby and fight are called, after the boss in it:
+ * G-Max where it Gigantamaxes, D-Max otherwise, so the name says which
+ * of the two the party is up against
+ */
 export function getMaxRaidTitle(species: Species): string {
-  return `Max Raid ${getSpeciesData(species).name}`;
+  return `${canGigantamax(species) ? 'G-Max' : 'D-Max'} ${getSpeciesData(species).name}`;
 }
 
 /** What an Alpha raid's lobby is called, after the Alpha in it */

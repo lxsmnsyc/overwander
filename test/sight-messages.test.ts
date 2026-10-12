@@ -51,12 +51,17 @@ describe('a walk from another client', () => {
     expect(asLeg({ u: 'a', x: 0, y: 0, s: 'R'.repeat(40), t: 1 })).toBeNull();
   });
 
+  it('reads the four diagonals', () => {
+    expect(asLeg({ u: 'a', x: 0, y: 0, s: 'QEZC', t: 1 })?.steps).toHaveLength(4);
+  });
+
   it('reads a run with no steps as where they are now', () => {
     expect(asLeg({ u: 'a', x: 5, y: 6, s: '', t: 1 })?.steps).toEqual([]);
   });
 
   it('is refused when any part of it is not a walk', () => {
-    expect(asLeg({ u: 'a', x: 3, y: -4, s: 'RQ', t: 1 })).toBeNull();
+    // Q is a diagonal now, so a letter that is no step at all
+    expect(asLeg({ u: 'a', x: 3, y: -4, s: 'RX', t: 1 })).toBeNull();
     expect(asLeg({ u: 'a', x: 3, y: -4, s: 'R' })).toBeNull();
     expect(asLeg({ x: 3, y: -4, s: 'R', t: 1 })).toBeNull();
     expect(asLeg(null)).toBeNull();

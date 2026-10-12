@@ -12,7 +12,13 @@ import {
 } from '../../data/moves/max-moves';
 import { isPseudoMove } from '../../data/moves/pseudo';
 import type Battle from '../core';
-import { BattleEvents, EffectType, type MoveTarget, MoveTargetType } from '../events';
+import {
+  BattleEvents,
+  type CastingData,
+  EffectType,
+  type MoveTarget,
+  MoveTargetType,
+} from '../events';
 import { isPrimalWeather } from '../utils';
 import type Unit from '../unit';
 import { TERRAIN_DURATION } from './terrain';
@@ -36,6 +42,18 @@ export function maxMoveFor(unit: Unit, base: Moves, target: MoveTarget): Moves |
   const gmax = unit.gigantamax ? getGMaxMove(unit.species, type) : null;
 
   return gmax ?? TYPE_MAX_MOVES.get(type) ?? null;
+}
+
+/**
+ * The move a unit's cast goes off as, which is what its cast plate
+ * names: a Dynamaxed unit's own cast turns into its Max Move as it
+ * lands, so the plate says so from the start of the wind-up
+ */
+export function castShownAs(unit: Unit, cast: CastingData): Moves {
+  if (!unit.dynamaxed || isPseudoMove(cast.move)) {
+    return cast.move;
+  }
+  return maxMoveFor(unit, cast.move, cast.target) ?? cast.move;
 }
 
 export default function setupMaxMoves(battle: Battle): void {

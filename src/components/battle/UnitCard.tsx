@@ -4,6 +4,7 @@
 // oxlint-disable typescript/no-unsafe-type-assertion
 import { For, Index, type JSX, Show, createMemo } from 'solid-js';
 import type { ProgressData } from '../../battle/events';
+import { castShownAs } from '../../battle/moves/max-moves';
 import type Unit from '../../battle/unit';
 import { Stats } from '../../data/constants/stats';
 import type Abilities from '../../data/ids/abilities';
@@ -214,7 +215,7 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
         acting == null
           ? null
           : {
-              name: getMoveData(acting.move).name,
+              name: getMoveData(castShownAs(unit, acting)).name,
               channelling: unit.channeling != null,
               done: fractionOf(acting.time),
             },

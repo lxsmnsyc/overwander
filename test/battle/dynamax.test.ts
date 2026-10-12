@@ -19,6 +19,7 @@ import { Species } from '../../src/data/ids/species';
 import { Statuses, Terrains, Weathers } from '../../src/data/ids/status';
 import * as gmax from '../../src/data/moves/gmax-moves';
 import { maxPowerOf } from '../../src/data/moves/max-moves';
+import { castShownAs } from '../../src/battle/moves/max-moves';
 import { placesOf } from '../../src/components/battle/battle-canvas/field';
 import { createBattle, createUnit, pinRandom } from './harness';
 
@@ -195,6 +196,37 @@ describe('Dynamax', () => {
     expect(maxPowerOf(Moves.CloseCombat)).toBe(95);
     expect(maxPowerOf(Moves.LowKick)).toBe(100);
     expect(maxPowerOf(Moves.GrassKnot)).toBe(130);
+  });
+
+  it('names the Max Move on the cast while it winds up', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const giant = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    giant.addMove(Moves.Flamethrower);
+    giant.addMove(Moves.Growl);
+    expect(
+      castShownAs(giant, {
+        move: Moves.Flamethrower,
+        target: at(foe),
+        time: { progress: 0, duration: 1 },
+      }),
+    ).toBe(Moves.Flamethrower);
+
+    dynamax(giant);
+    giant.cast(Moves.Flamethrower, at(foe));
+
+    const cast = giant.casting;
+
+    expect(cast?.move).toBe(Moves.Flamethrower);
+    expect(cast == null ? null : castShownAs(giant, cast)).toBe(Moves.MaxFlare);
+    expect(
+      castShownAs(giant, {
+        move: Moves.Growl,
+        target: at(foe),
+        time: { progress: 0, duration: 1 },
+      }),
+    ).toBe(Moves.MaxGuard);
   });
 
   it('throws a status move as Max Guard', () => {

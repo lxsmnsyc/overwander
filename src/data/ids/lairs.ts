@@ -91,6 +91,18 @@ const enum Lairs {
   WildArea = 82,
   IsleOfArmor = 83,
   ScarletBog = 84,
+  // Paldea's and Kitakami's, reserved the same way as Galar's
+  GrasswitherShrine = 85,
+  IcerendShrine = 86,
+  GroundblightShrine = 87,
+  FirescourgeShrine = 88,
+  ZeroLab = 89,
+  ParadiseBarrens = 90,
+  WistfulFields = 91,
+  OniMountain = 92,
+  DreadedDen = 93,
+  AreaZeroUnderdepths = 94,
+  LoyaltyPlaza = 95,
 }
 
 export default Lairs;

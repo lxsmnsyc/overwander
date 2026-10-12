@@ -1178,6 +1178,58 @@ export const enum Items {
    * to three when a Noble raid starts
    */
   Balm = 605,
+
+  /** What lets a pokemon Terastallize, once a side a fight */
+  TeraOrb = 606,
+
+  /** The shards a Tera type is changed with, one per type and Stellar last */
+  NormalTeraShard = 607,
+  FireTeraShard = 608,
+  WaterTeraShard = 609,
+  ElectricTeraShard = 610,
+  GrassTeraShard = 611,
+  IceTeraShard = 612,
+  FightingTeraShard = 613,
+  PoisonTeraShard = 614,
+  GroundTeraShard = 615,
+  FlyingTeraShard = 616,
+  PsychicTeraShard = 617,
+  BugTeraShard = 618,
+  RockTeraShard = 619,
+  GhostTeraShard = 620,
+  DragonTeraShard = 621,
+  DarkTeraShard = 622,
+  SteelTeraShard = 623,
+  FairyTeraShard = 624,
+  StellarTeraShard = 625,
+
+  /** The apple an Applin grows into a Dipplin on */
+  SyrupyApple = 626,
+
+  /** The metal a Duraludon is coated in to become an Archaludon */
+  MetalAlloy = 627,
+
+  /** The cups a Poltchageist is found in: a fake's plain one, then a true antique's masterpiece */
+  UnremarkableTeacup = 628,
+  MasterpieceTeacup = 629,
+
+  /** The crest a Bisharp takes from its leader to become a Kingambit */
+  LeadersCrest = 630,
+
+  /** The armour a Charcadet takes up, Armarouge's auspicious and Ceruledge's malicious */
+  AuspiciousArmor = 631,
+  MaliciousArmor = 632,
+
+  /** The coins a Gimmighoul hoards, and evolves once it has enough of */
+  GimmighoulCoin = 633,
+
+  /** The masks Ogerpon was robbed of, each putting it in its shape */
+  WellspringMask = 634,
+  HearthflameMask = 635,
+  CornerstoneMask = 636,
+
+  /** The relic Kitakami's mythical leaves behind it: the mochi it fed the Loyal Three */
+  PoisonMochi = 637,
 }
 
 /**

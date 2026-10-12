@@ -14,7 +14,13 @@ import {
 } from '../../data/moves/z-moves';
 import { SIGNATURE_CRYSTALS, TYPE_CRYSTALS } from '../../data/items/z-crystals';
 import type Battle from '../core';
-import { BattleEvents, EffectType, type MoveTarget, MoveTargetType } from '../events';
+import {
+  BattleEvents,
+  type CastingData,
+  EffectType,
+  type MoveTarget,
+  MoveTargetType,
+} from '../events';
 import { isMegaHolder } from '../items/megas';
 import type Team from '../team';
 import type Unit from '../unit';
@@ -38,6 +44,31 @@ const ALL_STAGES = [
   Stages.Evasion,
   Stages.Accuracy,
 ] as const;
+
+/**
+ * The sides that have thrown their Z-Move this fight. Kept with the
+ * module rather than one battle, since a side belongs to one battle
+ * already, so the cast plate can ask it too
+ */
+const spent = new WeakSet<Team>();
+
+/**
+ * The Z-Move a unit's cast will go off as, if its crystal turns it and
+ * its side still has its Z-Move, so the cast plate can name it from the
+ * start of the wind-up. A Z-Move is only ever aimed at an enemy
+ */
+export function zCastShownAs(unit: Unit, cast: CastingData): Moves | null {
+  if (spent.has(unit.team) || getMoveData(cast.move).category === MoveCategories.Status) {
+    return null;
+  }
+  if (
+    cast.target.type === MoveTargetType.Unit &&
+    cast.target.unit.team.alliance === unit.team.alliance
+  ) {
+    return null;
+  }
+  return zMoveFor(unit, cast.move, cast.target);
+}
 
 /** The Z-Move this unit's crystal makes of the move, if any */
 function zMoveFor(unit: Unit, move: Moves, target: MoveTarget): Moves | null {
@@ -134,8 +165,6 @@ export function zTargetOf(battle: Battle, unit: Unit, target: MoveTarget): MoveT
 }
 
 export default function setupZMoves(battle: Battle): void {
-  /** The sides that have thrown their Z-Move this fight */
-  const spent = new WeakSet<Team>();
   /** The move each unit's type Z-Move replaced, for its power and category */
   const replaced = new Map<Unit, Moves>();
 

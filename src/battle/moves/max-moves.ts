@@ -23,7 +23,7 @@ import { isPrimalWeather } from '../utils';
 import type Unit from '../unit';
 import { TERRAIN_DURATION } from './terrain';
 import { WEATHER_DURATION } from './weather';
-import { zTargetOf } from './z-moves';
+import { zCastShownAs, zTargetOf } from './z-moves';
 
 /**
  * Max Moves. Every move a Dynamaxed unit casts goes off as the Max
@@ -46,14 +46,18 @@ export function maxMoveFor(unit: Unit, base: Moves, target: MoveTarget): Moves |
 
 /**
  * The move a unit's cast goes off as, which is what its cast plate
- * names: a Dynamaxed unit's own cast turns into its Max Move as it
- * lands, so the plate says so from the start of the wind-up
+ * names. A Dynamaxed unit's own cast turns into its Max Move, and a
+ * Z-Crystal holder's into its Z-Move, only as it lands, so the plate
+ * says so from the start of the wind-up
  */
 export function castShownAs(unit: Unit, cast: CastingData): Moves {
-  if (!unit.dynamaxed || isPseudoMove(cast.move)) {
+  if (isPseudoMove(cast.move)) {
     return cast.move;
   }
-  return maxMoveFor(unit, cast.move, cast.target) ?? cast.move;
+  if (unit.dynamaxed) {
+    return maxMoveFor(unit, cast.move, cast.target) ?? cast.move;
+  }
+  return zCastShownAs(unit, cast) ?? cast.move;
 }
 
 export default function setupMaxMoves(battle: Battle): void {

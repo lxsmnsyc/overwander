@@ -1,0 +1,198 @@
+Chespin:
+  Chespin:
+    abilities: [Overgrow]
+    hidden: [Bulletproof]
+  Quilladin:
+    abilities: [Overgrow]
+    hidden: [Bulletproof]
+  Chesnaught:
+    abilities: [Overgrow]
+    hidden: [Bulletproof, RoughSkin, Stamina]
+Fennekin:
+  Fennekin:
+    abilities: [Blaze]
+    hidden: [Magician]
+  Braixen:
+    abilities: [Blaze]
+    hidden: [Magician]
+  Delphox:
+    abilities: [Blaze]
+    hidden: [Magician, MagicGuard, Forewarn]
+Froakie:
+  Froakie:
+    abilities: [Torrent]
+    hidden: [Protean]
+  Frogadier:
+    abilities: [Torrent]
+    hidden: [Protean]
+  Greninja:
+    abilities: [Torrent]
+    # Battle Bond is Greninja's own, so neither Froakie nor Frogadier
+    # can be born with it
+    hidden: [Protean, Infiltrator, Sniper, BattleBond]
+  GreninjaAsh:
+    abilities: [BattleBond]
+    hidden: []
+Bunnelby:
+  Bunnelby:
+    abilities: [Pickup, CheekPouch]
+    hidden: [HugePower]
+  Diggersby:
+    abilities: [Pickup, CheekPouch]
+    hidden: [HugePower, SandRush]
+Fletchling:
+  Fletchling:
+    abilities: [BigPecks]
+    hidden: [GaleWings]
+  Fletchinder:
+    abilities: [FlameBody]
+    hidden: [GaleWings]
+  Talonflame:
+    abilities: [FlameBody]
+    hidden: [GaleWings, Reckless]
+Scatterbug:
+  Scatterbug:
+    abilities: [ShieldDust, CompoundEyes]
+    hidden: [FriendGuard]
+  Spewpa:
+    abilities: [ShedSkin]
+    hidden: [FriendGuard]
+  Vivillon:
+    abilities: [ShieldDust, CompoundEyes]
+    hidden: [FriendGuard]
+  VivillonIcySnow:
+    abilities: [ShieldDust, CompoundEyes]
+    hidden: [FriendGuard]
+  VivillonPolar:
+    abilities: [ShieldDust, CompoundEyes]
+    hidden: [FriendGuard]
+  VivillonTundra:
+    abilities: [ShieldDust, CompoundEyes]
+    hidden: [FriendGuard]
+  VivillonContinental:
+    abilities: [ShieldDust, CompoundEyes]
+    hidden: [FriendGuard]
+  VivillonGarden:
+    abilities: [ShieldDust, CompoundEyes]
+    hidden: [FriendGuard]
+  VivillonElegant:
+    abilities: [ShieldDust, CompoundEyes]
+    hidden: [FriendGuard]
+  VivillonModern:
+    abilities: [ShieldDust, CompoundEyes]
+    hidden: [FriendGuard]
+  VivillonMarine:
+    abilities: [ShieldDust, CompoundEyes]
+    hidden: [FriendGuard]
+  VivillonArchipelago:
+    abilities: [ShieldDust, CompoundEyes]
+    hidden: [FriendGuard]
+  VivillonHighPlains:
+    abilities: [ShieldDust, CompoundEyes]
+    hidden: [FriendGuard]
+  VivillonSandstorm:
+    abilities: [ShieldDust, CompoundEyes]
+    hidden: [FriendGuard]
+  VivillonRiver:
+    abilities: [ShieldDust, CompoundEyes]
+    hidden: [FriendGuard]
+  VivillonMonsoon:
+    abilities: [ShieldDust, CompoundEyes]
+    hidden: [FriendGuard]
+  VivillonSavannah:
+    abilities: [ShieldDust, CompoundEyes]
+    hidden: [FriendGuard]
+  VivillonSun:
+    abilities: [ShieldDust, CompoundEyes]
+    hidden: [FriendGuard]
+  VivillonOcean:
+    abilities: [ShieldDust, CompoundEyes]
+    hidden: [FriendGuard]
+  VivillonJungle:
+    abilities: [ShieldDust, CompoundEyes]
+    hidden: [FriendGuard]
+  # Without Spewpa below them they miss Shed Skin, so each gets a filler
+  VivillonFancy:
+    abilities: [ShieldDust, CompoundEyes]
+    hidden: [FriendGuard, CuteCharm]
+  VivillonPokeBall:
+    abilities: [ShieldDust, CompoundEyes]
+    hidden: [FriendGuard, Pickup]
+Litleo:
+  Litleo:
+    abilities: [Rivalry, Unnerve]
+    hidden: [Moxie]
+  Pyroar:
+    abilities: [Rivalry, Unnerve]
+    # Intimidate is this line's invented filler: the mainline gives it
+    # three abilities, and Fire Mane belongs to the Mega
+    hidden: [Moxie, Intimidate]
+Flabebe:
+  Flabebe:
+    abilities: [FlowerVeil]
+    hidden: [Symbiosis]
+  Floette:
+    abilities: [FlowerVeil]
+    hidden: [Symbiosis]
+  # Misty Surge and Unaware are this line's invented fillers: the
+  # mainline gives Florges only the two in its own list
+  Florges:
+    abilities: [FlowerVeil]
+    hidden: [Symbiosis, MistySurge, Unaware]
+  FlabebeYellow:
+    abilities: [FlowerVeil]
+    hidden: [Symbiosis]
+  FloetteYellow:
+    abilities: [FlowerVeil]
+    hidden: [Symbiosis]
+  FlorgesYellow:
+    abilities: [FlowerVeil]
+    hidden: [Symbiosis, MistySurge, Unaware]
+  FlabebeOrange:
+    abilities: [FlowerVeil]
+    hidden: [Symbiosis]
+  FloetteOrange:
+    abilities: [FlowerVeil]
+    hidden: [Symbiosis]
+  FlorgesOrange:
+    abilities: [FlowerVeil]
+    hidden: [Symbiosis, MistySurge, Unaware]
+  FlabebeBlue:
+    abilities: [FlowerVeil]
+    hidden: [Symbiosis]
+  FloetteBlue:
+    abilities: [FlowerVeil]
+    hidden: [Symbiosis]
+  FlorgesBlue:
+    abilities: [FlowerVeil]
+    hidden: [Symbiosis, MistySurge, Unaware]
+  FlabebeWhite:
+    abilities: [FlowerVeil]
+    hidden: [Symbiosis]
+  FloetteWhite:
+    abilities: [FlowerVeil]
+    hidden: [Symbiosis]
+  FlorgesWhite:
+    abilities: [FlowerVeil]
+    hidden: [Symbiosis, MistySurge, Unaware]
+  FloetteEternal:
+    abilities: [FlowerVeil]
+    hidden: [Symbiosis, Pixilate, FlowerGift]
+Skiddo:
+  Skiddo:
+    abilities: [SapSipper]
+    hidden: [GrassPelt]
+  Gogoat:
+    abilities: [SapSipper]
+    # Stamina and Harvest are this line's invented fillers: the
+    # mainline gives Gogoat only the two above
+    hidden: [GrassPelt, Stamina, Harvest]
+Pancham:
+  Pancham:
+    abilities: [IronFist, MoldBreaker]
+    hidden: [Scrappy]
+  Pangoro:
+    abilities: [IronFist, MoldBreaker]
+    # Guts is this line's invented filler: the mainline gives the
+    # panda Iron Fist, Mold Breaker and Scrappy and nothing else
+    hidden: [Scrappy, Guts]

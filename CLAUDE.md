@@ -32,7 +32,7 @@ Three that touch nearly every change: comments stay short and say the why rather
 
 Everything in `src/data/` describes itself and registers itself; nothing is queryable until `registerGameData()` in [src/data/index.ts](src/data/index.ts) has run. A test that reads species, moves, abilities or items must call the registration functions first.
 
-Each registry is a folder with `__create.ts` (the `Map`, the `registerX`/`getXData` pair, and any shared factories), a `gen-1.ts` of entries, and an `index.ts` that re-exports and registers. Ids are `const enum`s in `src/data/ids/`. Every entry carries a required one-line player-facing `description`; a test asserts each ends in a full stop.
+Each registry is a folder with `__create.ts` (the `Map`, the `registerX`/`getXData` pair, and any shared factories) and an `index.ts` that re-exports and registers. Species, moves, abilities, items, the per-move battle numbers (`src/data/battle/`) and the spawn pools (`src/data/biome/pools/`) are written as YAML, a folder per part of the record with the player-facing words under `src/data/text/en/`, read and checked by each registry's `yaml.ts` (the `data-yaml` skill). Behaviour, and any line that follows a table, stays in TypeScript beside `__create.ts`. Ids are `const enum`s in `src/data/ids/`. Every entry carries a required one-line player-facing `description`; a test asserts each ends in a full stop.
 
 Ability pools have their own rules about what a species may reach, which the `ability-pools` skill states.
 

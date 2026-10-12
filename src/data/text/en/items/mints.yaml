@@ -1,0 +1,24 @@
+templates:
+  mint: 'Makes it {nature}: {up}x {raised}, {down}x {lowered}. Spent on use.'
+  neutral: Makes it {nature}, which raises and lowers nothing. Spent on use.
+LonelyMint: { name: Lonely Mint }
+BraveMint: { name: Brave Mint }
+AdamantMint: { name: Adamant Mint }
+NaughtyMint: { name: Naughty Mint }
+BoldMint: { name: Bold Mint }
+RelaxedMint: { name: Relaxed Mint }
+ImpishMint: { name: Impish Mint }
+LaxMint: { name: Lax Mint }
+TimidMint: { name: Timid Mint }
+HastyMint: { name: Hasty Mint }
+SeriousMint: { name: Serious Mint }
+JollyMint: { name: Jolly Mint }
+NaiveMint: { name: Naive Mint }
+ModestMint: { name: Modest Mint }
+MildMint: { name: Mild Mint }
+QuietMint: { name: Quiet Mint }
+RashMint: { name: Rash Mint }
+CalmMint: { name: Calm Mint }
+GentleMint: { name: Gentle Mint }
+SassyMint: { name: Sassy Mint }
+CarefulMint: { name: Careful Mint }

@@ -125,6 +125,22 @@ export function createRodAbility(
 }
 
 /**
+ * An ability whose moves go where they were aimed: no Follow Me and no
+ * rod pulls them aside (Stalwart, Propeller Tail). Ending the question
+ * before anybody answers it leaves the aim standing
+ * https://bulbapedia.bulbagarden.net/wiki/Stalwart_(Ability)
+ */
+export function createStalwartAbility(ability: Abilities): (battle: Battle) => void {
+  return createAbility(ability, (battle) =>
+    battle.on(BattleEvents.CheckUnitMoveRedirect, EventPriority.Pre, (event) => {
+      if (event.source.hasAbility(ability)) {
+        event.disabled = true;
+      }
+    }),
+  );
+}
+
+/**
  * An ability that refuses every stat drop somebody else tries to
  * land: Clear Body and White Smoke, which are one effect printed
  * under two names. A drop the holder inflicts on itself still lands

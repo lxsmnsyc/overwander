@@ -1,0 +1,160 @@
+# From Mach Punch to Endure: the priority moves, the field hazards
+# and the ways out of a losing fight
+
+MachPunch:
+  type: Fighting
+  category: Physical
+  power: 40
+  accuracy: 100
+  priority: 1
+  pp: 30
+  target: Unit
+  flags: [Contact]
+
+ScaryFace:
+  type: Normal
+  category: Status
+  accuracy: 100
+  pp: 10
+  target: Unit
+  affects: [Unit, Own, Enemy]
+
+FeintAttack:
+  type: Dark
+  category: Physical
+  power: 60
+  pp: 20
+  target: Unit
+  flags: [Contact]
+
+SweetKiss:
+  type: Fairy
+  category: Status
+  accuracy: 75
+  pp: 10
+  target: Unit
+
+BellyDrum:
+  type: Normal
+  category: Status
+  pp: 10
+  target: None
+
+SludgeBomb:
+  type: Poison
+  category: Special
+  power: 90
+  accuracy: 100
+  pp: 10
+  target: Unit
+  projectile: true
+
+MudSlap:
+  type: Ground
+  category: Special
+  power: 20
+  accuracy: 100
+  pp: 10
+  target: Unit
+  projectile: true
+
+Octazooka:
+  type: Water
+  category: Special
+  power: 65
+  accuracy: 85
+  pp: 10
+  target: Unit
+  projectile: true
+
+Spikes:
+  type: Ground
+  category: Status
+  pp: 20
+  target: Team
+
+ZapCannon:
+  type: Electric
+  category: Special
+  power: 120
+  accuracy: 50
+  pp: 5
+  target: Unit
+  projectile: true
+
+Foresight:
+  type: Normal
+  category: Status
+  pp: 40
+  target: Unit
+
+DestinyBond:
+  type: Ghost
+  category: Status
+  pp: 5
+  target: None
+
+PerishSong:
+  type: Normal
+  category: Status
+  pp: 5
+  target: None
+  affects: [Self, Unit, Own, Enemy]
+  flags: [Sound]
+
+IcyWind:
+  type: Ice
+  category: Special
+  power: 55
+  accuracy: 95
+  pp: 15
+  target: None
+  affects: [Unit, Enemy]
+  flags: [Wind]
+  projectile: true
+
+Detect:
+  type: Fighting
+  category: Status
+  priority: 4
+  pp: 5
+  target: None
+
+BoneRush:
+  type: Ground
+  category: Physical
+  power: 25
+  accuracy: 90
+  pp: 10
+  target: Unit
+
+LockOn:
+  type: Normal
+  category: Status
+  pp: 5
+  target: Unit
+
+Outrage:
+  type: Dragon
+  category: Physical
+  power: 120
+  accuracy: 100
+  pp: 10
+  target: Unit
+  flags: [Contact]
+  steps: 2
+
+GigaDrain:
+  type: Grass
+  category: Special
+  power: 75
+  accuracy: 100
+  pp: 10
+  target: Unit
+
+Endure:
+  type: Normal
+  category: Status
+  priority: 4
+  pp: 10
+  target: None

@@ -1,0 +1,364 @@
+Chespin:
+  Chespin:
+    stats: { HP: 56, Attack: 61, Defense: 65, SpecialAttack: 48, SpecialDefense: 45, Speed: 38 }
+    catch-rate: 45
+    height: 0.4
+    weight: 9
+    gender: [7, 1]
+  Quilladin:
+    stats: { HP: 61, Attack: 78, Defense: 95, SpecialAttack: 56, SpecialDefense: 58, Speed: 57 }
+    catch-rate: 45
+    height: 0.7
+    weight: 29
+    gender: [7, 1]
+  Chesnaught:
+    stats: { HP: 88, Attack: 107, Defense: 122, SpecialAttack: 74, SpecialDefense: 75, Speed: 64 }
+    catch-rate: 45
+    height: 1.6
+    weight: 90
+    gender: [7, 1]
+Fennekin:
+  Fennekin:
+    stats: { HP: 40, Attack: 45, Defense: 40, SpecialAttack: 62, SpecialDefense: 60, Speed: 60 }
+    catch-rate: 45
+    height: 0.4
+    weight: 9.4
+    gender: [7, 1]
+  Braixen:
+    stats: { HP: 59, Attack: 59, Defense: 58, SpecialAttack: 90, SpecialDefense: 70, Speed: 73 }
+    catch-rate: 45
+    height: 1
+    weight: 14.5
+    gender: [7, 1]
+  Delphox:
+    stats: { HP: 75, Attack: 69, Defense: 72, SpecialAttack: 114, SpecialDefense: 100, Speed: 104 }
+    catch-rate: 45
+    height: 1.5
+    weight: 39
+    gender: [7, 1]
+Froakie:
+  Froakie:
+    stats: { HP: 41, Attack: 56, Defense: 40, SpecialAttack: 62, SpecialDefense: 44, Speed: 71 }
+    catch-rate: 45
+    height: 0.3
+    weight: 7
+    gender: [7, 1]
+  Frogadier:
+    stats: { HP: 54, Attack: 63, Defense: 52, SpecialAttack: 83, SpecialDefense: 56, Speed: 97 }
+    catch-rate: 45
+    height: 0.6
+    weight: 10.9
+    gender: [7, 1]
+  Greninja:
+    stats: { HP: 72, Attack: 95, Defense: 67, SpecialAttack: 103, SpecialDefense: 71, Speed: 122 }
+    catch-rate: 45
+    height: 1.5
+    weight: 40
+    gender: &a1 [7, 1]
+  GreninjaAsh:
+    stats: { HP: 72, Attack: 145, Defense: 67, SpecialAttack: 153, SpecialDefense: 71, Speed: 132 }
+    catch-rate: 45
+    height: 1.5
+    weight: 40
+    gender: *a1
+Bunnelby:
+  Bunnelby:
+    stats: { HP: 38, Attack: 36, Defense: 38, SpecialAttack: 32, SpecialDefense: 36, Speed: 57 }
+    catch-rate: 255
+    height: 0.4
+    weight: 5
+    gender: [4, 4]
+  Diggersby:
+    stats: { HP: 85, Attack: 56, Defense: 77, SpecialAttack: 50, SpecialDefense: 77, Speed: 78 }
+    catch-rate: 127
+    height: 1
+    weight: 42.4
+    gender: [4, 4]
+Fletchling:
+  Fletchling:
+    stats: { HP: 45, Attack: 50, Defense: 43, SpecialAttack: 40, SpecialDefense: 38, Speed: 62 }
+    catch-rate: 255
+    height: 0.3
+    weight: 1.7
+    gender: [4, 4]
+  Fletchinder:
+    stats: { HP: 62, Attack: 73, Defense: 55, SpecialAttack: 56, SpecialDefense: 52, Speed: 84 }
+    catch-rate: 120
+    height: 0.7
+    weight: 16
+    gender: [4, 4]
+  Talonflame:
+    stats: { HP: 78, Attack: 81, Defense: 71, SpecialAttack: 74, SpecialDefense: 69, Speed: 126 }
+    catch-rate: 45
+    height: 1.2
+    weight: 24.5
+    gender: [4, 4]
+Scatterbug:
+  Scatterbug:
+    stats: { HP: 38, Attack: 35, Defense: 40, SpecialAttack: 27, SpecialDefense: 25, Speed: 35 }
+    catch-rate: 255
+    height: 0.3
+    weight: 2.5
+    gender: [4, 4]
+  Spewpa:
+    stats: { HP: 45, Attack: 22, Defense: 60, SpecialAttack: 27, SpecialDefense: 30, Speed: 29 }
+    catch-rate: 120
+    height: 0.3
+    weight: 8.4
+    gender: [4, 4]
+  Vivillon:
+    stats: { HP: 80, Attack: 52, Defense: 50, SpecialAttack: 90, SpecialDefense: 50, Speed: 89 }
+    catch-rate: 45
+    height: 1.2
+    weight: 17
+    gender: [4, 4]
+  VivillonIcySnow:
+    stats: { HP: 80, Attack: 52, Defense: 50, SpecialAttack: 90, SpecialDefense: 50, Speed: 89 }
+    catch-rate: 45
+    height: 1.2
+    weight: 17
+    gender: [4, 4]
+  VivillonPolar:
+    stats: { HP: 80, Attack: 52, Defense: 50, SpecialAttack: 90, SpecialDefense: 50, Speed: 89 }
+    catch-rate: 45
+    height: 1.2
+    weight: 17
+    gender: [4, 4]
+  VivillonTundra:
+    stats: { HP: 80, Attack: 52, Defense: 50, SpecialAttack: 90, SpecialDefense: 50, Speed: 89 }
+    catch-rate: 45
+    height: 1.2
+    weight: 17
+    gender: [4, 4]
+  VivillonContinental:
+    stats: { HP: 80, Attack: 52, Defense: 50, SpecialAttack: 90, SpecialDefense: 50, Speed: 89 }
+    catch-rate: 45
+    height: 1.2
+    weight: 17
+    gender: [4, 4]
+  VivillonGarden:
+    stats: { HP: 80, Attack: 52, Defense: 50, SpecialAttack: 90, SpecialDefense: 50, Speed: 89 }
+    catch-rate: 45
+    height: 1.2
+    weight: 17
+    gender: [4, 4]
+  VivillonElegant:
+    stats: { HP: 80, Attack: 52, Defense: 50, SpecialAttack: 90, SpecialDefense: 50, Speed: 89 }
+    catch-rate: 45
+    height: 1.2
+    weight: 17
+    gender: [4, 4]
+  VivillonModern:
+    stats: { HP: 80, Attack: 52, Defense: 50, SpecialAttack: 90, SpecialDefense: 50, Speed: 89 }
+    catch-rate: 45
+    height: 1.2
+    weight: 17
+    gender: [4, 4]
+  VivillonMarine:
+    stats: { HP: 80, Attack: 52, Defense: 50, SpecialAttack: 90, SpecialDefense: 50, Speed: 89 }
+    catch-rate: 45
+    height: 1.2
+    weight: 17
+    gender: [4, 4]
+  VivillonArchipelago:
+    stats: { HP: 80, Attack: 52, Defense: 50, SpecialAttack: 90, SpecialDefense: 50, Speed: 89 }
+    catch-rate: 45
+    height: 1.2
+    weight: 17
+    gender: [4, 4]
+  VivillonHighPlains:
+    stats: { HP: 80, Attack: 52, Defense: 50, SpecialAttack: 90, SpecialDefense: 50, Speed: 89 }
+    catch-rate: 45
+    height: 1.2
+    weight: 17
+    gender: [4, 4]
+  VivillonSandstorm:
+    stats: { HP: 80, Attack: 52, Defense: 50, SpecialAttack: 90, SpecialDefense: 50, Speed: 89 }
+    catch-rate: 45
+    height: 1.2
+    weight: 17
+    gender: [4, 4]
+  VivillonRiver:
+    stats: { HP: 80, Attack: 52, Defense: 50, SpecialAttack: 90, SpecialDefense: 50, Speed: 89 }
+    catch-rate: 45
+    height: 1.2
+    weight: 17
+    gender: [4, 4]
+  VivillonMonsoon:
+    stats: { HP: 80, Attack: 52, Defense: 50, SpecialAttack: 90, SpecialDefense: 50, Speed: 89 }
+    catch-rate: 45
+    height: 1.2
+    weight: 17
+    gender: [4, 4]
+  VivillonSavannah:
+    stats: { HP: 80, Attack: 52, Defense: 50, SpecialAttack: 90, SpecialDefense: 50, Speed: 89 }
+    catch-rate: 45
+    height: 1.2
+    weight: 17
+    gender: [4, 4]
+  VivillonSun:
+    stats: { HP: 80, Attack: 52, Defense: 50, SpecialAttack: 90, SpecialDefense: 50, Speed: 89 }
+    catch-rate: 45
+    height: 1.2
+    weight: 17
+    gender: [4, 4]
+  VivillonOcean:
+    stats: { HP: 80, Attack: 52, Defense: 50, SpecialAttack: 90, SpecialDefense: 50, Speed: 89 }
+    catch-rate: 45
+    height: 1.2
+    weight: 17
+    gender: [4, 4]
+  VivillonJungle:
+    stats: { HP: 80, Attack: 52, Defense: 50, SpecialAttack: 90, SpecialDefense: 50, Speed: 89 }
+    catch-rate: 45
+    height: 1.2
+    weight: 17
+    gender: [4, 4]
+  VivillonFancy:
+    stats: { HP: 80, Attack: 52, Defense: 50, SpecialAttack: 90, SpecialDefense: 50, Speed: 89 }
+    catch-rate: 45
+    height: 1.2
+    weight: 17
+    gender: [4, 4]
+  VivillonPokeBall:
+    stats: { HP: 80, Attack: 52, Defense: 50, SpecialAttack: 90, SpecialDefense: 50, Speed: 89 }
+    catch-rate: 45
+    height: 1.2
+    weight: 17
+    gender: [4, 4]
+Litleo:
+  Litleo:
+    stats: { HP: 62, Attack: 50, Defense: 58, SpecialAttack: 73, SpecialDefense: 54, Speed: 72 }
+    catch-rate: 220
+    height: 0.6
+    weight: 13.5
+    gender: [1, 7]
+  Pyroar:
+    stats: { HP: 86, Attack: 68, Defense: 72, SpecialAttack: 109, SpecialDefense: 66, Speed: 106 }
+    catch-rate: 65
+    height: 1.5
+    weight: 81.5
+    gender: [1, 7]
+Flabebe:
+  Flabebe:
+    stats: { HP: 44, Attack: 38, Defense: 39, SpecialAttack: 61, SpecialDefense: 79, Speed: 42 }
+    catch-rate: 225
+    height: 0.1
+    weight: 0.1
+    gender: [0, 1]
+  Floette:
+    stats: { HP: 54, Attack: 45, Defense: 47, SpecialAttack: 75, SpecialDefense: 98, Speed: 52 }
+    catch-rate: 120
+    height: 0.2
+    weight: 0.9
+    gender: [0, 1]
+  Florges:
+    stats: { HP: 78, Attack: 65, Defense: 68, SpecialAttack: 112, SpecialDefense: 154, Speed: 75 }
+    catch-rate: 45
+    height: 1.1
+    weight: 10
+    gender: [0, 1]
+  FlabebeYellow:
+    stats: { HP: 44, Attack: 38, Defense: 39, SpecialAttack: 61, SpecialDefense: 79, Speed: 42 }
+    catch-rate: 225
+    height: 0.1
+    weight: 0.1
+    gender: [0, 1]
+  FloetteYellow:
+    stats: { HP: 54, Attack: 45, Defense: 47, SpecialAttack: 75, SpecialDefense: 98, Speed: 52 }
+    catch-rate: 120
+    height: 0.2
+    weight: 0.9
+    gender: [0, 1]
+  FlorgesYellow:
+    stats: { HP: 78, Attack: 65, Defense: 68, SpecialAttack: 112, SpecialDefense: 154, Speed: 75 }
+    catch-rate: 45
+    height: 1.1
+    weight: 10
+    gender: [0, 1]
+  FlabebeOrange:
+    stats: { HP: 44, Attack: 38, Defense: 39, SpecialAttack: 61, SpecialDefense: 79, Speed: 42 }
+    catch-rate: 225
+    height: 0.1
+    weight: 0.1
+    gender: [0, 1]
+  FloetteOrange:
+    stats: { HP: 54, Attack: 45, Defense: 47, SpecialAttack: 75, SpecialDefense: 98, Speed: 52 }
+    catch-rate: 120
+    height: 0.2
+    weight: 0.9
+    gender: [0, 1]
+  FlorgesOrange:
+    stats: { HP: 78, Attack: 65, Defense: 68, SpecialAttack: 112, SpecialDefense: 154, Speed: 75 }
+    catch-rate: 45
+    height: 1.1
+    weight: 10
+    gender: [0, 1]
+  FlabebeBlue:
+    stats: { HP: 44, Attack: 38, Defense: 39, SpecialAttack: 61, SpecialDefense: 79, Speed: 42 }
+    catch-rate: 225
+    height: 0.1
+    weight: 0.1
+    gender: [0, 1]
+  FloetteBlue:
+    stats: { HP: 54, Attack: 45, Defense: 47, SpecialAttack: 75, SpecialDefense: 98, Speed: 52 }
+    catch-rate: 120
+    height: 0.2
+    weight: 0.9
+    gender: [0, 1]
+  FlorgesBlue:
+    stats: { HP: 78, Attack: 65, Defense: 68, SpecialAttack: 112, SpecialDefense: 154, Speed: 75 }
+    catch-rate: 45
+    height: 1.1
+    weight: 10
+    gender: [0, 1]
+  FlabebeWhite:
+    stats: { HP: 44, Attack: 38, Defense: 39, SpecialAttack: 61, SpecialDefense: 79, Speed: 42 }
+    catch-rate: 225
+    height: 0.1
+    weight: 0.1
+    gender: [0, 1]
+  FloetteWhite:
+    stats: { HP: 54, Attack: 45, Defense: 47, SpecialAttack: 75, SpecialDefense: 98, Speed: 52 }
+    catch-rate: 120
+    height: 0.2
+    weight: 0.9
+    gender: [0, 1]
+  FlorgesWhite:
+    stats: { HP: 78, Attack: 65, Defense: 68, SpecialAttack: 112, SpecialDefense: 154, Speed: 75 }
+    catch-rate: 45
+    height: 1.1
+    weight: 10
+    gender: [0, 1]
+  FloetteEternal:
+    stats: { HP: 74, Attack: 65, Defense: 67, SpecialAttack: 125, SpecialDefense: 128, Speed: 92 }
+    catch-rate: 45
+    height: 0.2
+    weight: 0.9
+    gender: [0, 1]
+Skiddo:
+  Skiddo:
+    stats: { HP: 66, Attack: 65, Defense: 48, SpecialAttack: 62, SpecialDefense: 57, Speed: 52 }
+    catch-rate: 200
+    height: 0.9
+    weight: 31
+    gender: [1, 1]
+  Gogoat:
+    stats: { HP: 123, Attack: 100, Defense: 62, SpecialAttack: 97, SpecialDefense: 81, Speed: 68 }
+    catch-rate: 45
+    height: 1.7
+    weight: 91
+    gender: [1, 1]
+Pancham:
+  Pancham:
+    stats: { HP: 67, Attack: 82, Defense: 62, SpecialAttack: 46, SpecialDefense: 48, Speed: 43 }
+    catch-rate: 220
+    height: 0.6
+    weight: 8
+    gender: [1, 1]
+  Pangoro:
+    stats: { HP: 95, Attack: 124, Defense: 78, SpecialAttack: 69, SpecialDefense: 71, Speed: 58 }
+    catch-rate: 65
+    height: 2.1
+    weight: 136
+    gender: [1, 1]

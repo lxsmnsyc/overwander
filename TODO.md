@@ -7,8 +7,9 @@ later feature adds more text to translate and more data to load at boot.
 
 The three plans touch the same registries, so they are sequenced: decide how
 text leaves the registries (i18n) before splitting them for loading, and keep
-the database copy independent of both. Game data stays hand-written TypeScript
-throughout; nothing here turns it into generated JSON.
+the database copy independent of both. Game data moves to YAML a registry at a
+time, a folder per field so each part can load on its own (see the `data-yaml`
+skill); behaviour stays TypeScript.
 
 ### Internationalization
 
@@ -25,8 +26,8 @@ string is hard-coded English, in registry `name` and `description` fields, the
 - [ ] **Formatting.** Replace the four `toLocaleString('en-US')` calls and any
       hand-built dates with `Intl`, reading the active locale.
 - [ ] **Registry text out of the entries.** Names and descriptions move into
-      per-locale text tables keyed by id (for example
-      `src/data/text/en/species.ts`), read through `getSpeciesName(id)` and
+      per-locale text tables keyed by id (species already use
+      `src/data/text/en/species.yaml`), read through `getSpeciesName(id)` and
       friends. Derived descriptions (`describeBerry`, the gems, valuables)
       become message templates with parameters rather than string
       concatenation.
@@ -52,12 +53,15 @@ thin slice of it.
       to read `.shiny`, which rolls moves, abilities, held items and level.
       Split out a `deriveShiny`. After this the overworld needs no learn sets,
       ability pools or held-item tables.
-- [ ] **Split the species record in two, as source files.** The world half is
-      what spawning and the board read: id, name, family, types, habitat,
-      `evolvesFrom`, `evolvesInto`, `dexNumber`, `eggGroups`, plus the spawn
-      pools. The detail half holds learn sets, stats, ability pools, held
-      items, catch rate, height, weight and gender ratio, in a matching file
-      that loads later.
+- [x] **Split the species record by field, as source files.** Done as YAML:
+      `world/`, `stats/`, `abilities/` and `learnsets/`, families filed in
+      blocks of 25 dex numbers per region, with names filed the same way
+      under `text/en/species/`. They still load eagerly; loading each field
+      when it is first wanted is the next step.
+- [ ] **Move the other registries to YAML** on the same pipeline. Moves,
+      abilities, items, the per-move battle numbers and the spawn pools are
+      done; the lairs are next. The Megas and true
+      shadows can follow once the YAML can say `inherits:`.
 - [ ] **Load moves, abilities and items on demand** in the browser, behind a
       Suspense gate around the panels and the battle view. The server keeps
       registering everything eagerly.
@@ -263,6 +267,24 @@ What is still short of the mainline, in rough order of how much it matters:
 ### True Species
 
 - Pre-existing species with new types
+
+### Alola trainers
+
+Skipped until five core trainers have overworld sprites. The Pokéngine Alola
+collection (`10v2m11k`) has only a placeholder for each, and no other upload or
+pack has them.
+
+- [ ] Hala (kahuna, Elite Four in Sun and Moon)
+- [ ] Ilima (trial captain)
+- [ ] Acerola (trial captain, Elite Four)
+- [ ] Mina (trial captain)
+- [ ] Plumeria (Team Skull admin)
+
+Everything else the set needs has a sheet there: the other kahunas and
+captains, Molayne, Kahili, Kukui, Hau, Gladion, Guzma, the Skull grunts, the
+Aether staff, Faba and Lusamine, and most of Alola's trainer classes. Most
+overworlds are DiegoWT's, under kyledove's battle sprites, free to use with
+credit. Collector and Golfer have no Alolan overworld either.
 
 ### Available Mega Sprites
 

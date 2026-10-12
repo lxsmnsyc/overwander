@@ -1,0 +1,186 @@
+# From Charm to Baton Pass: the machines Johto handed out, and the
+# moves that pass what they built along
+
+Charm:
+  type: Fairy
+  category: Status
+  accuracy: 100
+  pp: 20
+  target: Unit
+  affects: [Unit, Own, Enemy]
+
+Rollout:
+  type: Rock
+  category: Physical
+  power: 30
+  accuracy: 90
+  pp: 20
+  target: Unit
+  flags: [Contact]
+  steps: 4
+
+FalseSwipe:
+  type: Normal
+  category: Physical
+  power: 40
+  accuracy: 100
+  pp: 40
+  target: Unit
+  flags: [Contact, Slicing]
+
+Swagger:
+  type: Normal
+  category: Status
+  accuracy: 85
+  pp: 15
+  target: Unit
+  affects: [Unit, Own, Enemy]
+
+MilkDrink:
+  type: Normal
+  category: Status
+  pp: 5
+  target: Unit
+  affects: [Unit, Self, Own]
+
+Spark:
+  type: Electric
+  category: Physical
+  power: 65
+  accuracy: 100
+  pp: 20
+  target: Unit
+  flags: [Contact]
+
+FuryCutter:
+  type: Bug
+  category: Physical
+  power: 40
+  accuracy: 95
+  pp: 20
+  target: Unit
+  flags: [Contact, Slicing]
+  steps: 3
+
+SteelWing:
+  type: Steel
+  category: Physical
+  power: 70
+  accuracy: 90
+  pp: 25
+  target: Unit
+  flags: [Contact]
+
+MeanLook:
+  type: Normal
+  category: Status
+  pp: 5
+  target: Unit
+
+Attract:
+  type: Normal
+  category: Status
+  accuracy: 100
+  pp: 15
+  target: Unit
+
+SleepTalk:
+  type: Normal
+  category: Status
+  pp: 10
+  target: None
+
+HealBell:
+  type: Normal
+  category: Status
+  pp: 5
+  target: Team
+  affects: [Team, Own]
+  flags: [Sound]
+
+Return:
+  type: Normal
+  category: Physical
+  accuracy: 100
+  pp: 20
+  target: Unit
+  flags: [Contact]
+
+Present:
+  type: Normal
+  category: Physical
+  accuracy: 90
+  pp: 15
+  target: Unit
+  affects: [Unit, Own, Enemy]
+  projectile: true
+
+Frustration:
+  type: Normal
+  category: Physical
+  accuracy: 100
+  pp: 20
+  target: Unit
+  flags: [Contact]
+
+Safeguard:
+  type: Normal
+  category: Status
+  pp: 25
+  target: Team
+  affects: [Team, Own]
+
+PainSplit:
+  type: Normal
+  category: Status
+  pp: 20
+  target: Unit
+  affects: [Unit, Own, Enemy]
+
+SacredFire:
+  type: Fire
+  category: Physical
+  power: 100
+  accuracy: 95
+  pp: 5
+  target: Unit
+
+Magnitude:
+  type: Ground
+  category: Physical
+  accuracy: 100
+  pp: 30
+  target: None
+  affects: [Unit, Own, Enemy]
+
+DynamicPunch:
+  type: Fighting
+  category: Physical
+  power: 100
+  accuracy: 50
+  pp: 5
+  target: Unit
+  flags: [Contact]
+
+Megahorn:
+  type: Bug
+  category: Physical
+  power: 120
+  accuracy: 85
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+DragonBreath:
+  type: Dragon
+  category: Special
+  power: 60
+  accuracy: 100
+  pp: 20
+  target: Unit
+
+BatonPass:
+  type: Normal
+  category: Status
+  pp: 40
+  target: None

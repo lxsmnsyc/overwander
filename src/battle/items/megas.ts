@@ -2,7 +2,7 @@ import { EventPriority } from '../../core/event-emitter';
 import { STAT_ORDER } from '../../data/constants/stats';
 import { Moves } from '../../data/ids/moves';
 import { Species, getBaseFormSpecies } from '../../data/ids/species';
-import { MEGA_STONES } from '../../data/items/mega-stones';
+import { MEGA_STONES, getMegaStone } from '../../data/items/mega-stones';
 import { getSpeciesData } from '../../data/species/__create';
 import { getShadowlessSpecies, getTrueShadowShape } from '../../data/species/true-shadow';
 import type Battle from '../core';
@@ -35,6 +35,15 @@ function plainMegaOf(unit: Unit, species: Species): Species | null {
     }
   }
   return null;
+}
+
+/** Whether the unit is a Mega, or holds what would make it one */
+export function isMegaHolder(unit: Unit): boolean {
+  return (
+    megaOf(unit) != null ||
+    getMegaStone(unit.species) != null ||
+    unit.species === Species.RayquazaMega
+  );
 }
 
 function megaTotal(mega: Species): number {

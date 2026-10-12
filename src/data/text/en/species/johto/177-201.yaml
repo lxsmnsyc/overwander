@@ -1,0 +1,65 @@
+Natu:
+  Natu: { name: Natu, category: Tiny Bird Pokemon }
+  Xatu: { name: Xatu, category: Mystic Pokemon }
+Mareep:
+  Mareep: { name: Mareep, category: Wool Pokemon }
+  Flaaffy: { name: Flaaffy, category: Wool Pokemon }
+  Ampharos: { name: Ampharos, category: Light Pokemon }
+Marill:
+  Marill: { name: Marill, category: Aqua Mouse Pokemon }
+  Azumarill: { name: Azumarill, category: Aqua Rabbit Pokemon }
+  Azurill: { name: Azurill, category: Polka Dot Pokemon }
+Sudowoodo:
+  Sudowoodo: { name: Sudowoodo, category: Imitation Pokemon }
+  Bonsly: { name: Bonsly, category: Bonsai Pokemon }
+Hoppip:
+  Hoppip: { name: Hoppip, category: Cottonweed Pokemon }
+  Skiploom: { name: Skiploom, category: Cottonweed Pokemon }
+  Jumpluff: { name: Jumpluff, category: Cottonweed Pokemon }
+Aipom:
+  Aipom: { name: Aipom, category: Long Tail Pokemon }
+  Ambipom: { name: Ambipom, category: Long Tail Pokemon }
+Sunkern:
+  Sunkern: { name: Sunkern, category: Seed Pokemon }
+  Sunflora: { name: Sunflora, category: Sun Pokemon }
+Yanma:
+  Yanma: { name: Yanma, category: Clear Wing Pokemon }
+  Yanmega: { name: Yanmega, category: Ogre Darner Pokemon }
+Wooper:
+  Wooper: { name: Wooper, category: Water Fish Pokemon }
+  Quagsire: { name: Quagsire, category: Water Fish Pokemon }
+Murkrow:
+  Murkrow: { name: Murkrow, category: Darkness Pokemon }
+  Honchkrow: { name: Honchkrow, category: Big Boss Pokemon }
+Misdreavus:
+  Misdreavus: { name: Misdreavus, category: Screech Pokemon }
+  Mismagius: { name: Mismagius, category: Magical Pokemon }
+Unown:
+  Unown: { name: Unown, category: Symbol Pokemon }
+  UnownB: { name: Unown B, category: Symbol Pokemon }
+  UnownC: { name: Unown C, category: Symbol Pokemon }
+  UnownD: { name: Unown D, category: Symbol Pokemon }
+  UnownE: { name: Unown E, category: Symbol Pokemon }
+  UnownF: { name: Unown F, category: Symbol Pokemon }
+  UnownG: { name: Unown G, category: Symbol Pokemon }
+  UnownH: { name: Unown H, category: Symbol Pokemon }
+  UnownI: { name: Unown I, category: Symbol Pokemon }
+  UnownJ: { name: Unown J, category: Symbol Pokemon }
+  UnownK: { name: Unown K, category: Symbol Pokemon }
+  UnownL: { name: Unown L, category: Symbol Pokemon }
+  UnownM: { name: Unown M, category: Symbol Pokemon }
+  UnownN: { name: Unown N, category: Symbol Pokemon }
+  UnownO: { name: Unown O, category: Symbol Pokemon }
+  UnownP: { name: Unown P, category: Symbol Pokemon }
+  UnownQ: { name: Unown Q, category: Symbol Pokemon }
+  UnownR: { name: Unown R, category: Symbol Pokemon }
+  UnownS: { name: Unown S, category: Symbol Pokemon }
+  UnownT: { name: Unown T, category: Symbol Pokemon }
+  UnownU: { name: Unown U, category: Symbol Pokemon }
+  UnownV: { name: Unown V, category: Symbol Pokemon }
+  UnownW: { name: Unown W, category: Symbol Pokemon }
+  UnownX: { name: Unown X, category: Symbol Pokemon }
+  UnownY: { name: Unown Y, category: Symbol Pokemon }
+  UnownZ: { name: Unown Z, category: Symbol Pokemon }
+  UnownExclamation: { name: Unown !, category: Symbol Pokemon }
+  UnownQuestion: { name: Unown ?, category: Symbol Pokemon }

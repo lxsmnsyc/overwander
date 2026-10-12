@@ -1,0 +1,163 @@
+Chatot:
+  # The bird that keeps whatever it was told. Every note it makes is
+  # somebody else's, and it says them back louder
+  Chatot:
+    types: [Normal, Flying]
+    egg-groups: [Flying]
+    biomes: [TropicalSeasonalForest, TemperateForest, Woodland]
+    active: [Morning, Day]
+Spiritomb:
+  # A hundred and eight spirits pressed into one keystone for what
+  # they did, and still in it
+  Spiritomb:
+    types: [Ghost, Dark]
+    egg-groups: [Amorphous]
+    biomes: [Badlands, Bog, Woodland]
+    active: [Evening, Night]
+Gible:
+  # The cave mouth that bites: Gible waits in a hole for something to
+  # walk past, and a Garchomp does the same at the speed of a jet
+  Gible:
+    types: [Dragon, Ground]
+    egg-groups: [Monster, Dragon]
+    biomes: [Mountain, Badlands, Desert]
+    active: any
+    evolves-into:
+      - species: Gabite
+        method: [Level]
+        level: 24
+  Gabite:
+    types: [Dragon, Ground]
+    egg-groups: [Monster, Dragon]
+    biomes: [Mountain, Badlands, Desert]
+    active: any
+    evolves-from: Gible
+    evolves-into:
+      - species: Garchomp
+        method: [Level]
+        level: 48
+  Garchomp:
+    types: [Dragon, Ground]
+    egg-groups: [Monster, Dragon]
+    biomes: [Mountain, Badlands, Desert]
+    active: any
+    evolves-from: Gabite
+Riolu:
+  # The aura reader: a Riolu tells how somebody feels from across a
+  # field, and a Lucario tells what they are about to do
+  Riolu:
+    types: [Fighting]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Mountain, MontaneForest, AlpineTundra]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Lucario
+        method: [Friendship, TimeOfDay]
+        time: [Morning, Day]
+    rank: baby
+  Lucario:
+    types: [Fighting, Steel]
+    egg-groups: [Field, HumanLike]
+    biomes: [Mountain, MontaneForest, AlpineTundra]
+    active: [Morning, Day]
+    evolves-from: Riolu
+Hippopotas:
+  # The desert's own weather: a Hippopotas carries sand in its hide and
+  # shakes it out, and a Hippowdon never stops shaking it out
+  Hippopotas:
+    types: [Ground]
+    egg-groups: [Field]
+    biomes: [Desert, Badlands, Savanna]
+    active: any
+    evolves-into:
+      - species: Hippowdon
+        method: [Level]
+        level: 34
+  Hippowdon:
+    types: [Ground]
+    egg-groups: [Field]
+    biomes: [Desert, Badlands, Savanna]
+    active: any
+    evolves-from: Hippopotas
+Skorupi:
+  # The one that waits under the sand: a Skorupi holds still until
+  # something walks over it, and a Drapion holds whatever it caught
+  Skorupi:
+    types: [Poison, Bug]
+    egg-groups: [Bug, Water3]
+    biomes: [Desert, Shrubland, Steppe]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Drapion
+        method: [Level]
+        level: 40
+  Drapion:
+    types: [Poison, Dark]
+    egg-groups: [Bug, Water3]
+    biomes: [Desert, Shrubland, Steppe]
+    active: [Evening, Night]
+    evolves-from: Skorupi
+Croagunk:
+  # The one that croaks before it swings: a Croagunk unsettles whatever
+  # it is facing, and a Toxicroak jabs with a claw it has poisoned
+  Croagunk:
+    types: [Poison, Fighting]
+    egg-groups: [HumanLike]
+    biomes: [Swamp, Bog, Mangrove]
+    active: any
+    evolves-into:
+      - species: Toxicroak
+        method: [Level]
+        level: 37
+  Toxicroak:
+    types: [Poison, Fighting]
+    egg-groups: [HumanLike]
+    biomes: [Swamp, Bog, Mangrove]
+    active: any
+    evolves-from: Croagunk
+Carnivine:
+  # The mouth hanging off a branch. It smells sweet on purpose, and
+  # what comes to find out why does not come back
+  Carnivine:
+    types: [Grass]
+    egg-groups: [Grass]
+    biomes: [Swamp, Mangrove, TropicalRainforest]
+    active: any
+Finneon:
+  # The fish that wears two false eyes: a Finneon hides behind the
+  # pattern on its fins, and a Lumineon lights the deep water with it
+  Finneon:
+    types: [Water]
+    egg-groups: [Water2]
+    habitat: Water
+    biomes: [Ocean, CoralReef, KelpForest]
+    active: any
+    evolves-into:
+      - species: Lumineon
+        method: [Level]
+        level: 31
+  Lumineon:
+    types: [Water]
+    egg-groups: [Water2]
+    habitat: Water
+    biomes: [Ocean, CoralReef, KelpForest]
+    active: any
+    evolves-from: Finneon
+Snover:
+  # The tree that brings its own winter: a Snover walks down to where
+  # people are when the snow comes, and an Abomasnow makes the snow
+  Snover:
+    types: [Grass, Ice]
+    egg-groups: [Monster, Grass]
+    biomes: [AlpineTundra, Taiga, Tundra]
+    active: any
+    evolves-into:
+      - species: Abomasnow
+        method: [Level]
+        level: 40
+  Abomasnow:
+    types: [Grass, Ice]
+    egg-groups: [Monster, Grass]
+    biomes: [AlpineTundra, Taiga, Tundra]
+    active: any
+    evolves-from: Snover

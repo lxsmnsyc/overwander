@@ -1,0 +1,60 @@
+# The champions, one to a league, each by their enum name: the `title` the
+# seat is worth, the `league` whose Elite Four they ask to see beaten
+# first, the `sheets` they are seen in, the `prize` coats their title pays
+# besides, and their own six. A champion is the one expert who does not
+# draw from a pool: the team is the character, and a player who has
+# walked the whole league should meet the party they are known for.
+# What each is called is text/en.
+
+# Blue's is the line-up he takes the Indigo Plateau with in Fire Red, the
+# Blastoise one of the three he has. His Let's Go look is his own; his
+# Heart Gold one asks for Johto's crown as well, and is listed with the
+# crossed unlocks in charsets.ts
+Blue:
+  title: KantoChampion
+  league: Kanto
+  sheets: [characters/frlg/blue]
+  prize: [characters/lgpe/blue]
+  party: [Pidgeot, Alakazam, Rhydon, Arcanine, Exeggutor, Blastoise]
+# The one he defends the plateau with, three Dragonite and all
+Lance:
+  title: JohtoChampion
+  league: Johto
+  sheets:
+    - characters/hgss/lance
+    - characters/hgss/lance-2
+  party: [Gyarados, Charizard, Aerodactyl, Dragonite, Dragonite, Dragonite]
+# Sootopolis' gym is Juan's here, so Wallace is only ever the man at the
+# top, in both coats he is drawn in. The six he defends Ever Grande with
+# in Emerald, Milotic last
+Wallace:
+  title: HoennChampion
+  league: Hoenn
+  sheets:
+    - characters/rse/wallace
+    - characters/oras/wallace
+  party: [Wailord, Tentacruel, Ludicolo, Whiscash, Gyarados, Milotic]
+# Platinum's six, Garchomp last. It is the line-up she is remembered for,
+# and the one type nothing in it shares
+Cynthia:
+  title: SinnohChampion
+  league: Sinnoh
+  sheets: [characters/dppt/cynthia]
+  party: [Spiritomb, Roserade, Togekiss, Lucario, Milotic, Garchomp]
+# Opelucid's gym is Drayden's here, so both of her looks are the
+# champion's, the way both of Wallace's are. The six she defends Unova
+# with in the sequels, Haxorus last
+Iris:
+  title: UnovaChampion
+  league: Unova
+  sheets:
+    - characters/b2w2/iris-1
+    - characters/b2w2/iris-2
+  party: [Hydreigon, Druddigon, Aggron, Archeops, Lapras, Haxorus]
+# The six she defends Kalos with, Gardevoir last. Both fossils are hers,
+# so Tyrantrum and Aurorus stand side by side
+Diantha:
+  title: KalosChampion
+  league: Kalos
+  sheets: [characters/xy/diantha]
+  party: [Hawlucha, Tyrantrum, Aurorus, Gourgeist, Goodra, Gardevoir]

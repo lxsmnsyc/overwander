@@ -1,0 +1,86 @@
+# From Purify to Aurora Veil
+
+Purify:
+  type: Poison
+  category: Status
+  pp: 20
+  target: Unit
+  affects: [Unit, Own, Enemy]
+
+RevelationDance:
+  type: Normal
+  category: Special
+  power: 90
+  accuracy: 100
+  pp: 15
+  target: Unit
+
+CoreEnforcer:
+  type: Dragon
+  category: Special
+  power: 100
+  accuracy: 100
+  pp: 10
+  target: None
+  affects: [Unit, Enemy]
+
+TropKick:
+  type: Grass
+  category: Physical
+  power: 70
+  accuracy: 100
+  pp: 15
+  target: Unit
+  flags: [Contact]
+
+Instruct:
+  type: Psychic
+  category: Status
+  pp: 15
+  target: Unit
+  affects: [Unit, Own, Enemy]
+
+BeakBlast:
+  type: Flying
+  category: Physical
+  power: 100
+  accuracy: 100
+  priority: -3
+  pp: 15
+  target: Unit
+
+ClangingScales:
+  type: Dragon
+  category: Special
+  power: 110
+  accuracy: 100
+  pp: 5
+  target: None
+  affects: [Unit, Enemy]
+  flags: [Sound]
+
+DragonHammer:
+  type: Dragon
+  category: Physical
+  power: 90
+  accuracy: 100
+  pp: 15
+  target: Unit
+  flags: [Contact]
+
+BrutalSwing:
+  type: Dark
+  category: Physical
+  power: 60
+  accuracy: 100
+  pp: 20
+  target: None
+  affects: [Unit, Own, Enemy]
+  flags: [Contact]
+
+AuroraVeil:
+  type: Ice
+  category: Status
+  pp: 20
+  target: Team
+  affects: [Team, Own]

@@ -1,0 +1,60 @@
+# Each line says the place rather than what lives there: a map is a map,
+# and finding out what it was drawn for is the reason to follow it.
+
+OldSeaMap:
+  name: Old Sea Map
+  description: Opens a raid at the island it charts, far out to sea. Spent when the raid starts.
+GSBall:
+  name: GS Ball
+  description: Opens a raid at the shrine in the forest it was left at. Spent when the raid starts.
+AuroraTicket:
+  name: Aurora Ticket
+  description: Opens a raid at the island it admits one passenger to. Spent when the raid starts.
+WishTag:
+  name: Wish Tag
+  description: Opens a raid at the valley the comet passes over. Spent when the raid starts.
+MemberCard:
+  name: Member Card
+  description: Opens a raid at the island the boat behind the inn goes out to. Spent when the raid starts.
+ManaphyEgg:
+  name: Manaphy Egg
+  description: Opens a raid at the temple the sea gives back for one day. Spent when the raid starts.
+OaksLetter:
+  name: Oak's Letter
+  description: Opens a raid at the meadow at the far end of the broken path. Spent when the raid starts.
+AzureFlute:
+  name: Azure Flute
+  description: Opens a raid at the stair that opens above the mountain. Spent when the raid starts.
+ColtsPetal:
+  name: Colt's Petal
+  description: Opens a raid at the marsh the youngest of the swords waits in. Spent when the raid starts.
+LibertyPass:
+  name: Liberty Pass
+  description: Opens a raid at the garden on the island the ferry runs out to. Spent when the raid starts.
+MusicBox:
+  name: Music Box
+  description: Opens a raid at the ruin the old song is still sung in. Spent when the raid starts.
+ColressMachine:
+  name: Colress Machine
+  description: Opens a raid at the laboratory it was carried out of. Spent when the raid starts.
+HeartDiamond:
+  name: Heart Diamond
+  description: Opens a raid at the cave of diamonds the jewels keep. Spent when the raid starts.
+SealedRing:
+  name: Sealed Ring
+  description: Opens a raid at the desert ruin the rings were shut into. Spent when the raid starts.
+SteamValve:
+  name: Steam Valve
+  description: Opens a raid at the vent in the mountain the steam comes out of. Spent when the raid starts.
+AncientPokeBall:
+  name: Ancient Poke Ball
+  description: Opens a raid at the workshop the old ball was made in. Spent when the raid starts.
+HerosCharm:
+  name: Hero's Charm
+  description: Opens a raid at the mountain the hero climbed. Spent when the raid starts.
+WindmillCharm:
+  name: Windmill Charm
+  description: Opens a raid at the forest behind the city of windmills. Spent when the raid starts.
+MysteryBox:
+  name: Mystery Box
+  description: Opens a raid at the park the box was opened in. Spent when the raid starts.

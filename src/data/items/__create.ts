@@ -70,6 +70,42 @@ export function nameToIcon(sheet: string, name: string): string {
 
 const ITEM_DATA = new Map<Items, ItemData>();
 
+/**
+ * The sentences each family's text file keeps for the lines its code
+ * fills in, by family and then by the template's own name
+ */
+const ITEM_TEMPLATES = new Map<string, Map<string, string>>();
+
+export function registerItemTemplates(family: string, templates: Map<string, string>): void {
+  ITEM_TEMPLATES.set(family, templates);
+}
+
+/** What a template's placeholders are filled with */
+export type TemplateValues = Readonly<Record<string, string | number>>;
+
+/**
+ * One of a family's templates, filled in. A number is written the way
+ * a price is, with its thousands separated; a placeholder with no
+ * value, or a template that is not there, fails rather than showing
+ * the player a brace
+ */
+export function itemText(family: string, template: string, values: TemplateValues = {}): string {
+  const written = ITEM_TEMPLATES.get(family)?.get(template);
+
+  if (written == null) {
+    throw new Error(`No "${template}" template for ${family}`);
+  }
+  return written.replaceAll(/\{(\w+)\}/g, (_, key: string) => {
+    if (!Object.hasOwn(values, key)) {
+      throw new Error(`The "${template}" template for ${family} needs a value for {${key}}`);
+    }
+
+    const value = values[key];
+
+    return typeof value === 'number' ? value.toLocaleString('en-US') : value;
+  });
+}
+
 export function registerItem(item: Items, data: ItemData): void {
   ITEM_DATA.set(item, data);
 }

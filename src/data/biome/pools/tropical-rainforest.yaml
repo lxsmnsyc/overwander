@@ -1,0 +1,223 @@
+# The Pikipek line is written but waits on sprites, since the
+# collection has drawn no Trumbeak and no finished Toucannon. Once it
+# does, mornings and days take Pikipek in base, Trumbeak in rare and
+# Toucannon in elusive, each weighed like its neighbours there.
+
+# The Lush Jungle waits the same way. With no Shiinotic drawn,
+# evenings and nights will take Morelull in uncommon and Shiinotic in
+# scarce. With no Oranguru drawn, mornings, days and evenings will take
+# both it and its counterpart Passimian in elusive, and so will the
+# tropical seasonal forest
+land:
+  morning: &land-morning
+    base:
+      Scatterbug: 962
+      Bounsweet: 882
+      Grubbin: 882
+      Slakoth: 802
+      Poliwag: 802
+      Lotad: 802
+      Treecko: 80
+      Mudkip: 80
+    uncommon:
+      Surskit: 460
+      MeowthAlola: 404
+      Fomantis: 404
+      Dewpider: 404
+      Exeggcute: 368
+      Pineco: 368
+      Yanma: 92
+    rare:
+      Vigoroth: 272
+      Lombre: 272
+      Steenee: 217
+      Charjabug: 217
+      Spewpa: 217
+      Grovyle: 27
+      Marshtomp: 27
+    scarce:
+      Exeggutor: 102
+      Masquerain: 102
+      PersianAlola: 61
+      Lurantis: 61
+      Ambipom: 61
+      Yanmega: 61
+      Tangrowth: 61
+      Araquanid: 61
+      Forretress: 51
+    elusive:
+      Kecleon: 47
+      Tropius: 37
+      Hawlucha: 28
+      Carnivine: 28
+      Comfey: 23
+      OricorioSensu: 23
+      Vivillon: 23
+      Slaking: 23
+      Ludicolo: 23
+      Tsareena: 19
+      Vikavolt: 19
+      Sceptile: 9
+      Swampert: 9
+    prized:
+      Unown: forms
+    special:
+      Buzzwole: 10
+      TapuLele: 10
+    mythical:
+      Mew: 10
+  day: *land-morning
+  evening:
+    base:
+      Poliwag: 3614
+      Rowlet: 695
+    uncommon:
+      Shroomish: 502
+      Noibat: 481
+      MeowthAlola: 442
+      RattataAlola: 442
+      Dewpider: 442
+      Exeggcute: 402
+      Spinarak: 402
+      Pineco: 402
+      Yanma: 100
+    rare:
+      Dartrix: 695
+    scarce:
+      Exeggutor: 116
+      Breloom: 116
+      Ariados: 93
+      Forretress: 93
+      PersianAlola: 69
+      RaticateAlola: 69
+      Noivern: 69
+      Ambipom: 69
+      Yanmega: 69
+      Tangrowth: 69
+      Araquanid: 69
+    elusive:
+      Hawlucha: 194
+      Carnivine: 194
+      Decidueye: 65
+    prized:
+      Unown: forms
+    special:
+      Buzzwole: 10
+      TapuLele: 10
+    mythical:
+      Mew: 10
+  night:
+    base:
+      Poliwag: 3615
+      Rowlet: 696
+    uncommon:
+      Shroomish: 502
+      Noibat: 482
+      MeowthAlola: 442
+      RattataAlola: 442
+      Dewpider: 442
+      Exeggcute: 402
+      Spinarak: 402
+      Pineco: 402
+      Yanma: 100
+    rare:
+      Dartrix: 696
+    scarce:
+      Exeggutor: 116
+      Breloom: 116
+      Ariados: 93
+      Forretress: 93
+      PersianAlola: 69
+      RaticateAlola: 69
+      Noivern: 69
+      Ambipom: 69
+      Yanmega: 69
+      Tangrowth: 69
+      Araquanid: 69
+    elusive:
+      Carnivine: 338
+      Decidueye: 113
+    prized:
+      Unown: forms
+    special:
+      Buzzwole: 10
+      TapuLele: 10
+    mythical:
+      Mew: 10
+
+water:
+  morning: &water-morning
+    base:
+      Poliwag: 2524
+      Lotad: 2524
+      Mudkip: 253
+    uncommon:
+      Magikarp: 703
+      Barboach: 585
+      Surskit: 585
+      Dewpider: 515
+      Yanma: 117
+    rare:
+      Lombre: 1139
+      Marshtomp: 114
+    scarce:
+      Masquerain: 184
+      Whiscash: 147
+      Araquanid: 110
+      Yanmega: 110
+      Gyarados: 74
+    elusive:
+      Tropius: 61
+      Hawlucha: 46
+      Carnivine: 46
+      Ludicolo: 38
+      OricorioSensu: 38
+      Vivillon: 38
+      Vikavolt: 30
+      Swampert: 15
+    special: {}
+  day: *water-morning
+  evening:
+    base:
+      Poliwag: 3623
+      Rowlet: 697
+    uncommon:
+      Magikarp: 1026
+      Barboach: 855
+      Noibat: 820
+      Dewpider: 752
+      Yanma: 171
+    rare: { Dartrix: 697 }
+    scarce:
+      Whiscash: 242
+      Araquanid: 181
+      Yanmega: 181
+      Noivern: 181
+      Gyarados: 120
+    special: {}
+    elusive:
+      Hawlucha: 194
+      Carnivine: 194
+      Decidueye: 65
+  night:
+    base:
+      Poliwag: 3623
+      Rowlet: 697
+    uncommon:
+      Magikarp: 1026
+      Barboach: 855
+      Noibat: 820
+      Dewpider: 752
+      Yanma: 171
+    rare:
+      Dartrix: 697
+    scarce:
+      Whiscash: 242
+      Araquanid: 181
+      Yanmega: 181
+      Noivern: 181
+      Gyarados: 120
+    special: {}
+    elusive:
+      Carnivine: 339
+      Decidueye: 113

@@ -1,10 +1,12 @@
 import { EventPriority } from '../../core/event-emitter';
 import Abilities from '../../data/ids/abilities';
 import { Items } from '../../data/ids/items';
+import { Moves } from '../../data/ids/moves';
 import { FORM_ITEMS } from '../../data/items/form-items';
 import { Species, getBaseFormSpecies } from '../../data/ids/species';
 import { getShadowlessSpecies, getTrueShadowShape } from '../../data/species/true-shadow';
 import type Battle from '../core';
+import type Unit from '../unit';
 import { BattleEvents } from '../events';
 import { MergedLifecycle } from '../lifecycle';
 import { createHeldItem, holds } from './__create';
@@ -24,7 +26,39 @@ const SHAPE_ABILITIES = new Map<Species, Abilities>([
   [Species.TornadusTherian, Abilities.Regenerator],
   [Species.ThundurusTherian, Abilities.VoltAbsorb],
   [Species.LandorusTherian, Abilities.Intimidate],
+  [Species.EnamorusTherian, Abilities.Overcoat],
 ]);
+
+/**
+ * The move a shape swaps for its own: a crowned hero's Iron Head
+ * becomes the blow its relic gives it
+ */
+const SHAPE_MOVES = new Map<Species, [from: Moves, to: Moves]>([
+  [Species.ZacianCrowned, [Moves.IronHead, Moves.BehemothBlade]],
+  [Species.ZamazentaCrowned, [Moves.IronHead, Moves.BehemothBash]],
+]);
+
+/**
+ * Trade the move a shape swaps for its own. Once swapped there is no
+ * Iron Head left, so entering again changes nothing
+ */
+function swapShapeMove(unit: Unit, shape: Species): void {
+  const swap = SHAPE_MOVES.get(shape);
+
+  if (swap == null) {
+    return;
+  }
+  const [from, to] = swap;
+  const known = unit.moves[from];
+
+  if (known == null || unit.moves[to] != null) {
+    return;
+  }
+  unit.removeMove(from);
+  unit.addMove(to);
+  // PP Ups bought for Iron Head carry over to the blow it became
+  unit.setMovePoints(to, known.points);
+}
 
 /**
  * The pokemon that only answer their form item through an ability of
@@ -107,6 +141,8 @@ export default function setupFormItems(battle: Battle): void {
               if (unit.species !== worn) {
                 unit.setSpecies(worn);
               }
+
+              swapShapeMove(unit, shape);
 
               const bonus = SHAPE_ABILITIES.get(shape);
 

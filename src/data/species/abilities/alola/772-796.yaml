@@ -1,0 +1,176 @@
+TypeNull:
+  TypeNull:
+    abilities: [BattleArmor]
+  Silvally:
+    abilities: [RksSystem]
+    hidden: [Adaptability, Download]
+  SilvallyFighting:
+    abilities: [RksSystem]
+    hidden: [Adaptability, Download]
+  SilvallyFlying:
+    abilities: [RksSystem]
+    hidden: [Adaptability, Download]
+  SilvallyPoison:
+    abilities: [RksSystem]
+    hidden: [Adaptability, Download]
+  SilvallyGround:
+    abilities: [RksSystem]
+    hidden: [Adaptability, Download]
+  SilvallyRock:
+    abilities: [RksSystem]
+    hidden: [Adaptability, Download]
+  SilvallyBug:
+    abilities: [RksSystem]
+    hidden: [Adaptability, Download]
+  SilvallyGhost:
+    abilities: [RksSystem]
+    hidden: [Adaptability, Download]
+  SilvallySteel:
+    abilities: [RksSystem]
+    hidden: [Adaptability, Download]
+  SilvallyFire:
+    abilities: [RksSystem]
+    hidden: [Adaptability, Download]
+  SilvallyWater:
+    abilities: [RksSystem]
+    hidden: [Adaptability, Download]
+  SilvallyGrass:
+    abilities: [RksSystem]
+    hidden: [Adaptability, Download]
+  SilvallyElectric:
+    abilities: [RksSystem]
+    hidden: [Adaptability, Download]
+  SilvallyPsychic:
+    abilities: [RksSystem]
+    hidden: [Adaptability, Download]
+  SilvallyIce:
+    abilities: [RksSystem]
+    hidden: [Adaptability, Download]
+  SilvallyDragon:
+    abilities: [RksSystem]
+    hidden: [Adaptability, Download]
+  SilvallyDark:
+    abilities: [RksSystem]
+    hidden: [Adaptability, Download]
+  SilvallyFairy:
+    abilities: [RksSystem]
+    hidden: [Adaptability, Download]
+Minior:
+  Minior:
+    abilities: [ShieldsDown]
+    hidden: [WeakArmor, MagicGuard, Sturdy]
+  MiniorRed:
+    abilities: [ShieldsDown]
+    hidden: [WeakArmor, MagicGuard, Sturdy]
+  MiniorOrange:
+    abilities: [ShieldsDown]
+    hidden: [WeakArmor, MagicGuard, Sturdy]
+  MiniorYellow:
+    abilities: [ShieldsDown]
+    hidden: [WeakArmor, MagicGuard, Sturdy]
+  MiniorGreen:
+    abilities: [ShieldsDown]
+    hidden: [WeakArmor, MagicGuard, Sturdy]
+  MiniorBlue:
+    abilities: [ShieldsDown]
+    hidden: [WeakArmor, MagicGuard, Sturdy]
+  MiniorIndigo:
+    abilities: [ShieldsDown]
+    hidden: [WeakArmor, MagicGuard, Sturdy]
+  MiniorViolet:
+    abilities: [ShieldsDown]
+    hidden: [WeakArmor, MagicGuard, Sturdy]
+Komala:
+  Komala:
+    abilities: [Comatose]
+    hidden: [Oblivious, Unaware, StickyHold]
+Turtonator:
+  Turtonator:
+    abilities: [ShellArmor]
+    hidden: [FlameBody, RoughSkin, MagmaArmor]
+Togedemaru:
+  Togedemaru:
+    abilities: [IronBarbs, LightningRod]
+    hidden: [Sturdy, Static]
+Mimikyu:
+  Mimikyu:
+    abilities: [Disguise]
+    hidden: [Infiltrator, Rattled, PerishBody]
+  MimikyuBusted:
+    abilities: [Disguise]
+    hidden: [Infiltrator, Rattled, PerishBody]
+Bruxish:
+  Bruxish:
+    abilities: [Dazzling, StrongJaw]
+    hidden: [WonderSkin, SwiftSwim]
+Drampa:
+  Drampa:
+    abilities: [Berserk, SapSipper]
+    hidden: [CloudNine, Fluffy]
+Dhelmise:
+  Dhelmise:
+    abilities: [Steelworker]
+    hidden: [HeavyMetal, CursedBody, ShadowTag]
+JangmoO:
+  JangmoO:
+    abilities: [Bulletproof, Soundproof]
+    hidden: [Overcoat]
+  HakamoO:
+    abilities: [Bulletproof, Soundproof]
+    hidden: [Overcoat]
+  KommoO:
+    abilities: [Bulletproof, Soundproof]
+    hidden: [Overcoat, Justified]
+TapuKoko:
+  TapuKoko:
+    abilities: [ElectricSurge]
+    # Telepathy is the mainline's, and the last two are this registry's
+    hidden: [Telepathy, LightningRod, Static]
+TapuLele:
+  TapuLele:
+    abilities: [PsychicSurge]
+    # Telepathy is the mainline's, and the last two are this registry's
+    hidden: [Telepathy, MagicGuard, Synchronize]
+TapuBulu:
+  TapuBulu:
+    abilities: [GrassySurge]
+    # Telepathy is the mainline's, and the last two are this registry's
+    hidden: [Telepathy, GrassPelt, SapSipper]
+TapuFini:
+  TapuFini:
+    abilities: [MistySurge]
+    # Telepathy is the mainline's, and the last two are this registry's
+    hidden: [Telepathy, WaterAbsorb, Regenerator]
+Cosmog:
+  Cosmog:
+    abilities: [Unaware]
+  Cosmoem:
+    abilities: [Sturdy]
+  Solgaleo:
+    abilities: [FullMetalBody]
+    # The line's own two come up from below it, so one of this registry's
+    hidden: [HeavyMetal]
+  Lunala:
+    abilities: [ShadowShield]
+    # The line's own two come up from below it, so one of this registry's
+    hidden: [Infiltrator]
+Nihilego:
+  Nihilego:
+    abilities: [BeastBoost]
+    # Beast Boost is all the mainline gives it, so these are this registry's
+    hidden: [Levitate, PoisonTouch, Merciless]
+Buzzwole:
+  Buzzwole:
+    abilities: [BeastBoost]
+    # Beast Boost is all the mainline gives it, so these are this registry's
+    hidden: [IronFist, Guts, Moxie]
+Pheromosa:
+  Pheromosa:
+    abilities: [BeastBoost]
+    # Beast Boost is all the mainline gives it, so these are this registry's
+    hidden: [SpeedBoost, QueenlyMajesty, TintedLens]
+Xurkitree:
+  Xurkitree:
+    abilities: [BeastBoost]
+    # Beast Boost is all the mainline gives it, so these are this registry's
+    hidden: [LightningRod, VoltAbsorb, Static]

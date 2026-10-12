@@ -31,6 +31,13 @@ const REFRESHED = new Set<Statuses>([
 
 export default function setupCureMoves(battle: Battle): void {
   battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
+    // Take Heart steadies the user as it raises it: whatever it was
+    // carrying is gone
+    if (event.move === Moves.TakeHeart) {
+      event.source.cure({ type: EffectType.Move, move: event.move, unit: event.source });
+      return;
+    }
+
     if (event.move === Moves.Refresh) {
       const cause = { type: EffectType.Move, move: event.move, unit: event.source } as const;
 

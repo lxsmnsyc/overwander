@@ -67,6 +67,7 @@ export const STATUS_NAMES: Record<Statuses, string> = {
   [Statuses.Floating]: 'Floating',
   [Statuses.Submerged]: 'Submerged',
   [Statuses.Dormant]: 'Dormant',
+  [Statuses.Staggered]: 'Staggered',
   [Statuses.Switching]: 'Switching',
   [Statuses.Protected]: 'Protected',
   [Statuses.Enduring]: 'Enduring',
@@ -98,6 +99,7 @@ export const STATUS_NAMES: Record<Statuses, string> = {
   [Statuses.AquaRinged]: 'Aqua Ring',
   [Statuses.Telekinetic]: 'Telekinesis',
   [Statuses.SkyDropped]: 'Sky Drop',
+  [Statuses.PowerShifted]: 'Power Shift',
 };
 
 /**

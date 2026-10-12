@@ -1,0 +1,100 @@
+# Kanto's trainer classes, each by its enum name: `types` it fields
+# (an empty list is every type), the `sheets` it may stand in, and the
+# `trade` it is one region's version of, left out where it is its own.
+# What each is called and says is text/en/trainers.
+
+AceTrainer:
+  types: []
+  sheets:
+    - characters/frlg/ace-trainer-f
+    - characters/frlg/ace-trainer-m
+    - characters/lgpe/ace-trainer
+Lass:
+  types: [Normal]
+  sheets:
+    - characters/frlg/lass
+    - characters/lgpe/lass
+BlackBelt:
+  types: [Fighting]
+  sheets:
+    - characters/lgpe/black-belt
+    - characters/frlg/crush-girl
+BirdKeeper:
+  types: [Flying]
+  sheets: [characters/lgpe/bird-keeper]
+Biker:
+  types: [Poison]
+  sheets:
+    - characters/frlg/roughneck
+    - characters/lgpe/punk
+Hiker:
+  types: [Ground]
+  sheets:
+    - characters/frlg/hiker
+    - characters/lgpe/hiker
+PokeManiac:
+  types: [Rock]
+  sheets:
+    - characters/lgpe/poke-maniac
+    - characters/frlg/ruin-maniac
+BugCatcher:
+  types: [Bug]
+  sheets:
+    - characters/frlg/bug-catcher
+    - characters/lgpe/bug-catcher
+Channeler:
+  types: [Ghost]
+  sheets: [characters/lgpe/channeler]
+Burglar:
+  types: [Fire]
+  sheets: [characters/lgpe/burglar]
+Swimmer:
+  types: [Water]
+  sheets:
+    - characters/lgpe/swimmer-f
+    - characters/lgpe/swimmer-m
+Rocker:
+  types: [Electric]
+  sheets:
+    - characters/frlg/rocker
+    - characters/lgpe/rocker
+Psychic:
+  types: [Psychic]
+  sheets: [characters/lgpe/psychic]
+# A type may be fielded by more than one trade: the mainline's classes
+# overlap, and what tells a Beauty from a Lass is who they are rather
+# than what they bring
+Beauty:
+  types: [Normal, Water]
+  sheets: [characters/frlg/beauty]
+Fisherman:
+  types: [Water]
+  sheets: [characters/lgpe/fisherman]
+Sailor:
+  types: [Water, Fighting]
+  sheets:
+    - characters/frlg/sailor
+    - characters/lgpe/sailor
+Gentleman:
+  types: [Fire, Electric]
+  sheets:
+    - characters/frlg/gentleman
+    - characters/lgpe/gentleman
+SuperNerd:
+  types: [Poison, Electric]
+  sheets: [characters/lgpe/super-nerd]
+Juggler:
+  types: [Psychic]
+  sheets: [characters/lgpe/juggler]
+Tamer:
+  types: [Ground, Poison]
+  sheets:
+    - characters/frlg/tamer
+    - characters/lgpe/tamer
+# Kanto's one steel line, which is a Magneton and nothing else
+Engineer:
+  types: [Steel, Electric]
+  sheets: [characters/lgpe/engineer]
+Gambler:
+  types: [Normal, Fire]
+  sheets: [characters/lgpe/gambler]

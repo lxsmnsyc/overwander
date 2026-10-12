@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Syndicate words",
+  "type": "object",
+  "propertyNames": {
+    "$ref": "names.json#/definitions/syndicate"
+  },
+  "additionalProperties": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string",
+        "description": "What the team is called"
+      },
+      "boss": {
+        "type": "string",
+        "description": "The boss's name"
+      },
+      "boss-title": {
+        "type": "string",
+        "description": "What the team calls its boss"
+      },
+      "executive-title": {
+        "type": "string",
+        "description": "What the team calls its executives"
+      },
+      "boss-quote": {
+        "type": "string",
+        "description": "What the boss says as they bar the cell"
+      },
+      "grunt-quote": {
+        "type": "string",
+        "description": "What the rank and file say"
+      }
+    },
+    "required": [
+      "name",
+      "boss",
+      "boss-title",
+      "executive-title",
+      "boss-quote",
+      "grunt-quote"
+    ],
+    "additionalProperties": false
+  }
+}

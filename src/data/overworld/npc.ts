@@ -1,7 +1,6 @@
 import { countsAgainstSlots } from '../constants/slots';
 import { MAX_FRIENDSHIP } from '../constants/friendship';
 import { MAX_IV } from '../constants/stats';
-import Awards from '../ids/awards';
 import type Abilities from '../ids/abilities';
 import { Items } from '../ids/items';
 import type { Moves } from '../ids/moves';
@@ -18,122 +17,13 @@ import Npc from '../ids/npcs';
 
 export default Npc;
 
-/**
- * The people who answer to a syndicate's boss. Like Giovanni they are the grunt's
- * landmark wearing a rarer face rather than a role of their own, and
- * they stand between him and the rank and file in every way: what
- * they field, what level it fights at, and how often one is met
- */
-const enum Executive {
-  Archer = 0,
-  Ariana = 1,
-  Proton = 2,
-  Petrel = 3,
-  Tabitha = 4,
-  Courtney = 5,
-  Matt = 6,
-  Shelly = 7,
-  Mars = 8,
-  Jupiter = 9,
-  Saturn = 10,
-  Colress = 11,
-  Zinzolin = 12,
-  Xerosic = 13,
-  Aliana = 14,
-  Bryony = 15,
-  Celosia = 16,
-  Mable = 17,
-}
-
-export { Executive };
-
-export const EXECUTIVE_NAMES: Record<Executive, string> = {
-  [Executive.Archer]: 'Archer',
-  [Executive.Ariana]: 'Ariana',
-  [Executive.Proton]: 'Proton',
-  [Executive.Petrel]: 'Petrel',
-  [Executive.Tabitha]: 'Tabitha',
-  [Executive.Courtney]: 'Courtney',
-  [Executive.Matt]: 'Matt',
-  [Executive.Shelly]: 'Shelly',
-  [Executive.Mars]: 'Mars',
-  [Executive.Jupiter]: 'Jupiter',
-  [Executive.Saturn]: 'Saturn',
-  [Executive.Colress]: 'Colress',
-  [Executive.Zinzolin]: 'Zinzolin',
-  [Executive.Xerosic]: 'Xerosic',
-  [Executive.Aliana]: 'Aliana',
-  [Executive.Bryony]: 'Bryony',
-  [Executive.Celosia]: 'Celosia',
-  [Executive.Mable]: 'Mable',
-};
-
-export const EXECUTIVE_CHARSETS: Record<Executive, string[]> = {
-  [Executive.Archer]: ['characters/hgss/archer', 'characters/lgpe/archer'],
-  [Executive.Ariana]: ['characters/hgss/ariana'],
-  [Executive.Proton]: ['characters/hgss/proton'],
-  [Executive.Petrel]: ['characters/hgss/petrel'],
-  [Executive.Tabitha]: ['characters/oras/tabitha'],
-  [Executive.Courtney]: ['characters/oras/courtney'],
-  [Executive.Matt]: ['characters/oras/matt'],
-  [Executive.Shelly]: ['characters/oras/shelly'],
-  [Executive.Mars]: ['characters/dppt/mars'],
-  [Executive.Jupiter]: ['characters/dppt/jupiter'],
-  [Executive.Saturn]: ['characters/dppt/saturn'],
-  // Both of his coats: the one he wears under Ghetsis and the one he
-  // wears once the machine is his own
-  [Executive.Colress]: ['characters/b2w2/colress-1', 'characters/b2w2/colress-2'],
-  [Executive.Zinzolin]: ['characters/b2w2/zinzolin'],
-  [Executive.Xerosic]: ['characters/xy/xerosic'],
-  [Executive.Aliana]: ['characters/xy/aliana'],
-  [Executive.Bryony]: ['characters/xy/bryony'],
-  [Executive.Celosia]: ['characters/xy/celosia'],
-  [Executive.Mable]: ['characters/xy/mable'],
-};
-
-/** The mark putting one of them down is worth, one to each */
-export const EXECUTIVE_HONORS: Record<Executive, Awards> = {
-  [Executive.Archer]: Awards.ArcherDefeated,
-  [Executive.Ariana]: Awards.ArianaDefeated,
-  [Executive.Proton]: Awards.ProtonDefeated,
-  [Executive.Petrel]: Awards.PetrelDefeated,
-  [Executive.Tabitha]: Awards.TabithaDefeated,
-  [Executive.Courtney]: Awards.CourtneyDefeated,
-  [Executive.Matt]: Awards.MattDefeated,
-  [Executive.Shelly]: Awards.ShellyDefeated,
-  [Executive.Mars]: Awards.MarsDefeated,
-  [Executive.Jupiter]: Awards.JupiterDefeated,
-  [Executive.Saturn]: Awards.SaturnDefeated,
-  [Executive.Colress]: Awards.ColressDefeated,
-  [Executive.Zinzolin]: Awards.ZinzolinDefeated,
-  [Executive.Xerosic]: Awards.XerosicDefeated,
-  [Executive.Aliana]: Awards.AlianaDefeated,
-  [Executive.Bryony]: Awards.BryonyDefeated,
-  [Executive.Celosia]: Awards.CelosiaDefeated,
-  [Executive.Mable]: Awards.MableDefeated,
-};
-
-/** What each says as they bar the cell */
-export const EXECUTIVE_QUOTES: Record<Executive, string> = {
-  [Executive.Archer]: 'I run this operation. You are an inconvenience in it.',
-  [Executive.Ariana]: 'A child playing hero. I will enjoy putting you down.',
-  [Executive.Proton]: 'I am the cruellest of the executives. Ask anyone who is left.',
-  [Executive.Petrel]: 'Hehe, you thought I was the boss? Close enough for you.',
-  [Executive.Tabitha]: 'The boss has plans for this land. You are standing on it.',
-  [Executive.Courtney]: 'Analysing your chances. Result: none. Proceeding.',
-  [Executive.Matt]: 'Ooooh, a challenger! Do not go down too fast, I get bored.',
-  [Executive.Shelly]: 'The sea takes what it wants. Today it wants you out of the way.',
-  [Executive.Mars]: 'You are in the way of a better world. Move, or be moved.',
-  [Executive.Jupiter]: 'Do not take this personally. I barely take it personally.',
-  [Executive.Saturn]: 'I have my doubts about all this. None of them are about beating you.',
-  [Executive.Colress]: 'I want to see the strength a pokemon reaches with you. Purely as data.',
-  [Executive.Zinzolin]: 'You will be cold long before you are finished. Begin.',
-  [Executive.Xerosic]: 'Fascinating. Let me see how your pokemon hold up under stress.',
-  [Executive.Aliana]: 'The world is ugly, so we are fixing it. You are part of the ugly.',
-  [Executive.Bryony]: 'Calculating your odds. They round down to nothing.',
-  [Executive.Celosia]: 'Only the beautiful get to stay. I will judge whether you do.',
-  [Executive.Mable]: 'We scientists are busy. Let us make this quick and quiet.',
-};
+export {
+  EXECUTIVE_CHARSETS,
+  EXECUTIVE_HONORS,
+  EXECUTIVE_NAMES,
+  EXECUTIVE_QUOTES,
+  Executive,
+} from './syndicate';
 
 /**
  * What the breeder charges for an egg. It is dear on purpose: an egg

@@ -1,0 +1,19 @@
+templates:
+  plate: '{type} moves hit 1.2x for as long as it is held. Also makes Judgment {type} and puts an Arceus with Multitype in its {type} shape.'
+FistPlate: { name: Fist Plate }
+SkyPlate: { name: Sky Plate }
+ToxicPlate: { name: Toxic Plate }
+EarthPlate: { name: Earth Plate }
+StonePlate: { name: Stone Plate }
+InsectPlate: { name: Insect Plate }
+SpookyPlate: { name: Spooky Plate }
+IronPlate: { name: Iron Plate }
+FlamePlate: { name: Flame Plate }
+SplashPlate: { name: Splash Plate }
+MeadowPlate: { name: Meadow Plate }
+ZapPlate: { name: Zap Plate }
+MindPlate: { name: Mind Plate }
+IciclePlate: { name: Icicle Plate }
+DracoPlate: { name: Draco Plate }
+DreadPlate: { name: Dread Plate }
+PixiePlate: { name: Pixie Plate }

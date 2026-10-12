@@ -2,6 +2,7 @@ import { EventPriority } from '../../core/event-emitter';
 import { TeamStatuses } from '../../data/ids/status';
 import type Battle from '../core';
 import { BattleEvents, type EffectCause } from '../events';
+import { registerTimedTeamStatus } from '../mechanics/side-conditions';
 import turns from '../turn';
 import type Team from '../team';
 
@@ -18,6 +19,8 @@ const MIST_DURATION = turns(5);
  */
 export default function setupMistStatus(battle: Battle): void {
   const instances = new Map<Team, MistData>();
+
+  registerTimedTeamStatus(battle, TeamStatuses.Mist, instances);
 
   const timer = battle.on(BattleEvents.Tick, EventPriority.Post, (event) => {
     for (const [team, data] of instances.entries()) {

@@ -1,0 +1,45 @@
+DualChop:
+  name: Dual Chop
+  description: Strikes 2 times.
+HeartStamp:
+  name: Heart Stamp
+  description: 30% to flinch.
+HornLeech:
+  name: Horn Leech
+  description: Heals the user for 1/2 of what it deals.
+SacredSword:
+  name: Sacred Sword
+  description: Ignores the target's stat stages.
+RazorShell:
+  name: Razor Shell
+  description: 50% to drop the target's Defense a stage.
+HeatCrash:
+  name: Heat Crash
+  description: 'Hits harder the heavier the user is than the target: 40 power, up to 120 at 5x its weight. Never misses a minimized target, and hits 2x on it.'
+LeafTornado:
+  name: Leaf Tornado
+  description: 50% to drop the target's accuracy a stage.
+Steamroller:
+  name: Steamroller
+  description: 30% to flinch. Never misses a minimized target, and hits 2x on it.
+CottonGuard:
+  name: Cotton Guard
+  description: Raises the user's Defense 3 stages.
+NightDaze:
+  name: Night Daze
+  description: 40% to drop the target's accuracy a stage.
+Psystrike:
+  name: Psystrike
+  description: Lands against the target's Defense rather than its Special Defense.
+TailSlap:
+  name: Tail Slap
+  description: Strikes 2 to 5 times.
+Hurricane:
+  name: Hurricane
+  description: 30% to confuse. Never misses in rain, drops to 50% in sun, and reaches anything in the air.
+HeadCharge:
+  name: Head Charge
+  description: The user takes 1/4 of the damage it deals.
+GearGrind:
+  name: Gear Grind
+  description: Strikes 2 times.

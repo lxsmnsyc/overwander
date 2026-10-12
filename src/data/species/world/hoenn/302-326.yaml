@@ -1,0 +1,219 @@
+Sableye:
+  # A gem eater that turns up nowhere anybody else does: caves and the
+  # dark of the badlands
+  Sableye:
+    types: [Dark, Ghost]
+    egg-groups: [HumanLike]
+    biomes: [Badlands, MontaneForest, DeepOcean]
+    active: [Evening, Night]
+Mawile:
+  Mawile:
+    types: [Steel, Fairy]
+    egg-groups: [Field, Fairy]
+    biomes: [Badlands, Mountain]
+    active: [Morning, Day]
+Aron:
+  Aron:
+    types: [Steel, Rock]
+    egg-groups: [Monster]
+    biomes: [Mountain, Badlands]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Lairon
+        method: [Level]
+        level: 32
+  Lairon:
+    types: [Steel, Rock]
+    egg-groups: [Monster]
+    biomes: [Mountain, Badlands]
+    active: [Morning, Day]
+    evolves-from: Aron
+    evolves-into:
+      - species: Aggron
+        method: [Level]
+        level: 42
+  Aggron:
+    types: [Steel, Rock]
+    egg-groups: [Monster]
+    biomes: [Mountain, Badlands]
+    active: [Morning, Day]
+    evolves-from: Lairon
+Meditite:
+  Meditite:
+    types: [Fighting, Psychic]
+    egg-groups: [HumanLike]
+    biomes: [Mountain, MontaneForest]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Medicham
+        method: [Level]
+        level: 37
+  Medicham:
+    types: [Fighting, Psychic]
+    egg-groups: [HumanLike]
+    biomes: [Mountain, MontaneForest]
+    active: [Morning, Day]
+    evolves-from: Meditite
+Electrike:
+  Electrike:
+    types: [Electric]
+    egg-groups: [Field]
+    biomes: [Savanna, Steppe]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Manectric
+        method: [Level]
+        level: 26
+  Manectric:
+    types: [Electric]
+    egg-groups: [Field]
+    biomes: [Savanna, Steppe]
+    active: [Morning, Day]
+    evolves-from: Electrike
+Plusle:
+  # The two that only work beside somebody: each carries half of a
+  # pair bonus, and Battery is what they hand the rest of the side
+  Plusle:
+    types: [Electric]
+    egg-groups: [Fairy]
+    biomes: [Grassland, Savanna]
+    active: [Morning, Day]
+Minun:
+  Minun:
+    types: [Electric]
+    egg-groups: [Fairy]
+    biomes: [Grassland, Savanna]
+    active: [Morning, Day]
+Volbeat:
+  # One male, one female, and nothing else: the two of them are the
+  # only way either of them breeds
+  Volbeat:
+    types: [Bug]
+    egg-groups: [Bug, HumanLike]
+    biomes: [Bog, TemperateForest]
+    active: [Evening, Night]
+Illumise:
+  Illumise:
+    types: [Bug]
+    egg-groups: [Bug, HumanLike]
+    biomes: [Bog, TemperateForest]
+    active: [Evening, Night]
+Roselia:
+  Roselia:
+    types: [Grass, Poison]
+    egg-groups: [Fairy, Grass]
+    biomes: [Grassland, Shrubland]
+    active: any
+    evolves-from: Budew
+    evolves-into:
+      - species: Roserade
+        method: [UsedItem]
+        item: ShinyStone
+  # What a Roselia was and what it becomes: a Budew closes its bud in
+  # the cold, and a Roserade hides a whip of thorns behind each bouquet
+  Budew:
+    types: [Grass, Poison]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Grassland, Shrubland]
+    active: any
+    evolves-into:
+      - species: Roselia
+        method: [Friendship, TimeOfDay]
+        time: [Morning, Day]
+    rank: baby
+  Roserade:
+    types: [Grass, Poison]
+    egg-groups: [Fairy, Grass]
+    biomes: [Grassland, Shrubland]
+    active: any
+    evolves-from: Roselia
+Gulpin:
+  Gulpin:
+    types: [Poison]
+    egg-groups: [Amorphous]
+    biomes: [Bog, Swamp]
+    active: any
+    evolves-into:
+      - species: Swalot
+        method: [Level]
+        level: 26
+  Swalot:
+    types: [Poison]
+    egg-groups: [Amorphous]
+    biomes: [Bog, Swamp]
+    active: any
+    evolves-from: Gulpin
+Carvanha:
+  Carvanha:
+    types: [Water, Dark]
+    egg-groups: [Water2]
+    habitat: Water
+    biomes: [Ocean, CoralReef]
+    active: any
+    evolves-into:
+      - species: Sharpedo
+        method: [Level]
+        level: 30
+  Sharpedo:
+    types: [Water, Dark]
+    egg-groups: [Water2]
+    habitat: Water
+    biomes: [Ocean, CoralReef]
+    active: any
+    evolves-from: Carvanha
+Wailmer:
+  Wailmer:
+    types: [Water]
+    egg-groups: [Field, Water2]
+    habitat: Water
+    biomes: [Ocean, DeepOcean]
+    active: any
+    evolves-into:
+      - species: Wailord
+        method: [Level]
+        level: 40
+  Wailord:
+    types: [Water]
+    egg-groups: [Field, Water2]
+    habitat: Water
+    biomes: [Ocean, DeepOcean]
+    active: any
+    evolves-from: Wailmer
+Numel:
+  Numel:
+    types: [Fire, Ground]
+    egg-groups: [Field]
+    biomes: [Volcano, Badlands]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Camerupt
+        method: [Level]
+        level: 33
+  Camerupt:
+    types: [Fire, Ground]
+    egg-groups: [Field]
+    biomes: [Volcano, Badlands]
+    active: [Morning, Day]
+    evolves-from: Numel
+Torkoal:
+  Torkoal:
+    types: [Fire]
+    egg-groups: [Field]
+    biomes: [Volcano, Mountain]
+    active: [Morning, Day]
+Spoink:
+  Spoink:
+    types: [Psychic]
+    egg-groups: [Field]
+    biomes: [Mountain, Shrubland]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Grumpig
+        method: [Level]
+        level: 32
+  Grumpig:
+    types: [Psychic]
+    egg-groups: [Field]
+    biomes: [Mountain, Shrubland]
+    active: [Morning, Day]
+    evolves-from: Spoink

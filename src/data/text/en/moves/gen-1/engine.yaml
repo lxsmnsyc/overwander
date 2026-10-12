@@ -1,0 +1,6 @@
+Attack:
+  name: Attack
+  description: A feeble swing made of whatever the user is, for the gaps while real moves cool.
+Struggle:
+  name: Struggle
+  description: Thrown when every move is shut off. Nothing resists it, and it costs 1/4 of the user's HP.

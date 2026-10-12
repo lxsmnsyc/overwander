@@ -1,5 +1,6 @@
 import { defineConfig } from 'vitest/config';
 import { TEST_DATABASE_URL } from './test/test-database.ts';
+import yamlData from './plugins/yaml.ts';
 
 /**
  * The database suite: server modules run against the throwaway
@@ -8,6 +9,7 @@ import { TEST_DATABASE_URL } from './test/test-database.ts';
  * so it runs one file at a time and never beside the e2e suite
  */
 export default defineConfig({
+  plugins: [yamlData()],
   // The tests' own environment, not the root .env (see test/env/.env.test)
   envDir: 'test/env',
   resolve: {

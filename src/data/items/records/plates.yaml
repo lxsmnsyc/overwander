@@ -1,0 +1,109 @@
+# Held, never spent, and never listed: a plate is dug up rather than
+# bought. The sell price is what a plate fetches from a shop that will
+# never stock one.
+#
+# A plate is not named for its type (a Fist Plate is Fighting), so the
+# picture is taken from the plate's own first word, which is what the
+# `plates` sheet names them by.
+
+FistPlate:
+  type: Held
+  icon: plates/fist
+  flags: [Holdable]
+  sell: 2000
+
+SkyPlate:
+  type: Held
+  icon: plates/sky
+  flags: [Holdable]
+  sell: 2000
+
+ToxicPlate:
+  type: Held
+  icon: plates/toxic
+  flags: [Holdable]
+  sell: 2000
+
+EarthPlate:
+  type: Held
+  icon: plates/earth
+  flags: [Holdable]
+  sell: 2000
+
+StonePlate:
+  type: Held
+  icon: plates/stone
+  flags: [Holdable]
+  sell: 2000
+
+InsectPlate:
+  type: Held
+  icon: plates/insect
+  flags: [Holdable]
+  sell: 2000
+
+SpookyPlate:
+  type: Held
+  icon: plates/spooky
+  flags: [Holdable]
+  sell: 2000
+
+IronPlate:
+  type: Held
+  icon: plates/iron
+  flags: [Holdable]
+  sell: 2000
+
+FlamePlate:
+  type: Held
+  icon: plates/flame
+  flags: [Holdable]
+  sell: 2000
+
+SplashPlate:
+  type: Held
+  icon: plates/splash
+  flags: [Holdable]
+  sell: 2000
+
+MeadowPlate:
+  type: Held
+  icon: plates/meadow
+  flags: [Holdable]
+  sell: 2000
+
+ZapPlate:
+  type: Held
+  icon: plates/zap
+  flags: [Holdable]
+  sell: 2000
+
+MindPlate:
+  type: Held
+  icon: plates/mind
+  flags: [Holdable]
+  sell: 2000
+
+IciclePlate:
+  type: Held
+  icon: plates/icicle
+  flags: [Holdable]
+  sell: 2000
+
+DracoPlate:
+  type: Held
+  icon: plates/draco
+  flags: [Holdable]
+  sell: 2000
+
+DreadPlate:
+  type: Held
+  icon: plates/dread
+  flags: [Holdable]
+  sell: 2000
+
+PixiePlate:
+  type: Held
+  icon: plates/pixie
+  flags: [Holdable]
+  sell: 2000

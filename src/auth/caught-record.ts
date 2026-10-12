@@ -130,6 +130,17 @@ export interface CaughtPokemon {
    */
   canEvolve: boolean;
   /**
+   * The running total of a battle feat counted across fights (see
+   * `BATTLE_FEATS`), cleared with `canEvolve`
+   */
+  featProgress: number;
+  /**
+   * Whether it carries the Gigantamax Factor, which Max Mushrooms
+   * give. It stays through a handover and an evolution, and only does
+   * anything on a species with a Gigantamax form
+   */
+  gigantamax: boolean;
+  /**
    * Whether somebody would pay for it — see `isAuctionableCatch`.
    *
    * Derived from `ivs`, `shiny` and `species`, and stored anyway: "any
@@ -612,6 +623,8 @@ export function asCaughtPokemon(value: unknown): CaughtPokemon {
     // trading was a thing
     traded: asBoolean(data.traded),
     canEvolve: asBoolean(data.canEvolve),
+    featProgress: asNumber(data.featProgress),
+    gigantamax: asBoolean(data.gigantamax),
     auctionable: asBoolean(data.auctionable),
     moves: asNumberArray(data.moves) as Moves[],
     movePoints: asMovePoints(data.movePoints),

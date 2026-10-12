@@ -9,14 +9,25 @@ function cell(x: number, y: number): number {
 }
 
 /**
- * Whether a route is one a player could actually walk: every cell is a
- * straight step from the one before it, starting from where they stood
+ * Whether a route is one a player could actually walk: every cell is
+ * one step from the one before it, starting from where they stood, and
+ * no diagonal cuts the corner of a blocked cell
  */
-function walkable(from: number, route: number[]): boolean {
+function walkable(
+  from: number,
+  route: number[],
+  passable: (cell: number) => boolean = OPEN,
+): boolean {
   let at = from;
 
   for (const step of route) {
     if (stepsBetween(at, step) !== 1) {
+      return false;
+    }
+    const dx = (step % BOARD_CELLS) - (at % BOARD_CELLS);
+    const dy = Math.floor(step / BOARD_CELLS) - Math.floor(at / BOARD_CELLS);
+
+    if (dx !== 0 && dy !== 0 && (!passable(at + dx) || !passable(at + dy * BOARD_CELLS))) {
       return false;
     }
     at = step;
@@ -36,36 +47,43 @@ describe('walking across a chunk', () => {
     expect(walkable(from, route ?? [])).toBe(true);
   });
 
-  it('steps straight, never diagonally', () => {
+  it('walks a diagonal as one step a cell', () => {
     const from = cell(0, 0);
     const route = findPath(from, cell(5, 5), OPEN) ?? [];
 
-    // A diagonal would be five steps rather than ten, which is exactly
-    // what this must not be
-    expect(route).toHaveLength(10);
-    expect(walkable(from, route)).toBe(true);
+    expect(route).toEqual([cell(1, 1), cell(2, 2), cell(3, 3), cell(4, 4), cell(5, 5)]);
   });
 
-  it('heads along the line to the goal rather than one leg and then the other', () => {
-    const from = cell(1, 1);
-    const route = findPath(from, cell(9, 9), OPEN) ?? [];
-    let run = 0;
-    let longest = 0;
-    let at = from;
-    let axis = -1;
+  it('walks a straight line straight, since a diagonal takes longer', () => {
+    // A zigzag is as many steps, but every diagonal in it is √2 times
+    // as long to walk
+    const from = cell(0, 4);
 
-    for (const step of route) {
-      // 0 for a step across, 1 for a step down
-      const turned = Math.abs(step - at) === 1 ? 0 : 1;
+    expect(findPath(from, cell(4, 4), OPEN)).toEqual([
+      cell(1, 4),
+      cell(2, 4),
+      cell(3, 4),
+      cell(4, 4),
+    ]);
+  });
 
-      run = turned === axis ? run + 1 : 1;
-      axis = turned;
-      longest = Math.max(longest, run);
-      at = step;
-    }
-    expect(route).toHaveLength(16);
-    // A staircase on a square diagonal: never more than two steps the same way
-    expect(longest).toBeLessThanOrEqual(2);
+  it('never cuts the corner of something standing there', () => {
+    // A tree beside the diagonal: the step past it goes round
+    const tree = cell(1, 0);
+    const passable = (index: number): boolean => index !== tree;
+    const from = cell(0, 0);
+    const route = findPath(from, cell(2, 0), passable) ?? [];
+
+    expect(route[0]).not.toBe(cell(1, 1));
+    expect(walkable(from, route, passable)).toBe(true);
+    expect(route.at(-1)).toBe(cell(2, 0));
+  });
+
+  it('does not slip between two blocked corners', () => {
+    // Two cells touching only at a corner: shut to a diagonal step
+    const passable = (index: number): boolean => index !== cell(1, 0) && index !== cell(0, 1);
+
+    expect(findPath(cell(0, 0), cell(1, 1), passable)).toBeNull();
   });
 
   it('gives nothing back for a walk to where the walker already is', () => {
@@ -80,7 +98,7 @@ describe('walking across a chunk', () => {
     const route = findPath(from, cell(15, 0), passable);
 
     expect(route).not.toBeNull();
-    expect(walkable(from, route ?? [])).toBe(true);
+    expect(walkable(from, route ?? [], passable)).toBe(true);
     // Through the one gap there is, which is the far corner of the
     // chunk and back
     expect(route).toContain(gap);
@@ -115,9 +133,8 @@ describe('walking across a chunk', () => {
     expect(
       Math.abs(Math.floor(ended / BOARD_CELLS) - Math.floor(to / BOARD_CELLS)),
     ).toBeLessThanOrEqual(1);
-    // The shortest such walk: the corner of its ring is the nearest
-    // cell that counts as beside it
-    expect(route).toHaveLength(stepsBetween(from, to) - 2);
+    // The shortest such walk: one short of the thing itself
+    expect(route).toHaveLength(stepsBetween(from, to) - 1);
   });
 
   it('walks nowhere for something already within reach', () => {
@@ -143,8 +160,7 @@ describe('walking to a cell nobody can stand on', () => {
 
     expect(route).not.toBeNull();
     expect(walkable(from, route ?? [])).toBe(true);
-    // One step off it: straight beside, never the diagonal, since a
-    // diagonal is two steps away on a grid walked in straight lines
+    // One step off it
     expect(stepsBetween(ended, to)).toBe(1);
     expect(route).toHaveLength(stepsBetween(from, to) - 1);
   });

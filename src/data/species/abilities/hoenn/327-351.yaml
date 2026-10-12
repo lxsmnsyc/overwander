@@ -1,0 +1,115 @@
+Spinda:
+  Spinda:
+    abilities: [OwnTempo, TangledFeet]
+    hidden: [Contrary, Unaware]
+Trapinch:
+  Trapinch:
+    abilities: [HyperCutter, ArenaTrap]
+    hidden: [SheerForce]
+  Vibrava:
+    abilities: [Levitate]
+  Flygon:
+    abilities: [Levitate]
+Cacnea:
+  Cacnea:
+    abilities: [SandVeil]
+    hidden: [WaterAbsorb]
+  Cacturne:
+    abilities: [SandVeil]
+    # Two the mainline never gave it: a cactus is unpleasant to
+    # touch, and the sand it stalks through is what it moves fastest
+    # in
+    hidden: [WaterAbsorb, RoughSkin, SandRush]
+Swablu:
+  Swablu:
+    abilities: [NaturalCure]
+    hidden: [CloudNine]
+  Altaria:
+    abilities: [NaturalCure]
+    # Two the mainline never gave it: what it sings for an ally, and
+    # a cloud's own way of getting somewhere first
+    hidden: [CloudNine, GaleWings, Healer]
+Zangoose:
+  Zangoose:
+    abilities: [Immunity]
+    hidden: [ToxicBoost, Scrappy, ToughClaws]
+Seviper:
+  Seviper:
+    abilities: [ShedSkin]
+    hidden: [Infiltrator, PoisonTouch, StrongJaw]
+Lunatone:
+  Lunatone:
+    abilities: [Levitate]
+    hidden: [Illuminate, ClearBody, Synchronize]
+Solrock:
+  Solrock:
+    abilities: [Levitate]
+    hidden: [Illuminate, ClearBody, MagicBounce]
+Barboach:
+  Barboach:
+    abilities: [Oblivious, Anticipation]
+    hidden: [Hydration]
+  Whiscash:
+    abilities: [Oblivious, Anticipation]
+    # One the mainline never gave it: something that sits out an
+    # earthquake under the mud is not taken down in one blow
+    hidden: [Hydration, Sturdy]
+Corphish:
+  Corphish:
+    abilities: [HyperCutter, ShellArmor]
+    hidden: [Adaptability]
+  Crawdaunt:
+    abilities: [HyperCutter, ShellArmor]
+    # One the mainline never gave it: those pincers are most of what
+    # it is, and Crabhammer is most of what it does with them
+    hidden: [Adaptability, ToughClaws]
+Baltoy:
+  Baltoy:
+    abilities: [Levitate]
+  Claydol:
+    abilities: [Levitate]
+    # Three the mainline never gave it, which is what a doll with one
+    # ability owes: it works out the answer at leisure, fired clay
+    # blunts what should be devastating, and the sand it was dug from
+    # sharpens what it throws
+    hidden: [Analytic, Filter, SandForce]
+Lileep:
+  Lileep:
+    abilities: [SuctionCups]
+    hidden: [StormDrain]
+  Cradily:
+    abilities: [SuctionCups]
+    # Two the mainline never gave it: the filter feeder drinks what
+    # is thrown at it, and a thing anchored to the rock only settles
+    # deeper for being hit
+    hidden: [StormDrain, WaterAbsorb, Stamina]
+Anorith:
+  Anorith:
+    abilities: [BattleArmor]
+    hidden: [SwiftSwim]
+  Armaldo:
+    abilities: [BattleArmor]
+    # Two the mainline never gave it: plate armour that will not be
+    # broken through in one blow, and a body built for exactly the
+    # two things it is made of
+    hidden: [SwiftSwim, Sturdy, Adaptability]
+Feebas:
+  Feebas:
+    abilities: [SwiftSwim, Oblivious]
+    hidden: [Adaptability]
+  Milotic:
+    abilities: [MarvelScale, Competitive]
+    hidden: [CuteCharm]
+Castform:
+  Castform:
+    abilities: [Forecast]
+    hidden: [Levitate, Adaptability, SereneGrace]
+  CastformSunny:
+    abilities: [Forecast]
+    hidden: [Levitate, Adaptability, SereneGrace]
+  CastformRainy:
+    abilities: [Forecast]
+    hidden: [Levitate, Adaptability, SereneGrace]
+  CastformSnowy:
+    abilities: [Forecast]
+    hidden: [Levitate, Adaptability, SereneGrace]

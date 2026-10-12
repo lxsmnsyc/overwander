@@ -1,0 +1,139 @@
+# What one is worth, in the order they are worth it. None is
+# marketable: found, never stocked, so a vendor buys one and cannot
+# sell one.
+#
+# Every figure is the mainline's doubled, which is what the five
+# originals already were (a Pearl fetches 700 there and 1400 here), so
+# the ladder is one rule rather than a list of judgements. The two
+# exceptions are the shore finds: a Shoal Salt sells for ten in the
+# mainline, and twenty gold is beneath a player's notice in a game
+# where the cheapest ball costs two hundred, so the pair are priced at
+# what makes them worth bending down for.
+#
+# The top of the ladder is deliberately steep. A Relic Crown is worth
+# six hundred thousand (sixty raids, a hundred and twenty vitamins),
+# and it is drawn from the rarest band there is, about as often as a
+# Master Ball. It is the one thing in the game that is only gold and
+# still belongs beside the things gold cannot buy.
+
+# The shore and the roadside: what a walk turns up between the things
+# a walk is actually for
+ShoalSalt:
+  type: Valuable
+  icon: valuables/shoal-salt
+  sell: 200
+
+ShoalShell:
+  type: Valuable
+  icon: valuables/shoal-shell
+  sell: 200
+
+PrettyWing:
+  type: Valuable
+  icon: valuables/pretty-wing
+  sell: 200
+
+TinyMushroom:
+  type: Valuable
+  icon: valuables/tiny-mushroom
+  sell: 500
+
+Pearl:
+  type: Valuable
+  icon: valuables/pearl
+  sell: 1400
+
+Stardust:
+  type: Valuable
+  icon: valuables/stardust
+  sell: 2000
+
+RelicCopper:
+  type: Valuable
+  icon: valuables/relic-copper
+  sell: 2000
+
+# Worth the detour: a morning's walk in one pocket
+BigMushroom:
+  type: Valuable
+  icon: valuables/big-mushroom
+  sell: 5000
+
+RareBone:
+  type: Valuable
+  icon: valuables/rare-bone
+  sell: 5000
+
+BigPearl:
+  type: Valuable
+  icon: valuables/big-pearl
+  sell: 7500
+
+StarPiece:
+  type: Valuable
+  icon: valuables/star-piece
+  sell: 9800
+
+RelicSilver:
+  type: Valuable
+  icon: valuables/relic-silver
+  sell: 10000
+
+SlowpokeTail:
+  type: Valuable
+  icon: valuables/slowpoke-tail
+  sell: 13600
+
+# The prize of the pile, and what a player saves a trip for
+Nugget:
+  type: Valuable
+  icon: valuables/nugget
+  sell: 10000
+
+PearlString:
+  type: Valuable
+  icon: valuables/pearl-string
+  sell: 15000
+
+RelicGold:
+  type: Valuable
+  icon: valuables/relic-gold
+  sell: 20000
+
+BalmMushroom:
+  type: Valuable
+  icon: valuables/balm-mushroom
+  sell: 25000
+
+BigNugget:
+  type: Valuable
+  icon: valuables/big-nugget
+  sell: 40000
+
+# The ruins, which are a different kind of find altogether: one of
+# these pays for a season of everything else
+RelicVase:
+  type: Valuable
+  icon: valuables/relic-vase
+  sell: 100000
+
+CometShard:
+  type: Valuable
+  icon: valuables/comet-shard
+  sell: 120000
+
+RelicBand:
+  type: Valuable
+  icon: valuables/relic-band
+  sell: 200000
+
+RelicStatue:
+  type: Valuable
+  icon: valuables/relic-statue
+  sell: 400000
+
+# And the one that stands with the Master Ball
+RelicCrown:
+  type: Valuable
+  icon: valuables/relic-crown
+  sell: 600000

@@ -157,14 +157,14 @@ describe('wandering NPCs', () => {
     // What a pokemon has just grown into is the entry for that level
     // exactly, in the order the entry lists it
     expect(getMovesLearnedAt(Species.Bulbasaur, 1)).toEqual([Moves.Tackle, Moves.Growl]);
-    expect(getMovesLearnedAt(Species.Bulbasaur, 10)).toEqual([Moves.VineWhip]);
+    expect(getMovesLearnedAt(Species.Bulbasaur, 3)).toEqual([Moves.VineWhip]);
     // A level with nothing on it offers nothing — and the level below
     // one is not the level, which is what keeps growing up from being
     // a free Move Reminder
-    expect(getMovesLearnedAt(Species.Bulbasaur, 12)).toEqual([]);
+    expect(getMovesLearnedAt(Species.Bulbasaur, 4)).toEqual([]);
 
     // Every level's own moves are part of what it has learned by then
-    for (const level of [1, 7, 10, 15, 20, 25]) {
+    for (const level of [1, 3, 6, 9, 12, 15]) {
       const learned = new Set(getLevelUpMoves(Species.Bulbasaur, level));
 
       for (const move of getMovesLearnedAt(Species.Bulbasaur, level)) {
@@ -179,16 +179,20 @@ describe('wandering NPCs', () => {
     expect(getLevelUpMoves(Species.Bulbasaur, 27)).toEqual([
       Moves.Tackle,
       Moves.Growl,
-      Moves.LeechSeed,
       Moves.VineWhip,
+      Moves.Growth,
+      Moves.LeechSeed,
+      Moves.RazorLeaf,
       Moves.PoisonPowder,
       Moves.SleepPowder,
-      Moves.RazorLeaf,
+      Moves.SeedBomb,
+      Moves.TakeDown,
       Moves.SweetScent,
+      Moves.Synthesis,
     ]);
     // Nothing it has not reached yet
-    expect(new Set(getLevelUpMoves(Species.Bulbasaur, 27)).has(Moves.Growth)).toBe(false);
-    expect(getLevelUpMoves(Species.Bulbasaur, 6)).toEqual([Moves.Tackle, Moves.Growl]);
+    expect(new Set(getLevelUpMoves(Species.Bulbasaur, 27)).has(Moves.WorrySeed)).toBe(false);
+    expect(getLevelUpMoves(Species.Bulbasaur, 2)).toEqual([Moves.Tackle, Moves.Growl]);
 
     // What the reminder can put back is that list minus what it still
     // knows: the four it is carrying are not offered back to it
@@ -199,11 +203,15 @@ describe('wandering NPCs', () => {
       Moves.Growl,
       Moves.LeechSeed,
       Moves.SleepPowder,
+      Moves.SeedBomb,
+      Moves.TakeDown,
       Moves.SweetScent,
+      Moves.Synthesis,
       Moves.WorrySeed,
+      Moves.DoubleEdge,
     ]);
     // A pokemon that never dropped anything has nothing to remember
-    expect(getRecallableMoves(Species.Bulbasaur, 6, [Moves.Tackle, Moves.Growl])).toEqual([]);
+    expect(getRecallableMoves(Species.Bulbasaur, 2, [Moves.Tackle, Moves.Growl])).toEqual([]);
     // And a machine move it forgot stays forgotten: he only ever gives
     // back what levelling gave it
     expect(new Set(getRecallableMoves(Species.Bulbasaur, 48, carrying)).has(Moves.PetalDance)).toBe(
@@ -211,14 +219,14 @@ describe('wandering NPCs', () => {
     );
 
     // An evolved pokemon reaches its pre-evolutions' moves too, up to
-    // its own level: Caterpie's Bug Bite comes at 15
+    // its own level: Butterfree's Psybeam comes at 16
     const butterfree = new Set(getRecallableMoves(Species.Butterfree, 12, []));
 
     for (const move of [Moves.Tackle, Moves.StringShot, Moves.Harden, Moves.Confusion]) {
       expect(butterfree.has(move)).toBe(true);
     }
-    expect(butterfree.has(Moves.BugBite)).toBe(false);
-    expect(new Set(getRecallableMoves(Species.Butterfree, 15, [])).has(Moves.BugBite)).toBe(true);
+    expect(butterfree.has(Moves.Psybeam)).toBe(false);
+    expect(new Set(getRecallableMoves(Species.Butterfree, 16, [])).has(Moves.Psybeam)).toBe(true);
   });
 });
 

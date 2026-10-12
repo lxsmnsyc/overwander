@@ -940,10 +940,10 @@ describe('type experts', () => {
     // Accuracy is rolled against evasion, so a written 100 is a
     // promise a Double Team breaks and a move with no accuracy is
     // not. Read flat the two tied, and the older move id won
-    const scyther = getBestMoves(Species.Scyther, [Abilities.Swarm]);
+    const starly = getBestMoves(Species.Starly, [Abilities.KeenEye]);
 
-    expect(scyther).toContain(Moves.AerialAce);
-    expect(scyther).not.toContain(Moves.WingAttack);
+    expect(starly).toContain(Moves.AerialAce);
+    expect(starly).not.toContain(Moves.WingAttack);
   });
 
   it('does not hand the same move to half the party', () => {
@@ -1174,13 +1174,13 @@ describe('type experts', () => {
     expect(getBestMoves(Species.Gyarados, [Abilities.Intimidate])).not.toContain(Moves.GigaImpact);
 
     // A move whose power the engine works out at the cast is still
-    // worth something: Snorlax throws its own weight
-    expect(getBestMoves(Species.Snorlax, [Abilities.Immunity])).toContain(Moves.HeavySlam);
+    // worth something: Golem throws its own weight
+    expect(getBestMoves(Species.Golem, [Abilities.Sturdy])).toContain(Moves.HeavySlam);
 
     // Every strike counts, and Skill Link lands the lot, which is what
     // makes five strikes of 25 worth a slot
-    expect(getBestMoves(Species.Cloyster, [Abilities.ShellArmor])).not.toContain(Moves.SpikeCannon);
-    expect(getBestMoves(Species.Cloyster, [Abilities.SkillLink])).toContain(Moves.SpikeCannon);
+    expect(getBestMoves(Species.Cloyster, [Abilities.ShellArmor])).not.toContain(Moves.RockBlast);
+    expect(getBestMoves(Species.Cloyster, [Abilities.SkillLink])).toContain(Moves.RockBlast);
   });
 
   it('never awakens an ability the sheet never asks for', () => {
@@ -1328,11 +1328,11 @@ describe('type experts', () => {
   });
 
   it('prefers a healer that mends over a frailer one that only boosts', () => {
-    // Lucario only has Helping Hand, so Chansey heals despite its bulk
+    // Hitmontop only has Helping Hand, so Chansey heals despite its bulk
     const roles = assignBuildRoles([
       Species.Gengar,
       Species.Machamp,
-      Species.Lucario,
+      Species.Hitmontop,
       Species.Chansey,
       Species.Skarmory,
       Species.Tyranitar,

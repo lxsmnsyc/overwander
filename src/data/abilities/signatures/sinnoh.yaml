@@ -1,0 +1,116 @@
+# The signature abilities granted to the families filed under Sinnoh
+
+families:
+  # The Sinnoh starters share one signature: each is braced for one
+  # kind of blow, takes it once a fight for half of what it was worth,
+  # and turns it into something that lasts
+  Turtwig: BarkBrace
+  Chimchar: CinderBrace
+  Piplup: CrestBrace
+
+  # The three that open Sinnoh's routes, each worth more for the
+  # company it keeps: a flock, a lodge, a chorus
+  Starly: Murmuration
+  Bidoof: Lodgework
+  Kricketot: Chorus
+
+  # Gleam Eyes: the lion whose eyes are the reason nothing it hunts
+  # gets to hide
+  Shinx: GleamEyes
+
+  # Sinnoh's two fossils share cover: the skull ignores it, the
+  # face-shield hands it out
+  Cranidos: Ramrod
+  Shieldon: Bulwark
+
+  # Sinnoh's next two: one built out of what it is hit with, the
+  # other out of the side of the world it came from
+  Burmy: Patchwork
+  Shellos: TwoSeas
+
+  # The comb, the sac and the blossom: what one gathers goes to the
+  # hive, what one carries holds it off the ground, and what one
+  # opens is itself
+  Combee: PollenDole
+  Buizel: FloatSac
+  Cherubi: SecondBloom
+
+  # The balloon, the ears and the claws: one drifts off with whatever
+  # it lands on, one uncoils as it goes, and one goes for whatever
+  # has been making itself comfortable
+  Drifloon: CarryOff
+  Buneary: Springheel
+  Glameow: VelvetClaws
+
+  # The skunk, the bell and the shark: one fights whatever it has
+  # already poisoned, one tolls for everything facing it, and one
+  # reaches what thinks it is out of reach
+  Stunky: RankAir
+  Bronzor: DeepToll
+  Gible: Skyhunt
+
+  # The aura, the sand and the sting: one rises to whatever it is
+  # facing, one carries its own weather, and one gets a single blow
+  # in before it is seen
+  Riolu: AuraMatch
+  Hippopotas: DustBath
+  Skorupi: Ambush
+
+  # The frog, the fish and the tree: one throws the blow that ends
+  # it, one takes what was aimed at somebody worse off, and one
+  # stands in the winter it brought
+  Croagunk: Finisher
+  Finneon: FalseEyes
+  Snover: Evergreen
+
+  # The squirrel, whose charge is in the fur of whoever it lives with
+  Pachirisu: Sparkfur
+
+  # The bird, whose noise is somebody else's and louder
+  Chatot: Birdsong
+
+  # The stone, which is only ever taking on more
+  Spiritomb: Soulwell
+
+  # The mouth on a stem, which shuts once on each of them
+  Carnivine: Snapvine
+
+  # The plasma, which is good at whatever it got into
+  Rotom: Appliance
+
+  # The lake trio: each of them hands its own side the thing it was
+  # made to keep, one stage of it, as it arrives. The birds' wingbeat
+  # turned around
+  Uxie: Mindgift
+  Mesprit: Heartgift
+  Azelf: Willgift
+
+  # The dome hangs over whatever it lit, and keeps it burning
+  Heatran: Lavadome
+
+  # The fourth golem, and the one that sealed the other three. It
+  # shares their seal, minus the half of its own damage: Slow Start
+  # is already taking that
+  Regigigas: TitanSeal
+
+  # The creation trio: while one stands, the far side reads one of
+  # its stages a step lower. Asked rather than applied, so it lifts
+  # the moment the holder leaves
+  Dialga: TimeDrag
+  Palkia: SpaceDrift
+  Giratina: VoidWeight
+
+  # The moon duo, who disagree about how long a night runs. One cuts
+  # what settles on its own side in half, the other draws out what it
+  # puts on the far side, and meeting each other is what answers both
+  Cresselia: WaningLight
+  Darkrai: WaxingDark
+
+  # The prince of the sea, whose own move is a swap of hearts
+  Manaphy: Heartcurrent
+
+  # The one that was there first, whose judgment nobody shrugs off
+  Arceus: Firstlight
+
+  # The flower that takes the poison out of the air it stands in
+  Shaymin: Purebloom

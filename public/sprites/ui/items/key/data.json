@@ -147,6 +147,19 @@
       ]
     },
     {
+      "name": "balm.png",
+      "x": 117,
+      "y": 363,
+      "width": 14,
+      "height": 21,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        9,
+        6
+      ]
+    },
+    {
       "name": "band-autograph.png",
       "x": 197,
       "y": 262,

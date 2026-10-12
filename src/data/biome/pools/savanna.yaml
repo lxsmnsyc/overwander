@@ -1,0 +1,234 @@
+land:
+  morning:
+    base:
+      Shinx: 1150
+      FlabebeYellow: 1104
+      Scatterbug: 1104
+      NidoranF: 920
+      NidoranM: 920
+      Torchic: 92
+    uncommon:
+      Sunkern: 264
+      Taillow: 264
+      Electrike: 264
+      Wooper: 264
+      Mudbray: 232
+      Doduo: 211
+      Natu: 211
+      Phanpy: 211
+      Hippopotas: 211
+      Psyduck: 211
+      Growlithe: 105
+      Girafarig: 53
+    rare:
+      FloetteYellow: 313
+      Spewpa: 313
+      Nidorina: 195
+      Nidorino: 195
+      Luxio: 195
+      Combusken: 39
+    scarce:
+      Dodrio: 75
+      Swellow: 75
+      Manectric: 75
+      Golduck: 75
+      Mudsdale: 45
+      Hippowdon: 45
+      Electivire: 45
+      Arcanine: 38
+      Xatu: 38
+      Sunflora: 38
+      Donphan: 38
+      Quagsire: 38
+    elusive:
+      Tauros: 42
+      Plusle: 33
+      Minun: 33
+      Zangoose: 33
+      Komala: 21
+      Oricorio: 21
+      FlorgesYellow: 21
+      Vivillon: 21
+      Nidoqueen: 21
+      Nidoking: 21
+      Kangaskhan: 21
+      Luxray: 17
+      Blaziken: 8
+    prized:
+      Unown: forms
+    special: {}
+  day:
+    base:
+      Shinx: 966
+      FlabebeYellow: 927
+      Scatterbug: 927
+      NidoranF: 773
+      NidoranM: 773
+      Rhyhorn: 773
+      Fennekin: 77
+      Torchic: 77
+    uncommon:
+      Sunkern: 243
+      Taillow: 243
+      Electrike: 243
+      Wooper: 243
+      Mudbray: 214
+      Ekans: 195
+      Doduo: 195
+      Natu: 195
+      Phanpy: 195
+      Hippopotas: 195
+      Psyduck: 195
+      Growlithe: 97
+      Girafarig: 49
+    rare:
+      Rhydon: 284
+      FloetteYellow: 227
+      Spewpa: 227
+      Nidorina: 142
+      Nidorino: 142
+      Luxio: 142
+      Braixen: 57
+      Combusken: 28
+    scarce:
+      Arbok: 67
+      Dodrio: 67
+      Swellow: 67
+      Manectric: 67
+      Golduck: 67
+      Mudsdale: 40
+      Hippowdon: 40
+      Electivire: 40
+      Arcanine: 34
+      Xatu: 34
+      Sunflora: 34
+      Donphan: 34
+      Quagsire: 34
+    elusive:
+      Tauros: 41
+      Plusle: 32
+      Minun: 32
+      Zangoose: 32
+      Komala: 20
+      Oricorio: 20
+      FlorgesYellow: 20
+      Vivillon: 20
+      Nidoqueen: 20
+      Nidoking: 20
+      Kangaskhan: 20
+      Luxray: 16
+      Delphox: 8
+      Blaziken: 8
+    prized:
+      Unown: forms
+    special: {}
+  evening:
+    base:
+      Shinx: 1973
+      NidoranF: 1579
+      NidoranM: 1579
+      Fennekin: 158
+    uncommon:
+      Wooper: 473
+      Mudbray: 417
+      Ekans: 379
+      Houndour: 379
+      Poochyena: 379
+      Hippopotas: 379
+      Girafarig: 95
+    rare:
+      Nidorina: 368
+      Nidorino: 368
+      Luxio: 368
+      Braixen: 147
+    scarce:
+      Arbok: 130
+      Mightyena: 130
+      Mudsdale: 78
+      Hippowdon: 78
+      Electivire: 78
+      Houndoom: 65
+      Quagsire: 65
+    elusive:
+      Seviper: 86
+      Komala: 54
+      Nidoqueen: 54
+      Nidoking: 54
+      Luxray: 43
+      Delphox: 22
+    prized:
+      Unown: forms
+    special: {}
+  night:
+    base:
+      Shinx: 2035
+      NidoranF: 1628
+      NidoranM: 1628
+    uncommon:
+      Wooper: 473
+      Mudbray: 417
+      Ekans: 379
+      Houndour: 379
+      Poochyena: 379
+      Hippopotas: 379
+      Girafarig: 95
+    rare:
+      Nidorina: 417
+      Nidorino: 417
+      Luxio: 417
+    scarce:
+      Arbok: 130
+      Mightyena: 130
+      Mudsdale: 78
+      Hippowdon: 78
+      Electivire: 78
+      Houndoom: 65
+      Quagsire: 65
+    elusive:
+      Seviper: 93
+      Komala: 58
+      Nidoqueen: 58
+      Nidoking: 58
+      Luxray: 46
+    prized:
+      Unown: forms
+    special: {}
+
+water:
+  morning: &water-morning
+    base: {}
+    uncommon:
+      Magikarp: 1647
+      Barboach: 1373
+      Wooper: 1373
+      Taillow: 1373
+      Psyduck: 1099
+      Doduo: 1099
+      Natu: 1099
+    rare: {}
+    scarce:
+      Golduck: 120
+      Dodrio: 120
+      Swellow: 120
+      Whiscash: 96
+      Quagsire: 60
+      Xatu: 60
+      Gyarados: 48
+    special: {}
+    elusive:
+      Oricorio: 156
+      Vivillon: 156
+  day: *water-morning
+  evening: &water-evening
+    base: {}
+    uncommon:
+      Magikarp: 3397
+      Barboach: 2831
+      Wooper: 2831
+    rare: {}
+    scarce:
+      Whiscash: 442
+      Quagsire: 277
+      Gyarados: 222
+    special: {}
+  night: *water-evening

@@ -1,0 +1,45 @@
+Switcheroo:
+  name: Switcheroo
+  description: Trades what the user is holding for what the target is.
+GigaImpact:
+  name: Giga Impact
+  description: The user must recharge for 2 seconds after it lands.
+NastyPlot:
+  name: Nasty Plot
+  description: Raises the user's Special Attack 2 stages.
+BulletPunch:
+  name: Bullet Punch
+  description: A shorter wind-up than most.
+Avalanche:
+  name: Avalanche
+  description: 2x power if the user has been hurt in the last 2 seconds, but a long wind-up.
+IceShard:
+  name: Ice Shard
+  description: A shorter wind-up than most.
+ShadowClaw:
+  name: Shadow Claw
+  description: Lands a critical more often than most.
+ThunderFang:
+  name: Thunder Fang
+  description: 10% to paralyse, and 10% to make the target flinch.
+IceFang:
+  name: Ice Fang
+  description: 10% to freeze, and 10% to make the target flinch.
+FireFang:
+  name: Fire Fang
+  description: 10% to burn, and 10% to make the target flinch.
+ShadowSneak:
+  name: Shadow Sneak
+  description: A shorter wind-up than most.
+MudBomb:
+  name: Mud Bomb
+  description: 30% to drop the target's Accuracy 1 stage.
+PsychoCut:
+  name: Psycho Cut
+  description: Lands a critical more often than most.
+ZenHeadbutt:
+  name: Zen Headbutt
+  description: 20% to make the target flinch.
+MirrorShot:
+  name: Mirror Shot
+  description: 30% to drop the target's Accuracy 1 stage.

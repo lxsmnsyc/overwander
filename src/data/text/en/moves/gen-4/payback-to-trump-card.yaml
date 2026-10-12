@@ -1,0 +1,18 @@
+Payback:
+  name: Payback
+  description: 2x power if the target has begun a cast in the last 2 seconds.
+Assurance:
+  name: Assurance
+  description: 2x power if the target has already been hurt in the last 2 seconds.
+Embargo:
+  name: Embargo
+  description: The target cannot use its held item for 10 seconds.
+Fling:
+  name: Fling
+  description: "Throws the user's held item: 10 power for a berry, 60 for anything else. The item is gone after."
+PsychoShift:
+  name: Psycho Shift
+  description: Passes the user's status to the target, which cures the user.
+TrumpCard:
+  name: Trump Card
+  description: Every one played this fight makes the next hit harder, from 40 power up to 200.

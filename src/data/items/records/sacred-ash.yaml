@@ -1,0 +1,7 @@
+# What somebody will pay to take one off a player's hands. Dear,
+# because a fight it turns around is a fight that was over
+SacredAsh:
+  type: Held
+  icon: medicine/sacred-ash
+  flags: [Consumable, Holdable]
+  sell: 20000

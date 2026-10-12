@@ -17,6 +17,8 @@ const enum Regions {
   Unova = 5,
   Kalos = 6,
   Alola = 7,
+  Galar = 8,
+  Hisui = 9,
 }
 
 export default Regions;

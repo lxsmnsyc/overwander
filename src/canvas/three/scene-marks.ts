@@ -90,6 +90,17 @@ void main() {
   gl_FragColor = texture2D(sheet, pass_uv) * pass_tint;
 }`;
 
+/** The tint alone, in the picture's shape: a body washed in one colour */
+const WASH_FRAGMENT = `
+precision mediump float;
+uniform sampler2D sheet;
+varying vec2 pass_uv;
+varying vec4 pass_tint;
+
+void main() {
+  gl_FragColor = pass_tint * texture2D(sheet, pass_uv).a;
+}`;
+
 /** The same, for a picture that hides what is behind it: its see-through pixels are left out */
 const SOLID_FRAGMENT = `
 precision mediump float;
@@ -549,9 +560,14 @@ export default class SceneMarks {
     if (known != null) {
       return known;
     }
+    let fragment = run.solid ? SOLID_FRAGMENT : FRAGMENT;
+
+    if (run.blend === 'wash') {
+      fragment = WASH_FRAGMENT;
+    }
     const made = new RawShaderMaterial({
       vertexShader: VERTEX,
-      fragmentShader: run.solid ? SOLID_FRAGMENT : FRAGMENT,
+      fragmentShader: fragment,
       uniforms: {
         viewport: { value: this.viewport },
         sheet: { value: this.textureOf(run.sheet, run.sampling) },
@@ -565,7 +581,8 @@ export default class SceneMarks {
       // Written over rather than into: a mark is flat on whatever it
       // lies on, and two of them on one cell are both meant to show.
       // A pokemon's own picture is the exception, so effects behind it hide
-      depthWrite: run.solid,
+      // A wash writes none: it keeps no see-through pixels out, and lies on a body drawn already
+      depthWrite: run.solid && run.blend !== 'wash',
       blending: CustomBlending,
       blendSrc: run.blend === 'multiply' ? DstColorFactor : OneFactor,
       blendDst: run.blend === 'screen' ? OneMinusSrcColorFactor : OneMinusSrcAlphaFactor,

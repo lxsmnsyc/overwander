@@ -33,6 +33,7 @@ export const SELF_SWITCH_MOVES = new Set<Moves>([
   Moves.UTurn,
   Moves.VoltSwitch,
   Moves.PartingShot,
+  Moves.FlipTurn,
 ]);
 
 /**

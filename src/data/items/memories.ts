@@ -1,7 +1,6 @@
 import { TYPE_NAMES, Types } from '../constants/types';
-import { ItemFlags, ItemTypes, Items } from '../ids/items';
-import { PLATE_RESALE } from './plates';
-import { registerItem } from './__create';
+import { Items } from '../ids/items';
+import { itemText } from './__create';
 
 /**
  * The Memories: held discs that set the type of a Multi-Attack. The
@@ -28,17 +27,11 @@ export const MEMORIES = new Map<Items, Types>([
   [Items.FairyMemory, Types.Fairy],
 ]);
 
-/** Held, never spent, and found rather than bought, the way a plate is */
-export default function registerMemories(): void {
-  for (const [item, type] of MEMORIES) {
-    registerItem(item, {
-      name: `${TYPE_NAMES[type]} Memory`,
-      type: ItemTypes.Held,
-      description: `Multi-Attack is ${TYPE_NAMES[type]}-type while it is held, and so is a Silvally with RKS System.`,
-      icon: `memories/${TYPE_NAMES[type].toLowerCase()}`,
-      flags: ItemFlags.Holdable,
-      buy: 0,
-      sell: PLATE_RESALE,
-    });
+export function describeMemory(item: Items): string {
+  const type = MEMORIES.get(item);
+
+  if (type == null) {
+    throw new Error(`Item #${item} is not a memory`);
   }
+  return itemText('memories', 'memory', { type: TYPE_NAMES[type] });
 }

@@ -1,0 +1,39 @@
+Mareanie:
+  Mareanie: { name: Mareanie, category: Brutal Star Pokemon }
+  Toxapex: { name: Toxapex, category: Brutal Star Pokemon }
+Mudbray:
+  Mudbray: { name: Mudbray, category: Donkey Pokemon }
+  Mudsdale: { name: Mudsdale, category: Draft Horse Pokemon }
+Dewpider:
+  Dewpider: { name: Dewpider, category: Water Bubble Pokemon }
+  Araquanid: { name: Araquanid, category: Water Bubble Pokemon }
+Fomantis:
+  Fomantis: { name: Fomantis, category: Sickle Grass Pokemon }
+  Lurantis: { name: Lurantis, category: Bloom Sickle Pokemon }
+Morelull:
+  Morelull: { name: Morelull, category: Illuminating Pokemon }
+  Shiinotic: { name: Shiinotic, category: Illuminating Pokemon }
+Salandit:
+  Salandit: { name: Salandit, category: Toxic Lizard Pokemon }
+  Salazzle: { name: Salazzle, category: Toxic Lizard Pokemon }
+Stufful:
+  Stufful: { name: Stufful, category: Flailing Pokemon }
+  Bewear: { name: Bewear, category: Strong Arm Pokemon }
+Bounsweet:
+  Bounsweet: { name: Bounsweet, category: Fruit Pokemon }
+  Steenee: { name: Steenee, category: Fruit Pokemon }
+  Tsareena: { name: Tsareena, category: Fruit Pokemon }
+Comfey:
+  Comfey: { name: Comfey, category: Posy Picker Pokemon }
+Oranguru:
+  Oranguru: { name: Oranguru, category: Sage Pokemon }
+Passimian:
+  Passimian: { name: Passimian, category: Teamwork Pokemon }
+Wimpod:
+  Wimpod: { name: Wimpod, category: Turn Tail Pokemon }
+  Golisopod: { name: Golisopod, category: Hard Scale Pokemon }
+Sandygast:
+  Sandygast: { name: Sandygast, category: Sand Heap Pokemon }
+  Palossand: { name: Palossand, category: Sand Castle Pokemon }
+Pyukumuku:
+  Pyukumuku: { name: Pyukumuku, category: Sea Cucumber Pokemon }

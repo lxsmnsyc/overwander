@@ -1,0 +1,25 @@
+templates:
+  worth: Worth {sell} gold to a vendor. Nothing else.
+ShoalSalt: { name: Shoal Salt }
+ShoalShell: { name: Shoal Shell }
+PrettyWing: { name: Pretty Wing }
+TinyMushroom: { name: Tiny Mushroom }
+Pearl: { name: Pearl }
+Stardust: { name: Stardust }
+RelicCopper: { name: Relic Copper }
+BigMushroom: { name: Big Mushroom }
+RareBone: { name: Rare Bone }
+BigPearl: { name: Big Pearl }
+StarPiece: { name: Star Piece }
+RelicSilver: { name: Relic Silver }
+SlowpokeTail: { name: Slowpoke Tail }
+Nugget: { name: Nugget }
+PearlString: { name: Pearl String }
+RelicGold: { name: Relic Gold }
+BalmMushroom: { name: Balm Mushroom }
+BigNugget: { name: Big Nugget }
+RelicVase: { name: Relic Vase }
+CometShard: { name: Comet Shard }
+RelicBand: { name: Relic Band }
+RelicStatue: { name: Relic Statue }
+RelicCrown: { name: Relic Crown }

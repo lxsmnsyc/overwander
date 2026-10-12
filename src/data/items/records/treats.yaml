@@ -1,0 +1,65 @@
+# A sweet undercuts the Full Heal it copies, and sells back at half
+# like everything else on a counter
+
+LavaCookie:
+  type: Held
+  icon: medicine/lava-cookie
+  flags: [Consumable, Holdable, Marketable]
+  buy: 600
+  sell: 300
+
+OldGateau:
+  type: Held
+  icon: medicine/old-gateau
+  flags: [Consumable, Holdable, Marketable]
+  buy: 600
+  sell: 300
+
+Casteliacone:
+  type: Held
+  icon: medicine/casteliacone
+  flags: [Consumable, Holdable, Marketable]
+  buy: 600
+  sell: 300
+
+LumioseGalette:
+  type: Held
+  icon: medicine/lumiose-galette
+  flags: [Consumable, Holdable, Marketable]
+  buy: 600
+  sell: 300
+
+ShalourSable:
+  type: Held
+  icon: medicine/shalour-sable
+  flags: [Consumable, Holdable, Marketable]
+  buy: 600
+  sell: 300
+
+BigMalasada:
+  type: Held
+  icon: medicine/big-malasada
+  flags: [Consumable, Holdable, Marketable]
+  buy: 600
+  sell: 300
+
+PewterCrunchies:
+  type: Held
+  icon: medicine/pewter-crunchies
+  flags: [Consumable, Holdable, Marketable]
+  buy: 600
+  sell: 300
+
+RageCandyBar:
+  type: Held
+  icon: medicine/rage-candy-bar
+  flags: [Consumable, Holdable, Marketable]
+  buy: 300
+  sell: 150
+
+SweetHeart:
+  type: Held
+  icon: medicine/sweet-heart
+  flags: [Consumable, Holdable, Marketable]
+  buy: 300
+  sell: 150

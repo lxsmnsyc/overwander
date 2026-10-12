@@ -1,0 +1,105 @@
+BreakneckBlitz:
+  name: Breakneck Blitz
+  description: A Normal crystal's Z-Move. Its power and whether it is physical or special come from the move it replaces.
+AllOutPummeling:
+  name: All-Out Pummeling
+  description: A Fighting crystal's Z-Move. Its power and whether it is physical or special come from the move it replaces.
+SupersonicSkystrike:
+  name: Supersonic Skystrike
+  description: A Flying crystal's Z-Move. Its power and whether it is physical or special come from the move it replaces.
+AcidDownpour:
+  name: Acid Downpour
+  description: A Poison crystal's Z-Move. Its power and whether it is physical or special come from the move it replaces.
+TectonicRage:
+  name: Tectonic Rage
+  description: A Ground crystal's Z-Move. Its power and whether it is physical or special come from the move it replaces.
+ContinentalCrush:
+  name: Continental Crush
+  description: A Rock crystal's Z-Move. Its power and whether it is physical or special come from the move it replaces.
+SavageSpinOut:
+  name: Savage Spin-Out
+  description: A Bug crystal's Z-Move. Its power and whether it is physical or special come from the move it replaces.
+NeverEndingNightmare:
+  name: Never-Ending Nightmare
+  description: A Ghost crystal's Z-Move. Its power and whether it is physical or special come from the move it replaces.
+CorkscrewCrash:
+  name: Corkscrew Crash
+  description: A Steel crystal's Z-Move. Its power and whether it is physical or special come from the move it replaces.
+InfernoOverdrive:
+  name: Inferno Overdrive
+  description: A Fire crystal's Z-Move. Its power and whether it is physical or special come from the move it replaces.
+HydroVortex:
+  name: Hydro Vortex
+  description: A Water crystal's Z-Move. Its power and whether it is physical or special come from the move it replaces.
+BloomDoom:
+  name: Bloom Doom
+  description: A Grass crystal's Z-Move. Its power and whether it is physical or special come from the move it replaces.
+GigavoltHavoc:
+  name: Gigavolt Havoc
+  description: A Electric crystal's Z-Move. Its power and whether it is physical or special come from the move it replaces.
+ShatteredPsyche:
+  name: Shattered Psyche
+  description: A Psychic crystal's Z-Move. Its power and whether it is physical or special come from the move it replaces.
+SubzeroSlammer:
+  name: Subzero Slammer
+  description: A Ice crystal's Z-Move. Its power and whether it is physical or special come from the move it replaces.
+DevastatingDrake:
+  name: Devastating Drake
+  description: A Dragon crystal's Z-Move. Its power and whether it is physical or special come from the move it replaces.
+BlackHoleEclipse:
+  name: Black Hole Eclipse
+  description: A Dark crystal's Z-Move. Its power and whether it is physical or special come from the move it replaces.
+TwinkleTackle:
+  name: Twinkle Tackle
+  description: A Fairy crystal's Z-Move. Its power and whether it is physical or special come from the move it replaces.
+Catastropika:
+  name: Catastropika
+  description: A Pikachu's own Z-Move.
+SinisterArrowRaid:
+  name: Sinister Arrow Raid
+  description: A Decidueye's own Z-Move.
+MaliciousMoonsault:
+  name: Malicious Moonsault
+  description: An Incineroar's own Z-Move.
+OceanicOperetta:
+  name: Oceanic Operetta
+  description: A Primarina's own Z-Move.
+GuardianOfAlola:
+  name: Guardian of Alola
+  description: Takes 3/4 of whatever health the target has left. A Tapu's own Z-Move.
+SoulStealing7StarStrike:
+  name: Soul-Stealing 7-Star Strike
+  description: A Marshadow's own Z-Move.
+StokedSparksurfer:
+  name: Stoked Sparksurfer
+  description: Always paralyses. An Alolan Raichu's own Z-Move.
+PulverizingPancake:
+  name: Pulverizing Pancake
+  description: A Snorlax's own Z-Move.
+ExtremeEvoboost:
+  name: Extreme Evoboost
+  description: Raises every one of the user's stats 2 stages. An Eevee's own Z-Move.
+GenesisSupernova:
+  name: Genesis Supernova
+  description: Lays Psychic Terrain behind it. A Mew's own Z-Move.
+TenMillionVoltThunderbolt:
+  name: 10,000,000 Volt Thunderbolt
+  description: More likely to land a critical hit. The Z-Move of a Pikachu in Ash's cap.
+LightThatBurnsTheSky:
+  name: Light That Burns the Sky
+  description: Physical when the user's Attack is higher. Ignores the target's abilities. A fused Necrozma's own Z-Move.
+SearingSunrazeSmash:
+  name: Searing Sunraze Smash
+  description: Ignores the target's abilities. A Solgaleo's own Z-Move.
+MenacingMoonrazeMaelstrom:
+  name: Menacing Moonraze Maelstrom
+  description: Ignores the target's abilities. A Lunala's own Z-Move.
+LetsSnuggleForever:
+  name: Let's Snuggle Forever
+  description: A Mimikyu's own Z-Move.
+SplinteredStormshards:
+  name: Splintered Stormshards
+  description: Clears the terrain away. A Lycanroc's own Z-Move.
+ClangorousSoulblaze:
+  name: Clangorous Soulblaze
+  description: Hits everything opposite, then raises every one of the user's stats a stage. A Kommo-o's own Z-Move. It is a sound.

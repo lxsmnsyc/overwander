@@ -1,0 +1,65 @@
+# Every one is held for as long as its holder keeps it: none is consumed,
+# and none is used on a pokemon. The stocked ones are dear because each is
+# worth half again of a stat.
+
+ChoiceBand:
+  type: Held
+  icon: held/choice-band
+  flags: [Holdable, Marketable]
+  buy: 8000
+  sell: 4000
+
+ChoiceSpecs:
+  type: Held
+  icon: held/choice-specs
+  flags: [Holdable, Marketable]
+  buy: 8000
+  sell: 4000
+
+ChoiceScarf:
+  type: Held
+  icon: held/choice-scarf
+  flags: [Holdable, Marketable]
+  buy: 8000
+  sell: 4000
+
+AssaultVest:
+  type: Held
+  icon: held/assault-vest
+  flags: [Holdable, Marketable]
+  buy: 8000
+  sell: 4000
+
+Eviolite:
+  type: Held
+  icon: held/eviolite
+  flags: [Holdable, Marketable]
+  buy: 8000
+  sell: 4000
+
+# The relics are found rather than bought: a relic has no listing, only a
+# price somebody will pay for it, which is what a shop will take one off a
+# player's hands for.
+LightBall:
+  type: Held
+  icon: held/light-ball
+  flags: [Holdable]
+  sell: 1000
+
+ThickClub:
+  type: Held
+  icon: held/thick-club
+  flags: [Holdable]
+  sell: 1000
+
+MetalPowder:
+  type: Held
+  icon: held/metal-powder
+  flags: [Holdable]
+  sell: 1000
+
+QuickPowder:
+  type: Held
+  icon: held/quick-powder
+  flags: [Holdable]
+  sell: 1000

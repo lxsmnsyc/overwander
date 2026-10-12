@@ -1,0 +1,69 @@
+TypeNull:
+  TypeNull: { name: 'Type: Null', category: Synthetic Pokemon }
+  Silvally: { name: Silvally, category: Synthetic Pokemon }
+  SilvallyFighting: { name: Silvally Fighting, category: Synthetic Pokemon }
+  SilvallyFlying: { name: Silvally Flying, category: Synthetic Pokemon }
+  SilvallyPoison: { name: Silvally Poison, category: Synthetic Pokemon }
+  SilvallyGround: { name: Silvally Ground, category: Synthetic Pokemon }
+  SilvallyRock: { name: Silvally Rock, category: Synthetic Pokemon }
+  SilvallyBug: { name: Silvally Bug, category: Synthetic Pokemon }
+  SilvallyGhost: { name: Silvally Ghost, category: Synthetic Pokemon }
+  SilvallySteel: { name: Silvally Steel, category: Synthetic Pokemon }
+  SilvallyFire: { name: Silvally Fire, category: Synthetic Pokemon }
+  SilvallyWater: { name: Silvally Water, category: Synthetic Pokemon }
+  SilvallyGrass: { name: Silvally Grass, category: Synthetic Pokemon }
+  SilvallyElectric: { name: Silvally Electric, category: Synthetic Pokemon }
+  SilvallyPsychic: { name: Silvally Psychic, category: Synthetic Pokemon }
+  SilvallyIce: { name: Silvally Ice, category: Synthetic Pokemon }
+  SilvallyDragon: { name: Silvally Dragon, category: Synthetic Pokemon }
+  SilvallyDark: { name: Silvally Dark, category: Synthetic Pokemon }
+  SilvallyFairy: { name: Silvally Fairy, category: Synthetic Pokemon }
+Minior:
+  Minior: { name: Minior, category: Meteor Pokemon }
+  MiniorRed: { name: Red Core Minior, category: Meteor Pokemon }
+  MiniorOrange: { name: Orange Core Minior, category: Meteor Pokemon }
+  MiniorYellow: { name: Yellow Core Minior, category: Meteor Pokemon }
+  MiniorGreen: { name: Green Core Minior, category: Meteor Pokemon }
+  MiniorBlue: { name: Blue Core Minior, category: Meteor Pokemon }
+  MiniorIndigo: { name: Indigo Core Minior, category: Meteor Pokemon }
+  MiniorViolet: { name: Violet Core Minior, category: Meteor Pokemon }
+Komala:
+  Komala: { name: Komala, category: Drowsing Pokemon }
+Turtonator:
+  Turtonator: { name: Turtonator, category: Blast Turtle Pokemon }
+Togedemaru:
+  Togedemaru: { name: Togedemaru, category: Roly-Poly Pokemon }
+Mimikyu:
+  Mimikyu: { name: Mimikyu, category: Disguise Pokemon }
+  MimikyuBusted: { name: Busted Mimikyu, category: Disguise Pokemon }
+Bruxish:
+  Bruxish: { name: Bruxish, category: Gnash Teeth Pokemon }
+Drampa:
+  Drampa: { name: Drampa, category: Placid Pokemon }
+Dhelmise:
+  Dhelmise: { name: Dhelmise, category: Sea Creeper Pokemon }
+JangmoO:
+  JangmoO: { name: Jangmo-o, category: Scaly Pokemon }
+  HakamoO: { name: Hakamo-o, category: Scaly Pokemon }
+  KommoO: { name: Kommo-o, category: Scaly Pokemon }
+TapuKoko:
+  TapuKoko: { name: Tapu Koko, category: Land Spirit Pokemon }
+TapuLele:
+  TapuLele: { name: Tapu Lele, category: Land Spirit Pokemon }
+TapuBulu:
+  TapuBulu: { name: Tapu Bulu, category: Land Spirit Pokemon }
+TapuFini:
+  TapuFini: { name: Tapu Fini, category: Land Spirit Pokemon }
+Cosmog:
+  Cosmog: { name: Cosmog, category: Nebula Pokemon }
+  Cosmoem: { name: Cosmoem, category: Protostar Pokemon }
+  Solgaleo: { name: Solgaleo, category: Sunne Pokemon }
+  Lunala: { name: Lunala, category: Moone Pokemon }
+Nihilego:
+  Nihilego: { name: Nihilego, category: Parasite Pokemon }
+Buzzwole:
+  Buzzwole: { name: Buzzwole, category: Swollen Pokemon }
+Pheromosa:
+  Pheromosa: { name: Pheromosa, category: Lissome Pokemon }
+Xurkitree:
+  Xurkitree: { name: Xurkitree, category: Glowing Pokemon }

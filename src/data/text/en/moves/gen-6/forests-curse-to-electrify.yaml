@@ -1,0 +1,36 @@
+ForestsCurse:
+  name: Forest's Curse
+  description: Adds Grass to the target's types, in place of anything Trick-or-Treat added.
+PetalBlizzard:
+  name: Petal Blizzard
+  description: Hits everything opposite and the user's teammates.
+FreezeDry:
+  name: Freeze-Dry
+  description: 2x on Water, whatever the chart says. 10% to freeze.
+DisarmingVoice:
+  name: Disarming Voice
+  description: Hits everything opposite, and never misses. It is a sound.
+PartingShot:
+  name: Parting Shot
+  description: Drops the target's Attack and Special Attack a stage each, then swaps the user out. It is a sound.
+TopsyTurvy:
+  name: Topsy-Turvy
+  description: Turns every stat stage on the target the other way up.
+DrainingKiss:
+  name: Draining Kiss
+  description: Heals the user for 3/4 the damage dealt.
+CraftyShield:
+  name: Crafty Shield
+  description: For 2 seconds, status moves are turned away from the user's team.
+FlowerShield:
+  name: Flower Shield
+  description: Raises the Defense of every Grass type on the field a stage.
+GrassyTerrain:
+  name: Grassy Terrain
+  description: For 10 seconds, grounded pokemon heal 1/16 of their HP each time they act and their Grass moves hit 1.3x. Earthquake, Bulldoze and Magnitude hit them at 1/2.
+MistyTerrain:
+  name: Misty Terrain
+  description: For 10 seconds, grounded pokemon cannot be given a status, confused or made drowsy, and Dragon moves hit them at 1/2.
+Electrify:
+  name: Electrify
+  description: The target's next move within 2 seconds lands as Electric.

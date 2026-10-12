@@ -1,0 +1,11 @@
+# Drawn on the medicine sheet, which is where the collection packed it
+AbilityCapsule:
+  type: Training
+  icon: medicine/ability-capsule
+  flags: [Consumable, Usable]
+
+# Drawn on the other sheet, beside the bottle caps
+AbilityPatch:
+  type: Training
+  icon: other/ability-patch
+  flags: [Consumable, Usable]

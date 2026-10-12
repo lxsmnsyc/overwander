@@ -1,0 +1,11 @@
+RareCandy:
+  type: Medicine
+  icon: medicine/rare-candy
+  flags: [Consumable, Usable]
+
+# Found as a special, never bought: every level-up move on the way
+# stays on offer
+RareCandyMax:
+  type: Medicine
+  icon: medicine/rare-candy-max
+  flags: [Consumable, Usable]

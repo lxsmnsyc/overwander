@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Battle: added stages",
+  "type": "object",
+  "propertyNames": {
+    "$ref": "names.json#/definitions/move"
+  },
+  "additionalProperties": {
+    "type": "object",
+    "properties": {
+      "stages": {
+        "type": "array",
+        "items": {
+          "$ref": "names.json#/definitions/stage"
+        }
+      },
+      "value": {
+        "type": "number"
+      },
+      "chance": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 100,
+        "description": "The chance, out of 100"
+      },
+      "self": {
+        "const": true,
+        "description": "Pushed on its own user rather than on what it hit"
+      }
+    },
+    "required": [
+      "stages",
+      "value",
+      "chance"
+    ],
+    "additionalProperties": false
+  }
+}

@@ -1,0 +1,42 @@
+StormThrow:
+  name: Storm Throw
+  description: Always lands a critical.
+FlameBurst:
+  name: Flame Burst
+  description: Its splash burns each of the target's teammates for 1/16 of their HP.
+SludgeWave:
+  name: Sludge Wave
+  description: Hits the user's own team and everything opposite. 10% to poison.
+QuiverDance:
+  name: Quiver Dance
+  description: Raises the user's Special Attack, Special Defense and Speed a stage each.
+HeavySlam:
+  name: Heavy Slam
+  description: 'Hits harder the heavier the user is than the target: 40 power, up to 120 at 5x its weight. Never misses a minimized target, and hits 2x on it.'
+Synchronoise:
+  name: Synchronoise
+  description: Hits the user's own team and everything opposite, but only those sharing a type with the user.
+ElectroBall:
+  name: Electro Ball
+  description: 'Hits harder the faster the user is than the target: 40 power, up to 150 at 4x its Speed.'
+Soak:
+  name: Soak
+  description: Makes the target pure Water-type.
+FlameCharge:
+  name: Flame Charge
+  description: Raises the user's Speed a stage.
+Coil:
+  name: Coil
+  description: Raises the user's Attack, Defense and accuracy a stage each.
+LowSweep:
+  name: Low Sweep
+  description: Drops the target's Speed a stage.
+AcidSpray:
+  name: Acid Spray
+  description: Drops the target's Special Defense 2 stages.
+FoulPlay:
+  name: Foul Play
+  description: Hits with the target's own Attack and stages rather than the user's.
+SimpleBeam:
+  name: Simple Beam
+  description: Swaps 1 of the target's abilities for Simple, so its stat stages count 2x.

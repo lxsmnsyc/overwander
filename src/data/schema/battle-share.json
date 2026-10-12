@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Battle: shares",
+  "type": "object",
+  "propertyNames": {
+    "$ref": "names.json#/definitions/move"
+  },
+  "additionalProperties": {
+    "anyOf": [
+      {
+        "type": "number",
+        "minimum": 0
+      },
+      {
+        "type": "string",
+        "pattern": "^\\d+/\\d+$"
+      }
+    ],
+    "description": "A share, as a number or a fraction such as `1/3`"
+  }
+}

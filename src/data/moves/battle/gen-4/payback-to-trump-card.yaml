@@ -1,0 +1,48 @@
+# From Payback to Trump Card: the moves that wait for their moment,
+# and the two that go through what somebody is carrying
+
+Payback:
+  type: Dark
+  category: Physical
+  power: 50
+  accuracy: 100
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+Assurance:
+  type: Dark
+  category: Physical
+  power: 60
+  accuracy: 100
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+Embargo:
+  type: Dark
+  category: Status
+  accuracy: 100
+  pp: 15
+  target: Unit
+
+Fling:
+  type: Dark
+  category: Physical
+  accuracy: 100
+  pp: 10
+  target: Unit
+  projectile: true
+
+PsychoShift:
+  type: Psychic
+  category: Status
+  accuracy: 100
+  pp: 10
+  target: Unit
+
+TrumpCard:
+  type: Normal
+  category: Special
+  pp: 5
+  target: Unit

@@ -320,6 +320,9 @@ export const RAID_KIND = v.picklist([
   RaidKind.Shadow,
   RaidKind.Mythical,
   RaidKind.Totem,
+  RaidKind.Max,
+  RaidKind.Alpha,
+  RaidKind.Noble,
 ]);
 
 /** How a battle ended */
@@ -413,6 +416,10 @@ export const AFTERMATHS = listOf(
     statuses: COUNT,
     coins: COUNT,
     sketched: v.optional(GAME_ID),
+    criticals: v.optional(COUNT),
+    taken: v.optional(COUNT),
+    landed: v.optional(COUNT),
+    recoil: v.optional(COUNT),
   }),
   TEAM_SIZE,
 );

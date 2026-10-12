@@ -317,6 +317,8 @@ export async function acceptTrade(
       friendship: BASE_FRIENDSHIP,
       traded: true,
       canEvolve: incomingHandover.opens,
+      // A change of hands drops a feat not yet used, and the count towards one
+      featProgress: 0,
       ...(incomingHandover.spends == null
         ? {}
         : { items: withoutHeld(incoming.items, incomingHandover.spends) }),
@@ -338,6 +340,8 @@ export async function acceptTrade(
       friendship: BASE_FRIENDSHIP,
       traded: true,
       canEvolve: outgoingHandover.opens,
+      // A change of hands drops a feat not yet used, and the count towards one
+      featProgress: 0,
       ...(outgoingHandover.spends == null
         ? {}
         : { items: withoutHeld(outgoing.items, outgoingHandover.spends) }),

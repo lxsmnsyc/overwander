@@ -1,0 +1,87 @@
+# From Hone Claws to Smack Down: the guards, the splits and the two
+# rooms that bend the whole field
+
+HoneClaws:
+  type: Dark
+  category: Status
+  pp: 15
+  target: None
+
+WideGuard:
+  type: Rock
+  category: Status
+  priority: 3
+  pp: 10
+  target: Team
+  affects: [Team, Own]
+
+GuardSplit:
+  type: Psychic
+  category: Status
+  pp: 10
+  target: Unit
+
+PowerSplit:
+  type: Psychic
+  category: Status
+  pp: 10
+  target: Unit
+
+WonderRoom:
+  type: Psychic
+  category: Status
+  pp: 10
+  target: None
+
+Psyshock:
+  type: Psychic
+  category: Special
+  power: 80
+  accuracy: 100
+  pp: 10
+  target: Unit
+  projectile: true
+
+Venoshock:
+  type: Poison
+  category: Special
+  power: 65
+  accuracy: 100
+  pp: 10
+  target: Unit
+  projectile: true
+
+Autotomize:
+  type: Steel
+  category: Status
+  pp: 15
+  target: None
+
+RagePowder:
+  type: Bug
+  category: Status
+  priority: 2
+  pp: 20
+  target: None
+  flags: [Powder]
+
+Telekinesis:
+  type: Psychic
+  category: Status
+  pp: 15
+  target: Unit
+
+MagicRoom:
+  type: Psychic
+  category: Status
+  pp: 10
+  target: None
+
+SmackDown:
+  type: Rock
+  category: Physical
+  power: 50
+  accuracy: 100
+  pp: 15
+  target: Unit
+  projectile: true

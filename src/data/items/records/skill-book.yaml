@@ -1,0 +1,5 @@
+SkillBook:
+  type: Training
+  # Its own picture, tinted out of the rule book by `scripts/item-icons.ts`
+  icon: key/skill-book
+  flags: [Consumable, Usable]

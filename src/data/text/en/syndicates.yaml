@@ -1,0 +1,47 @@
+# What each syndicate is called, what it calls its own ranks, and what its
+# boss and rank and file say as they bar the cell. A person at one of
+# these landmarks is introduced the way the games introduce them, team
+# first and title before the name: "Team Aqua Leader Archie"
+
+Rocket:
+  name: Team Rocket
+  boss: Giovanni
+  boss-title: Boss
+  executive-title: Executive
+  boss-quote: So you are the one. Show me what you have.
+  grunt-quote: Wrong path, kid. Three of mine say so.
+Magma:
+  name: Team Magma
+  boss: Maxie
+  boss-title: Leader
+  executive-title: Admin
+  boss-quote: The sea has had its turn. I am giving the land back its own.
+  grunt-quote: This ground is going to be worth something. Off it.
+Aqua:
+  name: Team Aqua
+  boss: Archie
+  boss-title: Leader
+  executive-title: Admin
+  boss-quote: Everything began in the water. I am only sending it home.
+  grunt-quote: The tide is coming in whether you move or not.
+Galactic:
+  name: Team Galactic
+  boss: Cyrus
+  boss-title: Boss
+  executive-title: Commander
+  boss-quote: This world is built out of spirit, and spirit is the flaw. I will do without it.
+  grunt-quote: The old world ends here. You can go first if you like.
+Plasma:
+  name: Team Plasma
+  boss: Ghetsis
+  boss-title: Sage
+  executive-title: Admin
+  boss-quote: Every pokemon behind you is a pokemon I will take back. Starting with those.
+  grunt-quote: Release them, or we will. Those are the two doors.
+Flare:
+  name: Team Flare
+  boss: Lysandre
+  boss-title: Boss
+  executive-title: Scientist
+  boss-quote: The world is too full of people who take. Your pokemon will be the last thing you take.
+  grunt-quote: Only the stylish get a future. Sorry, you do not qualify.

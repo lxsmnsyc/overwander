@@ -1,0 +1,159 @@
+# All ten evolution stones are stocked and found.
+
+FireStone:
+  type: Evolution
+  icon: evolutions/fire-stone
+  flags: [Usable, Marketable]
+  buy: 3000
+  sell: 1500
+
+WaterStone:
+  type: Evolution
+  icon: evolutions/water-stone
+  flags: [Usable, Marketable]
+  buy: 3000
+  sell: 1500
+
+ThunderStone:
+  type: Evolution
+  icon: evolutions/thunder-stone
+  flags: [Usable, Marketable]
+  buy: 3000
+  sell: 1500
+
+LeafStone:
+  type: Evolution
+  icon: evolutions/leaf-stone
+  flags: [Usable, Marketable]
+  buy: 3000
+  sell: 1500
+
+MoonStone:
+  type: Evolution
+  icon: evolutions/moon-stone
+  flags: [Usable, Marketable]
+  buy: 3000
+  sell: 1500
+
+# Johto's own: a Sunkern becomes a Sunflora with it, so it is stocked and
+# buried like the five above.
+SunStone:
+  type: Evolution
+  icon: evolutions/sun-stone
+  flags: [Usable, Marketable]
+  buy: 3000
+  sell: 1500
+
+# The four Sinnoh stones were registered and left out of the market while
+# nothing asked for them; a Roserade, a Togekiss, a Mismagius, a
+# Honchkrow, a Gallade, a Froslass, a Magnezone and a Glaceon all ask now,
+# so they are stocked and found beside the older six.
+ShinyStone:
+  type: Evolution
+  icon: evolutions/shiny-stone
+  flags: [Usable, Marketable]
+  buy: 3000
+  sell: 1500
+
+DuskStone:
+  type: Evolution
+  icon: evolutions/dusk-stone
+  flags: [Usable, Marketable]
+  buy: 3000
+  sell: 1500
+
+DawnStone:
+  type: Evolution
+  icon: evolutions/dawn-stone
+  flags: [Usable, Marketable]
+  buy: 3000
+  sell: 1500
+
+IceStone:
+  type: Evolution
+  icon: evolutions/ice-stone
+  flags: [Usable, Marketable]
+  buy: 3000
+  sell: 1500
+
+# Not a stone, but the same kind of item: used on a Rotom to move it into
+# one of the machines it lives in, and spent doing it. Nobody stocks one,
+# so every shape after the first costs a Catalog found in the ground.
+# Drawn on the key sheet, which is where the collection packed it.
+RotomCatalog:
+  type: Evolution
+  icon: key/rotom-catalog
+  flags: [Usable]
+  sell: 1500
+
+# Also not a stone: the cells a Zygarde is not carrying are kept in it, so
+# it takes the shape either way and is spent doing it. Drawn on the key
+# sheet, which is where the collection packed it.
+ZygardeCube:
+  type: Evolution
+  icon: key/zygarde-cube
+  flags: [Usable]
+  sell: 1500
+
+# Galar's evolution items that are used rather than held: the two apples
+# an Applin evolves on, and the cracked pot a Sinistea moves into. The
+# chipped pot is left out, since the antique Sinistea is not.
+TartApple:
+  type: Evolution
+  icon: evolutions/tart-apple
+  flags: [Usable, Marketable]
+  buy: 3000
+  sell: 1500
+SweetApple:
+  type: Evolution
+  icon: evolutions/sweet-apple
+  flags: [Usable, Marketable]
+  buy: 3000
+  sell: 1500
+CrackedPot:
+  type: Evolution
+  icon: evolutions/cracked-pot
+  flags: [Usable, Marketable]
+  buy: 3000
+  sell: 1500
+
+# The Galarica twigs a Galarian Slowpoke evolves on, used rather than
+# held: the cuff for Slowbro and the wreath for Slowking.
+GalaricaCuff:
+  type: Evolution
+  icon: evolutions/galarica-cuff
+  flags: [Usable, Marketable]
+  buy: 3000
+  sell: 1500
+GalaricaWreath:
+  type: Evolution
+  icon: evolutions/galarica-wreath
+  flags: [Usable, Marketable]
+  buy: 3000
+  sell: 1500
+# Hisui's: the black stone a Scyther splits into an axe on, and the
+# peat an Ursaring digs up under the moon.
+BlackAugurite:
+  type: Evolution
+  icon: evolutions/black-augurite
+  flags: [Usable, Marketable]
+  buy: 3000
+  sell: 1500
+PeatBlock:
+  type: Evolution
+  icon: evolutions/peat-block
+  flags: [Usable, Marketable]
+  buy: 3000
+  sell: 1500
+# The scrolls a Kubfu trains under, which decide the style its Urshifu
+# fights in. Never stocked: a scroll is only ever dug up.
+ScrollOfDarkness:
+  type: Evolution
+  icon: other/scroll-of-darkness
+  flags: [Usable]
+  sell: 6000
+ScrollOfWaters:
+  type: Evolution
+  icon: other/scroll-of-waters
+  flags: [Usable]
+  sell: 6000

@@ -1,0 +1,101 @@
+Bulbasaur:
+  Bulbasaur:
+    abilities: [Overgrow]
+    hidden: [Chlorophyll]
+  Ivysaur:
+    abilities: [Overgrow]
+    hidden: [Chlorophyll]
+  Venusaur:
+    abilities: [Overgrow]
+    hidden: [Chlorophyll, LeafGuard, EffectSpore]
+Charmander:
+  Charmander:
+    abilities: [Blaze]
+    hidden: [SolarPower]
+  Charmeleon:
+    abilities: [Blaze]
+    hidden: [SolarPower]
+  Charizard:
+    abilities: [Blaze]
+    hidden: [SolarPower, FlameBody, Intimidate]
+Squirtle:
+  Squirtle:
+    abilities: [Torrent]
+    hidden: [RainDish]
+  Wartortle:
+    abilities: [Torrent]
+    hidden: [RainDish]
+  Blastoise:
+    abilities: [Torrent]
+    hidden: [RainDish, ShellArmor, Sniper]
+Caterpie:
+  Caterpie:
+    abilities: [ShieldDust]
+    hidden: [RunAway]
+  Metapod:
+    abilities: [ShedSkin]
+  Butterfree:
+    abilities: [CompoundEyes]
+    hidden: [TintedLens]
+Weedle:
+  Weedle:
+    abilities: [ShieldDust]
+    hidden: [RunAway]
+  Kakuna:
+    abilities: [ShedSkin]
+  Beedrill:
+    abilities: [Swarm]
+    hidden: [Sniper]
+Pidgey:
+  Pidgey:
+    abilities: [KeenEye, TangledFeet]
+    hidden: [BigPecks]
+  Pidgeotto:
+    abilities: [KeenEye, TangledFeet]
+    hidden: [BigPecks]
+  Pidgeot:
+    abilities: [KeenEye, TangledFeet]
+    hidden: [BigPecks, GaleWings]
+Rattata:
+  Rattata:
+    abilities: [RunAway, Guts]
+    hidden: [Hustle]
+  Raticate:
+    abilities: [RunAway, Guts]
+    hidden: [Hustle, Adaptability]
+  RattataAlola:
+    abilities: [Gluttony, Hustle]
+    hidden: [ThickFat]
+  RaticateAlola:
+    abilities: [Gluttony, Hustle]
+    hidden: [ThickFat, Ripen]
+Spearow:
+  Spearow:
+    abilities: [KeenEye]
+    hidden: [Sniper]
+  Fearow:
+    abilities: [KeenEye]
+    hidden: [Sniper, BigPecks, Hustle]
+Ekans:
+  Ekans:
+    abilities: [Intimidate, ShedSkin]
+    hidden: [Unnerve]
+  Arbok:
+    abilities: [Intimidate, ShedSkin]
+    hidden: [Unnerve, PoisonTouch]
+Pikachu:
+  Pikachu:
+    abilities: [Static]
+    hidden: [LightningRod]
+  Raichu:
+    abilities: [Static]
+    hidden: [LightningRod, VoltAbsorb, QuickFeet]
+  Pichu:
+    abilities: [Static]
+    hidden: [LightningRod]
+  PichuSpikyEared:
+    abilities: [Static]
+    hidden: [LightningRod, ElectricSurge, FriendGuard]
+  RaichuAlola:
+    abilities: [SurgeSurfer]
+    hidden: [Levitate]

@@ -48,7 +48,27 @@ const REGIONS: Partial<Record<string, string>> = {
   unova: 'unova',
   kalos: 'kalos',
   alola: 'alola',
+  galar: 'galar',
+  hisui: 'hisui',
 };
+
+/**
+ * Dex numbers the collection files under another region than the game
+ * does. It keeps Hisui's new species, and their forms, with Galar's
+ */
+const REFILED: { from: number; to: number; under: string }[] = [
+  { from: 899, to: 905, under: 'hisui' },
+];
+
+/** The folder a slot goes under here, by its dex number where the collection differs */
+function folderOf(slot: Slot, region: string): string {
+  for (const refiled of REFILED) {
+    if (slot.dex >= refiled.from && slot.dex <= refiled.to) {
+      return refiled.under;
+    }
+  }
+  return region;
+}
 
 /**
  * The three drawn like pokemon without being pokemon, by the form the
@@ -86,6 +106,9 @@ const IDS = 'src/data/ids/species.ts';
 
 /** Where the species themselves are written, a file per line */
 const SPECIES = 'src/data/species';
+
+/** Where the stand-in sheets are listed */
+const STAND_IN_TABLE = 'src/canvas/species-sprites.ts';
 
 /**
  * Where form ids start, matching `SPECIES_FORM_BAND` in
@@ -137,12 +160,15 @@ function slotsOf(root: string): Slot[] {
  * species are written a line at a time, so a sheet for a line nobody
  * can meet yet is art that ships for nothing.
  *
- * Both files are read as text, since node refuses the `const enum`
- * they are written in. A name counts wherever it appears under
- * `src/data/species/`, and so does a form list the ids file exports,
- * because a form is as often registered through one of those as by
- * name
+ * Both are read as text, since node refuses the `const enum`s the
+ * code is written in. A name counts wherever it is written under
+ * `src/data/species/`, as a key of the species YAML or as
+ * `Species.Name` in the code beside it, and so does a form list the
+ * ids file exports
  */
+/** The one file under the species folder that names every regional form list */
+const REGION_TABLE = join(SPECIES, 'regions.ts');
+
 function writtenSpecies(): Set<number> {
   const source = readFileSync(IDS, 'utf8');
   const body = source.slice(source.indexOf('export const enum Species {'));
@@ -174,22 +200,50 @@ function writtenSpecies(): Set<number> {
   for (const file of sourceFiles(SPECIES)) {
     const text = readFileSync(file, 'utf8');
 
-    for (const [, name] of text.matchAll(/Species\.(\w+)/g)) {
+    // A YAML file names its species as keys under their family, the code as `Species.Name`
+    const pattern = file.endsWith('.yaml') ? /^ {0,2}([A-Z]\w*):/gm : /Species\.(\w+)/g;
+
+    for (const [, name] of text.matchAll(pattern)) {
       const id = numbered.get(name);
 
       if (id != null) {
         ids.add(id);
       }
     }
+    // The region table files every regional form by its region, written
+    // or not, so naming a form list there does not write its species
     for (const [list, held] of lists) {
-      if (text.includes(list)) {
+      if (file !== REGION_TABLE && text.includes(list)) {
         for (const id of held) {
           ids.add(id);
         }
       }
     }
   }
+  // A sheet that stands in for a pokemon the collection has not drawn
+  // (Falinks drawn as its Brass) is shipped though no data names it
+  for (const id of standInSheets(numbered)) {
+    ids.add(id);
+  }
   return ids;
+}
+
+/** The sheets `STAND_INS` draws other pokemon as, read as text like the rest */
+function standInSheets(numbered: Map<string, number>): number[] {
+  const source = readFileSync(STAND_IN_TABLE, 'utf8');
+  const table = source.slice(source.indexOf('const STAND_INS'));
+  const sheets: number[] = [];
+
+  for (const [, sheet] of table
+    .slice(0, table.indexOf(']);'))
+    .matchAll(/\[Species\.\w+, Species\.(\w+)\]/g)) {
+    const id = numbered.get(sheet);
+
+    if (id != null) {
+      sheets.push(id);
+    }
+  }
+  return sheets;
 }
 
 /**
@@ -227,7 +281,7 @@ function sourceFiles(folder: string): string[] {
 
     if (entry.isDirectory()) {
       found.push(...sourceFiles(path));
-    } else if (path.endsWith('.ts')) {
+    } else if (path.endsWith('.ts') || path.endsWith('.yaml')) {
       found.push(path);
     }
   }
@@ -254,7 +308,7 @@ function wanted(root: string, slot: Slot, known: Set<number>, shadows: Set<numbe
   if (!known.has(species) || shadows.has(species) !== isShadowSlot(root, slot)) {
     return null;
   }
-  return { ...slot, species, under: region };
+  return { ...slot, species, under: folderOf(slot, region) };
 }
 
 /** What the clips are called, for a line somebody has to read. */

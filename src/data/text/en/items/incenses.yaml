@@ -1,0 +1,19 @@
+templates:
+  type: '{type} moves hit 1.2x for as long as it is held.'
+OddIncense: { name: Odd Incense }
+RockIncense: { name: Rock Incense }
+RoseIncense: { name: Rose Incense }
+SeaIncense: { name: Sea Incense }
+WaveIncense: { name: Wave Incense }
+FullIncense:
+  name: Full Incense
+  description: Its holder winds up a bracket slower than it otherwise would.
+LaxIncense:
+  name: Lax Incense
+  description: Anything aimed at its holder is 5% likelier to miss.
+LuckIncense:
+  name: Luck Incense
+  description: While your buddy carries it, 2x the gold from a won raid or a beaten stop trainer.
+PureIncense:
+  name: Pure Incense
+  description: 3 fewer wild spawns around the buddy carrying it.

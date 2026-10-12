@@ -1,0 +1,147 @@
+# One flat price, for the same reason the gear has one: what a player is
+# picking is the moment they expect to have, not the one they can afford.
+#
+# The price is half again of a gem, which is the other thing in the game
+# that is held for exactly one moment. A gem lifts a hit its holder chose
+# to throw; these answer something done to the holder, which is worth
+# more precisely because it cannot be planned.
+
+FocusSash:
+  type: Held
+  icon: held/focus-sash
+  flags: [Consumable, Holdable, Marketable]
+  buy: 3000
+  sell: 1500
+
+AirBalloon:
+  type: Held
+  icon: held/air-balloon
+  flags: [Consumable, Holdable, Marketable]
+  buy: 3000
+  sell: 1500
+
+WeaknessPolicy:
+  type: Held
+  icon: held/weakness-policy
+  flags: [Consumable, Holdable, Marketable]
+  buy: 3000
+  sell: 1500
+
+BlunderPolicy:
+  type: Held
+  icon: held/blunder-policy
+  flags: [Consumable, Holdable, Marketable]
+  buy: 3000
+  sell: 1500
+
+AbsorbBulb:
+  type: Held
+  icon: held/absorb-bulb
+  flags: [Consumable, Holdable, Marketable]
+  buy: 3000
+  sell: 1500
+
+CellBattery:
+  type: Held
+  icon: held/cell-battery
+  flags: [Consumable, Holdable, Marketable]
+  buy: 3000
+  sell: 1500
+
+Snowball:
+  type: Held
+  icon: held/snowball
+  flags: [Consumable, Holdable, Marketable]
+  buy: 3000
+  sell: 1500
+
+LuminousMoss:
+  type: Held
+  icon: held/luminous-moss
+  flags: [Consumable, Holdable, Marketable]
+  buy: 3000
+  sell: 1500
+
+ThroatSpray:
+  type: Held
+  icon: held/throat-spray
+  flags: [Consumable, Holdable, Marketable]
+  buy: 3000
+  sell: 1500
+
+WhiteHerb:
+  type: Held
+  icon: held/white-herb
+  flags: [Consumable, Holdable, Marketable]
+  buy: 3000
+  sell: 1500
+
+MentalHerb:
+  type: Held
+  icon: held/mental-herb
+  flags: [Consumable, Holdable, Marketable]
+  buy: 3000
+  sell: 1500
+
+PowerHerb:
+  type: Held
+  icon: held/power-herb
+  flags: [Consumable, Holdable, Marketable]
+  buy: 3000
+  sell: 1500
+
+AdrenalineOrb:
+  type: Held
+  icon: held/adrenaline-orb
+  flags: [Consumable, Holdable, Marketable]
+  buy: 3000
+  sell: 1500
+
+ElectricSeed:
+  type: Held
+  icon: held/electric-seed
+  flags: [Consumable, Holdable, Marketable]
+  buy: 3000
+  sell: 1500
+
+GrassySeed:
+  type: Held
+  icon: held/grassy-seed
+  flags: [Consumable, Holdable, Marketable]
+  buy: 3000
+  sell: 1500
+
+MistySeed:
+  type: Held
+  icon: held/misty-seed
+  flags: [Consumable, Holdable, Marketable]
+  buy: 3000
+  sell: 1500
+
+PsychicSeed:
+  type: Held
+  icon: held/psychic-seed
+  flags: [Consumable, Holdable, Marketable]
+  buy: 3000
+  sell: 1500
+
+RedCard:
+  type: Held
+  icon: held/red-card
+  flags: [Consumable, Holdable, Marketable]
+  buy: 3000
+  sell: 1500
+
+EjectButton:
+  type: Held
+  icon: held/eject-button
+  flags: [Consumable, Holdable, Marketable]
+  buy: 3000
+  sell: 1500
+
+EjectPack:
+  type: Held
+  icon: held/eject-pack
+  flags: [Consumable, Holdable, Marketable]
+  buy: 3000
+  sell: 1500

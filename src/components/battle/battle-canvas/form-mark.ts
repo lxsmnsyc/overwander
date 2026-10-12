@@ -5,7 +5,7 @@ import type { Items } from '../../../data/ids/items';
 import type { Species } from '../../../data/ids/species';
 import { getItemData } from '../../../data/items';
 import { FORM_ITEMS } from '../../../data/items/form-items';
-import { MEGA_STONES, getMegaStone } from '../../../data/items/mega-stones';
+import { getMegaStone } from '../../../data/items/mega-stones';
 import { getFusionItem } from '../../../data/species/fusion';
 import { isMegaSpecies } from '../../../data/species/megas';
 import { getShadowlessSpecies } from '../../../data/species/true-shadow';
@@ -63,7 +63,10 @@ function iconOf(worn: Species): { sheet: string; name: string } | null {
   const species = getShadowlessSpecies(worn) ?? worn;
   // A fusion drawn as its partner wears the item that joined them, until
   // the shape is drawn
-  const item = SHAPE_ITEMS.get(species) ?? (isStandIn(species) ? getFusionItem(species) : null);
+  const item =
+    SHAPE_ITEMS.get(species) ??
+    (isMegaSpecies(species) ? getMegaStone(species) : null) ??
+    (isStandIn(species) ? getFusionItem(species) : null);
 
   if (item != null) {
     // An item's icon is written as its sheet and its name
@@ -71,13 +74,7 @@ function iconOf(worn: Species): { sheet: string; name: string } | null {
 
     return { sheet, name };
   }
-  if (!isMegaSpecies(species)) {
-    return null;
-  }
-  const stone = getMegaStone(species);
-  const held = stone == null ? null : MEGA_STONES.get(stone);
-
-  return held == null ? KEY_STONE : { sheet: 'mega-stones', name: held.icon };
+  return isMegaSpecies(species) ? KEY_STONE : null;
 }
 
 function paint(context: CanvasRenderingContext2D, quad: SpriteQuad, alpha: number): void {

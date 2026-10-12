@@ -1,0 +1,60 @@
+FocusSash:
+  name: Focus Sash
+  description: Leaves its holder on 1 HP the first time a blow would take it from full.
+AirBalloon:
+  name: Air Balloon
+  description: Its holder floats, so Ground moves miss. Pops on the first hit that lands.
+WeaknessPolicy:
+  name: Weakness Policy
+  description: +2 Attack and +2 Special Attack after a super-effective blow lands.
+BlunderPolicy:
+  name: Blunder Policy
+  description: +2 Speed after its holder misses.
+AbsorbBulb:
+  name: Absorb Bulb
+  description: +1 Special Attack after a Water move lands on its holder.
+CellBattery:
+  name: Cell Battery
+  description: +1 Attack after an Electric move lands on its holder.
+Snowball:
+  name: Snowball
+  description: +1 Attack after an Ice move lands on its holder.
+LuminousMoss:
+  name: Luminous Moss
+  description: +1 Special Defense after a Water move lands on its holder.
+ThroatSpray:
+  name: Throat Spray
+  description: +1 Special Attack after its holder casts a sound move.
+WhiteHerb:
+  name: White Herb
+  description: Puts back every lowered stage at once, then is gone.
+MentalHerb:
+  name: Mental Herb
+  description: Clears infatuation the moment it lands.
+PowerHerb:
+  name: Power Herb
+  description: Its holder’s next cast goes off instantly, with no wind-up.
+AdrenalineOrb:
+  name: Adrenaline Orb
+  description: +1 Speed when its holder is stared down by an Intimidate.
+ElectricSeed:
+  name: Electric Seed
+  description: +1 Defense once Electric Terrain covers its holder.
+GrassySeed:
+  name: Grassy Seed
+  description: +1 Defense once Grassy Terrain covers its holder.
+MistySeed:
+  name: Misty Seed
+  description: +1 Special Defense once Misty Terrain covers its holder.
+PsychicSeed:
+  name: Psychic Seed
+  description: +1 Special Defense once Psychic Terrain covers its holder.
+RedCard:
+  name: Red Card
+  description: 'Sends the attacker away: an enemy for their weakest, an ally for their strongest.'
+EjectButton:
+  name: Eject Button
+  description: Swaps its holder out for the strongest of their bench when a blow lands.
+EjectPack:
+  name: Eject Pack
+  description: Swaps its holder out for the strongest of their bench when a stat is knocked down.

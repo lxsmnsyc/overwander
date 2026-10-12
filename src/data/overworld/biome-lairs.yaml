@@ -1,0 +1,61 @@
+# Which lairs each biome hosts, in the order a landmark draws from them.
+# The order is part of the shared world: reordering a list moves lairs on
+# every player's map.
+
+DeepOcean: [SeafoamIslands, WhirlIslands, MarineCave, NavelRock]
+Ocean: [WhirlIslands, SouthernIsland, FullmoonIsland, IronRuins, SkyPillar, UltraDeepSea]
+Beach: [EmbeddedTower, AetherParadise, IsleOfArmor]
+PolarOcean: [SeafoamIslands, IslandCave]
+Glacier: [SnowpointTemple, GiantChasm]
+Grassland: [PowerPlant, BurnedTower, LakeValor, AbundantShrine, WildArea]
+Bog: [LakeValor, TurnbackCave, ScarletBog]
+TemperateForest: [LakeVerity, RuminationField, WindingWoods, UltraForest, SlumberingWeald]
+Woodland: [BurnedTower, LakeVerity, RuminationField, WindingWoods]
+Taiga: [LakeAcuity, IcebergRuins, DragonspiralTower, CrownShrine]
+Tundra:
+  [
+    LakeAcuity,
+    SnowpointTemple,
+    IcebergRuins,
+    DragonspiralTower,
+    GiantChasm,
+    FrostCavern,
+    SplitDecisionRuins,
+    OldCemetery,
+    CrownTundra,
+  ]
+Steppe: [PowerPlant]
+Desert: [DesertRuins, RockPeakRuins, RelicCastle, RuinsOfAbundance, UltraDesert]
+TropicalSeasonalForest: [RuinsOfConflict, PoniGrove]
+TropicalRainforest: [RuinsOfLife, UltraJungle]
+RockyCoast: [RuinsOfHope, TowerOfWaters]
+Badlands:
+  [
+    DesertRuins,
+    AncientTomb,
+    TurnbackCave,
+    RockPeakRuins,
+    TrialChamber,
+    TerminusCave,
+    AltarOfTheSunne,
+    AltarOfTheMoone,
+    UltraPlant,
+    UltraRuin,
+    EnergyPlant,
+  ]
+Mountain:
+  [
+    MtEmber,
+    CeruleanCave,
+    BellTower,
+    AncientTomb,
+    GuidanceChamber,
+    TrialChamber,
+    FrostCavern,
+    TerminusCave,
+    TenCaratHill,
+    UltraCrater,
+    TowerOfDarkness,
+  ]
+AlpineTundra: [CeruleanCave, SpearPillar, SnowslideSlope]
+Volcano: [MtEmber, TerraCave, StarkMountain]

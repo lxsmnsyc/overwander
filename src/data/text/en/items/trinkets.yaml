@@ -1,0 +1,9 @@
+CleanseTag:
+  name: Cleanse Tag
+  description: 3 fewer wild spawns around the buddy carrying it.
+Everstone:
+  name: Everstone
+  description: Its holder will not evolve, and an egg bred from it inherits its nature.
+AmuletCoin:
+  name: Amulet Coin
+  description: While your buddy carries it, 3x the gold from a won raid or a beaten stop trainer.

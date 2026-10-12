@@ -1,0 +1,282 @@
+Burmy:
+  # The bagworm and what it grows into. A Burmy is met wearing whatever
+  # the place it was met is made of, and it keeps that cloak for life:
+  # the leaves, the sand or the scrap decide what a Wormadam is built
+  # out of. A male leaves the case behind entirely and flies off as a
+  # Mothim
+  Burmy:
+    types: [Bug]
+    egg-groups: [Bug]
+    active: any
+    evolves-into:
+      - species: Wormadam
+        method: [Level, Gender]
+        level: 20
+        gender: Female
+      - species: Mothim
+        method: [Level, Gender]
+        level: 20
+        gender: Male
+  BurmySandy:
+    types: [Bug]
+    egg-groups: [Bug]
+    biomes: [Beach, Desert, RockyCoast]
+    active: any
+    base-form: false
+    evolves-into:
+      - species: WormadamSandy
+        method: [Level, Gender]
+        level: 20
+        gender: Female
+      - species: Mothim
+        method: [Level, Gender]
+        level: 20
+        gender: Male
+  BurmyTrash:
+    types: [Bug]
+    egg-groups: [Bug]
+    biomes: [Badlands, Mountain, Steppe]
+    active: any
+    base-form: false
+    evolves-into:
+      - species: WormadamTrash
+        method: [Level, Gender]
+        level: 20
+        gender: Female
+      - species: Mothim
+        method: [Level, Gender]
+        level: 20
+        gender: Male
+  Wormadam:
+    types: [Bug, Grass]
+    egg-groups: [Bug]
+    biomes: [Woodland, TemperateForest, MontaneForest]
+    active: any
+    evolves-from: Burmy
+  WormadamSandy:
+    types: [Bug, Ground]
+    egg-groups: [Bug]
+    biomes: [Beach, Desert, RockyCoast]
+    active: any
+    base-form: false
+    evolves-from: BurmySandy
+  WormadamTrash:
+    types: [Bug, Steel]
+    egg-groups: [Bug]
+    biomes: [Badlands, Mountain, Steppe]
+    active: any
+    base-form: false
+    evolves-from: BurmyTrash
+  Mothim:
+    types: [Bug, Flying]
+    egg-groups: [Bug]
+    biomes: [Woodland, TemperateForest, MontaneForest]
+    active: any
+    evolves-from: Burmy
+Combee:
+  # The comb and the queen. A Combee is three grubs flying in step, and
+  # only a female one has a comb to build: the males stay as they are,
+  # so a Vespiquen is always the one that was born to be one
+  Combee:
+    types: [Bug, Flying]
+    egg-groups: [Bug]
+    active: any
+    evolves-into:
+      - species: Vespiquen
+        method: [Level, Gender]
+        level: 21
+        gender: Female
+  Vespiquen:
+    types: [Bug, Flying]
+    egg-groups: [Bug]
+    biomes: [Woodland, TemperateForest, Grassland]
+    active: any
+    evolves-from: Combee
+Pachirisu:
+  # The squirrel with its cheeks full: berries in one pouch and a
+  # charge in the other, and it hands both out to whoever it lives
+  # beside
+  Pachirisu:
+    types: [Electric]
+    egg-groups: [Field, Fairy]
+    biomes: [TemperateForest, Woodland, Taiga]
+    active: any
+Buizel:
+  # The sea weasel: the sac around its neck is what keeps it up, and
+  # the two tails are what it screws through the water with
+  Buizel:
+    types: [Water]
+    egg-groups: [Water1, Field]
+    habitat: Amphibious
+    biomes: [Beach, RockyCoast, Bog, KelpForest]
+    active: any
+    evolves-into:
+      - species: Floatzel
+        method: [Level]
+        level: 26
+  Floatzel:
+    types: [Water]
+    egg-groups: [Water1, Field]
+    habitat: Amphibious
+    biomes: [Beach, RockyCoast, Bog, KelpForest]
+    active: any
+    evolves-from: Buizel
+Cherubi:
+  # The cherry and what it opens into. A Cherrim keeps its blossom shut
+  # until the sun is out, so the open shape is worn rather than met:
+  # the dex fills it in the moment the closed one is
+  Cherubi:
+    types: [Grass]
+    egg-groups: [Fairy, Grass]
+    biomes: [Woodland, TemperateForest, TropicalSeasonalForest]
+    active: any
+    evolves-into:
+      - species: Cherrim
+        method: [Level]
+        level: 25
+  Cherrim:
+    types: [Grass]
+    egg-groups: [Fairy, Grass]
+    biomes: [Woodland, TemperateForest, TropicalSeasonalForest]
+    active: any
+    evolves-from: Cherubi
+  CherrimSunshine:
+    types: [Grass]
+    egg-groups: [Fairy, Grass]
+    active: any
+    base-form: false
+    worn: true
+    evolves-from: Cherubi
+Shellos:
+  # The sea slug that comes in two shells. Which one a player meets is
+  # decided by the side of the world they are standing on rather than
+  # by the shore itself: west of the meridian is the pink one, east of
+  # it the blue, and the shell it was met in is the shell it evolves
+  # with
+  Shellos:
+    types: [Water]
+    egg-groups: [Water1, Amorphous]
+    habitat: Amphibious
+    biomes: [Beach, RockyCoast, Mangrove, CoralReef, KelpForest]
+    active: any
+    evolves-into:
+      - species: Gastrodon
+        method: [Level]
+        level: 30
+  ShellosEast:
+    types: [Water]
+    egg-groups: [Water1, Amorphous]
+    habitat: Amphibious
+    biomes: [Beach, RockyCoast, Mangrove, CoralReef, KelpForest]
+    active: any
+    base-form: false
+    evolves-into:
+      - species: GastrodonEast
+        method: [Level]
+        level: 30
+  Gastrodon:
+    types: [Water, Ground]
+    egg-groups: [Water1, Amorphous]
+    habitat: Amphibious
+    biomes: [Beach, RockyCoast, Mangrove, CoralReef, KelpForest]
+    active: any
+    evolves-from: Shellos
+  GastrodonEast:
+    types: [Water, Ground]
+    egg-groups: [Water1, Amorphous]
+    habitat: Amphibious
+    biomes: [Beach, RockyCoast, Mangrove, CoralReef, KelpForest]
+    active: any
+    base-form: false
+    evolves-from: ShellosEast
+Drifloon:
+  # The balloon that waits about at dusk. What it is full of is not air,
+  # and a Drifblim carries off whatever takes hold of its string
+  Drifloon:
+    types: [Ghost, Flying]
+    egg-groups: [Amorphous]
+    biomes: [Bog, Woodland, Steppe]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Drifblim
+        method: [Level]
+        level: 28
+  Drifblim:
+    types: [Ghost, Flying]
+    egg-groups: [Amorphous]
+    biomes: [Bog, Woodland, Steppe]
+    active: [Evening, Night]
+    evolves-from: Drifloon
+Buneary:
+  # The rabbit that keeps its ears rolled up until it trusts whoever is
+  # holding the other end of the walk: it is friendship rather than
+  # levels that unrolls them
+  Buneary:
+    types: [Normal]
+    egg-groups: [Field, HumanLike]
+    biomes: [Grassland, Woodland, TemperateForest]
+    active: any
+    evolves-into:
+      - species: Lopunny
+        method: [Friendship]
+  Lopunny:
+    types: [Normal]
+    egg-groups: [Field, HumanLike]
+    biomes: [Grassland, Woodland, TemperateForest]
+    active: any
+    evolves-from: Buneary
+Glameow:
+  # The cat that purrs while it is being fed and claws the moment it is
+  # not. A Purugly takes whatever nest it likes the look of and sleeps
+  # in it
+  Glameow:
+    types: [Normal]
+    egg-groups: [Field]
+    biomes: [Grassland, Shrubland, Woodland]
+    active: any
+    evolves-into:
+      - species: Purugly
+        method: [Level]
+        level: 38
+  Purugly:
+    types: [Normal]
+    egg-groups: [Field]
+    biomes: [Grassland, Shrubland, Woodland]
+    active: any
+    evolves-from: Glameow
+Stunky:
+  # The smell that clears a route: Stunky sprays from behind and walks
+  # off, and a Skuntank can put the same cloud out a long way
+  Stunky:
+    types: [Poison, Dark]
+    egg-groups: [Field]
+    biomes: [Shrubland, Grassland, Woodland]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Skuntank
+        method: [Level]
+        level: 34
+  Skuntank:
+    types: [Poison, Dark]
+    egg-groups: [Field]
+    biomes: [Shrubland, Grassland, Woodland]
+    active: [Evening, Night]
+    evolves-from: Stunky
+Bronzor:
+  # Found where people used to live: Bronzor is a mirror somebody
+  # buried, and a Bronzong is the bell that was rung above it
+  Bronzor:
+    types: [Steel, Psychic]
+    egg-groups: [Mineral]
+    biomes: [Mountain, Badlands, AlpineTundra]
+    active: any
+    evolves-into:
+      - species: Bronzong
+        method: [Level]
+        level: 33
+  Bronzong:
+    types: [Steel, Psychic]
+    egg-groups: [Mineral]
+    biomes: [Mountain, Badlands, AlpineTundra]
+    active: any
+    evolves-from: Bronzor

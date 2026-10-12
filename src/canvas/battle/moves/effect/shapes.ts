@@ -300,7 +300,84 @@ export type EffectShape =
   | 'Spotlight'
   | 'Pollen'
   | 'Detonate'
-  | 'Whiff';
+  | 'Behemoth'
+  | 'Bulwark'
+  | 'Dynamax'
+  | 'Darters'
+  | 'Lance'
+  | 'Astral'
+  | 'Bleakwind'
+  | 'Wildbolt'
+  | 'Sandsear'
+  | 'Springtide'
+  | 'Dragonforce'
+  | 'Glaring'
+  | 'Thunderkick'
+  | 'Wrath'
+  | 'Singlestrike'
+  | 'Rapidstrike'
+  | 'Jungle'
+  | 'Maxcannon'
+  | 'Mystic'
+  | 'Cage'
+  | 'Whiff'
+  | 'MaxFlare'
+  | 'MaxGeyser'
+  | 'MaxHailstorm'
+  | 'MaxRockfall'
+  | 'MaxLightning'
+  | 'MaxOvergrowth'
+  | 'MaxMindstorm'
+  | 'MaxStarfall'
+  | 'MaxStrike'
+  | 'MaxFlutterby'
+  | 'MaxPhantasm'
+  | 'MaxWyrmwind'
+  | 'MaxDarkness'
+  | 'MaxKnuckle'
+  | 'MaxSteelspike'
+  | 'MaxOoze'
+  | 'MaxQuake'
+  | 'MaxAirstream'
+  | 'MaxGuard'
+  | 'GMaxVineLash'
+  | 'GMaxWildfire'
+  | 'GMaxCannonade'
+  | 'GMaxBefuddle'
+  | 'GMaxVoltCrash'
+  | 'GMaxGoldRush'
+  | 'GMaxChiStrike'
+  | 'GMaxTerror'
+  | 'GMaxFoamBurst'
+  | 'GMaxResonance'
+  | 'GMaxCuddle'
+  | 'GMaxReplenish'
+  | 'GMaxMalodor'
+  | 'GMaxMeltdown'
+  | 'GMaxDrumSolo'
+  | 'GMaxFireball'
+  | 'GMaxHydrosnipe'
+  | 'GMaxWindRage'
+  | 'GMaxGravitas'
+  | 'GMaxStonesurge'
+  | 'GMaxVolcalith'
+  | 'GMaxTartness'
+  | 'GMaxSweetness'
+  | 'GMaxSandblast'
+  | 'GMaxStunShock'
+  | 'GMaxCentiferno'
+  | 'GMaxSmite'
+  | 'GMaxSnooze'
+  | 'GMaxFinale'
+  | 'GMaxSteelsurge'
+  | 'GMaxDepletion'
+  | 'GMaxOneBlow'
+  | 'GMaxRapidFlow'
+  | 'Splinters'
+  | 'PetalStorm'
+  | 'Wildfire'
+  | 'ChargedBlast'
+  | 'Iceberg';
 
 /** How long Wish's star rings where it lands, after the heal */
 export const WISH_TAIL = 400;
@@ -561,7 +638,88 @@ export const SPANS: Record<EffectShape, number> = {
   Spotlight: 1000,
   Pollen: 1000,
   Detonate: 1000,
+  Behemoth: 1000,
+  Bulwark: 1000,
+  Dynamax: 1200,
+  Darters: 900,
+  Lance: 1000,
+  Astral: 1100,
+  Bleakwind: 1200,
+  Wildbolt: 1200,
+  Sandsear: 1200,
+  Springtide: 1200,
+  Dragonforce: 1100,
+  Glaring: 1000,
+  Thunderkick: 800,
+  Wrath: 1000,
+  Singlestrike: 800,
+  Rapidstrike: 1000,
+  Jungle: 1000,
+  Maxcannon: 1200,
+  Mystic: 1100,
+  Cage: 1000,
   Whiff: 320,
+  // The Max Moves: the cloud, the blast and what the type leaves behind
+  MaxFlare: 1200,
+  MaxGeyser: 1200,
+  MaxHailstorm: 1200,
+  MaxRockfall: 1200,
+  MaxLightning: 1200,
+  MaxOvergrowth: 1200,
+  MaxMindstorm: 1200,
+  MaxStarfall: 1200,
+  MaxStrike: 1200,
+  MaxFlutterby: 1200,
+  MaxPhantasm: 1200,
+  MaxWyrmwind: 1200,
+  MaxDarkness: 1200,
+  MaxKnuckle: 1200,
+  MaxSteelspike: 1200,
+  MaxOoze: 1200,
+  MaxQuake: 1200,
+  MaxAirstream: 1200,
+  MaxGuard: 1000,
+  // The G-Max Moves, a Gigantamax's signature each, timed with their gathering like the Z-Moves
+  GMaxVineLash: 1300,
+  GMaxWildfire: 1300,
+  GMaxCannonade: 1300,
+  GMaxBefuddle: 1300,
+  GMaxVoltCrash: 1300,
+  GMaxGoldRush: 1300,
+  GMaxChiStrike: 1300,
+  GMaxTerror: 1300,
+  GMaxFoamBurst: 1300,
+  GMaxResonance: 1300,
+  GMaxCuddle: 1300,
+  GMaxReplenish: 1300,
+  GMaxMalodor: 1300,
+  GMaxMeltdown: 1300,
+  GMaxDrumSolo: 1300,
+  GMaxFireball: 1300,
+  GMaxHydrosnipe: 1300,
+  GMaxWindRage: 1300,
+  GMaxGravitas: 1300,
+  GMaxStonesurge: 1300,
+  GMaxVolcalith: 1300,
+  GMaxTartness: 1300,
+  GMaxSweetness: 1300,
+  GMaxSandblast: 1300,
+  GMaxStunShock: 1300,
+  GMaxCentiferno: 1300,
+  GMaxSmite: 1300,
+  GMaxSnooze: 1300,
+  GMaxFinale: 1300,
+  GMaxSteelsurge: 1300,
+  GMaxDepletion: 1300,
+  GMaxOneBlow: 1300,
+  GMaxRapidFlow: 1300,
+  // The Frenzy bursts: each is a whole moment, a fall or a gathering
+  // and then what it does
+  Splinters: 1400,
+  PetalStorm: 1300,
+  Wildfire: 1400,
+  ChargedBlast: 1300,
+  Iceberg: 1400,
 };
 
 /**

@@ -1,0 +1,164 @@
+Mareanie:
+  Mareanie:
+    stats: { HP: 50, Attack: 53, Defense: 62, SpecialAttack: 43, SpecialDefense: 52, Speed: 45 }
+    catch-rate: 190
+    height: 0.4
+    weight: 8
+    gender: [4, 4]
+  Toxapex:
+    stats: { HP: 50, Attack: 63, Defense: 152, SpecialAttack: 53, SpecialDefense: 142, Speed: 35 }
+    catch-rate: 75
+    height: 0.7
+    weight: 14.5
+    gender: [4, 4]
+Mudbray:
+  Mudbray:
+    stats: { HP: 70, Attack: 100, Defense: 70, SpecialAttack: 45, SpecialDefense: 55, Speed: 45 }
+    catch-rate: 190
+    height: 1
+    weight: 110
+    gender: [4, 4]
+  Mudsdale:
+    stats: { HP: 100, Attack: 125, Defense: 100, SpecialAttack: 55, SpecialDefense: 85, Speed: 35 }
+    catch-rate: 60
+    height: 2.5
+    weight: 920
+    gender: [4, 4]
+Dewpider:
+  Dewpider:
+    stats: { HP: 38, Attack: 40, Defense: 52, SpecialAttack: 40, SpecialDefense: 72, Speed: 27 }
+    catch-rate: 200
+    height: 0.3
+    weight: 4
+    gender: [4, 4]
+  Araquanid:
+    stats: { HP: 68, Attack: 70, Defense: 92, SpecialAttack: 50, SpecialDefense: 132, Speed: 42 }
+    catch-rate: 100
+    height: 1.8
+    weight: 82
+    gender: [4, 4]
+Fomantis:
+  Fomantis:
+    stats: { HP: 40, Attack: 55, Defense: 35, SpecialAttack: 50, SpecialDefense: 35, Speed: 35 }
+    catch-rate: 190
+    height: 0.3
+    weight: 1.5
+    gender: [4, 4]
+  Lurantis:
+    stats: { HP: 70, Attack: 105, Defense: 90, SpecialAttack: 80, SpecialDefense: 90, Speed: 45 }
+    catch-rate: 75
+    height: 0.9
+    weight: 18.5
+    gender: [4, 4]
+Morelull:
+  Morelull:
+    stats: { HP: 40, Attack: 35, Defense: 55, SpecialAttack: 65, SpecialDefense: 75, Speed: 15 }
+    catch-rate: 190
+    height: 0.2
+    weight: 1.5
+    gender: [4, 4]
+  Shiinotic:
+    stats: { HP: 60, Attack: 45, Defense: 80, SpecialAttack: 90, SpecialDefense: 100, Speed: 30 }
+    catch-rate: 75
+    height: 1
+    weight: 11.5
+    gender: [4, 4]
+Salandit:
+  Salandit:
+    stats: { HP: 48, Attack: 44, Defense: 40, SpecialAttack: 71, SpecialDefense: 40, Speed: 77 }
+    catch-rate: 120
+    height: 0.6
+    weight: 4.8
+    gender: [7, 1]
+  Salazzle:
+    stats: { HP: 68, Attack: 64, Defense: 60, SpecialAttack: 111, SpecialDefense: 60, Speed: 117 }
+    catch-rate: 45
+    height: 1.2
+    weight: 22.2
+    gender: [0, 1]
+Stufful:
+  Stufful:
+    stats: { HP: 70, Attack: 75, Defense: 50, SpecialAttack: 45, SpecialDefense: 50, Speed: 50 }
+    catch-rate: 140
+    height: 0.5
+    weight: 6.8
+    gender: [4, 4]
+  Bewear:
+    stats: { HP: 120, Attack: 125, Defense: 80, SpecialAttack: 55, SpecialDefense: 60, Speed: 60 }
+    catch-rate: 70
+    height: 2.1
+    weight: 135
+    gender: [4, 4]
+Bounsweet:
+  Bounsweet:
+    stats: { HP: 42, Attack: 30, Defense: 38, SpecialAttack: 30, SpecialDefense: 38, Speed: 32 }
+    catch-rate: 235
+    height: 0.3
+    weight: 3.2
+    gender: [0, 8]
+  Steenee:
+    stats: { HP: 52, Attack: 40, Defense: 48, SpecialAttack: 40, SpecialDefense: 48, Speed: 62 }
+    catch-rate: 120
+    height: 0.7
+    weight: 8.2
+    gender: [0, 8]
+  Tsareena:
+    stats: { HP: 72, Attack: 120, Defense: 98, SpecialAttack: 50, SpecialDefense: 98, Speed: 72 }
+    catch-rate: 45
+    height: 1.2
+    weight: 21.4
+    gender: [0, 8]
+Comfey:
+  Comfey:
+    stats: { HP: 51, Attack: 52, Defense: 90, SpecialAttack: 82, SpecialDefense: 110, Speed: 100 }
+    catch-rate: 60
+    height: 0.1
+    weight: 0.3
+    gender: [2, 6]
+Oranguru:
+  Oranguru:
+    stats: { HP: 90, Attack: 60, Defense: 80, SpecialAttack: 90, SpecialDefense: 110, Speed: 60 }
+    catch-rate: 45
+    height: 1.5
+    weight: 76
+    gender: [4, 4]
+Passimian:
+  Passimian:
+    stats: { HP: 100, Attack: 120, Defense: 90, SpecialAttack: 40, SpecialDefense: 60, Speed: 80 }
+    catch-rate: 45
+    height: 2
+    weight: 82.8
+    gender: [4, 4]
+Wimpod:
+  Wimpod:
+    stats: { HP: 25, Attack: 35, Defense: 40, SpecialAttack: 20, SpecialDefense: 30, Speed: 80 }
+    catch-rate: 90
+    height: 0.5
+    weight: 12
+    gender: [4, 4]
+  Golisopod:
+    stats: { HP: 75, Attack: 125, Defense: 140, SpecialAttack: 60, SpecialDefense: 90, Speed: 40 }
+    catch-rate: 45
+    height: 2
+    weight: 108
+    gender: [4, 4]
+Sandygast:
+  Sandygast:
+    stats: { HP: 55, Attack: 55, Defense: 80, SpecialAttack: 70, SpecialDefense: 45, Speed: 15 }
+    catch-rate: 140
+    height: 0.5
+    weight: 70
+    gender: [4, 4]
+  Palossand:
+    stats: { HP: 85, Attack: 75, Defense: 110, SpecialAttack: 100, SpecialDefense: 75, Speed: 35 }
+    catch-rate: 60
+    height: 1.3
+    weight: 250
+    gender: [4, 4]
+Pyukumuku:
+  Pyukumuku:
+    stats: { HP: 55, Attack: 60, Defense: 130, SpecialAttack: 30, SpecialDefense: 130, Speed: 5 }
+    catch-rate: 60
+    height: 0.3
+    weight: 1.2
+    gender: [4, 4]

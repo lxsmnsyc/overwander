@@ -1,0 +1,192 @@
+Milcery:
+  Milcery:
+    types: [Fairy]
+    egg-groups: [Fairy, Amorphous]
+    biomes: [Grassland, Shrubland]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Alcremie
+        method: [HeldItem]
+        item: StrawberrySweet
+      - species: AlcremieBerry
+        method: [HeldItem]
+        item: BerrySweet
+      - species: AlcremieLove
+        method: [HeldItem]
+        item: LoveSweet
+      - species: AlcremieStar
+        method: [HeldItem]
+        item: StarSweet
+      - species: AlcremieClover
+        method: [HeldItem]
+        item: CloverSweet
+      - species: AlcremieFlower
+        method: [HeldItem]
+        item: FlowerSweet
+      - species: AlcremieRibbon
+        method: [HeldItem]
+        item: RibbonSweet
+  Alcremie:
+    types: [Fairy]
+    egg-groups: [Fairy, Amorphous]
+    active: [Morning, Day]
+    evolves-from: Milcery
+  AlcremieBerry:
+    types: [Fairy]
+    egg-groups: [Fairy, Amorphous]
+    active: [Morning, Day]
+    # The Berry Sweet on Vanilla Cream, from a Milcery evolving with a Berry
+    # Sweet in hand. The other creams are left out on purpose
+    base-form: false
+    evolves-from: Milcery
+  AlcremieLove:
+    types: [Fairy]
+    egg-groups: [Fairy, Amorphous]
+    active: [Morning, Day]
+    # The Love Sweet on Vanilla Cream, from a Milcery evolving with a Love
+    # Sweet in hand. The other creams are left out on purpose
+    base-form: false
+    evolves-from: Milcery
+  AlcremieStar:
+    types: [Fairy]
+    egg-groups: [Fairy, Amorphous]
+    active: [Morning, Day]
+    # The Star Sweet on Vanilla Cream, from a Milcery evolving with a Star
+    # Sweet in hand. The other creams are left out on purpose
+    base-form: false
+    evolves-from: Milcery
+  AlcremieClover:
+    types: [Fairy]
+    egg-groups: [Fairy, Amorphous]
+    active: [Morning, Day]
+    # The Clover Sweet on Vanilla Cream, from a Milcery evolving with a Clover
+    # Sweet in hand. The other creams are left out on purpose
+    base-form: false
+    evolves-from: Milcery
+  AlcremieFlower:
+    types: [Fairy]
+    egg-groups: [Fairy, Amorphous]
+    active: [Morning, Day]
+    # The Flower Sweet on Vanilla Cream, from a Milcery evolving with a Flower
+    # Sweet in hand. The other creams are left out on purpose
+    base-form: false
+    evolves-from: Milcery
+  AlcremieRibbon:
+    types: [Fairy]
+    egg-groups: [Fairy, Amorphous]
+    active: [Morning, Day]
+    # The Ribbon Sweet on Vanilla Cream, from a Milcery evolving with a Ribbon
+    # Sweet in hand. The other creams are left out on purpose
+    base-form: false
+    evolves-from: Milcery
+Falinks:
+  Falinks:
+    types: [Fighting]
+    egg-groups: [Fairy, Mineral]
+    biomes: [Badlands, Mountain, Steppe]
+    active: any
+Pincurchin:
+  Pincurchin:
+    types: [Electric]
+    egg-groups: [Water1, Amorphous]
+    habitat: Amphibious
+    biomes: [RockyCoast, CoralReef]
+    active: any
+Snom:
+  Snom:
+    types: [Ice, Bug]
+    egg-groups: [Bug]
+    biomes: [Tundra, AlpineTundra, Taiga]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Frosmoth
+        method: [Friendship, TimeOfDay]
+        time: [Night]
+  Frosmoth:
+    types: [Ice, Bug]
+    egg-groups: [Bug]
+    biomes: [Tundra, AlpineTundra, Taiga]
+    active: [Evening, Night]
+    evolves-from: Snom
+Stonjourner:
+  Stonjourner:
+    types: [Rock]
+    egg-groups: [Mineral]
+    biomes: [Steppe, Badlands, Grassland]
+    active: any
+Eiscue:
+  Eiscue:
+    types: [Ice]
+    egg-groups: [Water1, Field]
+    habitat: Amphibious
+    biomes: [Glacier, PolarOcean, Tundra]
+    active: any
+  EiscueNoice:
+    types: [Ice]
+    egg-groups: [Water1, Field]
+    habitat: Amphibious
+    active: any
+    # The face left once a physical hit breaks its ice, until hail
+    # freezes it back
+    base-form: false
+    worn: true
+Indeedee:
+  Indeedee:
+    types: [Psychic, Normal]
+    egg-groups: [Fairy]
+    biomes: [TemperateForest, Woodland]
+    active: any
+  IndeedeeFemale:
+    types: [Psychic, Normal]
+    egg-groups: [Fairy]
+    biomes: [TemperateForest, Woodland]
+    active: any
+    # Her own pokemon rather than his coat, the way Meowstic's female is:
+    # she is born Own Tempo where he is born Inner Focus, and she
+    # leans to defence where he leans to attack
+    base-form: false
+Morpeko:
+  Morpeko:
+    types: [Electric, Dark]
+    egg-groups: [Field, Fairy]
+    biomes: [Grassland, Woodland]
+    active: any
+  MorpekoHangry:
+    types: [Electric, Dark]
+    egg-groups: [Field, Fairy]
+    active: any
+    # The hungry mood it swings into each time it acts
+    base-form: false
+    worn: true
+Dracozolt:
+  Dracozolt:
+    types: [Electric, Dragon]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    # Revived, never met: a Fossilized Bird over a Fossilized Drake
+Arctozolt:
+  Arctozolt:
+    types: [Electric, Ice]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    # Revived, never met: a Fossilized Bird over a Fossilized Dino
+Dracovish:
+  Dracovish:
+    types: [Water, Dragon]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    # Revived, never met: a Fossilized Fish over a Fossilized Drake
+Arctovish:
+  Arctovish:
+    types: [Water, Ice]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    # Revived, never met: a Fossilized Fish over a Fossilized Dino
+Duraludon:
+  Duraludon:
+    types: [Steel, Dragon]
+    egg-groups: [Mineral, Dragon]
+    biomes: [Mountain, Badlands]
+    active: any
+    # Archaludon grows out of it in a later generation
+    awaiting: evolution

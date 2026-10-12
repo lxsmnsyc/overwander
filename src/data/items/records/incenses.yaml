@@ -1,0 +1,72 @@
+# All of them are held and none is spent: an incense burns for as long as
+# its holder carries it.
+#
+# An incense costs less than the plain item it stands beside: a Sea
+# Incense and a Mystic Water do the same thing, and the incense is the
+# cheaper way to it.
+#
+# The `incense` sheet names them by the word in front of the word
+# "Incense": a Sea Incense is `sea`.
+
+OddIncense:
+  type: Held
+  icon: incense/odd
+  flags: [Holdable, Marketable]
+  buy: 3000
+  sell: 1500
+
+RockIncense:
+  type: Held
+  icon: incense/rock
+  flags: [Holdable, Marketable]
+  buy: 3000
+  sell: 1500
+
+RoseIncense:
+  type: Held
+  icon: incense/rose
+  flags: [Holdable, Marketable]
+  buy: 3000
+  sell: 1500
+
+SeaIncense:
+  type: Held
+  icon: incense/sea
+  flags: [Holdable, Marketable]
+  buy: 3000
+  sell: 1500
+
+WaveIncense:
+  type: Held
+  icon: incense/wave
+  flags: [Holdable, Marketable]
+  buy: 3000
+  sell: 1500
+
+FullIncense:
+  type: Held
+  icon: incense/full
+  flags: [Holdable, Marketable]
+  buy: 3000
+  sell: 1500
+
+LaxIncense:
+  type: Held
+  icon: incense/lax
+  flags: [Holdable, Marketable]
+  buy: 3000
+  sell: 1500
+
+LuckIncense:
+  type: Held
+  icon: incense/luck
+  flags: [Holdable, Marketable]
+  buy: 3000
+  sell: 1500
+
+PureIncense:
+  type: Held
+  icon: incense/pure
+  flags: [Holdable, Marketable]
+  buy: 3000
+  sell: 1500

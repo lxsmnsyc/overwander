@@ -1,0 +1,105 @@
+Regirock:
+  Regirock:
+    stats: { HP: 80, Attack: 100, Defense: 200, SpecialAttack: 50, SpecialDefense: 100, Speed: 50 }
+    catch-rate: 3
+    height: 1.7
+    weight: 230
+    gender: genderless
+Regice:
+  Regice:
+    stats: { HP: 80, Attack: 50, Defense: 100, SpecialAttack: 100, SpecialDefense: 200, Speed: 50 }
+    catch-rate: 3
+    height: 1.8
+    weight: 175
+    gender: genderless
+Registeel:
+  Registeel:
+    stats: { HP: 80, Attack: 75, Defense: 150, SpecialAttack: 75, SpecialDefense: 150, Speed: 50 }
+    catch-rate: 3
+    height: 1.9
+    weight: 205
+    gender: genderless
+Latias:
+  Latias:
+    stats: { HP: 80, Attack: 80, Defense: 90, SpecialAttack: 110, SpecialDefense: 130, Speed: 110 }
+    catch-rate: 3
+    height: 1.4
+    weight: 40
+    # Always the sister of the two
+    gender: [0, 1]
+Latios:
+  Latios:
+    stats: { HP: 80, Attack: 90, Defense: 80, SpecialAttack: 130, SpecialDefense: 110, Speed: 110 }
+    catch-rate: 3
+    height: 2
+    weight: 60
+    # Always the brother of the two
+    gender: [1, 0]
+Kyogre:
+  Kyogre:
+    stats: { HP: 100, Attack: 100, Defense: 90, SpecialAttack: 150, SpecialDefense: 140, Speed: 90 }
+    catch-rate: 3
+    height: 4.5
+    weight: 352
+    gender: genderless
+  KyogrePrimal:
+    stats: { HP: 100, Attack: 150, Defense: 90, SpecialAttack: 180, SpecialDefense: 160, Speed: 90 }
+    catch-rate: 3
+    height: 9.8
+    weight: 430
+    gender: genderless
+Groudon:
+  Groudon:
+    stats: { HP: 100, Attack: 150, Defense: 140, SpecialAttack: 100, SpecialDefense: 90, Speed: 90 }
+    catch-rate: 3
+    height: 3.5
+    weight: 950
+    gender: genderless
+  GroudonPrimal:
+    stats: { HP: 100, Attack: 180, Defense: 160, SpecialAttack: 150, SpecialDefense: 90, Speed: 90 }
+    catch-rate: 3
+    height: 5
+    weight: 999.7
+    gender: genderless
+Rayquaza:
+  Rayquaza:
+    stats: { HP: 105, Attack: 150, Defense: 90, SpecialAttack: 150, SpecialDefense: 90, Speed: 95 }
+    # The one of the three the mainline lets a player face on level
+    # terms, and the only reason it is not a 3
+    catch-rate: 45
+    height: 7
+    weight: 206.5
+    gender: genderless
+Jirachi:
+  Jirachi:
+    stats:
+      { HP: 100, Attack: 100, Defense: 100, SpecialAttack: 100, SpecialDefense: 100, Speed: 100 }
+    catch-rate: 3
+    height: 0.3
+    weight: 1.1
+    gender: genderless
+Deoxys:
+  Deoxys:
+    stats: { HP: 50, Attack: 150, Defense: 50, SpecialAttack: 150, SpecialDefense: 50, Speed: 150 }
+    catch-rate: 3
+    height: 1.7
+    weight: 60.8
+    gender: genderless
+  DeoxysAttack:
+    stats: { HP: 50, Attack: 180, Defense: 20, SpecialAttack: 180, SpecialDefense: 20, Speed: 150 }
+    catch-rate: 3
+    height: 1.7
+    weight: 60.8
+    gender: genderless
+  DeoxysDefense:
+    stats: { HP: 50, Attack: 70, Defense: 160, SpecialAttack: 70, SpecialDefense: 160, Speed: 90 }
+    catch-rate: 3
+    height: 1.7
+    weight: 60.8
+    gender: genderless
+  DeoxysSpeed:
+    stats: { HP: 50, Attack: 95, Defense: 90, SpecialAttack: 95, SpecialDefense: 90, Speed: 180 }
+    catch-rate: 3
+    height: 1.7
+    weight: 60.8
+    gender: genderless

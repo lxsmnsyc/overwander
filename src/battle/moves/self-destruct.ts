@@ -9,7 +9,11 @@ import { BattleEvents, EffectType, MoveTargetType } from '../events';
  * Moves whose blast engulfs the user as one of its own targets (Damp
  * forbids casting them)
  */
-export const SELF_DESTRUCT_MOVES = new Set<Moves>([Moves.SelfDestruct, Moves.Explosion]);
+export const SELF_DESTRUCT_MOVES = new Set<Moves>([
+  Moves.SelfDestruct,
+  Moves.Explosion,
+  Moves.MistyExplosion,
+]);
 
 // https://bulbapedia.bulbagarden.net/wiki/Explosion_(move)
 export default function setupSelfDestructMoves(battle: Battle): void {

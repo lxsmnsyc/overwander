@@ -24,6 +24,9 @@ one that covers what you are about to do:
   lines, and design history belongs in git rather than in a doc block.
 - `sprite-fps` - every sprite sheet animates at 24fps; count in `SPRITE_TICK` and
   let clips play at the speed they were drawn at.
+- `move-visuals` - every legendary or mythical signature move has a battle
+  shape of its own (two signatures of one pokemon are two shapes); other moves
+  reuse an earlier shape, named in `effect/named.ts`.
 - `prefer-sets` - use `Set.has` for membership checks instead of scanning arrays.
 - `prefer-for-of` - iterate with `for...of` rather than callback Array methods
   such as `map`, `filter`, `some` and `find`; `sort` and JSX `<For>` stay.

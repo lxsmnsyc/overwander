@@ -104,6 +104,10 @@ function setupUnitDamageMechanics(battle: Battle): void {
   battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
     const before = standing.get(event);
 
+    if (event.success && before != null) {
+      event.target.taken += Math.max(0, before - event.target.health);
+    }
+
     // Only what crossed the lines counts as contribution: recoil, a
     // confused self-hit and friendly fire rank nobody
     if (

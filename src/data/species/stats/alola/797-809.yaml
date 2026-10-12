@@ -1,0 +1,113 @@
+Celesteela:
+  Celesteela:
+    stats: { HP: 97, Attack: 101, Defense: 103, SpecialAttack: 107, SpecialDefense: 101, Speed: 61 }
+    catch-rate: 45
+    height: 9.2
+    weight: 999.9
+    gender: genderless
+Kartana:
+  Kartana:
+    stats: { HP: 59, Attack: 181, Defense: 131, SpecialAttack: 59, SpecialDefense: 31, Speed: 109 }
+    catch-rate: 45
+    height: 0.3
+    weight: 0.1
+    gender: genderless
+Guzzlord:
+  Guzzlord:
+    stats: { HP: 223, Attack: 101, Defense: 53, SpecialAttack: 97, SpecialDefense: 53, Speed: 43 }
+    catch-rate: 45
+    height: 5.5
+    weight: 888
+    gender: genderless
+Necrozma:
+  Necrozma:
+    stats: { HP: 97, Attack: 107, Defense: 101, SpecialAttack: 127, SpecialDefense: 89, Speed: 79 }
+    catch-rate: 255
+    height: 2.4
+    weight: 230
+    gender: genderless
+  NecrozmaDuskMane:
+    stats: { HP: 97, Attack: 157, Defense: 127, SpecialAttack: 113, SpecialDefense: 109, Speed: 77 }
+    catch-rate: 255
+    height: 3.8
+    weight: 460
+    gender: genderless
+  NecrozmaDawnWings:
+    stats: { HP: 97, Attack: 113, Defense: 109, SpecialAttack: 157, SpecialDefense: 127, Speed: 77 }
+    catch-rate: 255
+    height: 4.2
+    weight: 350
+    gender: genderless
+  NecrozmaUltra:
+    stats: { HP: 97, Attack: 167, Defense: 97, SpecialAttack: 167, SpecialDefense: 97, Speed: 129 }
+    catch-rate: 255
+    height: 7.5
+    weight: 230
+    gender: genderless
+Magearna:
+  Magearna:
+    stats: { HP: 80, Attack: 95, Defense: 115, SpecialAttack: 130, SpecialDefense: 115, Speed: 65 }
+    catch-rate: 3
+    height: 1
+    weight: 80.5
+    gender: genderless
+  MagearnaOriginal:
+    stats: { HP: 80, Attack: 95, Defense: 115, SpecialAttack: 130, SpecialDefense: 115, Speed: 65 }
+    catch-rate: 3
+    height: 1
+    weight: 80.5
+    gender: genderless
+Marshadow:
+  Marshadow:
+    stats: { HP: 90, Attack: 125, Defense: 80, SpecialAttack: 90, SpecialDefense: 90, Speed: 125 }
+    catch-rate: 3
+    height: 0.7
+    weight: 22.2
+    gender: genderless
+Poipole:
+  Poipole:
+    stats: { HP: 67, Attack: 73, Defense: 67, SpecialAttack: 73, SpecialDefense: 67, Speed: 73 }
+    catch-rate: 45
+    height: 0.6
+    weight: 1.8
+    gender: genderless
+  Naganadel:
+    stats: { HP: 73, Attack: 73, Defense: 73, SpecialAttack: 127, SpecialDefense: 73, Speed: 121 }
+    catch-rate: 45
+    height: 3.6
+    weight: 150
+    gender: genderless
+Stakataka:
+  Stakataka:
+    stats: { HP: 61, Attack: 131, Defense: 211, SpecialAttack: 53, SpecialDefense: 101, Speed: 13 }
+    catch-rate: 30
+    height: 5.5
+    weight: 820
+    gender: genderless
+Blacephalon:
+  Blacephalon:
+    stats: { HP: 53, Attack: 127, Defense: 53, SpecialAttack: 151, SpecialDefense: 79, Speed: 107 }
+    catch-rate: 30
+    height: 1.8
+    weight: 13
+    gender: genderless
+Zeraora:
+  Zeraora:
+    stats: { HP: 88, Attack: 112, Defense: 75, SpecialAttack: 102, SpecialDefense: 80, Speed: 143 }
+    catch-rate: 3
+    height: 1.5
+    weight: 44.5
+    gender: genderless
+Meltan:
+  Meltan:
+    stats: { HP: 46, Attack: 65, Defense: 65, SpecialAttack: 55, SpecialDefense: 35, Speed: 34 }
+    catch-rate: 3
+    height: 0.2
+    weight: 8
+    gender: genderless
+  Melmetal:
+    stats: { HP: 135, Attack: 143, Defense: 143, SpecialAttack: 80, SpecialDefense: 65, Speed: 34 }
+    catch-rate: 3
+    height: 2.5
+    weight: 800
+    gender: genderless

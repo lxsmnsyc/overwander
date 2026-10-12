@@ -1,0 +1,118 @@
+Yamper:
+  Yamper:
+    abilities: [BallFetch]
+    hidden: [Rattled]
+  Boltund:
+    abilities: [StrongJaw]
+    hidden: [Competitive]
+Applin:
+  Applin:
+    abilities: [Ripen, Gluttony]
+    hidden: [Bulletproof]
+  Flapple:
+    abilities: [Ripen, Gluttony]
+    hidden: [Hustle]
+  Appletun:
+    abilities: [Ripen, Gluttony]
+    hidden: [ThickFat]
+Silicobra:
+  Silicobra:
+    abilities: [SandSpit, ShedSkin]
+    hidden: [SandVeil]
+  Sandaconda:
+    abilities: [SandSpit, ShedSkin]
+    # Sand Force is this registry's rather than the mainline's, filling it
+    # to four: it spits sand from the sac around its neck
+    hidden: [SandVeil, SandForce]
+Cramorant:
+  Cramorant:
+    abilities: [GulpMissile]
+    # Gluttony, Oblivious and Swift Swim are this registry's rather than the
+    # mainline's, filling it to four: it swallows what it catches whole,
+    # swims in rain and pays little mind
+    hidden: [Gluttony, Oblivious, SwiftSwim]
+  CramorantGulping:
+    abilities: [GulpMissile]
+    # Gluttony, Oblivious and Swift Swim are this registry's rather than the
+    # mainline's, filling it to four: it swallows what it catches whole,
+    # swims in rain and pays little mind
+    hidden: [Gluttony, Oblivious, SwiftSwim]
+  CramorantGorging:
+    abilities: [GulpMissile]
+    # Gluttony, Oblivious and Swift Swim are this registry's rather than the
+    # mainline's, filling it to four: it swallows what it catches whole,
+    # swims in rain and pays little mind
+    hidden: [Gluttony, Oblivious, SwiftSwim]
+Arrokuda:
+  Arrokuda:
+    abilities: [SwiftSwim]
+    hidden: [PropellerTail]
+  Barraskewda:
+    abilities: [SwiftSwim]
+    # Strong Jaw and Sniper are this registry's rather than the mainline's,
+    # filling it to four: it skewers prey with a jaw and an aim it never
+    # misses with
+    hidden: [PropellerTail, StrongJaw, Sniper]
+Toxel:
+  Toxel:
+    abilities: [Rattled, Static]
+    hidden: [Klutz]
+  Toxtricity:
+    abilities: [PunkRock, Plus]
+    hidden: [Technician]
+  ToxtricityLowKey:
+    abilities: [PunkRock, Minus]
+    hidden: [Technician]
+Sizzlipede:
+  Sizzlipede:
+    abilities: [FlashFire, WhiteSmoke]
+    hidden: [FlameBody]
+  Centiskorch:
+    abilities: [FlashFire, WhiteSmoke]
+    # Strong Jaw is this registry's rather than the mainline's, filling it
+    # to four: it coils round prey and bites with burning fangs
+    hidden: [FlameBody, StrongJaw]
+Clobbopus:
+  Clobbopus:
+    abilities: [Limber]
+    hidden: [Technician]
+  Grapploct:
+    abilities: [Limber]
+    # Suction Cups and Iron Fist are this registry's rather than the
+    # mainline's, filling it to four: its suckered arms grip and strike like
+    # fists
+    hidden: [Technician, SuctionCups, IronFist]
+Sinistea:
+  Sinistea:
+    abilities: [WeakArmor]
+    hidden: [CursedBody]
+  Polteageist:
+    abilities: [WeakArmor]
+    # Levitate and Heatproof are this registry's rather than the mainline's,
+    # filling it to four: it floats in its pot and the brew inside is
+    # already hot
+    hidden: [CursedBody, Levitate, Heatproof]
+Hatenna:
+  Hatenna:
+    abilities: [Healer, Anticipation]
+    hidden: [MagicBounce]
+  Hattrem:
+    abilities: [Healer, Anticipation]
+    hidden: [MagicBounce]
+  Hatterene:
+    abilities: [Healer, Anticipation]
+    # Soundproof is this registry's rather than the mainline's, filling it
+    # to four: it cannot stand loud noise
+    hidden: [MagicBounce, Soundproof]
+Impidimp:
+  Impidimp:
+    abilities: [Prankster, Frisk]
+    hidden: [Pickpocket]
+  Morgrem:
+    abilities: [Prankster, Frisk]
+    hidden: [Pickpocket]
+  Grimmsnarl:
+    abilities: [Prankster, Frisk]
+    # Iron Fist is this registry's rather than the mainline's, filling it to
+    # four: it fights with hair wound round its fists
+    hidden: [Pickpocket, IronFist]

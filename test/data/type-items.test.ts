@@ -9,36 +9,25 @@ import { ITEM_POOL, getItemBand, isPreciousItem } from '../../src/data/overworld
 import { isMarketable } from '../../src/data/overworld/vendor';
 import { isHeartScale } from '../../src/data/items/heart-scale';
 import { MEDICINES } from '../../src/data/items/medicine';
-import { GEMS, GEM_PRICE } from '../../src/data/items/gems';
-import {
-  FOUND_GEAR,
-  GEAR_PRICE,
-  MARKET_GEAR,
-  QUARRIED_GEAR,
-  isGear,
-} from '../../src/data/items/gear';
-import { INCENSES, INCENSE_PRICE, INCENSE_TYPES } from '../../src/data/items/incenses';
-import { BATTLE_ITEMS, BATTLE_ITEM_PRICE, isBattleItem } from '../../src/data/items/battle-items';
-import { ONE_SHOTS, ONE_SHOT_PRICE, isOneShot } from '../../src/data/items/one-shots';
+import { GEMS } from '../../src/data/items/gems';
+import { FOUND_GEAR, MARKET_GEAR, QUARRIED_GEAR, isGear } from '../../src/data/items/gear';
+import { INCENSES, INCENSE_TYPES } from '../../src/data/items/incenses';
+import { BATTLE_ITEMS, isBattleItem } from '../../src/data/items/battle-items';
+import { ONE_SHOTS, isOneShot } from '../../src/data/items/one-shots';
 import { DRINKS, isDrink } from '../../src/data/items/drinks';
 import { isSacredAsh } from '../../src/data/items/sacred-ash';
 import {
   FOUND_TRINKETS,
   MARKET_TRINKETS,
   TRINKETS,
-  TRINKET_PRICE,
   isTrinket,
 } from '../../src/data/items/trinkets';
 import { LUCK_INCENSE_BONUS } from '../../src/overworld/items/incenses';
 import { AMULET_COIN_BONUS } from '../../src/overworld/items/trinkets';
-import { ORBS, ORB_PRICE } from '../../src/data/items/orbs';
-import { PLATES, PLATE_RESALE } from '../../src/data/items/plates';
-import {
-  GENERAL_STAT_BOOSTERS,
-  RELIC_STAT_BOOSTERS,
-  STAT_BOOSTER_PRICE,
-} from '../../src/data/items/stat-boosters';
-import { TYPE_BOOSTERS, TYPE_BOOSTER_PRICE } from '../../src/data/items/type-boosters';
+import { ORBS } from '../../src/data/items/orbs';
+import { PLATES } from '../../src/data/items/plates';
+import { GENERAL_STAT_BOOSTERS, RELIC_STAT_BOOSTERS } from '../../src/data/items/stat-boosters';
+import { TYPE_BOOSTERS } from '../../src/data/items/type-boosters';
 import { registerSpecies } from '../../src/data/species';
 
 // Registry-only tests: no battle is involved, the data just has to
@@ -48,6 +37,20 @@ registerAbilities();
 registerSpecies();
 registerItems();
 registerBiomeSpawns();
+
+// What each shelf is priced at in its records file. The prices are
+// data now; these say what the shelves are meant to cost, so a slip in
+// one file fails here
+const TYPE_BOOSTER_PRICE = 4000;
+const GEM_PRICE = 1500;
+const ORB_PRICE = 6000;
+const PLATE_RESALE = 2000;
+const INCENSE_PRICE = 3000;
+const STAT_BOOSTER_PRICE = 8000;
+const GEAR_PRICE = 5000;
+const ONE_SHOT_PRICE = 3000;
+const TRINKET_PRICE = 3000;
+const BATTLE_ITEM_PRICE = 1500;
 
 describe('type-enhancing items', () => {
   it('gives every attacking type one booster', () => {
@@ -138,10 +141,9 @@ describe('type-enhancing items', () => {
   });
 
   it('registers the orbs as held costs rather than consumables', () => {
-    for (const [item, [name]] of ORBS) {
+    for (const item of ORBS) {
       const data = getItemData(item);
 
-      expect(data.name).toBe(name);
       expect(data.type).toBe(ItemTypes.Held);
       expect(data.flags & ItemFlags.Holdable).not.toBe(0);
       // An orb is never spent: it keeps costing its holder, which is
@@ -230,10 +232,9 @@ describe('type-enhancing items', () => {
       ].map((entry) => entry.item),
     );
 
-    for (const [item, [name]] of MARKET_GEAR) {
+    for (const item of MARKET_GEAR) {
       const data = getItemData(item);
 
-      expect(data.name).toBe(name);
       expect(data.type).toBe(ItemTypes.Held);
       expect(data.flags & ItemFlags.Holdable).not.toBe(0);
       // Gear works for as long as it is carried: nothing spends it
@@ -245,7 +246,7 @@ describe('type-enhancing items', () => {
       expect(getItemBand(item)).toBe('scarce');
     }
 
-    for (const [item] of FOUND_GEAR) {
+    for (const item of FOUND_GEAR) {
       const data = getItemData(item);
 
       expect(data.type).toBe(ItemTypes.Held);
@@ -272,10 +273,9 @@ describe('type-enhancing items', () => {
   });
 
   it('spends a one-shot the way it spends a berry', () => {
-    for (const [item, [name]] of ONE_SHOTS) {
+    for (const item of ONE_SHOTS) {
       const data = getItemData(item);
 
-      expect(data.name).toBe(name);
       expect(data.type).toBe(ItemTypes.Held);
       expect(data.flags & ItemFlags.Holdable).not.toBe(0);
       // The whole difference between these and the gear
@@ -302,10 +302,9 @@ describe('type-enhancing items', () => {
       ].map((entry) => entry.item),
     );
 
-    for (const [item, [name]] of TRINKETS) {
+    for (const item of TRINKETS) {
       const data = getItemData(item);
 
-      expect(data.name).toBe(name);
       expect(data.type).toBe(ItemTypes.Held);
       expect(data.flags & ItemFlags.Holdable).not.toBe(0);
       // Nothing about them is spent: a trinket works for as long as
@@ -316,7 +315,7 @@ describe('type-enhancing items', () => {
       expect(isOneShot(item)).toBe(false);
     }
 
-    for (const [item] of MARKET_TRINKETS) {
+    for (const item of MARKET_TRINKETS) {
       const data = getItemData(item);
 
       expect(data.flags & ItemFlags.Marketable).not.toBe(0);
@@ -326,7 +325,7 @@ describe('type-enhancing items', () => {
 
     // The two no stall sells are the two the ground hides. The
     // geologist lists the Everstone at the trinket price
-    for (const [item] of FOUND_TRINKETS) {
+    for (const item of FOUND_TRINKETS) {
       const data = getItemData(item);
 
       expect(data.flags & ItemFlags.Marketable).toBe(
@@ -368,7 +367,6 @@ describe('type-enhancing items', () => {
     for (const [item, drink] of DRINKS) {
       const data = getItemData(item);
 
-      expect(data.name).toBe(drink.name);
       // Held, unlike everything else that gives health back over a
       // counter: a potion cannot be carried into a fight
       expect(data.type).toBe(ItemTypes.Held);

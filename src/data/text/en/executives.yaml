@@ -1,0 +1,56 @@
+# What each executive is called, and what each says as they bar the cell
+
+Archer:
+  name: Archer
+  quote: I run this operation. You are an inconvenience in it.
+Ariana:
+  name: Ariana
+  quote: A child playing hero. I will enjoy putting you down.
+Proton:
+  name: Proton
+  quote: I am the cruellest of the executives. Ask anyone who is left.
+Petrel:
+  name: Petrel
+  quote: Hehe, you thought I was the boss? Close enough for you.
+Tabitha:
+  name: Tabitha
+  quote: The boss has plans for this land. You are standing on it.
+Courtney:
+  name: Courtney
+  quote: 'Analysing your chances. Result: none. Proceeding.'
+Matt:
+  name: Matt
+  quote: Ooooh, a challenger! Do not go down too fast, I get bored.
+Shelly:
+  name: Shelly
+  quote: The sea takes what it wants. Today it wants you out of the way.
+Mars:
+  name: Mars
+  quote: You are in the way of a better world. Move, or be moved.
+Jupiter:
+  name: Jupiter
+  quote: Do not take this personally. I barely take it personally.
+Saturn:
+  name: Saturn
+  quote: I have my doubts about all this. None of them are about beating you.
+Colress:
+  name: Colress
+  quote: I want to see the strength a pokemon reaches with you. Purely as data.
+Zinzolin:
+  name: Zinzolin
+  quote: You will be cold long before you are finished. Begin.
+Xerosic:
+  name: Xerosic
+  quote: Fascinating. Let me see how your pokemon hold up under stress.
+Aliana:
+  name: Aliana
+  quote: The world is ugly, so we are fixing it. You are part of the ugly.
+Bryony:
+  name: Bryony
+  quote: Calculating your odds. They round down to nothing.
+Celosia:
+  name: Celosia
+  quote: Only the beautiful get to stay. I will judge whether you do.
+Mable:
+  name: Mable
+  quote: We scientists are busy. Let us make this quick and quiet.

@@ -1,0 +1,123 @@
+land:
+  morning: &land-morning
+    base:
+      Bellsprout: 1548
+      Poliwag: 1548
+      Lotad: 1548
+      Turtwig: 232
+      Hatenna: 147
+      Sobble: 46
+    uncommon:
+      Wooper: 720
+      Surskit: 720
+      Marill: 575
+      Chewtle: 295
+      Tangela: 289
+      SlowpokeGalar: 150
+    rare:
+      Lombre: 523
+      Weepinbell: 261
+      Poliwhirl: 261
+      Grotle: 105
+      Hattrem: 49
+      Drizzile: 14
+    scarce:
+      Masquerain: 180
+      Tangrowth: 108
+      Leafeon: 108
+      Azumarill: 90
+      Quagsire: 90
+      Drednaw: 34
+      SlowbroGalar: 15
+      SlowkingGalar: 15
+    elusive:
+      Victreebel: 84
+      Politoed: 84
+      Ludicolo: 84
+      Torterra: 34
+      Hatterene: 15
+      Inteleon: 4
+    prized:
+      Unown: forms
+      Azurill: prized
+    special: {}
+  day: *land-morning
+  evening: &land-evening
+    base: { Poliwag: 2660, Impidimp: 170, Hatenna: 150, Dreepy: 60, Sobble: 47 }
+    uncommon:
+      Shroomish: 918
+      Wooper: 918
+      Venonat: 735
+      Marill: 735
+      Chewtle: 300
+      Sinistea: 150
+    rare: { Poliwhirl: 1654, Morgrem: 60, Hattrem: 50, Drakloak: 15, Drizzile: 14 }
+    scarce:
+      Venomoth: 230
+      Breloom: 230
+      Tangrowth: 138
+      Azumarill: 115
+      Quagsire: 115
+      Drednaw: 35
+      Polteageist: 25
+    elusive: { Politoed: 414, Hatterene: 15, Grimmsnarl: 15, Dragapult: 5, Inteleon: 4 }
+    prized:
+      Unown: forms
+      Azurill: prized
+    special: {}
+  night: *land-evening
+
+water:
+  morning: &water-morning
+    base:
+      Poliwag: 2501
+      Lotad: 2501
+      Sobble: 46
+    uncommon:
+      Magikarp: 709
+      Wooper: 591
+      Surskit: 591
+      Marill: 473
+      Chewtle: 295
+      BasculinWhite: 150
+    rare:
+      Lombre: 788
+      Poliwhirl: 394
+      Drizzile: 14
+    scarce:
+      Masquerain: 247
+      Azumarill: 123
+      Quagsire: 123
+      Gyarados: 98
+      Drednaw: 34
+      Basculegion: 13
+      BasculegionFemale: 13
+    elusive:
+      Politoed: 147
+      Ludicolo: 147
+    special: {}
+  day: *water-morning
+  evening: &water-evening
+    base:
+      Poliwag: 2830
+      Sobble: 46
+    uncommon:
+      Magikarp: 1409
+      Wooper: 1174
+      Marill: 940
+      Chewtle: 295
+      BasculinWhite: 150
+    rare:
+      Poliwhirl: 1761
+      Drizzile: 14
+    scarce:
+      Azumarill: 314
+      Quagsire: 314
+      Gyarados: 251
+      Drednaw: 34
+      Basculegion: 13
+      BasculegionFemale: 13
+    elusive:
+      Politoed: 441
+    special: {}
+  night: *water-evening

@@ -9,6 +9,7 @@ import type { Items } from '../data/ids/items';
 import BattleOutcome from '../auth/battle-outcome';
 import type Families from '../data/ids/families';
 import { getSpeciesData } from '../data/species';
+import { settleBattleFeat } from '../data/species/feats';
 import { Metric } from '../auth/quest-record';
 import { grantCandies } from './candy';
 import { getSql, tx } from './db';
@@ -17,10 +18,13 @@ import { type ProgressBump, bumpProgress } from './quest-progress';
 import { asNumber, asNumberArray } from './read';
 import type { CaughtPokemon } from '../auth/caught';
 import { Moves } from '../data/ids/moves';
+import { Types } from '../data/constants/types';
 import { getRegisteredMoves } from '../data/moves';
 import BATTLE_TIMEOUT from '../auth/battle-lock';
 import { canCallHappyHour, payDayCeiling } from '../battle/moves/pay-day';
 import { Z_MOVES } from '../data/moves/z-moves';
+import { G_MAX_MOVES, getGMaxMove } from '../data/moves/gmax-moves';
+import { FRENZY_MOVES } from '../data/moves/frenzy-moves';
 import { moveGoldIn } from './profile';
 
 /**
@@ -38,7 +42,9 @@ function settleSketch(record: CaughtPokemon, sketched: Moves | undefined): Moves
     !record.moves.includes(Moves.Sketch) ||
     record.moves.includes(sketched) ||
     !new Set(getRegisteredMoves()).has(sketched) ||
-    Z_MOVES.has(sketched)
+    Z_MOVES.has(sketched) ||
+    G_MAX_MOVES.has(sketched) ||
+    FRENZY_MOVES.has(sketched)
   ) {
     return undefined;
   }
@@ -221,7 +227,16 @@ export default async function recordAftermath(
     const ceiling =
       snapshot == null
         ? 0
-        : payDayCeiling(snapshot.level, snapshot.moves, snapshot.abilities, lasted, happy);
+        : payDayCeiling(
+            snapshot.level,
+            snapshot.moves,
+            snapshot.abilities,
+            lasted,
+            happy,
+            // G-Max Gold Rush scatters coins as Pay Day does
+            snapshot.gigantamax === true &&
+              getGMaxMove(snapshot.species, Types.Normal) === Moves.GMaxGoldRush,
+          );
 
     coins += Math.min(Math.max(0, Math.floor(entry.coins)), ceiling);
   }
@@ -295,9 +310,33 @@ export default async function recordAftermath(
         }
       }
 
+      // A feat opens the evolution it is asked for. The numbers are the
+      // client's word like the health beside them; what the server
+      // holds is that the catch fought as the species the feat is for
+      // and is still that species now. A feat counted across fights
+      // adds this one to the total the catch carries
+      const species = fielded.get(target.caught)?.species;
+      const progress = asNumber(data.featProgress);
+      const feat =
+        species === record.species
+          ? settleBattleFeat(
+              record.species,
+              {
+                criticals: target.criticals ?? 0,
+                taken: target.taken ?? 0,
+                landed: target.landed ?? 0,
+                recoil: target.recoil ?? 0,
+                health,
+              },
+              progress,
+            )
+          : { progress, met: false };
+
       await updateCaughtIn(transaction, target.caught, {
         health,
         statuses,
+        ...(feat.met ? { canEvolve: true } : {}),
+        ...(feat.progress === progress ? {} : { featProgress: feat.progress }),
         ...(drawn == null ? {} : { moves: drawn, movePoints: points }),
         ...(taken.size > 0 ? { items: remaining } : {}),
         // A pokemon that was carried out of the fight thinks a little

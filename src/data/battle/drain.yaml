@@ -1,0 +1,13 @@
+# The share of the damage a move deals that it hands back to its user
+
+Absorb: 1/2
+MegaDrain: 1/2
+LeechLife: 1/2
+DreamEater: 1/2
+GigaDrain: 1/2
+DrainPunch: 1/2
+HornLeech: 1/2
+ParabolicCharge: 1/2
+DrainingKiss: 0.75
+OblivionWing: 0.75
+BouncyBubble: 1

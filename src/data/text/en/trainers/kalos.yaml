@@ -1,0 +1,127 @@
+# What Kalos's trainer classes are called, and what each says as a duel
+# is put to the player. Two regions' worth of one trade share a name; the
+# screen adds the region where they do.
+
+KalosAceTrainer:
+  name: Ace Trainer
+  quote: Every city in Kalos has a trainer like me. I am the one who stayed undefeated.
+KalosLass:
+  name: Lass
+  quote: Oh, a challenger! My pokemon and I match today, so we cannot lose.
+KalosYoungster:
+  name: Youngster
+  quote: I dug my whole team up from the badlands. Want to see?
+KalosBlackBelt:
+  name: Black Belt
+  quote: I trained at the Shalour dojo. Show me what you trained at.
+KalosBattleGirl:
+  name: Battle Girl
+  quote: Korrina says to fight with your whole heart. Here comes mine!
+KalosBeauty:
+  name: Beauty
+  quote: A battle in Lumiose is a performance. Do try to keep up.
+KalosFisherman:
+  name: Fisherman
+  quote: The river has been quiet all morning. You will have to do.
+KalosSwimmer:
+  name: Swimmer
+  quote: I swam here from Azure Bay. A battle is a nice rest.
+KalosHiker:
+  name: Hiker
+  quote: Terminus Cave goes deeper than anyone has walked. So do my pokemon.
+KalosPsychic:
+  name: Psychic
+  quote: I foresaw this meeting at the Lost Hotel. I foresaw how it ends, too.
+KalosHexManiac:
+  name: Hex Maniac
+  quote: Hehe... The pumpkins in the forest told me you would come.
+KalosScientist:
+  name: Scientist
+  quote: The power plant hums along nicely. My pokemon keep it humming.
+KalosWorker:
+  name: Worker
+  quote: Lunch break. Plenty of time to knock you over.
+KalosRichBoy:
+  name: Rich Boy
+  quote: Father bought me a box at the Chateau. Earn a seat beside it.
+KalosPokeFan:
+  name: Poké Fan
+  quote: Have you seen how fluffy my pokemon are? Look closer. Closer!
+KalosRanger:
+  name: Pokémon Ranger
+  quote: I keep the Santalune Forest. You are walking on my patrol.
+KalosBreeder:
+  name: Pokémon Breeder
+  quote: I raised every one of these from an egg. They know your kind.
+KalosBackpacker:
+  name: Backpacker
+  quote: I have walked every route in Kalos twice. This one three times.
+KalosArtist:
+  name: Artist
+  quote: Hold still. My pokemon want to paint you mid-defeat.
+KalosCyclist:
+  name: Cyclist
+  quote: The Cycling Road is closed for repairs, so you are my race today.
+KalosGentleman:
+  name: Gentleman
+  quote: A duel before tea is the Kalosian way. After you.
+KalosLady:
+  name: Lady
+  quote: My garden is in bloom, and so is my team. Shall we?
+KalosWaiter:
+  name: Garçon
+  quote: Your table is not ready. A battle while you wait, perhaps?
+KalosMaid:
+  name: Maid
+  quote: The Chateau must be spotless. I will tidy you away first.
+KalosTwins:
+  name: Twins
+  quote: "We finish each other's battles! You will not finish ours!"
+KalosVeteran:
+  name: Veteran
+  quote: I walked Victory Road before you were born. Let us see what has changed.
+KalosSchoolKid:
+  name: School Kid
+  quote: "The Trainers' School taught us type matchups. Test me!"
+KalosPreschooler:
+  name: Preschooler
+  quote: Mommy said I can battle one big kid today. You!
+KalosRollerSkater:
+  name: Roller Skater
+  quote: I skated all the way from Lumiose. Catch me if you can!
+KalosPunkGuy:
+  name: Punk Guy
+  quote: Nice outfit. Shame about what is going to happen to it.
+KalosPunkGirl:
+  name: Punk Girl
+  quote: You look lost. My pokemon can show you the way out.
+KalosSocialite:
+  name: Socialite
+  quote: Everyone who matters in Kalos has battled me. You may join them.
+KalosChef:
+  name: Chef
+  quote: My kitchen runs hot. So does my team.
+KalosClerk:
+  name: Clerk
+  quote: Lumiose never sleeps, and neither do its offices. Make it quick.
+KalosGardener:
+  name: Gardener
+  quote: Mind the flowerbeds. My pokemon grew up in them.
+SkyTrainer:
+  name: Sky Trainer
+  quote: I only battle in the air. Look up!
+FairyTaleGirl:
+  name: Fairy Tale Girl
+  quote: Once upon a time, a trainer wandered into my story...
+FurisodeGirl:
+  name: Furisode Girl
+  quote: I wore my finest for the Chateau. You will not crease it.
+Butler:
+  name: Butler
+  quote: The household keys are in my care. So is your defeat.
+Tourist:
+  name: Tourist
+  quote: Every Vivillon I meet has new wings. Come see my collection!
+RisingStar:
+  name: Rising Star
+  quote: Everyone says I am the next big thing. Prove them wrong, if you can.

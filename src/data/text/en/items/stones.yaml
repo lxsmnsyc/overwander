@@ -1,0 +1,63 @@
+FireStone:
+  name: Fire Stone
+  description: Evolves the pokemon it is used on, where a line asks for it.
+WaterStone:
+  name: Water Stone
+  description: Evolves the pokemon it is used on, where a line asks for it.
+ThunderStone:
+  name: Thunder Stone
+  description: Evolves the pokemon it is used on, where a line asks for it.
+LeafStone:
+  name: Leaf Stone
+  description: Evolves the pokemon it is used on, where a line asks for it.
+MoonStone:
+  name: Moon Stone
+  description: Evolves the pokemon it is used on, where a line asks for it.
+SunStone:
+  name: Sun Stone
+  description: Evolves the pokemon it is used on, where a line asks for it.
+ShinyStone:
+  name: Shiny Stone
+  description: Evolves the pokemon it is used on, where a line asks for it.
+DuskStone:
+  name: Dusk Stone
+  description: Evolves the pokemon it is used on, where a line asks for it.
+DawnStone:
+  name: Dawn Stone
+  description: Evolves the pokemon it is used on, where a line asks for it.
+IceStone:
+  name: Ice Stone
+  description: Evolves the pokemon it is used on, where a line asks for it.
+RotomCatalog:
+  name: Rotom Catalog
+  description: Moves the Rotom it is used on into another of its machines. Spent on each change.
+ZygardeCube:
+  name: Zygarde Cube
+  description: Puts the Zygarde it is used on into its other shape. Spent on each change.
+TartApple:
+  name: Tart Apple
+  description: An Applin it is used on grows wings and becomes a Flapple.
+SweetApple:
+  name: Sweet Apple
+  description: An Applin it is used on fills out and becomes an Appletun.
+CrackedPot:
+  name: Cracked Pot
+  description: A Sinistea it is used on moves into the pot and becomes a Polteageist.
+GalaricaCuff:
+  name: Galarica Cuff
+  description: A Galarian Slowpoke it is used on becomes a Galarian Slowbro.
+GalaricaWreath:
+  name: Galarica Wreath
+  description: A Galarian Slowpoke it is used on becomes a Galarian Slowking.
+BlackAugurite:
+  name: Black Augurite
+  description: A Scyther it is used on splits it into axes and becomes a Kleavor.
+PeatBlock:
+  name: Peat Block
+  description: An Ursaring it is used on at night becomes an Ursaluna.
+ScrollOfDarkness:
+  name: Scroll of Darkness
+  description: A Kubfu it is used on masters the dark style and becomes a Single Strike Urshifu.
+ScrollOfWaters:
+  name: Scroll of Waters
+  description: A Kubfu it is used on masters the water style and becomes a Rapid Strike Urshifu.

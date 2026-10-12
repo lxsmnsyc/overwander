@@ -156,6 +156,8 @@ const HAZARDS = new Set<Moves>([
   Moves.ToxicSpikes,
   Moves.StealthRock,
   Moves.StickyWeb,
+  // Trades the hazards between the sides, which is laying them on the other one
+  Moves.CourtChange,
 ]);
 const FIELDS = new Set<Moves>([
   Moves.TrickRoom,
@@ -181,6 +183,9 @@ const DISRUPTING = new Set<Moves>([
   Moves.TrickOrTreat,
   Moves.ForestsCurse,
   Moves.Telekinesis,
+  Moves.MagicPowder,
+  Moves.CorrosiveGas,
+  Moves.Octolock,
 ]);
 const FOE_DROPS = new Set<Moves>([Moves.Captivate]);
 const HEALS = new Set<Moves>([
@@ -191,6 +196,9 @@ const HEALS = new Set<Moves>([
   Moves.Refresh,
   Moves.StrengthSap,
   Moves.Purify,
+  Moves.LifeDew,
+  Moves.JungleHealing,
+  Moves.LunarBlessing,
 ]);
 const SELF_BOOSTS = new Set<Moves>([
   Moves.BellyDrum,
@@ -201,6 +209,7 @@ const SELF_BOOSTS = new Set<Moves>([
   Moves.PsychUp,
   // The next move lands as a critical hit, which is what a boost is for
   Moves.LaserFocus,
+  Moves.StuffCheeks,
 ]);
 const SUPPORTING = new Set<Moves>([
   Moves.AfterYou,
@@ -208,6 +217,8 @@ const SUPPORTING = new Set<Moves>([
   Moves.HoldHands,
   Moves.Bestow,
   Moves.Instruct,
+  Moves.Coaching,
+  Moves.Teatime,
 ]);
 const UTILITIES = new Set<Moves>([
   // Callers and copies, worth whatever they turn into
@@ -235,6 +246,7 @@ const UTILITIES = new Set<Moves>([
   Moves.Camouflage,
   Moves.ReflectType,
   Moves.PowerTrick,
+  Moves.PowerShift,
   Moves.Recycle,
   // Nothing at all
   Moves.Splash,

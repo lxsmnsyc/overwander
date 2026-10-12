@@ -28,7 +28,7 @@ import { type CaughtPokemon, asCaughtPokemon } from '../src/auth/caught-record';
 import { Items } from '../src/data/ids/items';
 import { MAX_IV, PERFECT_IVS, STAT_ORDER, isZeroIVs, setIV } from '../src/data/constants/stats';
 import { Species } from '../src/data/ids/species';
-import registerSpecies from '../src/data/species/gen-1';
+import { registerSpecies } from '../src/data/species';
 
 // getSpawnRarity reads the registry, so the species have to be in it
 registerSpecies();

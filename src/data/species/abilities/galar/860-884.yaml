@@ -1,0 +1,135 @@
+Milcery:
+  Milcery:
+    abilities: [SweetVeil]
+    hidden: [AromaVeil]
+  Alcremie:
+    abilities: [SweetVeil]
+    # Healer and Cute Charm are this registry's rather than the mainline's,
+    # filling it to four: its cream soothes friends and charms foes
+    hidden: [AromaVeil, Healer, CuteCharm]
+  AlcremieBerry:
+    abilities: [SweetVeil]
+    # Healer and Cute Charm are this registry's rather than the mainline's,
+    # filling it to four: its cream soothes friends and charms foes
+    hidden: [AromaVeil, Healer, CuteCharm]
+  AlcremieLove:
+    abilities: [SweetVeil]
+    # Healer and Cute Charm are this registry's rather than the mainline's,
+    # filling it to four: its cream soothes friends and charms foes
+    hidden: [AromaVeil, Healer, CuteCharm]
+  AlcremieStar:
+    abilities: [SweetVeil]
+    # Healer and Cute Charm are this registry's rather than the mainline's,
+    # filling it to four: its cream soothes friends and charms foes
+    hidden: [AromaVeil, Healer, CuteCharm]
+  AlcremieClover:
+    abilities: [SweetVeil]
+    # Healer and Cute Charm are this registry's rather than the mainline's,
+    # filling it to four: its cream soothes friends and charms foes
+    hidden: [AromaVeil, Healer, CuteCharm]
+  AlcremieFlower:
+    abilities: [SweetVeil]
+    # Healer and Cute Charm are this registry's rather than the mainline's,
+    # filling it to four: its cream soothes friends and charms foes
+    hidden: [AromaVeil, Healer, CuteCharm]
+  AlcremieRibbon:
+    abilities: [SweetVeil]
+    # Healer and Cute Charm are this registry's rather than the mainline's,
+    # filling it to four: its cream soothes friends and charms foes
+    hidden: [AromaVeil, Healer, CuteCharm]
+Falinks:
+  Falinks:
+    abilities: [BattleArmor]
+    # Steadfast and Intimidate are this registry's rather than the
+    # mainline's, filling it to four: a troop stands its ground and stares a
+    # foe down
+    hidden: [Defiant, Steadfast, Intimidate]
+Pincurchin:
+  Pincurchin:
+    abilities: [LightningRod]
+    # Static and Water Absorb are this registry's rather than the
+    # mainline's, filling it to four: its spines hold a charge, and it feeds
+    # where seawater runs
+    hidden: [ElectricSurge, Static, WaterAbsorb]
+Snom:
+  Snom:
+    abilities: [ShieldDust]
+    hidden: [IceScales]
+  Frosmoth:
+    abilities: [ShieldDust]
+    # Snow Cloak and Tinted Lens are this registry's rather than the
+    # mainline's, filling it to four: it hides in the snow it scatters and
+    # finds the gap in a guard
+    hidden: [IceScales, SnowCloak, TintedLens]
+Stonjourner:
+  Stonjourner:
+    abilities: [PowerSpot]
+    # Sturdy, Solid Rock and Clear Body are this registry's rather than the
+    # mainline's, filling it to four: it is a standing stone that nothing
+    # moves
+    hidden: [Sturdy, SolidRock, ClearBody]
+Eiscue:
+  Eiscue:
+    abilities: [IceFace]
+    # Swift Swim, Ice Body and Slush Rush are this registry's rather than
+    # the mainline's, filling it to four: it swims in cold water and rests
+    # on the ice
+    hidden: [SwiftSwim, IceBody, SlushRush]
+  EiscueNoice:
+    abilities: [IceFace]
+    # Swift Swim, Ice Body and Slush Rush are this registry's rather than
+    # the mainline's, filling it to four: it swims in cold water and rests
+    # on the ice
+    hidden: [SwiftSwim, IceBody, SlushRush]
+Indeedee:
+  Indeedee:
+    abilities: [InnerFocus, Synchronize]
+    # Telepathy is this registry's rather than the mainline's, filling it to
+    # four: it reads the feelings of those near it
+    hidden: [PsychicSurge, Telepathy]
+  IndeedeeFemale:
+    abilities: [OwnTempo, Synchronize]
+    # Telepathy is this registry's rather than the mainline's, filling it to
+    # four: it reads the feelings of those near it
+    hidden: [PsychicSurge, Telepathy]
+Morpeko:
+  Morpeko:
+    abilities: [HungerSwitch]
+    # Cheek Pouch, Gluttony and Anger Point are this registry's rather than
+    # the mainline's, filling it to four: its moods swing with how full its
+    # cheeks are
+    hidden: [CheekPouch, Gluttony, AngerPoint]
+  MorpekoHangry:
+    abilities: [HungerSwitch]
+    # Cheek Pouch, Gluttony and Anger Point are this registry's rather than
+    # the mainline's, filling it to four: its moods swing with how full its
+    # cheeks are
+    hidden: [CheekPouch, Gluttony, AngerPoint]
+Dracozolt:
+  Dracozolt:
+    abilities: [VoltAbsorb, Hustle]
+    # Sheer Force is this registry's rather than the mainline's, filling it
+    # to four: the stitched halves hit harder than either alone
+    hidden: [SandRush, SheerForce]
+Arctozolt:
+  Arctozolt:
+    abilities: [VoltAbsorb, Static]
+    # Ice Body is this registry's rather than the mainline's, filling it to
+    # four: its frozen half keeps it fed in the cold
+    hidden: [SlushRush, IceBody]
+Dracovish:
+  Dracovish:
+    abilities: [WaterAbsorb, StrongJaw]
+    # Swift Swim is this registry's rather than the mainline's, filling it
+    # to four: its fish half swims fast in rain
+    hidden: [SandRush, SwiftSwim]
+Arctovish:
+  Arctovish:
+    abilities: [WaterAbsorb, IceBody]
+    # Water Veil is this registry's rather than the mainline's, filling it
+    # to four: its frozen fish skin will not burn
+    hidden: [SlushRush, WaterVeil]
+Duraludon:
+  Duraludon:
+    abilities: [LightMetal, HeavyMetal]
+    hidden: [Stalwart]

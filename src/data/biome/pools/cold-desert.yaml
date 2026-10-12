@@ -1,0 +1,187 @@
+land:
+  morning: &land-morning
+    base:
+      Swinub: 2815
+      Geodude: 2251
+      Beldum: 225
+    uncommon:
+      Snorunt: 764
+      Cacnea: 694
+      Diglett: 694
+      Onix: 347
+    rare:
+      Graveler: 568
+      Piloswine: 568
+      Metang: 114
+    scarce:
+      Dugtrio: 231
+      Glalie: 139
+      Froslass: 139
+      Steelix: 116
+    elusive:
+      Golem: 142
+      Mamoswine: 142
+      Metagross: 28
+    prized:
+      Unown: forms
+    special: {}
+  day: *land-morning
+  evening:
+    base:
+      Swinub: 2814
+      Geodude: 2251
+      Beldum: 225
+    uncommon:
+      Snorunt: 671
+      Elgyem: 610
+      Diglett: 610
+      Onix: 305
+      Gligar: 152
+      Sneasel: 152
+    rare:
+      Graveler: 568
+      Piloswine: 568
+      Metang: 114
+    scarce:
+      Dugtrio: 120
+      Beheeyem: 84
+      Cacturne: 72
+      Gliscor: 72
+      Glalie: 72
+      Froslass: 72
+      Weavile: 72
+      Steelix: 60
+    elusive:
+      Golem: 98
+      Lunatone: 98
+      Mamoswine: 98
+      Metagross: 20
+    prized:
+      Unown: forms
+    special: {}
+  night:
+    base:
+      Swinub: 2815
+      Geodude: 2251
+      Beldum: 225
+    uncommon:
+      Snorunt: 539
+      Elgyem: 490
+      Diglett: 490
+      Cubone: 490
+      Onix: 245
+      Gligar: 123
+      Sneasel: 123
+    rare:
+      Graveler: 568
+      Piloswine: 568
+      Metang: 114
+    scarce:
+      Dugtrio: 101
+      Marowak: 101
+      Beheeyem: 71
+      Cacturne: 60
+      Gliscor: 60
+      Glalie: 60
+      Froslass: 60
+      Weavile: 60
+      Steelix: 50
+    elusive:
+      Golem: 98
+      Lunatone: 98
+      Mamoswine: 98
+      Metagross: 20
+    prized:
+      Unown: forms
+    special: {}
+
+ice:
+  morning: &ice-morning
+    base:
+      Swinub: 2820
+      Geodude: 2256
+      Beldum: 226
+    uncommon:
+      Snorunt: 766
+      Cacnea: 696
+      Diglett: 696
+      Onix: 348
+    rare:
+      Piloswine: 569
+      Graveler: 569
+      Metang: 114
+    scarce:
+      Dugtrio: 232
+      Glalie: 139
+      Froslass: 139
+      Steelix: 116
+    elusive:
+      Mamoswine: 142
+      Golem: 142
+      Metagross: 28
+    special: {}
+  day: *ice-morning
+  evening:
+    base:
+      Swinub: 2820
+      Geodude: 2255
+      Beldum: 226
+    uncommon:
+      Snorunt: 673
+      Elgyem: 611
+      Diglett: 611
+      Onix: 306
+      Sneasel: 152
+      Gligar: 152
+    rare:
+      Piloswine: 569
+      Graveler: 569
+      Metang: 114
+    scarce:
+      Dugtrio: 120
+      Beheeyem: 84
+      Glalie: 72
+      Froslass: 72
+      Weavile: 72
+      Cacturne: 72
+      Gliscor: 72
+      Steelix: 60
+    elusive:
+      Mamoswine: 98
+      Golem: 98
+      Lunatone: 98
+      Metagross: 20
+    special: {}
+  night:
+    base:
+      Swinub: 2820
+      Geodude: 2256
+      Beldum: 226
+    uncommon:
+      Snorunt: 540
+      Elgyem: 491
+      Diglett: 491
+      Cubone: 491
+      Onix: 246
+      Sneasel: 123
+      Gligar: 123
+    rare:
+      Piloswine: 569
+      Graveler: 569
+      Metang: 114
+    scarce:
+      Dugtrio: 101
+      Marowak: 101
+      Beheeyem: 71
+      Glalie: 60
+      Froslass: 60
+      Weavile: 60
+      Cacturne: 60
+      Gliscor: 60
+      Steelix: 50
+    elusive:
+      Mamoswine: 98
+      Golem: 98
+      Lunatone: 98
+      Metagross: 20
+    special: {}

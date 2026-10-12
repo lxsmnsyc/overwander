@@ -1,0 +1,98 @@
+# What lives in the towns: the pokemon that live around people, one
+# pool every town's streets draw from whatever country it stands in.
+# The sewer crowd comes out after dark and the birds keep to the day
+
+pool:
+  morning: &pool-morning
+    base:
+      Pidgey: 1586
+      Starly: 1586
+      Magnemite: 1322
+      Porygon: 793
+    uncommon:
+      Rattata: 595
+      Zigzagoon: 595
+      Voltorb: 476
+      Glameow: 417
+      Buneary: 417
+    rare:
+      Pidgeotto: 463
+      Staravia: 463
+      Magneton: 324
+    scarce:
+      Raticate: 179
+      Linoone: 179
+      Electrode: 149
+      Purugly: 119
+    elusive:
+      Ditto: 104
+      Rotom: 83
+      Kecleon: 83
+      Magnezone: 42
+    prized:
+      VivillonFancy: 2
+    special: {}
+    mythical:
+      VivillonPokeBall: 1
+      FloetteEternal: 1
+  day: *pool-morning
+  evening:
+    base:
+      Magnemite: 3305
+      Porygon: 1983
+    uncommon:
+      Rattata: 595
+      Zigzagoon: 595
+      Voltorb: 476
+      Glameow: 417
+      Buneary: 417
+    rare:
+      Magneton: 1250
+    scarce:
+      Raticate: 179
+      Linoone: 179
+      Electrode: 149
+      Purugly: 119
+    elusive:
+      Ditto: 142
+      Rotom: 114
+      Magnezone: 57
+    prized:
+      VivillonFancy: 2
+    special: {}
+    mythical:
+      VivillonPokeBall: 1
+      FloetteEternal: 1
+  night:
+    base:
+      Magnemite: 3305
+      Porygon: 1983
+    uncommon:
+      Rattata: 373
+      Zigzagoon: 373
+      Meowth: 336
+      Voltorb: 299
+      Grimer: 299
+      Koffing: 299
+      Glameow: 261
+      Buneary: 261
+    rare:
+      Magneton: 1250
+    scarce:
+      Raticate: 110
+      Linoone: 110
+      Electrode: 92
+      Persian: 92
+      Purugly: 74
+      Muk: 74
+      Weezing: 74
+    elusive:
+      Ditto: 142
+      Rotom: 114
+      Magnezone: 57
+    prized:
+      VivillonFancy: 2
+    special: {}
+    mythical:
+      VivillonPokeBall: 1
+      FloetteEternal: 1

@@ -5,6 +5,7 @@ import { BattleEvents } from '../../battle/events';
 import type Unit from '../../battle/unit';
 import { EventPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
+import Abilities from '../../data/ids/abilities';
 import { getSpeciesData } from '../../data/species';
 import { Badge, Button } from '../styled';
 
@@ -145,7 +146,14 @@ export default function BattleTopBar(props: BattleTopBarProps): JSX.Element {
         continue;
       }
       if (alliance.boss) {
-        boss = standingOf(units, getSpeciesData(units[0].appearance).name, false);
+        const name = getSpeciesData(units[0].appearance).name;
+
+        // A Noble's HP is its Frenzy, which is what the party drains
+        boss = standingOf(
+          units,
+          units[0].hasAbility(Abilities.Noble) ? `${name}'s Frenzy` : name,
+          false,
+        );
         continue;
       }
       if (own == null) {

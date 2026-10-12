@@ -1,0 +1,162 @@
+Tackle:
+  name: Tackle
+  description: Plain contact damage.
+Growl:
+  name: Growl
+  description: Drops the Attack of everything opposite by a stage. It is a sound.
+LeechSeed:
+  name: Leech Seed
+  description: 'Seeds the target: 1/8 of its HP every 2 seconds, drained to the seeder. Grass is immune.'
+VineWhip:
+  name: Vine Whip
+  description: Plain contact damage.
+PoisonPowder:
+  name: Poison Powder
+  description: Poisons the target. A powder, so Grass ignores it.
+RazorLeaf:
+  name: Razor Leaf
+  description: Hits everything opposite, and crits more readily.
+Growth:
+  name: Growth
+  description: Raises the user's Special Attack a stage.
+SolarBeam:
+  name: Solar Beam
+  description: Winds up unless the sun is out. Fog, rain, hail and sandstorm halve it.
+SwordsDance:
+  name: Swords Dance
+  description: Raises the user's Attack 2 stages.
+Toxic:
+  name: Toxic
+  description: 'Badly poisons the target: it bites harder the longer it holds.'
+BodySlam:
+  name: Body Slam
+  description: 30% to paralyse. Never misses a minimized target, and hits 2x on it.
+TakeDown:
+  name: Take Down
+  description: The user takes 1/4 of the damage it deals.
+DoubleEdge:
+  name: Double Edge
+  description: The user takes 1/3 of the damage it deals.
+Rage:
+  name: Rage
+  description: Every hit the user takes raises its Attack a stage, until it casts something else.
+MegaDrain:
+  name: Mega Drain
+  description: Heals the user for 1/2 the damage dealt.
+Mimic:
+  name: Mimic
+  description: Replaces itself with the target's last move.
+DoubleTeam:
+  name: Double Team
+  description: Raises the user's evasion a stage.
+Bide:
+  name: Bide
+  description: Channels 2x as long, then throws back 2x the damage taken while biding.
+Reflect:
+  name: Reflect
+  description: Cuts physical damage against the user's side by 1/3 for 10 seconds.
+Rest:
+  name: Rest
+  description: The user sleeps at full health, cured of everything. Nothing happens if it cannot sleep.
+HyperBeam:
+  name: Hyper Beam
+  description: The user must recharge for 2 seconds after it lands.
+SleepPowder:
+  name: Sleep Powder
+  description: Puts the target to sleep. A powder, so Grass ignores it.
+Cut:
+  name: Cut
+  description: Plain contact damage.
+Substitute:
+  name: Substitute
+  description: Spends 1/4 of the user's HP on a decoy that takes the hits.
+Scratch:
+  name: Scratch
+  description: Plain contact damage.
+Ember:
+  name: Ember
+  description: 10% to burn.
+Leer:
+  name: Leer
+  description: Drops the Defense of everything opposite by a stage.
+Slash:
+  name: Slash
+  description: Crits more readily.
+Flamethrower:
+  name: Flamethrower
+  description: 10% to burn.
+FireSpin:
+  name: Fire Spin
+  description: 'Binds the target: 1/8 of its HP every 2 seconds for 8 seconds, and no escape, ghosts aside.'
+MegaPunch:
+  name: Mega Punch
+  description: Plain contact damage.
+MegaKick:
+  name: Mega Kick
+  description: Plain contact damage.
+Submission:
+  name: Submission
+  description: The user takes 1/4 of the damage it deals.
+SeismicToss:
+  name: Seismic Toss
+  description: Deals the user's level in damage, whatever the stats say.
+DragonRage:
+  name: Dragon Rage
+  description: Deals a flat 40 damage.
+Dig:
+  name: Dig
+  description: The user burrows out of sight, then strikes. Only Earthquake and Magnitude (at 2x) and Fissure reach it.
+FireBlast:
+  name: Fire Blast
+  description: 10% to burn.
+Swift:
+  name: Swift
+  description: Hits everything opposite, and never misses.
+SkullBash:
+  name: Skull Bash
+  description: Raises the user's Defense a stage as it winds up, then hits.
+Strength:
+  name: Strength
+  description: Plain contact damage.
+Earthquake:
+  name: Earthquake
+  description: Hits everything opposite and the user's teammates. 2x on anything underground from Dig.
+Fissure:
+  name: Fissure
+  description: Takes the target's whole health, at 30% accuracy. Sturdy shrugs it off.
+Fly:
+  name: Fly
+  description: The user takes to the air, then strikes. Only Gust and Twister (at 2x), Thunder and Sky Uppercut reach it.
+TailWhip:
+  name: Tail Whip
+  description: Drops the Defense of everything opposite by a stage.
+Bubble:
+  name: Bubble
+  description: Hits everything opposite, 10% to drop the target's Speed a stage.
+WaterGun:
+  name: Water Gun
+  description: Plain damage.
+Bite:
+  name: Bite
+  description: 30% to flinch.
+Withdraw:
+  name: Withdraw
+  description: Raises the user's Defense a stage.
+HydroPump:
+  name: Hydro Pump
+  description: Plain damage.
+BubbleBeam:
+  name: Bubble Beam
+  description: 10% to drop the target's Speed a stage.
+IceBeam:
+  name: Ice Beam
+  description: 10% to freeze.
+Blizzard:
+  name: Blizzard
+  description: Hits everything opposite, 10% to freeze, and never misses in hail or snow.
+Counter:
+  name: Counter
+  description: Returns 2x the last physical hit taken, at whoever landed it rather than the chosen target.
+Surf:
+  name: Surf
+  description: Hits everything opposite and the user's teammates. 2x on anything underwater from Dive.

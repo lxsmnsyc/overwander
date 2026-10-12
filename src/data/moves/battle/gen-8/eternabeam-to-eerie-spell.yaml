@@ -1,0 +1,281 @@
+# From Eternabeam to Eerie Spell: the Galar legendaries, the moves Isle of
+# Armor and the Crown Tundra brought, and the terrain moves between them
+
+Eternabeam:
+  type: Dragon
+  category: Special
+  power: 160
+  accuracy: 90
+  pp: 5
+  target: Unit
+
+SteelBeam:
+  type: Steel
+  category: Special
+  power: 140
+  accuracy: 95
+  pp: 5
+  target: Unit
+
+ExpandingForce:
+  type: Psychic
+  category: Special
+  power: 80
+  accuracy: 100
+  pp: 10
+  target: Unit
+  projectile: true
+
+SteelRoller:
+  type: Steel
+  category: Physical
+  power: 130
+  accuracy: 100
+  pp: 5
+  target: Unit
+  flags: [Contact]
+
+ScaleShot:
+  type: Dragon
+  category: Physical
+  power: 25
+  accuracy: 90
+  pp: 20
+  target: Unit
+  projectile: true
+
+MeteorBeam:
+  type: Rock
+  category: Special
+  power: 120
+  accuracy: 90
+  pp: 10
+  target: Unit
+  steps: 1
+
+ShellSideArm:
+  type: Poison
+  category: Special
+  power: 90
+  accuracy: 100
+  pp: 10
+  target: Unit
+  projectile: true
+
+MistyExplosion:
+  type: Fairy
+  category: Special
+  power: 100
+  accuracy: 100
+  pp: 5
+  target: None
+  affects: [Unit, Own, Enemy]
+
+GrassyGlide:
+  type: Grass
+  category: Physical
+  power: 55
+  accuracy: 100
+  pp: 20
+  target: Unit
+  flags: [Contact]
+
+RisingVoltage:
+  type: Electric
+  category: Special
+  power: 70
+  accuracy: 100
+  pp: 20
+  target: Unit
+
+TerrainPulse:
+  type: Normal
+  category: Special
+  power: 50
+  accuracy: 100
+  pp: 10
+  target: Unit
+  projectile: true
+
+SkitterSmack:
+  type: Bug
+  category: Physical
+  power: 70
+  accuracy: 90
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+BurningJealousy:
+  type: Fire
+  category: Special
+  power: 70
+  accuracy: 100
+  pp: 5
+  target: None
+  affects: [Unit, Enemy]
+
+LashOut:
+  type: Dark
+  category: Physical
+  power: 75
+  accuracy: 100
+  pp: 5
+  target: Unit
+  flags: [Contact]
+
+Poltergeist:
+  type: Ghost
+  category: Physical
+  power: 110
+  accuracy: 90
+  pp: 5
+  target: Unit
+
+CorrosiveGas:
+  type: Poison
+  category: Status
+  accuracy: 100
+  pp: 40
+  target: None
+  affects: [Unit, Own, Enemy]
+
+Coaching:
+  type: Fighting
+  category: Status
+  pp: 10
+  target: Team
+  affects: [Team, Own]
+
+FlipTurn:
+  type: Water
+  category: Physical
+  power: 60
+  accuracy: 100
+  pp: 20
+  target: Unit
+  flags: [Contact]
+  steps: 1
+
+TripleAxel:
+  type: Ice
+  category: Physical
+  power: 20
+  accuracy: 90
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+DualWingbeat:
+  type: Flying
+  category: Physical
+  power: 40
+  accuracy: 90
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+ScorchingSands:
+  type: Ground
+  category: Special
+  power: 70
+  accuracy: 100
+  pp: 10
+  target: Unit
+  projectile: true
+
+JungleHealing:
+  type: Grass
+  category: Status
+  pp: 10
+  target: Team
+  affects: [Team, Own]
+
+WickedBlow:
+  type: Dark
+  category: Physical
+  power: 75
+  accuracy: 100
+  pp: 5
+  target: Unit
+  flags: [Contact]
+
+SurgingStrikes:
+  type: Water
+  category: Physical
+  power: 25
+  accuracy: 100
+  pp: 5
+  target: Unit
+  flags: [Contact]
+
+ThunderCage:
+  type: Electric
+  category: Special
+  power: 80
+  accuracy: 90
+  pp: 15
+  target: Unit
+
+DragonEnergy:
+  type: Dragon
+  category: Special
+  power: 150
+  accuracy: 100
+  pp: 5
+  target: None
+  affects: [Unit, Enemy]
+
+FreezingGlare:
+  type: Psychic
+  category: Special
+  power: 90
+  accuracy: 100
+  pp: 10
+  target: Unit
+  projectile: true
+
+FieryWrath:
+  type: Dark
+  category: Special
+  power: 90
+  accuracy: 100
+  pp: 10
+  target: None
+  affects: [Unit, Enemy]
+
+ThunderousKick:
+  type: Fighting
+  category: Physical
+  power: 90
+  accuracy: 100
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+GlacialLance:
+  type: Ice
+  category: Physical
+  power: 120
+  accuracy: 100
+  pp: 5
+  target: None
+  affects: [Unit, Enemy]
+
+AstralBarrage:
+  type: Ghost
+  category: Special
+  power: 120
+  accuracy: 100
+  pp: 5
+  target: None
+  affects: [Unit, Enemy]
+
+EerieSpell:
+  type: Psychic
+  category: Special
+  power: 80
+  accuracy: 100
+  pp: 5
+  target: Unit
+  flags: [Sound]

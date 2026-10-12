@@ -1,0 +1,319 @@
+TypeNull:
+  TypeNull:
+    stats: { HP: 95, Attack: 95, Defense: 95, SpecialAttack: 95, SpecialDefense: 95, Speed: 59 }
+    catch-rate: 3
+    height: 1.9
+    weight: 120.5
+    gender: [0, 0]
+  Silvally:
+    stats: { HP: 95, Attack: 95, Defense: 95, SpecialAttack: 95, SpecialDefense: 95, Speed: 95 }
+    catch-rate: 3
+    height: 2.3
+    weight: 100.5
+    gender: [0, 0]
+  SilvallyFighting:
+    stats: { HP: 95, Attack: 95, Defense: 95, SpecialAttack: 95, SpecialDefense: 95, Speed: 95 }
+    catch-rate: 3
+    height: 2.3
+    weight: 100.5
+    gender: [0, 0]
+  SilvallyFlying:
+    stats: { HP: 95, Attack: 95, Defense: 95, SpecialAttack: 95, SpecialDefense: 95, Speed: 95 }
+    catch-rate: 3
+    height: 2.3
+    weight: 100.5
+    gender: [0, 0]
+  SilvallyPoison:
+    stats: { HP: 95, Attack: 95, Defense: 95, SpecialAttack: 95, SpecialDefense: 95, Speed: 95 }
+    catch-rate: 3
+    height: 2.3
+    weight: 100.5
+    gender: [0, 0]
+  SilvallyGround:
+    stats: { HP: 95, Attack: 95, Defense: 95, SpecialAttack: 95, SpecialDefense: 95, Speed: 95 }
+    catch-rate: 3
+    height: 2.3
+    weight: 100.5
+    gender: [0, 0]
+  SilvallyRock:
+    stats: { HP: 95, Attack: 95, Defense: 95, SpecialAttack: 95, SpecialDefense: 95, Speed: 95 }
+    catch-rate: 3
+    height: 2.3
+    weight: 100.5
+    gender: [0, 0]
+  SilvallyBug:
+    stats: { HP: 95, Attack: 95, Defense: 95, SpecialAttack: 95, SpecialDefense: 95, Speed: 95 }
+    catch-rate: 3
+    height: 2.3
+    weight: 100.5
+    gender: [0, 0]
+  SilvallyGhost:
+    stats: { HP: 95, Attack: 95, Defense: 95, SpecialAttack: 95, SpecialDefense: 95, Speed: 95 }
+    catch-rate: 3
+    height: 2.3
+    weight: 100.5
+    gender: [0, 0]
+  SilvallySteel:
+    stats: { HP: 95, Attack: 95, Defense: 95, SpecialAttack: 95, SpecialDefense: 95, Speed: 95 }
+    catch-rate: 3
+    height: 2.3
+    weight: 100.5
+    gender: [0, 0]
+  SilvallyFire:
+    stats: { HP: 95, Attack: 95, Defense: 95, SpecialAttack: 95, SpecialDefense: 95, Speed: 95 }
+    catch-rate: 3
+    height: 2.3
+    weight: 100.5
+    gender: [0, 0]
+  SilvallyWater:
+    stats: { HP: 95, Attack: 95, Defense: 95, SpecialAttack: 95, SpecialDefense: 95, Speed: 95 }
+    catch-rate: 3
+    height: 2.3
+    weight: 100.5
+    gender: [0, 0]
+  SilvallyGrass:
+    stats: { HP: 95, Attack: 95, Defense: 95, SpecialAttack: 95, SpecialDefense: 95, Speed: 95 }
+    catch-rate: 3
+    height: 2.3
+    weight: 100.5
+    gender: [0, 0]
+  SilvallyElectric:
+    stats: { HP: 95, Attack: 95, Defense: 95, SpecialAttack: 95, SpecialDefense: 95, Speed: 95 }
+    catch-rate: 3
+    height: 2.3
+    weight: 100.5
+    gender: [0, 0]
+  SilvallyPsychic:
+    stats: { HP: 95, Attack: 95, Defense: 95, SpecialAttack: 95, SpecialDefense: 95, Speed: 95 }
+    catch-rate: 3
+    height: 2.3
+    weight: 100.5
+    gender: [0, 0]
+  SilvallyIce:
+    stats: { HP: 95, Attack: 95, Defense: 95, SpecialAttack: 95, SpecialDefense: 95, Speed: 95 }
+    catch-rate: 3
+    height: 2.3
+    weight: 100.5
+    gender: [0, 0]
+  SilvallyDragon:
+    stats: { HP: 95, Attack: 95, Defense: 95, SpecialAttack: 95, SpecialDefense: 95, Speed: 95 }
+    catch-rate: 3
+    height: 2.3
+    weight: 100.5
+    gender: [0, 0]
+  SilvallyDark:
+    stats: { HP: 95, Attack: 95, Defense: 95, SpecialAttack: 95, SpecialDefense: 95, Speed: 95 }
+    catch-rate: 3
+    height: 2.3
+    weight: 100.5
+    gender: [0, 0]
+  SilvallyFairy:
+    stats: { HP: 95, Attack: 95, Defense: 95, SpecialAttack: 95, SpecialDefense: 95, Speed: 95 }
+    catch-rate: 3
+    height: 2.3
+    weight: 100.5
+    gender: [0, 0]
+Minior:
+  Minior:
+    stats: { HP: 60, Attack: 60, Defense: 100, SpecialAttack: 60, SpecialDefense: 100, Speed: 60 }
+    catch-rate: 30
+    height: 0.3
+    weight: 40
+    gender: &a1 [0, 0]
+  MiniorRed:
+    stats: { HP: 60, Attack: 100, Defense: 60, SpecialAttack: 100, SpecialDefense: 60, Speed: 120 }
+    catch-rate: 30
+    height: 0.3
+    weight: 0.3
+    gender: *a1
+  MiniorOrange:
+    stats: { HP: 60, Attack: 100, Defense: 60, SpecialAttack: 100, SpecialDefense: 60, Speed: 120 }
+    catch-rate: 30
+    height: 0.3
+    weight: 0.3
+    gender: *a1
+  MiniorYellow:
+    stats: { HP: 60, Attack: 100, Defense: 60, SpecialAttack: 100, SpecialDefense: 60, Speed: 120 }
+    catch-rate: 30
+    height: 0.3
+    weight: 0.3
+    gender: *a1
+  MiniorGreen:
+    stats: { HP: 60, Attack: 100, Defense: 60, SpecialAttack: 100, SpecialDefense: 60, Speed: 120 }
+    catch-rate: 30
+    height: 0.3
+    weight: 0.3
+    gender: *a1
+  MiniorBlue:
+    stats: { HP: 60, Attack: 100, Defense: 60, SpecialAttack: 100, SpecialDefense: 60, Speed: 120 }
+    catch-rate: 30
+    height: 0.3
+    weight: 0.3
+    gender: *a1
+  MiniorIndigo:
+    stats: { HP: 60, Attack: 100, Defense: 60, SpecialAttack: 100, SpecialDefense: 60, Speed: 120 }
+    catch-rate: 30
+    height: 0.3
+    weight: 0.3
+    gender: *a1
+  MiniorViolet:
+    stats: { HP: 60, Attack: 100, Defense: 60, SpecialAttack: 100, SpecialDefense: 60, Speed: 120 }
+    catch-rate: 30
+    height: 0.3
+    weight: 0.3
+    gender: *a1
+Komala:
+  Komala:
+    stats: { HP: 65, Attack: 115, Defense: 65, SpecialAttack: 75, SpecialDefense: 95, Speed: 65 }
+    catch-rate: 45
+    height: 0.4
+    weight: 19.9
+    gender: [4, 4]
+Turtonator:
+  Turtonator:
+    stats: { HP: 60, Attack: 78, Defense: 135, SpecialAttack: 91, SpecialDefense: 85, Speed: 36 }
+    catch-rate: 70
+    height: 2
+    weight: 212
+    gender: [4, 4]
+Togedemaru:
+  Togedemaru:
+    stats: { HP: 65, Attack: 98, Defense: 63, SpecialAttack: 40, SpecialDefense: 73, Speed: 96 }
+    catch-rate: 180
+    height: 0.3
+    weight: 3.3
+    gender: [4, 4]
+Mimikyu:
+  Mimikyu:
+    stats: { HP: 55, Attack: 90, Defense: 80, SpecialAttack: 50, SpecialDefense: 105, Speed: 96 }
+    catch-rate: 45
+    height: 0.2
+    weight: 0.7
+    gender: [4, 4]
+  MimikyuBusted:
+    stats: { HP: 55, Attack: 90, Defense: 80, SpecialAttack: 50, SpecialDefense: 105, Speed: 96 }
+    catch-rate: 45
+    height: 0.2
+    weight: 0.7
+    gender: [4, 4]
+Bruxish:
+  Bruxish:
+    stats: { HP: 68, Attack: 105, Defense: 70, SpecialAttack: 70, SpecialDefense: 70, Speed: 92 }
+    catch-rate: 80
+    height: 0.9
+    weight: 19
+    gender: [4, 4]
+Drampa:
+  Drampa:
+    stats: { HP: 78, Attack: 60, Defense: 85, SpecialAttack: 135, SpecialDefense: 91, Speed: 36 }
+    catch-rate: 70
+    height: 3
+    weight: 185
+    gender: [4, 4]
+Dhelmise:
+  Dhelmise:
+    stats: { HP: 70, Attack: 131, Defense: 100, SpecialAttack: 86, SpecialDefense: 90, Speed: 40 }
+    catch-rate: 25
+    height: 3.9
+    weight: 210
+    gender: [0, 0]
+JangmoO:
+  JangmoO:
+    stats: { HP: 45, Attack: 55, Defense: 65, SpecialAttack: 45, SpecialDefense: 45, Speed: 45 }
+    catch-rate: 45
+    height: 0.6
+    weight: 29.7
+    gender: [4, 4]
+  HakamoO:
+    stats: { HP: 55, Attack: 75, Defense: 90, SpecialAttack: 65, SpecialDefense: 70, Speed: 65 }
+    catch-rate: 45
+    height: 1.2
+    weight: 47
+    gender: [4, 4]
+  KommoO:
+    stats: { HP: 75, Attack: 110, Defense: 125, SpecialAttack: 100, SpecialDefense: 105, Speed: 85 }
+    catch-rate: 45
+    height: 1.6
+    weight: 78.2
+    gender: [4, 4]
+TapuKoko:
+  TapuKoko:
+    stats: { HP: 70, Attack: 115, Defense: 85, SpecialAttack: 95, SpecialDefense: 75, Speed: 130 }
+    catch-rate: 3
+    height: 1.8
+    weight: 20.5
+    gender: genderless
+TapuLele:
+  TapuLele:
+    stats: { HP: 70, Attack: 85, Defense: 75, SpecialAttack: 130, SpecialDefense: 115, Speed: 95 }
+    catch-rate: 3
+    height: 1.2
+    weight: 18.6
+    gender: genderless
+TapuBulu:
+  TapuBulu:
+    stats: { HP: 70, Attack: 130, Defense: 115, SpecialAttack: 85, SpecialDefense: 95, Speed: 75 }
+    catch-rate: 3
+    height: 1.9
+    weight: 45.5
+    gender: genderless
+TapuFini:
+  TapuFini:
+    stats: { HP: 70, Attack: 75, Defense: 115, SpecialAttack: 95, SpecialDefense: 130, Speed: 85 }
+    catch-rate: 3
+    height: 1.3
+    weight: 21.2
+    gender: genderless
+Cosmog:
+  Cosmog:
+    stats: { HP: 43, Attack: 29, Defense: 31, SpecialAttack: 29, SpecialDefense: 31, Speed: 37 }
+    catch-rate: 45
+    height: 0.2
+    weight: 0.1
+    gender: genderless
+  Cosmoem:
+    stats: { HP: 43, Attack: 29, Defense: 131, SpecialAttack: 29, SpecialDefense: 131, Speed: 37 }
+    catch-rate: 45
+    height: 0.1
+    weight: 999.9
+    gender: genderless
+  Solgaleo:
+    stats: { HP: 137, Attack: 137, Defense: 107, SpecialAttack: 113, SpecialDefense: 89, Speed: 97 }
+    catch-rate: 45
+    height: 3.4
+    weight: 230
+    gender: genderless
+  Lunala:
+    stats: { HP: 137, Attack: 113, Defense: 89, SpecialAttack: 137, SpecialDefense: 107, Speed: 97 }
+    catch-rate: 45
+    height: 4
+    weight: 120
+    gender: genderless
+Nihilego:
+  Nihilego:
+    stats: { HP: 109, Attack: 53, Defense: 47, SpecialAttack: 127, SpecialDefense: 131, Speed: 103 }
+    catch-rate: 45
+    height: 1.2
+    weight: 55.5
+    gender: genderless
+Buzzwole:
+  Buzzwole:
+    stats: { HP: 107, Attack: 139, Defense: 139, SpecialAttack: 53, SpecialDefense: 53, Speed: 79 }
+    catch-rate: 45
+    height: 2.4
+    weight: 333.6
+    gender: genderless
+Pheromosa:
+  Pheromosa:
+    stats: { HP: 71, Attack: 137, Defense: 37, SpecialAttack: 137, SpecialDefense: 37, Speed: 151 }
+    catch-rate: 45
+    height: 1.8
+    weight: 25
+    gender: genderless
+Xurkitree:
+  Xurkitree:
+    stats: { HP: 83, Attack: 89, Defense: 71, SpecialAttack: 173, SpecialDefense: 71, Speed: 83 }
+    catch-rate: 45
+    height: 3.8
+    weight: 100
+    gender: genderless

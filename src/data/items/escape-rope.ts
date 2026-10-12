@@ -1,6 +1,6 @@
 import { MOUTH_SEARCH } from '../overworld/cave';
-import { ItemFlags, ItemTypes, Items } from '../ids/items';
-import { registerItem } from './__create';
+import { Items } from '../ids/items';
+import { itemText } from './__create';
 
 /**
  * The Escape Rope: the way out of a cave that is not the walk back
@@ -12,14 +12,9 @@ export function isEscapeRope(item: Items): boolean {
   return item === Items.EscapeRope;
 }
 
-export default function registerEscapeRope(): void {
-  registerItem(Items.EscapeRope, {
-    name: 'Escape Rope',
-    description: `Climbs out of a cave at the nearest mouth, up to ${MOUTH_SEARCH} chunks away. Spent on use.`,
-    type: ItemTypes.KeyItem,
-    icon: 'other/escape-rope',
-    flags: ItemFlags.Usable | ItemFlags.Consumable,
-    buy: 0,
-    sell: 0,
-  });
+export function describeEscapeRope(item: Items): string {
+  if (!isEscapeRope(item)) {
+    throw new Error(`No escape rope description for item ${item}`);
+  }
+  return itemText('escape-rope', 'rope', { chunks: MOUTH_SEARCH });
 }

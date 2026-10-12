@@ -1,0 +1,85 @@
+# From Flash Cannon to Rock Wrecker: the fourth stretch of Sinnoh's
+# list, where the beams and the two moves that bend the field are
+
+FlashCannon:
+  type: Steel
+  category: Special
+  power: 80
+  accuracy: 100
+  pp: 10
+  target: Unit
+  projectile: true
+
+RockClimb:
+  type: Normal
+  category: Physical
+  power: 90
+  accuracy: 85
+  pp: 20
+  target: Unit
+  flags: [Contact]
+
+Defog:
+  type: Flying
+  category: Status
+  pp: 15
+  target: Unit
+  flags: [Wind]
+
+TrickRoom:
+  type: Psychic
+  category: Status
+  priority: -7
+  pp: 5
+  target: None
+
+DracoMeteor:
+  type: Dragon
+  category: Special
+  power: 130
+  accuracy: 90
+  pp: 5
+  target: Unit
+  projectile: true
+
+Discharge:
+  type: Electric
+  category: Special
+  power: 80
+  accuracy: 100
+  pp: 15
+  target: Unit
+
+LavaPlume:
+  type: Fire
+  category: Special
+  power: 80
+  accuracy: 100
+  pp: 15
+  target: Unit
+
+LeafStorm:
+  type: Grass
+  category: Special
+  power: 130
+  accuracy: 90
+  pp: 5
+  target: Unit
+
+PowerWhip:
+  type: Grass
+  category: Physical
+  power: 120
+  accuracy: 85
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+RockWrecker:
+  type: Rock
+  category: Physical
+  power: 150
+  accuracy: 90
+  pp: 5
+  target: Unit
+  projectile: true

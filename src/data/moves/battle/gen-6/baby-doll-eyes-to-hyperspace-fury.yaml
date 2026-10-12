@@ -1,0 +1,123 @@
+# From Baby-Doll Eyes to Hyperspace Fury: the end of Kalos's list, where its legendaries keep their own moves
+
+BabyDollEyes:
+  type: Fairy
+  category: Status
+  accuracy: 100
+  priority: 1
+  pp: 30
+  target: Unit
+
+Nuzzle:
+  type: Electric
+  category: Physical
+  power: 20
+  accuracy: 100
+  pp: 20
+  target: Unit
+  flags: [Contact]
+
+HoldBack:
+  type: Normal
+  category: Physical
+  power: 40
+  accuracy: 100
+  pp: 40
+  target: Unit
+  flags: [Contact]
+
+Infestation:
+  type: Bug
+  category: Special
+  power: 20
+  accuracy: 100
+  pp: 20
+  target: Unit
+
+PowerUpPunch:
+  type: Fighting
+  category: Physical
+  power: 40
+  accuracy: 100
+  pp: 20
+  target: Unit
+  flags: [Contact]
+
+OblivionWing:
+  type: Flying
+  category: Special
+  power: 80
+  accuracy: 100
+  pp: 10
+  target: Unit
+  projectile: true
+
+ThousandArrows:
+  type: Ground
+  category: Physical
+  power: 90
+  accuracy: 100
+  pp: 10
+  target: None
+  affects: [Unit, Enemy]
+
+ThousandWaves:
+  type: Ground
+  category: Physical
+  power: 90
+  accuracy: 100
+  pp: 10
+  target: None
+  affects: [Unit, Enemy]
+
+LandsWrath:
+  type: Ground
+  category: Physical
+  power: 90
+  accuracy: 100
+  pp: 10
+  target: None
+  affects: [Unit, Enemy]
+
+LightOfRuin:
+  type: Fairy
+  category: Special
+  power: 140
+  accuracy: 90
+  pp: 5
+  target: Unit
+  projectile: true
+
+OriginPulse:
+  type: Water
+  category: Special
+  power: 110
+  accuracy: 85
+  pp: 10
+  target: None
+  affects: [Unit, Enemy]
+
+PrecipiceBlades:
+  type: Ground
+  category: Physical
+  power: 120
+  accuracy: 85
+  pp: 10
+  target: None
+  affects: [Unit, Enemy]
+
+DragonAscent:
+  type: Flying
+  category: Physical
+  power: 120
+  accuracy: 100
+  pp: 5
+  target: Unit
+  flags: [Contact]
+
+HyperspaceFury:
+  type: Dark
+  category: Physical
+  power: 100
+  pp: 5
+  target: Unit

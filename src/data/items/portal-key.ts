@@ -1,5 +1,4 @@
-import { ItemFlags, ItemTypes, Items } from '../ids/items';
-import { registerItem } from './__create';
+import { Items } from '../ids/items';
 
 /**
  * The Portal Key: the only thing that crosses the world without
@@ -18,22 +17,7 @@ import { registerItem } from './__create';
  * fight.
  */
 
+// Named, as the other families' checks are
 export function isPortalKey(item: Items): boolean {
   return item === Items.PortalKey;
-}
-
-export default function registerPortalKey(): void {
-  registerItem(Items.PortalKey, {
-    name: 'Portal Key',
-    description:
-      'Pays for one crossing from a portal you are standing on to a town some player has found. Spent on use.',
-    type: ItemTypes.KeyItem,
-    // Its own picture, tinted out of the Intriguing Stone by
-    // `scripts/item-icons.ts`: no rip drew a portal key, and the two
-    // stones it used to borrow are spoken for
-    icon: 'key/portal-key',
-    flags: ItemFlags.Usable | ItemFlags.Consumable,
-    buy: 0,
-    sell: 0,
-  });
 }

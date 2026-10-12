@@ -1,0 +1,158 @@
+# The words a town's name is built from. A name is worked out from where
+# the town stands, never rolled: an optional mark, a head from its own
+# biome, a tail welded onto it, a title, and its county, as in
+# "New Shellford Town, Ashmarch". Every region of a county lands on a
+# name of its own, so the lists are counted on: each biome has exactly 8
+# heads, and adding or reordering any word renames towns players already
+# know. No two biomes share a head.
+
+# The head, by the biome the town stands on. Only the biomes a town can be
+# settled on: the open seas and the Beyond have none
+heads:
+  Beach: [Shell, Dune, Surf, Drift, Pebble, Tide, Cockle, Foam]
+  Mangrove: [Stilt, Tangle, Silt, Brack, Prop, Wade, Heron, Knot]
+  Swamp: [Mire, Reed, Murk, Peat, Sedge, Gloam, Croak, Sump]
+  TropicalRainforest: [Vine, Orchid, Fever, Emerald, Liana, Toucan, Steam, Deep]
+  TropicalSeasonalForest: [Teak, Monsoon, Ebon, Cicada, Bamboo, Sap, Husk, Downpour]
+  Savanna: [Acacia, Amber, Tawny, Ochre, Pride, Veldt, Baobab, Wildfire]
+  Desert: [Scorch, Mirage, Quartz, Basin, Cactus, Sirocco, Dust, Kiln]
+  Shrubland: [Heath, Gorse, Broom, Sage, Bramble, Scrub, Juniper, Myrtle]
+  Grassland: [Meadow, Clover, Barley, Lark, Corn, Hay, Swallow, Sunrise]
+  TemperateForest: [Oak, Beech, Acorn, Hazel, Birch, Fawn, Elder, Maple]
+  TemperateRainforest: [Moss, Lichen, Cedar, Dew, Sorrel, Hush, Laurel, Drizzle]
+  ColdDesert: [Flint, Gypsum, Bitter, Chalk, Grit, Alkali, Scour, Pale]
+  Taiga: [Pine, Spruce, Resin, Needle, Sable, Owl, Larch, Cone]
+  Tundra: [Frost, Thaw, Cotton, Willow, Hare, Bleak, Snow, Permafrost]
+  Mountain: [Crag, Granite, Eagle, Slate, Storm, Iron, Spur, Summit]
+  AlpineTundra: [Rime, Cirque, Marmot, Alpen, Thin, Cloud, Scree, Silver]
+  Glacier: [Hoar, Floe, Glass, Serac, Moraine, White, Still, Calving]
+  Woodland: [Copse, Glade, Rowan, Thicket, Badger, Holly, Dapple, Nut]
+  Steppe: [Horse, Feather, Saiga, Gale, Wide, Kite, Roam, Sweep]
+  MontaneForest: [Fir, Hemlock, Bear, Talus, Fog, Lynx, Timber, Switchback]
+  Volcano: [Ember, Cinder, Basalt, Sulphur, Pumice, Fume, Magma, Ashfall]
+  Badlands: [Gulch, Hoodoo, Rust, Butte, Vulture, Bone, Wash, Redrock]
+  RockyCoast: [Cliff, Kittiwake, Spray, Stack, Beacon, Tern, Barnacle, Lee]
+  Bog: [Quag, Cranberry, Tussock, Fen, Bittern, Sink, Wisp, Blackwater]
+
+# Welded onto the head, which makes the name one word rather than two.
+# Shared across the world: a tail says what shape the place takes
+tails:
+  [
+    fell,
+    mere,
+    ridge,
+    hollow,
+    brook,
+    reach,
+    march,
+    crest,
+    gate,
+    haven,
+    moor,
+    dale,
+    ford,
+    wick,
+    burn,
+    stead,
+    holt,
+    combe,
+    tarn,
+    scar,
+    bourne,
+    glen,
+    cairn,
+    thorpe,
+    barrow,
+    spire,
+    run,
+    shade,
+    wold,
+    rise,
+    strand,
+    gorge,
+    field,
+    watch,
+    hurst,
+    bury,
+    croft,
+    garth,
+    mouth,
+    shaw,
+  ]
+
+# What the place calls itself, rolled rather than taken from its size
+titles:
+  [Town, City, Village, Hamlet, Borough, Outpost, Landing, Crossing, Mills, Rest, Quarter, Waypoint]
+
+# The word in front, where there is one. About 1 town in 16 carries one
+marks: [New, Old, Upper, Lower, North, South, East, West, Great, Little, Port, Fort]
+
+# The counties, 8 to a row, row by row, which are the second half of
+# every name. A name only has to be unique inside one county and one biome
+counties:
+  [
+    Ashmarch,
+    Kelvenmoor,
+    Dunhollow,
+    Brackenshire,
+    Thornwold,
+    Greyfen,
+    Highmarch,
+    Westerling,
+    Stonereach,
+    Elderfen,
+    Mirefold,
+    Cindermarch,
+    Coldharrow,
+    Sablewold,
+    Larkenfen,
+    Orrenmoor,
+    Vesperhold,
+    Marrowfen,
+    Gildenmarch,
+    Hollowshire,
+    Amberfold,
+    Ravenmoor,
+    Silverfen,
+    Winterhold,
+    Duskmarch,
+    Thistlewold,
+    Pelloway,
+    Harrowfen,
+    Brimshire,
+    Calderfold,
+    Nettlemoor,
+    Ironmarch,
+    Wyndhollow,
+    Ferrowshire,
+    Glenmarch,
+    Saltenfen,
+    Oakenwold,
+    Windermarch,
+    Tarnhollow,
+    Bracklemoor,
+    Emberfold,
+    Fallowshire,
+    Grimmarch,
+    Heathenfen,
+    Ivywold,
+    Junipermoor,
+    Kestrelhold,
+    Lowmarch,
+    Mosswold,
+    Northfen,
+    Orchardshire,
+    Peatmarch,
+    Quarryhold,
+    Reedfold,
+    Sedgemoor,
+    Tinderwold,
+    Umberfen,
+    Vaultmarch,
+    Wolfhollow,
+    Yarrowshire,
+    Ashenfold,
+    Bellmarch,
+    Cragmarch,
+    Dalefen,
+  ]

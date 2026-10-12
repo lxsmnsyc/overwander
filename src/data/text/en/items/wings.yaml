@@ -1,0 +1,15 @@
+templates:
+  effort: Adds {effort} {stat} effort. Spent on use.
+  max: Sets {stat} effort to {max}. Spent on use.
+HealthWing: { name: Health Wing }
+MuscleWing: { name: Muscle Wing }
+ResistWing: { name: Resist Wing }
+GeniusWing: { name: Genius Wing }
+CleverWing: { name: Clever Wing }
+SwiftWing: { name: Swift Wing }
+HealthWingMax: { name: Health Wing Max }
+MuscleWingMax: { name: Muscle Wing Max }
+ResistWingMax: { name: Resist Wing Max }
+GeniusWingMax: { name: Genius Wing Max }
+CleverWingMax: { name: Clever Wing Max }
+SwiftWingMax: { name: Swift Wing Max }

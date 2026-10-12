@@ -1,0 +1,112 @@
+# From Inferno to Drill Run: the three Pledges and the moves that
+# sweep a whole side
+
+Inferno:
+  type: Fire
+  category: Special
+  power: 100
+  accuracy: 50
+  pp: 5
+  target: Unit
+
+WaterPledge:
+  type: Water
+  category: Special
+  power: 80
+  accuracy: 100
+  pp: 10
+  target: Unit
+
+FirePledge:
+  type: Fire
+  category: Special
+  power: 80
+  accuracy: 100
+  pp: 10
+  target: Unit
+
+GrassPledge:
+  type: Grass
+  category: Special
+  power: 80
+  accuracy: 100
+  pp: 10
+  target: Unit
+
+VoltSwitch:
+  type: Electric
+  category: Special
+  power: 70
+  accuracy: 100
+  pp: 20
+  target: Unit
+  steps: 1
+
+StruggleBug:
+  type: Bug
+  category: Special
+  power: 50
+  accuracy: 100
+  pp: 20
+  target: None
+  affects: [Unit, Enemy]
+
+Bulldoze:
+  type: Ground
+  category: Physical
+  power: 60
+  accuracy: 100
+  pp: 20
+  target: None
+  affects: [Unit, Own, Enemy]
+
+FrostBreath:
+  type: Ice
+  category: Special
+  power: 60
+  accuracy: 90
+  pp: 10
+  target: Unit
+
+DragonTail:
+  type: Dragon
+  category: Physical
+  power: 60
+  accuracy: 90
+  priority: -6
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+WorkUp:
+  type: Normal
+  category: Status
+  pp: 30
+  target: None
+
+Electroweb:
+  type: Electric
+  category: Special
+  power: 55
+  accuracy: 95
+  pp: 15
+  target: None
+  affects: [Unit, Enemy]
+
+WildCharge:
+  type: Electric
+  category: Physical
+  power: 90
+  accuracy: 100
+  pp: 15
+  target: Unit
+  flags: [Contact]
+
+DrillRun:
+  type: Ground
+  category: Physical
+  power: 80
+  accuracy: 95
+  pp: 10
+  target: Unit
+  flags: [Contact]

@@ -1,0 +1,37 @@
+Milcery:
+  Milcery: { name: Milcery, category: Cream Pokemon }
+  Alcremie: { name: Alcremie, category: Cream Pokemon }
+  AlcremieBerry: { name: Berry Sweet Alcremie, category: Cream Pokemon }
+  AlcremieLove: { name: Love Sweet Alcremie, category: Cream Pokemon }
+  AlcremieStar: { name: Star Sweet Alcremie, category: Cream Pokemon }
+  AlcremieClover: { name: Clover Sweet Alcremie, category: Cream Pokemon }
+  AlcremieFlower: { name: Flower Sweet Alcremie, category: Cream Pokemon }
+  AlcremieRibbon: { name: Ribbon Sweet Alcremie, category: Cream Pokemon }
+Falinks:
+  Falinks: { name: Falinks, category: Formation Pokemon }
+Pincurchin:
+  Pincurchin: { name: Pincurchin, category: Sea Urchin Pokemon }
+Snom:
+  Snom: { name: Snom, category: Worm Pokemon }
+  Frosmoth: { name: Frosmoth, category: Frost Moth Pokemon }
+Stonjourner:
+  Stonjourner: { name: Stonjourner, category: Big Rock Pokemon }
+Eiscue:
+  Eiscue: { name: Eiscue, category: Penguin Pokemon }
+  EiscueNoice: { name: Noice Face Eiscue, category: Penguin Pokemon }
+Indeedee:
+  Indeedee: { name: Indeedee, category: Emotion Pokemon }
+  IndeedeeFemale: { name: Indeedee, category: Emotion Pokemon }
+Morpeko:
+  Morpeko: { name: Morpeko, category: Two-Sided Pokemon }
+  MorpekoHangry: { name: Hangry Morpeko, category: Two-Sided Pokemon }
+Dracozolt:
+  Dracozolt: { name: Dracozolt, category: Fossil Pokemon }
+Arctozolt:
+  Arctozolt: { name: Arctozolt, category: Fossil Pokemon }
+Dracovish:
+  Dracovish: { name: Dracovish, category: Fossil Pokemon }
+Arctovish:
+  Arctovish: { name: Arctovish, category: Fossil Pokemon }
+Duraludon:
+  Duraludon: { name: Duraludon, category: Alloy Pokemon }

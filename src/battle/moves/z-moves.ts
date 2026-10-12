@@ -1,7 +1,6 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Stages, Stats } from '../../data/constants/stats';
 import { Types } from '../../data/constants/types';
-import { Species } from '../../data/ids/species';
 import { MoveCategories, MoveTargets, type Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
@@ -13,11 +12,10 @@ import {
   canBecomeZMove,
   zPowerOf,
 } from '../../data/moves/z-moves';
-import { getMegaStone } from '../../data/items/mega-stones';
 import { SIGNATURE_CRYSTALS, TYPE_CRYSTALS } from '../../data/items/z-crystals';
 import type Battle from '../core';
 import { BattleEvents, EffectType, type MoveTarget, MoveTargetType } from '../events';
-import { megaOf } from '../items/megas';
+import { isMegaHolder } from '../items/megas';
 import type Team from '../team';
 import type Unit from '../unit';
 
@@ -40,15 +38,6 @@ const ALL_STAGES = [
   Stages.Evasion,
   Stages.Accuracy,
 ] as const;
-
-/** Whether the unit is a Mega, or holds what would make it one */
-function isMegaHolder(unit: Unit): boolean {
-  return (
-    megaOf(unit) != null ||
-    getMegaStone(unit.species) != null ||
-    unit.species === Species.RayquazaMega
-  );
-}
 
 /** The Z-Move this unit's crystal makes of the move, if any */
 function zMoveFor(unit: Unit, move: Moves, target: MoveTarget): Moves | null {
@@ -132,7 +121,7 @@ function applyZEffect(unit: Unit, move: Moves, effect: ZStatusEffect): void {
  * off a move that went out to everybody picks the first enemy standing,
  * and one thrown off a move aimed at the user's own side is not thrown
  */
-function zTargetOf(battle: Battle, unit: Unit, target: MoveTarget): MoveTarget | null {
+export function zTargetOf(battle: Battle, unit: Unit, target: MoveTarget): MoveTarget | null {
   if (target.type === MoveTargetType.Unit) {
     return target.unit.team.alliance === unit.team.alliance ? null : target;
   }

@@ -314,10 +314,10 @@ const enum BattleEvents {
   CheckUnitStatusDamage = 149,
 
   /**
-   * Who a single-target move actually lands on. Asked once per move
-   * that was aimed at one thing, with the aim as the answer, so an
-   * ability may put somebody else in the way. A move that goes out to
-   * a whole side is never asked: there is nobody it missed
+   * Who a single-target move actually lands on, with the aim as the
+   * answer, so a centre or an ability may put somebody else in the way.
+   * Asked as a cast is aimed and again as it lands. A move that goes
+   * out to a whole side is never asked: there is nobody it missed
    */
   CheckUnitMoveRedirect = 150,
 

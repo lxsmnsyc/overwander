@@ -1,0 +1,33 @@
+templates:
+  restore: Restores {restore} HP.
+  restoreAll: Restores all HP.
+  reviveFull: Revives a fainted pokemon at full HP.
+  reviveHalf: Revives a fainted pokemon at 1/2 HP.
+  revive: Revives a fainted pokemon at {percent}% of its HP.
+  cureAll: Cures every status.
+  cure: Cures {cures}.
+  poison: poison
+  sleep: sleep
+  paralysis: paralysis
+  burn: a burn
+  freezing: freezing
+  bitter: 'Bitter: costs friendship.'
+  bitterTwice: 'Bitter: costs friendship twice over.'
+  bitterThrice: 'Bitter: costs friendship three times over.'
+Potion: { name: Potion }
+SuperPotion: { name: Super Potion }
+HyperPotion: { name: Hyper Potion }
+MaxPotion: { name: Max Potion }
+FullRestore: { name: Full Restore }
+Antidote: { name: Antidote }
+BurnHeal: { name: Burn Heal }
+IceHeal: { name: Ice Heal }
+Awakening: { name: Awakening }
+ParalyzeHeal: { name: Paralyze Heal }
+FullHeal: { name: Full Heal }
+Revive: { name: Revive }
+MaxRevive: { name: Max Revive }
+EnergyPowder: { name: Energy Powder }
+EnergyRoot: { name: Energy Root }
+HealPowder: { name: Heal Powder }
+RevivalHerb: { name: Revival Herb }

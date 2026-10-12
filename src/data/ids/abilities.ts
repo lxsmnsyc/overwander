@@ -583,6 +583,22 @@ const enum Abilities {
    */
   Totem = 100004,
   /**
+   * The ally a Totem calls: a raid-sized pokemon of its line, though
+   * a smaller one than the Totem itself
+   */
+  TotemAlly = 100005,
+  /**
+   * What makes a raid boss an Alpha: an oversized wild pokemon that
+   * brings its side back to six of its own kind as it is worn down
+   */
+  Alpha = 100006,
+  /**
+   * What makes a raid boss a frenzied Noble: it is calmed rather than
+   * felled, staggers as its Frenzy drains and bursts on the whole party
+   * in between
+   */
+  Noble = 100007,
+  /**
    * Signature (one per family, granted rather than rolled at birth).
    * They sit outside the pools walk, so a line's four ordinary
    * abilities stay four
@@ -1095,6 +1111,71 @@ const enum Abilities {
   UmbralStrike = 200425,
   IonField = 200426,
   MetalEater = 200427,
+  // Galar's routes: the starters, then each family where it is met
+  DrumCue = 200428,
+  KickCue = 200429,
+  ScopeCue = 200430,
+  PantryRaid = 200431,
+  SteelEscort = 200432,
+  EarlyWarning = 200433,
+  Fence = 200434,
+  CottonCradle = 200435,
+  Shorn = 200436,
+  ShellSnap = 200437,
+  Zoomies = 200438,
+  SharedHarvest = 200439,
+  CoilBurrow = 200440,
+  ThroatPouch = 200441,
+  Spearhead = 200442,
+  VenomCharge = 200443,
+  CinderCoils = 200444,
+  ArmLock = 200445,
+  LiveSpines = 200446,
+  LastPour = 200447,
+  SilentWrath = 200448,
+  DespairFeast = 200449,
+  Sugarcoat = 200450,
+  MirrorScales = 200451,
+  ChippedIce = 200452,
+  RankAndFile = 200453,
+  Attendant = 200454,
+  HangrySpark = 200455,
+  Overhang = 200456,
+  DreepyLaunch = 200457,
+  Solstice = 200458,
+  Boltdrake = 200459,
+  Boltfrost = 200460,
+  Gilldrake = 200461,
+  Gillfrost = 200462,
+  // Galar's regional lines, then its legends
+  WarSpoils = 200463,
+  MendingHorn = 200464,
+  SlowVenom = 200465,
+  LeekShield = 200466,
+  CoralHusk = 200467,
+  Blockade = 200468,
+  ColdSink = 200469,
+  CarvedGrudge = 200470,
+  Glarewing = 200471,
+  Strikewing = 200472,
+  Wrathwing = 200473,
+  SwornBlade = 200474,
+  SwornShield = 200475,
+  DarkestDay = 200476,
+  Kata = 200477,
+  VoltSeal = 200478,
+  WyrmSeal = 200479,
+  Frostreign = 200480,
+  Shadereign = 200481,
+  Crownreign = 200482,
+  // Hisui's regional lines, then Enamorus
+  Watchfire = 200483,
+  HuskBurst = 200484,
+  VenomFeast = 200485,
+  NerveVenom = 200486,
+  Afterhaunt = 200487,
+  SoulCloak = 200488,
+  Bloomfall = 200489,
 }
 
 export default Abilities;

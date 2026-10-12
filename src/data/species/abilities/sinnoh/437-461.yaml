@@ -1,0 +1,87 @@
+Chatot:
+  Chatot:
+    abilities: [KeenEye, TangledFeet]
+    # Big Pecks is the mainline's hidden one; the deafness is this
+    # registry's, and it is the other half of what an ear is for
+    hidden: [BigPecks, Soundproof]
+Spiritomb:
+  Spiritomb:
+    abilities: [Pressure]
+    # Infiltrator is the mainline's hidden one; the other two are
+    # this registry's, and both are the stone rather than the ghost:
+    # it reaches back out, and nobody it is holding gets to leave
+    hidden: [Infiltrator, CursedBody, ShadowTag]
+Gible:
+  Gible:
+    abilities: [SandVeil]
+    hidden: [RoughSkin]
+  Gabite:
+    abilities: [SandVeil]
+    hidden: [RoughSkin]
+  Garchomp:
+    abilities: [SandVeil]
+    # Strong Jaw and Sand Rush are this registry's rather than the
+    # mainline's: the line has two abilities and needs four, and Mega
+    # Garchomp's Sand Force is not one it may take early
+    hidden: [RoughSkin, StrongJaw, SandRush]
+Riolu:
+  Riolu:
+    abilities: [Steadfast, InnerFocus]
+    hidden: [Prankster]
+  Lucario:
+    abilities: [Steadfast, InnerFocus]
+    hidden: [Justified]
+Hippopotas:
+  Hippopotas:
+    abilities: [SandStream]
+    hidden: [SandForce]
+  Hippowdon:
+    abilities: [SandStream]
+    # Thick Fat and Solid Rock are this registry's rather than the
+    # mainline's: the line has two abilities and needs four, and a hide
+    # packed with fat and sand is what it is made of
+    hidden: [SandForce, ThickFat, SolidRock]
+Skorupi:
+  Skorupi:
+    abilities: [BattleArmor, Sniper]
+    hidden: [KeenEye]
+  Drapion:
+    abilities: [BattleArmor, Sniper]
+    # Merciless is this registry's rather than the mainline's: the
+    # sting is what the pincers are waiting on, and Sniper already
+    # says what a critical is worth to this line
+    hidden: [KeenEye, Merciless]
+Croagunk:
+  Croagunk:
+    abilities: [Anticipation, DrySkin]
+    hidden: [PoisonTouch]
+  Toxicroak:
+    abilities: [Anticipation, DrySkin]
+    # Technician is this registry's rather than the mainline's: the
+    # line fights in short jabs, and nothing else it has pays for one
+    hidden: [PoisonTouch, Technician]
+Carnivine:
+  Carnivine:
+    abilities: [Levitate]
+    # The other three are this registry's: it is a mouth on a stem,
+    # it eats early, and nothing else opens its lunch in front of one
+    hidden: [StrongJaw, Gluttony, Unnerve]
+Finneon:
+  Finneon:
+    abilities: [SwiftSwim, StormDrain]
+    hidden: [WaterVeil]
+  Lumineon:
+    abilities: [SwiftSwim, StormDrain]
+    # Illuminate is this registry's rather than the mainline's: the
+    # Neon Pokemon is named for the light its own dex entry describes
+    hidden: [WaterVeil, Illuminate]
+Snover:
+  Snover:
+    abilities: [SnowWarning]
+    hidden: [Soundproof]
+  Abomasnow:
+    abilities: [SnowWarning]
+    # Ice Body and Slush Rush are this registry's rather than the
+    # mainline's: the line has two abilities and needs four, and both
+    # are paid for by the hail it brings itself
+    hidden: [Soundproof, IceBody, SlushRush]

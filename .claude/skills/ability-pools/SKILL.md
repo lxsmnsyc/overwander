@@ -34,7 +34,7 @@ A species carries no record of what its Mega form's ability would be. The `laten
 
 Check the ability against PokeAPI rather than writing it from recall.
 
-**A species that is a final evolution in this registry is not necessarily terminal in canon.** Kanto is all that is registered, so Golbat, Onix, Chansey, Scyther, Porygon, Tangela, Electabuzz, Magmar, Rhydon, Magneton, Lickitung, Seadra, Primeape, Farfetch'd and Mr. Mime all look final here and gain an evolution in a later generation. Giving one of them an ability today creates a violation of this rule the day that evolution lands, so leave them alone.
+**A species that is a final evolution in this registry is not necessarily terminal in canon.** Kanto is all that is registered, so Golbat, Onix, Chansey, Scyther, Porygon, Tangela, Electabuzz, Magmar, Rhydon, Magneton, Lickitung, Seadra and Primeape all look final here and gain an evolution in a later generation. Giving one of them an ability today creates a violation of this rule the day that evolution lands, so leave them alone. Farfetch'd and Mr. Mime are not on that list: Sirfetch'd and Mr. Rime evolve from their Galarian forms, which are a different pokemon (see below).
 
 **Regional forms are not a source.** An Alolan Marowak's Cursed Body is out of reach of a Kantonian Marowak, and the same goes for every Alolan, Galarian, Hisuian and Paldean form. They are a different pokemon wearing the same name, not a stage of this one.
 

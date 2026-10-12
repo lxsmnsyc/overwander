@@ -7,6 +7,7 @@ import type Team from '../team';
 import type Unit from '../unit';
 import { clearSpikes, layersUnder } from './spikes';
 import { clearStealthRock, stonesOver } from './stealth-rock';
+import { clearSteelsurge, steelOver } from './steelsurge';
 import { clearStickyWeb, webOver } from './sticky-web';
 import { clearToxicSpikes, toxicLayersUnder } from './toxic-spikes';
 
@@ -22,7 +23,13 @@ import { clearToxicSpikes, toxicLayersUnder } from './toxic-spikes';
 const SHAKEN = [Statuses.Trapped, Statuses.Seeding];
 
 function hazardsUnder(team: Team): boolean {
-  return layersUnder(team) > 0 || toxicLayersUnder(team) > 0 || stonesOver(team) || webOver(team);
+  return (
+    layersUnder(team) > 0 ||
+    toxicLayersUnder(team) > 0 ||
+    stonesOver(team) ||
+    steelOver(team) ||
+    webOver(team)
+  );
 }
 
 function heldDown(unit: Unit): boolean {
@@ -48,6 +55,7 @@ export default function setupRapidSpin(battle: Battle): void {
     clearSpikes(team);
     clearToxicSpikes(team);
     clearStealthRock(team);
+    clearSteelsurge(team);
     clearStickyWeb(team);
 
     const cause = { type: EffectType.Move, move: event.move, unit: event.source } as const;

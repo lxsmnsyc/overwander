@@ -1,6 +1,7 @@
 import { Stages } from '../constants/stats';
 import { Types } from '../constants/types';
 import { MoveCategories, Moves } from '../ids/moves';
+import { Z_POWER_OVERRIDES } from '../battle';
 import { getMoveData } from './__create';
 
 /**
@@ -61,47 +62,6 @@ export const Z_MOVES = new Set<Moves>([...GENERIC_Z_MOVES, ...SIGNATURE_Z_MOVES]
 export function isZMove(move: Moves): boolean {
   return Z_MOVES.has(move);
 }
-
-/**
- * What a type Z-Move hits with, for the moves the table by power gets
- * wrong: the ones with no power of their own, and a few the mainline
- * rounds its own way
- */
-const Z_POWER_OVERRIDES: { [key in Moves]?: number } = {
-  [Moves.MegaDrain]: 120,
-  [Moves.WeatherBall]: 160,
-  [Moves.Hex]: 160,
-  [Moves.GearGrind]: 180,
-  [Moves.VCreate]: 220,
-  [Moves.FlyingPress]: 170,
-  [Moves.CoreEnforcer]: 140,
-  [Moves.StoredPower]: 160,
-  [Moves.PowerTrip]: 160,
-  [Moves.Fissure]: 180,
-  [Moves.HornDrill]: 180,
-  [Moves.Guillotine]: 180,
-  [Moves.SheerCold]: 180,
-  [Moves.FinalGambit]: 180,
-  [Moves.Return]: 160,
-  [Moves.Frustration]: 160,
-  [Moves.Flail]: 160,
-  [Moves.Reversal]: 160,
-  [Moves.LowKick]: 160,
-  [Moves.GrassKnot]: 160,
-  [Moves.HeavySlam]: 160,
-  [Moves.HeatCrash]: 160,
-  [Moves.GyroBall]: 160,
-  [Moves.ElectroBall]: 160,
-  [Moves.Punishment]: 160,
-  [Moves.TrumpCard]: 160,
-  [Moves.NaturalGift]: 160,
-  [Moves.Endeavor]: 160,
-  [Moves.Magnitude]: 140,
-  [Moves.CrushGrip]: 190,
-  [Moves.WringOut]: 190,
-  [Moves.Eruption]: 200,
-  [Moves.WaterSpout]: 200,
-};
 
 /**
  * What a type Z-Move hits with, read off the move it replaces: the

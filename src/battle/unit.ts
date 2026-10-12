@@ -129,6 +129,15 @@ export default class Unit {
    */
   shiny = false;
 
+  /**
+   * Whether it carries the Gigantamax Factor, copied off its record:
+   * Dynamaxed, it throws its species' G-Max Move where it has one
+   */
+  gigantamax = false;
+
+  /** Whether it is Dynamaxed right now. Set and cleared by `dynamax` and `revertDynamax` */
+  dynamaxed = false;
+
   gender = Genders.Genderless;
 
   setGender(gender: Genders): void {
@@ -639,6 +648,18 @@ export default class Unit {
    * end-of-fight summary ranks contributions with
    */
   dealt = 0;
+
+  /**
+   * The critical hits this unit has landed, and the health it has
+   * taken from anything. Like `dealt`, the battle decides nothing by
+   * them: they are what a battle feat is measured with
+   */
+  criticals = 0;
+  taken = 0;
+  /** Hits landed, by move, for a feat that counts one move's uses */
+  landed = new Map<Moves, number>();
+  /** Recoil taken from its own moves */
+  recoil = 0;
 
   addItem(item: Items): void {
     this.battle.emit(BattleEvents.UnitAddItem, {

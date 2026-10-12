@@ -1,0 +1,25 @@
+Regirock:
+  Regirock: { name: Regirock, category: Rock Peak Pokemon }
+Regice:
+  Regice: { name: Regice, category: Iceberg Pokemon }
+Registeel:
+  Registeel: { name: Registeel, category: Iron Pokemon }
+Latias:
+  Latias: { name: Latias, category: Eon Pokemon }
+Latios:
+  Latios: { name: Latios, category: Eon Pokemon }
+Kyogre:
+  Kyogre: { name: Kyogre, category: Sea Basin Pokemon }
+  KyogrePrimal: { name: Primal Kyogre, category: Sea Basin Pokemon }
+Groudon:
+  Groudon: { name: Groudon, category: Continent Pokemon }
+  GroudonPrimal: { name: Primal Groudon, category: Continent Pokemon }
+Rayquaza:
+  Rayquaza: { name: Rayquaza, category: Sky High Pokemon }
+Jirachi:
+  Jirachi: { name: Jirachi, category: Wish Pokemon }
+Deoxys:
+  Deoxys: { name: Deoxys, category: DNA Pokemon }
+  DeoxysAttack: { name: Attack Deoxys, category: DNA Pokemon }
+  DeoxysDefense: { name: Defense Deoxys, category: DNA Pokemon }
+  DeoxysSpeed: { name: Speed Deoxys, category: DNA Pokemon }

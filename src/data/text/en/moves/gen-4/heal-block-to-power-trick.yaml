@@ -1,0 +1,9 @@
+HealBlock:
+  name: Heal Block
+  description: The target cannot be healed for 10 seconds.
+WringOut:
+  name: Wring Out
+  description: The more HP the target has left, the harder it hits, up to 120 power.
+PowerTrick:
+  name: Power Trick
+  description: Swaps the user's Attack and Defense.

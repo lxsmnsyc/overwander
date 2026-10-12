@@ -1,0 +1,21 @@
+Zekrom:
+  Zekrom: { name: Zekrom, category: Deep Black Pokemon }
+Landorus:
+  Landorus: { name: Landorus, category: Abundance Pokemon }
+  LandorusTherian: { name: Landorus Therian, category: Abundance Pokemon }
+Kyurem:
+  Kyurem: { name: Kyurem, category: Boundary Pokemon }
+  KyuremBlack: { name: Black Kyurem, category: Boundary Pokemon }
+  KyuremWhite: { name: White Kyurem, category: Boundary Pokemon }
+Keldeo:
+  Keldeo: { name: Keldeo, category: Colt Pokemon }
+  KeldeoResolute: { name: Keldeo Resolute, category: Colt Pokemon }
+Meloetta:
+  Meloetta: { name: Meloetta, category: Melody Pokemon }
+  MeloettaPirouette: { name: Meloetta Pirouette, category: Melody Pokemon }
+Genesect:
+  Genesect: { name: Genesect, category: Paleozoic Pokemon }
+  GenesectDouse: { name: Genesect Douse, category: Paleozoic Pokemon }
+  GenesectShock: { name: Genesect Shock, category: Paleozoic Pokemon }
+  GenesectBurn: { name: Genesect Burn, category: Paleozoic Pokemon }
+  GenesectChill: { name: Genesect Chill, category: Paleozoic Pokemon }

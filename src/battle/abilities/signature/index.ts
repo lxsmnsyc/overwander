@@ -77,6 +77,15 @@ import tapus from './tapus';
 import lightTrio from './light-trio';
 import ultraBeasts from './ultra-beasts';
 import alolaMythicals from './alola-mythicals';
+import grookeyToSobble from './grookey-to-sobble';
+import skwovetToYamper from './skwovet-to-yamper';
+import applinToPincurchin from './applin-to-pincurchin';
+import sinisteaToMilcery from './sinistea-to-milcery';
+import snomToStonjourner from './snom-to-stonjourner';
+import galarFossils from './galar-fossils';
+import galarianForms from './galarian-forms';
+import galarLegends from './galar-legends';
+import hisuianForms from './hisuian-forms';
 
 /**
  * The invented abilities, one per evolution family, in the order the
@@ -161,6 +170,15 @@ const setupAbilities = [
   ...emolga,
   ...tirtougaToBouffalant,
   ...forcesOfNature,
+  ...grookeyToSobble,
+  ...skwovetToYamper,
+  ...applinToPincurchin,
+  ...sinisteaToMilcery,
+  ...snomToStonjourner,
+  ...galarFossils,
+  ...galarianForms,
+  ...galarLegends,
+  ...hisuianForms,
 ];
 
 /**

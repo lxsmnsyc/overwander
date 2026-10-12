@@ -19,9 +19,23 @@ import turns from '../turn';
  */
 const DURATION = turns(5);
 
+/** What a Grav Apple is worth while the field runs heavy */
+const GRAV_APPLE_BOOST = 1.5;
+
+const PULLS = new WeakMap<Battle, () => void>();
+
+/** Call up Gravity from something other than the move (G-Max Gravitas) */
+export function pullDown(battle: Battle): void {
+  PULLS.get(battle)?.();
+}
+
 export default function setupGravity(battle: Battle): void {
   /** How long the field still has to run heavy */
   let remaining = 0;
+
+  PULLS.set(battle, () => {
+    remaining = DURATION;
+  });
 
   battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     if (event.move === Moves.Gravity) {
@@ -46,6 +60,13 @@ export default function setupGravity(battle: Battle): void {
       if (target.types.has(Types.Flying) || target.hasAbility(Abilities.Levitate)) {
         event.immune = false;
       }
+    }
+  });
+
+  // Grav Apple falls harder for the field pulling it down
+  battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
+    if (event.power != null && event.move === Moves.GravApple && remaining > 0) {
+      event.power *= GRAV_APPLE_BOOST;
     }
   });
 

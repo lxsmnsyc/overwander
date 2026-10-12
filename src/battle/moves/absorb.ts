@@ -1,4 +1,5 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
+import { DRAIN_SHARES } from '../../data/battle';
 import { Stats } from '../../data/constants/stats';
 import { DamageFlags, Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
@@ -11,32 +12,16 @@ import { hasAnyStatus } from '../utils';
 import type Unit from '../unit';
 
 /**
- * The moves that take health back from what they hit. Exported so an
- * ability that turns a drain against its user (Liquid Ooze) can say
- * which moves it is talking about without keeping its own list
+ * The moves that take health back from what they hit, read off the
+ * drain shares (`src/data/battle/drain.yaml`). Exported so an ability
+ * that turns a drain against its user (Liquid Ooze) can say which moves
+ * it is talking about without keeping its own list
  */
-export const ABSORB_MOVES = new Set<Moves>([
-  Moves.Absorb,
-  Moves.MegaDrain,
-  Moves.LeechLife,
-  Moves.DreamEater,
-  Moves.GigaDrain,
-  Moves.DrainPunch,
-  Moves.HornLeech,
-  Moves.ParabolicCharge,
-  Moves.DrainingKiss,
-  Moves.OblivionWing,
-  Moves.BouncyBubble,
-]);
+export const ABSORB_MOVES = new Set<Moves>();
 
-const HEALING_FACTOR = 0.5;
-
-/** The drains that take back more than half of what they deal */
-const DRAIN_SHARES: { [key in Moves]?: number } = {
-  [Moves.DrainingKiss]: 0.75,
-  [Moves.OblivionWing]: 0.75,
-  [Moves.BouncyBubble]: 1,
-};
+for (const key of Object.keys(DRAIN_SHARES)) {
+  ABSORB_MOVES.add(Number(key));
+}
 
 /**
  * The share of its health below which a unit values the drain as well
@@ -102,7 +87,7 @@ export default function setupAbsorb(battle: Battle): void {
     ) {
       const amount = event.source.checkDrain(
         event.target,
-        event.value * (DRAIN_SHARES[event.cause.move] ?? HEALING_FACTOR),
+        event.value * (DRAIN_SHARES[event.cause.move] ?? 0),
       );
 
       if (amount >= 0) {

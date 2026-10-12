@@ -1,0 +1,66 @@
+HelpingHand:
+  name: Helping Hand
+  description: A teammate's next move within 4 seconds hits for 1.5x.
+Trick:
+  name: Trick
+  description: Swaps held items with the target.
+RolePlay:
+  name: Role Play
+  description: Copies the target's abilities over the user's own. The target keeps them.
+Wish:
+  name: Wish
+  description: Heals the user or a party member 1/2 its HP 4 seconds later.
+Assist:
+  name: Assist
+  description: Casts a move drawn at random from the rest of the party.
+Ingrain:
+  name: Ingrain
+  description: 'Roots the user: it recovers 1/16 of its HP every time it acts and cannot be swapped out.'
+Superpower:
+  name: Superpower
+  description: Drops the user's Attack and Defense a stage each after it lands.
+MagicCoat:
+  name: Magic Coat
+  description: For 4 seconds the first status move aimed at the user from outside its party is turned back on its caster.
+Recycle:
+  name: Recycle
+  description: Takes back the last held item the user used up.
+Revenge:
+  name: Revenge
+  description: A long wind-up, and 2x power if the user is hit while winding up.
+BrickBreak:
+  name: Brick Break
+  description: Breaks Reflect and Light Screen on the target's side, then hits.
+Yawn:
+  name: Yawn
+  description: The target falls asleep 4 seconds later.
+KnockOff:
+  name: Knock Off
+  description: Knocks the target's held item off it.
+Endeavor:
+  name: Endeavor
+  description: Cuts the target's HP down to the user's own.
+Eruption:
+  name: Eruption
+  description: The more HP the user has left, the harder it hits, up to 150 power.
+SkillSwap:
+  name: Skill Swap
+  description: Swaps abilities with the target.
+Imprison:
+  name: Imprison
+  description: For 10 seconds the target cannot cast any move the user also knows.
+Refresh:
+  name: Refresh
+  description: Clears the user's burn, poison or paralysis.
+Grudge:
+  name: Grudge
+  description: For 10 seconds, whatever knocks the user out has the move that did it put on a 2 minute cooldown.
+Snatch:
+  name: Snatch
+  description: For 4 seconds the next move somebody casts on themselves is taken instead.
+SecretPower:
+  name: Secret Power
+  description: 30% for a status, and the ground underfoot decides which.
+Dive:
+  name: Dive
+  description: Goes under the water, where only Surf and Whirlpool (at 2x) reach it, and surfaces into the hit.

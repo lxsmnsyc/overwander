@@ -1,0 +1,136 @@
+# From Searing Shot to Fusion Bolt: the end of Unova's list, where its
+# legendaries and mythicals keep their own moves
+
+SearingShot:
+  type: Fire
+  category: Special
+  power: 100
+  accuracy: 100
+  pp: 5
+  target: None
+  affects: [Unit, Own, Enemy]
+
+TechnoBlast:
+  type: Normal
+  category: Special
+  power: 120
+  accuracy: 100
+  pp: 5
+  target: Unit
+  projectile: true
+
+# TODO Meloetta's change of form, once Meloetta is registered
+RelicSong:
+  type: Normal
+  category: Special
+  power: 75
+  accuracy: 100
+  pp: 10
+  target: None
+  affects: [Unit, Enemy]
+  flags: [Sound]
+
+SecretSword:
+  type: Fighting
+  category: Special
+  power: 85
+  accuracy: 100
+  pp: 10
+  target: Unit
+  flags: [Slicing]
+
+Glaciate:
+  type: Ice
+  category: Special
+  power: 65
+  accuracy: 95
+  pp: 10
+  target: None
+  affects: [Unit, Enemy]
+
+BoltStrike:
+  type: Electric
+  category: Physical
+  power: 130
+  accuracy: 85
+  pp: 5
+  target: Unit
+  flags: [Contact]
+
+BlueFlare:
+  type: Fire
+  category: Special
+  power: 130
+  accuracy: 85
+  pp: 5
+  target: Unit
+
+FieryDance:
+  type: Fire
+  category: Special
+  power: 80
+  accuracy: 100
+  pp: 10
+  target: Unit
+
+FreezeShock:
+  type: Ice
+  category: Physical
+  power: 140
+  accuracy: 90
+  pp: 5
+  target: Unit
+  steps: 1
+
+IceBurn:
+  type: Ice
+  category: Special
+  power: 140
+  accuracy: 90
+  pp: 5
+  target: Unit
+  steps: 1
+
+Snarl:
+  type: Dark
+  category: Special
+  power: 55
+  accuracy: 95
+  pp: 15
+  target: None
+  affects: [Unit, Enemy]
+  flags: [Sound]
+
+IcicleCrash:
+  type: Ice
+  category: Physical
+  power: 85
+  accuracy: 90
+  pp: 10
+  target: Unit
+
+VCreate:
+  type: Fire
+  category: Physical
+  power: 180
+  accuracy: 95
+  pp: 5
+  target: Unit
+  flags: [Contact]
+
+FusionFlare:
+  type: Fire
+  category: Special
+  power: 100
+  accuracy: 100
+  pp: 5
+  target: Unit
+  projectile: true
+
+FusionBolt:
+  type: Electric
+  category: Physical
+  power: 100
+  accuracy: 100
+  pp: 5
+  target: Unit

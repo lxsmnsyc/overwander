@@ -1,0 +1,69 @@
+Encore:
+  name: Encore
+  description: Locks the target's current or next cast into 3 uses in a row, for one cooldown. Moves that wind up are not locked.
+Pursuit:
+  name: Pursuit
+  description: Hits 2x as hard against a target that is being swapped out.
+RapidSpin:
+  name: Rapid Spin
+  description: Always raises the user's Speed a stage, clears every hazard under its side, and frees the user from a bind or Leech Seed.
+SweetScent:
+  name: Sweet Scent
+  description: Drops the evasion of everything opposite 2 stages.
+IronTail:
+  name: Iron Tail
+  description: 30% to drop the target's Defense a stage.
+MetalClaw:
+  name: Metal Claw
+  description: 10% to raise the user's Attack a stage.
+VitalThrow:
+  name: Vital Throw
+  description: Winds up longer than an ordinary move, and never misses.
+MorningSun:
+  name: Morning Sun
+  description: Heals the user 1/2 its HP, 2/3 in sun and 1/4 in any other weather.
+Synthesis:
+  name: Synthesis
+  description: Heals the user 1/2 its HP, 2/3 in sun and 1/4 in any other weather.
+Moonlight:
+  name: Moonlight
+  description: Heals the user 1/2 its HP, 2/3 in sun and 1/4 in any other weather.
+HiddenPower:
+  name: Hidden Power
+  description: A type of its own, decided by the user's genes.
+CrossChop:
+  name: Cross Chop
+  description: Crits more readily.
+Twister:
+  name: Twister
+  description: Hits everything opposite, 20% to flinch, and reaches a target in the air at 2x.
+Crunch:
+  name: Crunch
+  description: 20% to drop the target's Defense a stage.
+MirrorCoat:
+  name: Mirror Coat
+  description: Returns 2x the last special hit taken, at whoever landed it rather than the chosen target.
+PsychUp:
+  name: Psych Up
+  description: Copies the target's stat stages over the user's own.
+ExtremeSpeed:
+  name: Extreme Speed
+  description: Winds up far faster than an ordinary move.
+AncientPower:
+  name: Ancient Power
+  description: 10% to raise every one of the user's stats a stage.
+ShadowBall:
+  name: Shadow Ball
+  description: 20% to drop the target's Special Defense a stage.
+FutureSight:
+  name: Future Sight
+  description: Lands 4 seconds after it is cast, wherever the target is by then.
+RockSmash:
+  name: Rock Smash
+  description: 50% to drop the target's Defense a stage.
+Whirlpool:
+  name: Whirlpool
+  description: 'Binds the target: 1/8 of its HP every 2 seconds for 8 seconds, and no escape, ghosts aside. 2x on anything underwater from Dive.'
+BeatUp:
+  name: Beat Up
+  description: Strikes once for every pokemon in the party that is standing and unafflicted.

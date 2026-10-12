@@ -4,6 +4,7 @@ import tailwindcss from '@tailwindcss/vite';
 import { nitro } from 'nitro/vite';
 import solidMarked from 'vite-plugin-solid-marked';
 import { defineConfig, loadEnv } from 'vite';
+import yamlData from './plugins/yaml.ts';
 
 /**
  * Nitro is the server runtime: it is what turns the app into something
@@ -74,6 +75,7 @@ export default defineConfig(({ mode }) => ({
   // Tailwind reads its configuration out of src/app.css rather than a
   // config file of its own, so the plugin is all the wiring there is
   plugins: [
+    yamlData(),
     tailwindcss(),
     // The release pages under docs/ are imported as components, and
     // this is what turns them into JSX. It runs before SolidStart's

@@ -28,9 +28,19 @@ function tray(
   gold: number,
   bag: InventoryEntry[],
   crate: InventoryEntry[],
+  searched: { buy: string; sell: string },
 ): PickItemInput {
   return {
     player: visit.player,
+    // Each side keeps its search through a trade, which draws the counter again
+    query: buying ? searched.buy : searched.sell,
+    onQuery: (typed) => {
+      if (buying) {
+        searched.buy = typed;
+      } else {
+        searched.sell = typed;
+      }
+    },
     verb: buying ? 'Buy' : 'Sell',
     entries: buying ? crate : bag,
     have: goldHeld(gold),
@@ -73,6 +83,7 @@ const shop: NpcScript = async (visit) => {
   const stock = visit.snapshot.getVendorStock(visit.cell);
   let line: string | undefined;
   let selling = false;
+  const searched = { buy: '', sell: '' };
 
   for (;;) {
     const [gold, bag] = await Promise.all([visit.gold(), visit.bag()]);
@@ -86,8 +97,8 @@ const shop: NpcScript = async (visit) => {
     const pick: ShopPick | null = await visit.form(
       ShopForm,
       {
-        buy: tray(visit, true, gold, bag, crate),
-        sell: tray(visit, false, gold, bag, crate),
+        buy: tray(visit, true, gold, bag, crate, searched),
+        sell: tray(visit, false, gold, bag, crate, searched),
         selling,
       },
       { line },

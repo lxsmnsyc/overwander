@@ -1,0 +1,340 @@
+land:
+  morning: &land-morning
+    base:
+      FlabebeBlue: 989
+      Scatterbug: 989
+      Poliwag: 824
+      Bellsprout: 824
+      Lotad: 824
+      Goomy: 494
+      Mudkip: 83
+      Sobble: 47
+    uncommon:
+      Wooper: 318
+      Bidoof: 318
+      Buizel: 318
+      Surskit: 318
+      Chewtle: 297
+      Gulpin: 279
+      Ducklett: 254
+      Marill: 254
+      Croagunk: 254
+      Yanma: 63
+    rare:
+      Lombre: 283
+      FloetteBlue: 226
+      Spewpa: 226
+      Sliggoo: 142
+      Poliwhirl: 142
+      Weepinbell: 142
+      SliggooHisui: 60
+      Marshtomp: 29
+      Drizzile: 14
+    scarce:
+      Masquerain: 94
+      Bibarel: 94
+      Floatzel: 75
+      Swalot: 65
+      Swanna: 57
+      Toxicroak: 57
+      Yanmega: 57
+      Azumarill: 48
+      Quagsire: 48
+      Drednaw: 35
+    elusive:
+      Stunfisk: 50
+      FlorgesBlue: 41
+      Vivillon: 41
+      Poliwrath: 41
+      Victreebel: 41
+      Ludicolo: 41
+      Goodra: 25
+      GoodraHisui: 20
+      Swampert: 16
+      Inteleon: 4
+    prized:
+      Unown: forms
+      Azurill: prized
+    special:
+      Azelf: 10
+      Giratina: 10
+      Enamorus: 10
+    mythical:
+      Keldeo: 10
+  day: *land-morning
+  evening:
+    base:
+      Tympole: 1264
+      Litwick: 1112
+      Poliwag: 1011
+      Tynamo: 910
+      Goomy: 606
+      Froakie: 101
+      Sobble: 47
+    uncommon:
+      Chewtle: 297
+      Wooper: 289
+      Bidoof: 289
+      Buizel: 289
+      Trubbish: 256
+      Gulpin: 256
+      Venonat: 232
+      Marill: 232
+      Drifloon: 232
+      Croagunk: 232
+      Yanma: 57
+    rare:
+      Palpitoad: 320
+      Lampent: 256
+      Eelektrik: 223
+      Sliggoo: 160
+      Poliwhirl: 160
+      Frogadier: 64
+      SliggooHisui: 60
+      Drizzile: 14
+    scarce:
+      Venomoth: 84
+      Bibarel: 84
+      Floatzel: 67
+      Garbodor: 59
+      Swalot: 59
+      Drifblim: 52
+      Toxicroak: 52
+      Yanmega: 52
+      Azumarill: 43
+      Quagsire: 43
+      Drednaw: 35
+      Toxtricity: 25
+      ToxtricityLowKey: 25
+    elusive:
+      Volbeat: 47
+      Illumise: 47
+      Stunfisk: 35
+      Mimikyu: 30
+      Chandelure: 30
+      Seismitoad: 30
+      Spiritomb: 30
+      Eelektross: 24
+      GoodraHisui: 20
+      Goodra: 17
+      Greninja: 11
+      Inteleon: 4
+    prized:
+      Unown: forms
+      Azurill: prized
+    special:
+      Azelf: 10
+      Giratina: 10
+      Enamorus: 10
+    mythical:
+      Keldeo: 10
+  night:
+    base:
+      Tympole: 900
+      Litwick: 792
+      Poliwag: 720
+      Oddish: 720
+      Gastly: 720
+      Tynamo: 648
+      Goomy: 432
+      Froakie: 72
+      Sobble: 47
+    uncommon:
+      Chewtle: 297
+      Wooper: 289
+      Bidoof: 289
+      Buizel: 289
+      Trubbish: 256
+      Gulpin: 256
+      Grimer: 232
+      Marill: 232
+      Drifloon: 232
+      Croagunk: 232
+      Yanma: 57
+    rare:
+      Palpitoad: 252
+      Lampent: 201
+      Eelektrik: 176
+      Sliggoo: 126
+      Poliwhirl: 126
+      Gloom: 126
+      Haunter: 126
+      SliggooHisui: 60
+      Frogadier: 51
+      Drizzile: 14
+    scarce:
+      Muk: 84
+      Bibarel: 84
+      Floatzel: 67
+      Garbodor: 59
+      Swalot: 59
+      Drifblim: 52
+      Toxicroak: 52
+      Yanmega: 52
+      Azumarill: 43
+      Quagsire: 43
+      Drednaw: 35
+      Toxtricity: 25
+      ToxtricityLowKey: 25
+    elusive:
+      Volbeat: 36
+      Illumise: 36
+      Stunfisk: 27
+      Mimikyu: 23
+      Chandelure: 23
+      Seismitoad: 23
+      Spiritomb: 23
+      Poliwrath: 23
+      Vileplume: 23
+      Gengar: 23
+      GoodraHisui: 20
+      Eelektross: 18
+      Goodra: 13
+      Greninja: 9
+      Inteleon: 4
+    prized:
+      Unown: forms
+      Azurill: prized
+    special:
+      Azelf: 10
+      Giratina: 10
+      Enamorus: 10
+    mythical:
+      Keldeo: 10
+
+water:
+  morning: &water-morning
+    base:
+      Poliwag: 2422
+      Lotad: 2422
+      Mudkip: 242
+      Sobble: 47
+    uncommon:
+      Magikarp: 344
+      Chewtle: 300
+      Barboach: 286
+      Wooper: 286
+      Surskit: 286
+      Buizel: 286
+      Bidoof: 286
+      Marill: 229
+      Ducklett: 229
+      Feebas: 114
+      Yanma: 58
+    rare:
+      Lombre: 751
+      Poliwhirl: 376
+      Marshtomp: 75
+      Drizzile: 14
+    scarce:
+      Masquerain: 104
+      Bibarel: 104
+      Whiscash: 83
+      Floatzel: 83
+      Yanmega: 62
+      Swanna: 62
+      Azumarill: 52
+      Quagsire: 52
+      Drednaw: 35
+    elusive:
+      BasculinBlue: 52
+      Basculin: 52
+      Stunfisk: 52
+      Poliwrath: 43
+      Ludicolo: 43
+      Vivillon: 43
+      Swampert: 17
+    special:
+      Azelf: 10
+  day: *water-morning
+  evening:
+    base:
+      Tympole: 1957
+      Poliwag: 1566
+      Tynamo: 1409
+      Froakie: 157
+      Sobble: 47
+    uncommon:
+      Magikarp: 390
+      Barboach: 326
+      Wooper: 326
+      Buizel: 326
+      Bidoof: 326
+      Chewtle: 300
+      Marill: 260
+      Drifloon: 260
+      Feebas: 130
+      Yanma: 65
+    rare:
+      Palpitoad: 501
+      Eelektrik: 352
+      Poliwhirl: 251
+      Frogadier: 100
+      Drizzile: 14
+    scarce:
+      Bibarel: 125
+      Whiscash: 100
+      Floatzel: 100
+      Yanmega: 75
+      Drifblim: 75
+      Azumarill: 62
+      Quagsire: 62
+      Drednaw: 35
+    elusive:
+      BasculinBlue: 62
+      Basculin: 62
+      Stunfisk: 62
+      Seismitoad: 52
+      Eelektross: 41
+      Greninja: 21
+    special:
+      Azelf: 10
+  night:
+    base:
+      Tympole: 1497
+      Poliwag: 1198
+      Gastly: 1198
+      Tynamo: 1079
+      Froakie: 119
+      Sobble: 47
+    uncommon:
+      Magikarp: 390
+      Barboach: 326
+      Wooper: 326
+      Buizel: 326
+      Bidoof: 326
+      Chewtle: 300
+      Marill: 260
+      Drifloon: 260
+      Feebas: 130
+      Yanma: 65
+    rare:
+      Palpitoad: 415
+      Eelektrik: 291
+      Poliwhirl: 208
+      Haunter: 208
+      Frogadier: 83
+      Drizzile: 14
+    scarce:
+      Bibarel: 125
+      Whiscash: 100
+      Floatzel: 100
+      Yanmega: 75
+      Drifblim: 75
+      Azumarill: 62
+      Quagsire: 62
+      Drednaw: 35
+    elusive:
+      BasculinBlue: 46
+      Basculin: 46
+      Stunfisk: 46
+      Poliwrath: 38
+      Seismitoad: 38
+      Gengar: 38
+      Eelektross: 31
+      Greninja: 15
+    special:
+      Azelf: 10
+
+# The legendaries met wild in the caves under it
+cave-legends: { Giratina: 10 }

@@ -4,9 +4,10 @@ import { Types } from '../../data/constants/types';
 import { DamageFlags, Moves } from '../../data/ids/moves';
 import { TeamStatuses } from '../../data/ids/status';
 import type Battle from '../core';
-import { BattleEvents, EffectType, MoveTargetType } from '../events';
+import { BattleEvents, type EffectCause, EffectType, MoveTargetType } from '../events';
 import type Team from '../team';
 import type Unit from '../unit';
+import { registerSideCondition } from '../mechanics/side-conditions';
 import walksOverHazards from './hazards';
 
 /**
@@ -50,11 +51,35 @@ export function clearSpikes(team: Team): boolean {
  * them. The airborne check is the engine's own, so a Flying type
  * pulled down by Gravity walks into them like anything else
  */
+/**
+ * Lay a side's spikes at this many layers, none clearing them: a
+ * Ceaseless Edge adding one, or a Court Change carrying them across
+ */
+export function setSpikes(team: Team, layers: number, cause: EffectCause): void {
+  const kept = Math.max(0, Math.min(LAYER_DAMAGE.length, layers));
+
+  if (kept === 0) {
+    clearSpikes(team);
+    return;
+  }
+  LAYERS.set(team, kept);
+  if (team.status[TeamStatuses.Spikes] == null) {
+    team.addStatus(TeamStatuses.Spikes, cause);
+  }
+}
+
 function walksOn(unit: Unit): boolean {
   return unit.checkGrounded() && !unit.types.has(Types.Flying);
 }
 
 export default function setupSpikes(battle: Battle): void {
+  registerSideCondition(battle, {
+    read: (team) => layersUnder(team) || undefined,
+    write: (team, value, cause) => {
+      setSpikes(team, value ?? 0, cause);
+    },
+  });
+
   battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
     if (event.usable && event.move === Moves.Spikes && event.target.type === MoveTargetType.Team) {
       event.usable = layersUnder(event.target.team) < LAYER_DAMAGE.length;

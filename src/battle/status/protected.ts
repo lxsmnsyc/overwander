@@ -1,6 +1,7 @@
 import { EventPriority } from '../../core/event-emitter';
 import { MoveCategories, Moves } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
+import { isMaxMove } from '../../data/moves/max-moves';
 import { guardOf } from '../moves/protect';
 import { Statuses } from '../../data/ids/status';
 import type Battle from '../core';
@@ -63,17 +64,25 @@ export default function setupProtectedStatus(battle: Battle): void {
       return;
     }
 
-    // A King's Shield is raised against blows, so a status move walks
-    // straight past it without breaking it
+    // A King's Shield or an Obstruct is raised against blows, so a
+    // status move walks straight past it without breaking it
+    const raised = guardOf(target);
+
     if (
-      guardOf(target) === Moves.KingsShield &&
+      (raised === Moves.KingsShield || raised === Moves.Obstruct) &&
       getMoveData(event.move).category === MoveCategories.Status
     ) {
       return;
     }
 
+    // Max Guard stops everything. A Max Move walks through any other guard
+    const walks =
+      raised !== Moves.MaxGuard &&
+      ((isMaxMove(event.move) && event.move !== Moves.MaxGuard) ||
+        event.source.checkMoveGuard(event.move, event.target));
+
     // The guard does not survive being walked through
-    if (event.source.checkMoveGuard(event.move, event.target)) {
+    if (walks) {
       if (!battle.estimating) {
         target.removeStatus(Statuses.Protected, guard);
       }

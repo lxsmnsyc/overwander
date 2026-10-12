@@ -1,0 +1,9 @@
+FlameOrb:
+  name: Flame Orb
+  description: Burns its holder after 5 seconds of holding it, and again once the burn is cured.
+ToxicOrb:
+  name: Toxic Orb
+  description: Badly poisons its holder after 5 seconds of holding it, and again once the poison is cured.
+LifeOrb:
+  name: Life Orb
+  description: 1.3x damage, and its holder pays 1/10 of its own HP for every blow.

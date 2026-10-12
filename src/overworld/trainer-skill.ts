@@ -3,7 +3,13 @@ import { BASIC_SKILL, GYM_SKILL, TOP_SKILL, type TrainerSkill } from '../battle/
 import Abilities from '../data/ids/abilities';
 
 /** The marks a fight adds to a pokemon, which say nothing about who raised it */
-const MARKS = new Set<Abilities>([Abilities.Shadow, Abilities.Boss]);
+const MARKS = new Set<Abilities>([
+  Abilities.Shadow,
+  Abilities.Boss,
+  Abilities.TotemAlly,
+  Abilities.Alpha,
+  Abilities.Noble,
+]);
 
 /**
  * How sharply a team is directed, read off the team itself so a replay

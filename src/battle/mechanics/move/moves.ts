@@ -1,3 +1,4 @@
+import { FRENZY_MOVES } from '../../../data/moves/frenzy-moves';
 import { EventPriority } from '../../../core/event-emitter';
 import { Slots } from '../../../data/constants/slots';
 import { TYPE_EFFECTIVENESS, TypeEffectiveness, Types } from '../../../data/constants/types';
@@ -67,7 +68,7 @@ function countMoves(unit: Unit): number {
     const move = Number(key) as Moves;
 
     // oxlint-disable-next-line typescript/no-unnecessary-condition
-    if (unit.moves[move] != null && move !== Moves.Attack) {
+    if (unit.moves[move] != null && move !== Moves.Attack && !FRENZY_MOVES.has(move)) {
       count += 1;
     }
   }
@@ -76,11 +77,14 @@ function countMoves(unit: Unit): number {
 }
 
 export default function setupMoveMechanics(battle: Battle): void {
-  // A unit knows what it has room for, held to what the fight allows
+  // A unit knows what it has room for, held to what the fight allows.
+  // A Noble's burst is its frenzy rather than a move it learned, so it
+  // takes no room
   battle.on(BattleEvents.UnitAddMove, EventPriority.Pre, (event) => {
     if (
       event.source.moves[event.move] == null &&
       event.move !== Moves.Attack &&
+      !FRENZY_MOVES.has(event.move) &&
       countMoves(event.source) >= event.source.checkSlots(Slots.Move)
     ) {
       event.disabled = true;

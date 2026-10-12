@@ -1,0 +1,182 @@
+# The middle of the dex, Clefairy to Tentacruel: the sleepers, the
+# spore carriers and the first psychics
+
+Pound:
+  type: Normal
+  category: Physical
+  power: 40
+  accuracy: 100
+  pp: 35
+  target: Unit
+  flags: [Contact]
+
+Sing:
+  type: Normal
+  category: Status
+  accuracy: 55
+  pp: 15
+  target: Unit
+  flags: [Sound]
+
+DoubleSlap:
+  type: Normal
+  category: Physical
+  power: 15
+  accuracy: 85
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+Minimize:
+  type: Normal
+  category: Status
+  pp: 10
+  target: None
+
+Metronome:
+  type: Normal
+  category: Status
+  pp: 10
+  target: Unit
+
+DefenseCurl:
+  type: Normal
+  category: Status
+  pp: 40
+  target: None
+
+LightScreen:
+  type: Psychic
+  category: Status
+  pp: 30
+  target: Team
+  affects: [Team, Own]
+
+Roar:
+  type: Normal
+  category: Status
+  priority: -6
+  pp: 20
+  target: Unit
+  flags: [Sound]
+  steps: 1
+
+ConfuseRay:
+  type: Ghost
+  category: Status
+  accuracy: 100
+  pp: 10
+  target: Unit
+
+Disable:
+  type: Normal
+  category: Status
+  accuracy: 100
+  pp: 20
+  target: Unit
+
+LeechLife:
+  type: Bug
+  category: Physical
+  power: 80
+  accuracy: 100
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+Haze:
+  type: Ice
+  category: Status
+  pp: 30
+  target: None
+
+Absorb:
+  type: Grass
+  category: Special
+  power: 20
+  accuracy: 100
+  pp: 25
+  target: Unit
+
+# Rampage: every step lands the same attack
+PetalDance:
+  type: Grass
+  category: Special
+  power: 120
+  accuracy: 100
+  pp: 10
+  target: Unit
+  flags: [Contact]
+  steps: 2
+
+Spore:
+  type: Grass
+  category: Status
+  accuracy: 100
+  pp: 15
+  target: Unit
+  flags: [Powder]
+
+KarateChop:
+  type: Fighting
+  category: Physical
+  power: 50
+  accuracy: 100
+  pp: 25
+  target: Unit
+  flags: [Contact]
+
+Hypnosis:
+  type: Psychic
+  category: Status
+  accuracy: 60
+  pp: 20
+  target: Unit
+
+Amnesia:
+  type: Psychic
+  category: Status
+  pp: 20
+  target: None
+
+Recover:
+  type: Normal
+  category: Status
+  pp: 5
+  target: None
+
+# Power is the target's weight; the registered figure is what the
+# dex shows and what a targetless rating reads. See
+# [`src/battle/moves/weight.ts`](../../battle/moves/weight.ts)
+LowKick:
+  type: Fighting
+  category: Physical
+  power: 50
+  accuracy: 100
+  pp: 20
+  target: Unit
+  flags: [Contact]
+
+Slam:
+  type: Normal
+  category: Physical
+  power: 80
+  accuracy: 75
+  pp: 20
+  target: Unit
+  flags: [Contact]
+
+Constrict:
+  type: Normal
+  category: Physical
+  power: 10
+  accuracy: 100
+  pp: 35
+  target: Unit
+  flags: [Contact]
+
+Barrier:
+  type: Psychic
+  category: Status
+  pp: 20
+  target: None

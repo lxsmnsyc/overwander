@@ -1,0 +1,128 @@
+# The Frontier Brains, each by their enum name: the house `rule` the fight
+# is held under, the `crown` of the region they ask to see, the `sheets`
+# they are seen in, the silver and gold `symbols` their house hangs on the
+# shelf, and the three they field: `party` the first time, `gold-party`
+# once the challenger holds the silver. Three rather than six is the
+# Frontier's own shape, and the whole reason a house rule bites. An empty
+# party is nobody's: the house draws its three when the fight is set.
+# What each is called, and the house they keep, is text/en.
+
+# Hoenn
+
+# The Pyramid King fields the three that were sealed in chambers, which is
+# the one party in the game a legendary belongs to. His three are the same
+# either time: what he changes between them is the level and the loadout
+Brandon:
+  rule: Bare
+  crown: HoennChampion
+  sheets: [characters/rse/brandon]
+  symbols: [SilverBraveSymbol, GoldBraveSymbol]
+  party: [Regirock, Regice, Registeel]
+  gold-party: [Regirock, Regice, Registeel]
+Greta:
+  rule: Timed
+  crown: HoennChampion
+  sheets: [characters/rse/greta]
+  symbols: [SilverGutsSymbol, GoldGutsSymbol]
+  party: [Umbreon, Hariyama, Shedinja]
+  gold-party: [Gengar, Breloom, Umbreon]
+Lucy:
+  rule: Curtained
+  crown: HoennChampion
+  sheets: [characters/rse/lucy]
+  symbols: [SilverLuckSymbol, GoldLuckSymbol]
+  party: [Seviper, Shuckle, Milotic]
+  gold-party: [Seviper, Steelix, Gyarados]
+# Nobody's: the Factory rents to its own keeper too, so his three are
+# rolled out of the same crate the challenger's come from, both meetings
+Noland:
+  rule: Rented
+  crown: HoennChampion
+  sheets: [characters/rse/noland]
+  symbols: [SilverKnowledgeSymbol, GoldKnowledgeSymbol]
+  party: []
+  gold-party: []
+# The Tower asks nothing, which is the point of it: it is the fight the
+# other four are read against. Its own three are the hardest hand in the
+# game, an Entei among them, which is what a house with no rule has
+# instead of one
+Anabel:
+  rule: None
+  crown: HoennChampion
+  sheets: [characters/rse/anabel]
+  symbols: [SilverAbilitySymbol, GoldAbilitySymbol]
+  party: [Alakazam, Entei, Snorlax]
+  gold-party: [Raikou, Snorlax, Latios]
+# Three that read as three different temperaments, which is what the
+# Palace is asking about
+Spenser:
+  rule: Natured
+  crown: HoennChampion
+  sheets: [characters/rse/spenser]
+  symbols: [SilverSpiritsSymbol, GoldSpiritsSymbol]
+  party: [Crobat, Slaking, Lapras]
+  gold-party: [Arcanine, Slaking, Suicune]
+# Nobody's either, and for the opposite reason to Noland's: the Dome names
+# nobody until the challenger has, and then answers them
+Tucker:
+  rule: Countered
+  crown: HoennChampion
+  sheets: [characters/rse/tucker]
+  symbols: [SilverTacticsSymbol, GoldTacticsSymbol]
+  party: []
+  gold-party: []
+
+# Sinnoh
+
+# Sinnoh's Tower asks nothing either. Its own three either time: what its
+# keeper changes between the two meetings is how they are built, not who
+# they are
+Palmer:
+  rule: None
+  crown: SinnohChampion
+  sheets: [characters/dppt/palmer]
+  symbols: [SilverTowerPrint, GoldTowerPrint]
+  party: [Rhyperior, Dragonite, Milotic]
+  gold-party: [Rhyperior, Dragonite, Milotic]
+# Nobody's: the Factory rents to its own keeper here too
+Thorton:
+  rule: Rented
+  crown: SinnohChampion
+  sheets: [characters/dppt/thorton]
+  symbols: [SilverFactoryPrint, GoldFactoryPrint]
+  party: []
+  gold-party: []
+# Three built on chance, which is what the Arcade is about: a Serene Grace
+# flincher, a ghost that carries Aftermath and a Rattled runner
+Dahlia:
+  rule: Rolled
+  crown: SinnohChampion
+  sheets: [characters/dppt/dahlia]
+  symbols: [SilverArcadePrint, GoldArcadePrint]
+  party: [Togekiss, Drifblim, Lopunny]
+  gold-party: [Togekiss, Gengar, Gliscor]
+# The Castle is kept by two: the lady who owns it and the valet who fights
+# for her. Whichever of them a chunk seats, the Castle Print is what it
+# pays, and his three are hers, since he is the one who fights
+Darach:
+  rule: Unhealed
+  crown: SinnohChampion
+  sheets: [characters/dppt/darach]
+  symbols: [SilverCastlePrint, GoldCastlePrint]
+  party: [Staraptor, Houndoom, Gallade]
+  gold-party: [Staraptor, Milotic, Roserade]
+Caitlin:
+  rule: Unhealed
+  crown: SinnohChampion
+  sheets: [characters/dppt/caitlin]
+  symbols: [SilverCastlePrint, GoldCastlePrint]
+  party: [Staraptor, Houndoom, Gallade]
+  gold-party: [Staraptor, Milotic, Roserade]
+# Nobody's: the Hall answers the one that walked in
+Argenta:
+  rule: Singled
+  crown: SinnohChampion
+  sheets: [characters/dppt/argenta]
+  symbols: [SilverHallPrint, GoldHallPrint]
+  party: []
+  gold-party: []

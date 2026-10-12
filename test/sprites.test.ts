@@ -52,8 +52,8 @@ const SPRITE_ROOT = 'public/sprites';
 
 // Moves first: the withdrawn machines are registered whatever species exist
 registerMoves();
-registerItems();
 registerSpecies();
+registerItems();
 
 /** The outline the candy drawing is drawn in, which no swap repaints. */
 const CANDY_OUTLINE = '41,41,41';
@@ -140,6 +140,9 @@ const DRAWN_AS_PEOPLE = new Set<Landmark>([
 
 /** And the ones that grow their own picture */
 const GROWS_ITS_OWN = new Set<Landmark>([Landmark.BerryPatch, Landmark.ApricornTree]);
+
+/** And the raid sites painted in code: a den's pillar of light and a trial site */
+const PAINTED_IN_CODE = new Set<Landmark>([Landmark.MaxRaid, Landmark.Totem]);
 
 describe('the sheet stamps', () => {
   it('match every sheet as it is committed', () => {
@@ -404,7 +407,7 @@ describe('the landmarks that ship', () => {
   it('leaves the landmarks somebody stands on to their charsets', () => {
     // A market is its vendor and a gym is its leader. A picture as well
     // would be the cell saying the same thing twice
-    for (const kind of [...DRAWN_AS_PEOPLE, ...GROWS_ITS_OWN]) {
+    for (const kind of [...DRAWN_AS_PEOPLE, ...GROWS_ITS_OWN, ...PAINTED_IN_CODE]) {
       expect(hasLandmarkPicture(kind), LANDMARK_NAMES[kind]).toBe(false);
       expect(landmarkPicture(kind), LANDMARK_NAMES[kind]).toBe(null);
     }
@@ -426,7 +429,10 @@ describe('the landmarks that ship', () => {
     // mouth shipped with no art
     for (const kind of LANDMARKS) {
       expect(
-        hasLandmarkPicture(kind) || DRAWN_AS_PEOPLE.has(kind) || GROWS_ITS_OWN.has(kind),
+        hasLandmarkPicture(kind) ||
+          DRAWN_AS_PEOPLE.has(kind) ||
+          GROWS_ITS_OWN.has(kind) ||
+          PAINTED_IN_CODE.has(kind),
         LANDMARK_NAMES[kind],
       ).toBe(true);
     }
@@ -450,6 +456,26 @@ describe('the landmarks that ship', () => {
 
     expect(shadow.width).toBe(legendary.width);
     expect(shadow.height).toBe(legendary.height);
+  });
+
+  it("draws an Alpha's ground as a clearing of its own, standing on a tile", () => {
+    expect(landmarkPicture(Landmark.AlphaRaid)).toBe('alpha');
+
+    const [alpha] = packed(LANDMARK_SHEET).filter((one) => one.name === 'alpha');
+
+    // Wider than it is tall: ground trampled flat, with a boulder at the back
+    expect(alpha.width).toBeGreaterThan(alpha.height);
+    expect(alpha.width).toBeLessThanOrEqual(alpha.sourceWidth);
+  });
+
+  it('draws the Noble Arena as a ring of its own, standing on a tile', () => {
+    expect(landmarkPicture(Landmark.NobleArena)).toBe('noble');
+
+    const [noble] = packed(LANDMARK_SHEET).filter((one) => one.name === 'noble');
+
+    // A raised ring with a gate at the back, no wider than its cell
+    expect(noble.width).toBeGreaterThan(noble.height);
+    expect(noble.width).toBeLessThanOrEqual(noble.sourceWidth);
   });
 
   it('opens a cache this player has already dug up', () => {

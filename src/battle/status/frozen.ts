@@ -17,7 +17,7 @@ const DURATION = turns(5);
 const setupTimer = createTimedStatus(Statuses.Frozen, DURATION);
 
 /** Hot enough to thaw what they hit without being Fire-type */
-const THAWS_TARGET = new Set<Moves>([Moves.Scald]);
+const THAWS_TARGET = new Set<Moves>([Moves.Scald, Moves.ScorchingSands]);
 
 export default function setupFrozenStatus(battle: Battle): void {
   setupTimer(battle);

@@ -9,6 +9,7 @@ import setupCorneredStatus from './cornered';
 import setupConfusedStatus from './confused';
 import setupCursedStatus from './cursed';
 import setupDormantStatus from './dormant';
+import setupStaggeredStatus from './staggered';
 import setupEncoredStatus from './encored';
 import setupEnduringStatus from './enduring';
 import setupFlinchedStatus from './flinched';
@@ -88,6 +89,7 @@ export const MOVE_LOCKING_STATUS = new Set<Statuses>([
   Statuses.Dormant,
   Statuses.Switching,
   Statuses.SkyDropped,
+  Statuses.Staggered,
 ]);
 
 const NON_REFRESHABLE_STATUS = new Set<Statuses>([
@@ -179,6 +181,7 @@ export default function setupStatus(battle: Battle): void {
   setupInfatuatedStatus(battle);
   setupGroundedStatus(battle);
   setupDormantStatus(battle);
+  setupStaggeredStatus(battle);
   setupSwitchingStatus(battle);
   setupMistStatus(battle);
   setupProtectedStatus(battle);

@@ -1,0 +1,33 @@
+# The people who answer to a syndicate's boss, each by their enum name:
+# the `sheets` they are seen in and the `honor` putting one down is worth,
+# one to each. Which team each serves is syndicates.yaml, and what each
+# is called and says is text/en.
+
+Archer:
+  sheets:
+    - characters/hgss/archer
+    - characters/lgpe/archer
+  honor: ArcherDefeated
+Ariana: { sheets: [characters/hgss/ariana], honor: ArianaDefeated }
+Proton: { sheets: [characters/hgss/proton], honor: ProtonDefeated }
+Petrel: { sheets: [characters/hgss/petrel], honor: PetrelDefeated }
+Tabitha: { sheets: [characters/oras/tabitha], honor: TabithaDefeated }
+Courtney: { sheets: [characters/oras/courtney], honor: CourtneyDefeated }
+Matt: { sheets: [characters/oras/matt], honor: MattDefeated }
+Shelly: { sheets: [characters/oras/shelly], honor: ShellyDefeated }
+Mars: { sheets: [characters/dppt/mars], honor: MarsDefeated }
+Jupiter: { sheets: [characters/dppt/jupiter], honor: JupiterDefeated }
+Saturn: { sheets: [characters/dppt/saturn], honor: SaturnDefeated }
+# Both of his coats: the one he wears under Ghetsis and the one he wears
+# once the machine is his own
+Colress:
+  sheets:
+    - characters/b2w2/colress-1
+    - characters/b2w2/colress-2
+  honor: ColressDefeated
+Zinzolin: { sheets: [characters/b2w2/zinzolin], honor: ZinzolinDefeated }
+Xerosic: { sheets: [characters/xy/xerosic], honor: XerosicDefeated }
+Aliana: { sheets: [characters/xy/aliana], honor: AlianaDefeated }
+Bryony: { sheets: [characters/xy/bryony], honor: BryonyDefeated }
+Celosia: { sheets: [characters/xy/celosia], honor: CelosiaDefeated }
+Mable: { sheets: [characters/xy/mable], honor: MableDefeated }

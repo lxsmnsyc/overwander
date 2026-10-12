@@ -750,9 +750,7 @@ export const enum Items {
   /** Walks its holder over whatever was laid at its feet */
   HeavyDutyBoots = 351,
 
-  /**
-   * TODO: blocked on Dynamax, which this game has none of
-   */
+  /** Gives a pokemon whose line can Gigantamax the Gigantamax Factor */
   MaxMushrooms = 354,
 
   /**
@@ -1121,6 +1119,65 @@ export const enum Items {
   SkillBook = 577,
   /** What shows the forces of nature their other shape */
   RevealGlass = 578,
+
+  /** The relics the heroes of Galar take up, and the crowned shapes they bring back */
+  RustedSword = 579,
+  RustedShield = 580,
+
+  /** What lets Calyrex ride one of its steeds, and parts them again */
+  ReinsOfUnity = 581,
+
+  /** The apples an Applin evolves on, the tart one first */
+  TartApple = 582,
+  SweetApple = 583,
+
+  /** The teapots a Sinistea is found in: a fake's cracked pot, then a true antique's chipped one */
+  CrackedPot = 584,
+  ChippedPot = 585,
+
+  /** The Galarica twigs a Galarian Slowpoke evolves on, the cuff for Slowbro and the wreath for Slowking */
+  GalaricaCuff = 586,
+  GalaricaWreath = 587,
+
+  /** The sweets a Milcery evolves holding */
+  StrawberrySweet = 588,
+  BerrySweet = 589,
+  LoveSweet = 590,
+  StarSweet = 591,
+  CloverSweet = 592,
+  FlowerSweet = 593,
+  RibbonSweet = 594,
+
+  /** The scrolls a Kubfu trains under, which decide the style its Urshifu fights in */
+  ScrollOfDarkness = 595,
+  ScrollOfWaters = 596,
+
+  /** The Hisuian stones: the augurite a Scyther cleaves itself an axe from, the peat an Ursaring evolves in */
+  BlackAugurite = 597,
+  PeatBlock = 598,
+
+  /** The relic Galar's mythical leaves behind it: the scarf the Zarude that raised a child wears */
+  DadasScarf = 599,
+
+  /**
+   * Galar's fossils, each half a pokemon: a top (the bird or the fish)
+   * and a bottom (the drake or the dino), revived as a pair
+   */
+  FossilizedBird = 600,
+  FossilizedFish = 601,
+  FossilizedDrake = 602,
+  FossilizedDino = 603,
+
+  /**
+   * Held, it lets its pokemon Dynamax the first time it drops below
+   * half its HP, once per side
+   */
+  DynamaxBand = 604,
+  /**
+   * Thrown at a frenzied Noble to soothe its Frenzy. A party packs up
+   * to three when a Noble raid starts
+   */
+  Balm = 605,
 }
 
 /**

@@ -33,7 +33,7 @@ country the world grows in a 300-cell square:
 | 0.03          | 25.8%     | 16,518           | 299 (the whole square) |
 
 An **elbow** is the fix for a passage that steps diagonally. A vein corners
-wherever the field does, and nothing in this game moves diagonally, so two cells
+wherever the field does, and a diagonal step never cuts a corner, so two cells
 touching only at their corners are two dead ends. Where a diagonal pair has both
 of its connecting cells solid, the **westerly** one opens: the two candidates
 see the same pair with both offsets negated, so exactly one of them acts without

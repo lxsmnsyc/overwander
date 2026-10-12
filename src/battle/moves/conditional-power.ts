@@ -2,7 +2,7 @@ import { EventPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
 import { Types } from '../../data/constants/types';
 import { Moves } from '../../data/ids/moves';
-import { Statuses, Weathers } from '../../data/ids/status';
+import { Statuses, Terrains, Weathers } from '../../data/ids/status';
 import type Battle from '../core';
 import { BattleEvents, MoveTargetType } from '../events';
 import type Unit from '../unit';
@@ -42,10 +42,35 @@ export const WEATHER_BALL_TYPES = new Map<Weathers, Types>([
  * Eruption and Water Spout, read off what is left of the user: full
  * power at full health, and next to nothing on its last legs
  */
-const HEALTH_SCALED = new Set<Moves>([Moves.Eruption, Moves.WaterSpout]);
+const HEALTH_SCALED = new Set<Moves>([Moves.Eruption, Moves.WaterSpout, Moves.DragonEnergy]);
+
+/** What a Terrain Pulse becomes on each terrain the user stands on */
+export const TERRAIN_PULSE_TYPES = new Map<Terrains, Types>([
+  [Terrains.Electric, Types.Electric],
+  [Terrains.Grassy, Types.Grass],
+  [Terrains.Misty, Types.Fairy],
+  [Terrains.Psychic, Types.Psychic],
+]);
+
+/**
+ * The moves a terrain the user stands on makes 1.5x: Expanding Force
+ * on its own Psychic Terrain, and Misty Explosion going off in the mist
+ */
+const TERRAIN_SWELLS = new Map<Moves, Terrains>([
+  [Moves.ExpandingForce, Terrains.Psychic],
+  [Moves.MistyExplosion, Terrains.Misty],
+]);
+
+const TERRAIN_SWELL = 1.5;
 
 /** What Venoshock reads on the target */
 const POISONS = new Set<Statuses>([Statuses.Poisoned, Statuses.BadlyPoisoned]);
+
+/** The moves that hit a poisoned target twice as hard */
+const POISON_READERS = new Set<Moves>([Moves.Venoshock, Moves.BarbBarrage]);
+
+/** And the ones that hit anything with a status condition twice as hard */
+const STATUS_READERS = new Set<Moves>([Moves.Hex, Moves.InfernalParade]);
 
 /** What Hex reads: any status condition, and the endless sleep of Comatose */
 const HEXED = new Set<Statuses>([...MAJOR_STATUS_CONDITIONS, Statuses.Comatose]);
@@ -101,12 +126,29 @@ export default function setupConditionalPowerMoves(battle: Battle): void {
     if (event.move === Moves.Acrobatics && countHeldItems(event.source) === 0) {
       event.power *= 2;
     }
+    if (event.move === Moves.TerrainPulse && TERRAIN_PULSE_TYPES.has(event.source.checkTerrain())) {
+      event.power *= 2;
+    }
+    const swell = TERRAIN_SWELLS.get(event.move);
+
+    if (swell != null && event.source.checkTerrain() === swell) {
+      event.power *= TERRAIN_SWELL;
+    }
+    // Rising Voltage reads the terrain under the target, which is None
+    // for anything off the ground
+    if (
+      event.move === Moves.RisingVoltage &&
+      event.target.type === MoveTargetType.Unit &&
+      event.target.unit.checkTerrain() === Terrains.Electric
+    ) {
+      event.power *= 2;
+    }
     if (event.target.type === MoveTargetType.Unit) {
       const target = event.target.unit;
 
       if (
-        (event.move === Moves.Venoshock && hasAnyStatus(target, POISONS)) ||
-        (event.move === Moves.Hex && hasAnyStatus(target, HEXED))
+        (POISON_READERS.has(event.move) && hasAnyStatus(target, POISONS)) ||
+        (STATUS_READERS.has(event.move) && hasAnyStatus(target, HEXED))
       ) {
         event.power *= 2;
       }
@@ -116,6 +158,14 @@ export default function setupConditionalPowerMoves(battle: Battle): void {
   // The ball is made of whatever is falling: it keeps its own type
   // under a clear sky
   battle.on(BattleEvents.CheckUnitMoveType, EventPriority.Post, (event) => {
+    if (event.move === Moves.TerrainPulse) {
+      const pulsed = TERRAIN_PULSE_TYPES.get(event.source.checkTerrain());
+
+      if (pulsed != null) {
+        event.type = pulsed;
+      }
+      return;
+    }
     if (event.move !== Moves.WeatherBall) {
       return;
     }

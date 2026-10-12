@@ -210,6 +210,7 @@ describe('achievements', () => {
       TrainerClass.HoennSwimmer,
       TrainerClass.SinnohSwimmer,
       TrainerClass.UnovaSwimmer,
+      TrainerClass.KalosSwimmer,
     ]);
     expect(TRAINER_TRADES).not.toContain(TrainerClass.JohtoSwimmer);
     expect(ACHIEVEMENT_TRAINERS).toEqual(TRAINER_TRADES);
@@ -234,7 +235,7 @@ describe('achievements', () => {
     expect(standings.variants.get(TrainerClass.Swimmer)?.tier).toBe(AchievementTier.None);
     expect(standings.variants.get(TrainerClass.JohtoSwimmer)?.count).toBe(2);
     // A trade only one region has counts the way it always did
-    expect(getTradeClasses(TrainerClass.Channeler)).toEqual([TrainerClass.Channeler]);
+    expect(getTradeClasses(TrainerClass.Engineer)).toEqual([TrainerClass.Engineer]);
   });
 
   it('names a trade twice over by the region it is met in', () => {
@@ -359,6 +360,7 @@ describe('achievements', () => {
           TrainerClass.HoennAceTrainer,
           TrainerClass.SinnohAceTrainer,
           TrainerClass.UnovaAceTrainer,
+          TrainerClass.KalosAceTrainer,
           ...standing,
         ]);
       }

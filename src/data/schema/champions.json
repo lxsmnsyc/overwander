@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Champions",
+  "type": "object",
+  "propertyNames": {
+    "$ref": "names.json#/definitions/champion"
+  },
+  "additionalProperties": {
+    "type": "object",
+    "properties": {
+      "title": {
+        "$ref": "names.json#/definitions/award",
+        "description": "The title the seat is worth"
+      },
+      "league": {
+        "$ref": "names.json#/definitions/region",
+        "description": "Whose Elite Four they ask to see beaten first"
+      },
+      "sheets": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "minItems": 1,
+        "description": "The charsets they are seen in"
+      },
+      "prize": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "minItems": 1,
+        "description": "Coats the title pays besides"
+      },
+      "party": {
+        "type": "array",
+        "items": {
+          "$ref": "names.json#/definitions/species"
+        },
+        "minItems": 6,
+        "maxItems": 6,
+        "description": "Their own six"
+      }
+    },
+    "required": [
+      "title",
+      "league",
+      "sheets",
+      "party"
+    ],
+    "additionalProperties": false
+  }
+}

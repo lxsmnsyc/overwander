@@ -1,0 +1,49 @@
+templates:
+  stone: Lets a {holder} holding it Mega Evolve. Only one pokemon on a team Mega Evolves in a fight.
+Venusaurite: { name: Venusaurite }
+CharizarditeX: { name: Charizardite X }
+CharizarditeY: { name: Charizardite Y }
+Blastoisinite: { name: Blastoisinite }
+Beedrillite: { name: Beedrillite }
+Pidgeotite: { name: Pidgeotite }
+Alakazite: { name: Alakazite }
+Slowbronite: { name: Slowbronite }
+Gengarite: { name: Gengarite }
+Kangaskhanite: { name: Kangaskhanite }
+Pinsirite: { name: Pinsirite }
+Gyaradosite: { name: Gyaradosite }
+Aerodactylite: { name: Aerodactylite }
+MewtwoniteX: { name: Mewtwonite X }
+MewtwoniteY: { name: Mewtwonite Y }
+Ampharosite: { name: Ampharosite }
+Steelixite: { name: Steelixite }
+Scizorite: { name: Scizorite }
+Heracronite: { name: Heracronite }
+Houndoominite: { name: Houndoominite }
+Tyranitarite: { name: Tyranitarite }
+Sceptilite: { name: Sceptilite }
+Blazikenite: { name: Blazikenite }
+Swampertite: { name: Swampertite }
+Gardevoirite: { name: Gardevoirite }
+Sablenite: { name: Sablenite }
+Mawilite: { name: Mawilite }
+Aggronite: { name: Aggronite }
+Medichamite: { name: Medichamite }
+Manectite: { name: Manectite }
+Sharpedonite: { name: Sharpedonite }
+Cameruptite: { name: Cameruptite }
+Altarianite: { name: Altarianite }
+Banettite: { name: Banettite }
+Absolite: { name: Absolite }
+Glalitite: { name: Glalitite }
+Salamencite: { name: Salamencite }
+Metagrossite: { name: Metagrossite }
+Latiasite: { name: Latiasite }
+Latiosite: { name: Latiosite }
+Lopunnite: { name: Lopunnite }
+Garchompite: { name: Garchompite }
+Lucarionite: { name: Lucarionite }
+Abomasite: { name: Abomasite }
+Galladite: { name: Galladite }
+Audinite: { name: Audinite }
+Diancite: { name: Diancite }

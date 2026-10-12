@@ -1,6 +1,5 @@
 import { Slots } from '../constants/slots';
-import { ItemFlags, ItemTypes, Items } from '../ids/items';
-import { registerItem } from './__create';
+import { Items } from '../ids/items';
 
 /**
  * The Utility Belt: one more place for a pokemon to put something.
@@ -27,21 +26,4 @@ export const UTILITY_BELT_SLOT = Slots.Item;
 
 export function isUtilityBelt(item: Items): boolean {
   return item === Items.UtilityBelt;
-}
-
-export default function registerUtilityBelt(): void {
-  registerItem(Items.UtilityBelt, {
-    name: 'Utility Belt',
-    description: 'Gives one pokemon a permanent extra item slot. Spent on use.',
-    type: ItemTypes.Training,
-    // Its own picture, tinted out of the Power Lens by
-    // `scripts/item-icons.ts`: that one is a band with fittings set
-    // into it, which in leather and brass is a belt
-    icon: 'ev-items/utility-belt',
-    // Used on a pokemon and gone, like a cap. Never held: a belt in
-    // the grip would be a held item taking up the slot it grants
-    flags: ItemFlags.Usable | ItemFlags.Consumable,
-    buy: 0,
-    sell: 0,
-  });
 }

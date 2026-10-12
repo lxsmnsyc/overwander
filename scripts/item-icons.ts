@@ -336,6 +336,25 @@ interface Tint {
 
 const TINTS: Tint[] = [
   {
+    from: 'key/powder-jar',
+    to: 'key/balm',
+    why: 'the Balm a Noble is calmed with is its own item, and no sheet draws it',
+    // The jar under a linen cloth tied at the neck, full of a pale green
+    // salve with a cream leaf pressed on the front
+    swaps: {
+      '#303030': '#28302a',
+      '#70f070': '#f4efe2',
+      '#48b850': '#cfc5aa',
+      '#604830': '#5a4a36',
+      '#806030': '#8c7350',
+      '#888030': '#4f7a58',
+      '#d0a830': '#8fc89a',
+      '#f8e848': '#d6f4cf',
+      '#e0c838': '#b2e0b2',
+      '#f8b030': '#f2e4b0',
+    },
+  },
+  {
     from: 'key/silver-wing',
     to: 'held/fairy-feather',
     why: 'the boosters are one object each, and the silver wing is its own item',
@@ -671,7 +690,86 @@ const TINTS: Tint[] = [
       '#ffc529': '#ffc529',
     },
   },
+  scroll(
+    'other/scroll-of-darkness',
+    'the scroll a Kubfu trains on in the Tower of Darkness',
+    // Charcoal with a pale mark, so the body still reads off the outline
+    { light: '#5a5a66', body: '#3a3a44', mark: '#c8c8d4', outline: '#141418' },
+  ),
+  scroll('other/scroll-of-waters', 'the scroll a Kubfu trains on in the Tower of Waters', {
+    light: '#62b4f6',
+    body: '#2a62b4',
+    mark: '#e6f6ff',
+    outline: '#18223a',
+  }),
+  {
+    from: 'evolutions/ice-stone',
+    to: 'evolutions/black-augurite',
+    why: 'the stone a Scyther evolves on is its own item, and no sheet draws it',
+    // The facets kept and taken to black, with the brightest glint left
+    // pale so it still reads glossy
+    swaps: {
+      '#202020': '#050507',
+      '#f6ffff': '#e8e8f4',
+      '#eeffff': '#6e6e82',
+      '#def6ff': '#5a5a6c',
+      '#d5eef6': '#4e4e5e',
+      '#bdeef6': '#42424f',
+      '#94d5de': '#33333e',
+      '#62bdcd': '#26262f',
+      '#399cb4': '#1b1b22',
+      '#186a94': '#111116',
+    },
+  },
+  {
+    from: 'key/parcel',
+    to: 'evolutions/peat-block',
+    why: 'the block an Ursaring evolves on is its own item, and no sheet draws it',
+    // The parcel's box in dark earth: the string becomes the seams of
+    // the compacted peat and the label goes into the front face
+    swaps: {
+      '#202020': '#100b07',
+      '#f6de83': '#5e4230',
+      '#c5c552': '#4e3624',
+      '#a4a431': '#36261a',
+      '#cdb45a': '#402c1e',
+      '#737318': '#2a1c12',
+      '#947b20': '#2e2016',
+      '#735a10': '#22170f',
+      '#cd5210': '#402c1e',
+    },
+  },
 ];
+
+/**
+ * A training scroll is the rolled Gen 3 town map in a colour of its
+ * own: the gold bands and silver caps are kept, and the body and the
+ * mark on it are what say which tower it is from
+ */
+function scroll(
+  to: string,
+  why: string,
+  colours: { light: string; body: string; mark: string; outline: string },
+): Tint {
+  return {
+    from: 'key/town-map-gen3',
+    to,
+    why: `${why}, and no sheet draws one`,
+    swaps: {
+      '#303030': colours.outline,
+      '#e88828': colours.light,
+      '#906028': colours.body,
+      '#585048': colours.mark,
+      '#e8f0f8': '#e8f0f8',
+      '#98a0b8': '#98a0b8',
+      '#c8d8e8': '#c8d8e8',
+      '#908098': '#908098',
+      '#f0e028': '#f0e028',
+      '#c0b028': '#c0b028',
+      '#807828': '#807828',
+    },
+  };
+}
 
 /** The colour every Max item is marked in */
 const MAX_VIOLET = { dark: '#6a3194', mid: '#a462de', light: '#e6b4ff' };

@@ -1,0 +1,63 @@
+OdorSleuth:
+  name: Odor Sleuth
+  description: The target loses its evasion and its immunities to Normal and Fighting.
+RockTomb:
+  name: Rock Tomb
+  description: Always drops the target's Speed a stage.
+SilverWind:
+  name: Silver Wind
+  description: 10% to raise every one of the user's stats a stage.
+MetalSound:
+  name: Metal Sound
+  description: Drops the target's Special Defense 2 stages. It is a sound.
+GrassWhistle:
+  name: Grass Whistle
+  description: Puts the target to sleep. It is a sound.
+Tickle:
+  name: Tickle
+  description: Drops the target's Attack and Defense a stage each.
+CosmicPower:
+  name: Cosmic Power
+  description: Raises the user's Defense and Special Defense a stage each.
+WaterSpout:
+  name: Water Spout
+  description: The more HP the user has left, the harder it hits, up to 150 power.
+SignalBeam:
+  name: Signal Beam
+  description: 10% to confuse.
+ShadowPunch:
+  name: Shadow Punch
+  description: Never misses.
+Extrasensory:
+  name: Extrasensory
+  description: 10% to flinch.
+SkyUppercut:
+  name: Sky Uppercut
+  description: Reaches a pokemon that is up in the air.
+SandTomb:
+  name: Sand Tomb
+  description: 'Binds the target: 1/8 of its HP every 2 seconds for 8 seconds, and no escape, ghosts aside.'
+SheerCold:
+  name: Sheer Cold
+  description: Knocks the target out in one hit, and lands 30% of the time.
+MuddyWater:
+  name: Muddy Water
+  description: Hits everything opposite. 30% to drop the target's accuracy a stage.
+BulletSeed:
+  name: Bullet Seed
+  description: Strikes 2 to 5 times.
+AerialAce:
+  name: Aerial Ace
+  description: Never misses.
+IcicleSpear:
+  name: Icicle Spear
+  description: Strikes 2 to 5 times.
+IronDefense:
+  name: Iron Defense
+  description: Raises the user's Defense 2 stages.
+Block:
+  name: Block
+  description: The target cannot be swapped out for 10 seconds, ghosts aside.
+Howl:
+  name: Howl
+  description: Raises the user's Attack a stage. It is a sound.

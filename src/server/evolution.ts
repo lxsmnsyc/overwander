@@ -6,6 +6,7 @@ import { getTimeOfDay } from '../data/ids/biome';
 import { toLocalTime } from '../auth/local-time';
 import { Balls, type Items } from '../data/ids/items';
 import type { Moves } from '../data/ids/moves';
+import type Natures from '../data/ids/natures';
 import { Genders, type Species } from '../data/ids/species';
 import type { EvolutionContext, EvolutionData } from '../data/species';
 import { FUSION_ITEMS } from '../data/species/fusion';
@@ -121,6 +122,9 @@ export default async function evolveCatch(
       // is settled the moment it is caught
       // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
       gender: asNumber(caught.gender) as Genders,
+      // Born with it, the same as the gender: what a Toxel becomes
+      // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+      nature: asNumber(caught.nature) as Natures,
     };
     // The road taken is the first one open, which decides what is
     // spent: a handover that does not cover the evolution pays a
@@ -178,6 +182,7 @@ export default async function evolveCatch(
       // change of shape: a handover earned by one species is never
       // read by the next one up
       canEvolve: false,
+      featProgress: 0,
       // No Gen 1 line evolves into a legendary, so this changes
       // nothing today. It is written anyway because the day a line
       // does, a silent wrong answer here would be very hard to see

@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Executives",
+  "type": "object",
+  "propertyNames": {
+    "$ref": "names.json#/definitions/executive"
+  },
+  "additionalProperties": {
+    "type": "object",
+    "properties": {
+      "sheets": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "minItems": 1,
+        "description": "The charsets they are met in"
+      },
+      "honor": {
+        "$ref": "names.json#/definitions/award",
+        "description": "The mark putting them down pays"
+      }
+    },
+    "required": [
+      "sheets",
+      "honor"
+    ],
+    "additionalProperties": false
+  }
+}

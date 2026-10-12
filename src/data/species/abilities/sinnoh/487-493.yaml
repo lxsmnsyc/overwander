@@ -1,0 +1,106 @@
+Giratina:
+  Giratina:
+    abilities: [Pressure]
+    # Pressure and Telepathy are all the mainline gives it, so the
+    # other two are this registry's. Levitate is not among them: that
+    # is Origin Forme's own, and a form's ability is never lent down
+    hidden: [Telepathy, Contrary, CursedBody]
+  GiratinaOrigin:
+    abilities: [Levitate]
+    hidden: []
+Cresselia:
+  Cresselia:
+    abilities: [Levitate]
+    # The other three are this registry's: what it does for a sleeper
+    # it does awake as well, and the crescent it trails is a light
+    # nobody dims
+    hidden: [Healer, Illuminate, AromaVeil]
+Manaphy:
+  Phione:
+    abilities: [Hydration]
+    # The other three are this registry's: it goes where the water
+    # goes, and the sac on its head is what keeps it up
+    hidden: [SwiftSwim, RainDish, StormDrain]
+  Manaphy:
+    abilities: [Hydration]
+    # The other three are this registry's: the sea does it no harm,
+    # and Heart Swap is a bond read two ways
+    hidden: [WaterAbsorb, Healer, FriendGuard]
+Darkrai:
+  Darkrai:
+    abilities: [BadDreams]
+    # The other three are this registry's: nothing rests near it, it
+    # is under before anybody saw it coming, and no screen was ever
+    # in its way
+    hidden: [Unnerve, Prankster, Infiltrator]
+Shaymin:
+  Shaymin:
+    abilities: [NaturalCure]
+    # Serene Grace is Sky Forme's own, so it stays there. The three
+    # here are this registry's: a flower answers the sun, and a thing
+    # that gives back is what the species is named for
+    hidden: [Chlorophyll, Harvest, LeafGuard]
+  ShayminSky:
+    # Serene Grace is the shape's own, the way Levitate is Giratina
+    # Origin's: what it does on the ground it does on purpose, and
+    # what it does in the air keeps happening
+    abilities: [SereneGrace]
+    hidden: []
+Arceus:
+  Arceus:
+    abilities: [Multitype]
+    # The other three are this registry's: standing in front of it is
+    # expensive, it has an answer to whatever it is not wearing, and
+    # whatever it is wearing it is entirely
+    hidden: [MoldBreaker, Filter, Adaptability]
+  ArceusBug:
+    abilities: [Multitype]
+    hidden: []
+  ArceusDark:
+    abilities: [Multitype]
+    hidden: []
+  ArceusDragon:
+    abilities: [Multitype]
+    hidden: []
+  ArceusElectric:
+    abilities: [Multitype]
+    hidden: []
+  ArceusFighting:
+    abilities: [Multitype]
+    hidden: []
+  ArceusFire:
+    abilities: [Multitype]
+    hidden: []
+  ArceusFlying:
+    abilities: [Multitype]
+    hidden: []
+  ArceusGhost:
+    abilities: [Multitype]
+    hidden: []
+  ArceusGrass:
+    abilities: [Multitype]
+    hidden: []
+  ArceusGround:
+    abilities: [Multitype]
+    hidden: []
+  ArceusIce:
+    abilities: [Multitype]
+    hidden: []
+  ArceusPoison:
+    abilities: [Multitype]
+    hidden: []
+  ArceusPsychic:
+    abilities: [Multitype]
+    hidden: []
+  ArceusRock:
+    abilities: [Multitype]
+    hidden: []
+  ArceusSteel:
+    abilities: [Multitype]
+    hidden: []
+  ArceusWater:
+    abilities: [Multitype]
+    hidden: []
+  ArceusFairy:
+    abilities: [Multitype]
+    hidden: []

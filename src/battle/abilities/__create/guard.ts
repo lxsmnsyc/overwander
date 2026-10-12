@@ -1,6 +1,6 @@
 import { AttackPriority, EventPriority } from '../../../core/event-emitter';
 import { Stages, Stats } from '../../../data/constants/stats';
-import { DamageFlags, type Moves, StatFlags } from '../../../data/ids/moves';
+import { DamageFlags, type MoveCategories, type Moves, StatFlags } from '../../../data/ids/moves';
 import type { Types } from '../../../data/constants/types';
 import type { MoveTarget, UnitAttackEvent } from '../../events';
 import type Unit from '../../unit';
@@ -194,6 +194,28 @@ export function createFilterAbility(targetAbility: Abilities): (battle: Battle) 
       }),
     ]);
   });
+}
+
+/**
+ * Meta ability for the coats that soften one kind of blow (Fur Coat
+ * for physical, Ice Scales for special)
+ * https://bulbapedia.bulbagarden.net/wiki/Fur_Coat_(Ability)
+ * https://bulbapedia.bulbagarden.net/wiki/Ice_Scales_(Ability)
+ */
+export function createFurCoatAbility(
+  targetAbility: Abilities,
+  category: MoveCategories,
+  factor: number,
+): (battle: Battle) => void {
+  return createAbility(targetAbility, (battle) =>
+    battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
+      const parent = event.parent;
+
+      if (parent.category === category && parent.target.hasAbility(targetAbility)) {
+        event.value *= factor;
+      }
+    }),
+  );
 }
 
 /**

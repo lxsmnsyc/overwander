@@ -26,7 +26,7 @@ Because the members then share one behaviour, the implementation goes in a **met
 
 ## Read what the family already has
 
-**Before proposing anything, read that family's own ability pool** in `src/data/species/`, every stage of the line included. Two failures come out of skipping it, and both mean the concept has to be thrown away rather than tuned.
+**Before proposing anything, read that family's own ability pool** in `src/data/species/abilities/`, every stage of the line included. Two failures come out of skipping it, and both mean the concept has to be thrown away rather than tuned.
 
 The first is saying the same thing twice. Shroomish already has Effect Spore, so a signature that put a spore on whoever touched it was giving the line nothing it did not have.
 
@@ -34,7 +34,7 @@ The second is stacking a cost on a line that is already paying one. Slaking alre
 
 ## What the design may not do
 
-**A name may never be the same as a move's or an item's.** All three appear in the same lists and tooltips, so one word standing for two mechanics is confusing however it is described. A name that merely contains a move's word is fine: Mimed Barrier stands beside Barrier. Check `src/data/moves` and `src/data/items` before proposing, not after.
+**A name may never be the same as a move's or an item's.** All three appear in the same lists and tooltips, so one word standing for two mechanics is confusing however it is described. A name that merely contains a move's word is fine: Mimed Barrier stands beside Barrier. Check `src/data/text/en/moves` and `src/data/items` before proposing, not after.
 
 **Nothing shortens a cooldown.** Speed already decides how fast a unit's moves come back, and a second source of the same thing muddies what the stat means. Reach for Speed itself, or for cast and channel times, which Speed does not govern. A cooldown **penalty** is a different thing and is fair as the cost side of a trade, the way the Squirtle line's Overpressure adds to its own cooldowns for the power it gains.
 
@@ -60,6 +60,6 @@ The uniqueness rules still apply: a second design in one of these directions has
 The concept is the user's decision and is put up for approval before any of it is written; how it is built is not. Once a concept is settled, a signature ability costs four things:
 
 1. An id in the signature band, appended rather than inserted, since an id reaches a player's caught rows.
-2. A registry entry in [`signature.ts`](../../../src/data/abilities/signature.ts) with a one-line player-facing description, grouped under a comment naming the family.
+2. A name and a one-line player-facing description in `src/data/text/en/abilities/signature/<region>.yaml`, and the grant in `src/data/abilities/signatures/<region>.yaml` under the family (or under `forms:` for a regional line), with any design note as a comment above it. The region is the one the family's species files are under.
 3. An implementation in the region's file under [`abilities/signature/`](../../../src/battle/abilities/signature/), wired through the list in that folder's `index.ts`. A test checks the registry against every ability the engine implements, so a missing entry fails rather than going quiet.
 4. A test suite asserting real engine state, and a changeset. Work that only changes something introduced on the same branch edits that branch's changeset in place instead of adding one.

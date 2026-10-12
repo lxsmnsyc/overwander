@@ -1,0 +1,165 @@
+land:
+  morning:
+    base:
+      Scatterbug: 2150
+      Geodude: 1791
+      Charmander: 537
+      Cyndaquil: 537
+      Torchic: 179
+    uncommon:
+      DiglettAlola: 474
+      Salandit: 474
+      Numel: 431
+      Growlithe: 431
+      Slugma: 431
+      Magmar: 215
+      GrowlitheHisui: 150
+    rare:
+      Spewpa: 491
+      Graveler: 308
+      Charmeleon: 185
+      Quilava: 185
+      Combusken: 62
+    scarce:
+      DugtrioAlola: 108
+      Salazzle: 108
+      Camerupt: 108
+      Magmortar: 108
+      Arcanine: 90
+      Magcargo: 90
+      ArcanineHisui: 25
+    elusive:
+      Torkoal: 105
+      Turtonator: 44
+      Vivillon: 44
+      Golem: 44
+      Charizard: 27
+      Typhlosion: 27
+      Blaziken: 18
+    prized:
+      Unown: forms
+    special:
+      Groudon: 10
+      Moltres: 10
+      Heatran: 10
+    mythical:
+      Volcanion: 10
+  day:
+    base:
+      Scatterbug: 2150
+      Geodude: 1791
+      Charmander: 537
+      Cyndaquil: 537
+      Torchic: 179
+    uncommon:
+      DiglettAlola: 375
+      Salandit: 375
+      Numel: 341
+      Growlithe: 341
+      Ponyta: 341
+      Slugma: 341
+      Onix: 171
+      Magmar: 171
+      GrowlitheHisui: 150
+    rare:
+      Spewpa: 491
+      Graveler: 308
+      Charmeleon: 185
+      Quilava: 185
+      Combusken: 62
+    scarce:
+      DugtrioAlola: 94
+      Salazzle: 94
+      Camerupt: 94
+      Magmortar: 94
+      Arcanine: 79
+      Rapidash: 79
+      Magcargo: 79
+      ArcanineHisui: 25
+    elusive:
+      Torkoal: 105
+      Turtonator: 44
+      Vivillon: 44
+      Golem: 44
+      Charizard: 27
+      Typhlosion: 27
+      Blaziken: 18
+    prized:
+      Unown: forms
+    special:
+      Groudon: 10
+      Moltres: 10
+      Heatran: 10
+    mythical:
+      Volcanion: 10
+  evening:
+    base:
+      Deino: 376
+    uncommon:
+      DiglettAlola: 1519
+      Salandit: 1519
+      Vulpix: 1381
+      Slugma: 1381
+      Magmar: 691
+      Sizzlipede: 249
+    rare:
+      Zweilous: 376
+    scarce:
+      Magcargo: 415
+      MarowakAlola: 249
+      DugtrioAlola: 249
+      Salazzle: 249
+      Magmortar: 249
+      Ninetales: 208
+      Centiskorch: 30
+    elusive:
+      Heatmor: 374
+      Turtonator: 311
+      Hydreigon: 125
+      TyphlosionHisui: 20
+    prized:
+      Unown: forms
+    special:
+      Groudon: 10
+      Moltres: 10
+      Heatran: 10
+    mythical:
+      Volcanion: 10
+  night:
+    base:
+      Deino: 376
+    uncommon:
+      DiglettAlola: 1251
+      Salandit: 1251
+      Vulpix: 1140
+      Koffing: 1140
+      Slugma: 1140
+      Magmar: 569
+      Sizzlipede: 249
+    rare:
+      Zweilous: 376
+    scarce:
+      MarowakAlola: 249
+      DugtrioAlola: 249
+      Salazzle: 249
+      Magmortar: 249
+      Weezing: 208
+      Ninetales: 208
+      Magcargo: 208
+      Centiskorch: 30
+    elusive:
+      Heatmor: 374
+      Turtonator: 311
+      Hydreigon: 125
+      TyphlosionHisui: 20
+    prized:
+      Unown: forms
+    special:
+      Groudon: 10
+      Moltres: 10
+      Heatran: 10
+    mythical:
+      Volcanion: 10
+
+# The legendaries met wild in the caves under it
+cave-legends: { Groudon: 10, Heatran: 10 }

@@ -49,17 +49,26 @@ export const SPRITE_ROOT = spriteUrl('/sprites/pokemon');
  */
 const BORROWED_COATS = new Map<Species, { sheet: Species; female: boolean }>([
   [Species.MeowsticFemale, { sheet: Species.Meowstic, female: true }],
+  [Species.IndeedeeFemale, { sheet: Species.Indeedee, female: true }],
+  [Species.BasculegionFemale, { sheet: Species.Basculegion, female: true }],
 ]);
 
 /**
  * Shapes the collection has not drawn yet, standing in as the pokemon
- * they are made of until it does. A fused Necrozma is drawn as the
- * Solgaleo or Lunala inside it, and the battle floats the prism over
- * it so a watcher can tell the shape has changed
+ * they are made of until it does. A fusion is drawn as the partner
+ * inside it, which a watcher tells from the husk at a glance, and the
+ * battle floats the item that joined them over it so the shape still
+ * reads as changed
  */
 const STAND_INS = new Map<Species, Species>([
-  [Species.NecrozmaDuskMane, Species.Solgaleo],
-  [Species.NecrozmaDawnWings, Species.Lunala],
+  [Species.CalyrexIce, Species.Glastrier],
+  [Species.CalyrexShadow, Species.Spectrier],
+  // A Cramorant with its catch is drawn as the bird alone
+  [Species.CramorantGulping, Species.Cramorant],
+  [Species.CramorantGorging, Species.Cramorant],
+  // The collection draws the troop only as its pieces, so Falinks is
+  // drawn as the Brass that leads it
+  [Species.Falinks, Species.FalinksBrass],
 ]);
 
 /** Whether this shape is drawn as another pokemon until it has art of its own */

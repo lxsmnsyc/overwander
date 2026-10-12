@@ -1,0 +1,26 @@
+# Held, never spent, and found rather than bought, the way a plate is,
+# and sold back for what a plate fetches
+
+DouseDrive:
+  type: Held
+  icon: held/douse-drive
+  flags: [Holdable]
+  sell: 2000
+
+ShockDrive:
+  type: Held
+  icon: held/shock-drive
+  flags: [Holdable]
+  sell: 2000
+
+BurnDrive:
+  type: Held
+  icon: held/burn-drive
+  flags: [Holdable]
+  sell: 2000
+
+ChillDrive:
+  type: Held
+  icon: held/chill-drive
+  flags: [Holdable]
+  sell: 2000

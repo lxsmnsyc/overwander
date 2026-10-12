@@ -1,0 +1,25 @@
+# The tag does what a Pure Incense does, so it is priced as one: the
+# incense price rather than the gear price.
+CleanseTag:
+  type: Held
+  icon: held/cleanse-tag
+  flags: [Holdable, Marketable]
+  buy: 3000
+  sell: 1500
+
+# The Everstone is a stone, so the geologist sells it as well, at the
+# Cleanse Tag's price.
+Everstone:
+  type: Held
+  icon: held/everstone
+  flags: [Holdable, Marketable]
+  buy: 3000
+  sell: 1500
+
+# Nothing stocks it, so 1,000 is only what somebody will pay to take one
+# away.
+AmuletCoin:
+  type: Held
+  icon: held/amulet-coin
+  flags: [Holdable]
+  sell: 1000

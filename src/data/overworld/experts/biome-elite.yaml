@@ -1,0 +1,179 @@
+# Which of the Elite Four hold each biome's seats, by the rule the gyms
+# follow: ice country is Lorelei's, hard dry ground is Bruno's, the damp is
+# Agatha's, and everything green or under water is Lance's. The later
+# leagues take the countries their own kind answers to. The order is part
+# of the shared world, since the window's roll picks from it.
+
+DeepOcean:
+  - Lance
+  - Drake
+  - Siebold
+  - Drasna
+Ocean:
+  - Lance
+  - Drake
+  - Siebold
+  - Drasna
+CoralReef:
+  - Lance
+  - Drake
+  - Siebold
+  - Drasna
+Beach:
+  - Lance
+  - Drake
+  - Siebold
+  - Drasna
+Mangrove:
+  - Agatha
+  - Koga
+  - Phoebe
+  - Aaron
+  - Shauntal
+Swamp:
+  - Agatha
+  - Koga
+  - Phoebe
+  - Aaron
+  - Shauntal
+TropicalRainforest:
+  - Lance
+  - Koga
+  - Will
+  - Drake
+  - Aaron
+  - Lucian
+  - Caitlin
+  - Drasna
+TropicalSeasonalForest:
+  - Lance
+  - Drake
+  - Aaron
+  - Drasna
+Savanna:
+  - Bruno
+  - JohtoBruno
+  - Bertha
+  - Marshal
+Desert:
+  - Bruno
+  - JohtoBruno
+  - Bertha
+  - Flint
+  - Marshal
+  - Malva
+Shrubland:
+  - Bruno
+  - JohtoBruno
+  - Bertha
+  - Aaron
+  - Marshal
+Grassland:
+  - Lance
+  - Drake
+  - Aaron
+  - Drasna
+TemperateForest:
+  - Lance
+  - Drake
+  - Aaron
+  - Drasna
+TemperateRainforest:
+  - Agatha
+  - Will
+  - Karen
+  - Sidney
+  - Phoebe
+  - Aaron
+  - Lucian
+  - Shauntal
+  - Grimsley
+  - Caitlin
+ColdDesert:
+  - Lorelei
+  - Glacia
+  - Bertha
+  - Wikstrom
+Taiga:
+  - Lorelei
+  - Karen
+  - Glacia
+  - Sidney
+  - Aaron
+  - Grimsley
+Tundra: [Lorelei, Glacia]
+Mountain:
+  - Bruno
+  - JohtoBruno
+  - Bertha
+  - Marshal
+  - Wikstrom
+AlpineTundra: [Lorelei, Glacia]
+Glacier: [Lorelei, Glacia]
+Woodland:
+  - Lance
+  - Drake
+  - Aaron
+  - Drasna
+Steppe:
+  - Bruno
+  - JohtoBruno
+  - Bertha
+  - Marshal
+MontaneForest:
+  - Lance
+  - Will
+  - Drake
+  - Aaron
+  - Lucian
+  - Caitlin
+  - Drasna
+PolarOcean: [Lorelei, Glacia, Siebold]
+Beyond:
+  - Agatha
+  - Will
+  - Karen
+  - Sidney
+  - Phoebe
+  - Lucian
+  - Shauntal
+  - Grimsley
+  - Caitlin
+Volcano:
+  - Lance
+  - Drake
+  - Flint
+  - Malva
+  - Wikstrom
+  - Drasna
+Badlands:
+  - Bruno
+  - JohtoBruno
+  - Koga
+  - Karen
+  - Sidney
+  - Bertha
+  - Marshal
+  - Grimsley
+  - Wikstrom
+RockyCoast:
+  - Bruno
+  - JohtoBruno
+  - Bertha
+  - Marshal
+Bog:
+  - Agatha
+  - Koga
+  - Karen
+  - Sidney
+  - Phoebe
+  - Shauntal
+  - Grimsley
+KelpForest:
+  - Lance
+  - Will
+  - Drake
+  - Lucian
+  - Caitlin
+  - Siebold
+  - Drasna

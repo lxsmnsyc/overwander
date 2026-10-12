@@ -1,0 +1,57 @@
+# What Unova brought, described in this engine's terms rather than
+# the mainline's
+
+# Victini
+VictoryStar:
+  name: Victory Star
+  description: Its whole team, itself included, throws moves at 1.1x accuracy.
+
+# Ferroseed
+IronBarbs:
+  name: Iron Barbs
+  description: Whoever lands a contact move on it loses 1/8 of their HP to the spikes.
+
+# Archen
+Defeatist:
+  name: Defeatist
+  description: At 1/2 HP or less, its Attack and Special Attack drop to 0.5x.
+
+# Zorua
+Illusion:
+  name: Illusion
+  description: It takes the field looking like a teammate, until a move lands on it.
+
+# Yamask
+Mummy:
+  name: Mummy
+  description: Whoever lands a contact move on it loses one of their abilities and catches this one.
+
+# Cofagrigus
+PerishBody:
+  name: Perish Body
+  description: Whoever lands a contact move on it faints in 3 turns, and so does it. Once per battle.
+
+# Darmanitan
+ZenMode:
+  name: Zen Mode
+  description: Below 1/2 HP it sits down into its Zen shape, and it stands back up above that.
+
+# Meloetta
+Dancer:
+  name: Dancer
+  description: Whenever anybody uses a dance move, it casts the same one straight after, free.
+
+# Sawsbuck
+FurCoat:
+  name: Fur Coat
+  description: Physical moves land on it at half damage.
+
+# Reshiram
+Turboblaze:
+  name: Turboblaze
+  description: The target's abilities cannot hinder its moves.
+
+# Zekrom
+Teravolt:
+  name: Teravolt
+  description: The target's abilities cannot hinder its moves.

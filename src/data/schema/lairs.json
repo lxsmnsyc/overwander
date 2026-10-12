@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Lairs",
+  "type": "object",
+  "propertyNames": {
+    "$ref": "names.json#/definitions/lair"
+  },
+  "additionalProperties": {
+    "type": "object",
+    "properties": {
+      "species": {
+        "type": "array",
+        "items": {
+          "$ref": "names.json#/definitions/species"
+        },
+        "description": "Who is at home there, in the order a raid picks from"
+      },
+      "underground": {
+        "type": "boolean",
+        "description": "A cave under its biome stages it too"
+      },
+      "reserved": {
+        "type": "boolean",
+        "description": "Kept out of the world until its batch lists it"
+      }
+    },
+    "required": [
+      "species"
+    ],
+    "additionalProperties": false
+  }
+}

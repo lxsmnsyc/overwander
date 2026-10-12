@@ -10,8 +10,17 @@ import {
 } from '../data/constants/slots';
 import { getBannedBossMoves } from '../data/overworld/boss-moves';
 import { getTotemAlly, getTotemSize } from '../data/overworld/totems';
+import { ALPHA_COPIES, getAlphaSize } from '../data/overworld/alphas';
+import AleaRNG from '../core/alea';
 import { MAX_LEVEL } from '../data/constants/levels';
-import { MAX_EFFORT_PER_STAT, MAX_IV, PERFECT_IVS, Stats } from '../data/constants/stats';
+import {
+  MAX_EFFORT_PER_STAT,
+  MAX_IV,
+  PERFECT_IVS,
+  STAT_ORDER,
+  Stats,
+  setIV,
+} from '../data/constants/stats';
 import Abilities from '../data/ids/abilities';
 import { CRASH_MOVES } from '../battle/moves/crash';
 import { OHKO_MOVES } from '../battle/moves/fixed-damage';
@@ -22,10 +31,19 @@ import { SELF_DESTRUCT_MOVES } from '../battle/moves/self-destruct';
 import { MoveCategories, Moves } from '../data/ids/moves';
 import { RECHARGE_MOVES } from '../data/moves/recharge';
 import { Z_MOVES } from '../data/moves/z-moves';
+import { G_MAX_MOVES, canGigantamax } from '../data/moves/gmax-moves';
+import { FRENZY_MOVES } from '../data/moves/frenzy-moves';
 import { Species } from '../data/ids/species';
 import { getMoveData } from '../data/moves';
 import { getLevelUpMoves, getSpeciesData } from '../data/species';
-import { deriveAbility, deriveGender, deriveMoves, deriveNature, deriveSize } from './encounter';
+import {
+  EncounterType,
+  deriveAbility,
+  deriveGender,
+  deriveMoves,
+  deriveNature,
+  deriveSize,
+} from './encounter';
 
 /**
  * A raid boss is a maxed legendary: the fight is meant to need a
@@ -50,6 +68,12 @@ export const LEGENDARY_RAID_REWARD_LEVEL = 50;
 export const SHADOW_RAID_REWARD_LEVEL = 25;
 /** A Totem is handed over between the two: a strong pokemon, but no legendary */
 export const TOTEM_RAID_REWARD_LEVEL = 40;
+/** A Max Raid's prize too: the same kind of boss, a final stage of the biome */
+export const MAX_RAID_REWARD_LEVEL = 40;
+/** And an Alpha's, whatever stage it is: its three perfect stats are the prize */
+export const ALPHA_RAID_REWARD_LEVEL = 40;
+/** A Noble is calmed, never caught, so its level is only what a record would say */
+export const NOBLE_RAID_REWARD_LEVEL = 40;
 
 /**
  * What clearing one pays, on top of the pokemon.
@@ -68,8 +92,12 @@ export const TOTEM_RAID_REWARD_LEVEL = 40;
  */
 export const SHADOW_RAID_GOLD = 35000;
 export const LEGENDARY_RAID_GOLD = 80000;
-/** A Totem pays between a shadow and a legendary */
+/** A Totem pays between a shadow and a legendary, and so do a Max Raid and an Alpha */
 export const TOTEM_RAID_GOLD = 50000;
+export const MAX_RAID_GOLD = 50000;
+export const ALPHA_RAID_GOLD = 50000;
+/** A Noble pays a Totem's purse and a tenth more, since nobody catches it */
+export const NOBLE_RAID_GOLD = 55000;
 export const MYTHICAL_RAID_GOLD = 200000;
 
 /**
@@ -150,6 +178,8 @@ const BOSS_UNFIT_ATTACKS = new Set<Moves>([
   ...CRASH_MOVES,
   ...OHKO_MOVES,
   ...Z_MOVES,
+  ...G_MAX_MOVES,
+  ...FRENZY_MOVES,
   Moves.FocusPunch,
   Moves.DreamEater,
   Moves.Snore,
@@ -271,6 +301,23 @@ export function canStageBoss(species: Species): boolean {
 }
 
 /**
+ * Whether a Max Raid's boss of this species is Gigantamaxed: always,
+ * where the species has a Gigantamax form. The species alone decides
+ * it, so the prize's factor needs nothing stored beside the raid
+ */
+export function isGigantamaxBoss(species: Species): boolean {
+  return canGigantamax(species);
+}
+
+/** Whether a prize carries the Gigantamax Factor: one out of a Gigantamax Max Raid boss */
+export function keepsGigantamaxFactor(encounter: {
+  type: EncounterType;
+  species: Species;
+}): boolean {
+  return encounter.type === EncounterType.MaxRaid && isGigantamaxBoss(encounter.species);
+}
+
+/**
  * The raid boss as a catch snapshot, so a battle builds it from the
  * same shape as a player's party. Its individual values are perfect
  * and its effort values maxed; the nature and ability come from the
@@ -283,10 +330,20 @@ export function createRaidBossSnapshot(
   traitValue: number,
   shadow = false,
   totem = false,
+  max = false,
+  alpha = false,
+  noble = false,
 ): CatchSnapshot {
   // The lobby shares the raid's trait value, so every player fights a
-  // boss of exactly the same build. A Totem stands at its own size
-  const size = totem ? getTotemSize(species) : deriveSize(species, traitValue);
+  // boss of exactly the same build. A Totem and an Alpha stand at
+  // their own size
+  let size = deriveSize(species, traitValue);
+
+  if (totem) {
+    size = getTotemSize(species);
+  } else if (alpha) {
+    size = getAlphaSize(species);
+  }
   const marks = [Abilities.Boss];
 
   if (shadow) {
@@ -294,6 +351,12 @@ export function createRaidBossSnapshot(
   }
   if (totem) {
     marks.push(Abilities.Totem);
+  }
+  if (alpha) {
+    marks.push(Abilities.Alpha);
+  }
+  if (noble) {
+    marks.push(Abilities.Noble);
   }
 
   return {
@@ -337,14 +400,18 @@ export function createRaidBossSnapshot(
     // Nothing has raised it, so it thinks of nobody
     friendship: BASE_FRIENDSHIP,
     statuses: 0,
+    // A Max Raid's boss is a giant from the first moment to the last
+    ...(max ? { dynamaxed: true } : {}),
+    ...(max && isGigantamaxBoss(species) ? { gigantamax: true } : {}),
   };
 }
 
 /**
  * The ally a Totem calls: the first stage of its line, or another of
  * itself, at the raid's level with nothing spent on it. It is no boss,
- * so it fights on an ordinary health pool, and it is marked as called
- * so the battle keeps it off the field until the Totem asks for it
+ * but its Totem Ally mark gives it a raid-sized share of HP and stats.
+ * It is marked as called so the battle keeps it off the field until
+ * the Totem asks for it
  */
 export function createTotemAllySnapshot(totem: Species, traitValue: number): CatchSnapshot {
   const species = getTotemAlly(totem);
@@ -364,7 +431,7 @@ export function createTotemAllySnapshot(totem: Species, traitValue: number): Cat
     shadow: false,
     moves: getBossMoves(species),
     movePoints: {},
-    abilities: [deriveAbility(species, traitValue)],
+    abilities: [deriveAbility(species, traitValue), Abilities.TotemAlly],
     items: [],
     slots: packSlots(DEFAULT_ABILITY_SLOTS, DEFAULT_ITEM_SLOTS, mostSlots(Slots.Move)),
     health: getMaxHealth({
@@ -380,17 +447,78 @@ export function createTotemAllySnapshot(totem: Species, traitValue: number): Cat
 }
 
 /**
+ * The copies an Alpha summons, one per place at its side: plain wild
+ * pokemon of its species at its level, each with a nature, an ability
+ * and individual values of its own and nothing spent on it. No mark of
+ * any kind, so it is neither a boss nor anything a party can catch.
+ * A fallen copy is replaced by its place's copy built again
+ */
+export function createAlphaCopySnapshots(species: Species, traitValue: number): CatchSnapshot[] {
+  const copies: CatchSnapshot[] = [];
+
+  for (let place = 0; place < ALPHA_COPIES; place++) {
+    // The draws land in order: its trait value, then each stat's value
+    const rng = new AleaRNG(`${traitValue}:alpha-copy:${place}`);
+    const trait = rng.int32();
+    let ivs = 0;
+
+    for (const stat of STAT_ORDER) {
+      ivs = setIV(ivs, stat, Math.floor(rng.random() * (MAX_IV + 1)));
+    }
+
+    const size = deriveSize(species, trait);
+
+    copies.push({
+      caught: '',
+      species,
+      level: RAID_BOSS_LEVEL,
+      ivs,
+      effortValues: noEffortValues(),
+      nature: deriveNature(trait),
+      gender: deriveGender(species, trait),
+      height: size.height,
+      weight: size.weight,
+      shiny: false,
+      shadow: false,
+      moves: getBossMoves(species),
+      movePoints: {},
+      abilities: [deriveAbility(species, trait)],
+      items: [],
+      slots: packSlots(DEFAULT_ABILITY_SLOTS, DEFAULT_ITEM_SLOTS, mostSlots(Slots.Move)),
+      health: getMaxHealth({
+        species,
+        level: RAID_BOSS_LEVEL,
+        ivs,
+        effortValues: noEffortValues(),
+      }),
+      friendship: BASE_FRIENDSHIP,
+      statuses: 0,
+      called: true,
+      alphaCopy: true,
+    });
+  }
+  return copies;
+}
+
+/**
  * The boss side of a raid, as the catches its team snapshot holds: the
- * boss alone, or a Totem with the ally it will call
+ * boss alone, a Totem with the ally it will call, or an Alpha with the
+ * copies it will summon
  */
 export function createRaidBossTeam(
   species: Species,
   traitValue: number,
   shadow: boolean,
   totem: boolean,
+  max = false,
+  alpha = false,
+  noble = false,
 ): CatchSnapshot[] {
-  const boss = createRaidBossSnapshot(species, traitValue, shadow, totem);
+  const boss = createRaidBossSnapshot(species, traitValue, shadow, totem, max, alpha, noble);
 
+  if (alpha) {
+    return [boss, ...createAlphaCopySnapshots(species, traitValue)];
+  }
   return totem ? [boss, createTotemAllySnapshot(species, traitValue)] : [boss];
 }
 

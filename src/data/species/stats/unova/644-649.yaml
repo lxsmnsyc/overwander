@@ -1,0 +1,97 @@
+Zekrom:
+  Zekrom:
+    stats:
+      { HP: 100, Attack: 150, Defense: 120, SpecialAttack: 120, SpecialDefense: 100, Speed: 90 }
+    catch-rate: 3
+    height: 2.9
+    weight: 345
+    gender: genderless
+Landorus:
+  Landorus:
+    stats: { HP: 89, Attack: 125, Defense: 90, SpecialAttack: 115, SpecialDefense: 80, Speed: 101 }
+    catch-rate: 3
+    height: 1.5
+    weight: 68
+    gender: [1, 0]
+  LandorusTherian:
+    stats: { HP: 89, Attack: 145, Defense: 90, SpecialAttack: 105, SpecialDefense: 80, Speed: 91 }
+    catch-rate: 3
+    height: 1.3
+    weight: 68
+    gender: [1, 0]
+Kyurem:
+  Kyurem:
+    stats: { HP: 125, Attack: 130, Defense: 90, SpecialAttack: 130, SpecialDefense: 90, Speed: 95 }
+    catch-rate: 3
+    height: 3
+    weight: 325
+    gender: genderless
+  KyuremBlack:
+    stats: { HP: 125, Attack: 170, Defense: 100, SpecialAttack: 120, SpecialDefense: 90, Speed: 95 }
+    catch-rate: 3
+    height: 3.3
+    weight: 325
+    gender: genderless
+  KyuremWhite:
+    stats: { HP: 125, Attack: 120, Defense: 90, SpecialAttack: 170, SpecialDefense: 100, Speed: 95 }
+    catch-rate: 3
+    height: 3.6
+    weight: 325
+    gender: genderless
+Keldeo:
+  Keldeo:
+    stats: { HP: 91, Attack: 72, Defense: 90, SpecialAttack: 129, SpecialDefense: 90, Speed: 108 }
+    catch-rate: 3
+    height: 1.4
+    weight: 48.5
+    gender: genderless
+  KeldeoResolute:
+    stats: { HP: 91, Attack: 72, Defense: 90, SpecialAttack: 129, SpecialDefense: 90, Speed: 108 }
+    catch-rate: 3
+    height: 1.4
+    weight: 48.5
+    gender: genderless
+Meloetta:
+  Meloetta:
+    stats: { HP: 100, Attack: 77, Defense: 77, SpecialAttack: 128, SpecialDefense: 128, Speed: 90 }
+    catch-rate: 3
+    height: 0.6
+    weight: 6.5
+    gender: genderless
+  MeloettaPirouette:
+    stats: { HP: 100, Attack: 128, Defense: 90, SpecialAttack: 77, SpecialDefense: 77, Speed: 128 }
+    catch-rate: 3
+    height: 0.6
+    weight: 6.5
+    gender: genderless
+Genesect:
+  Genesect:
+    stats: { HP: 71, Attack: 120, Defense: 95, SpecialAttack: 120, SpecialDefense: 95, Speed: 99 }
+    catch-rate: 3
+    height: 1.5
+    weight: 82.5
+    gender: genderless
+  GenesectDouse:
+    stats: { HP: 71, Attack: 120, Defense: 95, SpecialAttack: 120, SpecialDefense: 95, Speed: 99 }
+    catch-rate: 3
+    height: 1.5
+    weight: 82.5
+    gender: genderless
+  GenesectShock:
+    stats: { HP: 71, Attack: 120, Defense: 95, SpecialAttack: 120, SpecialDefense: 95, Speed: 99 }
+    catch-rate: 3
+    height: 1.5
+    weight: 82.5
+    gender: genderless
+  GenesectBurn:
+    stats: { HP: 71, Attack: 120, Defense: 95, SpecialAttack: 120, SpecialDefense: 95, Speed: 99 }
+    catch-rate: 3
+    height: 1.5
+    weight: 82.5
+    gender: genderless
+  GenesectChill:
+    stats: { HP: 71, Attack: 120, Defense: 95, SpecialAttack: 120, SpecialDefense: 95, Speed: 99 }
+    catch-rate: 3
+    height: 1.5
+    weight: 82.5
+    gender: genderless

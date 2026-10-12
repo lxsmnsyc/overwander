@@ -1,0 +1,194 @@
+# From Encore to Beat Up: the last stretch of Johto's list, the
+# weather healers and the heavy hitters at the end of it
+
+Encore:
+  type: Normal
+  category: Status
+  accuracy: 100
+  pp: 5
+  target: Unit
+  affects: [Unit, Own, Enemy]
+
+Pursuit:
+  type: Dark
+  category: Physical
+  power: 40
+  accuracy: 100
+  pp: 20
+  target: Unit
+  flags: [Contact]
+
+RapidSpin:
+  type: Normal
+  category: Physical
+  power: 50
+  accuracy: 100
+  pp: 40
+  target: Unit
+  flags: [Contact]
+
+SweetScent:
+  type: Normal
+  category: Status
+  accuracy: 100
+  pp: 20
+  target: None
+  affects: [Unit, Enemy]
+
+IronTail:
+  type: Steel
+  category: Physical
+  power: 100
+  accuracy: 75
+  pp: 15
+  target: Unit
+  flags: [Contact]
+
+MetalClaw:
+  type: Steel
+  category: Physical
+  power: 50
+  accuracy: 95
+  pp: 35
+  target: Unit
+  flags: [Contact, Slicing]
+
+VitalThrow:
+  type: Fighting
+  category: Physical
+  power: 70
+  priority: -1
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+MorningSun:
+  type: Normal
+  category: Status
+  pp: 5
+  target: None
+
+Synthesis:
+  type: Grass
+  category: Status
+  pp: 5
+  target: None
+
+Moonlight:
+  type: Fairy
+  category: Status
+  pp: 5
+  target: None
+
+HiddenPower:
+  type: Normal
+  category: Special
+  power: 60
+  accuracy: 100
+  pp: 15
+  target: Unit
+  projectile: true
+
+CrossChop:
+  type: Fighting
+  category: Physical
+  power: 100
+  accuracy: 80
+  pp: 5
+  target: Unit
+  flags: [Contact]
+
+Twister:
+  type: Dragon
+  category: Special
+  power: 40
+  accuracy: 100
+  pp: 20
+  target: None
+  affects: [Unit, Enemy]
+  flags: [Wind]
+
+Crunch:
+  type: Dark
+  category: Physical
+  power: 80
+  accuracy: 100
+  pp: 15
+  target: Unit
+  flags: [Contact, Bite]
+
+MirrorCoat:
+  type: Psychic
+  category: Special
+  accuracy: 100
+  priority: -5
+  pp: 20
+  target: Unit
+
+PsychUp:
+  type: Normal
+  category: Status
+  pp: 10
+  target: Unit
+  affects: [Unit, Own, Enemy]
+
+ExtremeSpeed:
+  type: Normal
+  category: Physical
+  power: 80
+  accuracy: 100
+  priority: 2
+  pp: 5
+  target: Unit
+  flags: [Contact]
+
+AncientPower:
+  type: Rock
+  category: Special
+  power: 60
+  accuracy: 100
+  pp: 5
+  target: Unit
+  projectile: true
+
+ShadowBall:
+  type: Ghost
+  category: Special
+  power: 80
+  accuracy: 100
+  pp: 15
+  target: Unit
+  projectile: true
+
+FutureSight:
+  type: Psychic
+  category: Special
+  power: 120
+  accuracy: 100
+  pp: 10
+  target: Unit
+
+RockSmash:
+  type: Fighting
+  category: Physical
+  power: 40
+  accuracy: 100
+  pp: 15
+  target: Unit
+  flags: [Contact]
+
+Whirlpool:
+  type: Water
+  category: Special
+  power: 35
+  accuracy: 85
+  pp: 15
+  target: Unit
+
+BeatUp:
+  type: Dark
+  category: Physical
+  power: 10
+  accuracy: 100
+  pp: 10
+  target: Unit

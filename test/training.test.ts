@@ -37,7 +37,6 @@ import {
   MAX_VITAMIN_STATS,
   PP_ITEMS,
   VITAMIN_EFFORT,
-  VITAMIN_PRICE,
   VITAMIN_STATS,
   isVitamin,
 } from '../src/data/items/vitamins';
@@ -371,7 +370,7 @@ describe('vitamins', () => {
 
       expect(data.type).toBe(ItemTypes.Training);
       expect(data.flags & ItemFlags.Marketable).not.toBe(0);
-      expect(data.buy).toBe(VITAMIN_PRICE);
+      expect(data.buy).toBe(5000);
       expect(getItemBand(item)).toBe('rare');
     }
     // A wing is found, never stocked

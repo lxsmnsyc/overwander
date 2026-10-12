@@ -3,8 +3,14 @@
 // assertion back, tsgolint resolves the enum to number and calls it
 // redundant
 // oxlint-disable typescript/no-unnecessary-type-assertion
-import Biome, { BIOME_CONFIGS } from '../ids/biome';
-import Decoration, { getBiomeDecorations } from './decoration';
+import * as v from 'valibot';
+import type Biome from '../ids/biome';
+import { BIOME_CONFIGS } from '../ids/biome';
+import { DECORATION_IDS } from '../ids/names';
+import { idOf } from '../yaml';
+import Decoration, { BIOME_PICTURES, getBiomeDecorations } from './decoration';
+import artFile from './decorations.yaml';
+import snowFile from './snow-trees.yaml';
 
 /**
  * Where a piece of scenery is drawn from, and which one a biome grows.
@@ -34,155 +40,36 @@ interface DecorationArt {
   names: string[];
 }
 
+const ART = v.object({
+  sheet: v.picklist([DECORATION_SHEET, TREE_SHEET]),
+  pictures: v.array(v.string()),
+});
+
 /**
- * What each kind is drawn as where its biome says nothing more.
+ * What each kind is drawn as where its biome says nothing more, out of
+ * `decorations.yaml`.
  *
  * A list rather than one picture: a chunk rolls eight to twelve pieces
  * of scenery out of a list of three or four kinds, so one picture a
- * kind put the same rock down four times in a row.
- *
- * Written out rather than derived from `DECORATION_NAMES`: that table
- * is what a player is told a thing is, and renaming one should not
- * repoint it at a picture that is not there
+ * kind put the same rock down four times in a row
  */
-const PICTURES: Record<Decoration, DecorationArt> = {
-  [Decoration.Tree]: { sheet: TREE_SHEET, names: ['broadleaf'] },
-  [Decoration.Pine]: { sheet: TREE_SHEET, names: ['pine'] },
-  [Decoration.Palm]: { sheet: TREE_SHEET, names: ['palm'] },
-  [Decoration.Cactus]: { sheet: DECORATION_SHEET, names: ['cactus', 'cactus-flower'] },
-  [Decoration.Shrub]: {
-    sheet: DECORATION_SHEET,
-    names: ['shrub', 'shrub-spiky', 'shrub-tall', 'shrub-dark'],
-  },
-  [Decoration.Grass]: {
-    sheet: DECORATION_SHEET,
-    names: ['grass', 'grass-broad', 'grass-blades', 'grass-fern'],
-  },
-  [Decoration.Flower]: {
-    sheet: DECORATION_SHEET,
-    names: ['flower', 'flower-white', 'flower-blue'],
-  },
-  [Decoration.Rock]: { sheet: DECORATION_SHEET, names: ['rock', 'rock-pair', 'rock-brown'] },
-  [Decoration.Boulder]: {
-    sheet: DECORATION_SHEET,
-    names: ['boulder', 'boulder-brown', 'boulder-stack'],
-  },
-  [Decoration.Reed]: { sheet: DECORATION_SHEET, names: ['reed'] },
-  [Decoration.Coral]: {
-    sheet: DECORATION_SHEET,
-    names: ['coral', 'coral-brain', 'coral-red', 'coral-small'],
-  },
-  [Decoration.Ice]: {
-    sheet: DECORATION_SHEET,
-    names: ['ice', 'ice-shards', 'ice-shard', 'ice-floe'],
-  },
-  [Decoration.Mushroom]: { sheet: DECORATION_SHEET, names: ['mushroom', 'mushroom-red'] },
-  [Decoration.Stump]: {
-    sheet: DECORATION_SHEET,
-    names: ['stump', 'log', 'stump-pale', 'log-moss'],
-  },
-};
+const PICTURES: Record<number, DecorationArt> = {};
+
+for (const [name, art] of Object.entries(v.parse(v.record(v.string(), ART), artFile))) {
+  PICTURES[idOf<Decoration>(DECORATION_IDS, name, `decorations.yaml: ${name}`)] = {
+    sheet: art.sheet,
+    names: art.pictures,
+  };
+}
 
 /**
- * What a biome draws instead, where it draws something of its own.
- *
- * A forest and a savanna both put `Tree` on a cell and mean different
- * things by it, and the same trunk in both is what made every biome
- * look alike before there were sheets at all. The same argument reaches
- * the props: a boulder in a bog is grown over and one in a tundra is
- * under snow, and the rip drew both.
- *
- * A kind left out draws the list above, which is what makes this a
- * short table rather than one row per biome
+ * What a biome draws instead, where it draws something of its own:
+ * the `pictures` of its row in `biome-decorations.yaml`. A forest and
+ * a savanna both put `Tree` on a cell and mean different things by it,
+ * and a boulder in a bog is grown over where one in a tundra is under
+ * snow
  */
-const BY_BIOME: Partial<Record<Biome, Partial<Record<Decoration, string[]>>>> = {
-  // Ocean floor: coral, and the stones it grows on
-  [Biome.CoralReef]: { [Decoration.Coral]: ['coral', 'coral-brain', 'coral-red'] },
-  [Biome.PolarOcean]: { [Decoration.Ice]: ['ice-floe', 'ice-shards', 'ice'] },
-  // Shore: the sea has taken the soil, so what grows is low and tough
-  [Biome.Beach]: { [Decoration.Shrub]: ['shrub', 'shrub-tall', 'shrub-flower'] },
-  [Biome.RockyCoast]: {
-    [Decoration.Rock]: ['rock', 'rock-pair', 'rock-iced'],
-    [Decoration.Shrub]: ['shrub-star', 'shrub', 'shrub-tall'],
-  },
-  // Wetlands: everything standing in water is grown over
-  [Biome.Mangrove]: { [Decoration.Tree]: ['dark'] },
-  [Biome.Swamp]: { [Decoration.Stump]: ['log-moss', 'stump', 'log'] },
-  [Biome.Bog]: { [Decoration.Stump]: ['log-moss', 'stump', 'stump-pale'] },
-  // Tropics: closed canopy, ferns under it, moss on the stone
-  [Biome.TropicalRainforest]: { [Decoration.Tree]: ['jungle'] },
-  [Biome.TropicalSeasonalForest]: {
-    [Decoration.Tree]: ['olive'],
-    [Decoration.Shrub]: ['shrub-fern', 'shrub', 'shrub-tall'],
-  },
-  // What survives a dry season: sparse, and more bark than leaf
-  [Biome.Savanna]: {
-    [Decoration.Tree]: ['dry'],
-    [Decoration.Grass]: ['grass-blades', 'grass', 'grass-broad'],
-    [Decoration.Rock]: ['rock-brown', 'rock', 'rock-pair'],
-  },
-  [Biome.Desert]: {
-    [Decoration.Rock]: ['rock-brown', 'rock-pair', 'rock'],
-    [Decoration.Boulder]: ['boulder-brown', 'boulder-stack', 'boulder'],
-  },
-  // Open country: one round tree standing on its own in the grass
-  [Biome.Grassland]: {
-    [Decoration.Tree]: ['round'],
-    [Decoration.Flower]: ['flower', 'flower-white', 'flower-blue'],
-  },
-  [Biome.Shrubland]: {
-    [Decoration.Shrub]: ['shrub', 'shrub-spiky', 'shrub-flower', 'shrub-tall'],
-  },
-  [Biome.Steppe]: { [Decoration.Grass]: ['grass-blades', 'grass-broad', 'grass'] },
-  // Thin cover, and the season showing in it
-  [Biome.Woodland]: {
-    [Decoration.Tree]: ['autumn'],
-    [Decoration.Flower]: ['flower-white', 'flower-blue', 'flower'],
-  },
-  [Biome.TemperateForest]: {
-    [Decoration.Shrub]: ['shrub-fern', 'shrub-sapling', 'shrub'],
-    [Decoration.Stump]: ['stump', 'log', 'log-moss', 'stump-dark'],
-  },
-  [Biome.TemperateRainforest]: {
-    [Decoration.Tree]: ['jungle'],
-    [Decoration.Stump]: ['log-moss', 'stump', 'log'],
-  },
-  // Cold: snow on everything that does not move
-  [Biome.ColdDesert]: {
-    [Decoration.Rock]: ['rock-snow', 'rock-pair', 'rock-iced'],
-    [Decoration.Boulder]: ['boulder-snow', 'boulder-brown', 'boulder'],
-    [Decoration.Shrub]: ['shrub-conifer', 'shrub-sapling', 'shrub-dark'],
-  },
-  [Biome.Taiga]: { [Decoration.Rock]: ['rock-snow', 'rock-iced', 'rock-pair'] },
-  [Biome.Tundra]: {
-    [Decoration.Rock]: ['rock-snow', 'rock-iced', 'rock-pair'],
-    [Decoration.Shrub]: ['shrub-star', 'shrub-conifer', 'shrub-dark'],
-  },
-  [Biome.Glacier]: { [Decoration.Rock]: ['rock-iced', 'rock-snow', 'rock-pair'] },
-  // Highlands: bare stone, and one tree line's worth of trees
-  [Biome.Mountain]: {
-    [Decoration.Pine]: ['pine-dark'],
-    [Decoration.Boulder]: ['boulder', 'boulder-stack', 'boulder-brown'],
-  },
-  [Biome.AlpineTundra]: {
-    [Decoration.Rock]: ['rock-snow', 'rock-iced', 'rock-pair'],
-    [Decoration.Shrub]: ['shrub-star', 'shrub-dark', 'shrub-conifer'],
-  },
-  // Both of its trees are the mountain's: short, dark and holding on
-  [Biome.MontaneForest]: {
-    [Decoration.Tree]: ['fir'],
-    [Decoration.Pine]: ['pine-blue'],
-    [Decoration.Boulder]: ['boulder-moss', 'boulder', 'boulder-stack'],
-  },
-  [Biome.Volcano]: {
-    [Decoration.Boulder]: ['boulder-stack', 'boulder', 'boulder-brown'],
-    [Decoration.Rock]: ['rock-pair', 'rock-brown', 'rock'],
-  },
-  [Biome.Badlands]: {
-    [Decoration.Boulder]: ['boulder-brown', 'boulder-stack', 'boulder'],
-    [Decoration.Rock]: ['rock-brown', 'rock-pair', 'rock'],
-  },
-};
+const BY_BIOME: Record<number, Record<number, string[]>> = BIOME_PICTURES;
 
 /**
  * How cold a biome has to be before its trees are drawn under snow.
@@ -220,21 +107,10 @@ const SNOWY = (() => {
  * what lets a cold biome keep the shade of pine it chose.
  *
  * A tree left out goes bare in the cold. The palm is the one that means
- * it: there is no coat cut for it and no beach cold enough to want one
+ * it: there is no coat cut for it and no beach cold enough to want one.
+ * The pairs are `snow-trees.yaml`
  */
-const SNOW: Partial<Record<string, string>> = {
-  round: 'round-snow',
-  broadleaf: 'broadleaf-snow',
-  dark: 'dark-snow',
-  jungle: 'jungle-snow',
-  olive: 'olive-snow',
-  autumn: 'autumn-snow',
-  dry: 'dry-snow',
-  fir: 'fir-snow',
-  pine: 'pine-snow',
-  'pine-dark': 'pine-dark-snow',
-  'pine-blue': 'pine-blue-snow',
-};
+const SNOW: Partial<Record<string, string>> = v.parse(v.record(v.string(), v.string()), snowFile);
 
 /** What counts as a tree to hide a grotto under, in order of preference. */
 const TREE_KINDS = [Decoration.Tree, Decoration.Pine, Decoration.Palm];
@@ -277,7 +153,7 @@ export default function decorationPicture(
   cell = 0,
 ): DecorationPicture {
   const own = PICTURES[kind];
-  const names = BY_BIOME[biome]?.[kind] ?? own.names;
+  const names = (Object.hasOwn(BY_BIOME, biome) ? BY_BIOME[biome][kind] : undefined) ?? own.names;
   const name = names[Math.abs(cell) % names.length] ?? own.names[0];
 
   // Only the trees take snow. A rock in a taiga is a rock, and a white
@@ -303,7 +179,7 @@ export function decorationPictures(): DecorationPicture[] {
   for (const overrides of Object.values(BY_BIOME)) {
     for (const [kind, names] of Object.entries(overrides)) {
       for (const name of names) {
-        keep({ sheet: PICTURES[Number(kind) as Decoration].sheet, name });
+        keep({ sheet: PICTURES[Number(kind)].sheet, name });
       }
     }
   }
@@ -330,7 +206,7 @@ export function isSnowy(biome: Biome): boolean {
 export function biomeVariants(biome: Biome): Decoration[] {
   const kinds: Decoration[] = [];
 
-  for (const kind of Object.keys(BY_BIOME[biome] ?? {})) {
+  for (const kind of Object.keys(Object.hasOwn(BY_BIOME, biome) ? BY_BIOME[biome] : {})) {
     kinds.push(Number(kind) as Decoration);
   }
   return kinds;

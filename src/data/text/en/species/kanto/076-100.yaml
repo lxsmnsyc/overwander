@@ -1,0 +1,52 @@
+Ponyta:
+  Ponyta: { name: Ponyta, category: Fire Horse Pokemon }
+  Rapidash: { name: Rapidash, category: Fire Horse Pokemon }
+  PonytaGalar: { name: Galarian Ponyta, category: Unique Horn Pokemon }
+  RapidashGalar: { name: Galarian Rapidash, category: Unique Horn Pokemon }
+Slowpoke:
+  Slowpoke: { name: Slowpoke, category: Dopey Pokemon }
+  Slowbro: { name: Slowbro, category: Hermit Crab Pokemon }
+  Slowking: { name: Slowking, category: Royal Pokemon }
+  SlowpokeGalar: { name: Galarian Slowpoke, category: Dopey Pokemon }
+  SlowbroGalar: { name: Galarian Slowbro, category: Hermit Crab Pokemon }
+  SlowkingGalar: { name: Galarian Slowking, category: Royal Pokemon }
+Magnemite:
+  Magnemite: { name: Magnemite, category: Magnet Pokemon }
+  Magneton: { name: Magneton, category: Magnet Pokemon }
+  Magnezone: { name: Magnezone, category: Magnet Area Pokemon }
+Farfetchd:
+  Farfetchd: { name: Farfetch'd, category: Wild Duck Pokemon }
+  FarfetchdGalar: { name: Galarian Farfetch'd, category: Wild Duck Pokemon }
+  Sirfetchd: { name: Sirfetch'd, category: Wild Duck Pokemon }
+Doduo:
+  Doduo: { name: Doduo, category: Twin Bird Pokemon }
+  Dodrio: { name: Dodrio, category: Triple Bird Pokemon }
+Seel:
+  Seel: { name: Seel, category: Sea Lion Pokemon }
+  Dewgong: { name: Dewgong, category: Sea Lion Pokemon }
+Grimer:
+  Grimer: { name: Grimer, category: Sludge Pokemon }
+  Muk: { name: Muk, category: Sludge Pokemon }
+  GrimerAlola: { name: Alolan Grimer, category: Sludge Pokemon }
+  MukAlola: { name: Alolan Muk, category: Sludge Pokemon }
+Shellder:
+  Shellder: { name: Shellder, category: Bivalve Pokemon }
+  Cloyster: { name: Cloyster, category: Bivalve Pokemon }
+Gastly:
+  Gastly: { name: Gastly, category: Gas Pokemon }
+  Haunter: { name: Haunter, category: Gas Pokemon }
+  Gengar: { name: Gengar, category: Shadow Pokemon }
+Onix:
+  Onix: { name: Onix, category: Rock Snake Pokemon }
+  Steelix: { name: Steelix, category: Iron Snake Pokemon }
+Drowzee:
+  Drowzee: { name: Drowzee, category: Hypnosis Pokemon }
+  Hypno: { name: Hypno, category: Hypnosis Pokemon }
+Krabby:
+  Krabby: { name: Krabby, category: River Crab Pokemon }
+  Kingler: { name: Kingler, category: Pincer Pokemon }
+Voltorb:
+  Voltorb: { name: Voltorb, category: Ball Pokemon }
+  Electrode: { name: Electrode, category: Ball Pokemon }
+  VoltorbHisui: { name: Hisuian Voltorb, category: Sphere Pokemon }
+  ElectrodeHisui: { name: Hisuian Electrode, category: Sphere Pokemon }

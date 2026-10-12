@@ -1,0 +1,9 @@
+# What each vendor's counter is called on the board: the stall's name from
+# across the chunk, so it says the shelf rather than the trade
+
+Medicine: Medicine Stall
+Vitamins: Vitamin Stall
+Incenses: Incense Stall
+BattleItems: Battle Item Stall
+Balls: Ball Stall
+Moves: Machine Stall

@@ -76,7 +76,6 @@ import deriveEncounter, {
 import Landmark from '../../../src/data/overworld/landmark';
 import Phenomenon, { BIOME_PHENOMENA } from '../../../src/data/overworld/phenomenon';
 import World from '../../../src/overworld/world';
-import { isTotemSpecies } from '../../../src/data/overworld/totems';
 import findChunk from './helpers';
 
 // Spawn rolls read the species registry and the biome spawn pools;
@@ -426,7 +425,11 @@ describe('world', () => {
     expect(getSpeciesLairs(Species.Kyogre)).toEqual([Lairs.MarineCave, Lairs.EmbeddedTower]);
     expect(getSpeciesLairs(Species.Groudon)).toEqual([Lairs.TerraCave, Lairs.EmbeddedTower]);
     expect(getSpeciesLairs(Species.Rayquaza)).toEqual([Lairs.SkyPillar, Lairs.EmbeddedTower]);
-    expect(getBiomeLairs(Biome.Beach)).toEqual([Lairs.EmbeddedTower, Lairs.AetherParadise]);
+    expect(getBiomeLairs(Biome.Beach)).toEqual([
+      Lairs.EmbeddedTower,
+      Lairs.AetherParadise,
+      Lairs.IsleOfArmor,
+    ]);
     expect(getBiomeLairs(Biome.Badlands)).toContain(Lairs.RockPeakRuins);
     expect(getBiomeLairs(Biome.Tundra)).toContain(Lairs.IcebergRuins);
     expect(getBiomeLairs(Biome.Ocean)).toContain(Lairs.IronRuins);
@@ -446,11 +449,12 @@ describe('world', () => {
       return;
     }
 
-    // A mountain holds ten: the volcano, the cave under it, the
+    // A mountain holds eleven: the volcano, the cave under it, the
     // tower on it, the tomb cut into it, the two chambers the swords
-    // keep, the frozen cavern, the cave the cells gather in and the
-    // hill the prism waits in and the crater a rocket launched from. Every
-    // window stages one of them, and whoever is at home in it
+    // keep, the frozen cavern, the cave the cells gather in, the hill
+    // the prism waits in, the crater a rocket launched from and the
+    // tower of the dark style. Every window stages one of them, and
+    // whoever is at home in it
     const hosted = new Set(getBiomeLairs(Biome.Mountain));
 
     expect(hosted).toEqual(
@@ -465,6 +469,7 @@ describe('world', () => {
         Lairs.TerminusCave,
         Lairs.TenCaratHill,
         Lairs.UltraCrater,
+        Lairs.TowerOfDarkness,
       ]),
     );
 
@@ -620,18 +625,9 @@ describe('world', () => {
   });
 
   it('never derives the same move twice', () => {
-    // A learn set lists a move at every level it is offered at, and
-    // Kadabra is offered Confusion at 1 and again at 16, Disable at 1
-    // and again at 20. Run together that is four slots holding two
-    // moves — a pokemon that cannot do half of what its card says
-    const kadabra = deriveMoves(Species.Kadabra, 30);
-
-    expect(new Set(kadabra).size).toBe(kadabra.length);
-
-    // ...and it is the *latest* of each that is kept, so the four are
-    // still the four most recently learned
-    expect(kadabra).toContain(Moves.Psybeam);
-
+    // A move can be offered at more than one level, its own and a
+    // pre-evolution's, and run together that is two slots holding one
+    // move: a pokemon that cannot do half of what its card says
     // Every species, at every level one of them can be met at
     for (const species of getRegisteredSpecies()) {
       for (const level of [1, 10, 25, 50, MAX_LEVEL]) {
@@ -728,7 +724,7 @@ describe('world', () => {
 
     // Clefable would otherwise take Metronome, which can call
     // anything registered — Transform included
-    expect(deriveMoves(Species.Clefable, RAID_BOSS_LEVEL)).toContain(Moves.Metronome);
+    expect(getLevelUpMoves(Species.Clefable, RAID_BOSS_LEVEL)).toContain(Moves.Metronome);
     expect(createRaidBossSnapshot(Species.Clefable, 0x12345678).moves).not.toContain(
       Moves.Metronome,
     );
@@ -775,14 +771,15 @@ describe('world', () => {
   });
 
   it('fills a boss from its whole learn set, not only its latest moves', () => {
-    // Azelf's last eight are mostly unfit (Uproar, Future Sight, Last
-    // Resort, Natural Gift, Explosion), so the slots come from earlier
+    // Four of Azelf's last eight are unfit (Uproar, Future Sight, Last
+    // Resort, Explosion), so those slots come from earlier
     const moves = getBossMoves(Species.Azelf);
 
     expect(moves).toContain(Moves.Detect);
     expect(moves).toContain(Moves.Imprison);
-    expect(moves).toContain(Moves.Confusion);
-    expect(moves).toHaveLength(6);
+    expect(moves).toContain(Moves.Swift);
+    expect(moves).not.toContain(Moves.Explosion);
+    expect(moves).toHaveLength(8);
   });
 
   it('never stages a Ditto, or anything with nothing left to cast', () => {
@@ -898,6 +895,9 @@ describe('world', () => {
     party[1].addStatus(Statuses.Poisoned, { type: EffectType.None });
     // Confusion ends with the battle, so it is never carried out
     party[0].addStatus(Statuses.Confused, { type: EffectType.None });
+    // What a battle feat reads travels with it
+    party[1].criticals = 3;
+    party[1].taken = 49.5;
 
     const reported = collectAftermath(built, 'trainer-uid');
 
@@ -917,6 +917,8 @@ describe('world', () => {
         health: 12,
         statuses: packStatuses([Statuses.Poisoned, Statuses.Burned]),
         coins: 0,
+        criticals: 3,
+        taken: 49,
       },
     ]);
     expect(collectAftermath(built, 'other-uid')).toEqual([
@@ -1035,8 +1037,7 @@ describe('world', () => {
         const shadow = snapshot.getShadowLairs();
 
         for (const [cell, landmark] of chunk.getLandmarkCells()) {
-          // A Totem's window is its own kind, covered on its own below
-          if (landmark !== Landmark.LegendaryLair || snapshot.isTotemLair(cell)) {
+          if (landmark !== Landmark.LegendaryLair) {
             continue;
           }
           // Never both, and never an empty legendary lair
@@ -1055,43 +1056,6 @@ describe('world', () => {
     expect(fallen).toBeGreaterThan(0);
     // ...and it holds a shadow raid rather than standing empty
     expect(raided).toBeGreaterThan(0);
-  });
-
-  it('stands a lair as a Totem some windows, and as nothing else then', () => {
-    const world = new World('overworld');
-    const lairs: ReturnType<World['getChunk']>[] = [];
-
-    for (let x = -16; x < 16; x++) {
-      for (let y = -16; y < 16; y++) {
-        const chunk = world.getChunk(x, y);
-        const kinds = new Set(chunk.getLandmarkCells().values());
-
-        if (kinds.has(Landmark.LegendaryLair) || kinds.has(Landmark.ShadowLair)) {
-          lairs.push(chunk);
-        }
-      }
-    }
-
-    let totems = 0;
-
-    for (let window = 0; window < 4 && totems < 3; window++) {
-      for (const chunk of lairs) {
-        const snapshot = new ChunkSnapshot(chunk, window * RAID_INTERVAL);
-        const legendary = snapshot.getLegendaryLairs();
-        const shadow = snapshot.getShadowLairs();
-
-        for (const [cell, roll] of snapshot.getTotemLairs()) {
-          totems++;
-          // One kind a window: a Totem's lair holds nobody else
-          expect(legendary.has(cell) || shadow.has(cell)).toBe(false);
-          expect(snapshot.isShadowLair(cell)).toBe(false);
-          // A final stage, at home on the tile's own biome
-          expect(isTotemSpecies(roll.species)).toBe(true);
-          expect(roll.lair).toBeNull();
-        }
-      }
-    }
-    expect(totems).toBeGreaterThan(0);
   });
 
   it('lets a shadow take over one of the biome own lairs', () => {

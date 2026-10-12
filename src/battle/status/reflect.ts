@@ -3,6 +3,7 @@ import { MoveAttackFlags, MoveCategories } from '../../data/ids/moves';
 import { TeamStatuses } from '../../data/ids/status';
 import type Battle from '../core';
 import { BattleEvents, type EffectCause } from '../events';
+import { registerTimedTeamStatus } from '../mechanics/side-conditions';
 import turns from '../turn';
 import type Team from '../team';
 
@@ -32,6 +33,8 @@ const OWN_SCREEN: { [key in MoveCategories]?: TeamStatuses } = {
 function createScreenStatus(status: TeamStatuses, categories: MoveCategories[]) {
   return (battle: Battle) => {
     const instances = new Map<Team, ScreenData>();
+
+    registerTimedTeamStatus(battle, status, instances);
 
     const timer = battle.on(BattleEvents.Tick, EventPriority.Post, (event) => {
       for (const [team, data] of instances.entries()) {

@@ -1,0 +1,214 @@
+# Held, never spent, and never listed, the way a Mega Stone is. The sell
+# price is what a crystal fetches from a shop that will never stock one,
+# the plates' price. Each picture on the `z-crystals` sheet is the
+# crystal's name, lowercased.
+
+NormaliumZ:
+  type: Held
+  icon: z-crystals/normalium-z
+  flags: [Holdable]
+  sell: 2000
+
+FightiniumZ:
+  type: Held
+  icon: z-crystals/fightinium-z
+  flags: [Holdable]
+  sell: 2000
+
+FlyiniumZ:
+  type: Held
+  icon: z-crystals/flyinium-z
+  flags: [Holdable]
+  sell: 2000
+
+PoisoniumZ:
+  type: Held
+  icon: z-crystals/poisonium-z
+  flags: [Holdable]
+  sell: 2000
+
+GroundiumZ:
+  type: Held
+  icon: z-crystals/groundium-z
+  flags: [Holdable]
+  sell: 2000
+
+RockiumZ:
+  type: Held
+  icon: z-crystals/rockium-z
+  flags: [Holdable]
+  sell: 2000
+
+BuginiumZ:
+  type: Held
+  icon: z-crystals/buginium-z
+  flags: [Holdable]
+  sell: 2000
+
+GhostiumZ:
+  type: Held
+  icon: z-crystals/ghostium-z
+  flags: [Holdable]
+  sell: 2000
+
+SteeliumZ:
+  type: Held
+  icon: z-crystals/steelium-z
+  flags: [Holdable]
+  sell: 2000
+
+FiriumZ:
+  type: Held
+  icon: z-crystals/firium-z
+  flags: [Holdable]
+  sell: 2000
+
+WateriumZ:
+  type: Held
+  icon: z-crystals/waterium-z
+  flags: [Holdable]
+  sell: 2000
+
+GrassiumZ:
+  type: Held
+  icon: z-crystals/grassium-z
+  flags: [Holdable]
+  sell: 2000
+
+ElectriumZ:
+  type: Held
+  icon: z-crystals/electrium-z
+  flags: [Holdable]
+  sell: 2000
+
+PsychiumZ:
+  type: Held
+  icon: z-crystals/psychium-z
+  flags: [Holdable]
+  sell: 2000
+
+IciumZ:
+  type: Held
+  icon: z-crystals/icium-z
+  flags: [Holdable]
+  sell: 2000
+
+DragoniumZ:
+  type: Held
+  icon: z-crystals/dragonium-z
+  flags: [Holdable]
+  sell: 2000
+
+DarkiniumZ:
+  type: Held
+  icon: z-crystals/darkinium-z
+  flags: [Holdable]
+  sell: 2000
+
+FairiumZ:
+  type: Held
+  icon: z-crystals/fairium-z
+  flags: [Holdable]
+  sell: 2000
+
+PikaniumZ:
+  type: Held
+  icon: z-crystals/pikanium-z
+  flags: [Holdable]
+  sell: 2000
+
+PikashuniumZ:
+  type: Held
+  icon: z-crystals/pikashunium-z
+  flags: [Holdable]
+  sell: 2000
+
+AloraichiumZ:
+  type: Held
+  icon: z-crystals/aloraichium-z
+  flags: [Holdable]
+  sell: 2000
+
+EeviumZ:
+  type: Held
+  icon: z-crystals/eevium-z
+  flags: [Holdable]
+  sell: 2000
+
+SnorliumZ:
+  type: Held
+  icon: z-crystals/snorlium-z
+  flags: [Holdable]
+  sell: 2000
+
+MewniumZ:
+  type: Held
+  icon: z-crystals/mewnium-z
+  flags: [Holdable]
+  sell: 2000
+
+DecidiumZ:
+  type: Held
+  icon: z-crystals/decidium-z
+  flags: [Holdable]
+  sell: 2000
+
+InciniumZ:
+  type: Held
+  icon: z-crystals/incinium-z
+  flags: [Holdable]
+  sell: 2000
+
+PrimariumZ:
+  type: Held
+  icon: z-crystals/primarium-z
+  flags: [Holdable]
+  sell: 2000
+
+LycaniumZ:
+  type: Held
+  icon: z-crystals/lycanium-z
+  flags: [Holdable]
+  sell: 2000
+
+MimikiumZ:
+  type: Held
+  icon: z-crystals/mimikium-z
+  flags: [Holdable]
+  sell: 2000
+
+KommoniumZ:
+  type: Held
+  icon: z-crystals/kommonium-z
+  flags: [Holdable]
+  sell: 2000
+
+TapuniumZ:
+  type: Held
+  icon: z-crystals/tapunium-z
+  flags: [Holdable]
+  sell: 2000
+
+SolganiumZ:
+  type: Held
+  icon: z-crystals/solganium-z
+  flags: [Holdable]
+  sell: 2000
+
+LunaliumZ:
+  type: Held
+  icon: z-crystals/lunalium-z
+  flags: [Holdable]
+  sell: 2000
+
+UltranecroziumZ:
+  type: Held
+  icon: z-crystals/ultranecrozium-z
+  flags: [Holdable]
+  sell: 2000
+
+MarshadiumZ:
+  type: Held
+  icon: z-crystals/marshadium-z
+  flags: [Holdable]
+  sell: 2000

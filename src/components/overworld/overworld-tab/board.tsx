@@ -87,7 +87,7 @@ import { Depth } from '../../../overworld/depth';
 import { throughMouth } from '../../../overworld/cave';
 import { townAt, townName } from '../../../overworld/town';
 import { discoverTown } from '../../../auth/towns';
-import { canStep, findPathBeside, findPathNear } from '../../../overworld/path';
+import { canStep, findPathBeside, findPathNear, stepDuration } from '../../../overworld/path';
 import type SafariSession from '../../../overworld/safari';
 import { isInWorld } from '../../../overworld/world';
 import Biome, { isIceBiome } from '../../../data/ids/biome';
@@ -2385,11 +2385,20 @@ export default function OverworldBoard(props: {
   );
 
   /**
-   * When the last cell of a walk was stepped. The pace is measured from
-   * it rather than from the press, so pressing again mid-walk changes
-   * where the player is going without changing how fast they get there
+   * When the next step may be taken: the last one's start plus how long
+   * it takes, a diagonal being √2 times a straight step. The pace is
+   * measured from it rather than from the press, so pressing again
+   * mid-walk changes where the player is going without changing how
+   * fast they get there
    */
-  let steppedAt = 0;
+  let nextStepAt = 0;
+
+  /** How long until the next step, or a whole pace when the last one did not move */
+  const untilNextStep = (): number => {
+    const owed = nextStepAt - Date.now();
+
+    return owed > 0 ? owed : STEP_PACE;
+  };
 
   /**
    * Whether the walk has arrived. Reaching for something ends beside
@@ -2507,7 +2516,7 @@ export default function OverworldBoard(props: {
       announced = plan;
       sight()?.plan(stepsAlong(here, route));
     }
-    steppedAt = Date.now();
+    nextStepAt = Date.now() + stepDuration(step, STEP_PACE);
     move(step[0], step[1]);
   };
 
@@ -2520,14 +2529,14 @@ export default function OverworldBoard(props: {
   });
 
   /**
-   * The walk itself: a step, and then one every `STEP_PACE` until it
-   * arrives or gives up.
+   * The walk itself: a step, and then the next as soon as that one is
+   * done, until it arrives or gives up. Each step waits out its own
+   * length, so a diagonal takes √2 times a straight one.
    *
-   * The first step is taken the moment the press lands, unless one was
-   * taken less than a pace ago — a new press restarts this effect, and
-   * stepping straight away on every press let a player who kept
-   * re-pressing walk as fast as they could click. What is owed from the
-   * last step is waited out first, and only then does the clock resume.
+   * The first step is taken the moment the press lands, unless the
+   * last one is still under way — a new press restarts this effect,
+   * and stepping straight away on every press let a player who kept
+   * re-pressing walk as fast as they could click.
    *
    * Everything the step reads is read outside the effect's tracking,
    * so the only thing that restarts the clock is a **new** press: read
@@ -2539,35 +2548,31 @@ export default function OverworldBoard(props: {
     if (journey() == null) {
       return;
     }
-    const owed = Math.max(0, STEP_PACE - (Date.now() - steppedAt));
-    let waiting: ReturnType<typeof setTimeout> | null = null;
-    let timer: ReturnType<typeof setInterval> | null = null;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    // A step can end the walk from inside itself, by arriving or by
+    // crossing an edge, which disposes this effect there and then. A
+    // timer set after that would outlive the walk and drive the next
+    let ended = false;
 
     const pace = (): void => {
-      // The clock is started before the step, not after. A step can end
-      // the walk from inside itself, by arriving or by crossing an
-      // edge, and ending it disposes this effect there and then: a
-      // clock started afterwards is one nothing holds a handle to. Those
-      // outlive the walk, and every one of them drives the next walk, so
-      // two of them is a player moving three cells a pace
-      timer = setInterval(() => {
-        untrack(stride);
-      }, STEP_PACE);
+      timer = null;
       untrack(stride);
+      if (!ended) {
+        timer = setTimeout(pace, untilNextStep());
+      }
     };
+    const owed = nextStepAt - Date.now();
 
     if (owed > 0) {
-      waiting = setTimeout(pace, owed);
+      timer = setTimeout(pace, owed);
     } else {
       pace();
     }
 
     onCleanup(() => {
-      if (waiting != null) {
-        clearTimeout(waiting);
-      }
+      ended = true;
       if (timer != null) {
-        clearInterval(timer);
+        clearTimeout(timer);
       }
     });
   });
@@ -2636,7 +2641,7 @@ export default function OverworldBoard(props: {
     const loaded = view();
     const first = ways.at(0);
 
-    if (loaded == null || first == null || engaged() || Date.now() - steppedAt < STEP_PACE) {
+    if (loaded == null || first == null || engaged() || Date.now() < nextStepAt) {
       return;
     }
     // The keyboard is the player walking themselves, so a walk they
@@ -2648,7 +2653,7 @@ export default function OverworldBoard(props: {
     for (const way of ways) {
       if (canStep(cell(), way[0], way[1], passable)) {
         setFacing(way);
-        steppedAt = Date.now();
+        nextStepAt = Date.now() + stepDuration(way, STEP_PACE);
         move(way[0], way[1]);
         return;
       }
@@ -2684,12 +2689,12 @@ export default function OverworldBoard(props: {
    */
   onMount(() => {
     let held: Direction[] = [];
-    let pacing: ReturnType<typeof setInterval> | null = null;
+    let pacing: ReturnType<typeof setTimeout> | null = null;
 
     const stop = (): void => {
       held = [];
       if (pacing != null) {
-        clearInterval(pacing);
+        clearTimeout(pacing);
         pacing = null;
       }
     };
@@ -2723,13 +2728,20 @@ export default function OverworldBoard(props: {
       return [[STEPS[across][0], STEPS[along][1]], STEPS[newer], STEPS[older]];
     };
 
-    const onward = (): void => {
+    /** The next step once this one is done, which a diagonal makes longer */
+    const keepPace = (): void => {
+      pacing ??= setTimeout(onward, untilNextStep());
+    };
+
+    function onward(): void {
+      pacing = null;
       if (held.length === 0) {
         stop();
         return;
       }
       stepBy(ways());
-    };
+      keepPace();
+    }
 
     const down = (event: KeyboardEvent): void => {
       if (event.repeat || !forTheGame(event)) {
@@ -2761,7 +2773,7 @@ export default function OverworldBoard(props: {
       pressed.push(action);
       held = pressed;
       stepBy(ways());
-      pacing ??= setInterval(onward, STEP_PACE);
+      keepPace();
     };
 
     const up = (event: KeyboardEvent): void => {

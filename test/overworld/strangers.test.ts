@@ -103,6 +103,35 @@ describe('strangers', () => {
     expect(strangers.standing()[0]).toMatchObject({ x: 2, y: 1, facing: SOUTH, moving: false });
   });
 
+  it('play a diagonal step back over √2 paces, as long as it took', () => {
+    const { strangers, at } = crowd();
+    const SOUTH_EAST: Facing = [1, 1];
+    const diagonal = PACE * Math.SQRT2;
+
+    strangers.see(sight('a', 0, 0));
+    strangers.hear({ uid: 'a', x: 0, y: 0, steps: [SOUTH_EAST, EAST], at: 0, planned: false });
+
+    at(PLAYBACK_DELAY + diagonal / 2);
+    const halfway = strangers.standing()[0];
+
+    expect(halfway.x).toBeCloseTo(0.5);
+    expect(halfway.y).toBeCloseTo(0.5);
+    expect(halfway.moving).toBe(true);
+
+    // Past one straight pace and still on the diagonal
+    at(PLAYBACK_DELAY + PACE + 1);
+    expect(strangers.standing()[0]).toMatchObject({ facing: SOUTH_EAST, moving: true });
+
+    at(PLAYBACK_DELAY + diagonal + PACE / 2);
+    const after = strangers.standing()[0];
+
+    expect(after.x).toBeCloseTo(1.5);
+    expect(after).toMatchObject({ y: 1, facing: EAST, moving: true });
+
+    at(PLAYBACK_DELAY + diagonal + PACE);
+    expect(strangers.standing()[0]).toMatchObject({ x: 2, y: 1, moving: false });
+  });
+
   it('play a second run after the first, not over it', () => {
     const { strangers, at } = crowd();
 

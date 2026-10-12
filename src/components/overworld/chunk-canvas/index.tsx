@@ -2057,7 +2057,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         slide.x += (dx / span) * gain;
         slide.y += (dy / span) * gain;
         walker?.advanceBy(gain * CELL_STRIDE);
-        strideUntil = clock + SLIDE_PACE;
+        strideUntil = clock + SLIDE_PACE * stepped.stride;
       } else {
         heading = facingToward(0, 0, props.facing[0], props.facing[1]);
         walker?.stop();

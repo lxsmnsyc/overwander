@@ -54,6 +54,19 @@ describe('walking across a chunk', () => {
     expect(route).toEqual([cell(1, 1), cell(2, 2), cell(3, 3), cell(4, 4), cell(5, 5)]);
   });
 
+  it('walks a straight line straight, since a diagonal takes longer', () => {
+    // A zigzag is as many steps, but every diagonal in it is √2 times
+    // as long to walk
+    const from = cell(0, 4);
+
+    expect(findPath(from, cell(4, 4), OPEN)).toEqual([
+      cell(1, 4),
+      cell(2, 4),
+      cell(3, 4),
+      cell(4, 4),
+    ]);
+  });
+
   it('never cuts the corner of something standing there', () => {
     // A tree beside the diagonal: the step past it goes round
     const tree = cell(1, 0);

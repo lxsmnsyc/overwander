@@ -36,6 +36,36 @@ export const STEPS: readonly [number, number][] = [
 ];
 
 /**
+ * How much longer a diagonal step takes than a straight one. It covers
+ * √2 cells, and a walk keeps one speed whichever way it goes
+ */
+export const DIAGONAL_PACE = Math.SQRT2;
+
+/** How long a step takes, given how long a straight one does */
+export function stepDuration([dx, dy]: readonly [number, number], pace: number): number {
+  return dx !== 0 && dy !== 0 ? pace * DIAGONAL_PACE : pace;
+}
+
+/**
+ * What a step costs a route: straight 10, diagonal 14, its time in
+ * whole numbers, so two routes that take as long tie exactly
+ */
+const STRAIGHT_COST = 10;
+const DIAGONAL_COST = 14;
+
+/**
+ * The time a walk between two cells takes with nothing in the way, in
+ * those costs. It never over-estimates, so the first route found to a
+ * cell is the quickest one
+ */
+function costBetween(one: number, other: number): number {
+  const across = Math.abs((one % BOARD_CELLS) - (other % BOARD_CELLS));
+  const along = Math.abs(Math.floor(one / BOARD_CELLS) - Math.floor(other / BOARD_CELLS));
+
+  return STRAIGHT_COST * Math.max(across, along) + (DIAGONAL_COST - STRAIGHT_COST) * Math.min(across, along);
+}
+
+/**
  * Whether one step from a cell is allowed: onto open ground, and, for a
  * diagonal, without cutting the corner of anything on either side
  */
@@ -71,10 +101,7 @@ function neighbors(cell: number, passable: Passable): number[] {
 
 /**
  * How many steps apart two cells are with nothing in the way, a
- * diagonal counting as one. It is the distance the grid is actually
- * walked in, which is what makes it safe to steer the search by: it
- * never over-estimates, so the first route found to a cell is the
- * shortest one
+ * diagonal counting as one
  */
 export function stepsBetween(one: number, other: number): number {
   return Math.max(
@@ -154,12 +181,15 @@ function search(
       return route.reverse();
     }
 
-    const spent = (cost.get(cell) ?? 0) + 1;
 
     // The cell being walked to is checked for what is standing on it
     // rather than the one being left, so a player who somehow ends up
     // on an occupied cell can still walk off it
     for (const next of neighbors(cell, passable)) {
+      const diagonal =
+        next % BOARD_CELLS !== cell % BOARD_CELLS &&
+        Math.floor(next / BOARD_CELLS) !== Math.floor(cell / BOARD_CELLS);
+      const spent = (cost.get(cell) ?? 0) + (diagonal ? DIAGONAL_COST : STRAIGHT_COST);
       const known = cost.get(next) ?? Number.POSITIVE_INFINITY;
       const parent = cameFrom.get(next);
 
@@ -190,7 +220,7 @@ export function findPath(from: number, to: number, passable: Passable): number[]
   return search(
     from,
     (cell) => cell === to,
-    (cell) => stepsBetween(cell, to),
+    (cell) => costBetween(cell, to),
     strayFrom(from, to),
     passable,
   );
@@ -269,9 +299,9 @@ export function findPathBeside(from: number, to: number, passable: Passable): nu
   return search(
     from,
     beside,
-    // One short of the distance, since the ring around it is one step
-    // nearer than the cell itself
-    (cell) => Math.max(0, stepsBetween(cell, to) - 1),
+    // A diagonal short of the way there, since the ring around it is at
+    // most one diagonal nearer than the cell itself
+    (cell) => Math.max(0, costBetween(cell, to) - DIAGONAL_COST),
     strayFrom(from, to),
     passable,
   );

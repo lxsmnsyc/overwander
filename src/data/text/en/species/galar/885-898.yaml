@@ -24,3 +24,5 @@ Spectrier:
   Spectrier: { name: Spectrier, category: Swift Horse Pokemon }
 Calyrex:
   Calyrex: { name: Calyrex, category: King Pokemon }
+  CalyrexIce: { name: Ice Rider Calyrex, category: High King Pokemon }
+  CalyrexShadow: { name: Shadow Rider Calyrex, category: High King Pokemon }

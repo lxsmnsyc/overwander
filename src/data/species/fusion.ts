@@ -18,7 +18,9 @@ interface Fusion {
   item: Items;
   /**
    * Whether the shape fights with the partner's abilities too. Kyurem's
-   * shapes do; Necrozma keeps its own armour whatever it has absorbed
+   * shapes do, and a rider wears its steed's neigh beside the king's
+   * Unnerve, which is As One; Necrozma keeps its own armour whatever it
+   * has absorbed
    */
   wearsPartner: boolean;
 }
@@ -58,6 +60,24 @@ const FUSIONS = new Map<Species, Fusion>([
       partner: Species.Lunala,
       item: Items.NLunarizer,
       wearsPartner: false,
+    },
+  ],
+  [
+    Species.CalyrexIce,
+    {
+      husk: Species.Calyrex,
+      partner: Species.Glastrier,
+      item: Items.ReinsOfUnity,
+      wearsPartner: true,
+    },
+  ],
+  [
+    Species.CalyrexShadow,
+    {
+      husk: Species.Calyrex,
+      partner: Species.Spectrier,
+      item: Items.ReinsOfUnity,
+      wearsPartner: true,
     },
   ],
 ]);

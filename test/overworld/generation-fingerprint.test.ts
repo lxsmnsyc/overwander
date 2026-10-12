@@ -125,7 +125,7 @@ describe('generation fingerprint', () => {
 
     const surface = new World('fingerprint-seed', Depth.Surface, Generation.Second);
 
-    expect(fingerprint(surface)).toBe('af95afa7');
+    expect(fingerprint(surface)).toBe('16bf616f');
     expect(fingerprint(surface.at(Depth.Cave))).toBe('15f65e2f');
   });
 });

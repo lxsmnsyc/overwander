@@ -1,4 +1,4 @@
-import { For, type JSX, Show, createSignal } from 'solid-js';
+import { For, type JSX, Show, createSignal, from } from 'solid-js';
 import {
   type AuctionRecord,
   canReclaim,
@@ -6,6 +6,9 @@ import {
   isLive,
   reclaimAuction,
 } from '../../auth/auctions';
+import { type Profile, watchProfile } from '../../auth/profile';
+import { useGame } from '../app/game-context';
+import PlayerPlate from '../profile/PlayerPlate';
 import { AuctionLotLabel } from './auction-tab/lots';
 import { describeRemaining, describeStanding } from './auction-tab/time';
 import {
@@ -95,6 +98,30 @@ function describeLot(auction: AuctionRecord, state: LotState, at: number): strin
   return `${auction.bid} gold`;
 }
 
+/**
+ * Whoever holds the top bid, pressable into their profile: a seller
+ * wants to know who is buying, and a name alone leads nowhere. The row
+ * follows the profile, so the list is paged for it
+ */
+function BidderPlate(props: { uid: string }): JSX.Element {
+  const game = useGame();
+  const profile = from<Profile | null>((set) =>
+    watchProfile(props.uid, (record) => {
+      set(record);
+    }),
+  );
+
+  return (
+    <PlayerPlate
+      name={profile()?.nickname ?? 'a trainer'}
+      sprite={profile()?.sprite ?? null}
+      onOpen={() => {
+        game.setVisiting(props.uid);
+      }}
+    />
+  );
+}
+
 export interface SellingListProps {
   player: string;
   /**
@@ -170,6 +197,12 @@ export default function SellingList(props: SellingListProps): JSX.Element {
                     </span>
                     <Meta>{describeLot(lot, state(), Date.now())}</Meta>
                   </div>
+                  <Show when={lot.bidder !== ''}>
+                    <span class="flex min-w-0 items-center gap-2">
+                      <Meta>{state() === LotState.Running ? 'Leading' : 'Won by'}</Meta>
+                      <BidderPlate uid={lot.bidder} />
+                    </span>
+                  </Show>
                   <Badge tone={LOT_STATE_TONES[state()]}>{LOT_STATE_LABELS[state()]}</Badge>
                   {/* Nothing hands an unsold lot back on its own, so
                       this is the only way it ever returns */}

@@ -49,6 +49,9 @@ NSolarizer:
 NLunarizer:
   name: N-Lunarizer
   description: Folds a Lunala into a Necrozma, or pulls it back out. Spent on each use.
+ReinsOfUnity:
+  name: Reins of Unity
+  description: Seats a Calyrex on a Glastrier or a Spectrier, or lets it down again. Spent on each use.
 RustedSword:
   name: Rusted Sword
   description: A Zacian holding it fights crowned, and its Iron Head becomes Behemoth Blade.

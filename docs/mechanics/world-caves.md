@@ -21,8 +21,8 @@ Entrances are common, about one chunk in two in rocky country, so coming back up
 is never far.
 
 Nothing grows down there, and passages never run diagonally. Two cells that
-touch only at their corners would be two dead ends, since nothing in the game
-moves diagonally, so a corner like that is squared off into a walkable one.
+touch only at their corners would be two dead ends, since a diagonal step never
+cuts a corner, so a corner like that is squared off into a walkable one.
 
 **A cave under the open sea is its own network.** The rock is solid along every
 shore, so no tunnel runs from the hills out under the water. The sea caves are

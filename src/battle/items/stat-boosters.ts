@@ -103,7 +103,14 @@ function setupChoiceItem(item: Items, stat: Stats): (battle: Battle) => void {
     function isLockedOut(unit: Unit, move: Moves): boolean {
       const locked = committed.get(unit);
 
-      return locked != null && locked !== move && !isPseudoMove(move) && holds(unit, item);
+      // A giant is never held to one move
+      return (
+        locked != null &&
+        locked !== move &&
+        !isPseudoMove(move) &&
+        !unit.dynamaxed &&
+        holds(unit, item)
+      );
     }
 
     return new MergedLifecycle([
@@ -114,9 +121,12 @@ function setupChoiceItem(item: Items, stat: Stats): (battle: Battle) => void {
       }),
 
       // Only a move of the holder's own locks it: the basic swing and
-      // Struggle are what it falls back on, never what it chose
+      // Struggle are what it falls back on, never what it chose. A
+      // Dynamax wipes the lock, so it starts over once it shrinks
       battle.on(BattleEvents.UnitCast, EventPriority.Post, (event) => {
-        if (holds(event.source, item) && !isPseudoMove(event.move)) {
+        if (event.source.dynamaxed) {
+          committed.delete(event.source);
+        } else if (holds(event.source, item) && !isPseudoMove(event.move)) {
           committed.set(event.source, event.move);
         }
       }),

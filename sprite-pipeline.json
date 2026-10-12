@@ -8510,15 +8510,15 @@
       }
     },
     "public/sprites/overworld/landmarks/image.png": {
-      "digest": "55c56c98f7924c96",
-      "bytes": 3084,
-      "width": 120,
-      "height": 111,
+      "digest": "6b14d82cda819456",
+      "bytes": 3836,
+      "width": 128,
+      "height": 115,
       "compact": {
-        "at": "2026-09-14T17:04:33Z",
+        "at": "2026-10-09T15:06:54Z",
         "as": "already compact",
-        "was": 3084,
-        "bytes": 3084
+        "was": 3836,
+        "bytes": 3836
       }
     },
     "public/sprites/overworld/trees/image.png": {
@@ -37980,15 +37980,15 @@
       }
     },
     "public/sprites/ui/items/key/image.png": {
-      "digest": "923424da18399412",
-      "bytes": 56876,
+      "digest": "87e9adc689dfb656",
+      "bytes": 57060,
       "width": 299,
       "height": 384,
       "compact": {
-        "at": "2026-10-01T11:26:36Z",
+        "at": "2026-10-09T14:54:51Z",
         "as": "already compact",
-        "was": 56876,
-        "bytes": 56876
+        "was": 57060,
+        "bytes": 57060
       }
     },
     "public/sprites/ui/items/medicine/image.png": {

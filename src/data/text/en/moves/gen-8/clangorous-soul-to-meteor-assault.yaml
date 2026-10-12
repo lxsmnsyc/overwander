@@ -18,10 +18,10 @@ PyroBall:
   description: 10% to burn. Thaws the user.
 BehemothBlade:
   name: Behemoth Blade
-  description: The sword Zacian is known for, at full strength against anything.
+  description: The sword Zacian is known for, and 2x power against a Dynamaxed target.
 BehemothBash:
   name: Behemoth Bash
-  description: The shield Zamazenta is known for, at full strength against anything.
+  description: The shield Zamazenta is known for, and 2x power against a Dynamaxed target.
 AuraWheel:
   name: Aura Wheel
   description: Morpeko's own, which no other pokemon can use. Raises its Speed a stage, and turns Dark-type while it is Hangry.

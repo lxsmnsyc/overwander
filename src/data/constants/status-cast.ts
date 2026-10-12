@@ -42,6 +42,8 @@ export const STATUS_CAST: [status: Statuses, cast: readonly CastAnimation[]][] =
   // is concerned. Nothing else says what dormant means
   [Statuses.Dormant, [SpriteAnim.Sleep]],
   [Statuses.Sleeping, [SpriteAnim.Sleep]],
+  // Reeling where it stands, the way a confused one does
+  [Statuses.Staggered, [SpriteAnim.Twirl, SpriteAnim.Shake, SpriteAnim.Hurt]],
   // Shivering where it stands: a Shake reads as cold on the sheets
   // that have one, and a Hurt reads as unable to move on the ones
   // that do not

@@ -11,6 +11,7 @@ import setupItems from './items';
 import setupAbilityMechanics from './mechanics/ability';
 import setupAllianceMechanics from './mechanics/alliance';
 import setupBattleMechanics from './mechanics/battle';
+import setupDynamaxMechanics from './mechanics/dynamax';
 import setupItemMechanics from './mechanics/item';
 import {
   setupAttackMechanics,
@@ -60,6 +61,8 @@ export default function createBattle(
   setupItemMechanics(battle);
   setupWeatherMechanics(battle);
   setupTerrainMechanics(battle);
+  // Ahead of the moves, so a giant refuses a switch before anything reacts to one
+  setupDynamaxMechanics(battle);
   setupMoveMechanics(battle);
   setupCastingMechanics(battle);
   setupChannelingMechanics(battle);

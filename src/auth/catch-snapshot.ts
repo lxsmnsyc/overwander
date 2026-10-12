@@ -61,6 +61,11 @@ export interface CatchSnapshot {
    */
   shiny: boolean;
   shadow: boolean;
+  /**
+   * Whether it carries the Gigantamax Factor. Left out reads as false,
+   * which is what every snapshot written before the factor was
+   */
+  gigantamax?: boolean;
   moves: Moves[];
   /**
    * What has been spent on each of those moves, keyed by move id. It
@@ -98,6 +103,19 @@ export interface CatchSnapshot {
    * holds no side up before then
    */
   called?: boolean;
+  /** Set on a Max Raid's boss: it fights Dynamaxed from start to end */
+  dynamaxed?: boolean;
+  /**
+   * Set, beside `called`, on a copy an Alpha summons. It is built
+   * each time the Alpha calls one, so a fallen copy can be replaced
+   */
+  alphaCopy?: boolean;
+  /**
+   * The Balms its player packed for a Noble raid, set on the first
+   * pokemon of their first party only. The server takes them from the
+   * bag as the raid starts
+   */
+  balms?: number;
 }
 
 /**
@@ -125,6 +143,7 @@ export function previewSnapshot(snapshot: CatchSnapshot): CaughtPokemon {
     guarded: false,
     traded: false,
     canEvolve: false,
+    gigantamax: snapshot.gigantamax === true,
     featProgress: 0,
     auctionable: false,
     moves: snapshot.moves,
@@ -173,6 +192,7 @@ export function createCatchSnapshot(id: string, caught: CaughtPokemon): CatchSna
     weight: size.weight,
     shiny: caught.shiny,
     shadow: caught.shadow,
+    ...(caught.gigantamax ? { gigantamax: true } : {}),
     moves: caught.moves,
     movePoints: caught.movePoints,
     abilities: caught.abilities,
@@ -223,7 +243,11 @@ export function asCatchSnapshot(value: unknown): CatchSnapshot {
     // A snapshot written before the field existed reads as a stranger's
     // catch, which is what Return and Frustration answer to
     friendship: data.friendship == null ? BASE_FRIENDSHIP : asNumber(data.friendship),
+    ...(data.gigantamax === true ? { gigantamax: true } : {}),
     ...(data.called === true ? { called: true } : {}),
+    ...(data.dynamaxed === true ? { dynamaxed: true } : {}),
+    ...(data.alphaCopy === true ? { alphaCopy: true } : {}),
+    ...(typeof data.balms === 'number' && data.balms > 0 ? { balms: Math.floor(data.balms) } : {}),
   };
 }
 

@@ -2109,7 +2109,46 @@
         "WildboltStorm",
         "SandsearStorm",
         "LunarBlessing",
-        "TakeHeart"
+        "TakeHeart",
+        "GMaxVineLash",
+        "GMaxWildfire",
+        "GMaxCannonade",
+        "GMaxBefuddle",
+        "GMaxVoltCrash",
+        "GMaxGoldRush",
+        "GMaxChiStrike",
+        "GMaxTerror",
+        "GMaxFoamBurst",
+        "GMaxResonance",
+        "GMaxCuddle",
+        "GMaxReplenish",
+        "GMaxMalodor",
+        "GMaxMeltdown",
+        "GMaxDrumSolo",
+        "GMaxFireball",
+        "GMaxHydrosnipe",
+        "GMaxWindRage",
+        "GMaxGravitas",
+        "GMaxStonesurge",
+        "GMaxVolcalith",
+        "GMaxTartness",
+        "GMaxSweetness",
+        "GMaxSandblast",
+        "GMaxStunShock",
+        "GMaxCentiferno",
+        "GMaxSmite",
+        "GMaxSnooze",
+        "GMaxFinale",
+        "GMaxSteelsurge",
+        "GMaxDepletion",
+        "GMaxOneBlow",
+        "GMaxRapidFlow",
+        "FrenzyStoneAxe",
+        "FrenzyPetalStorm",
+        "FrenzyWildfire",
+        "FrenzyBlast",
+        "FrenzyIceberg",
+        "FrenzyBurst"
       ]
     },
     "ability": {
@@ -2433,6 +2472,8 @@
         "Purified",
         "Totem",
         "TotemAlly",
+        "Alpha",
+        "Noble",
         "VerdantField",
         "EmberField",
         "DelugeField",
@@ -3529,7 +3570,9 @@
         "FossilizedBird",
         "FossilizedFish",
         "FossilizedDrake",
-        "FossilizedDino"
+        "FossilizedDino",
+        "DynamaxBand",
+        "Balm"
       ]
     },
     "biome": {
@@ -4274,7 +4317,8 @@
         "AquaRinged",
         "Telekinetic",
         "SkyDropped",
-        "PowerShifted"
+        "PowerShifted",
+        "Staggered"
       ]
     },
     "team-status": {
@@ -4999,7 +5043,11 @@
         "FrontierBrain",
         "PokemonCenter",
         "CaveMouth",
-        "HoneyTree"
+        "HoneyTree",
+        "MaxRaid",
+        "Totem",
+        "AlphaRaid",
+        "NobleArena"
       ]
     },
     "phenomenon": {

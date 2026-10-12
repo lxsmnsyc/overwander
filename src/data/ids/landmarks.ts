@@ -140,6 +140,31 @@ const enum Landmark {
    * the spot, and nothing in its pool spawns anywhere else
    */
   HoneyTree = 20,
+  /**
+   * A Max Raid: a hole in open country with a pillar of light over it,
+   * holding a Dynamaxed final stage of a line the tile's biome spawns.
+   * Not rolled on its own: it takes a share of the item cache rolls,
+   * so the rest of a chunk's landmarks stand where they did
+   */
+  MaxRaid = 21,
+  /**
+   * An Alolan trial site holding a Totem every raid window. It takes a
+   * share of the trainer rolls the way a Max Raid takes the caches'
+   */
+  Totem = 22,
+  /**
+   * An Alpha's ground: a trampled clearing in open country holding an
+   * oversized wild pokemon of the tile's biome, any stage, that calls
+   * its own kind to its side. It takes a share of the item cache rolls
+   * beside the Max Raid's
+   */
+  AlphaRaid = 23,
+  /**
+   * A Noble's arena: a raised stone ring in open country where a
+   * frenzied lord of the land is calmed rather than beaten. It takes a
+   * share of the trainer rolls beside the Totem's
+   */
+  NobleArena = 24,
 }
 
 export { Landmark };

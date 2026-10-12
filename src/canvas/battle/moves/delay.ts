@@ -546,6 +546,12 @@ const NAMED: Partial<Record<Moves, [winding?: DelayShape, striking?: DelayShape]
  * the wait before them is the caster winding up rather than a throw
  */
 const ARRIVES_ITSELF = new Set<EffectShape>([
+  // The Frenzy bursts: each falls, gathers or catches on the target
+  'Splinters',
+  'PetalStorm',
+  'Wildfire',
+  'ChargedBlast',
+  'Iceberg',
   // Sent from the caster
   'Stream',
   'Wave',
@@ -585,6 +591,25 @@ const ARRIVES_ITSELF = new Set<EffectShape>([
   'Mystic',
   'Wrath',
   'Cage',
+  // The Max Moves come down on the target out of the cloud over it
+  'MaxFlare',
+  'MaxGeyser',
+  'MaxHailstorm',
+  'MaxRockfall',
+  'MaxLightning',
+  'MaxOvergrowth',
+  'MaxMindstorm',
+  'MaxStarfall',
+  'MaxStrike',
+  'MaxFlutterby',
+  'MaxPhantasm',
+  'MaxWyrmwind',
+  'MaxDarkness',
+  'MaxKnuckle',
+  'MaxSteelspike',
+  'MaxOoze',
+  'MaxQuake',
+  'MaxAirstream',
 ]);
 
 const BY_LANDING: Partial<Record<EffectShape, DelayShape>> = {
@@ -639,6 +664,7 @@ const BY_LANDING: Partial<Record<EffectShape, DelayShape>> = {
   Gears: 'Focus',
   Windup: 'Focus',
   Shed: 'Focus',
+  MaxGuard: 'Brace',
 };
 
 /**

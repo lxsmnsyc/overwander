@@ -7,6 +7,7 @@ import type Biome from '../data/ids/biome';
 import type { Items } from '../data/ids/items';
 import type Lairs from '../data/overworld/lair';
 import { getLairTitle } from '../data/overworld/lair';
+import Landmark from '../data/overworld/landmark';
 import type { Species } from '../data/ids/species';
 import { getSpeciesData } from '../data/species/__create';
 import type Chunk from '../overworld/chunk';
@@ -52,11 +53,27 @@ export const enum RaidKind {
    */
   Mythical = 2,
   /**
-   * A Totem standing in a lair this window instead of its legendary
-   * or its shadow: a final stage of a line the tile's biome spawns,
-   * oversized and wrapped in an aura
+   * A Totem at a Totem landmark: a final stage of a line the tile's
+   * biome spawns, oversized and wrapped in an aura
    */
   Totem = 3,
+  /**
+   * A Max Raid: a final stage picked the way a Totem is, Dynamaxed
+   * for the whole fight, and Gigantamaxed where its species can be
+   */
+  Max = 4,
+  /**
+   * An Alpha raid: an oversized wild pokemon of the tile's biome, any
+   * stage, that brings six of its own kind to its side as it is worn
+   * down
+   */
+  Alpha = 5,
+  /**
+   * A Noble raid: a frenzied lord of the tile's biome, one of Hisui's
+   * five or a final stage by rule, calmed rather than beaten. Nothing
+   * is caught: the calmers are paid in items and gold
+   */
+  Noble = 6,
 }
 
 /**
@@ -191,17 +208,56 @@ export interface RaidView {
  * whoever is at home in it, and two Articuno raids in one chunk were
  * two of the same word for different things
  */
-export function getRaidTitle(raid: RaidRecord): string {
+export function getRaidTitle(raid: RaidRecord | RaidView): string {
   if (raid.kind === RaidKind.Totem) {
     return getTotemTitle(raid.species);
+  }
+  if (raid.kind === RaidKind.Max) {
+    return getMaxRaidTitle(raid.species);
+  }
+  if (raid.kind === RaidKind.Alpha) {
+    return getAlphaRaidTitle(raid.species);
+  }
+  if (raid.kind === RaidKind.Noble) {
+    return getNobleRaidTitle(raid.species);
   }
   return getLairTitle(raid.lair, raid.biome, raid.kind === RaidKind.Shadow);
 }
 
-/** What the lair at this cell stages this window: a Totem, a shadow, or its legendary */
-export function getLairKind(snapshot: ChunkSnapshot, cell: number): RaidKind {
-  if (snapshot.isTotemLair(cell)) {
+/** Whether a landmark stages a raid: either lair, a Totem, a Max Raid, an Alpha or a Noble */
+export function isRaidLandmark(landmark: Landmark): boolean {
+  return (
+    landmark === Landmark.LegendaryLair ||
+    landmark === Landmark.ShadowLair ||
+    landmark === Landmark.Totem ||
+    landmark === Landmark.MaxRaid ||
+    landmark === Landmark.AlphaRaid ||
+    landmark === Landmark.NobleArena
+  );
+}
+
+/**
+ * What the raid landmark at this cell stages this window. A legendary
+ * lair with nobody to host stands as a shadow one; null for a cell
+ * holding no raid landmark
+ */
+export function getRaidKindAt(snapshot: ChunkSnapshot, cell: number): RaidKind | null {
+  const landmark = snapshot.chunk.getLandmarkCells().get(cell);
+
+  if (landmark === Landmark.Totem) {
     return RaidKind.Totem;
+  }
+  if (landmark === Landmark.MaxRaid) {
+    return RaidKind.Max;
+  }
+  if (landmark === Landmark.AlphaRaid) {
+    return RaidKind.Alpha;
+  }
+  if (landmark === Landmark.NobleArena) {
+    return RaidKind.Noble;
+  }
+  if (landmark !== Landmark.LegendaryLair && landmark !== Landmark.ShadowLair) {
+    return null;
   }
   return snapshot.isShadowLair(cell) ? RaidKind.Shadow : RaidKind.Legendary;
 }
@@ -209,6 +265,21 @@ export function getLairKind(snapshot: ChunkSnapshot, cell: number): RaidKind {
 /** What a Totem's lobby is called: the Totem itself, since it stands in no lair of its own */
 export function getTotemTitle(species: Species): string {
   return `Totem ${getSpeciesData(species).name}`;
+}
+
+/** What a Max Raid's lobby is called, after the boss in it */
+export function getMaxRaidTitle(species: Species): string {
+  return `Max Raid ${getSpeciesData(species).name}`;
+}
+
+/** What an Alpha raid's lobby is called, after the Alpha in it */
+export function getAlphaRaidTitle(species: Species): string {
+  return `Alpha Raid ${getSpeciesData(species).name}`;
+}
+
+/** What a Noble raid's lobby is called, after the Noble in it */
+export function getNobleRaidTitle(species: Species): string {
+  return `Noble ${getSpeciesData(species).name}`;
 }
 
 /**
@@ -249,6 +320,9 @@ const RAID_ID_TAGS: Record<RaidKind, string> = {
   [RaidKind.Shadow]: 'shadow',
   [RaidKind.Mythical]: 'raid',
   [RaidKind.Totem]: 'totem',
+  [RaidKind.Max]: 'max',
+  [RaidKind.Alpha]: 'alpha',
+  [RaidKind.Noble]: 'noble',
 };
 
 /**

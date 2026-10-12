@@ -1,6 +1,7 @@
 import useBall from '../../auth/balls';
 import useBottleCap from '../../auth/bottle-caps';
 import useMint from '../../auth/mints';
+import useMaxMushrooms from '../../auth/max-mushrooms';
 import { useRareCandy, useRareCandyMax } from '../../auth/candy';
 import { type CaughtPokemon, getCaught } from '../../auth/caught';
 import {
@@ -36,6 +37,7 @@ import {
 } from '../../data/items/ability-items';
 import { capAsksForStat, isBottleCap, isPerfectIVs } from '../../data/items/bottle-caps';
 import { getMintNature, isMint } from '../../data/items/mints';
+import { isMaxMushrooms, takesGigantamaxFactor } from '../../data/items/max-mushrooms';
 import { isHerbal } from '../../data/items/medicine';
 import { isPurifyingGem } from '../../data/items/purifying-gem';
 import { SKILL_BOOK_SLOT, isSkillBook } from '../../data/items/skill-book';
@@ -98,6 +100,10 @@ export function isUsableOn(item: Items, caught: CaughtPokemon): boolean {
   }
   if (isPurifyingGem(item)) {
     return isShadow(caught);
+  }
+  // Only a species with a Gigantamax form, and only once
+  if (isMaxMushrooms(item)) {
+    return takesGigantamaxFactor(caught);
   }
   // A belt is offered only where there is room to add: the record's
   // own count rather than the game's default, since a pokemon that has
@@ -390,6 +396,12 @@ export default async function spendItemOn(catchId: string, item: Items): Promise
     }
     playEffect(Effect.Purified);
     return { said: `The shadow is gone — ${describeIVs(ivs)}.`, tone: 'neutral', level: null };
+  }
+
+  if (isMaxMushrooms(item)) {
+    return (await useMaxMushrooms(catchId))
+      ? { said: 'It carries the Gigantamax Factor now.', tone: 'neutral', level: null }
+      : refused(item);
   }
 
   if (isUtilityBelt(item)) {

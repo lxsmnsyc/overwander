@@ -14,7 +14,15 @@ import { getSpeciesSignature } from '../data/abilities';
 import { getRegisteredSpecies, isFullyEvolved, isWornForm } from '../data/species';
 import { deriveAbility, deriveGender, deriveMoves, deriveNature, deriveSize } from './encounter';
 import { isTotemSpecies } from '../data/overworld/totems';
-import { BOSS_ALLIANCE, PLAYER_ALLIANCE, canStageBoss, createRaidBossTeam } from './raid';
+import { isAlphaSpecies } from '../data/overworld/alphas';
+import { NOBLE_BALM_PACK } from '../data/overworld/nobles';
+import {
+  BOSS_ALLIANCE,
+  PLAYER_ALLIANCE,
+  canStageBoss,
+  createRaidBossTeam,
+  isGigantamaxBoss,
+} from './raid';
 
 /**
  * A raid built out of nothing, for looking at: a boss, five parties,
@@ -181,8 +189,12 @@ function rollCatch(random: () => number, index: number, mega = false): CatchSnap
  * The teams of a demo raid: the boss in its own alliance, and
  * `DEMO_TEAMS` parties sharing the other one, exactly as a real lobby
  * publishes them. `shadow` stages the shadow raid, which is the one
- * fight the battle field has a shadow's haze to draw, and `totem` a
- * Totem with the ally it calls.
+ * fight the battle field has a shadow's haze to draw, `totem` a
+ * Totem with the ally it calls, `max` a Max Raid's boss, Dynamaxed
+ * throughout and drawn from the lines that Gigantamax, `alpha` an
+ * Alpha with the copies it summons, and `noble` a frenzied Noble, the
+ * species `pinned` names where one is given, with every party packing
+ * Balms.
  *
  * The parties are separate **teams** rather than one big party
  * because that is what a lobby is — five players who happen to be
@@ -193,19 +205,29 @@ export function createDemoRaidTeams(
   seed: string,
   shadow = false,
   totem = false,
+  max = false,
+  alpha = false,
+  noble = false,
+  pinned: Species | null = null,
 ): TeamSnapshotRecord[] {
   const rng = new AleaRNG(`demo-raid:${seed}`);
   const random = (): number => rng.random();
   const bosses: Species[] = [];
 
   for (const species of getRollableSpecies()) {
-    if (canStageBoss(species) && (!totem || isTotemSpecies(species))) {
+    if (
+      canStageBoss(species) &&
+      (!totem || isTotemSpecies(species)) &&
+      (!max || (isTotemSpecies(species) && isGigantamaxBoss(species))) &&
+      (!alpha || isAlphaSpecies(species)) &&
+      (!noble || isTotemSpecies(species))
+    ) {
       bosses.push(species);
     }
   }
-  const boss = pick(bosses, random);
+  const boss = pinned ?? pick(bosses, random);
   const bossTrait = Math.floor(random() * 0x1_0000_0000);
-  const [staged, ...allies] = createRaidBossTeam(boss, bossTrait, shadow, totem);
+  const [staged, ...allies] = createRaidBossTeam(boss, bossTrait, shadow, totem, max, alpha, noble);
 
   const teams: TeamSnapshotRecord[] = [
     {
@@ -230,6 +252,9 @@ export function createDemoRaidTeams(
 
     for (let member = 0; member < DEMO_TEAM_SIZE; member++) {
       catches.push(rollCatch(random, team * DEMO_TEAM_SIZE + member, member === 0));
+    }
+    if (noble) {
+      catches[0] = { ...catches[0], balms: NOBLE_BALM_PACK };
     }
     teams.push({ player: `demo-${team + 1}`, alliance: PLAYER_ALLIANCE, catches });
   }

@@ -107,6 +107,8 @@ export const SPECIAL_ABILITIES = new Set<Abilities>([
   Abilities.Purified,
   Abilities.Totem,
   Abilities.TotemAlly,
+  Abilities.Alpha,
+  Abilities.Noble,
 ]);
 
 /**

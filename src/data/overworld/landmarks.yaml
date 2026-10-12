@@ -65,3 +65,20 @@ CaveMouth:
 HoneyTree:
   weight: 15
   picture: honey-tree
+# Both raid sites are drawn in code rather than off the sheet, and take
+# their share of another landmark's rolls (`chunk.ts`) rather than a
+# weight of their own
+MaxRaid:
+  weight: 0
+Totem:
+  weight: 0
+# Carved from the cache rolls like the Max Raid, but drawn off the sheet:
+# a trampled clearing with a red-eyed mark scratched into its rock
+AlphaRaid:
+  weight: 0
+  picture: alpha
+# Carved from the trainer rolls like the Totem, and drawn off the sheet: a
+# raised stone ring with braziers and a shrine gate
+NobleArena:
+  weight: 0
+  picture: noble

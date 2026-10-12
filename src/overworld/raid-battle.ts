@@ -11,7 +11,9 @@ import type Biome from '../data/ids/biome';
 import createBattle from '../battle/setup';
 import Team from '../battle/team';
 import Unit from '../battle/unit';
-import { holdTotemAlly } from '../battle/abilities/special';
+import { holdAlphaCopy, holdTotemAlly } from '../battle/abilities/special';
+import { holdBalms } from '../battle/abilities/noble';
+import { dynamax } from '../battle/mechanics/dynamax';
 import { UNLIMITED_BATTLE_LIMITS } from '../data/constants/battle-limits';
 import { STAT_ORDER, Stats, StatsKind, getIV } from '../data/constants/stats';
 import {
@@ -41,7 +43,7 @@ function addUnit(battle: Battle, team: Team, snapshot: CatchSnapshot): Unit {
   // record — the empty string travels through unchanged
   const unit = new Unit(battle, team, snapshot.caught);
 
-  // A Totem's ally is built now but joins its team only when called
+  // A Totem's ally and an Alpha's copies join their team only when called
   if (snapshot.called !== true) {
     team.addUnit(unit);
   }
@@ -53,6 +55,8 @@ function addUnit(battle: Battle, team: Team, snapshot: CatchSnapshot): Unit {
   // Drawn from the shiny sheet, so a sparkling pokemon fights looking
   // like itself
   unit.shiny = snapshot.shiny;
+  // The factor travels with the catch, so its G-Max Move does too
+  unit.gigantamax = snapshot.gigantamax === true;
   // What it thinks of its owner, which is what Return and Frustration
   // are worth in its hands
   unit.friendship = snapshot.friendship;
@@ -100,6 +104,10 @@ function addUnit(battle: Battle, team: Team, snapshot: CatchSnapshot): Unit {
   // before the first turn, both of which are the right answers
   for (const status of unpackStatuses(snapshot.statuses)) {
     unit.addStatus(status, { type: EffectType.None });
+  }
+  // After its health, which growing doubles
+  if (snapshot.dynamaxed === true) {
+    dynamax(unit, { permanent: true });
   }
 
   return unit;
@@ -189,8 +197,18 @@ export function fieldTeams(
     const party: Unit[] = [];
 
     for (const snapshot of record.catches) {
+      // Built when summoned rather than now, and again for each one
+      // that replaces it
+      if (snapshot.alphaCopy === true) {
+        holdAlphaCopy(team, () => addUnit(battle, team, snapshot));
+        continue;
+      }
+
       const unit = addUnit(battle, team, snapshot);
 
+      if (snapshot.balms != null) {
+        holdBalms(team, snapshot.balms);
+      }
       if (snapshot.called === true) {
         holdTotemAlly(team, unit);
       } else {

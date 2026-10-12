@@ -18,6 +18,7 @@ export const GUARD_MOVES: { [key in Moves]?: Statuses } = {
   [Moves.KingsShield]: Statuses.Protected,
   [Moves.BanefulBunker]: Statuses.Protected,
   [Moves.Obstruct]: Statuses.Protected,
+  [Moves.MaxGuard]: Statuses.Protected,
 };
 
 /** What a Spiky Shield costs whatever touches it, as a share of its HP */

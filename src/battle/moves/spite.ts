@@ -13,6 +13,16 @@ const COOLDOWN_FACTOR = 4;
 
 const NOT_A_MOVE = new Set<Moves>([Moves.Struggle, Moves.Attack, Moves.Spite]);
 
+const SPITES = new WeakMap<Battle, (target: Unit) => boolean>();
+
+/**
+ * Spite a unit from something other than Spite itself (G-Max
+ * Depletion), answering whether it had a move to stretch
+ */
+export function spiteUnit(battle: Battle, target: Unit): boolean {
+  return SPITES.get(battle)?.(target) ?? false;
+}
+
 export default function setupSpite(battle: Battle): void {
   const lastUsed = new Map<Unit, Moves>();
 
@@ -64,6 +74,8 @@ export default function setupSpite(battle: Battle): void {
     }
     return true;
   }
+
+  SPITES.set(battle, spite);
 
   battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     if (event.move !== Moves.Spite || event.target.type !== MoveTargetType.Unit) {

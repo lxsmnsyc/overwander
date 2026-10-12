@@ -18,6 +18,8 @@ import {
 } from '../../data/overworld/weather';
 import { MAX_IV, STAT_ORDER, Stats, packIVs } from '../../data/constants/stats';
 import { TOTEM_PERFECT_STATS, getTotemAbility } from '../../data/overworld/totems';
+import { pickAlphaPerfectStats } from '../../data/overworld/alphas';
+import AleaRNG from '../../core/alea';
 import type Biome from '../../data/ids/biome';
 import {
   SPECIES_DAY_HIDDEN_ABILITY_BOOST,
@@ -153,6 +155,13 @@ export function raiseIV(raw: number, floor: number): number {
   return MAX_IV - Math.floor(((MAX_IV - raw) * (MAX_IV - floor)) / MAX_IV);
 }
 
+/** A plain source of numbers off a seed */
+function seededRandom(seed: string): () => number {
+  const rng = new AleaRNG(seed);
+
+  return () => rng.random();
+}
+
 export default function deriveEncounter(
   snapshot: ChunkSnapshot,
   spawn: Spawn,
@@ -190,8 +199,16 @@ export default function deriveEncounter(
   // which three read off the trait value so two prizes differ
   const totem = type === EncounterType.TotemRaid;
   const perfectFrom = (traitValue >>> 0) % STAT_ORDER.length;
+  // An Alpha's three are any three, drawn off the prize's own values,
+  // which the raid's seed and the player decide
+  const alpha =
+    type === EncounterType.AlphaRaid
+      ? pickAlphaPerfectStats(seededRandom(`${individualValue}:${traitValue}:alpha`))
+      : null;
   const isPerfect = (index: number): boolean =>
-    totem && (index - perfectFrom + STAT_ORDER.length) % STAT_ORDER.length < TOTEM_PERFECT_STATS;
+    (totem &&
+      (index - perfectFrom + STAT_ORDER.length) % STAT_ORDER.length < TOTEM_PERFECT_STATS) ||
+    (alpha?.has(STAT_ORDER[index]) ?? false);
   const sliceIV = (index: number): number =>
     isPerfect(index)
       ? MAX_IV

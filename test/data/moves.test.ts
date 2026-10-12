@@ -1,4 +1,6 @@
+import { TYPE_MAX_MOVES } from '../../src/data/moves/max-moves';
 import { GENERIC_Z_MOVES } from '../../src/data/moves/z-moves';
+import { FIXED_G_MAX_MOVES, G_MAX_MOVES } from '../../src/data/moves/gmax-moves';
 import { describe, expect, it } from 'vitest';
 import registerBiomeSpawns from '../../src/data/biome';
 import EggGroups from '../../src/data/ids/egg-groups';
@@ -322,6 +324,11 @@ describe('move damage', () => {
     // target's health for Guardian of Alola
     ...GENERIC_Z_MOVES,
     Moves.GuardianOfAlola,
+    // And the Max Moves read theirs off the move they replace
+    ...TYPE_MAX_MOVES.values(),
+    // And the G-Max Moves off the move they replace, bar the three
+    // that are written at 160
+    ...[...G_MAX_MOVES].filter((move) => !FIXED_G_MAX_MOVES.has(move)),
   ]);
 
   it('gives every damaging move something to hit with', () => {

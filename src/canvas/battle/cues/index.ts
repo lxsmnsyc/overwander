@@ -73,6 +73,8 @@ const ABILITY_CUES: Partial<Record<Abilities, CueKind>> = {
   [Abilities.BadDreams]: 'Menace',
   [Abilities.ScreenCleaner]: 'Menace',
   [Abilities.Boss]: 'Menace',
+  [Abilities.Alpha]: 'Menace',
+  [Abilities.Noble]: 'Notice',
 };
 
 export default function abilityCueFor(ability: Abilities): PaintedVisual {
@@ -98,6 +100,8 @@ const ITEM_CUES: Partial<Record<Items, CueKind>> = {
   // It got there first
   [Items.QuickClaw]: 'Rush',
   [Items.ChoiceScarf]: 'Rush',
+  // It soothed a Noble's Frenzy
+  [Items.Balm]: 'Mend',
 };
 
 /**

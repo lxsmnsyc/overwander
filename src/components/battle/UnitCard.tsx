@@ -71,6 +71,7 @@ export const STATUS_COLORS: Record<Statuses, string> = {
   [Statuses.Floating]: '#9fc4dd',
   [Statuses.Submerged]: '#3f7fa0',
   [Statuses.Dormant]: '#6f6f6f',
+  [Statuses.Staggered]: '#e8c547',
   [Statuses.Switching]: '#7fa8c9',
   [Statuses.Protected]: '#6fa8c9',
   [Statuses.Enduring]: '#b98a4a',

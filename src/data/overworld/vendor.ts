@@ -134,8 +134,9 @@ export function sellPrice(item: Items): number {
  */
 const SHELVES = new Map<VendorKind, () => Items[]>([
   [VendorKind.Balls, () => Object.values(BALL_ITEMS)],
-  // Honey rides with the medicine: it is food, and the jar a honey tree wants
-  [VendorKind.Medicine, () => [...MEDICINES.keys(), Items.Honey]],
+  // Honey rides with the medicine: it is food, and the jar a honey tree
+  // wants. So does the Balm a Noble raid is calmed with
+  [VendorKind.Medicine, () => [...MEDICINES.keys(), Items.Honey, Items.Balm]],
   [VendorKind.Vitamins, () => [...VITAMIN_STATS.keys(), ...PP_ITEMS.keys()]],
   [VendorKind.Incenses, () => [...INCENSES]],
   [VendorKind.BattleItems, () => [...BATTLE_ITEMS]],

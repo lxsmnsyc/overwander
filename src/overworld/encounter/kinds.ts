@@ -47,6 +47,21 @@ export const enum EncounterType {
    * pokemon comes with
    */
   TotemRaid = 8,
+  /**
+   * Fought and caught in a Max Raid. A Gigantamax boss's prize keeps
+   * the Gigantamax Factor
+   */
+  MaxRaid = 9,
+  /**
+   * Fought and caught in an Alpha raid: the species at its own size,
+   * with three perfect stats
+   */
+  AlphaRaid = 10,
+  /**
+   * A Noble raid. A calmed Noble is never caught, so no record carries
+   * it: it names the lobby's kind where every raid kind is listed
+   */
+  NobleRaid = 11,
 }
 
 /**
@@ -73,7 +88,10 @@ export function isRaidEncounter(type: EncounterType): boolean {
     type === EncounterType.LegendaryRaid ||
     type === EncounterType.ShadowRaid ||
     type === EncounterType.MythicalRaid ||
-    type === EncounterType.TotemRaid
+    type === EncounterType.TotemRaid ||
+    type === EncounterType.MaxRaid ||
+    type === EncounterType.AlphaRaid ||
+    type === EncounterType.NobleRaid
   );
 }
 
@@ -90,6 +108,8 @@ export function isShadowableEncounter(type: EncounterType): boolean {
     type === EncounterType.Wild ||
     type === EncounterType.LegendaryRaid ||
     type === EncounterType.TotemRaid ||
+    type === EncounterType.MaxRaid ||
+    type === EncounterType.AlphaRaid ||
     type === EncounterType.Hatched ||
     type === EncounterType.Revived
   );
@@ -117,4 +137,7 @@ export const ENCOUNTER_TYPE_NAMES: Record<EncounterType, string> = {
   [EncounterType.MythicalRaid]: 'Mythical Raid',
   [EncounterType.Revived]: 'Revived from a fossil',
   [EncounterType.TotemRaid]: 'Totem Raid',
+  [EncounterType.MaxRaid]: 'Max Raid',
+  [EncounterType.AlphaRaid]: 'Alpha Raid',
+  [EncounterType.NobleRaid]: 'Noble Raid',
 };

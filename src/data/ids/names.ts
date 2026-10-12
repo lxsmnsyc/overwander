@@ -2104,6 +2104,45 @@ export const MOVE_IDS = {
   SandsearStorm: Moves.SandsearStorm,
   LunarBlessing: Moves.LunarBlessing,
   TakeHeart: Moves.TakeHeart,
+  GMaxVineLash: Moves.GMaxVineLash,
+  GMaxWildfire: Moves.GMaxWildfire,
+  GMaxCannonade: Moves.GMaxCannonade,
+  GMaxBefuddle: Moves.GMaxBefuddle,
+  GMaxVoltCrash: Moves.GMaxVoltCrash,
+  GMaxGoldRush: Moves.GMaxGoldRush,
+  GMaxChiStrike: Moves.GMaxChiStrike,
+  GMaxTerror: Moves.GMaxTerror,
+  GMaxFoamBurst: Moves.GMaxFoamBurst,
+  GMaxResonance: Moves.GMaxResonance,
+  GMaxCuddle: Moves.GMaxCuddle,
+  GMaxReplenish: Moves.GMaxReplenish,
+  GMaxMalodor: Moves.GMaxMalodor,
+  GMaxMeltdown: Moves.GMaxMeltdown,
+  GMaxDrumSolo: Moves.GMaxDrumSolo,
+  GMaxFireball: Moves.GMaxFireball,
+  GMaxHydrosnipe: Moves.GMaxHydrosnipe,
+  GMaxWindRage: Moves.GMaxWindRage,
+  GMaxGravitas: Moves.GMaxGravitas,
+  GMaxStonesurge: Moves.GMaxStonesurge,
+  GMaxVolcalith: Moves.GMaxVolcalith,
+  GMaxTartness: Moves.GMaxTartness,
+  GMaxSweetness: Moves.GMaxSweetness,
+  GMaxSandblast: Moves.GMaxSandblast,
+  GMaxStunShock: Moves.GMaxStunShock,
+  GMaxCentiferno: Moves.GMaxCentiferno,
+  GMaxSmite: Moves.GMaxSmite,
+  GMaxSnooze: Moves.GMaxSnooze,
+  GMaxFinale: Moves.GMaxFinale,
+  GMaxSteelsurge: Moves.GMaxSteelsurge,
+  GMaxDepletion: Moves.GMaxDepletion,
+  GMaxOneBlow: Moves.GMaxOneBlow,
+  GMaxRapidFlow: Moves.GMaxRapidFlow,
+  FrenzyStoneAxe: Moves.FrenzyStoneAxe,
+  FrenzyPetalStorm: Moves.FrenzyPetalStorm,
+  FrenzyWildfire: Moves.FrenzyWildfire,
+  FrenzyBlast: Moves.FrenzyBlast,
+  FrenzyIceberg: Moves.FrenzyIceberg,
+  FrenzyBurst: Moves.FrenzyBurst,
 } as const satisfies Record<string, Moves>;
 
 export const MOVE_CATEGORY_IDS = {
@@ -2508,6 +2547,8 @@ export const ABILITY_IDS = {
   Purified: Abilities.Purified,
   Totem: Abilities.Totem,
   TotemAlly: Abilities.TotemAlly,
+  Alpha: Abilities.Alpha,
+  Noble: Abilities.Noble,
   VerdantField: Abilities.VerdantField,
   EmberField: Abilities.EmberField,
   DelugeField: Abilities.DelugeField,
@@ -3604,6 +3645,8 @@ export const ITEM_IDS = {
   FossilizedFish: Items.FossilizedFish,
   FossilizedDrake: Items.FossilizedDrake,
   FossilizedDino: Items.FossilizedDino,
+  DynamaxBand: Items.DynamaxBand,
+  Balm: Items.Balm,
 } as const satisfies Record<string, Items>;
 
 export const ITEM_TYPE_IDS = {
@@ -4252,6 +4295,7 @@ export const STATUS_IDS = {
   Telekinetic: Statuses.Telekinetic,
   SkyDropped: Statuses.SkyDropped,
   PowerShifted: Statuses.PowerShifted,
+  Staggered: Statuses.Staggered,
 } as const satisfies Record<string, Statuses>;
 
 export const TEAM_STATUS_IDS = {
@@ -4988,6 +5032,10 @@ export const LANDMARK_IDS = {
   PokemonCenter: Landmark.PokemonCenter,
   CaveMouth: Landmark.CaveMouth,
   HoneyTree: Landmark.HoneyTree,
+  MaxRaid: Landmark.MaxRaid,
+  Totem: Landmark.Totem,
+  AlphaRaid: Landmark.AlphaRaid,
+  NobleArena: Landmark.NobleArena,
 } as const satisfies Record<string, Landmark>;
 
 export const PHENOMENON_IDS = {

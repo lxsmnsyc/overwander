@@ -83,9 +83,15 @@ bottom half, and spends both:
 
 - **The halves are sold by the Fossil Maniac** at 12,000 gold each, and dug up
   like the other fossils.
+- **A revived pokemon's dex entry names both halves** it came from.
 - **Each one strikes with its tail's type.** Its head type's moves (Electric
   or Water) strike as its tail's type (Dragon or Ice) against any target the
   tail type hits harder.
+
+## Items
+
+**The Tart Apple, the Sweet Apple, the Cracked Pot and the seven Sweets** are
+stocked, for Applin, Sinistea and Milcery.
 
 ## Gen 8 abilities
 

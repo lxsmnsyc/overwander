@@ -1,3 +1,5 @@
+import { stepDuration } from './path';
+
 /**
  * The other players in sight, and where each of them is at any moment.
  *
@@ -61,27 +63,35 @@ export const PLAYBACK_DELAY = 2500;
 /** How many strangers are drawn at once, nearest first */
 export const MAX_STRANGERS = 30;
 
+/**
+ * One letter a step. The diagonals are the corner keys around WASD, and
+ * a screen too old to know them drops the run rather than misreading it
+ */
 const STEP_LETTERS = new Map<string, Facing>([
   ['U', [0, -1]],
   ['D', [0, 1]],
   ['L', [-1, 0]],
   ['R', [1, 0]],
+  ['Q', [-1, -1]],
+  ['E', [1, -1]],
+  ['Z', [-1, 1]],
+  ['C', [1, 1]],
 ]);
+
+/** A step's letter, keyed by its offsets shifted to 0..2 */
+const LETTER_OF = new Map<number, string>();
+
+for (const [letter, [dx, dy]] of STEP_LETTERS) {
+  LETTER_OF.set((dy + 1) * 3 + (dx + 1), letter);
+}
 
 /** A run of steps as a string of letters, one byte a step */
 export function encodeSteps(steps: Facing[]): string {
   let written = '';
 
   for (const [dx, dy] of steps) {
-    if (dy < 0) {
-      written += 'U';
-    } else if (dy > 0) {
-      written += 'D';
-    } else if (dx < 0) {
-      written += 'L';
-    } else {
-      written += 'R';
-    }
+    // Anything that is not a step faces down, as a standing player does
+    written += LETTER_OF.get((Math.sign(dy) + 1) * 3 + (Math.sign(dx) + 1)) ?? 'D';
   }
   return written;
 }
@@ -168,12 +178,23 @@ export default class Strangers {
 
   /**
    * `clock` is the server's time, which the walkers stamp their runs
-   * with. `pace` is how long one step takes, the same for everybody
+   * with. `pace` is how long one straight step takes, the same for
+   * everybody; a diagonal takes √2 times that
    */
   constructor(
     private readonly clock: () => number,
     private readonly pace: number,
   ) {}
+
+  /** How long a run of steps takes to walk */
+  private lengthOf(steps: Facing[]): number {
+    let total = 0;
+
+    for (const step of steps) {
+      total += stepDuration(step, this.pace);
+    }
+    return total;
+  }
 
   get size(): number {
     return this.known.size;
@@ -253,7 +274,7 @@ export default class Strangers {
     const after = stranger.queue.at(-1);
     const start = Math.max(
       leg.at + PLAYBACK_DELAY,
-      after == null ? Number.NEGATIVE_INFINITY : after.start + after.steps.length * this.pace,
+      after == null ? Number.NEGATIVE_INFINITY : after.start + this.lengthOf(after.steps),
     );
 
     stranger.queue.push({ ...leg, start, endX, endY });
@@ -294,7 +315,7 @@ export default class Strangers {
     while (stranger.queue.length > 0) {
       const leg = stranger.queue[0];
 
-      if (now < leg.start + leg.steps.length * this.pace) {
+      if (now < leg.start + this.lengthOf(leg.steps)) {
         return;
       }
       stranger.x = leg.endX;
@@ -318,19 +339,22 @@ export default class Strangers {
       };
     }
 
-    const progress = (now - leg.start) / this.pace;
-    const taken = Math.floor(progress);
+    // Each step takes its own length, a diagonal √2 times a straight one
+    let left = now - leg.start;
+    let taken = 0;
     let x = leg.x;
     let y = leg.y;
 
-    for (let index = 0; index < taken; index += 1) {
-      x += leg.steps[index][0];
-      y += leg.steps[index][1];
+    while (taken < leg.steps.length - 1 && left >= stepDuration(leg.steps[taken], this.pace)) {
+      left -= stepDuration(leg.steps[taken], this.pace);
+      x += leg.steps[taken][0];
+      y += leg.steps[taken][1];
+      taken += 1;
     }
 
     // `settle` has already put a finished run behind them, so this step exists
     const step = leg.steps[taken];
-    const part = progress - taken;
+    const part = Math.min(1, left / stepDuration(step, this.pace));
 
     return {
       uid: stranger.uid,

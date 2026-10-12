@@ -35,10 +35,10 @@ export async function countVisit<T>(uid: string, npc: Npc, served: T): Promise<T
  * before anything happens, so asking the wrong NPC — or any NPC from a
  * cell that has none — is refused rather than paid for.
  *
- * **Each serves a player once per window**, the vendor aside: a marker
+ * **The ones with a visit tag serve a player once per window**: a marker
  * in `npcClaims` records the visit, and it is taken only where the
- * visit lands and given back if the write fails. The vendor takes no
- * marker — his crate and the player's purse are the whole limit.
+ * visit lands and given back if the write fails. The rest take no
+ * marker: what the player can pay is the whole limit.
  *
  * The two that charge take gold after the visit is claimed and put it
  * back if nothing was written: charged and given nothing is worse than

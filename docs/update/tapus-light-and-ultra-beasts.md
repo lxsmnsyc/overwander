@@ -40,7 +40,7 @@ own terrain is on the field:
 - **The N-Solarizer folds a Solgaleo into a Necrozma** as Dusk Mane Necrozma,
   and **the N-Lunarizer folds a Lunala into one** as Dawn Wings Necrozma.
   Either item takes the pair apart again, and is never spent.
-- **Dusk Mane and Dawn Wings are drawn as Necrozma** until their own art exists.
+- **Dusk Mane and Dawn Wings have sheets of their own**, recoloured from Solgaleo and Lunala until the forms are drawn.
 - **Ultra Burst.** A Dusk Mane or Dawn Wings Necrozma holding Ultranecrozium Z
   takes the field as Ultra Necrozma, with Neuroforce.
 - **The fusion dialog names both pokemon**, the one being folded in and the one

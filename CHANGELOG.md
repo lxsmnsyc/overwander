@@ -1,5 +1,61 @@
 # overwander
 
+## 4.37.0
+
+### Minor Changes
+
+- a76d7c3: - Alpha raids stand at an Alpha landmark in open country: an oversized pokemon
+    the tile's biome spawns, at any stage, that brings its side back to 6 of its
+    kind at 3/4, 1/2 and 1/4 HP.
+  - Beaten, an Alpha pays 50,000 and waits at level 40 with 3 random stats at 31.
+  - World generation: the Alpha takes a further 2 of the cache's 15 shares on the
+    surface, so some caches on existing maps become Alpha sites and no other
+    landmark moves.
+- a7135a9: - The overworld can be walked diagonally. A pressed walk takes the diagonal where it is shorter, and two direction keys held together walk it.
+  - A diagonal is one step that takes √2 times as long as a straight one, so walking keeps one speed whichever way it goes. It never cuts the corner of a tree, a landmark or a cliff, so nothing new is reachable.
+  - Other players see the diagonal steps as they are walked.
+- 62a180e: - A pokemon holding the new Dynamax Band Dynamaxes the first time it drops below 1/2 HP, once a side a fight, for its next 3 moves.
+  - A Dynamaxed pokemon has 2x HP, throws each damaging move as its type's Max Move and each status move as Max Guard, and stands in the middle of its team.
+  - The 18 Max Moves and Max Guard: weather, terrain, a stage off every foe or onto the whole side, and a guard Max Moves cannot get through.
+  - A Dynamaxed pokemon cannot flinch, be sent away, be held by Encore, Disable, Torment, Instruct or a Choice item, and shrugs off OHKO and weight moves.
+  - Behemoth Blade, Behemoth Bash and Dynamax Cannon hit a Dynamaxed target 2x.
+  - A Dynamaxed pokemon is drawn larger, with a red glow.
+  - The Dynamax Band is dug up beside the Mega Stones and turns up in dust clouds.
+- d43a7be: - The 33 G-Max Moves, each with the effect it leaves behind once it lands.
+  - The Gigantamax Factor, a catch flag that stays through trades and evolution,
+    shown on the catch sheet.
+  - Max Mushrooms give the factor to a species with a Gigantamax form. They are
+    dug up in the prized band.
+  - World generation: Max Mushrooms join the ground's item pool, so stashes
+    change.
+- d94bbba: - Max Raids: a new landmark out in the country, a hole under a pillar of red light (purple and brighter over a Gigantamax), holding a final stage of the biome Dynamaxed for the whole fight, Gigantamaxed whenever its species can be.
+  - Clearing a Max Raid pays 50,000 gold and the boss at level 40, plus 1 or 2 Max Mushrooms and, one clear in 10, a Dynamax Band. A Gigantamax boss caught from it keeps the Gigantamax Factor.
+  - Totems have a landmark of their own, a trial site under the Totem's gold aura, holding a Totem every raid window. Lairs no longer hold Totems.
+  - The board demo can find the nearest Max Raid or Totem, and the raid demo can stage a Max Raid.
+  - World generation: about one item cache in five on dry ground above ground is now a Max Raid, and about one trainer in five on dry ground is now a Totem. Every other landmark stays where it was.
+- 8998be6: - Noble raids stand at a Noble Arena in open country: one of Hisui's five
+    Nobles in its own biomes half the time, otherwise a final stage of the tile's
+    biome.
+  - A Noble cannot faint. Its HP is its Frenzy: it staggers at 3/4, 1/2 and 1/4,
+    bursts on the whole party every 10 seconds after a 1.8 second windup a guard
+    can answer, and is calmed rather than caught when the Frenzy is drained.
+  - The Balm: each player packs up to 3 into a Noble raid, and their party throws
+    one every 10 seconds to soothe 1/50 of the Frenzy. Sold at the medicine
+    counter.
+  - A calmed Noble pays 55,000 and 2 or 3 Balms, and a canon Noble its treasure.
+  - World generation: the Noble Arena takes the next 1 of the trainer's 10 shares
+    on the surface, so some duelling trainers on existing maps become Noble
+    Arenas and no other landmark moves.
+
+### Patch Changes
+
+- c806b35: A Dynamaxed pokemon, a raid boss among them, now looks the part in battle:
+  
+  - Its body is washed red (a deeper magenta for a Gigantamax), pulsing gently.
+  - A red glow rings its body on any ground, where before the glow barely showed.
+  - Three small red storm clouds swirl over its head for as long as it stays grown, each a puff trailing a wisp.
+- 8a26012: Dusk Mane and Dawn Wings Necrozma are drawn with sheets of their own, in their own colours and shiny colours, rather than as the Solgaleo or Lunala inside them. The art is a recolour until the forms are drawn, and the item that joined them no longer floats over them.
+
 ## 4.36.0
 
 ### Minor Changes

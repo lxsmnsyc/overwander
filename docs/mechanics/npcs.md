@@ -19,11 +19,17 @@ Battle Frontier are on [Gyms and the league](npc-league.md).
 
 ## The once-per-window rule
 
-Every traveller except the **chef**, the **Fossil Scientist** and **Kurt** helps
-a player once per three-hour window. Asking again before the window turns over
-is refused, whatever the player can pay. The chef is paced by a purse, the
-scientist by how many fossils have been dug up, and Kurt by how many apricorns
-have been picked.
+Seven travellers help a player once per three-hour window: the **Breeder**, the
+**Daycare Lady**, the **Groomer**, the **Fossil Maniac**, the **Channeler**, the
+**Hyper Trainer** and the **Trader**. Asking again before the window turns over
+is refused, whatever the player can pay.
+
+The rest serve as often as a player can pay, and keep the conversation open
+until the player steps back: the **Move Reminder**, the **Move Tutor** and the
+**Dojo Master** take a Heart Scale each time, the **chef** and the
+**Geologist** a purse, the **Fossil Scientist** whatever fossils have been dug
+up, and **Kurt** whatever apricorns have been picked. Nurse Joy and the vendor
+never limit a visit either.
 
 The limit applies per cell. Walking to another wandering cell finds somebody who
 has not served that player yet. That walk is what a second egg costs.
@@ -48,14 +54,14 @@ the button that buys or sells it at the price on the square.
 
 A stall sets up **one counter** per window, drawn from six:
 
-| Counter          | What is on it                                               |
-| ---------------- | ----------------------------------------------------------- |
-| **Balls**        | Every ball with a price, opening with a Poke Ball           |
+| Counter          | What is on it                                                |
+| ---------------- | ------------------------------------------------------------ |
+| **Balls**        | Every ball with a price, opening with a Poke Ball            |
 | **Medicine**     | Potions, cures, revives and the herbs, opening with a Potion |
-| **Vitamins**     | The six vitamins, and the PP Ups                            |
-| **Incenses**     | The incenses a buddy carries                                |
-| **Battle items** | The one-fight boosters                                      |
-| **Machines**     | The machines, and the only place one is sold                |
+| **Vitamins**     | The six vitamins, and the PP Ups                             |
+| **Incenses**     | The incenses a buddy carries                                 |
+| **Battle items** | The one-fight boosters                                       |
+| **Machines**     | The machines, and the only place one is sold                 |
 
 A stall carries **12** kinds off that counter, drawn without repeats. Where a
 counter holds fewer than twelve, it carries the whole shelf, which the vitamins,

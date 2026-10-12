@@ -35,6 +35,9 @@ export interface PickItemInput {
   most?: (entry: InventoryEntry) => number;
   sum?: (item: Items, amount: number) => JSX.Element;
   refuse?: (item: Items, amount: number) => string | null;
+  /** The search the tray opens on, and where each change goes */
+  query?: string;
+  onQuery?: (typed: string) => void;
 }
 
 /** The tray itself, and what is said over it, for a form that holds one or two */
@@ -69,6 +72,8 @@ export function ItemTray(props: {
           most={props.input.most}
           sum={props.input.sum}
           refuse={props.input.refuse}
+          query={props.input.query}
+          onQuery={props.input.onQuery}
           onPick={(item, amount) => {
             if (item != null && amount > 0) {
               props.onPick([item, amount]);

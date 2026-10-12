@@ -1,3 +1,4 @@
+import type Biome from '../data/ids/biome';
 import type { SettledBiome } from '../data/ids/biome';
 import { isOpenSea, isSettledBiome } from '../data/ids/biome';
 import nameTown from '../data/overworld/town-names';
@@ -151,12 +152,16 @@ function regionOf(cell: number): number {
  * as much as nine hundred, and this is asked of every region a player
  * walks through
  */
-function isBuildable(world: World, x: number, y: number): boolean {
+function isBuildable(world: World, x: number, y: number, overWater: boolean): boolean {
   const biome = world.getCellBiome(x, y);
 
   // Nothing is built at sea, and nothing is built on the one cell the
   // whole town is measured from being water or rock
-  if (isOpenSea(biome) || isWaterAt(world, x, y, biome) || isRock(world, x, y, biome)) {
+  if (
+    isOpenSea(biome) ||
+    isUnbuildableWater(world, x, y, biome, overWater) ||
+    isRock(world, x, y, biome)
+  ) {
     return false;
   }
 
@@ -168,11 +173,29 @@ function isBuildable(world: World, x: number, y: number): boolean {
     const py = Math.round(y + Math.sin(angle) * TOWN_RADIUS * 0.7);
     const around = world.getCellBiome(px, py);
 
-    if (isWaterAt(world, px, py, around) || isRock(world, px, py, around)) {
+    if (isUnbuildableWater(world, px, py, around, overWater) || isRock(world, px, py, around)) {
       wet += 1;
     }
   }
   return wet <= WET_LIMIT;
+}
+
+/**
+ * Water a town cannot be built over. A town drains every lake and
+ * wetland it covers, as a route does, so built over water only the sea
+ * is left
+ */
+function isUnbuildableWater(
+  world: World,
+  x: number,
+  y: number,
+  biome: Biome,
+  overWater: boolean,
+): boolean {
+  if (overWater && !isOpenSea(biome)) {
+    return false;
+  }
+  return isWaterAt(world, x, y, biome);
 }
 
 /**
@@ -265,7 +288,8 @@ function townIn(world: World, regionX: number, regionY: number): Town | null {
   const seed = `${world.seed}town(${regionX}, ${regionY})`;
   const draws = world.draws(seed);
   const spread = REGION_CELLS - SITE_INSET * 2;
-  let town: Town | null = null;
+  let dry: Town | null = null;
+  let wet: Town | null = null;
 
   // Every draw is taken whether or not it is used, so the ground
   // deciding a site is unbuildable does not shift the ones after it
@@ -278,10 +302,20 @@ function townIn(world: World, regionX: number, regionY: number): Town | null {
     // A town is named after its own country, so the country has to be
     // one a town can stand on. `isBuildable` refuses the open seas
     // anyway; this is the same refusal said in the type
-    if (town == null && isSettledBiome(biome) && isBuildable(world, x, y)) {
-      town = { x, y, regionX, regionY, biome, seed };
+    if (!isSettledBiome(biome)) {
+      continue;
+    }
+    if (dry == null && isBuildable(world, x, y, false)) {
+      dry = { x, y, regionX, regionY, biome, seed };
+    }
+    if (wet == null && world.sitesTownsOnWater && isBuildable(world, x, y, true)) {
+      wet = { x, y, regionX, regionY, biome, seed };
     }
   }
+
+  // A dry site wins wherever there is one, so a town that stood before
+  // water was allowed stands where it did
+  const town = dry ?? wet;
 
   known.set(key, town);
   return town;

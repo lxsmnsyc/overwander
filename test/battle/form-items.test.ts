@@ -156,6 +156,23 @@ describe('Fused shapes', () => {
     expect(husk.hasAbility(Abilities.Teravolt)).toBe(false);
   });
 
+  it('seats a rider with its steed neigh beside Unnerve, which is As One', () => {
+    const { battle, teamA } = createBattle();
+    const ice = createUnit(battle, teamA);
+    const shadow = createUnit(battle, teamA);
+
+    ice.setSpecies(Species.CalyrexIce);
+    ice.addAbility(Abilities.Unnerve);
+    shadow.setSpecies(Species.CalyrexShadow);
+    ice.enter();
+    shadow.enter();
+
+    expect(ice.hasAbility(Abilities.Unnerve)).toBe(true);
+    expect(ice.hasAbility(Abilities.ChillingNeigh)).toBe(true);
+    expect(shadow.hasAbility(Abilities.GrimNeigh)).toBe(true);
+    expect(shadow.hasAbility(Abilities.ChillingNeigh)).toBe(false);
+  });
+
   it('hands the folded dragon creed only to a holder keeping its own', () => {
     const { battle, teamA } = createBattle();
     const granted = createUnit(battle, teamA);

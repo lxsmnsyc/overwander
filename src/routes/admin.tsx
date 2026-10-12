@@ -94,8 +94,10 @@ function Gate(props: ParentProps<{ uid: string }>): JSX.Element {
             {/* The dashboard reuses the game's own panels — the auction
               board, the gift shelf — and those read where the player
               is and open sheets through the game's state, so the
-              provider they expect stands here too */}
-            <GameProvider>
+              provider they expect stands here too. Managing, so it
+              plays nothing for the staff member: no walk, no notices,
+              no quests */}
+            <GameProvider managing>
               <StaffProvider uid={props.uid} role={() => loaded().role}>
                 <AdminShell nickname={loaded().nickname}>
                   {/* A section a moderator is not offered is a section

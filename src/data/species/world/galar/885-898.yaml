@@ -76,7 +76,9 @@ Kubfu:
       - species: UrshifuRapidStrike
         method: [UsedItem]
         item: ScrollOfWaters
-    rank: legendary
+    # A first stage of a legendary line, met in the wild the way Cosmog
+    # and Type: Null are, rather than at a lair
+    rank: prized
   Urshifu:
     types: [Fighting, Dark]
     egg-groups: [NoEggsDiscovered]
@@ -121,9 +123,38 @@ Spectrier:
     active: any
     rank: legendary
 Calyrex:
+  # The king, and the two shapes it takes astride a steed the Reins of
+  # Unity have joined it to
   Calyrex:
     types: [Psychic, Grass]
     egg-groups: [NoEggsDiscovered]
     biomes: [Taiga]
     active: any
+    evolves-into:
+      - species: CalyrexIce
+        method: [UsedItem]
+        item: ReinsOfUnity
+      - species: CalyrexShadow
+        method: [UsedItem]
+        item: ReinsOfUnity
     rank: legendary
+  CalyrexIce:
+    types: [Psychic, Ice]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    evolves-from: Calyrex
+    evolves-into:
+      - species: Calyrex
+        method: [UsedItem]
+        item: ReinsOfUnity
+  CalyrexShadow:
+    types: [Psychic, Ghost]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    evolves-from: Calyrex
+    evolves-into:
+      - species: Calyrex
+        method: [UsedItem]
+        item: ReinsOfUnity

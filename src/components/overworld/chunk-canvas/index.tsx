@@ -153,7 +153,7 @@ import {
   RIPPLE_WEIGHT,
   SCENERY_CELLS,
   SLIDE_PACE,
-  SNAP_CELLS,
+  SNAP_STEPS,
   SPRITE_STANDS,
   VEIL_ALPHA,
   VEIL_FADE,
@@ -1128,6 +1128,8 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
    * jump too far to be a step snaps instead
    */
   const slide = { x: props.at[0], y: props.at[1] };
+  /** Where the last step went to, and how long it was: 1, or √2 diagonally */
+  const stepped = { x: props.at[0], y: props.at[1], stride: 1 };
   /**
    * How high the ground under the player stands, eased the way their
    * step is. The picture is centred on it, so walking up a terrace
@@ -2022,6 +2024,13 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       // the walk cycle fed by how far it actually moved this frame
       const walker = playerPerson();
       const [goalX, goalY] = props.at;
+
+      if (goalX !== stepped.x || goalY !== stepped.y) {
+        // Anything longer than a diagonal is a jump, which snaps anyway
+        stepped.stride = Math.min(Math.hypot(goalX - stepped.x, goalY - stepped.y), Math.SQRT2);
+        stepped.x = goalX;
+        stepped.y = goalY;
+      }
       const dx = goalX - slide.x;
       const dy = goalY - slide.y;
       const span = Math.hypot(dx, dy);
@@ -2033,7 +2042,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       }
       sliding = span > 0;
 
-      if (span > SNAP_CELLS) {
+      if (span > SNAP_STEPS * stepped.stride) {
         slide.x = goalX;
         slide.y = goalY;
         // Standing still, so the way they are standing is the caller's
@@ -2042,13 +2051,13 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         heading = facingToward(0, 0, props.facing[0], props.facing[1]);
         walker?.stop();
       } else if (span > 0) {
-        const gain = slideGain(span, elapsed);
+        const gain = slideGain(span, elapsed, stepped.stride);
 
         heading = facingToward(slide.x, slide.y, goalX, goalY);
         slide.x += (dx / span) * gain;
         slide.y += (dy / span) * gain;
         walker?.advanceBy(gain * CELL_STRIDE);
-        strideUntil = clock + SLIDE_PACE;
+        strideUntil = clock + SLIDE_PACE * stepped.stride;
       } else {
         heading = facingToward(0, 0, props.facing[0], props.facing[1]);
         walker?.stop();

@@ -114,3 +114,17 @@ Calyrex:
     weight: 7.7
     gender: genderless
     egg-cycles: 120
+  CalyrexIce:
+    stats: { HP: 100, Attack: 165, Defense: 150, SpecialAttack: 85, SpecialDefense: 130, Speed: 50 }
+    catch-rate: 3
+    height: 2.4
+    weight: 809.1
+    gender: genderless
+    egg-cycles: 120
+  CalyrexShadow:
+    stats: { HP: 100, Attack: 85, Defense: 80, SpecialAttack: 165, SpecialDefense: 100, Speed: 150 }
+    catch-rate: 3
+    height: 2.4
+    weight: 53.6
+    gender: genderless
+    egg-cycles: 120

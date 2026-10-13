@@ -61,3 +61,9 @@ ScrollOfDarkness:
 ScrollOfWaters:
   name: Scroll of Waters
   description: A Kubfu it is used on masters the water style and becomes a Rapid Strike Urshifu.
+AuspiciousArmor:
+  name: Auspicious Armor
+  description: Evolves the pokemon it is used on, where a line asks for it.
+MaliciousArmor:
+  name: Malicious Armor
+  description: Evolves the pokemon it is used on, where a line asks for it.

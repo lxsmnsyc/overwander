@@ -1,0 +1,97 @@
+Frigibax:
+  # TM and tutor moves shared by the whole family
+  family-teachable:
+    - Avalanche
+    - Blizzard
+    - BodySlam
+    - Crunch
+    - Dig
+    - DracoMeteor
+    - DragonClaw
+    - DragonPulse
+    - DragonTail
+    - Endure
+    - Facade
+    - HelpingHand
+    - IceBeam
+    - IceFang
+    - IcicleSpear
+    - IcyWind
+    - Outrage
+    - Protect
+    - RainDance
+    - Rest
+    - SleepTalk
+    - Snowscape
+    - Substitute
+    - SwordsDance
+    - TakeDown
+    - TeraBlast
+  Frigibax:
+    level:
+      1: [Tackle, Leer, DragonTail]
+      6: [IcyWind]
+      12: [DragonBreath]
+      18: [FocusEnergy]
+      24: [Bite]
+      29: [IceFang]
+      32: [DragonClaw]
+      36: [TakeDown]
+      40: [IceBeam]
+      44: [Crunch]
+      48: [IcicleCrash]
+    egg:
+      - AquaTail
+      - DragonRush
+      - FreezeDry
+      - IcicleSpear
+  Arctibax:
+    level:
+      1: [Tackle, Leer, DragonTail]
+      6: [IcyWind]
+      12: [DragonBreath]
+      18: [FocusEnergy]
+      24: [Bite]
+      29: [IceFang]
+      40: [TakeDown]
+      45: [IceBeam]
+      50: [Crunch]
+      55: [IcicleCrash]
+    teachable:
+      - AerialAce
+      - BrickBreak
+      - IronHead
+      - ScaryFace
+  Baxcalibur:
+    level:
+      1: [Tackle, Leer, IceShard, DragonTail, BreakingSwipe, GlaiveRush, Snowscape]
+      6: [IcyWind]
+      12: [DragonBreath]
+      18: [FocusEnergy]
+      24: [Bite]
+      29: [IceFang]
+      35: [DragonClaw]
+      42: [TakeDown]
+      48: [IceBeam]
+      55: [Crunch]
+      62: [IcicleCrash]
+    teachable:
+      - AerialAce
+      - BodyPress
+      - BreakingSwipe
+      - BrickBreak
+      - Bulldoze
+      - DoubleEdge
+      - DragonCheer
+      - DragonDance
+      - Earthquake
+      - FalseSwipe
+      - GigaImpact
+      - HighHorsepower
+      - HyperBeam
+      - IronHead
+      - ScaleShot
+      - ScaryFace
+      - StompingTantrum
+      - ThunderFang
+      - ZenHeadbutt

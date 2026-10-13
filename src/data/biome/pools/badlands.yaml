@@ -143,6 +143,7 @@ land:
       Dwebble: 129
       Darumaka: 129
       Baltoy: 129
+      Rellor: 120
       Numel: 117
       Sandshrew: 117
       Ekans: 117
@@ -270,6 +271,8 @@ land:
       BurmyTrash: 121
       Bronzor: 121
       Hippopotas: 121
+      Rellor: 120
+      Glimmet: 120
       Dunsparce: 60
       Gligar: 31
     rare:
@@ -283,6 +286,7 @@ land:
       Gabite: 35
       Bisharp: 26
     scarce:
+      Glimmora: 50
       Arbok: 43
       Ninjask: 43
       Houndoom: 43
@@ -364,6 +368,7 @@ land:
       Yamask: 125
       Scraggy: 125
       Baltoy: 125
+      Glimmet: 120
       Golett: 114
       Ekans: 114
       Cubone: 114
@@ -388,6 +393,7 @@ land:
       Gabite: 28
       Bisharp: 27
     scarce:
+      Glimmora: 50
       Marowak: 44
       Ninjask: 44
       Crawdaunt: 36

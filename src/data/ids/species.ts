@@ -1988,6 +1988,16 @@ export const PALDEAN_FORMS: Species[] = [
   Species.WooperPaldea,
 ];
 
+/** A Palafin, and the hero it comes back as once it has left the field */
+export const PALAFIN_FORMS: Species[] = [Species.Palafin, Species.PalafinHero];
+
+/** The three shapes a Tatsugiri is met in, Curly at the base */
+export const TATSUGIRI_FORMS: Species[] = [
+  Species.Tatsugiri,
+  Species.TatsugiriStretchy,
+  Species.TatsugiriDroopy,
+];
+
 /** A Cramorant, and what it comes back up with after a dive: the small catch, then the big one */
 export const CRAMORANT_FORMS: Species[] = [
   Species.Cramorant,

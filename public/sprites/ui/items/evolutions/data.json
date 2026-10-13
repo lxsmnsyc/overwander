@@ -1,24 +1,11 @@
 {
   "compact": true,
-  "width": 100,
-  "height": 178,
+  "width": 103,
+  "height": 179,
   "images": [
     {
-      "name": "berry-sweet.png",
-      "x": 37,
-      "y": 162,
-      "width": 16,
-      "height": 15,
-      "sourceWidth": 32,
-      "sourceHeight": 32,
-      "trim": [
-        8,
-        8
-      ]
-    },
-    {
-      "name": "black-augurite.png",
-      "x": 60,
+      "name": "auspicious-armor.png",
+      "x": 77,
       "y": 69,
       "width": 20,
       "height": 20,
@@ -30,9 +17,35 @@
       ]
     },
     {
+      "name": "berry-sweet.png",
+      "x": 59,
+      "y": 163,
+      "width": 16,
+      "height": 15,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "black-augurite.png",
+      "x": 0,
+      "y": 49,
+      "width": 20,
+      "height": 20,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        6,
+        6
+      ]
+    },
+    {
       "name": "chipped-pot.png",
-      "x": 40,
-      "y": 108,
+      "x": 79,
+      "y": 109,
       "width": 24,
       "height": 18,
       "sourceWidth": 32,
@@ -44,8 +57,8 @@
     },
     {
       "name": "clover-sweet.png",
-      "x": 36,
-      "y": 127,
+      "x": 60,
+      "y": 128,
       "width": 17,
       "height": 17,
       "sourceWidth": 32,
@@ -57,8 +70,8 @@
     },
     {
       "name": "cracked-pot.png",
-      "x": 64,
-      "y": 108,
+      "x": 0,
+      "y": 128,
       "width": 24,
       "height": 18,
       "sourceWidth": 32,
@@ -70,8 +83,8 @@
     },
     {
       "name": "dawn-stone.png",
-      "x": 80,
-      "y": 69,
+      "x": 20,
+      "y": 89,
       "width": 18,
       "height": 19,
       "sourceWidth": 32,
@@ -83,8 +96,8 @@
     },
     {
       "name": "deep-sea-scale.png",
-      "x": 0,
-      "y": 127,
+      "x": 24,
+      "y": 128,
       "width": 20,
       "height": 18,
       "sourceWidth": 32,
@@ -96,7 +109,7 @@
     },
     {
       "name": "deep-sea-tooth.png",
-      "x": 0,
+      "x": 38,
       "y": 89,
       "width": 20,
       "height": 19,
@@ -109,8 +122,8 @@
     },
     {
       "name": "dragon-scale.png",
-      "x": 72,
-      "y": 145,
+      "x": 0,
+      "y": 163,
       "width": 22,
       "height": 16,
       "sourceWidth": 32,
@@ -122,8 +135,8 @@
     },
     {
       "name": "dubious-disc.png",
-      "x": 53,
-      "y": 127,
+      "x": 77,
+      "y": 128,
       "width": 20,
       "height": 17,
       "sourceWidth": 32,
@@ -135,7 +148,7 @@
     },
     {
       "name": "dusk-stone.png",
-      "x": 20,
+      "x": 58,
       "y": 89,
       "width": 19,
       "height": 19,
@@ -148,7 +161,7 @@
     },
     {
       "name": "electirizer.png",
-      "x": 0,
+      "x": 20,
       "y": 49,
       "width": 20,
       "height": 20,
@@ -174,8 +187,8 @@
     },
     {
       "name": "flower-sweet.png",
-      "x": 0,
-      "y": 162,
+      "x": 22,
+      "y": 163,
       "width": 17,
       "height": 16,
       "sourceWidth": 32,
@@ -213,7 +226,7 @@
     },
     {
       "name": "ice-stone.png",
-      "x": 20,
+      "x": 40,
       "y": 49,
       "width": 20,
       "height": 20,
@@ -252,7 +265,7 @@
     },
     {
       "name": "linking-cord.png",
-      "x": 40,
+      "x": 60,
       "y": 49,
       "width": 22,
       "height": 20,
@@ -265,8 +278,8 @@
     },
     {
       "name": "love-sweet.png",
-      "x": 73,
-      "y": 127,
+      "x": 0,
+      "y": 146,
       "width": 17,
       "height": 17,
       "sourceWidth": 32,
@@ -278,7 +291,7 @@
     },
     {
       "name": "magmarizer.png",
-      "x": 62,
+      "x": 82,
       "y": 49,
       "width": 20,
       "height": 20,
@@ -290,9 +303,22 @@
       ]
     },
     {
+      "name": "malicious-armor.png",
+      "x": 0,
+      "y": 89,
+      "width": 20,
+      "height": 20,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        6,
+        6
+      ]
+    },
+    {
       "name": "metal-coat.png",
-      "x": 82,
-      "y": 49,
+      "x": 0,
+      "y": 69,
       "width": 17,
       "height": 20,
       "sourceWidth": 32,
@@ -304,7 +330,7 @@
     },
     {
       "name": "moon-stone.png",
-      "x": 39,
+      "x": 77,
       "y": 89,
       "width": 21,
       "height": 19,
@@ -317,8 +343,8 @@
     },
     {
       "name": "oval-stone.png",
-      "x": 0,
-      "y": 145,
+      "x": 17,
+      "y": 146,
       "width": 16,
       "height": 17,
       "sourceWidth": 32,
@@ -330,8 +356,8 @@
     },
     {
       "name": "peat-block.png",
-      "x": 20,
-      "y": 108,
+      "x": 0,
+      "y": 109,
       "width": 20,
       "height": 19,
       "sourceWidth": 32,
@@ -343,8 +369,8 @@
     },
     {
       "name": "prism-scale.png",
-      "x": 67,
-      "y": 162,
+      "x": 89,
+      "y": 163,
       "width": 13,
       "height": 13,
       "sourceWidth": 32,
@@ -356,7 +382,7 @@
     },
     {
       "name": "protector.png",
-      "x": 0,
+      "x": 17,
       "y": 69,
       "width": 20,
       "height": 20,
@@ -369,8 +395,8 @@
     },
     {
       "name": "razor-claw.png",
-      "x": 16,
-      "y": 145,
+      "x": 33,
+      "y": 146,
       "width": 18,
       "height": 17,
       "sourceWidth": 32,
@@ -382,8 +408,8 @@
     },
     {
       "name": "razor-fang.png",
-      "x": 20,
-      "y": 127,
+      "x": 44,
+      "y": 128,
       "width": 16,
       "height": 18,
       "sourceWidth": 32,
@@ -408,8 +434,8 @@
     },
     {
       "name": "ribbon-sweet.png",
-      "x": 17,
-      "y": 162,
+      "x": 39,
+      "y": 163,
       "width": 20,
       "height": 16,
       "sourceWidth": 32,
@@ -434,8 +460,8 @@
     },
     {
       "name": "shiny-stone.png",
-      "x": 60,
-      "y": 89,
+      "x": 20,
+      "y": 109,
       "width": 19,
       "height": 19,
       "sourceWidth": 32,
@@ -447,8 +473,8 @@
     },
     {
       "name": "star-sweet.png",
-      "x": 34,
-      "y": 145,
+      "x": 51,
+      "y": 146,
       "width": 18,
       "height": 17,
       "sourceWidth": 32,
@@ -460,8 +486,8 @@
     },
     {
       "name": "strawberry-sweet.png",
-      "x": 53,
-      "y": 162,
+      "x": 75,
+      "y": 163,
       "width": 14,
       "height": 14,
       "sourceWidth": 32,
@@ -486,8 +512,8 @@
     },
     {
       "name": "sweet-apple.png",
-      "x": 79,
-      "y": 89,
+      "x": 39,
+      "y": 109,
       "width": 20,
       "height": 19,
       "sourceWidth": 32,
@@ -499,8 +525,8 @@
     },
     {
       "name": "tart-apple.png",
-      "x": 0,
-      "y": 108,
+      "x": 59,
+      "y": 109,
       "width": 20,
       "height": 19,
       "sourceWidth": 32,
@@ -512,7 +538,7 @@
     },
     {
       "name": "thunder-stone.png",
-      "x": 20,
+      "x": 37,
       "y": 69,
       "width": 20,
       "height": 20,
@@ -525,8 +551,8 @@
     },
     {
       "name": "up-grade.png",
-      "x": 52,
-      "y": 145,
+      "x": 69,
+      "y": 146,
       "width": 20,
       "height": 17,
       "sourceWidth": 32,
@@ -538,7 +564,7 @@
     },
     {
       "name": "water-stone.png",
-      "x": 40,
+      "x": 57,
       "y": 69,
       "width": 20,
       "height": 20,

@@ -1,0 +1,32 @@
+---
+'overwander': minor
+---
+
+- Lechonk and Oinkologne roam the grassland. Pig Out casts Stockpile each time it eats a Berry.
+- Tarountula and Spidops lurk in the forest at night. Tripwire slows the first move of an enemy that takes the field mid-fight.
+- Nymble and Lokix hop about the steppe. Knockback pushes back a target's wind-up with each contact move.
+- Pawmi, Pawmo and Pawmot live on the mountain. Static Palms paralyses with its punches 20% of the time.
+- Tandemaus and Maushold scurry through the woodland. Scatter Brood spreads a multi-hit move's strikes across the enemies.
+- Fidough and Dachsbun play in the shrubland. Fresh Batch hands a Sitrus Berry to a teammate every 20 seconds.
+- Smoliv, Dolliv and Arboliva grow on the steppe. Anoint cures a teammate's status whenever it heals them.
+- Nacli, Naclstack and Garganacl are found on the mountain. Brine Rebound answers a Water move with Salt Cure.
+- Charcadet, Armarouge and Ceruledge burn on the volcano at night, evolving with the new Auspicious and Malicious Armor. Kindling speeds up its next move after a Fire move.
+- Tadbulb and Bellibolt glow in the bog. Bubble Shock hits a soaked target harder.
+- Wattrel and Kilowattrel fly over the beach. Lightning Dive hits harder under Tailwind.
+- Bramblin rolls through the desert and Toedscool hides in the bog, each waiting on its evolution. Windswept speeds it up after a wind move, and Mycelium Mat cures a teammate Grassy Terrain heals.
+- Capsakid and Scovillain grow in the desert. Heat Tolerance turns a burn into healing.
+- Rellor rolls in the badlands and Flittle on the savanna, each waiting on its evolution. Ball Toss hands its item to a teammate in trouble, and Stare Down taunts with its Psychic moves.
+- Tinkatink, Tinkatuff and Tinkaton live in the woodland. Tinker remakes a teammate's used-up item once.
+- Wiglett and Wugtrio poke out of the beach sand. Sand Duck makes Ground moves miss and raises its Speed.
+- Finizen and Palafin swim the ocean. Lifeguard takes a teammate's finishing blow once.
+- Varoom and Revavroom roar on the mountain. Redline winds up faster the lower its HP.
+- Cyclizar runs the steppe. Shed Decoy puts up a free Substitute the first time it falls below half HP.
+- Orthworm burrows in the desert. Slag Trail lays Spikes with its Steel moves.
+- Glimmet and Glimmora shine in the badlands at night. Glimmering slows every poisoned enemy.
+- Greavard and Houndstone haunt the grassland at night. Grave Digger picks up a fallen teammate's item.
+- Cetoddle and Cetitan roam the tundra. Snow Hoard raises its Attack while snow falls.
+- Veluza swims the kelp forest. Fillet Thrift halves what HP-costing moves cost it.
+- Dondozo and Tatsugiri live in the ocean and the coral reef, Tatsugiri in all three shapes. Mouthful swallows a teammate in trouble to heal it, and Back Seat Orders powers up its teammates while it is in cover.
+- Frigibax, Arctibax and Baxcalibur live on the glacier. Glaive Guard raises its defences after a move that leaves it open.
+- Every Gen 9 ability works in battle, from Zero to Hero and Commander to Protosynthesis, Quark Drive and the four Ruins.
+- Revival Blessing and Last Respects have pictures of their own, now that one family learns each.

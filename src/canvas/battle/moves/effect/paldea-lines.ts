@@ -326,6 +326,16 @@ function plate(
   context.restore();
 }
 
+/** Revival Blessing: the share the light has risen by, and its gold and white */
+export const REVIVAL_RISEN = 0.4;
+export const REVIVAL_GOLD = '#ffd86a';
+export const REVIVAL_WHITE = '#fff8e2';
+
+/** Last Respects: the share the mourning wisps gather by, and their colours */
+export const RESPECTS_GATHER = 0.45;
+export const RESPECTS_WISP = '#b9a8ff';
+export const RESPECTS_DARK = '#2c2440';
+
 const paldeaLines = {
   // A bouquet tossed up and over onto it, then going off as a trick bomb
   // in a burst of petals and confetti
@@ -1280,6 +1290,74 @@ const paldeaLines = {
         alpha: 1,
       });
     }
+  },
+
+  // Pawmot's blessing: a halo of gold light opening over the fallen
+  // teammate, a column of light rising through it and sparks drifting up
+  Revival(context, stage, share, { seed, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+    const rise = Math.min(1, share / REVIVAL_RISEN);
+    const shown = Math.min(1, share * 5) * late(share, 0.7);
+    const halo: Point = [at[0], at[1] - size * (1.4 + rise * 0.6)];
+
+    context.strokeStyle = fade(REVIVAL_GOLD, shown);
+    context.lineWidth = 3 * stage.scale;
+    context.beginPath();
+    context.ellipse(halo[0], halo[1], size * 1.2, size * 0.36, 0, 0, Math.PI * 2);
+    context.stroke();
+    orb(context, at, size * (0.8 + rise * 1.2), { color: REVIVAL_WHITE, alpha: shown * 0.7 });
+    for (let ray = 0; ray < 5; ray += 1) {
+      const x = at[0] + (ray - 2) * size * 0.4;
+      const top = at[1] - size * (1 + rise * 2.4);
+
+      edge(context, [x, at[1] + size * 0.6], [x, top], size * 0.18, 0, {
+        color: REVIVAL_GOLD,
+        alpha: shown * 0.6 * swell((ray + 0.5) / 5),
+      });
+    }
+    motes(context, at, size * 2, many(12, weight), seed, share, {
+      color: REVIVAL_GOLD,
+      alpha: shown,
+    });
+    star(context, halo, size * 0.5, share * 4, { color: REVIVAL_WHITE, alpha: shown });
+  },
+
+  // Houndstone's mourning: a wisp for the fallen drifting in round the
+  // target and gathering, then a cold blow of ghost light where they meet
+  Respects(context, stage, share, { seed, weight }) {
+    const at = landing(stage);
+    const size = REACH * stage.scale * weight;
+    const gather = Math.min(1, share / RESPECTS_GATHER);
+
+    if (share < RESPECTS_GATHER) {
+      for (let wisp = 0; wisp < 5; wisp += 1) {
+        const angle = (wisp / 5) * Math.PI * 2 + gather * 2;
+        const out = size * (3 - gather * 2.4);
+        const spot: Point = [
+          at[0] + Math.cos(angle) * out,
+          at[1] - size * 0.6 + Math.sin(angle) * out * 0.5,
+        ];
+
+        orb(context, spot, size * 0.5, { color: RESPECTS_WISP, alpha: Math.min(1, share * 6) });
+        orb(context, spot, size * 0.2, { color: '#ffffff', alpha: Math.min(1, share * 6) });
+      }
+      orb(context, at, size * 1.8, { color: RESPECTS_DARK, alpha: gather * 0.35 });
+      return;
+    }
+    const hit = (share - RESPECTS_GATHER) / (1 - RESPECTS_GATHER);
+
+    orb(context, at, size * (1 + hit * 2), { color: RESPECTS_WISP, alpha: decay(hit) * 0.8 });
+    ring(context, at, size * (1 + hit * 3), {
+      color: lighten(RESPECTS_WISP, 0.3),
+      alpha: decay(hit),
+      width: 3 * stage.scale,
+    });
+    burst(context, at, size * (1.4 + hit * 2), 10, seed, {
+      color: RESPECTS_WISP,
+      alpha: decay(hit),
+      width: 2 * stage.scale,
+    });
   },
 } satisfies Partial<Record<EffectShape, ShapePainter>>;
 

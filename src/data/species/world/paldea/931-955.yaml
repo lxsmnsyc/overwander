@@ -1,0 +1,129 @@
+Nacli:
+  Nacli:
+    types: [Rock]
+    egg-groups: [Mineral]
+    biomes: [Mountain, Badlands]
+    active: any
+    evolves-into:
+      - species: Naclstack
+        method: [Level]
+        level: 24
+  Naclstack:
+    types: [Rock]
+    egg-groups: [Mineral]
+    biomes: [Mountain, Badlands]
+    active: any
+    evolves-from: Nacli
+    evolves-into:
+      - species: Garganacl
+        method: [Level]
+        level: 38
+  Garganacl:
+    types: [Rock]
+    egg-groups: [Mineral]
+    biomes: [Mountain, Badlands]
+    active: any
+    evolves-from: Naclstack
+Charcadet:
+  Charcadet:
+    types: [Fire]
+    egg-groups: [HumanLike]
+    biomes: [Volcano, Badlands]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Armarouge
+        method: [UsedItem]
+        item: AuspiciousArmor
+      - species: Ceruledge
+        method: [UsedItem]
+        item: MaliciousArmor
+  Armarouge:
+    types: [Fire, Psychic]
+    egg-groups: [HumanLike]
+    biomes: [Volcano, Badlands]
+    active: [Evening, Night]
+    evolves-from: Charcadet
+  Ceruledge:
+    types: [Fire, Ghost]
+    egg-groups: [HumanLike]
+    biomes: [Volcano, Badlands]
+    active: [Evening, Night]
+    evolves-from: Charcadet
+Tadbulb:
+  Tadbulb:
+    types: [Electric]
+    egg-groups: [Water1]
+    habitat: Amphibious
+    biomes: [Bog, Swamp]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Bellibolt
+        method: [UsedItem]
+        item: ThunderStone
+  Bellibolt:
+    types: [Electric]
+    egg-groups: [Water1]
+    habitat: Amphibious
+    biomes: [Bog, Swamp]
+    active: [Evening, Night]
+    evolves-from: Tadbulb
+Wattrel:
+  Wattrel:
+    types: [Electric, Flying]
+    egg-groups: [Water1, Flying]
+    biomes: [Beach, RockyCoast]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Kilowattrel
+        method: [Level]
+        level: 25
+  Kilowattrel:
+    types: [Electric, Flying]
+    egg-groups: [Water1, Flying]
+    biomes: [Beach, RockyCoast]
+    active: [Morning, Day]
+    evolves-from: Wattrel
+Bramblin:
+  Bramblin:
+    types: [Grass, Ghost]
+    egg-groups: [Grass]
+    biomes: [Desert, Steppe]
+    active: [Day, Evening]
+    awaiting: evolution
+Toedscool:
+  Toedscool:
+    types: [Ground, Grass]
+    egg-groups: [Grass]
+    biomes: [Bog, TemperateForest]
+    active: [Morning, Day]
+    awaiting: evolution
+Capsakid:
+  Capsakid:
+    types: [Grass]
+    egg-groups: [Grass]
+    biomes: [Desert, Savanna]
+    active: [Day]
+    evolves-into:
+      - species: Scovillain
+        method: [UsedItem]
+        item: FireStone
+  Scovillain:
+    types: [Grass, Fire]
+    egg-groups: [Grass]
+    biomes: [Desert, Savanna]
+    active: [Day]
+    evolves-from: Capsakid
+Rellor:
+  Rellor:
+    types: [Bug]
+    egg-groups: [Bug]
+    biomes: [Badlands, Desert]
+    active: [Day, Evening]
+    awaiting: evolution
+Flittle:
+  Flittle:
+    types: [Psychic]
+    egg-groups: [Flying]
+    biomes: [Savanna, Desert]
+    active: [Morning, Day]
+    awaiting: evolution

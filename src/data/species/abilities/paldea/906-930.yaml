@@ -37,3 +37,61 @@ Quaxly:
     # mainline's, filling it to four: it fights in the steps of a
     # samba, and its feet are its pride
     hidden: [Moxie, Dancer, QuickFeet]
+Lechonk:
+  Lechonk:
+    abilities: [AromaVeil, Gluttony]
+    hidden: [ThickFat]
+  Oinkologne:
+    abilities: [LingeringAroma, Gluttony]
+    hidden: [ThickFat]
+Tarountula:
+  Tarountula:
+    abilities: [Insomnia]
+    hidden: [Stakeout]
+  Spidops:
+    abilities: [Insomnia]
+    # Compound Eyes and Battle Armor are this registry's rather than the mainline's, filling it to four
+    hidden: [Stakeout, CompoundEyes, BattleArmor]
+Nymble:
+  Nymble:
+    abilities: [Swarm]
+    hidden: [TintedLens]
+  Lokix:
+    abilities: [Swarm]
+    # Sniper and Hustle are this registry's rather than the mainline's, filling it to four
+    hidden: [TintedLens, Sniper, Hustle]
+Pawmi:
+  Pawmi:
+    abilities: [Static, NaturalCure]
+    hidden: [IronFist]
+  Pawmo:
+    abilities: [VoltAbsorb, NaturalCure]
+    hidden: [IronFist]
+  Pawmot:
+    abilities: [VoltAbsorb, NaturalCure]
+    hidden: [IronFist]
+Tandemaus:
+  Tandemaus:
+    abilities: [RunAway, Pickup]
+    hidden: [OwnTempo]
+  Maushold:
+    abilities: [FriendGuard, CheekPouch]
+    hidden: [Technician]
+Fidough:
+  Fidough:
+    abilities: [OwnTempo]
+    hidden: [Klutz]
+  Dachsbun:
+    abilities: [WellBakedBody]
+    hidden: [AromaVeil]
+Smoliv:
+  Smoliv:
+    abilities: [EarlyBird]
+    hidden: [Harvest]
+  Dolliv:
+    abilities: [EarlyBird]
+    hidden: [Harvest]
+  Arboliva:
+    abilities: [SeedSower]
+    # Grassy Surge is this registry's rather than the mainline's, filling it to four
+    hidden: [Harvest, GrassySurge]

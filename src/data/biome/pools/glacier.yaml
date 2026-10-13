@@ -6,6 +6,7 @@ land:
       Scatterbug: 1222
       Vanillite: 1222
       Piplup: 153
+      Frigibax: 150
     uncommon:
       Bergmite: 449
       VulpixAlola: 411
@@ -19,6 +20,7 @@ land:
       Sealeo: 295
       Piloswine: 185
       Prinplup: 74
+      Arctibax: 70
     scarce:
       Dewgong: 117
       Crabominable: 76
@@ -37,6 +39,7 @@ land:
       Walrein: 57
       Delibird: 57
       Mamoswine: 57
+      Baxcalibur: 25
       Empoleon: 23
     prized:
       Unown: forms
@@ -48,6 +51,7 @@ land:
     base:
       Spheal: 2572
       Swinub: 2572
+      Frigibax: 150
     uncommon:
       Bergmite: 508
       VulpixAlola: 464
@@ -58,6 +62,7 @@ land:
     rare:
       Sealeo: 747
       Piloswine: 467
+      Arctibax: 70
     scarce:
       Dewgong: 117
       Crabominable: 76
@@ -76,6 +81,7 @@ land:
       Delibird: 64
       Mamoswine: 64
       Cryogonal: 51
+      Baxcalibur: 25
     prized:
       Unown: forms
       Smoochum: prized

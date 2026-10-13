@@ -15,7 +15,8 @@ import { createFeedScoring } from './scoring';
 /** Abilities that take a move rather than a blow: what they match, and what they pay */
 /**
  * An ability that refuses a move outright and takes a stage from it
- * instead: Sap Sipper, Motor Drive, Storm Drain, Wind Rider.
+ * instead: Sap Sipper, Motor Drive, Storm Drain, Wind Rider, and
+ * Well-Baked Body, which takes 2.
  *
  * The refusal and the payout are deliberately separate. The immunity
  * is a pure answer to a question anybody may ask, including the AI's
@@ -27,8 +28,9 @@ export function createAbsorbStageAbility(
   ability: Abilities,
   stage: Stages,
   matches: AbsorbMatcher,
+  stages = 1,
 ): (battle: Battle) => void {
-  return createAbility(ability, (battle) => absorbStage(battle, ability, stage, matches));
+  return createAbility(ability, (battle) => absorbStage(battle, ability, stage, matches, stages));
 }
 
 function absorbStage(
@@ -36,6 +38,7 @@ function absorbStage(
   ability: Abilities,
   stage: Stages,
   matches: AbsorbMatcher,
+  stages = 1,
 ): MergedLifecycle {
   return new MergedLifecycle([
     battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
@@ -70,7 +73,7 @@ function absorbStage(
     ),
     battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
       if (event.ability === ability) {
-        event.source.addStage(stage, 1, {
+        event.source.addStage(stage, stages, {
           type: EffectType.Ability,
           ability,
           unit: event.source,

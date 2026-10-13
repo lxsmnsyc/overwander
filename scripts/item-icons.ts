@@ -722,6 +722,42 @@ const TINTS: Tint[] = [
     },
   },
   {
+    from: 'evolutions/protector',
+    to: 'evolutions/auspicious-armor',
+    why: 'the armour a Charcadet takes up to become Armarouge is its own item, and no sheet draws it',
+    // The plates gilded and the shadows taken to crimson, for the
+    // warrior's ceremonial red and gold
+    swaps: {
+      '#202020': '#1c1010',
+      '#e67339': '#f2c84a',
+      '#ee9c73': '#ffe79a',
+      '#de5a20': '#d89a1e',
+      '#ac6239': '#c0392b',
+      '#8b4a31': '#962a22',
+      '#9c5239': '#a8301f',
+      '#6a3929': '#6e1c18',
+      '#523129': '#4a1210',
+    },
+  },
+  {
+    from: 'evolutions/protector',
+    to: 'evolutions/malicious-armor',
+    why: 'the armour a Charcadet takes up to become Ceruledge is its own item, and no sheet draws it',
+    // The same plates in a cursed violet over black, for the vengeful
+    // swordsman's dark armour
+    swaps: {
+      '#202020': '#100a18',
+      '#e67339': '#8a4fd8',
+      '#ee9c73': '#b98cf2',
+      '#de5a20': '#6a2fc0',
+      '#ac6239': '#3a2a5a',
+      '#8b4a31': '#2a1d42',
+      '#9c5239': '#33244e',
+      '#6a3929': '#1a1229',
+      '#523129': '#120c1c',
+    },
+  },
+  {
     from: 'key/parcel',
     to: 'evolutions/peat-block',
     why: 'the block an Ursaring evolves on is its own item, and no sheet draws it',

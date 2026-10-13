@@ -1,0 +1,60 @@
+Nacli:
+  Nacli:
+    abilities: [PurifyingSalt, Sturdy]
+    hidden: [ClearBody]
+  Naclstack:
+    abilities: [PurifyingSalt, Sturdy]
+    hidden: [ClearBody]
+  Garganacl:
+    abilities: [PurifyingSalt, Sturdy]
+    # Water Absorb is this registry's rather than the mainline's, filling it to four
+    hidden: [ClearBody, WaterAbsorb]
+Charcadet:
+  Charcadet:
+    abilities: [FlashFire]
+    hidden: [FlameBody]
+  Armarouge:
+    abilities: [FlashFire]
+    # Magic Guard is this registry's rather than the mainline's, filling it to four
+    hidden: [WeakArmor, MagicGuard]
+  Ceruledge:
+    abilities: [FlashFire]
+    # Sharpness is this registry's rather than the mainline's, filling it to four
+    hidden: [WeakArmor, Sharpness]
+Tadbulb:
+  Tadbulb:
+    abilities: [OwnTempo, Static]
+    hidden: [Damp]
+  Bellibolt:
+    abilities: [Electromorphosis, Static]
+    hidden: [Damp]
+Wattrel:
+  Wattrel:
+    abilities: [WindPower, VoltAbsorb]
+    hidden: [Competitive]
+  Kilowattrel:
+    abilities: [WindPower, VoltAbsorb]
+    # Gale Wings is this registry's rather than the mainline's, filling it to four
+    hidden: [Competitive, GaleWings]
+Bramblin:
+  Bramblin:
+    abilities: [WindRider]
+    hidden: [Infiltrator]
+Toedscool:
+  Toedscool:
+    abilities: [MyceliumMight]
+Capsakid:
+  Capsakid:
+    abilities: [Chlorophyll, Insomnia]
+    hidden: [Klutz]
+  Scovillain:
+    abilities: [Chlorophyll, Insomnia]
+    hidden: [Moody]
+Rellor:
+  Rellor:
+    abilities: [CompoundEyes]
+    hidden: [ShedSkin]
+Flittle:
+  Flittle:
+    abilities: [Anticipation, Frisk]
+    hidden: [SpeedBoost]

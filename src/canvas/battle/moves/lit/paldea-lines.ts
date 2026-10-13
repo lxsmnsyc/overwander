@@ -52,6 +52,12 @@ import {
   RAGE_LANDS,
   RAGE_PURPLE,
   RAGE_RED,
+  RESPECTS_DARK,
+  RESPECTS_GATHER,
+  RESPECTS_WISP,
+  REVIVAL_GOLD,
+  REVIVAL_RISEN,
+  REVIVAL_WHITE,
   SHOCK_FIRST,
   SHOCK_ORANGE,
   SHOCK_SECOND,
@@ -1055,6 +1061,59 @@ const paldeaLines = {
         1,
       );
     }
+  },
+
+  Revival(kit, stage, share, { seed, weight }) {
+    const at = landed(stage);
+    const reach = reachOf(stage, weight);
+    const rise = Math.min(1, share / REVIVAL_RISEN);
+    const shown = Math.min(1, share * 5) * late(share, 0.7);
+    const halo = aside(kit, at, 0, reach * (1.4 + rise * 0.6));
+
+    kit.oval(halo, reach * 1.2, reach * 0.36, 0, 0.3, REVIVAL_GOLD, shown);
+    kit.glow(at, reach * (0.8 + rise * 1.2), REVIVAL_WHITE, shown * 0.7);
+    for (let ray = 0; ray < 5; ray += 1) {
+      const foot = aside(kit, floorOf(at), (ray - 2) * reach * 0.4);
+
+      kit.trail(
+        foot,
+        aside(kit, foot, 0, reach * (1 + rise * 3)),
+        reach * 0.1,
+        REVIVAL_GOLD,
+        shown * 0.6 * swell((ray + 0.5) / 5),
+      );
+    }
+    sparks(kit, at, reach * 2, many(12, weight), seed, share, REVIVAL_GOLD, shown);
+    kit.star(halo, reach * 0.5, share * 4, REVIVAL_WHITE, shown);
+  },
+
+  Respects(kit, stage, share, { seed, weight }) {
+    const at = landed(stage);
+    const reach = reachOf(stage, weight);
+    const gather = Math.min(1, share / RESPECTS_GATHER);
+
+    if (share < RESPECTS_GATHER) {
+      for (let wisp = 0; wisp < 5; wisp += 1) {
+        const angle = (wisp / 5) * TAU + gather * 2;
+        const out = reach * (3 - gather * 2.4);
+        const spot = aside(
+          kit,
+          at,
+          Math.cos(angle) * out,
+          reach * 0.6 + Math.sin(angle) * out * 0.5,
+        );
+
+        kit.puff(spot, reach * 0.4, RESPECTS_WISP, Math.min(1, share * 6));
+        kit.glow(spot, reach * 0.3, '#ffffff', Math.min(1, share * 6));
+      }
+      kit.puff(at, reach * 1.6, RESPECTS_DARK, gather * 0.35);
+      return;
+    }
+    const hit = (share - RESPECTS_GATHER) / (1 - RESPECTS_GATHER);
+
+    kit.glow(at, reach * (1 + hit * 2), RESPECTS_WISP, decay(hit) * 0.8);
+    kit.ring(at, reach * (1 + hit * 3), 0.08, lighten(RESPECTS_WISP, 0.3), decay(hit));
+    sparks(kit, at, reach * (1.4 + hit * 2), 10, seed, hit, RESPECTS_WISP, decay(hit));
   },
 } satisfies Partial<Record<EffectShape, LitShapePainter>>;
 

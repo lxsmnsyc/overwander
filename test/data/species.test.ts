@@ -73,6 +73,8 @@ import {
   MORPEKO_FORMS,
   NECROZMA_FORMS,
   ORICORIO_FORMS,
+  PALAFIN_FORMS,
+  PALDEAN_FORMS,
   PALKIA_FORMS,
   PICHU_FORMS,
   PUMPKABOO_FORMS,
@@ -82,6 +84,7 @@ import {
   SHELLOS_FORMS,
   SILVALLY_FORMS,
   Species,
+  TATSUGIRI_FORMS,
   THUNDURUS_FORMS,
   TORNADUS_FORMS,
   TOXTRICITY_FORMS,
@@ -498,6 +501,9 @@ describe('species forms', () => {
       ...BASCULEGION_FORMS.slice(1),
       ...ENAMORUS_FORMS.slice(1),
       ...CALYREX_FORMS.slice(1),
+      ...PALDEAN_FORMS,
+      ...PALAFIN_FORMS.slice(1),
+      ...TATSUGIRI_FORMS.slice(1),
       // The true shadows, which are forms of the birds they are the
       // shadow of rather than pokemon of their own
       ...listTrueShadows(),

@@ -162,6 +162,7 @@ land:
       Venonat: 120
       Spinarak: 120
       Pineco: 120
+      Tarountula: 120
       Deerling: 108
       Pikachu: 30
       Murkrow: 30
@@ -173,6 +174,7 @@ land:
       Dottler: 78
       Hattrem: 49
     scarce:
+      Spidops: 50
       Venomoth: 39
       Noctowl: 39
       Kricketune: 39
@@ -252,6 +254,7 @@ land:
       Phantump: 137
       Espurr: 137
       Cherubi: 125
+      Tarountula: 120
       Foongus: 114
       Shelmet: 114
       Zorua: 114
@@ -271,6 +274,7 @@ land:
       Dottler: 78
       Hattrem: 49
     scarce:
+      Spidops: 50
       Parasect: 36
       Venomoth: 36
       Noctowl: 36

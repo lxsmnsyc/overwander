@@ -31,6 +31,7 @@ land:
       Yamper: 295
       Milcery: 148
       FarfetchdGalar: 120
+      Lechonk: 120
       Rattata: 77
       Patrat: 77
       Bunnelby: 67
@@ -92,6 +93,7 @@ land:
       Ivysaur: 10
       Bayleef: 10
     scarce:
+      Oinkologne: 50
       Eldegoss: 39
       Dubwool: 39
       Boltund: 34
@@ -233,6 +235,7 @@ land:
       Yamper: 295
       Milcery: 148
       FarfetchdGalar: 120
+      Lechonk: 120
       Rattata: 76
       Patrat: 76
       Bunnelby: 65
@@ -296,6 +299,7 @@ land:
       Ivysaur: 10
       Bayleef: 10
     scarce:
+      Oinkologne: 50
       Eldegoss: 39
       Dubwool: 39
       Boltund: 34
@@ -436,6 +440,7 @@ land:
       Ekans: 126
       Roselia: 126
       Marill: 126
+      Greavard: 120
       Deerling: 115
       Pumpkaboo: 76
       PumpkabooSuper: 76
@@ -453,6 +458,7 @@ land:
       LinooneGalar: 80
       Torracat: 64
     scarce:
+      Houndstone: 50
       Raticate: 39
       Arbok: 39
       Linoone: 39
@@ -543,6 +549,7 @@ land:
       Mudbray: 125
       Rockruff: 125
       Stunky: 125
+      Greavard: 120
       Ekans: 115
       Meowth: 115
       Drowzee: 115
@@ -565,6 +572,7 @@ land:
       LinooneGalar: 80
       Torracat: 64
     scarce:
+      Houndstone: 50
       Raticate: 34
       Arbok: 34
       Persian: 34

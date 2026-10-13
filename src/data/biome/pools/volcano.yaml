@@ -102,6 +102,7 @@ land:
       Slugma: 1381
       Magmar: 691
       Sizzlipede: 249
+      Charcadet: 120
     rare:
       Zweilous: 376
     scarce:
@@ -111,6 +112,8 @@ land:
       Salazzle: 249
       Magmortar: 249
       Ninetales: 208
+      Armarouge: 50
+      Ceruledge: 50
       Centiskorch: 30
     elusive:
       Heatmor: 374
@@ -136,6 +139,7 @@ land:
       Slugma: 1140
       Magmar: 569
       Sizzlipede: 249
+      Charcadet: 120
     rare:
       Zweilous: 376
     scarce:
@@ -146,6 +150,8 @@ land:
       Weezing: 208
       Ninetales: 208
       Magcargo: 208
+      Armarouge: 50
+      Ceruledge: 50
       Centiskorch: 30
     elusive:
       Heatmor: 374

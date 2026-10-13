@@ -3,6 +3,7 @@ import type { EventListenerLifecycle } from '../../../core/event-emitter';
 import { Stats } from '../../../data/constants/stats';
 import { getWeatherMove } from '../../../data/moves';
 import type Abilities from '../../../data/ids/abilities';
+import { Items } from '../../../data/ids/items';
 import type { Moves } from '../../../data/ids/moves';
 import { Weathers } from '../../../data/ids/status';
 import type Battle from '../../core';
@@ -10,8 +11,9 @@ import type { CheckUnitCanDamageEvent } from '../../events';
 import { BattleEvents, EffectType, MoveTargetType } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
 import { isPrimalWeather, skyOverTeam } from '../../utils';
+import { spendItem } from '../../items/__create';
 import type Unit from '../../unit';
-import { createAbility } from './create';
+import { createAbility, getAbilityHolders } from './create';
 
 /** Abilities that set the sky, read it, or run on it */
 /**
@@ -245,4 +247,136 @@ export function chipImmunity(
       event.success = false;
     }
   });
+}
+
+/** What the two Paradox abilities make of the stat they lift */
+export const PARADOX_SCALE = 1.3;
+export const PARADOX_SPEED_SCALE = 1.5;
+
+/** The stats a Paradox ability can lift, in the order a tie goes */
+const PARADOX_STATS = [
+  Stats.Attack,
+  Stats.Defense,
+  Stats.SpecialAttack,
+  Stats.SpecialDefense,
+  Stats.Speed,
+];
+
+/**
+ * Meta ability for the Paradox pair (Protosynthesis, Quark Drive):
+ * while `active` holds, or once a held Booster Energy is spent, the
+ * holder's highest stat is lifted. The stat is picked as the boost
+ * starts and kept while it lasts, the mainline's rule; the Booster
+ * Energy's boost lasts until the holder leaves the field
+ * https://bulbapedia.bulbagarden.net/wiki/Protosynthesis_(Ability)
+ */
+export function createProtosynthesisAbility(
+  ability: Abilities,
+  active: (unit: Unit) => boolean,
+): (battle: Battle) => void {
+  return createAbility(ability, (battle) => {
+    const boosted = new Map<Unit, Stats>();
+    const energized = new Set<Unit>();
+
+    function highest(unit: Unit): Stats {
+      let best = PARADOX_STATS[0];
+      let value = -1;
+
+      for (const stat of PARADOX_STATS) {
+        const current = unit.resolveStat(stat, 0);
+
+        if (current > value) {
+          best = stat;
+          value = current;
+        }
+      }
+      return best;
+    }
+
+    function settle(unit: Unit): void {
+      if (!unit.alive || !unit.hasAbility(ability)) {
+        boosted.delete(unit);
+        return;
+      }
+
+      let on = energized.has(unit) || active(unit);
+
+      // The energy is only drunk when nothing else is lifting it
+      if (!on && spendItem(unit, Items.BoosterEnergy) != null) {
+        energized.add(unit);
+        on = true;
+      }
+      if (!on) {
+        boosted.delete(unit);
+        return;
+      }
+      if (!boosted.has(unit)) {
+        boosted.set(unit, highest(unit));
+        unit.triggerAbility(ability);
+      }
+    }
+
+    function settleAll(): void {
+      for (const unit of getAbilityHolders(battle, ability)) {
+        settle(unit);
+      }
+    }
+
+    function leave(unit: Unit): void {
+      boosted.delete(unit);
+      energized.delete(unit);
+    }
+
+    return new MergedLifecycle([
+      battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+        if (boosted.get(event.source) === event.stat && event.source.hasAbility(ability)) {
+          event.value *= event.stat === Stats.Speed ? PARADOX_SPEED_SCALE : PARADOX_SCALE;
+        }
+      }),
+      battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+        settle(event.source);
+      }),
+      battle.on(BattleEvents.UnitAddAbility, EventPriority.Post, (event) => {
+        if (event.ability === ability) {
+          settle(event.source);
+        }
+      }),
+      battle.on(BattleEvents.UnitAddItem, EventPriority.Post, (event) => {
+        settle(event.source);
+      }),
+      battle.on(BattleEvents.SetWeather, EventPriority.Post, settleAll),
+      battle.on(BattleEvents.TeamSetWeather, EventPriority.Post, settleAll),
+      battle.on(BattleEvents.SetTerrain, EventPriority.Post, settleAll),
+      battle.on(BattleEvents.TeamSetTerrain, EventPriority.Post, settleAll),
+      battle.on(BattleEvents.UnitLeavesField, EventPriority.Post, (event) => {
+        leave(event.source);
+      }),
+      battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
+        leave(event.source);
+      }),
+    ]);
+  });
+}
+
+/** What the two box legends make of their stat on their own ground */
+export const PULSE_SCALE = 5461 / 4096;
+
+/**
+ * The stat half of the two box legends (Orichalcum Pulse, Hadron
+ * Engine): one stat at 1.33x while `active` holds. What they lay on
+ * arrival is the Drought or Surge they are paired with
+ * https://bulbapedia.bulbagarden.net/wiki/Orichalcum_Pulse_(Ability)
+ */
+export function createOrichalcumPulseAbility(
+  ability: Abilities,
+  stat: Stats,
+  active: (unit: Unit) => boolean,
+): (battle: Battle) => void {
+  return createAbility(ability, (battle) =>
+    battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+      if (event.stat === stat && event.source.hasAbility(ability) && active(event.source)) {
+        event.value *= PULSE_SCALE;
+      }
+    }),
+  );
 }

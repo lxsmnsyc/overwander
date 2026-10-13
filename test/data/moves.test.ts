@@ -329,6 +329,11 @@ describe('move damage', () => {
     // And the G-Max Moves off the move they replace, bar the three
     // that are written at 160
     ...[...G_MAX_MOVES].filter((move) => !FIXED_G_MAX_MOVES.has(move)),
+    // Paldea's own: power read off what the target has left, off the
+    // last hit taken, and off the target's health
+    Moves.Ruination,
+    Moves.Comeuppance,
+    Moves.HardPress,
   ]);
 
   it('gives every damaging move something to hit with', () => {

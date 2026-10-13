@@ -131,26 +131,37 @@ function setupAddedTypes(battle: Battle): void {
 }
 
 /**
- * Burn Up spends the user's own fire: it only works from a Fire type,
- * and the user is not one afterwards
+ * Burn Up and Double Shock spend the user's own type: each only works
+ * from that type, and the user is not one afterwards
  * https://bulbapedia.bulbagarden.net/wiki/Burn_Up_(move)
  */
+const SPENT_TYPES = new Map<Moves, Types>([
+  [Moves.BurnUp, Types.Fire],
+  [Moves.DoubleShock, Types.Electric],
+]);
+
 function setupBurnUp(battle: Battle): void {
   battle.on(BattleEvents.CheckUnitCanCast, EventPriority.Post, (event) => {
-    if (event.success && event.move === Moves.BurnUp && !event.source.types.has(Types.Fire)) {
+    const type = SPENT_TYPES.get(event.move);
+
+    if (event.success && type != null && !event.source.types.has(type)) {
       event.success = false;
     }
   });
 
   battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
-    if (event.usable && event.move === Moves.BurnUp) {
-      event.usable = event.source.types.has(Types.Fire);
+    const type = SPENT_TYPES.get(event.move);
+
+    if (event.usable && type != null) {
+      event.usable = event.source.types.has(type);
     }
   });
 
   battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Post, (event) => {
-    if (event.move === Moves.BurnUp && event.source.types.has(Types.Fire)) {
-      event.source.removeType(Types.Fire);
+    const type = SPENT_TYPES.get(event.move);
+
+    if (type != null && event.source.types.has(type)) {
+      event.source.removeType(type);
     }
   });
 }

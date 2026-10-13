@@ -128,3 +128,15 @@ SandsearStorm: { status: Burned, chance: 20 }
 # The Noble bursts that leave a status behind
 FrenzyWildfire: { status: Burned, chance: 30 }
 FrenzyIceberg: { status: Flinched, chance: 30 }
+
+# Paldea
+AxeKick: { status: Confused, chance: 30 }
+MortalSpin: { status: Poisoned, chance: 100 }
+BlazingTorque: { status: Burned, chance: 30 }
+WickedTorque: { status: Sleeping, chance: 10 }
+NoxiousTorque: { status: Poisoned, chance: 30 }
+CombatTorque: { status: Paralyzed, chance: 30 }
+MagicalTorque: { status: Confused, chance: 30 }
+MatchaGotcha: { status: Burned, chance: 20 }
+MalignantChain: { status: BadlyPoisoned, chance: 50 }
+UpperHand: { status: Flinched, chance: 100 }

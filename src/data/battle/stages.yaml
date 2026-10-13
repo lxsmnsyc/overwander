@@ -80,3 +80,8 @@ Decorate: { Attack: 2, SpecialAttack: 2 }
 VictoryDance: { Attack: 1, Defense: 1, Speed: 1 }
 Shelter: { Defense: 2 }
 TakeHeart: { SpecialAttack: 1, SpecialDefense: 1 }
+
+# Paldea
+SpicyExtract: { Attack: 2, Defense: -2 }
+FilletAway: { Attack: 2, SpecialAttack: 2, Speed: 2 }
+TidyUp: { Attack: 1, Speed: 1 }

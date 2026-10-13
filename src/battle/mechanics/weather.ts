@@ -44,6 +44,9 @@ const WEATHER_NULLIFIED: { [key in Weathers]?: Types } = {
 
 const SANDSTORM_DEFENSE_FACTOR = 1.5;
 
+/** And what snow piles onto an Ice type's Defense */
+const SNOW_DEFENSE_FACTOR = 1.5;
+
 // Damaging weathers, mapped to the types they cannot harm; ability
 // immunities (e.g. Sand Veil, Ice Body) answer CheckUnitCanDamage in
 // their own modules instead
@@ -176,6 +179,17 @@ export default function setupWeatherMechanics(battle: Battle): void {
       event.source.checkWeather() === Weathers.Sandstorm
     ) {
       event.value *= SANDSTORM_DEFENSE_FACTOR;
+    }
+  });
+
+  // And snow does the same for what is made of ice, on the other half
+  battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+    if (
+      event.stat === Stats.Defense &&
+      event.source.types.has(Types.Ice) &&
+      event.source.checkWeather() === Weathers.Snow
+    ) {
+      event.value *= SNOW_DEFENSE_FACTOR;
     }
   });
 

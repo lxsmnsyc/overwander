@@ -33,3 +33,9 @@ ScaleShot: { min: 2, max: 5 }
 TripleAxel: { min: 3, max: 3, escalating: true }
 DualWingbeat: { min: 2, max: 2 }
 SurgingStrikes: { min: 3, max: 3 }
+
+# Paldea
+PopulationBomb: { min: 10, max: 10 }
+TripleDive: { min: 3, max: 3 }
+TwinBeam: { min: 2, max: 2 }
+TachyonCutter: { min: 2, max: 2 }

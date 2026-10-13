@@ -25,6 +25,8 @@ export const PUNCH_MOVES = new Set<Moves>([
   Moves.ShadowPunch,
   Moves.SkyUppercut,
   Moves.ThunderPunch,
+  Moves.JetPunch,
+  Moves.RageFist,
 ]);
 
 export function isPunchMove(move: Moves): boolean {

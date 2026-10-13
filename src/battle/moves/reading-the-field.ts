@@ -28,6 +28,14 @@ const ME_FIRST_POWER = 1.5;
 /** Neither of the fallbacks is a move anybody copied on purpose */
 const NOT_COPIED = new Set<Moves>([Moves.Copycat, Moves.Struggle, Moves.Attack, Moves.Sketch]);
 
+/** Sucker Punch and Thunderclap, which only land on a target that is swinging */
+const SUCKERS = new Set<Moves>([Moves.SuckerPunch, Moves.Thunderclap]);
+
+/** The move a unit is committed to right now, whatever kind it is */
+function committed(unit: Unit): Moves | undefined {
+  return unit.casting?.move ?? unit.channeling?.move;
+}
+
 /** The move a unit is committed to right now, if it is a damaging one */
 function swinging(unit: Unit): Moves | undefined {
   const move = unit.casting?.move ?? unit.channeling?.move;
@@ -54,7 +62,7 @@ export default function setupReadingTheField(battle: Battle): void {
       return;
     }
 
-    if (event.move === Moves.SuckerPunch || event.move === Moves.MeFirst) {
+    if (SUCKERS.has(event.move) || event.move === Moves.MeFirst) {
       const target = event.target.type === MoveTargetType.Unit ? event.target.unit : undefined;
 
       // The target has to still be swinging when this goes off, so a
@@ -65,8 +73,27 @@ export default function setupReadingTheField(battle: Battle): void {
         (target.casting == null ||
           landsIn(target) >= effectIn(event.source, event.move, event.target));
     }
+    if (event.move === Moves.UpperHand) {
+      const target = event.target.type === MoveTargetType.Unit ? event.target.unit : undefined;
+      const move = target == null ? undefined : committed(target);
+
+      event.usable = move != null && (getMoveData(move).priority ?? 0) > 0;
+    }
     if (event.move === Moves.Copycat) {
       event.usable = copied != null;
+    }
+  });
+
+  // Upper Hand only beats a move that was itself thrown to come first
+  battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
+    if (event.immune || event.move !== Moves.UpperHand || event.target.type !== MoveTargetType.Unit) {
+      return;
+    }
+
+    const move = committed(event.target.unit);
+
+    if (move == null || (getMoveData(move).priority ?? 0) <= 0) {
+      event.immune = true;
     }
   });
 
@@ -75,7 +102,7 @@ export default function setupReadingTheField(battle: Battle): void {
   battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
     if (
       !event.immune &&
-      event.move === Moves.SuckerPunch &&
+      SUCKERS.has(event.move) &&
       event.target.type === MoveTargetType.Unit &&
       swinging(event.target.unit) == null
     ) {

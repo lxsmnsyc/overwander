@@ -93,7 +93,7 @@ export function payDayCeiling(
 }
 
 /** The moves that scatter coins as they land, G-Max Gold Rush at Pay Day's rate */
-const COIN_MOVES = new Set<Moves>([Moves.PayDay, Moves.GMaxGoldRush]);
+const COIN_MOVES = new Set<Moves>([Moves.PayDay, Moves.GMaxGoldRush, Moves.MakeItRain]);
 
 export default function setupPayDay(battle: Battle): void {
   const happy = new WeakSet<Team>();

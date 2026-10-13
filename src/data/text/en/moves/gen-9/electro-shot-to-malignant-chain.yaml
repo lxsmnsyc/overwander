@@ -1,0 +1,45 @@
+ElectroShot:
+  name: Electro Shot
+  description: Raises the user's Special Attack a stage as it winds up, then strikes. In rain it strikes at once.
+TeraStarstorm:
+  name: Tera Starstorm
+  description: Plain special damage.
+FickleBeam:
+  name: Fickle Beam
+  description: 30% to hit 2x.
+BurningBulwark:
+  name: Burning Bulwark
+  description: Blocks every damaging move aimed at the user for 2 seconds, and burns anything that touches it. Status moves pass. It fails if used twice over.
+Thunderclap:
+  name: Thunderclap
+  description: A shorter wind-up than most. Only lands on a target that is casting a damaging move.
+MightyCleave:
+  name: Mighty Cleave
+  description: Hits through Protect and the other guards, and breaks the guard it went through.
+TachyonCutter:
+  name: Tachyon Cutter
+  description: Strikes 2 times, and never misses.
+HardPress:
+  name: Hard Press
+  description: Hits hardest against a target at full HP, up to 100, and for almost nothing against a weak one.
+DragonCheer:
+  name: Dragon Cheer
+  description: The user's teammates crit more readily until they leave the field, Dragon types twice over.
+AlluringVoice:
+  name: Alluring Voice
+  description: Confuses a target whose stats rose in the last 2 seconds.
+TemperFlare:
+  name: Temper Flare
+  description: 2x after the user's last move failed.
+SupercellSlam:
+  name: Supercell Slam
+  description: A miss costs the user 1/2 its HP.
+PsychicNoise:
+  name: Psychic Noise
+  description: The target cannot be healed for 4 seconds.
+UpperHand:
+  name: Upper Hand
+  description: Winds up far faster than an ordinary move, and flinches the target. Only lands on a target casting a move with a shorter wind-up than most.
+MalignantChain:
+  name: Malignant Chain
+  description: 50% to badly poison.

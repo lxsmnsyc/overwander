@@ -54,11 +54,13 @@ export const TERRAIN_PULSE_TYPES = new Map<Terrains, Types>([
 
 /**
  * The moves a terrain the user stands on makes 1.5x: Expanding Force
- * on its own Psychic Terrain, and Misty Explosion going off in the mist
+ * on its own Psychic Terrain, Misty Explosion going off in the mist,
+ * and Psyblade on Electric Terrain
  */
 const TERRAIN_SWELLS = new Map<Moves, Terrains>([
   [Moves.ExpandingForce, Terrains.Psychic],
   [Moves.MistyExplosion, Terrains.Misty],
+  [Moves.Psyblade, Terrains.Electric],
 ]);
 
 const TERRAIN_SWELL = 1.5;

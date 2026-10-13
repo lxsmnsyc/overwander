@@ -5,9 +5,10 @@ import { BattleEvents } from '../events';
 import turns from '../turn';
 import createTimedStatus from './__create';
 
-const DURATION = turns(5);
+/** How long a Heal Block holds */
+export const HEAL_BLOCK_DURATION = turns(5);
 
-const setupTimer = createTimedStatus(Statuses.HealBlocked, DURATION);
+const setupTimer = createTimedStatus(Statuses.HealBlocked, HEAL_BLOCK_DURATION);
 
 /**
  * HealBlocked: nothing puts health back on this unit while it lasts.

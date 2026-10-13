@@ -28,6 +28,9 @@ const RETURNED: { [key in Moves]?: MoveCategories } = {
  */
 const BURST_SHARE = 1.5;
 
+/** Metal Burst and Comeuppance, which answer whatever kind of hit landed last */
+const BURSTS = new Set<Moves>([Moves.MetalBurst, Moves.Comeuppance]);
+
 const COUNTER_SHARE = 2;
 
 export default function setupCounter(battle: Battle): void {
@@ -40,7 +43,7 @@ export default function setupCounter(battle: Battle): void {
   const latest = new Map<Unit, CounterData>();
 
   function lastHit(unit: Unit, move: Moves): CounterData | undefined {
-    if (move === Moves.MetalBurst) {
+    if (BURSTS.has(move)) {
       return latest.get(unit);
     }
 
@@ -51,7 +54,7 @@ export default function setupCounter(battle: Battle): void {
 
   /** Whether this move gives a hit back at all, and so reads the record */
   function returns(move: Moves): boolean {
-    return move === Moves.MetalBurst || RETURNED[move] != null;
+    return BURSTS.has(move) || RETURNED[move] != null;
   }
 
   // Track the last direct hit of each kind every unit takes
@@ -111,7 +114,7 @@ export default function setupCounter(battle: Battle): void {
     event.source.attack(
       record.attacker,
       event.move,
-      record.value * (event.move === Moves.MetalBurst ? BURST_SHARE : COUNTER_SHARE),
+      record.value * (BURSTS.has(event.move) ? BURST_SHARE : COUNTER_SHARE),
       event.source.checkMoveType(event.move, {
         type: MoveTargetType.Unit,
         unit: record.attacker,

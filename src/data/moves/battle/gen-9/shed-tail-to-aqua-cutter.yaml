@@ -1,0 +1,133 @@
+# From Shed Tail to Aqua Cutter: the rest of Scarlet and Violet's, at the
+# numbers Scarlet and Violet settled them on
+
+ShedTail:
+  type: Normal
+  category: Status
+  pp: 10
+  target: None
+  steps: 1
+
+ChillyReception:
+  type: Ice
+  category: Status
+  pp: 10
+  target: None
+  steps: 1
+
+TidyUp:
+  type: Normal
+  category: Status
+  pp: 10
+  target: None
+
+Snowscape:
+  type: Ice
+  category: Status
+  pp: 10
+  target: None
+
+Pounce:
+  type: Bug
+  category: Physical
+  power: 50
+  accuracy: 100
+  pp: 20
+  target: Unit
+  flags: [Contact]
+
+Trailblaze:
+  type: Grass
+  category: Physical
+  power: 50
+  accuracy: 100
+  pp: 20
+  target: Unit
+  flags: [Contact]
+
+ChillingWater:
+  type: Water
+  category: Special
+  power: 50
+  accuracy: 100
+  pp: 20
+  target: Unit
+
+HyperDrill:
+  type: Normal
+  category: Physical
+  power: 100
+  accuracy: 100
+  pp: 5
+  target: Unit
+  flags: [Contact]
+
+TwinBeam:
+  type: Psychic
+  category: Special
+  power: 40
+  accuracy: 100
+  pp: 10
+  target: Unit
+  projectile: true
+
+RageFist:
+  type: Ghost
+  category: Physical
+  power: 50
+  accuracy: 100
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+ArmorCannon:
+  type: Fire
+  category: Special
+  power: 120
+  accuracy: 100
+  pp: 5
+  target: Unit
+  projectile: true
+
+BitterBlade:
+  type: Fire
+  category: Physical
+  power: 90
+  accuracy: 100
+  pp: 10
+  target: Unit
+  flags: [Contact, Slicing]
+
+DoubleShock:
+  type: Electric
+  category: Physical
+  power: 120
+  accuracy: 100
+  pp: 5
+  target: Unit
+  flags: [Contact]
+
+GigatonHammer:
+  type: Steel
+  category: Physical
+  power: 160
+  accuracy: 100
+  pp: 5
+  target: Unit
+
+Comeuppance:
+  type: Dark
+  category: Physical
+  accuracy: 100
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+AquaCutter:
+  type: Water
+  category: Physical
+  power: 70
+  accuracy: 100
+  pp: 20
+  target: Unit
+  flags: [Slicing]

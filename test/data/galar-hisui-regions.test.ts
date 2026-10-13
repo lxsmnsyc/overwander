@@ -5,7 +5,9 @@ import { REGIONS, getRegionSpan, getSpeciesRegion } from '../../src/data/species
 
 describe('Galar and Hisui', () => {
   it('cover the Gen 8 dex numbers after Alola', () => {
-    expect(REGIONS.slice(-2)).toEqual([Regions.Galar, Regions.Hisui]);
+    const after = REGIONS.indexOf(Regions.Alola) + 1;
+
+    expect(REGIONS.slice(after, after + 2)).toEqual([Regions.Galar, Regions.Hisui]);
     expect(getRegionSpan(Regions.Galar)).toEqual([810, 898]);
     expect(getRegionSpan(Regions.Hisui)).toEqual([899, 905]);
     expect(getSpeciesRegion(Species.Grookey)).toBe(Regions.Galar);

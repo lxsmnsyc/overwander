@@ -4649,6 +4649,7 @@ export const REGION_IDS = {
   Alola: Regions.Alola,
   Galar: Regions.Galar,
   Hisui: Regions.Hisui,
+  Paldea: Regions.Paldea,
 } as const satisfies Record<string, Regions>;
 
 export const NATURE_IDS = {

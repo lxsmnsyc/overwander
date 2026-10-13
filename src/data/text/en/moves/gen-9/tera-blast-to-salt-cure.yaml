@@ -39,4 +39,4 @@ RevivalBlessing:
   description: Brings a fainted teammate back with 1/2 its HP.
 SaltCure:
   name: Salt Cure
-  description: "Salts the target: it loses 1/8 of its HP each time it acts, 1/4 if it is Water or Steel, until it leaves the field."
+  description: 'Salts the target: it loses 1/8 of its HP each time it acts, 1/4 if it is Water or Steel, until it leaves the field.'

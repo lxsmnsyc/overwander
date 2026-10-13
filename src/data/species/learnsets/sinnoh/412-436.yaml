@@ -287,6 +287,7 @@ Combee:
     - Swift
     - Tailwind
     - DualWingbeat
+    - TeraBlast
   Combee:
     level:
       1: [Gust, SweetScent, BugBite, StruggleBug]
@@ -362,6 +363,8 @@ Combee:
       - ToxicSpikes
       - Uproar
       - Venoshock
+      - Pounce
+      - PsychicNoise
 Pachirisu:
   Pachirisu:
     level:
@@ -424,6 +427,9 @@ Pachirisu:
       - Confide
       - LaserFocus
       - VoltSwitch
+      - TeraBlast
+      - Trailblaze
+      - AlluringVoice
     egg:
       [
         IonDeluge,
@@ -482,6 +488,9 @@ Buizel:
     - Whirlpool
     - Confide
     - PowerUpPunch
+    - TeraBlast
+    - IceSpinner
+    - ChillingWater
   Buizel:
     level:
       1: [Tackle, SonicBoom, WaterSport]
@@ -705,6 +714,9 @@ Shellos:
     - Confide
     - Infestation
     - SkitterSmack
+    - TeraBlast
+    - Snowscape
+    - ChillingWater
   Shellos:
     level:
       1: [WaterGun, MudSlap]
@@ -744,6 +756,9 @@ Shellos:
       - MuddyWater
       - Round
       - Scald
+      - TeraBlast
+      - Snowscape
+      - ChillingWater
   ShellosEast:
     level:
       1: [WaterGun, MudSlap]
@@ -823,6 +838,9 @@ Shellos:
       - Scald
       - SludgeWave
       - WeatherBall
+      - TeraBlast
+      - Snowscape
+      - ChillingWater
   GastrodonEast:
     level:
       1: [WaterGun, Recover, Harden, MudSlap]
@@ -921,6 +939,8 @@ Drifloon:
     - Trick
     - WillOWisp
     - Confide
+    - TeraBlast
+    - TemperFlare
   Drifloon:
     level:
       1: [Minimize, Astonish, Constrict]
@@ -1289,6 +1309,9 @@ Stunky:
     - ThroatChop
     - LashOut
     - CorrosiveGas
+    - TeraBlast
+    - Trailblaze
+    - TemperFlare
   Stunky:
     level:
       1: [Scratch, PoisonGas]
@@ -1428,6 +1451,8 @@ Bronzor:
     - SteelBeam
     - ExpandingForce
     - SteelRoller
+    - TeraBlast
+    - IceSpinner
   Bronzor:
     level:
       1: [Tackle, Confusion]
@@ -1498,4 +1523,6 @@ Bronzor:
         SpeedSwap,
         WeatherBall,
         WonderRoom,
+        HardPress,
+        PsychicNoise,
       ]

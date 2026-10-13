@@ -132,6 +132,7 @@ Spiritomb:
       - Round
       - Snarl
       - WonderRoom
+      - TeraBlast
     egg: [DestinyBond, Disable, FoulPlay, Grudge, Imprison, PainSplit, ShadowSneak, SmokeScreen]
 Gible:
   # TM, HM and tutor moves shared by the whole family
@@ -184,6 +185,8 @@ Gible:
     - Confide
     - ScaleShot
     - ScorchingSands
+    - TeraBlast
+    - DragonCheer
   Gible:
     level:
       1: [Tackle, SandTomb]
@@ -320,6 +323,9 @@ Riolu:
     - Confide
     - PowerUpPunch
     - Coaching
+    - TeraBlast
+    - Trailblaze
+    - UpperHand
   Riolu:
     level:
       1: [QuickAttack, Endure, Foresight]
@@ -480,6 +486,7 @@ Hippopotas:
     - Confide
     - StompingTantrum
     - ScorchingSands
+    - TeraBlast
   Hippopotas:
     level:
       1: [SandAttack, Tackle]
@@ -547,6 +554,7 @@ Hippopotas:
         SandTomb,
         ThunderFang,
         WeatherBall,
+        HardPress,
       ]
 Skorupi:
   # TM, HM and tutor moves shared by the whole family
@@ -750,6 +758,9 @@ Croagunk:
     - PowerUpPunch
     - LashOut
     - Coaching
+    - TeraBlast
+    - ChillingWater
+    - UpperHand
   Croagunk:
     level:
       1: [PoisonSting, MudSlap]
@@ -962,6 +973,9 @@ Finneon:
     - WaterPulse
     - Waterfall
     - Confide
+    - TeraBlast
+    - ChillingWater
+    - AlluringVoice
   Finneon:
     level:
       1: [Pound]
@@ -1039,6 +1053,11 @@ Snover:
     - WaterPulse
     - Confide
     - GrassyGlide
+    - TeraBlast
+    - IceSpinner
+    - Snowscape
+    - Trailblaze
+    - ChillingWater
   Snover:
     level:
       1: [Leer, PowderSnow]
@@ -1095,3 +1114,4 @@ Snover:
       - MegaPunch
       - Round
       - WeatherBall
+      - HardPress

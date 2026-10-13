@@ -42,6 +42,8 @@ Turtwig:
     - Synthesis
     - Toxic
     - Confide
+    - TeraBlast
+    - Trailblaze
   Turtwig:
     level:
       1: [Tackle]
@@ -124,6 +126,7 @@ Turtwig:
       - StompingTantrum
       - Bulldoze
       - WorkUp
+      - HardPress
 Chimchar:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -182,6 +185,8 @@ Chimchar:
     - WillOWisp
     - Confide
     - PowerUpPunch
+    - TeraBlast
+    - TemperFlare
   Chimchar:
     level:
       1: [Scratch, Leer]
@@ -227,7 +232,7 @@ Chimchar:
       46: [Acrobatics]
       49: [SlackOff]
       56: [FlareBlitz]
-    teachable: [FocusBlast, PoisonJab, RockSlide, RockTomb, LowSweep, NastyPlot, WorkUp]
+    teachable: [FocusBlast, PoisonJab, RockSlide, RockTomb, LowSweep, NastyPlot, WorkUp, UpperHand]
   Infernape:
     level:
       1:
@@ -273,6 +278,7 @@ Chimchar:
       - LowSweep
       - NastyPlot
       - WorkUp
+      - UpperHand
 Piplup:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -317,6 +323,10 @@ Piplup:
     - WaterPulse
     - Waterfall
     - Confide
+    - TeraBlast
+    - IceSpinner
+    - Snowscape
+    - ChillingWater
   Piplup:
     level:
       1: [Pound]
@@ -443,6 +453,7 @@ Starly:
     - Twister
     - UTurn
     - Confide
+    - TeraBlast
   Starly:
     level:
       1: [Tackle, Growl]
@@ -608,7 +619,7 @@ Bidoof:
       - WorkUp
 Kricketot:
   # TM, HM and tutor moves shared by the whole family
-  family-teachable: [BugBite, Endeavor, MudSlap, Snore, StringShot, Uproar]
+  family-teachable: [BugBite, Endeavor, MudSlap, Snore, StringShot, Uproar, TeraBlast]
   Kricketot:
     level:
       1: [Pound, Growl, Bide]
@@ -669,6 +680,8 @@ Kricketot:
       - LaserFocus
       - ThroatChop
       - BugBuzz
+      - Pounce
+      - Trailblaze
 Shinx:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -709,6 +722,8 @@ Shinx:
     - Toxic
     - Confide
     - RisingVoltage
+    - TeraBlast
+    - Trailblaze
   Shinx:
     level:
       1: [Tackle, Leer]
@@ -825,6 +840,7 @@ Shinx:
         ThunderFang,
         VoltSwitch,
         WildCharge,
+        SupercellSlam,
       ]
 Cranidos:
   # TM, HM and tutor moves shared by the whole family
@@ -887,6 +903,9 @@ Cranidos:
     - ZenHeadbutt
     - Confide
     - PowerUpPunch
+    - TeraBlast
+    - Trailblaze
+    - DragonCheer
   Cranidos:
     level:
       1: [Headbutt, Leer]
@@ -930,6 +949,7 @@ Cranidos:
       - StompingTantrum
       - LaserFocus
       - Bulldoze
+      - SupercellSlam
 Shieldon:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -981,6 +1001,9 @@ Shieldon:
     - Torment
     - Toxic
     - Confide
+    - TeraBlast
+    - Trailblaze
+    - HardPress
   Shieldon:
     level:
       1: [Tackle, Protect]

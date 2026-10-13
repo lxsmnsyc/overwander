@@ -69,6 +69,7 @@ Giratina:
     - BreakingSwipe
     - Poltergeist
     - DualWingbeat
+    - TeraBlast
   Giratina:
     level:
       1: [ShadowSneak, Defog]
@@ -198,6 +199,7 @@ Cresselia:
       - Psyshock
       - Round
       - StoredPower
+      - TeraBlast
 Manaphy:
   family-teachable:
     - AncientPower
@@ -241,6 +243,9 @@ Manaphy:
     - Waterfall
     - Confide
     - DazzlingGleam
+    - TeraBlast
+    - ChillingWater
+    - AlluringVoice
   Phione:
     level:
       1: [Bubble, WaterSport]
@@ -364,6 +369,7 @@ Darkrai:
       - XScissor
       - PowerUpPunch
       - ThroatChop
+      - TeraBlast
 Shaymin:
   family-teachable:
     - BulletSeed
@@ -402,6 +408,8 @@ Shaymin:
     - ZenHeadbutt
     - Confide
     - DazzlingGleam
+    - TeraBlast
+    - Trailblaze
   Shaymin:
     level:
       1: [Growth]
@@ -556,6 +564,10 @@ Arceus:
     - Confide
     - Liquidation
     - LaserFocus
+    - TeraBlast
+    - Trailblaze
+    - ChillingWater
+    - SupercellSlam
   Arceus:
     level:
       1: [CosmicPower, NaturalGift, Punishment, SeismicToss]
@@ -569,6 +581,8 @@ Arceus:
       80: [HyperBeam]
       90: [PerishSong]
       100: [Judgment]
+    teachable:
+      - SupercellSlam
   ArceusBug:
     level:
       1: [CosmicPower, NaturalGift, Punishment, SeismicToss]

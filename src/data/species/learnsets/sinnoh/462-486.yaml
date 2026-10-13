@@ -43,6 +43,7 @@ Rotom:
     - Confide
     - RisingVoltage
     - Poltergeist
+    - TeraBlast
   Rotom:
     level:
       1: [DoubleTeam, Astonish]
@@ -316,6 +317,8 @@ Uxie:
       - StoredPower
       - TriAttack
       - WonderRoom
+      - TeraBlast
+      - PsychicNoise
 Mesprit:
   Mesprit:
     level:
@@ -415,6 +418,8 @@ Mesprit:
       - StoredPower
       - TriAttack
       - WonderRoom
+      - TeraBlast
+      - PsychicNoise
 Azelf:
   Azelf:
     level:
@@ -520,6 +525,7 @@ Azelf:
       - StoredPower
       - TriAttack
       - WonderRoom
+      - TeraBlast
 Dialga:
   family-teachable:
     - AerialAce
@@ -585,6 +591,7 @@ Dialga:
     - StealthRock
     - TrickRoom
     - StompingTantrum
+    - TeraBlast
   Dialga:
     level:
       1: [ScaryFace, MetalClaw]
@@ -693,6 +700,9 @@ Palkia:
     - WaterPulse
     - StompingTantrum
     - Liquidation
+    - TeraBlast
+    - Snowscape
+    - ChillingWater
   Palkia:
     level:
       1: [ScaryFace, WaterPulse]
@@ -818,6 +828,9 @@ Heatran:
       - Round
       - ScaryFace
       - SelfDestruct
+      - TeraBlast
+      - Pounce
+      - HardPress
 Regigigas:
   Regigigas:
     level:
@@ -903,3 +916,5 @@ Regigigas:
       - Retaliate
       - Revenge
       - Round
+      - TeraBlast
+      - HardPress

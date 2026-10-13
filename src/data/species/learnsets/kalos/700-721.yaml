@@ -108,6 +108,9 @@ Hawlucha:
       - BodyPress
       - Coaching
       - DualWingbeat
+      - TeraBlast
+      - Trailblaze
+      - UpperHand
     egg:
       - Agility
       - AllySwitch
@@ -203,6 +206,8 @@ Dedenne:
       - VoltSwitch
       - WildCharge
       - RisingVoltage
+      - TeraBlast
+      - Trailblaze
     egg: [Covet, EerieImpulse, HelpingHand, MagnetRise, NaturalGift, TearfulLook]
 Carbink:
   Carbink:
@@ -294,6 +299,7 @@ Carbink:
       - MeteorBeam
       - MistyExplosion
       - TerrainPulse
+      - TeraBlast
 Goomy:
   family-teachable:
     - Attract
@@ -333,6 +339,8 @@ Goomy:
     - Toxic
     - WaterPulse
     - SkitterSmack
+    - TeraBlast
+    - ChillingWater
   Goomy:
     level:
       1: [Tackle, Absorb, Bubble]
@@ -428,6 +436,7 @@ Goomy:
       - LaserFocus
       - BodyPress
       - BreakingSwipe
+      - DragonCheer
   SliggooHisui:
     level:
       1: [Tackle, WaterGun, Absorb, AcidArmor, DragonBreath, Shelter]
@@ -475,6 +484,7 @@ Goomy:
         Thunder,
         Thunderbolt,
         WaterPulse,
+        IceSpinner,
       ]
   GoodraHisui:
     level:
@@ -543,6 +553,8 @@ Goomy:
         Thunderbolt,
         WaterPulse,
         WeatherBall,
+        IceSpinner,
+        DragonCheer,
       ]
 Klefki:
   Klefki:
@@ -614,6 +626,7 @@ Klefki:
       - PlayRough
       - Spikes
       - StoredPower
+      - TeraBlast
     egg: [IronDefense, LockOn, Switcheroo, Thief, MagnetRise]
 Phantump:
   family-teachable:
@@ -682,6 +695,8 @@ Phantump:
     - GrassyGlide
     - SkitterSmack
     - Poltergeist
+    - TeraBlast
+    - Trailblaze
   Phantump:
     level:
       1: [Tackle, Astonish]
@@ -740,6 +755,7 @@ Phantump:
       - TakeDown
       - XScissor
       - BrutalSwing
+      - PsychicNoise
 Pumpkaboo:
   family-teachable:
     - AllySwitch
@@ -911,6 +927,10 @@ Bergmite:
     - TakeDown
     - Toxic
     - WaterPulse
+    - TeraBlast
+    - IceSpinner
+    - Snowscape
+    - ChillingWater
   Bergmite:
     level:
       1: [Harden, RapidSpin]
@@ -1018,6 +1038,7 @@ Bergmite:
         StoneEdge,
         Substitute,
         TakeDown,
+        HardPress,
       ]
 Noibat:
   family-teachable:
@@ -1082,6 +1103,7 @@ Noibat:
     - WildCharge
     - XScissor
     - DualWingbeat
+    - TeraBlast
   Noibat:
     level:
       1: [Tackle, Absorb]
@@ -1132,6 +1154,8 @@ Noibat:
       - HyperBeam
       - ScaryFace
       - LaserFocus
+      - DragonCheer
+      - PsychicNoise
 Xerneas:
   Xerneas:
     level:
@@ -1504,6 +1528,8 @@ Diancie:
       - MeteorBeam
       - MistyExplosion
       - TerrainPulse
+      - TeraBlast
+      - Snowscape
 Hoopa:
   family-teachable:
     - AllySwitch
@@ -1590,6 +1616,8 @@ Hoopa:
     - ZenHeadbutt
     - LaserFocus
     - ThroatChop
+    - TeraBlast
+    - PsychicNoise
   Hoopa:
     level:
       1: [Confusion, AllySwitch, DestinyBond, HyperspaceHole, Trick]
@@ -1715,3 +1743,4 @@ Volcanion:
       - Liquidation
       - BodyPress
       - ScorchingSands
+      - TeraBlast

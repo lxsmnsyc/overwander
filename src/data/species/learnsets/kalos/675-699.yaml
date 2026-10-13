@@ -111,6 +111,8 @@ Espurr:
     - WonderRoom
     - ZenHeadbutt
     - ExpandingForce
+    - TeraBlast
+    - PsychicNoise
   Espurr:
     level:
       1: [Scratch, Leer]
@@ -170,6 +172,8 @@ Espurr:
         Swift,
         TailSlap,
         WorkUp,
+        Trailblaze,
+        AlluringVoice,
       ]
   MeowsticFemale:
     level:
@@ -210,6 +214,8 @@ Espurr:
         Swift,
         TailSlap,
         WorkUp,
+        Trailblaze,
+        AlluringVoice,
       ]
 Honedge:
   family-teachable:
@@ -614,6 +620,7 @@ Inkay:
     - TrickRoom
     - ExpandingForce
     - LashOut
+    - TeraBlast
   Inkay:
     level:
       1: [Tackle, Peck, Constrict]
@@ -668,6 +675,8 @@ Inkay:
       - BrutalSwing
       - ThroatChop
       - Liquidation
+      - Trailblaze
+      - PsychicNoise
 Binacle:
   family-teachable:
     - AerialAce
@@ -834,6 +843,9 @@ Skrelp:
     - Waterfall
     - ScaleShot
     - FlipTurn
+    - TeraBlast
+    - Snowscape
+    - ChillingWater
   Skrelp:
     level:
       1: [Tackle, SmokeScreen]
@@ -930,6 +942,9 @@ Clauncher:
     - Waterfall
     - TerrainPulse
     - FlipTurn
+    - TeraBlast
+    - Pounce
+    - ChillingWater
   Clauncher:
     level:
       1: [WaterGun, Splash]

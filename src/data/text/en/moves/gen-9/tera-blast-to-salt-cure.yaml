@@ -27,7 +27,7 @@ SpinOut:
   description: Drops the user's Speed 2 stages.
 PopulationBomb:
   name: Population Bomb
-  description: Strikes 10 times, each strike rolling to land on its own.
+  description: Strikes 10 times.
 IceSpinner:
   name: Ice Spinner
   description: Rolls the terrain flat, ending it.

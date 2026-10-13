@@ -54,7 +54,7 @@ FlipTurn:
   description: The user swaps out for a teammate once it lands.
 TripleAxel:
   name: Triple Axel
-  description: Strikes 3 times, harder each time, each strike rolling to land on its own.
+  description: Kicks 3 times, each one harder than the last.
 DualWingbeat:
   name: Dual Wingbeat
   description: Strikes 2 times.

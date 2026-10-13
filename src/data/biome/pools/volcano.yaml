@@ -38,6 +38,8 @@ land:
       Blaziken: 18
     prized:
       Unown: forms
+      SlitherWing: 8
+      GougingFire: 8
     special:
       Groudon: 10
       Moltres: 10
@@ -86,6 +88,8 @@ land:
       Blaziken: 18
     prized:
       Unown: forms
+      SlitherWing: 8
+      GougingFire: 8
     special:
       Groudon: 10
       Moltres: 10
@@ -122,10 +126,14 @@ land:
       TyphlosionHisui: 20
     prized:
       Unown: forms
+      SlitherWing: 8
+      GougingFire: 8
+      IronMoth: 8
     special:
       Groudon: 10
       Moltres: 10
       Heatran: 10
+      ChiYu: 10
     mythical:
       Volcanion: 10
   night:
@@ -160,10 +168,14 @@ land:
       TyphlosionHisui: 20
     prized:
       Unown: forms
+      SlitherWing: 8
+      GougingFire: 8
+      IronMoth: 8
     special:
       Groudon: 10
       Moltres: 10
       Heatran: 10
+      ChiYu: 10
     mythical:
       Volcanion: 10
 

@@ -173,6 +173,19 @@
       ]
     },
     {
+      "name": "booster-energy.png",
+      "x": 200,
+      "y": 52,
+      "width": 8,
+      "height": 21,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        12,
+        6
+      ]
+    },
+    {
       "name": "bright-powder.png",
       "x": 132,
       "y": 116,

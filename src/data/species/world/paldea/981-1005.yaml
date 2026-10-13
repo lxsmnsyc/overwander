@@ -24,3 +24,111 @@ Frigibax:
     biomes: [Glacier, AlpineTundra]
     active: any
     evolves-from: Arctibax
+Gimmighoul:
+  Gimmighoul:
+    types: [Ghost]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Woodland, Mountain]
+    active: any
+    evolves-into:
+      - species: Gholdengo
+        method: [Level]
+        level: 40
+  Gholdengo:
+    types: [Steel, Ghost]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Woodland, Mountain]
+    active: any
+    evolves-from: Gimmighoul
+GreatTusk:
+  GreatTusk:
+    types: [Ground, Fighting]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Desert, Badlands]
+    active: any
+    rank: prized
+ScreamTail:
+  ScreamTail:
+    types: [Fairy, Psychic]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Mountain, Grassland]
+    active: any
+    rank: prized
+FlutterMane:
+  FlutterMane:
+    types: [Ghost, Fairy]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [TemperateForest, Woodland]
+    active: [Evening, Night]
+    rank: prized
+SlitherWing:
+  SlitherWing:
+    types: [Bug, Fighting]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Volcano, Badlands]
+    active: any
+    rank: prized
+SandyShocks:
+  SandyShocks:
+    types: [Electric, Ground]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Desert, Badlands]
+    active: any
+    rank: prized
+IronTreads:
+  IronTreads:
+    types: [Ground, Steel]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Desert, Badlands]
+    active: any
+    rank: prized
+IronBundle:
+  IronBundle:
+    types: [Ice, Water]
+    egg-groups: [NoEggsDiscovered]
+    habitat: Amphibious
+    biomes: [Glacier, Tundra]
+    active: any
+    rank: prized
+IronHands:
+  IronHands:
+    types: [Fighting, Electric]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Mountain, Badlands]
+    active: any
+    rank: prized
+IronMoth:
+  IronMoth:
+    types: [Fire, Poison]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Volcano, Desert]
+    active: [Evening, Night]
+    rank: prized
+IronThorns:
+  IronThorns:
+    types: [Rock, Electric]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Mountain, Badlands]
+    active: any
+    rank: prized
+RoaringMoon:
+  RoaringMoon:
+    types: [Dragon, Dark]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Mountain, AlpineTundra]
+    active: [Night]
+    rank: prized
+TingLu:
+  TingLu:
+    types: [Dark, Ground]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Badlands]
+    active: any
+    rank: legendary
+ChiYu:
+  ChiYu:
+    types: [Dark, Fire]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Volcano]
+    active: [Evening, Night]
+    rank: legendary

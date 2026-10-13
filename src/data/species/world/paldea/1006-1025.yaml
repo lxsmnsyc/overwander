@@ -31,3 +31,53 @@ Poltchageist:
     active: [Evening, Night]
     base-form: false
     evolves-from: PoltchageistArtisan
+IronValiant:
+  IronValiant:
+    types: [Fairy, Fighting]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [TemperateForest, Mountain]
+    active: any
+    rank: prized
+Koraidon:
+  Koraidon:
+    types: [Fighting, Dragon]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Mountain]
+    active: [Morning, Day]
+    rank: legendary
+Miraidon:
+  Miraidon:
+    types: [Electric, Dragon]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Mountain]
+    active: [Evening, Night]
+    rank: legendary
+WalkingWake:
+  WalkingWake:
+    types: [Water, Dragon]
+    egg-groups: [NoEggsDiscovered]
+    habitat: Amphibious
+    biomes: [Swamp, Ocean]
+    active: any
+    rank: prized
+IronLeaves:
+  IronLeaves:
+    types: [Grass, Psychic]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [TemperateForest, Woodland]
+    active: any
+    rank: prized
+GougingFire:
+  GougingFire:
+    types: [Fire, Dragon]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Volcano]
+    active: any
+    rank: prized
+RagingBolt:
+  RagingBolt:
+    types: [Electric, Dragon]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Mountain, Steppe]
+    active: any
+    rank: prized

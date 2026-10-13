@@ -40,3 +40,26 @@ families:
 
   # Kitakami's tea, the support half of the pair Sinistea's Last Pour began
   Poltchageist: TeaService
+
+  # Gimmighoul, the Treasures of Ruin, Koraidon and Miraidon, and the Paradox pokemon
+  Gimmighoul: CoinScatter
+  TingLu: CrackedVessel
+  ChiYu: ScatteredBeads
+  Koraidon: SunSprint
+  Miraidon: DriveMode
+  GreatTusk: HeadlongGuard
+  ScreamTail: ShriekSpeed
+  FlutterMane: EerieFlutter
+  SlitherWing: AncientCocoon
+  SandyShocks: EarthCurrent
+  RoaringMoon: MoonHowl
+  WalkingWake: SteamSurge
+  GougingFire: MoltenBulwark
+  RagingBolt: StormCloud
+  IronTreads: TrackLaying
+  IronBundle: IcePack
+  IronHands: IronGrip
+  IronMoth: ToxicExhaust
+  IronThorns: SandGenerator
+  IronValiant: Afterimage
+  IronLeaves: TerrainEdge

@@ -288,3 +288,12 @@ DynamaxBand:
   flags: [Holdable, Marketable]
   buy: 8000
   sell: 4000
+
+# Lets its pokemon Terastallize, priced with the Dynamax Band. The
+# behaviour is the Terastal mechanic's, in `src/battle/mechanics/terastal.ts`
+TeraOrb:
+  type: Held
+  icon: held/tera-orb
+  flags: [Holdable, Marketable]
+  buy: 8000
+  sell: 4000

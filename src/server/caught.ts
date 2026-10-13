@@ -26,6 +26,7 @@ import type { Species } from '../data/ids/species';
 import { getSpeciesData } from '../data/species';
 import createOverworld from '../overworld/setup';
 import { keepsGigantamaxFactor } from '../overworld/raid';
+import { rollTeraType } from '../data/species/tera-type';
 import { asBuddy } from './buddy';
 import type Families from '../data/ids/families';
 import { catchCandyWorth, grantCandies } from './candy';
@@ -232,6 +233,7 @@ export async function insertCaughtIn(
     items: encounter.items.slice(0, getHeldItemRoom({ slots: room, abilities })),
     // A Gigantamax Max Raid boss hands its factor on with itself
     ...(keepsGigantamaxFactor(encounter) ? { gigantamax: true } : {}),
+    teraType: rollTeraType(encounter.species),
     // The ball is on the entry as well as on the pokemon: this is
     // the one it arrived in, and a later owner may put it in another.
     // Whoever had it first holds no uid: nobody signs in as Red

@@ -2,6 +2,7 @@ import useBall from '../../auth/balls';
 import useBottleCap from '../../auth/bottle-caps';
 import useMint from '../../auth/mints';
 import useMaxMushrooms from '../../auth/max-mushrooms';
+import useTeraShards from '../../auth/tera-shards';
 import { useRareCandy, useRareCandyMax } from '../../auth/candy';
 import { type CaughtPokemon, getCaught } from '../../auth/caught';
 import {
@@ -38,6 +39,8 @@ import {
 import { capAsksForStat, isBottleCap, isPerfectIVs } from '../../data/items/bottle-caps';
 import { getMintNature, isMint } from '../../data/items/mints';
 import { isMaxMushrooms, takesGigantamaxFactor } from '../../data/items/max-mushrooms';
+import { TERA_SHARD_COST, isTeraShard, takesTeraShard } from '../../data/items/tera-shards';
+import { TYPE_NAMES } from '../../data/constants/types';
 import { isHerbal } from '../../data/items/medicine';
 import { isPurifyingGem } from '../../data/items/purifying-gem';
 import { SKILL_BOOK_SLOT, isSkillBook } from '../../data/items/skill-book';
@@ -104,6 +107,10 @@ export function isUsableOn(item: Items, caught: CaughtPokemon): boolean {
   // Only a species with a Gigantamax form, and only once
   if (isMaxMushrooms(item)) {
     return takesGigantamaxFactor(caught);
+  }
+  // Only a type it does not already have, and never Stellar
+  if (isTeraShard(item)) {
+    return takesTeraShard(caught, item);
   }
   // A belt is offered only where there is room to add: the record's
   // own count rather than the game's default, since a pokemon that has
@@ -402,6 +409,19 @@ export default async function spendItemOn(catchId: string, item: Items): Promise
     return (await useMaxMushrooms(catchId))
       ? { said: 'It carries the Gigantamax Factor now.', tone: 'neutral', level: null }
       : refused(item);
+  }
+
+  if (isTeraShard(item)) {
+    const type = await useTeraShards(catchId, item);
+
+    // The likeliest refusal is a bag short of the cost, so it is named
+    return type == null
+      ? {
+          said: `It takes ${TERA_SHARD_COST} ${describeItem(item)}s to change a Tera type.`,
+          tone: 'ember',
+          level: null,
+        }
+      : { said: `Its Tera type is ${TYPE_NAMES[type]} now.`, tone: 'neutral', level: null };
   }
 
   if (isUtilityBelt(item)) {

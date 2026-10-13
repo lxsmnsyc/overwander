@@ -28,6 +28,7 @@ import {
 } from '../__create';
 import { MergedLifecycle } from '../../lifecycle';
 import { registerWeatherWant } from '../../ai/weather-wants';
+import { adaptedSTAB } from '../../mechanics/terastal';
 
 // The skies these thrive under, so the AI weighs a weather move by who gains from it
 registerWeatherWant(Abilities.SnowCloak, [Weathers.Hail, Weathers.Snow]);
@@ -42,8 +43,8 @@ const eeveeToDragonite = [
   createAbility(Abilities.Adaptability, (battle) =>
     // Mutates the in-flight STAB resolution, so the effect stays inline
     battle.on(BattleEvents.UnitAttackResolveSTAB, EventPriority.Post, (event) => {
-      if (event.value > 1 && event.parent.source.hasAbility(Abilities.Adaptability)) {
-        event.value = 2;
+      if (event.parent.source.hasAbility(Abilities.Adaptability)) {
+        event.value = adaptedSTAB(event.parent.source, event.parent.type, event.value);
       }
     }),
   ),

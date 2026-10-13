@@ -103,7 +103,7 @@ export function dynamaxActsLeft(unit: Unit): number {
 }
 
 /** Whether it holds any Mega Stone or Z-Crystal, whoever the stone is for */
-function holdsStoneOrCrystal(unit: Unit): boolean {
+export function holdsStoneOrCrystal(unit: Unit): boolean {
   for (const held of [MEGA_STONES, TYPE_CRYSTALS, SIGNATURE_CRYSTALS]) {
     for (const item of held.keys()) {
       if (unit.items[item] != null) {
@@ -116,7 +116,12 @@ function holdsStoneOrCrystal(unit: Unit): boolean {
 
 /** Whether the band may grow this unit at all. Held rather than enabled, the way a stone is */
 export function canDynamax(unit: Unit): boolean {
-  return unit.items[Items.DynamaxBand] != null && !isMegaHolder(unit) && !holdsStoneOrCrystal(unit);
+  return (
+    unit.items[Items.DynamaxBand] != null &&
+    !unit.terastallized &&
+    !isMegaHolder(unit) &&
+    !holdsStoneOrCrystal(unit)
+  );
 }
 
 export default function setupDynamaxMechanics(battle: Battle): void {

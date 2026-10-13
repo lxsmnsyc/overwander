@@ -29959,7 +29959,7 @@
       "width": 226,
       "height": 301,
       "compact": {
-        "at": "2026-10-14T02:16:24Z",
+        "at": "2026-10-14T02:23:16Z",
         "as": "already compact",
         "was": 12866,
         "bytes": 12866
@@ -29971,7 +29971,7 @@
       "width": 226,
       "height": 301,
       "compact": {
-        "at": "2026-10-14T02:16:24Z",
+        "at": "2026-10-14T02:23:16Z",
         "as": "already compact",
         "was": 12883,
         "bytes": 12883
@@ -40445,7 +40445,7 @@
       "width": 139,
       "height": 165,
       "compact": {
-        "at": "2026-10-14T02:16:24Z",
+        "at": "2026-10-14T02:23:16Z",
         "as": "already compact",
         "was": 21851,
         "bytes": 21851
@@ -40488,15 +40488,15 @@
       }
     },
     "public/sprites/ui/items/held/image.png": {
-      "digest": "4d6439604bbf7276",
-      "bytes": 23104,
-      "width": 171,
-      "height": 258,
+      "digest": "76c46b64f6b95ac5",
+      "bytes": 23207,
+      "width": 160,
+      "height": 276,
       "compact": {
-        "at": "2026-10-14T02:16:24Z",
+        "at": "2026-10-14T02:23:16Z",
         "as": "already compact",
-        "was": 23104,
-        "bytes": 23104
+        "was": 23207,
+        "bytes": 23207
       }
     },
     "public/sprites/ui/items/incense/image.png": {
@@ -40584,15 +40584,15 @@
       }
     },
     "public/sprites/ui/items/other/image.png": {
-      "digest": "3f4f528623da6a76",
-      "bytes": 7438,
-      "width": 85,
-      "height": 155,
+      "digest": "26a0a711a6cdd573",
+      "bytes": 9835,
+      "width": 87,
+      "height": 202,
       "compact": {
-        "at": "2026-10-08T14:58:04Z",
+        "at": "2026-10-13T11:31:16Z",
         "as": "already compact",
-        "was": 7438,
-        "bytes": 7438
+        "was": 9835,
+        "bytes": 9835
       }
     },
     "public/sprites/ui/items/partner/image.png": {

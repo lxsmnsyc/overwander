@@ -228,6 +228,9 @@ rare:
   # band stays the stones' and finding a Choice Band stays an event
   orbs: 1
   stat-boosters: 1
+  # The Tera Shards, on the plates' terms: eighteen thin slots, since a
+  # Tera raid is where they come by the handful
+  tera-shards: 1
 prized:
   # A dug-up cap fixes one stat of one pokemon, and nothing else in
   # the game touches what a catch was born with. The commonest of

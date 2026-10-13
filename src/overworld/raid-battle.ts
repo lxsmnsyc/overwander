@@ -23,6 +23,7 @@ import {
   unpackStatuses,
 } from '../data/ids/status';
 import { featMove } from '../data/species/feats';
+import { getSpeciesData } from '../data/species/__create';
 import { BOSS_ALLIANCE } from './raid';
 import { setTrainerSkill } from '../battle/ai/skill';
 import skillOf from './trainer-skill';
@@ -57,6 +58,8 @@ function addUnit(battle: Battle, team: Team, snapshot: CatchSnapshot): Unit {
   unit.shiny = snapshot.shiny;
   // The factor travels with the catch, so its G-Max Move does too
   unit.gigantamax = snapshot.gigantamax === true;
+  // A catch from before Terastallization has none stored and reads as its first type
+  unit.teraType = snapshot.teraType ?? getSpeciesData(snapshot.species).types[0];
   // What it thinks of its owner, which is what Return and Frustration
   // are worth in its hands
   unit.friendship = snapshot.friendship;

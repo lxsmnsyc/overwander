@@ -728,6 +728,14 @@ const TINTS: Tint[] = [
     },
   },
   {
+    from: 'held/life-orb',
+    to: 'held/tera-orb',
+    why: 'the orb a pokemon Terastallizes with is its own item, and no sheet draws it',
+    // The orb's violet turned to the crystal teal of a Tera
+    swaps: {},
+    recolour: rehue(185, 1.1),
+  },
+  {
     from: 'key/parcel',
     to: 'evolutions/peat-block',
     why: 'the block an Ursaring evolves on is its own item, and no sheet draws it',
@@ -877,6 +885,28 @@ function hslToHex(hue: number, saturation: number, lightness: number): string {
 }
 
 /**
+ * A recolour that turns every coloured tone to one hue at a share of
+ * its saturation, keeping its lightness. Greys and the outline are
+ * left as they are, so the shading and the edge survive
+ */
+function rehue(hue: number, saturation: number): (colour: string) => string {
+  return (colour) => {
+    const [red, green, blue] = hexToRgb(colour);
+    const high = Math.max(red, green, blue) / 255;
+    const low = Math.min(red, green, blue) / 255;
+    const lightness = (high + low) / 2;
+    const chroma = high - low;
+
+    if (chroma < 0.08) {
+      return colour;
+    }
+    const was = chroma / (1 - Math.abs(2 * lightness - 1));
+
+    return hslToHex(hue, Math.min(1, was * saturation), lightness);
+  };
+}
+
+/**
  * Rare Candy Max: the candy's own tones run red to violet from one
  * wrapped end to the other. Six bands rather than a smooth ramp, so it
  * stays drawn in flat tones like the rest of the sheet
@@ -946,6 +976,80 @@ const MAX_TINTS: Tint[] = [
 ];
 
 TINTS.push(...MAX_TINTS);
+
+/**
+ * The type colours of `TYPE_COLORS` in `src/data/constants/types.ts`,
+ * copied because that file's const enum cannot be loaded from here
+ */
+const TERA_COLOURS: Record<string, string> = {
+  normal: '#9fa19f',
+  fire: '#e62829',
+  water: '#2980ef',
+  electric: '#fac000',
+  grass: '#3fa129',
+  ice: '#3dcef3',
+  fighting: '#ff8000',
+  poison: '#9141cb',
+  ground: '#915121',
+  flying: '#81b9ef',
+  psychic: '#ef4179',
+  bug: '#91a119',
+  rock: '#afa981',
+  ghost: '#704170',
+  dragon: '#5060e1',
+  dark: '#624d4e',
+  steel: '#60a1b8',
+  fairy: '#ef70ef',
+};
+
+/** The hue and saturation of a colour, for rehueing toward it */
+function hueOf(hex: string): [number, number] {
+  const [red, green, blue] = hexToRgb(hex).map((channel) => channel / 255);
+  const high = Math.max(red, green, blue);
+  const low = Math.min(red, green, blue);
+  const chroma = high - low;
+  const lightness = (high + low) / 2;
+
+  if (chroma === 0) {
+    return [0, 0];
+  }
+  const hue =
+    high === red
+      ? ((green - blue) / chroma + 6) % 6
+      : high === green
+        ? (blue - red) / chroma + 2
+        : (red - green) / chroma + 4;
+
+  return [hue * 60, chroma / (1 - Math.abs(2 * lightness - 1))];
+}
+
+/**
+ * A Tera Shard per type: the meteorite shard taken to the type's
+ * colour. Its own tones are muted, so the saturation is lifted to
+ * match a vivid type and left near grey for Normal
+ */
+for (const [type, colour] of Object.entries(TERA_COLOURS)) {
+  const [hue, saturation] = hueOf(colour);
+
+  TINTS.push({
+    from: 'key/meteorite-shard',
+    to: `other/${type}-tera-shard`,
+    why: 'the Tera Shards are their own items, and no sheet draws them',
+    swaps: {},
+    recolour: rehue(hue, saturation * 2.5),
+  });
+}
+
+// Stellar runs through every colour, the way the Rare Candy Max does,
+// with the outline kept dark
+TINTS.push({
+  from: 'key/meteorite-shard',
+  to: 'other/stellar-tera-shard',
+  why: 'the Tera Shards are their own items, and no sheet draws them',
+  swaps: { '#202020': '#202020' },
+  recolour: (colour) => colour,
+  shade: rainbow,
+});
 
 /**
  * The marks a swap cannot make, painted on where the picture already

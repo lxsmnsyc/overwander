@@ -144,6 +144,11 @@
                 ],
                 "additionalProperties": false
               },
+              "walked": {
+                "type": "number",
+                "minimum": 0,
+                "description": "The steps it has to walk as the buddy"
+              },
               "shed": {
                 "type": "boolean",
                 "description": "Left behind beside the evolution taken, as Shedinja"

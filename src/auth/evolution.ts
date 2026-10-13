@@ -36,7 +36,10 @@ export interface EvolutionOption {
    * swap happened and took the item it wanted with it
    */
   covered: boolean;
-  /** How far along a feat counted across fights is, where it asks one */
+  /**
+   * How far along a feat counted across fights is, or the steps
+   * walked, where it asks one
+   */
   progress?: number;
 }
 
@@ -93,6 +96,7 @@ export async function listEvolutionOptions(
     time: getTimeOfDay(localNow()),
     gender: caught.gender,
     nature: caught.nature,
+    walked: caught.walked,
   };
 
   const options: EvolutionOption[] = [];
@@ -108,6 +112,7 @@ export async function listEvolutionOptions(
         featOfEvolution(evolution)?.cumulative === true
           ? { progress: caught.featProgress }
           : {}),
+        ...((evolution.method & EvolutionMethod.Walked) === 0 ? {} : { progress: caught.walked }),
       });
     }
   }

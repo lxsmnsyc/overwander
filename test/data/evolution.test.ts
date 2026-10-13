@@ -723,6 +723,27 @@ describe('evolution data', () => {
     ]);
   });
 
+  it('holds a Pawmo back until it has walked 1000 steps as the buddy', () => {
+    const context = {
+      species: Species.Pawmo,
+      level: 1,
+      carried: new Set<Items>(),
+      held: new Set<Items>(),
+      canEvolve: false,
+      moves: new Set<Moves>(),
+      stats: EVEN_STATS,
+      friendship: BASE_FRIENDSHIP,
+      time: TimeOfDay.Day,
+      gender: Genders.Male,
+    };
+
+    expect(getAvailableEvolutions(context)).toEqual([]);
+    expect(getAvailableEvolutions({ ...context, walked: 999 })).toEqual([]);
+    expect(getAvailableEvolutions({ ...context, walked: 1000 })).toEqual([
+      { species: Species.Pawmot, method: EvolutionMethod.Walked, walked: 1000 },
+    ]);
+  });
+
   it('splits an Eevee by the hour it is asked in', () => {
     const context = {
       species: Species.Eevee,

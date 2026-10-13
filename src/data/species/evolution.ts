@@ -29,7 +29,8 @@ export const SUPPORTED_METHODS =
   EvolutionMethod.Gender |
   EvolutionMethod.KnownMove |
   EvolutionMethod.StatComparison |
-  EvolutionMethod.Special;
+  EvolutionMethod.Special |
+  EvolutionMethod.Walked;
 
 /**
  * What an evolution check is measured against: the catch itself, its
@@ -95,6 +96,12 @@ export interface EvolutionContext {
    * Left out, a road that asks for a nature stays shut
    */
   nature?: Natures;
+  /**
+   * The steps it has walked as the player's buddy. Pawmo is the only
+   * line that reads it. Left out, a road that asks for a walk stays
+   * shut
+   */
+  walked?: number;
 }
 
 /**
@@ -237,6 +244,11 @@ export function meetsEvolutionCriteria(
   }
   if ((method & EvolutionMethod.Special) !== 0 && !meetsFeat(context)) {
     return false;
+  }
+  if ((method & EvolutionMethod.Walked) !== 0) {
+    if (evolution.walked == null || (context.walked ?? 0) < evolution.walked) {
+      return false;
+    }
   }
   return true;
 }

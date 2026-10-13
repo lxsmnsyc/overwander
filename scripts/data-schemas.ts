@@ -124,6 +124,7 @@ const EVOLUTION = part(
       },
       ['stat', 'against', 'order'],
     ),
+    walked: described(COUNT, 'The steps it has to walk as the buddy'),
     shed: described({ type: 'boolean' }, 'Left behind beside the evolution taken, as Shedinja'),
   },
   ['species', 'method'],

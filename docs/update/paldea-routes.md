@@ -33,7 +33,8 @@ swamp from morning to evening.
   move 50% slower.
 - **Nymble** pushes a target's wind-up back half a second with each contact
   move.
-- **Pawmi** paralyses with its punches 20% of the time.
+- **Pawmi** paralyses with its punches 20% of the time. Pawmo evolves once it
+  has walked 1,000 steps as your buddy.
 - **Tandemaus** sends each strike of a multi-hit move at a different enemy.
 - **Fidough** hands a Sitrus Berry to the teammate lowest on HP with free hands,
   every 20 seconds.

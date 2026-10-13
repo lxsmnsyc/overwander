@@ -1413,6 +1413,7 @@ export const EVOLUTION_METHOD_IDS = {
   Weather: EvolutionMethod.Weather,
   StatComparison: EvolutionMethod.StatComparison,
   Special: EvolutionMethod.Special,
+  Walked: EvolutionMethod.Walked,
 } as const satisfies Record<string, EvolutionMethod>;
 
 export const MOVE_IDS = {

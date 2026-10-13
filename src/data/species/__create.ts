@@ -75,6 +75,11 @@ export interface EvolutionData {
    */
   natures?: ReadonlySet<Natures>;
   /**
+   * The steps it has to have walked as the player's buddy
+   * (EvolutionMethod.Walked). Pawmo is the only line that asks
+   */
+  walked?: number;
+  /**
    * Left behind beside whichever evolution is taken, rather than taken
    * instead of one: a Nincada that becomes a Ninjask with a Poke Ball in
    * the bag leaves a Shedinja too, the way the mainline hands over both

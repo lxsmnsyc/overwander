@@ -5,7 +5,7 @@
 - Lechonk and Oinkologne roam the grassland. Pig Out casts Stockpile each time it eats a Berry.
 - Tarountula and Spidops lurk in the forest at night. Tripwire slows the first move of an enemy that takes the field mid-fight.
 - Nymble and Lokix hop about the steppe. Knockback pushes back a target's wind-up with each contact move.
-- Pawmi, Pawmo and Pawmot live on the mountain. Static Palms paralyses with its punches 20% of the time.
+- Pawmi, Pawmo and Pawmot live on the mountain. Pawmo evolves after walking 1,000 steps as the buddy. Static Palms paralyses with its punches 20% of the time.
 - Tandemaus and Maushold scurry through the woodland. Scatter Brood spreads a multi-hit move's strikes across the enemies.
 - Fidough and Dachsbun play in the shrubland. Fresh Batch hands a Sitrus Berry to a teammate every 20 seconds.
 - Smoliv, Dolliv and Arboliva grow on the steppe. Anoint cures a teammate's status whenever it heals them.

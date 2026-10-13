@@ -72,6 +72,10 @@ export const enum EvolutionMethod {
    * A one-off condition outside the other flags
    */
   Special = 0b1000000000000,
+  /**
+   * Steps walked as the player's buddy
+   */
+  Walked = 0b10000000000000,
 }
 
 /** Where a species can be met: on the ground, in the water, or either */

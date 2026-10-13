@@ -145,8 +145,8 @@ Pawmi:
     evolves-from: Pawmi
     evolves-into:
       - species: Pawmot
-        method: [Level]
-        level: 36
+        method: [Walked]
+        walked: 1000
   Pawmot:
     types: [Electric, Fighting]
     egg-groups: [Field]

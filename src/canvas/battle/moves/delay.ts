@@ -534,12 +534,10 @@ const NAMED: Partial<Record<Moves, [winding?: DelayShape, striking?: DelayShape]
   [Moves.GravApple]: [undefined, 'Lobbed'],
 
   // Paldea. A shot charged up the way Meteor Beam is, beams drawn up the way Fleur Cannon's
-  // is, and a flower and a bomb of syrup lobbed
+  // is
   [Moves.ElectroShot]: ['Charge', 'Charge'],
   [Moves.TeraBlast]: [undefined, 'Charge'],
   [Moves.FickleBeam]: [undefined, 'Charge'],
-  [Moves.FlowerTrick]: [undefined, 'Lobbed'],
-  [Moves.SyrupBomb]: [undefined, 'Lobbed'],
 };
 
 /**
@@ -603,6 +601,33 @@ const ARRIVES_ITSELF = new Set<EffectShape>([
   'Chains',
   'Calamity',
   'Starstorm',
+  // Paldea's other signatures: thrown, poured, fired or dropped onto the target by the
+  // picture itself
+  'Snare',
+  'Lumina',
+  'Order',
+  'Jetfist',
+  'Spice',
+  'Horde',
+  'Salt',
+  'Divers',
+  'Doodle',
+  'Fillet',
+  'Bouquet',
+  'Torch',
+  'Coins',
+  'Twin',
+  'Armor',
+  'Doubleshock',
+  'Gigaton',
+  'Bloodmoon',
+  'Matcha',
+  'Syrup',
+  'Electroshot',
+  'Fickle',
+  'Clap',
+  'Tachyon',
+  'Steamjet',
   // The Max Moves come down on the target out of the cloud over it
   'MaxFlare',
   'MaxGeyser',

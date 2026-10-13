@@ -326,6 +326,49 @@ export type EffectShape =
   | 'Cudgel'
   | 'Starstorm'
   | 'Chains'
+  | 'Snare'
+  | 'Lumina'
+  | 'Order'
+  | 'Jetfist'
+  | 'Spice'
+  | 'Burnout'
+  | 'Horde'
+  | 'Glaive'
+  | 'Salt'
+  | 'Divers'
+  | 'Spinner'
+  | 'Doodle'
+  | 'Fillet'
+  | 'Kowtow'
+  | 'Bouquet'
+  | 'Torch'
+  | 'Stepdance'
+  | 'Bull'
+  | 'Coins'
+  | 'Hyperdrill'
+  | 'Twin'
+  | 'Ragefist'
+  | 'Armor'
+  | 'Bitter'
+  | 'Doubleshock'
+  | 'Gigaton'
+  | 'Bloodmoon'
+  | 'Matcha'
+  | 'Syrup'
+  | 'Electroshot'
+  | 'Fickle'
+  | 'Firewall'
+  | 'Clap'
+  | 'Cleave'
+  | 'Tachyon'
+  | 'Psyblade'
+  | 'Steamjet'
+  | 'Reception'
+  | 'Blazing'
+  | 'Wicked'
+  | 'Noxious'
+  | 'Combat'
+  | 'Magical'
   | 'Whiff'
   | 'MaxFlare'
   | 'MaxGeyser'
@@ -670,6 +713,49 @@ export const SPANS: Record<EffectShape, number> = {
   Cudgel: 900,
   Starstorm: 1200,
   Chains: 1000,
+  Snare: 1000,
+  Lumina: 1200,
+  Order: 1100,
+  Jetfist: 800,
+  Spice: 1100,
+  Burnout: 1100,
+  Horde: 1300,
+  Glaive: 1000,
+  Salt: 1200,
+  Divers: 1200,
+  Spinner: 1100,
+  Doodle: 1100,
+  Fillet: 1000,
+  Kowtow: 1200,
+  Bouquet: 1100,
+  Torch: 1200,
+  Stepdance: 1100,
+  Bull: 900,
+  Coins: 1300,
+  Hyperdrill: 1000,
+  Twin: 1100,
+  Ragefist: 1000,
+  Armor: 1300,
+  Bitter: 1100,
+  Doubleshock: 1200,
+  Gigaton: 1200,
+  Bloodmoon: 1300,
+  Matcha: 1300,
+  Syrup: 1100,
+  Electroshot: 1300,
+  Fickle: 1200,
+  Firewall: 1100,
+  Clap: 900,
+  Cleave: 1100,
+  Tachyon: 1100,
+  Psyblade: 1000,
+  Steamjet: 1200,
+  Reception: 1300,
+  Blazing: 1000,
+  Wicked: 1000,
+  Noxious: 1000,
+  Combat: 1000,
+  Magical: 1000,
   Whiff: 320,
   // The Max Moves: the cloud, the blast and what the type leaves behind
   MaxFlare: 1200,

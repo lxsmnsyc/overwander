@@ -79,6 +79,8 @@ function canvas(): {
     quadraticCurveTo: (...args: number[]) => drawn.push(`quad ${args.join()}`),
     ellipse: (...args: number[]) => drawn.push(`ellipse ${args.join()}`),
     arc: (...args: number[]) => drawn.push(`arc ${args.join()}`),
+    rect: (...args: number[]) => drawn.push(`rect ${args.join()}`),
+    clip: () => {},
     createRadialGradient: () => gradient,
     createLinearGradient: () => gradient,
     stroke: () => {
@@ -491,6 +493,49 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Cudgel', Moves.IvyCudgel],
   ['Starstorm', Moves.TeraStarstorm],
   ['Chains', Moves.MalignantChain],
+  // Paldea's other signatures, one family each
+  ['Snare', Moves.SilkTrap],
+  ['Lumina', Moves.LuminaCrash],
+  ['Order', Moves.OrderUp],
+  ['Jetfist', Moves.JetPunch],
+  ['Spice', Moves.SpicyExtract],
+  ['Burnout', Moves.SpinOut],
+  ['Horde', Moves.PopulationBomb],
+  ['Glaive', Moves.GlaiveRush],
+  ['Salt', Moves.SaltCure],
+  ['Divers', Moves.TripleDive],
+  ['Spinner', Moves.MortalSpin],
+  ['Doodle', Moves.Doodle],
+  ['Fillet', Moves.FilletAway],
+  ['Kowtow', Moves.KowtowCleave],
+  ['Bouquet', Moves.FlowerTrick],
+  ['Torch', Moves.TorchSong],
+  ['Stepdance', Moves.AquaStep],
+  ['Bull', Moves.RagingBull],
+  ['Coins', Moves.MakeItRain],
+  ['Hyperdrill', Moves.HyperDrill],
+  ['Twin', Moves.TwinBeam],
+  ['Ragefist', Moves.RageFist],
+  ['Armor', Moves.ArmorCannon],
+  ['Bitter', Moves.BitterBlade],
+  ['Doubleshock', Moves.DoubleShock],
+  ['Gigaton', Moves.GigatonHammer],
+  ['Bloodmoon', Moves.BloodMoon],
+  ['Matcha', Moves.MatchaGotcha],
+  ['Syrup', Moves.SyrupBomb],
+  ['Electroshot', Moves.ElectroShot],
+  ['Fickle', Moves.FickleBeam],
+  ['Firewall', Moves.BurningBulwark],
+  ['Clap', Moves.Thunderclap],
+  ['Cleave', Moves.MightyCleave],
+  ['Tachyon', Moves.TachyonCutter],
+  ['Psyblade', Moves.Psyblade],
+  ['Steamjet', Moves.HydroSteam],
+  ['Blazing', Moves.BlazingTorque],
+  ['Wicked', Moves.WickedTorque],
+  ['Noxious', Moves.NoxiousTorque],
+  ['Combat', Moves.CombatTorque],
+  ['Magical', Moves.MagicalTorque],
 ];
 
 /**
@@ -502,7 +547,7 @@ const STEP_SHAPES: [shape: string, move: Moves, steps: number][] = [
   ['Dart', Moves.UTurn, 1],
   ['Dart', Moves.FlipTurn, 1],
   ['Doll', Moves.ShedTail, 1],
-  ['Sky', Moves.ChillyReception, 1],
+  ['Reception', Moves.ChillyReception, 1],
 ];
 
 describe('a painted move', () => {
@@ -760,18 +805,16 @@ describe('a painted move', () => {
   });
 
   it('draws the Paldea moves that are an earlier move in all but name', () => {
-    expect(effectShapeFor(Moves.SilkTrap)).toBe('Shell');
     expect(effectShapeFor(Moves.ShedTail)).toBe('Relay');
-    expect(effectShapeFor(Moves.FilletAway)).toBe('Shed');
+    expect(effectShapeFor(Moves.Snowscape)).toBe('Sky');
     expect(effectShapeFor(Moves.TidyUp)).toBe('Clear');
     expect(effectShapeFor(Moves.Comeuppance)).toBe('Turnabout');
     expect(effectShapeFor(Moves.HardPress)).toBe('Grip');
     expect(effectShapeFor(Moves.SupercellSlam)).toBe('Plummet');
-    expect(effectShapeFor(Moves.BlazingTorque)).toBe('Wheel');
+    expect(effectShapeFor(Moves.TemperFlare)).toBe('Rush');
     // Electro Shot spends its first step gathering the charge, like Meteor Beam
     expect(moveEffectVisual(Moves.ElectroShot, 1)).toBeNull();
     expect(delayShapeFor(Moves.ElectroShot, 1)).toBe('Charge');
-    expect(delayShapeFor(Moves.SyrupBomb, 0)).toBe('Lobbed');
   });
 
   it('draws each Max Move as a picture of its own', () => {

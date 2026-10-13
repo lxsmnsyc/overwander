@@ -30,6 +30,9 @@ import gMaxMoves from './g-max-moves';
 import gMaxGalar from './g-max-galar';
 import hisui from './hisui';
 import paldea from './paldea';
+import paldeaLate from './paldea-late';
+import paldeaLines from './paldea-lines';
+import paldeaRoutes from './paldea-routes';
 
 import {
   EXACT_SPANS,
@@ -84,7 +87,7 @@ const WINDING_AS: Partial<Record<Moves, EffectShape>> = {
   // Shed Tail makes its substitute and Chilly Reception calls the snow
   // before either walks off
   [Moves.ShedTail]: 'Doll',
-  [Moves.ChillyReception]: 'Sky',
+  [Moves.ChillyReception]: 'Reception',
 };
 
 /**
@@ -132,6 +135,9 @@ const PAINTERS: Record<EffectShape, ShapePainter> = {
   ...gMaxGalar,
   ...hisui,
   ...paldea,
+  ...paldeaRoutes,
+  ...paldeaLines,
+  ...paldeaLate,
 };
 
 /**

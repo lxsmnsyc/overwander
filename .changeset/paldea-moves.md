@@ -8,6 +8,6 @@
 - Snow now raises Ice types' Defense 1.5x, and Snowscape and Chilly Reception call it up.
 - Dancer copies Fiery Dance, Victory Dance and Aqua Step.
 - Every pokemon from Kanto to Hisui learns them by level, machine, tutor and egg, as Scarlet and Violet teach them.
-- Paldea's legendary and mythical signatures each have a picture of their own: Koraidon's charge, Miraidon's neon drift, the treasures of ruin closing in, Ogerpon's ivy club, Terapagos's crystal stars and Pecharunt's poison chains.
-- The other moves are drawn as the older move they look like. Shed Tail drops its substitute and Chilly Reception calls the snow before either walks off.
+- Every Paldea signature move has a picture of its own. Koraidon charges in, Gholdengo rains coins, Tinkaton's hammer comes down, Dondozo flings its Tatsugiri, and each Starmobile's Torque rolls in as its own wheel.
+- The moves many pokemon learn are drawn as the older move they look like. Shed Tail drops its substitute and Chilly Reception tells its cold joke before either walks off.
 - Chilly Reception calls the snow once rather than twice.

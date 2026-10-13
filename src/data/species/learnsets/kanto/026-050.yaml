@@ -93,6 +93,15 @@ Sandshrew:
       - ThroatChop
       - WorkUp
       - TeraBlast
+      - LowKick
+      - SuperFang
+      - Spikes
+      - FalseSwipe
+      - KnockOff
+      - Endeavor
+      - StoneEdge
+      - SmackDown
+      - HighHorsepower
     egg:
       - Counter
       - Swift
@@ -207,6 +216,15 @@ Sandshrew:
       - ThroatChop
       - WorkUp
       - TeraBlast
+      - LowKick
+      - SuperFang
+      - FalseSwipe
+      - MetalClaw
+      - KnockOff
+      - Endeavor
+      - GunkShot
+      - SmackDown
+      - HighHorsepower
   SandshrewAlola:
     level:
       1: [Scratch, DefenseCurl]
@@ -287,6 +305,12 @@ Sandshrew:
       - Swift
       - TeraBlast
       - IceSpinner
+      - TakeDown
+      - DoubleEdge
+      - IceBeam
+      - LowKick
+      - Endeavor
+      - FlashCannon
     egg:
       - Amnesia
       - ChipAway
@@ -395,6 +419,14 @@ Sandshrew:
       - TeraBlast
       - IceSpinner
       - Snowscape
+      - TakeDown
+      - DoubleEdge
+      - IceBeam
+      - LowKick
+      - Curse
+      - FalseSwipe
+      - Endeavor
+      - FlashCannon
 NidoranF:
   # TM, HM and tutor moves shared by the whole family
 
@@ -996,6 +1028,13 @@ Clefairy:
       - TeraBlast
       - ChillingWater
       - AlluringVoice
+      - Psybeam
+      - NightShade
+      - Swift
+      - Thief
+      - KnockOff
+      - Endeavor
+      - SkillSwap
   Clefable:
     level:
       1:
@@ -1154,6 +1193,14 @@ Clefairy:
       - TeraBlast
       - ChillingWater
       - AlluringVoice
+      - Psybeam
+      - NightShade
+      - Swift
+      - Thief
+      - FutureSight
+      - KnockOff
+      - Endeavor
+      - SkillSwap
   Cleffa:
     level:
       1: [Pound, Splash, Copycat]
@@ -1247,6 +1294,11 @@ Clefairy:
       - TeraBlast
       - ChillingWater
       - AlluringVoice
+      - Psybeam
+      - Swift
+      - Endeavor
+      - CalmMind
+      - DazzlingGleam
     egg:
       - Amnesia
       - BellyDrum
@@ -1348,6 +1400,12 @@ Vulpix:
       - WeatherBall
       - WillOWisp
       - TeraBlast
+      - Charm
+      - PainSplit
+      - BatonPass
+      - HelpingHand
+      - NastyPlot
+      - Snarl
     egg:
       - Hypnosis
       - Disable
@@ -1367,6 +1425,7 @@ Vulpix:
       - FlameCharge
       - Memento
       - Roar
+      - HealingWish
   Ninetales:
     level:
       1:
@@ -1465,6 +1524,12 @@ Vulpix:
       - WeatherBall
       - WillOWisp
       - TeraBlast
+      - NightShade
+      - Charm
+      - PainSplit
+      - BatonPass
+      - HelpingHand
+      - Snarl
   VulpixAlola:
     level:
       1: [TailWhip, PowderSnow]
@@ -1546,6 +1611,17 @@ Vulpix:
       - TeraBlast
       - Snowscape
       - ChillingWater
+      - TakeDown
+      - DoubleEdge
+      - BatonPass
+      - HelpingHand
+      - FakeTears
+      - IcicleSpear
+      - NastyPlot
+      - StoredPower
+      - DisarmingVoice
+      - MistyTerrain
+      - PlayRough
     egg:
       - Agility
       - Charm
@@ -1658,6 +1734,13 @@ Vulpix:
       - TeraBlast
       - Snowscape
       - ChillingWater
+      - TakeDown
+      - DoubleEdge
+      - BatonPass
+      - HelpingHand
+      - IcicleSpear
+      - DisarmingVoice
+      - PlayRough
 Jigglypuff:
   Jigglypuff:
     level:
@@ -1787,6 +1870,26 @@ Jigglypuff:
       - ChillingWater
       - AlluringVoice
       - PsychicNoise
+      - Metronome
+      - Swift
+      - Amnesia
+      - Thief
+      - Sandstorm
+      - PainSplit
+      - Encore
+      - Taunt
+      - KnockOff
+      - Endeavor
+      - SkillSwap
+      - MagicalLeaf
+      - CalmMind
+      - DarkPulse
+      - EnergyBall
+      - NastyPlot
+      - ZenHeadbutt
+      - Psyshock
+      - StoredPower
+      - BodyPress
   Wigglytuff:
     level:
       1:
@@ -1932,6 +2035,26 @@ Jigglypuff:
       - ChillingWater
       - AlluringVoice
       - PsychicNoise
+      - Metronome
+      - Swift
+      - Amnesia
+      - Thief
+      - Sandstorm
+      - PainSplit
+      - Encore
+      - Taunt
+      - KnockOff
+      - Endeavor
+      - SkillSwap
+      - MagicalLeaf
+      - CalmMind
+      - DarkPulse
+      - EnergyBall
+      - NastyPlot
+      - ZenHeadbutt
+      - Psyshock
+      - StoredPower
+      - BodyPress
   Igglybuff:
     level:
       1: [Pound, Sing, Copycat]
@@ -2015,6 +2138,12 @@ Jigglypuff:
       - TeraBlast
       - Trailblaze
       - AlluringVoice
+      - TakeDown
+      - Swift
+      - PainSplit
+      - Encore
+      - Endeavor
+      - DazzlingGleam
     egg:
       [
         FeintAttack,
@@ -2352,6 +2481,10 @@ Oddish:
       - GrassyTerrain
       - TeraBlast
       - Trailblaze
+      - HelpingHand
+      - MagicalLeaf
+      - LeafStorm
+      - AcidSpray
     egg:
       - SwordsDance
       - RazorLeaf
@@ -2433,6 +2566,11 @@ Oddish:
       - GrassyTerrain
       - TeraBlast
       - Trailblaze
+      - HelpingHand
+      - MagicalLeaf
+      - LeafStorm
+      - AcidSpray
+      - PollenPuff
   Vileplume:
     level:
       1:
@@ -2513,6 +2651,12 @@ Oddish:
       - SludgeWave
       - TeraBlast
       - Trailblaze
+      - HelpingHand
+      - WeatherBall
+      - MagicalLeaf
+      - LeafStorm
+      - AcidSpray
+      - SolarBlade
   Bellossom:
     level:
       1:
@@ -2596,6 +2740,13 @@ Oddish:
       - Uproar
       - TeraBlast
       - Trailblaze
+      - Encore
+      - Endeavor
+      - WeatherBall
+      - AcidSpray
+      - SolarBlade
+      - PollenPuff
+      - TripleAxel
 Paras:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -2747,6 +2898,20 @@ Venonat:
     - TeraBlast
     - Pounce
     - PsychicNoise
+    - Psybeam
+    - Agility
+    - NightShade
+    - ConfuseRay
+    - LeechLife
+    - BatonPass
+    - Endeavor
+    - ToxicSpikes
+    - BugBuzz
+    - EnergyBall
+    - ZenHeadbutt
+    - AcidSpray
+    - Lunge
+    - SkitterSmack
   Venonat:
     level:
       1: [Tackle, Disable, StruggleBug, Foresight]
@@ -2755,7 +2920,7 @@ Venonat:
       13: [PoisonPowder]
       17: [Psybeam]
       23: [StunSpore]
-      25: [MegaDrain]
+      25: [MegaDrain, BugBuzz]
       29: [SleepPowder]
       35: [LeechLife]
       37: [ZenHeadbutt]
@@ -2773,6 +2938,7 @@ Venonat:
         Agility,
         BugBite,
         MorningSun,
+        Venoshock,
       ]
   Venomoth:
     level:
@@ -2788,6 +2954,7 @@ Venonat:
           StruggleBug,
           Foresight,
           SilverWind,
+          AirSlash,
         ]
       11: [Confusion]
       13: [PoisonPowder]
@@ -2804,14 +2971,14 @@ Venonat:
       - Flash
       - AerialAce
       - Defog
-      - EnergyBall
       - GigaImpact
       - OminousWind
       - Roost
       - Tailwind
       - UTurn
       - Acrobatics
-      - BugBuzz
+      - AirCutter
+      - SludgeWave
 Diglett:
   Diglett:
     level:
@@ -2887,6 +3054,17 @@ Diglett:
       - Uproar
       - WorkUp
       - TeraBlast
+      - SwordsDance
+      - Charm
+      - HelpingHand
+      - Endeavor
+      - SandTomb
+      - MudShot
+      - RockBlast
+      - StoneEdge
+      - SmackDown
+      - FoulPlay
+      - ThroatChop
     egg:
       [
         Screech,
@@ -2991,6 +3169,14 @@ Diglett:
       - Uproar
       - WorkUp
       - TeraBlast
+      - SwordsDance
+      - Charm
+      - Endeavor
+      - MudShot
+      - RockBlast
+      - SmackDown
+      - FoulPlay
+      - ThroatChop
   DiglettAlola:
     level:
       1: [SandAttack, MetalClaw]
@@ -3054,6 +3240,17 @@ Diglett:
       - Screech
       - Uproar
       - TeraBlast
+      - SwordsDance
+      - TakeDown
+      - ScaryFace
+      - Charm
+      - HelpingHand
+      - SandTomb
+      - MudShot
+      - RockBlast
+      - StoneEdge
+      - SmackDown
+      - FoulPlay
     egg:
       - AncientPower
       - BeatUp
@@ -3135,3 +3332,17 @@ Diglett:
       - TriAttack
       - Uproar
       - TeraBlast
+      - SwordsDance
+      - TakeDown
+      - DoubleEdge
+      - Curse
+      - ScaryFace
+      - Charm
+      - HelpingHand
+      - Endeavor
+      - MetalSound
+      - MudShot
+      - RockBlast
+      - SmackDown
+      - FoulPlay
+      - ThroatChop

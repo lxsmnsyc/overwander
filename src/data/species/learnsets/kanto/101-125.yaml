@@ -78,6 +78,13 @@ Exeggcute:
       - Uproar
       - TeraBlast
       - PsychicNoise
+      - Psybeam
+      - HelpingHand
+      - Trick
+      - Imprison
+      - ZenHeadbutt
+      - Psyshock
+      - StoredPower
     egg:
       - Reflect
       - MegaDrain
@@ -198,6 +205,14 @@ Exeggcute:
       - Uproar
       - TeraBlast
       - PsychicNoise
+      - BodySlam
+      - Psybeam
+      - Earthquake
+      - HelpingHand
+      - Trick
+      - Imprison
+      - StoredPower
+      - PsychicTerrain
   ExeggutorAlola:
     level:
       1:
@@ -298,6 +313,17 @@ Exeggcute:
       - Trailblaze
       - DragonCheer
       - PsychicNoise
+      - BodySlam
+      - TakeDown
+      - DoubleEdge
+      - Psybeam
+      - Curse
+      - HelpingHand
+      - Trick
+      - Imprison
+      - CalmMind
+      - StoredPower
+      - PsychicTerrain
 Cubone:
   Cubone:
     level:
@@ -627,7 +653,33 @@ Cubone:
       - Swift
 Tyrogue:
   # TM, HM and tutor moves shared by the whole family
-  family-teachable: [Toxic, TeraBlast, UpperHand]
+  family-teachable:
+    [
+      Toxic,
+      TeraBlast,
+      UpperHand,
+      BodySlam,
+      TakeDown,
+      LowKick,
+      Swift,
+      Rest,
+      RockSlide,
+      Substitute,
+      Thief,
+      Protect,
+      Endure,
+      SleepTalk,
+      RainDance,
+      SunnyDay,
+      Uproar,
+      Facade,
+      HelpingHand,
+      BrickBreak,
+      BulkUp,
+      VacuumWave,
+      LowSweep,
+      Bulldoze,
+    ]
   Hitmonlee:
     level:
       1: [Tackle, FocusEnergy, FakeOut, HelpingHand, BrickBreak, Feint, LowSweep, Meditate]
@@ -647,8 +699,6 @@ Tyrogue:
     teachable:
       - MegaPunch
       - MegaKick
-      - BodySlam
-      - TakeDown
       - DoubleEdge
       - Submission
       - Counter
@@ -659,32 +709,21 @@ Tyrogue:
       - Bide
       - Metronome
       - SkullBash
-      - Rest
-      - Substitute
       - Strength
       - Headbutt
-      - Swift
-      - Thief
       - Snore
       - Curse
-      - Protect
       - MudSlap
       - Detect
-      - Endure
       - Swagger
       - Attract
-      - SleepTalk
       - Return
       - Frustration
       - DynamicPunch
       - HiddenPower
-      - SunnyDay
       - RockSmash
-      - BulkUp
       - Earthquake
-      - Facade
       - FocusPunch
-      - RockSlide
       - RockTomb
       - SecretPower
       - Captivate
@@ -693,33 +732,33 @@ Tyrogue:
       - NaturalGift
       - RockClimb
       - StoneEdge
-      - LowSweep
       - Round
       - Retaliate
-      - Bulldoze
       - WorkUp
       - Confide
       - PowerUpPunch
       - LaserFocus
       - PoisonJab
       - SuckerPunch
-      - VacuumWave
       - StompingTantrum
       - Coaching
       - AuraSphere
       - BlazeKick
       - Bounce
-      - BrickBreak
       - CloseCombat
       - FocusEnergy
-      - HelpingHand
-      - LowKick
-      - RainDance
       - Revenge
       - Reversal
       - Superpower
       - ThroatChop
-      - Uproar
+      - SwordsDance
+      - ScaryFace
+      - BatonPass
+      - Taunt
+      - KnockOff
+      - Endeavor
+      - GigaImpact
+      - Lunge
   Hitmonchan:
     level:
       1:
@@ -749,8 +788,6 @@ Tyrogue:
     teachable:
       - MegaPunch
       - MegaKick
-      - BodySlam
-      - TakeDown
       - DoubleEdge
       - Submission
       - Counter
@@ -761,32 +798,21 @@ Tyrogue:
       - Bide
       - Metronome
       - SkullBash
-      - Rest
-      - Substitute
       - Strength
       - Headbutt
-      - Swift
-      - Thief
       - Snore
       - Curse
-      - Protect
       - MudSlap
       - Detect
-      - Endure
       - Swagger
       - Attract
-      - SleepTalk
       - Return
       - Frustration
       - DynamicPunch
       - HiddenPower
-      - SunnyDay
       - RockSmash
-      - BulkUp
       - Earthquake
-      - Facade
       - FocusPunch
-      - RockSlide
       - RockTomb
       - SecretPower
       - Captivate
@@ -795,10 +821,8 @@ Tyrogue:
       - NaturalGift
       - RockClimb
       - StoneEdge
-      - LowSweep
       - Round
       - Retaliate
-      - Bulldoze
       - WorkUp
       - Confide
       - PowerUpPunch
@@ -806,7 +830,6 @@ Tyrogue:
       - FirePunch
       - IcePunch
       - ThunderPunch
-      - BrickBreak
       - DrainPunch
       - ThroatChop
       - Coaching
@@ -814,65 +837,51 @@ Tyrogue:
       - AuraSphere
       - CloseCombat
       - FocusEnergy
-      - HelpingHand
-      - LowKick
-      - RainDance
       - Revenge
-      - Uproar
       - Trailblaze
+      - SwordsDance
+      - Reversal
+      - ScaryFace
+      - BatonPass
+      - Encore
+      - Taunt
+      - KnockOff
+      - Endeavor
+      - PoisonJab
+      - GigaImpact
   Tyrogue:
     level:
       1: [Tackle, FocusEnergy, FakeOut, HelpingHand]
     teachable:
       - Strength
       - DoubleTeam
-      - Rest
-      - Thief
       - Snore
       - Curse
-      - Protect
       - Detect
-      - Endure
       - Swagger
       - Attract
-      - SleepTalk
       - Return
       - Frustration
       - HiddenPower
-      - SunnyDay
       - MudSlap
       - Headbutt
       - RockSmash
-      - Swift
-      - BodySlam
-      - BrickBreak
-      - BulkUp
       - DoubleEdge
       - Earthquake
-      - Facade
       - MegaKick
       - Mimic
-      - RockSlide
       - SecretPower
       - SeismicToss
-      - Substitute
       - Captivate
       - NaturalGift
-      - VacuumWave
-      - LowSweep
       - Round
       - Retaliate
-      - Bulldoze
       - WorkUp
       - Confide
       - LaserFocus
       - Counter
       - FocusEnergy
-      - HelpingHand
-      - LowKick
       - MegaPunch
-      - RainDance
-      - Uproar
     egg:
       [
         HiJumpKick,
@@ -903,43 +912,27 @@ Tyrogue:
     teachable:
       - Strength
       - DoubleTeam
-      - Rest
-      - Thief
       - Snore
       - Curse
-      - Protect
       - Detect
-      - Endure
       - Swagger
       - Attract
-      - SleepTalk
       - Return
       - Frustration
       - HiddenPower
-      - SunnyDay
       - MudSlap
       - Headbutt
       - RockSmash
-      - Swift
-      - BodySlam
-      - BrickBreak
-      - BulkUp
       - DoubleEdge
       - Earthquake
-      - Facade
       - MegaKick
       - Mimic
-      - RockSlide
       - SecretPower
       - SeismicToss
-      - Substitute
       - Captivate
       - NaturalGift
-      - VacuumWave
-      - LowSweep
       - Round
       - Retaliate
-      - Bulldoze
       - WorkUp
       - Confide
       - LaserFocus
@@ -956,14 +949,13 @@ Tyrogue:
       - FocusBlast
       - FocusEnergy
       - GyroBall
-      - HelpingHand
-      - LowKick
       - MegaPunch
-      - RainDance
       - Revenge
       - Sandstorm
-      - Uproar
       - IceSpinner
+      - Reversal
+      - BatonPass
+      - GigaImpact
 Lickitung:
   Lickitung:
     level:
@@ -1222,6 +1214,22 @@ Koffing:
     - Round
     - CorrosiveGas
     - TeraBlast
+    - BodySlam
+    - TakeDown
+    - Psybeam
+    - Toxic
+    - Haze
+    - Curse
+    - Spite
+    - ScaryFace
+    - PainSplit
+    - RainDance
+    - WillOWisp
+    - GyroBall
+    - ToxicSpikes
+    - GunkShot
+    - SludgeWave
+    - AcidSpray
   Koffing:
     level:
       1: [Tackle, PoisonGas]
@@ -1261,7 +1269,6 @@ Koffing:
         Bide,
         Captivate,
         Confide,
-        Curse,
         DoubleTeam,
         Explosion,
         Flash,
@@ -1278,17 +1285,11 @@ Koffing:
         ShockWave,
         Swagger,
         Torment,
-        Toxic,
         ZapCannon,
         Assurance,
-        GyroBall,
-        RainDance,
         Screech,
-        SludgeWave,
-        ToxicSpikes,
         Uproar,
         VenomDrench,
-        WillOWisp,
       ]
   Weezing:
     level:
@@ -1309,13 +1310,11 @@ Koffing:
         Bide,
         Captivate,
         Confide,
-        Curse,
         DoubleTeam,
         Explosion,
         Flash,
         Frustration,
         GigaImpact,
-        GyroBall,
         HiddenPower,
         HyperBeam,
         Incinerate,
@@ -1329,17 +1328,12 @@ Koffing:
         ShockWave,
         Swagger,
         Torment,
-        Toxic,
         ZapCannon,
         Assurance,
         HeatWave,
-        RainDance,
         Screech,
-        SludgeWave,
-        ToxicSpikes,
         Uproar,
         VenomDrench,
-        WillOWisp,
       ]
   WeezingGalar:
     level:
@@ -1375,21 +1369,17 @@ Koffing:
         BrutalSwing,
         DazzlingGleam,
         GigaImpact,
-        GyroBall,
         HeatWave,
         HyperBeam,
         MistyExplosion,
         MistyTerrain,
         Overheat,
         PlayRough,
-        RainDance,
         Screech,
-        SludgeWave,
-        ToxicSpikes,
         Uproar,
         VenomDrench,
-        WillOWisp,
         WonderRoom,
+        DoubleEdge,
       ]
 Rhyhorn:
   Rhyhorn:
@@ -1492,6 +1482,9 @@ Rhyhorn:
       - Uproar
       - TeraBlast
       - SupercellSlam
+      - Endeavor
+      - HeavySlam
+      - BodyPress
     egg:
       - RockSlide
       - Thrash
@@ -1650,6 +1643,7 @@ Rhyhorn:
       - Whirlpool
       - TeraBlast
       - SupercellSlam
+      - Endeavor
   Rhyperior:
     level:
       1: [Tackle, TailWhip, HammerArm, SmackDown, Bulldoze, PoisonJab]
@@ -1772,6 +1766,10 @@ Rhyhorn:
       - TeraBlast
       - TemperFlare
       - SupercellSlam
+      - DoubleEdge
+      - Curse
+      - MetalClaw
+      - DragonTail
 Chansey:
   Chansey:
     level:
@@ -1908,6 +1906,11 @@ Chansey:
       - Snowscape
       - Trailblaze
       - ChillingWater
+      - Swift
+      - Thief
+      - Endeavor
+      - FocusBlast
+      - ElectricTerrain
   Blissey:
     level:
       1: [Pound, Minimize, DefenseCurl, SweetKiss, Charm, Covet, Copycat, DisarmingVoice]
@@ -2032,6 +2035,11 @@ Chansey:
       - Trailblaze
       - ChillingWater
       - AlluringVoice
+      - Swift
+      - Thief
+      - Trick
+      - Endeavor
+      - ElectricTerrain
   Happiny:
     level:
       1: [Pound, Minimize, Copycat]
@@ -2096,6 +2104,7 @@ Chansey:
       - WorkUp
       - TeraBlast
       - Snowscape
+      - TakeDown
     egg:
       - Aromatherapy
       - Counter
@@ -2480,6 +2489,7 @@ Horsea:
       - Outrage
       - TeraBlast
       - ChillingWater
+      - WeatherBall
     egg:
       [
         AuroraBeam,
@@ -2568,6 +2578,8 @@ Horsea:
       - TeraBlast
       - Snowscape
       - ChillingWater
+      - ScaryFace
+      - WeatherBall
   Kingdra:
     level:
       1: [Leer, WaterGun, SmokeScreen, Twister, Whirlpool, Yawn, Bubble]
@@ -2580,6 +2592,7 @@ Horsea:
       51: [HydroPump]
       58: [DragonDance]
       65: [RainDance]
+      72: [WaveCrash]
     teachable:
       - Attract
       - Blizzard
@@ -2642,6 +2655,9 @@ Horsea:
       - TeraBlast
       - Snowscape
       - ChillingWater
+      - TakeDown
+      - ScaryFace
+      - WeatherBall
 Goldeen:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -3325,6 +3341,13 @@ Scyther:
       - TeraBlast
       - Pounce
       - Trailblaze
+      - TakeDown
+      - ScaryFace
+      - HelpingHand
+      - AirCutter
+      - CloseCombat
+      - Lunge
+      - SkitterSmack
     egg:
       - Counter
       - LightScreen
@@ -3430,6 +3453,15 @@ Scyther:
       - Pounce
       - Trailblaze
       - HardPress
+      - TakeDown
+      - ScaryFace
+      - HelpingHand
+      - KnockOff
+      - AirCutter
+      - CloseCombat
+      - VacuumWave
+      - Lunge
+      - SkitterSmack
   Kleavor:
     level:
       1: [Leer, QuickAttack, StoneAxe]
@@ -3800,6 +3832,12 @@ Electabuzz:
       - TeraBlast
       - Trailblaze
       - SupercellSlam
+      - Taunt
+      - KnockOff
+      - MetalSound
+      - BulkUp
+      - EerieImpulse
+      - ElectricTerrain
   Elekid:
     level:
       1: [Leer, QuickAttack]
@@ -3881,6 +3919,13 @@ Electabuzz:
       - TeraBlast
       - Trailblaze
       - SupercellSlam
+      - TakeDown
+      - Taunt
+      - KnockOff
+      - MetalSound
+      - FocusBlast
+      - EerieImpulse
+      - ElectricTerrain
     egg:
       [
         Barrier,
@@ -3894,6 +3939,7 @@ Electabuzz:
         FocusPunch,
         HammerArm,
         IcePunch,
+        FollowMe,
       ]
   Electivire:
     level:
@@ -3986,3 +4032,11 @@ Electabuzz:
       - TeraBlast
       - Trailblaze
       - SupercellSlam
+      - TakeDown
+      - DoubleEdge
+      - Reflect
+      - Metronome
+      - KnockOff
+      - MetalSound
+      - BulkUp
+      - EerieImpulse

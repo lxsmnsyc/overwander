@@ -52,6 +52,16 @@ Bulbasaur:
     - GrassyGlide
     - TeraBlast
     - Trailblaze
+    - Charm
+    - FalseSwipe
+    - HelpingHand
+    - KnockOff
+    - WeatherBall
+    - MagicalLeaf
+    - SeedBomb
+    - LeafStorm
+    - AcidSpray
+    - GrassyTerrain
   Bulbasaur:
     level:
       1: [Tackle, Growl]
@@ -87,17 +97,9 @@ Bulbasaur:
       - Toxic
     teachable:
       - Amnesia
-      - Charm
-      - FalseSwipe
-      - GrassyTerrain
-      - HelpingHand
-      - LeafStorm
       - LightScreen
-      - MagicalLeaf
       - PowerWhip
       - Safeguard
-      - SeedBomb
-      - WeatherBall
       - WorkUp
   Ivysaur:
     level:
@@ -112,22 +114,7 @@ Bulbasaur:
       40: [WorrySeed]
       45: [DoubleEdge]
       50: [SolarBeam]
-    teachable:
-      [
-        SeedBomb,
-        Amnesia,
-        Charm,
-        FalseSwipe,
-        GrassyTerrain,
-        HelpingHand,
-        LeafStorm,
-        LightScreen,
-        MagicalLeaf,
-        PowerWhip,
-        Safeguard,
-        WeatherBall,
-        WorkUp,
-      ]
+    teachable: [Amnesia, LightScreen, PowerWhip, Safeguard, WorkUp, Roar]
   Venusaur:
     level:
       1: [VineWhip, Tackle, Growl, Growth, PetalDance, PetalBlizzard]
@@ -148,24 +135,18 @@ Bulbasaur:
       - FrenzyPlant
       - GigaImpact
       - RockClimb
-      - SeedBomb
       - Bulldoze
       - StompingTantrum
       - TerrainPulse
       - Amnesia
-      - Charm
       - EarthPower
-      - FalseSwipe
-      - GrassyTerrain
-      - HelpingHand
-      - LeafStorm
       - LightScreen
-      - MagicalLeaf
       - Outrage
       - PowerWhip
       - Safeguard
-      - WeatherBall
       - WorkUp
+      - ScaryFace
+      - PoisonJab
 Charmander:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -234,6 +215,26 @@ Charmander:
     - PowerUpPunch
     - TeraBlast
     - TemperFlare
+    - ThunderPunch
+    - Roar
+    - FireSpin
+    - RockSlide
+    - ScaryFace
+    - Outrage
+    - Crunch
+    - HeatWave
+    - WillOWisp
+    - HelpingHand
+    - WeatherBall
+    - RockTomb
+    - DragonDance
+    - FlareBlitz
+    - DragonPulse
+    - FocusBlast
+    - ShadowClaw
+    - FireFang
+    - DragonTail
+    - BreakingSwipe
   Charmander:
     level:
       1: [Scratch, Growl]
@@ -251,29 +252,7 @@ Charmander:
       36: [Inferno]
       40: [FlareBlitz]
       43: [DragonRage]
-    teachable:
-      [
-        ShadowClaw,
-        Acrobatics,
-        BeatUp,
-        Crunch,
-        DragonDance,
-        DragonPulse,
-        FalseSwipe,
-        FireFang,
-        FireSpin,
-        FlareBlitz,
-        HeatWave,
-        HelpingHand,
-        Outrage,
-        RockSlide,
-        RockTomb,
-        ScaryFace,
-        ThunderPunch,
-        WeatherBall,
-        WillOWisp,
-        WorkUp,
-      ]
+    teachable: [Acrobatics, BeatUp, FalseSwipe, WorkUp]
     egg:
       - RockSlide
       - Bite
@@ -290,6 +269,7 @@ Charmander:
       - DragonTail
       - MetalClaw
       - WingAttack
+      - IronTail
   Charmeleon:
     level:
       1: [Scratch, Growl, Ember, SmokeScreen]
@@ -305,29 +285,7 @@ Charmander:
       42: [FireSpin]
       48: [Inferno, DragonRage]
       54: [FlareBlitz]
-    teachable:
-      [
-        RockSlide,
-        ShadowClaw,
-        Acrobatics,
-        BeatUp,
-        Crunch,
-        DragonDance,
-        DragonPulse,
-        FalseSwipe,
-        FireFang,
-        FireSpin,
-        FlareBlitz,
-        HeatWave,
-        HelpingHand,
-        Outrage,
-        RockTomb,
-        ScaryFace,
-        ThunderPunch,
-        WeatherBall,
-        WillOWisp,
-        WorkUp,
-      ]
+    teachable: [Acrobatics, BeatUp, FalseSwipe, WorkUp]
   Charizard:
     level:
       1:
@@ -359,23 +317,17 @@ Charmander:
       - Earthquake
       - Fissure
       - Fly
-      - Roar
       - Sandstorm
       - SteelWing
       - BlastBurn
-      - RockSlide
       - Defog
-      - DragonPulse
-      - FocusBlast
       - GigaImpact
       - OminousWind
       - Roost
       - Tailwind
       - SkyDrop
       - Bulldoze
-      - DragonTail
       - BrutalSwing
-      - BreakingSwipe
       - ScaleShot
       - DualWingbeat
       - ScorchingSands
@@ -383,27 +335,14 @@ Charmander:
       - AirSlash
       - BeatUp
       - BlazeKick
-      - Crunch
-      - DragonDance
       - FalseSwipe
-      - FireFang
-      - FireSpin
-      - FlareBlitz
       - HeatCrash
-      - HeatWave
-      - HelpingHand
       - Hurricane
       - MysticalFire
-      - Outrage
-      - RockTomb
-      - ScaryFace
-      - ShadowClaw
       - SolarBeam
-      - ThunderPunch
-      - WeatherBall
-      - WillOWisp
       - WorkUp
       - DragonCheer
+      - AirCutter
 Squirtle:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -475,6 +414,14 @@ Squirtle:
     - TeraBlast
     - IceSpinner
     - ChillingWater
+    - HydroPump
+    - Haze
+    - HelpingHand
+    - WeatherBall
+    - MuddyWater
+    - IronDefense
+    - MudShot
+    - Liquidation
   Squirtle:
     level:
       1: [Tackle, TailWhip]
@@ -490,7 +437,7 @@ Squirtle:
       27: [ShellSmash]
       30: [IronDefense]
       33: [HydroPump]
-      36: [SkullBash]
+      36: [SkullBash, WaveCrash]
     egg:
       - Haze
       - Mist
@@ -513,12 +460,7 @@ Squirtle:
       - DragonPulse
       - FalseSwipe
       - Hail
-      - HelpingHand
-      - HydroPump
-      - IronDefense
-      - MuddyWater
       - RockTomb
-      - WeatherBall
       - WorkUp
   Wartortle:
     level:
@@ -532,18 +474,13 @@ Squirtle:
       35: [ShellSmash]
       40: [IronDefense]
       45: [HydroPump]
-      50: [SkullBash]
+      50: [SkullBash, WaveCrash]
     teachable:
       - AuraSphere
       - DragonPulse
       - FalseSwipe
       - Hail
-      - HelpingHand
-      - HydroPump
-      - IronDefense
-      - MuddyWater
       - RockTomb
-      - WeatherBall
       - WorkUp
   Blastoise:
     level:
@@ -557,7 +494,7 @@ Squirtle:
       35: [ShellSmash]
       42: [IronDefense]
       49: [HydroPump]
-      56: [SkullBash]
+      56: [SkullBash, WaveCrash]
     teachable:
       - HyperBeam
       - Earthquake
@@ -571,7 +508,6 @@ Squirtle:
       - SmackDown
       - Bulldoze
       - DragonTail
-      - Liquidation
       - BodyPress
       - TerrainPulse
       - AuraSphere
@@ -581,15 +517,11 @@ Squirtle:
       - FalseSwipe
       - FlashCannon
       - Hail
-      - HelpingHand
-      - HydroPump
-      - IronDefense
-      - MuddyWater
       - Outrage
       - RockSlide
       - RockTomb
-      - WeatherBall
       - WorkUp
+      - ScaryFace
 Caterpie:
   Caterpie:
     level:
@@ -1325,6 +1257,26 @@ Ekans:
     - BrutalSwing
     - TeraBlast
     - Trailblaze
+    - Haze
+    - LeechLife
+    - Spite
+    - ScaryFace
+    - MudSlap
+    - RainDance
+    - Crunch
+    - KnockOff
+    - RockTomb
+    - MudShot
+    - PoisonTail
+    - ToxicSpikes
+    - FireFang
+    - GunkShot
+    - AcidSpray
+    - Snarl
+    - PsychicFangs
+    - ScaleShot
+    - SkitterSmack
+    - LashOut
   Ekans:
     level:
       1: [Wrap, Leer]
@@ -1355,9 +1307,6 @@ Ekans:
         ScaryFace,
         SuckerPunch,
       ]
-    teachable:
-      - RainDance
-      - RockTomb
   Arbok:
     level:
       1: [Wrap, PoisonSting, Leer, Bite, Crunch, ThunderFang, IceFang, FireFang]
@@ -1373,7 +1322,8 @@ Ekans:
       51: [Haze]
       56: [Coil]
       63: [GunkShot]
-    teachable: [HyperBeam, GigaImpact, DragonTail, StompingTantrum, ThroatChop, RainDance, RockTomb]
+    teachable:
+      [HyperBeam, GigaImpact, DragonTail, StompingTantrum, ThroatChop, PainSplit, BreakingSwipe]
 Pikachu:
   Pikachu:
     level:
@@ -1473,6 +1423,12 @@ Pikachu:
       - Trailblaze
       - AlluringVoice
       - UpperHand
+      - Charge
+      - KnockOff
+      - Endeavor
+      - FakeTears
+      - DisarmingVoice
+      - EerieImpulse
   Raichu:
     level:
       1:
@@ -1589,6 +1545,10 @@ Pikachu:
       - Trailblaze
       - AlluringVoice
       - UpperHand
+      - Charge
+      - KnockOff
+      - Endeavor
+      - DisarmingVoice
   Pichu:
     level:
       1: [TailWhip, ThunderShock]
@@ -1661,6 +1621,8 @@ Pikachu:
       - Uproar
       - TeraBlast
       - Trailblaze
+      - TakeDown
+      - ElectroBall
     egg:
       - Bide
       - DoubleSlap
@@ -1873,3 +1835,9 @@ Pikachu:
       - AlluringVoice
       - PsychicNoise
       - UpperHand
+      - TakeDown
+      - Charge
+      - Endeavor
+      - SkillSwap
+      - EerieImpulse
+      - PsychicTerrain

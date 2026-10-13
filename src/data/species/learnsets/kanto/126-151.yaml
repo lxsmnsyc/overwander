@@ -91,6 +91,12 @@ Magmar:
       - WillOWisp
       - TeraBlast
       - TemperFlare
+      - Roar
+      - Taunt
+      - KnockOff
+      - PoisonJab
+      - AcidSpray
+      - HeatCrash
   Magby:
     level:
       1: [Leer, Smog]
@@ -169,6 +175,10 @@ Magmar:
       - WillOWisp
       - TeraBlast
       - TemperFlare
+      - TakeDown
+      - PoisonJab
+      - AcidSpray
+      - BurningJealousy
     egg:
       [
         Barrier,
@@ -185,6 +195,7 @@ Magmar:
         MachPunch,
         PowerSwap,
         ThunderPunch,
+        FollowMe,
       ]
   Magmortar:
     level:
@@ -271,6 +282,17 @@ Magmar:
       - WeatherBall
       - TeraBlast
       - TemperFlare
+      - TakeDown
+      - DoubleEdge
+      - Roar
+      - Metronome
+      - Curse
+      - KnockOff
+      - HyperVoice
+      - PoisonJab
+      - FlameCharge
+      - AcidSpray
+      - HeatCrash
 Pinsir:
   Pinsir:
     level:
@@ -470,6 +492,10 @@ Tauros:
       - ZenHeadbutt
       - TeraBlast
       - Trailblaze
+      - Dig
+      - Thief
+      - ShadowBall
+      - Endeavor
 Magikarp:
   Magikarp:
     level:
@@ -583,6 +609,10 @@ Magikarp:
       - ChillingWater
       - DragonCheer
       - TemperFlare
+      - Spite
+      - SunnyDay
+      - HelpingHand
+      - Endeavor
 Lapras:
   Lapras:
     level:
@@ -687,6 +717,11 @@ Lapras:
       - DragonCheer
       - AlluringVoice
       - PsychicNoise
+      - Earthquake
+      - Haze
+      - MuddyWater
+      - IcicleSpear
+      - DisarmingVoice
     egg:
       [
         AuroraBeam,
@@ -778,6 +813,8 @@ Eevee:
       - TeraBlast
       - Trailblaze
       - AlluringVoice
+      - Roar
+      - CalmMind
     egg:
       [
         Flail,
@@ -902,6 +939,7 @@ Eevee:
       - Trailblaze
       - ChillingWater
       - AlluringVoice
+      - CalmMind
   Jolteon:
     level:
       1:
@@ -1006,6 +1044,13 @@ Eevee:
       - TeraBlast
       - Trailblaze
       - AlluringVoice
+      - FalseSwipe
+      - Charge
+      - MetalSound
+      - CalmMind
+      - Electroweb
+      - EerieImpulse
+      - ElectricTerrain
   Flareon:
     level:
       1:
@@ -1113,6 +1158,8 @@ Eevee:
       - Trailblaze
       - AlluringVoice
       - TemperFlare
+      - Endeavor
+      - CalmMind
   Espeon:
     level:
       1:
@@ -1217,6 +1264,15 @@ Eevee:
       - Trailblaze
       - AlluringVoice
       - PsychicNoise
+      - Roar
+      - ThunderWave
+      - ConfuseRay
+      - Imprison
+      - MagicalLeaf
+      - Gravity
+      - PowerGem
+      - DrainingKiss
+      - PsychicTerrain
   Umbreon:
     level:
       1:
@@ -1322,6 +1378,14 @@ Eevee:
       - TeraBlast
       - Trailblaze
       - AlluringVoice
+      - Roar
+      - ThunderWave
+      - LightScreen
+      - Reflect
+      - Spite
+      - ScaryFace
+      - SkillSwap
+      - CalmMind
   Leafeon:
     level:
       1:
@@ -1419,6 +1483,9 @@ Eevee:
       - TeraBlast
       - Trailblaze
       - AlluringVoice
+      - Curse
+      - MudShot
+      - CalmMind
   Glaceon:
     level:
       1:
@@ -1509,6 +1576,11 @@ Eevee:
       - TeraBlast
       - ChillingWater
       - AlluringVoice
+      - Haze
+      - Curse
+      - MudShot
+      - CalmMind
+      - Gravity
   Sylveon:
     level:
       1:
@@ -1695,6 +1767,7 @@ Porygon:
       - SpeedSwap
       - Trick
       - TeraBlast
+      - Charge
   Porygon2:
     level:
       1: [Tackle, DefenseCurl, Conversion, Recycle, MagnetRise]
@@ -1773,6 +1846,8 @@ Porygon:
       - TriAttack
       - Trick
       - TeraBlast
+      - TakeDown
+      - Charge
   PorygonZ:
     level:
       1: [Tackle, DefenseCurl, Conversion, Recycle, MagnetRise, NastyPlot, TrickRoom]
@@ -1785,7 +1860,7 @@ Porygon:
       35: [Recover]
       40: [Discharge]
       45: [TriAttack]
-      50: [MagicCoat]
+      50: [MagicCoat, DoubleEdge]
       55: [LockOn]
       60: [ZapCannon]
       65: [HyperBeam]
@@ -1851,6 +1926,9 @@ Porygon:
       - TriAttack
       - WonderRoom
       - TeraBlast
+      - TakeDown
+      - Charge
+      - Gravity
 Omanyte:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -2416,6 +2494,8 @@ Snorlax:
       - ChillingWater
       - HardPress
       - SupercellSlam
+      - Dig
+      - HelpingHand
   Munchlax:
     level:
       1: [Tackle, Lick, OdorSleuth]
@@ -2511,6 +2591,11 @@ Snorlax:
       - TeraBlast
       - Trailblaze
       - ChillingWater
+      - TakeDown
+      - Dig
+      - Crunch
+      - HelpingHand
+      - GigaImpact
     egg:
       - Charm
       - Curse
@@ -2540,7 +2625,7 @@ Articuno:
       45: [IceBeam]
       50: [Hail, Snowscape]
       55: [Hurricane]
-      60: [MindReader]
+      60: [MindReader, Haze]
       65: [Blizzard]
       70: [SheerCold]
     teachable:
@@ -2612,6 +2697,10 @@ Articuno:
       - WeatherBall
       - TeraBlast
       - IceSpinner
+      - LightScreen
+      - HelpingHand
+      - FeatherDance
+      - AirCutter
   ArticunoGalar:
     level:
       1: [Gust, PsychoShift]
@@ -2626,7 +2715,7 @@ Articuno:
       45: [FreezingGlare]
       50: [DreamEater]
       55: [Hurricane]
-      60: [MindReader]
+      60: [MindReader, DoubleTeam]
       65: [FutureSight]
       70: [TrickRoom]
     teachable:
@@ -2671,6 +2760,13 @@ Articuno:
         TeraBlast,
         Snowscape,
         PsychicNoise,
+        TakeDown,
+        Psybeam,
+        RainDance,
+        SunnyDay,
+        HelpingHand,
+        Trick,
+        AirCutter,
       ]
 Zapdos:
   Zapdos:
@@ -2761,6 +2857,12 @@ Zapdos:
       - WeatherBall
       - TeraBlast
       - SupercellSlam
+      - HelpingHand
+      - AirCutter
+      - MetalSound
+      - ElectroBall
+      - Acrobatics
+      - ElectricTerrain
   ZapdosGalar:
     level:
       1: [Peck, FocusEnergy]
@@ -2823,6 +2925,16 @@ Zapdos:
         UTurn,
         TeraBlast,
         Trailblaze,
+        TakeDown,
+        DoubleEdge,
+        Sandstorm,
+        RainDance,
+        SunnyDay,
+        HelpingHand,
+        KnockOff,
+        Endeavor,
+        AerialAce,
+        Tailwind,
       ]
 Moltres:
   Moltres:
@@ -2914,6 +3026,9 @@ Moltres:
       - WillOWisp
       - TeraBlast
       - TemperFlare
+      - HelpingHand
+      - AirCutter
+      - Acrobatics
   MoltresGalar:
     level:
       1: [Gust, Leer]
@@ -2967,6 +3082,17 @@ Moltres:
         Taunt,
         UTurn,
         TeraBlast,
+        TakeDown,
+        Thief,
+        Spite,
+        Sandstorm,
+        PainSplit,
+        RainDance,
+        SunnyDay,
+        HelpingHand,
+        AerialAce,
+        Tailwind,
+        Acrobatics,
       ]
 Dratini:
   # TM, HM and tutor moves shared by the whole family
@@ -3029,6 +3155,20 @@ Dratini:
     - TeraBlast
     - ChillingWater
     - DragonCheer
+    - HydroPump
+    - HyperBeam
+    - FireSpin
+    - ThunderWave
+    - Agility
+    - LightScreen
+    - Haze
+    - FireBlast
+    - Outrage
+    - SunnyDay
+    - HelpingHand
+    - DragonDance
+    - GigaImpact
+    - IronHead
   Dratini:
     level:
       1: [Wrap, Leer]
@@ -3045,23 +3185,7 @@ Dratini:
       50: [DragonDance]
       55: [Outrage]
       60: [HyperBeam]
-    teachable:
-      [
-        FireBlast,
-        Agility,
-        DragonDance,
-        FireSpin,
-        GigaImpact,
-        Hail,
-        HydroPump,
-        HyperBeam,
-        LightScreen,
-        Outrage,
-        Safeguard,
-        SunnyDay,
-        ThunderWave,
-        Whirlpool,
-      ]
+    teachable: [Hail, Safeguard, Whirlpool]
     egg:
       [
         LightScreen,
@@ -3089,23 +3213,7 @@ Dratini:
       60: [DragonDance]
       67: [Outrage]
       74: [HyperBeam]
-    teachable:
-      [
-        FireBlast,
-        Agility,
-        DragonDance,
-        FireSpin,
-        GigaImpact,
-        Hail,
-        HydroPump,
-        HyperBeam,
-        LightScreen,
-        Outrage,
-        Safeguard,
-        SunnyDay,
-        ThunderWave,
-        Whirlpool,
-      ]
+    teachable: [Hail, Safeguard, Whirlpool, WeatherBall]
   Dragonite:
     level:
       1:
@@ -3133,10 +3241,8 @@ Dratini:
       62: [DragonDance]
       80: [HyperBeam]
     teachable:
-      - HyperBeam
       - Earthquake
       - Fissure
-      - FireBlast
       - Strength
       - FirePunch
       - IcePunch
@@ -3160,8 +3266,6 @@ Dratini:
       - Defog
       - Fling
       - FocusBlast
-      - GigaImpact
-      - IronHead
       - OminousWind
       - StoneEdge
       - Tailwind
@@ -3171,26 +3275,25 @@ Dratini:
       - PowerUpPunch
       - BodyPress
       - DualWingbeat
-      - Agility
       - AirSlash
-      - DragonDance
-      - FireSpin
       - Hail
       - HeatWave
       - Hurricane
-      - HydroPump
-      - LightScreen
       - MegaKick
       - MegaPunch
-      - Outrage
       - RockSlide
       - Roost
       - Safeguard
-      - SunnyDay
       - Superpower
-      - ThunderWave
       - IceSpinner
       - Snowscape
+      - LowKick
+      - Metronome
+      - ScaryFace
+      - Encore
+      - WeatherBall
+      - AirCutter
+      - StompingTantrum
 Mewtwo:
   Mewtwo:
     level:
@@ -3349,6 +3452,22 @@ Mewtwo:
       - Trailblaze
       - ChillingWater
       - PsychicNoise
+      - Psybeam
+      - NightShade
+      - ConfuseRay
+      - Reversal
+      - Spite
+      - ScaryFace
+      - HelpingHand
+      - KnockOff
+      - Imprison
+      - WeatherBall
+      - DarkPulse
+      - PowerGem
+      - EarthPower
+      - Hex
+      - StompingTantrum
+      - LashOut
 Mew:
   Mew:
     level:
@@ -3688,3 +3807,30 @@ Mew:
       - SupercellSlam
       - PsychicNoise
       - UpperHand
+      - Psybeam
+      - NightShade
+      - ConfuseRay
+      - Haze
+      - SuperFang
+      - Spite
+      - PainSplit
+      - MetalClaw
+      - Charge
+      - KnockOff
+      - Endeavor
+      - FeatherDance
+      - BlastBurn
+      - HydroCannon
+      - AirCutter
+      - MetalSound
+      - FrenzyPlant
+      - PoisonTail
+      - DracoMeteor
+      - AcidSpray
+      - WaterPledge
+      - FirePledge
+      - GrassPledge
+      - PetalBlizzard
+      - DisarmingVoice
+      - Lunge
+      - SteelBeam

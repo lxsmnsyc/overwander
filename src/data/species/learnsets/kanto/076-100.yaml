@@ -350,6 +350,11 @@ Slowpoke:
       - TeraBlast
       - Snowscape
       - ChillingWater
+      - Psybeam
+      - Waterfall
+      - HelpingHand
+      - Avalanche
+      - FoulPlay
     egg:
       - Stomp
       - BellyDrum
@@ -497,6 +502,10 @@ Slowpoke:
       - Snowscape
       - ChillingWater
       - PsychicNoise
+      - Psybeam
+      - Metronome
+      - Waterfall
+      - HelpingHand
   Slowking:
     level:
       1: [Tackle, Growl, WaterGun, Curse, Swagger, PowerGem, NastyPlot]
@@ -626,6 +635,15 @@ Slowpoke:
       - Snowscape
       - ChillingWater
       - PsychicNoise
+      - FirePunch
+      - ThunderPunch
+      - TakeDown
+      - Psybeam
+      - Reflect
+      - Metronome
+      - Waterfall
+      - RockSlide
+      - RockTomb
   SlowpokeGalar:
     level:
       1: [Tackle, Curse]
@@ -703,6 +721,11 @@ Slowpoke:
         TeraBlast,
         Snowscape,
         ChillingWater,
+        TakeDown,
+        Psybeam,
+        Waterfall,
+        HelpingHand,
+        Avalanche,
       ]
     egg: [Belch, BellyDrum, Block, Stomp]
   SlowbroGalar:
@@ -799,6 +822,23 @@ Slowpoke:
         TeraBlast,
         Snowscape,
         ChillingWater,
+        TakeDown,
+        DoubleEdge,
+        Psybeam,
+        Toxic,
+        Haze,
+        Metronome,
+        Waterfall,
+        ScaryFace,
+        Sandstorm,
+        HelpingHand,
+        RockBlast,
+        PowerGem,
+        IceFang,
+        GunkShot,
+        SmackDown,
+        AcidSpray,
+        BodyPress,
       ]
   SlowkingGalar:
     level:
@@ -895,6 +935,22 @@ Slowpoke:
         TeraBlast,
         ChillingWater,
         PsychicNoise,
+        FirePunch,
+        ThunderPunch,
+        TakeDown,
+        Psybeam,
+        Toxic,
+        Metronome,
+        Waterfall,
+        ScaryFace,
+        Taunt,
+        ToxicSpikes,
+        PoisonJab,
+        GunkShot,
+        LowSweep,
+        AcidSpray,
+        Snarl,
+        StompingTantrum,
       ]
 Magnemite:
   Magnemite:
@@ -969,6 +1025,14 @@ Magnemite:
       - Screech
       - SunnyDay
       - TeraBlast
+      - ConfuseRay
+      - Sandstorm
+      - Charge
+      - HelpingHand
+      - IronHead
+      - HeavySlam
+      - EerieImpulse
+      - ElectricTerrain
   Magneton:
     level:
       1: [Tackle, Supersonic, ThunderShock, ThunderWave, TriAttack, ElectricTerrain, SonicBoom]
@@ -1042,6 +1106,13 @@ Magnemite:
       - SunnyDay
       - TriAttack
       - TeraBlast
+      - ConfuseRay
+      - Sandstorm
+      - Charge
+      - HelpingHand
+      - IronHead
+      - HeavySlam
+      - EerieImpulse
   Magnezone:
     level:
       1:
@@ -1127,6 +1198,15 @@ Magnemite:
       - TeraBlast
       - HardPress
       - SupercellSlam
+      - BodySlam
+      - TakeDown
+      - DoubleEdge
+      - ConfuseRay
+      - Sandstorm
+      - Charge
+      - HelpingHand
+      - Gravity
+      - EerieImpulse
 Farfetchd:
   Farfetchd:
     level:
@@ -1392,6 +1472,21 @@ Doduo:
     - WorkUp
     - Confide
     - TeraBlast
+    - SwordsDance
+    - LowKick
+    - Agility
+    - BatonPass
+    - RainDance
+    - Uproar
+    - HelpingHand
+    - KnockOff
+    - Endeavor
+    - FeatherDance
+    - Tailwind
+    - BraveBird
+    - Acrobatics
+    - ThroatChop
+    - Lunge
   Doduo:
     level:
       1: [Growl, Peck]
@@ -1412,8 +1507,20 @@ Doduo:
       43: [DrillPeck]
       47: [Endeavor]
       50: [Thrash]
-    teachable: [Pluck, SwordsDance]
-    egg: [QuickAttack, Supersonic, Haze, Flail, FeintAttack, Endeavor, BraveBird, Assurance]
+    teachable: [Pluck]
+    egg:
+      [
+        QuickAttack,
+        Supersonic,
+        Haze,
+        Flail,
+        FeintAttack,
+        Endeavor,
+        BraveBird,
+        Assurance,
+        Whirlwind,
+        SkyAttack,
+      ]
   Dodrio:
     level:
       1: [Growl, Peck, QuickAttack, TriAttack, Pursuit]
@@ -1440,9 +1547,10 @@ Doduo:
         Payback,
         StompingTantrum,
         Pluck,
-        SwordsDance,
         Pounce,
         Trailblaze,
+        ScaryFace,
+        DrillRun,
       ]
 Seel:
   # TM, HM and tutor moves shared by the whole family
@@ -1499,11 +1607,23 @@ Seel:
     - IceSpinner
     - Snowscape
     - ChillingWater
+    - HydroPump
+    - Haze
+    - Charm
+    - Encore
+    - Uproar
+    - HelpingHand
+    - WeatherBall
+    - MuddyWater
+    - IcicleSpear
+    - Avalanche
+    - FlipTurn
+    - TripleAxel
   Seel:
     level:
       1: [Headbutt]
       3: [Growl]
-      7: [WaterGun]
+      7: [WaterGun, Charm]
       11: [IcyWind]
       13: [Encore]
       17: [IceShard]
@@ -1559,7 +1679,6 @@ Seel:
     teachable:
       [
         HyperBeam,
-        Avalanche,
         GigaImpact,
         FrostBreath,
         Liquidation,
@@ -1568,6 +1687,9 @@ Seel:
         IronTail,
         Safeguard,
         AlluringVoice,
+        KnockOff,
+        Endeavor,
+        PlayRough,
       ]
 Grimer:
   Grimer:
@@ -1577,7 +1699,7 @@ Grimer:
       7: [MudSlap]
       12: [Disable]
       15: [Sludge]
-      18: [Smog]
+      18: [Smog, MudShot]
       21: [Minimize]
       23: [MudBomb]
       26: [Fling]
@@ -1650,6 +1772,14 @@ Grimer:
       - ShadowBall
       - Strength
       - TeraBlast
+      - ConfuseRay
+      - Metronome
+      - Sandstorm
+      - PainSplit
+      - HelpingHand
+      - DrainPunch
+      - ZenHeadbutt
+      - Hex
     egg:
       [
         Haze,
@@ -1671,7 +1801,7 @@ Grimer:
       1: [Pound, Harden, PoisonGas, MudSlap, VenomDrench]
       12: [Disable]
       15: [Sludge]
-      18: [Smog]
+      18: [Smog, MudShot]
       21: [Minimize]
       23: [MudBomb]
       26: [Fling]
@@ -1751,6 +1881,24 @@ Grimer:
       - RockSlide
       - ShadowBall
       - TeraBlast
+      - ConfuseRay
+      - Haze
+      - Metronome
+      - Swift
+      - Spite
+      - ScaryFace
+      - Sandstorm
+      - PainSplit
+      - HelpingHand
+      - KnockOff
+      - Imprison
+      - ToxicSpikes
+      - DrainPunch
+      - ZenHeadbutt
+      - AcidSpray
+      - Hex
+      - Lunge
+      - LashOut
   GrimerAlola:
     level:
       1: [PoisonGas, Pound]
@@ -1819,6 +1967,25 @@ Grimer:
       - Toxic
       - Venoshock
       - TeraBlast
+      - BodySlam
+      - TakeDown
+      - HyperBeam
+      - Thunderbolt
+      - Thunder
+      - Dig
+      - Metronome
+      - Swift
+      - MudSlap
+      - Sandstorm
+      - Endure
+      - HelpingHand
+      - BrickBreak
+      - MudShot
+      - DarkPulse
+      - DrainPunch
+      - GigaImpact
+      - ZenHeadbutt
+      - Hex
     egg:
       - Assurance
       - ClearSmog
@@ -1907,6 +2074,26 @@ Grimer:
       - HyperBeam
       - Recycle
       - TeraBlast
+      - BodySlam
+      - TakeDown
+      - Thunderbolt
+      - Thunder
+      - Dig
+      - Haze
+      - Metronome
+      - Swift
+      - Curse
+      - ScaryFace
+      - MudSlap
+      - Sandstorm
+      - Endure
+      - HelpingHand
+      - Imprison
+      - MudShot
+      - DrainPunch
+      - ZenHeadbutt
+      - Hex
+      - LashOut
 Shellder:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -1955,6 +2142,16 @@ Shellder:
     - IceSpinner
     - Snowscape
     - ChillingWater
+    - HydroPump
+    - Waterfall
+    - Spikes
+    - HelpingHand
+    - IcicleSpear
+    - IronDefense
+    - MudShot
+    - RockBlast
+    - ToxicSpikes
+    - Avalanche
   Shellder:
     level:
       1: [Tackle, WaterGun]
@@ -1986,15 +2183,9 @@ Shellder:
         WaterPulse,
       ]
     teachable:
-      - Avalanche
       - Brine
       - Hail
-      - HydroPump
-      - IcicleSpear
-      - IronDefense
-      - MudShot
       - RazorShell
-      - RockBlast
       - Screech
       - TriAttack
   Cloyster:
@@ -2025,7 +2216,6 @@ Shellder:
     teachable:
       - HyperBeam
       - Torment
-      - Avalanche
       - Brine
       - GigaImpact
       - PoisonJab
@@ -2033,19 +2223,15 @@ Shellder:
       - SmartStrike
       - SteelRoller
       - Hail
-      - HydroPump
-      - IcicleSpear
-      - IronDefense
       - LightScreen
-      - MudShot
       - PinMissile
       - RazorShell
-      - RockBlast
       - Screech
-      - Spikes
-      - ToxicSpikes
       - TriAttack
       - WeatherBall
+      - BodySlam
+      - ScaryFace
+      - DrillRun
 Gastly:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -2106,6 +2292,26 @@ Gastly:
     - Poltergeist
     - CorrosiveGas
     - TeraBlast
+    - FirePunch
+    - IcePunch
+    - ThunderPunch
+    - NightShade
+    - ConfuseRay
+    - Haze
+    - Spite
+    - ScaryFace
+    - IcyWind
+    - PainSplit
+    - WillOWisp
+    - Trick
+    - Imprison
+    - PoisonJab
+    - DarkPulse
+    - NastyPlot
+    - GunkShot
+    - SludgeWave
+    - AcidSpray
+    - Hex
   Gastly:
     level:
       1: [ConfuseRay, Lick]
@@ -2139,19 +2345,8 @@ Gastly:
       - Toxic
     teachable:
       - AllySwitch
-      - DarkPulse
-      - FirePunch
-      - Hex
-      - IcePunch
-      - IcyWind
       - Payback
-      - PoisonJab
-      - ScaryFace
-      - SludgeWave
-      - ThunderPunch
-      - Trick
       - Uproar
-      - WillOWisp
   Haunter:
     level:
       1: [Hypnosis, ConfuseRay, Lick, MeanLook, ShadowPunch]
@@ -2168,22 +2363,15 @@ Gastly:
     teachable:
       [
         Fling,
-        PoisonJab,
         ShadowClaw,
         AllySwitch,
-        DarkPulse,
         Encore,
-        FirePunch,
-        Hex,
-        IcePunch,
-        IcyWind,
         Payback,
-        ScaryFace,
-        SludgeWave,
-        ThunderPunch,
-        Trick,
         Uproar,
-        WillOWisp,
+        Metronome,
+        ToxicSpikes,
+        FocusBlast,
+        PhantomForce,
       ]
   Gengar:
     level:
@@ -2208,9 +2396,6 @@ Gastly:
       - Counter
       - HyperBeam
       - Strength
-      - FirePunch
-      - IcePunch
-      - ThunderPunch
       - Headbutt
       - DynamicPunch
       - RockSmash
@@ -2221,25 +2406,18 @@ Gastly:
       - Fling
       - FocusBlast
       - GigaImpact
-      - PoisonJab
       - ShadowClaw
       - PowerUpPunch
       - LaserFocus
       - AllySwitch
-      - DarkPulse
       - Encore
-      - Hex
-      - IcyWind
-      - Imprison
-      - NastyPlot
       - Payback
       - PhantomForce
-      - ScaryFace
-      - SludgeWave
-      - Trick
       - Uproar
-      - WillOWisp
       - PsychicNoise
+      - ThunderWave
+      - KnockOff
+      - ToxicSpikes
 Onix:
   Onix:
     level:
@@ -2527,6 +2705,26 @@ Drowzee:
     - TeraBlast
     - Trailblaze
     - PsychicNoise
+    - Psybeam
+    - LowKick
+    - NightShade
+    - LightScreen
+    - Haze
+    - Swift
+    - Encore
+    - FutureSight
+    - HelpingHand
+    - Trick
+    - KnockOff
+    - Endeavor
+    - Imprison
+    - FocusBlast
+    - NastyPlot
+    - ZenHeadbutt
+    - StoredPower
+    - DrainingKiss
+    - PsychicTerrain
+    - ExpandingForce
   Drowzee:
     level:
       1: [Pound, Hypnosis]
@@ -2561,8 +2759,6 @@ Drowzee:
         ThunderPunch,
       ]
     teachable:
-      - LightScreen
-      - NastyPlot
       - Recycle
   Hypno:
     level:
@@ -2578,7 +2774,7 @@ Drowzee:
       45: [Swagger]
       49: [Psychic]
       57: [Psyshock]
-    teachable: [HyperBeam, LightScreen, FocusBlast, GigaImpact, NastyPlot, Recycle]
+    teachable: [HyperBeam, GigaImpact, Recycle, ConfuseRay, ScaryFace, BatonPass, Hex, BodyPress]
 Krabby:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -2762,6 +2958,14 @@ Voltorb:
     - WildCharge
     - Confide
     - TeraBlast
+    - DoubleEdge
+    - Agility
+    - Charge
+    - GyroBall
+    - ChargeBeam
+    - ElectroBall
+    - Electroweb
+    - ElectricTerrain
   Voltorb:
     level:
       1: [Tackle, Charge]
@@ -2782,9 +2986,11 @@ Voltorb:
       46: [GyroBall]
       48: [MirrorCoat]
     teachable:
-      - ChargeBeam
-      - GyroBall
       - LightScreen
+      - HelpingHand
+      - MetalSound
+    egg:
+      - Recycle
   Electrode:
     level:
       1: [Tackle, Charge, EerieImpulse, MagneticFlux, SonicBoom]
@@ -2802,7 +3008,8 @@ Voltorb:
       47: [Explosion]
       54: [GyroBall]
       58: [MirrorCoat]
-    teachable: [HyperBeam, GigaImpact, ChargeBeam, GyroBall, LightScreen, SupercellSlam]
+    teachable:
+      [HyperBeam, GigaImpact, LightScreen, SupercellSlam, ScaryFace, HelpingHand, MetalSound]
   VoltorbHisui:
     level:
       1: [Tackle, Charge]
@@ -2822,14 +3029,7 @@ Voltorb:
       50: [GrassyTerrain]
     teachable:
       [
-        Agility,
         BulletSeed,
-        Charge,
-        ChargeBeam,
-        DoubleEdge,
-        ElectricTerrain,
-        ElectroBall,
-        Electroweb,
         Endure,
         EnergyBall,
         Facade,
@@ -2838,7 +3038,6 @@ Voltorb:
         GrassKnot,
         GrassyGlide,
         GrassyTerrain,
-        GyroBall,
         LeafStorm,
         Protect,
         RainDance,
@@ -2878,15 +3077,8 @@ Voltorb:
       50: [GrassyTerrain]
     teachable:
       [
-        Agility,
         BulletSeed,
-        Charge,
-        ChargeBeam,
         Curse,
-        DoubleEdge,
-        ElectricTerrain,
-        ElectroBall,
-        Electroweb,
         Endure,
         EnergyBall,
         Facade,
@@ -2896,7 +3088,6 @@ Voltorb:
         GrassKnot,
         GrassyGlide,
         GrassyTerrain,
-        GyroBall,
         HyperBeam,
         LeafStorm,
         Protect,

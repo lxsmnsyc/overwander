@@ -72,6 +72,7 @@ Zorua:
     - SkitterSmack
     - BurningJealousy
     - LashOut
+    - TeraBlast
   Zorua:
     level:
       1: [Scratch, Leer]
@@ -194,6 +195,7 @@ Zorua:
         Trick,
         UTurn,
         WillOWisp,
+        Snowscape,
       ]
     egg: [Detect, Extrasensory, Memento]
   ZoroarkHisui:
@@ -271,6 +273,7 @@ Zorua:
         Trick,
         UTurn,
         WillOWisp,
+        Snowscape,
       ]
 Minccino:
   # TM, HM and tutor moves shared by the whole family
@@ -331,6 +334,10 @@ Minccino:
     - Confide
     - DazzlingGleam
     - TripleAxel
+    - TeraBlast
+    - Trailblaze
+    - ChillingWater
+    - AlluringVoice
   Minccino:
     level:
       1: [Pound, BabyDollEyes]
@@ -360,6 +367,7 @@ Minccino:
       - MudSlap
       - SleepTalk
       - TailWhip
+      - TidyUp
     teachable:
       - PlayRough
   Cinccino:
@@ -395,6 +403,7 @@ Minccino:
       - Thunder
       - LaserFocus
       - PlayRough
+      - IceSpinner
 Gothita:
   # TM, HM and tutor moves shared by the whole family
 
@@ -471,6 +480,8 @@ Gothita:
     - ZenHeadbutt
     - Confide
     - ExpandingForce
+    - TeraBlast
+    - PsychicNoise
   Gothita:
     level:
       1: [Pound, Confusion]
@@ -619,6 +630,7 @@ Solosis:
     - Infestation
     - ExpandingForce
     - SteelRoller
+    - TeraBlast
   Solosis:
     level:
       1: [Confusion, Protect, Psywave]
@@ -699,6 +711,7 @@ Solosis:
       - PsychicTerrain
       - Superpower
       - ThunderPunch
+      - PsychicNoise
 Ducklett:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -746,6 +759,9 @@ Ducklett:
     - Whirlpool
     - Confide
     - Liquidation
+    - TeraBlast
+    - Trailblaze
+    - ChillingWater
   Ducklett:
     level:
       1: [WaterGun]
@@ -787,7 +803,7 @@ Ducklett:
       37: [Tailwind]
       44: [BraveBird]
       52: [Hurricane]
-    teachable: [GigaImpact, HyperBeam]
+    teachable: [GigaImpact, HyperBeam, AlluringVoice]
 Vanillite:
   # TM, HM and tutor moves shared by the whole family
 
@@ -944,6 +960,8 @@ Deerling:
     - WorrySeed
     - ZenHeadbutt
     - Confide
+    - TeraBlast
+    - Trailblaze
   Deerling:
     level:
       1: [Tackle, Camouflage]
@@ -1262,7 +1280,7 @@ Karrablast:
       - Screech
       - Taunt
 Foongus:
-  family-teachable: [AfterYou, Attract]
+  family-teachable: [AfterYou, Attract, TeraBlast]
   Foongus:
     level:
       1: [Absorb, Astonish]

@@ -87,6 +87,9 @@ Zekrom:
       - Swift
       - ThunderFang
       - WeatherBall
+      - TeraBlast
+      - DragonCheer
+      - SupercellSlam
 Landorus:
   family-teachable:
     - Attract
@@ -153,6 +156,7 @@ Landorus:
     - SwordsDance
     - Taunt
     - BrutalSwing
+    - TeraBlast
   Landorus:
     level:
       1: [RockThrow, SandTomb, Tackle, MudShot, SmackDown]
@@ -264,6 +268,9 @@ Kyurem:
     - BreakingSwipe
     - ScaleShot
     - DualWingbeat
+    - TeraBlast
+    - Snowscape
+    - DragonCheer
   Kyurem:
     level:
       1: [DragonBreath, AncientPower, NobleRoar, FreezeDry, DragonRage, IcyWind]
@@ -388,6 +395,10 @@ Keldeo:
     - Liquidation
     - Coaching
     - FlipTurn
+    - TeraBlast
+    - Trailblaze
+    - ChillingWater
+    - UpperHand
   Keldeo:
     level:
       1: [Leer, HelpingHand, AquaJet, WorkUp, SecretSword]
@@ -539,6 +550,8 @@ Meloetta:
     - DazzlingGleam
     - PowerUpPunch
     - LaserFocus
+    - TeraBlast
+    - AlluringVoice
   Meloetta:
     level:
       1: [Sing, Confusion, QuickAttack, Round]

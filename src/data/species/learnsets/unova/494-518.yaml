@@ -145,6 +145,8 @@ Snivy:
     - Toxic
     - WorrySeed
     - Confide
+    - TeraBlast
+    - Trailblaze
   Snivy:
     level:
       1: [Tackle]
@@ -263,6 +265,9 @@ Tepig:
     - WillOWisp
     - Confide
     - StompingTantrum
+    - TeraBlast
+    - Trailblaze
+    - TemperFlare
   Tepig:
     level:
       1: [Tackle]
@@ -366,6 +371,7 @@ Tepig:
       - IronHead
       - Scald
       - SmackDown
+      - HardPress
 Oshawott:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -409,6 +415,9 @@ Oshawott:
     - WaterPledge
     - XScissor
     - Confide
+    - TeraBlast
+    - Snowscape
+    - ChillingWater
   Oshawott:
     level:
       1: [Tackle]
@@ -426,7 +435,7 @@ Oshawott:
       37: [Retaliate]
       41: [SwordsDance]
       43: [HydroPump]
-    egg: [AirSlash, Assurance, Brine, Copycat, Detect, NightSlash, Screech, TrumpCard]
+    egg: [AirSlash, Assurance, Brine, Copycat, Detect, NightSlash, Screech, TrumpCard, AquaCutter]
   Dewott:
     level:
       1: [Tackle, TailWhip, WaterGun, WaterSport]
@@ -475,6 +484,7 @@ Oshawott:
       - Superpower
       - Liquidation
       - SmartStrike
+      - UpperHand
   SamurottHisui:
     level:
       1: [Tackle, TailWhip, WaterGun, Slash, Megahorn, SuckerPunch, CeaselessEdge]
@@ -539,6 +549,7 @@ Oshawott:
         Waterfall,
         Whirlpool,
         XScissor,
+        UpperHand,
       ]
 Patrat:
   # TM, HM and tutor moves shared by the whole family

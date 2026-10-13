@@ -64,6 +64,10 @@ Alomomola:
       - ZenHeadbutt
       - Confide
       - Liquidation
+      - TeraBlast
+      - Snowscape
+      - ChillingWater
+      - AlluringVoice
     egg: [Bounce, Endure, MirrorCoat, Mist, PainSplit, Refresh, Tickle]
 Joltik:
   # TM, HM and tutor moves shared by the whole family
@@ -122,6 +126,8 @@ Joltik:
     - Infestation
     - RisingVoltage
     - SkitterSmack
+    - TeraBlast
+    - Pounce
   Joltik:
     level:
       1: [Absorb, FuryCutter, LeechLife, SpiderWeb]
@@ -379,7 +385,7 @@ Tynamo:
     # is something else
     level:
       1: [Tackle, ThunderWave, Spark, ChargeBeam]
-    teachable: [Charge, ChargeBeam, KnockOff, ThunderWave]
+    teachable: [Charge, ChargeBeam, KnockOff, ThunderWave, TeraBlast]
   Eelektrik:
     level:
       1: [Headbutt, ThunderWave, Spark, ChargeBeam, Crunch]
@@ -435,6 +441,7 @@ Tynamo:
       - WildCharge
       - Confide
       - ThroatChop
+      - TeraBlast
   Eelektross:
     level:
       1:
@@ -521,6 +528,8 @@ Tynamo:
       - ThunderPunch
       - ZenHeadbutt
       - PowerUpPunch
+      - TeraBlast
+      - SupercellSlam
 Elgyem:
   # TM and tutor moves shared by the whole family
 
@@ -689,6 +698,8 @@ Litwick:
     - SkitterSmack
     - BurningJealousy
     - Poltergeist
+    - TeraBlast
+    - TemperFlare
   Litwick:
     level:
       1: [Smog, Astonish]
@@ -748,7 +759,7 @@ Litwick:
           Inferno,
           FlameBurst,
         ]
-    teachable: [GigaImpact, HyperBeam, LaserFocus, MysticalFire]
+    teachable: [GigaImpact, HyperBeam, LaserFocus, MysticalFire, Trailblaze]
 Axew:
   # TM and tutor moves shared by the whole family
 
@@ -815,6 +826,9 @@ Axew:
     - Confide
     - BreakingSwipe
     - ScaleShot
+    - TeraBlast
+    - Trailblaze
+    - DragonCheer
   Axew:
     level:
       1: [Scratch, Leer]
@@ -966,6 +980,10 @@ Cubchoo:
     - XScissor
     - Confide
     - PowerUpPunch
+    - TeraBlast
+    - Snowscape
+    - Trailblaze
+    - ChillingWater
   Cubchoo:
     level:
       1: [Growl, PowderSnow]
@@ -978,7 +996,7 @@ Cubchoo:
       21: [Slash]
       24: [Flail]
       27: [Charm]
-      30: [Hail]
+      30: [Hail, Snowscape]
       33: [Thrash]
       36: [Rest]
       39: [Blizzard]
@@ -1005,7 +1023,7 @@ Cubchoo:
       21: [Slash]
       24: [Flail]
       27: [Swagger]
-      30: [Hail]
+      30: [Hail, Snowscape]
       33: [Thrash]
       36: [Rest]
       41: [Blizzard]
@@ -1031,6 +1049,7 @@ Cubchoo:
       - BodyPress
       - Liquidation
       - PlayRough
+      - HardPress
 Cryogonal:
   Cryogonal:
     level:
@@ -1096,6 +1115,10 @@ Cryogonal:
       - AuroraVeil
       - LaserFocus
       - TripleAxel
+      - TeraBlast
+      - IceSpinner
+      - Snowscape
+      - ChillingWater
     egg: [Explosion, FrostBreath]
 Shelmet:
   family-teachable: [Attract, SkitterSmack]

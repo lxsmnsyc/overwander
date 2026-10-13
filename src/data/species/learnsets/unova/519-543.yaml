@@ -133,6 +133,9 @@ Blitzle:
     - VoltSwitch
     - WildCharge
     - Confide
+    - TeraBlast
+    - Trailblaze
+    - SupercellSlam
   Blitzle:
     level:
       1: [QuickAttack]
@@ -444,6 +447,7 @@ Drilbur:
     - XScissor
     - Confide
     - ScorchingSands
+    - TeraBlast
   Drilbur:
     level:
       1: [MudSlap, RapidSpin, MudSport]
@@ -681,6 +685,7 @@ Timburr:
     - PowerUpPunch
     - BrutalSwing
     - Coaching
+    - TeraBlast
   Timburr:
     level:
       1: [Pound, Leer]
@@ -747,6 +752,8 @@ Timburr:
       - RockBlast
       - StompingTantrum
       - HighHorsepower
+      - HardPress
+      - UpperHand
 Tympole:
   # TM, HM and tutor moves shared by the whole family
 
@@ -1064,6 +1071,9 @@ Sewaddle:
     - Toxic
     - WorrySeed
     - Confide
+    - TeraBlast
+    - Pounce
+    - Trailblaze
   Sewaddle:
     level:
       1: [StringShot, Tackle]

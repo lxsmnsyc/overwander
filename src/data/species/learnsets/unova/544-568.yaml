@@ -34,6 +34,7 @@ Cottonee:
     - Confide
     - DazzlingGleam
     - GrassyGlide
+    - TeraBlast
   Cottonee:
     level:
       1: [Absorb, HelpingHand]
@@ -157,6 +158,8 @@ Petilil:
     - Confide
     - LaserFocus
     - GrassyGlide
+    - TeraBlast
+    - Trailblaze
   Petilil:
     level:
       1: [Absorb, Growth]
@@ -232,6 +235,7 @@ Petilil:
         MagicalLeaf,
         PollenPuff,
         SolarBlade,
+        AlluringVoice,
       ]
   LilligantHisui:
     level:
@@ -260,6 +264,7 @@ Petilil:
           SolarBlade,
           VictoryDance,
         ]
+      5: [AxeKick]
     teachable:
       [
         Acrobatics,
@@ -305,6 +310,8 @@ Petilil:
         TripleAxel,
         VacuumWave,
         WeatherBall,
+        IceSpinner,
+        UpperHand,
       ]
 Basculin:
   family-teachable:
@@ -363,6 +370,9 @@ Basculin:
     - Liquidation
     - ScaleShot
     - FlipTurn
+    - TeraBlast
+    - Snowscape
+    - ChillingWater
   Basculin:
     level:
       1: [TailWhip, WaterGun]
@@ -668,6 +678,7 @@ Sandile:
     - SkitterSmack
     - LashOut
     - ScorchingSands
+    - TeraBlast
   Sandile:
     level:
       1: [Leer, PowerTrip, Rage]
@@ -1315,6 +1326,9 @@ Scraggy:
     - PowerUpPunch
     - LashOut
     - Coaching
+    - TeraBlast
+    - Trailblaze
+    - UpperHand
   Scraggy:
     level:
       1: [Leer, LowKick]

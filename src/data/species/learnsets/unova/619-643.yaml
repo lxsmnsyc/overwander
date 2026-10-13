@@ -66,6 +66,9 @@ Mienfoo:
     - Confide
     - PowerUpPunch
     - Coaching
+    - TeraBlast
+    - Trailblaze
+    - UpperHand
   Mienfoo:
     level:
       1: [Pound, Detect]
@@ -120,6 +123,7 @@ Mienfoo:
       - VacuumWave
       - LaserFocus
       - BrutalSwing
+      - IceSpinner
 Druddigon:
   Druddigon:
     level:
@@ -304,6 +308,7 @@ Golett:
     - PowerUpPunch
     - Poltergeist
     - ScorchingSands
+    - TeraBlast
   Golett:
     level:
       1: [MudSlap, Astonish]
@@ -362,6 +367,7 @@ Golett:
       - HighHorsepower
       - PhantomForce
       - StompingTantrum
+      - HardPress
 Pawniard:
   # TM and tutor moves shared by the whole family
 
@@ -432,6 +438,7 @@ Pawniard:
     - PowerUpPunch
     - SteelBeam
     - LashOut
+    - TeraBlast
   Pawniard:
     level:
       1: [Scratch, Leer]
@@ -624,6 +631,7 @@ Rufflet:
     - ZenHeadbutt
     - Confide
     - DualWingbeat
+    - TeraBlast
   Rufflet:
     level:
       1: [Leer, Peck, QuickAttack]
@@ -729,6 +737,7 @@ Rufflet:
         UTurn,
         VacuumWave,
         ZenHeadbutt,
+        PsychicNoise,
       ]
 Vullaby:
   # TM and tutor moves shared by the whole family
@@ -794,6 +803,7 @@ Vullaby:
     - Confide
     - LashOut
     - DualWingbeat
+    - TeraBlast
   Vullaby:
     level:
       1: [Gust, Leer]
@@ -1056,6 +1066,8 @@ Deino:
     - WorkUp
     - ZenHeadbutt
     - Confide
+    - TeraBlast
+    - DragonCheer
   Deino:
     level:
       1: [Tackle, FocusEnergy, DragonRage]
@@ -1207,6 +1219,9 @@ Larvesta:
     - ZenHeadbutt
     - Confide
     - SkitterSmack
+    - TeraBlast
+    - Pounce
+    - Trailblaze
   Larvesta:
     level:
       1: [Ember, StringShot]
@@ -1354,6 +1369,8 @@ Cobalion:
       - ScaryFace
       - SmartStrike
       - Swift
+      - TeraBlast
+      - UpperHand
 Terrakion:
   Terrakion:
     level:
@@ -1431,6 +1448,8 @@ Terrakion:
       - ScaryFace
       - SmartStrike
       - Swift
+      - TeraBlast
+      - UpperHand
 Virizion:
   Virizion:
     level:
@@ -1510,6 +1529,9 @@ Virizion:
       - SmartStrike
       - SolarBlade
       - Swift
+      - TeraBlast
+      - Trailblaze
+      - UpperHand
 Tornadus:
   family-teachable:
     - Attract
@@ -1581,6 +1603,9 @@ Tornadus:
     - Uproar
     - BrutalSwing
     - LashOut
+    - TeraBlast
+    - Snowscape
+    - ChillingWater
   Tornadus:
     level:
       1: [Gust, Astonish, Tackle]
@@ -1700,6 +1725,8 @@ Thundurus:
     - SmartStrike
     - RisingVoltage
     - LashOut
+    - TeraBlast
+    - SupercellSlam
   Thundurus:
     level:
       1: [ThunderShock, Astonish, Tackle, NastyPlot]
@@ -1838,3 +1865,5 @@ Reshiram:
       - SteelWing
       - Swift
       - WeatherBall
+      - TeraBlast
+      - DragonCheer

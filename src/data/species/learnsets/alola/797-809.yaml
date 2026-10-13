@@ -312,6 +312,10 @@ Necrozma:
       - ScaryFace
       - StoredPower
       - TeraBlast
+      - BodySlam
+      - Swift
+      - Sandstorm
+      - SunnyDay
   NecrozmaDuskMane:
     level:
       1: [Confusion, MetalClaw, MorningSun, Moonlight, Gravity, ChargeBeam, MirrorShot]
@@ -343,6 +347,10 @@ Necrozma:
       - ScaryFace
       - StoredPower
       - TeraBlast
+      - BodySlam
+      - Swift
+      - Sandstorm
+      - SunnyDay
   NecrozmaDawnWings:
     level:
       1: [Confusion, MetalClaw, MorningSun, Moonlight, Gravity, ChargeBeam, MirrorShot]
@@ -374,6 +382,10 @@ Necrozma:
       - ScaryFace
       - StoredPower
       - TeraBlast
+      - BodySlam
+      - Swift
+      - Sandstorm
+      - SunnyDay
   NecrozmaUltra:
     level:
       1: [ChargeBeam, Confusion, MetalClaw, MirrorShot, Moonlight, MorningSun]
@@ -444,6 +456,34 @@ Magearna:
     - TeraBlast
     - IceSpinner
     - Snowscape
+    - BodySlam
+    - TakeDown
+    - Psybeam
+    - Psychic
+    - Agility
+    - ConfuseRay
+    - Swift
+    - Rest
+    - Spikes
+    - Endure
+    - SleepTalk
+    - BatonPass
+    - Encore
+    - SunnyDay
+    - Facade
+    - Trick
+    - SkillSwap
+    - Imprison
+    - AuraSphere
+    - Psyshock
+    - HeavySlam
+    - ElectroBall
+    - StoredPower
+    - DisarmingVoice
+    - DrainingKiss
+    - MistyTerrain
+    - PlayRough
+    - EerieImpulse
   Magearna:
     level:
       1: [HelpingHand, GyroBall, SonicBoom]
@@ -451,13 +491,13 @@ Magearna:
       9: [LuckyChant]
       12: [Rollout]
       18: [IronDefense]
-      24: [GearUp]
+      24: [GearUp, MagneticFlux]
       25: [MirrorShot]
       30: [Psybeam]
       36: [AuroraBeam]
-      42: [MindReader]
+      42: [MindReader, LockOn]
       48: [ShiftGear]
-      54: [CraftyShield]
+      54: [CraftyShield, Trick]
       60: [IronHead]
       66: [AuraSphere]
       72: [FlashCannon]
@@ -468,24 +508,14 @@ Magearna:
       90: [FleurCannon]
       97: [TrumpCard]
     teachable:
-      - Agility
-      - AuraSphere
-      - BatonPass
-      - DrainingKiss
-      - EerieImpulse
-      - ElectroBall
       - Electroweb
-      - Encore
-      - Endure
       - GuardSwap
-      - Imprison
       - PowerSwap
-      - Rest
       - SelfDestruct
       - SpeedSwap
-      - StoredPower
       - TriAttack
-      - Trick
+      - MetalSound
+      - Gravity
   MagearnaOriginal:
     level:
       1: [HelpingHand, GyroBall, SonicBoom]
@@ -493,13 +523,13 @@ Magearna:
       9: [LuckyChant]
       12: [Rollout]
       18: [IronDefense]
-      24: [GearUp]
+      24: [GearUp, MagneticFlux]
       25: [MirrorShot]
       30: [Psybeam]
       36: [AuroraBeam]
-      42: [MindReader]
+      42: [MindReader, LockOn]
       48: [ShiftGear]
-      54: [CraftyShield]
+      54: [CraftyShield, Trick]
       60: [IronHead]
       66: [AuraSphere]
       72: [FlashCannon]
@@ -510,24 +540,12 @@ Magearna:
       90: [FleurCannon]
       97: [TrumpCard]
     teachable:
-      - Agility
-      - AuraSphere
-      - BatonPass
-      - DrainingKiss
-      - EerieImpulse
-      - ElectroBall
       - Electroweb
-      - Encore
-      - Endure
       - GuardSwap
-      - Imprison
       - PowerSwap
-      - Rest
       - SelfDestruct
       - SpeedSwap
-      - StoredPower
       - TriAttack
-      - Trick
 Marshadow:
   Marshadow:
     level:

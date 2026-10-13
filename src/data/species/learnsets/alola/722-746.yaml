@@ -42,6 +42,25 @@ Rowlet:
     - DualWingbeat
     - TeraBlast
     - Trailblaze
+    - TakeDown
+    - NightShade
+    - ConfuseRay
+    - Haze
+    - Swift
+    - Endure
+    - RainDance
+    - HelpingHand
+    - KnockOff
+    - FeatherDance
+    - AirCutter
+    - BulletSeed
+    - AerialAce
+    - MagicalLeaf
+    - AirSlash
+    - BraveBird
+    - NastyPlot
+    - LeafStorm
+    - GrassyTerrain
   Rowlet:
     level:
       1: [Tackle, Growl]
@@ -59,14 +78,10 @@ Rowlet:
       30: [LeafBlade]
       33: [FeatherDance]
       36: [BraveBird]
-    egg: [BatonPass, ConfuseRay, Curse, Defog, Haze, OminousWind, DoubleTeam, KnockOff]
+    egg: [BatonPass, ConfuseRay, Curse, Defog, Haze, OminousWind, DoubleTeam, KnockOff, Roost]
     teachable:
       - BatonPass
-      - BraveBird
-      - Endure
       - LeafBlade
-      - NastyPlot
-      - Swift
   Dartrix:
     level:
       1: [Tackle, Growl, Astonish, Leafage]
@@ -85,11 +100,8 @@ Rowlet:
       50: [BraveBird]
     teachable:
       - BatonPass
-      - BraveBird
-      - Endure
       - LeafBlade
-      - NastyPlot
-      - Swift
+      - Tailwind
   Decidueye:
     level:
       1: [Tackle, Growl, Spite, Astonish, UTurn, LeafStorm, PhantomForce, SpiritShackle, Leafage]
@@ -119,22 +131,29 @@ Rowlet:
       - LaserFocus
       - SkitterSmack
       - Poltergeist
-      - AirSlash
       - BatonPass
-      - BraveBird
-      - Endure
       - Hex
       - Hurricane
       - HyperBeam
       - Imprison
       - LeafBlade
-      - LeafStorm
-      - NastyPlot
       - PhantomForce
       - PsychoCut
       - SolarBlade
-      - Swift
       - UpperHand
+      - LowKick
+      - Curse
+      - Reversal
+      - ScaryFace
+      - FocusPunch
+      - Taunt
+      - BrickBreak
+      - RockTomb
+      - BulkUp
+      - CloseCombat
+      - AuraSphere
+      - FocusBlast
+      - Coaching
   DecidueyeHisui:
     level:
       1: [Tackle, Growl, UTurn, LeafStorm, Leafage, TripleArrows]
@@ -150,24 +169,16 @@ Rowlet:
       58: [BraveBird]
     teachable:
       [
-        AerialAce,
-        AirCutter,
-        AirSlash,
         AuraSphere,
         BatonPass,
-        BraveBird,
         BrickBreak,
         BulkUp,
-        BulletSeed,
         CloseCombat,
         Coaching,
-        ConfuseRay,
         DualWingbeat,
-        Endure,
         EnergyBall,
         Facade,
         FalseSwipe,
-        FeatherDance,
         FocusBlast,
         FocusPunch,
         FrenzyPlant,
@@ -176,20 +187,11 @@ Rowlet:
         GrassKnot,
         GrassPledge,
         GrassyGlide,
-        GrassyTerrain,
-        Haze,
-        HelpingHand,
         HyperBeam,
-        KnockOff,
-        LeafStorm,
         LightScreen,
         LowKick,
         LowSweep,
-        MagicalLeaf,
-        NastyPlot,
-        NightShade,
         Protect,
-        RainDance,
         Rest,
         Reversal,
         RockTomb,
@@ -201,10 +203,8 @@ Rowlet:
         SolarBeam,
         Substitute,
         SunnyDay,
-        Swift,
         SwordsDance,
         Tailwind,
-        TakeDown,
         Taunt,
         UTurn,
         UpperHand,
@@ -251,6 +251,17 @@ Litten:
     - TeraBlast
     - Trailblaze
     - TemperFlare
+    - BodySlam
+    - TakeDown
+    - DoubleEdge
+    - FireSpin
+    - ScaryFace
+    - Endure
+    - Crunch
+    - HelpingHand
+    - FlareBlitz
+    - NastyPlot
+    - FireFang
   Litten:
     level:
       1: [Scratch, Growl]
@@ -270,16 +281,8 @@ Litten:
       46: [Outrage]
     egg: [BodySlam, Crunch, FakeOut, HeatWave, NastyPlot, Revenge, PowerTrip, PartingShot]
     teachable:
-      - BodySlam
-      - Crunch
-      - Endure
-      - FireFang
-      - FireSpin
-      - FlareBlitz
-      - NastyPlot
       - PayDay
       - Revenge
-      - ScaryFace
   Torracat:
     level:
       1: [Scratch, Growl, Ember, Lick]
@@ -295,20 +298,7 @@ Litten:
       45: [Thrash]
       50: [FlareBlitz]
       55: [Outrage]
-    teachable:
-      [
-        DualChop,
-        BodySlam,
-        Crunch,
-        Endure,
-        FireFang,
-        FireSpin,
-        FlareBlitz,
-        NastyPlot,
-        PayDay,
-        Revenge,
-        ScaryFace,
-      ]
+    teachable: [DualChop, PayDay, Revenge]
   Incineroar:
     level:
       1: [Scratch, Growl, Ember, Lick, CrossChop, BulkUp, DarkestLariat, ThroatChop]
@@ -356,23 +346,18 @@ Litten:
       - ScorchingSands
       - Assurance
       - BlazeKick
-      - BodySlam
       - CloseCombat
-      - Crunch
       - DarkestLariat
-      - Endure
-      - FireFang
-      - FireSpin
-      - FlareBlitz
       - HeatCrash
       - MegaKick
       - MegaPunch
-      - NastyPlot
       - PayDay
       - Revenge
       - Reversal
-      - ScaryFace
       - ThroatChop
+      - Thief
+      - BatonPass
+      - AerialAce
 Popplio:
   # TM and tutor moves shared by the whole family
   family-teachable:
@@ -416,6 +401,17 @@ Popplio:
     - TeraBlast
     - IceSpinner
     - ChillingWater
+    - HydroPump
+    - Swift
+    - Amnesia
+    - Endure
+    - Charm
+    - Encore
+    - Whirlpool
+    - DisarmingVoice
+    - DrainingKiss
+    - MistyTerrain
+    - PlayRough
   Popplio:
     level:
       1: [Pound, Growl]
@@ -435,17 +431,8 @@ Popplio:
       39: [Captivate]
     egg: [Amnesia, AquaRing, AromaticMist, Charm, PerishSong, WonderRoom, LifeDew]
     teachable:
-      - Amnesia
       - Brine
-      - Charm
       - Dive
-      - DrainingKiss
-      - Encore
-      - Endure
-      - HydroPump
-      - MistyTerrain
-      - PlayRough
-      - Whirlpool
   Brionne:
     level:
       1: [Pound, Growl, WaterGun, DisarmingVoice]
@@ -462,17 +449,9 @@ Popplio:
       46: [Captivate]
       50: [HydroPump]
     teachable:
-      - Amnesia
       - Brine
-      - Charm
       - Dive
-      - DrainingKiss
-      - Encore
-      - Endure
-      - HydroPump
-      - MistyTerrain
-      - PlayRough
-      - Whirlpool
+      - BodySlam
   Primarina:
     level:
       1: [Pound, Growl, WaterGun, DisarmingVoice, SparklingAria]
@@ -501,24 +480,17 @@ Popplio:
       - ShadowBall
       - Liquidation
       - MistyExplosion
-      - Amnesia
       - Brine
       - CalmMind
-      - Charm
       - Dive
-      - DrainingKiss
-      - Encore
-      - Endure
-      - HydroPump
       - HyperBeam
-      - MistyTerrain
-      - PlayRough
       - StoredPower
       - WeatherBall
-      - Whirlpool
       - Snowscape
       - AlluringVoice
       - PsychicNoise
+      - BodySlam
+      - Haze
 Pikipek:
   # TM and tutor moves shared by the whole family
   family-teachable:
@@ -558,6 +530,18 @@ Pikipek:
     - Uproar
     - WorkUp
     - TeraBlast
+    - TakeDown
+    - Endure
+    - Facade
+    - HelpingHand
+    - Endeavor
+    - FeatherDance
+    - AirCutter
+    - BulletSeed
+    - AirSlash
+    - BraveBird
+    - Acrobatics
+    - DualWingbeat
   Pikipek:
     level:
       1: [Peck]
@@ -573,7 +557,7 @@ Pikipek:
       31: [BulletSeed]
       33: [FeatherDance]
       37: [HyperVoice]
-    egg: [Boomburst, BraveBird, MirrorMove, Tailwind, Uproar]
+    egg: [Boomburst, BraveBird, MirrorMove, Tailwind, Uproar, SkyAttack, GunkShot]
   Trumbeak:
     level:
       1: [EchoedVoice, Growl, Peck, RockBlast, RockSmash]
@@ -586,6 +570,8 @@ Pikipek:
       37: [BulletSeed]
       40: [FeatherDance]
       45: [HyperVoice]
+    teachable:
+      - Swift
   Toucannon:
     level:
       1: [BeakBlast, EchoedVoice, Growl, Peck, RockBlast, RockSmash]
@@ -598,7 +584,21 @@ Pikipek:
       40: [BulletSeed]
       44: [FeatherDance]
       50: [HyperVoice]
-    teachable: [FlashCannon, Overheat, SeedBomb, TemperFlare]
+    teachable:
+      [
+        FlashCannon,
+        Overheat,
+        SeedBomb,
+        TemperFlare,
+        HyperBeam,
+        Swift,
+        ScaryFace,
+        Encore,
+        PsychUp,
+        GigaImpact,
+        Hurricane,
+        ThroatChop,
+      ]
 Yungoos:
   # TM and tutor moves shared by the whole family
   family-teachable:
@@ -637,13 +637,33 @@ Yungoos:
     - TeraBlast
     - Trailblaze
     - ChillingWater
+    - TakeDown
+    - DoubleEdge
+    - Dig
+    - Reversal
+    - ScaryFace
+    - MudSlap
+    - Endure
+    - RainDance
+    - SunnyDay
+    - Crunch
+    - HelpingHand
+    - MudShot
+    - SeedBomb
+    - ThunderFang
+    - IceFang
+    - FireFang
+    - ZenHeadbutt
+    - Bulldoze
+    - WildCharge
+    - PsychicFangs
   Yungoos:
     level:
       1: [Tackle]
       3: [Leer]
-      7: [Pursuit]
+      7: [Pursuit, Payback]
       10: [SandAttack]
-      13: [OdorSleuth]
+      13: [OdorSleuth, WorkUp]
       16: [Bide]
       19: [Bite]
       22: [MudSlap]
@@ -655,11 +675,11 @@ Yungoos:
       40: [Yawn]
       43: [Thrash]
       46: [Rest]
-    egg: [FireFang, IceFang, LastResort, Revenge, ThunderFang]
+    egg: [FireFang, IceFang, LastResort, Revenge, ThunderFang, Endeavor]
   Gumshoos:
     level:
-      1: [Leer, Pursuit, SandAttack, Tackle]
-      13: [OdorSleuth]
+      1: [Leer, Pursuit, SandAttack, Tackle, Payback]
+      13: [OdorSleuth, WorkUp]
       16: [Bide]
       19: [Bite]
       23: [MudSlap]
@@ -673,7 +693,6 @@ Yungoos:
       55: [Rest]
     teachable:
       - Block
-      - Bulldoze
       - DualChop
       - FirePunch
       - Fling
@@ -681,7 +700,13 @@ Yungoos:
       - IronHead
       - Roar
       - ThunderPunch
-      - ZenHeadbutt
+      - BodySlam
+      - HyperBeam
+      - Curse
+      - FocusPunch
+      - KnockOff
+      - GigaImpact
+      - LowSweep
 Grubbin:
   # TM and tutor moves shared by the whole family
   family-teachable:
@@ -718,6 +743,17 @@ Grubbin:
     - SkitterSmack
     - TeraBlast
     - Pounce
+    - TakeDown
+    - Dig
+    - MudSlap
+    - Endure
+    - BatonPass
+    - Crunch
+    - Charge
+    - MudShot
+    - StruggleBug
+    - ElectricTerrain
+    - Lunge
   Grubbin:
     level:
       1: [ViceGrip, MudSlap]
@@ -732,10 +768,6 @@ Grubbin:
       40: [Dig]
     egg: [Electroweb, Endure, Harden, MudShot, Discharge]
     teachable:
-      - Crunch
-      - Dig
-      - Endure
-      - MudShot
       - Screech
   Charjabug:
     level:
@@ -749,7 +781,7 @@ Grubbin:
       50: [Dig]
       57: [IronDefense]
       64: [Discharge]
-    teachable: [IronDefense, Crunch, Dig, EerieImpulse, ElectroBall, Endure, MudShot, Screech]
+    teachable: [IronDefense, EerieImpulse, ElectroBall, Screech, Thunder]
   Vikavolt:
     level:
       1:
@@ -792,15 +824,13 @@ Grubbin:
       - Agility
       - AirSlash
       - BugBuzz
-      - Crunch
-      - Dig
       - EerieImpulse
       - ElectroBall
-      - Endure
       - Fly
-      - MudShot
       - Screech
       - SupercellSlam
+      - Swift
+      - Bulldoze
 Crabrawler:
   # TM and tutor moves shared by the whole family
   family-teachable:
@@ -849,28 +879,44 @@ Crabrawler:
     - TeraBlast
     - ChillingWater
     - UpperHand
+    - BodySlam
+    - TakeDown
+    - Dig
+    - Swift
+    - Amnesia
+    - Reversal
+    - MudSlap
+    - Endure
+    - HelpingHand
+    - KnockOff
+    - MudShot
+    - CloseCombat
+    - GunkShot
+    - StompingTantrum
+    - Liquidation
+    - Coaching
   Crabrawler:
     level:
       1: [Bubble]
       5: [RockSmash]
       9: [Leer]
       13: [Pursuit]
-      17: [BubbleBeam]
-      22: [PowerUpPunch]
-      25: [DizzyPunch]
+      17: [BubbleBeam, Protect]
+      22: [PowerUpPunch, BrickBreak]
+      25: [DizzyPunch, Slam]
       29: [Payback]
       33: [Reversal]
       37: [Crabhammer]
       42: [IronDefense]
       45: [DynamicPunch]
       49: [CloseCombat]
-    egg: [Amnesia, Endeavor, Superpower, WideGuard]
+    egg: [Amnesia, Endeavor, Superpower, WideGuard, FocusPunch]
   Crabominable:
     level:
-      1: [Bubble, IcePunch, Leer, Pursuit, RockSmash]
+      1: [Bubble, IcePunch, Leer, Pursuit, RockSmash, Protect]
       17: [BubbleBeam]
-      22: [PowerUpPunch]
-      25: [DizzyPunch]
+      22: [PowerUpPunch, BrickBreak]
+      25: [DizzyPunch, Slam]
       29: [Avalanche]
       33: [Reversal]
       37: [IceHammer]
@@ -878,7 +924,20 @@ Crabrawler:
       45: [DynamicPunch]
       49: [CloseCombat]
     teachable:
-      [Blizzard, Block, GigaImpact, Hail, IceBeam, IcyWind, IceSpinner, Snowscape, HardPress]
+      [
+        Blizzard,
+        Block,
+        GigaImpact,
+        Hail,
+        IceBeam,
+        IcyWind,
+        IceSpinner,
+        Snowscape,
+        HardPress,
+        HyperBeam,
+        ScaryFace,
+        BodyPress,
+      ]
 Oricorio:
   family-teachable:
     - Acrobatics
@@ -920,6 +979,21 @@ Oricorio:
     - TeraBlast
     - Trailblaze
     - AlluringVoice
+    - TakeDown
+    - Agility
+    - Swift
+    - Reversal
+    - Endure
+    - Charm
+    - BatonPass
+    - RainDance
+    - SunnyDay
+    - PsychUp
+    - FeatherDance
+    - AirCutter
+    - AirSlash
+    - Hurricane
+    - DualWingbeat
   Oricorio:
     level:
       1: [Pound]
@@ -929,16 +1003,16 @@ Oricorio:
       13: [AirCutter]
       16: [BatonPass]
       20: [FeatherDance]
-      23: [DoubleSlap]
+      23: [DoubleSlap, Acrobatics]
       26: [TeeterDance]
       30: [Roost]
-      33: [Captivate]
+      33: [Captivate, Flatter]
       36: [AirSlash]
       40: [RevelationDance]
       43: [MirrorMove]
       46: [Agility]
       50: [Hurricane]
-    egg: [Captivate, Pluck, Safeguard, Tailwind]
+    egg: [Captivate, Pluck, Safeguard, Tailwind, Attract, Defog, QuiverDance]
   OricorioPomPom:
     level:
       1: [Pound]
@@ -948,10 +1022,10 @@ Oricorio:
       13: [AirCutter]
       16: [BatonPass]
       20: [FeatherDance]
-      23: [DoubleSlap]
+      23: [DoubleSlap, Acrobatics]
       26: [TeeterDance]
       30: [Roost]
-      33: [Captivate]
+      33: [Captivate, Flatter]
       36: [AirSlash]
       40: [RevelationDance]
       43: [MirrorMove]
@@ -967,10 +1041,10 @@ Oricorio:
       13: [AirCutter]
       16: [BatonPass]
       20: [FeatherDance]
-      23: [DoubleSlap]
+      23: [DoubleSlap, Acrobatics]
       26: [TeeterDance]
       30: [Roost]
-      33: [Captivate]
+      33: [Captivate, Flatter]
       36: [AirSlash]
       40: [RevelationDance]
       43: [MirrorMove]
@@ -986,10 +1060,10 @@ Oricorio:
       13: [AirCutter]
       16: [BatonPass]
       20: [FeatherDance]
-      23: [DoubleSlap]
+      23: [DoubleSlap, Acrobatics]
       26: [TeeterDance]
       30: [Roost]
-      33: [Captivate]
+      33: [Captivate, Flatter]
       36: [AirSlash]
       40: [RevelationDance]
       43: [MirrorMove]
@@ -1049,6 +1123,20 @@ Cutiefly:
     - TeraBlast
     - Pounce
     - Trailblaze
+    - Swift
+    - Endure
+    - Charm
+    - BatonPass
+    - Imprison
+    - FakeTears
+    - MagicalLeaf
+    - BugBuzz
+    - GrassKnot
+    - StruggleBug
+    - DrainingKiss
+    - PlayRough
+    - PollenPuff
+    - SkitterSmack
   Cutiefly:
     level:
       1: [Absorb, FairyWind]
@@ -1057,23 +1145,14 @@ Cutiefly:
       13: [SilverWind]
       18: [DrainingKiss]
       24: [StruggleBug]
-      30: [Aromatherapy]
+      30: [Aromatherapy, Covet]
       36: [Switcheroo]
       42: [DazzlingGleam]
       48: [BugBuzz]
       54: [QuiverDance]
     egg: [BatonPass, Bestow, Moonblast, Powder, SkillSwap, SpeedSwap, StickyWeb, AromaticMist]
     teachable:
-      - BatonPass
-      - BugBuzz
-      - Charm
-      - DrainingKiss
-      - Endure
-      - FakeTears
-      - Imprison
-      - PlayRough
       - SpeedSwap
-      - Swift
   Ribombee:
     level:
       1: [Absorb, StunSpore, SweetScent, Covet, FairyWind, PollenPuff]
@@ -1089,22 +1168,15 @@ Cutiefly:
       [
         NaturePower,
         SolarBeam,
-        BatonPass,
-        BugBuzz,
-        Charm,
-        DrainingKiss,
-        Endure,
-        FakeTears,
         GigaImpact,
         HyperBeam,
-        Imprison,
-        MagicalLeaf,
-        PlayRough,
-        PollenPuff,
         SpeedSwap,
-        Swift,
         AlluringVoice,
         PsychicNoise,
+        TakeDown,
+        Agility,
+        StoredPower,
+        Lunge,
       ]
 Rockruff:
   # TM and tutor moves shared by the whole family
@@ -1149,6 +1221,21 @@ Rockruff:
     - ZenHeadbutt
     - TeraBlast
     - Trailblaze
+    - SwordsDance
+    - TakeDown
+    - DoubleEdge
+    - Dig
+    - ScaryFace
+    - Sandstorm
+    - Endure
+    - Charm
+    - Crunch
+    - HelpingHand
+    - ThunderFang
+    - FireFang
+    - Bulldoze
+    - PlayRough
+    - PsychicFangs
   Rockruff:
     level:
       1: [Tackle, Leer]
@@ -1168,13 +1255,7 @@ Rockruff:
       48: [StoneEdge]
     egg: [CrushClaw, FireFang, SuckerPunch, Thrash, ThunderFang, Endeavor, LastResort]
     teachable:
-      - Crunch
-      - Endure
-      - FireFang
-      - PlayRough
-      - ScaryFace
-      - SwordsDance
-      - ThunderFang
+      - MudSlap
   Lycanroc:
     level:
       1: [SandAttack, Tackle, Leer, QuickAttack, DoubleTeam, SuckerPunch, QuickGuard, Accelerock]
@@ -1194,23 +1275,17 @@ Rockruff:
       [
         BrickBreak,
         BulkUp,
-        SwordsDance,
         DrillRun,
         Agility,
         Assurance,
         CloseCombat,
-        Crunch,
-        Endure,
-        FireFang,
         GigaImpact,
-        PlayRough,
-        PsychicFangs,
         RockBlast,
-        Sandstorm,
-        ScaryFace,
         Swift,
         TailSlap,
-        ThunderFang,
+        BodySlam,
+        MudSlap,
+        SunnyDay,
       ]
   LycanrocMidnight:
     level:
@@ -1230,7 +1305,6 @@ Rockruff:
     teachable:
       - BrickBreak
       - BulkUp
-      - SwordsDance
       - DualChop
       - FirePunch
       - FocusPunch
@@ -1242,23 +1316,21 @@ Rockruff:
       - Uproar
       - LashOut
       - CloseCombat
-      - Crunch
-      - Endure
-      - FireFang
       - GigaImpact
       - LowSweep
       - MegaKick
       - MegaPunch
       - Payback
-      - PlayRough
-      - PsychicFangs
       - Revenge
       - Reversal
       - RockBlast
-      - Sandstorm
-      - ScaryFace
-      - ThunderFang
       - UpperHand
+      - BodySlam
+      - MudSlap
+      - SunnyDay
+      - KnockOff
+      - Fling
+      - ShadowClaw
   LycanrocDusk:
     level:
       1:
@@ -1294,24 +1366,16 @@ Rockruff:
       [
         BrickBreak,
         BulkUp,
-        SwordsDance,
         DrillRun,
         Outrage,
         CloseCombat,
-        Crunch,
-        Endure,
-        FireFang,
         FocusEnergy,
         GigaImpact,
-        PlayRough,
-        PsychicFangs,
         Reversal,
         RockBlast,
-        Sandstorm,
-        ScaryFace,
         TailSlap,
-        ThunderFang,
         WorkUp,
+        ThroatChop,
       ]
 Wishiwashi:
   family-teachable:

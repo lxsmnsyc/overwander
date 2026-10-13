@@ -113,6 +113,16 @@ Espurr:
     - ExpandingForce
     - TeraBlast
     - PsychicNoise
+    - Psybeam
+    - Swift
+    - Endure
+    - Charm
+    - ShadowBall
+    - SkillSwap
+    - FakeTears
+    - NastyPlot
+    - DisarmingVoice
+    - PlayRough
   Espurr:
     level:
       1: [Scratch, Leer]
@@ -126,13 +136,7 @@ Espurr:
     egg: [Assist, Barrier, Trick, Yawn, Tickle]
     teachable:
       - AllySwitch
-      - Endure
-      - FakeTears
-      - NastyPlot
       - PayDay
-      - PlayRough
-      - SkillSwap
-      - Swift
       - WorkUp
   Meowstic:
     level:
@@ -157,23 +161,17 @@ Espurr:
         GigaImpact,
         HyperBeam,
         PowerUpPunch,
-        ShadowBall,
         AllySwitch,
-        Charm,
-        Endure,
-        FakeTears,
         Imprison,
         MistyTerrain,
-        NastyPlot,
         PayDay,
-        PlayRough,
         PsychicTerrain,
-        SkillSwap,
-        Swift,
         TailSlap,
         WorkUp,
         Trailblaze,
         AlluringVoice,
+        BatonPass,
+        StoredPower,
       ]
   MeowsticFemale:
     level:
@@ -198,24 +196,17 @@ Espurr:
         GigaImpact,
         HyperBeam,
         PowerUpPunch,
-        ShadowBall,
         AllySwitch,
-        Charm,
-        Endure,
-        FakeTears,
         FutureSight,
         MagicalLeaf,
-        NastyPlot,
         PayDay,
-        PlayRough,
         PsychicTerrain,
-        SkillSwap,
         StoredPower,
-        Swift,
         TailSlap,
         WorkUp,
         Trailblaze,
         AlluringVoice,
+        BatonPass,
       ]
 Honedge:
   family-teachable:
@@ -621,6 +612,8 @@ Inkay:
     - ExpandingForce
     - LashOut
     - TeraBlast
+    - Lunge
+    - Liquidation
   Inkay:
     level:
       1: [Tackle, Peck, Constrict]
@@ -647,8 +640,6 @@ Inkay:
       - GuardSwap
       - PowerSplit
       - SimpleBeam
-    teachable:
-      - Liquidation
   Malamar:
     level:
       1: [Tackle, Wrap, Peck, Hypnosis, Reversal, Constrict, Reflect]
@@ -674,7 +665,6 @@ Inkay:
       - SignalBeam
       - BrutalSwing
       - ThroatChop
-      - Liquidation
       - Trailblaze
       - PsychicNoise
 Binacle:
@@ -846,6 +836,22 @@ Skrelp:
     - TeraBlast
     - Snowscape
     - ChillingWater
+    - TakeDown
+    - HydroPump
+    - Haze
+    - Thief
+    - Spite
+    - ScaryFace
+    - MudSlap
+    - Endure
+    - Whirlpool
+    - MuddyWater
+    - MudShot
+    - PoisonTail
+    - ToxicSpikes
+    - AcidSpray
+    - PlayRough
+    - Liquidation
   Skrelp:
     level:
       1: [Tackle, SmokeScreen]
@@ -864,10 +870,6 @@ Skrelp:
       55: [HydroPump]
     egg: [AcidArmor, Haze, PlayRough, ToxicSpikes, VenomDrench, DragonTail, Twister]
     teachable:
-      - Endure
-      - HydroPump
-      - PlayRough
-      - ToxicSpikes
       - VenomDrench
   Dragalge:
     level:
@@ -886,20 +888,7 @@ Skrelp:
       59: [HydroPump, DragonTail]
       66: [Outrage]
       67: [Twister]
-    teachable:
-      [
-        DracoMeteor,
-        DragonTail,
-        FocusBlast,
-        GigaImpact,
-        HyperBeam,
-        Thunder,
-        Endure,
-        HydroPump,
-        PlayRough,
-        ToxicSpikes,
-        VenomDrench,
-      ]
+    teachable: [DracoMeteor, DragonTail, FocusBlast, GigaImpact, HyperBeam, Thunder, VenomDrench]
 Clauncher:
   family-teachable:
     - AquaTail
@@ -945,6 +934,18 @@ Clauncher:
     - TeraBlast
     - Pounce
     - ChillingWater
+    - TakeDown
+    - HydroPump
+    - Blizzard
+    - Thief
+    - MudSlap
+    - Endure
+    - WeatherBall
+    - MuddyWater
+    - MudShot
+    - AuraSphere
+    - DarkPulse
+    - Liquidation
   Clauncher:
     level:
       1: [WaterGun, Splash]
@@ -962,10 +963,6 @@ Clauncher:
       50: [MuddyWater]
       55: [Crabhammer]
     egg: [AquaJet, Crabhammer, Endure, Entrainment, HelpingHand, AquaTail, BubbleBeam]
-    teachable:
-      - AuraSphere
-      - Endure
-      - MuddyWater
   Clawitzer:
     level:
       1: [ViceGrip, WaterGun, Splash, Flail, DarkPulse, DragonPulse, HealPulse]
@@ -981,16 +978,13 @@ Clauncher:
       56: [MuddyWater]
       63: [Crabhammer]
     teachable:
-      - DarkPulse
       - FocusBlast
       - GigaImpact
       - HyperBeam
       - ShadowBall
-      - Liquidation
       - LaserFocus
-      - AuraSphere
-      - Endure
-      - MuddyWater
+      - BodySlam
+      - ScaryFace
 Helioptile:
   family-teachable:
     - Agility

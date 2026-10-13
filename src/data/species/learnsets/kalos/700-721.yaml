@@ -111,6 +111,7 @@ Hawlucha:
       - TeraBlast
       - Trailblaze
       - UpperHand
+      - Lunge
     egg:
       - Agility
       - AllySwitch
@@ -627,6 +628,10 @@ Klefki:
       - Spikes
       - StoredPower
       - TeraBlast
+      - Swift
+      - Sandstorm
+      - TrickRoom
+      - SkitterSmack
     egg: [IronDefense, LockOn, Switcheroo, Thief, MagnetRise]
 Phantump:
   family-teachable:
@@ -697,6 +702,7 @@ Phantump:
     - Poltergeist
     - TeraBlast
     - Trailblaze
+    - LashOut
   Phantump:
     level:
       1: [Tackle, Astonish]
@@ -756,6 +762,7 @@ Phantump:
       - XScissor
       - BrutalSwing
       - PsychicNoise
+      - BurningJealousy
 Pumpkaboo:
   family-teachable:
     - AllySwitch
@@ -1156,6 +1163,7 @@ Noibat:
       - LaserFocus
       - DragonCheer
       - PsychicNoise
+      - BreakingSwipe
 Xerneas:
   Xerneas:
     level:
@@ -1530,6 +1538,7 @@ Diancie:
       - TerrainPulse
       - TeraBlast
       - Snowscape
+      - ScorchingSands
 Hoopa:
   family-teachable:
     - AllySwitch
@@ -1618,6 +1627,10 @@ Hoopa:
     - ThroatChop
     - TeraBlast
     - PsychicNoise
+    - PsychicTerrain
+    - ExpandingForce
+    - SkitterSmack
+    - LashOut
   Hoopa:
     level:
       1: [Confusion, AllySwitch, DestinyBond, HyperspaceHole, Trick]
@@ -1641,9 +1654,9 @@ Hoopa:
       25: [SkillSwap]
       29: [GuardSplit, PowerSplit]
       35: [PhantomForce]
-      46: [ZenHeadbutt]
+      46: [ZenHeadbutt, KnockOff]
       50: [TrickRoom, WonderRoom]
-      55: [ShadowBall]
+      55: [ShadowBall, DarkPulse]
       68: [NastyPlot]
       75: [Psychic]
 Volcanion:

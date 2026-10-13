@@ -26,7 +26,7 @@ Girafarig:
       23: [Agility]
       25: [OdorSleuth]
       28: [DoubleHit]
-      32: [ZenHeadbutt]
+      32: [ZenHeadbutt, TwinBeam]
       37: [Crunch]
       41: [BatonPass]
       46: [NastyPlot]
@@ -97,6 +97,9 @@ Girafarig:
       - NastyPlot
       - RainDance
       - Recycle
+      - TeraBlast
+      - Trailblaze
+      - PsychicNoise
     egg:
       - Amnesia
       - BeatUp
@@ -153,6 +156,9 @@ Pineco:
     - Bulldoze
     - DrillRun
     - Confide
+    - TeraBlast
+    - IceSpinner
+    - Pounce
   Pineco:
     level:
       1: [Tackle, Protect]
@@ -229,6 +235,7 @@ Pineco:
       - GyroBall
       - Payback
       - RockTomb
+      - HardPress
 Dunsparce:
   Dunsparce:
     level:
@@ -242,7 +249,7 @@ Dunsparce:
       24: [DrillRun]
       26: [Pursuit]
       28: [Yawn]
-      32: [BodySlam]
+      32: [BodySlam, HyperDrill]
       36: [TakeDown]
       40: [Roost]
       44: [DragonRush]
@@ -330,6 +337,10 @@ Dunsparce:
       - Roost
       - Screech
       - StoredPower
+      - TeraBlast
+      - IceSpinner
+      - Pounce
+      - ChillingWater
     egg:
       [
         AncientPower,
@@ -435,6 +446,7 @@ Gligar:
       - Torment
       - UTurn
       - XScissor
+      - TeraBlast
     egg:
       - Counter
       - MetalClaw
@@ -536,6 +548,7 @@ Gligar:
       - BrutalSwing
       - ThroatChop
       - Bulldoze
+      - TeraBlast
 Snubbull:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -609,6 +622,9 @@ Snubbull:
     - Confide
     - DazzlingGleam
     - PowerUpPunch
+    - TeraBlast
+    - Trailblaze
+    - TemperFlare
   Snubbull:
     level:
       1: [Tackle, TailWhip, ScaryFace, Charm, ThunderFang, IceFang, FireFang]
@@ -754,6 +770,8 @@ Qwilfish:
       - Taunt
       - ToxicSpikes
       - VenomDrench
+      - TeraBlast
+      - ChillingWater
     egg: [BubbleBeam, Flail, Haze, Supersonic, Astonish, AquaJet, AcidSpray, WaterPulse]
   QwilfishHisui:
     level:
@@ -820,6 +838,8 @@ Qwilfish:
         Venoshock,
         WaterPulse,
         Waterfall,
+        TeraBlast,
+        ChillingWater,
       ]
     egg:
       [
@@ -898,6 +918,8 @@ Qwilfish:
         ToxicSpikes,
         Venoshock,
         Waterfall,
+        TeraBlast,
+        ChillingWater,
       ]
 Shuckle:
   Shuckle:
@@ -1089,6 +1111,10 @@ Heracross:
       - RockBlast
       - SmartStrike
       - Spikes
+      - TeraBlast
+      - Pounce
+      - Trailblaze
+      - UpperHand
     egg:
       [
         Bide,
@@ -1205,6 +1231,10 @@ Sneasel:
       - SunnyDay
       - Taunt
       - Whirlpool
+      - TeraBlast
+      - Snowscape
+      - Trailblaze
+      - UpperHand
     egg:
       - Bite
       - Counter
@@ -1331,6 +1361,12 @@ Sneasel:
       - Screech
       - Snarl
       - Whirlpool
+      - TeraBlast
+      - IceSpinner
+      - Snowscape
+      - Trailblaze
+      - ChillingWater
+      - UpperHand
   SneaselHisui:
     level:
       1: [Scratch, Leer, RockSmash]
@@ -1394,6 +1430,8 @@ Sneasel:
         VacuumWave,
         Venoshock,
         XScissor,
+        TeraBlast,
+        Trailblaze,
       ]
     egg: [Counter, DoubleHit, FakeOut, Feint, NightSlash, QuickGuard, Switcheroo]
   Sneasler:
@@ -1465,6 +1503,9 @@ Sneasel:
         VacuumWave,
         Venoshock,
         XScissor,
+        TeraBlast,
+        Trailblaze,
+        UpperHand,
       ]
 Teddiursa:
   # TM, HM and tutor moves shared by the whole family
@@ -1533,6 +1574,8 @@ Teddiursa:
     - WorkUp
     - Confide
     - PowerUpPunch
+    - TeraBlast
+    - Trailblaze
   Teddiursa:
     level:
       1: [Scratch, Lick, FakeTears, Covet, Fling, BabyDollEyes, Leer]
@@ -1668,6 +1711,8 @@ Teddiursa:
         ThunderPunch,
         Uproar,
         VacuumWave,
+        HardPress,
+        SupercellSlam,
       ]
 Slugma:
   # TM, HM and tutor moves shared by the whole family
@@ -1708,6 +1753,8 @@ Slugma:
     - Incinerate
     - Confide
     - Infestation
+    - TeraBlast
+    - TemperFlare
   Slugma:
     level:
       1: [Smog, Yawn]
@@ -1843,6 +1890,9 @@ Swinub:
       - Sandstorm
       - ScaryFace
       - Superpower
+      - TeraBlast
+      - Snowscape
+      - Trailblaze
     egg:
       - AncientPower
       - Bite
@@ -1928,6 +1978,9 @@ Swinub:
       - Sandstorm
       - ScaryFace
       - Superpower
+      - TeraBlast
+      - Snowscape
+      - Trailblaze
   Mamoswine:
     level:
       1: [Tackle, Flail, PowderSnow, MudSlap, AncientPower, IceFang, DoubleHit, OdorSleuth, Peck]
@@ -2003,6 +2056,10 @@ Swinub:
       - Round
       - SandTomb
       - ScaryFace
+      - TeraBlast
+      - Snowscape
+      - Trailblaze
+      - HardPress
 Corsola:
   Corsola:
     level:
@@ -2455,6 +2512,11 @@ Delibird:
       - Spikes
       - SteelWing
       - WeatherBall
+      - TeraBlast
+      - IceSpinner
+      - Snowscape
+      - Trailblaze
+      - ChillingWater
     egg:
       - AuroraBeam
       - FutureSight

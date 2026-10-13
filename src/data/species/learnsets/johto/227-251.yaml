@@ -85,6 +85,7 @@ Skarmory:
       - SandTomb
       - Spikes
       - SwordsDance
+      - TeraBlast
     egg:
       [
         DrillPeck,
@@ -156,6 +157,9 @@ Houndour:
     - Retaliate
     - Snarl
     - Confide
+    - TeraBlast
+    - Trailblaze
+    - TemperFlare
   Houndour:
     level:
       1: [Leer, Ember]
@@ -169,7 +173,7 @@ Houndour:
       28: [FireFang]
       31: [OdorSleuth]
       32: [Payback]
-      37: [FlameCharge]
+      37: [FlameCharge, Comeuppance]
       40: [FoulPlay, Embargo]
       44: [Flamethrower]
       49: [Crunch]
@@ -204,7 +208,7 @@ Houndour:
       26: [BeatUp]
       30: [FireFang, FeintAttack]
       35: [Payback, OdorSleuth]
-      41: [FlameCharge]
+      41: [FlameCharge, Comeuppance]
       44: [Embargo]
       45: [FoulPlay]
       50: [Flamethrower]
@@ -252,6 +256,8 @@ Phanpy:
     - EchoedVoice
     - Bulldoze
     - Confide
+    - TeraBlast
+    - Trailblaze
   Phanpy:
     level:
       1: [Tackle, Growl, DefenseCurl, OdorSleuth]
@@ -324,6 +330,7 @@ Phanpy:
       - BrutalSwing
       - StompingTantrum
       - GigaImpact
+      - IceSpinner
 Stantler:
   Stantler:
     level:
@@ -405,6 +412,8 @@ Stantler:
       - CalmMind
       - LightScreen
       - Reflect
+      - TeraBlast
+      - Trailblaze
     egg:
       [
         Bite,
@@ -490,6 +499,9 @@ Stantler:
         Uproar,
         WildCharge,
         ZenHeadbutt,
+        TeraBlast,
+        Trailblaze,
+        PsychicNoise,
       ]
 Smeargle:
   Smeargle:
@@ -696,6 +708,9 @@ Raikou:
       - ShadowBall
       - ThunderFang
       - WeatherBall
+      - TeraBlast
+      - Trailblaze
+      - SupercellSlam
 Entei:
   Entei:
     level:
@@ -783,6 +798,8 @@ Entei:
       - ShadowBall
       - WeatherBall
       - WillOWisp
+      - TeraBlast
+      - Trailblaze
 Suicune:
   Suicune:
     level:
@@ -870,6 +887,10 @@ Suicune:
       - Liquidation
       - ShadowBall
       - WeatherBall
+      - TeraBlast
+      - Snowscape
+      - Trailblaze
+      - ChillingWater
 Larvitar:
   family-teachable:
     - Toxic
@@ -916,6 +937,7 @@ Larvitar:
     - Snarl
     - Confide
     - PowerUpPunch
+    - TeraBlast
   Larvitar:
     level:
       1: [Tackle, Leer]
@@ -1100,6 +1122,7 @@ Larvitar:
       - ThunderPunch
       - Uproar
       - Whirlpool
+      - HardPress
 Lugia:
   Lugia:
     level:
@@ -1213,6 +1236,9 @@ Lugia:
       - Safeguard
       - Trick
       - WeatherBall
+      - TeraBlast
+      - ChillingWater
+      - PsychicNoise
 HoOh:
   HoOh:
     level:
@@ -1317,6 +1343,7 @@ HoOh:
       - Safeguard
       - WeatherBall
       - WillOWisp
+      - TeraBlast
 Celebi:
   Celebi:
     level:

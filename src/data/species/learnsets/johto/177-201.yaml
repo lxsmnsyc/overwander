@@ -176,6 +176,8 @@ Mareep:
     - EchoedVoice
     - WildCharge
     - Confide
+    - TeraBlast
+    - Trailblaze
   Mareep:
     level:
       1: [Tackle, Growl]
@@ -299,6 +301,8 @@ Mareep:
       - Reflect
       - Safeguard
       - ThunderWave
+      - DragonCheer
+      - SupercellSlam
 Marill:
   Marill:
     level:
@@ -388,6 +392,12 @@ Marill:
       - Substitute
       - Superpower
       - Uproar
+      - TeraBlast
+      - IceSpinner
+      - Snowscape
+      - Trailblaze
+      - ChillingWater
+      - AlluringVoice
   Azumarill:
     level:
       1: [Tackle, TailWhip, WaterGun, DefenseCurl, Rollout, HelpingHand]
@@ -481,6 +491,12 @@ Marill:
       - PlayRough
       - Superpower
       - Uproar
+      - TeraBlast
+      - IceSpinner
+      - Snowscape
+      - Trailblaze
+      - ChillingWater
+      - AlluringVoice
   Azurill:
     # The whole line's inheritance, since the egg is laid as an
     # Azurill: what a Marill used to carry is carried here
@@ -543,6 +559,8 @@ Marill:
       - MuddyWater
       - Uproar
       - Whirlpool
+      - TeraBlast
+      - AlluringVoice
     egg:
       - Amnesia
       - BellyDrum
@@ -565,7 +583,7 @@ Marill:
       - MuddyWater
       - Slam
 Sudowoodo:
-  family-teachable: [Attract]
+  family-teachable: [Attract, TeraBlast, Trailblaze]
   Sudowoodo:
     level:
       1: [Slam, RockThrow, Flail, FakeTears, HammerArm, Copycat, StoneEdge, WoodHammer]
@@ -748,6 +766,8 @@ Hoppip:
     - Confide
     - DazzlingGleam
     - Infestation
+    - TeraBlast
+    - Trailblaze
   Hoppip:
     level:
       1: [Absorb, Splash]
@@ -921,6 +941,10 @@ Aipom:
       - Fling
       - NastyPlot
       - RainDance
+      - TeraBlast
+      - Trailblaze
+      - ChillingWater
+      - UpperHand
     egg:
       [
         Agility,
@@ -1016,6 +1040,10 @@ Aipom:
       - LowSweep
       - NastyPlot
       - WorkUp
+      - TeraBlast
+      - Trailblaze
+      - ChillingWater
+      - UpperHand
 Sunkern:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -1055,6 +1083,8 @@ Sunkern:
     - AfterYou
     - Round
     - Confide
+    - TeraBlast
+    - Trailblaze
   Sunkern:
     level:
       1: [Tackle, Growth]
@@ -1167,6 +1197,9 @@ Yanma:
       - BugBuzz
       - SwordsDance
       - UTurn
+      - TeraBlast
+      - Pounce
+      - PsychicNoise
     egg: [LeechLife, Reversal, Whirlwind, SignalBeam, SilverWind, Feint, DoubleEdge]
   Yanmega:
     level:
@@ -1240,6 +1273,9 @@ Yanma:
       - LaserFocus
       - BugBuzz
       - SwordsDance
+      - TeraBlast
+      - Pounce
+      - PsychicNoise
 Wooper:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -1294,6 +1330,10 @@ Wooper:
     - Confide
     - Infestation
     - StompingTantrum
+    - TeraBlast
+    - Snowscape
+    - Trailblaze
+    - ChillingWater
   Wooper:
     level:
       1: [TailWhip, WaterGun]
@@ -1452,6 +1492,8 @@ Murkrow:
       - Psychic
       - RainDance
       - Taunt
+      - TeraBlast
+      - PsychicNoise
     egg:
       - DrillPeck
       - MirrorMove
@@ -1490,7 +1532,7 @@ Murkrow:
       25: [Swagger]
       35: [NastyPlot]
       45: [FoulPlay]
-      65: [Quash]
+      65: [Quash, Comeuppance]
       75: [DarkPulse]
     teachable:
       - AerialAce
@@ -1545,6 +1587,9 @@ Murkrow:
       - Confide
       - NastyPlot
       - Snarl
+      - TeraBlast
+      - ChillingWater
+      - PsychicNoise
 Misdreavus:
   Misdreavus:
     level:
@@ -1622,6 +1667,9 @@ Misdreavus:
       - NastyPlot
       - Payback
       - WillOWisp
+      - TeraBlast
+      - Snowscape
+      - PsychicNoise
     egg:
       [
         DestinyBond,
@@ -1715,6 +1763,9 @@ Misdreavus:
       - DazzlingGleam
       - LaserFocus
       - NastyPlot
+      - TeraBlast
+      - Snowscape
+      - PsychicNoise
 Unown:
   Unown:
     level:

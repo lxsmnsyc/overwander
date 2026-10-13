@@ -39,6 +39,8 @@ Chikorita:
     - EchoedVoice
     - GrassPledge
     - Confide
+    - TeraBlast
+    - Trailblaze
   Chikorita:
     level:
       1: [Tackle, Growl]
@@ -172,6 +174,8 @@ Cyndaquil:
     - FirePledge
     - WildCharge
     - Confide
+    - TeraBlast
+    - TemperFlare
   Cyndaquil:
     level:
       1: [Tackle, Leer]
@@ -410,6 +414,9 @@ Totodile:
     - WaterPledge
     - Confide
     - PowerUpPunch
+    - TeraBlast
+    - Trailblaze
+    - ChillingWater
   Totodile:
     level:
       1: [Scratch, Leer]
@@ -568,6 +575,9 @@ Sentret:
     - Confide
     - PowerUpPunch
     - BrutalSwing
+    - TeraBlast
+    - Trailblaze
+    - ChillingWater
   Sentret:
     level:
       1: [Scratch, Growl, Tackle]
@@ -597,6 +607,7 @@ Sentret:
         Charm,
         Covet,
         LastResort,
+        TidyUp,
       ]
     teachable:
       - Blizzard
@@ -671,6 +682,7 @@ Hoothoot:
     - WorkUp
     - Confide
     - DualWingbeat
+    - TeraBlast
   Hoothoot:
     level:
       1: [Growl, Peck]
@@ -760,6 +772,7 @@ Hoothoot:
         StoredPower,
         Uproar,
         ZenHeadbutt,
+        PsychicNoise,
       ]
 Ledyba:
   # TM, HM and tutor moves shared by the whole family
@@ -898,6 +911,9 @@ Spinarak:
     - Electroweb
     - Confide
     - Infestation
+    - TeraBlast
+    - Pounce
+    - Trailblaze
   Spinarak:
     level:
       1: [PoisonSting, StringShot]
@@ -1021,6 +1037,8 @@ Chinchou:
     - Confide
     - DazzlingGleam
     - RisingVoltage
+    - TeraBlast
+    - ChillingWater
   Chinchou:
     level:
       1: [Supersonic, WaterGun, Bubble]

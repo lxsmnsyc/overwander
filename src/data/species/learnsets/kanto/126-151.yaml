@@ -89,6 +89,8 @@ Magmar:
       - Screech
       - Uproar
       - WillOWisp
+      - TeraBlast
+      - TemperFlare
   Magby:
     level:
       1: [Leer, Smog]
@@ -165,6 +167,8 @@ Magmar:
       - Screech
       - Uproar
       - WillOWisp
+      - TeraBlast
+      - TemperFlare
     egg:
       [
         Barrier,
@@ -265,6 +269,8 @@ Magmar:
       - Screech
       - Uproar
       - WeatherBall
+      - TeraBlast
+      - TemperFlare
 Pinsir:
   Pinsir:
     level:
@@ -378,7 +384,7 @@ Tauros:
       25: [ScaryFace]
       26: [Pursuit]
       30: [ZenHeadbutt]
-      35: [TakeDown, Leer]
+      35: [TakeDown, Leer, RagingBull]
       40: [Rest]
       45: [Swagger]
       50: [Thrash]
@@ -462,6 +468,8 @@ Tauros:
       - Uproar
       - Whirlpool
       - ZenHeadbutt
+      - TeraBlast
+      - Trailblaze
 Magikarp:
   Magikarp:
     level:
@@ -571,6 +579,10 @@ Magikarp:
       - PowerWhip
       - ScaryFace
       - Uproar
+      - TeraBlast
+      - ChillingWater
+      - DragonCheer
+      - TemperFlare
 Lapras:
   Lapras:
     level:
@@ -669,6 +681,12 @@ Lapras:
       - Outrage
       - Safeguard
       - WeatherBall
+      - TeraBlast
+      - Snowscape
+      - ChillingWater
+      - DragonCheer
+      - AlluringVoice
+      - PsychicNoise
     egg:
       [
         AuroraBeam,
@@ -757,6 +775,9 @@ Eevee:
       - PayDay
       - StoredPower
       - WeatherBall
+      - TeraBlast
+      - Trailblaze
+      - AlluringVoice
     egg:
       [
         Flail,
@@ -877,6 +898,10 @@ Eevee:
       - StoredPower
       - Strength
       - WeatherBall
+      - TeraBlast
+      - Trailblaze
+      - ChillingWater
+      - AlluringVoice
   Jolteon:
     level:
       1:
@@ -978,6 +1003,9 @@ Eevee:
       - Strength
       - ThunderFang
       - WeatherBall
+      - TeraBlast
+      - Trailblaze
+      - AlluringVoice
   Flareon:
     level:
       1:
@@ -1081,6 +1109,10 @@ Eevee:
       - Superpower
       - WeatherBall
       - WillOWisp
+      - TeraBlast
+      - Trailblaze
+      - AlluringVoice
+      - TemperFlare
   Espeon:
     level:
       1:
@@ -1181,6 +1213,10 @@ Eevee:
       - StoredPower
       - Trick
       - WeatherBall
+      - TeraBlast
+      - Trailblaze
+      - AlluringVoice
+      - PsychicNoise
   Umbreon:
     level:
       1:
@@ -1283,6 +1319,9 @@ Eevee:
       - StoredPower
       - Thief
       - WeatherBall
+      - TeraBlast
+      - Trailblaze
+      - AlluringVoice
   Leafeon:
     level:
       1:
@@ -1377,6 +1416,9 @@ Eevee:
       - StoredPower
       - WeatherBall
       - WorkUp
+      - TeraBlast
+      - Trailblaze
+      - AlluringVoice
   Glaceon:
     level:
       1:
@@ -1400,7 +1442,7 @@ Eevee:
       20: [IceShard]
       25: [Bite]
       30: [IceFang]
-      35: [Hail]
+      35: [Hail, Snowscape]
       40: [FreezeDry]
       45: [MirrorCoat]
       50: [Blizzard]
@@ -1464,6 +1506,9 @@ Eevee:
       - StoredPower
       - WeatherBall
       - WorkUp
+      - TeraBlast
+      - ChillingWater
+      - AlluringVoice
   Sylveon:
     level:
       1:
@@ -1561,6 +1606,9 @@ Eevee:
       - WorkUp
       - LaserFocus
       - MistyExplosion
+      - TeraBlast
+      - Trailblaze
+      - AlluringVoice
 Porygon:
   Porygon:
     level:
@@ -1646,6 +1694,7 @@ Porygon:
       - Recycle
       - SpeedSwap
       - Trick
+      - TeraBlast
   Porygon2:
     level:
       1: [Tackle, DefenseCurl, Conversion, Recycle, MagnetRise]
@@ -1723,6 +1772,7 @@ Porygon:
       - SpeedSwap
       - TriAttack
       - Trick
+      - TeraBlast
   PorygonZ:
     level:
       1: [Tackle, DefenseCurl, Conversion, Recycle, MagnetRise, NastyPlot, TrickRoom]
@@ -1800,6 +1850,7 @@ Porygon:
       - SpeedSwap
       - TriAttack
       - WonderRoom
+      - TeraBlast
 Omanyte:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -2360,6 +2411,11 @@ Snorlax:
       - Superpower
       - Uproar
       - Whirlpool
+      - TeraBlast
+      - Trailblaze
+      - ChillingWater
+      - HardPress
+      - SupercellSlam
   Munchlax:
     level:
       1: [Tackle, Lick, OdorSleuth]
@@ -2452,6 +2508,9 @@ Snorlax:
       - SelfDestruct
       - Whirlpool
       - WorkUp
+      - TeraBlast
+      - Trailblaze
+      - ChillingWater
     egg:
       - Charm
       - Curse
@@ -2479,7 +2538,7 @@ Articuno:
       35: [FreezeDry]
       40: [Roost]
       45: [IceBeam]
-      50: [Hail]
+      50: [Hail, Snowscape]
       55: [Hurricane]
       60: [MindReader]
       65: [Blizzard]
@@ -2551,6 +2610,8 @@ Articuno:
       - IcicleSpear
       - Roost
       - WeatherBall
+      - TeraBlast
+      - IceSpinner
   ArticunoGalar:
     level:
       1: [Gust, PsychoShift]
@@ -2607,6 +2668,9 @@ Articuno:
         Swift,
         TrickRoom,
         UTurn,
+        TeraBlast,
+        Snowscape,
+        PsychicNoise,
       ]
 Zapdos:
   Zapdos:
@@ -2695,6 +2759,8 @@ Zapdos:
       - Pluck
       - Roost
       - WeatherBall
+      - TeraBlast
+      - SupercellSlam
   ZapdosGalar:
     level:
       1: [Peck, FocusEnergy]
@@ -2755,6 +2821,8 @@ Zapdos:
         Taunt,
         ThroatChop,
         UTurn,
+        TeraBlast,
+        Trailblaze,
       ]
 Moltres:
   Moltres:
@@ -2844,6 +2912,8 @@ Moltres:
       - SolarBeam
       - WeatherBall
       - WillOWisp
+      - TeraBlast
+      - TemperFlare
   MoltresGalar:
     level:
       1: [Gust, Leer]
@@ -2896,6 +2966,7 @@ Moltres:
         Swift,
         Taunt,
         UTurn,
+        TeraBlast,
       ]
 Dratini:
   # TM, HM and tutor moves shared by the whole family
@@ -2955,6 +3026,9 @@ Dratini:
     - BrutalSwing
     - BreakingSwipe
     - ScaleShot
+    - TeraBlast
+    - ChillingWater
+    - DragonCheer
   Dratini:
     level:
       1: [Wrap, Leer]
@@ -3115,6 +3189,8 @@ Dratini:
       - SunnyDay
       - Superpower
       - ThunderWave
+      - IceSpinner
+      - Snowscape
 Mewtwo:
   Mewtwo:
     level:
@@ -3269,6 +3345,10 @@ Mewtwo:
       - StoredPower
       - Trick
       - WillOWisp
+      - TeraBlast
+      - Trailblaze
+      - ChillingWater
+      - PsychicNoise
 Mew:
   Mew:
     level:
@@ -3595,3 +3675,16 @@ Mew:
       - VenomDrench
       - WeatherBall
       - WillOWisp
+      - TeraBlast
+      - IceSpinner
+      - Snowscape
+      - Pounce
+      - Trailblaze
+      - ChillingWater
+      - HardPress
+      - DragonCheer
+      - AlluringVoice
+      - TemperFlare
+      - SupercellSlam
+      - PsychicNoise
+      - UpperHand

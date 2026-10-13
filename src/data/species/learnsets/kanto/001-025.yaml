@@ -50,6 +50,8 @@ Bulbasaur:
     - GrassPledge
     - Confide
     - GrassyGlide
+    - TeraBlast
+    - Trailblaze
   Bulbasaur:
     level:
       1: [Tackle, Growl]
@@ -230,6 +232,8 @@ Charmander:
     - FirePledge
     - Confide
     - PowerUpPunch
+    - TeraBlast
+    - TemperFlare
   Charmander:
     level:
       1: [Scratch, Growl]
@@ -399,6 +403,7 @@ Charmander:
       - WeatherBall
       - WillOWisp
       - WorkUp
+      - DragonCheer
 Squirtle:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -467,6 +472,9 @@ Squirtle:
     - Confide
     - PowerUpPunch
     - FlipTurn
+    - TeraBlast
+    - IceSpinner
+    - ChillingWater
   Squirtle:
     level:
       1: [Tackle, TailWhip]
@@ -1315,6 +1323,8 @@ Ekans:
     - Confide
     - Infestation
     - BrutalSwing
+    - TeraBlast
+    - Trailblaze
   Ekans:
     level:
       1: [Wrap, Leer]
@@ -1459,6 +1469,10 @@ Pikachu:
       - Surf
       - Thief
       - Uproar
+      - TeraBlast
+      - Trailblaze
+      - AlluringVoice
+      - UpperHand
   Raichu:
     level:
       1:
@@ -1571,6 +1585,10 @@ Pikachu:
       - SpeedSwap
       - Surf
       - Uproar
+      - TeraBlast
+      - Trailblaze
+      - AlluringVoice
+      - UpperHand
   Pichu:
     level:
       1: [TailWhip, ThunderShock]
@@ -1641,6 +1659,8 @@ Pikachu:
       - ThunderPunch
       - ThunderWave
       - Uproar
+      - TeraBlast
+      - Trailblaze
     egg:
       - Bide
       - DoubleSlap
@@ -1846,3 +1866,8 @@ Pikachu:
       - Surf
       - Swift
       - Uproar
+      - TeraBlast
+      - Trailblaze
+      - AlluringVoice
+      - PsychicNoise
+      - UpperHand

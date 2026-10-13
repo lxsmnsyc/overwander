@@ -92,6 +92,7 @@ Sandshrew:
       - SandTomb
       - ThroatChop
       - WorkUp
+      - TeraBlast
     egg:
       - Counter
       - Swift
@@ -205,6 +206,7 @@ Sandshrew:
       - Spikes
       - ThroatChop
       - WorkUp
+      - TeraBlast
   SandshrewAlola:
     level:
       1: [Scratch, DefenseCurl]
@@ -222,7 +224,7 @@ Sandshrew:
       33: [IronHead]
       36: [GyroBall]
       39: [SwordsDance]
-      42: [Hail]
+      42: [Hail, Snowscape]
       45: [Blizzard]
     teachable:
       - AerialAce
@@ -283,6 +285,8 @@ Sandshrew:
       - IcicleSpear
       - RockTomb
       - Swift
+      - TeraBlast
+      - IceSpinner
     egg:
       - Amnesia
       - ChipAway
@@ -388,6 +392,9 @@ Sandshrew:
       - RockTomb
       - Spikes
       - Swift
+      - TeraBlast
+      - IceSpinner
+      - Snowscape
 NidoranF:
   # TM, HM and tutor moves shared by the whole family
 
@@ -986,6 +993,9 @@ Clefairy:
       - TriAttack
       - Trick
       - Uproar
+      - TeraBlast
+      - ChillingWater
+      - AlluringVoice
   Clefable:
     level:
       1:
@@ -1141,6 +1151,9 @@ Clefairy:
       - TriAttack
       - Trick
       - Uproar
+      - TeraBlast
+      - ChillingWater
+      - AlluringVoice
   Cleffa:
     level:
       1: [Pound, Splash, Copycat]
@@ -1231,6 +1244,9 @@ Clefairy:
       - Substitute
       - Trick
       - Uproar
+      - TeraBlast
+      - ChillingWater
+      - AlluringVoice
     egg:
       - Amnesia
       - BellyDrum
@@ -1331,6 +1347,7 @@ Vulpix:
       - TailSlap
       - WeatherBall
       - WillOWisp
+      - TeraBlast
     egg:
       - Hypnosis
       - Disable
@@ -1447,6 +1464,7 @@ Vulpix:
       - TailSlap
       - WeatherBall
       - WillOWisp
+      - TeraBlast
   VulpixAlola:
     level:
       1: [TailWhip, PowderSnow]
@@ -1525,6 +1543,9 @@ Vulpix:
       - Swift
       - TailSlap
       - WeatherBall
+      - TeraBlast
+      - Snowscape
+      - ChillingWater
     egg:
       - Agility
       - Charm
@@ -1634,6 +1655,9 @@ Vulpix:
       - Swift
       - TailSlap
       - WeatherBall
+      - TeraBlast
+      - Snowscape
+      - ChillingWater
 Jigglypuff:
   Jigglypuff:
     level:
@@ -1757,6 +1781,12 @@ Jigglypuff:
       - SelfDestruct
       - TriAttack
       - Uproar
+      - TeraBlast
+      - IceSpinner
+      - Trailblaze
+      - ChillingWater
+      - AlluringVoice
+      - PsychicNoise
   Wigglytuff:
     level:
       1:
@@ -1896,6 +1926,12 @@ Jigglypuff:
       - SelfDestruct
       - TriAttack
       - Uproar
+      - TeraBlast
+      - IceSpinner
+      - Trailblaze
+      - ChillingWater
+      - AlluringVoice
+      - PsychicNoise
   Igglybuff:
     level:
       1: [Pound, Sing, Copycat]
@@ -1976,6 +2012,9 @@ Jigglypuff:
       - Recycle
       - Screech
       - Uproar
+      - TeraBlast
+      - Trailblaze
+      - AlluringVoice
     egg:
       [
         FeintAttack,
@@ -2311,6 +2350,8 @@ Oddish:
       - GrassyGlide
       - Charm
       - GrassyTerrain
+      - TeraBlast
+      - Trailblaze
     egg:
       - SwordsDance
       - RazorLeaf
@@ -2390,6 +2431,8 @@ Oddish:
       - GrassyGlide
       - Charm
       - GrassyTerrain
+      - TeraBlast
+      - Trailblaze
   Vileplume:
     level:
       1:
@@ -2468,6 +2511,8 @@ Oddish:
       - PollenPuff
       - Safeguard
       - SludgeWave
+      - TeraBlast
+      - Trailblaze
   Bellossom:
     level:
       1:
@@ -2549,6 +2594,8 @@ Oddish:
       - MagicalLeaf
       - PlayRough
       - Uproar
+      - TeraBlast
+      - Trailblaze
 Paras:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -2697,6 +2744,9 @@ Venonat:
     - StruggleBug
     - Confide
     - Infestation
+    - TeraBlast
+    - Pounce
+    - PsychicNoise
   Venonat:
     level:
       1: [Tackle, Disable, StruggleBug, Foresight]
@@ -2836,6 +2886,7 @@ Diglett:
       - Screech
       - Uproar
       - WorkUp
+      - TeraBlast
     egg:
       [
         Screech,
@@ -2939,6 +2990,7 @@ Diglett:
       - TriAttack
       - Uproar
       - WorkUp
+      - TeraBlast
   DiglettAlola:
     level:
       1: [SandAttack, MetalClaw]
@@ -3001,6 +3053,7 @@ Diglett:
       - Reversal
       - Screech
       - Uproar
+      - TeraBlast
     egg:
       - AncientPower
       - BeatUp
@@ -3081,3 +3134,4 @@ Diglett:
       - Screech
       - TriAttack
       - Uproar
+      - TeraBlast

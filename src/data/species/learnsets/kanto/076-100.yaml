@@ -347,6 +347,9 @@ Slowpoke:
       - WeatherBall
       - Whirlpool
       - ZenHeadbutt
+      - TeraBlast
+      - Snowscape
+      - ChillingWater
     egg:
       - Stomp
       - BellyDrum
@@ -490,6 +493,10 @@ Slowpoke:
       - WeatherBall
       - Whirlpool
       - ZenHeadbutt
+      - TeraBlast
+      - Snowscape
+      - ChillingWater
+      - PsychicNoise
   Slowking:
     level:
       1: [Tackle, Growl, WaterGun, Curse, Swagger, PowerGem, NastyPlot]
@@ -615,6 +622,10 @@ Slowpoke:
       - Trick
       - WeatherBall
       - ZenHeadbutt
+      - TeraBlast
+      - Snowscape
+      - ChillingWater
+      - PsychicNoise
   SlowpokeGalar:
     level:
       1: [Tackle, Curse]
@@ -689,6 +700,9 @@ Slowpoke:
         Whirlpool,
         WonderRoom,
         ZenHeadbutt,
+        TeraBlast,
+        Snowscape,
+        ChillingWater,
       ]
     egg: [Belch, BellyDrum, Block, Stomp]
   SlowbroGalar:
@@ -782,6 +796,9 @@ Slowpoke:
         Whirlpool,
         WonderRoom,
         ZenHeadbutt,
+        TeraBlast,
+        Snowscape,
+        ChillingWater,
       ]
   SlowkingGalar:
     level:
@@ -875,6 +892,9 @@ Slowpoke:
         Whirlpool,
         WonderRoom,
         ZenHeadbutt,
+        TeraBlast,
+        ChillingWater,
+        PsychicNoise,
       ]
 Magnemite:
   Magnemite:
@@ -948,6 +968,7 @@ Magnemite:
       - Recycle
       - Screech
       - SunnyDay
+      - TeraBlast
   Magneton:
     level:
       1: [Tackle, Supersonic, ThunderShock, ThunderWave, TriAttack, ElectricTerrain, SonicBoom]
@@ -1020,6 +1041,7 @@ Magnemite:
       - Screech
       - SunnyDay
       - TriAttack
+      - TeraBlast
   Magnezone:
     level:
       1:
@@ -1102,6 +1124,9 @@ Magnemite:
       - TriAttack
       - VoltSwitch
       - WildCharge
+      - TeraBlast
+      - HardPress
+      - SupercellSlam
 Farfetchd:
   Farfetchd:
     level:
@@ -1366,6 +1391,7 @@ Doduo:
     - EchoedVoice
     - WorkUp
     - Confide
+    - TeraBlast
   Doduo:
     level:
       1: [Growl, Peck]
@@ -1405,7 +1431,19 @@ Doduo:
       47: [DrillPeck]
       52: [Endeavor]
       56: [Thrash]
-    teachable: [HyperBeam, Taunt, Torment, GigaImpact, Payback, StompingTantrum, Pluck, SwordsDance]
+    teachable:
+      [
+        HyperBeam,
+        Taunt,
+        Torment,
+        GigaImpact,
+        Payback,
+        StompingTantrum,
+        Pluck,
+        SwordsDance,
+        Pounce,
+        Trailblaze,
+      ]
 Seel:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -1457,6 +1495,10 @@ Seel:
     - DrillRun
     - Confide
     - SmartStrike
+    - TeraBlast
+    - IceSpinner
+    - Snowscape
+    - ChillingWater
   Seel:
     level:
       1: [Headbutt]
@@ -1475,7 +1517,7 @@ Seel:
       43: [AquaTail]
       47: [IceBeam]
       51: [Safeguard]
-      53: [Hail]
+      53: [Hail, Snowscape]
     egg:
       [
         Lick,
@@ -1513,9 +1555,20 @@ Seel:
       49: [AquaTail]
       55: [IceBeam]
       61: [Safeguard]
-      65: [Hail]
+      65: [Hail, Snowscape]
     teachable:
-      [HyperBeam, Avalanche, GigaImpact, FrostBreath, Liquidation, Brine, Hail, IronTail, Safeguard]
+      [
+        HyperBeam,
+        Avalanche,
+        GigaImpact,
+        FrostBreath,
+        Liquidation,
+        Brine,
+        Hail,
+        IronTail,
+        Safeguard,
+        AlluringVoice,
+      ]
 Grimer:
   Grimer:
     level:
@@ -1596,6 +1649,7 @@ Grimer:
       - RockSlide
       - ShadowBall
       - Strength
+      - TeraBlast
     egg:
       [
         Haze,
@@ -1696,6 +1750,7 @@ Grimer:
       - RainDance
       - RockSlide
       - ShadowBall
+      - TeraBlast
   GrimerAlola:
     level:
       1: [PoisonGas, Pound]
@@ -1763,6 +1818,7 @@ Grimer:
       - Torment
       - Toxic
       - Venoshock
+      - TeraBlast
     egg:
       - Assurance
       - ClearSmog
@@ -1850,6 +1906,7 @@ Grimer:
       - GigaImpact
       - HyperBeam
       - Recycle
+      - TeraBlast
 Shellder:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -1894,6 +1951,10 @@ Shellder:
     - Round
     - Confide
     - Liquidation
+    - TeraBlast
+    - IceSpinner
+    - Snowscape
+    - ChillingWater
   Shellder:
     level:
       1: [Tackle, WaterGun]
@@ -2044,6 +2105,7 @@ Gastly:
     - SkitterSmack
     - Poltergeist
     - CorrosiveGas
+    - TeraBlast
   Gastly:
     level:
       1: [ConfuseRay, Lick]
@@ -2177,6 +2239,7 @@ Gastly:
       - Trick
       - Uproar
       - WillOWisp
+      - PsychicNoise
 Onix:
   Onix:
     level:
@@ -2461,6 +2524,9 @@ Drowzee:
     - Confide
     - DazzlingGleam
     - PowerUpPunch
+    - TeraBlast
+    - Trailblaze
+    - PsychicNoise
   Drowzee:
     level:
       1: [Pound, Hypnosis]
@@ -2695,6 +2761,7 @@ Voltorb:
     - VoltSwitch
     - WildCharge
     - Confide
+    - TeraBlast
   Voltorb:
     level:
       1: [Tackle, Charge]
@@ -2735,7 +2802,7 @@ Voltorb:
       47: [Explosion]
       54: [GyroBall]
       58: [MirrorCoat]
-    teachable: [HyperBeam, GigaImpact, ChargeBeam, GyroBall, LightScreen]
+    teachable: [HyperBeam, GigaImpact, ChargeBeam, GyroBall, LightScreen, SupercellSlam]
   VoltorbHisui:
     level:
       1: [Tackle, Charge]
@@ -2850,4 +2917,5 @@ Voltorb:
         Thunderbolt,
         VoltSwitch,
         WildCharge,
+        SupercellSlam,
       ]

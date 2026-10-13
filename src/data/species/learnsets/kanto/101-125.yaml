@@ -76,6 +76,8 @@ Exeggcute:
       - PowerSwap
       - SwordsDance
       - Uproar
+      - TeraBlast
+      - PsychicNoise
     egg:
       - Reflect
       - MegaDrain
@@ -194,6 +196,8 @@ Exeggcute:
       - SeedBomb
       - SwordsDance
       - Uproar
+      - TeraBlast
+      - PsychicNoise
   ExeggutorAlola:
     level:
       1:
@@ -290,6 +294,10 @@ Exeggcute:
       - PowerWhip
       - SelfDestruct
       - Uproar
+      - TeraBlast
+      - Trailblaze
+      - DragonCheer
+      - PsychicNoise
 Cubone:
   Cubone:
     level:
@@ -619,7 +627,7 @@ Cubone:
       - Swift
 Tyrogue:
   # TM, HM and tutor moves shared by the whole family
-  family-teachable: [Toxic]
+  family-teachable: [Toxic, TeraBlast, UpperHand]
   Hitmonlee:
     level:
       1: [Tackle, FocusEnergy, FakeOut, HelpingHand, BrickBreak, Feint, LowSweep, Meditate]
@@ -635,6 +643,7 @@ Tyrogue:
       36: [CloseCombat, Foresight]
       40: [Reversal]
       44: [HiJumpKick]
+      50: [AxeKick]
     teachable:
       - MegaPunch
       - MegaKick
@@ -810,6 +819,7 @@ Tyrogue:
       - RainDance
       - Revenge
       - Uproar
+      - Trailblaze
   Tyrogue:
     level:
       1: [Tackle, FocusEnergy, FakeOut, HelpingHand]
@@ -953,6 +963,7 @@ Tyrogue:
       - Revenge
       - Sandstorm
       - Uproar
+      - IceSpinner
 Lickitung:
   Lickitung:
     level:
@@ -1210,6 +1221,7 @@ Koffing:
     - Venoshock
     - Round
     - CorrosiveGas
+    - TeraBlast
   Koffing:
     level:
       1: [Tackle, PoisonGas]
@@ -1478,6 +1490,8 @@ Rhyhorn:
       - SwordsDance
       - ThunderFang
       - Uproar
+      - TeraBlast
+      - SupercellSlam
     egg:
       - RockSlide
       - Thrash
@@ -1634,6 +1648,8 @@ Rhyhorn:
       - ThunderFang
       - Uproar
       - Whirlpool
+      - TeraBlast
+      - SupercellSlam
   Rhyperior:
     level:
       1: [Tackle, TailWhip, HammerArm, SmackDown, Bulldoze, PoisonJab]
@@ -1753,6 +1769,9 @@ Rhyhorn:
       - ScaryFace
       - ThunderFang
       - Whirlpool
+      - TeraBlast
+      - TemperFlare
+      - SupercellSlam
 Chansey:
   Chansey:
     level:
@@ -1885,6 +1904,10 @@ Chansey:
       - StoredPower
       - ThunderPunch
       - Uproar
+      - TeraBlast
+      - Snowscape
+      - Trailblaze
+      - ChillingWater
   Blissey:
     level:
       1: [Pound, Minimize, DefenseCurl, SweetKiss, Charm, Covet, Copycat, DisarmingVoice]
@@ -2004,6 +2027,11 @@ Chansey:
       - ThunderPunch
       - TriAttack
       - Uproar
+      - TeraBlast
+      - Snowscape
+      - Trailblaze
+      - ChillingWater
+      - AlluringVoice
   Happiny:
     level:
       1: [Pound, Minimize, Copycat]
@@ -2066,6 +2094,8 @@ Chansey:
       - Round
       - StoredPower
       - WorkUp
+      - TeraBlast
+      - Snowscape
     egg:
       - Aromatherapy
       - Counter
@@ -2448,6 +2478,8 @@ Horsea:
       - Liquidation
       - MuddyWater
       - Outrage
+      - TeraBlast
+      - ChillingWater
     egg:
       [
         AuroraBeam,
@@ -2533,6 +2565,9 @@ Horsea:
       - Liquidation
       - MuddyWater
       - Outrage
+      - TeraBlast
+      - Snowscape
+      - ChillingWater
   Kingdra:
     level:
       1: [Leer, WaterGun, SmokeScreen, Twister, Whirlpool, Yawn, Bubble]
@@ -2604,6 +2639,9 @@ Horsea:
       - Liquidation
       - MuddyWater
       - Outrage
+      - TeraBlast
+      - Snowscape
+      - ChillingWater
 Goldeen:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -3284,6 +3322,9 @@ Scyther:
       - Reversal
       - Safeguard
       - XScissor
+      - TeraBlast
+      - Pounce
+      - Trailblaze
     egg:
       - Counter
       - LightScreen
@@ -3385,6 +3426,10 @@ Scyther:
       - Superpower
       - SwordsDance
       - XScissor
+      - TeraBlast
+      - Pounce
+      - Trailblaze
+      - HardPress
   Kleavor:
     level:
       1: [Leer, QuickAttack, StoneAxe]
@@ -3445,6 +3490,9 @@ Scyther:
         UTurn,
         VacuumWave,
         XScissor,
+        TeraBlast,
+        Pounce,
+        Trailblaze,
       ]
 Jynx:
   Jynx:
@@ -3749,6 +3797,9 @@ Electabuzz:
       - LowKick
       - Screech
       - Uproar
+      - TeraBlast
+      - Trailblaze
+      - SupercellSlam
   Elekid:
     level:
       1: [Leer, QuickAttack]
@@ -3827,6 +3878,9 @@ Electabuzz:
       - LowKick
       - Screech
       - Uproar
+      - TeraBlast
+      - Trailblaze
+      - SupercellSlam
     egg:
       [
         Barrier,
@@ -3929,3 +3983,6 @@ Electabuzz:
       - VoltSwitch
       - WeatherBall
       - WildCharge
+      - TeraBlast
+      - Trailblaze
+      - SupercellSlam

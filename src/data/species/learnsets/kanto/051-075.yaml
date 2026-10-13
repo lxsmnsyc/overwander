@@ -94,6 +94,9 @@ Meowth:
       - RainDance
       - Screech
       - Uproar
+      - TeraBlast
+      - Trailblaze
+      - ChillingWater
     egg:
       [
         Hypnosis,
@@ -207,6 +210,9 @@ Meowth:
       - RainDance
       - Screech
       - Uproar
+      - TeraBlast
+      - Trailblaze
+      - ChillingWater
   MeowthAlola:
     level:
       1: [Growl, FakeOut]
@@ -288,6 +294,9 @@ Meowth:
       - Retaliate
       - Screech
       - Swift
+      - TeraBlast
+      - Trailblaze
+      - ChillingWater
     egg:
       - Amnesia
       - Assist
@@ -389,6 +398,9 @@ Meowth:
       - Retaliate
       - Screech
       - Swift
+      - TeraBlast
+      - Trailblaze
+      - ChillingWater
   MeowthGalar:
     level:
       1: [Growl, FakeOut]
@@ -449,6 +461,8 @@ Meowth:
         UTurn,
         Uproar,
         WorkUp,
+        TeraBlast,
+        Trailblaze,
       ]
     egg: [Covet, Curse, DoubleEdge, Flail, NightSlash, Spite]
   Perrserker:
@@ -515,6 +529,9 @@ Meowth:
         UTurn,
         Uproar,
         WorkUp,
+        TeraBlast,
+        Trailblaze,
+        ChillingWater,
       ]
 Psyduck:
   # TM, HM and tutor moves shared by the whole family
@@ -589,6 +606,10 @@ Psyduck:
     - Scald
     - Confide
     - PowerUpPunch
+    - TeraBlast
+    - Trailblaze
+    - ChillingWater
+    - PsychicNoise
   Psyduck:
     level:
       1: [Scratch, TailWhip, WaterSport]
@@ -748,6 +769,7 @@ Mankey:
     - DualChop
     - Confide
     - PowerUpPunch
+    - TeraBlast
   Mankey:
     level:
       1: [Scratch, Leer, LowKick, FocusEnergy, Covet]
@@ -791,7 +813,7 @@ Mankey:
       22: [CrossChop]
       26: [Assurance]
       30: [SkullBash]
-      35: [Thrash]
+      35: [Thrash, RageFist]
       39: [CloseCombat]
       44: [Screech]
       48: [StompingTantrum]
@@ -848,6 +870,8 @@ Growlithe:
     - WildCharge
     - Snarl
     - Confide
+    - TeraBlast
+    - TemperFlare
   Growlithe:
     level:
       1: [Leer, Ember]
@@ -1161,6 +1185,8 @@ Poliwag:
       - HydroPump
       - MudShot
       - MuddyWater
+      - TeraBlast
+      - ChillingWater
     egg:
       [
         Mist,
@@ -1259,6 +1285,8 @@ Poliwag:
       - HydroPump
       - MudShot
       - MuddyWater
+      - TeraBlast
+      - ChillingWater
   Poliwrath:
     level:
       1:
@@ -1372,6 +1400,9 @@ Poliwag:
       - Reversal
       - RockSlide
       - Superpower
+      - TeraBlast
+      - ChillingWater
+      - UpperHand
   Politoed:
     level:
       1:
@@ -1467,6 +1498,8 @@ Poliwag:
       - Screech
       - Uproar
       - WeatherBall
+      - TeraBlast
+      - ChillingWater
 Abra:
   family-teachable:
     - MegaPunch
@@ -1895,6 +1928,9 @@ Bellsprout:
     - Round
     - Confide
     - Infestation
+    - TeraBlast
+    - Pounce
+    - Trailblaze
   Bellsprout:
     level:
       1: [VineWhip]
@@ -2022,6 +2058,9 @@ Tentacool:
     - Confide
     - DazzlingGleam
     - Infestation
+    - TeraBlast
+    - Pounce
+    - ChillingWater
   Tentacool:
     level:
       1: [PoisonSting, WaterGun]
@@ -2184,6 +2223,7 @@ Geodude:
       - PowerUpPunch
       - RockPolish
       - StoneEdge
+      - TeraBlast
     egg: [MegaPunch, RockSlide, Block, HammerArm, Autotomize, Curse, Flail, WideGuard]
   Graveler:
     level:
@@ -2268,6 +2308,8 @@ Geodude:
       - StompingTantrum
       - RockPolish
       - StoneEdge
+      - TeraBlast
+      - HardPress
   Golem:
     level:
       1: [Tackle, DefenseCurl, RockPolish, HeavySlam, Magnitude, MudSport]
@@ -2357,6 +2399,8 @@ Geodude:
       - StompingTantrum
       - RockPolish
       - StoneEdge
+      - TeraBlast
+      - HardPress
   GeodudeAlola:
     level:
       1: [DefenseCurl, Tackle]
@@ -2421,6 +2465,8 @@ Geodude:
       - Thunderbolt
       - Toxic
       - VoltSwitch
+      - TeraBlast
+      - SupercellSlam
     egg:
       - Autotomize
       - Block
@@ -2497,6 +2543,9 @@ Geodude:
       - AllySwitch
       - ShockWave
       - StompingTantrum
+      - TeraBlast
+      - HardPress
+      - SupercellSlam
   GolemAlola:
     level:
       1: [Charge, DefenseCurl, HeavySlam, RockPolish, Tackle]
@@ -2569,3 +2618,6 @@ Geodude:
       - ShockWave
       - StompingTantrum
       - WildCharge
+      - TeraBlast
+      - HardPress
+      - SupercellSlam

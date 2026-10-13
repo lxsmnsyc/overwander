@@ -320,6 +320,12 @@ export type EffectShape =
   | 'Maxcannon'
   | 'Mystic'
   | 'Cage'
+  | 'Collision'
+  | 'Neon'
+  | 'Calamity'
+  | 'Cudgel'
+  | 'Starstorm'
+  | 'Chains'
   | 'Whiff'
   | 'MaxFlare'
   | 'MaxGeyser'
@@ -658,6 +664,12 @@ export const SPANS: Record<EffectShape, number> = {
   Maxcannon: 1200,
   Mystic: 1100,
   Cage: 1000,
+  Collision: 1000,
+  Neon: 1000,
+  Calamity: 1100,
+  Cudgel: 900,
+  Starstorm: 1200,
+  Chains: 1000,
   Whiff: 320,
   // The Max Moves: the cloud, the blast and what the type leaves behind
   MaxFlare: 1200,

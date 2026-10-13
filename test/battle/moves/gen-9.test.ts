@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { MoveTargetType } from '../../../src/battle/events';
+import { BattleEvents, MoveTargetType } from '../../../src/battle/events';
+import { EventPriority } from '../../../src/core/event-emitter';
 import { layersUnder } from '../../../src/battle/moves/spikes';
 import turns from '../../../src/battle/turn';
 import type Unit from '../../../src/battle/unit';
@@ -216,6 +217,20 @@ describe("Paldea's moves with a rule of their own", () => {
     user.triggerMoveEffect(Moves.TidyUp, NONE_TARGET, 0);
     expect(layersUnder(teamA)).toBe(0);
     expect(user.stages[Stages.Attack]).toBe(1);
+  });
+
+  it('calls the snow once with Chilly Reception, on its wind-up', () => {
+    const { battle, teamA } = createBattle();
+    const user = createUnit(battle, teamA);
+    let called = 0;
+
+    battle.on(BattleEvents.UnitSetWeather, EventPriority.Post, () => {
+      called += 1;
+    });
+    user.triggerMoveEffect(Moves.ChillyReception, NONE_TARGET, 1);
+    user.triggerMoveEffect(Moves.ChillyReception, NONE_TARGET, 0);
+    expect(called).toBe(1);
+    expect(user.checkWeather()).toBe(Weathers.Snow);
   });
 
   it('calls up snow with Snowscape, which hardens Ice types', () => {

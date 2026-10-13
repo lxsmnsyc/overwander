@@ -484,6 +484,13 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Wildfire', Moves.FrenzyWildfire],
   ['ChargedBlast', Moves.FrenzyBlast],
   ['Iceberg', Moves.FrenzyIceberg],
+  // Paldea's legendary and mythical signatures
+  ['Collision', Moves.CollisionCourse],
+  ['Neon', Moves.ElectroDrift],
+  ['Calamity', Moves.Ruination],
+  ['Cudgel', Moves.IvyCudgel],
+  ['Starstorm', Moves.TeraStarstorm],
+  ['Chains', Moves.MalignantChain],
 ];
 
 /**
@@ -494,6 +501,8 @@ const SHAPES: [shape: string, move: Moves][] = [
 const STEP_SHAPES: [shape: string, move: Moves, steps: number][] = [
   ['Dart', Moves.UTurn, 1],
   ['Dart', Moves.FlipTurn, 1],
+  ['Doll', Moves.ShedTail, 1],
+  ['Sky', Moves.ChillyReception, 1],
 ];
 
 describe('a painted move', () => {
@@ -748,6 +757,21 @@ describe('a painted move', () => {
     // Charged and thrown the way the earlier moves of their kind are
     expect(delayShapeFor(Moves.MeteorBeam, 1)).toBe('Charge');
     expect(delayShapeFor(Moves.PyroBall, 0)).toBe('Lobbed');
+  });
+
+  it('draws the Paldea moves that are an earlier move in all but name', () => {
+    expect(effectShapeFor(Moves.SilkTrap)).toBe('Shell');
+    expect(effectShapeFor(Moves.ShedTail)).toBe('Relay');
+    expect(effectShapeFor(Moves.FilletAway)).toBe('Shed');
+    expect(effectShapeFor(Moves.TidyUp)).toBe('Clear');
+    expect(effectShapeFor(Moves.Comeuppance)).toBe('Turnabout');
+    expect(effectShapeFor(Moves.HardPress)).toBe('Grip');
+    expect(effectShapeFor(Moves.SupercellSlam)).toBe('Plummet');
+    expect(effectShapeFor(Moves.BlazingTorque)).toBe('Wheel');
+    // Electro Shot spends its first step gathering the charge, like Meteor Beam
+    expect(moveEffectVisual(Moves.ElectroShot, 1)).toBeNull();
+    expect(delayShapeFor(Moves.ElectroShot, 1)).toBe('Charge');
+    expect(delayShapeFor(Moves.SyrupBomb, 0)).toBe('Lobbed');
   });
 
   it('draws each Max Move as a picture of its own', () => {

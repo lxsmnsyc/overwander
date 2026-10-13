@@ -29,6 +29,7 @@ import maxMoves from './max-moves';
 import gMaxMoves from './g-max-moves';
 import gMaxGalar from './g-max-galar';
 import hisui from './hisui';
+import paldea from './paldea';
 
 import {
   EXACT_SPANS,
@@ -68,6 +69,7 @@ const WINDING_UP = new Set<Moves>([
   Moves.FreezeShock,
   Moves.IceBurn,
   Moves.SkyDrop,
+  Moves.ElectroShot,
 ]);
 
 /**
@@ -79,6 +81,10 @@ const WINDING_UP = new Set<Moves>([
 const WINDING_AS: Partial<Record<Moves, EffectShape>> = {
   [Moves.UTurn]: 'Dart',
   [Moves.FlipTurn]: 'Dart',
+  // Shed Tail makes its substitute and Chilly Reception calls the snow
+  // before either walks off
+  [Moves.ShedTail]: 'Doll',
+  [Moves.ChillyReception]: 'Sky',
 };
 
 /**
@@ -125,6 +131,7 @@ const PAINTERS: Record<EffectShape, ShapePainter> = {
   ...gMaxMoves,
   ...gMaxGalar,
   ...hisui,
+  ...paldea,
 };
 
 /**

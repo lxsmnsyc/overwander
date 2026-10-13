@@ -19,6 +19,7 @@ import maxMoves from './max-moves';
 import gMaxMoves from './g-max-moves';
 import gMaxGalar from './g-max-galar';
 import hisui from './hisui';
+import paldea from './paldea';
 
 export { JOLTS, reachOf } from './shapes';
 
@@ -43,4 +44,5 @@ export const LIT: Partial<Record<EffectShape, LitShapePainter>> = {
   ...gMaxMoves,
   ...gMaxGalar,
   ...hisui,
+  ...paldea,
 };

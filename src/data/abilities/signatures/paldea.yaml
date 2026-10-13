@@ -1,0 +1,8 @@
+# The signature abilities granted to the families filed under Paldea
+
+families:
+  # Paldea's three starters, each a performer: one of its blows reaches
+  # past the pokemon it was thrown at
+  Sprigatito: PetalScatter
+  Fuecoco: SpreadingFlame
+  Quaxly: Wake

@@ -7,6 +7,7 @@ land:
       Squirtle: 164
       Totodile: 164
       Mudkip: 164
+      Quaxly: 46
     uncommon:
       Chewtle: 298
       Corphish: 236
@@ -30,6 +31,7 @@ land:
       Wartortle: 58
       Croconaw: 58
       Marshtomp: 58
+      Quaxwell: 14
     scarce:
       Golduck: 61
       Slowbro: 61
@@ -57,6 +59,7 @@ land:
       GoodraHisui: 20
       Feraligatr: 15
       Swampert: 15
+      Quaquaval: 4
     prized:
       Unown: forms
       Azurill: prized
@@ -68,6 +71,7 @@ land:
       Poliwag: 1710
       Goomy: 1026
       Froakie: 171
+      Quaxly: 46
     uncommon:
       Corphish: 324
       Wooper: 324
@@ -85,6 +89,7 @@ land:
       Poliwhirl: 271
       Frogadier: 109
       SliggooHisui: 60
+      Quaxwell: 14
     scarce:
       Bibarel: 93
       Crawdaunt: 74
@@ -108,6 +113,7 @@ land:
       Goodra: 28
       GoodraHisui: 20
       Greninja: 19
+      Quaquaval: 4
     prized:
       Unown: forms
       Azurill: prized

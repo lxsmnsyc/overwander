@@ -3253,6 +3253,9 @@ export const ABILITY_IDS = {
   Afterhaunt: Abilities.Afterhaunt,
   SoulCloak: Abilities.SoulCloak,
   Bloomfall: Abilities.Bloomfall,
+  PetalScatter: Abilities.PetalScatter,
+  SpreadingFlame: Abilities.SpreadingFlame,
+  Wake: Abilities.Wake,
 } as const satisfies Record<string, Abilities>;
 
 export const ITEM_IDS = {

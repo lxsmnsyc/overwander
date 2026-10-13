@@ -1,0 +1,81 @@
+Sprigatito:
+  Sprigatito:
+    types: [Grass]
+    egg-groups: [Field, Grass]
+    biomes: [Grassland, Shrubland]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Floragato
+        method: [Level]
+        level: 16
+  Floragato:
+    types: [Grass]
+    egg-groups: [Field, Grass]
+    biomes: [Grassland, Shrubland]
+    active: [Morning, Day]
+    evolves-from: Sprigatito
+    evolves-into:
+      - species: Meowscarada
+        method: [Level]
+        level: 36
+  Meowscarada:
+    types: [Grass, Dark]
+    egg-groups: [Field, Grass]
+    biomes: [Grassland, Shrubland]
+    active: [Morning, Day]
+    evolves-from: Floragato
+Fuecoco:
+  Fuecoco:
+    types: [Fire]
+    egg-groups: [Field]
+    biomes: [Savanna, Volcano]
+    active: [Day, Evening]
+    evolves-into:
+      - species: Crocalor
+        method: [Level]
+        level: 16
+  Crocalor:
+    types: [Fire]
+    egg-groups: [Field]
+    biomes: [Savanna, Volcano]
+    active: [Day, Evening]
+    evolves-from: Fuecoco
+    evolves-into:
+      - species: Skeledirge
+        method: [Level]
+        level: 36
+  Skeledirge:
+    types: [Fire, Ghost]
+    egg-groups: [Field]
+    biomes: [Savanna, Volcano]
+    active: [Day, Evening]
+    evolves-from: Crocalor
+Quaxly:
+  Quaxly:
+    types: [Water]
+    egg-groups: [Water1, Flying]
+    habitat: Amphibious
+    biomes: [Swamp, Mangrove]
+    active: [Morning, Day, Evening]
+    evolves-into:
+      - species: Quaxwell
+        method: [Level]
+        level: 16
+  Quaxwell:
+    types: [Water]
+    egg-groups: [Water1, Flying]
+    habitat: Amphibious
+    biomes: [Swamp, Mangrove]
+    active: [Morning, Day, Evening]
+    evolves-from: Quaxly
+    evolves-into:
+      - species: Quaquaval
+        method: [Level]
+        level: 36
+  Quaquaval:
+    types: [Water, Fighting]
+    egg-groups: [Water1, Flying]
+    habitat: Amphibious
+    biomes: [Swamp, Mangrove]
+    active: [Morning, Day, Evening]
+    evolves-from: Quaxwell

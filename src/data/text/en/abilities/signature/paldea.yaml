@@ -1,0 +1,11 @@
+# The signature abilities of the families filed under Paldea
+
+PetalScatter:
+  name: Petal Scatter
+  description: A Grass critical hit it lands also deals 1/4 of that damage to every other enemy.
+SpreadingFlame:
+  name: Spreading Flame
+  description: A burn it inflicts with a Fire move also burns the other enemy lowest on HP.
+Wake:
+  name: Wake
+  description: A Water move it lands drops the target's Speed 1 stage and every other enemy's by 1 as well, at most once every 8 seconds.

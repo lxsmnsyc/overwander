@@ -67,6 +67,7 @@ land:
       Rhyhorn: 773
       Fennekin: 77
       Torchic: 77
+      Fuecoco: 46
     uncommon:
       Sunkern: 243
       Taillow: 243
@@ -90,6 +91,7 @@ land:
       Luxio: 142
       Braixen: 57
       Combusken: 28
+      Crocalor: 14
     scarce:
       Arbok: 67
       Dodrio: 67
@@ -119,6 +121,7 @@ land:
       Luxray: 16
       Delphox: 8
       Blaziken: 8
+      Skeledirge: 4
     prized:
       Unown: forms
     special: {}
@@ -128,6 +131,7 @@ land:
       NidoranF: 1579
       NidoranM: 1579
       Fennekin: 158
+      Fuecoco: 46
     uncommon:
       Wooper: 473
       Mudbray: 417
@@ -141,6 +145,7 @@ land:
       Nidorino: 368
       Luxio: 368
       Braixen: 147
+      Crocalor: 14
     scarce:
       Arbok: 130
       Mightyena: 130
@@ -156,6 +161,7 @@ land:
       Nidoking: 54
       Luxray: 43
       Delphox: 22
+      Skeledirge: 4
     prized:
       Unown: forms
     special: {}

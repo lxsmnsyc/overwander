@@ -78,6 +78,7 @@ import lightTrio from './light-trio';
 import ultraBeasts from './ultra-beasts';
 import alolaMythicals from './alola-mythicals';
 import grookeyToSobble from './grookey-to-sobble';
+import sprigatitoToQuaxly from './sprigatito-to-quaxly';
 import skwovetToYamper from './skwovet-to-yamper';
 import applinToPincurchin from './applin-to-pincurchin';
 import sinisteaToMilcery from './sinistea-to-milcery';
@@ -171,6 +172,7 @@ const setupAbilities = [
   ...tirtougaToBouffalant,
   ...forcesOfNature,
   ...grookeyToSobble,
+  ...sprigatitoToQuaxly,
   ...skwovetToYamper,
   ...applinToPincurchin,
   ...sinisteaToMilcery,

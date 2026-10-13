@@ -1,0 +1,39 @@
+Sprigatito:
+  Sprigatito:
+    abilities: [Overgrow]
+    hidden: [Protean]
+  Floragato:
+    abilities: [Overgrow]
+    hidden: [Protean]
+  Meowscarada:
+    abilities: [Overgrow]
+    # Prankster and Magician are this registry's rather than the
+    # mainline's, filling it to four: a stage magician's misdirection,
+    # and the trick of stealing what the audience holds
+    hidden: [Protean, Prankster, Magician]
+Fuecoco:
+  Fuecoco:
+    abilities: [Blaze]
+    hidden: [Unaware]
+  Crocalor:
+    abilities: [Blaze]
+    hidden: [Unaware]
+  Skeledirge:
+    abilities: [Blaze]
+    # Punk Rock and Flash Fire are this registry's rather than the
+    # mainline's, filling it to four: it sings loud, and drinks in the
+    # flames thrown at its song
+    hidden: [Unaware, PunkRock, FlashFire]
+Quaxly:
+  Quaxly:
+    abilities: [Torrent]
+    hidden: [Moxie]
+  Quaxwell:
+    abilities: [Torrent]
+    hidden: [Moxie]
+  Quaquaval:
+    abilities: [Torrent]
+    # Dancer and Quick Feet are this registry's rather than the
+    # mainline's, filling it to four: it fights in the steps of a
+    # samba, and its feet are its pride
+    hidden: [Moxie, Dancer, QuickFeet]

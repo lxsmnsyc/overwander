@@ -21,6 +21,7 @@ land:
       Poliwag: 234
       Rookidee: 177
       Scorbunny: 46
+      Sprigatito: 46
       Bulbasaur: 24
       Chikorita: 24
     uncommon:
@@ -87,6 +88,7 @@ land:
       Luxio: 49
       Poliwhirl: 49
       Raboot: 14
+      Floragato: 14
       Ivysaur: 10
       Bayleef: 10
     scarce:
@@ -175,6 +177,7 @@ land:
       Politoed: 6
       Luxray: 5
       Cinderace: 4
+      Meowscarada: 4
       Venusaur: 2
       Meganium: 2
     prized:
@@ -220,6 +223,7 @@ land:
       Rookidee: 177
       Abra: 114
       Scorbunny: 46
+      Sprigatito: 46
       Bulbasaur: 23
       Chikorita: 23
     uncommon:
@@ -288,6 +292,7 @@ land:
       Luxio: 47
       Poliwhirl: 47
       Raboot: 14
+      Floragato: 14
       Ivysaur: 10
       Bayleef: 10
     scarce:
@@ -379,6 +384,7 @@ land:
       Politoed: 6
       Luxray: 5
       Cinderace: 4
+      Meowscarada: 4
       Venusaur: 2
       Meganium: 2
     prized:

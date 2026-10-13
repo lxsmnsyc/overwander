@@ -1176,6 +1176,10 @@ const enum Abilities {
   Afterhaunt = 200487,
   SoulCloak = 200488,
   Bloomfall = 200489,
+  // Paldea: the starters, then each family where it is met
+  PetalScatter = 200490,
+  SpreadingFlame = 200491,
+  Wake = 200492,
 }
 
 export default Abilities;

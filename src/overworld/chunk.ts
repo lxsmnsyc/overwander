@@ -90,6 +90,9 @@ const CARVED_LANDMARKS: { kind: Landmark; from: Landmark; share: number; caves: 
   // The next 1 of the duel's 10, which leaves the duel 7. Open country
   // only: a Noble is a lord of the land under the sky
   { kind: Landmark.NobleArena, from: Landmark.Trainer, share: 1 / 10, caves: false },
+  // The next 1 of the cache's 15, which leaves the cache 9. Underground
+  // too: a Tera crystal grows out of rock wherever there is some
+  { kind: Landmark.TeraRaid, from: Landmark.ItemCache, share: 1 / 15, caves: true },
 ];
 
 /**

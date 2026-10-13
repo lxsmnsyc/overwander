@@ -366,6 +366,8 @@ describe('the caves', () => {
           Landmark.ShadowLair,
           // A trial site may be underground, taking a duel's place
           Landmark.Totem,
+          // And a Tera crystal, grown out of rock in a cache's place
+          Landmark.TeraRaid,
         ],
         String(kind),
       ).toContain(kind);

@@ -133,7 +133,8 @@ function describeMet(caught: CaughtPokemon): string {
     caught.type === EncounterType.TotemRaid ||
     caught.type === EncounterType.MaxRaid ||
     caught.type === EncounterType.AlphaRaid ||
-    caught.type === EncounterType.NobleRaid
+    caught.type === EncounterType.NobleRaid ||
+    caught.type === EncounterType.TeraRaid
   ) {
     const name = ENCOUNTER_TYPE_NAMES[caught.type];
 

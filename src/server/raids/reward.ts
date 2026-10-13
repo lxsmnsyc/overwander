@@ -20,6 +20,12 @@ import AleaRNG from '../../core/alea';
 import type { ItemStack } from '../../data/overworld/item-pool';
 import { getTotemCrystal } from '../../data/overworld/totems';
 import { getNobleTreasure } from '../../data/overworld/nobles';
+import {
+  TERA_RAID_EXTRA_SHARDS,
+  TERA_RAID_SHARDS,
+  getTeraRaidType,
+} from '../../data/overworld/tera-raids';
+import { getTeraShard } from '../../data/items/tera-shards';
 import { Items } from '../../data/ids/items';
 import { asOutcome } from './outcome';
 import { RAID_ENCOUNTER_TYPES, RAID_GOLD, RAID_REWARD_LEVELS, RAID_SHINY_BOOST } from './spoils';
@@ -130,6 +136,27 @@ async function nobleSpoils(uid: string, lobby: string, raid: RaidRecord): Promis
 }
 
 /**
+ * What a cleared Tera raid leaves this player beside the pokemon: Tera
+ * Shards of the boss's Tera type, `TERA_RAID_SHARDS` and up to
+ * `TERA_RAID_EXTRA_SHARDS` more. Rolled off the lobby and the player,
+ * so a claim asked twice answers the same
+ */
+async function teraSpoils(uid: string, lobby: string, raid: RaidRecord): Promise<ItemStack[]> {
+  const shard =
+    raid.kind === RaidKind.Tera ? getTeraShard(getTeraRaidType(raid.species, lobby)) : null;
+
+  if (shard == null) {
+    return [];
+  }
+
+  const rng = new AleaRNG(`${lobby}:${uid}:tera`);
+  const amount = TERA_RAID_SHARDS + Math.floor(rng.random() * (TERA_RAID_EXTRA_SHARDS + 1));
+
+  await grantItem(uid, shard, amount);
+  return [{ item: shard, amount }];
+}
+
+/**
  * Collect what a cleared raid owes. The claim marker at
  * raidRewards/{raidId}:{uid} guards it, so the raid pays each fighter
  * once however late they come back for it — the gold and the pokemon
@@ -187,6 +214,7 @@ export async function claimRaidReward(uid: string, lobby: string): Promise<RaidR
     ...(await totemCrystal(uid, lobby, raid)),
     ...(await maxRaidSpoils(uid, lobby, raid)),
     ...(await nobleSpoils(uid, lobby, raid)),
+    ...(await teraSpoils(uid, lobby, raid)),
   ];
 
   // Calmed, not caught: the purse and the items are the whole prize

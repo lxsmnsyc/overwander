@@ -14,6 +14,7 @@ import Unit from '../battle/unit';
 import { holdAlphaCopy, holdTotemAlly } from '../battle/abilities/special';
 import { holdBalms } from '../battle/abilities/noble';
 import { dynamax } from '../battle/mechanics/dynamax';
+import { terastallize } from '../battle/mechanics/terastal';
 import { UNLIMITED_BATTLE_LIMITS } from '../data/constants/battle-limits';
 import { STAT_ORDER, Stats, StatsKind, getIV } from '../data/constants/stats';
 import {
@@ -111,6 +112,9 @@ function addUnit(battle: Battle, team: Team, snapshot: CatchSnapshot): Unit {
   // After its health, which growing doubles
   if (snapshot.dynamaxed === true) {
     dynamax(unit, { permanent: true });
+  }
+  if (snapshot.terastallized === true) {
+    terastallize(unit);
   }
 
   return unit;

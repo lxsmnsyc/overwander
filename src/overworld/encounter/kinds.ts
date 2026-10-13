@@ -62,6 +62,8 @@ export const enum EncounterType {
    * it: it names the lobby's kind where every raid kind is listed
    */
   NobleRaid = 11,
+  /** Fought and caught in a Tera raid. Its prize keeps the boss's Tera type */
+  TeraRaid = 12,
 }
 
 /**
@@ -91,7 +93,8 @@ export function isRaidEncounter(type: EncounterType): boolean {
     type === EncounterType.TotemRaid ||
     type === EncounterType.MaxRaid ||
     type === EncounterType.AlphaRaid ||
-    type === EncounterType.NobleRaid
+    type === EncounterType.NobleRaid ||
+    type === EncounterType.TeraRaid
   );
 }
 
@@ -110,6 +113,7 @@ export function isShadowableEncounter(type: EncounterType): boolean {
     type === EncounterType.TotemRaid ||
     type === EncounterType.MaxRaid ||
     type === EncounterType.AlphaRaid ||
+    type === EncounterType.TeraRaid ||
     type === EncounterType.Hatched ||
     type === EncounterType.Revived
   );
@@ -140,4 +144,5 @@ export const ENCOUNTER_TYPE_NAMES: Record<EncounterType, string> = {
   [EncounterType.MaxRaid]: 'Max Raid',
   [EncounterType.AlphaRaid]: 'Alpha Raid',
   [EncounterType.NobleRaid]: 'Noble Raid',
+  [EncounterType.TeraRaid]: 'Tera Raid',
 };

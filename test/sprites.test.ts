@@ -478,6 +478,16 @@ describe('the landmarks that ship', () => {
     expect(noble.width).toBeLessThanOrEqual(noble.sourceWidth);
   });
 
+  it('draws the Tera crystal as a cluster of its own, standing on a tile', () => {
+    expect(landmarkPicture(Landmark.TeraRaid)).toBe('tera');
+
+    const [tera] = packed(LANDMARK_SHEET).filter((one) => one.name === 'tera');
+
+    // A tall point over a bed of rock, no wider than its cell
+    expect(tera.height).toBeGreaterThanOrEqual(tera.width);
+    expect(tera.width).toBeLessThanOrEqual(tera.sourceWidth);
+  });
+
   it('opens a cache this player has already dug up', () => {
     expect(landmarkPicture(Landmark.ItemCache)).toBe('cache');
     expect(landmarkPicture(Landmark.ItemCache, true)).toBe('cache-taken');

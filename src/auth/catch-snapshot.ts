@@ -112,6 +112,8 @@ export interface CatchSnapshot {
   called?: boolean;
   /** Set on a Max Raid's boss: it fights Dynamaxed from start to end */
   dynamaxed?: boolean;
+  /** Set on a Tera raid's boss: it fights Terastallized into its `teraType` from the start */
+  terastallized?: boolean;
   /**
    * Set, beside `called`, on a copy an Alpha summons. It is built
    * each time the Alpha calls one, so a fallen copy can be replaced
@@ -256,6 +258,7 @@ export function asCatchSnapshot(value: unknown): CatchSnapshot {
     ...(isTeraType(data.teraType) ? { teraType: data.teraType } : {}),
     ...(data.called === true ? { called: true } : {}),
     ...(data.dynamaxed === true ? { dynamaxed: true } : {}),
+    ...(data.terastallized === true ? { terastallized: true } : {}),
     ...(data.alphaCopy === true ? { alphaCopy: true } : {}),
     ...(typeof data.balms === 'number' && data.balms > 0 ? { balms: Math.floor(data.balms) } : {}),
   };

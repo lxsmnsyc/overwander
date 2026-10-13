@@ -165,6 +165,12 @@ const enum Landmark {
    * share of the trainer rolls beside the Totem's
    */
   NobleArena = 24,
+  /**
+   * A Tera crystal: a great jewel grown out of the ground holding a
+   * Terastallized pokemon of the tile's biome. It takes a share of the
+   * item cache rolls after the Alpha's, underground as well as above
+   */
+  TeraRaid = 25,
 }
 
 export { Landmark };

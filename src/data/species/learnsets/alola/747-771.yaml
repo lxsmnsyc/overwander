@@ -43,6 +43,10 @@ Mareanie:
     - Toxic
     - Venoshock
     - WaterPulse
+    - TeraBlast
+    - IceSpinner
+    - Pounce
+    - ChillingWater
   Mareanie:
     level:
       1: [PoisonSting, Peck]
@@ -129,6 +133,7 @@ Mudbray:
     - Superpower
     - Swagger
     - Toxic
+    - TeraBlast
   Mudbray:
     level:
       1: [MudSlap, RockSmash]
@@ -225,6 +230,10 @@ Dewpider:
     - WonderRoom
     - XScissor
     - SkitterSmack
+    - TeraBlast
+    - Pounce
+    - Trailblaze
+    - ChillingWater
   Dewpider:
     level:
       1: [WaterGun, Infestation, Bubble, WaterSport]
@@ -299,6 +308,8 @@ Fomantis:
     - WorrySeed
     - XScissor
     - GrassyGlide
+    - TeraBlast
+    - Trailblaze
   Fomantis:
     level:
       1: [FuryCutter, Leafage]
@@ -483,6 +494,9 @@ Salandit:
     - WillOWisp
     - ScaleShot
     - SkitterSmack
+    - TeraBlast
+    - Trailblaze
+    - TemperFlare
   Salandit:
     level:
       1: [Scratch, PoisonGas]
@@ -557,6 +571,7 @@ Salandit:
         Swift,
         ThunderWave,
         VenomDrench,
+        DragonCheer,
       ]
 Stufful:
   # TM and tutor moves shared by the whole family
@@ -707,6 +722,8 @@ Bounsweet:
     - WorrySeed
     - ZenHeadbutt
     - GrassyGlide
+    - TeraBlast
+    - Trailblaze
   Bounsweet:
     level:
       1: [Splash]
@@ -881,6 +898,9 @@ Comfey:
       - PlayRough
       - PollenPuff
       - StoredPower
+      - TeraBlast
+      - Trailblaze
+      - AlluringVoice
     egg: [AfterYou, Amnesia, Endure, LuckyChant, LeafTornado, WorrySeed]
 Oranguru:
   Oranguru:
@@ -973,6 +993,10 @@ Oranguru:
       - NastyPlot
       - PsychicTerrain
       - StoredPower
+      - TeraBlast
+      - Trailblaze
+      - ChillingWater
+      - PsychicNoise
     egg: [Extrasensory, PsychicTerrain, WonderRoom, DreamEater, LastResort, Yawn]
 Passimian:
   Passimian:
@@ -1059,6 +1083,10 @@ Passimian:
       - Revenge
       - Reversal
       - ScaryFace
+      - TeraBlast
+      - Trailblaze
+      - ChillingWater
+      - UpperHand
     egg: [Feint, IronHead, QuickAttack, QuickGuard, SeismicToss, VitalThrow, Counter, KnockOff]
 Wimpod:
   # TM and tutor moves shared by the whole family
@@ -1207,6 +1235,8 @@ Sandygast:
     - Trick
     - Poltergeist
     - ScorchingSands
+    - TeraBlast
+    - ChillingWater
   Sandygast:
     level:
       1: [Absorb, Harden]

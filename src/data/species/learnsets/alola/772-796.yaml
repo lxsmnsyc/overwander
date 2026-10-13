@@ -1334,6 +1334,7 @@ Minior:
     - Toxic
     - UTurn
     - ZenHeadbutt
+    - TeraBlast
   Minior:
     level:
       1: [Tackle]
@@ -1521,6 +1522,9 @@ Komala:
       - UTurn
       - WorkUp
       - ZenHeadbutt
+      - TeraBlast
+      - IceSpinner
+      - Trailblaze
     egg: [Charm, PlayRough, Sing, Wish]
 Turtonator:
   Turtonator:
@@ -1755,6 +1759,9 @@ Mimikyu:
     - WorkUp
     - XScissor
     - BurningJealousy
+    - TeraBlast
+    - Pounce
+    - Trailblaze
   Mimikyu:
     level:
       1: [Scratch, Splash, Astonish, Copycat, WoodHammer]
@@ -1874,6 +1881,9 @@ Bruxish:
       - WaterPulse
       - Waterfall
       - WonderRoom
+      - TeraBlast
+      - ChillingWater
+      - PsychicNoise
     egg: [IceFang, PoisonFang, Rage, WaterPulse]
 Drampa:
   Drampa:
@@ -2107,6 +2117,8 @@ JangmoO:
     - WorkUp
     - XScissor
     - ScaleShot
+    - TeraBlast
+    - DragonCheer
   JangmoO:
     level:
       1: [Tackle, Leer]
@@ -2157,6 +2169,7 @@ JangmoO:
         Reversal,
         ScaryFace,
         Screech,
+        UpperHand,
       ]
   KommoO:
     level:
@@ -2219,6 +2232,7 @@ JangmoO:
       - Reversal
       - ScaryFace
       - Screech
+      - UpperHand
 TapuKoko:
   TapuKoko:
     level:
@@ -2653,6 +2667,7 @@ Cosmog:
       - PsychicFangs
       - ScaryFace
       - Swift
+      - TeraBlast
   Lunala:
     level:
       1: [Confusion, Hypnosis, Teleport, CosmicPower, MoongeistBeam]
@@ -2742,6 +2757,7 @@ Cosmog:
       - PsychoCut
       - ScaryFace
       - Swift
+      - TeraBlast
 Nihilego:
   Nihilego:
     level:

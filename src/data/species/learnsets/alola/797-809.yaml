@@ -311,6 +311,7 @@ Necrozma:
       - RockBlast
       - ScaryFace
       - StoredPower
+      - TeraBlast
   NecrozmaDuskMane:
     level:
       1: [Confusion, MetalClaw, MorningSun, Moonlight, Gravity, ChargeBeam, MirrorShot]
@@ -341,6 +342,7 @@ Necrozma:
       - RockBlast
       - ScaryFace
       - StoredPower
+      - TeraBlast
   NecrozmaDawnWings:
     level:
       1: [Confusion, MetalClaw, MorningSun, Moonlight, Gravity, ChargeBeam, MirrorShot]
@@ -371,6 +373,7 @@ Necrozma:
       - RockBlast
       - ScaryFace
       - StoredPower
+      - TeraBlast
   NecrozmaUltra:
     level:
       1: [ChargeBeam, Confusion, MetalClaw, MirrorShot, Moonlight, MorningSun]
@@ -438,6 +441,9 @@ Magearna:
     - SteelBeam
     - SteelRoller
     - MistyExplosion
+    - TeraBlast
+    - IceSpinner
+    - Snowscape
   Magearna:
     level:
       1: [HelpingHand, GyroBall, SonicBoom]

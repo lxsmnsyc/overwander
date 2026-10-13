@@ -40,6 +40,8 @@ Rowlet:
     - WorrySeed
     - GrassyGlide
     - DualWingbeat
+    - TeraBlast
+    - Trailblaze
   Rowlet:
     level:
       1: [Tackle, Growl]
@@ -132,6 +134,7 @@ Rowlet:
       - PsychoCut
       - SolarBlade
       - Swift
+      - UpperHand
   DecidueyeHisui:
     level:
       1: [Tackle, Growl, UTurn, LeafStorm, Leafage, TripleArrows]
@@ -204,6 +207,7 @@ Rowlet:
         TakeDown,
         Taunt,
         UTurn,
+        UpperHand,
       ]
 Litten:
   # TM and tutor moves shared by the whole family
@@ -244,6 +248,9 @@ Litten:
     - UTurn
     - WillOWisp
     - WorkUp
+    - TeraBlast
+    - Trailblaze
+    - TemperFlare
   Litten:
     level:
       1: [Scratch, Growl]
@@ -406,6 +413,9 @@ Popplio:
     - WorkUp
     - FlipTurn
     - TripleAxel
+    - TeraBlast
+    - IceSpinner
+    - ChillingWater
   Popplio:
     level:
       1: [Pound, Growl]
@@ -506,6 +516,9 @@ Popplio:
       - StoredPower
       - WeatherBall
       - Whirlpool
+      - Snowscape
+      - AlluringVoice
+      - PsychicNoise
 Pikipek:
   # TM and tutor moves shared by the whole family
   family-teachable:
@@ -544,6 +557,7 @@ Pikipek:
     - UTurn
     - Uproar
     - WorkUp
+    - TeraBlast
   Pikipek:
     level:
       1: [Peck]
@@ -584,7 +598,7 @@ Pikipek:
       40: [BulletSeed]
       44: [FeatherDance]
       50: [HyperVoice]
-    teachable: [FlashCannon, Overheat, SeedBomb]
+    teachable: [FlashCannon, Overheat, SeedBomb, TemperFlare]
 Yungoos:
   # TM and tutor moves shared by the whole family
   family-teachable:
@@ -620,6 +634,9 @@ Yungoos:
     - UTurn
     - Uproar
     - WorkUp
+    - TeraBlast
+    - Trailblaze
+    - ChillingWater
   Yungoos:
     level:
       1: [Tackle]
@@ -699,6 +716,8 @@ Grubbin:
     - XScissor
     - RisingVoltage
     - SkitterSmack
+    - TeraBlast
+    - Pounce
   Grubbin:
     level:
       1: [ViceGrip, MudSlap]
@@ -781,6 +800,7 @@ Grubbin:
       - Fly
       - MudShot
       - Screech
+      - SupercellSlam
 Crabrawler:
   # TM and tutor moves shared by the whole family
   family-teachable:
@@ -826,6 +846,9 @@ Crabrawler:
     - Toxic
     - WorkUp
     - ZenHeadbutt
+    - TeraBlast
+    - ChillingWater
+    - UpperHand
   Crabrawler:
     level:
       1: [Bubble]
@@ -854,7 +877,8 @@ Crabrawler:
       42: [IronDefense]
       45: [DynamicPunch]
       49: [CloseCombat]
-    teachable: [Blizzard, Block, GigaImpact, Hail, IceBeam, IcyWind]
+    teachable:
+      [Blizzard, Block, GigaImpact, Hail, IceBeam, IcyWind, IceSpinner, Snowscape, HardPress]
 Oricorio:
   family-teachable:
     - Acrobatics
@@ -893,6 +917,9 @@ Oricorio:
     - Toxic
     - UTurn
     - WorkUp
+    - TeraBlast
+    - Trailblaze
+    - AlluringVoice
   Oricorio:
     level:
       1: [Pound]
@@ -1019,6 +1046,9 @@ Cutiefly:
     - UTurn
     - WonderRoom
     - DualWingbeat
+    - TeraBlast
+    - Pounce
+    - Trailblaze
   Cutiefly:
     level:
       1: [Absorb, FairyWind]
@@ -1073,6 +1103,8 @@ Cutiefly:
         PollenPuff,
         SpeedSwap,
         Swift,
+        AlluringVoice,
+        PsychicNoise,
       ]
 Rockruff:
   # TM and tutor moves shared by the whole family
@@ -1115,6 +1147,8 @@ Rockruff:
     - Taunt
     - Toxic
     - ZenHeadbutt
+    - TeraBlast
+    - Trailblaze
   Rockruff:
     level:
       1: [Tackle, Leer]
@@ -1224,6 +1258,7 @@ Rockruff:
       - Sandstorm
       - ScaryFace
       - ThunderFang
+      - UpperHand
   LycanrocDusk:
     level:
       1:

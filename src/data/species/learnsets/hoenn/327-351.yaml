@@ -142,6 +142,13 @@ Trapinch:
     - Confide
     - ScorchingSands
     - TeraBlast
+    - TakeDown
+    - Crunch
+    - SandTomb
+    - MudShot
+    - EarthPower
+    - StoneEdge
+    - StealthRock
   Trapinch:
     level:
       1: [SandAttack, Astonish]
@@ -174,11 +181,7 @@ Trapinch:
         MudShot,
       ]
     teachable:
-      - Crunch
-      - EarthPower
       - FocusEnergy
-      - MudShot
-      - SandTomb
       - Superpower
   Vibrava:
     level:
@@ -216,7 +219,6 @@ Trapinch:
       - Defog
       - DracoMeteor
       - DragonPulse
-      - EarthPower
       - OminousWind
       - Roost
       - Tailwind
@@ -225,15 +227,16 @@ Trapinch:
       - DualWingbeat
       - AirSlash
       - BugBuzz
-      - Crunch
       - FocusEnergy
       - HeatWave
-      - MudShot
       - Outrage
-      - SandTomb
       - Screech
       - Superpower
       - Uproar
+      - AirCutter
+      - AerialAce
+      - DragonClaw
+      - GigaImpact
   Flygon:
     level:
       1:
@@ -279,11 +282,9 @@ Trapinch:
       - Defog
       - DracoMeteor
       - DragonPulse
-      - EarthPower
       - GigaImpact
       - OminousWind
       - Roost
-      - StoneEdge
       - Tailwind
       - UTurn
       - HoneClaws
@@ -299,16 +300,13 @@ Trapinch:
       - AerialAce
       - AirSlash
       - BugBuzz
-      - Crunch
       - DragonDance
       - FireSpin
       - FocusEnergy
       - HeatWave
       - MegaKick
       - MegaPunch
-      - MudShot
       - Outrage
-      - SandTomb
       - Screech
       - Superpower
       - ThunderPunch
@@ -316,6 +314,10 @@ Trapinch:
       - DragonCheer
       - AlluringVoice
       - PsychicNoise
+      - Agility
+      - HelpingHand
+      - AirCutter
+      - VacuumWave
 Cacnea:
   # TM and tutor moves both stages share
   family-teachable:
@@ -369,6 +371,30 @@ Cacnea:
     - PowerUpPunch
     - TeraBlast
     - Trailblaze
+    - TakeDown
+    - LowKick
+    - Dig
+    - Swift
+    - Thief
+    - Curse
+    - Spite
+    - ScaryFace
+    - Spikes
+    - Encore
+    - RainDance
+    - HelpingHand
+    - BrickBreak
+    - Endeavor
+    - MagicalLeaf
+    - ToxicSpikes
+    - NastyPlot
+    - LeafStorm
+    - FoulPlay
+    - Bulldoze
+    - GrassyTerrain
+    - ThroatChop
+    - GrassyGlide
+    - SkitterSmack
   Cacnea:
     level:
       1: [PoisonSting, Leer]
@@ -376,8 +402,8 @@ Cacnea:
       7: [Growth]
       10: [LeechSeed]
       13: [SandAttack]
-      16: [PoisonJab]
-      19: [Assurance]
+      16: [PoisonJab, BulletSeed]
+      19: [Assurance, PowerTrip]
       22: [Ingrain]
       26: [Payback]
       29: [FeintAttack]
@@ -410,16 +436,14 @@ Cacnea:
         WorrySeed,
       ]
     teachable:
-      - BrickBreak
-      - NastyPlot
       - Payback
   Cacturne:
     level:
       1: [PoisonSting, Leer, Absorb, Growth, DestinyBond, Revenge, SpikyShield]
       10: [LeechSeed]
       13: [SandAttack]
-      16: [PoisonJab]
-      19: [Assurance]
+      16: [PoisonJab, BulletSeed]
+      19: [Assurance, PowerTrip]
       22: [Ingrain]
       26: [Payback]
       29: [FeintAttack]
@@ -437,12 +461,15 @@ Cacnea:
       - Embargo
       - FocusBlast
       - GigaImpact
-      - FoulPlay
       - Retaliate
       - StompingTantrum
-      - BrickBreak
-      - NastyPlot
       - Payback
+      - ShadowBall
+      - Taunt
+      - KnockOff
+      - ZenHeadbutt
+      - Lunge
+      - LashOut
 Swablu:
   # TM, HM and tutor moves both stages share
   family-teachable:
@@ -489,6 +516,20 @@ Swablu:
     - TeraBlast
     - Trailblaze
     - DragonCheer
+    - TakeDown
+    - Agility
+    - Haze
+    - HeatWave
+    - HelpingHand
+    - Endeavor
+    - FeatherDance
+    - HyperVoice
+    - DragonPulse
+    - BraveBird
+    - Acrobatics
+    - Hurricane
+    - DisarmingVoice
+    - PlayRough
   Swablu:
     level:
       1: [Growl, Peck]
@@ -506,19 +547,7 @@ Swablu:
       41: [Refresh]
       44: [PerishSong]
       45: [DragonPulse]
-    teachable:
-      [
-        Pluck,
-        Agility,
-        DragonPulse,
-        FalseSwipe,
-        HeatWave,
-        HyperVoice,
-        Outrage,
-        PlayRough,
-        PowerSwap,
-        Uproar,
-      ]
+    teachable: [Pluck, FalseSwipe, Outrage, PowerSwap, Uproar]
     egg:
       [
         Agility,
@@ -566,21 +595,17 @@ Swablu:
       - Incinerate
       - Bulldoze
       - BreakingSwipe
-      - Agility
       - DragonDance
-      - DragonPulse
       - FalseSwipe
       - FireSpin
-      - HeatWave
-      - Hurricane
-      - HyperVoice
       - Outrage
-      - PlayRough
       - Pluck
       - PowerSwap
       - Uproar
       - Snowscape
       - AlluringVoice
+      - WillOWisp
+      - WeatherBall
 Zangoose:
   Zangoose:
     level:
@@ -590,12 +615,12 @@ Zangoose:
       12: [HoneClaws]
       15: [AerialAce]
       19: [Slash]
-      22: [Revenge]
+      22: [Revenge, PowerTrip]
       25: [Pursuit]
       26: [CrushClaw]
       27: [Embargo]
       29: [FalseSwipe]
-      33: [Facade]
+      33: [Facade, Switcheroo]
       36: [Detect]
       40: [XScissor]
       43: [Taunt]
@@ -682,6 +707,23 @@ Zangoose:
       - XScissor
       - TeraBlast
       - UpperHand
+      - TakeDown
+      - Surf
+      - HyperBeam
+      - LowKick
+      - Agility
+      - Reversal
+      - BatonPass
+      - HelpingHand
+      - KnockOff
+      - Endeavor
+      - AuraSphere
+      - SeedBomb
+      - GigaImpact
+      - ZenHeadbutt
+      - GunkShot
+      - GrassKnot
+      - LowSweep
     egg:
       [
         Curse,
@@ -779,6 +821,28 @@ Seviper:
       - TeraBlast
       - Pounce
       - Trailblaze
+      - TakeDown
+      - HyperBeam
+      - Curse
+      - Reversal
+      - HelpingHand
+      - BrickBreak
+      - KnockOff
+      - Endeavor
+      - SeedBomb
+      - GigaImpact
+      - ThunderFang
+      - IceFang
+      - FireFang
+      - ZenHeadbutt
+      - GunkShot
+      - IronHead
+      - AcidSpray
+      - Snarl
+      - PsychicFangs
+      - BreakingSwipe
+      - SkitterSmack
+      - LashOut
     egg:
       [
         SpitUp,
@@ -1033,6 +1097,25 @@ Barboach:
     - Confide
     - TeraBlast
     - ChillingWater
+    - TakeDown
+    - HydroPump
+    - Swift
+    - Amnesia
+    - RockSlide
+    - Outrage
+    - SunnyDay
+    - FutureSight
+    - Whirlpool
+    - HelpingHand
+    - MuddyWater
+    - MudShot
+    - DragonDance
+    - ZenHeadbutt
+    - StoneEdge
+    - StealthRock
+    - HighHorsepower
+    - StompingTantrum
+    - Liquidation
   Barboach:
     level:
       1: [WaterGun, MudSlap]
@@ -1060,14 +1143,7 @@ Barboach:
         TakeDown,
       ]
     teachable:
-      - Amnesia
       - Bounce
-      - DragonDance
-      - FutureSight
-      - HydroPump
-      - MudShot
-      - MuddyWater
-      - Whirlpool
   Whiscash:
     level:
       1: [Thrash, WaterGun, Rest, Snore, MudSlap, Tickle, ZenHeadbutt, Belch, MudSport, WaterSport]
@@ -1084,23 +1160,15 @@ Barboach:
       - HyperBeam
       - Strength
       - RockSmash
-      - RockSlide
       - GigaImpact
-      - StoneEdge
-      - StompingTantrum
-      - Amnesia
       - Bounce
-      - DragonDance
-      - FutureSight
-      - HydroPump
-      - Liquidation
-      - MudShot
-      - MuddyWater
       - SandTomb
       - Uproar
       - WeatherBall
-      - Whirlpool
-      - ZenHeadbutt
+      - BodySlam
+      - Curse
+      - ScaryFace
+      - Spikes
 Corphish:
   # TM, HM and tutor moves both stages share
   family-teachable:
@@ -1154,6 +1222,21 @@ Corphish:
     - Confide
     - TeraBlast
     - ChillingWater
+    - TakeDown
+    - HydroPump
+    - RockSlide
+    - Thief
+    - FalseSwipe
+    - MetalClaw
+    - Crunch
+    - Whirlpool
+    - KnockOff
+    - Endeavor
+    - MuddyWater
+    - IronDefense
+    - MudShot
+    - DragonDance
+    - Liquidation
   Corphish:
     level:
       1: [WaterGun, Harden, Bubble]
@@ -1188,17 +1271,8 @@ Corphish:
         Switcheroo,
       ]
     teachable:
-      - Crunch
-      - DragonDance
-      - FalseSwipe
-      - HydroPump
-      - IronDefense
-      - MudShot
-      - MuddyWater
       - RazorShell
-      - RockSlide
       - Superpower
-      - Whirlpool
   Crawdaunt:
     level:
       1: [Leer, WaterGun, Harden, Swift, Taunt, Bubble, ViceGrip]
@@ -1223,23 +1297,15 @@ Corphish:
       - SludgeWave
       - Retaliate
       - Snarl
-      - Liquidation
       - LashOut
       - CloseCombat
-      - Crunch
-      - DragonDance
-      - FalseSwipe
-      - HydroPump
-      - IronDefense
-      - MudShot
-      - MuddyWater
       - NastyPlot
       - RazorShell
       - Revenge
-      - RockSlide
       - Superpower
-      - Whirlpool
       - HardPress
+      - Spite
+      - ScaryFace
 Baltoy:
   # TM and tutor moves both stages share
   family-teachable:
@@ -1631,13 +1697,19 @@ Feebas:
     - ScaleShot
     - TeraBlast
     - ChillingWater
+    - ConfuseRay
+    - LightScreen
+    - Haze
+    - Whirlpool
+    - MuddyWater
+    - MudShot
+    - DragonPulse
   Feebas:
     level:
       1: [Splash]
       15: [Tackle]
       25: [Flail]
-    teachable:
-      [Captivate, Brine, DragonPulse, IronTail, LightScreen, MudShot, MuddyWater, Whirlpool]
+    teachable: [Captivate, Brine, IronTail]
     egg: [ConfuseRay, DragonBreath, Hypnosis, LightScreen, MirrorCoat, MudSport, Haze, Mist, Tickle]
   Milotic:
     level:
@@ -1666,7 +1738,6 @@ Feebas:
       - PsychUp
       - MudSlap
       - Avalanche
-      - DragonPulse
       - GigaImpact
       - IronHead
       - Bulldoze
@@ -1682,13 +1753,11 @@ Feebas:
       - HelpingHand
       - HydroPump
       - Imprison
-      - LightScreen
-      - MudShot
-      - MuddyWater
       - WeatherBall
-      - Whirlpool
       - DragonCheer
       - AlluringVoice
+      - TakeDown
+      - DrainingKiss
 Castform:
   family-teachable:
     - WaterPulse

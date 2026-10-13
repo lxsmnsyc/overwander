@@ -47,6 +47,22 @@ Wingull:
     - TeraBlast
     - Snowscape
     - ChillingWater
+    - TakeDown
+    - HydroPump
+    - Surf
+    - Agility
+    - Waterfall
+    - Whirlpool
+    - HelpingHand
+    - KnockOff
+    - FeatherDance
+    - AirCutter
+    - MuddyWater
+    - Tailwind
+    - AirSlash
+    - BraveBird
+    - Acrobatics
+    - Hurricane
   Wingull:
     level:
       1: [Growl, WaterGun]
@@ -60,7 +76,7 @@ Wingull:
       40: [Roost]
       43: [Pursuit]
       45: [Hurricane]
-    teachable: [Tailwind, Agility, AirSlash, Hurricane, Roost, Uproar]
+    teachable: [Roost, Uproar]
     egg:
       [
         Gust,
@@ -101,23 +117,17 @@ Wingull:
       62: [HydroPump]
     teachable:
       [
-        Surf,
         HyperBeam,
         GigaImpact,
         GunkShot,
         SeedBomb,
         SkyDrop,
-        Agility,
-        AirSlash,
-        BraveBird,
         Fling,
-        Hurricane,
-        HydroPump,
         Payback,
         Roost,
         Uproar,
         WeatherBall,
-        Whirlpool,
+        BodySlam,
       ]
 Ralts:
   Ralts:
@@ -218,6 +228,9 @@ Ralts:
       - WillOWisp
       - TeraBlast
       - AlluringVoice
+      - Metronome
+      - PainSplit
+      - PsychicTerrain
     egg:
       - Disable
       - MeanLook
@@ -232,6 +245,7 @@ Ralts:
       - Encore
       - Grudge
       - KnockOff
+      - MysticalFire
   Kirlia:
     level:
       1: [Growl, Confusion, DoubleTeam, DisarmingVoice]
@@ -328,6 +342,12 @@ Ralts:
       - WillOWisp
       - TeraBlast
       - AlluringVoice
+      - HyperBeam
+      - ConfuseRay
+      - Metronome
+      - PainSplit
+      - KnockOff
+      - PsychicTerrain
   Gardevoir:
     level:
       1:
@@ -446,6 +466,14 @@ Ralts:
       - TeraBlast
       - AlluringVoice
       - PsychicNoise
+      - NightShade
+      - ConfuseRay
+      - Metronome
+      - PainSplit
+      - KnockOff
+      - Gravity
+      - AuraSphere
+      - VacuumWave
   Gallade:
     level:
       1:
@@ -470,6 +498,7 @@ Ralts:
           LifeDew,
           LeafBlade,
           AquaCutter,
+          SacredSword,
         ]
       9: [HelpingHand]
       12: [Feint]
@@ -599,6 +628,14 @@ Ralts:
       - TeraBlast
       - AlluringVoice
       - UpperHand
+      - TakeDown
+      - Agility
+      - NightShade
+      - ConfuseRay
+      - PainSplit
+      - ShadowClaw
+      - Hex
+      - PsychicTerrain
 Surskit:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -644,6 +681,22 @@ Surskit:
     - TeraBlast
     - Pounce
     - ChillingWater
+    - TakeDown
+    - HydroPump
+    - Surf
+    - Psybeam
+    - Agility
+    - Haze
+    - Waterfall
+    - LeechLife
+    - MudSlap
+    - BatonPass
+    - HelpingHand
+    - MudShot
+    - BugBuzz
+    - Acrobatics
+    - Lunge
+    - SkitterSmack
   Surskit:
     level:
       1: [WaterGun, Bubble]
@@ -696,10 +749,23 @@ Surskit:
       22: [ScaryFace, AirCutter]
       26: [StunSpore]
       32: [Supersonic]
-      38: [AirSlash]
+      38: [AirSlash, GigaDrain]
       47: [SilverWind]
     teachable:
-      [AerialAce, HyperBeam, Defog, EnergyBall, GigaImpact, Roost, Tailwind, UTurn, BugBuzz]
+      [
+        AerialAce,
+        HyperBeam,
+        Defog,
+        EnergyBall,
+        GigaImpact,
+        Roost,
+        Tailwind,
+        UTurn,
+        WeatherBall,
+        FoulPlay,
+        Hurricane,
+        DualWingbeat,
+      ]
 Shroomish:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -739,6 +805,19 @@ Shroomish:
     - Confide
     - TeraBlast
     - Pounce
+    - TakeDown
+    - Swift
+    - Charm
+    - FalseSwipe
+    - RainDance
+    - HelpingHand
+    - FakeTears
+    - MagicalLeaf
+    - SeedBomb
+    - DrainPunch
+    - ZenHeadbutt
+    - GunkShot
+    - GrassyTerrain
   Shroomish:
     level:
       1: [Tackle, Absorb]
@@ -754,9 +833,6 @@ Shroomish:
       36: [SeedBomb]
       40: [Spore]
     egg: [Charm, HelpingHand, FalseSwipe, FakeTears, WakeUpSlap, SeedBomb, WorrySeed]
-    teachable:
-      - DrainPunch
-      - FalseSwipe
   Breloom:
     level:
       1:
@@ -800,7 +876,6 @@ Shroomish:
       - MudSlap
       - FuryCutter
       - ThunderPunch
-      - DrainPunch
       - Fling
       - FocusBlast
       - GigaImpact
@@ -812,9 +887,17 @@ Shroomish:
       - WorkUp
       - PowerUpPunch
       - LaserFocus
-      - FalseSwipe
       - RockSlide
       - RockTomb
+      - LowKick
+      - Dig
+      - Reversal
+      - AerialAce
+      - MudShot
+      - CloseCombat
+      - PoisonJab
+      - LeafStorm
+      - Bulldoze
 Slakoth:
   family-teachable:
     - FocusPunch
@@ -881,6 +964,24 @@ Slakoth:
     - PowerUpPunch
     - TeraBlast
     - ChillingWater
+    - TakeDown
+    - Metronome
+    - Amnesia
+    - Thief
+    - Curse
+    - FalseSwipe
+    - Encore
+    - MetalClaw
+    - HelpingHand
+    - RockTomb
+    - MudShot
+    - Fling
+    - PoisonJab
+    - SeedBomb
+    - XScissor
+    - ZenHeadbutt
+    - PlayRough
+    - ThroatChop
   Slakoth:
     level:
       1: [Scratch, Yawn]
@@ -890,12 +991,11 @@ Slakoth:
       17: [Amnesia]
       19: [FeintAttack]
       22: [Covet]
-      25: [Headbutt]
+      25: [Headbutt, ThroatChop]
       30: [Counter]
       33: [Flail]
       37: [ChipAway]
       38: [PlayRough]
-    teachable: [Fling, RockTomb]
     egg:
       [Slash, Pursuit, CrushClaw, Curse, HammerArm, NightSlash, AfterYou, BodySlam, Snore, Tickle]
   Vigoroth:
@@ -918,7 +1018,7 @@ Slakoth:
       14: [FurySwipes]
       17: [Endure]
       23: [Slash]
-      27: [Headbutt]
+      27: [Headbutt, ThroatChop]
       33: [Counter]
       37: [FocusPunch]
       43: [ChipAway]
@@ -929,11 +1029,20 @@ Slakoth:
         Taunt,
         LowSweep,
         Bulldoze,
-        Fling,
         FocusBlast,
         RockClimb,
-        RockTomb,
         Trailblaze,
+        LowKick,
+        ThunderWave,
+        Dig,
+        ScaryFace,
+        Outrage,
+        KnockOff,
+        Endeavor,
+        HyperVoice,
+        DrainPunch,
+        StompingTantrum,
+        LashOut,
       ]
   Slaking:
     level:
@@ -959,10 +1068,11 @@ Slakoth:
       17: [Amnesia]
       19: [FeintAttack]
       23: [Covet]
-      27: [Headbutt]
+      27: [Headbutt, ThroatChop]
       33: [Counter]
       37: [ChipAway]
       39: [Flail]
+      52: [MegaKick]
       53: [SuckerPunch]
       55: [Punishment]
     teachable:
@@ -978,11 +1088,23 @@ Slakoth:
       - SmackDown
       - Quash
       - StompingTantrum
-      - Fling
-      - RockTomb
       - Pounce
       - Trailblaze
       - HardPress
+      - LowKick
+      - ThunderWave
+      - Dig
+      - ScaryFace
+      - Outrage
+      - KnockOff
+      - Endeavor
+      - HyperVoice
+      - DrainPunch
+      - HeavySlam
+      - WildCharge
+      - HighHorsepower
+      - BodyPress
+      - LashOut
 Nincada:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -1336,6 +1458,23 @@ Makuhita:
     - TeraBlast
     - ChillingWater
     - UpperHand
+    - TakeDown
+    - LowKick
+    - Swift
+    - Thief
+    - Reversal
+    - Taunt
+    - HelpingHand
+    - KnockOff
+    - MudShot
+    - CloseCombat
+    - DrainPunch
+    - ZenHeadbutt
+    - StoneEdge
+    - HeavySlam
+    - StompingTantrum
+    - BodyPress
+    - Coaching
   Makuhita:
     level:
       1: [Tackle, FocusEnergy]
@@ -1345,7 +1484,7 @@ Makuhita:
       13: [ForcePalm]
       16: [Whirlwind]
       19: [KnockOff]
-      22: [VitalThrow]
+      22: [VitalThrow, BulkUp]
       25: [BellyDrum]
       28: [Detect]
       31: [SeismicToss, SmellingSalts]
@@ -1374,7 +1513,7 @@ Makuhita:
       13: [ForcePalm]
       16: [Whirlwind]
       19: [KnockOff]
-      22: [VitalThrow]
+      22: [VitalThrow, BulkUp]
       26: [BellyDrum]
       30: [Detect]
       33: [SmellingSalts]
@@ -1384,15 +1523,17 @@ Makuhita:
       46: [CloseCombat]
       50: [Reversal]
       54: [HeavySlam]
+      60: [HeadlongRush]
     teachable:
       - HyperBeam
       - GigaImpact
       - IronHead
       - Payback
-      - StoneEdge
-      - StompingTantrum
       - ThroatChop
       - Brine
+      - Curse
+      - ScaryFace
+      - LashOut
 Nosepass:
   Nosepass:
     level:
@@ -1466,6 +1607,18 @@ Nosepass:
       - StompingTantrum
       - StoneEdge
       - TeraBlast
+      - TakeDown
+      - Curse
+      - PainSplit
+      - HelpingHand
+      - SandTomb
+      - IronDefense
+      - FlashCannon
+      - HeavySlam
+      - HighHorsepower
+      - BodyPress
+      - SteelBeam
+      - MeteorBeam
     egg: [Explosion, Magnitude, Rollout, HeadSmash, Block, DoubleEdge, WideGuard]
   Probopass:
     level:
@@ -1551,6 +1704,18 @@ Nosepass:
       - TeraBlast
       - HardPress
       - SupercellSlam
+      - BodySlam
+      - TakeDown
+      - DoubleEdge
+      - Curse
+      - PainSplit
+      - HelpingHand
+      - MetalSound
+      - SandTomb
+      - HeavySlam
+      - HighHorsepower
+      - SteelBeam
+      - MeteorBeam
 Skitty:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:

@@ -92,6 +92,8 @@ Regirock:
       - Superpower
       - TeraBlast
       - HardPress
+      - TakeDown
+      - PowerGem
 Regice:
   Regice:
     level:
@@ -183,6 +185,7 @@ Regice:
       - TeraBlast
       - IceSpinner
       - Snowscape
+      - BodyPress
 Registeel:
   Registeel:
     level:
@@ -279,6 +282,8 @@ Registeel:
       - TeraBlast
       - IceSpinner
       - HardPress
+      - TakeDown
+      - MetalSound
 Latias:
   Latias:
     level:
@@ -398,6 +403,12 @@ Latias:
       - ChillingWater
       - DragonCheer
       - AlluringVoice
+      - TakeDown
+      - WeatherBall
+      - AirCutter
+      - DisarmingVoice
+      - DrainingKiss
+      - Liquidation
 Latios:
   Latios:
     level:
@@ -515,6 +526,11 @@ Latios:
       - ChillingWater
       - DragonCheer
       - PsychicNoise
+      - TakeDown
+      - WeatherBall
+      - AirCutter
+      - Liquidation
+      - FlipTurn
 Kyogre:
   family-teachable:
     - Roar
@@ -594,6 +610,8 @@ Kyogre:
       - Whirlpool
       - TeraBlast
       - ChillingWater
+      - TakeDown
+      - HelpingHand
   KyogrePrimal:
     level:
       1: [WaterPulse]
@@ -710,6 +728,19 @@ Groudon:
       - ScaryFace
       - Uproar
       - TeraBlast
+      - TakeDown
+      - Spikes
+      - MetalClaw
+      - Crunch
+      - HeatWave
+      - WillOWisp
+      - FocusPunch
+      - HelpingHand
+      - SandTomb
+      - RockBlast
+      - FireFang
+      - ZenHeadbutt
+      - BodyPress
   GroudonPrimal:
     level:
       1: [MudShot]
@@ -833,6 +864,11 @@ Rayquaza:
       - Whirlpool
       - TeraBlast
       - DragonCheer
+      - TakeDown
+      - HelpingHand
+      - UTurn
+      - StealthRock
+      - WildCharge
 Jirachi:
   Jirachi:
     level:
@@ -937,6 +973,11 @@ Jirachi:
       - ZenHeadbutt
       - TeraBlast
       - PsychicNoise
+      - Psybeam
+      - ConfuseRay
+      - MudSlap
+      - FakeTears
+      - MetalSound
 Deoxys:
   family-teachable:
     - FocusPunch
@@ -1000,6 +1041,35 @@ Deoxys:
     - PowerUpPunch
     - TeraBlast
     - PsychicNoise
+    - FirePunch
+    - IcePunch
+    - ThunderPunch
+    - TakeDown
+    - Psybeam
+    - LowKick
+    - ThunderWave
+    - Agility
+    - NightShade
+    - Swift
+    - RockSlide
+    - Substitute
+    - ScaryFace
+    - IcyWind
+    - Endure
+    - SleepTalk
+    - PainSplit
+    - PsychUp
+    - FutureSight
+    - Trick
+    - KnockOff
+    - Imprison
+    - DarkPulse
+    - StoredPower
+    - ThroatChop
+    - PsychicTerrain
+    - StompingTantrum
+    - ExpandingForce
+    - MeteorBeam
   Deoxys:
     level:
       1: [Wrap, Leer]
@@ -1007,29 +1077,39 @@ Deoxys:
       10: [Teleport]
       15: [KnockOff]
       20: [Pursuit]
-      25: [Psychic]
+      25: [Psychic, Psyshock]
       30: [Snatch]
       35: [CosmicPower]
+      37: [Gravity]
       40: [Recover]
+      43: [SkillSwap]
       45: [PsychoBoost]
       50: [HyperBeam]
       57: [PsychoShift]
       65: [ZenHeadbutt]
+    teachable:
+      - NastyPlot
   DeoxysAttack:
     level:
       1: [Wrap, Leer]
       5: [NightShade]
       10: [Teleport]
       15: [KnockOff]
+      19: [Taunt]
       20: [Pursuit]
-      25: [Psychic]
+      25: [Psychic, Psyshock]
       30: [Snatch]
       35: [CosmicPower]
+      37: [Superpower]
       40: [Recover]
+      43: [SkillSwap]
       45: [PsychoBoost]
       50: [HyperBeam]
       57: [PsychoShift]
+      61: [ZapCannon]
       65: [ZenHeadbutt]
+    teachable:
+      - NastyPlot
   DeoxysDefense:
     level:
       1: [Wrap, Leer]
@@ -1037,26 +1117,37 @@ Deoxys:
       10: [Teleport]
       15: [KnockOff]
       20: [Pursuit]
-      25: [Psychic]
+      25: [Psychic, Spikes]
       30: [Snatch]
       35: [CosmicPower]
+      37: [Protect]
       40: [Recover]
+      43: [SkillSwap]
       45: [PsychoBoost]
       50: [HyperBeam]
+      55: [Amnesia, IronDefense]
       57: [PsychoShift]
       65: [ZenHeadbutt]
+      73: [Counter, MirrorCoat]
   DeoxysSpeed:
     level:
       1: [Wrap, Leer]
       5: [NightShade]
       10: [Teleport]
+      13: [DoubleTeam]
       15: [KnockOff]
       20: [Pursuit]
-      25: [Psychic]
+      25: [Psychic, Psyshock]
       30: [Snatch]
       35: [CosmicPower]
+      37: [Swift]
       40: [Recover]
+      43: [SkillSwap]
       45: [PsychoBoost]
       50: [HyperBeam]
+      55: [Agility]
       57: [PsychoShift]
       65: [ZenHeadbutt]
+      73: [ExtremeSpeed]
+    teachable:
+      - NastyPlot

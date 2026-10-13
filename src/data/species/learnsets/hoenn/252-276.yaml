@@ -57,6 +57,9 @@ Treecko:
     - Confide
     - PowerUpPunch
     - GrassyGlide
+    - TeraBlast
+    - Trailblaze
+    - UpperHand
   Treecko:
     level:
       1: [Pound, Leer]
@@ -201,6 +204,7 @@ Treecko:
       - SolarBlade
       - WorkUp
       - XScissor
+      - DragonCheer
 Torchic:
   family-teachable:
     - Toxic
@@ -250,6 +254,8 @@ Torchic:
     - Incinerate
     - FirePledge
     - Confide
+    - TeraBlast
+    - TemperFlare
   Torchic:
     level:
       1: [Scratch, Growl]
@@ -424,6 +430,7 @@ Torchic:
       - Superpower
       - UTurn
       - WillOWisp
+      - UpperHand
 Mudkip:
   family-teachable:
     - WaterPulse
@@ -471,6 +478,8 @@ Mudkip:
     - Scald
     - WaterPledge
     - Confide
+    - TeraBlast
+    - ChillingWater
   Mudkip:
     level:
       1: [Tackle, Growl]
@@ -614,6 +623,7 @@ Mudkip:
       - Uproar
       - Whirlpool
       - WorkUp
+      - HardPress
 Poochyena:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -659,6 +669,8 @@ Poochyena:
     - Retaliate
     - Snarl
     - Confide
+    - TeraBlast
+    - Trailblaze
   Poochyena:
     level:
       1: [Tackle]
@@ -1191,6 +1203,9 @@ Lotad:
     - Scald
     - Confide
     - GrassyGlide
+    - TeraBlast
+    - Trailblaze
+    - ChillingWater
   Lotad:
     level:
       1: [Growl, Astonish]
@@ -1316,6 +1331,7 @@ Lotad:
       - Uproar
       - WeatherBall
       - Whirlpool
+      - IceSpinner
 Seedot:
   family-teachable:
     - Toxic
@@ -1359,6 +1375,8 @@ Seedot:
     - Retaliate
     - Confide
     - GrassyGlide
+    - TeraBlast
+    - Trailblaze
   Seedot:
     level:
       1: [Tackle, Harden, Bide]
@@ -1458,6 +1476,7 @@ Seedot:
       - RockSlide
       - SelfDestruct
       - SolarBlade
+      - ChillingWater
   Shiftry:
     level:
       1:
@@ -1540,6 +1559,8 @@ Seedot:
       - Screech
       - SelfDestruct
       - SolarBlade
+      - ChillingWater
+      - UpperHand
 Taillow:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:

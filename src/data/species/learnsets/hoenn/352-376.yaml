@@ -155,6 +155,8 @@ Shuppet:
     - Round
     - Confide
     - DazzlingGleam
+    - TeraBlast
+    - Pounce
   Shuppet:
     level:
       1: [KnockOff]
@@ -214,6 +216,7 @@ Shuppet:
       - Infestation
       - ThroatChop
       - WillOWisp
+      - Trailblaze
 Duskull:
   Duskull:
     level:
@@ -291,6 +294,7 @@ Duskull:
       - Revenge
       - Trick
       - WillOWisp
+      - TeraBlast
     egg: [DestinyBond, FeintAttack, Grudge, Imprison, Memento, Haze, PainSplit]
   Dusclops:
     level:
@@ -398,6 +402,7 @@ Duskull:
       - Revenge
       - Trick
       - WillOWisp
+      - TeraBlast
   Dusknoir:
     level:
       1:
@@ -504,6 +509,8 @@ Duskull:
       - Revenge
       - Round
       - WonderRoom
+      - TeraBlast
+      - HardPress
 Tropius:
   Tropius:
     level:
@@ -572,6 +579,8 @@ Tropius:
       - BrutalSwing
       - StompingTantrum
       - DragonPulse
+      - TeraBlast
+      - Trailblaze
     egg:
       [
         LeechSeed,
@@ -587,7 +596,7 @@ Tropius:
         Synthesis,
       ]
 Chimecho:
-  family-teachable: [Attract, CalmMind]
+  family-teachable: [Attract, CalmMind, TeraBlast, PsychicNoise]
   Chimecho:
     level:
       1: [Wrap, Growl, Confusion, Astonish, HealingWish, LastResort, Entrainment]
@@ -856,7 +865,7 @@ Snorunt:
       34: [IceBeam]
       35: [Bite]
       40: [IceFang]
-      45: [Hail]
+      45: [Hail, Snowscape]
       50: [Headbutt]
       55: [Crunch]
       60: [Blizzard]
@@ -901,6 +910,10 @@ Snorunt:
       - IceFang
       - Spikes
       - WeatherBall
+      - TeraBlast
+      - IceSpinner
+      - Trailblaze
+      - ChillingWater
     egg: [Block, Spikes, Hex, Disable, FakeTears, IcicleCrash, Rollout, Switcheroo, WeatherBall]
   Glalie:
     level:
@@ -912,7 +925,7 @@ Snorunt:
       34: [IceBeam]
       35: [Bite]
       40: [IceFang]
-      47: [Hail]
+      47: [Hail, Snowscape]
       54: [Headbutt]
       61: [Crunch]
       68: [Blizzard]
@@ -975,6 +988,10 @@ Snorunt:
       - SelfDestruct
       - Spikes
       - WeatherBall
+      - TeraBlast
+      - IceSpinner
+      - Trailblaze
+      - ChillingWater
   Froslass:
     level:
       1:
@@ -999,7 +1016,7 @@ Snorunt:
       30: [FrostBreath]
       31: [Captivate]
       35: [ConfuseRay]
-      40: [Hail]
+      40: [Hail, Snowscape]
       47: [WillOWisp]
       54: [AuroraVeil]
       61: [ShadowBall]
@@ -1076,6 +1093,9 @@ Snorunt:
       - Spikes
       - WeatherBall
       - WillOWisp
+      - TeraBlast
+      - IceSpinner
+      - ChillingWater
 Spheal:
   # TM, HM and tutor moves the whole line shares
   family-teachable:
@@ -1456,6 +1476,8 @@ Luvdisc:
       - Scald
       - Confide
       - Liquidation
+      - TeraBlast
+      - Snowscape
     egg: [Splash, Supersonic, WaterSport, MudSport, AquaJet, HealPulse, AquaRing, Entrainment]
 Bagon:
   # TM, HM and tutor moves shared by the whole family
@@ -1504,6 +1526,8 @@ Bagon:
     - Round
     - Incinerate
     - Confide
+    - TeraBlast
+    - DragonCheer
   Bagon:
     level:
       1: [Leer, Ember, Rage]
@@ -1556,6 +1580,7 @@ Bagon:
         Outrage,
         ScaryFace,
         ZenHeadbutt,
+        TemperFlare,
       ]
   Salamence:
     level:
@@ -1605,11 +1630,12 @@ Bagon:
       - ScaryFace
       - ThunderFang
       - ZenHeadbutt
+      - TemperFlare
 Beldum:
   Beldum:
     level:
       1: [Tackle, TakeDown]
-    teachable: [IronHead, ZenHeadbutt, SteelBeam, IronDefense]
+    teachable: [IronHead, ZenHeadbutt, SteelBeam, IronDefense, TeraBlast]
   Metang:
     level:
       1: [Tackle, Confusion, MetalClaw, BulletPunch]
@@ -1699,6 +1725,10 @@ Beldum:
       - SelfDestruct
       - Trick
       - ZenHeadbutt
+      - TeraBlast
+      - Trailblaze
+      - HardPress
+      - PsychicNoise
   Metagross:
     level:
       1: [Tackle, Confusion, MetalClaw, HammerArm, BulletPunch]
@@ -1793,3 +1823,7 @@ Beldum:
       - SelfDestruct
       - Trick
       - ZenHeadbutt
+      - TeraBlast
+      - Trailblaze
+      - HardPress
+      - PsychicNoise

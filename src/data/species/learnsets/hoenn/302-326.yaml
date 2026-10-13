@@ -110,6 +110,7 @@ Sableye:
       - Trick
       - WillOWisp
       - ZenHeadbutt
+      - TeraBlast
     egg:
       [
         Moonlight,
@@ -511,6 +512,9 @@ Meditite:
     - WorkUp
     - Confide
     - PowerUpPunch
+    - TeraBlast
+    - Trailblaze
+    - UpperHand
   Meditite:
     level:
       1: [Pound, Bide]
@@ -566,7 +570,7 @@ Meditite:
       36: [PowerTrick]
       42: [Reversal]
       47: [Recover]
-      53: [Counter]
+      53: [Counter, AxeKick]
     teachable: [HyperBeam, RockSlide, EnergyBall, GigaImpact, LaserFocus, Recycle]
 Electrike:
   # TM, HM and tutor moves shared by the whole family
@@ -759,6 +763,9 @@ Plusle:
       - Confide
       - NastyPlot
       - SkillSwap
+      - TeraBlast
+      - Trailblaze
+      - AlluringVoice
     egg: [Wish, Discharge, TearfulLook, Charm, FakeTears, Sing, SweetKiss]
 Minun:
   Minun:
@@ -832,6 +839,9 @@ Minun:
       - WildCharge
       - Confide
       - NastyPlot
+      - TeraBlast
+      - Trailblaze
+      - AlluringVoice
     egg: [Wish, Discharge, TearfulLook, Charm, FakeTears, Sing, SweetKiss]
 Volbeat:
   Volbeat:
@@ -914,6 +924,10 @@ Volbeat:
       - DazzlingGleam
       - PowerUpPunch
       - BugBuzz
+      - TeraBlast
+      - Pounce
+      - Trailblaze
+      - ChillingWater
     egg: [BatonPass, SilverWind, Trick, Lunge, Encore, SeismicToss]
 Illumise:
   Illumise:
@@ -995,6 +1009,9 @@ Illumise:
       - DazzlingGleam
       - PowerUpPunch
       - BugBuzz
+      - TeraBlast
+      - Pounce
+      - Trailblaze
     egg: [BatonPass, Growth, SilverWind, Aromatherapy, ConfuseRay, Encore, FakeTears]
 Roselia:
   family-teachable: [Attract, GrassyGlide]
@@ -1257,6 +1274,7 @@ Gulpin:
     - Confide
     - Infestation
     - PowerUpPunch
+    - TeraBlast
   Gulpin:
     level:
       1: [Pound]
@@ -1577,6 +1595,9 @@ Numel:
     - Incinerate
     - Bulldoze
     - Confide
+    - TeraBlast
+    - Trailblaze
+    - TemperFlare
   Numel:
     level:
       1: [Tackle, Growl]
@@ -1732,6 +1753,8 @@ Torkoal:
       - Superpower
       - WeatherBall
       - WillOWisp
+      - TeraBlast
+      - TemperFlare
     egg:
       [Yawn, Eruption, FlameBurst, ClearSmog, AncientPower, Fissure, Flail, SkullBash, Superpower]
 Spoink:
@@ -1783,6 +1806,10 @@ Spoink:
     - Telekinesis
     - Round
     - Confide
+    - TeraBlast
+    - Snowscape
+    - Trailblaze
+    - ChillingWater
   Spoink:
     level:
       1: [Splash]
@@ -1845,3 +1872,4 @@ Spoink:
       - Payback
       - Recycle
       - ThunderWave
+      - PsychicNoise

@@ -90,6 +90,8 @@ Regirock:
       - SelfDestruct
       - StoneEdge
       - Superpower
+      - TeraBlast
+      - HardPress
 Regice:
   Regice:
     level:
@@ -178,6 +180,9 @@ Regice:
       - RockTomb
       - SelfDestruct
       - Superpower
+      - TeraBlast
+      - IceSpinner
+      - Snowscape
 Registeel:
   Registeel:
     level:
@@ -271,6 +276,9 @@ Registeel:
       - SandTomb
       - SelfDestruct
       - Superpower
+      - TeraBlast
+      - IceSpinner
+      - HardPress
 Latias:
   Latias:
     level:
@@ -386,6 +394,10 @@ Latias:
       - Trick
       - Whirlpool
       - ZenHeadbutt
+      - TeraBlast
+      - ChillingWater
+      - DragonCheer
+      - AlluringVoice
 Latios:
   Latios:
     level:
@@ -499,6 +511,10 @@ Latios:
       - Trick
       - Whirlpool
       - ZenHeadbutt
+      - TeraBlast
+      - ChillingWater
+      - DragonCheer
+      - PsychicNoise
 Kyogre:
   family-teachable:
     - Roar
@@ -576,6 +592,8 @@ Kyogre:
       - ScaryFace
       - Uproar
       - Whirlpool
+      - TeraBlast
+      - ChillingWater
   KyogrePrimal:
     level:
       1: [WaterPulse]
@@ -691,6 +709,7 @@ Groudon:
       - MudShot
       - ScaryFace
       - Uproar
+      - TeraBlast
   GroudonPrimal:
     level:
       1: [MudShot]
@@ -812,6 +831,8 @@ Rayquaza:
       - SwordsDance
       - Uproar
       - Whirlpool
+      - TeraBlast
+      - DragonCheer
 Jirachi:
   Jirachi:
     level:
@@ -914,6 +935,8 @@ Jirachi:
       - Trick
       - Uproar
       - ZenHeadbutt
+      - TeraBlast
+      - PsychicNoise
 Deoxys:
   family-teachable:
     - FocusPunch
@@ -975,6 +998,8 @@ Deoxys:
     - AllySwitch
     - Confide
     - PowerUpPunch
+    - TeraBlast
+    - PsychicNoise
   Deoxys:
     level:
       1: [Wrap, Leer]

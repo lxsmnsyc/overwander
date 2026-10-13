@@ -141,6 +141,7 @@ Trapinch:
     - Bulldoze
     - Confide
     - ScorchingSands
+    - TeraBlast
   Trapinch:
     level:
       1: [SandAttack, Astonish]
@@ -312,6 +313,9 @@ Trapinch:
       - Superpower
       - ThunderPunch
       - Uproar
+      - DragonCheer
+      - AlluringVoice
+      - PsychicNoise
 Cacnea:
   # TM and tutor moves both stages share
   family-teachable:
@@ -363,6 +367,8 @@ Cacnea:
     - Round
     - Confide
     - PowerUpPunch
+    - TeraBlast
+    - Trailblaze
   Cacnea:
     level:
       1: [PoisonSting, Leer]
@@ -480,6 +486,9 @@ Swablu:
     - Confide
     - DazzlingGleam
     - DualWingbeat
+    - TeraBlast
+    - Trailblaze
+    - DragonCheer
   Swablu:
     level:
       1: [Growl, Peck]
@@ -570,6 +579,8 @@ Swablu:
       - Pluck
       - PowerSwap
       - Uproar
+      - Snowscape
+      - AlluringVoice
 Zangoose:
   Zangoose:
     level:
@@ -669,6 +680,8 @@ Zangoose:
       - FalseSwipe
       - RockTomb
       - XScissor
+      - TeraBlast
+      - UpperHand
     egg:
       [
         Curse,
@@ -763,6 +776,9 @@ Seviper:
       - ThroatChop
       - PoisonJab
       - SwordsDance
+      - TeraBlast
+      - Pounce
+      - Trailblaze
     egg:
       [
         SpitUp,
@@ -1015,6 +1031,8 @@ Barboach:
     - Scald
     - Bulldoze
     - Confide
+    - TeraBlast
+    - ChillingWater
   Barboach:
     level:
       1: [WaterGun, MudSlap]
@@ -1134,6 +1152,8 @@ Corphish:
     - Round
     - Scald
     - Confide
+    - TeraBlast
+    - ChillingWater
   Corphish:
     level:
       1: [WaterGun, Harden, Bubble]
@@ -1219,6 +1239,7 @@ Corphish:
       - RockSlide
       - Superpower
       - Whirlpool
+      - HardPress
 Baltoy:
   # TM and tutor moves both stages share
   family-teachable:
@@ -1608,6 +1629,8 @@ Feebas:
     - Scald
     - Confide
     - ScaleShot
+    - TeraBlast
+    - ChillingWater
   Feebas:
     level:
       1: [Splash]
@@ -1664,6 +1687,8 @@ Feebas:
       - MuddyWater
       - WeatherBall
       - Whirlpool
+      - DragonCheer
+      - AlluringVoice
 Castform:
   family-teachable:
     - WaterPulse

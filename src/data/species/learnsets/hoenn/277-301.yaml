@@ -44,6 +44,9 @@ Wingull:
     - Confide
     - Liquidation
     - DualWingbeat
+    - TeraBlast
+    - Snowscape
+    - ChillingWater
   Wingull:
     level:
       1: [Growl, WaterGun]
@@ -213,6 +216,8 @@ Ralts:
       - Swift
       - Trick
       - WillOWisp
+      - TeraBlast
+      - AlluringVoice
     egg:
       - Disable
       - MeanLook
@@ -321,6 +326,8 @@ Ralts:
       - Swift
       - Trick
       - WillOWisp
+      - TeraBlast
+      - AlluringVoice
   Gardevoir:
     level:
       1:
@@ -436,6 +443,9 @@ Ralts:
       - Swift
       - Trick
       - WillOWisp
+      - TeraBlast
+      - AlluringVoice
+      - PsychicNoise
   Gallade:
     level:
       1:
@@ -459,6 +469,7 @@ Ralts:
           DrainingKiss,
           LifeDew,
           LeafBlade,
+          AquaCutter,
         ]
       9: [HelpingHand]
       12: [Feint]
@@ -585,6 +596,9 @@ Ralts:
       - WillOWisp
       - WonderRoom
       - WorkUp
+      - TeraBlast
+      - AlluringVoice
+      - UpperHand
 Surskit:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -627,6 +641,9 @@ Surskit:
     - Confide
     - Infestation
     - Liquidation
+    - TeraBlast
+    - Pounce
+    - ChillingWater
   Surskit:
     level:
       1: [WaterGun, Bubble]
@@ -720,6 +737,8 @@ Shroomish:
     - Venoshock
     - Round
     - Confide
+    - TeraBlast
+    - Pounce
   Shroomish:
     level:
       1: [Tackle, Absorb]
@@ -860,6 +879,8 @@ Slakoth:
     - WorkUp
     - Confide
     - PowerUpPunch
+    - TeraBlast
+    - ChillingWater
   Slakoth:
     level:
       1: [Scratch, Yawn]
@@ -901,7 +922,19 @@ Slakoth:
       33: [Counter]
       37: [FocusPunch]
       43: [ChipAway]
-    teachable: [Roar, Earthquake, Taunt, LowSweep, Bulldoze, Fling, FocusBlast, RockClimb, RockTomb]
+    teachable:
+      [
+        Roar,
+        Earthquake,
+        Taunt,
+        LowSweep,
+        Bulldoze,
+        Fling,
+        FocusBlast,
+        RockClimb,
+        RockTomb,
+        Trailblaze,
+      ]
   Slaking:
     level:
       1:
@@ -947,6 +980,9 @@ Slakoth:
       - StompingTantrum
       - Fling
       - RockTomb
+      - Pounce
+      - Trailblaze
+      - HardPress
 Nincada:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -1297,6 +1333,9 @@ Makuhita:
     - WorkUp
     - Confide
     - PowerUpPunch
+    - TeraBlast
+    - ChillingWater
+    - UpperHand
   Makuhita:
     level:
       1: [Tackle, FocusEnergy]
@@ -1426,6 +1465,7 @@ Nosepass:
       - DazzlingGleam
       - StompingTantrum
       - StoneEdge
+      - TeraBlast
     egg: [Explosion, Magnitude, Rollout, HeadSmash, Block, DoubleEdge, WideGuard]
   Probopass:
     level:
@@ -1508,6 +1548,9 @@ Nosepass:
       - StompingTantrum
       - Bulldoze
       - VoltSwitch
+      - TeraBlast
+      - HardPress
+      - SupercellSlam
 Skitty:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:

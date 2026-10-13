@@ -121,6 +121,12 @@ Applin:
         SunnyDay,
         UTurn,
         Trailblaze,
+        TakeDown,
+        Endeavor,
+        AerialAce,
+        MagicalLeaf,
+        LeafStorm,
+        GrassyTerrain,
       ]
   Appletun:
     level:
@@ -172,6 +178,16 @@ Applin:
         SunnyDay,
         Superpower,
         Trailblaze,
+        TakeDown,
+        RainDance,
+        HelpingHand,
+        MagicalLeaf,
+        ZenHeadbutt,
+        LeafStorm,
+        IronHead,
+        DragonTail,
+        GrassyTerrain,
+        StompingTantrum,
       ]
 Silicobra:
   # TM, TR and tutor moves shared by the whole family
@@ -199,6 +215,16 @@ Silicobra:
     - Snore
     - Substitute
     - TeraBlast
+    - BodySlam
+    - TakeDown
+    - RockSlide
+    - ScaryFace
+    - MudSlap
+    - RockTomb
+    - PoisonTail
+    - RockBlast
+    - StoneEdge
+    - StealthRock
   Silicobra:
     level:
       1: [SandAttack, Wrap]
@@ -235,12 +261,9 @@ Silicobra:
         IronDefense,
         IronHead,
         Outrage,
-        RockBlast,
-        RockSlide,
-        RockTomb,
-        StealthRock,
-        StoneEdge,
         ZenHeadbutt,
+        Endeavor,
+        ThunderFang,
       ]
 Cramorant:
   # TM, TR and tutor moves shared by the whole family
@@ -295,6 +318,14 @@ Cramorant:
     egg: [AerialAce, AquaRing, Defog, FeatherDance, Roost, AquaCutter]
     teachable:
       - ChillingWater
+      - TakeDown
+      - Endeavor
+      - AirCutter
+      - WaterPulse
+      - Tailwind
+      - Acrobatics
+      - TeraBlast
+      - Pounce
   CramorantGulping:
     level:
       1: [Peck, Stockpile, SpitUp, Swallow, Belch]
@@ -351,6 +382,12 @@ Arrokuda:
     - Whirlpool
     - TeraBlast
     - ChillingWater
+    - TakeDown
+    - DoubleEdge
+    - HydroPump
+    - Surf
+    - WaterPulse
+    - FlipTurn
   Arrokuda:
     level:
       1: [Peck, AquaJet]
@@ -358,7 +395,7 @@ Arrokuda:
       12: [Bite]
       18: [Agility]
       24: [Dive]
-      30: [LaserFocus]
+      30: [LaserFocus, FocusEnergy]
       36: [Crunch]
       42: [Liquidation]
       48: [DoubleEdge]
@@ -368,11 +405,11 @@ Arrokuda:
       1: [FuryAttack, Bite, Peck, AquaJet, ThroatChop]
       18: [Agility]
       24: [Dive]
-      32: [LaserFocus]
+      32: [LaserFocus, FocusEnergy]
       40: [Crunch]
       48: [Liquidation]
       56: [DoubleEdge]
-    teachable: [FlipTurn, GigaImpact, HydroPump, HyperBeam, ScaryFace, Surf]
+    teachable: [GigaImpact, HyperBeam, ScaryFace, IceBeam, Blizzard]
 Toxel:
   # TM, TR and tutor moves shared by the whole family
   family-teachable:
@@ -387,6 +424,9 @@ Toxel:
     - Snore
     - Substitute
     - TeraBlast
+    - Charm
+    - Endeavor
+    - MetalSound
   Toxel:
     level:
       1: [Growl, Acid, Flail, Belch, Nuzzle, TearfulLook]
@@ -457,6 +497,19 @@ Toxel:
         WildCharge,
         Trailblaze,
         PsychicNoise,
+        TakeDown,
+        Metronome,
+        Thief,
+        RainDance,
+        SunnyDay,
+        HelpingHand,
+        BrickBreak,
+        PoisonTail,
+        ToxicSpikes,
+        ThunderFang,
+        ChargeBeam,
+        Electroweb,
+        ElectricTerrain,
       ]
   ToxtricityLowKey:
     level:
@@ -524,6 +577,20 @@ Toxel:
         WildCharge,
         Trailblaze,
         PsychicNoise,
+        TakeDown,
+        Metronome,
+        Thief,
+        RainDance,
+        SunnyDay,
+        HelpingHand,
+        BrickBreak,
+        PoisonTail,
+        ToxicSpikes,
+        ThunderFang,
+        ChargeBeam,
+        Venoshock,
+        Electroweb,
+        ElectricTerrain,
       ]
 Sizzlipede:
   # TM, TR and tutor moves shared by the whole family
@@ -694,6 +761,15 @@ Sinistea:
     - WillOWisp
     - WonderRoom
     - TeraBlast
+    - Psybeam
+    - NightShade
+    - ConfuseRay
+    - Curse
+    - Spite
+    - SkillSwap
+    - MagicalLeaf
+    - CalmMind
+    - TrickRoom
   Sinistea:
     level:
       1: [Withdraw, Astonish]
@@ -701,25 +777,27 @@ Sinistea:
       12: [MegaDrain]
       18: [Protect]
       24: [SuckerPunch]
-      30: [Aromatherapy]
+      30: [Aromatherapy, SweetScent]
       36: [GigaDrain]
       42: [NastyPlot]
       48: [ShadowBall]
       54: [Memento]
       60: [ShellSmash]
+    egg:
+      - AllySwitch
   Polteageist:
     level:
       1: [MegaDrain, Withdraw, Astonish, AromaticMist, StrengthSap, Teatime]
       18: [Protect]
       24: [SuckerPunch]
-      30: [Aromatherapy]
+      30: [Aromatherapy, SweetScent]
       36: [GigaDrain]
       42: [NastyPlot]
       48: [ShadowBall]
       54: [Memento]
       60: [ShellSmash]
       66: [Curse]
-    teachable: [GigaImpact, HyperBeam, LightScreen, Reflect, SelfDestruct]
+    teachable: [GigaImpact, HyperBeam, LightScreen, Reflect, SelfDestruct, PainSplit]
 Hatenna:
   # TM, TR and tutor moves shared by the whole family
   family-teachable:
@@ -753,6 +831,17 @@ Hatenna:
     - Substitute
     - ThunderWave
     - TeraBlast
+    - Psybeam
+    - Reflect
+    - Metronome
+    - Swift
+    - PsychUp
+    - FutureSight
+    - Trick
+    - TrickRoom
+    - DisarmingVoice
+    - MistyTerrain
+    - PsychicTerrain
   Hatenna:
     level:
       1: [Confusion, PlayNice]
@@ -765,11 +854,11 @@ Hatenna:
       35: [CalmMind]
       40: [Psychic]
       45: [HealingWish]
-    egg: [AfterYou, AromaticMist, Nuzzle, Quash]
+    egg: [AfterYou, AromaticMist, Nuzzle, Quash, MysticalFire]
   Hattrem:
     level:
       1: [Confusion, DisarmingVoice, PlayNice, BrutalSwing, LifeDew]
-      15: [Aromatherapy]
+      15: [Aromatherapy, AromaticMist]
       20: [Psybeam]
       25: [HealPulse]
       30: [DazzlingGleam]
@@ -780,7 +869,7 @@ Hatenna:
   Hatterene:
     level:
       1: [Confusion, PsychoCut, DisarmingVoice, PlayNice, BrutalSwing, LifeDew]
-      15: [Aromatherapy]
+      15: [Aromatherapy, AromaticMist]
       20: [Psybeam]
       25: [HealPulse]
       30: [DazzlingGleam]
@@ -791,7 +880,6 @@ Hatenna:
     teachable:
       [
         BrutalSwing,
-        FutureSight,
         GigaImpact,
         GuardSwap,
         HyperBeam,
@@ -803,9 +891,11 @@ Hatenna:
         ShadowBall,
         ShadowClaw,
         SwordsDance,
-        TrickRoom,
         WonderRoom,
         PsychicNoise,
+        Agility,
+        PainSplit,
+        Gravity,
       ]
 Impidimp:
   # TM, TR and tutor moves shared by the whole family
@@ -845,6 +935,13 @@ Impidimp:
     - TeraBlast
     - Trailblaze
     - ChillingWater
+    - TakeDown
+    - LightScreen
+    - Reflect
+    - ScaryFace
+    - Fling
+    - MistyTerrain
+    - ThroatChop
   Impidimp:
     level:
       1: [FakeOut, Confide]
@@ -859,6 +956,8 @@ Impidimp:
       36: [NastyPlot]
       40: [PlayRough]
       44: [FoulPlay]
+    egg:
+      - PartingShot
   Morgrem:
     level:
       1: [Bite, FakeOut, Flatter, Confide, FalseSurrender]
@@ -871,7 +970,7 @@ Impidimp:
       40: [NastyPlot]
       46: [PlayRough]
       52: [FoulPlay]
-    teachable: [LightScreen, Reflect, ShadowClaw, ThroatChop]
+    teachable: [ShadowClaw, Imprison]
   Grimmsnarl:
     level:
       1: [Bite, FakeOut, Flatter, BulkUp, Confide, PowerUpPunch, SpiritBreak, FalseSurrender]
@@ -899,16 +998,14 @@ Impidimp:
         GigaImpact,
         HyperBeam,
         IcePunch,
-        LightScreen,
         LowSweep,
         PowerSwap,
         PowerWhip,
-        Reflect,
-        ScaryFace,
         ShadowClaw,
         StompingTantrum,
         Superpower,
-        ThroatChop,
         ThunderPunch,
         WonderRoom,
+        FocusPunch,
+        Imprison,
       ]

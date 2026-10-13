@@ -288,11 +288,14 @@ Combee:
     - Tailwind
     - DualWingbeat
     - TeraBlast
+    - SleepTalk
+    - BugBuzz
+    - StruggleBug
+    - Lunge
+    - SkitterSmack
   Combee:
     level:
       1: [Gust, SweetScent, BugBite, StruggleBug]
-    teachable:
-      - BugBuzz
   Vespiquen:
     level:
       1: [Gust, PoisonSting, ConfuseRay, Slash, SweetScent, BugBite, StruggleBug]
@@ -335,7 +338,6 @@ Combee:
       - SecretPower
       - SignalBeam
       - SilverWind
-      - SleepTalk
       - SludgeBomb
       - Substitute
       - SunnyDay
@@ -351,7 +353,6 @@ Combee:
       - AirSlash
       - Assurance
       - BeatUp
-      - BugBuzz
       - CrossPoison
       - Hex
       - PinMissile
@@ -365,10 +366,19 @@ Combee:
       - Venoshock
       - Pounce
       - PsychicNoise
+      - TakeDown
+      - Agility
+      - Spite
+      - ScaryFace
+      - Spikes
+      - Taunt
+      - HelpingHand
+      - Hurricane
+      - PollenPuff
 Pachirisu:
   Pachirisu:
     level:
-      1: [Growl, BabyDollEyes, Bide]
+      1: [Growl, BabyDollEyes, Bide, ThunderShock]
       5: [QuickAttack]
       9: [Charm]
       13: [Spark]
@@ -430,6 +440,22 @@ Pachirisu:
       - TeraBlast
       - Trailblaze
       - AlluringVoice
+      - TakeDown
+      - HyperBeam
+      - Agility
+      - Thief
+      - Encore
+      - SunnyDay
+      - Endeavor
+      - AerialAce
+      - MudShot
+      - GigaImpact
+      - ThunderFang
+      - Electroweb
+      - WildCharge
+      - PlayRough
+      - EerieImpulse
+      - ElectricTerrain
     egg:
       [
         IonDeluge,
@@ -491,6 +517,22 @@ Buizel:
     - TeraBlast
     - IceSpinner
     - ChillingWater
+    - TakeDown
+    - Roar
+    - HydroPump
+    - LowKick
+    - Agility
+    - Thief
+    - MudSlap
+    - BatonPass
+    - Crunch
+    - Taunt
+    - HelpingHand
+    - Fling
+    - IceFang
+    - LowSweep
+    - Liquidation
+    - FlipTurn
   Buizel:
     level:
       1: [Tackle, SonicBoom, WaterSport]
@@ -504,10 +546,11 @@ Buizel:
       24: [AquaJet]
       27: [DoubleHit]
       31: [Whirlpool]
-      35: [Waterfall]
+      35: [Waterfall, Liquidation]
       38: [AquaTail]
       41: [Agility]
       45: [HydroPump, RazorWind]
+      49: [WaveCrash]
     egg:
       - BatonPass
       - DoubleSlap
@@ -526,7 +569,7 @@ Buizel:
       - Scald
   Floatzel:
     level:
-      1: [Tackle, Growl, QuickAttack, Crunch, IceFang, SonicBoom, WaterSport]
+      1: [Tackle, Growl, QuickAttack, Crunch, IceFang, SonicBoom, WaterSport, Soak]
       7: [TailWhip]
       10: [Pursuit]
       15: [WaterGun]
@@ -535,25 +578,27 @@ Buizel:
       24: [AquaJet]
       29: [DoubleHit]
       35: [Whirlpool]
-      41: [Waterfall]
+      41: [Waterfall, Liquidation]
       46: [AquaTail]
       50: [RazorWind]
       51: [Agility]
       57: [HydroPump]
+      62: [WaveCrash]
     teachable:
       - AquaTail
       - FocusBlast
       - GigaImpact
       - Headbutt
       - HyperBeam
-      - LowKick
-      - MudSlap
       - Payback
-      - Roar
-      - Taunt
       - Torment
-      - Liquidation
       - Scald
+      - BodySlam
+      - DoubleEdge
+      - Metronome
+      - ScaryFace
+      - MuddyWater
+      - Snarl
 Cherubi:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -759,6 +804,16 @@ Shellos:
       - TeraBlast
       - Snowscape
       - ChillingWater
+      - TakeDown
+      - Waterfall
+      - RockSlide
+      - Sandstorm
+      - HelpingHand
+      - RockTomb
+      - StoneEdge
+      - StealthRock
+      - Bulldoze
+      - Liquidation
   ShellosEast:
     level:
       1: [WaterGun, MudSlap]
@@ -841,6 +896,13 @@ Shellos:
       - TeraBlast
       - Snowscape
       - ChillingWater
+      - TakeDown
+      - Curse
+      - Spikes
+      - HelpingHand
+      - RockBlast
+      - StealthRock
+      - Liquidation
   GastrodonEast:
     level:
       1: [WaterGun, Recover, Harden, MudSlap]
@@ -941,6 +1003,22 @@ Drifloon:
     - Confide
     - TeraBlast
     - TemperFlare
+    - Fly
+    - Psybeam
+    - NightShade
+    - Haze
+    - Amnesia
+    - Curse
+    - BatonPass
+    - HelpingHand
+    - Imprison
+    - WeatherBall
+    - AerialAce
+    - TrickRoom
+    - StoredPower
+    - Hex
+    - Acrobatics
+    - PhantomForce
   Drifloon:
     level:
       1: [Minimize, Astonish, Constrict]
@@ -970,17 +1048,12 @@ Drifloon:
         Tailwind,
       ]
     teachable:
-      - Acrobatics
       - AllySwitch
-      - Amnesia
-      - BatonPass
       - BodySlam
       - BrutalSwing
       - FocusEnergy
-      - Hex
       - Round
       - SelfDestruct
-      - WeatherBall
   Drifblim:
     level:
       1: [Gust, Minimize, FocusEnergy, Astonish, PhantomForce, StrengthSap, Constrict]
@@ -996,22 +1069,16 @@ Drifloon:
       54: [Explosion]
     teachable:
       [
-        Fly,
         GigaImpact,
         HyperBeam,
-        Acrobatics,
         AllySwitch,
-        Amnesia,
-        BatonPass,
         BodySlam,
         BrutalSwing,
         FocusEnergy,
-        Hex,
-        Imprison,
-        PhantomForce,
         Round,
         SelfDestruct,
-        WeatherBall,
+        Fling,
+        AirSlash,
       ]
 Buneary:
   # TM, HM and tutor moves shared by the whole family
@@ -1312,6 +1379,26 @@ Stunky:
     - TeraBlast
     - Trailblaze
     - TemperFlare
+    - BodySlam
+    - TakeDown
+    - DoubleEdge
+    - Haze
+    - ScaryFace
+    - Crunch
+    - HelpingHand
+    - KnockOff
+    - PoisonTail
+    - ToxicSpikes
+    - PoisonJab
+    - NastyPlot
+    - GunkShot
+    - Venoshock
+    - SludgeWave
+    - AcidSpray
+    - FoulPlay
+    - Hex
+    - Snarl
+    - PlayRough
   Stunky:
     level:
       1: [Scratch, PoisonGas]
@@ -1346,19 +1433,11 @@ Stunky:
       - Slash
     teachable:
       - Assurance
-      - Crunch
       - FocusEnergy
-      - FoulPlay
-      - Hex
-      - NastyPlot
-      - PlayRough
       - Round
-      - ScaryFace
       - Screech
-      - Snarl
       - TailSlap
       - VenomDrench
-      - Venoshock
   Skuntank:
     level:
       1: [Scratch, Flamethrower, SmokeScreen, PoisonGas, Feint]
@@ -1380,24 +1459,17 @@ Stunky:
       [
         GigaImpact,
         HyperBeam,
-        PoisonJab,
         Strength,
         BurningJealousy,
         Assurance,
-        Crunch,
         FireSpin,
         FocusEnergy,
-        FoulPlay,
-        Hex,
-        NastyPlot,
-        PlayRough,
         Round,
-        ScaryFace,
         Screech,
-        Snarl,
         TailSlap,
         VenomDrench,
-        Venoshock,
+        SuperFang,
+        Endeavor,
       ]
 Bronzor:
   # TM, HM and tutor moves shared by the whole family
@@ -1453,6 +1525,26 @@ Bronzor:
     - SteelRoller
     - TeraBlast
     - IceSpinner
+    - BodySlam
+    - TakeDown
+    - ConfuseRay
+    - FutureSight
+    - HelpingHand
+    - Imprison
+    - MetalSound
+    - IronDefense
+    - RockBlast
+    - Gravity
+    - PowerGem
+    - ZenHeadbutt
+    - IronHead
+    - Psyshock
+    - HeavySlam
+    - StoredPower
+    - Hex
+    - Bulldoze
+    - PsychicTerrain
+    - StompingTantrum
   Bronzor:
     level:
       1: [Tackle, Confusion]
@@ -1471,18 +1563,14 @@ Bronzor:
       52: [HealBlock]
     teachable:
       - AllySwitch
-      - Bulldoze
-      - FutureSight
       - GuardSwap
-      - HeavySlam
-      - Hex
-      - Imprison
-      - IronDefense
       - PowerSwap
-      - Psyshock
       - Round
       - SpeedSwap
       - WonderRoom
+    egg:
+      - Recycle
+      - Gravity
   Bronzong:
     level:
       1: [Tackle, Confusion, ConfuseRay, SunnyDay, WeatherBall, Block, Payback]
@@ -1502,27 +1590,19 @@ Bronzor:
         Explosion,
         GigaImpact,
         HyperBeam,
-        IronHead,
         RockSmash,
         Strength,
-        ZenHeadbutt,
         BodyPress,
         MeteorBeam,
         AllySwitch,
-        Bulldoze,
-        FutureSight,
         GuardSwap,
-        HeavySlam,
-        Hex,
-        Imprison,
-        IronDefense,
         PowerSwap,
-        PsychicTerrain,
-        Psyshock,
         Round,
         SpeedSwap,
         WeatherBall,
         WonderRoom,
         HardPress,
         PsychicNoise,
+        Psybeam,
+        NightShade,
       ]

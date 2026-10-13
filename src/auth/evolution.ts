@@ -13,6 +13,7 @@ import { featOfEvolution } from '../data/species/feats';
 import evolveOnServerSide from '../server/evolution';
 import { requireUid } from '../server/auth';
 import check, { GAME_ID, ID, LOCALE, OFFSET, TOKEN } from '../server/validate';
+import { getCandyCount } from './candy';
 import { type CaughtPokemon, getCaught } from './caught';
 import { getStats } from './health';
 import { type InventoryEntry, getInventory } from './inventory';
@@ -38,8 +39,8 @@ export interface EvolutionOption {
    */
   covered: boolean;
   /**
-   * How far along a feat counted across fights is, or the steps
-   * walked, where it asks one
+   * How far along a feat counted across fights is, the steps walked or
+   * the candies held, where it asks one
    */
   progress?: number;
 }
@@ -85,6 +86,16 @@ export async function listEvolutionOptions(
     }
   }
 
+  const roads = getSpeciesData(caught.species).evolvesInto ?? [];
+  let candies = 0;
+
+  for (const road of roads) {
+    if ((road.method & EvolutionMethod.Candy) !== 0) {
+      candies = await getCandyCount(uid, getSpeciesData(caught.species).family);
+      break;
+    }
+  }
+
   const context = {
     species: caught.species,
     level: caught.level,
@@ -98,12 +109,13 @@ export async function listEvolutionOptions(
     gender: caught.gender,
     nature: caught.nature,
     walked: caught.walked,
+    candies,
     rare: isOneInAHundred(caught.traitValue),
   };
 
   const options: EvolutionOption[] = [];
 
-  for (const evolution of getSpeciesData(caught.species).evolvesInto ?? []) {
+  for (const evolution of roads) {
     // A husk comes out beside another evolution, so it is no row of its own
     if (
       evolution.shed !== true &&
@@ -118,6 +130,7 @@ export async function listEvolutionOptions(
           ? { progress: caught.featProgress }
           : {}),
         ...((evolution.method & EvolutionMethod.Walked) === 0 ? {} : { progress: caught.walked }),
+        ...((evolution.method & EvolutionMethod.Candy) === 0 ? {} : { progress: candies }),
       });
     }
   }

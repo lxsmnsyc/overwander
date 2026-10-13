@@ -1422,7 +1422,8 @@
         "Weather",
         "StatComparison",
         "Special",
-        "Walked"
+        "Walked",
+        "Candy"
       ]
     },
     "move": {

@@ -5,7 +5,8 @@ and **Gimmighoul's line**, each with a signature ability.
 
 ## Gimmighoul and Gholdengo
 
-**Gimmighoul** wanders the woodland and grows into **Gholdengo** at level 40.
+**Gimmighoul** wanders the woodland and grows into **Gholdengo** for 999
+Gimmighoul candies.
 It is drawn on the move until the collection draws its chest.
 
 - **Coin Scatter:** each damaging move it lands scatters coins the way Pay Day

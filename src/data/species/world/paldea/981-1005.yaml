@@ -32,8 +32,8 @@ Gimmighoul:
     active: any
     evolves-into:
       - species: Gholdengo
-        method: [Level]
-        level: 40
+        method: [Candy]
+        candies: 999
   Gholdengo:
     types: [Steel, Ghost]
     egg-groups: [NoEggsDiscovered]

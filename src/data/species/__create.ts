@@ -80,6 +80,12 @@ export interface EvolutionData {
    */
   walked?: number;
   /**
+   * The candies of its own family the evolution spends
+   * (EvolutionMethod.Candy). Gimmighoul is the only line that asks:
+   * the mainline's 999 coins, paid in its own candy
+   */
+  candies?: number;
+  /**
    * Whether the road is the one in a hundred or every other one.
    * Tandemaus is the only line that asks: the family of three is the
    * rare split. Read off the catch's trait value, so like a nature it

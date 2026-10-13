@@ -76,6 +76,10 @@ export const enum EvolutionMethod {
    * Steps walked as the player's buddy
    */
   Walked = 0b10000000000000,
+  /**
+   * Candies of its own family, spent on the evolution
+   */
+  Candy = 0b100000000000000,
 }
 
 /** Where a species can be met: on the ground, in the water, or either */

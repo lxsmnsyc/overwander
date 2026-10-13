@@ -41,6 +41,19 @@ Chikorita:
     - Confide
     - TeraBlast
     - Trailblaze
+    - BodySlam
+    - TakeDown
+    - LightScreen
+    - Reflect
+    - Charm
+    - Encore
+    - HelpingHand
+    - FakeTears
+    - MagicalLeaf
+    - LeafStorm
+    - GrassyTerrain
+    - SolarBlade
+    - GrassyGlide
   Chikorita:
     level:
       1: [Tackle, Growl]
@@ -54,7 +67,7 @@ Chikorita:
       31: [LightScreen]
       34: [BodySlam]
       39: [Safeguard]
-      42: [Aromatherapy]
+      42: [Aromatherapy, GigaDrain]
       45: [SolarBeam]
     egg:
       - VineWhip
@@ -72,8 +85,6 @@ Chikorita:
       - Aromatherapy
       - BodySlam
     teachable:
-      - LightScreen
-      - Reflect
       - Safeguard
       - WorkUp
   Bayleef:
@@ -82,12 +93,12 @@ Chikorita:
       12: [Synthesis]
       18: [Reflect]
       22: [MagicalLeaf]
-      26: [NaturePower, NaturalGift]
+      26: [NaturePower, NaturalGift, LeechSeed]
       32: [SweetScent]
       36: [LightScreen]
       40: [BodySlam]
       46: [Safeguard]
-      50: [Aromatherapy]
+      50: [Aromatherapy, GigaDrain]
       54: [SolarBeam]
     teachable:
       [
@@ -96,10 +107,10 @@ Chikorita:
         RockSmash,
         Counter,
         LaserFocus,
-        LightScreen,
-        Reflect,
         Safeguard,
         WorkUp,
+        KnockOff,
+        StompingTantrum,
       ]
   Meganium:
     level:
@@ -107,12 +118,12 @@ Chikorita:
       12: [Synthesis]
       18: [Reflect]
       22: [MagicalLeaf]
-      26: [NaturePower, NaturalGift]
+      26: [NaturePower, NaturalGift, LeechSeed]
       34: [SweetScent]
       40: [LightScreen]
       46: [BodySlam]
       54: [Safeguard]
-      60: [Aromatherapy]
+      60: [Aromatherapy, GigaDrain]
       66: [SolarBeam]
     teachable:
       - Strength
@@ -128,10 +139,14 @@ Chikorita:
       - StompingTantrum
       - LaserFocus
       - FrenzyPlant
-      - LightScreen
-      - Reflect
       - Safeguard
       - WorkUp
+      - Outrage
+      - KnockOff
+      - Endeavor
+      - WeatherBall
+      - ZenHeadbutt
+      - BodyPress
 Cyndaquil:
   family-teachable:
     - Toxic
@@ -176,6 +191,19 @@ Cyndaquil:
     - Confide
     - TeraBlast
     - TemperFlare
+    - TakeDown
+    - Roar
+    - Flamethrower
+    - FireSpin
+    - Reversal
+    - HeatWave
+    - WillOWisp
+    - FlareBlitz
+    - FireFang
+    - ZenHeadbutt
+    - IronHead
+    - PlayRough
+    - BurningJealousy
   Cyndaquil:
     level:
       1: [Tackle, Leer]
@@ -191,7 +219,7 @@ Cyndaquil:
       46: [Inferno]
       49: [Rollout]
       55: [DoubleEdge]
-      58: [BurnUp]
+      58: [BurnUp, Overheat]
       64: [Eruption]
     egg:
       - Thrash
@@ -208,9 +236,8 @@ Cyndaquil:
       - Extrasensory
       - NaturePower
       - QuickAttack
+      - Curse
     teachable:
-      - Flamethrower
-      - WillOWisp
       - WorkUp
   Quilava:
     level:
@@ -226,20 +253,9 @@ Cyndaquil:
       53: [Inferno]
       57: [Rollout]
       64: [DoubleEdge]
-      68: [BurnUp]
+      68: [BurnUp, Overheat]
       75: [Eruption]
-    teachable:
-      [
-        Roar,
-        Strength,
-        FuryCutter,
-        RockSmash,
-        BrickBreak,
-        FocusPunch,
-        Flamethrower,
-        WillOWisp,
-        WorkUp,
-      ]
+    teachable: [Strength, FuryCutter, RockSmash, BrickBreak, FocusPunch, WorkUp, Endeavor]
   Typhlosion:
     level:
       1: [Tackle, DoubleEdge, Leer, Ember, SmokeScreen, Eruption, GyroBall]
@@ -252,9 +268,8 @@ Cyndaquil:
       48: [Flamethrower]
       56: [Inferno]
       61: [Rollout]
-      74: [BurnUp]
+      74: [BurnUp, Overheat]
     teachable:
-      - Roar
       - Strength
       - FuryCutter
       - RockSmash
@@ -281,12 +296,21 @@ Cyndaquil:
       - LaserFocus
       - ThroatChop
       - BlastBurn
-      - Flamethrower
       - GyroBall
       - RockTomb
       - SolarBeam
-      - WillOWisp
       - WorkUp
+      - LowKick
+      - NightShade
+      - ConfuseRay
+      - Spite
+      - ShadowBall
+      - HelpingHand
+      - Endeavor
+      - CalmMind
+      - Hex
+      - Poltergeist
+      - ScorchingSands
   TyphlosionHisui:
     level:
       1: [Tackle, DoubleEdge, Leer, Ember, SmokeScreen, Eruption, GyroBall, InfernalParade]
@@ -307,7 +331,6 @@ Cyndaquil:
         BodySlam,
         BrickBreak,
         Bulldoze,
-        BurningJealousy,
         CalmMind,
         ConfuseRay,
         Curse,
@@ -318,30 +341,21 @@ Cyndaquil:
         Endure,
         Facade,
         FireBlast,
-        FireFang,
         FirePledge,
         FirePunch,
-        FireSpin,
         FlameCharge,
-        Flamethrower,
-        FlareBlitz,
         FocusBlast,
         FocusPunch,
         GigaImpact,
         GyroBall,
-        HeatWave,
         Hex,
         HyperBeam,
-        IronHead,
         LowKick,
         NightShade,
         Overheat,
-        PlayRough,
         Poltergeist,
         Protect,
         Rest,
-        Reversal,
-        Roar,
         RockSlide,
         ShadowBall,
         ShadowClaw,
@@ -352,11 +366,8 @@ Cyndaquil:
         Substitute,
         SunnyDay,
         Swift,
-        TakeDown,
         ThunderPunch,
         WildCharge,
-        WillOWisp,
-        ZenHeadbutt,
       ]
 Totodile:
   family-teachable:
@@ -417,6 +428,26 @@ Totodile:
     - TeraBlast
     - Trailblaze
     - ChillingWater
+    - TakeDown
+    - HydroPump
+    - LowKick
+    - RockSlide
+    - Thief
+    - Spite
+    - ScaryFace
+    - MetalClaw
+    - Crunch
+    - Uproar
+    - Endeavor
+    - FakeTears
+    - RockTomb
+    - MuddyWater
+    - DragonClaw
+    - DragonDance
+    - IceFang
+    - Liquidation
+    - BreakingSwipe
+    - FlipTurn
   Totodile:
     level:
       1: [Scratch, Leer]
@@ -452,11 +483,9 @@ Totodile:
       - HydroPump
       - IcePunch
       - MetalClaw
+      - Counter
     teachable:
-      - DragonClaw
       - Hail
-      - RockSlide
-      - RockTomb
       - WorkUp
   Croconaw:
     level:
@@ -474,8 +503,7 @@ Totodile:
       51: [AquaTail]
       57: [Superpower]
       60: [HydroPump]
-    teachable:
-      [Roar, Strength, FuryCutter, RockSmash, RockSlide, DragonClaw, Hail, RockTomb, WorkUp]
+    teachable: [Roar, Strength, FuryCutter, RockSmash, Hail, WorkUp, PsychicFangs]
   Feraligatr:
     level:
       1: [Scratch, Leer, WaterGun, Agility, MudSlap, Rage]
@@ -498,8 +526,6 @@ Totodile:
       - RockSmash
       - HyperBeam
       - Earthquake
-      - DragonClaw
-      - RockSlide
       - Avalanche
       - DragonPulse
       - FocusBlast
@@ -507,11 +533,16 @@ Totodile:
       - RockClimb
       - Bulldoze
       - DragonTail
-      - Liquidation
       - Hail
       - HydroCannon
-      - RockTomb
       - WorkUp
+      - Outrage
+      - HelpingHand
+      - Snarl
+      - PsychicFangs
+      - StompingTantrum
+      - ScaleShot
+      - LashOut
 Sentret:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -578,6 +609,25 @@ Sentret:
     - TeraBlast
     - Trailblaze
     - ChillingWater
+    - TakeDown
+    - DoubleEdge
+    - Blizzard
+    - Thunder
+    - Amnesia
+    - SuperFang
+    - Substitute
+    - Reversal
+    - Charm
+    - BatonPass
+    - RainDance
+    - Uproar
+    - HelpingHand
+    - Trick
+    - KnockOff
+    - Endeavor
+    - HyperVoice
+    - SeedBomb
+    - PlayRough
   Sentret:
     level:
       1: [Scratch, Growl, Tackle]
@@ -609,10 +659,6 @@ Sentret:
         LastResort,
         TidyUp,
       ]
-    teachable:
-      - Blizzard
-      - RainDance
-      - Substitute
   Furret:
     level:
       1: [Scratch, Growl, Agility, QuickAttack, DefenseCurl, Coil]
@@ -624,19 +670,15 @@ Sentret:
       36: [SuckerPunch]
       42: [Amnesia]
       46: [BatonPass]
-      50: [Reversal, MeFirst]
+      50: [Reversal, MeFirst, DoubleEdge]
       56: [HyperVoice]
     teachable:
       - HyperBeam
       - Strength
-      - Blizzard
-      - DoubleEdge
       - RockSmash
-      - Substitute
-      - Thunder
       - FocusBlast
       - GigaImpact
-      - RainDance
+      - ZenHeadbutt
 Hoothoot:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -683,6 +725,32 @@ Hoothoot:
     - Confide
     - DualWingbeat
     - TeraBlast
+    - TakeDown
+    - Psybeam
+    - Agility
+    - NightShade
+    - ConfuseRay
+    - Haze
+    - Reflect
+    - Amnesia
+    - Spite
+    - RainDance
+    - PsychUp
+    - Uproar
+    - HeatWave
+    - SkillSwap
+    - Imprison
+    - FeatherDance
+    - HyperVoice
+    - AirCutter
+    - CalmMind
+    - AirSlash
+    - BraveBird
+    - NastyPlot
+    - ZenHeadbutt
+    - StoredPower
+    - Acrobatics
+    - Hurricane
   Hoothoot:
     level:
       1: [Growl, Peck]
@@ -714,24 +782,9 @@ Hoothoot:
       - MeanLook
       - NightShade
     teachable:
-      - Agility
-      - AirSlash
-      - Amnesia
-      - CalmMind
-      - HeatWave
-      - Hurricane
-      - HyperVoice
-      - Imprison
-      - NastyPlot
-      - PsychUp
-      - RainDance
       - Recycle
-      - Reflect
       - Roost
       - Screech
-      - StoredPower
-      - Uproar
-      - ZenHeadbutt
   Noctowl:
     level:
       1: [Tackle, Growl, Peck, SkyAttack, EchoedVoice, Foresight]
@@ -753,26 +806,13 @@ Hoothoot:
         HyperBeam,
         GigaImpact,
         LaserFocus,
-        Agility,
-        AirSlash,
-        Amnesia,
-        CalmMind,
         FutureSight,
-        HeatWave,
-        Hurricane,
-        HyperVoice,
-        Imprison,
-        NastyPlot,
-        PsychUp,
-        RainDance,
         Recycle,
-        Reflect,
         Roost,
         Screech,
-        StoredPower,
-        Uproar,
-        ZenHeadbutt,
         PsychicNoise,
+        BodySlam,
+        ScaryFace,
       ]
 Ledyba:
   # TM, HM and tutor moves shared by the whole family
@@ -914,6 +954,23 @@ Spinarak:
     - TeraBlast
     - Pounce
     - Trailblaze
+    - Agility
+    - NightShade
+    - LeechLife
+    - Spite
+    - ScaryFace
+    - BatonPass
+    - KnockOff
+    - ToxicSpikes
+    - PoisonJab
+    - XScissor
+    - BugBuzz
+    - BugBite
+    - SludgeWave
+    - AcidSpray
+    - Hex
+    - Lunge
+    - SkitterSmack
   Spinarak:
     level:
       1: [PoisonSting, StringShot]
@@ -935,7 +992,6 @@ Spinarak:
       47: [CrossPoison]
       50: [StickyWeb]
       54: [ToxicThread]
-    teachable: [BugBite, BugBuzz, PoisonJab, XScissor]
     egg:
       - SonicBoom
       - Disable
@@ -979,18 +1035,7 @@ Spinarak:
       55: [CrossPoison]
       58: [StickyWeb]
       63: [ToxicThread]
-    teachable:
-      [
-        HyperBeam,
-        GigaImpact,
-        StompingTantrum,
-        ThroatChop,
-        SmartStrike,
-        BugBuzz,
-        PoisonJab,
-        SwordsDance,
-        XScissor,
-      ]
+    teachable: [HyperBeam, GigaImpact, StompingTantrum, ThroatChop, SmartStrike, SwordsDance]
 Chinchou:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -1039,6 +1084,22 @@ Chinchou:
     - RisingVoltage
     - TeraBlast
     - ChillingWater
+    - TakeDown
+    - HydroPump
+    - Psybeam
+    - ThunderWave
+    - Agility
+    - ConfuseRay
+    - Amnesia
+    - IcyWind
+    - Charge
+    - MuddyWater
+    - ElectroBall
+    - Electroweb
+    - EerieImpulse
+    - ElectricTerrain
+    - Liquidation
+    - FlipTurn
   Chinchou:
     level:
       1: [Supersonic, WaterGun, Bubble]
@@ -1054,17 +1115,11 @@ Chinchou:
       40: [TakeDown]
       44: [HydroPump]
       47: [IonDeluge]
-    egg: [Screech, Amnesia, Agility, Flail, Mist, Psybeam, Soak, WaterPulse, Whirlpool]
+    egg: [Screech, Amnesia, Agility, Flail, Mist, Psybeam, Soak, WaterPulse, Whirlpool, SuckerPunch]
     teachable:
-      - Agility
-      - Amnesia
       - Bounce
-      - ElectroBall
       - Hail
-      - HydroPump
-      - IcyWind
       - Screech
-      - ThunderWave
   Lanturn:
     level:
       1:
@@ -1089,22 +1144,7 @@ Chinchou:
       42: [Flail]
       48: [TakeDown]
       54: [HydroPump, IonDeluge]
-    teachable:
-      [
-        HyperBeam,
-        AquaTail,
-        GigaImpact,
-        Agility,
-        Amnesia,
-        Bounce,
-        EerieImpulse,
-        ElectroBall,
-        Hail,
-        HydroPump,
-        IcyWind,
-        Screech,
-        ThunderWave,
-      ]
+    teachable: [HyperBeam, AquaTail, GigaImpact, Bounce, Hail, Screech]
 # The line learns the same list either side of evolving
 Togepi:
   Togepi:

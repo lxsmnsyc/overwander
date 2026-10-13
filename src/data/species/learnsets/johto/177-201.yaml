@@ -178,6 +178,25 @@ Mareep:
     - Confide
     - TeraBlast
     - Trailblaze
+    - BodySlam
+    - TakeDown
+    - ThunderWave
+    - Dig
+    - Agility
+    - ConfuseRay
+    - LightScreen
+    - Reflect
+    - SunnyDay
+    - Charge
+    - HelpingHand
+    - Endeavor
+    - PowerGem
+    - ElectroBall
+    - VoltSwitch
+    - Electroweb
+    - EerieImpulse
+    - ElectricTerrain
+    - DazzlingGleam
   Mareep:
     level:
       1: [Tackle, Growl]
@@ -191,7 +210,7 @@ Mareep:
       29: [PowerGem]
       32: [Discharge]
       36: [CottonGuard]
-      39: [ChargeBeam]
+      39: [ChargeBeam, DazzlingGleam]
       43: [LightScreen]
       46: [Thunder]
     egg:
@@ -208,11 +227,9 @@ Mareep:
       - Agility
       - Flatter
       - SandAttack
+      - Electroweb
     teachable:
-      - LightScreen
-      - Reflect
       - Safeguard
-      - ThunderWave
   Flaaffy:
     level:
       1: [Tackle, Growl, ThunderShock, ThunderWave]
@@ -224,7 +241,7 @@ Mareep:
       34: [PowerGem]
       38: [Discharge]
       43: [CottonGuard]
-      47: [ChargeBeam]
+      47: [ChargeBeam, DazzlingGleam]
       52: [LightScreen]
       56: [Thunder]
     teachable:
@@ -233,9 +250,7 @@ Mareep:
       - ThunderPunch
       - RockSmash
       - Strength
-      - VoltSwitch
       - PowerUpPunch
-      - BodySlam
       - BrickBreak
       - Counter
       - FocusPunch
@@ -243,10 +258,10 @@ Mareep:
       - MegaPunch
       - SeismicToss
       - Fling
-      - LightScreen
-      - Reflect
       - Safeguard
-      - ThunderWave
+      - IcePunch
+      - Roar
+      - LowKick
   Ampharos:
     level:
       1:
@@ -270,7 +285,7 @@ Mareep:
       35: [PowerGem]
       40: [Discharge]
       46: [CottonGuard]
-      51: [ChargeBeam]
+      51: [ChargeBeam, DazzlingGleam]
       57: [LightScreen]
       62: [Thunder]
     teachable:
@@ -279,10 +294,8 @@ Mareep:
       - ThunderPunch
       - RockSmash
       - Strength
-      - VoltSwitch
       - PowerUpPunch
       - HyperBeam
-      - BodySlam
       - BrickBreak
       - Counter
       - FocusPunch
@@ -297,12 +310,17 @@ Mareep:
       - BrutalSwing
       - LaserFocus
       - DragonPulse
-      - LightScreen
-      - Reflect
       - Safeguard
-      - ThunderWave
       - DragonCheer
       - SupercellSlam
+      - IcePunch
+      - Roar
+      - LowKick
+      - Outrage
+      - DragonTail
+      - StompingTantrum
+      - BreakingSwipe
+      - MeteorBeam
 Marill:
   Marill:
     level:
@@ -398,6 +416,12 @@ Marill:
       - Trailblaze
       - ChillingWater
       - AlluringVoice
+      - TakeDown
+      - Metronome
+      - KnockOff
+      - Bulldoze
+      - DisarmingVoice
+      - Liquidation
   Azumarill:
     level:
       1: [Tackle, TailWhip, WaterGun, DefenseCurl, Rollout, HelpingHand]
@@ -497,6 +521,10 @@ Marill:
       - Trailblaze
       - ChillingWater
       - AlluringVoice
+      - TakeDown
+      - Metronome
+      - KnockOff
+      - DisarmingVoice
   Azurill:
     # The whole line's inheritance, since the egg is laid as an
     # Azurill: what a Marill used to carry is carried here
@@ -561,6 +589,7 @@ Marill:
       - Whirlpool
       - TeraBlast
       - AlluringVoice
+      - TakeDown
     egg:
       - Amnesia
       - BellyDrum
@@ -583,7 +612,49 @@ Marill:
       - MuddyWater
       - Slam
 Sudowoodo:
-  family-teachable: [Attract, TeraBlast, Trailblaze]
+  family-teachable:
+    [
+      Attract,
+      TeraBlast,
+      Trailblaze,
+      BodySlam,
+      TakeDown,
+      DoubleEdge,
+      LowKick,
+      Earthquake,
+      Dig,
+      Rest,
+      RockSlide,
+      Substitute,
+      Thief,
+      Curse,
+      Protect,
+      MudSlap,
+      Spikes,
+      Sandstorm,
+      Endure,
+      SleepTalk,
+      SunnyDay,
+      PsychUp,
+      Facade,
+      HelpingHand,
+      BrickBreak,
+      FakeTears,
+      RockTomb,
+      SandTomb,
+      MudShot,
+      CalmMind,
+      RockBlast,
+      PowerGem,
+      EarthPower,
+      StoneEdge,
+      StealthRock,
+      GrassKnot,
+      SmackDown,
+      FoulPlay,
+      Bulldoze,
+      StompingTantrum,
+    ]
   Sudowoodo:
     level:
       1: [Slam, RockThrow, Flail, FakeTears, HammerArm, Copycat, StoneEdge, WoodHammer]
@@ -599,75 +670,50 @@ Sudowoodo:
       44: [DoubleEdge]
       48: [HeadSmash]
     teachable:
-      - Curse
       - DefenseCurl
-      - Dig
       - DoubleTeam
       - DynamicPunch
-      - Earthquake
-      - Endure
       - FirePunch
       - Frustration
       - Headbutt
       - HiddenPower
       - IcePunch
-      - MudSlap
-      - Protect
-      - PsychUp
-      - Rest
       - Return
       - RockSmash
       - Rollout
-      - Sandstorm
-      - SleepTalk
       - Snore
       - Strength
-      - SunnyDay
       - Swagger
-      - Thief
       - ThunderPunch
       - Toxic
-      - BodySlam
-      - BrickBreak
-      - CalmMind
       - Counter
       - Explosion
-      - Facade
       - FocusPunch
       - MegaKick
       - MegaPunch
-      - RockTomb
       - SecretPower
       - SeismicToss
-      - Substitute
       - Taunt
       - Captivate
-      - EarthPower
       - Fling
       - NaturalGift
       - RockPolish
-      - StealthRock
-      - StoneEdge
-      - SmackDown
-      - FoulPlay
       - AfterYou
       - Round
-      - Bulldoze
       - Confide
       - PowerUpPunch
-      - StompingTantrum
       - BodyPress
       - MeteorBeam
-      - FakeTears
-      - HelpingHand
       - IronDefense
-      - LowKick
-      - RockBlast
-      - RockSlide
-      - SandTomb
       - SelfDestruct
       - Torment
       - Uproar
+      - HyperBeam
+      - Endeavor
+      - DrainPunch
+      - GigaImpact
+      - LowSweep
+      - HighHorsepower
   Bonsly:
     level:
       1: [FakeTears, Copycat]
@@ -685,46 +731,23 @@ Sudowoodo:
       40: [Counter]
       44: [DoubleEdge]
     teachable:
-      - BrickBreak
-      - CalmMind
       - Captivate
-      - Dig
       - DoubleTeam
-      - EarthPower
-      - Endure
       - Explosion
-      - Facade
       - Frustration
-      - HelpingHand
       - HiddenPower
       - NaturalGift
-      - Protect
-      - PsychUp
-      - Rest
       - Return
       - RockPolish
-      - RockSlide
-      - RockTomb
       - Rollout
-      - Sandstorm
       - SecretPower
-      - SleepTalk
       - Snore
-      - StealthRock
-      - Substitute
       - SuckerPunch
-      - SunnyDay
       - Swagger
-      - Thief
       - Toxic
       - Uproar
       - Confide
-      - StompingTantrum
-      - FakeTears
-      - FoulPlay
-      - LowKick
       - Round
-      - SandTomb
       - SelfDestruct
     egg: [DefenseCurl, Harden, Headbutt, Rollout, SandTomb, SelfDestruct, Curse, RockPolish]
 Hoppip:
@@ -768,6 +791,23 @@ Hoppip:
     - Infestation
     - TeraBlast
     - Trailblaze
+    - TakeDown
+    - DoubleEdge
+    - LightScreen
+    - Reflect
+    - Thief
+    - Charm
+    - BatonPass
+    - Encore
+    - HelpingHand
+    - MagicalLeaf
+    - Tailwind
+    - UTurn
+    - Fling
+    - LeafStorm
+    - GrassyTerrain
+    - PollenPuff
+    - Lunge
   Hoppip:
     level:
       1: [Absorb, Splash]
@@ -805,10 +845,10 @@ Hoppip:
       - Aromatherapy
       - SeedBomb
       - WorrySeed
+      - Switcheroo
     teachable:
       - PsychUp
-      - Reflect
-      - UTurn
+      - RainDance
   Skiploom:
     level:
       1: [TailWhip, Absorb, Splash, Synthesis]
@@ -828,7 +868,7 @@ Hoppip:
       52: [GigaDrain]
       56: [Bounce]
       60: [Memento]
-    teachable: [DoubleEdge, PsychUp, Reflect, UTurn]
+    teachable: [PsychUp, Endeavor]
   Jumpluff:
     level:
       1: [TailWhip, Absorb, Splash, Synthesis]
@@ -848,7 +888,7 @@ Hoppip:
       59: [GigaDrain]
       64: [Bounce]
       69: [Memento]
-    teachable: [HyperBeam, DoubleEdge, GigaImpact, PsychUp, Reflect, UTurn]
+    teachable: [HyperBeam, GigaImpact, PsychUp, RainDance, Endeavor]
 Aipom:
   Aipom:
     level:
@@ -945,6 +985,14 @@ Aipom:
       - Trailblaze
       - ChillingWater
       - UpperHand
+      - TakeDown
+      - LowKick
+      - HelpingHand
+      - KnockOff
+      - Endeavor
+      - MudShot
+      - SmackDown
+      - ThroatChop
     egg:
       [
         Agility,
@@ -1044,6 +1092,18 @@ Aipom:
       - Trailblaze
       - ChillingWater
       - UpperHand
+      - TakeDown
+      - DoubleEdge
+      - LowKick
+      - Metronome
+      - HelpingHand
+      - Endeavor
+      - MudShot
+      - SmackDown
+      - FoulPlay
+      - Acrobatics
+      - ThroatChop
+      - TripleAxel
 Sunkern:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -1085,6 +1145,17 @@ Sunkern:
     - Confide
     - TeraBlast
     - Trailblaze
+    - TakeDown
+    - Encore
+    - RainDance
+    - HelpingHand
+    - Endeavor
+    - WeatherBall
+    - BulletSeed
+    - MagicalLeaf
+    - SeedBomb
+    - LeafStorm
+    - GrassyTerrain
   Sunkern:
     level:
       1: [Tackle, Growth]
@@ -1101,7 +1172,6 @@ Sunkern:
       37: [DoubleEdge]
       40: [SunnyDay]
       43: [SeedBomb]
-    teachable: [BulletSeed]
     egg:
       [
         Encore,
@@ -1132,14 +1202,14 @@ Sunkern:
       40: [SunnyDay]
       43: [LeafStorm]
       50: [PetalBlizzard]
-    teachable: [HyperBeam, GigaImpact, SeedBomb, BulletSeed]
+    teachable: [HyperBeam, GigaImpact, DazzlingGleam, GrassyGlide]
 Yanma:
   Yanma:
     level:
       1: [Gust, Tackle, Foresight]
       6: [QuickAttack]
       11: [DoubleTeam]
-      14: [AerialAce]
+      14: [AerialAce, AirCutter]
       17: [Detect]
       19: [SonicBoom]
       22: [Supersonic]
@@ -1200,6 +1270,11 @@ Yanma:
       - TeraBlast
       - Pounce
       - PsychicNoise
+      - TakeDown
+      - PsychUp
+      - StruggleBug
+      - Lunge
+      - SkitterSmack
     egg: [LeechLife, Reversal, Whirlwind, SignalBeam, SilverWind, Feint, DoubleEdge]
   Yanmega:
     level:
@@ -1276,6 +1351,17 @@ Yanma:
       - TeraBlast
       - Pounce
       - PsychicNoise
+      - TakeDown
+      - DoubleEdge
+      - LeechLife
+      - Reversal
+      - ScaryFace
+      - Crunch
+      - Tailwind
+      - StruggleBug
+      - Lunge
+      - SkitterSmack
+      - DualWingbeat
 Wooper:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -1334,6 +1420,24 @@ Wooper:
     - Snowscape
     - Trailblaze
     - ChillingWater
+    - BodySlam
+    - TakeDown
+    - HydroPump
+    - Haze
+    - Amnesia
+    - RockSlide
+    - Spikes
+    - IcyWind
+    - Encore
+    - HelpingHand
+    - RockTomb
+    - MuddyWater
+    - MudShot
+    - Avalanche
+    - StoneEdge
+    - StealthRock
+    - AcidSpray
+    - Liquidation
   Wooper:
     level:
       1: [TailWhip, WaterGun]
@@ -1367,16 +1471,9 @@ Wooper:
       - PowerUpPunch
       - Recover
     teachable:
-      - Amnesia
-      - BodySlam
       - EerieImpulse
-      - Encore
       - GuardSwap
       - Hail
-      - HydroPump
-      - IcyWind
-      - MudShot
-      - MuddyWater
       - Safeguard
   Quagsire:
     level:
@@ -1393,33 +1490,25 @@ Wooper:
     teachable:
       - Strength
       - HyperBeam
-      - BodySlam
       - BrickBreak
       - Counter
       - FocusPunch
       - MegaKick
       - MegaPunch
-      - RockTomb
       - SeismicToss
       - Fling
       - FocusBlast
       - GigaImpact
-      - StoneEdge
       - PowerUpPunch
-      - Amnesia
       - EerieImpulse
-      - Encore
       - GuardSwap
       - Hail
       - HighHorsepower
-      - HydroPump
-      - IcyWind
-      - Liquidation
-      - MudShot
-      - MuddyWater
-      - RockSlide
       - Safeguard
       - Thief
+      - ToxicSpikes
+      - DrainPunch
+      - BodyPress
 Murkrow:
   Murkrow:
     level:
@@ -1494,6 +1583,21 @@ Murkrow:
       - Taunt
       - TeraBlast
       - PsychicNoise
+      - TakeDown
+      - HyperBeam
+      - Spite
+      - ScaryFace
+      - Uproar
+      - HeatWave
+      - UTurn
+      - AirSlash
+      - GigaImpact
+      - NastyPlot
+      - Hex
+      - Acrobatics
+      - Hurricane
+      - LashOut
+      - DualWingbeat
     egg:
       - DrillPeck
       - MirrorMove
@@ -1590,6 +1694,22 @@ Murkrow:
       - TeraBlast
       - ChillingWater
       - PsychicNoise
+      - TakeDown
+      - DoubleEdge
+      - ConfuseRay
+      - ScaryFace
+      - IcyWind
+      - HelpingHand
+      - Endeavor
+      - FeatherDance
+      - UTurn
+      - AirSlash
+      - BraveBird
+      - Hex
+      - Acrobatics
+      - Hurricane
+      - LashOut
+      - DualWingbeat
 Misdreavus:
   Misdreavus:
     level:
@@ -1670,6 +1790,26 @@ Misdreavus:
       - TeraBlast
       - Snowscape
       - PsychicNoise
+      - HyperBeam
+      - NightShade
+      - ScaryFace
+      - IcyWind
+      - Charm
+      - FutureSight
+      - HelpingHand
+      - Trick
+      - HyperVoice
+      - FakeTears
+      - MagicalLeaf
+      - EnergyBall
+      - GigaImpact
+      - GrassKnot
+      - Psyshock
+      - StoredPower
+      - PhantomForce
+      - DrainingKiss
+      - BurningJealousy
+      - Poltergeist
     egg:
       [
         DestinyBond,
@@ -1766,6 +1906,23 @@ Misdreavus:
       - TeraBlast
       - Snowscape
       - PsychicNoise
+      - NightShade
+      - Curse
+      - ScaryFace
+      - Charm
+      - FutureSight
+      - HelpingHand
+      - Imprison
+      - HyperVoice
+      - FakeTears
+      - GrassKnot
+      - Psyshock
+      - FoulPlay
+      - StoredPower
+      - DrainingKiss
+      - BurningJealousy
+      - LashOut
+      - Poltergeist
 Unown:
   Unown:
     level:

@@ -100,6 +100,19 @@ Girafarig:
       - TeraBlast
       - Trailblaze
       - PsychicNoise
+      - HyperBeam
+      - LowKick
+      - ConfuseRay
+      - Uproar
+      - HelpingHand
+      - Trick
+      - Endeavor
+      - Imprison
+      - HyperVoice
+      - GigaImpact
+      - StoredPower
+      - HighHorsepower
+      - ExpandingForce
     egg:
       - Amnesia
       - BeatUp
@@ -113,6 +126,7 @@ Girafarig:
       - DoubleKick
       - MeanLook
       - MirrorCoat
+      - AllySwitch
 Pineco:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -159,6 +173,27 @@ Pineco:
     - TeraBlast
     - IceSpinner
     - Pounce
+    - TakeDown
+    - DoubleEdge
+    - Reflect
+    - Swift
+    - Reversal
+    - Spikes
+    - Sandstorm
+    - PainSplit
+    - RainDance
+    - HelpingHand
+    - RockTomb
+    - SandTomb
+    - IronDefense
+    - RockBlast
+    - GyroBall
+    - ToxicSpikes
+    - PoisonJab
+    - SeedBomb
+    - BugBuzz
+    - BugBite
+    - Lunge
   Pineco:
     level:
       1: [Tackle, Protect]
@@ -167,7 +202,7 @@ Pineco:
       12: [TakeDown]
       17: [RapidSpin]
       20: [Autotomize, NaturalGift]
-      23: [Rollout]
+      23: [Rollout, Curse]
       28: [Spikes]
       29: [Bide]
       31: [Payback]
@@ -187,13 +222,8 @@ Pineco:
       - DoubleEdge
       - Revenge
     teachable:
-      - BugBuzz
       - Explosion
-      - GyroBall
       - Payback
-      - Reflect
-      - RockTomb
-      - Sandstorm
   Forretress:
     level:
       1:
@@ -211,7 +241,7 @@ Pineco:
       12: [TakeDown]
       17: [RapidSpin]
       20: [Reflect, NaturalGift]
-      23: [Rollout]
+      23: [Rollout, Curse]
       28: [Spikes]
       29: [Bide]
       31: [MirrorShot]
@@ -221,21 +251,24 @@ Pineco:
       46: [GyroBall]
       50: [DoubleEdge]
     teachable:
-      - Sandstorm
       - HyperBeam
       - Counter
-      - Reflect
       - FlashCannon
       - GigaImpact
       - RockPolish
       - VoltSwitch
       - LaserFocus
-      - BugBuzz
       - Explosion
-      - GyroBall
       - Payback
-      - RockTomb
       - HardPress
+      - ThunderWave
+      - MetalSound
+      - EarthPower
+      - IronHead
+      - StoneEdge
+      - SmartStrike
+      - BodyPress
+      - SteelBeam
 Dunsparce:
   Dunsparce:
     level:
@@ -341,6 +374,20 @@ Dunsparce:
       - IceSpinner
       - Pounce
       - ChillingWater
+      - HyperBeam
+      - ScaryFace
+      - Sandstorm
+      - PainSplit
+      - Uproar
+      - HyperVoice
+      - MudShot
+      - PoisonTail
+      - EarthPower
+      - GigaImpact
+      - StoneEdge
+      - Lunge
+      - SmartStrike
+      - BreakingSwipe
     egg:
       [
         AncientPower,
@@ -375,7 +422,7 @@ Gligar:
       30: [UTurn]
       35: [Screech]
       40: [XScissor]
-      45: [Earthquake]
+      45: [Earthquake, Crabhammer]
       50: [SwordsDance]
       55: [Guillotine]
     teachable:
@@ -447,6 +494,23 @@ Gligar:
       - UTurn
       - XScissor
       - TeraBlast
+      - TakeDown
+      - ScaryFace
+      - Spikes
+      - Crunch
+      - MudShot
+      - ToxicSpikes
+      - ThunderFang
+      - IceFang
+      - FireFang
+      - GunkShot
+      - HighHorsepower
+      - Lunge
+      - PsychicFangs
+      - BreakingSwipe
+      - ScaleShot
+      - SkitterSmack
+      - DualWingbeat
     egg:
       - Counter
       - MetalClaw
@@ -485,7 +549,7 @@ Gligar:
       30: [UTurn]
       35: [Screech]
       40: [XScissor]
-      45: [Earthquake]
+      45: [Earthquake, Crabhammer]
       50: [SwordsDance]
     teachable:
       - AerialAce
@@ -549,6 +613,29 @@ Gligar:
       - ThroatChop
       - Bulldoze
       - TeraBlast
+      - TakeDown
+      - DoubleEdge
+      - Agility
+      - ScaryFace
+      - Spikes
+      - BatonPass
+      - MetalClaw
+      - Crunch
+      - SandTomb
+      - MudShot
+      - PoisonTail
+      - Tailwind
+      - ToxicSpikes
+      - GunkShot
+      - Venoshock
+      - StruggleBug
+      - HighHorsepower
+      - Lunge
+      - PsychicFangs
+      - BreakingSwipe
+      - ScaleShot
+      - SkitterSmack
+      - DualWingbeat
 Snubbull:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -625,14 +712,37 @@ Snubbull:
     - TeraBlast
     - Trailblaze
     - TemperFlare
+    - TakeDown
+    - LowKick
+    - Metronome
+    - SuperFang
+    - Reversal
+    - Spite
+    - ScaryFace
+    - Charm
+    - Encore
+    - Crunch
+    - Uproar
+    - HelpingHand
+    - Endeavor
+    - HyperVoice
+    - FakeTears
+    - CloseCombat
+    - ThunderFang
+    - IceFang
+    - FireFang
+    - PlayRough
+    - PsychicFangs
+    - StompingTantrum
+    - LashOut
   Snubbull:
     level:
-      1: [Tackle, TailWhip, ScaryFace, Charm, ThunderFang, IceFang, FireFang]
+      1: [Tackle, TailWhip, ScaryFace, Charm, ThunderFang, IceFang, FireFang, Growl]
       7: [Bite]
       13: [Lick]
       19: [Headbutt]
       25: [Roar]
-      31: [Taunt]
+      31: [Taunt, LastResort]
       34: [Rage]
       37: [PlayRough]
       43: [Payback, TakeDown]
@@ -654,17 +764,19 @@ Snubbull:
       - Mimic
       - Snore
       - ThunderFang
+      - Counter
+      - Retaliate
     teachable:
       - Payback
       - Reflect
   Granbull:
     level:
-      1: [Tackle, TailWhip, ScaryFace, Outrage, Charm, ThunderFang, IceFang, FireFang]
+      1: [Tackle, TailWhip, ScaryFace, Outrage, Charm, ThunderFang, IceFang, FireFang, Growl]
       7: [Bite]
       13: [Lick]
       19: [Headbutt]
       27: [Roar]
-      35: [Taunt]
+      35: [Taunt, LastResort]
       38: [Rage]
       43: [PlayRough]
       51: [Payback, TakeDown]
@@ -672,16 +784,15 @@ Snubbull:
     teachable:
       - HyperBeam
       - IronTail
-      - Metronome
       - RockSlide
       - RockTomb
       - FocusBlast
       - GigaImpact
       - RockClimb
       - StoneEdge
-      - StompingTantrum
       - Payback
       - Reflect
+      - LowSweep
 Qwilfish:
   Qwilfish:
     level:
@@ -772,7 +883,17 @@ Qwilfish:
       - VenomDrench
       - TeraBlast
       - ChillingWater
-    egg: [BubbleBeam, Flail, Haze, Supersonic, Astonish, AquaJet, AcidSpray, WaterPulse]
+      - Agility
+      - Spite
+      - PainSplit
+      - Crunch
+      - MudShot
+      - PoisonTail
+      - GigaImpact
+      - GunkShot
+      - FlipTurn
+    egg:
+      [BubbleBeam, Flail, Haze, Supersonic, Astonish, AquaJet, AcidSpray, WaterPulse, BarbBarrage]
   QwilfishHisui:
     level:
       1: [Tackle, PoisonSting]
@@ -1020,7 +1141,7 @@ Shuckle:
 Heracross:
   Heracross:
     level:
-      1: [Tackle, Leer, NightSlash]
+      1: [Tackle, Leer, NightSlash, ArmThrust]
       5: [FuryAttack]
       10: [Endure]
       15: [AerialAce]
@@ -1115,6 +1236,11 @@ Heracross:
       - Pounce
       - Trailblaze
       - UpperHand
+      - KnockOff
+      - Endeavor
+      - BugBuzz
+      - Lunge
+      - SkitterSmack
     egg:
       [
         Bide,
@@ -1235,6 +1361,15 @@ Sneasel:
       - Snowscape
       - Trailblaze
       - UpperHand
+      - TakeDown
+      - Reversal
+      - ScaryFace
+      - HelpingHand
+      - KnockOff
+      - IcicleSpear
+      - WaterPulse
+      - GigaImpact
+      - NastyPlot
     egg:
       - Bite
       - Counter
@@ -1367,6 +1502,12 @@ Sneasel:
       - Trailblaze
       - ChillingWater
       - UpperHand
+      - TakeDown
+      - Metronome
+      - ScaryFace
+      - BatonPass
+      - HelpingHand
+      - WaterPulse
   SneaselHisui:
     level:
       1: [Scratch, Leer, RockSmash]
@@ -1576,6 +1717,23 @@ Teddiursa:
     - PowerUpPunch
     - TeraBlast
     - Trailblaze
+    - TakeDown
+    - LowKick
+    - RockSlide
+    - Charm
+    - MetalClaw
+    - RainDance
+    - Crunch
+    - Uproar
+    - HelpingHand
+    - HyperVoice
+    - FakeTears
+    - RockTomb
+    - CloseCombat
+    - Fling
+    - Avalanche
+    - SmackDown
+    - PlayRough
   Teddiursa:
     level:
       1: [Scratch, Lick, FakeTears, Covet, Fling, BabyDollEyes, Leer]
@@ -1603,11 +1761,7 @@ Teddiursa:
       - CrossChop
       - DoubleEdge
       - FakeTears
-    teachable:
-      - Fling
-      - RainDance
-      - RockSlide
-      - RockTomb
+      - FuryCutter
   Ursaring:
     level:
       1: [Scratch, Leer, Lick, Charm, FakeTears, Covet, HammerArm, Fling, BabyDollEyes]
@@ -1615,28 +1769,23 @@ Teddiursa:
       15: [Payback]
       22: [SweetScent, FeintAttack]
       25: [PlayNice]
-      29: [Slash]
+      29: [Slash, PlayRough]
       38: [ScaryFace]
       47: [Rest]
+      48: [HighHorsepower]
       49: [Snore]
       58: [Thrash]
     teachable:
       - HyperBeam
       - Counter
-      - RockSlide
-      - RockTomb
       - SeismicToss
-      - Avalanche
-      - Fling
       - FocusBlast
       - GigaImpact
       - RockClimb
       - StoneEdge
-      - SmackDown
       - StompingTantrum
       - LaserFocus
       - ThroatChop
-      - RainDance
   Ursaluna:
     level:
       1: [Scratch, Leer, Lick, FakeTears, Covet, HeadlongRush]
@@ -1654,15 +1803,11 @@ Teddiursa:
     teachable:
       [
         AerialAce,
-        Avalanche,
         BodyPress,
         BodySlam,
         BrickBreak,
         BulkUp,
         Bulldoze,
-        Charm,
-        CloseCombat,
-        Crunch,
         Curse,
         Dig,
         DoubleEdge,
@@ -1671,45 +1816,32 @@ Teddiursa:
         Earthquake,
         Endure,
         Facade,
-        FakeTears,
         FirePunch,
-        Fling,
         FocusPunch,
         GigaImpact,
         GunkShot,
         HeavySlam,
-        HelpingHand,
         HighHorsepower,
         HyperBeam,
-        HyperVoice,
         IcePunch,
-        LowKick,
-        MetalClaw,
         Metronome,
-        PlayRough,
         Protect,
-        RainDance,
         Rest,
         Roar,
-        RockSlide,
-        RockTomb,
         ScaryFace,
         SeedBomb,
         ShadowClaw,
         SleepTalk,
-        SmackDown,
         StompingTantrum,
         StoneEdge,
         Substitute,
         SunnyDay,
         Swift,
         SwordsDance,
-        TakeDown,
         Taunt,
         Thief,
         ThroatChop,
         ThunderPunch,
-        Uproar,
         VacuumWave,
         HardPress,
         SupercellSlam,
@@ -1755,6 +1887,27 @@ Slugma:
     - Infestation
     - TeraBlast
     - TemperFlare
+    - BodySlam
+    - TakeDown
+    - FireSpin
+    - Earthquake
+    - Amnesia
+    - RockSlide
+    - Sandstorm
+    - PainSplit
+    - HeatWave
+    - WillOWisp
+    - RockTomb
+    - IronDefense
+    - MudShot
+    - RockBlast
+    - PowerGem
+    - EarthPower
+    - StoneEdge
+    - StealthRock
+    - SmackDown
+    - Bulldoze
+    - HeatCrash
   Slugma:
     level:
       1: [Smog, Yawn]
@@ -1788,10 +1941,7 @@ Slugma:
         Swallow,
       ]
     teachable:
-      - RockSlide
-      - RockTomb
-      - Sandstorm
-      - WillOWisp
+      - HighHorsepower
   Magcargo:
     level:
       1: [Ember, RockThrow, Smog, Yawn, EarthPower, ShellSmash]
@@ -1807,23 +1957,18 @@ Slugma:
       47: [Recover]
       54: [Flamethrower]
     teachable:
-      - Earthquake
       - Strength
       - HyperBeam
-      - RockTomb
       - GigaImpact
       - GyroBall
       - RockPolish
-      - StealthRock
-      - StoneEdge
-      - SmackDown
-      - Bulldoze
       - StompingTantrum
       - Explosion
-      - RockSlide
-      - Sandstorm
       - SolarBeam
-      - WillOWisp
+      - SandTomb
+      - FlareBlitz
+      - BurningJealousy
+      - ScorchingSands
 Swinub:
   Swinub:
     level:
@@ -1893,6 +2038,15 @@ Swinub:
       - TeraBlast
       - Snowscape
       - Trailblaze
+      - Haze
+      - Reversal
+      - Charm
+      - Endeavor
+      - IceFang
+      - StoneEdge
+      - SmackDown
+      - HighHorsepower
+      - StompingTantrum
     egg:
       - AncientPower
       - Bite
@@ -1981,6 +2135,12 @@ Swinub:
       - TeraBlast
       - Snowscape
       - Trailblaze
+      - Haze
+      - Reversal
+      - Charm
+      - Endeavor
+      - SmackDown
+      - ThroatChop
   Mamoswine:
     level:
       1: [Tackle, Flail, PowderSnow, MudSlap, AncientPower, IceFang, DoubleHit, OdorSleuth, Peck]
@@ -2060,6 +2220,13 @@ Swinub:
       - Snowscape
       - Trailblaze
       - HardPress
+      - DoubleEdge
+      - Haze
+      - Curse
+      - Reversal
+      - Charm
+      - SmackDown
+      - ThroatChop
 Corsola:
   Corsola:
     level:
@@ -2517,6 +2684,18 @@ Delibird:
       - Snowscape
       - Trailblaze
       - ChillingWater
+      - TakeDown
+      - HyperBeam
+      - Haze
+      - Reversal
+      - Endeavor
+      - FeatherDance
+      - AirCutter
+      - Tailwind
+      - AirSlash
+      - GigaImpact
+      - FoulPlay
+      - Acrobatics
     egg:
       - AuroraBeam
       - FutureSight

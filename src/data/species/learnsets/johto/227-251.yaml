@@ -86,6 +86,12 @@ Skarmory:
       - Spikes
       - SwordsDance
       - TeraBlast
+      - TakeDown
+      - HyperBeam
+      - Reversal
+      - GigaImpact
+      - DrillRun
+      - Hurricane
     egg:
       [
         DrillPeck,
@@ -160,6 +166,27 @@ Houndour:
     - TeraBlast
     - Trailblaze
     - TemperFlare
+    - TakeDown
+    - FireSpin
+    - SuperFang
+    - Reversal
+    - Spite
+    - ScaryFace
+    - PainSplit
+    - RainDance
+    - Crunch
+    - HeatWave
+    - WillOWisp
+    - HelpingHand
+    - HyperVoice
+    - MudShot
+    - FlareBlitz
+    - NastyPlot
+    - ThunderFang
+    - FireFang
+    - PsychicFangs
+    - BurningJealousy
+    - LashOut
   Houndour:
     level:
       1: [Leer, Ember]
@@ -167,12 +194,12 @@ Houndour:
       8: [Smog]
       13: [Roar]
       16: [Bite]
-      20: [Taunt]
+      20: [Taunt, Incinerate]
       25: [BeatUp]
       27: [FeintAttack]
       28: [FireFang]
       31: [OdorSleuth]
-      32: [Payback]
+      32: [Payback, Torment]
       37: [FlameCharge, Comeuppance]
       40: [FoulPlay, Embargo]
       44: [Flamethrower]
@@ -194,9 +221,6 @@ Houndour:
       - DestinyBond
       - FireFang
       - SuckerPunch
-    teachable:
-      - NastyPlot
-      - WillOWisp
   Houndoom:
     level:
       1: [Leer, Ember, NastyPlot, ThunderFang, Inferno]
@@ -204,17 +228,16 @@ Houndour:
       8: [Smog]
       13: [Roar]
       16: [Bite]
-      20: [Taunt]
+      20: [Taunt, Incinerate]
       26: [BeatUp]
       30: [FireFang, FeintAttack]
-      35: [Payback, OdorSleuth]
+      35: [Payback, OdorSleuth, Torment]
       41: [FlameCharge, Comeuppance]
       44: [Embargo]
       45: [FoulPlay]
       50: [Flamethrower]
       56: [Crunch]
-    teachable:
-      [Strength, HyperBeam, Counter, GigaImpact, LaserFocus, ThroatChop, NastyPlot, WillOWisp]
+    teachable: [Strength, HyperBeam, Counter, GigaImpact, LaserFocus, ThroatChop, Endeavor]
 Phanpy:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -258,6 +281,28 @@ Phanpy:
     - Confide
     - TeraBlast
     - Trailblaze
+    - BodySlam
+    - TakeDown
+    - DoubleEdge
+    - Dig
+    - RockSlide
+    - Thief
+    - Charm
+    - Encore
+    - RainDance
+    - HelpingHand
+    - KnockOff
+    - Endeavor
+    - HyperVoice
+    - SandTomb
+    - MudShot
+    - IronHead
+    - StoneEdge
+    - SmackDown
+    - HeavySlam
+    - PlayRough
+    - HighHorsepower
+    - StompingTantrum
   Phanpy:
     level:
       1: [Tackle, Growl, DefenseCurl, OdorSleuth]
@@ -285,8 +330,6 @@ Phanpy:
       - Endeavor
       - MudSlap
       - Snore
-    teachable:
-      - RockSlide
   Donphan:
     level:
       1:
@@ -312,25 +355,25 @@ Phanpy:
       15: [Assurance]
       19: [KnockOff]
       24: [Slam]
-      30: [RockTomb]
+      30: [RockTomb, StompingTantrum]
       37: [ScaryFace]
       43: [Earthquake]
       50: [GigaImpact]
     teachable:
       - HyperBeam
-      - BodySlam
       - Counter
-      - DoubleEdge
-      - RockSlide
       - GyroBall
       - NaturalGift
       - PoisonJab
       - RockPolish
-      - StoneEdge
       - BrutalSwing
-      - StompingTantrum
       - GigaImpact
       - IceSpinner
+      - IronDefense
+      - IceFang
+      - ThroatChop
+      - SmartStrike
+      - BodyPress
 Stantler:
   Stantler:
     level:
@@ -414,6 +457,17 @@ Stantler:
       - Reflect
       - TeraBlast
       - Trailblaze
+      - Psybeam
+      - HyperBeam
+      - Dig
+      - Agility
+      - ScaryFace
+      - FutureSight
+      - Uproar
+      - HelpingHand
+      - Trick
+      - EarthPower
+      - StoredPower
     egg:
       [
         Bite,
@@ -711,6 +765,10 @@ Raikou:
       - TeraBlast
       - Trailblaze
       - SupercellSlam
+      - TakeDown
+      - ScaryFace
+      - ElectroBall
+      - Electroweb
 Entei:
   Entei:
     level:
@@ -800,6 +858,7 @@ Entei:
       - WillOWisp
       - TeraBlast
       - Trailblaze
+      - TakeDown
 Suicune:
   Suicune:
     level:
@@ -891,6 +950,7 @@ Suicune:
       - Snowscape
       - Trailblaze
       - ChillingWater
+      - TakeDown
 Larvitar:
   family-teachable:
     - Toxic
@@ -938,6 +998,23 @@ Larvitar:
     - Confide
     - PowerUpPunch
     - TeraBlast
+    - TakeDown
+    - RockSlide
+    - Spite
+    - ScaryFace
+    - Outrage
+    - Crunch
+    - HelpingHand
+    - RockTomb
+    - SandTomb
+    - IronDefense
+    - MudShot
+    - DragonDance
+    - RockBlast
+    - DarkPulse
+    - GigaImpact
+    - StoneEdge
+    - StompingTantrum
   Larvitar:
     level:
       1: [Tackle, Leer]
@@ -949,7 +1026,7 @@ Larvitar:
       15: [RockSlide]
       18: [StompingTantrum]
       21: [Screech]
-      24: [DarkPulse]
+      24: [DarkPulse, SmackDown]
       27: [Crunch]
       31: [Earthquake]
       33: [StoneEdge]
@@ -960,22 +1037,11 @@ Larvitar:
       [
         RockSmash,
         Assurance,
-        Crunch,
-        DarkPulse,
-        DragonDance,
         FocusEnergy,
-        IronDefense,
         IronTail,
         MuddyWater,
-        Outrage,
         Payback,
-        RockSlide,
-        RockTomb,
-        SandTomb,
-        ScaryFace,
         Screech,
-        StompingTantrum,
-        StoneEdge,
         Superpower,
         Uproar,
       ]
@@ -1001,7 +1067,7 @@ Larvitar:
       15: [RockSlide]
       18: [StompingTantrum]
       21: [Screech]
-      24: [DarkPulse]
+      24: [DarkPulse, SmackDown]
       27: [Crunch]
       33: [Earthquake]
       37: [StoneEdge]
@@ -1012,24 +1078,16 @@ Larvitar:
       [
         RockSmash,
         Assurance,
-        Crunch,
-        DarkPulse,
-        DragonDance,
         FocusEnergy,
-        IronDefense,
         IronTail,
         MuddyWater,
-        Outrage,
         Payback,
-        RockSlide,
-        RockTomb,
-        SandTomb,
-        ScaryFace,
         Screech,
-        StompingTantrum,
-        StoneEdge,
         Superpower,
         Uproar,
+        AerialAce,
+        HighHorsepower,
+        LashOut,
       ]
   Tyranitar:
     level:
@@ -1040,7 +1098,7 @@ Larvitar:
       15: [RockSlide]
       18: [StompingTantrum]
       21: [Screech]
-      24: [DarkPulse]
+      24: [DarkPulse, SmackDown]
       27: [Crunch]
       33: [Earthquake]
       37: [StoneEdge]
@@ -1071,7 +1129,6 @@ Larvitar:
       - FocusPunch
       - MegaKick
       - MegaPunch
-      - RockTomb
       - SeismicToss
       - ShockWave
       - Thunder
@@ -1082,7 +1139,6 @@ Larvitar:
       - DragonPulse
       - Fling
       - FocusBlast
-      - GigaImpact
       - RockClimb
       - ShadowClaw
       - HoneClaws
@@ -1090,14 +1146,10 @@ Larvitar:
       - Incinerate
       - DragonTail
       - BrutalSwing
-      - StompingTantrum
       - BodyPress
       - BreakingSwipe
       - LashOut
       - Assurance
-      - Crunch
-      - DarkPulse
-      - DragonDance
       - FireFang
       - FocusEnergy
       - HeavySlam
@@ -1105,24 +1157,20 @@ Larvitar:
       - HydroPump
       - IceFang
       - IcePunch
-      - IronDefense
       - LowKick
       - MuddyWater
-      - Outrage
       - Payback
       - Revenge
-      - RockBlast
-      - RockSlide
-      - SandTomb
-      - ScaryFace
       - Screech
-      - StoneEdge
       - Superpower
       - ThunderFang
       - ThunderPunch
       - Uproar
       - Whirlpool
       - HardPress
+      - IcyWind
+      - KnockOff
+      - PowerGem
 Lugia:
   Lugia:
     level:
@@ -1239,6 +1287,12 @@ Lugia:
       - TeraBlast
       - ChillingWater
       - PsychicNoise
+      - TakeDown
+      - ScaryFace
+      - AirCutter
+      - BraveBird
+      - Acrobatics
+      - Liquidation
 HoOh:
   HoOh:
     level:
@@ -1344,6 +1398,10 @@ HoOh:
       - WeatherBall
       - WillOWisp
       - TeraBlast
+      - BodySlam
+      - TakeDown
+      - AirCutter
+      - Hurricane
 Celebi:
   Celebi:
     level:

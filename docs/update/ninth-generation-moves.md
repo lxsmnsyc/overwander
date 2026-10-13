@@ -69,6 +69,10 @@ All of them are at the numbers Scarlet and Violet settled them on.
 new moves by level, machine, tutor and egg, the way Scarlet and Violet teach
 them.
 
+- **They learn Scarlet and Violet's older moves too.** About 200 new level-up
+  moves, more than 4,000 new machine and tutor moves and about 70 egg moves.
+  Squirtle's line learns Wave Crash, Gallade Sacred Sword and Starly Dual
+  Wingbeat.
 - **Nothing learned by level is taken away.**
 - **Egg moves go on the pokemon that hatches**, not on its evolutions.
 

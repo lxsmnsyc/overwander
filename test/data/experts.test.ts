@@ -939,8 +939,12 @@ describe('type experts', () => {
   it('pays for a move that cannot miss at all', () => {
     // Accuracy is rolled against evasion, so a written 100 is a
     // promise a Double Team breaks and a move with no accuracy is
-    // not. Read flat the two tied, and the older move id won
-    const starly = getBestMoves(Species.Starly, [Abilities.KeenEye]);
+    // not. Read flat the two tied, and the older move id won. Dual
+    // Wingbeat is already carried by the party, so the Flying pick is
+    // between the two 60-power moves
+    const starly = getBestMoves(Species.Starly, [Abilities.KeenEye], {
+      taken: new Map([[Moves.DualWingbeat, 3]]),
+    });
 
     expect(starly).toContain(Moves.AerialAce);
     expect(starly).not.toContain(Moves.WingAttack);

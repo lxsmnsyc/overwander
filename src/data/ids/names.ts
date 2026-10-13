@@ -3286,6 +3286,9 @@ export const ABILITY_IDS = {
   Mouthful: Abilities.Mouthful,
   BackSeatOrders: Abilities.BackSeatOrders,
   GlaiveGuard: Abilities.GlaiveGuard,
+  BogDown: Abilities.BogDown,
+  Raging: Abilities.Raging,
+  TeaService: Abilities.TeaService,
 } as const satisfies Record<string, Abilities>;
 
 export const ITEM_IDS = {

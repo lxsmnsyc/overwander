@@ -67,3 +67,12 @@ AuspiciousArmor:
 MaliciousArmor:
   name: Malicious Armor
   description: Evolves the pokemon it is used on, where a line asks for it.
+SyrupyApple:
+  name: Syrupy Apple
+  description: Evolves the pokemon it is used on, where a line asks for it.
+MetalAlloy:
+  name: Metal Alloy
+  description: Evolves the pokemon it is used on, where a line asks for it.
+UnremarkableTeacup:
+  name: Unremarkable Teacup
+  description: Evolves the pokemon it is used on, where a line asks for it.

@@ -1209,6 +1209,10 @@ const enum Abilities {
   Mouthful = 200519,
   BackSeatOrders = 200520,
   GlaiveGuard = 200521,
+  // Paldea's regional lines, and the tea pair's support half
+  BogDown = 200522,
+  Raging = 200523,
+  TeaService = 200524,
 }
 
 export default Abilities;

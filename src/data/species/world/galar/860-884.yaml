@@ -188,5 +188,13 @@ Duraludon:
     egg-groups: [Mineral, Dragon]
     biomes: [Mountain, Badlands]
     active: any
-    # Archaludon grows out of it in a later generation
-    awaiting: evolution
+    evolves-into:
+      - species: Archaludon
+        method: [UsedItem]
+        item: MetalAlloy
+  Archaludon:
+    types: [Steel, Dragon]
+    egg-groups: [Mineral, Dragon]
+    biomes: [Mountain, Badlands]
+    active: any
+    evolves-from: Duraludon

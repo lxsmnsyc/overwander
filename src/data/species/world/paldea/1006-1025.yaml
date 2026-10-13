@@ -1,0 +1,16 @@
+Poltchageist:
+  Poltchageist:
+    types: [Grass, Ghost]
+    egg-groups: [Mineral, Amorphous]
+    biomes: [TemperateForest, MontaneForest]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Sinistcha
+        method: [UsedItem]
+        item: UnremarkableTeacup
+  Sinistcha:
+    types: [Grass, Ghost]
+    egg-groups: [Mineral, Amorphous]
+    biomes: [TemperateForest, MontaneForest]
+    active: [Evening, Night]
+    evolves-from: Poltchageist

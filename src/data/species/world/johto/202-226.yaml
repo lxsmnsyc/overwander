@@ -22,7 +22,17 @@ Girafarig:
     egg-groups: [Field]
     biomes: [Savanna, Grassland, Steppe]
     active: any
-    awaiting: evolution
+    evolves-into:
+      - species: Farigiraf
+        method: [Level, KnownMove]
+        level: 32
+        move: TwinBeam
+  Farigiraf:
+    types: [Normal, Psychic]
+    egg-groups: [Field]
+    biomes: [Savanna, Grassland, Steppe]
+    active: any
+    evolves-from: Girafarig
 Pineco:
   Pineco:
     types: [Bug]
@@ -45,7 +55,17 @@ Dunsparce:
     egg-groups: [Field]
     biomes: [Mountain, Steppe, Badlands]
     active: any
-    awaiting: evolution
+    evolves-into:
+      - species: Dudunsparce
+        method: [Level, KnownMove]
+        level: 32
+        move: HyperDrill
+  Dudunsparce:
+    types: [Normal]
+    egg-groups: [Field]
+    biomes: [Mountain, Steppe, Badlands]
+    active: any
+    evolves-from: Dunsparce
 Gligar:
   Gligar:
     types: [Ground, Flying]
@@ -184,6 +204,14 @@ Teddiursa:
     biomes: [Taiga, MontaneForest]
     active: [Evening, Night]
     evolves-from: Ursaring
+  UrsalunaBloodmoon:
+    types: [Ground, Normal]
+    egg-groups: [Field]
+    biomes: [Taiga, MontaneForest]
+    active: [Night]
+    # Raised under a red moon rather than grown from an Ursaring, so it is
+    # met as it is
+    base-form: false
 Slugma:
   Slugma:
     types: [Fire]

@@ -506,6 +506,7 @@ describe('species forms', () => {
       ...MAUSHOLD_FORMS.slice(1),
       ...PALAFIN_FORMS.slice(1),
       ...TATSUGIRI_FORMS.slice(1),
+      Species.UrsalunaBloodmoon,
       // The true shadows, which are forms of the birds they are the
       // shadow of rather than pokemon of their own
       ...listTrueShadows(),

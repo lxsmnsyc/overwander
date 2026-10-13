@@ -3,11 +3,13 @@ Wobbuffet:
   Wynaut: { name: Wynaut, category: Bright Pokemon }
 Girafarig:
   Girafarig: { name: Girafarig, category: Long Neck Pokemon }
+  Farigiraf: { name: Farigiraf, category: Long Neck Pokemon }
 Pineco:
   Pineco: { name: Pineco, category: Bagworm Pokemon }
   Forretress: { name: Forretress, category: Bagworm Pokemon }
 Dunsparce:
   Dunsparce: { name: Dunsparce, category: Land Snake Pokemon }
+  Dudunsparce: { name: Dudunsparce, category: Land Snake Pokemon }
 Gligar:
   Gligar: { name: Gligar, category: Fly Scorpion Pokemon }
   Gliscor: { name: Gliscor, category: Fang Scorpion Pokemon }
@@ -31,6 +33,7 @@ Teddiursa:
   Teddiursa: { name: Teddiursa, category: Little Bear Pokemon }
   Ursaring: { name: Ursaring, category: Hibernator Pokemon }
   Ursaluna: { name: Ursaluna, category: Peat Pokemon }
+  UrsalunaBloodmoon: { name: Bloodmoon Ursaluna, category: Peat Pokemon }
 Slugma:
   Slugma: { name: Slugma, category: Lava Pokemon }
   Magcargo: { name: Magcargo, category: Lava Pokemon }

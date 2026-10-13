@@ -42,6 +42,7 @@ export const BATTLE_FEATS = new Map<Species, BattleFeat>([
   [Species.Stantler, { landed: { move: Moves.PsyshieldBash, count: 20 }, cumulative: true }],
   [Species.QwilfishHisui, { landed: { move: Moves.BarbBarrage, count: 20 }, cumulative: true }],
   [Species.BasculinWhite, { recoil: 294, cumulative: true }],
+  [Species.Primeape, { landed: { move: Moves.RageFist, count: 20 }, cumulative: true }],
 ]);
 
 /** Whether one fight met the feat this species evolves on */

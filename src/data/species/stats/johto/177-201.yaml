@@ -133,6 +133,18 @@ Wooper:
     height: 1.4
     weight: 75
     gender: [1, 1]
+  WooperPaldea:
+    stats: { HP: 55, Attack: 45, Defense: 45, SpecialAttack: 25, SpecialDefense: 25, Speed: 15 }
+    catch-rate: 255
+    height: 0.4
+    weight: 11
+    gender: [4, 4]
+  Clodsire:
+    stats: { HP: 130, Attack: 75, Defense: 60, SpecialAttack: 45, SpecialDefense: 100, Speed: 20 }
+    catch-rate: 90
+    height: 1.8
+    weight: 223
+    gender: [4, 4]
 Murkrow:
   Murkrow:
     stats: { HP: 60, Attack: 85, Defense: 42, SpecialAttack: 85, SpecialDefense: 42, Speed: 91 }

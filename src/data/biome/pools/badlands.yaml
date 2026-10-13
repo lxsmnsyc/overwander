@@ -35,6 +35,7 @@ land:
       Vullaby: 104
       Drilbur: 104
       Dunsparce: 65
+      Duraludon: 29
     rare:
       Boldore: 161
       Krokorok: 135
@@ -73,7 +74,6 @@ land:
     elusive:
       Falinks: 34
       Stonjourner: 29
-      Duraludon: 29
       Maractus: 20
       Mawile: 20
       Carbink: 14
@@ -156,6 +156,7 @@ land:
       Vullaby: 93
       Drilbur: 93
       Dunsparce: 59
+      Duraludon: 29
     rare:
       Boldore: 152
       Krokorok: 127
@@ -197,7 +198,6 @@ land:
     elusive:
       Falinks: 34
       Stonjourner: 29
-      Duraludon: 29
       Maractus: 20
       Mawile: 20
       Carbink: 14
@@ -275,6 +275,7 @@ land:
       Glimmet: 120
       Dunsparce: 60
       Gligar: 31
+      Duraludon: 29
     rare:
       Golbat: 341
       HakamoO: 273
@@ -312,9 +313,9 @@ land:
       Sableye: 37
       Falinks: 34
       Stonjourner: 29
-      Duraludon: 29
       Carbink: 27
       Heatmor: 27
+      Kingambit: 25
       Turtonator: 23
       Aegislash: 23
       Spiritomb: 23
@@ -381,6 +382,7 @@ land:
       Dunsparce: 57
       Misdreavus: 29
       Gligar: 29
+      Duraludon: 29
     rare:
       Golbat: 277
       HakamoO: 223
@@ -420,9 +422,9 @@ land:
       Sableye: 34
       Falinks: 34
       Stonjourner: 29
-      Duraludon: 29
       Carbink: 25
       Heatmor: 25
+      Kingambit: 25
       Turtonator: 21
       Aegislash: 21
       Spiritomb: 21

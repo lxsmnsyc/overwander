@@ -143,6 +143,8 @@ land:
     elusive:
       Morpeko: 118
       Corviknight: 25
+      TaurosPaldeaCombat: 25
+      TaurosPaldeaAqua: 25
       Stonjourner: 15
       Spinda: 14
       Castform: 12
@@ -350,6 +352,8 @@ land:
     elusive:
       Morpeko: 118
       Corviknight: 25
+      TaurosPaldeaCombat: 25
+      TaurosPaldeaAqua: 25
       Stonjourner: 15
       Spinda: 14
       Castform: 12

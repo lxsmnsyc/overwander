@@ -15,6 +15,12 @@ Applin:
   Appletun:
     abilities: [Ripen, Gluttony]
     hidden: [ThickFat]
+  Dipplin:
+    abilities: [SupersweetSyrup, Gluttony]
+    hidden: [StickyHold]
+  Hydrapple:
+    abilities: [SupersweetSyrup, Regenerator]
+    hidden: [StickyHold]
 Silicobra:
   Silicobra:
     abilities: [SandSpit, ShedSkin]

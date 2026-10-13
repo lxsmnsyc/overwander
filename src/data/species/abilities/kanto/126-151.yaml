@@ -19,6 +19,18 @@ Tauros:
   Tauros:
     abilities: [Intimidate, AngerPoint]
     hidden: [SheerForce, Reckless]
+  TaurosPaldeaCombat:
+    abilities: [Intimidate, AngerPoint]
+    # Guts is this registry's rather than the mainline's, filling it to four
+    hidden: [CudChew, Guts]
+  TaurosPaldeaBlaze:
+    abilities: [Intimidate, AngerPoint]
+    # Flash Fire is this registry's rather than the mainline's, filling it to four
+    hidden: [CudChew, FlashFire]
+  TaurosPaldeaAqua:
+    abilities: [Intimidate, AngerPoint]
+    # Swift Swim is this registry's rather than the mainline's, filling it to four
+    hidden: [CudChew, SwiftSwim]
 Magikarp:
   Magikarp:
     abilities: [SwiftSwim]

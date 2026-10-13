@@ -1116,3 +1116,68 @@ Duraludon:
         Roar,
       ]
     egg: [MirrorCoat, NightSlash, Slash]
+  Archaludon:
+    level:
+      1: [Leer, MetalClaw, ElectroShot]
+      6: [RockSmash]
+      12: [HoneClaws]
+      18: [MetalSound]
+      24: [BreakingSwipe]
+      30: [DragonTail]
+      36: [IronDefense]
+      42: [FocusEnergy]
+      48: [DragonClaw]
+      54: [FlashCannon]
+      60: [MetalBurst]
+      66: [HyperBeam]
+    teachable:
+      - AuraSphere
+      - BodyPress
+      - BodySlam
+      - BreakingSwipe
+      - BrickBreak
+      - DarkPulse
+      - DoubleEdge
+      - DracoMeteor
+      - DragonCheer
+      - DragonClaw
+      - DragonPulse
+      - DragonTail
+      - Earthquake
+      - Endure
+      - Facade
+      - FlashCannon
+      - FoulPlay
+      - GigaImpact
+      - GyroBall
+      - HardPress
+      - HeavySlam
+      - HyperBeam
+      - IronDefense
+      - IronHead
+      - LightScreen
+      - MetalClaw
+      - MetalSound
+      - MeteorBeam
+      - Outrage
+      - Protect
+      - Reflect
+      - Rest
+      - Roar
+      - RockSlide
+      - RockTomb
+      - ScaryFace
+      - SleepTalk
+      - SmackDown
+      - Snarl
+      - SolarBeam
+      - StealthRock
+      - SteelBeam
+      - StoneEdge
+      - Substitute
+      - SwordsDance
+      - TakeDown
+      - TeraBlast
+      - Thunder
+      - ThunderWave
+      - Thunderbolt

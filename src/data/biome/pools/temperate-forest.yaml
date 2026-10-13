@@ -13,6 +13,7 @@ land:
       Blipbug: 240
       Rookidee: 173
       Hatenna: 144
+      Applin: 144
       Grookey: 45
       Chespin: 38
       Bulbasaur: 38
@@ -31,7 +32,6 @@ land:
       Pansear: 144
       Pansage: 144
       Cherubi: 144
-      Applin: 144
       Karrablast: 131
       Ledyba: 131
       Pineco: 131
@@ -55,6 +55,8 @@ land:
       Poliwhirl: 59
       Hattrem: 48
       Quilladin: 24
+      Flapple: 15
+      Appletun: 15
       Thwackey: 14
       Ivysaur: 12
       Bayleef: 12
@@ -85,8 +87,6 @@ land:
       Quagsire: 20
       Wormadam: 16
       Mothim: 16
-      Flapple: 15
-      Appletun: 15
     elusive:
       Indeedee: 86
       IndeedeeFemale: 86
@@ -163,6 +163,7 @@ land:
       Spinarak: 120
       Pineco: 120
       Tarountula: 120
+      Poltchageist: 120
       Deerling: 108
       Pikachu: 30
       Murkrow: 30
@@ -175,6 +176,7 @@ land:
       Hattrem: 49
     scarce:
       Spidops: 50
+      Sinistcha: 50
       Venomoth: 39
       Noctowl: 39
       Kricketune: 39
@@ -255,6 +257,7 @@ land:
       Espurr: 137
       Cherubi: 125
       Tarountula: 120
+      Poltchageist: 120
       Foongus: 114
       Shelmet: 114
       Zorua: 114
@@ -275,6 +278,7 @@ land:
       Hattrem: 49
     scarce:
       Spidops: 50
+      Sinistcha: 50
       Parasect: 36
       Venomoth: 36
       Noctowl: 36

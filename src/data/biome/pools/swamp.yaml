@@ -21,6 +21,7 @@ land:
       Slowpoke: 188
       Marill: 188
       Croagunk: 188
+      WooperPaldea: 120
       Lickitung: 47
       Yanma: 47
     rare:
@@ -37,6 +38,7 @@ land:
       Slowbro: 61
       Masquerain: 61
       Bibarel: 61
+      Clodsire: 50
       Crawdaunt: 48
       Swalot: 43
       Swanna: 37
@@ -82,6 +84,7 @@ land:
       Shelmet: 260
       Marill: 260
       Croagunk: 260
+      WooperPaldea: 120
       Yanma: 64
     rare:
       Palpitoad: 542
@@ -98,6 +101,7 @@ land:
       Yanmega: 57
       Tangrowth: 57
       Araquanid: 57
+      Clodsire: 50
       Accelgor: 47
       Azumarill: 47
       Quagsire: 47
@@ -136,6 +140,7 @@ land:
       Koffing: 211
       Marill: 211
       Croagunk: 211
+      WooperPaldea: 120
       Yanma: 54
     rare:
       Palpitoad: 541
@@ -149,6 +154,7 @@ land:
       Bibarel: 70
       Crawdaunt: 58
       Swalot: 50
+      Clodsire: 50
       Toxicroak: 43
       Yanmega: 43
       Tangrowth: 43

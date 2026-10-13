@@ -919,6 +919,30 @@ Mankey:
       48: [StompingTantrum]
       53: [Outrage, Punishment]
     teachable: [HyperBeam, GigaImpact, StealthRock]
+  Annihilape:
+    level:
+      1: [Scratch, Leer, Counter, FocusEnergy, ShadowPunch, Fling]
+      5: [FurySwipes]
+      8: [LowKick]
+      12: [SeismicToss]
+      17: [Swagger]
+      22: [CrossChop]
+      26: [Assurance]
+      30: [Thrash]
+      35: [RageFist]
+      39: [CloseCombat]
+      44: [Screech]
+      48: [StompingTantrum]
+      53: [Outrage]
+      57: [FinalGambit]
+    teachable:
+      - Coaching
+      - GigaImpact
+      - HyperBeam
+      - NightShade
+      - PhantomForce
+      - ShadowBall
+      - StealthRock
 Growlithe:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:

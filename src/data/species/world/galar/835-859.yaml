@@ -20,7 +20,6 @@ Applin:
     egg-groups: [Grass, Dragon]
     biomes: [TemperateForest, Woodland]
     active: [Morning, Day]
-    # Dipplin grows out of it in a later generation
     evolves-into:
       - species: Flapple
         method: [UsedItem]
@@ -28,7 +27,9 @@ Applin:
       - species: Appletun
         method: [UsedItem]
         item: SweetApple
-    awaiting: evolution
+      - species: Dipplin
+        method: [UsedItem]
+        item: SyrupyApple
   Flapple:
     types: [Grass, Dragon]
     egg-groups: [Grass, Dragon]
@@ -41,6 +42,23 @@ Applin:
     biomes: [TemperateForest, Woodland]
     active: [Morning, Day]
     evolves-from: Applin
+  Dipplin:
+    types: [Grass, Dragon]
+    egg-groups: [Grass, Dragon]
+    biomes: [TemperateForest, Woodland]
+    active: [Morning, Day]
+    evolves-from: Applin
+    evolves-into:
+      - species: Hydrapple
+        method: [Level, KnownMove]
+        level: 40
+        move: DragonCheer
+  Hydrapple:
+    types: [Grass, Dragon]
+    egg-groups: [Grass, Dragon]
+    biomes: [TemperateForest, Woodland]
+    active: [Morning, Day]
+    evolves-from: Dipplin
 Silicobra:
   Silicobra:
     types: [Ground]

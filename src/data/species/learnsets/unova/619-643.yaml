@@ -368,6 +368,68 @@ Golett:
       - HardPress
 Pawniard:
   # TM and tutor moves shared by the whole family
+  Kingambit:
+    level:
+      1: [Scratch, Leer, FuryCutter, MetalClaw, MetalBurst, KowtowCleave]
+      15: [Torment]
+      20: [ScaryFace]
+      25: [Assurance]
+      30: [MetalSound]
+      35: [Slash]
+      40: [NightSlash]
+      45: [IronDefense]
+      50: [Retaliate]
+      57: [IronHead]
+      64: [SwordsDance]
+      71: [Guillotine]
+    teachable:
+      - AerialAce
+      - AirSlash
+      - BrickBreak
+      - DarkPulse
+      - Dig
+      - Endure
+      - Facade
+      - FalseSwipe
+      - FlashCannon
+      - Fling
+      - FocusBlast
+      - FoulPlay
+      - GigaImpact
+      - GrassKnot
+      - HyperBeam
+      - IronDefense
+      - IronHead
+      - LashOut
+      - LowKick
+      - LowSweep
+      - MetalClaw
+      - MetalSound
+      - PoisonJab
+      - Protect
+      - RainDance
+      - Rest
+      - Reversal
+      - RockTomb
+      - Sandstorm
+      - ScaryFace
+      - ShadowClaw
+      - SleepTalk
+      - Snarl
+      - Spite
+      - StealthRock
+      - SteelBeam
+      - StoneEdge
+      - Substitute
+      - SwordsDance
+      - TakeDown
+      - Taunt
+      - TeraBlast
+      - Thief
+      - ThroatChop
+      - ThunderWave
+      - XScissor
+      - ZenHeadbutt
 
   # What the blades work out how to do, at either size
   family-teachable:

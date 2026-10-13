@@ -28,6 +28,8 @@ Yanma:
 Wooper:
   Wooper: { name: Wooper, category: Water Fish Pokemon }
   Quagsire: { name: Quagsire, category: Water Fish Pokemon }
+  WooperPaldea: { name: Paldean Wooper, category: Water Fish Pokemon }
+  Clodsire: { name: Clodsire, category: Spiny Fish Pokemon }
 Murkrow:
   Murkrow: { name: Murkrow, category: Darkness Pokemon }
   Honchkrow: { name: Honchkrow, category: Big Boss Pokemon }

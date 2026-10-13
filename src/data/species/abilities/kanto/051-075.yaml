@@ -31,6 +31,9 @@ Mankey:
   Primeape:
     abilities: [VitalSpirit, AngerPoint]
     hidden: [Defiant]
+  Annihilape:
+    abilities: [VitalSpirit, InnerFocus]
+    hidden: [Defiant]
 Growlithe:
   Growlithe:
     abilities: [Intimidate, FlashFire]

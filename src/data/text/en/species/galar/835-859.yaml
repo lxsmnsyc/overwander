@@ -5,6 +5,8 @@ Applin:
   Applin: { name: Applin, category: Apple Core Pokemon }
   Flapple: { name: Flapple, category: Apple Wing Pokemon }
   Appletun: { name: Appletun, category: Apple Nectar Pokemon }
+  Dipplin: { name: Dipplin, category: Candy Apple Pokemon }
+  Hydrapple: { name: Hydrapple, category: Apple Hydra Pokemon }
 Silicobra:
   Silicobra: { name: Silicobra, category: Sand Snake Pokemon }
   Sandaconda: { name: Sandaconda, category: Sand Snake Pokemon }

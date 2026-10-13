@@ -34,6 +34,7 @@ land:
       Onix: 89
       Dunsparce: 89
       Magmar: 45
+      Duraludon: 29
     rare:
       Boldore: 213
       Lairon: 178
@@ -64,6 +65,7 @@ land:
       Steelix: 35
       Magcargo: 35
       WormadamTrash: 28
+      Archaludon: 25
       ArcanineHisui: 25
       Sneasler: 25
       Kleavor: 25
@@ -72,10 +74,10 @@ land:
       AvaluggHisui: 25
     elusive:
       Falinks: 29
-      Duraludon: 29
       Torkoal: 26
       Pawmot: 25
       Garganacl: 25
+      Annihilape: 25
       Mawile: 17
       Carbink: 12
       Durant: 12
@@ -115,8 +117,6 @@ land:
     special:
       Celesteela: 10
       Necrozma: 10
-      ZygardeTenPercent: 5
-      Zygarde: 5
       Yveltal: 10
       Terrakion: 10
       Cobalion: 10
@@ -124,11 +124,13 @@ land:
       Moltres: 10
       HoOh: 10
       Urshifu: 10
+      ZygardeTenPercent: 5
+      Zygarde: 5
     mythical:
-      Magearna: 5
-      MagearnaOriginal: 5
       Marshadow: 10
       Diancie: 10
+      Magearna: 5
+      MagearnaOriginal: 5
   day:
     base:
       Roggenrola: 728
@@ -166,6 +168,7 @@ land:
       Onix: 89
       Dunsparce: 89
       Magmar: 45
+      Duraludon: 29
     rare:
       Boldore: 210
       Lairon: 175
@@ -198,6 +201,7 @@ land:
       Steelix: 35
       Magcargo: 35
       WormadamTrash: 28
+      Archaludon: 25
       ArcanineHisui: 25
       Sneasler: 25
       Kleavor: 25
@@ -206,10 +210,10 @@ land:
       AvaluggHisui: 25
     elusive:
       Falinks: 29
-      Duraludon: 29
       Torkoal: 26
       Pawmot: 25
       Garganacl: 25
+      Annihilape: 25
       Mawile: 17
       Carbink: 12
       Durant: 12
@@ -250,8 +254,6 @@ land:
     special:
       Celesteela: 10
       Necrozma: 10
-      ZygardeTenPercent: 5
-      Zygarde: 5
       Yveltal: 10
       Terrakion: 10
       Cobalion: 10
@@ -259,11 +261,13 @@ land:
       Moltres: 10
       HoOh: 10
       Urshifu: 10
+      ZygardeTenPercent: 5
+      Zygarde: 5
     mythical:
-      Magearna: 5
-      MagearnaOriginal: 5
       Marshadow: 10
       Diancie: 10
+      Magearna: 5
+      MagearnaOriginal: 5
   evening:
     base:
       Zubat: 1233
@@ -293,6 +297,7 @@ land:
       Magmar: 63
       Murkrow: 63
       Gligar: 63
+      Duraludon: 29
     rare:
       Golbat: 287
       HakamoO: 229
@@ -318,11 +323,11 @@ land:
       Magcargo: 44
       WormadamTrash: 35
       Perrserker: 30
+      Archaludon: 25
       AvaluggHisui: 25
       Centiskorch: 24
     elusive:
       Falinks: 29
-      Duraludon: 29
       Garganacl: 25
       Carbink: 20
       TyphlosionHisui: 20
@@ -356,8 +361,6 @@ land:
     special:
       Celesteela: 10
       Necrozma: 10
-      ZygardeTenPercent: 5
-      Zygarde: 5
       Yveltal: 10
       Terrakion: 10
       Cobalion: 10
@@ -365,11 +368,13 @@ land:
       Moltres: 10
       HoOh: 10
       Urshifu: 10
+      ZygardeTenPercent: 5
+      Zygarde: 5
     mythical:
-      Magearna: 5
-      MagearnaOriginal: 5
       Marshadow: 10
       Diancie: 10
+      Magearna: 5
+      MagearnaOriginal: 5
   night:
     base:
       Zubat: 1080
@@ -401,6 +406,7 @@ land:
       Murkrow: 54
       Misdreavus: 54
       Gligar: 54
+      Duraludon: 29
     rare:
       Golbat: 262
       HakamoO: 209
@@ -428,11 +434,11 @@ land:
       Magcargo: 34
       Perrserker: 30
       WormadamTrash: 26
+      Archaludon: 25
       AvaluggHisui: 25
       Centiskorch: 24
     elusive:
       Falinks: 29
-      Duraludon: 29
       Garganacl: 25
       TyphlosionHisui: 20
       Carbink: 19
@@ -467,8 +473,6 @@ land:
     special:
       Celesteela: 10
       Necrozma: 10
-      ZygardeTenPercent: 5
-      Zygarde: 5
       Yveltal: 10
       Terrakion: 10
       Cobalion: 10
@@ -477,11 +481,13 @@ land:
       Mewtwo: 10
       HoOh: 10
       Urshifu: 10
+      ZygardeTenPercent: 5
+      Zygarde: 5
     mythical:
-      Magearna: 5
-      MagearnaOriginal: 5
       Marshadow: 10
       Diancie: 10
+      Magearna: 5
+      MagearnaOriginal: 5
 
 water:
   morning:

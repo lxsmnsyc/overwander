@@ -1509,6 +1509,54 @@ Wooper:
       - ToxicSpikes
       - DrainPunch
       - BodyPress
+  WooperPaldea:
+    level:
+      1: [TailWhip, MudShot]
+      4: [Tackle]
+      8: [PoisonTail]
+      12: [ToxicSpikes]
+      16: [Slam]
+      21: [Yawn]
+      24: [PoisonJab]
+      28: [SludgeWave]
+      32: [Amnesia]
+      36: [Toxic]
+      40: [Earthquake]
+    teachable:
+      - BodyPress
+      - GunkShot
+      - LowKick
+      - PoisonJab
+      - PoisonTail
+      - ToxicSpikes
+      - Venoshock
+  Clodsire:
+    level:
+      1: [TailWhip, PoisonSting, Amnesia]
+      4: [ToxicSpikes]
+      8: [MudShot]
+      12: [PoisonTail]
+      16: [Slam]
+      21: [Yawn]
+      24: [PoisonJab]
+      30: [SludgeWave]
+      36: [Megahorn]
+      40: [Toxic]
+      48: [Earthquake]
+    teachable:
+      - BodyPress
+      - GigaImpact
+      - GunkShot
+      - HeavySlam
+      - HighHorsepower
+      - HyperBeam
+      - IronHead
+      - LowKick
+      - PoisonJab
+      - PoisonTail
+      - ToxicSpikes
+      - Venoshock
+      - ZenHeadbutt
 Murkrow:
   Murkrow:
     level:

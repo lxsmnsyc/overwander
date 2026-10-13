@@ -1,0 +1,13 @@
+Poltchageist:
+  Poltchageist:
+    stats: { HP: 40, Attack: 45, Defense: 45, SpecialAttack: 74, SpecialDefense: 54, Speed: 50 }
+    catch-rate: 120
+    height: 0.1
+    weight: 1.1
+    gender: genderless
+  Sinistcha:
+    stats: { HP: 71, Attack: 60, Defense: 106, SpecialAttack: 121, SpecialDefense: 80, Speed: 70 }
+    catch-rate: 60
+    height: 0.2
+    weight: 2.2
+    gender: genderless

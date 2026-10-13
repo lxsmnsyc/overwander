@@ -330,6 +330,12 @@ interface Tint {
    * A pixel the source left empty stays empty
    */
   paint?: { rows: string[]; colours: Record<string, string> };
+  /**
+   * Every colour the swaps do not name, worked out from the colour
+   * itself: for a picture shaded in too many tones to list, such as a
+   * whole apple turned another hue
+   */
+  recolour?: (colour: string) => string;
   /** A colour worked out per pixel after the swap, for a gradient no swap can draw */
   shade?: (colour: string, x: number, y: number, width: number, height: number) => string;
 }
@@ -722,6 +728,38 @@ const TINTS: Tint[] = [
     },
   },
   {
+    from: 'evolutions/sweet-apple',
+    to: 'evolutions/syrupy-apple',
+    why: 'the apple an Applin grows into a Dipplin on is its own item, and no sheet draws it',
+    // The red skin turned to a glossy amber candy coat
+    swaps: {},
+    recolour: rehue(32, 1),
+  },
+  {
+    from: 'evolutions/metal-coat',
+    to: 'evolutions/metal-alloy',
+    why: 'the alloy a Duraludon grows into an Archaludon on is its own item, and no sheet draws it',
+    // The coat's grey steel taken to a blued alloy
+    swaps: {},
+    recolour: rehue(212, 2.5),
+  },
+  {
+    from: 'evolutions/cracked-pot',
+    to: 'evolutions/unremarkable-teacup',
+    why: 'the cup a Poltchageist grows into a Sinistcha in is its own item, and no sheet draws it',
+    // The pot's tea turned to matcha green
+    swaps: {},
+    recolour: rehue(95, 0.8),
+  },
+  {
+    from: 'evolutions/kings-rock',
+    to: 'evolutions/leaders-crest',
+    why: 'the crest a Bisharp carries to become a Kingambit is its own item, and no sheet draws it',
+    // The crown's gold dulled to a battered crimson
+    swaps: {},
+    recolour: rehue(352, 0.7),
+  },
+  {
     from: 'key/parcel',
     to: 'evolutions/peat-block',
     why: 'the block an Ursaring evolves on is its own item, and no sheet draws it',
@@ -871,6 +909,28 @@ function hslToHex(hue: number, saturation: number, lightness: number): string {
 }
 
 /**
+ * A recolour that turns every coloured tone to one hue at a share of
+ * its saturation, keeping its lightness. Greys and the outline are
+ * left as they are, so the shading and the edge survive
+ */
+function rehue(hue: number, saturation: number): (colour: string) => string {
+  return (colour) => {
+    const [red, green, blue] = hexToRgb(colour);
+    const high = Math.max(red, green, blue) / 255;
+    const low = Math.min(red, green, blue) / 255;
+    const lightness = (high + low) / 2;
+    const chroma = high - low;
+
+    if (chroma < 0.08) {
+      return colour;
+    }
+    const was = chroma / (1 - Math.abs(2 * lightness - 1));
+
+    return hslToHex(hue, Math.min(1, was * saturation), lightness);
+  };
+}
+
+/**
  * Rare Candy Max: the candy's own tones run red to violet from one
  * wrapped end to the other. Six bands rather than a smooth ramp, so it
  * stays drawn in flat tones like the rest of the sheet
@@ -1000,11 +1060,13 @@ function tinted(tint: Tint, sheets: Map<string, Sheet>): Picture {
     }
     const was = hexOf(image, at);
 
-    if (!Object.hasOwn(tint.swaps, was)) {
+    const swapped = Object.hasOwn(tint.swaps, was) ? tint.swaps[was] : tint.recolour?.(was);
+
+    if (swapped == null) {
       missed.add(was);
       continue;
     }
-    const packedColour = Number.parseInt(tint.swaps[was].slice(1), 16);
+    const packedColour = Number.parseInt(swapped.slice(1), 16);
 
     image.rgba[at] = (packedColour >> 16) & 0xff;
     image.rgba[at + 1] = (packedColour >> 8) & 0xff;

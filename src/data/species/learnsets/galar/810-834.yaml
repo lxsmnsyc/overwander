@@ -35,6 +35,8 @@ Grookey:
     - UTurn
     - Uproar
     - WorkUp
+    - TeraBlast
+    - Trailblaze
   Grookey:
     level:
       1: [Scratch, Growl]
@@ -133,6 +135,9 @@ Scorbunny:
     - Taunt
     - UTurn
     - WorkUp
+    - TeraBlast
+    - Trailblaze
+    - TemperFlare
   Scorbunny:
     level:
       1: [Tackle, Growl]
@@ -216,6 +221,8 @@ Sobble:
     - WeatherBall
     - Whirlpool
     - WorkUp
+    - TeraBlast
+    - ChillingWater
   Sobble:
     level:
       1: [Pound, Growl]
@@ -274,6 +281,7 @@ Sobble:
         ShadowBall,
         SwordsDance,
         Waterfall,
+        Snowscape,
       ]
 Skwovet:
   # TM, TR and tutor moves shared by the whole family
@@ -304,6 +312,7 @@ Skwovet:
     - TailSlap
     - Thief
     - Uproar
+    - TeraBlast
   Skwovet:
     level:
       1: [Tackle, TailWhip]
@@ -317,6 +326,8 @@ Skwovet:
       40: [SuperFang]
       45: [Belch]
     egg: [BellyDrum, DefenseCurl, LastResort, Rollout]
+    teachable:
+      - Trailblaze
   Greedent:
     level:
       1: [Tackle, TailWhip, Bite, Covet, StuffCheeks]
@@ -373,6 +384,7 @@ Rookidee:
     - Thief
     - UTurn
     - WorkUp
+    - TeraBlast
   Rookidee:
     level:
       1: [Leer, Peck]
@@ -743,6 +755,8 @@ Chewtle:
     - Substitute
     - Surf
     - Whirlpool
+    - TeraBlast
+    - ChillingWater
   Chewtle:
     level:
       1: [Tackle, WaterGun]
@@ -799,4 +813,5 @@ Chewtle:
         SwordsDance,
         ThroatChop,
         Waterfall,
+        IceSpinner,
       ]

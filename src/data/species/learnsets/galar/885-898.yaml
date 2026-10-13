@@ -15,6 +15,7 @@ Dreepy:
     - Substitute
     - Swift
     - ThunderWave
+    - TeraBlast
   Dreepy:
     level:
       1: [Bite, QuickAttack, Astonish, Infestation]
@@ -62,6 +63,8 @@ Dreepy:
         Thunderbolt,
         UTurn,
         WillOWisp,
+        Pounce,
+        DragonCheer,
       ]
   Dragapult:
     level:
@@ -115,6 +118,8 @@ Dreepy:
         TriAttack,
         UTurn,
         WillOWisp,
+        Pounce,
+        DragonCheer,
       ]
 Zacian:
   family-teachable:
@@ -163,6 +168,8 @@ Zacian:
     - ThunderFang
     - WildCharge
     - WorkUp
+    - TeraBlast
+    - Trailblaze
   Zacian:
     level:
       1: [Bite, QuickAttack, MetalClaw, Howl, QuickGuard, SacredSword]
@@ -235,6 +242,8 @@ Zamazenta:
     - ThunderFang
     - WildCharge
     - WorkUp
+    - TeraBlast
+    - Trailblaze
   Zamazenta:
     level:
       1: [Bite, QuickAttack, MetalClaw, Howl, MetalBurst, WideGuard]
@@ -310,6 +319,7 @@ Eternatus:
         ToxicSpikes,
         VenomDrench,
         Venoshock,
+        TeraBlast,
       ]
 Kubfu:
   family-teachable:
@@ -348,6 +358,7 @@ Kubfu:
     - UTurn
     - WorkUp
     - ZenHeadbutt
+    - TeraBlast
   Kubfu:
     level:
       1: [Leer, RockSmash]
@@ -404,6 +415,7 @@ Kubfu:
         Swift,
         Taunt,
         ThroatChop,
+        Trailblaze,
       ]
   UrshifuRapidStrike:
     level:
@@ -441,6 +453,9 @@ Kubfu:
         Taunt,
         Waterfall,
         Whirlpool,
+        IceSpinner,
+        Trailblaze,
+        ChillingWater,
       ]
 Regieleki:
   Regieleki:
@@ -492,6 +507,8 @@ Regieleki:
         Thunderbolt,
         VoltSwitch,
         WildCharge,
+        TeraBlast,
+        SupercellSlam,
       ]
 Regidrago:
   Regidrago:
@@ -538,6 +555,8 @@ Regidrago:
         Snore,
         Substitute,
         ThunderFang,
+        TeraBlast,
+        DragonCheer,
       ]
 Glastrier:
   Glastrier:
@@ -596,6 +615,9 @@ Glastrier:
         Taunt,
         ThroatChop,
         Uproar,
+        TeraBlast,
+        Snowscape,
+        Trailblaze,
       ]
 Spectrier:
   Spectrier:
@@ -648,6 +670,7 @@ Spectrier:
         Taunt,
         Uproar,
         WillOWisp,
+        TeraBlast,
       ]
 Calyrex:
   Calyrex:
@@ -718,6 +741,7 @@ Calyrex:
         TrickRoom,
         WonderRoom,
         ZenHeadbutt,
+        TeraBlast,
       ]
   CalyrexIce:
     level:
@@ -837,6 +861,9 @@ Calyrex:
         Uproar,
         WonderRoom,
         ZenHeadbutt,
+        TeraBlast,
+        Snowscape,
+        Trailblaze,
       ]
   CalyrexShadow:
     level:
@@ -947,4 +974,5 @@ Calyrex:
         WillOWisp,
         WonderRoom,
         ZenHeadbutt,
+        TeraBlast,
       ]

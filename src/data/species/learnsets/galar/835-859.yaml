@@ -69,6 +69,8 @@ Applin:
     - Attract
     - DracoMeteor
     - GrassyGlide
+    - TeraBlast
+    - Pounce
   Applin:
     level:
       1: [Withdraw, Astonish]
@@ -118,6 +120,7 @@ Applin:
         Substitute,
         SunnyDay,
         UTurn,
+        Trailblaze,
       ]
   Appletun:
     level:
@@ -168,6 +171,7 @@ Applin:
         Substitute,
         SunnyDay,
         Superpower,
+        Trailblaze,
       ]
 Silicobra:
   # TM, TR and tutor moves shared by the whole family
@@ -194,6 +198,7 @@ Silicobra:
     - SleepTalk
     - Snore
     - Substitute
+    - TeraBlast
   Silicobra:
     level:
       1: [SandAttack, Wrap]
@@ -287,7 +292,9 @@ Cramorant:
       42: [Amnesia]
       49: [Thrash]
       56: [HydroPump]
-    egg: [AerialAce, AquaRing, Defog, FeatherDance, Roost]
+    egg: [AerialAce, AquaRing, Defog, FeatherDance, Roost, AquaCutter]
+    teachable:
+      - ChillingWater
   CramorantGulping:
     level:
       1: [Peck, Stockpile, SpitUp, Swallow, Belch]
@@ -342,6 +349,8 @@ Arrokuda:
     - ThroatChop
     - Waterfall
     - Whirlpool
+    - TeraBlast
+    - ChillingWater
   Arrokuda:
     level:
       1: [Peck, AquaJet]
@@ -377,6 +386,7 @@ Toxel:
     - SleepTalk
     - Snore
     - Substitute
+    - TeraBlast
   Toxel:
     level:
       1: [Growl, Acid, Flail, Belch, Nuzzle, TearfulLook]
@@ -445,6 +455,8 @@ Toxel:
         Venoshock,
         VoltSwitch,
         WildCharge,
+        Trailblaze,
+        PsychicNoise,
       ]
   ToxtricityLowKey:
     level:
@@ -510,6 +522,8 @@ Toxel:
         VenomDrench,
         VoltSwitch,
         WildCharge,
+        Trailblaze,
+        PsychicNoise,
       ]
 Sizzlipede:
   # TM, TR and tutor moves shared by the whole family
@@ -679,6 +693,7 @@ Sinistea:
     - Trick
     - WillOWisp
     - WonderRoom
+    - TeraBlast
   Sinistea:
     level:
       1: [Withdraw, Astonish]
@@ -737,6 +752,7 @@ Hatenna:
     - StoredPower
     - Substitute
     - ThunderWave
+    - TeraBlast
   Hatenna:
     level:
       1: [Confusion, PlayNice]
@@ -789,6 +805,7 @@ Hatenna:
         SwordsDance,
         TrickRoom,
         WonderRoom,
+        PsychicNoise,
       ]
 Impidimp:
   # TM, TR and tutor moves shared by the whole family
@@ -825,6 +842,9 @@ Impidimp:
     - ThunderWave
     - Trick
     - Uproar
+    - TeraBlast
+    - Trailblaze
+    - ChillingWater
   Impidimp:
     level:
       1: [FakeOut, Confide]

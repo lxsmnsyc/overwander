@@ -17,7 +17,7 @@ export {
   createRodAbility,
   createStalwartAbility,
 } from './absorb';
-export { createIntrepidSwordAbility, createMoxieAbility } from './boost';
+export { createBeastBoostAbility, createIntrepidSwordAbility, createMoxieAbility } from './boost';
 export { movesFlagged, movesOfType } from './matchers';
 export type { AbsorbMatcher } from './matchers';
 export {
@@ -46,6 +46,7 @@ export {
   createFurCoatAbility,
   createGooeyAbility,
   createKeenEyeAbility,
+  createLevitateAbility,
   createLimberAbility,
   createMultiscaleAbility,
   createQueenlyMajestyAbility,

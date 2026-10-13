@@ -18,7 +18,7 @@ import {
 } from '../../data/species/best-build';
 import type { Items } from '../../data/ids/items';
 import type { Species } from '../../data/ids/species';
-import { getSpeciesStones, getStoneMega } from '../../data/items/mega-stones';
+import { getHolderMega, getSpeciesStones } from '../../data/items/mega-stones';
 import { STAT_ORDER, Stats } from '../../data/constants/stats';
 import { MoveCategories } from '../../data/ids/moves';
 import { getSpeciesData } from '../../data/species';
@@ -216,7 +216,7 @@ function stoneFor(species: Species, role: BuildRole): Items | null {
   let bestWorth = Number.NEGATIVE_INFINITY;
 
   for (const stone of getSpeciesStones(species)) {
-    const mega = getStoneMega(stone);
+    const mega = getHolderMega(stone, species);
 
     if (mega == null) {
       continue;
@@ -265,7 +265,7 @@ function handMegaStone(
   for (const [at, member] of party.entries()) {
     const role = roles[at] ?? coreRoleOf(member.species);
     const stone = stoneFor(member.species, role);
-    const mega = stone == null ? null : getStoneMega(stone);
+    const mega = stone == null ? null : getHolderMega(stone, member.species);
 
     if (stone == null || mega == null) {
       continue;
@@ -295,7 +295,7 @@ function handMegaStone(
 
   const member = party[chosen.at];
   const items = [chosen.stone, ...member.items].slice(0, Math.max(1, outfit.items));
-  const mega = getStoneMega(chosen.stone);
+  const mega = getHolderMega(chosen.stone, member.species);
   const built = composed?.[chosen.at];
 
   party[chosen.at] = {

@@ -23,6 +23,7 @@ import {
   createContactHazard,
   createFilterAbility,
   createHydrationAbility,
+  createLevitateAbility,
   createLimberAbility,
   createSandRushAbility,
   createShellArmorAbility,
@@ -453,37 +454,7 @@ const geodudeToDrowzee = [
   ),
 
   // Gastly
-  // https://bulbapedia.bulbagarden.net/wiki/Levitate_(Ability)
-  createAbility(
-    Abilities.Levitate,
-    (battle) =>
-      new MergedLifecycle([
-        // Airborne unless something (e.g. Gravity) forces grounding;
-        // the shared immunity rule then blocks Ground moves
-        battle.on(BattleEvents.CheckUnitGrounded, EventPriority.Post, (event) => {
-          if (
-            event.grounded &&
-            event.source.status[Statuses.Grounded] == null &&
-            event.source.hasAbility(Abilities.Levitate)
-          ) {
-            event.grounded = false;
-          }
-        }),
-        // The cue only fires when a real Ground move was avoided
-        battle.on(BattleEvents.UnitTriggerMoveFailed, EventPriority.Post, (event) => {
-          const target = event.parent.target;
-
-          if (
-            target.type === MoveTargetType.Unit &&
-            target.unit.hasAbility(Abilities.Levitate) &&
-            !target.unit.checkGrounded() &&
-            event.parent.source.checkMoveType(event.parent.move, target) === Types.Ground
-          ) {
-            target.unit.triggerAbility(Abilities.Levitate);
-          }
-        }),
-      ]),
-  ),
+  createLevitateAbility(Abilities.Levitate),
 
   /**
    * Cursed Body: what hit it stops working for a while.

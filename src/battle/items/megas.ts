@@ -1,8 +1,8 @@
 import { EventPriority } from '../../core/event-emitter';
 import { STAT_ORDER } from '../../data/constants/stats';
 import { Moves } from '../../data/ids/moves';
-import { Species, getBaseFormSpecies } from '../../data/ids/species';
-import { MEGA_STONES, getMegaStone } from '../../data/items/mega-stones';
+import { Species } from '../../data/ids/species';
+import { MEGA_STONES, getHolderMega, getMegaStone } from '../../data/items/mega-stones';
 import { getSpeciesData } from '../../data/species/__create';
 import type Battle from '../core';
 import { BattleEvents } from '../events';
@@ -18,11 +18,13 @@ export function megaOf(unit: Unit): Species | null {
   if (unit.species === Species.Rayquaza && unit.moves[Moves.DragonAscent] != null) {
     return Species.RayquazaMega;
   }
-  for (const [item, stone] of MEGA_STONES) {
+  for (const item of MEGA_STONES.keys()) {
     // Held rather than enabled: nothing that stops an item working
     // stops a stone, the way the mainline has it
-    if (unit.items[item] != null && getBaseFormSpecies(stone.mega) === unit.species) {
-      return stone.mega;
+    const mega = unit.items[item] == null ? null : getHolderMega(item, unit.species);
+
+    if (mega != null) {
+      return mega;
     }
   }
   return null;
@@ -82,12 +84,12 @@ export function pickMega(team: Team): Unit | null {
 export default function setupMegas(battle: Battle): void {
   const spent = new Set<Team>();
 
-  battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
-    const unit = event.source;
+  function megaEvolve(unit: Unit): void {
     const mega = megaOf(unit);
 
     if (
       mega == null ||
+      !unit.alive ||
       unit.terastallized ||
       spent.has(unit.team) ||
       pickMega(unit.team) !== unit
@@ -97,5 +99,14 @@ export default function setupMegas(battle: Battle): void {
     spent.add(unit.team);
     unit.setSpecies(mega);
     unit.wearAbility(getSpeciesData(mega).abilities[0]);
+  }
+
+  battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+    megaEvolve(event.source);
+  });
+  // A shape taken mid-fight can be the one a stone names: Mega Zygarde
+  // is reached only from the Complete Forme Power Construct builds
+  battle.on(BattleEvents.UnitSetSpecies, EventPriority.Post, (event) => {
+    megaEvolve(event.source);
   });
 }

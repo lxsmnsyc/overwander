@@ -23,6 +23,12 @@ import paldea from './paldea';
 import paldeaLate from './paldea-late';
 import paldeaLines from './paldea-lines';
 import paldeaRoutes from './paldea-routes';
+import earlySignatures from './early-signatures';
+import kalosSignatures from './kalos-signatures';
+import alolaSignatures from './alola-signatures';
+import galarSignatures from './galar-signatures';
+import galarLines from './galar-lines';
+import hisuiSignatures from './hisui-signatures';
 
 export { JOLTS, reachOf } from './shapes';
 
@@ -51,4 +57,10 @@ export const LIT: Partial<Record<EffectShape, LitShapePainter>> = {
   ...paldeaRoutes,
   ...paldeaLines,
   ...paldeaLate,
+  ...earlySignatures,
+  ...kalosSignatures,
+  ...alolaSignatures,
+  ...galarSignatures,
+  ...galarLines,
+  ...hisuiSignatures,
 };

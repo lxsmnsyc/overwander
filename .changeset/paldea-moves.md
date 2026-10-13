@@ -11,3 +11,4 @@
 - Every Paldea signature move has a picture of its own. Koraidon charges in, Gholdengo rains coins, Tinkaton's hammer comes down, Dondozo flings its Tatsugiri, and each Starmobile's Torque rolls in as its own wheel.
 - The moves many pokemon learn are drawn as the older move they look like. Shed Tail drops its substitute and Chilly Reception tells its cold joke before either walks off.
 - Chilly Reception calls the snow once rather than twice.
+- Every older signature move that shared a picture now has its own too, from Sketch and Volt Tackle to King's Shield, Pyro Ball and Dire Claw.

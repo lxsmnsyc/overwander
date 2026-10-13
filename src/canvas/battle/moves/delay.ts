@@ -522,16 +522,13 @@ const NAMED: Partial<Record<Moves, [winding?: DelayShape, striking?: DelayShape]
   [Moves.ShadowBone]: [undefined, 'Spun'],
   [Moves.AuroraVeil]: [undefined, 'Brace'],
 
-  // Galar and Hisui. A rock charged up the way Skull Bash is, beams drawn up the way Fleur
-  // Cannon's is, a fireball kicked and apples dropped in an arc
+  // Galar and Hisui. A rock charged up the way Skull Bash is, and beams drawn up the way
+  // Fleur Cannon's is
   [Moves.MeteorBeam]: ['Charge', 'Charge'],
   [Moves.Eternabeam]: [undefined, 'Charge'],
   [Moves.DynamaxCannon]: [undefined, 'Charge'],
   [Moves.SteelBeam]: [undefined, 'Charge'],
   [Moves.DragonEnergy]: [undefined, 'Charge'],
-  [Moves.PyroBall]: [undefined, 'Lobbed'],
-  [Moves.AppleAcid]: [undefined, 'Lobbed'],
-  [Moves.GravApple]: [undefined, 'Lobbed'],
 
   // Paldea. A shot charged up the way Meteor Beam is, beams drawn up the way Fleur Cannon's
   // is
@@ -628,6 +625,31 @@ const ARRIVES_ITSELF = new Set<EffectShape>([
   'Clap',
   'Tachyon',
   'Steamjet',
+  // Every older region's signatures that cross the gap or come down by themselves
+  'Eggbarrage',
+  'Kiss',
+  'Chatter',
+  'Thread',
+  'Revelation',
+  'Scales',
+  'Trap',
+  'Fleur',
+  'Snipe',
+  'Powder',
+  'Drumming',
+  'Pyroball',
+  'Mountaingale',
+  'Barbs',
+  'Esper',
+  'Malice',
+  'Parade',
+  'Chloroblast',
+  'Amped',
+  'Acid',
+  'Gravapple',
+  'Strangesteam',
+  'Sidearm',
+  'Spell',
   // The Max Moves come down on the target out of the cloud over it
   'MaxFlare',
   'MaxGeyser',

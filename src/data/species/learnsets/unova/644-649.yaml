@@ -90,6 +90,18 @@ Zekrom:
       - TeraBlast
       - DragonCheer
       - SupercellSlam
+      - BodySlam
+      - TakeDown
+      - DoubleEdge
+      - Roar
+      - Haze
+      - ScaryFace
+      - SunnyDay
+      - FocusPunch
+      - Charge
+      - BrickBreak
+      - StealthRock
+      - ElectricTerrain
 Landorus:
   family-teachable:
     - Attract
@@ -157,6 +169,9 @@ Landorus:
     - Taunt
     - BrutalSwing
     - TeraBlast
+    - MudShot
+    - StompingTantrum
+    - ScorchingSands
   Landorus:
     level:
       1: [RockThrow, SandTomb, Tackle, MudShot, SmackDown]
@@ -180,8 +195,6 @@ Landorus:
       65: [Earthquake]
       70: [Outrage]
       75: [Fissure]
-    teachable:
-      - MudShot
   LandorusTherian:
     level:
       1: [RockThrow, SandTomb, Tackle, MudShot, SmackDown]
@@ -204,8 +217,7 @@ Landorus:
       65: [Earthquake]
       70: [Outrage]
       75: [Fissure]
-    teachable:
-      - MudShot
+      80: [SandsearStorm]
 Kyurem:
   family-teachable:
     - Cut
@@ -271,6 +283,20 @@ Kyurem:
     - TeraBlast
     - Snowscape
     - DragonCheer
+    - BodySlam
+    - TakeDown
+    - Roar
+    - Swift
+    - ScaryFace
+    - Endure
+    - HelpingHand
+    - Imprison
+    - WeatherBall
+    - AerialAce
+    - IcicleSpear
+    - DragonDance
+    - Avalanche
+    - IceFang
   Kyurem:
     level:
       1: [DragonBreath, AncientPower, NobleRoar, FreezeDry, DragonRage, IcyWind]
@@ -286,15 +312,7 @@ Kyurem:
       80: [Glaciate]
       88: [SheerCold]
     teachable:
-      - DragonDance
-      - Endure
-      - HelpingHand
-      - IcicleSpear
-      - Imprison
-      - ScaryFace
       - SteelWing
-      - Swift
-      - WeatherBall
   KyuremBlack:
     level:
       1: [DragonBreath, AncientPower, NobleRoar, FreezeDry, DragonRage, IcyWind]
@@ -310,15 +328,7 @@ Kyurem:
       80: [FreezeShock]
       88: [SheerCold]
     teachable:
-      - DragonDance
-      - Endure
-      - HelpingHand
-      - IcicleSpear
-      - Imprison
-      - ScaryFace
       - SteelWing
-      - Swift
-      - WeatherBall
   KyuremWhite:
     level:
       1: [DragonBreath, AncientPower, NobleRoar, FreezeDry, DragonRage, IcyWind]
@@ -334,15 +344,7 @@ Kyurem:
       80: [IceBurn]
       88: [SheerCold]
     teachable:
-      - DragonDance
-      - Endure
-      - HelpingHand
-      - IcicleSpear
-      - Imprison
-      - ScaryFace
       - SteelWing
-      - Swift
-      - WeatherBall
 Keldeo:
   family-teachable:
     - AerialAce
@@ -399,6 +401,24 @@ Keldeo:
     - Trailblaze
     - ChillingWater
     - UpperHand
+    - TakeDown
+    - DoubleEdge
+    - HydroPump
+    - LowKick
+    - Swift
+    - Reversal
+    - Endure
+    - PainSplit
+    - BatonPass
+    - SunnyDay
+    - BrickBreak
+    - MuddyWater
+    - WaterPulse
+    - CloseCombat
+    - AuraSphere
+    - AirSlash
+    - VacuumWave
+    - SmartStrike
   Keldeo:
     level:
       1: [Leer, HelpingHand, AquaJet, WorkUp, SecretSword]
@@ -413,20 +433,8 @@ Keldeo:
       63: [HydroPump]
       70: [CloseCombat]
     teachable:
-      - AirSlash
-      - AuraSphere
-      - BrickBreak
-      - CloseCombat
-      - Endure
-      - HydroPump
-      - LowKick
       - Megahorn
-      - MuddyWater
       - Revenge
-      - Reversal
-      - SmartStrike
-      - SunnyDay
-      - Swift
   KeldeoResolute:
     level:
       1: [Leer, HelpingHand, AquaJet, WorkUp, SecretSword]
@@ -441,20 +449,8 @@ Keldeo:
       63: [HydroPump]
       70: [CloseCombat]
     teachable:
-      - AirSlash
-      - AuraSphere
-      - BrickBreak
-      - CloseCombat
-      - Endure
-      - HydroPump
-      - LowKick
       - Megahorn
-      - MuddyWater
       - Revenge
-      - Reversal
-      - SmartStrike
-      - SunnyDay
-      - Swift
 Meloetta:
   family-teachable:
     - Acrobatics
@@ -552,6 +548,10 @@ Meloetta:
     - LaserFocus
     - TeraBlast
     - AlluringVoice
+    - DisarmingVoice
+    - PlayRough
+    - Coaching
+    - TripleAxel
   Meloetta:
     level:
       1: [Sing, Confusion, QuickAttack, Round]

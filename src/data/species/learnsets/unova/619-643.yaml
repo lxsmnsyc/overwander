@@ -124,6 +124,7 @@ Mienfoo:
       - LaserFocus
       - BrutalSwing
       - IceSpinner
+      - TripleAxel
 Druddigon:
   Druddigon:
     level:
@@ -309,6 +310,8 @@ Golett:
     - Poltergeist
     - ScorchingSands
     - TeraBlast
+    - PhantomForce
+    - StompingTantrum
   Golett:
     level:
       1: [MudSlap, Astonish]
@@ -329,9 +332,6 @@ Golett:
       52: [Earthquake]
       55: [FocusPunch]
       56: [DynamicPunch]
-    teachable:
-      - PhantomForce
-      - StompingTantrum
   Golurk:
     level:
       1: [Pound, DefenseCurl, MudSlap, FocusPunch, Astonish, HighHorsepower]
@@ -365,8 +365,6 @@ Golett:
       - BodyPress
       - DarkestLariat
       - HighHorsepower
-      - PhantomForce
-      - StompingTantrum
       - HardPress
 Pawniard:
   # TM and tutor moves shared by the whole family
@@ -804,6 +802,7 @@ Vullaby:
     - LashOut
     - DualWingbeat
     - TeraBlast
+    - ThroatChop
   Vullaby:
     level:
       1: [Gust, Leer]
@@ -1114,7 +1113,7 @@ Deino:
       54: [DragonRush]
       60: [NastyPlot]
       66: [Outrage]
-    teachable: [BeatUp, HelpingHand]
+    teachable: [BeatUp, HelpingHand, StompingTantrum, LashOut]
   Hydreigon:
     level:
       1: [Tackle, Bite, FocusEnergy, TriAttack, DragonBreath, DoubleHit, DragonRage]
@@ -1169,6 +1168,8 @@ Deino:
       - BreakingSwipe
       - ScaleShot
       - DualWingbeat
+      - StompingTantrum
+      - LashOut
 Larvesta:
   # TM and tutor moves shared by both sizes
   family-teachable:
@@ -1222,6 +1223,7 @@ Larvesta:
     - TeraBlast
     - Pounce
     - Trailblaze
+    - Lunge
   Larvesta:
     level:
       1: [Ember, StringShot]
@@ -1371,6 +1373,15 @@ Cobalion:
       - Swift
       - TeraBlast
       - UpperHand
+      - BodySlam
+      - DoubleEdge
+      - RainDance
+      - SunnyDay
+      - MetalSound
+      - AuraSphere
+      - VacuumWave
+      - HeavySlam
+      - BodyPress
 Terrakion:
   Terrakion:
     level:
@@ -1450,6 +1461,10 @@ Terrakion:
       - Swift
       - TeraBlast
       - UpperHand
+      - BodySlam
+      - DoubleEdge
+      - AuraSphere
+      - HighHorsepower
 Virizion:
   Virizion:
     level:
@@ -1532,6 +1547,12 @@ Virizion:
       - TeraBlast
       - Trailblaze
       - UpperHand
+      - BodySlam
+      - DoubleEdge
+      - ScaryFace
+      - BulletSeed
+      - AuraSphere
+      - VacuumWave
 Tornadus:
   family-teachable:
     - Attract
@@ -1649,6 +1670,7 @@ Tornadus:
       65: [Hurricane]
       67: [DarkPulse]
       70: [Thrash]
+      77: [BleakwindStorm]
 Thundurus:
   family-teachable:
     - Attract
@@ -1727,6 +1749,8 @@ Thundurus:
     - LashOut
     - TeraBlast
     - SupercellSlam
+    - EerieImpulse
+    - ElectricTerrain
   Thundurus:
     level:
       1: [ThunderShock, Astonish, Tackle, NastyPlot]
@@ -1750,8 +1774,6 @@ Thundurus:
       65: [Thunder]
       67: [DarkPulse]
       70: [Thrash]
-    teachable:
-      - EerieImpulse
   ThundurusTherian:
     level:
       1: [ThunderShock, Astonish, Tackle, NastyPlot]
@@ -1774,8 +1796,7 @@ Thundurus:
       65: [Thunder]
       67: [DarkPulse]
       70: [Thrash]
-    teachable:
-      - EerieImpulse
+      75: [WildboltStorm]
 Reshiram:
   Reshiram:
     level:
@@ -1867,3 +1888,9 @@ Reshiram:
       - WeatherBall
       - TeraBlast
       - DragonCheer
+      - BodySlam
+      - TakeDown
+      - DoubleEdge
+      - Roar
+      - FireSpin
+      - ScaryFace

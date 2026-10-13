@@ -1,7 +1,7 @@
 Alomomola:
   Alomomola:
     level:
-      1: [Pound, HydroPump, HelpingHand, WaterSport, HealingWish, WideGuard]
+      1: [Pound, HydroPump, HelpingHand, WaterSport, HealingWish, WideGuard, PlayNice]
       5: [AquaRing]
       9: [AquaJet]
       13: [DoubleSlap]
@@ -68,6 +68,10 @@ Alomomola:
       - Snowscape
       - ChillingWater
       - AlluringVoice
+      - MistyTerrain
+      - PlayRough
+      - ScaleShot
+      - FlipTurn
     egg: [Bounce, Endure, MirrorCoat, Mist, PainSplit, Refresh, Tickle]
 Joltik:
   # TM, HM and tutor moves shared by the whole family
@@ -128,6 +132,7 @@ Joltik:
     - SkitterSmack
     - TeraBlast
     - Pounce
+    - Lunge
   Joltik:
     level:
       1: [Absorb, FuryCutter, LeechLife, SpiderWeb]
@@ -442,6 +447,9 @@ Tynamo:
       - Confide
       - ThroatChop
       - TeraBlast
+      - EerieImpulse
+      - ElectricTerrain
+      - Lunge
   Eelektross:
     level:
       1:
@@ -530,6 +538,12 @@ Tynamo:
       - PowerUpPunch
       - TeraBlast
       - SupercellSlam
+      - EerieImpulse
+      - ElectricTerrain
+      - Lunge
+      - StompingTantrum
+      - Liquidation
+      - BodyPress
 Elgyem:
   # TM and tutor moves shared by the whole family
 
@@ -737,6 +751,7 @@ Litwick:
       64: [Memento]
     teachable:
       - MysticalFire
+      - LashOut
   Chandelure:
     level:
       1:
@@ -759,7 +774,7 @@ Litwick:
           Inferno,
           FlameBurst,
         ]
-    teachable: [GigaImpact, HyperBeam, LaserFocus, MysticalFire, Trailblaze]
+    teachable: [GigaImpact, HyperBeam, LaserFocus, MysticalFire, Trailblaze, LashOut]
 Axew:
   # TM and tutor moves shared by the whole family
 
@@ -829,6 +844,7 @@ Axew:
     - TeraBlast
     - Trailblaze
     - DragonCheer
+    - StompingTantrum
   Axew:
     level:
       1: [Scratch, Leer]
@@ -842,7 +858,7 @@ Axew:
       21: [ScaryFace]
       24: [Crunch]
       27: [DragonDance]
-      30: [DualChop]
+      30: [DualChop, BreakingSwipe]
       33: [LaserFocus, FocusEnergy]
       36: [DragonPulse]
       39: [SwordsDance]
@@ -872,14 +888,14 @@ Axew:
       21: [ScaryFace]
       24: [Crunch]
       27: [DragonDance]
-      30: [DualChop]
+      30: [DualChop, BreakingSwipe]
       33: [LaserFocus, FocusEnergy]
       36: [DragonPulse]
       41: [SwordsDance]
       46: [Outrage]
       51: [Guillotine]
       56: [GigaImpact]
-    teachable: [LowKick, StompingTantrum]
+    teachable: [LowKick]
   Haxorus:
     level:
       1: [Scratch, Leer, Bite, FalseSwipe, DragonRage]
@@ -890,7 +906,7 @@ Axew:
       21: [ScaryFace]
       24: [Crunch]
       27: [DragonDance]
-      30: [DualChop]
+      30: [DualChop, BreakingSwipe]
       33: [LaserFocus, FocusEnergy]
       36: [DragonPulse]
       41: [SwordsDance]
@@ -909,7 +925,6 @@ Axew:
       - PsychoCut
       - RockSlide
       - BrutalSwing
-      - StompingTantrum
       - LaserFocus
 Cubchoo:
   # TM and tutor moves shared by both sizes
@@ -984,6 +999,9 @@ Cubchoo:
     - Snowscape
     - Trailblaze
     - ChillingWater
+    - PlayRough
+    - Liquidation
+    - BodyPress
   Cubchoo:
     level:
       1: [Growl, PowderSnow]
@@ -1010,8 +1028,6 @@ Cubchoo:
       - NightSlash
       - SleepTalk
       - Yawn
-      - PlayRough
-    teachable:
       - PlayRough
   Beartic:
     level:
@@ -1046,9 +1062,6 @@ Cubchoo:
       - StoneEdge
       - SwordsDance
       - ThroatChop
-      - BodyPress
-      - Liquidation
-      - PlayRough
       - HardPress
 Cryogonal:
   Cryogonal:

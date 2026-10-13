@@ -2136,6 +2136,19 @@
       ]
     },
     {
+      "name": "poison-mochi.png",
+      "x": 131,
+      "y": 363,
+      "width": 20,
+      "height": 20,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        6,
+        6
+      ]
+    },
+    {
       "name": "poke-flute-gen3.png",
       "x": 66,
       "y": 142,

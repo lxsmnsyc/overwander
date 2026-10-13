@@ -128,3 +128,22 @@ RustedShield:
   icon: held/rusted-shield
   flags: [Holdable]
   sell: 6000
+
+# The masks Ogerpon was robbed of, each putting it in its shape
+WellspringMask:
+  type: Held
+  icon: held/wellspring-mask
+  flags: [Holdable]
+  sell: 6000
+
+HearthflameMask:
+  type: Held
+  icon: held/hearthflame-mask
+  flags: [Holdable]
+  sell: 6000
+
+CornerstoneMask:
+  type: Held
+  icon: held/cornerstone-mask
+  flags: [Holdable]
+  sell: 6000

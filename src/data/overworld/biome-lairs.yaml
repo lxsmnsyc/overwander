@@ -7,9 +7,9 @@ Ocean: [WhirlIslands, SouthernIsland, FullmoonIsland, IronRuins, SkyPillar, Ultr
 Beach: [EmbeddedTower, AetherParadise, IsleOfArmor]
 PolarOcean: [SeafoamIslands, IslandCave]
 Glacier: [SnowpointTemple, GiantChasm]
-Grassland: [PowerPlant, BurnedTower, LakeValor, AbundantShrine, WildArea]
+Grassland: [PowerPlant, BurnedTower, LakeValor, AbundantShrine, WildArea, WistfulFields]
 Bog: [LakeValor, TurnbackCave, ScarletBog]
-TemperateForest: [LakeVerity, RuminationField, WindingWoods, UltraForest, SlumberingWeald]
+TemperateForest: [LakeVerity, RuminationField, WindingWoods, UltraForest, SlumberingWeald, DreadedDen]
 Woodland: [BurnedTower, LakeVerity, RuminationField, WindingWoods]
 Taiga: [LakeAcuity, IcebergRuins, DragonspiralTower, CrownShrine]
 Tundra:
@@ -58,6 +58,8 @@ Mountain:
     UltraCrater,
     TowerOfDarkness,
     ZeroLab,
+    OniMountain,
+    AreaZeroUnderdepths,
   ]
 AlpineTundra: [CeruleanCave, SpearPillar, SnowslideSlope]
 Volcano: [MtEmber, TerraCave, StarkMountain, FirescourgeShrine]

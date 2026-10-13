@@ -74,6 +74,7 @@ import {
   MINIOR_FORMS,
   MORPEKO_FORMS,
   NECROZMA_FORMS,
+  OGERPON_FORMS,
   ORICORIO_FORMS,
   PALAFIN_FORMS,
   PALDEAN_FORMS,
@@ -88,6 +89,7 @@ import {
   Species,
   TATSUGIRI_FORMS,
   TEA_FORMS,
+  TERAPAGOS_FORMS,
   THUNDURUS_FORMS,
   TORNADUS_FORMS,
   TOXTRICITY_FORMS,
@@ -510,6 +512,8 @@ describe('species forms', () => {
       ...TEA_FORMS,
       ...PALAFIN_FORMS.slice(1),
       ...TATSUGIRI_FORMS.slice(1),
+      ...OGERPON_FORMS.slice(1),
+      ...TERAPAGOS_FORMS.slice(1),
       Species.UrsalunaBloodmoon,
       // The true shadows, which are forms of the birds they are the
       // shadow of rather than pokemon of their own

@@ -88,6 +88,7 @@ import paldeaRegionals from './paldea-regionals';
 import paldeaLegends from './paldea-legends';
 import ancientParadox from './ancient-paradox';
 import futureParadox from './future-paradox';
+import kitakamiLegends from './kitakami-legends';
 import skwovetToYamper from './skwovet-to-yamper';
 import applinToPincurchin from './applin-to-pincurchin';
 import sinisteaToMilcery from './sinistea-to-milcery';
@@ -191,6 +192,7 @@ const setupAbilities = [
   ...paldeaLegends,
   ...ancientParadox,
   ...futureParadox,
+  ...kitakamiLegends,
   ...skwovetToYamper,
   ...applinToPincurchin,
   ...sinisteaToMilcery,

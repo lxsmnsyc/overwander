@@ -3241,7 +3241,13 @@
         "ToxicExhaust",
         "SandGenerator",
         "Afterimage",
-        "TerrainEdge"
+        "TerrainEdge",
+        "HoundsOath",
+        "MonkeysOath",
+        "PheasantsOath",
+        "MaskAura",
+        "Prismatic",
+        "PuppetStrings"
       ]
     },
     "item": {

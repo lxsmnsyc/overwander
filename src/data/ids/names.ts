@@ -3317,6 +3317,12 @@ export const ABILITY_IDS = {
   SandGenerator: Abilities.SandGenerator,
   Afterimage: Abilities.Afterimage,
   TerrainEdge: Abilities.TerrainEdge,
+  HoundsOath: Abilities.HoundsOath,
+  MonkeysOath: Abilities.MonkeysOath,
+  PheasantsOath: Abilities.PheasantsOath,
+  MaskAura: Abilities.MaskAura,
+  Prismatic: Abilities.Prismatic,
+  PuppetStrings: Abilities.PuppetStrings,
 } as const satisfies Record<string, Abilities>;
 
 export const ITEM_IDS = {

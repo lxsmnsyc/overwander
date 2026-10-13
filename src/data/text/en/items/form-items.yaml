@@ -58,3 +58,12 @@ RustedSword:
 RustedShield:
   name: Rusted Shield
   description: A Zamazenta holding it fights crowned, and its Iron Head becomes Behemoth Bash.
+WellspringMask:
+  name: Wellspring Mask
+  description: An Ogerpon holding it fights in its Wellspring Mask, as a Grass and Water type.
+HearthflameMask:
+  name: Hearthflame Mask
+  description: An Ogerpon holding it fights in its Hearthflame Mask, as a Grass and Fire type.
+CornerstoneMask:
+  name: Cornerstone Mask
+  description: An Ogerpon holding it fights in its Cornerstone Mask, as a Grass and Rock type.

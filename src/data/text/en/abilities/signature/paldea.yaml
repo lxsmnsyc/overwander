@@ -174,3 +174,21 @@ Afterimage:
 TerrainEdge:
   name: Terrain Edge
   description: Its slicing moves hit 1.3x while any terrain is up.
+HoundsOath:
+  name: "Hound's Oath"
+  description: When a teammate faints, its next damaging move is sure to badly poison and is a critical hit.
+MonkeysOath:
+  name: "Monkey's Oath"
+  description: When a teammate faints, its next damaging move is sure to badly poison and winds up 40% faster.
+PheasantsOath:
+  name: "Pheasant's Oath"
+  description: When a teammate faints, its next damaging move is sure to badly poison and strikes every enemy.
+MaskAura:
+  name: Mask Aura
+  description: "While it wears a mask, its teammates' moves of that mask's type hit 1.2x: Grass for Teal, Water for Wellspring, Fire for Hearthflame, Rock for Cornerstone."
+Prismatic:
+  name: Prismatic
+  description: Its Normal moves become whichever type hits the target hardest, as they go off.
+PuppetStrings:
+  name: Puppet Strings
+  description: "A confused enemy's single-target moves aimed at it go to one of that enemy's own teammates instead, if one stands."

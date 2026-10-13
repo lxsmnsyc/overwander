@@ -72,3 +72,86 @@ RagingBolt:
     height: 5.2
     weight: 480
     gender: genderless
+Munkidori:
+  Munkidori:
+    stats: { HP: 88, Attack: 75, Defense: 66, SpecialAttack: 130, SpecialDefense: 90, Speed: 106 }
+    catch-rate: 3
+    height: 1
+    weight: 12.2
+    gender: [8, 0]
+Fezandipiti:
+  Fezandipiti:
+    stats: { HP: 88, Attack: 91, Defense: 82, SpecialAttack: 70, SpecialDefense: 125, Speed: 99 }
+    catch-rate: 3
+    height: 1.4
+    weight: 30.1
+    gender: [8, 0]
+Ogerpon:
+  Ogerpon:
+    stats: { HP: 80, Attack: 120, Defense: 84, SpecialAttack: 60, SpecialDefense: 96, Speed: 110 }
+    catch-rate: 5
+    height: 1.2
+    weight: 39.8
+    gender: [0, 8]
+  OgerponWellspring:
+    stats: { HP: 80, Attack: 120, Defense: 84, SpecialAttack: 60, SpecialDefense: 96, Speed: 110 }
+    catch-rate: 5
+    height: 1.2
+    weight: 39.8
+    gender: [0, 8]
+  OgerponHearthflame:
+    stats: { HP: 80, Attack: 120, Defense: 84, SpecialAttack: 60, SpecialDefense: 96, Speed: 110 }
+    catch-rate: 5
+    height: 1.2
+    weight: 39.8
+    gender: [0, 8]
+  OgerponCornerstone:
+    stats: { HP: 80, Attack: 120, Defense: 84, SpecialAttack: 60, SpecialDefense: 96, Speed: 110 }
+    catch-rate: 5
+    height: 1.2
+    weight: 39.8
+    gender: [0, 8]
+  OgerponTealTera:
+    stats: { HP: 80, Attack: 120, Defense: 84, SpecialAttack: 60, SpecialDefense: 96, Speed: 110 }
+    catch-rate: 5
+    height: 1.2
+    weight: 39.8
+    gender: [0, 8]
+  OgerponWellspringTera:
+    stats: { HP: 80, Attack: 120, Defense: 84, SpecialAttack: 60, SpecialDefense: 96, Speed: 110 }
+    catch-rate: 5
+    height: 1.2
+    weight: 39.8
+    gender: [0, 8]
+  OgerponHearthflameTera:
+    stats: { HP: 80, Attack: 120, Defense: 84, SpecialAttack: 60, SpecialDefense: 96, Speed: 110 }
+    catch-rate: 5
+    height: 1.2
+    weight: 39.8
+    gender: [0, 8]
+  OgerponCornerstoneTera:
+    stats: { HP: 80, Attack: 120, Defense: 84, SpecialAttack: 60, SpecialDefense: 96, Speed: 110 }
+    catch-rate: 5
+    height: 1.2
+    weight: 39.8
+    gender: [0, 8]
+Terapagos:
+  Terapagos:
+    stats: { HP: 90, Attack: 65, Defense: 85, SpecialAttack: 65, SpecialDefense: 85, Speed: 60 }
+    catch-rate: 255
+    height: 0.2
+    weight: 6.5
+    gender: [4, 4]
+  TerapagosTerastal:
+    stats: { HP: 95, Attack: 95, Defense: 110, SpecialAttack: 105, SpecialDefense: 110, Speed: 85 }
+    catch-rate: 255
+    height: 0.3
+    weight: 16
+    gender: [4, 4]
+Pecharunt:
+  Pecharunt:
+    stats: { HP: 88, Attack: 88, Defense: 160, SpecialAttack: 88, SpecialDefense: 88, Speed: 88 }
+    catch-rate: 3
+    height: 0.3
+    weight: 0.3
+    gender: genderless

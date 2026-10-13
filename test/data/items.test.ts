@@ -1480,6 +1480,7 @@ describe('item data', () => {
       Items.HerosCharm,
       Items.WindmillCharm,
       Items.MysteryBox,
+      Items.PoisonMochi,
       Items.GoldenBottleCap,
       Items.HPUpMax,
       Items.ProteinMax,

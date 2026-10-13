@@ -95,3 +95,8 @@ MysteryBox:
   type: KeyItem
   icon: key/mystery-box
   flags: [Consumable, Usable]
+
+PoisonMochi:
+  type: KeyItem
+  icon: key/poison-mochi
+  flags: [Consumable, Usable]

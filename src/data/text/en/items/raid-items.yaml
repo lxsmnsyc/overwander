@@ -58,3 +58,6 @@ WindmillCharm:
 MysteryBox:
   name: Mystery Box
   description: Opens a raid at the park the box was opened in. Spent when the raid starts.
+PoisonMochi:
+  name: Poison Mochi
+  description: Opens a raid at the plaza where the mochi's maker was found out. Spent when the raid starts.

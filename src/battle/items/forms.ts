@@ -9,6 +9,7 @@ import type Unit from '../unit';
 import { BattleEvents } from '../events';
 import { MergedLifecycle } from '../lifecycle';
 import { createHeldItem, holds } from './__create';
+import { teraShapeOf } from './masks';
 
 /**
  * The ability a shape brings on top of what the catch carries. Worn
@@ -26,7 +27,40 @@ const SHAPE_ABILITIES = new Map<Species, Abilities>([
   [Species.ThundurusTherian, Abilities.VoltAbsorb],
   [Species.LandorusTherian, Abilities.Intimidate],
   [Species.EnamorusTherian, Abilities.Overcoat],
+  // Ogerpon has no ability of its own: each mask brings one, the Teal
+  // with nothing in hand, and every Terastal shape brings Embody Aspect
+  [Species.Ogerpon, Abilities.Defiant],
+  [Species.OgerponWellspring, Abilities.WaterAbsorb],
+  [Species.OgerponHearthflame, Abilities.MoldBreaker],
+  [Species.OgerponCornerstone, Abilities.Sturdy],
+  [Species.OgerponTealTera, Abilities.EmbodyAspect],
+  [Species.OgerponWellspringTera, Abilities.EmbodyAspect],
+  [Species.OgerponHearthflameTera, Abilities.EmbodyAspect],
+  [Species.OgerponCornerstoneTera, Abilities.EmbodyAspect],
+  [Species.TerapagosTerastal, Abilities.TeraShell],
 ]);
+
+/**
+ * Trade the shape it leaves for the one it takes: a shape's ability
+ * comes with it and goes with it, but never takes one the catch carries
+ */
+function wearShapeAbility(battle: Battle): void {
+  battle.on(BattleEvents.UnitSetSpecies, EventPriority.Pre, (event) => {
+    const unit = event.source;
+    const left = SHAPE_ABILITIES.get(unit.species);
+
+    if (left != null && left !== SHAPE_ABILITIES.get(event.species) && unit.worn[left] != null) {
+      unit.removeAbility(left);
+    }
+  });
+  battle.on(BattleEvents.UnitSetSpecies, EventPriority.Post, (event) => {
+    const bonus = SHAPE_ABILITIES.get(event.species);
+
+    if (bonus != null) {
+      event.source.wearAbility(bonus);
+    }
+  });
+}
 
 /**
  * The move a shape swaps for its own: a crowned hero's Iron Head
@@ -99,7 +133,7 @@ const ultraBurst = createHeldItem(Items.UltranecroziumZ, (battle) =>
  * [`FORM_ITEMS`](../../data/items/form-items.ts)
  */
 export default function setupFormItems(battle: Battle): void {
-  const setups: ((battle: Battle) => void)[] = [];
+  const setups: ((battle: Battle) => void)[] = [wearShapeAbility];
 
   for (const [item, forms] of FORM_ITEMS) {
     setups.push(
@@ -131,17 +165,14 @@ export default function setupFormItems(battle: Battle): void {
 
               const shape = own[Math.floor(inner.random() * own.length)];
 
-              if (unit.species !== shape) {
-                unit.setSpecies(shape);
+              // A Terastallized Ogerpon keeps its Terastal shape
+              const target = unit.terastallized ? (teraShapeOf(shape) ?? shape) : shape;
+
+              if (unit.species !== target) {
+                unit.setSpecies(target);
               }
 
               swapShapeMove(unit, shape);
-
-              const bonus = SHAPE_ABILITIES.get(shape);
-
-              if (bonus != null) {
-                unit.wearAbility(bonus);
-              }
             }),
           ]),
       ),

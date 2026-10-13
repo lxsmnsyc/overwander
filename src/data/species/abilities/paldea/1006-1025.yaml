@@ -48,3 +48,56 @@ RagingBolt:
     abilities: [Protosynthesis]
     # Volt Absorb, Inner Focus and Static are this registry's rather than the mainline's, filling it to four
     hidden: [VoltAbsorb, InnerFocus, Static]
+Munkidori:
+  Munkidori:
+    abilities: [ToxicChain]
+    # Pickpocket and Prankster are this registry's rather than the mainline's, filling it to four
+    hidden: [Frisk, Pickpocket, Prankster]
+Fezandipiti:
+  Fezandipiti:
+    abilities: [ToxicChain]
+    # Keen Eye and Big Pecks are this registry's rather than the mainline's, filling it to four
+    hidden: [Technician, KeenEye, BigPecks]
+Ogerpon:
+  # Always in one of its four masks, Teal included, so it has no base
+  # ability of its own: each mask's ability is worn in battle by its
+  # form, and the pool is four of this registry's
+  Ogerpon:
+    abilities: [GrassPelt, InnerFocus]
+    hidden: [LeafGuard, SapSipper]
+  OgerponWellspring:
+    abilities: [WaterAbsorb]
+    hidden: []
+  OgerponHearthflame:
+    abilities: [MoldBreaker]
+    hidden: []
+  OgerponCornerstone:
+    abilities: [Sturdy]
+    hidden: []
+  # The Terastal shapes wear Embody Aspect
+  OgerponTealTera:
+    abilities: [EmbodyAspect]
+    hidden: []
+  OgerponWellspringTera:
+    abilities: [EmbodyAspect]
+    hidden: []
+  OgerponHearthflameTera:
+    abilities: [EmbodyAspect]
+    hidden: []
+  OgerponCornerstoneTera:
+    abilities: [EmbodyAspect]
+    hidden: []
+Terapagos:
+  Terapagos:
+    abilities: [TeraShift]
+    # Analytic, Solid Rock and Shell Armor are this registry's, filling it to four. One born
+    # with any of them keeps its base shape, since Tera Shift is what changes it
+    hidden: [Analytic, SolidRock, ShellArmor]
+  TerapagosTerastal:
+    abilities: [TeraShell]
+    hidden: []
+Pecharunt:
+  Pecharunt:
+    abilities: [PoisonPuppeteer]
+    # Levitate, Cursed Body and Corrosion are this registry's rather than the mainline's, filling it to four
+    hidden: [Levitate, CursedBody, Corrosion]

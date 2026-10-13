@@ -1237,6 +1237,13 @@ const enum Abilities {
   SandGenerator = 200545,
   Afterimage = 200546,
   TerrainEdge = 200547,
+  // Kitakami's legends, Terapagos and Pecharunt
+  HoundsOath = 200548,
+  MonkeysOath = 200549,
+  PheasantsOath = 200550,
+  MaskAura = 200551,
+  Prismatic = 200552,
+  PuppetStrings = 200553,
 }
 
 export default Abilities;

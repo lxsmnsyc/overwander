@@ -14,7 +14,7 @@ Each keeps its family's signature ability.
 - **Dudunsparce:** Dunsparce evolves once it knows Hyper Drill.
 - **Kingambit:** Bisharp evolves holding a **Leader's Crest**.
 - **Dipplin and Hydrapple:** Applin evolves with a **Syrupy Apple**, and Dipplin
-  once it knows Dragon Cheer.
+  once it knows Dragon Cheer, at any level.
 - **Archaludon:** Duraludon evolves with a **Metal Alloy**.
 
 ## Paldea's regional lines

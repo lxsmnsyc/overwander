@@ -50,8 +50,7 @@ Applin:
     evolves-from: Applin
     evolves-into:
       - species: Hydrapple
-        method: [Level, KnownMove]
-        level: 40
+        method: [KnownMove]
         move: DragonCheer
   Hydrapple:
     types: [Grass, Dragon]

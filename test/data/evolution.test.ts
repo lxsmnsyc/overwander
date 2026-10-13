@@ -17,7 +17,7 @@ import Abilities from '../../src/data/ids/abilities';
 import { Types } from '../../src/data/constants/types';
 import Biome, { TimeOfDay } from '../../src/data/ids/biome';
 import { Items } from '../../src/data/ids/items';
-import type { Moves } from '../../src/data/ids/moves';
+import { Moves } from '../../src/data/ids/moves';
 import {
   DEOXYS_FORMS,
   EvolutionMethod,
@@ -744,6 +744,28 @@ describe('evolution data', () => {
     expect(getAvailableEvolutions({ ...context, walked: 1000 })).toEqual([
       { species: Species.Pawmot, method: EvolutionMethod.Walked, walked: 1000 },
     ]);
+  });
+
+  it('evolves a Dipplin that knows Dragon Cheer at any level', () => {
+    const context = {
+      species: Species.Dipplin,
+      level: 1,
+      carried: new Set<Items>(),
+      held: new Set<Items>(),
+      canEvolve: false,
+      moves: new Set<Moves>(),
+      stats: EVEN_STATS,
+      friendship: BASE_FRIENDSHIP,
+      time: TimeOfDay.Day,
+      gender: Genders.Male,
+    };
+
+    expect(getAvailableEvolutions(context)).toEqual([]);
+    expect(
+      getAvailableEvolutions({ ...context, moves: new Set([Moves.DragonCheer]) }).map(
+        (entry) => entry.species,
+      ),
+    ).toEqual([Species.Hydrapple]);
   });
 
   it('grows one Tandemaus in a hundred into the family of three', () => {

@@ -1,4 +1,5 @@
-import { Species, getBaseFormSpecies } from '../data/ids/species';
+import { Species } from '../data/ids/species';
+import { getBaseFormSpecies } from '../data/ids/forms';
 import { REGION_NAMES, getSpeciesRegion } from '../data/species/regions';
 import SpeciesSpriteAnimation from './species-sprite-animation';
 import type { Coat, SpriteCoats } from './sprite-coats';

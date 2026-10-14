@@ -3,7 +3,8 @@ import { SpawnSurface, TimeOfDay } from '../ids/biome';
 import EggGroups from '../ids/egg-groups';
 import type Families from '../ids/families';
 import Abilities from '../ids/abilities';
-import { Habitat, Species, UNOWN_FORMS, getBaseFormSpecies } from '../ids/species';
+import { Habitat, Species } from '../ids/species';
+import { UNOWN_FORMS, getBaseFormSpecies } from '../ids/forms';
 import { Types } from '../constants/types';
 import {
   type SpeciesRank,

@@ -18,13 +18,8 @@ import { Types } from '../../src/data/constants/types';
 import Biome, { TimeOfDay } from '../../src/data/ids/biome';
 import { Items } from '../../src/data/ids/items';
 import { Moves } from '../../src/data/ids/moves';
-import {
-  DEOXYS_FORMS,
-  EvolutionMethod,
-  Genders,
-  ROTOM_FORMS,
-  Species,
-} from '../../src/data/ids/species';
+import { EvolutionMethod, Genders, Species } from '../../src/data/ids/species';
+import { DEOXYS_FORMS, ROTOM_FORMS } from '../../src/data/ids/forms';
 import { MAX_LEVEL } from '../../src/data/constants/levels';
 import {
   CANDY_PER_LEVEL,

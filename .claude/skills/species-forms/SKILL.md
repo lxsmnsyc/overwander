@@ -17,7 +17,7 @@ form id = 1000000 + dexNumber * 100 + formIndex
 
 The default form is **not** in the band: its id is its dex number, which is what keeps `Species === dexNumber` true everywhere that relies on it. So Unown A is `201` and Unown B is `1020101`.
 
-The scheme buys three things: a hundred slots per species (Alcremie's 63 is the largest set the mainline prints), a species' forms sorting straight after it, and the base form recoverable from the id by arithmetic alone. The helpers in [`src/data/ids/species.ts`](../../../src/data/ids/species.ts) are `speciesDexNumber`, `speciesFormIndex` and `getBaseFormSpecies`.
+The scheme buys three things: a hundred slots per species (Alcremie's 63 is the largest set the mainline prints), a species' forms sorting straight after it, and the base form recoverable from the id by arithmetic alone. The helpers in [`src/data/ids/forms.ts`](../../../src/data/ids/forms.ts), beside the per-species form lists, are `speciesDexNumber`, `speciesFormIndex` and `getBaseFormSpecies`.
 
 **An id is stored player data**, so nothing in the band may be renumbered once it ships. The same rule the family ids keep.
 

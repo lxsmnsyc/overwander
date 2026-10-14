@@ -33,7 +33,8 @@ import {
   statusFlag,
   unpackStatuses,
 } from '../../src/data/ids/status';
-import { ARCEUS_FORMS, EvolutionMethod, Species } from '../../src/data/ids/species';
+import { EvolutionMethod, Species } from '../../src/data/ids/species';
+import { ARCEUS_FORMS } from '../../src/data/ids/forms';
 import { CANDY_PER_LEVEL, SHADOW_CANDY_MULTIPLIER, getCandyCost } from '../../src/auth/candy';
 import registerItems, {
   ITEM_TYPE_NAMES,

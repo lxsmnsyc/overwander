@@ -44,7 +44,8 @@ import { isLoopingCast, pickCast } from '../../../data/constants/cast';
 
 import { Stats } from '../../../data/constants/stats';
 import { MoveFlags, Moves } from '../../../data/ids/moves';
-import { Genders, Species, getBaseFormSpecies } from '../../../data/ids/species';
+import { Genders, Species } from '../../../data/ids/species';
+import { getBaseFormSpecies } from '../../../data/ids/forms';
 import { getItemForms } from '../../../data/items/form-items';
 import { getStoneMega } from '../../../data/items/mega-stones';
 import { Items } from '../../../data/ids/items';

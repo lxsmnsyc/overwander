@@ -1,5 +1,6 @@
 import { Items } from '../ids/items';
-import { Species, getBaseFormSpecies } from '../ids/species';
+import { Species } from '../ids/species';
+import { getBaseFormSpecies } from '../ids/forms';
 import { getSpeciesData } from '../species/__create';
 import { getMegaBase } from '../species/megas';
 import { itemText } from './__create';

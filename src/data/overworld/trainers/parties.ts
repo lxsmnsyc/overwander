@@ -1,4 +1,5 @@
-import { Species, getBaseFormSpecies } from '../../ids/species';
+import { Species } from '../../ids/species';
+import { getBaseFormSpecies } from '../../ids/forms';
 import type Regions from '../../ids/regions';
 import {
   getGrowthRoads,

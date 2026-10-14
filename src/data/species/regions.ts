@@ -11,7 +11,7 @@ import {
   HISUIAN_FORMS,
   PALDEAN_FORMS,
   speciesDexNumber,
-} from '../ids/species';
+} from '../ids/forms';
 import { getRegisteredSpecies } from './__create';
 
 /**

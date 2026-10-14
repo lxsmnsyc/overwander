@@ -9,7 +9,8 @@ import {
   MoveTargets,
   Moves,
 } from '../../data/ids/moves';
-import { Species, getBaseFormSpecies } from '../../data/ids/species';
+import { Species } from '../../data/ids/species';
+import { getBaseFormSpecies } from '../../data/ids/forms';
 import { NON_VOLATILE_STATUSES, Statuses, Terrains, Weathers } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
 import { MULTI_HIT_MOVES } from '../../data/moves/multi-hit';

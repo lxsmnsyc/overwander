@@ -22,7 +22,8 @@ import {
   TIME_OF_DAY_IDS,
   TYPE_IDS,
 } from '../ids/names';
-import { type Species, speciesDexNumber, speciesFormIndex } from '../ids/species';
+import type { Species } from '../ids/species';
+import { speciesDexNumber, speciesFormIndex } from '../ids/forms';
 import { flagsOf, idOf, idsOf } from '../yaml';
 import type {
   EvolutionData,

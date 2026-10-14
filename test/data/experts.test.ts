@@ -11,7 +11,8 @@ import {
 import Biome, { isOpenSea } from '../../src/data/ids/biome';
 import { Items, getMachineMove } from '../../src/data/ids/items';
 import { MoveCategories, Moves } from '../../src/data/ids/moves';
-import { Species, getBaseFormSpecies } from '../../src/data/ids/species';
+import { Species } from '../../src/data/ids/species';
+import { getBaseFormSpecies } from '../../src/data/ids/forms';
 import registerItems, { getItemData } from '../../src/data/items';
 import { getMoveData, registerMoves } from '../../src/data/moves';
 import AleaRNG from '../../src/core/alea';

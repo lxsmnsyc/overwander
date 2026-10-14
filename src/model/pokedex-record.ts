@@ -1,5 +1,5 @@
 import type { Species } from '../data/ids/species';
-import { getBaseFormSpecies } from '../data/ids/species';
+import { getBaseFormSpecies } from '../data/ids/forms';
 import { isRecord } from './normalize';
 
 /**

@@ -4,6 +4,7 @@ import { Items } from '../../data/ids/items';
 import { Moves } from '../../data/ids/moves';
 import { FORM_ITEMS } from '../../data/items/form-items';
 import { Species, getBaseFormSpecies } from '../../data/ids/species';
+import { getShadowlessSpecies, getTrueShadowShape } from '../../data/species/true-shadow';
 import type Battle from '../core';
 import type Unit from '../unit';
 import { BattleEvents } from '../events';
@@ -130,9 +131,15 @@ export default function setupFormItems(battle: Battle): void {
               }
 
               const shape = own[Math.floor(inner.random() * own.length)];
+              // A true shadow takes its own colours of the shape, or none
+              const worn =
+                getShadowlessSpecies(unit.species) == null ? shape : getTrueShadowShape(shape);
 
-              if (unit.species !== shape) {
-                unit.setSpecies(shape);
+              if (worn == null) {
+                return;
+              }
+              if (unit.species !== worn) {
+                unit.setSpecies(worn);
               }
 
               swapShapeMove(unit, shape);

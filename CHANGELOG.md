@@ -1,5 +1,25 @@
 # overwander
 
+## 4.38.0
+
+### Minor Changes
+
+- bb498cc: - Eight new true shadows, the shadows of the Hoenn legendaries: XD-377 to XD-384, for Regirock, Regice, Registeel, Latias, Latios, Kyogre, Groudon and Rayquaza.
+  - Like the others, each has 10 more points on every stat than its counterpart and can never be purified.
+  - They appear only on a Dark Day: in the special band of the wild pool, and in the shadow lairs of their counterparts.
+  - XD-382, the shadow of Kyogre, appears only on water.
+  - XD-382 and XD-383 holding a Blue or Red Orb return to their own Primal shapes, Primal XD-382 and Primal XD-383.
+  - XD-384 knowing Dragon Ascent Mega Evolves into Mega XD-384.
+  - A true shadow with no shadow Mega of its own, such as XD-150 with a Mewtwonite, keeps its shape.
+
+### Patch Changes
+
+- ae4e459: A Dancer's copy of a dance is no longer copied by the other Dancers on the field, so a field full of Oricorio no longer dances forever and freezes the fight.
+- 5fdf864: A cast now names the move it will go off as, from the start of the wind-up, on the cast plate and the unit card: a Dynamaxed pokemon's Max Move, and a Z-Crystal holder's Z-Move while its side still has one.
+- 54fb6d1: - A Max Raid is called D-Max or G-Max and its boss, such as G-Max Snorlax, in its lobby and as its fight's title, so the name says whether the boss Gigantamaxes.
+  - A Max Raid's pillar of light is half as wide.
+- 7c45441: - The release workflow runs on every push to main again, instead of only when started by hand.
+
 ## 4.37.0
 
 ### Minor Changes

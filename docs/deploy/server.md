@@ -100,8 +100,8 @@ Without the token, the release still publishes and the workflow logs a warning
 that the sprite host was not deployed. To publish it by hand, run
 `pnpm dlx wrangler@4 deploy` while signed in with `wrangler login`.
 
-While the workflow is switched off (it runs only when started by hand for
-now), release from a checkout of `main` instead:
+To release without the workflow, for instance with no Actions minutes left,
+release from a checkout of `main` instead:
 
 ```bash
 pnpm cs:ver                 # fold the pending changesets into the version and changelog

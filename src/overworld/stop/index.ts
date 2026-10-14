@@ -2,20 +2,15 @@ import { SHADOW_FRIENDSHIP } from '../../data/constants/friendship';
 import type { CatchSnapshot } from '../../model/catch-snapshot';
 import { getMaxHealth } from '../../model/health';
 import { Slots, defaultSlots, withSlots } from '../../data/constants/slots';
-import { getExpertHeldItems } from '../../data/items/expert-loadout';
-import {
-  type BuildRole,
-  coreCategory,
-  coreRoleOf,
-  isCoreRole,
-} from '../../data/species/best-moves';
+import { getExpertHeldItems } from '../builds/held-items';
+import { type BuildRole, coreCategory, coreRoleOf, isCoreRole } from '../builds/roles';
 import {
   type BestBuild,
   assignBuildRoles,
   getBestBuild,
   getBestNature,
   getBestParty,
-} from '../../data/species/best-build';
+} from '../builds/best-build';
 import type { Items } from '../../data/ids/items';
 import type { Species } from '../../data/ids/species';
 import { getHolderMega, getSpeciesStones } from '../../data/items/mega-stones';

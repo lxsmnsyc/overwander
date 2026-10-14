@@ -14,9 +14,9 @@ import { Slots, defaultSlots, withSlots } from '../../src/data/constants/slots';
 import { MAX_IV, Stats, packIVs } from '../../src/data/constants/stats';
 import { Species } from '../../src/data/ids/species';
 import type { Moves } from '../../src/data/ids/moves';
-import { getExpertHeldItems } from '../../src/data/items/expert-loadout';
+import { getExpertHeldItems } from '../../src/overworld/builds/held-items';
 import { getRegisteredSpecies, isFullyEvolved, isWornForm } from '../../src/data/species';
-import { getBestParty } from '../../src/data/species/best-build';
+import { getBestParty } from '../../src/overworld/builds/best-build';
 import { deriveGender, deriveSize } from '../../src/overworld/encounter';
 import { fieldTeams } from '../../src/overworld/raid-battle';
 

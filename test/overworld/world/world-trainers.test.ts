@@ -9,20 +9,20 @@ import registerBiomeSpawns, {
   getSpawnRarity,
   spawnRanks,
 } from '../../../src/data/biome';
-import { isCoreRole } from '../../../src/data/species/best-moves';
+import { isCoreRole } from '../../../src/overworld/builds/roles';
 import { getStoneMega } from '../../../src/data/items/mega-stones';
 import {
   CORE_COUNT,
   assignBuildRoles,
   getBestNature,
   getBestParty,
-} from '../../../src/data/species/best-build';
+} from '../../../src/overworld/builds/best-build';
 import Biome, { getTimeOfDay } from '../../../src/data/ids/biome';
 import { EVERY_LAIR, getBiomeLairs, getLairResidents } from '../../../src/data/overworld/lair';
 import canMeetSpecies from '../../../src/data/overworld/reach';
 import { Items } from '../../../src/data/ids/items';
 import registerItems, { getItemData } from '../../../src/data/items';
-import { getExpertHeldItems } from '../../../src/data/items/expert-loadout';
+import { getExpertHeldItems } from '../../../src/overworld/builds/held-items';
 import { Slots, countAbilitySlots, getSlots } from '../../../src/data/constants/slots';
 import type { CatchSnapshot } from '../../../src/model/catch-snapshot';
 import {

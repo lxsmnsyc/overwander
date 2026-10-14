@@ -1,29 +1,30 @@
-import Abilities from '../ids/abilities';
-import { MoveCategories, MoveFlags, Moves } from '../ids/moves';
-import Natures, { NATURE_EFFECTS, getNatureFactor } from '../ids/natures';
-import { Stats } from '../constants/stats';
-import type { Species } from '../ids/species';
-import { getSignatureAbility } from '../abilities/__create';
-import { getMoveData } from '../moves/__create';
-import { getReachableMoves, getSpeciesAbilityPools, getSpeciesData } from './__create';
-import { MOVE_WEATHERS } from '../moves/weather';
-import { isRecoilMove } from '../moves/recoil';
-import { isPunchMove } from '../moves/punches';
-import { Weathers } from '../ids/status';
+import Abilities from '../../data/ids/abilities';
+import { MoveCategories, MoveFlags, Moves } from '../../data/ids/moves';
+import Natures, { NATURE_EFFECTS, getNatureFactor } from '../../data/ids/natures';
+import { Stats } from '../../data/constants/stats';
+import type { Species } from '../../data/ids/species';
+import { getSignatureAbility } from '../../data/abilities/__create';
+import { getMoveData } from '../../data/moves/__create';
+import {
+  getReachableMoves,
+  getSpeciesAbilityPools,
+  getSpeciesData,
+} from '../../data/species/__create';
+import { MOVE_WEATHERS } from '../../data/moves/weather';
+import { isRecoilMove } from '../../data/moves/recoil';
+import { isPunchMove } from '../../data/moves/punches';
+import { Weathers } from '../../data/ids/status';
 import {
   ABILITY_WANTS_WEATHER,
   ABILITY_WEATHER,
   type BuildAlly,
-  BuildRole,
-  StatusKind,
   WEATHER_TYPES,
-  coreCategory,
   getBestMoves,
-  isCoreRole,
   kindCapability,
   roleCapability,
 } from './best-moves';
-import { Types } from '../constants/types';
+import { BuildRole, StatusKind, coreCategory, isCoreRole } from './roles';
+import { Types } from '../../data/constants/types';
 
 /**
  * What an expert's party is, as opposed to what its six pokemon are.

@@ -16,7 +16,7 @@ import registerItems, { getItemData } from '../../src/data/items';
 import { getMoveData, registerMoves } from '../../src/data/moves';
 import AleaRNG from '../../src/core/alea';
 import { Stats } from '../../src/data/constants/stats';
-import { getExpertHeldItems } from '../../src/data/items/expert-loadout';
+import { getExpertHeldItems } from '../../src/overworld/builds/held-items';
 import { TYPE_BOOSTERS } from '../../src/data/items/type-boosters';
 import canMeetSpecies from '../../src/data/overworld/reach';
 import {
@@ -112,11 +112,10 @@ import { counterParty, rentalOffer, rentedHand } from '../../src/overworld/stop'
 import {
   BEST_MOVE_COUNT,
   BEST_MOVE_OVERRIDES,
-  BuildRole,
   SETUP_MOVES,
   getBestMoves,
-  isCoreRole,
-} from '../../src/data/species/best-moves';
+} from '../../src/overworld/builds/best-moves';
+import { BuildRole, isCoreRole } from '../../src/overworld/builds/roles';
 import {
   CORE_COUNT,
   assignBuildRoles,
@@ -124,7 +123,7 @@ import {
   getBestBuild,
   getBestNature,
   getBestParty,
-} from '../../src/data/species/best-build';
+} from '../../src/overworld/builds/best-build';
 import { NATURE_EFFECTS } from '../../src/data/ids/natures';
 import { isRecoilMove } from '../../src/data/moves/recoil';
 

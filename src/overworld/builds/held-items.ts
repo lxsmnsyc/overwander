@@ -1,18 +1,18 @@
-import Abilities from '../ids/abilities';
-import { Items } from '../ids/items';
-import { MoveCategories, Moves } from '../ids/moves';
-import type { Species } from '../ids/species';
-import { Stats } from '../constants/stats';
-import type { Types } from '../constants/types';
-import { getMoveData, getSpeedCooldownFactor } from '../moves/__create';
-import { GENERAL_STAT_BOOSTERS } from './stat-boosters';
-import { MARKET_GEAR } from './gear';
-import { ORBS } from './orbs';
-import { TYPE_BOOSTERS } from './type-boosters';
-import { getSpeciesData } from '../species/__create';
-import { type BuildRole, coreRoleOf, isCoreRole } from '../species/best-moves';
-import { getSpeciesHeldItems } from '../species/held-items';
-import { isFullyEvolved } from '../species/evolution';
+import Abilities from '../../data/ids/abilities';
+import { Items } from '../../data/ids/items';
+import { MoveCategories, Moves } from '../../data/ids/moves';
+import type { Species } from '../../data/ids/species';
+import { Stats } from '../../data/constants/stats';
+import type { Types } from '../../data/constants/types';
+import { getMoveData, getSpeedCooldownFactor } from '../../data/moves/__create';
+import { GENERAL_STAT_BOOSTERS } from '../../data/items/stat-boosters';
+import { MARKET_GEAR } from '../../data/items/gear';
+import { ORBS } from '../../data/items/orbs';
+import { TYPE_BOOSTERS } from '../../data/items/type-boosters';
+import { getSpeciesData } from '../../data/species/__create';
+import { type BuildRole, coreRoleOf, isCoreRole } from './roles';
+import { getSpeciesHeldItems } from '../../data/species/held-items';
+import { isFullyEvolved } from '../../data/species/evolution';
 
 /**
  * What an expert's pokemon fights carrying.

@@ -9,7 +9,7 @@ import { Moves } from '../../src/data/ids/moves';
 import { Species } from '../../src/data/ids/species';
 import registerItems from '../../src/data/items';
 import { registerMoves } from '../../src/data/moves';
-import { getExpertHeldItems, isBattleHeldItem } from '../../src/data/items/expert-loadout';
+import { getExpertHeldItems, isBattleHeldItem } from '../../src/overworld/builds/held-items';
 import Npc, {
   EXECUTIVE_CHARSETS,
   EXECUTIVE_HONORS,

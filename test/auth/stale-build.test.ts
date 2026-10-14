@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { BUILD_HEADER, STALE_BUILD_HEADER } from '../../src/utils/build';
-import guardServerCalls from '../../src/utils/stale-build';
+import { BUILD_HEADER, STALE_BUILD_HEADER } from '../../src/model/build';
+import guardServerCalls from '../../src/auth/stale-build';
 
 describe('guardServerCalls', () => {
   const original = globalThis.fetch;

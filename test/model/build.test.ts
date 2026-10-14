@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { isStaleCall } from '../../src/utils/build';
+import { isStaleCall } from '../../src/model/build';
 
 describe('which server calls are refused', () => {
   it('lets through a call from the live build', () => {

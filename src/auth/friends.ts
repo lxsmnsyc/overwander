@@ -16,7 +16,7 @@ import { requireReader, requireUid } from '../server/auth';
 import check, { LINK_TABLE, TEXT, TOKEN, UID } from '../server/validate';
 import { syncServerClock } from './clock';
 import { type Unwatch, watchTable } from './watch';
-import { readOnly } from '../utils/server-calls';
+import { readOnly } from './server-calls';
 import getIdToken from './session';
 
 /**

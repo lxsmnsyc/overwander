@@ -48,8 +48,8 @@ import { asOffset, toLocalTime } from '../model/local-time';
 import { followChanges } from './live';
 import { type Unwatch, watchTable } from './watch';
 import getIdToken from './session';
-import batchedQuery from '../utils/batched-query';
-import { readOnly } from '../utils/server-calls';
+import batchedQuery from './batched-query';
+import { readOnly } from './server-calls';
 import {
   readClaimedRaids,
   readLiveLobbyRows,

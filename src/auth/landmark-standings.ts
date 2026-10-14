@@ -1,4 +1,4 @@
-import { readOnly } from '../utils/server-calls';
+import { readOnly } from './server-calls';
 import Landmark from '../data/overworld/landmark';
 import { NPC_VISIT_TAGS } from '../overworld/npcs';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';

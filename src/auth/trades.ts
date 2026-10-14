@@ -12,7 +12,7 @@ import check, { ID, MAYBE_ID, OFFSET, TOKEN, TRADE_OFFER, UID } from '../server/
 import { type TradeRecord, asTradeRecord } from '../model/trade-record';
 import { syncServerClock } from './clock';
 import { type Unwatch, watchTable } from './watch';
-import { readOnly } from '../utils/server-calls';
+import { readOnly } from './server-calls';
 import { getLocalOffset } from '../model/local-time';
 import getIdToken from './session';
 

@@ -1,4 +1,4 @@
-import { readOnly } from '../utils/server-calls';
+import { readOnly } from './server-calls';
 import type { Items } from '../data/ids/items';
 import type { Moves } from '../data/ids/moves';
 import type { Stats } from '../data/constants/stats';

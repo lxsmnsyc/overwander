@@ -1,4 +1,4 @@
-import { reloadForNewBuild } from '../utils/stale-build';
+import { reloadForNewBuild } from './stale-build';
 import getIdToken from './session';
 import { asNumber, asRecord, asString } from '../model/normalize';
 

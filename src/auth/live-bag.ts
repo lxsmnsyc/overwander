@@ -1,4 +1,4 @@
-import { readOnly, serverCallsSeen } from '../utils/server-calls';
+import { readOnly, serverCallsSeen } from './server-calls';
 import { asNumber, asRecord, asString } from '../model/normalize';
 import getIdToken from './session';
 import { requireReader } from '../server/auth';

@@ -1,4 +1,4 @@
-import { readOnly } from '../utils/server-calls';
+import { readOnly } from './server-calls';
 import { WORLD_GENERATION } from '../overworld/current';
 import type { Depth } from '../overworld/depth';
 import { requireReader, requireUid } from '../server/auth';

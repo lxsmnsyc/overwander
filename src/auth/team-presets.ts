@@ -1,4 +1,4 @@
-import { readOnly } from '../utils/server-calls';
+import { readOnly } from './server-calls';
 import type { TeamPresetRecord } from '../model/team-preset-record';
 import getIdToken from './session';
 import { requireReader, requireUid } from '../server/auth';

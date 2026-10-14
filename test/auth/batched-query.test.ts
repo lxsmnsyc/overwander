@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import batchedQuery from '../../src/utils/batched-query';
+import batchedQuery from '../../src/auth/batched-query';
 
 /** A read that squares every number it is handed, remembering each batch */
 function squares(fail: (queries: number[]) => boolean = () => false): {

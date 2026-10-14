@@ -1,4 +1,4 @@
-import { readOnly } from '../utils/server-calls';
+import { readOnly } from './server-calls';
 import type { Species } from '../data/ids/species';
 import check, { TOKEN, UID } from '../server/validate';
 import {

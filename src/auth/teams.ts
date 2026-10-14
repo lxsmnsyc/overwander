@@ -1,7 +1,7 @@
 import type { CatchSnapshot } from '../model/catch-snapshot';
 import getIdToken from './session';
-import batchedQuery from '../utils/batched-query';
-import { readOnly } from '../utils/server-calls';
+import batchedQuery from './batched-query';
+import { readOnly } from './server-calls';
 import { requireReader } from '../server/auth';
 import check, { ID_BATCH, TOKEN, UID } from '../server/validate';
 import { readTeams } from '../server/raids/io';

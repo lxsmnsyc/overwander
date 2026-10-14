@@ -1,4 +1,4 @@
-import { readOnly } from '../utils/server-calls';
+import { readOnly } from './server-calls';
 import type { PlayerIdentity } from '../auth/user';
 import { BALL_ITEMS, type Balls, type Items } from '../data/ids/items';
 import SafariSession, {

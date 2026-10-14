@@ -1,4 +1,4 @@
-import { BUILD_HEADER, STALE_BUILD_HEADER, isServerCall } from './build';
+import { BUILD_HEADER, STALE_BUILD_HEADER, isServerCall } from '../model/build';
 import { countServerCall } from './server-calls';
 
 /** The stale build a reload was last asked for, so a page that comes back stale is not reloaded forever */

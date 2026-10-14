@@ -63,7 +63,7 @@ vi.mock('../../src/server/inventory', () => ({
 }));
 
 const { default: readHeldBag } = await import('../../src/auth/live-bag');
-const { countServerCall } = await import('../../src/utils/server-calls');
+const { countServerCall } = await import('../../src/auth/server-calls');
 
 let player = 0;
 

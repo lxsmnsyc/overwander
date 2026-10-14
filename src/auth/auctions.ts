@@ -27,7 +27,7 @@ import {
 } from '../model/auction-record';
 import { syncServerClock } from './clock';
 import { type Unwatch, watchRow, watchTable } from './watch';
-import { readOnly } from '../utils/server-calls';
+import { readOnly } from './server-calls';
 import {
   readAuctionsBy,
   readAuctionsIn,

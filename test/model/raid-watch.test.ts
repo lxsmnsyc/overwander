@@ -39,7 +39,7 @@ vi.mock('solid-js/web', async (original) => ({
 }));
 vi.mock('../../src/auth/session', () => ({ default: async () => Promise.resolve('token') }));
 vi.mock('../../src/server/auth', () => ({ requireReader: async () => Promise.resolve('reader') }));
-vi.mock('../../src/server/raid-reads', () => ({
+vi.mock('../../src/server/raids/reads', () => ({
   readLobbyRows: async () => {
     reads += 1;
     return Promise.resolve(stored == null ? [] : [structuredClone(stored)]);

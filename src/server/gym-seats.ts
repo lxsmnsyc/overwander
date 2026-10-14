@@ -28,7 +28,7 @@ import { type Tx, getSql, jsonOf, newDocId, tx } from './db';
 import { isCatchLocked } from './locks';
 import { resolveSnapshot } from './overworld';
 import { bumpProgress } from './quest-progress';
-import { foughtBattle, readBattle } from './raid-io';
+import { foughtBattle, readBattle } from './raids/io';
 import { isAnyCatchQueued, publishTeamSnapshot } from './raids';
 import { recordSeenOpponents } from './pokedex';
 import { asNumber, asString } from './read';

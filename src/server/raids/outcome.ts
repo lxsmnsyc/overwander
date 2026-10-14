@@ -1,7 +1,7 @@
 import 'server-only';
 import BattleOutcome from '../../model/battle-outcome';
 import BATTLE_TIMEOUT from '../../model/battle-lock';
-import { readBattle } from '../raid-io';
+import { readBattle } from './io';
 import { asNumber } from '../read';
 
 /** How a raid battle's result is read, and when a silent one counts as lost */

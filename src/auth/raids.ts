@@ -56,7 +56,7 @@ import {
   readLobbyRows,
   readRaidInvites,
   readRaidWatchers,
-} from '../server/raid-reads';
+} from '../server/raids/reads';
 
 export {
   RAID_PLAYER_LIMIT,

@@ -15,7 +15,7 @@ import {
 import { writeCaughtRecord } from '../../src/server/caught';
 import { ITEM_STACKS } from '../../src/model/stacks';
 import { readStack } from '../../src/server/stacks';
-import { writeRaid } from '../../src/server/raid-io';
+import { writeRaid } from '../../src/server/raids/io';
 import { tx } from '../../src/server/db';
 import ChunkSnapshot, { RAID_INTERVAL, type RaidRoll } from '../../src/overworld/chunk-snapshot';
 import getWorld from '../../src/overworld/current';

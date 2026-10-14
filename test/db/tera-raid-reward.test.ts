@@ -15,7 +15,7 @@ import {
 } from '../../src/data/overworld/tera-raids';
 import { claimRaidReward, enterRaid, peekRaid } from '../../src/server/raids';
 import { writeCaughtRecord } from '../../src/server/caught';
-import { writeRaid } from '../../src/server/raid-io';
+import { writeRaid } from '../../src/server/raids/io';
 import { readStack } from '../../src/server/stacks';
 import { tx } from '../../src/server/db';
 import ChunkSnapshot, { type RaidRoll } from '../../src/overworld/chunk-snapshot';

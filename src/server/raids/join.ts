@@ -7,7 +7,7 @@ import { TEAM_SIZE } from '../../auth/teams';
 import { isGuardedRecord } from '../catch-fields';
 import { getSql, newDocId, tx } from '../db';
 import { readCaughtMany } from '../caught-io';
-import { readRaid } from '../raid-io';
+import { readRaid } from './io';
 import { isAnyCatchLocked } from '../locks';
 import { asNumber } from '../read';
 

@@ -75,7 +75,7 @@ import { readEncounter } from './encounter-io';
 import { startEncounter } from './overworld';
 import { grantGold } from './profile';
 import { recordSeenOpponents } from './pokedex';
-import { foughtBattle, readBattle } from './raid-io';
+import { foughtBattle, readBattle } from './raids/io';
 import { isAnyCatchQueued, publishTeamSnapshot, readPublishedSpecies } from './raids';
 import { asNumber, asString } from './read';
 

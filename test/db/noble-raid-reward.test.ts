@@ -10,7 +10,7 @@ import { Species } from '../../src/data/ids/species';
 import { NOBLE_BALM_PACK, getNobleTreasure } from '../../src/data/overworld/nobles';
 import { claimRaidReward, enterRaid, joinRaid, peekRaid, startRaid } from '../../src/server/raids';
 import { NOBLE_RAID_BALMS, NOBLE_RAID_EXTRA_BALM_CHANCE } from '../../src/server/raids/reward';
-import { writeRaid } from '../../src/server/raid-io';
+import { writeRaid } from '../../src/server/raids/io';
 import { grantItem } from '../../src/server/inventory';
 import { readStack } from '../../src/server/stacks';
 import { tx } from '../../src/server/db';

@@ -1,8 +1,8 @@
 import 'server-only';
-import { WORLD_GENERATION } from '../overworld/current';
-import { asOffset } from '../model/local-time';
-import { getSql } from './db';
-import { asNumber, asString } from './read';
+import { WORLD_GENERATION } from '../../overworld/current';
+import { asOffset } from '../../model/local-time';
+import { getSql } from '../db';
+import { asNumber, asString } from '../read';
 
 /** Lobby rows with their `teams` (id and place joined) embedded, the shape the browser reads */
 async function withTeams(

@@ -11,7 +11,7 @@ import { Balls } from '../../src/data/ids/items';
 import { ALPHA_PERFECT_STATS, pickAlphaPerfectStats } from '../../src/data/overworld/alphas';
 import { claimRaidReward, enterRaid, peekRaid } from '../../src/server/raids';
 import { writeCaughtRecord } from '../../src/server/caught';
-import { writeRaid } from '../../src/server/raid-io';
+import { writeRaid } from '../../src/server/raids/io';
 import { tx } from '../../src/server/db';
 import ChunkSnapshot, { type RaidRoll } from '../../src/overworld/chunk-snapshot';
 import getWorld from '../../src/overworld/current';

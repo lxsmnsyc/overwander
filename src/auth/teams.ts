@@ -4,7 +4,7 @@ import batchedQuery from '../utils/batched-query';
 import { readOnly } from '../utils/server-calls';
 import { requireReader } from '../server/auth';
 import check, { ID_BATCH, TOKEN, UID } from '../server/validate';
-import { readTeams } from '../server/raid-io';
+import { readTeams } from '../server/raids/io';
 import { readPlayerTeams, readTeamSnapshots } from '../server/team-reads';
 
 /** The most ids one batched read sends, as `ID_BATCH` allows */

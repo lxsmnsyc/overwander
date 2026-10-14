@@ -5,7 +5,7 @@ import { asOffset, toLocalTime } from '../../src/model/local-time';
 import { RaidKind, raidId } from '../../src/model/raid-record';
 import { claimRaidReward } from '../../src/server/raids';
 import { holdsItem } from '../../src/server/inventory';
-import { writeRaid } from '../../src/server/raid-io';
+import { writeRaid } from '../../src/server/raids/io';
 import { tx } from '../../src/server/db';
 import ChunkSnapshot from '../../src/overworld/chunk-snapshot';
 import getWorld from '../../src/overworld/current';

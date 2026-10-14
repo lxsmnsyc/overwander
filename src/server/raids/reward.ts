@@ -10,7 +10,7 @@ import { Metric } from '../../model/quest-record';
 import { bumpProgress } from '../quest-progress';
 import Biome from '../../data/ids/biome';
 import { getSql } from '../db';
-import { foughtBattle, readBattle, readRaid } from '../raid-io';
+import { foughtBattle, readBattle, readRaid } from './io';
 import { startEncounter } from '../overworld';
 import { readEncounter } from '../encounter-io';
 import { encounterKey } from '../../overworld/safari';

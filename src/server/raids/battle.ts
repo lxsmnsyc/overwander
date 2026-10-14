@@ -4,7 +4,7 @@ import { UNLIMITED_BATTLE_LIMITS } from '../../data/constants/battle-limits';
 import { RaidKind, type RaidRecord, asRaidRecord, mythicalRelicOf } from '../../model/raid-record';
 import { BOSS_ALLIANCE, PLAYER_ALLIANCE, createRaidBossTeam } from '../../overworld/raid';
 import { getSql, jsonOf, newDocId, tx } from '../db';
-import { foughtBattle, readBattle, readRaid, type readTeam, readTeams } from '../raid-io';
+import { foughtBattle, readBattle, readRaid, type readTeam, readTeams } from './io';
 import { consumeItem, grantItem } from '../inventory';
 import { Items } from '../../data/ids/items';
 import { NOBLE_BALM_PACK } from '../../data/overworld/nobles';

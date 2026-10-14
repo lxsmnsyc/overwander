@@ -19,7 +19,7 @@ import Biome from '../../data/ids/biome';
 import { getSpeciesHome } from '../../data/biome';
 import { getSpeciesLairs } from '../../data/overworld/lair';
 import { getSql, tx } from '../db';
-import { foughtBattle, readBattle, readRaid, readRaidIn, writeRaid } from '../raid-io';
+import { foughtBattle, readBattle, readRaid, readRaidIn, writeRaid } from './io';
 import { holdsItem } from '../inventory';
 import { asString } from '../read';
 import { hasAnyCaught } from '../caught';

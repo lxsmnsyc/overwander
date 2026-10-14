@@ -19,7 +19,7 @@ A move is drawn as two pictures: the **wait** while the engine holds it open ([`
 
 ## Adding a region
 
-1. **New shapes go in `effect/<region>.ts` and `lit/<region>.ts`**, one painter each, sharing their timing and colour constants (export them from the `effect` file). Spread both into the `PAINTERS` and `LIT` tables.
+1. **New shapes go in `effect/regions/<region>/` and the same path under `lit/`**, one painter each, sharing their timing and colour constants (export them from the `effect` file): `legends.ts` for the region's legendary and mythical moves, `signatures.ts` for its families' own moves. Moves drawn by kind rather than by region live in `themes/`, and the Z-Moves and Max Moves in `z/` and `max/`. Spread both into the `PAINTERS` and `LIT` tables.
 2. **Register each shape** in the `EffectShape` union and `SPANS` in `effect/shapes.ts`, and give a heavy one a `JOLTS` entry in `lit/shapes.ts`.
 3. **Map the moves** in `effect/named.ts`. A move that strikes on one step and does something else on the last (U-turn, Flip Turn) also goes in `WINDING_AS`.
 4. **The wait:**

@@ -47,4 +47,4 @@ Adding something that stands in the air means saying what it does flat on as wel
 
 ## Giving way to the player
 
-In both boards, anything drawn after the player that covers enough of them fades and comes back: `coverOf` and the `VEIL_*` numbers in `src/components/overworld/chunk-canvas/metrics.ts`. It is a fade rather than a switch, and each of a cell's pictures fades on its own.
+In both boards, anything drawn after the player that covers enough of them fades and comes back: `coverOf` and the `VEIL_*` numbers in `src/canvas/overworld/metrics.ts`. It is a fade rather than a switch, and each of a cell's pictures fades on its own.

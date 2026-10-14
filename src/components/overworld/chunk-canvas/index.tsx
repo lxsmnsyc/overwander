@@ -168,7 +168,7 @@ import {
   pictureWidth,
   shadowSquash,
   slideGain,
-} from './metrics';
+} from '../../../canvas/overworld/metrics';
 import {
   type AuraPart,
   CellAura,
@@ -188,8 +188,13 @@ import {
   paintSparkle,
   phenomenonSpan,
   plantCallOut,
-} from './scenery';
-import { RaidBeacon, beaconCorners, drawRaidBeacon, paintRaidBeacon } from './beacon';
+} from '../../../canvas/overworld/scenery';
+import {
+  RaidBeacon,
+  beaconCorners,
+  drawRaidBeacon,
+  paintRaidBeacon,
+} from '../../../canvas/overworld/beacon';
 
 /**
  * How near the viewer the backdrop is drawn, in the scene's own clip

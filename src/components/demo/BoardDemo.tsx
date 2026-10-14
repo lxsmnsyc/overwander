@@ -7,9 +7,9 @@ import { BIOME_NAMES } from '../../data/biome';
 import type Decoration from '../../data/overworld/decoration';
 import Weather, { DARK_DAY_LAMP_CELLS, WEATHER_NAMES } from '../../data/overworld/weather';
 import ChunkCanvas from '../overworld/chunk-canvas';
-import { CellAura, type SpawnCoat, rankOf } from '../overworld/chunk-canvas/scenery';
+import { CellAura, type SpawnCoat, rankOf } from '../../canvas/overworld/scenery';
 import { BOARD_CELLS, BOARD_CENTER, boardIndexOf, viewFor } from '../../canvas/board';
-import { SLIDE_PACE } from '../overworld/chunk-canvas/metrics';
+import { SLIDE_PACE } from '../../canvas/overworld/metrics';
 import { findPathNear } from '../../overworld/path';
 import { boardMargin } from '../overworld/overworld-tab/metrics';
 import settings, { type BoardEdge, setSetting } from '../app/settings';
@@ -29,7 +29,7 @@ import { Species } from '../../data/ids/species';
 import Landmark from '../../data/overworld/landmark';
 import ChunkSnapshot from '../../overworld/chunk-snapshot';
 import { isGigantamaxBoss } from '../../overworld/raid';
-import { RaidBeacon } from '../overworld/chunk-canvas/beacon';
+import { RaidBeacon } from '../../canvas/overworld/beacon';
 
 /**
  * The board on its own, at whatever shape of screen you like.

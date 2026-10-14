@@ -5,7 +5,7 @@ import {
   COMPASS_SIZE,
   compassArrow,
   grownArrow,
-} from '../../src/components/overworld/chunk-canvas/metrics';
+} from '../../src/canvas/overworld/metrics';
 
 /** How far apart two points are. */
 function span(one: { x: number; y: number }, other: { x: number; y: number }): number {

@@ -20,7 +20,7 @@ import projectField, {
   type FieldView,
   ringOf,
   ringRadius,
-} from '../../../canvas/battle/field';
+} from '../../../canvas/battle/projection';
 import facingToward from '../../../canvas/facing';
 import type SpeciesSpriteAnimation from '../../../canvas/species-sprite-animation';
 import type { Point, SpriteDirection } from '../../../canvas/sprite-sheet';

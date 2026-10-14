@@ -8,7 +8,7 @@ import projectField, {
   ringRadius,
   scaleAt,
   unprojectField,
-} from '../../src/canvas/battle/field';
+} from '../../src/canvas/battle/projection';
 
 const VIEW: FieldView = { width: 640, height: 360, unit: 12, yaw: 0 };
 

@@ -26,7 +26,7 @@ import { CAVE_DARK_CELLS } from '../../../data/overworld/cave';
 import { Depth } from '../../../overworld/depth';
 import createOverworld from '../../../overworld/setup';
 import { isGigantamaxBoss } from '../../../overworld/raid';
-import { RaidBeacon } from '../../overworld/chunk-canvas/beacon';
+import { RaidBeacon } from '../../../canvas/overworld/beacon';
 import settings from '../../app/settings';
 import { BOARD_CELLS, BOARD_CENTER, BOARD_RADIUS, PUBLISHED_SPAWNS, boardMargin } from './metrics';
 

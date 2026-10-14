@@ -3,7 +3,7 @@ import projectField, {
   type FieldView,
   horizonOf,
   unprojectField,
-} from '../../../canvas/battle/field';
+} from '../../../canvas/battle/projection';
 import type { Painter, QuadPoint } from '../../../canvas/gl/quad-batch';
 import { SKY_BANDS, getSkybox, mixHex } from '../../../canvas/daylight';
 import { localNow } from '../../../auth/clock';

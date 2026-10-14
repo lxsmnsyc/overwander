@@ -1,10 +1,10 @@
 import { type JSX, Show, createEffect, createMemo, createSignal, onCleanup } from 'solid-js';
 import { atClockHour } from '../../data/day-clock';
 import { Badge, Meta, Note, Row, Select, Slider, Switch } from '../styled';
-import { CELL, COLORS, SPRITE_STANDS, pictureWidth } from '../overworld/chunk-canvas/metrics';
+import { CELL, COLORS, SPRITE_STANDS, pictureWidth } from '../../canvas/overworld/metrics';
 import { fitPicture, projectAir } from '../../canvas/board';
 import speciesSize from '../../canvas/species-size';
-import { SHADOW_STAMP, bakeShadowDisc } from '../overworld/chunk-canvas/scenery';
+import { SHADOW_STAMP, bakeShadowDisc } from '../../canvas/overworld/scenery';
 import { castCorners, shadowCorners } from '../../canvas/placement';
 import { directionOf, litFrame } from '../../canvas/sprite-sheet';
 import { getRegisteredSpecies, getSpeciesData } from '../../data/species';

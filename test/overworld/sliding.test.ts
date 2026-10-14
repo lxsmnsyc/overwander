@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { slideGain } from '../../src/components/overworld/chunk-canvas';
-import { SLIDE_PACE, SNAP_STEPS } from '../../src/components/overworld/chunk-canvas/metrics';
+import { SLIDE_PACE, SNAP_STEPS } from '../../src/canvas/overworld/metrics';
 import { STEP_PACE } from '../../src/components/overworld/overworld-tab/metrics';
 
 describe('the walker sliding after the cell it is walking to', () => {

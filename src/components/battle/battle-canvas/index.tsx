@@ -24,7 +24,7 @@ import {
   moveEffectVisual,
   moveMissVisual,
 } from '../../../canvas/battle/moves';
-import { type FieldPoint, type FieldView, unprojectField } from '../../../canvas/battle/field';
+import { type FieldPoint, type FieldView, unprojectField } from '../../../canvas/battle/projection';
 import { shortestTurn } from '../../../canvas/board';
 import loadTerrainTiles, { TERRAIN_TILE } from '../../../canvas/terrain-tiles';
 import drawFloor, { type Arena, type FloorRegion, type FloorTile, drawGroundShade } from './floor';

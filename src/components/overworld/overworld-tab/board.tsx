@@ -72,7 +72,7 @@ import { NPC_VISIT_TAGS, npcName } from '../../../overworld/npcs';
 import type { GymSeatStanding } from '../../../model/gym-seat-record';
 import { enterGymSeat } from '../../../auth/gym-seats';
 import { type LandmarkStandings, readLandmarkStandings } from '../../../auth/landmark-standings';
-import { CellAura, rankOf } from '../chunk-canvas/scenery';
+import { CellAura, rankOf } from '../../../canvas/overworld/scenery';
 import GymSeatDialog from '../GymSeatDialog';
 import { VENDOR_KIND_NAMES } from '../../../data/overworld/vendor';
 import type Phenomenon from '../../../data/overworld/phenomenon';

@@ -156,3 +156,46 @@ describe('Mega Evolution', () => {
     expect(ghost.species).toBe(Species.GengarMega);
   });
 });
+
+describe('a true shadow in a worn shape', () => {
+  it('reverts to its own Primal with the orb, weather and all', () => {
+    const { battle, teamA } = createBattle();
+    const sea = createUnit(battle, teamA);
+    const land = createUnit(battle, teamA);
+    sea.setSpecies(Species.KyogreShadow);
+    sea.addItem(Items.BlueOrb);
+    land.setSpecies(Species.GroudonShadow);
+    land.addItem(Items.RedOrb);
+
+    sea.enter();
+    land.enter();
+
+    expect(sea.species).toBe(Species.KyogreShadowPrimal);
+    expect(sea.hasAbility(Abilities.PrimordialSea)).toBe(true);
+    expect(land.species).toBe(Species.GroudonShadowPrimal);
+    expect(land.hasAbility(Abilities.DesolateLand)).toBe(true);
+  });
+
+  it('Mega Evolves a shadow Rayquaza into its own Mega', () => {
+    const { battle, teamA } = createBattle();
+    const dragon = createUnit(battle, teamA);
+    dragon.setSpecies(Species.RayquazaShadow);
+    dragon.addMove(Moves.DragonAscent);
+
+    dragon.enter();
+
+    expect(dragon.species).toBe(Species.RayquazaShadowMega);
+    expect(dragon.hasAbility(Abilities.DeltaStream)).toBe(true);
+  });
+
+  it('takes no shape it has no colours of its own for', () => {
+    const { battle, teamA } = createBattle();
+    const clone = createUnit(battle, teamA);
+    clone.setSpecies(Species.MewtwoShadow);
+    clone.addItem(Items.MewtwoniteX);
+
+    clone.enter();
+
+    expect(clone.species).toBe(Species.MewtwoShadow);
+  });
+});

@@ -5,7 +5,7 @@ import projectField, {
   unprojectField,
 } from '../../../canvas/battle/projection';
 import type { Painter, QuadPoint } from '../../../canvas/gl/quad-batch';
-import { SKY_BANDS, getSkybox, mixHex } from '../../../canvas/daylight';
+import { SKY_BANDS, getSkybox, mixHex } from '../../../canvas/overworld/daylight';
 import { localNow } from '../../../auth/clock';
 
 /**

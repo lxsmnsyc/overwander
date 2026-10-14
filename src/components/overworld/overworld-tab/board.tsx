@@ -54,8 +54,8 @@ import {
   watchSnapshotWindow,
 } from '../../../auth/snapshots';
 import type { PlayerIdentity } from '../../../auth/user';
-import { type BoardCell, boardIndexOf } from '../../../canvas/board';
-import { getSkybox, latitudeOf } from '../../../canvas/daylight';
+import { type BoardCell, boardIndexOf } from '../../../canvas/overworld/board';
+import { getSkybox, latitudeOf } from '../../../canvas/overworld/daylight';
 import { CAVERN } from '../../../canvas/sky';
 import { DECORATION_NAMES } from '../../../data/overworld/decoration';
 import {

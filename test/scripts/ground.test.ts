@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { GROUND_SQUASH } from '../../src/canvas/tilt';
+import { GROUND_SQUASH } from '../../src/canvas/overworld/tilt';
 import type { Image } from '../../src/server/sprites/png';
 import groundPoint from '../../scripts/lib/ground.ts';
 

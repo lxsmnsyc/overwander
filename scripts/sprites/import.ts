@@ -109,7 +109,7 @@ const IDS = 'src/data/ids/species.ts';
 const SPECIES = 'src/data/species';
 
 /** Where the stand-in sheets are listed */
-const STAND_IN_TABLE = 'src/canvas/species-sprites.ts';
+const STAND_IN_TABLE = 'src/canvas/sprites/species-sprites.ts';
 
 /**
  * Where form ids start, matching `SPECIES_FORM_BAND` in

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { isTurningPress } from '../../src/components/overworld/chunk-canvas';
-import createTwist, { type Finger } from '../../src/canvas/twist';
+import createTwist, { type Finger } from '../../src/canvas/overworld/twist';
 
 describe('what turns the board rather than pressing it', () => {
   const LEFT = 0;

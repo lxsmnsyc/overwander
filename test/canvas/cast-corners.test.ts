@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { type ShadowPatch, type SpriteQuad, castCorners } from '../../src/canvas/placement';
-import { GROUND_DEPTH } from '../../src/canvas/tilt';
+import { type ShadowPatch, type SpriteQuad, castCorners } from '../../src/canvas/sprites/placement';
+import { GROUND_DEPTH } from '../../src/canvas/overworld/tilt';
 
 /**
  * A pokemon 40 wide whose picture reaches 60 above the ground it

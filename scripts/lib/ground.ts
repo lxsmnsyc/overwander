@@ -1,4 +1,4 @@
-import { GROUND_SQUASH } from '../../src/canvas/tilt.ts';
+import { GROUND_SQUASH } from '../../src/canvas/overworld/tilt.ts';
 import type { Image } from '../../src/server/sprites/png.ts';
 
 /**

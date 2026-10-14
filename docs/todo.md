@@ -446,7 +446,7 @@ moved_at` (`db/migrations/0001_baseline.sql:732`), and the table already sends
 - The chunk canvas already draws several people on several cells in several
   charsets, facing correctly, with cast shadows, occlusion veiling and press
   targets. `loadOWChar` hands each caller its own clone so two people in the same
-  charset stand apart (`src/canvas/ow-char-sprites.ts:46`). What is missing is a
+  charset stand apart (`src/canvas/overworld/char-sprites.ts:46`). What is missing is a
   prop saying who else is here: `personOn` reads landmarks only
   (`src/components/overworld/chunk-canvas/index.tsx:769`).
 

@@ -33,9 +33,9 @@ import {
   radiusOf,
   shortestTurn,
   unprojectGround,
-} from '../../canvas/board';
-import createTwist from '../../canvas/twist';
-import { GROUND_DEPTH } from '../../canvas/tilt';
+} from '../../canvas/overworld/board';
+import createTwist from '../../canvas/overworld/twist';
+import { GROUND_DEPTH } from '../../canvas/overworld/tilt';
 import { TYPE_NAMES } from '../../data/constants/types';
 
 /**

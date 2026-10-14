@@ -6,7 +6,7 @@ import { BIOME_NAMES } from '../../data/biome';
 import { Badge, Button, Meta, Note, Row, Switch } from '../styled';
 import World, { Generation, isInWorld } from '../../overworld/world';
 import { CHUNK_CELLS } from '../../overworld/chunk';
-import shadeCell from '../../canvas/world-shade';
+import shadeCell from '../../canvas/overworld/world-shade';
 import { levelAt, terraceTop } from '../../overworld/terrace';
 import type Biome from '../../data/ids/biome';
 

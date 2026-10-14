@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 import { readFile, readdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import type { Coat, SpriteCoats } from '../../canvas/sprite-coats';
+import type { Coat, SpriteCoats } from '../../canvas/sprites/coats';
 
 /**
  * The list of which pokemon were drawn in which coat, built by looking.

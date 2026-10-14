@@ -10,7 +10,7 @@ import { Slots, defaultSlots, getSlots, mostSlots } from '../data/constants/slot
 import { type Stats, isZeroIVs } from '../data/constants/stats';
 import type { Types } from '../data/constants/types';
 import { isTeraType } from '../data/species/tera-type';
-import type { AuraKind } from '../canvas/auras';
+import type { AuraKind } from '../canvas/effects/auras';
 import Abilities from '../data/ids/abilities';
 import type Biome from '../data/ids/biome';
 import type { Balls, Items } from '../data/ids/items';

@@ -21,9 +21,9 @@ import projectField, {
   ringOf,
   ringRadius,
 } from '../../../canvas/battle/projection';
-import facingToward from '../../../canvas/facing';
-import type SpeciesSpriteAnimation from '../../../canvas/species-sprite-animation';
-import type { Point, SpriteDirection } from '../../../canvas/sprite-sheet';
+import facingToward from '../../../canvas/sprites/facing';
+import type SpeciesSpriteAnimation from '../../../canvas/sprites/species-sprite-animation';
+import type { Point, SpriteDirection } from '../../../canvas/sprites/sheet';
 
 /**
  * Who is standing where: the fight read into a ring of teams about a

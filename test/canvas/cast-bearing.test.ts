@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { boardView, projectGround } from '../../src/canvas/board';
-import { getCast, getSun } from '../../src/canvas/daylight';
+import { boardView, projectGround } from '../../src/canvas/overworld/board';
+import { getCast, getSun } from '../../src/canvas/overworld/daylight';
 
 /**
  * Which way something points on the screen, in degrees from the right,

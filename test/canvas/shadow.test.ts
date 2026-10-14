@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { GROUND_DEPTH } from '../../src/canvas/tilt';
-import { castCorners } from '../../src/canvas/placement';
-import { getCast } from '../../src/canvas/daylight';
+import { GROUND_DEPTH } from '../../src/canvas/overworld/tilt';
+import { castCorners } from '../../src/canvas/sprites/placement';
+import { getCast } from '../../src/canvas/overworld/daylight';
 
 /**
  * Which way a shadow falls as the camera walks round the board.

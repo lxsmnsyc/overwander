@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import loadSpeciesSprite, {
   hasFemaleSheet,
   spriteImagePath,
-} from '../../src/canvas/species-sprites';
+} from '../../src/canvas/sprites/species-sprites';
 import { Species } from '../../src/data/ids/species';
 
 /**

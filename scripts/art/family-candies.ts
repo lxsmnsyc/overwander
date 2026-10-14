@@ -696,7 +696,7 @@ function sheetOf(species: number, dex: number): Image | null {
 
 /** Which sheet each stand-in in `species-sprites.ts` is drawn as, by id */
 function standInsOf(ids: Map<string, number>): Map<number, number> {
-  const source = readFileSync('src/canvas/species-sprites.ts', 'utf8');
+  const source = readFileSync('src/canvas/sprites/species-sprites.ts', 'utf8');
   const table = source.slice(source.indexOf('const STAND_INS'));
   const found = new Map<number, number>();
 

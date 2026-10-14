@@ -19,7 +19,7 @@ description: >
 
 **The anchors are on the frame, in the frame box's own pixels.** Shadow, body centre, head and both hands, from the collection's `-Offsets` images, and any of them may be absent (`-32768` in both slots of `frames.bin`). They may fall outside the frame: a flying pokemon's shadow is on the ground below everything drawn, and nothing clamps them.
 
-**Read the format from the source.** `../SpriteCollab/compact/README.md` is the authority on `sheet.json` and `frames.bin`, down to the column order of the frame table; [`sprite-sheet.ts`](../../../src/canvas/sprite-sheet.ts) is this game's reader of it and nothing else.
+**Read the format from the source.** `../SpriteCollab/compact/README.md` is the authority on `sheet.json` and `frames.bin`, down to the column order of the frame table; [`sprite-sheet.ts`](../../../src/canvas/sprites/sheet.ts) is this game's reader of it and nothing else.
 
 **Two tiers of clip, and the collection names both.** The **bare minimum** six, `Idle` `Attack` `Walk` `Sleep` `Hurt` `Hop`, are what a sheet cannot be put on screen without; four more, `Charge` `Double` `Rotate` `Swing`, complete the ten a renderer may assume. They are [`MINIMUM_CAST` and `COMMON_CAST`](../../../src/data/constants/cast.ts), a cast list may end on any of the ten, and `pickCast` gives up onto two of the six. A sheet short of one of the six is unfinished art worth reporting; short of one of the other four it is drawn a little plainer.
 

@@ -6,7 +6,7 @@ import { Items } from '../../data/ids/items';
 import { LATHER_COST } from '../../data/overworld/honey-tree';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
 import AtlasSprite from '../sprites/AtlasSprite';
-import { OW_SPRITE_ROOT } from '../../canvas/ow-char-sprites';
+import { OW_SPRITE_ROOT } from '../../canvas/overworld/char-sprites';
 import Landmark from '../../data/overworld/landmark';
 import landmarkPicture, { LANDMARK_SHEET } from '../../data/overworld/landmark-sprite';
 

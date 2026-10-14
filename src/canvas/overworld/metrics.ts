@@ -1,4 +1,4 @@
-import { BOARD_SPAN, boardView } from '../board';
+import { BOARD_SPAN, boardView } from './board';
 
 /**
  * The board's reference measurements, its colours, and the few facts

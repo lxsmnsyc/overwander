@@ -1,6 +1,6 @@
 import { type JSX, Show, createEffect, createSignal, onCleanup } from 'solid-js';
-import type OWCharSprite from '../../canvas/ow-char-sprite';
-import loadOWChar from '../../canvas/ow-char-sprites';
+import type OWCharSprite from '../../canvas/overworld/char-sprite';
+import loadOWChar from '../../canvas/overworld/char-sprites';
 
 /**
  * A person from the overworld, standing still and facing the reader.

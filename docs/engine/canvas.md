@@ -18,7 +18,7 @@ rows cannot: who came with whom, and that the fight is one boss with a lobby
 closed around it.
 
 Facing is worked out per unit by
-[`facingToward`](../../src/canvas/facing.ts), which rounds the angle to the boss
+[`facingToward`](../../src/canvas/sprites/facing.ts), which rounds the angle to the boss
 to one of the eight rows a sheet carries. It sits in its own module with its own
 test because a canvas y axis grows **downward**, so `down` is the larger y.
 Getting that backwards turns a lobby inside out, with everybody looking away

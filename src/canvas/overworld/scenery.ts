@@ -1,10 +1,10 @@
-import { SPRITE_FACINGS } from '../board';
+import { SPRITE_FACINGS } from './board';
 import { SpawnRarity, getSpawnRarity } from '../../data/biome';
 import type { Species } from '../../data/ids/species';
 import Landmark from '../../data/overworld/landmark';
 import Phenomenon from '../../data/overworld/phenomenon';
-import drawSparkle, { SPARKLE_FRAME, SPARKLE_SPREAD, SPARKLE_STAR_SIZE } from '../sparkle';
-import drawHerald, { HERALD_FRAME } from '../herald';
+import drawSparkle, { SPARKLE_FRAME, SPARKLE_SPREAD, SPARKLE_STAR_SIZE } from '../effects/sparkle';
+import drawHerald, { HERALD_FRAME } from './herald';
 import type Bakery from '../bakery';
 import type { Baked } from '../bakery';
 import { CELL, COLORS } from './metrics';

@@ -8,7 +8,7 @@ import type Decoration from '../../data/overworld/decoration';
 import Weather, { DARK_DAY_LAMP_CELLS, WEATHER_NAMES } from '../../data/overworld/weather';
 import ChunkCanvas from '../overworld/chunk-canvas';
 import { CellAura, type SpawnCoat, rankOf } from '../../canvas/overworld/scenery';
-import { BOARD_CELLS, BOARD_CENTER, boardIndexOf, viewFor } from '../../canvas/board';
+import { BOARD_CELLS, BOARD_CENTER, boardIndexOf, viewFor } from '../../canvas/overworld/board';
 import { SLIDE_PACE } from '../../canvas/overworld/metrics';
 import { findPathNear } from '../../overworld/path';
 import { boardMargin } from '../overworld/overworld-tab/metrics';

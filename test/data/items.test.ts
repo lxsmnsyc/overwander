@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { asBasicSpriteData } from '../../src/canvas/basic-sprite';
+import { asBasicSpriteData } from '../../src/canvas/sprites/basic-sprite';
 import registerBiomeSpawns, { isMythicalSpecies, listSpeciesHabitats } from '../../src/data/biome';
 import Families from '../../src/data/ids/families';
 import registerAbilities, { getAbilityData } from '../../src/data/abilities';

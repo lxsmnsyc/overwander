@@ -15,7 +15,7 @@ import {
 } from '../../overworld/overworld-tab/metrics';
 import ChunkCanvas, { type SpawnCoat } from '../../overworld/chunk-canvas';
 import { CellAura, rankOf } from '../../../canvas/overworld/scenery';
-import { getSkybox, latitudeOf } from '../../../canvas/daylight';
+import { getSkybox, latitudeOf } from '../../../canvas/overworld/daylight';
 import { CAVERN } from '../../../canvas/sky';
 import { asOffset, getLocalOffset } from '../../../model/local-time';
 import Biome, { isIceBiome } from '../../../data/ids/biome';

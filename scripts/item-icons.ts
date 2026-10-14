@@ -728,14 +728,6 @@ const TINTS: Tint[] = [
     },
   },
   {
-    from: 'held/cell-battery',
-    to: 'held/booster-energy',
-    why: 'the capsule a Paradox pokemon draws its boost from is its own item, and no sheet draws it',
-    // The cell's casing turned to the capsule's lime glow
-    swaps: {},
-    recolour: rehue(80, 1),
-  },
-  {
     from: 'key/parcel',
     to: 'evolutions/peat-block',
     why: 'the block an Ursaring evolves on is its own item, and no sheet draws it',
@@ -882,28 +874,6 @@ function hslToHex(hue: number, saturation: number, lightness: number): string {
         .padStart(2, '0'),
     )
     .join('')}`;
-}
-
-/**
- * A recolour that turns every coloured tone to one hue at a share of
- * its saturation, keeping its lightness. Greys and the outline are
- * left as they are, so the shading and the edge survive
- */
-function rehue(hue: number, saturation: number): (colour: string) => string {
-  return (colour) => {
-    const [red, green, blue] = hexToRgb(colour);
-    const high = Math.max(red, green, blue) / 255;
-    const low = Math.min(red, green, blue) / 255;
-    const lightness = (high + low) / 2;
-    const chroma = high - low;
-
-    if (chroma < 0.08) {
-      return colour;
-    }
-    const was = chroma / (1 - Math.abs(2 * lightness - 1));
-
-    return hslToHex(hue, Math.min(1, was * saturation), lightness);
-  };
 }
 
 /**
@@ -1133,6 +1103,7 @@ const SHRUNK: Shrunk[] = [
   { from: 'unremarkable-teacup', to: 'evolutions/unremarkable-teacup', fit: 28, plain: true },
   { from: 'masterpiece-teacup', to: 'evolutions/masterpiece-teacup', fit: 28, plain: true },
   { from: 'leaders-crest', to: 'evolutions/leaders-crest', fit: 28, plain: true },
+  { from: 'booster-energy', to: 'held/booster-energy', fit: 28, plain: true },
 ];
 
 function lightnessOf(colour: number[]): number {

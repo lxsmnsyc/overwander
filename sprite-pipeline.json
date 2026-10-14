@@ -29953,6 +29953,30 @@
         "bytes": 3968
       }
     },
+    "public/sprites/pokemon/paldea/1092501/regular.png": {
+      "digest": "822f020891dee209",
+      "bytes": 12866,
+      "width": 226,
+      "height": 301,
+      "compact": {
+        "at": "2026-10-14T02:16:24Z",
+        "as": "already compact",
+        "was": 12866,
+        "bytes": 12866
+      }
+    },
+    "public/sprites/pokemon/paldea/1092501/shiny.png": {
+      "digest": "12392845e39f6747",
+      "bytes": 12883,
+      "width": 226,
+      "height": 301,
+      "compact": {
+        "at": "2026-10-14T02:16:24Z",
+        "as": "already compact",
+        "was": 12883,
+        "bytes": 12883
+      }
+    },
     "public/sprites/pokemon/paldea/1096401/regular.png": {
       "digest": "0f17b8a500d6eb95",
       "bytes": 8503,
@@ -40416,15 +40440,15 @@
       }
     },
     "public/sprites/ui/items/evolutions/image.png": {
-      "digest": "502ccb56066aa874",
-      "bytes": 12555,
-      "width": 102,
-      "height": 200,
+      "digest": "b451a526f8164267",
+      "bytes": 21851,
+      "width": 139,
+      "height": 165,
       "compact": {
-        "at": "2026-10-13T10:39:31Z",
+        "at": "2026-10-14T02:16:24Z",
         "as": "already compact",
-        "was": 12555,
-        "bytes": 12555
+        "was": 21851,
+        "bytes": 21851
       }
     },
     "public/sprites/ui/items/flutes/image.png": {
@@ -40464,15 +40488,15 @@
       }
     },
     "public/sprites/ui/items/held/image.png": {
-      "digest": "fc7402f9be21505c",
-      "bytes": 21654,
-      "width": 216,
-      "height": 201,
+      "digest": "4d6439604bbf7276",
+      "bytes": 23104,
+      "width": 171,
+      "height": 258,
       "compact": {
-        "at": "2026-10-13T11:02:53Z",
+        "at": "2026-10-14T02:16:24Z",
         "as": "already compact",
-        "was": 21654,
-        "bytes": 21654
+        "was": 23104,
+        "bytes": 23104
       }
     },
     "public/sprites/ui/items/incense/image.png": {

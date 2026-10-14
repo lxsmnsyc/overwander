@@ -4,8 +4,8 @@
 Volcanion**, and its last two lines, Litleo and Spritzee. **Mega Evolution** is
 here too, with all 48 Megas of the sixth generation and the Primals of Kyogre
 and Groudon. **Kalos's trainers take the road**: eight gym leaders, an Elite
-Four, **Diantha**, **AZ** and **Team Flare**. And the **Johto legendaries** cast
-true shadows.
+Four, **Diantha**, **AZ** and **Team Flare**. And the **Johto and Hoenn
+legendaries** cast true shadows.
 
 Everything from before is still here.
 
@@ -122,6 +122,19 @@ shadows of Raikou, Entei, Suicune, Lugia and Ho-Oh.
   be purified.
 - **They appear only on a Dark Day**, in the special band of the wild pool and
   in their counterparts' shadow lairs.
+
+## The Hoenn legendaries' true shadows
+
+**Eight new true shadows**: XD-377 to XD-384, the shadows of Regirock, Regice,
+Registeel, Latias, Latios, Kyogre, Groudon and Rayquaza. They follow the same
+rules as the Johto ones.
+
+- **XD-382**, the shadow of Kyogre, appears only on water.
+- **XD-382 and XD-383 return to their own Primal shapes** holding a Blue or Red
+  Orb: Primal XD-382 and Primal XD-383.
+- **XD-384 Mega Evolves into Mega XD-384** when it knows Dragon Ascent.
+- **A true shadow with no shadow Mega of its own keeps its shape.** XD-150
+  holding a Mewtwonite stays as it is.
 
 ## A signature for each of them
 

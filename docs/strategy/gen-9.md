@@ -1,6 +1,6 @@
 # Generation 9 strategy
 
-How Paldea, Kitakami and the Blueberry Academy go in, batch by batch, on top of `gen-9-data`. The Gen 8 plan this one follows is in [docs/strategy/gen-8.md](docs/strategy/gen-8.md).
+How Paldea, Kitakami and the Blueberry Academy go in, batch by batch, on top of `gen-9-data`. The Gen 8 plan this one follows is in [gen-8.md](gen-8.md).
 
 ## Where things stand
 

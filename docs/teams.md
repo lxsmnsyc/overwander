@@ -84,7 +84,7 @@ Celebi row.
   other items and the catch's own abilities stay.
 - Stones are never sold. They sit in the rarest band of the item pool.
 - Where a line already reaches its Mega's canon ability, the Mega wears a different one
-  ([`megas.ts`](src/data/species/megas.ts)).
+  ([`megas.ts`](../src/data/species/megas.ts)).
 
 | Mega | Stat line | Ability it wears |
 | --- | --- | --- |
@@ -102,7 +102,7 @@ rule. Rayquaza cannot opt out once it knows Dragon Ascent.
 ### Worn shapes
 
 A form item is a held item that decides which shape its holder fights in
-([`forms.ts`](src/battle/items/forms.ts)). It is not a Mega. It costs an item slot and
+([`forms.ts`](../src/battle/items/forms.ts)). It is not a Mega. It costs an item slot and
 leaves the team's one Mega free, and the shape's ability is worn on top of the four.
 
 | Item | Holder | Shape | Ability worn |
@@ -154,7 +154,7 @@ shadows, not six.
 
 Nine true shadows are the Articuno, Zapdos, Moltres, Mewtwo, Raikou, Entei, Suicune,
 Lugia and Ho-Oh of the dark: XD-144, XD-145, XD-146, XD-150, XD-243, XD-244, XD-245,
-XD-249 and XD-250 ([`true-shadow.ts`](src/data/species/true-shadow.ts)). Each copies its
+XD-249 and XD-250 ([`true-shadow.ts`](../src/data/species/true-shadow.ts)). Each copies its
 counterpart and adds 10 to every stat, and each carries Shadow permanently.
 
 - They are only found under a dark day, in the special band of the wild pool and in
@@ -172,7 +172,7 @@ Darkrai, Shaymin, Arceus, Victini, Keldeo, Meloetta, Genesect, Diancie, Hoopa, V
 Magearna, Marshadow, Zeraora and Meltan.
 
 - Each is called by one relic, which is dug up from the item pool and spent when the raid
-  starts ([`raid-items.ts`](src/data/items/raid-items.ts)).
+  starts ([`raid-items.ts`](../src/data/items/raid-items.ts)).
 - Alola's four are also met now and then in the wild in their home biomes. The world
   never stages the other fifteen.
 - The prize arrives at level 30, against a legendary's 50.

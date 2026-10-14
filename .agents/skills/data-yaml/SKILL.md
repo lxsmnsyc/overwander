@@ -120,4 +120,4 @@ A file per family in two folders, each item keyed by name:
 - **Comments are welcome.** They say why a value is what it is, the way they did in the code.
 - **Behaviour stays in TypeScript.** Rules that choose a form (`species/forms.ts`), the Megas and true shadows (built from their base species), weather pairings, and anything that runs in a fight are code.
 
-The build turns each `.yaml` file into a module (`plugins/yaml.ts`), so the browser never parses YAML.
+The build turns each `.yaml` file into a module (`scripts/vite/yaml.ts`), so the browser never parses YAML.

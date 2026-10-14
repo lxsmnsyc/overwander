@@ -722,42 +722,6 @@ const TINTS: Tint[] = [
     },
   },
   {
-    from: 'evolutions/protector',
-    to: 'evolutions/auspicious-armor',
-    why: 'the armour a Charcadet takes up to become Armarouge is its own item, and no sheet draws it',
-    // The plates gilded and the shadows taken to crimson, for the
-    // warrior's ceremonial red and gold
-    swaps: {
-      '#202020': '#1c1010',
-      '#e67339': '#f2c84a',
-      '#ee9c73': '#ffe79a',
-      '#de5a20': '#d89a1e',
-      '#ac6239': '#c0392b',
-      '#8b4a31': '#962a22',
-      '#9c5239': '#a8301f',
-      '#6a3929': '#6e1c18',
-      '#523129': '#4a1210',
-    },
-  },
-  {
-    from: 'evolutions/protector',
-    to: 'evolutions/malicious-armor',
-    why: 'the armour a Charcadet takes up to become Ceruledge is its own item, and no sheet draws it',
-    // The same plates in a cursed violet over black, for the vengeful
-    // swordsman's dark armour
-    swaps: {
-      '#202020': '#100a18',
-      '#e67339': '#8a4fd8',
-      '#ee9c73': '#b98cf2',
-      '#de5a20': '#6a2fc0',
-      '#ac6239': '#3a2a5a',
-      '#8b4a31': '#2a1d42',
-      '#9c5239': '#33244e',
-      '#6a3929': '#1a1229',
-      '#523129': '#120c1c',
-    },
-  },
-  {
     from: 'key/parcel',
     to: 'evolutions/peat-block',
     why: 'the block an Ursaring evolves on is its own item, and no sheet draws it',
@@ -1111,13 +1075,21 @@ interface Shrunk {
   from: string;
   to: string;
   /** How wide the picture ends up, which the height follows. */
-  wide: number;
+  wide?: number;
+  /** How long its longer side ends up, for art taller than it is wide */
+  fit?: number;
+  /** Kept as the resize left it, with no tones merged and no outline drawn */
+  plain?: true;
 }
 
 const SHRUNK: Shrunk[] = [
   { from: 'clear-amulet', to: 'held/clear-amulet', wide: 21 },
   { from: 'loaded-dice', to: 'held/loaded-dice', wide: 20 },
   { from: 'manaphy-egg', to: 'key/manaphy-egg', wide: 20 },
+  // Gen 9 items, resized from their own art and nothing else. Detailed
+  // art keeps 28 pixels on its long side to stay legible, a plain shape 24
+  { from: 'auspicious-armor', to: 'evolutions/auspicious-armor', fit: 28, plain: true },
+  { from: 'malicious-armor', to: 'evolutions/malicious-armor', fit: 28, plain: true },
 ];
 
 function lightnessOf(colour: number[]): number {
@@ -1175,12 +1147,14 @@ async function shrunk(art: Shrunk): Promise<Picture> {
     .trim({ threshold: 1 })
     .toBuffer();
   const source = await sharp(trimmed).metadata();
-  const tall = Math.round((source.height / source.width) * art.wide);
+  const longest = Math.max(source.width, source.height);
+  const wide = art.wide ?? Math.round(((art.fit ?? CELL) * source.width) / longest);
+  const tall = Math.round((source.height / source.width) * wide);
   const { data } = await sharp(trimmed)
-    .resize(art.wide, tall, { kernel: 'lanczos3' })
+    .resize(wide, tall, { kernel: 'lanczos3' })
     .raw()
     .toBuffer({ resolveWithObject: true });
-  const image: Image = { width: art.wide, height: tall, rgba: Buffer.alloc(art.wide * tall * 4) };
+  const image: Image = { width: wide, height: tall, rgba: Buffer.alloc(wide * tall * 4) };
   const counts = new Map<string, number>();
 
   for (let at = 0; at < image.rgba.length; at += 4) {
@@ -1197,6 +1171,14 @@ async function shrunk(art: Shrunk): Promise<Picture> {
     const key = hexOf(image, at);
 
     counts.set(key, (counts.get(key) ?? 0) + 1);
+  }
+
+  if (art.plain === true) {
+    return {
+      name: art.to.split('/')[1],
+      image,
+      trim: [Math.floor((CELL - image.width) / 2), Math.floor((CELL - image.height) / 2)],
+    };
   }
 
   const tones: { colour: number[]; pixels: number }[] = [];

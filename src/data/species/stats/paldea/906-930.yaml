@@ -126,6 +126,12 @@ Tandemaus:
     height: 0.3
     weight: 2.8
     gender: genderless
+  MausholdThree:
+    stats: { HP: 74, Attack: 75, Defense: 70, SpecialAttack: 65, SpecialDefense: 75, Speed: 111 }
+    catch-rate: 75
+    height: 0.3
+    weight: 2.3
+    gender: genderless
 Fidough:
   Fidough:
     stats: { HP: 37, Attack: 55, Defense: 70, SpecialAttack: 30, SpecialDefense: 55, Speed: 65 }

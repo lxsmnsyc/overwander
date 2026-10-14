@@ -77,6 +77,9 @@ Tandemaus:
   Maushold:
     abilities: [FriendGuard, CheekPouch]
     hidden: [Technician]
+  MausholdThree:
+    abilities: [FriendGuard, CheekPouch]
+    hidden: [Technician]
 Fidough:
   Fidough:
     abilities: [OwnTempo]

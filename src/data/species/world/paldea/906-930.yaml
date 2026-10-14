@@ -163,11 +163,24 @@ Tandemaus:
       - species: Maushold
         method: [Level]
         level: 25
+        rare: false
+      - species: MausholdThree
+        method: [Level]
+        level: 25
+        rare: true
   Maushold:
     types: [Normal]
     egg-groups: [Field, Fairy]
     biomes: [Woodland, Grassland]
     active: any
+    evolves-from: Tandemaus
+  MausholdThree:
+    types: [Normal]
+    egg-groups: [Field, Fairy]
+    active: any
+    # The family of three, one Tandemaus in a hundred. A wild one is met
+    # by the same roll, so it has no pool of its own
+    base-form: false
     evolves-from: Tandemaus
 Fidough:
   Fidough:

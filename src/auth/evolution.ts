@@ -5,6 +5,7 @@ import {
   canEverEvolve,
   coveredByHandover,
   getSpeciesData,
+  isOneInAHundred,
   meetsEvolutionCriteria,
 } from '../data/species';
 import type { EvolutionData } from '../data/species';
@@ -97,13 +98,17 @@ export async function listEvolutionOptions(
     gender: caught.gender,
     nature: caught.nature,
     walked: caught.walked,
+    rare: isOneInAHundred(caught.traitValue),
   };
 
   const options: EvolutionOption[] = [];
 
   for (const evolution of getSpeciesData(caught.species).evolvesInto ?? []) {
     // A husk comes out beside another evolution, so it is no row of its own
-    if (evolution.shed !== true && canEverEvolve(evolution, caught.gender, caught.nature)) {
+    if (
+      evolution.shed !== true &&
+      canEverEvolve(evolution, caught.gender, caught.nature, context.rare)
+    ) {
       options.push({
         evolution,
         available: meetsEvolutionCriteria(evolution, context),

@@ -102,6 +102,12 @@ export interface EvolutionContext {
    * shut
    */
   walked?: number;
+  /**
+   * Whether it is the one in a hundred (see `isOneInAHundred`).
+   * Tandemaus is the only line that reads it. Left out, it is one of
+   * the rest
+   */
+  rare?: boolean;
 }
 
 /**
@@ -230,6 +236,9 @@ export function meetsEvolutionCriteria(
   ) {
     return false;
   }
+  if (evolution.rare != null && evolution.rare !== (context.rare ?? false)) {
+    return false;
+  }
   if ((method & EvolutionMethod.StatComparison) !== 0) {
     if (evolution.compare == null || !comparesStats(evolution.compare, context)) {
       return false;
@@ -275,8 +284,12 @@ export function canEverEvolve(
   evolution: EvolutionData,
   gender: Genders,
   nature?: Natures,
+  rare?: boolean,
 ): boolean {
   if (evolution.natures != null && nature != null && !evolution.natures.has(nature)) {
+    return false;
+  }
+  if (evolution.rare != null && rare != null && evolution.rare !== rare) {
     return false;
   }
   return (evolution.method & EvolutionMethod.Gender) === 0 || evolution.gender === gender;

@@ -66,6 +66,7 @@ import {
   LANDORUS_FORMS,
   LYCANROC_FORMS,
   MAGEARNA_FORMS,
+  MAUSHOLD_FORMS,
   MELOETTA_FORMS,
   MEOWSTIC_FORMS,
   MIMIKYU_FORMS,
@@ -502,6 +503,7 @@ describe('species forms', () => {
       ...ENAMORUS_FORMS.slice(1),
       ...CALYREX_FORMS.slice(1),
       ...PALDEAN_FORMS,
+      ...MAUSHOLD_FORMS.slice(1),
       ...PALAFIN_FORMS.slice(1),
       ...TATSUGIRI_FORMS.slice(1),
       // The true shadows, which are forms of the birds they are the

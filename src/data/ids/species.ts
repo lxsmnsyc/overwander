@@ -1992,6 +1992,9 @@ export const PALDEAN_FORMS: Species[] = [
   Species.WooperPaldea,
 ];
 
+/** A Maushold's family of four, and the one in a hundred that is three */
+export const MAUSHOLD_FORMS: Species[] = [Species.Maushold, Species.MausholdThree];
+
 /** A Palafin, and the hero it comes back as once it has left the field */
 export const PALAFIN_FORMS: Species[] = [Species.Palafin, Species.PalafinHero];
 

@@ -89,6 +89,7 @@ const WORLD = v.object({
           }),
         ),
         walked: v.optional(COUNT),
+        rare: v.optional(v.boolean()),
         shed: v.optional(v.boolean()),
       }),
     ),
@@ -195,6 +196,9 @@ function readEvolutions(
     }
     if (road.walked != null) {
       evolution.walked = road.walked;
+    }
+    if (road.rare != null) {
+      evolution.rare = road.rare;
     }
     if (road.natures != null) {
       evolution.natures = new Set(idsOf(NATURE_IDS, road.natures, where));

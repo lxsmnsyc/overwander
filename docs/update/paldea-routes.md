@@ -36,6 +36,8 @@ swamp from morning to evening.
 - **Pawmi** paralyses with its punches 20% of the time. Pawmo evolves once it
   has walked 1,000 steps as your buddy.
 - **Tandemaus** sends each strike of a multi-hit move at a different enemy.
+  One in a hundred grows into the **family of three** rather than four, and a
+  wild Maushold is the family of three just as often.
 - **Fidough** hands a Sitrus Berry to the teammate lowest on HP with free hands,
   every 20 seconds.
 - **Smoliv** cures a teammate's major status whenever it heals them.

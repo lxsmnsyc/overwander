@@ -26,6 +26,7 @@ Pawmi:
 Tandemaus:
   Tandemaus: { name: Tandemaus, category: Couple Pokemon }
   Maushold: { name: Maushold, category: Family Pokemon }
+  MausholdThree: { name: Maushold Family of Three, category: Family Pokemon }
 Fidough:
   Fidough: { name: Fidough, category: Puppy Pokemon }
   Dachsbun: { name: Dachsbun, category: Dog Pokemon }

@@ -15,6 +15,7 @@ import {
   getSpeciesData,
   getSpentHeldItem,
   getWingPattern,
+  isOneInAHundred,
   meetsEvolutionCriteria,
 } from '../data/species';
 import { Metric } from '../auth/quest-record';
@@ -127,6 +128,8 @@ export default async function evolveCatch(
       nature: asNumber(caught.nature) as Natures,
       // Counted by the server as the buddy walks, never reported here
       walked: asNumber(caught.walked),
+      // Its trait value, set when it was met: a Tandemaus's family size
+      rare: isOneInAHundred(asNumber(caught.traitValue)),
     };
     // The road taken is the first one open, which decides what is
     // spent: a handover that does not cover the evolution pays a

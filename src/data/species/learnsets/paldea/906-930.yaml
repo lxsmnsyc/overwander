@@ -779,6 +779,26 @@ Tandemaus:
       - GigaImpact
       - HyperBeam
       - Trailblaze
+  MausholdThree:
+    level:
+      1: [Pound, FollowMe, BabyDollEyes, TidyUp]
+      5: [EchoedVoice]
+      8: [HelpingHand]
+      11: [SuperFang]
+      14: [DoubleHit]
+      18: [BulletSeed]
+      22: [Encore]
+      29: [PlayRough]
+      33: [HyperVoice]
+      37: [Charm]
+      41: [BeatUp]
+      46: [Copycat]
+      53: [PopulationBomb]
+    teachable:
+      - ChillingWater
+      - GigaImpact
+      - HyperBeam
+      - Trailblaze
 Fidough:
   # TM and tutor moves shared by the whole family
   family-teachable:

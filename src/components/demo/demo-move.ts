@@ -10,7 +10,7 @@ import { Species } from '../../data/ids/species';
 import { getMoveData } from '../../data/moves';
 import { getBaseForms } from '../../data/species';
 import { deriveGender, deriveNature, deriveSize } from '../../overworld/encounter';
-import { fieldTeams } from '../../overworld/raid-battle';
+import { fieldTeams } from '../../overworld/raid/battle';
 import { UNLIMITED_BATTLE_LIMITS } from '../../data/constants/battle-limits';
 import { BattleEvents, type MoveTarget, MoveTargetType } from '../../battle/events';
 import { BattleModes } from '../../battle/battle';

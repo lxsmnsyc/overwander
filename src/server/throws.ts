@@ -15,7 +15,7 @@ import SafariSession, {
   tallyOf,
 } from '../overworld/safari';
 import { isOwedEncounter } from '../overworld/encounter/kinds';
-import { type SafariFacts, safariContextOf } from '../overworld/safari-context';
+import { type SafariFacts, safariContextOf } from '../overworld/safari/context';
 import { asBuddy, resolveBuddyCatch } from './buddy';
 import { insertCaughtIn, payCatch } from './caught';
 import { type Tx, getSql, jsonOf, tx } from './db';

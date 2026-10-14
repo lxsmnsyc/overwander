@@ -19,8 +19,8 @@ import {
   createRaidBossTeam,
   keepsGigantamaxFactor,
   keptTeraType,
-} from '../../src/overworld/raid';
-import { createRaidBattle } from '../../src/overworld/raid-battle';
+} from '../../src/overworld/raid/index';
+import { createRaidBattle } from '../../src/overworld/raid/battle';
 import { EncounterType } from '../../src/overworld/encounter';
 
 beforeAll(() => {

@@ -1,24 +1,24 @@
 import { describe, expect, it } from 'vitest';
-import registerGameData from '../../src/data';
+import registerGameData from '../../../src/data';
 import {
   DEMO_MAX_LEVEL,
   DEMO_MIN_LEVEL,
   DEMO_TEAMS,
   DEMO_TEAM_SIZE,
   createDemoRaidTeams,
-} from '../../src/overworld/demo-raid';
+} from '../../../src/overworld/raid/demo';
 import {
   BOSS_ALLIANCE,
   PLAYER_ALLIANCE,
   RAID_BOSS_LEVEL,
   canStageBoss,
-} from '../../src/overworld/raid';
-import { createRaidBattle } from '../../src/overworld/raid-battle';
-import { Species } from '../../src/data/ids/species';
-import Abilities from '../../src/data/ids/abilities';
-import { PERFECT_IVS } from '../../src/data/constants/stats';
-import { getSpeciesSignature } from '../../src/data/abilities';
-import { isFullyEvolved } from '../../src/data/species';
+} from '../../../src/overworld/raid/index';
+import { createRaidBattle } from '../../../src/overworld/raid/battle';
+import { Species } from '../../../src/data/ids/species';
+import Abilities from '../../../src/data/ids/abilities';
+import { PERFECT_IVS } from '../../../src/data/constants/stats';
+import { getSpeciesSignature } from '../../../src/data/abilities';
+import { isFullyEvolved } from '../../../src/data/species';
 
 // The demo rolls species out of the registry, so the registry has to
 // be filled the way the page fills it

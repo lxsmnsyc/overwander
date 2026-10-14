@@ -9,7 +9,7 @@ import Biome, {
   isOpenSea,
   isWaterBiome,
 } from '../data/ids/biome';
-import { type GroundRole, isShelfAt, roleAt } from './ground';
+import { type GroundRole, isShelfAt, roleAt } from './terrain/ground';
 import type World from './world';
 import type Decoration from '../data/overworld/decoration';
 import {
@@ -21,7 +21,7 @@ import {
 import Landmark, { LANDMARKS, LANDMARK_WEIGHTS } from '../data/overworld/landmark';
 import { TOWN_LANDMARKS, getTownLots, isTownAt, portalCellIn, townOverChunk } from './town';
 import { caveMouthCellIn } from './cave';
-import { isFace, isSeam } from './cliff';
+import { isFace, isSeam } from './terrain/cliff';
 import { isRouteAt } from './route';
 import { Depth } from './depth';
 

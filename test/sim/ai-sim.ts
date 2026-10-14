@@ -18,7 +18,7 @@ import { getExpertHeldItems } from '../../src/overworld/builds/held-items';
 import { getRegisteredSpecies, isFullyEvolved, isWornForm } from '../../src/data/species';
 import { getBestParty } from '../../src/overworld/builds/best-build';
 import { deriveGender, deriveSize } from '../../src/overworld/encounter';
-import { fieldTeams } from '../../src/overworld/raid-battle';
+import { fieldTeams } from '../../src/overworld/raid/battle';
 
 /** The names of the roles, for the report: the enum is erased at build */
 export const ROLE_NAMES: Record<MoveRole, string> = {

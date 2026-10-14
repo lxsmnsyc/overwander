@@ -50,7 +50,7 @@ import {
   LEGENDARY_RAID_REWARD_LEVEL,
   MYTHICAL_RAID_REWARD_LEVEL,
   SHADOW_RAID_REWARD_LEVEL,
-} from '../../../src/overworld/raid';
+} from '../../../src/overworld/raid/index';
 import { ROCKET_REWARD_LEVEL } from '../../../src/overworld/stop';
 import deriveEncounter, {
   ENCOUNTER_TYPE_NAMES,

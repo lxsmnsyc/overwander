@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { BOARD_CELLS, BOARD_MARGIN } from '../../src/components/overworld/overworld-tab/metrics';
-import { buildBoardView } from '../../src/components/overworld/overworld-tab/board-view';
-import { type BoardGround, readBoardGround } from '../../src/overworld/board-ground';
-import { Depth } from '../../src/overworld/depth';
-import World from '../../src/overworld/world';
+import { BOARD_CELLS, BOARD_MARGIN } from '../../../src/components/overworld/overworld-tab/metrics';
+import { buildBoardView } from '../../../src/components/overworld/overworld-tab/board-view';
+import { type BoardGround, readBoardGround } from '../../../src/overworld/board/ground';
+import { Depth } from '../../../src/overworld/depth';
+import World from '../../../src/overworld/world';
 
 /** A walk of single steps with one short jump in it, from wherever it starts */
 const STEPS: [number, number][] = [

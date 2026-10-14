@@ -1,8 +1,8 @@
 import { CHUNK_CELLS, ORTHOGONAL, worldCell } from './grid';
-import { isHillside, isSurfaceWater } from './surface';
+import { isHillside, isSurfaceWater } from './terrain/surface';
 import { portalCellIn } from './town';
 import { caveWaterTable, isCaveFloor, isCaveWaterway, isRock, isSealedVolcano } from './fields';
-import { TERRACE_STEPS, levelAt, levelBelow } from './terrace';
+import { TERRACE_STEPS, levelAt, levelBelow } from './terrain/terrace';
 import poolsWhere, { remembered } from './pooling';
 import type Biome from '../data/ids/biome';
 import { MOUTH_GAP, MOUTH_SEARCH } from '../data/overworld/cave';

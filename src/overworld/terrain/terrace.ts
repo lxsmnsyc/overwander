@@ -1,7 +1,7 @@
-import LRUMap from '../core/lru-map';
-import { SQUARES } from './grid';
-import { plateauAt, townSkirts } from './town';
-import type World from './world';
+import LRUMap from '../../core/lru-map';
+import { SQUARES } from '../grid';
+import { plateauAt, townSkirts } from '../town';
+import type World from '../world';
 
 /**
  * How high the ground stands, in levels.

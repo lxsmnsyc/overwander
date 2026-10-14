@@ -1,15 +1,15 @@
-import type { TeamSnapshotRecord } from '../auth/teams';
-import { BattleModes } from '../battle/battle';
-import type Biome from '../data/ids/biome';
-import createBattle from '../battle/setup';
-import { NPC_BATTLE_LIMITS } from '../data/constants/battle-limits';
-import Weather, { toBattleWeather } from '../data/overworld/weather';
-import { FRONTIER_TIME_LIMIT, FrontierRule } from '../data/overworld/experts';
-import { BattleEvents } from '../battle/events';
-import { EventPriority } from '../core/event-emitter';
-import { PLAYER_ALLIANCE } from './raid';
-import type Battle from '../battle/battle';
-import { type RaidBattle, fieldTeams } from './raid-battle';
+import type { TeamSnapshotRecord } from '../../auth/teams';
+import { BattleModes } from '../../battle/battle';
+import type Biome from '../../data/ids/biome';
+import createBattle from '../../battle/setup';
+import { NPC_BATTLE_LIMITS } from '../../data/constants/battle-limits';
+import Weather, { toBattleWeather } from '../../data/overworld/weather';
+import { FRONTIER_TIME_LIMIT, FrontierRule } from '../../data/overworld/experts';
+import { BattleEvents } from '../../battle/events';
+import { EventPriority } from '../../core/event-emitter';
+import { PLAYER_ALLIANCE } from '../raid';
+import type Battle from '../../battle/battle';
+import { type RaidBattle, fieldTeams } from '../raid/battle';
 
 /**
  * The trainer fights, assembled. It is client-only for the same

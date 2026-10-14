@@ -22,7 +22,7 @@ import ChunkSnapshot, { type RaidRoll } from '../../src/overworld/chunk-snapshot
 import getWorld from '../../src/overworld/current';
 import { Depth } from '../../src/overworld/depth';
 import { EncounterType } from '../../src/overworld/encounter';
-import { TERA_RAID_GOLD } from '../../src/overworld/raid';
+import { TERA_RAID_GOLD } from '../../src/overworld/raid/index';
 
 /**
  * A beaten Tera raid, claimed and caught against the real database:

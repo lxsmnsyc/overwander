@@ -1,10 +1,10 @@
-import type Biome from '../data/ids/biome';
-import { isOpenSea } from '../data/ids/biome';
-import { isRock, isSealedVolcano, isWaterAt } from './fields';
-import { isRouteAt } from './route';
-import { isTownAt } from './town';
-import poolsWhere, { remembered } from './pooling';
-import type World from './world';
+import type Biome from '../../data/ids/biome';
+import { isOpenSea } from '../../data/ids/biome';
+import { isRock, isSealedVolcano, isWaterAt } from '../fields';
+import { isRouteAt } from '../route';
+import { isTownAt } from '../town';
+import poolsWhere, { remembered } from '../pooling';
+import type World from '../world';
 
 /**
  * The ground above: where water stands and where a hillside is.

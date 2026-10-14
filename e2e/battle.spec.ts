@@ -1,5 +1,5 @@
 import { type Locator, type Page, expect, test } from '@playwright/test';
-import { DEMO_TEAM_SIZE } from '../src/overworld/demo-raid';
+import { DEMO_TEAM_SIZE } from '../src/overworld/raid/demo';
 
 /**
  * A fight, in a browser.

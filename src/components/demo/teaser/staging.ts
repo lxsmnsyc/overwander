@@ -27,8 +27,8 @@ import {
   deriveSize,
 } from '../../../overworld/encounter';
 import { BOSS_ALLIANCE, PLAYER_ALLIANCE, createRaidBossSnapshot } from '../../../overworld/raid';
-import { type RaidBattle, createRaidBattle } from '../../../overworld/raid-battle';
-import { createTrainerBattle } from '../../../overworld/stop-battle';
+import { type RaidBattle, createRaidBattle } from '../../../overworld/raid/battle';
+import { createTrainerBattle } from '../../../overworld/stop/battle';
 import { STOP_ALLIANCE } from '../../../overworld/stop/loot';
 import {
   createStopParty,

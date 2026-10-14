@@ -17,7 +17,7 @@ import { tx } from '../../src/server/db';
 import ChunkSnapshot, { type RaidRoll } from '../../src/overworld/chunk-snapshot';
 import getWorld from '../../src/overworld/current';
 import { Depth } from '../../src/overworld/depth';
-import { NOBLE_RAID_GOLD } from '../../src/overworld/raid';
+import { NOBLE_RAID_GOLD } from '../../src/overworld/raid/index';
 
 /**
  * A calmed Noble against the real database: the purse, the Balms, a

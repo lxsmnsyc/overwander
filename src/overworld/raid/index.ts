@@ -1,21 +1,21 @@
-import { BASE_FRIENDSHIP } from '../data/constants/friendship';
-import type { CatchSnapshot } from '../model/catch-snapshot';
-import { getMaxHealth } from '../model/health';
+import { BASE_FRIENDSHIP } from '../../data/constants/friendship';
+import type { CatchSnapshot } from '../../model/catch-snapshot';
+import { getMaxHealth } from '../../model/health';
 import {
   DEFAULT_ABILITY_SLOTS,
   DEFAULT_ITEM_SLOTS,
   Slots,
   mostSlots,
   packSlots,
-} from '../data/constants/slots';
-import { getBannedBossMoves } from '../data/overworld/boss-moves';
-import { getTotemAlly, getTotemSize } from '../data/overworld/totems';
-import { ALPHA_COPIES, getAlphaSize } from '../data/overworld/alphas';
-import { getTeraRaidType } from '../data/overworld/tera-raids';
-import type { Types } from '../data/constants/types';
-import { rewardLobbyOf } from '../model/raid-record';
-import AleaRNG from '../core/alea';
-import { MAX_LEVEL } from '../data/constants/levels';
+} from '../../data/constants/slots';
+import { getBannedBossMoves } from '../../data/overworld/boss-moves';
+import { getTotemAlly, getTotemSize } from '../../data/overworld/totems';
+import { ALPHA_COPIES, getAlphaSize } from '../../data/overworld/alphas';
+import { getTeraRaidType } from '../../data/overworld/tera-raids';
+import type { Types } from '../../data/constants/types';
+import { rewardLobbyOf } from '../../model/raid-record';
+import AleaRNG from '../../core/alea';
+import { MAX_LEVEL } from '../../data/constants/levels';
 import {
   MAX_EFFORT_PER_STAT,
   MAX_IV,
@@ -23,22 +23,22 @@ import {
   STAT_ORDER,
   Stats,
   setIV,
-} from '../data/constants/stats';
-import Abilities from '../data/ids/abilities';
-import { CRASH_MOVES } from '../battle/moves/crash';
-import { OHKO_MOVES } from '../battle/moves/fixed-damage';
-import { DELAYED_MOVES } from '../battle/moves/future-sight';
-import { RAMPAGE_MOVES } from '../battle/moves/rampage';
-import { ROLLING_MOVES } from '../battle/moves/rolling';
-import { SELF_DESTRUCT_MOVES } from '../battle/moves/self-destruct';
-import { MoveCategories, Moves } from '../data/ids/moves';
-import { RECHARGE_MOVES } from '../data/moves/recharge';
-import { Z_MOVES } from '../data/moves/z-moves';
-import { G_MAX_MOVES, canGigantamax } from '../data/moves/gmax-moves';
-import { FRENZY_MOVES } from '../data/moves/frenzy-moves';
-import { Species } from '../data/ids/species';
-import { getMoveData } from '../data/moves';
-import { getLevelUpMoves, getSpeciesData } from '../data/species';
+} from '../../data/constants/stats';
+import Abilities from '../../data/ids/abilities';
+import { CRASH_MOVES } from '../../battle/moves/crash';
+import { OHKO_MOVES } from '../../battle/moves/fixed-damage';
+import { DELAYED_MOVES } from '../../battle/moves/future-sight';
+import { RAMPAGE_MOVES } from '../../battle/moves/rampage';
+import { ROLLING_MOVES } from '../../battle/moves/rolling';
+import { SELF_DESTRUCT_MOVES } from '../../battle/moves/self-destruct';
+import { MoveCategories, Moves } from '../../data/ids/moves';
+import { RECHARGE_MOVES } from '../../data/moves/recharge';
+import { Z_MOVES } from '../../data/moves/z-moves';
+import { G_MAX_MOVES, canGigantamax } from '../../data/moves/gmax-moves';
+import { FRENZY_MOVES } from '../../data/moves/frenzy-moves';
+import { Species } from '../../data/ids/species';
+import { getMoveData } from '../../data/moves';
+import { getLevelUpMoves, getSpeciesData } from '../../data/species';
 import {
   EncounterType,
   deriveAbility,
@@ -46,7 +46,7 @@ import {
   deriveMoves,
   deriveNature,
   deriveSize,
-} from './encounter';
+} from '../encounter';
 
 /**
  * A raid boss is a maxed legendary: the fight is meant to need a

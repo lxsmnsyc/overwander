@@ -5,8 +5,8 @@ import { Stages, Stats } from '../../src/data/constants/stats';
 import Abilities from '../../src/data/ids/abilities';
 import { Moves } from '../../src/data/ids/moves';
 import { Species } from '../../src/data/ids/species';
-import { BOSS_ALLIANCE, PLAYER_ALLIANCE, createRaidBossTeam } from '../../src/overworld/raid';
-import { type RaidBattle, createRaidBattle } from '../../src/overworld/raid-battle';
+import { BOSS_ALLIANCE, PLAYER_ALLIANCE, createRaidBossTeam } from '../../src/overworld/raid/index';
+import { type RaidBattle, createRaidBattle } from '../../src/overworld/raid/battle';
 import type Unit from '../../src/battle/unit';
 
 beforeAll(() => {

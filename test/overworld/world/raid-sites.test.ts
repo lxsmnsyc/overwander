@@ -10,7 +10,7 @@ import { RaidKind, getRaidKindAt, getRaidTitle } from '../../../src/model/raid-r
 import type Chunk from '../../../src/overworld/chunk';
 import ChunkSnapshot, { RAID_INTERVAL } from '../../../src/overworld/chunk-snapshot';
 import { Depth } from '../../../src/overworld/depth';
-import { isGigantamaxBoss } from '../../../src/overworld/raid';
+import { isGigantamaxBoss } from '../../../src/overworld/raid/index';
 import World from '../../../src/overworld/world';
 import Biome from '../../../src/data/ids/biome';
 import { Species } from '../../../src/data/ids/species';

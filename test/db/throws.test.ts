@@ -2,7 +2,7 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } 
 import { type Actor, actor, clearAll, sql } from './clients';
 import { BALL_ITEMS, Balls } from '../../src/data/ids/items';
 import { WORLD_GENERATION } from '../../src/overworld/current';
-import { ThrowResult } from '../../src/overworld/safari';
+import { ThrowResult } from '../../src/overworld/safari/index';
 import { EncounterType } from '../../src/overworld/encounter/kinds';
 import { throwAt } from '../../src/server/throws';
 import { readWaitingEncounters } from '../../src/server/encounter-io';

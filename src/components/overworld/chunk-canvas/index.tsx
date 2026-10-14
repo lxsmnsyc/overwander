@@ -79,7 +79,7 @@ import {
   shadowCorners,
 } from '../../../canvas/sprites/placement';
 import type Biome from '../../../data/ids/biome';
-import type { BoardGround } from '../../../overworld/board-ground';
+import type { BoardGround } from '../../../overworld/board/ground';
 import { SpriteAnim } from '../../../data/ids/sprite-anims';
 import type Decoration from '../../../data/overworld/decoration';
 import { getBlocker } from '../../../data/overworld/decoration';

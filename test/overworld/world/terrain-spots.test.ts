@@ -10,13 +10,13 @@ import { isRoadAt } from '../../../src/overworld/town';
 import ChunkSnapshot, { PHENOMENON_INTERVAL } from '../../../src/overworld/chunk-snapshot';
 import Landmark from '../../../src/data/overworld/landmark';
 import Phenomenon, { BIOME_PHENOMENA } from '../../../src/data/overworld/phenomenon';
-import { roleAt } from '../../../src/overworld/ground';
+import { roleAt } from '../../../src/overworld/terrain/ground';
 import { isIslandAt } from '../../../src/overworld/fields';
 import { Depth } from '../../../src/overworld/depth';
-import { blocksWalk, isFace, isPassAt, isSeam } from '../../../src/overworld/cliff';
+import { blocksWalk, isFace, isPassAt, isSeam } from '../../../src/overworld/terrain/cliff';
 import { isRouteAt } from '../../../src/overworld/route';
 import { ORTHOGONAL, SQUARES, SURROUNDING } from '../../../src/overworld/grid';
-import { levelAt } from '../../../src/overworld/terrace';
+import { levelAt } from '../../../src/overworld/terrain/terrace';
 import World from '../../../src/overworld/world';
 import findChunk from './helpers';
 

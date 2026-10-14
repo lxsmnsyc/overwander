@@ -10,7 +10,7 @@ import SafariSession, {
   asSafariTally,
   encounterKey,
 } from '../overworld/safari';
-import { safariContextOf } from '../overworld/safari-context';
+import { safariContextOf } from '../overworld/safari/context';
 import { requireReader, requireUid, requireUidFor } from '../server/auth';
 import { Feature } from '../server/switches';
 import { Pace } from '../server/pace';

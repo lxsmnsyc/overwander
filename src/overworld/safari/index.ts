@@ -1,13 +1,13 @@
-import { type BaseEvent, EventPriority } from '../core/event-emitter';
-import { EventEngine } from '../core/event-engine';
-import { MAX_LEVEL } from '../data/constants/levels';
-import { Stats, getIV, getOtherStat } from '../data/constants/stats';
-import { Types } from '../data/constants/types';
-import { TimeOfDay, getTimeOfDay, isWaterBiome } from '../data/ids/biome';
-import { Balls, Items } from '../data/ids/items';
-import { getNatureFactor } from '../data/ids/natures';
-import { Genders } from '../data/ids/species';
-import type { Species } from '../data/ids/species';
+import { type BaseEvent, EventPriority } from '../../core/event-emitter';
+import { EventEngine } from '../../core/event-engine';
+import { MAX_LEVEL } from '../../data/constants/levels';
+import { Stats, getIV, getOtherStat } from '../../data/constants/stats';
+import { Types } from '../../data/constants/types';
+import { TimeOfDay, getTimeOfDay, isWaterBiome } from '../../data/ids/biome';
+import { Balls, Items } from '../../data/ids/items';
+import { getNatureFactor } from '../../data/ids/natures';
+import { Genders } from '../../data/ids/species';
+import type { Species } from '../../data/ids/species';
 
 import {
   BAIT_BERRIES,
@@ -15,16 +15,16 @@ import {
   NANAB_FLEE_FACTOR,
   PRIZE_BERRIES,
   RAZZ_CATCH_BONUS,
-} from '../data/items/berries';
+} from '../../data/items/berries';
 import {
   SPECIES_DAY_CATCH_BOOST,
   getSpeciesData,
   isFeaturedSpecies,
   lineEvolvesByItem,
-} from '../data/species';
-import { isUltraBeast } from '../data/species/ultra-beasts';
-import Phenomenon from '../data/overworld/phenomenon';
-import { type Encounter, EncounterType, isRaidEncounter } from './encounter';
+} from '../../data/species';
+import { isUltraBeast } from '../../data/species/ultra-beasts';
+import Phenomenon from '../../data/overworld/phenomenon';
+import { type Encounter, EncounterType, isRaidEncounter } from '../encounter';
 
 export const enum SafariState {
   Active = 0,

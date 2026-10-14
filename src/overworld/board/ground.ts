@@ -1,11 +1,11 @@
-import type Biome from '../data/ids/biome';
-import { isFace, isSeam } from './cliff';
-import { type GroundRole, isShelfAt, readGround, roleAt } from './ground';
-import { isRouteAt } from './route';
-import { levelAt } from './terrace';
-import { Depth } from './depth';
-import { isPlotAt, isRoadAt, isTownAt } from './town';
-import type World from './world';
+import type Biome from '../../data/ids/biome';
+import { isFace, isSeam } from '../terrain/cliff';
+import { type GroundRole, isShelfAt, readGround, roleAt } from '../terrain/ground';
+import { isRouteAt } from '../route';
+import { levelAt } from '../terrain/terrace';
+import { Depth } from '../depth';
+import { isPlotAt, isRoadAt, isTownAt } from '../town';
+import type World from '../world';
 
 /**
  * One window of ground, read for the board that draws it.

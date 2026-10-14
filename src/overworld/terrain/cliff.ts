@@ -1,10 +1,10 @@
-import { Depth } from './depth';
-import { ORTHOGONAL, SURROUNDING } from './grid';
+import { Depth } from '../depth';
+import { ORTHOGONAL, SURROUNDING } from '../grid';
 import { roleAt } from './ground';
-import { isRouteAt } from './route';
+import { isRouteAt } from '../route';
 import { levelAt } from './terrace';
-import { isRoadAt } from './town';
-import type World from './world';
+import { isRoadAt } from '../town';
+import type World from '../world';
 
 /**
  * What a step between two levels does to a walk.

@@ -18,7 +18,7 @@ import getWorld from '../../src/overworld/current';
 import { Depth } from '../../src/overworld/depth';
 import { EncounterType } from '../../src/overworld/encounter';
 import { RAID_MIN_IV } from '../../src/overworld/encounter/traits';
-import { ALPHA_RAID_GOLD } from '../../src/overworld/raid';
+import { ALPHA_RAID_GOLD } from '../../src/overworld/raid/index';
 
 /**
  * A beaten Alpha raid, claimed and caught against the real database:

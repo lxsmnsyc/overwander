@@ -1,8 +1,8 @@
-import type { Genders, Species } from '../data/ids/species';
-import type { Buddy } from './core';
-import type { Encounter } from './encounter';
-import { MAX_CATCH_BONUS, type SafariContext, encounterKey, masteryOf } from './safari';
-import createOverworld from './setup';
+import type { Genders, Species } from '../../data/ids/species';
+import type { Buddy } from '../core';
+import type { Encounter } from '../encounter';
+import { MAX_CATCH_BONUS, type SafariContext, encounterKey, masteryOf } from '.';
+import createOverworld from '../setup';
 
 /**
  * The facts about a player a throw depends on, read by whoever is

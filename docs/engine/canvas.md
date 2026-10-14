@@ -49,7 +49,7 @@ mark the size of a pokemon turned the field into a wall of white rings.
 
 [`/demo/raid`](../../src/routes/demo/raid.tsx) stages a raid out of a seed: one
 boss against `DEMO_TEAMS` (8) parties of `DEMO_TEAM_SIZE` (6), rolled by
-[`createDemoRaidTeams`](../../src/overworld/demo-raid.ts) and fought by the same
+[`createDemoRaidTeams`](../../src/overworld/raid/demo.ts) and fought by the same
 `createRaidBattle` a real lobby uses, over the same `TeamSnapshotRecord` shape a
 real lobby publishes. It writes nothing, settles no raid and pays nobody.
 

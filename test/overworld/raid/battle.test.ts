@@ -1,20 +1,20 @@
 import { describe, expect, it } from 'vitest';
-import registerGameData from '../../src/data';
-import { BASE_FRIENDSHIP } from '../../src/data/constants/friendship';
-import { PERFECT_IVS, Stats } from '../../src/data/constants/stats';
-import { defaultSlots } from '../../src/data/constants/slots';
-import { Species } from '../../src/data/ids/species';
-import type { CatchSnapshot } from '../../src/model/catch-snapshot';
-import type { TeamSnapshotRecord } from '../../src/auth/teams';
-import { getMaxHealth } from '../../src/model/health';
-import { BattleModes } from '../../src/battle/battle';
-import { EventPriority } from '../../src/core/event-emitter';
-import { BattleEvents } from '../../src/battle/events';
-import createBattle from '../../src/battle/setup';
-import type Unit from '../../src/battle/unit';
-import { fieldTeams } from '../../src/overworld/raid-battle';
-import { mythicalRaidId, mythicalRelicOf } from '../../src/model/raid-record';
-import { Items } from '../../src/data/ids/items';
+import registerGameData from '../../../src/data';
+import { BASE_FRIENDSHIP } from '../../../src/data/constants/friendship';
+import { PERFECT_IVS, Stats } from '../../../src/data/constants/stats';
+import { defaultSlots } from '../../../src/data/constants/slots';
+import { Species } from '../../../src/data/ids/species';
+import type { CatchSnapshot } from '../../../src/model/catch-snapshot';
+import type { TeamSnapshotRecord } from '../../../src/auth/teams';
+import { getMaxHealth } from '../../../src/model/health';
+import { BattleModes } from '../../../src/battle/battle';
+import { EventPriority } from '../../../src/core/event-emitter';
+import { BattleEvents } from '../../../src/battle/events';
+import createBattle from '../../../src/battle/setup';
+import type Unit from '../../../src/battle/unit';
+import { fieldTeams } from '../../../src/overworld/raid/battle';
+import { mythicalRaidId, mythicalRelicOf } from '../../../src/model/raid-record';
+import { Items } from '../../../src/data/ids/items';
 
 registerGameData();
 

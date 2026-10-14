@@ -32,9 +32,9 @@ import {
   collectAftermath,
   countDefeated,
   createRaidBattle,
-} from '../../../overworld/raid-battle';
+} from '../../../overworld/raid/battle';
 import Npc from '../../../data/overworld/npc';
-import { createTrainerBattle } from '../../../overworld/stop-battle';
+import { createTrainerBattle } from '../../../overworld/stop/battle';
 import BattleField from '../BattleField';
 import BattleTopBar from '../BattleTopBar';
 import CandySprite from '../../sprites/CandySprite';

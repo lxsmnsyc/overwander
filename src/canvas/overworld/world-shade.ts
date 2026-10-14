@@ -1,9 +1,9 @@
 import { BIOME_COLORS } from '../../data/biome';
 import type Biome from '../../data/ids/biome';
 import { ORTHOGONAL } from '../../overworld/grid';
-import { readGround } from '../../overworld/ground';
+import { readGround } from '../../overworld/terrain/ground';
 import { isRouteAt } from '../../overworld/route';
-import { levelAt, terraceTop } from '../../overworld/terrace';
+import { levelAt, terraceTop } from '../../overworld/terrain/terrace';
 import { isRoadAt, isTownAt } from '../../overworld/town';
 import type World from '../../overworld/world';
 

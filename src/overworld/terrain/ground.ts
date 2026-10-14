@@ -1,9 +1,9 @@
-import Biome, { isWaterBiome } from '../data/ids/biome';
-import { isCaveOpen, isCaveWater } from './cave';
-import { STONE_FREQUENCY, rockLevel } from './fields';
+import Biome, { isWaterBiome } from '../../data/ids/biome';
+import { isCaveOpen, isCaveWater } from '../cave';
+import { STONE_FREQUENCY, rockLevel } from '../fields';
 import { isSurfaceWater } from './surface';
-import type World from './world';
-import { Depth } from './depth';
+import type World from '../world';
+import { Depth } from '../depth';
 
 export { isHillside } from './surface';
 

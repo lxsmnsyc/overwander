@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import shadeCell, { FACE, ROUTE } from '../../../src/canvas/overworld/world-shade';
 import { ORTHOGONAL } from '../../../src/overworld/grid';
-import { readGround } from '../../../src/overworld/ground';
+import { readGround } from '../../../src/overworld/terrain/ground';
 import { isRouteAt } from '../../../src/overworld/route';
-import { levelAt } from '../../../src/overworld/terrace';
+import { levelAt } from '../../../src/overworld/terrain/terrace';
 import { isTownAt } from '../../../src/overworld/town';
 import World from '../../../src/overworld/world';
 

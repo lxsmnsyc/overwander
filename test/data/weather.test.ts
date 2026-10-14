@@ -38,7 +38,7 @@ import { MAX_IV, STAT_ORDER, getIV } from '../../src/data/constants/stats';
 import registerGameData from '../../src/data';
 import { BattleModes } from '../../src/battle/battle';
 import { Weathers } from '../../src/data/ids/status';
-import { createTrainerBattle } from '../../src/overworld/stop-battle';
+import { createTrainerBattle } from '../../src/overworld/stop/battle';
 import { getSignatureAbility } from '../../src/data/abilities';
 import {
   getBaseSpecies,

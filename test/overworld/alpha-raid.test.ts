@@ -22,8 +22,8 @@ import {
   PLAYER_ALLIANCE,
   createRaidBossSnapshot,
   createRaidBossTeam,
-} from '../../src/overworld/raid';
-import { type RaidBattle, countDefeated, createRaidBattle } from '../../src/overworld/raid-battle';
+} from '../../src/overworld/raid/index';
+import { type RaidBattle, countDefeated, createRaidBattle } from '../../src/overworld/raid/battle';
 import deriveEncounter, { EncounterType } from '../../src/overworld/encounter';
 import ChunkSnapshot from '../../src/overworld/chunk-snapshot';
 import World from '../../src/overworld/world';

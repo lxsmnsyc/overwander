@@ -16,9 +16,9 @@ import { FRENZY_MOVES, getNobleBurst } from '../../data/moves/frenzy-moves';
 import { getMoveData } from '../../data/moves';
 import { getSpeciesData } from '../../data/species';
 import { CANON_NOBLES } from '../../data/overworld/nobles';
-import { DEMO_TEAMS, DEMO_TEAM_SIZE, createDemoRaidTeams } from '../../overworld/demo-raid';
+import { DEMO_TEAMS, DEMO_TEAM_SIZE, createDemoRaidTeams } from '../../overworld/raid/demo';
 import { BOSS_ALLIANCE, PLAYER_ALLIANCE } from '../../overworld/raid';
-import { type RaidBattle, createRaidBattle } from '../../overworld/raid-battle';
+import { type RaidBattle, createRaidBattle } from '../../overworld/raid/battle';
 
 /**
  * A raid to look at: a boss, five parties, and nothing else, staged

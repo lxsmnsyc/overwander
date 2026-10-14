@@ -28,8 +28,8 @@ import { Items } from '../../src/data/ids/items';
 import { Species } from '../../src/data/ids/species';
 import { Statuses, TeamStatuses } from '../../src/data/ids/status';
 import { CANON_BURSTS, FRENZY_MOVES, getNobleBurst } from '../../src/data/moves/frenzy-moves';
-import { BOSS_ALLIANCE, PLAYER_ALLIANCE, createRaidBossTeam } from '../../src/overworld/raid';
-import { type RaidBattle, countDefeated, createRaidBattle } from '../../src/overworld/raid-battle';
+import { BOSS_ALLIANCE, PLAYER_ALLIANCE, createRaidBossTeam } from '../../src/overworld/raid/index';
+import { type RaidBattle, countDefeated, createRaidBattle } from '../../src/overworld/raid/battle';
 
 beforeAll(() => {
   registerGameData();

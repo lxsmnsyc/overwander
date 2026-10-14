@@ -46,7 +46,7 @@ import ChunkSnapshot, {
 } from '../../../src/overworld/chunk-snapshot';
 import pickStartPosition from '../../../src/overworld/start';
 import deriveEncounter from '../../../src/overworld/encounter';
-import { encounterKey, encounterWindow } from '../../../src/overworld/safari';
+import { encounterKey, encounterWindow } from '../../../src/overworld/safari/index';
 import { FOSSIL_OFFER_KINDS, getFossilPrice } from '../../../src/data/overworld/fossil';
 import { isFossil } from '../../../src/data/items/fossils';
 import Landmark from '../../../src/data/overworld/landmark';

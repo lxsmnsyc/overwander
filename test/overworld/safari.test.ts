@@ -29,7 +29,7 @@ import SafariSession, {
   levelCatchFactor,
   masteryOf,
   tallyOf,
-} from '../../src/overworld/safari';
+} from '../../src/overworld/safari/index';
 import { CATCHING_CHARM_BOOST } from '../../src/overworld/items/key-items';
 import { TRAP_FLEE_FACTOR } from '../../src/overworld/abilities/__create';
 import World from '../../src/overworld/world';

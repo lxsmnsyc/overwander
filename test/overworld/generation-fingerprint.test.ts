@@ -3,7 +3,7 @@ import registerGameData from '../../src/data/index';
 import caveMouth from '../../src/overworld/cave';
 import { CHUNK_CELLS } from '../../src/overworld/grid';
 import pickStartPosition from '../../src/overworld/start';
-import { levelAt } from '../../src/overworld/terrace';
+import { levelAt } from '../../src/overworld/terrain/terrace';
 import { getTownLots, getTownRoads, townOfRegion } from '../../src/overworld/town';
 import World, { Depth, Generation } from '../../src/overworld/world';
 

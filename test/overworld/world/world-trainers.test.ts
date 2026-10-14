@@ -54,7 +54,7 @@ import {
   LEGENDARY_RAID_GOLD,
   MYTHICAL_RAID_GOLD,
   SHADOW_RAID_GOLD,
-} from '../../../src/overworld/raid';
+} from '../../../src/overworld/raid/index';
 import {
   ACE_OUTFIT,
   BOSS_OUTFIT,

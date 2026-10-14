@@ -1,33 +1,33 @@
-import type { CatchSnapshot } from '../model/catch-snapshot';
-import type BattleAftermath from '../model/battle-aftermath';
-import { getMaxHealth, rescaleHealth } from '../model/health';
-import type { TeamSnapshotRecord } from '../auth/teams';
-import Alliance from '../battle/alliance';
-import type Battle from '../battle/battle';
-import { BattleModes } from '../battle/battle';
-import { BattleEvents, EffectType } from '../battle/events';
-import { EventPriority } from '../core/event-emitter';
-import type Biome from '../data/ids/biome';
-import createBattle from '../battle/setup';
-import Team from '../battle/team';
-import Unit from '../battle/unit';
-import { holdAlphaCopy, holdTotemAlly } from '../battle/abilities/special';
-import { holdBalms } from '../battle/abilities/special/noble';
-import { dynamax } from '../battle/gimmicks/dynamax';
-import { terastallize } from '../battle/gimmicks/terastal';
-import { UNLIMITED_BATTLE_LIMITS } from '../data/constants/battle-limits';
-import { STAT_ORDER, Stats, StatsKind, getIV } from '../data/constants/stats';
+import type { CatchSnapshot } from '../../model/catch-snapshot';
+import type BattleAftermath from '../../model/battle-aftermath';
+import { getMaxHealth, rescaleHealth } from '../../model/health';
+import type { TeamSnapshotRecord } from '../../auth/teams';
+import Alliance from '../../battle/alliance';
+import type Battle from '../../battle/battle';
+import { BattleModes } from '../../battle/battle';
+import { BattleEvents, EffectType } from '../../battle/events';
+import { EventPriority } from '../../core/event-emitter';
+import type Biome from '../../data/ids/biome';
+import createBattle from '../../battle/setup';
+import Team from '../../battle/team';
+import Unit from '../../battle/unit';
+import { holdAlphaCopy, holdTotemAlly } from '../../battle/abilities/special';
+import { holdBalms } from '../../battle/abilities/special/noble';
+import { dynamax } from '../../battle/gimmicks/dynamax';
+import { terastallize } from '../../battle/gimmicks/terastal';
+import { UNLIMITED_BATTLE_LIMITS } from '../../data/constants/battle-limits';
+import { STAT_ORDER, Stats, StatsKind, getIV } from '../../data/constants/stats';
 import {
   NON_VOLATILE_STATUSES,
   packStatuses,
   settleStatuses,
   unpackStatuses,
-} from '../data/ids/status';
-import { featMove } from '../data/species/feats';
-import { getSpeciesData } from '../data/species/__create';
-import { BOSS_ALLIANCE } from './raid';
-import { setTrainerSkill } from '../battle/ai/skill';
-import skillOf from './trainer-skill';
+} from '../../data/ids/status';
+import { featMove } from '../../data/species/feats';
+import { getSpeciesData } from '../../data/species/__create';
+import { BOSS_ALLIANCE } from '.';
+import { setTrainerSkill } from '../../battle/ai/skill';
+import skillOf from '../trainer-skill';
 
 /**
  * A raid, fielded.

@@ -13,9 +13,9 @@ import ChunkSnapshot, {
   type Spawn,
 } from '../../../overworld/chunk-snapshot';
 import { CHUNK_CELLS, cellInChunk, chunkOfCell } from '../../../overworld/chunk';
-import { type BoardGround, readBoardGround } from '../../../overworld/board-ground';
-import { blocksWalk } from '../../../overworld/cliff';
-import { isLavaAt } from '../../../overworld/ground';
+import { type BoardGround, readBoardGround } from '../../../overworld/board/ground';
+import { blocksWalk } from '../../../overworld/terrain/cliff';
+import { isLavaAt } from '../../../overworld/terrain/ground';
 import type { Buddy } from '../../../overworld/core';
 import getWorld from '../../../overworld/current';
 import deriveEncounter from '../../../overworld/encounter';

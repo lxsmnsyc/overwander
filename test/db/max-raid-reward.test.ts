@@ -21,7 +21,7 @@ import ChunkSnapshot, { RAID_INTERVAL, type RaidRoll } from '../../src/overworld
 import getWorld from '../../src/overworld/current';
 import { Depth } from '../../src/overworld/depth';
 import { EncounterType } from '../../src/overworld/encounter';
-import { MAX_RAID_GOLD, isGigantamaxBoss } from '../../src/overworld/raid';
+import { MAX_RAID_GOLD, isGigantamaxBoss } from '../../src/overworld/raid/index';
 
 /**
  * A beaten Max Raid, claimed against the real database: the purse, the

@@ -62,8 +62,8 @@ import {
   canStageBoss,
   createRaidBossSnapshot,
   getBossMoves,
-} from '../../../src/overworld/raid';
-import { collectAftermath, createRaidBattle } from '../../../src/overworld/raid-battle';
+} from '../../../src/overworld/raid/index';
+import { collectAftermath, createRaidBattle } from '../../../src/overworld/raid/battle';
 import { MoveCategories, Moves } from '../../../src/data/ids/moves';
 import deriveEncounter, {
   EncounterType,

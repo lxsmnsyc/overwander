@@ -16,7 +16,7 @@ import { SPAWN_COUNT } from '../../../src/overworld/chunk-snapshot';
 import pickStartPosition, { START_AREA, pickFreeCell } from '../../../src/overworld/start';
 import type { Encounter } from '../../../src/overworld/encounter/shape';
 import { EncounterType, SPECIAL_SPAWN_LEVELS } from '../../../src/overworld/encounter';
-import { MAX_CATCH_BONUS, SHADOW_CATCH_FACTOR } from '../../../src/overworld/safari';
+import { MAX_CATCH_BONUS, SHADOW_CATCH_FACTOR } from '../../../src/overworld/safari/index';
 import { MAX_LEVEL } from '../../../src/data/constants/levels';
 import { DARK_DAY_LAMP_CELLS } from '../../../src/data/overworld/weather';
 import {

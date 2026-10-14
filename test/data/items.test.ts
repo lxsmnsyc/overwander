@@ -183,7 +183,7 @@ import {
 import { INCENSES } from '../../src/data/items/incenses';
 import { BATTLE_ITEMS } from '../../src/data/items/battle-items';
 import { DRINKS } from '../../src/data/items/drinks';
-import { FEED_CATCH_BONUS, MAX_CATCH_BONUS } from '../../src/overworld/safari';
+import { FEED_CATCH_BONUS, MAX_CATCH_BONUS } from '../../src/overworld/safari/index';
 import { PLATES } from '../../src/data/items/plates';
 import { FORM_ITEMS, getItemForms } from '../../src/data/items/form-items';
 import { RAID_ITEMS, getRaidSpecies } from '../../src/data/items/raid-items';

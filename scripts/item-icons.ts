@@ -728,38 +728,6 @@ const TINTS: Tint[] = [
     },
   },
   {
-    from: 'key/professors-mask',
-    to: 'held/wellspring-mask',
-    why: 'the mask that puts Ogerpon in its Water shape is its own item, and no sheet draws it',
-    // The mask carved from the spring: a deep water blue
-    swaps: {},
-    recolour: rehue(205, 1.2),
-  },
-  {
-    from: 'key/professors-mask',
-    to: 'held/hearthflame-mask',
-    why: 'the mask that puts Ogerpon in its Fire shape is its own item, and no sheet draws it',
-    // The mask carved by the hearth: an ember red
-    swaps: {},
-    recolour: rehue(6, 1.2),
-  },
-  {
-    from: 'key/professors-mask',
-    to: 'held/cornerstone-mask',
-    why: 'the mask that puts Ogerpon in its Rock shape is its own item, and no sheet draws it',
-    // The mask carved from stone: a dull grey brown
-    swaps: {},
-    recolour: rehue(30, 0.35),
-  },
-  {
-    from: 'berries/pecha',
-    to: 'key/poison-mochi',
-    why: 'the mochi Pecharunt fed the Loyal Three is its own item, and no sheet draws it',
-    // The sweet peach turned to its sickly violet poison
-    swaps: {},
-    recolour: rehue(290, 0.9),
-  },
-  {
     from: 'key/parcel',
     to: 'evolutions/peat-block',
     why: 'the block an Ursaring evolves on is its own item, and no sheet draws it',
@@ -906,28 +874,6 @@ function hslToHex(hue: number, saturation: number, lightness: number): string {
         .padStart(2, '0'),
     )
     .join('')}`;
-}
-
-/**
- * A recolour that turns every coloured tone to one hue at a share of
- * its saturation, keeping its lightness. Greys and the outline are
- * left as they are, so the shading and the edge survive
- */
-function rehue(hue: number, saturation: number): (colour: string) => string {
-  return (colour) => {
-    const [red, green, blue] = hexToRgb(colour);
-    const high = Math.max(red, green, blue) / 255;
-    const low = Math.min(red, green, blue) / 255;
-    const lightness = (high + low) / 2;
-    const chroma = high - low;
-
-    if (chroma < 0.08) {
-      return colour;
-    }
-    const was = chroma / (1 - Math.abs(2 * lightness - 1));
-
-    return hslToHex(hue, Math.min(1, was * saturation), lightness);
-  };
 }
 
 /**
@@ -1178,6 +1124,11 @@ const SHRUNK: Shrunk[] = [
   { from: 'dark-tera-shard', to: 'other/dark-tera-shard', fit: 28, plain: true },
   { from: 'fairy-tera-shard', to: 'other/fairy-tera-shard', fit: 28, plain: true },
   { from: 'ghost-tera-shard', to: 'other/ghost-tera-shard', fit: 28, plain: true },
+  { from: 'teal-mask', to: 'held/teal-mask', fit: 28, plain: true },
+  { from: 'wellspring-mask', to: 'held/wellspring-mask', fit: 28, plain: true },
+  { from: 'hearthflame-mask', to: 'held/hearthflame-mask', fit: 28, plain: true },
+  { from: 'cornerstone-mask', to: 'held/cornerstone-mask', fit: 28, plain: true },
+  { from: 'mythical-pecha-berry', to: 'key/mythical-pecha-berry', fit: 28, plain: true },
 ];
 
 function lightnessOf(colour: number[]): number {

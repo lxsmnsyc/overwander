@@ -38,7 +38,7 @@ export const RAID_ITEMS = new Map<Items, Species>([
   [Items.HerosCharm, Species.Marshadow],
   [Items.WindmillCharm, Species.Zeraora],
   [Items.MysteryBox, Species.Meltan],
-  [Items.PoisonMochi, Species.Pecharunt],
+  [Items.MythicalPechaBerry, Species.Pecharunt],
 ]);
 
 function isRegisteredSpecies(species: Species): boolean {

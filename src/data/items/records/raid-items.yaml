@@ -96,7 +96,7 @@ MysteryBox:
   icon: key/mystery-box
   flags: [Consumable, Usable]
 
-PoisonMochi:
+MythicalPechaBerry:
   type: KeyItem
-  icon: key/poison-mochi
+  icon: key/mythical-pecha-berry
   flags: [Consumable, Usable]

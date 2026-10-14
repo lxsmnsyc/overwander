@@ -38,8 +38,8 @@ base shape.
 
 ## Pecharunt
 
-**Pecharunt** is mythical, so it is never met by chance. The **Poison Mochi**
-calls it up at the Loyalty Plaza.
+**Pecharunt** is mythical, so it is never met by chance. The **Mythical Pecha
+Berry** calls it up at the Loyalty Plaza.
 
 - **Puppet Strings:** a confused enemy's single-target moves aimed at it go to
   one of that enemy's own teammates instead.

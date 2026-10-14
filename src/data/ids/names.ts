@@ -3963,7 +3963,7 @@ export const ITEM_IDS = {
   WellspringMask: Items.WellspringMask,
   HearthflameMask: Items.HearthflameMask,
   CornerstoneMask: Items.CornerstoneMask,
-  PoisonMochi: Items.PoisonMochi,
+  MythicalPechaBerry: Items.MythicalPechaBerry,
   TealMask: Items.TealMask,
 } as const satisfies Record<string, Items>;
 

@@ -40740,15 +40740,15 @@
       }
     },
     "public/sprites/ui/items/held/image.png": {
-      "digest": "6f2177f56f7d88f9",
-      "bytes": 25381,
-      "width": 156,
-      "height": 297,
+      "digest": "92b1ad4d34b9791a",
+      "bytes": 31869,
+      "width": 213,
+      "height": 222,
       "compact": {
-        "at": "2026-10-14T02:31:39Z",
+        "at": "2026-10-14T02:35:37Z",
         "as": "already compact",
-        "was": 25381,
-        "bytes": 25381
+        "was": 31869,
+        "bytes": 31869
       }
     },
     "public/sprites/ui/items/incense/image.png": {
@@ -40764,15 +40764,15 @@
       }
     },
     "public/sprites/ui/items/key/image.png": {
-      "digest": "925a99136302ae2c",
-      "bytes": 57223,
-      "width": 299,
-      "height": 384,
+      "digest": "ac8bbf7177159e70",
+      "bytes": 58811,
+      "width": 309,
+      "height": 364,
       "compact": {
-        "at": "2026-10-13T12:18:02Z",
+        "at": "2026-10-14T01:40:45Z",
         "as": "already compact",
-        "was": 57223,
-        "bytes": 57223
+        "was": 58811,
+        "bytes": 58811
       }
     },
     "public/sprites/ui/items/medicine/image.png": {

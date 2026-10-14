@@ -3964,6 +3964,7 @@ export const ITEM_IDS = {
   HearthflameMask: Items.HearthflameMask,
   CornerstoneMask: Items.CornerstoneMask,
   PoisonMochi: Items.PoisonMochi,
+  TealMask: Items.TealMask,
 } as const satisfies Record<string, Items>;
 
 export const ITEM_TYPE_IDS = {

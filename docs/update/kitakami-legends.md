@@ -17,8 +17,9 @@ with one more effect each:
 ## Ogerpon
 
 **Ogerpon** hides in the Dreaded Den in the forest. It is always in one of its
-four masks, and the **Wellspring, Hearthflame and Cornerstone Masks** are new
-items: one held puts it in that mask's shape.
+four masks. The **Teal, Wellspring, Hearthflame and Cornerstone Masks** are new
+items: using one on an Ogerpon puts it in that mask's shape for good, the way a
+Rotom Catalog changes a Rotom.
 
 - Each mask's ability is worn in battle: Defiant for Teal, Water Absorb for
   Wellspring, Mold Breaker for Hearthflame and Sturdy for Cornerstone.

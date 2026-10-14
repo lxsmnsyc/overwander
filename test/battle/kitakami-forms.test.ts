@@ -9,13 +9,12 @@ import { Items } from '../../src/data/ids/items';
 import { Species } from '../../src/data/ids/species';
 import { createBattle, createUnit } from './harness';
 
-/** An Ogerpon carrying a filler, holding whatever it is handed */
-function ogerpon(...items: Items[]): Unit {
-  // Room for a mask and a Tera Orb both
+/** An Ogerpon kept in a mask, carrying a filler, holding whatever it is handed */
+function ogerpon(shape: Species, ...items: Items[]): Unit {
   const { battle, teamA } = createBattle('test-seed', undefined, UNLIMITED_BATTLE_LIMITS);
   const ogre = createUnit(battle, teamA);
 
-  ogre.setSpecies(Species.Ogerpon);
+  ogre.setSpecies(shape);
   ogre.setSlots(packSlots(1, 2, 4));
   ogre.addAbility(Abilities.GrassPelt);
   for (const item of items) {
@@ -26,7 +25,7 @@ function ogerpon(...items: Items[]): Unit {
 
 describe("Ogerpon's masks", () => {
   it('wears Defiant in the Teal Mask, on top of its filler', () => {
-    const ogre = ogerpon();
+    const ogre = ogerpon(Species.Ogerpon);
 
     ogre.enter();
 
@@ -37,11 +36,11 @@ describe("Ogerpon's masks", () => {
   });
 
   it.each([
-    [Items.WellspringMask, Species.OgerponWellspring, Abilities.WaterAbsorb],
-    [Items.HearthflameMask, Species.OgerponHearthflame, Abilities.MoldBreaker],
-    [Items.CornerstoneMask, Species.OgerponCornerstone, Abilities.Sturdy],
-  ])('puts on the mask it holds and wears its ability in place of Defiant', (mask, shape, worn) => {
-    const ogre = ogerpon(mask);
+    [Species.OgerponWellspring, Abilities.WaterAbsorb],
+    [Species.OgerponHearthflame, Abilities.MoldBreaker],
+    [Species.OgerponCornerstone, Abilities.Sturdy],
+  ])('wears the ability of the mask it is kept in, in place of Defiant', (shape, worn) => {
+    const ogre = ogerpon(shape);
 
     ogre.enter();
 
@@ -52,7 +51,7 @@ describe("Ogerpon's masks", () => {
   });
 
   it("Terastallizes into its mask's type and shape, whatever its own Tera type", () => {
-    const ogre = ogerpon(Items.WellspringMask, Items.TeraOrb);
+    const ogre = ogerpon(Species.OgerponWellspring, Items.TeraOrb);
 
     ogre.teraType = Types.Fire;
     ogre.enter();
@@ -68,7 +67,7 @@ describe("Ogerpon's masks", () => {
   });
 
   it('Terastallizes into Grass in the Teal Mask', () => {
-    const ogre = ogerpon(Items.TeraOrb);
+    const ogre = ogerpon(Species.Ogerpon, Items.TeraOrb);
 
     ogre.teraType = Types.Dragon;
     ogre.enter();
@@ -79,8 +78,16 @@ describe("Ogerpon's masks", () => {
     expect(ogre.stages[Stages.Speed]).toBe(1);
   });
 
+  it('ignores a mask held rather than used', () => {
+    const ogre = ogerpon(Species.Ogerpon, Items.WellspringMask);
+
+    ogre.enter();
+
+    expect(ogre.species).toBe(Species.Ogerpon);
+  });
+
   it('keeps its Terastal shape through switching out', () => {
-    const ogre = ogerpon(Items.HearthflameMask, Items.TeraOrb);
+    const ogre = ogerpon(Species.OgerponHearthflame, Items.TeraOrb);
 
     ogre.enter();
     ogre.leave();

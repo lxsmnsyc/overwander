@@ -1230,6 +1230,9 @@ export const enum Items {
 
   /** The relic Kitakami's mythical leaves behind it: the mochi it fed the Loyal Three */
   PoisonMochi = 637,
+
+  /** The mask Ogerpon wears when it is in none of the stolen three, which puts it back in the Teal */
+  TealMask = 683,
 }
 
 /**

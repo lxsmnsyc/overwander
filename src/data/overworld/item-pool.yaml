@@ -354,6 +354,7 @@ prized:
   # terms: each is the only way to the shape it holds
   RustedSword: 4
   RustedShield: 4
+  TealMask: 4
   WellspringMask: 4
   HearthflameMask: 4
   CornerstoneMask: 4

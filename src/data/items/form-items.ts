@@ -115,11 +115,6 @@ export const FORM_ITEMS = new Map<Items, Species[]>([
   // Galar's heroes take up their relics and fight crowned
   [Items.RustedSword, [Species.ZacianCrowned]],
   [Items.RustedShield, [Species.ZamazentaCrowned]],
-  // Ogerpon's stolen masks, each putting it in its shape. The Teal Mask is
-  // the one it wears with nothing in hand
-  [Items.WellspringMask, [Species.OgerponWellspring]],
-  [Items.HearthflameMask, [Species.OgerponHearthflame]],
-  [Items.CornerstoneMask, [Species.OgerponCornerstone]],
   // The seventeen Plates, each of which is already a type booster.
   // Holding one paints an Arceus the type it lifts, which is what the
   // mainline calls Multitype: there is no battle code behind it, only

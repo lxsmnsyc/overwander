@@ -1,5 +1,5 @@
 import { For, type JSX, Show, Suspense, createResource } from 'solid-js';
-import BattleData from '../../app/battle-data';
+import BattleData from '../../app/BattleData';
 import { getCandyCount } from '../../../auth/candy';
 import { getPokedex, getSpeciesDexEntry } from '../../../auth/pokedex';
 import type { Species } from '../../../data/ids/species';

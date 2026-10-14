@@ -20,7 +20,7 @@ import { getSpeciesData } from '../../../data/species';
 
 import { type CatchDialogProps, CatchSheetBody } from './sheet';
 import { answered } from '../../app/resource-reads';
-import BattleData from '../../app/battle-data';
+import BattleData from '../../app/BattleData';
 
 export type { CatchDialogProps };
 

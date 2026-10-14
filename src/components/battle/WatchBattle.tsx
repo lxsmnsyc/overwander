@@ -1,7 +1,7 @@
 import { useNavigate } from '@solidjs/router';
 import { type JSX, type Resource, Show, Suspense, createResource } from 'solid-js';
 import { type BattleRecord, getBattle } from '../../auth/battles';
-import BattleData from '../app/battle-data';
+import BattleData from '../app/BattleData';
 import BattleView from './battle-view';
 import { Button, Note } from '../styled';
 

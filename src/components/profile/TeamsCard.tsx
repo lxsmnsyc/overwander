@@ -11,7 +11,7 @@ import {
 } from '../../auth/team-presets';
 import { NICKNAME_LIMIT, asNickname } from '../../model/nickname';
 import { TEAM_SIZE } from '../../auth/teams';
-import BattleData from '../app/battle-data';
+import BattleData from '../app/BattleData';
 import CatchPicker, { type CatchOption } from '../catches/catch-picker';
 import TeamRow, { TeamRows } from '../catches/TeamRow';
 import {

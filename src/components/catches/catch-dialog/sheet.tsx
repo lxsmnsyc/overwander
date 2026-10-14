@@ -1,6 +1,6 @@
 import { HISTORY_BALL, HISTORY_BALL_INSET, describeHistory, isHoldable } from './describe';
 import { capAsksForStat } from '../../../data/items/bottle-caps';
-import BattleData from '../../app/battle-data';
+import BattleData from '../../app/BattleData';
 import CandySprite from '../../sprites/CandySprite';
 import BattleSection from './sections/BattleSection';
 import EvolutionSection from './sections/EvolutionSection';

@@ -49,7 +49,7 @@ import {
 import { WeatherFavors, getWeatherIcon } from '../overworld/WeatherIcon';
 import { Divider } from '../styled';
 import { SHEER } from '../styled/transition';
-import FullscreenToggle, { fullscreenOffered } from './fullscreen';
+import FullscreenToggle, { fullscreenOffered } from './FullscreenToggle';
 import { ThemeToggle } from './theme';
 import { actionOf, forTheGame } from './keys';
 import settings, { type ClockFormat } from './settings';

@@ -46,9 +46,9 @@ import {
   tutorMove as tutorOnServerSide,
   visitNurse as visitNurseOnServerSide,
 } from '../server/npcs';
-import type { LearnResult } from './learn-refusal';
+import type { LearnResult } from '../model/learn-refusal';
 import { syncServerClock } from './clock';
-import { getLocale } from './local-time';
+import { getLocale } from '../model/local-time';
 import getIdToken from './session';
 
 /**

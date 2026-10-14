@@ -5,7 +5,7 @@ import { AuctionLot } from '../auth/auctions';
 import { type Profile, watchProfile } from '../auth/profile';
 import { signOut } from '../auth/actions';
 import CommandBar from '../components/app/command-bar';
-import { runsTheGame } from '../auth/staff';
+import { runsTheGame } from '../model/staff';
 import { useAuth } from '../auth/context';
 import type { PlayerIdentity } from '../auth/user';
 import AuctionDialog from '../components/auctions/AuctionDialog';

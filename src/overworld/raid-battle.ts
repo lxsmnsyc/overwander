@@ -1,6 +1,6 @@
-import type { CatchSnapshot } from '../auth/catch-snapshot';
-import type BattleAftermath from '../auth/battle-aftermath';
-import { getMaxHealth, rescaleHealth } from '../auth/health';
+import type { CatchSnapshot } from '../model/catch-snapshot';
+import type BattleAftermath from '../model/battle-aftermath';
+import { getMaxHealth, rescaleHealth } from '../model/health';
 import type { TeamSnapshotRecord } from '../auth/teams';
 import Alliance from '../battle/alliance';
 import type Battle from '../battle/core';

@@ -1,4 +1,4 @@
-import type { BattleRecord } from './battles';
+import type { BattleRecord } from '../auth/battles';
 
 /**
  * What kind of fight a battle was.

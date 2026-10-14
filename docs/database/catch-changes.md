@@ -118,7 +118,7 @@ it costs, not what it was.
 
 The doubled levelling cost is read off the `Shadow` **flag** rather than the
 ability (`getCandyCost` in
-[`src/auth/candy-rules.ts`](../../src/auth/candy-rules.ts)), so clearing that
+[`src/model/candy-rules.ts`](../../src/model/candy-rules.ts)), so clearing that
 bit is what reverts it. Nothing else about it is touched: a shiny shadow is
 still shiny.
 

@@ -1,6 +1,6 @@
 import { CHUNK_CELLS } from '../overworld/chunk';
 import { Depth, WORLD_MAX, WORLD_MIN } from '../overworld/world';
-import { asNumber, asRecord, asString } from './__normalize';
+import { asNumber, asRecord, asString } from './normalize';
 
 /**
  * Where a player is standing.

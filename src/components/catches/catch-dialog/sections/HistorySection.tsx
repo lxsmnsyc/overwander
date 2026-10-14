@@ -1,8 +1,8 @@
 import { HISTORY_BALL, HISTORY_BALL_INSET, describeHistory } from '../describe';
-import type { OwnershipRecord } from '../../../../auth/caught-record';
+import type { OwnershipRecord } from '../../../../model/caught-record';
 
 import type { CaughtPokemon } from '../../../../auth/caught';
-import { ACQUISITION_NAMES } from '../../../../auth/caught-record';
+import { ACQUISITION_NAMES } from '../../../../model/caught-record';
 
 import describeDate from '../../../../core/dates';
 

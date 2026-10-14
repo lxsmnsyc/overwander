@@ -1,5 +1,5 @@
 import 'server-only';
-import type { Metric } from '../auth/quest-record';
+import type { Metric } from '../model/quest-record';
 import { getSql } from './db';
 import { asNumber, asRecord } from './read';
 

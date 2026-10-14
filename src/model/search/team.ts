@@ -1,6 +1,6 @@
-import type { TeamRecord } from './teams';
-import type { QueryVocabulary } from '../core/query';
-import { alternatives, askedTerms, holds, parseControls, within } from '../core/query';
+import type { TeamRecord } from '../../auth/teams';
+import type { QueryVocabulary } from '../../core/query';
+import { alternatives, askedTerms, holds, parseControls, within } from '../../core/query';
 
 /**
  * What a search box over a raid lobby can be asked.

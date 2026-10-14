@@ -28,7 +28,7 @@ import {
   asStatRecord,
   asString,
   isRecord,
-} from './__normalize';
+} from './normalize';
 import { getMaxHealth } from './health';
 
 /**

@@ -1,11 +1,11 @@
-import type { CaughtPokemon } from './caught';
-import { ACQUISITION_NAMES, getCatchName, isFavorite, isGuarded, isShiny } from './caught-record';
-import { BALL_ITEMS, type Items } from '../data/ids/items';
-import { BIOME_NAMES, TIME_OF_DAY_NAMES } from '../data/biome/names';
-import { ENCOUNTER_TYPE_NAMES, EncounterType, deriveCatchSize } from '../overworld/encounter';
-import { GENDER_NAMES } from '../data/ids/species';
-import { LAIR_NAMES } from '../data/overworld/lair';
-import { ITEM_TYPE_ORDER, getItemData, listItemsByType } from '../data/items';
+import type { CaughtPokemon } from '../caught-record';
+import { ACQUISITION_NAMES, getCatchName, isFavorite, isGuarded, isShiny } from '../caught-record';
+import { BALL_ITEMS, type Items } from '../../data/ids/items';
+import { BIOME_NAMES, TIME_OF_DAY_NAMES } from '../../data/biome/names';
+import { ENCOUNTER_TYPE_NAMES, EncounterType, deriveCatchSize } from '../../overworld/encounter';
+import { GENDER_NAMES } from '../../data/ids/species';
+import { LAIR_NAMES } from '../../data/overworld/lair';
+import { ITEM_TYPE_ORDER, getItemData, listItemsByType } from '../../data/items';
 import {
   PERFECT_IVS,
   STAT_ORDER,
@@ -13,31 +13,31 @@ import {
   getHealthStat,
   getIV,
   getOtherStat,
-} from '../data/constants/stats';
+} from '../../data/constants/stats';
 import {
   TYPE_EFFECTIVENESS,
   TYPE_EFFECTIVENESS_FACTOR,
   TYPE_NAMES,
   type Types,
-} from '../data/constants/types';
-import { EGG_GROUP_NAMES } from '../data/ids/egg-groups';
-import { SPAWN_RARITY_NAMES, getSpawnRarity } from '../data/biome';
-import { NATURE_NAMES, getNatureFactor } from '../data/ids/natures';
-import { unusedEffort } from './effort';
-import { getAbilityData, getRegisteredAbilities } from '../data/abilities';
+} from '../../data/constants/types';
+import { EGG_GROUP_NAMES } from '../../data/ids/egg-groups';
+import { SPAWN_RARITY_NAMES, getSpawnRarity } from '../../data/biome';
+import { NATURE_NAMES, getNatureFactor } from '../../data/ids/natures';
+import { unusedEffort } from '../effort';
+import { getAbilityData, getRegisteredAbilities } from '../../data/abilities';
 import {
   getFamilyName,
   getLearnableMoves,
   getRegisteredSpecies,
   getSpeciesData,
-} from '../data/species';
-import { getMoveData, getRegisteredMoves } from '../data/moves';
-import type { Species } from '../data/ids/species';
-import { isEgg } from './egg';
-import { getMaxHealth, isFainted } from './health';
-import BATTLE_TIMEOUT, { isLockLive } from './battle-lock';
-import { serverNow } from './clock';
-import type { Bounds, QueryTerm, QueryVocabulary } from '../core/query';
+} from '../../data/species';
+import { getMoveData, getRegisteredMoves } from '../../data/moves';
+import type { Species } from '../../data/ids/species';
+import { isEgg } from '../egg';
+import { getMaxHealth, isFainted } from '../health';
+import BATTLE_TIMEOUT, { isLockLive } from '../battle-lock';
+import { serverNow } from '../../auth/clock';
+import type { Bounds, QueryTerm, QueryVocabulary } from '../../core/query';
 import {
   alternatives,
   askedTerms,
@@ -47,7 +47,7 @@ import {
   namedAll,
   parseControls,
   ranges,
-} from '../core/query';
+} from '../../core/query';
 
 /**
  * What a search box over a box of pokemon can be asked.

@@ -1,6 +1,6 @@
 import { registerMoves } from '../../src/data/moves';
 import { beforeAll, describe, expect, it } from 'vitest';
-import type { EggProgress } from '../../src/auth/egg';
+import type { EggProgress } from '../../src/model/egg';
 import {
   EGG_HATCH_STEPS,
   EGG_LEVEL,
@@ -13,7 +13,7 @@ import {
   creditedEggSteps,
   getEggHatchSteps,
   stepsRemaining,
-} from '../../src/auth/egg';
+} from '../../src/model/egg';
 import { STAT_ORDER, Stats, getIV, packIVs } from '../../src/data/constants/stats';
 import Abilities from '../../src/data/ids/abilities';
 import { Balls } from '../../src/data/ids/items';

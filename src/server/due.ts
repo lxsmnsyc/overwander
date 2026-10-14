@@ -4,7 +4,7 @@ import { dailyWindow, weeklyWindow } from '../data/quests/rotations';
 import { readProgress } from './quest-progress';
 import { listQuests } from './quests';
 import { listRotations } from './rotations';
-import { toLocalTime } from '../auth/local-time';
+import { toLocalTime } from '../model/local-time';
 
 /**
  * What is standing ready to claim, for the announcement rather than

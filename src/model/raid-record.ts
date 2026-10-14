@@ -16,7 +16,7 @@ import { WORLD_GENERATION } from '../overworld/current';
 import { Generation } from '../overworld/world';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
 import type { Spawn } from '../overworld/chunk-snapshot';
-import { asNumber, asRecord, asString, asStringArray } from './__normalize';
+import { asNumber, asRecord, asString, asStringArray } from './normalize';
 import { toZoneKey } from './local-time';
 
 /**

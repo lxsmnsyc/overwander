@@ -110,8 +110,8 @@ import { GEMS } from '../../src/data/items/gems';
 import { QUARRIED_GEAR } from '../../src/data/items/gear';
 import { PP_ITEMS, VITAMIN_STATS } from '../../src/data/items/vitamins';
 import { TREATS } from '../../src/data/items/treats';
-import { asBoolean } from '../../src/auth/__normalize';
-import { CANDY_STACKS, ITEM_STACKS, getStack, listStacks } from '../../src/auth/stacks';
+import { asBoolean } from '../../src/model/normalize';
+import { CANDY_STACKS, ITEM_STACKS, getStack, listStacks } from '../../src/model/stacks';
 import {
   MAX_SLOTS,
   SLOT_BITS,
@@ -127,7 +127,7 @@ import {
   withSlots,
 } from '../../src/data/constants/slots';
 import getSigil, { BRAILLE_BASE, SIGIL_CELLS } from '../../src/data/constants/sigil';
-import { isFavorite, isGuarded } from '../../src/auth/caught-record';
+import { isFavorite, isGuarded } from '../../src/model/caught-record';
 import {
   MAX_IV,
   MAX_IV_STARS,
@@ -162,7 +162,7 @@ import {
   UNLIMITED_BATTLE_LIMITS,
   withLimit,
 } from '../../src/data/constants/battle-limits';
-import { DEFAULT_DUEL_RULES, asDuelRules } from '../../src/auth/duel-record';
+import { DEFAULT_DUEL_RULES, asDuelRules } from '../../src/model/duel-record';
 import {
   PURIFY_IV_BOOST,
   isPurifiable,

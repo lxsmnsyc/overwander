@@ -6,7 +6,7 @@ import { fitsSurface } from '../../../src/data/biome';
 import { canGigantamax } from '../../../src/data/moves/gmax-moves';
 import Landmark from '../../../src/data/overworld/landmark';
 import { getTotemsOf, isTotemSpecies } from '../../../src/data/overworld/totems';
-import { RaidKind, getRaidKindAt, getRaidTitle } from '../../../src/auth/raid-record';
+import { RaidKind, getRaidKindAt, getRaidTitle } from '../../../src/model/raid-record';
 import type Chunk from '../../../src/overworld/chunk';
 import ChunkSnapshot, { RAID_INTERVAL } from '../../../src/overworld/chunk-snapshot';
 import { Depth } from '../../../src/overworld/depth';

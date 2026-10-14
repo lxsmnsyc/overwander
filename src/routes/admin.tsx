@@ -8,7 +8,7 @@ import { StaffProvider } from '../components/admin/staff-context';
 import GameProvider from '../components/app/game-context';
 import { Card, Note } from '../components/styled';
 import { Title } from '@solidjs/meta';
-import isStaff, { runsTheGame } from '../auth/staff';
+import isStaff, { runsTheGame } from '../model/staff';
 import { useAuth } from '../auth/context';
 
 /**

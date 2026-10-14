@@ -1,5 +1,5 @@
 import { readOnly, serverCallsSeen } from '../utils/server-calls';
-import { asNumber, asRecord, asString } from './__normalize';
+import { asNumber, asRecord, asString } from '../model/normalize';
 import getIdToken from './session';
 import { requireReader } from '../server/auth';
 import check, { TOKEN, UID } from '../server/validate';

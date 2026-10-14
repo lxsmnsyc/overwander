@@ -1,4 +1,4 @@
-import type { CatchSnapshot } from './catch-snapshot';
+import type { CatchSnapshot } from '../model/catch-snapshot';
 import getIdToken from './session';
 import batchedQuery from '../utils/batched-query';
 import { readOnly } from '../utils/server-calls';
@@ -10,7 +10,7 @@ import { readPlayerTeams, readTeamSnapshots } from '../server/team-reads';
 /** The most ids one batched read sends, as `ID_BATCH` allows */
 const BATCH_SIZE = 50;
 
-export { default as TEAM_SIZE } from './team-size';
+export { default as TEAM_SIZE } from '../model/team-size';
 
 /**
  * A party a player brought to a raid lobby, stored at teams/{teamId}.

@@ -5,11 +5,11 @@ import {
   asChunkCoordinate,
   asDepth,
   asPositionRecord,
-} from '../auth/position-record';
+} from '../model/position-record';
 import type Biome from '../data/ids/biome';
 import getWorld, { WORLD_GENERATION } from '../overworld/current';
 import type { Depth } from '../overworld/depth';
-import { Metric } from '../auth/quest-record';
+import { Metric } from '../model/quest-record';
 import { getSql } from './db';
 import { markProgress } from './quest-progress';
 import { asString } from './read';

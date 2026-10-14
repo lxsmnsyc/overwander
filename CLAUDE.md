@@ -54,6 +54,7 @@ The map is never stored. A chunk's terrain, landmarks, spawns, stashes and raids
 
 - `src/auth/` runs in the browser: thin wrappers around server functions, for reads and writes alike. No browser code reaches the database.
 - `src/server/` is privileged. Every module starts with `import 'server-only'` and reads and writes over the table-owner connection ([src/server/db.ts](src/server/db.ts)). There are no row policies, so a server function is what decides who may see or change a row.
+- `src/model/` is what both sides share: each stored record's shape and normaliser (`*-record.ts`), the rules read off a record (health, eggs, stacks, the local clock), and the search parsers (`search/`). Nothing in it opens with `'use server'` or imports `server-only`.
 
 The wrapper shape is fixed: an exported client function calls an inner function whose body opens with `'use server'`, passing an id token, and that inner function checks each of its arguments with `check` from [src/server/validate.ts](src/server/validate.ts) and then calls `requireUid(token)` (a write) or `requireReader(token)` (a read, see the `server-reads` skill) before anything in `src/server/`. Accounts are Better Auth's ([src/server/better-auth.ts](src/server/better-auth.ts)), and the token is its short-lived JWT. Live views follow table changes over the server's own socket (`src/server/live`). SolidStart's transform strips module-level imports that only the server function uses, so import server modules statically at the top of the file rather than dynamically inside it.
 

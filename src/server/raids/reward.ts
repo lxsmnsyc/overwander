@@ -1,12 +1,12 @@
 import 'server-only';
-import BattleOutcome from '../../auth/battle-outcome';
-import { type EncounterRecord, asEncounterRecord } from '../../auth/encounter-record';
-import { RaidKind, type RaidRecord, asRaidRecord, deriveRaidReward } from '../../auth/raid-record';
+import BattleOutcome from '../../model/battle-outcome';
+import { type EncounterRecord, asEncounterRecord } from '../../model/encounter-record';
+import { RaidKind, type RaidRecord, asRaidRecord, deriveRaidReward } from '../../model/raid-record';
 import ChunkSnapshot from '../../overworld/chunk-snapshot';
 import { WORLD_GENERATION, getChunkOfSeed } from '../../overworld/current';
 import createOverworld from '../../overworld/setup';
 import resolveBuddy from '../buddy';
-import { Metric } from '../../auth/quest-record';
+import { Metric } from '../../model/quest-record';
 import { bumpProgress } from '../quest-progress';
 import Biome from '../../data/ids/biome';
 import { getSql } from '../db';

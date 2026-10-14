@@ -1,5 +1,5 @@
 import type Biome from '../data/ids/biome';
-import { asNumber, asRecord, asString } from './__normalize';
+import { asNumber, asRecord, asString } from './normalize';
 
 /**
  * A town as the store holds it.

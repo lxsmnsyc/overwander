@@ -1,6 +1,6 @@
 import type { Items } from '../data/ids/items';
 import type { Moves } from '../data/ids/moves';
-import type { LearnResult } from './learn-refusal';
+import type { LearnResult } from '../model/learn-refusal';
 import { requireUid } from '../server/auth';
 import check, { GAME_ID, ID, REPLACED_SLOT, TOKEN } from '../server/validate';
 import teachOnServerSide, { learnLevelUpMove as learnOnServerSide } from '../server/moves';

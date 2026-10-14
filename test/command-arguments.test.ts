@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import type { CommandArguments } from '../src/core/command';
-import { GiftKind } from '../src/auth/gift-record';
+import { GiftKind } from '../src/model/gift-record';
 import { Genders, Species } from '../src/data/ids/species';
 import { Items } from '../src/data/ids/items';
 import { MAX_IV, Stats, packIVs, unpackIVs } from '../src/data/constants/stats';

@@ -2,7 +2,7 @@
 // assertions that tsc requires but tsgolint (resolving const enums to
 // number) considers unnecessary
 // oxlint-disable typescript/no-unnecessary-type-assertion
-import { asNumber, asRecord, asRecordArray, asString, asStringArray } from './__normalize';
+import { asNumber, asRecord, asRecordArray, asString, asStringArray } from './normalize';
 import { PVP_BATTLE_LIMITS } from '../data/constants/battle-limits';
 import { LobbyRole } from './lobby-role';
 import TEAM_SIZE from './team-size';

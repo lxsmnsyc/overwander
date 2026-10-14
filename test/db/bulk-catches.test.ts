@@ -2,7 +2,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { type Actor, actor, caughtRow, clearAll, sql } from './clients';
 import { Species } from '../../src/data/ids/species';
 import registerData from '../../src/data';
-import { getReleaseCandy } from '../../src/auth/candy-rules';
+import { getReleaseCandy } from '../../src/model/candy-rules';
 import { getSpeciesData } from '../../src/data/species';
 import { releaseCatch, releaseCatches, setCatchMarks } from '../../src/server/caught';
 import { Items } from '../../src/data/ids/items';

@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { NICKNAME_LIMIT, PLAYER_NAME_LIMIT, asNickname, asPlayerName } from '../src/auth/nickname';
-import type { OwnershipRecord } from '../src/auth/caught-record';
+import { NICKNAME_LIMIT, PLAYER_NAME_LIMIT, asNickname, asPlayerName } from '../src/model/nickname';
+import type { OwnershipRecord } from '../src/model/caught-record';
 import {
   Acquisition,
   isNicknameLocked,
   isOriginalOwner,
   originalOwner,
-} from '../src/auth/caught-record';
+} from '../src/model/caught-record';
 
 /**
  * What a name a player writes may be made of: letters of any script,

@@ -11,12 +11,12 @@ import {
   hasSeenSpecies,
   listDexTallies,
   pokedexId,
-} from '../src/auth/pokedex-record';
+} from '../src/model/pokedex-record';
 
 /**
  * What a stored dex means, asked of the readers rather than of a
  * store. The document is four maps of counts — see
- * [`pokedex-record.ts`](../src/auth/pokedex-record.ts) — and every
+ * [`pokedex-record.ts`](../src/model/pokedex-record.ts) — and every
  * question a screen asks of a dex is answered from them, so what these
  * cover is the arithmetic and the shapes a Firestore document can
  * arrive in

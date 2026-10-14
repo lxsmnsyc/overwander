@@ -1,6 +1,6 @@
 import { BASE_FRIENDSHIP } from '../data/constants/friendship';
-import type { CatchSnapshot } from '../auth/catch-snapshot';
-import { getMaxHealth } from '../auth/health';
+import type { CatchSnapshot } from '../model/catch-snapshot';
+import { getMaxHealth } from '../model/health';
 import {
   DEFAULT_ABILITY_SLOTS,
   DEFAULT_ITEM_SLOTS,
@@ -13,7 +13,7 @@ import { getTotemAlly, getTotemSize } from '../data/overworld/totems';
 import { ALPHA_COPIES, getAlphaSize } from '../data/overworld/alphas';
 import { getTeraRaidType } from '../data/overworld/tera-raids';
 import type { Types } from '../data/constants/types';
-import { rewardLobbyOf } from '../auth/raid-record';
+import { rewardLobbyOf } from '../model/raid-record';
 import AleaRNG from '../core/alea';
 import { MAX_LEVEL } from '../data/constants/levels';
 import {

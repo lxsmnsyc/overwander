@@ -8,7 +8,7 @@ row stores it in.
 Effort is not earned from what a pokemon happened to fight. Every level pays
 `EFFORT_PER_LEVEL` (5) points into a pool the player spends where they like, so
 a freshly caught level 20 pokemon arrives with 100 points nobody has assigned.
-The arithmetic is in [`src/auth/effort.ts`](../../src/auth/effort.ts), and both
+The arithmetic is in [`src/model/effort.ts`](../../src/model/effort.ts), and both
 sides read it: the catch sheet to say what is possible, the server to decide it
 again against the stored record.
 
@@ -129,7 +129,7 @@ The other five are **stated** about a record. `auctionable` is **derived** from
 three columns the row already carries (`ivs`, `shiny` and `species`) and stored
 anyway. It answers "would somebody else pay for this": perfect values, **no**
 values, shiny, or a special-tier species. See
-[`isAuctionableCatch`](../../src/auth/caught-record.ts), and
+[`isAuctionableCatch`](../../src/model/caught-record.ts), and
 [Auctions](auctions.md#what-may-go-on-the-block) for what asks.
 
 Storing a derived value is the thing this codebase otherwise refuses to do: the

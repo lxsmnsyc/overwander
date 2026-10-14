@@ -1,5 +1,5 @@
 import { readOnly } from '../utils/server-calls';
-import type { TeamPresetRecord } from './team-preset-record';
+import type { TeamPresetRecord } from '../model/team-preset-record';
 import getIdToken from './session';
 import { requireReader, requireUid } from '../server/auth';
 import check, { ID, NICKNAME, PARTY, TOKEN, UID } from '../server/validate';
@@ -9,8 +9,8 @@ import {
   writeTeamPreset as writeOnServer,
 } from '../server/team-presets';
 
-export { TEAM_PRESET_LIMIT } from './team-preset-record';
-export type { TeamPresetRecord } from './team-preset-record';
+export { TEAM_PRESET_LIMIT } from '../model/team-preset-record';
+export type { TeamPresetRecord } from '../model/team-preset-record';
 
 /**
  * The parties a player saved for themselves. Reads and writes both go

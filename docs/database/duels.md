@@ -6,7 +6,7 @@ privacy is the whole of what separates it from a raid lobby, which stands open i
 the world for anybody to walk into.
 
 Written by [`src/server/duels.ts`](../../src/server/duels.ts), read through
-[`src/auth/duel-record.ts`](../../src/auth/duel-record.ts).
+[`src/model/duel-record.ts`](../../src/model/duel-record.ts).
 
 ## `duels`
 

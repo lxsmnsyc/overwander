@@ -1,5 +1,5 @@
 import { For, type JSX, createSignal } from 'solid-js';
-import { BOX_COLOURS, BOX_NAME_LIMIT } from '../../../auth/box-record';
+import { BOX_COLOURS, BOX_NAME_LIMIT } from '../../../model/box-record';
 import { Button, TextField } from '../../styled';
 
 /**

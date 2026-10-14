@@ -17,7 +17,7 @@ import {
   hasCaughtShiny,
   hasSeenSpecies,
   listDexTallies,
-} from './pokedex-record';
+} from '../model/pokedex-record';
 
 /**
  * The dex as a screen wants it: every species the player has ever met,

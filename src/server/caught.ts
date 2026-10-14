@@ -6,10 +6,10 @@ import {
   getHeldItemRoom,
   isAuctionableCatch,
   isNicknameLocked,
-} from '../auth/caught-record';
-import { asNickname } from '../auth/nickname';
-import type { EncounterRecord } from '../auth/encounter-record';
-import { getMaxHealth, needsCare } from '../auth/health';
+} from '../model/caught-record';
+import { asNickname } from '../model/nickname';
+import type { EncounterRecord } from '../model/encounter-record';
+import { getMaxHealth, needsCare } from '../model/health';
 import {
   DEFAULT_MOVE_SLOTS,
   Slots,
@@ -30,7 +30,7 @@ import { rollTeraType } from '../data/species/tera-type';
 import { asBuddy } from './buddy';
 import type Families from '../data/ids/families';
 import { catchCandyWorth, grantCandies } from './candy';
-import { getCatchCandy, getReleaseCandy } from '../auth/candy-rules';
+import { getCatchCandy, getReleaseCandy } from '../model/candy-rules';
 import {
   asLocale,
   isEggRecord,
@@ -43,11 +43,11 @@ import { readCaughtIn, readCaughtMany, updateCaughtIn } from './caught-io';
 import { caughtFriendship } from '../data/constants/friendship';
 import { type Tx, getSql, newDocId, tx } from './db';
 import { recordCaughtSpecies } from './pokedex';
-import { Metric } from '../auth/quest-record';
+import { Metric } from '../model/quest-record';
 import { type ProgressBump, bumpProgress } from './quest-progress';
-import { CANDY_STACKS, ITEM_STACKS } from '../auth/stacks';
+import { CANDY_STACKS, ITEM_STACKS } from '../model/stacks';
 import { readStackIn, readStacksIn, spendStackIn, writeStackIn } from './stacks';
-import { asOffset, toLocalISO, toLocalTime } from '../auth/local-time';
+import { asOffset, toLocalISO, toLocalTime } from '../model/local-time';
 import { isCatchLocked } from './locks';
 import { asNumber, asNumberArray, asRecord } from './read';
 import { ServerFlag, isFlagOn } from './flags';

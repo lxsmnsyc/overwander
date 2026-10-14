@@ -20,11 +20,11 @@ import settings from '../../app/settings';
 import { DEFAULT_CHARSET } from '../../../data/overworld/charsets';
 import { watchProfile } from '../../../auth/profile';
 import openSight, { type Sight } from '../../../auth/sight';
-import { MAX_STEP_REPORT } from '../../../auth/egg';
-import type { SnapshotRecord } from '../../../auth/snapshot-record';
+import { MAX_STEP_REPORT } from '../../../model/egg';
+import type { SnapshotRecord } from '../../../model/snapshot-record';
 import { type EggWalk, type WalkReport, walk } from '../../../auth/eggs';
-import type { EncounterRecord } from '../../../auth/encounter-record';
-import { getLocalOffset } from '../../../auth/local-time';
+import type { EncounterRecord } from '../../../model/encounter-record';
+import { getLocalOffset } from '../../../model/local-time';
 import { localNow } from '../../../auth/clock';
 import {
   RaidAction,
@@ -34,7 +34,7 @@ import {
   isRaidLandmark,
   peekRaid,
 } from '../../../auth/raids';
-import { type StopRecord, stopIdOf } from '../../../auth/stop-record';
+import { type StopRecord, stopIdOf } from '../../../model/stop-record';
 import { claimStopReward, enterStop } from '../../../auth/stops';
 import { createSafariSession, isEncounterRetired } from '../../../auth/safari';
 import {
@@ -69,7 +69,7 @@ import { type ItemStack, getItemBand } from '../../../data/overworld/item-pool';
 import Landmark, { LANDMARK_NAMES } from '../../../data/overworld/landmark';
 import Npc from '../../../data/overworld/npc';
 import { NPC_VISIT_TAGS, npcName } from '../../../overworld/npcs';
-import type { GymSeatStanding } from '../../../auth/gym-seat-record';
+import type { GymSeatStanding } from '../../../model/gym-seat-record';
 import { enterGymSeat } from '../../../auth/gym-seats';
 import { type LandmarkStandings, readLandmarkStandings } from '../../../auth/landmark-standings';
 import { CellAura, rankOf } from '../chunk-canvas/scenery';

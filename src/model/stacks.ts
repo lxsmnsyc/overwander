@@ -1,4 +1,4 @@
-import { isRecord } from './__normalize';
+import { isRecord } from './normalize';
 
 /**
  * Everything a player is carrying, read as one shape.

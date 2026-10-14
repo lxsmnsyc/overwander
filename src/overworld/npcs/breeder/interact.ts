@@ -1,4 +1,4 @@
-import { isEgg } from '../../../auth/egg';
+import { isEgg } from '../../../model/egg';
 import { breed } from '../../../auth/npcs';
 import { BREEDING_FEE } from '../../../data/overworld/npc';
 import { canBreed, canLayEggs } from '../../breeding';

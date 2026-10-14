@@ -15,12 +15,12 @@ import check, {
 import { type WalkReport, recordSteps } from '../server/eggs';
 import savePositionOnServerSide, { markBiomeStoodIn, readPosition } from '../server/positions';
 import { syncServerClock } from './clock';
-import { getLocalOffset } from './local-time';
+import { getLocalOffset } from '../model/local-time';
 import { type Unwatch, watchRow } from './watch';
-import { type PositionRecord, asPositionRecord } from './position-record';
+import { type PositionRecord, asPositionRecord } from '../model/position-record';
 import getIdToken from './session';
 
-export type { PositionRecord } from './position-record';
+export type { PositionRecord } from '../model/position-record';
 
 /**
  * Where the player was when they last put the game down.

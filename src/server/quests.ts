@@ -1,9 +1,9 @@
 import 'server-only';
-import type { Metric, QuestStanding, RequirementStanding } from '../auth/quest-record';
-import { GiftKind } from '../auth/gift-record';
-import { ITEM_STACKS } from '../auth/stacks';
+import type { Metric, QuestStanding, RequirementStanding } from '../model/quest-record';
+import { GiftKind } from '../model/gift-record';
+import { ITEM_STACKS } from '../model/stacks';
 import { Balls } from '../data/ids/items';
-import type { EncounterRecord } from '../auth/encounter-record';
+import type { EncounterRecord } from '../model/encounter-record';
 import {
   QUESTS,
   QUEST_ORDER,

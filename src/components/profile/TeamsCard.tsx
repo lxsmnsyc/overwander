@@ -1,7 +1,7 @@
 import { For, type JSX, Show, createResource, createSignal } from 'solid-js';
 import type { CaughtPokemon } from '../../auth/caught';
 import { getCaughtBatched, isGuarded } from '../../auth/caught';
-import { isEgg } from '../../auth/egg';
+import { isEgg } from '../../model/egg';
 import {
   TEAM_PRESET_LIMIT,
   type TeamPresetRecord,
@@ -9,7 +9,7 @@ import {
   listTeamPresets,
   saveTeamPreset,
 } from '../../auth/team-presets';
-import { NICKNAME_LIMIT, asNickname } from '../../auth/nickname';
+import { NICKNAME_LIMIT, asNickname } from '../../model/nickname';
 import { TEAM_SIZE } from '../../auth/teams';
 import BattleData from '../app/battle-data';
 import CatchPicker, { type CatchOption } from '../catches/catch-picker';

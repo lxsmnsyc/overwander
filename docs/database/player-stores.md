@@ -96,7 +96,7 @@ difference, so one arriving after a read that already saw it changes nothing.
 
 ### How a stack is read and written
 
-[`src/auth/stacks.ts`](../../src/auth/stacks.ts) says which table a kind lives in
+[`src/model/stacks.ts`](../../src/model/stacks.ts) says which table a kind lives in
 (`ITEM_STACKS`, `CANDY_STACKS`) and reads one out: `getStack` for a count,
 `listStacks` for the id-count pairs every picker wants.
 

@@ -1,6 +1,6 @@
 import 'server-only';
 import type { TeamRecord, TeamSnapshotRecord } from '../auth/teams';
-import { type CatchSnapshot, asCatchSnapshot } from '../auth/catch-snapshot';
+import { type CatchSnapshot, asCatchSnapshot } from '../model/catch-snapshot';
 import { getSql } from './db';
 import { asNumber, asString } from './read';
 import { readTeams } from './raid-io';

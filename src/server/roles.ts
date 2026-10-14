@@ -1,5 +1,5 @@
 import 'server-only';
-import isStaff, { ADMIN_ROLE, canActOn, canAssign, canBan, runsTheGame } from '../auth/staff';
+import isStaff, { ADMIN_ROLE, canActOn, canAssign, canBan, runsTheGame } from '../model/staff';
 import { requireUid } from './auth';
 import { getSql } from './db';
 import { asString } from './read';

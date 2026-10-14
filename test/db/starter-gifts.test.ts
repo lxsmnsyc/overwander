@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import registerData from '../../src/data';
-import { GiftKind } from '../../src/auth/gift-record';
+import { GiftKind } from '../../src/model/gift-record';
 import { STARTER_SPECIES, listMysteryGifts } from '../../src/server/gifts';
 import { type Actor, actor, clearAll, sql } from './clients';
 

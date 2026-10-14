@@ -59,7 +59,7 @@ import {
   getTrainerPool,
   isAceTrainer,
 } from '../../src/data/overworld/trainers';
-import { Metric, Landmark as QuestLandmark } from '../../src/auth/quest-record';
+import { Metric, Landmark as QuestLandmark } from '../../src/model/quest-record';
 import {
   DAILY_SLOTS,
   dailyWindow,

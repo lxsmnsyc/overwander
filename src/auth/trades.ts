@@ -9,11 +9,11 @@ import {
 import { requireReader, requireUid, requireUidFor } from '../server/auth';
 import { Feature } from '../server/switches';
 import check, { ID, MAYBE_ID, OFFSET, TOKEN, TRADE_OFFER, UID } from '../server/validate';
-import { type TradeRecord, asTradeRecord } from './trade-record';
+import { type TradeRecord, asTradeRecord } from '../model/trade-record';
 import { syncServerClock } from './clock';
 import { type Unwatch, watchTable } from './watch';
 import { readOnly } from '../utils/server-calls';
-import { getLocalOffset } from './local-time';
+import { getLocalOffset } from '../model/local-time';
 import getIdToken from './session';
 
 export {
@@ -25,8 +25,8 @@ export {
   canAnswerTrade,
   canCancelTrade,
   isOpenTrade,
-} from './trade-record';
-export type { TradeRecord } from './trade-record';
+} from '../model/trade-record';
+export type { TradeRecord } from '../model/trade-record';
 
 /**
  * Trading, as the browser sees it. Everything that moves — offering,

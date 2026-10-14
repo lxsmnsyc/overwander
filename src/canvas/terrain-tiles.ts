@@ -1,5 +1,5 @@
 import type Biome from '../data/ids/biome';
-import { asNumber, asNumberArray, asRecord, asRecordArray, asString } from '../auth/__normalize';
+import { asNumber, asNumberArray, asRecord, asRecordArray, asString } from '../model/normalize';
 import sheetStamp, { stampedFile } from './sprite-stamps';
 import { spriteUrl } from './sprite-origin';
 

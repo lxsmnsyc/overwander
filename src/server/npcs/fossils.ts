@@ -1,6 +1,6 @@
 import 'server-only';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
-import { Acquisition } from '../../auth/caught-record';
+import { Acquisition } from '../../model/caught-record';
 import Npc from '../../data/overworld/npc';
 import {
   FOSSIL_BENCH_LIMIT,

@@ -21,8 +21,8 @@ import { buddyEffectsOf, resolveBuddy } from './buddy';
 import { hasCaughtSpecies } from './caught';
 import { getCaughtSpeciesCount } from './pokedex';
 import { syncServerClock } from './clock';
-import { getLocalOffset, getLocale } from './local-time';
-import { type EncounterRecord, asEncounterRecord } from './encounter-record';
+import { getLocalOffset, getLocale } from '../model/local-time';
+import { type EncounterRecord, asEncounterRecord } from '../model/encounter-record';
 import { getInventory } from './inventory';
 import getIdToken from './session';
 

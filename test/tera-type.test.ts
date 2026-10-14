@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
-import { asCaughtPokemon } from '../src/auth/caught-record';
-import { asCatchSnapshot, createCatchSnapshot, previewSnapshot } from '../src/auth/catch-snapshot';
+import { asCaughtPokemon } from '../src/model/caught-record';
+import { asCatchSnapshot, createCatchSnapshot, previewSnapshot } from '../src/model/catch-snapshot';
 import registerGameData from '../src/data';
 import { Stats, packIVs } from '../src/data/constants/stats';
 import { Types } from '../src/data/constants/types';

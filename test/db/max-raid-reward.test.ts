@@ -1,9 +1,9 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { type Actor, actor, clearAll, sql } from './clients';
-import BattleOutcome from '../../src/auth/battle-outcome';
-import { Acquisition } from '../../src/auth/caught-record';
-import { asOffset, toLocalTime } from '../../src/auth/local-time';
-import { RaidAction, RaidKind, raidId } from '../../src/auth/raid-record';
+import BattleOutcome from '../../src/model/battle-outcome';
+import { Acquisition } from '../../src/model/caught-record';
+import { asOffset, toLocalTime } from '../../src/model/local-time';
+import { RaidAction, RaidKind, raidId } from '../../src/model/raid-record';
 import AleaRNG from '../../src/core/alea';
 import { Balls, Items } from '../../src/data/ids/items';
 import { claimRaidReward, enterRaid, peekRaid } from '../../src/server/raids';
@@ -13,7 +13,7 @@ import {
   MAX_RAID_MUSHROOMS,
 } from '../../src/server/raids/reward';
 import { writeCaughtRecord } from '../../src/server/caught';
-import { ITEM_STACKS } from '../../src/auth/stacks';
+import { ITEM_STACKS } from '../../src/model/stacks';
 import { readStack } from '../../src/server/stacks';
 import { writeRaid } from '../../src/server/raid-io';
 import { tx } from '../../src/server/db';

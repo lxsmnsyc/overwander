@@ -23,8 +23,8 @@ import {
   isBidOn,
   isLive,
   nextBid,
-} from '../src/auth/auction-record';
-import { type CaughtPokemon, asCaughtPokemon } from '../src/auth/caught-record';
+} from '../src/model/auction-record';
+import { type CaughtPokemon, asCaughtPokemon } from '../src/model/caught-record';
 import { Items } from '../src/data/ids/items';
 import { MAX_IV, PERFECT_IVS, STAT_ORDER, isZeroIVs, setIV } from '../src/data/constants/stats';
 import { Species } from '../src/data/ids/species';

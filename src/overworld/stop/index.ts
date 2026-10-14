@@ -1,6 +1,6 @@
 import { SHADOW_FRIENDSHIP } from '../../data/constants/friendship';
-import type { CatchSnapshot } from '../../auth/catch-snapshot';
-import { getMaxHealth } from '../../auth/health';
+import type { CatchSnapshot } from '../../model/catch-snapshot';
+import { getMaxHealth } from '../../model/health';
 import { Slots, defaultSlots, withSlots } from '../../data/constants/slots';
 import { getExpertHeldItems } from '../../data/items/expert-loadout';
 import {

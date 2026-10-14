@@ -4,7 +4,7 @@
 // oxlint-disable typescript/no-unnecessary-type-assertion
 import type { Items } from '../data/ids/items';
 import { getItemBand } from '../data/overworld/item-pool';
-import { asNumber, asRecord, asString } from './__normalize';
+import { asNumber, asRecord, asString } from './normalize';
 
 /**
  * What an auction is, and the rules both sides read it by. The shape

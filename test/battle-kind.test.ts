@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import BattleKind, { BATTLE_KIND_NAMES, getBattleKind } from '../src/auth/battle-kind';
+import BattleKind, { BATTLE_KIND_NAMES, getBattleKind } from '../src/model/battle-kind';
 import type { BattleRecord } from '../src/auth/battles';
-import BattleOutcome from '../src/auth/battle-outcome';
+import BattleOutcome from '../src/model/battle-outcome';
 import Biome from '../src/data/ids/biome';
 import Weather from '../src/data/overworld/weather';
 import { UNLIMITED_BATTLE_LIMITS } from '../src/data/constants/battle-limits';

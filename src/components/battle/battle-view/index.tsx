@@ -26,7 +26,7 @@ import { forTheGame } from '../../app/keys';
 import { answered } from '../../app/resource-reads';
 import { PLAYER_ALLIANCE, RaidKind, clearRaid, getRaid, getRaidTitle } from '../../../auth/raids';
 import { BattleModes } from '../../../battle/core';
-import BattleKind, { getBattleKind } from '../../../auth/battle-kind';
+import BattleKind, { getBattleKind } from '../../../model/battle-kind';
 import {
   type RaidBattle,
   collectAftermath,

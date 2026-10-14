@@ -1,7 +1,7 @@
 import 'server-only';
-import BattleOutcome from '../../auth/battle-outcome';
+import BattleOutcome from '../../model/battle-outcome';
 import { UNLIMITED_BATTLE_LIMITS } from '../../data/constants/battle-limits';
-import { RaidKind, type RaidRecord, asRaidRecord, mythicalRelicOf } from '../../auth/raid-record';
+import { RaidKind, type RaidRecord, asRaidRecord, mythicalRelicOf } from '../../model/raid-record';
 import { BOSS_ALLIANCE, PLAYER_ALLIANCE, createRaidBossTeam } from '../../overworld/raid';
 import { getSql, jsonOf, newDocId, tx } from '../db';
 import { foughtBattle, readBattle, readRaid, type readTeam, readTeams } from '../raid-io';

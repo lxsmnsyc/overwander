@@ -1,5 +1,5 @@
 import type Chunk from '../overworld/chunk';
-import { asNumber, asRecord, asString } from './__normalize';
+import { asNumber, asRecord, asString } from './normalize';
 
 /**
  * A gym seat: the one place in the world where players fight each

@@ -1,6 +1,6 @@
 import { For, type JSX, Show, createSignal, from } from 'solid-js';
 import { type FriendLink, watchFriends } from '../../auth/friends';
-import { LOBBY_ROLE_NAMES, LobbyRole } from '../../auth/lobby-role';
+import { LOBBY_ROLE_NAMES, LobbyRole } from '../../model/lobby-role';
 import FriendEntry from '../friends/FriendEntry';
 import {
   Button,

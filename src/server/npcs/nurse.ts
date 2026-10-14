@@ -1,7 +1,7 @@
 import 'server-only';
-import { asCaughtPokemon } from '../../auth/caught-record';
-import { boostedSteps, stepsRemaining } from '../../auth/egg';
-import { getMaxHealth, needsCare } from '../../auth/health';
+import { asCaughtPokemon } from '../../model/caught-record';
+import { boostedSteps, stepsRemaining } from '../../model/egg';
+import { getMaxHealth, needsCare } from '../../model/health';
 import Npc, { DAYCARE_FEE } from '../../data/overworld/npc';
 import { isPurifiable, purifyIVs } from '../../data/items/purifying-gem';
 import { isEggRecord, isGuardedRecord } from '../catch-fields';
@@ -10,7 +10,7 @@ import { getSql, tx } from '../db';
 import { isCatchLocked } from '../locks';
 import { grantGold, spendGold } from '../profile';
 import { purifiedFields } from '../purify';
-import { Metric } from '../../auth/quest-record';
+import { Metric } from '../../model/quest-record';
 import { bumpProgress } from '../quest-progress';
 import { releaseVisit, resolveNpc, takeVisit } from './visits';
 

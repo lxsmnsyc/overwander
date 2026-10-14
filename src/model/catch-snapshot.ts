@@ -15,17 +15,10 @@ import type { Moves } from '../data/ids/moves';
 import type Natures from '../data/ids/natures';
 import type { Genders, Species } from '../data/ids/species';
 import { EncounterType, deriveCatchSize } from '../overworld/encounter';
-import {
-  asBoolean,
-  asNumber,
-  asNumberArray,
-  asRecord,
-  asStatRecord,
-  asString,
-} from './__normalize';
+import { asBoolean, asNumber, asNumberArray, asRecord, asStatRecord, asString } from './normalize';
 import { asMovePoints } from './caught-record';
 import { getMaxHealth } from './health';
-import type { CaughtPokemon } from './caught';
+import type { CaughtPokemon } from './caught-record';
 
 /**
  * A catch frozen at the moment a team snapshot was taken. A battle

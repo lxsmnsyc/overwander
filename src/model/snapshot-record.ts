@@ -1,5 +1,5 @@
 import type { Species } from '../data/ids/species';
-import { asNumber, asString, isRecord } from './__normalize';
+import { asNumber, asString, isRecord } from './normalize';
 
 /**
  * What a chunk's shared window is, and how a stored one is read back.

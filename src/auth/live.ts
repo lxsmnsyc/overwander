@@ -1,6 +1,6 @@
 import { reloadForNewBuild } from '../utils/stale-build';
 import getIdToken from './session';
-import { asNumber, asRecord, asString } from './__normalize';
+import { asNumber, asRecord, asString } from '../model/normalize';
 
 /**
  * The browser's end of the live feed (`src/server/live`): one socket

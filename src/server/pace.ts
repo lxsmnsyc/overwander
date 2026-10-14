@@ -1,6 +1,6 @@
 import 'server-only';
 import type { Sql, Tx } from './db';
-import isStaff from '../auth/staff';
+import isStaff from '../model/staff';
 import { Feature } from './switches';
 
 /**

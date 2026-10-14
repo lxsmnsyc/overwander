@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, it } from 'vitest';
-import { asCaughtPokemon } from '../src/auth/caught-record';
+import { asCaughtPokemon } from '../src/model/caught-record';
 import { Moves } from '../src/data/ids/moves';
 import { Species } from '../src/data/ids/species';
 import registerGameData from '../src/data';

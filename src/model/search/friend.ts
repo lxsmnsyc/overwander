@@ -1,5 +1,5 @@
-import type { QueryVocabulary } from '../core/query';
-import { askedTerms, holds, parseControls, within } from '../core/query';
+import type { QueryVocabulary } from '../../core/query';
+import { askedTerms, holds, parseControls, within } from '../../core/query';
 
 /**
  * What a search box over a friends list can be asked.

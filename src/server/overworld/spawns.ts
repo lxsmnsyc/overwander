@@ -1,7 +1,7 @@
 import 'server-only';
 import { Depth } from '../../overworld/depth';
-import { type EncounterRecord, asEncounterRecord } from '../../auth/encounter-record';
-import { asSpawnRolls, spawnId as nameSpawn } from '../../auth/snapshot-record';
+import { type EncounterRecord, asEncounterRecord } from '../../model/encounter-record';
+import { asSpawnRolls, spawnId as nameSpawn } from '../../model/snapshot-record';
 import type { Spawn } from '../../overworld/chunk-snapshot';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
 import getWorld, { WORLD_GENERATION } from '../../overworld/current';
@@ -27,7 +27,7 @@ import { getSql, tx } from '../db';
 import { readEncounter, writeEncounter } from '../encounter-io';
 import { grantItem } from '../inventory';
 import { recordSeenSpecies } from '../pokedex';
-import { toZoneKey } from '../../auth/local-time';
+import { toZoneKey } from '../../model/local-time';
 import { resolveSnapshot } from './claims';
 
 /** Meeting one wild pokemon, and letting it go */

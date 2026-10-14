@@ -1,6 +1,6 @@
 import 'server-only';
-import BattleOutcome from '../../auth/battle-outcome';
-import BATTLE_TIMEOUT from '../../auth/battle-lock';
+import BattleOutcome from '../../model/battle-outcome';
+import BATTLE_TIMEOUT from '../../model/battle-lock';
 import { readBattle } from '../raid-io';
 import { asNumber } from '../read';
 

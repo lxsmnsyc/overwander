@@ -1,6 +1,6 @@
 import { useSearchParams } from '@solidjs/router';
 import { type JSX, Match, type Resource, Show, Suspense, Switch, createResource } from 'solid-js';
-import { asOffset, getLocalOffset, toLocalTime } from '../../../auth/local-time';
+import { asOffset, getLocalOffset, toLocalTime } from '../../../model/local-time';
 import { atClockHour } from '../../../data/day-clock';
 import ensureBattleData from '../../../data/battle-data';
 import Landmark from '../../../data/overworld/landmark';

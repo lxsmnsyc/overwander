@@ -2,7 +2,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { type Actor, actor, caughtRow, clearAll, sql } from './clients';
 import { Species } from '../../src/data/ids/species';
 import registerData from '../../src/data';
-import { BOX_LIMIT } from '../../src/auth/box-record';
+import { BOX_LIMIT } from '../../src/model/box-record';
 import {
   arrangeBoxes,
   dropBox,

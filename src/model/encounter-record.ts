@@ -10,7 +10,7 @@ import type Natures from '../data/ids/natures';
 import type { Genders, Species } from '../data/ids/species';
 import type Lairs from '../data/overworld/lair';
 import type { Encounter, EncounterType } from '../overworld/encounter';
-import { asBoolean, asNumber, asNumberArray, asRecord, asString } from './__normalize';
+import { asBoolean, asNumber, asNumberArray, asRecord, asString } from './normalize';
 
 /**
  * A player's view of a spawn, keyed by the spawn and the player.

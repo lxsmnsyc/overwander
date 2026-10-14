@@ -1,9 +1,9 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { PLAYER_NAME_LIMIT, asNickname, asPlayerName } from '../../src/auth/nickname';
+import { PLAYER_NAME_LIMIT, asNickname, asPlayerName } from '../../src/model/nickname';
 import { randomUUID } from 'node:crypto';
 import { actor, caughtRow, sql } from './clients';
 import { createProfile } from '../../src/server/profile';
-import { Acquisition } from '../../src/auth/caught-record';
+import { Acquisition } from '../../src/model/caught-record';
 import { setNickname } from '../../src/server/caught';
 
 /**

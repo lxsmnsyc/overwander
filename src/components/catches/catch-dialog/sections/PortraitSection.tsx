@@ -1,11 +1,11 @@
 import { healthLeft } from '../describe';
 
 import type { CaughtPokemon } from '../../../../auth/caught';
-import { catchAura, isShiny } from '../../../../auth/caught-record';
+import { catchAura, isShiny } from '../../../../model/caught-record';
 
-import { isEgg } from '../../../../auth/egg';
+import { isEgg } from '../../../../model/egg';
 
-import { getMaxHealth, isFainted } from '../../../../auth/health';
+import { getMaxHealth, isFainted } from '../../../../model/health';
 import StatusSquares from '../../StatusSquares';
 
 import getSigil from '../../../../data/constants/sigil';

@@ -9,7 +9,7 @@ import {
 } from 'solid-js';
 import useBottleCap from '../../auth/bottle-caps';
 import { type CaughtPokemon, getCaught } from '../../auth/caught';
-import { isShiny } from '../../auth/caught-record';
+import { isShiny } from '../../model/caught-record';
 import { MAX_IV, STAT_NAMES, STAT_ORDER, type Stats, getIV } from '../../data/constants/stats';
 import { Items } from '../../data/ids/items';
 import { SpriteAnim } from '../../data/ids/sprite-anims';

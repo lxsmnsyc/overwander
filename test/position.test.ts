@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { asPositionRecord } from '../src/auth/position-record';
+import { asPositionRecord } from '../src/model/position-record';
 import { CHUNK_CELLS } from '../src/overworld/chunk';
 import { Depth, WORLD_MAX, WORLD_MIN } from '../src/overworld/world';
 

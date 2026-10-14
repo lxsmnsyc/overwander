@@ -6,16 +6,16 @@ import Natures from '../src/data/ids/natures';
 import { PERFECT_IVS, packIVs } from '../src/data/constants/stats';
 import { Balls, Items } from '../src/data/ids/items';
 import { Moves } from '../src/data/ids/moves';
-import { Acquisition, asCaughtPokemon } from '../src/auth/caught-record';
+import { Acquisition, asCaughtPokemon } from '../src/model/caught-record';
 import Biome from '../src/data/ids/biome';
 import { BIOME_NAMES } from '../src/data/biome/names';
-import { getMaxHealth } from '../src/auth/health';
+import { getMaxHealth } from '../src/model/health';
 import { getSpeciesData } from '../src/data/species';
 import matchesCatch, {
   CATCH_VOCABULARY,
   orderCatches,
   planCatchSearch,
-} from '../src/auth/catch-search';
+} from '../src/model/search/catch';
 import parseQuery from '../src/core/query';
 import registerGameData from '../src/data';
 

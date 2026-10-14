@@ -39,7 +39,7 @@ import {
   SNIPER_AIMS,
   STENCH_QUIET,
 } from '../../../src/overworld/abilities/gen-1';
-import { EGG_HATCH_STEPS } from '../../../src/auth/egg';
+import { EGG_HATCH_STEPS } from '../../../src/model/egg';
 import type Overworld from '../../../src/overworld/core';
 import type { Buddy } from '../../../src/overworld/core';
 import { CANDY_ITEM_BONUS } from '../../../src/overworld/items/candy-items';

@@ -1,5 +1,5 @@
-import type { CatchSnapshot } from '../../src/auth/catch-snapshot';
-import { getMaxHealth } from '../../src/auth/health';
+import type { CatchSnapshot } from '../../src/model/catch-snapshot';
+import { getMaxHealth } from '../../src/model/health';
 import type { TeamSnapshotRecord } from '../../src/auth/teams';
 import { MoveRole, getMoveRoles } from '../../src/battle/ai/roles';
 import type Battle from '../../src/battle/core';

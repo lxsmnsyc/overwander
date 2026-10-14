@@ -1,7 +1,7 @@
 import { afterAll, beforeEach, describe, expect, it } from 'vitest';
 import { type Actor, actor, caughtRow, clearAll, sql } from './clients';
 import { acceptTrade, cancelTrade, declineTrade, offerTrade } from '../../src/server/trades';
-import { TradeStatus } from '../../src/auth/trade-record';
+import { TradeStatus } from '../../src/model/trade-record';
 import { BASE_FRIENDSHIP } from '../../src/data/constants/friendship';
 import { Species } from '../../src/data/ids/species';
 

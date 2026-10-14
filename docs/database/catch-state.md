@@ -9,7 +9,7 @@ A battle leaves a party in the state it ended in. A pokemon walks out of a raid
 at whatever health it had when the boss fell, still burned if it was burned, and
 walks into the next fight that way. The report that writes it is
 [`battle_aftermaths`](battle-rows.md#battle_aftermaths), and the rules both
-sides read are in [`src/auth/health.ts`](../../src/auth/health.ts).
+sides read are in [`src/model/health.ts`](../../src/model/health.ts).
 
 **The maximum is stored beside the current figure.** It comes from the same
 formula the battle fights on (`getHealthStat` in
@@ -166,7 +166,7 @@ nothing. A claim whose teams then field nothing leaves the raid pointing at a
 battle row that was never written, which reads as lost and restages.
 
 The client asks the same question through `isLockLive`
-([`src/auth/battle-lock.ts`](../../src/auth/battle-lock.ts)) so the catch dialog
+([`src/model/battle-lock.ts`](../../src/model/battle-lock.ts)) so the catch dialog
 can grey its buttons out and say why. The refusal itself is the server's.
 
 ## See also

@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { type Actor, actor, caughtRow, clearAll, sql } from './clients';
-import { getMaxHealth } from '../../src/auth/health';
-import { asCatchSnapshot } from '../../src/auth/catch-snapshot';
+import { getMaxHealth } from '../../src/model/health';
+import { asCatchSnapshot } from '../../src/model/catch-snapshot';
 import { publishTeamSnapshot } from '../../src/server/raids';
 
 /**

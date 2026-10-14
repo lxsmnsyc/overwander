@@ -1,6 +1,6 @@
 import { type Accessor, type JSX, Show, children, createMemo, createSignal } from 'solid-js';
 import { type CaughtPokemon, findDuplicates } from '../../auth/caught';
-import matchesCatch, { CATCH_VOCABULARY, orderCatches } from '../../auth/catch-search';
+import matchesCatch, { CATCH_VOCABULARY, orderCatches } from '../../model/search/catch';
 import CatchBox, {
   type BoxEntry,
   type BoxGap,

@@ -462,7 +462,7 @@ What is in the way:
       is no index on `chunk_x, chunk_y`. "Who else is in this chunk" is a query
       that does not exist.
 - [ ] **Positions are saved every few seconds rather than every step**
-      (`src/auth/position-record.ts:15`), and only the local player has a slide.
+      (`src/model/position-record.ts:15`), and only the local player has a slide.
       Anybody else would hop between saves without one.
 
 The objection to answer first: the world is effectively endless, so two players

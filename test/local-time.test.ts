@@ -6,7 +6,7 @@ import {
   toLocalISO,
   toLocalTime,
   toZoneKey,
-} from '../src/auth/local-time';
+} from '../src/model/local-time';
 
 /**
  * Late on the 9th in UTC, which is already the 10th east of it

@@ -18,9 +18,9 @@ import check, {
   TIME,
   TRADE_OFFER,
 } from '../src/server/validate';
-import { AuctionLot } from '../src/auth/auction-record';
+import { AuctionLot } from '../src/model/auction-record';
 import { Depth } from '../src/overworld/depth';
-import { GiftKind } from '../src/auth/gift-record';
+import { GiftKind } from '../src/model/gift-record';
 import { MAX_PACKED_IVS } from '../src/data/constants/stats';
 import { Items } from '../src/data/ids/items';
 import { Species } from '../src/data/ids/species';

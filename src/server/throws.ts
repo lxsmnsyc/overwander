@@ -1,7 +1,7 @@
 import 'server-only';
-import { Acquisition, asCaughtPokemon } from '../auth/caught-record';
-import { type EncounterRecord, asEncounterRecord } from '../auth/encounter-record';
-import { ITEM_STACKS } from '../auth/stacks';
+import { Acquisition, asCaughtPokemon } from '../model/caught-record';
+import { type EncounterRecord, asEncounterRecord } from '../model/encounter-record';
+import { ITEM_STACKS } from '../model/stacks';
 import { BALL_ITEMS, type Balls, type Items } from '../data/ids/items';
 import { WORLD_GENERATION } from '../overworld/current';
 import SafariSession, {

@@ -1,5 +1,5 @@
-import { getCatchSlots } from '../../../auth/caught-record';
-import { isEgg } from '../../../auth/egg';
+import { getCatchSlots } from '../../../model/caught-record';
+import { isEgg } from '../../../model/egg';
 import { channelAbility } from '../../../auth/npcs';
 import { getAbilityData } from '../../../data/abilities';
 import { Slots, countAbilitySlots, mostSlots } from '../../../data/constants/slots';

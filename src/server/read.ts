@@ -6,7 +6,7 @@ import {
   asRecordArray,
   asString,
   asStringArray,
-} from '../auth/__normalize';
+} from '../model/normalize';
 
 /**
  * The store hands back untyped rows. Everything the server reads goes

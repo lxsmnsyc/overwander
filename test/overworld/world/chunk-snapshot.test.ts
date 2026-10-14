@@ -31,7 +31,7 @@ import {
 } from '../../../src/data/species';
 import { WILD_HELD_COMMON, WILD_HELD_UNCOMMON } from '../../../src/data/species/held-items';
 import { RaidKind, deriveRaidReward } from '../../../src/auth/raids';
-import { isShadow, isShiny } from '../../../src/auth/caught-record';
+import { isShadow, isShiny } from '../../../src/model/caught-record';
 import { PERFECT_IVS, unpackIVs } from '../../../src/data/constants/stats';
 import {
   CELL_COUNT,

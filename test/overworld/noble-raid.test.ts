@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
-import { asCatchSnapshot } from '../../src/auth/catch-snapshot';
+import { asCatchSnapshot } from '../../src/model/catch-snapshot';
 import {
   BALM_EVERY,
   BALM_SHARE,

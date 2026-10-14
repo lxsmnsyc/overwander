@@ -1,6 +1,6 @@
 import 'server-only';
 import { WORLD_GENERATION } from '../overworld/current';
-import { asOffset } from '../auth/local-time';
+import { asOffset } from '../model/local-time';
 import { getSql } from './db';
 import { asNumber, asString } from './read';
 

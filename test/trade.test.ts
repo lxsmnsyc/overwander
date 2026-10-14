@@ -9,7 +9,7 @@ import {
   canAnswerTrade,
   canCancelTrade,
   isOpenTrade,
-} from '../src/auth/trade-record';
+} from '../src/model/trade-record';
 
 const OPENED = 1_700_000_000_000;
 

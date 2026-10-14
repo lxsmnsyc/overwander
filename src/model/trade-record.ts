@@ -2,7 +2,7 @@
 // assertions that tsc requires but tsgolint (resolving const enums to
 // number) considers unnecessary
 // oxlint-disable typescript/no-unnecessary-type-assertion
-import { asNumber, asRecord, asString } from './__normalize';
+import { asNumber, asRecord, asString } from './normalize';
 
 /**
  * What a trade is, and the rules both sides read it by: one pokemon

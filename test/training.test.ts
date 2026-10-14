@@ -7,7 +7,7 @@ import {
   effortBudget,
   effortSpent,
   unusedEffort,
-} from '../src/auth/effort';
+} from '../src/model/effort';
 import {
   BASE_FRIENDSHIP,
   FRIENDSHIP_STEP_INTERVAL,
@@ -29,7 +29,7 @@ import {
   STAT_ORDER,
   Stats,
 } from '../src/data/constants/stats';
-import { asCaughtPokemon, getMovePoints } from '../src/auth/caught-record';
+import { asCaughtPokemon, getMovePoints } from '../src/model/caught-record';
 import { Balls, ItemFlags, ItemTypes, Items } from '../src/data/ids/items';
 import { Moves } from '../src/data/ids/moves';
 import registerItems, { getItemData } from '../src/data/items';

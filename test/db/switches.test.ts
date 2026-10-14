@@ -2,7 +2,7 @@ import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { type Actor, actor, clearAll, sql } from './clients';
 import { Pace, admit } from '../../src/server/pace';
 import { Feature } from '../../src/server/switches';
-import { ADMIN_ROLE } from '../../src/auth/staff';
+import { ADMIN_ROLE } from '../../src/model/staff';
 
 /**
  * The switches are read in the same statement as the ban check and the

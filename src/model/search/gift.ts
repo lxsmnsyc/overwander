@@ -1,8 +1,8 @@
-import { type CatchGift, type EncounterGift, GiftKind, type MysteryGift } from './gift-record';
-import type { QueryVocabulary } from '../core/query';
-import { alternatives, askedTerms, holds, parseControls, within } from '../core/query';
-import { getItemData } from '../data/items';
-import { getSpeciesData } from '../data/species';
+import { type CatchGift, type EncounterGift, GiftKind, type MysteryGift } from '../gift-record';
+import type { QueryVocabulary } from '../../core/query';
+import { alternatives, askedTerms, holds, parseControls, within } from '../../core/query';
+import { getItemData } from '../../data/items';
+import { getSpeciesData } from '../../data/species';
 
 /**
  * What a search box over the gift ledger can be asked.

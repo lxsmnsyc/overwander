@@ -25,12 +25,12 @@ import {
   setNickname,
   takeItem,
 } from '../../../auth/caught';
-import { getCatchName, isNicknameLocked, isShadow, isShiny } from '../../../auth/caught-record';
-import { NICKNAME_LIMIT, asNickname } from '../../../auth/nickname';
+import { getCatchName, isNicknameLocked, isShadow, isShiny } from '../../../model/caught-record';
+import { NICKNAME_LIMIT, asNickname } from '../../../model/nickname';
 import { useAuth } from '../../../auth/context';
 import { answered, failed, readable } from '../../app/resource-reads';
 
-import { canHatch, isEgg } from '../../../auth/egg';
+import { canHatch, isEgg } from '../../../model/egg';
 import AnimatedSprite from '../../sprites/AnimatedSprite';
 import { HeadingPortrait } from '../../forms/terms';
 import TargetStrip from '../TargetStrip';

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { RaidRecord } from '../src/auth/raid-record';
+import type { RaidRecord } from '../src/model/raid-record';
 
 /**
  * A lobby watched the way every member watches it: the stream's own

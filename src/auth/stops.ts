@@ -13,7 +13,7 @@ import type { Depth } from '../overworld/depth';
 import { syncServerClock } from './clock';
 import getIdToken from './session';
 
-export type { StopPokemon, StopRecord } from './stop-record';
+export type { StopPokemon, StopRecord } from '../model/stop-record';
 export type { StopEntry, StopReward } from '../server/stops';
 
 /**

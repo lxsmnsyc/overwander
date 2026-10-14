@@ -1,6 +1,6 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { asRecord, asRecordArray } from '../src/auth/__normalize';
+import { asRecord, asRecordArray } from '../src/model/normalize';
 import * as hub from '../src/server/live/hub';
 import { LIVE_TABLES, matchesFilter, parseFilter, visibleRow } from '../src/server/live/rules';
 

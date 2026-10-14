@@ -1,7 +1,7 @@
 import 'server-only';
-import { asCaughtPokemon } from '../../auth/caught-record';
-import { isFainted } from '../../auth/health';
-import { RAID_PLAYER_LIMIT } from '../../auth/raid-record';
+import { asCaughtPokemon } from '../../model/caught-record';
+import { isFainted } from '../../model/health';
+import { RAID_PLAYER_LIMIT } from '../../model/raid-record';
 import { WORLD_GENERATION } from '../../overworld/current';
 import { TEAM_SIZE } from '../../auth/teams';
 import { isGuardedRecord } from '../catch-fields';

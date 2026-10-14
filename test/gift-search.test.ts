@@ -1,12 +1,17 @@
 import { beforeAll, describe, expect, it } from 'vitest';
-import { type CatchGift, GiftKind, type ItemGift, type MysteryGift } from '../src/auth/gift-record';
+import {
+  type CatchGift,
+  GiftKind,
+  type ItemGift,
+  type MysteryGift,
+} from '../src/model/gift-record';
 import { Balls, Items } from '../src/data/ids/items';
 import { Genders, Species } from '../src/data/ids/species';
 import matchesGift, {
   GIFT_VOCABULARY,
   type GiftContext,
   orderGifts,
-} from '../src/auth/gift-search';
+} from '../src/model/search/gift';
 import registerGameData from '../src/data';
 
 beforeAll(() => {

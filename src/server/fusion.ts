@@ -1,7 +1,7 @@
 import 'server-only';
-import { asCaughtPokemon, isAuctionableCatch } from '../auth/caught-record';
-import { getMaxHealth, rescaleHealth } from '../auth/health';
-import { ITEM_STACKS } from '../auth/stacks';
+import { asCaughtPokemon, isAuctionableCatch } from '../model/caught-record';
+import { getMaxHealth, rescaleHealth } from '../model/health';
+import { ITEM_STACKS } from '../model/stacks';
 import type { Species } from '../data/ids/species';
 import { getFusionHusk, getFusionItem, getFusionPartner } from '../data/species/fusion';
 import { isEggRecord, isGuardedRecord } from './catch-fields';

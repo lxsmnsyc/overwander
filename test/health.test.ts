@@ -5,9 +5,9 @@ import {
   Acquisition,
   asCaughtPokemon,
   getCatchName,
-} from '../src/auth/caught-record';
-import { NICKNAME_LIMIT, asNickname } from '../src/auth/nickname';
-import type { HealthSource, HealthState } from '../src/auth/health';
+} from '../src/model/caught-record';
+import { NICKNAME_LIMIT, asNickname } from '../src/model/nickname';
+import type { HealthSource, HealthState } from '../src/model/health';
 import {
   NON_VOLATILE_STATUSES,
   carriedStatuses,
@@ -17,7 +17,7 @@ import {
   isNonVolatileStatus,
   needsCare,
   rescaleHealth,
-} from '../src/auth/health';
+} from '../src/model/health';
 import { Stats, getHealthStat, packIVs } from '../src/data/constants/stats';
 import { Balls, Items } from '../src/data/ids/items';
 import { bitterness, isHerbal } from '../src/data/items/medicine';

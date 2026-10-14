@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { TeamRecord } from '../src/auth/teams';
-import matchesTeam, { TEAM_VOCABULARY, orderTeams } from '../src/auth/team-search';
+import matchesTeam, { TEAM_VOCABULARY, orderTeams } from '../src/model/search/team';
 
 /** One row of a raid lobby */
 function team(player: string, catches: number): TeamRecord {

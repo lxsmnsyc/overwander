@@ -6,7 +6,7 @@ import AleaRNG from '../core/alea';
 import type { Species } from '../data/ids/species';
 import type Chunk from '../overworld/chunk';
 import type { Spawn } from '../overworld/chunk-snapshot';
-import { asNumber, asRecord, asString } from './__normalize';
+import { asNumber, asRecord, asString } from './normalize';
 import { toZoneKey } from './local-time';
 
 /**

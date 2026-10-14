@@ -1,5 +1,5 @@
 import 'server-only';
-import type { RaidRecord } from '../auth/raid-record';
+import type { RaidRecord } from '../model/raid-record';
 import { WORLD_GENERATION } from '../overworld/current';
 import { type Tx, getSql } from './db';
 import { asNumber, asString } from './read';

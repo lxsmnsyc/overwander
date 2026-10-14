@@ -1,6 +1,6 @@
 import 'server-only';
-import { BOX_COLOURS, BOX_LIMIT, BOX_SLOT_LIMIT, type BoxRecord } from '../auth/box-record';
-import { asNickname } from '../auth/nickname';
+import { BOX_COLOURS, BOX_LIMIT, BOX_SLOT_LIMIT, type BoxRecord } from '../model/box-record';
+import { asNickname } from '../model/nickname';
 import { getSpeciesData } from '../data/species';
 import type { BulkOutcome } from './caught';
 import { type Tx, getSql, newDocId, tx } from './db';

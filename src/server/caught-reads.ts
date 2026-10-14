@@ -1,6 +1,6 @@
 import 'server-only';
 import type { Fragment, Sql } from 'postgres';
-import type { CatchConstraint, CatchOp } from '../auth/catch-search';
+import type { CatchConstraint, CatchOp } from '../model/search/catch';
 import { getSql } from './db';
 import { readCaughtMany } from './caught-io';
 import { asString } from './read';

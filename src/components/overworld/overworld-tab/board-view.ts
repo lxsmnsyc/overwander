@@ -1,4 +1,4 @@
-import { type SnapshotRecord, spawnId } from '../../../auth/snapshot-record';
+import { type SnapshotRecord, spawnId } from '../../../model/snapshot-record';
 import { localNow } from '../../../auth/clock';
 import type Biome from '../../../data/ids/biome';
 import type Weather from '../../../data/overworld/weather';

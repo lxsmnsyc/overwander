@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
-import { asCatchSnapshot } from '../../src/auth/catch-snapshot';
+import { asCatchSnapshot } from '../../src/model/catch-snapshot';
 import { dynamaxActsLeft } from '../../src/battle/mechanics/dynamax';
 import type Unit from '../../src/battle/unit';
 import registerGameData from '../../src/data';

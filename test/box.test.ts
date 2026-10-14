@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { type Kept, mergeBox, staleIn } from '../src/auth/box';
-import { type CaughtPokemon, asCaughtPokemon } from '../src/auth/caught-record';
+import { type CaughtPokemon, asCaughtPokemon } from '../src/model/caught-record';
 import { Species } from '../src/data/ids/species';
 
 function catchOf(owner: string, level: number): CaughtPokemon {

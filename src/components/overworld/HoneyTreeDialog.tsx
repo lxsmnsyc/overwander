@@ -1,5 +1,5 @@
 import { type JSX, type Resource, Show, Suspense, createResource, createSignal } from 'solid-js';
-import type { EncounterRecord } from '../../auth/encounter-record';
+import type { EncounterRecord } from '../../model/encounter-record';
 import { getItemCount } from '../../auth/inventory';
 import { latherHoneyTree } from '../../auth/snapshots';
 import { Items } from '../../data/ids/items';

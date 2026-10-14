@@ -8,7 +8,7 @@
  * own: it is read in their zone through localNow
  */
 
-import { getLocalOffset, toLocalTime } from './local-time';
+import { getLocalOffset, toLocalTime } from '../model/local-time';
 
 /**
  * How long a measured offset is trusted before the next read

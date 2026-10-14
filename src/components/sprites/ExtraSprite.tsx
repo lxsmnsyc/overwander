@@ -1,5 +1,5 @@
 import { type JSX, Show, createSignal } from 'solid-js';
-import { asNumber, asRecord, asRecordArray, asString } from '../../auth/__normalize';
+import { asNumber, asRecord, asRecordArray, asString } from '../../model/normalize';
 import { spriteUrl } from '../../canvas/sprite-origin';
 
 /**

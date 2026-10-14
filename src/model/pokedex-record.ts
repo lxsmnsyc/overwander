@@ -1,6 +1,6 @@
 import type { Species } from '../data/ids/species';
 import { getBaseFormSpecies } from '../data/ids/species';
-import { isRecord } from './__normalize';
+import { isRecord } from './normalize';
 
 /**
  * What a player has met and what they have kept: a row per species in

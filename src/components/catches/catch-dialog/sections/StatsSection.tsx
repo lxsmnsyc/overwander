@@ -12,7 +12,7 @@ import {
 
 import type { CaughtPokemon } from '../../../../auth/caught';
 
-import { unusedEffort } from '../../../../auth/effort';
+import { unusedEffort } from '../../../../model/effort';
 
 import type { Stats } from '../../../../data/constants/stats';
 import {

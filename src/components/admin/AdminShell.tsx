@@ -1,7 +1,7 @@
 import { A, useLocation } from '@solidjs/router';
 import { For, type JSX, type ParentProps } from 'solid-js';
 import { linksFor, sectionFor } from './sections';
-import { ROLES, ROLE_NAMES, type Role } from '../../auth/staff';
+import { ROLES, ROLE_NAMES, type Role } from '../../model/staff';
 import { Badge } from '../styled';
 import useStaff from './staff-context';
 import { ThemeToggle } from '../app/theme';

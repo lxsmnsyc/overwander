@@ -1,12 +1,12 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { type Actor, actor, clearAll, sql } from './clients';
-import BattleOutcome from '../../src/auth/battle-outcome';
+import BattleOutcome from '../../src/model/battle-outcome';
 import {
   SEAT_DAILY_TAKE,
   SEAT_STAKE_LIMIT,
   SEAT_STAKE_SHARE,
   seatStake,
-} from '../../src/auth/gym-seat-record';
+} from '../../src/model/gym-seat-record';
 
 /**
  * The gym seat's settlement, run against the real database.

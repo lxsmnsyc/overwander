@@ -1,5 +1,5 @@
 import { TRAINER_NAMES } from '../../../data/overworld/trainers';
-import { Foe, Landmark, Metric } from '../../../auth/quest-record';
+import { Foe, Landmark, Metric } from '../../../model/quest-record';
 import { AWARD_NAMES } from '../../../data/ids/awards';
 import type Regions from '../../../data/ids/regions';
 import { REGION_NAMES } from '../../../data/species/regions';

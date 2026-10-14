@@ -7,7 +7,7 @@ import Biome from '../../../src/data/ids/biome';
 import { isFullyEvolved } from '../../../src/data/species';
 import Landmark from '../../../src/data/overworld/landmark';
 import landmarkPicture from '../../../src/data/overworld/landmark-sprite';
-import { RaidKind, getRaidKindAt, getRaidTitle } from '../../../src/auth/raid-record';
+import { RaidKind, getRaidKindAt, getRaidTitle } from '../../../src/model/raid-record';
 import type Chunk from '../../../src/overworld/chunk';
 import ChunkSnapshot, { RAID_INTERVAL } from '../../../src/overworld/chunk-snapshot';
 import World, { Depth, Generation } from '../../../src/overworld/world';

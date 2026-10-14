@@ -14,13 +14,13 @@ import {
   reclaimAuction,
 } from '../../../auth/auctions';
 import { type CaughtPokemon, isFavorite } from '../../../auth/caught';
-import { isEgg } from '../../../auth/egg';
+import { isEgg } from '../../../model/egg';
 import { type Profile, watchProfile } from '../../../auth/profile';
 import matchesAuction, {
   AUCTION_VOCABULARY,
   type AuctionContext,
   orderAuctions,
-} from '../../../auth/auction-search';
+} from '../../../model/search/auction';
 import { useGame } from '../../app/game-context';
 import CatchCard from '../../catches/CatchCard';
 import CatchGrid, { type CatchGridEntry } from '../../catches/CatchGrid';
@@ -45,7 +45,7 @@ import {
   Status,
 } from '../../styled';
 import AuctionDialog, { type AuctionSubject } from '../AuctionDialog';
-import { AUCTION_DURATION } from '../../../auth/auction-record';
+import { AUCTION_DURATION } from '../../../model/auction-record';
 import { type JSX, type Resource, Show, createSignal, from } from 'solid-js';
 import playEffect, { Effect } from '../../app/sound';
 

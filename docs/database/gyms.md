@@ -8,7 +8,7 @@ whoever last took it, for as long as nobody takes it off them.
 
 Written by [`src/server/gym-seats.ts`](../../src/server/gym-seats.ts); the rules
 both sides read live in
-[`src/auth/gym-seat-record.ts`](../../src/auth/gym-seat-record.ts).
+[`src/model/gym-seat-record.ts`](../../src/model/gym-seat-record.ts).
 
 ## `gym_seats`
 

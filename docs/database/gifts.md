@@ -10,7 +10,7 @@ its player's uid; an open one names nobody, stands on every shelf at once, and i
 taken once each. That is why taking one is a row of its own: a single offer has
 as many claims as there are players.
 
-`gifts` ([`src/auth/gift-record.ts`](../../src/auth/gift-record.ts))
+`gifts` ([`src/model/gift-record.ts`](../../src/model/gift-record.ts))
 
 | Column       | Type     | What it is                                            |
 | ------------ | -------- | ----------------------------------------------------- |

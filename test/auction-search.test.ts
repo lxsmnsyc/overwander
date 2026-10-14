@@ -1,9 +1,9 @@
 import { beforeAll, describe, expect, it } from 'vitest';
-import { AuctionLot, type AuctionRecord, asAuctionRecord } from '../src/auth/auction-record';
+import { AuctionLot, type AuctionRecord, asAuctionRecord } from '../src/model/auction-record';
 import { Items } from '../src/data/ids/items';
 import { Species } from '../src/data/ids/species';
-import { asCaughtPokemon } from '../src/auth/caught-record';
-import matchesAuction, { AUCTION_VOCABULARY, orderAuctions } from '../src/auth/auction-search';
+import { asCaughtPokemon } from '../src/model/caught-record';
+import matchesAuction, { AUCTION_VOCABULARY, orderAuctions } from '../src/model/search/auction';
 import registerGameData from '../src/data';
 
 beforeAll(() => {

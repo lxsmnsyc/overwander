@@ -1,6 +1,6 @@
 import { getMoveData, registerMoves } from '../../../src/data/moves';
 import { describe, expect, it } from 'vitest';
-import { MAX_OFFSET, MIN_OFFSET, asOffset } from '../../../src/auth/local-time';
+import { MAX_OFFSET, MIN_OFFSET, asOffset } from '../../../src/model/local-time';
 import Abilities from '../../../src/data/ids/abilities';
 import registerAbilities from '../../../src/data/abilities';
 import registerBiomeSpawns, {
@@ -43,7 +43,7 @@ import {
   getBannedBossMoves,
 } from '../../../src/battle/abilities/special';
 import { EffectType } from '../../../src/battle/events';
-import { getMaxHealth } from '../../../src/auth/health';
+import { getMaxHealth } from '../../../src/model/health';
 import { MAX_EFFORT_PER_STAT, PERFECT_IVS, Stats } from '../../../src/data/constants/stats';
 import { Statuses, packStatuses } from '../../../src/data/ids/status';
 import ChunkSnapshot, {

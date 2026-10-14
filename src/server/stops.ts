@@ -1,22 +1,22 @@
 import 'server-only';
 import { Depth } from '../overworld/depth';
-import BattleOutcome from '../auth/battle-outcome';
+import BattleOutcome from '../model/battle-outcome';
 import { NPC_BATTLE_LIMITS } from '../data/constants/battle-limits';
-import { type EncounterRecord, asEncounterRecord } from '../auth/encounter-record';
-import { asOffset, toLocalTime } from '../auth/local-time';
+import { type EncounterRecord, asEncounterRecord } from '../model/encounter-record';
+import { asOffset, toLocalTime } from '../model/local-time';
 import {
   type StopRecord,
   asStopRecord,
   deriveStopReward,
   stopIdOf,
   toSpawns,
-} from '../auth/stop-record';
-import TEAM_SIZE from '../auth/team-size';
+} from '../model/stop-record';
+import TEAM_SIZE from '../model/team-size';
 import ChunkSnapshot, { NPC_INTERVAL, RocketRank, type Spawn } from '../overworld/chunk-snapshot';
 import getWorld, { WORLD_GENERATION, getChunkOfSeed, getWorldOfChunk } from '../overworld/current';
 import { EncounterType } from '../overworld/encounter';
 import { PLAYER_ALLIANCE } from '../overworld/raid';
-import { getMaxHealth } from '../auth/health';
+import { getMaxHealth } from '../model/health';
 import { packStatuses } from '../data/ids/status';
 import {
   FRONTIER_OUTFIT,
@@ -40,7 +40,7 @@ import Npc, { EXECUTIVE_HONORS } from '../data/overworld/npc';
 import { SYNDICATE_BOSS_HONORS, SYNDICATE_GRUNT_HONORS } from '../data/overworld/syndicate';
 import { trainerLevels } from '../data/overworld/trainers';
 import type Awards from '../data/ids/awards';
-import type { CatchSnapshot } from '../auth/catch-snapshot';
+import type { CatchSnapshot } from '../model/catch-snapshot';
 import {
   ARCADE_PANEL_WEATHER,
   ArcadePanel,
@@ -67,7 +67,7 @@ import type { Species } from '../data/ids/species';
 import AleaRNG from '../core/alea';
 import { hasAwards, recordAwardWin } from './awards';
 import { grantItem } from './inventory';
-import { Foe, Metric } from '../auth/quest-record';
+import { Foe, Metric } from '../model/quest-record';
 import { type ProgressBump, bumpProgress } from './quest-progress';
 import resolveBuddy from './buddy';
 import { getSql, jsonOf, newDocId, tx } from './db';

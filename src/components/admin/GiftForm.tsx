@@ -16,7 +16,7 @@ import {
 } from '../styled';
 import { ITEM_TYPE_ORDER, getItemData, listItemsByType } from '../../data/items';
 import { BALL_ITEMS, Balls, type Items } from '../../data/ids/items';
-import { GiftKind } from '../../auth/gift-record';
+import { GiftKind } from '../../model/gift-record';
 import {
   MAX_IV,
   STAT_NAMES,

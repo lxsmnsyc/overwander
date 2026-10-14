@@ -1,6 +1,6 @@
 import { UNLIMITED_BATTLE_LIMITS } from '../data/constants/battle-limits';
 import type { Species } from '../data/ids/species';
-import { asNumber, asRecordArray, asString } from './__normalize';
+import { asNumber, asRecordArray, asString } from '../model/normalize';
 import { type Unwatch, watchRow, watchTable } from './watch';
 import { readOnly } from '../utils/server-calls';
 import { readBattleRows, readPlayerBattleRows } from '../server/battle-reads';
@@ -14,18 +14,18 @@ import check, {
   TOKEN,
   UID,
 } from '../server/validate';
-import BattleOutcome from './battle-outcome';
+import BattleOutcome from '../model/battle-outcome';
 import Biome from '../data/ids/biome';
 import Weather from '../data/overworld/weather';
 import { FrontierRule } from '../data/overworld/experts';
 import recordOnServer, { type CandyEarned } from '../server/battles';
 import { finishBattle as finishOnServer } from '../server/raids';
-import type BattleAftermath from './battle-aftermath';
+import type BattleAftermath from '../model/battle-aftermath';
 
 import getIdToken from './session';
 import { type TeamSnapshotRecord, getTeamSnapshotBatched } from './teams';
 
-export { default as BattleOutcome } from './battle-outcome';
+export { default as BattleOutcome } from '../model/battle-outcome';
 export type { CandyEarned } from '../server/battles';
 
 /**

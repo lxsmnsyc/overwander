@@ -1,6 +1,6 @@
 import claimDevAdmin from './roles';
 import { DEFAULT_CHARSET } from '../data/overworld/charsets';
-import { DEFAULT_PLAYER_NAME, asPlayerName } from './nickname';
+import { DEFAULT_PLAYER_NAME, asPlayerName } from '../model/nickname';
 import { type Unwatch, watchRow } from './watch';
 import getIdToken from './session';
 import { readOnly } from '../utils/server-calls';

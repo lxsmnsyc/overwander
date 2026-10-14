@@ -25,7 +25,7 @@ import {
 } from '../../../src/data/overworld/item-pool';
 import { Species } from '../../../src/data/ids/species';
 import { getBaseSpecies, getSpeciesData, registerSpecies } from '../../../src/data/species';
-import { seatId } from '../../../src/auth/gym-seat-record';
+import { seatId } from '../../../src/model/gym-seat-record';
 import { CHUNK_CELLS, worldCell } from '../../../src/overworld/chunk';
 import nameTown from '../../../src/data/overworld/town-names';
 import type { Town } from '../../../src/overworld/town';

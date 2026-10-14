@@ -1,5 +1,5 @@
 import { readOnly } from '../utils/server-calls';
-import type { BoxRecord } from './box-record';
+import type { BoxRecord } from '../model/box-record';
 import getIdToken from './session';
 import { requireReader, requireUid } from '../server/auth';
 import check, {
@@ -27,7 +27,7 @@ import {
   readBoxes as readOnServerSide,
 } from '../server/boxes';
 
-export * from './box-record';
+export * from '../model/box-record';
 export type { BoxLayout } from '../server/boxes';
 
 /**

@@ -1,4 +1,4 @@
-import { runsTheGame } from '../../auth/staff';
+import { runsTheGame } from '../../model/staff';
 
 /**
  * What the dashboard is divided into.

@@ -7,7 +7,7 @@ import type ChunkSnapshot from '../../overworld/chunk-snapshot';
 import type { Spawn } from '../../overworld/chunk-snapshot';
 import { grantNestEgg } from '../eggs';
 import { getSql } from '../db';
-import { Landmark, Metric } from '../../auth/quest-record';
+import { Landmark, Metric } from '../../model/quest-record';
 import { bumpProgress } from '../quest-progress';
 import { grantStash } from './caches';
 import { claim, resolveSnapshot } from './claims';

@@ -4,7 +4,7 @@ import {
   type GymSeatStanding,
   SEAT_DAILY_TAKE,
   SEAT_STAKE_SHARE,
-} from '../../auth/gym-seat-record';
+} from '../../model/gym-seat-record';
 import { getProfile } from '../../auth/profile';
 import { getTeamSnapshot } from '../../auth/teams';
 import type { TeamSnapshotRecord } from '../../auth/teams';

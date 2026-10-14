@@ -8,7 +8,7 @@ import type { Moves } from '../data/ids/moves';
 import type Natures from '../data/ids/natures';
 import type { Genders, Species } from '../data/ids/species';
 import { type EncounterRecord, asEncounterRecord } from './encounter-record';
-import { asBoolean, asNumber, asNumberArray, asRecord, asString } from './__normalize';
+import { asBoolean, asNumber, asNumberArray, asRecord, asString } from './normalize';
 
 /**
  * What a mystery gift is, as both sides read it.

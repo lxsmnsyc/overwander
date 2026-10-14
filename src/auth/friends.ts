@@ -1,4 +1,4 @@
-import type { FoundPlayer, FriendLink, FriendRequests, FriendTie } from './friend-record';
+import type { FoundPlayer, FriendLink, FriendRequests, FriendTie } from '../model/friend-record';
 import {
   acceptFriendRequest as acceptOnServerSide,
   blockPlayer as blockOnServerSide,
@@ -33,8 +33,8 @@ import getIdToken from './session';
  * stranger cannot be found without being handed their code.
  */
 
-export { FRIEND_LIMIT, FriendTie, friendActionLabel } from './friend-record';
-export type { FoundPlayer, FriendLink, FriendRequests } from './friend-record';
+export { FRIEND_LIMIT, FriendTie, friendActionLabel } from '../model/friend-record';
+export type { FoundPlayer, FriendLink, FriendRequests } from '../model/friend-record';
 
 /** Sort by the newest tie first, then by uid so the order is settled */
 function byNewest(left: FriendLink, right: FriendLink): number {

@@ -24,7 +24,7 @@ import { Items } from '../../../src/data/ids/items';
 import registerItems, { getItemData } from '../../../src/data/items';
 import { getExpertHeldItems } from '../../../src/data/items/expert-loadout';
 import { Slots, countAbilitySlots, getSlots } from '../../../src/data/constants/slots';
-import type { CatchSnapshot } from '../../../src/auth/catch-snapshot';
+import type { CatchSnapshot } from '../../../src/model/catch-snapshot';
 import {
   type ItemBand,
   MAX_KINDS,
@@ -33,7 +33,7 @@ import {
 } from '../../../src/data/overworld/item-pool';
 import { Species } from '../../../src/data/ids/species';
 import { getSpeciesAbilityPools, getSpeciesData, registerSpecies } from '../../../src/data/species';
-import { isShiny } from '../../../src/auth/caught-record';
+import { isShiny } from '../../../src/model/caught-record';
 import {
   MAX_EFFORT_PER_STAT,
   MAX_IV,
@@ -42,7 +42,7 @@ import {
   Stats,
   getIV,
 } from '../../../src/data/constants/stats';
-import { type StopRecord, deriveStopReward } from '../../../src/auth/stop-record';
+import { type StopRecord, deriveStopReward } from '../../../src/model/stop-record';
 import ChunkSnapshot, {
   EXECUTIVE_CHANCE,
   NPC_INTERVAL,

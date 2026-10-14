@@ -1,6 +1,6 @@
 import 'server-only';
-import { asNumberArray } from '../auth/__normalize';
-import { ITEM_STACKS } from '../auth/stacks';
+import { asNumberArray } from '../model/normalize';
+import { ITEM_STACKS } from '../model/stacks';
 import AleaRNG from '../core/alea';
 import { Slots, countAbilitySlots, getSlots, mostSlots, withSlots } from '../data/constants/slots';
 import type Abilities from '../data/ids/abilities';

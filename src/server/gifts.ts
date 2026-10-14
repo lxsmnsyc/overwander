@@ -1,8 +1,8 @@
 import 'server-only';
-import { Acquisition } from '../auth/caught-record';
-import type { EncounterRecord } from '../auth/encounter-record';
-import type { CatchGift, EncounterGift, GiftRecord, MysteryGift } from '../auth/gift-record';
-import { GiftKind, asGiftRecord } from '../auth/gift-record';
+import { Acquisition } from '../model/caught-record';
+import type { EncounterRecord } from '../model/encounter-record';
+import type { CatchGift, EncounterGift, GiftRecord, MysteryGift } from '../model/gift-record';
+import { GiftKind, asGiftRecord } from '../model/gift-record';
 import AleaRNG from '../core/alea';
 import { defaultSlots } from '../data/constants/slots';
 import Biome from '../data/ids/biome';

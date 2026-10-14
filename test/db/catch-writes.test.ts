@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { type Actor, actor, caughtRow, clearAll, sql } from './clients';
-import { Acquisition, asCaughtPokemon } from '../../src/auth/caught-record';
+import { Acquisition, asCaughtPokemon } from '../../src/model/caught-record';
 import { Slots, mostSlots } from '../../src/data/constants/slots';
 import { Moves } from '../../src/data/ids/moves';
 import { readCaughtIn, updateCaughtIn } from '../../src/server/caught-io';

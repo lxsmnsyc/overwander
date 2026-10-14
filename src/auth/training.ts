@@ -17,7 +17,7 @@ import getIdToken from './session';
  * Training a pokemon: where its effort goes, and what moves it.
  *
  * The catch sheet works out what is possible with the same arithmetic
- * the server does — see [`src/auth/effort.ts`](./effort.ts) — so the
+ * the server does — see [`src/model/effort.ts`](./effort.ts) — so the
  * buttons say the truth before they are pressed. What actually
  * changes a record is decided again here against the stored one.
  */

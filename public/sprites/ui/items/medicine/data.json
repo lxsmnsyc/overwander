@@ -1,7 +1,7 @@
 {
   "compact": true,
   "width": 185,
-  "height": 123,
+  "height": 139,
   "images": [
     {
       "name": "ability-capsule.png",
@@ -147,6 +147,19 @@
       ]
     },
     {
+      "name": "clever-mochi.png",
+      "x": 72,
+      "y": 122,
+      "width": 24,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        4,
+        8
+      ]
+    },
+    {
       "name": "clever-wing-max.png",
       "x": 16,
       "y": 107,
@@ -225,6 +238,19 @@
       ]
     },
     {
+      "name": "fresh-start-mochi.png",
+      "x": 24,
+      "y": 123,
+      "width": 24,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        4,
+        8
+      ]
+    },
+    {
       "name": "fresh-water.png",
       "x": 81,
       "y": 47,
@@ -264,6 +290,19 @@
       ]
     },
     {
+      "name": "genius-mochi.png",
+      "x": 48,
+      "y": 122,
+      "width": 24,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        4,
+        8
+      ]
+    },
+    {
       "name": "genius-wing-max.png",
       "x": 0,
       "y": 107,
@@ -300,6 +339,19 @@
       "trim": [
         5,
         12
+      ]
+    },
+    {
+      "name": "health-mochi.png",
+      "x": 156,
+      "y": 119,
+      "width": 24,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        4,
+        8
       ]
     },
     {
@@ -524,6 +576,19 @@
       ]
     },
     {
+      "name": "muscle-mochi.png",
+      "x": 97,
+      "y": 120,
+      "width": 24,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        4,
+        8
+      ]
+    },
+    {
       "name": "muscle-wing-max.png",
       "x": 149,
       "y": 90,
@@ -693,6 +758,19 @@
       ]
     },
     {
+      "name": "resist-mochi.png",
+      "x": 121,
+      "y": 120,
+      "width": 24,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        4,
+        8
+      ]
+    },
+    {
       "name": "resist-wing-max.png",
       "x": 165,
       "y": 90,
@@ -807,6 +885,19 @@
       "trim": [
         9,
         10
+      ]
+    },
+    {
+      "name": "swift-mochi.png",
+      "x": 0,
+      "y": 123,
+      "width": 24,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        4,
+        8
       ]
     },
     {

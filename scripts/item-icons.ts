@@ -1129,6 +1129,13 @@ const SHRUNK: Shrunk[] = [
   { from: 'hearthflame-mask', to: 'held/hearthflame-mask', fit: 28, plain: true },
   { from: 'cornerstone-mask', to: 'held/cornerstone-mask', fit: 28, plain: true },
   { from: 'mythical-pecha-berry', to: 'key/mythical-pecha-berry', fit: 28, plain: true },
+  { from: 'health-mochi', to: 'medicine/health-mochi', fit: 24, plain: true },
+  { from: 'muscle-mochi', to: 'medicine/muscle-mochi', fit: 24, plain: true },
+  { from: 'resist-mochi', to: 'medicine/resist-mochi', fit: 24, plain: true },
+  { from: 'genius-mochi', to: 'medicine/genius-mochi', fit: 24, plain: true },
+  { from: 'clever-mochi', to: 'medicine/clever-mochi', fit: 24, plain: true },
+  { from: 'swift-mochi', to: 'medicine/swift-mochi', fit: 24, plain: true },
+  { from: 'fresh-start-mochi', to: 'medicine/fresh-start-mochi', fit: 24, plain: true },
 ];
 
 function lightnessOf(colour: number[]): number {

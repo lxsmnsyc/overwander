@@ -41,6 +41,11 @@ const SHAPE_ABILITIES = new Map<Species, Abilities>([
   [Species.TerapagosTerastal, Abilities.TeraShell],
 ]);
 
+/** A true shadow's shape brings what its counterpart's would */
+function shapeAbilityOf(species: Species): Abilities | undefined {
+  return SHAPE_ABILITIES.get(getShadowlessSpecies(species) ?? species);
+}
+
 /**
  * Trade the shape it leaves for the one it takes: a shape's ability
  * comes with it and goes with it, but never takes one the catch carries
@@ -48,14 +53,14 @@ const SHAPE_ABILITIES = new Map<Species, Abilities>([
 function wearShapeAbility(battle: Battle): void {
   battle.on(BattleEvents.UnitSetSpecies, EventPriority.Pre, (event) => {
     const unit = event.source;
-    const left = SHAPE_ABILITIES.get(unit.species);
+    const left = shapeAbilityOf(unit.species);
 
-    if (left != null && left !== SHAPE_ABILITIES.get(event.species) && unit.worn[left] != null) {
+    if (left != null && left !== shapeAbilityOf(event.species) && unit.worn[left] != null) {
       unit.removeAbility(left);
     }
   });
   battle.on(BattleEvents.UnitSetSpecies, EventPriority.Post, (event) => {
-    const bonus = SHAPE_ABILITIES.get(event.species);
+    const bonus = shapeAbilityOf(event.species);
 
     if (bonus != null) {
       event.source.wearAbility(bonus);

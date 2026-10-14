@@ -8,11 +8,13 @@ import { Species } from '../../data/ids/species';
 import { MINIOR_FORMS, getBaseFormSpecies } from '../../data/ids/forms';
 import { NON_VOLATILE_STATUSES, Statuses, Terrains } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, EffectType, MoveTargetType, type UnitAttackEvent } from '../events';
 import { MergedLifecycle } from '../lifecycle';
 import type Unit from '../unit';
-import { isOwnBerry, isPrimalWeather, onUnitActs } from '../utils';
+import { isPrimalWeather } from '../weather';
+import onUnitActs from '../acts';
+import { isOwnBerry } from '../items/held';
 import {
   createAbility,
   createBeastBoostAbility,

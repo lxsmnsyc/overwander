@@ -13,11 +13,14 @@ import {
 import { Statuses } from '../../../../data/ids/status';
 import { BERRY_HEALS, BERRY_STATUS_CURES } from '../../../../data/items/berries';
 import { listItemsByType } from '../../../../data/items';
-import type Battle from '../../../core';
+import type Battle from '../../../battle';
 import { BattleEvents, EffectType, MoveTargetType } from '../../../events';
 import { MergedLifecycle } from '../../../lifecycle';
 import type Unit from '../../../unit';
-import { isConsumable, isWeatherRainy, onUnitActs, unitTarget } from '../../../utils';
+import { unitTarget } from '../../../unit-checks';
+import { isWeatherRainy } from '../../../weather';
+import onUnitActs from '../../../acts';
+import { isConsumable } from '../../../items/held';
 import { createAbility, getAbilityHolders } from '../../__create';
 import { createUnitCounter, enemyHolder, isPhysicalMove, sideHolder } from '../__create';
 

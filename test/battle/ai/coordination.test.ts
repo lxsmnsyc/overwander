@@ -11,7 +11,7 @@ import {
 import { PLEDGE_PAIR_BONUS } from '../../../src/battle/moves/pledges';
 import Team from '../../../src/battle/team';
 import type Unit from '../../../src/battle/unit';
-import { unitTarget } from '../../../src/battle/utils';
+import { unitTarget } from '../../../src/battle/unit-checks';
 import { Stages } from '../../../src/data/constants/stats';
 import { Types } from '../../../src/data/constants/types';
 import { Moves } from '../../../src/data/ids/moves';

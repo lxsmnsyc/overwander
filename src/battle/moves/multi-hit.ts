@@ -2,7 +2,7 @@ import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { MoveAttackFlags, type Moves } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
 import { MULTI_HIT_MOVES, type MultiHitConfig, estimateMoveHits } from '../../data/moves/multi-hit';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, type MoveTarget, MoveTargetType } from '../events';
 import type Unit from '../unit';
 

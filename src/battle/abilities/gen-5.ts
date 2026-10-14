@@ -7,7 +7,7 @@ import { Statuses } from '../../data/ids/status';
 import { isDanceMove } from '../../data/moves/dances';
 import { getSpeciesData } from '../../data/species';
 import { getWornPartner } from '../../data/species/fusion';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import { MergedLifecycle } from '../lifecycle';
 import type Unit from '../unit';

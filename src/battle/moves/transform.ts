@@ -4,7 +4,7 @@ import { USELESS_PENALTY } from '../ai/score';
 import type { Types } from '../../data/constants/types';
 import { Moves } from '../../data/ids/moves';
 import type { Species } from '../../data/ids/species';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import type Unit from '../unit';
 

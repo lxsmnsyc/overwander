@@ -1,4 +1,4 @@
-import type Battle from '../../core';
+import type Battle from '../../battle';
 import arceus from './gen-4/arceus';
 import bulbasaurToPikachu from './gen-1/bulbasaur-to-pikachu';
 import chikoritaToCelebi from './gen-2/chikorita-to-celebi';

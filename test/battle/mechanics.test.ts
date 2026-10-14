@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { AttackPriority, EventPriority } from '../../src/core/event-emitter';
-import { BattleModes } from '../../src/battle/core';
+import { BattleModes } from '../../src/battle/battle';
 import { BattleEvents, EffectType, MoveTargetType } from '../../src/battle/events';
-import type Battle from '../../src/battle/core';
+import type Battle from '../../src/battle/battle';
 import Team from '../../src/battle/team';
 import type Unit from '../../src/battle/unit';
 import { MOVE_DELAY, criticalChance, resolveMoveTargets } from '../../src/battle/mechanics/move';

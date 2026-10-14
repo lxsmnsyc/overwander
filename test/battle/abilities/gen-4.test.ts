@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type Battle from '../../../src/battle/core';
+import type Battle from '../../../src/battle/battle';
 import {
   BattleEvents,
   EffectType,

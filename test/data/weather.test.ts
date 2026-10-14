@@ -36,7 +36,7 @@ import type { Moves } from '../../src/data/ids/moves';
 import { TYPE_NAMES, Types } from '../../src/data/constants/types';
 import { MAX_IV, STAT_ORDER, getIV } from '../../src/data/constants/stats';
 import registerGameData from '../../src/data';
-import { BattleModes } from '../../src/battle/core';
+import { BattleModes } from '../../src/battle/battle';
 import { Weathers } from '../../src/data/ids/status';
 import { createTrainerBattle } from '../../src/overworld/stop-battle';
 import { getSignatureAbility } from '../../src/data/abilities';

@@ -1,4 +1,4 @@
-import type Battle from '../core';
+import type Battle from '../battle';
 import setupBattleItems from './battle-items';
 import setupBerries from './berries';
 import setupDrinks from './drinks';

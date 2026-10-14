@@ -3,13 +3,14 @@ import Abilities from '../../../../data/ids/abilities';
 import { MoveAttackFlags } from '../../../../data/ids/moves';
 import { Statuses } from '../../../../data/ids/status';
 import { isPunchMove } from '../../../../data/moves/punches';
-import type Battle from '../../../core';
+import type Battle from '../../../battle';
 import { BattleEvents, MoveTargetType, type UnitTriggerMoveChildEvent } from '../../../events';
 import { MergedLifecycle } from '../../../lifecycle';
 import { STATUS_MOVES } from '../../../moves/status';
 import { isCentered } from '../../../status/centered';
 import type Unit from '../../../unit';
-import { isOwnBerry, unitTarget } from '../../../utils';
+import { unitTarget } from '../../../unit-checks';
+import { isOwnBerry } from '../../../items/held';
 import { createAbility, getAbilityHolders } from '../../__create';
 import { createUnitState, isPseudoMove, isSingleTargetMove } from '../__create';
 

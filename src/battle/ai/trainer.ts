@@ -1,5 +1,5 @@
 import { Moves } from '../../data/ids/moves';
-import type Battle from '../core';
+import type Battle from '../battle';
 import type { AIMoveChoice, MoveTarget } from '../events';
 import { GUARD_MOVES } from '../moves/protect';
 import type Team from '../team';

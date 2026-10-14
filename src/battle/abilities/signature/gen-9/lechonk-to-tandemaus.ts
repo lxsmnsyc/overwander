@@ -3,12 +3,12 @@ import Abilities from '../../../../data/ids/abilities';
 import { MoveAttackFlags, Moves } from '../../../../data/ids/moves';
 import { Statuses } from '../../../../data/ids/status';
 import { isPunchMove } from '../../../../data/moves/punches';
-import type Battle from '../../../core';
+import type Battle from '../../../battle';
 import { BattleEvents, EffectType, MoveTargetType, type UnitAttackEvent } from '../../../events';
 import { MergedLifecycle } from '../../../lifecycle';
 import { MULTI_HIT_MOVES } from '../../../moves/multi-hit';
 import type Unit from '../../../unit';
-import { isOwnBerry } from '../../../utils';
+import { isOwnBerry } from '../../../items/held';
 import { createAbility } from '../../__create';
 import { createNextCastPenalty, createUnitState, enemyHolder } from '../__create';
 

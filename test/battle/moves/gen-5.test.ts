@@ -5,7 +5,7 @@ import {
   EffectType,
   MoveTargetType,
 } from '../../../src/battle/events';
-import type Battle from '../../../src/battle/core';
+import type Battle from '../../../src/battle/battle';
 import type Unit from '../../../src/battle/unit';
 import { EventPriority } from '../../../src/core/event-emitter';
 import { Stages, Stats, StatsKind } from '../../../src/data/constants/stats';

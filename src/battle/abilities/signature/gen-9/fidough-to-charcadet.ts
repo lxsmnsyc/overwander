@@ -4,13 +4,14 @@ import { Types } from '../../../../data/constants/types';
 import Abilities from '../../../../data/ids/abilities';
 import { Items } from '../../../../data/ids/items';
 import { MoveAttackFlags, Moves } from '../../../../data/ids/moves';
-import type Battle from '../../../core';
+import type Battle from '../../../battle';
 import { BattleEvents, EffectType, type UnitAttackEvent } from '../../../events';
 import { MergedLifecycle } from '../../../lifecycle';
 import { MAJOR_STATUS_CONDITIONS } from '../../../status';
 import turns from '../../../turn';
 import type Unit from '../../../unit';
-import { hasAnyStatus, hasFreeItemSlot, unitTarget } from '../../../utils';
+import { hasAnyStatus, unitTarget } from '../../../unit-checks';
+import { hasFreeItemSlot } from '../../../items/held';
 import { createAbility, getAbilityHolders } from '../../__create';
 import { createNextCastPenalty, createTimedMarks, createUnitState } from '../__create';
 

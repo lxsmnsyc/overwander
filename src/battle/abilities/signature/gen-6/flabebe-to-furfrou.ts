@@ -7,7 +7,7 @@ import type { EffectCause } from '../../../events';
 import { MAJOR_STATUS_CONDITIONS } from '../../../status';
 import type Unit from '../../../unit';
 import { MergedLifecycle } from '../../../lifecycle';
-import { hasAnyStatus } from '../../../utils';
+import { hasAnyStatus } from '../../../unit-checks';
 import { createAbility } from '../../__create';
 
 /** How much health a goat needs left before it will carry anything */

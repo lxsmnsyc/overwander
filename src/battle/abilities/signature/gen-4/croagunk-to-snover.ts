@@ -6,7 +6,8 @@ import { BattleEvents, MoveTargetType } from '../../../events';
 import { MergedLifecycle } from '../../../lifecycle';
 import type Unit from '../../../unit';
 import { isCentered } from '../../../status/centered';
-import { isWeatherHail, unitTarget } from '../../../utils';
+import { unitTarget } from '../../../unit-checks';
+import { isWeatherHail } from '../../../weather';
 import { createAbility, getAbilityHolders } from '../../__create';
 
 /** How much of the wind-up is left once the fight is decided */

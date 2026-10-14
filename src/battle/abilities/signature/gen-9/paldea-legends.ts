@@ -3,7 +3,7 @@ import { Stages } from '../../../../data/constants/stats';
 import Abilities from '../../../../data/ids/abilities';
 import { MoveAttackFlags, MoveCategories, Moves } from '../../../../data/ids/moves';
 import { Terrains } from '../../../../data/ids/status';
-import type Battle from '../../../core';
+import type Battle from '../../../battle';
 import { BattleEvents, type UnitAttackEvent } from '../../../events';
 import { MergedLifecycle } from '../../../lifecycle';
 import { getCastTime } from '../../../mechanics/move/timing';
@@ -11,7 +11,7 @@ import { HAPPY_HOUR_FACTOR, PAY_DAY_COINS_PER_LEVEL } from '../../../moves/pay-d
 import type Team from '../../../team';
 import turns from '../../../turn';
 import type Unit from '../../../unit';
-import { isWeatherSunny } from '../../../utils';
+import { isWeatherSunny } from '../../../weather';
 import { createAbility } from '../../__create';
 import { createTimedMarks } from '../__create';
 

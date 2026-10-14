@@ -2,7 +2,7 @@ import { AttackPriority } from '../../core/event-emitter';
 import { countsAgainstSlots } from '../../data/constants/slots';
 import Abilities from '../../data/ids/abilities';
 import { Moves } from '../../data/ids/moves';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, MoveTargetType } from '../events';
 import type Unit from '../unit';
 import { seesFully } from '../ai/fog';

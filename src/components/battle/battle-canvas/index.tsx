@@ -1,5 +1,5 @@
 import { type JSX, createSignal, onCleanup, onMount } from 'solid-js';
-import type Battle from '../../../battle/core';
+import type Battle from '../../../battle/battle';
 import type SpeciesSpriteAnimation from '../../../canvas/species-sprite-animation';
 
 import type { FieldVisual } from '../../../canvas/battle/moves/__painted';

@@ -4,7 +4,7 @@ import type Abilities from '../../../../data/ids/abilities';
 import { MoveAttackFlags, MoveCategories } from '../../../../data/ids/moves';
 import { getMoveData } from '../../../../data/moves';
 import { Statuses } from '../../../../data/ids/status';
-import type Battle from '../../../core';
+import type Battle from '../../../battle';
 import { BattleEvents, EffectType, MoveTargetType } from '../../../events';
 import { type Lifecycle, MergedLifecycle } from '../../../lifecycle';
 import type Unit from '../../../unit';

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { AttackPriority } from '../../../src/core/event-emitter';
 import { chooseMove, setupChooseMoveAI } from '../../../src/battle/ai/choose-move';
-import type Battle from '../../../src/battle/core';
+import type Battle from '../../../src/battle/battle';
 import { BattleEvents, MoveTargetType, type UnitAttackEvent } from '../../../src/battle/events';
 import { canDynamax } from '../../../src/battle/gimmicks/dynamax';
 import {

@@ -5,7 +5,7 @@ import { DamageFlags, MoveAttackFlags, Moves } from '../../../../data/ids/moves'
 import { BattleEvents, EffectType, MoveTargetType } from '../../../events';
 import { MergedLifecycle } from '../../../lifecycle';
 import type Unit from '../../../unit';
-import { onUnitActs } from '../../../utils';
+import onUnitActs from '../../../acts';
 import { createAbility, getAbilityHolders } from '../../__create';
 import {
   createReignAbility,

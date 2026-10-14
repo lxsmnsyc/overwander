@@ -4,10 +4,10 @@ import { Moves } from '../../data/ids/moves';
 import { BERRY_RESIST_TYPES, isBerry } from '../../data/items/berries';
 import { GEMS } from '../../data/items/gems';
 import { USELESS_PENALTY } from '../ai/score';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import type Unit from '../unit';
-import { isConsumable, stealableItem } from '../utils';
+import { isConsumable, stealableItem } from '../items/held';
 import { seesFully } from '../ai/fog';
 
 /**

@@ -7,11 +7,11 @@ import { getMoveData } from '../../data/moves';
 import { Statuses, Weathers } from '../../data/ids/status';
 import { Species } from '../../data/ids/species';
 import { getBaseFormSpecies } from '../../data/ids/forms';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import { MergedLifecycle } from '../lifecycle';
 import { STATUS_MOVES } from '../moves/status';
-import { unitTarget } from '../utils';
+import { unitTarget } from '../unit-checks';
 import type Unit from '../unit';
 import {
   createAbility,

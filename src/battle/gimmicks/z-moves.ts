@@ -13,7 +13,7 @@ import {
   zPowerOf,
 } from '../../data/moves/z-moves';
 import { SIGNATURE_CRYSTALS, TYPE_CRYSTALS } from '../../data/items/z-crystals';
-import type Battle from '../core';
+import type Battle from '../battle';
 import {
   BattleEvents,
   type CastingData,

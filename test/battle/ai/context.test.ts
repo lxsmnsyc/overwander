@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { getAIContext, withAIContext } from '../../../src/battle/ai/context';
 import setupFog from '../../../src/battle/ai/fog';
-import { unitTarget } from '../../../src/battle/utils';
+import { unitTarget } from '../../../src/battle/unit-checks';
 import { BattleEvents } from '../../../src/battle/events';
 import { EventPriority } from '../../../src/core/event-emitter';
 import { Moves } from '../../../src/data/ids/moves';

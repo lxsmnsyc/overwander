@@ -3,7 +3,7 @@
 import { describe, expect, it } from 'vitest';
 import { UMBRAL_STRIKE_SCALE } from '../../../../src/battle/abilities/signature/gen-7/alola-mythicals';
 import { EffectType } from '../../../../src/battle/events';
-import { unitTarget } from '../../../../src/battle/utils';
+import { unitTarget } from '../../../../src/battle/unit-checks';
 import { SpawnRarity, getSpawnRarity } from '../../../../src/data/biome';
 import { Stages, Stats } from '../../../../src/data/constants/stats';
 import { Types } from '../../../../src/data/constants/types';

@@ -7,7 +7,7 @@ import { Statuses, Terrains } from '../../../../data/ids/status';
 import { getMoveData } from '../../../../data/moves';
 import { isPunchMove } from '../../../../data/moves/punches';
 import { healWorth } from '../../../ai/score';
-import type Battle from '../../../core';
+import type Battle from '../../../battle';
 import {
   BattleEvents,
   EffectType,
@@ -21,7 +21,7 @@ import { stonesOver } from '../../../moves/stealth-rock';
 import { GUARDS } from '../../../moves/team-guards';
 import turns from '../../../turn';
 import type Unit from '../../../unit';
-import { isPrimalWeather } from '../../../utils';
+import { isPrimalWeather } from '../../../weather';
 import { createAbility } from '../../__create';
 import { createTimedMarks } from '../__create';
 

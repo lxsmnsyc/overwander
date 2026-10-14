@@ -3,7 +3,7 @@ import type { Stages } from '../../../../data/constants/stats';
 import { Stats } from '../../../../data/constants/stats';
 import Abilities from '../../../../data/ids/abilities';
 import type { Types } from '../../../../data/constants/types';
-import type Battle from '../../../core';
+import type Battle from '../../../battle';
 import { BattleEvents, EffectType } from '../../../events';
 import { MergedLifecycle } from '../../../lifecycle';
 import type Unit from '../../../unit';

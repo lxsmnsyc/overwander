@@ -5,7 +5,7 @@ import { Items } from '../../data/ids/items';
 import { MoveCategories, Moves, StatFlags } from '../../data/ids/moves';
 import { MULTI_HIT_MOVES } from '../../data/moves/multi-hit';
 import { getSpeciesData } from '../../data/species/__create';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, type UnitAttackEvent } from '../events';
 import { maskShapeOf, maskTypeOf, teraShapeOf } from '../items/masks';
 import { isMegaHolder } from './mega';

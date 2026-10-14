@@ -9,7 +9,9 @@ import { BattleEvents, EffectType, MoveTargetType } from '../../../events';
 import { MergedLifecycle } from '../../../lifecycle';
 import turns from '../../../turn';
 import type Unit from '../../../unit';
-import { isConsumable, isWeatherSandstorm, stealableItem, unitTarget } from '../../../utils';
+import { unitTarget } from '../../../unit-checks';
+import { isWeatherSandstorm } from '../../../weather';
+import { isConsumable, stealableItem } from '../../../items/held';
 import { createAbility, getAbilityHolders } from '../../__create';
 import { createTimedMarks, worstHurtMate } from '../__create';
 

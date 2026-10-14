@@ -5,7 +5,8 @@ import { MoveAttackFlags } from '../../../../data/ids/moves';
 import { BattleEvents, EffectType, MoveTargetType } from '../../../events';
 import { MergedLifecycle } from '../../../lifecycle';
 import type Unit from '../../../unit';
-import { isWeatherSandstorm, onUnitActs } from '../../../utils';
+import { isWeatherSandstorm } from '../../../weather';
+import onUnitActs from '../../../acts';
 import { createAbility } from '../../__create';
 
 /** What reading something in better shape than itself is worth */

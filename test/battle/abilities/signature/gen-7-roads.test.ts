@@ -6,7 +6,7 @@ import { Types } from '../../../../src/data/constants/types';
 import Abilities from '../../../../src/data/ids/abilities';
 import { MoveCategories, Moves } from '../../../../src/data/ids/moves';
 import Team from '../../../../src/battle/team';
-import { unitTarget } from '../../../../src/battle/utils';
+import { unitTarget } from '../../../../src/battle/unit-checks';
 import {
   SCORE_TO_SETTLE_SCALE,
   TRICKLE_CHARGE_LIMIT,

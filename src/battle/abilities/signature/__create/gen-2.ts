@@ -4,11 +4,11 @@ import { Stats } from '../../../../data/constants/stats';
 import type Abilities from '../../../../data/ids/abilities';
 import { DamageFlags, MoveAttackFlags } from '../../../../data/ids/moves';
 import { Statuses } from '../../../../data/ids/status';
-import type Battle from '../../../core';
+import type Battle from '../../../battle';
 import { BattleEvents, EffectType } from '../../../events';
 import { MergedLifecycle } from '../../../lifecycle';
 import type Unit from '../../../unit';
-import { onUnitActs } from '../../../utils';
+import onUnitActs from '../../../acts';
 import { createAbility } from '../../__create';
 import { createUnitState } from './helpers';
 

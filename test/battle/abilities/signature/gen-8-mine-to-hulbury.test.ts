@@ -8,10 +8,10 @@ import Abilities from '../../../../src/data/ids/abilities';
 import { Items } from '../../../../src/data/ids/items';
 import { MoveCategories, MoveTargets, Moves } from '../../../../src/data/ids/moves';
 import { Statuses, Weathers } from '../../../../src/data/ids/status';
-import type Battle from '../../../../src/battle/core';
+import type Battle from '../../../../src/battle/battle';
 import { BattleEvents, EffectType } from '../../../../src/battle/events';
 import turns from '../../../../src/battle/turn';
-import { unitTarget } from '../../../../src/battle/utils';
+import { unitTarget } from '../../../../src/battle/unit-checks';
 import {
   SPEARHEAD_COOLDOWN,
   VENOM_CHARGE_COOLDOWN,

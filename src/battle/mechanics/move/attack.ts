@@ -6,7 +6,7 @@ import {
   type Types,
 } from '../../../data/constants/types';
 import { DamageFlags, MoveAttackFlags, MoveCategories, StatFlags } from '../../../data/ids/moves';
-import type Battle from '../../core';
+import type Battle from '../../battle';
 import type {
   CheckUnitAttackEffectChanceEvent,
   CheckUnitAttackEffectEvent,

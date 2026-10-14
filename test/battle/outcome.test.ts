@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import Alliance from '../../src/battle/alliance';
-import { BattleModes } from '../../src/battle/core';
+import { BattleModes } from '../../src/battle/battle';
 import { EffectType, MoveTargetType } from '../../src/battle/events';
 import setupOutcomeMechanics from '../../src/battle/mechanics/outcome';
 import createRaidBattle from '../../src/battle/setup';

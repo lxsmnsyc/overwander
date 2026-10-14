@@ -5,7 +5,7 @@ import { Species } from '../../data/ids/species';
 import { MEGA_STONES, getHolderMega, getMegaStone } from '../../data/items/mega-stones';
 import { getSpeciesData } from '../../data/species/__create';
 import { getShadowlessSpecies, getTrueShadowShape } from '../../data/species/true-shadow';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents } from '../events';
 import type Team from '../team';
 import type Unit from '../unit';

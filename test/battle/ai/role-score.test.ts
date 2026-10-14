@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { chooseMove, setupChooseMoveAI } from '../../../src/battle/ai/choose-move';
 import { MoveRole, ROLE_BASE } from '../../../src/battle/ai/roles';
 import { BASE_SCORE } from '../../../src/battle/ai/score';
-import { BattleModes } from '../../../src/battle/core';
+import { BattleModes } from '../../../src/battle/battle';
 import {
   BattleEvents,
   type CheckUnitAIMoveScoreEvent,
@@ -12,7 +12,7 @@ import {
   MoveTargetType,
 } from '../../../src/battle/events';
 import type Unit from '../../../src/battle/unit';
-import { unitTarget } from '../../../src/battle/utils';
+import { unitTarget } from '../../../src/battle/unit-checks';
 import { Stats, StatsKind } from '../../../src/data/constants/stats';
 import { Types } from '../../../src/data/constants/types';
 import Abilities from '../../../src/data/ids/abilities';

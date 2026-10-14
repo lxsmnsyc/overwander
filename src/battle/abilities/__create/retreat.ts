@@ -3,7 +3,7 @@ import { Stats } from '../../../data/constants/stats';
 import type Abilities from '../../../data/ids/abilities';
 import { DamageFlags, MoveTargetPriorities } from '../../../data/ids/moves';
 import { checkTeamUnit } from '../../ai/rating';
-import type Battle from '../../core';
+import type Battle from '../../battle';
 import { BattleEvents, EffectType } from '../../events';
 import { createAbility } from './create';
 

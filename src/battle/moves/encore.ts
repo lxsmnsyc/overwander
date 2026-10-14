@@ -7,10 +7,10 @@ import { MoveCategories, Moves } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
 import { Statuses } from '../../data/ids/status';
 import { USELESS_PENALTY } from '../ai/score';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, EffectType, type MoveTarget, MoveTargetType } from '../events';
 import type Unit from '../unit';
-import { unitTarget } from '../utils';
+import { unitTarget } from '../unit-checks';
 import { effectIn, landsIn } from '../ai/context';
 
 /**

@@ -10,7 +10,7 @@ import {
   MoveTargetType,
 } from '../../../src/battle/events';
 import type Unit from '../../../src/battle/unit';
-import { unitTarget } from '../../../src/battle/utils';
+import { unitTarget } from '../../../src/battle/unit-checks';
 import { Stages, Stats, StatsKind } from '../../../src/data/constants/stats';
 import Abilities from '../../../src/data/ids/abilities';
 import { Items } from '../../../src/data/ids/items';

@@ -11,7 +11,7 @@ import {
   maxPowerOf,
 } from '../../../data/moves/max-moves';
 import { isPseudoMove } from '../../../data/moves/pseudo';
-import type Battle from '../../core';
+import type Battle from '../../battle';
 import {
   BattleEvents,
   type CastingData,
@@ -19,7 +19,7 @@ import {
   type MoveTarget,
   MoveTargetType,
 } from '../../events';
-import { isPrimalWeather } from '../../utils';
+import { isPrimalWeather } from '../../weather';
 import type Unit from '../../unit';
 import { TERRAIN_DURATION } from '../../moves/terrain';
 import { WEATHER_DURATION } from '../../moves/weather';

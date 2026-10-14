@@ -5,11 +5,13 @@ import type { Types } from '../../../../data/constants/types';
 import { DamageFlags, MoveAttackFlags, MoveCategories } from '../../../../data/ids/moves';
 import { getWeatherMove } from '../../../../data/moves';
 import { Statuses, TeamStatuses, type Weathers } from '../../../../data/ids/status';
-import type Battle from '../../../core';
+import type Battle from '../../../battle';
 import { BattleEvents, EffectType, MoveTargetType } from '../../../events';
 import { type Lifecycle, MergedLifecycle } from '../../../lifecycle';
 import type Unit from '../../../unit';
-import { isPrimalWeather, onUnitActs, slipsTraps } from '../../../utils';
+import { slipsTraps } from '../../../unit-checks';
+import { isPrimalWeather } from '../../../weather';
+import onUnitActs from '../../../acts';
 import { createAbility, getAbilityHolders } from '../../__create';
 import { STAT_STAGES, createStatExtremes } from '../../__create/stats';
 import {

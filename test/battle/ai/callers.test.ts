@@ -10,7 +10,7 @@ import {
 } from '../../../src/battle/events';
 import { groundMove } from '../../../src/battle/moves/ground';
 import type Unit from '../../../src/battle/unit';
-import { unitTarget } from '../../../src/battle/utils';
+import { unitTarget } from '../../../src/battle/unit-checks';
 import { Moves } from '../../../src/data/ids/moves';
 import { Statuses } from '../../../src/data/ids/status';
 import { type BattleHarness, createBattle, createUnit, pinRandom } from '../harness';

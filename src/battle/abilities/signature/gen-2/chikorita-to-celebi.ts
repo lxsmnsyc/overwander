@@ -15,12 +15,15 @@ import {
   affectsFoesOnly,
 } from '../../../../data/ids/moves';
 import { getMoveData } from '../../../../data/moves';
-import type Battle from '../../../core';
+import type Battle from '../../../battle';
 import { BattleEvents, EffectType, MoveTargetType } from '../../../events';
 import { MergedLifecycle } from '../../../lifecycle';
 import { PASSED_STAGES } from '../../../moves/switch-out';
 import type Unit from '../../../unit';
-import { hasFreeItemSlot, isWeatherSandstorm, onUnitActs, unitTarget } from '../../../utils';
+import { unitTarget } from '../../../unit-checks';
+import { isWeatherSandstorm } from '../../../weather';
+import onUnitActs from '../../../acts';
+import { hasFreeItemSlot } from '../../../items/held';
 import { createAbility } from '../../__create';
 import {
   allyHolder,

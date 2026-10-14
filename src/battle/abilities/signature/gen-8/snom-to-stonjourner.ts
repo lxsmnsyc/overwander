@@ -9,13 +9,15 @@ import {
   Moves,
 } from '../../../../data/ids/moves';
 import { Weathers } from '../../../../data/ids/status';
-import type Battle from '../../../core';
+import type Battle from '../../../battle';
 import { BattleEvents, MoveTargetType, type UnitAttackEvent } from '../../../events';
 import { MergedLifecycle } from '../../../lifecycle';
 import { hasAttackEffect } from '../../../moves/status';
 import turns from '../../../turn';
 import type Unit from '../../../unit';
-import { isOwnBerry, skyOverTeam, unitTarget } from '../../../utils';
+import { unitTarget } from '../../../unit-checks';
+import { skyOverTeam } from '../../../weather';
+import { isOwnBerry } from '../../../items/held';
 import { createAbility, getAbilityHolders } from '../../__create';
 import { createTimedMarks, createUnitState } from '../__create';
 

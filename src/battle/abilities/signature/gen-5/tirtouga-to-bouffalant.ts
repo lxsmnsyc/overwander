@@ -8,7 +8,7 @@ import { getMoveData } from '../../../../data/moves';
 import { BattleEvents, EffectType } from '../../../events';
 import { MergedLifecycle } from '../../../lifecycle';
 import type Unit from '../../../unit';
-import { unitTarget } from '../../../utils';
+import { unitTarget } from '../../../unit-checks';
 import { createAbility } from '../../__create';
 import { createUnitState } from '../__create';
 

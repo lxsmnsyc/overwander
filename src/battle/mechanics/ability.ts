@@ -1,7 +1,7 @@
 import { EventPriority } from '../../core/event-emitter';
 import { Slots, countsAgainstSlots } from '../../data/constants/slots';
 import type Abilities from '../../data/ids/abilities';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents } from '../events';
 import type Unit from '../unit';
 

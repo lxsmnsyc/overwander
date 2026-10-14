@@ -5,7 +5,7 @@ import { Moves } from '../../data/ids/moves';
 import { DRIVES } from '../../data/items/drives';
 import { MEMORIES } from '../../data/items/memories';
 import { PLATES } from '../../data/items/plates';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents } from '../events';
 
 /**

@@ -38,7 +38,7 @@ Ability pools have their own rules about what a species may reach, which the `ab
 
 ## Battle engine
 
-Real time, not turns. A mainline turn is 2 seconds, written `turns(n)` from `src/battle/turn.ts` rather than as milliseconds. Per-turn residuals have no clock to hang on: they are paid when a unit begins casting or channelling, via `onUnitActs`.
+Real time, not turns. A mainline turn is 2 seconds, written `turns(n)` from `src/battle/turn.ts` rather than as milliseconds. Per-turn residuals have no clock to hang on: they are paid when a unit begins casting or channelling, via `onUnitActs` (`src/battle/acts.ts`).
 
 Everything is an event on one bus ([src/battle/events/index.ts](src/battle/events/index.ts)). `Check*` events are questions whose answer is a field the listeners mutate (`power`, `immune`, `priority`, `success`); `Unit*` events are things that happened. Listeners pick `EventPriority.Pre | Exact | Post` (or `AttackPriority`), where `Exact` is the mechanic's own answer and `Post` is everyone modifying it.
 

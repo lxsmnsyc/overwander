@@ -4,7 +4,7 @@ import type Abilities from '../../../../data/ids/abilities';
 import type { Types } from '../../../../data/constants/types';
 import type { MoveCategories } from '../../../../data/ids/moves';
 import { Terrains } from '../../../../data/ids/status';
-import type Battle from '../../../core';
+import type Battle from '../../../battle';
 import { BattleEvents } from '../../../events';
 import { MergedLifecycle } from '../../../lifecycle';
 import type Unit from '../../../unit';

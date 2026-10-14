@@ -5,7 +5,7 @@ import { DamageFlags, MoveAttackFlags, Moves } from '../../../../data/ids/moves'
 import { Statuses } from '../../../../data/ids/status';
 import type Unit from '../../../unit';
 import { BattleEvents, EffectType } from '../../../events';
-import { unitTarget } from '../../../utils';
+import { unitTarget } from '../../../unit-checks';
 import { MergedLifecycle } from '../../../lifecycle';
 import { createAbility, createContactHazard, getAbilityHolders } from '../../__create';
 import { createUnitState, isSoundMove } from '../__create';

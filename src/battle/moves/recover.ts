@@ -4,10 +4,10 @@ import { Stats } from '../../data/constants/stats';
 import { Moves } from '../../data/ids/moves';
 import { Statuses, Terrains, Weathers } from '../../data/ids/status';
 import { scoreHeal } from '../ai/score';
-import type Battle from '../core';
+import type Battle from '../battle';
 import type Unit from '../unit';
 import { BattleEvents, EffectType, type MoveTarget, MoveTargetType } from '../events';
-import { isWeatherSandstorm, isWeatherSunny } from '../utils';
+import { isWeatherSandstorm, isWeatherSunny } from '../weather';
 
 /**
  * The heals that read the sky: full measure under a clear one, more

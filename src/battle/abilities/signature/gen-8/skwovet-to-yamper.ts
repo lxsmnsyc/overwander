@@ -13,7 +13,7 @@ import { Statuses, TeamStatuses, Terrains } from '../../../../data/ids/status';
 import { getMoveData } from '../../../../data/moves';
 import type { Items } from '../../../../data/ids/items';
 import { isBerry } from '../../../../data/items/berries';
-import type Battle from '../../../core';
+import type Battle from '../../../battle';
 import {
   BattleEvents,
   type EffectCause,
@@ -24,7 +24,7 @@ import {
 import { MergedLifecycle } from '../../../lifecycle';
 import turns from '../../../turn';
 import type Unit from '../../../unit';
-import { countHeldItems, hasFreeItemSlot } from '../../../utils';
+import { countHeldItems, hasFreeItemSlot } from '../../../items/held';
 import { createAbility, getAbilityHolders } from '../../__create';
 import {
   createTimedMarks,

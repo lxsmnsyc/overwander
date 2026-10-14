@@ -7,7 +7,8 @@ import { BattleEvents, EffectType } from '../../../events';
 import { MergedLifecycle } from '../../../lifecycle';
 import { getCastTime } from '../../../mechanics/move/timing';
 import type Unit from '../../../unit';
-import { onUnitActs, unitTarget } from '../../../utils';
+import { unitTarget } from '../../../unit-checks';
+import onUnitActs from '../../../acts';
 import { createAbility } from '../../__create';
 import { createUnitState } from '../__create';
 

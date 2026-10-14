@@ -6,7 +6,8 @@ import { DamageFlags, MoveAttackFlags } from '../../../../data/ids/moves';
 import { Statuses } from '../../../../data/ids/status';
 import { BattleEvents, EffectType, MoveTargetType } from '../../../events';
 import { MergedLifecycle } from '../../../lifecycle';
-import { hasAnyStatus, onUnitActs, unitTarget } from '../../../utils';
+import { hasAnyStatus, unitTarget } from '../../../unit-checks';
+import onUnitActs from '../../../acts';
 import { createAbility } from '../../__create';
 
 /** What a poisoned target is worth to the spray */

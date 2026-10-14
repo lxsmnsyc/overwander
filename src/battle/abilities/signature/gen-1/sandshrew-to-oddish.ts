@@ -3,12 +3,13 @@ import { Stats } from '../../../../data/constants/stats';
 import Abilities from '../../../../data/ids/abilities';
 import { Statuses } from '../../../../data/ids/status';
 import { Moves } from '../../../../data/ids/moves';
-import type Battle from '../../../core';
+import type Battle from '../../../battle';
 import { BattleEvents, type EffectCause, EffectType, MoveTargetType } from '../../../events';
 import { MergedLifecycle } from '../../../lifecycle';
 import { ABSORB_MOVES } from '../../../moves/absorb';
 import type Unit from '../../../unit';
-import { onUnitActs, unitTarget } from '../../../utils';
+import { unitTarget } from '../../../unit-checks';
+import onUnitActs from '../../../acts';
 import { createAbility } from '../../__create';
 import { createRegalCourtAbility, createUnitCounter } from '../__create';
 

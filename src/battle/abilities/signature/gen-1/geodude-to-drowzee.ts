@@ -7,7 +7,9 @@ import { DamageFlags, MoveAttackFlags, MoveCategories } from '../../../../data/i
 import { BattleEvents, EffectType } from '../../../events';
 import { MergedLifecycle } from '../../../lifecycle';
 import type Unit from '../../../unit';
-import { onUnitActs, stealableItem, unitTarget } from '../../../utils';
+import { unitTarget } from '../../../unit-checks';
+import onUnitActs from '../../../acts';
+import { stealableItem } from '../../../items/held';
 import { createAbility, createContactHazard } from '../../__create';
 import {
   allyHolder,

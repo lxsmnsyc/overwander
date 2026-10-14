@@ -5,7 +5,7 @@ import Abilities from '../../../../data/ids/abilities';
 import { DamageFlags } from '../../../../data/ids/moves';
 import { BattleEvents, EffectType } from '../../../events';
 import { MergedLifecycle } from '../../../lifecycle';
-import { onUnitActs } from '../../../utils';
+import onUnitActs from '../../../acts';
 import { createAbility, getAbilityHolders } from '../../__create';
 
 /**

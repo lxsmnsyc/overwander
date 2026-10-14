@@ -6,7 +6,8 @@ import { DamageFlags, MoveCategories, Moves } from '../../../../data/ids/moves';
 import { BattleEvents, EffectType } from '../../../events';
 import { MergedLifecycle } from '../../../lifecycle';
 import type Unit from '../../../unit';
-import { onUnitActs, unitTarget } from '../../../utils';
+import { unitTarget } from '../../../unit-checks';
+import onUnitActs from '../../../acts';
 import { createAbility } from '../../__create';
 import { createHitBackAbility, createUnitState } from '../__create';
 

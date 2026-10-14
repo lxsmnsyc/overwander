@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import Battle from '../../src/battle/core';
+import Battle from '../../src/battle/battle';
 import { BattleEvents } from '../../src/battle/events';
 import { EventPriority } from '../../src/core/event-emitter';
 import setupBattleMechanics from '../../src/battle/mechanics/battle';

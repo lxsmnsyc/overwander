@@ -6,7 +6,7 @@ import {
   PIERCING_DRILL_SCALE,
 } from '../../../src/battle/abilities/legends-za';
 import type Unit from '../../../src/battle/unit';
-import { unitTarget } from '../../../src/battle/utils';
+import { unitTarget } from '../../../src/battle/unit-checks';
 import { Stages, Stats, StatsKind } from '../../../src/data/constants/stats';
 import { Types } from '../../../src/data/constants/types';
 import Abilities from '../../../src/data/ids/abilities';

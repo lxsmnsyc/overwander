@@ -62,7 +62,7 @@ import {
   NINE_TAILS_MAX_STACKS,
   NINE_TAILS_STEP,
 } from '../../../../src/battle/abilities/signature/gen-1/sandshrew-to-oddish';
-import type Battle from '../../../../src/battle/core';
+import type Battle from '../../../../src/battle/battle';
 import { BattleEvents, EffectType, MoveTargetType } from '../../../../src/battle/events';
 import type Unit from '../../../../src/battle/unit';
 import { Stages, Stats } from '../../../../src/data/constants/stats';
@@ -72,7 +72,7 @@ import { Items } from '../../../../src/data/ids/items';
 import { MoveCategories, MoveTargets, Moves } from '../../../../src/data/ids/moves';
 import { Statuses } from '../../../../src/data/ids/status';
 import turns from '../../../../src/battle/turn';
-import { unitTarget } from '../../../../src/battle/utils';
+import { unitTarget } from '../../../../src/battle/unit-checks';
 import { createBattle, createUnit, pinRandom } from '../../harness';
 import {
   NONE_CAUSE,

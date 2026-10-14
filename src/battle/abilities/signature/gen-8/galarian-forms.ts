@@ -9,13 +9,8 @@ import { MergedLifecycle } from '../../../lifecycle';
 import { isCentered } from '../../../status/centered';
 import turns from '../../../turn';
 import type Unit from '../../../unit';
-import {
-  countHeldItems,
-  hasFreeItemSlot,
-  isConsumable,
-  stealableItem,
-  unitTarget,
-} from '../../../utils';
+import { unitTarget } from '../../../unit-checks';
+import { countHeldItems, hasFreeItemSlot, isConsumable, stealableItem } from '../../../items/held';
 import { createAbility, createRodAbility } from '../../__create';
 import { createDamageTaken, createUnitState, isSingleTargetMove, worstHurtMate } from '../__create';
 

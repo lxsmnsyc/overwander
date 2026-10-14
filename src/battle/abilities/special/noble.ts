@@ -7,7 +7,7 @@ import { MoveCategories, Moves } from '../../../data/ids/moves';
 import { Statuses, TeamStatuses } from '../../../data/ids/status';
 import { FRENZY_MOVES, getNobleBurst } from '../../../data/moves/frenzy-moves';
 import { getSpeciesData } from '../../../data/species';
-import type Battle from '../../core';
+import type Battle from '../../battle';
 import { BattleEvents, EffectType, MoveTargetType } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
 import { setStealthRock } from '../../moves/stealth-rock';

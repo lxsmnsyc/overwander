@@ -4,7 +4,7 @@ import { knowsAbility, knowsMove } from '../../../src/battle/ai/fog';
 import { BASE_SCORE } from '../../../src/battle/ai/score';
 import { BattleEvents, type CheckUnitAIMoveScoreEvent } from '../../../src/battle/events';
 import type Unit from '../../../src/battle/unit';
-import { unitTarget } from '../../../src/battle/utils';
+import { unitTarget } from '../../../src/battle/unit-checks';
 import Abilities from '../../../src/data/ids/abilities';
 import { Items } from '../../../src/data/ids/items';
 import { Moves } from '../../../src/data/ids/moves';

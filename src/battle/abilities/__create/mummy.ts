@@ -1,10 +1,10 @@
 import { AttackPriority } from '../../../core/event-emitter';
 import { countsAgainstSlots } from '../../../data/constants/slots';
 import type Abilities from '../../../data/ids/abilities';
-import type Battle from '../../core';
+import type Battle from '../../battle';
 import { BattleEvents } from '../../events';
 import type Unit from '../../unit';
-import { unitTarget } from '../../utils';
+import { unitTarget } from '../../unit-checks';
 import { createAbility } from './create';
 
 /**

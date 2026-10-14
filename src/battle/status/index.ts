@@ -1,7 +1,7 @@
 import { EventPriority } from '../../core/event-emitter';
 import { Types } from '../../data/constants/types';
 import { Statuses, TeamStatuses } from '../../data/ids/status';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents } from '../events';
 import setupBondedStatus from './bonded';
 import setupBurnedStatus from './burned';

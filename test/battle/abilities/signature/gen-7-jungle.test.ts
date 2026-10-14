@@ -3,7 +3,7 @@
 import { describe, expect, it } from 'vitest';
 import { AttackPriority } from '../../../../src/core/event-emitter';
 import { BattleEvents, MoveTargetType } from '../../../../src/battle/events';
-import { unitTarget } from '../../../../src/battle/utils';
+import { unitTarget } from '../../../../src/battle/unit-checks';
 import {
   LEI_HEAL_FRACTION,
   RUSH_PASS_SCALE,

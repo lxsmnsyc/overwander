@@ -3,11 +3,11 @@ import { Stats } from '../../data/constants/stats';
 import { Types } from '../../data/constants/types';
 import { Moves } from '../../data/ids/moves';
 import { NON_VOLATILE_STATUSES, Statuses, Terrains } from '../../data/ids/status';
-import type Battle from '../core';
-import { BattleModes } from '../core';
+import type Battle from '../battle';
+import { BattleModes } from '../battle';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import type Unit from '../unit';
-import { onUnitActs } from '../utils';
+import onUnitActs from '../acts';
 
 /**
  * The terrains: what the field is laid with. They reach the way a

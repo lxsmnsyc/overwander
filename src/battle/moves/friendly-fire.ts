@@ -1,7 +1,7 @@
 import { AttackPriority } from '../../core/event-emitter';
 import { MoveCategories, MoveTargets, type Moves, affectsFoesOnly } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, MoveTargetType } from '../events';
 
 /**

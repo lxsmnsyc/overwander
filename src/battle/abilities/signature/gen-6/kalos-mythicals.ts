@@ -6,7 +6,7 @@ import { BattleEvents, EffectType, MoveTargetType } from '../../../events';
 import { MergedLifecycle } from '../../../lifecycle';
 import turns from '../../../turn';
 import type Unit from '../../../unit';
-import { isWeatherRainy, isWeatherSunny } from '../../../utils';
+import { isWeatherRainy, isWeatherSunny } from '../../../weather';
 import { createAbility, getAbilityHolders } from '../../__create';
 import { isSingleTargetMove } from '../__create';
 

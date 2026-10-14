@@ -9,7 +9,7 @@ import {
 } from './metrics';
 import type { Striking } from './motion';
 import type Alliance from '../../../battle/alliance';
-import type Battle from '../../../battle/core';
+import type Battle from '../../../battle/battle';
 import { type MoveTarget, MoveTargetType } from '../../../battle/events';
 import type Team from '../../../battle/team';
 import Abilities from '../../../data/ids/abilities';

@@ -3,7 +3,7 @@ import { Stats } from '../../data/constants/stats';
 import { Types } from '../../data/constants/types';
 import { DamageFlags, Moves } from '../../data/ids/moves';
 import { TeamStatuses } from '../../data/ids/status';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, type EffectCause, EffectType, MoveTargetType } from '../events';
 import type Team from '../team';
 import type Unit from '../unit';

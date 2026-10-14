@@ -7,7 +7,7 @@ import { Statuses } from '../../../../data/ids/status';
 import { getMoveData } from '../../../../data/moves';
 import { BattleEvents, EffectType, type UnitAttackEvent } from '../../../events';
 import { MergedLifecycle } from '../../../lifecycle';
-import { isWeatherRainy } from '../../../utils';
+import { isWeatherRainy } from '../../../weather';
 import { createAbility } from '../../__create';
 import { createUnitCounter, isPseudoMove } from '../__create';
 

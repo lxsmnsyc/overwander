@@ -7,7 +7,7 @@ import { BattleEvents, EffectType, MoveTargetType } from '../../../events';
 import { MergedLifecycle } from '../../../lifecycle';
 import { MAJOR_STATUS_CONDITIONS } from '../../../status';
 import type Unit from '../../../unit';
-import { hasAnyStatus } from '../../../utils';
+import { hasAnyStatus } from '../../../unit-checks';
 import { createAbility } from '../../__create';
 
 /**

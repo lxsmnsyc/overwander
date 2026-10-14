@@ -20,7 +20,7 @@ import Biome from '../../../src/data/ids/biome';
 import { groundMove, groundStatus } from '../../../src/battle/moves/ground';
 import { getMoveData } from '../../../src/data/moves';
 import { MOVE_DELAY } from '../../../src/battle/mechanics/move';
-import type Battle from '../../../src/battle/core';
+import type Battle from '../../../src/battle/battle';
 import { createBattle, createUnit, pinRandom } from '../harness';
 
 function unitTarget(unit: Unit): { readonly type: MoveTargetType.Unit; readonly unit: Unit } {

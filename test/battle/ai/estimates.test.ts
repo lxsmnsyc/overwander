@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { chooseMove, setupChooseMoveAI } from '../../../src/battle/ai/choose-move';
 import { withAIContext } from '../../../src/battle/ai/context';
-import type Battle from '../../../src/battle/core';
+import type Battle from '../../../src/battle/battle';
 import type Team from '../../../src/battle/team';
 import type Unit from '../../../src/battle/unit';
 import { DOOM_MARK_SCALE } from '../../../src/battle/abilities/signature/gen-3/spoink-to-deoxys';
@@ -11,7 +11,7 @@ import {
   type UnitAttackEvent,
   type UnitAttackResolveAmountEvent,
 } from '../../../src/battle/events';
-import { unitTarget } from '../../../src/battle/utils';
+import { unitTarget } from '../../../src/battle/unit-checks';
 import { EventPriority } from '../../../src/core/event-emitter';
 import { Stages } from '../../../src/data/constants/stats';
 import { DEFAULT_MOVE_SLOTS } from '../../../src/data/constants/slots';

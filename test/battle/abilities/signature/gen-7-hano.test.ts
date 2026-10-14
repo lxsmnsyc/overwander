@@ -9,7 +9,7 @@ import {
   MoveTargetType,
 } from '../../../../src/battle/events';
 import type Unit from '../../../../src/battle/unit';
-import { unitTarget } from '../../../../src/battle/utils';
+import { unitTarget } from '../../../../src/battle/unit-checks';
 import { getMiniorCore } from '../../../../src/battle/abilities/gen-7';
 import {
   CASTLE_DRAIN_FRACTION,

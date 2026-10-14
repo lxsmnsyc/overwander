@@ -7,7 +7,7 @@ import { Weathers } from '../../../../data/ids/status';
 import { BattleEvents, EffectType, MoveTargetType, type UnitAttackEvent } from '../../../events';
 import { MergedLifecycle } from '../../../lifecycle';
 import type Unit from '../../../unit';
-import { onUnitActs } from '../../../utils';
+import onUnitActs from '../../../acts';
 import { createAbility } from '../../__create';
 import { healthShare } from '../../special';
 import { createUnitState, isPseudoMove } from '../__create';

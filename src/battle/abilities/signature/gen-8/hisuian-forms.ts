@@ -6,7 +6,7 @@ import { BattleEvents, type EffectCause, EffectType, MoveTargetType } from '../.
 import { MergedLifecycle } from '../../../lifecycle';
 import turns from '../../../turn';
 import type Unit from '../../../unit';
-import { unitTarget } from '../../../utils';
+import { unitTarget } from '../../../unit-checks';
 import { createAbility, getAbilityHolders } from '../../__create';
 import { createTuftAbility, createUnitState } from '../__create';
 

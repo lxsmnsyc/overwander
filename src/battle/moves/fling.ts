@@ -1,9 +1,9 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
 import { isBerry } from '../../data/items/berries';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, EffectType } from '../events';
-import { isConsumable, stealableItem } from '../utils';
+import { isConsumable, stealableItem } from '../items/held';
 
 /**
  * Fling throws whatever the user is holding, and the item is gone

@@ -1,7 +1,7 @@
 import { EventPriority } from '../../core/event-emitter';
 import { Stages, Stats } from '../../data/constants/stats';
 import { Moves, StatFlags } from '../../data/ids/moves';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents } from '../events';
 import { ACCURACY_STAGE_LIMIT, accuracyScale } from '../mechanics/move/trigger';
 

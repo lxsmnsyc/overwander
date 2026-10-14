@@ -5,11 +5,12 @@ import { DamageFlags, MoveCategories, Moves, StatFlags } from '../../data/ids/mo
 import { Species } from '../../data/ids/species';
 import { Statuses } from '../../data/ids/status';
 import { isBerry } from '../../data/items/berries';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import turns from '../turn';
 import type Unit from '../unit';
-import { onUnitActs, stealableItem } from '../utils';
+import onUnitActs from '../acts';
+import { stealableItem } from '../items/held';
 
 /**
  * The Galar and Hisui moves with a rule of their own, each too small

@@ -5,7 +5,7 @@ import type Abilities from '../../../../data/ids/abilities';
 import type { Types } from '../../../../data/constants/types';
 import { MoveAttackFlags, MoveCategories } from '../../../../data/ids/moves';
 import type { Statuses } from '../../../../data/ids/status';
-import type Battle from '../../../core';
+import type Battle from '../../../battle';
 import { BattleEvents, EffectType, type UnitAttackResolveAmountEvent } from '../../../events';
 import { MergedLifecycle } from '../../../lifecycle';
 import type Unit from '../../../unit';

@@ -1,6 +1,6 @@
 import { EventPriority } from '../../core/event-emitter';
 import { Statuses, TeamStatuses } from '../../data/ids/status';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, type EffectCause } from '../events';
 import type Team from '../team';
 import { registerTimedTeamStatus } from '../mechanics/side-conditions';

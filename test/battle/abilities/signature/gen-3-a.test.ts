@@ -48,7 +48,7 @@ import {
   PERENNIAL_THRESHOLD,
   VANISHING_ACT_DURATION,
 } from '../../../../src/battle/abilities/signature/gen-3/treecko-to-torkoal';
-import { unitTarget } from '../../../../src/battle/utils';
+import { unitTarget } from '../../../../src/battle/unit-checks';
 import { createBattle, createUnit, pinRandom } from '../../harness';
 import {
   NONE_CAUSE,

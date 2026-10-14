@@ -4,7 +4,7 @@ import { MoveCategories, MoveTargetPriorities, Moves } from '../../data/ids/move
 import { Statuses } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
 import { checkTeamUnit } from '../ai/rating';
-import type Battle from '../core';
+import type Battle from '../battle';
 import type { MoveTarget } from '../events';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import type Unit from '../unit';

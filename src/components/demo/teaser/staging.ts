@@ -11,7 +11,7 @@ import { getRentalPool } from '../../../data/overworld/experts/frontier';
 import Landmark from '../../../data/overworld/landmark';
 import { LAIR_NAMES } from '../../../data/overworld/lair';
 import type Weather from '../../../data/overworld/weather';
-import { BattleModes } from '../../../battle/core';
+import { BattleModes } from '../../../battle/battle';
 import ChunkSnapshot, {
   RAID_INTERVAL,
   type RaidRoll,

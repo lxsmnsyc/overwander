@@ -3,7 +3,7 @@ import { Stats } from '../../data/constants/stats';
 import { DamageFlags } from '../../data/ids/moves';
 import { RECOIL_MOVES } from '../../data/moves/recoil';
 import { RISKY_PENALTY, USELESS_PENALTY } from '../ai/score';
-import type Battle from '../core';
+import type Battle from '../battle';
 import {
   BattleEvents,
   type CheckUnitRecoilEvent,

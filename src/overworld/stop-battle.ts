@@ -1,5 +1,5 @@
 import type { TeamSnapshotRecord } from '../auth/teams';
-import { BattleModes } from '../battle/core';
+import { BattleModes } from '../battle/battle';
 import type Biome from '../data/ids/biome';
 import createBattle from '../battle/setup';
 import { NPC_BATTLE_LIMITS } from '../data/constants/battle-limits';
@@ -8,7 +8,7 @@ import { FRONTIER_TIME_LIMIT, FrontierRule } from '../data/overworld/experts';
 import { BattleEvents } from '../battle/events';
 import { EventPriority } from '../core/event-emitter';
 import { PLAYER_ALLIANCE } from './raid';
-import type Battle from '../battle/core';
+import type Battle from '../battle/battle';
 import { type RaidBattle, fieldTeams } from './raid-battle';
 
 /**

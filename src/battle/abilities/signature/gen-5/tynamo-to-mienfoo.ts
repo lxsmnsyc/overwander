@@ -6,7 +6,8 @@ import { Statuses } from '../../../../data/ids/status';
 import { BattleEvents, EffectType, MoveTargetType } from '../../../events';
 import { MergedLifecycle } from '../../../lifecycle';
 import type Unit from '../../../unit';
-import { onUnitActs, slipsTraps } from '../../../utils';
+import { slipsTraps } from '../../../unit-checks';
+import onUnitActs from '../../../acts';
 import { createAbility, getAbilityHolders } from '../../__create';
 
 /**

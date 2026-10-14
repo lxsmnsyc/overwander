@@ -5,7 +5,7 @@ to know is in [Battles](mechanics/battles.md). These pages are the machinery
 underneath it.
 
 The whole thing is one event engine
-([`src/battle/core.ts`](../src/battle/core.ts)), with every mechanic, move,
+([`src/battle/battle.ts`](../src/battle/battle.ts)), with every mechanic, move,
 status, ability, item and the AI registered against it as listeners. Nothing
 that resolves a hit names an ability. Each effect is written once and listens
 for the questions it has an opinion about.

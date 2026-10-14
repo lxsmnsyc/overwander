@@ -23,7 +23,7 @@ import { MoveCategories, Moves } from '../../../../src/data/ids/moves';
 import { Statuses, TeamStatuses, Weathers } from '../../../../src/data/ids/status';
 import turns from '../../../../src/battle/turn';
 import { layersUnder } from '../../../../src/battle/moves/spikes';
-import { unitTarget } from '../../../../src/battle/utils';
+import { unitTarget } from '../../../../src/battle/unit-checks';
 import Team from '../../../../src/battle/team';
 import { createBattle, createUnit, pinRandom } from '../../harness';
 import { NONE_CAUSE, act, resolveAttackDamage, rollMove } from './helpers';

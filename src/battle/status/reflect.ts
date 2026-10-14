@@ -1,7 +1,7 @@
 import { EventPriority } from '../../core/event-emitter';
 import { MoveAttackFlags, MoveCategories } from '../../data/ids/moves';
 import { TeamStatuses } from '../../data/ids/status';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, type EffectCause } from '../events';
 import { registerTimedTeamStatus } from '../mechanics/side-conditions';
 import turns from '../turn';

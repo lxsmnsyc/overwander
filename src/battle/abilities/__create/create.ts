@@ -2,7 +2,7 @@ import { AttackPriority, EventPriority } from '../../../core/event-emitter';
 import type { EventListenerLifecycle } from '../../../core/event-emitter';
 import type Abilities from '../../../data/ids/abilities';
 import { RISKY_PENALTY } from '../../ai/score';
-import type Battle from '../../core';
+import type Battle from '../../battle';
 import type { CheckUnitAIMoveScoreEvent } from '../../events';
 import { BattleEvents, MoveTargetType } from '../../events';
 import type { Lifecycle } from '../../lifecycle';

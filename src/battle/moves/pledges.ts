@@ -3,13 +3,13 @@ import { Stats } from '../../data/constants/stats';
 import { Types } from '../../data/constants/types';
 import { DamageFlags, Moves } from '../../data/ids/moves';
 import { TeamStatuses } from '../../data/ids/status';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { effectIn, landsIn } from '../ai/context';
 import { BattleEvents, EffectType, type MoveTarget, MoveTargetType } from '../events';
 import type Team from '../team';
 import turns from '../turn';
 import type Unit from '../unit';
-import { onUnitActs } from '../utils';
+import onUnitActs from '../acts';
 
 /**
  * The three Pledges. Two different ones from the same team inside a

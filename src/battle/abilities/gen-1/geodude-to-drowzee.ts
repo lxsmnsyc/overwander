@@ -9,14 +9,9 @@ import { BattleEvents, EffectType, MoveTargetType } from '../../events';
 import { OHKO_MOVES } from '../../moves/fixed-damage';
 import { ASLEEP_STATUSES } from '../../status';
 import type Unit from '../../unit';
-import {
-  hasAnyStatus,
-  isWeatherHail,
-  isWeatherRainy,
-  onUnitActs,
-  slipsTraps,
-  unitTarget,
-} from '../../utils';
+import { hasAnyStatus, slipsTraps, unitTarget } from '../../unit-checks';
+import { isWeatherHail, isWeatherRainy } from '../../weather';
+import onUnitActs from '../../acts';
 import {
   chipImmunity,
   createAbility,

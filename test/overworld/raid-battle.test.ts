@@ -7,7 +7,7 @@ import { Species } from '../../src/data/ids/species';
 import type { CatchSnapshot } from '../../src/model/catch-snapshot';
 import type { TeamSnapshotRecord } from '../../src/auth/teams';
 import { getMaxHealth } from '../../src/model/health';
-import { BattleModes } from '../../src/battle/core';
+import { BattleModes } from '../../src/battle/battle';
 import { EventPriority } from '../../src/core/event-emitter';
 import { BattleEvents } from '../../src/battle/events';
 import createBattle from '../../src/battle/setup';

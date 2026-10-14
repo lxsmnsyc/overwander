@@ -4,7 +4,7 @@ import Abilities from '../../data/ids/abilities';
 import { MoveAffects, Moves } from '../../data/ids/moves';
 import { STAGE_MOVES, type StageMoveEffect } from '../../data/battle';
 import { getMoveData } from '../../data/moves';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { USELESS_PENALTY } from '../ai/score';
 import {
   BattleEvents,

@@ -16,7 +16,10 @@ import { transformUnit } from '../../moves/transform';
 import { PROTECTED_ABILITIES } from '../special';
 import { MAJOR_STATUS_CONDITIONS } from '../../status';
 import type Unit from '../../unit';
-import { hasAnyStatus, holdsAnyItem, isWeatherSunny, onUnitActs, unitTarget } from '../../utils';
+import { hasAnyStatus, unitTarget } from '../../unit-checks';
+import { isWeatherSunny } from '../../weather';
+import onUnitActs from '../../acts';
+import { holdsAnyItem } from '../../items/held';
 import {
   createAbility,
   createFilterAbility,

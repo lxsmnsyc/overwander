@@ -15,10 +15,11 @@ import { NON_VOLATILE_STATUSES, Statuses, Terrains, Weathers } from '../../data/
 import { getMoveData } from '../../data/moves';
 import { MULTI_HIT_MOVES } from '../../data/moves/multi-hit';
 import { MergedLifecycle } from '../lifecycle';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, type EffectCause, EffectType, MoveTargetType } from '../events';
 import type Unit from '../unit';
-import { hasFreeItemSlot, isConsumable, stealableItem, unitTarget } from '../utils';
+import { unitTarget } from '../unit-checks';
+import { hasFreeItemSlot, isConsumable, stealableItem } from '../items/held';
 import { HEALING_MOVES } from '../moves/recover';
 import { fieldHolder } from './signature/__create';
 import {

@@ -1,12 +1,7 @@
 import { useSearchParams } from '@solidjs/router';
 import { type JSX, Show, createEffect, createMemo, createSignal, onCleanup } from 'solid-js';
 import { MoveTargetType } from '../../battle/events';
-import {
-  type DemoRules,
-  type MoveDemo as Staged,
-  aimFor,
-  createMoveDemo,
-} from '../../battle/demo-move';
+import { type DemoRules, type MoveDemo as Staged, aimFor, createMoveDemo } from './demo-move';
 import BattleField from '../battle/BattleField';
 import BattleTopBar from '../battle/BattleTopBar';
 import BiomePicker, { biomeFrom } from './BiomePicker';

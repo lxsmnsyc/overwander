@@ -4,11 +4,11 @@ import type Abilities from '../../../../data/ids/abilities';
 import type { Types } from '../../../../data/constants/types';
 import type { Moves } from '../../../../data/ids/moves';
 import { DamageFlags, MoveCategories } from '../../../../data/ids/moves';
-import type Battle from '../../../core';
+import type Battle from '../../../battle';
 import { BattleEvents, EffectType } from '../../../events';
 import { MergedLifecycle } from '../../../lifecycle';
 import type Unit from '../../../unit';
-import { unitTarget } from '../../../utils';
+import { unitTarget } from '../../../unit-checks';
 import { createAbility } from '../../__create';
 
 /** What each Kalos starter's bond is worth to the team standing with it */

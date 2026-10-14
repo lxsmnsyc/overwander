@@ -5,7 +5,7 @@
 // server bundle
 import setupAbilities from './abilities';
 import setupAI from './ai';
-import Battle, { BattleModes } from './core';
+import Battle, { BattleModes } from './battle';
 import type Biome from '../data/ids/biome';
 import setupItems from './items';
 import setupAbilityMechanics from './mechanics/ability';

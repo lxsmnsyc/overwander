@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { chooseMove, setupChooseMoveAI } from '../../../src/battle/ai/choose-move';
 import setupIdleAI from '../../../src/battle/ai/idle';
 import { getTrainer } from '../../../src/battle/ai/trainer';
-import { unitTarget } from '../../../src/battle/utils';
+import { unitTarget } from '../../../src/battle/unit-checks';
 import { MoveTargetType } from '../../../src/battle/events';
 import { Moves } from '../../../src/data/ids/moves';
 import { type BattleHarness, createBattle, createUnit, pinRandom } from '../harness';

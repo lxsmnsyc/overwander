@@ -1,7 +1,7 @@
 import { AttackPriority } from '../../core/event-emitter';
 import { MoveAttackFlags, Moves } from '../../data/ids/moves';
 import { TeamStatuses } from '../../data/ids/status';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, EffectType } from '../events';
 
 /**

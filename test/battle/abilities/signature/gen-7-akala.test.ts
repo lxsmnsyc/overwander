@@ -2,10 +2,10 @@
 
 import { describe, expect, it } from 'vitest';
 import { EventPriority } from '../../../../src/core/event-emitter';
-import type Battle from '../../../../src/battle/core';
+import type Battle from '../../../../src/battle/battle';
 import { BattleEvents, type MoveTarget } from '../../../../src/battle/events';
 import type Unit from '../../../../src/battle/unit';
-import { unitTarget } from '../../../../src/battle/utils';
+import { unitTarget } from '../../../../src/battle/unit-checks';
 import {
   BUBBLE_WARD_SCALE,
   HEAVY_HOOVES_CAP,

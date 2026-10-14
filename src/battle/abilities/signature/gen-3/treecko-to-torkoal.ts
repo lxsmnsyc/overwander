@@ -12,18 +12,14 @@ import {
 } from '../../../../data/ids/moves';
 import { getMoveData } from '../../../../data/moves';
 import { Statuses, Weathers } from '../../../../data/ids/status';
-import type Battle from '../../../core';
+import type Battle from '../../../battle';
 import { BattleEvents, EffectType, MoveTargetType } from '../../../events';
 import { MergedLifecycle } from '../../../lifecycle';
 import type Unit from '../../../unit';
 import { MAJOR_STATUS_CONDITIONS } from '../../../status';
-import {
-  hasAnyStatus,
-  isWeatherRainy,
-  isWeatherSunny,
-  onUnitActs,
-  unitTarget,
-} from '../../../utils';
+import { hasAnyStatus, unitTarget } from '../../../unit-checks';
+import { isWeatherRainy, isWeatherSunny } from '../../../weather';
+import onUnitActs from '../../../acts';
 import { createAbility } from '../../__create';
 import {
   createCheerAbility,

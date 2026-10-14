@@ -26,7 +26,7 @@ import {
   FINISHER_THRESHOLD,
 } from '../../../../src/battle/abilities/signature/gen-4/croagunk-to-snover';
 import { AttackPriority } from '../../../../src/core/event-emitter';
-import type Battle from '../../../../src/battle/core';
+import type Battle from '../../../../src/battle/battle';
 import {
   BattleEvents,
   EffectType,
@@ -40,7 +40,7 @@ import Abilities from '../../../../src/data/ids/abilities';
 import { MoveCategories, Moves } from '../../../../src/data/ids/moves';
 import { Statuses, Weathers } from '../../../../src/data/ids/status';
 import turns from '../../../../src/battle/turn';
-import { unitTarget } from '../../../../src/battle/utils';
+import { unitTarget } from '../../../../src/battle/unit-checks';
 import { createBattle, createUnit, pinRandom } from '../../harness';
 import { NONE_CAUSE, act, makeAttack, resolveAttackDamage, resolveAttackStat } from './helpers';
 

@@ -2,11 +2,11 @@ import { AttackPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
 import { USELESS_PENALTY } from '../ai/score';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import { ASLEEP_STATUSES, MAJOR_STATUS_CONDITIONS } from '../status';
 import { Stats } from '../../data/constants/stats';
-import { hasAnyStatus } from '../utils';
+import { hasAnyStatus } from '../unit-checks';
 
 /**
  * The moves that take an ailment back off rather than putting one on.

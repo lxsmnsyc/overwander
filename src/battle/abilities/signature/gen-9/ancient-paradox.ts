@@ -6,13 +6,14 @@ import Abilities from '../../../../data/ids/abilities';
 import { MoveAttackFlags, MoveCategories, Moves } from '../../../../data/ids/moves';
 import { Statuses } from '../../../../data/ids/status';
 import { getMoveData } from '../../../../data/moves';
-import type Battle from '../../../core';
+import type Battle from '../../../battle';
 import { BattleEvents, EffectType, MoveTargetType, type UnitAttackEvent } from '../../../events';
 import { MergedLifecycle } from '../../../lifecycle';
 import { WEATHER_DAMAGE } from '../../../mechanics/weather';
 import { BLOW_GUARDS, guardOf } from '../../../moves/protect';
 import type Unit from '../../../unit';
-import { isWeatherSunny, skyOverTeam, unitTarget } from '../../../utils';
+import { unitTarget } from '../../../unit-checks';
+import { isWeatherSunny, skyOverTeam } from '../../../weather';
 import { createAbility } from '../../__create';
 import {
   createDamageTaken,

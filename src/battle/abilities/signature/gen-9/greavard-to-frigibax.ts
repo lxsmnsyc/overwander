@@ -8,7 +8,9 @@ import { BattleEvents, EffectType, MoveTargetType } from '../../../events';
 import { MergedLifecycle } from '../../../lifecycle';
 import turns from '../../../turn';
 import type Unit from '../../../unit';
-import { countHeldItems, isWeatherHail, onUnitActs, stealableItem } from '../../../utils';
+import { isWeatherHail } from '../../../weather';
+import onUnitActs from '../../../acts';
+import { countHeldItems, stealableItem } from '../../../items/held';
 import { createAbility, getAbilityHolders } from '../../__create';
 import { allyHolder, createDamageTaken, createTimedMarks, createUnitState } from '../__create';
 

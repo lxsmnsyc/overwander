@@ -5,7 +5,7 @@ import { MoveAttackFlags } from '../../../../data/ids/moves';
 import { BattleEvents, EffectType, MoveTargetType } from '../../../events';
 import { MergedLifecycle } from '../../../lifecycle';
 import type Unit from '../../../unit';
-import { hasFreeItemSlot, isConsumable, stealableItem } from '../../../utils';
+import { hasFreeItemSlot, isConsumable, stealableItem } from '../../../items/held';
 import { createAbility } from '../../__create';
 
 /**

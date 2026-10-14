@@ -6,7 +6,7 @@ import { FORM_ITEMS } from '../../data/items/form-items';
 import { Species } from '../../data/ids/species';
 import { getBaseFormSpecies } from '../../data/ids/forms';
 import { getShadowlessSpecies, getTrueShadowShape } from '../../data/species/true-shadow';
-import type Battle from '../core';
+import type Battle from '../battle';
 import type Unit from '../unit';
 import { BattleEvents } from '../events';
 import { MergedLifecycle } from '../lifecycle';

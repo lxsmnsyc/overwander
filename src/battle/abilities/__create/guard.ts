@@ -6,10 +6,10 @@ import type { MoveTarget, UnitAttackEvent } from '../../events';
 import type Unit from '../../unit';
 import type Abilities from '../../../data/ids/abilities';
 import { Statuses } from '../../../data/ids/status';
-import type Battle from '../../core';
+import type Battle from '../../battle';
 import { BattleEvents, EffectType, MoveTargetType } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
-import { unitTarget } from '../../utils';
+import { unitTarget } from '../../unit-checks';
 import { createAbility, createContactHazard } from './create';
 
 /** Abilities that refuse something: a status, a stat drop, a critical, an aim */

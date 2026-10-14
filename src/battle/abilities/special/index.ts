@@ -9,7 +9,7 @@ import {
   affectsFoesOnly,
 } from '../../../data/ids/moves';
 import { NON_VOLATILE_STATUSES, Statuses } from '../../../data/ids/status';
-import type Battle from '../../core';
+import type Battle from '../../battle';
 import {
   BattleEvents,
   type EffectCause,

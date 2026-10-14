@@ -4,7 +4,7 @@ import Abilities from '../../../../data/ids/abilities';
 import { DamageFlags, Moves } from '../../../../data/ids/moves';
 import { BattleEvents, EffectType } from '../../../events';
 import { MergedLifecycle } from '../../../lifecycle';
-import { unitTarget } from '../../../utils';
+import { unitTarget } from '../../../unit-checks';
 import { createAbility } from '../../__create';
 import { firstEnemy } from '../__create';
 

@@ -1,4 +1,4 @@
-import type Battle from '../core';
+import type Battle from '../battle';
 import setupBeatUp from './beat-up';
 import setupCurse from './curse';
 import setupDestinyBond from './destiny-bond';

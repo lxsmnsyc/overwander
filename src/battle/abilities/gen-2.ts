@@ -4,7 +4,7 @@ import { Types } from '../../data/constants/types';
 import Abilities from '../../data/ids/abilities';
 import { DamageFlags, MoveCategories, type Moves } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { Items } from '../../data/ids/items';
 import { Species } from '../../data/ids/species';
 import { getBaseFormSpecies } from '../../data/ids/forms';
@@ -14,15 +14,10 @@ import { MergedLifecycle } from '../lifecycle';
 import type Unit from '../unit';
 import { FORCED_SWITCH_MOVES } from '../moves/switch-out';
 import { MAJOR_STATUS_CONDITIONS } from '../status';
-import {
-  hasFreeItemSlot,
-  isConsumable,
-  isWeatherSunny,
-  onUnitActs,
-  slipsTraps,
-  stealableItem,
-  unitTarget,
-} from '../utils';
+import { slipsTraps, unitTarget } from '../unit-checks';
+import { isWeatherSunny } from '../weather';
+import onUnitActs from '../acts';
+import { hasFreeItemSlot, isConsumable, stealableItem } from '../items/held';
 import {
   createAbility,
   createAbsorbStageAbility,

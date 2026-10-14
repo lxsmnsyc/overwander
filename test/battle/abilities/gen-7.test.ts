@@ -3,7 +3,7 @@ import { Types } from '../../../src/data/constants/types';
 import Abilities from '../../../src/data/ids/abilities';
 import { Moves } from '../../../src/data/ids/moves';
 import { STAKEOUT_SCALE } from '../../../src/battle/abilities/gen-7';
-import { unitTarget } from '../../../src/battle/utils';
+import { unitTarget } from '../../../src/battle/unit-checks';
 import { createBattle, createUnit, pinRandom } from '../harness';
 import { act } from './signature/helpers';
 

@@ -18,7 +18,7 @@ import {
   WOKEN_SCALE,
   WOKEN_STAGES,
 } from '../../../../src/battle/abilities/signature/__create';
-import type Battle from '../../../../src/battle/core';
+import type Battle from '../../../../src/battle/battle';
 import { BattleEvents, EffectType } from '../../../../src/battle/events';
 import type Unit from '../../../../src/battle/unit';
 import { Stages, Stats, StatsKind } from '../../../../src/data/constants/stats';
@@ -61,7 +61,7 @@ import {
   WEATHER_WORN_TAKEN_SCALE,
 } from '../../../../src/battle/abilities/signature/gen-3/spoink-to-deoxys';
 import turns from '../../../../src/battle/turn';
-import { unitTarget } from '../../../../src/battle/utils';
+import { unitTarget } from '../../../../src/battle/unit-checks';
 import { createBattle, createUnit, pinRandom } from '../../harness';
 import { NONE_CAUSE, act, dealDamage, makeAttack, resolveAttackDamage, rollMove } from './helpers';
 

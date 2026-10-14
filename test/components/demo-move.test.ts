@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { BattleEvents, MoveTargetType } from '../../src/battle/events';
 import { EventPriority } from '../../src/core/event-emitter';
-import { createMoveDemo } from '../../src/battle/demo-move';
+import { createMoveDemo } from '../../src/components/demo/demo-move';
 import { Moves } from '../../src/data/ids/moves';
 import registerGameData from '../../src/data';
 

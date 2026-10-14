@@ -2,7 +2,7 @@ import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Types } from '../../data/constants/types';
 import Abilities from '../../data/ids/abilities';
 import { Moves } from '../../data/ids/moves';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, MoveTargetType } from '../events';
 import type Unit from '../unit';
 

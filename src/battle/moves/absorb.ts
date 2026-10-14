@@ -4,11 +4,11 @@ import { Stats } from '../../data/constants/stats';
 import { DamageFlags, Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
 import { HEAL_BONUS } from '../ai/score';
-import type Battle from '../core';
+import type Battle from '../battle';
 import type { MoveTarget } from '../events';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import { ASLEEP_STATUSES } from '../status';
-import { hasAnyStatus } from '../utils';
+import { hasAnyStatus } from '../unit-checks';
 import type Unit from '../unit';
 
 /**

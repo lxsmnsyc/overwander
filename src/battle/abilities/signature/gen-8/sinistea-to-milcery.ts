@@ -3,11 +3,11 @@ import { Stats } from '../../../../data/constants/stats';
 import Abilities from '../../../../data/ids/abilities';
 import { DamageFlags, MoveCategories, Moves } from '../../../../data/ids/moves';
 import { getMoveData } from '../../../../data/moves';
-import type Battle from '../../../core';
+import type Battle from '../../../battle';
 import { BattleEvents, EffectType, MoveTargetType } from '../../../events';
 import { type Lifecycle, MergedLifecycle } from '../../../lifecycle';
 import type Unit from '../../../unit';
-import { unitTarget } from '../../../utils';
+import { unitTarget } from '../../../unit-checks';
 import { createAbility } from '../../__create';
 import { fieldHasAbility, isPseudoMove, worstHurtMate } from '../__create';
 

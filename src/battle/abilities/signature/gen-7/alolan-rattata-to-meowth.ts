@@ -6,7 +6,9 @@ import { DamageFlags, Moves } from '../../../../data/ids/moves';
 import { Statuses } from '../../../../data/ids/status';
 import { BattleEvents, EffectType, MoveTargetType } from '../../../events';
 import { MergedLifecycle } from '../../../lifecycle';
-import { isOwnBerry, isWeatherHail, unitTarget } from '../../../utils';
+import { unitTarget } from '../../../unit-checks';
+import { isWeatherHail } from '../../../weather';
+import { isOwnBerry } from '../../../items/held';
 import { createAbility } from '../../__create';
 import { createUnitState, firstEnemy } from '../__create';
 

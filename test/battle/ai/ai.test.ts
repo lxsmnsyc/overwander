@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { chooseMove, setupChooseMoveAI } from '../../../src/battle/ai/choose-move';
-import { BattleModes } from '../../../src/battle/core';
+import { BattleModes } from '../../../src/battle/battle';
 import setupIdleAI, { AI_REST_PERIOD } from '../../../src/battle/ai/idle';
 import { checkTeamUnit, checkUnitRating } from '../../../src/battle/ai/rating';
 import {
@@ -11,10 +11,15 @@ import {
   type MoveTarget,
   MoveTargetType,
 } from '../../../src/battle/events';
-import { BASE_SCORE, HEAL_BONUS, STEP_PENALTY, USELESS_PENALTY } from '../../../src/battle/ai/score';
+import {
+  BASE_SCORE,
+  HEAL_BONUS,
+  STEP_PENALTY,
+  USELESS_PENALTY,
+} from '../../../src/battle/ai/score';
 import { PERISH_TRADE_BONUS } from '../../../src/battle/moves/perish-song';
 import type Unit from '../../../src/battle/unit';
-import { unitTarget } from '../../../src/battle/utils';
+import { unitTarget } from '../../../src/battle/unit-checks';
 import { MoveRole, ROLE_BASE } from '../../../src/battle/ai/roles';
 import { EventPriority } from '../../../src/core/event-emitter';
 import Abilities from '../../../src/data/ids/abilities';

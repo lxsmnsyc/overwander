@@ -11,12 +11,12 @@ import {
   affectsFoesOnly,
 } from '../../../../data/ids/moves';
 import { getMoveData } from '../../../../data/moves';
-import type Battle from '../../../core';
+import type Battle from '../../../battle';
 import { BattleEvents, EffectType, MoveTargetType } from '../../../events';
 import { MergedLifecycle } from '../../../lifecycle';
 import { MULTI_HIT_MOVES } from '../../../moves/multi-hit';
 import type Unit from '../../../unit';
-import { unitTarget } from '../../../utils';
+import { unitTarget } from '../../../unit-checks';
 import { createAbility } from '../../__create';
 import {
   createDamageTaken,

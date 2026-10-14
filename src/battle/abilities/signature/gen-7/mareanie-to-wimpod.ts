@@ -5,7 +5,7 @@ import { MoveAttackFlags, Moves } from '../../../../data/ids/moves';
 import { Statuses } from '../../../../data/ids/status';
 import { BattleEvents, EffectType, MoveTargetType } from '../../../events';
 import { MergedLifecycle } from '../../../lifecycle';
-import { unitTarget } from '../../../utils';
+import { unitTarget } from '../../../unit-checks';
 import { createAbility } from '../../__create';
 import { createUnitState } from '../__create';
 

@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { AttackPriority } from '../../../src/core/event-emitter';
-import type Battle from '../../../src/battle/core';
+import type Battle from '../../../src/battle/battle';
 import { BattleEvents, EffectType, MoveTargetType } from '../../../src/battle/events';
 import {
   DYNAMAX_ACTS,

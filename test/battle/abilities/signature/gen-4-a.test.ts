@@ -32,7 +32,7 @@ import Abilities from '../../../../src/data/ids/abilities';
 import { DamageFlags, MoveCategories, Moves } from '../../../../src/data/ids/moves';
 import { Statuses } from '../../../../src/data/ids/status';
 import turns from '../../../../src/battle/turn';
-import { unitTarget } from '../../../../src/battle/utils';
+import { unitTarget } from '../../../../src/battle/unit-checks';
 import { createBattle, createUnit, pinRandom } from '../../harness';
 import { NONE_CAUSE } from './helpers';
 

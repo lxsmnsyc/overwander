@@ -1,9 +1,9 @@
 import { EventPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
 import { Weathers } from '../../data/ids/status';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents } from '../events';
-import { isWeatherRainy, isWeatherSunny } from '../utils';
+import { isWeatherRainy, isWeatherSunny } from '../weather';
 
 interface WeatherAccuracyConfig {
   /**

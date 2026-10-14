@@ -5,7 +5,7 @@ import { MoveAttackFlags, Moves } from '../../../../data/ids/moves';
 import { BattleEvents, EffectType, MoveTargetType } from '../../../events';
 import { MergedLifecycle } from '../../../lifecycle';
 import type Unit from '../../../unit';
-import { unitTarget } from '../../../utils';
+import { unitTarget } from '../../../unit-checks';
 import { createAbility } from '../../__create';
 
 /** How often the string is taken hold of */

@@ -5,7 +5,7 @@ import { Stages, Stats } from '../../../../src/data/constants/stats';
 import Abilities from '../../../../src/data/ids/abilities';
 import { DamageFlags, Moves } from '../../../../src/data/ids/moves';
 import { EffectType } from '../../../../src/battle/events';
-import { unitTarget } from '../../../../src/battle/utils';
+import { unitTarget } from '../../../../src/battle/unit-checks';
 import {
   DESPAIR_FEAST_FRACTION,
   SILENT_WRATH_FRACTION,

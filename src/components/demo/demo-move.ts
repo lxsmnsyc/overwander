@@ -1,23 +1,23 @@
-import { BASE_FRIENDSHIP } from '../data/constants/friendship';
-import type { CatchSnapshot } from '../model/catch-snapshot';
-import { getMaxHealth } from '../model/health';
-import type { TeamSnapshotRecord } from '../auth/teams';
-import { defaultSlots } from '../data/constants/slots';
-import { PERFECT_IVS, Stats } from '../data/constants/stats';
-import { Types } from '../data/constants/types';
-import { MoveAffects, MoveTargets, Moves } from '../data/ids/moves';
-import { Species } from '../data/ids/species';
-import { getMoveData } from '../data/moves';
-import { getBaseForms } from '../data/species';
-import { deriveGender, deriveNature, deriveSize } from '../overworld/encounter';
-import { fieldTeams } from '../overworld/raid-battle';
-import { UNLIMITED_BATTLE_LIMITS } from '../data/constants/battle-limits';
-import { BattleEvents, type MoveTarget, MoveTargetType } from './events';
-import { BattleModes } from './core';
-import { EventPriority } from '../core/event-emitter';
-import type Battle from './core';
-import createBattle from './setup';
-import type Unit from './unit';
+import { BASE_FRIENDSHIP } from '../../data/constants/friendship';
+import type { CatchSnapshot } from '../../model/catch-snapshot';
+import { getMaxHealth } from '../../model/health';
+import type { TeamSnapshotRecord } from '../../auth/teams';
+import { defaultSlots } from '../../data/constants/slots';
+import { PERFECT_IVS, Stats } from '../../data/constants/stats';
+import { Types } from '../../data/constants/types';
+import { MoveAffects, MoveTargets, Moves } from '../../data/ids/moves';
+import { Species } from '../../data/ids/species';
+import { getMoveData } from '../../data/moves';
+import { getBaseForms } from '../../data/species';
+import { deriveGender, deriveNature, deriveSize } from '../../overworld/encounter';
+import { fieldTeams } from '../../overworld/raid-battle';
+import { UNLIMITED_BATTLE_LIMITS } from '../../data/constants/battle-limits';
+import { BattleEvents, type MoveTarget, MoveTargetType } from '../../battle/events';
+import { BattleModes } from '../../battle/battle';
+import { EventPriority } from '../../core/event-emitter';
+import type Battle from '../../battle/battle';
+import createBattle from '../../battle/setup';
+import type Unit from '../../battle/unit';
 
 /**
  * Two dummies and one move, for looking at it.

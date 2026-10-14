@@ -3,7 +3,7 @@ import { setupChooseMoveAI } from '../../../src/battle/ai/choose-move';
 import { getAIContext } from '../../../src/battle/ai/context';
 import { BASIC_SKILL, GYM_SKILL, TOP_SKILL, setTrainerSkill } from '../../../src/battle/ai/skill';
 import { getTrainer } from '../../../src/battle/ai/trainer';
-import { unitTarget } from '../../../src/battle/utils';
+import { unitTarget } from '../../../src/battle/unit-checks';
 import Abilities from '../../../src/data/ids/abilities';
 import { Items } from '../../../src/data/ids/items';
 import { Moves } from '../../../src/data/ids/moves';

@@ -2,7 +2,7 @@ import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { MoveCategories, Moves } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
 import { USELESS_PENALTY } from '../ai/score';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, MoveTargetType } from '../events';
 import type Unit from '../unit';
 import { scoreAsCall } from '../ai/choose-move';
@@ -86,7 +86,11 @@ export default function setupReadingTheField(battle: Battle): void {
 
   // Upper Hand only beats a move that was itself thrown to come first
   battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
-    if (event.immune || event.move !== Moves.UpperHand || event.target.type !== MoveTargetType.Unit) {
+    if (
+      event.immune ||
+      event.move !== Moves.UpperHand ||
+      event.target.type !== MoveTargetType.Unit
+    ) {
       return;
     }
 

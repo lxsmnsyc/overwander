@@ -4,13 +4,13 @@ import { Types } from '../../../../data/constants/types';
 import Abilities from '../../../../data/ids/abilities';
 import { DamageFlags, MoveAttackFlags } from '../../../../data/ids/moves';
 import { Statuses } from '../../../../data/ids/status';
-import type Battle from '../../../core';
+import type Battle from '../../../battle';
 import { BattleEvents, EffectType, type UnitAttackEvent } from '../../../events';
 import { MergedLifecycle } from '../../../lifecycle';
 import { MAJOR_STATUS_CONDITIONS } from '../../../status';
 import turns from '../../../turn';
 import type Unit from '../../../unit';
-import { hasAnyStatus, unitTarget } from '../../../utils';
+import { hasAnyStatus, unitTarget } from '../../../unit-checks';
 import { createAbility } from '../../__create';
 import { createTimedMarks } from '../__create';
 

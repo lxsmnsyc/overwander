@@ -1,7 +1,7 @@
 // Type: Null through Jangmo-o, with RKS System and Dazzling.
 
 import { describe, expect, it } from 'vitest';
-import { unitTarget } from '../../../../src/battle/utils';
+import { unitTarget } from '../../../../src/battle/unit-checks';
 import {
   GHOST_SHIP_SCALE,
   MEMORY_ECHO_SCALE,

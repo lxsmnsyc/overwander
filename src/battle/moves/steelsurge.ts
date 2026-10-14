@@ -2,7 +2,7 @@ import { EventPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
 import { TYPE_EFFECTIVENESS, TYPE_EFFECTIVENESS_FACTOR, Types } from '../../data/constants/types';
 import { DamageFlags } from '../../data/ids/moves';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, type EffectCause } from '../events';
 import { registerSideCondition } from '../mechanics/side-conditions';
 import type Team from '../team';

@@ -3,7 +3,7 @@ import Abilities from '../../../../data/ids/abilities';
 import { Moves } from '../../../../data/ids/moves';
 import { BattleEvents } from '../../../events';
 import { MergedLifecycle } from '../../../lifecycle';
-import { unitTarget } from '../../../utils';
+import { unitTarget } from '../../../unit-checks';
 import { createAbility } from '../../__create';
 import { createSpentItemAbility, firstEnemy } from '../__create';
 

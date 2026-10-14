@@ -1,5 +1,5 @@
 import { type JSX, Show, createEffect, createSignal, onCleanup } from 'solid-js';
-import type Battle from '../../battle/core';
+import type Battle from '../../battle/battle';
 import type Biome from '../../data/ids/biome';
 import type Unit from '../../battle/unit';
 import { type BaseEvent, EventPriority } from '../../core/event-emitter';

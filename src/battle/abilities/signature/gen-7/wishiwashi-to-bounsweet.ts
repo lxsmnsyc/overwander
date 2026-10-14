@@ -9,7 +9,7 @@ import { isKickMove } from '../../../../data/moves/kicks';
 import { BattleEvents, EffectType, MoveTargetType } from '../../../events';
 import { MergedLifecycle } from '../../../lifecycle';
 import type Unit from '../../../unit';
-import { onUnitActs } from '../../../utils';
+import onUnitActs from '../../../acts';
 import { createAbility, getAbilityHolders } from '../../__create';
 
 /** What a lone Wishiwashi heals each time it acts */

@@ -8,7 +8,7 @@ import {
   SNOW_HOARD_INTERVAL,
 } from '../../../../src/battle/abilities/signature/gen-9/greavard-to-frigibax';
 import { EffectType } from '../../../../src/battle/events';
-import { unitTarget } from '../../../../src/battle/utils';
+import { unitTarget } from '../../../../src/battle/unit-checks';
 import { Stages, Stats } from '../../../../src/data/constants/stats';
 import { Types } from '../../../../src/data/constants/types';
 import Abilities from '../../../../src/data/ids/abilities';

@@ -10,7 +10,7 @@ import { getMoveData } from '../../data/moves';
 import { RISKY_PENALTY } from '../ai/score';
 import { hasAttackEffect } from '../moves/status';
 import type Unit from '../unit';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { createHeldItem, holds } from './__create';
 
 /**

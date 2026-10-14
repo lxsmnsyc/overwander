@@ -8,7 +8,7 @@ import { TERA_TYPES } from '../../../../data/species/tera-type';
 import { BattleEvents, MoveTargetType } from '../../../events';
 import { maskTypeOf } from '../../../items/masks';
 import { isCentered } from '../../../status/centered';
-import { unitTarget } from '../../../utils';
+import { unitTarget } from '../../../unit-checks';
 import { createAbility, getAbilityHolders } from '../../__create';
 import { createAvengingChainAbility, isSingleTargetMove } from '../__create';
 

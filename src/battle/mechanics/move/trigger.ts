@@ -2,7 +2,7 @@ import { AttackPriority, EventPriority } from '../../../core/event-emitter';
 import { Stages } from '../../../data/constants/stats';
 import { MoveTargets, type Moves, StatFlags } from '../../../data/ids/moves';
 import { getMoveData } from '../../../data/moves';
-import type Battle from '../../core';
+import type Battle from '../../battle';
 import type {
   MoveTarget,
   TriggerMoveData,

@@ -10,13 +10,9 @@ import { BattleEvents, EffectType, MoveTargetType } from '../../../events';
 import { MergedLifecycle } from '../../../lifecycle';
 import type Unit from '../../../unit';
 import { MAJOR_STATUS_CONDITIONS } from '../../../status';
-import {
-  countHeldItems,
-  hasAnyStatus,
-  hasFreeItemSlot,
-  onUnitActs,
-  unitTarget,
-} from '../../../utils';
+import { hasAnyStatus, unitTarget } from '../../../unit-checks';
+import onUnitActs from '../../../acts';
+import { countHeldItems, hasFreeItemSlot } from '../../../items/held';
 import { createAbility, getAbilityHolders } from '../../__create';
 import { healthShare } from '../../special';
 import {

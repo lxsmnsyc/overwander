@@ -3,12 +3,13 @@ import { Stats } from '../../../../data/constants/stats';
 import { Types } from '../../../../data/constants/types';
 import Abilities from '../../../../data/ids/abilities';
 import { DamageFlags, MoveAttackFlags } from '../../../../data/ids/moves';
-import type Battle from '../../../core';
+import type Battle from '../../../battle';
 import { BattleEvents, EffectType, MoveTargetType } from '../../../events';
 import { MergedLifecycle } from '../../../lifecycle';
 import { MAJOR_STATUS_CONDITIONS } from '../../../status';
 import type Unit from '../../../unit';
-import { hasAnyStatus, slipsTraps, stealableItem, unitTarget } from '../../../utils';
+import { hasAnyStatus, slipsTraps, unitTarget } from '../../../unit-checks';
+import { stealableItem } from '../../../items/held';
 import { createAbility, getAbilityHolders } from '../../__create';
 import { createNextCastPenalty } from '../__create';
 

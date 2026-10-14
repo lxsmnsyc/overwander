@@ -1,5 +1,5 @@
 import { EventPriority } from '../../../core/event-emitter';
-import type Battle from '../../core';
+import type Battle from '../../battle';
 import { BattleEvents, MoveTargetType } from '../../events';
 import type Unit from '../../unit';
 import { getCastTime } from './timing';

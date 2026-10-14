@@ -1537,6 +1537,10 @@ export const enum Species {
   AlcremieFlower = 1086905,
   AlcremieRibbon = 1086906,
 
+  /** The true antiques among the Sinistea, the fakes at the base */
+  SinisteaAntique = 1085401,
+  PolteageistAntique = 1085501,
+
   /**
    * The Brass that leads a Falinks troop. Not a pokemon of its own:
    * the collection draws the troop only as its pieces, so Falinks is
@@ -1604,6 +1608,10 @@ export const enum Species {
 
   /** The rarer Dudunsparce, with three segments where the base has two */
   DudunsparceThree = 1098201,
+
+  /** The artisan's own work among the Poltchageist, the counterfeits at the base */
+  PoltchageistArtisan = 1101201,
+  SinistchaMasterpiece = 1101301,
 
   /** Gimmighoul on its own legs, the Chest form at the base */
   GimmighoulRoaming = 1099901,
@@ -1994,6 +2002,17 @@ export const PALDEAN_FORMS: Species[] = [
 
 /** A Maushold's family of four, and the one in a hundred that is three */
 export const MAUSHOLD_FORMS: Species[] = [Species.Maushold, Species.MausholdThree];
+
+/** A Dudunsparce's two segments, and the one in a hundred with three */
+export const DUDUNSPARCE_FORMS: Species[] = [Species.Dudunsparce, Species.DudunsparceThree];
+
+/** The fake teas at the base and the true antiques, Sinistea's line then Poltchageist's */
+export const TEA_FORMS: Species[] = [
+  Species.SinisteaAntique,
+  Species.PolteageistAntique,
+  Species.PoltchageistArtisan,
+  Species.SinistchaMasterpiece,
+];
 
 /** A Palafin, and the hero it comes back as once it has left the field */
 export const PALAFIN_FORMS: Species[] = [Species.Palafin, Species.PalafinHero];

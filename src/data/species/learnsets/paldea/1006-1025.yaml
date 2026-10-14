@@ -44,7 +44,35 @@ Poltchageist:
       48: [ShadowBall]
       54: [Memento]
       60: [LeafStorm]
+  PoltchageistArtisan:
+    level:
+      1: [StunSpore, Withdraw, Astonish]
+      6: [Absorb]
+      12: [LifeDew]
+      18: [FoulPlay]
+      24: [MegaDrain]
+      30: [Hex]
+      36: [RagePowder]
+      42: [GigaDrain]
+      48: [ShadowBall]
+      54: [Memento]
+      60: [LeafStorm]
   Sinistcha:
+    level:
+      1: [StunSpore, Withdraw, Astonish, MatchaGotcha]
+      6: [Absorb]
+      12: [LifeDew]
+      18: [FoulPlay]
+      24: [MegaDrain]
+      30: [Hex]
+      36: [RagePowder]
+      42: [StrengthSap]
+      48: [ShadowBall]
+      54: [Memento]
+      60: [LeafStorm]
+    teachable:
+      - HyperBeam
+  SinistchaMasterpiece:
     level:
       1: [StunSpore, Withdraw, Astonish, MatchaGotcha]
       6: [Absorb]

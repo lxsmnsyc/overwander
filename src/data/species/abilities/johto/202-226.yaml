@@ -33,6 +33,10 @@ Dunsparce:
     abilities: [SereneGrace, RunAway]
     # Simple is this registry's rather than the mainline's, filling it to four
     hidden: [Rattled, Simple]
+  DudunsparceThree:
+    abilities: [SereneGrace, RunAway]
+    # Simple is this registry's rather than the mainline's, filling it to four
+    hidden: [Rattled, Simple]
 Gligar:
   Gligar:
     abilities: [HyperCutter, SandVeil]

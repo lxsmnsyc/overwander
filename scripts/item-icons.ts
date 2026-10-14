@@ -728,38 +728,6 @@ const TINTS: Tint[] = [
     },
   },
   {
-    from: 'evolutions/sweet-apple',
-    to: 'evolutions/syrupy-apple',
-    why: 'the apple an Applin grows into a Dipplin on is its own item, and no sheet draws it',
-    // The red skin turned to a glossy amber candy coat
-    swaps: {},
-    recolour: rehue(32, 1),
-  },
-  {
-    from: 'evolutions/metal-coat',
-    to: 'evolutions/metal-alloy',
-    why: 'the alloy a Duraludon grows into an Archaludon on is its own item, and no sheet draws it',
-    // The coat's grey steel taken to a blued alloy
-    swaps: {},
-    recolour: rehue(212, 2.5),
-  },
-  {
-    from: 'evolutions/cracked-pot',
-    to: 'evolutions/unremarkable-teacup',
-    why: 'the cup a Poltchageist grows into a Sinistcha in is its own item, and no sheet draws it',
-    // The pot's tea turned to matcha green
-    swaps: {},
-    recolour: rehue(95, 0.8),
-  },
-  {
-    from: 'evolutions/kings-rock',
-    to: 'evolutions/leaders-crest',
-    why: 'the crest a Bisharp carries to become a Kingambit is its own item, and no sheet draws it',
-    // The crown's gold dulled to a battered crimson
-    swaps: {},
-    recolour: rehue(352, 0.7),
-  },
-  {
     from: 'key/parcel',
     to: 'evolutions/peat-block',
     why: 'the block an Ursaring evolves on is its own item, and no sheet draws it',
@@ -906,28 +874,6 @@ function hslToHex(hue: number, saturation: number, lightness: number): string {
         .padStart(2, '0'),
     )
     .join('')}`;
-}
-
-/**
- * A recolour that turns every coloured tone to one hue at a share of
- * its saturation, keeping its lightness. Greys and the outline are
- * left as they are, so the shading and the edge survive
- */
-function rehue(hue: number, saturation: number): (colour: string) => string {
-  return (colour) => {
-    const [red, green, blue] = hexToRgb(colour);
-    const high = Math.max(red, green, blue) / 255;
-    const low = Math.min(red, green, blue) / 255;
-    const lightness = (high + low) / 2;
-    const chroma = high - low;
-
-    if (chroma < 0.08) {
-      return colour;
-    }
-    const was = chroma / (1 - Math.abs(2 * lightness - 1));
-
-    return hslToHex(hue, Math.min(1, was * saturation), lightness);
-  };
 }
 
 /**
@@ -1152,6 +1098,11 @@ const SHRUNK: Shrunk[] = [
   // art keeps 28 pixels on its long side to stay legible, a plain shape 24
   { from: 'auspicious-armor', to: 'evolutions/auspicious-armor', fit: 28, plain: true },
   { from: 'malicious-armor', to: 'evolutions/malicious-armor', fit: 28, plain: true },
+  { from: 'syrupy-apple', to: 'evolutions/syrupy-apple', fit: 24, plain: true },
+  { from: 'metal-alloy', to: 'evolutions/metal-alloy', fit: 24, plain: true },
+  { from: 'unremarkable-teacup', to: 'evolutions/unremarkable-teacup', fit: 28, plain: true },
+  { from: 'masterpiece-teacup', to: 'evolutions/masterpiece-teacup', fit: 28, plain: true },
+  { from: 'leaders-crest', to: 'evolutions/leaders-crest', fit: 28, plain: true },
 ];
 
 function lightnessOf(colour: number[]): number {

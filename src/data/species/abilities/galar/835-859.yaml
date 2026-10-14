@@ -92,7 +92,16 @@ Sinistea:
   Sinistea:
     abilities: [WeakArmor]
     hidden: [CursedBody]
+  SinisteaAntique:
+    abilities: [WeakArmor]
+    hidden: [CursedBody]
   Polteageist:
+    abilities: [WeakArmor]
+    # Levitate and Heatproof are this registry's rather than the mainline's,
+    # filling it to four: it floats in its pot and the brew inside is
+    # already hot
+    hidden: [CursedBody, Levitate, Heatproof]
+  PolteageistAntique:
     abilities: [WeakArmor]
     # Levitate and Heatproof are this registry's rather than the mainline's,
     # filling it to four: it floats in its pot and the brew inside is

@@ -69,6 +69,13 @@ const STAND_INS = new Map<Species, Species>([
   // The collection draws the troop only as its pieces, so Falinks is
   // drawn as the Brass that leads it
   [Species.Falinks, Species.FalinksBrass],
+  // The true antiques differ from the fakes only in a stamp the
+  // collection does not draw, and the third segment is not drawn yet
+  [Species.SinisteaAntique, Species.Sinistea],
+  [Species.PolteageistAntique, Species.Polteageist],
+  [Species.PoltchageistArtisan, Species.Poltchageist],
+  [Species.SinistchaMasterpiece, Species.Sinistcha],
+  [Species.DudunsparceThree, Species.Dudunsparce],
 ]);
 
 /** Whether this shape is drawn as another pokemon until it has art of its own */

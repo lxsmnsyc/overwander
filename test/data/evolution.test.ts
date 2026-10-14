@@ -800,9 +800,33 @@ describe('evolution data', () => {
     while (!isOneInAHundred(value)) {
       value++;
     }
+    expect(getRareShape(Species.Sinistea, value)).toBe(Species.SinisteaAntique);
+    expect(getRareShape(Species.Sinistcha, value)).toBe(Species.SinistchaMasterpiece);
     expect(getRareShape(Species.Maushold, value)).toBe(Species.MausholdThree);
     expect(getRareShape(Species.Maushold, value + 1)).toBe(Species.Maushold);
     expect(getRareShape(Species.Pikachu, value)).toBe(Species.Pikachu);
+  });
+
+  it('grows the rare forms by their own items and moves', () => {
+    const context = {
+      level: 32,
+      carried: new Set<Items>([Items.ChippedPot, Items.CrackedPot, Items.MasterpieceTeacup]),
+      held: new Set<Items>(),
+      canEvolve: false,
+      moves: new Set<Moves>([Moves.HyperDrill]),
+      stats: EVEN_STATS,
+      friendship: BASE_FRIENDSHIP,
+      time: TimeOfDay.Night,
+      gender: Genders.Male,
+    };
+    const into = (species: Species, rare = false): Species[] =>
+      getAvailableEvolutions({ ...context, species, rare }).map((entry) => entry.species);
+
+    expect(into(Species.SinisteaAntique)).toEqual([Species.PolteageistAntique]);
+    expect(into(Species.Sinistea)).toEqual([Species.Polteageist]);
+    expect(into(Species.PoltchageistArtisan)).toEqual([Species.SinistchaMasterpiece]);
+    expect(into(Species.Dunsparce)).toEqual([Species.Dudunsparce]);
+    expect(into(Species.Dunsparce, true)).toEqual([Species.DudunsparceThree]);
   });
 
   it('rolls the one in a hundred about once in a hundred, the same each time', () => {

@@ -880,7 +880,35 @@ Sinistea:
       60: [ShellSmash]
     egg:
       - AllySwitch
+  SinisteaAntique:
+    level:
+      1: [Withdraw, Astonish]
+      6: [AromaticMist]
+      12: [MegaDrain]
+      18: [Protect]
+      24: [SuckerPunch]
+      30: [Aromatherapy, SweetScent]
+      36: [GigaDrain]
+      42: [NastyPlot]
+      48: [ShadowBall]
+      54: [Memento]
+      60: [ShellSmash]
+    egg:
+      - AllySwitch
   Polteageist:
+    level:
+      1: [MegaDrain, Withdraw, Astonish, AromaticMist, StrengthSap, Teatime]
+      18: [Protect]
+      24: [SuckerPunch]
+      30: [Aromatherapy, SweetScent]
+      36: [GigaDrain]
+      42: [NastyPlot]
+      48: [ShadowBall]
+      54: [Memento]
+      60: [ShellSmash]
+      66: [Curse]
+    teachable: [GigaImpact, HyperBeam, LightScreen, Reflect, SelfDestruct, PainSplit]
+  PolteageistAntique:
     level:
       1: [MegaDrain, Withdraw, Astonish, AromaticMist, StrengthSap, Teatime]
       18: [Protect]

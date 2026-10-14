@@ -14,3 +14,20 @@ Poltchageist:
     biomes: [TemperateForest, MontaneForest]
     active: [Evening, Night]
     evolves-from: Poltchageist
+  PoltchageistArtisan:
+    types: [Grass, Ghost]
+    egg-groups: [Mineral, Amorphous]
+    active: [Evening, Night]
+    # The artisan's work, one Poltchageist in a hundred. A wild one is
+    # met by the same roll, so it has no pool of its own
+    base-form: false
+    evolves-into:
+      - species: SinistchaMasterpiece
+        method: [UsedItem]
+        item: MasterpieceTeacup
+  SinistchaMasterpiece:
+    types: [Grass, Ghost]
+    egg-groups: [Mineral, Amorphous]
+    active: [Evening, Night]
+    base-form: false
+    evolves-from: PoltchageistArtisan

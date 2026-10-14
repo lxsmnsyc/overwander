@@ -141,7 +141,19 @@ Sinistea:
     height: 0.1
     weight: 0.2
     gender: genderless
+  SinisteaAntique:
+    stats: { HP: 40, Attack: 45, Defense: 45, SpecialAttack: 74, SpecialDefense: 54, Speed: 50 }
+    catch-rate: 120
+    height: 0.1
+    weight: 0.2
+    gender: genderless
   Polteageist:
+    stats: { HP: 60, Attack: 65, Defense: 65, SpecialAttack: 134, SpecialDefense: 114, Speed: 70 }
+    catch-rate: 60
+    height: 0.2
+    weight: 0.4
+    gender: genderless
+  PolteageistAntique:
     stats: { HP: 60, Attack: 65, Defense: 65, SpecialAttack: 134, SpecialDefense: 114, Speed: 70 }
     catch-rate: 60
     height: 0.2

@@ -116,6 +116,12 @@ CrackedPot:
   flags: [Usable, Marketable]
   buy: 3000
   sell: 1500
+ChippedPot:
+  type: Evolution
+  icon: evolutions/chipped-pot
+  flags: [Usable, Marketable]
+  buy: 3000
+  sell: 1500
 
 # The Galarica twigs a Galarian Slowpoke evolves on, used rather than
 # held: the cuff for Slowbro and the wreath for Slowking.
@@ -188,6 +194,12 @@ MetalAlloy:
 UnremarkableTeacup:
   type: Evolution
   icon: evolutions/unremarkable-teacup
+  flags: [Usable, Marketable]
+  buy: 3000
+  sell: 1500
+MasterpieceTeacup:
+  type: Evolution
+  icon: evolutions/masterpiece-teacup
   flags: [Usable, Marketable]
   buy: 3000
   sell: 1500

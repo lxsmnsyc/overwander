@@ -50,6 +50,12 @@ Dunsparce:
     height: 3.6
     weight: 39.2
     gender: [4, 4]
+  DudunsparceThree:
+    stats: { HP: 125, Attack: 100, Defense: 80, SpecialAttack: 85, SpecialDefense: 75, Speed: 55 }
+    catch-rate: 45
+    height: 3.6
+    weight: 39.2
+    gender: [4, 4]
 Gligar:
   Gligar:
     stats: { HP: 65, Attack: 75, Defense: 105, SpecialAttack: 35, SpecialDefense: 65, Speed: 85 }

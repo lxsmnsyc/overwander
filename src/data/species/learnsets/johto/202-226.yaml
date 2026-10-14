@@ -578,6 +578,99 @@ Dunsparce:
       - Uproar
       - WildCharge
       - ZenHeadbutt
+  DudunsparceThree:
+    level:
+      1: [DefenseCurl, Flail]
+      4: [MudSlap]
+      8: [Rollout]
+      12: [Glare]
+      16: [Screech]
+      20: [AncientPower]
+      24: [DrillRun]
+      28: [Yawn]
+      32: [HyperDrill]
+      36: [Roost]
+      40: [DragonRush]
+      44: [Coil]
+      48: [DoubleEdge]
+      52: [Endeavor]
+      56: [Hurricane]
+      62: [Boomburst]
+    teachable:
+      - Agility
+      - AirSlash
+      - Amnesia
+      - BatonPass
+      - Blizzard
+      - BodyPress
+      - BodySlam
+      - BreakingSwipe
+      - Bulldoze
+      - CalmMind
+      - ChillingWater
+      - Curse
+      - Dig
+      - DoubleEdge
+      - DragonTail
+      - DrillRun
+      - DualWingbeat
+      - EarthPower
+      - Earthquake
+      - Endeavor
+      - Endure
+      - Facade
+      - FireBlast
+      - Flamethrower
+      - GigaImpact
+      - GyroBall
+      - HeavySlam
+      - HelpingHand
+      - Hex
+      - Hurricane
+      - HyperBeam
+      - HyperVoice
+      - IceBeam
+      - IceSpinner
+      - Lunge
+      - MudShot
+      - MudSlap
+      - Outrage
+      - PainSplit
+      - PoisonJab
+      - PoisonTail
+      - Pounce
+      - Protect
+      - PsychUp
+      - RainDance
+      - Rest
+      - RockSlide
+      - RockTomb
+      - Sandstorm
+      - ScaleShot
+      - ScaryFace
+      - ShadowBall
+      - SkitterSmack
+      - SleepTalk
+      - SmartStrike
+      - SolarBeam
+      - Spite
+      - StealthRock
+      - StompingTantrum
+      - StoneEdge
+      - StoredPower
+      - Substitute
+      - SunnyDay
+      - Tailwind
+      - TakeDown
+      - TeraBlast
+      - Thief
+      - ThroatChop
+      - Thunder
+      - Thunderbolt
+      - Toxic
+      - Uproar
+      - WildCharge
+      - ZenHeadbutt
 Gligar:
   Gligar:
     level:

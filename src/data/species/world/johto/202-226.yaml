@@ -60,11 +60,25 @@ Dunsparce:
         method: [Level, KnownMove]
         level: 32
         move: HyperDrill
+        rare: false
+      - species: DudunsparceThree
+        method: [Level, KnownMove]
+        level: 32
+        move: HyperDrill
+        rare: true
   Dudunsparce:
     types: [Normal]
     egg-groups: [Field]
     biomes: [Mountain, Steppe, Badlands]
     active: any
+    evolves-from: Dunsparce
+  DudunsparceThree:
+    types: [Normal]
+    egg-groups: [Field]
+    active: any
+    # One Dunsparce in a hundred. A wild one is met by the same roll,
+    # so it has no pool of its own
+    base-form: false
     evolves-from: Dunsparce
 Gligar:
   Gligar:

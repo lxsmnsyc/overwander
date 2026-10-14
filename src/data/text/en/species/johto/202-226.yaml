@@ -10,6 +10,7 @@ Pineco:
 Dunsparce:
   Dunsparce: { name: Dunsparce, category: Land Snake Pokemon }
   Dudunsparce: { name: Dudunsparce, category: Land Snake Pokemon }
+  DudunsparceThree: { name: Dudunsparce Three-Segment, category: Land Snake Pokemon }
 Gligar:
   Gligar: { name: Gligar, category: Fly Scorpion Pokemon }
   Gliscor: { name: Gliscor, category: Fang Scorpion Pokemon }

@@ -43,6 +43,9 @@ SweetApple:
 CrackedPot:
   name: Cracked Pot
   description: A Sinistea it is used on moves into the pot and becomes a Polteageist.
+ChippedPot:
+  name: Chipped Pot
+  description: An antique Sinistea it is used on moves into the pot and becomes an antique Polteageist.
 GalaricaCuff:
   name: Galarica Cuff
   description: A Galarian Slowpoke it is used on becomes a Galarian Slowbro.
@@ -76,3 +79,6 @@ MetalAlloy:
 UnremarkableTeacup:
   name: Unremarkable Teacup
   description: Evolves the pokemon it is used on, where a line asks for it.
+MasterpieceTeacup:
+  name: Masterpiece Teacup
+  description: An artisan Poltchageist it is used on moves into the cup and becomes a masterpiece Sinistcha.

@@ -8,7 +8,7 @@ import { spriteUrl } from './sprite-origin';
  * address change instead: a sheet is fetched at `?v=<stamp>`, so it can
  * be kept for a year and a repacked one is a different URL.
  *
- * `scripts/sprite-stamps.ts` writes the list at build time, keyed by
+ * `scripts/sprites/stamps.ts` writes the list at build time, keyed by
  * the folder a sheet lives in. The pokemon sheets are stamped by
  * `coats.json` instead, per species, which is older and stays as it is.
  *

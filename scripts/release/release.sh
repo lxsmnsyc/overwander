@@ -24,7 +24,7 @@ fi
 # The same annotated tag `pnpm cs:tag` makes by hand, unless GitHub has it already
 git fetch --tags --quiet
 if [ -z "$(git tag -l "$tag")" ]; then
-  node scripts/tag-release.ts
+  node scripts/release/tag.ts
   git push origin "$tag"
 fi
 
@@ -35,7 +35,7 @@ gh release create "$tag" --title "Overwander $tag" --notes-file "$notes" --verif
 if [ -n "${CLOUDFLARE_API_TOKEN:-}" ]; then
   # Stamped here as the build does, or a redrawn sheet ships under the
   # digest browsers already hold for the old one
-  node scripts/sprite-stamps.ts
+  node scripts/sprites/stamps.ts
   pnpm dlx wrangler@4 deploy
   echo "Sprite host deployed for $tag"
 else

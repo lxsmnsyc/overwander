@@ -1,5 +1,5 @@
-import { GROUND_SQUASH } from '../src/canvas/tilt.ts';
-import type { Image } from '../src/server/sprites/png.ts';
+import { GROUND_SQUASH } from '../../src/canvas/tilt.ts';
+import type { Image } from '../../src/server/sprites/png.ts';
 
 /**
  * Where a drawn thing meets the ground, for the tools that cut sheets.

@@ -148,7 +148,7 @@ describe('the sheet stamps', () => {
   it('match every sheet as it is committed', () => {
     // A sheet repacked without a fresh stamp is served from the cache as
     // the old picture under the new description
-    const checked = spawnSync('node', ['scripts/sprite-stamps.ts', '--check'], {
+    const checked = spawnSync('node', ['scripts/sprites/stamps.ts', '--check'], {
       encoding: 'utf8',
     });
 
@@ -207,7 +207,7 @@ describe('the berry plants that ship', () => {
       .filter(({ name }) => !existsSync(`${ROOT}/${name}/image.png`))
       .map((one) => one.name);
 
-    expect(missing, 'run `node scripts/berry-plants.ts <sheet>` for these').toEqual([]);
+    expect(missing, 'run `node scripts/art/berry-plants.ts <sheet>` for these').toEqual([]);
   });
 
   it('ships no plant for a berry the game does not have', () => {
@@ -401,7 +401,7 @@ describe('the landmarks that ship', () => {
     const drawn = new Set(packed(LANDMARK_SHEET).map((one) => one.name));
     const missing = landmarkPictures().filter((name) => !drawn.has(name));
 
-    expect(missing, 'run `node scripts/landmarks.ts <sheet>` for these').toEqual([]);
+    expect(missing, 'run `node scripts/art/landmarks/index.ts <sheet>` for these').toEqual([]);
   });
 
   it('leaves the landmarks somebody stands on to their charsets', () => {
@@ -516,7 +516,7 @@ describe('the scenery that ships', () => {
       .map((one) => `${one.sheet}/${one.name}`)
       .filter((key) => !drawn.has(key));
 
-    expect(missing, 'run `node scripts/decorations.ts <sheet>` for these').toEqual([]);
+    expect(missing, 'run `node scripts/art/decorations.ts <sheet>` for these').toEqual([]);
   });
 
   it('carries no picture nothing is drawn as', () => {

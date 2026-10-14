@@ -1,9 +1,9 @@
 import { readFileSync } from 'node:fs';
-import decode, { type Image } from '../src/server/sprites/png.ts';
-import writeAtlas, { type Cut, type Drawn, assertWhole, cut, tighten } from './atlas.ts';
-import drawAlphaSite from './landmark-alpha.ts';
-import drawNobleArena from './landmark-noble.ts';
-import drawTeraCrystal from './landmark-tera.ts';
+import decode, { type Image } from '../../../src/server/sprites/png.ts';
+import writeAtlas, { type Cut, type Drawn, assertWhole, cut, tighten } from '../../lib/atlas.ts';
+import drawAlphaSite from './alpha.ts';
+import drawNobleArena from './noble.ts';
+import drawTeraCrystal from './tera.ts';
 
 /**
  * The landmarks, cut out of an overworld rip.

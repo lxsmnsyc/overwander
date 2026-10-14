@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs';
-import decode, { type Image } from '../src/server/sprites/png.ts';
+import decode, { type Image } from '../../src/server/sprites/png.ts';
 import writeAtlas, {
   type Crop,
   type Cut,
@@ -9,8 +9,8 @@ import writeAtlas, {
   cut,
   standsOn,
   tighten,
-} from './atlas.ts';
-import groundPoint from './ground.ts';
+} from '../lib/atlas.ts';
+import groundPoint from '../lib/ground.ts';
 
 /**
  * The scenery, cut out of an overworld rip and packed into two atlases.

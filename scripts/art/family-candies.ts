@@ -1,8 +1,8 @@
 import { mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { parse } from 'yaml';
-import decode, { type Image, encodeSmallest } from '../src/server/sprites/png.ts';
-import pack from '../src/server/sprites/packing.ts';
+import decode, { type Image, encodeSmallest } from '../../src/server/sprites/png.ts';
+import pack from '../../src/server/sprites/packing.ts';
 
 /**
  * A candy per evolution family, in that family's own colours.

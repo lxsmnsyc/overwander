@@ -1,6 +1,6 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import decode, { type Image, encodeSmallest } from '../src/server/sprites/png.ts';
+import decode, { type Image, encodeSmallest } from '../../src/server/sprites/png.ts';
 
 /**
  * The seven apricorn trees, grown out of the Nanab berry plant.

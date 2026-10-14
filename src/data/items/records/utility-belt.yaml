@@ -1,7 +1,7 @@
 UtilityBelt:
   type: Training
   # Its own picture, tinted out of the Power Lens by
-  # `scripts/item-icons.ts`: that one is a band with fittings set
+  # `scripts/art/item-icons.ts`: that one is a band with fittings set
   # into it, which in leather and brass is a belt
   icon: ev-items/utility-belt
   # Used on a pokemon and gone, like a cap. Never held: a belt in

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { GROUND_SQUASH } from '../src/canvas/tilt';
 import type { Image } from '../src/server/sprites/png';
-import groundPoint from '../scripts/ground.ts';
+import groundPoint from '../scripts/lib/ground.ts';
 
 /**
  * The one question a sprite sheet answers about a picture: which point

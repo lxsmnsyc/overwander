@@ -32,7 +32,7 @@ Checked against the collection as of 8 October 2026.
 - **Every Gen 8 species and form that can be shiny has a shiny coat**, Alcremie's seven Sweets included.
 - **Eternamax is left out.** It is only ever the final battle's boss in the mainline, and nothing here could stage it.
 - **Alcremie ships its seven Sweets on Vanilla Cream only** (`AlcremieBerry` to `AlcremieRibbon`, Strawberry being the base). The other eight creams are left out on purpose, not for lack of art.
-- **The collection files Hisui's new species under `galar/`.** `scripts/import-sprites.ts` refiles dex 899 to 905 under `hisui`, where the game looks for them.
+- **The collection files Hisui's new species under `galar/`.** `scripts/sprites/import.ts` refiles dex 899 to 905 under `hisui`, where the game looks for them.
 - **What follows from the gaps:**
   - The Zarude lair and relic stay reserved.
   - The fossil set ships all four.

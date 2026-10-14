@@ -362,7 +362,7 @@ rules were already server functions on `getSql()`. What moved underneath it:
 - [ ] **Tests.** `test/rls/dungeons.test.ts` becomes a `test/db` suite on the
       dev database, through the server functions.
 - [ ] **Art.** Regenerate rather than merge: `scripts/dungeon-terrain.ts`,
-      `scripts/landmarks.ts`, then `sprite-stamps`. The tileset review sheets
+      `scripts/art/landmarks/index.ts`, then `sprite-stamps`. The tileset review sheets
       under `tileset-review/dungeon` do not need to come back.
 - [ ] **The cliff hover ring.** The branch also carried a small fix, the hover
       ring lying on a cliff tile's slope (`.changeset/cliff-hover-ring.md`).

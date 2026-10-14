@@ -1,7 +1,7 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import decode, { type Image, encodeSmallest } from '../src/server/sprites/png.ts';
-import groundPoint from './ground.ts';
+import decode, { type Image, encodeSmallest } from '../../src/server/sprites/png.ts';
+import groundPoint from '../lib/ground.ts';
 
 /**
  * The berry plants, cut out of a rip and filed one to a berry.

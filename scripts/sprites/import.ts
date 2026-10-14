@@ -1,8 +1,8 @@
 import { copyFileSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
-import { SpriteAnim, asSpriteAnim, spriteAnimName } from '../src/data/ids/sprite-anims.ts';
-import writeCoats from '../src/server/sprites/coats.ts';
-import writeSpriteCredits from '../src/server/sprites/credits.ts';
+import { SpriteAnim, asSpriteAnim, spriteAnimName } from '../../src/data/ids/sprite-anims.ts';
+import writeCoats from '../../src/server/sprites/coats.ts';
+import writeSpriteCredits from '../../src/server/sprites/credits.ts';
 
 /**
  * Brings the pokemon sheets in from the SpriteCollab checkout.

@@ -1,8 +1,8 @@
 import { existsSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import sharp from 'sharp';
-import decode, { type Image, encodeSmallest } from '../src/server/sprites/png.ts';
-import { packSmallest } from '../src/server/sprites/packing.ts';
+import decode, { type Image, encodeSmallest } from '../../src/server/sprites/png.ts';
+import { packSmallest } from '../../src/server/sprites/packing.ts';
 
 /**
  * Item pictures that no rip drew.

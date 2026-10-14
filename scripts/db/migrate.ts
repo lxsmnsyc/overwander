@@ -1,5 +1,5 @@
 import postgres from 'postgres';
-import migrate from '../db/migrate.ts';
+import migrate from '../../db/migrate.ts';
 
 /** `pnpm migrate`: bring the database in DATABASE_URL up to date with db/migrations */
 const url = process.env.DATABASE_URL ?? '';

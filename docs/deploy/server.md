@@ -87,7 +87,7 @@ build's output and never the file itself. The host needs Node and pnpm.
 
 The [release workflow](../../.github/workflows/release.yml) publishes a GitHub
 release when the Version Packages pull request is merged.
-[`scripts/release.sh`](../../scripts/release.sh) then publishes the sprite host
+[`scripts/release/release.sh`](../../scripts/release/release.sh) then publishes the sprite host
 ([`wrangler.jsonc`](../../wrangler.jsonc)) with `wrangler deploy`. It needs two
 repository secrets:
 
@@ -109,7 +109,7 @@ git commit -am "chore: version packages" && git push
 pnpm cs:release            # tag, publish the GitHub release, and the sprite host
 ```
 
-`pnpm cs:release` (`scripts/release.sh`) needs `gh` signed in, and `CLOUDFLARE_API_TOKEN` and
+`pnpm cs:release` (`scripts/release/release.sh`) needs `gh` signed in, and `CLOUDFLARE_API_TOKEN` and
 `CLOUDFLARE_ACCOUNT_ID` in the environment for the sprite host.
 
 The server fetches the release itself, so GitHub never needs a way in.

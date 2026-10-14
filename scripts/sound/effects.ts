@@ -12,7 +12,7 @@ import { join } from 'node:path';
  * played out at 10 bits. Encoded as Ogg Vorbis at that rate.
  *
  * ```bash
- * FFMPEG=/path/to/ffmpeg node scripts/sound-effects.ts
+ * FFMPEG=/path/to/ffmpeg node scripts/sound/effects.ts
  * ```
  *
  * Needs an ffmpeg with libvorbis, found on the PATH unless `FFMPEG` names one.

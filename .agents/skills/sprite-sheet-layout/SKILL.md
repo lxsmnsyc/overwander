@@ -47,7 +47,7 @@ pnpm import-sprites --dry-run  # say what it would copy
 pnpm compact-sprites           # record them, and shrink any PNG that can be
 ```
 
-[`scripts/import-sprites.ts`](../../../scripts/import-sprites.ts) replaces the tree rather than writing over it, so a pokemon no longer built stops being served. It renames the collection's `{region}/{dex}/{form}` to the species id this game knows it by, skips a form there is no id for, and rewrites `coats.json` with a fresh stamp per pokemon. Without that stamp browsers go on drawing yesterday's sheet against today's description, which draws nothing at all.
+[`scripts/sprites/import.ts`](../../../scripts/sprites/import.ts) replaces the tree rather than writing over it, so a pokemon no longer built stops being served. It renames the collection's `{region}/{dex}/{form}` to the species id this game knows it by, skips a form there is no id for, and rewrites `coats.json` with a fresh stamp per pokemon. Without that stamp browsers go on drawing yesterday's sheet against today's description, which draws nothing at all.
 
 Nothing is repacked on the way in. A sheet that needs repacking is repacked in the SpriteCollab checkout and imported again.
 

@@ -6,7 +6,7 @@ import decode, {
   encodeTruecolor,
   paletteOf,
   sameImage,
-} from '../src/server/sprites/png.ts';
+} from '../../src/server/sprites/png.ts';
 import now, {
   type Ledger,
   digestOf,
@@ -15,7 +15,7 @@ import now, {
   record,
   sheetKey,
   writeLedger,
-} from './sprite-ledger.ts';
+} from './ledger.ts';
 
 /**
  * Shrink the sprite sheets under `public/sprites` without changing a

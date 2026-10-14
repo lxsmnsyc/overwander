@@ -1,5 +1,5 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import renderDataSchemas, { SCHEMA_DIR } from './data-schemas.ts';
+import renderDataSchemas, { SCHEMA_DIR } from './schemas.ts';
 
 /**
  * Writes `src/data/ids/names.ts`: every member of the enums the YAML
@@ -84,7 +84,7 @@ const TABLES: Table[] = [
 
 /** The member names of one enum, in the order they are declared */
 function membersOf(table: Table): string[] {
-  const path = new URL(`../src/data/ids/${table.from}.ts`, import.meta.url);
+  const path = new URL(`../../src/data/ids/${table.from}.ts`, import.meta.url);
   const source = readFileSync(path, 'utf8');
   const start = source.search(
     new RegExp(
@@ -143,7 +143,7 @@ export default function renderIdNames(): string {
   }
 
   const lines = [
-    '// Written by scripts/id-names.ts from the enums it lists; run `pnpm id-names`',
+    '// Written by scripts/data/id-names.ts from the enums it lists; run `pnpm id-names`',
     '// rather than editing it',
   ];
 
@@ -157,11 +157,11 @@ export default function renderIdNames(): string {
 }
 
 if (import.meta.main) {
-  writeFileSync(new URL(`../${OUTPUT}`, import.meta.url), renderIdNames());
+  writeFileSync(new URL(`../../${OUTPUT}`, import.meta.url), renderIdNames());
   console.log(`${OUTPUT} written`);
-  mkdirSync(new URL(`../${SCHEMA_DIR}`, import.meta.url), { recursive: true });
+  mkdirSync(new URL(`../../${SCHEMA_DIR}`, import.meta.url), { recursive: true });
   for (const [file, schema] of renderDataSchemas(enumMembers())) {
-    writeFileSync(new URL(`../${SCHEMA_DIR}/${file}`, import.meta.url), schema);
+    writeFileSync(new URL(`../../${SCHEMA_DIR}/${file}`, import.meta.url), schema);
   }
   console.log(`${SCHEMA_DIR} written`);
 }

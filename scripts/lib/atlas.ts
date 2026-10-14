@@ -1,7 +1,7 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { type Image, encodeSmallest } from '../src/server/sprites/png.ts';
-import pack from '../src/server/sprites/packing.ts';
+import { type Image, encodeSmallest } from '../../src/server/sprites/png.ts';
+import pack from '../../src/server/sprites/packing.ts';
 import groundPoint, { groundSpan } from './ground.ts';
 
 /**

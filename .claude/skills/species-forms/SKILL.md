@@ -46,5 +46,5 @@ A shape worn in battle (an Origin forme with its orb, Sky Shaymin with a Gracide
 1. An id in `Species`, written directly after the species' own and inside the band.
 2. `baseForm: false` on the registration, and the same `dexNumber` and `family` as the default form.
 3. A name that tells it apart in a box. The default keeps the plain name; a variant is marked (`Unown Q`).
-4. The species' dex number in `FORMS` in [`scripts/import-sprites.ts`](../../../scripts/import-sprites.ts), with how many forms the game now has ids for. Anything past the count is skipped rather than imported under an id nothing knows.
+4. The species' dex number in `FORMS` in [`scripts/sprites/import.ts`](../../../scripts/sprites/import.ts), with how many forms the game now has ids for. Anything past the count is skipped rather than imported under an id nothing knows.
 5. `pnpm import-sprites && pnpm compact-sprites`.

@@ -1,8 +1,8 @@
 import { mkdirSync, readdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import sharp from 'sharp';
-import { type Image, encodeSmallest } from '../src/server/sprites/png.ts';
-import pack from '../src/server/sprites/packing.ts';
+import { type Image, encodeSmallest } from '../../src/server/sprites/png.ts';
+import pack from '../../src/server/sprites/packing.ts';
 
 /**
  * The Battle Frontier symbols, as pixel art.

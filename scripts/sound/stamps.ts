@@ -53,7 +53,7 @@ async function main(): Promise<void> {
 
   await writeFile(
     OUTPUT,
-    `// Written by scripts/sound-stamps.ts; run it rather than editing this
+    `// Written by scripts/sound/stamps.ts; run it rather than editing this
 
 /** The digest each sound under \`public/sounds/effects\` is asked for with */
 const SOUND_STAMPS: Readonly<Partial<Record<string, string>>> = {

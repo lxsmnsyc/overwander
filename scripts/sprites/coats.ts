@@ -1,4 +1,4 @@
-import writeCoats from '../src/server/sprites/coats.ts';
+import writeCoats from '../../src/server/sprites/coats.ts';
 
 /**
  * Rebuilds the list of which pokemon were drawn in which coat.

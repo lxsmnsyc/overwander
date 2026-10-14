@@ -1,5 +1,5 @@
-import type { Image } from '../src/server/sprites/png.ts';
-import type { Drawn } from './atlas.ts';
+import type { Image } from '../../../src/server/sprites/png.ts';
+import type { Drawn } from '../../lib/atlas.ts';
 
 /**
  * The Alpha's ground, drawn on a grid rather than cut from the rip,

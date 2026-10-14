@@ -1,5 +1,5 @@
 import postgres from 'postgres';
-import createPasswordLink, { PASSWORD_LINK_DAYS } from '../db/password-link.ts';
+import createPasswordLink, { PASSWORD_LINK_DAYS } from '../../db/password-link.ts';
 
 /**
  * `pnpm password-link <email or nickname>`: a one-time link for the

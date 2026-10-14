@@ -115,7 +115,7 @@ A file per family in two folders, each item keyed by name:
 ## Rules
 
 - **Names, not numbers.** Write things the way the code names them: `Arcanine`, `FlareBlitz`, `FireStone`, `UsedItem`, `Contact`. Each registry's `yaml.ts` loader checks every name against its enum through `src/data/ids/names.ts` and fails the load on a typo.
-- **A new enum member needs `pnpm id-names`** before the YAML can use it. It rewrites the name tables and the JSON Schemas in `src/data/schema/`, and a test fails when either is out of date. The schemas are for the editor only (completion and squiggles through the Red Hat YAML extension, mapped in `.vscode/settings.json`); the loaders are still what decide whether the data is right, so a field added to a loader is added to `scripts/data-schemas.ts` too.
+- **A new enum member needs `pnpm id-names`** before the YAML can use it. It rewrites the name tables and the JSON Schemas in `src/data/schema/`, and a test fails when either is out of date. The schemas are for the editor only (completion and squiggles through the Red Hat YAML extension, mapped in `.vscode/settings.json`); the loaders are still what decide whether the data is right, so a field added to a loader is added to `scripts/data/schemas.ts` too.
 - **Keep a file readable in one sitting.** When a file grows past a few hundred lines, split it the way its neighbours are split rather than letting it grow.
 - **Comments are welcome.** They say why a value is what it is, the way they did in the code.
 - **Behaviour stays in TypeScript.** Rules that choose a form (`species/forms.ts`), the Megas and true shadows (built from their base species), weather pairings, and anything that runs in a fight are code.

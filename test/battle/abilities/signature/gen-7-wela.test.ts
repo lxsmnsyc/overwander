@@ -10,7 +10,7 @@ import {
   FOND_CRUSH_SCALE,
   OPENING_SLASH_SCALE,
   TOXIC_DOME_SCALE,
-} from '../../../../src/battle/abilities/signature/mareanie-to-wimpod';
+} from '../../../../src/battle/abilities/signature/gen-7/mareanie-to-wimpod';
 import { Stats } from '../../../../src/data/constants/stats';
 import { Types } from '../../../../src/data/constants/types';
 import Abilities from '../../../../src/data/ids/abilities';

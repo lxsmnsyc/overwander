@@ -6,7 +6,7 @@ import { BattleEvents, EffectType } from '../../../../src/battle/events';
 import { unitTarget } from '../../../../src/battle/utils';
 import { DISGUISE_CHIP } from '../../../../src/battle/abilities/gen-7';
 import { HIT_BACK_SCALE } from '../../../../src/battle/abilities/signature/__create';
-import { NAP_TIME_FRACTION } from '../../../../src/battle/abilities/signature/komala-to-drampa';
+import { NAP_TIME_FRACTION } from '../../../../src/battle/abilities/signature/gen-7/komala-to-drampa';
 import { Stats } from '../../../../src/data/constants/stats';
 import { Types } from '../../../../src/data/constants/types';
 import Abilities from '../../../../src/data/ids/abilities';

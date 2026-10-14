@@ -17,7 +17,7 @@ import {
   SQUEEZE_FRACTION,
   SQUEEZE_INTERVAL,
   TWIN_STINGER_POWER_SCALE,
-} from '../../../../src/battle/abilities/signature/bulbasaur-to-pikachu';
+} from '../../../../src/battle/abilities/signature/gen-1/bulbasaur-to-pikachu';
 import {
   DELAYED_REACTION_DELAY,
   DELAYED_REACTION_SHARE,
@@ -35,7 +35,7 @@ import {
   SOLID_CORE_SPECIAL_SCALE,
   SPIKE_SHELL_CONTACT_SCALE,
   SPIKE_SHELL_FRACTION,
-} from '../../../../src/battle/abilities/signature/geodude-to-drowzee';
+} from '../../../../src/battle/abilities/signature/gen-1/geodude-to-drowzee';
 import {
   BLIND_RAGE_ACCURACY_SCALE,
   BLIND_RAGE_ATTACK_SCALE,
@@ -53,7 +53,7 @@ import {
   TELEPORT_GUARD_WINDOW,
   UNDERMINE_MAX_STACKS,
   UNDERMINE_STEP,
-} from '../../../../src/battle/abilities/signature/paras-to-tentacool';
+} from '../../../../src/battle/abilities/signature/gen-1/paras-to-tentacool';
 import {
   BLOODTHIRST_DRAIN_SCALE,
   BLOODTHIRST_HEAL_SCALE,
@@ -61,7 +61,7 @@ import {
   LULLABY_SLEEP_SCALE,
   NINE_TAILS_MAX_STACKS,
   NINE_TAILS_STEP,
-} from '../../../../src/battle/abilities/signature/sandshrew-to-oddish';
+} from '../../../../src/battle/abilities/signature/gen-1/sandshrew-to-oddish';
 import type Battle from '../../../../src/battle/core';
 import { BattleEvents, EffectType, MoveTargetType } from '../../../../src/battle/events';
 import type Unit from '../../../../src/battle/unit';

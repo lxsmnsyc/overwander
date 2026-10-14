@@ -18,7 +18,7 @@ import {
   BOSS_PHASES,
   SHADOW_DEFENSE_SCALE,
   SHADOW_OFFENSE_SCALE,
-} from '../../../src/battle/abilities/special';
+} from '../../../src/battle/abilities/special/index';
 import { MOVE_DELAY } from '../../../src/battle/mechanics/move';
 import { RESIDUAL_TICK } from '../../../src/battle/status/__create';
 import turns from '../../../src/battle/turn';

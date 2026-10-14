@@ -15,7 +15,7 @@ import {
   CASTLE_DRAIN_FRACTION,
   CHARGED_SPINES_SCALE,
   STARFALL_SCALE,
-} from '../../../../src/battle/abilities/signature/sandygast-to-togedemaru';
+} from '../../../../src/battle/abilities/signature/gen-7/sandygast-to-togedemaru';
 import { Stages, Stats } from '../../../../src/data/constants/stats';
 import { Types } from '../../../../src/data/constants/types';
 import Abilities from '../../../../src/data/ids/abilities';

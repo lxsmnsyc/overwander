@@ -19,7 +19,7 @@ import {
   createMummyAbility,
   getAbilityHolders,
 } from './__create';
-import { FOLDED_CREEDS, HUSK_CREED } from './signature/tao-trio';
+import { FOLDED_CREEDS, HUSK_CREED } from './signature/gen-5/tao-trio';
 
 /** How far a Darmanitan has to fall before it sits down */
 export const ZEN_MODE_THRESHOLD = 1 / 2;

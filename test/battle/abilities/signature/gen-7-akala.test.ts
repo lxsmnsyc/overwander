@@ -12,7 +12,7 @@ import {
   ORCHID_GUISE_SCALE,
   REGROUP_HEAL_FRACTION,
   TROP_STRIDE_SCALE,
-} from '../../../../src/battle/abilities/signature/wishiwashi-to-bounsweet';
+} from '../../../../src/battle/abilities/signature/gen-7/wishiwashi-to-bounsweet';
 import { Stats, StatsKind } from '../../../../src/data/constants/stats';
 import { Types } from '../../../../src/data/constants/types';
 import Abilities from '../../../../src/data/ids/abilities';

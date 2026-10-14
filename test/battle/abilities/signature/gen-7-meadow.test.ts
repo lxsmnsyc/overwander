@@ -8,7 +8,7 @@ import { unitTarget } from '../../../../src/battle/utils';
 import {
   DIZZY_TWIRL_SCALE,
   REBOUND_PUNCH_SCALE,
-} from '../../../../src/battle/abilities/signature/oricorio-to-crabrawler';
+} from '../../../../src/battle/abilities/signature/gen-7/oricorio-to-crabrawler';
 import { Stages, Stats } from '../../../../src/data/constants/stats';
 import { Types } from '../../../../src/data/constants/types';
 import Abilities from '../../../../src/data/ids/abilities';

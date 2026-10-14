@@ -3,7 +3,7 @@ import {
   GLIMMERING_SCALE,
   REDLINE_MAX_QUICKEN,
   SLAG_TRAIL_COOLDOWN,
-} from '../../../../src/battle/abilities/signature/finizen-to-glimmet';
+} from '../../../../src/battle/abilities/signature/gen-9/finizen-to-glimmet';
 import { EffectType } from '../../../../src/battle/events';
 import { layersUnder } from '../../../../src/battle/moves/spikes';
 import turns from '../../../../src/battle/turn';

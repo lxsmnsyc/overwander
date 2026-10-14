@@ -5,7 +5,7 @@ import {
   COTTON_CRADLE_SCALE,
   EARLY_WARNING_COOLDOWN,
   STEEL_ESCORT_COOLDOWN,
-} from '../../../../src/battle/abilities/signature/skwovet-to-yamper';
+} from '../../../../src/battle/abilities/signature/gen-8/skwovet-to-yamper';
 import { type EffectCause, EffectType, MoveTargetType } from '../../../../src/battle/events';
 import type Unit from '../../../../src/battle/unit';
 import { unitTarget } from '../../../../src/battle/utils';

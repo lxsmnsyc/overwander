@@ -2,7 +2,7 @@
 
 import { describe, expect, it } from 'vitest';
 import { NEUROFORCE_SCALE } from '../../../../src/battle/abilities/gen-7';
-import { MOLD_PROOF_ABILITIES } from '../../../../src/battle/abilities/protected';
+import { MOLD_PROOF_ABILITIES } from '../../../../src/battle/abilities/unsuppressible';
 import { SKY_ARC_RISE } from '../../../../src/battle/abilities/signature/__create';
 import { MoveTargetType } from '../../../../src/battle/events';
 import { unitTarget } from '../../../../src/battle/utils';

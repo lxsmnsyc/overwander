@@ -10,7 +10,7 @@ import {
   BOILER_SCALE,
   REGALIA_INTERVAL,
   REGALIA_LIMIT,
-} from '../../../../src/battle/abilities/signature/kalos-mythicals';
+} from '../../../../src/battle/abilities/signature/gen-6/kalos-mythicals';
 import { MoveTargetType } from '../../../../src/battle/events';
 import { createBattle, createUnit, pinRandom } from '../../harness';
 import { dealDamage } from './helpers';

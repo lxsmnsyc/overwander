@@ -6,7 +6,7 @@ import {
   MOUTHFUL_HEAL,
   SNOW_HOARD_CAP,
   SNOW_HOARD_INTERVAL,
-} from '../../../../src/battle/abilities/signature/greavard-to-frigibax';
+} from '../../../../src/battle/abilities/signature/gen-9/greavard-to-frigibax';
 import { EffectType } from '../../../../src/battle/events';
 import { unitTarget } from '../../../../src/battle/utils';
 import { Stages, Stats } from '../../../../src/data/constants/stats';

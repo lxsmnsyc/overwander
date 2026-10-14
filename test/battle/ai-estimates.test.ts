@@ -4,7 +4,7 @@ import { withAIContext } from '../../src/battle/ai/context';
 import type Battle from '../../src/battle/core';
 import type Team from '../../src/battle/team';
 import type Unit from '../../src/battle/unit';
-import { DOOM_MARK_SCALE } from '../../src/battle/abilities/signature/spoink-to-deoxys';
+import { DOOM_MARK_SCALE } from '../../src/battle/abilities/signature/gen-3/spoink-to-deoxys';
 import {
   BattleEvents,
   MoveTargetType,

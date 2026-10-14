@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { AVENGING_CAST_SCALE } from '../../../../src/battle/abilities/signature/__create';
-import { MASK_AURA_SCALE } from '../../../../src/battle/abilities/signature/kitakami-legends';
+import { MASK_AURA_SCALE } from '../../../../src/battle/abilities/signature/gen-9/kitakami-legends';
 import type Battle from '../../../../src/battle/core';
 import { BattleEvents, MoveTargetType } from '../../../../src/battle/events';
 import type Unit from '../../../../src/battle/unit';

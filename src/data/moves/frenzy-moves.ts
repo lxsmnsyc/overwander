@@ -10,7 +10,7 @@ import { Z_MOVES } from './z-moves';
 /**
  * The Frenzy bursts a Noble unleashes. Like the G-Max Moves, none of
  * them is learned, copied, called or remembered. The battle side is
- * in `src/battle/abilities/noble.ts`
+ * in `src/battle/abilities/special/noble.ts`
  */
 
 /** Hisui's five Nobles, each with a burst of its own */

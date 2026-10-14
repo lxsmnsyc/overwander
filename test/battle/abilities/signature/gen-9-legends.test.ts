@@ -3,7 +3,7 @@ import {
   COIN_SCATTER_REST,
   FULL_THROTTLE_SCALE,
   STUNTED_DURATION,
-} from '../../../../src/battle/abilities/signature/paldea-legends';
+} from '../../../../src/battle/abilities/signature/gen-9/paldea-legends';
 import { MoveTargetType } from '../../../../src/battle/events';
 import { MOVE_DELAY } from '../../../../src/battle/mechanics/move/timing';
 import { PAY_DAY_COINS_PER_LEVEL } from '../../../../src/battle/moves/pay-day';

@@ -9,7 +9,7 @@ import { Moves } from '../../../../src/data/ids/moves';
 import {
   CRYSTAL_GROWTH_INTERVAL,
   CRYSTAL_GROWTH_LIMIT,
-} from '../../../../src/battle/abilities/signature/pancham-to-carbink';
+} from '../../../../src/battle/abilities/signature/gen-6/pancham-to-carbink';
 import { EffectType, MoveTargetType } from '../../../../src/battle/events';
 import { createBattle, createUnit, pinRandom } from '../../harness';
 import { NONE_CAUSE } from './helpers';

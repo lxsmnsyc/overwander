@@ -11,7 +11,7 @@ import {
   SOLSTICE_DURATION,
   SOLSTICE_INTERVAL,
   SOLSTICE_SCALE,
-} from '../../../../src/battle/abilities/signature/snom-to-stonjourner';
+} from '../../../../src/battle/abilities/signature/gen-8/snom-to-stonjourner';
 import { Stages, Stats } from '../../../../src/data/constants/stats';
 import { Types } from '../../../../src/data/constants/types';
 import Abilities from '../../../../src/data/ids/abilities';

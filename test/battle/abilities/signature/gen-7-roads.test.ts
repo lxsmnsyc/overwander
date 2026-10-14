@@ -11,7 +11,7 @@ import {
   SCORE_TO_SETTLE_SCALE,
   TRICKLE_CHARGE_LIMIT,
   TRICKLE_CHARGE_SHARE,
-} from '../../../../src/battle/abilities/signature/pikipek-to-grubbin';
+} from '../../../../src/battle/abilities/signature/gen-7/pikipek-to-grubbin';
 import { createBattle, createUnit, pinRandom } from '../../harness';
 import { dealDamage } from './helpers';
 

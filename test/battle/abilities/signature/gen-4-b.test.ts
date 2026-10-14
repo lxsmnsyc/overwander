@@ -7,24 +7,24 @@ import {
   WOKEN_SCALE,
   WOKEN_STAGES,
 } from '../../../../src/battle/abilities/signature/__create';
-import { APPLIANCE_SCALE } from '../../../../src/battle/abilities/signature/rotom';
-import { LAVADOME_SCALE } from '../../../../src/battle/abilities/signature/heatran-regigigas';
+import { APPLIANCE_SCALE } from '../../../../src/battle/abilities/signature/gen-4/rotom';
+import { LAVADOME_SCALE } from '../../../../src/battle/abilities/signature/gen-4/heatran-regigigas';
 import {
   DEEP_TOLL_FRACTION,
   RANK_AIR_SCALE,
   SKYHUNT_SCALE,
-} from '../../../../src/battle/abilities/signature/stunky-to-gible';
+} from '../../../../src/battle/abilities/signature/gen-4/stunky-to-gible';
 import {
   AMBUSH_SCALE,
   AURA_MATCH_SCALE,
   DUST_BATH_FRACTION,
-} from '../../../../src/battle/abilities/signature/riolu-to-skorupi';
+} from '../../../../src/battle/abilities/signature/gen-4/riolu-to-skorupi';
 import {
   EVERGREEN_SCALE,
   FALSE_EYES_THRESHOLD,
   FINISHER_SCALE,
   FINISHER_THRESHOLD,
-} from '../../../../src/battle/abilities/signature/croagunk-to-snover';
+} from '../../../../src/battle/abilities/signature/gen-4/croagunk-to-snover';
 import { AttackPriority } from '../../../../src/core/event-emitter';
 import type Battle from '../../../../src/battle/core';
 import {

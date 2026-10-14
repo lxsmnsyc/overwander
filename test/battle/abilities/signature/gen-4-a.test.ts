@@ -6,22 +6,22 @@ import {
   FLOCK_CEILING,
   FLOCK_SCALE,
   LODGE_SCALE,
-} from '../../../../src/battle/abilities/signature/starly-to-kricketot';
+} from '../../../../src/battle/abilities/signature/gen-4/starly-to-kricketot';
 import {
   PATCHWORK_MAX_PATCHES,
   TWO_SEAS_SCALE,
-} from '../../../../src/battle/abilities/signature/burmy-to-shellos';
+} from '../../../../src/battle/abilities/signature/gen-4/burmy-to-shellos';
 import {
   CARRY_OFF_CHANCE,
   SPRINGHEEL_MAX_JUMPS,
   VELVET_CLAWS_SCALE,
-} from '../../../../src/battle/abilities/signature/drifloon-to-glameow';
+} from '../../../../src/battle/abilities/signature/gen-4/drifloon-to-glameow';
 import {
   FLOAT_SAC_THRESHOLD,
   POLLEN_DOLE_FRACTION,
   SECOND_BLOOM_FRACTION,
   SECOND_BLOOM_STAGES,
-} from '../../../../src/battle/abilities/signature/combee-to-cherubi';
+} from '../../../../src/battle/abilities/signature/gen-4/combee-to-cherubi';
 import { Species } from '../../../../src/data/ids/species';
 import { AttackPriority } from '../../../../src/core/event-emitter';
 import { BattleEvents, MoveTargetType } from '../../../../src/battle/events';

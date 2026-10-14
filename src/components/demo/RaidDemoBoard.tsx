@@ -10,7 +10,7 @@ import { Badge, Button, Meta, Note, Select, Switch } from '../../components/styl
 import type { Species } from '../../data/ids/species';
 import { Stats } from '../../data/constants/stats';
 import { EffectType, MoveTargetType } from '../../battle/events';
-import { NOBLE_THRESHOLDS } from '../../battle/abilities/noble';
+import { NOBLE_THRESHOLDS } from '../../battle/abilities/special/noble';
 import { Statuses } from '../../data/ids/status';
 import { FRENZY_MOVES, getNobleBurst } from '../../data/moves/frenzy-moves';
 import { getMoveData } from '../../data/moves';

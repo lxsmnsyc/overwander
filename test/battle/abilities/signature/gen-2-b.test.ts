@@ -12,7 +12,7 @@ import {
   SAND_RIDER_SCALE,
   SWEET_PAW_SHARE,
   TIMELINE_SPLIT_THRESHOLD,
-} from '../../../../src/battle/abilities/signature/chikorita-to-celebi';
+} from '../../../../src/battle/abilities/signature/gen-2/chikorita-to-celebi';
 import { AttackPriority, EventPriority } from '../../../../src/core/event-emitter';
 import { BattleEvents, EffectType, MoveTargetType } from '../../../../src/battle/events';
 import { Stages, Stats } from '../../../../src/data/constants/stats';

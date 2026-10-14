@@ -9,8 +9,8 @@ import {
   NOBLE_THRESHOLDS,
   balmsLeft,
   burstEffectOf,
-} from '../../src/battle/abilities/noble';
-import { PROTECTED_ABILITIES } from '../../src/battle/abilities/special';
+} from '../../src/battle/abilities/special/noble';
+import { PROTECTED_ABILITIES } from '../../src/battle/abilities/special/index';
 import { BattleEvents, EffectType, MoveTargetType } from '../../src/battle/events';
 import { stonesOver } from '../../src/battle/moves/stealth-rock';
 import { STAGGER_DURATION } from '../../src/battle/status/staggered';

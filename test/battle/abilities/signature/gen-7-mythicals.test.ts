@@ -1,7 +1,7 @@
 // Magearna, Marshadow, Zeraora and the Meltan line, with Soul-Heart.
 
 import { describe, expect, it } from 'vitest';
-import { UMBRAL_STRIKE_SCALE } from '../../../../src/battle/abilities/signature/alola-mythicals';
+import { UMBRAL_STRIKE_SCALE } from '../../../../src/battle/abilities/signature/gen-7/alola-mythicals';
 import { EffectType } from '../../../../src/battle/events';
 import { unitTarget } from '../../../../src/battle/utils';
 import { SpawnRarity, getSpawnRarity } from '../../../../src/data/biome';

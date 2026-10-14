@@ -3,7 +3,7 @@ import {
   BOG_DOWN_DURATION,
   RAGING_SCALE,
   TEA_SERVICE_SCALE,
-} from '../../../../src/battle/abilities/signature/paldea-regionals';
+} from '../../../../src/battle/abilities/signature/gen-9/paldea-regionals';
 import { EffectType } from '../../../../src/battle/events';
 import { unitTarget } from '../../../../src/battle/utils';
 import { Stages } from '../../../../src/data/constants/stats';

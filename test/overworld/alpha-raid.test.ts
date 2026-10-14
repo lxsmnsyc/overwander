@@ -7,7 +7,7 @@ import {
   BOSS_HEALTH_SCALE,
   BOSS_STAT_SCALE,
   PROTECTED_ABILITIES,
-} from '../../src/battle/abilities/special';
+} from '../../src/battle/abilities/special/index';
 import type Unit from '../../src/battle/unit';
 import registerGameData from '../../src/data';
 import { SPECIAL_ABILITIES } from '../../src/data/constants/slots';

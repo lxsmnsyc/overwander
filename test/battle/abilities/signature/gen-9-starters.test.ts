@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   PETAL_SCATTER_FRACTION,
   WAKE_COOLDOWN,
-} from '../../../../src/battle/abilities/signature/sprigatito-to-quaxly';
+} from '../../../../src/battle/abilities/signature/gen-9/sprigatito-to-quaxly';
 import { EffectType } from '../../../../src/battle/events';
 import { Stages } from '../../../../src/data/constants/stats';
 import { Types } from '../../../../src/data/constants/types';

@@ -9,7 +9,7 @@ import {
   BACKLASH_SHARE,
   SHARED_MISERY_THRESHOLD,
   SUNLIT_CHARGE_SCALE,
-} from '../../../../src/battle/abilities/signature/chikorita-to-celebi';
+} from '../../../../src/battle/abilities/signature/gen-2/chikorita-to-celebi';
 import { AttackPriority } from '../../../../src/core/event-emitter';
 import type Battle from '../../../../src/battle/core';
 import { BattleEvents, EffectType, MoveTargetType } from '../../../../src/battle/events';

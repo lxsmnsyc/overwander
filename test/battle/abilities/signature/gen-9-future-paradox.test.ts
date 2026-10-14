@@ -7,7 +7,7 @@ import {
   SAND_GENERATOR_COOLDOWN,
   TERRAIN_EDGE_BOOST,
   TRACK_LAYING_COOLDOWN,
-} from '../../../../src/battle/abilities/signature/future-paradox';
+} from '../../../../src/battle/abilities/signature/gen-9/future-paradox';
 import { EventPriority } from '../../../../src/core/event-emitter';
 import type Battle from '../../../../src/battle/core';
 import { BattleEvents, MoveTargetType } from '../../../../src/battle/events';

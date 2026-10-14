@@ -5,7 +5,7 @@ import type Battle from '../../core';
 import { BattleEvents, MoveTargetType } from '../../events';
 import { type Lifecycle, MergedLifecycle } from '../../lifecycle';
 import type Unit from '../../unit';
-import PROTECTED_ABILITIES, { MOLD_PROOF_ABILITIES } from '../protected';
+import PROTECTED_ABILITIES, { MOLD_PROOF_ABILITIES } from '../unsuppressible';
 import { createAbility } from './create';
 
 /**

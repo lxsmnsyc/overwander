@@ -59,7 +59,7 @@ import {
   UNIQUE_SPOTS_RAISED,
   WEATHER_WORN_DEALT_SCALE,
   WEATHER_WORN_TAKEN_SCALE,
-} from '../../../../src/battle/abilities/signature/spoink-to-deoxys';
+} from '../../../../src/battle/abilities/signature/gen-3/spoink-to-deoxys';
 import turns from '../../../../src/battle/turn';
 import { unitTarget } from '../../../../src/battle/utils';
 import { createBattle, createUnit, pinRandom } from '../../harness';

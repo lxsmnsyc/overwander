@@ -41,7 +41,7 @@ rolled one, and a shadow boss carries `Shadow` between them. It fights alone
 under `BOSS_ALLIANCE`; every player team shares `PLAYER_ALLIANCE`.
 
 Its move list is filtered through `BANNED_BOSS_MOVES`
-([`src/battle/abilities/special.ts`](../../src/battle/abilities/special.ts)).
+([`src/battle/abilities/special/index.ts`](../../src/battle/abilities/special/index.ts)).
 
 | Banned move | Why                                                                 |
 | ----------- | ------------------------------------------------------------------- |

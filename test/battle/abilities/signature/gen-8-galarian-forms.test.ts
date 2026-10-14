@@ -7,7 +7,7 @@ import {
   CORAL_HUSK_DURATION,
   LEEK_SHIELD_SCALE,
   MENDING_HORN_SHARE,
-} from '../../../../src/battle/abilities/signature/galarian-forms';
+} from '../../../../src/battle/abilities/signature/gen-8/galarian-forms';
 import type Unit from '../../../../src/battle/unit';
 import { unitTarget } from '../../../../src/battle/utils';
 import { Stages, Stats } from '../../../../src/data/constants/stats';

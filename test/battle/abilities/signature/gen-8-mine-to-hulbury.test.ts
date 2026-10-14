@@ -15,7 +15,7 @@ import { unitTarget } from '../../../../src/battle/utils';
 import {
   SPEARHEAD_COOLDOWN,
   VENOM_CHARGE_COOLDOWN,
-} from '../../../../src/battle/abilities/signature/applin-to-pincurchin';
+} from '../../../../src/battle/abilities/signature/gen-8/applin-to-pincurchin';
 import { createBattle, createUnit, pinRandom } from '../../harness';
 import { NONE_CAUSE, dealDamage } from './helpers';
 

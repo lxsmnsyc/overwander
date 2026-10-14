@@ -8,8 +8,8 @@ import { MoveCategories, Moves } from '../../../../src/data/ids/moves';
 import {
   MANY_HANDS_SCALE,
   SHOT_FLOOR,
-} from '../../../../src/battle/abilities/signature/binacle-to-clauncher';
-import { BOSS_DAMAGE_CAP } from '../../../../src/battle/abilities/special';
+} from '../../../../src/battle/abilities/signature/gen-6/binacle-to-clauncher';
+import { BOSS_DAMAGE_CAP } from '../../../../src/battle/abilities/special/index';
 import { createBattle, createUnit, pinRandom } from '../../harness';
 import { NONE_CAUSE, dealDamage } from './helpers';
 

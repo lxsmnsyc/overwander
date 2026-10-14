@@ -8,7 +8,7 @@ import {
   LEI_HEAL_FRACTION,
   RUSH_PASS_SCALE,
   SAGES_CALL_SCALE,
-} from '../../../../src/battle/abilities/signature/morelull-to-passimian';
+} from '../../../../src/battle/abilities/signature/gen-7/morelull-to-passimian';
 import { Stats, StatsKind } from '../../../../src/data/constants/stats';
 import { Types } from '../../../../src/data/constants/types';
 import Abilities from '../../../../src/data/ids/abilities';

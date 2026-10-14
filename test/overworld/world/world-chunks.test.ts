@@ -41,7 +41,7 @@ import {
   BANNED_BOSS_MOVES,
   BOSS_HEALTH_SCALE,
   getBannedBossMoves,
-} from '../../../src/battle/abilities/special';
+} from '../../../src/battle/abilities/special/index';
 import { EffectType } from '../../../src/battle/events';
 import { getMaxHealth } from '../../../src/model/health';
 import { MAX_EFFORT_PER_STAT, PERFECT_IVS, Stats } from '../../../src/data/constants/stats';

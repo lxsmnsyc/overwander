@@ -14,7 +14,7 @@ import { Badge, Button, Combobox, Meta, Note, Row, Switch } from '../styled';
 import { MOVE_CATEGORY_NAMES, type Moves } from '../../data/ids/moves';
 import { TYPE_NAMES } from '../../data/constants/types';
 import { getMoveData, getRegisteredMoves } from '../../data/moves';
-import { dynamax } from '../../battle/mechanics/dynamax';
+import { dynamax } from '../../battle/gimmicks/dynamax';
 import { Species } from '../../data/ids/species';
 
 /**

@@ -1,7 +1,7 @@
-import { AttackPriority, EventPriority } from '../../core/event-emitter';
-import { MoveCategories, Moves } from '../../data/ids/moves';
-import { getMoveData } from '../../data/moves';
-import { FIXED_G_MAX_MOVES, getGMaxMove } from '../../data/moves/gmax-moves';
+import { AttackPriority, EventPriority } from '../../../core/event-emitter';
+import { MoveCategories, Moves } from '../../../data/ids/moves';
+import { getMoveData } from '../../../data/moves';
+import { FIXED_G_MAX_MOVES, getGMaxMove } from '../../../data/moves/gmax-moves';
 import {
   MAX_MOVE_ALLY_STAGES,
   MAX_MOVE_FOE_STAGES,
@@ -9,21 +9,21 @@ import {
   MAX_MOVE_WEATHERS,
   TYPE_MAX_MOVES,
   maxPowerOf,
-} from '../../data/moves/max-moves';
-import { isPseudoMove } from '../../data/moves/pseudo';
-import type Battle from '../core';
+} from '../../../data/moves/max-moves';
+import { isPseudoMove } from '../../../data/moves/pseudo';
+import type Battle from '../../core';
 import {
   BattleEvents,
   type CastingData,
   EffectType,
   type MoveTarget,
   MoveTargetType,
-} from '../events';
-import { isPrimalWeather } from '../utils';
-import type Unit from '../unit';
-import { TERRAIN_DURATION } from './terrain';
-import { WEATHER_DURATION } from './weather';
-import { zCastShownAs, zTargetOf } from './z-moves';
+} from '../../events';
+import { isPrimalWeather } from '../../utils';
+import type Unit from '../../unit';
+import { TERRAIN_DURATION } from '../../moves/terrain';
+import { WEATHER_DURATION } from '../../moves/weather';
+import { zCastShownAs, zTargetOf } from '../z-moves';
 
 /**
  * Max Moves. Every move a Dynamaxed unit casts goes off as the Max

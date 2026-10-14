@@ -3,7 +3,7 @@ import { AttackPriority } from '../../src/core/event-emitter';
 import { chooseMove, setupChooseMoveAI } from '../../src/battle/ai/choose-move';
 import type Battle from '../../src/battle/core';
 import { BattleEvents, MoveTargetType, type UnitAttackEvent } from '../../src/battle/events';
-import { canDynamax } from '../../src/battle/mechanics/dynamax';
+import { canDynamax } from '../../src/battle/gimmicks/dynamax';
 import {
   TERA_ADAPTABILITY_STAB,
   TERA_POWER_FLOOR,
@@ -12,7 +12,7 @@ import {
   canTerastallize,
   isTerastallized,
   terastallize,
-} from '../../src/battle/mechanics/terastal';
+} from '../../src/battle/gimmicks/terastal';
 import type Unit from '../../src/battle/unit';
 import { packSlots } from '../../src/data/constants/slots';
 import { Stats, StatsKind } from '../../src/data/constants/stats';

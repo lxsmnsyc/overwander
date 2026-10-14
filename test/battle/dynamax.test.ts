@@ -7,7 +7,7 @@ import {
   dynamax,
   dynamaxActsLeft,
   revertDynamax,
-} from '../../src/battle/mechanics/dynamax';
+} from '../../src/battle/gimmicks/dynamax';
 import turns from '../../src/battle/turn';
 import type Unit from '../../src/battle/unit';
 import { packSlots } from '../../src/data/constants/slots';
@@ -19,7 +19,7 @@ import { Species } from '../../src/data/ids/species';
 import { Statuses, Terrains, Weathers } from '../../src/data/ids/status';
 import * as gmax from '../../src/data/moves/gmax-moves';
 import { maxPowerOf } from '../../src/data/moves/max-moves';
-import { castShownAs } from '../../src/battle/moves/max-moves';
+import { castShownAs } from '../../src/battle/gimmicks/dynamax/max-moves';
 import { placesOf } from '../../src/components/battle/battle-canvas/field';
 import { createBattle, createUnit, pinRandom } from './harness';
 

@@ -6,8 +6,8 @@ import Battle, { type BattleModes } from '../../src/battle/core';
 import setupItems from '../../src/battle/items';
 import setupAbilityMechanics from '../../src/battle/mechanics/ability';
 import setupAllianceMechanics from '../../src/battle/mechanics/alliance';
-import setupDynamaxMechanics from '../../src/battle/mechanics/dynamax';
-import setupTerastalMechanics from '../../src/battle/mechanics/terastal';
+import setupDynamaxMechanics from '../../src/battle/gimmicks/dynamax';
+import setupTerastalMechanics from '../../src/battle/gimmicks/terastal';
 import setupItemMechanics from '../../src/battle/mechanics/item';
 import {
   setupAttackMechanics,

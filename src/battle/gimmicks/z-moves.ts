@@ -21,7 +21,7 @@ import {
   type MoveTarget,
   MoveTargetType,
 } from '../events';
-import { isMegaHolder } from '../items/megas';
+import { isMegaHolder } from './mega';
 import type Team from '../team';
 import type Unit from '../unit';
 

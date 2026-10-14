@@ -8,7 +8,7 @@ import { getSpeciesData } from '../../data/species/__create';
 import type Battle from '../core';
 import { BattleEvents, type UnitAttackEvent } from '../events';
 import { maskShapeOf, maskTypeOf, teraShapeOf } from '../items/masks';
-import { isMegaHolder } from '../items/megas';
+import { isMegaHolder } from './mega';
 import type Team from '../team';
 import type Unit from '../unit';
 import { holdsStoneOrCrystal } from './dynamax';

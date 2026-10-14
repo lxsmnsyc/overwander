@@ -5,7 +5,7 @@ import {
   CHI_STRIKE_LIMIT,
   FINALE_SHARE,
   G_MAX_RESIDUAL_SHARE,
-} from '../../../src/battle/moves/gmax-moves';
+} from '../../../src/battle/gimmicks/dynamax/gmax-moves';
 import { payDayCeiling } from '../../../src/battle/moves/pay-day';
 import { stonesOver } from '../../../src/battle/moves/stealth-rock';
 import { steelOver } from '../../../src/battle/moves/steelsurge';

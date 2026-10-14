@@ -11,8 +11,8 @@ import setupItems from './items';
 import setupAbilityMechanics from './mechanics/ability';
 import setupAllianceMechanics from './mechanics/alliance';
 import setupBattleMechanics from './mechanics/battle';
-import setupDynamaxMechanics from './mechanics/dynamax';
-import setupTerastalMechanics from './mechanics/terastal';
+import setupDynamaxMechanics from './gimmicks/dynamax';
+import setupTerastalMechanics from './gimmicks/terastal';
 import setupItemMechanics from './mechanics/item';
 import {
   setupAttackMechanics,

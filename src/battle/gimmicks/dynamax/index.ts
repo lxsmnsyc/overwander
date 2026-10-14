@@ -1,23 +1,23 @@
-import { AttackPriority, EventPriority } from '../../core/event-emitter';
-import { Stats } from '../../data/constants/stats';
-import { Items } from '../../data/ids/items';
-import { Moves } from '../../data/ids/moves';
-import { Statuses } from '../../data/ids/status';
-import { MEGA_STONES } from '../../data/items/mega-stones';
-import { SIGNATURE_CRYSTALS, TYPE_CRYSTALS } from '../../data/items/z-crystals';
-import type Battle from '../core';
-import { BattleEvents, EffectType, MoveTargetType } from '../events';
-import { isMegaHolder } from '../items/megas';
-import { OHKO_MOVES } from '../moves/fixed-damage';
-import { FORCED_SWITCH_MOVES } from '../moves/switch-out';
-import type Team from '../team';
-import type Unit from '../unit';
+import { AttackPriority, EventPriority } from '../../../core/event-emitter';
+import { Stats } from '../../../data/constants/stats';
+import { Items } from '../../../data/ids/items';
+import { Moves } from '../../../data/ids/moves';
+import { Statuses } from '../../../data/ids/status';
+import { MEGA_STONES } from '../../../data/items/mega-stones';
+import { SIGNATURE_CRYSTALS, TYPE_CRYSTALS } from '../../../data/items/z-crystals';
+import type Battle from '../../core';
+import { BattleEvents, EffectType, MoveTargetType } from '../../events';
+import { isMegaHolder } from '../mega';
+import { OHKO_MOVES } from '../../moves/fixed-damage';
+import { FORCED_SWITCH_MOVES } from '../../moves/switch-out';
+import type Team from '../../team';
+import type Unit from '../../unit';
 
 /**
  * Dynamax. A unit holding a Dynamax Band grows the first time it drops
  * below 1/2 HP, once a side a fight, with nothing to press. It keeps
  * the size for its next `DYNAMAX_ACTS` casts and then shrinks back.
- * The Max Moves it throws meanwhile are `src/battle/moves/max-moves.ts`
+ * The Max Moves it throws meanwhile are `src/battle/gimmicks/dynamax/max-moves.ts`
  * https://bulbapedia.bulbagarden.net/wiki/Dynamax
  */
 

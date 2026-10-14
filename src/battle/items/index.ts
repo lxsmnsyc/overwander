@@ -7,7 +7,7 @@ import setupGear from './gear';
 import setupGems from './gems';
 import setupHoney from './honey';
 import setupIncenses from './incenses';
-import setupMegas from './megas';
+import setupMegas from '../gimmicks/mega';
 import setupOneShots from './one-shots';
 import setupOrbs from './orbs';
 import setupSacredAsh from './sacred-ash';

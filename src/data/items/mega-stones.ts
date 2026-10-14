@@ -9,7 +9,7 @@ import { itemText } from './__create';
  *
  * Unlike a form item, holding one is not enough on its own. A team
  * Mega Evolves once, so the battle side in
- * [`src/battle/items/megas.ts`](../../battle/items/megas.ts) picks
+ * [`src/battle/gimmicks/mega.ts`](../../battle/gimmicks/mega.ts) picks
  * which holder gets to.
  */
 
@@ -113,7 +113,13 @@ export const MEGA_STONES = new Map<Items, MegaStone>([
   [Items.Falinksite, { mega: Species.FalinksMega }],
   [Items.Scovillainite, { mega: Species.ScovillainMega }],
   [Items.Glimmoranite, { mega: Species.GlimmoraMega }],
-  [Items.Tatsugirinite, { mega: Species.TatsugiriMega, forms: [Species.TatsugiriStretchyMega, Species.TatsugiriDroopyMega] }],
+  [
+    Items.Tatsugirinite,
+    {
+      mega: Species.TatsugiriMega,
+      forms: [Species.TatsugiriStretchyMega, Species.TatsugiriDroopyMega],
+    },
+  ],
   [Items.Baxcalibrite, { mega: Species.BaxcaliburMega }],
 ]);
 

@@ -13,8 +13,8 @@ import Team from '../battle/team';
 import Unit from '../battle/unit';
 import { holdAlphaCopy, holdTotemAlly } from '../battle/abilities/special';
 import { holdBalms } from '../battle/abilities/noble';
-import { dynamax } from '../battle/mechanics/dynamax';
-import { terastallize } from '../battle/mechanics/terastal';
+import { dynamax } from '../battle/gimmicks/dynamax';
+import { terastallize } from '../battle/gimmicks/terastal';
 import { UNLIMITED_BATTLE_LIMITS } from '../data/constants/battle-limits';
 import { STAT_ORDER, Stats, StatsKind, getIV } from '../data/constants/stats';
 import {

@@ -28,7 +28,7 @@ import {
 } from '../__create';
 import { MergedLifecycle } from '../../lifecycle';
 import { registerWeatherWant } from '../../ai/weather-wants';
-import { adaptedSTAB } from '../../mechanics/terastal';
+import { adaptedSTAB } from '../../gimmicks/terastal';
 
 // The skies these thrive under, so the AI weighs a weather move by who gains from it
 registerWeatherWant(Abilities.SnowCloak, [Weathers.Hail, Weathers.Snow]);

@@ -14,6 +14,7 @@ export const KICK_MOVES = new Set<Moves>([
   Moves.RollingKick,
   Moves.TripleKick,
   Moves.TropKick,
+  Moves.AxeKick,
 ]);
 
 export function isKickMove(move: Moves): boolean {

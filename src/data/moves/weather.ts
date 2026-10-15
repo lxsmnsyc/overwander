@@ -31,6 +31,8 @@ export const MOVE_WEATHERS = new Map<Moves, Weathers>([
   [Moves.SunnyDay, Weathers.Sunny],
   [Moves.Sandstorm, Weathers.Sandstorm],
   [Moves.Hail, Weathers.Hail],
+  [Moves.Snowscape, Weathers.Snow],
+  [Moves.ChillyReception, Weathers.Snow],
 ]);
 
 export function getWeatherMove(weather: Weathers): Moves | undefined {

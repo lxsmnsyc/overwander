@@ -852,6 +852,10 @@ const MOVE_DRAWBACKS: Partial<Record<Moves, number>> = {
   // Burns the user's own Fire type away, and fails without it, so it
   // is one swing a fight
   [Moves.BurnUp]: 0.5,
+  [Moves.DoubleShock]: 0.5,
+  // Paldea's: a drop on the stat it fired from, and two on Speed
+  [Moves.MakeItRain]: 0.75,
+  [Moves.SpinOut]: 0.75,
 };
 
 /** The abilities that spare the user each kind of cost */
@@ -876,7 +880,13 @@ function holdsAbility(abilities: readonly Abilities[], wanted: ReadonlySet<Abili
 const RECHARGE_FACTOR = 0.5;
 
 /** The drawbacks that are a drop on the user, which Contrary turns into a rise */
-const SELF_DROPPING = new Set<Moves>([Moves.Overheat, Moves.PsychoBoost, Moves.Superpower]);
+const SELF_DROPPING = new Set<Moves>([
+  Moves.Overheat,
+  Moves.PsychoBoost,
+  Moves.Superpower,
+  Moves.MakeItRain,
+  Moves.SpinOut,
+]);
 
 /**
  * The moves aimed at an enemy that a teammate's ability turns into a

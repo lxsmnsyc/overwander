@@ -199,6 +199,7 @@ const HEALS = new Set<Moves>([
   Moves.LifeDew,
   Moves.JungleHealing,
   Moves.LunarBlessing,
+  Moves.RevivalBlessing,
 ]);
 const SELF_BOOSTS = new Set<Moves>([
   Moves.BellyDrum,
@@ -219,6 +220,7 @@ const SUPPORTING = new Set<Moves>([
   Moves.Instruct,
   Moves.Coaching,
   Moves.Teatime,
+  Moves.DragonCheer,
 ]);
 const UTILITIES = new Set<Moves>([
   // Callers and copies, worth whatever they turn into

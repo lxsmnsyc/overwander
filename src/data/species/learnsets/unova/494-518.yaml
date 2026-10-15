@@ -145,6 +145,19 @@ Snivy:
     - Toxic
     - WorrySeed
     - Confide
+    - TeraBlast
+    - Trailblaze
+    - TakeDown
+    - DoubleEdge
+    - Swift
+    - Endure
+    - HelpingHand
+    - BulletSeed
+    - MagicalLeaf
+    - LeafStorm
+    - PetalBlizzard
+    - GrassyTerrain
+    - GrassyGlide
   Snivy:
     level:
       1: [Tackle]
@@ -174,6 +187,7 @@ Snivy:
       - SweetScent
       - Twister
       - GrassyTerrain
+      - Synthesis
   Servine:
     level:
       1: [Tackle, Leer, VineWhip, Wrap]
@@ -181,7 +195,7 @@ Snivy:
       7: [VineWhip]
       10: [Wrap]
       13: [Growth]
-      16: [LeafTornado]
+      16: [LeafTornado, MagicalLeaf]
       20: [LeechSeed]
       24: [MegaDrain]
       28: [Slam]
@@ -198,7 +212,7 @@ Snivy:
       7: [VineWhip]
       10: [Wrap]
       13: [Growth]
-      16: [LeafTornado]
+      16: [LeafTornado, MagicalLeaf]
       20: [LeechSeed]
       24: [MegaDrain]
       28: [Slam]
@@ -218,6 +232,10 @@ Snivy:
       - RockSmash
       - Strength
       - BrutalSwing
+      - BodySlam
+      - ScaryFace
+      - BreakingSwipe
+      - ScaleShot
 Tepig:
   # TM, HM and tutor moves shared by the whole family
 
@@ -263,12 +281,28 @@ Tepig:
     - WillOWisp
     - Confide
     - StompingTantrum
+    - TeraBlast
+    - Trailblaze
+    - TemperFlare
+    - FirePunch
+    - BodySlam
+    - TakeDown
+    - DoubleEdge
+    - FireSpin
+    - Dig
+    - Curse
+    - MudSlap
+    - Endure
+    - FlareBlitz
+    - ZenHeadbutt
+    - HeavySlam
+    - HeatCrash
   Tepig:
     level:
       1: [Tackle]
       3: [TailWhip]
       7: [Ember]
-      9: [OdorSleuth]
+      9: [OdorSleuth, Endure]
       13: [DefenseCurl]
       15: [FlameCharge]
       19: [Smog]
@@ -292,10 +326,11 @@ Tepig:
       - Thrash
       - Yawn
       - BurnUp
+      - SuckerPunch
   Pignite:
     # What it comes out of the evolution knowing
     level:
-      1: [Tackle, TailWhip, Ember, OdorSleuth]
+      1: [Tackle, TailWhip, Ember, OdorSleuth, Endure]
       3: [TailWhip]
       7: [Ember]
       9: [OdorSleuth]
@@ -314,7 +349,6 @@ Tepig:
     teachable:
       - BrickBreak
       - Bulldoze
-      - FirePunch
       - Fling
       - FocusBlast
       - LowKick
@@ -325,6 +359,15 @@ Tepig:
       - ThunderPunch
       - WorkUp
       - PowerUpPunch
+      - Reversal
+      - ScaryFace
+      - FocusPunch
+      - KnockOff
+      - BulkUp
+      - CloseCombat
+      - DrainPunch
+      - HighHorsepower
+      - Coaching
   Emboar:
     level:
       1: [Tackle, TailWhip, Ember, OdorSleuth, HammerArm]
@@ -346,7 +389,6 @@ Tepig:
     teachable:
       - BrickBreak
       - Bulldoze
-      - FirePunch
       - Fling
       - FocusBlast
       - LowKick
@@ -366,6 +408,16 @@ Tepig:
       - IronHead
       - Scald
       - SmackDown
+      - HardPress
+      - Reversal
+      - ScaryFace
+      - FocusPunch
+      - KnockOff
+      - CloseCombat
+      - DrainPunch
+      - HighHorsepower
+      - BodyPress
+      - Coaching
 Oshawott:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -409,27 +461,56 @@ Oshawott:
     - WaterPledge
     - XScissor
     - Confide
+    - TeraBlast
+    - Snowscape
+    - ChillingWater
+    - TakeDown
+    - HydroPump
+    - Swift
+    - Thief
+    - Endure
+    - Encore
+    - Whirlpool
+    - KnockOff
+    - WaterPulse
+    - AirSlash
+    - Avalanche
+    - Liquidation
+    - FlipTurn
   Oshawott:
     level:
       1: [Tackle]
       5: [TailWhip]
       7: [WaterGun]
-      11: [WaterSport]
+      11: [WaterSport, Soak]
       13: [FocusEnergy]
       17: [RazorShell]
       19: [FuryCutter]
       23: [WaterPulse]
-      25: [Revenge]
+      25: [Revenge, AerialAce]
       29: [AquaJet]
       31: [Encore]
       35: [AquaTail]
       37: [Retaliate]
       41: [SwordsDance]
       43: [HydroPump]
-    egg: [AirSlash, Assurance, Brine, Copycat, Detect, NightSlash, Screech, TrumpCard]
+    egg:
+      [
+        AirSlash,
+        Assurance,
+        Brine,
+        Copycat,
+        Detect,
+        NightSlash,
+        Screech,
+        TrumpCard,
+        AquaCutter,
+        KnockOff,
+        SacredSword,
+      ]
   Dewott:
     level:
-      1: [Tackle, TailWhip, WaterGun, WaterSport]
+      1: [Tackle, TailWhip, WaterGun, WaterSport, Soak]
       5: [TailWhip]
       7: [WaterGun]
       11: [WaterSport]
@@ -438,16 +519,17 @@ Oshawott:
       20: [FuryCutter]
       25: [WaterPulse]
       28: [Revenge]
+      29: [AerialAce]
       33: [AquaJet]
       36: [Encore]
       41: [AquaTail]
       44: [Retaliate]
       49: [SwordsDance]
       52: [HydroPump]
-    teachable: [BrickBreak]
+    teachable: [BrickBreak, VacuumWave]
   Samurott:
     level:
-      1: [Tackle, TailWhip, WaterGun, WaterSport, Megahorn]
+      1: [Tackle, TailWhip, WaterGun, WaterSport, Megahorn, Soak]
       5: [TailWhip]
       7: [WaterGun]
       11: [WaterSport]
@@ -456,6 +538,7 @@ Oshawott:
       20: [FuryCutter]
       25: [WaterPulse]
       28: [Revenge]
+      29: [AerialAce]
       33: [AquaJet]
       36: [Slash]
       38: [Encore]
@@ -470,11 +553,19 @@ Oshawott:
       - GigaImpact
       - HydroCannon
       - HyperBeam
-      - KnockOff
       - Strength
       - Superpower
-      - Liquidation
       - SmartStrike
+      - UpperHand
+      - BodySlam
+      - ScaryFace
+      - DarkPulse
+      - VacuumWave
+      - Bulldoze
+      - DrillRun
+      - Snarl
+      - ThroatChop
+      - LashOut
   SamurottHisui:
     level:
       1: [Tackle, TailWhip, WaterGun, Slash, Megahorn, SuckerPunch, CeaselessEdge]
@@ -492,8 +583,6 @@ Oshawott:
     teachable:
       [
         AerialAce,
-        AirSlash,
-        Avalanche,
         Blizzard,
         BodySlam,
         BrickBreak,
@@ -501,23 +590,17 @@ Oshawott:
         DarkPulse,
         Dig,
         DrillRun,
-        Encore,
-        Endure,
         Facade,
         FalseSwipe,
         Fling,
-        FlipTurn,
         GigaImpact,
         GrassKnot,
         HelpingHand,
         HydroCannon,
-        HydroPump,
         HyperBeam,
         IceBeam,
         IcyWind,
-        KnockOff,
         LashOut,
-        Liquidation,
         Protect,
         RainDance,
         Rest,
@@ -527,18 +610,14 @@ Oshawott:
         Snarl,
         Substitute,
         Surf,
-        Swift,
         SwordsDance,
-        TakeDown,
         Taunt,
-        Thief,
         ThroatChop,
         VacuumWave,
         WaterPledge,
-        WaterPulse,
         Waterfall,
-        Whirlpool,
         XScissor,
+        UpperHand,
       ]
 Patrat:
   # TM, HM and tutor moves shared by the whole family

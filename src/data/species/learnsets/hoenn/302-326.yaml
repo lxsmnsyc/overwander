@@ -110,6 +110,26 @@ Sableye:
       - Trick
       - WillOWisp
       - ZenHeadbutt
+      - TeraBlast
+      - TakeDown
+      - Psybeam
+      - HyperBeam
+      - ThunderWave
+      - LightScreen
+      - Reflect
+      - Spite
+      - GigaDrain
+      - PainSplit
+      - MetalClaw
+      - SkillSwap
+      - BulkUp
+      - MudShot
+      - XScissor
+      - EnergyBall
+      - GigaImpact
+      - PhantomForce
+      - ThroatChop
+      - SkitterSmack
     egg:
       [
         Moonlight,
@@ -511,9 +531,32 @@ Meditite:
     - WorkUp
     - Confide
     - PowerUpPunch
+    - TeraBlast
+    - Trailblaze
+    - UpperHand
+    - TakeDown
+    - Psybeam
+    - LowKick
+    - NightShade
+    - RockSlide
+    - Thief
+    - Reversal
+    - PainSplit
+    - BatonPass
+    - Taunt
+    - HelpingHand
+    - Trick
+    - SkillSwap
+    - Imprison
+    - AerialAce
+    - CloseCombat
+    - TrickRoom
+    - StoredPower
+    - PsychicTerrain
+    - ExpandingForce
   Meditite:
     level:
-      1: [Pound, Bide]
+      1: [Pound, Bide, WorkUp]
       4: [LowKick, Meditate]
       7: [Confusion]
       9: [Detect]
@@ -523,7 +566,7 @@ Meditite:
       18: [HiddenPower]
       20: [Psybeam]
       23: [CalmMind]
-      25: [MindReader]
+      25: [MindReader, ZenHeadbutt]
       28: [HiJumpKick]
       31: [PsychUp]
       33: [Acupressure]
@@ -548,10 +591,21 @@ Meditite:
       ]
     teachable:
       - Recycle
-      - RockSlide
   Medicham:
     level:
-      1: [Pound, FirePunch, IcePunch, ThunderPunch, Confusion, Detect, ZenHeadbutt, Bide, Meditate]
+      1:
+        [
+          Pound,
+          FirePunch,
+          IcePunch,
+          ThunderPunch,
+          Confusion,
+          Detect,
+          ZenHeadbutt,
+          Bide,
+          Meditate,
+          WorkUp,
+        ]
       4: [LowKick]
       12: [Endure]
       15: [Feint]
@@ -566,8 +620,8 @@ Meditite:
       36: [PowerTrick]
       42: [Reversal]
       47: [Recover]
-      53: [Counter]
-    teachable: [HyperBeam, RockSlide, EnergyBall, GigaImpact, LaserFocus, Recycle]
+      53: [Counter, AxeKick]
+    teachable: [HyperBeam, EnergyBall, GigaImpact, LaserFocus, Recycle, AuraSphere]
 Electrike:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -695,7 +749,7 @@ Plusle:
       4: [HelpingHand]
       7: [Spark]
       10: [Encore]
-      13: [SkillSwap]
+      13: [SkillSwap, Switcheroo]
       16: [Swift]
       19: [ElectroBall]
       22: [Copycat]
@@ -759,6 +813,16 @@ Plusle:
       - Confide
       - NastyPlot
       - SkillSwap
+      - TeraBlast
+      - Trailblaze
+      - AlluringVoice
+      - SuperFang
+      - Uproar
+      - Endeavor
+      - Electroweb
+      - PlayRough
+      - EerieImpulse
+      - ElectricTerrain
     egg: [Wish, Discharge, TearfulLook, Charm, FakeTears, Sing, SweetKiss]
 Minun:
   Minun:
@@ -832,6 +896,15 @@ Minun:
       - WildCharge
       - Confide
       - NastyPlot
+      - TeraBlast
+      - Trailblaze
+      - AlluringVoice
+      - SuperFang
+      - Uproar
+      - Endeavor
+      - Electroweb
+      - PlayRough
+      - ElectricTerrain
     egg: [Wish, Discharge, TearfulLook, Charm, FakeTears, Sing, SweetKiss]
 Volbeat:
   Volbeat:
@@ -914,6 +987,16 @@ Volbeat:
       - DazzlingGleam
       - PowerUpPunch
       - BugBuzz
+      - TeraBlast
+      - Pounce
+      - Trailblaze
+      - ChillingWater
+      - TakeDown
+      - Taunt
+      - Endeavor
+      - AirCutter
+      - AirSlash
+      - SkitterSmack
     egg: [BatonPass, SilverWind, Trick, Lunge, Encore, SeismicToss]
 Illumise:
   Illumise:
@@ -995,6 +1078,17 @@ Illumise:
       - DazzlingGleam
       - PowerUpPunch
       - BugBuzz
+      - TeraBlast
+      - Pounce
+      - Trailblaze
+      - TakeDown
+      - Trick
+      - Endeavor
+      - AirCutter
+      - AirSlash
+      - DisarmingVoice
+      - DrainingKiss
+      - SkitterSmack
     egg: [BatonPass, Growth, SilverWind, Aromatherapy, ConfuseRay, Encore, FakeTears]
 Roselia:
   family-teachable: [Attract, GrassyGlide]
@@ -1257,6 +1351,22 @@ Gulpin:
     - Confide
     - Infestation
     - PowerUpPunch
+    - TeraBlast
+    - SwordsDance
+    - TakeDown
+    - ThunderWave
+    - Amnesia
+    - Thief
+    - Curse
+    - PainSplit
+    - Encore
+    - HelpingHand
+    - MudShot
+    - Fling
+    - ToxicSpikes
+    - PoisonJab
+    - GunkShot
+    - AcidSpray
   Gulpin:
     level:
       1: [Pound]
@@ -1273,7 +1383,19 @@ Gulpin:
       41: [Belch]
       44: [PainSplit]
       49: [GunkShot, WringOut]
-    egg: [AcidArmor, PainSplit, Smog, VenomDrench, Curse, DestinyBond, GunkShot, MudSlap]
+    egg:
+      [
+        AcidArmor,
+        PainSplit,
+        Smog,
+        VenomDrench,
+        Curse,
+        DestinyBond,
+        GunkShot,
+        MudSlap,
+        ClearSmog,
+        StuffCheeks,
+      ]
   Swalot:
     level:
       1: [Pound, BodySlam, Sludge, PoisonGas, Yawn, GunkShot, VenomDrench]
@@ -1287,7 +1409,18 @@ Gulpin:
       49: [Belch]
       54: [PainSplit]
       59: [WringOut]
-    teachable: [HyperBeam, GigaImpact, Bulldoze, Earthquake]
+    teachable:
+      [
+        HyperBeam,
+        GigaImpact,
+        Bulldoze,
+        Earthquake,
+        Metronome,
+        BrickBreak,
+        KnockOff,
+        ZenHeadbutt,
+        BodyPress,
+      ]
 Carvanha:
   # TM, HM and tutor moves both stages share
   family-teachable:
@@ -1577,13 +1710,42 @@ Numel:
     - Incinerate
     - Bulldoze
     - Confide
+    - TeraBlast
+    - Trailblaze
+    - TemperFlare
+    - TakeDown
+    - Roar
+    - FireSpin
+    - Amnesia
+    - Curse
+    - ScaryFace
+    - Charm
+    - RainDance
+    - HeatWave
+    - WillOWisp
+    - HelpingHand
+    - Endeavor
+    - MudShot
+    - FlareBlitz
+    - EarthPower
+    - ZenHeadbutt
+    - FlashCannon
+    - IronHead
+    - StoneEdge
+    - HeavySlam
+    - HeatCrash
+    - HighHorsepower
+    - StompingTantrum
+    - BodyPress
+    - LashOut
+    - ScorchingSands
   Numel:
     level:
       1: [Tackle, Growl]
       5: [Ember]
       8: [FocusEnergy]
       12: [Bulldoze]
-      15: [FlameWheel, FlameBurst]
+      15: [FlameWheel, FlameBurst, Incinerate]
       19: [Amnesia, Magnitude]
       22: [LavaPlume]
       26: [EarthPower]
@@ -1612,8 +1774,6 @@ Numel:
         Swallow,
         Yawn,
       ]
-    teachable:
-      - WillOWisp
   Camerupt:
     level:
       1:
@@ -1630,7 +1790,7 @@ Numel:
           Magnitude,
         ]
       12: [Bulldoze]
-      15: [FlameWheel, FlameBurst]
+      15: [FlameWheel, FlameBurst, Incinerate]
       19: [Amnesia]
       22: [LavaPlume]
       26: [EarthPower]
@@ -1639,17 +1799,12 @@ Numel:
       39: [Yawn]
       46: [Earthquake]
     teachable:
-      - Roar
       - HyperBeam
       - Explosion
-      - FlashCannon
       - GigaImpact
-      - IronHead
       - RockPolish
-      - StoneEdge
-      - StompingTantrum
       - SolarBeam
-      - WillOWisp
+      - SmackDown
 Torkoal:
   Torkoal:
     level:
@@ -1732,6 +1887,14 @@ Torkoal:
       - Superpower
       - WeatherBall
       - WillOWisp
+      - TeraBlast
+      - TemperFlare
+      - TakeDown
+      - Sandstorm
+      - HelpingHand
+      - FlareBlitz
+      - ZenHeadbutt
+      - HeavySlam
     egg:
       [Yawn, Eruption, FlameBurst, ClearSmog, AncientPower, Fissure, Flail, SkullBash, Superpower]
 Spoink:
@@ -1783,6 +1946,32 @@ Spoink:
     - Telekinesis
     - Round
     - Confide
+    - TeraBlast
+    - Snowscape
+    - Trailblaze
+    - ChillingWater
+    - TakeDown
+    - Psybeam
+    - ThunderWave
+    - NightShade
+    - ConfuseRay
+    - Amnesia
+    - Encore
+    - FutureSight
+    - Uproar
+    - HelpingHand
+    - Trick
+    - Endeavor
+    - Imprison
+    - PowerGem
+    - ZenHeadbutt
+    - FlashCannon
+    - StoredPower
+    - Snarl
+    - DazzlingGleam
+    - PsychicTerrain
+    - Lunge
+    - ExpandingForce
   Spoink:
     level:
       1: [Splash]
@@ -1803,7 +1992,6 @@ Spoink:
     teachable:
       - Payback
       - Recycle
-      - ThunderWave
   Grumpig:
     level:
       1: [Splash, TeeterDance, Belch, Psywave, OdorSleuth]
@@ -1844,4 +2032,14 @@ Spoink:
       - NastyPlot
       - Payback
       - Recycle
-      - ThunderWave
+      - PsychicNoise
+      - LowKick
+      - Dig
+      - Metronome
+      - HyperVoice
+      - MudShot
+      - SeedBomb
+      - EarthPower
+      - LowSweep
+      - StompingTantrum
+      - BodyPress

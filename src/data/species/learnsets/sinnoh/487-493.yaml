@@ -69,6 +69,21 @@ Giratina:
     - BreakingSwipe
     - Poltergeist
     - DualWingbeat
+    - TeraBlast
+    - BodySlam
+    - TakeDown
+    - ConfuseRay
+    - Curse
+    - ScaryFace
+    - PainSplit
+    - HyperVoice
+    - Gravity
+    - AuraSphere
+    - Hex
+    - Bulldoze
+    - DragonTail
+    - PhantomForce
+    - SkitterSmack
   Giratina:
     level:
       1: [ShadowSneak, Defog]
@@ -87,14 +102,7 @@ Giratina:
       77: [ShadowForce]
       84: [DestinyBond]
     teachable:
-      - AuraSphere
-      - BodySlam
-      - Bulldoze
-      - Hex
-      - HyperVoice
-      - PhantomForce
       - Round
-      - ScaryFace
   GiratinaOrigin:
     level:
       1: [ShadowSneak, Defog]
@@ -113,14 +121,7 @@ Giratina:
       77: [ShadowForce]
       84: [DestinyBond]
     teachable:
-      - AuraSphere
-      - BodySlam
-      - Bulldoze
-      - Hex
-      - HyperVoice
-      - PhantomForce
       - Round
-      - ScaryFace
 Cresselia:
   Cresselia:
     level:
@@ -198,6 +199,15 @@ Cresselia:
       - Psyshock
       - Round
       - StoredPower
+      - TeraBlast
+      - Thunderbolt
+      - Thunder
+      - ConfuseRay
+      - ScaryFace
+      - Gravity
+      - PowerGem
+      - DazzlingGleam
+      - PsychicTerrain
 Manaphy:
   family-teachable:
     - AncientPower
@@ -241,9 +251,23 @@ Manaphy:
     - Waterfall
     - Confide
     - DazzlingGleam
+    - TeraBlast
+    - ChillingWater
+    - AlluringVoice
+    - HydroPump
+    - Haze
+    - Charm
+    - BatonPass
+    - Whirlpool
+    - WeatherBall
+    - ZenHeadbutt
+    - Scald
+    - DisarmingVoice
+    - Liquidation
+    - FlipTurn
   Phione:
     level:
-      1: [Bubble, WaterSport]
+      1: [Bubble, WaterSport, WaterGun]
       9: [Charm]
       16: [Supersonic]
       24: [BubbleBeam]
@@ -253,7 +277,6 @@ Manaphy:
       54: [AquaRing]
       61: [Dive]
       69: [RainDance]
-    teachable: [Liquidation]
   Manaphy:
     level:
       1: [WaterGun, TailGlow, Bubble, WaterSport]
@@ -278,8 +301,9 @@ Manaphy:
       - Reflect
       - ShadowBall
       - SkillSwap
-      - Liquidation
-      - Scald
+      - Psybeam
+      - FakeTears
+      - StoredPower
 Darkrai:
   Darkrai:
     level:
@@ -287,7 +311,7 @@ Darkrai:
       11: [QuickAttack]
       20: [Hypnosis]
       29: [FeintAttack]
-      38: [Nightmare]
+      38: [Nightmare, NightShade]
       47: [DoubleTeam]
       57: [Haze]
       66: [DarkVoid]
@@ -364,6 +388,15 @@ Darkrai:
       - XScissor
       - PowerUpPunch
       - ThroatChop
+      - TeraBlast
+      - ConfuseRay
+      - Curse
+      - ScaryFace
+      - Psyshock
+      - FoulPlay
+      - Hex
+      - Snarl
+      - LashOut
 Shaymin:
   family-teachable:
     - BulletSeed
@@ -402,6 +435,23 @@ Shaymin:
     - ZenHeadbutt
     - Confide
     - DazzlingGleam
+    - TeraBlast
+    - Trailblaze
+    - TakeDown
+    - DoubleEdge
+    - BatonPass
+    - Endeavor
+    - AirCutter
+    - MagicalLeaf
+    - Tailwind
+    - AirSlash
+    - EarthPower
+    - LeafStorm
+    - PetalBlizzard
+    - DisarmingVoice
+    - GrassyTerrain
+    - PlayRough
+    - GrassyGlide
   Shaymin:
     level:
       1: [Growth]
@@ -409,24 +459,14 @@ Shaymin:
       19: [LeechSeed]
       28: [Synthesis]
       37: [SweetScent]
-      46: [NaturalGift]
+      46: [NaturalGift, PlayRough]
       55: [WorrySeed]
-      64: [Aromatherapy]
+      64: [Aromatherapy, GrassyTerrain]
       73: [EnergyBall]
       82: [SweetKiss]
       91: [HealingWish]
       100: [SeedFlare]
-    teachable:
-      [
-        EarthPower,
-        Endeavor,
-        LaserFocus,
-        AerialAce,
-        BabyDollEyes,
-        MagicalLeaf,
-        OminousWind,
-        PlayRough,
-      ]
+    teachable: [LaserFocus, AerialAce, BabyDollEyes, OminousWind]
   ShayminSky:
     level:
       1: [Growth]
@@ -434,24 +474,14 @@ Shaymin:
       19: [LeechSeed]
       28: [QuickAttack]
       37: [SweetScent]
-      46: [NaturalGift]
+      46: [NaturalGift, PlayRough]
       55: [WorrySeed]
       64: [AirSlash]
       73: [EnergyBall]
       82: [SweetKiss]
       91: [LeafStorm]
       100: [SeedFlare]
-    teachable:
-      [
-        AirCutter,
-        OminousWind,
-        LaserFocus,
-        AerialAce,
-        BabyDollEyes,
-        EarthPower,
-        MagicalLeaf,
-        PlayRough,
-      ]
+    teachable: [OminousWind, LaserFocus, AerialAce, BabyDollEyes]
 Arceus:
   family-teachable:
     - AerialAce
@@ -556,6 +586,10 @@ Arceus:
     - Confide
     - Liquidation
     - LaserFocus
+    - TeraBlast
+    - Trailblaze
+    - ChillingWater
+    - SupercellSlam
   Arceus:
     level:
       1: [CosmicPower, NaturalGift, Punishment, SeismicToss]
@@ -563,12 +597,55 @@ Arceus:
       20: [EarthPower]
       30: [HyperVoice]
       40: [ExtremeSpeed]
-      50: [Refresh]
+      50: [Refresh, HealingWish]
       60: [FutureSight]
       70: [Recover]
       80: [HyperBeam]
       90: [PerishSong]
       100: [Judgment]
+    teachable:
+      - SupercellSlam
+      - BodySlam
+      - TakeDown
+      - DoubleEdge
+      - HydroPump
+      - Agility
+      - ConfuseRay
+      - ScaryFace
+      - Taunt
+      - Imprison
+      - BulkUp
+      - MagicalLeaf
+      - DragonDance
+      - Tailwind
+      - FlareBlitz
+      - AuraSphere
+      - AirSlash
+      - BugBuzz
+      - PowerGem
+      - GunkShot
+      - Psyshock
+      - HeavySlam
+      - AcidSpray
+      - FoulPlay
+      - StoredPower
+      - Hex
+      - Bulldoze
+      - DragonTail
+      - WildCharge
+      - Hurricane
+      - Snarl
+      - PhantomForce
+      - GrassyTerrain
+      - MistyTerrain
+      - ElectricTerrain
+      - DazzlingGleam
+      - PsychicTerrain
+      - StompingTantrum
+      - BodyPress
+      - SteelBeam
+      - MeteorBeam
+      - ScorchingSands
   ArceusBug:
     level:
       1: [CosmicPower, NaturalGift, Punishment, SeismicToss]

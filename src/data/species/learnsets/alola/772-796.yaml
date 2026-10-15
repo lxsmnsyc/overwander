@@ -1334,6 +1334,17 @@ Minior:
     - Toxic
     - UTurn
     - ZenHeadbutt
+    - TeraBlast
+    - TakeDown
+    - DoubleEdge
+    - ConfuseRay
+    - Swift
+    - Endure
+    - RockBlast
+    - PowerGem
+    - EarthPower
+    - MeteorBeam
+    - ScorchingSands
   Minior:
     level:
       1: [Tackle]
@@ -1345,7 +1356,7 @@ Minior:
       22: [SelfDestruct]
       24: [StealthRock]
       29: [TakeDown]
-      31: [Autotomize]
+      31: [Autotomize, RockPolish]
       36: [CosmicPower]
       38: [PowerGem]
       43: [DoubleEdge]
@@ -1362,7 +1373,7 @@ Minior:
       22: [SelfDestruct]
       24: [StealthRock]
       29: [TakeDown]
-      31: [Autotomize]
+      31: [Autotomize, RockPolish]
       36: [CosmicPower]
       38: [PowerGem]
       43: [DoubleEdge]
@@ -1379,7 +1390,7 @@ Minior:
       22: [SelfDestruct]
       24: [StealthRock]
       29: [TakeDown]
-      31: [Autotomize]
+      31: [Autotomize, RockPolish]
       36: [CosmicPower]
       38: [PowerGem]
       43: [DoubleEdge]
@@ -1396,7 +1407,7 @@ Minior:
       22: [SelfDestruct]
       24: [StealthRock]
       29: [TakeDown]
-      31: [Autotomize]
+      31: [Autotomize, RockPolish]
       36: [CosmicPower]
       38: [PowerGem]
       43: [DoubleEdge]
@@ -1413,7 +1424,7 @@ Minior:
       22: [SelfDestruct]
       24: [StealthRock]
       29: [TakeDown]
-      31: [Autotomize]
+      31: [Autotomize, RockPolish]
       36: [CosmicPower]
       38: [PowerGem]
       43: [DoubleEdge]
@@ -1430,7 +1441,7 @@ Minior:
       22: [SelfDestruct]
       24: [StealthRock]
       29: [TakeDown]
-      31: [Autotomize]
+      31: [Autotomize, RockPolish]
       36: [CosmicPower]
       38: [PowerGem]
       43: [DoubleEdge]
@@ -1447,7 +1458,7 @@ Minior:
       22: [SelfDestruct]
       24: [StealthRock]
       29: [TakeDown]
-      31: [Autotomize]
+      31: [Autotomize, RockPolish]
       36: [CosmicPower]
       38: [PowerGem]
       43: [DoubleEdge]
@@ -1464,7 +1475,7 @@ Minior:
       22: [SelfDestruct]
       24: [StealthRock]
       29: [TakeDown]
-      31: [Autotomize]
+      31: [Autotomize, RockPolish]
       36: [CosmicPower]
       38: [PowerGem]
       43: [DoubleEdge]
@@ -1521,6 +1532,26 @@ Komala:
       - UTurn
       - WorkUp
       - ZenHeadbutt
+      - TeraBlast
+      - IceSpinner
+      - Trailblaze
+      - BodySlam
+      - TakeDown
+      - DoubleEdge
+      - HyperBeam
+      - LowKick
+      - SuperFang
+      - Thief
+      - Curse
+      - Reversal
+      - Endure
+      - MetalClaw
+      - RainDance
+      - RockTomb
+      - Fling
+      - SeedBomb
+      - GigaImpact
+      - GunkShot
     egg: [Charm, PlayRough, Sing, Wish]
 Turtonator:
   Turtonator:
@@ -1755,6 +1786,23 @@ Mimikyu:
     - WorkUp
     - XScissor
     - BurningJealousy
+    - TeraBlast
+    - Pounce
+    - Trailblaze
+    - TakeDown
+    - NightShade
+    - ConfuseRay
+    - Curse
+    - Endure
+    - Charm
+    - RainDance
+    - SunnyDay
+    - GigaImpact
+    - Hex
+    - PhantomForce
+    - DrainingKiss
+    - MistyTerrain
+    - PlayRough
   Mimikyu:
     level:
       1: [Scratch, Splash, Astonish, Copycat, WoodHammer]
@@ -1772,13 +1820,6 @@ Mimikyu:
     egg: [Curse, DestinyBond, Grudge, Nightmare]
     teachable:
       - BeatUp
-      - Charm
-      - DrainingKiss
-      - Endure
-      - GigaImpact
-      - Hex
-      - PhantomForce
-      - PlayRough
       - Screech
   MimikyuBusted:
     level:
@@ -1797,13 +1838,6 @@ Mimikyu:
     egg: [Curse, DestinyBond, Grudge, Nightmare]
     teachable:
       - BeatUp
-      - Charm
-      - DrainingKiss
-      - Endure
-      - GigaImpact
-      - Hex
-      - PhantomForce
-      - PlayRough
       - Screech
 Bruxish:
   Bruxish:
@@ -1814,12 +1848,12 @@ Bruxish:
       12: [Bite]
       17: [AquaJet]
       20: [Disable]
-      25: [Psywave]
+      25: [Psywave, Psyshock]
       28: [Crunch]
       33: [AquaTail]
       36: [Screech]
       41: [PsychicFangs]
-      44: [Synchronoise]
+      44: [Synchronoise, WaveCrash]
     teachable:
       - AerialAce
       - AfterYou
@@ -1874,6 +1908,21 @@ Bruxish:
       - WaterPulse
       - Waterfall
       - WonderRoom
+      - TeraBlast
+      - ChillingWater
+      - PsychicNoise
+      - TakeDown
+      - HydroPump
+      - HyperBeam
+      - Agility
+      - SuperFang
+      - ScaryFace
+      - IcyWind
+      - Endure
+      - Whirlpool
+      - PsychicTerrain
+      - ExpandingForce
+      - FlipTurn
     egg: [IceFang, PoisonFang, Rage, WaterPulse]
 Drampa:
   Drampa:
@@ -2107,6 +2156,16 @@ JangmoO:
     - WorkUp
     - XScissor
     - ScaleShot
+    - TeraBlast
+    - DragonCheer
+    - BodySlam
+    - TakeDown
+    - Reversal
+    - ScaryFace
+    - Endure
+    - FocusPunch
+    - DragonDance
+    - BreakingSwipe
   JangmoO:
     level:
       1: [Tackle, Leer]
@@ -2124,11 +2183,7 @@ JangmoO:
       44: [Outrage]
     egg: [Counter, DragonBreath, Reversal, FocusPunch]
     teachable:
-      - DragonDance
-      - Endure
       - Fling
-      - Reversal
-      - ScaryFace
       - Screech
   HakamoO:
     level:
@@ -2150,13 +2205,15 @@ JangmoO:
         Fling,
         Coaching,
         CloseCombat,
-        DragonDance,
-        Endure,
         MegaKick,
         MegaPunch,
-        Reversal,
-        ScaryFace,
         Screech,
+        UpperHand,
+        DoubleEdge,
+        MetalClaw,
+        SunnyDay,
+        VacuumWave,
+        ThroatChop,
       ]
   KommoO:
     level:
@@ -2192,7 +2249,6 @@ JangmoO:
       - Flamethrower
       - FlashCannon
       - Fling
-      - FocusPunch
       - GigaImpact
       - HyperBeam
       - HyperVoice
@@ -2207,18 +2263,22 @@ JangmoO:
       - ThunderPunch
       - WaterPulse
       - BodyPress
-      - BreakingSwipe
       - Coaching
       - AuraSphere
       - CloseCombat
-      - DragonDance
-      - Endure
       - MegaKick
       - MegaPunch
       - Revenge
-      - Reversal
-      - ScaryFace
       - Screech
+      - UpperHand
+      - DoubleEdge
+      - MetalClaw
+      - RainDance
+      - SunnyDay
+      - HelpingHand
+      - MetalSound
+      - VacuumWave
+      - ThroatChop
 TapuKoko:
   TapuKoko:
     level:
@@ -2653,6 +2713,10 @@ Cosmog:
       - PsychicFangs
       - ScaryFace
       - Swift
+      - TeraBlast
+      - BodySlam
+      - TakeDown
+      - DoubleEdge
   Lunala:
     level:
       1: [Confusion, Hypnosis, Teleport, CosmicPower, MoongeistBeam]
@@ -2742,6 +2806,8 @@ Cosmog:
       - PsychoCut
       - ScaryFace
       - Swift
+      - TeraBlast
+      - RainDance
 Nihilego:
   Nihilego:
     level:

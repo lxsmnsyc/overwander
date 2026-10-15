@@ -16,6 +16,7 @@ const THAWING_MOVES = new Set<Moves>([
   Moves.FusionFlare,
   Moves.PyroBall,
   Moves.ScorchingSands,
+  Moves.MatchaGotcha,
 ]);
 
 export default function setupThawingMoves(battle: Battle): void {

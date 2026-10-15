@@ -15,6 +15,9 @@ Dreepy:
     - Substitute
     - Swift
     - ThunderWave
+    - TeraBlast
+    - Curse
+    - DragonTail
   Dreepy:
     level:
       1: [Bite, QuickAttack, Astonish, Infestation]
@@ -62,6 +65,12 @@ Dreepy:
         Thunderbolt,
         UTurn,
         WillOWisp,
+        Pounce,
+        DragonCheer,
+        NightShade,
+        LightScreen,
+        Reflect,
+        SunnyDay,
       ]
   Dragapult:
     level:
@@ -115,6 +124,10 @@ Dreepy:
         TriAttack,
         UTurn,
         WillOWisp,
+        Pounce,
+        DragonCheer,
+        NightShade,
+        SunnyDay,
       ]
 Zacian:
   family-teachable:
@@ -163,13 +176,23 @@ Zacian:
     - ThunderFang
     - WildCharge
     - WorkUp
+    - TeraBlast
+    - Trailblaze
+    - BodySlam
+    - TakeDown
+    - MetalClaw
+    - IronDefense
+    - PoisonJab
+    - FlashCannon
+    - MistyTerrain
+    - DazzlingGleam
   Zacian:
     level:
       1: [Bite, QuickAttack, MetalClaw, Howl, QuickGuard, SacredSword]
       11: [Slash]
       22: [SwordsDance]
       33: [IronHead]
-      44: [LaserFocus]
+      44: [LaserFocus, NobleRoar]
       55: [Crunch]
       66: [Moonblast]
       77: [CloseCombat]
@@ -180,7 +203,7 @@ Zacian:
       11: [Slash]
       22: [SwordsDance]
       33: [IronHead]
-      44: [LaserFocus]
+      44: [LaserFocus, NobleRoar]
       55: [Crunch]
       66: [Moonblast]
       77: [CloseCombat]
@@ -235,6 +258,19 @@ Zamazenta:
     - ThunderFang
     - WildCharge
     - WorkUp
+    - TeraBlast
+    - Trailblaze
+    - BodySlam
+    - TakeDown
+    - Roar
+    - Sandstorm
+    - MetalClaw
+    - RainDance
+    - SunnyDay
+    - BrickBreak
+    - StoneEdge
+    - HeavySlam
+    - BodyPress
   Zamazenta:
     level:
       1: [Bite, QuickAttack, MetalClaw, Howl, MetalBurst, WideGuard]
@@ -271,7 +307,7 @@ Eternatus:
       64: [CosmicPower]
       72: [Recover]
       80: [HyperBeam]
-      88: [Eternabeam]
+      88: [Eternabeam, Outrage]
     teachable:
       [
         Agility,
@@ -310,6 +346,15 @@ Eternatus:
         ToxicSpikes,
         VenomDrench,
         Venoshock,
+        TeraBlast,
+        BodySlam,
+        TakeDown,
+        FireSpin,
+        FireBlast,
+        RainDance,
+        SunnyDay,
+        Gravity,
+        GunkShot,
       ]
 Kubfu:
   family-teachable:
@@ -348,6 +393,13 @@ Kubfu:
     - UTurn
     - WorkUp
     - ZenHeadbutt
+    - TeraBlast
+    - SwordsDance
+    - TakeDown
+    - DoubleEdge
+    - FocusPunch
+    - AerialAce
+    - Fling
   Kubfu:
     level:
       1: [Leer, RockSmash]
@@ -364,6 +416,8 @@ Kubfu:
       44: [Counter]
       48: [CloseCombat]
       52: [FocusPunch]
+    teachable:
+      - MetalClaw
   Urshifu:
     level:
       1: [Leer, FocusEnergy, Endure, RockSmash, SuckerPunch, WickedBlow]
@@ -389,7 +443,6 @@ Kubfu:
         DarkestLariat,
         DrainPunch,
         FalseSwipe,
-        Fling,
         FocusBlast,
         FoulPlay,
         GigaImpact,
@@ -404,6 +457,9 @@ Kubfu:
         Swift,
         Taunt,
         ThroatChop,
+        Trailblaze,
+        Roar,
+        MetalClaw,
       ]
   UrshifuRapidStrike:
     level:
@@ -441,6 +497,9 @@ Kubfu:
         Taunt,
         Waterfall,
         Whirlpool,
+        IceSpinner,
+        Trailblaze,
+        ChillingWater,
       ]
 Regieleki:
   Regieleki:
@@ -492,6 +551,11 @@ Regieleki:
         Thunderbolt,
         VoltSwitch,
         WildCharge,
+        TeraBlast,
+        SupercellSlam,
+        TakeDown,
+        Charge,
+        ChargeBeam,
       ]
 Regidrago:
   Regidrago:
@@ -538,6 +602,13 @@ Regidrago:
         Snore,
         Substitute,
         ThunderFang,
+        TeraBlast,
+        DragonCheer,
+        TakeDown,
+        Earthquake,
+        Swift,
+        EarthPower,
+        IceFang,
       ]
 Glastrier:
   Glastrier:
@@ -596,6 +667,12 @@ Glastrier:
         Taunt,
         ThroatChop,
         Uproar,
+        TeraBlast,
+        Snowscape,
+        Trailblaze,
+        Roar,
+        Curse,
+        ZenHeadbutt,
       ]
 Spectrier:
   Spectrier:
@@ -648,6 +725,13 @@ Spectrier:
         Taunt,
         Uproar,
         WillOWisp,
+        TeraBlast,
+        Psychic,
+        NightShade,
+        Curse,
+        PainSplit,
+        DrainingKiss,
+        Poltergeist,
       ]
 Calyrex:
   Calyrex:
@@ -718,6 +802,15 @@ Calyrex:
         TrickRoom,
         WonderRoom,
         ZenHeadbutt,
+        TeraBlast,
+        TakeDown,
+        Psybeam,
+        ScaryFace,
+        PsychUp,
+        MudShot,
+        Gravity,
+        Snarl,
+        BodyPress,
       ]
   CalyrexIce:
     level:
@@ -837,6 +930,10 @@ Calyrex:
         Uproar,
         WonderRoom,
         ZenHeadbutt,
+        TeraBlast,
+        Snowscape,
+        Trailblaze,
+        Psybeam,
       ]
   CalyrexShadow:
     level:
@@ -947,4 +1044,7 @@ Calyrex:
         WillOWisp,
         WonderRoom,
         ZenHeadbutt,
+        TeraBlast,
+        Psybeam,
+        NightShade,
       ]

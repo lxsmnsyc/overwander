@@ -1,0 +1,42 @@
+TeraBlast:
+  name: Tera Blast
+  description: Plain special damage.
+SilkTrap:
+  name: Silk Trap
+  description: Blocks every damaging move aimed at the user for 2 seconds, and drops the Speed of anything that touches it a stage. Status moves pass. It fails if used twice over.
+AxeKick:
+  name: Axe Kick
+  description: 30% to confuse the target. A miss costs the user 1/2 its HP.
+LastRespects:
+  name: Last Respects
+  description: Hits 50 harder for each of the user's teammates that has fainted this fight.
+LuminaCrash:
+  name: Lumina Crash
+  description: Drops the target's Special Defense 2 stages.
+OrderUp:
+  name: Order Up
+  description: With a Tatsugiri standing on its team, raises the user's Attack, Defense or Speed a stage, by that Tatsugiri's shape.
+JetPunch:
+  name: Jet Punch
+  description: A shorter wind-up than most.
+SpicyExtract:
+  name: Spicy Extract
+  description: Raises the target's Attack 2 stages and drops its Defense 2.
+SpinOut:
+  name: Spin Out
+  description: Drops the user's Speed 2 stages.
+PopulationBomb:
+  name: Population Bomb
+  description: Strikes 10 times.
+IceSpinner:
+  name: Ice Spinner
+  description: Rolls the terrain flat, ending it.
+GlaiveRush:
+  name: Glaive Rush
+  description: For 2 seconds after, every move aimed at the user lands, and hits it 2x.
+RevivalBlessing:
+  name: Revival Blessing
+  description: Brings a fainted teammate back with 1/2 its HP.
+SaltCure:
+  name: Salt Cure
+  description: "Salts the target: it loses 1/8 of its HP each time it acts, 1/4 if it is Water or Steel, until it leaves the field."

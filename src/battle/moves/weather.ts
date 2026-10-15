@@ -1,4 +1,5 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
+import { Moves } from '../../data/ids/moves';
 import { Weathers } from '../../data/ids/status';
 import { MOVE_WEATHERS } from '../../data/moves/weather';
 import type Battle from '../core';
@@ -30,6 +31,11 @@ export default function setupWeatherMoves(battle: Battle): void {
 
     // Explicit null check: the first Weathers enum member is 0
     if (weather == null || isPrimalWeather(event.source.checkWeather())) {
+      return;
+    }
+    // Chilly Reception calls the snow on its wind-up and only walks off
+    // on the last step, so the sky is not called up twice
+    if (event.move === Moves.ChillyReception && event.steps === 0) {
       return;
     }
 

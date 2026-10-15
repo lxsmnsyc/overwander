@@ -2,9 +2,10 @@ import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { countsAgainstSlots } from '../../data/constants/slots';
 import { Stats } from '../../data/constants/stats';
 import Abilities from '../../data/ids/abilities';
-import { MoveCategories, Moves } from '../../data/ids/moves';
+import { MoveCategories, type Moves } from '../../data/ids/moves';
 import { Species } from '../../data/ids/species';
 import { Statuses } from '../../data/ids/status';
+import { isDanceMove } from '../../data/moves/dances';
 import { getSpeciesData } from '../../data/species';
 import { getWornPartner } from '../../data/species/fusion';
 import type Battle from '../core';
@@ -64,22 +65,6 @@ const FUR_COAT_SCALE = 0.5;
 
 /** What having the victory sprite on the team is worth to its aim */
 const VICTORY_STAR_SCALE = 1.1;
-
-/**
- * The moves that count as a dance. Rain Dance is deliberately absent:
- * the mainline does not count it either, whatever it is called
- */
-const DANCE_MOVES = new Set<Moves>([
-  Moves.SwordsDance,
-  Moves.PetalDance,
-  Moves.FeatherDance,
-  Moves.TeeterDance,
-  Moves.DragonDance,
-  Moves.LunarDance,
-  Moves.QuiverDance,
-  Moves.FieryDance,
-  Moves.RevelationDance,
-]);
 
 const setupAbilities = [
   // https://bulbapedia.bulbagarden.net/wiki/Iron_Barbs_(Ability)
@@ -320,7 +305,7 @@ const setupAbilities = [
 
     return new MergedLifecycle([
       battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Post, (event) => {
-        if (!DANCE_MOVES.has(event.move) || copied.get(event.source) === event.move) {
+        if (!isDanceMove(event.move) || copied.get(event.source) === event.move) {
           return;
         }
 

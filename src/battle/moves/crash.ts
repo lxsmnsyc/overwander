@@ -9,7 +9,12 @@ import { BattleEvents, EffectType } from '../events';
  * Moves whose user crashes on a miss, taking half its max HP (also
  * boosted by Reckless)
  */
-export const CRASH_MOVES = new Set<Moves>([Moves.JumpKick, Moves.HiJumpKick]);
+export const CRASH_MOVES = new Set<Moves>([
+  Moves.JumpKick,
+  Moves.HiJumpKick,
+  Moves.AxeKick,
+  Moves.SupercellSlam,
+]);
 
 const CRASH_FRACTION = 0.5;
 

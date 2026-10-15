@@ -43,6 +43,22 @@ Rotom:
     - Confide
     - RisingVoltage
     - Poltergeist
+    - TeraBlast
+    - NightShade
+    - ConfuseRay
+    - PainSplit
+    - Charge
+    - HelpingHand
+    - HyperVoice
+    - NastyPlot
+    - ElectroBall
+    - FoulPlay
+    - StoredPower
+    - Hex
+    - VoltSwitch
+    - Electroweb
+    - EerieImpulse
+    - ElectricTerrain
   Rotom:
     level:
       1: [DoubleTeam, Astonish]
@@ -60,18 +76,7 @@ Rotom:
       55: [Uproar]
     teachable:
       - AllySwitch
-      - EerieImpulse
-      - ElectricTerrain
-      - ElectroBall
-      - Electroweb
-      - FoulPlay
-      - HelpingHand
-      - Hex
-      - HyperVoice
-      - NastyPlot
       - Round
-      - StoredPower
-      - VoltSwitch
   RotomHeat:
     level:
       1: [DoubleTeam, Astonish, Overheat]
@@ -89,18 +94,7 @@ Rotom:
       55: [Uproar]
     teachable:
       - AllySwitch
-      - EerieImpulse
-      - ElectricTerrain
-      - ElectroBall
-      - Electroweb
-      - FoulPlay
-      - HelpingHand
-      - Hex
-      - HyperVoice
-      - NastyPlot
       - Round
-      - StoredPower
-      - VoltSwitch
   RotomWash:
     level:
       1: [DoubleTeam, Astonish, HydroPump]
@@ -118,18 +112,7 @@ Rotom:
       55: [Uproar]
     teachable:
       - AllySwitch
-      - EerieImpulse
-      - ElectricTerrain
-      - ElectroBall
-      - Electroweb
-      - FoulPlay
-      - HelpingHand
-      - Hex
-      - HyperVoice
-      - NastyPlot
       - Round
-      - StoredPower
-      - VoltSwitch
   RotomFrost:
     level:
       1: [DoubleTeam, Astonish, Blizzard]
@@ -147,18 +130,7 @@ Rotom:
       55: [Uproar]
     teachable:
       - AllySwitch
-      - EerieImpulse
-      - ElectricTerrain
-      - ElectroBall
-      - Electroweb
-      - FoulPlay
-      - HelpingHand
-      - Hex
-      - HyperVoice
-      - NastyPlot
       - Round
-      - StoredPower
-      - VoltSwitch
   RotomFan:
     level:
       1: [DoubleTeam, Astonish, AirSlash]
@@ -176,18 +148,7 @@ Rotom:
       55: [Uproar]
     teachable:
       - AllySwitch
-      - EerieImpulse
-      - ElectricTerrain
-      - ElectroBall
-      - Electroweb
-      - FoulPlay
-      - HelpingHand
-      - Hex
-      - HyperVoice
-      - NastyPlot
       - Round
-      - StoredPower
-      - VoltSwitch
   RotomMow:
     level:
       1: [DoubleTeam, Astonish, LeafStorm]
@@ -205,18 +166,7 @@ Rotom:
       55: [Uproar]
     teachable:
       - AllySwitch
-      - EerieImpulse
-      - ElectricTerrain
-      - ElectroBall
-      - Electroweb
-      - FoulPlay
-      - HelpingHand
-      - Hex
-      - HyperVoice
-      - NastyPlot
       - Round
-      - StoredPower
-      - VoltSwitch
 Uxie:
   Uxie:
     level:
@@ -316,6 +266,10 @@ Uxie:
       - StoredPower
       - TriAttack
       - WonderRoom
+      - TeraBlast
+      - PsychicNoise
+      - ConfuseRay
+      - PainSplit
 Mesprit:
   Mesprit:
     level:
@@ -415,6 +369,11 @@ Mesprit:
       - StoredPower
       - TriAttack
       - WonderRoom
+      - TeraBlast
+      - PsychicNoise
+      - DoubleEdge
+      - ConfuseRay
+      - PainSplit
 Azelf:
   Azelf:
     level:
@@ -520,6 +479,9 @@ Azelf:
       - StoredPower
       - TriAttack
       - WonderRoom
+      - TeraBlast
+      - DoubleEdge
+      - Endeavor
 Dialga:
   family-teachable:
     - AerialAce
@@ -585,6 +547,21 @@ Dialga:
     - StealthRock
     - TrickRoom
     - StompingTantrum
+    - TeraBlast
+    - BodySlam
+    - TakeDown
+    - ScaryFace
+    - MetalClaw
+    - Trick
+    - HyperVoice
+    - AuraSphere
+    - PowerGem
+    - FocusBlast
+    - HeavySlam
+    - Bulldoze
+    - DragonTail
+    - BodyPress
+    - SteelBeam
   Dialga:
     level:
       1: [ScaryFace, MetalClaw]
@@ -601,18 +578,11 @@ Dialga:
       80: [IronTail]
       88: [RoarOfTime]
     teachable:
-      - BodyPress
       - BreakingSwipe
-      - SteelBeam
       - ScaleShot
-      - AuraSphere
-      - BodySlam
-      - Bulldoze
-      - HeavySlam
-      - HyperVoice
-      - PowerGem
       - Round
-      - ScaryFace
+      - MetalSound
+      - Gravity
   DialgaOrigin:
     level:
       1: [DragonBreath, ScaryFace]
@@ -621,9 +591,11 @@ Dialga:
       30: [DragonClaw]
       40: [RoarOfTime]
       50: [HealBlock]
+      56: [PowerGem]
       60: [EarthPower]
+      64: [MetalBurst]
       70: [Slash]
-      80: [FlashCannon]
+      80: [FlashCannon, IronTail]
       90: [AuraSphere]
 Palkia:
   family-teachable:
@@ -693,6 +665,23 @@ Palkia:
     - WaterPulse
     - StompingTantrum
     - Liquidation
+    - TeraBlast
+    - Snowscape
+    - ChillingWater
+    - BodySlam
+    - TakeDown
+    - HydroPump
+    - Waterfall
+    - ScaryFace
+    - IcyWind
+    - Trick
+    - HyperVoice
+    - AuraSphere
+    - PowerGem
+    - HeavySlam
+    - Bulldoze
+    - DragonTail
+    - BodyPress
   Palkia:
     level:
       1: [ScaryFace, WaterPulse]
@@ -709,31 +698,26 @@ Palkia:
       80: [SpacialRend]
       88: [HydroPump]
     teachable:
-      - BodyPress
       - BreakingSwipe
       - ScaleShot
       - DualWingbeat
-      - AuraSphere
-      - BodySlam
-      - Bulldoze
-      - HeavySlam
-      - HydroPump
-      - HyperVoice
-      - PowerGem
       - Round
-      - ScaryFace
       - Whirlpool
+      - Gravity
   PalkiaOrigin:
     level:
       1: [DragonBreath, ScaryFace]
       10: [WaterPulse]
       20: [AncientPower]
       30: [DragonClaw]
+      32: [AquaRing]
       40: [SpacialRend]
       50: [HealBlock]
+      56: [PowerGem]
       60: [EarthPower]
       70: [Slash]
       80: [AquaTail]
+      88: [HydroPump]
       90: [AuraSphere]
 Heatran:
   Heatran:
@@ -818,6 +802,16 @@ Heatran:
       - Round
       - ScaryFace
       - SelfDestruct
+      - TeraBlast
+      - Pounce
+      - HardPress
+      - TakeDown
+      - Sandstorm
+      - RockBlast
+      - FlareBlitz
+      - PowerGem
+      - FlameCharge
+      - Lunge
 Regigigas:
   Regigigas:
     level:
@@ -903,3 +897,8 @@ Regigigas:
       - Retaliate
       - Revenge
       - Round
+      - TeraBlast
+      - HardPress
+      - DoubleEdge
+      - Gravity
+      - SmackDown

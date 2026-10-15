@@ -307,8 +307,18 @@ function setupCosts(battle: Battle): void {
 }
 
 /**
- * Burning Jealousy and Lash Out, which read what a stat did just now:
- * one burns whoever rose, the other hits back for having been dropped
+ * What each envious move leaves on a target whose stats rose just now:
+ * Burning Jealousy a burn, Paldea's Alluring Voice confusion
+ */
+const ENVIOUS: { [key in Moves]?: Statuses } = {
+  [Moves.BurningJealousy]: Statuses.Burned,
+  [Moves.AlluringVoice]: Statuses.Confused,
+};
+
+/**
+ * Burning Jealousy, Alluring Voice and Lash Out, which read what a
+ * stat did just now: two answer whoever rose, the other hits back for
+ * having been dropped
  */
 function setupStatWindows(battle: Battle): void {
   const rose = new Map<Unit, number>();
@@ -341,16 +351,17 @@ function setupStatWindows(battle: Battle): void {
   });
 
   battle.on(BattleEvents.CheckUnitAttackEffectChance, EventPriority.Post, (event) => {
-    if (event.parent.move === Moves.BurningJealousy) {
+    if (ENVIOUS[event.parent.move] != null) {
       event.value = rose.has(event.parent.target) ? 100 : 0;
     }
   });
 
   battle.on(BattleEvents.UnitAttackEffect, EventPriority.Exact, (event) => {
     const { move, source, target } = event.parent;
+    const status = ENVIOUS[move];
 
-    if (move === Moves.BurningJealousy && rose.has(target)) {
-      target.addStatus(Statuses.Burned, { type: EffectType.Move, move, unit: source });
+    if (status != null && rose.has(target)) {
+      target.addStatus(status, { type: EffectType.Move, move, unit: source });
     }
   });
 

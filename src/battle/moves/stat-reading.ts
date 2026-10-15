@@ -23,6 +23,7 @@ const ALWAYS_CRITICAL = new Set<Moves>([
   Moves.FrostBreath,
   Moves.WickedBlow,
   Moves.SurgingStrikes,
+  Moves.FlowerTrick,
 ]);
 
 /** Swung with the user's own Defense and its stages in place of its Attack */

@@ -35,6 +35,17 @@ Grookey:
     - UTurn
     - Uproar
     - WorkUp
+    - TeraBlast
+    - Trailblaze
+    - BodySlam
+    - TakeDown
+    - Thief
+    - KnockOff
+    - Endeavor
+    - BulletSeed
+    - SeedBomb
+    - LeafStorm
+    - GrassyTerrain
   Grookey:
     level:
       1: [Scratch, Growl]
@@ -58,6 +69,8 @@ Grookey:
       36: [Uproar]
       42: [WoodHammer]
       48: [Endeavor]
+    teachable:
+      - ScaryFace
   Rillaboom:
     level:
       1: [Scratch, Growl, Taunt, DoubleHit, NobleRoar, GrassyTerrain, DrumBeating, BranchPoke]
@@ -72,28 +85,27 @@ Grookey:
     teachable:
       [
         BodyPress,
-        BodySlam,
         BrickBreak,
         BrutalSwing,
         BulkUp,
         Bulldoze,
-        BulletSeed,
         DarkestLariat,
         EarthPower,
         Earthquake,
         FocusBlast,
         FrenzyPlant,
         GigaImpact,
-        GrassyTerrain,
         HighHorsepower,
         HyperBeam,
         HyperVoice,
-        LeafStorm,
         MudShot,
         ScaryFace,
         Snarl,
         StompingTantrum,
         Superpower,
+        DoubleEdge,
+        FocusPunch,
+        LowSweep,
       ]
 Scorbunny:
   # TM, TR and tutor moves shared by the whole family
@@ -133,6 +145,17 @@ Scorbunny:
     - Taunt
     - UTurn
     - WorkUp
+    - TeraBlast
+    - Trailblaze
+    - TemperFlare
+    - TakeDown
+    - DoubleEdge
+    - FireSpin
+    - SuperFang
+    - HelpingHand
+    - FlareBlitz
+    - FlameCharge
+    - BurningJealousy
   Scorbunny:
     level:
       1: [Tackle, Growl]
@@ -156,7 +179,7 @@ Scorbunny:
       36: [Counter]
       42: [Bounce]
       48: [DoubleEdge]
-    teachable: [BulkUp, FlareBlitz]
+    teachable: [BulkUp, SwordsDance, WeatherBall]
   Cinderace:
     level:
       1: [Tackle, Growl, Ember, QuickAttack, Feint, PyroBall]
@@ -174,11 +197,8 @@ Scorbunny:
         BulkUp,
         Coaching,
         FirePunch,
-        FireSpin,
-        FlareBlitz,
         FocusBlast,
         GigaImpact,
-        HelpingHand,
         HyperBeam,
         IronHead,
         Revenge,
@@ -186,6 +206,12 @@ Scorbunny:
         ShadowBall,
         Snarl,
         ZenHeadbutt,
+        SwordsDance,
+        MudSlap,
+        WillOWisp,
+        WeatherBall,
+        Fling,
+        SmackDown,
       ]
 Sobble:
   # TM, TR and tutor moves shared by the whole family
@@ -216,6 +242,13 @@ Sobble:
     - WeatherBall
     - Whirlpool
     - WorkUp
+    - TeraBlast
+    - ChillingWater
+    - TakeDown
+    - HydroPump
+    - Haze
+    - Waterfall
+    - WaterPulse
   Sobble:
     level:
       1: [Pound, Growl]
@@ -263,7 +296,6 @@ Sobble:
         FocusEnergy,
         GigaImpact,
         HydroCannon,
-        HydroPump,
         HyperBeam,
         IceBeam,
         IcicleSpear,
@@ -273,7 +305,14 @@ Sobble:
         ScaleShot,
         ShadowBall,
         SwordsDance,
-        Waterfall,
+        Snowscape,
+        PsychUp,
+        Taunt,
+        AirCutter,
+        VacuumWave,
+        SmackDown,
+        SkitterSmack,
+        FlipTurn,
       ]
 Skwovet:
   # TM, TR and tutor moves shared by the whole family
@@ -304,6 +343,13 @@ Skwovet:
     - TailSlap
     - Thief
     - Uproar
+    - TeraBlast
+    - TakeDown
+    - DoubleEdge
+    - SuperFang
+    - Curse
+    - MudSlap
+    - Endeavor
   Skwovet:
     level:
       1: [Tackle, TailWhip]
@@ -317,6 +363,8 @@ Skwovet:
       40: [SuperFang]
       45: [Belch]
     egg: [BellyDrum, DefenseCurl, LastResort, Rollout]
+    teachable:
+      - Trailblaze
   Greedent:
     level:
       1: [Tackle, TailWhip, Bite, Covet, StuffCheeks]
@@ -341,6 +389,11 @@ Skwovet:
         SwordsDance,
         ThunderFang,
         WildCharge,
+        RainDance,
+        SunnyDay,
+        KnockOff,
+        Bulldoze,
+        HighHorsepower,
       ]
 Rookidee:
   # TM, TR and tutor moves shared by the whole family
@@ -373,6 +426,12 @@ Rookidee:
     - Thief
     - UTurn
     - WorkUp
+    - TeraBlast
+    - TakeDown
+    - Spite
+    - AirCutter
+    - AerialAce
+    - Tailwind
   Rookidee:
     level:
       1: [Leer, Peck]
@@ -396,6 +455,8 @@ Rookidee:
       34: [DrillPeck]
       40: [Swagger]
       46: [BraveBird]
+    teachable:
+      - Hurricane
   Corviknight:
     level:
       1: [Leer, Peck, SteelWing, MetalSound, IronDefense, HoneClaws, PowerTrip]
@@ -423,6 +484,11 @@ Rookidee:
         Screech,
         SteelBeam,
         SteelWing,
+        DoubleEdge,
+        Curse,
+        MetalClaw,
+        RainDance,
+        SunnyDay,
       ]
 Blipbug:
   Blipbug:
@@ -743,6 +809,16 @@ Chewtle:
     - Substitute
     - Surf
     - Whirlpool
+    - TeraBlast
+    - ChillingWater
+    - TakeDown
+    - Waterfall
+    - ScaryFace
+    - FalseSwipe
+    - Crunch
+    - WaterPulse
+    - PoisonJab
+    - StompingTantrum
   Chewtle:
     level:
       1: [Tackle, WaterGun]
@@ -753,7 +829,7 @@ Chewtle:
       35: [JawLock]
       42: [Liquidation]
       49: [BodySlam]
-    egg: [DragonTail, GastroAcid, SkullBash]
+    egg: [DragonTail, GastroAcid, SkullBash, ShellSmash]
   Drednaw:
     level:
       1: [Tackle, Bite, WaterGun, Protect, Crunch, RockTomb, RockPolish, RazorShell]
@@ -768,11 +844,9 @@ Chewtle:
         Blizzard,
         BodyPress,
         Bulldoze,
-        Crunch,
         Dig,
         EarthPower,
         Earthquake,
-        FalseSwipe,
         GigaImpact,
         HighHorsepower,
         HyperBeam,
@@ -782,7 +856,6 @@ Chewtle:
         Megahorn,
         MeteorBeam,
         MuddyWater,
-        PoisonJab,
         RazorShell,
         RockBlast,
         RockSlide,
@@ -790,13 +863,13 @@ Chewtle:
         SandTomb,
         Sandstorm,
         Scald,
-        ScaryFace,
         SmartStrike,
         StealthRock,
-        StompingTantrum,
         StoneEdge,
         Superpower,
         SwordsDance,
         ThroatChop,
-        Waterfall,
+        IceSpinner,
+        DoubleEdge,
+        SuperFang,
       ]

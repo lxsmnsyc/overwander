@@ -42,6 +42,27 @@ Turtwig:
     - Synthesis
     - Toxic
     - Confide
+    - TeraBlast
+    - Trailblaze
+    - BodySlam
+    - TakeDown
+    - DoubleEdge
+    - Roar
+    - Amnesia
+    - Curse
+    - Crunch
+    - SandTomb
+    - MudShot
+    - MagicalLeaf
+    - ZenHeadbutt
+    - LeafStorm
+    - IronHead
+    - SmackDown
+    - HeavySlam
+    - GrassPledge
+    - Bulldoze
+    - GrassyTerrain
+    - GrassyGlide
   Turtwig:
     level:
       1: [Tackle]
@@ -76,6 +97,7 @@ Turtwig:
       - EarthPower
       - HeavySlam
       - WideGuard
+      - ShellSmash
     teachable:
       - WorkUp
   Grotle:
@@ -112,9 +134,7 @@ Turtwig:
       - FrenzyPlant
       - GigaImpact
       - HyperBeam
-      - IronHead
       - Outrage
-      - Roar
       - RockPolish
       - RockSlide
       - RockTomb
@@ -122,8 +142,15 @@ Turtwig:
       - StoneEdge
       - WorrySeed
       - StompingTantrum
-      - Bulldoze
       - WorkUp
+      - HardPress
+      - ScaryFace
+      - HyperVoice
+      - IronDefense
+      - RockBlast
+      - HighHorsepower
+      - BodyPress
+      - ScorchingSands
 Chimchar:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -182,6 +209,30 @@ Chimchar:
     - WillOWisp
     - Confide
     - PowerUpPunch
+    - TeraBlast
+    - TemperFlare
+    - TakeDown
+    - DoubleEdge
+    - FireSpin
+    - Agility
+    - Metronome
+    - RockSlide
+    - Thief
+    - Encore
+    - PsychUp
+    - Uproar
+    - KnockOff
+    - FakeTears
+    - RockTomb
+    - FlareBlitz
+    - PoisonJab
+    - NastyPlot
+    - ZenHeadbutt
+    - FlameCharge
+    - LowSweep
+    - Acrobatics
+    - FirePledge
+    - BurningJealousy
   Chimchar:
     level:
       1: [Scratch, Leer]
@@ -197,7 +248,7 @@ Chimchar:
       39: [Acrobatics]
       41: [SlackOff]
       47: [Flamethrower]
-    teachable: [Uproar, LowSweep, NastyPlot, WorkUp]
+    teachable: [WorkUp]
     egg:
       - Assist
       - BlazeKick
@@ -213,6 +264,7 @@ Chimchar:
       - PowerUpPunch
       - QuickGuard
       - Submission
+      - Switcheroo
   Monferno:
     level:
       1: [Scratch, Leer, Ember, Flamethrower, MachPunch, Facade, NastyPlot]
@@ -227,7 +279,7 @@ Chimchar:
       46: [Acrobatics]
       49: [SlackOff]
       56: [FlareBlitz]
-    teachable: [FocusBlast, PoisonJab, RockSlide, RockTomb, LowSweep, NastyPlot, WorkUp]
+    teachable: [FocusBlast, WorkUp, UpperHand, Reversal, DrainPunch, SmackDown, LashOut]
   Infernape:
     level:
       1:
@@ -262,17 +314,23 @@ Chimchar:
       - FocusBlast
       - GigaImpact
       - HyperBeam
-      - PoisonJab
       - Roar
-      - RockSlide
-      - RockTomb
       - SolarBeam
       - StoneEdge
       - LaserFocus
       - Bulldoze
-      - LowSweep
-      - NastyPlot
       - WorkUp
+      - UpperHand
+      - BodySlam
+      - Reversal
+      - ScaryFace
+      - AuraSphere
+      - DrainPunch
+      - SmackDown
+      - ThroatChop
+      - LashOut
+      - Coaching
+      - ScorchingSands
 Piplup:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -317,6 +375,25 @@ Piplup:
     - WaterPulse
     - Waterfall
     - Confide
+    - TeraBlast
+    - IceSpinner
+    - Snowscape
+    - ChillingWater
+    - HydroPump
+    - Agility
+    - Haze
+    - Swift
+    - Charm
+    - PsychUp
+    - Whirlpool
+    - HelpingHand
+    - FeatherDance
+    - WeatherBall
+    - WaterPledge
+    - DisarmingVoice
+    - Liquidation
+    - FlipTurn
+    - TripleAxel
   Piplup:
     level:
       1: [Pound]
@@ -347,6 +424,7 @@ Piplup:
       - Yawn
       - PowerTrip
       - IcyWind
+      - Roost
     teachable:
       - Scald
       - WorkUp
@@ -364,7 +442,7 @@ Piplup:
       42: [Mist]
       46: [DrillPeck]
       50: [HydroPump]
-    teachable: [RockSmash, ShadowClaw, Strength, Scald, WorkUp]
+    teachable: [RockSmash, ShadowClaw, Strength, Scald, WorkUp, TakeDown, DoubleEdge]
   Empoleon:
     level:
       1: [Pound, Tackle, Growl, Charm, MetalClaw, AquaJet]
@@ -398,12 +476,24 @@ Piplup:
       - SteelWing
       - Strength
       - SwordsDance
-      - Liquidation
       - LaserFocus
       - ThroatChop
       - Bulldoze
       - Scald
       - WorkUp
+      - BodySlam
+      - TakeDown
+      - DoubleEdge
+      - ScaryFace
+      - FalseSwipe
+      - Uproar
+      - AirCutter
+      - MetalSound
+      - AirSlash
+      - VacuumWave
+      - SteelBeam
+      - LashOut
+      - DualWingbeat
 Starly:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -443,6 +533,18 @@ Starly:
     - Twister
     - UTurn
     - Confide
+    - TeraBlast
+    - TakeDown
+    - DoubleEdge
+    - Agility
+    - Uproar
+    - HelpingHand
+    - FeatherDance
+    - AirSlash
+    - BraveBird
+    - Acrobatics
+    - Hurricane
+    - DualWingbeat
   Starly:
     level:
       1: [Tackle, Growl]
@@ -494,7 +596,7 @@ Starly:
       41: [Agility]
       49: [BraveBird]
       57: [FinalGambit]
-    teachable: [GigaImpact, HyperBeam, SkyAttack, LaserFocus, WorkUp]
+    teachable: [GigaImpact, HyperBeam, SkyAttack, LaserFocus, WorkUp, StruggleBug]
 Bidoof:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -608,15 +710,27 @@ Bidoof:
       - WorkUp
 Kricketot:
   # TM, HM and tutor moves shared by the whole family
-  family-teachable: [BugBite, Endeavor, MudSlap, Snore, StringShot, Uproar]
+  family-teachable:
+    [
+      BugBite,
+      Endeavor,
+      MudSlap,
+      Snore,
+      StringShot,
+      Uproar,
+      TeraBlast,
+      StruggleBug,
+      Lunge,
+      SkitterSmack,
+    ]
   Kricketot:
     level:
-      1: [Pound, Growl, Bide]
+      1: [Pound, Growl, Bide, Tackle]
       6: [StruggleBug]
       16: [BugBite]
   Kricketune:
     level:
-      1: [Pound, Growl, FuryCutter, BugBite, StruggleBug, Bide]
+      1: [Pound, Growl, FuryCutter, BugBite, StruggleBug, Bide, Tackle]
       14: [Absorb, LeechLife]
       18: [Sing]
       22: [FocusEnergy]
@@ -669,6 +783,13 @@ Kricketot:
       - LaserFocus
       - ThroatChop
       - BugBuzz
+      - Pounce
+      - Trailblaze
+      - TakeDown
+      - GigaDrain
+      - BatonPass
+      - HelpingHand
+      - HyperVoice
 Shinx:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -709,6 +830,29 @@ Shinx:
     - Toxic
     - Confide
     - RisingVoltage
+    - TeraBlast
+    - Trailblaze
+    - TakeDown
+    - DoubleEdge
+    - ConfuseRay
+    - ScaryFace
+    - SunnyDay
+    - Crunch
+    - Charge
+    - HelpingHand
+    - FakeTears
+    - ThunderFang
+    - IceFang
+    - FireFang
+    - ElectroBall
+    - VoltSwitch
+    - Electroweb
+    - WildCharge
+    - Snarl
+    - PlayRough
+    - EerieImpulse
+    - ElectricTerrain
+    - PsychicFangs
   Shinx:
     level:
       1: [Tackle, Leer]
@@ -742,21 +886,7 @@ Shinx:
       - ShockWave
       - Swift
     teachable:
-      - Crunch
-      - EerieImpulse
-      - ElectroBall
-      - FakeTears
-      - FireFang
-      - HelpingHand
-      - IceFang
-      - PlayRough
-      - PsychicFangs
       - Round
-      - ScaryFace
-      - Snarl
-      - ThunderFang
-      - VoltSwitch
-      - WildCharge
   Luxio:
     level:
       1: [Tackle, Leer, ThunderShock, Charge]
@@ -772,21 +902,7 @@ Shinx:
       60: [Swagger]
       68: [WildCharge]
     teachable:
-      - Crunch
-      - EerieImpulse
-      - ElectroBall
-      - FakeTears
-      - FireFang
-      - HelpingHand
-      - IceFang
-      - PlayRough
-      - PsychicFangs
       - Round
-      - ScaryFace
-      - Snarl
-      - ThunderFang
-      - VoltSwitch
-      - WildCharge
   Luxray:
     level:
       1: [Tackle, Leer, ThunderShock, Charge, ElectricTerrain]
@@ -809,22 +925,9 @@ Shinx:
         LaserFocus,
         ThroatChop,
         Agility,
-        Crunch,
-        EerieImpulse,
-        ElectricTerrain,
-        ElectroBall,
-        FakeTears,
-        FireFang,
-        HelpingHand,
-        IceFang,
-        PlayRough,
-        PsychicFangs,
         Round,
-        ScaryFace,
-        Snarl,
-        ThunderFang,
-        VoltSwitch,
-        WildCharge,
+        SupercellSlam,
+        BodySlam,
       ]
 Cranidos:
   # TM, HM and tutor moves shared by the whole family
@@ -887,11 +990,24 @@ Cranidos:
     - ZenHeadbutt
     - Confide
     - PowerUpPunch
+    - TeraBlast
+    - Trailblaze
+    - DragonCheer
+    - BodySlam
+    - TakeDown
+    - DoubleEdge
+    - Curse
+    - ScaryFace
+    - Crunch
+    - RockBlast
+    - SmackDown
+    - Bulldoze
+    - StompingTantrum
   Cranidos:
     level:
       1: [Headbutt, Leer]
       6: [FocusEnergy]
-      10: [RockPolish, Pursuit]
+      10: [RockPolish, Pursuit, RockSmash]
       15: [TakeDown]
       19: [ScaryFace]
       24: [Assurance]
@@ -901,16 +1017,14 @@ Cranidos:
       42: [Screech]
       46: [HeadSmash]
     egg: [Crunch, Curse, DoubleEdge, HammerArm, Leer, Slam, Stomp, Thrash, Whirlwind, IronHead]
-    teachable:
-      - Bulldoze
   Rampardos:
     level:
       1: [Headbutt, Leer, FocusEnergy, Endeavor]
-      10: [RockPolish, Pursuit]
+      10: [RockPolish, Pursuit, RockSmash]
       15: [TakeDown]
       19: [ScaryFace]
       24: [Assurance]
-      28: [SwordsDance]
+      28: [SwordsDance, Slam]
       36: [AncientPower]
       43: [ZenHeadbutt]
       51: [Screech]
@@ -927,9 +1041,13 @@ Cranidos:
       - PainSplit
       - Surf
       - Whirlpool
-      - StompingTantrum
       - LaserFocus
-      - Bulldoze
+      - SupercellSlam
+      - DragonClaw
+      - HeavySlam
+      - DragonTail
+      - BodyPress
+      - BreakingSwipe
 Shieldon:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -981,6 +1099,24 @@ Shieldon:
     - Torment
     - Toxic
     - Confide
+    - TeraBlast
+    - Trailblaze
+    - HardPress
+    - BodySlam
+    - TakeDown
+    - DoubleEdge
+    - Curse
+    - ScaryFace
+    - MetalSound
+    - SandTomb
+    - RockBlast
+    - PowerGem
+    - SmackDown
+    - HeavySlam
+    - Bulldoze
+    - StompingTantrum
+    - SteelBeam
+    - ScorchingSands
   Shieldon:
     level:
       1: [Tackle, Protect]
@@ -1007,8 +1143,6 @@ Shieldon:
       - Screech
       - GuardSplit
       - WideGuard
-    teachable:
-      - Bulldoze
   Bastiodon:
     level:
       1: [Tackle, Protect, Taunt, MetalSound, Block]
@@ -1028,5 +1162,8 @@ Shieldon:
       - HyperBeam
       - MagicCoat
       - Outrage
-      - StompingTantrum
-      - Bulldoze
+      - Reflect
+      - Reversal
+      - FoulPlay
+      - BodyPress
+      - MeteorBeam

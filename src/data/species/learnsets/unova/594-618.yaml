@@ -1,7 +1,7 @@
 Alomomola:
   Alomomola:
     level:
-      1: [Pound, HydroPump, HelpingHand, WaterSport, HealingWish, WideGuard]
+      1: [Pound, HydroPump, HelpingHand, WaterSport, HealingWish, WideGuard, PlayNice]
       5: [AquaRing]
       9: [AquaJet]
       13: [DoubleSlap]
@@ -64,6 +64,14 @@ Alomomola:
       - ZenHeadbutt
       - Confide
       - Liquidation
+      - TeraBlast
+      - Snowscape
+      - ChillingWater
+      - AlluringVoice
+      - MistyTerrain
+      - PlayRough
+      - ScaleShot
+      - FlipTurn
     egg: [Bounce, Endure, MirrorCoat, Mist, PainSplit, Refresh, Tickle]
 Joltik:
   # TM, HM and tutor moves shared by the whole family
@@ -122,6 +130,9 @@ Joltik:
     - Infestation
     - RisingVoltage
     - SkitterSmack
+    - TeraBlast
+    - Pounce
+    - Lunge
   Joltik:
     level:
       1: [Absorb, FuryCutter, LeechLife, SpiderWeb]
@@ -379,7 +390,7 @@ Tynamo:
     # is something else
     level:
       1: [Tackle, ThunderWave, Spark, ChargeBeam]
-    teachable: [Charge, ChargeBeam, KnockOff, ThunderWave]
+    teachable: [Charge, ChargeBeam, KnockOff, ThunderWave, TeraBlast]
   Eelektrik:
     level:
       1: [Headbutt, ThunderWave, Spark, ChargeBeam, Crunch]
@@ -435,6 +446,10 @@ Tynamo:
       - WildCharge
       - Confide
       - ThroatChop
+      - TeraBlast
+      - EerieImpulse
+      - ElectricTerrain
+      - Lunge
   Eelektross:
     level:
       1:
@@ -521,6 +536,14 @@ Tynamo:
       - ThunderPunch
       - ZenHeadbutt
       - PowerUpPunch
+      - TeraBlast
+      - SupercellSlam
+      - EerieImpulse
+      - ElectricTerrain
+      - Lunge
+      - StompingTantrum
+      - Liquidation
+      - BodyPress
 Elgyem:
   # TM and tutor moves shared by the whole family
 
@@ -689,6 +712,8 @@ Litwick:
     - SkitterSmack
     - BurningJealousy
     - Poltergeist
+    - TeraBlast
+    - TemperFlare
   Litwick:
     level:
       1: [Smog, Astonish]
@@ -726,6 +751,7 @@ Litwick:
       64: [Memento]
     teachable:
       - MysticalFire
+      - LashOut
   Chandelure:
     level:
       1:
@@ -748,7 +774,7 @@ Litwick:
           Inferno,
           FlameBurst,
         ]
-    teachable: [GigaImpact, HyperBeam, LaserFocus, MysticalFire]
+    teachable: [GigaImpact, HyperBeam, LaserFocus, MysticalFire, Trailblaze, LashOut]
 Axew:
   # TM and tutor moves shared by the whole family
 
@@ -815,6 +841,10 @@ Axew:
     - Confide
     - BreakingSwipe
     - ScaleShot
+    - TeraBlast
+    - Trailblaze
+    - DragonCheer
+    - StompingTantrum
   Axew:
     level:
       1: [Scratch, Leer]
@@ -828,7 +858,7 @@ Axew:
       21: [ScaryFace]
       24: [Crunch]
       27: [DragonDance]
-      30: [DualChop]
+      30: [DualChop, BreakingSwipe]
       33: [LaserFocus, FocusEnergy]
       36: [DragonPulse]
       39: [SwordsDance]
@@ -858,14 +888,14 @@ Axew:
       21: [ScaryFace]
       24: [Crunch]
       27: [DragonDance]
-      30: [DualChop]
+      30: [DualChop, BreakingSwipe]
       33: [LaserFocus, FocusEnergy]
       36: [DragonPulse]
       41: [SwordsDance]
       46: [Outrage]
       51: [Guillotine]
       56: [GigaImpact]
-    teachable: [LowKick, StompingTantrum]
+    teachable: [LowKick]
   Haxorus:
     level:
       1: [Scratch, Leer, Bite, FalseSwipe, DragonRage]
@@ -876,7 +906,7 @@ Axew:
       21: [ScaryFace]
       24: [Crunch]
       27: [DragonDance]
-      30: [DualChop]
+      30: [DualChop, BreakingSwipe]
       33: [LaserFocus, FocusEnergy]
       36: [DragonPulse]
       41: [SwordsDance]
@@ -895,7 +925,6 @@ Axew:
       - PsychoCut
       - RockSlide
       - BrutalSwing
-      - StompingTantrum
       - LaserFocus
 Cubchoo:
   # TM and tutor moves shared by both sizes
@@ -966,6 +995,13 @@ Cubchoo:
     - XScissor
     - Confide
     - PowerUpPunch
+    - TeraBlast
+    - Snowscape
+    - Trailblaze
+    - ChillingWater
+    - PlayRough
+    - Liquidation
+    - BodyPress
   Cubchoo:
     level:
       1: [Growl, PowderSnow]
@@ -978,7 +1014,7 @@ Cubchoo:
       21: [Slash]
       24: [Flail]
       27: [Charm]
-      30: [Hail]
+      30: [Hail, Snowscape]
       33: [Thrash]
       36: [Rest]
       39: [Blizzard]
@@ -993,8 +1029,6 @@ Cubchoo:
       - SleepTalk
       - Yawn
       - PlayRough
-    teachable:
-      - PlayRough
   Beartic:
     level:
       1: [Growl, FurySwipes, PowderSnow, Endure, Charm, AquaJet, IcicleCrash, Bide]
@@ -1005,7 +1039,7 @@ Cubchoo:
       21: [Slash]
       24: [Flail]
       27: [Swagger]
-      30: [Hail]
+      30: [Hail, Snowscape]
       33: [Thrash]
       36: [Rest]
       41: [Blizzard]
@@ -1028,9 +1062,7 @@ Cubchoo:
       - StoneEdge
       - SwordsDance
       - ThroatChop
-      - BodyPress
-      - Liquidation
-      - PlayRough
+      - HardPress
 Cryogonal:
   Cryogonal:
     level:
@@ -1096,6 +1128,10 @@ Cryogonal:
       - AuroraVeil
       - LaserFocus
       - TripleAxel
+      - TeraBlast
+      - IceSpinner
+      - Snowscape
+      - ChillingWater
     egg: [Explosion, FrostBreath]
 Shelmet:
   family-teachable: [Attract, SkitterSmack]

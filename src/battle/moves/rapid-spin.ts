@@ -41,12 +41,15 @@ function heldDown(unit: Unit): boolean {
   return false;
 }
 
+/** Rapid Spin and Mortal Spin, which each sweep the user's side as they land */
+const SPINS = new Set<Moves>([Moves.RapidSpin, Moves.MortalSpin]);
+
 /** What a spin that has something to clear is worth over one that does not */
 const CLEAR_BONUS = 10;
 
 export default function setupRapidSpin(battle: Battle): void {
   battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Post, (event) => {
-    if (event.move !== Moves.RapidSpin) {
+    if (!SPINS.has(event.move)) {
       return;
     }
 
@@ -72,7 +75,7 @@ export default function setupRapidSpin(battle: Battle): void {
   // something to clear, which is what the AI is told
   battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
     if (
-      event.move === Moves.RapidSpin &&
+      SPINS.has(event.move) &&
       (hazardsUnder(event.source.team) || heldDown(event.source))
     ) {
       event.score += CLEAR_BONUS;

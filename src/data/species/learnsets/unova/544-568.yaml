@@ -34,6 +34,14 @@ Cottonee:
     - Confide
     - DazzlingGleam
     - GrassyGlide
+    - TeraBlast
+    - Swift
+    - Endure
+    - Charm
+    - Encore
+    - FakeTears
+    - GrassyTerrain
+    - MistyTerrain
   Cottonee:
     level:
       1: [Absorb, HelpingHand]
@@ -65,13 +73,6 @@ Cottonee:
       - WorrySeed
     teachable:
       - BeatUp
-      - Charm
-      - Encore
-      - Endure
-      - FakeTears
-      - GrassyTerrain
-      - MistyTerrain
-      - Swift
   Whimsicott:
     # A stone evolution learns nothing further on its own, beyond
     # the wind it comes into
@@ -112,15 +113,8 @@ Cottonee:
       - TrickRoom
       - UTurn
       - BeatUp
-      - Charm
-      - Encore
-      - Endure
-      - FakeTears
-      - GrassyTerrain
       - Hurricane
-      - MistyTerrain
       - PlayRough
-      - Swift
 Petilil:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -157,6 +151,15 @@ Petilil:
     - Confide
     - LaserFocus
     - GrassyGlide
+    - TeraBlast
+    - Trailblaze
+    - Endure
+    - Charm
+    - Encore
+    - BulletSeed
+    - MagicalLeaf
+    - LeafStorm
+    - PollenPuff
   Petilil:
     level:
       1: [Absorb, Growth]
@@ -184,13 +187,6 @@ Petilil:
       - NaturalGift
       - SweetScent
       - WorrySeed
-    teachable:
-      - Charm
-      - Encore
-      - Endure
-      - LeafStorm
-      - MagicalLeaf
-      - PollenPuff
   Lilligant:
     level:
       1:
@@ -215,6 +211,7 @@ Petilil:
           Entrainment,
           AfterYou,
           PetalBlizzard,
+          Charm,
         ]
     teachable:
       [
@@ -223,15 +220,12 @@ Petilil:
         LightScreen,
         RolePlay,
         SwordsDance,
-        Charm,
-        Encore,
-        Endure,
         GrassyTerrain,
         LeafBlade,
-        LeafStorm,
-        MagicalLeaf,
-        PollenPuff,
         SolarBlade,
+        AlluringVoice,
+        PsychUp,
+        WeatherBall,
       ]
   LilligantHisui:
     level:
@@ -260,18 +254,15 @@ Petilil:
           SolarBlade,
           VictoryDance,
         ]
+      5: [AxeKick]
     teachable:
       [
         Acrobatics,
         AerialAce,
         AirSlash,
         BrickBreak,
-        BulletSeed,
-        Charm,
         CloseCombat,
         Coaching,
-        Encore,
-        Endure,
         EnergyBall,
         Facade,
         GigaDrain,
@@ -282,14 +273,11 @@ Petilil:
         HelpingHand,
         Hurricane,
         HyperBeam,
-        LeafStorm,
         LowKick,
         LowSweep,
-        MagicalLeaf,
         Metronome,
         PetalBlizzard,
         PoisonJab,
-        PollenPuff,
         Protect,
         PsychUp,
         RainDance,
@@ -305,6 +293,8 @@ Petilil:
         TripleAxel,
         VacuumWave,
         WeatherBall,
+        IceSpinner,
+        UpperHand,
       ]
 Basculin:
   family-teachable:
@@ -363,6 +353,10 @@ Basculin:
     - Liquidation
     - ScaleShot
     - FlipTurn
+    - TeraBlast
+    - Snowscape
+    - ChillingWater
+    - PsychicFangs
   Basculin:
     level:
       1: [TailWhip, WaterGun]
@@ -378,7 +372,7 @@ Basculin:
       32: [Crunch]
       36: [TakeDown]
       40: [FinalGambit]
-      44: [AquaTail]
+      44: [AquaTail, WaveCrash]
       48: [Thrash]
       52: [DoubleEdge]
       56: [HeadSmash]
@@ -394,8 +388,6 @@ Basculin:
       - Revenge
       - Swift
       - Whirlpool
-    teachable:
-      - PsychicFangs
   BasculinBlue:
     level:
       1: [TailWhip, WaterGun]
@@ -411,7 +403,7 @@ Basculin:
       32: [Crunch]
       36: [TakeDown]
       40: [FinalGambit]
-      44: [AquaTail]
+      44: [AquaTail, WaveCrash]
       48: [Thrash]
       52: [DoubleEdge]
       56: [HeadSmash]
@@ -427,8 +419,6 @@ Basculin:
       - Revenge
       - Swift
       - Whirlpool
-    teachable:
-      - PsychicFangs
   BasculinWhite:
     level:
       1: [TailWhip, WaterGun]
@@ -464,7 +454,6 @@ Basculin:
         MudShot,
         MuddyWater,
         Protect,
-        PsychicFangs,
         RainDance,
         Rest,
         ScaleShot,
@@ -522,7 +511,6 @@ Basculin:
         PainSplit,
         PhantomForce,
         Protect,
-        PsychicFangs,
         RainDance,
         Rest,
         ScaleShot,
@@ -580,7 +568,6 @@ Basculin:
         PainSplit,
         PhantomForce,
         Protect,
-        PsychicFangs,
         RainDance,
         Rest,
         ScaleShot,
@@ -668,6 +655,8 @@ Sandile:
     - SkitterSmack
     - LashOut
     - ScorchingSands
+    - TeraBlast
+    - StompingTantrum
   Sandile:
     level:
       1: [Leer, PowerTrip, Rage]
@@ -735,7 +724,8 @@ Sandile:
       - Strength
       - PowerUpPunch
       - BrutalSwing
-      - StompingTantrum
+      - BreakingSwipe
+      - ScaleShot
   Krookodile:
     level:
       1: [SandAttack, Leer, HoneClaws, PowerTrip, Rage]
@@ -781,11 +771,11 @@ Sandile:
       - Superpower
       - PowerUpPunch
       - BrutalSwing
-      - StompingTantrum
       - ThroatChop
       - ScaleShot
       - DarkestLariat
       - HighHorsepower
+      - BreakingSwipe
 Darumaka:
   family-teachable:
     - Attract
@@ -1315,6 +1305,10 @@ Scraggy:
     - PowerUpPunch
     - LashOut
     - Coaching
+    - TeraBlast
+    - Trailblaze
+    - UpperHand
+    - ThroatChop
   Scraggy:
     level:
       1: [Leer, LowKick]
@@ -1373,7 +1367,6 @@ Scraggy:
       - Outrage
       - Reversal
       - SwordsDance
-      - ThroatChop
 Sigilyph:
   Sigilyph:
     level:

@@ -1,6 +1,7 @@
 import { AttackPriority } from '../../core/event-emitter';
 import { Stages } from '../../data/constants/stats';
 import { MoveCategories, MoveTargetPriorities, Moves } from '../../data/ids/moves';
+import { Statuses } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
 import { checkTeamUnit } from '../ai/rating';
 import type Battle from '../core';
@@ -34,6 +35,8 @@ export const SELF_SWITCH_MOVES = new Set<Moves>([
   Moves.VoltSwitch,
   Moves.PartingShot,
   Moves.FlipTurn,
+  Moves.ShedTail,
+  Moves.ChillyReception,
 ]);
 
 /**
@@ -190,6 +193,15 @@ export default function setupSwitchOutMoves(battle: Battle): void {
       move: event.move,
       unit: event.source,
     });
+
+    // Shed Tail leaves its substitute standing for whoever comes in
+    if (event.move === Moves.ShedTail && replacement.status[Statuses.Substituted] == null) {
+      replacement.addStatus(Statuses.Substituted, {
+        type: EffectType.Move,
+        move: event.move,
+        unit: event.source,
+      });
+    }
 
     if (passed != null) {
       const cause = { type: EffectType.Move, move: Moves.BatonPass, unit: event.source } as const;

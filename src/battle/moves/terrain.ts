@@ -29,8 +29,13 @@ export default function setupTerrainMoves(battle: Battle): void {
   battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     const terrain = TERRAIN_MOVES.get(event.move);
 
-    // Lycanroc's Z-Move and Steel Roller clear whatever the field was laid with
-    if (event.move === Moves.SplinteredStormshards || event.move === Moves.SteelRoller) {
+    // Lycanroc's Z-Move, Steel Roller and Ice Spinner clear whatever the
+    // field was laid with
+    if (
+      event.move === Moves.SplinteredStormshards ||
+      event.move === Moves.SteelRoller ||
+      event.move === Moves.IceSpinner
+    ) {
       event.source.setTerrain(Terrains.None, 0);
       return;
     }

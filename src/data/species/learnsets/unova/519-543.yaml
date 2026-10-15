@@ -133,6 +133,27 @@ Blitzle:
     - VoltSwitch
     - WildCharge
     - Confide
+    - TeraBlast
+    - Trailblaze
+    - SupercellSlam
+    - BodySlam
+    - TakeDown
+    - DoubleEdge
+    - LowKick
+    - Agility
+    - Swift
+    - Endure
+    - BatonPass
+    - SunnyDay
+    - Uproar
+    - Charge
+    - HelpingHand
+    - Endeavor
+    - ElectroBall
+    - Electroweb
+    - EerieImpulse
+    - ElectricTerrain
+    - SmartStrike
   Blitzle:
     level:
       1: [QuickAttack]
@@ -148,7 +169,7 @@ Blitzle:
       36: [Agility]
       39: [WildCharge]
       43: [Thrash]
-    egg: [DoubleEdge, DoubleKick, Endure, MeFirst, Rage, SandAttack, Screech, TakeDown]
+    egg: [DoubleEdge, DoubleKick, Endure, MeFirst, Rage, SandAttack, Screech, TakeDown, Feint]
   Zebstrika:
     level:
       1: [Charge, QuickAttack, TailWhip, ThunderWave]
@@ -162,7 +183,18 @@ Blitzle:
       47: [WildCharge]
       53: [Thrash]
       58: [IonDeluge]
-    teachable: [GigaImpact, HyperBeam, Overheat, RockSmash, LaserFocus]
+    teachable:
+      [
+        GigaImpact,
+        HyperBeam,
+        Overheat,
+        RockSmash,
+        LaserFocus,
+        Roar,
+        Taunt,
+        Bulldoze,
+        HighHorsepower,
+      ]
 Roggenrola:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -444,6 +476,20 @@ Drilbur:
     - XScissor
     - Confide
     - ScorchingSands
+    - TeraBlast
+    - TakeDown
+    - DoubleEdge
+    - Curse
+    - MudSlap
+    - Endure
+    - MetalClaw
+    - SunnyDay
+    - HelpingHand
+    - MetalSound
+    - SandTomb
+    - MudShot
+    - HighHorsepower
+    - StompingTantrum
   Drilbur:
     level:
       1: [MudSlap, RapidSpin, MudSport]
@@ -461,11 +507,6 @@ Drilbur:
       44: [Earthquake]
       48: [Fissure]
     egg: [CrushClaw, MetalSound, RockClimb, SkullBash, Submission, Slash]
-    teachable:
-      - Endure
-      - HighHorsepower
-      - MudShot
-      - SandTomb
   Excadrill:
     level:
       1: [Scratch, HornDrill, MudSlap, RapidSpin, HoneClaws, MudSport, Rototiller]
@@ -487,14 +528,12 @@ Drilbur:
       - IronHead
       - MagnetRise
       - BrutalSwing
-      - StompingTantrum
       - SmartStrike
       - SteelBeam
-      - Endure
-      - HighHorsepower
-      - MudShot
       - RockBlast
-      - SandTomb
+      - BodySlam
+      - ScaryFace
+      - ThroatChop
 Audino:
   Audino:
     level:
@@ -681,6 +720,7 @@ Timburr:
     - PowerUpPunch
     - BrutalSwing
     - Coaching
+    - TeraBlast
   Timburr:
     level:
       1: [Pound, Leer]
@@ -747,6 +787,8 @@ Timburr:
       - RockBlast
       - StompingTantrum
       - HighHorsepower
+      - HardPress
+      - UpperHand
 Tympole:
   # TM, HM and tutor moves shared by the whole family
 
@@ -1064,6 +1106,20 @@ Sewaddle:
     - Toxic
     - WorrySeed
     - Confide
+    - TeraBlast
+    - Pounce
+    - Trailblaze
+    - TakeDown
+    - Endure
+    - Charm
+    - BatonPass
+    - RainDance
+    - MagicalLeaf
+    - BugBuzz
+    - GrassyTerrain
+    - Lunge
+    - GrassyGlide
+    - SkitterSmack
   Sewaddle:
     level:
       1: [StringShot, Tackle]
@@ -1084,12 +1140,21 @@ Sewaddle:
       - RazorWind
       - Screech
       - SilverWind
+      - Snore
+      - Synthesis
+      - WorrySeed
+      - Switcheroo
   Swadloon:
     # Wrapped in its own leaves and growing: everything else it
     # knows it learned as a Sewaddle
     level:
       1: [BugBite, GrassWhistle, RazorLeaf, StringShot, Tackle]
       20: [Protect]
+      22: [StruggleBug]
+      29: [Endure]
+      31: [StickyWeb]
+      36: [BugBuzz]
+      43: [Flail]
   Leavanny:
     level:
       1: [BugBite, FalseSwipe, RazorLeaf, StringShot, Tackle]
@@ -1119,6 +1184,12 @@ Sewaddle:
       - XScissor
       - LaserFocus
       - ThroatChop
+      - LowKick
+      - Agility
+      - BulletSeed
+      - AirSlash
+      - PollenPuff
+      - TripleAxel
 Venipede:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:

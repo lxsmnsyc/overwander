@@ -33,6 +33,11 @@ import { FUTURE_SIGHT_DELAY } from '../../src/battle/moves/future-sight';
 import { WISH_DELAY } from '../../src/battle/moves/wish';
 import { Statuses } from '../../src/data/ids/status';
 import registerGameData from '../../src/data';
+import {
+  getLearnableMoves,
+  getRegisteredSpecies,
+  getSpeciesData,
+} from '../../src/data/species/__create';
 
 /**
  * Everything the field draws over a fight is a painter: a function of
@@ -79,6 +84,8 @@ function canvas(): {
     quadraticCurveTo: (...args: number[]) => drawn.push(`quad ${args.join()}`),
     ellipse: (...args: number[]) => drawn.push(`ellipse ${args.join()}`),
     arc: (...args: number[]) => drawn.push(`arc ${args.join()}`),
+    rect: (...args: number[]) => drawn.push(`rect ${args.join()}`),
+    clip: () => {},
     createRadialGradient: () => gradient,
     createLinearGradient: () => gradient,
     stroke: () => {
@@ -88,6 +95,9 @@ function canvas(): {
       marks += 1;
     },
     fillRect: () => {
+      marks += 1;
+    },
+    strokeRect: () => {
       marks += 1;
     },
   };
@@ -172,7 +182,7 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Punch', Moves.IcePunch],
   ['Punch', Moves.ThunderPunch],
   ['Rush', Moves.FlareBlitz],
-  ['Rush', Moves.VoltTackle],
+  ['Rush', Moves.WildCharge],
   ['Wheel', Moves.FlameWheel],
   ['Torrent', Moves.Waterfall],
   // The legendary signatures
@@ -484,6 +494,132 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Wildfire', Moves.FrenzyWildfire],
   ['ChargedBlast', Moves.FrenzyBlast],
   ['Iceberg', Moves.FrenzyIceberg],
+  // Paldea's legendary and mythical signatures
+  ['Collision', Moves.CollisionCourse],
+  ['Neon', Moves.ElectroDrift],
+  ['Calamity', Moves.Ruination],
+  ['Cudgel', Moves.IvyCudgel],
+  ['Starstorm', Moves.TeraStarstorm],
+  ['Chains', Moves.MalignantChain],
+  // Paldea's other signatures, one family each
+  ['Snare', Moves.SilkTrap],
+  ['Lumina', Moves.LuminaCrash],
+  ['Order', Moves.OrderUp],
+  ['Jetfist', Moves.JetPunch],
+  ['Spice', Moves.SpicyExtract],
+  ['Burnout', Moves.SpinOut],
+  ['Horde', Moves.PopulationBomb],
+  ['Glaive', Moves.GlaiveRush],
+  ['Salt', Moves.SaltCure],
+  ['Divers', Moves.TripleDive],
+  ['Spinner', Moves.MortalSpin],
+  ['Doodle', Moves.Doodle],
+  ['Fillet', Moves.FilletAway],
+  ['Kowtow', Moves.KowtowCleave],
+  ['Bouquet', Moves.FlowerTrick],
+  ['Torch', Moves.TorchSong],
+  ['Stepdance', Moves.AquaStep],
+  ['Bull', Moves.RagingBull],
+  ['Coins', Moves.MakeItRain],
+  ['Hyperdrill', Moves.HyperDrill],
+  ['Twin', Moves.TwinBeam],
+  ['Ragefist', Moves.RageFist],
+  ['Armor', Moves.ArmorCannon],
+  ['Bitter', Moves.BitterBlade],
+  ['Doubleshock', Moves.DoubleShock],
+  ['Gigaton', Moves.GigatonHammer],
+  ['Bloodmoon', Moves.BloodMoon],
+  ['Matcha', Moves.MatchaGotcha],
+  ['Syrup', Moves.SyrupBomb],
+  ['Electroshot', Moves.ElectroShot],
+  ['Fickle', Moves.FickleBeam],
+  ['Firewall', Moves.BurningBulwark],
+  ['Clap', Moves.Thunderclap],
+  ['Cleave', Moves.MightyCleave],
+  ['Tachyon', Moves.TachyonCutter],
+  ['Psyblade', Moves.Psyblade],
+  ['Steamjet', Moves.HydroSteam],
+  ['Blazing', Moves.BlazingTorque],
+  ['Wicked', Moves.WickedTorque],
+  ['Noxious', Moves.NoxiousTorque],
+  ['Combat', Moves.CombatTorque],
+  ['Magical', Moves.MagicalTorque],
+  // Every older region's signatures that once borrowed a picture
+  ['Eggbarrage', Moves.Barrage],
+  ['Boneclub', Moves.BoneClub],
+  ['Kiss', Moves.LovelyKiss],
+  ['Conversion', Moves.Conversion],
+  ['Spoon', Moves.Kinesis],
+  ['Sketch', Moves.Sketch],
+  ['Reconvert', Moves.Conversion2],
+  ['Volt', Moves.VoltTackle],
+  ['Chatter', Moves.Chatter],
+  ['Attackorder', Moves.AttackOrder],
+  ['Grind', Moves.GearGrind],
+  ['Mat', Moves.MatBlock],
+  ['Treat', Moves.TrickOrTreat],
+  ['Curse', Moves.ForestsCurse],
+  ['Lock', Moves.FairyLock],
+  ['Aegis', Moves.KingsShield],
+  ['Wrathland', Moves.LandsWrath],
+  ['Shore', Moves.ShoreUp],
+  ['Bunker', Moves.BanefulBunker],
+  ['Icehammer', Moves.IceHammer],
+  ['Floral', Moves.FloralHealing],
+  ['Thread', Moves.ToxicThread],
+  ['Purify', Moves.Purify],
+  ['Revelation', Moves.RevelationDance],
+  ['Trop', Moves.TropKick],
+  ['Instruct', Moves.Instruct],
+  ['Beak', Moves.BeakBlast],
+  ['Scales', Moves.ClangingScales],
+  ['Trap', Moves.ShellTrap],
+  ['Fleur', Moves.FleurCannon],
+  ['Bone', Moves.ShadowBone],
+  ['Accelerock', Moves.Accelerock],
+  ['Thief', Moves.SpectralThief],
+  ['Multi', Moves.MultiAttack],
+  ['Plasma', Moves.PlasmaFists],
+  ['Clangor', Moves.ClangorousSoul],
+  ['Ironbash', Moves.DoubleIronBash],
+  ['Snipe', Moves.SnipeShot],
+  ['Jawlock', Moves.JawLock],
+  ['Cheeks', Moves.StuffCheeks],
+  ['Retreat', Moves.NoRetreat],
+  ['Powder', Moves.MagicPowder],
+  ['Teatime', Moves.Teatime],
+  ['Octolock', Moves.Octolock],
+  ['Court', Moves.CourtChange],
+  ['Decorate', Moves.Decorate],
+  ['Drumming', Moves.DrumBeating],
+  ['Pyroball', Moves.PyroBall],
+  ['Direclaw', Moves.DireClaw],
+  ['Psyshield', Moves.PsyshieldBash],
+  ['Stoneaxe', Moves.StoneAxe],
+  ['Mountaingale', Moves.MountainGale],
+  ['Victorydance', Moves.VictoryDance],
+  ['Barbs', Moves.BarbBarrage],
+  ['Esper', Moves.EsperWing],
+  ['Malice', Moves.BitterMalice],
+  ['Shelter', Moves.Shelter],
+  ['Triplearrows', Moves.TripleArrows],
+  ['Parade', Moves.InfernalParade],
+  ['Ceaseless', Moves.CeaselessEdge],
+  ['Blessing', Moves.LunarBlessing],
+  ['Takeheart', Moves.TakeHeart],
+  ['Chloroblast', Moves.Chloroblast],
+  ['Flyingpress', Moves.FlyingPress],
+  ['Aurawheel', Moves.AuraWheel],
+  ['Amped', Moves.Overdrive],
+  ['Acid', Moves.AppleAcid],
+  ['Gravapple', Moves.GravApple],
+  ['Spiritbreak', Moves.SpiritBreak],
+  ['Strangesteam', Moves.StrangeSteam],
+  ['Obstruct', Moves.Obstruct],
+  ['Surrender', Moves.FalseSurrender],
+  ['Assault', Moves.MeteorAssault],
+  ['Sidearm', Moves.ShellSideArm],
+  ['Spell', Moves.EerieSpell],
 ];
 
 /**
@@ -494,6 +630,8 @@ const SHAPES: [shape: string, move: Moves][] = [
 const STEP_SHAPES: [shape: string, move: Moves, steps: number][] = [
   ['Dart', Moves.UTurn, 1],
   ['Dart', Moves.FlipTurn, 1],
+  ['Doll', Moves.ShedTail, 1],
+  ['Reception', Moves.ChillyReception, 1],
 ];
 
 describe('a painted move', () => {
@@ -740,14 +878,61 @@ describe('a painted move', () => {
     expect(effectShapeFor(Moves.BodyPress)).toBe('Tonnage');
     expect(effectShapeFor(Moves.FlipTurn)).toBe('Relay');
     expect(effectShapeFor(Moves.LifeDew)).toBe('Mend');
-    expect(effectShapeFor(Moves.Obstruct)).toBe('Shell');
     expect(effectShapeFor(Moves.TripleAxel)).toBe('Kicks');
-    expect(effectShapeFor(Moves.TripleArrows)).toBe('Arrows');
     expect(effectShapeFor(Moves.WaveCrash)).toBe('Torrent');
     expect(effectShapeFor(Moves.SteelBeam)).toBe('Blaster');
     // Charged and thrown the way the earlier moves of their kind are
     expect(delayShapeFor(Moves.MeteorBeam, 1)).toBe('Charge');
-    expect(delayShapeFor(Moves.PyroBall, 0)).toBe('Lobbed');
+    expect(delayShapeFor(Moves.SteelBeam, 0)).toBe('Charge');
+  });
+
+  it('gives every signature move a shape no other move is drawn as', () => {
+    // A signature is a move one family learns, legendary or not; the
+    // move-visuals rule is that it never borrows another move's picture
+    const families = new Map<Moves, Set<number>>();
+
+    for (const species of getRegisteredSpecies()) {
+      const { family } = getSpeciesData(species);
+
+      for (const move of getLearnableMoves(species)) {
+        const learners = families.get(move) ?? new Set<number>();
+
+        learners.add(family);
+        families.set(move, learners);
+      }
+    }
+
+    const drawnAs = new Map<string, Moves[]>();
+
+    for (const move of families.keys()) {
+      const shape = effectShapeFor(move);
+
+      drawnAs.set(shape, [...(drawnAs.get(shape) ?? []), move]);
+    }
+
+    const shared: string[] = [];
+
+    for (const [move, learners] of families) {
+      const others = drawnAs.get(effectShapeFor(move)) ?? [];
+
+      if (learners.size === 1 && others.length > 1) {
+        shared.push(`${getMoveData(move).name} as ${effectShapeFor(move)}`);
+      }
+    }
+    expect(shared).toEqual([]);
+  });
+
+  it('draws the Paldea moves that are an earlier move in all but name', () => {
+    expect(effectShapeFor(Moves.ShedTail)).toBe('Relay');
+    expect(effectShapeFor(Moves.Snowscape)).toBe('Sky');
+    expect(effectShapeFor(Moves.TidyUp)).toBe('Clear');
+    expect(effectShapeFor(Moves.Comeuppance)).toBe('Turnabout');
+    expect(effectShapeFor(Moves.HardPress)).toBe('Tonnage');
+    expect(effectShapeFor(Moves.SupercellSlam)).toBe('Plummet');
+    expect(effectShapeFor(Moves.TemperFlare)).toBe('Rush');
+    // Electro Shot spends its first step gathering the charge, like Meteor Beam
+    expect(moveEffectVisual(Moves.ElectroShot, 1)).toBeNull();
+    expect(delayShapeFor(Moves.ElectroShot, 1)).toBe('Charge');
   });
 
   it('draws each Max Move as a picture of its own', () => {
@@ -940,7 +1125,7 @@ describe('a painted move', () => {
     expect(effectShapeFor(Moves.AcidArmor)).toBe('Boost');
     expect(effectShapeFor(Moves.Leer)).toBe('Drop');
     expect(effectShapeFor(Moves.TailWhip)).toBe('Drop');
-    expect(effectShapeFor(Moves.Kinesis)).toBe('Drop');
+    expect(effectShapeFor(Moves.SandAttack)).toBe('Drop');
     // Raising the target's Attack is still a rise, and it is drawn on
     // the target rather than on whoever cast it
     expect(effectShapeFor(Moves.Swagger)).toBe('Boost');

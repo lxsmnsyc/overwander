@@ -57,6 +57,23 @@ Treecko:
     - Confide
     - PowerUpPunch
     - GrassyGlide
+    - TeraBlast
+    - Trailblaze
+    - UpperHand
+    - TakeDown
+    - LowKick
+    - Agility
+    - RockSlide
+    - Thief
+    - Crunch
+    - HelpingHand
+    - Endeavor
+    - MagicalLeaf
+    - EnergyBall
+    - LeafStorm
+    - DragonTail
+    - GrassyTerrain
+    - BreakingSwipe
   Treecko:
     level:
       1: [Pound, Leer]
@@ -92,15 +109,7 @@ Treecko:
       - Synthesis
       - WorrySeed
     teachable:
-      - Agility
       - Assurance
-      - Crunch
-      - EnergyBall
-      - GrassyTerrain
-      - LeafStorm
-      - LowKick
-      - MagicalLeaf
-      - RockSlide
       - Screech
       - WorkUp
   Grovyle:
@@ -120,22 +129,15 @@ Treecko:
       55: [LeafStorm]
     teachable:
       [
-        EnergyBall,
         XScissor,
         LowSweep,
-        Agility,
         Assurance,
-        Crunch,
         FalseSwipe,
-        GrassyTerrain,
         LeafBlade,
-        LeafStorm,
-        LowKick,
-        MagicalLeaf,
-        RockSlide,
         Screech,
         SolarBlade,
         WorkUp,
+        VacuumWave,
       ]
   Sceptile:
     level:
@@ -171,7 +173,6 @@ Treecko:
       - HyperBeam
       - Earthquake
       - DragonPulse
-      - EnergyBall
       - FocusBlast
       - GigaImpact
       - RockClimb
@@ -181,26 +182,20 @@ Treecko:
       - BrutalSwing
       - LaserFocus
       - ThroatChop
-      - BreakingSwipe
       - ScaleShot
-      - Agility
       - Assurance
       - CrossPoison
-      - Crunch
       - DragonDance
       - FalseSwipe
       - FrenzyPlant
-      - GrassyTerrain
       - LeafBlade
-      - LeafStorm
-      - LowKick
-      - MagicalLeaf
       - Outrage
-      - RockSlide
       - Screech
       - SolarBlade
       - WorkUp
       - XScissor
+      - DragonCheer
+      - VacuumWave
 Torchic:
   family-teachable:
     - Toxic
@@ -250,6 +245,21 @@ Torchic:
     - Incinerate
     - FirePledge
     - Confide
+    - TeraBlast
+    - TemperFlare
+    - TakeDown
+    - LowKick
+    - FireSpin
+    - Agility
+    - Curse
+    - Reversal
+    - BatonPass
+    - Uproar
+    - HeatWave
+    - WillOWisp
+    - HelpingHand
+    - FeatherDance
+    - FlareBlitz
   Torchic:
     level:
       1: [Scratch, Growl]
@@ -288,18 +298,9 @@ Torchic:
       - LowKick
       - Peck
     teachable:
-      - Agility
       - Assurance
-      - BatonPass
       - Bounce
-      - FireSpin
-      - FlareBlitz
       - FocusEnergy
-      - HeatWave
-      - HelpingHand
-      - LowKick
-      - Reversal
-      - WillOWisp
       - WorkUp
   Combusken:
     level:
@@ -334,20 +335,13 @@ Torchic:
       - PoisonJab
       - VacuumWave
       - Coaching
-      - Agility
       - Assurance
-      - BatonPass
       - BlazeKick
       - Bounce
-      - FireSpin
-      - FlareBlitz
       - FocusEnergy
-      - HeatWave
-      - HelpingHand
-      - LowKick
       - Revenge
-      - Reversal
-      - WillOWisp
+      - Thief
+      - CloseCombat
   Blaziken:
     level:
       1:
@@ -402,28 +396,22 @@ Torchic:
       - LaserFocus
       - Coaching
       - ScorchingSands
-      - Agility
       - Assurance
       - AuraSphere
-      - BatonPass
       - BlastBurn
       - BlazeKick
       - Bounce
       - BraveBird
       - CloseCombat
-      - FireSpin
-      - FlareBlitz
       - FocusEnergy
       - HeatCrash
-      - HeatWave
-      - HelpingHand
-      - LowKick
       - Revenge
-      - Reversal
       - SolarBeam
       - Superpower
       - UTurn
-      - WillOWisp
+      - UpperHand
+      - Thief
+      - KnockOff
 Mudkip:
   family-teachable:
     - WaterPulse
@@ -471,6 +459,22 @@ Mudkip:
     - Scald
     - WaterPledge
     - Confide
+    - TeraBlast
+    - ChillingWater
+    - TakeDown
+    - Roar
+    - HydroPump
+    - LowKick
+    - Amnesia
+    - RockSlide
+    - Curse
+    - Whirlpool
+    - Uproar
+    - Endeavor
+    - MuddyWater
+    - MudShot
+    - Avalanche
+    - Liquidation
   Mudkip:
     level:
       1: [Tackle, Growl]
@@ -508,15 +512,8 @@ Mudkip:
         Yawn,
       ]
     teachable:
-      - Amnesia
-      - Avalanche
-      - HydroPump
-      - LowKick
-      - RockSlide
       - Screech
       - Superpower
-      - Uproar
-      - Whirlpool
       - WorkUp
   Marshtomp:
     level:
@@ -539,25 +536,18 @@ Mudkip:
       - Counter
       - SeismicToss
       - DynamicPunch
-      - RockSlide
       - IcePunch
       - Bulldoze
       - PowerUpPunch
       - Fling
       - StealthRock
-      - Amnesia
-      - Avalanche
       - BrickBreak
-      - HydroPump
-      - LowKick
-      - MudShot
-      - MuddyWater
       - SandTomb
       - Screech
       - Superpower
-      - Uproar
-      - Whirlpool
       - WorkUp
+      - FocusPunch
+      - HelpingHand
   Swampert:
     level:
       1: [Tackle, Growl, WaterGun, Surf, Earthquake, RockSmash, MudShot, HammerArm, MudSlap]
@@ -579,15 +569,12 @@ Mudkip:
       - Counter
       - SeismicToss
       - DynamicPunch
-      - RockSlide
       - IcePunch
       - Bulldoze
       - PowerUpPunch
       - FocusPunch
-      - Roar
       - BrickBreak
       - HyperBeam
-      - Avalanche
       - Fling
       - FocusBlast
       - GigaImpact
@@ -597,23 +584,22 @@ Mudkip:
       - StompingTantrum
       - BodyPress
       - FlipTurn
-      - Amnesia
       - BulkUp
       - DarkestLariat
       - HighHorsepower
       - HydroCannon
-      - HydroPump
-      - Liquidation
-      - LowKick
-      - MudShot
-      - MuddyWater
       - Outrage
       - SandTomb
       - Screech
       - Superpower
-      - Uproar
-      - Whirlpool
       - WorkUp
+      - HardPress
+      - ScaryFace
+      - HelpingHand
+      - KnockOff
+      - WeatherBall
+      - PoisonJab
+      - SmackDown
 Poochyena:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -659,6 +645,25 @@ Poochyena:
     - Retaliate
     - Snarl
     - Confide
+    - TeraBlast
+    - Trailblaze
+    - TakeDown
+    - SuperFang
+    - Spite
+    - ScaryFace
+    - Charm
+    - Crunch
+    - Uproar
+    - HelpingHand
+    - Endeavor
+    - HyperVoice
+    - NastyPlot
+    - ThunderFang
+    - IceFang
+    - FireFang
+    - PlayRough
+    - PsychicFangs
+    - LashOut
   Poochyena:
     level:
       1: [Tackle]
@@ -692,12 +697,10 @@ Poochyena:
       - ThunderFang
       - PlayRough
       - SuckerPunch
-    teachable:
-      - NastyPlot
   Mightyena:
     level:
       1: [SandAttack, Tackle, Bite, Thief, Crunch, Howl, ThunderFang, IceFang, FireFang, Snarl]
-      13: [MudSlap]
+      13: [MudSlap, Leer]
       16: [Roar]
       17: [OdorSleuth]
       20: [Swagger]
@@ -710,7 +713,7 @@ Poochyena:
       48: [TakeDown]
       52: [SuckerPunch]
       56: [PlayRough]
-    teachable: [HyperBeam, Strength, GigaImpact, LaserFocus, ThroatChop, NastyPlot]
+    teachable: [HyperBeam, Strength, GigaImpact, LaserFocus, ThroatChop]
 Zigzagoon:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -1191,6 +1194,19 @@ Lotad:
     - Scald
     - Confide
     - GrassyGlide
+    - TeraBlast
+    - Trailblaze
+    - ChillingWater
+    - TakeDown
+    - Whirlpool
+    - Uproar
+    - WeatherBall
+    - MuddyWater
+    - MagicalLeaf
+    - EnergyBall
+    - ZenHeadbutt
+    - DisarmingVoice
+    - GrassyTerrain
   Lotad:
     level:
       1: [Growl, Astonish]
@@ -1208,11 +1224,6 @@ Lotad:
       43: [EnergyBall]
     egg:
       [WaterGun, Synthesis, LeechSeed, RazorLeaf, SweetScent, Flail, Counter, TeeterDance, Tickle]
-    teachable:
-      - EnergyBall
-      - Uproar
-      - Whirlpool
-      - ZenHeadbutt
   Lombre:
     level:
       1: [Growl, WaterGun, Absorb, Flail, FakeOut, KnockOff, TeeterDance, Astonish]
@@ -1220,7 +1231,7 @@ Lotad:
       12: [MegaDrain]
       18: [FurySwipes]
       24: [BubbleBeam]
-      30: [NaturePower]
+      30: [NaturePower, LeechSeed]
       31: [WaterSport]
       36: [GigaDrain]
       37: [Thief]
@@ -1242,7 +1253,6 @@ Lotad:
       - HoneClaws
       - PowerUpPunch
       - DrainPunch
-      - EnergyBall
       - Fling
       - NaturalGift
       - Encore
@@ -1251,10 +1261,7 @@ Lotad:
       - MegaKick
       - MegaPunch
       - MudShot
-      - MuddyWater
-      - Uproar
-      - Whirlpool
-      - ZenHeadbutt
+      - Metronome
   Ludicolo:
     level:
       1:
@@ -1299,23 +1306,19 @@ Lotad:
       - SeismicToss
       - Metronome
       - DrainPunch
-      - EnergyBall
       - Fling
       - FocusBlast
       - GigaImpact
       - NaturalGift
       - RockClimb
-      - ZenHeadbutt
       - Amnesia
       - Encore
       - HydroPump
       - HyperVoice
       - LeafStorm
       - MudShot
-      - MuddyWater
-      - Uproar
-      - WeatherBall
-      - Whirlpool
+      - IceSpinner
+      - Swift
 Seedot:
   family-teachable:
     - Toxic
@@ -1359,6 +1362,19 @@ Seedot:
     - Retaliate
     - Confide
     - GrassyGlide
+    - TeraBlast
+    - Trailblaze
+    - TakeDown
+    - Amnesia
+    - Curse
+    - Spite
+    - FalseSwipe
+    - RainDance
+    - Endeavor
+    - MagicalLeaf
+    - NastyPlot
+    - LeafStorm
+    - GrassyTerrain
   Seedot:
     level:
       1: [Tackle, Harden, Bide]
@@ -1368,7 +1384,7 @@ Seedot:
       12: [Rollout]
       15: [MegaDrain]
       18: [Payback]
-      21: [NaturePower]
+      21: [NaturePower, Headbutt]
       24: [SunnyDay]
       27: [Synthesis]
       30: [SuckerPunch]
@@ -1389,11 +1405,7 @@ Seedot:
       - NightSlash
       - WorrySeed
     teachable:
-      - Amnesia
       - BeatUp
-      - FalseSwipe
-      - GrassyTerrain
-      - NastyPlot
       - Payback
       - PowerSwap
       - SelfDestruct
@@ -1446,18 +1458,19 @@ Seedot:
       - Fling
       - Payback
       - LashOut
-      - Amnesia
       - Assurance
       - BeatUp
-      - FalseSwipe
-      - GrassyTerrain
       - LeafBlade
       - LowKick
-      - NastyPlot
       - PowerSwap
       - RockSlide
       - SelfDestruct
       - SolarBlade
+      - ChillingWater
+      - ScaryFace
+      - Uproar
+      - KnockOff
+      - WeatherBall
   Shiftry:
     level:
       1:
@@ -1521,25 +1534,35 @@ Seedot:
       - ThroatChop
       - LashOut
       - AirSlash
-      - Amnesia
       - Assurance
       - BeatUp
       - Bounce
-      - FalseSwipe
-      - GrassyTerrain
       - HeatWave
       - Hurricane
       - IcyWind
       - LeafBlade
-      - LeafStorm
       - LowKick
-      - NastyPlot
       - PowerSwap
       - Revenge
       - RockSlide
       - Screech
       - SelfDestruct
       - SolarBlade
+      - ChillingWater
+      - UpperHand
+      - ConfuseRay
+      - Reversal
+      - ScaryFace
+      - Uproar
+      - WillOWisp
+      - Taunt
+      - KnockOff
+      - Imprison
+      - WeatherBall
+      - ToxicSpikes
+      - VacuumWave
+      - Hex
+      - PetalBlizzard
 Taillow:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:

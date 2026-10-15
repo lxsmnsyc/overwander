@@ -66,6 +66,9 @@ Mienfoo:
     - Confide
     - PowerUpPunch
     - Coaching
+    - TeraBlast
+    - Trailblaze
+    - UpperHand
   Mienfoo:
     level:
       1: [Pound, Detect]
@@ -120,6 +123,8 @@ Mienfoo:
       - VacuumWave
       - LaserFocus
       - BrutalSwing
+      - IceSpinner
+      - TripleAxel
 Druddigon:
   Druddigon:
     level:
@@ -304,6 +309,9 @@ Golett:
     - PowerUpPunch
     - Poltergeist
     - ScorchingSands
+    - TeraBlast
+    - PhantomForce
+    - StompingTantrum
   Golett:
     level:
       1: [MudSlap, Astonish]
@@ -324,9 +332,6 @@ Golett:
       52: [Earthquake]
       55: [FocusPunch]
       56: [DynamicPunch]
-    teachable:
-      - PhantomForce
-      - StompingTantrum
   Golurk:
     level:
       1: [Pound, DefenseCurl, MudSlap, FocusPunch, Astonish, HighHorsepower]
@@ -360,8 +365,7 @@ Golett:
       - BodyPress
       - DarkestLariat
       - HighHorsepower
-      - PhantomForce
-      - StompingTantrum
+      - HardPress
 Pawniard:
   # TM and tutor moves shared by the whole family
 
@@ -432,6 +436,7 @@ Pawniard:
     - PowerUpPunch
     - SteelBeam
     - LashOut
+    - TeraBlast
   Pawniard:
     level:
       1: [Scratch, Leer]
@@ -624,6 +629,7 @@ Rufflet:
     - ZenHeadbutt
     - Confide
     - DualWingbeat
+    - TeraBlast
   Rufflet:
     level:
       1: [Leer, Peck, QuickAttack]
@@ -729,6 +735,7 @@ Rufflet:
         UTurn,
         VacuumWave,
         ZenHeadbutt,
+        PsychicNoise,
       ]
 Vullaby:
   # TM and tutor moves shared by the whole family
@@ -794,6 +801,8 @@ Vullaby:
     - Confide
     - LashOut
     - DualWingbeat
+    - TeraBlast
+    - ThroatChop
   Vullaby:
     level:
       1: [Gust, Leer]
@@ -1056,6 +1065,8 @@ Deino:
     - WorkUp
     - ZenHeadbutt
     - Confide
+    - TeraBlast
+    - DragonCheer
   Deino:
     level:
       1: [Tackle, FocusEnergy, DragonRage]
@@ -1102,7 +1113,7 @@ Deino:
       54: [DragonRush]
       60: [NastyPlot]
       66: [Outrage]
-    teachable: [BeatUp, HelpingHand]
+    teachable: [BeatUp, HelpingHand, StompingTantrum, LashOut]
   Hydreigon:
     level:
       1: [Tackle, Bite, FocusEnergy, TriAttack, DragonBreath, DoubleHit, DragonRage]
@@ -1157,6 +1168,8 @@ Deino:
       - BreakingSwipe
       - ScaleShot
       - DualWingbeat
+      - StompingTantrum
+      - LashOut
 Larvesta:
   # TM and tutor moves shared by both sizes
   family-teachable:
@@ -1207,6 +1220,10 @@ Larvesta:
     - ZenHeadbutt
     - Confide
     - SkitterSmack
+    - TeraBlast
+    - Pounce
+    - Trailblaze
+    - Lunge
   Larvesta:
     level:
       1: [Ember, StringShot]
@@ -1354,6 +1371,17 @@ Cobalion:
       - ScaryFace
       - SmartStrike
       - Swift
+      - TeraBlast
+      - UpperHand
+      - BodySlam
+      - DoubleEdge
+      - RainDance
+      - SunnyDay
+      - MetalSound
+      - AuraSphere
+      - VacuumWave
+      - HeavySlam
+      - BodyPress
 Terrakion:
   Terrakion:
     level:
@@ -1431,6 +1459,12 @@ Terrakion:
       - ScaryFace
       - SmartStrike
       - Swift
+      - TeraBlast
+      - UpperHand
+      - BodySlam
+      - DoubleEdge
+      - AuraSphere
+      - HighHorsepower
 Virizion:
   Virizion:
     level:
@@ -1510,6 +1544,15 @@ Virizion:
       - SmartStrike
       - SolarBlade
       - Swift
+      - TeraBlast
+      - Trailblaze
+      - UpperHand
+      - BodySlam
+      - DoubleEdge
+      - ScaryFace
+      - BulletSeed
+      - AuraSphere
+      - VacuumWave
 Tornadus:
   family-teachable:
     - Attract
@@ -1581,6 +1624,9 @@ Tornadus:
     - Uproar
     - BrutalSwing
     - LashOut
+    - TeraBlast
+    - Snowscape
+    - ChillingWater
   Tornadus:
     level:
       1: [Gust, Astonish, Tackle]
@@ -1624,6 +1670,7 @@ Tornadus:
       65: [Hurricane]
       67: [DarkPulse]
       70: [Thrash]
+      77: [BleakwindStorm]
 Thundurus:
   family-teachable:
     - Attract
@@ -1700,6 +1747,10 @@ Thundurus:
     - SmartStrike
     - RisingVoltage
     - LashOut
+    - TeraBlast
+    - SupercellSlam
+    - EerieImpulse
+    - ElectricTerrain
   Thundurus:
     level:
       1: [ThunderShock, Astonish, Tackle, NastyPlot]
@@ -1723,8 +1774,6 @@ Thundurus:
       65: [Thunder]
       67: [DarkPulse]
       70: [Thrash]
-    teachable:
-      - EerieImpulse
   ThundurusTherian:
     level:
       1: [ThunderShock, Astonish, Tackle, NastyPlot]
@@ -1747,8 +1796,7 @@ Thundurus:
       65: [Thunder]
       67: [DarkPulse]
       70: [Thrash]
-    teachable:
-      - EerieImpulse
+      75: [WildboltStorm]
 Reshiram:
   Reshiram:
     level:
@@ -1838,3 +1886,11 @@ Reshiram:
       - SteelWing
       - Swift
       - WeatherBall
+      - TeraBlast
+      - DragonCheer
+      - BodySlam
+      - TakeDown
+      - DoubleEdge
+      - Roar
+      - FireSpin
+      - ScaryFace

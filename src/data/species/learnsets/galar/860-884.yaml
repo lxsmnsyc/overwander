@@ -17,13 +17,14 @@ Milcery:
     - Snore
     - StoredPower
     - Substitute
+    - TeraBlast
   Milcery:
     level:
       1: [Tackle, AromaticMist]
       5: [SweetKiss]
       10: [SweetScent]
       15: [DrainingKiss]
-      20: [Aromatherapy]
+      20: [Aromatherapy, Charm]
       25: [Attract]
       30: [AcidArmor]
       35: [DazzlingGleam]
@@ -35,7 +36,7 @@ Milcery:
     level:
       1: [Tackle, SweetKiss, SweetScent, AromaticMist, Decorate]
       15: [DrainingKiss]
-      20: [Aromatherapy]
+      20: [Aromatherapy, Charm]
       25: [Attract]
       30: [AcidArmor]
       35: [DazzlingGleam]
@@ -66,6 +67,11 @@ Milcery:
         SolarBeam,
         TriAttack,
         WonderRoom,
+        AlluringVoice,
+        PainSplit,
+        PsychUp,
+        Endeavor,
+        DisarmingVoice,
       ]
   AlcremieBerry:
     level:
@@ -102,6 +108,7 @@ Milcery:
         SolarBeam,
         TriAttack,
         WonderRoom,
+        AlluringVoice,
       ]
   AlcremieLove:
     level:
@@ -138,6 +145,7 @@ Milcery:
         SolarBeam,
         TriAttack,
         WonderRoom,
+        AlluringVoice,
       ]
   AlcremieStar:
     level:
@@ -174,6 +182,7 @@ Milcery:
         SolarBeam,
         TriAttack,
         WonderRoom,
+        AlluringVoice,
       ]
   AlcremieClover:
     level:
@@ -210,6 +219,7 @@ Milcery:
         SolarBeam,
         TriAttack,
         WonderRoom,
+        AlluringVoice,
       ]
   AlcremieFlower:
     level:
@@ -246,6 +256,7 @@ Milcery:
         SolarBeam,
         TriAttack,
         WonderRoom,
+        AlluringVoice,
       ]
   AlcremieRibbon:
     level:
@@ -282,6 +293,7 @@ Milcery:
         SolarBeam,
         TriAttack,
         WonderRoom,
+        AlluringVoice,
       ]
 Falinks:
   Falinks:
@@ -338,6 +350,20 @@ Falinks:
         SwordsDance,
         ThroatChop,
         ZenHeadbutt,
+        TeraBlast,
+        Trailblaze,
+        UpperHand,
+        BodySlam,
+        TakeDown,
+        RainDance,
+        SunnyDay,
+        PsychUp,
+        Uproar,
+        KnockOff,
+        Endeavor,
+        HighHorsepower,
+        Lunge,
+        BodyPress,
       ]
 Pincurchin:
   Pincurchin:
@@ -390,6 +416,19 @@ Pincurchin:
         ToxicSpikes,
         VenomDrench,
         Venoshock,
+        TeraBlast,
+        ChillingWater,
+        SupercellSlam,
+        BodySlam,
+        TakeDown,
+        HyperBeam,
+        Swift,
+        PainSplit,
+        GigaImpact,
+        ChargeBeam,
+        ElectroBall,
+        Electroweb,
+        WildCharge,
       ]
     egg: [Memento, SuckerPunch]
 Snom:
@@ -408,6 +447,11 @@ Snom:
     - SleepTalk
     - Snore
     - Substitute
+    - TeraBlast
+    - Pounce
+    - BugBite
+    - StruggleBug
+    - Lunge
   Snom:
     level:
       1: [PowderSnow, StruggleBug]
@@ -421,7 +465,7 @@ Snom:
       16: [Defog]
       21: [FeatherDance]
       24: [AuroraBeam]
-      28: [Hail]
+      28: [Hail, Snowscape]
       32: [BugBuzz]
       36: [AuroraVeil]
       40: [Blizzard]
@@ -453,6 +497,9 @@ Snom:
         TripleAxel,
         UTurn,
         WeatherBall,
+        IceSpinner,
+        TakeDown,
+        Swift,
       ]
 Stonjourner:
   Stonjourner:
@@ -507,6 +554,17 @@ Stonjourner:
         Substitute,
         Superpower,
         WonderRoom,
+        TeraBlast,
+        HardPress,
+        TakeDown,
+        LowKick,
+        SunnyDay,
+        PsychUp,
+        Endeavor,
+        PowerGem,
+        SmackDown,
+        LowSweep,
+        HighHorsepower,
       ]
     egg: [AncientPower, Curse]
 Eiscue:
@@ -543,6 +601,19 @@ Eiscue:
     - WeatherBall
     - Whirlpool
     - ZenHeadbutt
+    - TeraBlast
+    - IceSpinner
+    - Snowscape
+    - ChillingWater
+    - BodySlam
+    - TakeDown
+    - DoubleEdge
+    - HyperBeam
+    - RainDance
+    - FeatherDance
+    - WaterPulse
+    - GigaImpact
+    - FlipTurn
   Eiscue:
     level:
       1: [Tackle, PowderSnow]
@@ -552,7 +623,7 @@ Eiscue:
       24: [Headbutt]
       30: [Amnesia]
       36: [FreezeDry]
-      42: [Hail]
+      42: [Hail, Snowscape]
       48: [AuroraVeil]
       54: [Surf]
       60: [Blizzard]
@@ -566,7 +637,7 @@ Eiscue:
       24: [Headbutt]
       30: [Amnesia]
       36: [FreezeDry]
-      42: [Hail]
+      42: [Hail, Snowscape]
       48: [AuroraVeil]
       54: [Surf]
       60: [Blizzard]
@@ -607,6 +678,16 @@ Indeedee:
     - TerrainPulse
     - Trick
     - ZenHeadbutt
+    - TeraBlast
+    - PsychicNoise
+    - BodySlam
+    - TakeDown
+    - Psybeam
+    - PsychUp
+    - SkillSwap
+    - Gravity
+    - TrickRoom
+    - DisarmingVoice
   Indeedee:
     level:
       1: [StoredPower, PlayNice]
@@ -615,13 +696,13 @@ Indeedee:
       15: [Psybeam]
       20: [HelpingHand]
       25: [AfterYou]
-      30: [Aromatherapy]
+      30: [Aromatherapy, HealingWish]
       35: [Psychic]
       40: [CalmMind]
       45: [PowerSplit]
       50: [PsychicTerrain]
       55: [LastResort]
-    teachable: [Encore, MagicRoom, PowerSwap, TriAttack, TrickRoom, WonderRoom]
+    teachable: [Encore, MagicRoom, PowerSwap, TriAttack, WonderRoom]
     egg: [Extrasensory, FakeOut, PsychUp]
   IndeedeeFemale:
     level:
@@ -637,7 +718,7 @@ Indeedee:
       45: [GuardSplit]
       50: [PsychicTerrain]
       55: [HealingWish]
-    teachable: [BatonPass, GuardSwap, LightScreen, Reflect, Safeguard]
+    teachable: [BatonPass, GuardSwap, LightScreen, Reflect, Safeguard, Charm]
     egg: [FakeOut, HealPulse, PsychUp, PsychoShift]
 Morpeko:
   # TM, TR and tutor moves shared by the whole family
@@ -687,6 +768,18 @@ Morpeko:
     - Uproar
     - VoltSwitch
     - WildCharge
+    - TeraBlast
+    - TakeDown
+    - DoubleEdge
+    - SuperFang
+    - Reversal
+    - Spite
+    - BatonPass
+    - Charge
+    - KnockOff
+    - Endeavor
+    - ChargeBeam
+    - EerieImpulse
   Morpeko:
     level:
       1: [TailWhip, ThunderShock]
@@ -966,7 +1059,7 @@ Duraludon:
       24: [BreakingSwipe]
       30: [DragonTail]
       36: [IronDefense]
-      42: [LaserFocus]
+      42: [LaserFocus, FocusEnergy]
       48: [DragonClaw]
       54: [FlashCannon]
       60: [MetalBurst]
@@ -1016,5 +1109,10 @@ Duraludon:
         Thunder,
         ThunderWave,
         Thunderbolt,
+        TeraBlast,
+        DragonCheer,
+        TakeDown,
+        DoubleEdge,
+        Roar,
       ]
     egg: [MirrorCoat, NightSlash, Slash]

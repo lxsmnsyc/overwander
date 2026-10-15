@@ -1,0 +1,77 @@
+# From Blazing Torque to Ivy Cudgel: the Starmobile's torques and the Teal Mask's, at the
+# numbers Scarlet and Violet settled them on
+
+BlazingTorque:
+  type: Fire
+  category: Physical
+  power: 80
+  accuracy: 100
+  pp: 10
+  target: Unit
+
+WickedTorque:
+  type: Dark
+  category: Physical
+  power: 80
+  accuracy: 100
+  pp: 10
+  target: Unit
+
+NoxiousTorque:
+  type: Poison
+  category: Physical
+  power: 100
+  accuracy: 100
+  pp: 10
+  target: Unit
+
+CombatTorque:
+  type: Fighting
+  category: Physical
+  power: 100
+  accuracy: 100
+  pp: 10
+  target: Unit
+
+MagicalTorque:
+  type: Fairy
+  category: Physical
+  power: 100
+  accuracy: 100
+  pp: 10
+  target: Unit
+
+BloodMoon:
+  type: Normal
+  category: Special
+  power: 140
+  accuracy: 100
+  pp: 5
+  target: Unit
+  projectile: true
+
+MatchaGotcha:
+  type: Grass
+  category: Special
+  power: 80
+  accuracy: 90
+  pp: 15
+  target: None
+  affects: [Unit, Enemy]
+
+SyrupBomb:
+  type: Grass
+  category: Special
+  power: 60
+  accuracy: 85
+  pp: 10
+  target: Unit
+  projectile: true
+
+IvyCudgel:
+  type: Grass
+  category: Physical
+  power: 100
+  accuracy: 100
+  pp: 10
+  target: Unit

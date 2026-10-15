@@ -71,10 +71,13 @@ const GYRO_CEILING = 150;
  */
 const SQUEEZE_CEILING = 120;
 
-function healthPower(target: Unit): number {
+/** Hard Press presses a little less hard than Crush Grip squeezes */
+const PRESS_CEILING = 100;
+
+function healthPower(target: Unit, ceiling = SQUEEZE_CEILING): number {
   return Math.max(
     1,
-    Math.floor(SQUEEZE_CEILING * (target.health / Math.max(1, target.checkStat(Stats.HP, 0)))),
+    Math.floor(ceiling * (target.health / Math.max(1, target.checkStat(Stats.HP, 0)))),
   );
 }
 
@@ -219,6 +222,7 @@ const TARGETED_POWER: { [key in Moves]?: (source: Unit, target: Unit) => number 
     Math.min(PUNISHMENT_CEILING, PUNISHMENT_BASE + PUNISHMENT_PER_STAGE * raisedStages(target)),
   [Moves.WringOut]: (_source, target) => healthPower(target),
   [Moves.CrushGrip]: (_source, target) => healthPower(target),
+  [Moves.HardPress]: (_source, target) => healthPower(target, PRESS_CEILING),
   [Moves.ElectroBall]: (source, target) =>
     bandPower(
       SPEED_BANDS,

@@ -4,7 +4,7 @@ How Paldea, Kitakami and the Blueberry Academy go in, batch by batch, on top of 
 
 ## Where things stand
 
-- **Already on `main`:** the Gen 9 ability ids, `LingeringAroma` (280) to `PoisonPuppeteer` (313).
+- **Batch 0 is done** on `gen-9-data`: the species, form and family ids, the 69 moves, the items and the reserved lairs. All 47 Gen 9 ability ids were already on `main`.
 - **Not yet:** species, form and family ids past Gen 8, the Gen 9 moves, and a Paldea region.
 - **Gen 9 by PokeAPI:** 120 species (906 to 1025), 69 moves and 47 abilities.
 - **Lines waiting on Gen 9,** marked `awaiting: evolution`: Primeape (Annihilape), Girafarig (Farigiraf), Dunsparce (Dudunsparce), Applin (Dipplin) and Duraludon (Archaludon). The mark in `world/kanto/101-125.yaml` is checked in batch 2.
@@ -31,7 +31,7 @@ Same as Galar: ids, then moves, then the moves on older species, then each famil
 
 | # | Batch | Families or content |
 | --- | --- | --- |
-| 0 | Ids | `gen-9-data`: species, form and family ids, the 69 move ids, the ability ids not yet reserved, the reserved lairs and relics |
+| 0 | Ids | `gen-9-data`: species, form and family ids, the 69 move ids, the items, the reserved lairs and Pecharunt's relic |
 | 1 | Gen 9 moves | Behaviour and pictures, every region's species taught them from SV's learnsets, release page |
 | 2 | Scaffolding | `Paldea` region, `regions.yaml` rows, sprite import keys, form lists, the ability-pool audit, the `awaiting` marks |
 | 3 | Starters | Sprigatito, Fuecoco, Quaxly |
@@ -82,6 +82,186 @@ Routes follow Scarlet and Violet's order. The order of batches 4 to 10 may shift
 
 A batch is done when all of that is green and a test asserts each new signature ability against real engine state.
 
+## Signatures and fillers
+
+Each concept is yours to decide (`signature-abilities`), family by family, along with the fillers. Anything that changes later is put to you again first.
+
+- **Pools are PokeAPI's current lists**, walked up the chain.
+- **Fillers** go in `hidden`, one per slot a final stage is short of four.
+
+### Batch 3: the starters
+
+**Approved, signatures and fillers.** The Scatter frame: each performer widens what one of its blows does.
+
+| Family | Signature | Fillers |
+| --- | --- | --- |
+| Sprigatito | **Petal Scatter**: A Grass critical hit it lands splashes 1/4 of its damage onto every other enemy. | Meowscarada: Prankster, Magician |
+| Fuecoco | **Spreading Flame**: A burn it inflicts with a Fire move also burns the other enemy lowest on HP. | Skeledirge: Punk Rock, Flash Fire |
+| Quaxly | **Wake**: A Water move it lands drops the target's Speed 1 stage and every other enemy's by 1 as well, at most once every 8 seconds. | Quaquaval: Dancer, Quick Feet |
+
+### Batch 4: South Province
+
+**Approved, signatures and fillers.**
+
+| Family | Signature | Fillers |
+| --- | --- | --- |
+| Lechonk | **Pig Out**: Each time it eats a Berry, it casts Stockpile on itself. | Male Oinkologne is full; female Oinkologne: Ripen |
+| Tarountula | **Tripwire**: An enemy that takes the field mid-fight winds up its first move 50% slower. | Spidops: Compound Eyes, Battle Armor |
+| Nymble | **Knockback**: Each contact move it lands pushes the target's current wind-up back 0.5 seconds. | Lokix: Sniper, Hustle |
+| Pawmi | **Static Palms**: Its punching moves paralyse the target 20% of the time. | Pawmot is full |
+| Tandemaus | **Scatter Brood**: Its multi-hit moves send each strike at a different standing enemy in turn. | Maushold is full |
+
+### Batch 5: South Province, later
+
+**Approved, signatures and fillers.** Charcadet's one signature covers both branches.
+
+| Family | Signature | Fillers |
+| --- | --- | --- |
+| Fidough | **Fresh Batch**: Every 20 seconds it hands a Sitrus Berry to the teammate lowest on HP whose hands are empty. | Dachsbun is full |
+| Smoliv | **Anoint**: Any heal it gives a teammate also cures that teammate's major status. | Arboliva: Grassy Surge |
+| Nacli | **Brine Rebound**: A Water move landing on it makes it cast Salt Cure at whoever threw it, at most once every 10 seconds. | Garganacl: Water Absorb |
+| Charcadet | **Kindling**: Each Fire move it lands makes its next move wind up 25% faster. | Armarouge: Magic Guard; Ceruledge: Sharpness |
+
+### Batch 6: West Province
+
+**Approved, signatures and fillers.** Brambleghast and Toedscruel are not drawn yet, so Bramblin and Toedscool ship as their line's end, carrying the signature and waiting for the fillers' stage.
+
+| Family | Signature | Fillers |
+| --- | --- | --- |
+| Tadbulb | **Bubble Shock**: Its Electric moves hit 1.5x a target that a Water move has landed on in the last 4 seconds. | Bellibolt is full |
+| Wattrel | **Lightning Dive**: Its Electric moves hit 1.3x while Tailwind blows on its side. | Kilowattrel: Gale Wings |
+| Bramblin | **Windswept**: When a wind move lands on anybody, its own next move winds up 50% faster. | Brambleghast: Rough Skin, Levitate |
+| Toedscool | **Mycelium Mat**: While it stands, each time Grassy Terrain heals one of its teammates it also cures one major status from them. Replaces Leech Tendril, which repeated Sweet Paw. | Toedscruel: Effect Spore, Overcoat, Liquid Ooze |
+
+### Batch 7: East Province
+
+**Approved, signatures and fillers.** Rabsca and Espathra are not drawn yet, so Rellor and Flittle ship as their line's end. Both finals already reach four.
+
+| Family | Signature | Fillers |
+| --- | --- | --- |
+| Capsakid | **Heat Tolerance**: A burn heals it 1/8 of its HP each time it acts instead of hurting it, and does not halve its Attack. | Scovillain is full |
+| Rellor | **Ball Toss**: When a teammate drops below 1/3 HP with empty hands, it hands them its own held item, once per fight. | Rabsca is full |
+| Flittle | **Stare Down**: Each Psychic move it lands casts Taunt at the target, at most once every 10 seconds per target. | Espathra is full |
+| Tinkatink | **Tinker**: The first time each teammate uses up its held item, it remakes it, once per teammate per battle. | Tinkaton: Sheer Force |
+| Wiglett | **Sand Duck**: Ground moves aimed at it miss, and each one that does raises its Speed 1 stage. | Wugtrio: Sand Rush |
+
+### Batch 8: the coast and the roads
+
+**Approved, signatures and fillers.**
+
+| Family | Signature | Fillers |
+| --- | --- | --- |
+| Finizen | **Lifeguard**: While it is above 1/2 HP, the first blow each fight that would knock out a teammate is taken by it instead, once per teammate per battle. | Palafin: Justified, Swift Swim |
+| Varoom | **Redline**: Its moves wind up faster the lower its HP, from 0% at full to 30% near 0 HP. | Revavroom: Speed Boost |
+| Cyclizar | **Shed Decoy**: The first time its HP drops below 1/2 each fight, it casts Substitute without paying the HP for it. | Stamina, Quick Feet |
+| Orthworm | **Slag Trail**: Each Steel move it lands lays a layer of Spikes under the target's side, at most once every 10 seconds. | Sturdy, Heavy Metal |
+| Glimmet | **Glimmering**: While it stands, every poisoned enemy winds up its moves 20% slower. | Glimmora: Poison Point, Solid Rock |
+
+### Batches 9 and 10: North Province, Glaseado and the treasure
+
+**Approved, signatures and fillers.** Dondozo and Tatsugiri are paired by Commander and share the shelter frame, each working on its own.
+
+| Family | Signature | Fillers |
+| --- | --- | --- |
+| Greavard | **Grave Digger**: When a teammate faints holding an item and its own hands are empty, the item goes into its hands. | Houndstone: Cursed Body |
+| Cetoddle | **Snow Hoard**: While snow or hail falls, it gains 1 stage of Attack every 4 seconds, up to +3 from this. | Cetitan is full |
+| Veluza | **Fillet Thrift**: Moves that cost HP to use (Fillet Away, Substitute, Belly Drum, Shed Tail) cost it half. | Swift Swim, Telepathy |
+| Dondozo | **Mouthful**: When a teammate drops below 1/3 HP, it swallows them: untargetable for 4 seconds and healing 1/4 of their HP, once per teammate per battle. | Thick Fat |
+| Tatsugiri | **Back Seat Orders**: While it is untargetable, behind a Substitute or under its own Protect, each move a teammate lands hits 1.2x. Its own moves reach cover through Substitute and Protect, since it learns no move that hides it. | Swift Swim, Rattled |
+| Frigibax | **Glaive Guard**: After a move that leaves it exposed (Glaive Rush, Outrage, a recharge), its Defense and Special Defense are +2 until it next acts. | Baxcalibur: Sharpness, Slush Rush |
+| Gimmighoul | **Coin Scatter**: Each damaging move it lands scatters coins as Pay Day does, under Pay Day's own ceiling. | Gholdengo: Steelworker, Pickup |
+
+### Batches 11 and 12: new evolutions and the regional lines
+
+**Approved, signatures and fillers.**
+
+- **New evolutions keep their family's signature,** all of which still read sensibly: Annihilape (Blind Rage), Farigiraf (Ambidextrous), Dudunsparce (Hidden Den), Kingambit (Honed), Dipplin and Hydrapple (Shared Harvest), Archaludon (Overhang).
+- **Bloodmoon Ursaluna keeps the Teddiursa family's Sweet Paw,** as a lone regional stage, the way Alolan Raichu keeps Pikachu's.
+- **Paldean Wooper and Paldean Tauros are regional all the way down,** so each line has a signature of its own.
+- **Poltchageist is Sinistea's counterpart,** and complements Last Pour as the support half of the tea pair.
+
+| Line | Signature | Fillers |
+| --- | --- | --- |
+| Paldean Wooper, Clodsire | **Bog Down**: An enemy that lands a Ground move on it cannot switch out for 6 seconds. | Clodsire: Damp |
+| Paldean Tauros (all three breeds) | **Raging**: While its Attack is raised above +0, its moves wind up 20% faster. | Combat: Guts; Blaze: Flash Fire; Aqua: Swift Swim |
+| Poltchageist, Sinistcha | **Tea Service**: Its healing moves aimed at a teammate wind up 40% faster. | Sinistcha: Cursed Body, Levitate |
+| Bloodmoon Ursaluna | Sweet Paw, the family's | Keen Eye, Insomnia, Sniper |
+| Annihilape, Farigiraf, Kingambit, Hydrapple, Archaludon | The family's | Full |
+| Dudunsparce | The family's | Simple |
+
+### Batches 13 and 17: the Treasures of Ruin, Koraidon and Miraidon
+
+**Approved, signatures and fillers.**
+
+- **The Treasures of Ruin: Stunted.** Each move one lands curses the target: for 6 seconds the target's stat matching its Ruin cannot rise, refreshed on each hit. One factory serves all four.
+- **Koraidon and Miraidon: Full Throttle.** Each rides fastest in its own field. One factory serves both.
+
+| Family | Signature | Fillers |
+| --- | --- | --- |
+| Wo-Chien | **Withered Tablets**: A target it lands a move on cannot raise its Attack for 6 seconds. | Sap Sipper, Liquid Ooze, Natural Cure |
+| Chien-Pao | **Shattered Sword**: A target it lands a move on cannot raise its Defense for 6 seconds. | Sharpness, Ice Body, Slush Rush |
+| Ting-Lu | **Cracked Vessel**: A target it lands a move on cannot raise its Special Attack for 6 seconds. | Sand Stream, Solid Rock, Stamina |
+| Chi-Yu | **Scattered Beads**: A target it lands a move on cannot raise its Special Defense for 6 seconds. | Flash Fire, Levitate, Flame Body |
+| Koraidon | **Sun Sprint**: While sun shines, its moves wind up 20% faster. | Tough Claws, Guts, Intimidate |
+| Miraidon | **Drive Mode**: While Electric Terrain is up, its moves wind up 20% faster. | Levitate, Download, Transistor |
+
+### Batches 14 to 16: the Paradox pokemon
+
+**Approved, signatures and fillers.** Each has a signature of its own, with no shared frame. Each reaches only Protosynthesis or Quark Drive, so each takes three fillers.
+
+| Pokemon | Signature | Fillers |
+| --- | --- | --- |
+| Great Tusk | **Headlong Guard**: The stat drops its own moves give it (Headlong Rush, Close Combat) are undone the next time it lands a contact move. | Rock Head, Sturdy, Sand Force |
+| Scream Tail | **Shriek Speed**: Its sound moves wind up 30% faster. | Punk Rock, Competitive, Moody |
+| Brute Bonnet | **Fungal Feast**: It heals 1/8 of its HP each time an enemy falls asleep, from any source. | Effect Spore, Strong Jaw, Guts |
+| Flutter Mane | **Eerie Flutter**: A single-target move aimed at it has a 20% chance to go to a random standing teammate of the attacker instead, or to miss if the attacker stands alone. | Levitate, Infiltrator, Cursed Body |
+| Slither Wing | **Ancient Cocoon**: The first time it drops below 1/3 HP each fight, it casts Quiver Dance on itself. | Flame Body, Swarm, Tinted Lens |
+| Sandy Shocks | **Earth Current**: Its Electric moves hit Ground types for neutral damage instead of not at all. | Magnet Pull, Sand Force, Analytic |
+| Roaring Moon | **Moon Howl**: As it takes the field, every enemy's next move winds up 30% slower. | Intimidate, Moxie, Tough Claws |
+| Walking Wake | **Steam Surge**: While sun shines, its Water moves are not weakened by the sun and wind up 20% faster. | Swift Swim, Inner Focus, Water Absorb |
+| Gouging Fire | **Molten Bulwark**: Each time one of its protect moves blocks a move, it heals 1/8 of its HP. | Flash Fire, Rock Head, Inner Focus |
+| Raging Bolt | **Storm Cloud**: Each Electric move it lands has a 15% chance to lay Electric Terrain. | Volt Absorb, Inner Focus, Static |
+| Iron Treads | **Track Laying**: Each Ground move it lands lays a layer of Stealth Rock under the target's side, at most once every 15 seconds. | Sturdy, Clear Body, Heavy Metal |
+| Iron Bundle | **Ice Pack**: Its Ice moves aimed at a teammate heal that teammate 1/4 of their max HP instead of hurting them. | Vital Spirit, Ice Body, Swift Swim |
+| Iron Hands | **Iron Grip**: A target it lands a punching move on cannot use protect moves for 4 seconds. | Iron Fist, Sheer Force, Guts |
+| Iron Jugulis | **Searchlight**: Its moves hit a target that is mid-Fly, Dig, Dive, Bounce or Phantom Force. | Sniper, Infiltrator, Keen Eye |
+| Iron Moth | **Toxic Exhaust**: Its Fire moves poison the target 20% of the time. | Levitate, Flame Body, Light Metal |
+| Iron Thorns | **Sand Generator**: An Electric move landing on it whips up a sandstorm, at most once every 15 seconds. | Sand Stream, Motor Drive, Unnerve |
+| Iron Valiant | **Afterimage**: For 1 second after it takes a hit, its next move winds up 40% faster. | Sharpness, Trace, Download |
+| Iron Leaves | **Terrain Edge**: Its slicing moves hit 1.3x while any terrain is up. | Sharpness, Justified, Leaf Guard |
+| Iron Boulder | **Rock Blade**: Its Rock moves count as slicing moves, so Sharpness's 1.5x reaches them. | Sharpness, Justified, Sturdy |
+| Iron Crown | **Tachyon Edge**: Its slicing moves cannot miss and wind up 15% faster. | Sharpness, Justified, Clear Body |
+
+### Batches 19 and 20: Kitakami's legends, Terapagos and Pecharunt
+
+**Approved, signatures and fillers.**
+
+- **The Loyal Three: Avenging Chain.** When a teammate faints, its next damaging move is sure to badly poison, with one more effect per member. One factory serves all three.
+- **Ogerpon has no base ability.** It is always in one of its four masks, Teal included, so every mask's ability (Defiant, Water Absorb, Mold Breaker, Sturdy) is worn in battle by form, the way the Origin Formes wear theirs, and its pool is four fillers. Embody Aspect is worn by the Terastal shapes.
+- **Terapagos's Tera Shift gates its shapes:** one born with a filler keeps its base shape. Tera Shell and Teraform Zero are worn by the Terastal and Stellar shapes.
+
+| Pokemon | Signature | Fillers |
+| --- | --- | --- |
+| Okidogi | **Hound's Oath**: When a teammate faints, its next damaging move is sure to badly poison and is a critical hit. | Iron Fist, Guts |
+| Munkidori | **Monkey's Oath**: When a teammate faints, its next damaging move is sure to badly poison and winds up 40% faster. | Pickpocket, Prankster |
+| Fezandipiti | **Pheasant's Oath**: When a teammate faints, its next damaging move is sure to badly poison and strikes every enemy. | Keen Eye, Big Pecks |
+| Ogerpon | **Mask Aura**: While it wears a mask, its teammates' moves of that mask's type hit 1.2x: Grass for Teal, Water for Wellspring, Fire for Hearthflame, Rock for Cornerstone. | Grass Pelt, Inner Focus, Leaf Guard, Sap Sipper |
+| Terapagos | **Prismatic**: Its Normal moves become whichever type hits the target hardest, as they go off. | Analytic, Solid Rock, Shell Armor |
+| Pecharunt | **Puppet Strings**: A confused enemy's single-target moves aimed at it go to one of that enemy's own teammates instead, if one stands. | Levitate, Cursed Body, Corrosion |
+
+### Held back until SpriteCollab draws them
+
+**Approved, signatures and fillers.** Each is written up now and ships in the batch its area belongs to once its sprite is built.
+
+| Family | Signature | Fillers |
+| --- | --- | --- |
+| Squawkabilly | **Gang Up**: Its moves hit 1.3x a target a teammate has landed a move on in the last 2 seconds. | Keen Eye, shared by every plumage |
+| Maschiff | **Snarl Reply**: A contact move landing on it makes it cast Snarl, at most once every 10 seconds. | Mabosstiff is full |
+| Shroodle | **Pilfer Dash**: Each time it takes an item off someone, its next move winds up 50% faster. | Grafaiai is full |
+| Klawf | **Snap Back**: A contact move landing on it makes it cast Crabhammer at the attacker, at most once every 8 seconds. | Hyper Cutter |
+| Bombirdier | **Heavy Load**: While it holds an item, it takes 0.85x from every hit. | Sniper |
+| Flamigo | **In Step**: Its moves wind up 20% faster while a teammate is winding up a move at the same time. | Dancer |
+
 ## Terastallization
 
 Batch 18, built the way Megas, Z-Moves and Dynamax were: automatic, once per side, with nothing to press, so a player and the AI get it the same way. Decided:
@@ -105,10 +285,10 @@ Batch 18, built the way Megas, Z-Moves and Dynamax were: automatic, once per sid
 - **Paradox signatures:** each its own.
 - **Forms:** only what SpriteCollab has.
 - **Paldea's trainers and gym leaders:** not yet.
+- **Signatures and fillers:** approved family by family in [Signatures and fillers](#signatures-and-fillers), held-back lines included.
 
 ## Still to decide
 
-- The signatures and fillers, batch by batch, starting with the starters.
 - How a Tera type is shown on the catch sheet and in a raid lobby.
 - What else a Tera raid pays beside Tera Shards.
 

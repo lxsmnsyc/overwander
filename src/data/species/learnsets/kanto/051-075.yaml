@@ -94,6 +94,20 @@ Meowth:
       - RainDance
       - Screech
       - Uproar
+      - TeraBlast
+      - Trailblaze
+      - ChillingWater
+      - ThunderWave
+      - Agility
+      - FalseSwipe
+      - PainSplit
+      - MetalClaw
+      - HelpingHand
+      - KnockOff
+      - Endeavor
+      - FakeTears
+      - PowerGem
+      - Snarl
     egg:
       [
         Hypnosis,
@@ -207,6 +221,20 @@ Meowth:
       - RainDance
       - Screech
       - Uproar
+      - TeraBlast
+      - Trailblaze
+      - ChillingWater
+      - ThunderWave
+      - Agility
+      - Spite
+      - FalseSwipe
+      - PainSplit
+      - MetalClaw
+      - HelpingHand
+      - KnockOff
+      - Endeavor
+      - FakeTears
+      - Snarl
   MeowthAlola:
     level:
       1: [Growl, FakeOut]
@@ -288,6 +316,21 @@ Meowth:
       - Retaliate
       - Screech
       - Swift
+      - TeraBlast
+      - Trailblaze
+      - ChillingWater
+      - TakeDown
+      - DoubleEdge
+      - ThunderWave
+      - Agility
+      - ConfuseRay
+      - Curse
+      - MetalClaw
+      - HelpingHand
+      - Endeavor
+      - FakeTears
+      - PowerGem
+      - Snarl
     egg:
       - Amnesia
       - Assist
@@ -389,6 +432,19 @@ Meowth:
       - Retaliate
       - Screech
       - Swift
+      - TeraBlast
+      - Trailblaze
+      - ChillingWater
+      - TakeDown
+      - DoubleEdge
+      - ThunderWave
+      - Agility
+      - ConfuseRay
+      - Curse
+      - MetalClaw
+      - HelpingHand
+      - Endeavor
+      - SmackDown
   MeowthGalar:
     level:
       1: [Growl, FakeOut]
@@ -449,6 +505,22 @@ Meowth:
         UTurn,
         Uproar,
         WorkUp,
+        TeraBlast,
+        Trailblaze,
+        TakeDown,
+        Metronome,
+        Charm,
+        FalseSwipe,
+        HelpingHand,
+        BrickBreak,
+        KnockOff,
+        Endeavor,
+        FakeTears,
+        AerialAce,
+        Fling,
+        XScissor,
+        FlashCannon,
+        StealthRock,
       ]
     egg: [Covet, Curse, DoubleEdge, Flail, NightSlash, Spite]
   Perrserker:
@@ -515,6 +587,23 @@ Meowth:
         UTurn,
         Uproar,
         WorkUp,
+        TeraBlast,
+        Trailblaze,
+        ChillingWater,
+        TakeDown,
+        DoubleEdge,
+        Metronome,
+        Curse,
+        Spite,
+        Charm,
+        FalseSwipe,
+        HelpingHand,
+        BrickBreak,
+        KnockOff,
+        Endeavor,
+        FakeTears,
+        XScissor,
+        StealthRock,
       ]
 Psyduck:
   # TM, HM and tutor moves shared by the whole family
@@ -589,6 +678,34 @@ Psyduck:
     - Scald
     - Confide
     - PowerUpPunch
+    - TeraBlast
+    - Trailblaze
+    - ChillingWater
+    - PsychicNoise
+    - HydroPump
+    - Psybeam
+    - LowKick
+    - Psychic
+    - ConfuseRay
+    - LightScreen
+    - Haze
+    - Metronome
+    - Amnesia
+    - Thief
+    - Encore
+    - Taunt
+    - HelpingHand
+    - KnockOff
+    - Endeavor
+    - SkillSwap
+    - MuddyWater
+    - MudShot
+    - VacuumWave
+    - NastyPlot
+    - ZenHeadbutt
+    - LowSweep
+    - Liquidation
+    - FlipTurn
   Psyduck:
     level:
       1: [Scratch, TailWhip, WaterSport]
@@ -623,15 +740,9 @@ Psyduck:
       - SimpleBeam
       - Yawn
     teachable:
-      - Amnesia
-      - Encore
       - FutureSight
       - Hail
-      - HydroPump
-      - LightScreen
-      - Psychic
       - Screech
-      - ZenHeadbutt
   Golduck:
     level:
       1: [Scratch, TailWhip, WaterGun, Confusion, AquaJet, WaterSport]
@@ -652,21 +763,12 @@ Psyduck:
       - FocusBlast
       - GigaImpact
       - RockClimb
-      - LowSweep
-      - Liquidation
       - LaserFocus
-      - FlipTurn
-      - Amnesia
-      - Encore
       - FutureSight
       - Hail
-      - HydroPump
-      - LightScreen
-      - LowKick
-      - MuddyWater
-      - Psychic
       - Screech
-      - ZenHeadbutt
+      - PowerGem
+      - GrassKnot
 Mankey:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -748,6 +850,25 @@ Mankey:
     - DualChop
     - Confide
     - PowerUpPunch
+    - TeraBlast
+    - LowKick
+    - Reversal
+    - Spite
+    - ScaryFace
+    - Outrage
+    - Encore
+    - RainDance
+    - Uproar
+    - HelpingHand
+    - Endeavor
+    - CloseCombat
+    - Fling
+    - DrainPunch
+    - ShadowClaw
+    - StoneEdge
+    - ThroatChop
+    - StompingTantrum
+    - LashOut
   Mankey:
     level:
       1: [Scratch, Leer, LowKick, FocusEnergy, Covet]
@@ -766,7 +887,6 @@ Mankey:
       45: [Punishment]
       47: [Outrage]
       50: [FinalGambit]
-    teachable: [Fling, RainDance]
     egg:
       - RockSlide
       - Meditate
@@ -780,6 +900,8 @@ Mankey:
       - CloseCombat
       - Encore
       - NightSlash
+      - Curse
+      - Spite
   Primeape:
     level:
       1: [Scratch, Leer, LowKick, FocusEnergy, Covet, Fling, FinalGambit, KarateChop, Rage]
@@ -791,12 +913,12 @@ Mankey:
       22: [CrossChop]
       26: [Assurance]
       30: [SkullBash]
-      35: [Thrash]
+      35: [Thrash, RageFist]
       39: [CloseCombat]
       44: [Screech]
       48: [StompingTantrum]
       53: [Outrage, Punishment]
-    teachable: [HyperBeam, GigaImpact, StoneEdge, ThroatChop, Fling, RainDance]
+    teachable: [HyperBeam, GigaImpact, StealthRock]
 Growlithe:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -848,6 +970,22 @@ Growlithe:
     - WildCharge
     - Snarl
     - Confide
+    - TeraBlast
+    - TemperFlare
+    - FireSpin
+    - Agility
+    - Reversal
+    - ScaryFace
+    - Outrage
+    - Crunch
+    - HeatWave
+    - WillOWisp
+    - HelpingHand
+    - CloseCombat
+    - FlareBlitz
+    - ThunderFang
+    - FireFang
+    - PsychicFangs
   Growlithe:
     level:
       1: [Leer, Ember]
@@ -882,22 +1020,12 @@ Growlithe:
         DoubleKick,
         FlareBlitz,
         MorningSun,
+        RagingFury,
       ]
     teachable:
-      - Agility
-      - CloseCombat
-      - Crunch
-      - FireFang
-      - FireSpin
-      - FlareBlitz
-      - HeatWave
-      - HelpingHand
-      - Outrage
       - PlayRough
-      - PsychicFangs
-      - Reversal
       - Safeguard
-      - WillOWisp
+      - Charm
   Arcanine:
     level:
       1:
@@ -932,24 +1060,12 @@ Growlithe:
       - Bulldoze
       - LaserFocus
       - ScorchingSands
-      - Agility
-      - CloseCombat
-      - Crunch
-      - FireFang
-      - FireSpin
-      - FlareBlitz
-      - HeatWave
-      - HelpingHand
       - HyperVoice
-      - Outrage
       - PlayRough
-      - PsychicFangs
-      - Reversal
       - Safeguard
-      - ScaryFace
       - SolarBeam
-      - ThunderFang
-      - WillOWisp
+      - Charm
+      - HeatCrash
   GrowlitheHisui:
     level:
       1: [Leer, Ember]
@@ -968,35 +1084,23 @@ Growlithe:
       56: [FlareBlitz]
     teachable:
       [
-        Agility,
         BodySlam,
-        CloseCombat,
-        Crunch,
         Dig,
         DoubleEdge,
         Endure,
         Facade,
         FireBlast,
-        FireFang,
-        FireSpin,
         FlameCharge,
         Flamethrower,
-        FlareBlitz,
-        HeatWave,
-        HelpingHand,
-        Outrage,
         Overheat,
         PowerGem,
         Protect,
-        PsychicFangs,
         Rest,
-        Reversal,
         Roar,
         RockBlast,
         RockSlide,
         RockTomb,
         Sandstorm,
-        ScaryFace,
         ScorchingSands,
         SleepTalk,
         SmackDown,
@@ -1006,8 +1110,6 @@ Growlithe:
         Substitute,
         SunnyDay,
         TakeDown,
-        ThunderFang,
-        WillOWisp,
       ]
     egg: [Covet, DoubleEdge, DoubleKick, HeadSmash, MorningSun, Thrash]
   ArcanineHisui:
@@ -1037,42 +1139,30 @@ Growlithe:
     teachable:
       [
         AerialAce,
-        Agility,
         BodySlam,
         Bulldoze,
-        CloseCombat,
-        Crunch,
         Dig,
         DoubleEdge,
         DragonPulse,
         Endure,
         Facade,
         FireBlast,
-        FireFang,
-        FireSpin,
         FlameCharge,
         Flamethrower,
-        FlareBlitz,
         GigaImpact,
         HeatCrash,
-        HeatWave,
-        HelpingHand,
         HyperBeam,
         HyperVoice,
         IronHead,
-        Outrage,
         Overheat,
         PowerGem,
         Protect,
-        PsychicFangs,
         Rest,
-        Reversal,
         Roar,
         RockBlast,
         RockSlide,
         RockTomb,
         Sandstorm,
-        ScaryFace,
         ScorchingSands,
         SleepTalk,
         SmackDown,
@@ -1085,9 +1175,7 @@ Growlithe:
         SunnyDay,
         TakeDown,
         Thief,
-        ThunderFang,
         WildCharge,
-        WillOWisp,
       ]
 # The evolved forms grow arms: fighting-style TMs and HM Strength
 Poliwag:
@@ -1161,6 +1249,14 @@ Poliwag:
       - HydroPump
       - MudShot
       - MuddyWater
+      - TeraBlast
+      - ChillingWater
+      - LowKick
+      - Swift
+      - MudSlap
+      - FocusPunch
+      - WeatherBall
+      - Liquidation
     egg:
       [
         Mist,
@@ -1259,6 +1355,16 @@ Poliwag:
       - HydroPump
       - MudShot
       - MuddyWater
+      - TeraBlast
+      - ChillingWater
+      - LowKick
+      - Haze
+      - Swift
+      - PsychUp
+      - Endeavor
+      - WeatherBall
+      - LowSweep
+      - Liquidation
   Poliwrath:
     level:
       1:
@@ -1372,6 +1478,20 @@ Poliwag:
       - Reversal
       - RockSlide
       - Superpower
+      - TeraBlast
+      - ChillingWater
+      - UpperHand
+      - LowKick
+      - Haze
+      - Swift
+      - Amnesia
+      - ScaryFace
+      - BatonPass
+      - PsychUp
+      - Taunt
+      - KnockOff
+      - Endeavor
+      - WeatherBall
   Politoed:
     level:
       1:
@@ -1467,6 +1587,16 @@ Poliwag:
       - Screech
       - Uproar
       - WeatherBall
+      - TeraBlast
+      - ChillingWater
+      - TakeDown
+      - LowKick
+      - Haze
+      - Swift
+      - Amnesia
+      - PsychUp
+      - Endeavor
+      - LowSweep
 Abra:
   family-teachable:
     - MegaPunch
@@ -1895,6 +2025,21 @@ Bellsprout:
     - Round
     - Confide
     - Infestation
+    - TeraBlast
+    - Pounce
+    - Trailblaze
+    - LeechLife
+    - Encore
+    - KnockOff
+    - WeatherBall
+    - MagicalLeaf
+    - PoisonJab
+    - LeafStorm
+    - SludgeWave
+    - AcidSpray
+    - GrassyTerrain
+    - Lunge
+    - GrassyGlide
   Bellsprout:
     level:
       1: [VineWhip]
@@ -1926,8 +2071,7 @@ Bellsprout:
       - Tickle
       - WeatherBall
       - WorrySeed
-    teachable:
-      - PoisonJab
+      - SuckerPunch
   Weepinbell:
     level:
       1: [VineWhip, Wrap, Growth]
@@ -1941,8 +2085,9 @@ Bellsprout:
       44: [RazorLeaf]
       47: [PoisonJab, WringOut]
       54: [Slam]
+      58: [PowerWhip]
     teachable:
-      - PoisonJab
+      - BugBite
   Victreebel:
     level:
       1:
@@ -1967,7 +2112,7 @@ Bellsprout:
         ]
       32: [LeafStorm]
       44: [LeafBlade]
-    teachable: [HyperBeam, BodySlam, GastroAcid, GigaImpact, PoisonJab]
+    teachable: [HyperBeam, BodySlam, GastroAcid, GigaImpact, Swift, ScaryFace, BugBite]
 Tentacool:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -2022,6 +2167,24 @@ Tentacool:
     - Confide
     - DazzlingGleam
     - Infestation
+    - TeraBlast
+    - Pounce
+    - ChillingWater
+    - HydroPump
+    - ConfuseRay
+    - Haze
+    - Swift
+    - KnockOff
+    - MuddyWater
+    - MudShot
+    - ToxicSpikes
+    - PoisonJab
+    - GunkShot
+    - AcidSpray
+    - Hex
+    - ThroatChop
+    - Liquidation
+    - FlipTurn
   Tentacool:
     level:
       1: [PoisonSting, WaterGun]
@@ -2059,13 +2222,8 @@ Tentacool:
       - BrutalSwing
       - CrossPoison
       - Hail
-      - Hex
-      - HydroPump
-      - MuddyWater
-      - PoisonJab
       - Safeguard
       - Screech
-      - ToxicSpikes
   Tentacruel:
     level:
       1: [Wrap, PoisonSting, Acid, WaterGun, ReflectType, Constrict]
@@ -2091,14 +2249,12 @@ Tentacool:
         BrutalSwing,
         CrossPoison,
         Hail,
-        Hex,
-        HydroPump,
-        MuddyWater,
-        PoisonJab,
         Safeguard,
         Screech,
-        ToxicSpikes,
         VenomDrench,
+        ScaryFace,
+        WeatherBall,
+        SkitterSmack,
       ]
 Geodude:
   Geodude:
@@ -2184,6 +2340,13 @@ Geodude:
       - PowerUpPunch
       - RockPolish
       - StoneEdge
+      - TeraBlast
+      - ThunderPunch
+      - ScaryFace
+      - IronDefense
+      - MudShot
+      - HighHorsepower
+      - StompingTantrum
     egg: [MegaPunch, RockSlide, Block, HammerArm, Autotomize, Curse, Flail, WideGuard]
   Graveler:
     level:
@@ -2268,6 +2431,17 @@ Geodude:
       - StompingTantrum
       - RockPolish
       - StoneEdge
+      - TeraBlast
+      - HardPress
+      - ThunderPunch
+      - ScaryFace
+      - IronDefense
+      - MudShot
+      - FocusBlast
+      - IronHead
+      - HeavySlam
+      - HighHorsepower
+      - BodyPress
   Golem:
     level:
       1: [Tackle, DefenseCurl, RockPolish, HeavySlam, Magnitude, MudSport]
@@ -2357,6 +2531,14 @@ Geodude:
       - StompingTantrum
       - RockPolish
       - StoneEdge
+      - TeraBlast
+      - HardPress
+      - ThunderPunch
+      - ScaryFace
+      - IronDefense
+      - MudShot
+      - HighHorsepower
+      - BodyPress
   GeodudeAlola:
     level:
       1: [DefenseCurl, Tackle]
@@ -2421,6 +2603,16 @@ Geodude:
       - Thunderbolt
       - Toxic
       - VoltSwitch
+      - TeraBlast
+      - SupercellSlam
+      - BodySlam
+      - TakeDown
+      - ThunderWave
+      - Dig
+      - MudSlap
+      - MudShot
+      - WildCharge
+      - HighHorsepower
     egg:
       - Autotomize
       - Block
@@ -2497,6 +2689,23 @@ Geodude:
       - AllySwitch
       - ShockWave
       - StompingTantrum
+      - TeraBlast
+      - HardPress
+      - SupercellSlam
+      - BodySlam
+      - TakeDown
+      - ThunderWave
+      - Dig
+      - Metronome
+      - Curse
+      - ScaryFace
+      - MudSlap
+      - Endure
+      - MudShot
+      - FocusBlast
+      - WildCharge
+      - ElectricTerrain
+      - HighHorsepower
   GolemAlola:
     level:
       1: [Charge, DefenseCurl, HeavySlam, RockPolish, Tackle]
@@ -2569,3 +2778,19 @@ Geodude:
       - ShockWave
       - StompingTantrum
       - WildCharge
+      - TeraBlast
+      - HardPress
+      - SupercellSlam
+      - BodySlam
+      - TakeDown
+      - ThunderWave
+      - Dig
+      - Metronome
+      - Curse
+      - ScaryFace
+      - MudSlap
+      - Endure
+      - MudShot
+      - ElectricTerrain
+      - BodyPress
+      - MeteorBeam

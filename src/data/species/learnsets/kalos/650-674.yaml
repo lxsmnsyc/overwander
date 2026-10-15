@@ -68,6 +68,22 @@ Chespin:
     - WorrySeed
     - ZenHeadbutt
     - StompingTantrum
+    - TeraBlast
+    - Trailblaze
+    - BodySlam
+    - TakeDown
+    - Swift
+    - Curse
+    - Spikes
+    - Endure
+    - MetalClaw
+    - RainDance
+    - BulletSeed
+    - MudShot
+    - MagicalLeaf
+    - LeafStorm
+    - GrassyTerrain
+    - GrassyGlide
   Chespin:
     level:
       1: [Tackle, Growl]
@@ -83,7 +99,8 @@ Chespin:
       42: [BodySlam]
       45: [PainSplit]
       48: [WoodHammer]
-    egg: [BellyDrum, Curse, DefenseCurl, QuickGuard, Rollout, Spikes, Synthesis]
+    egg:
+      [BellyDrum, Curse, DefenseCurl, QuickGuard, Rollout, Spikes, Synthesis, SuperFang, WideGuard]
   Quilladin:
     level:
       1: [Tackle, Growl]
@@ -129,6 +146,16 @@ Chespin:
       - GigaImpact
       - HoneClaws
       - HyperBeam
+      - DoubleEdge
+      - Reversal
+      - ScaryFace
+      - MudSlap
+      - Crunch
+      - KnockOff
+      - CloseCombat
+      - HighHorsepower
+      - BodyPress
+      - Coaching
 Fennekin:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -176,6 +203,27 @@ Fennekin:
     - Thief
     - Toxic
     - WillOWisp
+    - TeraBlast
+    - TakeDown
+    - Psybeam
+    - FireSpin
+    - Agility
+    - Swift
+    - MudSlap
+    - Endure
+    - Charm
+    - Encore
+    - HelpingHand
+    - Trick
+    - SkillSwap
+    - Imprison
+    - MudShot
+    - CalmMind
+    - FlareBlitz
+    - TrickRoom
+    - StoredPower
+    - PsychicTerrain
+    - BurningJealousy
   Fennekin:
     level:
       1: [Scratch, TailWhip]
@@ -193,7 +241,7 @@ Fennekin:
       43: [SunnyDay]
       46: [MagicRoom]
       48: [FireBlast]
-    egg: [HeatWave, Hypnosis, MagicCoat, Wish, PsychicTerrain]
+    egg: [HeatWave, Hypnosis, MagicCoat, Wish, PsychicTerrain, Copycat]
   Braixen:
     level:
       1: [Scratch, TailWhip]
@@ -216,10 +264,8 @@ Fennekin:
       - LowKick
       - Recycle
       - ShockWave
-      - SkillSwap
       - Snatch
       - ThunderPunch
-      - Trick
       - WonderRoom
       - ZenHeadbutt
       - LaserFocus
@@ -244,7 +290,6 @@ Fennekin:
       75: [MysticalFire]
     teachable:
       - BlastBurn
-      - CalmMind
       - DazzlingGleam
       - FirePunch
       - GigaImpact
@@ -255,14 +300,22 @@ Fennekin:
       - ShadowBall
       - ShockWave
       - SignalBeam
-      - SkillSwap
       - Snatch
       - ThunderPunch
-      - Trick
-      - TrickRoom
       - WonderRoom
       - ZenHeadbutt
       - LaserFocus
+      - PsychicNoise
+      - NightShade
+      - ConfuseRay
+      - Reflect
+      - Metronome
+      - HyperVoice
+      - FocusBlast
+      - NastyPlot
+      - Hex
+      - ExpandingForce
+      - ScorchingSands
 Froakie:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -312,10 +365,25 @@ Froakie:
     - WaterPledge
     - WaterPulse
     - Waterfall
+    - TeraBlast
+    - Snowscape
+    - Trailblaze
+    - ChillingWater
+    - TakeDown
+    - HydroPump
+    - Swift
+    - MudSlap
+    - Spikes
+    - Endure
+    - FalseSwipe
+    - HelpingHand
+    - MudShot
+    - ToxicSpikes
+    - Liquidation
   Froakie:
     level:
       1: [Pound, Growl]
-      5: [Bubble]
+      5: [Bubble, WaterGun]
       8: [QuickAttack]
       10: [Lick]
       14: [WaterPulse]
@@ -327,10 +395,22 @@ Froakie:
       39: [Bounce]
       43: [DoubleTeam]
       48: [HydroPump]
-    egg: [Bestow, Camouflage, MindReader, MudSport, ToxicSpikes, WaterSport]
+    egg:
+      [
+        Bestow,
+        Camouflage,
+        MindReader,
+        MudSport,
+        ToxicSpikes,
+        WaterSport,
+        Counter,
+        Spikes,
+        Switcheroo,
+        Retaliate,
+      ]
   Frogadier:
     level:
-      1: [Pound, Growl]
+      1: [Pound, Growl, WaterGun]
       5: [Bubble]
       8: [QuickAttack]
       10: [Lick]
@@ -343,10 +423,10 @@ Froakie:
       44: [Bounce]
       48: [DoubleTeam]
       55: [HydroPump]
-    teachable: [DarkPulse, GunkShot, IcePunch, LowKick]
+    teachable: [DarkPulse, GunkShot, IcePunch, LowKick, SwordsDance]
   Greninja:
     level:
-      1: [Pound, Growl, RolePlay, MatBlock]
+      1: [Pound, Growl, RolePlay, MatBlock, WaterGun]
       5: [Bubble]
       8: [QuickAttack]
       10: [Lick]
@@ -354,7 +434,7 @@ Froakie:
       20: [SmokeScreen]
       23: [ShadowSneak]
       28: [Spikes]
-      33: [FeintAttack]
+      33: [FeintAttack, AerialAce]
       43: [Substitute]
       49: [Extrasensory]
       52: [DoubleTeam]
@@ -371,9 +451,15 @@ Froakie:
       - IcePunch
       - LowKick
       - BrutalSwing
+      - UpperHand
+      - SwordsDance
+      - BrickBreak
+      - WeatherBall
+      - SludgeWave
+      - LowSweep
   GreninjaAsh:
     level:
-      1: [Pound, Growl, RolePlay, MatBlock]
+      1: [Pound, Growl, RolePlay, MatBlock, WaterGun]
       5: [Bubble]
       8: [QuickAttack]
       10: [Lick]
@@ -381,7 +467,7 @@ Froakie:
       20: [SmokeScreen]
       23: [ShadowSneak]
       28: [Spikes]
-      33: [FeintAttack]
+      33: [FeintAttack, AerialAce]
       43: [Substitute]
       49: [Extrasensory]
       52: [DoubleTeam]
@@ -398,6 +484,9 @@ Froakie:
       - IcePunch
       - LowKick
       - BrutalSwing
+      - SwordsDance
+      - BrickBreak
+      - LowSweep
 Bunnelby:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -556,6 +645,19 @@ Fletchling:
     - Toxic
     - UTurn
     - DualWingbeat
+    - TeraBlast
+    - TakeDown
+    - DoubleEdge
+    - Agility
+    - Swift
+    - Endure
+    - RainDance
+    - FeatherDance
+    - AirCutter
+    - FlareBlitz
+    - AirSlash
+    - BraveBird
+    - Hurricane
   Fletchling:
     level:
       1: [Growl, Peck, Tackle]
@@ -574,9 +676,6 @@ Fletchling:
       50: [Fly]
     egg: [QuickGuard, Snatch, Tailwind, Defog, FlameCharge]
     teachable:
-      - Agility
-      - Endure
-      - Swift
       - WillOWisp
       - WorkUp
   Fletchinder:
@@ -593,8 +692,7 @@ Fletchling:
       50: [SteelWing]
       57: [Roost]
       64: [Fly]
-    teachable:
-      [FireBlast, Flamethrower, Incinerate, WillOWisp, Agility, Endure, FireSpin, Swift, WorkUp]
+    teachable: [FireBlast, Flamethrower, Incinerate, WillOWisp, FireSpin, WorkUp, TemperFlare]
   Talonflame:
     level:
       1: [Growl, Ember, Peck, QuickAttack, Feint, FlareBlitz, FlameCharge, Tackle]
@@ -620,27 +718,25 @@ Fletchling:
       - Incinerate
       - SolarBeam
       - WillOWisp
-      - Agility
-      - BraveBird
-      - Endure
       - FireSpin
-      - FlareBlitz
-      - Hurricane
-      - Swift
       - WorkUp
+      - TemperFlare
+      - UpperHand
 Scatterbug:
-  family-teachable: [BugBite]
+  family-teachable: [BugBite, TeraBlast, Pounce]
   Scatterbug:
     level:
       1: [Tackle, StringShot]
       6: [StunSpore]
       15: [BugBite]
     egg: [PoisonPowder, RagePowder, StunSpore]
+    teachable:
+      - StruggleBug
   Spewpa:
     level:
       1: [Harden]
       9: [Protect]
-    teachable: [Electroweb, IronDefense, Protect]
+    teachable: [Electroweb, IronDefense, Protect, StruggleBug]
   Vivillon:
     level:
       1: [Gust, PoisonPowder, StunSpore, SleepPowder, LightScreen]
@@ -697,6 +793,15 @@ Scatterbug:
       - Toxic
       - UTurn
       - LaserFocus
+      - ConfuseRay
+      - Swift
+      - Endure
+      - WeatherBall
+      - AirCutter
+      - IronDefense
+      - AirSlash
+      - PollenPuff
+      - SkitterSmack
   VivillonIcySnow:
     level:
       1: [Gust, PoisonPowder, StunSpore, SleepPowder, LightScreen]
@@ -1823,6 +1928,9 @@ Litleo:
     - WildCharge
     - WillOWisp
     - WorkUp
+    - TeraBlast
+    - Trailblaze
+    - PsychicFangs
   Litleo:
     level:
       1: [Leer, Tackle]
@@ -1854,7 +1962,7 @@ Litleo:
       48: [HyperVoice]
       51: [Incinerate]
       57: [Overheat]
-    teachable: [Bounce, GigaImpact, HyperBeam]
+    teachable: [Bounce, GigaImpact, HyperBeam, TemperFlare, BurningJealousy]
 Flabebe:
   family-teachable:
     - AfterYou
@@ -1899,33 +2007,64 @@ Flabebe:
     level:
       1: [VineWhip, Tackle]
       6: [FairyWind]
-      10: [LuckyChant]
+      10: [LuckyChant, Safeguard]
       15: [RazorLeaf]
       20: [Wish]
       22: [MagicalLeaf]
       24: [GrassyTerrain]
       28: [PetalBlizzard]
-      33: [Aromatherapy]
+      33: [Aromatherapy, Synthesis]
       37: [MistyTerrain]
       41: [Moonblast]
       45: [PetalDance]
       48: [SolarBeam]
-    egg: [Camouflage, Captivate, Copycat, TearfulLook]
+    egg: [Camouflage, Captivate, Copycat, TearfulLook, Endeavor]
+    teachable:
+      - AlluringVoice
+      - LightScreen
+      - Swift
+      - Endure
+      - Charm
+      - BatonPass
+      - StoredPower
+      - DisarmingVoice
+      - DrainingKiss
+      - PollenPuff
+      - TeraBlast
+      - Trailblaze
+      - ChillingWater
   Floette:
     level:
       1: [VineWhip, Tackle]
       6: [FairyWind]
-      10: [LuckyChant]
+      10: [LuckyChant, Safeguard]
       15: [RazorLeaf]
       20: [Wish]
       25: [MagicalLeaf]
       27: [GrassyTerrain]
       33: [PetalBlizzard]
-      38: [Aromatherapy]
+      38: [Aromatherapy, Synthesis]
       43: [MistyTerrain]
       46: [Moonblast]
       51: [PetalDance]
       58: [SolarBeam]
+    teachable:
+      - AlluringVoice
+      - LightScreen
+      - Metronome
+      - Swift
+      - Endure
+      - Charm
+      - BatonPass
+      - Trick
+      - SkillSwap
+      - StoredPower
+      - DisarmingVoice
+      - DrainingKiss
+      - PollenPuff
+      - TeraBlast
+      - Trailblaze
+      - ChillingWater
   Florges:
     level:
       1:
@@ -1941,7 +2080,31 @@ Flabebe:
         - GrassyTerrain
         - MistyTerrain
         - Moonblast
-    teachable: [GigaImpact, HyperBeam, LightScreen]
+        - SolarBeam
+        - Safeguard
+        - Synthesis
+    teachable:
+      [
+        GigaImpact,
+        HyperBeam,
+        LightScreen,
+        TeraBlast,
+        Trailblaze,
+        ChillingWater,
+        AlluringVoice,
+        PsychicNoise,
+        Metronome,
+        Swift,
+        Endure,
+        Charm,
+        BatonPass,
+        Trick,
+        SkillSwap,
+        StoredPower,
+        DrainingKiss,
+        PollenPuff,
+        MistyExplosion,
+      ]
   FlabebeYellow:
     level:
       1: [VineWhip, Tackle]
@@ -1958,6 +2121,8 @@ Flabebe:
       45: [PetalDance]
       48: [SolarBeam]
     egg: [Camouflage, Captivate, Copycat, TearfulLook]
+    teachable:
+      - AlluringVoice
   FloetteYellow:
     level:
       1: [VineWhip, Tackle]
@@ -1973,6 +2138,8 @@ Flabebe:
       46: [Moonblast]
       51: [PetalDance]
       58: [SolarBeam]
+    teachable:
+      - AlluringVoice
   FlorgesYellow:
     level:
       1:
@@ -1988,7 +2155,17 @@ Flabebe:
         - GrassyTerrain
         - MistyTerrain
         - Moonblast
-    teachable: [GigaImpact, HyperBeam, LightScreen]
+    teachable:
+      [
+        GigaImpact,
+        HyperBeam,
+        LightScreen,
+        TeraBlast,
+        Trailblaze,
+        ChillingWater,
+        AlluringVoice,
+        PsychicNoise,
+      ]
   FlabebeOrange:
     level:
       1: [VineWhip, Tackle]
@@ -2005,6 +2182,8 @@ Flabebe:
       45: [PetalDance]
       48: [SolarBeam]
     egg: [Camouflage, Captivate, Copycat, TearfulLook]
+    teachable:
+      - AlluringVoice
   FloetteOrange:
     level:
       1: [VineWhip, Tackle]
@@ -2020,6 +2199,8 @@ Flabebe:
       46: [Moonblast]
       51: [PetalDance]
       58: [SolarBeam]
+    teachable:
+      - AlluringVoice
   FlorgesOrange:
     level:
       1:
@@ -2035,7 +2216,17 @@ Flabebe:
         - GrassyTerrain
         - MistyTerrain
         - Moonblast
-    teachable: [GigaImpact, HyperBeam, LightScreen]
+    teachable:
+      [
+        GigaImpact,
+        HyperBeam,
+        LightScreen,
+        TeraBlast,
+        Trailblaze,
+        ChillingWater,
+        AlluringVoice,
+        PsychicNoise,
+      ]
   FlabebeBlue:
     level:
       1: [VineWhip, Tackle]
@@ -2052,6 +2243,8 @@ Flabebe:
       45: [PetalDance]
       48: [SolarBeam]
     egg: [Camouflage, Captivate, Copycat, TearfulLook]
+    teachable:
+      - AlluringVoice
   FloetteBlue:
     level:
       1: [VineWhip, Tackle]
@@ -2067,6 +2260,8 @@ Flabebe:
       46: [Moonblast]
       51: [PetalDance]
       58: [SolarBeam]
+    teachable:
+      - AlluringVoice
   FlorgesBlue:
     level:
       1:
@@ -2082,7 +2277,17 @@ Flabebe:
         - GrassyTerrain
         - MistyTerrain
         - Moonblast
-    teachable: [GigaImpact, HyperBeam, LightScreen]
+    teachable:
+      [
+        GigaImpact,
+        HyperBeam,
+        LightScreen,
+        TeraBlast,
+        Trailblaze,
+        ChillingWater,
+        AlluringVoice,
+        PsychicNoise,
+      ]
   FlabebeWhite:
     level:
       1: [VineWhip, Tackle]
@@ -2099,6 +2304,8 @@ Flabebe:
       45: [PetalDance]
       48: [SolarBeam]
     egg: [Camouflage, Captivate, Copycat, TearfulLook]
+    teachable:
+      - AlluringVoice
   FloetteWhite:
     level:
       1: [VineWhip, Tackle]
@@ -2114,6 +2321,8 @@ Flabebe:
       46: [Moonblast]
       51: [PetalDance]
       58: [SolarBeam]
+    teachable:
+      - AlluringVoice
   FlorgesWhite:
     level:
       1:
@@ -2129,7 +2338,17 @@ Flabebe:
         - GrassyTerrain
         - MistyTerrain
         - Moonblast
-    teachable: [GigaImpact, HyperBeam, LightScreen]
+    teachable:
+      [
+        GigaImpact,
+        HyperBeam,
+        LightScreen,
+        TeraBlast,
+        Trailblaze,
+        ChillingWater,
+        AlluringVoice,
+        PsychicNoise,
+      ]
   FloetteEternal:
     level:
       1: [VineWhip, Tackle]
@@ -2188,6 +2407,23 @@ Skiddo:
     - WildCharge
     - WorrySeed
     - ZenHeadbutt
+    - TeraBlast
+    - Trailblaze
+    - BodySlam
+    - TakeDown
+    - DoubleEdge
+    - MudSlap
+    - Endure
+    - HelpingHand
+    - Endeavor
+    - BulletSeed
+    - MudShot
+    - MagicalLeaf
+    - LeafStorm
+    - GrassyTerrain
+    - PlayRough
+    - StompingTantrum
+    - GrassyGlide
   Skiddo:
     level:
       1: [Tackle, Growth]
@@ -2205,7 +2441,7 @@ Skiddo:
       42: [HornLeech]
       45: [LeafBlade]
       50: [MilkDrink]
-    egg: [DefenseCurl, MilkDrink, Rollout]
+    egg: [DefenseCurl, MilkDrink, Rollout, GrassyTerrain]
   Gogoat:
     level:
       1: [Tackle, Growth]
@@ -2232,7 +2468,8 @@ Skiddo:
       - GigaImpact
       - HyperBeam
       - Superpower
-      - StompingTantrum
+      - HighHorsepower
+      - ThroatChop
 Pancham:
   family-teachable:
     - AerialAce

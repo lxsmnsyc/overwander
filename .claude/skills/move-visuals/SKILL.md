@@ -3,8 +3,7 @@ name: move-visuals
 description: >
   How a move is drawn in battle: a landing shape painted twice (canvas and
   lit scene), picked by the move's data or named in a table, with a wait
-  before it. Every legendary or mythical signature move has a shape of its
-  own. Applies whenever adding moves, adding a region's move visuals, or
+  before it. Every signature move has a shape of its own. Applies whenever adding moves, adding a region's move visuals, or
   changing what a move looks like.
 ---
 
@@ -12,7 +11,8 @@ A move is drawn as two pictures: the **wait** while the engine holds it open ([`
 
 ## Signature moves get their own picture
 
-- **Every legendary or mythical signature move has a shape of its own**, in every region: Roar of Time, Spacial Rend, Judgment, Origin Pulse, Hyperspace Fury, Sunsteel Strike, Behemoth Blade and so on.
+- **Every signature move has a shape of its own**, in every region. A signature is a move only one family learns (counting its forms), legendary or not: Roar of Time, Behemoth Blade, Dragon Darts, Gigaton Hammer, Make It Rain and so on.
+- **Check who learns it before reusing a shape.** PokeAPI's `move/<name>` lists `learned_by_pokemon`; one family there means a signature.
 - **Two signatures of one pokemon are two pictures.** Behemoth Blade is a sword and Behemoth Bash a shield; Photon Geyser and Prismatic Laser are told apart the same way.
 - **A themed group still gets one picture each.** The four forces of nature share a frame in their abilities, but their storms are drawn as four shapes.
 - **Everything else reuses an earlier shape** where the picture is the same: Flip Turn is U-turn's, Life Dew is Recover's. Name it in `NAMED` with the shape it takes after.

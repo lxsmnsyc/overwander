@@ -155,6 +155,28 @@ Shuppet:
     - Round
     - Confide
     - DazzlingGleam
+    - TeraBlast
+    - Pounce
+    - Psybeam
+    - NightShade
+    - ConfuseRay
+    - Metronome
+    - Curse
+    - Spite
+    - ScaryFace
+    - PainSplit
+    - Encore
+    - WillOWisp
+    - HelpingHand
+    - Trick
+    - Imprison
+    - NastyPlot
+    - GunkShot
+    - Hex
+    - PhantomForce
+    - SkitterSmack
+    - LashOut
+    - Poltergeist
   Shuppet:
     level:
       1: [KnockOff]
@@ -186,8 +208,6 @@ Shuppet:
         GunkShot,
         ShadowSneak,
       ]
-    teachable:
-      - WillOWisp
   Banette:
     level:
       1: [NightShade, Screech, Spite, KnockOff, PhantomForce]
@@ -206,14 +226,15 @@ Shuppet:
       58: [Trick]
     teachable:
       - HyperBeam
-      - Metronome
       - MudSlap
       - Fling
       - GigaImpact
       - ShadowClaw
       - Infestation
       - ThroatChop
-      - WillOWisp
+      - Trailblaze
+      - SwordsDance
+      - BurningJealousy
 Duskull:
   Duskull:
     level:
@@ -291,6 +312,10 @@ Duskull:
       - Revenge
       - Trick
       - WillOWisp
+      - TeraBlast
+      - LeechLife
+      - Spite
+      - PhantomForce
     egg: [DestinyBond, FeintAttack, Grudge, Imprison, Memento, Haze, PainSplit]
   Dusclops:
     level:
@@ -398,6 +423,12 @@ Duskull:
       - Revenge
       - Trick
       - WillOWisp
+      - TeraBlast
+      - Haze
+      - LeechLife
+      - Spite
+      - PainSplit
+      - PhantomForce
   Dusknoir:
     level:
       1:
@@ -504,6 +535,13 @@ Duskull:
       - Revenge
       - Round
       - WonderRoom
+      - TeraBlast
+      - HardPress
+      - Haze
+      - Swift
+      - LeechLife
+      - PainSplit
+      - PhantomForce
 Tropius:
   Tropius:
     level:
@@ -513,10 +551,10 @@ Tropius:
       16: [MagicalLeaf]
       21: [Whirlwind]
       26: [LeafTornado]
-      30: [DragonDance]
+      30: [DragonDance, WideGuard]
       36: [AirSlash]
       41: [BodySlam]
-      46: [DragonHammer]
+      46: [DragonHammer, Outrage]
       50: [Synthesis]
       56: [SolarBeam]
       57: [NaturalGift, Bestow]
@@ -572,6 +610,23 @@ Tropius:
       - BrutalSwing
       - StompingTantrum
       - DragonPulse
+      - TeraBlast
+      - Trailblaze
+      - TakeDown
+      - Spite
+      - RainDance
+      - HelpingHand
+      - AirCutter
+      - UTurn
+      - SeedBomb
+      - ZenHeadbutt
+      - DragonTail
+      - Hurricane
+      - PetalBlizzard
+      - GrassyTerrain
+      - SolarBlade
+      - BodyPress
+      - DualWingbeat
     egg:
       [
         LeechSeed,
@@ -587,12 +642,53 @@ Tropius:
         Synthesis,
       ]
 Chimecho:
-  family-teachable: [Attract, CalmMind]
+  family-teachable:
+    [
+      Attract,
+      CalmMind,
+      TeraBlast,
+      PsychicNoise,
+      DoubleEdge,
+      ThunderWave,
+      Psychic,
+      LightScreen,
+      Reflect,
+      Rest,
+      Substitute,
+      Curse,
+      Protect,
+      IcyWind,
+      Endure,
+      SleepTalk,
+      BatonPass,
+      RainDance,
+      SunnyDay,
+      PsychUp,
+      ShadowBall,
+      FutureSight,
+      Uproar,
+      Facade,
+      Taunt,
+      HelpingHand,
+      Trick,
+      KnockOff,
+      SkillSwap,
+      HyperVoice,
+      Gravity,
+      EnergyBall,
+      ZenHeadbutt,
+      TrickRoom,
+      GrassKnot,
+      ChargeBeam,
+      Psyshock,
+      StoredPower,
+      DazzlingGleam,
+    ]
   Chimecho:
     level:
       1: [Wrap, Growl, Confusion, Astonish, HealingWish, LastResort, Entrainment]
       13: [Yawn]
-      16: [LightScreen]
+      16: [LightScreen, StoredPower]
       19: [TakeDown]
       22: [Extrasensory]
       27: [HealBell]
@@ -605,57 +701,41 @@ Chimecho:
       54: [Synchronoise]
     teachable:
       - DefenseCurl
-      - DoubleEdge
       - DoubleTeam
       - DreamEater
-      - Endure
-      - Facade
       - Flash
       - Frustration
       - HiddenPower
-      - IcyWind
-      - LightScreen
       - Mimic
-      - Protect
-      - PsychUp
-      - Psychic
-      - RainDance
-      - Reflect
-      - Rest
       - Return
       - Rollout
       - Safeguard
       - SecretPower
-      - ShadowBall
       - ShockWave
-      - SkillSwap
-      - SleepTalk
       - Snatch
       - Snore
-      - Substitute
-      - SunnyDay
       - Swagger
-      - Taunt
       - Torment
       - Toxic
       - Captivate
-      - ChargeBeam
-      - EnergyBall
-      - GrassKnot
-      - Gravity
       - LastResort
       - NaturalGift
-      - TrickRoom
-      - ZenHeadbutt
-      - Psyshock
       - Telekinesis
       - Round
       - EchoedVoice
       - Confide
-      - DazzlingGleam
       - LaserFocus
       - Recycle
-      - ThunderWave
+      - Psybeam
+      - Swift
+      - Charm
+      - Encore
+      - Imprison
+      - FakeTears
+      - Snarl
+      - DisarmingVoice
+      - DrainingKiss
+      - ExpandingForce
   Chingling:
     level:
       1: [Wrap]
@@ -668,55 +748,40 @@ Chimecho:
       32: [Uproar]
     teachable:
       - Captivate
-      - ChargeBeam
       - DoubleTeam
       - DreamEater
-      - Endure
-      - Facade
       - Flash
       - Frustration
-      - GrassKnot
-      - HelpingHand
       - HiddenPower
-      - IcyWind
-      - KnockOff
       - LastResort
-      - LightScreen
       - NaturalGift
-      - Protect
-      - PsychUp
-      - Psychic
-      - RainDance
       - Recycle
-      - Reflect
-      - Rest
       - Return
       - Rollout
       - Safeguard
       - SecretPower
-      - ShadowBall
       - ShockWave
       - SignalBeam
-      - SkillSwap
-      - SleepTalk
       - Snatch
       - Snore
-      - Substitute
-      - SunnyDay
       - Swagger
       - Swift
-      - Taunt
-      - ThunderWave
       - Torment
       - Toxic
-      - Trick
-      - TrickRoom
-      - Uproar
-      - ZenHeadbutt
       - Confide
-      - DazzlingGleam
     egg:
-      [Curse, Disable, DreamEater, FutureSight, Hypnosis, Recover, Wish, CosmicPower, StoredPower]
+      [
+        Curse,
+        Disable,
+        DreamEater,
+        FutureSight,
+        Hypnosis,
+        Recover,
+        Wish,
+        CosmicPower,
+        StoredPower,
+        AllySwitch,
+      ]
 Absol:
   Absol:
     level:
@@ -856,7 +921,7 @@ Snorunt:
       34: [IceBeam]
       35: [Bite]
       40: [IceFang]
-      45: [Hail]
+      45: [Hail, Snowscape]
       50: [Headbutt]
       55: [Crunch]
       60: [Blizzard]
@@ -901,6 +966,14 @@ Snorunt:
       - IceFang
       - Spikes
       - WeatherBall
+      - TeraBlast
+      - IceSpinner
+      - Trailblaze
+      - ChillingWater
+      - TakeDown
+      - Spite
+      - HelpingHand
+      - IcicleSpear
     egg: [Block, Spikes, Hex, Disable, FakeTears, IcicleCrash, Rollout, Switcheroo, WeatherBall]
   Glalie:
     level:
@@ -912,7 +985,7 @@ Snorunt:
       34: [IceBeam]
       35: [Bite]
       40: [IceFang]
-      47: [Hail]
+      47: [Hail, Snowscape]
       54: [Headbutt]
       61: [Crunch]
       68: [Blizzard]
@@ -975,6 +1048,14 @@ Snorunt:
       - SelfDestruct
       - Spikes
       - WeatherBall
+      - TeraBlast
+      - IceSpinner
+      - Trailblaze
+      - ChillingWater
+      - TakeDown
+      - Spite
+      - HelpingHand
+      - FoulPlay
   Froslass:
     level:
       1:
@@ -999,7 +1080,7 @@ Snorunt:
       30: [FrostBreath]
       31: [Captivate]
       35: [ConfuseRay]
-      40: [Hail]
+      40: [Hail, Snowscape]
       47: [WillOWisp]
       54: [AuroraVeil]
       61: [ShadowBall]
@@ -1076,6 +1157,16 @@ Snorunt:
       - Spikes
       - WeatherBall
       - WillOWisp
+      - TeraBlast
+      - IceSpinner
+      - ChillingWater
+      - TakeDown
+      - NightShade
+      - Haze
+      - Curse
+      - ScaryFace
+      - PainSplit
+      - HelpingHand
 Spheal:
   # TM, HM and tutor moves the whole line shares
   family-teachable:
@@ -1408,7 +1499,7 @@ Luvdisc:
       4: [WaterGun]
       7: [Agility]
       9: [DrainingKiss]
-      13: [TearfulLook]
+      13: [TearfulLook, Wish]
       17: [WaterPulse, LuckyChant]
       20: [Attract]
       22: [Brine]
@@ -1456,6 +1547,12 @@ Luvdisc:
       - Scald
       - Confide
       - Liquidation
+      - TeraBlast
+      - Snowscape
+      - Whirlpool
+      - Endeavor
+      - ScaleShot
+      - FlipTurn
     egg: [Splash, Supersonic, WaterSport, MudSport, AquaJet, HealPulse, AquaRing, Entrainment]
 Bagon:
   # TM, HM and tutor moves shared by the whole family
@@ -1504,6 +1601,23 @@ Bagon:
     - Round
     - Incinerate
     - Confide
+    - TeraBlast
+    - DragonCheer
+    - TakeDown
+    - HydroPump
+    - FireSpin
+    - ScaryFace
+    - Outrage
+    - Crunch
+    - HelpingHand
+    - HyperVoice
+    - IronDefense
+    - DragonDance
+    - ThunderFang
+    - FireFang
+    - ZenHeadbutt
+    - IronHead
+    - DragonTail
   Bagon:
     level:
       1: [Leer, Ember, Rage]
@@ -1520,16 +1634,7 @@ Bagon:
       55: [DoubleEdge]
     egg: [DragonDance, DragonRage, HydroPump, Thrash, Twister, DragonRush, FireFang, DefenseCurl]
     teachable:
-      - Crunch
-      - DragonDance
-      - FireFang
       - FocusEnergy
-      - HydroPump
-      - HyperVoice
-      - IronDefense
-      - Outrage
-      - ScaryFace
-      - ZenHeadbutt
   Shelgon:
     level:
       1: [Leer, Bite, Ember, Protect, DragonBreath, Rage]
@@ -1542,21 +1647,7 @@ Bagon:
       53: [Flamethrower]
       60: [Outrage]
       67: [DoubleEdge]
-    teachable:
-      [
-        Rollout,
-        DefenseCurl,
-        Crunch,
-        DragonDance,
-        FireFang,
-        FocusEnergy,
-        HydroPump,
-        HyperVoice,
-        IronDefense,
-        Outrage,
-        ScaryFace,
-        ZenHeadbutt,
-      ]
+    teachable: [Rollout, DefenseCurl, FocusEnergy, TemperFlare]
   Salamence:
     level:
       1: [Fly, Leer, Bite, Ember, Protect, DragonBreath, DragonTail, Rage, FireFang, ThunderFang]
@@ -1586,30 +1677,21 @@ Bagon:
       - StoneEdge
       - Tailwind
       - Bulldoze
-      - DragonTail
       - BrutalSwing
       - LaserFocus
       - BreakingSwipe
       - DualWingbeat
       - AirSlash
-      - Crunch
-      - DragonDance
-      - FireFang
       - FocusEnergy
       - HeatWave
       - Hurricane
-      - HydroPump
-      - HyperVoice
-      - IronDefense
-      - Outrage
-      - ScaryFace
-      - ThunderFang
-      - ZenHeadbutt
+      - TemperFlare
+      - PsychicFangs
 Beldum:
   Beldum:
     level:
       1: [Tackle, TakeDown]
-    teachable: [IronHead, ZenHeadbutt, SteelBeam, IronDefense]
+    teachable: [IronHead, ZenHeadbutt, SteelBeam, IronDefense, TeraBlast]
   Metang:
     level:
       1: [Tackle, Confusion, MetalClaw, BulletPunch]
@@ -1699,6 +1781,14 @@ Beldum:
       - SelfDestruct
       - Trick
       - ZenHeadbutt
+      - TeraBlast
+      - Trailblaze
+      - HardPress
+      - PsychicNoise
+      - FutureSight
+      - FocusPunch
+      - GigaImpact
+      - HeavySlam
   Metagross:
     level:
       1: [Tackle, Confusion, MetalClaw, HammerArm, BulletPunch]
@@ -1793,3 +1883,14 @@ Beldum:
       - SelfDestruct
       - Trick
       - ZenHeadbutt
+      - TeraBlast
+      - Trailblaze
+      - HardPress
+      - PsychicNoise
+      - FutureSight
+      - FocusPunch
+      - KnockOff
+      - ShadowClaw
+      - StoneEdge
+      - HeavySlam
+      - PsychicFangs

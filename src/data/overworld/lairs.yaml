@@ -300,3 +300,47 @@ IsleOfArmor:
 # The bog in Hisui's Crimson Mirelands the fourth force of nature blows over
 ScarletBog:
   species: [Enamorus]
+# The shrine Wo-Chien was sealed under, in the grass it withered
+GrasswitherShrine:
+  species: [WoChien]
+  reserved: true
+# The shrine Chien-Pao was sealed under, in the ice it split
+IcerendShrine:
+  species: [ChienPao]
+  reserved: true
+# The shrine Ting-Lu was sealed under, in the ground it blighted
+GroundblightShrine:
+  species: [TingLu]
+  reserved: true
+# The shrine Chi-Yu was sealed under, in the fire it scourged
+FirescourgeShrine:
+  species: [ChiYu]
+  reserved: true
+# The laboratory at the bottom of Area Zero the two box legends came out of
+ZeroLab:
+  species: [Koraidon, Miraidon]
+  reserved: true
+# The barrens in north-west Kitakami Okidogi keeps to
+ParadiseBarrens:
+  species: [Okidogi]
+  reserved: true
+# The fields by the lake in south-west Kitakami Munkidori keeps to
+WistfulFields:
+  species: [Munkidori]
+  reserved: true
+# The cliff on the east face of Kitakami's mountain Fezandipiti keeps to
+OniMountain:
+  species: [Fezandipiti]
+  reserved: true
+# The den high on Oni Mountain the masked ogre hides in
+DreadedDen:
+  species: [Ogerpon]
+  reserved: true
+# The crystal cavern under Area Zero the Stellar Tera Pokemon sleeps in
+AreaZeroUnderdepths:
+  species: [Terapagos]
+  reserved: true
+# The plaza honouring the Loyal Three, where their master was found out. A mythical's, so it is never staged
+LoyaltyPlaza:
+  species: [Pecharunt]
+  reserved: true

@@ -1,0 +1,48 @@
+ShedTail:
+  name: Shed Tail
+  description: Spends 1/2 the user's HP to make a substitute, then swaps out for its strongest teammate, who stands behind it.
+ChillyReception:
+  name: Chilly Reception
+  description: Calls up snow, then the user swaps out for its strongest teammate.
+TidyUp:
+  name: Tidy Up
+  description: Clears every hazard and substitute off the field, and raises the user's Attack and Speed a stage.
+Snowscape:
+  name: Snowscape
+  description: Calls up snow for 10 seconds, which raises Ice types' Defense 1.5x.
+Pounce:
+  name: Pounce
+  description: Drops the target's Speed a stage.
+Trailblaze:
+  name: Trailblaze
+  description: Raises the user's Speed a stage.
+ChillingWater:
+  name: Chilling Water
+  description: Drops the target's Attack a stage.
+HyperDrill:
+  name: Hyper Drill
+  description: Hits through Protect and the other guards, and breaks the guard it went through.
+TwinBeam:
+  name: Twin Beam
+  description: Strikes 2 times.
+RageFist:
+  name: Rage Fist
+  description: Hits 50 harder for each hit the user has taken this fight, up to 350.
+ArmorCannon:
+  name: Armor Cannon
+  description: Drops the user's Defense and Special Defense 1 stage each.
+BitterBlade:
+  name: Bitter Blade
+  description: Heals the user for 1/2 of what it deals.
+DoubleShock:
+  name: Double Shock
+  description: Only an Electric type can use it, and the user is not Electric afterwards.
+GigatonHammer:
+  name: Gigaton Hammer
+  description: Cannot be used twice in a row.
+Comeuppance:
+  name: Comeuppance
+  description: Returns 1.5x the last hit taken from a move, at whoever landed it. Fails if nothing has hit the user.
+AquaCutter:
+  name: Aqua Cutter
+  description: Lands a critical more often than most.

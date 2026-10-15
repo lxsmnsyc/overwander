@@ -132,6 +132,15 @@ Spiritomb:
       - Round
       - Snarl
       - WonderRoom
+      - TeraBlast
+      - BodySlam
+      - Psybeam
+      - ScaryFace
+      - HelpingHand
+      - SkillSwap
+      - TrickRoom
+      - Psyshock
+      - StoredPower
     egg: [DestinyBond, Disable, FoulPlay, Grudge, Imprison, PainSplit, ShadowSneak, SmokeScreen]
 Gible:
   # TM, HM and tutor moves shared by the whole family
@@ -184,6 +193,22 @@ Gible:
     - Confide
     - ScaleShot
     - ScorchingSands
+    - TeraBlast
+    - DragonCheer
+    - SwordsDance
+    - BodySlam
+    - TakeDown
+    - DoubleEdge
+    - ScaryFace
+    - FalseSwipe
+    - MetalClaw
+    - HelpingHand
+    - SandTomb
+    - MudShot
+    - ThunderFang
+    - FireFang
+    - Bulldoze
+    - DragonTail
   Gible:
     level:
       1: [Tackle, SandTomb]
@@ -211,13 +236,8 @@ Gible:
       - Twister
       - MudShot
     teachable:
-      - BodySlam
-      - Bulldoze
       - IronTail
-      - MudShot
       - Round
-      - SandTomb
-      - ScaryFace
   Gabite:
     level:
       1: [SandAttack, Tackle, DragonBreath, SandTomb, DualChop]
@@ -230,7 +250,7 @@ Gible:
       58: [Sandstorm]
       66: [TakeDown]
       74: [DragonRush]
-    teachable: [IronTail, LaserFocus, BodySlam, Bulldoze, MudShot, Round, SandTomb, ScaryFace]
+    teachable: [IronTail, LaserFocus, Round, Crunch, PowerGem, BreakingSwipe]
   Garchomp:
     level:
       1: [SandAttack, Tackle, DragonBreath, Crunch, SandTomb, DualChop, FireFang]
@@ -246,27 +266,22 @@ Gible:
     teachable:
       - AquaTail
       - BrickBreak
-      - FalseSwipe
       - Fling
       - GigaImpact
       - HyperBeam
       - IronTail
       - PoisonJab
       - Surf
-      - SwordsDance
       - BrutalSwing
       - StompingTantrum
       - LaserFocus
       - BreakingSwipe
-      - BodySlam
-      - Bulldoze
       - Crunch
-      - FireFang
-      - MudShot
       - Round
-      - SandTomb
-      - ScaryFace
       - Whirlpool
+      - Spikes
+      - PowerGem
+      - Liquidation
 Riolu:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -320,6 +335,21 @@ Riolu:
     - Confide
     - PowerUpPunch
     - Coaching
+    - TeraBlast
+    - Trailblaze
+    - UpperHand
+    - TakeDown
+    - LowKick
+    - Agility
+    - Reversal
+    - MetalClaw
+    - Crunch
+    - PsychUp
+    - AerialAce
+    - CloseCombat
+    - NastyPlot
+    - LowSweep
+    - Bulldoze
   Riolu:
     level:
       1: [QuickAttack, Endure, Foresight]
@@ -338,24 +368,7 @@ Riolu:
       52: [FinalGambit]
       56: [Reversal]
     teachable:
-      [
-        LaserFocus,
-        Agility,
-        BlazeKick,
-        Bulldoze,
-        Crunch,
-        LowKick,
-        LowSweep,
-        MegaKick,
-        MegaPunch,
-        NastyPlot,
-        Retaliate,
-        Revenge,
-        Reversal,
-        Round,
-        Screech,
-        WorkUp,
-      ]
+      [LaserFocus, BlazeKick, MegaKick, MegaPunch, Retaliate, Revenge, Round, Screech, WorkUp]
     egg:
       - Agility
       - Bite
@@ -395,6 +408,7 @@ Riolu:
           LifeDew,
           DarkPulse,
           Foresight,
+          VacuumWave,
         ]
       12: [Counter]
       16: [LaserFocus]
@@ -424,25 +438,19 @@ Riolu:
       - WaterPulse
       - SteelBeam
       - TerrainPulse
-      - Agility
       - AuraSphere
       - BlazeKick
-      - Bulldoze
-      - CloseCombat
-      - Crunch
       - FocusEnergy
-      - LowKick
-      - LowSweep
       - MegaKick
       - MegaPunch
-      - NastyPlot
       - Retaliate
       - Revenge
-      - Reversal
       - Round
       - ScaryFace
       - Screech
       - WorkUp
+      - BodySlam
+      - Metronome
 Hippopotas:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -480,6 +488,25 @@ Hippopotas:
     - Confide
     - StompingTantrum
     - ScorchingSands
+    - TeraBlast
+    - BodySlam
+    - TakeDown
+    - DoubleEdge
+    - Dig
+    - Amnesia
+    - Curse
+    - Crunch
+    - HelpingHand
+    - SandTomb
+    - MuddyWater
+    - MudShot
+    - ThunderFang
+    - IceFang
+    - FireFang
+    - StoneEdge
+    - Bulldoze
+    - HighHorsepower
+    - BodyPress
   Hippopotas:
     level:
       1: [SandAttack, Tackle]
@@ -498,17 +525,8 @@ Hippopotas:
       52: [SlackOff]
     egg: [BodySlam, Curse, SandTomb, SlackOff, SpitUp, Stockpile, Swallow, Revenge, Whirlwind]
     teachable:
-      - Amnesia
-      - BodySlam
-      - Bulldoze
-      - Crunch
-      - Dig
-      - HighHorsepower
-      - MudShot
-      - MuddyWater
       - Revenge
       - Round
-      - SandTomb
       - WeatherBall
   Hippowdon:
     level:
@@ -529,24 +547,12 @@ Hippopotas:
         GigaImpact,
         HyperBeam,
         IronHead,
-        StoneEdge,
-        BodyPress,
-        Amnesia,
-        BodySlam,
-        Bulldoze,
-        Crunch,
-        Dig,
-        FireFang,
         HeavySlam,
-        HighHorsepower,
-        IceFang,
-        MudShot,
-        MuddyWater,
         Revenge,
         Round,
-        SandTomb,
-        ThunderFang,
         WeatherBall,
+        HardPress,
+        HyperVoice,
       ]
 Skorupi:
   # TM, HM and tutor moves shared by the whole family
@@ -750,6 +756,27 @@ Croagunk:
     - PowerUpPunch
     - LashOut
     - Coaching
+    - TeraBlast
+    - ChillingWater
+    - UpperHand
+    - TakeDown
+    - LowKick
+    - SuperFang
+    - Reversal
+    - ScaryFace
+    - BatonPass
+    - Encore
+    - AerialAce
+    - MudShot
+    - DrainPunch
+    - NastyPlot
+    - ShadowClaw
+    - Venoshock
+    - SludgeWave
+    - LowSweep
+    - AcidSpray
+    - FoulPlay
+    - Bulldoze
   Croagunk:
     level:
       1: [PoisonSting, MudSlap]
@@ -757,7 +784,7 @@ Croagunk:
       8: [Taunt]
       12: [Flatter]
       15: [Pursuit]
-      16: [Revenge]
+      16: [Revenge, LowKick]
       17: [FeintAttack]
       20: [Venoshock]
       24: [SuckerPunch]
@@ -785,30 +812,20 @@ Croagunk:
       - QuickGuard
     teachable:
       - Assurance
-      - BatonPass
-      - Bulldoze
-      - DrainPunch
-      - Encore
-      - FoulPlay
-      - LowKick
-      - LowSweep
       - MegaKick
       - MegaPunch
-      - NastyPlot
       - Retaliate
       - Revenge
       - Round
       - Screech
-      - SludgeWave
       - VenomDrench
-      - Venoshock
       - WorkUp
   Toxicroak:
     level:
       1: [PoisonSting, MudSlap, Taunt, Astonish]
       12: [Flatter]
       15: [Pursuit]
-      16: [Revenge]
+      16: [Revenge, LowKick]
       17: [FeintAttack]
       20: [Venoshock]
       24: [SuckerPunch]
@@ -829,25 +846,16 @@ Croagunk:
         ThroatChop,
         CorrosiveGas,
         Assurance,
-        BatonPass,
-        Bulldoze,
         CrossPoison,
-        DrainPunch,
-        Encore,
-        FoulPlay,
-        LowKick,
-        LowSweep,
         MegaKick,
         MegaPunch,
-        NastyPlot,
         Retaliate,
         Revenge,
         Round,
         Screech,
-        SludgeWave,
         VenomDrench,
-        Venoshock,
         WorkUp,
+        CloseCombat,
       ]
 Carnivine:
   Carnivine:
@@ -962,6 +970,22 @@ Finneon:
     - WaterPulse
     - Waterfall
     - Confide
+    - TeraBlast
+    - ChillingWater
+    - AlluringVoice
+    - TakeDown
+    - HydroPump
+    - Psybeam
+    - Agility
+    - ConfuseRay
+    - Thief
+    - Charm
+    - Whirlpool
+    - HelpingHand
+    - Tailwind
+    - Acrobatics
+    - DazzlingGleam
+    - FlipTurn
   Finneon:
     level:
       1: [Pound]
@@ -994,7 +1018,7 @@ Finneon:
       48: [UTurn]
       53: [Bounce]
       59: [Tailwind, SilverWind]
-    teachable: [GigaImpact, HyperBeam, Scald]
+    teachable: [GigaImpact, HyperBeam, Scald, Encore, AirSlash]
 Snover:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -1039,6 +1063,20 @@ Snover:
     - WaterPulse
     - Confide
     - GrassyGlide
+    - TeraBlast
+    - IceSpinner
+    - Snowscape
+    - Trailblaze
+    - ChillingWater
+    - BodySlam
+    - TakeDown
+    - DoubleEdge
+    - Curse
+    - HelpingHand
+    - WeatherBall
+    - IcicleSpear
+    - MagicalLeaf
+    - LeafStorm
   Snover:
     level:
       1: [Leer, PowderSnow]
@@ -1053,12 +1091,10 @@ Snover:
       41: [WoodHammer]
       45: [Blizzard]
       50: [SheerCold]
-    egg: [DoubleEdge, Growth, LeechSeed, MagicalLeaf, Mist, SeedBomb, Stomp, SkullBash]
+    egg: [DoubleEdge, Growth, LeechSeed, MagicalLeaf, Mist, SeedBomb, Stomp, SkullBash, WeatherBall]
     teachable:
-      - MagicalLeaf
       - MegaPunch
       - Round
-      - WeatherBall
   Abomasnow:
     level:
       1: [IcePunch, Leer, Mist, PowderSnow, Leafage, AuroraVeil]
@@ -1088,10 +1124,10 @@ Snover:
       - StompingTantrum
       - Bulldoze
       - EarthPower
-      - IcicleSpear
-      - LeafStorm
-      - MagicalLeaf
       - MegaKick
       - MegaPunch
       - Round
-      - WeatherBall
+      - HardPress
+      - LowKick
+      - ScaryFace
+      - BodyPress

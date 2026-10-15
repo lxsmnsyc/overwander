@@ -32,7 +32,7 @@ export default function setupStompingTantrum(battle: Battle): void {
 
   battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
     if (
-      event.move === Moves.StompingTantrum &&
+      (event.move === Moves.StompingTantrum || event.move === Moves.TemperFlare) &&
       event.power != null &&
       previous.get(event.source) === true
     ) {

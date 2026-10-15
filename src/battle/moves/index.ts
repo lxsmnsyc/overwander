@@ -80,6 +80,7 @@ import setupStompingTantrum from './stomping-tantrum';
 import setupSpectralThief from './spectral-thief';
 import setupHazardMoves from './court-change';
 import setupGalarMoves from './galar';
+import setupPaldeaMoves from './paldea';
 import setupMindBlown from './mind-blown';
 import setupPiercingMoves from './piercing-moves';
 import setupInstruct from './instruct';
@@ -229,6 +230,7 @@ export default function setupMoves(battle: Battle): void {
   setupSpectralThief(battle);
   setupHazardMoves(battle);
   setupGalarMoves(battle);
+  setupPaldeaMoves(battle);
   setupMindBlown(battle);
   setupPiercingMoves(battle);
   setupInstruct(battle);

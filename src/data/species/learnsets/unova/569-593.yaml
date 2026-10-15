@@ -72,6 +72,7 @@ Zorua:
     - SkitterSmack
     - BurningJealousy
     - LashOut
+    - TeraBlast
   Zorua:
     level:
       1: [Scratch, Leer]
@@ -194,6 +195,7 @@ Zorua:
         Trick,
         UTurn,
         WillOWisp,
+        Snowscape,
       ]
     egg: [Detect, Extrasensory, Memento]
   ZoroarkHisui:
@@ -271,6 +273,7 @@ Zorua:
         Trick,
         UTurn,
         WillOWisp,
+        Snowscape,
       ]
 Minccino:
   # TM, HM and tutor moves shared by the whole family
@@ -331,6 +334,11 @@ Minccino:
     - Confide
     - DazzlingGleam
     - TripleAxel
+    - TeraBlast
+    - Trailblaze
+    - ChillingWater
+    - AlluringVoice
+    - PlayRough
   Minccino:
     level:
       1: [Pound, BabyDollEyes]
@@ -360,8 +368,7 @@ Minccino:
       - MudSlap
       - SleepTalk
       - TailWhip
-    teachable:
-      - PlayRough
+      - TidyUp
   Cinccino:
     # A stone evolution learns nothing further on its own, beyond
     # the tail it comes into
@@ -394,7 +401,7 @@ Minccino:
       - RockBlast
       - Thunder
       - LaserFocus
-      - PlayRough
+      - IceSpinner
 Gothita:
   # TM, HM and tutor moves shared by the whole family
 
@@ -471,6 +478,9 @@ Gothita:
     - ZenHeadbutt
     - Confide
     - ExpandingForce
+    - TeraBlast
+    - PsychicNoise
+    - PsychicTerrain
   Gothita:
     level:
       1: [Pound, Confusion]
@@ -619,6 +629,8 @@ Solosis:
     - Infestation
     - ExpandingForce
     - SteelRoller
+    - TeraBlast
+    - PsychicTerrain
   Solosis:
     level:
       1: [Confusion, Protect, Psywave]
@@ -647,8 +659,6 @@ Solosis:
       - NightShade
       - SecretPower
       - Trick
-    teachable:
-      - PsychicTerrain
   Duosion:
     level:
       1: [Confusion, Recover, Protect, Endeavor, Psywave, Rollout, Snatch]
@@ -664,8 +674,6 @@ Solosis:
       50: [HealBlock]
       52: [FutureSight]
       58: [WonderRoom]
-    teachable:
-      - PsychicTerrain
   Reuniclus:
     level:
       1: [Confusion, Recover, Protect, Endeavor, HammerArm, Psywave, Rollout, Snatch]
@@ -696,9 +704,11 @@ Solosis:
       - GrassKnot
       - IcePunch
       - MegaPunch
-      - PsychicTerrain
       - Superpower
       - ThunderPunch
+      - PsychicNoise
+      - FocusPunch
+      - KnockOff
 Ducklett:
   # TM, HM and tutor moves shared by the whole family
   family-teachable:
@@ -746,6 +756,10 @@ Ducklett:
     - Whirlpool
     - Confide
     - Liquidation
+    - TeraBlast
+    - Trailblaze
+    - ChillingWater
+    - DisarmingVoice
   Ducklett:
     level:
       1: [WaterGun]
@@ -787,7 +801,8 @@ Ducklett:
       37: [Tailwind]
       44: [BraveBird]
       52: [Hurricane]
-    teachable: [GigaImpact, HyperBeam]
+    teachable:
+      [GigaImpact, HyperBeam, AlluringVoice, HydroPump, KnockOff, WeatherBall, Acrobatics, FlipTurn]
 Vanillite:
   # TM, HM and tutor moves shared by the whole family
 
@@ -944,6 +959,8 @@ Deerling:
     - WorrySeed
     - ZenHeadbutt
     - Confide
+    - TeraBlast
+    - Trailblaze
   Deerling:
     level:
       1: [Tackle, Camouflage]
@@ -959,6 +976,16 @@ Deerling:
       37: [DoubleEdge]
       41: [NaturePower]
       42: [SolarBeam]
+    teachable:
+      - GrassyGlide
+    egg:
+      - Headbutt
+      - Agility
+      - SleepTalk
+      - BatonPass
+      - Synthesis
+      - FakeTears
+      - WorrySeed
   DeerlingSummer:
     level:
       1: [Tackle, Camouflage]
@@ -1006,7 +1033,7 @@ Deerling:
       42: [SolarBeam]
   Sawsbuck:
     level:
-      1: [HornLeech, Megahorn, Tackle, Camouflage, Growl]
+      1: [HornLeech, Megahorn, Tackle, Camouflage, Growl, SandAttack]
       10: [DoubleKick]
       13: [LeechSeed]
       16: [FeintAttack, BulletSeed]
@@ -1016,7 +1043,23 @@ Deerling:
       36: [Charm]
       44: [DoubleEdge, NaturePower]
       52: [SolarBeam]
-    teachable: [Curse, Cut, GigaImpact, HyperBeam, RockSmash, SwordsDance, StompingTantrum]
+    teachable:
+      [
+        Curse,
+        Cut,
+        GigaImpact,
+        HyperBeam,
+        RockSmash,
+        SwordsDance,
+        StompingTantrum,
+        PetalBlizzard,
+        GrassyTerrain,
+        PlayRough,
+        HighHorsepower,
+        ThroatChop,
+        SmartStrike,
+        GrassyGlide,
+      ]
   SawsbuckSummer:
     level:
       1: [HornLeech, Megahorn, Tackle, Camouflage, Growl]
@@ -1262,7 +1305,35 @@ Karrablast:
       - Screech
       - Taunt
 Foongus:
-  family-teachable: [AfterYou, Attract]
+  family-teachable:
+    [
+      AfterYou,
+      Attract,
+      TeraBlast,
+      BodySlam,
+      SolarBeam,
+      Toxic,
+      Rest,
+      Substitute,
+      Protect,
+      SludgeBomb,
+      GigaDrain,
+      Endure,
+      SleepTalk,
+      RainDance,
+      SunnyDay,
+      Facade,
+      BulletSeed,
+      MagicalLeaf,
+      SeedBomb,
+      EnergyBall,
+      LeafStorm,
+      GrassKnot,
+      Venoshock,
+      FoulPlay,
+      GrassyTerrain,
+      PollenPuff,
+    ]
   Foongus:
     level:
       1: [Absorb, Astonish]
@@ -1279,38 +1350,19 @@ Foongus:
       44: [SolarBeam]
       48: [Spore]
     teachable:
-      - BodySlam
       - DoubleTeam
-      - Endure
-      - EnergyBall
-      - Facade
       - Flash
-      - FoulPlay
       - Frustration
       - GastroAcid
-      - GigaDrain
-      - GrassKnot
       - HiddenPower
       - Payback
-      - Protect
-      - RainDance
-      - Rest
       - Return
       - Round
-      - SeedBomb
-      - SleepTalk
-      - SludgeBomb
       - Snore
-      - SolarBeam
-      - Substitute
-      - SunnyDay
       - Swagger
       - Synthesis
-      - Toxic
-      - Venoshock
       - WorrySeed
       - Confide
-      - PollenPuff
     egg:
       - BodySlam
       - DefenseCurl
@@ -1336,42 +1388,23 @@ Foongus:
       54: [Spore]
     teachable:
       - DoubleTeam
-      - EnergyBall
-      - Facade
       - Flash
-      - FoulPlay
       - Frustration
       - GastroAcid
-      - GigaDrain
       - GigaImpact
-      - GrassKnot
       - HiddenPower
       - HyperBeam
       - Payback
-      - Protect
-      - RainDance
-      - Rest
       - Return
       - Round
-      - SeedBomb
-      - SleepTalk
-      - SludgeBomb
       - Snore
-      - SolarBeam
-      - Substitute
-      - SunnyDay
       - Swagger
       - Synthesis
-      - Toxic
-      - Venoshock
       - WorrySeed
       - Confide
       - StompingTantrum
-      - BodySlam
-      - Endure
-      - GrassyTerrain
       - Hex
-      - PollenPuff
+      - ScaryFace
 Frillish:
   family-teachable:
     - Attract

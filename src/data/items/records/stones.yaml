@@ -116,6 +116,12 @@ CrackedPot:
   flags: [Usable, Marketable]
   buy: 3000
   sell: 1500
+ChippedPot:
+  type: Evolution
+  icon: evolutions/chipped-pot
+  flags: [Usable, Marketable]
+  buy: 3000
+  sell: 1500
 
 # The Galarica twigs a Galarian Slowpoke evolves on, used rather than
 # held: the cuff for Slowbro and the wreath for Slowking.
@@ -168,6 +174,32 @@ AuspiciousArmor:
 MaliciousArmor:
   type: Evolution
   icon: evolutions/malicious-armor
+  flags: [Usable, Marketable]
+  buy: 3000
+  sell: 1500
+# Paldea's later lines: the apple a Dipplin grows from, the alloy that
+# coats an Archaludon, and the cup a Poltchageist settles into.
+SyrupyApple:
+  type: Evolution
+  icon: evolutions/syrupy-apple
+  flags: [Usable, Marketable]
+  buy: 3000
+  sell: 1500
+MetalAlloy:
+  type: Evolution
+  icon: evolutions/metal-alloy
+  flags: [Usable, Marketable]
+  buy: 3000
+  sell: 1500
+UnremarkableTeacup:
+  type: Evolution
+  icon: evolutions/unremarkable-teacup
+  flags: [Usable, Marketable]
+  buy: 3000
+  sell: 1500
+MasterpieceTeacup:
+  type: Evolution
+  icon: evolutions/masterpiece-teacup
   flags: [Usable, Marketable]
   buy: 3000
   sell: 1500

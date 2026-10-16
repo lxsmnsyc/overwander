@@ -42,6 +42,25 @@ Tauros:
     biomes: [Savanna, Grassland, Steppe]
     active: [Morning, Day]
     held: { common: OranBerry, uncommon: SilkScarf, rare: MuscleBand }
+  TaurosPaldeaCombat:
+    types: [Fighting]
+    egg-groups: [Field]
+    biomes: [Grassland, Steppe]
+    active: [Morning, Day]
+    base-form: false
+  TaurosPaldeaBlaze:
+    types: [Fighting, Fire]
+    egg-groups: [Field]
+    biomes: [Savanna, Volcano]
+    active: [Day, Evening]
+    base-form: false
+  TaurosPaldeaAqua:
+    types: [Fighting, Water]
+    egg-groups: [Field]
+    habitat: Amphibious
+    biomes: [Swamp, Grassland]
+    active: [Morning, Day]
+    base-form: false
 Magikarp:
   Magikarp:
     types: [Water]

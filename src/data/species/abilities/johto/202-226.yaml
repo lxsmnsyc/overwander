@@ -12,6 +12,9 @@ Girafarig:
   Girafarig:
     abilities: [InnerFocus, EarlyBird]
     hidden: [SapSipper]
+  Farigiraf:
+    abilities: [CudChew, ArmorTail]
+    hidden: [SapSipper]
 Pineco:
   Pineco:
     abilities: [Sturdy]
@@ -26,6 +29,14 @@ Dunsparce:
   Dunsparce:
     abilities: [SereneGrace, RunAway]
     hidden: [Rattled]
+  Dudunsparce:
+    abilities: [SereneGrace, RunAway]
+    # Simple is this registry's rather than the mainline's, filling it to four
+    hidden: [Rattled, Simple]
+  DudunsparceThree:
+    abilities: [SereneGrace, RunAway]
+    # Simple is this registry's rather than the mainline's, filling it to four
+    hidden: [Rattled, Simple]
 Gligar:
   Gligar:
     abilities: [HyperCutter, SandVeil]
@@ -94,6 +105,10 @@ Teddiursa:
   Ursaluna:
     abilities: [Guts, Bulletproof]
     hidden: [Unnerve]
+  UrsalunaBloodmoon:
+    abilities: [MindsEye]
+    # Keen Eye, Insomnia and Sniper are this registry's rather than the mainline's, filling it to four
+    hidden: [KeenEye, Insomnia, Sniper]
 Slugma:
   Slugma:
     abilities: [MagmaArmor, FlameBody]

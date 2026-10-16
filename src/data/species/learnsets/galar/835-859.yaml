@@ -189,6 +189,101 @@ Applin:
         GrassyTerrain,
         StompingTantrum,
       ]
+  Dipplin:
+    level:
+      1: [Withdraw, SweetScent, Recycle, Astonish, DoubleHit]
+      4: [DragonTail]
+      8: [Growth]
+      12: [DragonBreath]
+      16: [Protect]
+      20: [BulletSeed]
+      28: [SyrupBomb]
+      32: [DragonPulse]
+      36: [Recover]
+      40: [EnergyBall]
+      44: [Substitute]
+    teachable:
+      - BodySlam
+      - BugBite
+      - BulletSeed
+      - DragonCheer
+      - DragonPulse
+      - DragonTail
+      - Endure
+      - EnergyBall
+      - Facade
+      - GigaDrain
+      - GigaImpact
+      - GrassKnot
+      - GrassyTerrain
+      - GyroBall
+      - HyperBeam
+      - LeafStorm
+      - Outrage
+      - PollenPuff
+      - Protect
+      - Reflect
+      - Rest
+      - SeedBomb
+      - SleepTalk
+      - SolarBeam
+      - Substitute
+      - SunnyDay
+      - TakeDown
+  Hydrapple:
+    level:
+      1: [Withdraw, SweetScent, Recycle, Astonish, FickleBeam]
+      4: [DragonTail]
+      8: [Growth]
+      12: [DragonBreath]
+      16: [Protect]
+      20: [BulletSeed]
+      28: [SyrupBomb]
+      32: [DragonPulse]
+      36: [Recover]
+      40: [EnergyBall]
+      44: [Substitute]
+      54: [PowerWhip]
+    teachable:
+      - BodyPress
+      - BodySlam
+      - BreakingSwipe
+      - BugBite
+      - BulletSeed
+      - Curse
+      - DoubleEdge
+      - DragonCheer
+      - DragonPulse
+      - DragonTail
+      - EarthPower
+      - Earthquake
+      - Endure
+      - EnergyBall
+      - Facade
+      - GigaDrain
+      - GigaImpact
+      - GrassKnot
+      - GrassyTerrain
+      - GyroBall
+      - HeavySlam
+      - HydroPump
+      - HyperBeam
+      - LeafStorm
+      - MagicalLeaf
+      - NastyPlot
+      - Outrage
+      - PollenPuff
+      - Protect
+      - RainDance
+      - Reflect
+      - Rest
+      - SeedBomb
+      - SleepTalk
+      - SolarBeam
+      - Substitute
+      - SunnyDay
+      - TakeDown
+      - Uproar
 Silicobra:
   # TM, TR and tutor moves shared by the whole family
   family-teachable:
@@ -785,7 +880,35 @@ Sinistea:
       60: [ShellSmash]
     egg:
       - AllySwitch
+  SinisteaAntique:
+    level:
+      1: [Withdraw, Astonish]
+      6: [AromaticMist]
+      12: [MegaDrain]
+      18: [Protect]
+      24: [SuckerPunch]
+      30: [Aromatherapy, SweetScent]
+      36: [GigaDrain]
+      42: [NastyPlot]
+      48: [ShadowBall]
+      54: [Memento]
+      60: [ShellSmash]
+    egg:
+      - AllySwitch
   Polteageist:
+    level:
+      1: [MegaDrain, Withdraw, Astonish, AromaticMist, StrengthSap, Teatime]
+      18: [Protect]
+      24: [SuckerPunch]
+      30: [Aromatherapy, SweetScent]
+      36: [GigaDrain]
+      42: [NastyPlot]
+      48: [ShadowBall]
+      54: [Memento]
+      60: [ShellSmash]
+      66: [Curse]
+    teachable: [GigaImpact, HyperBeam, LightScreen, Reflect, SelfDestruct, PainSplit]
+  PolteageistAntique:
     level:
       1: [MegaDrain, Withdraw, Astonish, AromaticMist, StrengthSap, Teatime]
       18: [Protect]

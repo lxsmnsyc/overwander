@@ -111,12 +111,19 @@ export function isOneInAHundred(traitValue: number): boolean {
 }
 
 /** The rare shapes a wild pokemon is met in by the same roll */
-const ONE_IN_A_HUNDRED = new Map<Species, Species>([[Species.Maushold, Species.MausholdThree]]);
+const ONE_IN_A_HUNDRED = new Map<Species, Species>([
+  [Species.Maushold, Species.MausholdThree],
+  [Species.Dudunsparce, Species.DudunsparceThree],
+  [Species.Sinistea, Species.SinisteaAntique],
+  [Species.Polteageist, Species.PolteageistAntique],
+  [Species.Poltchageist, Species.PoltchageistArtisan],
+  [Species.Sinistcha, Species.SinistchaMasterpiece],
+]);
 
 /**
  * The shape a wild one is met in: a Maushold is the family of three
  * one time in a hundred, the same catches whose Tandemaus would grow
- * into one
+ * into one, and a Sinistea is the true antique as often
  */
 export function getRareShape(species: Species, traitValue: number): Species {
   const rare = ONE_IN_A_HUNDRED.get(species);

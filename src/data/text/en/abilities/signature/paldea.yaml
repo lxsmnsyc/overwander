@@ -96,3 +96,12 @@ BackSeatOrders:
 GlaiveGuard:
   name: Glaive Guard
   description: After a move that leaves it exposed (Glaive Rush, Outrage, a recharge), its Defense and Special Defense are +2 until it next acts.
+BogDown:
+  name: Bog Down
+  description: An enemy that lands a Ground move on it cannot switch out for 6 seconds.
+Raging:
+  name: Raging
+  description: While its Attack is raised above +0, its moves wind up 20% faster.
+TeaService:
+  name: Tea Service
+  description: Its healing moves aimed at a teammate wind up 40% faster.

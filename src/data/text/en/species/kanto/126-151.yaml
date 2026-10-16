@@ -6,6 +6,9 @@ Pinsir:
   Pinsir: { name: Pinsir, category: Stag Beetle Pokemon }
 Tauros:
   Tauros: { name: Tauros, category: Wild Bull Pokemon }
+  TaurosPaldeaCombat: { name: Combat Breed Tauros, category: Wild Bull Pokemon }
+  TaurosPaldeaBlaze: { name: Blaze Breed Tauros, category: Wild Bull Pokemon }
+  TaurosPaldeaAqua: { name: Aqua Breed Tauros, category: Wild Bull Pokemon }
 Magikarp:
   Magikarp: { name: Magikarp, category: Fish Pokemon }
   Gyarados: { name: Gyarados, category: Atrocious Pokemon }

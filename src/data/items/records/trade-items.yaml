@@ -187,3 +187,12 @@ RibbonSweet:
   flags: [Holdable, Marketable]
   buy: 3000
   sell: 1500
+
+# The crest of a Bisharp's leader: holding one, a Bisharp grows into a
+# Kingambit.
+LeadersCrest:
+  type: Held
+  icon: evolutions/leaders-crest
+  flags: [Holdable, Marketable]
+  buy: 3000
+  sell: 1500

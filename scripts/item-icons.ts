@@ -330,6 +330,12 @@ interface Tint {
    * A pixel the source left empty stays empty
    */
   paint?: { rows: string[]; colours: Record<string, string> };
+  /**
+   * Every colour the swaps do not name, worked out from the colour
+   * itself: for a picture shaded in too many tones to list, such as a
+   * whole apple turned another hue
+   */
+  recolour?: (colour: string) => string;
   /** A colour worked out per pixel after the swap, for a gradient no swap can draw */
   shade?: (colour: string, x: number, y: number, width: number, height: number) => string;
 }
@@ -1000,11 +1006,13 @@ function tinted(tint: Tint, sheets: Map<string, Sheet>): Picture {
     }
     const was = hexOf(image, at);
 
-    if (!Object.hasOwn(tint.swaps, was)) {
+    const swapped = Object.hasOwn(tint.swaps, was) ? tint.swaps[was] : tint.recolour?.(was);
+
+    if (swapped == null) {
       missed.add(was);
       continue;
     }
-    const packedColour = Number.parseInt(tint.swaps[was].slice(1), 16);
+    const packedColour = Number.parseInt(swapped.slice(1), 16);
 
     image.rgba[at] = (packedColour >> 16) & 0xff;
     image.rgba[at + 1] = (packedColour >> 8) & 0xff;
@@ -1090,6 +1098,11 @@ const SHRUNK: Shrunk[] = [
   // art keeps 28 pixels on its long side to stay legible, a plain shape 24
   { from: 'auspicious-armor', to: 'evolutions/auspicious-armor', fit: 28, plain: true },
   { from: 'malicious-armor', to: 'evolutions/malicious-armor', fit: 28, plain: true },
+  { from: 'syrupy-apple', to: 'evolutions/syrupy-apple', fit: 24, plain: true },
+  { from: 'metal-alloy', to: 'evolutions/metal-alloy', fit: 24, plain: true },
+  { from: 'unremarkable-teacup', to: 'evolutions/unremarkable-teacup', fit: 28, plain: true },
+  { from: 'masterpiece-teacup', to: 'evolutions/masterpiece-teacup', fit: 28, plain: true },
+  { from: 'leaders-crest', to: 'evolutions/leaders-crest', fit: 28, plain: true },
 ];
 
 function lightnessOf(colour: number[]): number {

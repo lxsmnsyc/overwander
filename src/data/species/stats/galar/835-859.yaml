@@ -30,6 +30,18 @@ Applin:
     height: 0.4
     weight: 13
     gender: [1, 1]
+  Dipplin:
+    stats: { HP: 80, Attack: 80, Defense: 110, SpecialAttack: 95, SpecialDefense: 80, Speed: 40 }
+    catch-rate: 45
+    height: 0.4
+    weight: 9.7
+    gender: [4, 4]
+  Hydrapple:
+    stats: { HP: 106, Attack: 80, Defense: 110, SpecialAttack: 120, SpecialDefense: 80, Speed: 44 }
+    catch-rate: 10
+    height: 1.8
+    weight: 93
+    gender: [4, 4]
 Silicobra:
   Silicobra:
     stats: { HP: 52, Attack: 57, Defense: 75, SpecialAttack: 35, SpecialDefense: 50, Speed: 46 }
@@ -129,7 +141,19 @@ Sinistea:
     height: 0.1
     weight: 0.2
     gender: genderless
+  SinisteaAntique:
+    stats: { HP: 40, Attack: 45, Defense: 45, SpecialAttack: 74, SpecialDefense: 54, Speed: 50 }
+    catch-rate: 120
+    height: 0.1
+    weight: 0.2
+    gender: genderless
   Polteageist:
+    stats: { HP: 60, Attack: 65, Defense: 65, SpecialAttack: 134, SpecialDefense: 114, Speed: 70 }
+    catch-rate: 60
+    height: 0.2
+    weight: 0.4
+    gender: genderless
+  PolteageistAntique:
     stats: { HP: 60, Attack: 65, Defense: 65, SpecialAttack: 134, SpecialDefense: 114, Speed: 70 }
     catch-rate: 60
     height: 0.2

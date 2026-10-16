@@ -1,0 +1,15 @@
+Poltchageist:
+  Poltchageist:
+    abilities: [Hospitality]
+    hidden: [Heatproof]
+  PoltchageistArtisan:
+    abilities: [Hospitality]
+    hidden: [Heatproof]
+  Sinistcha:
+    abilities: [Hospitality]
+    # Cursed Body and Levitate are this registry's rather than the mainline's, filling it to four
+    hidden: [Heatproof, CursedBody, Levitate]
+  SinistchaMasterpiece:
+    abilities: [Hospitality]
+    # Cursed Body and Levitate are this registry's rather than the mainline's, filling it to four
+    hidden: [Heatproof, CursedBody, Levitate]

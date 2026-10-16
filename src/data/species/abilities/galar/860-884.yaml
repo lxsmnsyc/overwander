@@ -133,3 +133,6 @@ Duraludon:
   Duraludon:
     abilities: [LightMetal, HeavyMetal]
     hidden: [Stalwart]
+  Archaludon:
+    abilities: [Stamina, Sturdy]
+    hidden: [Stalwart]

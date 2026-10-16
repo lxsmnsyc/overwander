@@ -205,6 +205,24 @@ Wooper:
       - MontaneForest
     active: any
     evolves-from: Wooper
+  WooperPaldea:
+    types: [Poison, Ground]
+    egg-groups: [Water1, Field]
+    habitat: Amphibious
+    biomes: [Swamp, Bog]
+    active: any
+    base-form: false
+    evolves-into:
+      - species: Clodsire
+        method: [Level]
+        level: 20
+  Clodsire:
+    types: [Poison, Ground]
+    egg-groups: [Water1, Field]
+    habitat: Amphibious
+    biomes: [Swamp, Bog]
+    active: any
+    evolves-from: WooperPaldea
 Murkrow:
   Murkrow:
     types: [Dark, Flying]

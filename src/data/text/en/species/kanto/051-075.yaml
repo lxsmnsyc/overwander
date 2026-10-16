@@ -11,6 +11,7 @@ Psyduck:
 Mankey:
   Mankey: { name: Mankey, category: Pig Monkey Pokemon }
   Primeape: { name: Primeape, category: Pig Monkey Pokemon }
+  Annihilape: { name: Annihilape, category: Rage Monkey Pokemon }
 Growlithe:
   Growlithe: { name: Growlithe, category: Puppy Pokemon }
   Arcanine: { name: Arcanine, category: Legendary Pokemon }

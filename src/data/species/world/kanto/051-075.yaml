@@ -87,8 +87,16 @@ Mankey:
     biomes: [Mountain, MontaneForest, Badlands]
     active: [Morning, Day]
     evolves-from: Mankey
-    awaiting: evolution
+    evolves-into:
+      - species: Annihilape
+        method: [Special]
     held: { common: OranBerry, uncommon: BlackBelt, rare: FocusBand }
+  Annihilape:
+    types: [Fighting, Ghost]
+    egg-groups: [Field]
+    biomes: [Mountain, MontaneForest, Badlands]
+    active: [Morning, Day]
+    evolves-from: Primeape
 Growlithe:
   Growlithe:
     types: [Fire]

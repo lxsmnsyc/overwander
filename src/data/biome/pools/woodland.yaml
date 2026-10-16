@@ -23,6 +23,7 @@ land:
       Poliwag: 224
       Rookidee: 174
       Tinkatink: 150
+      Applin: 144
       Grookey: 45
       Turtwig: 33
       Chespin: 23
@@ -33,7 +34,6 @@ land:
       Rattata: 152
       VoltorbHisui: 150
       PonytaGalar: 147
-      Applin: 144
       Sentret: 127
       Zigzagoon: 127
       Buneary: 127
@@ -66,6 +66,7 @@ land:
       Vigoroth: 78
       Dottler: 77
       Tinkatuff: 70
+      Dipplin: 70
       Corvisquire: 68
       Floette: 63
       Spewpa: 63
@@ -78,6 +79,8 @@ land:
       Poliwhirl: 39
       Quilladin: 16
       Grotle: 16
+      Flapple: 15
+      Appletun: 15
       Thwackey: 14
       Ivysaur: 9
       Bayleef: 9
@@ -105,8 +108,6 @@ land:
       Togekiss: 17
       Lickilicky: 17
       Aromatisse: 17
-      Flapple: 15
-      Appletun: 15
       Escavalier: 14
       Raichu: 14
       Scizor: 14
@@ -126,6 +127,7 @@ land:
       Corviknight: 25
       Orbeetle: 25
       Tinkaton: 25
+      Hydrapple: 25
       Butterfree: 15
       Beedrill: 15
       Beautifly: 15

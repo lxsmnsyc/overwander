@@ -44,6 +44,7 @@ land:
       Servine: 44
     scarce:
       Lokix: 50
+      Dudunsparce: 50
       Fearow: 45
       Rapidash: 45
       Dodrio: 45
@@ -60,6 +61,7 @@ land:
       Zebstrika: 28
       Braviary: 28
       Electivire: 28
+      Farigiraf: 25
       Arcanine: 23
       Quagsire: 23
       Sirfetchd: 20
@@ -134,6 +136,7 @@ land:
       Servine: 44
     scarce:
       Lokix: 50
+      Dudunsparce: 50
       Fearow: 42
       Arbok: 42
       Rapidash: 42
@@ -151,6 +154,7 @@ land:
       Zebstrika: 26
       Braviary: 26
       Electivire: 26
+      Farigiraf: 25
       Arcanine: 21
       Quagsire: 21
       Sirfetchd: 20
@@ -206,6 +210,7 @@ land:
       Electrode: 77
       Watchog: 63
       Scrafty: 55
+      Dudunsparce: 50
       Mudsdale: 47
       LycanrocDusk: 47
       Golurk: 47
@@ -214,6 +219,7 @@ land:
       Electivire: 47
       Quagsire: 39
       WormadamTrash: 31
+      Farigiraf: 25
     elusive:
       Castform: 91
       Seviper: 73
@@ -254,6 +260,7 @@ land:
       Electrode: 77
       Watchog: 63
       Scrafty: 55
+      Dudunsparce: 50
       Mudsdale: 47
       LycanrocMidnight: 47
       Golurk: 47
@@ -262,6 +269,7 @@ land:
       Electivire: 47
       Quagsire: 39
       WormadamTrash: 31
+      Farigiraf: 25
     elusive:
       Castform: 91
       Seviper: 73

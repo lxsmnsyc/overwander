@@ -1989,6 +1989,17 @@ export const HISUIAN_FORMS: Species[] = [
   Species.DecidueyeHisui,
 ];
 
+/**
+ * The Paldean forms, the same way. Bloodmoon Ursaluna is not one: the
+ * collection files it beside Ursaluna, under Hisui
+ */
+export const PALDEAN_FORMS: Species[] = [
+  Species.TaurosPaldeaCombat,
+  Species.TaurosPaldeaBlaze,
+  Species.TaurosPaldeaAqua,
+  Species.WooperPaldea,
+];
+
 /** A Cramorant, and what it comes back up with after a dive: the small catch, then the big one */
 export const CRAMORANT_FORMS: Species[] = [
   Species.Cramorant,

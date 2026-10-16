@@ -73,6 +73,8 @@ const STAND_INS = new Map<Species, Species>([
   // in its Low Power mode, so each is drawn as that shape
   [Species.Gimmighoul, Species.GimmighoulRoaming],
   [Species.Miraidon, Species.MiraidonLowPower],
+  // The collection draws one Mega Meowstic, so she wears his
+  [Species.MeowsticFemaleMega, Species.MeowsticMega],
   // The true antiques differ from the fakes only in a stamp the
   // collection does not draw, and the third segment is not drawn yet
   [Species.SinisteaAntique, Species.Sinistea],

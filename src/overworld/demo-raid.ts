@@ -8,10 +8,10 @@ import { MAX_LEVEL } from '../data/constants/levels';
 import { MAX_IV, Stats, packIVs } from '../data/constants/stats';
 import type { Items } from '../data/ids/items';
 import { Species, getBaseFormSpecies } from '../data/ids/species';
-import { MEGA_STONES } from '../data/items/mega-stones';
+import { MEGA_STONES, getStoneMegas } from '../data/items/mega-stones';
 import type Abilities from '../data/ids/abilities';
 import { getSpeciesSignature } from '../data/abilities';
-import { getRegisteredSpecies, isFullyEvolved, isWornForm } from '../data/species';
+import { getMegaBase, getRegisteredSpecies, isFullyEvolved, isWornForm } from '../data/species';
 import { deriveAbility, deriveGender, deriveMoves, deriveNature, deriveSize } from './encounter';
 import { isTotemSpecies } from '../data/overworld/totems';
 import { isAlphaSpecies } from '../data/overworld/alphas';
@@ -103,10 +103,12 @@ let megaStones: Map<Species, Items[]> | null = null;
 function getMegaStones(): Map<Species, Items[]> {
   if (megaStones == null) {
     megaStones = new Map();
-    for (const [item, stone] of MEGA_STONES) {
-      const base = getBaseFormSpecies(stone.mega);
+    for (const item of MEGA_STONES.keys()) {
+      for (const mega of getStoneMegas(item)) {
+        const base = getMegaBase(mega) ?? getBaseFormSpecies(mega);
 
-      megaStones.set(base, [...(megaStones.get(base) ?? []), item]);
+        megaStones.set(base, [...(megaStones.get(base) ?? []), item]);
+      }
     }
   }
   return megaStones;

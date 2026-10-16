@@ -57,7 +57,11 @@ export default function setupGravity(battle: Battle): void {
       const target = event.target.unit;
 
       // Whichever way it was staying up, the floor has it now
-      if (target.types.has(Types.Flying) || target.hasAbility(Abilities.Levitate)) {
+      if (
+        target.types.has(Types.Flying) ||
+        target.hasAbility(Abilities.Levitate) ||
+        target.hasAbility(Abilities.Eelevate)
+      ) {
         event.immune = false;
       }
     }

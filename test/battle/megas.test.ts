@@ -155,6 +155,62 @@ describe('Mega Evolution', () => {
 
     expect(ghost.species).toBe(Species.GengarMega);
   });
+
+  it('puts each form in its own Mega with one shared stone', () => {
+    const shapes: [Species, Items, Species][] = [
+      [Species.Tatsugiri, Items.Tatsugirinite, Species.TatsugiriMega],
+      [Species.TatsugiriStretchy, Items.Tatsugirinite, Species.TatsugiriStretchyMega],
+      [Species.TatsugiriDroopy, Items.Tatsugirinite, Species.TatsugiriDroopyMega],
+      [Species.MeowsticFemale, Items.Meowsticite, Species.MeowsticFemaleMega],
+      [Species.MagearnaOriginal, Items.Magearnite, Species.MagearnaOriginalMega],
+    ];
+
+    for (const [species, stone, mega] of shapes) {
+      const { battle, teamA } = createBattle();
+      const unit = createUnit(battle, teamA);
+      unit.setSpecies(species);
+      unit.addItem(stone);
+
+      unit.enter();
+
+      expect(unit.species).toBe(mega);
+    }
+  });
+
+  it('opens a Mega only for the form its stone names', () => {
+    const shapes: [Species, Items, Species][] = [
+      [Species.FloetteEternal, Items.Floettite, Species.FloetteMega],
+      [Species.Floette, Items.Floettite, Species.Floette],
+      [Species.Raichu, Items.RaichuniteX, Species.RaichuMegaX],
+      [Species.RaichuAlola, Items.RaichuniteX, Species.RaichuAlola],
+    ];
+
+    for (const [species, stone, shape] of shapes) {
+      const { battle, teamA } = createBattle();
+      const unit = createUnit(battle, teamA);
+      unit.setSpecies(species);
+      unit.addItem(stone);
+
+      unit.enter();
+
+      expect(unit.species).toBe(shape);
+    }
+  });
+
+  it('Mega Evolves a Zygarde once Power Construct makes it Complete', () => {
+    const { battle, teamA } = createBattle();
+    const order = createUnit(battle, teamA);
+    order.setSpecies(Species.Zygarde);
+    order.addItem(Items.Zygardite);
+
+    order.enter();
+    expect(order.species).toBe(Species.Zygarde);
+
+    order.setSpecies(Species.ZygardeComplete);
+
+    expect(order.species).toBe(Species.ZygardeMega);
+    expect(order.hasAbility(Abilities.Pressure)).toBe(true);
+  });
 });
 
 describe('a true shadow in a worn shape', () => {

@@ -234,7 +234,14 @@ describe('sprite metadata', () => {
    * as a list so a second one shows up as a failure rather than as
    * nothing
    */
-  const OVERDRAWN = new Set(['214 Attack', '643 Charge', '643 Shoot', '643 Swing', '727 Charge']);
+  const OVERDRAWN = new Set([
+    '214 Attack',
+    '643 Charge',
+    '643 Shoot',
+    '643 Swing',
+    '727 Charge',
+    '1071805 Charge',
+  ]);
 
   /**
    * A clip whose drawing starts above or left of the cell it is
@@ -262,6 +269,8 @@ describe('sprite metadata', () => {
     ['727 Charge', -3],
     ['774 Idle', -1],
     ['774 Walk', -1],
+    // Mega Zygarde's Charge, two columns out
+    ['1071805 Charge', -2],
     [' ', -1],
   ]);
 

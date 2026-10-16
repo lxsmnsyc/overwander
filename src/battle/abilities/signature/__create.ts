@@ -25,10 +25,12 @@ import { type Lifecycle, MergedLifecycle } from '../../lifecycle';
 import type Unit from '../../unit';
 import { isPrimalWeather, onUnitActs, slipsTraps, unitTarget } from '../../utils';
 import { createAbility, getAbilityHolders } from '../__create';
+import { BATTLE_STATS, STAT_STAGES, createStatExtremes } from '../__create/stats';
 import turns from '../../turn';
 import { PSEUDO_MOVES } from '../../../data/moves/pseudo';
 
 export { isPseudoMove } from '../../../data/moves/pseudo';
+export { BATTLE_STATS, STAT_STAGES, createStatExtremes } from '../__create/stats';
 
 /**
  * What the signature abilities that remember something share: state
@@ -315,23 +317,6 @@ export function createTimedMarks(battle: Battle): {
   };
 }
 
-/**
- * The five a fight is fought with. HP is left out: it is not a stat a
- * pokemon leans on, it is the room it has to be wrong in
- */
-export const BATTLE_STATS = [
-  Stats.Attack,
-  Stats.Defense,
-  Stats.SpecialAttack,
-  Stats.SpecialDefense,
-  Stats.Speed,
-];
-
-/**
- * Reads which of a unit's five stats stand highest and lowest. Asking
- * for a stat emits the same event the caller is answering, so the
- * measurement raises a flag the caller checks before it does anything
- */
 /** What a field tilted toward a type is worth, and against one */
 export const FIELD_RAISED_SCALE = 1.2;
 export const FIELD_LOWERED_SCALE = 0.8;
@@ -839,43 +824,6 @@ export function createStatAverage(): {
   };
 }
 
-export function createStatExtremes(): {
-  measuring(): boolean;
-  extremes(unit: Unit): { highest: Stats; lowest: Stats };
-} {
-  let measuring = false;
-
-  return {
-    measuring: () => measuring,
-    extremes(unit) {
-      measuring = true;
-
-      let highest = BATTLE_STATS[0];
-      let lowest = BATTLE_STATS[0];
-      let highestValue = Number.NEGATIVE_INFINITY;
-      let lowestValue = Number.POSITIVE_INFINITY;
-
-      for (const stat of BATTLE_STATS) {
-        const value = unit.checkStat(stat, 0);
-
-        if (value > highestValue) {
-          highest = stat;
-          highestValue = value;
-        }
-
-        if (value < lowestValue) {
-          lowest = stat;
-          lowestValue = value;
-        }
-      }
-
-      measuring = false;
-
-      return { highest, lowest };
-    },
-  };
-}
-
 /** What one poisoned enemy is worth to the court, and how many it counts */
 export const REGAL_COURT_STEP = 0.15;
 export const REGAL_COURT_MAX_ENEMIES = 3;
@@ -1114,15 +1062,6 @@ export function createDeceiverAbility(
     }),
   );
 }
-
-/** Which stage answers each of the five battle stats */
-export const STAT_STAGES: Partial<Record<Stats, Stages>> = {
-  [Stats.Attack]: Stages.Attack,
-  [Stats.Defense]: Stages.Defense,
-  [Stats.SpecialAttack]: Stages.SpecialAttack,
-  [Stats.SpecialDefense]: Stages.SpecialDefense,
-  [Stats.Speed]: Stages.Speed,
-};
 
 /** How many times one cheerleader's shout counts in a battle */
 export const CHEER_MAX_SHOUTS = 3;

@@ -7,6 +7,7 @@ land:
       Scatterbug: 812
       GeodudeAlola: 745
       Magnemite: 677
+      Smoliv: 150
       Snivy: 102
     uncommon:
       Wooloo: 296
@@ -26,6 +27,7 @@ land:
       Voltorb: 121
       BurmyTrash: 121
       FarfetchdGalar: 120
+      Nymble: 120
       Rufflet: 98
       Growlithe: 61
       Ponyta: 61
@@ -38,8 +40,10 @@ land:
       FloetteYellow: 179
       Spewpa: 179
       Flaaffy: 112
+      Dolliv: 70
       Servine: 44
     scarce:
+      Lokix: 50
       Fearow: 45
       Rapidash: 45
       Dodrio: 45
@@ -67,6 +71,8 @@ land:
       Ampharos: 32
       Stonjourner: 30
       Zangoose: 25
+      Arboliva: 25
+      Cyclizar: 25
       Bouffalant: 19
       Stoutland: 19
       FlorgesYellow: 16
@@ -90,6 +96,7 @@ land:
       Scatterbug: 812
       GeodudeAlola: 745
       Magnemite: 677
+      Smoliv: 150
       Snivy: 102
     uncommon:
       Wooloo: 296
@@ -104,6 +111,7 @@ land:
       Mudbray: 127
       Rockruff: 127
       FarfetchdGalar: 120
+      Nymble: 120
       Spearow: 116
       Ekans: 116
       Doduo: 116
@@ -122,8 +130,10 @@ land:
       FloetteYellow: 179
       Spewpa: 179
       Flaaffy: 112
+      Dolliv: 70
       Servine: 44
     scarce:
+      Lokix: 50
       Fearow: 42
       Arbok: 42
       Rapidash: 42
@@ -152,6 +162,8 @@ land:
       Ampharos: 32
       Stonjourner: 30
       Zangoose: 25
+      Arboliva: 25
+      Cyclizar: 25
       Bouffalant: 19
       Stoutland: 19
       FlorgesYellow: 16

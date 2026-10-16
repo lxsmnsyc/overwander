@@ -1,0 +1,35 @@
+Tinkatink:
+  Tinkatink: { name: Tinkatink, category: Metalsmith Pokemon }
+  Tinkatuff: { name: Tinkatuff, category: Hammer Pokemon }
+  Tinkaton: { name: Tinkaton, category: Hammer Pokemon }
+Wiglett:
+  Wiglett: { name: Wiglett, category: Garden Eel Pokemon }
+  Wugtrio: { name: Wugtrio, category: Garden Eel Pokemon }
+Finizen:
+  Finizen: { name: Finizen, category: Dolphin Pokemon }
+  Palafin: { name: Palafin, category: Dolphin Pokemon }
+  PalafinHero: { name: Palafin Hero, category: Dolphin Pokemon }
+Varoom:
+  Varoom: { name: Varoom, category: Single-Cyl Pokemon }
+  Revavroom: { name: Revavroom, category: Multi-Cyl Pokemon }
+Cyclizar:
+  Cyclizar: { name: Cyclizar, category: Mount Pokemon }
+Orthworm:
+  Orthworm: { name: Orthworm, category: Earthworm Pokemon }
+Glimmet:
+  Glimmet: { name: Glimmet, category: Ore Pokemon }
+  Glimmora: { name: Glimmora, category: Ore Pokemon }
+Greavard:
+  Greavard: { name: Greavard, category: Ghost Dog Pokemon }
+  Houndstone: { name: Houndstone, category: Ghost Dog Pokemon }
+Cetoddle:
+  Cetoddle: { name: Cetoddle, category: Terra Whale Pokemon }
+  Cetitan: { name: Cetitan, category: Terra Whale Pokemon }
+Veluza:
+  Veluza: { name: Veluza, category: Jettison Pokemon }
+Dondozo:
+  Dondozo: { name: Dondozo, category: Big Catfish Pokemon }
+Tatsugiri:
+  Tatsugiri: { name: Tatsugiri, category: Mimicry Pokemon }
+  TatsugiriDroopy: { name: Tatsugiri Droopy, category: Mimicry Pokemon }
+  TatsugiriStretchy: { name: Tatsugiri Stretchy, category: Mimicry Pokemon }

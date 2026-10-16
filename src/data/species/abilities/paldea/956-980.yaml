@@ -1,0 +1,94 @@
+Tinkatink:
+  Tinkatink:
+    abilities: [MoldBreaker, OwnTempo]
+    hidden: [Pickpocket]
+  Tinkatuff:
+    abilities: [MoldBreaker, OwnTempo]
+    hidden: [Pickpocket]
+  Tinkaton:
+    abilities: [MoldBreaker, OwnTempo]
+    # Sheer Force is this registry's rather than the mainline's, filling it to four
+    hidden: [Pickpocket, SheerForce]
+Wiglett:
+  Wiglett:
+    abilities: [Gooey, Rattled]
+    hidden: [SandVeil]
+  Wugtrio:
+    abilities: [Gooey, Rattled]
+    # Sand Rush is this registry's rather than the mainline's, filling it to four
+    hidden: [SandVeil, SandRush]
+Finizen:
+  Finizen:
+    abilities: [WaterVeil]
+  Palafin:
+    abilities: [ZeroToHero]
+    # Justified and Swift Swim are this registry's rather than the mainline's, filling it to four
+    hidden: [Justified, SwiftSwim]
+  PalafinHero:
+    abilities: [ZeroToHero]
+    # Justified and Swift Swim are this registry's rather than the mainline's, filling it to four
+    hidden: [Justified, SwiftSwim]
+Varoom:
+  Varoom:
+    abilities: [Overcoat]
+    hidden: [SlowStart]
+  Revavroom:
+    abilities: [Overcoat]
+    # Speed Boost is this registry's rather than the mainline's, filling it to four
+    hidden: [Filter, SpeedBoost]
+Cyclizar:
+  Cyclizar:
+    abilities: [ShedSkin]
+    # Stamina and Quick Feet are this registry's rather than the mainline's, filling it to four
+    hidden: [Regenerator, Stamina, QuickFeet]
+Orthworm:
+  Orthworm:
+    abilities: [EarthEater]
+    # Sturdy and Heavy Metal are this registry's rather than the mainline's, filling it to four
+    hidden: [SandVeil, Sturdy, HeavyMetal]
+Glimmet:
+  Glimmet:
+    abilities: [ToxicDebris]
+    hidden: [Corrosion]
+  Glimmora:
+    abilities: [ToxicDebris]
+    # Poison Point and Solid Rock are this registry's rather than the mainline's, filling it to four
+    hidden: [Corrosion, PoisonPoint, SolidRock]
+Greavard:
+  Greavard:
+    abilities: [Pickup]
+    hidden: [Fluffy]
+  Houndstone:
+    abilities: [SandRush]
+    # Cursed Body is this registry's rather than the mainline's, filling it to four
+    hidden: [Fluffy, CursedBody]
+Cetoddle:
+  Cetoddle:
+    abilities: [ThickFat, SnowCloak]
+    hidden: [SheerForce]
+  Cetitan:
+    abilities: [ThickFat, SlushRush]
+    hidden: [SheerForce]
+Veluza:
+  Veluza:
+    abilities: [MoldBreaker]
+    # Swift Swim and Telepathy are this registry's rather than the mainline's, filling it to four
+    hidden: [Sharpness, SwiftSwim, Telepathy]
+Dondozo:
+  Dondozo:
+    abilities: [Unaware, Oblivious]
+    # Thick Fat is this registry's rather than the mainline's, filling it to four
+    hidden: [WaterVeil, ThickFat]
+Tatsugiri:
+  Tatsugiri:
+    abilities: [Commander]
+    # Swift Swim and Rattled are this registry's rather than the mainline's, filling it to four
+    hidden: [StormDrain, SwiftSwim, Rattled]
+  TatsugiriDroopy:
+    abilities: [Commander]
+    # Swift Swim and Rattled are this registry's rather than the mainline's, filling it to four
+    hidden: [StormDrain, SwiftSwim, Rattled]
+  TatsugiriStretchy:
+    abilities: [Commander]
+    # Swift Swim and Rattled are this registry's rather than the mainline's, filling it to four
+    hidden: [StormDrain, SwiftSwim, Rattled]

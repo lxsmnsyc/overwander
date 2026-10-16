@@ -143,6 +143,7 @@ land:
       Dwebble: 129
       Darumaka: 129
       Baltoy: 129
+      Rellor: 120
       Numel: 117
       Sandshrew: 117
       Ekans: 117
@@ -249,6 +250,7 @@ land:
       Beldum: 97
       Larvitar: 97
       Gible: 97
+      Pawniard: 96
     uncommon:
       Nincada: 150
       Corphish: 150
@@ -269,7 +271,8 @@ land:
       BurmyTrash: 121
       Bronzor: 121
       Hippopotas: 121
-      Pawniard: 96
+      Rellor: 120
+      Glimmet: 120
       Dunsparce: 60
       Gligar: 31
     rare:
@@ -281,7 +284,9 @@ land:
       Metang: 35
       Pupitar: 35
       Gabite: 35
+      Bisharp: 26
     scarce:
+      Glimmora: 50
       Arbok: 43
       Ninjask: 43
       Houndoom: 43
@@ -294,7 +299,6 @@ land:
       DugtrioAlola: 26
       Salazzle: 26
       LycanrocDusk: 26
-      Bisharp: 26
       Golurk: 26
       Claydol: 26
       Bronzong: 26
@@ -347,6 +351,7 @@ land:
       JangmoO: 895
       Geodude: 814
       Duskull: 814
+      Pawniard: 91
       Deino: 81
       Beldum: 81
       Larvitar: 81
@@ -363,6 +368,7 @@ land:
       Yamask: 125
       Scraggy: 125
       Baltoy: 125
+      Glimmet: 120
       Golett: 114
       Ekans: 114
       Cubone: 114
@@ -372,7 +378,6 @@ land:
       BurmyTrash: 114
       Bronzor: 114
       Hippopotas: 114
-      Pawniard: 91
       Dunsparce: 57
       Misdreavus: 29
       Gligar: 29
@@ -386,7 +391,9 @@ land:
       Metang: 28
       Pupitar: 28
       Gabite: 28
+      Bisharp: 27
     scarce:
+      Glimmora: 50
       Marowak: 44
       Ninjask: 44
       Crawdaunt: 36
@@ -397,7 +404,6 @@ land:
       DugtrioAlola: 27
       Salazzle: 27
       LycanrocMidnight: 27
-      Bisharp: 27
       Golurk: 27
       Claydol: 27
       Bronzong: 27

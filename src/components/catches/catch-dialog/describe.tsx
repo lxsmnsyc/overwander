@@ -348,6 +348,13 @@ export function EvolutionCondition(props: {
         <Show when={has(EvolutionMethod.Special) ? featOfEvolution(props.evolution) : null}>
           {(feat) => <span>{describeFeat(feat(), props.progress)}</span>}
         </Show>
+        <Show when={has(EvolutionMethod.Walked) ? props.evolution.walked : null}>
+          {(walked) => (
+            <span>
+              walk {walked()} steps{tally(props.progress, walked())}
+            </span>
+          )}
+        </Show>
       </span>
     </Show>
   );
@@ -425,10 +432,18 @@ export function describeEvolutionMethod(
   if (feat != null) {
     steps.push(describeFeat(feat, progress));
   }
+  if ((method & EvolutionMethod.Walked) !== 0 && evolution.walked != null) {
+    steps.push(`walk ${evolution.walked} steps as your buddy${tally(progress, evolution.walked)}`);
+  }
   if (steps.length === 0) {
     return 'It evolves on its own.';
   }
   return `To evolve, ${steps.join(' and ')}.`;
+}
+
+/** How far along a goal is, the way a feat says it: " (412/1000)" */
+function tally(progress: number | undefined, goal: number): string {
+  return progress == null ? '' : ` (${Math.min(progress, goal)}/${goal})`;
 }
 
 /**

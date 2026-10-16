@@ -18,7 +18,7 @@ import turns from '../turn';
  * out rather than being taken off
  * https://bulbapedia.bulbagarden.net/wiki/Tailwind_(move)
  */
-const DURATION = turns(3);
+export const TAILWIND_DURATION = turns(3);
 
 const DOUBLED = 2;
 
@@ -39,7 +39,7 @@ export default function setupTailwind(battle: Battle): void {
 
   battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     if (event.move === Moves.Tailwind) {
-      remaining.set(event.source.team, DURATION);
+      remaining.set(event.source.team, TAILWIND_DURATION);
     }
   });
 

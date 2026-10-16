@@ -69,6 +69,7 @@ const REGIONS: { name: string; from: number; to: number }[] = [
   { name: 'alola', from: 722, to: 809 },
   { name: 'galar', from: 810, to: 898 },
   { name: 'hisui', from: 899, to: 905 },
+  { name: 'paldea', from: 906, to: 1025 },
 ];
 
 /** Where the ids are written down, read as text for the same reason. */

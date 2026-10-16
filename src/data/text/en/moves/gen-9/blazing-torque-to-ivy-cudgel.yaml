@@ -21,7 +21,7 @@ MatchaGotcha:
   description: Hits everything opposite, heals the user for 1/2 of what it deals, and burns 20% of the time. Thaws the user.
 SyrupBomb:
   name: Syrup Bomb
-  description: "Coats the target in syrup: it loses a stage of Speed each time it acts, 3 times."
+  description: 'Coats the target in syrup: it loses a stage of Speed each time it acts, 3 times.'
 IvyCudgel:
   name: Ivy Cudgel
   description: Lands a critical more often than most. An Ogerpon throws it as its mask's type.

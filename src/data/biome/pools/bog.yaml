@@ -19,6 +19,7 @@ land:
       Ducklett: 254
       Marill: 254
       Croagunk: 254
+      Toedscool: 120
       Yanma: 63
     rare:
       Lombre: 283
@@ -82,6 +83,7 @@ land:
       Marill: 232
       Drifloon: 232
       Croagunk: 232
+      Tadbulb: 120
       Yanma: 57
     rare:
       Palpitoad: 320
@@ -101,6 +103,7 @@ land:
       Drifblim: 52
       Toxicroak: 52
       Yanmega: 52
+      Bellibolt: 50
       Azumarill: 43
       Quagsire: 43
       Drednaw: 35
@@ -150,6 +153,7 @@ land:
       Marill: 232
       Drifloon: 232
       Croagunk: 232
+      Tadbulb: 120
       Yanma: 57
     rare:
       Palpitoad: 252
@@ -171,6 +175,7 @@ land:
       Drifblim: 52
       Toxicroak: 52
       Yanmega: 52
+      Bellibolt: 50
       Azumarill: 43
       Quagsire: 43
       Drednaw: 35

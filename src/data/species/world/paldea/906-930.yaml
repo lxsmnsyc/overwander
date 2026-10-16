@@ -1,0 +1,226 @@
+Sprigatito:
+  Sprigatito:
+    types: [Grass]
+    egg-groups: [Field, Grass]
+    biomes: [Grassland, Shrubland]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Floragato
+        method: [Level]
+        level: 16
+  Floragato:
+    types: [Grass]
+    egg-groups: [Field, Grass]
+    biomes: [Grassland, Shrubland]
+    active: [Morning, Day]
+    evolves-from: Sprigatito
+    evolves-into:
+      - species: Meowscarada
+        method: [Level]
+        level: 36
+  Meowscarada:
+    types: [Grass, Dark]
+    egg-groups: [Field, Grass]
+    biomes: [Grassland, Shrubland]
+    active: [Morning, Day]
+    evolves-from: Floragato
+Fuecoco:
+  Fuecoco:
+    types: [Fire]
+    egg-groups: [Field]
+    biomes: [Savanna, Volcano]
+    active: [Day, Evening]
+    evolves-into:
+      - species: Crocalor
+        method: [Level]
+        level: 16
+  Crocalor:
+    types: [Fire]
+    egg-groups: [Field]
+    biomes: [Savanna, Volcano]
+    active: [Day, Evening]
+    evolves-from: Fuecoco
+    evolves-into:
+      - species: Skeledirge
+        method: [Level]
+        level: 36
+  Skeledirge:
+    types: [Fire, Ghost]
+    egg-groups: [Field]
+    biomes: [Savanna, Volcano]
+    active: [Day, Evening]
+    evolves-from: Crocalor
+Quaxly:
+  Quaxly:
+    types: [Water]
+    egg-groups: [Water1, Flying]
+    habitat: Amphibious
+    biomes: [Swamp, Mangrove]
+    active: [Morning, Day, Evening]
+    evolves-into:
+      - species: Quaxwell
+        method: [Level]
+        level: 16
+  Quaxwell:
+    types: [Water]
+    egg-groups: [Water1, Flying]
+    habitat: Amphibious
+    biomes: [Swamp, Mangrove]
+    active: [Morning, Day, Evening]
+    evolves-from: Quaxly
+    evolves-into:
+      - species: Quaquaval
+        method: [Level]
+        level: 36
+  Quaquaval:
+    types: [Water, Fighting]
+    egg-groups: [Water1, Flying]
+    habitat: Amphibious
+    biomes: [Swamp, Mangrove]
+    active: [Morning, Day, Evening]
+    evolves-from: Quaxwell
+Lechonk:
+  Lechonk:
+    types: [Normal]
+    egg-groups: [Field]
+    biomes: [Grassland, Woodland]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Oinkologne
+        method: [Level]
+        level: 18
+  Oinkologne:
+    types: [Normal]
+    egg-groups: [Field]
+    biomes: [Grassland, Woodland]
+    active: [Morning, Day]
+    evolves-from: Lechonk
+Tarountula:
+  Tarountula:
+    types: [Bug]
+    egg-groups: [Bug]
+    biomes: [TemperateForest, Woodland]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Spidops
+        method: [Level]
+        level: 15
+  Spidops:
+    types: [Bug]
+    egg-groups: [Bug]
+    biomes: [TemperateForest, Woodland]
+    active: [Evening, Night]
+    evolves-from: Tarountula
+Nymble:
+  Nymble:
+    types: [Bug]
+    egg-groups: [Bug]
+    biomes: [Grassland, Steppe]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Lokix
+        method: [Level]
+        level: 24
+  Lokix:
+    types: [Bug, Dark]
+    egg-groups: [Bug]
+    biomes: [Grassland, Steppe]
+    active: [Morning, Day]
+    evolves-from: Nymble
+Pawmi:
+  Pawmi:
+    types: [Electric]
+    egg-groups: [Field]
+    biomes: [Grassland, Mountain]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Pawmo
+        method: [Level]
+        level: 18
+  Pawmo:
+    types: [Electric, Fighting]
+    egg-groups: [Field]
+    biomes: [Grassland, Mountain]
+    active: [Morning, Day]
+    evolves-from: Pawmi
+    evolves-into:
+      - species: Pawmot
+        method: [Walked]
+        walked: 1000
+  Pawmot:
+    types: [Electric, Fighting]
+    egg-groups: [Field]
+    biomes: [Grassland, Mountain]
+    active: [Morning, Day]
+    evolves-from: Pawmo
+Tandemaus:
+  Tandemaus:
+    types: [Normal]
+    egg-groups: [Field, Fairy]
+    biomes: [Woodland, Grassland]
+    active: any
+    evolves-into:
+      - species: Maushold
+        method: [Level]
+        level: 25
+        rare: false
+      - species: MausholdThree
+        method: [Level]
+        level: 25
+        rare: true
+  Maushold:
+    types: [Normal]
+    egg-groups: [Field, Fairy]
+    biomes: [Woodland, Grassland]
+    active: any
+    evolves-from: Tandemaus
+  MausholdThree:
+    types: [Normal]
+    egg-groups: [Field, Fairy]
+    active: any
+    # The family of three, one Tandemaus in a hundred. A wild one is met
+    # by the same roll, so it has no pool of its own
+    base-form: false
+    evolves-from: Tandemaus
+Fidough:
+  Fidough:
+    types: [Fairy]
+    egg-groups: [Field, Mineral]
+    biomes: [Grassland, Shrubland]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Dachsbun
+        method: [Level]
+        level: 26
+  Dachsbun:
+    types: [Fairy]
+    egg-groups: [Field, Mineral]
+    biomes: [Grassland, Shrubland]
+    active: [Morning, Day]
+    evolves-from: Fidough
+Smoliv:
+  Smoliv:
+    types: [Grass, Normal]
+    egg-groups: [Grass]
+    biomes: [Shrubland, Steppe]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Dolliv
+        method: [Level]
+        level: 25
+  Dolliv:
+    types: [Grass, Normal]
+    egg-groups: [Grass]
+    biomes: [Shrubland, Steppe]
+    active: [Morning, Day]
+    evolves-from: Smoliv
+    evolves-into:
+      - species: Arboliva
+        method: [Level]
+        level: 35
+  Arboliva:
+    types: [Grass, Normal]
+    egg-groups: [Grass]
+    biomes: [Shrubland, Steppe]
+    active: [Morning, Day]
+    evolves-from: Dolliv

@@ -7,6 +7,7 @@ import setupGen5Abilities from './gen-5';
 import setupGen6Abilities from './gen-6';
 import setupGen7Abilities from './gen-7';
 import setupGen8Abilities from './gen-8';
+import setupGen9Abilities from './gen-9';
 import setupSignatureAbilities from './signature';
 import setupSpecialAbilities from './special';
 
@@ -19,6 +20,7 @@ export default function setupAbilities(battle: Battle): void {
   setupGen6Abilities(battle);
   setupGen7Abilities(battle);
   setupGen8Abilities(battle);
+  setupGen9Abilities(battle);
   setupSpecialAbilities(battle);
   setupSignatureAbilities(battle);
 }

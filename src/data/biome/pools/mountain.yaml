@@ -9,6 +9,8 @@ land:
       Geodude: 619
       Aron: 619
       Axew: 155
+      Pawmi: 150
+      Nacli: 150
       Chimchar: 93
       Charmander: 62
       Cyndaquil: 62
@@ -40,6 +42,8 @@ land:
       Klang: 141
       Machoke: 88
       Graveler: 88
+      Pawmo: 70
+      Naclstack: 70
       Fraxure: 53
       Monferno: 35
       Charmeleon: 18
@@ -70,6 +74,8 @@ land:
       Falinks: 29
       Duraludon: 29
       Torkoal: 26
+      Pawmot: 25
+      Garganacl: 25
       Mawile: 17
       Carbink: 12
       Durant: 12
@@ -133,6 +139,8 @@ land:
       Geodude: 607
       Aron: 607
       Axew: 152
+      Pawmi: 150
+      Nacli: 150
       Bagon: 91
       Chimchar: 91
       Charmander: 61
@@ -154,6 +162,7 @@ land:
       GrowlitheHisui: 150
       SneaselHisui: 150
       Rufflet: 142
+      Varoom: 120
       Onix: 89
       Dunsparce: 89
       Magmar: 45
@@ -165,6 +174,8 @@ land:
       Klang: 139
       Machoke: 87
       Graveler: 87
+      Pawmo: 70
+      Naclstack: 70
       Fraxure: 53
       Monferno: 35
       Shelgon: 17
@@ -176,6 +187,7 @@ land:
       Dugtrio: 71
       Medicham: 71
       Golduck: 71
+      Revavroom: 50
       Mienshao: 42
       Braviary: 42
       Hariyama: 42
@@ -196,6 +208,8 @@ land:
       Falinks: 29
       Duraludon: 29
       Torkoal: 26
+      Pawmot: 25
+      Garganacl: 25
       Mawile: 17
       Carbink: 12
       Durant: 12
@@ -257,6 +271,7 @@ land:
       JangmoO: 903
       Geodude: 821
       Tynamo: 740
+      Nacli: 150
       Bagon: 122
       Larvitar: 82
       Gible: 82
@@ -274,6 +289,7 @@ land:
       MeowthGalar: 149
       Onix: 123
       Dunsparce: 123
+      Varoom: 120
       Magmar: 63
       Murkrow: 63
       Gligar: 63
@@ -283,6 +299,7 @@ land:
       Doublade: 229
       Eelektrik: 200
       Graveler: 142
+      Naclstack: 70
       Shelgon: 28
       Pupitar: 28
       Gabite: 28
@@ -295,6 +312,7 @@ land:
       Probopass: 53
       Honchkrow: 53
       Gliscor: 53
+      Revavroom: 50
       Ferrothorn: 44
       Steelix: 44
       Magcargo: 44
@@ -305,6 +323,7 @@ land:
     elusive:
       Falinks: 29
       Duraludon: 29
+      Garganacl: 25
       Carbink: 20
       TyphlosionHisui: 20
       Drampa: 16
@@ -359,6 +378,7 @@ land:
       Geodude: 720
       Gastly: 720
       Tynamo: 649
+      Nacli: 150
       Larvitar: 73
       Gible: 73
       Dreepy: 59
@@ -388,6 +408,7 @@ land:
       Eelektrik: 182
       Graveler: 130
       Haunter: 130
+      Naclstack: 70
       Pupitar: 26
       Gabite: 26
       Drakloak: 15
@@ -412,6 +433,7 @@ land:
     elusive:
       Falinks: 29
       Duraludon: 29
+      Garganacl: 25
       TyphlosionHisui: 20
       Carbink: 19
       Drampa: 16

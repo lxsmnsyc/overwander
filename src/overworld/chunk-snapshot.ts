@@ -17,6 +17,7 @@ import {
   SPECIES_DAY_WEIGHT_BOOST,
   TRUE_SHADOW_WEIGHT,
   getFeaturedFamilies,
+  getRareShape,
   getSeasonalCoat,
   getShoreForm,
   getSpeciesData,
@@ -622,11 +623,14 @@ export default class ChunkSnapshot {
         // Vivillon wears is the country it came out in
         const shore = getShoreForm(rolled, this.chunk.x);
         const winged = getWingPattern(shore, this.chunk.biome);
-        const species = getSeasonalCoat(winged, getSeason(this.timestamp));
+        const coat = getSeasonalCoat(winged, getSeason(this.timestamp));
 
         // The draws land in tuple order: individual value, then the
-        // trait value
-        const spawn: Spawn = [species, this.rng.int32(), this.rng.int32()];
+        // trait value. The trait is what makes a Maushold the family of
+        // three, so it is drawn before the shape is settled
+        const individual = this.rng.int32();
+        const trait = this.rng.int32();
+        const spawn: Spawn = [getRareShape(coat, trait), individual, trait];
 
         this.cells[cell] = spawn;
         spawns.push(spawn);

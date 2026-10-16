@@ -1,0 +1,36 @@
+Sprigatito:
+  Sprigatito: { name: Sprigatito, category: Grass Cat Pokemon }
+  Floragato: { name: Floragato, category: Grass Cat Pokemon }
+  Meowscarada: { name: Meowscarada, category: Magician Pokemon }
+Fuecoco:
+  Fuecoco: { name: Fuecoco, category: Fire Croc Pokemon }
+  Crocalor: { name: Crocalor, category: Fire Croc Pokemon }
+  Skeledirge: { name: Skeledirge, category: Singer Pokemon }
+Quaxly:
+  Quaxly: { name: Quaxly, category: Duckling Pokemon }
+  Quaxwell: { name: Quaxwell, category: Practicing Pokemon }
+  Quaquaval: { name: Quaquaval, category: Dancer Pokemon }
+Lechonk:
+  Lechonk: { name: Lechonk, category: Hog Pokemon }
+  Oinkologne: { name: Oinkologne, category: Hog Pokemon }
+Tarountula:
+  Tarountula: { name: Tarountula, category: String Ball Pokemon }
+  Spidops: { name: Spidops, category: Trap Pokemon }
+Nymble:
+  Nymble: { name: Nymble, category: Grasshopper Pokemon }
+  Lokix: { name: Lokix, category: Grasshopper Pokemon }
+Pawmi:
+  Pawmi: { name: Pawmi, category: Mouse Pokemon }
+  Pawmo: { name: Pawmo, category: Mouse Pokemon }
+  Pawmot: { name: Pawmot, category: Hands-On Pokemon }
+Tandemaus:
+  Tandemaus: { name: Tandemaus, category: Couple Pokemon }
+  Maushold: { name: Maushold, category: Family Pokemon }
+  MausholdThree: { name: Maushold Family of Three, category: Family Pokemon }
+Fidough:
+  Fidough: { name: Fidough, category: Puppy Pokemon }
+  Dachsbun: { name: Dachsbun, category: Dog Pokemon }
+Smoliv:
+  Smoliv: { name: Smoliv, category: Olive Pokemon }
+  Dolliv: { name: Dolliv, category: Olive Pokemon }
+  Arboliva: { name: Arboliva, category: Olive Pokemon }

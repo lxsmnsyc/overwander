@@ -1,0 +1,105 @@
+Nacli:
+  Nacli:
+    stats: { HP: 55, Attack: 55, Defense: 75, SpecialAttack: 35, SpecialDefense: 35, Speed: 25 }
+    catch-rate: 255
+    height: 0.4
+    weight: 16
+    gender: [4, 4]
+  Naclstack:
+    stats: { HP: 60, Attack: 60, Defense: 100, SpecialAttack: 35, SpecialDefense: 65, Speed: 35 }
+    catch-rate: 120
+    height: 0.6
+    weight: 105
+    gender: [4, 4]
+  Garganacl:
+    stats: { HP: 100, Attack: 100, Defense: 130, SpecialAttack: 45, SpecialDefense: 90, Speed: 35 }
+    catch-rate: 45
+    height: 2.3
+    weight: 240
+    gender: [4, 4]
+Charcadet:
+  Charcadet:
+    stats: { HP: 40, Attack: 50, Defense: 40, SpecialAttack: 50, SpecialDefense: 40, Speed: 35 }
+    catch-rate: 90
+    height: 0.6
+    weight: 10.5
+    gender: [4, 4]
+  Armarouge:
+    stats: { HP: 85, Attack: 60, Defense: 100, SpecialAttack: 125, SpecialDefense: 80, Speed: 75 }
+    catch-rate: 25
+    height: 1.5
+    weight: 85
+    gender: [4, 4]
+  Ceruledge:
+    stats: { HP: 75, Attack: 125, Defense: 80, SpecialAttack: 60, SpecialDefense: 100, Speed: 85 }
+    catch-rate: 25
+    height: 1.6
+    weight: 62
+    gender: [4, 4]
+Tadbulb:
+  Tadbulb:
+    stats: { HP: 61, Attack: 31, Defense: 41, SpecialAttack: 59, SpecialDefense: 35, Speed: 45 }
+    catch-rate: 190
+    height: 0.3
+    weight: 0.4
+    gender: [4, 4]
+  Bellibolt:
+    stats: { HP: 109, Attack: 64, Defense: 91, SpecialAttack: 103, SpecialDefense: 83, Speed: 45 }
+    catch-rate: 50
+    height: 1.2
+    weight: 113
+    gender: [4, 4]
+Wattrel:
+  Wattrel:
+    stats: { HP: 40, Attack: 40, Defense: 35, SpecialAttack: 55, SpecialDefense: 40, Speed: 70 }
+    catch-rate: 180
+    height: 0.4
+    weight: 3.6
+    gender: [4, 4]
+  Kilowattrel:
+    stats: { HP: 70, Attack: 70, Defense: 60, SpecialAttack: 105, SpecialDefense: 60, Speed: 125 }
+    catch-rate: 90
+    height: 1.4
+    weight: 38.6
+    gender: [4, 4]
+Bramblin:
+  Bramblin:
+    stats: { HP: 40, Attack: 65, Defense: 30, SpecialAttack: 45, SpecialDefense: 35, Speed: 60 }
+    catch-rate: 190
+    height: 0.6
+    weight: 0.6
+    gender: [4, 4]
+Toedscool:
+  Toedscool:
+    stats: { HP: 40, Attack: 40, Defense: 35, SpecialAttack: 50, SpecialDefense: 100, Speed: 70 }
+    catch-rate: 190
+    height: 0.9
+    weight: 33
+    gender: [4, 4]
+Capsakid:
+  Capsakid:
+    stats: { HP: 50, Attack: 62, Defense: 40, SpecialAttack: 62, SpecialDefense: 40, Speed: 50 }
+    catch-rate: 190
+    height: 0.3
+    weight: 3
+    gender: [4, 4]
+  Scovillain:
+    stats: { HP: 65, Attack: 108, Defense: 65, SpecialAttack: 108, SpecialDefense: 65, Speed: 75 }
+    catch-rate: 75
+    height: 0.9
+    weight: 15
+    gender: [4, 4]
+Rellor:
+  Rellor:
+    stats: { HP: 41, Attack: 50, Defense: 60, SpecialAttack: 31, SpecialDefense: 58, Speed: 30 }
+    catch-rate: 190
+    height: 0.2
+    weight: 1
+    gender: [4, 4]
+Flittle:
+  Flittle:
+    stats: { HP: 30, Attack: 35, Defense: 30, SpecialAttack: 55, SpecialDefense: 30, Speed: 75 }
+    catch-rate: 120
+    height: 0.2
+    weight: 1.5
+    gender: [4, 4]

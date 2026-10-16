@@ -1424,6 +1424,7 @@ export const EVOLUTION_METHOD_IDS = {
   Weather: EvolutionMethod.Weather,
   StatComparison: EvolutionMethod.StatComparison,
   Special: EvolutionMethod.Special,
+  Walked: EvolutionMethod.Walked,
 } as const satisfies Record<string, EvolutionMethod>;
 
 export const MOVE_IDS = {
@@ -3264,6 +3265,38 @@ export const ABILITY_IDS = {
   Afterhaunt: Abilities.Afterhaunt,
   SoulCloak: Abilities.SoulCloak,
   Bloomfall: Abilities.Bloomfall,
+  PetalScatter: Abilities.PetalScatter,
+  SpreadingFlame: Abilities.SpreadingFlame,
+  Wake: Abilities.Wake,
+  PigOut: Abilities.PigOut,
+  Tripwire: Abilities.Tripwire,
+  Knockback: Abilities.Knockback,
+  StaticPalms: Abilities.StaticPalms,
+  ScatterBrood: Abilities.ScatterBrood,
+  FreshBatch: Abilities.FreshBatch,
+  Anoint: Abilities.Anoint,
+  BrineRebound: Abilities.BrineRebound,
+  Kindling: Abilities.Kindling,
+  BubbleShock: Abilities.BubbleShock,
+  LightningDive: Abilities.LightningDive,
+  Windswept: Abilities.Windswept,
+  MyceliumMat: Abilities.MyceliumMat,
+  HeatTolerance: Abilities.HeatTolerance,
+  BallToss: Abilities.BallToss,
+  StareDown: Abilities.StareDown,
+  Tinker: Abilities.Tinker,
+  SandDuck: Abilities.SandDuck,
+  Lifeguard: Abilities.Lifeguard,
+  Redline: Abilities.Redline,
+  ShedDecoy: Abilities.ShedDecoy,
+  SlagTrail: Abilities.SlagTrail,
+  Glimmering: Abilities.Glimmering,
+  GraveDigger: Abilities.GraveDigger,
+  SnowHoard: Abilities.SnowHoard,
+  FilletThrift: Abilities.FilletThrift,
+  Mouthful: Abilities.Mouthful,
+  BackSeatOrders: Abilities.BackSeatOrders,
+  GlaiveGuard: Abilities.GlaiveGuard,
 } as const satisfies Record<string, Abilities>;
 
 export const ITEM_IDS = {
@@ -4660,6 +4693,7 @@ export const REGION_IDS = {
   Alola: Regions.Alola,
   Galar: Regions.Galar,
   Hisui: Regions.Hisui,
+  Paldea: Regions.Paldea,
 } as const satisfies Record<string, Regions>;
 
 export const NATURE_IDS = {

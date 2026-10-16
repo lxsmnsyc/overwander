@@ -50,6 +50,7 @@ const REGIONS: Partial<Record<string, string>> = {
   alola: 'alola',
   galar: 'galar',
   hisui: 'hisui',
+  paldea: 'paldea',
 };
 
 /**

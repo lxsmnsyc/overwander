@@ -29,7 +29,8 @@ export const SUPPORTED_METHODS =
   EvolutionMethod.Gender |
   EvolutionMethod.KnownMove |
   EvolutionMethod.StatComparison |
-  EvolutionMethod.Special;
+  EvolutionMethod.Special |
+  EvolutionMethod.Walked;
 
 /**
  * What an evolution check is measured against: the catch itself, its
@@ -95,6 +96,18 @@ export interface EvolutionContext {
    * Left out, a road that asks for a nature stays shut
    */
   nature?: Natures;
+  /**
+   * The steps it has walked as the player's buddy. Pawmo is the only
+   * line that reads it. Left out, a road that asks for a walk stays
+   * shut
+   */
+  walked?: number;
+  /**
+   * Whether it is the one in a hundred (see `isOneInAHundred`).
+   * Tandemaus is the only line that reads it. Left out, it is one of
+   * the rest
+   */
+  rare?: boolean;
 }
 
 /**
@@ -223,6 +236,9 @@ export function meetsEvolutionCriteria(
   ) {
     return false;
   }
+  if (evolution.rare != null && evolution.rare !== (context.rare ?? false)) {
+    return false;
+  }
   if ((method & EvolutionMethod.StatComparison) !== 0) {
     if (evolution.compare == null || !comparesStats(evolution.compare, context)) {
       return false;
@@ -237,6 +253,11 @@ export function meetsEvolutionCriteria(
   }
   if ((method & EvolutionMethod.Special) !== 0 && !meetsFeat(context)) {
     return false;
+  }
+  if ((method & EvolutionMethod.Walked) !== 0) {
+    if (evolution.walked == null || (context.walked ?? 0) < evolution.walked) {
+      return false;
+    }
   }
   return true;
 }
@@ -263,8 +284,12 @@ export function canEverEvolve(
   evolution: EvolutionData,
   gender: Genders,
   nature?: Natures,
+  rare?: boolean,
 ): boolean {
   if (evolution.natures != null && nature != null && !evolution.natures.has(nature)) {
+    return false;
+  }
+  if (evolution.rare != null && rare != null && evolution.rare !== rare) {
     return false;
   }
   return (evolution.method & EvolutionMethod.Gender) === 0 || evolution.gender === gender;

@@ -31,6 +31,7 @@ land:
       Snubbull: 159
       Roselia: 159
       Milcery: 150
+      Fidough: 120
     rare:
       Duosion: 211
       GravelerAlola: 169
@@ -46,6 +47,7 @@ land:
       Fearow: 61
       Delcatty: 61
       Masquerain: 61
+      Dachsbun: 50
       Purugly: 49
       Cinccino: 43
       Whimsicott: 43
@@ -107,6 +109,7 @@ land:
       Snubbull: 159
       Roselia: 159
       Milcery: 150
+      Fidough: 120
     rare:
       Duosion: 204
       GravelerAlola: 162
@@ -123,6 +126,7 @@ land:
       Fearow: 61
       Delcatty: 61
       Masquerain: 61
+      Dachsbun: 50
       Purugly: 49
       Cinccino: 43
       Whimsicott: 43
@@ -163,6 +167,7 @@ land:
       GeodudeAlola: 1030
       Seedot: 936
       Poliwag: 936
+      Pawniard: 261
       Fennekin: 94
     uncommon:
       Glameow: 408
@@ -171,7 +176,6 @@ land:
       Poochyena: 327
       Roselia: 327
       Skorupi: 327
-      Pawniard: 261
       Vulpix: 163
     rare:
       Gothorita: 313
@@ -179,12 +183,12 @@ land:
       GravelerAlola: 250
       Luxio: 156
       Poliwhirl: 156
+      Bisharp: 64
       Braixen: 63
     scarce:
       Mightyena: 106
       Purugly: 85
       Skuntank: 85
-      Bisharp: 64
       Drapion: 64
       Roserade: 64
       Ninetales: 53
@@ -211,6 +215,7 @@ land:
       GeodudeAlola: 1048
       Seedot: 953
       Poliwag: 953
+      Pawniard: 261
     uncommon:
       Glameow: 408
       Stunky: 359
@@ -218,7 +223,6 @@ land:
       Poochyena: 327
       Roselia: 327
       Skorupi: 327
-      Pawniard: 261
       Vulpix: 163
     rare:
       Gothorita: 329
@@ -226,11 +230,11 @@ land:
       GravelerAlola: 263
       Luxio: 164
       Poliwhirl: 164
+      Bisharp: 64
     scarce:
       Mightyena: 106
       Purugly: 85
       Skuntank: 85
-      Bisharp: 64
       Drapion: 64
       Roserade: 64
       Ninetales: 53

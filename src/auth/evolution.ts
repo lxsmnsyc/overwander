@@ -5,6 +5,7 @@ import {
   canEverEvolve,
   coveredByHandover,
   getSpeciesData,
+  isOneInAHundred,
   meetsEvolutionCriteria,
 } from '../data/species';
 import type { EvolutionData } from '../data/species';
@@ -36,7 +37,10 @@ export interface EvolutionOption {
    * swap happened and took the item it wanted with it
    */
   covered: boolean;
-  /** How far along a feat counted across fights is, where it asks one */
+  /**
+   * How far along a feat counted across fights is, or the steps
+   * walked, where it asks one
+   */
   progress?: number;
 }
 
@@ -93,13 +97,18 @@ export async function listEvolutionOptions(
     time: getTimeOfDay(localNow()),
     gender: caught.gender,
     nature: caught.nature,
+    walked: caught.walked,
+    rare: isOneInAHundred(caught.traitValue),
   };
 
   const options: EvolutionOption[] = [];
 
   for (const evolution of getSpeciesData(caught.species).evolvesInto ?? []) {
     // A husk comes out beside another evolution, so it is no row of its own
-    if (evolution.shed !== true && canEverEvolve(evolution, caught.gender, caught.nature)) {
+    if (
+      evolution.shed !== true &&
+      canEverEvolve(evolution, caught.gender, caught.nature, context.rare)
+    ) {
       options.push({
         evolution,
         available: meetsEvolutionCriteria(evolution, context),
@@ -108,6 +117,7 @@ export async function listEvolutionOptions(
         featOfEvolution(evolution)?.cumulative === true
           ? { progress: caught.featProgress }
           : {}),
+        ...((evolution.method & EvolutionMethod.Walked) === 0 ? {} : { progress: caught.walked }),
       });
     }
   }

@@ -1,0 +1,25 @@
+Nacli:
+  Nacli: { name: Nacli, category: Rock Salt Pokemon }
+  Naclstack: { name: Naclstack, category: Rock Salt Pokemon }
+  Garganacl: { name: Garganacl, category: Rock Salt Pokemon }
+Charcadet:
+  Charcadet: { name: Charcadet, category: Fire Child Pokemon }
+  Armarouge: { name: Armarouge, category: Fire Warrior Pokemon }
+  Ceruledge: { name: Ceruledge, category: Fire Blades Pokemon }
+Tadbulb:
+  Tadbulb: { name: Tadbulb, category: EleTadpole Pokemon }
+  Bellibolt: { name: Bellibolt, category: EleFrog Pokemon }
+Wattrel:
+  Wattrel: { name: Wattrel, category: Storm Petrel Pokemon }
+  Kilowattrel: { name: Kilowattrel, category: Frigatebird Pokemon }
+Bramblin:
+  Bramblin: { name: Bramblin, category: Tumbleweed Pokemon }
+Toedscool:
+  Toedscool: { name: Toedscool, category: Woodear Pokemon }
+Capsakid:
+  Capsakid: { name: Capsakid, category: Spicy Pepper Pokemon }
+  Scovillain: { name: Scovillain, category: Spicy Pepper Pokemon }
+Rellor:
+  Rellor: { name: Rellor, category: Rolling Pokemon }
+Flittle:
+  Flittle: { name: Flittle, category: Frill Pokemon }

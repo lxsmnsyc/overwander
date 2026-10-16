@@ -1,6 +1,7 @@
 import { For, type JSX, Show, createSignal } from 'solid-js';
 import { RaidAction, RaidKind, type RaidView, enterRaid, getRaidTitle } from '../../auth/raids';
 import { isGigantamaxBoss } from '../../overworld/raid';
+import { getTeraRaidType } from '../../data/overworld/tera-raids';
 import { getSpeciesData } from '../../data/species';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
 import { Button, Dialog, DialogActions, Meta, useToast } from '../styled';
@@ -50,6 +51,9 @@ function describeRaid(view: RaidView): string {
   }
   if (view.kind === RaidKind.Noble) {
     return 'A Noble raid: its HP is its Frenzy, and it staggers at 3/4, 1/2 and 1/4 and bursts on the whole party in between. Calmed, it leaves Balms and gold rather than waiting to be caught. Each player packs up to 3 Balms from their bag.';
+  }
+  if (view.kind === RaidKind.Tera) {
+    return 'A Tera raid: it is Terastallized for the whole fight and is hit as its Tera type alone. Beaten, it leaves Tera Shards of that type and keeps its Tera type when caught.';
   }
   if (view.kind === RaidKind.Alpha) {
     return 'An Alpha raid: it brings six of its kind back to its side at 3/4, 1/2 and 1/4 HP. Beaten, it waits with three perfect stats.';
@@ -269,6 +273,16 @@ export default function RaidDialog(props: RaidDialogProps): JSX.Element {
                     </span>
                   ),
                 },
+                ...(standing().kind === RaidKind.Tera
+                  ? [
+                      {
+                        label: 'Tera type',
+                        value: (
+                          <TypeBadge type={getTeraRaidType(standing().species, standing().lobby)} />
+                        ),
+                      },
+                    ]
+                  : []),
               ]}
             />
             {/* What fighting it means, which is the decision the button asks for */}

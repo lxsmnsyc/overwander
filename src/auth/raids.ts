@@ -69,6 +69,7 @@ export {
   getNobleRaidTitle,
   getRaidKindAt,
   getRaidTitle,
+  getTeraRaidTitle,
   getTotemTitle,
   isRaidLandmark,
   raidId,

@@ -121,3 +121,6 @@ StickyBarb:
 DynamaxBand:
   name: Dynamax Band
   description: The first time its holder drops below 1/2 HP it Dynamaxes for its next 3 moves, once a side. Not with a Mega Stone or a Z-Crystal.
+TeraOrb:
+  name: Tera Orb
+  description: Its holder Terastallizes into its Tera type as it takes the field, once a side. Not with a Mega Stone, a Z-Crystal or a Dynamax Band.

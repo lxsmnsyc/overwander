@@ -1,12 +1,12 @@
 {
   "compact": true,
   "width": 128,
-  "height": 115,
+  "height": 119,
   "stands": 24,
   "images": [
     {
       "name": "alpha.png",
-      "x": 0,
+      "x": 33,
       "y": 86,
       "width": 40,
       "height": 28,
@@ -23,7 +23,7 @@
     },
     {
       "name": "board.png",
-      "x": 41,
+      "x": 74,
       "y": 86,
       "width": 34,
       "height": 24,
@@ -57,7 +57,7 @@
     },
     {
       "name": "cache.png",
-      "x": 76,
+      "x": 109,
       "y": 86,
       "width": 15,
       "height": 12,
@@ -223,6 +223,23 @@
       "base": [
         22,
         36
+      ]
+    },
+    {
+      "name": "tera.png",
+      "x": 0,
+      "y": 86,
+      "width": 32,
+      "height": 32,
+      "sourceWidth": 44,
+      "sourceHeight": 44,
+      "trim": [
+        6,
+        12
+      ],
+      "base": [
+        22,
+        38
       ]
     }
   ]

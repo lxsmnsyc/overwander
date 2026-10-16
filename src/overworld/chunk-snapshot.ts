@@ -934,28 +934,13 @@ export default class ChunkSnapshot {
   getAlphaRaids(): Map<number, RaidRoll> {
     if (this.alphaRaids == null) {
       const raids = new Map<number, RaidRoll>();
-      const time = getTimeOfDay(this.raidTimestamp);
 
       for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
         if (landmark !== Landmark.AlphaRaid) {
           continue;
         }
-        const hosts = this.hostsAt(cell);
-        const species = new Set<Species>();
-        const pool = getSpawnPool(
-          this.biomeAt(cell),
-          time,
-          this.depth === Depth.Cave,
-          this.drawnSurface(cell),
-        );
+        const species = this.spawnedBossesAt(cell);
 
-        for (const rank of spawnRanks(pool)) {
-          for (const entry of rank) {
-            if (isAlphaSpecies(entry.species) && hosts(entry.species)) {
-              species.add(entry.species);
-            }
-          }
-        }
         if (species.size === 0) {
           continue;
         }
@@ -974,6 +959,68 @@ export default class ChunkSnapshot {
       this.alphaRaids = raids;
     }
     return this.alphaRaids;
+  }
+
+  /**
+   * Every species the cell's own biome spawns there that can stand on
+   * it, at whatever stage it spawns at, short of the kinds that hold
+   * lairs of their own
+   */
+  private spawnedBossesAt(cell: number): Set<Species> {
+    const hosts = this.hostsAt(cell);
+    const species = new Set<Species>();
+    const pool = getSpawnPool(
+      this.biomeAt(cell),
+      getTimeOfDay(this.raidTimestamp),
+      this.depth === Depth.Cave,
+      this.drawnSurface(cell),
+    );
+
+    for (const rank of spawnRanks(pool)) {
+      for (const entry of rank) {
+        if (isAlphaSpecies(entry.species) && hosts(entry.species)) {
+          species.add(entry.species);
+        }
+      }
+    }
+    return species;
+  }
+
+  private teraRaids: Map<number, RaidRoll> | null = null;
+
+  /**
+   * The window's Tera bosses, keyed by the crystal's cell: any species
+   * the tile's own biome spawns there, the way an Alpha is picked. Its
+   * Tera type is read off the lobby (`getTeraRaidType`). A crystal
+   * whose tile has none holds nothing this window
+   */
+  getTeraRaids(): Map<number, RaidRoll> {
+    if (this.teraRaids == null) {
+      const raids = new Map<number, RaidRoll>();
+
+      for (const [cell, landmark] of this.chunk.getLandmarkCells()) {
+        if (landmark !== Landmark.TeraRaid) {
+          continue;
+        }
+        const species = this.spawnedBossesAt(cell);
+
+        if (species.size === 0) {
+          continue;
+        }
+
+        // The draws land in order: the boss, then its trait value
+        const rng = new AleaRNG(`${this.key}${this.raidTimestamp}tera${cell}`);
+        const choices = [...species];
+
+        raids.set(cell, {
+          lair: null,
+          species: choices[Math.floor(rng.random() * choices.length)],
+          traitValue: rng.int32(),
+        });
+      }
+      this.teraRaids = raids;
+    }
+    return this.teraRaids;
   }
 
   /** One boss per landmark of this kind, from the final stages the tile's biome grows into */

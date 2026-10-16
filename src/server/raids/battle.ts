@@ -8,6 +8,7 @@ import { foughtBattle, readBattle, readRaid, type readTeam, readTeams } from '..
 import { consumeItem, grantItem } from '../inventory';
 import { Items } from '../../data/ids/items';
 import { NOBLE_BALM_PACK } from '../../data/overworld/nobles';
+import { getTeraRaidType } from '../../data/overworld/tera-raids';
 import { releaseBattleLocks } from '../locks';
 import { recordSeenOpponents } from '../pokedex';
 import { asOutcome } from './outcome';
@@ -118,6 +119,7 @@ export async function startRaid(uid: string, lobby: string, now: number): Promis
           raid.kind === RaidKind.Max,
           raid.kind === RaidKind.Alpha,
           raid.kind === RaidKind.Noble,
+          raid.kind === RaidKind.Tera ? getTeraRaidType(raid.species, lobby) : null,
         ),
       )})
     `;

@@ -148,6 +148,28 @@ transaction with the mushrooms leaving the bag
 The flag rides into a fight on the team snapshot, and a unit built from it
 throws its species' G-Max Move when it Dynamaxes.
 
+## Tera Shards
+
+The Tera type is the `tera_type` column on the catch, a `Types` id. It is rolled
+when the row is written, by every path that writes one (a catch, a gift, a
+trader's pokemon, a revived fossil, an evolution's husk, an egg): one of the
+species' own types, or 1 time in 20 any of the 18 types. Stellar is never
+rolled. A catch written before the column holds null, which reads as its
+species' first type (`teraTypeOf` in
+[`src/data/species/tera-type.ts`](../../src/data/species/tera-type.ts)).
+
+**Tera Shards**, one per type, are found in the overworld item pool and never
+stocked. Spending 50 of a type sets the column to that type, in one transaction
+with the shards leaving the bag
+([`src/server/tera-shards.ts`](../../src/server/tera-shards.ts)).
+
+- A shard of the type it already has is refused, as is a catch that is not the
+  player's, is locked into a battle, is guarded, or is still an egg.
+- The Stellar Shard is an item, but nothing spends it yet.
+- The type stays through a trade, an auction and an evolution.
+
+The type rides into a fight on the team snapshot as `teraType`.
+
 ## Releasing
 
 `releaseCatch` ([`src/server/caught.ts`](../../src/server/caught.ts))

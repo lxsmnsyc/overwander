@@ -16,6 +16,7 @@ import { deriveAbility, deriveGender, deriveMoves, deriveNature, deriveSize } fr
 import { isTotemSpecies } from '../data/overworld/totems';
 import { isAlphaSpecies } from '../data/overworld/alphas';
 import { NOBLE_BALM_PACK } from '../data/overworld/nobles';
+import { getTeraRaidType } from '../data/overworld/tera-raids';
 import {
   BOSS_ALLIANCE,
   PLAYER_ALLIANCE,
@@ -194,7 +195,8 @@ function rollCatch(random: () => number, index: number, mega = false): CatchSnap
  * throughout and drawn from the lines that Gigantamax, `alpha` an
  * Alpha with the copies it summons, and `noble` a frenzied Noble, the
  * species `pinned` names where one is given, with every party packing
- * Balms.
+ * Balms. `tera` Terastallizes the boss, into a Tera type read off the
+ * seed the way a lobby's is.
  *
  * The parties are separate **teams** rather than one big party
  * because that is what a lobby is — five players who happen to be
@@ -209,6 +211,7 @@ export function createDemoRaidTeams(
   alpha = false,
   noble = false,
   pinned: Species | null = null,
+  tera = false,
 ): TeamSnapshotRecord[] {
   const rng = new AleaRNG(`demo-raid:${seed}`);
   const random = (): number => rng.random();
@@ -227,7 +230,16 @@ export function createDemoRaidTeams(
   }
   const boss = pinned ?? pick(bosses, random);
   const bossTrait = Math.floor(random() * 0x1_0000_0000);
-  const [staged, ...allies] = createRaidBossTeam(boss, bossTrait, shadow, totem, max, alpha, noble);
+  const [staged, ...allies] = createRaidBossTeam(
+    boss,
+    bossTrait,
+    shadow,
+    totem,
+    max,
+    alpha,
+    noble,
+    tera ? getTeraRaidType(boss, `demo-raid:${seed}`) : null,
+  );
 
   const teams: TeamSnapshotRecord[] = [
     {

@@ -5442,6 +5442,7 @@ export const LANDMARK_IDS = {
   Totem: Landmark.Totem,
   AlphaRaid: Landmark.AlphaRaid,
   NobleArena: Landmark.NobleArena,
+  TeraRaid: Landmark.TeraRaid,
 } as const satisfies Record<string, Landmark>;
 
 export const PHENOMENON_IDS = {

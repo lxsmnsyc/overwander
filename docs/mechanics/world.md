@@ -189,6 +189,7 @@ marked below.
 | **Totem**           | An Alolan trial site holding a Totem every raid window. One to a chunk |
 | **Alpha**           | A trampled clearing with a claw-raked boulder, glowing red while an oversized pokemon of the biome, any stage, is home. One to a chunk, never underground |
 | **Noble Arena**     | A raised stone ring under a red shrine gate, braziers burning at the front, glowing white while a frenzied Noble is home. One to a chunk, never underground |
+| **Tera Crystal**    | A cluster of faceted crystals on a bed of rock, glowing red while a Terastallized pokemon of the biome, any stage, is home. One to a chunk, above ground or below |
 | **Wandering NPC**   | Whoever is passing through: a breeder, a nurse, a chef          |
 | **Market**          | A vendor's stall, behind one of the trade's four counters       |
 | **Auction Board**   | The region's lots, and the only way to them. One to a chunk     |

@@ -95,7 +95,12 @@ export default function setupMegas(battle: Battle): void {
     const unit = event.source;
     const mega = megaOf(unit);
 
-    if (mega == null || spent.has(unit.team) || pickMega(unit.team) !== unit) {
+    if (
+      mega == null ||
+      unit.terastallized ||
+      spent.has(unit.team) ||
+      pickMega(unit.team) !== unit
+    ) {
       return;
     }
     spent.add(unit.team);

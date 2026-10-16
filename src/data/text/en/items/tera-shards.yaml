@@ -1,0 +1,23 @@
+templates:
+  shard: Fifty of them change a pokemon's Tera type to {type}. Spent on use.
+NormalTeraShard: { name: Normal Tera Shard }
+FireTeraShard: { name: Fire Tera Shard }
+WaterTeraShard: { name: Water Tera Shard }
+ElectricTeraShard: { name: Electric Tera Shard }
+GrassTeraShard: { name: Grass Tera Shard }
+IceTeraShard: { name: Ice Tera Shard }
+FightingTeraShard: { name: Fighting Tera Shard }
+PoisonTeraShard: { name: Poison Tera Shard }
+GroundTeraShard: { name: Ground Tera Shard }
+FlyingTeraShard: { name: Flying Tera Shard }
+PsychicTeraShard: { name: Psychic Tera Shard }
+BugTeraShard: { name: Bug Tera Shard }
+RockTeraShard: { name: Rock Tera Shard }
+GhostTeraShard: { name: Ghost Tera Shard }
+DragonTeraShard: { name: Dragon Tera Shard }
+DarkTeraShard: { name: Dark Tera Shard }
+SteelTeraShard: { name: Steel Tera Shard }
+FairyTeraShard: { name: Fairy Tera Shard }
+StellarTeraShard:
+  name: Stellar Tera Shard
+  description: A shard of the Stellar type. Nothing takes it yet.

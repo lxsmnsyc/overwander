@@ -15,6 +15,7 @@ import { SIGNATURE_CRYSTALS, TYPE_CRYSTALS } from '../items/z-crystals';
 import { MAX_VITAMIN_STATS, VITAMIN_STATS } from '../items/vitamins';
 import { MINT_NATURES } from '../items/mints';
 import { POWER_ITEMS } from '../items/power-items';
+import { listTypeShards } from '../items/tera-shards';
 import { GENERAL_STAT_BOOSTERS } from '../items/stat-boosters';
 import { TYPE_BOOSTERS } from '../items/type-boosters';
 import { MAX_WING_STATS, WING_STATS } from '../items/wings';
@@ -82,6 +83,7 @@ const ITEM_FAMILIES: Record<string, () => Iterable<Items>> = {
   'power-items': () => POWER_ITEMS.keys(),
   mints: () => MINT_NATURES.keys(),
   'max-vitamins': () => MAX_VITAMIN_STATS.keys(),
+  'tera-shards': listTypeShards,
 };
 
 const BAND = v.record(v.string(), v.number());

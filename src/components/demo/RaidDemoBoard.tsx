@@ -163,6 +163,7 @@ export default function RaidDemoBoard(): JSX.Element {
     max?: string;
     alpha?: string;
     noble?: string;
+    tera?: string;
     biome?: string;
   }>();
   const seed = (): string => params.seed ?? DEFAULT_SEED;
@@ -172,6 +173,7 @@ export default function RaidDemoBoard(): JSX.Element {
   const totem = (): boolean => params.totem === '1';
   const max = (): boolean => params.max === '1';
   const alpha = (): boolean => params.alpha === '1';
+  const tera = (): boolean => params.tera === '1';
   // Any truthy value stages a Noble; a species id pins which one
   const noble = (): boolean => params.noble != null;
   const pinned = (): Species | null => {
@@ -185,7 +187,7 @@ export default function RaidDemoBoard(): JSX.Element {
   createEffect(() => {
     const staged = createRaidBattle(
       `demo:${seed()}`,
-      createDemoRaidTeams(seed(), shadow(), totem(), max(), alpha(), noble(), pinned()),
+      createDemoRaidTeams(seed(), shadow(), totem(), max(), alpha(), noble(), pinned(), tera()),
     );
 
     // Initialized but not started: the canvas starts it once it has
@@ -295,6 +297,15 @@ export default function RaidDemoBoard(): JSX.Element {
         checked={alpha()}
         onChange={(on) => {
           setParams({ alpha: on ? '1' : undefined });
+        }}
+      />
+
+      <Switch
+        label="Tera"
+        description="Stages a boss Terastallized for the whole fight, hit as its Tera type alone."
+        checked={tera()}
+        onChange={(on) => {
+          setParams({ tera: on ? '1' : undefined });
         }}
       />
 

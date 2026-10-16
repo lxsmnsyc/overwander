@@ -77,6 +77,11 @@ function iconOf(worn: Species): { sheet: string; name: string } | null {
   return isMegaSpecies(species) ? KEY_STONE : null;
 }
 
+/** Whether this shape floats a mark over it, so another mark can sit above it */
+export function wearsFormMark(species: Species): boolean {
+  return iconOf(species) != null;
+}
+
 function paint(context: CanvasRenderingContext2D, quad: SpriteQuad, alpha: number): void {
   context.globalAlpha = alpha;
   context.drawImage(

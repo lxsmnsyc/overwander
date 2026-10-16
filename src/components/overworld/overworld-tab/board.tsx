@@ -1174,6 +1174,9 @@ export default function OverworldBoard(props: {
           // A Noble at home glows white like a legend in a seat: a lord
           // of the land is in residence
           next.set(at, CellAura.Legend);
+        } else if (landmark === Landmark.TeraRaid && snapshot.getTeraRaids().has(inChunk)) {
+          // A Tera crystal with somebody in it glows like a fight waiting, the way an Alpha does
+          next.set(at, CellAura.Fight);
         }
       } else if (landmark === Landmark.GymSeat) {
         const holder = read.seats.get(inChunk);

@@ -44,6 +44,9 @@ function lairRolls(snapshot: ChunkSnapshot, kind: RaidKind): Map<number, RaidRol
   if (kind === RaidKind.Noble) {
     return snapshot.getNobleRaids();
   }
+  if (kind === RaidKind.Tera) {
+    return snapshot.getTeraRaids();
+  }
   return kind === RaidKind.Shadow ? snapshot.getShadowLairs() : snapshot.getLegendaryLairs();
 }
 

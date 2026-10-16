@@ -8,6 +8,8 @@ import { BASE_FRIENDSHIP } from '../data/constants/friendship';
 import { isPerfectIVs } from '../data/items/bottle-caps';
 import { Slots, defaultSlots, getSlots, mostSlots } from '../data/constants/slots';
 import { type Stats, isZeroIVs } from '../data/constants/stats';
+import type { Types } from '../data/constants/types';
+import { isTeraType } from '../data/species/tera-type';
 import type { AuraKind } from '../canvas/auras';
 import Abilities from '../data/ids/abilities';
 import type Biome from '../data/ids/biome';
@@ -140,6 +142,12 @@ export interface CaughtPokemon {
    * anything on a species with a Gigantamax form
    */
   gigantamax: boolean;
+  /**
+   * The type it Terastallizes into, rolled when it was written and
+   * changed with Tera Shards. Null on a catch made before it was
+   * stored, which reads as its species' first type (`teraTypeOf`)
+   */
+  teraType: Types | null;
   /**
    * Whether somebody would pay for it — see `isAuctionableCatch`.
    *
@@ -625,6 +633,7 @@ export function asCaughtPokemon(value: unknown): CaughtPokemon {
     canEvolve: asBoolean(data.canEvolve),
     featProgress: asNumber(data.featProgress),
     gigantamax: asBoolean(data.gigantamax),
+    teraType: isTeraType(data.teraType) ? data.teraType : null,
     auctionable: asBoolean(data.auctionable),
     moves: asNumberArray(data.moves) as Moves[],
     movePoints: asMovePoints(data.movePoints),

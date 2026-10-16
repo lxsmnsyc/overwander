@@ -72,7 +72,7 @@ export function zCastShownAs(unit: Unit, cast: CastingData): Moves | null {
 
 /** The Z-Move this unit's crystal makes of the move, if any */
 function zMoveFor(unit: Unit, move: Moves, target: MoveTarget): Moves | null {
-  if (!canBecomeZMove(move) || isMegaHolder(unit)) {
+  if (!canBecomeZMove(move) || isMegaHolder(unit) || unit.terastallized) {
     return null;
   }
   for (const [item, crystal] of SIGNATURE_CRYSTALS) {
@@ -102,6 +102,7 @@ function zEffectFor(unit: Unit, move: Moves, target: MoveTarget): ZStatusEffect 
   if (
     effect == null ||
     isMegaHolder(unit) ||
+    unit.terastallized ||
     !holdsTypeCrystal(unit, unit.checkMoveType(move, target))
   ) {
     return null;

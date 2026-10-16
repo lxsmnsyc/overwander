@@ -245,7 +245,7 @@ export const BAIT_BERRIES = new Set<Items>([
 /**
  * What feeding one is worth, against the quarter a cure berry buys.
  * Fed to the encounter rather than held, so the multiplier is read by
- * the safari rules in [`src/overworld/safari.ts`](../../overworld/safari.ts)
+ * the safari rules in [`src/overworld/safari/index.ts`](../../overworld/safari.ts)
  */
 export const BAIT_CATCH_BONUS = 1.5;
 

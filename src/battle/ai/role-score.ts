@@ -6,8 +6,8 @@ import { MoveAttackFlags, MoveCategories, MoveTargets, Moves } from '../../data/
 import { TeamStatuses } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
 import { MOVE_WEATHERS } from '../../data/moves/weather';
-import type Battle from '../core';
-import { BattleModes } from '../core';
+import type Battle from '../battle';
+import { BattleModes } from '../battle';
 import {
   BattleEvents,
   type CheckUnitAIMoveScoreEvent,

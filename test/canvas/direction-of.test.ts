@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { directionOf, litFrame } from '../../src/canvas/sprite-sheet';
+import { directionOf, litFrame } from '../../src/canvas/sprites/sheet';
 
 describe('reading a facing off a screen direction', () => {
   it('names each of the eight', () => {

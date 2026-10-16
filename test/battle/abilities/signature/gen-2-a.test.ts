@@ -9,9 +9,9 @@ import {
   BACKLASH_SHARE,
   SHARED_MISERY_THRESHOLD,
   SUNLIT_CHARGE_SCALE,
-} from '../../../../src/battle/abilities/signature/chikorita-to-celebi';
+} from '../../../../src/battle/abilities/signature/gen-2/chikorita-to-celebi';
 import { AttackPriority } from '../../../../src/core/event-emitter';
-import type Battle from '../../../../src/battle/core';
+import type Battle from '../../../../src/battle/battle';
 import { BattleEvents, EffectType, MoveTargetType } from '../../../../src/battle/events';
 import type Unit from '../../../../src/battle/unit';
 import { Stages, Stats, StatsKind } from '../../../../src/data/constants/stats';
@@ -22,7 +22,7 @@ import { MoveCategories, MoveTargets, Moves, StatFlags } from '../../../../src/d
 import { Statuses, TeamStatuses } from '../../../../src/data/ids/status';
 import turns from '../../../../src/battle/turn';
 import { layersUnder } from '../../../../src/battle/moves/spikes';
-import { unitTarget } from '../../../../src/battle/utils';
+import { unitTarget } from '../../../../src/battle/unit-checks';
 import { SWITCHING_SPAN } from '../../../../src/battle/status/switching';
 import { createBattle, createUnit, pinRandom } from '../../harness';
 import { NONE_CAUSE, act, makeAttack, resolveAttackStat, rollMove, rolled } from './helpers';

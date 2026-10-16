@@ -1,5 +1,5 @@
 import type { TeamStatuses } from '../../data/ids/status';
-import type Battle from '../core';
+import type Battle from '../battle';
 import type { EffectCause } from '../events';
 import type Team from '../team';
 

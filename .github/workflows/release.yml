@@ -40,7 +40,7 @@ jobs:
       - uses: changesets/action@v2
         with:
           version-script: pnpm cs:ver
-          publish-script: bash scripts/release.sh
+          publish-script: bash scripts/release/release.sh
           create-github-releases: false
           push-git-tags: false
         env:

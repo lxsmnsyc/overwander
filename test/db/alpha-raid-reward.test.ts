@@ -1,9 +1,9 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { type Actor, actor, clearAll, sql } from './clients';
-import BattleOutcome from '../../src/auth/battle-outcome';
-import { Acquisition } from '../../src/auth/caught-record';
-import { asOffset, toLocalTime } from '../../src/auth/local-time';
-import { RaidAction, RaidKind, raidId } from '../../src/auth/raid-record';
+import BattleOutcome from '../../src/model/battle-outcome';
+import { Acquisition } from '../../src/model/caught-record';
+import { asOffset, toLocalTime } from '../../src/model/local-time';
+import { RaidAction, RaidKind, raidId } from '../../src/model/raid-record';
 import AleaRNG from '../../src/core/alea';
 import { MAX_IV, STAT_ORDER, getIV } from '../../src/data/constants/stats';
 import Abilities from '../../src/data/ids/abilities';
@@ -11,14 +11,14 @@ import { Balls } from '../../src/data/ids/items';
 import { ALPHA_PERFECT_STATS, pickAlphaPerfectStats } from '../../src/data/overworld/alphas';
 import { claimRaidReward, enterRaid, peekRaid } from '../../src/server/raids';
 import { writeCaughtRecord } from '../../src/server/caught';
-import { writeRaid } from '../../src/server/raid-io';
+import { writeRaid } from '../../src/server/raids/io';
 import { tx } from '../../src/server/db';
 import ChunkSnapshot, { type RaidRoll } from '../../src/overworld/chunk-snapshot';
 import getWorld from '../../src/overworld/current';
 import { Depth } from '../../src/overworld/depth';
 import { EncounterType } from '../../src/overworld/encounter';
 import { RAID_MIN_IV } from '../../src/overworld/encounter/traits';
-import { ALPHA_RAID_GOLD } from '../../src/overworld/raid';
+import { ALPHA_RAID_GOLD } from '../../src/overworld/raid/index';
 
 /**
  * A beaten Alpha raid, claimed and caught against the real database:

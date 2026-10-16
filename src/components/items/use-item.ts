@@ -11,10 +11,10 @@ import {
   getMovePoints,
   isShadow,
   isShiny,
-} from '../../auth/caught-record';
-import { isEgg } from '../../auth/egg';
+} from '../../model/caught-record';
+import { isEgg } from '../../model/egg';
 import useHealingItem from '../../auth/healing';
-import { healedByItem } from '../../auth/health';
+import { healedByItem } from '../../model/health';
 import usePurifyingGem from '../../auth/purify';
 import { useAbilityCapsule } from '../../auth/ability-items';
 import useSkillBook from '../../auth/skill-book';

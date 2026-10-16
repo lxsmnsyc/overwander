@@ -6,7 +6,7 @@ import { getMoveData } from './__create';
 
 /**
  * The Z-Moves: what a held Z-Crystal turns a move into, once a side a
- * fight. The battle side is in `src/battle/moves/z-moves.ts`
+ * fight. The battle side is in `src/battle/gimmicks/z-moves.ts`
  * https://bulbapedia.bulbagarden.net/wiki/Z-Move
  */
 

@@ -1,8 +1,8 @@
 import { For, type JSX } from 'solid-js';
 import type { CaughtPokemon } from '../../auth/caught';
-import { getCatchName, isShiny } from '../../auth/caught-record';
-import { isEgg } from '../../auth/egg';
-import { STATUS_NAMES, getMaxHealth, isFainted } from '../../auth/health';
+import { getCatchName, isShiny } from '../../model/caught-record';
+import { isEgg } from '../../model/egg';
+import { STATUS_NAMES, getMaxHealth, isFainted } from '../../model/health';
 import { Genders, Species } from '../../data/ids/species';
 import { unpackStatuses } from '../../data/ids/status';
 import AnimatedSprite from '../sprites/AnimatedSprite';

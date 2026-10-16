@@ -1,6 +1,6 @@
 import type { JSX } from 'solid-js';
 import AtlasSprite from './AtlasSprite';
-import { UI_SPRITE_ROOT } from '../../canvas/basic-sprites';
+import { UI_SPRITE_ROOT } from '../../canvas/sprites/basic-sprites';
 import type Families from '../../data/ids/families';
 import familyCandyIcon from '../../data/species/family-candy';
 import { getFamilyName } from '../../data/species';

@@ -2,7 +2,7 @@ import type { MoveTarget } from '../../../battle/events';
 import type Unit from '../../../battle/unit';
 import type { FieldVisual } from '../../../canvas/battle/moves/__painted';
 import { standInFor } from '../../../canvas/battle/stand-in';
-import type SpeciesSpriteAnimation from '../../../canvas/species-sprite-animation';
+import type SpeciesSpriteAnimation from '../../../canvas/sprites/species-sprite-animation';
 import { isLoopingCast, pickCast } from '../../../data/constants/cast';
 import pickStatusCast from '../../../data/constants/status-cast';
 import type { Moves } from '../../../data/ids/moves';

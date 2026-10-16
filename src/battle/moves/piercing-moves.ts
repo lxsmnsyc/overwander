@@ -2,7 +2,7 @@ import { AttackPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
 import { MoveCategories, Moves, StatFlags } from '../../data/ids/moves';
 import { createPierceWindows } from '../abilities/__create/pierce';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents } from '../events';
 
 /**

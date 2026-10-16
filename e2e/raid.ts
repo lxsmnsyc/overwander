@@ -1,8 +1,8 @@
 import { type Page, expect } from '@playwright/test';
-import { getLocalOffset } from '../src/auth/local-time';
+import { getLocalOffset } from '../src/model/local-time';
 import Biome from '../src/data/ids/biome';
 import { Species } from '../src/data/ids/species';
-import { RaidKind } from '../src/auth/raid-record';
+import { RaidKind } from '../src/model/raid-record';
 import { RAID_INTERVAL } from '../src/overworld/chunk-snapshot';
 import { GENERATION, clearIdleRaids, insertRow, uidOf } from './admin';
 import { type Player, pressBoxSquare } from './game';

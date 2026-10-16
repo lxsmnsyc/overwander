@@ -1,4 +1,4 @@
-import { readOnly } from '../utils/server-calls';
+import { readOnly } from './server-calls';
 import type { Species } from '../data/ids/species';
 import check, { TOKEN, UID } from '../server/validate';
 import {
@@ -17,7 +17,7 @@ import {
   hasCaughtShiny,
   hasSeenSpecies,
   listDexTallies,
-} from './pokedex-record';
+} from '../model/pokedex-record';
 
 /**
  * The dex as a screen wants it: every species the player has ever met,

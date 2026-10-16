@@ -1,5 +1,5 @@
 import { For, type JSX, Show, createMemo, createSignal } from 'solid-js';
-import { BOX_LIMIT } from '../../../auth/box-record';
+import { BOX_LIMIT } from '../../../model/box-record';
 import { ClockIcon, GripIcon, PlusIcon, SearchIcon } from '../../icons';
 import { Meta } from '../../styled';
 import BoxForm from './box-form';

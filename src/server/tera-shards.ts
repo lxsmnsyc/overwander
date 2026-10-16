@@ -1,6 +1,6 @@
 import 'server-only';
-import { ITEM_STACKS } from '../auth/stacks';
-import { Metric } from '../auth/quest-record';
+import { ITEM_STACKS } from '../model/stacks';
+import { Metric } from '../model/quest-record';
 import type { Types } from '../data/constants/types';
 import type { Items } from '../data/ids/items';
 import type { Species } from '../data/ids/species';

@@ -2,10 +2,10 @@ import { describe, expect, it } from 'vitest';
 import {
   KNOCKBACK_SETBACK,
   TRIPWIRE_SCALE,
-} from '../../../../src/battle/abilities/signature/lechonk-to-tandemaus';
+} from '../../../../src/battle/abilities/signature/gen-9/lechonk-to-tandemaus';
 import { EffectType } from '../../../../src/battle/events';
 import turns from '../../../../src/battle/turn';
-import { unitTarget } from '../../../../src/battle/utils';
+import { unitTarget } from '../../../../src/battle/unit-checks';
 import { Stages, Stats } from '../../../../src/data/constants/stats';
 import { Types } from '../../../../src/data/constants/types';
 import Abilities from '../../../../src/data/ids/abilities';

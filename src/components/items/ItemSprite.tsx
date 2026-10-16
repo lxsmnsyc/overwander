@@ -1,7 +1,7 @@
 import type { JSX } from 'solid-js';
 import { Show } from 'solid-js';
 import AtlasSprite from '../sprites/AtlasSprite';
-import { UI_SPRITE_ROOT } from '../../canvas/basic-sprites';
+import { UI_SPRITE_ROOT } from '../../canvas/sprites/basic-sprites';
 import type { Items } from '../../data/ids/items';
 import { describeItem } from '../details';
 import { getItemData } from '../../data/items';

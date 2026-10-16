@@ -79,7 +79,7 @@ so a find cannot be reported twice or lost between the walk and the bag.
 `hatchEgg` takes the flag off once `steps` has reached `hatchSteps` and pays the
 family's candy, exactly as meeting the pokemon any other way would have. The
 shared rules both sides read, `getEggHatchSteps`, `canHatch`, `creditableSteps`
-and `creditedEggSteps`, are in [`src/auth/egg.ts`](../../src/auth/egg.ts).
+and `creditedEggSteps`, are in [`src/model/egg.ts`](../../src/model/egg.ts).
 
 ## See also
 

@@ -1,4 +1,4 @@
-import { isEgg } from './egg';
+import { isEgg } from '../model/egg';
 import { announceBuddyChange } from './buddy-changes';
 import type { Buddy } from '../overworld/core';
 import { type CaughtPokemon, getCaught } from './caught';

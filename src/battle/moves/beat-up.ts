@@ -1,7 +1,7 @@
 import { EventPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
 import { MAJOR_STATUS_CONDITIONS } from '../status';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents } from '../events';
 import type Unit from '../unit';
 

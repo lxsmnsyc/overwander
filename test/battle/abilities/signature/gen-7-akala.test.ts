@@ -2,17 +2,17 @@
 
 import { describe, expect, it } from 'vitest';
 import { EventPriority } from '../../../../src/core/event-emitter';
-import type Battle from '../../../../src/battle/core';
+import type Battle from '../../../../src/battle/battle';
 import { BattleEvents, type MoveTarget } from '../../../../src/battle/events';
 import type Unit from '../../../../src/battle/unit';
-import { unitTarget } from '../../../../src/battle/utils';
+import { unitTarget } from '../../../../src/battle/unit-checks';
 import {
   BUBBLE_WARD_SCALE,
   HEAVY_HOOVES_CAP,
   ORCHID_GUISE_SCALE,
   REGROUP_HEAL_FRACTION,
   TROP_STRIDE_SCALE,
-} from '../../../../src/battle/abilities/signature/wishiwashi-to-bounsweet';
+} from '../../../../src/battle/abilities/signature/gen-7/wishiwashi-to-bounsweet';
 import { Stats, StatsKind } from '../../../../src/data/constants/stats';
 import { Types } from '../../../../src/data/constants/types';
 import Abilities from '../../../../src/data/ids/abilities';

@@ -12,7 +12,7 @@ import {
 import { DamageFlags, StatFlags } from '../../data/ids/moves';
 import { getNatureFactor } from '../../data/ids/natures';
 import { getSpeciesData } from '../../data/species';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, type EffectCause, type ProgressData } from '../events';
 import type Unit from '../unit';
 import { SWITCHING_SPAN } from '../status/switching';

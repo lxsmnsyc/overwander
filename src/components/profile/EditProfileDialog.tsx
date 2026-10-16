@@ -1,7 +1,7 @@
 import { type JSX, createEffect, createResource, createSignal, on } from 'solid-js';
 import { listMyTitles, saveSprite, saveTitle } from '../../auth/achievements';
 import { type Profile, saveProfile } from '../../auth/profile';
-import { PLAYER_NAME_LIMIT, asNickname } from '../../auth/nickname';
+import { PLAYER_NAME_LIMIT, asNickname } from '../../model/nickname';
 import { type Title, getTitleName } from '../../data/ids/titles';
 import { Button, Combobox, Dialog, DialogActions, Status, TextField } from '../styled';
 import SpritePicker from './SpritePicker';

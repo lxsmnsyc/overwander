@@ -9,7 +9,7 @@ import Biome, { getBiome } from '../data/ids/biome';
 import type Weather from '../data/overworld/weather';
 import { classifyWeather } from '../data/overworld/weather';
 import Chunk, { CHUNK_CELLS } from './chunk';
-import { SECOND_TERRACE_COUNT, TERRACE_STEPS, evenTerraceSteps } from './terrace';
+import { SECOND_TERRACE_COUNT, TERRACE_STEPS, evenTerraceSteps } from './terrain/terrace';
 
 /**
  * How many chunks one climate noise cell spans: lower values make

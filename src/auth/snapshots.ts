@@ -17,7 +17,7 @@ import {
   type SpawnRoll,
   asSnapshotRecord,
   spawnId,
-} from './snapshot-record';
+} from '../model/snapshot-record';
 import { requireReader, requireUid, requireUidFor } from '../server/auth';
 import { Feature } from '../server/switches';
 import { Pace } from '../server/pace';
@@ -50,12 +50,12 @@ import {
   peekNest as peekNestOnServerSide,
   peekPhenomenonEgg as peekPhenomenonEggOnServerSide,
 } from '../server/overworld';
-import batchedQuery from '../utils/batched-query';
+import batchedQuery from './batched-query';
 import { localNow, syncServerClock } from './clock';
-import { asOffset, getLocale, toZoneKey } from './local-time';
-import type { EncounterRecord } from './encounter-record';
+import { asOffset, getLocale, toZoneKey } from '../model/local-time';
+import type { EncounterRecord } from '../model/encounter-record';
 import { type Unwatch, watchTable } from './watch';
-import { readOnly } from '../utils/server-calls';
+import { readOnly } from './server-calls';
 import { readSnapshotWindows, writeSnapshotWindow } from '../server/snapshot-windows';
 import getIdToken from './session';
 

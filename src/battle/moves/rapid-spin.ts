@@ -1,7 +1,7 @@
 import { AttackPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, EffectType } from '../events';
 import type Team from '../team';
 import type Unit from '../unit';
@@ -74,10 +74,7 @@ export default function setupRapidSpin(battle: Battle): void {
   // taken off a spin with nothing to clear. It is worth more with
   // something to clear, which is what the AI is told
   battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
-    if (
-      SPINS.has(event.move) &&
-      (hazardsUnder(event.source.team) || heldDown(event.source))
-    ) {
+    if (SPINS.has(event.move) && (hazardsUnder(event.source.team) || heldDown(event.source))) {
       event.score += CLEAR_BONUS;
     }
   });

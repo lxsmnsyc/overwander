@@ -7,12 +7,12 @@ import {
   SAND_GENERATOR_COOLDOWN,
   TERRAIN_EDGE_BOOST,
   TRACK_LAYING_COOLDOWN,
-} from '../../../../src/battle/abilities/signature/future-paradox';
+} from '../../../../src/battle/abilities/signature/gen-9/future-paradox';
 import { EventPriority } from '../../../../src/core/event-emitter';
-import type Battle from '../../../../src/battle/core';
+import type Battle from '../../../../src/battle/battle';
 import { BattleEvents, MoveTargetType } from '../../../../src/battle/events';
 import { clearStealthRock, stonesOver } from '../../../../src/battle/moves/stealth-rock';
-import { unitTarget } from '../../../../src/battle/utils';
+import { unitTarget } from '../../../../src/battle/unit-checks';
 import { Stats } from '../../../../src/data/constants/stats';
 import { Types } from '../../../../src/data/constants/types';
 import Abilities from '../../../../src/data/ids/abilities';

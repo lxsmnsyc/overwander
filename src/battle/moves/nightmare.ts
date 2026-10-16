@@ -1,10 +1,10 @@
 import { AttackPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import { ASLEEP_STATUSES } from '../status';
-import { hasAnyStatus } from '../utils';
+import { hasAnyStatus } from '../unit-checks';
 
 /**
  * What counts as asleep enough to dream. A dormant boss is neither

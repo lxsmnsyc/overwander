@@ -9,7 +9,7 @@ import { Types } from '../../../src/data/constants/types';
 import ChunkSnapshot from '../../../src/overworld/chunk-snapshot';
 import { TRAINER_TYPES, isAceTrainer } from '../../../src/data/overworld/trainers';
 import Landmark from '../../../src/data/overworld/landmark';
-import { roleAt } from '../../../src/overworld/ground';
+import { roleAt } from '../../../src/overworld/terrain/ground';
 import World, { Generation } from '../../../src/overworld/world';
 import { Depth } from '../../../src/overworld/depth';
 import findChunk from './helpers';

@@ -1,7 +1,7 @@
 import { EventPriority } from '../../../core/event-emitter';
 import { Items } from '../../../data/ids/items';
 import type { Species } from '../../../data/ids/species';
-import type Battle from '../../core';
+import type Battle from '../../battle';
 import { BattleEvents, MoveTargetType } from '../../events';
 import { createHeldItem, holds } from '../__create';
 import {

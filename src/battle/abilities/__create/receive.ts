@@ -1,6 +1,6 @@
 import { EventPriority } from '../../../core/event-emitter';
 import Abilities from '../../../data/ids/abilities';
-import type Battle from '../../core';
+import type Battle from '../../battle';
 import { BattleEvents } from '../../events';
 import { abilitiesOf } from '../../moves/ability-moves';
 import { createAbility } from './create';

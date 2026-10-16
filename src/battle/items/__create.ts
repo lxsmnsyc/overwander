@@ -1,7 +1,7 @@
 import { type EventListenerLifecycle, EventPriority } from '../../core/event-emitter';
 import type { Stages } from '../../data/constants/stats';
 import type { Items } from '../../data/ids/items';
-import type Battle from '../core';
+import type Battle from '../battle';
 import {
   BattleEvents,
   type EffectCause,

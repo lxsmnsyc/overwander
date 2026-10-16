@@ -2,7 +2,7 @@ import { AttackPriority } from '../../core/event-emitter';
 import { Stages } from '../../data/constants/stats';
 import { Moves } from '../../data/ids/moves';
 import { USELESS_PENALTY } from '../ai/score';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import type Unit from '../unit';
 

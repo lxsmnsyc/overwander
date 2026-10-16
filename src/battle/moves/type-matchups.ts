@@ -1,7 +1,7 @@
 import { EventPriority } from '../../core/event-emitter';
 import { TYPE_EFFECTIVENESS, TYPE_EFFECTIVENESS_FACTOR, Types } from '../../data/constants/types';
 import { Moves } from '../../data/ids/moves';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents } from '../events';
 
 /**

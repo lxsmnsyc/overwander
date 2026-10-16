@@ -11,7 +11,7 @@ import { getSpeciesData, registerSpecies } from './__create';
  *
  * Everything a Mega does not change is read off the pokemon it is a
  * Mega of, which is why these are registered after every generation.
- * The battle side is `src/battle/items/megas.ts`.
+ * The battle side is `src/battle/gimmicks/mega.ts`.
  */
 
 interface MegaShape {
@@ -507,7 +507,8 @@ const MEGA_SHAPES: MegaShape[] = [
     ability: Abilities.MagicBounce,
     height: 1.1,
     weight: 27.8,
-  },  {
+  },
+  {
     mega: Species.RaichuMegaX,
     base: Species.Raichu,
     name: 'Mega Raichu X',

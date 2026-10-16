@@ -1,4 +1,4 @@
-import { toZoneKey } from '../auth/local-time';
+import { toZoneKey } from '../model/local-time';
 import AleaRNG from '../core/alea';
 import {
   boostFamilyWeights,

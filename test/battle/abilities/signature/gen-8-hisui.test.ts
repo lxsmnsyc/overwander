@@ -7,12 +7,12 @@ import {
   SOUL_CLOAK_SCALE,
   VENOM_FEAST_SHARE,
   WATCHFIRE_SCALE,
-} from '../../../../src/battle/abilities/signature/hisuian-forms';
-import type Battle from '../../../../src/battle/core';
+} from '../../../../src/battle/abilities/signature/gen-8/hisuian-forms';
+import type Battle from '../../../../src/battle/battle';
 import { EffectType } from '../../../../src/battle/events';
 import turns from '../../../../src/battle/turn';
 import type Unit from '../../../../src/battle/unit';
-import { unitTarget } from '../../../../src/battle/utils';
+import { unitTarget } from '../../../../src/battle/unit-checks';
 import { Stats } from '../../../../src/data/constants/stats';
 import { Types } from '../../../../src/data/constants/types';
 import Abilities from '../../../../src/data/ids/abilities';

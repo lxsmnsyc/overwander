@@ -12,7 +12,8 @@ import { FEED_BONUS } from '../../ai/score';
 import { BattleEvents, EffectType, MoveTargetType } from '../../events';
 import { STATUS_MOVES, hasAttackEffect } from '../../moves/status';
 import type Unit from '../../unit';
-import { isWeatherSandstorm, unitTarget } from '../../utils';
+import { unitTarget } from '../../unit-checks';
+import { isWeatherSandstorm } from '../../weather';
 import {
   chipImmunity,
   createAbility,

@@ -1,5 +1,5 @@
 import { Items } from '../../../data/ids/items';
-import type Battle from '../../core';
+import type Battle from '../../battle';
 import {
   setupBrightPowder,
   setupLoadedDice,

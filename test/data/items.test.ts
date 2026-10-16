@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { asBasicSpriteData } from '../../src/canvas/basic-sprite';
+import { asBasicSpriteData } from '../../src/canvas/sprites/basic-sprite';
 import registerBiomeSpawns, { isMythicalSpecies, listSpeciesHabitats } from '../../src/data/biome';
 import Families from '../../src/data/ids/families';
 import registerAbilities, { getAbilityData } from '../../src/data/abilities';
@@ -33,7 +33,8 @@ import {
   statusFlag,
   unpackStatuses,
 } from '../../src/data/ids/status';
-import { ARCEUS_FORMS, EvolutionMethod, Species } from '../../src/data/ids/species';
+import { EvolutionMethod, Species } from '../../src/data/ids/species';
+import { ARCEUS_FORMS } from '../../src/data/ids/forms';
 import { CANDY_PER_LEVEL, SHADOW_CANDY_MULTIPLIER, getCandyCost } from '../../src/auth/candy';
 import registerItems, {
   ITEM_TYPE_NAMES,
@@ -110,8 +111,8 @@ import { GEMS } from '../../src/data/items/gems';
 import { QUARRIED_GEAR } from '../../src/data/items/gear';
 import { PP_ITEMS, VITAMIN_STATS } from '../../src/data/items/vitamins';
 import { TREATS } from '../../src/data/items/treats';
-import { asBoolean } from '../../src/auth/__normalize';
-import { CANDY_STACKS, ITEM_STACKS, getStack, listStacks } from '../../src/auth/stacks';
+import { asBoolean } from '../../src/model/normalize';
+import { CANDY_STACKS, ITEM_STACKS, getStack, listStacks } from '../../src/model/stacks';
 import {
   MAX_SLOTS,
   SLOT_BITS,
@@ -127,7 +128,7 @@ import {
   withSlots,
 } from '../../src/data/constants/slots';
 import getSigil, { BRAILLE_BASE, SIGIL_CELLS } from '../../src/data/constants/sigil';
-import { isFavorite, isGuarded } from '../../src/auth/caught-record';
+import { isFavorite, isGuarded } from '../../src/model/caught-record';
 import {
   MAX_IV,
   MAX_IV_STARS,
@@ -162,7 +163,7 @@ import {
   UNLIMITED_BATTLE_LIMITS,
   withLimit,
 } from '../../src/data/constants/battle-limits';
-import { DEFAULT_DUEL_RULES, asDuelRules } from '../../src/auth/duel-record';
+import { DEFAULT_DUEL_RULES, asDuelRules } from '../../src/model/duel-record';
 import {
   PURIFY_IV_BOOST,
   isPurifiable,
@@ -182,7 +183,7 @@ import {
 import { INCENSES } from '../../src/data/items/incenses';
 import { BATTLE_ITEMS } from '../../src/data/items/battle-items';
 import { DRINKS } from '../../src/data/items/drinks';
-import { FEED_CATCH_BONUS, MAX_CATCH_BONUS } from '../../src/overworld/safari';
+import { FEED_CATCH_BONUS, MAX_CATCH_BONUS } from '../../src/overworld/safari/index';
 import { PLATES } from '../../src/data/items/plates';
 import { FORM_ITEMS, getItemForms } from '../../src/data/items/form-items';
 import { RAID_ITEMS, getRaidSpecies } from '../../src/data/items/raid-items';

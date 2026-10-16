@@ -5,7 +5,7 @@ import { maxPowerOf } from './max-moves';
 
 /**
  * The G-Max Moves: what a Gigantamax throws in place of the Max Move
- * of one type. The battle side is in `src/battle/moves/gmax-moves.ts`
+ * of one type. The battle side is in `src/battle/gimmicks/dynamax/gmax-moves.ts`
  * https://bulbapedia.bulbagarden.net/wiki/G-Max_Move
  */
 

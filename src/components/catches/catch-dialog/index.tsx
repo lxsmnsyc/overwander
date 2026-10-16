@@ -1,5 +1,5 @@
 import { type JSX, type Resource, Suspense, createResource } from 'solid-js';
-import { isLockLive } from '../../../auth/battle-lock';
+import { isLockLive } from '../../../model/battle-lock';
 import { getBuddy } from '../../../auth/buddy';
 import { syncServerClock } from '../../../auth/clock';
 
@@ -14,13 +14,13 @@ import { getCandyCount } from '../../../auth/candy';
 
 import { useAuth } from '../../../auth/context';
 import { listEvolutionOptions } from '../../../auth/evolution';
-import { getStats } from '../../../auth/health';
+import { getStats } from '../../../model/health';
 
 import { getSpeciesData } from '../../../data/species';
 
 import { type CatchDialogProps, CatchSheetBody } from './sheet';
 import { answered } from '../../app/resource-reads';
-import BattleData from '../../app/battle-data';
+import BattleData from '../../app/BattleData';
 
 export type { CatchDialogProps };
 

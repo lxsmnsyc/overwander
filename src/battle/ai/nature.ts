@@ -3,7 +3,7 @@ import { BattleEvents, MoveTargetType } from '../events';
 import { MoveCategories } from '../../data/ids/moves';
 import { NATURE_EFFECTS } from '../../data/ids/natures';
 import { Stats } from '../../data/constants/stats';
-import type Battle from '../core';
+import type Battle from '../battle';
 import CALLERS from './callers';
 import { getAIContext } from './context';
 import { getMoveData } from '../../data/moves';

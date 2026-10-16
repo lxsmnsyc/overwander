@@ -2,7 +2,7 @@
 # on a cadence and unleashes it on every foe at once. They never miss, so
 # the windup is the dodge: a Protect, a Detect, a Max Guard or a Wide Guard
 # raised in time turns one away. What each leaves behind is in
-# `src/battle/abilities/noble.ts`
+# `src/battle/abilities/special/noble.ts`
 
 FrenzyStoneAxe:
   type: Rock

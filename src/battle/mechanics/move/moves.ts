@@ -4,7 +4,7 @@ import { Slots } from '../../../data/constants/slots';
 import { TYPE_EFFECTIVENESS, TypeEffectiveness, Types } from '../../../data/constants/types';
 import { MoveCategories, MoveFlags, Moves } from '../../../data/ids/moves';
 import { PP_UP_LIMIT, getMoveData, getMovePP } from '../../../data/moves';
-import type Battle from '../../core';
+import type Battle from '../../battle';
 import type { MoveState } from '../../events';
 import { BattleEvents, MoveTargetType } from '../../events';
 import type Unit from '../../unit';

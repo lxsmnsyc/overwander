@@ -1,7 +1,7 @@
 import 'server-only';
-import { asCaughtPokemon, isAuctionableCatch } from '../../auth/caught-record';
-import { getMaxHealth, rescaleHealth } from '../../auth/health';
-import { Metric } from '../../auth/quest-record';
+import { asCaughtPokemon, isAuctionableCatch } from '../../model/caught-record';
+import { getMaxHealth, rescaleHealth } from '../../model/health';
+import { Metric } from '../../model/quest-record';
 import { type Stats, getIV } from '../../data/constants/stats';
 import { polishIVs } from '../../data/items/bottle-caps';
 import Npc, { hyperTrainingCost } from '../../data/overworld/npc';

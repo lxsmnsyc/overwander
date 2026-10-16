@@ -1,7 +1,7 @@
 import 'server-only';
-import { Acquisition } from '../../auth/caught-record';
-import { ITEM_STACKS } from '../../auth/stacks';
-import { Metric } from '../../auth/quest-record';
+import { Acquisition } from '../../model/caught-record';
+import { ITEM_STACKS } from '../../model/stacks';
+import { Metric } from '../../model/quest-record';
 import { Balls, type Items } from '../../data/ids/items';
 import type { Species } from '../../data/ids/species';
 import Npc from '../../data/overworld/npc';

@@ -1,6 +1,6 @@
 import { createSignal } from 'solid-js';
 import { isServer } from 'solid-js/web';
-import { asNumber, asRecord, asString } from '../../auth/__normalize';
+import { asNumber, asRecord, asString } from '../../model/normalize';
 import { BALL_ITEMS, Balls } from '../../data/ids/items';
 import { ACTION_ORDER, DEFAULT_BINDS, type KeyBinds } from './keys';
 

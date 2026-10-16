@@ -7,7 +7,7 @@ import { itemText } from './__create';
 /**
  * The Z-Crystals. Held, and never spent: the crystal turns one of the
  * holder's moves into its Z-Move as it is thrown, once a side a fight.
- * The battle side is in `src/battle/moves/z-moves.ts`
+ * The battle side is in `src/battle/gimmicks/z-moves.ts`
  */
 
 /** The crystals of one type, each turning any damaging move of it */

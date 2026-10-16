@@ -1,11 +1,11 @@
 import { AttackPriority, EventPriority } from '../../../core/event-emitter';
 import Abilities from '../../../data/ids/abilities';
 import type { Moves } from '../../../data/ids/moves';
-import type Battle from '../../core';
+import type Battle from '../../battle';
 import { BattleEvents, MoveTargetType } from '../../events';
 import { type Lifecycle, MergedLifecycle } from '../../lifecycle';
 import type Unit from '../../unit';
-import PROTECTED_ABILITIES, { MOLD_PROOF_ABILITIES } from '../protected';
+import PROTECTED_ABILITIES, { MOLD_PROOF_ABILITIES } from '../unsuppressible';
 import { createAbility } from './create';
 
 /**

@@ -1,6 +1,6 @@
 import { EventPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents } from '../events';
 
 const INCREASED_CRITICAL_HIT_RATIO_MOVES = new Set([

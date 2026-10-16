@@ -4,14 +4,14 @@
 // oxlint-disable typescript/no-unsafe-type-assertion
 import { For, Index, type JSX, Show, createMemo } from 'solid-js';
 import type { ProgressData } from '../../battle/events';
-import { castShownAs } from '../../battle/moves/max-moves';
+import { castShownAs } from '../../battle/gimmicks/dynamax/max-moves';
 import type Unit from '../../battle/unit';
 import { Stats } from '../../data/constants/stats';
 import type Abilities from '../../data/ids/abilities';
 import type { Items } from '../../data/ids/items';
 import { Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
-import { STATUS_NAMES } from '../../auth/health';
+import { STATUS_NAMES } from '../../model/health';
 import {
   ABILITY_PILLS,
   type AbilityKind,

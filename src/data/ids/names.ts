@@ -1,4 +1,4 @@
-// Written by scripts/id-names.ts from the enums it lists; run `pnpm id-names`
+// Written by scripts/data/id-names.ts from the enums it lists; run `pnpm id-names`
 // rather than editing it
 import { EvolutionMethod, Genders, Habitat, Species } from './species';
 import { MoveAffects, MoveCategories, MoveFlags, MoveTargets, Moves } from './moves';

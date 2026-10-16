@@ -1,8 +1,8 @@
 // Dracozolt, Arctozolt, Dracovish and Arctovish.
 
 import { describe, expect, it } from 'vitest';
-import type Battle from '../../../../src/battle/core';
-import { unitTarget } from '../../../../src/battle/utils';
+import type Battle from '../../../../src/battle/battle';
+import { unitTarget } from '../../../../src/battle/unit-checks';
 import { Stats } from '../../../../src/data/constants/stats';
 import { Types } from '../../../../src/data/constants/types';
 import Abilities from '../../../../src/data/ids/abilities';

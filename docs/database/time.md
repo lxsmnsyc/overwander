@@ -15,7 +15,7 @@ skewed device cannot shift the instants it is given, only how they are read.
 ## Local time
 
 Which _day and hour_ an instant falls in is the player's own, and
-[`src/auth/local-time.ts`](../../src/auth/local-time.ts) decides it. The offset
+[`src/model/local-time.ts`](../../src/model/local-time.ts) decides it. The offset
 is minutes east of UTC (`+480` for UTC+8), reported by the client from its own
 zone and normalized with `asOffset` to something a zone can actually be.
 

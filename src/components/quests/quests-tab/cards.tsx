@@ -1,5 +1,5 @@
 import { describeRequirement, describeReward, requirementIcon } from './describe';
-import type { QuestStanding, RequirementStanding } from '../../../auth/quest-record';
+import type { QuestStanding, RequirementStanding } from '../../../model/quest-record';
 import type { RotationStanding } from '../../../auth/rotations';
 import {
   QUESTS,

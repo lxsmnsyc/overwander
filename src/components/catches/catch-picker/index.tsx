@@ -1,5 +1,5 @@
 import { type JSX, Show, Suspense, createMemo, createResource, createSignal } from 'solid-js';
-import { isLockLive } from '../../../auth/battle-lock';
+import { isLockLive } from '../../../model/battle-lock';
 import readBox from '../../../auth/box';
 import { readCatchContext, searchCaught } from '../../../auth/caught';
 import { syncServerClock } from '../../../auth/clock';
@@ -8,7 +8,7 @@ import {
   type CatchConstraint,
   type CatchContext,
   planCatchSearch,
-} from '../../../auth/catch-search';
+} from '../../../model/search/catch';
 import ensureBattleData from '../../../data/battle-data';
 import {
   type BoxRecord,

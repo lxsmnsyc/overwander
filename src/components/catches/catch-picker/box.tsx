@@ -1,10 +1,10 @@
-import matchesCatch, { type CatchContext, orderCatches } from '../../../auth/catch-search';
+import matchesCatch, { type CatchContext, orderCatches } from '../../../model/search/catch';
 import {
   type BoxRecord,
   DEFAULT_BOX_NAME,
   DEFAULT_BOX_TONE,
   boxTone,
-} from '../../../auth/box-record';
+} from '../../../model/box-record';
 import { parseControls } from '../../../core/query';
 import { answered } from '../../app/resource-reads';
 import settings from '../../app/settings';

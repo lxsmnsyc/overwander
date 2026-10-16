@@ -1,5 +1,5 @@
 # Its own picture, tinted out of the Intriguing Stone by
-# `scripts/item-icons.ts`: no rip drew a portal key, and the two
+# `scripts/art/item-icons.ts`: no rip drew a portal key, and the two
 # stones it used to borrow are spoken for
 PortalKey:
   type: KeyItem

@@ -1,9 +1,9 @@
 import 'server-only';
-import { Acquisition, asCaughtPokemon, isAuctionableCatch } from '../auth/caught-record';
-import { CANDY_STACKS, ITEM_STACKS } from '../auth/stacks';
-import { getMaxHealth, getStats, rescaleHealth } from '../auth/health';
+import { Acquisition, asCaughtPokemon, isAuctionableCatch } from '../model/caught-record';
+import { CANDY_STACKS, ITEM_STACKS } from '../model/stacks';
+import { getMaxHealth, getStats, rescaleHealth } from '../model/health';
 import { getTimeOfDay } from '../data/ids/biome';
-import { toLocalTime } from '../auth/local-time';
+import { toLocalTime } from '../model/local-time';
 import { Balls, type Items } from '../data/ids/items';
 import type { Moves } from '../data/ids/moves';
 import type Natures from '../data/ids/natures';
@@ -18,7 +18,7 @@ import {
   isOneInAHundred,
   meetsEvolutionCriteria,
 } from '../data/species';
-import { Metric } from '../auth/quest-record';
+import { Metric } from '../model/quest-record';
 import { isEggRecord, isGuardedRecord, withoutHeld } from './catch-fields';
 import { recordFoundSpecies } from './pokedex';
 import { type ProgressBump, bumpProgress } from './quest-progress';
@@ -28,7 +28,7 @@ import { insertCaughtIn } from './caught';
 import { tx } from './db';
 import { isCatchLocked } from './locks';
 import { asNumber, asNumberArray } from './read';
-import { asBoolean } from '../auth/__normalize';
+import { asBoolean } from '../model/normalize';
 
 /**
  * Evolving, written with admin credentials. An evolution turns a

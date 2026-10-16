@@ -7,7 +7,7 @@ import {
   LIGHTNING_DIVE_SCALE,
   STARE_DOWN_COOLDOWN,
   WINDSWEPT_SCALE,
-} from '../../../../src/battle/abilities/signature/tadbulb-to-wiglett';
+} from '../../../../src/battle/abilities/signature/gen-9/tadbulb-to-wiglett';
 import { EffectType, MoveTargetType } from '../../../../src/battle/events';
 import turns from '../../../../src/battle/turn';
 import { Stages, Stats } from '../../../../src/data/constants/stats';

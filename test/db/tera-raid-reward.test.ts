@@ -1,10 +1,10 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { type Actor, actor, clearAll, sql } from './clients';
-import BattleOutcome from '../../src/auth/battle-outcome';
-import { Acquisition } from '../../src/auth/caught-record';
-import { asOffset, toLocalTime } from '../../src/auth/local-time';
-import { RaidAction, RaidKind, raidId } from '../../src/auth/raid-record';
-import { ITEM_STACKS } from '../../src/auth/stacks';
+import BattleOutcome from '../../src/model/battle-outcome';
+import { Acquisition } from '../../src/model/caught-record';
+import { asOffset, toLocalTime } from '../../src/model/local-time';
+import { RaidAction, RaidKind, raidId } from '../../src/model/raid-record';
+import { ITEM_STACKS } from '../../src/model/stacks';
 import AleaRNG from '../../src/core/alea';
 import { Balls } from '../../src/data/ids/items';
 import { getTeraShard } from '../../src/data/items/tera-shards';
@@ -15,14 +15,14 @@ import {
 } from '../../src/data/overworld/tera-raids';
 import { claimRaidReward, enterRaid, peekRaid } from '../../src/server/raids';
 import { writeCaughtRecord } from '../../src/server/caught';
-import { writeRaid } from '../../src/server/raid-io';
+import { writeRaid } from '../../src/server/raids/io';
 import { readStack } from '../../src/server/stacks';
 import { tx } from '../../src/server/db';
 import ChunkSnapshot, { type RaidRoll } from '../../src/overworld/chunk-snapshot';
 import getWorld from '../../src/overworld/current';
 import { Depth } from '../../src/overworld/depth';
 import { EncounterType } from '../../src/overworld/encounter';
-import { TERA_RAID_GOLD } from '../../src/overworld/raid';
+import { TERA_RAID_GOLD } from '../../src/overworld/raid/index';
 
 /**
  * A beaten Tera raid, claimed and caught against the real database:

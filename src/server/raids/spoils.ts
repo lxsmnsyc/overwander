@@ -1,5 +1,5 @@
 import 'server-only';
-import { RaidKind } from '../../auth/raid-record';
+import { RaidKind } from '../../model/raid-record';
 import { EncounterType } from '../../overworld/encounter';
 import {
   ALPHA_RAID_GOLD,

@@ -29,7 +29,7 @@ import ChunkSnapshot, {
 import { PLACEMENT_AREA, centeredCells } from '../../../src/overworld/chunk';
 import deriveEncounter, { EncounterType } from '../../../src/overworld/encounter';
 import World from '../../../src/overworld/world';
-import { canStageBoss } from '../../../src/overworld/raid';
+import { canStageBoss } from '../../../src/overworld/raid/index';
 
 registerMoves();
 registerSpecies();

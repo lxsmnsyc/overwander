@@ -7,7 +7,7 @@ import { getMoveData } from './__create';
 
 /**
  * The Max Moves: what a Dynamaxed pokemon throws in place of the move
- * it reached for. The battle side is in `src/battle/moves/max-moves.ts`
+ * it reached for. The battle side is in `src/battle/gimmicks/dynamax/max-moves.ts`
  * https://bulbapedia.bulbagarden.net/wiki/Max_Move
  */
 

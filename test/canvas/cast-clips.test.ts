@@ -1,7 +1,7 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import SpeciesSpriteAnimation from '../../src/canvas/species-sprite-animation';
-import asSpriteSheetJSON, { readFrameTable } from '../../src/canvas/sprite-sheet';
+import SpeciesSpriteAnimation from '../../src/canvas/sprites/species-sprite-animation';
+import asSpriteSheetJSON, { readFrameTable } from '../../src/canvas/sprites/sheet';
 import { MoveTargetType } from '../../src/battle/events';
 import {
   COMMON_CAST,

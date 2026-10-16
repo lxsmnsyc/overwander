@@ -1,0 +1,430 @@
+import { copyFileSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync } from 'node:fs';
+import { join } from 'node:path';
+import { SpriteAnim, asSpriteAnim, spriteAnimName } from '../../src/data/ids/sprite-anims.ts';
+import writeCoats from '../../src/server/sprites/coats.ts';
+import writeSpriteCredits from '../../src/server/sprites/credits.ts';
+
+/**
+ * Brings the pokemon sheets in from the SpriteCollab checkout.
+ *
+ * The sheets are built there, in `compact/`, and copied here whole: a
+ * folder per pokemon holding `sheet.json`, `frames.bin` and a PNG per
+ * coat. Nothing is repacked on the way, so what the game draws is what
+ * the collection built, pixel for pixel.
+ *
+ * The one thing that changes is the name. The collection files a form
+ * as `{region}/{dex}/{form}`; the game files it under the **species
+ * id** it knows it by, which is the dex number for a base form and a
+ * number past a hundred thousand for the three things that are drawn
+ * like pokemon without being pokemon. A form whose species is not
+ * written yet is skipped and counted, whatever ids are reserved.
+ *
+ * ```bash
+ * pnpm import-sprites                    # from ../SpriteCollab
+ * pnpm import-sprites ../elsewhere       # from another checkout
+ * pnpm import-sprites --dry-run
+ * ```
+ *
+ * Run `pnpm compact-sprites` afterwards, which records the new sheets
+ * in the pipeline ledger. `coats.json` and the sprite half of
+ * `credits.json` are rewritten here, since both are read off the
+ * sheets that were just copied.
+ */
+
+const SOURCE = '../SpriteCollab';
+
+const DESTINATION = 'public/sprites/pokemon';
+
+/**
+ * Which regions are carried over, and what they are called here. The
+ * game's own answer is `getSpeciesRegion`, which cannot be imported
+ * into a script: it is written in `const enum`s, which node refuses
+ */
+const REGIONS: Partial<Record<string, string>> = {
+  kanto: 'kanto',
+  johto: 'johto',
+  hoenn: 'hoenn',
+  sinnoh: 'sinnoh',
+  unova: 'unova',
+  kalos: 'kalos',
+  alola: 'alola',
+  galar: 'galar',
+  hisui: 'hisui',
+  paldea: 'paldea',
+};
+
+/**
+ * Dex numbers the collection files under another region than the game
+ * does. It keeps Hisui's new species, and their forms, with Galar's
+ */
+const REFILED: { from: number; to: number; under: string }[] = [
+  { from: 899, to: 905, under: 'hisui' },
+];
+
+/** The folder a slot goes under here, by its dex number where the collection differs */
+function folderOf(slot: Slot, region: string): string {
+  for (const refiled of REFILED) {
+    if (slot.dex >= refiled.from && slot.dex <= refiled.to) {
+      return refiled.under;
+    }
+  }
+  return region;
+}
+
+/**
+ * The three drawn like pokemon without being pokemon, by the form the
+ * collection files them under. Their ids are in
+ * [`src/data/ids/species.ts`](../src/data/ids/species.ts)
+ */
+const MISC: Partial<Record<number, { species: number; name: string }>> = {
+  0: { species: 100000, name: 'Missingno' },
+  4: { species: 100001, name: 'Egg' },
+  1: { species: 100002, name: 'Substitute' },
+};
+
+/** Where the misc three are filed, being of no region. */
+const UNKNOWN = 'unknown';
+
+/**
+ * The six a sheet cannot be put on screen without. Written out rather
+ * than imported from [`MINIMUM_CAST`](../src/data/constants/cast.ts),
+ * which reaches the `const enum`s node refuses to load
+ */
+const MINIMUM = new Set<number>([
+  SpriteAnim.Idle,
+  SpriteAnim.Attack,
+  SpriteAnim.Walk,
+  SpriteAnim.Sleep,
+  SpriteAnim.Hurt,
+  SpriteAnim.Hop,
+]);
+
+/**
+ * Where the ids are written down, read as text: node refuses to
+ * import a `const enum`
+ */
+const IDS = 'src/data/ids/species.ts';
+
+/** Where the species themselves are written, a file per line */
+const SPECIES = 'src/data/species';
+
+/** Where the stand-in sheets are listed */
+const STAND_IN_TABLE = 'src/canvas/sprites/species-sprites.ts';
+
+/**
+ * Where form ids start, matching `SPECIES_FORM_BAND` in
+ * [`src/data/ids/species.ts`](../src/data/ids/species.ts). Repeated
+ * rather than imported, since node refuses a `const enum`'s file
+ */
+const FORM_BAND = 1000000;
+const FORMS_PER_SPECIES = 100;
+
+interface Slot {
+  region: string;
+  dex: number;
+  form: number;
+  path: string;
+  coats: string[];
+  missing: number[];
+}
+
+interface Wanted extends Slot {
+  species: number;
+  under: string;
+}
+
+function say(message: string): void {
+  console.log(message);
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value != null;
+}
+
+function slotsOf(root: string): Slot[] {
+  const index: unknown = JSON.parse(readFileSync(join(root, 'index.json'), 'utf8'));
+  const held = isRecord(index) && Array.isArray(index.slots) ? index.slots : [];
+
+  return held.filter(isRecord).map((slot) => ({
+    region: String(slot.region),
+    dex: Number(slot.dex),
+    form: Number(slot.form),
+    path: String(slot.path),
+    coats: Array.isArray(slot.coats) ? slot.coats.map(String) : [],
+    missing: Array.isArray(slot.missing) ? slot.missing.map(Number) : [],
+  }));
+}
+
+/**
+ * Every species the data actually names, which is narrower than every
+ * id the enum holds: ids are reserved a region at a time and the
+ * species are written a line at a time, so a sheet for a line nobody
+ * can meet yet is art that ships for nothing.
+ *
+ * Both are read as text, since node refuses the `const enum`s the
+ * code is written in. A name counts wherever it is written under
+ * `src/data/species/`, as a key of the species YAML or as
+ * `Species.Name` in the code beside it, and so does a form list the
+ * ids file exports
+ */
+/** The one file under the species folder that names every regional form list */
+const REGION_TABLE = join(SPECIES, 'regions.ts');
+
+function writtenSpecies(): Set<number> {
+  const source = readFileSync(IDS, 'utf8');
+  const body = source.slice(source.indexOf('export const enum Species {'));
+  const numbered = new Map<string, number>();
+
+  for (const [, name, id] of body.slice(0, body.indexOf('\n}')).matchAll(/(\w+) = (\d+),/g)) {
+    numbered.set(name, Number(id));
+  }
+
+  const lists = new Map<string, number[]>();
+
+  for (const [, list, members] of source.matchAll(
+    /export const (\w+_FORMS)(?:: Species\[\])? = \[([\s\S]*?)\];/g,
+  )) {
+    const held: number[] = [];
+
+    for (const [, name] of members.matchAll(/Species\.(\w+)/g)) {
+      const id = numbered.get(name);
+
+      if (id != null) {
+        held.push(id);
+      }
+    }
+    lists.set(list, held);
+  }
+
+  const ids = new Set<number>();
+
+  for (const file of sourceFiles(SPECIES)) {
+    const text = readFileSync(file, 'utf8');
+
+    // A YAML file names its species as keys under their family, the code as `Species.Name`
+    const pattern = file.endsWith('.yaml') ? /^ {0,2}([A-Z]\w*):/gm : /Species\.(\w+)/g;
+
+    for (const [, name] of text.matchAll(pattern)) {
+      const id = numbered.get(name);
+
+      if (id != null) {
+        ids.add(id);
+      }
+    }
+    // The region table files every regional form by its region, written
+    // or not, so naming a form list there does not write its species
+    for (const [list, held] of lists) {
+      if (file !== REGION_TABLE && text.includes(list)) {
+        for (const id of held) {
+          ids.add(id);
+        }
+      }
+    }
+  }
+  // A sheet that stands in for a pokemon the collection has not drawn
+  // (Falinks drawn as its Brass) is shipped though no data names it
+  for (const id of standInSheets(numbered)) {
+    ids.add(id);
+  }
+  return ids;
+}
+
+/** The sheets `STAND_INS` draws other pokemon as, read as text like the rest */
+function standInSheets(numbered: Map<string, number>): number[] {
+  const source = readFileSync(STAND_IN_TABLE, 'utf8');
+  const table = source.slice(source.indexOf('const STAND_INS'));
+  const sheets: number[] = [];
+
+  for (const [, sheet] of table
+    .slice(0, table.indexOf(']);'))
+    .matchAll(/\[Species\.\w+, Species\.(\w+)\]/g)) {
+    const id = numbered.get(sheet);
+
+    if (id != null) {
+      sheets.push(id);
+    }
+  }
+  return sheets;
+}
+
+/**
+ * The ids the game names as a shadow (`ArticunoShadow`). The collection
+ * files its Shadow drawings among a species' forms, so a slot is only
+ * a shadow's where the id it lands on is one: Keldeo's second slot is a
+ * Shadow Keldeo, not the Resolute form the id band numbers there
+ */
+function shadowSpecies(): Set<number> {
+  const source = readFileSync(IDS, 'utf8');
+  const body = source.slice(source.indexOf('export const enum Species {'));
+  const shadows = new Set<number>();
+
+  for (const [, name, id] of body.slice(0, body.indexOf('\n}')).matchAll(/(\w+) = (\d+),/g)) {
+    if (name.endsWith('Shadow')) {
+      shadows.add(Number(id));
+    }
+  }
+  return shadows;
+}
+
+/** Whether the collection drew this slot as a Shadow, by the form name on its sheet */
+function isShadowSlot(root: string, slot: Slot): boolean {
+  const sheet: unknown = JSON.parse(readFileSync(join(root, slot.path, 'sheet.json'), 'utf8'));
+
+  return isRecord(sheet) && sheet.formName === 'Shadow';
+}
+
+/** Every TypeScript file under a folder, the species data being a tree of them */
+function sourceFiles(folder: string): string[] {
+  const found: string[] = [];
+
+  for (const entry of readdirSync(folder, { withFileTypes: true })) {
+    const path = join(folder, entry.name);
+
+    if (entry.isDirectory()) {
+      found.push(...sourceFiles(path));
+    } else if (path.endsWith('.ts') || path.endsWith('.yaml')) {
+      found.push(path);
+    }
+  }
+  return found;
+}
+
+/** The species id this form is known by here, or nothing for one it is not. */
+function wanted(root: string, slot: Slot, known: Set<number>, shadows: Set<number>): Wanted | null {
+  if (slot.region === 'misc' && slot.dex === 0) {
+    const misc = MISC[slot.form];
+
+    return misc == null ? null : { ...slot, species: misc.species, under: UNKNOWN };
+  }
+  const region = REGIONS[slot.region];
+
+  if (region == null) {
+    return null;
+  }
+
+  // An alternate form is filed beside its species, under the id the
+  // reserved band gives it
+  const species = slot.form === 0 ? slot.dex : FORM_BAND + slot.dex * FORMS_PER_SPECIES + slot.form;
+
+  if (!known.has(species) || shadows.has(species) !== isShadowSlot(root, slot)) {
+    return null;
+  }
+  return { ...slot, species, under: folderOf(slot, region) };
+}
+
+/** What the clips are called, for a line somebody has to read. */
+function named(anims: number[]): string {
+  return anims
+    .map((anim) => {
+      const known = asSpriteAnim(anim);
+
+      return known == null ? String(anim) : spriteAnimName(known);
+    })
+    .join(', ');
+}
+
+/** Which animations one copied sheet carries. */
+function animsOf(folder: string): number[] {
+  const sheet: unknown = JSON.parse(readFileSync(join(folder, 'sheet.json'), 'utf8'));
+  const held = isRecord(sheet) && Array.isArray(sheet.anims) ? sheet.anims : [];
+
+  return held.filter(isRecord).map((anim) => Number(anim.anim));
+}
+
+/** Everything the collection put in one form's folder. */
+function filesOf(root: string, slot: Slot): string[] {
+  return readdirSync(join(root, slot.path)).filter((file) => !file.startsWith('.'));
+}
+
+export default function importSprites(source: string, dryRun: boolean): void {
+  const root = join(source, 'compact');
+
+  if (!existsSync(join(root, 'index.json'))) {
+    throw new Error(`No compact sheets at ${root}. Build them in the SpriteCollab checkout first`);
+  }
+  const slots = slotsOf(root);
+  const known = writtenSpecies();
+  const shadows = shadowSpecies();
+  const taking: Wanted[] = [];
+
+  for (const slot of slots) {
+    const held = wanted(root, slot, known, shadows);
+
+    if (held != null) {
+      taking.push(held);
+    }
+  }
+  taking.sort((one, two) => one.species - two.species);
+
+  say(`${taking.length} of ${slots.length} forms, from ${root}`);
+
+  if (dryRun) {
+    for (const slot of taking) {
+      say(`  ${slot.path} -> ${slot.under}/${slot.species} (${slot.coats.join(', ')})`);
+    }
+    return;
+  }
+
+  // The whole tree is replaced rather than written over: a species
+  // whose folder is no longer built has to stop being served, and its
+  // files would otherwise sit there being drawn
+  for (const region of new Set(taking.map((slot) => slot.under))) {
+    rmSync(join(DESTINATION, region), { recursive: true, force: true });
+  }
+
+  let files = 0;
+
+  for (const slot of taking) {
+    const folder = join(DESTINATION, slot.under, String(slot.species));
+
+    mkdirSync(folder, { recursive: true });
+    for (const file of filesOf(root, slot)) {
+      copyFileSync(join(root, slot.path, file), join(folder, file));
+      files += 1;
+    }
+  }
+  say(`${files} files under ${DESTINATION}`);
+
+  for (const slot of taking.filter((one) => one.missing.length > 0)) {
+    const bare = slot.missing.filter((anim) => MINIMUM.has(anim));
+
+    // A gap in the other four is a sheet drawn plainer; a gap in the
+    // six is a pokemon that cannot be put on screen properly at all
+    say(
+      bare.length > 0
+        ? `  ${slot.species} has no ${named(bare)}, which a sheet cannot be drawn without`
+        : `  ${slot.species} has no ${named(slot.missing)}: unfinished art, cast falls back`,
+    );
+  }
+
+  // A clip this game has no number for cannot be asked to play, so it
+  // would ship as bytes nothing reads. It is a gap in `SpriteAnim`
+  // rather than a bad sheet
+  const unknown = new Set<number>();
+
+  for (const slot of taking) {
+    for (const anim of animsOf(join(DESTINATION, slot.under, String(slot.species)))) {
+      if (asSpriteAnim(anim) == null) {
+        unknown.add(anim);
+      }
+    }
+  }
+  if (unknown.size > 0) {
+    say(`animations with no id here: ${[...unknown].sort((one, two) => one - two).join(', ')}`);
+  }
+}
+
+const argv = process.argv.slice(2);
+const dryRun = argv.includes('--dry-run');
+const from = argv.find((arg) => !arg.startsWith('--')) ?? SOURCE;
+
+importSprites(from, dryRun);
+
+if (!dryRun) {
+  say(`public/${await writeCoats()}`);
+  // Who drew what travels with the sheets: every artist named in a
+  // `sheet.json` is scanned back out into the credits list, so a
+  // pokemon cannot land in `public/` without its artists landing on
+  // the credits screen
+  say(await writeSpriteCredits());
+}

@@ -1,12 +1,12 @@
 // Type: Null through Jangmo-o, with RKS System and Dazzling.
 
 import { describe, expect, it } from 'vitest';
-import { unitTarget } from '../../../../src/battle/utils';
+import { unitTarget } from '../../../../src/battle/unit-checks';
 import {
   GHOST_SHIP_SCALE,
   MEMORY_ECHO_SCALE,
   WAR_CLANGOR_CAP,
-} from '../../../../src/battle/abilities/signature/type-null-to-jangmo-o';
+} from '../../../../src/battle/abilities/signature/gen-7/type-null-to-jangmo-o';
 import { SpawnRarity, getSpawnRarity } from '../../../../src/data/biome';
 import { Stages, Stats } from '../../../../src/data/constants/stats';
 import { Types } from '../../../../src/data/constants/types';

@@ -2,7 +2,7 @@ import { AttackPriority } from '../../core/event-emitter';
 import { RECHARGE_MOVES } from '../../data/moves/recharge';
 import { Statuses } from '../../data/ids/status';
 import { STEP_PENALTY } from '../ai/score';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, EffectType } from '../events';
 
 // https://bulbapedia.bulbagarden.net/wiki/Hyper_Beam_(move)

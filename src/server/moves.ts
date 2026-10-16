@@ -1,14 +1,14 @@
 import 'server-only';
-import { asNumberArray } from '../auth/__normalize';
-import { LearnRefusal, type LearnResult } from '../auth/learn-refusal';
-import { ITEM_STACKS } from '../auth/stacks';
+import { asNumberArray } from '../model/normalize';
+import { LearnRefusal, type LearnResult } from '../model/learn-refusal';
+import { ITEM_STACKS } from '../model/stacks';
 import { type Items, getMachineMove } from '../data/ids/items';
 import type { Moves } from '../data/ids/moves';
 import type { Species } from '../data/ids/species';
 import { Slots, getSlots } from '../data/constants/slots';
 import { getMovesLearnedBetween, getSpeciesData } from '../data/species';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
-import { Metric } from '../auth/quest-record';
+import { Metric } from '../model/quest-record';
 import { readStackIn, writeStackIn } from './stacks';
 import { readCaughtIn, updateCaughtIn } from './caught-io';
 import { type ProgressBump, bumpProgress } from './quest-progress';

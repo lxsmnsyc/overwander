@@ -160,6 +160,7 @@ give a player a **password link** from the player's admin page instead, or with
 | `src/overworld/`       | The world: chunks, snapshots, landmarks, encounters, safari, breeding, raids                                              |
 | `src/battle/`          | The battle engine: events, units, moves, statuses, abilities, items, AI                                                   |
 | `src/auth/`            | The browser's side: `'use server'` wrappers around every read and write, sign-in, and the live feed                       |
+| `src/model/`           | What both sides agree on: the shape of each stored record, the rules read off it, and the search parsers                  |
 | `src/server/`          | Reads and writes over the owner connection, behind a verified caller                                                      |
 | `src/components/`      | The UI, in a folder per feature (`overworld/`, `catches/`, `battle/`, …) over the shared `sprites/`, `styled/` and `app/` |
 | `src/canvas/`          | Sprite sheets and the animation class the map and battle canvases draw with                                               |

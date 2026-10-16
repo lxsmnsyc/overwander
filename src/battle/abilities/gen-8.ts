@@ -8,12 +8,15 @@ import { Statuses, TeamStatuses, Weathers } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
 import { isPseudoMove } from '../../data/moves/pseudo';
 import { registerWeatherWant } from '../ai/weather-wants';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, type EffectCause, EffectType } from '../events';
 import { MergedLifecycle } from '../lifecycle';
 import { abilitiesOf } from '../moves/ability-moves';
 import type Unit from '../unit';
-import { hasAnyStatus, hasFreeItemSlot, isWeatherHail, onUnitActs, unitTarget } from '../utils';
+import { hasAnyStatus, unitTarget } from '../unit-checks';
+import { isWeatherHail } from '../weather';
+import onUnitActs from '../acts';
+import { hasFreeItemSlot } from '../items/held';
 import {
   createAbility,
   createBatteryAbility,

@@ -1,10 +1,10 @@
 import { For, type JSX, Show, Suspense, createResource } from 'solid-js';
-import BattleData from '../../app/battle-data';
+import BattleData from '../../app/BattleData';
 import { getCandyCount } from '../../../auth/candy';
 import { getPokedex, getSpeciesDexEntry } from '../../../auth/pokedex';
 import type { Species } from '../../../data/ids/species';
 import { getSpeciesData, getSpeciesForms, isBaseForm } from '../../../data/species';
-import { hasFemaleSheet } from '../../../canvas/species-sprites';
+import { hasFemaleSheet } from '../../../canvas/sprites/species-sprites';
 import { Badge, CloseButton, Dialog, Divider, Meta, Note, StepButton } from '../../styled';
 import TypeBadge from '../../sprites/TypeBadge';
 import { dexLabel } from '../PokedexGrid';

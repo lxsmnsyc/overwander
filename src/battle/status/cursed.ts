@@ -1,9 +1,9 @@
 import { Stats } from '../../data/constants/stats';
 import { DamageFlags } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { EffectType } from '../events';
-import { onUnitActs } from '../utils';
+import onUnitActs from '../acts';
 import { checkStatusDamage } from './__create';
 
 /**

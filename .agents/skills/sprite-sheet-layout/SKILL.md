@@ -19,7 +19,7 @@ description: >
 
 **The anchors are on the frame, in the frame box's own pixels.** Shadow, body centre, head and both hands, from the collection's `-Offsets` images, and any of them may be absent (`-32768` in both slots of `frames.bin`). They may fall outside the frame: a flying pokemon's shadow is on the ground below everything drawn, and nothing clamps them.
 
-**Read the format from the source.** `../SpriteCollab/compact/README.md` is the authority on `sheet.json` and `frames.bin`, down to the column order of the frame table; [`sprite-sheet.ts`](../../../src/canvas/sprite-sheet.ts) is this game's reader of it and nothing else.
+**Read the format from the source.** `../SpriteCollab/compact/README.md` is the authority on `sheet.json` and `frames.bin`, down to the column order of the frame table; [`sprite-sheet.ts`](../../../src/canvas/sprites/sheet.ts) is this game's reader of it and nothing else.
 
 **Two tiers of clip, and the collection names both.** The **bare minimum** six, `Idle` `Attack` `Walk` `Sleep` `Hurt` `Hop`, are what a sheet cannot be put on screen without; four more, `Charge` `Double` `Rotate` `Swing`, complete the ten a renderer may assume. They are [`MINIMUM_CAST` and `COMMON_CAST`](../../../src/data/constants/cast.ts), a cast list may end on any of the ten, and `pickCast` gives up onto two of the six. A sheet short of one of the six is unfinished art worth reporting; short of one of the other four it is drawn a little plainer.
 
@@ -47,7 +47,7 @@ pnpm import-sprites --dry-run  # say what it would copy
 pnpm compact-sprites           # record them, and shrink any PNG that can be
 ```
 
-[`scripts/import-sprites.ts`](../../../scripts/import-sprites.ts) replaces the tree rather than writing over it, so a pokemon no longer built stops being served. It renames the collection's `{region}/{dex}/{form}` to the species id this game knows it by, skips a form there is no id for, and rewrites `coats.json` with a fresh stamp per pokemon. Without that stamp browsers go on drawing yesterday's sheet against today's description, which draws nothing at all.
+[`scripts/sprites/import.ts`](../../../scripts/sprites/import.ts) replaces the tree rather than writing over it, so a pokemon no longer built stops being served. It renames the collection's `{region}/{dex}/{form}` to the species id this game knows it by, skips a form there is no id for, and rewrites `coats.json` with a fresh stamp per pokemon. Without that stamp browsers go on drawing yesterday's sheet against today's description, which draws nothing at all.
 
 Nothing is repacked on the way in. A sheet that needs repacking is repacked in the SpriteCollab checkout and imported again.
 

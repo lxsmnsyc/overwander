@@ -2,11 +2,11 @@ import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
 import { Weathers } from '../../data/ids/status';
 import { MOVE_WEATHERS } from '../../data/moves/weather';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents } from '../events';
 import turns from '../turn';
 import type Team from '../team';
-import { isPrimalWeather } from '../utils';
+import { isPrimalWeather } from '../weather';
 
 /**
  * The weather moves: a move whose whole effect is what the sky does

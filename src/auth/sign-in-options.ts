@@ -1,6 +1,6 @@
 import type { SignInProvider } from '../server/better-auth';
 import { signInProviders } from '../server/better-auth';
-import { readOnly } from '../utils/server-calls';
+import { readOnly } from './server-calls';
 
 export type { SignInProvider };
 

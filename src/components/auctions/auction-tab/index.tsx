@@ -5,7 +5,7 @@ import {
   getSellerStanding,
   watchOpenAuctions,
 } from '../../../auth/auctions';
-import { isLockLive } from '../../../auth/battle-lock';
+import { isLockLive } from '../../../model/battle-lock';
 import { getBuddy } from '../../../auth/buddy';
 import { syncServerClock } from '../../../auth/clock';
 import {

@@ -1,6 +1,6 @@
 import { defineConfig } from 'vitest/config';
 import { TEST_DATABASE_URL } from './test/test-database.ts';
-import yamlData from './plugins/yaml.ts';
+import yamlData from './scripts/vite/yaml.ts';
 
 /**
  * The database suite: server modules run against the throwaway

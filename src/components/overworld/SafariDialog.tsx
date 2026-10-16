@@ -12,11 +12,11 @@ import {
   on,
 } from 'solid-js';
 import { type InventoryEntry, getInventory } from '../../auth/inventory';
-import type { EncounterRecord } from '../../auth/encounter-record';
+import type { EncounterRecord } from '../../model/encounter-record';
 import { feedEncounter, throwBall } from '../../auth/safari';
 import { BALL_ITEMS, Balls, type Items, getBall } from '../../data/ids/items';
 import { Genders } from '../../data/ids/species';
-import { isShadow, isShiny } from '../../auth/caught-record';
+import { isShadow, isShiny } from '../../model/caught-record';
 import { getSpeciesData } from '../../data/species';
 import type SafariSession from '../../overworld/safari';
 import { FEED_CATCH_BONUS, SafariState, ThrowResult, describeFlight } from '../../overworld/safari';

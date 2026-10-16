@@ -1,6 +1,6 @@
 import type { JSX } from 'solid-js';
 import AtlasSprite from './AtlasSprite';
-import { UI_SPRITE_ROOT } from '../../canvas/basic-sprites';
+import { UI_SPRITE_ROOT } from '../../canvas/sprites/basic-sprites';
 import { MOVE_CATEGORY_NAMES, MoveCategories } from '../../data/ids/moves';
 
 /**

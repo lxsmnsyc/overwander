@@ -7,7 +7,7 @@ import { Statuses } from '../../data/ids/status';
 import { isDanceMove } from '../../data/moves/dances';
 import { getSpeciesData } from '../../data/species';
 import { getWornPartner } from '../../data/species/fusion';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import { MergedLifecycle } from '../lifecycle';
 import type Unit from '../unit';
@@ -19,7 +19,7 @@ import {
   createMummyAbility,
   getAbilityHolders,
 } from './__create';
-import { FOLDED_CREEDS, HUSK_CREED } from './signature/tao-trio';
+import { FOLDED_CREEDS, HUSK_CREED } from './signature/gen-5/tao-trio';
 
 /** How far a Darmanitan has to fall before it sits down */
 export const ZEN_MODE_THRESHOLD = 1 / 2;

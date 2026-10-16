@@ -3,10 +3,10 @@ import { Depth } from '../../overworld/depth';
 import type { ItemStack } from '../../data/overworld/item-pool';
 import type { Items } from '../../data/ids/items';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
-import { ITEM_STACKS } from '../../auth/stacks';
+import { ITEM_STACKS } from '../../model/stacks';
 import { type Sql, type Tx, getSql } from '../db';
 import { grantStacksIn } from '../stacks';
-import { Landmark, Metric } from '../../auth/quest-record';
+import { Landmark, Metric } from '../../model/quest-record';
 import { bumpProgress } from '../quest-progress';
 import { claim, resolveSnapshot } from './claims';
 

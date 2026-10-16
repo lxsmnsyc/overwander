@@ -5,10 +5,10 @@ import {
   MOON_HOWL_SCALE,
   SHRIEK_SPEED_SCALE,
   STEAM_SURGE_SCALE,
-} from '../../../../src/battle/abilities/signature/ancient-paradox';
+} from '../../../../src/battle/abilities/signature/gen-9/ancient-paradox';
 import { EffectType, MoveTargetType } from '../../../../src/battle/events';
 import { MOVE_DELAY } from '../../../../src/battle/mechanics/move/timing';
-import { unitTarget } from '../../../../src/battle/utils';
+import { unitTarget } from '../../../../src/battle/unit-checks';
 import { Stages, Stats } from '../../../../src/data/constants/stats';
 import { Types } from '../../../../src/data/constants/types';
 import Abilities from '../../../../src/data/ids/abilities';

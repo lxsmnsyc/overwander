@@ -1,9 +1,9 @@
 import 'server-only';
-import { ITEM_STACKS } from '../auth/stacks';
+import { ITEM_STACKS } from '../model/stacks';
 import type { Items } from '../data/ids/items';
 import type Natures from '../data/ids/natures';
 import { getMintNature } from '../data/items/mints';
-import { Metric } from '../auth/quest-record';
+import { Metric } from '../model/quest-record';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
 import { bumpProgress } from './quest-progress';
 import { readStackIn, writeStackIn } from './stacks';

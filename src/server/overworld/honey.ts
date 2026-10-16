@@ -1,12 +1,12 @@
 import 'server-only';
 import AleaRNG from '../../core/alea';
-import type { EncounterRecord } from '../../auth/encounter-record';
+import type { EncounterRecord } from '../../model/encounter-record';
 import { Items } from '../../data/ids/items';
 import { HONEY_TREE_MIN_IV, LATHER_COST, rollHoneyTree } from '../../data/overworld/honey-tree';
 import Landmark from '../../data/overworld/landmark';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
 import type { Spawn } from '../../overworld/chunk-snapshot';
-import { ITEM_STACKS } from '../../auth/stacks';
+import { ITEM_STACKS } from '../../model/stacks';
 import { readStackIn, spendStackIn } from '../stacks';
 import { claim, resolveSnapshot } from './claims';
 import { startEncounter } from './spawns';

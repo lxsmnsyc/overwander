@@ -1,4 +1,4 @@
-import type Battle from '../core';
+import type Battle from '../battle';
 import setupGen1Abilities from './gen-1';
 import setupGen2Abilities from './gen-2';
 import setupGen3Abilities from './gen-3';

@@ -1,8 +1,8 @@
 import 'server-only';
-import { asCaughtPokemon, getMovePoints } from '../auth/caught-record';
-import { ITEM_STACKS } from '../auth/stacks';
-import { assignEfforts as assignedValues, unusedEffort } from '../auth/effort';
-import { getMaxHealth, rescaleHealth } from '../auth/health';
+import { asCaughtPokemon, getMovePoints } from '../model/caught-record';
+import { ITEM_STACKS } from '../model/stacks';
+import { assignEfforts as assignedValues, unusedEffort } from '../model/effort';
+import { getMaxHealth, rescaleHealth } from '../model/health';
 import { MAX_EFFORT_PER_STAT, type Stats } from '../data/constants/stats';
 import type { Moves } from '../data/ids/moves';
 import { friendshipFactor, gainFriendship } from '../data/constants/friendship';
@@ -12,7 +12,7 @@ import { MAX_VITAMIN_STATS, PP_ITEMS, VITAMIN_EFFORT, VITAMIN_STATS } from '../d
 import { MACHO_BRACE_EFFORT } from '../data/items/power-items';
 import { MAX_WING_STATS, WING_EFFORT, WING_STATS } from '../data/items/wings';
 import { PP_UP_LIMIT, getMovePP } from '../data/moves';
-import { Metric } from '../auth/quest-record';
+import { Metric } from '../model/quest-record';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
 import { readCaughtIn, updateCaughtIn } from './caught-io';
 import { tx } from './db';
@@ -28,7 +28,7 @@ import { isCatchLocked } from './locks';
  * on top of them; and a bitter berry, taking ten back off a stat and
  * handing them to the pool to be spent again.
  *
- * The arithmetic itself is in [`src/auth/effort.ts`](../auth/effort.ts)
+ * The arithmetic itself is in [`src/model/effort.ts`](../auth/effort.ts)
  * so the catch sheet can say what is possible before asking for it.
  * What is here is the part that has to be decided against the stored
  * record: a client that worked out its own budget would simply work

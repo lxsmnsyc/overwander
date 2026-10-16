@@ -1,4 +1,4 @@
-import { Landmark, Metric } from '../auth/quest-record';
+import { Landmark, Metric } from '../model/quest-record';
 import { Types } from './constants/types';
 import Npc from './overworld/npc';
 import {

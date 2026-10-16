@@ -1,6 +1,6 @@
-import { isGuarded } from '../../auth/caught-record';
-import { isEgg } from '../../auth/egg';
-import type { LearnResult } from '../../auth/learn-refusal';
+import { isGuarded } from '../../model/caught-record';
+import { isEgg } from '../../model/egg';
+import type { LearnResult } from '../../model/learn-refusal';
 import type { Items } from '../../data/ids/items';
 import type { Moves } from '../../data/ids/moves';
 import type { CatchOption } from '../../components/catches/catch-picker';

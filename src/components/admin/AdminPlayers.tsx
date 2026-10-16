@@ -10,7 +10,7 @@ import {
 } from 'solid-js';
 import type { Listing as ListingPage, PlayerRow } from '../../auth/admin';
 import { Badge, List, ListRow, Meta, Note } from '../styled';
-import { ADMIN_ROLE } from '../../auth/staff';
+import { ADMIN_ROLE } from '../../model/staff';
 import Listing from './Listing';
 import { listPlayers } from '../../auth/admin';
 import namePlace from '../../overworld/place';

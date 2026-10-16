@@ -7,7 +7,7 @@ import {
   type CheckUnitAIMoveUsableEvent,
   MoveTargetType,
 } from '../../../src/battle/events';
-import type Battle from '../../../src/battle/core';
+import type Battle from '../../../src/battle/battle';
 import type Unit from '../../../src/battle/unit';
 import { MAX_STAGE, Stages } from '../../../src/data/constants/stats';
 import { Types } from '../../../src/data/constants/types';

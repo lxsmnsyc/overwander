@@ -7,10 +7,10 @@ import { RAID_INTERVAL } from '../overworld/chunk-snapshot';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
 import { WORLD_GENERATION } from '../overworld/current';
 import type { Depth } from '../overworld/depth';
-import { asRecordArray, asString } from './__normalize';
-import { RaidKind, type RaidRecord, type RaidView, asRaidRecord } from './raid-record';
+import { asRecordArray, asString } from '../model/normalize';
+import { RaidKind, type RaidRecord, type RaidView, asRaidRecord } from '../model/raid-record';
 import { hasAnyCaught } from './caught';
-import { LobbyRole } from './lobby-role';
+import { LobbyRole } from '../model/lobby-role';
 import { requireReader, requireUid, requireUidFor } from '../server/auth';
 import { Feature } from '../server/switches';
 import check, {
@@ -44,19 +44,19 @@ import {
   watchRaidLobby as watchLobbyOnServer,
 } from '../server/raids';
 import { serverNow, syncServerClock } from './clock';
-import { asOffset, toLocalTime } from './local-time';
+import { asOffset, toLocalTime } from '../model/local-time';
 import { followChanges } from './live';
 import { type Unwatch, watchTable } from './watch';
 import getIdToken from './session';
-import batchedQuery from '../utils/batched-query';
-import { readOnly } from '../utils/server-calls';
+import batchedQuery from './batched-query';
+import { readOnly } from './server-calls';
 import {
   readClaimedRaids,
   readLiveLobbyRows,
   readLobbyRows,
   readRaidInvites,
   readRaidWatchers,
-} from '../server/raid-reads';
+} from '../server/raids/reads';
 
 export {
   RAID_PLAYER_LIMIT,
@@ -73,8 +73,8 @@ export {
   getTotemTitle,
   isRaidLandmark,
   raidId,
-} from './raid-record';
-export type { RaidRecord, RaidView } from './raid-record';
+} from '../model/raid-record';
+export type { RaidRecord, RaidView } from '../model/raid-record';
 
 /**
  * The alliance numbers live with the battle builder that reads them

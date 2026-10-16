@@ -1,5 +1,5 @@
 import 'server-only';
-import { ITEM_STACKS } from '../auth/stacks';
+import { ITEM_STACKS } from '../model/stacks';
 import { type Slots, getSlots, mostSlots, withSlots } from '../data/constants/slots';
 import type { Items } from '../data/ids/items';
 import { isEggRecord, isGuardedRecord } from './catch-fields';

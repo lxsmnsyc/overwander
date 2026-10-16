@@ -9,7 +9,7 @@ import { isFullyEvolved } from '../../data/species';
 import { BattleEvents } from '../events';
 import { MergedLifecycle } from '../lifecycle';
 import type Unit from '../unit';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { createHeldItem, holds } from './__create';
 
 /**

@@ -1,5 +1,5 @@
 import 'server-only';
-import { GiftKind } from '../auth/gift-record';
+import { GiftKind } from '../model/gift-record';
 import {
   DAILY_SLOTS,
   type RotationQuest,
@@ -14,7 +14,7 @@ import { ROTATION_GIFT, claimMysteryGift, giftId, makeGiftOffer, offer } from '.
 import { type Counters, countOf } from './quests';
 import { readProgress } from './quest-progress';
 import { asNumber, asRecord } from './read';
-import { toLocalTime } from '../auth/local-time';
+import { toLocalTime } from '../model/local-time';
 
 /**
  * The rotating board, measured from baselines: the quests are the

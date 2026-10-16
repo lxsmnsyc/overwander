@@ -1,7 +1,7 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { MoveAffects, MoveTargets, Moves } from '../../data/ids/moves';
 import { Terrains } from '../../data/ids/status';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents } from '../events';
 import type Alliance from '../alliance';
 import type Team from '../team';

@@ -1,10 +1,10 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents } from '../events';
 import { MOVE_LOCKING_STATUS } from '../status';
 import type Team from '../team';
 import type Unit from '../unit';
-import { hasAnyStatus } from '../utils';
+import { hasAnyStatus } from '../unit-checks';
 import { getTrainer } from './trainer';
 
 /**

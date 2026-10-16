@@ -1,8 +1,8 @@
 // From the record module rather than from `auth/auctions`, which
 // reaches into the server half of the app: importing it here drags
 // `server-only` into a plain Node test and refuses to load at all
-import { AUCTION_DURATION, AuctionLot } from '../src/auth/auction-record';
-import { getLocalOffset } from '../src/auth/local-time';
+import { AUCTION_DURATION, AuctionLot } from '../src/model/auction-record';
+import { getLocalOffset } from '../src/model/local-time';
 import { Items } from '../src/data/ids/items';
 import { copyable, findRows, insertRow, sql, stageAccount } from './admin';
 

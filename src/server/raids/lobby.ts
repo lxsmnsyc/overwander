@@ -1,6 +1,6 @@
 import 'server-only';
 import { Depth } from '../../overworld/depth';
-import { asOffset, toLocalTime } from '../../auth/local-time';
+import { asOffset, toLocalTime } from '../../model/local-time';
 import {
   RaidAction,
   RaidKind,
@@ -9,7 +9,7 @@ import {
   asRaidRecord,
   mythicalRaidId,
   raidId,
-} from '../../auth/raid-record';
+} from '../../model/raid-record';
 import ChunkSnapshot, { type RaidRoll } from '../../overworld/chunk-snapshot';
 import getWorld from '../../overworld/current';
 import AleaRNG from '../../core/alea';
@@ -19,11 +19,11 @@ import Biome from '../../data/ids/biome';
 import { getSpeciesHome } from '../../data/biome';
 import { getSpeciesLairs } from '../../data/overworld/lair';
 import { getSql, tx } from '../db';
-import { foughtBattle, readBattle, readRaid, readRaidIn, writeRaid } from '../raid-io';
+import { foughtBattle, readBattle, readRaid, readRaidIn, writeRaid } from './io';
 import { holdsItem } from '../inventory';
 import { asString } from '../read';
 import { hasAnyCaught } from '../caught';
-import BattleOutcome from '../../auth/battle-outcome';
+import BattleOutcome from '../../model/battle-outcome';
 import { asOutcome, isBattleLost, isRaidLost } from './outcome';
 
 /**

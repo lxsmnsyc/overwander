@@ -3,7 +3,7 @@
 import { describe, expect, it } from 'vitest';
 import { CUE_COOLDOWN } from '../../../../src/battle/abilities/signature/__create';
 import { MoveTargetType } from '../../../../src/battle/events';
-import { unitTarget } from '../../../../src/battle/utils';
+import { unitTarget } from '../../../../src/battle/unit-checks';
 import { Stats, StatsKind } from '../../../../src/data/constants/stats';
 import { Types } from '../../../../src/data/constants/types';
 import Abilities from '../../../../src/data/ids/abilities';

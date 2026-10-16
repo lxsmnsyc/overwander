@@ -1,4 +1,4 @@
-import { Foe, Landmark, Metric } from '../../auth/quest-record';
+import { Foe, Landmark, Metric } from '../../model/quest-record';
 import { Balls, Items } from '../ids/items';
 import Npc from '../overworld/npc';
 import { Species } from '../ids/species';

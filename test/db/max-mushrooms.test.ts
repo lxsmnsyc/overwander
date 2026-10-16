@@ -1,6 +1,6 @@
 import { afterAll, beforeEach, describe, expect, it } from 'vitest';
 import { type Actor, actor, caughtRow, clearAll, sql } from './clients';
-import { ITEM_STACKS } from '../../src/auth/stacks';
+import { ITEM_STACKS } from '../../src/model/stacks';
 import { Items } from '../../src/data/ids/items';
 import { Species } from '../../src/data/ids/species';
 import useMaxMushrooms from '../../src/server/max-mushrooms';

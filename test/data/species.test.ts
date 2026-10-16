@@ -31,6 +31,7 @@ import {
 } from '../../src/data/constants/types';
 import Biome, { TimeOfDay, WILD_BIOMES } from '../../src/data/ids/biome';
 import { Moves } from '../../src/data/ids/moves';
+import { EvolutionMethod, Species } from '../../src/data/ids/species';
 import {
   AEGISLASH_FORMS,
   ALCREMIE_FORMS,
@@ -50,7 +51,6 @@ import {
   DUDUNSPARCE_FORMS,
   EISCUE_FORMS,
   ENAMORUS_FORMS,
-  EvolutionMethod,
   FLABEBE_FORMS,
   FLOETTE_FORMS,
   FLORGES_FORMS,
@@ -86,7 +86,6 @@ import {
   SHAYMIN_FORMS,
   SHELLOS_FORMS,
   SILVALLY_FORMS,
-  Species,
   TATSUGIRI_FORMS,
   TEA_FORMS,
   TERAPAGOS_FORMS,
@@ -105,7 +104,7 @@ import {
   speciesDexNumber,
   speciesFormIndex,
   unownLetter,
-} from '../../src/data/ids/species';
+} from '../../src/data/ids/forms';
 import registerItems from '../../src/data/items';
 import { registerMoves } from '../../src/data/moves';
 import { Stats } from '../../src/data/constants/stats';

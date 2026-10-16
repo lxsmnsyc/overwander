@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import renderIdNames, { enumMembers } from '../../scripts/id-names';
-import renderDataSchemas, { SCHEMA_DIR } from '../../scripts/data-schemas';
+import renderIdNames, { enumMembers } from '../../scripts/data/id-names';
+import renderDataSchemas, { SCHEMA_DIR } from '../../scripts/data/schemas';
 
 describe('the name tables', () => {
   it('list every member of the enums they name, as `pnpm id-names` writes them', () => {

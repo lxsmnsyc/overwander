@@ -1,4 +1,4 @@
-import type { MysteryGift } from './gift-record';
+import type { MysteryGift } from '../model/gift-record';
 import { requireUid, requireUidFor } from '../server/auth';
 import { Feature } from '../server/switches';
 import check, { ID, LOCALE, OFFSET, TOKEN } from '../server/validate';
@@ -6,8 +6,8 @@ import type { GiftClaim } from '../server/gifts';
 import { claimMysteryGift as claimOne, listMysteryGifts as listOwed } from '../server/gifts';
 import { bumpProgress } from '../server/quest-progress';
 import { syncServerClock } from './clock';
-import { getLocalOffset, getLocale } from './local-time';
-import { Metric } from './quest-record';
+import { getLocalOffset, getLocale } from '../model/local-time';
+import { Metric } from '../model/quest-record';
 import getIdToken from './session';
 
 /**

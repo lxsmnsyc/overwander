@@ -1,5 +1,5 @@
 import { type JSX, type Resource, Show, Suspense, createResource } from 'solid-js';
-import type { PositionRecord } from '../../auth/position-record';
+import type { PositionRecord } from '../../model/position-record';
 import { Badge, Meta, Note, Row } from '../styled';
 import { getPlayerPosition } from '../../auth/positions';
 import namePlace from '../../overworld/place';

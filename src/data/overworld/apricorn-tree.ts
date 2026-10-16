@@ -13,7 +13,7 @@ import { getItemData } from '../items';
  * The drawings are the Nanab berry plant with its canopy painted green
  * and its fruit painted the apricorn's colour: nobody drew an apricorn
  * tree, and that plant is shaped like one. See
- * [`scripts/apricorn-trees.ts`](../../../scripts/apricorn-trees.ts).
+ * [`scripts/art/apricorn-trees.ts`](../../../scripts/art/apricorn-trees.ts).
  */
 
 /** The colour half of an apricorn's name, which is how it is filed. */

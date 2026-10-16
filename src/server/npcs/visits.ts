@@ -3,9 +3,9 @@ import type Npc from '../../data/overworld/npc';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
 import { WORLD_GENERATION } from '../../overworld/current';
 import { getSql } from '../db';
-import { isRefusal } from '../../auth/learn-refusal';
+import { isRefusal } from '../../model/learn-refusal';
 import { claim, liveSnapshot } from '../overworld';
-import { Metric } from '../../auth/quest-record';
+import { Metric } from '../../model/quest-record';
 import { bumpProgress } from '../quest-progress';
 
 /**

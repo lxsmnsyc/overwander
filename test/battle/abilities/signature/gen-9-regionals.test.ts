@@ -3,9 +3,9 @@ import {
   BOG_DOWN_DURATION,
   RAGING_SCALE,
   TEA_SERVICE_SCALE,
-} from '../../../../src/battle/abilities/signature/paldea-regionals';
+} from '../../../../src/battle/abilities/signature/gen-9/paldea-regionals';
 import { EffectType } from '../../../../src/battle/events';
-import { unitTarget } from '../../../../src/battle/utils';
+import { unitTarget } from '../../../../src/battle/unit-checks';
 import { Stages } from '../../../../src/data/constants/stats';
 import { Types } from '../../../../src/data/constants/types';
 import Abilities from '../../../../src/data/ids/abilities';

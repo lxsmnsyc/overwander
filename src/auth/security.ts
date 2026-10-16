@@ -4,7 +4,7 @@ import { readSecurity, unlockSecurity as unlockOnServerSide } from '../server/se
 import { requireReader, requireUid } from '../server/auth';
 import authClient from './auth-client';
 import getIdToken from './session';
-import { readOnly } from '../utils/server-calls';
+import { readOnly } from './server-calls';
 
 /**
  * The account's security settings: an authenticator app and passkeys.

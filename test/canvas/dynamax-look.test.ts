@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Slot } from '../../src/components/battle/battle-canvas/field';
-import type SpeciesSpriteAnimation from '../../src/canvas/species-sprite-animation';
+import type SpeciesSpriteAnimation from '../../src/canvas/sprites/species-sprite-animation';
 import type Bakery from '../../src/canvas/bakery';
 import type { Painter, QuadBlend } from '../../src/canvas/gl/quad-batch';
 import { type SlotBatch, drawSlot } from '../../src/components/battle/battle-canvas/draw';

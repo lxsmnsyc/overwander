@@ -1,6 +1,6 @@
 import { type TeamStatuses, Terrains, Weathers } from '../data/ids/status';
 import type Alliance from './alliance';
-import type Battle from './core';
+import type Battle from './battle';
 import {
   BattleEvents,
   type CheckTeamStatusDurationEvent,

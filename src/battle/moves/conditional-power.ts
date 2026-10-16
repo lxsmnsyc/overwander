@@ -3,11 +3,12 @@ import { Stats } from '../../data/constants/stats';
 import { Types } from '../../data/constants/types';
 import { Moves } from '../../data/ids/moves';
 import { Statuses, Terrains, Weathers } from '../../data/ids/status';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, MoveTargetType } from '../events';
 import type Unit from '../unit';
 import { ASLEEP_STATUSES, MAJOR_STATUS_CONDITIONS } from '../status';
-import { countHeldItems, hasAnyStatus } from '../utils';
+import { hasAnyStatus } from '../unit-checks';
+import { countHeldItems } from '../items/held';
 
 /**
  * The moves whose power is decided by the state of the fight rather

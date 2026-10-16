@@ -2,8 +2,8 @@
 // assertions that tsc requires but tsgolint (resolving const enums to
 // number) considers unnecessary
 // oxlint-disable typescript/no-unnecessary-type-assertion
-import type { DuelInvite, DuelRecord, DuelRules } from './duel-record';
-import type { LobbyRole } from './lobby-role';
+import type { DuelInvite, DuelRecord, DuelRules } from '../model/duel-record';
+import type { LobbyRole } from '../model/lobby-role';
 import { requireReader, requireUid, requireUidFor } from '../server/auth';
 import { Feature } from '../server/switches';
 import check, {
@@ -35,7 +35,7 @@ import {
 } from '../server/duels';
 import { syncServerClock } from './clock';
 import { type Unwatch, watchRow, watchTable } from './watch';
-import { readOnly } from '../utils/server-calls';
+import { readOnly } from './server-calls';
 import getIdToken from './session';
 
 export {
@@ -44,8 +44,8 @@ export {
   getDuelBlocker,
   getDuelFighters,
   getDuelSpectators,
-} from './duel-record';
-export type { DuelInvite, DuelMember, DuelRecord, DuelRules } from './duel-record';
+} from '../model/duel-record';
+export type { DuelInvite, DuelMember, DuelRecord, DuelRules } from '../model/duel-record';
 
 const DUEL_TABLE = 'duels';
 

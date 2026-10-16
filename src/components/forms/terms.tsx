@@ -1,5 +1,5 @@
 import { For, type JSX, Show } from 'solid-js';
-import { getCatchName, isShiny } from '../../auth/caught-record';
+import { getCatchName, isShiny } from '../../model/caught-record';
 import { Genders } from '../../data/ids/species';
 import type { Items } from '../../data/ids/items';
 import { getItemData } from '../../data/items';

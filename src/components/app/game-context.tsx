@@ -13,12 +13,12 @@ import {
 import { useAuth } from '../../auth/context';
 import type Npc from '../../data/overworld/npc';
 import type Weather from '../../data/overworld/weather';
-import type { EncounterRecord } from '../../auth/encounter-record';
+import type { EncounterRecord } from '../../model/encounter-record';
 import { type Notice, watchNotifications } from '../../auth/notifications';
 import { claimRaidReward } from '../../auth/raids';
 import { claimStopReward } from '../../auth/stops';
 import { settleGymChallenge } from '../../auth/gym-seats';
-import type { PositionRecord } from '../../auth/position-record';
+import type { PositionRecord } from '../../model/position-record';
 import type Biome from '../../data/ids/biome';
 import type { Species } from '../../data/ids/species';
 import type { WalkReport } from '../../auth/eggs';

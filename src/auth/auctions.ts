@@ -24,10 +24,10 @@ import {
   type PlayerBid,
   asAuctionRecord,
   asPlayerBid,
-} from './auction-record';
+} from '../model/auction-record';
 import { syncServerClock } from './clock';
 import { type Unwatch, watchRow, watchTable } from './watch';
-import { readOnly } from '../utils/server-calls';
+import { readOnly } from './server-calls';
 import {
   readAuctionsBy,
   readAuctionsIn,
@@ -36,7 +36,7 @@ import {
   readSellerStanding,
   readStakes,
 } from '../server/auction-reads';
-import { getLocalOffset } from './local-time';
+import { getLocalOffset } from '../model/local-time';
 import getIdToken from './session';
 
 export {
@@ -62,8 +62,8 @@ export {
   isBidOn,
   isLive,
   nextBid,
-} from './auction-record';
-export type { AuctionOffer, AuctionRecord, AuctionTerms, PlayerBid } from './auction-record';
+} from '../model/auction-record';
+export type { AuctionOffer, AuctionRecord, AuctionTerms, PlayerBid } from '../model/auction-record';
 
 /**
  * The auction house, as the browser sees it. Everything that moves —

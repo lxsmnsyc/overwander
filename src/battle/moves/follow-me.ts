@@ -5,7 +5,7 @@ import { Items } from '../../data/ids/items';
 import { MoveTargets, Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import { isCentered } from '../status/centered';
 import type Unit from '../unit';

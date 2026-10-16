@@ -1,4 +1,4 @@
-import { spriteUrl } from '../../canvas/sprite-origin';
+import { spriteUrl } from '../../canvas/sprites/origin';
 import SOUND_STAMPS from './sound-stamps';
 import settings from './settings';
 

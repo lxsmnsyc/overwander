@@ -1,11 +1,11 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
-import { type CatchSnapshot, asCatchSnapshot } from '../../src/auth/catch-snapshot';
+import { type CatchSnapshot, asCatchSnapshot } from '../../src/model/catch-snapshot';
 import {
   RaidKind,
   type RaidRecord,
   deriveRaidReward,
   rewardLobbyOf,
-} from '../../src/auth/raid-record';
+} from '../../src/model/raid-record';
 import registerGameData from '../../src/data';
 import { Types } from '../../src/data/constants/types';
 import { Species } from '../../src/data/ids/species';
@@ -19,8 +19,8 @@ import {
   createRaidBossTeam,
   keepsGigantamaxFactor,
   keptTeraType,
-} from '../../src/overworld/raid';
-import { createRaidBattle } from '../../src/overworld/raid-battle';
+} from '../../src/overworld/raid/index';
+import { createRaidBattle } from '../../src/overworld/raid/battle';
 import { EncounterType } from '../../src/overworld/encounter';
 
 beforeAll(() => {

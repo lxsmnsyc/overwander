@@ -2,7 +2,7 @@ import { AttackPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
 import type { Statuses } from '../../data/ids/status';
 import { USELESS_PENALTY } from '../ai/score';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import { MAJOR_STATUS_CONDITIONS } from '../status';
 import type Unit from '../unit';

@@ -12,8 +12,8 @@ import {
 import {
   DARKEST_DAY_FRACTION,
   KATA_INTERVAL,
-} from '../../../../src/battle/abilities/signature/galar-legends';
-import type Battle from '../../../../src/battle/core';
+} from '../../../../src/battle/abilities/signature/gen-8/galar-legends';
+import type Battle from '../../../../src/battle/battle';
 import { BattleEvents } from '../../../../src/battle/events';
 import type Unit from '../../../../src/battle/unit';
 import { Stages, Stats } from '../../../../src/data/constants/stats';

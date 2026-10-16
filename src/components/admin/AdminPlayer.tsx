@@ -8,7 +8,7 @@ import {
   canActOn,
   grantableRoles,
   runsTheGame,
-} from '../../auth/staff';
+} from '../../model/staff';
 import { Badge, Button, Card, Meta, Note, Row, Select, Status, TextField } from '../styled';
 import ProfileTab from '../profile/ProfileTab';
 import { createPasswordLink, getPlayer, setPlayerBan, setPlayerRole } from '../../auth/admin';

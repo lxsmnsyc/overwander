@@ -9,7 +9,7 @@ import { type MoveCategories, MoveTargets, type Moves } from '../data/ids/moves'
 import Natures from '../data/ids/natures';
 import { Genders, Species } from '../data/ids/species';
 import { type Statuses, Terrains, Weathers } from '../data/ids/status';
-import type Battle from './core';
+import type Battle from './battle';
 import type {
   CastingData,
   ChannelingData,

@@ -13,10 +13,10 @@ import {
   takeGymSeat as takeOnServer,
 } from '../server/gym-seats';
 import { syncServerClock } from './clock';
-import type { GymSeatRecord } from './gym-seat-record';
+import type { GymSeatRecord } from '../model/gym-seat-record';
 import getIdToken from './session';
 
-export type { GymSeatRecord, GymSeatStanding } from './gym-seat-record';
+export type { GymSeatRecord, GymSeatStanding } from '../model/gym-seat-record';
 export type { GymSeatResult, GymSeatView } from '../server/gym-seats';
 
 /**

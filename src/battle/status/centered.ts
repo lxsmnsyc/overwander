@@ -1,4 +1,4 @@
-import type Battle from '../core';
+import type Battle from '../battle';
 import { Statuses } from '../../data/ids/status';
 import turns from '../turn';
 import type Unit from '../unit';

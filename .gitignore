@@ -159,3 +159,6 @@ ui-debug.log
 
 # Database dumps scripts/backup.sh keeps on the server
 backups/
+
+# Editor workspaces
+*.code-workspace

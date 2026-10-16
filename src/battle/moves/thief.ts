@@ -1,8 +1,8 @@
 import { EventPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, EffectType } from '../events';
-import { isConsumable, stealableItem } from '../utils';
+import { isConsumable, stealableItem } from '../items/held';
 
 /**
  * Thief and Covet take what the target is holding, and only into a

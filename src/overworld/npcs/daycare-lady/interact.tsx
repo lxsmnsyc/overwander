@@ -1,4 +1,4 @@
-import { boostedSteps, isEgg, stepsRemaining } from '../../../auth/egg';
+import { boostedSteps, isEgg, stepsRemaining } from '../../../model/egg';
 import { boostEgg } from '../../../auth/npcs';
 import { Species } from '../../../data/ids/species';
 import { DAYCARE_FEE } from '../../../data/overworld/npc';

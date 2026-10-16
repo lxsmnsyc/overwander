@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { type Actor, actor, caughtRow, clearAll, sql } from './clients';
-import BattleOutcome from '../../src/auth/battle-outcome';
+import BattleOutcome from '../../src/model/battle-outcome';
 import { Species } from '../../src/data/ids/species';
 import registerData from '../../src/data';
 import recordAftermath from '../../src/server/battles';

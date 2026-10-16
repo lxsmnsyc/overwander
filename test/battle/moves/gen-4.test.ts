@@ -6,7 +6,7 @@ import {
   EffectType,
   MoveTargetType,
 } from '../../../src/battle/events';
-import type Battle from '../../../src/battle/core';
+import type Battle from '../../../src/battle/battle';
 import type Unit from '../../../src/battle/unit';
 import { Stages, Stats } from '../../../src/data/constants/stats';
 import { Types } from '../../../src/data/constants/types';
@@ -20,7 +20,7 @@ import turns from '../../../src/battle/turn';
 import { toxicLayersUnder } from '../../../src/battle/moves/toxic-spikes';
 import { layersUnder } from '../../../src/battle/moves/spikes';
 import { stonesOver } from '../../../src/battle/moves/stealth-rock';
-import { stealableItem } from '../../../src/battle/utils';
+import { stealableItem } from '../../../src/battle/items/held';
 import { createBattle, createUnit, pinRandom } from '../harness';
 
 /** A plain cause, for the damage and heals these tests stage by hand */

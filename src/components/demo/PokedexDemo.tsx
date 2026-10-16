@@ -1,7 +1,7 @@
 import { useSearchParams } from '@solidjs/router';
 import { type JSX, createMemo, createSignal } from 'solid-js';
 import type { PokedexView, SpeciesDexEntry } from '../../auth/pokedex';
-import type { DexTally } from '../../auth/pokedex-record';
+import type { DexTally } from '../../model/pokedex-record';
 import { Species } from '../../data/ids/species';
 import { getRegisteredSpecies, getSpeciesData } from '../../data/species';
 import DexEntryDialog, { type DexReads } from '../dex/dex-entry-dialog';

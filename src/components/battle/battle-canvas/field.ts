@@ -9,7 +9,7 @@ import {
 } from './metrics';
 import type { Striking } from './motion';
 import type Alliance from '../../../battle/alliance';
-import type Battle from '../../../battle/core';
+import type Battle from '../../../battle/battle';
 import { type MoveTarget, MoveTargetType } from '../../../battle/events';
 import type Team from '../../../battle/team';
 import Abilities from '../../../data/ids/abilities';
@@ -20,10 +20,10 @@ import projectField, {
   type FieldView,
   ringOf,
   ringRadius,
-} from '../../../canvas/battle/field';
-import facingToward from '../../../canvas/facing';
-import type SpeciesSpriteAnimation from '../../../canvas/species-sprite-animation';
-import type { Point, SpriteDirection } from '../../../canvas/sprite-sheet';
+} from '../../../canvas/battle/projection';
+import facingToward from '../../../canvas/sprites/facing';
+import type SpeciesSpriteAnimation from '../../../canvas/sprites/species-sprite-animation';
+import type { Point, SpriteDirection } from '../../../canvas/sprites/sheet';
 
 /**
  * Who is standing where: the fight read into a ring of teams about a

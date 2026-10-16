@@ -1,6 +1,6 @@
 import type { Items } from '../data/ids/items';
 import readHeldBag from './live-bag';
-import { ITEM_STACKS, getStack, listStacks } from './stacks';
+import { ITEM_STACKS, getStack, listStacks } from '../model/stacks';
 
 /**
  * The bag as a list of stacks, which is how every picker in the game

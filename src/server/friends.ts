@@ -1,6 +1,6 @@
 import 'server-only';
-import { FRIEND_LIMIT, type FoundPlayer, FriendTie } from '../auth/friend-record';
-import { Metric } from '../auth/quest-record';
+import { FRIEND_LIMIT, type FoundPlayer, FriendTie } from '../model/friend-record';
+import { Metric } from '../model/quest-record';
 import { type Tx, getSql, tx } from './db';
 import { bumpProgress } from './quest-progress';
 import { asNumber, asString } from './read';

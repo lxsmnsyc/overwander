@@ -1,6 +1,6 @@
-import type BasicSprite from '../../../canvas/basic-sprite';
-import loadBasicSprite, { UI_SPRITE_ROOT } from '../../../canvas/basic-sprites';
-import { type SpriteQuad, cornersOf } from '../../../canvas/placement';
+import type BasicSprite from '../../../canvas/sprites/basic-sprite';
+import loadBasicSprite, { UI_SPRITE_ROOT } from '../../../canvas/sprites/basic-sprites';
+import { type SpriteQuad, cornersOf } from '../../../canvas/sprites/placement';
 import type { Items } from '../../../data/ids/items';
 import type { Species } from '../../../data/ids/species';
 import { getItemData } from '../../../data/items';
@@ -9,7 +9,7 @@ import { getMegaStone } from '../../../data/items/mega-stones';
 import { getFusionItem } from '../../../data/species/fusion';
 import { isMegaSpecies } from '../../../data/species/megas';
 import { getShadowlessSpecies } from '../../../data/species/true-shadow';
-import { isStandIn } from '../../../canvas/species-sprites';
+import { isStandIn } from '../../../canvas/sprites/species-sprites';
 import type { SlotBatch } from './draw';
 
 /**

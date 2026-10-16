@@ -1,5 +1,5 @@
 import 'server-only';
-import type { TownRecord } from '../auth/town-record';
+import type { TownRecord } from '../model/town-record';
 import getWorld, { WORLD_GENERATION } from '../overworld/current';
 import { townName, townOfRegion } from '../overworld/town';
 import { getSql } from './db';

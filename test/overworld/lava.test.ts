@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import registerGameData from '../../src/data/index';
 import Biome from '../../src/data/ids/biome';
-import { readGround } from '../../src/overworld/ground';
+import { readGround } from '../../src/overworld/terrain/ground';
 import { SURROUNDING } from '../../src/overworld/grid';
 import World, { Depth } from '../../src/overworld/world';
 

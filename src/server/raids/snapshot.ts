@@ -3,9 +3,9 @@ import {
   type CatchSnapshot,
   asCatchSnapshot,
   createCatchSnapshot,
-} from '../../auth/catch-snapshot';
-import { asCaughtPokemon } from '../../auth/caught-record';
-import { getMaxHealth, isFainted } from '../../auth/health';
+} from '../../model/catch-snapshot';
+import { asCaughtPokemon } from '../../model/caught-record';
+import { getMaxHealth, isFainted } from '../../model/health';
 import { PIKE_CURTAIN_STATUSES, PikeCurtain } from '../../data/overworld/experts';
 import { packStatuses } from '../../data/ids/status';
 import { isEggRecord, isGuardedRecord } from '../catch-fields';

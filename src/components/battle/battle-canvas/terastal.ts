@@ -1,5 +1,5 @@
 import type { QuadPoint } from '../../../canvas/gl/quad-batch';
-import type { SpriteQuad } from '../../../canvas/placement';
+import type { SpriteQuad } from '../../../canvas/sprites/placement';
 import type { Baked } from '../../../canvas/bakery';
 import { mix } from '../../../canvas/battle/moves/__paint';
 import { TYPE_COLORS } from '../../../data/constants/types';

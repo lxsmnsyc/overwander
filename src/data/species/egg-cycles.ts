@@ -12,7 +12,7 @@ import { getBaseSpecies, getSpeciesData } from './__create';
  * `DEFAULT_EGG_CYCLES`, which is what the great majority take.
  *
  * What a cycle is worth in steps is
- * [`src/auth/egg.ts`](../../auth/egg.ts)'s business, not this table's:
+ * [`src/model/egg.ts`](../../auth/egg.ts)'s business, not this table's:
  * this is the shape of the curve, and that file decides how far a
  * player has to walk along it.
  *

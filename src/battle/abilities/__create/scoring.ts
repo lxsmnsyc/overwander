@@ -5,7 +5,7 @@ import { getMoveData } from '../../../data/moves';
 import type { Types } from '../../../data/constants/types';
 import type Abilities from '../../../data/ids/abilities';
 import { FEED_BONUS, healWorth } from '../../ai/score';
-import type Battle from '../../core';
+import type Battle from '../../battle';
 import { BattleEvents, type MoveTarget, MoveTargetType } from '../../events';
 import { type Lifecycle, MergedLifecycle } from '../../lifecycle';
 import type Unit from '../../unit';

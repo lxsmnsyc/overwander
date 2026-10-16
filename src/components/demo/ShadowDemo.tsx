@@ -1,22 +1,22 @@
 import { type JSX, Show, createEffect, createMemo, createSignal, onCleanup } from 'solid-js';
 import { atClockHour } from '../../data/day-clock';
 import { Badge, Meta, Note, Row, Select, Slider, Switch } from '../styled';
-import { CELL, COLORS, SPRITE_STANDS, pictureWidth } from '../overworld/chunk-canvas/metrics';
-import { fitPicture, projectAir } from '../../canvas/board';
-import speciesSize from '../../canvas/species-size';
-import { SHADOW_STAMP, bakeShadowDisc } from '../overworld/chunk-canvas/scenery';
-import { castCorners, shadowCorners } from '../../canvas/placement';
-import { directionOf, litFrame } from '../../canvas/sprite-sheet';
+import { CELL, COLORS, SPRITE_STANDS, pictureWidth } from '../../canvas/overworld/metrics';
+import { fitPicture, projectAir } from '../../canvas/overworld/board';
+import speciesSize from '../../canvas/sprites/species-size';
+import { SHADOW_STAMP, bakeShadowDisc } from '../../canvas/overworld/scenery';
+import { castCorners, shadowCorners } from '../../canvas/sprites/placement';
+import { directionOf, litFrame } from '../../canvas/sprites/sheet';
 import { getRegisteredSpecies, getSpeciesData } from '../../data/species';
-import { getCast, getSun } from '../../canvas/daylight';
+import { getCast, getSun } from '../../canvas/overworld/daylight';
 import Bakery from '../../canvas/bakery';
 import type { QuadPoint } from '../../canvas/gl/quad-batch';
 import QuadBatch from '../../canvas/gl/quad-batch';
 import type { Species } from '../../data/ids/species';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
-import type SpeciesSpriteAnimation from '../../canvas/species-sprite-animation';
-import { GROUND_SQUASH } from '../../canvas/tilt';
-import loadSpeciesSprite from '../../canvas/species-sprites';
+import type SpeciesSpriteAnimation from '../../canvas/sprites/species-sprite-animation';
+import { GROUND_SQUASH } from '../../canvas/overworld/tilt';
+import loadSpeciesSprite from '../../canvas/sprites/species-sprites';
 
 /**
  * Where the light throws a shadow, on demand.

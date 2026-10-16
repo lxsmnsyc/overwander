@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { BOARD_CELLS } from '../../src/overworld/board';
+import { BOARD_CELLS } from '../../src/overworld/board/index';
 import { findPath, findPathBeside, findPathNear, stepsBetween } from '../../src/overworld/path';
 
 const OPEN = (): boolean => true;

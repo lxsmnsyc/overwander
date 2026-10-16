@@ -4,7 +4,7 @@ import { Types } from '../../data/constants/types';
 import Abilities from '../../data/ids/abilities';
 import { Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import type Unit from '../unit';
 

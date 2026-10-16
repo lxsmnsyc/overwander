@@ -10,7 +10,7 @@ import turns from '../../../../src/battle/turn';
 import {
   STOOP_SCALE,
   WINGSCALE_FLOOR,
-} from '../../../../src/battle/abilities/signature/bunnelby-to-scatterbug';
+} from '../../../../src/battle/abilities/signature/gen-6/bunnelby-to-scatterbug';
 import { createBattle, createUnit, pinRandom } from '../../harness';
 import { NONE_CAUSE, dealDamage } from './helpers';
 

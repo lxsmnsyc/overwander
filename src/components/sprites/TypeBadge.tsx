@@ -1,6 +1,6 @@
 import { For, type JSX, Show } from 'solid-js';
 import AtlasSprite from './AtlasSprite';
-import { UI_SPRITE_ROOT } from '../../canvas/basic-sprites';
+import { UI_SPRITE_ROOT } from '../../canvas/sprites/basic-sprites';
 import {
   TYPE_COLORS,
   TYPE_NAMES,

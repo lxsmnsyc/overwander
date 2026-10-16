@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+# Publishes the version in package.json as a tagged GitHub release, with that
+# version's CHANGELOG section as the notes. Run by the release workflow once no
+# changesets are pending, so a version already released is left alone.
+set -euo pipefail
+
+version="$(node -p "require('./package.json').version")"
+tag="v$version"
+
+if gh release view "$tag" > /dev/null 2>&1; then
+  echo "$tag is already released"
+  exit 0
+fi
+
+notes="$(mktemp)"
+awk -v v="$version" '$0 == "## " v {found=1; next} found && /^## / {exit} found {print}' \
+  CHANGELOG.md > "$notes"
+
+if [ ! -s "$notes" ]; then
+  echo "CHANGELOG.md has no section for $version" >&2
+  exit 1
+fi
+
+# The same annotated tag `pnpm cs:tag` makes by hand, unless GitHub has it already
+git fetch --tags --quiet
+if [ -z "$(git tag -l "$tag")" ]; then
+  node scripts/release/tag.ts
+  git push origin "$tag"
+fi
+
+gh release create "$tag" --title "Overwander $tag" --notes-file "$notes" --verify-tag
+
+# The server picks the new tag up itself (scripts/deploy.sh), so the sprite host
+# is the one thing a release publishes
+if [ -n "${CLOUDFLARE_API_TOKEN:-}" ]; then
+  # Stamped here as the build does, or a redrawn sheet ships under the
+  # digest browsers already hold for the old one
+  node scripts/sprites/stamps.ts
+  pnpm dlx wrangler@4 deploy
+  echo "Sprite host deployed for $tag"
+else
+  echo "::warning::CLOUDFLARE_API_TOKEN is not set, so the sprite host was not deployed"
+fi

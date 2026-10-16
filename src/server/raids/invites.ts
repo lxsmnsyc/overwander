@@ -1,8 +1,8 @@
 import 'server-only';
-import { asRaidRecord } from '../../auth/raid-record';
-import { LobbyRole } from '../../auth/lobby-role';
+import { asRaidRecord } from '../../model/raid-record';
+import { LobbyRole } from '../../model/lobby-role';
 import { getSql } from '../db';
-import { readRaid } from '../raid-io';
+import { readRaid } from './io';
 import { asString } from '../read';
 
 /** Asking somebody into a lobby, and turning the ask down */

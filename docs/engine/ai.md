@@ -210,7 +210,7 @@ also tell the fog what a foe holds. An ability that answers a guess still
 changes the estimate (a Bluff the AI knows about zeroes the damage), and only a
 real blow spends it.
 
-[`test/battle/ai-estimates.test.ts`](../../test/battle/ai-estimates.test.ts)
+[`test/battle/ai/estimates.test.ts`](../../test/battle/ai/estimates.test.ts)
 holds the rule: it runs AI decisions around every registered ability and every
 held item and berry, on each side of the field, and fails on any event that is
 not a question or any draw from the random stream while the AI is estimating. It
@@ -365,7 +365,7 @@ guessed.
   expert's are. `SIM_BATTLES`, `SIM_SIZE` and `SIM_LEVEL` override the defaults
   of 40 battles, three a side, at level 50. It runs on its own config
   (`vitest.sim.ts`), since a run takes minutes.
-- **`test/battle/ai-openings.test.ts`** pins how a few fixed fights open, as a
+- **`test/battle/ai/openings.test.ts`** pins how a few fixed fights open, as a
   snapshot. A scoring change that moves an opening fails it, and a deliberate
   one updates it with `vitest -u`.
 

@@ -9,7 +9,8 @@ import type Families from '../ids/families';
 import { FAMILY_NAMES } from '../ids/families';
 import type { Items } from '../ids/items';
 import type { Moves } from '../ids/moves';
-import { type Genders, Habitat, type Species, getBaseFormSpecies } from '../ids/species';
+import { type Genders, Habitat, type Species } from '../ids/species';
+import { getBaseFormSpecies } from '../ids/forms';
 
 /**
  * One way a species evolves: the target species and the required

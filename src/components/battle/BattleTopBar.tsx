@@ -1,6 +1,6 @@
 import { Index, type JSX, Show, createSignal, onCleanup } from 'solid-js';
 import type Alliance from '../../battle/alliance';
-import type Battle from '../../battle/core';
+import type Battle from '../../battle/battle';
 import { BattleEvents } from '../../battle/events';
 import type Unit from '../../battle/unit';
 import { EventPriority } from '../../core/event-emitter';

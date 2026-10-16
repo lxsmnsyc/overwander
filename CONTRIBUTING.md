@@ -127,6 +127,9 @@ rather than reimplementing it.
 
 - `src/auth/` runs in the browser, and reads and writes through server functions.
 - `src/server/` is privileged. Every module opens with `import 'server-only'`.
+- `src/model/` is shared by both: the shape of each stored record, the rules
+  read off it, and the search parsers. It holds no server function and no
+  privileged import.
 
 A server function checks each of its arguments with `check` from
 `src/server/validate.ts`, then calls `requireUid(token)` before touching

@@ -2,7 +2,7 @@ import { AttackPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
 import { TeamStatuses } from '../../data/ids/status';
 import { USELESS_PENALTY } from '../ai/score';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, type EffectCause, EffectType, MoveTargetType } from '../events';
 import type Team from '../team';
 import { clearSpikes, layersUnder } from './spikes';

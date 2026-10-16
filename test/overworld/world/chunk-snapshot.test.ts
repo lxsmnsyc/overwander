@@ -31,7 +31,7 @@ import {
 } from '../../../src/data/species';
 import { WILD_HELD_COMMON, WILD_HELD_UNCOMMON } from '../../../src/data/species/held-items';
 import { RaidKind, deriveRaidReward } from '../../../src/auth/raids';
-import { isShadow, isShiny } from '../../../src/auth/caught-record';
+import { isShadow, isShiny } from '../../../src/model/caught-record';
 import { PERFECT_IVS, unpackIVs } from '../../../src/data/constants/stats';
 import {
   CELL_COUNT,
@@ -50,7 +50,7 @@ import {
   LEGENDARY_RAID_REWARD_LEVEL,
   MYTHICAL_RAID_REWARD_LEVEL,
   SHADOW_RAID_REWARD_LEVEL,
-} from '../../../src/overworld/raid';
+} from '../../../src/overworld/raid/index';
 import { ROCKET_REWARD_LEVEL } from '../../../src/overworld/stop';
 import deriveEncounter, {
   ENCOUNTER_TYPE_NAMES,

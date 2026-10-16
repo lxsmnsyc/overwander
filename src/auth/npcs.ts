@@ -1,4 +1,4 @@
-import { readOnly } from '../utils/server-calls';
+import { readOnly } from './server-calls';
 import type { Items } from '../data/ids/items';
 import type { Moves } from '../data/ids/moves';
 import type { Stats } from '../data/constants/stats';
@@ -46,9 +46,9 @@ import {
   tutorMove as tutorOnServerSide,
   visitNurse as visitNurseOnServerSide,
 } from '../server/npcs';
-import type { LearnResult } from './learn-refusal';
+import type { LearnResult } from '../model/learn-refusal';
 import { syncServerClock } from './clock';
-import { getLocale } from './local-time';
+import { getLocale } from '../model/local-time';
 import getIdToken from './session';
 
 /**

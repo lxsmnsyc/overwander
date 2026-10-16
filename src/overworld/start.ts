@@ -1,7 +1,7 @@
 import { type RandomSource, sourceOf } from '../core/draws';
 import type Chunk from './chunk';
 import { CELL_COUNT, CHUNK_CELLS } from './chunk';
-import { blocksWalk } from './cliff';
+import { blocksWalk } from './terrain/cliff';
 import { cellInChunk, chunkOfCell, worldCell } from './grid';
 import { TOWN_REGION, townOfRegion } from './town';
 import type World from './world';

@@ -1,5 +1,6 @@
 import { STAT_ORDER } from '../constants/stats';
-import { Species, getBaseFormSpecies, speciesDexNumber } from '../ids/species';
+import { Species } from '../ids/species';
+import { getBaseFormSpecies, speciesDexNumber } from '../ids/forms';
 import { getSpeciesData, registerSpecies } from './__create';
 
 /**

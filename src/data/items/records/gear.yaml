@@ -281,7 +281,7 @@ StickyBarb:
 
 # Lets its pokemon Dynamax, so it is priced with the Choice items, the
 # strongest held items on the shelf. The behaviour is the Dynamax
-# mechanic's, in `src/battle/mechanics/dynamax.ts`
+# mechanic's, in `src/battle/gimmicks/dynamax/index.ts`
 DynamaxBand:
   type: Held
   icon: key/dynamax-band
@@ -290,7 +290,7 @@ DynamaxBand:
   sell: 4000
 
 # Lets its pokemon Terastallize, priced with the Dynamax Band. The
-# behaviour is the Terastal mechanic's, in `src/battle/mechanics/terastal.ts`
+# behaviour is the Terastal mechanic's, in `src/battle/gimmicks/terastal.ts`
 TeraOrb:
   type: Held
   icon: held/tera-orb

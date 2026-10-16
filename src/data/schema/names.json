@@ -1433,7 +1433,8 @@
         "Weather",
         "StatComparison",
         "Special",
-        "Walked"
+        "Walked",
+        "Candy"
       ]
     },
     "move": {
@@ -3228,7 +3229,30 @@
         "GlaiveGuard",
         "BogDown",
         "Raging",
-        "TeaService"
+        "TeaService",
+        "CoinScatter",
+        "WitheredTablets",
+        "ShatteredSword",
+        "CrackedVessel",
+        "ScatteredBeads",
+        "SunSprint",
+        "DriveMode",
+        "HeadlongGuard",
+        "ShriekSpeed",
+        "EerieFlutter",
+        "AncientCocoon",
+        "EarthCurrent",
+        "MoonHowl",
+        "SteamSurge",
+        "MoltenBulwark",
+        "StormCloud",
+        "TrackLaying",
+        "IcePack",
+        "IronGrip",
+        "ToxicExhaust",
+        "SandGenerator",
+        "Afterimage",
+        "TerrainEdge"
       ]
     },
     "item": {

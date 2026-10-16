@@ -355,6 +355,13 @@ export function EvolutionCondition(props: {
             </span>
           )}
         </Show>
+        <Show when={has(EvolutionMethod.Candy) ? props.evolution.candies : null}>
+          {(candies) => (
+            <span>
+              spend {candies()} candies{tally(props.progress, candies())}
+            </span>
+          )}
+        </Show>
       </span>
     </Show>
   );
@@ -434,6 +441,11 @@ export function describeEvolutionMethod(
   }
   if ((method & EvolutionMethod.Walked) !== 0 && evolution.walked != null) {
     steps.push(`walk ${evolution.walked} steps as your buddy${tally(progress, evolution.walked)}`);
+  }
+  if ((method & EvolutionMethod.Candy) !== 0 && evolution.candies != null) {
+    steps.push(
+      `spend ${evolution.candies} of its family's candies${tally(progress, evolution.candies)}`,
+    );
   }
   if (steps.length === 0) {
     return 'It evolves on its own.';

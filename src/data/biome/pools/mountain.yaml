@@ -114,6 +114,10 @@ land:
       Chingling: prized
       Bonsly: prized
       Kubfu: prized
+      ScreamTail: 8
+      IronHands: 8
+      IronThorns: 8
+      RagingBolt: 8
     special:
       Celesteela: 10
       Necrozma: 10
@@ -124,6 +128,7 @@ land:
       Moltres: 10
       HoOh: 10
       Urshifu: 10
+      Koraidon: 10
       ZygardeTenPercent: 5
       Zygarde: 5
     mythical:
@@ -251,6 +256,10 @@ land:
       Chingling: prized
       Bonsly: prized
       Kubfu: prized
+      ScreamTail: 8
+      IronHands: 8
+      IronThorns: 8
+      RagingBolt: 8
     special:
       Celesteela: 10
       Necrozma: 10
@@ -261,6 +270,7 @@ land:
       Moltres: 10
       HoOh: 10
       Urshifu: 10
+      Koraidon: 10
       ZygardeTenPercent: 5
       Zygarde: 5
     mythical:
@@ -358,6 +368,10 @@ land:
       Chingling: prized
       Bonsly: prized
       Kubfu: prized
+      ScreamTail: 8
+      IronHands: 8
+      IronThorns: 8
+      RagingBolt: 8
     special:
       Celesteela: 10
       Necrozma: 10
@@ -368,6 +382,7 @@ land:
       Moltres: 10
       HoOh: 10
       Urshifu: 10
+      Miraidon: 10
       ZygardeTenPercent: 5
       Zygarde: 5
     mythical:
@@ -470,6 +485,11 @@ land:
       Chingling: prized
       Bonsly: prized
       Kubfu: prized
+      ScreamTail: 8
+      IronHands: 8
+      IronThorns: 8
+      RagingBolt: 8
+      RoaringMoon: 8
     special:
       Celesteela: 10
       Necrozma: 10
@@ -481,6 +501,7 @@ land:
       Mewtwo: 10
       HoOh: 10
       Urshifu: 10
+      Miraidon: 10
       ZygardeTenPercent: 5
       Zygarde: 5
     mythical:

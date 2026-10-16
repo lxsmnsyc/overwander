@@ -17,7 +17,9 @@ import { readCaughtMany, updateCaughtIn } from './caught-io';
 import { type ProgressBump, bumpProgress } from './quest-progress';
 import { asNumber, asNumberArray } from './read';
 import type { CaughtPokemon } from '../auth/caught';
+import type Abilities from '../data/ids/abilities';
 import { Moves } from '../data/ids/moves';
+import { getSignatureAbility } from '../data/abilities';
 import { Types } from '../data/constants/types';
 import { getRegisteredMoves } from '../data/moves';
 import BATTLE_TIMEOUT from '../auth/battle-lock';
@@ -86,6 +88,16 @@ const asHeldItems = (value: unknown): Items[] => asNumberArray(value) as Items[]
  * server's own writing, so they — not the report — decide what a unit
  * could possibly have spent
  */
+/**
+ * The abilities a fielded catch fights with: what its snapshot names,
+ * and the signature its family is granted, which no snapshot lists
+ */
+function withSignature(snapshot: CatchSnapshot): Abilities[] {
+  const signature = getSignatureAbility(getSpeciesData(snapshot.species).family);
+
+  return signature == null ? [...snapshot.abilities] : [...snapshot.abilities, signature];
+}
+
 async function readFielded(battleId: string, player: string): Promise<Map<string, CatchSnapshot>> {
   const fielded = new Map<string, CatchSnapshot>();
   const snapshots = await getSql()`
@@ -230,7 +242,7 @@ export default async function recordAftermath(
         : payDayCeiling(
             snapshot.level,
             snapshot.moves,
-            snapshot.abilities,
+            withSignature(snapshot),
             lasted,
             happy,
             // G-Max Gold Rush scatters coins as Pay Day does

@@ -52,6 +52,7 @@ land:
       Snubbull: 102
       Marill: 102
       Psyduck: 102
+      Gimmighoul: 60
       Scyther: 25
       Pikachu: 25
       Togetic: 25
@@ -95,6 +96,7 @@ land:
       Golduck: 27
       ElectrodeHisui: 25
       Kleavor: 25
+      Gholdengo: 25
       Ledian: 22
       Lopunny: 22
       Purugly: 22
@@ -218,6 +220,7 @@ land:
       Pineco: 70
       Drifloon: 70
       Marill: 70
+      Gimmighoul: 60
       Pumpkaboo: 41
       PumpkabooSuper: 41
       Vulpix: 35
@@ -240,6 +243,7 @@ land:
       Maushold: 50
       Thievul: 33
       ElectrodeHisui: 25
+      Gholdengo: 25
       Polteageist: 24
       Raticate: 22
       Noctowl: 22
@@ -363,6 +367,7 @@ land:
       Pineco: 68
       Drifloon: 68
       Marill: 68
+      Gimmighoul: 60
       Pumpkaboo: 40
       PumpkabooSuper: 40
       Vulpix: 34
@@ -387,6 +392,7 @@ land:
       Maushold: 50
       Thievul: 33
       ElectrodeHisui: 25
+      Gholdengo: 25
       Polteageist: 24
       Raticate: 20
       Persian: 20

@@ -1,13 +1,13 @@
 import 'server-only';
 import { Acquisition, asCaughtPokemon, isAuctionableCatch } from '../auth/caught-record';
-import { ITEM_STACKS } from '../auth/stacks';
+import { CANDY_STACKS, ITEM_STACKS } from '../auth/stacks';
 import { getMaxHealth, getStats, rescaleHealth } from '../auth/health';
 import { getTimeOfDay } from '../data/ids/biome';
 import { toLocalTime } from '../auth/local-time';
 import { Balls, type Items } from '../data/ids/items';
 import type { Moves } from '../data/ids/moves';
 import type Natures from '../data/ids/natures';
-import { Genders, type Species } from '../data/ids/species';
+import { EvolutionMethod, Genders, type Species } from '../data/ids/species';
 import type { EvolutionContext, EvolutionData } from '../data/species';
 import { FUSION_ITEMS } from '../data/species/fusion';
 import {
@@ -22,7 +22,7 @@ import { Metric } from '../auth/quest-record';
 import { isEggRecord, isGuardedRecord, withoutHeld } from './catch-fields';
 import { recordFoundSpecies } from './pokedex';
 import { type ProgressBump, bumpProgress } from './quest-progress';
-import { readStackIn, writeStackIn } from './stacks';
+import { readStackIn, spendStackIn, writeStackIn } from './stacks';
 import { readCaughtIn, updateCaughtIn } from './caught-io';
 import { insertCaughtIn } from './caught';
 import { tx } from './db';
@@ -93,6 +93,18 @@ export default async function evolveCatch(
       return null;
     }
 
+    const { family } = getSpeciesData(species);
+    // Only read where a road spends them: a Gimmighoul's pile is what
+    // its Gholdengo costs
+    let candies = 0;
+
+    for (const road of roads) {
+      if ((road.method & EvolutionMethod.Candy) !== 0) {
+        candies = await readStackIn(transaction, CANDY_STACKS, uid, family);
+        break;
+      }
+    }
+
     // Read off the stored record rather than taken from the caller: a
     // trade evolution is opened by the handover the server wrote, not
     // by a client saying one happened
@@ -128,6 +140,7 @@ export default async function evolveCatch(
       nature: asNumber(caught.nature) as Natures,
       // Counted by the server as the buddy walks, never reported here
       walked: asNumber(caught.walked),
+      candies,
       // Its trait value, set when it was met: a Tandemaus's family size
       rare: isOneInAHundred(asNumber(caught.traitValue)),
     };
@@ -158,6 +171,12 @@ export default async function evolveCatch(
       return null;
     }
 
+    if (
+      (evolution.method & EvolutionMethod.Candy) !== 0 &&
+      !(await spendStackIn(transaction, CANDY_STACKS, uid, family, candies, evolution.candies ?? 0))
+    ) {
+      return null;
+    }
     if (consumed != null) {
       await writeStackIn(transaction, ITEM_STACKS, uid, consumed, stock - 1);
       spent = consumed;

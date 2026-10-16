@@ -52,6 +52,9 @@ land:
       Unown: forms
       Magby: prized
       Larvesta: prized
+      GreatTusk: 8
+      SandyShocks: 8
+      IronTreads: 8
     special:
       Pheromosa: 10
       TapuBulu: 10
@@ -121,6 +124,9 @@ land:
       Unown: forms
       Magby: prized
       Larvesta: prized
+      GreatTusk: 8
+      SandyShocks: 8
+      IronTreads: 8
     special:
       Pheromosa: 10
       TapuBulu: 10
@@ -165,6 +171,9 @@ land:
     prized:
       Unown: forms
       Magby: prized
+      GreatTusk: 8
+      SandyShocks: 8
+      IronTreads: 8
     special:
       Pheromosa: 10
       TapuBulu: 10
@@ -207,6 +216,9 @@ land:
     prized:
       Unown: forms
       Magby: prized
+      GreatTusk: 8
+      SandyShocks: 8
+      IronTreads: 8
     special:
       Pheromosa: 10
       TapuBulu: 10

@@ -43,6 +43,7 @@ land:
       Empoleon: 23
     prized:
       Unown: forms
+      IronBundle: 8
     special:
       Kyurem: 10
       Regigigas: 10
@@ -85,6 +86,7 @@ land:
     prized:
       Unown: forms
       Smoochum: prized
+      IronBundle: 8
     special:
       Kyurem: 10
       Regigigas: 10

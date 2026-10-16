@@ -65,6 +65,7 @@ land:
     prized:
       Unown: forms
       Azurill: prized
+      WalkingWake: 8
     special: {}
   day: *land-morning
   evening:
@@ -121,6 +122,7 @@ land:
     prized:
       Unown: forms
       Azurill: prized
+      WalkingWake: 8
     special: {}
   night:
     base:
@@ -178,6 +180,7 @@ land:
     prized:
       Unown: forms
       Azurill: prized
+      WalkingWake: 8
     special: {}
 
 water:

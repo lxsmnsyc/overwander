@@ -354,6 +354,10 @@ prized:
   # terms: each is the only way to the shape it holds
   RustedSword: 4
   RustedShield: 4
+  TealMask: 4
+  WellspringMask: 4
+  HearthflameMask: 4
+  CornerstoneMask: 4
   ScrollOfDarkness: 4
   ScrollOfWaters: 4
   # The Gigantamax Factor, on the belt's terms: it changes one pokemon
@@ -387,6 +391,7 @@ special:
   HerosCharm: 6
   WindmillCharm: 6
   MysteryBox: 6
+  MythicalPechaBerry: 6
   # Six stats made perfect at once. Nothing else undoes a bad roll,
   # so it belongs with the things gold cannot buy
   GoldenBottleCap: 8

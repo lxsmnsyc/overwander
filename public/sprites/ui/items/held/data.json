@@ -1,12 +1,12 @@
 {
   "compact": true,
-  "width": 173,
-  "height": 257,
+  "width": 213,
+  "height": 222,
   "images": [
     {
       "name": "absorb-bulb.png",
-      "x": 60,
-      "y": 117,
+      "x": 184,
+      "y": 96,
       "width": 16,
       "height": 20,
       "sourceWidth": 32,
@@ -18,8 +18,8 @@
     },
     {
       "name": "adamant-orb.png",
-      "x": 107,
-      "y": 0,
+      "x": 0,
+      "y": 30,
       "width": 22,
       "height": 22,
       "sourceWidth": 32,
@@ -44,8 +44,8 @@
     },
     {
       "name": "air-balloon.png",
-      "x": 129,
-      "y": 0,
+      "x": 22,
+      "y": 30,
       "width": 18,
       "height": 22,
       "sourceWidth": 32,
@@ -57,8 +57,8 @@
     },
     {
       "name": "amulet-coin.png",
-      "x": 61,
-      "y": 138,
+      "x": 141,
+      "y": 117,
       "width": 21,
       "height": 19,
       "sourceWidth": 32,
@@ -70,8 +70,8 @@
     },
     {
       "name": "assault-vest.png",
-      "x": 0,
-      "y": 158,
+      "x": 53,
+      "y": 137,
       "width": 21,
       "height": 18,
       "sourceWidth": 32,
@@ -83,8 +83,8 @@
     },
     {
       "name": "big-root.png",
-      "x": 147,
-      "y": 0,
+      "x": 40,
+      "y": 30,
       "width": 21,
       "height": 22,
       "sourceWidth": 32,
@@ -96,8 +96,8 @@
     },
     {
       "name": "binding-band.png",
-      "x": 21,
-      "y": 158,
+      "x": 74,
+      "y": 137,
       "width": 21,
       "height": 18,
       "sourceWidth": 32,
@@ -122,8 +122,8 @@
     },
     {
       "name": "black-glasses.png",
-      "x": 0,
-      "y": 227,
+      "x": 90,
+      "y": 191,
       "width": 21,
       "height": 15,
       "sourceWidth": 32,
@@ -135,8 +135,8 @@
     },
     {
       "name": "black-sludge.png",
-      "x": 147,
-      "y": 176,
+      "x": 165,
+      "y": 156,
       "width": 20,
       "height": 17,
       "sourceWidth": 32,
@@ -148,8 +148,8 @@
     },
     {
       "name": "blue-orb.png",
-      "x": 42,
-      "y": 158,
+      "x": 95,
+      "y": 137,
       "width": 18,
       "height": 18,
       "sourceWidth": 32,
@@ -161,8 +161,8 @@
     },
     {
       "name": "blunder-policy.png",
-      "x": 0,
-      "y": 194,
+      "x": 185,
+      "y": 156,
       "width": 20,
       "height": 17,
       "sourceWidth": 32,
@@ -174,7 +174,7 @@
     },
     {
       "name": "booster-energy.png",
-      "x": 21,
+      "x": 71,
       "y": 0,
       "width": 21,
       "height": 27,
@@ -187,8 +187,8 @@
     },
     {
       "name": "bright-powder.png",
-      "x": 60,
-      "y": 158,
+      "x": 113,
+      "y": 137,
       "width": 22,
       "height": 18,
       "sourceWidth": 32,
@@ -200,8 +200,8 @@
     },
     {
       "name": "burn-drive.png",
-      "x": 21,
-      "y": 227,
+      "x": 111,
+      "y": 191,
       "width": 21,
       "height": 15,
       "sourceWidth": 32,
@@ -226,7 +226,7 @@
     },
     {
       "name": "charcoal.png",
-      "x": 76,
+      "x": 0,
       "y": 117,
       "width": 20,
       "height": 20,
@@ -239,8 +239,8 @@
     },
     {
       "name": "chill-drive.png",
-      "x": 42,
-      "y": 227,
+      "x": 132,
+      "y": 191,
       "width": 21,
       "height": 15,
       "sourceWidth": 32,
@@ -252,7 +252,7 @@
     },
     {
       "name": "choice-band.png",
-      "x": 0,
+      "x": 61,
       "y": 30,
       "width": 22,
       "height": 22,
@@ -265,7 +265,7 @@
     },
     {
       "name": "choice-scarf.png",
-      "x": 22,
+      "x": 83,
       "y": 30,
       "width": 22,
       "height": 22,
@@ -278,8 +278,8 @@
     },
     {
       "name": "choice-specs.png",
-      "x": 143,
-      "y": 194,
+      "x": 123,
+      "y": 174,
       "width": 22,
       "height": 16,
       "sourceWidth": 32,
@@ -291,8 +291,8 @@
     },
     {
       "name": "cleanse-tag.png",
-      "x": 82,
-      "y": 138,
+      "x": 162,
+      "y": 117,
       "width": 17,
       "height": 19,
       "sourceWidth": 32,
@@ -316,8 +316,21 @@
       ]
     },
     {
+      "name": "cornerstone-mask.png",
+      "x": 21,
+      "y": 0,
+      "width": 24,
+      "height": 28,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        4,
+        2
+      ]
+    },
+    {
       "name": "damp-rock.png",
-      "x": 44,
+      "x": 105,
       "y": 30,
       "width": 22,
       "height": 22,
@@ -330,7 +343,7 @@
     },
     {
       "name": "destiny-knot.png",
-      "x": 66,
+      "x": 127,
       "y": 30,
       "width": 20,
       "height": 22,
@@ -343,8 +356,8 @@
     },
     {
       "name": "douse-drive.png",
-      "x": 63,
-      "y": 227,
+      "x": 153,
+      "y": 191,
       "width": 21,
       "height": 15,
       "sourceWidth": 32,
@@ -369,8 +382,8 @@
     },
     {
       "name": "eject-button.png",
-      "x": 82,
-      "y": 158,
+      "x": 135,
+      "y": 137,
       "width": 20,
       "height": 18,
       "sourceWidth": 32,
@@ -382,7 +395,7 @@
     },
     {
       "name": "eject-pack.png",
-      "x": 86,
+      "x": 147,
       "y": 30,
       "width": 23,
       "height": 22,
@@ -395,8 +408,8 @@
     },
     {
       "name": "electric-seed.png",
-      "x": 84,
-      "y": 227,
+      "x": 174,
+      "y": 191,
       "width": 25,
       "height": 15,
       "sourceWidth": 32,
@@ -408,8 +421,8 @@
     },
     {
       "name": "everstone.png",
-      "x": 109,
-      "y": 227,
+      "x": 0,
+      "y": 207,
       "width": 18,
       "height": 15,
       "sourceWidth": 32,
@@ -421,8 +434,8 @@
     },
     {
       "name": "eviolite.png",
-      "x": 106,
-      "y": 242,
+      "x": 149,
+      "y": 207,
       "width": 13,
       "height": 13,
       "sourceWidth": 32,
@@ -460,8 +473,8 @@
     },
     {
       "name": "flame-orb.png",
-      "x": 0,
-      "y": 211,
+      "x": 145,
+      "y": 174,
       "width": 16,
       "height": 16,
       "sourceWidth": 32,
@@ -473,8 +486,8 @@
     },
     {
       "name": "float-stone.png",
-      "x": 119,
-      "y": 242,
+      "x": 162,
+      "y": 207,
       "width": 16,
       "height": 13,
       "sourceWidth": 32,
@@ -486,7 +499,7 @@
     },
     {
       "name": "focus-band.png",
-      "x": 109,
+      "x": 170,
       "y": 30,
       "width": 22,
       "height": 22,
@@ -512,8 +525,8 @@
     },
     {
       "name": "grassy-seed.png",
-      "x": 127,
-      "y": 227,
+      "x": 18,
+      "y": 207,
       "width": 25,
       "height": 15,
       "sourceWidth": 32,
@@ -525,8 +538,8 @@
     },
     {
       "name": "grip-claw.png",
-      "x": 131,
-      "y": 30,
+      "x": 0,
+      "y": 52,
       "width": 22,
       "height": 22,
       "sourceWidth": 32,
@@ -538,8 +551,8 @@
     },
     {
       "name": "griseous-orb.png",
-      "x": 153,
-      "y": 30,
+      "x": 22,
+      "y": 52,
       "width": 20,
       "height": 22,
       "sourceWidth": 32,
@@ -551,8 +564,8 @@
     },
     {
       "name": "hard-stone.png",
-      "x": 102,
-      "y": 158,
+      "x": 155,
+      "y": 137,
       "width": 17,
       "height": 18,
       "sourceWidth": 32,
@@ -560,6 +573,19 @@
       "trim": [
         7,
         7
+      ]
+    },
+    {
+      "name": "hearthflame-mask.png",
+      "x": 120,
+      "y": 0,
+      "width": 28,
+      "height": 25,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        2,
+        3
       ]
     },
     {
@@ -577,8 +603,8 @@
     },
     {
       "name": "heavy-duty-boots.png",
-      "x": 0,
-      "y": 96,
+      "x": 162,
+      "y": 74,
       "width": 24,
       "height": 21,
       "sourceWidth": 32,
@@ -590,7 +616,7 @@
     },
     {
       "name": "icy-rock.png",
-      "x": 0,
+      "x": 42,
       "y": 52,
       "width": 22,
       "height": 22,
@@ -603,8 +629,8 @@
     },
     {
       "name": "iron-ball.png",
-      "x": 16,
-      "y": 211,
+      "x": 161,
+      "y": 174,
       "width": 16,
       "height": 16,
       "sourceWidth": 32,
@@ -616,7 +642,7 @@
     },
     {
       "name": "kings-rock.png",
-      "x": 22,
+      "x": 64,
       "y": 52,
       "width": 21,
       "height": 22,
@@ -629,8 +655,8 @@
     },
     {
       "name": "lagging-tail.png",
-      "x": 24,
-      "y": 96,
+      "x": 186,
+      "y": 74,
       "width": 22,
       "height": 21,
       "sourceWidth": 32,
@@ -642,7 +668,7 @@
     },
     {
       "name": "leftovers.png",
-      "x": 96,
+      "x": 20,
       "y": 117,
       "width": 13,
       "height": 20,
@@ -655,8 +681,8 @@
     },
     {
       "name": "life-orb.png",
-      "x": 32,
-      "y": 211,
+      "x": 177,
+      "y": 174,
       "width": 16,
       "height": 16,
       "sourceWidth": 32,
@@ -668,8 +694,8 @@
     },
     {
       "name": "light-ball.png",
-      "x": 48,
-      "y": 211,
+      "x": 193,
+      "y": 174,
       "width": 16,
       "height": 16,
       "sourceWidth": 32,
@@ -681,8 +707,8 @@
     },
     {
       "name": "light-clay.png",
-      "x": 64,
-      "y": 211,
+      "x": 0,
+      "y": 191,
       "width": 19,
       "height": 16,
       "sourceWidth": 32,
@@ -694,8 +720,8 @@
     },
     {
       "name": "loaded-dice.png",
-      "x": 119,
-      "y": 158,
+      "x": 172,
+      "y": 137,
       "width": 20,
       "height": 18,
       "sourceWidth": 32,
@@ -707,8 +733,8 @@
     },
     {
       "name": "lucky-egg.png",
-      "x": 139,
-      "y": 158,
+      "x": 192,
+      "y": 137,
       "width": 15,
       "height": 18,
       "sourceWidth": 32,
@@ -720,7 +746,7 @@
     },
     {
       "name": "lucky-punch.png",
-      "x": 43,
+      "x": 85,
       "y": 52,
       "width": 22,
       "height": 22,
@@ -733,7 +759,7 @@
     },
     {
       "name": "luminous-moss.png",
-      "x": 109,
+      "x": 33,
       "y": 117,
       "width": 15,
       "height": 20,
@@ -746,7 +772,7 @@
     },
     {
       "name": "lustrous-orb.png",
-      "x": 65,
+      "x": 107,
       "y": 52,
       "width": 22,
       "height": 22,
@@ -759,8 +785,8 @@
     },
     {
       "name": "magnet.png",
-      "x": 154,
-      "y": 158,
+      "x": 0,
+      "y": 156,
       "width": 18,
       "height": 18,
       "sourceWidth": 32,
@@ -772,8 +798,8 @@
     },
     {
       "name": "mental-herb.png",
-      "x": 20,
-      "y": 194,
+      "x": 0,
+      "y": 174,
       "width": 19,
       "height": 17,
       "sourceWidth": 32,
@@ -785,7 +811,7 @@
     },
     {
       "name": "metal-coat.png",
-      "x": 124,
+      "x": 48,
       "y": 117,
       "width": 17,
       "height": 20,
@@ -798,8 +824,8 @@
     },
     {
       "name": "metal-powder.png",
-      "x": 0,
-      "y": 176,
+      "x": 18,
+      "y": 156,
       "width": 22,
       "height": 18,
       "sourceWidth": 32,
@@ -811,7 +837,7 @@
     },
     {
       "name": "metronome.png",
-      "x": 141,
+      "x": 65,
       "y": 117,
       "width": 15,
       "height": 20,
@@ -824,8 +850,8 @@
     },
     {
       "name": "miracle-seed.png",
-      "x": 39,
-      "y": 194,
+      "x": 19,
+      "y": 174,
       "width": 17,
       "height": 17,
       "sourceWidth": 32,
@@ -837,8 +863,8 @@
     },
     {
       "name": "misty-seed.png",
-      "x": 0,
-      "y": 242,
+      "x": 43,
+      "y": 207,
       "width": 25,
       "height": 15,
       "sourceWidth": 32,
@@ -850,7 +876,7 @@
     },
     {
       "name": "muscle-band.png",
-      "x": 87,
+      "x": 129,
       "y": 52,
       "width": 22,
       "height": 22,
@@ -863,7 +889,7 @@
     },
     {
       "name": "mystic-water.png",
-      "x": 46,
+      "x": 0,
       "y": 96,
       "width": 18,
       "height": 21,
@@ -876,7 +902,7 @@
     },
     {
       "name": "never-melt-ice.png",
-      "x": 64,
+      "x": 18,
       "y": 96,
       "width": 20,
       "height": 21,
@@ -889,8 +915,8 @@
     },
     {
       "name": "poison-barb.png",
-      "x": 99,
-      "y": 138,
+      "x": 179,
+      "y": 117,
       "width": 19,
       "height": 19,
       "sourceWidth": 32,
@@ -902,8 +928,8 @@
     },
     {
       "name": "power-herb.png",
-      "x": 56,
-      "y": 194,
+      "x": 36,
+      "y": 174,
       "width": 19,
       "height": 17,
       "sourceWidth": 32,
@@ -915,7 +941,7 @@
     },
     {
       "name": "protective-pads.png",
-      "x": 109,
+      "x": 151,
       "y": 52,
       "width": 20,
       "height": 22,
@@ -928,8 +954,8 @@
     },
     {
       "name": "psychic-seed.png",
-      "x": 25,
-      "y": 242,
+      "x": 68,
+      "y": 207,
       "width": 25,
       "height": 15,
       "sourceWidth": 32,
@@ -941,8 +967,8 @@
     },
     {
       "name": "purifying-gem.png",
-      "x": 22,
-      "y": 176,
+      "x": 40,
+      "y": 156,
       "width": 18,
       "height": 18,
       "sourceWidth": 32,
@@ -954,8 +980,8 @@
     },
     {
       "name": "quick-claw.png",
-      "x": 118,
-      "y": 138,
+      "x": 0,
+      "y": 137,
       "width": 17,
       "height": 19,
       "sourceWidth": 32,
@@ -967,8 +993,8 @@
     },
     {
       "name": "quick-powder.png",
-      "x": 40,
-      "y": 176,
+      "x": 58,
+      "y": 156,
       "width": 22,
       "height": 18,
       "sourceWidth": 32,
@@ -980,8 +1006,8 @@
     },
     {
       "name": "red-card.png",
-      "x": 75,
-      "y": 194,
+      "x": 55,
+      "y": 174,
       "width": 15,
       "height": 17,
       "sourceWidth": 32,
@@ -993,7 +1019,7 @@
     },
     {
       "name": "red-orb.png",
-      "x": 129,
+      "x": 171,
       "y": 52,
       "width": 18,
       "height": 22,
@@ -1006,8 +1032,8 @@
     },
     {
       "name": "ring-target.png",
-      "x": 90,
-      "y": 194,
+      "x": 70,
+      "y": 174,
       "width": 14,
       "height": 17,
       "sourceWidth": 32,
@@ -1019,8 +1045,8 @@
     },
     {
       "name": "rocky-helmet.png",
-      "x": 62,
-      "y": 176,
+      "x": 80,
+      "y": 156,
       "width": 20,
       "height": 18,
       "sourceWidth": 32,
@@ -1032,7 +1058,7 @@
     },
     {
       "name": "room-service.png",
-      "x": 42,
+      "x": 148,
       "y": 0,
       "width": 22,
       "height": 25,
@@ -1045,8 +1071,8 @@
     },
     {
       "name": "rusted-shield.png",
-      "x": 82,
-      "y": 176,
+      "x": 100,
+      "y": 156,
       "width": 22,
       "height": 18,
       "sourceWidth": 32,
@@ -1058,8 +1084,8 @@
     },
     {
       "name": "rusted-sword.png",
-      "x": 0,
-      "y": 138,
+      "x": 80,
+      "y": 117,
       "width": 21,
       "height": 20,
       "sourceWidth": 32,
@@ -1071,8 +1097,8 @@
     },
     {
       "name": "safety-goggles.png",
-      "x": 83,
-      "y": 211,
+      "x": 19,
+      "y": 191,
       "width": 23,
       "height": 16,
       "sourceWidth": 32,
@@ -1084,7 +1110,7 @@
     },
     {
       "name": "scope-lens.png",
-      "x": 84,
+      "x": 38,
       "y": 96,
       "width": 22,
       "height": 21,
@@ -1097,7 +1123,7 @@
     },
     {
       "name": "sharp-beak.png",
-      "x": 106,
+      "x": 60,
       "y": 96,
       "width": 19,
       "height": 21,
@@ -1110,8 +1136,8 @@
     },
     {
       "name": "shed-shell.png",
-      "x": 21,
-      "y": 138,
+      "x": 101,
+      "y": 117,
       "width": 20,
       "height": 20,
       "sourceWidth": 32,
@@ -1123,8 +1149,8 @@
     },
     {
       "name": "shell-bell.png",
-      "x": 104,
-      "y": 176,
+      "x": 122,
+      "y": 156,
       "width": 21,
       "height": 18,
       "sourceWidth": 32,
@@ -1136,8 +1162,8 @@
     },
     {
       "name": "shock-drive.png",
-      "x": 50,
-      "y": 242,
+      "x": 93,
+      "y": 207,
       "width": 21,
       "height": 15,
       "sourceWidth": 32,
@@ -1149,7 +1175,7 @@
     },
     {
       "name": "silk-scarf.png",
-      "x": 147,
+      "x": 189,
       "y": 52,
       "width": 22,
       "height": 22,
@@ -1162,8 +1188,8 @@
     },
     {
       "name": "silver-powder.png",
-      "x": 135,
-      "y": 242,
+      "x": 178,
+      "y": 207,
       "width": 22,
       "height": 13,
       "sourceWidth": 32,
@@ -1175,8 +1201,8 @@
     },
     {
       "name": "smoke-ball.png",
-      "x": 106,
-      "y": 211,
+      "x": 42,
+      "y": 191,
       "width": 16,
       "height": 16,
       "sourceWidth": 32,
@@ -1201,8 +1227,8 @@
     },
     {
       "name": "snowball.png",
-      "x": 157,
-      "y": 242,
+      "x": 200,
+      "y": 207,
       "width": 13,
       "height": 13,
       "sourceWidth": 32,
@@ -1214,8 +1240,8 @@
     },
     {
       "name": "soft-sand.png",
-      "x": 125,
-      "y": 176,
+      "x": 143,
+      "y": 156,
       "width": 22,
       "height": 18,
       "sourceWidth": 32,
@@ -1227,8 +1253,8 @@
     },
     {
       "name": "soul-dew.png",
-      "x": 92,
-      "y": 242,
+      "x": 135,
+      "y": 207,
       "width": 14,
       "height": 14,
       "sourceWidth": 32,
@@ -1240,8 +1266,8 @@
     },
     {
       "name": "spell-tag.png",
-      "x": 135,
-      "y": 138,
+      "x": 17,
+      "y": 137,
       "width": 17,
       "height": 19,
       "sourceWidth": 32,
@@ -1253,7 +1279,7 @@
     },
     {
       "name": "stick.png",
-      "x": 125,
+      "x": 79,
       "y": 96,
       "width": 21,
       "height": 21,
@@ -1266,8 +1292,8 @@
     },
     {
       "name": "sticky-barb.png",
-      "x": 122,
-      "y": 211,
+      "x": 58,
+      "y": 191,
       "width": 16,
       "height": 16,
       "sourceWidth": 32,
@@ -1278,8 +1304,21 @@
       ]
     },
     {
+      "name": "teal-mask.png",
+      "x": 45,
+      "y": 0,
+      "width": 26,
+      "height": 28,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        3,
+        2
+      ]
+    },
+    {
       "name": "tera-orb.png",
-      "x": 146,
+      "x": 100,
       "y": 96,
       "width": 24,
       "height": 21,
@@ -1292,7 +1331,7 @@
     },
     {
       "name": "terrain-extender.png",
-      "x": 88,
+      "x": 194,
       "y": 0,
       "width": 19,
       "height": 23,
@@ -1305,8 +1344,8 @@
     },
     {
       "name": "thick-club.png",
-      "x": 41,
-      "y": 138,
+      "x": 121,
+      "y": 117,
       "width": 20,
       "height": 20,
       "sourceWidth": 32,
@@ -1318,8 +1357,8 @@
     },
     {
       "name": "throat-spray.png",
-      "x": 0,
-      "y": 117,
+      "x": 124,
+      "y": 96,
       "width": 18,
       "height": 21,
       "sourceWidth": 32,
@@ -1331,8 +1370,8 @@
     },
     {
       "name": "toxic-orb.png",
-      "x": 138,
-      "y": 211,
+      "x": 74,
+      "y": 191,
       "width": 16,
       "height": 16,
       "sourceWidth": 32,
@@ -1344,8 +1383,8 @@
     },
     {
       "name": "twisted-spoon.png",
-      "x": 18,
-      "y": 117,
+      "x": 142,
+      "y": 96,
       "width": 22,
       "height": 21,
       "sourceWidth": 32,
@@ -1357,7 +1396,7 @@
     },
     {
       "name": "utility-umbrella.png",
-      "x": 64,
+      "x": 170,
       "y": 0,
       "width": 24,
       "height": 24,
@@ -1370,8 +1409,8 @@
     },
     {
       "name": "weakness-policy.png",
-      "x": 104,
-      "y": 194,
+      "x": 84,
+      "y": 174,
       "width": 20,
       "height": 17,
       "sourceWidth": 32,
@@ -1382,9 +1421,22 @@
       ]
     },
     {
+      "name": "wellspring-mask.png",
+      "x": 92,
+      "y": 0,
+      "width": 28,
+      "height": 27,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        2,
+        2
+      ]
+    },
+    {
       "name": "white-herb.png",
-      "x": 124,
-      "y": 194,
+      "x": 104,
+      "y": 174,
       "width": 19,
       "height": 17,
       "sourceWidth": 32,
@@ -1396,8 +1448,8 @@
     },
     {
       "name": "wide-lens.png",
-      "x": 40,
-      "y": 117,
+      "x": 164,
+      "y": 96,
       "width": 20,
       "height": 21,
       "sourceWidth": 32,
@@ -1409,8 +1461,8 @@
     },
     {
       "name": "wise-glasses.png",
-      "x": 71,
-      "y": 242,
+      "x": 114,
+      "y": 207,
       "width": 21,
       "height": 15,
       "sourceWidth": 32,
@@ -1422,8 +1474,8 @@
     },
     {
       "name": "zoom-lens.png",
-      "x": 152,
-      "y": 138,
+      "x": 34,
+      "y": 137,
       "width": 19,
       "height": 19,
       "sourceWidth": 32,

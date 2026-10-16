@@ -35,7 +35,7 @@ IronValiant:
   IronValiant:
     types: [Fairy, Fighting]
     egg-groups: [NoEggsDiscovered]
-    biomes: [TemperateForest, Mountain]
+    biomes: [TemperateForest]
     active: any
     rank: prized
 Koraidon:
@@ -81,3 +81,132 @@ RagingBolt:
     biomes: [Mountain, Steppe]
     active: any
     rank: prized
+Munkidori:
+  Munkidori:
+    types: [Poison, Psychic]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Grassland]
+    active: any
+    rank: legendary
+Fezandipiti:
+  Fezandipiti:
+    types: [Poison, Fairy]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Mountain]
+    active: any
+    rank: legendary
+Ogerpon:
+  # A mask is a shape it is kept in rather than one it fights in: each
+  # is used to move it between the four, its Teal included, so the line
+  # is a wheel the way Rotom's is
+  Ogerpon:
+    types: [Grass]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [TemperateForest]
+    active: any
+    evolves-into:
+      - species: OgerponWellspring
+        method: [UsedItem]
+        item: WellspringMask
+      - species: OgerponHearthflame
+        method: [UsedItem]
+        item: HearthflameMask
+      - species: OgerponCornerstone
+        method: [UsedItem]
+        item: CornerstoneMask
+    rank: legendary
+  OgerponWellspring:
+    types: [Grass, Water]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    evolves-from: Ogerpon
+    evolves-into:
+      - species: Ogerpon
+        method: [UsedItem]
+        item: TealMask
+      - species: OgerponHearthflame
+        method: [UsedItem]
+        item: HearthflameMask
+      - species: OgerponCornerstone
+        method: [UsedItem]
+        item: CornerstoneMask
+    rank: legendary
+  OgerponHearthflame:
+    types: [Grass, Fire]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    evolves-from: Ogerpon
+    evolves-into:
+      - species: Ogerpon
+        method: [UsedItem]
+        item: TealMask
+      - species: OgerponWellspring
+        method: [UsedItem]
+        item: WellspringMask
+      - species: OgerponCornerstone
+        method: [UsedItem]
+        item: CornerstoneMask
+    rank: legendary
+  OgerponCornerstone:
+    types: [Grass, Rock]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    evolves-from: Ogerpon
+    evolves-into:
+      - species: Ogerpon
+        method: [UsedItem]
+        item: TealMask
+      - species: OgerponWellspring
+        method: [UsedItem]
+        item: WellspringMask
+      - species: OgerponHearthflame
+        method: [UsedItem]
+        item: HearthflameMask
+    rank: legendary
+  OgerponTealTera:
+    types: [Grass]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    worn: true
+  OgerponWellspringTera:
+    types: [Grass, Water]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    worn: true
+  OgerponHearthflameTera:
+    types: [Grass, Fire]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    worn: true
+  OgerponCornerstoneTera:
+    types: [Grass, Rock]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    worn: true
+Terapagos:
+  Terapagos:
+    types: [Normal]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Mountain]
+    active: any
+    rank: legendary
+  TerapagosTerastal:
+    types: [Normal]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    worn: true
+Pecharunt:
+  Pecharunt:
+    types: [Poison, Ghost]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Grassland]
+    active: any
+    rank: mythical

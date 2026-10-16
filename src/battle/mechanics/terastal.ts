@@ -7,6 +7,7 @@ import { MULTI_HIT_MOVES } from '../../data/moves/multi-hit';
 import { getSpeciesData } from '../../data/species/__create';
 import type Battle from '../core';
 import { BattleEvents, type UnitAttackEvent } from '../events';
+import { maskShapeOf, maskTypeOf, teraShapeOf } from '../items/masks';
 import { isMegaHolder } from '../items/megas';
 import type Team from '../team';
 import type Unit from '../unit';
@@ -71,8 +72,13 @@ export function terastallize(unit: Unit): void {
     return;
   }
   const natural = [...unit.types];
+  // Ogerpon's mask decides its Tera type, whatever the catch's own
+  const mask = maskShapeOf(unit);
+  const masked = mask == null ? undefined : maskTypeOf(mask);
 
-  if (unit.teraType === Types.Unknown) {
+  if (masked != null) {
+    unit.teraType = masked;
+  } else if (unit.teraType === Types.Unknown) {
     unit.teraType = natural[0] ?? Types.Normal;
   }
   naturalTypes.set(unit, natural);
@@ -85,6 +91,12 @@ export function terastallize(unit: Unit): void {
   }
   unit.addType(unit.teraType);
   retyping = false;
+
+  const shape = mask == null ? undefined : teraShapeOf(mask);
+
+  if (shape != null) {
+    unit.setSpecies(shape);
+  }
 }
 
 /**

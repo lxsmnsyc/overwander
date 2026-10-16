@@ -17,3 +17,21 @@ GougingFire:
   GougingFire: { name: Gouging Fire, category: Paradox Pokemon }
 RagingBolt:
   RagingBolt: { name: Raging Bolt, category: Paradox Pokemon }
+Munkidori:
+  Munkidori: { name: Munkidori, category: Retainer Pokemon }
+Fezandipiti:
+  Fezandipiti: { name: Fezandipiti, category: Retainer Pokemon }
+Ogerpon:
+  Ogerpon: { name: Ogerpon, category: Mask Pokemon }
+  OgerponWellspring: { name: Wellspring Mask Ogerpon, category: Mask Pokemon }
+  OgerponHearthflame: { name: Hearthflame Mask Ogerpon, category: Mask Pokemon }
+  OgerponCornerstone: { name: Cornerstone Mask Ogerpon, category: Mask Pokemon }
+  OgerponTealTera: { name: Terastal Teal Ogerpon, category: Mask Pokemon }
+  OgerponWellspringTera: { name: Terastal Wellspring Ogerpon, category: Mask Pokemon }
+  OgerponHearthflameTera: { name: Terastal Hearthflame Ogerpon, category: Mask Pokemon }
+  OgerponCornerstoneTera: { name: Terastal Cornerstone Ogerpon, category: Mask Pokemon }
+Terapagos:
+  Terapagos: { name: Terapagos, category: Tera Pokemon }
+  TerapagosTerastal: { name: Terastal Terapagos, category: Tera Pokemon }
+Pecharunt:
+  Pecharunt: { name: Pecharunt, category: Subjugation Pokemon }

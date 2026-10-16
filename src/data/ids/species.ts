@@ -2040,6 +2040,21 @@ export const TATSUGIRI_FORMS: Species[] = [
   Species.TatsugiriDroopy,
 ];
 
+/** Ogerpon in each of its masks, the Teal at the base, then each mask Terastallized */
+export const OGERPON_FORMS: Species[] = [
+  Species.Ogerpon,
+  Species.OgerponWellspring,
+  Species.OgerponHearthflame,
+  Species.OgerponCornerstone,
+  Species.OgerponTealTera,
+  Species.OgerponWellspringTera,
+  Species.OgerponHearthflameTera,
+  Species.OgerponCornerstoneTera,
+];
+
+/** A Terapagos, and the Terastal shape its Tera Shift takes */
+export const TERAPAGOS_FORMS: Species[] = [Species.Terapagos, Species.TerapagosTerastal];
+
 /** A Cramorant, and what it comes back up with after a dive: the small catch, then the big one */
 export const CRAMORANT_FORMS: Species[] = [
   Species.Cramorant,

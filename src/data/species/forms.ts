@@ -96,3 +96,30 @@ const SEASONAL_COATS = new Map<Species, Species[]>([
 export function getSeasonalCoat(species: Species, season: number): Species {
   return SEASONAL_COATS.get(species)?.[season] ?? species;
 }
+
+/**
+ * Whether a catch is the one in a hundred, read off its trait value
+ * the way the mainline reads its encryption constant. The value is
+ * mixed first, since every other trait already reads a slice of it
+ * and this must move with none of them
+ */
+export function isOneInAHundred(traitValue: number): boolean {
+  let mixed = Math.imul(traitValue ^ 0x9e3779b9, 0x85ebca6b);
+
+  mixed ^= mixed >>> 13;
+  return (mixed >>> 0) % 100 === 0;
+}
+
+/** The rare shapes a wild pokemon is met in by the same roll */
+const ONE_IN_A_HUNDRED = new Map<Species, Species>([[Species.Maushold, Species.MausholdThree]]);
+
+/**
+ * The shape a wild one is met in: a Maushold is the family of three
+ * one time in a hundred, the same catches whose Tandemaus would grow
+ * into one
+ */
+export function getRareShape(species: Species, traitValue: number): Species {
+  const rare = ONE_IN_A_HUNDRED.get(species);
+
+  return rare != null && isOneInAHundred(traitValue) ? rare : species;
+}

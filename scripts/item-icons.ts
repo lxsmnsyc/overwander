@@ -1075,13 +1075,21 @@ interface Shrunk {
   from: string;
   to: string;
   /** How wide the picture ends up, which the height follows. */
-  wide: number;
+  wide?: number;
+  /** How long its longer side ends up, for art taller than it is wide */
+  fit?: number;
+  /** Kept as the resize left it, with no tones merged and no outline drawn */
+  plain?: true;
 }
 
 const SHRUNK: Shrunk[] = [
   { from: 'clear-amulet', to: 'held/clear-amulet', wide: 21 },
   { from: 'loaded-dice', to: 'held/loaded-dice', wide: 20 },
   { from: 'manaphy-egg', to: 'key/manaphy-egg', wide: 20 },
+  // Gen 9 items, resized from their own art and nothing else. Detailed
+  // art keeps 28 pixels on its long side to stay legible, a plain shape 24
+  { from: 'auspicious-armor', to: 'evolutions/auspicious-armor', fit: 28, plain: true },
+  { from: 'malicious-armor', to: 'evolutions/malicious-armor', fit: 28, plain: true },
 ];
 
 function lightnessOf(colour: number[]): number {
@@ -1139,12 +1147,14 @@ async function shrunk(art: Shrunk): Promise<Picture> {
     .trim({ threshold: 1 })
     .toBuffer();
   const source = await sharp(trimmed).metadata();
-  const tall = Math.round((source.height / source.width) * art.wide);
+  const longest = Math.max(source.width, source.height);
+  const wide = art.wide ?? Math.round(((art.fit ?? CELL) * source.width) / longest);
+  const tall = Math.round((source.height / source.width) * wide);
   const { data } = await sharp(trimmed)
-    .resize(art.wide, tall, { kernel: 'lanczos3' })
+    .resize(wide, tall, { kernel: 'lanczos3' })
     .raw()
     .toBuffer({ resolveWithObject: true });
-  const image: Image = { width: art.wide, height: tall, rgba: Buffer.alloc(art.wide * tall * 4) };
+  const image: Image = { width: wide, height: tall, rgba: Buffer.alloc(wide * tall * 4) };
   const counts = new Map<string, number>();
 
   for (let at = 0; at < image.rgba.length; at += 4) {
@@ -1161,6 +1171,14 @@ async function shrunk(art: Shrunk): Promise<Picture> {
     const key = hexOf(image, at);
 
     counts.set(key, (counts.get(key) ?? 0) + 1);
+  }
+
+  if (art.plain === true) {
+    return {
+      name: art.to.split('/')[1],
+      image,
+      trim: [Math.floor((CELL - image.width) / 2), Math.floor((CELL - image.height) / 2)],
+    };
   }
 
   const tones: { colour: number[]; pixels: number }[] = [];

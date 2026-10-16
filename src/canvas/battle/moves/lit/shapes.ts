@@ -222,6 +222,7 @@ export const JOLTS: Partial<Record<EffectShape, number>> = {
   Ceaseless: 2.5,
   Chloroblast: 3,
   Flyingpress: 3,
+  Respects: 2,
   Aurawheel: 2.5,
   Amped: 2.5,
   Acid: 1.5,

@@ -8,6 +8,11 @@ How Paldea, Kitakami and the Blueberry Academy go in, batch by batch, on top of 
 - **Gen 9 by PokeAPI:** 120 species (906 to 1025), 69 moves and 47 abilities.
 - **Batch 1 is done** on `gen-9-moves`: the moves, every older species' Scarlet and Violet learnsets, and a picture for every signature move.
 - **Batch 2 is done** on `paldea-scaffolding`: the Paldea region (dex 906 to 1025), `PALDEAN_FORMS`, and the sprite and candy keys.
+- **Batches 3 to 10 are built** on `paldea-starters`, as one PR for Paldea's routes. Decided while building them:
+  - Pawmo evolves once it has walked 1,000 steps as the buddy, counted on the catch's walked steps.
+  - Tandemaus always grows into the family of four. The family of three waits for a way to roll it.
+  - Gimmighoul and Gholdengo wait: the collection draws only the Roaming form, not the base Gimmighoul a line needs at its root.
+  - Tadbulb, Bellibolt, Wiglett and Wugtrio are amphibious, so they are met on land despite their water egg groups.
 - **Lines waiting on Gen 9,** marked `awaiting: evolution`: Primeape (Annihilape), Girafarig (Farigiraf), Dunsparce (Dudunsparce), Applin (Dipplin), Duraludon (Archaludon) and Bisharp (Kingambit). Each mark comes off with its evolution.
   - Galarian Mr. Mime keeps its mark in `world/kanto/101-125.yaml`: Mr. Rime is still not drawn.
   - The ability audit is clean. None of these lines carries an invented filler, so their evolutions break no pool.

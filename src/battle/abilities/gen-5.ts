@@ -1,5 +1,4 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
-import { countsAgainstSlots } from '../../data/constants/slots';
 import { Stats } from '../../data/constants/stats';
 import Abilities from '../../data/ids/abilities';
 import { MoveCategories, type Moves } from '../../data/ids/moves';
@@ -17,29 +16,10 @@ import {
   createContactRecoilAbility,
   createFurCoatAbility,
   createMoldBreakerAbility,
+  createMummyAbility,
   getAbilityHolders,
 } from './__create';
 import { FOLDED_CREEDS, HUSK_CREED } from './signature/tao-trio';
-
-/**
- * The abilities a swap may take: what counts against a slot, and never
- * a shape's own, which is worn rather than carried
- */
-function swappableAbilities(unit: Unit): Abilities[] {
-  const held: Abilities[] = [];
-
-  // The list is keyed by the ability enum, which comes back as a
-  // string from Object.entries
-  for (const [ability, carried] of Object.entries(unit.abilities)) {
-    const id: Abilities = Number(ability);
-
-    if (carried && countsAgainstSlots(id) && unit.worn[id] == null) {
-      held.push(id);
-    }
-  }
-
-  return held;
-}
 
 /** How far a Darmanitan has to fall before it sits down */
 export const ZEN_MODE_THRESHOLD = 1 / 2;
@@ -136,38 +116,8 @@ const setupAbilities = [
     ]);
   }),
 
-  /**
-   * Mummy spreads itself: whoever touches it catches it in place of
-   * whatever they were carrying. One ability rather than the lot, the
-   * way Worry Seed takes one, and a worn shape's own is left alone
-   * https://bulbapedia.bulbagarden.net/wiki/Mummy_(Ability)
-   */
-  createAbility(Abilities.Mummy, (battle) =>
-    battle.on(BattleEvents.UnitAttack, AttackPriority.Post, (event) => {
-      const source = event.source;
-      const target = event.target;
-
-      if (
-        !event.success ||
-        !source.alive ||
-        source === target ||
-        source.hasAbility(Abilities.Mummy) ||
-        !target.hasAbility(Abilities.Mummy) ||
-        !source.checkMoveContact(event.move, { type: MoveTargetType.Unit, unit: target })
-      ) {
-        return;
-      }
-
-      const held = swappableAbilities(source);
-
-      target.triggerAbility(Abilities.Mummy);
-
-      if (held.length > 0) {
-        source.removeAbility(held[Math.floor(battle.random() * held.length)]);
-      }
-      source.addAbility(Abilities.Mummy);
-    }),
-  ),
+  // Whoever touches it catches it
+  createMummyAbility(Abilities.Mummy),
 
   /**
    * Perish Body: the lid closes on whoever reached in, and the coffin

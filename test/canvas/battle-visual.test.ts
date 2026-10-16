@@ -609,6 +609,8 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Takeheart', Moves.TakeHeart],
   ['Chloroblast', Moves.Chloroblast],
   ['Flyingpress', Moves.FlyingPress],
+  ['Revival', Moves.RevivalBlessing],
+  ['Respects', Moves.LastRespects],
   ['Aurawheel', Moves.AuraWheel],
   ['Amped', Moves.Overdrive],
   ['Acid', Moves.AppleAcid],

@@ -1,0 +1,11 @@
+Frigibax:
+  Frigibax:
+    abilities: [ThermalExchange]
+    hidden: [IceBody]
+  Arctibax:
+    abilities: [ThermalExchange]
+    hidden: [IceBody]
+  Baxcalibur:
+    abilities: [ThermalExchange]
+    # Sharpness and Slush Rush are this registry's rather than the mainline's, filling it to four
+    hidden: [IceBody, Sharpness, SlushRush]

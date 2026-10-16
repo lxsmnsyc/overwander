@@ -1409,13 +1409,21 @@ describe('type experts', () => {
     expect(getSpeciesData(Species.Gyarados).types).not.toContain(Types.Dragon);
 
     // Agatha is not a second Koga, who now sits in Johto's league
-    // with the Poison type entire: hers is the group her ghosts
-    // share. Counted by pokemon rather than by entry, since a Rotom
-    // brings five addresses of itself to an Amorphous pool
-    const distinct = (member: EliteMember): number =>
-      new Set(poolOf(member).map(getBaseFormSpecies)).size;
+    // with the Poison type entire: most of what she fields is no
+    // pokemon he could. Counted by pokemon rather than by entry, since
+    // a Rotom brings five addresses of itself to a pool
+    const distinct = (member: EliteMember): Set<Species> =>
+      new Set(poolOf(member).map(getBaseFormSpecies));
+    const agatha = distinct(EliteMember.Agatha);
+    const koga = distinct(EliteMember.Koga);
+    let shared = 0;
 
-    expect(distinct(EliteMember.Agatha)).toBeLessThan(distinct(EliteMember.Koga));
+    for (const species of agatha) {
+      if (koga.has(species)) {
+        shared += 1;
+      }
+    }
+    expect(shared * 2).toBeLessThan(agatha.size);
     expect(poolOf(EliteMember.Agatha)).not.toContain(Species.Venusaur);
 
     // A name is the one thing that reaches outside the band: Bruno's

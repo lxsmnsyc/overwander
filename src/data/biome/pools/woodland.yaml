@@ -22,6 +22,7 @@ land:
       Slakoth: 224
       Poliwag: 224
       Rookidee: 174
+      Tinkatink: 150
       Grookey: 45
       Turtwig: 33
       Chespin: 23
@@ -39,6 +40,7 @@ land:
       Glameow: 127
       Pancham: 123
       Spritzee: 123
+      Tandemaus: 120
       Stufful: 112
       Panpour: 112
       Pansear: 112
@@ -63,6 +65,7 @@ land:
       Gurdurr: 78
       Vigoroth: 78
       Dottler: 77
+      Tinkatuff: 70
       Corvisquire: 68
       Floette: 63
       Spewpa: 63
@@ -79,6 +82,7 @@ land:
       Ivysaur: 9
       Bayleef: 9
     scarce:
+      Maushold: 50
       RapidashGalar: 29
       Greedent: 28
       Raticate: 27
@@ -121,6 +125,7 @@ land:
       IndeedeeFemale: 86
       Corviknight: 25
       Orbeetle: 25
+      Tinkaton: 25
       Butterfree: 15
       Beedrill: 15
       Beautifly: 15
@@ -187,6 +192,7 @@ land:
       Nickit: 161
       VoltorbHisui: 150
       Sinistea: 142
+      Tandemaus: 120
       Rattata: 106
       Hoothoot: 87
       Zigzagoon: 87
@@ -229,6 +235,7 @@ land:
       Dottler: 76
       Morgrem: 57
     scarce:
+      Maushold: 50
       Thievul: 33
       ElectrodeHisui: 25
       Polteageist: 24
@@ -329,6 +336,7 @@ land:
       Nickit: 161
       VoltorbHisui: 150
       Sinistea: 142
+      Tandemaus: 120
       Rattata: 101
       Hoothoot: 85
       Zigzagoon: 85
@@ -374,6 +382,7 @@ land:
       Dottler: 76
       Morgrem: 57
     scarce:
+      Maushold: 50
       Thievul: 33
       ElectrodeHisui: 25
       Polteageist: 24

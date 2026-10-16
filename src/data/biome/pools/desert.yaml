@@ -82,6 +82,8 @@ land:
       Hippopotas: 194
       Vullaby: 156
       Drilbur: 156
+      Bramblin: 120
+      Capsakid: 120
       Magmar: 48
     rare:
       Krokorok: 295
@@ -96,6 +98,7 @@ land:
       Excadrill: 59
       Crustle: 51
       Darmanitan: 51
+      Scovillain: 50
       Palossand: 44
       Heliolisk: 44
       Mandibuzz: 44
@@ -111,6 +114,7 @@ land:
       Krookodile: 40
       Flygon: 40
       Solrock: 40
+      Orthworm: 25
       Emboar: 15
       Garchomp: 15
     prized:
@@ -140,6 +144,7 @@ land:
       Hippopotas: 741
       Magmar: 184
       YamaskGalar: 150
+      Bramblin: 120
     rare:
       Gabite: 410
     scarce:

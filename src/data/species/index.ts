@@ -65,7 +65,13 @@ export {
 } from './evolution';
 export type { EvolutionContext, Handover } from './evolution';
 export { REGIONS, REGION_NAMES, getSpeciesByRegion, getSpeciesRegion } from './regions';
-export { getSeasonalCoat, getShoreForm, getWingPattern } from './forms';
+export {
+  getRareShape,
+  getSeasonalCoat,
+  getShoreForm,
+  getWingPattern,
+  isOneInAHundred,
+} from './forms';
 export {
   TRUE_SHADOW_BONUS,
   TRUE_SHADOW_WEIGHT,

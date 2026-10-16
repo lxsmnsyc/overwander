@@ -1,7 +1,7 @@
 import { AttackPriority, EventPriority } from '../../../core/event-emitter';
 import { Stats } from '../../../data/constants/stats';
 import { Types } from '../../../data/constants/types';
-import type { MoveCategories, MoveFlags, Moves } from '../../../data/ids/moves';
+import { MoveCategories, type MoveFlags, type Moves } from '../../../data/ids/moves';
 import { getMoveData } from '../../../data/moves';
 import Abilities from '../../../data/ids/abilities';
 import type Battle from '../../core';
@@ -10,7 +10,9 @@ import { MergedLifecycle } from '../../lifecycle';
 import type { Statuses } from '../../../data/ids/status';
 import { MAJOR_STATUS_CONDITIONS } from '../../status';
 import type Unit from '../../unit';
-import { createAbility } from './create';
+import { unitTarget } from '../../utils';
+import { createAbility, getAbilityHolders } from './create';
+import type { AbsorbMatcher } from './matchers';
 import { createHealFeedScoring } from './scoring';
 
 /** Abilities that change what a blow is worth, or what its holder weighs */
@@ -398,4 +400,108 @@ export function createSteelworkerAbility(
       }
     }),
   );
+}
+
+/** What a Ruin takes off the stat it names, on everybody but its holder */
+export const RUIN_SCALE = 0.75;
+
+/**
+ * Meta ability for the four Ruins (Tablets, Sword, Vessel, Beads): one
+ * stat of every other pokemon on the field is cut, allies' included.
+ * A second holder of the same Ruin is spared, and two do not stack
+ * https://bulbapedia.bulbagarden.net/wiki/Sword_of_Ruin_(Ability)
+ */
+export function createRuinAbility(ability: Abilities, stat: Stats): (battle: Battle) => void {
+  return createAbility(
+    ability,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.CheckUnitStat, EventPriority.Post, (event) => {
+          if (event.stat !== stat || event.source.hasAbility(ability)) {
+            return;
+          }
+          for (const holder of getAbilityHolders(battle, ability)) {
+            if (holder !== event.source && holder.alive && holder.hasAbility(ability)) {
+              event.value *= RUIN_SCALE;
+              return;
+            }
+          }
+        }),
+        // Announced on arrival, so the field knows what it is up against
+        battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+          if (!event.reactivation && event.source.hasAbility(ability)) {
+            event.source.triggerAbility(ability);
+          }
+        }),
+      ]),
+  );
+}
+
+/** What a charge does to the next Electric move */
+export const CHARGE_SCALE = 2;
+
+/**
+ * Meta ability for the ones a blow charges up (Electromorphosis, Wind
+ * Power): a damaging move that `matches` and lands on the holder
+ * leaves its next Electric move at 2x, as Charge would, without the
+ * Special Defense Charge also raises
+ * https://bulbapedia.bulbagarden.net/wiki/Electromorphosis_(Ability)
+ */
+export function createElectromorphosisAbility(
+  ability: Abilities,
+  matches: AbsorbMatcher,
+): (battle: Battle) => void {
+  return createAbility(ability, (battle) => {
+    const charged = new Set<Unit>();
+
+    function discharge(unit: Unit): void {
+      charged.delete(unit);
+    }
+
+    return new MergedLifecycle([
+      battle.on(BattleEvents.UnitAttack, AttackPriority.Post, (event) => {
+        const { source, target } = event;
+
+        if (
+          event.success &&
+          event.category !== MoveCategories.Status &&
+          source !== target &&
+          target.alive &&
+          target.hasAbility(ability) &&
+          matches(source, event.move, unitTarget(target), event.type)
+        ) {
+          target.triggerAbility(ability);
+        }
+      }),
+      battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
+        if (event.ability === ability) {
+          charged.add(event.source);
+        }
+      }),
+      battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
+        if (
+          event.power != null &&
+          charged.has(event.source) &&
+          event.source.checkMoveType(event.move, event.target) === Types.Electric
+        ) {
+          event.power *= CHARGE_SCALE;
+        }
+      }),
+      // Spent on the first Electric move that goes off, landed or not
+      battle.on(BattleEvents.UnitTriggerMove, AttackPriority.Post, (event) => {
+        if (
+          charged.has(event.source) &&
+          event.source.checkMoveType(event.move, event.target) === Types.Electric
+        ) {
+          discharge(event.source);
+        }
+      }),
+      battle.on(BattleEvents.UnitLeavesField, EventPriority.Post, (event) => {
+        discharge(event.source);
+      }),
+      battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
+        discharge(event.source);
+      }),
+    ]);
+  });
 }

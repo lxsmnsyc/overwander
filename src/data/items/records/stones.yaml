@@ -157,3 +157,17 @@ ScrollOfWaters:
   icon: other/scroll-of-waters
   flags: [Usable]
   sell: 6000
+# Paldea's: the two armours a Charcadet takes up, which decide whether it
+# grows into a warrior or a swordsman.
+AuspiciousArmor:
+  type: Evolution
+  icon: evolutions/auspicious-armor
+  flags: [Usable, Marketable]
+  buy: 3000
+  sell: 1500
+MaliciousArmor:
+  type: Evolution
+  icon: evolutions/malicious-armor
+  flags: [Usable, Marketable]
+  buy: 3000
+  sell: 1500

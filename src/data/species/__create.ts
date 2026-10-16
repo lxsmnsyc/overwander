@@ -75,6 +75,18 @@ export interface EvolutionData {
    */
   natures?: ReadonlySet<Natures>;
   /**
+   * The steps it has to have walked as the player's buddy
+   * (EvolutionMethod.Walked). Pawmo is the only line that asks
+   */
+  walked?: number;
+  /**
+   * Whether the road is the one in a hundred or every other one.
+   * Tandemaus is the only line that asks: the family of three is the
+   * rare split. Read off the catch's trait value, so like a nature it
+   * never changes and the road it cannot take is left out
+   */
+  rare?: boolean;
+  /**
    * Left behind beside whichever evolution is taken, rather than taken
    * instead of one: a Nincada that becomes a Ninjask with a Poke Ball in
    * the bag leaves a Shedinja too, the way the mainline hands over both

@@ -19,6 +19,8 @@ land:
       BurmySandy: 188
       SlowpokeGalar: 150
       CorsolaGalar: 150
+      Wattrel: 120
+      Wiglett: 120
     rare:
       Spewpa: 835
       Brionne: 209
@@ -29,6 +31,8 @@ land:
       Kingler: 56
       Pelipper: 56
       Gastrodon: 56
+      Kilowattrel: 50
+      Wugtrio: 50
       Floatzel: 45
       ExeggutorAlola: 34
       MukAlola: 34
@@ -74,6 +78,7 @@ land:
       BurmySandy: 940
       Clobbopus: 245
       CorsolaGalar: 150
+      Wiglett: 120
     rare: {}
     scarce:
       Kingler: 87
@@ -84,6 +89,7 @@ land:
       Palossand: 52
       Golisopod: 52
       Malamar: 52
+      Wugtrio: 50
       Vaporeon: 44
       WormadamSandy: 34
       Grapploct: 29

@@ -84,6 +84,9 @@ water:
       Kingdra: 33
       Vivillon: 33
       Slowking: 33
+      Tatsugiri: 15
+      TatsugiriStretchy: 15
+      TatsugiriDroopy: 15
     prized:
       Mantyke: prized
     special: {}
@@ -120,6 +123,9 @@ water:
       Wishiwashi: 48
       Mantine: 48
       Kingdra: 48
+      Tatsugiri: 15
+      TatsugiriStretchy: 15
+      TatsugiriDroopy: 15
     prized:
       Mantyke: prized
     special: {}

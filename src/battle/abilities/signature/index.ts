@@ -78,6 +78,12 @@ import lightTrio from './light-trio';
 import ultraBeasts from './ultra-beasts';
 import alolaMythicals from './alola-mythicals';
 import grookeyToSobble from './grookey-to-sobble';
+import sprigatitoToQuaxly from './sprigatito-to-quaxly';
+import lechonkToTandemaus from './lechonk-to-tandemaus';
+import fidoughToCharcadet from './fidough-to-charcadet';
+import tadbulbToWiglett from './tadbulb-to-wiglett';
+import finizenToGlimmet from './finizen-to-glimmet';
+import greavardToFrigibax from './greavard-to-frigibax';
 import skwovetToYamper from './skwovet-to-yamper';
 import applinToPincurchin from './applin-to-pincurchin';
 import sinisteaToMilcery from './sinistea-to-milcery';
@@ -171,6 +177,12 @@ const setupAbilities = [
   ...tirtougaToBouffalant,
   ...forcesOfNature,
   ...grookeyToSobble,
+  ...sprigatitoToQuaxly,
+  ...lechonkToTandemaus,
+  ...fidoughToCharcadet,
+  ...tadbulbToWiglett,
+  ...finizenToGlimmet,
+  ...greavardToFrigibax,
   ...skwovetToYamper,
   ...applinToPincurchin,
   ...sinisteaToMilcery,

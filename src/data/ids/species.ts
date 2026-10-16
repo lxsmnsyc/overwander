@@ -72,6 +72,10 @@ export const enum EvolutionMethod {
    * A one-off condition outside the other flags
    */
   Special = 0b1000000000000,
+  /**
+   * Steps walked as the player's buddy
+   */
+  Walked = 0b10000000000000,
 }
 
 /** Where a species can be met: on the ground, in the water, or either */
@@ -1998,6 +2002,19 @@ export const PALDEAN_FORMS: Species[] = [
   Species.TaurosPaldeaBlaze,
   Species.TaurosPaldeaAqua,
   Species.WooperPaldea,
+];
+
+/** A Maushold's family of four, and the one in a hundred that is three */
+export const MAUSHOLD_FORMS: Species[] = [Species.Maushold, Species.MausholdThree];
+
+/** A Palafin, and the hero it comes back as once it has left the field */
+export const PALAFIN_FORMS: Species[] = [Species.Palafin, Species.PalafinHero];
+
+/** The three shapes a Tatsugiri is met in, Curly at the base */
+export const TATSUGIRI_FORMS: Species[] = [
+  Species.Tatsugiri,
+  Species.TatsugiriStretchy,
+  Species.TatsugiriDroopy,
 ];
 
 /** A Cramorant, and what it comes back up with after a dive: the small catch, then the big one */

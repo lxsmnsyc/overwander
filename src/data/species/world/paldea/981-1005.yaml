@@ -1,0 +1,26 @@
+Frigibax:
+  Frigibax:
+    types: [Dragon, Ice]
+    egg-groups: [Mineral, Dragon]
+    biomes: [Glacier, AlpineTundra]
+    active: any
+    evolves-into:
+      - species: Arctibax
+        method: [Level]
+        level: 35
+  Arctibax:
+    types: [Dragon, Ice]
+    egg-groups: [Mineral, Dragon]
+    biomes: [Glacier, AlpineTundra]
+    active: any
+    evolves-from: Frigibax
+    evolves-into:
+      - species: Baxcalibur
+        method: [Level]
+        level: 54
+  Baxcalibur:
+    types: [Dragon, Ice]
+    egg-groups: [Mineral, Dragon]
+    biomes: [Glacier, AlpineTundra]
+    active: any
+    evolves-from: Arctibax

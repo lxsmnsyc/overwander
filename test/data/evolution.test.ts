@@ -49,6 +49,7 @@ import {
   getDaysInYear,
   getFamilyName,
   getFeaturedFamilies,
+  getRareShape,
   getRegisteredFamilies,
   getRegisteredSpecies,
   getShedEvolutions,
@@ -57,6 +58,7 @@ import {
   getSpeciesData,
   getSpentHeldItem,
   isFeaturedSpecies,
+  isOneInAHundred,
   meetsEvolutionCriteria,
   registerSpecies,
   settleHandover,
@@ -721,6 +723,77 @@ describe('evolution data', () => {
     expect(getAvailableEvolutions({ ...context, friendship: EVOLUTION_FRIENDSHIP })).toEqual([
       { species: Species.Pikachu, method: EvolutionMethod.Friendship },
     ]);
+  });
+
+  it('holds a Pawmo back until it has walked 1000 steps as the buddy', () => {
+    const context = {
+      species: Species.Pawmo,
+      level: 1,
+      carried: new Set<Items>(),
+      held: new Set<Items>(),
+      canEvolve: false,
+      moves: new Set<Moves>(),
+      stats: EVEN_STATS,
+      friendship: BASE_FRIENDSHIP,
+      time: TimeOfDay.Day,
+      gender: Genders.Male,
+    };
+
+    expect(getAvailableEvolutions(context)).toEqual([]);
+    expect(getAvailableEvolutions({ ...context, walked: 999 })).toEqual([]);
+    expect(getAvailableEvolutions({ ...context, walked: 1000 })).toEqual([
+      { species: Species.Pawmot, method: EvolutionMethod.Walked, walked: 1000 },
+    ]);
+  });
+
+  it('grows one Tandemaus in a hundred into the family of three', () => {
+    const context = {
+      species: Species.Tandemaus,
+      level: 25,
+      carried: new Set<Items>(),
+      held: new Set<Items>(),
+      canEvolve: false,
+      moves: new Set<Moves>(),
+      stats: EVEN_STATS,
+      friendship: BASE_FRIENDSHIP,
+      time: TimeOfDay.Day,
+      gender: Genders.Genderless,
+    };
+    const into = (rare: boolean): Species[] =>
+      getAvailableEvolutions({ ...context, rare }).map((entry) => entry.species);
+
+    expect(into(false)).toEqual([Species.Maushold]);
+    expect(into(true)).toEqual([Species.MausholdThree]);
+
+    // The road it can never take is left off its sheet
+    const [four, three] = getSpeciesData(Species.Tandemaus).evolvesInto ?? [];
+
+    expect(canEverEvolve(three, Genders.Genderless, undefined, false)).toBe(false);
+    expect(canEverEvolve(four, Genders.Genderless, undefined, true)).toBe(false);
+  });
+
+  it('meets a wild one in its rare shape for the same catches', () => {
+    let value = 0;
+
+    while (!isOneInAHundred(value)) {
+      value++;
+    }
+    expect(getRareShape(Species.Maushold, value)).toBe(Species.MausholdThree);
+    expect(getRareShape(Species.Maushold, value + 1)).toBe(Species.Maushold);
+    expect(getRareShape(Species.Pikachu, value)).toBe(Species.Pikachu);
+  });
+
+  it('rolls the one in a hundred about once in a hundred, the same each time', () => {
+    let rare = 0;
+
+    for (let value = 0; value < 100_000; value++) {
+      if (isOneInAHundred(value * 2_654_435_761)) {
+        rare++;
+      }
+    }
+    expect(rare).toBeGreaterThan(800);
+    expect(rare).toBeLessThan(1200);
+    expect(isOneInAHundred(12_345)).toBe(isOneInAHundred(12_345));
   });
 
   it('splits an Eevee by the hour it is asked in', () => {

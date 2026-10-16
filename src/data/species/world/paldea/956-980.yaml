@@ -1,0 +1,184 @@
+Tinkatink:
+  Tinkatink:
+    types: [Fairy, Steel]
+    egg-groups: [Fairy]
+    biomes: [Woodland, Mountain]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Tinkatuff
+        method: [Level]
+        level: 24
+  Tinkatuff:
+    types: [Fairy, Steel]
+    egg-groups: [Fairy]
+    biomes: [Woodland, Mountain]
+    active: [Morning, Day]
+    evolves-from: Tinkatink
+    evolves-into:
+      - species: Tinkaton
+        method: [Level]
+        level: 38
+  Tinkaton:
+    types: [Fairy, Steel]
+    egg-groups: [Fairy]
+    biomes: [Woodland, Mountain]
+    active: [Morning, Day]
+    evolves-from: Tinkatuff
+Wiglett:
+  Wiglett:
+    types: [Water]
+    egg-groups: [Water3]
+    habitat: Amphibious
+    biomes: [Beach]
+    active: any
+    evolves-into:
+      - species: Wugtrio
+        method: [Level]
+        level: 26
+  Wugtrio:
+    types: [Water]
+    egg-groups: [Water3]
+    habitat: Amphibious
+    biomes: [Beach]
+    active: any
+    evolves-from: Wiglett
+Finizen:
+  Finizen:
+    types: [Water]
+    egg-groups: [Field, Water2]
+    habitat: Water
+    biomes: [Ocean, CoralReef]
+    active: any
+    evolves-into:
+      - species: Palafin
+        method: [Level]
+        level: 38
+  Palafin:
+    types: [Water]
+    egg-groups: [Field, Water2]
+    habitat: Water
+    biomes: [Ocean, CoralReef]
+    active: any
+    evolves-from: Finizen
+  PalafinHero:
+    types: [Water]
+    egg-groups: [Field, Water2]
+    habitat: Water
+    active: any
+    # The hero it comes back as after leaving the field once, never met
+    # on its own
+    base-form: false
+    worn: true
+Varoom:
+  Varoom:
+    types: [Steel, Poison]
+    egg-groups: [Mineral]
+    biomes: [Mountain, Badlands]
+    active: [Day, Evening]
+    evolves-into:
+      - species: Revavroom
+        method: [Level]
+        level: 40
+  Revavroom:
+    types: [Steel, Poison]
+    egg-groups: [Mineral]
+    biomes: [Mountain, Badlands]
+    active: [Day, Evening]
+    evolves-from: Varoom
+Cyclizar:
+  Cyclizar:
+    types: [Dragon, Normal]
+    egg-groups: [Field]
+    biomes: [Steppe, Savanna]
+    active: [Morning, Day]
+Orthworm:
+  Orthworm:
+    types: [Steel]
+    egg-groups: [Field]
+    biomes: [Desert, Badlands]
+    active: [Day]
+Glimmet:
+  Glimmet:
+    types: [Rock, Poison]
+    egg-groups: [Mineral]
+    biomes: [Mountain, Badlands]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Glimmora
+        method: [Level]
+        level: 35
+  Glimmora:
+    types: [Rock, Poison]
+    egg-groups: [Mineral]
+    biomes: [Mountain, Badlands]
+    active: [Evening, Night]
+    evolves-from: Glimmet
+Greavard:
+  Greavard:
+    types: [Ghost]
+    egg-groups: [Field]
+    biomes: [Grassland, Woodland]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Houndstone
+        method: [Level]
+        level: 30
+  Houndstone:
+    types: [Ghost]
+    egg-groups: [Field]
+    biomes: [Grassland, Woodland]
+    active: [Evening, Night]
+    evolves-from: Greavard
+Cetoddle:
+  Cetoddle:
+    types: [Ice]
+    egg-groups: [Field]
+    biomes: [Tundra, Glacier]
+    active: any
+    evolves-into:
+      - species: Cetitan
+        method: [UsedItem]
+        item: IceStone
+  Cetitan:
+    types: [Ice]
+    egg-groups: [Field]
+    biomes: [Tundra, Glacier]
+    active: any
+    evolves-from: Cetoddle
+Veluza:
+  Veluza:
+    types: [Water, Psychic]
+    egg-groups: [Water2]
+    habitat: Water
+    biomes: [Ocean, KelpForest]
+    active: any
+Dondozo:
+  Dondozo:
+    types: [Water]
+    egg-groups: [Water2]
+    habitat: Water
+    biomes: [Ocean, DeepOcean]
+    active: any
+Tatsugiri:
+  Tatsugiri:
+    types: [Dragon, Water]
+    egg-groups: [Water2]
+    habitat: Water
+    biomes: [CoralReef, Ocean]
+    active: any
+  TatsugiriDroopy:
+    types: [Dragon, Water]
+    egg-groups: [Water2]
+    habitat: Water
+    biomes: [CoralReef, Ocean]
+    active: any
+    # One of the three shapes a Tatsugiri is met in, Curly at the base
+    base-form: false
+  TatsugiriStretchy:
+    types: [Dragon, Water]
+    egg-groups: [Water2]
+    habitat: Water
+    biomes: [CoralReef, Ocean]
+    active: any
+    # One of the three shapes a Tatsugiri is met in, Curly at the base
+    base-form: false

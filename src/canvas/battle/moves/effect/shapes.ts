@@ -433,6 +433,8 @@ export type EffectShape =
   | 'Takeheart'
   | 'Chloroblast'
   | 'Flyingpress'
+  | 'Revival'
+  | 'Respects'
   | 'Aurawheel'
   | 'Amped'
   | 'Acid'
@@ -895,6 +897,8 @@ export const SPANS: Record<EffectShape, number> = {
   Takeheart: 1200,
   Chloroblast: 1200,
   Flyingpress: 1000,
+  Revival: 1200,
+  Respects: 1100,
   Aurawheel: 1000,
   Amped: 1100,
   Acid: 1000,

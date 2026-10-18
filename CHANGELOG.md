@@ -1,5 +1,11 @@
 # overwander
 
+## 4.41.1
+
+### Patch Changes
+
+- 505e9f0: Bloodmoon Ursaluna is a legend, staged by the new Timeless Woods lair in the taiga and the montane forest at night, rather than a rare wild spawn.
+
 ## 4.41.0
 
 ### Minor Changes

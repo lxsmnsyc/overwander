@@ -16,9 +16,14 @@ with one more effect each:
 
 ## Bloodmoon Ursaluna
 
-**Bloodmoon Ursaluna** is a legend now, the way Volcarona is. It keeps to the
-Timeless Woods, a new lair in the taiga and the montane forest, and comes out
-only at night. It no longer turns up as a rare wild pokemon.
+**Bloodmoon Ursaluna** is a legend now, the way Volcarona is. It comes out only
+at night, in the taiga and the montane forest. It is met rarely in the wild, as
+a legend is, and raided at the **Timeless Woods**, a new lair in both. It has
+left the ordinary wild bands it was found in before.
+
+- It keeps the Teddiursa family's **Sweet Paw**, and reaches **Mind's Eye**,
+  Keen Eye, Insomnia and Sniper.
+- It learns **Blood Moon** at level 70.
 
 ## Ogerpon
 

@@ -38,7 +38,12 @@ Cord** as well.
 A **one in a hundred** evolution is decided by the pokemon itself, not by
 chance on the day. One Tandemaus in a hundred grows into Maushold's family of
 three and every other one into the family of four, and which one a Tandemaus is
-never changes. Its sheet shows only the evolution it can take.
+never changes. Its sheet shows only the evolution it can take. One Dunsparce in
+a hundred grows into Three-Segment Dudunsparce the same way.
+
+The antique Sinistea and the artisan Poltchageist are rare forms of their own,
+met as such. Each evolves with its own item: the **Chipped Pot** for an antique
+Sinistea and the **Masterpiece Teacup** for an artisan Poltchageist.
 
 An **Everstone** refuses every evolution while the pokemon holds it. It is not
 held back from anything else: it still levels, learns and fights.

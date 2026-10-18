@@ -1,5 +1,22 @@
 # overwander
 
+## 4.41.0
+
+### Minor Changes
+
+- 97e8f7f: - Primeape evolves into Annihilape after landing Rage Fist 20 times across its fights.
+  - Girafarig evolves into Farigiraf, and Dunsparce into Dudunsparce, once they know Twin Beam and Hyper Drill.
+  - Bisharp evolves into Kingambit holding the new Leader's Crest.
+  - Applin evolves into Dipplin with the new Syrupy Apple, and Dipplin into Hydrapple once it knows Dragon Cheer.
+  - Duraludon evolves into Archaludon with the new Metal Alloy.
+  - Paldean Wooper and Clodsire live in the swamp. Bog Down keeps an enemy that hits it with a Ground move from switching out for 6 seconds.
+  - Paldean Tauros roams in all three breeds. Raging winds up 20% faster while its Attack is raised.
+  - Bloodmoon Ursaluna prowls the taiga at night, carrying its family's Sweet Paw.
+  - Poltchageist and Sinistcha haunt the forest at night, evolving with the new Unremarkable Teacup. Tea Service winds up healing moves for a teammate 40% faster.
+- d3000de: - One Sinistea and Poltchageist in a hundred is the real thing: an antique Sinistea grows into an antique Polteageist with the new Chipped Pot, and an artisan Poltchageist into a masterpiece Sinistcha with the new Masterpiece Teacup.
+  - One Dunsparce in a hundred grows into Three-Segment Dudunsparce.
+  - A wild Polteageist, Sinistcha or Dudunsparce is its rare form just as often. Each is drawn as its usual form until it has art of its own.
+
 ## 4.40.0
 
 ### Minor Changes

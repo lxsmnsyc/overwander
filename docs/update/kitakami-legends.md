@@ -1,7 +1,7 @@
 # Kitakami's legends, Terapagos and Pecharunt
 
 **Munkidori, Fezandipiti, Ogerpon, Terapagos and Pecharunt** close out Paldea,
-each with a signature ability.
+each with a signature ability, and Bloodmoon Ursaluna joins the legends.
 
 ## The Loyal Three
 
@@ -13,6 +13,12 @@ with one more effect each:
 
 - **Monkey's Oath (Munkidori):** that move winds up 40% faster.
 - **Pheasant's Oath (Fezandipiti):** that move strikes every enemy.
+
+## Bloodmoon Ursaluna
+
+**Bloodmoon Ursaluna** is a legend now, the way Volcarona is. It keeps to the
+Timeless Woods, a new lair in the taiga and the montane forest, and comes out
+only at night. It no longer turns up as a rare wild pokemon.
 
 ## Ogerpon
 

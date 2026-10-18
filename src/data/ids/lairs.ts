@@ -103,6 +103,7 @@ const enum Lairs {
   DreadedDen = 93,
   AreaZeroUnderdepths = 94,
   LoyaltyPlaza = 95,
+  TimelessWoods = 96,
 }
 
 export default Lairs;

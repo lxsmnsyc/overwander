@@ -11,7 +11,8 @@ Grassland: [PowerPlant, BurnedTower, LakeValor, AbundantShrine, WildArea, Wistfu
 Bog: [LakeValor, TurnbackCave, ScarletBog]
 TemperateForest: [LakeVerity, RuminationField, WindingWoods, UltraForest, SlumberingWeald, DreadedDen]
 Woodland: [BurnedTower, LakeVerity, RuminationField, WindingWoods]
-Taiga: [LakeAcuity, IcebergRuins, DragonspiralTower, CrownShrine]
+Taiga: [LakeAcuity, IcebergRuins, DragonspiralTower, CrownShrine, TimelessWoods]
+MontaneForest: [TimelessWoods]
 Tundra:
   [
     LakeAcuity,

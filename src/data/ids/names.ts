@@ -5006,6 +5006,7 @@ export const LAIR_IDS = {
   DreadedDen: Lairs.DreadedDen,
   AreaZeroUnderdepths: Lairs.AreaZeroUnderdepths,
   LoyaltyPlaza: Lairs.LoyaltyPlaza,
+  TimelessWoods: Lairs.TimelessWoods,
 } as const satisfies Record<string, Lairs>;
 
 export const TRAINER_IDS = {

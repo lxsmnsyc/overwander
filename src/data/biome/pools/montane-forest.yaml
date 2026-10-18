@@ -117,7 +117,8 @@ land:
     prized:
       Unown: forms
       Chingling: prized
-    special: {}
+    special:
+      UrsalunaBloodmoon: 10
 
 water:
   morning: &water-morning

@@ -37,7 +37,7 @@ ElectricSurge:
 # Clauncher
 MegaLauncher:
   name: Mega Launcher
-  description: Pulses and aura moves hit 1.5x, and a Heal Pulse gives back 1.5x as much.
+  description: Its pulse and aura moves hit 1.5x, and its Heal Pulse gives back 1.5x as much.
 
 # Amaura
 Refrigerate:

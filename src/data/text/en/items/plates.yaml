@@ -1,5 +1,5 @@
 templates:
-  plate: '{type} moves hit 1.2x for as long as it is held. Also makes Judgment {type} and puts an Arceus with Multitype in its {type} shape.'
+  plate: 'Its holder’s {type} moves hit 1.2x for as long as it is held. Also makes Judgment {type} and puts an Arceus with Multitype in its {type} shape.'
 FistPlate: { name: Fist Plate }
 SkyPlate: { name: Sky Plate }
 ToxicPlate: { name: Toxic Plate }

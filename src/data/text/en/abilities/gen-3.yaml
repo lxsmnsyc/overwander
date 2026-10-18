@@ -74,7 +74,7 @@ Forecast:
 # Metagross
 Steelworker:
   name: Steelworker
-  description: Steel moves hit 1.5x, whatever its own types are.
+  description: Its Steel moves hit 1.5x, whatever its own types are.
 
 # Numel
 Simple:

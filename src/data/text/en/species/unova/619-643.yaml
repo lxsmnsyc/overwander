@@ -9,6 +9,7 @@ Golett:
 Pawniard:
   Pawniard: { name: Pawniard, category: Sharp Blade Pokemon }
   Bisharp: { name: Bisharp, category: Sword Blade Pokemon }
+  Kingambit: { name: Kingambit, category: Big Blade Pokemon }
 Bouffalant:
   Bouffalant: { name: Bouffalant, category: Bash Buffalo Pokemon }
 Rufflet:

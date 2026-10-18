@@ -29,9 +29,11 @@ Pawniard:
     hidden: [Pressure]
   Bisharp:
     abilities: [Defiant, InnerFocus]
-    # Three, and it stays at three: Kingambit stands above this one in
-    # a later generation, so anything invented here would be in a
-    # Kingambit's reach the day it lands
+    # Three, and it stays at three: Kingambit stands above it, so
+    # anything invented here would be in a Kingambit's reach
+    hidden: [Pressure]
+  Kingambit:
+    abilities: [Defiant, SupremeOverlord]
     hidden: [Pressure]
 Bouffalant:
   Bouffalant:

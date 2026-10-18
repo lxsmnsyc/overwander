@@ -84,6 +84,7 @@ import fidoughToCharcadet from './fidough-to-charcadet';
 import tadbulbToWiglett from './tadbulb-to-wiglett';
 import finizenToGlimmet from './finizen-to-glimmet';
 import greavardToFrigibax from './greavard-to-frigibax';
+import paldeaRegionals from './paldea-regionals';
 import skwovetToYamper from './skwovet-to-yamper';
 import applinToPincurchin from './applin-to-pincurchin';
 import sinisteaToMilcery from './sinistea-to-milcery';
@@ -183,6 +184,7 @@ const setupAbilities = [
   ...tadbulbToWiglett,
   ...finizenToGlimmet,
   ...greavardToFrigibax,
+  ...paldeaRegionals,
   ...skwovetToYamper,
   ...applinToPincurchin,
   ...sinisteaToMilcery,

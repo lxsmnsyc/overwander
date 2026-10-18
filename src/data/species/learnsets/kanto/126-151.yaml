@@ -496,6 +496,186 @@ Tauros:
       - Thief
       - ShadowBall
       - Endeavor
+  TaurosPaldeaCombat:
+    level:
+      1: [Tackle, TailWhip]
+      5: [WorkUp]
+      10: [DoubleKick]
+      15: [Assurance]
+      20: [Headbutt]
+      25: [ScaryFace]
+      30: [ZenHeadbutt]
+      35: [RagingBull]
+      40: [Rest]
+      45: [Swagger]
+      50: [Thrash]
+      55: [DoubleEdge]
+      60: [CloseCombat]
+    teachable:
+      - BodyPress
+      - BodySlam
+      - BulkUp
+      - Bulldoze
+      - CloseCombat
+      - Curse
+      - Dig
+      - DoubleEdge
+      - DrillRun
+      - Earthquake
+      - Endeavor
+      - Endure
+      - Facade
+      - GigaImpact
+      - HighHorsepower
+      - HyperBeam
+      - IronHead
+      - LashOut
+      - Outrage
+      - Protect
+      - RainDance
+      - Rest
+      - Reversal
+      - RockSlide
+      - RockTomb
+      - Sandstorm
+      - ScaryFace
+      - SleepTalk
+      - SmartStrike
+      - StompingTantrum
+      - StoneEdge
+      - Substitute
+      - SunnyDay
+      - Surf
+      - TakeDown
+      - TeraBlast
+      - Thief
+      - ThroatChop
+      - Trailblaze
+      - WildCharge
+      - ZenHeadbutt
+  TaurosPaldeaBlaze:
+    level:
+      1: [Tackle, TailWhip]
+      5: [WorkUp]
+      10: [DoubleKick]
+      15: [FlameCharge]
+      20: [Headbutt]
+      25: [ScaryFace]
+      30: [ZenHeadbutt]
+      35: [RagingBull]
+      40: [Rest]
+      45: [Swagger]
+      50: [Thrash]
+      55: [FlareBlitz]
+      60: [CloseCombat]
+    teachable:
+      - BodyPress
+      - BodySlam
+      - BulkUp
+      - Bulldoze
+      - CloseCombat
+      - Curse
+      - Dig
+      - DoubleEdge
+      - DrillRun
+      - Earthquake
+      - Endeavor
+      - Endure
+      - Facade
+      - FireBlast
+      - FireSpin
+      - FlameCharge
+      - Flamethrower
+      - FlareBlitz
+      - GigaImpact
+      - HighHorsepower
+      - HyperBeam
+      - IronHead
+      - LashOut
+      - Outrage
+      - Overheat
+      - Protect
+      - RainDance
+      - Rest
+      - Reversal
+      - RockSlide
+      - RockTomb
+      - Sandstorm
+      - ScaryFace
+      - SleepTalk
+      - SmartStrike
+      - StompingTantrum
+      - StoneEdge
+      - Substitute
+      - SunnyDay
+      - TakeDown
+      - TemperFlare
+      - TeraBlast
+      - Thief
+      - Trailblaze
+      - WildCharge
+      - WillOWisp
+      - ZenHeadbutt
+  TaurosPaldeaAqua:
+    level:
+      1: [Tackle, TailWhip]
+      5: [WorkUp]
+      10: [DoubleKick]
+      15: [AquaJet]
+      20: [Headbutt]
+      25: [ScaryFace]
+      30: [ZenHeadbutt]
+      35: [RagingBull]
+      40: [Rest]
+      45: [Swagger]
+      50: [Thrash]
+      55: [WaveCrash]
+      60: [CloseCombat]
+    teachable:
+      - BodyPress
+      - BodySlam
+      - BulkUp
+      - Bulldoze
+      - ChillingWater
+      - CloseCombat
+      - Curse
+      - Dig
+      - DoubleEdge
+      - DrillRun
+      - Earthquake
+      - Endeavor
+      - Endure
+      - Facade
+      - GigaImpact
+      - HighHorsepower
+      - HydroPump
+      - HyperBeam
+      - IronHead
+      - LashOut
+      - Liquidation
+      - Outrage
+      - Protect
+      - RainDance
+      - Rest
+      - Reversal
+      - RockSlide
+      - RockTomb
+      - Sandstorm
+      - ScaryFace
+      - SleepTalk
+      - SmartStrike
+      - StompingTantrum
+      - StoneEdge
+      - Substitute
+      - Surf
+      - TakeDown
+      - TeraBlast
+      - Thief
+      - Trailblaze
+      - WaterPulse
+      - Whirlpool
+      - WildCharge
+      - ZenHeadbutt
 Magikarp:
   Magikarp:
     level:

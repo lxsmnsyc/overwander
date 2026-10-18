@@ -17,7 +17,7 @@ import Abilities from '../../src/data/ids/abilities';
 import { Types } from '../../src/data/constants/types';
 import Biome, { TimeOfDay } from '../../src/data/ids/biome';
 import { Items } from '../../src/data/ids/items';
-import type { Moves } from '../../src/data/ids/moves';
+import { Moves } from '../../src/data/ids/moves';
 import {
   DEOXYS_FORMS,
   EvolutionMethod,
@@ -746,6 +746,28 @@ describe('evolution data', () => {
     ]);
   });
 
+  it('evolves a Dipplin that knows Dragon Cheer at any level', () => {
+    const context = {
+      species: Species.Dipplin,
+      level: 1,
+      carried: new Set<Items>(),
+      held: new Set<Items>(),
+      canEvolve: false,
+      moves: new Set<Moves>(),
+      stats: EVEN_STATS,
+      friendship: BASE_FRIENDSHIP,
+      time: TimeOfDay.Day,
+      gender: Genders.Male,
+    };
+
+    expect(getAvailableEvolutions(context)).toEqual([]);
+    expect(
+      getAvailableEvolutions({ ...context, moves: new Set([Moves.DragonCheer]) }).map(
+        (entry) => entry.species,
+      ),
+    ).toEqual([Species.Hydrapple]);
+  });
+
   it('grows one Tandemaus in a hundred into the family of three', () => {
     const context = {
       species: Species.Tandemaus,
@@ -778,9 +800,33 @@ describe('evolution data', () => {
     while (!isOneInAHundred(value)) {
       value++;
     }
+    expect(getRareShape(Species.Sinistea, value)).toBe(Species.SinisteaAntique);
+    expect(getRareShape(Species.Sinistcha, value)).toBe(Species.SinistchaMasterpiece);
     expect(getRareShape(Species.Maushold, value)).toBe(Species.MausholdThree);
     expect(getRareShape(Species.Maushold, value + 1)).toBe(Species.Maushold);
     expect(getRareShape(Species.Pikachu, value)).toBe(Species.Pikachu);
+  });
+
+  it('grows the rare forms by their own items and moves', () => {
+    const context = {
+      level: 32,
+      carried: new Set<Items>([Items.ChippedPot, Items.CrackedPot, Items.MasterpieceTeacup]),
+      held: new Set<Items>(),
+      canEvolve: false,
+      moves: new Set<Moves>([Moves.HyperDrill]),
+      stats: EVEN_STATS,
+      friendship: BASE_FRIENDSHIP,
+      time: TimeOfDay.Night,
+      gender: Genders.Male,
+    };
+    const into = (species: Species, rare = false): Species[] =>
+      getAvailableEvolutions({ ...context, species, rare }).map((entry) => entry.species);
+
+    expect(into(Species.SinisteaAntique)).toEqual([Species.PolteageistAntique]);
+    expect(into(Species.Sinistea)).toEqual([Species.Polteageist]);
+    expect(into(Species.PoltchageistArtisan)).toEqual([Species.SinistchaMasterpiece]);
+    expect(into(Species.Dunsparce)).toEqual([Species.Dudunsparce]);
+    expect(into(Species.Dunsparce, true)).toEqual([Species.DudunsparceThree]);
   });
 
   it('rolls the one in a hundred about once in a hundred, the same each time', () => {

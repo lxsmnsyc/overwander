@@ -33,6 +33,24 @@ Tauros:
     height: 1.4
     weight: 88.4
     gender: [1, 0]
+  TaurosPaldeaCombat:
+    stats: { HP: 75, Attack: 110, Defense: 105, SpecialAttack: 30, SpecialDefense: 70, Speed: 100 }
+    catch-rate: 45
+    height: 1.4
+    weight: 115
+    gender: [8, 0]
+  TaurosPaldeaBlaze:
+    stats: { HP: 75, Attack: 110, Defense: 105, SpecialAttack: 30, SpecialDefense: 70, Speed: 100 }
+    catch-rate: 45
+    height: 1.4
+    weight: 85
+    gender: [8, 0]
+  TaurosPaldeaAqua:
+    stats: { HP: 75, Attack: 110, Defense: 105, SpecialAttack: 30, SpecialDefense: 70, Speed: 100 }
+    catch-rate: 45
+    height: 1.4
+    weight: 110
+    gender: [8, 0]
 Magikarp:
   Magikarp:
     stats: { HP: 20, Attack: 10, Defense: 55, SpecialAttack: 15, SpecialDefense: 20, Speed: 80 }

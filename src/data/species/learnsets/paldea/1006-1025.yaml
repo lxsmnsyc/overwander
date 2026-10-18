@@ -1,0 +1,89 @@
+Poltchageist:
+  # TM and tutor moves shared by the whole family
+  family-teachable:
+    - CalmMind
+    - Curse
+    - Endure
+    - EnergyBall
+    - FoulPlay
+    - GigaDrain
+    - GrassyTerrain
+    - Hex
+    - Imprison
+    - IronDefense
+    - LeafStorm
+    - MagicalLeaf
+    - NastyPlot
+    - NightShade
+    - PainSplit
+    - PhantomForce
+    - Poltergeist
+    - Protect
+    - PsychUp
+    - Reflect
+    - Rest
+    - Scald
+    - ShadowBall
+    - SleepTalk
+    - SolarBeam
+    - Spite
+    - Substitute
+    - TeraBlast
+    - TrickRoom
+    - Uproar
+  Poltchageist:
+    level:
+      1: [StunSpore, Withdraw, Astonish]
+      6: [Absorb]
+      12: [LifeDew]
+      18: [FoulPlay]
+      24: [MegaDrain]
+      30: [Hex]
+      36: [RagePowder]
+      42: [GigaDrain]
+      48: [ShadowBall]
+      54: [Memento]
+      60: [LeafStorm]
+  PoltchageistArtisan:
+    level:
+      1: [StunSpore, Withdraw, Astonish]
+      6: [Absorb]
+      12: [LifeDew]
+      18: [FoulPlay]
+      24: [MegaDrain]
+      30: [Hex]
+      36: [RagePowder]
+      42: [GigaDrain]
+      48: [ShadowBall]
+      54: [Memento]
+      60: [LeafStorm]
+  Sinistcha:
+    level:
+      1: [StunSpore, Withdraw, Astonish, MatchaGotcha]
+      6: [Absorb]
+      12: [LifeDew]
+      18: [FoulPlay]
+      24: [MegaDrain]
+      30: [Hex]
+      36: [RagePowder]
+      42: [StrengthSap]
+      48: [ShadowBall]
+      54: [Memento]
+      60: [LeafStorm]
+    teachable:
+      - HyperBeam
+  SinistchaMasterpiece:
+    level:
+      1: [StunSpore, Withdraw, Astonish, MatchaGotcha]
+      6: [Absorb]
+      12: [LifeDew]
+      18: [FoulPlay]
+      24: [MegaDrain]
+      30: [Hex]
+      36: [RagePowder]
+      42: [StrengthSap]
+      48: [ShadowBall]
+      54: [Memento]
+      60: [LeafStorm]
+    teachable:
+      - HyperBeam

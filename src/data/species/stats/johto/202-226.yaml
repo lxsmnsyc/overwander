@@ -18,6 +18,12 @@ Girafarig:
     height: 1.5
     weight: 41.5
     gender: [1, 1]
+  Farigiraf:
+    stats: { HP: 120, Attack: 90, Defense: 70, SpecialAttack: 110, SpecialDefense: 70, Speed: 60 }
+    catch-rate: 45
+    height: 3.2
+    weight: 160
+    gender: [4, 4]
 Pineco:
   Pineco:
     stats: { HP: 50, Attack: 65, Defense: 90, SpecialAttack: 35, SpecialDefense: 35, Speed: 15 }
@@ -38,6 +44,18 @@ Dunsparce:
     height: 1.5
     weight: 14
     gender: [1, 1]
+  Dudunsparce:
+    stats: { HP: 125, Attack: 100, Defense: 80, SpecialAttack: 85, SpecialDefense: 75, Speed: 55 }
+    catch-rate: 45
+    height: 3.6
+    weight: 39.2
+    gender: [4, 4]
+  DudunsparceThree:
+    stats: { HP: 125, Attack: 100, Defense: 80, SpecialAttack: 85, SpecialDefense: 75, Speed: 55 }
+    catch-rate: 45
+    height: 3.6
+    weight: 39.2
+    gender: [4, 4]
 Gligar:
   Gligar:
     stats: { HP: 65, Attack: 75, Defense: 105, SpecialAttack: 35, SpecialDefense: 65, Speed: 85 }
@@ -141,6 +159,12 @@ Teddiursa:
     height: 2.4
     weight: 290
     gender: [1, 1]
+  UrsalunaBloodmoon:
+    stats: { HP: 113, Attack: 70, Defense: 120, SpecialAttack: 135, SpecialDefense: 65, Speed: 52 }
+    catch-rate: 75
+    height: 2.4
+    weight: 290
+    gender: [4, 4]
 Slugma:
   Slugma:
     stats: { HP: 40, Attack: 40, Defense: 40, SpecialAttack: 70, SpecialDefense: 40, Speed: 20 }

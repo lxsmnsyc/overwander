@@ -1331,6 +1331,8 @@
         "AlcremieClover",
         "AlcremieFlower",
         "AlcremieRibbon",
+        "SinisteaAntique",
+        "PolteageistAntique",
         "FalinksBrass",
         "EiscueNoice",
         "IndeedeeFemale",
@@ -1357,6 +1359,8 @@
         "TatsugiriStretchy",
         "TatsugiriDroopy",
         "DudunsparceThree",
+        "PoltchageistArtisan",
+        "SinistchaMasterpiece",
         "GimmighoulRoaming",
         "KoraidonLimited",
         "MiraidonLowPower",
@@ -3221,7 +3225,10 @@
         "FilletThrift",
         "Mouthful",
         "BackSeatOrders",
-        "GlaiveGuard"
+        "GlaiveGuard",
+        "BogDown",
+        "Raging",
+        "TeaService"
       ]
     },
     "item": {

@@ -1358,6 +1358,8 @@ export const SPECIES_IDS = {
   AlcremieClover: Species.AlcremieClover,
   AlcremieFlower: Species.AlcremieFlower,
   AlcremieRibbon: Species.AlcremieRibbon,
+  SinisteaAntique: Species.SinisteaAntique,
+  PolteageistAntique: Species.PolteageistAntique,
   FalinksBrass: Species.FalinksBrass,
   EiscueNoice: Species.EiscueNoice,
   IndeedeeFemale: Species.IndeedeeFemale,
@@ -1384,6 +1386,8 @@ export const SPECIES_IDS = {
   TatsugiriStretchy: Species.TatsugiriStretchy,
   TatsugiriDroopy: Species.TatsugiriDroopy,
   DudunsparceThree: Species.DudunsparceThree,
+  PoltchageistArtisan: Species.PoltchageistArtisan,
+  SinistchaMasterpiece: Species.SinistchaMasterpiece,
   GimmighoulRoaming: Species.GimmighoulRoaming,
   KoraidonLimited: Species.KoraidonLimited,
   MiraidonLowPower: Species.MiraidonLowPower,
@@ -3297,6 +3301,9 @@ export const ABILITY_IDS = {
   Mouthful: Abilities.Mouthful,
   BackSeatOrders: Abilities.BackSeatOrders,
   GlaiveGuard: Abilities.GlaiveGuard,
+  BogDown: Abilities.BogDown,
+  Raging: Abilities.Raging,
+  TeaService: Abilities.TeaService,
 } as const satisfies Record<string, Abilities>;
 
 export const ITEM_IDS = {

@@ -13,6 +13,7 @@ How Paldea, Kitakami and the Blueberry Academy go in, batch by batch, on top of 
   - Tandemaus always grows into the family of four. The family of three waits for a way to roll it.
   - Gimmighoul and Gholdengo wait: the collection draws only the Roaming form, not the base Gimmighoul a line needs at its root.
   - Tadbulb, Bellibolt, Wiglett and Wugtrio are amphibious, so they are met on land despite their water egg groups.
+- **Batches 11 and 12 are built** on `paldea-evolutions`. Dipplin evolves into Hydrapple at any level once it knows Dragon Cheer (a TM), and Kingambit at 60 holding a Leader's Crest, since the game cannot count defeated Bisharp. The Masterpiece Teacup waits with the Artisan forms.
 - **Lines waiting on Gen 9,** marked `awaiting: evolution`: Primeape (Annihilape), Girafarig (Farigiraf), Dunsparce (Dudunsparce), Applin (Dipplin), Duraludon (Archaludon) and Bisharp (Kingambit). Each mark comes off with its evolution.
   - Galarian Mr. Mime keeps its mark in `world/kanto/101-125.yaml`: Mr. Rime is still not drawn.
   - The ability audit is clean. None of these lines carries an invented filler, so their evolutions break no pool.

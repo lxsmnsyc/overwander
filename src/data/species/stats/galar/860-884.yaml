@@ -166,3 +166,9 @@ Duraludon:
     weight: 40
     gender: [1, 1]
     egg-cycles: 30
+  Archaludon:
+    stats: { HP: 90, Attack: 105, Defense: 130, SpecialAttack: 125, SpecialDefense: 65, Speed: 85 }
+    catch-rate: 10
+    height: 2
+    weight: 60
+    gender: [4, 4]

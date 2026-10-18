@@ -92,6 +92,13 @@ Wooper:
     # filling a final evolution to four: nothing it is told and
     # nothing aimed at it gets through to it
     hidden: [Unaware, Oblivious]
+  WooperPaldea:
+    abilities: [PoisonPoint, WaterAbsorb]
+    hidden: [Unaware]
+  Clodsire:
+    abilities: [PoisonPoint, WaterAbsorb]
+    # Damp is this registry's rather than the mainline's, filling it to four
+    hidden: [Unaware, Damp]
 Murkrow:
   Murkrow:
     abilities: [Insomnia, SuperLuck]

@@ -2,8 +2,8 @@ import { ITEM_SPRITE, isHoldable, itemSlots } from '../describe';
 
 import type { CatchOrder, CaughtPokemon } from '../../../../auth/caught';
 
-import { getCatchSlots, getHeldItemRoom, getMovePoints } from '../../../../auth/caught-record';
-import { getStats } from '../../../../auth/health';
+import { getCatchSlots, getHeldItemRoom, getMovePoints } from '../../../../model/caught-record';
+import { getStats } from '../../../../model/health';
 import {
   DEFAULT_ABILITY_SLOTS,
   DEFAULT_ITEM_SLOTS,

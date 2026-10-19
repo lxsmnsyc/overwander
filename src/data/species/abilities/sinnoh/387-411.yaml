@@ -1,0 +1,97 @@
+Turtwig:
+  Turtwig:
+    abilities: [Overgrow]
+    hidden: [ShellArmor]
+  Grotle:
+    abilities: [Overgrow]
+    hidden: [ShellArmor]
+  Torterra:
+    abilities: [Overgrow]
+    # Sturdy and Harvest are this registry's rather than the mainline's:
+    # it does not go over in one blow, and the tree it carries bears again
+    hidden: [ShellArmor, Sturdy, Harvest]
+Chimchar:
+  Chimchar:
+    abilities: [Blaze]
+    hidden: [IronFist]
+  Monferno:
+    abilities: [Blaze]
+    hidden: [IronFist]
+  Infernape:
+    abilities: [Blaze]
+    # Vital Spirit and Flash Fire are this registry's rather than the
+    # mainline's: the flame never goes out, and fire thrown at it feeds it
+    hidden: [IronFist, VitalSpirit, FlashFire]
+Piplup:
+  Piplup:
+    abilities: [Torrent]
+    hidden: [Competitive]
+  Prinplup:
+    abilities: [Torrent]
+    hidden: [Competitive]
+  Empoleon:
+    abilities: [Torrent]
+    # Defiant and Filter are this registry's rather than the mainline's:
+    # it answers a stat drop whichever way it is built, and steel blunts
+    # what gets through
+    hidden: [Competitive, Defiant, Filter]
+Starly:
+  Starly:
+    abilities: [KeenEye]
+    hidden: [Reckless]
+  Staravia:
+    abilities: [Intimidate]
+    hidden: [Reckless]
+  Staraptor:
+    abilities: [Intimidate]
+    # Gale Wings is this registry's rather than the mainline's: the
+    # flock leaves the flock behind, and it gets there first
+    hidden: [Reckless, GaleWings]
+Bidoof:
+  Bidoof:
+    abilities: [Simple, Unaware]
+    hidden: [Moody]
+  Bibarel:
+    abilities: [Simple, Unaware]
+    # Sturdy is this registry's rather than the mainline's: a dam is
+    # built to hold, and this line has no stat that stands out instead
+    hidden: [Moody, Sturdy]
+Kricketot:
+  Kricketot:
+    abilities: [ShedSkin]
+    hidden: [RunAway]
+  Kricketune:
+    abilities: [Swarm]
+    hidden: [Technician]
+Shinx:
+  Shinx:
+    abilities: [Rivalry, Intimidate]
+    hidden: [Guts]
+  Luxio:
+    abilities: [Rivalry, Intimidate]
+    hidden: [Guts]
+  Luxray:
+    abilities: [Rivalry, Intimidate]
+    # Strong Jaw is this registry's rather than the mainline's: the
+    # line's whole finish is what it bites with
+    hidden: [Guts, StrongJaw]
+Cranidos:
+  Cranidos:
+    abilities: [MoldBreaker]
+    hidden: [SheerForce]
+  Rampardos:
+    abilities: [MoldBreaker]
+    # Rock Head and Rivalry are this registry's rather than the
+    # mainline's: Head Smash is the line's own move, and the head is
+    # what it settles an argument with
+    hidden: [SheerForce, RockHead, Rivalry]
+Shieldon:
+  Shieldon:
+    abilities: [Sturdy]
+    hidden: [Soundproof]
+  Bastiodon:
+    abilities: [Sturdy]
+    # Filter and Heavy Metal are this registry's rather than the
+    # mainline's: the wall answers the 4x it is built against, and
+    # what holds a line that hard is what it weighs
+    hidden: [Soundproof, Filter, HeavyMetal]

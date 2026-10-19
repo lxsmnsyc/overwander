@@ -1,9 +1,9 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
 import { TeamStatuses } from '../../data/ids/status';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents } from '../events';
-import { isWeatherHail } from '../utils';
+import { isWeatherHail } from '../weather';
 
 /**
  * Aurora Veil only goes up in hail or snow. The screen itself is a team

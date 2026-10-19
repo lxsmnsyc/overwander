@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { type Actor, actor, clearAll, sql } from './clients';
 import { Items } from '../../src/data/ids/items';
-import { ITEM_STACKS } from '../../src/auth/stacks';
+import { ITEM_STACKS } from '../../src/model/stacks';
 import { WORLD_GENERATION } from '../../src/overworld/current';
 import { type ClaimPayment, claim } from '../../src/server/overworld/claims';
 import { grantStacksIn } from '../../src/server/stacks';

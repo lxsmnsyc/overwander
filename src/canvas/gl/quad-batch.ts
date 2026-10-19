@@ -89,10 +89,13 @@ precision mediump float;
 in vec2 pass_uv;
 in vec4 pass_tint;
 uniform sampler2D sheet;
+uniform float wash;
 out vec4 colour;
 
 void main() {
-  colour = texture(sheet, pass_uv) * pass_tint;
+  vec4 seen = texture(sheet, pass_uv);
+
+  colour = wash > 0.5 ? pass_tint * seen.a : seen * pass_tint;
 }`;
 
 /** Position, texture coordinate and tint: eight floats a vertex. */
@@ -147,9 +150,12 @@ export type QuadSampling = 'pixels' | 'smooth';
  * The two beside `over` are the hour's own: light taken out of the
  * picture and light added to it. They are exact only where what they
  * cover is opaque, which is why the layer paints its own backdrop
- * rather than letting the page show through
+ * rather than letting the page show through.
+ *
+ * `wash` is laid over like `over`, but in the tint alone: the picture
+ * gives only its shape, so a body can be washed in one colour
  */
-export type QuadBlend = 'over' | 'multiply' | 'screen';
+export type QuadBlend = 'over' | 'multiply' | 'screen' | 'wash';
 
 /** One stretch of the buffer drawn from a single sheet, one way. */
 interface Run {
@@ -207,6 +213,7 @@ export default class QuadBatch {
   private readonly buffer: WebGLBuffer;
   private readonly array: WebGLVertexArrayObject;
   private readonly viewport: WebGLUniformLocation | null;
+  private readonly washing: WebGLUniformLocation | null;
 
   /** A single opaque texel, which is what a flat colour is drawn with */
   private readonly blank: WebGLTexture;
@@ -273,6 +280,7 @@ export default class QuadBatch {
     this.buffer = gl.createBuffer();
     this.array = gl.createVertexArray();
     this.viewport = gl.getUniformLocation(program, 'viewport');
+    this.washing = gl.getUniformLocation(program, 'wash');
 
     gl.bindVertexArray(this.array);
     gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
@@ -622,6 +630,7 @@ export default class QuadBatch {
   private blendAs(blend: QuadBlend): void {
     const gl = this.gl;
 
+    gl.uniform1f(this.washing, blend === 'wash' ? 1 : 0);
     if (blend === 'multiply') {
       gl.blendFuncSeparate(gl.DST_COLOR, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
       return;

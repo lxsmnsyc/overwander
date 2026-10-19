@@ -1,0 +1,275 @@
+// Rows arrive untyped; the reads below restore const-enum fields via
+// assertions that tsc requires but tsgolint (resolving const enums to
+// number) considers unnecessary
+// oxlint-disable typescript/no-unnecessary-type-assertion
+import type { Types } from '../data/constants/types';
+import type { Stats } from '../data/constants/stats';
+import { BASE_FRIENDSHIP } from '../data/constants/friendship';
+import { defaultSlots } from '../data/constants/slots';
+import { isTeraType } from '../data/species/tera-type';
+import Biome from '../data/ids/biome';
+import { Balls } from '../data/ids/items';
+import type Abilities from '../data/ids/abilities';
+import type { Items } from '../data/ids/items';
+import type { Moves } from '../data/ids/moves';
+import type Natures from '../data/ids/natures';
+import type { Genders, Species } from '../data/ids/species';
+import { EncounterType, deriveCatchSize } from '../overworld/encounter';
+import { asBoolean, asNumber, asNumberArray, asRecord, asStatRecord, asString } from './normalize';
+import { asMovePoints } from './caught-record';
+import { getMaxHealth } from './health';
+import type { CaughtPokemon } from './caught-record';
+
+/**
+ * A catch frozen at the moment a team snapshot was taken. A battle
+ * must not shift under the players — levelling, evolving or handing
+ * an item over mid-raid would change the units already fighting — so
+ * a snapshot copies everything the battle needs and is never
+ * rewritten afterwards
+ */
+export interface CatchSnapshot {
+  /**
+   * The caught/{catchId} this was copied from; the copy stands on
+   * its own, so the source may have changed since
+   */
+  caught: string;
+  species: Species;
+  level: number;
+  /**
+   * The packed individual values, exactly as the record had them
+   */
+  ivs: number;
+  effortValues: Record<Stats, number>;
+  nature: Natures;
+  gender: Genders;
+  /**
+   * This individual's own measurements, in meters and kilograms.
+   * They are frozen like everything else: evolving mid-raid must not
+   * make the unit already fighting heavier
+   */
+  height: number;
+  weight: number;
+  /**
+   * What was true about it when the snapshot was taken. A frozen copy
+   * answers the two questions a fight asks — whether it sparkles, and
+   * whether it is a shadow
+   */
+  shiny: boolean;
+  shadow: boolean;
+  /**
+   * Whether it carries the Gigantamax Factor. Left out reads as false,
+   * which is what every snapshot written before the factor was
+   */
+  gigantamax?: boolean;
+  /**
+   * The type it Terastallizes into. Left out reads as the species' first
+   * type, which is what every catch made before Terastallization holds
+   */
+  teraType?: Types;
+  moves: Moves[];
+  /**
+   * What has been spent on each of those moves, keyed by move id. It
+   * is frozen with everything else: a PP Up bought while a raid is
+   * under way changes the pokemon, not the copy already fighting
+   */
+  movePoints: Record<string, number>;
+  abilities: Abilities[];
+  items: Items[];
+  /**
+   * What it has room for, packed as the record packs it. It is frozen
+   * with the rest: a slot bought while a raid is under way changes the
+   * pokemon, not the copy already fighting
+   */
+  slots: number;
+  /**
+   * The health it walks in with. A fight picks up where the last one
+   * left off, so a pokemon hurt yesterday is hurt at the start of
+   * today's raid rather than quietly mended by being fielded
+   */
+  health: number;
+  /**
+   * The non-volatile statuses it walks in with, all of them, as a
+   * mask of `StatusFlags`
+   */
+  statuses: number;
+  /**
+   * What it thought of its owner when the snapshot was taken. Return
+   * and Frustration read it, so a fight has to carry it
+   */
+  friendship: number;
+  /**
+   * Set on a Totem's ally: it is built with the fight but kept off the
+   * field until the Totem calls it, so it stands in nobody's way and
+   * holds no side up before then
+   */
+  called?: boolean;
+  /** Set on a Max Raid's boss: it fights Dynamaxed from start to end */
+  dynamaxed?: boolean;
+  /** Set on a Tera raid's boss: it fights Terastallized into its `teraType` from the start */
+  terastallized?: boolean;
+  /**
+   * Set, beside `called`, on a copy an Alpha summons. It is built
+   * each time the Alpha calls one, so a fallen copy can be replaced
+   */
+  alphaCopy?: boolean;
+  /**
+   * The Balms its player packed for a Noble raid, set on the first
+   * pokemon of their first party only. The server takes them from the
+   * bag as the raid starts
+   */
+  balms?: number;
+}
+
+/**
+ * Read a snapshot back as the record it was copied from, for a screen
+ * that draws frozen teams with the same card and square a live catch
+ * gets. Whatever a snapshot does not keep — history, friendship, the
+ * marks — reads as a fresh record's nothing
+ */
+export function previewSnapshot(snapshot: CatchSnapshot): CaughtPokemon {
+  return {
+    owner: '',
+    type: EncounterType.Fateful,
+    species: snapshot.species,
+    nickname: '',
+    level: snapshot.level,
+    individualValue: snapshot.ivs,
+    traitValue: 0,
+    ivs: snapshot.ivs,
+    gender: snapshot.gender,
+    nature: snapshot.nature,
+    shiny: snapshot.shiny,
+    shadow: snapshot.shadow,
+    egg: false,
+    favorite: false,
+    guarded: false,
+    traded: false,
+    canEvolve: false,
+    gigantamax: snapshot.gigantamax === true,
+    teraType: snapshot.teraType ?? null,
+    featProgress: 0,
+    auctionable: false,
+    moves: snapshot.moves,
+    movePoints: snapshot.movePoints,
+    abilities: snapshot.abilities,
+    slots: snapshot.slots,
+    items: snapshot.items,
+    history: [],
+    lockedAt: 0,
+    steps: 0,
+    hatchSteps: 0,
+    steppedAt: 0,
+    statuses: snapshot.statuses,
+    lair: null,
+    box: null,
+    slot: null,
+    ball: Balls.PokeBall,
+    caughtAt: '',
+    locale: '',
+    effortValues: snapshot.effortValues,
+    effortBonus: 0,
+    walked: 0,
+    friendship: snapshot.friendship,
+    health: snapshot.health,
+    origin: { timestamp: 0, x: 0, y: 0, biome: Biome.Beyond },
+  };
+}
+
+/**
+ * Copy a catch into a snapshot
+ */
+export function createCatchSnapshot(id: string, caught: CaughtPokemon): CatchSnapshot {
+  // Size is derived from the trait value against the species standing
+  // now, so an evolution taken before the raid is already reflected
+  const size = deriveCatchSize(caught.species, caught.traitValue, caught.type);
+
+  return {
+    caught: id,
+    species: caught.species,
+    level: caught.level,
+    ivs: caught.ivs,
+    effortValues: caught.effortValues,
+    nature: caught.nature,
+    gender: caught.gender,
+    height: size.height,
+    weight: size.weight,
+    shiny: caught.shiny,
+    shadow: caught.shadow,
+    ...(caught.gigantamax ? { gigantamax: true } : {}),
+    ...(caught.teraType == null ? {} : { teraType: caught.teraType }),
+    moves: caught.moves,
+    movePoints: caught.movePoints,
+    abilities: caught.abilities,
+    items: caught.items,
+    slots: caught.slots,
+    health: caught.health,
+    statuses: caught.statuses,
+    friendship: caught.friendship,
+  };
+}
+
+/**
+ * Restore a snapshot from an untyped row
+ */
+export function asCatchSnapshot(value: unknown): CatchSnapshot {
+  const data = asRecord(value);
+
+  return {
+    caught: asString(data.caught),
+    species: asNumber(data.species) as Species,
+    level: asNumber(data.level),
+    ivs: asNumber(data.ivs),
+    effortValues: asStatRecord(data.effortValues),
+    nature: asNumber(data.nature) as Natures,
+    gender: asNumber(data.gender) as Genders,
+    height: asNumber(data.height),
+    weight: asNumber(data.weight),
+    shiny: asBoolean(data.shiny),
+    shadow: asBoolean(data.shadow),
+    moves: asNumberArray(data.moves) as Moves[],
+    // A snapshot written before a move could be trained has nothing
+    // spent on any of them
+    movePoints: asMovePoints(data.movePoints),
+    abilities: asNumberArray(data.abilities) as Abilities[],
+    items: asNumberArray(data.items) as Items[],
+    // A snapshot written before the field existed reads as the room
+    // the game used to give everything, widened for a shadow's second
+    // ability the way a record's own missing field is
+    slots:
+      data.slots == null
+        ? defaultSlots(asNumberArray(data.abilities) as Abilities[])
+        : asNumber(data.slots),
+    // A snapshot written before a fight could hurt anything carries
+    // no health, and a unit fielded at zero would be down before the
+    // first turn: missing means whole
+    health: data.health == null ? getMaxHealth(asHealthSource(data)) : asNumber(data.health),
+    statuses: asNumber(data.statuses),
+    // A snapshot written before the field existed reads as a stranger's
+    // catch, which is what Return and Frustration answer to
+    friendship: data.friendship == null ? BASE_FRIENDSHIP : asNumber(data.friendship),
+    ...(data.gigantamax === true ? { gigantamax: true } : {}),
+    ...(isTeraType(data.teraType) ? { teraType: data.teraType } : {}),
+    ...(data.called === true ? { called: true } : {}),
+    ...(data.dynamaxed === true ? { dynamaxed: true } : {}),
+    ...(data.terastallized === true ? { terastallized: true } : {}),
+    ...(data.alphaCopy === true ? { alphaCopy: true } : {}),
+    ...(typeof data.balms === 'number' && data.balms > 0 ? { balms: Math.floor(data.balms) } : {}),
+  };
+}
+
+/**
+ * What maximum health is derived from, read off an untyped snapshot
+ */
+function asHealthSource(data: Record<string, unknown>): {
+  species: Species;
+  level: number;
+  ivs: number;
+  effortValues: Record<Stats, number>;
+} {
+  return {
+    species: asNumber(data.species) as Species,
+    level: asNumber(data.level),
+    ivs: asNumber(data.ivs),
+    effortValues: asStatRecord(data.effortValues),
+  };
+}

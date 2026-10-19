@@ -2,14 +2,19 @@ import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
 import { DamageFlags, Moves } from '../../data/ids/moves';
 import { RISKY_PENALTY, USELESS_PENALTY } from '../ai/score';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, EffectType } from '../events';
 
 /**
  * Moves whose user crashes on a miss, taking half its max HP (also
  * boosted by Reckless)
  */
-export const CRASH_MOVES = new Set<Moves>([Moves.JumpKick, Moves.HiJumpKick]);
+export const CRASH_MOVES = new Set<Moves>([
+  Moves.JumpKick,
+  Moves.HiJumpKick,
+  Moves.AxeKick,
+  Moves.SupercellSlam,
+]);
 
 const CRASH_FRACTION = 0.5;
 

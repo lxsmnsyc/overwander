@@ -16,7 +16,7 @@ Lifetime counters, a `(metric, param)` grid per player.
 | `count`  | `bigint`   | How many                                             |
 
 The metrics are the `Metric` enum in
-[`src/auth/quest-record.ts`](../../src/auth/quest-record.ts): catches, hatches,
+[`src/model/quest-record.ts`](../../src/model/quest-record.ts): catches, hatches,
 level-ups, item uses, steps, npc visits, landmark claims, raid runs and wins,
 trades, friends, auctions, purifies, evolutions, releases, moves learned, battle
 wins, gold earned and spent, gifts, bids, shiny catches, trainer wins, biomes

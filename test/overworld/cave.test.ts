@@ -3,9 +3,9 @@ import Landmark from '../../src/data/overworld/landmark';
 import { isOpenSea } from '../../src/data/ids/biome';
 import caveMouth, { caveMouthCellIn, nearestMouth, throughMouth } from '../../src/overworld/cave';
 import { MOUTH_SEARCH } from '../../src/data/overworld/cave';
-import { blocksWalk, isFace } from '../../src/overworld/cliff';
+import { blocksWalk, isFace } from '../../src/overworld/terrain/cliff';
 import { CHUNK_CELLS, worldCell } from '../../src/overworld/grid';
-import { isHillside, roleAt } from '../../src/overworld/ground';
+import { isHillside, roleAt } from '../../src/overworld/terrain/ground';
 import World, { Depth } from '../../src/overworld/world';
 import registerGameData from '../../src/data';
 
@@ -364,6 +364,10 @@ describe('the caves', () => {
           Landmark.Trainer,
           Landmark.LegendaryLair,
           Landmark.ShadowLair,
+          // A trial site may be underground, taking a duel's place
+          Landmark.Totem,
+          // And a Tera crystal, grown out of rock in a cache's place
+          Landmark.TeraRaid,
         ],
         String(kind),
       ).toContain(kind);

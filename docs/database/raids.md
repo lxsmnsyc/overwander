@@ -206,7 +206,7 @@ the join is attempted.
 
 A full lobby is twenty rows, so it carries a search box of its own, with the
 same grammar as everything else. `TEAM_VOCABULARY` and `matchesTeam` live in
-[`team-search.ts`](../../src/auth/team-search.ts).
+[`team-search.ts`](../../src/model/search/team.ts).
 
 | Field             | What it narrows by                               |
 | ----------------- | ------------------------------------------------ |

@@ -1,0 +1,62 @@
+# Each one answers a stat being knocked down rather than being reached for
+# from a bag, which is what the descriptions say.
+#
+# Cheaper than a one-shot, because a one-shot answers whatever happens to
+# its holder and these answer one thing only: a pokemon nobody bothers to
+# weaken carries its X item all fight.
+
+XAttack:
+  type: Held
+  icon: battle-items/x-attack
+  flags: [Consumable, Holdable, Marketable]
+  buy: 1500
+  sell: 750
+
+XDefense:
+  type: Held
+  icon: battle-items/x-defense
+  flags: [Consumable, Holdable, Marketable]
+  buy: 1500
+  sell: 750
+
+XSpAtk:
+  type: Held
+  icon: battle-items/x-sp-atk
+  flags: [Consumable, Holdable, Marketable]
+  buy: 1500
+  sell: 750
+
+XSpDef:
+  type: Held
+  icon: battle-items/x-sp-def
+  flags: [Consumable, Holdable, Marketable]
+  buy: 1500
+  sell: 750
+
+XSpeed:
+  type: Held
+  icon: battle-items/x-speed
+  flags: [Consumable, Holdable, Marketable]
+  buy: 1500
+  sell: 750
+
+XAccuracy:
+  type: Held
+  icon: battle-items/x-accuracy
+  flags: [Consumable, Holdable, Marketable]
+  buy: 1500
+  sell: 750
+
+DireHit:
+  type: Held
+  icon: battle-items/dire-hit
+  flags: [Consumable, Holdable, Marketable]
+  buy: 1500
+  sell: 750
+
+GuardSpec:
+  type: Held
+  icon: battle-items/guard-spec
+  flags: [Consumable, Holdable, Marketable]
+  buy: 1500
+  sell: 750

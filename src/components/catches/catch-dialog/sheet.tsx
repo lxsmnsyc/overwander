@@ -1,6 +1,6 @@
 import { HISTORY_BALL, HISTORY_BALL_INSET, describeHistory, isHoldable } from './describe';
 import { capAsksForStat } from '../../../data/items/bottle-caps';
-import BattleData from '../../app/battle-data';
+import BattleData from '../../app/BattleData';
 import CandySprite from '../../sprites/CandySprite';
 import BattleSection from './sections/BattleSection';
 import EvolutionSection from './sections/EvolutionSection';
@@ -25,17 +25,17 @@ import {
   setNickname,
   takeItem,
 } from '../../../auth/caught';
-import { getCatchName, isNicknameLocked, isShadow, isShiny } from '../../../auth/caught-record';
-import { NICKNAME_LIMIT, asNickname } from '../../../auth/nickname';
+import { getCatchName, isNicknameLocked, isShadow, isShiny } from '../../../model/caught-record';
+import { NICKNAME_LIMIT, asNickname } from '../../../model/nickname';
 import { useAuth } from '../../../auth/context';
 import { answered, failed, readable } from '../../app/resource-reads';
 
-import { canHatch, isEgg } from '../../../auth/egg';
+import { canHatch, isEgg } from '../../../model/egg';
 import AnimatedSprite from '../../sprites/AnimatedSprite';
 import { HeadingPortrait } from '../../forms/terms';
 import TargetStrip from '../TargetStrip';
 import { hatchEgg } from '../../../auth/eggs';
-import { deriveSize } from '../../../overworld/encounter';
+import { deriveCatchSize } from '../../../overworld/encounter';
 import { type EvolutionOption, evolveCatch } from '../../../auth/evolution';
 import { fuseCatch, unfuseCatch } from '../../../auth/fusion';
 import type { InventoryEntry } from '../../../auth/inventory';
@@ -57,9 +57,10 @@ import { isPreciousItem } from '../../../data/overworld/item-pool';
 import { isAbilityPatch } from '../../../data/items/ability-items';
 import { isPurifyingGem } from '../../../data/items/purifying-gem';
 import { getFamilyName, getSpeciesData } from '../../../data/species';
-import { getFusionPartner, isFusedSpecies } from '../../../data/species/fusion';
+import { getFusionHusk, getFusionPartner, isFusedSpecies } from '../../../data/species/fusion';
+import { teraTypeOf } from '../../../data/species/tera-type';
 
-import { ActionsIcon, HeartIcon, LockIcon, SparklesIcon, StarIcon } from '../../icons';
+import { HeartIcon, LockIcon, SparklesIcon, StarIcon } from '../../icons';
 import TypeBadge from '../../sprites/TypeBadge';
 import { GENDER_LABELS, GENDER_MARKS } from '../catch-summary';
 import InventoryPicker from '../../items/InventoryPicker';
@@ -896,7 +897,15 @@ export function CatchSheetBody(
   const dragonName = (): string => {
     const dragon = dragonWanted();
 
-    return dragon == null ? 'dragon' : getSpeciesData(dragon).name;
+    return dragon == null ? 'partner' : getSpeciesData(dragon).name;
+  };
+
+  /** What it is folded into, named for the picker */
+  const huskName = (): string => {
+    const into = folding();
+    const husk = into == null ? null : getFusionHusk(into);
+
+    return husk == null ? 'husk' : getSpeciesData(husk).name;
   };
 
   /**
@@ -1406,39 +1415,13 @@ export function CatchSheetBody(
   };
 
   /**
-   * The badges and the Actions menu, in the heading row beside the
-   * nameplate rather than a bar of their own under it
+   * The box chip, the badges and the Actions menu, in the heading row
+   * beside the nameplate rather than a bar of their own under it
    */
   const actionsRow = (): JSX.Element => (
     <div class="flex flex-wrap items-center justify-end gap-2">
-      <Show when={view()}>
-        {(record) => (
-          <span class="mr-auto flex min-w-0 flex-wrap items-center gap-2 text-left">
-            <Show when={isFavorite(record())}>
-              <Badge tone="gold">
-                <StarIcon class="size-3.5" aria-hidden="true" />
-                Favorite
-              </Badge>
-            </Show>
-            <Show when={isGuarded(record())}>
-              <Badge tone="tide">
-                <LockIcon class="size-3.5" aria-hidden="true" />
-                Locked
-              </Badge>
-            </Show>
-            <Show when={isShadow(record())}>
-              <Badge>Shadow</Badge>
-            </Show>
-            <Show when={props.buddy.latest === props.catchId}>
-              <Badge tone="leaf">Buddy</Badge>
-            </Show>
-            <Show when={owned() != null && props.fighting.latest === true}>
-              <Badge tone="ember">In a raid</Badge>
-            </Show>
-          </span>
-        )}
-      </Show>
-      {/* Which box it is filed in, and where else it could go */}
+      {/* Which box it is filed in, and where else it could go, first
+          in the row as the box it is in is the first thing about it */}
       <Show when={owned() != null && props.catchId != null && view()}>
         {(record) => (
           <BoxChip
@@ -1457,8 +1440,38 @@ export function CatchSheetBody(
           />
         )}
       </Show>
+      <Show when={view()}>
+        {(record) => (
+          <span class="flex min-w-0 flex-wrap items-center gap-2 text-left">
+            <Show when={isFavorite(record())}>
+              <Badge tone="gold">
+                <StarIcon class="size-3.5" aria-hidden="true" />
+                Favorite
+              </Badge>
+            </Show>
+            <Show when={isGuarded(record())}>
+              <Badge tone="tide">
+                <LockIcon class="size-3.5" aria-hidden="true" />
+                Locked
+              </Badge>
+            </Show>
+            <Show when={isShadow(record())}>
+              <Badge>Shadow</Badge>
+            </Show>
+            <Show when={record().gigantamax}>
+              <Badge tone="arcane">Gigantamax</Badge>
+            </Show>
+            <Show when={props.buddy.latest === props.catchId}>
+              <Badge tone="leaf">Buddy</Badge>
+            </Show>
+            <Show when={owned() != null && props.fighting.latest === true}>
+              <Badge tone="ember">In a raid</Badge>
+            </Show>
+          </span>
+        )}
+      </Show>
       <Show when={owned() != null || props.onDex != null}>
-        <Menu label="Actions" icon={ActionsIcon} actions={menuActions()} />
+        <Menu label="Actions" actions={menuActions()} />
       </Show>
     </div>
   );
@@ -1626,10 +1639,20 @@ export function CatchSheetBody(
                             {(type) => <TypeBadge type={type} />}
                           </For>
                           <Badge>
-                            {deriveSize(loaded().species, loaded().traitValue).height.toFixed(2)} m
+                            {deriveCatchSize(
+                              loaded().species,
+                              loaded().traitValue,
+                              loaded().type,
+                            ).height.toFixed(2)}{' '}
+                            m
                           </Badge>
                           <Badge>
-                            {deriveSize(loaded().species, loaded().traitValue).weight.toFixed(1)} kg
+                            {deriveCatchSize(
+                              loaded().species,
+                              loaded().traitValue,
+                              loaded().type,
+                            ).weight.toFixed(1)}{' '}
+                            kg
                           </Badge>
                           <TooltipHost
                             name="Friendship"
@@ -1643,6 +1666,12 @@ export function CatchSheetBody(
                           <Badge>
                             {loaded().walked} {loaded().walked === 1 ? 'step' : 'steps'}
                           </Badge>
+                        </div>
+                        <div class="flex items-center justify-center gap-1.5">
+                          <span class="text-xs font-extrabold tracking-wider text-muted uppercase">
+                            Tera type
+                          </span>
+                          <TypeBadge type={teraTypeOf(loaded())} />
                         </div>
                         <div class="flex flex-wrap items-center justify-center gap-1.5">
                           <Badge tone="gold">
@@ -1994,16 +2023,16 @@ export function CatchSheetBody(
           and nothing takes the points back, so it asks which before it
           leaves the bag */}
       {/* Folding a dragon in asks which one, the way a machine asks
-          which move: the splicers are not spent and the dragon is not
-          gone, but it goes out of sight until the pair comes apart, so
-          the choice is the player's rather than a roll */}
+          which move: the dragon is not gone, but it goes out of sight
+          until the pair comes apart, so the choice is the player's
+          rather than a roll */}
       <CatchPicker
         open={folding() != null}
         value={null}
         title={`Fold in a ${dragonName()}?`}
-        description="It goes inside the Kyurem until you take the two apart again."
+        description={`It goes inside the ${huskName()} until you take the two apart again.`}
         verb="Fold in"
-        empty="You have none of that dragon."
+        empty={`You have no ${dragonName()}.`}
         filter={(option) =>
           option.caught.species === dragonWanted() &&
           !option.fighting &&

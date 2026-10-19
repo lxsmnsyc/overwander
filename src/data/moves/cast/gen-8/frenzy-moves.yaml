@@ -1,0 +1,6 @@
+FrenzyStoneAxe: [Swing, Attack, Charge]
+FrenzyPetalStorm: [Rotate, Emit, Charge]
+FrenzyWildfire: [Emit, Attack, Charge]
+FrenzyBlast: [Swell, Shock, Charge]
+FrenzyIceberg: [Shoot, Emit, Charge]
+FrenzyBurst: [Emit, Attack, Charge]

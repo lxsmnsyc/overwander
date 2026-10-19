@@ -1,4 +1,4 @@
-import type Battle from '../core';
+import type Battle from '../battle';
 import { setupChooseMoveAI } from './choose-move';
 import setupIdleAI from './idle';
 import setupNatureAI from './nature';

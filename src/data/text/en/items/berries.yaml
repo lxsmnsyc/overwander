@@ -1,0 +1,122 @@
+templates:
+  bait: Fed to a wild pokemon for {bonus}x catch odds.
+  nanabHalve: Fed to a wild pokemon for {bonus}x catch odds, and halves its chance of bolting from the next ball.
+  nanabStop: Fed to a wild pokemon for {bonus}x catch odds, and stops it bolting from the next ball.
+  pinapOne: Fed to a wild pokemon for {bonus}x catch odds. Catching it pays one extra helping of its candy.
+  pinap: Fed to a wild pokemon for {bonus}x catch odds. Catching it pays {helpings} extra helpings of its candy.
+  resist: Halves one {type} blow that was landing hard.
+  resistNormal: Halves the first {type} blow to land on its holder.
+  pinch: +1 {stat} at 1/4 HP.
+  nature: Restores 1/3 of max HP at 1/2 HP. Confuses a pokemon whose nature lowers {stat}.
+  effort: Takes 10 {stat} effort off a pokemon it is fed to.
+CheriBerry:
+  name: Cheri Berry
+  description: Cures paralysis the moment it lands.
+ChestoBerry:
+  name: Chesto Berry
+  description: Wakes its holder the moment it falls asleep.
+PechaBerry:
+  name: Pecha Berry
+  description: Cures poison the moment it lands.
+RawstBerry:
+  name: Rawst Berry
+  description: Cures a burn the moment it lands.
+AspearBerry:
+  name: Aspear Berry
+  description: Thaws its holder the moment it freezes.
+LeppaBerry:
+  name: Leppa Berry
+  description: Clears the cooldown of the first move its holder uses.
+OranBerry:
+  name: Oran Berry
+  description: Restores 10 HP at 1/2 HP.
+PersimBerry:
+  name: Persim Berry
+  description: Cures confusion the moment it lands.
+LumBerry:
+  name: Lum Berry
+  description: Cures any status the moment it lands.
+SitrusBerry:
+  name: Sitrus Berry
+  description: Restores 1/4 of max HP at 1/2 HP.
+OccaBerry: { name: Occa Berry }
+PasshoBerry: { name: Passho Berry }
+WacanBerry: { name: Wacan Berry }
+RindoBerry: { name: Rindo Berry }
+YacheBerry: { name: Yache Berry }
+ChopleBerry: { name: Chople Berry }
+KebiaBerry: { name: Kebia Berry }
+ShucaBerry: { name: Shuca Berry }
+CobaBerry: { name: Coba Berry }
+PayapaBerry: { name: Payapa Berry }
+TangaBerry: { name: Tanga Berry }
+ChartiBerry: { name: Charti Berry }
+KasibBerry: { name: Kasib Berry }
+HabanBerry: { name: Haban Berry }
+ColburBerry: { name: Colbur Berry }
+BabiriBerry: { name: Babiri Berry }
+ChilanBerry: { name: Chilan Berry }
+RoseliBerry: { name: Roseli Berry }
+LiechiBerry: { name: Liechi Berry }
+GanlonBerry: { name: Ganlon Berry }
+SalacBerry: { name: Salac Berry }
+PetayaBerry: { name: Petaya Berry }
+ApicotBerry: { name: Apicot Berry }
+LansatBerry:
+  name: Lansat Berry
+  description: Sharpens its holder’s criticals by 2 stages at 1/4 HP.
+StarfBerry:
+  name: Starf Berry
+  description: +2 to 1 random stat at 1/4 HP.
+CustapBerry:
+  name: Custap Berry
+  description: Its holder’s next move winds up a bracket faster, at 1/4 HP.
+MicleBerry:
+  name: Micle Berry
+  description: 1.2x accuracy on its holder’s next move, at 1/4 HP.
+FigyBerry: { name: Figy Berry }
+WikiBerry: { name: Wiki Berry }
+MagoBerry: { name: Mago Berry }
+AguavBerry: { name: Aguav Berry }
+IapapaBerry: { name: Iapapa Berry }
+EnigmaBerry:
+  name: Enigma Berry
+  description: Restores 1/4 of max HP after a super-effective blow lands.
+KeeBerry:
+  name: Kee Berry
+  description: +1 Defense after a physical blow lands on its holder.
+MarangaBerry:
+  name: Maranga Berry
+  description: +1 Sp. Defense after a special blow lands on its holder.
+JabocaBerry:
+  name: Jaboca Berry
+  description: A physical attacker pays 1/8 of its own HP.
+RowapBerry:
+  name: Rowap Berry
+  description: A special attacker pays 1/8 of its own HP.
+PomegBerry: { name: Pomeg Berry }
+KelpsyBerry: { name: Kelpsy Berry }
+QualotBerry: { name: Qualot Berry }
+HondewBerry: { name: Hondew Berry }
+GrepaBerry: { name: Grepa Berry }
+TamatoBerry: { name: Tamato Berry }
+RazzBerry: { name: Razz Berry }
+BlukBerry: { name: Bluk Berry }
+NanabBerry: { name: Nanab Berry }
+WepearBerry: { name: Wepear Berry }
+PinapBerry: { name: Pinap Berry }
+CornnBerry: { name: Cornn Berry }
+MagostBerry: { name: Magost Berry }
+RabutaBerry: { name: Rabuta Berry }
+NomelBerry: { name: Nomel Berry }
+SpelonBerry: { name: Spelon Berry }
+PamtreBerry: { name: Pamtre Berry }
+WatmelBerry: { name: Watmel Berry }
+DurinBerry: { name: Durin Berry }
+BelueBerry: { name: Belue Berry }
+SilverRazzBerry: { name: Silver Razz Berry }
+GoldenRazzBerry: { name: Golden Razz Berry }
+SilverNanabBerry: { name: Silver Nanab Berry }
+GoldenNanabBerry: { name: Golden Nanab Berry }
+SilverPinapBerry: { name: Silver Pinap Berry }
+GoldenPinapBerry: { name: Golden Pinap Berry }

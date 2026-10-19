@@ -2,7 +2,7 @@ import { AttackPriority } from '../../core/event-emitter';
 import { DamageFlags, MoveAttackFlags, Moves } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
 import { USELESS_PENALTY, sacrificeCost } from '../ai/score';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import type Unit from '../unit';
 
@@ -43,6 +43,8 @@ export const FIXED_DAMAGE_MOVES: {
   [Moves.SuperFang]: (_, target) => Math.max(1, Math.floor(target.health / 2)),
   // https://bulbapedia.bulbagarden.net/wiki/Nature%27s_Madness_(move)
   [Moves.NaturesMadness]: (_, target) => Math.max(1, Math.floor(target.health / 2)),
+  // https://bulbapedia.bulbagarden.net/wiki/Ruination_(move)
+  [Moves.Ruination]: (_, target) => Math.max(1, Math.floor(target.health / 2)),
   // https://bulbapedia.bulbagarden.net/wiki/Guardian_of_Alola_(move)
   [Moves.GuardianOfAlola]: (_, target) => Math.max(1, Math.floor((target.health * 3) / 4)),
   // https://bulbapedia.bulbagarden.net/wiki/Psywave_(move)
@@ -67,6 +69,7 @@ export const HEALTH_SCALED_MOVES = new Set<Moves>([
   Moves.Guillotine,
   Moves.SuperFang,
   Moves.NaturesMadness,
+  Moves.Ruination,
   Moves.GuardianOfAlola,
   Moves.SheerCold,
   Moves.Endeavor,

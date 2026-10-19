@@ -1,0 +1,72 @@
+# The signature abilities granted to the families filed under Paldea
+
+families:
+  # Paldea's three starters, each a performer: one of its blows reaches
+  # past the pokemon it was thrown at
+  Sprigatito: PetalScatter
+  Fuecoco: SpreadingFlame
+  Quaxly: Wake
+
+  # The South, West and East Provinces, the coast, the roads and the north
+  Lechonk: PigOut
+  Tarountula: Tripwire
+  Nymble: Knockback
+  Pawmi: StaticPalms
+  Tandemaus: ScatterBrood
+  Fidough: FreshBatch
+  Smoliv: Anoint
+  Nacli: BrineRebound
+  Charcadet: Kindling
+  Tadbulb: BubbleShock
+  Wattrel: LightningDive
+  Bramblin: Windswept
+  Toedscool: MyceliumMat
+  Capsakid: HeatTolerance
+  Rellor: BallToss
+  Flittle: StareDown
+  Tinkatink: Tinker
+  Wiglett: SandDuck
+  Finizen: Lifeguard
+  Varoom: Redline
+  Cyclizar: ShedDecoy
+  Orthworm: SlagTrail
+  Glimmet: Glimmering
+  Greavard: GraveDigger
+  Cetoddle: SnowHoard
+  Veluza: FilletThrift
+  Dondozo: Mouthful
+  Tatsugiri: BackSeatOrders
+  Frigibax: GlaiveGuard
+
+  # Kitakami's tea, the support half of the pair Sinistea's Last Pour began
+  Poltchageist: TeaService
+
+  # Gimmighoul, the Treasures of Ruin, Koraidon and Miraidon, and the Paradox pokemon
+  Gimmighoul: CoinScatter
+  TingLu: CrackedVessel
+  ChiYu: ScatteredBeads
+  Koraidon: SunSprint
+  Miraidon: DriveMode
+  GreatTusk: HeadlongGuard
+  ScreamTail: ShriekSpeed
+  FlutterMane: EerieFlutter
+  SlitherWing: AncientCocoon
+  SandyShocks: EarthCurrent
+  RoaringMoon: MoonHowl
+  WalkingWake: SteamSurge
+  GougingFire: MoltenBulwark
+  RagingBolt: StormCloud
+  IronTreads: TrackLaying
+  IronBundle: IcePack
+  IronHands: IronGrip
+  IronMoth: ToxicExhaust
+  IronThorns: SandGenerator
+  IronValiant: Afterimage
+  IronLeaves: TerrainEdge
+
+  # The Loyal Three, Ogerpon, Terapagos and Pecharunt. Okidogi waits for its art
+  Munkidori: MonkeysOath
+  Fezandipiti: PheasantsOath
+  Ogerpon: MaskAura
+  Terapagos: Prismatic
+  Pecharunt: PuppetStrings

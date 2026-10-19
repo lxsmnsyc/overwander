@@ -11,7 +11,7 @@ import {
   PEDIGREE_COAT_FLOOR,
   PEDIGREE_COAT_SCALE,
   SADDLE_BURDEN_FLOOR,
-} from '../../../../src/battle/abilities/signature/flabebe-to-furfrou';
+} from '../../../../src/battle/abilities/signature/gen-6/flabebe-to-furfrou';
 import { createBattle, createUnit, pinRandom } from '../../harness';
 import { dealDamage } from './helpers';
 

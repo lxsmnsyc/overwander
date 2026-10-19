@@ -1,7 +1,7 @@
 import { EventPriority } from '../../core/event-emitter';
 import type Alliance from '../alliance';
-import type Battle from '../core';
-import { BattleModes } from '../core';
+import type Battle from '../battle';
+import { BattleModes } from '../battle';
 import { BattleEvents } from '../events';
 import { Stats } from '../../data/constants/stats';
 

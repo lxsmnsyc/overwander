@@ -1,0 +1,30 @@
+ForcePalm:
+  name: Force Palm
+  description: 30% to paralyse.
+AuraSphere:
+  name: Aura Sphere
+  description: Never misses.
+RockPolish:
+  name: Rock Polish
+  description: Raises the user's Speed 2 stages.
+PoisonJab:
+  name: Poison Jab
+  description: 30% to poison.
+DarkPulse:
+  name: Dark Pulse
+  description: 20% to make the target flinch.
+NightSlash:
+  name: Night Slash
+  description: Lands a critical more often than most.
+AquaTail:
+  name: Aqua Tail
+  description: Plain contact damage.
+SeedBomb:
+  name: Seed Bomb
+  description: Plain damage from a distance.
+AirSlash:
+  name: Air Slash
+  description: 30% to make the target flinch.
+XScissor:
+  name: X-Scissor
+  description: Plain contact damage.

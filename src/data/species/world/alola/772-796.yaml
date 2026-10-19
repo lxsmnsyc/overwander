@@ -1,0 +1,382 @@
+# The seventeen types a Memory sets a Silvally to
+
+# Worn rather than met: a Memory in its hands is what sets it
+TypeNull:
+  TypeNull:
+    types: [Normal]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Beach]
+    active: any
+    evolves-into:
+      - species: Silvally
+        method: [Friendship]
+    # The line is made rather than born, so it is never common
+    rank: prized
+  Silvally:
+    types: [Normal]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Beach]
+    active: any
+    evolves-from: TypeNull
+    # Staged by its lair and raided there
+    rank: legendary
+  SilvallyFighting:
+    types: [Fighting]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    worn: true
+    evolves-from: TypeNull
+  SilvallyFlying:
+    types: [Flying]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    worn: true
+    evolves-from: TypeNull
+  SilvallyPoison:
+    types: [Poison]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    worn: true
+    evolves-from: TypeNull
+  SilvallyGround:
+    types: [Ground]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    worn: true
+    evolves-from: TypeNull
+  SilvallyRock:
+    types: [Rock]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    worn: true
+    evolves-from: TypeNull
+  SilvallyBug:
+    types: [Bug]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    worn: true
+    evolves-from: TypeNull
+  SilvallyGhost:
+    types: [Ghost]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    worn: true
+    evolves-from: TypeNull
+  SilvallySteel:
+    types: [Steel]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    worn: true
+    evolves-from: TypeNull
+  SilvallyFire:
+    types: [Fire]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    worn: true
+    evolves-from: TypeNull
+  SilvallyWater:
+    types: [Water]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    worn: true
+    evolves-from: TypeNull
+  SilvallyGrass:
+    types: [Grass]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    worn: true
+    evolves-from: TypeNull
+  SilvallyElectric:
+    types: [Electric]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    worn: true
+    evolves-from: TypeNull
+  SilvallyPsychic:
+    types: [Psychic]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    worn: true
+    evolves-from: TypeNull
+  SilvallyIce:
+    types: [Ice]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    worn: true
+    evolves-from: TypeNull
+  SilvallyDragon:
+    types: [Dragon]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    worn: true
+    evolves-from: TypeNull
+  SilvallyDark:
+    types: [Dark]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    worn: true
+    evolves-from: TypeNull
+  SilvallyFairy:
+    types: [Fairy]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    worn: true
+    evolves-from: TypeNull
+# The shell and the cores share everything but their stats and their weight
+
+# Shields Down cracks the shell open mid-fight, so a core is never met on its own
+Minior:
+  Minior:
+    types: [Rock, Flying]
+    egg-groups: [Mineral]
+    biomes: [Mountain, AlpineTundra]
+    active: any
+  MiniorRed:
+    types: [Rock, Flying]
+    egg-groups: [Mineral]
+    active: any
+    base-form: false
+    worn: true
+  MiniorOrange:
+    types: [Rock, Flying]
+    egg-groups: [Mineral]
+    active: any
+    base-form: false
+    worn: true
+  MiniorYellow:
+    types: [Rock, Flying]
+    egg-groups: [Mineral]
+    active: any
+    base-form: false
+    worn: true
+  MiniorGreen:
+    types: [Rock, Flying]
+    egg-groups: [Mineral]
+    active: any
+    base-form: false
+    worn: true
+  MiniorBlue:
+    types: [Rock, Flying]
+    egg-groups: [Mineral]
+    active: any
+    base-form: false
+    worn: true
+  MiniorIndigo:
+    types: [Rock, Flying]
+    egg-groups: [Mineral]
+    active: any
+    base-form: false
+    worn: true
+  MiniorViolet:
+    types: [Rock, Flying]
+    egg-groups: [Mineral]
+    active: any
+    base-form: false
+    worn: true
+Komala:
+  Komala:
+    types: [Normal]
+    egg-groups: [Field]
+    biomes: [TropicalSeasonalForest, Savanna]
+    active: any
+Turtonator:
+  Turtonator:
+    types: [Fire, Dragon]
+    egg-groups: [Monster, Dragon]
+    biomes: [Volcano, Badlands]
+    active: any
+Togedemaru:
+  Togedemaru:
+    types: [Electric, Steel]
+    egg-groups: [Field, Fairy]
+    biomes: [Mountain, Grassland]
+    active: any
+Mimikyu:
+  Mimikyu:
+    types: [Ghost, Fairy]
+    egg-groups: [Amorphous]
+    biomes: [Woodland, Bog]
+    active: [Evening, Night]
+  MimikyuBusted:
+    types: [Ghost, Fairy]
+    egg-groups: [Amorphous]
+    active: [Evening, Night]
+    # Disguise gives way mid-fight, so it is never met like this
+    base-form: false
+    worn: true
+Bruxish:
+  Bruxish:
+    types: [Water, Psychic]
+    egg-groups: [Water2]
+    habitat: Water
+    biomes: [CoralReef, KelpForest]
+    active: any
+Drampa:
+  Drampa:
+    types: [Normal, Dragon]
+    egg-groups: [Monster, Dragon]
+    biomes: [Mountain, AlpineTundra]
+    active: any
+Dhelmise:
+  Dhelmise:
+    types: [Ghost, Grass]
+    egg-groups: [Mineral]
+    habitat: Water
+    biomes: [Ocean, KelpForest]
+    active: any
+JangmoO:
+  JangmoO:
+    types: [Dragon]
+    egg-groups: [Dragon]
+    biomes: [Badlands, Mountain]
+    active: any
+    evolves-into:
+      - species: HakamoO
+        method: [Level]
+        level: 35
+  HakamoO:
+    types: [Dragon, Fighting]
+    egg-groups: [Dragon]
+    biomes: [Badlands, Mountain]
+    active: any
+    evolves-from: JangmoO
+    evolves-into:
+      - species: KommoO
+        method: [Level]
+        level: 45
+  KommoO:
+    types: [Dragon, Fighting]
+    egg-groups: [Dragon]
+    biomes: [Badlands, Mountain]
+    active: any
+    evolves-from: HakamoO
+TapuKoko:
+  # The four guardians of Alola, one to each island. None is born and
+  # none evolves: each is met at the ruin its island keeps for it
+  TapuKoko:
+    types: [Electric, Fairy]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [TropicalSeasonalForest]
+    active: any
+    rank: legendary
+TapuLele:
+  TapuLele:
+    types: [Psychic, Fairy]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [TropicalRainforest]
+    active: any
+    rank: legendary
+TapuBulu:
+  TapuBulu:
+    types: [Grass, Fairy]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Desert]
+    active: any
+    rank: legendary
+TapuFini:
+  TapuFini:
+    types: [Water, Fairy]
+    egg-groups: [NoEggsDiscovered]
+    # Its ruin stands at the water's edge, so it rises from the sea as well
+    habitat: Amphibious
+    biomes: [RockyCoast]
+    active: any
+    rank: legendary
+Cosmog:
+  # The nebula that grows into the sun or the moon. Which one is the
+  # hour it finishes growing at: by day a Solgaleo, by night a Lunala
+  Cosmog:
+    types: [Psychic]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Grassland]
+    active: any
+    evolves-into:
+      - species: Cosmoem
+        method: [Level]
+        level: 43
+    # The light pair before it grows, as rare as the line is
+    rank: prized
+  Cosmoem:
+    types: [Psychic]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Grassland]
+    active: any
+    evolves-from: Cosmog
+    evolves-into:
+      - species: Solgaleo
+        method: [Level, TimeOfDay]
+        level: 53
+        time: [Morning, Day]
+      - species: Lunala
+        method: [Level, TimeOfDay]
+        level: 53
+        time: [Evening, Night]
+    rank: prized
+  Solgaleo:
+    types: [Psychic, Steel]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Badlands]
+    active: any
+    evolves-from: Cosmoem
+    rank: legendary
+  Lunala:
+    types: [Psychic, Ghost]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Badlands]
+    active: any
+    evolves-from: Cosmoem
+    rank: legendary
+Nihilego:
+  # The creatures that came through the wormholes from Ultra Space. Each
+  # is met in the country most like the world it came from
+  Nihilego:
+    types: [Rock, Poison]
+    egg-groups: [NoEggsDiscovered]
+    # Its world is a sea, so it drifts in the water as well
+    habitat: Amphibious
+    # Ultra Deep Sea
+    biomes: [Ocean]
+    active: any
+    # The Ultra Beasts are staged by their lairs the way a legendary is
+    rank: legendary
+Buzzwole:
+  Buzzwole:
+    types: [Bug, Fighting]
+    egg-groups: [NoEggsDiscovered]
+    # Ultra Jungle
+    biomes: [TropicalRainforest]
+    active: any
+    rank: legendary
+Pheromosa:
+  Pheromosa:
+    types: [Bug, Fighting]
+    egg-groups: [NoEggsDiscovered]
+    # Ultra Desert
+    biomes: [Desert]
+    active: any
+    rank: legendary
+Xurkitree:
+  Xurkitree:
+    types: [Electric]
+    egg-groups: [NoEggsDiscovered]
+    # Ultra Plant
+    biomes: [Badlands]
+    active: any
+    rank: legendary

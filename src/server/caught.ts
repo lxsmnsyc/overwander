@@ -6,10 +6,10 @@ import {
   getHeldItemRoom,
   isAuctionableCatch,
   isNicknameLocked,
-} from '../auth/caught-record';
-import { asNickname } from '../auth/nickname';
-import type { EncounterRecord } from '../auth/encounter-record';
-import { getMaxHealth, needsCare } from '../auth/health';
+} from '../model/caught-record';
+import { asNickname } from '../model/nickname';
+import type { EncounterRecord } from '../model/encounter-record';
+import { getMaxHealth, needsCare } from '../model/health';
 import {
   DEFAULT_MOVE_SLOTS,
   Slots,
@@ -25,10 +25,12 @@ import { PINAP_CANDY_HELPINGS } from '../data/items/berries';
 import type { Species } from '../data/ids/species';
 import { getSpeciesData } from '../data/species';
 import createOverworld from '../overworld/setup';
+import { keepsGigantamaxFactor, keptTeraType } from '../overworld/raid';
+import { rollTeraType } from '../data/species/tera-type';
 import { asBuddy } from './buddy';
 import type Families from '../data/ids/families';
 import { catchCandyWorth, grantCandies } from './candy';
-import { getCatchCandy, getReleaseCandy } from '../auth/candy-rules';
+import { getCatchCandy, getReleaseCandy } from '../model/candy-rules';
 import {
   asLocale,
   isEggRecord,
@@ -41,11 +43,11 @@ import { readCaughtIn, readCaughtMany, updateCaughtIn } from './caught-io';
 import { caughtFriendship } from '../data/constants/friendship';
 import { type Tx, getSql, newDocId, tx } from './db';
 import { recordCaughtSpecies } from './pokedex';
-import { Metric } from '../auth/quest-record';
+import { Metric } from '../model/quest-record';
 import { type ProgressBump, bumpProgress } from './quest-progress';
-import { CANDY_STACKS, ITEM_STACKS } from '../auth/stacks';
+import { CANDY_STACKS, ITEM_STACKS } from '../model/stacks';
 import { readStackIn, readStacksIn, spendStackIn, writeStackIn } from './stacks';
-import { asOffset, toLocalISO, toLocalTime } from '../auth/local-time';
+import { asOffset, toLocalISO, toLocalTime } from '../model/local-time';
 import { isCatchLocked } from './locks';
 import { asNumber, asNumberArray, asRecord } from './read';
 import { ServerFlag, isFlagOn } from './flags';
@@ -229,6 +231,10 @@ export async function insertCaughtIn(
     movePoints: {},
     abilities,
     items: encounter.items.slice(0, getHeldItemRoom({ slots: room, abilities })),
+    // A Gigantamax Max Raid boss hands its factor on with itself
+    ...(keepsGigantamaxFactor(encounter) ? { gigantamax: true } : {}),
+    // A Tera raid's prize keeps its boss's
+    teraType: keptTeraType(encounter) ?? rollTeraType(encounter.species),
     // The ball is on the entry as well as on the pokemon: this is
     // the one it arrived in, and a later owner may put it in another.
     // Whoever had it first holds no uid: nobody signs in as Red

@@ -12,7 +12,7 @@ import { Dynamic } from 'solid-js/web';
 import { Popover, PopoverButton, PopoverPanel, Transition } from 'terracotta';
 import { useAuth } from '../../auth/context';
 import { localNow, serverNow, syncServerClock } from '../../auth/clock';
-import { getLocalOffset, toLocalTime } from '../../auth/local-time';
+import { getLocalOffset, toLocalTime } from '../../model/local-time';
 import { TIME_OF_DAY_NAMES } from '../../data/biome';
 import { getTimeOfDay } from '../../data/ids/biome';
 import { WEATHER_DESCRIPTIONS, WEATHER_NAMES } from '../../data/overworld/weather';
@@ -49,7 +49,7 @@ import {
 import { WeatherFavors, getWeatherIcon } from '../overworld/WeatherIcon';
 import { Divider } from '../styled';
 import { SHEER } from '../styled/transition';
-import FullscreenToggle, { fullscreenOffered } from './fullscreen';
+import FullscreenToggle, { fullscreenOffered } from './FullscreenToggle';
 import { ThemeToggle } from './theme';
 import { actionOf, forTheGame } from './keys';
 import settings, { type ClockFormat } from './settings';

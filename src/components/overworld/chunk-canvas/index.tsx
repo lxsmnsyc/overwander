@@ -41,34 +41,35 @@ import {
   shortestTurn,
   unprojectGround,
   yawTurns,
-} from '../../../canvas/board';
-import type SpeciesSpriteAnimation from '../../../canvas/species-sprite-animation';
-import { SPRITE_DIRECTIONS, type SpriteDirection } from '../../../canvas/sprite-sheet';
-import drawSparkle, { SPARKLE_LIFE } from '../../../canvas/sparkle';
-import drawHerald, { HERALD_BURST_LIFE } from '../../../canvas/herald';
-import speciesSize from '../../../canvas/species-size';
+} from '../../../canvas/overworld/board';
+import type SpeciesSpriteAnimation from '../../../canvas/sprites/species-sprite-animation';
+import { SPRITE_DIRECTIONS, type SpriteDirection } from '../../../canvas/sprites/sheet';
+import drawSparkle, { SPARKLE_LIFE } from '../../../canvas/effects/sparkle';
+import drawHerald, { HERALD_BURST_LIFE } from '../../../canvas/overworld/herald';
+import speciesSize from '../../../canvas/sprites/species-size';
 import {
   batchAmbient,
   batchSkybox,
+  getAmbient,
   getSkybox,
   paintAmbient,
   paintSkybox,
-} from '../../../canvas/daylight';
+} from '../../../canvas/overworld/daylight';
 import Weather from '../../../data/overworld/weather';
 import settings from '../../app/settings';
 import pixelRatio from '../../../canvas/ratio';
 import paintSky, { CAVERN, type Lamp, batchSky, batchWash, paintCavern } from '../../../canvas/sky';
-import createTwist from '../../../canvas/twist';
+import createTwist from '../../../canvas/overworld/twist';
 import { localNow } from '../../../auth/clock';
-import loadSpeciesSprite from '../../../canvas/species-sprites';
-import drawTileQuad, { grownQuad } from '../../../canvas/tile-quad';
-import loadTerrainTiles, { type TerrainTiles } from '../../../canvas/terrain-tiles';
+import loadSpeciesSprite from '../../../canvas/sprites/species-sprites';
+import drawTileQuad, { grownQuad } from '../../../canvas/overworld/tile-quad';
+import loadTerrainTiles, { type TerrainTiles } from '../../../canvas/overworld/terrain-tiles';
 import createBoardScene, {
   type BoardScene,
   type SceneSpot,
   hazeAt,
 } from '../../../canvas/three/board-scene';
-import terrainCell from '../../../canvas/terrain-cell';
+import terrainCell from '../../../canvas/overworld/terrain-cell';
 import QuadBatch, { type Painter } from '../../../canvas/gl/quad-batch';
 import Bakery, { type Baked } from '../../../canvas/bakery';
 import {
@@ -76,9 +77,9 @@ import {
   type SpriteQuad,
   cornersOf,
   shadowCorners,
-} from '../../../canvas/placement';
+} from '../../../canvas/sprites/placement';
 import type Biome from '../../../data/ids/biome';
-import type { BoardGround } from '../../../overworld/board-ground';
+import type { BoardGround } from '../../../overworld/board/ground';
 import { SpriteAnim } from '../../../data/ids/sprite-anims';
 import type Decoration from '../../../data/overworld/decoration';
 import { getBlocker } from '../../../data/overworld/decoration';
@@ -86,18 +87,18 @@ import Landmark from '../../../data/overworld/landmark';
 import Phenomenon from '../../../data/overworld/phenomenon';
 import Npc from '../../../data/overworld/npc';
 import { npcSheet } from '../../../overworld/npcs';
-import facingToward from '../../../canvas/facing';
-import type OWCharSprite from '../../../canvas/ow-char-sprite';
+import facingToward from '../../../canvas/sprites/facing';
+import type OWCharSprite from '../../../canvas/overworld/char-sprite';
 import type Strangers from '../../../overworld/strangers';
 import type { StrangerStanding } from '../../../overworld/strangers';
-import loadOWChar, { OW_SPRITE_ROOT } from '../../../canvas/ow-char-sprites';
-import type OWPlantSprite from '../../../canvas/ow-plant-sprite';
-import loadOWPlant from '../../../canvas/ow-plant-sprites';
+import loadOWChar, { OW_SPRITE_ROOT } from '../../../canvas/overworld/char-sprites';
+import type OWPlantSprite from '../../../canvas/overworld/plant-sprite';
+import loadOWPlant from '../../../canvas/overworld/plant-sprites';
 import apricornTreeSheet from '../../../data/overworld/apricorn-tree';
 import berryPlantSheet from '../../../data/overworld/berry-plant';
 import decorationPicture, { grottoPicture } from '../../../data/overworld/decoration-sprite';
 import landmarkPicture, { LANDMARK_SHEET } from '../../../data/overworld/landmark-sprite';
-import type BasicSprite from '../../../canvas/basic-sprite';
+import type BasicSprite from '../../../canvas/sprites/basic-sprite';
 import type { Colour } from '../../../canvas/gl/colour';
 import {
   CAVE_LIGHT,
@@ -110,8 +111,8 @@ import {
   encoded,
   isLit,
   litAt,
-} from '../../../canvas/lighting';
-import loadBasicSprite from '../../../canvas/basic-sprites';
+} from '../../../canvas/overworld/lighting';
+import loadBasicSprite from '../../../canvas/sprites/basic-sprites';
 import type { ItemStack } from '../../../data/overworld/item-pool';
 import {
   CELL,
@@ -153,7 +154,7 @@ import {
   RIPPLE_WEIGHT,
   SCENERY_CELLS,
   SLIDE_PACE,
-  SNAP_CELLS,
+  SNAP_STEPS,
   SPRITE_STANDS,
   VEIL_ALPHA,
   VEIL_FADE,
@@ -167,7 +168,7 @@ import {
   pictureWidth,
   shadowSquash,
   slideGain,
-} from './metrics';
+} from '../../../canvas/overworld/metrics';
 import {
   type AuraPart,
   CellAura,
@@ -187,13 +188,22 @@ import {
   paintSparkle,
   phenomenonSpan,
   plantCallOut,
-} from './scenery';
+} from '../../../canvas/overworld/scenery';
+import {
+  RaidBeacon,
+  beaconCorners,
+  drawRaidBeacon,
+  paintRaidBeacon,
+} from '../../../canvas/overworld/beacon';
 
 /**
  * How near the viewer the backdrop is drawn, in the scene's own clip
  * space: behind the country, which is all there is behind it
  */
 const BEHIND = 0.99;
+
+/** How much of the night a raid site's light lifts, against how deep the night is */
+const BEACON_NIGHT_LIFT = 1.6;
 
 /** How far a mark spreads past the cell it belongs to, in cells */
 const RING_SPREAD = 2;
@@ -340,6 +350,11 @@ export interface ChunkCanvasProps {
    * not yet visited
    */
   auras: Map<number, CellAura>;
+  /**
+   * What a Max Raid's pillar burns as this window, by cell. A Max Raid
+   * left out burns red; a Totem site needs no word
+   */
+  beacons?: Map<number, RaidBeacon>;
   /**
    * The chunk's scenery by cell. It is drawn and nothing else: a tree
    * cannot be pressed, and standing on one does nothing
@@ -1128,6 +1143,8 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
    * jump too far to be a step snaps instead
    */
   const slide = { x: props.at[0], y: props.at[1] };
+  /** Where the last step went to, and how long it was: 1, or √2 diagonally */
+  const stepped = { x: props.at[0], y: props.at[1], stride: 1 };
   /**
    * How high the ground under the player stands, eased the way their
    * step is. The picture is centred on it, so walking up a terrace
@@ -2022,6 +2039,13 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       // the walk cycle fed by how far it actually moved this frame
       const walker = playerPerson();
       const [goalX, goalY] = props.at;
+
+      if (goalX !== stepped.x || goalY !== stepped.y) {
+        // Anything longer than a diagonal is a jump, which snaps anyway
+        stepped.stride = Math.min(Math.hypot(goalX - stepped.x, goalY - stepped.y), Math.SQRT2);
+        stepped.x = goalX;
+        stepped.y = goalY;
+      }
       const dx = goalX - slide.x;
       const dy = goalY - slide.y;
       const span = Math.hypot(dx, dy);
@@ -2033,7 +2057,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
       }
       sliding = span > 0;
 
-      if (span > SNAP_CELLS) {
+      if (span > SNAP_STEPS * stepped.stride) {
         slide.x = goalX;
         slide.y = goalY;
         // Standing still, so the way they are standing is the caller's
@@ -2042,13 +2066,13 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         heading = facingToward(0, 0, props.facing[0], props.facing[1]);
         walker?.stop();
       } else if (span > 0) {
-        const gain = slideGain(span, elapsed);
+        const gain = slideGain(span, elapsed, stepped.stride);
 
         heading = facingToward(slide.x, slide.y, goalX, goalY);
         slide.x += (dx / span) * gain;
         slide.y += (dy / span) * gain;
         walker?.advanceBy(gain * CELL_STRIDE);
-        strideUntil = clock + SLIDE_PACE;
+        strideUntil = clock + SLIDE_PACE * stepped.stride;
       } else {
         heading = facingToward(0, 0, props.facing[0], props.facing[1]);
         walker?.stop();
@@ -2960,6 +2984,66 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         );
       };
 
+      /** Which raid site a cell is painted as, if it is one */
+      const beaconOn = (index: number): RaidBeacon | null => {
+        const landmark = props.landmarks.get(index);
+
+        if (landmark === Landmark.Totem) {
+          return RaidBeacon.Totem;
+        }
+        if (landmark !== Landmark.MaxRaid) {
+          return null;
+        }
+        // Won this window: the light goes out until the next boss
+        if (props.auras.get(index) === CellAura.Cleared) {
+          return RaidBeacon.Spent;
+        }
+        return props.beacons?.get(index) ?? RaidBeacon.Max;
+      };
+
+      /** The lit raid sites, stamped again over the night so their light carries */
+      const glowing: { middle: ProjectedPoint; beacon: RaidBeacon }[] = [];
+
+      /** One half of a raid site, if the cell is one */
+      const stampBeacon = (
+        index: number,
+        middle: ProjectedPoint,
+        part: AuraPart,
+        alpha = 1,
+      ): void => {
+        const beacon = beaconOn(index);
+
+        if (beacon == null) {
+          return;
+        }
+        if (part === 'air' && alpha === 1 && beacon !== RaidBeacon.Spent) {
+          glowing.push({ middle, beacon });
+        }
+        animating = true;
+        const squash = shadowSquash();
+        const picture = batch == null ? null : paintRaidBeacon(beacon, part, clock, squash);
+
+        if (picture == null || batch == null) {
+          context.save();
+          context.globalAlpha = alpha;
+          drawRaidBeacon(context, middle, beacon, part, clock, magnify, squash);
+          context.restore();
+          return;
+        }
+        if (!repaintedAuras.has(`beacon${beacon}:${part}`)) {
+          batch.invalidate(picture);
+          repaintedAuras.add(`beacon${beacon}:${part}`);
+        }
+        batch.quad(
+          picture,
+          { x: 0, y: 0, width: picture.width, height: picture.height },
+          beaconCorners(middle, magnify),
+          alpha,
+          undefined,
+          'smooth',
+        );
+      };
+
       /** The cell the cursor is over, once this frame */
       const under = hovered();
       /**
@@ -3680,6 +3764,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
           // The ring and its light lie under the landmark and whoever
           // stands on it; the glints are drawn over them further down
           stampAura(index, middle, 'ground');
+          stampBeacon(index, middle, 'ground');
           standPiece(
             context,
             sceneryOn(index),
@@ -3858,6 +3943,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
 
         if (!loading()) {
           stampAura(index, middle, 'air');
+          stampBeacon(index, middle, 'air');
         }
 
         if (standing != null) {
@@ -4099,6 +4185,33 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         batchWash(batch, width, height, skies.to, clock, risen, null, sky);
         batchSky(batch, width, height, skies.from, clock, 1 - risen, sky);
         batchSky(batch, width, height, skies.to, clock, risen, sky);
+      }
+
+      // A raid site's light is its own, so the night is lifted off it
+      // by as much as the night took
+      const night = props.underground ? 0 : getAmbient(worldTime(), props.latitude).depth;
+
+      if (night > 0) {
+        for (const { middle, beacon } of glowing) {
+          const picture =
+            batch == null ? null : paintRaidBeacon(beacon, 'air', clock, shadowSquash());
+
+          if (picture == null || batch == null) {
+            context.save();
+            context.globalAlpha = Math.min(1, night * BEACON_NIGHT_LIFT);
+            drawRaidBeacon(context, middle, beacon, 'air', clock, magnify, shadowSquash());
+            context.restore();
+            continue;
+          }
+          batch.quad(
+            picture,
+            { x: 0, y: 0, width: picture.width, height: picture.height },
+            beaconCorners(middle, magnify),
+            Math.min(1, night * BEACON_NIGHT_LIFT),
+            undefined,
+            'smooth',
+          );
+        }
       }
 
       /**

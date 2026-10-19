@@ -1,32 +1,34 @@
 import 'server-only';
-import { Acquisition, asCaughtPokemon, isAuctionableCatch } from '../auth/caught-record';
-import { ITEM_STACKS } from '../auth/stacks';
-import { getMaxHealth, getStats, rescaleHealth } from '../auth/health';
+import { Acquisition, asCaughtPokemon, isAuctionableCatch } from '../model/caught-record';
+import { CANDY_STACKS, ITEM_STACKS } from '../model/stacks';
+import { getMaxHealth, getStats, rescaleHealth } from '../model/health';
 import { getTimeOfDay } from '../data/ids/biome';
-import { toLocalTime } from '../auth/local-time';
+import { toLocalTime } from '../model/local-time';
 import { Balls, type Items } from '../data/ids/items';
 import type { Moves } from '../data/ids/moves';
-import { Genders, type Species } from '../data/ids/species';
+import type Natures from '../data/ids/natures';
+import { EvolutionMethod, Genders, type Species } from '../data/ids/species';
 import type { EvolutionContext, EvolutionData } from '../data/species';
-import { FUSION_ITEM } from '../data/species/fusion';
+import { FUSION_ITEMS } from '../data/species/fusion';
 import {
   getConsumedItem,
   getSpeciesData,
   getSpentHeldItem,
   getWingPattern,
+  isOneInAHundred,
   meetsEvolutionCriteria,
 } from '../data/species';
-import { Metric } from '../auth/quest-record';
+import { Metric } from '../model/quest-record';
 import { isEggRecord, isGuardedRecord, withoutHeld } from './catch-fields';
 import { recordFoundSpecies } from './pokedex';
 import { type ProgressBump, bumpProgress } from './quest-progress';
-import { readStackIn, writeStackIn } from './stacks';
+import { readStackIn, spendStackIn, writeStackIn } from './stacks';
 import { readCaughtIn, updateCaughtIn } from './caught-io';
 import { insertCaughtIn } from './caught';
 import { tx } from './db';
 import { isCatchLocked } from './locks';
 import { asNumber, asNumberArray } from './read';
-import { asBoolean } from '../auth/__normalize';
+import { asBoolean } from '../model/normalize';
 
 /**
  * Evolving, written with admin credentials. An evolution turns a
@@ -78,13 +80,29 @@ export default async function evolveCatch(
       // A husk is only ever left beside another evolution, and a
       // fusion is two pokemon rather than one, so it has a road of its
       // own in `src/server/fusion.ts` and never comes through here
-      if (entry.species === into && entry.shed !== true && entry.item !== FUSION_ITEM) {
+      if (
+        entry.species === into &&
+        entry.shed !== true &&
+        (entry.item == null || !FUSION_ITEMS.has(entry.item))
+      ) {
         roads.push(entry);
       }
     }
 
     if (roads.length === 0) {
       return null;
+    }
+
+    const { family } = getSpeciesData(species);
+    // Only read where a road spends them: a Gimmighoul's pile is what
+    // its Gholdengo costs
+    let candies = 0;
+
+    for (const road of roads) {
+      if ((road.method & EvolutionMethod.Candy) !== 0) {
+        candies = await readStackIn(transaction, CANDY_STACKS, uid, family);
+        break;
+      }
     }
 
     // Read off the stored record rather than taken from the caller: a
@@ -117,6 +135,14 @@ export default async function evolveCatch(
       // is settled the moment it is caught
       // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
       gender: asNumber(caught.gender) as Genders,
+      // Born with it, the same as the gender: what a Toxel becomes
+      // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
+      nature: asNumber(caught.nature) as Natures,
+      // Counted by the server as the buddy walks, never reported here
+      walked: asNumber(caught.walked),
+      candies,
+      // Its trait value, set when it was met: a Tandemaus's family size
+      rare: isOneInAHundred(asNumber(caught.traitValue)),
     };
     // The road taken is the first one open, which decides what is
     // spent: a handover that does not cover the evolution pays a
@@ -145,6 +171,12 @@ export default async function evolveCatch(
       return null;
     }
 
+    if (
+      (evolution.method & EvolutionMethod.Candy) !== 0 &&
+      !(await spendStackIn(transaction, CANDY_STACKS, uid, family, candies, evolution.candies ?? 0))
+    ) {
+      return null;
+    }
     if (consumed != null) {
       await writeStackIn(transaction, ITEM_STACKS, uid, consumed, stock - 1);
       spent = consumed;
@@ -174,6 +206,7 @@ export default async function evolveCatch(
       // change of shape: a handover earned by one species is never
       // read by the next one up
       canEvolve: false,
+      featProgress: 0,
       // No Gen 1 line evolves into a legendary, so this changes
       // nothing today. It is written anyway because the day a line
       // does, a silent wrong answer here would be very hard to see

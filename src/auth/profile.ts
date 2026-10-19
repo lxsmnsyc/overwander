@@ -1,13 +1,13 @@
 import claimDevAdmin from './roles';
 import { DEFAULT_CHARSET } from '../data/overworld/charsets';
-import { DEFAULT_PLAYER_NAME, asPlayerName } from './nickname';
+import { DEFAULT_PLAYER_NAME, asPlayerName } from '../model/nickname';
 import { type Unwatch, watchRow } from './watch';
 import getIdToken from './session';
-import { readOnly } from '../utils/server-calls';
+import { readOnly } from './server-calls';
 import { requireReader, requireUid } from '../server/auth';
 import check, { MAYBE_ID, PLAYER_NAME, TOKEN, UID, UID_BATCH } from '../server/validate';
 import { readProfileRows, writeBuddy, writeNickname } from '../server/profile';
-import batchedQuery from '../utils/batched-query';
+import batchedQuery from './batched-query';
 import type { PlayerIdentity } from './user';
 
 /**

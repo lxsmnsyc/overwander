@@ -2,7 +2,7 @@ import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Types } from '../../data/constants/types';
 import Abilities from '../../data/ids/abilities';
 import { Moves } from '../../data/ids/moves';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, MoveTargetType } from '../events';
 import type Unit from '../unit';
 
@@ -25,16 +25,28 @@ function retype(unit: Unit, types: Types[]): void {
   }
 }
 
+/** The moves that make the target one type and nothing else */
+const RETYPES = new Map<Moves, Types>([
+  [Moves.Soak, Types.Water],
+  [Moves.MagicPowder, Types.Psychic],
+]);
+
 /** Whether the move would change anything, which is also when it works */
 function changes(move: Moves, source: Unit, target: Unit): boolean {
-  if (move === Moves.Soak) {
-    // A Multitype pokemon's type is its plate's, not something to wash off
-    return !hasExactly(target, [Types.Water]) && !target.hasAbility(Abilities.Multitype);
+  const into = RETYPES.get(move);
+
+  if (into != null) {
+    // A Multitype or RKS System pokemon's type is its item's, not something to wash off
+    return (
+      !hasExactly(target, [into]) &&
+      !target.hasAbility(Abilities.Multitype) &&
+      !target.hasAbility(Abilities.RksSystem)
+    );
   }
   return target.types.size > 0 && !hasExactly(source, [...target.types]);
 }
 
-const TYPING_MOVES = new Set<Moves>([Moves.Soak, Moves.ReflectType]);
+const TYPING_MOVES = new Set<Moves>([...RETYPES.keys(), Moves.ReflectType]);
 
 export default function setupTypingMoves(battle: Battle): void {
   setupBurnUp(battle);
@@ -51,10 +63,12 @@ export default function setupTypingMoves(battle: Battle): void {
       return;
     }
 
-    if (event.move === Moves.Soak) {
-      retype(target, [Types.Water]);
-    } else {
+    const into = RETYPES.get(event.move);
+
+    if (into == null) {
       retype(event.source, [...target.types]);
+    } else {
+      retype(target, [into]);
     }
   });
 
@@ -117,26 +131,37 @@ function setupAddedTypes(battle: Battle): void {
 }
 
 /**
- * Burn Up spends the user's own fire: it only works from a Fire type,
- * and the user is not one afterwards
+ * Burn Up and Double Shock spend the user's own type: each only works
+ * from that type, and the user is not one afterwards
  * https://bulbapedia.bulbagarden.net/wiki/Burn_Up_(move)
  */
+const SPENT_TYPES = new Map<Moves, Types>([
+  [Moves.BurnUp, Types.Fire],
+  [Moves.DoubleShock, Types.Electric],
+]);
+
 function setupBurnUp(battle: Battle): void {
   battle.on(BattleEvents.CheckUnitCanCast, EventPriority.Post, (event) => {
-    if (event.success && event.move === Moves.BurnUp && !event.source.types.has(Types.Fire)) {
+    const type = SPENT_TYPES.get(event.move);
+
+    if (event.success && type != null && !event.source.types.has(type)) {
       event.success = false;
     }
   });
 
   battle.on(BattleEvents.CheckUnitAIMoveUsable, AttackPriority.Exact, (event) => {
-    if (event.usable && event.move === Moves.BurnUp) {
-      event.usable = event.source.types.has(Types.Fire);
+    const type = SPENT_TYPES.get(event.move);
+
+    if (event.usable && type != null) {
+      event.usable = event.source.types.has(type);
     }
   });
 
   battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Post, (event) => {
-    if (event.move === Moves.BurnUp && event.source.types.has(Types.Fire)) {
-      event.source.removeType(Types.Fire);
+    const type = SPENT_TYPES.get(event.move);
+
+    if (type != null && event.source.types.has(type)) {
+      event.source.removeType(type);
     }
   });
 }

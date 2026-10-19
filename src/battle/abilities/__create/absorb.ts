@@ -3,11 +3,11 @@ import { MAX_STAGE, type Stages } from '../../../data/constants/stats';
 import type Abilities from '../../../data/ids/abilities';
 import type { Types } from '../../../data/constants/types';
 import { FEED_BONUS } from '../../ai/score';
-import type Battle from '../../core';
+import type Battle from '../../battle';
 import { BattleEvents, EffectType, MoveTargetType } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
 import { isCentered } from '../../status/centered';
-import { unitTarget } from '../../utils';
+import { unitTarget } from '../../unit-checks';
 import { createAbility, getAbilityHolders } from './create';
 import { type AbsorbMatcher, movesOfType } from './matchers';
 import { createFeedScoring } from './scoring';
@@ -15,7 +15,8 @@ import { createFeedScoring } from './scoring';
 /** Abilities that take a move rather than a blow: what they match, and what they pay */
 /**
  * An ability that refuses a move outright and takes a stage from it
- * instead: Sap Sipper, Motor Drive, Storm Drain, Wind Rider.
+ * instead: Sap Sipper, Motor Drive, Storm Drain, Wind Rider, and
+ * Well-Baked Body, which takes 2.
  *
  * The refusal and the payout are deliberately separate. The immunity
  * is a pure answer to a question anybody may ask, including the AI's
@@ -27,8 +28,9 @@ export function createAbsorbStageAbility(
   ability: Abilities,
   stage: Stages,
   matches: AbsorbMatcher,
+  stages = 1,
 ): (battle: Battle) => void {
-  return createAbility(ability, (battle) => absorbStage(battle, ability, stage, matches));
+  return createAbility(ability, (battle) => absorbStage(battle, ability, stage, matches, stages));
 }
 
 function absorbStage(
@@ -36,6 +38,7 @@ function absorbStage(
   ability: Abilities,
   stage: Stages,
   matches: AbsorbMatcher,
+  stages = 1,
 ): MergedLifecycle {
   return new MergedLifecycle([
     battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
@@ -70,7 +73,7 @@ function absorbStage(
     ),
     battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
       if (event.ability === ability) {
-        event.source.addStage(stage, 1, {
+        event.source.addStage(stage, stages, {
           type: EffectType.Ability,
           ability,
           unit: event.source,
@@ -121,6 +124,22 @@ export function createRodAbility(
           }
         }),
       ]),
+  );
+}
+
+/**
+ * An ability whose moves go where they were aimed: no Follow Me and no
+ * rod pulls them aside (Stalwart, Propeller Tail). Ending the question
+ * before anybody answers it leaves the aim standing
+ * https://bulbapedia.bulbagarden.net/wiki/Stalwart_(Ability)
+ */
+export function createStalwartAbility(ability: Abilities): (battle: Battle) => void {
+  return createAbility(ability, (battle) =>
+    battle.on(BattleEvents.CheckUnitMoveRedirect, EventPriority.Pre, (event) => {
+      if (event.source.hasAbility(ability)) {
+        event.disabled = true;
+      }
+    }),
   );
 }
 

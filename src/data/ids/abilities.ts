@@ -578,6 +578,27 @@ const enum Abilities {
    */
   Purified = 100003,
   /**
+   * What makes a raid boss a Totem: the aura it starts in, and the one
+   * ally of its own line it calls at half HP
+   */
+  Totem = 100004,
+  /**
+   * The ally a Totem calls: a raid-sized pokemon of its line, though
+   * a smaller one than the Totem itself
+   */
+  TotemAlly = 100005,
+  /**
+   * What makes a raid boss an Alpha: an oversized wild pokemon that
+   * brings its side back to six of its own kind as it is worn down
+   */
+  Alpha = 100006,
+  /**
+   * What makes a raid boss a frenzied Noble: it is calmed rather than
+   * felled, staggers as its Frenzy drains and bursts on the whole party
+   * in between
+   */
+  Noble = 100007,
+  /**
    * Signature (one per family, granted rather than rolled at birth).
    * They sit outside the pools walk, so a line's four ordinary
    * abilities stay four
@@ -1012,6 +1033,217 @@ const enum Abilities {
   OrchidGuise = 200379,
   // Bounsweet
   TropStride = 200380,
+  // Morelull
+  DrowsyGlow = 200381,
+  // Comfey
+  LeiGift = 200382,
+  // Oranguru
+  SagesCall = 200383,
+  // Passimian
+  RushPass = 200384,
+  // Mareanie
+  ToxicDome = 200385,
+  // Salandit
+  FumeFlare = 200386,
+  // Stufful
+  FondCrush = 200387,
+  // Wimpod
+  OpeningSlash = 200388,
+  // Sandygast
+  CastleDrain = 200389,
+  // Pyukumuku
+  TossedBack = 200390,
+  // Minior
+  Starfall = 200391,
+  // Togedemaru
+  ChargedSpines = 200392,
+  // Alolan Rattata
+  RichDiet = 200393,
+  // Alolan Sandshrew
+  Frostforged = 200394,
+  // Alolan Vulpix
+  AuroraCrown = 200395,
+  // Alolan Diglett
+  WireSnare = 200396,
+  // Alolan Meowth
+  TauntingGaze = 200397,
+  // Alolan Geodude
+  MagnetFloat = 200398,
+  // Alolan Grimer
+  CrystalToxin = 200399,
+  // Komala
+  NapTime = 200400,
+  // Turtonator
+  BlastShell = 200401,
+  // Mimikyu
+  GrudgeShroud = 200402,
+  // Drampa
+  EldersIre = 200403,
+  // Type: Null
+  MemoryEcho = 200404,
+  // Bruxish
+  PsychicGnash = 200405,
+  // Dhelmise
+  GhostShip = 200406,
+  // Jangmo-o
+  WarClangor = 200407,
+  // The Tapus: each island's guardian blesses its own under its terrain
+  StormBlessing = 200408,
+  MindBlessing = 200409,
+  WildBlessing = 200410,
+  MistBlessing = 200411,
+  // The light trio: one reads its health from the top, one from the bottom
+  Zenith = 200412,
+  Nadir = 200413,
+  // The Ultra Beasts: each shrugs off one weakness this world has for it
+  Earthless = 200414,
+  Windbreak = 200415,
+  GaleWard = 200416,
+  Unearthed = 200417,
+  HeatShield = 200418,
+  Fireproof = 200419,
+  Unenchanted = 200420,
+  ClosedMind = 200421,
+  DeepFooting = 200422,
+  DryFuse = 200423,
+  // Alola's mythicals, one each
+  SoulRelay = 200424,
+  UmbralStrike = 200425,
+  IonField = 200426,
+  MetalEater = 200427,
+  // Galar's routes: the starters, then each family where it is met
+  DrumCue = 200428,
+  KickCue = 200429,
+  ScopeCue = 200430,
+  PantryRaid = 200431,
+  SteelEscort = 200432,
+  EarlyWarning = 200433,
+  Fence = 200434,
+  CottonCradle = 200435,
+  Shorn = 200436,
+  ShellSnap = 200437,
+  Zoomies = 200438,
+  SharedHarvest = 200439,
+  CoilBurrow = 200440,
+  ThroatPouch = 200441,
+  Spearhead = 200442,
+  VenomCharge = 200443,
+  CinderCoils = 200444,
+  ArmLock = 200445,
+  LiveSpines = 200446,
+  LastPour = 200447,
+  SilentWrath = 200448,
+  DespairFeast = 200449,
+  Sugarcoat = 200450,
+  MirrorScales = 200451,
+  ChippedIce = 200452,
+  RankAndFile = 200453,
+  Attendant = 200454,
+  HangrySpark = 200455,
+  Overhang = 200456,
+  DreepyLaunch = 200457,
+  Solstice = 200458,
+  Boltdrake = 200459,
+  Boltfrost = 200460,
+  Gilldrake = 200461,
+  Gillfrost = 200462,
+  // Galar's regional lines, then its legends
+  WarSpoils = 200463,
+  MendingHorn = 200464,
+  SlowVenom = 200465,
+  LeekShield = 200466,
+  CoralHusk = 200467,
+  Blockade = 200468,
+  ColdSink = 200469,
+  CarvedGrudge = 200470,
+  Glarewing = 200471,
+  Strikewing = 200472,
+  Wrathwing = 200473,
+  SwornBlade = 200474,
+  SwornShield = 200475,
+  DarkestDay = 200476,
+  Kata = 200477,
+  VoltSeal = 200478,
+  WyrmSeal = 200479,
+  Frostreign = 200480,
+  Shadereign = 200481,
+  Crownreign = 200482,
+  // Hisui's regional lines, then Enamorus
+  Watchfire = 200483,
+  HuskBurst = 200484,
+  VenomFeast = 200485,
+  NerveVenom = 200486,
+  Afterhaunt = 200487,
+  SoulCloak = 200488,
+  Bloomfall = 200489,
+  // Paldea: the starters, then each family where it is met
+  PetalScatter = 200490,
+  SpreadingFlame = 200491,
+  Wake = 200492,
+  PigOut = 200493,
+  Tripwire = 200494,
+  Knockback = 200495,
+  StaticPalms = 200496,
+  ScatterBrood = 200497,
+  FreshBatch = 200498,
+  Anoint = 200499,
+  BrineRebound = 200500,
+  Kindling = 200501,
+  BubbleShock = 200502,
+  LightningDive = 200503,
+  Windswept = 200504,
+  MyceliumMat = 200505,
+  HeatTolerance = 200506,
+  BallToss = 200507,
+  StareDown = 200508,
+  Tinker = 200509,
+  SandDuck = 200510,
+  Lifeguard = 200511,
+  Redline = 200512,
+  ShedDecoy = 200513,
+  SlagTrail = 200514,
+  Glimmering = 200515,
+  GraveDigger = 200516,
+  SnowHoard = 200517,
+  FilletThrift = 200518,
+  Mouthful = 200519,
+  BackSeatOrders = 200520,
+  GlaiveGuard = 200521,
+  // Paldea's regional lines, and the tea pair's support half
+  BogDown = 200522,
+  Raging = 200523,
+  TeaService = 200524,
+  // Paldea's legends: Gimmighoul, the Treasures of Ruin, the box legends and the Paradox pokemon
+  CoinScatter = 200525,
+  WitheredTablets = 200526,
+  ShatteredSword = 200527,
+  CrackedVessel = 200528,
+  ScatteredBeads = 200529,
+  SunSprint = 200530,
+  DriveMode = 200531,
+  HeadlongGuard = 200532,
+  ShriekSpeed = 200533,
+  EerieFlutter = 200534,
+  AncientCocoon = 200535,
+  EarthCurrent = 200536,
+  MoonHowl = 200537,
+  SteamSurge = 200538,
+  MoltenBulwark = 200539,
+  StormCloud = 200540,
+  TrackLaying = 200541,
+  IcePack = 200542,
+  IronGrip = 200543,
+  ToxicExhaust = 200544,
+  SandGenerator = 200545,
+  Afterimage = 200546,
+  TerrainEdge = 200547,
+  // Kitakami's legends, Terapagos and Pecharunt
+  HoundsOath = 200548,
+  MonkeysOath = 200549,
+  PheasantsOath = 200550,
+  MaskAura = 200551,
+  Prismatic = 200552,
+  PuppetStrings = 200553,
 }
 
 export default Abilities;

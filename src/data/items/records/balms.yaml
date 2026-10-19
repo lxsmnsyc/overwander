@@ -1,0 +1,10 @@
+# Thrown at a frenzied Noble rather than used on a pokemon: a party packs
+# what its player carries when a Noble raid starts. Stocked by the medicine
+# counter, and a calmed Noble leaves a few behind.
+
+Balm:
+  type: Medicine
+  icon: key/balm
+  flags: [Consumable, Marketable]
+  buy: 1500
+  sell: 750

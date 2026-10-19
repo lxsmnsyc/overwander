@@ -2,7 +2,7 @@ import { AttackPriority, EventPriority } from '../../../core/event-emitter';
 import { Items } from '../../../data/ids/items';
 import { DamageFlags } from '../../../data/ids/moves';
 import { Statuses, type Weathers } from '../../../data/ids/status';
-import type Battle from '../../core';
+import type Battle from '../../battle';
 import { BattleEvents, EffectType } from '../../events';
 import { TRAPPING_MOVES } from '../../moves/status';
 import { createHeldItem, holds } from '../__create';

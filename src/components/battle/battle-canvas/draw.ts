@@ -1,25 +1,25 @@
-import type SpeciesSpriteAnimation from '../../../canvas/species-sprite-animation';
+import type SpeciesSpriteAnimation from '../../../canvas/sprites/species-sprite-animation';
 import type { Slot } from './field';
 import { type CastLabels, drawCastLabel } from './cast-label';
-import drawFormMark from './form-mark';
-import { COLORS, HIT_REACH, NAMED_RADIUS } from './metrics';
-import speciesSize from '../../../canvas/species-size';
+import drawFormMark, { wearsFormMark } from './form-mark';
+import { drawTeraBehind, drawTeraJewel, drawTeraOver, teraLookOf } from './terastal';
+import { type GiantBody, drawGiantBehind, drawGiantOver, giantLookOf } from './dynamax';
+import { COLORS, DYNAMAX_DRAW_SCALE, HIT_REACH, NAMED_RADIUS, TOTEM_DRAW_SCALE } from './metrics';
+import speciesSize from '../../../canvas/sprites/species-size';
 import { type Striking, animationFor } from './motion';
 import type { ProgressData } from '../../../battle/events';
 import type Unit from '../../../battle/unit';
-import { paintAura, paintPurifiedAura, paintShadowAura } from '../../../canvas/auras';
+import { paintAura, paintPurifiedAura, paintShadowAura } from '../../../canvas/effects/auras';
 import type Bakery from '../../../canvas/bakery';
 import type { Painter, QuadPoint } from '../../../canvas/gl/quad-batch';
-import projectField, { type FieldView, unprojectField } from '../../../canvas/battle/field';
+import projectField, { type FieldView, unprojectField } from '../../../canvas/battle/projection';
 import type EffectBatch from '../../../canvas/three/effect-batch';
 import type { Spot } from '../../../canvas/three/effect-batch';
 import { litPurifiedAura, litShadowAura, litSparkle } from '../../../canvas/battle/decor';
-import { cornersOf, shadowCorners } from '../../../canvas/placement';
-import { facingVector } from '../../../canvas/facing';
-import { SHIM_SPANS, shimMotion } from '../../../canvas/battle/sprite-shim';
-import { SHADOW_STAMP, bakeShadowDisc, paintSparkle } from '../../overworld/chunk-canvas/scenery';
-import drawSparkle, { SPARKLE_LIFE } from '../../../canvas/sparkle';
-import type { Point } from '../../../canvas/sprite-sheet';
+import { cornersOf, shadowCorners } from '../../../canvas/sprites/placement';
+import { SHADOW_STAMP, bakeShadowDisc, paintSparkle } from '../../../canvas/overworld/scenery';
+import drawSparkle, { SPARKLE_LIFE } from '../../../canvas/effects/sparkle';
+import type { Point } from '../../../canvas/sprites/sheet';
 import { Stats } from '../../../data/constants/stats';
 import Abilities from '../../../data/ids/abilities';
 import { SpriteAnim } from '../../../data/ids/sprite-anims';
@@ -83,6 +83,9 @@ function corners(x: number, y: number, across: number, down: number): QuadPoint[
     { x, y: y + down },
   ];
 }
+
+/** How far a Dynamax's soft glow reaches on the 2D context */
+const DYNAMAX_BLUR = 18;
 
 /**
  * The round patch under a pokemon, stamped from the one baked disc.
@@ -159,35 +162,6 @@ function fractionOf(progress: ProgressData): number {
  * How much bigger than the sheet a pokemon in this slot is drawn
  */
 /**
- * A quad turned about a point. The batch takes four corners rather
- * than a rectangle, so a rotation is the corners moved and nothing
- * else
- */
-function turned(
-  quad: { x: number; y: number }[],
-  x: number,
-  y: number,
-  angle: number,
-): { x: number; y: number }[] {
-  if (angle === 0) {
-    return quad;
-  }
-
-  const cos = Math.cos(angle);
-  const sin = Math.sin(angle);
-
-  const rotated: { x: number; y: number }[] = [];
-
-  for (const corner of quad) {
-    rotated.push({
-      x: x + (corner.x - x) * cos - (corner.y - y) * sin,
-      y: y + (corner.x - x) * sin + (corner.y - y) * cos,
-    });
-  }
-  return rotated;
-}
-
-/**
  * How many marks run from a caster to what it is aiming at, how long
  * one takes to travel the whole way, and how long each one is as a
  * share of the gap
@@ -259,9 +233,20 @@ export function scaleOf(slot: Slot): number {
   const sprite = slot.sprite;
 
   // The doll has no species data to size it by, so it keeps the base scale
-  return sprite == null || slot.unit.appearance === Species.Substitute
-    ? baseScaleOf(slot)
-    : baseScaleOf(slot) * speciesSize(slot.unit.appearance, sprite);
+  if (sprite == null || slot.unit.appearance === Species.Substitute) {
+    return baseScaleOf(slot);
+  }
+  // A Totem, an Alpha or a Noble towers over the rest of its kind
+  const towering =
+    slot.unit.hasAbility(Abilities.Totem) ||
+    slot.unit.hasAbility(Abilities.Alpha) ||
+    slot.unit.hasAbility(Abilities.Noble)
+      ? TOTEM_DRAW_SCALE
+      : 1;
+  // And a Dynamax grows into its size rather than jumping to it
+  const giant = 1 + (DYNAMAX_DRAW_SCALE - 1) * (slot.giant ?? 0);
+
+  return baseScaleOf(slot) * speciesSize(slot.unit.appearance, sprite) * towering * giant;
 }
 
 /**
@@ -628,30 +613,6 @@ export function drawSlot(
       if (wanted.still) {
         sprite.stop();
       }
-      // A clip the sheet has not got is stood in for by moving the
-      // body the way that clip would have. It is written into the
-      // slot's offset, which is what moves a pokemon without taking
-      // its bar and its name along with it
-      if (wanted.shim != null) {
-        const span = SHIM_SPANS[wanted.shim];
-        // A move runs its stand-in once, over the window the engine
-        // holds it for; a status loops it for as long as it is carried
-        const through =
-          strike == null
-            ? (clock % span) / span
-            : Math.min(1, (strike.elapsed ?? 0) / Math.max(1, strike.window));
-        const motion = shimMotion(wanted.shim, through);
-        const size = sprite.frameSize;
-        const scale = scaleOf(slot);
-        const [ahead, down] = facingVector(slot.facing);
-        const reach = motion.along * size.width * scale;
-
-        slot.offset = [
-          slot.offset[0] + ahead * reach,
-          slot.offset[1] + down * reach - motion.lift * size.height * scale,
-        ];
-        slot.spin = motion.spin;
-      }
       // Its body over the middle of the slot, which is the point
       // everything else on the field is measured from: the bars, the
       // name, and whatever a move draws on it.
@@ -703,18 +664,38 @@ export function drawSlot(
       } else if (!shade(sprite.shadowOf(x, y, placement), onto, alpha)) {
         sprite.drawShadow(context, x, y, placement);
       }
-      const quad = onto == null ? null : sprite.quadOf(x, y, placement);
+      // Asked for on both renderers: the Dynamax look is drawn off the frame
+      const quad = sprite.quadOf(x, y, placement);
+      const look = giantLookOf(slot.giant ?? 0, unit.gigantamax, clock);
+      const tera = quad == null ? null : teraLookOf(unit, clock);
+      const giant: GiantBody | null =
+        look == null || quad == null
+          ? null
+          : {
+              quad,
+              foot: [x, y],
+              middle: sprite.locate('center', x, y, placement),
+              reach: sprite.shadowRadius(placement.scale).x,
+            };
 
       if (onto == null || quad == null) {
-        // Turned about the point it stands on, so a spinning pokemon
-        // stays on its own spot rather than orbiting it
-        if (slot.spin !== 0) {
+        if (tera != null && quad != null) {
+          drawTeraBehind(context, quad, tera, alpha);
+        }
+        if (giant != null && look != null) {
+          drawGiantBehind(context, giant, look, clock, alpha);
           context.save();
-          context.translate(x, y);
-          context.rotate(slot.spin);
-          context.translate(-x, -y);
+          context.shadowColor = look.tint;
+          context.shadowBlur = DYNAMAX_BLUR * look.share;
         }
         sprite.draw(context, x, y, placement);
+        if (giant != null && look != null) {
+          context.restore();
+          drawGiantOver(context, giant, look, clock, alpha);
+        }
+        if (tera != null && quad != null) {
+          drawTeraOver(context, quad, tera, clock, alpha);
+        }
         // A transformation's flash, laid over the body it is lighting
         if ((slot.glow ?? 0) > 0) {
           context.save();
@@ -723,15 +704,26 @@ export function drawSlot(
           sprite.draw(context, x, y, placement);
           context.restore();
         }
-        if (slot.spin !== 0) {
-          context.restore();
-        }
       } else {
+        const body = cornersOf(quad);
+
+        // Behind the body and hiding nothing: the far clouds and the glow
+        if (tera != null) {
+          drawTeraBehind(context, quad, tera, alpha, onto);
+        }
+        if (giant != null && look != null) {
+          drawGiantBehind(context, giant, look, clock, alpha, onto);
+        }
         // The one picture that hides a move effect passing behind it
         onto.solid?.(true);
-        const body = turned(cornersOf(quad), x, y, slot.spin);
-
         onto.batch.quad(quad.sheet, quad.source, body, alpha);
+        onto.solid?.(false);
+        if (giant != null && look != null) {
+          drawGiantOver(context, giant, look, clock, alpha, onto);
+        }
+        if (tera != null) {
+          drawTeraOver(context, quad, tera, clock, alpha, onto);
+        }
         // A transformation's flash: the body screened over itself, twice
         // at the peak, so it reads as a burst of light
         for (let pass = 0; pass < 2; pass += 1) {
@@ -749,7 +741,6 @@ export function drawSlot(
             );
           }
         }
-        onto.solid?.(false);
       }
       if (unit.shiny && onto?.lit !== true) {
         sparkle(context, slot, x, y, clock, onto);
@@ -835,5 +826,20 @@ export function drawSlot(
   }
   // Above the plate, so a shape drawn as its old one still reads as changed
   drawFormMark(context, unit.species, slot.x, slot.y - slot.radius * 2 - 14, clock, faded, onto);
+  // The jewel stays up while it is out of sight, the way its bar does
+  const jewel = teraLookOf(unit, clock);
+
+  if (jewel != null) {
+    drawTeraJewel(
+      context,
+      jewel,
+      slot.x,
+      slot.y - slot.radius * 2 - 14,
+      wearsFormMark(unit.species),
+      clock,
+      faded,
+      onto,
+    );
+  }
   context.globalAlpha = 1;
 }

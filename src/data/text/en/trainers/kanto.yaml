@@ -1,0 +1,70 @@
+# What Kanto's trainer classes are called, and what each says as a duel
+# is put to the player. Two regions' worth of one trade share a name; the
+# screen adds the region where they do.
+
+AceTrainer:
+  name: Ace Trainer
+  quote: I only travel with the best. Let us see what you travel with.
+Lass:
+  name: Lass
+  quote: Hi! Do you want to battle? I have been practising.
+BlackBelt:
+  name: Black Belt
+  quote: My pokemon train as hard as I do. Try them.
+BirdKeeper:
+  name: Bird Keeper
+  quote: My birds have been circling you since you came into view.
+Biker:
+  name: Biker
+  quote: Nice road. It is ours. Fight us for it.
+Hiker:
+  name: Hiker
+  quote: I walked up here. You can walk through me.
+PokeManiac:
+  name: Poké Maniac
+  quote: You have not seen a rock type until you have seen mine!
+BugCatcher:
+  name: Bug Catcher
+  quote: I caught every one of these myself. Every single one!
+Channeler:
+  name: Channeler
+  quote: Something is standing behind you. It is mine.
+Burglar:
+  name: Burglar
+  quote: I take what I want. Today I want your win streak.
+Swimmer:
+  name: Swimmer
+  quote: I swam here. Fighting you is the easy part.
+Rocker:
+  name: Rocker
+  quote: Turn it up! My pokemon like it loud and shocking.
+Psychic:
+  name: Psychic
+  quote: You will decide to battle me. I have already seen it.
+Beauty:
+  name: Beauty
+  quote: You are staring. Battle me instead, it is less rude.
+Fisherman:
+  name: Fisherman
+  quote: I have been sat here since dawn. Something finally bit.
+Sailor:
+  name: Sailor
+  quote: I have hauled rope in worse weather than you have walked in.
+Gentleman:
+  name: Gentleman
+  quote: A wager, then? No? A battle will do just as well.
+SuperNerd:
+  name: Super Nerd
+  quote: I have read every paper on this. You have read none of them.
+Juggler:
+  name: Juggler
+  quote: Keep your eyes on the balls. That was the trick, and you looked away.
+Tamer:
+  name: Tamer
+  quote: Mine do as they are told. Let us see about yours.
+Engineer:
+  name: Engineer
+  quote: I built half the machines on this road. Meet the rest.
+Gambler:
+  name: Gambler
+  quote: Double or nothing on this one. You do not get a say.

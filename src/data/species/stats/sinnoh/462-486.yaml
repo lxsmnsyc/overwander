@@ -1,0 +1,103 @@
+Rotom:
+  Rotom:
+    stats: { HP: 50, Attack: 50, Defense: 77, SpecialAttack: 95, SpecialDefense: 77, Speed: 91 }
+    catch-rate: 45
+    height: 0.3
+    weight: 0.3
+    gender: genderless
+  RotomHeat:
+    stats: { HP: 50, Attack: 65, Defense: 107, SpecialAttack: 105, SpecialDefense: 107, Speed: 86 }
+    catch-rate: 45
+    height: 0.3
+    weight: 0.3
+    gender: genderless
+  RotomWash:
+    stats: { HP: 50, Attack: 65, Defense: 107, SpecialAttack: 105, SpecialDefense: 107, Speed: 86 }
+    catch-rate: 45
+    height: 0.3
+    weight: 0.3
+    gender: genderless
+  RotomFrost:
+    stats: { HP: 50, Attack: 65, Defense: 107, SpecialAttack: 105, SpecialDefense: 107, Speed: 86 }
+    catch-rate: 45
+    height: 0.3
+    weight: 0.3
+    gender: genderless
+  RotomFan:
+    stats: { HP: 50, Attack: 65, Defense: 107, SpecialAttack: 105, SpecialDefense: 107, Speed: 86 }
+    catch-rate: 45
+    height: 0.3
+    weight: 0.3
+    gender: genderless
+  RotomMow:
+    stats: { HP: 50, Attack: 65, Defense: 107, SpecialAttack: 105, SpecialDefense: 107, Speed: 86 }
+    catch-rate: 45
+    height: 0.3
+    weight: 0.3
+    gender: genderless
+Uxie:
+  Uxie:
+    stats: { HP: 75, Attack: 75, Defense: 130, SpecialAttack: 75, SpecialDefense: 130, Speed: 95 }
+    catch-rate: 3
+    height: 0.3
+    weight: 0.3
+    gender: genderless
+Mesprit:
+  Mesprit:
+    stats: { HP: 80, Attack: 105, Defense: 105, SpecialAttack: 105, SpecialDefense: 105, Speed: 80 }
+    catch-rate: 3
+    height: 0.3
+    weight: 0.3
+    gender: genderless
+Azelf:
+  Azelf:
+    stats: { HP: 75, Attack: 125, Defense: 70, SpecialAttack: 125, SpecialDefense: 70, Speed: 115 }
+    catch-rate: 3
+    height: 0.3
+    weight: 0.3
+    gender: genderless
+Dialga:
+  Dialga:
+    stats:
+      { HP: 100, Attack: 120, Defense: 120, SpecialAttack: 150, SpecialDefense: 100, Speed: 90 }
+    catch-rate: 3
+    height: 5.4
+    weight: 683
+    gender: genderless
+  DialgaOrigin:
+    stats:
+      { HP: 100, Attack: 100, Defense: 120, SpecialAttack: 150, SpecialDefense: 120, Speed: 90 }
+    catch-rate: 3
+    height: 7
+    weight: 848.7
+    gender: genderless
+Palkia:
+  Palkia:
+    stats:
+      { HP: 90, Attack: 120, Defense: 100, SpecialAttack: 150, SpecialDefense: 120, Speed: 100 }
+    catch-rate: 3
+    height: 4.2
+    weight: 336
+    gender: genderless
+  PalkiaOrigin:
+    stats:
+      { HP: 90, Attack: 100, Defense: 100, SpecialAttack: 150, SpecialDefense: 120, Speed: 120 }
+    catch-rate: 3
+    height: 6.3
+    weight: 659
+    gender: genderless
+Heatran:
+  Heatran:
+    stats: { HP: 91, Attack: 90, Defense: 106, SpecialAttack: 130, SpecialDefense: 106, Speed: 77 }
+    catch-rate: 3
+    height: 1.7
+    weight: 430
+    gender: [1, 1]
+Regigigas:
+  Regigigas:
+    stats:
+      { HP: 110, Attack: 160, Defense: 110, SpecialAttack: 80, SpecialDefense: 110, Speed: 100 }
+    catch-rate: 3
+    height: 3.7
+    weight: 420
+    gender: genderless

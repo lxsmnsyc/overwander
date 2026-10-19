@@ -133,7 +133,7 @@ screen.
 ### Roles, and what each may do
 
 Four roles, and they are a ladder rather than a set of flags
-([`src/auth/staff.ts`](../../src/auth/staff.ts)). Every rung may do what the rung
+([`src/model/staff.ts`](../../src/model/staff.ts)). Every rung may do what the rung
 below it may:
 
 | Role        | May                                                                 |

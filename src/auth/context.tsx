@@ -1,5 +1,5 @@
 import { useLocation } from '@solidjs/router';
-import { asRecord } from './__normalize';
+import { asRecord } from '../model/normalize';
 import {
   type Accessor,
   type JSX,

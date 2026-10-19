@@ -1,10 +1,10 @@
 import { EventPriority } from '../../core/event-emitter';
 import { Statuses } from '../../data/ids/status';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, EffectType } from '../events';
 import turns from '../turn';
 import createTimedStatus from './__create';
-import { slipsTraps } from '../utils';
+import { slipsTraps } from '../unit-checks';
 
 /**
  * Held on the field for five casts. The mainline holds a target until

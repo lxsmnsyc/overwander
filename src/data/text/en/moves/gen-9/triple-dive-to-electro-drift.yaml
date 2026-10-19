@@ -1,0 +1,45 @@
+TripleDive:
+  name: Triple Dive
+  description: Strikes 3 times.
+MortalSpin:
+  name: Mortal Spin
+  description: Hits everything opposite and poisons it, clears every hazard under the user's side, and frees the user from a bind or Leech Seed.
+Doodle:
+  name: Doodle
+  description: The user and its teammates take on the target's abilities over their own.
+FilletAway:
+  name: Fillet Away
+  description: Spends 1/2 the user's HP to raise its Attack, Special Attack and Speed 2 stages each.
+KowtowCleave:
+  name: Kowtow Cleave
+  description: Never misses.
+FlowerTrick:
+  name: Flower Trick
+  description: Never misses, and always lands a critical.
+TorchSong:
+  name: Torch Song
+  description: Raises the user's Special Attack a stage.
+AquaStep:
+  name: Aqua Step
+  description: Raises the user's Speed a stage.
+RagingBull:
+  name: Raging Bull
+  description: Breaks Reflect, Light Screen and Aurora Veil on the target's side, then hits. A Paldean Tauros throws it as its breed's type.
+MakeItRain:
+  name: Make It Rain
+  description: Hits everything opposite, scatters coins as Pay Day does, and drops the user's Special Attack a stage.
+Psyblade:
+  name: Psyblade
+  description: Hits 1.5x while Electric Terrain is up.
+HydroSteam:
+  name: Hydro Steam
+  description: Hits 1.5x in sunlight rather than being weakened by it.
+Ruination:
+  name: Ruination
+  description: Halves whatever health the target has left.
+CollisionCourse:
+  name: Collision Course
+  description: Hits 1.33x against a target it is super effective on.
+ElectroDrift:
+  name: Electro Drift
+  description: Hits 1.33x against a target it is super effective on.

@@ -1,0 +1,43 @@
+# From Gyro Ball to Feint: the moves that read the fight rather than
+# carry a power of their own, and the one that walks through a guard
+
+GyroBall:
+  type: Steel
+  category: Physical
+  accuracy: 100
+  pp: 5
+  target: Unit
+  flags: [Contact]
+
+HealingWish:
+  type: Psychic
+  category: Status
+  pp: 10
+  target: Unit
+  affects: [Unit, Own]
+
+Brine:
+  type: Water
+  category: Special
+  power: 65
+  accuracy: 100
+  pp: 10
+  target: Unit
+  projectile: true
+
+NaturalGift:
+  type: Normal
+  category: Physical
+  accuracy: 100
+  pp: 15
+  target: Unit
+  projectile: true
+
+Feint:
+  type: Normal
+  category: Physical
+  power: 30
+  accuracy: 100
+  priority: 2
+  pp: 10
+  target: Unit

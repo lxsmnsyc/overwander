@@ -12,7 +12,7 @@ import { Badge, Button, Card, List, ListRow, Meta, Note, Row, TextField } from '
 import { BIOME_NAMES } from '../../data/biome';
 import type Biome from '../../data/ids/biome';
 import { LANDMARK_NAMES } from '../../data/overworld/landmark';
-import type { SnapshotRecord } from '../../auth/snapshot-record';
+import type { SnapshotRecord } from '../../model/snapshot-record';
 import { WORLD_MAX, WORLD_MIN, isInWorld } from '../../overworld/world';
 import WorldMapCanvas, { townsInView } from '../overworld/WorldMapCanvas';
 import { getSpeciesData } from '../../data/species';

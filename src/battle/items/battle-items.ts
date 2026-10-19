@@ -2,7 +2,7 @@ import { EventPriority } from '../../core/event-emitter';
 import type { Stages } from '../../data/constants/stats';
 import { Items } from '../../data/ids/items';
 import { X_ITEM_STAGES } from '../../data/items/battle-items';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, type CheckUnitCanUpdateStageEvent, EffectType } from '../events';
 import { type Lifecycle, MergedLifecycle } from '../lifecycle';
 import type Unit from '../unit';
@@ -121,6 +121,13 @@ const setupGuardSpec = createHeldItem(Items.GuardSpec, (battle) => {
       event.cause.unit === event.source ||
       !holds(event.source, Items.GuardSpec)
     ) {
+      return;
+    }
+    // A guess sees the drop refused, and only a real one spends it
+    if (event.simulated || battle.estimating) {
+      if (event.source.checkCanConsumeItem(Items.GuardSpec)) {
+        event.success = false;
+      }
       return;
     }
     if (spendItem(event.source, Items.GuardSpec)) {

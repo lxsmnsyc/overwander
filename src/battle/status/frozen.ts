@@ -3,9 +3,9 @@ import { Types } from '../../data/constants/types';
 import { DamageFlags, Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, EffectType } from '../events';
-import { isWeatherSunny } from '../utils';
+import { isWeatherSunny } from '../weather';
 import turns from '../turn';
 import createTimedStatus from './__create';
 
@@ -17,7 +17,7 @@ const DURATION = turns(5);
 const setupTimer = createTimedStatus(Statuses.Frozen, DURATION);
 
 /** Hot enough to thaw what they hit without being Fire-type */
-const THAWS_TARGET = new Set<Moves>([Moves.Scald]);
+const THAWS_TARGET = new Set<Moves>([Moves.Scald, Moves.ScorchingSands]);
 
 export default function setupFrozenStatus(battle: Battle): void {
   setupTimer(battle);

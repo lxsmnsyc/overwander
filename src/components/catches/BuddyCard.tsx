@@ -8,8 +8,8 @@ import {
   createSignal,
 } from 'solid-js';
 import { resolveBuddy, setBuddy } from '../../auth/buddy';
-import { isShiny } from '../../auth/caught-record';
-import { isEgg } from '../../auth/egg';
+import { isShiny } from '../../model/caught-record';
+import { isEgg } from '../../model/egg';
 import { MAX_FRIENDSHIP, describeFriendship } from '../../data/constants/friendship';
 import getSigil from '../../data/constants/sigil';
 import { Genders, Species } from '../../data/ids/species';

@@ -143,6 +143,18 @@ Gather** comes up with a jar the first time it acts in a fight, if it has a hand
 free, and the jar restores 40 points to whoever holds it once they drop to a
 quarter.
 
+## Balms
+
+A **Balm** is the one item thrown in a fight, and only at a frenzied Noble (see
+[Noble raids](raids.md#noble-raids)). It is never used from the bag. When a
+Noble raid starts, each player packs **up to 3** from their bag onto their first
+party, and that party throws one **every 10 seconds** while the Noble stands,
+each soothing **1/50 of its Frenzy**. Packed Balms are spent whichever way the
+fight goes, the way a relic is; a party that fields nothing gets its Balms back.
+
+The medicine counter stocks them at 1,500 (750 back), and a calmed Noble leaves
+2 or 3 behind. None is buried.
+
 ## Berries
 
 A berry is what a pokemon carries into a fight when it is not carrying gear. No

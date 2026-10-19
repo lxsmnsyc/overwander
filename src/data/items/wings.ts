@@ -1,6 +1,6 @@
 import { MAX_EFFORT_PER_STAT, STAT_NAMES, Stats } from '../constants/stats';
-import { ItemFlags, ItemTypes, Items } from '../ids/items';
-import { nameToIcon, registerItem } from './__create';
+import { Items } from '../ids/items';
+import { itemText } from './__create';
 
 /**
  * The wings: one stat, three points of effort, and gone.
@@ -31,15 +31,6 @@ export const WING_STATS = new Map<Items, Stats>([
  */
 export const WING_EFFORT = 3;
 
-const NAMES: { [key in Items]?: string } = {
-  [Items.HealthWing]: 'Health Wing',
-  [Items.MuscleWing]: 'Muscle Wing',
-  [Items.ResistWing]: 'Resist Wing',
-  [Items.GeniusWing]: 'Genius Wing',
-  [Items.CleverWing]: 'Clever Wing',
-  [Items.SwiftWing]: 'Swift Wing',
-};
-
 /** The Max wings, each filling its stat's effort at once. Only a flying shadow drops one */
 export const MAX_WING_STATS = new Map<Items, Stats>([
   [Items.HealthWingMax, Stats.HP],
@@ -50,47 +41,22 @@ export const MAX_WING_STATS = new Map<Items, Stats>([
   [Items.SwiftWingMax, Stats.Speed],
 ]);
 
-const MAX_NAMES: { [key in Items]?: string } = {
-  [Items.HealthWingMax]: 'Health Wing Max',
-  [Items.MuscleWingMax]: 'Muscle Wing Max',
-  [Items.ResistWingMax]: 'Resist Wing Max',
-  [Items.GeniusWingMax]: 'Genius Wing Max',
-  [Items.CleverWingMax]: 'Clever Wing Max',
-  [Items.SwiftWingMax]: 'Swift Wing Max',
-};
-
 /** Whether the item is a wing, Max or not */
 export function isWing(item: Items): boolean {
   return WING_STATS.has(item) || MAX_WING_STATS.has(item);
 }
 
-export default function registerWings(): void {
-  for (const [item, stat] of WING_STATS) {
-    registerItem(item, {
-      name: NAMES[item] ?? 'Wing',
-      description: `Adds ${WING_EFFORT} ${STAT_NAMES[stat]} effort. Spent on use.`,
-      type: ItemTypes.Training,
-      // The wings are drawn on the medicine sheet, since that is what
-      // they are: something a pokemon swallows for what it does to it
-      icon: nameToIcon('medicine', NAMES[item] ?? 'Wing'),
-      flags: ItemFlags.Usable | ItemFlags.Consumable,
-      // Found on the wind rather than stocked: a shop that sold them
-      // would sell training by the gold piece
-      buy: 0,
-      sell: 100,
-    });
-  }
-  for (const [item, stat] of MAX_WING_STATS) {
-    const name = MAX_NAMES[item] ?? 'Wing Max';
+export function describeWing(item: Items): string {
+  const stat = WING_STATS.get(item);
 
-    registerItem(item, {
-      name,
-      description: `Sets ${STAT_NAMES[stat]} effort to ${MAX_EFFORT_PER_STAT}. Spent on use.`,
-      type: ItemTypes.Training,
-      icon: nameToIcon('medicine', name),
-      flags: ItemFlags.Usable | ItemFlags.Consumable,
-      buy: 0,
-      sell: 0,
-    });
+  if (stat != null) {
+    return itemText('wings', 'effort', { effort: WING_EFFORT, stat: STAT_NAMES[stat] });
   }
+
+  const max = MAX_WING_STATS.get(item);
+
+  if (max != null) {
+    return itemText('wings', 'max', { stat: STAT_NAMES[max], max: MAX_EFFORT_PER_STAT });
+  }
+  throw new Error(`No wing description for item ${item}`);
 }

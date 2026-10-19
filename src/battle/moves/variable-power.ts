@@ -3,7 +3,7 @@ import { MAX_FRIENDSHIP } from '../../data/constants/friendship';
 import { Stages, Stats } from '../../data/constants/stats';
 import { Moves } from '../../data/ids/moves';
 import { USELESS_PENALTY } from '../ai/score';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import type Unit from '../unit';
 
@@ -71,10 +71,13 @@ const GYRO_CEILING = 150;
  */
 const SQUEEZE_CEILING = 120;
 
-function healthPower(target: Unit): number {
+/** Hard Press presses a little less hard than Crush Grip squeezes */
+const PRESS_CEILING = 100;
+
+function healthPower(target: Unit, ceiling = SQUEEZE_CEILING): number {
   return Math.max(
     1,
-    Math.floor(SQUEEZE_CEILING * (target.health / Math.max(1, target.checkStat(Stats.HP, 0)))),
+    Math.floor(ceiling * (target.health / Math.max(1, target.checkStat(Stats.HP, 0)))),
   );
 }
 
@@ -173,6 +176,9 @@ function weightPower(source: Unit, target: Unit): number {
   return bandPower(WEIGHT_BANDS, source.checkWeight() / Math.max(0.1, target.checkWeight()));
 }
 
+/** The roll an AI estimate takes in place of a draw: the middle of the range */
+const ESTIMATED_ROLL = 0.5;
+
 /**
  * What each of them comes to. A table rather than a switch, so the
  * list of moves that work their power out is one place
@@ -216,6 +222,7 @@ const TARGETED_POWER: { [key in Moves]?: (source: Unit, target: Unit) => number 
     Math.min(PUNISHMENT_CEILING, PUNISHMENT_BASE + PUNISHMENT_PER_STAGE * raisedStages(target)),
   [Moves.WringOut]: (_source, target) => healthPower(target),
   [Moves.CrushGrip]: (_source, target) => healthPower(target),
+  [Moves.HardPress]: (_source, target) => healthPower(target, PRESS_CEILING),
   [Moves.ElectroBall]: (source, target) =>
     bandPower(
       SPEED_BANDS,
@@ -232,8 +239,10 @@ export default function setupVariablePowerMoves(battle: Battle): void {
   battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Exact, (event) => {
     const worked = VARIABLE_POWER[event.move];
 
+    // The AI takes the middle of the range rather than a draw, so how
+    // much it weighs does not move the fight's random stream
     if (worked != null) {
-      event.power = worked(event.source, battle.random());
+      event.power = worked(event.source, battle.estimating ? ESTIMATED_ROLL : battle.random());
       return;
     }
 

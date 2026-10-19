@@ -1,0 +1,169 @@
+land:
+  morning: &land-morning
+    base:
+      Spheal: 1273
+      Swinub: 1273
+      Scatterbug: 1222
+      Vanillite: 1222
+      Piplup: 153
+      Frigibax: 150
+    uncommon:
+      Bergmite: 449
+      VulpixAlola: 411
+      SandshrewAlola: 411
+      Snorunt: 411
+      Cubchoo: 374
+      Seel: 374
+    rare:
+      Vanillish: 368
+      Spewpa: 295
+      Sealeo: 295
+      Piloswine: 185
+      Prinplup: 74
+      Arctibax: 70
+    scarce:
+      Dewgong: 117
+      Crabominable: 76
+      NinetalesAlola: 70
+      SandslashAlola: 70
+      Avalugg: 70
+      Beartic: 70
+      Glalie: 70
+      Froslass: 70
+      Glaceon: 70
+      AvaluggHisui: 25
+    elusive:
+      Eiscue: 180
+      Vivillon: 57
+      Vanilluxe: 57
+      Walrein: 57
+      Delibird: 57
+      Mamoswine: 57
+      Baxcalibur: 25
+      Empoleon: 23
+    prized:
+      Unown: forms
+      IronBundle: 8
+    special:
+      Kyurem: 10
+      Regigigas: 10
+  day: *land-morning
+  evening: &land-evening
+    base:
+      Spheal: 2572
+      Swinub: 2572
+      Frigibax: 150
+    uncommon:
+      Bergmite: 508
+      VulpixAlola: 464
+      SandshrewAlola: 464
+      Snorunt: 464
+      Seel: 423
+      Sneasel: 106
+    rare:
+      Sealeo: 747
+      Piloswine: 467
+      Arctibax: 70
+    scarce:
+      Dewgong: 117
+      Crabominable: 76
+      NinetalesAlola: 70
+      SandslashAlola: 70
+      Avalugg: 70
+      Glalie: 70
+      Froslass: 70
+      Weavile: 70
+      Glaceon: 70
+      AvaluggHisui: 25
+    elusive:
+      Eiscue: 180
+      Walrein: 64
+      Jynx: 64
+      Delibird: 64
+      Mamoswine: 64
+      Cryogonal: 51
+      Baxcalibur: 25
+    prized:
+      Unown: forms
+      Smoochum: prized
+      IronBundle: 8
+    special:
+      Kyurem: 10
+      Regigigas: 10
+  night: *land-evening
+
+ice:
+  morning: &ice-morning
+    base:
+      Spheal: 1288
+      Swinub: 1288
+      Vanillite: 1237
+      Scatterbug: 1237
+      Piplup: 154
+    uncommon:
+      Bergmite: 455
+      Snorunt: 416
+      VulpixAlola: 416
+      SandshrewAlola: 416
+      Cubchoo: 379
+      Seel: 379
+    rare:
+      Vanillish: 373
+      Sealeo: 299
+      Spewpa: 299
+      Piloswine: 186
+      Prinplup: 75
+    scarce:
+      Dewgong: 118
+      Beartic: 71
+      Glalie: 71
+      Froslass: 71
+      NinetalesAlola: 71
+      SandslashAlola: 71
+      Avalugg: 71
+      Glaceon: 71
+    elusive:
+      Eiscue: 180
+      Vanilluxe: 57
+      Walrein: 57
+      Vivillon: 57
+      Delibird: 57
+      Mamoswine: 57
+      Empoleon: 23
+    special: {}
+  day: *ice-morning
+  evening: &ice-evening
+    base:
+      Spheal: 2603
+      Swinub: 2603
+    uncommon:
+      Bergmite: 514
+      Snorunt: 470
+      VulpixAlola: 470
+      SandshrewAlola: 470
+      Seel: 428
+      Sneasel: 107
+    rare:
+      Sealeo: 757
+      Piloswine: 473
+    scarce:
+      Dewgong: 118
+      Glalie: 71
+      Froslass: 71
+      NinetalesAlola: 71
+      SandslashAlola: 71
+      Avalugg: 71
+      Weavile: 71
+      Glaceon: 71
+    elusive:
+      Eiscue: 180
+      Walrein: 64
+      Jynx: 64
+      Delibird: 64
+      Mamoswine: 64
+      Cryogonal: 51
+    special: {}
+  night: *ice-evening
+
+# The legendaries met wild in the caves under it
+cave-legends: { Regigigas: 10, Kyurem: 10 }

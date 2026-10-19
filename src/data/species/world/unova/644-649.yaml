@@ -1,0 +1,143 @@
+Zekrom:
+  Zekrom:
+    types: [Dragon, Electric]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Taiga, Tundra]
+    active: any
+    rank: legendary
+Landorus:
+  Landorus:
+    types: [Ground, Flying]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Grassland]
+    active: any
+    rank: legendary
+  LandorusTherian:
+    types: [Ground, Flying]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+Kyurem:
+  Kyurem:
+    types: [Dragon, Ice]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Tundra, Glacier]
+    active: any
+    # A dragon is folded into it with the splicers, and pulled back
+    # out with the same pair
+    evolves-into:
+      - species: KyuremBlack
+        method: [UsedItem]
+        item: DnaSplicers
+      - species: KyuremWhite
+        method: [UsedItem]
+        item: DnaSplicers
+    rank: legendary
+  KyuremBlack:
+    types: [Dragon, Ice]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    evolves-from: Kyurem
+    evolves-into:
+      - species: Kyurem
+        method: [UsedItem]
+        item: DnaSplicers
+  KyuremWhite:
+    types: [Dragon, Ice]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    evolves-from: Kyurem
+    evolves-into:
+      - species: Kyurem
+        method: [UsedItem]
+        item: DnaSplicers
+Keldeo:
+  # Swift Swim, Analytic and Steadfast are this registry's rather
+  # than the mainline's: the colt is quickest where the water is,
+  # and it strikes into what is still winding up
+
+  # The fourth sword, and the youngest: a colt that crosses water at a
+  # gallop and is learning the blade from the three that already have
+  # it. It is a mythical, so a relic calls it rather than a lair
+  # staging it
+  Keldeo:
+    types: [Water, Fighting]
+    egg-groups: [NoEggsDiscovered]
+    habitat: Amphibious
+    biomes: [Bog]
+    active: any
+    rank: mythical
+  KeldeoResolute:
+    types: [Water, Fighting]
+    egg-groups: [NoEggsDiscovered]
+    habitat: Amphibious
+    active: any
+    base-form: false
+    # Worn rather than met: learning Secret Sword is what brings it
+    # out, so the dex fills it in the day Keldeo is
+    worn: true
+# The song and the step: one pokemon in two shapes, singing with its
+# special half and dancing with its physical one. Relic Song is what
+# turns it over, so the dancer is worn for a fight rather than caught
+Meloetta:
+  Meloetta:
+    types: [Normal, Psychic]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Woodland]
+    active: any
+    # The bare one only: the step is worn for a fight rather than owned
+    rank: mythical
+  MeloettaPirouette:
+    types: [Normal, Fighting]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    # Worn rather than met: Relic Song is what turns it over, so the
+    # dex fills the step in the day the song is
+    worn: true
+# A bug that died three hundred million years ago, dug up and fitted
+# with a cannon. The four Drives are held rather than used: each one
+# loads the cannon with a different element and repaints the machine
+# around it
+
+# Each cassette's shape. The machine stays Bug and Steel in all of
+# them: the Drive loads the cannon, it does not rebuild the bug
+
+# Worn rather than met: a Drive in the slot is what repaints
+# it, so the dex fills the shape in the day the bare one is
+
+# Worn rather than met, so no pool stages one
+Genesect:
+  Genesect:
+    types: [Bug, Steel]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Desert]
+    active: any
+    # The bare one only: the four cassettes are worn for a fight
+    rank: mythical
+  GenesectDouse:
+    types: [Bug, Steel]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    worn: true
+  GenesectShock:
+    types: [Bug, Steel]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    worn: true
+  GenesectBurn:
+    types: [Bug, Steel]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    worn: true
+  GenesectChill:
+    types: [Bug, Steel]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    worn: true

@@ -7,10 +7,11 @@ import {
   listLevelMoves,
   townHours,
 } from './species-facts';
-import { EGG_HATCH_STEPS } from '../../../auth/egg';
+import { EGG_HATCH_STEPS } from '../../../model/egg';
 import type { PokedexView, SpeciesDexEntry } from '../../../auth/pokedex';
 import { BIOME_NAMES } from '../../../data/biome';
 import { STAT_ORDER } from '../../../data/constants/stats';
+import type { Items } from '../../../data/ids/items';
 import type { Moves } from '../../../data/ids/moves';
 import type { Species } from '../../../data/ids/species';
 import { SpriteAnim } from '../../../data/ids/sprite-anims';
@@ -29,7 +30,7 @@ import {
   describeEvolutionMethod,
 } from '../../catches/catch-dialog/describe';
 import MoveTooltip from '../../moves/MoveTooltip';
-import { getSignatureAbility } from '../../../data/abilities';
+import { getSpeciesSignature } from '../../../data/abilities';
 import { describeAbility, detailAbility } from '../../details';
 import MoveCategorySprite from '../../sprites/MoveCategorySprite';
 import SpeciesCoat from '../../sprites/SpeciesCoat';
@@ -71,6 +72,16 @@ function totalOf(data: SpeciesData): number {
     total += data.stats[stat];
   }
   return total;
+}
+
+/** The rock it comes out of, or the two halves that make one */
+function nameFossils(fossils: Items[]): string {
+  const names: string[] = [];
+
+  for (const fossil of fossils) {
+    names.push(getItemData(fossil).name);
+  }
+  return names.join(' and a ');
 }
 
 /** One half of a two-way switch, pressed or not */
@@ -552,7 +563,7 @@ export function DexEntryBody(
                         </li>
                       )}
                     </For>
-                    <Show when={getSignatureAbility(entry().data.family)}>
+                    <Show when={getSpeciesSignature(entry().species)}>
                       {(signature) => (
                         <li>
                           <TooltipHost class="block" kind="ability" {...detailAbility(signature())}>
@@ -593,9 +604,9 @@ export function DexEntryBody(
                         when={getSpeciesFossil(entry().species)}
                         fallback={<Note>It is not met in the wild.</Note>}
                       >
-                        {(fossil) => (
+                        {(fossils) => (
                           <Note>
-                            Extinct. It is only ever met by reviving a {getItemData(fossil()).name}.
+                            Extinct. It is only ever met by reviving a {nameFossils(fossils())}.
                           </Note>
                         )}
                       </Show>

@@ -521,6 +521,20 @@ const NAMED: Partial<Record<Moves, [winding?: DelayShape, striking?: DelayShape]
   [Moves.BouncyBubble]: [undefined, 'Bubbles'],
   [Moves.ShadowBone]: [undefined, 'Spun'],
   [Moves.AuroraVeil]: [undefined, 'Brace'],
+
+  // Galar and Hisui. A rock charged up the way Skull Bash is, and beams drawn up the way
+  // Fleur Cannon's is
+  [Moves.MeteorBeam]: ['Charge', 'Charge'],
+  [Moves.Eternabeam]: [undefined, 'Charge'],
+  [Moves.DynamaxCannon]: [undefined, 'Charge'],
+  [Moves.SteelBeam]: [undefined, 'Charge'],
+  [Moves.DragonEnergy]: [undefined, 'Charge'],
+
+  // Paldea. A shot charged up the way Meteor Beam is, beams drawn up the way Fleur Cannon's
+  // is
+  [Moves.ElectroShot]: ['Charge', 'Charge'],
+  [Moves.TeraBlast]: [undefined, 'Charge'],
+  [Moves.FickleBeam]: [undefined, 'Charge'],
 };
 
 /**
@@ -535,6 +549,12 @@ const NAMED: Partial<Record<Moves, [winding?: DelayShape, striking?: DelayShape]
  * the wait before them is the caster winding up rather than a throw
  */
 const ARRIVES_ITSELF = new Set<EffectShape>([
+  // The Frenzy bursts: each falls, gathers or catches on the target
+  'Splinters',
+  'PetalStorm',
+  'Wildfire',
+  'ChargedBlast',
+  'Iceberg',
   // Sent from the caster
   'Stream',
   'Wave',
@@ -558,6 +578,97 @@ const ARRIVES_ITSELF = new Set<EffectShape>([
   'Lunar',
   'Converge',
   'Tri',
+  // Galar and Hisui: darts and riders cross by themselves, a beam leaves the caster, and a
+  // lance, a storm and a cage come down on the target
+  'Darters',
+  'Astral',
+  'Dynamax',
+  'Lance',
+  'Bleakwind',
+  'Wildbolt',
+  'Sandsear',
+  'Springtide',
+  'Dragonforce',
+  'Glaring',
+  'Maxcannon',
+  'Mystic',
+  'Wrath',
+  'Cage',
+  // Paldea: chains leave the caster, and the treasures and the stars come down on the target
+  'Chains',
+  'Calamity',
+  'Starstorm',
+  // Paldea's other signatures: thrown, poured, fired or dropped onto the target by the
+  // picture itself
+  'Snare',
+  'Lumina',
+  'Order',
+  'Jetfist',
+  'Spice',
+  'Horde',
+  'Salt',
+  'Divers',
+  'Doodle',
+  'Fillet',
+  'Bouquet',
+  'Torch',
+  'Coins',
+  'Twin',
+  'Armor',
+  'Doubleshock',
+  'Gigaton',
+  'Bloodmoon',
+  'Matcha',
+  'Syrup',
+  'Electroshot',
+  'Fickle',
+  'Clap',
+  'Tachyon',
+  'Steamjet',
+  // Every older region's signatures that cross the gap or come down by themselves
+  'Eggbarrage',
+  'Kiss',
+  'Chatter',
+  'Thread',
+  'Revelation',
+  'Scales',
+  'Trap',
+  'Fleur',
+  'Snipe',
+  'Powder',
+  'Drumming',
+  'Pyroball',
+  'Mountaingale',
+  'Barbs',
+  'Esper',
+  'Malice',
+  'Parade',
+  'Chloroblast',
+  'Amped',
+  'Acid',
+  'Gravapple',
+  'Strangesteam',
+  'Sidearm',
+  'Spell',
+  // The Max Moves come down on the target out of the cloud over it
+  'MaxFlare',
+  'MaxGeyser',
+  'MaxHailstorm',
+  'MaxRockfall',
+  'MaxLightning',
+  'MaxOvergrowth',
+  'MaxMindstorm',
+  'MaxStarfall',
+  'MaxStrike',
+  'MaxFlutterby',
+  'MaxPhantasm',
+  'MaxWyrmwind',
+  'MaxDarkness',
+  'MaxKnuckle',
+  'MaxSteelspike',
+  'MaxOoze',
+  'MaxQuake',
+  'MaxAirstream',
 ]);
 
 const BY_LANDING: Partial<Record<EffectShape, DelayShape>> = {
@@ -612,6 +723,7 @@ const BY_LANDING: Partial<Record<EffectShape, DelayShape>> = {
   Gears: 'Focus',
   Windup: 'Focus',
   Shed: 'Focus',
+  MaxGuard: 'Brace',
 };
 
 /**

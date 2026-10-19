@@ -1,0 +1,15 @@
+Roost:
+  name: Roost
+  description: Heals 1/2 the max HP. For 2 seconds its Flying type counts for nothing in matchups, though Ground moves still miss.
+Gravity:
+  name: Gravity
+  description: For 10 seconds Ground moves hit Flying types and anything with Levitate.
+MiracleEye:
+  name: Miracle Eye
+  description: Psychic moves hit the target even if it is Dark, and its Evasion stops counting.
+WakeUpSlap:
+  name: Wake-Up Slap
+  description: 2x power on a sleeping target, and wakes it.
+HammerArm:
+  name: Hammer Arm
+  description: Drops the user's Speed 1 stage.

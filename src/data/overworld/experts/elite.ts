@@ -1,5 +1,7 @@
-import { Types } from '../../constants/types';
-import Awards, {
+import * as v from 'valibot';
+import type { Types } from '../../constants/types';
+import type Awards from '../../ids/awards';
+import {
   HOENN_BADGES,
   HOENN_HONORS,
   JOHTO_BADGES,
@@ -13,154 +15,103 @@ import Awards, {
   UNOVA_BADGES,
   UNOVA_HONORS,
 } from '../../ids/awards';
-import Biome from '../../ids/biome';
-
-/**
- * The leagues' Elite Four, numbered Kanto's, Johto's, Hoenn's,
- * Sinnoh's, Unova's then Kalos's. Bruno is here twice because he keeps
- * a seat in each of the first two: two fights, two marks, and a
- * challenger who has only walked one region's gyms is taken by the
- * Bruno of that region alone. Unova's four keep their seats in both
- * of its leagues, so they are one seat each
- */
-const enum EliteMember {
-  Lorelei = 0,
-  Bruno = 1,
-  Agatha = 2,
-  Lance = 3,
-  Will = 4,
-  Koga = 5,
-  Karen = 6,
-  JohtoBruno = 7,
-  Sidney = 8,
-  Phoebe = 9,
-  Glacia = 10,
-  Drake = 11,
-  Aaron = 12,
-  Bertha = 13,
-  Flint = 14,
-  Lucian = 15,
-  Shauntal = 16,
-  Marshal = 17,
-  Grimsley = 18,
-  Caitlin = 19,
-  Malva = 20,
-  Siebold = 21,
-  Wikstrom = 22,
-  Drasna = 23,
-}
+import type Biome from '../../ids/biome';
+import type EggGroups from '../../ids/egg-groups';
+import EliteMember from '../../ids/elite';
+import {
+  AWARD_IDS,
+  BIOME_IDS,
+  EGG_GROUP_IDS,
+  ELITE_MEMBER_IDS,
+  SPECIES_IDS,
+  TYPE_IDS,
+} from '../../ids/names';
+import type { Species } from '../../ids/species';
+import namesFile from '../../text/en/elite.yaml';
+import { idOf, idsOf } from '../../yaml';
+import biomesFile from './biome-elite.yaml';
+import eliteFile from './elite.yaml';
+import type { ExpertPool } from './pools';
 
 export { EliteMember };
 
-export const ELITE_MEMBERS: EliteMember[] = [
-  EliteMember.Lorelei,
-  EliteMember.Bruno,
-  EliteMember.Agatha,
-  EliteMember.Lance,
-  EliteMember.Will,
-  EliteMember.Koga,
-  EliteMember.Karen,
-  EliteMember.JohtoBruno,
-  EliteMember.Sidney,
-  EliteMember.Phoebe,
-  EliteMember.Glacia,
-  EliteMember.Drake,
-  EliteMember.Aaron,
-  EliteMember.Bertha,
-  EliteMember.Flint,
-  EliteMember.Lucian,
-  EliteMember.Shauntal,
-  EliteMember.Marshal,
-  EliteMember.Grimsley,
-  EliteMember.Caitlin,
-  EliteMember.Malva,
-  EliteMember.Siebold,
-  EliteMember.Wikstrom,
-  EliteMember.Drasna,
-];
+/**
+ * The Elite Four, read out of `elite.yaml`, `biome-elite.yaml` and
+ * `text/en/elite.yaml`; the numbers are `ids/elite.ts`
+ */
+const MEMBER = v.object({
+  type: v.string(),
+  honor: v.string(),
+  sheets: v.array(v.string()),
+  signature: v.string(),
+  pool: v.object({
+    types: v.array(v.string()),
+    'egg-groups': v.optional(v.array(v.string())),
+    also: v.optional(v.array(v.string())),
+  }),
+});
 
-export const ELITE_MEMBER_NAMES: Record<EliteMember, string> = {
-  [EliteMember.Lorelei]: 'Lorelei',
-  [EliteMember.Bruno]: 'Bruno',
-  [EliteMember.Agatha]: 'Agatha',
-  [EliteMember.Lance]: 'Lance',
-  [EliteMember.Will]: 'Will',
-  [EliteMember.Koga]: 'Koga',
-  [EliteMember.Karen]: 'Karen',
-  [EliteMember.JohtoBruno]: 'Bruno',
-  [EliteMember.Sidney]: 'Sidney',
-  [EliteMember.Phoebe]: 'Phoebe',
-  [EliteMember.Glacia]: 'Glacia',
-  [EliteMember.Drake]: 'Drake',
-  [EliteMember.Aaron]: 'Aaron',
-  [EliteMember.Bertha]: 'Bertha',
-  [EliteMember.Flint]: 'Flint',
-  [EliteMember.Lucian]: 'Lucian',
-  [EliteMember.Shauntal]: 'Shauntal',
-  [EliteMember.Marshal]: 'Marshal',
-  [EliteMember.Grimsley]: 'Grimsley',
-  // The Battle Castle's lady, grown into a league seat. The Frontier
-  // keeps its own Caitlin, and the two are the same person
-  [EliteMember.Caitlin]: 'Caitlin',
-  [EliteMember.Malva]: 'Malva',
-  [EliteMember.Siebold]: 'Siebold',
-  [EliteMember.Wikstrom]: 'Wikstrom',
-  [EliteMember.Drasna]: 'Drasna',
-};
+/** Every seat, in the order they are numbered */
+export const ELITE_MEMBERS: EliteMember[] = [];
 
-export const ELITE_MEMBER_TYPES: Record<EliteMember, Types> = {
-  [EliteMember.Lorelei]: Types.Ice,
-  [EliteMember.Bruno]: Types.Fighting,
-  [EliteMember.Agatha]: Types.Ghost,
-  [EliteMember.Lance]: Types.Dragon,
-  [EliteMember.Will]: Types.Psychic,
-  [EliteMember.Koga]: Types.Poison,
-  [EliteMember.Karen]: Types.Dark,
-  [EliteMember.JohtoBruno]: Types.Fighting,
-  [EliteMember.Sidney]: Types.Dark,
-  [EliteMember.Phoebe]: Types.Ghost,
-  [EliteMember.Glacia]: Types.Ice,
-  [EliteMember.Drake]: Types.Dragon,
-  [EliteMember.Aaron]: Types.Bug,
-  [EliteMember.Bertha]: Types.Ground,
-  [EliteMember.Flint]: Types.Fire,
-  [EliteMember.Lucian]: Types.Psychic,
-  [EliteMember.Shauntal]: Types.Ghost,
-  [EliteMember.Marshal]: Types.Fighting,
-  [EliteMember.Grimsley]: Types.Dark,
-  [EliteMember.Caitlin]: Types.Psychic,
-  [EliteMember.Malva]: Types.Fire,
-  [EliteMember.Siebold]: Types.Water,
-  [EliteMember.Wikstrom]: Types.Steel,
-  [EliteMember.Drasna]: Types.Dragon,
-};
+export const ELITE_MEMBER_NAMES: Record<number, string> = {};
 
-export const ELITE_MEMBER_HONORS: Record<EliteMember, Awards> = {
-  [EliteMember.Lorelei]: Awards.LoreleiDefeated,
-  [EliteMember.Bruno]: Awards.BrunoDefeated,
-  [EliteMember.Agatha]: Awards.AgathaDefeated,
-  [EliteMember.Lance]: Awards.LanceDefeated,
-  [EliteMember.Will]: Awards.WillDefeated,
-  [EliteMember.Koga]: Awards.KogaDefeated,
-  [EliteMember.Karen]: Awards.KarenDefeated,
-  [EliteMember.JohtoBruno]: Awards.JohtoBrunoDefeated,
-  [EliteMember.Sidney]: Awards.SidneyDefeated,
-  [EliteMember.Phoebe]: Awards.PhoebeDefeated,
-  [EliteMember.Glacia]: Awards.GlaciaDefeated,
-  [EliteMember.Drake]: Awards.DrakeDefeated,
-  [EliteMember.Aaron]: Awards.AaronDefeated,
-  [EliteMember.Bertha]: Awards.BerthaDefeated,
-  [EliteMember.Flint]: Awards.FlintDefeated,
-  [EliteMember.Lucian]: Awards.LucianDefeated,
-  [EliteMember.Shauntal]: Awards.ShauntalDefeated,
-  [EliteMember.Marshal]: Awards.MarshalDefeated,
-  [EliteMember.Grimsley]: Awards.GrimsleyDefeated,
-  [EliteMember.Caitlin]: Awards.CaitlinDefeated,
-  [EliteMember.Malva]: Awards.MalvaDefeated,
-  [EliteMember.Siebold]: Awards.SieboldDefeated,
-  [EliteMember.Wikstrom]: Awards.WikstromDefeated,
-  [EliteMember.Drasna]: Awards.DrasnaDefeated,
-};
+/** The type each is known for */
+export const ELITE_MEMBER_TYPES: Record<number, Types> = {};
+
+/** The mark beating each pays */
+export const ELITE_MEMBER_HONORS: Record<number, Awards> = {};
+
+/** The sheets each is seen in */
+export const ELITE_MEMBER_CHARSETS: Record<number, string[]> = {};
+
+/**
+ * What each fields. Each widening is the one their mainline team
+ * actually shows: Bruno brings hard ground along with the muscle,
+ * Agatha's ghosts keep the company they keep, and Lance's dragons are
+ * read off the breeding table rather than the type chart
+ */
+export const ELITE_MEMBER_POOLS: Record<number, ExpertPool> = {};
+
+/**
+ * The one an elite is remembered for, standing last the way a gym
+ * leader's does. Bruno's is his Machamp in both leagues, since Bruno
+ * is in both
+ */
+export const ELITE_MEMBER_SIGNATURES: Record<number, Species> = {};
+
+for (const [name, written] of Object.entries(v.parse(v.record(v.string(), MEMBER), eliteFile))) {
+  const where = `elite.yaml: ${name}`;
+  const member = idOf<EliteMember>(ELITE_MEMBER_IDS, name, where);
+  const pool: ExpertPool = { types: idsOf<Types>(TYPE_IDS, written.pool.types, where) };
+  const eggGroups = written.pool['egg-groups'];
+
+  if (eggGroups != null) {
+    pool.eggGroups = idsOf<EggGroups>(EGG_GROUP_IDS, eggGroups, where);
+  }
+  if (written.pool.also != null) {
+    pool.also = idsOf<Species>(SPECIES_IDS, written.pool.also, where);
+  }
+  ELITE_MEMBERS.push(member);
+  ELITE_MEMBER_TYPES[member] = idOf<Types>(TYPE_IDS, written.type, where);
+  ELITE_MEMBER_HONORS[member] = idOf<Awards>(AWARD_IDS, written.honor, where);
+  ELITE_MEMBER_CHARSETS[member] = written.sheets;
+  ELITE_MEMBER_SIGNATURES[member] = idOf<Species>(SPECIES_IDS, written.signature, where);
+  ELITE_MEMBER_POOLS[member] = pool;
+}
+ELITE_MEMBERS.sort((one, two) => one - two);
+
+for (const [name, title] of Object.entries(v.parse(v.record(v.string(), v.string()), namesFile))) {
+  ELITE_MEMBER_NAMES[idOf<EliteMember>(ELITE_MEMBER_IDS, name, `text/en/elite.yaml: ${name}`)] =
+    title;
+}
+
+// Every seat the enum has is written down, so none stands nameless or bare
+for (const [name, member] of Object.entries(ELITE_MEMBER_IDS)) {
+  if (!Object.hasOwn(ELITE_MEMBER_TYPES, member) || !Object.hasOwn(ELITE_MEMBER_NAMES, member)) {
+    throw new Error(`${name} needs a record in elite.yaml and a name in text/en`);
+  }
+}
 
 /**
  * The badge case an elite asks to see before they will fight: their
@@ -181,226 +132,21 @@ export function getEliteBadges(member: EliteMember): Awards[] {
   ];
 }
 
-export const ELITE_MEMBER_CHARSETS: Record<EliteMember, string[]> = {
-  [EliteMember.Lorelei]: ['characters/frlg/lorelei'],
-  [EliteMember.Bruno]: ['characters/frlg/bruno', 'characters/lgpe/bruno'],
-  [EliteMember.Agatha]: ['characters/frlg/agatha', 'characters/lgpe/agatha'],
-  [EliteMember.Lance]: ['characters/frlg/lance', 'characters/lgpe/lance'],
-  [EliteMember.Will]: ['characters/hgss/will'],
-  // His Heart Gold sheet alone. The other two are the gym leader's,
-  // and a sprite is unlocked by one deed: the Soul Badge is what he
-  // is worn off in Kanto, his mark is what he is worn off in Johto
-  [EliteMember.Koga]: ['characters/hgss/koga'],
-  [EliteMember.Karen]: ['characters/hgss/karen'],
-  // His Heart Gold sheet, the way the rest of Johto's league is
-  // drawn. The Kanto seat above keeps the two he is drawn in there
-  [EliteMember.JohtoBruno]: ['characters/hgss/bruno'],
-  [EliteMember.Sidney]: ['characters/oras/sidney'],
-  [EliteMember.Phoebe]: ['characters/oras/phoebe'],
-  [EliteMember.Glacia]: ['characters/oras/glacia'],
-  [EliteMember.Drake]: ['characters/oras/drake'],
-  [EliteMember.Aaron]: ['characters/dppt/aaron'],
-  [EliteMember.Bertha]: ['characters/dppt/bertha'],
-  [EliteMember.Flint]: ['characters/dppt/flint'],
-  [EliteMember.Lucian]: ['characters/dppt/lucian'],
-  [EliteMember.Shauntal]: ['characters/b2w2/shauntal'],
-  [EliteMember.Marshal]: ['characters/b2w2/marshal'],
-  [EliteMember.Grimsley]: ['characters/b2w2/grimsley'],
-  // Her league sheet. The Frontier seat keeps the one she is drawn
-  // in at the Battle Castle, and each is worn off its own deed
-  [EliteMember.Caitlin]: ['characters/b2w2/caitlin'],
-  [EliteMember.Malva]: ['characters/xy/malva'],
-  [EliteMember.Siebold]: ['characters/xy/siebold'],
-  [EliteMember.Wikstrom]: ['characters/xy/wikstrom'],
-  [EliteMember.Drasna]: ['characters/xy/drasna'],
-};
-
 /**
- * Which of the Elite Four hold each biome's seats, by the same rule
- * the gyms follow: ice country is Lorelei's, hard dry ground is
- * Bruno's, the damp is Agatha's, and everything green or under water
- * is Lance's. The later leagues take the countries their own kind
- * answers to, so a seat holds several names across four leagues and
- * the window's roll says whose it is
+ * Which of the Elite Four hold each biome's seats, in the order the
+ * window's roll picks from. A seat holds several names across the
+ * leagues, and the roll says whose it is
  */
-export const BIOME_ELITE_MEMBERS: Record<Biome, EliteMember[]> = {
-  [Biome.Glacier]: [EliteMember.Lorelei, EliteMember.Glacia],
-  [Biome.Tundra]: [EliteMember.Lorelei, EliteMember.Glacia],
-  [Biome.ColdDesert]: [
-    EliteMember.Lorelei,
-    EliteMember.Glacia,
-    EliteMember.Bertha,
-    EliteMember.Wikstrom,
-  ],
-  [Biome.AlpineTundra]: [EliteMember.Lorelei, EliteMember.Glacia],
-  [Biome.Taiga]: [
-    EliteMember.Lorelei,
-    EliteMember.Karen,
-    EliteMember.Glacia,
-    EliteMember.Sidney,
-    EliteMember.Aaron,
-    EliteMember.Grimsley,
-  ],
-  [Biome.PolarOcean]: [EliteMember.Lorelei, EliteMember.Glacia, EliteMember.Siebold],
-  [Biome.Mountain]: [
-    EliteMember.Bruno,
-    EliteMember.JohtoBruno,
-    EliteMember.Bertha,
-    EliteMember.Marshal,
-    EliteMember.Wikstrom,
-  ],
-  [Biome.Badlands]: [
-    EliteMember.Bruno,
-    EliteMember.JohtoBruno,
-    EliteMember.Koga,
-    EliteMember.Karen,
-    EliteMember.Sidney,
-    EliteMember.Bertha,
-    EliteMember.Marshal,
-    EliteMember.Grimsley,
-    EliteMember.Wikstrom,
-  ],
-  [Biome.Desert]: [
-    EliteMember.Bruno,
-    EliteMember.JohtoBruno,
-    EliteMember.Bertha,
-    EliteMember.Flint,
-    EliteMember.Marshal,
-    EliteMember.Malva,
-  ],
-  [Biome.Steppe]: [
-    EliteMember.Bruno,
-    EliteMember.JohtoBruno,
-    EliteMember.Bertha,
-    EliteMember.Marshal,
-  ],
-  [Biome.Shrubland]: [
-    EliteMember.Bruno,
-    EliteMember.JohtoBruno,
-    EliteMember.Bertha,
-    EliteMember.Aaron,
-    EliteMember.Marshal,
-  ],
-  [Biome.Savanna]: [
-    EliteMember.Bruno,
-    EliteMember.JohtoBruno,
-    EliteMember.Bertha,
-    EliteMember.Marshal,
-  ],
-  [Biome.RockyCoast]: [
-    EliteMember.Bruno,
-    EliteMember.JohtoBruno,
-    EliteMember.Bertha,
-    EliteMember.Marshal,
-  ],
-  [Biome.Swamp]: [
-    EliteMember.Agatha,
-    EliteMember.Koga,
-    EliteMember.Phoebe,
-    EliteMember.Aaron,
-    EliteMember.Shauntal,
-  ],
-  [Biome.Bog]: [
-    EliteMember.Agatha,
-    EliteMember.Koga,
-    EliteMember.Karen,
-    EliteMember.Sidney,
-    EliteMember.Phoebe,
-    EliteMember.Shauntal,
-    EliteMember.Grimsley,
-  ],
-  [Biome.Mangrove]: [
-    EliteMember.Agatha,
-    EliteMember.Koga,
-    EliteMember.Phoebe,
-    EliteMember.Aaron,
-    EliteMember.Shauntal,
-  ],
-  [Biome.TemperateRainforest]: [
-    EliteMember.Agatha,
-    EliteMember.Will,
-    EliteMember.Karen,
-    EliteMember.Sidney,
-    EliteMember.Phoebe,
-    EliteMember.Aaron,
-    EliteMember.Lucian,
-    EliteMember.Shauntal,
-    EliteMember.Grimsley,
-    EliteMember.Caitlin,
-  ],
-  [Biome.Beyond]: [
-    EliteMember.Agatha,
-    EliteMember.Will,
-    EliteMember.Karen,
-    EliteMember.Sidney,
-    EliteMember.Phoebe,
-    EliteMember.Lucian,
-    EliteMember.Shauntal,
-    EliteMember.Grimsley,
-    EliteMember.Caitlin,
-  ],
-  [Biome.DeepOcean]: [
-    EliteMember.Lance,
-    EliteMember.Drake,
-    EliteMember.Siebold,
-    EliteMember.Drasna,
-  ],
-  [Biome.Ocean]: [EliteMember.Lance, EliteMember.Drake, EliteMember.Siebold, EliteMember.Drasna],
-  [Biome.CoralReef]: [
-    EliteMember.Lance,
-    EliteMember.Drake,
-    EliteMember.Siebold,
-    EliteMember.Drasna,
-  ],
-  [Biome.Beach]: [EliteMember.Lance, EliteMember.Drake, EliteMember.Siebold, EliteMember.Drasna],
-  [Biome.KelpForest]: [
-    EliteMember.Lance,
-    EliteMember.Will,
-    EliteMember.Drake,
-    EliteMember.Lucian,
-    EliteMember.Caitlin,
-    EliteMember.Siebold,
-    EliteMember.Drasna,
-  ],
-  [Biome.TropicalRainforest]: [
-    EliteMember.Lance,
-    EliteMember.Koga,
-    EliteMember.Will,
-    EliteMember.Drake,
-    EliteMember.Aaron,
-    EliteMember.Lucian,
-    EliteMember.Caitlin,
-    EliteMember.Drasna,
-  ],
-  [Biome.TropicalSeasonalForest]: [
-    EliteMember.Lance,
-    EliteMember.Drake,
-    EliteMember.Aaron,
-    EliteMember.Drasna,
-  ],
-  [Biome.Grassland]: [EliteMember.Lance, EliteMember.Drake, EliteMember.Aaron, EliteMember.Drasna],
-  [Biome.TemperateForest]: [
-    EliteMember.Lance,
-    EliteMember.Drake,
-    EliteMember.Aaron,
-    EliteMember.Drasna,
-  ],
-  [Biome.Woodland]: [EliteMember.Lance, EliteMember.Drake, EliteMember.Aaron, EliteMember.Drasna],
-  [Biome.MontaneForest]: [
-    EliteMember.Lance,
-    EliteMember.Will,
-    EliteMember.Drake,
-    EliteMember.Aaron,
-    EliteMember.Lucian,
-    EliteMember.Caitlin,
-    EliteMember.Drasna,
-  ],
-  [Biome.Volcano]: [
-    EliteMember.Lance,
-    EliteMember.Drake,
-    EliteMember.Flint,
-    EliteMember.Malva,
-    EliteMember.Wikstrom,
-    EliteMember.Drasna,
-  ],
-};
+export const BIOME_ELITE_MEMBERS: Record<number, EliteMember[]> = {};
+
+for (const [name, members] of Object.entries(
+  v.parse(v.record(v.string(), v.array(v.string())), biomesFile),
+)) {
+  const where = `biome-elite.yaml: ${name}`;
+
+  BIOME_ELITE_MEMBERS[idOf<Biome>(BIOME_IDS, name, where)] = idsOf<EliteMember>(
+    ELITE_MEMBER_IDS,
+    members,
+    where,
+  );
+}

@@ -1,0 +1,114 @@
+# What lives in the caves.
+
+# One pool for the whole of underground rather than one per biome.
+# A cave is a cave: the country overhead decides which cave a player
+# has walked into and how far they had to go to reach it, but what is
+# living in the dark is much the same under a desert as under a
+# taiga, and the mainline agrees with that.
+
+# **The same at every hour.** There is no sky down there, so nothing
+# about a cave changes with the time of day, which is one of the
+# things a player gives up by going under: no dawn, no dusk, and
+# nothing that only comes out at night.
+
+# The one pool every cave in the world draws from, at every hour
+
+pool:
+  morning: &pool-morning
+    base:
+      Zubat: 1058
+      Geodude: 846
+      Roggenrola: 846
+      Klink: 705
+      Machop: 423
+      Whismur: 423
+      Aron: 282
+      # The amphibious ones stand on the floor and swim the cave's water
+      Tympole: 282
+      Rhyhorn: 212
+      Larvitar: 106
+      Gible: 106
+    uncommon:
+      Joltik: 239
+      Ferroseed: 213
+      Diglett: 213
+      Woobat: 213
+      Sandshrew: 160
+      Drilbur: 160
+      Onix: 133
+      Clefairy: 106
+      Paras: 106
+      Makuhita: 106
+      Wooper: 106
+      Baltoy: 93
+      Psyduck: 93
+      Krabby: 93
+      Nosepass: 80
+      Bronzor: 80
+      Meditite: 80
+      Seel: 80
+      Slowpoke: 80
+      Slugma: 66
+    rare:
+      Golbat: 235
+      Graveler: 176
+      Boldore: 176
+      Klang: 118
+      Machoke: 118
+      Loudred: 118
+      Lairon: 88
+      Rhydon: 74
+      Palpitoad: 59
+      Pupitar: 44
+      Gabite: 44
+    scarce:
+      Dugtrio: 54
+      Sandslash: 48
+      Swoobat: 43
+      Steelix: 38
+      Parasect: 38
+      Excadrill: 38
+      Galvantula: 32
+      Hariyama: 32
+      Claydol: 32
+      Ferrothorn: 27
+      Clefable: 27
+      Bronzong: 27
+      Medicham: 27
+      Magcargo: 27
+      Quagsire: 27
+      Probopass: 22
+      Golduck: 22
+      Dewgong: 22
+      Slowbro: 22
+      Kingler: 22
+    elusive:
+      Dedenne: 28
+      Dunsparce: 28
+      Carbink: 23
+      Wobbuffet: 23
+      Sableye: 20
+      Mawile: 20
+      Solrock: 17
+      Lunatone: 17
+      Crobat: 17
+      Golem: 17
+      # The ones that never evolve are the reason to be down here at
+      # all: none of them stands anywhere else in the world
+      Druddigon: 14
+      Machamp: 14
+      Exploud: 14
+      Klinklang: 11
+      Aggron: 11
+      Gigalith: 11
+      Rhyperior: 8
+      Seismitoad: 8
+      Garchomp: 6
+      Tyranitar: 6
+    prized:
+      Unown: forms
+    # The legendaries follow the biome overhead: see its `cave-legends`
+    special: {}
+  day: *pool-morning
+  evening: *pool-morning
+  night: *pool-morning

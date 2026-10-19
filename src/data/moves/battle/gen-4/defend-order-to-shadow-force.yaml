@@ -1,0 +1,107 @@
+# From Defend Order to Shadow Force: the end of Sinnoh's list, which
+# is where the legendaries and the hive keep their own moves
+
+DefendOrder:
+  type: Bug
+  category: Status
+  pp: 10
+  target: None
+
+HealOrder:
+  type: Bug
+  category: Status
+  pp: 5
+  target: None
+
+HeadSmash:
+  type: Rock
+  category: Physical
+  power: 150
+  accuracy: 80
+  pp: 5
+  target: Unit
+  flags: [Contact]
+
+DoubleHit:
+  type: Normal
+  category: Physical
+  power: 35
+  accuracy: 90
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+RoarOfTime:
+  type: Dragon
+  category: Special
+  power: 150
+  accuracy: 90
+  pp: 5
+  target: Unit
+
+SpacialRend:
+  type: Dragon
+  category: Special
+  power: 100
+  accuracy: 95
+  pp: 5
+  target: Unit
+  flags: [Slicing]
+
+LunarDance:
+  type: Psychic
+  category: Status
+  pp: 10
+  target: Unit
+  affects: [Unit, Own]
+
+CrushGrip:
+  type: Normal
+  category: Physical
+  accuracy: 100
+  pp: 5
+  target: Unit
+  flags: [Contact]
+
+MagmaStorm:
+  type: Fire
+  category: Special
+  power: 100
+  accuracy: 75
+  pp: 5
+  target: Unit
+
+DarkVoid:
+  type: Dark
+  category: Status
+  accuracy: 50
+  pp: 10
+  target: Unit
+
+SeedFlare:
+  type: Grass
+  category: Special
+  power: 120
+  accuracy: 85
+  pp: 5
+  target: Unit
+
+OminousWind:
+  type: Ghost
+  category: Special
+  power: 60
+  accuracy: 100
+  pp: 5
+  target: Unit
+  flags: [Wind]
+  projectile: true
+
+ShadowForce:
+  type: Ghost
+  category: Physical
+  power: 120
+  accuracy: 100
+  pp: 5
+  target: Unit
+  flags: [Contact]
+  steps: 1

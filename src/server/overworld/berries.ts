@@ -2,9 +2,9 @@ import 'server-only';
 import { Depth } from '../../overworld/depth';
 import type { ItemStack } from '../../data/overworld/item-pool';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
-import { ITEM_STACKS } from '../../auth/stacks';
+import { ITEM_STACKS } from '../../model/stacks';
 import { grantStacksIn } from '../stacks';
-import { Landmark, Metric } from '../../auth/quest-record';
+import { Landmark, Metric } from '../../model/quest-record';
 import { bumpProgress } from '../quest-progress';
 import { claim, resolveSnapshot } from './claims';
 

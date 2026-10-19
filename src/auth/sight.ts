@@ -13,7 +13,7 @@ import Strangers, {
   encodeSteps,
 } from '../overworld/strangers';
 import { WORLD_MAX, WORLD_MIN } from '../overworld/world';
-import { asNumber, asRecord, asString } from './__normalize';
+import { asNumber, asRecord, asString } from '../model/normalize';
 import { serverNow } from './clock';
 import { type LivePresence, type Topic, joinTopic } from './live';
 

@@ -1,0 +1,130 @@
+# They all do the same job, so they all cost the same: a flat price rather
+# than one type being dearer than another. Held for as long as its holder
+# keeps it: nothing consumes a Charcoal, and nothing uses one on a pokemon
+# either.
+
+SilkScarf:
+  type: Held
+  icon: held/silk-scarf
+  flags: [Holdable, Marketable]
+  buy: 4000
+  sell: 2000
+
+BlackBelt:
+  type: Held
+  icon: held/black-belt
+  flags: [Holdable, Marketable]
+  buy: 4000
+  sell: 2000
+
+SharpBeak:
+  type: Held
+  icon: held/sharp-beak
+  flags: [Holdable, Marketable]
+  buy: 4000
+  sell: 2000
+
+PoisonBarb:
+  type: Held
+  icon: held/poison-barb
+  flags: [Holdable, Marketable]
+  buy: 4000
+  sell: 2000
+
+SoftSand:
+  type: Held
+  icon: held/soft-sand
+  flags: [Holdable, Marketable]
+  buy: 4000
+  sell: 2000
+
+HardStone:
+  type: Held
+  icon: held/hard-stone
+  flags: [Holdable, Marketable]
+  buy: 4000
+  sell: 2000
+
+SilverPowder:
+  type: Held
+  icon: held/silver-powder
+  flags: [Holdable, Marketable]
+  buy: 4000
+  sell: 2000
+
+SpellTag:
+  type: Held
+  icon: held/spell-tag
+  flags: [Holdable, Marketable]
+  buy: 4000
+  sell: 2000
+
+MetalCoat:
+  type: Held
+  icon: held/metal-coat
+  flags: [Holdable, Marketable]
+  buy: 4000
+  sell: 2000
+
+Charcoal:
+  type: Held
+  icon: held/charcoal
+  flags: [Holdable, Marketable]
+  buy: 4000
+  sell: 2000
+
+MysticWater:
+  type: Held
+  icon: held/mystic-water
+  flags: [Holdable, Marketable]
+  buy: 4000
+  sell: 2000
+
+MiracleSeed:
+  type: Held
+  icon: held/miracle-seed
+  flags: [Holdable, Marketable]
+  buy: 4000
+  sell: 2000
+
+Magnet:
+  type: Held
+  icon: held/magnet
+  flags: [Holdable, Marketable]
+  buy: 4000
+  sell: 2000
+
+TwistedSpoon:
+  type: Held
+  icon: held/twisted-spoon
+  flags: [Holdable, Marketable]
+  buy: 4000
+  sell: 2000
+
+NeverMeltIce:
+  type: Held
+  icon: held/never-melt-ice
+  flags: [Holdable, Marketable]
+  buy: 4000
+  sell: 2000
+
+DragonFang:
+  type: Held
+  icon: held/dragon-fang
+  flags: [Holdable, Marketable]
+  buy: 4000
+  sell: 2000
+
+BlackGlasses:
+  type: Held
+  icon: held/black-glasses
+  flags: [Holdable, Marketable]
+  buy: 4000
+  sell: 2000
+
+FairyFeather:
+  type: Held
+  icon: held/fairy-feather
+  flags: [Holdable, Marketable]
+  buy: 4000
+  sell: 2000

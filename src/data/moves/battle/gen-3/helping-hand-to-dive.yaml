@@ -1,0 +1,164 @@
+# From Helping Hand to Dive: what a double battle is fought with, and
+# the moves that borrow somebody else's
+
+HelpingHand:
+  type: Normal
+  category: Status
+  priority: 5
+  pp: 20
+  target: Unit
+  affects: [Unit, Own]
+
+Trick:
+  type: Psychic
+  category: Status
+  accuracy: 100
+  pp: 10
+  target: Unit
+
+RolePlay:
+  type: Psychic
+  category: Status
+  pp: 10
+  target: Unit
+
+Wish:
+  type: Normal
+  category: Status
+  pp: 10
+  target: Unit
+  affects: [Unit, Self, Own]
+
+Assist:
+  type: Normal
+  category: Status
+  pp: 20
+  target: None
+
+Ingrain:
+  type: Grass
+  category: Status
+  pp: 20
+  target: None
+
+Superpower:
+  type: Fighting
+  category: Physical
+  power: 120
+  accuracy: 100
+  pp: 5
+  target: Unit
+  flags: [Contact]
+
+MagicCoat:
+  type: Psychic
+  category: Status
+  priority: 4
+  pp: 15
+  target: None
+
+Recycle:
+  type: Normal
+  category: Status
+  pp: 10
+  target: None
+
+Revenge:
+  type: Fighting
+  category: Physical
+  power: 60
+  accuracy: 100
+  priority: -4
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+BrickBreak:
+  type: Fighting
+  category: Physical
+  power: 75
+  accuracy: 100
+  pp: 15
+  target: Unit
+  flags: [Contact]
+
+Yawn:
+  type: Normal
+  category: Status
+  pp: 10
+  target: Unit
+
+KnockOff:
+  type: Dark
+  category: Physical
+  power: 65
+  accuracy: 100
+  pp: 20
+  target: Unit
+  flags: [Contact]
+
+Endeavor:
+  type: Normal
+  category: Physical
+  accuracy: 100
+  pp: 5
+  target: Unit
+  flags: [Contact]
+
+Eruption:
+  type: Fire
+  category: Special
+  power: 150
+  accuracy: 100
+  pp: 5
+  target: None
+  affects: [Unit, Enemy]
+
+SkillSwap:
+  type: Psychic
+  category: Status
+  pp: 10
+  target: Unit
+
+Imprison:
+  type: Psychic
+  category: Status
+  pp: 10
+  target: Unit
+
+Refresh:
+  type: Normal
+  category: Status
+  pp: 20
+  target: None
+
+Grudge:
+  type: Ghost
+  category: Status
+  pp: 5
+  target: None
+
+Snatch:
+  type: Dark
+  category: Status
+  priority: 4
+  pp: 10
+  target: None
+
+SecretPower:
+  type: Normal
+  category: Physical
+  power: 70
+  accuracy: 100
+  pp: 20
+  target: Unit
+
+Dive:
+  type: Water
+  category: Physical
+  power: 80
+  accuracy: 100
+  pp: 10
+  target: Unit
+  flags: [Contact]
+  steps: 1

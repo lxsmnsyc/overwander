@@ -1,6 +1,6 @@
 import { EventPriority } from '../../core/event-emitter';
 import { Statuses } from '../../data/ids/status';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, MoveTargetType } from '../events';
 import { OHKO_MOVES } from '../moves/fixed-damage';
 import turns from '../turn';

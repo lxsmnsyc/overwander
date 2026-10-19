@@ -49,6 +49,10 @@ and a wild pokemon carries no light of its own, so finding one means walking a
 lamp onto it. A buddy with **Illuminate** more than doubles how far that pool
 reaches.
 
+A dark day is also when a **true shadow** is met. Any lair, legendary or shadow,
+that one of their counterparts is at home in holds the true shadow instead, as a
+shadow raid.
+
 A **fogbow** hands over an egg move, which breeding is otherwise the only way to
 come by. About half the families have an egg move at all, so half of what is met
 under one is given nothing.

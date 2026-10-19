@@ -4,10 +4,10 @@ import { Moves } from '../../data/ids/moves';
 import { BERRY_RESIST_TYPES, isBerry } from '../../data/items/berries';
 import { GEMS } from '../../data/items/gems';
 import { USELESS_PENALTY } from '../ai/score';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import type Unit from '../unit';
-import { stealableItem } from '../utils';
+import { isConsumable, stealableItem } from '../items/held';
 import { seesFully } from '../ai/fog';
 
 /**
@@ -93,7 +93,11 @@ export default function setupBerryMoves(battle: Battle): void {
       const berry = heldBerry(source);
 
       if (berry != null) {
-        source.removeItem(berry, { type: EffectType.Move, move: Moves.NaturalGift, unit: source });
+        source.removeItem(
+          berry,
+          { type: EffectType.Move, move: Moves.NaturalGift, unit: source },
+          true,
+        );
       }
       return;
     }
@@ -104,7 +108,11 @@ export default function setupBerryMoves(battle: Battle): void {
       const held = stealableItem(target);
 
       if (held != null && (isBerry(held) || GEMS.has(held))) {
-        target.removeItem(held, { type: EffectType.Move, move: Moves.Incinerate, unit: source });
+        target.removeItem(
+          held,
+          { type: EffectType.Move, move: Moves.Incinerate, unit: source },
+          isConsumable(held),
+        );
       }
       return;
     }
@@ -116,11 +124,11 @@ export default function setupBerryMoves(battle: Battle): void {
       const berry = heldBerry(target);
 
       if (berry != null) {
-        target.removeItem(berry, {
-          type: EffectType.Move,
-          move: event.parent.move,
-          unit: source,
-        });
+        target.removeItem(
+          berry,
+          { type: EffectType.Move, move: event.parent.move, unit: source },
+          isConsumable(berry),
+        );
         source.addItem(berry);
         source.triggerItem(berry);
       }

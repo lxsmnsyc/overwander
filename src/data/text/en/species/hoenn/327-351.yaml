@@ -1,0 +1,43 @@
+Spinda:
+  Spinda: { name: Spinda, category: Spot Panda Pokemon }
+Trapinch:
+  Trapinch: { name: Trapinch, category: Ant Pit Pokemon }
+  Vibrava: { name: Vibrava, category: Vibration Pokemon }
+  Flygon: { name: Flygon, category: Mystic Pokemon }
+Cacnea:
+  Cacnea: { name: Cacnea, category: Cactus Pokemon }
+  Cacturne: { name: Cacturne, category: Scarecrow Pokemon }
+Swablu:
+  Swablu: { name: Swablu, category: Cotton Bird Pokemon }
+  Altaria: { name: Altaria, category: Humming Pokemon }
+Zangoose:
+  Zangoose: { name: Zangoose, category: Cat Ferret Pokemon }
+Seviper:
+  Seviper: { name: Seviper, category: Fang Snake Pokemon }
+Lunatone:
+  Lunatone: { name: Lunatone, category: Meteorite Pokemon }
+Solrock:
+  Solrock: { name: Solrock, category: Meteorite Pokemon }
+Barboach:
+  Barboach: { name: Barboach, category: Whiskers Pokemon }
+  Whiscash: { name: Whiscash, category: Whiskers Pokemon }
+Corphish:
+  Corphish: { name: Corphish, category: Ruffian Pokemon }
+  Crawdaunt: { name: Crawdaunt, category: Rogue Pokemon }
+Baltoy:
+  Baltoy: { name: Baltoy, category: Clay Doll Pokemon }
+  Claydol: { name: Claydol, category: Clay Doll Pokemon }
+Lileep:
+  Lileep: { name: Lileep, category: Sea Lily Pokemon }
+  Cradily: { name: Cradily, category: Barnacle Pokemon }
+Anorith:
+  Anorith: { name: Anorith, category: Old Shrimp Pokemon }
+  Armaldo: { name: Armaldo, category: Plate Pokemon }
+Feebas:
+  Feebas: { name: Feebas, category: Fish Pokemon }
+  Milotic: { name: Milotic, category: Tender Pokemon }
+Castform:
+  Castform: { name: Castform, category: Weather Pokemon }
+  CastformSunny: { name: Sunny Castform, category: Weather Pokemon }
+  CastformRainy: { name: Rainy Castform, category: Weather Pokemon }
+  CastformSnowy: { name: Snowy Castform, category: Weather Pokemon }

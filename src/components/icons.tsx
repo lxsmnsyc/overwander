@@ -823,3 +823,72 @@ export function BoxIcon(props: ComponentProps<'svg'>): JSX.Element {
     </svg>
   );
 }
+
+/** Six dots: something that can be picked up and moved along a list */
+export function GripIcon(props: ComponentProps<'svg'>): JSX.Element {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" {...props}>
+      <circle cx="9" cy="6" r="1.6" />
+      <circle cx="15" cy="6" r="1.6" />
+      <circle cx="9" cy="12" r="1.6" />
+      <circle cx="15" cy="12" r="1.6" />
+      <circle cx="9" cy="18" r="1.6" />
+      <circle cx="15" cy="18" r="1.6" />
+    </svg>
+  );
+}
+
+/** A ticked square: turning presses into picks */
+export function SelectIcon(props: ComponentProps<'svg'>): JSX.Element {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="2"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      {...props}
+    >
+      <rect x="3" y="3" width="18" height="18" rx="4" />
+      <path d="M8 12l3 3 5-6" />
+    </svg>
+  );
+}
+
+/** Two arrows passing each other: the same order the other way round */
+export function SwapIcon(props: ComponentProps<'svg'>): JSX.Element {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="2"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      {...props}
+    >
+      <path d="M8 4v16M4 16l4 4 4-4M16 20V4M12 8l4-4 4 4" />
+    </svg>
+  );
+}
+
+/** A clock face: what happened earlier today */
+export function ClockIcon(props: ComponentProps<'svg'>): JSX.Element {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="2"
+      stroke="currentColor"
+      stroke-linecap="round"
+      {...props}
+    >
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7v5l3 2" />
+    </svg>
+  );
+}

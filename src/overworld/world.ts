@@ -9,7 +9,7 @@ import Biome, { getBiome } from '../data/ids/biome';
 import type Weather from '../data/overworld/weather';
 import { classifyWeather } from '../data/overworld/weather';
 import Chunk, { CHUNK_CELLS } from './chunk';
-import { SECOND_TERRACE_COUNT, TERRACE_STEPS, evenTerraceSteps } from './terrace';
+import { SECOND_TERRACE_COUNT, TERRACE_STEPS, evenTerraceSteps } from './terrain/terrace';
 
 /**
  * How many chunks one climate noise cell spans: lower values make
@@ -305,6 +305,15 @@ export default class World {
    * towns kept the slope and the round edge they were built with
    */
   get flattensTowns(): boolean {
+    return this.generation !== Generation.First;
+  }
+
+  /**
+   * Whether a town may be sited over lakes and wetland, which its
+   * ground drains anyway. The first generation refused any water, which
+   * kept towns out of nearly every swamp, bog and mangrove
+   */
+  get sitesTownsOnWater(): boolean {
     return this.generation !== Generation.First;
   }
 

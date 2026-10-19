@@ -9,14 +9,17 @@ import { Moves } from '../ids/moves';
  * reads a move's shape cannot disagree about what counts as a dance
  */
 export const DANCE_MOVES = new Set<Moves>([
+  Moves.AquaStep,
   Moves.DragonDance,
   Moves.FeatherDance,
+  Moves.FieryDance,
   Moves.LunarDance,
   Moves.PetalDance,
   Moves.QuiverDance,
   Moves.RevelationDance,
   Moves.SwordsDance,
   Moves.TeeterDance,
+  Moves.VictoryDance,
 ]);
 
 export function isDanceMove(move: Moves): boolean {

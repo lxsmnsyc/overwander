@@ -1,7 +1,7 @@
-import { STAT_NAMES, Stats } from '../constants/stats';
-import { ItemFlags, ItemTypes, Items } from '../ids/items';
+import { STAT_NAMES } from '../constants/stats';
+import { Items } from '../ids/items';
 import Natures, { NATURE_EFFECTS, NATURE_NAMES, getNatureFactor } from '../ids/natures';
-import { registerItem } from './__create';
+import { itemText } from './__create';
 
 /**
  * The mints: the only thing that changes a pokemon's nature.
@@ -58,58 +58,30 @@ export function getMintNature(item: Items): Natures | null {
 }
 
 /**
- * What a mint costs. Dearer than a vitamin, which moves one stat by a
- * little: a nature is two stats for the rest of the pokemon's life
- */
-export const MINT_PRICE = 12_000;
-
-/**
- * Which picture a mint takes. There is one per stat a nature can
- * raise rather than one per mint, so the four that raise Attack share
- * a jar and a neutral one has its own
- */
-const MINT_ICONS: Record<Stats, string> = {
-  [Stats.HP]: 'mints/neutral',
-  [Stats.Attack]: 'mints/attack',
-  [Stats.Defense]: 'mints/defense',
-  [Stats.SpecialAttack]: 'mints/special-attack',
-  [Stats.SpecialDefense]: 'mints/special-defense',
-  [Stats.Speed]: 'mints/speed',
-};
-
-function mintIcon(nature: Natures): string {
-  const effect = NATURE_EFFECTS[nature];
-
-  return effect == null ? 'mints/neutral' : MINT_ICONS[effect.up];
-}
-
-/**
  * What a mint says it does, read off the nature rather than written
  * out, so a nature retuned here re-describes every mint that makes it
  */
 export function describeMint(nature: Natures): string {
   const effect = NATURE_EFFECTS[nature];
-  const made = `Makes it ${NATURE_NAMES[nature]}`;
 
   if (effect == null) {
-    return `${made}, which raises and lowers nothing. Spent on use.`;
+    return itemText('mints', 'neutral', { nature: NATURE_NAMES[nature] });
   }
-  const up = getNatureFactor(nature, effect.up);
-  const down = getNatureFactor(nature, effect.down);
-
-  return `${made}: ${up}x ${STAT_NAMES[effect.up]}, ${down}x ${STAT_NAMES[effect.down]}. Spent on use.`;
+  return itemText('mints', 'mint', {
+    nature: NATURE_NAMES[nature],
+    up: getNatureFactor(nature, effect.up),
+    raised: STAT_NAMES[effect.up],
+    down: getNatureFactor(nature, effect.down),
+    lowered: STAT_NAMES[effect.down],
+  });
 }
 
-export default function registerMints(): void {
-  for (const [item, nature] of MINT_NATURES) {
-    registerItem(item, {
-      name: `${NATURE_NAMES[nature]} Mint`,
-      description: describeMint(nature),
-      type: ItemTypes.Training,
-      icon: mintIcon(nature),
-      flags: ItemFlags.Usable | ItemFlags.Consumable | ItemFlags.Marketable,
-      buy: MINT_PRICE,
-      sell: MINT_PRICE / 2,
-    });
+/** The same line, for the mint item rather than its nature */
+export function describeMintItem(item: Items): string {
+  const nature = MINT_NATURES.get(item);
+
+  if (nature == null) {
+    throw new Error(`Item ${item} is not a mint`);
   }
+  return describeMint(nature);
 }

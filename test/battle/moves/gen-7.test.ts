@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { AttackPriority, EventPriority } from '../../../src/core/event-emitter';
 import { BattleEvents, EffectType, MoveTargetType } from '../../../src/battle/events';
+import { castShownAs } from '../../../src/battle/gimmicks/dynamax/max-moves';
 import type Unit from '../../../src/battle/unit';
 import { Stages, Stats, StatsKind } from '../../../src/data/constants/stats';
 import { Types } from '../../../src/data/constants/types';
@@ -493,6 +494,30 @@ describe('Z-Moves', () => {
     expect(thrown.get(mate)).toEqual([Moves.Flamethrower]);
     // Flamethrower's 90 comes to 175
     expect(powers).toEqual([175]);
+  });
+
+  it('names the Z-Move on the cast while its side still has one', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const holder = createUnit(battle, teamA);
+    const mate = createUnit(battle, teamA);
+    const target = createUnit(battle, teamB);
+    const cast = (move: Moves) =>
+      ({ move, target: unitTarget(target), time: { progress: 0, duration: 1 } }) as const;
+
+    pinRandom(battle, 1);
+    holder.addItem(Items.FiriumZ);
+    mate.addItem(Items.FiriumZ);
+
+    expect(castShownAs(holder, cast(Moves.Flamethrower))).toBe(Moves.InfernoOverdrive);
+    // Only a matching damaging move is turned
+    expect(castShownAs(holder, cast(Moves.Surf))).toBe(Moves.Surf);
+    expect(castShownAs(holder, cast(Moves.WillOWisp))).toBe(Moves.WillOWisp);
+
+    holder.triggerMove(Moves.Flamethrower, unitTarget(target), 0);
+    battle.tick(turns(1));
+
+    // The side has spent it, so the mate's cast is named as itself
+    expect(castShownAs(mate, cast(Moves.Flamethrower))).toBe(Moves.Flamethrower);
   });
 
   it('leaves a Mega holder alone', () => {

@@ -12,7 +12,7 @@ import {
 import { DamageFlags, StatFlags } from '../../data/ids/moves';
 import { getNatureFactor } from '../../data/ids/natures';
 import { getSpeciesData } from '../../data/species';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, type EffectCause, type ProgressData } from '../events';
 import type Unit from '../unit';
 import { SWITCHING_SPAN } from '../status/switching';
@@ -103,6 +103,10 @@ function setupUnitDamageMechanics(battle: Battle): void {
 
   battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
     const before = standing.get(event);
+
+    if (event.success && before != null) {
+      event.target.taken += Math.max(0, before - event.target.health);
+    }
 
     // Only what crossed the lines counts as contribution: recoil, a
     // confused self-hit and friendly fire rank nobody

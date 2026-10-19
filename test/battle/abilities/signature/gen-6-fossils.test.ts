@@ -10,7 +10,7 @@ import {
   FROSTBOUND_DURATION,
   FROSTBOUND_SCALE,
   JAW_SNAP_COOLDOWN,
-} from '../../../../src/battle/abilities/signature/tyrunt-and-amaura';
+} from '../../../../src/battle/abilities/signature/gen-6/tyrunt-and-amaura';
 import { createBattle, createUnit, pinRandom } from '../../harness';
 import { dealDamage } from './helpers';
 

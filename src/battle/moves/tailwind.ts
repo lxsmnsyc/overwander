@@ -1,9 +1,10 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
 import { Moves } from '../../data/ids/moves';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents } from '../events';
 import type Team from '../team';
+import { registerSideCondition } from '../mechanics/side-conditions';
 import turns from '../turn';
 
 /**
@@ -17,7 +18,7 @@ import turns from '../turn';
  * out rather than being taken off
  * https://bulbapedia.bulbagarden.net/wiki/Tailwind_(move)
  */
-const DURATION = turns(3);
+export const TAILWIND_DURATION = turns(3);
 
 const DOUBLED = 2;
 
@@ -25,9 +26,20 @@ export default function setupTailwind(battle: Battle): void {
   /** How long each side still has the wind behind it */
   const remaining = new Map<Team, number>();
 
+  registerSideCondition(battle, {
+    read: (team) => remaining.get(team),
+    write: (team, value) => {
+      if (value == null) {
+        remaining.delete(team);
+      } else {
+        remaining.set(team, value);
+      }
+    },
+  });
+
   battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {
     if (event.move === Moves.Tailwind) {
-      remaining.set(event.source.team, DURATION);
+      remaining.set(event.source.team, TAILWIND_DURATION);
     }
   });
 

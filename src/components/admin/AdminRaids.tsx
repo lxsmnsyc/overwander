@@ -2,7 +2,7 @@ import { For, type JSX, type Resource, Suspense, createResource, createSignal } 
 import type { Listing as ListingPage, RaidRow } from '../../auth/admin';
 import { Badge, List, ListRow, Meta, Note } from '../styled';
 import Listing from './Listing';
-import { RaidKind } from '../../auth/raid-record';
+import { RaidKind } from '../../model/raid-record';
 import { getSpeciesData } from '../../data/species';
 import { listRaids } from '../../auth/admin';
 
@@ -27,6 +27,11 @@ const KINDS: Record<RaidKind, string> = {
   [RaidKind.Legendary]: 'legendary',
   [RaidKind.Shadow]: 'shadow',
   [RaidKind.Mythical]: 'mythical',
+  [RaidKind.Totem]: 'totem',
+  [RaidKind.Max]: 'max',
+  [RaidKind.Alpha]: 'alpha',
+  [RaidKind.Noble]: 'noble',
+  [RaidKind.Tera]: 'tera',
 };
 
 /**

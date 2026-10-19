@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { BattleModes } from '../../src/battle/core';
+import { BattleModes } from '../../src/battle/battle';
 import { MoveTargetType } from '../../src/battle/events';
-import { skyOverTeam } from '../../src/battle/utils';
+import { skyOverTeam } from '../../src/battle/weather';
 import { type Slot, skiesOver } from '../../src/components/battle/battle-canvas/field';
 import { Weathers } from '../../src/data/ids/status';
 import { Moves } from '../../src/data/ids/moves';
@@ -30,7 +30,6 @@ function slot(unit: Unit, x: number, y: number): Slot {
     facing: 'Down',
     depth: 1,
     offset: [0, 0],
-    spin: 0,
     visible: true,
   };
 }

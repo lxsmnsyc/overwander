@@ -1,4 +1,6 @@
-import Awards, {
+import * as v from 'valibot';
+import type Awards from '../../ids/awards';
+import {
   HOENN_HONORS,
   JOHTO_HONORS,
   KALOS_HONORS,
@@ -6,150 +8,81 @@ import Awards, {
   SINNOH_HONORS,
   UNOVA_HONORS,
 } from '../../ids/awards';
-import { Species } from '../../ids/species';
-
-/**
- * The champions, one to a league. Giovanni runs Kanto's eighth gym
- * here, so the seat at the top of that league is Blue's; Johto's is
- * Lance, who also keeps a seat in Kanto's Elite Four and is drawn in
- * his Heart Gold coat when he is standing at the top. Unova's is
- * Iris, which is why Opelucid's gym is Drayden's
- */
-const enum Champion {
-  Blue = 0,
-  Lance = 1,
-  Wallace = 2,
-  Cynthia = 3,
-  Iris = 4,
-  Diantha = 5,
-}
+import Champion from '../../ids/champions';
+import { AWARD_IDS, CHAMPION_IDS, SPECIES_IDS } from '../../ids/names';
+import type { Species } from '../../ids/species';
+import namesFile from '../../text/en/champions.yaml';
+import { idOf, idsOf } from '../../yaml';
+import championsFile from './champions.yaml';
 
 export { Champion };
 
-export const CHAMPIONS: Champion[] = [
-  Champion.Blue,
-  Champion.Lance,
-  Champion.Wallace,
-  Champion.Cynthia,
-  Champion.Iris,
-  Champion.Diantha,
-];
+/**
+ * The champions, read out of `champions.yaml` and
+ * `text/en/champions.yaml`; the numbers are `ids/champions.ts`
+ */
+const CHAMPION = v.object({
+  title: v.string(),
+  league: v.string(),
+  sheets: v.array(v.string()),
+  prize: v.optional(v.array(v.string())),
+  party: v.array(v.string()),
+});
 
-export const CHAMPION_NAMES: Record<Champion, string> = {
-  [Champion.Blue]: 'Blue',
-  [Champion.Lance]: 'Lance',
-  [Champion.Wallace]: 'Wallace',
-  [Champion.Cynthia]: 'Cynthia',
-  [Champion.Iris]: 'Iris',
-  [Champion.Diantha]: 'Diantha',
+/** Each league's Elite Four, by the name a champion's `league` is written in */
+const LEAGUE_HONORS: Record<string, Awards[]> = {
+  Kanto: KANTO_HONORS,
+  Johto: JOHTO_HONORS,
+  Hoenn: HOENN_HONORS,
+  Sinnoh: SINNOH_HONORS,
+  Unova: UNOVA_HONORS,
+  Kalos: KALOS_HONORS,
 };
 
-export const CHAMPION_CHARSETS: Record<Champion, string[]> = {
-  [Champion.Blue]: ['characters/frlg/blue'],
-  [Champion.Lance]: ['characters/hgss/lance', 'characters/hgss/lance-2'],
-  // Sootopolis' gym is Juan's here, so Wallace is only ever the man
-  // at the top, in both coats he is drawn in
-  [Champion.Wallace]: ['characters/rse/wallace', 'characters/oras/wallace'],
-  [Champion.Cynthia]: ['characters/dppt/cynthia'],
-  // Opelucid's gym is Drayden's here, so both of her looks are the
-  // champion's, the way both of Wallace's are
-  [Champion.Iris]: ['characters/b2w2/iris-1', 'characters/b2w2/iris-2'],
-  [Champion.Diantha]: ['characters/xy/diantha'],
-};
+/** Every champion, in the order they are numbered */
+export const CHAMPIONS: Champion[] = [];
+
+export const CHAMPION_NAMES: Record<number, string> = {};
+
+/** The sheets each is seen in */
+export const CHAMPION_CHARSETS: Record<number, string[]> = {};
 
 /** The title a champion's seat is worth */
-export const CHAMPION_TITLES: Record<Champion, Awards> = {
-  [Champion.Blue]: Awards.KantoChampion,
-  [Champion.Lance]: Awards.JohtoChampion,
-  [Champion.Wallace]: Awards.HoennChampion,
-  [Champion.Cynthia]: Awards.SinnohChampion,
-  [Champion.Iris]: Awards.UnovaChampion,
-  [Champion.Diantha]: Awards.KalosChampion,
-};
+export const CHAMPION_TITLES: Record<number, Awards> = {};
 
-/**
- * And the coats a champion's title unlocks besides the one they are
- * seen in. Blue's Let's Go look is his own; his Heart Gold one asks
- * for Johto's crown as well, since that is the era he is drawn in
- * there, and it is listed with the crossed unlocks in `charsets.ts`
- */
-export const CHAMPION_PRIZE_CHARSETS: Partial<Record<Champion, string[]>> = {
-  [Champion.Blue]: ['characters/lgpe/blue'],
-};
+/** The coats a champion's title unlocks besides the ones they are seen in */
+export const CHAMPION_PRIZE_CHARSETS: Partial<Record<number, string[]>> = {};
 
 /** The Elite Four a champion asks to see beaten first */
-export const CHAMPION_HONORS: Record<Champion, Awards[]> = {
-  [Champion.Blue]: KANTO_HONORS,
-  [Champion.Lance]: JOHTO_HONORS,
-  [Champion.Wallace]: HOENN_HONORS,
-  [Champion.Cynthia]: SINNOH_HONORS,
-  [Champion.Iris]: UNOVA_HONORS,
-  [Champion.Diantha]: KALOS_HONORS,
-};
+export const CHAMPION_HONORS: Record<number, Awards[]> = {};
 
-/**
- * The champion's own six.
- *
- * A champion is the one expert who does not draw from a pool: the
- * team is the character, and a player who has walked the whole league
- * to reach them should meet the party they are known for. Blue's is
- * the one he takes the Indigo Plateau with in Fire Red, the Blastoise
- * line-up of the three he has; Lance's is the one he defends it with,
- * three Dragonite and all
- */
-export const CHAMPION_PARTIES: Record<Champion, Species[]> = {
-  [Champion.Blue]: [
-    Species.Pidgeot,
-    Species.Alakazam,
-    Species.Rhydon,
-    Species.Arcanine,
-    Species.Exeggutor,
-    Species.Blastoise,
-  ],
-  [Champion.Lance]: [
-    Species.Gyarados,
-    Species.Charizard,
-    Species.Aerodactyl,
-    Species.Dragonite,
-    Species.Dragonite,
-    Species.Dragonite,
-  ],
-  // The six he defends Ever Grande with in Emerald, Milotic last
-  [Champion.Wallace]: [
-    Species.Wailord,
-    Species.Tentacruel,
-    Species.Ludicolo,
-    Species.Whiscash,
-    Species.Gyarados,
-    Species.Milotic,
-  ],
-  // Platinum's six, Garchomp last. It is the line-up she is
-  // remembered for, and the one type nothing in it shares
-  [Champion.Cynthia]: [
-    Species.Spiritomb,
-    Species.Roserade,
-    Species.Togekiss,
-    Species.Lucario,
-    Species.Milotic,
-    Species.Garchomp,
-  ],
-  // The six she defends Unova with in the sequels, Haxorus last
-  [Champion.Iris]: [
-    Species.Hydreigon,
-    Species.Druddigon,
-    Species.Aggron,
-    Species.Archeops,
-    Species.Lapras,
-    Species.Haxorus,
-  ],
-  // The six she defends Kalos with, Gardevoir last. Both fossils are
-  // hers, so Tyrantrum and Aurorus stand side by side
-  [Champion.Diantha]: [
-    Species.Hawlucha,
-    Species.Tyrantrum,
-    Species.Aurorus,
-    Species.Gourgeist,
-    Species.Goodra,
-    Species.Gardevoir,
-  ],
-};
+/** The champion's own six */
+export const CHAMPION_PARTIES: Record<number, Species[]> = {};
+
+for (const [name, written] of Object.entries(
+  v.parse(v.record(v.string(), CHAMPION), championsFile),
+)) {
+  const where = `champions.yaml: ${name}`;
+  const champion = idOf<Champion>(CHAMPION_IDS, name, where);
+
+  CHAMPIONS.push(champion);
+  CHAMPION_TITLES[champion] = idOf<Awards>(AWARD_IDS, written.title, where);
+  CHAMPION_HONORS[champion] = idOf(LEAGUE_HONORS, written.league, where);
+  CHAMPION_CHARSETS[champion] = written.sheets;
+  CHAMPION_PARTIES[champion] = idsOf<Species>(SPECIES_IDS, written.party, where);
+  if (written.prize != null) {
+    CHAMPION_PRIZE_CHARSETS[champion] = written.prize;
+  }
+}
+CHAMPIONS.sort((one, two) => one - two);
+
+for (const [name, title] of Object.entries(v.parse(v.record(v.string(), v.string()), namesFile))) {
+  CHAMPION_NAMES[idOf<Champion>(CHAMPION_IDS, name, `text/en/champions.yaml: ${name}`)] = title;
+}
+
+// Every champion the enum has is written down, so no seat stands empty or nameless
+for (const [name, champion] of Object.entries(CHAMPION_IDS)) {
+  if (!Object.hasOwn(CHAMPION_TITLES, champion) || !Object.hasOwn(CHAMPION_NAMES, champion)) {
+    throw new Error(`${name} needs a record in champions.yaml and a name in text/en`);
+  }
+}

@@ -1,0 +1,119 @@
+# The Max Moves, which nobody learns: a Dynamaxed pokemon throws one in
+# place of each move it reaches for. The typed ones take their power and
+# whether they are physical or special from the move they replace, and
+# never miss; see `src/data/moves/max-moves.ts`
+
+MaxGuard:
+  type: Normal
+  category: Status
+  priority: 4
+  pp: 10
+  target: None
+
+MaxFlare:
+  type: Fire
+  category: Physical
+  pp: 10
+  target: Unit
+
+MaxFlutterby:
+  type: Bug
+  category: Physical
+  pp: 10
+  target: Unit
+
+MaxLightning:
+  type: Electric
+  category: Physical
+  pp: 10
+  target: Unit
+
+MaxStrike:
+  type: Normal
+  category: Physical
+  pp: 10
+  target: Unit
+
+MaxKnuckle:
+  type: Fighting
+  category: Physical
+  pp: 10
+  target: Unit
+
+MaxPhantasm:
+  type: Ghost
+  category: Physical
+  pp: 10
+  target: Unit
+
+MaxHailstorm:
+  type: Ice
+  category: Physical
+  pp: 10
+  target: Unit
+
+MaxOoze:
+  type: Poison
+  category: Physical
+  pp: 10
+  target: Unit
+
+MaxGeyser:
+  type: Water
+  category: Physical
+  pp: 10
+  target: Unit
+
+MaxAirstream:
+  type: Flying
+  category: Physical
+  pp: 10
+  target: Unit
+
+MaxStarfall:
+  type: Fairy
+  category: Physical
+  pp: 10
+  target: Unit
+
+MaxWyrmwind:
+  type: Dragon
+  category: Physical
+  pp: 10
+  target: Unit
+
+MaxMindstorm:
+  type: Psychic
+  category: Physical
+  pp: 10
+  target: Unit
+
+MaxRockfall:
+  type: Rock
+  category: Physical
+  pp: 10
+  target: Unit
+
+MaxQuake:
+  type: Ground
+  category: Physical
+  pp: 10
+  target: Unit
+
+MaxDarkness:
+  type: Dark
+  category: Physical
+  pp: 10
+  target: Unit
+
+MaxOvergrowth:
+  type: Grass
+  category: Physical
+  pp: 10
+  target: Unit
+
+MaxSteelspike:
+  type: Steel
+  category: Physical
+  pp: 10
+  target: Unit

@@ -1,16 +1,22 @@
-import type { CatchSnapshot } from '../auth/catch-snapshot';
+import type { CatchSnapshot } from '../model/catch-snapshot';
 import { BASIC_SKILL, GYM_SKILL, TOP_SKILL, type TrainerSkill } from '../battle/ai/skill';
 import Abilities from '../data/ids/abilities';
 
 /** The marks a fight adds to a pokemon, which say nothing about who raised it */
-const MARKS = new Set<Abilities>([Abilities.Shadow, Abilities.Boss]);
+const MARKS = new Set<Abilities>([
+  Abilities.Shadow,
+  Abilities.Boss,
+  Abilities.TotemAlly,
+  Abilities.Alpha,
+  Abilities.Noble,
+]);
 
 /**
  * How sharply a team is directed, read off the team itself so a replay
- * reads the same. A player's team gets the best. A computer's is told
+ * reads the same. A player's team and a raid boss get the best. A computer's is told
  * by how its party was outfitted: two abilities each is the Elite and
  * above, trained or geared is a gym leader or an Ace Trainer, and the
- * rest, raid bosses included, get the basic trainer
+ * rest get the basic trainer
  */
 /** What of a team the rank is read from */
 export interface OutfittedTeam {
@@ -23,7 +29,7 @@ export default function skillOf(record: OutfittedTeam, boss: boolean): TrainerSk
     return TOP_SKILL;
   }
   if (boss) {
-    return BASIC_SKILL;
+    return TOP_SKILL;
   }
 
   let abilities = 0;

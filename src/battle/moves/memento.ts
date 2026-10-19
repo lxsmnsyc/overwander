@@ -1,7 +1,7 @@
 import { AttackPriority } from '../../core/event-emitter';
 import { DamageFlags, Moves } from '../../data/ids/moves';
 import { sacrificeCost } from '../ai/score';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, EffectType } from '../events';
 
 /**

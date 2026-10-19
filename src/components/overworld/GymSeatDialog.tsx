@@ -4,7 +4,7 @@ import {
   type GymSeatStanding,
   SEAT_DAILY_TAKE,
   SEAT_STAKE_SHARE,
-} from '../../auth/gym-seat-record';
+} from '../../model/gym-seat-record';
 import { getProfile } from '../../auth/profile';
 import { getTeamSnapshot } from '../../auth/teams';
 import type { TeamSnapshotRecord } from '../../auth/teams';
@@ -18,7 +18,7 @@ import CatchBox, { type BoxEntry } from '../catches/CatchBox';
 import PlayerPlate from '../profile/PlayerPlate';
 import { Button, Dialog, DialogActions, Meta, Note, useToast } from '../styled';
 import AtlasSprite from '../sprites/AtlasSprite';
-import { OW_SPRITE_ROOT } from '../../canvas/ow-char-sprites';
+import { OW_SPRITE_ROOT } from '../../canvas/overworld/char-sprites';
 import Landmark from '../../data/overworld/landmark';
 import landmarkPicture, { LANDMARK_SHEET } from '../../data/overworld/landmark-sprite';
 import { CounterSpent, CounterStep, CounterTerms, HeadingPortrait } from '../forms/terms';

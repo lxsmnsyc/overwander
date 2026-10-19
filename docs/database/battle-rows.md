@@ -17,7 +17,7 @@ snapshot is written once, read whole by the engine, and never queried per field.
 A `write_once` trigger refuses to let it be rewritten at all.
 
 A **catch snapshot**
-([`src/auth/catch-snapshot.ts`](../../src/auth/catch-snapshot.ts)) copies
+([`src/model/catch-snapshot.ts`](../../src/model/catch-snapshot.ts)) copies
 `caught` (the source id), `species`, `level`, `ivs`, `effortValues`, `nature`,
 `gender`, `height`, `weight`, `shiny`, `moves`, `abilities` and `items`. It is
 never rewritten: levelling, evolving or handing an item over mid-raid must not
@@ -41,7 +41,7 @@ rolled one, and a shadow boss carries `Shadow` between them. It fights alone
 under `BOSS_ALLIANCE`; every player team shares `PLAYER_ALLIANCE`.
 
 Its move list is filtered through `BANNED_BOSS_MOVES`
-([`src/battle/abilities/special.ts`](../../src/battle/abilities/special.ts)).
+([`src/battle/abilities/special/index.ts`](../../src/battle/abilities/special/index.ts)).
 
 | Banned move | Why                                                                 |
 | ----------- | ------------------------------------------------------------------- |

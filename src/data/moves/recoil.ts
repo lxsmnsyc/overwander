@@ -1,28 +1,8 @@
-import { Moves } from '../ids/moves';
+import { RECOIL_MOVES } from '../battle';
+import type { Moves } from '../ids/moves';
 
-/**
- * The moves that hurt their user for a share of what they dealt, and
- * how much of it.
- *
- * The table is data rather than mechanics because two sides read it:
- * [`src/battle/moves/recoil.ts`](../../battle/moves/recoil.ts) pays
- * the damage, and the expert builder prices a Reckless against what
- * the sheet actually carries. Kept in one place so the two cannot
- * disagree about which moves recoil
- */
-export const RECOIL_MOVES: { [key in Moves]?: number } = {
-  [Moves.TakeDown]: 1 / 4,
-  [Moves.DoubleEdge]: 1 / 3,
-  [Moves.Submission]: 1 / 4,
-  [Moves.VoltTackle]: 1 / 3,
-  [Moves.FlareBlitz]: 1 / 3,
-  [Moves.BraveBird]: 1 / 3,
-  [Moves.WoodHammer]: 1 / 3,
-  [Moves.HeadSmash]: 1 / 2,
-  [Moves.WildCharge]: 1 / 4,
-  [Moves.HeadCharge]: 1 / 4,
-  [Moves.LightOfRuin]: 1 / 2,
-};
+/** The moves that cost their user a share of what they deal (`src/data/battle/recoil.yaml`) */
+export { RECOIL_MOVES };
 
 export function isRecoilMove(move: Moves): boolean {
   return RECOIL_MOVES[move] != null;

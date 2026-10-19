@@ -9,7 +9,7 @@ import { type MoveCategories, MoveTargets, type Moves } from '../data/ids/moves'
 import Natures from '../data/ids/natures';
 import { Genders, Species } from '../data/ids/species';
 import { type Statuses, Terrains, Weathers } from '../data/ids/status';
-import type Battle from './core';
+import type Battle from './battle';
 import type {
   CastingData,
   ChannelingData,
@@ -128,6 +128,24 @@ export default class Unit {
    * reads it
    */
   shiny = false;
+
+  /**
+   * Whether it carries the Gigantamax Factor, copied off its record:
+   * Dynamaxed, it throws its species' G-Max Move where it has one
+   */
+  gigantamax = false;
+
+  /** Whether it is Dynamaxed right now. Set and cleared by `dynamax` and `revertDynamax` */
+  dynamaxed = false;
+
+  /**
+   * The type it Terastallizes into, copied off its record. Unknown
+   * reads as its first type when the time comes
+   */
+  teraType = Types.Unknown;
+
+  /** Whether it has Terastallized. Set by `terastallize` and kept for the fight */
+  terastallized = false;
 
   gender = Genders.Genderless;
 
@@ -619,10 +637,10 @@ export default class Unit {
   items: { [key in Items]?: boolean } = {};
 
   /**
-   * Every item that has left this unit's grip during the battle — a
-   * berry it ate, or anything else a removal took away. The battle
-   * itself does nothing with the set; it is what the fight reports
-   * afterwards, so a consumed item comes off the catch record too
+   * Every item this unit lost for good during the battle: one it used
+   * up, or a consumable a foe ate, stole or flung. The battle itself
+   * does nothing with the set; it is what the fight reports afterwards,
+   * so the item comes off the catch record too
    */
   consumed = new Set<Items>();
 
@@ -640,6 +658,18 @@ export default class Unit {
    */
   dealt = 0;
 
+  /**
+   * The critical hits this unit has landed, and the health it has
+   * taken from anything. Like `dealt`, the battle decides nothing by
+   * them: they are what a battle feat is measured with
+   */
+  criticals = 0;
+  taken = 0;
+  /** Hits landed, by move, for a feat that counts one move's uses */
+  landed = new Map<Moves, number>();
+  /** Recoil taken from its own moves */
+  recoil = 0;
+
   addItem(item: Items): void {
     this.battle.emit(BattleEvents.UnitAddItem, {
       id: 'UnitAddItem',
@@ -649,20 +679,25 @@ export default class Unit {
     });
   }
 
-  removeItem(item: Items, cause: EffectCause): void {
+  /**
+   * Take the item off the unit. `lost` says whether the catch record
+   * loses it too; anything not used up goes back after the battle
+   */
+  removeItem(item: Items, cause: EffectCause, lost = false): void {
     this.battle.emit(BattleEvents.UnitRemoveItem, {
       id: 'UnitRemoveItem',
       disabled: false,
       source: this,
       item,
       cause,
+      lost,
     });
   }
 
   triggerItem(item: Items): void {
     // Presence check (not truthiness): a consumed item is disabled
     // right before its trigger fires the effect
-    if (this.items[item] != null) {
+    if (this.items[item] != null && !this.battle.estimating) {
       this.battle.emit(BattleEvents.UnitTriggerItem, {
         id: 'UnitTriggerItem',
         disabled: false,
@@ -833,8 +868,10 @@ export default class Unit {
     return event.enabled;
   }
 
+  // A cue is something the field saw, and the AI weighing a move is
+  // not: it would also tell the AI's own fog what the foe holds
   triggerAbility(ability: Abilities): void {
-    if (this.abilities[ability]) {
+    if (this.abilities[ability] && !this.battle.estimating) {
       this.battle.emit(BattleEvents.UnitTriggerAbility, {
         id: 'UnitTriggerAbility',
         disabled: false,
@@ -900,6 +937,9 @@ export default class Unit {
   }
 
   triggerStatus(status: Statuses, cause: EffectCause): void {
+    if (this.battle.estimating) {
+      return;
+    }
     this.battle.emit(BattleEvents.UnitTriggerStatus, {
       id: 'UnitTriggerStatus',
       disabled: false,

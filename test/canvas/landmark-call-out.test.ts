@@ -1,10 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import Landmark, { LANDMARKS, LANDMARK_NAMES } from '../../src/data/overworld/landmark';
-import {
-  isFightingLandmark,
-  landmarkCallOut,
-} from '../../src/components/overworld/chunk-canvas/scenery';
-import { COLORS } from '../../src/components/overworld/chunk-canvas/metrics';
+import { isFightingLandmark, landmarkCallOut } from '../../src/canvas/overworld/scenery';
+import { COLORS } from '../../src/canvas/overworld/metrics';
 
 /**
  * The colour a landmark's cell is called out in.

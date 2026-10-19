@@ -14,7 +14,7 @@ A tab loaded before a deploy keeps calling those positions, with the arguments i
 
 ## The guard
 
-A tab names its build on every server call (`src/utils/stale-build.ts` wraps `fetch`), and `src/middleware/index.ts` refuses any server call that does not name the live build, before any function runs. The tab reloads on the refusal. A call that names no build is refused too.
+A tab names its build on every server call (`src/auth/stale-build.ts` wraps `fetch`), and `src/middleware/index.ts` refuses any server call that does not name the live build, before any function runs. The tab reloads on the refusal. A call that names no build is refused too.
 
 Because no call from another build ever reaches a function, server functions may be added, removed, reordered or given new parameters like any other code. A function nothing calls any more is deleted rather than kept for its slot.
 
@@ -26,4 +26,4 @@ Because no call from another build ever reaches a function, server functions may
 
 ## Checking a change
 
-For a change to the guard, run `test/utils/build.test.ts` and `test/utils/stale-build.test.ts`. For a new way of calling the server, check in the browser's network panel that the request carries the `X-Build` header.
+For a change to the guard, run `test/model/build.test.ts` and `test/auth/stale-build.test.ts`. For a new way of calling the server, check in the browser's network panel that the request carries the `X-Build` header.

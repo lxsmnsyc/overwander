@@ -1,0 +1,83 @@
+Frigibax:
+  Frigibax:
+    abilities: [ThermalExchange]
+    hidden: [IceBody]
+  Arctibax:
+    abilities: [ThermalExchange]
+    hidden: [IceBody]
+  Baxcalibur:
+    abilities: [ThermalExchange]
+    # Sharpness and Slush Rush are this registry's rather than the mainline's, filling it to four
+    hidden: [IceBody, Sharpness, SlushRush]
+Gimmighoul:
+  Gimmighoul:
+    abilities: [Rattled]
+  Gholdengo:
+    abilities: [GoodAsGold]
+    # Steelworker and Pickup are this registry's rather than the mainline's, filling it to four
+    hidden: [Steelworker, Pickup]
+GreatTusk:
+  GreatTusk:
+    abilities: [Protosynthesis]
+    # Rock Head, Sturdy and Sand Force are this registry's rather than the mainline's, filling it to four
+    hidden: [RockHead, Sturdy, SandForce]
+ScreamTail:
+  ScreamTail:
+    abilities: [Protosynthesis]
+    # Punk Rock, Competitive and Moody are this registry's rather than the mainline's, filling it to four
+    hidden: [PunkRock, Competitive, Moody]
+FlutterMane:
+  FlutterMane:
+    abilities: [Protosynthesis]
+    # Levitate, Infiltrator and Cursed Body are this registry's rather than the mainline's, filling it to four
+    hidden: [Levitate, Infiltrator, CursedBody]
+SlitherWing:
+  SlitherWing:
+    abilities: [Protosynthesis]
+    # Flame Body, Swarm and Tinted Lens are this registry's rather than the mainline's, filling it to four
+    hidden: [FlameBody, Swarm, TintedLens]
+SandyShocks:
+  SandyShocks:
+    abilities: [Protosynthesis]
+    # Magnet Pull, Sand Force and Analytic are this registry's rather than the mainline's, filling it to four
+    hidden: [MagnetPull, SandForce, Analytic]
+IronTreads:
+  IronTreads:
+    abilities: [QuarkDrive]
+    # Sturdy, Clear Body and Heavy Metal are this registry's rather than the mainline's, filling it to four
+    hidden: [Sturdy, ClearBody, HeavyMetal]
+IronBundle:
+  IronBundle:
+    abilities: [QuarkDrive]
+    # Vital Spirit, Ice Body and Swift Swim are this registry's rather than the mainline's, filling it to four
+    hidden: [VitalSpirit, IceBody, SwiftSwim]
+IronHands:
+  IronHands:
+    abilities: [QuarkDrive]
+    # Iron Fist, Sheer Force and Guts are this registry's rather than the mainline's, filling it to four
+    hidden: [IronFist, SheerForce, Guts]
+IronMoth:
+  IronMoth:
+    abilities: [QuarkDrive]
+    # Levitate, Flame Body and Light Metal are this registry's rather than the mainline's, filling it to four
+    hidden: [Levitate, FlameBody, LightMetal]
+IronThorns:
+  IronThorns:
+    abilities: [QuarkDrive]
+    # Sand Stream, Motor Drive and Unnerve are this registry's rather than the mainline's, filling it to four
+    hidden: [SandStream, MotorDrive, Unnerve]
+RoaringMoon:
+  RoaringMoon:
+    abilities: [Protosynthesis]
+    # Intimidate, Moxie and Tough Claws are this registry's rather than the mainline's, filling it to four
+    hidden: [Intimidate, Moxie, ToughClaws]
+TingLu:
+  TingLu:
+    abilities: [VesselOfRuin]
+    # Sand Stream, Solid Rock and Stamina are this registry's rather than the mainline's, filling it to four
+    hidden: [SandStream, SolidRock, Stamina]
+ChiYu:
+  ChiYu:
+    abilities: [BeadsOfRuin]
+    # Flash Fire, Levitate and Flame Body are this registry's rather than the mainline's, filling it to four
+    hidden: [FlashFire, Levitate, FlameBody]

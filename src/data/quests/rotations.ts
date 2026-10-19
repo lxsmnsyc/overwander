@@ -1,4 +1,4 @@
-import { Foe, Landmark, Metric } from '../../auth/quest-record';
+import { Foe, Landmark, Metric } from '../../model/quest-record';
 import AleaRNG from '../../core/alea';
 import type Families from '../ids/families';
 import { Items } from '../ids/items';

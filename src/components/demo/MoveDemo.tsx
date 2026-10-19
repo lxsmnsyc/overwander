@@ -1,12 +1,7 @@
 import { useSearchParams } from '@solidjs/router';
 import { type JSX, Show, createEffect, createMemo, createSignal, onCleanup } from 'solid-js';
 import { MoveTargetType } from '../../battle/events';
-import {
-  type DemoRules,
-  type MoveDemo as Staged,
-  aimFor,
-  createMoveDemo,
-} from '../../battle/demo-move';
+import { type DemoRules, type MoveDemo as Staged, aimFor, createMoveDemo } from './demo-move';
 import BattleField from '../battle/BattleField';
 import BattleTopBar from '../battle/BattleTopBar';
 import BiomePicker, { biomeFrom } from './BiomePicker';
@@ -14,6 +9,8 @@ import { Badge, Button, Combobox, Meta, Note, Row, Switch } from '../styled';
 import { MOVE_CATEGORY_NAMES, type Moves } from '../../data/ids/moves';
 import { TYPE_NAMES } from '../../data/constants/types';
 import { getMoveData, getRegisteredMoves } from '../../data/moves';
+import { dynamax } from '../../battle/gimmicks/dynamax';
+import { Species } from '../../data/ids/species';
 
 /**
  * One move, on demand.
@@ -54,7 +51,11 @@ const POLL_INTERVAL = 120;
 const DEFAULT_MOVE = 'Tackle';
 
 export default function MoveDemo(): JSX.Element {
-  const [params, setParams] = useSearchParams<{ move?: string; biome?: string }>();
+  const [params, setParams] = useSearchParams<{
+    move?: string;
+    biome?: string;
+    giant?: string;
+  }>();
 
   /**
    * Every move there is, by name. Built once: the registry is fixed at
@@ -109,6 +110,14 @@ export default function MoveDemo(): JSX.Element {
     }
 
     const demo = createMoveDemo(move, rules);
+    const giant = params.giant;
+
+    // A real pokemon rather than the doll, which is never drawn grown
+    if (giant === 'dynamax' || giant === 'gigantamax') {
+      demo.caster.setAppearance(giant === 'gigantamax' ? Species.Charizard : demo.caster.species);
+      demo.caster.gigantamax = giant === 'gigantamax';
+      dynamax(demo.caster, { permanent: true });
+    }
 
     // Initialized but not started: the field starts it once every
     // sheet has arrived, the way a real fight waits
@@ -277,6 +286,24 @@ export default function MoveDemo(): JSX.Element {
         onChange={(on) => {
           rules.alwaysHits = on;
           setHits(on);
+        }}
+      />
+
+      <Switch
+        label="Dynamax the caster"
+        description="Stages the caster grown for the whole fight, to watch how a Dynamax is drawn."
+        checked={params.giant === 'dynamax' || params.giant === 'gigantamax'}
+        onChange={(on) => {
+          setParams({ giant: on ? 'dynamax' : undefined });
+        }}
+      />
+
+      <Switch
+        label="Gigantamax"
+        description="Stages the grown caster as a Gigantamax instead."
+        checked={params.giant === 'gigantamax'}
+        onChange={(on) => {
+          setParams({ giant: on ? 'gigantamax' : 'dynamax' });
         }}
       />
 

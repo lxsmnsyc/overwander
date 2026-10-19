@@ -1,6 +1,6 @@
 import { MAX_IV, STAT_ORDER, type Stats, getIV, setIV } from '../constants/stats';
-import { ItemFlags, ItemTypes, Items } from '../ids/items';
-import { registerItem } from './__create';
+import { Items } from '../ids/items';
+import { itemText } from './__create';
 
 /**
  * The bottle caps: the only thing in the game that changes what a
@@ -73,24 +73,9 @@ export function polishIVs(ivs: number, stats: readonly Stats[]): number | null {
   return polished === ivs ? null : polished;
 }
 
-export default function registerBottleCaps(): void {
-  registerItem(Items.GoldenBottleCap, {
-    name: 'Golden Bottle Cap',
-    description: `Raises every one of a pokemon’s values to ${MAX_IV}. Spent on use.`,
-    type: ItemTypes.Training,
-    icon: 'other/gold-bottle-cap',
-    flags: ItemFlags.Usable | ItemFlags.Consumable,
-    buy: 0,
-    sell: 0,
-  });
-
-  registerItem(Items.BottleCap, {
-    name: 'Bottle Cap',
-    description: `Raises one value of your choice that is not yet ${MAX_IV} to ${MAX_IV}. Spent on use.`,
-    type: ItemTypes.Training,
-    icon: 'other/bottle-cap',
-    flags: ItemFlags.Usable | ItemFlags.Consumable,
-    buy: 0,
-    sell: 0,
-  });
+export function describeBottleCap(item: Items): string {
+  if (!BOTTLE_CAPS.has(item)) {
+    throw new Error(`No bottle cap description for item ${item}`);
+  }
+  return itemText('bottle-caps', capAsksForStat(item) ? 'plain' : 'golden', { max: MAX_IV });
 }

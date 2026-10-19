@@ -2,7 +2,7 @@ import { EventPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
 import type { Items } from '../../data/ids/items';
 import { TREATS, TREAT_CURES } from '../../data/items/treats';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, EffectType } from '../events';
 import { type Lifecycle, MergedLifecycle } from '../lifecycle';
 import type Unit from '../unit';

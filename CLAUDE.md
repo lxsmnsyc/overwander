@@ -32,13 +32,13 @@ Three that touch nearly every change: comments stay short and say the why rather
 
 Everything in `src/data/` describes itself and registers itself; nothing is queryable until `registerGameData()` in [src/data/index.ts](src/data/index.ts) has run. A test that reads species, moves, abilities or items must call the registration functions first.
 
-Each registry is a folder with `__create.ts` (the `Map`, the `registerX`/`getXData` pair, and any shared factories), a `gen-1.ts` of entries, and an `index.ts` that re-exports and registers. Ids are `const enum`s in `src/data/ids/`. Every entry carries a required one-line player-facing `description`; a test asserts each ends in a full stop.
+Each registry is a folder with `__create.ts` (the `Map`, the `registerX`/`getXData` pair, and any shared factories) and an `index.ts` that re-exports and registers. Species, moves, abilities, items, the per-move battle numbers (`src/data/battle/`) and the spawn pools (`src/data/biome/pools/`) are written as YAML, a folder per part of the record with the player-facing words under `src/data/text/en/`, read and checked by each registry's `yaml.ts` (the `data-yaml` skill). Behaviour, and any line that follows a table, stays in TypeScript beside `__create.ts`. Ids are `const enum`s in `src/data/ids/`. Every entry carries a required one-line player-facing `description`; a test asserts each ends in a full stop.
 
 Ability pools have their own rules about what a species may reach, which the `ability-pools` skill states.
 
 ## Battle engine
 
-Real time, not turns. A mainline turn is 2 seconds, written `turns(n)` from `src/battle/turn.ts` rather than as milliseconds. Per-turn residuals have no clock to hang on: they are paid when a unit begins casting or channelling, via `onUnitActs`.
+Real time, not turns. A mainline turn is 2 seconds, written `turns(n)` from `src/battle/turn.ts` rather than as milliseconds. Per-turn residuals have no clock to hang on: they are paid when a unit begins casting or channelling, via `onUnitActs` (`src/battle/acts.ts`).
 
 Everything is an event on one bus ([src/battle/events/index.ts](src/battle/events/index.ts)). `Check*` events are questions whose answer is a field the listeners mutate (`power`, `immune`, `priority`, `success`); `Unit*` events are things that happened. Listeners pick `EventPriority.Pre | Exact | Post` (or `AttackPriority`), where `Exact` is the mechanic's own answer and `Post` is everyone modifying it.
 
@@ -54,6 +54,7 @@ The map is never stored. A chunk's terrain, landmarks, spawns, stashes and raids
 
 - `src/auth/` runs in the browser: thin wrappers around server functions, for reads and writes alike. No browser code reaches the database.
 - `src/server/` is privileged. Every module starts with `import 'server-only'` and reads and writes over the table-owner connection ([src/server/db.ts](src/server/db.ts)). There are no row policies, so a server function is what decides who may see or change a row.
+- `src/model/` is what both sides share: each stored record's shape and normaliser (`*-record.ts`), the rules read off a record (health, eggs, stacks, the local clock), and the search parsers (`search/`). Nothing in it opens with `'use server'` or imports `server-only`.
 
 The wrapper shape is fixed: an exported client function calls an inner function whose body opens with `'use server'`, passing an id token, and that inner function checks each of its arguments with `check` from [src/server/validate.ts](src/server/validate.ts) and then calls `requireUid(token)` (a write) or `requireReader(token)` (a read, see the `server-reads` skill) before anything in `src/server/`. Accounts are Better Auth's ([src/server/better-auth.ts](src/server/better-auth.ts)), and the token is its short-lived JWT. Live views follow table changes over the server's own socket (`src/server/live`). SolidStart's transform strips module-level imports that only the server function uses, so import server modules statically at the top of the file rather than dynamically inside it.
 

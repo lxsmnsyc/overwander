@@ -1,11 +1,14 @@
 import 'server-only';
-import BattleOutcome from '../../auth/battle-outcome';
+import BattleOutcome from '../../model/battle-outcome';
 import { UNLIMITED_BATTLE_LIMITS } from '../../data/constants/battle-limits';
-import { RaidKind, type RaidRecord, asRaidRecord, mythicalRelicOf } from '../../auth/raid-record';
-import { BOSS_ALLIANCE, PLAYER_ALLIANCE, createRaidBossSnapshot } from '../../overworld/raid';
+import { RaidKind, type RaidRecord, asRaidRecord, mythicalRelicOf } from '../../model/raid-record';
+import { BOSS_ALLIANCE, PLAYER_ALLIANCE, createRaidBossTeam } from '../../overworld/raid';
 import { getSql, jsonOf, newDocId, tx } from '../db';
-import { foughtBattle, readBattle, readRaid, type readTeam, readTeams } from '../raid-io';
-import { consumeItem } from '../inventory';
+import { foughtBattle, readBattle, readRaid, type readTeam, readTeams } from './io';
+import { consumeItem, grantItem } from '../inventory';
+import { Items } from '../../data/ids/items';
+import { NOBLE_BALM_PACK } from '../../data/overworld/nobles';
+import { getTeraRaidType } from '../../data/overworld/tera-raids';
 import { releaseBattleLocks } from '../locks';
 import { recordSeenOpponents } from '../pokedex';
 import { asOutcome } from './outcome';
@@ -75,17 +78,24 @@ export async function startRaid(uid: string, lobby: string, now: number): Promis
   // none of them waits on another, so a lobby of four starts in the
   // time one takes rather than four
   const publishing: Promise<[string, string] | null>[] = [];
-
   // The whole lobby's teams in two queries, rather than two per team
-  for (const team of await readTeams(raid.teams)) {
-    publishing.push(publishTeam(team, now));
+  const teams = await readTeams(raid.teams);
+  // Taken from the bags before anything is frozen, since a frozen
+  // snapshot is never written again
+  const balms = raid.kind === RaidKind.Noble ? await packBalms(teams) : [];
+
+  for (const [at, team] of teams.entries()) {
+    publishing.push(publishTeam(team, now, balms[at] ?? 0));
   }
 
   const fielded: [string, string][] = [];
 
-  for (const entry of await Promise.all(publishing)) {
+  for (const [at, entry] of (await Promise.all(publishing)).entries()) {
     if (entry != null) {
       fielded.push(entry);
+    } else if ((balms[at] ?? 0) > 0 && teams[at] != null) {
+      // A party that fielded nothing throws nothing, so its Balms go back
+      await grantItem(teams[at].player, Items.Balm, balms[at]);
     }
   }
 
@@ -99,9 +109,19 @@ export async function startRaid(uid: string, lobby: string, now: number): Promis
   await tx(async (transaction) => {
     await transaction`
       insert into team_snapshots (id, player, alliance, catches)
-      values (${bossId}, null, ${BOSS_ALLIANCE}, ${jsonOf(transaction, [
-        createRaidBossSnapshot(raid.species, raid.traitValue, raid.kind === RaidKind.Shadow),
-      ])})
+      values (${bossId}, null, ${BOSS_ALLIANCE}, ${jsonOf(
+        transaction,
+        createRaidBossTeam(
+          raid.species,
+          raid.traitValue,
+          raid.kind === RaidKind.Shadow,
+          raid.kind === RaidKind.Totem,
+          raid.kind === RaidKind.Max,
+          raid.kind === RaidKind.Alpha,
+          raid.kind === RaidKind.Noble,
+          raid.kind === RaidKind.Tera ? getTeraRaidType(raid.species, lobby) : null,
+        ),
+      )})
     `;
     await transaction`
       insert into battles (id, raid_id, species, outcome, started_at, biome, limits)
@@ -145,15 +165,45 @@ export async function startRaid(uid: string, lobby: string, now: number): Promis
   return battleId;
 }
 
+/**
+ * Take each fighter's Balms for a Noble raid out of their bag, up to
+ * `NOBLE_BALM_PACK`, for their first party to carry: how many, by the
+ * team's place in the list. Spent whichever way the fight goes, the
+ * way a relic is
+ */
+async function packBalms(teams: Awaited<ReturnType<typeof readTeams>>): Promise<number[]> {
+  const packed = new Set<string>();
+  const counts: number[] = [];
+
+  for (const team of teams) {
+    if (team == null || packed.has(team.player)) {
+      counts.push(0);
+      continue;
+    }
+    packed.add(team.player);
+
+    let count = NOBLE_BALM_PACK;
+
+    while (count > 0 && !(await consumeItem(team.player, Items.Balm, count))) {
+      count -= 1;
+    }
+    counts.push(count);
+  }
+  return counts;
+}
+
 /** Freeze one party for the fight, or null when it has nothing left to field */
 async function publishTeam(
   team: Awaited<ReturnType<typeof readTeam>>,
   now: number,
+  balms: number,
 ): Promise<[string, string] | null> {
   if (team == null) {
     return null;
   }
-  const snapshot = await publishTeamSnapshot(team.player, team.catches, PLAYER_ALLIANCE, now);
+  const snapshot = await publishTeamSnapshot(team.player, team.catches, PLAYER_ALLIANCE, now, {
+    balms,
+  });
 
   return snapshot == null ? null : [team.player, snapshot];
 }

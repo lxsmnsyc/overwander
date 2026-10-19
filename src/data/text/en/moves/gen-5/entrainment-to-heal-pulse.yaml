@@ -1,0 +1,36 @@
+Entrainment:
+  name: Entrainment
+  description: Replaces the target's abilities with the user's.
+AfterYou:
+  name: After You
+  description: A teammate winding up a move casts it at once.
+Round:
+  name: Round
+  description: 2x power if a teammate's Round landed in the last 2 seconds. It is a sound.
+EchoedVoice:
+  name: Echoed Voice
+  description: Lands 40 harder for each Echoed Voice within 2 seconds of the last, up to 200. It is a sound.
+ChipAway:
+  name: Chip Away
+  description: Ignores the target's stat stages.
+ClearSmog:
+  name: Clear Smog
+  description: Never misses, and resets the target's stat stages.
+StoredPower:
+  name: Stored Power
+  description: 20 more power for every stage the user has raised.
+QuickGuard:
+  name: Quick Guard
+  description: For 2 seconds, moves with a shortened wind-up are turned away from the user's team.
+AllySwitch:
+  name: Ally Switch
+  description: The user trades places with a teammate, and what was aimed at either follows the swap.
+Scald:
+  name: Scald
+  description: 30% to burn. Thaws the user and the target.
+ShellSmash:
+  name: Shell Smash
+  description: Raises the user's Attack, Special Attack and Speed 2 stages, and drops its Defense and Special Defense a stage.
+HealPulse:
+  name: Heal Pulse
+  description: Heals a teammate 1/2 of its HP.

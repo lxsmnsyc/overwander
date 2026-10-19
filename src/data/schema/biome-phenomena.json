@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Biome phenomena",
+  "type": "object",
+  "propertyNames": {
+    "$ref": "names.json#/definitions/biome"
+  },
+  "additionalProperties": {
+    "type": "array",
+    "items": {
+      "$ref": "names.json#/definitions/phenomenon"
+    },
+    "description": "In the order the window rolls from them"
+  }
+}

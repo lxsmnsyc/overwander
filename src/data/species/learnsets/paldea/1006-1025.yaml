@@ -1,0 +1,992 @@
+Poltchageist:
+  # TM and tutor moves shared by the whole family
+  family-teachable:
+    - CalmMind
+    - Curse
+    - Endure
+    - EnergyBall
+    - FoulPlay
+    - GigaDrain
+    - GrassyTerrain
+    - Hex
+    - Imprison
+    - IronDefense
+    - LeafStorm
+    - MagicalLeaf
+    - NastyPlot
+    - NightShade
+    - PainSplit
+    - PhantomForce
+    - Poltergeist
+    - Protect
+    - PsychUp
+    - Reflect
+    - Rest
+    - Scald
+    - ShadowBall
+    - SleepTalk
+    - SolarBeam
+    - Spite
+    - Substitute
+    - TeraBlast
+    - TrickRoom
+    - Uproar
+  Poltchageist:
+    level:
+      1: [StunSpore, Withdraw, Astonish]
+      6: [Absorb]
+      12: [LifeDew]
+      18: [FoulPlay]
+      24: [MegaDrain]
+      30: [Hex]
+      36: [RagePowder]
+      42: [GigaDrain]
+      48: [ShadowBall]
+      54: [Memento]
+      60: [LeafStorm]
+  PoltchageistArtisan:
+    level:
+      1: [StunSpore, Withdraw, Astonish]
+      6: [Absorb]
+      12: [LifeDew]
+      18: [FoulPlay]
+      24: [MegaDrain]
+      30: [Hex]
+      36: [RagePowder]
+      42: [GigaDrain]
+      48: [ShadowBall]
+      54: [Memento]
+      60: [LeafStorm]
+  Sinistcha:
+    level:
+      1: [StunSpore, Withdraw, Astonish, MatchaGotcha]
+      6: [Absorb]
+      12: [LifeDew]
+      18: [FoulPlay]
+      24: [MegaDrain]
+      30: [Hex]
+      36: [RagePowder]
+      42: [StrengthSap]
+      48: [ShadowBall]
+      54: [Memento]
+      60: [LeafStorm]
+    teachable:
+      - HyperBeam
+  SinistchaMasterpiece:
+    level:
+      1: [StunSpore, Withdraw, Astonish, MatchaGotcha]
+      6: [Absorb]
+      12: [LifeDew]
+      18: [FoulPlay]
+      24: [MegaDrain]
+      30: [Hex]
+      36: [RagePowder]
+      42: [StrengthSap]
+      48: [ShadowBall]
+      54: [Memento]
+      60: [LeafStorm]
+    teachable:
+      - HyperBeam
+IronValiant:
+  # TM and tutor moves shared by the whole family
+  family-teachable:
+    - AerialAce
+    - Agility
+    - AuraSphere
+    - BrickBreak
+    - CalmMind
+    - ChargeBeam
+    - CloseCombat
+    - Coaching
+    - ConfuseRay
+    - DazzlingGleam
+    - DrainPunch
+    - ElectricTerrain
+    - Encore
+    - Endure
+    - EnergyBall
+    - ExpandingForce
+    - FalseSwipe
+    - FirePunch
+    - Fling
+    - FocusBlast
+    - FutureSight
+    - GigaImpact
+    - GrassKnot
+    - HelpingHand
+    - Hex
+    - HyperBeam
+    - HyperVoice
+    - IcePunch
+    - IcyWind
+    - Imprison
+    - KnockOff
+    - LightScreen
+    - Liquidation
+    - LowKick
+    - MagicalLeaf
+    - Metronome
+    - MistyTerrain
+    - PoisonJab
+    - Protect
+    - Psybeam
+    - PsychUp
+    - Psychic
+    - PsychicTerrain
+    - Psyshock
+    - Reflect
+    - Rest
+    - Reversal
+    - ShadowBall
+    - ShadowClaw
+    - SkillSwap
+    - SleepTalk
+    - StoredPower
+    - Substitute
+    - Swift
+    - SwordsDance
+    - Taunt
+    - TeraBlast
+    - ThroatChop
+    - ThunderPunch
+    - ThunderWave
+    - Thunderbolt
+    - Trick
+    - TrickRoom
+    - VacuumWave
+    - XScissor
+    - ZenHeadbutt
+  IronValiant:
+    level:
+      1: [Disable, DoubleTeam, FuryCutter, ShadowSneak]
+      7: [Hypnosis]
+      14: [Feint]
+      21: [FutureSight]
+      28: [DazzlingGleam]
+      35: [PsychoCut]
+      42: [NightSlash]
+      49: [LeafBlade]
+      56: [Moonblast]
+      63: [CloseCombat]
+      70: [KnockOff]
+      77: [DestinyBond]
+      84: [WideGuard, QuickGuard]
+      91: [SpiritBreak]
+Koraidon:
+  # TM and tutor moves shared by the whole family
+  family-teachable:
+    - Acrobatics
+    - Agility
+    - BodyPress
+    - BodySlam
+    - BreakingSwipe
+    - BrickBreak
+    - BulkUp
+    - Bulldoze
+    - CloseCombat
+    - Crunch
+    - Dig
+    - DoubleEdge
+    - DracoMeteor
+    - DragonCheer
+    - DragonClaw
+    - DragonPulse
+    - DragonTail
+    - DrainPunch
+    - DualWingbeat
+    - Endure
+    - Facade
+    - FireBlast
+    - FireFang
+    - FireSpin
+    - FlameCharge
+    - Flamethrower
+    - FlareBlitz
+    - FocusBlast
+    - FocusPunch
+    - GigaImpact
+    - HeatCrash
+    - HeatWave
+    - HeavySlam
+    - HelpingHand
+    - HyperBeam
+    - IceFang
+    - IronHead
+    - LowKick
+    - LowSweep
+    - MeteorBeam
+    - MudShot
+    - MudSlap
+    - Outrage
+    - Overheat
+    - Protect
+    - Rest
+    - Reversal
+    - Roar
+    - ScaleShot
+    - ScaryFace
+    - ShadowClaw
+    - SleepTalk
+    - Snarl
+    - SolarBeam
+    - StompingTantrum
+    - Substitute
+    - SunnyDay
+    - SwordsDance
+    - TakeDown
+    - Taunt
+    - TemperFlare
+    - TeraBlast
+    - ThunderFang
+    - UTurn
+    - Uproar
+    - WildCharge
+    - ZenHeadbutt
+  Koraidon:
+    level:
+      1: [SunnyDay, BreakingSwipe]
+      7: [RockSmash]
+      14: [AncientPower]
+      21: [DrainPunch]
+      28: [BrickBreak]
+      35: [Agility]
+      42: [DragonClaw]
+      49: [Flamethrower]
+      56: [CollisionCourse]
+      63: [Screech]
+      70: [Counter]
+      77: [Outrage]
+      84: [CloseCombat]
+      91: [FlareBlitz]
+      98: [GigaImpact]
+Miraidon:
+  # TM and tutor moves shared by the whole family
+  family-teachable:
+    - Acrobatics
+    - Agility
+    - BodySlam
+    - CalmMind
+    - Charge
+    - ChargeBeam
+    - ConfuseRay
+    - Crunch
+    - DazzlingGleam
+    - DracoMeteor
+    - DragonCheer
+    - DragonClaw
+    - DragonPulse
+    - DragonTail
+    - EerieImpulse
+    - ElectricTerrain
+    - ElectroBall
+    - Endure
+    - Facade
+    - FlashCannon
+    - GigaImpact
+    - HeavySlam
+    - HelpingHand
+    - HyperBeam
+    - LightScreen
+    - MetalSound
+    - Outrage
+    - Overheat
+    - PowerGem
+    - Protect
+    - Reflect
+    - Rest
+    - ScaryFace
+    - SleepTalk
+    - Snarl
+    - SolarBeam
+    - Substitute
+    - SupercellSlam
+    - SwordsDance
+    - TakeDown
+    - Taunt
+    - TeraBlast
+    - Thunder
+    - ThunderWave
+    - Thunderbolt
+    - UTurn
+    - VoltSwitch
+    - WildCharge
+    - ZenHeadbutt
+  Miraidon:
+    level:
+      1: [ThunderShock, DragonBreath, ElectricTerrain]
+      7: [ShockWave]
+      14: [Charge]
+      21: [ParabolicCharge]
+      28: [Discharge]
+      35: [Agility]
+      42: [DragonPulse]
+      56: [ElectroDrift]
+      63: [MetalSound]
+      70: [MirrorCoat]
+      77: [Outrage]
+      84: [Thunder]
+      91: [Overheat]
+      98: [HyperBeam]
+WalkingWake:
+  # TM and tutor moves shared by the whole family
+  family-teachable:
+    - Agility
+    - BodySlam
+    - BreakingSwipe
+    - ChillingWater
+    - Crunch
+    - DoubleEdge
+    - DracoMeteor
+    - DragonCheer
+    - DragonClaw
+    - DragonDance
+    - DragonPulse
+    - Endure
+    - Facade
+    - FireFang
+    - Flamethrower
+    - FlipTurn
+    - GigaImpact
+    - HoneClaws
+    - Hurricane
+    - HydroPump
+    - HyperBeam
+    - KnockOff
+    - Liquidation
+    - LowKick
+    - MudShot
+    - Outrage
+    - Protect
+    - RainDance
+    - Rest
+    - Roar
+    - Scald
+    - ScaryFace
+    - SleepTalk
+    - Snarl
+    - Substitute
+    - SunnyDay
+    - Surf
+    - Swift
+    - TakeDown
+    - TeraBlast
+    - WaterPulse
+    - Waterfall
+    - WeatherBall
+    - Whirlpool
+  WalkingWake:
+    level:
+      1: [Leer, Roar, Twister, AquaJet]
+      7: [Bite]
+      14: [WaterPulse]
+      21: [NobleRoar]
+      28: [DragonBreath]
+      35: [BreakingSwipe]
+      42: [DragonRush]
+      56: [HydroSteam]
+      63: [DragonPulse]
+      70: [Outrage]
+      77: [Flamethrower]
+      84: [HydroPump]
+IronLeaves:
+  # TM and tutor moves shared by the whole family
+  family-teachable:
+    - AerialAce
+    - Agility
+    - AirSlash
+    - BrickBreak
+    - CalmMind
+    - CloseCombat
+    - Coaching
+    - DoubleEdge
+    - ElectricTerrain
+    - Endure
+    - EnergyBall
+    - Facade
+    - FalseSwipe
+    - FocusBlast
+    - GigaDrain
+    - GigaImpact
+    - GrassKnot
+    - GrassyTerrain
+    - Gravity
+    - HelpingHand
+    - HyperBeam
+    - Imprison
+    - IronDefense
+    - LeafStorm
+    - MagicalLeaf
+    - MetalSound
+    - Protect
+    - PsychicTerrain
+    - Quash
+    - Rest
+    - Reversal
+    - ScaryFace
+    - SleepTalk
+    - SmartStrike
+    - SolarBeam
+    - SolarBlade
+    - Substitute
+    - Swift
+    - SwordsDance
+    - TakeDown
+    - Taunt
+    - TeraBlast
+    - ThroatChop
+    - Trailblaze
+    - WildCharge
+    - XScissor
+  IronLeaves:
+    level:
+      1: [Leer, QuickAttack, HelpingHand, WorkUp]
+      7: [MagicalLeaf]
+      14: [Retaliate]
+      21: [QuickGuard]
+      28: [NightSlash]
+      35: [SwordsDance]
+      42: [SacredSword]
+      49: [LeafBlade]
+      56: [Psyblade]
+      63: [CloseCombat]
+      70: [Imprison]
+      77: [Megahorn]
+      84: [AllySwitch]
+      91: [SolarBlade]
+GougingFire:
+  # TM and tutor moves shared by the whole family
+  family-teachable:
+    - BodySlam
+    - BreakingSwipe
+    - Bulldoze
+    - Crunch
+    - DoubleEdge
+    - DracoMeteor
+    - DragonCheer
+    - DragonClaw
+    - DragonDance
+    - DragonPulse
+    - DragonTail
+    - Earthquake
+    - Endure
+    - Facade
+    - FireBlast
+    - FireFang
+    - FireSpin
+    - FlameCharge
+    - Flamethrower
+    - FlareBlitz
+    - GigaImpact
+    - HeatCrash
+    - HeatWave
+    - HyperBeam
+    - IronHead
+    - Outrage
+    - Overheat
+    - Protect
+    - PsychicFangs
+    - Rest
+    - Reversal
+    - Roar
+    - ScaleShot
+    - ScaryFace
+    - ScorchingSands
+    - SleepTalk
+    - SmartStrike
+    - Snarl
+    - StompingTantrum
+    - StoneEdge
+    - Substitute
+    - SunnyDay
+    - TakeDown
+    - TemperFlare
+    - TeraBlast
+    - ThunderFang
+    - WeatherBall
+  GougingFire:
+    level:
+      1: [Stomp, Leer, SunnyDay, Incinerate]
+      7: [FireFang]
+      14: [Howl]
+      21: [Bite]
+      28: [DragonClaw]
+      35: [CrushClaw]
+      42: [MorningSun]
+      49: [BurningBulwark]
+      56: [DragonRush]
+      63: [FireBlast]
+      70: [LavaPlume]
+      77: [Outrage]
+      84: [FlareBlitz]
+      91: [RagingFury]
+RagingBolt:
+  # TM and tutor moves shared by the whole family
+  family-teachable:
+    - BodyPress
+    - BodySlam
+    - BreakingSwipe
+    - CalmMind
+    - Charge
+    - ChargeBeam
+    - Crunch
+    - DoubleEdge
+    - DracoMeteor
+    - DragonCheer
+    - DragonPulse
+    - DragonTail
+    - Earthquake
+    - EerieImpulse
+    - ElectricTerrain
+    - ElectroBall
+    - Electroweb
+    - Endure
+    - Facade
+    - GigaImpact
+    - HeavySlam
+    - HyperBeam
+    - HyperVoice
+    - Outrage
+    - Protect
+    - Rest
+    - Roar
+    - ScaryFace
+    - SleepTalk
+    - Snarl
+    - SolarBeam
+    - StompingTantrum
+    - Substitute
+    - SunnyDay
+    - SupercellSlam
+    - TakeDown
+    - Taunt
+    - TeraBlast
+    - Thunder
+    - ThunderFang
+    - ThunderWave
+    - Thunderbolt
+    - VoltSwitch
+    - WeatherBall
+    - WildCharge
+  RagingBolt:
+    level:
+      1: [Stomp, Twister, SunnyDay, ShockWave]
+      7: [Charge]
+      14: [DragonBreath]
+      21: [ElectricTerrain]
+      28: [Discharge]
+      35: [DragonTail]
+      42: [CalmMind]
+      49: [Thunderclap]
+      56: [DragonHammer]
+      63: [RisingVoltage]
+      70: [DragonPulse]
+      77: [ZapCannon]
+      84: [BodyPress]
+      91: [Thunder]
+Munkidori:
+  # TM and tutor moves shared by the whole family
+  family-teachable:
+    - AcidSpray
+    - BatonPass
+    - CalmMind
+    - ConfuseRay
+    - Endure
+    - Facade
+    - Fling
+    - FocusBlast
+    - FutureSight
+    - GigaImpact
+    - GrassKnot
+    - GunkShot
+    - HelpingHand
+    - Hex
+    - HyperBeam
+    - Imprison
+    - LashOut
+    - LightScreen
+    - Metronome
+    - MudSlap
+    - NastyPlot
+    - NightShade
+    - PoisonJab
+    - Poltergeist
+    - Protect
+    - Psybeam
+    - PsychUp
+    - Psychic
+    - PsychicNoise
+    - PsychicTerrain
+    - Psyshock
+    - Rest
+    - ShadowBall
+    - ShadowClaw
+    - SleepTalk
+    - SludgeBomb
+    - SludgeWave
+    - Spite
+    - StoredPower
+    - Substitute
+    - Swift
+    - Taunt
+    - TeraBlast
+    - Thief
+    - Toxic
+    - Trailblaze
+    - Trick
+    - UTurn
+    - Uproar
+    - Venoshock
+  Munkidori:
+    level:
+      1: [Scratch, Confusion, FakeOut, Flatter]
+      8: [HelpingHand]
+      16: [Psybeam]
+      24: [ClearSmog]
+      32: [PoisonJab]
+      40: [Psychic]
+      48: [SludgeWave]
+      56: [NastyPlot]
+      64: [FutureSight]
+      72: [PartingShot]
+Fezandipiti:
+  # TM and tutor moves shared by the whole family
+  family-teachable:
+    - AcidSpray
+    - Acrobatics
+    - AerialAce
+    - Agility
+    - AirCutter
+    - AirSlash
+    - AlluringVoice
+    - BraveBird
+    - CalmMind
+    - Charm
+    - DarkPulse
+    - DazzlingGleam
+    - DisarmingVoice
+    - DualWingbeat
+    - Endure
+    - Facade
+    - Fly
+    - GigaImpact
+    - GunkShot
+    - HeatWave
+    - Hex
+    - Hurricane
+    - HyperBeam
+    - IcyWind
+    - LashOut
+    - LightScreen
+    - NastyPlot
+    - PlayRough
+    - PoisonJab
+    - PoisonTail
+    - Protect
+    - PsychUp
+    - Rest
+    - ShadowBall
+    - ShadowClaw
+    - SleepTalk
+    - SludgeBomb
+    - Spite
+    - Substitute
+    - Swift
+    - SwordsDance
+    - Tailwind
+    - TakeDown
+    - Taunt
+    - TeraBlast
+    - Thief
+    - Toxic
+    - UTurn
+    - Uproar
+    - Venoshock
+  Fezandipiti:
+    level:
+      1: [DoubleKick, Peck, PoisonGas, DisarmingVoice]
+      8: [QuickAttack]
+      16: [Attract]
+      24: [WingAttack]
+      32: [CrossPoison]
+      40: [TailSlap]
+      48: [BeatUp]
+      56: [Swagger, Flatter]
+      64: [Roost]
+      72: [Moonblast]
+Ogerpon:
+  # TM and tutor moves shared by the whole family
+  family-teachable:
+    - BrickBreak
+    - BulletSeed
+    - Charm
+    - Encore
+    - Endure
+    - EnergyBall
+    - Facade
+    - FalseSwipe
+    - Fling
+    - GigaDrain
+    - GigaImpact
+    - GrassKnot
+    - GrassyGlide
+    - GrassyTerrain
+    - HelpingHand
+    - KnockOff
+    - LashOut
+    - LeafStorm
+    - LowKick
+    - LowSweep
+    - MagicalLeaf
+    - PlayRough
+    - Protect
+    - RainDance
+    - Rest
+    - Reversal
+    - RockTomb
+    - Sandstorm
+    - ScaryFace
+    - SeedBomb
+    - SleepTalk
+    - SolarBeam
+    - SolarBlade
+    - Spikes
+    - StompingTantrum
+    - Substitute
+    - SunnyDay
+    - SwordsDance
+    - TakeDown
+    - Taunt
+    - TeraBlast
+    - ThroatChop
+    - Trailblaze
+    - UTurn
+    - ZenHeadbutt
+  Ogerpon:
+    level:
+      1: [VineWhip, LeechSeed, QuickAttack, FollowMe]
+      6: [FocusEnergy]
+      12: [Growth]
+      18: [Slam]
+      24: [LowSweep]
+      30: [IvyCudgel]
+      36: [ThroatChop]
+      42: [Synthesis]
+      48: [SpikyShield]
+      54: [PowerWhip]
+      60: [Superpower]
+      66: [WoodHammer]
+  OgerponWellspring:
+    level:
+      1: [VineWhip, LeechSeed, QuickAttack, FollowMe]
+      6: [FocusEnergy]
+      12: [Growth]
+      18: [Slam]
+      24: [LowSweep]
+      30: [IvyCudgel]
+      36: [ThroatChop]
+      42: [Synthesis]
+      48: [SpikyShield]
+      54: [PowerWhip]
+      60: [Superpower]
+      66: [WoodHammer]
+  OgerponHearthflame:
+    level:
+      1: [VineWhip, LeechSeed, QuickAttack, FollowMe]
+      6: [FocusEnergy]
+      12: [Growth]
+      18: [Slam]
+      24: [LowSweep]
+      30: [IvyCudgel]
+      36: [ThroatChop]
+      42: [Synthesis]
+      48: [SpikyShield]
+      54: [PowerWhip]
+      60: [Superpower]
+      66: [WoodHammer]
+  OgerponCornerstone:
+    level:
+      1: [VineWhip, LeechSeed, QuickAttack, FollowMe]
+      6: [FocusEnergy]
+      12: [Growth]
+      18: [Slam]
+      24: [LowSweep]
+      30: [IvyCudgel]
+      36: [ThroatChop]
+      42: [Synthesis]
+      48: [SpikyShield]
+      54: [PowerWhip]
+      60: [Superpower]
+      66: [WoodHammer]
+  OgerponTealTera:
+    level:
+      1: [VineWhip, LeechSeed, QuickAttack, FollowMe]
+      6: [FocusEnergy]
+      12: [Growth]
+      18: [Slam]
+      24: [LowSweep]
+      30: [IvyCudgel]
+      36: [ThroatChop]
+      42: [Synthesis]
+      48: [SpikyShield]
+      54: [PowerWhip]
+      60: [Superpower]
+      66: [WoodHammer]
+  OgerponWellspringTera:
+    level:
+      1: [VineWhip, LeechSeed, QuickAttack, FollowMe]
+      6: [FocusEnergy]
+      12: [Growth]
+      18: [Slam]
+      24: [LowSweep]
+      30: [IvyCudgel]
+      36: [ThroatChop]
+      42: [Synthesis]
+      48: [SpikyShield]
+      54: [PowerWhip]
+      60: [Superpower]
+      66: [WoodHammer]
+  OgerponHearthflameTera:
+    level:
+      1: [VineWhip, LeechSeed, QuickAttack, FollowMe]
+      6: [FocusEnergy]
+      12: [Growth]
+      18: [Slam]
+      24: [LowSweep]
+      30: [IvyCudgel]
+      36: [ThroatChop]
+      42: [Synthesis]
+      48: [SpikyShield]
+      54: [PowerWhip]
+      60: [Superpower]
+      66: [WoodHammer]
+  OgerponCornerstoneTera:
+    level:
+      1: [VineWhip, LeechSeed, QuickAttack, FollowMe]
+      6: [FocusEnergy]
+      12: [Growth]
+      18: [Slam]
+      24: [LowSweep]
+      30: [IvyCudgel]
+      36: [ThroatChop]
+      42: [Synthesis]
+      48: [SpikyShield]
+      54: [PowerWhip]
+      60: [Superpower]
+      66: [WoodHammer]
+Terapagos:
+  # TM and tutor moves shared by the whole family
+  family-teachable:
+    - AuraSphere
+    - BodyPress
+    - BodySlam
+    - BugBuzz
+    - CalmMind
+    - Crunch
+    - DarkPulse
+    - DazzlingGleam
+    - DoubleEdge
+    - DragonPulse
+    - EarthPower
+    - Earthquake
+    - Endure
+    - EnergyBall
+    - Facade
+    - Flamethrower
+    - FlareBlitz
+    - FlashCannon
+    - GigaImpact
+    - Gravity
+    - GyroBall
+    - HeatCrash
+    - HeavySlam
+    - HyperBeam
+    - IceBeam
+    - IceSpinner
+    - IronHead
+    - MeteorBeam
+    - PowerGem
+    - Protect
+    - RainDance
+    - Rest
+    - Roar
+    - RockSlide
+    - ScorchingSands
+    - SleepTalk
+    - SolarBeam
+    - StealthRock
+    - StoneEdge
+    - StoredPower
+    - Substitute
+    - SunnyDay
+    - SupercellSlam
+    - Surf
+    - TakeDown
+    - Thunder
+    - Thunderbolt
+    - Toxic
+    - WaterPulse
+    - WeatherBall
+    - WildCharge
+    - ZenHeadbutt
+  Terapagos:
+    level:
+      1: [Withdraw, TriAttack, RapidSpin]
+      10: [AncientPower]
+      20: [Headbutt]
+      30: [Protect]
+      40: [EarthPower]
+      50: [HeavySlam]
+      60: [TeraStarstorm]
+      70: [DoubleEdge]
+      80: [RockPolish]
+      90: [GyroBall]
+  TerapagosTerastal:
+    level:
+      1: [Withdraw, TriAttack, RapidSpin]
+      10: [AncientPower]
+      20: [Headbutt]
+      30: [Protect]
+      40: [EarthPower]
+      50: [HeavySlam]
+      60: [TeraStarstorm]
+      70: [DoubleEdge]
+      80: [RockPolish]
+      90: [GyroBall]
+Pecharunt:
+  # TM and tutor moves shared by the whole family
+  family-teachable:
+    - AcidSpray
+    - Curse
+    - Endure
+    - FakeTears
+    - FoulPlay
+    - GunkShot
+    - Hex
+    - Imprison
+    - NastyPlot
+    - NightShade
+    - PhantomForce
+    - Poltergeist
+    - Protect
+    - Rest
+    - ShadowBall
+    - SleepTalk
+    - SludgeBomb
+    - SludgeWave
+    - Spite
+    - Substitute
+    - TeraBlast
+    - Toxic
+    - Venoshock
+  Pecharunt:
+    level:
+      1: [Smog, PoisonGas, Memento, Astonish]
+      8: [Withdraw]
+      16: [DestinyBond]
+      24: [FakeTears]
+      32: [PartingShot]
+      40: [ShadowBall]
+      48: [MalignantChain]
+      56: [Toxic]
+      64: [NastyPlot]
+      72: [Recover]

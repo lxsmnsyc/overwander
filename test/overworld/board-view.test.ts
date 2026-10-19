@@ -12,7 +12,7 @@ import AleaRNG from '../../src/core/alea';
 import { chunkOfCell } from '../../src/overworld/chunk';
 import ChunkSnapshot, { SNAPSHOT_INTERVAL } from '../../src/overworld/chunk-snapshot';
 import getWorld from '../../src/overworld/current';
-import { isLavaAt } from '../../src/overworld/ground';
+import { isLavaAt } from '../../src/overworld/terrain/ground';
 import { pickFreeCell } from '../../src/overworld/start';
 import type { Buddy } from '../../src/overworld/core';
 import { Depth } from '../../src/overworld/depth';

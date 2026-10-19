@@ -17,7 +17,7 @@ catch is on the pages beside it:
 - [Owners and origin](catch-history.md): `caught_history`, and where a pokemon
   was met
 - [Changing a catch](catch-changes.md): evolution, held items, bottle caps,
-  purifying, releasing, escrow
+  purifying, Max Mushrooms, Tera Shards, releasing, escrow
 - [Eggs](eggs.md): eggs, bred eggs, and walking one until it hatches
 
 ## `caught`
@@ -38,6 +38,9 @@ catch is on the pages beside it:
 | `shiny`, `shadow`, `egg`              | `boolean`   | What it is                                             |
 | `traded`                              | `boolean`   | Has changed hands; what the box search reads           |
 | `can_evolve`                          | `boolean`   | A handover has met what a trade evolution asks         |
+| `feat_progress`                       | `integer`   | The running total of a feat counted across fights      |
+| `gigantamax`                          | `boolean`   | Carries the Gigantamax Factor; see [Max Mushrooms][mm] |
+| `tera_type`                           | `smallint`  | The type it Terastallizes into; see [Tera Shards][ts]  |
 | `favorite`, `guarded`                 | `boolean`   | See [What the player sets][player-sets]                |
 | `auctionable`                         | `boolean`   | Advisory; the opener re-derives it                     |
 | `hidden`                              | `boolean`   | Folded into a fusion; nothing reads it yet             |
@@ -238,3 +241,5 @@ what came back. See
 
 [time]: time.md#local-time
 [player-sets]: catch-state.md#what-the-player-sets
+[mm]: catch-changes.md#max-mushrooms
+[ts]: catch-changes.md#tera-shards

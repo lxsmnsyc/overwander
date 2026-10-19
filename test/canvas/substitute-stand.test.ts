@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Slot, Stand } from '../../src/components/battle/battle-canvas/field';
-import type SpeciesSpriteAnimation from '../../src/canvas/species-sprite-animation';
+import type SpeciesSpriteAnimation from '../../src/canvas/sprites/species-sprite-animation';
 import { drawSlot } from '../../src/components/battle/battle-canvas/draw';
 import { createBattle, createUnit } from '../battle/harness';
 import type Unit from '../../src/battle/unit';
@@ -97,7 +97,6 @@ function slotOf(unit: Unit, sprite: SpeciesSpriteAnimation, stand: Stand | null)
     facing: 'Down',
     depth: 1,
     offset: [0, 0],
-    spin: 0,
     visible: true,
   };
 }

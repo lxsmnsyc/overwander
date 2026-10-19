@@ -20,14 +20,21 @@ import settings from '../../app/settings';
 import { DEFAULT_CHARSET } from '../../../data/overworld/charsets';
 import { watchProfile } from '../../../auth/profile';
 import openSight, { type Sight } from '../../../auth/sight';
-import { MAX_STEP_REPORT } from '../../../auth/egg';
-import type { SnapshotRecord } from '../../../auth/snapshot-record';
+import { MAX_STEP_REPORT } from '../../../model/egg';
+import type { SnapshotRecord } from '../../../model/snapshot-record';
 import { type EggWalk, type WalkReport, walk } from '../../../auth/eggs';
-import type { EncounterRecord } from '../../../auth/encounter-record';
-import { getLocalOffset } from '../../../auth/local-time';
+import type { EncounterRecord } from '../../../model/encounter-record';
+import { getLocalOffset } from '../../../model/local-time';
 import { localNow } from '../../../auth/clock';
-import { RaidAction, RaidKind, type RaidView, canJoinRaids, peekRaid } from '../../../auth/raids';
-import { type StopRecord, stopIdOf } from '../../../auth/stop-record';
+import {
+  RaidAction,
+  type RaidView,
+  canJoinRaids,
+  getRaidKindAt,
+  isRaidLandmark,
+  peekRaid,
+} from '../../../auth/raids';
+import { type StopRecord, stopIdOf } from '../../../model/stop-record';
 import { claimStopReward, enterStop } from '../../../auth/stops';
 import { createSafariSession, isEncounterRetired } from '../../../auth/safari';
 import {
@@ -47,8 +54,8 @@ import {
   watchSnapshotWindow,
 } from '../../../auth/snapshots';
 import type { PlayerIdentity } from '../../../auth/user';
-import { type BoardCell, boardIndexOf } from '../../../canvas/board';
-import { getSkybox, latitudeOf } from '../../../canvas/daylight';
+import { type BoardCell, boardIndexOf } from '../../../canvas/overworld/board';
+import { getSkybox, latitudeOf } from '../../../canvas/overworld/daylight';
 import { CAVERN } from '../../../canvas/sky';
 import { DECORATION_NAMES } from '../../../data/overworld/decoration';
 import {
@@ -62,10 +69,10 @@ import { type ItemStack, getItemBand } from '../../../data/overworld/item-pool';
 import Landmark, { LANDMARK_NAMES } from '../../../data/overworld/landmark';
 import Npc from '../../../data/overworld/npc';
 import { NPC_VISIT_TAGS, npcName } from '../../../overworld/npcs';
-import type { GymSeatStanding } from '../../../auth/gym-seat-record';
+import type { GymSeatStanding } from '../../../model/gym-seat-record';
 import { enterGymSeat } from '../../../auth/gym-seats';
 import { type LandmarkStandings, readLandmarkStandings } from '../../../auth/landmark-standings';
-import { CellAura, rankOf } from '../chunk-canvas/scenery';
+import { CellAura, rankOf } from '../../../canvas/overworld/scenery';
 import GymSeatDialog from '../GymSeatDialog';
 import { VENDOR_KIND_NAMES } from '../../../data/overworld/vendor';
 import type Phenomenon from '../../../data/overworld/phenomenon';
@@ -81,7 +88,7 @@ import { Depth } from '../../../overworld/depth';
 import { throughMouth } from '../../../overworld/cave';
 import { townAt, townName } from '../../../overworld/town';
 import { discoverTown } from '../../../auth/towns';
-import { findPathBeside, findPathNear } from '../../../overworld/path';
+import { canStep, findPathBeside, findPathNear, stepDuration } from '../../../overworld/path';
 import type SafariSession from '../../../overworld/safari';
 import { isInWorld } from '../../../overworld/world';
 import Biome, { isIceBiome } from '../../../data/ids/biome';
@@ -1157,9 +1164,19 @@ export default function OverworldBoard(props: {
       }
       const inChunk = spot.cell;
 
-      if (landmark === Landmark.LegendaryLair || landmark === Landmark.ShadowLair) {
+      if (isRaidLandmark(landmark)) {
         if (read.cleared.has(inChunk)) {
           next.set(at, CellAura.Cleared);
+        } else if (landmark === Landmark.AlphaRaid && snapshot.getAlphaRaids().has(inChunk)) {
+          // An Alpha at home glows like a fight waiting, since that is what it is
+          next.set(at, CellAura.Fight);
+        } else if (landmark === Landmark.NobleArena && snapshot.getNobleRaids().has(inChunk)) {
+          // A Noble at home glows white like a legend in a seat: a lord
+          // of the land is in residence
+          next.set(at, CellAura.Legend);
+        } else if (landmark === Landmark.TeraRaid && snapshot.getTeraRaids().has(inChunk)) {
+          // A Tera crystal with somebody in it glows like a fight waiting, the way an Alpha does
+          next.set(at, CellAura.Fight);
         }
       } else if (landmark === Landmark.GymSeat) {
         const holder = read.seats.get(inChunk);
@@ -1938,8 +1955,9 @@ export default function OverworldBoard(props: {
       setPortal(spot);
       return null;
     }
-    if (landmark === Landmark.LegendaryLair || landmark === Landmark.ShadowLair) {
-      const kind = landmark === Landmark.ShadowLair ? RaidKind.Shadow : RaidKind.Legendary;
+    const kind = getRaidKindAt(spot.snapshot, spot.cell);
+
+    if (kind != null) {
       // Looked at rather than walked into: nothing is staged until the
       // dialog's button is pressed, so a player who thinks better of it
       // leaves no lobby standing behind them
@@ -2379,11 +2397,20 @@ export default function OverworldBoard(props: {
   );
 
   /**
-   * When the last cell of a walk was stepped. The pace is measured from
-   * it rather than from the press, so pressing again mid-walk changes
-   * where the player is going without changing how fast they get there
+   * When the next step may be taken: the last one's start plus how long
+   * it takes, a diagonal being √2 times a straight step. The pace is
+   * measured from it rather than from the press, so pressing again
+   * mid-walk changes where the player is going without changing how
+   * fast they get there
    */
-  let steppedAt = 0;
+  let nextStepAt = 0;
+
+  /** How long until the next step, or a whole pace when the last one did not move */
+  const untilNextStep = (): number => {
+    const owed = nextStepAt - Date.now();
+
+    return owed > 0 ? owed : STEP_PACE;
+  };
 
   /**
    * Whether the walk has arrived. Reaching for something ends beside
@@ -2487,10 +2514,11 @@ export default function OverworldBoard(props: {
       Math.floor(next / BOARD_CELLS) - Math.floor(here / BOARD_CELLS),
     ];
 
-    // A route is a run of single straight steps and nothing else. A
-    // walk is what carries the egg and what the world is seen from, so
-    // one that jumped would be a teleport with a walk's name on it
-    if (Math.abs(step[0]) + Math.abs(step[1]) !== 1) {
+    // A route is a run of single steps, a diagonal included, and
+    // nothing else. A walk is what carries the egg and what the world is
+    // seen from, so one that jumped would be a teleport with a walk's
+    // name on it
+    if (Math.max(Math.abs(step[0]), Math.abs(step[1])) !== 1) {
       setJourney(null);
       return;
     }
@@ -2500,7 +2528,7 @@ export default function OverworldBoard(props: {
       announced = plan;
       sight()?.plan(stepsAlong(here, route));
     }
-    steppedAt = Date.now();
+    nextStepAt = Date.now() + stepDuration(step, STEP_PACE);
     move(step[0], step[1]);
   };
 
@@ -2513,14 +2541,14 @@ export default function OverworldBoard(props: {
   });
 
   /**
-   * The walk itself: a step, and then one every `STEP_PACE` until it
-   * arrives or gives up.
+   * The walk itself: a step, and then the next as soon as that one is
+   * done, until it arrives or gives up. Each step waits out its own
+   * length, so a diagonal takes √2 times a straight one.
    *
-   * The first step is taken the moment the press lands, unless one was
-   * taken less than a pace ago — a new press restarts this effect, and
-   * stepping straight away on every press let a player who kept
-   * re-pressing walk as fast as they could click. What is owed from the
-   * last step is waited out first, and only then does the clock resume.
+   * The first step is taken the moment the press lands, unless the
+   * last one is still under way — a new press restarts this effect,
+   * and stepping straight away on every press let a player who kept
+   * re-pressing walk as fast as they could click.
    *
    * Everything the step reads is read outside the effect's tracking,
    * so the only thing that restarts the clock is a **new** press: read
@@ -2532,35 +2560,31 @@ export default function OverworldBoard(props: {
     if (journey() == null) {
       return;
     }
-    const owed = Math.max(0, STEP_PACE - (Date.now() - steppedAt));
-    let waiting: ReturnType<typeof setTimeout> | null = null;
-    let timer: ReturnType<typeof setInterval> | null = null;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    // A step can end the walk from inside itself, by arriving or by
+    // crossing an edge, which disposes this effect there and then. A
+    // timer set after that would outlive the walk and drive the next
+    let ended = false;
 
     const pace = (): void => {
-      // The clock is started before the step, not after. A step can end
-      // the walk from inside itself, by arriving or by crossing an
-      // edge, and ending it disposes this effect there and then: a
-      // clock started afterwards is one nothing holds a handle to. Those
-      // outlive the walk, and every one of them drives the next walk, so
-      // two of them is a player moving three cells a pace
-      timer = setInterval(() => {
-        untrack(stride);
-      }, STEP_PACE);
+      timer = null;
       untrack(stride);
+      if (!ended) {
+        timer = setTimeout(pace, untilNextStep());
+      }
     };
+    const owed = nextStepAt - Date.now();
 
     if (owed > 0) {
-      waiting = setTimeout(pace, owed);
+      timer = setTimeout(pace, owed);
     } else {
       pace();
     }
 
     onCleanup(() => {
-      if (waiting != null) {
-        clearTimeout(waiting);
-      }
+      ended = true;
       if (timer != null) {
-        clearInterval(timer);
+        clearTimeout(timer);
       }
     });
   });
@@ -2617,29 +2641,38 @@ export default function OverworldBoard(props: {
    * A step taken on the keyboard: turn that way, and walk if the
    * ground there can be stood on.
    *
-   * A step into a landmark or a boulder turns without moving, which is
-   * what a mainline game does and what leaves the interact key
-   * something to act on. Held to the same pace as a pressed walk, so
-   * neither a held key nor a mashed one outruns the other
+   * The ways are tried in order: two keys held together walk the
+   * diagonal, and where that corner is shut the newer key's straight
+   * step slides along it instead. A step into a landmark or a boulder
+   * turns without moving, which is what a mainline game does and what
+   * leaves the interact key something to act on. Held to the same pace
+   * as a pressed walk, so neither a held key nor a mashed one outruns
+   * the other
    */
-  const stepBy = (step: [number, number]): void => {
+  const stepBy = (ways: [number, number][]): void => {
     const loaded = view();
+    const first = ways.at(0);
 
-    if (loaded == null || engaged() || Date.now() - steppedAt < STEP_PACE) {
+    if (loaded == null || first == null || engaged() || Date.now() < nextStepAt) {
       return;
     }
-    setFacing(step);
     // The keyboard is the player walking themselves, so a walk they
     // pressed for is dropped rather than raced
     setJourney(null);
 
-    // A step into something standing there turns the player and
-    // nothing more, which is what leaves the interact key an answer
-    if (!standable(loaded, ahead(step))) {
-      return;
+    const passable = (index: number): boolean => standable(loaded, index);
+
+    for (const way of ways) {
+      if (canStep(cell(), way[0], way[1], passable)) {
+        setFacing(way);
+        nextStepAt = Date.now() + stepDuration(way, STEP_PACE);
+        move(way[0], way[1]);
+        return;
+      }
     }
-    steppedAt = Date.now();
-    move(step[0], step[1]);
+    // Nowhere to go turns the player and nothing more, which is what
+    // leaves the interact key an answer
+    setFacing(first);
   };
 
   /**
@@ -2668,25 +2701,59 @@ export default function OverworldBoard(props: {
    */
   onMount(() => {
     let held: Direction[] = [];
-    let pacing: ReturnType<typeof setInterval> | null = null;
+    let pacing: ReturnType<typeof setTimeout> | null = null;
 
     const stop = (): void => {
       held = [];
       if (pacing != null) {
-        clearInterval(pacing);
+        clearTimeout(pacing);
         pacing = null;
       }
     };
 
-    const onward = (): void => {
-      const going = held.at(-1);
+    /**
+     * The ways the held keys walk, best first: the newest key on each
+     * axis together, then each of those alone, the newer first. Two
+     * keys on one axis are the newer one, so rolling from left onto
+     * right turns round rather than stopping dead
+     */
+    const ways = (): [number, number][] => {
+      let across: Direction | null = null;
+      let along: Direction | null = null;
 
-      if (going == null) {
+      for (const one of held) {
+        if (STEPS[one][0] === 0) {
+          along = one;
+        } else {
+          across = one;
+        }
+      }
+      if (across == null || along == null) {
+        const only = across ?? along;
+
+        return only == null ? [] : [STEPS[only]];
+      }
+
+      const newer = held.lastIndexOf(across) > held.lastIndexOf(along) ? across : along;
+      const older = newer === across ? along : across;
+
+      return [[STEPS[across][0], STEPS[along][1]], STEPS[newer], STEPS[older]];
+    };
+
+    /** The next step once this one is done, which a diagonal makes longer */
+    const keepPace = (): void => {
+      pacing ??= setTimeout(onward, untilNextStep());
+    };
+
+    function onward(): void {
+      pacing = null;
+      if (held.length === 0) {
         stop();
         return;
       }
-      stepBy(STEPS[going]);
-    };
+      stepBy(ways());
+      keepPace();
+    }
 
     const down = (event: KeyboardEvent): void => {
       if (event.repeat || !forTheGame(event)) {
@@ -2717,8 +2784,8 @@ export default function OverworldBoard(props: {
       }
       pressed.push(action);
       held = pressed;
-      stepBy(STEPS[action]);
-      pacing ??= setInterval(onward, STEP_PACE);
+      stepBy(ways());
+      keepPace();
     };
 
     const up = (event: KeyboardEvent): void => {
@@ -2949,6 +3016,7 @@ export default function OverworldBoard(props: {
                 picked={pickedHere()}
                 dug={dugHere()}
                 auras={auras()}
+                beacons={loaded().beacons}
                 decorations={loaded().decorations}
                 spawns={standingHere()}
                 goal={walkGoal()}

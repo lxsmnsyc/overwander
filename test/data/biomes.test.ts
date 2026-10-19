@@ -195,7 +195,7 @@ describe('biome data', () => {
     }
   });
 
-  it('rolls a spawn through the rarity bands, prized band included', () => {
+  it('rolls a spawn through the fixed bands, then everything else by weight', () => {
     const rolls = (values: number[]) => () => values.shift() ?? 0.999;
     const groups = {
       base: [{ species: Species.Pidgey, weight: 10 }],
@@ -205,29 +205,27 @@ describe('biome data', () => {
       special: [{ species: Species.Mew, weight: 10 }],
     };
 
-    // Richest first, each slice as wide as its own odds: special owns
-    // the opening 1/4096, prized the 1/512 after it, then the bands a
-    // line's stages are dealt into, and whatever is left falls to base
+    // The fixed bands take their own odds off the top: special the
+    // opening 1/4096, prized the 1/512 after it
     expect(pickSpawn(groups, rolls([0]))).toBe(Species.Mew);
     expect(pickSpawn(groups, rolls([1 / 1024, 0]))).toBe(Species.Eevee);
-    expect(pickSpawn(groups, rolls([1 / 128, 0]))).toBe(Species.Ditto);
-    expect(pickSpawn(groups, rolls([0.3, 0]))).toBe(Species.Ivysaur);
-    expect(pickSpawn(groups, rolls([0.9, 0]))).toBe(Species.Pidgey);
 
-    // A pool that leaves the band out is every pool in the game
-    // today, and its rares are rolled exactly as they were: the
-    // prized slice falls to the band below rather than to base
+    // Past them, one draw over every other band by weight: the bands
+    // are only labels, so three equal weights are three equal thirds
+    expect(pickSpawn(groups, rolls([0.5, 0]))).toBe(Species.Pidgey);
+    expect(pickSpawn(groups, rolls([0.5, 0.5]))).toBe(Species.Ivysaur);
+    expect(pickSpawn(groups, rolls([0.5, 0.9]))).toBe(Species.Ditto);
+
+    // A pool that leaves the prized band out hands its slice to the rest
     const { prized, ...without } = groups;
 
     expect(prized).toHaveLength(1);
-    expect(pickSpawn(without, rolls([1 / 1024, 0]))).toBe(Species.Ditto);
-    expect(pickSpawn(without, rolls([1 / 128, 0]))).toBe(Species.Ditto);
-    expect(pickSpawn(without, rolls([0.9, 0]))).toBe(Species.Pidgey);
+    expect(pickSpawn(without, rolls([1 / 1024, 0]))).toBe(Species.Pidgey);
   });
 
   it('groups biome spawn pools by time of day and rarity', () => {
     const morning = getSpawnPool(Biome.Grassland, TimeOfDay.Morning);
-    expect(morning.base).toContainEqual({ species: Species.Pidgey, weight: 30 });
+    expect(morning.base.some((entry) => entry.species === Species.Pidgey)).toBe(true);
 
     // Sections agree with the rarity classification
     expect(morning.rare.every((entry) => getSpawnRarity(entry.species) === SpawnRarity.Rare)).toBe(
@@ -552,20 +550,15 @@ describe('biome data', () => {
     const rolls = (values: number[]) => () => values.shift() ?? 0.999;
 
     // The rarest roll of all lands on the mythical the biome keeps,
-    // and the one under it in the special section
+    // the one under it in the special section, then the prized finds
     expect(getSpawnRarity(pickSpawn(pool, rolls([0, 0]))!)).toBe(SpawnRarity.Mythical);
     expect(getSpawnRarity(pickSpawn(pool, rolls([1.5 / 4096, 0]))!)).toBe(SpawnRarity.Special);
-
-    // Then the ladder down: prized, the two grown bands, the middle
-    // of a line, and the first stages
     expect(getSpawnRarity(pickSpawn(pool, rolls([1 / 1024, 0]))!)).toBe(SpawnRarity.Prized);
-    expect(getSpawnRarity(pickSpawn(pool, rolls([0.01, 0]))!)).toBe(SpawnRarity.Elusive);
-    expect(getSpawnRarity(pickSpawn(pool, rolls([0.05, 0]))!)).toBe(SpawnRarity.Scarce);
-    expect(getSpawnRarity(pickSpawn(pool, rolls([0.15, 0]))!)).toBe(SpawnRarity.Rare);
-    expect(getSpawnRarity(pickSpawn(pool, rolls([0.3, 0]))!)).toBe(SpawnRarity.Uncommon);
 
-    // Everything else lands in the base section
+    // Past those, one weighted draw over the rest, written base first
+    // and elusive last
     expect(getSpawnRarity(pickSpawn(pool, rolls([0.5, 0]))!)).toBe(SpawnRarity.Base);
+    expect(getSpawnRarity(pickSpawn(pool, rolls([0.5, 0.9999]))!)).toBe(SpawnRarity.Elusive);
 
     // An empty pool cannot roll
     expect(

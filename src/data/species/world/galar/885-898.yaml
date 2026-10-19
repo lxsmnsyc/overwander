@@ -1,0 +1,160 @@
+Dreepy:
+  Dreepy:
+    types: [Dragon, Ghost]
+    egg-groups: [Amorphous, Dragon]
+    biomes: [TemperateRainforest, Mountain]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Drakloak
+        method: [Level]
+        level: 50
+  Drakloak:
+    types: [Dragon, Ghost]
+    egg-groups: [Amorphous, Dragon]
+    biomes: [TemperateRainforest, Mountain]
+    active: [Evening, Night]
+    evolves-from: Dreepy
+    evolves-into:
+      - species: Dragapult
+        method: [Level]
+        level: 60
+  Dragapult:
+    types: [Dragon, Ghost]
+    egg-groups: [Amorphous, Dragon]
+    biomes: [TemperateRainforest, Mountain]
+    active: [Evening, Night]
+    evolves-from: Drakloak
+Zacian:
+  Zacian:
+    types: [Fairy]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [TemperateForest]
+    active: any
+    rank: legendary
+  ZacianCrowned:
+    # Worn with the Rusted Sword, so it is never met this way
+    types: [Fairy, Steel]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    worn: true
+    evolves-from: Zacian
+    rank: legendary
+Zamazenta:
+  Zamazenta:
+    types: [Fighting]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [TemperateForest]
+    active: any
+    rank: legendary
+  ZamazentaCrowned:
+    # Worn with the Rusted Shield, so it is never met this way
+    types: [Fighting, Steel]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    worn: true
+    evolves-from: Zamazenta
+    rank: legendary
+Eternatus:
+  Eternatus:
+    types: [Poison, Dragon]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Badlands]
+    active: any
+    rank: legendary
+Kubfu:
+  Kubfu:
+    types: [Fighting]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Mountain, RockyCoast]
+    active: any
+    evolves-into:
+      - species: Urshifu
+        method: [UsedItem]
+        item: ScrollOfDarkness
+      - species: UrshifuRapidStrike
+        method: [UsedItem]
+        item: ScrollOfWaters
+    # A first stage of a legendary line, met in the wild the way Cosmog
+    # and Type: Null are, rather than at a lair
+    rank: prized
+  Urshifu:
+    types: [Fighting, Dark]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Mountain]
+    active: any
+    evolves-from: Kubfu
+    rank: legendary
+  UrshifuRapidStrike:
+    types: [Fighting, Water]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [RockyCoast]
+    active: any
+    base-form: false
+    evolves-from: Kubfu
+    rank: legendary
+Regieleki:
+  Regieleki:
+    types: [Electric]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Tundra]
+    active: any
+    rank: legendary
+Regidrago:
+  Regidrago:
+    types: [Dragon]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Tundra]
+    active: any
+    rank: legendary
+Glastrier:
+  Glastrier:
+    types: [Ice]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [AlpineTundra]
+    active: any
+    rank: legendary
+Spectrier:
+  Spectrier:
+    types: [Ghost]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Tundra]
+    active: any
+    rank: legendary
+Calyrex:
+  # The king, and the two shapes it takes astride a steed the Reins of
+  # Unity have joined it to
+  Calyrex:
+    types: [Psychic, Grass]
+    egg-groups: [NoEggsDiscovered]
+    biomes: [Taiga]
+    active: any
+    evolves-into:
+      - species: CalyrexIce
+        method: [UsedItem]
+        item: ReinsOfUnity
+      - species: CalyrexShadow
+        method: [UsedItem]
+        item: ReinsOfUnity
+    rank: legendary
+  CalyrexIce:
+    types: [Psychic, Ice]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    evolves-from: Calyrex
+    evolves-into:
+      - species: Calyrex
+        method: [UsedItem]
+        item: ReinsOfUnity
+  CalyrexShadow:
+    types: [Psychic, Ghost]
+    egg-groups: [NoEggsDiscovered]
+    active: any
+    base-form: false
+    evolves-from: Calyrex
+    evolves-into:
+      - species: Calyrex
+        method: [UsedItem]
+        item: ReinsOfUnity

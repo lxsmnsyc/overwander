@@ -6,8 +6,8 @@ import type { Species } from '../data/ids/species';
 import { getSpeciesAbilityPools, getSpeciesData } from '../data/species';
 import { getItemData } from '../data/items';
 import { getMoveData } from '../data/moves';
-import { type CaughtPokemon, getCatchName } from '../auth/caught-record';
-import { isEgg } from '../auth/egg';
+import { type CaughtPokemon, getCatchName } from '../model/caught-record';
+import { isEgg } from '../model/egg';
 
 /**
  * What an ability, a move or an item is called, and what it does,

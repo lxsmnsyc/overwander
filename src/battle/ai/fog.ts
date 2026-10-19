@@ -2,7 +2,7 @@ import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import Abilities from '../../data/ids/abilities';
 import type { Items } from '../../data/ids/items';
 import { Moves } from '../../data/ids/moves';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents } from '../events';
 import type Unit from '../unit';
 
@@ -16,8 +16,13 @@ interface Revealed {
   moves: Set<Moves>;
 }
 
-/** Abilities nobody has to see cue to know about: a raid boss is plainly one */
-const ALWAYS_KNOWN = new Set<Abilities>([Abilities.Boss]);
+/** Abilities nobody has to see cue to know about: a raid boss, an Alpha, a Noble, or the ally a Totem calls, is plainly one */
+const ALWAYS_KNOWN = new Set<Abilities>([
+  Abilities.Boss,
+  Abilities.TotemAlly,
+  Abilities.Alpha,
+  Abilities.Noble,
+]);
 
 /** Moves every unit carries, so knowing a foe has them gives nothing away */
 const ALWAYS_CARRIED = new Set<Moves>([Moves.Attack, Moves.Struggle]);

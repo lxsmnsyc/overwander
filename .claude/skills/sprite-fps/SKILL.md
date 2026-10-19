@@ -8,7 +8,7 @@ description: >
   milliseconds.
 ---
 
-**All sprites are 24fps.** A sheet's durations are counted in ticks, and one tick is `SPRITE_TICK` — `1000 / SPRITE_FPS` in [`src/canvas/sprite-sheet.ts`](../../../src/canvas/sprite-sheet.ts). Pokemon sheets, effect and particle atlases and overworld characters all count in that same tick.
+**All sprites are 24fps.** A sheet's durations are counted in ticks, and one tick is `SPRITE_TICK` — `1000 / SPRITE_FPS` in [`src/canvas/sprites/sheet.ts`](../../../src/canvas/sprites/sheet.ts). Pokemon sheets, effect and particle atlases and overworld characters all count in that same tick.
 
 ## Rules
 

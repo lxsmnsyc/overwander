@@ -1,6 +1,6 @@
 import 'server-only';
-import BATTLE_TIMEOUT from '../auth/battle-lock';
-import { asCatchSnapshot } from '../auth/catch-snapshot';
+import BATTLE_TIMEOUT from '../model/battle-lock';
+import { asCatchSnapshot } from '../model/catch-snapshot';
 import { getSql } from './db';
 import { asNumber } from './read';
 

@@ -1,6 +1,6 @@
 // Treecko through Torkoal.
 
-import { BOSS_DAMAGE_CAP } from '../../../../src/battle/abilities/special';
+import { BOSS_DAMAGE_CAP } from '../../../../src/battle/abilities/special/index';
 import { describe, expect, it } from 'vitest';
 import {
   CHEER_MAX_SHOUTS,
@@ -8,7 +8,7 @@ import {
   GROVE_HEAL_FRACTION,
   GROWTH_MAX_STAGES,
 } from '../../../../src/battle/abilities/signature/__create';
-import { AttackPriority, EventPriority } from '../../../../src/core/event-emitter';
+import { AttackPriority } from '../../../../src/core/event-emitter';
 import { BattleEvents, EffectType, MoveTargetType } from '../../../../src/battle/events';
 import { Stages, Stats, StatsKind } from '../../../../src/data/constants/stats';
 import { Types } from '../../../../src/data/constants/types';
@@ -19,7 +19,7 @@ import { Statuses, Weathers } from '../../../../src/data/ids/status';
 import {
   STORED_BOUNCE_CAP,
   STORED_BOUNCE_SHARE,
-} from '../../../../src/battle/abilities/signature/spoink-to-deoxys';
+} from '../../../../src/battle/abilities/signature/gen-3/spoink-to-deoxys';
 import turns from '../../../../src/battle/turn';
 import {
   BODY_HEAT_SCALE,
@@ -47,8 +47,8 @@ import {
   PERENNIAL_HEAL_FRACTION,
   PERENNIAL_THRESHOLD,
   VANISHING_ACT_DURATION,
-} from '../../../../src/battle/abilities/signature/treecko-to-torkoal';
-import { unitTarget } from '../../../../src/battle/utils';
+} from '../../../../src/battle/abilities/signature/gen-3/treecko-to-torkoal';
+import { unitTarget } from '../../../../src/battle/unit-checks';
 import { createBattle, createUnit, pinRandom } from '../../harness';
 import {
   NONE_CAUSE,
@@ -1025,7 +1025,7 @@ describe('Stored Bounce', () => {
 
     let bounced = 0;
 
-    battle.on(BattleEvents.UnitDamage, EventPriority.Post, (event) => {
+    battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
       if (
         event.cause.type === EffectType.Ability &&
         event.cause.ability === Abilities.StoredBounce

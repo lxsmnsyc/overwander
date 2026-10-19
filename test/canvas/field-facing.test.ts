@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { FieldView } from '../../src/canvas/battle/field';
+import type { FieldView } from '../../src/canvas/battle/projection';
 import { MoveTargetType } from '../../src/battle/events';
 import { Moves } from '../../src/data/ids/moves';
 import {

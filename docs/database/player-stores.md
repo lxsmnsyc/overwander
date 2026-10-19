@@ -96,7 +96,7 @@ difference, so one arriving after a read that already saw it changes nothing.
 
 ### How a stack is read and written
 
-[`src/auth/stacks.ts`](../../src/auth/stacks.ts) says which table a kind lives in
+[`src/model/stacks.ts`](../../src/model/stacks.ts) says which table a kind lives in
 (`ITEM_STACKS`, `CANDY_STACKS`) and reads one out: `getStack` for a count,
 `listStacks` for the id-count pairs every picker wants.
 
@@ -279,7 +279,7 @@ stored encounter, so a player cannot retire a meeting they never had.
 | `window_at` | `bigint` | The window that staged it, for the sweep |
 
 An encounter key is `` `${x},${y}@${timestamp}:${individualValue}` `` (see
-`encounterKey` in [`src/overworld/safari.ts`](../../src/overworld/safari.ts)).
+`encounterKey` in [`src/overworld/safari/index.ts`](../../src/overworld/safari/index.ts)).
 
 A key carries the window that staged the spawn, and a spawn is gone when its
 window turns over, so anything older than `FLED_MEMORY` (1 hour) can never match

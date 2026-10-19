@@ -1,0 +1,71 @@
+templates:
+  type: Turns a damaging {type} move into {zMove} as it is thrown, and gives a status move of the type its Z-effect first. Once a side a fight.
+NormaliumZ: { name: Normalium Z }
+FightiniumZ: { name: Fightinium Z }
+FlyiniumZ: { name: Flyinium Z }
+PoisoniumZ: { name: Poisonium Z }
+GroundiumZ: { name: Groundium Z }
+RockiumZ: { name: Rockium Z }
+BuginiumZ: { name: Buginium Z }
+GhostiumZ: { name: Ghostium Z }
+SteeliumZ: { name: Steelium Z }
+FiriumZ: { name: Firium Z }
+WateriumZ: { name: Waterium Z }
+GrassiumZ: { name: Grassium Z }
+ElectriumZ: { name: Electrium Z }
+PsychiumZ: { name: Psychium Z }
+IciumZ: { name: Icium Z }
+DragoniumZ: { name: Dragonium Z }
+DarkiniumZ: { name: Darkinium Z }
+FairiumZ: { name: Fairium Z }
+PikaniumZ:
+  name: Pikanium Z
+  description: Turns a Pikachu's Volt Tackle into Catastropika as it is thrown. Once a side a fight.
+PikashuniumZ:
+  name: Pikashunium Z
+  description: Turns a Pikachu in Ash's cap's Thunderbolt into 10,000,000 Volt Thunderbolt as it is thrown. Once a side a fight.
+AloraichiumZ:
+  name: Aloraichium Z
+  description: Turns a Alolan Raichu's Thunderbolt into Stoked Sparksurfer as it is thrown. Once a side a fight.
+EeviumZ:
+  name: Eevium Z
+  description: Turns a Eevee's Last Resort into Extreme Evoboost as it is thrown. Once a side a fight.
+SnorliumZ:
+  name: Snorlium Z
+  description: Turns a Snorlax's Giga Impact into Pulverizing Pancake as it is thrown. Once a side a fight.
+MewniumZ:
+  name: Mewnium Z
+  description: Turns a Mew's Psychic into Genesis Supernova as it is thrown. Once a side a fight.
+DecidiumZ:
+  name: Decidium Z
+  description: Turns a Decidueye's Spirit Shackle into Sinister Arrow Raid as it is thrown. Once a side a fight.
+InciniumZ:
+  name: Incinium Z
+  description: Turns a Incineroar's Darkest Lariat into Malicious Moonsault as it is thrown. Once a side a fight.
+PrimariumZ:
+  name: Primarium Z
+  description: Turns a Primarina's Sparkling Aria into Oceanic Operetta as it is thrown. Once a side a fight.
+LycaniumZ:
+  name: Lycanium Z
+  description: Turns a Lycanroc's Stone Edge into Splintered Stormshards as it is thrown. Once a side a fight.
+MimikiumZ:
+  name: Mimikium Z
+  description: Turns a Mimikyu's Play Rough into Let's Snuggle Forever as it is thrown. Once a side a fight.
+KommoniumZ:
+  name: Kommonium Z
+  description: Turns a Kommo-o's Clanging Scales into Clangorous Soulblaze as it is thrown. Once a side a fight.
+TapuniumZ:
+  name: Tapunium Z
+  description: Turns a Tapu's Nature's Madness into Guardian of Alola as it is thrown. Once a side a fight.
+SolganiumZ:
+  name: Solganium Z
+  description: Turns a Solgaleo or Dusk Mane Necrozma's Sunsteel Strike into Searing Sunraze Smash as it is thrown. Once a side a fight.
+LunaliumZ:
+  name: Lunalium Z
+  description: Turns a Lunala or Dawn Wings Necrozma's Moongeist Beam into Menacing Moonraze Maelstrom as it is thrown. Once a side a fight.
+UltranecroziumZ:
+  name: Ultranecrozium Z
+  description: Turns a Necrozma fused with the sun or the moon's Photon Geyser into Light That Burns the Sky as it is thrown. Once a side a fight.
+MarshadiumZ:
+  name: Marshadium Z
+  description: Turns a Marshadow's Spectral Thief into Soul-Stealing 7-Star Strike as it is thrown. Once a side a fight.

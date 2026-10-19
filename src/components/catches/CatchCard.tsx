@@ -9,9 +9,9 @@ import {
   isPurified,
   isShadow,
   isShiny,
-} from '../../auth/caught-record';
-import { isEgg } from '../../auth/egg';
-import { getMaxHealth, getStats, isFainted } from '../../auth/health';
+} from '../../model/caught-record';
+import { isEgg } from '../../model/egg';
+import { getMaxHealth, getStats, isFainted } from '../../model/health';
 import getSigil from '../../data/constants/sigil';
 import { LockIcon, MoonIcon, SparklesIcon, StarIcon, SunIcon } from '../icons';
 import { MAX_IV_STARS, Stats, getIVStars } from '../../data/constants/stats';

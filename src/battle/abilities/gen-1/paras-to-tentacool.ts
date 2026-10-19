@@ -11,14 +11,10 @@ import { ABSORB_MOVES } from '../../moves/absorb';
 import { SELF_DESTRUCT_MOVES } from '../../moves/self-destruct';
 import { STATUS_MOVES } from '../../moves/status';
 import type Unit from '../../unit';
-import {
-  hasFreeItemSlot,
-  isWeatherRainy,
-  isWeatherSandstorm,
-  isWeatherSunny,
-  onUnitActs,
-  slipsTraps,
-} from '../../utils';
+import { slipsTraps } from '../../unit-checks';
+import { isWeatherRainy, isWeatherSandstorm, isWeatherSunny } from '../../weather';
+import onUnitActs from '../../acts';
+import { hasFreeItemSlot } from '../../items/held';
 import {
   ABSORB_HEAL_FRACTION,
   chipImmunity,

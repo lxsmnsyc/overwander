@@ -1,0 +1,23 @@
+Rotom:
+  Rotom: { name: Rotom, category: Plasma Pokemon }
+  RotomHeat: { name: Heat Rotom, category: Plasma Pokemon }
+  RotomWash: { name: Wash Rotom, category: Plasma Pokemon }
+  RotomFrost: { name: Frost Rotom, category: Plasma Pokemon }
+  RotomFan: { name: Fan Rotom, category: Plasma Pokemon }
+  RotomMow: { name: Mow Rotom, category: Plasma Pokemon }
+Uxie:
+  Uxie: { name: Uxie, category: Knowledge Pokemon }
+Mesprit:
+  Mesprit: { name: Mesprit, category: Emotion Pokemon }
+Azelf:
+  Azelf: { name: Azelf, category: Willpower Pokemon }
+Dialga:
+  Dialga: { name: Dialga, category: Temporal Pokemon }
+  DialgaOrigin: { name: Dialga Origin, category: Temporal Pokemon }
+Palkia:
+  Palkia: { name: Palkia, category: Spatial Pokemon }
+  PalkiaOrigin: { name: Palkia Origin, category: Spatial Pokemon }
+Heatran:
+  Heatran: { name: Heatran, category: Lava Dome Pokemon }
+Regigigas:
+  Regigigas: { name: Regigigas, category: Colossal Pokemon }

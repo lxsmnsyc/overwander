@@ -1,5 +1,5 @@
 import 'server-only';
-import { asOffset } from '../auth/local-time';
+import { asOffset } from '../model/local-time';
 import type { Sql, Tx } from './db';
 import { asNumber, asNumberArray, asRecord, asRecordArray, asString } from './read';
 
@@ -280,6 +280,9 @@ export function assembleCaught(
     guarded: row.guarded,
     traded: row.traded,
     canEvolve: row.can_evolve,
+    featProgress: row.feat_progress,
+    gigantamax: row.gigantamax,
+    teraType: row.tera_type,
     learnFrom: row.learn_from,
     auctionable: row.auctionable,
     hidden: row.hidden,
@@ -343,6 +346,9 @@ const SCALAR_COLUMNS: Record<string, string> = {
   guarded: 'guarded',
   traded: 'traded',
   canEvolve: 'can_evolve',
+  featProgress: 'feat_progress',
+  gigantamax: 'gigantamax',
+  teraType: 'tera_type',
   learnFrom: 'learn_from',
   auctionable: 'auctionable',
   // Written by the splicers alone: the base names what is inside it,

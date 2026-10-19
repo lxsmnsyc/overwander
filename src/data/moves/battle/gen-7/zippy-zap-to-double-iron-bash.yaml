@@ -1,0 +1,117 @@
+# From Zippy Zap to Double Iron Bash: the partner moves, and Melmetal's
+
+ZippyZap:
+  type: Electric
+  category: Physical
+  power: 80
+  accuracy: 100
+  priority: 2
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+SplishySplash:
+  type: Water
+  category: Special
+  power: 90
+  accuracy: 100
+  pp: 15
+  target: None
+  affects: [Unit, Enemy]
+
+FloatyFall:
+  type: Flying
+  category: Physical
+  power: 90
+  accuracy: 95
+  pp: 15
+  target: Unit
+  flags: [Contact]
+
+PikaPapow:
+  type: Electric
+  category: Special
+  pp: 20
+  target: Unit
+
+BouncyBubble:
+  type: Water
+  category: Special
+  power: 60
+  accuracy: 100
+  pp: 20
+  target: Unit
+  projectile: true
+
+BuzzyBuzz:
+  type: Electric
+  category: Special
+  power: 60
+  accuracy: 100
+  pp: 20
+  target: Unit
+
+SizzlySlide:
+  type: Fire
+  category: Physical
+  power: 60
+  accuracy: 100
+  pp: 20
+  target: Unit
+  flags: [Contact]
+
+GlitzyGlow:
+  type: Psychic
+  category: Special
+  power: 80
+  accuracy: 95
+  pp: 15
+  target: Unit
+
+BaddyBad:
+  type: Dark
+  category: Special
+  power: 80
+  accuracy: 95
+  pp: 15
+  target: Unit
+
+SappySeed:
+  type: Grass
+  category: Physical
+  power: 100
+  accuracy: 90
+  pp: 10
+  target: Unit
+
+FreezyFrost:
+  type: Ice
+  category: Special
+  power: 100
+  accuracy: 90
+  pp: 10
+  target: Unit
+
+SparklySwirl:
+  type: Fairy
+  category: Special
+  power: 120
+  accuracy: 85
+  pp: 5
+  target: Unit
+
+VeeveeVolley:
+  type: Normal
+  category: Physical
+  pp: 20
+  target: Unit
+  flags: [Contact]
+
+DoubleIronBash:
+  type: Steel
+  category: Physical
+  power: 60
+  accuracy: 100
+  pp: 5
+  target: Unit
+  flags: [Contact]

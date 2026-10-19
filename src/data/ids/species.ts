@@ -72,6 +72,14 @@ export const enum EvolutionMethod {
    * A one-off condition outside the other flags
    */
   Special = 0b1000000000000,
+  /**
+   * Steps walked as the player's buddy
+   */
+  Walked = 0b10000000000000,
+  /**
+   * Candies of its own family, spent on the evolution
+   */
+  Candy = 0b100000000000000,
 }
 
 /** Where a species can be met: on the ground, in the water, or either */
@@ -958,6 +966,228 @@ export const enum Species {
   Zeraora = 807,
   Meltan = 808,
   Melmetal = 809,
+
+  // Galar
+  Grookey = 810,
+  Thwackey = 811,
+  Rillaboom = 812,
+  Scorbunny = 813,
+  Raboot = 814,
+  Cinderace = 815,
+  Sobble = 816,
+  Drizzile = 817,
+  Inteleon = 818,
+  Skwovet = 819,
+  Greedent = 820,
+  Rookidee = 821,
+  Corvisquire = 822,
+  Corviknight = 823,
+  Blipbug = 824,
+  Dottler = 825,
+  Orbeetle = 826,
+  Nickit = 827,
+  Thievul = 828,
+  Gossifleur = 829,
+  Eldegoss = 830,
+  Wooloo = 831,
+  Dubwool = 832,
+  Chewtle = 833,
+  Drednaw = 834,
+  Yamper = 835,
+  Boltund = 836,
+  Rolycoly = 837,
+  Carkol = 838,
+  Coalossal = 839,
+  Applin = 840,
+  Flapple = 841,
+  Appletun = 842,
+  Silicobra = 843,
+  Sandaconda = 844,
+  Cramorant = 845,
+  Arrokuda = 846,
+  Barraskewda = 847,
+  Toxel = 848,
+  Toxtricity = 849,
+  Sizzlipede = 850,
+  Centiskorch = 851,
+  Clobbopus = 852,
+  Grapploct = 853,
+  Sinistea = 854,
+  Polteageist = 855,
+  Hatenna = 856,
+  Hattrem = 857,
+  Hatterene = 858,
+  Impidimp = 859,
+  Morgrem = 860,
+  Grimmsnarl = 861,
+  Obstagoon = 862,
+  Perrserker = 863,
+  Cursola = 864,
+  Sirfetchd = 865,
+  MrRime = 866,
+  Runerigus = 867,
+  Milcery = 868,
+  Alcremie = 869,
+  Falinks = 870,
+  Pincurchin = 871,
+  Snom = 872,
+  Frosmoth = 873,
+  Stonjourner = 874,
+  Eiscue = 875,
+  Indeedee = 876,
+  Morpeko = 877,
+  Cufant = 878,
+  Copperajah = 879,
+  Dracozolt = 880,
+  Arctozolt = 881,
+  Dracovish = 882,
+  Arctovish = 883,
+  Duraludon = 884,
+  Dreepy = 885,
+  Drakloak = 886,
+  Dragapult = 887,
+  Zacian = 888,
+  Zamazenta = 889,
+  Eternatus = 890,
+  Kubfu = 891,
+  Urshifu = 892,
+  Zarude = 893,
+  Regieleki = 894,
+  Regidrago = 895,
+  Glastrier = 896,
+  Spectrier = 897,
+  Calyrex = 898,
+
+  // Hisui
+  Wyrdeer = 899,
+  Kleavor = 900,
+  Ursaluna = 901,
+  Basculegion = 902,
+  Sneasler = 903,
+  Overqwil = 904,
+  Enamorus = 905,
+
+  // Paldea, with Kitakami and the Blueberry Academy
+  Sprigatito = 906,
+  Floragato = 907,
+  Meowscarada = 908,
+  Fuecoco = 909,
+  Crocalor = 910,
+  Skeledirge = 911,
+  Quaxly = 912,
+  Quaxwell = 913,
+  Quaquaval = 914,
+  Lechonk = 915,
+  Oinkologne = 916,
+  Tarountula = 917,
+  Spidops = 918,
+  Nymble = 919,
+  Lokix = 920,
+  Pawmi = 921,
+  Pawmo = 922,
+  Pawmot = 923,
+  Tandemaus = 924,
+  Maushold = 925,
+  Fidough = 926,
+  Dachsbun = 927,
+  Smoliv = 928,
+  Dolliv = 929,
+  Arboliva = 930,
+  Squawkabilly = 931,
+  Nacli = 932,
+  Naclstack = 933,
+  Garganacl = 934,
+  Charcadet = 935,
+  Armarouge = 936,
+  Ceruledge = 937,
+  Tadbulb = 938,
+  Bellibolt = 939,
+  Wattrel = 940,
+  Kilowattrel = 941,
+  Maschiff = 942,
+  Mabosstiff = 943,
+  Shroodle = 944,
+  Grafaiai = 945,
+  Bramblin = 946,
+  Brambleghast = 947,
+  Toedscool = 948,
+  Toedscruel = 949,
+  Klawf = 950,
+  Capsakid = 951,
+  Scovillain = 952,
+  Rellor = 953,
+  Rabsca = 954,
+  Flittle = 955,
+  Espathra = 956,
+  Tinkatink = 957,
+  Tinkatuff = 958,
+  Tinkaton = 959,
+  Wiglett = 960,
+  Wugtrio = 961,
+  Bombirdier = 962,
+  Finizen = 963,
+  Palafin = 964,
+  Varoom = 965,
+  Revavroom = 966,
+  Cyclizar = 967,
+  Orthworm = 968,
+  Glimmet = 969,
+  Glimmora = 970,
+  Greavard = 971,
+  Houndstone = 972,
+  Flamigo = 973,
+  Cetoddle = 974,
+  Cetitan = 975,
+  Veluza = 976,
+  Dondozo = 977,
+  Tatsugiri = 978,
+  Annihilape = 979,
+  Clodsire = 980,
+  Farigiraf = 981,
+  Dudunsparce = 982,
+  Kingambit = 983,
+  GreatTusk = 984,
+  ScreamTail = 985,
+  BruteBonnet = 986,
+  FlutterMane = 987,
+  SlitherWing = 988,
+  SandyShocks = 989,
+  IronTreads = 990,
+  IronBundle = 991,
+  IronHands = 992,
+  IronJugulis = 993,
+  IronMoth = 994,
+  IronThorns = 995,
+  Frigibax = 996,
+  Arctibax = 997,
+  Baxcalibur = 998,
+  Gimmighoul = 999,
+  Gholdengo = 1000,
+  WoChien = 1001,
+  ChienPao = 1002,
+  TingLu = 1003,
+  ChiYu = 1004,
+  RoaringMoon = 1005,
+  IronValiant = 1006,
+  Koraidon = 1007,
+  Miraidon = 1008,
+  WalkingWake = 1009,
+  IronLeaves = 1010,
+  Dipplin = 1011,
+  Poltchageist = 1012,
+  Sinistcha = 1013,
+  Okidogi = 1014,
+  Munkidori = 1015,
+  Fezandipiti = 1016,
+  Ogerpon = 1017,
+  Archaludon = 1018,
+  Hydrapple = 1019,
+  GougingFire = 1020,
+  RagingBolt = 1021,
+  IronBoulder = 1022,
+  IronCrown = 1023,
+  Terapagos = 1024,
+  Pecharunt = 1025,
   DeoxysAttack = 1038601,
   DeoxysDefense = 1038602,
   DeoxysSpeed = 1038603,
@@ -1133,6 +1363,18 @@ export const enum Species {
   SuicuneShadow = 1024503,
   LugiaShadow = 1024901,
   HoOhShadow = 1025002,
+  RegirockShadow = 1037702,
+  RegiceShadow = 1037802,
+  RegisteelShadow = 1037902,
+  LatiasShadow = 1038003,
+  LatiosShadow = 1038103,
+  KyogreShadow = 1038203,
+  GroudonShadow = 1038304,
+  RayquazaShadow = 1038404,
+  // The shapes a true shadow can be worn into, in the collection's own slots
+  KyogreShadowPrimal = 1038204,
+  GroudonShadowPrimal = 1038305,
+  RayquazaShadowMega = 1038405,
 
   /**
    * The Megas. The form index is the collection's own Mega slot, so
@@ -1187,6 +1429,61 @@ export const enum Species {
   GalladeMega = 1047501,
   AudinoMega = 1053101,
   DiancieMega = 1071901,
+
+  /**
+   * The Megas Legends: Z-A brought, each in the collection's own Mega
+   * slot. Meowstic's two sit past it, since its female form already
+   * holds slot 1
+   */
+  RaichuMegaX = 1002602,
+  RaichuMegaY = 1002603,
+  ClefableMega = 1003601,
+  VictreebelMega = 1007101,
+  StarmieMega = 1012101,
+  DragoniteMega = 1014901,
+  MeganiumMega = 1015401,
+  FeraligatrMega = 1016001,
+  SkarmoryMega = 1022701,
+  ChimechoMega = 1035801,
+  AbsolMegaZ = 1035902,
+  StaraptorMega = 1039801,
+  GarchompMegaZ = 1044502,
+  LucarioMegaZ = 1044802,
+  FroslassMega = 1047801,
+  HeatranMega = 1048501,
+  DarkraiMega = 1049102,
+  EmboarMega = 1050001,
+  ExcadrillMega = 1053001,
+  ScolipedeMega = 1054501,
+  ScraftyMega = 1056001,
+  EelektrossMega = 1060401,
+  ChandelureMega = 1060901,
+  GolurkMega = 1062301,
+  ChesnaughtMega = 1065201,
+  DelphoxMega = 1065501,
+  GreninjaMega = 1065802,
+  PyroarMega = 1066801,
+  FloetteMega = 1067006,
+  MeowsticMega = 1067803,
+  MeowsticFemaleMega = 1067804,
+  MalamarMega = 1068701,
+  BarbaracleMega = 1068901,
+  DragalgeMega = 1069101,
+  HawluchaMega = 1070101,
+  ZygardeMega = 1071805,
+  CrabominableMega = 1074001,
+  GolisopodMega = 1076801,
+  DrampaMega = 1078001,
+  MagearnaMega = 1080102,
+  MagearnaOriginalMega = 1080103,
+  ZeraoraMega = 1080701,
+  FalinksMega = 1087001,
+  ScovillainMega = 1095201,
+  GlimmoraMega = 1097001,
+  TatsugiriMega = 1097803,
+  TatsugiriStretchyMega = 1097804,
+  TatsugiriDroopyMega = 1097805,
+  BaxcaliburMega = 1099801,
 
   /** The two Primals, in the collection's own Primal slot */
   KyogrePrimal = 1038201,
@@ -1265,6 +1562,151 @@ export const enum Species {
 
   /** The colours Magearna was first painted in */
   MagearnaOriginal = 1080101,
+
+  /** The Galarian forms of the older lines, each in the collection's own Galar slot */
+  MeowthGalar = 1005202,
+  PonytaGalar = 1007701,
+  RapidashGalar = 1007801,
+  SlowpokeGalar = 1007901,
+  SlowbroGalar = 1008001,
+  FarfetchdGalar = 1008301,
+  WeezingGalar = 1011001,
+  MrMimeGalar = 1012201,
+  ArticunoGalar = 1014401,
+  ZapdosGalar = 1014501,
+  MoltresGalar = 1014601,
+  SlowkingGalar = 1019901,
+  CorsolaGalar = 1022201,
+  ZigzagoonGalar = 1026301,
+  LinooneGalar = 1026401,
+
+  /** The Hisuian forms of the older lines, each in the collection's own Hisui slot */
+  GrowlitheHisui = 1005801,
+  ArcanineHisui = 1005901,
+  VoltorbHisui = 1010001,
+  ElectrodeHisui = 1010101,
+  TyphlosionHisui = 1015701,
+  QwilfishHisui = 1021101,
+  SneaselHisui = 1021501,
+  SliggooHisui = 1070501,
+  GoodraHisui = 1070601,
+  AvaluggHisui = 1071301,
+  DecidueyeHisui = 1072401,
+
+  /** What a Cramorant comes back up with after a dive: the small catch, then the big one */
+  CramorantGulping = 1084501,
+  CramorantGorging = 1084502,
+
+  /** The calm key a Toxtricity is born into by its nature, Amped at the base */
+  ToxtricityLowKey = 1084901,
+
+  /** The six other Sweets an Alcremie can carry, on its Vanilla Cream. Strawberry is the base */
+  AlcremieBerry = 1086901,
+  AlcremieLove = 1086902,
+  AlcremieStar = 1086903,
+  AlcremieClover = 1086904,
+  AlcremieFlower = 1086905,
+  AlcremieRibbon = 1086906,
+
+  /** The true antiques among the Sinistea, the fakes at the base */
+  SinisteaAntique = 1085401,
+  PolteageistAntique = 1085501,
+
+  /**
+   * The Brass that leads a Falinks troop. Not a pokemon of its own:
+   * the collection draws the troop only as its pieces, so Falinks is
+   * drawn as its Brass until it has a sheet of its own
+   */
+  FalinksBrass = 1087002,
+
+  /** The head an Eiscue is left with once its ice is gone */
+  EiscueNoice = 1087501,
+
+  /** The female of the line, drawn apart from the male the way Meowstic's is */
+  IndeedeeFemale = 1087601,
+
+  /** The mood a Morpeko swings into each time it acts */
+  MorpekoHangry = 1087701,
+
+  /** The heroes with their rusted relics restored */
+  ZacianCrowned = 1088801,
+  ZamazentaCrowned = 1088901,
+
+  /** The style an Urshifu masters in the tower of water, Single Strike at the base */
+  UrshifuRapidStrike = 1089201,
+
+  /** The Zarude that raised a child of the jungle */
+  ZarudeDada = 1089301,
+
+  /** Calyrex astride one of its steeds, the ice first */
+  CalyrexIce = 1089801,
+  CalyrexShadow = 1089802,
+
+  /** The shape Enamorus takes when the Reveal Glass shows its other self */
+  EnamorusTherian = 1090501,
+
+  /** The female of the line, drawn apart from the male the way Meowstic's is */
+  BasculegionFemale = 1090201,
+
+  /** The three breeds of Paldean Tauros, in the collection's own slots, Combat first */
+  TaurosPaldeaCombat = 1012801,
+  TaurosPaldeaBlaze = 1012802,
+  TaurosPaldeaAqua = 1012803,
+
+  /** The Wooper of Paldea, which grows into Clodsire */
+  WooperPaldea = 1019402,
+
+  /** The Ursaluna raised under a red moon */
+  UrsalunaBloodmoon = 1090101,
+
+  /** The female of the line, drawn apart from the male the way Meowstic's is */
+  OinkologneFemale = 1091601,
+
+  /** The family of three a Tandemaus can grow into, the family of four at the base */
+  MausholdThree = 1092501,
+
+  /** Squawkabilly's other plumages, green at the base */
+  SquawkabillyBlue = 1093101,
+  SquawkabillyYellow = 1093102,
+  SquawkabillyWhite = 1093103,
+
+  /** The hero a Palafin turns into once it has left the field, Zero at the base */
+  PalafinHero = 1096401,
+
+  /** Tatsugiri's other two shapes, Curly at the base */
+  TatsugiriStretchy = 1097801,
+  TatsugiriDroopy = 1097802,
+
+  /** The rarer Dudunsparce, with three segments where the base has two */
+  DudunsparceThree = 1098201,
+
+  /** The artisan's own work among the Poltchageist, the counterfeits at the base */
+  PoltchageistArtisan = 1101201,
+  SinistchaMasterpiece = 1101301,
+
+  /** Gimmighoul on its own legs, the Chest form at the base */
+  GimmighoulRoaming = 1099901,
+
+  /** The box legends in the shapes they travel in, their battle builds at the base */
+  KoraidonLimited = 1100701,
+  MiraidonLowPower = 1100801,
+
+  /**
+   * Ogerpon in the masks it was robbed of, the Teal Mask at the base,
+   * then all four Terastallized, in the collection's slots 4 to 7
+   */
+  OgerponWellspring = 1101701,
+  OgerponHearthflame = 1101702,
+  OgerponCornerstone = 1101703,
+  OgerponTealTera = 1101704,
+  OgerponWellspringTera = 1101705,
+  OgerponHearthflameTera = 1101706,
+  OgerponCornerstoneTera = 1101707,
+
+  /** Terapagos Terastallized, then in its Stellar shape */
+  TerapagosTerastal = 1102401,
+  TerapagosStellar = 1102402,
+
   /**
    * The Zeniths, this engine's own. They take the last form slots of
    * their species, which no collection fills, so a form the art adds
@@ -1273,334 +1715,3 @@ export const enum Species {
    */
   ArcanineZenith = 1005999,
 }
-
-/**
- * Where form ids start. Below it an id is a dex number; at or above
- * it an id is `SPECIES_FORM_BAND + dexNumber * FORMS_PER_SPECIES +
- * formIndex`
- */
-export const SPECIES_FORM_BAND = 1000000;
-
-/** How many slots each species is given in the band. */
-export const FORMS_PER_SPECIES = 100;
-
-/**
- * The dex number an id belongs to: its own below the band, and the
- * species it is a form of above it. Missingno, the egg and the
- * substitute answer their own id, having no dex number to give
- */
-export function speciesDexNumber(species: Species): number {
-  const id: number = species;
-
-  return id < SPECIES_FORM_BAND ? id : Math.floor((id - SPECIES_FORM_BAND) / FORMS_PER_SPECIES);
-}
-
-/** Which form of its species an id is, counting the default as 0. */
-export function speciesFormIndex(species: Species): number {
-  const id: number = species;
-
-  return id < SPECIES_FORM_BAND ? 0 : (id - SPECIES_FORM_BAND) % FORMS_PER_SPECIES;
-}
-
-/**
- * The default form of whatever this is: itself for a base form, and
- * the species it is a costume of for a variant. It works off the id
- * alone because a base form's id **is** its dex number
- */
-export function getBaseFormSpecies(species: Species): Species {
-  // tsc requires the assertion to produce a Species from the number;
-  // tsgolint resolves the const enum to number
-  // oxlint-disable-next-line typescript/no-unnecessary-type-assertion
-  return speciesDexNumber(species) as Species;
-}
-
-/**
- * Every unown, in alphabet order, A first.
- *
- * One pokemon wearing twenty-eight faces, and the only species so far
- * with forms at all. The list is here rather than beside the species
- * data because the spawn pools and the dex both want it and neither
- * should have to read the registry to get it
- */
-export const UNOWN_FORMS: Species[] = [
-  Species.Unown,
-  Species.UnownB,
-  Species.UnownC,
-  Species.UnownD,
-  Species.UnownE,
-  Species.UnownF,
-  Species.UnownG,
-  Species.UnownH,
-  Species.UnownI,
-  Species.UnownJ,
-  Species.UnownK,
-  Species.UnownL,
-  Species.UnownM,
-  Species.UnownN,
-  Species.UnownO,
-  Species.UnownP,
-  Species.UnownQ,
-  Species.UnownR,
-  Species.UnownS,
-  Species.UnownT,
-  Species.UnownU,
-  Species.UnownV,
-  Species.UnownW,
-  Species.UnownX,
-  Species.UnownY,
-  Species.UnownZ,
-  Species.UnownExclamation,
-  Species.UnownQuestion,
-];
-
-/** The two marks the alphabet is followed by. */
-const UNOWN_MARKS = ['!', '?'];
-
-const UNOWN_LETTERS = (() => {
-  const letters = new Map<Species, string>();
-
-  for (const [at, species] of UNOWN_FORMS.entries()) {
-    letters.set(species, at < 26 ? String.fromCharCode(65 + at) : UNOWN_MARKS[at - 26]);
-  }
-  return letters;
-})();
-
-/**
- * The character an unown is shaped like: a letter, and the two marks
- * that come after Z. Null for anything that is not an unown, which is
- * how a caller asks whether it is looking at one
- */
-export function unownLetter(species: Species): string | null {
-  return UNOWN_LETTERS.get(species) ?? null;
-}
-
-/**
- * A Burmy's three cloaks, the plant one first: unlike a Castform's
- * skies, these are met rather than worn, and the one it was met in is
- * the one it keeps
- */
-export const BURMY_FORMS = [Species.Burmy, Species.BurmySandy, Species.BurmyTrash];
-
-/** What each cloak grows into, in the same order */
-export const WORMADAM_FORMS = [Species.Wormadam, Species.WormadamSandy, Species.WormadamTrash];
-
-/** The two shells, the west one first, split by the world's own meridian */
-export const SHELLOS_FORMS = [Species.Shellos, Species.ShellosEast];
-
-export const GASTRODON_FORMS = [Species.Gastrodon, Species.GastrodonEast];
-
-/** The two schools of Basculin, the red stripe first */
-export const BASCULIN_FORMS = [Species.Basculin, Species.BasculinBlue];
-
-/** Each genie's two shapes, the one it is usually met in first */
-export const TORNADUS_FORMS = [Species.Tornadus, Species.TornadusTherian];
-export const THUNDURUS_FORMS = [Species.Thundurus, Species.ThundurusTherian];
-export const LANDORUS_FORMS = [Species.Landorus, Species.LandorusTherian];
-
-/** Vivillon and the seventeen countries' wings it comes out with */
-export const VIVILLON_FORMS: Species[] = [
-  Species.Vivillon,
-  Species.VivillonIcySnow,
-  Species.VivillonPolar,
-  Species.VivillonTundra,
-  Species.VivillonContinental,
-  Species.VivillonGarden,
-  Species.VivillonElegant,
-  Species.VivillonModern,
-  Species.VivillonMarine,
-  Species.VivillonArchipelago,
-  Species.VivillonHighPlains,
-  Species.VivillonSandstorm,
-  Species.VivillonRiver,
-  Species.VivillonMonsoon,
-  Species.VivillonSavannah,
-  Species.VivillonSun,
-  Species.VivillonOcean,
-  Species.VivillonJungle,
-  Species.VivillonFancy,
-  Species.VivillonPokeBall,
-];
-
-/** Each deer's four coats, spring first, in the order the year turns */
-/** The two Meowstic, the male first: what a cat's own Espurr grew into */
-export const MEOWSTIC_FORMS: Species[] = [Species.Meowstic, Species.MeowsticFemale];
-
-/** The two stances a royal sword takes, the shield first */
-export const AEGISLASH_FORMS: Species[] = [Species.Aegislash, Species.AegislashBlade];
-
-/** Each colour of flower, the red one first: what a Flabebe was met carrying */
-export const FLABEBE_FORMS: Species[] = [
-  Species.Flabebe,
-  Species.FlabebeYellow,
-  Species.FlabebeOrange,
-  Species.FlabebeBlue,
-  Species.FlabebeWhite,
-];
-
-/** The same colours grown, with the flower that never wilts at the end */
-export const FLOETTE_FORMS: Species[] = [
-  Species.Floette,
-  Species.FloetteYellow,
-  Species.FloetteOrange,
-  Species.FloetteBlue,
-  Species.FloetteWhite,
-  Species.FloetteEternal,
-];
-
-export const FLORGES_FORMS: Species[] = [
-  Species.Florges,
-  Species.FlorgesYellow,
-  Species.FlorgesOrange,
-  Species.FlorgesBlue,
-  Species.FlorgesWhite,
-];
-
-/** The two Hoopa, bound first: the rings in, then the rings out */
-export const HOOPA_FORMS: Species[] = [Species.Hoopa, Species.HoopaUnbound];
-
-/** What a Zygarde has gathered of itself, half first, then a tenth, then all */
-export const ZYGARDE_FORMS: Species[] = [
-  Species.Zygarde,
-  Species.ZygardeTenPercent,
-  Species.ZygardeComplete,
-];
-
-/** Each size a pumpkin comes in, the middling one first */
-export const PUMPKABOO_FORMS: Species[] = [
-  Species.Pumpkaboo,
-  Species.PumpkabooSmall,
-  Species.PumpkabooLarge,
-  Species.PumpkabooSuper,
-];
-
-/** The same four sizes grown */
-export const GOURGEIST_FORMS: Species[] = [
-  Species.Gourgeist,
-  Species.GourgeistSmall,
-  Species.GourgeistLarge,
-  Species.GourgeistSuper,
-];
-
-/** Each deer's four coats, spring first, in the order the year turns */
-export const DEERLING_FORMS = [
-  Species.Deerling,
-  Species.DeerlingSummer,
-  Species.DeerlingAutumn,
-  Species.DeerlingWinter,
-];
-
-export const SAWSBUCK_FORMS = [
-  Species.Sawsbuck,
-  Species.SawsbuckSummer,
-  Species.SawsbuckAutumn,
-  Species.SawsbuckWinter,
-];
-
-/** The song and the step, the song first */
-export const MELOETTA_FORMS = [Species.Meloetta, Species.MeloettaPirouette];
-
-/** Genesect and the four shapes its Drives repaint it in */
-export const GENESECT_FORMS = [
-  Species.Genesect,
-  Species.GenesectDouse,
-  Species.GenesectShock,
-  Species.GenesectBurn,
-  Species.GenesectChill,
-];
-
-/** Darmanitan standing and Darmanitan sat down, the standing one first */
-export const DARMANITAN_FORMS = [Species.Darmanitan, Species.DarmanitanZen];
-
-/** Cherrim shut and Cherrim open, the shut one first */
-export const CHERRIM_FORMS = [Species.Cherrim, Species.CherrimSunshine];
-
-/** Pichu, and the spiky-eared one Celebi brought */
-export const PICHU_FORMS = [Species.Pichu, Species.PichuSpikyEared];
-
-/** Keldeo, and the shape it takes once it has learned Secret Sword */
-export const KELDEO_FORMS = [Species.Keldeo, Species.KeldeoResolute];
-
-/**
- * Castform's four shapes, its plain one first. Unlike an unown's,
- * these are not caught: Forecast puts the holder into whichever the
- * sky calls for, so only the first is ever spawned or stored
- */
-export const CASTFORM_FORMS: Species[] = [
-  Species.Castform,
-  Species.CastformSunny,
-  Species.CastformRainy,
-  Species.CastformSnowy,
-];
-
-/**
- * Deoxys and the three shapes it rearranges itself into. Like a
- * Castform's skies they are worn rather than met: a Meteorite in its
- * hands is what moves it between them
- */
-/** A creation trio member and the shape its own orb holds it in */
-export const DIALGA_FORMS: Species[] = [Species.Dialga, Species.DialgaOrigin];
-export const PALKIA_FORMS: Species[] = [Species.Palkia, Species.PalkiaOrigin];
-export const GIRATINA_FORMS: Species[] = [Species.Giratina, Species.GiratinaOrigin];
-
-/** The four dances an Oricorio takes on, Baile at the base */
-export const ORICORIO_FORMS: Species[] = [
-  Species.Oricorio,
-  Species.OricorioPomPom,
-  Species.OricorioPau,
-  Species.OricorioSensu,
-];
-
-/** The three hours a Lycanroc can grow up at, Midday at the base */
-export const LYCANROC_FORMS: Species[] = [
-  Species.Lycanroc,
-  Species.LycanrocMidnight,
-  Species.LycanrocDusk,
-];
-
-/** A Wishiwashi alone, and the school it calls together from level 20 */
-export const WISHIWASHI_FORMS: Species[] = [Species.Wishiwashi, Species.WishiwashiSchool];
-
-/** Rotom and the five machines it gets into */
-export const ROTOM_FORMS: Species[] = [
-  Species.Rotom,
-  Species.RotomHeat,
-  Species.RotomWash,
-  Species.RotomFrost,
-  Species.RotomFan,
-  Species.RotomMow,
-];
-
-/** Arceus and the seventeen shapes its Plates put it in */
-export const ARCEUS_FORMS: Species[] = [
-  Species.Arceus,
-  Species.ArceusBug,
-  Species.ArceusDark,
-  Species.ArceusDragon,
-  Species.ArceusElectric,
-  Species.ArceusFighting,
-  Species.ArceusFire,
-  Species.ArceusFlying,
-  Species.ArceusGhost,
-  Species.ArceusGrass,
-  Species.ArceusGround,
-  Species.ArceusIce,
-  Species.ArceusPoison,
-  Species.ArceusPsychic,
-  Species.ArceusRock,
-  Species.ArceusSteel,
-  Species.ArceusWater,
-  Species.ArceusFairy,
-];
-
-/** Shaymin and the shape the Gracidea opens it into */
-export const SHAYMIN_FORMS: Species[] = [Species.Shaymin, Species.ShayminSky];
-
-/** The husk and the two shapes a dragon folded into it puts it in */
-export const KYUREM_FORMS: Species[] = [Species.Kyurem, Species.KyuremBlack, Species.KyuremWhite];
-
-export const DEOXYS_FORMS: Species[] = [
-  Species.Deoxys,
-  Species.DeoxysAttack,
-  Species.DeoxysDefense,
-  Species.DeoxysSpeed,
-];

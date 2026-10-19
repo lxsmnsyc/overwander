@@ -1,0 +1,7 @@
+templates:
+  drink: Restores {restore} HP when its holder drops to 1/5 of its HP.
+FreshWater: { name: Fresh Water }
+SodaPop: { name: Soda Pop }
+Lemonade: { name: Lemonade }
+MoomooMilk: { name: Moomoo Milk }
+BerryJuice: { name: Berry Juice }

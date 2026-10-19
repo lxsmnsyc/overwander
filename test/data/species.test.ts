@@ -1,5 +1,10 @@
 import type { EvolutionData } from '../../src/data/species';
-import { getFoldedDragon, getFusedShape, isFusedSpecies } from '../../src/data/species/fusion';
+import {
+  getFoldedDragon,
+  getFusedShape,
+  getWornPartner,
+  isFusedSpecies,
+} from '../../src/data/species/fusion';
 import { describe, expect, it } from 'vitest';
 import registerBiomeSpawns, {
   BIOME_NAMES,
@@ -13,7 +18,7 @@ import registerBiomeSpawns, {
 } from '../../src/data/biome';
 import EggGroups from '../../src/data/ids/egg-groups';
 import Families from '../../src/data/ids/families';
-import registerAbilities from '../../src/data/abilities';
+import registerAbilities, { getRegisteredAbilities } from '../../src/data/abilities';
 import Abilities from '../../src/data/ids/abilities';
 import { Items } from '../../src/data/ids/items';
 import {
@@ -26,33 +31,53 @@ import {
 } from '../../src/data/constants/types';
 import Biome, { TimeOfDay, WILD_BIOMES } from '../../src/data/ids/biome';
 import { Moves } from '../../src/data/ids/moves';
+import { EvolutionMethod, Species } from '../../src/data/ids/species';
 import {
   AEGISLASH_FORMS,
+  ALCREMIE_FORMS,
+  ALOLAN_FORMS,
   ARCEUS_FORMS,
+  BASCULEGION_FORMS,
   BASCULIN_FORMS,
   BURMY_FORMS,
+  CALYREX_FORMS,
   CASTFORM_FORMS,
   CHERRIM_FORMS,
+  CRAMORANT_FORMS,
   DARMANITAN_FORMS,
   DEERLING_FORMS,
   DEOXYS_FORMS,
   DIALGA_FORMS,
-  EvolutionMethod,
+  DUDUNSPARCE_FORMS,
+  EISCUE_FORMS,
+  ENAMORUS_FORMS,
   FLABEBE_FORMS,
   FLOETTE_FORMS,
   FLORGES_FORMS,
+  GALARIAN_FORMS,
   GASTRODON_FORMS,
   GENESECT_FORMS,
   GIRATINA_FORMS,
   GOURGEIST_FORMS,
+  HISUIAN_FORMS,
   HOOPA_FORMS,
+  INDEEDEE_FORMS,
   KELDEO_FORMS,
   KYUREM_FORMS,
   LANDORUS_FORMS,
   LYCANROC_FORMS,
+  MAGEARNA_FORMS,
+  MAUSHOLD_FORMS,
   MELOETTA_FORMS,
   MEOWSTIC_FORMS,
+  MIMIKYU_FORMS,
+  MINIOR_FORMS,
+  MORPEKO_FORMS,
+  NECROZMA_FORMS,
+  OGERPON_FORMS,
   ORICORIO_FORMS,
+  PALAFIN_FORMS,
+  PALDEAN_FORMS,
   PALKIA_FORMS,
   PICHU_FORMS,
   PUMPKABOO_FORMS,
@@ -60,19 +85,26 @@ import {
   SAWSBUCK_FORMS,
   SHAYMIN_FORMS,
   SHELLOS_FORMS,
-  Species,
+  SILVALLY_FORMS,
+  TATSUGIRI_FORMS,
+  TEA_FORMS,
+  TERAPAGOS_FORMS,
   THUNDURUS_FORMS,
   TORNADUS_FORMS,
+  TOXTRICITY_FORMS,
   UNOWN_FORMS,
+  URSHIFU_FORMS,
   VIVILLON_FORMS,
   WISHIWASHI_FORMS,
   WORMADAM_FORMS,
+  ZACIAN_FORMS,
+  ZAMAZENTA_FORMS,
   ZYGARDE_FORMS,
   getBaseFormSpecies,
   speciesDexNumber,
   speciesFormIndex,
   unownLetter,
-} from '../../src/data/ids/species';
+} from '../../src/data/ids/forms';
 import registerItems from '../../src/data/items';
 import { registerMoves } from '../../src/data/moves';
 import { Stats } from '../../src/data/constants/stats';
@@ -309,6 +341,19 @@ describe('species abilities', () => {
       }
     }
   });
+  it('names and describes every ability a species can carry', () => {
+    // An id with no entry is drawn as "Ability #200" on every card
+    const missing: string[] = [];
+
+    for (const species of getRegisteredSpecies()) {
+      for (const ability of getSpeciesAbilities(species)) {
+        if (!getRegisteredAbilities().includes(ability)) {
+          missing.push(`${getSpeciesData(species).name}: ability #${ability}`);
+        }
+      }
+    }
+    expect(missing).toEqual([]);
+  });
 });
 
 describe('what a family is called', () => {
@@ -441,13 +486,47 @@ describe('species forms', () => {
       ...ORICORIO_FORMS.slice(1),
       ...LYCANROC_FORMS.slice(1),
       ...WISHIWASHI_FORMS.slice(1),
+      ...MINIOR_FORMS.slice(1),
+      ...SILVALLY_FORMS.slice(1),
+      ...NECROZMA_FORMS.slice(1),
+      ...MAGEARNA_FORMS.slice(1),
+      ...MIMIKYU_FORMS.slice(1),
+      ...ALOLAN_FORMS,
+      ...CRAMORANT_FORMS.slice(1),
+      ...TOXTRICITY_FORMS.slice(1),
+      ...ALCREMIE_FORMS.slice(1),
+      ...EISCUE_FORMS.slice(1),
+      ...INDEEDEE_FORMS.slice(1),
+      ...MORPEKO_FORMS.slice(1),
+      ...GALARIAN_FORMS,
+      ...ZACIAN_FORMS.slice(1),
+      ...ZAMAZENTA_FORMS.slice(1),
+      ...URSHIFU_FORMS.slice(1),
+      ...HISUIAN_FORMS,
+      ...BASCULEGION_FORMS.slice(1),
+      ...ENAMORUS_FORMS.slice(1),
+      ...CALYREX_FORMS.slice(1),
+      ...PALDEAN_FORMS,
+      ...MAUSHOLD_FORMS.slice(1),
+      ...DUDUNSPARCE_FORMS.slice(1),
+      ...TEA_FORMS,
+      ...PALAFIN_FORMS.slice(1),
+      ...TATSUGIRI_FORMS.slice(1),
+      ...OGERPON_FORMS.slice(1),
+      ...TERAPAGOS_FORMS.slice(1),
+      Species.UrsalunaBloodmoon,
       // The true shadows, which are forms of the birds they are the
       // shadow of rather than pokemon of their own
       ...listTrueShadows(),
       ...listMegas(),
       ...listZeniths(),
       Species.KyogrePrimal,
+      Species.GreninjaAsh,
       Species.GroudonPrimal,
+      // And the shapes a true shadow wears in its own colours
+      Species.KyogreShadowPrimal,
+      Species.GroudonShadowPrimal,
+      Species.RayquazaShadowMega,
     ]);
 
     expect(registered.length).toBeGreaterThan(0);
@@ -679,6 +758,36 @@ describe('fusions', () => {
       expect(road.method).toBe(EvolutionMethod.UsedItem);
       expect(road.item).toBe(Items.DnaSplicers);
     }
+  });
+
+  it('folds the sun and the moon into Necrozma with an item each', () => {
+    const roads = getSpeciesData(Species.Necrozma).evolvesInto ?? [];
+
+    expect(roads.map((road) => [road.species, road.item])).toEqual([
+      [Species.NecrozmaDuskMane, Items.NSolarizer],
+      [Species.NecrozmaDawnWings, Items.NLunarizer],
+    ]);
+    expect(getFoldedDragon(Species.NecrozmaDuskMane)).toBe(Species.Solgaleo);
+    expect(getFoldedDragon(Species.NecrozmaDawnWings)).toBe(Species.Lunala);
+    expect(getFusedShape(Species.Solgaleo)).toBe(Species.NecrozmaDuskMane);
+    // The prism keeps its own armour whatever it has absorbed
+    expect(getWornPartner(Species.NecrozmaDuskMane)).toBeNull();
+    expect(getWornPartner(Species.KyuremBlack)).toBe(Species.Zekrom);
+  });
+
+  it('seats Calyrex on either steed with one pair of reins', () => {
+    const roads = getSpeciesData(Species.Calyrex).evolvesInto ?? [];
+
+    expect(roads.map((road) => [road.species, road.item])).toEqual([
+      [Species.CalyrexIce, Items.ReinsOfUnity],
+      [Species.CalyrexShadow, Items.ReinsOfUnity],
+    ]);
+    expect(getFoldedDragon(Species.CalyrexIce)).toBe(Species.Glastrier);
+    expect(getFusedShape(Species.Spectrier)).toBe(Species.CalyrexShadow);
+    // The steed's neigh beside the king's Unnerve is As One
+    expect(getWornPartner(Species.CalyrexIce)).toBe(Species.Glastrier);
+    expect(getWornPartner(Species.CalyrexShadow)).toBe(Species.Spectrier);
+    expect(getSpeciesData(Species.CalyrexIce).abilities).toEqual([Abilities.Unnerve]);
   });
 
   it('gives a fused shape the ability of the dragon inside it', () => {

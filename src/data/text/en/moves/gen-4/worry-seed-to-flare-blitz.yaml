@@ -1,0 +1,21 @@
+WorrySeed:
+  name: Worry Seed
+  description: Swaps 1 of the target's abilities for Insomnia, so it cannot be put to sleep.
+SuckerPunch:
+  name: Sucker Punch
+  description: Only lands on a target that is casting a damaging move.
+ToxicSpikes:
+  name: Toxic Spikes
+  description: Poisons anything grounded that comes in on the far side, badly at two layers. A grounded Poison type clears them.
+HeartSwap:
+  name: Heart Swap
+  description: Trades every one of the user's stages for the target's.
+AquaRing:
+  name: Aqua Ring
+  description: Puts back 1/16 of the max HP each time the user acts.
+MagnetRise:
+  name: Magnet Rise
+  description: The user is off the ground for 10 seconds, so Ground moves miss it.
+FlareBlitz:
+  name: Flare Blitz
+  description: The user takes 1/3 of what it deals. 10% to burn.

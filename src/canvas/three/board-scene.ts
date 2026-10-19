@@ -14,15 +14,15 @@ import {
   Vector3,
   WebGLRenderer,
 } from 'three';
-import { WALL_BANDS, boardClipDepth, boardClipMatrix, boardView } from '../board';
-import { SKY_BANDS } from '../daylight';
+import { WALL_BANDS, boardClipDepth, boardClipMatrix, boardView } from '../overworld/board';
+import { SKY_BANDS } from '../overworld/daylight';
 import parseColour, { type Colour } from '../gl/colour';
 import { VIEW_RADIUS } from '../../overworld/board';
 import { SQUARES } from '../../overworld/grid';
-import { FLAT_PITCH, PITCH } from '../tilt';
-import { TERRAIN_TILE, type TerrainTiles } from '../terrain-tiles';
-import type { CellLook } from '../terrain-cell';
-import terrainCell from '../terrain-cell';
+import { FLAT_PITCH, PITCH } from '../overworld/tilt';
+import { TERRAIN_TILE, type TerrainTiles } from '../overworld/terrain-tiles';
+import type { CellLook } from '../overworld/terrain-cell';
+import terrainCell from '../overworld/terrain-cell';
 import SceneMarks from './scene-marks';
 
 /**

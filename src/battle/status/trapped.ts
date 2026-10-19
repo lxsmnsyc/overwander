@@ -2,12 +2,12 @@ import { EventPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
 import { DamageFlags } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, type EffectCause, EffectType } from '../events';
 import turns from '../turn';
 import type Unit from '../unit';
 import { checkStatusDamage } from './__create';
-import { slipsTraps } from '../utils';
+import { slipsTraps } from '../unit-checks';
 
 interface TrappedData {
   duration: number;

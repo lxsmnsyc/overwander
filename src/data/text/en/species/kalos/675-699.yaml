@@ -1,0 +1,38 @@
+Furfrou:
+  Furfrou: { name: Furfrou, category: Poodle Pokemon }
+Espurr:
+  Espurr: { name: Espurr, category: Restraint Pokemon }
+  Meowstic: { name: Meowstic, category: Constraint Pokemon }
+  MeowsticFemale: { name: Meowstic, category: Constraint Pokemon }
+Honedge:
+  Honedge: { name: Honedge, category: Sword Pokemon }
+  Doublade: { name: Doublade, category: Sword Pokemon }
+  Aegislash: { name: Aegislash, category: Royal Sword Pokemon }
+  AegislashBlade: { name: Aegislash Blade, category: Royal Sword Pokemon }
+Spritzee:
+  Spritzee: { name: Spritzee, category: Perfume Pokemon }
+  Aromatisse: { name: Aromatisse, category: Fragrance Pokemon }
+Swirlix:
+  Swirlix: { name: Swirlix, category: Cotton Candy Pokemon }
+  Slurpuff: { name: Slurpuff, category: Meringue Pokemon }
+Inkay:
+  Inkay: { name: Inkay, category: Revolving Pokemon }
+  Malamar: { name: Malamar, category: Overturning Pokemon }
+Binacle:
+  Binacle: { name: Binacle, category: Two-Handed Pokemon }
+  Barbaracle: { name: Barbaracle, category: Collective Pokemon }
+Skrelp:
+  Skrelp: { name: Skrelp, category: Mock Kelp Pokemon }
+  Dragalge: { name: Dragalge, category: Mock Kelp Pokemon }
+Clauncher:
+  Clauncher: { name: Clauncher, category: Water Gun Pokemon }
+  Clawitzer: { name: Clawitzer, category: Howitzer Pokemon }
+Helioptile:
+  Helioptile: { name: Helioptile, category: Generator Pokemon }
+  Heliolisk: { name: Heliolisk, category: Generator Pokemon }
+Tyrunt:
+  Tyrunt: { name: Tyrunt, category: Royal Heir Pokemon }
+  Tyrantrum: { name: Tyrantrum, category: Despot Pokemon }
+Amaura:
+  Amaura: { name: Amaura, category: Tundra Pokemon }
+  Aurorus: { name: Aurorus, category: Tundra Pokemon }

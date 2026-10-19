@@ -8,7 +8,7 @@ import { StaffProvider } from '../components/admin/staff-context';
 import GameProvider from '../components/app/game-context';
 import { Card, Note } from '../components/styled';
 import { Title } from '@solidjs/meta';
-import isStaff, { runsTheGame } from '../auth/staff';
+import isStaff, { runsTheGame } from '../model/staff';
 import { useAuth } from '../auth/context';
 
 /**
@@ -94,8 +94,10 @@ function Gate(props: ParentProps<{ uid: string }>): JSX.Element {
             {/* The dashboard reuses the game's own panels — the auction
               board, the gift shelf — and those read where the player
               is and open sheets through the game's state, so the
-              provider they expect stands here too */}
-            <GameProvider>
+              provider they expect stands here too. Managing, so it
+              plays nothing for the staff member: no walk, no notices,
+              no quests */}
+            <GameProvider managing>
               <StaffProvider uid={props.uid} role={() => loaded().role}>
                 <AdminShell nickname={loaded().nickname}>
                   {/* A section a moderator is not offered is a section

@@ -1,0 +1,23 @@
+# Found, never stocked, and never worth parting with
+
+# Held by the player's buddy, it sharpens every encounter's shiny odds
+# eightfold
+ShinyCharm:
+  type: KeyItem
+  icon: key/shiny-charm
+  flags: [Holdable]
+
+# Carried by the buddy, it is what a player sees by underground. It
+# does not stack with a buddy that lights the way itself: the brighter
+# of the two is what the dark gives way to
+ExplorerKit:
+  type: KeyItem
+  icon: key/explorer-kit
+  flags: [Holdable]
+
+# Held by the player's buddy, it puts half again on every throw
+# whatever the ball and whatever it is thrown at
+CatchingCharm:
+  type: KeyItem
+  icon: key/catching-charm
+  flags: [Holdable]

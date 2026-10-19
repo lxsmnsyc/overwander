@@ -1,14 +1,14 @@
 // Crabrawler through Rockruff.
 
 import { describe, expect, it } from 'vitest';
-import type Battle from '../../../../src/battle/core';
+import type Battle from '../../../../src/battle/battle';
 import { BattleEvents, type MoveTarget } from '../../../../src/battle/events';
 import type Unit from '../../../../src/battle/unit';
-import { unitTarget } from '../../../../src/battle/utils';
+import { unitTarget } from '../../../../src/battle/unit-checks';
 import {
   DIZZY_TWIRL_SCALE,
   REBOUND_PUNCH_SCALE,
-} from '../../../../src/battle/abilities/signature/oricorio-to-crabrawler';
+} from '../../../../src/battle/abilities/signature/gen-7/oricorio-to-crabrawler';
 import { Stages, Stats } from '../../../../src/data/constants/stats';
 import { Types } from '../../../../src/data/constants/types';
 import Abilities from '../../../../src/data/ids/abilities';

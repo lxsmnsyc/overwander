@@ -17,14 +17,9 @@ import Abilities from '../../src/data/ids/abilities';
 import { Types } from '../../src/data/constants/types';
 import Biome, { TimeOfDay } from '../../src/data/ids/biome';
 import { Items } from '../../src/data/ids/items';
-import type { Moves } from '../../src/data/ids/moves';
-import {
-  DEOXYS_FORMS,
-  EvolutionMethod,
-  Genders,
-  ROTOM_FORMS,
-  Species,
-} from '../../src/data/ids/species';
+import { Moves } from '../../src/data/ids/moves';
+import { EvolutionMethod, Genders, Species } from '../../src/data/ids/species';
+import { DEOXYS_FORMS, ROTOM_FORMS } from '../../src/data/ids/forms';
 import { MAX_LEVEL } from '../../src/data/constants/levels';
 import {
   CANDY_PER_LEVEL,
@@ -49,6 +44,7 @@ import {
   getDaysInYear,
   getFamilyName,
   getFeaturedFamilies,
+  getRareShape,
   getRegisteredFamilies,
   getRegisteredSpecies,
   getShedEvolutions,
@@ -57,6 +53,7 @@ import {
   getSpeciesData,
   getSpentHeldItem,
   isFeaturedSpecies,
+  isOneInAHundred,
   meetsEvolutionCriteria,
   registerSpecies,
   settleHandover,
@@ -721,6 +718,176 @@ describe('evolution data', () => {
     expect(getAvailableEvolutions({ ...context, friendship: EVOLUTION_FRIENDSHIP })).toEqual([
       { species: Species.Pikachu, method: EvolutionMethod.Friendship },
     ]);
+  });
+
+  it('holds a Pawmo back until it has walked 1000 steps as the buddy', () => {
+    const context = {
+      species: Species.Pawmo,
+      level: 1,
+      carried: new Set<Items>(),
+      held: new Set<Items>(),
+      canEvolve: false,
+      moves: new Set<Moves>(),
+      stats: EVEN_STATS,
+      friendship: BASE_FRIENDSHIP,
+      time: TimeOfDay.Day,
+      gender: Genders.Male,
+    };
+
+    expect(getAvailableEvolutions(context)).toEqual([]);
+    expect(getAvailableEvolutions({ ...context, walked: 999 })).toEqual([]);
+    expect(getAvailableEvolutions({ ...context, walked: 1000 })).toEqual([
+      { species: Species.Pawmot, method: EvolutionMethod.Walked, walked: 1000 },
+    ]);
+  });
+
+  it('holds a Gimmighoul back until its family has 999 candies', () => {
+    const context = {
+      species: Species.Gimmighoul,
+      level: 1,
+      carried: new Set<Items>(),
+      held: new Set<Items>(),
+      canEvolve: false,
+      moves: new Set<Moves>(),
+      stats: EVEN_STATS,
+      friendship: BASE_FRIENDSHIP,
+      time: TimeOfDay.Day,
+      gender: Genders.Genderless,
+    };
+
+    expect(getAvailableEvolutions(context)).toEqual([]);
+    expect(getAvailableEvolutions({ ...context, candies: 998 })).toEqual([]);
+    expect(getAvailableEvolutions({ ...context, candies: 999 })).toEqual([
+      { species: Species.Gholdengo, method: EvolutionMethod.Candy, candies: 999 },
+    ]);
+  });
+
+  it('evolves a Dipplin that knows Dragon Cheer at any level', () => {
+    const context = {
+      species: Species.Dipplin,
+      level: 1,
+      carried: new Set<Items>(),
+      held: new Set<Items>(),
+      canEvolve: false,
+      moves: new Set<Moves>(),
+      stats: EVEN_STATS,
+      friendship: BASE_FRIENDSHIP,
+      time: TimeOfDay.Day,
+      gender: Genders.Male,
+    };
+
+    expect(getAvailableEvolutions(context)).toEqual([]);
+    expect(
+      getAvailableEvolutions({ ...context, moves: new Set([Moves.DragonCheer]) }).map(
+        (entry) => entry.species,
+      ),
+    ).toEqual([Species.Hydrapple]);
+  });
+
+  it('grows one Tandemaus in a hundred into the family of three', () => {
+    const context = {
+      species: Species.Tandemaus,
+      level: 25,
+      carried: new Set<Items>(),
+      held: new Set<Items>(),
+      canEvolve: false,
+      moves: new Set<Moves>(),
+      stats: EVEN_STATS,
+      friendship: BASE_FRIENDSHIP,
+      time: TimeOfDay.Day,
+      gender: Genders.Genderless,
+    };
+    const into = (rare: boolean): Species[] =>
+      getAvailableEvolutions({ ...context, rare }).map((entry) => entry.species);
+
+    expect(into(false)).toEqual([Species.Maushold]);
+    expect(into(true)).toEqual([Species.MausholdThree]);
+
+    // The road it can never take is left off its sheet
+    const [four, three] = getSpeciesData(Species.Tandemaus).evolvesInto ?? [];
+
+    expect(canEverEvolve(three, Genders.Genderless, undefined, false)).toBe(false);
+    expect(canEverEvolve(four, Genders.Genderless, undefined, true)).toBe(false);
+  });
+
+  it('meets a wild one in its rare shape for the same catches', () => {
+    let value = 0;
+
+    while (!isOneInAHundred(value)) {
+      value++;
+    }
+    expect(getRareShape(Species.Sinistea, value)).toBe(Species.SinisteaAntique);
+    expect(getRareShape(Species.Sinistcha, value)).toBe(Species.SinistchaMasterpiece);
+    expect(getRareShape(Species.Maushold, value)).toBe(Species.MausholdThree);
+    expect(getRareShape(Species.Maushold, value + 1)).toBe(Species.Maushold);
+    expect(getRareShape(Species.Pikachu, value)).toBe(Species.Pikachu);
+  });
+
+  it('grows the rare forms by their own items and moves', () => {
+    const context = {
+      level: 32,
+      carried: new Set<Items>([Items.ChippedPot, Items.CrackedPot, Items.MasterpieceTeacup]),
+      held: new Set<Items>(),
+      canEvolve: false,
+      moves: new Set<Moves>([Moves.HyperDrill]),
+      stats: EVEN_STATS,
+      friendship: BASE_FRIENDSHIP,
+      time: TimeOfDay.Night,
+      gender: Genders.Male,
+    };
+    const into = (species: Species, rare = false): Species[] =>
+      getAvailableEvolutions({ ...context, species, rare }).map((entry) => entry.species);
+
+    expect(into(Species.SinisteaAntique)).toEqual([Species.PolteageistAntique]);
+    expect(into(Species.Sinistea)).toEqual([Species.Polteageist]);
+    expect(into(Species.PoltchageistArtisan)).toEqual([Species.SinistchaMasterpiece]);
+    expect(into(Species.Dunsparce)).toEqual([Species.Dudunsparce]);
+    expect(into(Species.Dunsparce, true)).toEqual([Species.DudunsparceThree]);
+  });
+
+  it('moves an Ogerpon between its four masks, the Teal included', () => {
+    const context = {
+      level: 1,
+      carried: new Set<Items>([
+        Items.TealMask,
+        Items.WellspringMask,
+        Items.HearthflameMask,
+        Items.CornerstoneMask,
+      ]),
+      held: new Set<Items>(),
+      canEvolve: false,
+      moves: new Set<Moves>(),
+      stats: EVEN_STATS,
+      friendship: BASE_FRIENDSHIP,
+      time: TimeOfDay.Day,
+      gender: Genders.Female,
+    };
+    const into = (species: Species): Species[] =>
+      getAvailableEvolutions({ ...context, species }).map((entry) => entry.species);
+
+    expect(into(Species.Ogerpon)).toEqual([
+      Species.OgerponWellspring,
+      Species.OgerponHearthflame,
+      Species.OgerponCornerstone,
+    ]);
+    expect(into(Species.OgerponCornerstone)).toEqual([
+      Species.Ogerpon,
+      Species.OgerponWellspring,
+      Species.OgerponHearthflame,
+    ]);
+  });
+
+  it('rolls the one in a hundred about once in a hundred, the same each time', () => {
+    let rare = 0;
+
+    for (let value = 0; value < 100_000; value++) {
+      if (isOneInAHundred(value * 2_654_435_761)) {
+        rare++;
+      }
+    }
+    expect(rare).toBeGreaterThan(800);
+    expect(rare).toBeLessThan(1200);
+    expect(isOneInAHundred(12_345)).toBe(isOneInAHundred(12_345));
   });
 
   it('splits an Eevee by the hour it is asked in', () => {

@@ -35,6 +35,13 @@ item a second time. `traded` is separate and stays: it says the pokemon has
 changed hands, which is what the box search reads, and it is true of a Machop
 that no trade evolution was ever open to.
 
+A `Special` evolution is a **battle feat** (`BATTLE_FEATS` in
+[`src/data/species/feats.ts`](../../src/data/species/feats.ts)), and it sets
+`can_evolve` too. A feat met in one fight sets it when that fight settles. A
+feat counted across fights adds each fight's measure to `feat_progress` and sets
+`can_evolve` once the total reaches the goal. A handover and the evolution clear
+both.
+
 An **Everstone** refuses every evolution while it is held, and it answers here
 rather than at the moment of evolving, so the catch sheet stops offering what
 the stone would refuse.
@@ -111,7 +118,7 @@ it costs, not what it was.
 
 The doubled levelling cost is read off the `Shadow` **flag** rather than the
 ability (`getCandyCost` in
-[`src/auth/candy-rules.ts`](../../src/auth/candy-rules.ts)), so clearing that
+[`src/model/candy-rules.ts`](../../src/model/candy-rules.ts)), so clearing that
 bit is what reverts it. Nothing else about it is touched: a shiny shadow is
 still shiny.
 
@@ -123,6 +130,45 @@ still an egg.
 
 The gem is not the only way. **Nurse Joy** purifies for free, along with the
 healing, once per NPC window. See [Wandering NPCs](town-npcs.md#wandering-npcs).
+
+## Max Mushrooms
+
+The Gigantamax Factor is the `gigantamax` flag on the catch. **Max Mushrooms**,
+a rare find in the overworld item pool that is never stocked, set it, in one
+transaction with the mushrooms leaving the bag
+([`src/server/max-mushrooms.ts`](../../src/server/max-mushrooms.ts)).
+
+- Only a species with a Gigantamax form takes it (`GMAX_SPECIES` in
+  [`src/data/moves/gmax-moves.ts`](../../src/data/moves/gmax-moves.ts)).
+- A catch that already has it is refused, as is one that is not the player's,
+  is locked into a battle, is guarded, or is still an egg.
+- Nothing clears it. It stays through a trade, an auction and an evolution, so
+  an Eevee that has it keeps it as a Vaporeon, where it does nothing.
+
+The flag rides into a fight on the team snapshot, and a unit built from it
+throws its species' G-Max Move when it Dynamaxes.
+
+## Tera Shards
+
+The Tera type is the `tera_type` column on the catch, a `Types` id. It is rolled
+when the row is written, by every path that writes one (a catch, a gift, a
+trader's pokemon, a revived fossil, an evolution's husk, an egg): one of the
+species' own types, or 1 time in 20 any of the 18 types. Stellar is never
+rolled. A catch written before the column holds null, which reads as its
+species' first type (`teraTypeOf` in
+[`src/data/species/tera-type.ts`](../../src/data/species/tera-type.ts)).
+
+**Tera Shards**, one per type, are found in the overworld item pool and never
+stocked. Spending 50 of a type sets the column to that type, in one transaction
+with the shards leaving the bag
+([`src/server/tera-shards.ts`](../../src/server/tera-shards.ts)).
+
+- A shard of the type it already has is refused, as is a catch that is not the
+  player's, is locked into a battle, is guarded, or is still an egg.
+- The Stellar Shard is an item, but nothing spends it yet.
+- The type stays through a trade, an auction and an evolution.
+
+The type rides into a fight on the team snapshot as `teraType`.
 
 ## Releasing
 

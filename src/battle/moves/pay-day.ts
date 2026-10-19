@@ -1,7 +1,7 @@
 import { AttackPriority } from '../../core/event-emitter';
 import Abilities from '../../data/ids/abilities';
 import { DamageFlags, Moves } from '../../data/ids/moves';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { getCastTime } from '../mechanics/move/timing';
 import { BattleEvents, EffectType } from '../events';
 import type Team from '../team';
@@ -35,11 +35,21 @@ const PAY_DAY_BORROWERS = new Set<Moves>([
 
 /**
  * Whether a pokemon fielded with these moves and abilities could ever
- * land a Pay Day. A new move or ability that borrows moves belongs in
+ * scatter coins: a Pay Day or a Make It Rain, or Gimmighoul's Coin
+ * Scatter. A new move or ability that borrows moves belongs in
  * `PAY_DAY_BORROWERS` or beside Imposter, or its coins are thrown away
  */
-function canScatterCoins(moves: readonly Moves[], abilities: readonly Abilities[]): boolean {
-  return canUse(Moves.PayDay, moves, abilities);
+function canScatterCoins(
+  moves: readonly Moves[],
+  abilities: readonly Abilities[],
+  rush: boolean,
+): boolean {
+  return (
+    rush ||
+    abilities.includes(Abilities.CoinScatter) ||
+    canUse(Moves.PayDay, moves, abilities) ||
+    canUse(Moves.MakeItRain, moves, abilities)
+  );
 }
 
 /** Whether these moves and abilities could ever reach `move`, borrowed or not */
@@ -68,8 +78,9 @@ export function canCallHappyHour(
  * has run `lasted` milliseconds: nothing from one that could never
  * have used the move, and otherwise one landed use for every cast that
  * fits in the time, at the level it was fielded at, doubled when its
- * team could have called Happy Hour. A report of more than this is a
- * report of a fight that did not happen
+ * team could have called Happy Hour. `rush` is a pokemon that could
+ * throw G-Max Gold Rush. A report of more than this is a report of a
+ * fight that did not happen
  */
 export function payDayCeiling(
   level: number,
@@ -77,14 +88,18 @@ export function payDayCeiling(
   abilities: readonly Abilities[],
   lasted: number,
   happy = false,
+  rush = false,
 ): number {
-  if (!canScatterCoins(moves, abilities)) {
+  if (!canScatterCoins(moves, abilities, rush)) {
     return 0;
   }
   const casts = 1 + Math.floor(Math.max(0, lasted) / getCastTime(0));
 
   return PAY_DAY_COINS_PER_LEVEL * level * casts * (happy ? HAPPY_HOUR_FACTOR : 1);
 }
+
+/** The moves that scatter coins as they land, G-Max Gold Rush at Pay Day's rate */
+const COIN_MOVES = new Set<Moves>([Moves.PayDay, Moves.GMaxGoldRush, Moves.MakeItRain]);
 
 export default function setupPayDay(battle: Battle): void {
   const happy = new WeakSet<Team>();
@@ -108,7 +123,7 @@ export default function setupPayDay(battle: Battle): void {
     if (
       !(event.flags & DamageFlags.Indirect) &&
       event.cause.type === EffectType.Move &&
-      event.cause.move === Moves.PayDay
+      COIN_MOVES.has(event.cause.move)
     ) {
       event.source.coins +=
         PAY_DAY_COINS_PER_LEVEL *

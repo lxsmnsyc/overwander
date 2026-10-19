@@ -38,17 +38,162 @@ the island it admits one passenger to.
 A **shadow raid** usually stages one of the biome's rare species, but one time
 in eight it reaches past them and stages a legendary instead.
 
+## Totems and Max Raids
+
+Two raids stand at landmarks of their own rather than in a lair, and both stage
+a **final stage of a line the tile's own biome spawns** that can stand on the
+cell. A new boss is picked each raid window.
+
+A **Totem** stands at a trial site: four standing stones round a floor, under
+the Totem's gold aura. A Totem starts the fight with its aura raising its stats,
+calls one ally of its line at half HP, and leaves its Z-Crystal the first time a
+player beats it (one time in four after that). A lair never holds a Totem: it
+always holds its own legendary or shadow.
+
+A **Max Raid** is a hole in the ground with a pillar of red light rising out of
+it. Its boss is **Dynamaxed for the whole fight**: twice the HP, every move
+thrown as a Max Move. When its species has a Gigantamax form it is always
+**Gigantamaxed**, throws its G-Max Move, and the pillar burns purple and
+brighter. The prize comes at level 40, with a purse of 50,000, one or two
+**Max Mushrooms**, and a **Dynamax Band** one clear in ten. A Gigantamax boss
+caught from the raid **keeps the Gigantamax Factor**.
+
+## Alpha raids
+
+An **Alpha** stands on a trampled clearing in open country, a boulder raked by
+claws with a red-eyed beast daubed on it, glowing red while the Alpha is home.
+Its boss is **any species the tile's own biome spawns there, at any stage**,
+that can stand on the cell, short of a legendary, a mythical, an Ultra Beast or
+a true shadow. A new Alpha is picked each raid window, and none stands
+underground.
+
+The Alpha is a raid boss drawn half again as large as its kind, at twice its
+height and four times its weight. Its own scale stands in for the boss one:
+**80x its HP and 1.5x every other stat**, against a lone boss's 110x and 2x,
+since it never fights alone.
+
+- Each time its HP falls past **3/4, 1/2 and 1/4**, it brings its side back to
+  **6 of its own kind**: copies still standing are healed to full, and fallen
+  or missing ones are summoned anew.
+- A blow past two thresholds refills once, and healing back over a threshold
+  does not open it again. Past 1/4 nothing more comes.
+- A copy is a plain wild pokemon of the same species at the Alpha's level, with
+  a nature, an ability and individual values of its own, no Boss or Alpha mark,
+  and nothing a party can catch. The copies flee when the Alpha falls.
+- Only the Alpha decides the raid and counts as beaten: the copies are not part
+  of the reward.
+
+Beaten, an Alpha pays 50,000 and waits at level 40 at its species' own size and
+abilities, with **3 different stats at 31**, picked at random from the prize's
+own rolls. The other three are rolled as any raid prize's are.
+
+## Tera raids
+
+A **Tera crystal** is a cluster of faceted crystals grown out of a bed of rock,
+glowing red while its boss is home. It stands in open country and underground
+alike. Its boss is picked the way an Alpha's is: **any species the tile's own
+biome spawns there, at any stage**, short of a legendary, a mythical, an Ultra
+Beast or a true shadow. A new boss is picked each raid window.
+
+The boss is **Terastallized for the whole fight**. Its Tera type is read off
+the lobby: half the time one of its own types, otherwise any of the 18. The
+lobby shows it beside the boss's own types, and the lobby's type chart is read
+off the Tera type alone, since that is all it is when hit.
+
+Beaten, it pays 50,000 and waits at level 40. Each fighter also takes **5 to 8
+Tera Shards** of the boss's Tera type, and the prize, once caught, **keeps the
+boss's Tera type** rather than rolling its own.
+
+## Noble raids
+
+A **Noble Arena** is a raised stone ring under a red shrine gate, a brazier
+burning either side of its front, glowing white while its Noble is home. None
+stands underground. Each raid window it holds one of two kinds of Noble:
+
+- One of **Hisui's five**, where the tile's biome is one of its own biomes and
+  it can stand on the cell: **Kleavor**, **Hisuian Lilligant**, **Hisuian
+  Arcanine**, **Hisuian Electrode** and **Hisuian Avalugg**. Where one of them
+  is at home, it holds the arena **half the time**.
+- Otherwise any **final stage of a line the tile's biome spawns** there, the way
+  a Totem is picked. The five can come up this way too, so in their own biomes
+  they hold the arena a little more than half the time.
+
+A Noble is a raid boss with the boss's pool and stats, and it is **calmed, never
+beaten**. It cannot faint: its HP bar is its **Frenzy**, and when the Frenzy is
+drained it leaves the field calm and the raid is won.
+
+- **Staggers.** Each time the Frenzy falls past **3/4, 1/2 and 1/4**, the Noble
+  reels for **4 seconds**: it cannot act, whatever it was winding up is lost,
+  and every attack on it lands for **1.5x**. Gold stars turn over its head. A
+  blow past two thresholds staggers it once, and healing back over one does not
+  open it again.
+- **Bursts.** Every **10 seconds** it spends able to act, it unleashes a burst on
+  the whole party. A burst is telegraphed for **1.8 seconds**: a ring closes on
+  the Noble and a red mark blinks over every pokemon it will reach. The burst
+  never misses, so the windup is the dodge: a Protect, a Detect, a Max Guard or
+  a Wide Guard up in time turns it away, and a pokemon that carries one raises
+  it when it sees the burst coming. A cast already under way finishes first.
+- **Balms.** A party that packed [Balms](items.md#balms) throws one every 10
+  seconds, each soothing 1/50 of the Frenzy.
+
+Each canon Noble has a burst of its own:
+
+| Noble             | Burst                | Power | What it leaves                               |
+| ----------------- | -------------------- | ----- | -------------------------------------------- |
+| Kleavor           | Frenzied Stone Axe   | 100   | Stealth Rock splinters on each side it hits  |
+| Hisuian Lilligant | Frenzied Petal Storm | 100   | Every pokemon hit loses a stage of Speed     |
+| Hisuian Arcanine  | Frenzied Wildfire    | 90    | A sea of fire on each side for 8 seconds, and a burn 30% of the time |
+| Hisuian Electrode | Frenzied Blast       | 130   | Nothing more; the Noble does not faint from it |
+| Hisuian Avalugg   | Frenzied Iceberg     | 110   | A flinch 30% of the time                     |
+
+Every other Noble throws a **Frenzy Burst** of 90 power in its own first type,
+physical or special by whichever of its Attack and Special Attack is higher,
+with an effect read off that type:
+
+| Type                    | What it leaves               |
+| ----------------------- | ---------------------------- |
+| Fire                    | A burn 30% of the time       |
+| Electric                | Paralysis 30% of the time    |
+| Ice                     | A freeze 10% of the time     |
+| Poison                  | Poison 30% of the time       |
+| Psychic                 | Confusion 30% of the time    |
+| Dark, Rock              | A flinch 30% of the time     |
+| Water, Grass, Flying    | A stage of Speed lost        |
+| Ground                  | A stage of accuracy lost     |
+| Normal, Fighting, Steel | A stage of Defense lost      |
+| Bug, Ghost              | A stage of Special Defense lost |
+| Dragon, Fairy           | A stage of Attack lost       |
+
+Nothing is caught: a calmed Noble pays **55,000**, **2 or 3 Balms**, and a canon
+Noble its treasure on top: a **Black Augurite** from Kleavor, a **Sun Stone**
+from Lilligant, a **Fire Stone** from Arcanine, a **Leaf Stone** from Electrode
+and a piece of **Never-Melt Ice** from Avalugg.
+
 ## The raid boss
 
 A boss is a **maxed legendary, perfect in every individual stat and trained to
 the cap in every one**, and every player in the lobby fights exactly the same
 one. Its raid form gives it:
 
-- A raid-sized health pool: sixty times what the species would have had.
+- A raid-sized health pool: 110 times what the species would have had.
 - Double every other stat.
-- Wind-ups that take twice as long, and that nothing short of fainting can
-  interrupt.
+- Wind-ups that take two and a half times as long, and that nothing short of
+  fainting can interrupt.
 - Single-target moves that strike every enemy at once.
+- The sharpest trainer's judgement: it never misplays and never hesitates.
+
+A boss is staged with **eight moves, all from what its species levels into**:
+it is met in the wild, and nothing there was taught by a machine, a tutor or its
+parents. Its five hardest attacks come first, one to a type, then the status
+moves a party has to answer, such as Darkrai's Haze, Zapdos' Thunder Wave or
+Zygarde's Glare. Each of those goes out to the whole party. It is
+never staged with an attack that costs it the fight's pace or only works under a
+condition, such as Explosion, Future Sight, Hyper Beam, Outrage or Focus Punch.
+
+**A boss shakes off what the party hung on it at half health and again at a
+quarter.** Its status, its stat drops, and any seed, curse, confusion or
+nightmare riding it are gone, so a party built on keeping it burned and charmed
+has to put it all back twice.
 
 A boss opens the fight **dormant**: for the first ten seconds it stands there
 and cannot act, which is the party's window to arrive, buff up and land the
@@ -63,12 +208,13 @@ the party. Infatuation is excluded twice over: a large lobby always contains
 somebody the boss would fall for, and a landed Attract would turn the raid into
 a queue.
 
-**Indirect damage counts, up to 200 a time.** Poison, burns, seeds, weather and
-crash damage from a missed Jump Kick all chip at a boss, and none of them chips
-for more than 200 however large the pool is. Damage measured as a share of its
-health, such as Super Fang, Endeavor and one-hit KO moves, lands for up to 200
-as well. A cost the boss pays itself is paid in full, so one that uses Explosion
-still dies by it.
+**Indirect damage counts, up to 50 a second in all.** Poison, burns, seeds,
+weather and crash damage from a missed Jump Kick all chip at a boss, and so does
+damage measured as a share of its health, such as Super Fang, Endeavor and
+one-hit KO moves. They all draw on one allowance that holds 200 and refills at
+50 a second, so one of them lands for up to 200, and five ticking together are
+worth no more than one. A cost the boss pays itself is paid in full, so one that
+uses Explosion still dies by it.
 
 **A boss heals up to 1,000 HP a second.** Recover, Synthesis and the rest are
 moves it may know again, and the allowance is what it can take back in a second

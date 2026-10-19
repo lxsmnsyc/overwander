@@ -3,7 +3,9 @@ import type { TimeOfDay } from '../ids/biome';
 import type { Stats } from '../constants/stats';
 import { Items } from '../ids/items';
 import type { Moves } from '../ids/moves';
+import type Natures from '../ids/natures';
 import { EvolutionMethod, type Genders, type Species } from '../ids/species';
+import { BATTLE_FEATS } from './feats';
 import {
   type EvolutionData,
   type StatComparison,
@@ -26,7 +28,10 @@ export const SUPPORTED_METHODS =
   EvolutionMethod.TimeOfDay |
   EvolutionMethod.Gender |
   EvolutionMethod.KnownMove |
-  EvolutionMethod.StatComparison;
+  EvolutionMethod.StatComparison |
+  EvolutionMethod.Special |
+  EvolutionMethod.Walked |
+  EvolutionMethod.Candy;
 
 /**
  * What an evolution check is measured against: the catch itself, its
@@ -52,7 +57,11 @@ export interface EvolutionContext {
    * this game has nowhere to put: an evolution here is something a
    * player asks for from the catch sheet. So a handover opens the
    * evolution rather than performing it, and the answer is worked out
-   * once, there, by `settleHandover`
+   * once, there, by `settleHandover`.
+   *
+   * A battle feat sets it too, for a species that evolves on one (see
+   * `BATTLE_FEATS`). No species evolves both ways, so the flag never
+   * has to say which of the two opened it
    */
   canEvolve: boolean;
   /**
@@ -83,6 +92,28 @@ export interface EvolutionContext {
    * pokemon takes never changes under it
    */
   gender: Genders;
+  /**
+   * The nature it was born with. Toxel is the only line that reads it.
+   * Left out, a road that asks for a nature stays shut
+   */
+  nature?: Natures;
+  /**
+   * The steps it has walked as the player's buddy. Pawmo is the only
+   * line that reads it. Left out, a road that asks for a walk stays
+   * shut
+   */
+  walked?: number;
+  /**
+   * The candies its family's pile holds. Gimmighoul is the only line
+   * that reads it. Left out, a road that spends candies stays shut
+   */
+  candies?: number;
+  /**
+   * Whether it is the one in a hundred (see `isOneInAHundred`).
+   * Tandemaus is the only line that reads it. Left out, it is one of
+   * the rest
+   */
+  rare?: boolean;
 }
 
 /**
@@ -205,6 +236,15 @@ export function meetsEvolutionCriteria(
       return false;
     }
   }
+  if (
+    evolution.natures != null &&
+    (context.nature == null || !evolution.natures.has(context.nature))
+  ) {
+    return false;
+  }
+  if (evolution.rare != null && evolution.rare !== (context.rare ?? false)) {
+    return false;
+  }
   if ((method & EvolutionMethod.StatComparison) !== 0) {
     if (evolution.compare == null || !comparesStats(evolution.compare, context)) {
       return false;
@@ -217,7 +257,30 @@ export function meetsEvolutionCriteria(
   ) {
     return false;
   }
+  if ((method & EvolutionMethod.Special) !== 0 && !meetsFeat(context)) {
+    return false;
+  }
+  if ((method & EvolutionMethod.Walked) !== 0) {
+    if (evolution.walked == null || (context.walked ?? 0) < evolution.walked) {
+      return false;
+    }
+  }
+  if ((method & EvolutionMethod.Candy) !== 0) {
+    if (evolution.candies == null || (context.candies ?? 0) < evolution.candies) {
+      return false;
+    }
+  }
   return true;
+}
+
+/**
+ * Whether a battle feat has opened a `Special` evolution. Only a
+ * species with a feat in `BATTLE_FEATS` reads the flag this way, so a
+ * `Special` with nothing to measure stays shut and a trade never
+ * stands in for a feat
+ */
+function meetsFeat(context: EvolutionContext): boolean {
+  return context.canEvolve && BATTLE_FEATS.has(context.species);
 }
 
 /**
@@ -228,7 +291,18 @@ export function meetsEvolutionCriteria(
  * born as and nothing changes it, so the branch it cannot take is
  * left out rather than refused forever
  */
-export function canEverEvolve(evolution: EvolutionData, gender: Genders): boolean {
+export function canEverEvolve(
+  evolution: EvolutionData,
+  gender: Genders,
+  nature?: Natures,
+  rare?: boolean,
+): boolean {
+  if (evolution.natures != null && nature != null && !evolution.natures.has(nature)) {
+    return false;
+  }
+  if (evolution.rare != null && rare != null && evolution.rare !== rare) {
+    return false;
+  }
   return (evolution.method & EvolutionMethod.Gender) === 0 || evolution.gender === gender;
 }
 

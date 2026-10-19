@@ -87,7 +87,7 @@ build's output and never the file itself. The host needs Node and pnpm.
 
 The [release workflow](../../.github/workflows/release.yml) publishes a GitHub
 release when the Version Packages pull request is merged.
-[`scripts/release.sh`](../../scripts/release.sh) then publishes the sprite host
+[`scripts/release/release.sh`](../../scripts/release/release.sh) then publishes the sprite host
 ([`wrangler.jsonc`](../../wrangler.jsonc)) with `wrangler deploy`. It needs two
 repository secrets:
 
@@ -100,8 +100,8 @@ Without the token, the release still publishes and the workflow logs a warning
 that the sprite host was not deployed. To publish it by hand, run
 `pnpm dlx wrangler@4 deploy` while signed in with `wrangler login`.
 
-While the workflow is switched off (it runs only when started by hand for
-now), release from a checkout of `main` instead:
+To release without the workflow, for instance with no Actions minutes left,
+release from a checkout of `main` instead:
 
 ```bash
 pnpm cs:ver                 # fold the pending changesets into the version and changelog
@@ -109,7 +109,7 @@ git commit -am "chore: version packages" && git push
 pnpm cs:release            # tag, publish the GitHub release, and the sprite host
 ```
 
-`pnpm cs:release` (`scripts/release.sh`) needs `gh` signed in, and `CLOUDFLARE_API_TOKEN` and
+`pnpm cs:release` (`scripts/release/release.sh`) needs `gh` signed in, and `CLOUDFLARE_API_TOKEN` and
 `CLOUDFLARE_ACCOUNT_ID` in the environment for the sprite host.
 
 The server fetches the release itself, so GitHub never needs a way in.

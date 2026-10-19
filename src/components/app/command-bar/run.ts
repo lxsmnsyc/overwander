@@ -9,9 +9,9 @@ import {
   VIEW,
 } from './commands';
 import type { CommandArguments } from '../../../core/command';
-import { GiftKind } from '../../../auth/gift-record';
+import { GiftKind } from '../../../model/gift-record';
 import type { Origin } from './locate';
-import type { PositionRecord } from '../../../auth/position-record';
+import type { PositionRecord } from '../../../model/position-record';
 import locate, { LOCATE_RADIUS, readLocate } from './locate';
 import namePlace from '../../../overworld/place';
 import { worldCell } from '../../../overworld/grid';

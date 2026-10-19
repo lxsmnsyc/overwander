@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { Stages } from '../../../../src/data/constants/stats';
 import { Types } from '../../../../src/data/constants/types';
 import Abilities from '../../../../src/data/ids/abilities';
-import { EVEN_KEEL_SCALE } from '../../../../src/battle/abilities/signature/kalos-trio';
+import { EVEN_KEEL_SCALE } from '../../../../src/battle/abilities/signature/gen-6/kalos-trio';
 import { EffectType } from '../../../../src/battle/events';
 import { createBattle, createUnit, pinRandom } from '../../harness';
 import { NONE_CAUSE } from './helpers';

@@ -2,7 +2,7 @@ import { AttackPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
 import { MoveCategories, Moves, StatFlags } from '../../data/ids/moves';
 import { createPierceWindows } from '../abilities/__create/pierce';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents } from '../events';
 
 /**
@@ -17,6 +17,10 @@ export const PIERCING_MOVES = new Set<Moves>([
   Moves.SearingSunrazeSmash,
   Moves.MenacingMoonrazeMaelstrom,
   Moves.LightThatBurnsTheSky,
+  // The three G-Max Moves that hit at a fixed 160
+  Moves.GMaxDrumSolo,
+  Moves.GMaxFireball,
+  Moves.GMaxHydrosnipe,
 ]);
 
 export default function setupPiercingMoves(battle: Battle): void {

@@ -1,0 +1,70 @@
+# What Johto's trainer classes are called, and what each says as a duel
+# is put to the player. Two regions' worth of one trade share a name; the
+# screen adds the region where they do.
+
+Sage:
+  name: Sage
+  quote: The tower teaches patience. My pokemon have more of it than you.
+Skier:
+  name: Skier
+  quote: I came down this slope faster than you can think. Keep up.
+Scientist:
+  name: Scientist
+  quote: My pokemon are steel. Yours are, at best, interesting data.
+JohtoPokeManiac:
+  name: Poké Maniac
+  quote: I have raised dragons since I could walk. Show me what you raised.
+JohtoBurglar:
+  name: Burglar
+  quote: Nothing good happens on this road after dark. I am the reason.
+JohtoAceTrainer:
+  name: Ace Trainer
+  quote: I have walked both regions. You have walked into me.
+JohtoLass:
+  name: Lass
+  quote: Everyone back home says I am the best. Let us find out!
+JohtoBlackBelt:
+  name: Black Belt
+  quote: I train at the falls under Chuck. You will feel it.
+JohtoBirdKeeper:
+  name: Bird Keeper
+  quote: My birds fly the whole coast. Yours have seen one road.
+JohtoBiker:
+  name: Biker
+  quote: We ride these roads at night. Move or fight.
+JohtoBugCatcher:
+  name: Bug Catcher
+  quote: The contest is over but I never stopped catching. Look at these!
+JohtoSwimmer:
+  name: Swimmer
+  quote: The water is colder here. It has not slowed me down.
+Firebreather:
+  name: Firebreather
+  quote: I breathe fire for a living. My pokemon do it better.
+Medium:
+  name: Medium
+  quote: The dead are chatty tonight. They are all saying your name.
+Teacher:
+  name: Teacher
+  quote: Class is in session. Today’s lesson is losing gracefully.
+SchoolKid:
+  name: School Kid
+  quote: I did the maths on this battle. You will not like the answer.
+Youngster:
+  name: Youngster
+  quote: I have been digging in the dirt since sunrise. Look what came up!
+Camper:
+  name: Camper
+  quote: Been up this mountain three days. Found rocks. Found these.
+JohtoGentleman:
+  name: Gentleman
+  quote: I keep a house in Goldenrod and a temper on the road.
+JohtoSuperNerd:
+  name: Super Nerd
+  quote: My notes say you lose in four minutes. Let us test that.
+JohtoJuggler:
+  name: Juggler
+  quote: Six in the air, and not one of them dropped. Watch this.
+Boarder:
+  name: Boarder
+  quote: I came down that face sideways. Standing still is the hard part.

@@ -1,4 +1,4 @@
-import type { QuestStanding } from './quest-record';
+import type { QuestStanding } from '../model/quest-record';
 import type { Quests } from '../data/quests';
 import { requireUid } from '../server/auth';
 import check, { GAME_ID, LOCALE, OFFSET, TOKEN } from '../server/validate';
@@ -6,7 +6,7 @@ import listDue, { type DueQuest } from '../server/due';
 import type { QuestPayout } from '../server/quests';
 import { claimQuest as claimOnServer, listQuests as listOnServer } from '../server/quests';
 import { syncServerClock } from './clock';
-import { getLocalOffset, getLocale } from './local-time';
+import { getLocalOffset, getLocale } from '../model/local-time';
 import getIdToken from './session';
 
 /**

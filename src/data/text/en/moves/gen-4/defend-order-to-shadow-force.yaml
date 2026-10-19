@@ -1,0 +1,39 @@
+DefendOrder:
+  name: Defend Order
+  description: Raises the user's Defense and Special Defense a stage each.
+HealOrder:
+  name: Heal Order
+  description: Heals the user 1/2 of its HP.
+HeadSmash:
+  name: Head Smash
+  description: The user takes 1/2 of the damage it deals.
+DoubleHit:
+  name: Double Hit
+  description: Strikes twice.
+RoarOfTime:
+  name: Roar of Time
+  description: The user must recharge for 2 seconds after it lands.
+SpacialRend:
+  name: Spacial Rend
+  description: Lands a critical more often than most.
+LunarDance:
+  name: Lunar Dance
+  description: The user faints, and a teammate on the field goes back to full HP, is cured, and has every move ready to cast.
+CrushGrip:
+  name: Crush Grip
+  description: Hits hardest against a target at full HP, and for almost nothing against a weak one.
+MagmaStorm:
+  name: Magma Storm
+  description: 'Binds the target: 1/8 of its HP every 2 seconds for 8 seconds, and no escape, ghosts aside.'
+DarkVoid:
+  name: Dark Void
+  description: Puts the target to sleep.
+SeedFlare:
+  name: Seed Flare
+  description: 40% to drop the target's Special Defense 2 stages.
+OminousWind:
+  name: Ominous Wind
+  description: 10% to raise every one of the user's stats a stage.
+ShadowForce:
+  name: Shadow Force
+  description: Vanishes, then strikes through Protect and Detect and breaks the guard. A Substitute still blocks it.

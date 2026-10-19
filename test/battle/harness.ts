@@ -2,10 +2,12 @@ import { registerMoves } from '../../src/data/moves';
 import setupAbilities from '../../src/battle/abilities';
 import { setupRatingAI } from '../../src/battle/ai/rating';
 import Alliance from '../../src/battle/alliance';
-import Battle, { type BattleModes } from '../../src/battle/core';
+import Battle, { type BattleModes } from '../../src/battle/battle';
 import setupItems from '../../src/battle/items';
 import setupAbilityMechanics from '../../src/battle/mechanics/ability';
 import setupAllianceMechanics from '../../src/battle/mechanics/alliance';
+import setupDynamaxMechanics from '../../src/battle/gimmicks/dynamax';
+import setupTerastalMechanics from '../../src/battle/gimmicks/terastal';
 import setupItemMechanics from '../../src/battle/mechanics/item';
 import {
   setupAttackMechanics,
@@ -63,8 +65,10 @@ export function createBattle(
   setupUnitMechanics(battle);
   setupAbilityMechanics(battle);
   setupItemMechanics(battle);
+  setupTerastalMechanics(battle);
   setupWeatherMechanics(battle);
   setupTerrainMechanics(battle);
+  setupDynamaxMechanics(battle);
   setupMoveMechanics(battle);
   setupCastingMechanics(battle);
   setupChannelingMechanics(battle);

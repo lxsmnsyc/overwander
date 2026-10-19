@@ -4,13 +4,14 @@
 // oxlint-disable typescript/no-unsafe-type-assertion
 import { For, Index, type JSX, Show, createMemo } from 'solid-js';
 import type { ProgressData } from '../../battle/events';
+import { castShownAs } from '../../battle/gimmicks/dynamax/max-moves';
 import type Unit from '../../battle/unit';
 import { Stats } from '../../data/constants/stats';
 import type Abilities from '../../data/ids/abilities';
 import type { Items } from '../../data/ids/items';
 import { Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
-import { STATUS_NAMES } from '../../auth/health';
+import { STATUS_NAMES } from '../../model/health';
 import {
   ABILITY_PILLS,
   type AbilityKind,
@@ -71,6 +72,7 @@ export const STATUS_COLORS: Record<Statuses, string> = {
   [Statuses.Floating]: '#9fc4dd',
   [Statuses.Submerged]: '#3f7fa0',
   [Statuses.Dormant]: '#6f6f6f',
+  [Statuses.Staggered]: '#e8c547',
   [Statuses.Switching]: '#7fa8c9',
   [Statuses.Protected]: '#6fa8c9',
   [Statuses.Enduring]: '#b98a4a',
@@ -102,6 +104,7 @@ export const STATUS_COLORS: Record<Statuses, string> = {
   [Statuses.AquaRinged]: '#6bb8d6',
   [Statuses.Telekinetic]: '#d68ad6',
   [Statuses.SkyDropped]: '#8ab4e0',
+  [Statuses.PowerShifted]: '#d69a5a',
 };
 
 /**
@@ -212,7 +215,7 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
         acting == null
           ? null
           : {
-              name: getMoveData(acting.move).name,
+              name: getMoveData(castShownAs(unit, acting)).name,
               channelling: unit.channeling != null,
               done: fractionOf(acting.time),
             },

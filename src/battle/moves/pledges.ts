@@ -3,13 +3,13 @@ import { Stats } from '../../data/constants/stats';
 import { Types } from '../../data/constants/types';
 import { DamageFlags, Moves } from '../../data/ids/moves';
 import { TeamStatuses } from '../../data/ids/status';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { effectIn, landsIn } from '../ai/context';
 import { BattleEvents, EffectType, type MoveTarget, MoveTargetType } from '../events';
 import type Team from '../team';
 import turns from '../turn';
 import type Unit from '../unit';
-import { onUnitActs } from '../utils';
+import onUnitActs from '../acts';
 
 /**
  * The three Pledges. Two different ones from the same team inside a
@@ -27,6 +27,13 @@ const SWAMP_SPEED = 0.25;
 const RAINBOW_CHANCE = 2;
 
 const PLEDGES = new Set<Moves>([Moves.WaterPledge, Moves.FirePledge, Moves.GrassPledge]);
+
+/** The fields a pair leaves behind */
+const FIELDS = new Set<TeamStatuses>([
+  TeamStatuses.Rainbow,
+  TeamStatuses.SeaOfFire,
+  TeamStatuses.Swamp,
+]);
 
 /** What landing a Pledge as the second of a pair is worth to the AI */
 export const PLEDGE_PAIR_BONUS = 8;
@@ -173,11 +180,20 @@ export default function setupPledges(battle: Battle): void {
     }
 
     team.addStatus(combo.field, { type: EffectType.Move, move: event.move, unit: event.source });
+  });
 
-    const laid = fields.get(team) ?? new Map<TeamStatuses, number>();
+  // Timed wherever a field comes from, so a Noble's wildfire lights
+  // the same sea of fire a pair of Pledges does
+  battle.on(BattleEvents.TeamAddStatus, EventPriority.Post, (event) => {
+    if (!FIELDS.has(event.status)) {
+      return;
+    }
 
-    laid.set(combo.field, FIELD_DURATION);
-    fields.set(team, laid);
+    const laid = fields.get(event.team) ?? new Map<TeamStatuses, number>();
+
+    laid.set(event.status, FIELD_DURATION);
+    fields.set(event.team, laid);
+    timer.start();
   });
 
   // The rainbow lands after every other chance has been worked out

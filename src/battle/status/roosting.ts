@@ -1,7 +1,7 @@
 import { EventPriority } from '../../core/event-emitter';
 import { Types } from '../../data/constants/types';
 import { Statuses } from '../../data/ids/status';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents } from '../events';
 import turns from '../turn';
 import createTimedStatus from './__create';

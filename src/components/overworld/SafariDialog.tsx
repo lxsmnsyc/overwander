@@ -12,11 +12,11 @@ import {
   on,
 } from 'solid-js';
 import { type InventoryEntry, getInventory } from '../../auth/inventory';
-import type { EncounterRecord } from '../../auth/encounter-record';
+import type { EncounterRecord } from '../../model/encounter-record';
 import { feedEncounter, throwBall } from '../../auth/safari';
 import { BALL_ITEMS, Balls, type Items, getBall } from '../../data/ids/items';
 import { Genders } from '../../data/ids/species';
-import { isShadow, isShiny } from '../../auth/caught-record';
+import { isShadow, isShiny } from '../../model/caught-record';
 import { getSpeciesData } from '../../data/species';
 import type SafariSession from '../../overworld/safari';
 import { FEED_CATCH_BONUS, SafariState, ThrowResult, describeFlight } from '../../overworld/safari';
@@ -171,7 +171,7 @@ export interface SafariDialogProps {
 function SafariBody(
   props: SafariDialogProps & {
     bag: Resource<InventoryEntry[]>;
-    /** Whether this player has ever owned the species standing there */
+    /** Whether this player has ever owned the species standing there, a shiny one for a shiny */
     owned: Resource<boolean>;
     /** One of this item left the bag on the server */
     onSpent: (item: Items) => void;
@@ -894,10 +894,22 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
     () => (props.session == null ? null : props.user.uid),
     getInventory,
   );
+  // A shiny counts as caught only once a shiny of the species has been:
+  // owning the plain one says nothing about the sparkling one
   const [owned] = createResource(
     () =>
-      props.session == null ? null : ([props.user.uid, props.session.encounter.species] as const),
-    async ([uid, species]) => (await getSpeciesDexEntry(uid, species)).owned,
+      props.session == null
+        ? null
+        : ([
+            props.user.uid,
+            props.session.encounter.species,
+            isShiny(props.session.encounter),
+          ] as const),
+    async ([uid, species, shiny]) => {
+      const entry = await getSpeciesDexEntry(uid, species);
+
+      return shiny ? entry.shiny : entry.owned;
+    },
   );
 
   return (

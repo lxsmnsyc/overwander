@@ -1,20 +1,32 @@
 import 'server-only';
-import BattleOutcome from '../../auth/battle-outcome';
-import { type EncounterRecord, asEncounterRecord } from '../../auth/encounter-record';
-import { RaidKind, type RaidRecord, asRaidRecord, deriveRaidReward } from '../../auth/raid-record';
+import BattleOutcome from '../../model/battle-outcome';
+import { type EncounterRecord, asEncounterRecord } from '../../model/encounter-record';
+import { RaidKind, type RaidRecord, asRaidRecord, deriveRaidReward } from '../../model/raid-record';
 import ChunkSnapshot from '../../overworld/chunk-snapshot';
 import { WORLD_GENERATION, getChunkOfSeed } from '../../overworld/current';
 import createOverworld from '../../overworld/setup';
 import resolveBuddy from '../buddy';
-import { Metric } from '../../auth/quest-record';
+import { Metric } from '../../model/quest-record';
 import { bumpProgress } from '../quest-progress';
 import Biome from '../../data/ids/biome';
 import { getSql } from '../db';
-import { foughtBattle, readBattle, readRaid } from '../raid-io';
+import { foughtBattle, readBattle, readRaid } from './io';
 import { startEncounter } from '../overworld';
 import { readEncounter } from '../encounter-io';
 import { encounterKey } from '../../overworld/safari';
 import { grantGold } from '../profile';
+import { grantItem } from '../inventory';
+import AleaRNG from '../../core/alea';
+import type { ItemStack } from '../../data/overworld/item-pool';
+import { getTotemCrystal } from '../../data/overworld/totems';
+import { getNobleTreasure } from '../../data/overworld/nobles';
+import {
+  TERA_RAID_EXTRA_SHARDS,
+  TERA_RAID_SHARDS,
+  getTeraRaidType,
+} from '../../data/overworld/tera-raids';
+import { getTeraShard } from '../../data/items/tera-shards';
+import { Items } from '../../data/ids/items';
 import { asOutcome } from './outcome';
 import { RAID_ENCOUNTER_TYPES, RAID_GOLD, RAID_REWARD_LEVELS, RAID_SHINY_BOOST } from './spoils';
 
@@ -24,8 +36,124 @@ import { RAID_ENCOUNTER_TYPES, RAID_GOLD, RAID_REWARD_LEVELS, RAID_SHINY_BOOST }
  * them, and the purse that came with it
  */
 export interface RaidReward {
-  encounter: EncounterRecord;
+  /** The pokemon waiting, null for a calmed Noble, which nobody catches */
+  encounter: EncounterRecord | null;
   gold: number;
+  /** What else it left: a Totem's Z-Crystal, a Max Raid's mushrooms and band, a Noble's Balms */
+  items: ItemStack[];
+}
+
+/** How often a Totem leaves its crystal again for somebody who has beaten that Totem before */
+export const TOTEM_CRYSTAL_REPEAT_CHANCE = 1 / 4;
+
+/**
+ * Whether a beaten Totem hands this player its Z-Crystal: always the
+ * first time they beat that Totem, and one time in four after that,
+ * rolled off the lobby so a claim asked twice answers the same
+ */
+async function totemCrystal(uid: string, lobby: string, raid: RaidRecord): Promise<ItemStack[]> {
+  if (raid.kind !== RaidKind.Totem) {
+    return [];
+  }
+
+  const before = await getSql()`
+    select 1 from raid_rewards r
+    join raids w on w.id = r.raid_id
+    where r.player = ${uid} and r.raid_id <> ${lobby}
+      and w.kind = ${RaidKind.Totem} and w.species = ${raid.species}
+    limit 1
+  `;
+  const dropped =
+    before.length === 0 ||
+    new AleaRNG(`${lobby}:${uid}:crystal`).random() < TOTEM_CRYSTAL_REPEAT_CHANCE;
+
+  if (!dropped) {
+    return [];
+  }
+
+  const item = getTotemCrystal(raid.species);
+
+  await grantItem(uid, item);
+  return [{ item, amount: 1 }];
+}
+
+/** How often a cleared Max Raid hands a fighter a Dynamax Band */
+export const MAX_RAID_BAND_CHANCE = 1 / 10;
+
+/** The Max Mushrooms every fighter takes from a cleared Max Raid, and how often one more */
+export const MAX_RAID_MUSHROOMS = 1;
+export const MAX_RAID_EXTRA_MUSHROOM_CHANCE = 1 / 2;
+
+/**
+ * What a cleared Max Raid leaves this player beside the pokemon: a
+ * Max Mushroom or two, and a Dynamax Band one clear in ten. Rolled off
+ * the lobby and the player, so a claim asked twice answers the same
+ */
+async function maxRaidSpoils(uid: string, lobby: string, raid: RaidRecord): Promise<ItemStack[]> {
+  if (raid.kind !== RaidKind.Max) {
+    return [];
+  }
+
+  // The draws land in order: the extra mushroom, then the band
+  const rng = new AleaRNG(`${lobby}:${uid}:max`);
+  const mushrooms = MAX_RAID_MUSHROOMS + (rng.random() < MAX_RAID_EXTRA_MUSHROOM_CHANCE ? 1 : 0);
+  const band = rng.random() < MAX_RAID_BAND_CHANCE;
+  const items: ItemStack[] = [{ item: Items.MaxMushrooms, amount: mushrooms }];
+
+  await grantItem(uid, Items.MaxMushrooms, mushrooms);
+  if (band) {
+    await grantItem(uid, Items.DynamaxBand);
+    items.push({ item: Items.DynamaxBand, amount: 1 });
+  }
+  return items;
+}
+
+/** The Balms every calmer takes from a Noble, and how often one more */
+export const NOBLE_RAID_BALMS = 2;
+export const NOBLE_RAID_EXTRA_BALM_CHANCE = 1 / 2;
+
+/**
+ * What a calmed Noble leaves this player: two or three Balms, and a
+ * canon Noble's own treasure. Rolled off the lobby and the player, so
+ * a claim asked twice answers the same
+ */
+async function nobleSpoils(uid: string, lobby: string, raid: RaidRecord): Promise<ItemStack[]> {
+  if (raid.kind !== RaidKind.Noble) {
+    return [];
+  }
+
+  const rng = new AleaRNG(`${lobby}:${uid}:noble`);
+  const balms = NOBLE_RAID_BALMS + (rng.random() < NOBLE_RAID_EXTRA_BALM_CHANCE ? 1 : 0);
+  const items: ItemStack[] = [{ item: Items.Balm, amount: balms }];
+  const treasure = getNobleTreasure(raid.species);
+
+  await grantItem(uid, Items.Balm, balms);
+  if (treasure != null) {
+    await grantItem(uid, treasure);
+    items.push({ item: treasure, amount: 1 });
+  }
+  return items;
+}
+
+/**
+ * What a cleared Tera raid leaves this player beside the pokemon: Tera
+ * Shards of the boss's Tera type, `TERA_RAID_SHARDS` and up to
+ * `TERA_RAID_EXTRA_SHARDS` more. Rolled off the lobby and the player,
+ * so a claim asked twice answers the same
+ */
+async function teraSpoils(uid: string, lobby: string, raid: RaidRecord): Promise<ItemStack[]> {
+  const shard =
+    raid.kind === RaidKind.Tera ? getTeraShard(getTeraRaidType(raid.species, lobby)) : null;
+
+  if (shard == null) {
+    return [];
+  }
+
+  const rng = new AleaRNG(`${lobby}:${uid}:tera`);
+  const amount = TERA_RAID_SHARDS + Math.floor(rng.random() * (TERA_RAID_EXTRA_SHARDS + 1));
+
+  await grantItem(uid, shard, amount);
+  return [{ item: shard, amount }];
 }
 
 /**
@@ -73,10 +201,26 @@ export async function claimRaidReward(uid: string, lobby: string): Promise<RaidR
   `;
 
   if (claimed.count === 0) {
+    // Nothing waits behind a Noble, so a second claim has nothing to reopen
+    if (raid.kind === RaidKind.Noble) {
+      return null;
+    }
     return reopenReward(uid, deriveRaidReward(raid, lobby, uid)[0]);
   }
   await grantGold(uid, gold, 'raid-reward');
   await bumpProgress(uid, [[Metric.GoldEarned, 0, gold]]);
+
+  const items = [
+    ...(await totemCrystal(uid, lobby, raid)),
+    ...(await maxRaidSpoils(uid, lobby, raid)),
+    ...(await nobleSpoils(uid, lobby, raid)),
+    ...(await teraSpoils(uid, lobby, raid)),
+  ];
+
+  // Calmed, not caught: the purse and the items are the whole prize
+  if (raid.kind === RaidKind.Noble) {
+    return { encounter: null, gold, items };
+  }
 
   // The raid's own world, so a cave lair's prize remembers the cave
   const chunk = getChunkOfSeed(raid.chunk.x, raid.chunk.y, raid.chunk.seed);
@@ -96,7 +240,7 @@ export async function claimRaidReward(uid: string, lobby: string): Promise<RaidR
     shinyBoost: RAID_SHINY_BOOST,
   });
 
-  return { encounter, gold };
+  return { encounter, gold, items };
 }
 
 /**
@@ -116,5 +260,5 @@ async function reopenReward(uid: string, spawnId: string): Promise<RaidReward | 
     where player = ${uid} and generation = ${WORLD_GENERATION} and key = ${encounterKey(encounter)}
   `;
 
-  return gone.length > 0 ? null : { encounter, gold: 0 };
+  return gone.length > 0 ? null : { encounter, gold: 0, items: [] };
 }

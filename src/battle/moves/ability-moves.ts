@@ -2,14 +2,14 @@ import { AttackPriority } from '../../core/event-emitter';
 import { countsAgainstSlots } from '../../data/constants/slots';
 import Abilities from '../../data/ids/abilities';
 import { Moves } from '../../data/ids/moves';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, MoveTargetType } from '../events';
 import type Unit from '../unit';
 import { seesFully } from '../ai/fog';
 
 /**
- * The four moves that move abilities about: two copy or trade, two
- * take one away
+ * The moves that move abilities about: three copy or trade, the rest
+ * take one away or put one on
  */
 export const ABILITY_MOVES = new Set<Moves>([
   Moves.RolePlay,
@@ -18,6 +18,7 @@ export const ABILITY_MOVES = new Set<Moves>([
   Moves.WorrySeed,
   Moves.Entrainment,
   Moves.SimpleBeam,
+  Moves.Doodle,
 ]);
 
 /**
@@ -31,7 +32,7 @@ export const ABILITY_MOVES = new Set<Moves>([
  * talked out of being one would lose its health pool mid-fight. An
  * ability worn with a form is left out for the same reason
  */
-function abilitiesOf(unit: Unit): Abilities[] {
+export function abilitiesOf(unit: Unit): Abilities[] {
   const abilities: Abilities[] = [];
 
   for (const [ability, carried] of Object.entries(unit.abilities)) {
@@ -60,6 +61,7 @@ function works(move: Moves, source: Unit, target: Unit, known = true): boolean {
 
   switch (move) {
     case Moves.RolePlay:
+    case Moves.Doodle:
     case Moves.GastroAcid:
       return holds;
     case Moves.Entrainment:
@@ -112,6 +114,24 @@ export default function setupAbilityMoves(battle: Battle): void {
       }
       for (const ability of copying) {
         event.source.addAbility(ability);
+      }
+      return;
+    }
+
+    // Doodle is Role Play for the user and every teammate standing
+    if (event.move === Moves.Doodle) {
+      const copying = abilitiesOf(target);
+
+      for (const unit of event.source.team.units) {
+        if (!unit.alive) {
+          continue;
+        }
+        for (const ability of abilitiesOf(unit)) {
+          unit.removeAbility(ability);
+        }
+        for (const ability of copying) {
+          unit.addAbility(ability);
+        }
       }
       return;
     }

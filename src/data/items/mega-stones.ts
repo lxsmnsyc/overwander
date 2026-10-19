@@ -1,275 +1,171 @@
-import { ItemFlags, ItemTypes, Items } from '../ids/items';
-import { Species, getBaseFormSpecies } from '../ids/species';
-import { registerItem } from './__create';
+import { Items } from '../ids/items';
+import { Species } from '../ids/species';
+import { getBaseFormSpecies } from '../ids/forms';
+import { getSpeciesData } from '../species/__create';
+import { getMegaBase } from '../species/megas';
+import { itemText } from './__create';
 
 /**
  * The Mega Stones: held for the Mega a pokemon takes in a fight.
  *
  * Unlike a form item, holding one is not enough on its own. A team
  * Mega Evolves once, so the battle side in
- * [`src/battle/items/megas.ts`](../../battle/items/megas.ts) picks
+ * [`src/battle/gimmicks/mega.ts`](../../battle/gimmicks/mega.ts) picks
  * which holder gets to.
  */
 
 interface MegaStone {
   mega: Species;
-  name: string;
-  /** Its picture on the `mega-stones` sheet */
-  icon: string;
-  /** Who it is for, written out since items register apart from species */
-  holder: string;
+  /**
+   * The Megas the stone opens for the species' other forms: a female
+   * Meowstic and each Tatsugiri wear their own
+   */
+  forms?: Species[];
 }
 
 export const MEGA_STONES = new Map<Items, MegaStone>([
+  [Items.Venusaurite, { mega: Species.VenusaurMega }],
+  [Items.CharizarditeX, { mega: Species.CharizardMegaX }],
+  [Items.CharizarditeY, { mega: Species.CharizardMegaY }],
+  [Items.Blastoisinite, { mega: Species.BlastoiseMega }],
+  [Items.Beedrillite, { mega: Species.BeedrillMega }],
+  [Items.Pidgeotite, { mega: Species.PidgeotMega }],
+  [Items.Alakazite, { mega: Species.AlakazamMega }],
+  [Items.Slowbronite, { mega: Species.SlowbroMega }],
+  [Items.Gengarite, { mega: Species.GengarMega }],
+  [Items.Kangaskhanite, { mega: Species.KangaskhanMega }],
+  [Items.Pinsirite, { mega: Species.PinsirMega }],
+  [Items.Gyaradosite, { mega: Species.GyaradosMega }],
+  [Items.Aerodactylite, { mega: Species.AerodactylMega }],
+  [Items.MewtwoniteX, { mega: Species.MewtwoMegaX }],
+  [Items.MewtwoniteY, { mega: Species.MewtwoMegaY }],
+  [Items.Ampharosite, { mega: Species.AmpharosMega }],
+  [Items.Steelixite, { mega: Species.SteelixMega }],
+  [Items.Scizorite, { mega: Species.ScizorMega }],
+  [Items.Heracronite, { mega: Species.HeracrossMega }],
+  [Items.Houndoominite, { mega: Species.HoundoomMega }],
+  [Items.Tyranitarite, { mega: Species.TyranitarMega }],
+  [Items.Sceptilite, { mega: Species.SceptileMega }],
+  [Items.Blazikenite, { mega: Species.BlazikenMega }],
+  [Items.Swampertite, { mega: Species.SwampertMega }],
+  [Items.Gardevoirite, { mega: Species.GardevoirMega }],
+  [Items.Sablenite, { mega: Species.SableyeMega }],
+  [Items.Mawilite, { mega: Species.MawileMega }],
+  [Items.Aggronite, { mega: Species.AggronMega }],
+  [Items.Medichamite, { mega: Species.MedichamMega }],
+  [Items.Manectite, { mega: Species.ManectricMega }],
+  [Items.Sharpedonite, { mega: Species.SharpedoMega }],
+  [Items.Cameruptite, { mega: Species.CameruptMega }],
+  [Items.Altarianite, { mega: Species.AltariaMega }],
+  [Items.Banettite, { mega: Species.BanetteMega }],
+  [Items.Absolite, { mega: Species.AbsolMega }],
+  [Items.Glalitite, { mega: Species.GlalieMega }],
+  [Items.Salamencite, { mega: Species.SalamenceMega }],
+  [Items.Metagrossite, { mega: Species.MetagrossMega }],
+  [Items.Latiasite, { mega: Species.LatiasMega }],
+  [Items.Latiosite, { mega: Species.LatiosMega }],
+  [Items.Lopunnite, { mega: Species.LopunnyMega }],
+  [Items.Garchompite, { mega: Species.GarchompMega }],
+  [Items.Lucarionite, { mega: Species.LucarioMega }],
+  [Items.Abomasite, { mega: Species.AbomasnowMega }],
+  [Items.Galladite, { mega: Species.GalladeMega }],
+  [Items.Audinite, { mega: Species.AudinoMega }],
+  [Items.Diancite, { mega: Species.DiancieMega }],
+  [Items.RaichuniteX, { mega: Species.RaichuMegaX }],
+  [Items.RaichuniteY, { mega: Species.RaichuMegaY }],
+  [Items.Clefablite, { mega: Species.ClefableMega }],
+  [Items.Victreebelite, { mega: Species.VictreebelMega }],
+  [Items.Starminite, { mega: Species.StarmieMega }],
+  [Items.Dragoninite, { mega: Species.DragoniteMega }],
+  [Items.Meganiumite, { mega: Species.MeganiumMega }],
+  [Items.Feraligite, { mega: Species.FeraligatrMega }],
+  [Items.Skarmorite, { mega: Species.SkarmoryMega }],
+  [Items.Chimechite, { mega: Species.ChimechoMega }],
+  [Items.AbsoliteZ, { mega: Species.AbsolMegaZ }],
+  [Items.Staraptite, { mega: Species.StaraptorMega }],
+  [Items.GarchompiteZ, { mega: Species.GarchompMegaZ }],
+  [Items.LucarioniteZ, { mega: Species.LucarioMegaZ }],
+  [Items.Froslassite, { mega: Species.FroslassMega }],
+  [Items.Heatranite, { mega: Species.HeatranMega }],
+  [Items.Darkranite, { mega: Species.DarkraiMega }],
+  [Items.Emboarite, { mega: Species.EmboarMega }],
+  [Items.Excadrite, { mega: Species.ExcadrillMega }],
+  [Items.Scolipite, { mega: Species.ScolipedeMega }],
+  [Items.Scraftinite, { mega: Species.ScraftyMega }],
+  [Items.Eelektrossite, { mega: Species.EelektrossMega }],
+  [Items.Chandelurite, { mega: Species.ChandelureMega }],
+  [Items.Golurkite, { mega: Species.GolurkMega }],
+  [Items.Chesnaughtite, { mega: Species.ChesnaughtMega }],
+  [Items.Delphoxite, { mega: Species.DelphoxMega }],
+  [Items.Greninjite, { mega: Species.GreninjaMega }],
+  [Items.Pyroarite, { mega: Species.PyroarMega }],
+  [Items.Floettite, { mega: Species.FloetteMega }],
+  [Items.Meowsticite, { mega: Species.MeowsticMega, forms: [Species.MeowsticFemaleMega] }],
+  [Items.Malamarite, { mega: Species.MalamarMega }],
+  [Items.Barbaracite, { mega: Species.BarbaracleMega }],
+  [Items.Dragalgite, { mega: Species.DragalgeMega }],
+  [Items.Hawluchanite, { mega: Species.HawluchaMega }],
+  [Items.Zygardite, { mega: Species.ZygardeMega }],
+  [Items.Crabominite, { mega: Species.CrabominableMega }],
+  [Items.Golisopite, { mega: Species.GolisopodMega }],
+  [Items.Drampanite, { mega: Species.DrampaMega }],
+  [Items.Magearnite, { mega: Species.MagearnaMega, forms: [Species.MagearnaOriginalMega] }],
+  [Items.Zeraorite, { mega: Species.ZeraoraMega }],
+  [Items.Falinksite, { mega: Species.FalinksMega }],
+  [Items.Scovillainite, { mega: Species.ScovillainMega }],
+  [Items.Glimmoranite, { mega: Species.GlimmoraMega }],
   [
-    Items.Venusaurite,
-    { mega: Species.VenusaurMega, name: 'Venusaurite', icon: 'venusaurite', holder: 'Venusaur' },
-  ],
-  [
-    Items.CharizarditeX,
+    Items.Tatsugirinite,
     {
-      mega: Species.CharizardMegaX,
-      name: 'Charizardite X',
-      icon: 'charizardite-x',
-      holder: 'Charizard',
+      mega: Species.TatsugiriMega,
+      forms: [Species.TatsugiriStretchyMega, Species.TatsugiriDroopyMega],
     },
   ],
-  [
-    Items.CharizarditeY,
-    {
-      mega: Species.CharizardMegaY,
-      name: 'Charizardite Y',
-      icon: 'charizardite-y',
-      holder: 'Charizard',
-    },
-  ],
-  [
-    Items.Blastoisinite,
-    {
-      mega: Species.BlastoiseMega,
-      name: 'Blastoisinite',
-      icon: 'blastoisinite',
-      holder: 'Blastoise',
-    },
-  ],
-  [
-    Items.Beedrillite,
-    { mega: Species.BeedrillMega, name: 'Beedrillite', icon: 'beedrillite', holder: 'Beedrill' },
-  ],
-  [
-    Items.Pidgeotite,
-    { mega: Species.PidgeotMega, name: 'Pidgeotite', icon: 'pidgeotite', holder: 'Pidgeot' },
-  ],
-  [
-    Items.Alakazite,
-    { mega: Species.AlakazamMega, name: 'Alakazite', icon: 'alakazite', holder: 'Alakazam' },
-  ],
-  [
-    Items.Slowbronite,
-    { mega: Species.SlowbroMega, name: 'Slowbronite', icon: 'slowbronite', holder: 'Slowbro' },
-  ],
-  [
-    Items.Gengarite,
-    { mega: Species.GengarMega, name: 'Gengarite', icon: 'gengarite', holder: 'Gengar' },
-  ],
-  [
-    Items.Kangaskhanite,
-    {
-      mega: Species.KangaskhanMega,
-      name: 'Kangaskhanite',
-      icon: 'kangaskhanite',
-      holder: 'Kangaskhan',
-    },
-  ],
-  [
-    Items.Pinsirite,
-    { mega: Species.PinsirMega, name: 'Pinsirite', icon: 'pinsirite', holder: 'Pinsir' },
-  ],
-  [
-    Items.Gyaradosite,
-    { mega: Species.GyaradosMega, name: 'Gyaradosite', icon: 'gyaradosite', holder: 'Gyarados' },
-  ],
-  [
-    Items.Aerodactylite,
-    {
-      mega: Species.AerodactylMega,
-      name: 'Aerodactylite',
-      icon: 'aerodactylite',
-      holder: 'Aerodactyl',
-    },
-  ],
-  [
-    Items.MewtwoniteX,
-    { mega: Species.MewtwoMegaX, name: 'Mewtwonite X', icon: 'mewtwonite-x', holder: 'Mewtwo' },
-  ],
-  [
-    Items.MewtwoniteY,
-    { mega: Species.MewtwoMegaY, name: 'Mewtwonite Y', icon: 'mewtwonite-y', holder: 'Mewtwo' },
-  ],
-  [
-    Items.Ampharosite,
-    { mega: Species.AmpharosMega, name: 'Ampharosite', icon: 'ampharosite', holder: 'Ampharos' },
-  ],
-  [
-    Items.Steelixite,
-    { mega: Species.SteelixMega, name: 'Steelixite', icon: 'steelixite', holder: 'Steelix' },
-  ],
-  [
-    Items.Scizorite,
-    { mega: Species.ScizorMega, name: 'Scizorite', icon: 'scizorite', holder: 'Scizor' },
-  ],
-  [
-    Items.Heracronite,
-    { mega: Species.HeracrossMega, name: 'Heracronite', icon: 'heracronite', holder: 'Heracross' },
-  ],
-  [
-    Items.Houndoominite,
-    {
-      mega: Species.HoundoomMega,
-      name: 'Houndoominite',
-      icon: 'houndoominite',
-      holder: 'Houndoom',
-    },
-  ],
-  [
-    Items.Tyranitarite,
-    {
-      mega: Species.TyranitarMega,
-      name: 'Tyranitarite',
-      icon: 'tyranitarite',
-      holder: 'Tyranitar',
-    },
-  ],
-  [
-    Items.Sceptilite,
-    { mega: Species.SceptileMega, name: 'Sceptilite', icon: 'sceptilite', holder: 'Sceptile' },
-  ],
-  [
-    Items.Blazikenite,
-    { mega: Species.BlazikenMega, name: 'Blazikenite', icon: 'blazikenite', holder: 'Blaziken' },
-  ],
-  [
-    Items.Swampertite,
-    { mega: Species.SwampertMega, name: 'Swampertite', icon: 'swampertite', holder: 'Swampert' },
-  ],
-  [
-    Items.Gardevoirite,
-    {
-      mega: Species.GardevoirMega,
-      name: 'Gardevoirite',
-      icon: 'gardevoirite',
-      holder: 'Gardevoir',
-    },
-  ],
-  [
-    Items.Sablenite,
-    { mega: Species.SableyeMega, name: 'Sablenite', icon: 'sablenite', holder: 'Sableye' },
-  ],
-  [
-    Items.Mawilite,
-    { mega: Species.MawileMega, name: 'Mawilite', icon: 'mawilite', holder: 'Mawile' },
-  ],
-  [
-    Items.Aggronite,
-    { mega: Species.AggronMega, name: 'Aggronite', icon: 'aggronite', holder: 'Aggron' },
-  ],
-  [
-    Items.Medichamite,
-    { mega: Species.MedichamMega, name: 'Medichamite', icon: 'medichamite', holder: 'Medicham' },
-  ],
-  [
-    Items.Manectite,
-    { mega: Species.ManectricMega, name: 'Manectite', icon: 'manectite', holder: 'Manectric' },
-  ],
-  [
-    Items.Sharpedonite,
-    { mega: Species.SharpedoMega, name: 'Sharpedonite', icon: 'sharpedonite', holder: 'Sharpedo' },
-  ],
-  [
-    Items.Cameruptite,
-    { mega: Species.CameruptMega, name: 'Cameruptite', icon: 'cameruptite', holder: 'Camerupt' },
-  ],
-  [
-    Items.Altarianite,
-    { mega: Species.AltariaMega, name: 'Altarianite', icon: 'altarianite', holder: 'Altaria' },
-  ],
-  [
-    Items.Banettite,
-    { mega: Species.BanetteMega, name: 'Banettite', icon: 'banettite', holder: 'Banette' },
-  ],
-  [
-    Items.Absolite,
-    { mega: Species.AbsolMega, name: 'Absolite', icon: 'absolite', holder: 'Absol' },
-  ],
-  [
-    Items.Glalitite,
-    { mega: Species.GlalieMega, name: 'Glalitite', icon: 'glalitite', holder: 'Glalie' },
-  ],
-  [
-    Items.Salamencite,
-    { mega: Species.SalamenceMega, name: 'Salamencite', icon: 'salamencite', holder: 'Salamence' },
-  ],
-  [
-    Items.Metagrossite,
-    {
-      mega: Species.MetagrossMega,
-      name: 'Metagrossite',
-      icon: 'metagrossite',
-      holder: 'Metagross',
-    },
-  ],
-  [
-    Items.Latiasite,
-    { mega: Species.LatiasMega, name: 'Latiasite', icon: 'latiasite', holder: 'Latias' },
-  ],
-  [
-    Items.Latiosite,
-    { mega: Species.LatiosMega, name: 'Latiosite', icon: 'latiosite', holder: 'Latios' },
-  ],
-  [
-    Items.Lopunnite,
-    { mega: Species.LopunnyMega, name: 'Lopunnite', icon: 'lopunnite', holder: 'Lopunny' },
-  ],
-  [
-    Items.Garchompite,
-    { mega: Species.GarchompMega, name: 'Garchompite', icon: 'garchompite', holder: 'Garchomp' },
-  ],
-  [
-    Items.Lucarionite,
-    { mega: Species.LucarioMega, name: 'Lucarionite', icon: 'lucarionite', holder: 'Lucario' },
-  ],
-  [
-    Items.Abomasite,
-    { mega: Species.AbomasnowMega, name: 'Abomasite', icon: 'abomasite', holder: 'Abomasnow' },
-  ],
-  [
-    Items.Galladite,
-    { mega: Species.GalladeMega, name: 'Galladite', icon: 'galladite', holder: 'Gallade' },
-  ],
-  [
-    Items.Audinite,
-    { mega: Species.AudinoMega, name: 'Audinite', icon: 'audinite', holder: 'Audino' },
-  ],
-  [
-    Items.Diancite,
-    { mega: Species.DiancieMega, name: 'Diancite', icon: 'diancite', holder: 'Diancie' },
-  ],
+  [Items.Baxcalibrite, { mega: Species.BaxcaliburMega }],
 ]);
-
-/** What a stone fetches from a shop that will never stock one, the plates' price */
-export const MEGA_STONE_RESALE = 2000;
 
 /** The Mega this stone puts its holder in, or null for everything else in the bag */
 export function getStoneMega(item: Items): Species | null {
   return MEGA_STONES.get(item)?.mega ?? null;
 }
 
+/** Every Mega one stone opens, one for each form that can hold it */
+function stoneMegas(stone: MegaStone): Species[] {
+  return [stone.mega, ...(stone.forms ?? [])];
+}
+
+/** Every Mega this stone opens, or none for anything that is not one */
+export function getStoneMegas(item: Items): Species[] {
+  const stone = MEGA_STONES.get(item);
+
+  return stone == null ? [] : stoneMegas(stone);
+}
+
+/**
+ * The Mega this stone puts this holder in, or null where it is not the
+ * holder's. A stone names a form, so an Alolan Raichu holding a
+ * Raichunite stays as it is, and each Tatsugiri wears its own
+ */
+export function getHolderMega(item: Items, holder: Species): Species | null {
+  const stone = MEGA_STONES.get(item);
+
+  if (stone == null) {
+    return null;
+  }
+  for (const mega of stoneMegas(stone)) {
+    if (getMegaBase(mega) === holder) {
+      return mega;
+    }
+  }
+  return null;
+}
+
 /** Every stone this species can hold for a Mega of its own: two for a Charizard, none for most */
 export function getSpeciesStones(species: Species): Items[] {
   const stones: Items[] = [];
 
-  for (const [item, stone] of MEGA_STONES) {
-    if (getBaseFormSpecies(stone.mega) === species) {
+  for (const item of MEGA_STONES.keys()) {
+    if (getHolderMega(item, species) != null) {
       stones.push(item);
     }
   }
@@ -279,24 +175,21 @@ export function getSpeciesStones(species: Species): Items[] {
 /** The stone that puts a pokemon in this Mega, or null for anything that is not one */
 export function getMegaStone(mega: Species): Items | null {
   for (const [item, stone] of MEGA_STONES) {
-    if (stone.mega === mega) {
+    if (stoneMegas(stone).includes(mega)) {
       return item;
     }
   }
   return null;
 }
 
-/** Held, never spent, and never listed: a stone is dug up rather than bought */
-export default function registerMegaStones(): void {
-  for (const [item, stone] of MEGA_STONES) {
-    registerItem(item, {
-      name: stone.name,
-      description: `Lets a ${stone.holder} holding it Mega Evolve. Only one pokemon on a team Mega Evolves in a fight.`,
-      type: ItemTypes.Held,
-      icon: `mega-stones/${stone.icon}`,
-      flags: ItemFlags.Holdable,
-      buy: 0,
-      sell: MEGA_STONE_RESALE,
-    });
+/** Every stone's line names the pokemon that holds it */
+export function describeMegaStone(item: Items): string {
+  const stone = MEGA_STONES.get(item);
+
+  if (stone == null) {
+    throw new Error(`${item} is not a Mega Stone`);
   }
+  return itemText('mega-stones', 'stone', {
+    holder: getSpeciesData(getMegaBase(stone.mega) ?? getBaseFormSpecies(stone.mega)).name,
+  });
 }

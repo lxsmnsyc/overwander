@@ -1,0 +1,32 @@
+Giratina:
+  Giratina: { name: Giratina, category: Renegade Pokemon }
+  GiratinaOrigin: { name: Giratina Origin, category: Renegade Pokemon }
+Cresselia:
+  Cresselia: { name: Cresselia, category: Lunar Pokemon }
+Manaphy:
+  Phione: { name: Phione, category: Sea Drifter Pokemon }
+  Manaphy: { name: Manaphy, category: Seafaring Pokemon }
+Darkrai:
+  Darkrai: { name: Darkrai, category: Pitch-Black Pokemon }
+Shaymin:
+  Shaymin: { name: Shaymin, category: Gratitude Pokemon }
+  ShayminSky: { name: Shaymin Sky, category: Gratitude Pokemon }
+Arceus:
+  Arceus: { name: Arceus, category: Alpha Pokemon }
+  ArceusBug: { name: Arceus Bug, category: Alpha Pokemon }
+  ArceusDark: { name: Arceus Dark, category: Alpha Pokemon }
+  ArceusDragon: { name: Arceus Dragon, category: Alpha Pokemon }
+  ArceusElectric: { name: Arceus Electric, category: Alpha Pokemon }
+  ArceusFighting: { name: Arceus Fighting, category: Alpha Pokemon }
+  ArceusFire: { name: Arceus Fire, category: Alpha Pokemon }
+  ArceusFlying: { name: Arceus Flying, category: Alpha Pokemon }
+  ArceusGhost: { name: Arceus Ghost, category: Alpha Pokemon }
+  ArceusGrass: { name: Arceus Grass, category: Alpha Pokemon }
+  ArceusGround: { name: Arceus Ground, category: Alpha Pokemon }
+  ArceusIce: { name: Arceus Ice, category: Alpha Pokemon }
+  ArceusPoison: { name: Arceus Poison, category: Alpha Pokemon }
+  ArceusPsychic: { name: Arceus Psychic, category: Alpha Pokemon }
+  ArceusRock: { name: Arceus Rock, category: Alpha Pokemon }
+  ArceusSteel: { name: Arceus Steel, category: Alpha Pokemon }
+  ArceusWater: { name: Arceus Water, category: Alpha Pokemon }
+  ArceusFairy: { name: Arceus Fairy, category: Alpha Pokemon }

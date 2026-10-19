@@ -1,0 +1,210 @@
+# The skies each country can show, one per band of a reading: clear and
+# stirred when dry, then damp, wet and a storm as a front comes in, and a
+# `rare` showpiece of its own where it has one. The four `corners` fall over
+# every country alike; `corners: false` leaves a country without them.
+
+corners:
+  wildest: MeteorShower
+  stillest: FataMorgana
+  bleakest: DarkDay
+  thickest: Fogbow
+
+biomes:
+  DeepOcean:
+    clear: Clear
+    stirred: Breezy
+    damp: Mist
+    wet: Rain
+    storm: Thunderstorm
+  Ocean:
+    clear: Clear
+    stirred: Breezy
+    damp: Mist
+    wet: Rain
+    storm: Thunderstorm
+    rare: Rainbow
+  CoralReef:
+    clear: Clear
+    stirred: Breezy
+    damp: Haze
+    wet: Rain
+    storm: Downpour
+    rare: Rainbow
+  Beach:
+    clear: Clear
+    stirred: Breezy
+    damp: Mist
+    wet: Rain
+    storm: Thunderstorm
+    rare: Rainbow
+  Mangrove:
+    clear: Cloudy
+    stirred: Breezy
+    damp: Mist
+    wet: Rain
+    storm: Downpour
+  Swamp:
+    clear: Overcast
+    stirred: Breezy
+    damp: Fog
+    wet: Rain
+    storm: Thunderstorm
+  TropicalRainforest:
+    clear: Cloudy
+    stirred: Haze
+    damp: Drizzle
+    wet: Downpour
+    storm: Thunderstorm
+    rare: PollenDrift
+  TropicalSeasonalForest:
+    clear: Clear
+    stirred: Breezy
+    damp: Drizzle
+    wet: Rain
+    storm: Thunderstorm
+    rare: PollenDrift
+  Savanna:
+    clear: Heatwave
+    stirred: DustHaze
+    damp: Cloudy
+    wet: Rain
+    storm: Thunderstorm
+  Desert:
+    clear: Heatwave
+    stirred: Sandstorm
+    damp: DustHaze
+    wet: Rain
+    storm: Thunderstorm
+  Shrubland:
+    clear: Clear
+    stirred: DustHaze
+    damp: Cloudy
+    wet: Rain
+    storm: Thunderstorm
+  Grassland:
+    clear: Clear
+    stirred: Breezy
+    damp: Mist
+    wet: Rain
+    storm: Thunderstorm
+    rare: Rainbow
+  TemperateForest:
+    clear: Clear
+    stirred: Breezy
+    damp: Mist
+    wet: Rain
+    storm: Thunderstorm
+    rare: PollenDrift
+  TemperateRainforest:
+    clear: Overcast
+    stirred: Breezy
+    damp: Fog
+    wet: Downpour
+    storm: Thunderstorm
+    rare: PollenDrift
+  ColdDesert:
+    clear: Clear
+    stirred: Sandstorm
+    damp: Frost
+    wet: Snow
+    storm: Blizzard
+  Taiga:
+    clear: Clear
+    stirred: Breezy
+    damp: Frost
+    wet: Snow
+    storm: Blizzard
+    rare: Aurora
+  Tundra:
+    clear: Frost
+    stirred: Breezy
+    damp: Snow
+    wet: Snow
+    storm: Blizzard
+    rare: Aurora
+  Mountain:
+    clear: Clear
+    stirred: Breezy
+    damp: Fog
+    wet: Hail
+    storm: Thunderstorm
+  AlpineTundra:
+    clear: Frost
+    stirred: Breezy
+    damp: Fog
+    wet: Snow
+    storm: Blizzard
+    rare: Aurora
+  Glacier:
+    clear: Frost
+    stirred: Breezy
+    damp: Snow
+    wet: Snow
+    storm: Blizzard
+    rare: Aurora
+  Woodland:
+    clear: Clear
+    stirred: Breezy
+    damp: Mist
+    wet: Rain
+    storm: Thunderstorm
+    rare: PollenDrift
+  Steppe:
+    clear: Clear
+    stirred: DustHaze
+    damp: Cloudy
+    wet: Rain
+    storm: Thunderstorm
+  MontaneForest:
+    clear: Clear
+    stirred: Breezy
+    damp: Fog
+    wet: Rain
+    storm: Thunderstorm
+    rare: PollenDrift
+  PolarOcean:
+    clear: Frost
+    stirred: Breezy
+    damp: Mist
+    wet: Snow
+    storm: Blizzard
+    rare: Aurora
+  Beyond:
+    clear: Clear
+    stirred: Clear
+    damp: Clear
+    wet: Clear
+    storm: Clear
+    corners: false
+  Volcano:
+    clear: Haze
+    stirred: FallingAsh
+    damp: Fog
+    wet: Rain
+    storm: Thunderstorm
+  Badlands:
+    clear: Heatwave
+    stirred: Sandstorm
+    damp: Haze
+    wet: Rain
+    storm: Thunderstorm
+  RockyCoast:
+    clear: Clear
+    stirred: Breezy
+    damp: Fog
+    wet: Rain
+    storm: Thunderstorm
+    rare: Rainbow
+  Bog:
+    clear: Overcast
+    stirred: Breezy
+    damp: Fog
+    wet: Drizzle
+    storm: Thunderstorm
+  KelpForest:
+    clear: Clear
+    stirred: Breezy
+    damp: Mist
+    wet: Rain
+    storm: Downpour
+    rare: Rainbow

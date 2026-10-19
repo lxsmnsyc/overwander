@@ -1,0 +1,156 @@
+Magmar:
+  Magmar:
+    abilities: [FlameBody]
+    hidden: [VitalSpirit]
+  Magby:
+    abilities: [FlameBody]
+    hidden: [VitalSpirit]
+  Magmortar:
+    abilities: [FlameBody]
+    # Flash Fire and Solar Power are this registry's rather than the
+    # mainline's: the line reaches two abilities and needs four, and
+    # both are what a cannon that runs on its own heat would have
+    hidden: [VitalSpirit, FlashFire, SolarPower]
+Pinsir:
+  Pinsir:
+    abilities: [HyperCutter, MoldBreaker]
+    hidden: [Moxie, Swarm]
+Tauros:
+  Tauros:
+    abilities: [Intimidate, AngerPoint]
+    hidden: [SheerForce, Reckless]
+  TaurosPaldeaCombat:
+    abilities: [Intimidate, AngerPoint]
+    # Guts is this registry's rather than the mainline's, filling it to four
+    hidden: [CudChew, Guts]
+  TaurosPaldeaBlaze:
+    abilities: [Intimidate, AngerPoint]
+    # Flash Fire is this registry's rather than the mainline's, filling it to four
+    hidden: [CudChew, FlashFire]
+  TaurosPaldeaAqua:
+    abilities: [Intimidate, AngerPoint]
+    # Swift Swim is this registry's rather than the mainline's, filling it to four
+    hidden: [CudChew, SwiftSwim]
+Magikarp:
+  Magikarp:
+    abilities: [SwiftSwim]
+    hidden: [Rattled]
+  Gyarados:
+    abilities: [Intimidate]
+    hidden: [Moxie]
+Lapras:
+  Lapras:
+    abilities: [WaterAbsorb, ShellArmor]
+    hidden: [Hydration, FriendGuard]
+Ditto:
+  Ditto:
+    abilities: [Limber]
+    hidden: [Imposter, StickyHold, Unaware]
+Eevee:
+  Eevee:
+    abilities: [RunAway, Adaptability]
+    hidden: [Anticipation]
+  Vaporeon:
+    abilities: [WaterAbsorb]
+    hidden: [Hydration]
+  Jolteon:
+    abilities: [VoltAbsorb]
+    hidden: [QuickFeet]
+  Flareon:
+    abilities: [FlashFire]
+    hidden: [Guts]
+  Espeon:
+    abilities: [Synchronize]
+    hidden: [MagicBounce]
+  Umbreon:
+    abilities: [Synchronize]
+    hidden: [InnerFocus]
+  Leafeon:
+    abilities: [LeafGuard]
+    hidden: [Chlorophyll]
+  Glaceon:
+    abilities: [SnowCloak]
+    hidden: [IceBody]
+  Sylveon:
+    abilities: [CuteCharm]
+    hidden: [Pixilate]
+Porygon:
+  Porygon:
+    abilities: [Trace, Download]
+    hidden: [Analytic]
+  Porygon2:
+    abilities: [Trace, Download]
+    hidden: [Analytic]
+  PorygonZ:
+    abilities: [Adaptability, Download]
+    hidden: [Analytic]
+Omanyte:
+  Omanyte:
+    abilities: [SwiftSwim, ShellArmor]
+    hidden: [WeakArmor]
+  Omastar:
+    abilities: [SwiftSwim, ShellArmor]
+    hidden: [WeakArmor, Sniper]
+Kabuto:
+  Kabuto:
+    abilities: [SwiftSwim, BattleArmor]
+    hidden: [WeakArmor]
+  Kabutops:
+    abilities: [SwiftSwim, BattleArmor]
+    hidden: [WeakArmor, Sharpness]
+Aerodactyl:
+  Aerodactyl:
+    abilities: [RockHead, Pressure]
+    hidden: [Unnerve, StrongJaw]
+Snorlax:
+  Snorlax:
+    abilities: [Immunity, ThickFat]
+    hidden: [Gluttony]
+  Munchlax:
+    abilities: [Pickup, ThickFat]
+    hidden: [Gluttony]
+Articuno:
+  Articuno:
+    abilities: [Pressure]
+    hidden: [SnowCloak, IceBody, SnowWarning]
+  ArticunoGalar:
+    abilities: [Competitive]
+    hidden:
+      # Telepathy, Synchronize and Magic Bounce are this registry's rather than the mainline's, filling it to four: it reads minds and turns them back
+      [Telepathy, Synchronize, MagicBounce]
+Zapdos:
+  Zapdos:
+    abilities: [Pressure]
+    hidden: [Static, LightningRod, Drizzle]
+  ZapdosGalar:
+    abilities: [Defiant]
+    hidden:
+      # Scrappy, Guts and Quick Feet are this registry's rather than the mainline's, filling it to four: it runs and kicks its way through anything
+      [Scrappy, Guts, QuickFeet]
+Moltres:
+  Moltres:
+    abilities: [Pressure]
+    hidden: [FlameBody, Drought, FlashFire]
+  MoltresGalar:
+    abilities: [Berserk]
+    hidden:
+      # Merciless, Infiltrator and Unnerve are this registry's rather than the mainline's, filling it to four: its malice slips past guards and saps the nerve
+      [Merciless, Infiltrator, Unnerve]
+Dratini:
+  Dratini:
+    abilities: [ShedSkin]
+    hidden: [MarvelScale]
+  Dragonair:
+    abilities: [ShedSkin]
+    hidden: [MarvelScale]
+  Dragonite:
+    abilities: [InnerFocus]
+    hidden: [Multiscale]
+Mewtwo:
+  Mewtwo:
+    abilities: [Pressure]
+    hidden: [Unnerve, MagicGuard, Forewarn]
+Mew:
+  Mew:
+    abilities: [Synchronize]
+    hidden: [Trace, Adaptability, Protean]

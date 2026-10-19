@@ -3,11 +3,13 @@ import { Stats } from '../../../data/constants/stats';
 import { TYPE_EFFECTIVENESS, TypeEffectiveness, Types } from '../../../data/constants/types';
 import { Items } from '../../../data/ids/items';
 import { DamageFlags } from '../../../data/ids/moves';
-import type Battle from '../../core';
+import type Battle from '../../battle';
 import { BattleEvents, EffectType, MoveTargetType } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
 import type Unit from '../../unit';
-import { hasFreeItemSlot, onUnitActs, unitTarget } from '../../utils';
+import { unitTarget } from '../../unit-checks';
+import onUnitActs from '../../acts';
+import { hasFreeItemSlot } from '../held';
 import { createHeldItem, holds } from '../__create';
 import {
   BLACK_SLUDGE_SHARE,

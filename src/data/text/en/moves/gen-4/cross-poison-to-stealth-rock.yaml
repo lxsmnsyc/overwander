@@ -1,0 +1,21 @@
+CrossPoison:
+  name: Cross Poison
+  description: Lands a critical more often than most. 10% to poison.
+GunkShot:
+  name: Gunk Shot
+  description: 30% to poison.
+IronHead:
+  name: Iron Head
+  description: 30% to make the target flinch.
+MagnetBomb:
+  name: Magnet Bomb
+  description: Never misses.
+StoneEdge:
+  name: Stone Edge
+  description: Lands a critical more often than most.
+Captivate:
+  name: Captivate
+  description: Drops the target's Special Attack 2 stages, but only the opposite gender.
+StealthRock:
+  name: Stealth Rock
+  description: 'Hangs stones over the far side: anything swapped in loses 1/8 of its HP, doubled or halved by how it takes a Rock move.'

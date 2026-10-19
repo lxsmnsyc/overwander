@@ -1,0 +1,9 @@
+# Held, never spent, and never listed: a shard is dug up rather than
+# bought. It sells for what a Mega Stone does. Each icon sits on a sheet
+# for its pokemon's region.
+
+ArcanineZenithShard:
+  type: Held
+  icon: zenith/kanto/arcanine
+  flags: [Holdable]
+  sell: 2000

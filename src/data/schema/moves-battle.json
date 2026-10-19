@@ -1,0 +1,68 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Moves: battle",
+  "type": "object",
+  "propertyNames": {
+    "$ref": "names.json#/definitions/move"
+  },
+  "additionalProperties": {
+    "type": "object",
+    "properties": {
+      "type": {
+        "$ref": "names.json#/definitions/type"
+      },
+      "category": {
+        "$ref": "names.json#/definitions/move-category"
+      },
+      "power": {
+        "type": "number",
+        "minimum": 0
+      },
+      "accuracy": {
+        "type": "number",
+        "minimum": 0,
+        "description": "Left out for a move that never misses"
+      },
+      "priority": {
+        "type": "number"
+      },
+      "pp": {
+        "type": "number",
+        "minimum": 0
+      },
+      "target": {
+        "$ref": "names.json#/definitions/move-target",
+        "description": "What the move is cast at"
+      },
+      "affects": {
+        "type": "array",
+        "items": {
+          "$ref": "names.json#/definitions/move-affect"
+        },
+        "description": "Who it reaches, where not the enemy the way it is cast"
+      },
+      "flags": {
+        "type": "array",
+        "items": {
+          "$ref": "names.json#/definitions/move-flag"
+        }
+      },
+      "steps": {
+        "type": "number",
+        "minimum": 0,
+        "description": "Later steps it channels after the first"
+      },
+      "projectile": {
+        "type": "boolean",
+        "description": "Flies across the gap before it lands"
+      }
+    },
+    "required": [
+      "type",
+      "category",
+      "pp",
+      "target"
+    ],
+    "additionalProperties": false
+  }
+}

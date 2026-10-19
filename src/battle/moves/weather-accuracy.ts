@@ -1,9 +1,9 @@
 import { EventPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
 import { Weathers } from '../../data/ids/status';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents } from '../events';
-import { isWeatherRainy, isWeatherSunny } from '../utils';
+import { isWeatherRainy, isWeatherSunny } from '../weather';
 
 interface WeatherAccuracyConfig {
   /**
@@ -22,6 +22,10 @@ const WEATHER_ACCURACY_MOVES: { [key in Moves]?: WeatherAccuracyConfig } = {
   [Moves.Blizzard]: { hail: null },
   // https://bulbapedia.bulbagarden.net/wiki/Hurricane_(move)
   [Moves.Hurricane]: { rain: null, sun: 50 },
+  // Hisui's three storms, which only the rain makes sure of
+  [Moves.BleakwindStorm]: { rain: null },
+  [Moves.WildboltStorm]: { rain: null },
+  [Moves.SandsearStorm]: { rain: null },
 };
 
 export default function setupWeatherAccuracyMoves(battle: Battle): void {

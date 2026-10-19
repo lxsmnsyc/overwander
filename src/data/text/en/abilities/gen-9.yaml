@@ -1,0 +1,184 @@
+# What Paldea, Kitakami and Blueberry Academy brought, described in this
+# engine's terms rather than the mainline's
+
+# Lechonk
+LingeringAroma:
+  name: Lingering Aroma
+  description: Whoever lands a contact move on it trades one of its abilities for this one.
+
+# Fidough
+WellBakedBody:
+  name: Well-Baked Body
+  description: Fire moves do nothing to it and raise its Defense by 2 stages instead.
+
+# Smoliv
+SeedSower:
+  name: Seed Sower
+  description: When a damaging move lands on it, it lays Grassy Terrain.
+
+# Nacli
+PurifyingSalt:
+  name: Purifying Salt
+  description: It cannot be poisoned, burned, paralysed, frozen, put to sleep or made drowsy, and Ghost moves hit it at 0.5x.
+
+# Tadbulb
+Electromorphosis:
+  name: Electromorphosis
+  description: When a damaging move lands on it, its next Electric move hits 2x.
+
+# Wattrel
+WindPower:
+  name: Wind Power
+  description: When a wind move lands on it, its next Electric move hits 2x.
+
+# Maschiff
+GuardDog:
+  name: Guard Dog
+  description: Intimidate raises its Attack instead of lowering it, and Roar and Whirlwind cannot drive it off.
+
+# Toedscool
+MyceliumMight:
+  name: Mycelium Might
+  description: Its status moves wind up slower but go through the target's abilities.
+
+# Klawf
+AngerShell:
+  name: Anger Shell
+  description: When a blow takes it to 1/2 HP or under, +1 Attack, Special Attack and Speed, but -1 Defense and Special Defense.
+
+# Flittle
+Opportunist:
+  name: Opportunist
+  description: Whenever a foe raises a stat, it raises the same stat as far.
+
+# Bombirdier
+RockyPayload:
+  name: Rocky Payload
+  description: Its Rock moves hit 1.5x.
+
+# Finizen
+ZeroToHero:
+  name: Zero to Hero
+  description: A Palafin that leaves the field comes back as its Hero Form, and stays that way.
+
+# Glimmet
+ToxicDebris:
+  name: Toxic Debris
+  description: When a physical move lands on it, a layer of Toxic Spikes is laid under the attacker's side.
+
+# Flamigo
+Costar:
+  name: Costar
+  description: When it enters, it copies a teammate's stat stages.
+
+# Tatsugiri
+Commander:
+  name: Commander
+  description: Beside a Dondozo, it climbs into its mouth, where it stops acting and nothing reaches it, and the Dondozo gains 2 stages of every stat.
+
+# Great Tusk
+Protosynthesis:
+  name: Protosynthesis
+  description: In sun, or once it uses up a held Booster Energy, its highest stat is 1.3x, or 1.5x if that is Speed.
+
+# Iron Treads
+QuarkDrive:
+  name: Quark Drive
+  description: On Electric Terrain, or once it uses up a held Booster Energy, its highest stat is 1.3x, or 1.5x if that is Speed.
+
+# Frigibax
+ThermalExchange:
+  name: Thermal Exchange
+  description: Fire moves that land on it raise its Attack by 1 stage, and it cannot be burned.
+
+# Gimmighoul
+GoodAsGold:
+  name: Good as Gold
+  description: Status moves from anybody else do nothing to it.
+
+# Wo-Chien
+TabletsOfRuin:
+  name: Tablets of Ruin
+  description: Every other pokemon on the field has 0.75x Attack.
+
+# Chien-Pao
+SwordOfRuin:
+  name: Sword of Ruin
+  description: Every other pokemon on the field has 0.75x Defense.
+
+# Ting-Lu
+VesselOfRuin:
+  name: Vessel of Ruin
+  description: Every other pokemon on the field has 0.75x Special Attack.
+
+# Chi-Yu
+BeadsOfRuin:
+  name: Beads of Ruin
+  description: Every other pokemon on the field has 0.75x Special Defense.
+
+# Koraidon
+OrichalcumPulse:
+  name: Orichalcum Pulse
+  description: When it enters, it calls up harsh sunlight, and in sun it has 1.33x Attack.
+
+# Miraidon
+HadronEngine:
+  name: Hadron Engine
+  description: When it enters, it lays Electric Terrain, and on Electric Terrain it has 1.33x Special Attack.
+
+# Farigiraf
+CudChew:
+  name: Cud Chew
+  description: A berry it eats is eaten again the next time it acts.
+
+ArmorTail:
+  name: Armor Tail
+  description: Moves that cut ahead of the queue fail against it and its teammates.
+
+# Bloodmoon Ursaluna
+MindsEye:
+  name: Mind's Eye
+  description: Its accuracy cannot be lowered, it ignores evasion, and its Normal and Fighting moves hit Ghost types.
+
+# Kingambit
+SupremeOverlord:
+  name: Supreme Overlord
+  description: Its moves hit 1.1x with one teammate fallen, 0.1x more for each after, up to 1.5x.
+
+# Dipplin
+SupersweetSyrup:
+  name: Supersweet Syrup
+  description: The first time it enters a battle, its foes lose 1 stage of evasion.
+
+# Poltchageist
+Hospitality:
+  name: Hospitality
+  description: When it enters, its most hurt teammate recovers 1/4 of its HP.
+
+# Okidogi
+ToxicChain:
+  name: Toxic Chain
+  description: Its damaging moves have a 30% chance to badly poison.
+
+# Ogerpon
+EmbodyAspect:
+  name: Embody Aspect
+  description: The first time it enters a battle, its mask raises a stat by 1 stage, Speed for Teal, Special Defense for Wellspring, Attack for Hearthflame and Defense for Cornerstone.
+
+# Terapagos
+TeraShift:
+  name: Tera Shift
+  description: It takes its Terastal Form as it enters.
+
+TeraShell:
+  name: Tera Shell
+  description: At full HP, every damaging move lands on it not very effective.
+
+TeraformZero:
+  name: Teraform Zero
+  description: When it enters, every weather and terrain on the field is cleared, though a primal sky stays.
+
+# Pecharunt
+PoisonPuppeteer:
+  name: Poison Puppeteer
+  description: Whatever it poisons is confused as well.

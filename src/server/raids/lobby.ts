@@ -1,6 +1,6 @@
 import 'server-only';
 import { Depth } from '../../overworld/depth';
-import { asOffset, toLocalTime } from '../../auth/local-time';
+import { asOffset, toLocalTime } from '../../model/local-time';
 import {
   RaidAction,
   RaidKind,
@@ -9,8 +9,8 @@ import {
   asRaidRecord,
   mythicalRaidId,
   raidId,
-} from '../../auth/raid-record';
-import ChunkSnapshot from '../../overworld/chunk-snapshot';
+} from '../../model/raid-record';
+import ChunkSnapshot, { type RaidRoll } from '../../overworld/chunk-snapshot';
 import getWorld from '../../overworld/current';
 import AleaRNG from '../../core/alea';
 import type { Items } from '../../data/ids/items';
@@ -19,17 +19,37 @@ import Biome from '../../data/ids/biome';
 import { getSpeciesHome } from '../../data/biome';
 import { getSpeciesLairs } from '../../data/overworld/lair';
 import { getSql, tx } from '../db';
-import { foughtBattle, readBattle, readRaid, readRaidIn, writeRaid } from '../raid-io';
+import { foughtBattle, readBattle, readRaid, readRaidIn, writeRaid } from './io';
 import { holdsItem } from '../inventory';
 import { asString } from '../read';
 import { hasAnyCaught } from '../caught';
-import BattleOutcome from '../../auth/battle-outcome';
+import BattleOutcome from '../../model/battle-outcome';
 import { asOutcome, isBattleLost, isRaidLost } from './outcome';
 
 /**
  * The lobby itself: looking at one, opening one, leaving one, and
  * watching one from outside
  */
+/** The rolls standing on raid landmarks of this kind this window */
+function lairRolls(snapshot: ChunkSnapshot, kind: RaidKind): Map<number, RaidRoll> {
+  if (kind === RaidKind.Totem) {
+    return snapshot.getTotems();
+  }
+  if (kind === RaidKind.Max) {
+    return snapshot.getMaxRaids();
+  }
+  if (kind === RaidKind.Alpha) {
+    return snapshot.getAlphaRaids();
+  }
+  if (kind === RaidKind.Noble) {
+    return snapshot.getNobleRaids();
+  }
+  if (kind === RaidKind.Tera) {
+    return snapshot.getTeraRaids();
+  }
+  return kind === RaidKind.Shadow ? snapshot.getShadowLairs() : snapshot.getLegendaryLairs();
+}
+
 /**
  * Look at a lair without staging anything.
  *
@@ -56,10 +76,7 @@ export async function peekRaid(
   const chunk = getWorld(depth).getChunk(x, y);
   const zone = asOffset(offset);
   const snapshot = new ChunkSnapshot(chunk, toLocalTime(now, zone), zone);
-  const roll =
-    kind === RaidKind.Shadow
-      ? snapshot.getShadowLairs().get(cell)
-      : snapshot.getLegendaryLairs().get(cell);
+  const roll = lairRolls(snapshot, kind).get(cell);
 
   if (roll == null) {
     return null;
@@ -150,10 +167,7 @@ export async function enterRaid(
   const chunk = getWorld(depth).getChunk(x, y);
   const zone = asOffset(offset);
   const snapshot = new ChunkSnapshot(chunk, toLocalTime(now, zone), zone);
-  const roll =
-    kind === RaidKind.Shadow
-      ? snapshot.getShadowLairs().get(cell)
-      : snapshot.getLegendaryLairs().get(cell);
+  const roll = lairRolls(snapshot, kind).get(cell);
 
   if (roll == null) {
     return null;

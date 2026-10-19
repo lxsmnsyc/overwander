@@ -1,0 +1,270 @@
+land:
+  morning:
+    base:
+      Sandile: 1727
+      Scatterbug: 1657
+      Trapinch: 1381
+      Tepig: 207
+      Gible: 138
+    uncommon:
+      Silicobra: 300
+      Helioptile: 253
+      Sandygast: 232
+      Dwebble: 232
+      Darumaka: 232
+      Baltoy: 232
+      Cacnea: 211
+      Diglett: 211
+      BurmySandy: 211
+      Hippopotas: 211
+      Vullaby: 169
+      Drilbur: 169
+      Magmar: 53
+    rare:
+      Krokorok: 389
+      Vibrava: 389
+      Spewpa: 312
+      Pignite: 78
+      Gabite: 39
+    scarce:
+      Dugtrio: 84
+      Excadrill: 67
+      Crustle: 59
+      Darmanitan: 59
+      Palossand: 50
+      Heliolisk: 50
+      Mandibuzz: 50
+      Claydol: 50
+      Hippowdon: 50
+      Magmortar: 50
+      Sandaconda: 35
+      WormadamSandy: 34
+    elusive:
+      Maractus: 64
+      Sigilyph: 47
+      Vivillon: 40
+      Krookodile: 40
+      Flygon: 40
+      Solrock: 40
+      Emboar: 15
+      Garchomp: 15
+    prized:
+      Unown: forms
+      Magby: prized
+      Larvesta: prized
+      GreatTusk: 8
+      SandyShocks: 8
+      IronTreads: 8
+    special:
+      Pheromosa: 10
+      TapuBulu: 10
+      Volcarona: 10
+      Regirock: 10
+    mythical:
+      Hoopa: 10
+      Genesect: 10
+  day:
+    base:
+      Sandile: 1359
+      Scatterbug: 1305
+      Rhyhorn: 1087
+      Trapinch: 1087
+      Tepig: 163
+      Gible: 109
+    uncommon:
+      Silicobra: 300
+      Helioptile: 233
+      Sandygast: 214
+      Dwebble: 214
+      Darumaka: 214
+      Baltoy: 214
+      Cacnea: 194
+      Sandshrew: 194
+      Diglett: 194
+      BurmySandy: 194
+      Hippopotas: 194
+      Vullaby: 156
+      Drilbur: 156
+      Bramblin: 120
+      Capsakid: 120
+      Magmar: 48
+    rare:
+      Krokorok: 295
+      Vibrava: 295
+      Rhydon: 295
+      Spewpa: 236
+      Pignite: 59
+      Gabite: 29
+    scarce:
+      Sandslash: 73
+      Dugtrio: 73
+      Excadrill: 59
+      Crustle: 51
+      Darmanitan: 51
+      Scovillain: 50
+      Palossand: 44
+      Heliolisk: 44
+      Mandibuzz: 44
+      Claydol: 44
+      Hippowdon: 44
+      Magmortar: 44
+      Sandaconda: 35
+      WormadamSandy: 29
+    elusive:
+      Maractus: 64
+      Sigilyph: 47
+      Vivillon: 40
+      Krookodile: 40
+      Flygon: 40
+      Solrock: 40
+      Orthworm: 25
+      Emboar: 15
+      Garchomp: 15
+    prized:
+      Unown: forms
+      Magby: prized
+      Larvesta: prized
+      GreatTusk: 8
+      SandyShocks: 8
+      IronTreads: 8
+    special:
+      Pheromosa: 10
+      TapuBulu: 10
+      Volcarona: 10
+      Regirock: 10
+    mythical:
+      Hoopa: 10
+      Genesect: 10
+  evening:
+    base:
+      Gible: 410
+    uncommon:
+      Sandygast: 814
+      Yamask: 814
+      Baltoy: 814
+      Elgyem: 741
+      Sandshrew: 741
+      Diglett: 741
+      BurmySandy: 741
+      Skorupi: 741
+      Hippopotas: 741
+      Magmar: 184
+      YamaskGalar: 150
+      Bramblin: 120
+    rare:
+      Gabite: 410
+    scarce:
+      Sandslash: 238
+      Dugtrio: 238
+      Beheeyem: 167
+      Cofagrigus: 167
+      Palossand: 144
+      Cacturne: 144
+      Claydol: 144
+      Drapion: 144
+      Hippowdon: 144
+      Magmortar: 144
+      WormadamSandy: 96
+      Runerigus: 25
+    elusive:
+      Garchomp: 141
+    prized:
+      Unown: forms
+      Magby: prized
+      GreatTusk: 8
+      SandyShocks: 8
+      IronTreads: 8
+    special:
+      Pheromosa: 10
+      TapuBulu: 10
+      Regirock: 10
+    mythical:
+      Hoopa: 10
+      Genesect: 10
+  night:
+    base:
+      Gible: 410
+    uncommon:
+      Sandygast: 814
+      Yamask: 814
+      Baltoy: 814
+      Elgyem: 741
+      Diglett: 741
+      Cubone: 741
+      BurmySandy: 741
+      Skorupi: 741
+      Hippopotas: 741
+      Magmar: 184
+      YamaskGalar: 150
+    rare:
+      Gabite: 410
+    scarce:
+      Dugtrio: 238
+      Marowak: 238
+      Beheeyem: 167
+      Cofagrigus: 167
+      Palossand: 144
+      Cacturne: 144
+      Claydol: 144
+      Drapion: 144
+      Hippowdon: 144
+      Magmortar: 144
+      WormadamSandy: 96
+      Runerigus: 25
+    elusive:
+      Garchomp: 141
+    prized:
+      Unown: forms
+      Magby: prized
+      GreatTusk: 8
+      SandyShocks: 8
+      IronTreads: 8
+    special:
+      Pheromosa: 10
+      TapuBulu: 10
+      Regirock: 10
+    mythical:
+      Hoopa: 10
+      Genesect: 10
+
+water:
+  morning: &water-morning
+    base: {}
+    uncommon:
+      Magikarp: 2274
+      Barboach: 1895
+      Baltoy: 1668
+      Vullaby: 1213
+      Feebas: 758
+    rare: { Vibrava: 1253 }
+    scarce:
+      Whiscash: 186
+      Mandibuzz: 139
+      Claydol: 139
+      Gyarados: 93
+      Milotic: 69
+    special: {}
+    elusive:
+      Sigilyph: 89
+      Vivillon: 74
+      Flygon: 74
+      Solrock: 74
+  day: *water-morning
+  evening: &water-evening
+    base: {}
+    uncommon:
+      Magikarp: 3124
+      Barboach: 2603
+      Baltoy: 2290
+      Feebas: 1041
+    rare: {}
+    scarce:
+      Whiscash: 358
+      Claydol: 269
+      Gyarados: 179
+      Milotic: 134
+    special: {}
+  night: *water-evening
+
+# The legendaries met wild in the caves under it
+cave-legends: { Regirock: 10, Volcarona: 10 }

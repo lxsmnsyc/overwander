@@ -1,0 +1,52 @@
+# From Pluck to Close Combat: what a team does for itself, and the
+# two moves that pay for their damage
+
+Pluck:
+  type: Flying
+  category: Physical
+  power: 60
+  accuracy: 100
+  pp: 20
+  target: Unit
+  flags: [Contact]
+
+Tailwind:
+  type: Flying
+  category: Status
+  pp: 15
+  target: Team
+  affects: [Team, Own]
+  flags: [Wind]
+
+Acupressure:
+  type: Normal
+  category: Status
+  pp: 30
+  target: Unit
+  affects: [Unit, Own]
+
+MetalBurst:
+  type: Steel
+  category: Physical
+  accuracy: 100
+  pp: 10
+  target: Unit
+
+UTurn:
+  type: Bug
+  category: Physical
+  power: 70
+  accuracy: 100
+  pp: 20
+  target: Unit
+  flags: [Contact]
+  steps: 1
+
+CloseCombat:
+  type: Fighting
+  category: Physical
+  power: 120
+  accuracy: 100
+  pp: 5
+  target: Unit
+  flags: [Contact]

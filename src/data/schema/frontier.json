@@ -1,0 +1,63 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Frontier Brains",
+  "type": "object",
+  "propertyNames": {
+    "$ref": "names.json#/definitions/frontier-brain"
+  },
+  "additionalProperties": {
+    "type": "object",
+    "properties": {
+      "rule": {
+        "$ref": "names.json#/definitions/frontier-rule",
+        "description": "The house rule the fight is held under"
+      },
+      "crown": {
+        "$ref": "names.json#/definitions/award",
+        "description": "The region crown they ask to see"
+      },
+      "sheets": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "minItems": 1,
+        "description": "The charsets they are seen in"
+      },
+      "symbols": {
+        "type": "array",
+        "items": {
+          "$ref": "names.json#/definitions/award"
+        },
+        "minItems": 2,
+        "maxItems": 2,
+        "description": "The silver symbol, then the gold"
+      },
+      "party": {
+        "type": "array",
+        "items": {
+          "$ref": "names.json#/definitions/species"
+        },
+        "maxItems": 3,
+        "description": "The three they field first; empty when the house draws them"
+      },
+      "gold-party": {
+        "type": "array",
+        "items": {
+          "$ref": "names.json#/definitions/species"
+        },
+        "maxItems": 3,
+        "description": "The three once the challenger holds the silver"
+      }
+    },
+    "required": [
+      "rule",
+      "crown",
+      "sheets",
+      "symbols",
+      "party",
+      "gold-party"
+    ],
+    "additionalProperties": false
+  }
+}

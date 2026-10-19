@@ -1,0 +1,30 @@
+Purify:
+  name: Purify
+  description: Cures the target's status and heals the user 1/2 its HP. Fails if there is nothing to cure.
+RevelationDance:
+  name: Revelation Dance
+  description: Thrown as the user's first type.
+CoreEnforcer:
+  name: Core Enforcer
+  description: Hits everything opposite, and takes an ability off each one it hits that is not winding up a move.
+TropKick:
+  name: Trop Kick
+  description: Always drops the target's Attack a stage.
+Instruct:
+  name: Instruct
+  description: The target throws the move it threw last again, at once.
+BeakBlast:
+  name: Beak Blast
+  description: A long wind-up, and anything that touches the user during it is burned.
+ClangingScales:
+  name: Clanging Scales
+  description: Hits everything opposite, then drops the user's Defense a stage. It is a sound.
+DragonHammer:
+  name: Dragon Hammer
+  description: Plain contact damage.
+BrutalSwing:
+  name: Brutal Swing
+  description: Hits everything opposite and the user's teammates.
+AuroraVeil:
+  name: Aurora Veil
+  description: Cuts physical and special damage against the user's side by 1/3 for 10 seconds. It fails outside hail or snow.

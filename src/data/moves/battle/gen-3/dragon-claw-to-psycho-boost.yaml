@@ -1,0 +1,147 @@
+# From Dragon Claw to Psycho Boost: the last stretch of Hoenn's list,
+# the setup moves and what the legendaries keep to themselves
+
+DragonClaw:
+  type: Dragon
+  category: Physical
+  power: 80
+  accuracy: 100
+  pp: 15
+  target: Unit
+  flags: [Contact]
+
+FrenzyPlant:
+  type: Grass
+  category: Special
+  power: 150
+  accuracy: 90
+  pp: 5
+  target: Unit
+
+BulkUp:
+  type: Fighting
+  category: Status
+  pp: 20
+  target: None
+
+Bounce:
+  type: Flying
+  category: Physical
+  power: 85
+  accuracy: 85
+  pp: 5
+  target: Unit
+  flags: [Contact]
+  steps: 1
+
+MudShot:
+  type: Ground
+  category: Special
+  power: 55
+  accuracy: 95
+  pp: 15
+  target: Unit
+  projectile: true
+
+PoisonTail:
+  type: Poison
+  category: Physical
+  power: 50
+  accuracy: 100
+  pp: 25
+  target: Unit
+  flags: [Contact]
+
+Covet:
+  type: Normal
+  category: Physical
+  power: 60
+  accuracy: 100
+  pp: 25
+  target: Unit
+  flags: [Contact]
+
+VoltTackle:
+  type: Electric
+  category: Physical
+  power: 120
+  accuracy: 100
+  pp: 15
+  target: Unit
+  flags: [Contact]
+
+MagicalLeaf:
+  type: Grass
+  category: Special
+  power: 60
+  pp: 20
+  target: Unit
+  projectile: true
+
+WaterSport:
+  type: Water
+  category: Status
+  pp: 15
+  target: None
+
+CalmMind:
+  type: Psychic
+  category: Status
+  pp: 20
+  target: None
+
+LeafBlade:
+  type: Grass
+  category: Physical
+  power: 90
+  accuracy: 100
+  pp: 15
+  target: Unit
+  flags: [Contact, Slicing]
+
+DragonDance:
+  type: Dragon
+  category: Status
+  pp: 20
+  target: None
+
+RockBlast:
+  type: Rock
+  category: Physical
+  power: 25
+  accuracy: 90
+  pp: 10
+  target: Unit
+  projectile: true
+
+ShockWave:
+  type: Electric
+  category: Special
+  power: 60
+  pp: 20
+  target: Unit
+
+WaterPulse:
+  type: Water
+  category: Special
+  power: 60
+  accuracy: 100
+  pp: 20
+  target: Unit
+  projectile: true
+
+DoomDesire:
+  type: Steel
+  category: Special
+  power: 140
+  accuracy: 100
+  pp: 5
+  target: Unit
+
+PsychoBoost:
+  type: Psychic
+  category: Special
+  power: 140
+  accuracy: 90
+  pp: 5
+  target: Unit

@@ -1,7 +1,7 @@
 import { AttackPriority } from '../../core/event-emitter';
 import { MoveAttackFlags, Moves } from '../../data/ids/moves';
 import { TeamStatuses } from '../../data/ids/status';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, EffectType } from '../events';
 
 /**
@@ -13,7 +13,7 @@ import { BattleEvents, EffectType } from '../events';
 const SCREENS = [TeamStatuses.Reflect, TeamStatuses.LightScreen, TeamStatuses.AuroraVeil];
 
 /** Brick Break, and Psychic Fangs which bites through the same way */
-const SCREEN_BREAKERS = new Set<Moves>([Moves.BrickBreak, Moves.PsychicFangs]);
+const SCREEN_BREAKERS = new Set<Moves>([Moves.BrickBreak, Moves.PsychicFangs, Moves.RagingBull]);
 
 export default function setupBrickBreak(battle: Battle): void {
   battle.on(BattleEvents.UnitAttack, AttackPriority.Pre, (event) => {

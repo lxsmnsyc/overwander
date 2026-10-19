@@ -1,0 +1,4 @@
+EscapeRope:
+  type: KeyItem
+  icon: other/escape-rope
+  flags: [Consumable, Usable]

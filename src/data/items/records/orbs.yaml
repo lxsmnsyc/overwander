@@ -1,0 +1,23 @@
+# None of them is consumed: an orb keeps doing what it does for as long
+# as it is carried, which is the point of it
+
+FlameOrb:
+  type: Held
+  icon: held/flame-orb
+  flags: [Holdable, Marketable]
+  buy: 6000
+  sell: 3000
+
+ToxicOrb:
+  type: Held
+  icon: held/toxic-orb
+  flags: [Holdable, Marketable]
+  buy: 6000
+  sell: 3000
+
+LifeOrb:
+  type: Held
+  icon: held/life-orb
+  flags: [Holdable, Marketable]
+  buy: 6000
+  sell: 3000

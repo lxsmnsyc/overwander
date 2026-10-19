@@ -1,7 +1,7 @@
 import { AttackPriority } from '../../core/event-emitter';
 import { Stages } from '../../data/constants/stats';
 import { Moves } from '../../data/ids/moves';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, EffectType } from '../events';
 
 /**
@@ -13,6 +13,10 @@ const CHARGE_STAGE_MOVES: {
 } = {
   // https://bulbapedia.bulbagarden.net/wiki/Skull_Bash_(move)
   [Moves.SkullBash]: { stage: Stages.Defense, value: 1 },
+  // https://bulbapedia.bulbagarden.net/wiki/Meteor_Beam_(move)
+  [Moves.MeteorBeam]: { stage: Stages.SpecialAttack, value: 1 },
+  // https://bulbapedia.bulbagarden.net/wiki/Electro_Shot_(move)
+  [Moves.ElectroShot]: { stage: Stages.SpecialAttack, value: 1 },
 };
 
 export default function setupChargeMoves(battle: Battle): void {

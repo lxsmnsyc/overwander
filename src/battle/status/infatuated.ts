@@ -1,7 +1,7 @@
 import { EventPriority } from '../../core/event-emitter';
 import { Genders } from '../../data/ids/species';
 import { Statuses } from '../../data/ids/status';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, type EffectCause, EffectType } from '../events';
 import type Unit from '../unit';
 

@@ -12,6 +12,7 @@ export {
   GYM_LEADER_LATER_CHARSETS,
   GYM_LEADER_NAMES,
   GYM_LEADER_PRIZE_CHARSETS,
+  GYM_LEADER_SIGNATURES,
   GYM_LEADER_TYPES,
   GymLeader,
   rollGymMachine,
@@ -22,6 +23,8 @@ export {
   ELITE_MEMBER_CHARSETS,
   ELITE_MEMBER_HONORS,
   ELITE_MEMBER_NAMES,
+  ELITE_MEMBER_POOLS,
+  ELITE_MEMBER_SIGNATURES,
   ELITE_MEMBER_TYPES,
   EliteMember,
   getEliteBadges,
@@ -46,10 +49,7 @@ export {
   Legend,
 } from './legends';
 export {
-  ELITE_MEMBER_POOLS,
-  ELITE_MEMBER_SIGNATURES,
   EXPERT_PARTY_SIZE,
-  GYM_LEADER_SIGNATURES,
   getEliteMemberRoster,
   getGymLeaderPool,
   getGymLeaderRoster,

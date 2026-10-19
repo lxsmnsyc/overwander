@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Trainer class text",
+  "type": "object",
+  "propertyNames": {
+    "$ref": "names.json#/definitions/trainer"
+  },
+  "additionalProperties": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string",
+        "description": "What the mainline calls the class"
+      },
+      "quote": {
+        "type": "string",
+        "description": "What it says as the duel is put to the player"
+      }
+    },
+    "required": [
+      "name",
+      "quote"
+    ],
+    "additionalProperties": false
+  }
+}

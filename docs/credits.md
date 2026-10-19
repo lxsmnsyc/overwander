@@ -69,8 +69,8 @@ stored once, cropped to the pixels that are lit, wherever the packer put it; a
 frame says which picture it draws, whether it is mirrored, and where that picture
 hangs inside the clip's box. Two animations that share a drawing point at one copy
 of it, and every coat of a pokemon is packed to one layout, so a shiny is a second
-PNG over the same frames. `src/canvas/sprite-sheet.ts` is the whole of that
-contract and `src/canvas/species-sprite-animation.ts` plays it.
+PNG over the same frames. `src/canvas/sprites/sheet.ts` is the whole of that
+contract and `src/canvas/sprites/species-sprite-animation.ts` plays it.
 
 The art is **PMD sprites**, the layout Pokémon Mystery Dungeon fan projects use:
 eight facing rows per animation, an `anims` block, and an anchor for the pokemon's

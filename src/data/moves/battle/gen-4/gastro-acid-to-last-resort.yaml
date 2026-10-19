@@ -1,0 +1,60 @@
+# From Gastro Acid to Last Resort: the moves that go after what a
+# pokemon is rather than what it has left, and the three that trade
+# stat changes across the field
+
+GastroAcid:
+  type: Poison
+  category: Status
+  accuracy: 100
+  pp: 10
+  target: Unit
+
+LuckyChant:
+  type: Normal
+  category: Status
+  pp: 30
+  target: Team
+  affects: [Team, Own]
+  flags: [Sound]
+
+MeFirst:
+  type: Normal
+  category: Status
+  priority: 1
+  pp: 20
+  target: Unit
+
+Copycat:
+  type: Normal
+  category: Status
+  pp: 20
+  target: None
+
+PowerSwap:
+  type: Psychic
+  category: Status
+  pp: 10
+  target: Unit
+
+GuardSwap:
+  type: Psychic
+  category: Status
+  pp: 10
+  target: Unit
+
+Punishment:
+  type: Dark
+  category: Physical
+  accuracy: 100
+  pp: 5
+  target: Unit
+  flags: [Contact]
+
+LastResort:
+  type: Normal
+  category: Physical
+  power: 140
+  accuracy: 100
+  pp: 5
+  target: Unit
+  flags: [Contact]

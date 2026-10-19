@@ -1,0 +1,38 @@
+# Which phenomena each biome can host, drawn from uniformly every window.
+# The ground decides: open water ripples and does nothing else, a desert
+# raises dust and nothing else, and the places that are two things at
+# once host both of theirs. An empty list never shows one at all. The
+# order is part of the shared world, since the roll picks from it.
+
+DeepOcean: [RipplingWater]
+Ocean: [RipplingWater]
+CoralReef: [RipplingWater]
+# Sand and sea, so both
+Beach: [RipplingWater, DustCloud]
+Mangrove: [RipplingWater, HiddenGrotto]
+Swamp: [RipplingWater, HiddenGrotto]
+TropicalRainforest: [HiddenGrotto, FlyingShadow]
+TropicalSeasonalForest: [HiddenGrotto, FlyingShadow]
+Savanna: [DustCloud, FlyingShadow]
+Desert: [DustCloud]
+Shrubland: [HiddenGrotto, DustCloud]
+Grassland: [HiddenGrotto, FlyingShadow]
+TemperateForest: [HiddenGrotto, FlyingShadow]
+TemperateRainforest: [HiddenGrotto, RipplingWater]
+ColdDesert: [DustCloud]
+Taiga: [HiddenGrotto, FlyingShadow]
+Tundra: [DustCloud, FlyingShadow]
+Mountain: [DustCloud, FlyingShadow]
+AlpineTundra: [DustCloud, FlyingShadow]
+Volcano: [DustCloud, FlyingShadow]
+Glacier: [DustCloud]
+Woodland: [HiddenGrotto, FlyingShadow]
+Steppe: [DustCloud, FlyingShadow]
+MontaneForest: [HiddenGrotto, FlyingShadow]
+PolarOcean: [RipplingWater]
+Badlands: [DustCloud, FlyingShadow]
+RockyCoast: [RipplingWater, FlyingShadow]
+Bog: [RipplingWater, HiddenGrotto]
+KelpForest: [RipplingWater]
+# Nothing lives beyond the map, so nothing is startled out of it
+Beyond: []

@@ -1,0 +1,102 @@
+Wingull:
+  Wingull:
+    abilities: [KeenEye, Hydration]
+    hidden: [RainDish]
+  Pelipper:
+    abilities: [KeenEye, Drizzle]
+    hidden: [RainDish]
+Ralts:
+  Ralts:
+    abilities: [Synchronize, Trace]
+    hidden: [Telepathy]
+  Kirlia:
+    abilities: [Synchronize, Trace]
+    hidden: [Telepathy]
+  Gardevoir:
+    abilities: [Synchronize, Trace]
+    # Healer is this registry's rather than the mainline's: it is the
+    # one that puts itself between its trainer and the hit, and a
+    # final evolution is filled to four
+    hidden: [Telepathy, Healer]
+  Gallade:
+    abilities: [Steadfast, Sharpness]
+    hidden: [Justified]
+Surskit:
+  Surskit:
+    abilities: [SwiftSwim]
+    hidden: [RainDish]
+  Masquerain:
+    abilities: [Intimidate]
+    hidden: [Unnerve]
+Shroomish:
+  Shroomish:
+    abilities: [EffectSpore, PoisonHeal]
+    hidden: [QuickFeet]
+  Breloom:
+    abilities: [EffectSpore, PoisonHeal]
+    hidden: [Technician]
+Slakoth:
+  Slakoth:
+    abilities: [Truant]
+  Vigoroth:
+    abilities: [VitalSpirit]
+  Slaking:
+    abilities: [Truant]
+    # Comatose and Oblivious are this registry's rather than the
+    # mainline's: it sleeps through most of the fight either way, and
+    # a final evolution is filled to four
+    hidden: [Comatose, Oblivious]
+Nincada:
+  Nincada:
+    abilities: [CompoundEyes]
+    hidden: [RunAway]
+  Ninjask:
+    abilities: [SpeedBoost]
+    hidden: [Infiltrator]
+  Shedinja:
+    abilities: [WonderGuard]
+    # Cursed Body is this registry's rather than the mainline's: a
+    # husk that answers whatever touches it, and a final evolution is
+    # filled to four
+    hidden: [CursedBody]
+Whismur:
+  Whismur:
+    abilities: [Soundproof]
+    hidden: [Rattled]
+  Loudred:
+    abilities: [Soundproof]
+    hidden: [Scrappy]
+  Exploud:
+    abilities: [Soundproof]
+    # Berserk is this registry's rather than the mainline's: it gets
+    # louder the worse things go, and a final evolution is filled to
+    # four
+    hidden: [Scrappy, Berserk]
+Makuhita:
+  Makuhita:
+    abilities: [ThickFat, Guts]
+    hidden: [SheerForce]
+  Hariyama:
+    abilities: [ThickFat, Guts]
+    # One the mainline never gave it: a sumo digs in rather than
+    # stepping back, so every blow leaves it harder to move
+    hidden: [SheerForce, Stamina]
+Nosepass:
+  Nosepass:
+    abilities: [Sturdy, MagnetPull]
+    hidden: [SandForce]
+  Probopass:
+    abilities: [Sturdy, MagnetPull]
+    # Levitate is this registry's rather than the mainline's: the
+    # three small noses hang in the air around it, and Ground is the
+    # worst thing a Rock and Steel type meets
+    hidden: [SandForce, Levitate]
+Skitty:
+  Skitty:
+    abilities: [CuteCharm, Normalize]
+    hidden: [WonderSkin]
+  Delcatty:
+    abilities: [CuteCharm, Normalize]
+    # Limber is this registry's rather than the mainline's: a cat
+    # that never seizes up, and a final evolution is filled to four
+    hidden: [WonderSkin, Limber]

@@ -1,5 +1,5 @@
 import { createMiddleware } from '@solidjs/start/middleware';
-import { BUILD_HEADER, STALE_BUILD_HEADER, isStaleCall } from '../utils/build';
+import { BUILD_HEADER, STALE_BUILD_HEADER, isStaleCall } from '../model/build';
 
 /** The site's own address when it is https, which only production's is */
 function secureSite(): string | null {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { AttackPriority } from '../../../src/core/event-emitter';
-import type Battle from '../../../src/battle/core';
+import type Battle from '../../../src/battle/battle';
 import { BattleEvents, EffectType, MoveTargetType } from '../../../src/battle/events';
 import type Unit from '../../../src/battle/unit';
 import { Stages, Stats, StatsKind } from '../../../src/data/constants/stats';

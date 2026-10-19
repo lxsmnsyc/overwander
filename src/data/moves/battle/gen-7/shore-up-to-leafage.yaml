@@ -1,0 +1,103 @@
+# From Shore Up to Leafage, the first of Alola's own
+
+ShoreUp:
+  type: Ground
+  category: Status
+  pp: 5
+  target: None
+
+FirstImpression:
+  type: Bug
+  category: Physical
+  power: 90
+  accuracy: 100
+  priority: 2
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+BanefulBunker:
+  type: Poison
+  category: Status
+  priority: 4
+  pp: 10
+  target: None
+
+SpiritShackle:
+  type: Ghost
+  category: Physical
+  power: 80
+  accuracy: 100
+  pp: 10
+  target: Unit
+  projectile: true
+
+DarkestLariat:
+  type: Dark
+  category: Physical
+  power: 85
+  accuracy: 100
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+SparklingAria:
+  type: Water
+  category: Special
+  power: 90
+  accuracy: 100
+  pp: 10
+  target: None
+  affects: [Unit, Own, Enemy]
+  flags: [Sound]
+
+IceHammer:
+  type: Ice
+  category: Physical
+  power: 100
+  accuracy: 90
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+FloralHealing:
+  type: Fairy
+  category: Status
+  pp: 10
+  target: Unit
+  affects: [Unit, Own, Enemy]
+
+HighHorsepower:
+  type: Ground
+  category: Physical
+  power: 95
+  accuracy: 95
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+StrengthSap:
+  type: Grass
+  category: Status
+  accuracy: 100
+  pp: 10
+  target: Unit
+
+SolarBlade:
+  type: Grass
+  category: Physical
+  power: 125
+  accuracy: 100
+  pp: 10
+  target: Unit
+  flags: [Contact, Slicing]
+  steps: 1
+
+Leafage:
+  type: Grass
+  category: Physical
+  power: 40
+  accuracy: 100
+  pp: 40
+  target: Unit
+  projectile: true

@@ -1,0 +1,104 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Species: stats",
+  "type": "object",
+  "propertyNames": {
+    "$ref": "names.json#/definitions/family"
+  },
+  "additionalProperties": {
+    "type": "object",
+    "description": "A family, with each of its species beneath it",
+    "properties": {},
+    "propertyNames": {
+      "$ref": "names.json#/definitions/species"
+    },
+    "additionalProperties": {
+      "type": "object",
+      "properties": {
+        "stats": {
+          "type": "object",
+          "properties": {
+            "HP": {
+              "type": "number",
+              "minimum": 0
+            },
+            "Attack": {
+              "type": "number",
+              "minimum": 0
+            },
+            "Defense": {
+              "type": "number",
+              "minimum": 0
+            },
+            "SpecialAttack": {
+              "type": "number",
+              "minimum": 0
+            },
+            "SpecialDefense": {
+              "type": "number",
+              "minimum": 0
+            },
+            "Speed": {
+              "type": "number",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "HP",
+            "Attack",
+            "Defense",
+            "SpecialAttack",
+            "SpecialDefense",
+            "Speed"
+          ],
+          "additionalProperties": false
+        },
+        "catch-rate": {
+          "type": "number",
+          "minimum": 0,
+          "description": "From 3, hardest, to 255, easiest"
+        },
+        "height": {
+          "type": "number",
+          "minimum": 0,
+          "description": "In meters"
+        },
+        "weight": {
+          "type": "number",
+          "minimum": 0,
+          "description": "In kilograms"
+        },
+        "gender": {
+          "anyOf": [
+            {
+              "const": "genderless"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "minimum": 0
+              },
+              "minItems": 2,
+              "maxItems": 2
+            }
+          ],
+          "description": "Male to female, as `[1, 1]`, or `genderless`"
+        },
+        "egg-cycles": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Hatch cycles, where not the default 20"
+        }
+      },
+      "required": [
+        "stats",
+        "catch-rate",
+        "height",
+        "weight",
+        "gender"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

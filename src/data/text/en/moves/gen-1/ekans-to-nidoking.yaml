@@ -1,0 +1,45 @@
+Wrap:
+  name: Wrap
+  description: 'Binds the target: 1/8 of its HP every 2 seconds for 8 seconds, and no escape, ghosts aside.'
+Glare:
+  name: Glare
+  description: Paralyses the target.
+Screech:
+  name: Screech
+  description: Drops the target's Defense 2 stages. It is a sound.
+Acid:
+  name: Acid
+  description: Hits everything opposite, 10% to drop the target's Special Defense a stage.
+RockSlide:
+  name: Rock Slide
+  description: Hits everything opposite, 30% to flinch.
+ThunderShock:
+  name: Thunder Shock
+  description: 10% to paralyse.
+ThunderWave:
+  name: Thunder Wave
+  description: Paralyses the target.
+Thunder:
+  name: Thunder
+  description: 30% to paralyse. Never misses in rain, 50% accuracy in sun.
+Thunderbolt:
+  name: Thunderbolt
+  description: 10% to paralyse.
+PayDay:
+  name: Pay Day
+  description: Scatters coins worth 5x the user's level, paid out after the fight.
+FurySwipes:
+  name: Fury Swipes
+  description: Strikes 2 to 5 times.
+DoubleKick:
+  name: Double Kick
+  description: Strikes 2 times.
+HornAttack:
+  name: Horn Attack
+  description: Plain contact damage.
+HornDrill:
+  name: Horn Drill
+  description: Takes the target's whole health, at 30% accuracy. Sturdy shrugs it off.
+Thrash:
+  name: Thrash
+  description: Lands the same hit 3 times over, and leaves the user confused.

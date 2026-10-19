@@ -1,4 +1,4 @@
-import { readOnly } from '../utils/server-calls';
+import { readOnly } from './server-calls';
 import type { PlayerIdentity } from '../auth/user';
 import { BALL_ITEMS, type Balls, type Items } from '../data/ids/items';
 import SafariSession, {
@@ -10,7 +10,7 @@ import SafariSession, {
   asSafariTally,
   encounterKey,
 } from '../overworld/safari';
-import { safariContextOf } from '../overworld/safari-context';
+import { safariContextOf } from '../overworld/safari/context';
 import { requireReader, requireUid, requireUidFor } from '../server/auth';
 import { Feature } from '../server/switches';
 import { Pace } from '../server/pace';
@@ -21,8 +21,8 @@ import { buddyEffectsOf, resolveBuddy } from './buddy';
 import { hasCaughtSpecies } from './caught';
 import { getCaughtSpeciesCount } from './pokedex';
 import { syncServerClock } from './clock';
-import { getLocalOffset, getLocale } from './local-time';
-import { type EncounterRecord, asEncounterRecord } from './encounter-record';
+import { getLocalOffset, getLocale } from '../model/local-time';
+import { type EncounterRecord, asEncounterRecord } from '../model/encounter-record';
 import { getInventory } from './inventory';
 import getIdToken from './session';
 

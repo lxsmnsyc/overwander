@@ -1,0 +1,211 @@
+land:
+  morning: &land-morning
+    base:
+      Scatterbug: 4166
+      Popplio: 348
+      Squirtle: 348
+    uncommon:
+      Clobbopus: 241
+      Wingull: 234
+      Shellos: 234
+      Buizel: 234
+      Binacle: 225
+      GrimerAlola: 206
+      Sandygast: 206
+      Wimpod: 206
+      Psyduck: 188
+      Slowpoke: 188
+      Krabby: 188
+      BurmySandy: 188
+      SlowpokeGalar: 150
+      CorsolaGalar: 150
+      Wattrel: 120
+      Wiglett: 120
+    rare:
+      Spewpa: 835
+      Brionne: 209
+      Wartortle: 105
+    scarce:
+      Golduck: 56
+      Slowbro: 56
+      Kingler: 56
+      Pelipper: 56
+      Gastrodon: 56
+      Kilowattrel: 50
+      Wugtrio: 50
+      Floatzel: 45
+      ExeggutorAlola: 34
+      MukAlola: 34
+      Palossand: 34
+      Golisopod: 34
+      Barbaracle: 34
+      Vaporeon: 29
+      Slowking: 29
+      Grapploct: 29
+      Cursola: 25
+      WormadamSandy: 23
+      SlowbroGalar: 15
+      SlowkingGalar: 15
+    elusive:
+      Cramorant: 173
+      Pyukumuku: 63
+      OricorioPau: 63
+      Vivillon: 63
+      RaichuAlola: 50
+      Primarina: 25
+      Blastoise: 25
+    prized:
+      Unown: forms
+      TypeNull: prized
+    special:
+      Silvally: 10
+      Groudon: 10
+      Rayquaza: 10
+      MoltresGalar: 10
+    mythical:
+      Deoxys: 10
+  day: *land-morning
+  evening: &land-evening
+    base: {}
+    uncommon:
+      Shellos: 1175
+      Buizel: 1175
+      Inkay: 1128
+      GrimerAlola: 1034
+      Sandygast: 1034
+      Wimpod: 1034
+      Krabby: 940
+      BurmySandy: 940
+      Clobbopus: 245
+      CorsolaGalar: 150
+      Wiglett: 120
+    rare: {}
+    scarce:
+      Kingler: 87
+      Gastrodon: 87
+      Floatzel: 71
+      ExeggutorAlola: 52
+      MukAlola: 52
+      Palossand: 52
+      Golisopod: 52
+      Malamar: 52
+      Wugtrio: 50
+      Vaporeon: 44
+      WormadamSandy: 34
+      Grapploct: 29
+      Cursola: 25
+    elusive:
+      Cramorant: 177
+      Pyukumuku: 163
+      RaichuAlola: 131
+    prized:
+      Unown: forms
+      TypeNull: prized
+    special:
+      Silvally: 10
+      Groudon: 10
+      Rayquaza: 10
+      MoltresGalar: 10
+    mythical:
+      Deoxys: 10
+  night: *land-evening
+
+water:
+  morning: &water-morning
+    base:
+      Horsea: 3632
+      Popplio: 727
+      Squirtle: 727
+    uncommon:
+      Shellos: 210
+      Wingull: 210
+      Buizel: 210
+      Crabrawler: 201
+      Binacle: 201
+      Mareanie: 184
+      Wimpod: 184
+      Shellder: 167
+      Krabby: 167
+      Tentacool: 167
+      Goldeen: 167
+      Psyduck: 167
+      Slowpoke: 167
+      SlowpokeGalar: 120
+      CorsolaGalar: 120
+    rare:
+      Seadra: 751
+      Brionne: 301
+      Wartortle: 150
+    scarce:
+      Cloyster: 53
+      Kingler: 53
+      Gastrodon: 53
+      Pelipper: 53
+      Seaking: 53
+      Golduck: 53
+      Slowbro: 53
+      Tentacruel: 42
+      Floatzel: 42
+      Toxapex: 32
+      Golisopod: 32
+      Barbaracle: 32
+      Vaporeon: 26
+      Slowking: 26
+      Cursola: 20
+    elusive:
+      Cramorant: 146
+      Corsola: 99
+      Luvdisc: 75
+      Pyukumuku: 25
+      OricorioPau: 25
+      Vivillon: 25
+      RaichuAlola: 20
+      Primarina: 10
+      Kingdra: 10
+      Blastoise: 10
+    special:
+      Kyogre: 10
+  day: *water-morning
+  evening: &water-evening
+    base:
+      Horsea: 2913
+    uncommon:
+      Shellos: 374
+      Buizel: 374
+      Inkay: 359
+      Crabrawler: 359
+      Mareanie: 329
+      Wimpod: 329
+      Shellder: 300
+      Krabby: 300
+      Tentacool: 300
+      Staryu: 300
+      Goldeen: 300
+      CorsolaGalar: 120
+    rare:
+      Seadra: 1813
+    scarce:
+      Cloyster: 102
+      Kingler: 102
+      Gastrodon: 102
+      Starmie: 102
+      Seaking: 102
+      Tentacruel: 82
+      Floatzel: 82
+      Toxapex: 61
+      Malamar: 61
+      Golisopod: 61
+      Vaporeon: 50
+      Cursola: 20
+    elusive:
+      Corsola: 293
+      Cramorant: 148
+      Pyukumuku: 73
+      RaichuAlola: 58
+      Kingdra: 30
+    special:
+      Kyogre: 10
+  night: *water-evening
+
+# The legendaries met wild in the caves under it
+cave-legends: { Kyogre: 10, Groudon: 10, Rayquaza: 10 }

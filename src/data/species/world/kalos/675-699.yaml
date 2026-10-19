@@ -1,0 +1,277 @@
+Furfrou:
+  # The poodle, in the coat it grows itself. The nine trims a groomer
+  # cuts are held back until they are drawn, so there is one shape here
+  # and the salon comes later
+  Furfrou:
+    types: [Normal]
+    egg-groups: [Field]
+    biomes: [Grassland, Woodland, Shrubland]
+    active: [Morning, Day, Evening]
+Espurr:
+  # The wood the cats keep to, both stages alike
+
+  # What both sexes share: the same body, met in the same wood
+
+  # The cats that hold their own psychic power in. An Espurr keeps it
+  # behind its ears; a Meowstic opens them and lets it out.
+
+  # The two sexes grow into different pokemon: he props screens up and
+  # she throws, which the mainline says with different abilities and
+  # different moves rather than with a recolour
+  Espurr:
+    types: [Psychic]
+    egg-groups: [Field]
+    biomes: [Woodland, TemperateForest]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Meowstic
+        method: [Level, Gender]
+        level: 25
+        gender: Male
+      - species: MeowsticFemale
+        method: [Level, Gender]
+        level: 25
+        gender: Female
+  Meowstic:
+    types: [Psychic]
+    egg-groups: [Field]
+    biomes: [Woodland, TemperateForest]
+    active: [Evening, Night]
+    evolves-from: Espurr
+  MeowsticFemale:
+    types: [Psychic]
+    egg-groups: [Field]
+    biomes: [Woodland, TemperateForest]
+    active: [Evening, Night]
+    # Her own pokemon rather than his coat: she is drawn again, she
+    # is born Competitive where he is born Prankster, and she learns
+    # to throw where he learns to guard
+    base-form: false
+    evolves-from: Espurr
+Honedge:
+  # Ruins and bare rock, where a sword is left lying
+
+  # What the royal sword carries whichever way round it is standing
+
+  # The haunted sword. It is drawn as a shield until it swings, and
+  # Stance Change is what turns it over mid-fight
+  Honedge:
+    types: [Steel, Ghost]
+    egg-groups: [Mineral]
+    biomes: [Badlands, Mountain]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Doublade
+        method: [Level]
+        level: 35
+  Doublade:
+    types: [Steel, Ghost]
+    egg-groups: [Mineral]
+    biomes: [Badlands, Mountain]
+    active: [Evening, Night]
+    evolves-from: Honedge
+    evolves-into:
+      - species: Aegislash
+        method: [UsedItem]
+        item: DuskStone
+  Aegislash:
+    types: [Steel, Ghost]
+    egg-groups: [Mineral]
+    biomes: [Badlands, Mountain]
+    active: [Evening, Night]
+    evolves-from: Doublade
+  AegislashBlade:
+    types: [Steel, Ghost]
+    egg-groups: [Mineral]
+    active: any
+    # Drawing the sword puts everything behind the edge and nothing
+    # behind the shield
+    base-form: false
+    evolves-from: Doublade
+Spritzee:
+  # The perfume bird and the fragrance it becomes, met where flowers
+  # grow under trees: the woodland and forest counterpart of Swirlix,
+  # which keeps to the open grass
+  Spritzee:
+    types: [Fairy]
+    egg-groups: [Fairy]
+    biomes: [Woodland, TemperateForest]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Aromatisse
+        method: [HeldItem, Trade]
+        item: Sachet
+  Aromatisse:
+    types: [Fairy]
+    egg-groups: [Fairy]
+    biomes: [Woodland, TemperateForest]
+    active: [Morning, Day]
+    evolves-from: Spritzee
+Swirlix:
+  # The open country the sweet shop keeps to
+
+  # The cotton dog that eats sugar and is made of it. Whatever it
+  # finishes off is handed round the rest of the team, which is what
+  # its signature pays out
+  Swirlix:
+    types: [Fairy]
+    egg-groups: [Fairy]
+    biomes: [Grassland, Shrubland]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Slurpuff
+        method: [HeldItem, Trade]
+        item: WhippedDream
+  Slurpuff:
+    types: [Fairy]
+    egg-groups: [Fairy]
+    biomes: [Grassland, Shrubland]
+    active: [Morning, Day]
+    evolves-from: Swirlix
+Inkay:
+  # The dark shallows both shapes hang in
+
+  # The squid that hangs upside down and talks whoever looks at it into
+  # doing the same. Its lights are the whole trick: what an enemy has
+  # built up comes off it rather than being matched
+  Inkay:
+    types: [Dark, Psychic]
+    egg-groups: [Water1]
+    habitat: Amphibious
+    biomes: [Beach, KelpForest]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Malamar
+        method: [Level, KnownMove]
+        level: 30
+        move: TopsyTurvy
+  Malamar:
+    types: [Dark, Psychic]
+    egg-groups: [Water1]
+    habitat: Amphibious
+    biomes: [Beach, KelpForest]
+    active: [Evening, Night]
+    evolves-from: Inkay
+Binacle:
+  # The rocks they hold on to, above the tideline
+
+  # The two hands on a rock, and the seven that hold each other. A
+  # Barbaracle is a Binacle's limbs grown into a crew, which is why it
+  # argues with itself over where to walk
+  Binacle:
+    types: [Rock, Water]
+    egg-groups: [Water3]
+    habitat: Amphibious
+    biomes: [RockyCoast, Beach]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Barbaracle
+        method: [Level]
+        level: 39
+  Barbaracle:
+    types: [Rock, Water]
+    egg-groups: [Water3]
+    habitat: Amphibious
+    biomes: [RockyCoast, Beach]
+    active: [Morning, Day]
+    evolves-from: Binacle
+Skrelp:
+  # The weed beds it hides in, both stages alike
+
+  # The kelp that is not kelp. It lies in the weed until something
+  # comes close enough, and grows into a dragon that never has to move
+  Skrelp:
+    types: [Poison, Water]
+    egg-groups: [Water1, Dragon]
+    habitat: Water
+    biomes: [KelpForest, CoralReef]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Dragalge
+        method: [Level]
+        level: 48
+  Dragalge:
+    types: [Poison, Dragon]
+    egg-groups: [Water1, Dragon]
+    habitat: Water
+    biomes: [KelpForest, CoralReef]
+    active: [Morning, Day]
+    evolves-from: Skrelp
+Clauncher:
+  # The open water they shoot across, both stages alike
+
+  # The pistol shrimp. It fires water hard enough to crack a rock, and
+  # the claw only gets bigger
+  Clauncher:
+    types: [Water]
+    egg-groups: [Water1, Water3]
+    habitat: Water
+    biomes: [CoralReef, Ocean]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Clawitzer
+        method: [Level]
+        level: 37
+  Clawitzer:
+    types: [Water]
+    egg-groups: [Water1, Water3]
+    habitat: Water
+    biomes: [CoralReef, Ocean]
+    active: [Morning, Day]
+    evolves-from: Clauncher
+Helioptile:
+  # The dry ground the frills are worth something on
+
+  # The lizard that runs on light. Its frills are cells rather than
+  # ears, and what they take out of an enemy goes back down the line to
+  # whoever is standing with it
+  Helioptile:
+    types: [Electric, Normal]
+    egg-groups: [Monster, Dragon]
+    biomes: [Desert, Badlands]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Heliolisk
+        method: [UsedItem]
+        item: SunStone
+  Heliolisk:
+    types: [Electric, Normal]
+    egg-groups: [Monster, Dragon]
+    biomes: [Desert, Badlands]
+    active: [Morning, Day]
+    evolves-from: Helioptile
+Tyrunt:
+  # The jaw in the rock. Nothing comes out of a Jaw Fossil but this,
+  # and nothing in the world grows one any more, so the bench is the
+  # only road to it
+  Tyrunt:
+    types: [Rock, Dragon]
+    egg-groups: [Monster, Dragon]
+    active: any
+    evolves-into:
+      - species: Tyrantrum
+        method: [Level, TimeOfDay]
+        level: 39
+        time: [Morning, Day]
+  Tyrantrum:
+    types: [Rock, Dragon]
+    egg-groups: [Monster, Dragon]
+    active: any
+    evolves-from: Tyrunt
+Amaura:
+  # The sail in the rock. A Sail Fossil is the only road to it, and the
+  # lights it hangs over a cold night are what it was named for
+  Amaura:
+    types: [Rock, Ice]
+    egg-groups: [Monster]
+    active: any
+    evolves-into:
+      - species: Aurorus
+        method: [Level, TimeOfDay]
+        level: 39
+        time: [Night]
+  Aurorus:
+    types: [Rock, Ice]
+    egg-groups: [Monster]
+    active: any
+    evolves-from: Amaura

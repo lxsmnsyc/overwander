@@ -1,24 +1,27 @@
 // Snivy through Oshawott.
 
-import { BOSS_DAMAGE_CAP } from '../../../../src/battle/abilities/special';
+import { BOSS_DAMAGE_CAP } from '../../../../src/battle/abilities/special/index';
 import { describe, expect, it } from 'vitest';
 import { Stages, Stats, StatsKind } from '../../../../src/data/constants/stats';
 import { Types } from '../../../../src/data/constants/types';
 import Abilities from '../../../../src/data/ids/abilities';
-import { MoveCategories, Moves } from '../../../../src/data/ids/moves';
+import { MoveAttackFlags, MoveCategories, Moves } from '../../../../src/data/ids/moves';
 import { Items } from '../../../../src/data/ids/items';
 import { Genders, Species } from '../../../../src/data/ids/species';
 import { Statuses, TeamStatuses, Weathers } from '../../../../src/data/ids/status';
 import { BattleEvents, EffectType, MoveTargetType } from '../../../../src/battle/events';
 import type Unit from '../../../../src/battle/unit';
-import { HONED_STAGES } from '../../../../src/battle/abilities/signature/pawniard-to-vullaby';
+import { HONED_STAGES } from '../../../../src/battle/abilities/signature/gen-5/pawniard-to-vullaby';
 import {
   FROST_FANGS_SCALE,
   LATCH_ON_SHARE,
   SLEEVE_GUARD_SCALE,
-} from '../../../../src/battle/abilities/signature/tynamo-to-mienfoo';
-import { COAT_TYPES, TURNING_SCALE } from '../../../../src/battle/abilities/signature/deerling';
-import { GLIDEWAKE_CAP } from '../../../../src/battle/abilities/signature/emolga';
+} from '../../../../src/battle/abilities/signature/gen-5/tynamo-to-mienfoo';
+import {
+  COAT_TYPES,
+  TURNING_SCALE,
+} from '../../../../src/battle/abilities/signature/gen-5/deerling';
+import { GLIDEWAKE_CAP } from '../../../../src/battle/abilities/signature/gen-5/emolga';
 import {
   BAREHIDE_STAGES,
   DEEP_HOLD_STAGES,
@@ -28,50 +31,50 @@ import {
   SHELL_THIEF_STAGES,
   SHOCKMUD_SCALE,
   STILL_WATER_SCALE,
-} from '../../../../src/battle/abilities/signature/tirtouga-to-bouffalant';
+} from '../../../../src/battle/abilities/signature/gen-5/tirtouga-to-bouffalant';
 import {
   OVERCLOCK_SCALE,
   OVERCLOCK_SHARE,
   OVERCLOCK_THRESHOLD,
   WINNERS_SHARE_STAGES,
-} from '../../../../src/battle/abilities/signature/unova-mythicals';
+} from '../../../../src/battle/abilities/signature/gen-5/unova-mythicals';
 import {
   ANTEATER_SCALE,
   ANT_GUARD_SCALE,
   EMBER_HALO_SHARE,
-} from '../../../../src/battle/abilities/signature/heatmor-to-larvesta';
+} from '../../../../src/battle/abilities/signature/gen-5/heatmor-to-larvesta';
 import {
   SCORING_STAGES,
   SUNWARMED_SCALE,
   THREE_HEADS_SHARE,
-} from '../../../../src/battle/abilities/signature/axew-to-deino';
+} from '../../../../src/battle/abilities/signature/gen-5/axew-to-deino';
 import {
   BROKEN_SEAL_ATTACK,
   BROKEN_SEAL_DEFENSE,
   HEXLIGHT_SCALE,
-} from '../../../../src/battle/abilities/signature/elgyem-to-golett';
+} from '../../../../src/battle/abilities/signature/gen-5/elgyem-to-golett';
 import {
   DOZE_SHARE,
   STORM_DASH_STEP,
-} from '../../../../src/battle/abilities/signature/munna-to-blitzle';
+} from '../../../../src/battle/abilities/signature/gen-5/munna-to-blitzle';
 import {
   HURRY_VENOM_SCALE,
   TAILOR_SCALE,
-} from '../../../../src/battle/abilities/signature/sewaddle-to-petilil';
+} from '../../../../src/battle/abilities/signature/gen-5/sewaddle-to-petilil';
 import {
   AFTERSHOCK_SHARE,
   TORQUE_SCALE,
   TORQUE_WIND_UP,
-} from '../../../../src/battle/abilities/signature/roggenrola-to-drilbur';
+} from '../../../../src/battle/abilities/signature/gen-5/roggenrola-to-drilbur';
 import {
   GUARD_FACTOR,
   SPOTTER_ACCURACY,
-} from '../../../../src/battle/abilities/signature/patrat-to-purrloin';
+} from '../../../../src/battle/abilities/signature/gen-5/patrat-to-purrloin';
 import {
   LOAD_BEARING_DEALT,
   LOAD_BEARING_TAKEN,
   RIPPLE_OUT_FRACTION,
-} from '../../../../src/battle/abilities/signature/audino-to-sawk';
+} from '../../../../src/battle/abilities/signature/gen-5/audino-to-sawk';
 import {
   BLUE_BELT_SCALE,
   BONEWEAR_STAGES,
@@ -84,26 +87,26 @@ import {
   DRY_SPELL_SCALE,
   GLANCING_BLOW_FRACTION,
   SLAB_SHARE,
-} from '../../../../src/battle/abilities/signature/sandile-to-dwebble';
+} from '../../../../src/battle/abilities/signature/gen-5/sandile-to-dwebble';
 import {
   DEATH_MASK_STAGES,
   GANG_UP_STEP,
-} from '../../../../src/battle/abilities/signature/scraggy-to-trubbish';
+} from '../../../../src/battle/abilities/signature/gen-5/scraggy-to-trubbish';
 import {
   DIVISION_SHARE,
   FIXATION_SCALE,
-} from '../../../../src/battle/abilities/signature/zorua-to-solosis';
+} from '../../../../src/battle/abilities/signature/gen-5/zorua-to-solosis';
 import {
   MESHING_DEALT,
   MESHING_TAKEN,
   THORN_CURTAIN_SCALE,
-} from '../../../../src/battle/abilities/signature/joltik-to-klink';
+} from '../../../../src/battle/abilities/signature/gen-5/joltik-to-klink';
 import { CONTACT_RECOIL_FRACTION } from '../../../../src/battle/abilities/__create';
 import {
   BLOOD_WATER_STEP,
   SWAN_DANCE_STAGES,
   TIDE_POOL_SCALE,
-} from '../../../../src/battle/abilities/signature/basculin-to-alomomola';
+} from '../../../../src/battle/abilities/signature/gen-5/basculin-to-alomomola';
 import turns from '../../../../src/battle/turn';
 import { createBattle, createUnit, pinRandom } from '../../harness';
 import { NONE_CAUSE, act, dealDamage, resolveAttackDamage } from './helpers';
@@ -1453,6 +1456,31 @@ describe('what the dragon tower holds', () => {
 
     hydreigon.attack(bitten, Moves.DragonPulse, 40, Types.Dragon, MoveCategories.Special, 0);
     expect(other.health).toBe(alone);
+  });
+
+  it('leaves the AI weighing a move without biting anyone', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const hydreigon = createUnit(battle, teamA);
+    const bitten = createUnit(battle, teamB);
+    const other = createUnit(battle, teamB);
+
+    pinRandom(battle, 0);
+    hydreigon.addAbility(Abilities.ThreeHeads);
+    hydreigon.enter();
+    bitten.enter();
+    other.enter();
+
+    const side = other.health;
+
+    hydreigon.attack(
+      bitten,
+      Moves.DragonPulse,
+      40,
+      Types.Dragon,
+      MoveCategories.Special,
+      MoveAttackFlags.Simulated,
+    );
+    expect(other.health).toBe(side);
   });
 });
 

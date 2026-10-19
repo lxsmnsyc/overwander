@@ -14,7 +14,7 @@ import {
   RESTRAINT_PENALTY,
   RESTRAINT_RELEASE,
   TURN_THE_BLADE_SCALE,
-} from '../../../../src/battle/abilities/signature/espurr-to-klefki';
+} from '../../../../src/battle/abilities/signature/gen-6/espurr-to-klefki';
 import { createBattle, createUnit, pinRandom } from '../../harness';
 import { dealDamage } from './helpers';
 

@@ -9,7 +9,7 @@ import ThemeProvider from './components/app/theme';
 import settings, { loadSettings } from './components/app/settings';
 import Announcements from './components/app/Announcements';
 import { ToastProvider } from './components/styled';
-import FormHost from './components/forms/host';
+import FormHost from './components/forms/FormHost';
 import { ROOT_HOST } from './components/styled/portal-host';
 import './app.css';
 

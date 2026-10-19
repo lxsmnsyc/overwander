@@ -1,8 +1,9 @@
 import { EventPriority } from '../../core/event-emitter';
 import { Statuses, TeamStatuses } from '../../data/ids/status';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, type EffectCause } from '../events';
 import type Team from '../team';
+import { registerTimedTeamStatus } from '../mechanics/side-conditions';
 import turns from '../turn';
 
 interface SafeguardData {
@@ -35,6 +36,8 @@ const WARDED = new Set<Statuses>([
  */
 export default function setupSafeguardStatus(battle: Battle): void {
   const instances = new Map<Team, SafeguardData>();
+
+  registerTimedTeamStatus(battle, TeamStatuses.Safeguard, instances);
 
   const timer = battle.on(BattleEvents.Tick, EventPriority.Post, (event) => {
     for (const [team, data] of instances.entries()) {

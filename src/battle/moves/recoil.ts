@@ -3,7 +3,7 @@ import { Stats } from '../../data/constants/stats';
 import { DamageFlags } from '../../data/ids/moves';
 import { RECOIL_MOVES } from '../../data/moves/recoil';
 import { RISKY_PENALTY, USELESS_PENALTY } from '../ai/score';
-import type Battle from '../core';
+import type Battle from '../battle';
 import {
   BattleEvents,
   type CheckUnitRecoilEvent,
@@ -41,6 +41,7 @@ export default function setupRecoilMoves(battle: Battle): void {
 
       if (recoilFactor != null) {
         const amount = event.value * recoilFactor;
+        const before = event.source.health;
 
         event.source.damage(
           {
@@ -50,6 +51,10 @@ export default function setupRecoilMoves(battle: Battle): void {
           amount,
           DamageFlags.Indirect,
         );
+        // Health actually lost, which is what a recoil feat counts
+        if (!battle.estimating) {
+          event.source.recoil += Math.max(0, before - event.source.health);
+        }
       }
     }
   });

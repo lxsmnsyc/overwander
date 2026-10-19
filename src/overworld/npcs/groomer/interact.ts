@@ -1,5 +1,5 @@
-import { isShadow } from '../../../auth/caught-record';
-import { isEgg } from '../../../auth/egg';
+import { isShadow } from '../../../model/caught-record';
+import { isEgg } from '../../../model/egg';
 import { groomCatch } from '../../../auth/npcs';
 import { describeFriendship, groomedFriendship } from '../../../data/constants/friendship';
 import { GROOMING_FEE } from '../../../data/overworld/npc';

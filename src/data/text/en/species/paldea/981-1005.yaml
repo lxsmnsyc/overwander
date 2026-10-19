@@ -1,0 +1,33 @@
+Frigibax:
+  Frigibax: { name: Frigibax, category: Ice Fin Pokemon }
+  Arctibax: { name: Arctibax, category: Ice Fin Pokemon }
+  Baxcalibur: { name: Baxcalibur, category: Ice Dragon Pokemon }
+Gimmighoul:
+  Gimmighoul: { name: Gimmighoul, category: Coin Chest Pokemon }
+  Gholdengo: { name: Gholdengo, category: Coin Entity Pokemon }
+GreatTusk:
+  GreatTusk: { name: Great Tusk, category: Paradox Pokemon }
+ScreamTail:
+  ScreamTail: { name: Scream Tail, category: Paradox Pokemon }
+FlutterMane:
+  FlutterMane: { name: Flutter Mane, category: Paradox Pokemon }
+SlitherWing:
+  SlitherWing: { name: Slither Wing, category: Paradox Pokemon }
+SandyShocks:
+  SandyShocks: { name: Sandy Shocks, category: Paradox Pokemon }
+IronTreads:
+  IronTreads: { name: Iron Treads, category: Paradox Pokemon }
+IronBundle:
+  IronBundle: { name: Iron Bundle, category: Paradox Pokemon }
+IronHands:
+  IronHands: { name: Iron Hands, category: Paradox Pokemon }
+IronMoth:
+  IronMoth: { name: Iron Moth, category: Paradox Pokemon }
+IronThorns:
+  IronThorns: { name: Iron Thorns, category: Paradox Pokemon }
+RoaringMoon:
+  RoaringMoon: { name: Roaring Moon, category: Paradox Pokemon }
+TingLu:
+  TingLu: { name: Ting-Lu, category: Ruinous Pokemon }
+ChiYu:
+  ChiYu: { name: Chi-Yu, category: Ruinous Pokemon }

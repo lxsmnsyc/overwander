@@ -8,7 +8,7 @@ import {
   onCleanup,
   onMount,
 } from 'solid-js';
-import type Battle from '../../battle/core';
+import type Battle from '../../battle/battle';
 import { BattleEvents } from '../../battle/events';
 import Unit from '../../battle/unit';
 import { type BaseEvent, EventPriority } from '../../core/event-emitter';

@@ -20,13 +20,13 @@ import { getBiomeLairs, getCaveLairs, getLairResidents } from '../../src/data/ov
 import registerAbilities from '../../src/data/abilities';
 import { Types } from '../../src/data/constants/types';
 import Biome, { SpawnSurface, TimeOfDay } from '../../src/data/ids/biome';
+import { Species } from '../../src/data/ids/species';
 import {
   DEERLING_FORMS,
   ROTOM_FORMS,
   SAWSBUCK_FORMS,
-  Species,
   VIVILLON_FORMS,
-} from '../../src/data/ids/species';
+} from '../../src/data/ids/forms';
 import registerItems from '../../src/data/items';
 import { registerMoves } from '../../src/data/moves';
 import {
@@ -368,6 +368,12 @@ describe('where a species lives', () => {
       Species.Toucannon,
       Species.Yungoos,
       Species.Gumshoos,
+      // Shiinotic and Oranguru are undrawn, and Passimian waits on its
+      // counterpart
+      Species.Morelull,
+      Species.Shiinotic,
+      Species.Oranguru,
+      Species.Passimian,
     ]);
     const staged = new Set<Species>();
 

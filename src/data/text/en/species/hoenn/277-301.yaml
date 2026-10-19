@@ -1,0 +1,35 @@
+Wingull:
+  Wingull: { name: Wingull, category: Seagull Pokemon }
+  Pelipper: { name: Pelipper, category: Water Bird Pokemon }
+Ralts:
+  Ralts: { name: Ralts, category: Feeling Pokemon }
+  Kirlia: { name: Kirlia, category: Emotion Pokemon }
+  Gardevoir: { name: Gardevoir, category: Embrace Pokemon }
+  Gallade: { name: Gallade, category: Blade Pokemon }
+Surskit:
+  Surskit: { name: Surskit, category: Pond Skater Pokemon }
+  Masquerain: { name: Masquerain, category: Eyeball Pokemon }
+Shroomish:
+  Shroomish: { name: Shroomish, category: Mushroom Pokemon }
+  Breloom: { name: Breloom, category: Mushroom Pokemon }
+Slakoth:
+  Slakoth: { name: Slakoth, category: Slacker Pokemon }
+  Vigoroth: { name: Vigoroth, category: Wild Monkey Pokemon }
+  Slaking: { name: Slaking, category: Lazy Pokemon }
+Nincada:
+  Nincada: { name: Nincada, category: Trainee Pokemon }
+  Ninjask: { name: Ninjask, category: Ninja Pokemon }
+  Shedinja: { name: Shedinja, category: Shed Pokemon }
+Whismur:
+  Whismur: { name: Whismur, category: Whisper Pokemon }
+  Loudred: { name: Loudred, category: Big Voice Pokemon }
+  Exploud: { name: Exploud, category: Loud Noise Pokemon }
+Makuhita:
+  Makuhita: { name: Makuhita, category: Guts Pokemon }
+  Hariyama: { name: Hariyama, category: Arm Thrust Pokemon }
+Nosepass:
+  Nosepass: { name: Nosepass, category: Compass Pokemon }
+  Probopass: { name: Probopass, category: Compass Pokemon }
+Skitty:
+  Skitty: { name: Skitty, category: Kitten Pokemon }
+  Delcatty: { name: Delcatty, category: Prim Pokemon }

@@ -1,0 +1,32 @@
+Turtwig:
+  Turtwig: { name: Turtwig, category: Tiny Leaf Pokemon }
+  Grotle: { name: Grotle, category: Grove Pokemon }
+  Torterra: { name: Torterra, category: Continent Pokemon }
+Chimchar:
+  Chimchar: { name: Chimchar, category: Chimp Pokemon }
+  Monferno: { name: Monferno, category: Playful Pokemon }
+  Infernape: { name: Infernape, category: Flame Pokemon }
+Piplup:
+  Piplup: { name: Piplup, category: Penguin Pokemon }
+  Prinplup: { name: Prinplup, category: Penguin Pokemon }
+  Empoleon: { name: Empoleon, category: Emperor Pokemon }
+Starly:
+  Starly: { name: Starly, category: Starling Pokemon }
+  Staravia: { name: Staravia, category: Starling Pokemon }
+  Staraptor: { name: Staraptor, category: Predator Pokemon }
+Bidoof:
+  Bidoof: { name: Bidoof, category: Plump Mouse Pokemon }
+  Bibarel: { name: Bibarel, category: Beaver Pokemon }
+Kricketot:
+  Kricketot: { name: Kricketot, category: Cricket Pokemon }
+  Kricketune: { name: Kricketune, category: Cricket Pokemon }
+Shinx:
+  Shinx: { name: Shinx, category: Flash Pokemon }
+  Luxio: { name: Luxio, category: Spark Pokemon }
+  Luxray: { name: Luxray, category: Gleam Eyes Pokemon }
+Cranidos:
+  Cranidos: { name: Cranidos, category: Head Butt Pokemon }
+  Rampardos: { name: Rampardos, category: Head Butt Pokemon }
+Shieldon:
+  Shieldon: { name: Shieldon, category: Shield Pokemon }
+  Bastiodon: { name: Bastiodon, category: Shield Pokemon }

@@ -1,0 +1,128 @@
+# From Triple Dive to Electro Drift: the starters' own, and the box legends', at the
+# numbers Scarlet and Violet settled them on
+
+TripleDive:
+  type: Water
+  category: Physical
+  power: 30
+  accuracy: 95
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+MortalSpin:
+  type: Poison
+  category: Physical
+  power: 30
+  accuracy: 100
+  pp: 15
+  target: None
+  affects: [Unit, Enemy]
+  flags: [Contact]
+
+Doodle:
+  type: Normal
+  category: Status
+  accuracy: 100
+  pp: 10
+  target: Unit
+
+FilletAway:
+  type: Normal
+  category: Status
+  pp: 10
+  target: None
+
+KowtowCleave:
+  type: Dark
+  category: Physical
+  power: 85
+  pp: 10
+  target: Unit
+  flags: [Contact, Slicing]
+
+FlowerTrick:
+  type: Grass
+  category: Physical
+  power: 70
+  pp: 10
+  target: Unit
+  projectile: true
+
+TorchSong:
+  type: Fire
+  category: Special
+  power: 80
+  accuracy: 100
+  pp: 10
+  target: Unit
+  flags: [Sound]
+
+AquaStep:
+  type: Water
+  category: Physical
+  power: 80
+  accuracy: 100
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+RagingBull:
+  type: Normal
+  category: Physical
+  power: 90
+  accuracy: 100
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+MakeItRain:
+  type: Steel
+  category: Special
+  power: 120
+  accuracy: 100
+  pp: 5
+  target: None
+  affects: [Unit, Enemy]
+
+Psyblade:
+  type: Psychic
+  category: Physical
+  power: 80
+  accuracy: 100
+  pp: 15
+  target: Unit
+  flags: [Contact, Slicing]
+
+HydroSteam:
+  type: Water
+  category: Special
+  power: 80
+  accuracy: 100
+  pp: 15
+  target: Unit
+
+Ruination:
+  type: Dark
+  category: Special
+  accuracy: 90
+  pp: 10
+  target: Unit
+
+CollisionCourse:
+  type: Fighting
+  category: Physical
+  power: 100
+  accuracy: 100
+  pp: 5
+  target: Unit
+  flags: [Contact]
+
+ElectroDrift:
+  type: Electric
+  category: Special
+  power: 100
+  accuracy: 100
+  pp: 5
+  target: Unit
+  flags: [Contact]

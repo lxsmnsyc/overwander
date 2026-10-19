@@ -1,0 +1,27 @@
+ChoiceBand:
+  name: Choice Band
+  description: 1.5x Attack, but its holder can only cast the move it opened with.
+ChoiceSpecs:
+  name: Choice Specs
+  description: 1.5x Special Attack, but its holder can only cast the move it opened with.
+ChoiceScarf:
+  name: Choice Scarf
+  description: 1.5x Speed, but its holder can only cast the move it opened with.
+AssaultVest:
+  name: Assault Vest
+  description: 1.5x Special Defense. Its holder cannot cast a status move at all.
+Eviolite:
+  name: Eviolite
+  description: 1.5x both defenses, for a pokemon with somewhere left to evolve to.
+LightBall:
+  name: Light Ball
+  description: 2x a Pikachu’s Attack and Special Attack. Nothing to anybody else.
+ThickClub:
+  name: Thick Club
+  description: 2x a Cubone’s or Marowak’s Attack. Nothing to anybody else.
+MetalPowder:
+  name: Metal Powder
+  description: 2x a Ditto’s Defense. Nothing to anybody else.
+QuickPowder:
+  name: Quick Powder
+  description: 2x a Ditto’s Speed. Nothing to anybody else.

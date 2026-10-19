@@ -1,0 +1,463 @@
+# Every berry sits on the one `berries` sheet under the bare half of
+# its name (a Cheri Berry is `cheri`, see `berryFruit`). The sheet
+# covers every berry the game has, and one it did not cover would
+# draw nothing rather than draw the wrong fruit
+
+# Cures paralysis
+CheriBerry:
+  type: Berry
+  icon: berries/cheri
+  flags: [Consumable, Holdable]
+  sell: 20
+
+# Cures sleep
+ChestoBerry:
+  type: Berry
+  icon: berries/chesto
+  flags: [Consumable, Holdable]
+  sell: 20
+
+# Cures poison
+PechaBerry:
+  type: Berry
+  icon: berries/pecha
+  flags: [Consumable, Holdable]
+  sell: 20
+
+# Cures a burn
+RawstBerry:
+  type: Berry
+  icon: berries/rawst
+  flags: [Consumable, Holdable]
+  sell: 20
+
+# Thaws the holder
+AspearBerry:
+  type: Berry
+  icon: berries/aspear
+  flags: [Consumable, Holdable]
+  sell: 20
+
+# Restores PP of a depleted move
+LeppaBerry:
+  type: Berry
+  icon: berries/leppa
+  flags: [Consumable, Holdable]
+  sell: 20
+
+# Restores a small amount of health when low
+OranBerry:
+  type: Berry
+  icon: berries/oran
+  flags: [Consumable, Holdable]
+  sell: 20
+
+# Cures confusion
+PersimBerry:
+  type: Berry
+  icon: berries/persim
+  flags: [Consumable, Holdable]
+  sell: 20
+
+# Cures any status condition
+LumBerry:
+  type: Berry
+  icon: berries/lum
+  flags: [Consumable, Holdable]
+  sell: 20
+
+# Restores a quarter of max health when low
+SitrusBerry:
+  type: Berry
+  icon: berries/sitrus
+  flags: [Consumable, Holdable]
+  sell: 20
+
+# What a berry that does more than cure a status fetches. A cure sells
+# for twenty; these are found in the same patches and are worth
+# carrying for what they do, so they are worth more to somebody who
+# would rather have the gold
+OccaBerry:
+  type: Berry
+  icon: berries/occa
+  flags: [Consumable, Holdable]
+  sell: 80
+
+PasshoBerry:
+  type: Berry
+  icon: berries/passho
+  flags: [Consumable, Holdable]
+  sell: 80
+
+WacanBerry:
+  type: Berry
+  icon: berries/wacan
+  flags: [Consumable, Holdable]
+  sell: 80
+
+RindoBerry:
+  type: Berry
+  icon: berries/rindo
+  flags: [Consumable, Holdable]
+  sell: 80
+
+YacheBerry:
+  type: Berry
+  icon: berries/yache
+  flags: [Consumable, Holdable]
+  sell: 80
+
+ChopleBerry:
+  type: Berry
+  icon: berries/chople
+  flags: [Consumable, Holdable]
+  sell: 80
+
+KebiaBerry:
+  type: Berry
+  icon: berries/kebia
+  flags: [Consumable, Holdable]
+  sell: 80
+
+ShucaBerry:
+  type: Berry
+  icon: berries/shuca
+  flags: [Consumable, Holdable]
+  sell: 80
+
+CobaBerry:
+  type: Berry
+  icon: berries/coba
+  flags: [Consumable, Holdable]
+  sell: 80
+
+PayapaBerry:
+  type: Berry
+  icon: berries/payapa
+  flags: [Consumable, Holdable]
+  sell: 80
+
+TangaBerry:
+  type: Berry
+  icon: berries/tanga
+  flags: [Consumable, Holdable]
+  sell: 80
+
+ChartiBerry:
+  type: Berry
+  icon: berries/charti
+  flags: [Consumable, Holdable]
+  sell: 80
+
+KasibBerry:
+  type: Berry
+  icon: berries/kasib
+  flags: [Consumable, Holdable]
+  sell: 80
+
+HabanBerry:
+  type: Berry
+  icon: berries/haban
+  flags: [Consumable, Holdable]
+  sell: 80
+
+ColburBerry:
+  type: Berry
+  icon: berries/colbur
+  flags: [Consumable, Holdable]
+  sell: 80
+
+BabiriBerry:
+  type: Berry
+  icon: berries/babiri
+  flags: [Consumable, Holdable]
+  sell: 80
+
+ChilanBerry:
+  type: Berry
+  icon: berries/chilan
+  flags: [Consumable, Holdable]
+  sell: 80
+
+RoseliBerry:
+  type: Berry
+  icon: berries/roseli
+  flags: [Consumable, Holdable]
+  sell: 80
+
+LiechiBerry:
+  type: Berry
+  icon: berries/liechi
+  flags: [Consumable, Holdable]
+  sell: 80
+
+GanlonBerry:
+  type: Berry
+  icon: berries/ganlon
+  flags: [Consumable, Holdable]
+  sell: 80
+
+SalacBerry:
+  type: Berry
+  icon: berries/salac
+  flags: [Consumable, Holdable]
+  sell: 80
+
+PetayaBerry:
+  type: Berry
+  icon: berries/petaya
+  flags: [Consumable, Holdable]
+  sell: 80
+
+ApicotBerry:
+  type: Berry
+  icon: berries/apicot
+  flags: [Consumable, Holdable]
+  sell: 80
+
+LansatBerry:
+  type: Berry
+  icon: berries/lansat
+  flags: [Consumable, Holdable]
+  sell: 80
+
+StarfBerry:
+  type: Berry
+  icon: berries/starf
+  flags: [Consumable, Holdable]
+  sell: 80
+
+CustapBerry:
+  type: Berry
+  icon: berries/custap
+  flags: [Consumable, Holdable]
+  sell: 80
+
+MicleBerry:
+  type: Berry
+  icon: berries/micle
+  flags: [Consumable, Holdable]
+  sell: 80
+
+FigyBerry:
+  type: Berry
+  icon: berries/figy
+  flags: [Consumable, Holdable]
+  sell: 80
+
+WikiBerry:
+  type: Berry
+  icon: berries/wiki
+  flags: [Consumable, Holdable]
+  sell: 80
+
+MagoBerry:
+  type: Berry
+  icon: berries/mago
+  flags: [Consumable, Holdable]
+  sell: 80
+
+AguavBerry:
+  type: Berry
+  icon: berries/aguav
+  flags: [Consumable, Holdable]
+  sell: 80
+
+IapapaBerry:
+  type: Berry
+  icon: berries/iapapa
+  flags: [Consumable, Holdable]
+  sell: 80
+
+EnigmaBerry:
+  type: Berry
+  icon: berries/enigma
+  flags: [Consumable, Holdable]
+  sell: 80
+
+KeeBerry:
+  type: Berry
+  icon: berries/kee
+  flags: [Consumable, Holdable]
+  sell: 80
+
+MarangaBerry:
+  type: Berry
+  icon: berries/maranga
+  flags: [Consumable, Holdable]
+  sell: 80
+
+JabocaBerry:
+  type: Berry
+  icon: berries/jaboca
+  flags: [Consumable, Holdable]
+  sell: 80
+
+RowapBerry:
+  type: Berry
+  icon: berries/rowap
+  flags: [Consumable, Holdable]
+  sell: 80
+
+PomegBerry:
+  type: Berry
+  icon: berries/pomeg
+  flags: [Consumable, Holdable]
+  sell: 80
+
+KelpsyBerry:
+  type: Berry
+  icon: berries/kelpsy
+  flags: [Consumable, Holdable]
+  sell: 80
+
+QualotBerry:
+  type: Berry
+  icon: berries/qualot
+  flags: [Consumable, Holdable]
+  sell: 80
+
+HondewBerry:
+  type: Berry
+  icon: berries/hondew
+  flags: [Consumable, Holdable]
+  sell: 80
+
+GrepaBerry:
+  type: Berry
+  icon: berries/grepa
+  flags: [Consumable, Holdable]
+  sell: 80
+
+TamatoBerry:
+  type: Berry
+  icon: berries/tamato
+  flags: [Consumable, Holdable]
+  sell: 80
+
+# Bait is not held and triggers on nothing, so it carries neither
+# the holdable flag nor the rare price. A flavour berry sells for what
+# a cure does. It is not scarce and it settles no fight, so nothing
+# about it is worth the rare price
+RazzBerry:
+  type: Berry
+  icon: berries/razz
+  flags: [Consumable]
+  sell: 20
+
+BlukBerry:
+  type: Berry
+  icon: berries/bluk
+  flags: [Consumable]
+  sell: 20
+
+NanabBerry:
+  type: Berry
+  icon: berries/nanab
+  flags: [Consumable]
+  sell: 20
+
+WepearBerry:
+  type: Berry
+  icon: berries/wepear
+  flags: [Consumable]
+  sell: 20
+
+PinapBerry:
+  type: Berry
+  icon: berries/pinap
+  flags: [Consumable]
+  sell: 20
+
+CornnBerry:
+  type: Berry
+  icon: berries/cornn
+  flags: [Consumable]
+  sell: 20
+
+MagostBerry:
+  type: Berry
+  icon: berries/magost
+  flags: [Consumable]
+  sell: 20
+
+RabutaBerry:
+  type: Berry
+  icon: berries/rabuta
+  flags: [Consumable]
+  sell: 20
+
+NomelBerry:
+  type: Berry
+  icon: berries/nomel
+  flags: [Consumable]
+  sell: 20
+
+SpelonBerry:
+  type: Berry
+  icon: berries/spelon
+  flags: [Consumable]
+  sell: 20
+
+PamtreBerry:
+  type: Berry
+  icon: berries/pamtre
+  flags: [Consumable]
+  sell: 20
+
+WatmelBerry:
+  type: Berry
+  icon: berries/watmel
+  flags: [Consumable]
+  sell: 20
+
+DurinBerry:
+  type: Berry
+  icon: berries/durin
+  flags: [Consumable]
+  sell: 20
+
+BelueBerry:
+  type: Berry
+  icon: berries/belue
+  flags: [Consumable]
+  sell: 20
+
+# What a prize berry fetches. Rarer than anything else a patch bears
+# and spent on one meeting, so it is worth more to a seller than the
+# berries that settle a fight
+SilverRazzBerry:
+  type: Berry
+  icon: berries/silver-razz
+  flags: [Consumable]
+  sell: 300
+
+GoldenRazzBerry:
+  type: Berry
+  icon: berries/golden-razz
+  flags: [Consumable]
+  sell: 300
+
+SilverNanabBerry:
+  type: Berry
+  icon: berries/silver-nanab
+  flags: [Consumable]
+  sell: 300
+
+GoldenNanabBerry:
+  type: Berry
+  icon: berries/golden-nanab
+  flags: [Consumable]
+  sell: 300
+
+SilverPinapBerry:
+  type: Berry
+  icon: berries/silver-pinap
+  flags: [Consumable]
+  sell: 300
+
+GoldenPinapBerry:
+  type: Berry
+  icon: berries/golden-pinap
+  flags: [Consumable]
+  sell: 300

@@ -1,6 +1,6 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, MoveTargetType } from '../events';
 import turns from '../turn';
 import type Unit from '../unit';
@@ -64,7 +64,11 @@ export default function setupLockOn(battle: Battle): void {
     }
 
     event.accuracy = undefined;
-    aims.delete(event.source);
+
+    // The AI asking whether it would land is not the move landing
+    if (!battle.estimating) {
+      aims.delete(event.source);
+    }
   });
 
   battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {

@@ -14,10 +14,10 @@ import {
   STEP_PACE,
 } from '../../overworld/overworld-tab/metrics';
 import ChunkCanvas, { type SpawnCoat } from '../../overworld/chunk-canvas';
-import { CellAura, rankOf } from '../../overworld/chunk-canvas/scenery';
-import { getSkybox, latitudeOf } from '../../../canvas/daylight';
+import { CellAura, rankOf } from '../../../canvas/overworld/scenery';
+import { getSkybox, latitudeOf } from '../../../canvas/overworld/daylight';
 import { CAVERN } from '../../../canvas/sky';
-import { asOffset, getLocalOffset } from '../../../auth/local-time';
+import { asOffset, getLocalOffset } from '../../../model/local-time';
 import Biome, { isIceBiome } from '../../../data/ids/biome';
 import Landmark from '../../../data/overworld/landmark';
 import { NPC_VISIT_TAGS } from '../../../overworld/npcs';

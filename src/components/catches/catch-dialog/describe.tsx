@@ -1,6 +1,6 @@
 import type { CaughtPokemon } from '../../../auth/caught';
-import { getHeldItemRoom } from '../../../auth/caught-record';
-import { isEgg } from '../../../auth/egg';
+import { getHeldItemRoom } from '../../../model/caught-record';
+import { isEgg } from '../../../model/egg';
 import describeDate from '../../../core/dates';
 import { BIOME_NAMES, TIME_OF_DAY_NAMES } from '../../../data/biome';
 import { EVOLUTION_FRIENDSHIP } from '../../../data/constants/friendship';
@@ -12,6 +12,7 @@ import { getNatureFactor } from '../../../data/ids/natures';
 import { EvolutionMethod, GENDER_NAMES } from '../../../data/ids/species';
 import { getLairTitle } from '../../../data/overworld/lair';
 import { type EvolutionData, SUPPORTED_METHODS, getSpeciesData } from '../../../data/species';
+import { describeFeat, featOfEvolution } from '../../../data/species/feats';
 import {
   ENCOUNTER_TYPE_NAMES,
   EncounterType,
@@ -22,7 +23,7 @@ import { describeItem } from '../../details';
 import ItemSprite from '../../items/ItemSprite';
 import { HeartIcon } from '../../icons';
 import { type JSX, Show } from 'solid-js';
-import { getMaxHealth } from '../../../auth/health';
+import { getMaxHealth } from '../../../model/health';
 import { ItemFlags, Items } from '../../../data/ids/items';
 import { getItemData } from '../../../data/items';
 
@@ -127,6 +128,18 @@ function describeOrigin(caught: CaughtPokemon): string | null {
  * own line further up
  */
 function describeMet(caught: CaughtPokemon): string {
+  // None stands in a lair, so none has a place's name to give
+  if (
+    caught.type === EncounterType.TotemRaid ||
+    caught.type === EncounterType.MaxRaid ||
+    caught.type === EncounterType.AlphaRaid ||
+    caught.type === EncounterType.NobleRaid ||
+    caught.type === EncounterType.TeraRaid
+  ) {
+    const name = ENCOUNTER_TYPE_NAMES[caught.type];
+
+    return `Caught in ${/^[AEIOU]/.test(name) ? 'an' : 'a'} ${name}`;
+  }
   if (isRaidEncounter(caught.type)) {
     return `Caught at ${getLairTitle(
       caught.lair,
@@ -182,6 +195,9 @@ export function describeHistory(caught: CaughtPokemon): string {
 function isMeasurableEvolution(evolution: EvolutionData): boolean {
   const { method } = evolution;
 
+  if ((method & EvolutionMethod.Special) !== 0 && featOfEvolution(evolution) == null) {
+    return false;
+  }
   return method !== 0 && (method & ~SUPPORTED_METHODS) === 0;
 }
 
@@ -257,7 +273,11 @@ const COMPARE_WORDS = { greater: 'higher than', lesser: 'lower than', equal: 'eq
  * this is what the player is working towards rather than a complaint
  * about today — the button beside it is what reports availability
  */
-export function EvolutionCondition(props: { evolution: EvolutionData }): JSX.Element {
+export function EvolutionCondition(props: {
+  evolution: EvolutionData;
+  /** A cumulative feat's running total, on a catch's own sheet */
+  progress?: number;
+}): JSX.Element {
   const method = (): number => props.evolution.method;
   const item = (): Items | null => props.evolution.item ?? null;
   const has = (flag: EvolutionMethod): boolean => (method() & flag) !== 0;
@@ -326,6 +346,23 @@ export function EvolutionCondition(props: { evolution: EvolutionData }): JSX.Ele
         <Show when={has(EvolutionMethod.TimeOfDay) ? timesOf(props.evolution.time) : null}>
           {(when) => <span>at {when()}</span>}
         </Show>
+        <Show when={has(EvolutionMethod.Special) ? featOfEvolution(props.evolution) : null}>
+          {(feat) => <span>{describeFeat(feat(), props.progress)}</span>}
+        </Show>
+        <Show when={has(EvolutionMethod.Walked) ? props.evolution.walked : null}>
+          {(walked) => (
+            <span>
+              walk {walked()} steps{tally(props.progress, walked())}
+            </span>
+          )}
+        </Show>
+        <Show when={has(EvolutionMethod.Candy) ? props.evolution.candies : null}>
+          {(candies) => (
+            <span>
+              spend {candies()} candies{tally(props.progress, candies())}
+            </span>
+          )}
+        </Show>
       </span>
     </Show>
   );
@@ -340,7 +377,11 @@ export function EvolutionCondition(props: { evolution: EvolutionData }): JSX.Ele
  * given, since a line of pictures and half-sentences is not something
  * that reads aloud
  */
-export function describeEvolutionMethod(evolution: EvolutionData, covered = false): string {
+export function describeEvolutionMethod(
+  evolution: EvolutionData,
+  covered = false,
+  progress?: number,
+): string {
   if (!isMeasurableEvolution(evolution)) {
     return 'This evolution is not possible here.';
   }
@@ -394,10 +435,28 @@ export function describeEvolutionMethod(evolution: EvolutionData, covered = fals
   if ((method & EvolutionMethod.TimeOfDay) !== 0 && evolution.time != null) {
     steps.push(`do it at ${timesOf(evolution.time).toLowerCase()}`);
   }
+  const feat = (method & EvolutionMethod.Special) === 0 ? undefined : featOfEvolution(evolution);
+
+  if (feat != null) {
+    steps.push(describeFeat(feat, progress));
+  }
+  if ((method & EvolutionMethod.Walked) !== 0 && evolution.walked != null) {
+    steps.push(`walk ${evolution.walked} steps as your buddy${tally(progress, evolution.walked)}`);
+  }
+  if ((method & EvolutionMethod.Candy) !== 0 && evolution.candies != null) {
+    steps.push(
+      `spend ${evolution.candies} of its family's candies${tally(progress, evolution.candies)}`,
+    );
+  }
   if (steps.length === 0) {
     return 'It evolves on its own.';
   }
   return `To evolve, ${steps.join(' and ')}.`;
+}
+
+/** How far along a goal is, the way a feat says it: " (412/1000)" */
+function tally(progress: number | undefined, goal: number): string {
+  return progress == null ? '' : ` (${Math.min(progress, goal)}/${goal})`;
 }
 
 /**

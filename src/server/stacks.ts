@@ -1,5 +1,5 @@
 import 'server-only';
-import type { StackSpec } from '../auth/stacks';
+import type { StackSpec } from '../model/stacks';
 import { type Sql, type Tx, getSql, tx } from './db';
 import { type LedgerEntry, LedgerKind, isLedgerOn, writeLedgerIn } from './ledger';
 import { asNumber } from './read';

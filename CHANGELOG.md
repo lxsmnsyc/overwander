@@ -1,5 +1,478 @@
 # overwander
 
+## 4.38.0
+
+### Minor Changes
+
+- bb498cc: - Eight new true shadows, the shadows of the Hoenn legendaries: XD-377 to XD-384, for Regirock, Regice, Registeel, Latias, Latios, Kyogre, Groudon and Rayquaza.
+  - Like the others, each has 10 more points on every stat than its counterpart and can never be purified.
+  - They appear only on a Dark Day: in the special band of the wild pool, and in the shadow lairs of their counterparts.
+  - XD-382, the shadow of Kyogre, appears only on water.
+  - XD-382 and XD-383 holding a Blue or Red Orb return to their own Primal shapes, Primal XD-382 and Primal XD-383.
+  - XD-384 knowing Dragon Ascent Mega Evolves into Mega XD-384.
+  - A true shadow with no shadow Mega of its own, such as XD-150 with a Mewtwonite, keeps its shape.
+
+### Patch Changes
+
+- ae4e459: A Dancer's copy of a dance is no longer copied by the other Dancers on the field, so a field full of Oricorio no longer dances forever and freezes the fight.
+- 5fdf864: A cast now names the move it will go off as, from the start of the wind-up, on the cast plate and the unit card: a Dynamaxed pokemon's Max Move, and a Z-Crystal holder's Z-Move while its side still has one.
+- 54fb6d1: - A Max Raid is called D-Max or G-Max and its boss, such as G-Max Snorlax, in its lobby and as its fight's title, so the name says whether the boss Gigantamaxes.
+  - A Max Raid's pillar of light is half as wide.
+- 7c45441: - The release workflow runs on every push to main again, instead of only when started by hand.
+
+## 4.37.0
+
+### Minor Changes
+
+- a76d7c3: - Alpha raids stand at an Alpha landmark in open country: an oversized pokemon
+    the tile's biome spawns, at any stage, that brings its side back to 6 of its
+    kind at 3/4, 1/2 and 1/4 HP.
+  - Beaten, an Alpha pays 50,000 and waits at level 40 with 3 random stats at 31.
+  - World generation: the Alpha takes a further 2 of the cache's 15 shares on the
+    surface, so some caches on existing maps become Alpha sites and no other
+    landmark moves.
+- a7135a9: - The overworld can be walked diagonally. A pressed walk takes the diagonal where it is shorter, and two direction keys held together walk it.
+  - A diagonal is one step that takes √2 times as long as a straight one, so walking keeps one speed whichever way it goes. It never cuts the corner of a tree, a landmark or a cliff, so nothing new is reachable.
+  - Other players see the diagonal steps as they are walked.
+- 62a180e: - A pokemon holding the new Dynamax Band Dynamaxes the first time it drops below 1/2 HP, once a side a fight, for its next 3 moves.
+  - A Dynamaxed pokemon has 2x HP, throws each damaging move as its type's Max Move and each status move as Max Guard, and stands in the middle of its team.
+  - The 18 Max Moves and Max Guard: weather, terrain, a stage off every foe or onto the whole side, and a guard Max Moves cannot get through.
+  - A Dynamaxed pokemon cannot flinch, be sent away, be held by Encore, Disable, Torment, Instruct or a Choice item, and shrugs off OHKO and weight moves.
+  - Behemoth Blade, Behemoth Bash and Dynamax Cannon hit a Dynamaxed target 2x.
+  - A Dynamaxed pokemon is drawn larger, with a red glow.
+  - The Dynamax Band is dug up beside the Mega Stones and turns up in dust clouds.
+- d43a7be: - The 33 G-Max Moves, each with the effect it leaves behind once it lands.
+  - The Gigantamax Factor, a catch flag that stays through trades and evolution,
+    shown on the catch sheet.
+  - Max Mushrooms give the factor to a species with a Gigantamax form. They are
+    dug up in the prized band.
+  - World generation: Max Mushrooms join the ground's item pool, so stashes
+    change.
+- d94bbba: - Max Raids: a new landmark out in the country, a hole under a pillar of red light (purple and brighter over a Gigantamax), holding a final stage of the biome Dynamaxed for the whole fight, Gigantamaxed whenever its species can be.
+  - Clearing a Max Raid pays 50,000 gold and the boss at level 40, plus 1 or 2 Max Mushrooms and, one clear in 10, a Dynamax Band. A Gigantamax boss caught from it keeps the Gigantamax Factor.
+  - Totems have a landmark of their own, a trial site under the Totem's gold aura, holding a Totem every raid window. Lairs no longer hold Totems.
+  - The board demo can find the nearest Max Raid or Totem, and the raid demo can stage a Max Raid.
+  - World generation: about one item cache in five on dry ground above ground is now a Max Raid, and about one trainer in five on dry ground is now a Totem. Every other landmark stays where it was.
+- 8998be6: - Noble raids stand at a Noble Arena in open country: one of Hisui's five
+    Nobles in its own biomes half the time, otherwise a final stage of the tile's
+    biome.
+  - A Noble cannot faint. Its HP is its Frenzy: it staggers at 3/4, 1/2 and 1/4,
+    bursts on the whole party every 10 seconds after a 1.8 second windup a guard
+    can answer, and is calmed rather than caught when the Frenzy is drained.
+  - The Balm: each player packs up to 3 into a Noble raid, and their party throws
+    one every 10 seconds to soothe 1/50 of the Frenzy. Sold at the medicine
+    counter.
+  - A calmed Noble pays 55,000 and 2 or 3 Balms, and a canon Noble its treasure.
+  - World generation: the Noble Arena takes the next 1 of the trainer's 10 shares
+    on the surface, so some duelling trainers on existing maps become Noble
+    Arenas and no other landmark moves.
+
+### Patch Changes
+
+- c806b35: A Dynamaxed pokemon, a raid boss among them, now looks the part in battle:
+  
+  - Its body is washed red (a deeper magenta for a Gigantamax), pulsing gently.
+  - A red glow rings its body on any ground, where before the glow barely showed.
+  - Three small red storm clouds swirl over its head for as long as it stays grown, each a puff trailing a wisp.
+- 8a26012: Dusk Mane and Dawn Wings Necrozma are drawn with sheets of their own, in their own colours and shiny colours, rather than as the Solgaleo or Lunala inside them. The art is a recolour until the forms are drawn, and the item that joined them no longer floats over them.
+
+## 4.36.0
+
+### Minor Changes
+
+- a8a0835: - Stantler evolves into Wyrdeer after landing Psyshield Bash 20 times, Hisuian Qwilfish into Overqwil after landing Barb Barrage 20 times, and white-striped Basculin into Basculegion after taking 294 recoil damage without fainting, counted across fights.
+  - The catch sheet shows how far along those feats are.
+  - Black Augurite and Peat Block have pictures.
+- 8ee7e32: Hisui's regional forms, its new evolutions and Enamorus arrive:
+  
+  - Hisuian Growlithe and Arcanine cast faster at an enemy that targets a teammate.
+  - Hisuian Voltorb and Electrode cast Leech Seed on every enemy when they drop below half HP.
+  - Hisuian Qwilfish and Overqwil heal from the poison the enemy side takes.
+  - Hisuian Sneasel and Sneasler paralyse poisoned targets with their contact moves.
+  - Hisuian Zorua and Zoroark linger for 4 seconds the first time they would faint.
+  - White-striped Basculin and Basculegion take the next blow at half after a teammate faints.
+  - Hisuian Typhlosion, Samurott, Decidueye, Lilligant, Braviary, Sliggoo, Goodra and Avalugg are offered beside the older evolution.
+  - Kleavor (Black Augurite), Ursaluna (Peat Block at night) and Sneasler (Razor Claw by day) evolve the mainline way, and the two new items are stocked.
+  - Wyrdeer, Overqwil and Basculegion open after feats counted across fights.
+  - Enamorus stands in the Scarlet Bog and lifts its team's Fairy moves, and the Reveal Glass shows its Therian shape.
+- 58ae85a: The Selling tab names who leads or won each lot, and pressing the name opens their profile.
+
+### Patch Changes
+
+- 819f2fd: The admin dashboard no longer plays the game for the staff member on it: no position is read or written, and no notice chimes or quest toasts arrive there.
+
+## 4.35.0
+
+### Minor Changes
+
+- - The Reins of Unity seat a Calyrex on a Glastrier or a Spectrier, as the Ice Rider or the Shadow Rider, and take the pair apart again. Each use spends the reins, and they are dug up in the prized band.
+  - A rider keeps Calyrex's own ability and wears its steed's neigh on top, which is As One.
+  - The riders learn Glacial Lance and Astral Barrage, and the moves Sword and Shield teach them.
+  - Until the riders are drawn, each is drawn as its steed, with the reins floating over it.
+- 2e0485d: - Battle feats open two evolutions: a Galarian Farfetch'd that lands 3 critical hits in one fight can become Sirfetch'd, and a Galarian Yamask that takes 49 damage in one fight without fainting can become Runerigus.
+  - Zacian holding the Rusted Sword and Zamazenta holding the Rusted Shield fight crowned, and their Iron Head becomes Behemoth Blade or Behemoth Bash.
+  - The Scroll of Darkness and the Scroll of Waters have pictures of their own.
+- e0797e6: Galar's regional forms and its legends arrive, each line with a signature ability:
+  
+  - Galarian Meowth and Perrserker take the item of any enemy they knock out.
+  - Galarian Ponyta and Rapidash heal their worst-hurt teammate with their Fairy moves.
+  - Galarian Slowpoke, Slowbro and Slowking badly poison an enemy with every third move they land on it. The Galarica Cuff and Wreath are stocked.
+  - Galarian Farfetch'd and Sirfetch'd raise a leek shield with each attack they land.
+  - Galarian Corsola and Cursola leave a husk that draws the enemy's moves for 6 seconds after fainting.
+  - Galarian Zigzagoon, Linoone and Obstagoon take 2 stages of Defense off whoever touches them.
+  - Galarian Darumaka and Darmanitan draw Ice moves onto themselves and grow stronger from them.
+  - Galarian Yamask and Runerigus curse every enemy that hurt them as they faint.
+  - Galarian Weezing and Galarian Mr. Mime are offered beside the older evolution.
+  - The Galarian birds cancel the Kanto birds they mirror.
+  - Zacian and Zamazenta answer a teammate brought low, Eternatus drains every enemy that acts, Kubfu builds up with every third move, Regieleki and Regidrago break their seals, and Calyrex, Glastrier and Spectrier lift the whole team with each knockout.
+  - The Slumbering Weald, the Energy Plant, both towers, the Split-Decision Ruins, the Crown Shrine, the Snowslide Slope, the Old Cemetery, the Crown Tundra, the Wild Area and the Isle of Armor stand in the world, and their legends walk the biomes around them.
+  - The Rusted Sword, the Rusted Shield and both scrolls are dug up in the prized band.
+- be8a9b7: The Gen 8 abilities of Galar's regional forms and legends now work in battle:
+  
+  - Steely Spirit lifts its team's Steel moves 1.5x.
+  - Pastel Veil keeps poison off its side and cures a poisoned teammate.
+  - Quick Draw gives its attacks a 30% chance to go off with no wind-up.
+  - Curious Medicine resets its teammates' stat stages when it enters.
+  - Screen Cleaner takes Reflect, Light Screen and Aurora Veil down on both sides when it enters.
+  - Gorilla Tactics gives 1.5x Attack and locks it into its first move until it leaves the field.
+  - Wandering Spirit trades itself for one of a contact attacker's abilities.
+  - Intrepid Sword and Dauntless Shield give +1 Attack or +1 Defense on the first entry of a battle.
+  - Unseen Fist sends its contact moves through Protect and the other guards.
+  - Transistor lifts Electric moves 1.3x and Dragon's Maw lifts Dragon moves 1.5x.
+  - Chilling Neigh and Grim Neigh give +1 Attack or +1 Special Attack on a knockout.
+
+### Patch Changes
+
+- 9f629d0: - Kubfu is met in the wild as rarely as Cosmog and Type: Null, rather than as a legend at the towers, which now hold only their Urshifu.
+- 65a561a: - The Move Reminder, the Move Tutor, the Dojo Master and Nurse Joy keep the conversation open after each lesson, training or heal, until you step back.
+  - A shop's search stays as you typed it after a purchase or a sale.
+- 246e606: Towns can now stand in swamps, bogs, mangroves and over lakes. A region
+  whose only sites are wet is given a town instead of being left empty, and
+  every town that already stood keeps its place.
+  
+  This changes world generation: the second generation gains towns where it
+  had none.
+
+## 4.34.0
+
+### Minor Changes
+
+- b3206f4: Galar's fossils can be revived:
+  
+  - The Fossil Scientist takes a top half (Fossilized Bird or Fish) and a bottom half (Fossilized Drake or Dino) and revives Dracozolt, Arctozolt, Dracovish or Arctovish, spending both.
+  - The Fossil Maniac can offer the halves at 12,000 gold each, and they can be dug up in the prized band like the other fossils.
+  - A revived Galar species' dex entry names both halves.
+- 9f91b1e: The moves Sword and Shield and Legends: Arceus brought are in the game: 65 from Galar and 24 from Hisui, at the numbers Scarlet and Violet settled them on. Most ride what was already there (Flip Turn swaps out like U-turn, Wicked Blow always lands a critical, Meteor Beam winds up like Skull Bash), and the rest have rules of their own: Jaw Lock and Octolock hold a pokemon on the field, Body Press hits with Defense, Bolt Beak and Fishious Rend double against a target that has not begun a cast, Tar Shot makes Fire hit 2x, Stone Axe and Ceaseless Edge leave hazards behind them, Court Change swaps hazards, screens, Mist, Safeguard and Tailwind between the sides with the time each had left, Power Shift swaps both pairs of attacking and defending stats, Expanding Force reaches everything opposite on Psychic Terrain, Aura Wheel is Morpeko's alone and turns Dark while it is Hangry, and Life Dew, Jungle Healing and Lunar Blessing mend the whole team. Each has a picture. Every legendary and mythical signature is drawn as its own (Behemoth Blade and Behemoth Bash, Eternabeam and Dynamax Cannon, Glacial Lance, Astral Barrage, Thunder Cage, Dragon Energy, the Galarian birds' three, Urshifu's two, Jungle Healing, Mystical Power and each of the four storms), as is Dragon Darts, and the rest look like the earlier move they take after. There is no Dynamax, so the Max Moves are not among them. The pokemon of Kanto to Alola learn the ones they learn in Sword and Shield, Brilliant Diamond and Shining Pearl, and Legends: Arceus, by level, machine, tutor or egg; the moves of Galar's and Hisui's own pokemon wait for them.
+- 9c3eadb: - Libero, Punk Rock, Cotton Down, Ball Fetch, Gulp Missile, Propeller Tail,
+    Ice Scales, Ice Face, Hunger Switch, Stalwart and Power Spot now work in
+    battle.
+  - Cramorant, Eiscue and Morpeko change form in battle the way their abilities
+    say.
+- 518896b: Galar's pokemon arrive, from the starters to the fossils, each family with a signature ability:
+  
+  - Grookey, Scorbunny and Sobble, whose moves of their own type cue Helping Hand, After You or Spotlight for their team.
+  - Skwovet eats the enemy's Berries, Rookidee casts Wide Guard against spread moves, and Blipbug warns a teammate with Detect.
+  - Nickit hands what it steals to a teammate, Gossifleur makes its team's grass healing 1.5x, and Wooloo's fleece singes off into Agility.
+  - Chewtle's bites break screens, and Yamper casts Charge whenever its Speed rises.
+  - Applin shares its Berries, Silicobra's Ground moves hit every enemy in a sandstorm, and Cramorant Stockpiles with each Water move.
+  - Arrokuda answers a wind-up with Aqua Jet, Toxel charges up on poison, and Sizzlipede burns up Berries.
+  - Clobbopus locks its target in Octolock, and Pincurchin shocks whoever touches it.
+  - Sinistea leaves a Healing Wish when it faints, and Hatenna and Impidimp cancel each other out.
+  - Milcery decorates the teammates it helps, and Alcremie comes in its seven Sweets.
+  - Snom turns added effects back on whoever threw them, Eiscue calls hail when struck, and Falinks halves its first 5 hits.
+  - Indeedee casts Heal Pulse on a teammate hit hard, Morpeko Nuzzles enemies that eat Berries, and Duraludon takes spread moves alone.
+  - Dreepy launches Dragon Darts at a second enemy, and Stonjourner powers up its team every 30 seconds.
+  - Dracozolt, Arctozolt, Dracovish and Arctovish strike with their tail's type where it hits harder.
+  - Toxel grows into the Amped or the Low Key Toxtricity by its nature.
+  - Tart Apple, Sweet Apple, Cracked Pot and the seven Sweets are stocked.
+- 0b47969: - Every pokemon in Sword and Shield or Brilliant Diamond and Shining Pearl learns by level what that game teaches it, at that game's levels, so Rayquaza learns Hurricane at 72.
+  - Nothing a pokemon already learned by level is taken away: a move the Gen 8 games dropped stays at its old level.
+  - Every pokemon can also be taught the Gen 8 machines, records and tutor moves its games teach it, and hatches with their egg moves.
+- fb8b6ef: Kalos trainers are on the road. 41 classes join the duelling stops, drawn in their XY sheets and fielding Kalos pokemon. 35 are Kalos's own takes on trades already met, from the Ace Trainer to the Hex Maniac, the Garçon and the Roller Skater. Six are trades nobody had before, each with its own achievement line and titles: the Sky Trainer, the Fairy Tale Girl, the Furisode Girl, the Butler, the Tourist and the Rising Star. The Kalos Ace travels everywhere the other Aces do. Stops in most biomes now roll from a longer list, so who stands at a given stop changes.
+- c88aa09: Spawn weights are now plain shares of every roll, so a species' weight is how often it is met, whatever band it is filed in. A water pool now lists everything met on water. With that, the pools are rebalanced: no common species is more than half of a pool any more (a lone Poliwag on a river at night, a lone Horsea at sea), a rare starter or pseudo-legendary is never the only thing in a place (Deino in the volcano at night, Gible in the desert, Oshawott in the kelp forest), evolutions are never met much more often than what they evolve from (the Eeveelutions, Blissey, Dartrix, Gabite, Garchomp), and the sea's islands are worth landing on: the deep sea's rocky islands keep Zubat, Slowpoke, Psyduck, Seel, Krabby, Wingull and Exeggcute lines and a rare Sableye, and the open sea's tropical ones Sandygast, Wimpod, Krabby, Salandit, Noibat, Wingull and Exeggcute lines, with Pyukumuku and Oricorio.
+- b809b22: - A Totem's ally now has the Totem Ally ability: 50x its HP and 1.5x every other stat.
+  - A Totem's ally stands beside it at a party pokemon's size, and the Totem stays at the centre.
+  - The Boss ability's description now gives the right HP figure (110x).
+  - The raid demo can stage a Totem raid.
+
+### Patch Changes
+
+- 0faf229: The numbers a fight reads off each move (the status it puts down and the chance, the stages it pushes, how many times it strikes, its recoil, drain and heal shares, and the Z-Move power overrides) are now written as YAML in their own files, one per mechanic, apart from the moves themselves. Nothing about any move changes.
+- 8a0aeba: The skies each biome can show are written in a data file.
+- 07e5936: Champions and legends are data now: each one's title or mark, league, sheets, prize coats and six are in `experts/champions.yaml` and `experts/legends.yaml`, with their names under `text/en/`. Nothing a player sees changes.
+- 578b989: Scenery is data now: what each biome grows, what blocks a cell, what grows on its islands and how it draws each kind are in `biome-decorations.yaml`, each kind's sheet and pictures in `decorations.yaml`, the snowy trees in `snow-trees.yaml`, and their names under `text/en/`. Every chunk keeps the scenery it had.
+- 724da9b: The Frontier Brains are data now: each one's house rule, crown, sheets, symbols and both parties are in `experts/frontier.yaml`, with their names and houses under `text/en/`. Nothing a player sees changes.
+- 7946fba: - Farfetch'd can be born with Sharpness.
+  - Zen Mode only switches a Darmanitan into its own line's Zen form.
+- c74368e: The sprite import files Hisui's new species under Hisui, where the game looks for them.
+- 5be6d8a: What the ground hides, band by band, is written in a data file.
+- e09267c: Items are now written as YAML: each family's records (type, picture, flags, prices) in one file and its names in another. Lines that follow a table, like a gem's type or a drink's restore, are written as templates the game fills in, so they still change with the numbers. Nothing about any item changes.
+- 64765f0: Each lair's residents, names and the biomes that host it are written in data files.
+- 28d5669: Landmarks and phenomena are data now: each landmark's weight and pictures are in `landmarks.yaml`, which phenomena each biome hosts is `biome-phenomena.yaml`, and their names are under `text/en/`. Every chunk keeps what it had.
+- 057a852: Gym leaders and the Elite Four are data now. Each person's type, badge or mark, sheets, ace and pool live in `experts/gym-leaders.yaml` and `experts/elite.yaml`, with their names under `text/en/`. Which of them each biome seats is in `biome-gym-leaders.yaml` and `biome-elite.yaml`. Nothing a player sees changes.
+- 978ac00: Moves and abilities are now written as YAML on the same pipeline as the species: a move's battle numbers, its cast clips and its words each in their own folder, an ability's name and line as text, and each region's signature grants in a file of its own. The species names moved into blocks beside the rest of their data. Nothing about any move or ability changes, and the editor schemas cover the new files.
+- 7d98142: The syndicates, their executives and the people's words are data now. Each team's grunts, boss, executives and biomes are in `syndicates.yaml`, each executive's sheets and mark in `executives.yaml`, and every name, title and quote under `text/en/` (`syndicates`, `executives`, `npcs`, `vendor-stalls`). Nothing a player sees changes.
+- a0aea62: Shiny Pa'u and Sensu Oricorio have their own colours on the wing tips and beak.
+- e589131: The spawn pools are now written as YAML, a file per biome plus the caves' and the towns' pools, with times of day that share a pool written once. Nothing about what spawns where changes. Rotom was listed twice in the temperate forest and the woodland, where the second entry was never read; it is now listed once.
+- 9ae2eda: The Boss, Shadow, Totem, Totem Ally and Purified abilities are written in a file of their own rather than with Gen 1.
+- d86c7d4: - What a wild pokemon carries, its egg cycles, and whether it is a legendary, a mythical or a baby are written beside each species in its data files.
+  - Each region's dex numbers and its dex chain are written in one data file.
+- 27543ce: The species data is now written as YAML: a folder per field (`world`, `stats`, `abilities`, `learnsets`), with each region's families filed in blocks of 25 dex numbers, and names in `src/data/text/en/species.yaml`. Nothing about the species themselves changes. The build checks every name in the files against the game's own ids, so a typo fails the build instead of reaching a fight. In the editor, JSON Schemas generated from the same ids give completion and squiggles while the YAML is written.
+- 1a0253e: Town names are built from words in `text/en/town-names.yaml`: each biome's heads, the tails, titles, marks and county names. Every town keeps the name it had.
+- c480f64: Trainer classes are data now. Each region's classes are a YAML file saying what each fields, which sheets it stands in and which trade it belongs to. Their names and challenge lines live under `text/en/trainers/`, and which classes each biome puts on the road is `trainers/biomes.yaml`. Nothing a player sees changes.
+
+## 4.33.0
+
+### Minor Changes
+
+- 28bc8f7: Alola's light trio turns up:
+  
+  - Cosmog and Cosmoem are met rarely in the grassland at any hour, by the Lake of the Sunne. Cosmog evolves into Cosmoem at 43. Cosmoem evolves at 53 into Solgaleo by day and into Lunala by night.
+  - Solgaleo stands in its lair, the Altar of the Sunne, and Lunala in its lair, the Altar of the Moone, both in the badlands.
+  - Necrozma stands in its lair, Ten Carat Hill, on the mountain.
+  - The N-Solarizer folds a Solgaleo into a Necrozma as Dusk Mane Necrozma, and the N-Lunarizer folds a Lunala into one as Dawn Wings Necrozma. Either item takes the pair apart again and is never spent. The two shapes are drawn as Necrozma until their own art exists.
+  - A Dusk Mane or Dawn Wings Necrozma holding Ultranecrozium Z takes the field as Ultra Necrozma, with Neuroforce.
+  - Full Metal Body, Shadow Shield and Prism Armor work as Clear Body, Multiscale and Filter do, and Mold Breaker cannot ignore them. Neuroforce makes super-effective moves hit 1.25x.
+  - The Cosmog line's signature, Zenith, makes its damaging moves hit harder the fuller its HP, from 1x near 0 HP up to 1.3x at full. Necrozma's signature, Nadir, is the reverse, from 1x at full HP up to 1.3x near 0.
+  - Solgaleo can also be born with Heavy Metal, Lunala with Infiltrator, and Necrozma with Tinted Lens, Mirror Armor or Levitate.
+  - The fusion dialog names the pokemon being folded in and the one it goes into, rather than always a dragon and a Kyurem.
+  - All of them learn their moves by level, machine and tutor, as they do in Ultra Sun and Ultra Moon.
+- cb4ec20: Alola's four mythicals turn up:
+  
+  - Each is called by its relic at its lair, and is met now and then in its home country:
+    - Magearna answers the Ancient Poke Ball at the Azoth Kingdom, and lives on the mountain. It comes in both its colours, the Original Color as rare as the other.
+    - Marshadow answers the Hero's Charm at Mt. Tensei, and lives on the mountain.
+    - Zeraora answers the Windmill Charm at the Fula Forest, and lives in the temperate forest.
+    - Meltan answers the Mystery Box at the GO Park, and lives in the badlands.
+  - The four relics now turn up in the special band.
+  - Meltan evolves into Melmetal at 40.
+  - Soul-Heart is built: Magearna gains 1 stage of Special Attack whenever any other pokemon on the field faints.
+  - Each family has a signature ability:
+    - Soul Relay: when a teammate faints, Magearna takes on every stat stage that teammate had raised.
+    - Umbral Strike: Marshadow's moves hit 1.25x against a target with any stat stage raised.
+    - Ion Field: while Zeraora is on the field, its enemies' Normal moves are Electric moves.
+    - Metal Eater: Steel moves heal Meltan and Melmetal 1/4 of their max HP rather than hurting them.
+  - Each can also be born with more abilities:
+    - Magearna: Download, Analytic or Clear Body.
+    - Marshadow: Infiltrator, Pickpocket or Cursed Body.
+    - Zeraora: Iron Fist, Speed Boost or Lightning Rod.
+    - Melmetal: Heavy Metal or Steelworker.
+  - Magearna, Marshadow and Zeraora learn their moves as they do in Ultra Sun and Ultra Moon, and Meltan and Melmetal as they do in Let's Go.
+- 82f4330: The four Tapus, Alola's island guardians, turn up:
+  
+  - Tapu Koko stands in its lair, the Ruins of Conflict, in the tropical seasonal forest.
+  - Tapu Lele stands in its lair, the Ruins of Life, in the tropical rainforest.
+  - Tapu Bulu stands in its lair, the Ruins of Abundance, in the desert.
+  - Tapu Fini stands in its lair, the Ruins of Hope, on the rocky coast, on land and in the water.
+  - Each can be met rarely at any hour in its own biome, and raided at its lair.
+  - Electric Surge, Psychic Surge and Grassy Surge lay their terrain as the pokemon takes the field, as Misty Surge already does.
+  - Each Tapu has a signature ability that raises one stat of every pokemon on its team by 1.25x while its own terrain is on the field. Storm Blessing raises Speed under Electric Terrain. Mind Blessing raises Special Attack under Psychic Terrain. Wild Blessing raises Attack under Grassy Terrain. Mist Blessing raises Special Defense under Misty Terrain.
+  - Each Tapu can also be born with Telepathy. Tapu Koko can be born with Lightning Rod or Static, Tapu Lele with Magic Guard or Synchronize, Tapu Bulu with Grass Pelt or Sap Sipper, and Tapu Fini with Water Absorb or Regenerator.
+  - All four learn their moves by level, machine and tutor, as they do in Ultra Sun and Ultra Moon.
+- 6241a7d: The Ultra Beasts come through the wormholes:
+  
+  - Each stands in a lair named for its own world, and can be met rarely there at any hour and raided:
+    - Nihilego in the Ultra Deep Sea, in the ocean, on land and in the water.
+    - Buzzwole in the Ultra Jungle, in the tropical rainforest.
+    - Pheromosa in the Ultra Desert, in the desert.
+    - Xurkitree in the Ultra Plant, and Guzzlord in the Ultra Ruin, both in the badlands.
+    - Celesteela in the Ultra Crater, on the mountain.
+    - Kartana in the Ultra Forest, in the temperate forest.
+    - Stakataka and Blacephalon in Poni Grove, in the tropical seasonal forest.
+  - Poipole is met rarely in the grassland. It can evolve into Naganadel once it knows Dragon Pulse, which is taught rather than learned by level.
+  - Beast Boost is built: each knockout raises the holder's highest stat 1 stage.
+  - Each family's signature makes one type that would be super effective on it hit for neutral damage instead:
+    - Ground for Nihilego (Earthless), Xurkitree (Unearthed) and Stakataka (Deep Footing).
+    - Flying for Buzzwole (Windbreak) and Pheromosa (Gale Ward).
+    - Fire for Celesteela (Heat Shield) and Kartana (Fireproof).
+    - Fairy for Guzzlord (Unenchanted).
+    - Psychic for Poipole and Naganadel (Closed Mind).
+    - Water for Blacephalon (Dry Fuse).
+  - Each can also be born with three more abilities:
+    - Nihilego: Levitate, Poison Touch or Merciless.
+    - Buzzwole: Iron Fist, Guts or Moxie.
+    - Pheromosa: Speed Boost, Queenly Majesty or Tinted Lens.
+    - Xurkitree: Lightning Rod, Volt Absorb or Static.
+    - Celesteela: Heavy Metal, Sturdy or Weak Armor.
+    - Kartana: Sharpness, Super Luck or Sniper.
+    - Guzzlord: Gluttony, Thick Fat or Ripen.
+    - Naganadel: Corrosion, Poison Point or Infiltrator.
+    - Stakataka: Sturdy, Solid Rock or Stamina.
+    - Blacephalon: Magic Guard, Aftermath or Flash Fire.
+  - All of them learn their moves by level, machine and tutor, as they do in Ultra Sun and Ultra Moon.
+- d139ed1: - Battle Bond is in, as one of Greninja's hidden abilities. Froakie and Frogadier can't be born with it.
+  - The first time a Battle Bond Greninja's move knocks out an enemy, it becomes Ash-Greninja for the rest of the fight: 72/145/67/153/71/132, and its Water Shuriken always strikes 3 times at 20 power.
+  - Ash-Greninja has no art of its own yet, so it is drawn as Greninja.
+- b6d7925: Totem raids:
+  
+  - A lair can stand as a Totem's for a window instead of holding its legendary or its shadow, one window in four. The Totem is a final stage of a line that lives on the lair's own tile.
+  - A Totem starts the fight wrapped in an aura that raises its stats, and calls one ally of its own line at 1/2 HP: the line's first stage, or another of itself for a one-stage family. The ally flees once the Totem falls.
+  - Alola's twelve trial Totems use the games' own auras and sizes. Every other Totem raises its highest stat by 2 when its family is one stage long, or its two highest by 1 when it evolved.
+  - Beating a Totem pays gold and the Totem itself at Totem size, with its hidden ability, at least 3 perfect stats, and never shiny. The first time you beat a given Totem it also leaves a Z-Crystal: the trial's own, or the one for its first type. After that, 1 time in 4.
+
+### Patch Changes
+
+- dbc04c2: The DNA Splicers, the N-Solarizer and the N-Lunarizer are spent on use: one each time a pair is joined, and one each time it is taken apart.
+- 2faea37: Dusk Mane and Dawn Wings Necrozma are drawn as the Solgaleo or Lunala inside them until they have art of their own, and in battle the N-Solarizer or N-Lunarizer floats above them.
+- 796383e: A shiny encounter is marked as caught before only when a shiny of that species has been caught, not when only its regular form has.
+- 2029d5b: Pressing a tab no longer bounces back to the one before it. Forming a team's Teams tab returned to "Your pokemon" when the box's sort menu handed focus back as it closed.
+- cfbe9c5: terracotta 1.3.1, which fixes tabs bouncing back when a closing panel handed focus back. The game's own workaround for it is gone.
+
+## 4.32.0
+
+### Minor Changes
+
+- 2d515ca: The families Poni and the sea turn up:
+  
+  - Type: Null is met on the beach, rarely, at any hour. It evolves into Silvally with friendship.
+  - Silvally stands in its lair, Aether Paradise, on the beach, where it can be raided.
+  - Bruxish swims in the coral reef and the kelp forest at any hour.
+  - Dhelmise drifts in the ocean and the kelp forest at any hour.
+  - Jangmo-o, Hakamo-o and Kommo-o live in the badlands and on the mountain at any hour.
+  - Each family has a signature ability. Memory Echo makes its super-effective moves hit 1.2x. Psychic Gnash makes its biting moves confuse 20% of the time. Ghost Ship makes its Ghost and Grass moves hit 1.3x in rain. War Clangor raises its Defense 1 stage for each sound move it lands, up to 3.
+  - RKS System makes a Silvally the type of the Memory it holds. A Silvally born with another ability stays Normal.
+  - The seventeen Memories can be dug up in the prized band.
+  - Dazzling turns away enemy moves that cut the queue, as Queenly Majesty does.
+  - Receiver and Power of Alchemy no longer take up Shields Down, Comatose, Disguise or RKS System.
+  - Soak no longer changes the type of a pokemon with RKS System.
+  - Silvally can also be born with Adaptability or Download, Bruxish with Swift Swim, Dhelmise with Heavy Metal, Cursed Body or Shadow Tag, and Kommo-o with Justified.
+  - All of them learn their moves by level, machine, tutor and egg, as they do in Sun, Moon, Ultra Sun and Ultra Moon.
+- 1838b04: The families Ula'ula's roads turn up:
+  
+  - Komala lives in the tropical seasonal forest and the savanna at any hour.
+  - Turtonator lives on the volcano and in the badlands at any hour.
+  - Mimikyu lives in the woodland and the bog by evening and night.
+  - Drampa lives on the mountain and the alpine tundra at any hour.
+  - Each family has a signature ability. Nap Time heals 1/4 of its HP every 3rd time it acts. Grudge Shroud casts Spite at each enemy the first time they land a move on it.
+  - Turtonator and Drampa share a pair of signatures. Blast Shell makes its next Fire move hit 1.5x after a physical move lands on it or a teammate. Elder's Ire makes its next Dragon move hit 1.5x after a special move lands on it or a teammate.
+  - Disguise takes the first move that hits Mimikyu for 1/8 of its HP instead, and leaves it busted for the rest of the fight.
+  - Komala can also be born with Oblivious, Unaware or Sticky Hold, Turtonator with Flame Body, Rough Skin or Magma Armor, Mimikyu with Infiltrator, Rattled or Perish Body, and Drampa with Fluffy.
+  - All of them learn their moves by level, machine, tutor and egg, as they do in Sun, Moon, Ultra Sun and Ultra Moon.
+- 3ad2fb0: The first Alolan forms:
+  
+  - Alolan Rattata and Raticate live in the tropical seasonal forest and the tropical rainforest by evening and night. An Alolan Rattata evolves only at night.
+  - Alolan Sandshrew and Sandslash, and Alolan Vulpix and Ninetales, live in the alpine tundra, the glacier and the tundra at any hour. Each evolves with an Ice Stone.
+  - Alolan Diglett and Dugtrio live on the volcano and in the badlands at any hour.
+  - Alolan Meowth and Persian live in the tropical seasonal forest and the tropical rainforest at any hour.
+  - Alolan Raichu lives on the beach and in the tropical seasonal forest at any hour. A Pikachu given a Thunder Stone can become either Raichu.
+  - Each Alolan form shares its Kanto family's candy.
+  - A line whose every stage is Alolan has its own signature ability. Rich Diet raises its Attack 1 stage for each Berry it eats. Frostforged takes Fire and Fighting moves at 0.75x. Aurora Crown casts Aurora Veil as it arrives while hail or snow falls. Wire Snare binds the first to land a contact move on it after each entrance. Taunting Gaze casts Taunt at an enemy as it arrives.
+  - Alolan Raichu keeps the Pikachu family's signature ability.
+  - Surge Surfer doubles its holder's Speed on Electric Terrain.
+  - Tangling Hair takes 1 stage of Speed off whoever lands a contact move on its holder.
+  - Ripen makes Berries its holder eats heal 2x as much and raise 2x as many stages.
+  - Alolan Raticate can also be born with Ripen, Alolan Sandslash with Iron Barbs or Ice Body, Alolan Ninetales with Ice Body or Refrigerate, and Alolan Dugtrio with Steelworker, and Alolan Raichu with Levitate.
+  - All of them learn their moves by level, machine, tutor and egg, as they do in Sun, Moon, Ultra Sun and Ultra Moon.
+- 8b9fde2: The rest of the Alolan forms:
+  
+  - Alolan Geodude, Graveler and Golem live on the steppe and in the shrubland at any hour. An Alolan Graveler evolves by trade.
+  - Alolan Grimer and Muk live on the beach and in the mangrove at any hour.
+  - Alolan Exeggutor lives on the beach at any hour. An Exeggcute given a Leaf Stone can become either Exeggutor.
+  - Alolan Marowak lives on the volcano by evening and night. A Cubone becomes a Kanto Marowak by morning or day, and an Alolan Marowak by evening or night.
+  - Each Alolan form shares its Kanto family's candy.
+  - Magnet Float casts Magnet Rise on its holder as it arrives on the field.
+  - Crystal Toxin keeps the poison its holder puts on an enemy from being cured.
+  - Alolan Exeggutor and Alolan Marowak keep their family's signature ability.
+  - Galvanize makes its holder's Normal moves Electric moves, and they hit 1.2x.
+  - Power of Alchemy takes up a fainted teammate's ability in its place, as Receiver does.
+  - Alolan Golem can also be born with Heavy Metal, Alolan Muk with Pickpocket, and Alolan Exeggutor with Leaf Guard.
+  - All of them learn their moves by level, machine, tutor and egg, as they do in Sun, Moon, Ultra Sun and Ultra Moon.
+- 21db04a: Raid bosses fight back:
+  
+  - A boss has 110 times its species' HP, up from 60.
+  - Indirect and share-of-HP damage share one allowance that holds 200 and refills at 50 a second, so stacked poison, burns, seeds and curses no longer add up.
+  - At half HP and again at a quarter, a boss clears its status, its stat drops, and any seed, curse or confusion on it.
+  - A boss is staged with its five hardest attacks, one to a type, from everything its line can learn, plus the status moves it knows that hit the whole party.
+  - A boss thinks as sharply as a player's team, and winds up two and a half times as long as anything else.
+- c801af9: - Spritzee and Aromatisse are met in woodland and temperate forest, mornings and days.
+  - Cilan, Chili and Cress close with Simisage, Simisear and Simipour, and Marlon closes with Jellicent.
+
+### Patch Changes
+
+- cec7809: A raid boss fights only with the moves its species levels into: no machine, tutor or egg move, since it is met in the wild.
+- 9e7794e: A raid boss throws only the status moves its line levels into, rather than the Toxic and Thunder Wave a machine teaches nearly everything.
+- 7bbc301: A raid boss fills its move slots from everything it levels into, not only its latest moves, so Azelf no longer fights with 3.
+- 39a6cf8: On a dark day, a legendary lair that a true shadow's counterpart is at home in now holds the true shadow as a shadow raid. Before, only shadow lairs did.
+- 94450d2: Sprites refreshed from SpriteCollab's new build:
+  
+  - Every sheet now has Swing, and Jellicent, Simipour and Amoonguss gain the clips nobody drew, made from their standing pose.
+  - Aromatisse, Toucannon, Mega Slowbro, Mega Sceptile and Mega Sharpedo get their sheets.
+  - The battle field no longer moves a pokemon to stand in for a clip its sheet lacks.
+- 5b0d284: A held item taken away in a raid or an NPC battle now comes back afterwards, unless it was used up.
+  
+  - Knock Off, Trick, Switcheroo, Bestow, Symbiosis, Cutpurse, Corrosive Ooze and Sticky Barb no longer cost the catch its item.
+  - Thief, Covet, Pickpocket, Magician, Cat Burglar, Fling, Incinerate, Pluck, Bug Bite and Taste Everything cost it only when the item is a consumable, such as a berry or a gem.
+
+## 4.31.0
+
+### Minor Changes
+
+- c98800e: The families Hano Beach and Mount Hokulani turn up:
+  
+  - Sandygast and Palossand live on the beach and in the desert at any hour.
+  - Pyukumuku lives on the beach and the rocky coast at any hour.
+  - Minior lives on the mountain and the alpine tundra at any hour. It is met in its shell, and each one has its own core colour.
+  - Togedemaru lives on the mountain and the grassland at any hour.
+  - Each family has a signature ability. Castle Drain takes 1/8 of the HP of whoever lands a contact move on it and heals it that much. Tossed Back leaves it on 1 HP from the first blow that would knock it out and sends it off the field for its strongest teammate, once per battle. Starfall casts its first move after each entrance 50% faster. Charged Spines makes its next Electric move that lands hit 1.5x after a contact move lands on it.
+  - Water Compaction raises its holder's Defense 2 stages for each Water move that lands on it.
+  - Sand Spit casts Sandstorm whenever a damaging move lands on its holder.
+  - Innards Out deals whoever knocks its holder out with a move as much damage as the holder had HP left.
+  - Shields Down keeps a Minior in its shell above 1/2 HP, where no major status gets through, and cracks it open to its core at or below 1/2 HP.
+  - Palossand can also be born with Sand Spit or Cursed Body, Pyukumuku with Regenerator or Liquid Ooze, Minior with Weak Armor, Magic Guard or Sturdy, and Togedemaru with Static.
+  - All of them learn their moves by level, machine, tutor and egg, as they do in Sun, Moon, Ultra Sun and Ultra Moon.
+- 95f108f: The families the Lush Jungle turns up:
+  
+  - Comfey lives in the tropical rainforest, the tropical seasonal forest and the grassland by morning and day.
+  - Morelull and Shiinotic, Oranguru and Passimian are written but not met in the wild yet: they wait on art for Shiinotic and Oranguru, and Passimian waits on its counterpart.
+  - Each family has a signature ability. Drowsy Glow casts Yawn on what it hits 20% of the time. Lei Gift gives its worst hurt teammate a lei as it arrives, healing them 1/16 of their HP each time they act. Sage's Call makes its strongest teammate cast their next move 25% faster each time it acts. Rush Pass makes its moves hit 1.3x whenever they are cast faster than they would be on their own.
+  - Receiver takes a fainted teammate's ability in its place.
+  - Shiinotic can also be born with Dry Skin, Comfey with Aroma Veil, Oranguru with Forewarn, and Passimian with Guts or Pickup.
+  - All of them learn their moves by level, machine, tutor and egg, as they do in Sun, Moon, Ultra Sun and Ultra Moon.
+- 4592c2a: The families Route 8 and Wela Volcano Park turn up:
+  
+  - Mareanie and Toxapex live in the water of the coral reef, the rocky coast and the beach at any hour.
+  - Salandit and Salazzle live on the volcano and in the badlands at any hour. Only a female Salandit evolves.
+  - Stufful and Bewear live in the grassland, the tropical seasonal forest and the woodland at any hour.
+  - Wimpod and Golisopod live on the beach and the rocky coast at any hour.
+  - Each family has a signature ability. Toxic Dome takes the first hit after each entrance at 0.5x and casts Toxic at the attacker. Fume Flare makes its Fire moves poison 20% of the time. Fond Crush makes its moves hit 1.3x against an infatuated target. Opening Slash makes the first move it lands after each entrance hit 1.5x.
+  - Corrosion can poison Poison and Steel types.
+  - Fluffy takes contact moves at 0.5x and Fire moves at 2x.
+  - Emergency Exit sends its holder off the field for its strongest teammate when damage drops it below 1/2 HP, as Wimp Out does.
+  - Toxapex can also be born with Poison Point, Salazzle with Flame Body or Poison Touch, and Golisopod with Battle Armor, Sharpness or Swift Swim.
+  - All of them learn their moves by level, machine, tutor and egg, as they do in Sun, Moon, Ultra Sun and Ultra Moon.
+
+### Patch Changes
+
+- bfa318f: Core Enforcer is taught only by the Move Tutor, like the other signature moves. Its TM is no longer sold, and a vendor buys one back for what it cost.
+- 1016398: The AI weighing its moves no longer changes the fight:
+  
+  - Three Heads no longer bites the enemy team before Hydreigon has cast anything.
+  - Glidewake no longer gains Evasion while Emolga's AI thinks.
+  - Bluff, Doom Mark, Lock-On and Guard Spec are no longer used up by a move that was only weighed.
+  - Protect and the team guards are no longer broken by a Feint that was only weighed.
+  - Ability, item and status cues no longer play while the AI thinks, and the AI no longer learns a foe's ability from them.
+  - The AI now weighs Flail, Reversal, Return, Frustration, Present, Magnitude, Gyro Ball, Electro Ball, Heavy Slam, Heat Crash and the other moves whose power is worked out in the fight, where it used to score them as doing nothing.
+
+## 4.30.0
+
+### Minor Changes
+
+- 434ee22: The Boxes screen is laid out as designed. It opens wide, with New box and Select at the top. Picking turns the top into a green bar to move, mark, release or clear what is picked. The rail counts each box in a pill, takes a drag to put your boxes in order, and holds today's let-go list. An empty box shows its numbered squares with Add pokemon, a box's menu says what laying out and closing up do, and searching every box counts the matches in each. On a phone a long press starts picking, and Move to opens as a sheet from the bottom. Pickers open wide, and a box's name no longer shrinks to one letter on its squares.
+
+### Patch Changes
+
+- ee1c738: Dragging a box to a new place in the list works again; it was refused with "Invalid length". A box dragged down the list now lands after the one it is dropped on, so a box can be moved to the bottom.
+- 37dfc5a: Picking a pokemon in Select mode no longer scrolls the box back to the top.
+- 4278a35: Boxes scroll instead of turning pages, so a pokemon can be moved anywhere in a box. Only the rows in sight are drawn, so a box of hundreds opens as fast as a box of thirty. Dragging a pokemon to the top or bottom edge scrolls the box, and while picking, pressing an empty square puts the picked pokemon there, which works with a finger. Every picker box scrolls the same way. On a phone, the Boxes screen's squares are square again so the sprites can be seen.
+- e15fe4b: Counters are one screen again. A vendor, chef or geologist opens on the crate with Buy and Sell as tabs, so buying is one press. The move tutor, the move reminder and the hyper trainer ask for the pokemon and the move or value together, with the button at the foot. Pickers no longer print a box name on each square, which was too small to read.
+- 7fced22: Archen and Archeops showed "Ability #200" in place of their ability. Defeatist now has its name and description and works in battle: at half HP or less, its Attack and Special Attack drop to 0.5x.
+- 0fa660e: Dropdowns and menus float over the dialog they are opened from rather than being cut off by it or its bottom bar, flip above their button when there is no room below, and never grow taller than the room they have.
+- 5de328b: Every picker of your own pokemon (Form a team, Nurse Joy, Use item, the breeder and the rest) opens with a box switcher before the search, on All boxes, with each box in its colour. The search says which box it looks through, a team picker says it is strongest first, and picks made in one box stay picked while another is showing.
+- fe2d9c3: The summary after a raid is laid out team first. Each party is a full-size row of six, drawn as the fight left it with the fainted greyed and each one's HP where it ended. Beside it, a plate says where the team placed, who fielded it, how much it dealt and its share of the damage, with your own row in green. The boss stands last with what it dealt back, and the best single pokemon is named under the list.
+- 3333111: The catch sheet shows which box a pokemon is in as a chip in its colour, first in the heading row, for every player. Its Move to menu lists each box with a tick on the current one, and New box makes a box and moves the pokemon into it.
+- ec25007: Saved teams, in the profile and in Form a team, show the team first with its name and buttons on a plate beside it, the way the battle history does.
+- 2f637a1: Saved teams, the battle history and lobby parties draw each team as a plain row of squares wide enough to see who is in it: each pokemon fills its square, with only a thin HP line under it, and its level in the card that opens over it.
+
 ## 4.29.0
 
 ### Minor Changes

@@ -1,0 +1,454 @@
+# What the three starter lines bring, and the machines they carry:
+# the first stretch of the dex, in the order it is walked
+
+Tackle:
+  type: Normal
+  category: Physical
+  power: 40
+  accuracy: 100
+  pp: 35
+  target: Unit
+  flags: [Contact]
+
+Growl:
+  type: Normal
+  category: Status
+  accuracy: 100
+  pp: 40
+  target: None
+  affects: [Unit, Enemy]
+  flags: [Sound]
+
+LeechSeed:
+  type: Grass
+  category: Status
+  accuracy: 90
+  pp: 10
+  target: Unit
+  projectile: true
+
+VineWhip:
+  type: Grass
+  category: Physical
+  power: 45
+  accuracy: 100
+  pp: 25
+  target: Unit
+  flags: [Contact]
+
+PoisonPowder:
+  type: Poison
+  category: Status
+  accuracy: 75
+  pp: 35
+  target: Unit
+  flags: [Powder]
+
+RazorLeaf:
+  type: Grass
+  category: Physical
+  power: 55
+  accuracy: 95
+  pp: 25
+  target: None
+  affects: [Unit, Enemy]
+  flags: [Slicing]
+  projectile: true
+
+Growth:
+  type: Grass
+  category: Status
+  pp: 20
+  target: None
+
+SolarBeam:
+  type: Grass
+  category: Special
+  power: 120
+  accuracy: 100
+  pp: 10
+  target: Unit
+  steps: 1
+
+SwordsDance:
+  type: Normal
+  category: Status
+  pp: 20
+  target: None
+
+Toxic:
+  type: Poison
+  category: Status
+  accuracy: 90
+  pp: 10
+  target: Unit
+
+BodySlam:
+  type: Normal
+  category: Physical
+  power: 85
+  accuracy: 100
+  pp: 15
+  target: Unit
+  flags: [Contact]
+
+TakeDown:
+  type: Normal
+  category: Physical
+  power: 90
+  accuracy: 85
+  pp: 20
+  target: Unit
+  flags: [Contact]
+
+DoubleEdge:
+  type: Normal
+  category: Physical
+  power: 120
+  accuracy: 100
+  pp: 15
+  target: Unit
+  flags: [Contact]
+
+Rage:
+  type: Normal
+  category: Physical
+  power: 20
+  accuracy: 100
+  pp: 20
+  target: Unit
+  flags: [Contact]
+
+MegaDrain:
+  type: Grass
+  category: Special
+  power: 40
+  accuracy: 100
+  pp: 15
+  target: Unit
+
+Mimic:
+  type: Normal
+  category: Status
+  pp: 10
+  target: Unit
+  affects: [Unit, Own, Enemy]
+
+DoubleTeam:
+  type: Normal
+  category: Status
+  pp: 15
+  target: None
+
+Bide:
+  type: Normal
+  category: Physical
+  priority: 1
+  pp: 10
+  target: Unit
+  steps: 1
+
+Reflect:
+  type: Psychic
+  category: Status
+  pp: 20
+  target: Team
+  affects: [Team, Own]
+
+Rest:
+  type: Psychic
+  category: Status
+  pp: 5
+  target: None
+
+HyperBeam:
+  type: Normal
+  category: Special
+  power: 150
+  accuracy: 90
+  pp: 5
+  target: Unit
+
+SleepPowder:
+  type: Grass
+  category: Status
+  accuracy: 75
+  pp: 15
+  target: Unit
+  flags: [Powder]
+
+Cut:
+  type: Normal
+  category: Physical
+  power: 50
+  accuracy: 95
+  pp: 30
+  target: Unit
+  flags: [Contact, Slicing]
+
+Substitute:
+  type: Normal
+  category: Status
+  pp: 10
+  target: None
+
+Scratch:
+  type: Normal
+  category: Physical
+  power: 40
+  accuracy: 100
+  pp: 35
+  target: Unit
+  flags: [Contact]
+
+Ember:
+  type: Fire
+  category: Special
+  power: 40
+  accuracy: 100
+  pp: 25
+  target: Unit
+  projectile: true
+
+Leer:
+  type: Normal
+  category: Status
+  accuracy: 100
+  pp: 30
+  target: None
+  affects: [Unit, Enemy]
+
+Slash:
+  type: Normal
+  category: Physical
+  power: 70
+  accuracy: 100
+  pp: 20
+  target: Unit
+  flags: [Contact, Slicing]
+
+Flamethrower:
+  type: Fire
+  category: Special
+  power: 90
+  accuracy: 100
+  pp: 15
+  target: Unit
+
+FireSpin:
+  type: Fire
+  category: Special
+  power: 35
+  accuracy: 85
+  pp: 15
+  target: Unit
+
+MegaPunch:
+  type: Normal
+  category: Physical
+  power: 80
+  accuracy: 85
+  pp: 20
+  target: Unit
+  flags: [Contact]
+
+MegaKick:
+  type: Normal
+  category: Physical
+  power: 120
+  accuracy: 75
+  pp: 5
+  target: Unit
+  flags: [Contact]
+
+Submission:
+  type: Fighting
+  category: Physical
+  power: 80
+  accuracy: 80
+  pp: 20
+  target: Unit
+  flags: [Contact]
+
+SeismicToss:
+  type: Fighting
+  category: Physical
+  accuracy: 100
+  pp: 20
+  target: Unit
+  flags: [Contact]
+
+DragonRage:
+  type: Dragon
+  category: Special
+  accuracy: 100
+  pp: 10
+  target: Unit
+
+Dig:
+  type: Ground
+  category: Physical
+  power: 80
+  accuracy: 100
+  pp: 10
+  target: Unit
+  flags: [Contact]
+  steps: 1
+
+FireBlast:
+  type: Fire
+  category: Special
+  power: 110
+  accuracy: 85
+  pp: 5
+  target: Unit
+  projectile: true
+
+Swift:
+  type: Normal
+  category: Special
+  power: 60
+  pp: 20
+  target: None
+  affects: [Unit, Enemy]
+  projectile: true
+
+SkullBash:
+  type: Normal
+  category: Physical
+  power: 130
+  accuracy: 100
+  pp: 10
+  target: Unit
+  flags: [Contact]
+  steps: 1
+
+Strength:
+  type: Normal
+  category: Physical
+  power: 80
+  accuracy: 100
+  pp: 15
+  target: Unit
+  flags: [Contact]
+
+Earthquake:
+  type: Ground
+  category: Physical
+  power: 100
+  accuracy: 100
+  pp: 10
+  target: None
+  affects: [Unit, Own, Enemy]
+
+Fissure:
+  type: Ground
+  category: Physical
+  accuracy: 30
+  pp: 5
+  target: Unit
+
+Fly:
+  type: Flying
+  category: Physical
+  power: 90
+  accuracy: 95
+  pp: 15
+  target: Unit
+  flags: [Contact]
+  steps: 1
+
+TailWhip:
+  type: Normal
+  category: Status
+  accuracy: 100
+  pp: 30
+  target: None
+  affects: [Unit, Enemy]
+
+Bubble:
+  type: Water
+  category: Special
+  power: 40
+  accuracy: 100
+  pp: 30
+  target: None
+  affects: [Unit, Enemy]
+  projectile: true
+
+WaterGun:
+  type: Water
+  category: Special
+  power: 40
+  accuracy: 100
+  pp: 25
+  target: Unit
+  projectile: true
+
+Bite:
+  type: Dark
+  category: Physical
+  power: 60
+  accuracy: 100
+  pp: 25
+  target: Unit
+  flags: [Contact, Bite]
+
+Withdraw:
+  type: Water
+  category: Status
+  pp: 40
+  target: None
+
+HydroPump:
+  type: Water
+  category: Special
+  power: 110
+  accuracy: 80
+  pp: 5
+  target: Unit
+  projectile: true
+
+BubbleBeam:
+  type: Water
+  category: Special
+  power: 65
+  accuracy: 100
+  pp: 20
+  target: Unit
+  projectile: true
+
+IceBeam:
+  type: Ice
+  category: Special
+  power: 90
+  accuracy: 100
+  pp: 10
+  target: Unit
+
+Blizzard:
+  type: Ice
+  category: Special
+  power: 110
+  accuracy: 70
+  pp: 5
+  target: None
+  affects: [Unit, Enemy]
+  flags: [Wind]
+
+Counter:
+  type: Fighting
+  category: Physical
+  accuracy: 100
+  priority: -5
+  pp: 20
+  target: Unit
+
+Surf:
+  type: Water
+  category: Special
+  power: 90
+  accuracy: 100
+  pp: 15
+  target: None
+  affects: [Unit, Own, Enemy]

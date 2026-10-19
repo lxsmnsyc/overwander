@@ -19,16 +19,25 @@ import attackMarkVisual from '../../src/canvas/battle/attack';
 import { LIT } from '../../src/canvas/battle/moves/lit';
 import type { Stage } from '../../src/canvas/battle/stage';
 import { Types } from '../../src/data/constants/types';
+import { getMoveData } from '../../src/data/moves';
 import Abilities from '../../src/data/ids/abilities';
 import { Items } from '../../src/data/ids/items';
 import { Moves } from '../../src/data/ids/moves';
+import { G_MAX_MOVES } from '../../src/data/moves/gmax-moves';
+import { CANON_BURSTS, FRENZY_MOVES, getBurstStandIn } from '../../src/data/moves/frenzy-moves';
+import { MAX_MOVES } from '../../src/data/moves/max-moves';
 import { SPANS } from '../../src/canvas/battle/moves/effect/shapes';
-import { WISH_LANDS } from '../../src/canvas/battle/moves/effect/care';
-import { STARFALL_DROP } from '../../src/canvas/battle/moves/effect/legends';
+import { WISH_LANDS } from '../../src/canvas/battle/moves/effect/themes/care';
+import { STARFALL_DROP } from '../../src/canvas/battle/moves/effect/regions/early/legends';
 import { FUTURE_SIGHT_DELAY } from '../../src/battle/moves/future-sight';
 import { WISH_DELAY } from '../../src/battle/moves/wish';
 import { Statuses } from '../../src/data/ids/status';
 import registerGameData from '../../src/data';
+import {
+  getLearnableMoves,
+  getRegisteredSpecies,
+  getSpeciesData,
+} from '../../src/data/species/__create';
 
 /**
  * Everything the field draws over a fight is a painter: a function of
@@ -75,6 +84,8 @@ function canvas(): {
     quadraticCurveTo: (...args: number[]) => drawn.push(`quad ${args.join()}`),
     ellipse: (...args: number[]) => drawn.push(`ellipse ${args.join()}`),
     arc: (...args: number[]) => drawn.push(`arc ${args.join()}`),
+    rect: (...args: number[]) => drawn.push(`rect ${args.join()}`),
+    clip: () => {},
     createRadialGradient: () => gradient,
     createLinearGradient: () => gradient,
     stroke: () => {
@@ -84,6 +95,9 @@ function canvas(): {
       marks += 1;
     },
     fillRect: () => {
+      marks += 1;
+    },
+    strokeRect: () => {
       marks += 1;
     },
   };
@@ -168,7 +182,7 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Punch', Moves.IcePunch],
   ['Punch', Moves.ThunderPunch],
   ['Rush', Moves.FlareBlitz],
-  ['Rush', Moves.VoltTackle],
+  ['Rush', Moves.WildCharge],
   ['Wheel', Moves.FlameWheel],
   ['Torrent', Moves.Waterfall],
   // The legendary signatures
@@ -366,6 +380,27 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Spotlight', Moves.Spotlight],
   ['Pollen', Moves.PollenPuff],
   ['Detonate', Moves.MindBlown],
+  // Galar and Hisui's signatures
+  ['Behemoth', Moves.BehemothBlade],
+  ['Bulwark', Moves.BehemothBash],
+  ['Dynamax', Moves.Eternabeam],
+  ['Darters', Moves.DragonDarts],
+  ['Lance', Moves.GlacialLance],
+  ['Astral', Moves.AstralBarrage],
+  ['Bleakwind', Moves.BleakwindStorm],
+  ['Wildbolt', Moves.WildboltStorm],
+  ['Sandsear', Moves.SandsearStorm],
+  ['Springtide', Moves.SpringtideStorm],
+  ['Dragonforce', Moves.DragonEnergy],
+  ['Glaring', Moves.FreezingGlare],
+  ['Thunderkick', Moves.ThunderousKick],
+  ['Wrath', Moves.FieryWrath],
+  ['Singlestrike', Moves.WickedBlow],
+  ['Rapidstrike', Moves.SurgingStrikes],
+  ['Jungle', Moves.JungleHealing],
+  ['Maxcannon', Moves.DynamaxCannon],
+  ['Mystic', Moves.MysticalPower],
+  ['Cage', Moves.ThunderCage],
   ['Blitz', Moves.BreakneckBlitz],
   ['Pummel', Moves.AllOutPummeling],
   ['Skystrike', Moves.SupersonicSkystrike],
@@ -401,6 +436,192 @@ const SHAPES: [shape: string, move: Moves][] = [
   ['Moonraze', Moves.MenacingMoonrazeMaelstrom],
   ['Stormshards', Moves.SplinteredStormshards],
   ['Soulblaze', Moves.ClangorousSoulblaze],
+  // The Max Moves
+  ['MaxFlare', Moves.MaxFlare],
+  ['MaxGeyser', Moves.MaxGeyser],
+  ['MaxHailstorm', Moves.MaxHailstorm],
+  ['MaxRockfall', Moves.MaxRockfall],
+  ['MaxLightning', Moves.MaxLightning],
+  ['MaxOvergrowth', Moves.MaxOvergrowth],
+  ['MaxMindstorm', Moves.MaxMindstorm],
+  ['MaxStarfall', Moves.MaxStarfall],
+  ['MaxStrike', Moves.MaxStrike],
+  ['MaxFlutterby', Moves.MaxFlutterby],
+  ['MaxPhantasm', Moves.MaxPhantasm],
+  ['MaxWyrmwind', Moves.MaxWyrmwind],
+  ['MaxDarkness', Moves.MaxDarkness],
+  ['MaxKnuckle', Moves.MaxKnuckle],
+  ['MaxSteelspike', Moves.MaxSteelspike],
+  ['MaxOoze', Moves.MaxOoze],
+  ['MaxQuake', Moves.MaxQuake],
+  ['MaxAirstream', Moves.MaxAirstream],
+  ['MaxGuard', Moves.MaxGuard],
+  ['GMaxVineLash', Moves.GMaxVineLash],
+  ['GMaxWildfire', Moves.GMaxWildfire],
+  ['GMaxCannonade', Moves.GMaxCannonade],
+  ['GMaxBefuddle', Moves.GMaxBefuddle],
+  ['GMaxVoltCrash', Moves.GMaxVoltCrash],
+  ['GMaxGoldRush', Moves.GMaxGoldRush],
+  ['GMaxChiStrike', Moves.GMaxChiStrike],
+  ['GMaxTerror', Moves.GMaxTerror],
+  ['GMaxFoamBurst', Moves.GMaxFoamBurst],
+  ['GMaxResonance', Moves.GMaxResonance],
+  ['GMaxCuddle', Moves.GMaxCuddle],
+  ['GMaxReplenish', Moves.GMaxReplenish],
+  ['GMaxMalodor', Moves.GMaxMalodor],
+  ['GMaxMeltdown', Moves.GMaxMeltdown],
+  ['GMaxDrumSolo', Moves.GMaxDrumSolo],
+  ['GMaxFireball', Moves.GMaxFireball],
+  ['GMaxHydrosnipe', Moves.GMaxHydrosnipe],
+  ['GMaxWindRage', Moves.GMaxWindRage],
+  ['GMaxGravitas', Moves.GMaxGravitas],
+  ['GMaxStonesurge', Moves.GMaxStonesurge],
+  ['GMaxVolcalith', Moves.GMaxVolcalith],
+  ['GMaxTartness', Moves.GMaxTartness],
+  ['GMaxSweetness', Moves.GMaxSweetness],
+  ['GMaxSandblast', Moves.GMaxSandblast],
+  ['GMaxStunShock', Moves.GMaxStunShock],
+  ['GMaxCentiferno', Moves.GMaxCentiferno],
+  ['GMaxSmite', Moves.GMaxSmite],
+  ['GMaxSnooze', Moves.GMaxSnooze],
+  ['GMaxFinale', Moves.GMaxFinale],
+  ['GMaxSteelsurge', Moves.GMaxSteelsurge],
+  ['GMaxDepletion', Moves.GMaxDepletion],
+  ['GMaxOneBlow', Moves.GMaxOneBlow],
+  ['GMaxRapidFlow', Moves.GMaxRapidFlow],
+  ['Splinters', Moves.FrenzyStoneAxe],
+  ['PetalStorm', Moves.FrenzyPetalStorm],
+  ['Wildfire', Moves.FrenzyWildfire],
+  ['ChargedBlast', Moves.FrenzyBlast],
+  ['Iceberg', Moves.FrenzyIceberg],
+  // Paldea's legendary and mythical signatures
+  ['Collision', Moves.CollisionCourse],
+  ['Neon', Moves.ElectroDrift],
+  ['Calamity', Moves.Ruination],
+  ['Cudgel', Moves.IvyCudgel],
+  ['Starstorm', Moves.TeraStarstorm],
+  ['Chains', Moves.MalignantChain],
+  // Paldea's other signatures, one family each
+  ['Snare', Moves.SilkTrap],
+  ['Lumina', Moves.LuminaCrash],
+  ['Order', Moves.OrderUp],
+  ['Jetfist', Moves.JetPunch],
+  ['Spice', Moves.SpicyExtract],
+  ['Burnout', Moves.SpinOut],
+  ['Horde', Moves.PopulationBomb],
+  ['Glaive', Moves.GlaiveRush],
+  ['Salt', Moves.SaltCure],
+  ['Divers', Moves.TripleDive],
+  ['Spinner', Moves.MortalSpin],
+  ['Doodle', Moves.Doodle],
+  ['Fillet', Moves.FilletAway],
+  ['Kowtow', Moves.KowtowCleave],
+  ['Bouquet', Moves.FlowerTrick],
+  ['Torch', Moves.TorchSong],
+  ['Stepdance', Moves.AquaStep],
+  ['Bull', Moves.RagingBull],
+  ['Coins', Moves.MakeItRain],
+  ['Hyperdrill', Moves.HyperDrill],
+  ['Twin', Moves.TwinBeam],
+  ['Ragefist', Moves.RageFist],
+  ['Armor', Moves.ArmorCannon],
+  ['Bitter', Moves.BitterBlade],
+  ['Doubleshock', Moves.DoubleShock],
+  ['Gigaton', Moves.GigatonHammer],
+  ['Bloodmoon', Moves.BloodMoon],
+  ['Matcha', Moves.MatchaGotcha],
+  ['Syrup', Moves.SyrupBomb],
+  ['Electroshot', Moves.ElectroShot],
+  ['Fickle', Moves.FickleBeam],
+  ['Firewall', Moves.BurningBulwark],
+  ['Clap', Moves.Thunderclap],
+  ['Cleave', Moves.MightyCleave],
+  ['Tachyon', Moves.TachyonCutter],
+  ['Psyblade', Moves.Psyblade],
+  ['Steamjet', Moves.HydroSteam],
+  ['Blazing', Moves.BlazingTorque],
+  ['Wicked', Moves.WickedTorque],
+  ['Noxious', Moves.NoxiousTorque],
+  ['Combat', Moves.CombatTorque],
+  ['Magical', Moves.MagicalTorque],
+  // Every older region's signatures that once borrowed a picture
+  ['Eggbarrage', Moves.Barrage],
+  ['Boneclub', Moves.BoneClub],
+  ['Kiss', Moves.LovelyKiss],
+  ['Conversion', Moves.Conversion],
+  ['Spoon', Moves.Kinesis],
+  ['Sketch', Moves.Sketch],
+  ['Reconvert', Moves.Conversion2],
+  ['Volt', Moves.VoltTackle],
+  ['Chatter', Moves.Chatter],
+  ['Attackorder', Moves.AttackOrder],
+  ['Grind', Moves.GearGrind],
+  ['Mat', Moves.MatBlock],
+  ['Treat', Moves.TrickOrTreat],
+  ['Curse', Moves.ForestsCurse],
+  ['Lock', Moves.FairyLock],
+  ['Aegis', Moves.KingsShield],
+  ['Wrathland', Moves.LandsWrath],
+  ['Shore', Moves.ShoreUp],
+  ['Bunker', Moves.BanefulBunker],
+  ['Icehammer', Moves.IceHammer],
+  ['Floral', Moves.FloralHealing],
+  ['Thread', Moves.ToxicThread],
+  ['Purify', Moves.Purify],
+  ['Revelation', Moves.RevelationDance],
+  ['Trop', Moves.TropKick],
+  ['Instruct', Moves.Instruct],
+  ['Beak', Moves.BeakBlast],
+  ['Scales', Moves.ClangingScales],
+  ['Trap', Moves.ShellTrap],
+  ['Fleur', Moves.FleurCannon],
+  ['Bone', Moves.ShadowBone],
+  ['Accelerock', Moves.Accelerock],
+  ['Thief', Moves.SpectralThief],
+  ['Multi', Moves.MultiAttack],
+  ['Plasma', Moves.PlasmaFists],
+  ['Clangor', Moves.ClangorousSoul],
+  ['Ironbash', Moves.DoubleIronBash],
+  ['Snipe', Moves.SnipeShot],
+  ['Jawlock', Moves.JawLock],
+  ['Cheeks', Moves.StuffCheeks],
+  ['Retreat', Moves.NoRetreat],
+  ['Powder', Moves.MagicPowder],
+  ['Teatime', Moves.Teatime],
+  ['Octolock', Moves.Octolock],
+  ['Court', Moves.CourtChange],
+  ['Decorate', Moves.Decorate],
+  ['Drumming', Moves.DrumBeating],
+  ['Pyroball', Moves.PyroBall],
+  ['Direclaw', Moves.DireClaw],
+  ['Psyshield', Moves.PsyshieldBash],
+  ['Stoneaxe', Moves.StoneAxe],
+  ['Mountaingale', Moves.MountainGale],
+  ['Victorydance', Moves.VictoryDance],
+  ['Barbs', Moves.BarbBarrage],
+  ['Esper', Moves.EsperWing],
+  ['Malice', Moves.BitterMalice],
+  ['Shelter', Moves.Shelter],
+  ['Triplearrows', Moves.TripleArrows],
+  ['Parade', Moves.InfernalParade],
+  ['Ceaseless', Moves.CeaselessEdge],
+  ['Blessing', Moves.LunarBlessing],
+  ['Takeheart', Moves.TakeHeart],
+  ['Chloroblast', Moves.Chloroblast],
+  ['Flyingpress', Moves.FlyingPress],
+  ['Revival', Moves.RevivalBlessing],
+  ['Respects', Moves.LastRespects],
+  ['Aurawheel', Moves.AuraWheel],
+  ['Amped', Moves.Overdrive],
+  ['Acid', Moves.AppleAcid],
+  ['Gravapple', Moves.GravApple],
+  ['Spiritbreak', Moves.SpiritBreak],
+  ['Strangesteam', Moves.StrangeSteam],
+  ['Obstruct', Moves.Obstruct],
+  ['Surrender', Moves.FalseSurrender],
+  ['Assault', Moves.MeteorAssault],
+  ['Sidearm', Moves.ShellSideArm],
+  ['Spell', Moves.EerieSpell],
 ];
 
 /**
@@ -408,7 +629,12 @@ const SHAPES: [shape: string, move: Moves][] = [
  * lands as. A U-turn's blow is its first step and its leaving is its
  * last, so neither picture is the move's landing
  */
-const STEP_SHAPES: [shape: string, move: Moves, steps: number][] = [['Dart', Moves.UTurn, 1]];
+const STEP_SHAPES: [shape: string, move: Moves, steps: number][] = [
+  ['Dart', Moves.UTurn, 1],
+  ['Dart', Moves.FlipTurn, 1],
+  ['Doll', Moves.ShedTail, 1],
+  ['Reception', Moves.ChillyReception, 1],
+];
 
 describe('a painted move', () => {
   it('has a move to draw for every shape there is', () => {
@@ -650,6 +876,160 @@ describe('a painted move', () => {
     expect(effectShapeFor(Moves.HeartStamp)).toBe('Hearts');
   });
 
+  it('draws the Galar and Hisui moves that are an earlier move in all but name', () => {
+    expect(effectShapeFor(Moves.BodyPress)).toBe('Tonnage');
+    expect(effectShapeFor(Moves.FlipTurn)).toBe('Relay');
+    expect(effectShapeFor(Moves.LifeDew)).toBe('Mend');
+    expect(effectShapeFor(Moves.TripleAxel)).toBe('Kicks');
+    expect(effectShapeFor(Moves.WaveCrash)).toBe('Torrent');
+    expect(effectShapeFor(Moves.SteelBeam)).toBe('Blaster');
+    // Charged and thrown the way the earlier moves of their kind are
+    expect(delayShapeFor(Moves.MeteorBeam, 1)).toBe('Charge');
+    expect(delayShapeFor(Moves.SteelBeam, 0)).toBe('Charge');
+  });
+
+  it('gives every signature move a shape no other move is drawn as', () => {
+    // A signature is a move one family learns, legendary or not; the
+    // move-visuals rule is that it never borrows another move's picture
+    const families = new Map<Moves, Set<number>>();
+
+    for (const species of getRegisteredSpecies()) {
+      const { family } = getSpeciesData(species);
+
+      for (const move of getLearnableMoves(species)) {
+        const learners = families.get(move) ?? new Set<number>();
+
+        learners.add(family);
+        families.set(move, learners);
+      }
+    }
+
+    const drawnAs = new Map<string, Moves[]>();
+
+    for (const move of families.keys()) {
+      const shape = effectShapeFor(move);
+
+      drawnAs.set(shape, [...(drawnAs.get(shape) ?? []), move]);
+    }
+
+    const shared: string[] = [];
+
+    for (const [move, learners] of families) {
+      const others = drawnAs.get(effectShapeFor(move)) ?? [];
+
+      if (learners.size === 1 && others.length > 1) {
+        shared.push(`${getMoveData(move).name} as ${effectShapeFor(move)}`);
+      }
+    }
+    expect(shared).toEqual([]);
+  });
+
+  it('draws the Paldea moves that are an earlier move in all but name', () => {
+    expect(effectShapeFor(Moves.ShedTail)).toBe('Relay');
+    expect(effectShapeFor(Moves.Snowscape)).toBe('Sky');
+    expect(effectShapeFor(Moves.TidyUp)).toBe('Clear');
+    expect(effectShapeFor(Moves.Comeuppance)).toBe('Turnabout');
+    expect(effectShapeFor(Moves.HardPress)).toBe('Tonnage');
+    expect(effectShapeFor(Moves.SupercellSlam)).toBe('Plummet');
+    expect(effectShapeFor(Moves.TemperFlare)).toBe('Rush');
+    // Electro Shot spends its first step gathering the charge, like Meteor Beam
+    expect(moveEffectVisual(Moves.ElectroShot, 1)).toBeNull();
+    expect(delayShapeFor(Moves.ElectroShot, 1)).toBe('Charge');
+  });
+
+  it('draws each Max Move as a picture of its own', () => {
+    const shapes = new Set<string>();
+
+    for (const move of MAX_MOVES) {
+      shapes.add(effectShapeFor(move));
+    }
+    expect(shapes.size).toBe(MAX_MOVES.size);
+    expect(effectShapeFor(Moves.MaxFlare)).toBe('MaxFlare');
+    expect(effectShapeFor(Moves.MaxGeyser)).toBe('MaxGeyser');
+    expect(effectShapeFor(Moves.MaxHailstorm)).toBe('MaxHailstorm');
+    expect(effectShapeFor(Moves.MaxRockfall)).toBe('MaxRockfall');
+    expect(effectShapeFor(Moves.MaxLightning)).toBe('MaxLightning');
+    expect(effectShapeFor(Moves.MaxOvergrowth)).toBe('MaxOvergrowth');
+    expect(effectShapeFor(Moves.MaxMindstorm)).toBe('MaxMindstorm');
+    expect(effectShapeFor(Moves.MaxStarfall)).toBe('MaxStarfall');
+    expect(effectShapeFor(Moves.MaxStrike)).toBe('MaxStrike');
+    expect(effectShapeFor(Moves.MaxFlutterby)).toBe('MaxFlutterby');
+    expect(effectShapeFor(Moves.MaxPhantasm)).toBe('MaxPhantasm');
+    expect(effectShapeFor(Moves.MaxWyrmwind)).toBe('MaxWyrmwind');
+    expect(effectShapeFor(Moves.MaxDarkness)).toBe('MaxDarkness');
+    expect(effectShapeFor(Moves.MaxKnuckle)).toBe('MaxKnuckle');
+    expect(effectShapeFor(Moves.MaxSteelspike)).toBe('MaxSteelspike');
+    expect(effectShapeFor(Moves.MaxOoze)).toBe('MaxOoze');
+    expect(effectShapeFor(Moves.MaxQuake)).toBe('MaxQuake');
+    expect(effectShapeFor(Moves.MaxAirstream)).toBe('MaxAirstream');
+    expect(effectShapeFor(Moves.MaxGuard)).toBe('MaxGuard');
+    // A barrier, but not Protect's
+    expect(effectShapeFor(Moves.MaxGuard)).not.toBe(effectShapeFor(Moves.Protect));
+    expect(delayShapeFor(Moves.MaxGuard, 0)).toBe('Brace');
+  });
+
+  it('draws each G-Max Move as a picture of its own', () => {
+    const owned: [move: Moves, shape: string][] = [
+      [Moves.GMaxVineLash, 'GMaxVineLash'],
+      [Moves.GMaxWildfire, 'GMaxWildfire'],
+      [Moves.GMaxCannonade, 'GMaxCannonade'],
+      [Moves.GMaxBefuddle, 'GMaxBefuddle'],
+      [Moves.GMaxVoltCrash, 'GMaxVoltCrash'],
+      [Moves.GMaxGoldRush, 'GMaxGoldRush'],
+      [Moves.GMaxChiStrike, 'GMaxChiStrike'],
+      [Moves.GMaxTerror, 'GMaxTerror'],
+      [Moves.GMaxFoamBurst, 'GMaxFoamBurst'],
+      [Moves.GMaxResonance, 'GMaxResonance'],
+      [Moves.GMaxCuddle, 'GMaxCuddle'],
+      [Moves.GMaxReplenish, 'GMaxReplenish'],
+      [Moves.GMaxMalodor, 'GMaxMalodor'],
+      [Moves.GMaxMeltdown, 'GMaxMeltdown'],
+      [Moves.GMaxDrumSolo, 'GMaxDrumSolo'],
+      [Moves.GMaxFireball, 'GMaxFireball'],
+      [Moves.GMaxHydrosnipe, 'GMaxHydrosnipe'],
+      [Moves.GMaxWindRage, 'GMaxWindRage'],
+      [Moves.GMaxGravitas, 'GMaxGravitas'],
+      [Moves.GMaxStonesurge, 'GMaxStonesurge'],
+      [Moves.GMaxVolcalith, 'GMaxVolcalith'],
+      [Moves.GMaxTartness, 'GMaxTartness'],
+      [Moves.GMaxSweetness, 'GMaxSweetness'],
+      [Moves.GMaxSandblast, 'GMaxSandblast'],
+      [Moves.GMaxStunShock, 'GMaxStunShock'],
+      [Moves.GMaxCentiferno, 'GMaxCentiferno'],
+      [Moves.GMaxSmite, 'GMaxSmite'],
+      [Moves.GMaxSnooze, 'GMaxSnooze'],
+      [Moves.GMaxFinale, 'GMaxFinale'],
+      [Moves.GMaxSteelsurge, 'GMaxSteelsurge'],
+      [Moves.GMaxDepletion, 'GMaxDepletion'],
+      [Moves.GMaxOneBlow, 'GMaxOneBlow'],
+      [Moves.GMaxRapidFlow, 'GMaxRapidFlow'],
+    ];
+    const shapes = new Set<string>();
+
+    for (const [move, shape] of owned) {
+      expect(effectShapeFor(move), shape).toBe(shape);
+      shapes.add(shape);
+    }
+    // Every one of them named above, and no two sharing a picture
+    expect(owned.length).toBe(G_MAX_MOVES.size);
+    expect(shapes.size).toBe(G_MAX_MOVES.size);
+  });
+
+  it("draws each of Hisui's Nobles' bursts as a shape of its own, and the plain one as its type's strongest move", () => {
+    const shapes = new Set<string>();
+
+    for (const move of CANON_BURSTS.values()) {
+      shapes.add(effectShapeFor(move));
+    }
+    expect(shapes.size).toBe(CANON_BURSTS.size);
+
+    // The plain burst is never named: it borrows by type at the field
+    expect(getBurstStandIn(Types.Fire)).not.toBe(Moves.FrenzyBurst);
+    expect(FRENZY_MOVES.has(getBurstStandIn(Types.Ice))).toBe(false);
+    expect(getMoveData(getBurstStandIn(Types.Water)).type).toBe(Types.Water);
+    expect(moveEffectVisual(getBurstStandIn(Types.Dragon))).not.toBeNull();
+  });
+
   it('draws a U-turn as the blow and then as the leaving', () => {
     // The engine deals the damage on the wind-up step and swaps the
     // pokemon out on the last one, so the two steps are two pictures
@@ -747,7 +1127,7 @@ describe('a painted move', () => {
     expect(effectShapeFor(Moves.AcidArmor)).toBe('Boost');
     expect(effectShapeFor(Moves.Leer)).toBe('Drop');
     expect(effectShapeFor(Moves.TailWhip)).toBe('Drop');
-    expect(effectShapeFor(Moves.Kinesis)).toBe('Drop');
+    expect(effectShapeFor(Moves.SandAttack)).toBe('Drop');
     // Raising the target's Attack is still a rise, and it is drawn on
     // the target rather than on whoever cast it
     expect(effectShapeFor(Moves.Swagger)).toBe('Boost');

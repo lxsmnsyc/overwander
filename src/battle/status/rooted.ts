@@ -1,9 +1,9 @@
 import { EventPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
 import { Statuses } from '../../data/ids/status';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, EffectType } from '../events';
-import { onUnitActs } from '../utils';
+import onUnitActs from '../acts';
 
 /** What the roots draw up every time the unit reaches for a move */
 const ROOTED_FRACTION = 1 / 16;

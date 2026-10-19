@@ -1,0 +1,18 @@
+# What each tree picture is drawn as where it snows. The rip draws the
+# snow as a coat, not as a tree, so the sheet carries every tree with its
+# own coat already composed onto it, which is what lets a cold biome keep
+# the shade of pine it chose. A tree left out goes bare in the cold: the
+# palm means it, since there is no coat cut for it and no beach cold
+# enough to want one.
+
+round: round-snow
+broadleaf: broadleaf-snow
+dark: dark-snow
+jungle: jungle-snow
+olive: olive-snow
+autumn: autumn-snow
+dry: dry-snow
+fir: fir-snow
+pine: pine-snow
+pine-dark: pine-dark-snow
+pine-blue: pine-blue-snow

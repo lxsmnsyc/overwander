@@ -1,0 +1,3216 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Biome: spawn pools",
+  "type": "object",
+  "properties": {
+    "land": {
+      "type": "object",
+      "properties": {
+        "morning": {
+          "type": "object",
+          "properties": {
+            "base": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "uncommon": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "rare": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "scarce": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "elusive": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "prized": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "special": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "mythical": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            }
+          },
+          "required": [
+            "base",
+            "uncommon",
+            "rare",
+            "special"
+          ],
+          "additionalProperties": false
+        },
+        "day": {
+          "type": "object",
+          "properties": {
+            "base": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "uncommon": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "rare": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "scarce": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "elusive": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "prized": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "special": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "mythical": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            }
+          },
+          "required": [
+            "base",
+            "uncommon",
+            "rare",
+            "special"
+          ],
+          "additionalProperties": false
+        },
+        "evening": {
+          "type": "object",
+          "properties": {
+            "base": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "uncommon": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "rare": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "scarce": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "elusive": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "prized": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "special": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "mythical": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            }
+          },
+          "required": [
+            "base",
+            "uncommon",
+            "rare",
+            "special"
+          ],
+          "additionalProperties": false
+        },
+        "night": {
+          "type": "object",
+          "properties": {
+            "base": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "uncommon": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "rare": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "scarce": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "elusive": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "prized": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "special": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "mythical": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            }
+          },
+          "required": [
+            "base",
+            "uncommon",
+            "rare",
+            "special"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "morning",
+        "day",
+        "evening",
+        "night"
+      ],
+      "additionalProperties": false
+    },
+    "water": {
+      "type": "object",
+      "properties": {
+        "morning": {
+          "type": "object",
+          "properties": {
+            "base": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "uncommon": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "rare": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "scarce": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "elusive": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "prized": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "special": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "mythical": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            }
+          },
+          "required": [
+            "base",
+            "uncommon",
+            "rare",
+            "special"
+          ],
+          "additionalProperties": false
+        },
+        "day": {
+          "type": "object",
+          "properties": {
+            "base": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "uncommon": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "rare": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "scarce": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "elusive": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "prized": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "special": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "mythical": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            }
+          },
+          "required": [
+            "base",
+            "uncommon",
+            "rare",
+            "special"
+          ],
+          "additionalProperties": false
+        },
+        "evening": {
+          "type": "object",
+          "properties": {
+            "base": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "uncommon": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "rare": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "scarce": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "elusive": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "prized": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "special": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "mythical": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            }
+          },
+          "required": [
+            "base",
+            "uncommon",
+            "rare",
+            "special"
+          ],
+          "additionalProperties": false
+        },
+        "night": {
+          "type": "object",
+          "properties": {
+            "base": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "uncommon": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "rare": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "scarce": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "elusive": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "prized": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "special": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "mythical": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            }
+          },
+          "required": [
+            "base",
+            "uncommon",
+            "rare",
+            "special"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "morning",
+        "day",
+        "evening",
+        "night"
+      ],
+      "additionalProperties": false
+    },
+    "ice": {
+      "type": "object",
+      "properties": {
+        "morning": {
+          "type": "object",
+          "properties": {
+            "base": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "uncommon": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "rare": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "scarce": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "elusive": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "prized": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "special": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "mythical": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            }
+          },
+          "required": [
+            "base",
+            "uncommon",
+            "rare",
+            "special"
+          ],
+          "additionalProperties": false
+        },
+        "day": {
+          "type": "object",
+          "properties": {
+            "base": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "uncommon": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "rare": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "scarce": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "elusive": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "prized": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "special": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "mythical": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            }
+          },
+          "required": [
+            "base",
+            "uncommon",
+            "rare",
+            "special"
+          ],
+          "additionalProperties": false
+        },
+        "evening": {
+          "type": "object",
+          "properties": {
+            "base": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "uncommon": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "rare": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "scarce": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "elusive": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "prized": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "special": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "mythical": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            }
+          },
+          "required": [
+            "base",
+            "uncommon",
+            "rare",
+            "special"
+          ],
+          "additionalProperties": false
+        },
+        "night": {
+          "type": "object",
+          "properties": {
+            "base": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "uncommon": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "rare": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "scarce": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "elusive": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "prized": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "special": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "mythical": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            }
+          },
+          "required": [
+            "base",
+            "uncommon",
+            "rare",
+            "special"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "morning",
+        "day",
+        "evening",
+        "night"
+      ],
+      "additionalProperties": false
+    },
+    "pool": {
+      "type": "object",
+      "properties": {
+        "morning": {
+          "type": "object",
+          "properties": {
+            "base": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "uncommon": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "rare": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "scarce": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "elusive": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "prized": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "special": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "mythical": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            }
+          },
+          "required": [
+            "base",
+            "uncommon",
+            "rare",
+            "special"
+          ],
+          "additionalProperties": false
+        },
+        "day": {
+          "type": "object",
+          "properties": {
+            "base": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "uncommon": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "rare": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "scarce": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "elusive": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "prized": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "special": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "mythical": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            }
+          },
+          "required": [
+            "base",
+            "uncommon",
+            "rare",
+            "special"
+          ],
+          "additionalProperties": false
+        },
+        "evening": {
+          "type": "object",
+          "properties": {
+            "base": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "uncommon": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "rare": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "scarce": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "elusive": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "prized": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "special": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "mythical": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            }
+          },
+          "required": [
+            "base",
+            "uncommon",
+            "rare",
+            "special"
+          ],
+          "additionalProperties": false
+        },
+        "night": {
+          "type": "object",
+          "properties": {
+            "base": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "uncommon": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "rare": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "scarce": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "elusive": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "prized": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "special": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            },
+            "mythical": {
+              "type": "object",
+              "propertyNames": {
+                "$ref": "names.json#/definitions/species"
+              },
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "const": "prized",
+                    "description": "The weight every prized species shares"
+                  },
+                  {
+                    "const": "forms",
+                    "description": "Unown only: each of its forms at weight 1"
+                  }
+                ]
+              },
+              "description": "Species and weight, in hundredths of a percent of every roll outside the fixed bands, heaviest first"
+            }
+          },
+          "required": [
+            "base",
+            "uncommon",
+            "rare",
+            "special"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "morning",
+        "day",
+        "evening",
+        "night"
+      ],
+      "additionalProperties": false,
+      "description": "The one pool the caves or the towns share"
+    },
+    "cave-legends": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "names.json#/definitions/species"
+      },
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "type": "number",
+            "minimum": 0
+          },
+          {
+            "const": "prized",
+            "description": "The weight every prized species shares"
+          },
+          {
+            "const": "forms",
+            "description": "Unown only: each of its forms at weight 1"
+          }
+        ]
+      },
+      "description": "The legendaries met wild in the caves under it"
+    }
+  },
+  "additionalProperties": false
+}

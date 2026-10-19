@@ -1,0 +1,211 @@
+# Kalos's trainer classes, each by its enum name: `types` it fields
+# (an empty list is every type), the `sheets` it may stand in, and the
+# `trade` it is one region's version of, left out where it is its own.
+# What each is called and says is text/en/trainers.
+
+KalosAceTrainer:
+  types: []
+  sheets:
+    - characters/xy/ace-trainer
+    - characters/xy/ace-trainer-f
+  trade: AceTrainer
+KalosLass:
+  types: [Normal]
+  sheets: [characters/xy/lass]
+  trade: Lass
+KalosYoungster:
+  types: [Ground]
+  sheets: [characters/xy/youngster]
+  trade: Youngster
+KalosBlackBelt:
+  types: [Fighting]
+  sheets: [characters/xy/black-belt]
+  trade: BlackBelt
+KalosBattleGirl:
+  types: [Fighting]
+  sheets: [characters/xy/battle-girl]
+  trade: BattleGirl
+KalosBeauty:
+  types: [Normal, Water]
+  sheets: [characters/xy/beauty]
+  trade: Beauty
+KalosFisherman:
+  types: [Water]
+  sheets: [characters/xy/fisher]
+  trade: Fisherman
+KalosSwimmer:
+  types: [Water]
+  sheets:
+    - characters/xy/swimmer-f
+    - characters/xy/swimmer-m
+    - characters/xy/swimmer-f-2
+    - characters/xy/swimmer-m-2
+  trade: Swimmer
+KalosHiker:
+  types: [Ground]
+  sheets: [characters/xy/hiker]
+  trade: Hiker
+KalosPsychic:
+  types: [Psychic]
+  sheets: [characters/xy/psychic]
+  trade: Psychic
+KalosHexManiac:
+  types: [Ghost]
+  sheets: [characters/xy/hex-maniac]
+  trade: Channeler
+KalosScientist:
+  types: [Steel]
+  sheets:
+    - characters/xy/scientist-f
+    - characters/xy/scientist-m
+  trade: Scientist
+KalosWorker:
+  types: [Rock, Steel]
+  sheets:
+    - characters/xy/worker-1
+    - characters/xy/worker-2
+  trade: Worker
+KalosRichBoy:
+  types: [Normal, Flying]
+  sheets: [characters/xy/rich-boy]
+  trade: RichBoy
+KalosPokeFan:
+  types: [Normal, Electric]
+  sheets:
+    - characters/xy/poke-fan-f
+    - characters/xy/poke-fan-m
+  trade: PokeFan
+KalosRanger:
+  types: [Grass, Bug]
+  sheets:
+    - characters/xy/ranger-f
+    - characters/xy/ranger-m
+  trade: Ranger
+KalosBreeder:
+  types: [Normal, Grass]
+  sheets:
+    - characters/xy/breeder-f
+    - characters/xy/breeder-m
+  trade: Breeder
+KalosBackpacker:
+  types: [Ground, Normal]
+  sheets: [characters/xy/backpacker]
+  trade: Backpacker
+KalosArtist:
+  types: [Normal]
+  sheets:
+    - characters/xy/artist-f
+    - characters/xy/artist-m
+  trade: Artist
+KalosCyclist:
+  types: [Electric]
+  sheets: [characters/xy/cyclist]
+  trade: Cyclist
+KalosGentleman:
+  types: [Fire, Electric]
+  sheets:
+    - characters/xy/gentleman
+    - characters/xy/monsieur
+  trade: Gentleman
+KalosLady:
+  types: [Grass, Normal]
+  sheets:
+    - characters/xy/lady
+    - characters/xy/madame
+  trade: Lady
+KalosWaiter:
+  types: [Normal, Fire]
+  sheets:
+    - characters/xy/waiter
+    - characters/xy/waitress
+  trade: Waiter
+KalosMaid:
+  types: [Ice, Normal]
+  sheets: [characters/xy/maid]
+  trade: Maid
+KalosTwins:
+  types: [Normal, Psychic]
+  sheets: [characters/xy/twins]
+  trade: Twins
+KalosVeteran:
+  types: [Dragon, Steel]
+  sheets:
+    - characters/xy/veteran
+    - characters/xy/veteran-f
+  trade: Veteran
+KalosSchoolKid:
+  types: [Electric]
+  sheets:
+    - characters/xy/school-boy
+    - characters/xy/school-girl
+  trade: SchoolKid
+KalosPreschooler:
+  types: [Normal]
+  sheets:
+    - characters/xy/preschooler
+    - characters/xy/preschooler-f
+    - characters/xy/preschooler-m
+  trade: PokeKid
+KalosRollerSkater:
+  types: [Normal, Fighting]
+  sheets:
+    - characters/xy/roller-skater-f
+    - characters/xy/roller-skater-m
+  trade: Jogger
+KalosPunkGuy:
+  types: [Dark]
+  sheets: [characters/xy/punky-guy]
+  trade: Burglar
+KalosPunkGirl:
+  types: [Poison]
+  sheets: [characters/xy/punk-girl]
+  trade: Biker
+KalosSocialite:
+  types: [Normal, Psychic]
+  sheets: [characters/xy/socialite]
+  trade: Socialite
+KalosChef:
+  types: [Fire]
+  sheets: [characters/xy/chef]
+  trade: Baker
+KalosClerk:
+  types: [Normal, Steel]
+  sheets: [characters/xy/clerk]
+  trade: Clerk
+KalosGardener:
+  types: [Grass]
+  sheets: [characters/xy/gardener]
+  trade: Sage
+# Kalos's own trades. The sky trainers fly their battles in a wingsuit,
+# the fairy tale girl keeps what the stories keep, the furisode girls and
+# the butler bring the Chateau's grace and its keys (a Klefki is both),
+# the tourist chases Vivillon's wings, and the rising star the spotlight
+SkyTrainer:
+  types: [Flying]
+  sheets:
+    - characters/xy/sky-trainer-f
+    - characters/xy/sky-trainer-m
+FairyTaleGirl:
+  types: [Fairy]
+  sheets: [characters/xy/fairy-tale-girl]
+FurisodeGirl:
+  types: [Grass, Fairy]
+  sheets:
+    - characters/xy/furisode-girl
+    - characters/xy/furisode-girl-kali
+    - characters/xy/furisode-girl-katherine
+    - characters/xy/furisode-girl-linnea
+Butler:
+  types: [Steel, Fairy]
+  sheets: [characters/xy/butler]
+Tourist:
+  types: [Bug, Flying]
+  sheets:
+    - characters/xy/tourist-f
+    - characters/xy/tourist-m
+    - characters/xy/tourist-3
+RisingStar:
+  types: [Normal, Electric]
+  sheets:
+    - characters/xy/rising-star-f
+    - characters/xy/rising-star-m

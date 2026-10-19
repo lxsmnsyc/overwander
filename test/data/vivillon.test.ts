@@ -6,7 +6,8 @@ import registerBiomeSpawns, {
   getSpawnRarity,
   getTownPool,
 } from '../../src/data/biome';
-import { Species, VIVILLON_FORMS } from '../../src/data/ids/species';
+import { Species } from '../../src/data/ids/species';
+import { VIVILLON_FORMS } from '../../src/data/ids/forms';
 import registerAbilities from '../../src/data/abilities';
 import registerItems from '../../src/data/items';
 import { registerMoves } from '../../src/data/moves';
@@ -14,8 +15,8 @@ import { getSpeciesData, getWingPattern, registerSpecies } from '../../src/data/
 
 registerMoves();
 registerAbilities();
-registerItems();
 registerSpecies();
+registerItems();
 registerBiomeSpawns();
 
 /** Every country there is, to read what wings it grows */

@@ -1,5 +1,5 @@
 import { EventPriority } from '../../core/event-emitter';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents } from '../events';
 
 export default function setupAllianceMechanics(battle: Battle): void {

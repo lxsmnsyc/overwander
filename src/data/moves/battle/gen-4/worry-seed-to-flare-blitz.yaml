@@ -1,0 +1,54 @@
+# From Worry Seed to Flare Blitz: what a side leaves on the ground
+# for whoever walks in, what a pokemon does to keep itself standing,
+# and the one that burns the user to land
+
+WorrySeed:
+  type: Grass
+  category: Status
+  accuracy: 100
+  pp: 10
+  target: Unit
+  projectile: true
+
+SuckerPunch:
+  type: Dark
+  category: Physical
+  power: 70
+  accuracy: 100
+  priority: 1
+  pp: 5
+  target: Unit
+  flags: [Contact]
+
+ToxicSpikes:
+  type: Poison
+  category: Status
+  pp: 20
+  target: Team
+
+HeartSwap:
+  type: Psychic
+  category: Status
+  pp: 10
+  target: Unit
+
+AquaRing:
+  type: Water
+  category: Status
+  pp: 20
+  target: None
+
+MagnetRise:
+  type: Electric
+  category: Status
+  pp: 10
+  target: None
+
+FlareBlitz:
+  type: Fire
+  category: Physical
+  power: 120
+  accuracy: 100
+  pp: 15
+  target: Unit
+  flags: [Contact]

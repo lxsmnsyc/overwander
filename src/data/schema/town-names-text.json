@@ -1,0 +1,63 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Town names",
+  "type": "object",
+  "properties": {
+    "heads": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "names.json#/definitions/biome"
+      },
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "uniqueItems": true,
+        "minItems": 8,
+        "maxItems": 8
+      },
+      "description": "Exactly 8 heads per biome a town can stand on"
+    },
+    "tails": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true,
+      "description": "Welded onto the head"
+    },
+    "titles": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true,
+      "description": "What the place calls itself"
+    },
+    "marks": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true,
+      "description": "The word in front, where there is one"
+    },
+    "counties": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true,
+      "description": "The counties, 8 to a row"
+    }
+  },
+  "required": [
+    "heads",
+    "tails",
+    "titles",
+    "marks",
+    "counties"
+  ],
+  "additionalProperties": false
+}

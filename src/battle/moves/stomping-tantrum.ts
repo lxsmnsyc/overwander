@@ -1,6 +1,6 @@
 import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents } from '../events';
 import type Unit from '../unit';
 
@@ -32,7 +32,7 @@ export default function setupStompingTantrum(battle: Battle): void {
 
   battle.on(BattleEvents.CheckUnitMovePower, EventPriority.Post, (event) => {
     if (
-      event.move === Moves.StompingTantrum &&
+      (event.move === Moves.StompingTantrum || event.move === Moves.TemperFlare) &&
       event.power != null &&
       previous.get(event.source) === true
     ) {

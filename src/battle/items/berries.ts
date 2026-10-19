@@ -30,7 +30,7 @@ import {
 } from '../../data/items/berries';
 import { Types } from '../../data/constants/types';
 import { listItemsByType } from '../../data/items';
-import type Battle from '../core';
+import type Battle from '../battle';
 import {
   BattleEvents,
   type EffectCause,

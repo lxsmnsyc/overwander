@@ -1,7 +1,8 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import registerGameData from '../../src/data';
 import { STAT_ORDER } from '../../src/data/constants/stats';
-import { type Species, getBaseFormSpecies } from '../../src/data/ids/species';
+import { getBaseFormSpecies } from '../../src/data/ids/forms';
+import type { Species } from '../../src/data/ids/species';
 import { FORM_ITEMS } from '../../src/data/items/form-items';
 import { getItemBiomes } from '../../src/data/overworld/biome-items';
 import { getItemBand } from '../../src/data/overworld/item-pool';

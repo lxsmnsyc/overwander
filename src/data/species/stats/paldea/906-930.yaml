@@ -1,0 +1,166 @@
+Sprigatito:
+  Sprigatito:
+    stats: { HP: 40, Attack: 61, Defense: 54, SpecialAttack: 45, SpecialDefense: 45, Speed: 65 }
+    catch-rate: 45
+    height: 0.4
+    weight: 4.1
+    gender: [7, 1]
+  Floragato:
+    stats: { HP: 61, Attack: 80, Defense: 63, SpecialAttack: 60, SpecialDefense: 63, Speed: 83 }
+    catch-rate: 45
+    height: 0.9
+    weight: 12.2
+    gender: [7, 1]
+  Meowscarada:
+    stats: { HP: 76, Attack: 110, Defense: 70, SpecialAttack: 81, SpecialDefense: 70, Speed: 123 }
+    catch-rate: 45
+    height: 1.5
+    weight: 31.2
+    gender: [7, 1]
+Fuecoco:
+  Fuecoco:
+    stats: { HP: 67, Attack: 45, Defense: 59, SpecialAttack: 63, SpecialDefense: 40, Speed: 36 }
+    catch-rate: 45
+    height: 0.4
+    weight: 9.8
+    gender: [7, 1]
+  Crocalor:
+    stats: { HP: 81, Attack: 55, Defense: 78, SpecialAttack: 90, SpecialDefense: 58, Speed: 49 }
+    catch-rate: 45
+    height: 1
+    weight: 30.7
+    gender: [7, 1]
+  Skeledirge:
+    stats: { HP: 104, Attack: 75, Defense: 100, SpecialAttack: 110, SpecialDefense: 75, Speed: 66 }
+    catch-rate: 45
+    height: 1.6
+    weight: 326.5
+    gender: [7, 1]
+Quaxly:
+  Quaxly:
+    stats: { HP: 55, Attack: 65, Defense: 45, SpecialAttack: 50, SpecialDefense: 45, Speed: 50 }
+    catch-rate: 45
+    height: 0.5
+    weight: 6.1
+    gender: [7, 1]
+  Quaxwell:
+    stats: { HP: 70, Attack: 85, Defense: 65, SpecialAttack: 65, SpecialDefense: 60, Speed: 65 }
+    catch-rate: 45
+    height: 1.2
+    weight: 21.5
+    gender: [7, 1]
+  Quaquaval:
+    stats: { HP: 85, Attack: 120, Defense: 80, SpecialAttack: 85, SpecialDefense: 75, Speed: 85 }
+    catch-rate: 45
+    height: 1.8
+    weight: 61.9
+    gender: [7, 1]
+Lechonk:
+  Lechonk:
+    stats: { HP: 54, Attack: 45, Defense: 40, SpecialAttack: 35, SpecialDefense: 45, Speed: 35 }
+    catch-rate: 255
+    height: 0.5
+    weight: 10.2
+    gender: [4, 4]
+  Oinkologne:
+    stats: { HP: 110, Attack: 100, Defense: 75, SpecialAttack: 59, SpecialDefense: 80, Speed: 65 }
+    catch-rate: 100
+    height: 1
+    weight: 120
+    gender: [8, 0]
+Tarountula:
+  Tarountula:
+    stats: { HP: 35, Attack: 41, Defense: 45, SpecialAttack: 29, SpecialDefense: 40, Speed: 20 }
+    catch-rate: 255
+    height: 0.3
+    weight: 4
+    gender: [4, 4]
+  Spidops:
+    stats: { HP: 60, Attack: 79, Defense: 92, SpecialAttack: 52, SpecialDefense: 86, Speed: 35 }
+    catch-rate: 120
+    height: 1
+    weight: 16.5
+    gender: [4, 4]
+Nymble:
+  Nymble:
+    stats: { HP: 33, Attack: 46, Defense: 40, SpecialAttack: 21, SpecialDefense: 25, Speed: 45 }
+    catch-rate: 190
+    height: 0.2
+    weight: 1
+    gender: [4, 4]
+  Lokix:
+    stats: { HP: 71, Attack: 102, Defense: 78, SpecialAttack: 52, SpecialDefense: 55, Speed: 92 }
+    catch-rate: 30
+    height: 1
+    weight: 17.5
+    gender: [4, 4]
+Pawmi:
+  Pawmi:
+    stats: { HP: 45, Attack: 50, Defense: 20, SpecialAttack: 40, SpecialDefense: 25, Speed: 60 }
+    catch-rate: 190
+    height: 0.3
+    weight: 2.5
+    gender: [4, 4]
+  Pawmo:
+    stats: { HP: 60, Attack: 75, Defense: 40, SpecialAttack: 50, SpecialDefense: 40, Speed: 85 }
+    catch-rate: 80
+    height: 0.4
+    weight: 6.5
+    gender: [4, 4]
+  Pawmot:
+    stats: { HP: 70, Attack: 115, Defense: 70, SpecialAttack: 70, SpecialDefense: 60, Speed: 105 }
+    catch-rate: 45
+    height: 0.9
+    weight: 41
+    gender: [4, 4]
+Tandemaus:
+  Tandemaus:
+    stats: { HP: 50, Attack: 50, Defense: 45, SpecialAttack: 40, SpecialDefense: 45, Speed: 75 }
+    catch-rate: 150
+    height: 0.3
+    weight: 1.8
+    gender: genderless
+  Maushold:
+    stats: { HP: 74, Attack: 75, Defense: 70, SpecialAttack: 65, SpecialDefense: 75, Speed: 111 }
+    catch-rate: 75
+    height: 0.3
+    weight: 2.8
+    gender: genderless
+  MausholdThree:
+    stats: { HP: 74, Attack: 75, Defense: 70, SpecialAttack: 65, SpecialDefense: 75, Speed: 111 }
+    catch-rate: 75
+    height: 0.3
+    weight: 2.3
+    gender: genderless
+Fidough:
+  Fidough:
+    stats: { HP: 37, Attack: 55, Defense: 70, SpecialAttack: 30, SpecialDefense: 55, Speed: 65 }
+    catch-rate: 190
+    height: 0.3
+    weight: 10.9
+    gender: [4, 4]
+  Dachsbun:
+    stats: { HP: 57, Attack: 80, Defense: 115, SpecialAttack: 50, SpecialDefense: 80, Speed: 95 }
+    catch-rate: 90
+    height: 0.5
+    weight: 14.9
+    gender: [4, 4]
+Smoliv:
+  Smoliv:
+    stats: { HP: 41, Attack: 35, Defense: 45, SpecialAttack: 58, SpecialDefense: 51, Speed: 30 }
+    catch-rate: 255
+    height: 0.3
+    weight: 6.5
+    gender: [4, 4]
+  Dolliv:
+    stats: { HP: 52, Attack: 53, Defense: 60, SpecialAttack: 78, SpecialDefense: 78, Speed: 33 }
+    catch-rate: 120
+    height: 0.6
+    weight: 11.9
+    gender: [4, 4]
+  Arboliva:
+    stats: { HP: 78, Attack: 69, Defense: 90, SpecialAttack: 125, SpecialDefense: 109, Speed: 39 }
+    catch-rate: 45
+    height: 1.4
+    weight: 48.2
+    gender: [4, 4]

@@ -1,9 +1,9 @@
 import 'server-only';
 import type { TeamRecord, TeamSnapshotRecord } from '../auth/teams';
-import { type CatchSnapshot, asCatchSnapshot } from '../auth/catch-snapshot';
+import { type CatchSnapshot, asCatchSnapshot } from '../model/catch-snapshot';
 import { getSql } from './db';
 import { asNumber, asString } from './read';
-import { readTeams } from './raid-io';
+import { readTeams } from './raids/io';
 
 /** Every team this player has formed, by id */
 export async function readPlayerTeams(player: string): Promise<[string, TeamRecord][]> {

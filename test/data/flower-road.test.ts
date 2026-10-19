@@ -6,14 +6,8 @@ import registerBiomeSpawns, {
   getSpawnRarity,
   getTownPool,
 } from '../../src/data/biome';
-import {
-  EvolutionMethod,
-  FLABEBE_FORMS,
-  FLOETTE_FORMS,
-  FLORGES_FORMS,
-  Genders,
-  Species,
-} from '../../src/data/ids/species';
+import { EvolutionMethod, Genders, Species } from '../../src/data/ids/species';
+import { FLABEBE_FORMS, FLOETTE_FORMS, FLORGES_FORMS } from '../../src/data/ids/forms';
 import Abilities from '../../src/data/ids/abilities';
 import registerAbilities from '../../src/data/abilities';
 import registerItems from '../../src/data/items';
@@ -22,8 +16,8 @@ import { getSpeciesData, registerSpecies } from '../../src/data/species';
 
 registerMoves();
 registerAbilities();
-registerItems();
 registerSpecies();
+registerItems();
 registerBiomeSpawns();
 
 /** The five colours, stage by stage, the red one first */

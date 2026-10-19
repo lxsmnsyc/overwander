@@ -5,7 +5,7 @@ description: The overworld board is drawn either laid back under the camera or f
 
 # The two boards
 
-`src/canvas/board.ts` holds two projections, not one.
+`src/canvas/overworld/board.ts` holds two projections, not one.
 
 - **3d**, the board laid back under the camera at sixty degrees: a trapezoid, the far rows smaller than the near ones, sprites standing up out of it.
 - **2d**, the board flat from straight above: square cells, no perspective at all, nothing standing above the ground.
@@ -26,7 +26,7 @@ A screen whose shorter side is under `CLOSE_SCREEN` pixels, either way up, gets 
 - `squash`, how flat a patch of ground lies, for a shadow or a pool of lamplight
 - `aspect` and `span`, the picture's shape and how wide it is in board widths
 
-`GROUND_DEPTH`, `GROUND_RISE` and `GROUND_SQUASH` in `src/canvas/tilt.ts` are the **laid-back** numbers, and they are there for the tools that cut sprite sheets, which are cut for one tilt and cannot follow a screen. Anything drawn on a live board reads `boardView()` instead. A drawing that reaches for the constants is drawing for a camera that may not be there.
+`GROUND_DEPTH`, `GROUND_RISE` and `GROUND_SQUASH` in `src/canvas/overworld/tilt.ts` are the **laid-back** numbers, and they are there for the tools that cut sprite sheets, which are cut for one tilt and cannot follow a screen. Anything drawn on a live board reads `boardView()` instead. A drawing that reaches for the constants is drawing for a camera that may not be there.
 
 ## Name the screen before projecting
 
@@ -47,4 +47,4 @@ Adding something that stands in the air means saying what it does flat on as wel
 
 ## Giving way to the player
 
-In both boards, anything drawn after the player that covers enough of them fades and comes back: `coverOf` and the `VEIL_*` numbers in `src/components/overworld/chunk-canvas/metrics.ts`. It is a fade rather than a switch, and each of a cell's pictures fades on its own.
+In both boards, anything drawn after the player that covers enough of them fades and comes back: `coverOf` and the `VEIL_*` numbers in `src/canvas/overworld/metrics.ts`. It is a fade rather than a switch, and each of a cell's pictures fades on its own.

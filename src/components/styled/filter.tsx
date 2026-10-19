@@ -1,4 +1,5 @@
 import { For, type JSX, createSignal } from 'solid-js';
+import { Portal } from 'solid-js/web';
 import {
   Listbox,
   ListboxButton,
@@ -9,6 +10,8 @@ import {
 } from 'terracotta';
 import { SHEER } from './transition';
 import dismissOutside from './dismiss';
+import useDropdown from './dropdown';
+import { usePortalHost } from './portal-host';
 
 /**
  * Narrowing a list down to one kind of thing.
@@ -82,14 +85,27 @@ export default function Filter<V>(props: {
   /** The whole control, for working out what is a press away from it */
   const [root, setRoot] = createSignal<HTMLElement>();
 
-  dismissOutside(root, open, () => {
-    setOpen(false);
-  });
+  /** The list, drawn apart from the control so no panel clips it */
+  const [panel, setPanel] = createSignal<HTMLElement>();
+  const host = usePortalHost();
+  // From the right edge, since the control itself sits in the right
+  // corner and a list wider than it would otherwise run off the screen
+  const floating = useDropdown({ open, placement: 'bottom-end', matchWidth: true });
+
+  dismissOutside(
+    root,
+    open,
+    () => {
+      setOpen(false);
+    },
+    panel,
+  );
 
   return (
     <Listbox
       ref={(element: HTMLElement) => {
         setRoot(element);
+        floating.refs.setReference(element);
       }}
       isOpen={open()}
       onDisclosureChange={(state) => {
@@ -121,33 +137,40 @@ export default function Filter<V>(props: {
         <span aria-hidden="true">▾</span>
       </ListboxButton>
       {/* Over the list it filters rather than pushing it down the
-          page: the rows underneath are what the choice is about. It
-          hangs from the right edge, since the control itself sits in
-          the right corner and a list wider than it would otherwise
-          run off the screen */}
-      <Transition
-        show={open()}
-        {...SHEER}
-        class="absolute top-full right-0 z-20 mt-1.5 w-max min-w-full"
-      >
-        <ListboxOptions
-          // Kept mounted, since the fade needs something to fade
-          unmount={false}
-          // A list that has been dismissed is not one to pick from,
-          // however long it takes to go
-          aria-hidden={open() ? undefined : 'true'}
-          class="flex max-h-64 w-full list-none flex-col gap-0.5 overflow-y-auto rounded-xl
-            border-2 border-line bg-paper p-1 shadow-float"
+          page: the rows underneath are what the choice is about */}
+      <Portal mount={host()}>
+        <div
+          ref={(element) => {
+            setPanel(element);
+            floating.refs.setFloating(element);
+          }}
+          class="z-40 flex"
+          style={{
+            ...floating.floatingStyles,
+            visibility: floating.isPositioned ? 'visible' : 'hidden',
+          }}
         >
-          <For each={props.options}>
-            {(option) => (
-              <ListboxOption class={OPTION} value={option.value}>
-                {option.label}
-              </ListboxOption>
-            )}
-          </For>
-        </ListboxOptions>
-      </Transition>
+          <Transition show={open()} {...SHEER} class="flex w-max min-w-full">
+            <ListboxOptions
+              // Kept mounted, since the fade needs something to fade
+              unmount={false}
+              // A list that has been dismissed is not one to pick from,
+              // however long it takes to go
+              aria-hidden={open() ? undefined : 'true'}
+              class="flex max-h-[min(16rem,var(--drop-room,16rem))] w-full list-none flex-col
+            gap-0.5 overflow-y-auto rounded-xl border-2 border-line bg-paper p-1 shadow-float"
+            >
+              <For each={props.options}>
+                {(option) => (
+                  <ListboxOption class={OPTION} value={option.value}>
+                    {option.label}
+                  </ListboxOption>
+                )}
+              </For>
+            </ListboxOptions>
+          </Transition>
+        </div>
+      </Portal>
     </Listbox>
   );
 }

@@ -1,11 +1,17 @@
 import { EventPriority } from '../../core/event-emitter';
 import Abilities from '../../data/ids/abilities';
+import { Items } from '../../data/ids/items';
+import { Moves } from '../../data/ids/moves';
 import { FORM_ITEMS } from '../../data/items/form-items';
-import { Species, getBaseFormSpecies } from '../../data/ids/species';
-import type Battle from '../core';
+import { Species } from '../../data/ids/species';
+import { getBaseFormSpecies } from '../../data/ids/forms';
+import { getShadowlessSpecies, getTrueShadowShape } from '../../data/species/true-shadow';
+import type Battle from '../battle';
+import type Unit from '../unit';
 import { BattleEvents } from '../events';
 import { MergedLifecycle } from '../lifecycle';
 import { createHeldItem, holds } from './__create';
+import { teraShapeOf } from './masks';
 
 /**
  * The ability a shape brings on top of what the catch carries. Worn
@@ -22,13 +28,106 @@ const SHAPE_ABILITIES = new Map<Species, Abilities>([
   [Species.TornadusTherian, Abilities.Regenerator],
   [Species.ThundurusTherian, Abilities.VoltAbsorb],
   [Species.LandorusTherian, Abilities.Intimidate],
+  [Species.EnamorusTherian, Abilities.Overcoat],
+  // Ogerpon has no ability of its own: each mask brings one, the Teal
+  // with nothing in hand, and every Terastal shape brings Embody Aspect
+  [Species.Ogerpon, Abilities.Defiant],
+  [Species.OgerponWellspring, Abilities.WaterAbsorb],
+  [Species.OgerponHearthflame, Abilities.MoldBreaker],
+  [Species.OgerponCornerstone, Abilities.Sturdy],
+  [Species.OgerponTealTera, Abilities.EmbodyAspect],
+  [Species.OgerponWellspringTera, Abilities.EmbodyAspect],
+  [Species.OgerponHearthflameTera, Abilities.EmbodyAspect],
+  [Species.OgerponCornerstoneTera, Abilities.EmbodyAspect],
+  [Species.TerapagosTerastal, Abilities.TeraShell],
+]);
+
+/** A true shadow's shape brings what its counterpart's would */
+function shapeAbilityOf(species: Species): Abilities | undefined {
+  return SHAPE_ABILITIES.get(getShadowlessSpecies(species) ?? species);
+}
+
+/**
+ * Trade the shape it leaves for the one it takes: a shape's ability
+ * comes with it and goes with it, but never takes one the catch carries
+ */
+function wearShapeAbility(battle: Battle): void {
+  battle.on(BattleEvents.UnitSetSpecies, EventPriority.Pre, (event) => {
+    const unit = event.source;
+    const left = shapeAbilityOf(unit.species);
+
+    if (left != null && left !== shapeAbilityOf(event.species) && unit.worn[left] != null) {
+      unit.removeAbility(left);
+    }
+  });
+  battle.on(BattleEvents.UnitSetSpecies, EventPriority.Post, (event) => {
+    const bonus = shapeAbilityOf(event.species);
+
+    if (bonus != null) {
+      event.source.wearAbility(bonus);
+    }
+  });
+}
+
+/**
+ * The move a shape swaps for its own: a crowned hero's Iron Head
+ * becomes the blow its relic gives it
+ */
+const SHAPE_MOVES = new Map<Species, [from: Moves, to: Moves]>([
+  [Species.ZacianCrowned, [Moves.IronHead, Moves.BehemothBlade]],
+  [Species.ZamazentaCrowned, [Moves.IronHead, Moves.BehemothBash]],
 ]);
 
 /**
- * The pokemon that only answer their form item through an ability of
- * their own. An Arceus born with a filler keeps its Normal type
+ * Trade the move a shape swaps for its own. Once swapped there is no
+ * Iron Head left, so entering again changes nothing
  */
-const SHAPE_NEEDS = new Map<Species, Abilities>([[Species.Arceus, Abilities.Multitype]]);
+function swapShapeMove(unit: Unit, shape: Species): void {
+  const swap = SHAPE_MOVES.get(shape);
+
+  if (swap == null) {
+    return;
+  }
+  const [from, to] = swap;
+  const known = unit.moves[from];
+
+  if (known == null || unit.moves[to] != null) {
+    return;
+  }
+  unit.removeMove(from);
+  unit.addMove(to);
+  // PP Ups bought for Iron Head carry over to the blow it became
+  unit.setMovePoints(to, known.points);
+}
+
+/**
+ * The pokemon that only answer their form item through an ability of
+ * their own. An Arceus or a Silvally born with a filler keeps its
+ * Normal type
+ */
+const SHAPE_NEEDS = new Map<Species, Abilities>([
+  [Species.Arceus, Abilities.Multitype],
+  [Species.Silvally, Abilities.RksSystem],
+]);
+
+/** The shapes of Necrozma that can let their light out */
+const ULTRA_BURST_FROM = new Set<Species>([Species.NecrozmaDuskMane, Species.NecrozmaDawnWings]);
+
+/**
+ * Ultra Burst: a fused Necrozma holding its crystal takes the field as
+ * Ultra Necrozma. Only a fused shape bursts, so a Necrozma alone keeps
+ * its own shape whatever it holds
+ */
+const ultraBurst = createHeldItem(Items.UltranecroziumZ, (battle) =>
+  battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
+    const unit = event.source;
+
+    if (ULTRA_BURST_FROM.has(unit.species) && holds(unit, Items.UltranecroziumZ)) {
+      unit.setSpecies(Species.NecrozmaUltra);
+      unit.wearAbility(Abilities.Neuroforce);
+    }
+  }),
+);
 
 /**
  * The form items: a held thing that decides which shape its holder
@@ -41,7 +140,7 @@ const SHAPE_NEEDS = new Map<Species, Abilities>([[Species.Arceus, Abilities.Mult
  * [`FORM_ITEMS`](../../data/items/form-items.ts)
  */
 export default function setupFormItems(battle: Battle): void {
-  const setups: ((battle: Battle) => void)[] = [];
+  const setups: ((battle: Battle) => void)[] = [wearShapeAbility];
 
   for (const [item, forms] of FORM_ITEMS) {
     setups.push(
@@ -72,21 +171,28 @@ export default function setupFormItems(battle: Battle): void {
               }
 
               const shape = own[Math.floor(inner.random() * own.length)];
+              // A true shadow takes its own colours of the shape, or none
+              const worn =
+                getShadowlessSpecies(unit.species) == null ? shape : getTrueShadowShape(shape);
 
-              if (unit.species !== shape) {
-                unit.setSpecies(shape);
+              if (worn == null) {
+                return;
+              }
+              // A Terastallized Ogerpon keeps its Terastal shape
+              const target = unit.terastallized ? (teraShapeOf(worn) ?? worn) : worn;
+
+              if (unit.species !== target) {
+                unit.setSpecies(target);
               }
 
-              const bonus = SHAPE_ABILITIES.get(shape);
-
-              if (bonus != null) {
-                unit.wearAbility(bonus);
-              }
+              swapShapeMove(unit, shape);
             }),
           ]),
       ),
     );
   }
+
+  setups.push(ultraBurst);
 
   for (const setup of setups) {
     setup(battle);

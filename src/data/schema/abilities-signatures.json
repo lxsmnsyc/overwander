@@ -1,0 +1,34 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Abilities: signatures",
+  "type": "object",
+  "properties": {
+    "families": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "names.json#/definitions/family"
+      },
+      "additionalProperties": {
+        "$ref": "names.json#/definitions/ability"
+      },
+      "description": "Each family's signature, shared by every stage of the line"
+    },
+    "forms": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "names.json#/definitions/ability"
+      },
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "$ref": "names.json#/definitions/species"
+        }
+      },
+      "description": "A regional line's own signature, by the forms that carry it"
+    }
+  },
+  "required": [
+    "families"
+  ],
+  "additionalProperties": false
+}

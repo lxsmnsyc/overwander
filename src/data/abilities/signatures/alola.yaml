@@ -1,0 +1,81 @@
+# The signature abilities granted to the families filed under Alola
+
+families:
+  # Alola's three starters, each playing to a crowd: the two that
+  # fight it out read the far side, the singer reads its own
+  Rowlet: QuillAudience
+  Litten: HeelAudience
+  Popplio: AriaAudience
+
+  # The three the first roads out of Melemele's towns walk past
+  Pikipek: Drumroll
+  Yungoos: ScoreToSettle
+  Grubbin: TrickleCharge
+
+  # Melemele's meadow and hill
+  Crabrawler: ReboundPunch
+  Oricorio: DizzyTwirl
+  Cutiefly: HoneyShare
+  Rockruff: Provoke
+
+  # Akala's first roads and Brooklet Hill
+  Wishiwashi: Regroup
+  Mudbray: HeavyHooves
+  Dewpider: BubbleWard
+  Fomantis: OrchidGuise
+  Bounsweet: TropStride
+
+  # The Lush Jungle
+  Morelull: DrowsyGlow
+  Comfey: LeiGift
+  Oranguru: SagesCall
+  Passimian: RushPass
+  Mareanie: ToxicDome
+  Salandit: FumeFlare
+  Stufful: FondCrush
+  Wimpod: OpeningSlash
+  Sandygast: CastleDrain
+  Pyukumuku: TossedBack
+  Minior: Starfall
+  Togedemaru: ChargedSpines
+  Komala: NapTime
+
+  # Turtonator and Drampa, the Sun and Moon pair: each answers one kind of blow on its team
+  Turtonator: BlastShell
+  Drampa: EldersIre
+  Mimikyu: GrudgeShroud
+  TypeNull: MemoryEcho
+  Bruxish: PsychicGnash
+  Dhelmise: GhostShip
+  JangmoO: WarClangor
+
+  # The Tapus, on one axis: each guardian blesses its own team while
+  # its own terrain is down
+  TapuKoko: StormBlessing
+  TapuLele: MindBlessing
+  TapuBulu: WildBlessing
+  TapuFini: MistBlessing
+
+  # The light trio, on one axis: the pair burns brightest whole, and
+  # the prism that lost its light burns brightest broken
+  Cosmog: Zenith
+  Necrozma: Nadir
+
+  # The Ultra Beasts, on one axis: each came from another world, so one
+  # type this world would beat it with lands only as hard as any other
+  Nihilego: Earthless
+  Buzzwole: Windbreak
+  Pheromosa: GaleWard
+  Xurkitree: Unearthed
+  Celesteela: HeatShield
+  Kartana: Fireproof
+  Guzzlord: Unenchanted
+  Poipole: ClosedMind
+  Stakataka: DeepFooting
+  Blacephalon: DryFuse
+
+  # Alola's mythicals, which the mainline does not present as a set
+  Magearna: SoulRelay
+  Marshadow: UmbralStrike
+  Zeraora: IonField
+  Meltan: MetalEater

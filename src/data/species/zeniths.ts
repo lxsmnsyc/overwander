@@ -2,7 +2,8 @@ import { Stats } from '../constants/stats';
 import { Types } from '../constants/types';
 import Abilities from '../ids/abilities';
 import { Items } from '../ids/items';
-import { FORMS_PER_SPECIES, Species, speciesDexNumber, speciesFormIndex } from '../ids/species';
+import { FORMS_PER_SPECIES, speciesDexNumber, speciesFormIndex } from '../ids/forms';
+import { Species } from '../ids/species';
 import { getSpeciesData, registerSpecies } from './__create';
 
 /**
@@ -15,7 +16,7 @@ import { getSpeciesData, registerSpecies } from './__create';
  * in, has no Zenith: one held transformation per pokemon. Like a Mega,
  * each is worn rather than met, and everything it does not change is
  * read off the pokemon it is a Zenith of, so these register after
- * every generation. The battle side is `src/battle/items/zeniths.ts`.
+ * every generation. The battle side is `src/battle/gimmicks/zenith.ts`.
  */
 
 export interface ZenithShape {

@@ -1,0 +1,120 @@
+Burmy:
+  Burmy:
+    abilities: [ShedSkin]
+    hidden: [Overcoat]
+  BurmySandy:
+    abilities: [ShedSkin]
+    hidden: [Overcoat]
+  BurmyTrash:
+    abilities: [ShedSkin]
+    hidden: [Overcoat]
+  Wormadam:
+    abilities: [Anticipation]
+    # Leaf Guard is this registry's rather than the mainline's: the
+    # cloak is leaves, and leaves keep in the sun
+    hidden: [Overcoat, LeafGuard]
+  WormadamSandy:
+    abilities: [Anticipation]
+    # Sand Veil is this registry's rather than the mainline's: the
+    # cloak is the sand, and the sand is where it cannot be seen
+    hidden: [Overcoat, SandVeil]
+  WormadamTrash:
+    abilities: [Anticipation]
+    # Heavy Metal is this registry's rather than the mainline's:
+    # what the cloak is made of is what it weighs
+    hidden: [Overcoat, HeavyMetal]
+  Mothim:
+    abilities: [Swarm]
+    hidden: [TintedLens]
+Combee:
+  Combee:
+    abilities: [HoneyGather]
+    hidden: [Hustle]
+  Vespiquen:
+    abilities: [Pressure]
+    hidden: [Unnerve]
+Pachirisu:
+  Pachirisu:
+    abilities: [RunAway, Pickup]
+    # Volt Absorb is the mainline's hidden one; the pouches are
+    # this registry's, and they are what the species is
+    hidden: [VoltAbsorb, CheekPouch]
+Buizel:
+  Buizel:
+    abilities: [SwiftSwim]
+    hidden: [WaterVeil]
+  Floatzel:
+    abilities: [SwiftSwim]
+    # Strong Jaw and Moxie are this registry's rather than the
+    # mainline's: what it hunts with, and what hunting does for it
+    hidden: [WaterVeil, StrongJaw, Moxie]
+Cherubi:
+  Cherubi:
+    abilities: [Chlorophyll]
+  Cherrim:
+    abilities: [FlowerGift]
+    # Harvest and Healer are this registry's rather than the
+    # mainline's: the line is fruit, and a blossom opens for whoever
+    # is standing under it
+    hidden: [Harvest, Healer]
+  CherrimSunshine:
+    abilities: [FlowerGift]
+    hidden: [Harvest, Healer]
+Shellos:
+  Shellos:
+    abilities: [StickyHold, StormDrain]
+    hidden: [SandForce]
+  ShellosEast:
+    abilities: [StickyHold, StormDrain]
+    hidden: [SandForce]
+  Gastrodon:
+    abilities: [StickyHold, StormDrain]
+    # Liquid Ooze is this registry's rather than the mainline's:
+    # what the slug is made of is not worth drinking
+    hidden: [SandForce, LiquidOoze]
+  GastrodonEast:
+    abilities: [StickyHold, StormDrain]
+    # Liquid Ooze is this registry's rather than the mainline's:
+    # what the slug is made of is not worth drinking
+    hidden: [SandForce, LiquidOoze]
+Drifloon:
+  Drifloon:
+    abilities: [Aftermath, Unburden]
+    hidden: [FlareBoost]
+  Drifblim:
+    abilities: [Aftermath, Unburden]
+    # Multiscale is this registry's rather than the mainline's: a
+    # balloon is whole until something puts a hole in it
+    hidden: [FlareBoost, Multiscale]
+Buneary:
+  Buneary:
+    abilities: [RunAway, Klutz]
+    hidden: [Limber]
+  Lopunny:
+    abilities: [CuteCharm, Klutz]
+    hidden: [Limber]
+Glameow:
+  Glameow:
+    abilities: [Limber, OwnTempo]
+    hidden: [KeenEye]
+  Purugly:
+    abilities: [ThickFat, OwnTempo]
+    hidden: [Defiant]
+Stunky:
+  Stunky:
+    abilities: [Stench, Aftermath]
+    hidden: [KeenEye]
+  Skuntank:
+    abilities: [Stench, Aftermath]
+    # Poison Touch is this registry's rather than the mainline's:
+    # the line fights close in, and nothing else it has puts poison on
+    hidden: [KeenEye, PoisonTouch]
+Bronzor:
+  Bronzor:
+    abilities: [Levitate, Heatproof]
+    hidden: [HeavyMetal]
+  Bronzong:
+    abilities: [Levitate, Heatproof]
+    # Mirror Armor is this registry's rather than the mainline's: the
+    # face is polished, and 116 of each defense is worth keeping
+    hidden: [HeavyMetal, MirrorArmor]

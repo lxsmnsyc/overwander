@@ -1,0 +1,237 @@
+Alomomola:
+  # The nurse: it carries whatever it finds hurt back to the shallows in
+  # its fins, and the film over it does the rest
+  Alomomola:
+    types: [Water]
+    egg-groups: [Water1, Water2]
+    habitat: Water
+    biomes: [Ocean, CoralReef]
+    active: any
+Joltik:
+  # The spiders: a Joltik clings to something bigger and drinks the
+  # static off it, and a Galvantula strings a fence of charged silk
+  # across whatever it wants kept away
+  Joltik:
+    types: [Bug, Electric]
+    egg-groups: [Bug]
+    biomes: [Mountain]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Galvantula
+        method: [Level]
+        level: 36
+  Galvantula:
+    types: [Bug, Electric]
+    egg-groups: [Bug]
+    biomes: [Mountain]
+    active: [Evening, Night]
+    evolves-from: Joltik
+Ferroseed:
+  # What a thing hanging off the ceiling learns to do to whatever walks
+
+  # The thorn pods: a Ferroseed hooks itself to a cave roof and pulls
+  # the minerals out of it, and a Ferrothorn lets go and drags the
+  # spikes along with it
+  Ferroseed:
+    types: [Grass, Steel]
+    egg-groups: [Grass, Mineral]
+    biomes: [Mountain]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Ferrothorn
+        method: [Level]
+        level: 40
+  Ferrothorn:
+    types: [Grass, Steel]
+    egg-groups: [Grass, Mineral]
+    biomes: [Mountain]
+    active: [Evening, Night]
+    evolves-from: Ferroseed
+Klink:
+  # The gears: two of them found each other in a cave and have turned
+  # against each other ever since, and neither half is anything on its
+  # own. None of them is male or female
+  Klink:
+    types: [Steel]
+    egg-groups: [Mineral]
+    biomes: [Mountain]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Klang
+        method: [Level]
+        level: 38
+  Klang:
+    types: [Steel]
+    egg-groups: [Mineral]
+    biomes: [Mountain]
+    active: [Morning, Day]
+    evolves-from: Klink
+    evolves-into:
+      - species: Klinklang
+        method: [Level]
+        level: 49
+  Klinklang:
+    types: [Steel]
+    egg-groups: [Mineral]
+    biomes: [Mountain]
+    active: [Morning, Day]
+    evolves-from: Klang
+Tynamo:
+  # The eels: a Tynamo alone is worth nothing and a shoal of them
+  # discharges as one, and what they grow into hangs onto its prey with
+  # a mouth that does not let go
+  Tynamo:
+    types: [Electric]
+    egg-groups: [Amorphous]
+    biomes: [Mountain, Bog]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Eelektrik
+        method: [Level]
+        level: 39
+  Eelektrik:
+    types: [Electric]
+    egg-groups: [Amorphous]
+    biomes: [Mountain, Bog]
+    active: [Evening, Night]
+    evolves-from: Tynamo
+    evolves-into:
+      - species: Eelektross
+        method: [UsedItem]
+        item: ThunderStone
+  Eelektross:
+    types: [Electric]
+    egg-groups: [Amorphous]
+    biomes: [Mountain, Bog]
+    active: [Evening, Night]
+    evolves-from: Eelektrik
+Elgyem:
+  # The ones that came down: an Elgyem was found beside a crater, and a
+  # Beheeyem talks with its fingers and rearranges what you remember of
+  # the conversation afterwards
+  Elgyem:
+    types: [Psychic]
+    egg-groups: [HumanLike]
+    biomes: [Desert, ColdDesert]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Beheeyem
+        method: [Level]
+        level: 42
+  Beheeyem:
+    types: [Psychic]
+    egg-groups: [HumanLike]
+    biomes: [Desert, ColdDesert]
+    active: [Evening, Night]
+    evolves-from: Elgyem
+Litwick:
+  # The lamps: a Litwick walks ahead of you helpfully, and the flame on
+  # its head is burning what it has already taken off whoever went first
+  Litwick:
+    types: [Ghost, Fire]
+    egg-groups: [Amorphous]
+    biomes: [Bog, Woodland]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Lampent
+        method: [Level]
+        level: 41
+  Lampent:
+    types: [Ghost, Fire]
+    egg-groups: [Amorphous]
+    biomes: [Bog, Woodland]
+    active: [Evening, Night]
+    evolves-from: Litwick
+    evolves-into:
+      - species: Chandelure
+        method: [UsedItem]
+        item: DuskStone
+  Chandelure:
+    types: [Ghost, Fire]
+    egg-groups: [Amorphous]
+    biomes: [Bog, Woodland]
+    active: [Evening, Night]
+    evolves-from: Lampent
+Axew:
+  # The tusks: an Axew scores trees to mark where it has been, and the
+  # tusk that breaks off doing it grows back harder than it was
+  Axew:
+    types: [Dragon]
+    egg-groups: [Monster, Dragon]
+    biomes: [Mountain, MontaneForest]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Fraxure
+        method: [Level]
+        level: 38
+  Fraxure:
+    types: [Dragon]
+    egg-groups: [Monster, Dragon]
+    biomes: [Mountain, MontaneForest]
+    active: [Morning, Day]
+    evolves-from: Axew
+    evolves-into:
+      - species: Haxorus
+        method: [Level]
+        level: 48
+  Haxorus:
+    types: [Dragon]
+    egg-groups: [Monster, Dragon]
+    biomes: [Mountain, MontaneForest]
+    active: [Morning, Day]
+    evolves-from: Fraxure
+Cubchoo:
+  # The bears: a Cubchoo's nose runs constantly and that is what it
+  # freezes into the fangs and claws a Beartic fights with
+  Cubchoo:
+    types: [Ice]
+    egg-groups: [Field]
+    biomes: [Tundra, Glacier]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Beartic
+        method: [Level]
+        level: 37
+  Beartic:
+    types: [Ice]
+    egg-groups: [Field]
+    biomes: [Tundra, Glacier]
+    active: [Morning, Day]
+    evolves-from: Cubchoo
+Cryogonal:
+  # The crystal: it is born in a snow cloud rather than hatched, and
+  # what it catches it catches in chains of ice rather than in a grip
+  Cryogonal:
+    types: [Ice]
+    egg-groups: [Mineral]
+    biomes: [Glacier, AlpineTundra]
+    active: [Evening, Night]
+Shelmet:
+  # The snail in the helmet Karrablast is after. Trading the two
+  # together leaves one armoured and the other bare and very fast
+  Shelmet:
+    types: [Bug]
+    egg-groups: [Bug]
+    # The same woods, and the wet ground past them, after dark
+    biomes: [TemperateForest, Swamp]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Accelgor
+        method: [Trade]
+        partner: Karrablast
+  Accelgor:
+    types: [Bug]
+    egg-groups: [Bug]
+    biomes: [TemperateForest, Swamp]
+    active: [Evening, Night]
+    evolves-from: Shelmet
+Stunfisk:
+  # The flat fish buried in the mud of a tidal flat, grinning at
+  # whatever stands on it
+  Stunfisk:
+    types: [Ground, Electric]
+    egg-groups: [Water1, Amorphous]
+    habitat: Amphibious
+    # Flat in the mud of the marshes, waiting to be stepped on
+    biomes: [Swamp, Bog]
+    active: any

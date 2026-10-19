@@ -4,7 +4,7 @@ The auction house is the one place something passes from one player to another.
 The server decides everything about it in
 [`src/server/auctions.ts`](../../src/server/auctions.ts). The rules both sides
 read, covering what a bid must clear, when bidding closes and who may collect,
-live in [`src/auth/auction-record.ts`](../../src/auth/auction-record.ts), and
+live in [`src/model/auction-record.ts`](../../src/model/auction-record.ts), and
 the browser reads the board through
 [`src/auth/auctions.ts`](../../src/auth/auctions.ts).
 
@@ -120,7 +120,7 @@ The board takes the same grammar the bag and the box do (`field:value` pairs, a
 leading `!` to refuse one, `|` inside a value to accept any of several, a
 comparison or a range for a number), asked of a lot rather than of something
 owned. `AUCTION_VOCABULARY` and `matchesAuction` live in
-[`auction-search.ts`](../../src/auth/auction-search.ts).
+[`auction-search.ts`](../../src/model/search/auction.ts).
 
 There is no query half: the board already holds every live lot, so every term is
 answered over what it read.
@@ -179,7 +179,7 @@ Anything else, a rare or a fully-evolved anything, a bidder can walk out and
 catch, which is what makes it not worth a day of the board.
 
 Both rules live in
-[`src/auth/auction-record.ts`](../../src/auth/auction-record.ts) and are read by
+[`src/model/auction-record.ts`](../../src/model/auction-record.ts) and are read by
 both sides: the sell pickers leave out everything that fails, and `openAuction`
 asks again from the **stored** record before it takes the lot.
 

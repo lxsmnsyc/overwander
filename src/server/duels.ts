@@ -3,21 +3,21 @@
 // number) considers unnecessary
 // oxlint-disable typescript/no-unnecessary-type-assertion
 import 'server-only';
-import BattleOutcome from '../auth/battle-outcome';
+import BattleOutcome from '../model/battle-outcome';
 import {
   DEFAULT_DUEL_RULES,
   DUEL_FIGHTERS,
   type DuelRecord,
   type DuelRules,
   asDuelRecord,
-} from '../auth/duel-record';
+} from '../model/duel-record';
 import { withLimit } from '../data/constants/battle-limits';
 import { Slots, getSlots } from '../data/constants/slots';
 import { BST_CAPS, DUEL_BANS } from '../data/constants/duel-bans';
 import { duelRefusal } from '../data/constants/duel-rules';
-import TEAM_SIZE from '../auth/team-size';
-import { LobbyRole } from '../auth/lobby-role';
-import { asCaughtPokemon } from '../auth/caught-record';
+import TEAM_SIZE from '../model/team-size';
+import { LobbyRole } from '../model/lobby-role';
+import { asCaughtPokemon } from '../model/caught-record';
 import { getSql, newDocId, tx } from './db';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
 import { isAnyCatchLocked } from './locks';

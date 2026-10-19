@@ -5,7 +5,7 @@ import { Pace } from '../server/pace';
 import check, { COUNT, ID, OFFSET, TOKEN } from '../server/validate';
 import { announceBuddyChange } from './buddy-changes';
 import { syncServerClock } from './clock';
-import { getLocalOffset } from './local-time';
+import { getLocalOffset } from '../model/local-time';
 import getIdToken from './session';
 
 export type { EggWalk, WalkReport } from '../server/eggs';
@@ -17,7 +17,7 @@ export type { EggWalk, WalkReport } from '../server/eggs';
  * keyboard — and reported in small batches to whatever egg the player
  * is carrying. The server credits them against its own clock, so a
  * report is worth at most what the time since the last one could have
- * been walked in; see [`src/auth/egg.ts`](./egg.ts) for the rules
+ * been walked in; see [`src/model/egg.ts`](./egg.ts) for the rules
  * both sides read.
  */
 

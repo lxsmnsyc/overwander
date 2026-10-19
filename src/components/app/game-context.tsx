@@ -13,12 +13,12 @@ import {
 import { useAuth } from '../../auth/context';
 import type Npc from '../../data/overworld/npc';
 import type Weather from '../../data/overworld/weather';
-import type { EncounterRecord } from '../../auth/encounter-record';
+import type { EncounterRecord } from '../../model/encounter-record';
 import { type Notice, watchNotifications } from '../../auth/notifications';
 import { claimRaidReward } from '../../auth/raids';
 import { claimStopReward } from '../../auth/stops';
 import { settleGymChallenge } from '../../auth/gym-seats';
-import type { PositionRecord } from '../../auth/position-record';
+import type { PositionRecord } from '../../model/position-record';
 import type Biome from '../../data/ids/biome';
 import type { Species } from '../../data/ids/species';
 import type { WalkReport } from '../../auth/eggs';
@@ -429,8 +429,19 @@ export function useGame(): GameState {
  * dialog shows, and both raids and replays open battles that replace
  * everything
  */
-export default function GameProvider(props: ParentProps): JSX.Element {
+export default function GameProvider(
+  props: ParentProps<{
+    /**
+     * Mounted by the staff dashboard for the game's panels alone. Staff
+     * there are managing, not playing: nothing is walked, chimed or
+     * claimed on their behalf
+     */
+    managing?: boolean;
+  }>,
+): JSX.Element {
   const auth = useAuth();
+  /** Who is playing on this screen, which on the dashboard is nobody */
+  const player = (): ReturnType<typeof auth.user> => (props.managing === true ? null : auth.user());
   const toast = useToast();
   const [dialog, setDialog] = createSignal(GameDialog.None);
   const [position, setPosition] = createSignal<PositionRecord | null>(null);
@@ -543,7 +554,7 @@ export default function GameProvider(props: ParentProps): JSX.Element {
   // the database has never heard of would leave every one of those
   // readings waiting on a row that is never coming
   createEffect(() => {
-    const user = auth.user();
+    const user = player();
 
     if (user == null) {
       return;
@@ -559,7 +570,7 @@ export default function GameProvider(props: ParentProps): JSX.Element {
   // anywhere — somewhere random in the starting region, written down
   // at once so the dice are rolled for them exactly once
   createEffect(() => {
-    const user = auth.user();
+    const user = player();
 
     if (user == null || position() != null) {
       return;
@@ -643,7 +654,7 @@ export default function GameProvider(props: ParentProps): JSX.Element {
    * it back
    */
   createEffect(() => {
-    const user = auth.user();
+    const user = player();
 
     if (user == null) {
       return;
@@ -694,7 +705,7 @@ export default function GameProvider(props: ParentProps): JSX.Element {
   let questSoundedAt = 0;
 
   watchDueQuests(
-    () => auth.user()?.uid ?? null,
+    () => player()?.uid ?? null,
     records,
     (name) => {
       toast.push({ title: 'Quest complete', message: `${name} is ready to claim.`, tone: 'leaf' });
@@ -709,7 +720,7 @@ export default function GameProvider(props: ParentProps): JSX.Element {
   const [notices, setNotices] = createSignal<Notice[]>([]);
 
   createEffect(() => {
-    const user = auth.user();
+    const user = player();
 
     if (user == null) {
       setNotices([]);
@@ -852,8 +863,16 @@ export default function GameProvider(props: ParentProps): JSX.Element {
           if (collected == null) {
             return;
           }
-          pay({ ...NOTHING, gold: collected.gold, waiting: collected.encounter.species });
-          setEncounter(collected.encounter);
+          pay({
+            ...NOTHING,
+            gold: collected.gold,
+            items: collected.items,
+            waiting: collected.encounter?.species ?? null,
+          });
+          // A calmed Noble leaves items and gold, and nobody waiting
+          if (collected.encounter != null) {
+            setEncounter(collected.encounter);
+          }
         })
         .catch(() => {
           // Nothing is lost by a claim that failed: the raid keeps

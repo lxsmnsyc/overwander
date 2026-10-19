@@ -1,6 +1,6 @@
-import { isEgg } from '../auth/egg';
+import { isEgg } from '../model/egg';
 import 'server-only';
-import { asCaughtPokemon } from '../auth/caught-record';
+import { asCaughtPokemon } from '../model/caught-record';
 import type { Buddy } from '../overworld/core';
 import { readCaughtIn } from './caught-io';
 import { getSql } from './db';

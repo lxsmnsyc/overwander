@@ -1,11 +1,11 @@
 import 'server-only';
-import { asCaughtPokemon } from '../auth/caught-record';
-import { ITEM_STACKS } from '../auth/stacks';
-import { type HealthState, healedByItem } from '../auth/health';
+import { asCaughtPokemon } from '../model/caught-record';
+import { ITEM_STACKS } from '../model/stacks';
+import { type HealthState, healedByItem } from '../model/health';
 import { gainFriendship } from '../data/constants/friendship';
 import type { Items } from '../data/ids/items';
 import { bitterness } from '../data/items/medicine';
-import { Metric } from '../auth/quest-record';
+import { Metric } from '../model/quest-record';
 import { readStackIn, writeStackIn } from './stacks';
 import { bumpProgress } from './quest-progress';
 import { isEggRecord, isGuardedRecord } from './catch-fields';

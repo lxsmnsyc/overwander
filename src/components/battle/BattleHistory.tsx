@@ -10,11 +10,11 @@ import {
   createSignal,
   from,
 } from 'solid-js';
-import BattleKind, { BATTLE_KIND_NAMES, getBattleKind } from '../../auth/battle-kind';
+import BattleKind, { BATTLE_KIND_NAMES, getBattleKind } from '../../model/battle-kind';
 import { BattleOutcome, type BattleRecord, watchBattleHistory } from '../../auth/battles';
 import { listClaimedRaids } from '../../auth/raids';
 import { listWaitingEncounters } from '../../auth/safari';
-import type { EncounterRecord } from '../../auth/encounter-record';
+import type { EncounterRecord } from '../../model/encounter-record';
 import { EncounterType } from '../../overworld/encounter/kinds';
 import { getSpeciesData } from '../../data/species';
 import {
@@ -34,7 +34,7 @@ import {
 import { PlayIcon, ShareIcon } from '../icons';
 import { GameDialog, useGame } from '../app/game-context';
 import type { CaughtPokemon } from '../../auth/caught';
-import { previewSnapshot } from '../../auth/catch-snapshot';
+import { previewSnapshot } from '../../model/catch-snapshot';
 import { getProfileBatched } from '../../auth/profile';
 import { type TeamSnapshotRecord, getTeamSnapshotBatched } from '../../auth/teams';
 import Npc from '../../data/overworld/npc';
@@ -222,7 +222,7 @@ function HistoryRow(props: {
       class="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-2"
       title={OUTCOME_LABELS[props.record.outcome]}
     >
-      <div class="w-full max-w-60 shrink-0">
+      <div class="w-full shrink-0 sm:w-80">
         <Suspense fallback={<Note>Reading the team…</Note>}>
           <OwnStrip fought={fought} />
         </Suspense>
@@ -330,6 +330,11 @@ const WAITING_KINDS: Partial<Record<EncounterType, string>> = {
   [EncounterType.LegendaryRaid]: 'Raid prize',
   [EncounterType.ShadowRaid]: 'Shadow raid prize',
   [EncounterType.MythicalRaid]: 'Mythical raid prize',
+  [EncounterType.TotemRaid]: 'Totem raid prize',
+  [EncounterType.MaxRaid]: 'Max raid prize',
+  [EncounterType.AlphaRaid]: 'Alpha raid prize',
+  [EncounterType.NobleRaid]: 'Noble raid prize',
+  [EncounterType.TeraRaid]: 'Tera raid prize',
   [EncounterType.Rocket]: 'Left behind',
   [EncounterType.Fateful]: 'Gift',
   [EncounterType.Revived]: 'Revived fossil',

@@ -1,12 +1,13 @@
 import { AttackPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, EffectType } from '../events';
 import type Team from '../team';
 import type Unit from '../unit';
 import { clearSpikes, layersUnder } from './spikes';
 import { clearStealthRock, stonesOver } from './stealth-rock';
+import { clearSteelsurge, steelOver } from './steelsurge';
 import { clearStickyWeb, webOver } from './sticky-web';
 import { clearToxicSpikes, toxicLayersUnder } from './toxic-spikes';
 
@@ -22,7 +23,13 @@ import { clearToxicSpikes, toxicLayersUnder } from './toxic-spikes';
 const SHAKEN = [Statuses.Trapped, Statuses.Seeding];
 
 function hazardsUnder(team: Team): boolean {
-  return layersUnder(team) > 0 || toxicLayersUnder(team) > 0 || stonesOver(team) || webOver(team);
+  return (
+    layersUnder(team) > 0 ||
+    toxicLayersUnder(team) > 0 ||
+    stonesOver(team) ||
+    steelOver(team) ||
+    webOver(team)
+  );
 }
 
 function heldDown(unit: Unit): boolean {
@@ -34,12 +41,15 @@ function heldDown(unit: Unit): boolean {
   return false;
 }
 
+/** Rapid Spin and Mortal Spin, which each sweep the user's side as they land */
+const SPINS = new Set<Moves>([Moves.RapidSpin, Moves.MortalSpin]);
+
 /** What a spin that has something to clear is worth over one that does not */
 const CLEAR_BONUS = 10;
 
 export default function setupRapidSpin(battle: Battle): void {
   battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Post, (event) => {
-    if (event.move !== Moves.RapidSpin) {
+    if (!SPINS.has(event.move)) {
       return;
     }
 
@@ -48,6 +58,7 @@ export default function setupRapidSpin(battle: Battle): void {
     clearSpikes(team);
     clearToxicSpikes(team);
     clearStealthRock(team);
+    clearSteelsurge(team);
     clearStickyWeb(team);
 
     const cause = { type: EffectType.Move, move: event.move, unit: event.source } as const;
@@ -63,10 +74,7 @@ export default function setupRapidSpin(battle: Battle): void {
   // taken off a spin with nothing to clear. It is worth more with
   // something to clear, which is what the AI is told
   battle.on(BattleEvents.CheckUnitAIMoveScore, AttackPriority.Post, (event) => {
-    if (
-      event.move === Moves.RapidSpin &&
-      (hazardsUnder(event.source.team) || heldDown(event.source))
-    ) {
+    if (SPINS.has(event.move) && (hazardsUnder(event.source.team) || heldDown(event.source))) {
       event.score += CLEAR_BONUS;
     }
   });

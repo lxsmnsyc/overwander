@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { asBasicSpriteData } from '../../src/canvas/basic-sprite';
+import { asBasicSpriteData } from '../../src/canvas/sprites/basic-sprite';
 import registerBiomeSpawns, { isMythicalSpecies, listSpeciesHabitats } from '../../src/data/biome';
 import Families from '../../src/data/ids/families';
 import registerAbilities, { getAbilityData } from '../../src/data/abilities';
@@ -33,7 +33,8 @@ import {
   statusFlag,
   unpackStatuses,
 } from '../../src/data/ids/status';
-import { ARCEUS_FORMS, EvolutionMethod, Species } from '../../src/data/ids/species';
+import { EvolutionMethod, Species } from '../../src/data/ids/species';
+import { ARCEUS_FORMS } from '../../src/data/ids/forms';
 import { CANDY_PER_LEVEL, SHADOW_CANDY_MULTIPLIER, getCandyCost } from '../../src/auth/candy';
 import registerItems, {
   ITEM_TYPE_NAMES,
@@ -44,7 +45,7 @@ import registerItems, {
 } from '../../src/data/items';
 import { WING_STATS, isWing } from '../../src/data/items/wings';
 import {
-  BAIT_BERRY_NAMES,
+  BAIT_BERRIES,
   BAIT_CATCH_BONUS,
   BERRY_BRACE_STAGES,
   BERRY_EFFORT_DROPS,
@@ -55,7 +56,7 @@ import {
   NANAB_FLEE_FACTOR,
   PINAP_CANDY_HELPINGS,
   PINCH_BERRIES,
-  PRIZE_BERRY_NAMES,
+  PRIZE_BERRIES,
   RAZZ_CATCH_BONUS,
   describeBerry,
   isBerry,
@@ -75,7 +76,21 @@ import {
   getFossilPrice,
   rollFossilOffer,
 } from '../../src/data/overworld/fossil';
-import { FOSSIL_SPECIES, isFossil, listFossils } from '../../src/data/items/fossils';
+import {
+  FOSSIL_BOTTOMS,
+  FOSSIL_PAIRS,
+  FOSSIL_SPECIES,
+  FOSSIL_TOPS,
+  getFossilPairSpecies,
+  getFossilPartners,
+  getSpeciesFossil,
+  isFossil,
+  isFossilBottom,
+  isFossilHalf,
+  isFossilTop,
+  listFossils,
+  listRevivedSpecies,
+} from '../../src/data/items/fossils';
 import {
   VENDOR_KINDS,
   VENDOR_KIND_NAMES,
@@ -96,8 +111,8 @@ import { GEMS } from '../../src/data/items/gems';
 import { QUARRIED_GEAR } from '../../src/data/items/gear';
 import { PP_ITEMS, VITAMIN_STATS } from '../../src/data/items/vitamins';
 import { TREATS } from '../../src/data/items/treats';
-import { asBoolean } from '../../src/auth/__normalize';
-import { CANDY_STACKS, ITEM_STACKS, getStack, listStacks } from '../../src/auth/stacks';
+import { asBoolean } from '../../src/model/normalize';
+import { CANDY_STACKS, ITEM_STACKS, getStack, listStacks } from '../../src/model/stacks';
 import {
   MAX_SLOTS,
   SLOT_BITS,
@@ -113,7 +128,7 @@ import {
   withSlots,
 } from '../../src/data/constants/slots';
 import getSigil, { BRAILLE_BASE, SIGIL_CELLS } from '../../src/data/constants/sigil';
-import { isFavorite, isGuarded } from '../../src/auth/caught-record';
+import { isFavorite, isGuarded } from '../../src/model/caught-record';
 import {
   MAX_IV,
   MAX_IV_STARS,
@@ -148,7 +163,7 @@ import {
   UNLIMITED_BATTLE_LIMITS,
   withLimit,
 } from '../../src/data/constants/battle-limits';
-import { DEFAULT_DUEL_RULES, asDuelRules } from '../../src/auth/duel-record';
+import { DEFAULT_DUEL_RULES, asDuelRules } from '../../src/model/duel-record';
 import {
   PURIFY_IV_BOOST,
   isPurifiable,
@@ -156,7 +171,6 @@ import {
   purifyAbilities,
   purifyIVs,
 } from '../../src/data/items/purifying-gem';
-import { CANDY_ITEM_PRICE } from '../../src/data/items/candy-items';
 import { isPortalKey } from '../../src/data/items/portal-key';
 import Landmark, { LANDMARKS, LANDMARK_NAMES } from '../../src/data/overworld/landmark';
 import {
@@ -169,7 +183,7 @@ import {
 import { INCENSES } from '../../src/data/items/incenses';
 import { BATTLE_ITEMS } from '../../src/data/items/battle-items';
 import { DRINKS } from '../../src/data/items/drinks';
-import { FEED_CATCH_BONUS, MAX_CATCH_BONUS } from '../../src/overworld/safari';
+import { FEED_CATCH_BONUS, MAX_CATCH_BONUS } from '../../src/overworld/safari/index';
 import { PLATES } from '../../src/data/items/plates';
 import { FORM_ITEMS, getItemForms } from '../../src/data/items/form-items';
 import { RAID_ITEMS, getRaidSpecies } from '../../src/data/items/raid-items';
@@ -281,7 +295,7 @@ describe('item data', () => {
       expect(data.flags & ItemFlags.Holdable).not.toBe(0);
       expect(data.flags & ItemFlags.Marketable).not.toBe(0);
       expect(data.flags & ItemFlags.Consumable).toBe(0);
-      expect(data.buy).toBe(CANDY_ITEM_PRICE);
+      expect(data.buy).toBe(6000);
       expect(data.sell).toBeLessThan(data.buy);
     }
     expect(getItemData(Items.ExpShare).name).toBe('Exp. Share');
@@ -341,7 +355,9 @@ describe('item data', () => {
   });
 
   it('buries the fossils and leaves what is in them nowhere else', () => {
-    expect(listFossils().length).toBe(FOSSIL_SPECIES.size);
+    expect(listFossils().length).toBe(
+      FOSSIL_SPECIES.size + FOSSIL_TOPS.length + FOSSIL_BOTTOMS.length,
+    );
     expect([...FOSSIL_SPECIES.values()]).toEqual([
       Species.Omanyte,
       Species.Kabuto,
@@ -404,11 +420,73 @@ describe('item data', () => {
     expect(FOSSIL_REVIVE_LEVEL).toBeGreaterThan(0);
   });
 
+  it('revives a Galar fossil from one top half and one bottom half', () => {
+    expect(FOSSIL_TOPS).toEqual([Items.FossilizedBird, Items.FossilizedFish]);
+    expect(FOSSIL_BOTTOMS).toEqual([Items.FossilizedDrake, Items.FossilizedDino]);
+
+    expect(getFossilPairSpecies(Items.FossilizedBird, Items.FossilizedDrake)).toBe(
+      Species.Dracozolt,
+    );
+    expect(getFossilPairSpecies(Items.FossilizedBird, Items.FossilizedDino)).toBe(
+      Species.Arctozolt,
+    );
+    expect(getFossilPairSpecies(Items.FossilizedFish, Items.FossilizedDrake)).toBe(
+      Species.Dracovish,
+    );
+    expect(getFossilPairSpecies(Items.FossilizedFish, Items.FossilizedDino)).toBe(
+      Species.Arctovish,
+    );
+    // The bench reads either order
+    expect(getFossilPairSpecies(Items.FossilizedDino, Items.FossilizedFish)).toBe(
+      Species.Arctovish,
+    );
+
+    // Two tops, two bottoms, the same half twice or a whole fossil are no pair
+    expect(getFossilPairSpecies(Items.FossilizedBird, Items.FossilizedFish)).toBeNull();
+    expect(getFossilPairSpecies(Items.FossilizedDrake, Items.FossilizedDino)).toBeNull();
+    expect(getFossilPairSpecies(Items.FossilizedBird, Items.FossilizedBird)).toBeNull();
+    expect(getFossilPairSpecies(Items.HelixFossil, Items.FossilizedDrake)).toBeNull();
+
+    const revived = new Set<Species>();
+
+    for (const [top, bottom, species] of FOSSIL_PAIRS) {
+      expect(isFossilTop(top)).toBe(true);
+      expect(isFossilBottom(bottom)).toBe(true);
+      expect(getFossilPartners(top)).toContain(bottom);
+      expect(getFossilPartners(bottom)).toContain(top);
+      // A pair species maps back to its two halves, and is met nowhere else
+      expect(getSpeciesFossil(species)).toEqual([top, bottom]);
+      expect(listSpeciesHabitats(species).length).toBe(0);
+      revived.add(species);
+    }
+    // Every top meets every bottom, and no species is named twice
+    expect(FOSSIL_PAIRS.length).toBe(FOSSIL_TOPS.length * FOSSIL_BOTTOMS.length);
+    expect(revived.size).toBe(FOSSIL_PAIRS.length);
+    expect(new Set(listRevivedSpecies()).size).toBe(FOSSIL_SPECIES.size + FOSSIL_PAIRS.length);
+
+    for (const half of [...FOSSIL_TOPS, ...FOSSIL_BOTTOMS]) {
+      const data = getItemData(half);
+
+      // A half is a fossil in every way but what it revives alone
+      expect(isFossil(half)).toBe(true);
+      expect(isFossilHalf(half)).toBe(true);
+      expect(FOSSIL_SPECIES.has(half)).toBe(false);
+      expect(data.type).toBe(ItemTypes.Fossil);
+      expect(isMarketable(half)).toBe(false);
+      expect(getFossilPrice(half)).toBe(getFossilPrice(Items.HelixFossil));
+    }
+
+    expect(getSpeciesFossil(Species.Omanyte)).toEqual([Items.HelixFossil]);
+    expect(getSpeciesFossil(Species.Pikachu)).toBeNull();
+    expect(isFossilHalf(Items.HelixFossil)).toBe(false);
+    expect(getFossilPartners(Items.HelixFossil)).toEqual([]);
+  });
+
   it('has the maniac carry two of them, never the same one twice', () => {
     const rng = new AleaRNG('fossils');
     const pairs = new Set<string>();
 
-    for (let at = 0; at < 400; at++) {
+    for (let at = 0; at < 2000; at++) {
       const offer = rollFossilOffer(() => rng.random());
 
       expect(offer.length).toBe(FOSSIL_OFFER_KINDS);
@@ -1399,6 +1477,11 @@ describe('item data', () => {
       Items.HeartDiamond,
       Items.SealedRing,
       Items.SteamValve,
+      Items.AncientPokeBall,
+      Items.HerosCharm,
+      Items.WindmillCharm,
+      Items.MysteryBox,
+      Items.MythicalPechaBerry,
       Items.GoldenBottleCap,
       Items.HPUpMax,
       Items.ProteinMax,
@@ -1837,11 +1920,10 @@ describe('item data', () => {
   });
 
   it('registers the flavour berries as bait, and nothing else', () => {
-    for (const [item, name] of BAIT_BERRY_NAMES) {
+    for (const item of BAIT_BERRIES) {
       const data = getItemData(item);
 
       expect(isBerry(item)).toBe(true);
-      expect(data.name).toBe(name);
       expect(data.type).toBe(ItemTypes.Berry);
       // Fed, never held: nothing in a battle reads one
       expect(data.flags & ItemFlags.Holdable).toBe(0);
@@ -1856,11 +1938,11 @@ describe('item data', () => {
     const jobs = [RAZZ_CATCH_BONUS, NANAB_FLEE_FACTOR, PINAP_CANDY_HELPINGS];
     const grown = new Set(BERRY_POOL.special.map((entry) => entry.item));
 
-    for (const [item, name] of PRIZE_BERRY_NAMES) {
+    for (const item of PRIZE_BERRIES) {
       const data = getItemData(item);
+      const { name } = data;
 
       expect(isBerry(item)).toBe(true);
-      expect(data.name).toBe(name);
       expect(data.type).toBe(ItemTypes.Berry);
       // Fed, never held
       expect(data.flags & ItemFlags.Holdable).toBe(0);
@@ -1898,7 +1980,7 @@ describe('item data', () => {
     for (const entry of BERRY_POOL.base) {
       everyday.add(entry.item);
     }
-    for (const item of BAIT_BERRY_NAMES.keys()) {
+    for (const item of BAIT_BERRIES) {
       expect(everyday.has(item), getItemData(item).name).toBe(true);
     }
   });

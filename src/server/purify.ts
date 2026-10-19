@@ -1,8 +1,8 @@
 import 'server-only';
-import { asBoolean } from '../auth/__normalize';
-import { asCaughtPokemon, isAuctionableCatch } from '../auth/caught-record';
-import { ITEM_STACKS } from '../auth/stacks';
-import { getMaxHealth, rescaleHealth } from '../auth/health';
+import { asBoolean } from '../model/normalize';
+import { asCaughtPokemon, isAuctionableCatch } from '../model/caught-record';
+import { ITEM_STACKS } from '../model/stacks';
+import { getMaxHealth, rescaleHealth } from '../model/health';
 import { purifiedFriendship } from '../data/constants/friendship';
 import type { Items } from '../data/ids/items';
 import {
@@ -11,7 +11,7 @@ import {
   purifyAbilities,
   purifyIVs,
 } from '../data/items/purifying-gem';
-import { Metric } from '../auth/quest-record';
+import { Metric } from '../model/quest-record';
 import { bumpProgress } from './quest-progress';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
 import { readStackIn, writeStackIn } from './stacks';

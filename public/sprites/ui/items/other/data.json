@@ -1,1 +1,670 @@
-{"compact":true,"width":107,"height":119,"images":[{"name":"ability-patch.png","x":10,"y":109,"width":18,"height":9,"sourceWidth":32,"sourceHeight":32,"trim":[8,13]},{"name":"armorite-ore.png","x":67,"y":0,"width":18,"height":22,"sourceWidth":32,"sourceHeight":32,"trim":[7,6]},{"name":"bottle-cap.png","x":72,"y":92,"width":15,"height":14,"sourceWidth":32,"sourceHeight":32,"trim":[9,9]},{"name":"discount-coupon.png","x":20,"y":73,"width":28,"height":17,"sourceWidth":32,"sourceHeight":32,"trim":[2,7]},{"name":"dynamax-candy.png","x":0,"y":52,"width":20,"height":21,"sourceWidth":32,"sourceHeight":32,"trim":[6,6]},{"name":"dynamax-crystal.png","x":32,"y":92,"width":22,"height":16,"sourceWidth":32,"sourceHeight":32,"trim":[6,8]},{"name":"dynite-ore.png","x":29,"y":0,"width":22,"height":28,"sourceWidth":32,"sourceHeight":32,"trim":[6,2]},{"name":"escape-rope.png","x":48,"y":73,"width":21,"height":17,"sourceWidth":32,"sourceHeight":32,"trim":[5,8]},{"name":"fluffy-tail.png","x":85,"y":0,"width":22,"height":22,"sourceWidth":32,"sourceHeight":32,"trim":[5,5]},{"name":"galarica-twig.png","x":0,"y":0,"width":29,"height":30,"sourceWidth":32,"sourceHeight":32,"trim":[2,1]},{"name":"gold-bottle-cap.png","x":87,"y":92,"width":15,"height":14,"sourceWidth":32,"sourceHeight":32,"trim":[9,9]},{"name":"heart-scale.png","x":54,"y":92,"width":18,"height":15,"sourceWidth":32,"sourceHeight":32,"trim":[7,9]},{"name":"honey.png","x":42,"y":52,"width":20,"height":20,"sourceWidth":32,"sourceHeight":32,"trim":[6,6]},{"name":"lure.png","x":0,"y":30,"width":15,"height":22,"sourceWidth":32,"sourceHeight":32,"trim":[9,5]},{"name":"max-lure.png","x":15,"y":30,"width":15,"height":22,"sourceWidth":32,"sourceHeight":32,"trim":[9,5]},{"name":"max-repel.png","x":30,"y":30,"width":14,"height":22,"sourceWidth":32,"sourceHeight":32,"trim":[9,5]},{"name":"odd-keystone.png","x":0,"y":73,"width":20,"height":19,"sourceWidth":32,"sourceHeight":32,"trim":[6,7]},{"name":"pass-orb.png","x":0,"y":109,"width":10,"height":10,"sourceWidth":32,"sourceHeight":32,"trim":[11,11]},{"name":"pink-nectar.png","x":69,"y":73,"width":16,"height":17,"sourceWidth":32,"sourceHeight":32,"trim":[8,8]},{"name":"poke-doll.png","x":20,"y":52,"width":22,"height":21,"sourceWidth":32,"sourceHeight":32,"trim":[5,6]},{"name":"poke-toy.png","x":44,"y":30,"width":18,"height":22,"sourceWidth":32,"sourceHeight":32,"trim":[8,5]},{"name":"purple-nectar.png","x":85,"y":73,"width":16,"height":17,"sourceWidth":32,"sourceHeight":32,"trim":[8,8]},{"name":"red-nectar.png","x":0,"y":92,"width":16,"height":17,"sourceWidth":32,"sourceHeight":32,"trim":[8,8]},{"name":"repel.png","x":62,"y":30,"width":14,"height":22,"sourceWidth":32,"sourceHeight":32,"trim":[9,5]},{"name":"soothe-bell.png","x":62,"y":52,"width":15,"height":20,"sourceWidth":32,"sourceHeight":32,"trim":[9,6]},{"name":"strange-souvenir.png","x":51,"y":0,"width":16,"height":27,"sourceWidth":32,"sourceHeight":32,"trim":[8,2]},{"name":"super-lure.png","x":76,"y":30,"width":15,"height":22,"sourceWidth":32,"sourceHeight":32,"trim":[9,5]},{"name":"super-repel.png","x":91,"y":30,"width":14,"height":22,"sourceWidth":32,"sourceHeight":32,"trim":[9,5]},{"name":"wishing-piece.png","x":77,"y":52,"width":23,"height":20,"sourceWidth":32,"sourceHeight":32,"trim":[5,5]},{"name":"yellow-nectar.png","x":16,"y":92,"width":16,"height":17,"sourceWidth":32,"sourceHeight":32,"trim":[8,8]}]}
+{
+  "compact": true,
+  "width": 183,
+  "height": 151,
+  "images": [
+    {
+      "name": "ability-patch.png",
+      "x": 165,
+      "y": 134,
+      "width": 18,
+      "height": 9,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        13
+      ]
+    },
+    {
+      "name": "armorite-ore.png",
+      "x": 16,
+      "y": 86,
+      "width": 18,
+      "height": 22,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        7,
+        6
+      ]
+    },
+    {
+      "name": "bottle-cap.png",
+      "x": 125,
+      "y": 134,
+      "width": 15,
+      "height": 14,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        9,
+        9
+      ]
+    },
+    {
+      "name": "bug-tera-shard.png",
+      "x": 29,
+      "y": 0,
+      "width": 26,
+      "height": 28,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        3,
+        2
+      ]
+    },
+    {
+      "name": "dark-tera-shard.png",
+      "x": 55,
+      "y": 0,
+      "width": 26,
+      "height": 28,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        3,
+        2
+      ]
+    },
+    {
+      "name": "discount-coupon.png",
+      "x": 142,
+      "y": 113,
+      "width": 28,
+      "height": 17,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        2,
+        7
+      ]
+    },
+    {
+      "name": "dragon-tera-shard.png",
+      "x": 81,
+      "y": 0,
+      "width": 26,
+      "height": 28,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        3,
+        2
+      ]
+    },
+    {
+      "name": "dynamax-candy.png",
+      "x": 161,
+      "y": 86,
+      "width": 20,
+      "height": 21,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        6,
+        6
+      ]
+    },
+    {
+      "name": "dynamax-crystal.png",
+      "x": 85,
+      "y": 134,
+      "width": 22,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        6,
+        8
+      ]
+    },
+    {
+      "name": "dynite-ore.png",
+      "x": 107,
+      "y": 0,
+      "width": 22,
+      "height": 28,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        6,
+        2
+      ]
+    },
+    {
+      "name": "electric-tera-shard.png",
+      "x": 129,
+      "y": 0,
+      "width": 26,
+      "height": 28,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        3,
+        2
+      ]
+    },
+    {
+      "name": "escape-rope.png",
+      "x": 0,
+      "y": 134,
+      "width": 21,
+      "height": 17,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        5,
+        8
+      ]
+    },
+    {
+      "name": "fairy-tera-shard.png",
+      "x": 155,
+      "y": 0,
+      "width": 26,
+      "height": 28,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        3,
+        2
+      ]
+    },
+    {
+      "name": "fighting-tera-shard.png",
+      "x": 0,
+      "y": 30,
+      "width": 26,
+      "height": 28,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        3,
+        2
+      ]
+    },
+    {
+      "name": "fire-tera-shard.png",
+      "x": 26,
+      "y": 30,
+      "width": 26,
+      "height": 28,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        3,
+        2
+      ]
+    },
+    {
+      "name": "fluffy-tail.png",
+      "x": 34,
+      "y": 86,
+      "width": 22,
+      "height": 22,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        5,
+        5
+      ]
+    },
+    {
+      "name": "flying-tera-shard.png",
+      "x": 52,
+      "y": 30,
+      "width": 26,
+      "height": 28,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        3,
+        2
+      ]
+    },
+    {
+      "name": "galarica-twig.png",
+      "x": 0,
+      "y": 0,
+      "width": 29,
+      "height": 30,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        2,
+        1
+      ]
+    },
+    {
+      "name": "ghost-tera-shard.png",
+      "x": 78,
+      "y": 30,
+      "width": 26,
+      "height": 28,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        3,
+        2
+      ]
+    },
+    {
+      "name": "gold-bottle-cap.png",
+      "x": 140,
+      "y": 134,
+      "width": 15,
+      "height": 14,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        9,
+        9
+      ]
+    },
+    {
+      "name": "grass-tera-shard.png",
+      "x": 104,
+      "y": 30,
+      "width": 26,
+      "height": 28,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        3,
+        2
+      ]
+    },
+    {
+      "name": "ground-tera-shard.png",
+      "x": 130,
+      "y": 30,
+      "width": 26,
+      "height": 28,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        3,
+        2
+      ]
+    },
+    {
+      "name": "heart-scale.png",
+      "x": 107,
+      "y": 134,
+      "width": 18,
+      "height": 15,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        7,
+        9
+      ]
+    },
+    {
+      "name": "honey.png",
+      "x": 22,
+      "y": 113,
+      "width": 20,
+      "height": 20,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        6,
+        6
+      ]
+    },
+    {
+      "name": "ice-tera-shard.png",
+      "x": 156,
+      "y": 30,
+      "width": 26,
+      "height": 28,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        3,
+        2
+      ]
+    },
+    {
+      "name": "lure.png",
+      "x": 56,
+      "y": 86,
+      "width": 15,
+      "height": 22,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        9,
+        5
+      ]
+    },
+    {
+      "name": "max-lure.png",
+      "x": 71,
+      "y": 86,
+      "width": 15,
+      "height": 22,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        9,
+        5
+      ]
+    },
+    {
+      "name": "max-repel.png",
+      "x": 86,
+      "y": 86,
+      "width": 14,
+      "height": 22,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        9,
+        5
+      ]
+    },
+    {
+      "name": "normal-tera-shard.png",
+      "x": 0,
+      "y": 58,
+      "width": 26,
+      "height": 28,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        3,
+        2
+      ]
+    },
+    {
+      "name": "odd-keystone.png",
+      "x": 80,
+      "y": 113,
+      "width": 20,
+      "height": 19,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        6,
+        7
+      ]
+    },
+    {
+      "name": "pass-orb.png",
+      "x": 155,
+      "y": 134,
+      "width": 10,
+      "height": 10,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        11,
+        11
+      ]
+    },
+    {
+      "name": "pink-nectar.png",
+      "x": 21,
+      "y": 134,
+      "width": 16,
+      "height": 17,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "poison-tera-shard.png",
+      "x": 26,
+      "y": 58,
+      "width": 26,
+      "height": 28,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        3,
+        2
+      ]
+    },
+    {
+      "name": "poke-doll.png",
+      "x": 0,
+      "y": 113,
+      "width": 22,
+      "height": 21,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        5,
+        6
+      ]
+    },
+    {
+      "name": "poke-toy.png",
+      "x": 100,
+      "y": 86,
+      "width": 18,
+      "height": 22,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        5
+      ]
+    },
+    {
+      "name": "psychic-tera-shard.png",
+      "x": 52,
+      "y": 58,
+      "width": 26,
+      "height": 28,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        3,
+        2
+      ]
+    },
+    {
+      "name": "purple-nectar.png",
+      "x": 37,
+      "y": 134,
+      "width": 16,
+      "height": 17,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "red-nectar.png",
+      "x": 53,
+      "y": 134,
+      "width": 16,
+      "height": 17,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "repel.png",
+      "x": 118,
+      "y": 86,
+      "width": 14,
+      "height": 22,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        9,
+        5
+      ]
+    },
+    {
+      "name": "rock-tera-shard.png",
+      "x": 78,
+      "y": 58,
+      "width": 26,
+      "height": 28,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        3,
+        2
+      ]
+    },
+    {
+      "name": "scroll-of-darkness.png",
+      "x": 100,
+      "y": 113,
+      "width": 21,
+      "height": 19,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        5,
+        7
+      ]
+    },
+    {
+      "name": "scroll-of-waters.png",
+      "x": 121,
+      "y": 113,
+      "width": 21,
+      "height": 19,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        5,
+        7
+      ]
+    },
+    {
+      "name": "soothe-bell.png",
+      "x": 42,
+      "y": 113,
+      "width": 15,
+      "height": 20,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        9,
+        6
+      ]
+    },
+    {
+      "name": "steel-tera-shard.png",
+      "x": 104,
+      "y": 58,
+      "width": 26,
+      "height": 28,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        3,
+        2
+      ]
+    },
+    {
+      "name": "stellar-tera-shard.png",
+      "x": 130,
+      "y": 58,
+      "width": 26,
+      "height": 28,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        3,
+        2
+      ]
+    },
+    {
+      "name": "strange-souvenir.png",
+      "x": 0,
+      "y": 86,
+      "width": 16,
+      "height": 27,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        2
+      ]
+    },
+    {
+      "name": "super-lure.png",
+      "x": 132,
+      "y": 86,
+      "width": 15,
+      "height": 22,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        9,
+        5
+      ]
+    },
+    {
+      "name": "super-repel.png",
+      "x": 147,
+      "y": 86,
+      "width": 14,
+      "height": 22,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        9,
+        5
+      ]
+    },
+    {
+      "name": "water-tera-shard.png",
+      "x": 156,
+      "y": 58,
+      "width": 26,
+      "height": 28,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        3,
+        2
+      ]
+    },
+    {
+      "name": "wishing-piece.png",
+      "x": 57,
+      "y": 113,
+      "width": 23,
+      "height": 20,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        5,
+        5
+      ]
+    },
+    {
+      "name": "yellow-nectar.png",
+      "x": 69,
+      "y": 134,
+      "width": 16,
+      "height": 17,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    }
+  ]
+}

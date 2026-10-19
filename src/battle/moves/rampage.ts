@@ -3,7 +3,7 @@ import { MoveAttackFlags, Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
 import { RISKY_PENALTY } from '../ai/score';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 
 /**
@@ -21,10 +21,16 @@ export const RAMPAGE_MOVES = new Set<Moves>([
   Moves.PetalDance,
   Moves.Outrage,
   Moves.Uproar,
+  Moves.RagingFury,
 ]);
 
 /** The ones that leave the user reeling when they finally stop */
-const FATIGUING_MOVES = new Set<Moves>([Moves.Thrash, Moves.PetalDance, Moves.Outrage]);
+const FATIGUING_MOVES = new Set<Moves>([
+  Moves.Thrash,
+  Moves.PetalDance,
+  Moves.Outrage,
+  Moves.RagingFury,
+]);
 
 export default function setupRampageMoves(battle: Battle): void {
   battle.on(BattleEvents.UnitTriggerMoveEffect, AttackPriority.Exact, (event) => {

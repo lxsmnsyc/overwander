@@ -750,9 +750,7 @@ export const enum Items {
   /** Walks its holder over whatever was laid at its feet */
   HeavyDutyBoots = 351,
 
-  /**
-   * TODO: blocked on Dynamax, which this game has none of
-   */
+  /** Gives a pokemon whose line can Gigantamax the Gigantamax Factor */
   MaxMushrooms = 354,
 
   /**
@@ -1121,6 +1119,167 @@ export const enum Items {
   SkillBook = 577,
   /** What shows the forces of nature their other shape */
   RevealGlass = 578,
+
+  /** The relics the heroes of Galar take up, and the crowned shapes they bring back */
+  RustedSword = 579,
+  RustedShield = 580,
+
+  /** What lets Calyrex ride one of its steeds, and parts them again */
+  ReinsOfUnity = 581,
+
+  /** The apples an Applin evolves on, the tart one first */
+  TartApple = 582,
+  SweetApple = 583,
+
+  /** The teapots a Sinistea is found in: a fake's cracked pot, then a true antique's chipped one */
+  CrackedPot = 584,
+  ChippedPot = 585,
+
+  /** The Galarica twigs a Galarian Slowpoke evolves on, the cuff for Slowbro and the wreath for Slowking */
+  GalaricaCuff = 586,
+  GalaricaWreath = 587,
+
+  /** The sweets a Milcery evolves holding */
+  StrawberrySweet = 588,
+  BerrySweet = 589,
+  LoveSweet = 590,
+  StarSweet = 591,
+  CloverSweet = 592,
+  FlowerSweet = 593,
+  RibbonSweet = 594,
+
+  /** The scrolls a Kubfu trains under, which decide the style its Urshifu fights in */
+  ScrollOfDarkness = 595,
+  ScrollOfWaters = 596,
+
+  /** The Hisuian stones: the augurite a Scyther cleaves itself an axe from, the peat an Ursaring evolves in */
+  BlackAugurite = 597,
+  PeatBlock = 598,
+
+  /** The relic Galar's mythical leaves behind it: the scarf the Zarude that raised a child wears */
+  DadasScarf = 599,
+
+  /**
+   * Galar's fossils, each half a pokemon: a top (the bird or the fish)
+   * and a bottom (the drake or the dino), revived as a pair
+   */
+  FossilizedBird = 600,
+  FossilizedFish = 601,
+  FossilizedDrake = 602,
+  FossilizedDino = 603,
+
+  /**
+   * Held, it lets its pokemon Dynamax the first time it drops below
+   * half its HP, once per side
+   */
+  DynamaxBand = 604,
+  /**
+   * Thrown at a frenzied Noble to soothe its Frenzy. A party packs up
+   * to three when a Noble raid starts
+   */
+  Balm = 605,
+
+  /** What lets a pokemon Terastallize, once a side a fight */
+  TeraOrb = 606,
+
+  /** The shards a Tera type is changed with, one per type and Stellar last */
+  NormalTeraShard = 607,
+  FireTeraShard = 608,
+  WaterTeraShard = 609,
+  ElectricTeraShard = 610,
+  GrassTeraShard = 611,
+  IceTeraShard = 612,
+  FightingTeraShard = 613,
+  PoisonTeraShard = 614,
+  GroundTeraShard = 615,
+  FlyingTeraShard = 616,
+  PsychicTeraShard = 617,
+  BugTeraShard = 618,
+  RockTeraShard = 619,
+  GhostTeraShard = 620,
+  DragonTeraShard = 621,
+  DarkTeraShard = 622,
+  SteelTeraShard = 623,
+  FairyTeraShard = 624,
+  StellarTeraShard = 625,
+
+  /** The apple an Applin grows into a Dipplin on */
+  SyrupyApple = 626,
+
+  /** The metal a Duraludon is coated in to become an Archaludon */
+  MetalAlloy = 627,
+
+  /** The cups a Poltchageist is found in: a fake's plain one, then a true antique's masterpiece */
+  UnremarkableTeacup = 628,
+  MasterpieceTeacup = 629,
+
+  /** The crest a Bisharp takes from its leader to become a Kingambit */
+  LeadersCrest = 630,
+
+  /** The armour a Charcadet takes up, Armarouge's auspicious and Ceruledge's malicious */
+  AuspiciousArmor = 631,
+  MaliciousArmor = 632,
+
+  /** The coins a Gimmighoul hoards, and evolves once it has enough of */
+  GimmighoulCoin = 633,
+
+  /** The masks Ogerpon was robbed of, each putting it in its shape */
+  WellspringMask = 634,
+  HearthflameMask = 635,
+  CornerstoneMask = 636,
+
+  /** The relic that calls Kitakami's mythical: the boxed berry from the Mochi Mayhem epilogue */
+  MythicalPechaBerry = 637,
+
+  /** The Mega Stones Legends: Z-A brought */
+  RaichuniteX = 638,
+  RaichuniteY = 639,
+  Clefablite = 640,
+  Victreebelite = 641,
+  Starminite = 642,
+  Dragoninite = 643,
+  Meganiumite = 644,
+  Feraligite = 645,
+  Skarmorite = 646,
+  Chimechite = 647,
+  AbsoliteZ = 648,
+  Staraptite = 649,
+  GarchompiteZ = 650,
+  LucarioniteZ = 651,
+  Froslassite = 652,
+  Heatranite = 653,
+  Darkranite = 654,
+  Emboarite = 655,
+  Excadrite = 656,
+  Scolipite = 657,
+  Scraftinite = 658,
+  Eelektrossite = 659,
+  Chandelurite = 660,
+  Golurkite = 661,
+  Chesnaughtite = 662,
+  Delphoxite = 663,
+  Greninjite = 664,
+  Pyroarite = 665,
+  Floettite = 666,
+  Meowsticite = 667,
+  Malamarite = 668,
+  Barbaracite = 669,
+  Dragalgite = 670,
+  Hawluchanite = 671,
+  Zygardite = 672,
+  Crabominite = 673,
+  Golisopite = 674,
+  Drampanite = 675,
+  Magearnite = 676,
+  Zeraorite = 677,
+  Falinksite = 678,
+  Scovillainite = 679,
+  Glimmoranite = 680,
+  Tatsugirinite = 681,
+  Baxcalibrite = 682,
+
+  /** The mask Ogerpon wears when it is in none of the stolen three, which puts it back in the Teal */
+  TealMask = 683,
 
   /**
    * The Zenith Shards, one per Zenith: 2000000 marks a shard as a

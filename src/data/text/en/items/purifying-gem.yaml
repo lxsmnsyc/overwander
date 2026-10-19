@@ -1,0 +1,3 @@
+templates:
+  gem: Turns a shadow's Shadow ability into Purified, raises every value by {boost} up to {max}, adds {friendship} friendship and halves its candy costs.
+PurifyingGem: { name: Purifying Gem }

@@ -1,9 +1,9 @@
 import 'server-only';
 import type Regions from '../data/ids/regions';
-import { type CatchSnapshot, asCatchSnapshot } from '../auth/catch-snapshot';
+import { type CatchSnapshot, asCatchSnapshot } from '../model/catch-snapshot';
 import type { Species } from '../data/ids/species';
-import { FORMS_PER_SPECIES, SPECIES_FORM_BAND } from '../data/ids/species';
-import { DEX_CAUGHT, DEX_SEEN, type DexSpec } from '../auth/pokedex-record';
+import { FORMS_PER_SPECIES, SPECIES_FORM_BAND } from '../data/ids/forms';
+import { DEX_CAUGHT, DEX_SEEN, type DexSpec } from '../model/pokedex-record';
 import { getRegionSpan } from '../data/species/regions';
 import { getWornForms } from '../data/species';
 import type { Fragment, Sql } from 'postgres';

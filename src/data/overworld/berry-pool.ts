@@ -1,5 +1,5 @@
 import { Items } from '../ids/items';
-import { BAIT_BERRY_NAMES, BERRY_EFFORT_DROPS, BERRY_RESIST_TYPES } from '../items/berries';
+import { BAIT_BERRIES, BERRY_EFFORT_DROPS, BERRY_RESIST_TYPES } from '../items/berries';
 import { type ItemRarityGroups, evenlyWeighted } from './item-pool';
 
 /**
@@ -22,7 +22,7 @@ const BERRY_POOL: ItemRarityGroups = {
     { item: Items.AspearBerry, weight: 10 },
     // The flavour berries, grown for the safari and nothing else. Fourteen
     // thin slots together weigh about what the five cures do
-    ...evenlyWeighted(BAIT_BERRY_NAMES.keys(), 3),
+    ...evenlyWeighted(BAIT_BERRIES, 3),
   ],
   uncommon: [
     { item: Items.LeppaBerry, weight: 10 },

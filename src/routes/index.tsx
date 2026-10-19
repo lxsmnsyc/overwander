@@ -5,12 +5,12 @@ import { AuctionLot } from '../auth/auctions';
 import { type Profile, watchProfile } from '../auth/profile';
 import { signOut } from '../auth/actions';
 import CommandBar from '../components/app/command-bar';
-import { runsTheGame } from '../auth/staff';
+import { runsTheGame } from '../model/staff';
 import { useAuth } from '../auth/context';
 import type { PlayerIdentity } from '../auth/user';
 import AuctionDialog from '../components/auctions/AuctionDialog';
 import AuctionTab from '../components/auctions/auction-tab';
-import BattleData from '../components/app/battle-data';
+import BattleData from '../components/app/BattleData';
 import CatchDialog from '../components/catches/catch-dialog';
 import CatchesList from '../components/catches/catches-list';
 import GameMenu from '../components/app/GameMenu';
@@ -173,25 +173,12 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
           {/* The two that came out of the profile. Each is one list and
               nothing else, so each is its own panel rather than a tab
               of a page about somebody */}
-          <Dialog
+          {/* Its own dialog: what stands in its header changes as it is used */}
+          <CatchesList
             isOpen={showing(GameDialog.Catches)}
+            player={props.user.uid}
             onClose={close}
-            width="wide"
-            terse
-            title={TITLES[GameDialog.Catches]}
-            description={DESCRIPTIONS[GameDialog.Catches]}
-          >
-            {/* The list draws the dialog's foot itself, since picking puts its actions there */}
-            <BattleData
-              fallback={
-                <DialogActions>
-                  <Button onClick={close}>Close</Button>
-                </DialogActions>
-              }
-            >
-              <CatchesList player={props.user.uid} onClose={close} />
-            </BattleData>
-          </Dialog>
+          />
 
           {/* The dex: what there is, beside the box of what they have */}
           <Dialog

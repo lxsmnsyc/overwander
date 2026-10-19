@@ -41,4 +41,4 @@ readOnly(listTradesOnServer);
 - the `live_changes` trigger, added in a migration under `db/migrations`;
 - an entry in `src/server/live/rules.ts` saying who may read its rows whole. A follower who may not gets the row's keys and reads again through the server.
 
-`test/live-feed.test.ts` fails when the two lists disagree.
+`test/server/live-feed.test.ts` fails when the two lists disagree.

@@ -1,0 +1,33 @@
+FlyingPress:
+  name: Flying Press
+  description: Lands as both a Fighting and a Flying move. Never misses a minimized target, and hits 2x on it.
+MatBlock:
+  name: Mat Block
+  description: For 2 seconds, damaging moves are turned away from the user's team. Once a trip onto the field, shared with Fake Out.
+Belch:
+  name: Belch
+  description: Only works once the user has eaten a berry this battle.
+Rototiller:
+  name: Rototiller
+  description: Raises the Attack and Special Attack of every Grass type on the ground a stage each.
+StickyWeb:
+  name: Sticky Web
+  description: 'Weaves a net over the far side: anything swapped in on the ground loses a stage of Speed.'
+FellStinger:
+  name: Fell Stinger
+  description: Raises the user's Attack 3 stages if it finishes the target off.
+PhantomForce:
+  name: Phantom Force
+  description: Vanishes, then strikes through Protect and Detect and breaks the guard. A Substitute still blocks it.
+TrickOrTreat:
+  name: Trick-or-Treat
+  description: Adds Ghost to the target's types, in place of anything Forest's Curse added.
+NobleRoar:
+  name: Noble Roar
+  description: Drops the target's Attack and Special Attack a stage each. It is a sound.
+IonDeluge:
+  name: Ion Deluge
+  description: For 2 seconds, every Normal move anyone throws lands as Electric. A shorter wind-up than most.
+ParabolicCharge:
+  name: Parabolic Charge
+  description: Hits everything opposite and the user's teammates, and heals the user for 1/2 the damage dealt.

@@ -1,0 +1,27 @@
+# The weather moves: what a pokemon does to the sky. Each is a Status
+# move aimed at nobody, since the sky is not something a move points
+# at; which sky each calls up is in `src/data/moves/weather.ts`
+
+RainDance:
+  type: Water
+  category: Status
+  pp: 5
+  target: None
+
+SunnyDay:
+  type: Fire
+  category: Status
+  pp: 5
+  target: None
+
+Sandstorm:
+  type: Rock
+  category: Status
+  pp: 10
+  target: None
+
+Hail:
+  type: Ice
+  category: Status
+  pp: 10
+  target: None

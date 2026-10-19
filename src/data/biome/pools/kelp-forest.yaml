@@ -1,0 +1,135 @@
+land:
+  morning: &land-morning
+    base:
+      Oshawott: 388
+    uncommon:
+      Shellos: 1395
+      Wingull: 1395
+      Buizel: 1395
+      Krabby: 1117
+      Seel: 1117
+      Tangela: 278
+    rare:
+      Dewott: 388
+    scarce:
+      Kingler: 321
+      Dewgong: 321
+      Gastrodon: 321
+      Pelipper: 321
+      Floatzel: 257
+      Tangrowth: 129
+    elusive:
+      Shuckle: 348
+      Dhelmise: 348
+      Samurott: 139
+    prized:
+      Unown: forms
+    special: {}
+  day: *land-morning
+  evening: &land-evening
+    base: {}
+    uncommon:
+      Shellos: 1983
+      Buizel: 1983
+      Inkay: 1904
+      Krabby: 1587
+      Seel: 1587
+    rare: {}
+    scarce:
+      Kingler: 142
+      Dewgong: 142
+      Gastrodon: 142
+      Floatzel: 114
+      Malamar: 85
+    elusive:
+      Shuckle: 156
+      Dhelmise: 156
+    prized:
+      Unown: forms
+    special: {}
+  night: *land-evening
+
+water:
+  morning: &water-morning
+    base:
+      Horsea: 4449
+      Oshawott: 667
+    uncommon:
+      Arrokuda: 300
+      Magikarp: 291
+      Shellos: 243
+      Wingull: 243
+      Buizel: 243
+      Skrelp: 233
+      Tentacool: 194
+      Chinchou: 194
+      Remoraid: 194
+      Finneon: 194
+      Krabby: 194
+      Seel: 194
+    rare:
+      Seadra: 1009
+      Dewott: 201
+    scarce:
+      Tentacruel: 65
+      Lanturn: 65
+      Octillery: 65
+      Kingler: 65
+      Dewgong: 65
+      Gastrodon: 65
+      Pelipper: 65
+      Floatzel: 52
+      Dragalge: 39
+      Lumineon: 39
+      Barraskewda: 30
+      Milotic: 19
+    elusive:
+      Qwilfish: 168
+      Bruxish: 56
+      Mantine: 56
+      Veluza: 25
+      Samurott: 22
+    prized:
+      Mantyke: prized
+    special: {}
+  day: *water-morning
+  evening: &water-evening
+    base:
+      Horsea: 2895
+    uncommon:
+      Magikarp: 443
+      Shellos: 369
+      Buizel: 369
+      Inkay: 355
+      Arrokuda: 300
+      Tentacool: 296
+      Staryu: 296
+      Chinchou: 296
+      Remoraid: 296
+      Finneon: 296
+      Krabby: 296
+      Seel: 296
+    rare:
+      Seadra: 1801
+    scarce:
+      Tentacruel: 97
+      Starmie: 97
+      Lanturn: 97
+      Octillery: 97
+      Kingler: 97
+      Dewgong: 97
+      Gastrodon: 97
+      Floatzel: 77
+      Malamar: 58
+      Lumineon: 58
+      Barraskewda: 30
+      Milotic: 29
+    elusive:
+      Qwilfish: 271
+      Bruxish: 91
+      Mantine: 91
+      Veluza: 25
+    prized:
+      Mantyke: prized
+    special: {}
+  night: *water-evening

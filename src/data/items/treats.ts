@@ -1,6 +1,6 @@
-import { ItemFlags, ItemTypes, Items } from '../ids/items';
+import { Items } from '../ids/items';
 import { NON_VOLATILE_STATUSES, Statuses } from '../ids/status';
-import { nameToIcon, registerItem } from './__create';
+import { itemText } from './__create';
 
 /**
  * The regional treats: what somebody brings back from a city they
@@ -13,12 +13,10 @@ import { nameToIcon, registerItem } from './__create';
  */
 
 export interface Treat {
-  name: string;
   /**
    * Health it gives back. Zero for the sweets, which only cure
    */
   restore: number;
-  buy: number;
 }
 
 /**
@@ -27,33 +25,27 @@ export interface Treat {
  */
 export const TREAT_CURES: Set<Statuses> = new Set(NON_VOLATILE_STATUSES);
 
-/**
- * What the chef charges for a sweet. It undercuts the Full Heal it
- * copies, and sells back at half like everything else on a counter
- */
-const SWEET_PRICE = 600;
-
 export const TREATS: Map<Items, Treat> = new Map([
-  [Items.LavaCookie, { name: 'Lava Cookie', restore: 0, buy: SWEET_PRICE }],
-  [Items.OldGateau, { name: 'Old Gateau', restore: 0, buy: SWEET_PRICE }],
-  [Items.Casteliacone, { name: 'Casteliacone', restore: 0, buy: SWEET_PRICE }],
-  [Items.LumioseGalette, { name: 'Lumiose Galette', restore: 0, buy: SWEET_PRICE }],
-  [Items.ShalourSable, { name: 'Shalour Sable', restore: 0, buy: SWEET_PRICE }],
-  [Items.BigMalasada, { name: 'Big Malasada', restore: 0, buy: SWEET_PRICE }],
-  [Items.PewterCrunchies, { name: 'Pewter Crunchies', restore: 0, buy: SWEET_PRICE }],
+  [Items.LavaCookie, { restore: 0 }],
+  [Items.OldGateau, { restore: 0 }],
+  [Items.Casteliacone, { restore: 0 }],
+  [Items.LumioseGalette, { restore: 0 }],
+  [Items.ShalourSable, { restore: 0 }],
+  [Items.BigMalasada, { restore: 0 }],
+  [Items.PewterCrunchies, { restore: 0 }],
   // The two that feed their holder rather than curing them, which
   // puts them with the drinks and not with the sweets
-  [Items.RageCandyBar, { name: 'Rage Candy Bar', restore: 20, buy: 300 }],
-  [Items.SweetHeart, { name: 'Sweet Heart', restore: 20, buy: 300 }],
+  [Items.RageCandyBar, { restore: 20 }],
+  [Items.SweetHeart, { restore: 20 }],
 ]);
 
 // The two poisons share a word, so a sweet names poison once
-const CURE_NAMES = new Map<Statuses, string>([
+const CURE_WORDS = new Map<Statuses, string>([
   [Statuses.Poisoned, 'poison'],
   [Statuses.BadlyPoisoned, 'poison'],
   [Statuses.Sleeping, 'sleep'],
   [Statuses.Paralyzed, 'paralysis'],
-  [Statuses.Burned, 'a burn'],
+  [Statuses.Burned, 'burn'],
   [Statuses.Frozen, 'freezing'],
 ]);
 
@@ -61,35 +53,27 @@ function describeSweet(): string {
   const cured = new Set<string>();
 
   for (const status of TREAT_CURES) {
-    cured.add(CURE_NAMES.get(status) ?? '');
+    cured.add(itemText('treats', CURE_WORDS.get(status) ?? ''));
   }
 
   const names = [...cured];
-  const last = names.pop();
+  const last = names.pop() ?? '';
   const list = names.length > 0 ? `${names.join(', ')} or ${last}` : last;
 
-  return `Cures ${list} a second after one lands on its holder.`;
+  return itemText('treats', 'sweet', { cures: list });
 }
 
 export function isTreat(item: Items): boolean {
   return TREATS.has(item);
 }
 
-const TREAT_RESALE = 0.5;
+export function describeTreat(item: Items): string {
+  const treat = TREATS.get(item);
 
-export default function registerTreats(): void {
-  for (const [item, treat] of TREATS) {
-    registerItem(item, {
-      name: treat.name,
-      description:
-        treat.restore > 0
-          ? `Restores ${treat.restore} HP when its holder drops to 1/5 of its HP.`
-          : describeSweet(),
-      type: ItemTypes.Held,
-      icon: nameToIcon('medicine', treat.name),
-      flags: ItemFlags.Holdable | ItemFlags.Consumable | ItemFlags.Marketable,
-      buy: treat.buy,
-      sell: treat.buy * TREAT_RESALE,
-    });
+  if (treat == null) {
+    throw new Error(`Item ${item} is not a treat`);
   }
+  return treat.restore > 0
+    ? itemText('treats', 'treat', { restore: treat.restore })
+    : describeSweet();
 }

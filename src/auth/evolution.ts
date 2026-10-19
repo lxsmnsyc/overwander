@@ -1,20 +1,23 @@
 import { getTimeOfDay } from '../data/ids/biome';
 import type { Items } from '../data/ids/items';
-import type { Species } from '../data/ids/species';
+import { EvolutionMethod, type Species } from '../data/ids/species';
 import {
   canEverEvolve,
   coveredByHandover,
   getSpeciesData,
+  isOneInAHundred,
   meetsEvolutionCriteria,
 } from '../data/species';
 import type { EvolutionData } from '../data/species';
+import { featOfEvolution } from '../data/species/feats';
 import evolveOnServerSide from '../server/evolution';
 import { requireUid } from '../server/auth';
 import check, { GAME_ID, ID, LOCALE, OFFSET, TOKEN } from '../server/validate';
+import { getCandyCount } from './candy';
 import { type CaughtPokemon, getCaught } from './caught';
-import { getStats } from './health';
+import { getStats } from '../model/health';
 import { type InventoryEntry, getInventory } from './inventory';
-import { getLocalOffset, getLocale } from './local-time';
+import { getLocalOffset, getLocale } from '../model/local-time';
 import { localNow } from './clock';
 import getIdToken from './session';
 
@@ -35,6 +38,11 @@ export interface EvolutionOption {
    * swap happened and took the item it wanted with it
    */
   covered: boolean;
+  /**
+   * How far along a feat counted across fights is, the steps walked or
+   * the candies held, where it asks one
+   */
+  progress?: number;
 }
 
 /**
@@ -78,6 +86,16 @@ export async function listEvolutionOptions(
     }
   }
 
+  const roads = getSpeciesData(caught.species).evolvesInto ?? [];
+  let candies = 0;
+
+  for (const road of roads) {
+    if ((road.method & EvolutionMethod.Candy) !== 0) {
+      candies = await getCandyCount(uid, getSpeciesData(caught.species).family);
+      break;
+    }
+  }
+
   const context = {
     species: caught.species,
     level: caught.level,
@@ -89,17 +107,30 @@ export async function listEvolutionOptions(
     friendship: caught.friendship,
     time: getTimeOfDay(localNow()),
     gender: caught.gender,
+    nature: caught.nature,
+    walked: caught.walked,
+    candies,
+    rare: isOneInAHundred(caught.traitValue),
   };
 
   const options: EvolutionOption[] = [];
 
-  for (const evolution of getSpeciesData(caught.species).evolvesInto ?? []) {
+  for (const evolution of roads) {
     // A husk comes out beside another evolution, so it is no row of its own
-    if (evolution.shed !== true && canEverEvolve(evolution, caught.gender)) {
+    if (
+      evolution.shed !== true &&
+      canEverEvolve(evolution, caught.gender, caught.nature, context.rare)
+    ) {
       options.push({
         evolution,
         available: meetsEvolutionCriteria(evolution, context),
         covered: coveredByHandover(evolution, context),
+        ...((evolution.method & EvolutionMethod.Special) !== 0 &&
+        featOfEvolution(evolution)?.cumulative === true
+          ? { progress: caught.featProgress }
+          : {}),
+        ...((evolution.method & EvolutionMethod.Walked) === 0 ? {} : { progress: caught.walked }),
+        ...((evolution.method & EvolutionMethod.Candy) === 0 ? {} : { progress: candies }),
       });
     }
   }

@@ -21,7 +21,7 @@ import matchesFriend, {
   FRIEND_VOCABULARY,
   type FriendRow,
   orderFriends,
-} from '../../auth/friend-search';
+} from '../../model/search/friend';
 import { type Profile, getProfiles } from '../../auth/profile';
 import {
   Button,

@@ -1,4 +1,5 @@
-import { Species, getBaseFormSpecies } from '../../ids/species';
+import { Species } from '../../ids/species';
+import { getBaseFormSpecies } from '../../ids/forms';
 import type Regions from '../../ids/regions';
 import {
   getGrowthRoads,
@@ -11,8 +12,7 @@ import {
 import { SpawnRarity, getSpawnRarity } from '../../biome';
 import { EVERY_LAIR, getLairResidents } from '../lair';
 import canMeetSpecies from '../reach';
-import { TRAINER_REGIONS, TrainerClass } from './classes';
-import TRAINER_TYPES from './types';
+import { TRAINER_REGIONS, TRAINER_TYPES, TrainerClass } from './classes';
 
 /**
  * What the Ace fields: five fully-grown pokemon, and none of them the
@@ -43,7 +43,8 @@ export function isAceTrainer(trainer: TrainerClass): boolean {
     trainer === TrainerClass.JohtoAceTrainer ||
     trainer === TrainerClass.HoennAceTrainer ||
     trainer === TrainerClass.SinnohAceTrainer ||
-    trainer === TrainerClass.UnovaAceTrainer
+    trainer === TrainerClass.UnovaAceTrainer ||
+    trainer === TrainerClass.KalosAceTrainer
   );
 }
 

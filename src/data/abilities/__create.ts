@@ -1,5 +1,7 @@
 import type Abilities from '../ids/abilities';
 import type Families from '../ids/families';
+import type { Species } from '../ids/species';
+import { getSpeciesData } from '../species/__create';
 
 export interface AbilityData {
   name: string;
@@ -46,13 +48,12 @@ export function getAbilityData(ability: Abilities): AbilityData {
 const SIGNATURE_ABILITIES = new Map<Families, Abilities>();
 
 /**
- * Register a family's signature. It is an ability like any other, so
- * it goes in the same store; the family is kept beside it because a
- * signature is granted, and something has to be able to ask which one
- * a line is owed
+ * Record a family's signature. The ability itself is registered like
+ * any other; the family is kept beside it because a signature is
+ * granted, and something has to be able to ask which one a line is
+ * owed
  */
-export function registerSignature(family: Families, ability: Abilities, data: AbilityData): void {
-  registerAbility(ability, data);
+export function registerSignature(family: Families, ability: Abilities): void {
   SIGNATURE_ABILITIES.set(family, ability);
 }
 
@@ -62,4 +63,25 @@ export function registerSignature(family: Families, ability: Abilities, data: Ab
  */
 export function getSignatureAbility(family: Families): Abilities | null {
   return SIGNATURE_ABILITIES.get(family) ?? null;
+}
+
+/**
+ * The signatures a regional line was given in place of its family's.
+ * Only a line whose every stage has the regional form earns its own;
+ * a lone regional stage keeps the family's
+ */
+const FORM_SIGNATURES = new Map<Species, Abilities>();
+
+export function registerFormSignature(forms: Species[], ability: Abilities): void {
+  for (const form of forms) {
+    FORM_SIGNATURES.set(form, ability);
+  }
+}
+
+/**
+ * The signature a species is owed: its regional line's own where it has
+ * one, its family's otherwise, and null where neither is written yet
+ */
+export function getSpeciesSignature(species: Species): Abilities | null {
+  return FORM_SIGNATURES.get(species) ?? getSignatureAbility(getSpeciesData(species).family);
 }

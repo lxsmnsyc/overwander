@@ -25,26 +25,35 @@ It is player-facing text under the name in a list — a market row, a bag entry,
 
 ## Derive it when the data already knows
 
-A line that restates a table drifts the moment the table changes. Where the registry has the answer, compute it:
+A line that restates a table drifts the moment the table changes. Where the registry has the answer, the words go in the family's text file as a template and the family's code fills in the value from the table the engine reads:
 
-```ts
-// gems: the type is already in the table
-description: `${TYPE_NAMES[type]} moves hit 1.5x. Spent on the first one that lands.`,
-
-// valuables: the sell price is already the entry
-description: `Worth ${sell.toLocaleString('en-US')} gold to a vendor. Nothing else.`,
+```yaml
+# src/data/text/en/items/gems.yaml
+templates:
+  gem: '{type} moves hit 1.5x. Spent on the first one that lands.'
+FireGem: { name: Fire Gem }
 ```
 
-For a family whose members differ in kind rather than in a value, write a `describeX(item)` that reads the same tables the engine reads — see `describeBerry` in `src/data/items/berries.ts` and `describeMedicine` in `src/data/items/medicine.ts`. A berry moved between tables then re-describes itself with no edit.
+```ts
+// src/data/items/gems.ts: the type is already in the table
+export function describeGem(item: Items): string {
+  return itemText('gems', 'gem', { type: TYPE_NAMES[GEMS.get(item) ?? Types.Normal] });
+}
+```
 
-Entries whose behaviour is genuinely their own get a hand-written line, kept in a `DESCRIPTIONS` map beside the names rather than inline in the loop.
+The describer is listed in `DESCRIBERS` in `src/data/items/index.ts`, and it only runs for an item whose text entry has no `description`. A number passed to `itemText` is written with its thousands separated, the way a price is.
+
+For a family whose members differ in kind rather than in a value, the describer picks between several templates by reading the same tables the engine reads: see `describeBerry` in `src/data/items/berries.ts` and `describeMedicine` in `src/data/items/medicine.ts`. A berry moved between tables then re-describes itself with no edit.
+
+Entries whose behaviour is genuinely their own get a hand-written `description` in the text file.
 
 ## Where they live
 
-| registry  | field added in                   | filled in                     |
-| --------- | -------------------------------- | ----------------------------- |
-| items     | `src/data/items/__create.ts`     | each `src/data/items/*.ts`    |
-| abilities | `src/data/abilities/__create.ts` | `src/data/abilities/gen-1.ts` |
+| registry  | field added in                   | filled in                                                   |
+| --------- | -------------------------------- | ----------------------------------------------------------- |
+| items     | `src/data/items/__create.ts`     | `src/data/text/en/items/*.yaml`, templates filled by the family's `describeX` |
+| abilities | `src/data/abilities/__create.ts` | `src/data/text/en/abilities/**/*.yaml`                      |
+| moves     | `src/data/moves/__create.ts`     | `src/data/text/en/moves/**/*.yaml`                          |
 
 ## Test it
 

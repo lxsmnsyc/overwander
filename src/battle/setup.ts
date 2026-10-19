@@ -5,12 +5,14 @@
 // server bundle
 import setupAbilities from './abilities';
 import setupAI from './ai';
-import Battle, { BattleModes } from './core';
+import Battle, { BattleModes } from './battle';
 import type Biome from '../data/ids/biome';
 import setupItems from './items';
 import setupAbilityMechanics from './mechanics/ability';
 import setupAllianceMechanics from './mechanics/alliance';
 import setupBattleMechanics from './mechanics/battle';
+import setupDynamaxMechanics from './gimmicks/dynamax';
+import setupTerastalMechanics from './gimmicks/terastal';
 import setupItemMechanics from './mechanics/item';
 import {
   setupAttackMechanics,
@@ -58,8 +60,12 @@ export default function createBattle(
   setupUnitMechanics(battle);
   setupAbilityMechanics(battle);
   setupItemMechanics(battle);
+  // Ahead of weather and terrain, so its power floor reads a move's own power
+  setupTerastalMechanics(battle);
   setupWeatherMechanics(battle);
   setupTerrainMechanics(battle);
+  // Ahead of the moves, so a giant refuses a switch before anything reacts to one
+  setupDynamaxMechanics(battle);
   setupMoveMechanics(battle);
   setupCastingMechanics(battle);
   setupChannelingMechanics(battle);

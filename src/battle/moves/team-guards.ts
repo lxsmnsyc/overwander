@@ -2,7 +2,7 @@ import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { MoveAffects, MoveCategories, MoveTargets, Moves } from '../../data/ids/moves';
 import { TeamStatuses } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import type Team from '../team';
 import turns from '../turn';
@@ -108,7 +108,7 @@ export default function setupTeamGuards(battle: Battle): void {
 
     // What walks through a Protect breaks a team guard the same way
     if (event.source.checkMoveGuard(event.move, event.target)) {
-      if (cause != null) {
+      if (cause != null && !battle.estimating) {
         team.removeStatus(guard, cause);
       }
       return;

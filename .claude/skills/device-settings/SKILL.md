@@ -25,7 +25,7 @@ holds the whole of it:
   browser already knows the answer, ask it: reduced motion comes from
   `prefers-reduced-motion` rather than from a guess of ours.
 - `stored()` reads the one JSON key and normalises every field through
-  `src/auth/__normalize`. A stored value can be anything at all,
+  `src/model/normalize`. A stored value can be anything at all,
   including from an older version of the game, so every field falls
   back rather than being trusted.
 - `settings` is the default export, a plain accessor. `setSetting(key,

@@ -1,0 +1,33 @@
+Hex:
+  name: Hex
+  description: 2x power against a target with a status condition.
+SkyDrop:
+  name: Sky Drop
+  description: Carries the target up, where it cannot act, then drops it. Fails on 200 kg or more, and a Flying type lands unhurt.
+ShiftGear:
+  name: Shift Gear
+  description: Raises the user's Speed 2 stages and its Attack a stage.
+CircleThrow:
+  name: Circle Throw
+  description: Throws the target off the field and drags its weakest teammate in. Slow to cast.
+Incinerate:
+  name: Incinerate
+  description: Hits everything opposite, burning up any berry or gem each one holds.
+Quash:
+  name: Quash
+  description: A target winding up a move has to start its wind-up over.
+Acrobatics:
+  name: Acrobatics
+  description: 2x power while the user holds no item.
+ReflectType:
+  name: Reflect Type
+  description: The user takes on the target's types.
+Retaliate:
+  name: Retaliate
+  description: 2x power if a teammate fainted in the last 2 seconds.
+FinalGambit:
+  name: Final Gambit
+  description: Deals damage equal to the user's HP, and the user faints if it lands.
+Bestow:
+  name: Bestow
+  description: Hands the user's held item to a teammate with room for it.

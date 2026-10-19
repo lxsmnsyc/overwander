@@ -8,7 +8,7 @@ import {
   projectCell,
   reachOf,
   setBoardScreen,
-} from '../src/canvas/board';
+} from '../src/canvas/overworld/board';
 import { CHUNK_CELLS } from '../src/overworld/chunk';
 import Landmark, { LANDMARK_NAMES } from '../src/data/overworld/landmark';
 import World from '../src/overworld/world';

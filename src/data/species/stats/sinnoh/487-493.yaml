@@ -1,0 +1,185 @@
+Giratina:
+  Giratina:
+    stats:
+      { HP: 150, Attack: 100, Defense: 120, SpecialAttack: 100, SpecialDefense: 120, Speed: 90 }
+    catch-rate: 3
+    height: 4.5
+    weight: 750
+    gender: genderless
+  GiratinaOrigin:
+    stats:
+      { HP: 150, Attack: 120, Defense: 100, SpecialAttack: 120, SpecialDefense: 100, Speed: 90 }
+    catch-rate: 3
+    height: 6.9
+    weight: 650
+    gender: genderless
+Cresselia:
+  Cresselia:
+    stats: { HP: 120, Attack: 70, Defense: 110, SpecialAttack: 75, SpecialDefense: 120, Speed: 85 }
+    catch-rate: 3
+    height: 1.5
+    weight: 85.6
+    # Always the sister of the two
+    gender: [0, 1]
+Manaphy:
+  Phione:
+    stats: { HP: 80, Attack: 80, Defense: 80, SpecialAttack: 80, SpecialDefense: 80, Speed: 80 }
+    catch-rate: 30
+    height: 0.4
+    weight: 3.1
+    gender: genderless
+  Manaphy:
+    stats:
+      { HP: 100, Attack: 100, Defense: 100, SpecialAttack: 100, SpecialDefense: 100, Speed: 100 }
+    catch-rate: 3
+    height: 0.3
+    weight: 1.4
+    gender: genderless
+Darkrai:
+  Darkrai:
+    stats: { HP: 70, Attack: 90, Defense: 90, SpecialAttack: 135, SpecialDefense: 90, Speed: 125 }
+    catch-rate: 3
+    height: 1.5
+    weight: 50.5
+    gender: genderless
+Shaymin:
+  Shaymin:
+    stats:
+      { HP: 100, Attack: 100, Defense: 100, SpecialAttack: 100, SpecialDefense: 100, Speed: 100 }
+    catch-rate: 45
+    height: 0.2
+    weight: 2.1
+    gender: genderless
+  ShayminSky:
+    stats: { HP: 100, Attack: 103, Defense: 75, SpecialAttack: 120, SpecialDefense: 75, Speed: 127 }
+    catch-rate: 45
+    height: 0.4
+    weight: 5.2
+    gender: genderless
+Arceus:
+  Arceus:
+    stats:
+      { HP: 120, Attack: 120, Defense: 120, SpecialAttack: 120, SpecialDefense: 120, Speed: 120 }
+    catch-rate: 3
+    height: 3.2
+    weight: 320
+    gender: genderless
+  ArceusBug:
+    stats:
+      { HP: 120, Attack: 120, Defense: 120, SpecialAttack: 120, SpecialDefense: 120, Speed: 120 }
+    catch-rate: 3
+    height: 3.2
+    weight: 320
+    gender: genderless
+  ArceusDark:
+    stats:
+      { HP: 120, Attack: 120, Defense: 120, SpecialAttack: 120, SpecialDefense: 120, Speed: 120 }
+    catch-rate: 3
+    height: 3.2
+    weight: 320
+    gender: genderless
+  ArceusDragon:
+    stats:
+      { HP: 120, Attack: 120, Defense: 120, SpecialAttack: 120, SpecialDefense: 120, Speed: 120 }
+    catch-rate: 3
+    height: 3.2
+    weight: 320
+    gender: genderless
+  ArceusElectric:
+    stats:
+      { HP: 120, Attack: 120, Defense: 120, SpecialAttack: 120, SpecialDefense: 120, Speed: 120 }
+    catch-rate: 3
+    height: 3.2
+    weight: 320
+    gender: genderless
+  ArceusFighting:
+    stats:
+      { HP: 120, Attack: 120, Defense: 120, SpecialAttack: 120, SpecialDefense: 120, Speed: 120 }
+    catch-rate: 3
+    height: 3.2
+    weight: 320
+    gender: genderless
+  ArceusFire:
+    stats:
+      { HP: 120, Attack: 120, Defense: 120, SpecialAttack: 120, SpecialDefense: 120, Speed: 120 }
+    catch-rate: 3
+    height: 3.2
+    weight: 320
+    gender: genderless
+  ArceusFlying:
+    stats:
+      { HP: 120, Attack: 120, Defense: 120, SpecialAttack: 120, SpecialDefense: 120, Speed: 120 }
+    catch-rate: 3
+    height: 3.2
+    weight: 320
+    gender: genderless
+  ArceusGhost:
+    stats:
+      { HP: 120, Attack: 120, Defense: 120, SpecialAttack: 120, SpecialDefense: 120, Speed: 120 }
+    catch-rate: 3
+    height: 3.2
+    weight: 320
+    gender: genderless
+  ArceusGrass:
+    stats:
+      { HP: 120, Attack: 120, Defense: 120, SpecialAttack: 120, SpecialDefense: 120, Speed: 120 }
+    catch-rate: 3
+    height: 3.2
+    weight: 320
+    gender: genderless
+  ArceusGround:
+    stats:
+      { HP: 120, Attack: 120, Defense: 120, SpecialAttack: 120, SpecialDefense: 120, Speed: 120 }
+    catch-rate: 3
+    height: 3.2
+    weight: 320
+    gender: genderless
+  ArceusIce:
+    stats:
+      { HP: 120, Attack: 120, Defense: 120, SpecialAttack: 120, SpecialDefense: 120, Speed: 120 }
+    catch-rate: 3
+    height: 3.2
+    weight: 320
+    gender: genderless
+  ArceusPoison:
+    stats:
+      { HP: 120, Attack: 120, Defense: 120, SpecialAttack: 120, SpecialDefense: 120, Speed: 120 }
+    catch-rate: 3
+    height: 3.2
+    weight: 320
+    gender: genderless
+  ArceusPsychic:
+    stats:
+      { HP: 120, Attack: 120, Defense: 120, SpecialAttack: 120, SpecialDefense: 120, Speed: 120 }
+    catch-rate: 3
+    height: 3.2
+    weight: 320
+    gender: genderless
+  ArceusRock:
+    stats:
+      { HP: 120, Attack: 120, Defense: 120, SpecialAttack: 120, SpecialDefense: 120, Speed: 120 }
+    catch-rate: 3
+    height: 3.2
+    weight: 320
+    gender: genderless
+  ArceusSteel:
+    stats:
+      { HP: 120, Attack: 120, Defense: 120, SpecialAttack: 120, SpecialDefense: 120, Speed: 120 }
+    catch-rate: 3
+    height: 3.2
+    weight: 320
+    gender: genderless
+  ArceusWater:
+    stats:
+      { HP: 120, Attack: 120, Defense: 120, SpecialAttack: 120, SpecialDefense: 120, Speed: 120 }
+    catch-rate: 3
+    height: 3.2
+    weight: 320
+    gender: genderless
+  ArceusFairy:
+    stats:
+      { HP: 120, Attack: 120, Defense: 120, SpecialAttack: 120, SpecialDefense: 120, Speed: 120 }
+    catch-rate: 3
+    height: 3.2
+    weight: 320
+    gender: genderless

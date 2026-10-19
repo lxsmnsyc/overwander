@@ -1,0 +1,132 @@
+land:
+  morning: &land-morning
+    base:
+      Scatterbug: 2994
+    uncommon:
+      Corphish: 810
+      Wingull: 810
+      Shellos: 810
+      Krabby: 649
+      Slowpoke: 649
+    rare:
+      Spewpa: 1864
+    scarce:
+      Kingler: 194
+      Pelipper: 194
+      Gastrodon: 194
+      Slowbro: 194
+      Crawdaunt: 155
+    elusive:
+      Vivillon: 155
+      Shuckle: 155
+      Slowking: 155
+    prized:
+      Unown: forms
+    special: {}
+  day: *land-morning
+  evening: &land-evening
+    base: {}
+    uncommon:
+      Corphish: 3229
+      Shellos: 3229
+      Krabby: 2583
+    rare: {}
+    scarce:
+      Kingler: 223
+      Gastrodon: 223
+      Crawdaunt: 179
+    elusive:
+      Shuckle: 313
+    prized:
+      Unown: forms
+    special: {}
+  night: *land-evening
+
+water:
+  morning: &water-morning
+    base:
+      Horsea: 2950
+    uncommon:
+      Corphish: 347
+      Wingull: 347
+      Shellos: 347
+      Clauncher: 332
+      Skrelp: 332
+      Mareanie: 305
+      Carvanha: 278
+      Clamperl: 278
+      Remoraid: 278
+      Finneon: 278
+      Krabby: 278
+      Slowpoke: 278
+    rare:
+      Seadra: 1834
+    scarce:
+      Kingler: 110
+      Pelipper: 110
+      Gastrodon: 110
+      Slowbro: 110
+      Crawdaunt: 88
+      Toxapex: 66
+      Clawitzer: 66
+      Dragalge: 66
+      Sharpedo: 66
+      Lumineon: 66
+      Octillery: 56
+    elusive:
+      Pincurchin: 150
+      Corsola: 128
+      Luvdisc: 96
+      Alomomola: 44
+      Bruxish: 33
+      Wishiwashi: 33
+      Mantine: 33
+      Kingdra: 33
+      Vivillon: 33
+      Slowking: 33
+      Tatsugiri: 15
+      TatsugiriStretchy: 15
+      TatsugiriDroopy: 15
+    prized:
+      Mantyke: prized
+    special: {}
+  day: *water-morning
+  evening: &water-evening
+    base:
+      Horsea: 2949
+    uncommon:
+      Corphish: 479
+      Shellos: 479
+      Mareanie: 420
+      Carvanha: 382
+      Clamperl: 382
+      Staryu: 382
+      Remoraid: 382
+      Finneon: 382
+      Krabby: 382
+    rare:
+      Seadra: 1835
+    scarce:
+      Starmie: 140
+      Octillery: 140
+      Kingler: 140
+      Gastrodon: 140
+      Crawdaunt: 111
+      Toxapex: 84
+      Sharpedo: 84
+      Lumineon: 84
+    elusive:
+      Corsola: 195
+      Pincurchin: 150
+      Alomomola: 69
+      Bruxish: 48
+      Wishiwashi: 48
+      Mantine: 48
+      Kingdra: 48
+      Tatsugiri: 15
+      TatsugiriStretchy: 15
+      TatsugiriDroopy: 15
+    prized:
+      Mantyke: prized
+    special: {}
+  night: *water-evening

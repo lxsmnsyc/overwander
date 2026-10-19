@@ -1,0 +1,67 @@
+# The signature abilities granted to the families filed under Kalos
+
+families:
+  # Kalos's three starters, each standing for the team rather than
+  # for itself
+  Chespin: SpineBond
+  Fennekin: EmberBond
+
+  # The three the first roads out of Kalos's towns walk past
+  Bunnelby: LoosenedEarth
+  Fletchling: Stoop
+  Scatterbug: Wingscale
+
+  # The flower road out of the second town
+  Flabebe: Hothouse
+  Skiddo: SaddleBurden
+  Furfrou: PedigreeCoat
+
+  # The sword and the key
+  Espurr: Restraint
+  Honedge: TurnTheBlade
+  Klefki: Keyring
+
+  # The sea, and the pair its two routes hand out one apiece
+  Binacle: ManyHands
+  Skrelp: DeepKelp
+  Clauncher: RangingShot
+
+  # Kalos's two fossils, which both attack the clock
+  Tyrunt: JawSnap
+  Amaura: Frostbound
+
+  # The three Kalos meets on its way up out of the towns
+  Inkay: Overturn
+  Helioptile: Backfeed
+  Hawlucha: TopRope
+
+  # The two the versions keep apart, and the ice beside them
+  Phantump: Undergrowth
+  Pumpkaboo: Hollowing
+  Bergmite: Deadweight
+
+  # The slug that soaks a blow and the bat that hears where it came from
+  Goomy: Seepage
+  Noibat: Echolocation
+
+  # The four Kalos keeps for last
+  Pancham: Begrudge
+  Swirlix: SugarRush
+  Dedenne: QuickWhiskers
+  Carbink: CrystalGrowth
+
+  # Kalos's three, on one axis: a stat stage is life given or taken,
+  # and the thing in the ground will have neither
+  Xerneas: Quickening
+  Yveltal: Withering
+  Zygarde: EvenKeel
+
+  # Kalos's three mythicals
+  Diancie: Regalia
+  Hoopa: Ringback
+  Volcanion: Boiler
+
+  # The two Kalos lines that waited on their evolutions being drawn
+  Litleo: PrideCall
+  Spritzee: CalmingScent
+  Froakie: ShadeBond

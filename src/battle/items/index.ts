@@ -1,4 +1,4 @@
-import type Battle from '../core';
+import type Battle from '../battle';
 import setupBattleItems from './battle-items';
 import setupBerries from './berries';
 import setupDrinks from './drinks';
@@ -7,8 +7,8 @@ import setupGear from './gear';
 import setupGems from './gems';
 import setupHoney from './honey';
 import setupIncenses from './incenses';
-import setupMegas from './megas';
-import setupZeniths from './zeniths';
+import setupMegas from '../gimmicks/mega';
+import setupZeniths from '../gimmicks/zenith';
 import setupOneShots from './one-shots';
 import setupOrbs from './orbs';
 import setupSacredAsh from './sacred-ash';

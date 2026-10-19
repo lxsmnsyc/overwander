@@ -13,7 +13,7 @@ import { constants, deflateSync, inflateSync } from 'node:zlib';
  * has the hard half.
  *
  * [`raster.ts`](./raster.ts) encodes the sheets the processors write
- * with it, and [`compact-sprites`](../../../scripts/compact-sprites.ts)
+ * with it, and [`compact-sprites`](../../../scripts/sprites/compact.ts)
  * rewrites sheets that arrive from anywhere else. It is the one module
  * here without `server-only`: that script imports it from plain Node,
  * where the marker throws, so its consumers carry the marker instead.

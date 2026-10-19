@@ -2,14 +2,18 @@ import { AttackPriority } from '../../core/event-emitter';
 import { DamageFlags, Moves } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
 import { sacrificeCost } from '../ai/score';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 
 /**
  * Moves whose blast engulfs the user as one of its own targets (Damp
  * forbids casting them)
  */
-export const SELF_DESTRUCT_MOVES = new Set<Moves>([Moves.SelfDestruct, Moves.Explosion]);
+export const SELF_DESTRUCT_MOVES = new Set<Moves>([
+  Moves.SelfDestruct,
+  Moves.Explosion,
+  Moves.MistyExplosion,
+]);
 
 // https://bulbapedia.bulbagarden.net/wiki/Explosion_(move)
 export default function setupSelfDestructMoves(battle: Battle): void {

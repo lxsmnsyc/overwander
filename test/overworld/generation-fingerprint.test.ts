@@ -3,7 +3,7 @@ import registerGameData from '../../src/data/index';
 import caveMouth from '../../src/overworld/cave';
 import { CHUNK_CELLS } from '../../src/overworld/grid';
 import pickStartPosition from '../../src/overworld/start';
-import { levelAt } from '../../src/overworld/terrace';
+import { levelAt } from '../../src/overworld/terrain/terrace';
 import { getTownLots, getTownRoads, townOfRegion } from '../../src/overworld/town';
 import World, { Depth, Generation } from '../../src/overworld/world';
 
@@ -116,8 +116,8 @@ describe('generation fingerprint', () => {
 
     const surface = new World('fingerprint-seed');
 
-    expect(fingerprint(surface)).toBe('07c716b7');
-    expect(fingerprint(surface.at(Depth.Cave))).toBe('de3ca278');
+    expect(fingerprint(surface)).toBe('32166a42');
+    expect(fingerprint(surface.at(Depth.Cave))).toBe('b6ed90cd');
   });
 
   it('pins the second generation too, so a change to it is a decision', () => {
@@ -125,7 +125,7 @@ describe('generation fingerprint', () => {
 
     const surface = new World('fingerprint-seed', Depth.Surface, Generation.Second);
 
-    expect(fingerprint(surface)).toBe('d00fdb2f');
-    expect(fingerprint(surface.at(Depth.Cave))).toBe('14c7926c');
+    expect(fingerprint(surface)).toBe('c3f8dc87');
+    expect(fingerprint(surface.at(Depth.Cave))).toBe('96ff312a');
   });
 });

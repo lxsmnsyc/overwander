@@ -1,0 +1,204 @@
+# From Dire Claw to Take Heart: what Hisui brought, at the numbers Scarlet
+# and Violet settled them on
+
+DireClaw:
+  type: Poison
+  category: Physical
+  power: 80
+  accuracy: 100
+  pp: 15
+  target: Unit
+  flags: [Contact]
+
+PsyshieldBash:
+  type: Psychic
+  category: Physical
+  power: 70
+  accuracy: 90
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+PowerShift:
+  type: Normal
+  category: Status
+  pp: 10
+  target: None
+
+StoneAxe:
+  type: Rock
+  category: Physical
+  power: 65
+  accuracy: 90
+  pp: 15
+  target: Unit
+  flags: [Contact, Slicing]
+
+SpringtideStorm:
+  type: Fairy
+  category: Special
+  power: 100
+  accuracy: 80
+  pp: 5
+  target: None
+  affects: [Unit, Enemy]
+  flags: [Wind]
+
+MysticalPower:
+  type: Psychic
+  category: Special
+  power: 70
+  accuracy: 90
+  pp: 10
+  target: Unit
+  projectile: true
+
+RagingFury:
+  type: Fire
+  category: Physical
+  power: 120
+  accuracy: 100
+  pp: 10
+  target: Unit
+  steps: 2
+
+WaveCrash:
+  type: Water
+  category: Physical
+  power: 120
+  accuracy: 100
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+Chloroblast:
+  type: Grass
+  category: Special
+  power: 150
+  accuracy: 95
+  pp: 5
+  target: Unit
+
+MountainGale:
+  type: Ice
+  category: Physical
+  power: 100
+  accuracy: 85
+  pp: 10
+  target: Unit
+  projectile: true
+
+VictoryDance:
+  type: Fighting
+  category: Status
+  pp: 10
+  target: None
+
+HeadlongRush:
+  type: Ground
+  category: Physical
+  power: 120
+  accuracy: 100
+  pp: 5
+  target: Unit
+  flags: [Contact]
+
+BarbBarrage:
+  type: Poison
+  category: Physical
+  power: 60
+  accuracy: 100
+  pp: 10
+  target: Unit
+  projectile: true
+
+EsperWing:
+  type: Psychic
+  category: Special
+  power: 80
+  accuracy: 100
+  pp: 10
+  target: Unit
+
+BitterMalice:
+  type: Ghost
+  category: Special
+  power: 75
+  accuracy: 100
+  pp: 10
+  target: Unit
+
+Shelter:
+  type: Steel
+  category: Status
+  pp: 10
+  target: None
+
+TripleArrows:
+  type: Fighting
+  category: Physical
+  power: 90
+  accuracy: 100
+  pp: 10
+  target: Unit
+  projectile: true
+
+InfernalParade:
+  type: Ghost
+  category: Special
+  power: 60
+  accuracy: 100
+  pp: 15
+  target: Unit
+
+CeaselessEdge:
+  type: Dark
+  category: Physical
+  power: 65
+  accuracy: 90
+  pp: 15
+  target: Unit
+  flags: [Contact, Slicing]
+
+BleakwindStorm:
+  type: Flying
+  category: Special
+  power: 100
+  accuracy: 80
+  pp: 10
+  target: None
+  affects: [Unit, Enemy]
+  flags: [Wind]
+
+WildboltStorm:
+  type: Electric
+  category: Special
+  power: 100
+  accuracy: 80
+  pp: 10
+  target: None
+  affects: [Unit, Enemy]
+  flags: [Wind]
+
+SandsearStorm:
+  type: Ground
+  category: Special
+  power: 100
+  accuracy: 80
+  pp: 10
+  target: None
+  affects: [Unit, Enemy]
+  flags: [Wind]
+
+LunarBlessing:
+  type: Psychic
+  category: Status
+  pp: 5
+  target: Team
+  affects: [Team, Own]
+
+TakeHeart:
+  type: Psychic
+  category: Status
+  pp: 10
+  target: None

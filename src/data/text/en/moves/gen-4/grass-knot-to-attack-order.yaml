@@ -1,0 +1,24 @@
+GrassKnot:
+  name: Grass Knot
+  description: 'Hits for what the target weighs: 20 power under 10 kg, rising to 120 at 200 kg and over.'
+Chatter:
+  name: Chatter
+  description: Always confuses.
+Judgment:
+  name: Judgment
+  description: Thrown as the type of the Plate the user is holding.
+BugBite:
+  name: Bug Bite
+  description: Eats the target's berry, and takes whatever the berry does.
+ChargeBeam:
+  name: Charge Beam
+  description: 70% to raise the user's Special Attack 1 stage.
+WoodHammer:
+  name: Wood Hammer
+  description: The user takes 1/3 of the damage it deals.
+AquaJet:
+  name: Aqua Jet
+  description: A shorter wind-up than most.
+AttackOrder:
+  name: Attack Order
+  description: Lands a critical more often than most.

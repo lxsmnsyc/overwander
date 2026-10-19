@@ -1,5 +1,5 @@
 // Shared by the signature suites beside this file.
-import type Battle from '../../../../src/battle/core';
+import type Battle from '../../../../src/battle/battle';
 import {
   BattleEvents,
   EffectType,

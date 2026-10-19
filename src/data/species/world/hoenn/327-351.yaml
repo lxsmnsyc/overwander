@@ -1,0 +1,226 @@
+Spinda:
+  Spinda:
+    types: [Normal]
+    egg-groups: [Field, HumanLike]
+    biomes: [Grassland, MontaneForest]
+    active: [Morning, Day]
+# What the two above the base pick up: a pit in the sand has no
+Trapinch:
+  Trapinch:
+    types: [Ground]
+    egg-groups: [Bug, Dragon]
+    biomes: [Desert, Badlands]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Vibrava
+        method: [Level]
+        level: 35
+  Vibrava:
+    types: [Ground, Dragon]
+    egg-groups: [Bug, Dragon]
+    biomes: [Desert, Badlands]
+    active: [Morning, Day]
+    evolves-from: Trapinch
+    evolves-into:
+      - species: Flygon
+        method: [Level]
+        level: 45
+  Flygon:
+    types: [Ground, Dragon]
+    egg-groups: [Bug, Dragon]
+    biomes: [Desert, Badlands]
+    active: [Morning, Day]
+    evolves-from: Vibrava
+Cacnea:
+  Cacnea:
+    types: [Grass]
+    egg-groups: [Grass, HumanLike]
+    biomes: [Desert, ColdDesert]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Cacturne
+        method: [Level]
+        level: 32
+  Cacturne:
+    types: [Grass, Dark]
+    egg-groups: [Grass, HumanLike]
+    biomes: [Desert, ColdDesert]
+    # It follows travellers once the sun is off it
+    active: [Evening, Night]
+    evolves-from: Cacnea
+Swablu:
+  Swablu:
+    types: [Normal, Flying]
+    egg-groups: [Flying, Dragon]
+    biomes: [Mountain, Grassland]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Altaria
+        method: [Level]
+        level: 35
+  Altaria:
+    types: [Dragon, Flying]
+    egg-groups: [Flying, Dragon]
+    biomes: [Mountain, Grassland]
+    active: [Morning, Day]
+    evolves-from: Swablu
+Zangoose:
+  # The mongoose and the snake, which the games keep apart and which
+  # share a plain here: one hunts by day and the other by night
+  Zangoose:
+    types: [Normal]
+    egg-groups: [Field]
+    biomes: [Savanna, Steppe]
+    active: [Morning, Day]
+Seviper:
+  Seviper:
+    types: [Poison]
+    egg-groups: [Field, Dragon]
+    biomes: [Savanna, Steppe]
+    active: [Evening, Night]
+Lunatone:
+  # Two stones that came down rather than grew: one turns up under the
+  # moon and the other under the sun
+  Lunatone:
+    types: [Rock, Psychic]
+    egg-groups: [Mineral]
+    biomes: [Badlands, ColdDesert]
+    active: [Evening, Night]
+Solrock:
+  Solrock:
+    types: [Rock, Psychic]
+    egg-groups: [Mineral]
+    biomes: [Badlands, Desert]
+    active: [Morning, Day]
+Barboach:
+  Barboach:
+    types: [Water, Ground]
+    egg-groups: [Water2]
+    habitat: Water
+    biomes: [Swamp, Bog, TropicalRainforest, Savanna, Desert, Badlands]
+    active: any
+    evolves-into:
+      - species: Whiscash
+        method: [Level]
+        level: 30
+  Whiscash:
+    types: [Water, Ground]
+    egg-groups: [Water2]
+    habitat: Water
+    biomes: [Swamp, Bog, TropicalRainforest, Savanna, Desert, Badlands]
+    active: any
+    evolves-from: Barboach
+Corphish:
+  Corphish:
+    types: [Water]
+    egg-groups: [Water1, Water3]
+    habitat: Amphibious
+    biomes: [Mangrove, Swamp, TropicalSeasonalForest, Badlands, CoralReef]
+    active: any
+    evolves-into:
+      - species: Crawdaunt
+        method: [Level]
+        level: 30
+  Crawdaunt:
+    types: [Water, Dark]
+    egg-groups: [Water1, Water3]
+    habitat: Amphibious
+    biomes: [Mangrove, Swamp, TropicalSeasonalForest, Badlands, CoralReef]
+    active: any
+    evolves-from: Corphish
+Baltoy:
+  Baltoy:
+    types: [Ground, Psychic]
+    egg-groups: [Mineral]
+    biomes: [Desert, Badlands]
+    active: any
+    evolves-into:
+      - species: Claydol
+        method: [Level]
+        level: 36
+  Claydol:
+    types: [Ground, Psychic]
+    egg-groups: [Mineral]
+    biomes: [Desert, Badlands]
+    active: any
+    evolves-from: Baltoy
+Lileep:
+  Lileep:
+    types: [Rock, Grass]
+    egg-groups: [Water3]
+    active: any
+    evolves-into:
+      - species: Cradily
+        method: [Level]
+        level: 40
+  Cradily:
+    types: [Rock, Grass]
+    egg-groups: [Water3]
+    habitat: Amphibious
+    active: any
+    evolves-from: Lileep
+Anorith:
+  Anorith:
+    types: [Rock, Bug]
+    egg-groups: [Water3]
+    active: any
+    evolves-into:
+      - species: Armaldo
+        method: [Level]
+        level: 40
+  Armaldo:
+    types: [Rock, Bug]
+    egg-groups: [Water3]
+    habitat: Amphibious
+    active: any
+    evolves-from: Anorith
+Feebas:
+  Feebas:
+    types: [Water]
+    egg-groups: [Water1, Dragon]
+    habitat: Water
+    biomes: [Bog, Swamp, Desert]
+    active: any
+    # The mainline turns a Feebas on how beautiful it has been made,
+    # which is a contest stat this game does not keep. Two roads
+    # stand in for it, and either one is enough: a Prism Scale handed
+    # over, or a Feebas raised fond enough to be worth looking at by
+    # the time it reaches 40
+    evolves-into:
+      - species: Milotic
+        method: [HeldItem, Trade]
+        item: PrismScale
+      - species: Milotic
+        method: [Level, Friendship]
+        level: 40
+  Milotic:
+    types: [Water]
+    egg-groups: [Water1, Dragon]
+    habitat: Water
+    biomes: [KelpForest, Desert]
+    active: any
+    evolves-from: Feebas
+Castform:
+  Castform:
+    types: [Normal]
+    egg-groups: [Fairy, Amorphous]
+    biomes: [Grassland, Steppe]
+    active: any
+  CastformSunny:
+    types: [Fire]
+    egg-groups: [Fairy, Amorphous]
+    active: any
+    base-form: false
+    worn: true
+  CastformRainy:
+    types: [Water]
+    egg-groups: [Fairy, Amorphous]
+    active: any
+    base-form: false
+    worn: true
+  CastformSnowy:
+    types: [Ice]
+    egg-groups: [Fairy, Amorphous]
+    active: any
+    base-form: false
+    worn: true

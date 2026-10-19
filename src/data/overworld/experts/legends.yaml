@@ -1,0 +1,45 @@
+# The legends, each by their enum name: the `honor` beating them pays,
+# which is the only thing they pay, the `sheets` they are seen in, the
+# `prize` coats that mark unlocks, and their own six, the way a champion's
+# is their own. What each is called is text/en.
+
+# Red's Fire Red sheet is what the game starts everybody as, so a mark that
+# unlocked it would be worth nothing to wear; what is left is the other two
+# of him, the Mt. Silver coat first
+Red:
+  honor: RedDefeated
+  sheets: [characters/frlg/red]
+  prize:
+    - characters/hgss/red
+    - characters/lgpe/red
+  party: [Pikachu, Lapras, Snorlax, Venusaur, Charizard, Blastoise]
+# Steven's one coat is nobody's starting look, so his mark pays the sheet
+# he is standing there in. The steel he is met with on the mountain in
+# Omega Ruby, Metagross last
+Steven:
+  honor: StevenDefeated
+  sheets: [characters/oras/steven]
+  prize: [characters/oras/steven]
+  party: [Skarmory, Claydol, Aggron, Cradily, Armaldo, Metagross]
+# His castle six, with both dragons rather than the one his version hands
+# him: he is the only person either of them answers to. The Vanilluxe is
+# the one left out for them, which Alder carries anyway
+N:
+  honor: NDefeated
+  sheets: [characters/b2w2/n]
+  prize: [characters/b2w2/n]
+  party: [Zoroark, Carracosta, Archeops, Klinklang, Reshiram, Zekrom]
+# The six he held the league with in Black and White, Volcarona last
+Alder:
+  honor: AlderDefeated
+  sheets: [characters/b2w2/alder]
+  prize: [characters/b2w2/alder]
+  party: [Accelgor, Bouffalant, Druddigon, Vanilluxe, Escavalier, Volcarona]
+# His three from the post-game fight, then the Floette he spent three
+# thousand years looking for, and both halves of the power his weapon was
+# built on
+AZ:
+  honor: AZDefeated
+  sheets: [characters/xy/az]
+  prize: [characters/xy/az]
+  party: [Torkoal, Golurk, Sigilyph, FloetteEternal, Xerneas, Yveltal]

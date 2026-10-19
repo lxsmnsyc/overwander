@@ -1,11 +1,5 @@
-import registerGen1Moves from './gen-1';
-import registerGen2Moves from './gen-2';
-import registerGen3Moves from './gen-3';
-import registerGen4Moves from './gen-4';
-import registerGen5Moves from './gen-5';
-import registerGen6Moves from './gen-6';
-import registerGen7Moves from './gen-7';
-import registerWeatherMoves from './weather';
+import { registerMove } from './__create';
+import { readMoves } from './yaml';
 
 export {
   MAX_SPEED_COOLDOWN_CUT,
@@ -25,12 +19,14 @@ export { TUTOR_ONLY_MOVES, isTutorOnlyMove } from './tutor-only';
 export { MOVE_WEATHERS, getWeatherMove } from './weather';
 
 export function registerMoves(): void {
-  registerGen1Moves();
-  registerGen2Moves();
-  registerGen3Moves();
-  registerGen4Moves();
-  registerGen5Moves();
-  registerGen6Moves();
-  registerGen7Moves();
-  registerWeatherMoves();
+  // Written as YAML, a folder per part (see ./yaml.ts)
+  const read = readMoves({
+    battle: import.meta.glob('./battle/**/*.yaml', { eager: true, import: 'default' }),
+    cast: import.meta.glob('./cast/**/*.yaml', { eager: true, import: 'default' }),
+    text: import.meta.glob('../text/en/moves/**/*.yaml', { eager: true, import: 'default' }),
+  });
+
+  for (const [move, data] of read) {
+    registerMove(move, data);
+  }
 }

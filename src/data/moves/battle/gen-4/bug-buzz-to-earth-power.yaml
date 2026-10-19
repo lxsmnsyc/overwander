@@ -1,0 +1,92 @@
+# From Bug Buzz to Earth Power: the special hits Sinnoh handed out,
+# most of which shake the guard loose as they land
+
+BugBuzz:
+  type: Bug
+  category: Special
+  power: 90
+  accuracy: 100
+  pp: 10
+  target: Unit
+  flags: [Sound]
+
+DragonPulse:
+  type: Dragon
+  category: Special
+  power: 85
+  accuracy: 100
+  pp: 10
+  target: Unit
+  projectile: true
+
+DragonRush:
+  type: Dragon
+  category: Physical
+  power: 100
+  accuracy: 75
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+PowerGem:
+  type: Rock
+  category: Special
+  power: 80
+  accuracy: 100
+  pp: 20
+  target: Unit
+  projectile: true
+
+DrainPunch:
+  type: Fighting
+  category: Physical
+  power: 75
+  accuracy: 100
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+VacuumWave:
+  type: Fighting
+  category: Special
+  power: 40
+  accuracy: 100
+  priority: 1
+  pp: 30
+  target: Unit
+  projectile: true
+
+FocusBlast:
+  type: Fighting
+  category: Special
+  power: 120
+  accuracy: 70
+  pp: 5
+  target: Unit
+  projectile: true
+
+EnergyBall:
+  type: Grass
+  category: Special
+  power: 90
+  accuracy: 100
+  pp: 10
+  target: Unit
+  projectile: true
+
+BraveBird:
+  type: Flying
+  category: Physical
+  power: 120
+  accuracy: 100
+  pp: 15
+  target: Unit
+  flags: [Contact]
+
+EarthPower:
+  type: Ground
+  category: Special
+  power: 90
+  accuracy: 100
+  pp: 10
+  target: Unit

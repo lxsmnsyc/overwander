@@ -19,6 +19,7 @@ const ABILITY_CUES: Partial<Record<Abilities, CueKind>> = {
   [Abilities.EffectSpore]: 'Ail',
   [Abilities.CuteCharm]: 'Ail',
   [Abilities.RoughSkin]: 'Barb',
+  [Abilities.GulpMissile]: 'Barb',
 
   // Something rose
   [Abilities.AngerPoint]: 'Rise',
@@ -27,6 +28,10 @@ const ABILITY_CUES: Partial<Record<Abilities, CueKind>> = {
   [Abilities.Defiant]: 'Rise',
   [Abilities.Competitive]: 'Rise',
   [Abilities.Download]: 'Rise',
+  [Abilities.ChillingNeigh]: 'Rise',
+  [Abilities.GrimNeigh]: 'Rise',
+  [Abilities.IntrepidSword]: 'Rise',
+  [Abilities.DauntlessShield]: 'Rise',
 
   // Something got faster
   [Abilities.Rattled]: 'Rush',
@@ -36,6 +41,7 @@ const ABILITY_CUES: Partial<Record<Abilities, CueKind>> = {
   [Abilities.RunAway]: 'Rush',
   [Abilities.SwiftSwim]: 'Rush',
   [Abilities.Chlorophyll]: 'Rush',
+  [Abilities.QuickDraw]: 'Rush',
 
   // Something mended
   [Abilities.Regenerator]: 'Mend',
@@ -45,6 +51,8 @@ const ABILITY_CUES: Partial<Record<Abilities, CueKind>> = {
   [Abilities.ShedSkin]: 'Mend',
   [Abilities.NaturalCure]: 'Mend',
   [Abilities.Healer]: 'Mend',
+  [Abilities.PastelVeil]: 'Mend',
+  [Abilities.CuriousMedicine]: 'Mend',
 
   // Something was noticed before it happened
   [Abilities.Anticipation]: 'Notice',
@@ -52,6 +60,7 @@ const ABILITY_CUES: Partial<Record<Abilities, CueKind>> = {
   [Abilities.Frisk]: 'Notice',
   [Abilities.Trace]: 'Notice',
   [Abilities.Pickup]: 'Notice',
+  [Abilities.BallFetch]: 'Notice',
   [Abilities.Harvest]: 'Notice',
 
   // Something weighs on the other side of the field
@@ -62,7 +71,10 @@ const ABILITY_CUES: Partial<Record<Abilities, CueKind>> = {
   [Abilities.Intimidate]: 'Menace',
   [Abilities.CursedBody]: 'Menace',
   [Abilities.BadDreams]: 'Menace',
+  [Abilities.ScreenCleaner]: 'Menace',
   [Abilities.Boss]: 'Menace',
+  [Abilities.Alpha]: 'Menace',
+  [Abilities.Noble]: 'Notice',
 };
 
 export default function abilityCueFor(ability: Abilities): PaintedVisual {
@@ -88,6 +100,8 @@ const ITEM_CUES: Partial<Record<Items, CueKind>> = {
   // It got there first
   [Items.QuickClaw]: 'Rush',
   [Items.ChoiceScarf]: 'Rush',
+  // It soothed a Noble's Frenzy
+  [Items.Balm]: 'Mend',
 };
 
 /**

@@ -1,4 +1,4 @@
-import type { Foe, Landmark, Metric } from '../../auth/quest-record';
+import type { Foe, Landmark, Metric } from '../../model/quest-record';
 import type Awards from '../ids/awards';
 import type { Types } from '../constants/types';
 import type Families from '../ids/families';

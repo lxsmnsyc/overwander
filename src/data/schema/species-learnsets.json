@@ -1,0 +1,67 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Species: learnsets",
+  "type": "object",
+  "propertyNames": {
+    "$ref": "names.json#/definitions/family"
+  },
+  "additionalProperties": {
+    "type": "object",
+    "description": "A family, with each of its species beneath it",
+    "properties": {
+      "family-teachable": {
+        "type": "array",
+        "items": {
+          "$ref": "names.json#/definitions/move"
+        },
+        "description": "TM, HM and tutor moves the whole family is taught"
+      }
+    },
+    "propertyNames": {
+      "anyOf": [
+        {
+          "$ref": "names.json#/definitions/species"
+        },
+        {
+          "enum": [
+            "family-teachable"
+          ]
+        }
+      ]
+    },
+    "additionalProperties": {
+      "type": "object",
+      "properties": {
+        "level": {
+          "type": "object",
+          "patternProperties": {
+            "^\\d+$": {
+              "type": "array",
+              "items": {
+                "$ref": "names.json#/definitions/move"
+              }
+            }
+          },
+          "additionalProperties": false,
+          "description": "Moves by the level they are learnt at"
+        },
+        "teachable": {
+          "type": "array",
+          "items": {
+            "$ref": "names.json#/definitions/move"
+          },
+          "description": "TM, HM and tutor moves this species alone is taught"
+        },
+        "egg": {
+          "type": "array",
+          "items": {
+            "$ref": "names.json#/definitions/move"
+          },
+          "description": "Egg moves"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    }
+  }
+}

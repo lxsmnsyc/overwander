@@ -1,14 +1,15 @@
 import { AttackPriority, EventPriority } from '../../../core/event-emitter';
 import { Stages, Stats } from '../../../data/constants/stats';
-import { DamageFlags, StatFlags } from '../../../data/ids/moves';
-import type { Types } from '../../../data/constants/types';
-import type { UnitAttackEvent } from '../../events';
+import { DamageFlags, type MoveCategories, type Moves, StatFlags } from '../../../data/ids/moves';
+import { Types } from '../../../data/constants/types';
+import type { MoveTarget, UnitAttackEvent } from '../../events';
 import type Unit from '../../unit';
 import type Abilities from '../../../data/ids/abilities';
-import type { Statuses } from '../../../data/ids/status';
-import type Battle from '../../core';
+import { Statuses } from '../../../data/ids/status';
+import type Battle from '../../battle';
 import { BattleEvents, EffectType, MoveTargetType } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
+import { unitTarget } from '../../unit-checks';
 import { createAbility, createContactHazard } from './create';
 
 /** Abilities that refuse something: a status, a stat drop, a critical, an aim */
@@ -123,6 +124,43 @@ export function createKeenEyeAbility(targetAbility: Abilities): (battle: Battle)
 }
 
 /**
+ * Meta ability for the ones that float (Levitate, Eelevate): off the
+ * ground unless something pins it there, which is what turns Ground
+ * moves and grounded hazards away
+ * https://bulbapedia.bulbagarden.net/wiki/Levitate_(Ability)
+ */
+export function createLevitateAbility(targetAbility: Abilities): (battle: Battle) => void {
+  return createAbility(
+    targetAbility,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.CheckUnitGrounded, EventPriority.Post, (event) => {
+          if (
+            event.grounded &&
+            event.source.status[Statuses.Grounded] == null &&
+            event.source.hasAbility(targetAbility)
+          ) {
+            event.grounded = false;
+          }
+        }),
+        // The cue only fires when a real Ground move was avoided
+        battle.on(BattleEvents.UnitTriggerMoveFailed, EventPriority.Post, (event) => {
+          const target = event.parent.target;
+
+          if (
+            target.type === MoveTargetType.Unit &&
+            target.unit.hasAbility(targetAbility) &&
+            !target.unit.checkGrounded() &&
+            event.parent.source.checkMoveType(event.parent.move, target) === Types.Ground
+          ) {
+            target.unit.triggerAbility(targetAbility);
+          }
+        }),
+      ]),
+  );
+}
+
+/**
  * Meta ability for Shell Armor and Battle Armor: critical hits never
  * land on the holder
  * https://bulbapedia.bulbagarden.net/wiki/Shell_Armor_(Ability)
@@ -193,6 +231,45 @@ export function createFilterAbility(targetAbility: Abilities): (battle: Battle) 
       }),
     ]);
   });
+}
+
+/**
+ * Meta ability for the coats that soften one kind of blow (Fur Coat
+ * for physical, Ice Scales for special)
+ * https://bulbapedia.bulbagarden.net/wiki/Fur_Coat_(Ability)
+ * https://bulbapedia.bulbagarden.net/wiki/Ice_Scales_(Ability)
+ */
+export function createFurCoatAbility(
+  targetAbility: Abilities,
+  category: MoveCategories,
+  factor: number,
+): (battle: Battle) => void {
+  return createAbility(targetAbility, (battle) =>
+    battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
+      const parent = event.parent;
+
+      if (parent.category === category && parent.target.hasAbility(targetAbility)) {
+        event.value *= factor;
+      }
+    }),
+  );
+}
+
+/**
+ * Meta ability for the two that halve a blow landing on a full health
+ * bar (Multiscale, Shadow Shield). It mutates the in-flight damage
+ * https://bulbapedia.bulbagarden.net/wiki/Multiscale_(Ability)
+ */
+export function createMultiscaleAbility(targetAbility: Abilities): (battle: Battle) => void {
+  return createAbility(targetAbility, (battle) =>
+    battle.on(BattleEvents.UnitAttackResolveDamage, EventPriority.Post, (event) => {
+      const target = event.parent.target;
+
+      if (target.hasAbility(targetAbility) && target.health >= target.checkStat(Stats.HP, 0)) {
+        event.value *= 0.5;
+      }
+    }),
+  );
 }
 
 /**
@@ -281,6 +358,93 @@ export function createContactRecoilAbility(ability: Abilities): (battle: Battle)
           );
         }),
         createContactHazard(battle, ability),
+      ]),
+  );
+}
+
+/**
+ * Meta ability for the ones whose touch slows whoever lands it (Gooey,
+ * Tangling Hair): a contact move that lands costs the attacker a stage
+ * of Speed
+ * https://bulbapedia.bulbagarden.net/wiki/Gooey_(Ability)
+ * https://bulbapedia.bulbagarden.net/wiki/Tangling_Hair_(Ability)
+ */
+export function createGooeyAbility(ability: Abilities): (battle: Battle) => void {
+  return createAbility(
+    ability,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+          if (
+            !event.success ||
+            (event.flags & DamageFlags.Indirect) !== 0 ||
+            event.cause.type !== EffectType.Move ||
+            event.cause.unit === event.target ||
+            !event.target.hasAbility(ability) ||
+            !event.cause.unit.checkMoveContact(event.cause.move, unitTarget(event.target))
+          ) {
+            return;
+          }
+
+          event.target.triggerAbility(ability);
+          event.cause.unit.addStage(Stages.Speed, -1, {
+            type: EffectType.Ability,
+            ability,
+            unit: event.target,
+          });
+        }),
+        // Touching it costs something, so the AI is told before it
+        // decides to
+        createContactHazard(battle, ability),
+      ]),
+  );
+}
+
+/**
+ * Meta ability for the ones that turn a queue-jumping move away from
+ * their whole side (Queenly Majesty, Dazzling). The priority is asked of
+ * the caster rather than read off the move, so a Prankster's status move
+ * counts
+ * https://bulbapedia.bulbagarden.net/wiki/Queenly_Majesty_(Ability)
+ */
+export function createQueenlyMajestyAbility(ability: Abilities): (battle: Battle) => void {
+  /** Whoever on the struck side turns the move away, or nobody */
+  function guards(source: Unit, move: Moves, target: MoveTarget): Unit[] {
+    if (target.type !== MoveTargetType.Unit) {
+      return [];
+    }
+
+    const found: Unit[] = [];
+
+    for (const unit of target.unit.team.units) {
+      if (unit === source) {
+        return [];
+      }
+      if (unit.alive && unit.hasAbility(ability)) {
+        found.push(unit);
+      }
+    }
+    return found.length > 0 && source.checkMovePriority(move, target) > 0 ? found : [];
+  }
+
+  return createAbility(
+    ability,
+    (battle) =>
+      new MergedLifecycle([
+        // Pure query: a move that cuts ahead of the queue cannot land
+        battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
+          if (!event.immune && guards(event.source, event.move, event.target).length > 0) {
+            event.immune = true;
+          }
+        }),
+        // The cue only fires when a real use was blocked, on the holder
+        battle.on(BattleEvents.UnitTriggerMoveFailed, EventPriority.Post, (event) => {
+          const parent = event.parent;
+
+          for (const unit of guards(parent.source, parent.move, parent.target)) {
+            unit.triggerAbility(ability);
+          }
+        }),
       ]),
   );
 }

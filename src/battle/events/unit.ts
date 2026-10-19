@@ -239,6 +239,12 @@ export interface CheckUnitSlotsEvent extends UnitEvent {
 
 export interface UnitRemoveItemEvent extends UnitItemEvent {
   cause: EffectCause;
+  /**
+   * Whether the catch record loses the item once the battle ends. Only
+   * an item that was used up is lost; one a foe knocked off, swapped
+   * or kept hold of goes back to its owner
+   */
+  lost: boolean;
 }
 
 /**

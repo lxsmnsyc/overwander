@@ -1,5 +1,5 @@
 import { type Locator, type Page, expect, test } from '@playwright/test';
-import { BOARD_CELLS, BOARD_CENTER, boardCells, reachOf } from '../src/canvas/board';
+import { BOARD_CELLS, BOARD_CENTER, boardCells, reachOf } from '../src/canvas/overworld/board';
 import { getRegisteredSpecies, getSpeciesData, registerSpecies } from '../src/data/species';
 import { SHEET, claimStarter, dialogNamed, expectOpen, signIn } from './game';
 import { boardOf, nameAt, placeOf, pressCell, pressFar } from './walk';

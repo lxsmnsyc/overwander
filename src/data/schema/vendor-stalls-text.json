@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Vendor stall names",
+  "type": "object",
+  "propertyNames": {
+    "$ref": "names.json#/definitions/vendor-kind"
+  },
+  "additionalProperties": {
+    "type": "string"
+  }
+}

@@ -1,11 +1,11 @@
 import 'server-only';
 import { WORLD_GENERATION } from '../../overworld/current';
 import { Depth } from '../../overworld/depth';
-import type { EncounterRecord } from '../../auth/encounter-record';
+import type { EncounterRecord } from '../../model/encounter-record';
 import type { ItemStack } from '../../data/overworld/item-pool';
 import { grantNestEgg } from '../eggs';
 import { getSql } from '../db';
-import { Landmark, Metric } from '../../auth/quest-record';
+import { Landmark, Metric } from '../../model/quest-record';
 import { bumpProgress } from '../quest-progress';
 import { claim, resolveSnapshot } from './claims';
 

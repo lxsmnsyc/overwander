@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Biome elite",
+  "type": "object",
+  "propertyNames": {
+    "$ref": "names.json#/definitions/biome"
+  },
+  "additionalProperties": {
+    "type": "array",
+    "items": {
+      "$ref": "names.json#/definitions/elite-member"
+    },
+    "description": "In the order a seat rolls from them"
+  }
+}

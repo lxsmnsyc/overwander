@@ -24,17 +24,17 @@ import createClientSignal from '../../app/client-signal';
 import playEffect, { Effect } from '../../app/sound';
 import { forTheGame } from '../../app/keys';
 import { answered } from '../../app/resource-reads';
-import { PLAYER_ALLIANCE, clearRaid, getRaid, getRaidTitle } from '../../../auth/raids';
-import { BattleModes } from '../../../battle/core';
-import BattleKind, { getBattleKind } from '../../../auth/battle-kind';
+import { PLAYER_ALLIANCE, RaidKind, clearRaid, getRaid, getRaidTitle } from '../../../auth/raids';
+import { BattleModes } from '../../../battle/battle';
+import BattleKind, { getBattleKind } from '../../../model/battle-kind';
 import {
   type RaidBattle,
   collectAftermath,
   countDefeated,
   createRaidBattle,
-} from '../../../overworld/raid-battle';
+} from '../../../overworld/raid/battle';
 import Npc from '../../../data/overworld/npc';
-import { createTrainerBattle } from '../../../overworld/stop-battle';
+import { createTrainerBattle } from '../../../overworld/stop/battle';
 import BattleField from '../BattleField';
 import BattleTopBar from '../BattleTopBar';
 import CandySprite from '../../sprites/CandySprite';
@@ -331,6 +331,9 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
     return found == null ? null : getRaidTitle(found);
   };
 
+  /** A Max Raid's name already says what the fight is, so it goes up alone */
+  const standsAlone = (): boolean => answered(staged)?.kind === RaidKind.Max;
+
   /**
    * Who the other side was, where it belonged to nobody.
    *
@@ -363,7 +366,10 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
 
     const named = lair();
 
-    return named == null ? 'Raid Battle' : `Raid Battle: ${named}`;
+    if (named == null) {
+      return 'Raid Battle';
+    }
+    return standsAlone() ? named : `Raid Battle: ${named}`;
   };
 
   /**
@@ -431,16 +437,6 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
 
   /** Whether this fight ranks whole teams rather than single pokemon */
   const raiding = (): boolean => instance()?.battle.mode === BattleModes.Raid;
-
-  /** The raid's damage shares, keyed by who dealt them — the boss under '' */
-  const shares = (): Map<string, number> => {
-    const dealt = new Map<string, number>();
-
-    for (const row of contributions()) {
-      dealt.set(row.player, row.dealt);
-    }
-    return dealt;
-  };
 
   /**
    * Whether the end has been heard. `outcome` is read on every nudge
@@ -834,7 +830,6 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
         player={auth.user()?.uid ?? ''}
         opponent={opponent()}
         teams={raiding() ? (record()?.teams ?? null) : null}
-        shares={shares()}
         replay={props.active.replay}
         onLeave={leave}
       />

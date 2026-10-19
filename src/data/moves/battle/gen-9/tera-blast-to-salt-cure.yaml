@@ -1,0 +1,119 @@
+# From Tera Blast to Salt Cure: the first stretch of what Paldea brought, at the
+# numbers Scarlet and Violet settled them on
+
+TeraBlast:
+  type: Normal
+  category: Special
+  power: 80
+  accuracy: 100
+  pp: 10
+  target: Unit
+  projectile: true
+
+SilkTrap:
+  type: Bug
+  category: Status
+  priority: 4
+  pp: 10
+  target: None
+
+AxeKick:
+  type: Fighting
+  category: Physical
+  power: 120
+  accuracy: 90
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+LastRespects:
+  type: Ghost
+  category: Physical
+  power: 50
+  accuracy: 100
+  pp: 10
+  target: Unit
+
+LuminaCrash:
+  type: Psychic
+  category: Special
+  power: 80
+  accuracy: 100
+  pp: 10
+  target: Unit
+  projectile: true
+
+OrderUp:
+  type: Dragon
+  category: Physical
+  power: 80
+  accuracy: 100
+  pp: 10
+  target: Unit
+
+JetPunch:
+  type: Water
+  category: Physical
+  power: 60
+  accuracy: 100
+  priority: 1
+  pp: 15
+  target: Unit
+  flags: [Contact]
+
+SpicyExtract:
+  type: Grass
+  category: Status
+  pp: 15
+  target: Unit
+
+SpinOut:
+  type: Steel
+  category: Physical
+  power: 100
+  accuracy: 100
+  pp: 5
+  target: Unit
+  flags: [Contact]
+
+PopulationBomb:
+  type: Normal
+  category: Physical
+  power: 20
+  accuracy: 90
+  pp: 10
+  target: Unit
+  flags: [Contact, Slicing]
+
+IceSpinner:
+  type: Ice
+  category: Physical
+  power: 80
+  accuracy: 100
+  pp: 15
+  target: Unit
+  flags: [Contact]
+
+GlaiveRush:
+  type: Dragon
+  category: Physical
+  power: 120
+  accuracy: 100
+  pp: 5
+  target: Unit
+  flags: [Contact]
+
+RevivalBlessing:
+  type: Normal
+  category: Status
+  pp: 1
+  target: Unit
+  affects: [Unit, Own, Fainted]
+
+SaltCure:
+  type: Rock
+  category: Physical
+  power: 40
+  accuracy: 100
+  pp: 15
+  target: Unit

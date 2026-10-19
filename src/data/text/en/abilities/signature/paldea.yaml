@@ -1,0 +1,194 @@
+# The signature abilities of the families filed under Paldea
+
+PetalScatter:
+  name: Petal Scatter
+  description: A Grass critical hit it lands also deals 1/4 of that damage to every other enemy.
+SpreadingFlame:
+  name: Spreading Flame
+  description: A burn it inflicts with a Fire move also burns the other enemy lowest on HP.
+Wake:
+  name: Wake
+  description: A Water move it lands drops the target's Speed 1 stage and every other enemy's by 1 as well, at most once every 8 seconds.
+PigOut:
+  name: Pig Out
+  description: Each time it eats a Berry, it casts Stockpile on itself.
+Tripwire:
+  name: Tripwire
+  description: An enemy that takes the field mid-fight winds up its first move 50% slower.
+Knockback:
+  name: Knockback
+  description: Each contact move it lands pushes the target's current wind-up back 0.5 seconds.
+StaticPalms:
+  name: Static Palms
+  description: Its punching moves paralyse the target 20% of the time.
+ScatterBrood:
+  name: Scatter Brood
+  description: Its multi-hit moves send each strike at a different standing enemy in turn.
+FreshBatch:
+  name: Fresh Batch
+  description: Every 20 seconds it hands a Sitrus Berry to the teammate lowest on HP whose hands are empty.
+Anoint:
+  name: Anoint
+  description: Any heal it gives a teammate also cures that teammate's major status.
+BrineRebound:
+  name: Brine Rebound
+  description: A Water move landing on it makes it cast Salt Cure at whoever threw it, at most once every 10 seconds.
+Kindling:
+  name: Kindling
+  description: Each Fire move it lands makes its next move wind up 25% faster.
+BubbleShock:
+  name: Bubble Shock
+  description: Its Electric moves hit 1.5x a target that a Water move has landed on in the last 4 seconds.
+LightningDive:
+  name: Lightning Dive
+  description: Its Electric moves hit 1.3x while Tailwind blows on its side.
+Windswept:
+  name: Windswept
+  description: When a wind move lands on anybody, its own next move winds up 50% faster.
+MyceliumMat:
+  name: Mycelium Mat
+  description: While it stands, each time Grassy Terrain heals one of its teammates it also cures one major status from them.
+HeatTolerance:
+  name: Heat Tolerance
+  description: A burn heals it 1/8 of its HP each time it acts instead of hurting it, and does not halve its Attack.
+BallToss:
+  name: Ball Toss
+  description: When a teammate drops below 1/3 HP with empty hands, it hands them its own held item, once per fight.
+StareDown:
+  name: Stare Down
+  description: Each Psychic move it lands casts Taunt at the target, at most once every 10 seconds per target.
+Tinker:
+  name: Tinker
+  description: The first time each teammate uses up its held item, it remakes it, once per teammate per fight.
+SandDuck:
+  name: Sand Duck
+  description: Ground moves aimed at it miss, and each one that does raises its Speed 1 stage.
+Lifeguard:
+  name: Lifeguard
+  description: While it is above 1/2 HP, the first blow each fight that would knock out a teammate is taken by it instead, once per teammate.
+Redline:
+  name: Redline
+  description: Its moves wind up faster the lower its HP, from 0% faster at full HP to 30% faster near 0 HP.
+ShedDecoy:
+  name: Shed Decoy
+  description: The first time its HP drops below 1/2 each fight, it casts Substitute without paying the HP for it.
+SlagTrail:
+  name: Slag Trail
+  description: Each Steel move it lands lays a layer of Spikes under the target's side, at most once every 10 seconds.
+Glimmering:
+  name: Glimmering
+  description: While it stands, every poisoned enemy winds up its moves 20% slower.
+GraveDigger:
+  name: Grave Digger
+  description: When a teammate faints holding an item and its own hands are empty, the item goes into its hands.
+SnowHoard:
+  name: Snow Hoard
+  description: While snow or hail falls, it gains 1 stage of Attack every 4 seconds, up to +3 from this.
+FilletThrift:
+  name: Fillet Thrift
+  description: Moves that cost HP to use (Fillet Away, Substitute, Belly Drum, Shed Tail) cost it half.
+Mouthful:
+  name: Mouthful
+  description: "When a teammate drops below 1/3 HP, it swallows them: they cannot be targeted for 4 seconds and heal 1/4 of their HP, once per teammate per fight."
+BackSeatOrders:
+  name: Back Seat Orders
+  description: While it is behind a Substitute or under its own Protect, each move a teammate lands hits 1.2x.
+GlaiveGuard:
+  name: Glaive Guard
+  description: After a move that leaves it exposed (Glaive Rush, Outrage, a recharge), its Defense and Special Defense are +2 until it next acts.
+BogDown:
+  name: Bog Down
+  description: An enemy that lands a Ground move on it cannot switch out for 6 seconds.
+Raging:
+  name: Raging
+  description: While its Attack is raised above +0, its moves wind up 20% faster.
+TeaService:
+  name: Tea Service
+  description: Its healing moves aimed at a teammate wind up 40% faster.
+CoinScatter:
+  name: Coin Scatter
+  description: "Each damaging move it lands scatters coins as Pay Day does, under Pay Day's own ceiling."
+WitheredTablets:
+  name: Withered Tablets
+  description: A target it lands a move on cannot raise its Attack for 6 seconds.
+ShatteredSword:
+  name: Shattered Sword
+  description: A target it lands a move on cannot raise its Defense for 6 seconds.
+CrackedVessel:
+  name: Cracked Vessel
+  description: A target it lands a move on cannot raise its Special Attack for 6 seconds.
+ScatteredBeads:
+  name: Scattered Beads
+  description: A target it lands a move on cannot raise its Special Defense for 6 seconds.
+SunSprint:
+  name: Sun Sprint
+  description: While sun shines, its moves wind up 20% faster.
+DriveMode:
+  name: Drive Mode
+  description: While Electric Terrain is up, its moves wind up 20% faster.
+HeadlongGuard:
+  name: Headlong Guard
+  description: The stat drops its own moves give it (Headlong Rush, Close Combat) are undone the next time it lands a contact move.
+ShriekSpeed:
+  name: Shriek Speed
+  description: Its sound moves wind up 30% faster.
+EerieFlutter:
+  name: Eerie Flutter
+  description: A single-target move aimed at it has a 20% chance to go to a random standing teammate of the attacker instead, or to miss if the attacker stands alone.
+AncientCocoon:
+  name: Ancient Cocoon
+  description: The first time it drops below 1/3 HP each fight, it casts Quiver Dance on itself.
+EarthCurrent:
+  name: Earth Current
+  description: Its Electric moves hit Ground types for neutral damage instead of not at all.
+MoonHowl:
+  name: Moon Howl
+  description: "As it takes the field, every enemy's next move winds up 30% slower."
+SteamSurge:
+  name: Steam Surge
+  description: While sun shines, its Water moves are not weakened by the sun and wind up 20% faster.
+MoltenBulwark:
+  name: Molten Bulwark
+  description: Each time one of its protect moves blocks a move, it heals 1/8 of its HP.
+StormCloud:
+  name: Storm Cloud
+  description: Each Electric move it lands has a 15% chance to lay Electric Terrain.
+TrackLaying:
+  name: Track Laying
+  description: "Each Ground move it lands lays a layer of Stealth Rock under the target's side, at most once every 15 seconds."
+IcePack:
+  name: Ice Pack
+  description: Its Ice moves aimed at a teammate heal that teammate 1/4 of their max HP instead of hurting them.
+IronGrip:
+  name: Iron Grip
+  description: A target it lands a punching move on cannot use protect moves for 4 seconds.
+ToxicExhaust:
+  name: Toxic Exhaust
+  description: Its Fire moves poison the target 20% of the time.
+SandGenerator:
+  name: Sand Generator
+  description: An Electric move landing on it whips up a sandstorm, at most once every 15 seconds.
+Afterimage:
+  name: Afterimage
+  description: For 1 second after it takes a hit, its next move winds up 40% faster.
+TerrainEdge:
+  name: Terrain Edge
+  description: Its slicing moves hit 1.3x while any terrain is up.
+HoundsOath:
+  name: "Hound's Oath"
+  description: When a teammate faints, its next damaging move is sure to badly poison and is a critical hit.
+MonkeysOath:
+  name: "Monkey's Oath"
+  description: When a teammate faints, its next damaging move is sure to badly poison and winds up 40% faster.
+PheasantsOath:
+  name: "Pheasant's Oath"
+  description: When a teammate faints, its next damaging move is sure to badly poison and strikes every enemy.
+MaskAura:
+  name: Mask Aura
+  description: "While it wears a mask, its teammates' moves of that mask's type hit 1.2x: Grass for Teal, Water for Wellspring, Fire for Hearthflame, Rock for Cornerstone."
+Prismatic:
+  name: Prismatic
+  description: Its Normal moves become whichever type hits the target hardest, as they go off.
+PuppetStrings:
+  name: Puppet Strings
+  description: "A confused enemy's single-target moves aimed at it go to one of that enemy's own teammates instead, if one stands."

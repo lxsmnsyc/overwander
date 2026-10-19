@@ -1,7 +1,7 @@
 import { For, type JSX, Show, createMemo, createResource, createSignal, from } from 'solid-js';
 import { isFavorite } from '../../auth/caught';
 import { getBuddy } from '../../auth/buddy';
-import { isEgg } from '../../auth/egg';
+import { isEgg } from '../../model/egg';
 import { type Profile, watchProfile } from '../../auth/profile';
 import {
   type TradeRecord,

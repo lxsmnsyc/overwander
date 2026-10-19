@@ -2,11 +2,9 @@ name: Release
 
 # Pending changesets on main keep a "Version Packages" PR up to date. Merging it
 # leaves none pending, and that push tags the version and publishes the release.
-#
-# Off for now, with no Actions minutes left this month: run by hand from the
-# Actions tab, or release locally as docs/deploy/server.md says. Put `push` (on
-# main) back to turn it on again.
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -42,7 +40,7 @@ jobs:
       - uses: changesets/action@v2
         with:
           version-script: pnpm cs:ver
-          publish-script: bash scripts/release.sh
+          publish-script: bash scripts/release/release.sh
           create-github-releases: false
           push-git-tags: false
         env:

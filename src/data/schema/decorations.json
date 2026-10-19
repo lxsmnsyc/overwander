@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Decorations",
+  "type": "object",
+  "propertyNames": {
+    "$ref": "names.json#/definitions/decoration"
+  },
+  "additionalProperties": {
+    "type": "object",
+    "properties": {
+      "sheet": {
+        "enum": [
+          "trees",
+          "decorations"
+        ],
+        "description": "The sheet it is drawn from"
+      },
+      "pictures": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "minItems": 1,
+        "description": "The pictures it is drawn as, in the order cells pick them"
+      }
+    },
+    "required": [
+      "sheet",
+      "pictures"
+    ],
+    "additionalProperties": false
+  }
+}

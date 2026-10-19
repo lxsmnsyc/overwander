@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { BattleEvents, EffectType, MoveTargetType } from '../../../src/battle/events';
-import type Battle from '../../../src/battle/core';
+import type Battle from '../../../src/battle/battle';
 import type Unit from '../../../src/battle/unit';
 import Abilities from '../../../src/data/ids/abilities';
 import { Items } from '../../../src/data/ids/items';
@@ -8,7 +8,7 @@ import { Stages, Stats } from '../../../src/data/constants/stats';
 import { Types } from '../../../src/data/constants/types';
 import { MoveCategories, Moves } from '../../../src/data/ids/moves';
 import { Statuses, Terrains } from '../../../src/data/ids/status';
-import { BattleModes } from '../../../src/battle/core';
+import { BattleModes } from '../../../src/battle/battle';
 import {
   GRASSY_HEAL_SHARE,
   TERRAIN_BLUNTING,

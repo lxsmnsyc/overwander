@@ -1,3 +1,4 @@
+import { castShownAs } from '../../../battle/gimmicks/dynamax/max-moves';
 import type Unit from '../../../battle/unit';
 import type Bakery from '../../../canvas/bakery';
 import type { QuadPoint } from '../../../canvas/gl/quad-batch';
@@ -64,9 +65,11 @@ export function trackCast(labels: CastLabels, unit: Unit, clock: number): void {
   const held = labels.get(unit);
 
   if (busy != null) {
-    if (held == null || held.move !== busy.move || held.endedAt != null) {
+    const shown = castShownAs(unit, busy);
+
+    if (held == null || held.move !== shown || held.endedAt != null) {
       labels.set(unit, {
-        move: busy.move,
+        move: shown,
         channel: unit.casting == null,
         shownAt: clock,
         endedAt: null,

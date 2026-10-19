@@ -1,0 +1,201 @@
+# From Arm Thrust to Overheat: the signature moves of Hoenn's own,
+# and the weather that comes with them
+
+ArmThrust:
+  type: Fighting
+  category: Physical
+  power: 15
+  accuracy: 100
+  pp: 20
+  target: Unit
+  flags: [Contact]
+
+Camouflage:
+  type: Normal
+  category: Status
+  pp: 20
+  target: None
+
+TailGlow:
+  type: Bug
+  category: Status
+  pp: 20
+  target: None
+
+LusterPurge:
+  type: Psychic
+  category: Special
+  power: 95
+  accuracy: 100
+  pp: 5
+  target: Unit
+
+MistBall:
+  type: Psychic
+  category: Special
+  power: 95
+  accuracy: 100
+  pp: 5
+  target: Unit
+  projectile: true
+
+FeatherDance:
+  type: Flying
+  category: Status
+  accuracy: 100
+  pp: 15
+  target: Unit
+  affects: [Unit, Own, Enemy]
+
+TeeterDance:
+  type: Normal
+  category: Status
+  accuracy: 100
+  pp: 20
+  target: None
+  affects: [Unit, Own, Enemy]
+
+BlazeKick:
+  type: Fire
+  category: Physical
+  power: 85
+  accuracy: 90
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+MudSport:
+  type: Ground
+  category: Status
+  pp: 15
+  target: None
+
+IceBall:
+  type: Ice
+  category: Physical
+  power: 30
+  accuracy: 90
+  pp: 20
+  target: Unit
+  flags: [Contact]
+  steps: 4
+  projectile: true
+
+NeedleArm:
+  type: Grass
+  category: Physical
+  power: 60
+  accuracy: 100
+  pp: 15
+  target: Unit
+  flags: [Contact]
+
+SlackOff:
+  type: Normal
+  category: Status
+  pp: 5
+  target: None
+
+HyperVoice:
+  type: Normal
+  category: Special
+  power: 90
+  accuracy: 100
+  pp: 10
+  target: None
+  affects: [Unit, Enemy]
+  flags: [Sound]
+
+PoisonFang:
+  type: Poison
+  category: Physical
+  power: 50
+  accuracy: 100
+  pp: 15
+  target: Unit
+  flags: [Contact, Bite]
+
+CrushClaw:
+  type: Normal
+  category: Physical
+  power: 75
+  accuracy: 95
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+BlastBurn:
+  type: Fire
+  category: Special
+  power: 150
+  accuracy: 90
+  pp: 5
+  target: Unit
+
+HydroCannon:
+  type: Water
+  category: Special
+  power: 150
+  accuracy: 90
+  pp: 5
+  target: Unit
+
+MeteorMash:
+  type: Steel
+  category: Physical
+  power: 90
+  accuracy: 90
+  pp: 10
+  target: Unit
+  flags: [Contact]
+
+Astonish:
+  type: Ghost
+  category: Physical
+  power: 30
+  accuracy: 100
+  pp: 15
+  target: Unit
+  flags: [Contact]
+
+WeatherBall:
+  type: Normal
+  category: Special
+  power: 50
+  accuracy: 100
+  pp: 10
+  target: Unit
+  projectile: true
+
+Aromatherapy:
+  type: Grass
+  category: Status
+  pp: 5
+  target: Team
+  affects: [Team, Own]
+
+FakeTears:
+  type: Dark
+  category: Status
+  accuracy: 100
+  pp: 20
+  target: Unit
+  affects: [Unit, Own, Enemy]
+
+AirCutter:
+  type: Flying
+  category: Special
+  power: 60
+  accuracy: 95
+  pp: 25
+  target: None
+  affects: [Unit, Enemy]
+  flags: [Slicing, Wind]
+
+Overheat:
+  type: Fire
+  category: Special
+  power: 130
+  accuracy: 90
+  pp: 5
+  target: Unit

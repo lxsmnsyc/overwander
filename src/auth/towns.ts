@@ -6,9 +6,9 @@ import {
 } from '../server/towns';
 import { syncServerClock } from './clock';
 import getIdToken from './session';
-import type { TownRecord } from './town-record';
+import type { TownRecord } from '../model/town-record';
 
-export type { TownRecord } from './town-record';
+export type { TownRecord } from '../model/town-record';
 
 /**
  * Towns as the client asks for them.

@@ -13,7 +13,7 @@ import { REGIONS, REGION_NAMES, getRegionSpan, getSpeciesRegion } from '../../da
 import { type PokedexView, getPokedex } from '../../auth/pokedex';
 import { ArrowLeftIcon, ArrowRightIcon } from '../icons';
 import type { Species } from '../../data/ids/species';
-import { getBaseFormSpecies } from '../../data/ids/species';
+import { getBaseFormSpecies } from '../../data/ids/forms';
 import { getBaseForms, getSpeciesData, getSpeciesForms } from '../../data/species';
 import PokedexGrid, { DEX_PAGE, type DexEntry, dexLabel } from './PokedexGrid';
 import { Badge, Button, Meta, Note, Panel, Row, TextField } from '../styled';

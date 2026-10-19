@@ -1,0 +1,43 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Battle: statuses",
+  "type": "object",
+  "properties": {
+    "target": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "names.json#/definitions/move"
+      },
+      "additionalProperties": {
+        "$ref": "names.json#/definitions/status"
+      },
+      "description": "What a status move puts on what it is aimed at"
+    },
+    "self": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "names.json#/definitions/move"
+      },
+      "additionalProperties": {
+        "$ref": "names.json#/definitions/status"
+      },
+      "description": "What a move puts on its own user"
+    },
+    "team": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "names.json#/definitions/move"
+      },
+      "additionalProperties": {
+        "$ref": "names.json#/definitions/team-status"
+      },
+      "description": "What a move lays over its own side"
+    }
+  },
+  "required": [
+    "target",
+    "self",
+    "team"
+  ],
+  "additionalProperties": false
+}

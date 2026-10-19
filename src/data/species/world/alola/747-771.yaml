@@ -1,0 +1,204 @@
+Mareanie:
+  Mareanie:
+    types: [Poison, Water]
+    egg-groups: [Water1]
+    habitat: Water
+    biomes: [CoralReef, RockyCoast, Beach]
+    active: any
+    evolves-into:
+      - species: Toxapex
+        method: [Level]
+        level: 38
+  Toxapex:
+    types: [Poison, Water]
+    egg-groups: [Water1]
+    habitat: Water
+    biomes: [CoralReef, RockyCoast, Beach]
+    active: any
+    evolves-from: Mareanie
+Mudbray:
+  Mudbray:
+    types: [Ground]
+    egg-groups: [Field]
+    biomes: [Savanna, Steppe, Grassland]
+    active: any
+    evolves-into:
+      - species: Mudsdale
+        method: [Level]
+        level: 30
+  Mudsdale:
+    types: [Ground]
+    egg-groups: [Field]
+    biomes: [Savanna, Steppe, Grassland]
+    active: any
+    evolves-from: Mudbray
+Dewpider:
+  Dewpider:
+    types: [Water, Bug]
+    egg-groups: [Water1, Bug]
+    habitat: Amphibious
+    biomes: [Swamp, Mangrove, TropicalRainforest]
+    active: any
+    evolves-into:
+      - species: Araquanid
+        method: [Level]
+        level: 22
+  Araquanid:
+    types: [Water, Bug]
+    egg-groups: [Water1, Bug]
+    habitat: Amphibious
+    biomes: [Swamp, Mangrove, TropicalRainforest]
+    active: any
+    evolves-from: Dewpider
+Fomantis:
+  Fomantis:
+    types: [Grass]
+    egg-groups: [Grass]
+    biomes: [TropicalRainforest, TropicalSeasonalForest, Grassland]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Lurantis
+        method: [Level, TimeOfDay]
+        level: 34
+        time: [Morning, Day]
+  Lurantis:
+    types: [Grass]
+    egg-groups: [Grass]
+    biomes: [TropicalRainforest, TropicalSeasonalForest, Grassland]
+    active: [Morning, Day]
+    evolves-from: Fomantis
+Morelull:
+  Morelull:
+    types: [Grass, Fairy]
+    egg-groups: [Grass]
+    biomes: [TropicalRainforest, TemperateRainforest, Swamp]
+    active: [Evening, Night]
+    evolves-into:
+      - species: Shiinotic
+        method: [Level]
+        level: 24
+  Shiinotic:
+    types: [Grass, Fairy]
+    egg-groups: [Grass]
+    biomes: [TropicalRainforest, TemperateRainforest, Swamp]
+    active: [Evening, Night]
+    evolves-from: Morelull
+Salandit:
+  Salandit:
+    types: [Poison, Fire]
+    egg-groups: [Monster, Dragon]
+    biomes: [Volcano, Badlands, Ocean]
+    active: any
+    evolves-into:
+      - species: Salazzle
+        method: [Level, Gender]
+        level: 33
+        gender: Female
+  Salazzle:
+    types: [Poison, Fire]
+    egg-groups: [Monster, Dragon]
+    biomes: [Volcano, Badlands, Ocean]
+    active: any
+    evolves-from: Salandit
+Stufful:
+  Stufful:
+    types: [Normal, Fighting]
+    egg-groups: [Field]
+    biomes: [Grassland, TropicalSeasonalForest, Woodland]
+    active: any
+    evolves-into:
+      - species: Bewear
+        method: [Level]
+        level: 27
+  Bewear:
+    types: [Normal, Fighting]
+    egg-groups: [Field]
+    biomes: [Grassland, TropicalSeasonalForest, Woodland]
+    active: any
+    evolves-from: Stufful
+Bounsweet:
+  Bounsweet:
+    types: [Grass]
+    egg-groups: [Grass]
+    biomes: [TropicalRainforest, TropicalSeasonalForest]
+    active: [Morning, Day]
+    evolves-into:
+      - species: Steenee
+        method: [Level]
+        level: 18
+  Steenee:
+    types: [Grass]
+    egg-groups: [Grass]
+    biomes: [TropicalRainforest, TropicalSeasonalForest]
+    active: [Morning, Day]
+    evolves-from: Bounsweet
+    evolves-into:
+      - species: Tsareena
+        method: [Level, KnownMove]
+        level: 29
+        move: Stomp
+  Tsareena:
+    types: [Grass]
+    egg-groups: [Grass]
+    biomes: [TropicalRainforest, TropicalSeasonalForest]
+    active: [Morning, Day]
+    evolves-from: Steenee
+Comfey:
+  Comfey:
+    types: [Fairy]
+    egg-groups: [Grass]
+    biomes: [TropicalRainforest, TropicalSeasonalForest, Grassland]
+    active: [Morning, Day]
+Oranguru:
+  Oranguru:
+    types: [Normal, Psychic]
+    egg-groups: [Field]
+    biomes: [TropicalRainforest, TropicalSeasonalForest]
+    active: [Morning, Day, Evening]
+Passimian:
+  Passimian:
+    types: [Fighting]
+    egg-groups: [Field]
+    biomes: [TropicalRainforest, TropicalSeasonalForest]
+    active: [Morning, Day, Evening]
+Wimpod:
+  Wimpod:
+    types: [Bug, Water]
+    egg-groups: [Bug, Water3]
+    habitat: Amphibious
+    biomes: [Beach, RockyCoast, Ocean]
+    active: any
+    evolves-into:
+      - species: Golisopod
+        method: [Level]
+        level: 30
+  Golisopod:
+    types: [Bug, Water]
+    egg-groups: [Bug, Water3]
+    habitat: Amphibious
+    biomes: [Beach, RockyCoast, Ocean]
+    active: any
+    evolves-from: Wimpod
+Sandygast:
+  Sandygast:
+    types: [Ghost, Ground]
+    egg-groups: [Amorphous]
+    biomes: [Beach, Desert, Ocean]
+    active: any
+    evolves-into:
+      - species: Palossand
+        method: [Level]
+        level: 42
+  Palossand:
+    types: [Ghost, Ground]
+    egg-groups: [Amorphous]
+    biomes: [Beach, Desert, Ocean]
+    active: any
+    evolves-from: Sandygast
+Pyukumuku:
+  Pyukumuku:
+    types: [Water]
+    egg-groups: [Water1]
+    habitat: Amphibious
+    biomes: [Beach, RockyCoast, Ocean]
+    active: any

@@ -1,5 +1,5 @@
 import 'server-only';
-import { Acquisition, asCaughtPokemon, isAuctionableCatch } from '../auth/caught-record';
+import { Acquisition, asCaughtPokemon, isAuctionableCatch } from '../model/caught-record';
 import {
   EGG_LEVEL,
   MAX_STEP_REPORT,
@@ -7,8 +7,8 @@ import {
   creditedEggSteps,
   getEggHatchSteps,
   stepsRemaining,
-} from '../auth/egg';
-import { getMaxHealth } from '../auth/health';
+} from '../model/egg';
+import { getMaxHealth } from '../model/health';
 import {
   FOGBOW_MOVE_CHANCE,
   FOGBOW_MOVE_SLOTS,
@@ -16,7 +16,7 @@ import {
   widensMoveSlots,
 } from '../data/overworld/weather';
 import { DEFAULT_MOVE_SLOTS, Slots, defaultSlots, withSlots } from '../data/constants/slots';
-import { asOffset, toLocalISO, toLocalTime } from '../auth/local-time';
+import { asOffset, toLocalISO, toLocalTime } from '../model/local-time';
 import AleaRNG from '../core/alea';
 import Abilities from '../data/ids/abilities';
 import { Balls, type Items } from '../data/ids/items';
@@ -45,7 +45,7 @@ import {
 } from '../overworld/breeding';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
 import type { Spawn } from '../overworld/chunk-snapshot';
-import { Metric } from '../auth/quest-record';
+import { Metric } from '../model/quest-record';
 import deriveEncounter, {
   EncounterType,
   bonusMoveRoll,
@@ -57,7 +57,7 @@ import { catchCandyWorth } from './candy';
 import { bumpProgress } from './quest-progress';
 import { type Tx, newDocId, tx } from './db';
 import { readCaughtIn, updateCaughtIn } from './caught-io';
-import { CANDY_STACKS, ITEM_STACKS } from '../auth/stacks';
+import { CANDY_STACKS, ITEM_STACKS } from '../model/stacks';
 import { grantStacksIn, readStacksIn, writeStackIn } from './stacks';
 import { asLocale, isEggRecord, zeroEffortValues } from './catch-fields';
 import {
@@ -71,6 +71,7 @@ import {
 import createOverworld from '../overworld/setup';
 import deriveNestEgg, { NEST_HATCH_FACTOR } from '../overworld/nest-egg';
 import resolveBuddy from './buddy';
+import { rollTeraType } from '../data/species/tera-type';
 import { isCatchLocked } from './locks';
 import { recordFoundSpecies } from './pokedex';
 
@@ -253,6 +254,8 @@ async function writeEgg(
       // raid's prize does
       abilities: hatching,
       items: [],
+      // Rolled for what is inside, which an evolution later keeps
+      teraType: rollTeraType(fields.species),
       // It was never anybody else's: this owner is where the pokemon
       // begins, egg and all
       history: [{ owner: uid, acquiredAt: foundAt, kind: Acquisition.Egg, ball: fields.ball }],

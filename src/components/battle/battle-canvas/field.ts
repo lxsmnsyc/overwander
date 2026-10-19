@@ -1,9 +1,18 @@
-import { BOSS_RADIUS, COLORS, MIN_RADIUS, PARTY_SLOT } from './metrics';
+import {
+  BOSS_RADIUS,
+  COLORS,
+  DYNAMAX_DRAW_SCALE,
+  FIELD_UNIT,
+  MIN_RADIUS,
+  PARTY_SLOT,
+  TOTEM_DRAW_SCALE,
+} from './metrics';
 import type { Striking } from './motion';
 import type Alliance from '../../../battle/alliance';
-import type Battle from '../../../battle/core';
+import type Battle from '../../../battle/battle';
 import { type MoveTarget, MoveTargetType } from '../../../battle/events';
 import type Team from '../../../battle/team';
+import Abilities from '../../../data/ids/abilities';
 import { Weathers } from '../../../data/ids/status';
 import type Unit from '../../../battle/unit';
 import projectField, {
@@ -11,10 +20,10 @@ import projectField, {
   type FieldView,
   ringOf,
   ringRadius,
-} from '../../../canvas/battle/field';
-import facingToward from '../../../canvas/facing';
-import type SpeciesSpriteAnimation from '../../../canvas/species-sprite-animation';
-import type { Point, SpriteDirection } from '../../../canvas/sprite-sheet';
+} from '../../../canvas/battle/projection';
+import facingToward from '../../../canvas/sprites/facing';
+import type SpeciesSpriteAnimation from '../../../canvas/sprites/species-sprite-animation';
+import type { Point, SpriteDirection } from '../../../canvas/sprites/sheet';
 
 /**
  * Who is standing where: the fight read into a ring of teams about a
@@ -53,6 +62,8 @@ export interface Slot {
   glow?: number;
   /** How much a transformation is swelling it, as a share of its size */
   swell?: number;
+  /** How far it is through growing into a Dynamax, from 0 to 1 */
+  giant?: number;
   /**
    * Which way it is facing: at whatever it is aiming at, worked out
    * after the camera has turned rather than fixed to a side of the
@@ -71,12 +82,6 @@ export interface Slot {
    * the body is furniture nobody can read
    */
   offset: Point;
-  /**
-   * How far the body is turned on the spot, in radians. It is the
-   * stand-in for a Rotate the sheet has not got, and nothing else
-   * turns a pokemon
-   */
-  spin: number;
   /** Whether it is in front of the camera at all. */
   visible: boolean;
   /** The substitute in front of it, where one is up */
@@ -242,6 +247,36 @@ const LOBBY_GAP = 21;
 const NEAREST = -Math.PI / 2;
 
 /**
+ * How far a Totem's ally stands from the Totem, in field units: clear
+ * of a Totem drawn larger than its kind, with room for its own slot
+ */
+const ALLY_REACH = (BOSS_RADIUS * TOTEM_DRAW_SCALE + PARTY_SLOT) / FIELD_UNIT;
+
+/**
+ * How wide the arc of several allies is, either side of the near point.
+ * The far third of a ring stands behind a boss drawn larger than its
+ * kind, where the camera cannot see it, so the arc leaves it out
+ */
+const ALLY_ARC = (Math.PI * 2) / 3;
+
+/** How far several allies stand from the boss, clear of a Totem- or Alpha-sized one */
+const ALLY_RING = ALLY_REACH * 1.3;
+
+/**
+ * Where the boss side's `at`th ally stands: a lone one beside the boss,
+ * and several spread along an arc round its front and sides
+ */
+function allyPlace(at: number, count: number): FieldPoint {
+  if (count < 2) {
+    return { x: ALLY_REACH * (at + 1), z: 0 };
+  }
+
+  const around = NEAREST - ALLY_ARC + (at * 2 * ALLY_ARC) / (count - 1);
+
+  return { x: Math.cos(around) * ALLY_RING, z: Math.sin(around) * ALLY_RING };
+}
+
+/**
  * How far back the camera stands for a lobby, and how wide its ring
  * is.
  *
@@ -264,6 +299,41 @@ export function lobbyCamera(teams: number): { radius: number; zoom: number } {
 }
 
 /**
+ * Where each of a side stands. A Dynamaxed pokemon cannot be sent off
+ * the field, so it holds the middle while it lasts and the rest ring
+ * round it, out far enough to stand clear of its size
+ */
+export function placesOf(units: Unit[], centre: FieldPoint, radius: number): FieldPoint[] {
+  let giant = -1;
+
+  for (const [at, unit] of units.entries()) {
+    if (unit.dynamaxed && giant < 0) {
+      giant = at;
+    }
+  }
+  if (giant < 0 || units.length < 2) {
+    return ringOf(units.length, centre, radius);
+  }
+
+  const reach = radius * DYNAMAX_DRAW_SCALE;
+  // A ring of one is its own middle, so a lone neighbour stands on the near edge instead
+  const around =
+    units.length === 2
+      ? [{ x: centre.x, z: centre.z - reach }]
+      : ringOf(units.length - 1, centre, reach);
+  const places: FieldPoint[] = [];
+
+  for (const [at] of units.entries()) {
+    if (at === giant) {
+      places.push(centre);
+    } else {
+      places.push(around[at < giant ? at : at - 1]);
+    }
+  }
+  return places;
+}
+
+/**
  * A side of a fight: a ring of pokemon around a point, each looking at
  * whatever it is up against by default — until it is aiming at
  * something, which `project` lets it turn to
@@ -279,8 +349,9 @@ export function side(
   standFor: (unit: Unit) => Stand | null = () => null,
 ): Standing[] {
   const standings: Standing[] = [];
+  const places = placesOf(units, centre, radius);
 
-  for (const [at, place] of ringOf(units.length, centre, radius).entries()) {
+  for (const [at, place] of places.entries()) {
     standings.push({
       unit: units[at],
       place,
@@ -315,16 +386,43 @@ export function ringStandings(
   // is drawn smaller for it: the camera has stepped back with the ring
   const { radius, zoom } = lobbyCamera(field.teams.length);
 
+  // The boss side holds the boss and, once called, a Totem's ally or
+  // an Alpha's copies. The boss keeps the origin, so an arrival moves
+  // nobody
+  const bosses: Unit[] = [];
+  const allies: Unit[] = [];
+
+  for (const unit of field.middle) {
+    if (unit.hasAbility(Abilities.Boss)) {
+      bosses.push(unit);
+    } else {
+      allies.push(unit);
+    }
+  }
+
   // Normally one. Two would be a raid nothing stages yet, so they
   // stand side by side rather than on top of one another
-  for (const [at, unit] of field.middle.entries()) {
+  for (const [at, unit] of bosses.entries()) {
     standings.push({
       unit,
-      place: { x: (at - (field.middle.length - 1) / 2) * 4, z: 0 },
+      place: { x: (at - (bosses.length - 1) / 2) * 4, z: 0 },
       // Nothing of its own to look at until it aims at something, so
       // it faces the camera
       look: { x: 0, z: -radius },
       radius: BOSS_RADIUS * zoom,
+      color: COLORS.boss,
+      sprite: spriteFor(unit),
+      stand: standFor(unit),
+    });
+  }
+
+  // An ally is an ordinary pokemon, so it is drawn at a party's size
+  for (const [at, unit] of allies.entries()) {
+    standings.push({
+      unit,
+      place: allyPlace(at, allies.length),
+      look: { x: 0, z: -radius },
+      radius: PARTY_SLOT * zoom,
       color: COLORS.boss,
       sprite: spriteFor(unit),
       stand: standFor(unit),
@@ -547,7 +645,6 @@ export function project(
       facing: facingToward(on.x, on.y, at.x, at.y),
       depth: on.scale,
       offset: [0, 0] as Point,
-      spin: 0,
       visible: on.visible,
     });
   }

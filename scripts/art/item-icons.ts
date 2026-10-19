@@ -1021,7 +1021,55 @@ function zenithShard(region: string, holder: string, first: string, second = fir
 }
 
 /** Every Zenith Shard, with its Zenith's types' colours */
+TINTS.push(zenithShard('kanto', 'butterfree', '#91a119', '#ef4179'));
+TINTS.push(zenithShard('kanto', 'raticate', '#9fa19f'));
+TINTS.push(zenithShard('kanto', 'fearow', '#81b9ef', '#915121'));
+TINTS.push(zenithShard('kanto', 'arbok', '#9141cb', '#624d4e'));
+TINTS.push(zenithShard('kanto', 'sandslash', '#915121', '#60a1b8'));
+TINTS.push(zenithShard('kanto', 'nidoqueen', '#9141cb', '#915121'));
+TINTS.push(zenithShard('kanto', 'nidoking', '#9141cb', '#915121'));
+TINTS.push(zenithShard('kanto', 'ninetales', '#e62829', '#704170'));
+TINTS.push(zenithShard('kanto', 'wigglytuff', '#9fa19f', '#ef70ef'));
+TINTS.push(zenithShard('kanto', 'vileplume', '#3fa129', '#9141cb'));
+TINTS.push(zenithShard('kanto', 'parasect', '#91a119', '#704170'));
+TINTS.push(zenithShard('kanto', 'venomoth', '#91a119', '#9141cb'));
+TINTS.push(zenithShard('kanto', 'dugtrio', '#915121'));
+TINTS.push(zenithShard('kanto', 'persian', '#9fa19f'));
+TINTS.push(zenithShard('kanto', 'golduck', '#2980ef', '#ef4179'));
 TINTS.push(zenithShard('kanto', 'arcanine', '#e62829', '#5060e1'));
+TINTS.push(zenithShard('kanto', 'poliwrath', '#2980ef', '#ff8000'));
+TINTS.push(zenithShard('kanto', 'machamp', '#ff8000'));
+TINTS.push(zenithShard('kanto', 'tentacruel', '#2980ef', '#9141cb'));
+TINTS.push(zenithShard('kanto', 'golem', '#afa981', '#915121'));
+TINTS.push(zenithShard('kanto', 'rapidash', '#e62829'));
+TINTS.push(zenithShard('kanto', 'farfetchd', '#9fa19f', '#81b9ef'));
+TINTS.push(zenithShard('kanto', 'dodrio', '#9fa19f', '#81b9ef'));
+TINTS.push(zenithShard('kanto', 'dewgong', '#2980ef', '#3dcef3'));
+TINTS.push(zenithShard('kanto', 'muk', '#9141cb'));
+TINTS.push(zenithShard('kanto', 'cloyster', '#2980ef', '#3dcef3'));
+TINTS.push(zenithShard('kanto', 'hypno', '#ef4179'));
+TINTS.push(zenithShard('kanto', 'kingler', '#2980ef'));
+TINTS.push(zenithShard('kanto', 'electrode', '#fac000'));
+TINTS.push(zenithShard('kanto', 'exeggutor', '#3fa129', '#ef4179'));
+TINTS.push(zenithShard('kanto', 'marowak', '#915121', '#ff8000'));
+TINTS.push(zenithShard('kanto', 'hitmonlee', '#ff8000'));
+TINTS.push(zenithShard('kanto', 'hitmonchan', '#ff8000'));
+TINTS.push(zenithShard('kanto', 'weezing', '#9141cb'));
+TINTS.push(zenithShard('kanto', 'seaking', '#2980ef'));
+TINTS.push(zenithShard('kanto', 'mr-mime', '#ef4179', '#ef70ef'));
+TINTS.push(zenithShard('kanto', 'jynx', '#3dcef3', '#ef4179'));
+TINTS.push(zenithShard('kanto', 'tauros', '#9fa19f'));
+TINTS.push(zenithShard('kanto', 'lapras', '#2980ef', '#3dcef3'));
+TINTS.push(zenithShard('kanto', 'vaporeon', '#2980ef'));
+TINTS.push(zenithShard('kanto', 'jolteon', '#fac000'));
+TINTS.push(zenithShard('kanto', 'flareon', '#e62829'));
+TINTS.push(zenithShard('kanto', 'omastar', '#afa981', '#2980ef'));
+TINTS.push(zenithShard('kanto', 'kabutops', '#afa981', '#2980ef'));
+TINTS.push(zenithShard('kanto', 'snorlax', '#9fa19f'));
+TINTS.push(zenithShard('kanto', 'articuno', '#3dcef3', '#81b9ef'));
+TINTS.push(zenithShard('kanto', 'zapdos', '#fac000', '#81b9ef'));
+TINTS.push(zenithShard('kanto', 'moltres', '#e62829', '#81b9ef'));
+TINTS.push(zenithShard('kanto', 'mew', '#ef4179'));
 
 /**
  * The marks a swap cannot make, painted on where the picture already

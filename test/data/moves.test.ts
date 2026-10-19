@@ -31,6 +31,7 @@ import {
   getRegisteredSpecies,
   getSpeciesData,
   isMegaSpecies,
+  isZenithSpecies,
   registerSpecies,
 } from '../../src/data/species';
 
@@ -184,10 +185,12 @@ describe('the moves added back to the dex', () => {
   });
 
   it('teaches Soft-Boiled to Chansey, the fairies and the one who was not supposed to exist', () => {
-    // A Mega fights with what its pokemon knows, so it is no learner of its own
+    // A Mega or a Zenith fights with what its pokemon knows, so it is no
+    // learner of its own
     const taught = getRegisteredSpecies().filter(
       (species) =>
         !isMegaSpecies(species) &&
+        !isZenithSpecies(species) &&
         new Set(getSpeciesData(species).learnSet.teachable).has(Moves.SoftBoiled),
     );
 

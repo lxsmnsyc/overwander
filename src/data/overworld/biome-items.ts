@@ -102,7 +102,8 @@ let homes: Map<Items, Set<Biome>> | null = null;
 /**
  * Where each Zenith Shard is buried: wherever any stage of its line
  * is met, read off the species so a line moved to new ground takes
- * its shard along. A final stage is often met nowhere itself
+ * its shard along. A final stage is often met nowhere itself, and a
+ * line met nowhere at all (a revived fossil) is buried everywhere
  */
 function addZenithHomes(into: Map<Items, Set<Biome>>): void {
   const families = new Map<Families, Set<Biome>>();
@@ -117,7 +118,11 @@ function addZenithHomes(into: Map<Items, Set<Biome>>): void {
     families.set(data.family, ground);
   }
   for (const [item, shape] of ZENITH_SHARDS) {
-    into.set(item, families.get(getSpeciesData(shape.base).family) ?? new Set());
+    const ground = families.get(getSpeciesData(shape.base).family);
+
+    if (ground != null && ground.size > 0) {
+      into.set(item, ground);
+    }
   }
 }
 

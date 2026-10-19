@@ -2,6 +2,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import registerGameData from '../../src/data';
 import { STAT_ORDER } from '../../src/data/constants/stats';
 import { getBaseFormSpecies } from '../../src/data/ids/forms';
+import { Items } from '../../src/data/ids/items';
 import type { Species } from '../../src/data/ids/species';
 import { FORM_ITEMS } from '../../src/data/items/form-items';
 import { getItemBiomes } from '../../src/data/overworld/biome-items';
@@ -78,10 +79,15 @@ describe('Zeniths', () => {
       const biomes = getItemBiomes(shape.shard);
 
       expect(getItemBand(shape.shard), shape.holder).toBe('prized');
-      expect(biomes.length, shape.holder).toBeGreaterThan(0);
       for (const biome of getSpeciesData(shape.base).biomes) {
         expect(biomes, shape.holder).toContain(biome);
       }
     }
+  });
+
+  it("buries a revived fossil line's shard everywhere, since the line is met nowhere", () => {
+    expect(getItemBiomes(Items.OmastarZenithShard)).toEqual([]);
+    expect(getItemBiomes(Items.KabutopsZenithShard)).toEqual([]);
+    expect(getItemBiomes(Items.ArcanineZenithShard).length).toBeGreaterThan(0);
   });
 });

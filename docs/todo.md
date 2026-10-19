@@ -120,15 +120,14 @@ Small and unblocked.
       should declare all of it in one place, the way `createAbility` does for
       abilities, so adding the Jeweler or the Archaeologist above is one file.
 
-- [ ] **Zenith forms, region by region.** The system and Zenith Arcanine are in
-      (`src/data/species/zeniths.ts`). Each batch proposes, per species, the
-      stat spread (+100), the worn ability and any type change for approval,
+- [ ] **Zenith forms, region by region.** Kanto is done
+      (`src/data/species/zeniths.ts`), and Johto is next. Each batch proposes,
+      per species, the stat spread (+100), the worn ability and any type change for approval,
       then adds the shape, its shard id (2000000 + dex × 100 + 01), its tint in
       `scripts/art/item-icons.ts` and its `zenith/<region>` icon.
-- [ ] **The Kanto Zeniths.** In progress. Agreed so far: Marowak is
-      Ground/Fighting with Mummy, and Ditto has no Zenith (`NO_ZENITH`).
-      Drafted Gen 7 picks: Electrode Galvanize, Lapras Liquid Voice, Seaking
-      Dazzling, Mr. Mime Prism Armor, Weezing Corrosion, Hitmonlee Long Reach.
+- [ ] **Regional Zeniths.** Kanto's regional forms (Alolan, Galarian,
+      Hisuian, Paldean) get theirs with their own region's batch, in slot 98
+      and down. Ditto has no Zenith (`NO_ZENITH`).
 - [ ] **Type: Null and Silvally.** When Gen 7 lands, Silvally's 17 Memories
       are form items the way the Plates are: rows in `FORM_ITEMS` derived from
       the type each Memory loads, gated on RKS System through `SHAPE_NEEDS` the

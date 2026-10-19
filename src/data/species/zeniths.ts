@@ -48,44 +48,6 @@ export const ZENITH_SHAPES: ZenithShape[] = [
 ];
 
 /**
- * The pokemon Legends: Z-A and its Mega Dimension gave a Mega that is
- * not registered here yet. Each is spoken for by that Mega, so none of
- * them gets a Zenith; a Mega registered later leaves this list
- */
-export const RESERVED_FOR_MEGAS = new Set<Species>([
-  Species.Raichu,
-  Species.Clefable,
-  Species.Victreebel,
-  Species.Starmie,
-  Species.Dragonite,
-  Species.Meganium,
-  Species.Feraligatr,
-  Species.Skarmory,
-  Species.Chimecho,
-  Species.Staraptor,
-  Species.Froslass,
-  Species.Heatran,
-  Species.Darkrai,
-  Species.Emboar,
-  Species.Excadrill,
-  Species.Scolipede,
-  Species.Scrafty,
-  Species.Eelektross,
-  Species.Chandelure,
-  Species.Golurk,
-  Species.Chesnaught,
-  Species.Delphox,
-  Species.Greninja,
-  Species.Pyroar,
-  Species.Meowstic,
-  Species.Malamar,
-  Species.Barbaracle,
-  Species.Dragalge,
-  Species.Hawlucha,
-  Species.Zygarde,
-]);
-
-/**
  * The pokemon left without a Zenith although nothing else spoken for
  * them. Ditto's whole kit is becoming something else, and a Zenith
  * set on entry would undo the copy Imposter has just made

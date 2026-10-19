@@ -15,7 +15,6 @@ import {
 import { getMegaBase } from '../../src/data/species/megas';
 import {
   NO_ZENITH,
-  RESERVED_FOR_MEGAS,
   ZENITH_BONUS,
   ZENITH_SHAPES,
   zenithShardId,
@@ -38,7 +37,7 @@ describe('Zeniths', () => {
   it('gives each a final stage with no other held shape', () => {
     // The pokemon a held item already changes: every Mega, and every
     // shape a form item puts something in
-    const spoken = new Set<Species>([...RESERVED_FOR_MEGAS, ...NO_ZENITH]);
+    const spoken = new Set<Species>(NO_ZENITH);
 
     for (const mega of listMegas()) {
       spoken.add(getMegaBase(mega)!);

@@ -1,7 +1,7 @@
 import { EventPriority } from '../../core/event-emitter';
 import type { Species } from '../../data/ids/species';
 import { ZENITH_SHARDS } from '../../data/items/zenith-shards';
-import { getZenithShape } from '../../data/species/zeniths';
+import { getZenithShape, isZenithSpecies } from '../../data/species/zeniths';
 import type Battle from '../battle';
 import { BattleEvents } from '../events';
 import type Team from '../team';
@@ -20,6 +20,11 @@ export function zenithOf(unit: Unit): Species | null {
     }
   }
   return null;
+}
+
+/** Whether the unit is a Zenith, or holds what would make it one */
+export function isZenithHolder(unit: Unit): boolean {
+  return zenithOf(unit) != null || isZenithSpecies(unit.species);
 }
 
 /** The one unit on a team that reaches its Zenith */

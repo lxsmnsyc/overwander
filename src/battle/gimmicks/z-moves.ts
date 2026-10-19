@@ -22,6 +22,7 @@ import {
   MoveTargetType,
 } from '../events';
 import { isMegaHolder } from './mega';
+import { isZenithHolder } from './zenith';
 import type Team from '../team';
 import type Unit from '../unit';
 
@@ -72,7 +73,7 @@ export function zCastShownAs(unit: Unit, cast: CastingData): Moves | null {
 
 /** The Z-Move this unit's crystal makes of the move, if any */
 function zMoveFor(unit: Unit, move: Moves, target: MoveTarget): Moves | null {
-  if (!canBecomeZMove(move) || isMegaHolder(unit) || unit.terastallized) {
+  if (!canBecomeZMove(move) || isMegaHolder(unit) || isZenithHolder(unit) || unit.terastallized) {
     return null;
   }
   for (const [item, crystal] of SIGNATURE_CRYSTALS) {
@@ -102,6 +103,7 @@ function zEffectFor(unit: Unit, move: Moves, target: MoveTarget): ZStatusEffect 
   if (
     effect == null ||
     isMegaHolder(unit) ||
+    isZenithHolder(unit) ||
     unit.terastallized ||
     !holdsTypeCrystal(unit, unit.checkMoveType(move, target))
   ) {

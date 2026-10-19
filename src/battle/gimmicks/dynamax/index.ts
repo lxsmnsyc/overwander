@@ -4,6 +4,7 @@ import { Items } from '../../../data/ids/items';
 import { Moves } from '../../../data/ids/moves';
 import { Statuses } from '../../../data/ids/status';
 import { MEGA_STONES } from '../../../data/items/mega-stones';
+import { ZENITH_SHARDS } from '../../../data/items/zenith-shards';
 import { SIGNATURE_CRYSTALS, TYPE_CRYSTALS } from '../../../data/items/z-crystals';
 import type Battle from '../../battle';
 import { BattleEvents, EffectType, MoveTargetType } from '../../events';
@@ -102,9 +103,9 @@ export function dynamaxActsLeft(unit: Unit): number {
   return actsLeft.get(unit) ?? 0;
 }
 
-/** Whether it holds any Mega Stone or Z-Crystal, whoever the stone is for */
+/** Whether it holds any Mega Stone, Zenith Shard or Z-Crystal, whoever it is for */
 export function holdsStoneOrCrystal(unit: Unit): boolean {
-  for (const held of [MEGA_STONES, TYPE_CRYSTALS, SIGNATURE_CRYSTALS]) {
+  for (const held of [MEGA_STONES, ZENITH_SHARDS, TYPE_CRYSTALS, SIGNATURE_CRYSTALS]) {
     for (const item of held.keys()) {
       if (unit.items[item] != null) {
         return true;

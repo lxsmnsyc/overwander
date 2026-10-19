@@ -1,8 +1,15 @@
 import { describe, expect, it } from 'vitest';
+import { MoveTargetType } from '../../../src/battle/events';
+import { canDynamax } from '../../../src/battle/gimmicks/dynamax';
+import { canTerastallize } from '../../../src/battle/gimmicks/terastal';
+import { zCastShownAs } from '../../../src/battle/gimmicks/z-moves';
+import type Unit from '../../../src/battle/unit';
+import { packSlots } from '../../../src/data/constants/slots';
 import { Stats } from '../../../src/data/constants/stats';
 import { Types } from '../../../src/data/constants/types';
 import Abilities from '../../../src/data/ids/abilities';
 import { Items } from '../../../src/data/ids/items';
+import { Moves } from '../../../src/data/ids/moves';
 import { Species } from '../../../src/data/ids/species';
 import { createBattle, createUnit } from '../harness';
 
@@ -84,5 +91,37 @@ describe('Zeniths', () => {
     dog.enter();
 
     expect(dog.species).toBe(Species.ArcanineZenith);
+  });
+
+  it('keeps a shard holder from Z-Moves, Terastal and Dynamax', () => {
+    const { battle, teamA, teamB } = createBattle('test-seed', undefined, packSlots(1, 2, 4));
+    const foe = createUnit(battle, teamB);
+    const plain = createUnit(battle, teamA);
+    const holding = (item: Items): Unit => {
+      const dog = createUnit(battle, teamA);
+
+      dog.setSlots(packSlots(1, 2, 4));
+      dog.setSpecies(Species.Arcanine);
+      dog.addItem(Items.ArcanineZenithShard);
+      dog.addItem(item);
+      return dog;
+    };
+    const crystal = holding(Items.FiriumZ);
+    const orb = holding(Items.TeraOrb);
+    const band = holding(Items.DynamaxBand);
+    const cast = {
+      move: Moves.Flamethrower,
+      target: { type: MoveTargetType.Unit, unit: foe },
+      time: { progress: 0, duration: 1 },
+    } as const;
+
+    plain.setSpecies(Species.Arcanine);
+    plain.addItem(Items.FiriumZ);
+
+    // The same crystal turns the cast of an Arcanine with no shard
+    expect(zCastShownAs(plain, cast)).not.toBeNull();
+    expect(zCastShownAs(crystal, cast)).toBeNull();
+    expect(canTerastallize(orb)).toBe(false);
+    expect(canDynamax(band)).toBe(false);
   });
 });

@@ -1103,6 +1103,7 @@ const SHRUNK: Shrunk[] = [
   { from: 'unremarkable-teacup', to: 'evolutions/unremarkable-teacup', fit: 28, plain: true },
   { from: 'masterpiece-teacup', to: 'evolutions/masterpiece-teacup', fit: 28, plain: true },
   { from: 'leaders-crest', to: 'evolutions/leaders-crest', fit: 28, plain: true },
+  { from: 'booster-energy', to: 'held/booster-energy', fit: 28, plain: true },
 ];
 
 function lightnessOf(colour: number[]): number {

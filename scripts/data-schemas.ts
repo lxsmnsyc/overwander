@@ -125,6 +125,7 @@ const EVOLUTION = part(
       ['stat', 'against', 'order'],
     ),
     walked: described(COUNT, 'The steps it has to walk as the buddy'),
+    candies: described(COUNT, 'The candies of its family the evolution spends'),
     rare: described({ type: 'boolean' }, 'Taken only by the one in a hundred, or only by the rest'),
     shed: described({ type: 'boolean' }, 'Left behind beside the evolution taken, as Shedinja'),
   },

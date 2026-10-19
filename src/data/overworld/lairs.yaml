@@ -311,15 +311,12 @@ IcerendShrine:
 # The shrine Ting-Lu was sealed under, in the ground it blighted
 GroundblightShrine:
   species: [TingLu]
-  reserved: true
 # The shrine Chi-Yu was sealed under, in the fire it scourged
 FirescourgeShrine:
   species: [ChiYu]
-  reserved: true
 # The laboratory at the bottom of Area Zero the two box legends came out of
 ZeroLab:
   species: [Koraidon, Miraidon]
-  reserved: true
 # The barrens in north-west Kitakami Okidogi keeps to
 ParadiseBarrens:
   species: [Okidogi]

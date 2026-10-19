@@ -17,3 +17,107 @@ Frigibax:
     height: 2.1
     weight: 210
     gender: [4, 4]
+Gimmighoul:
+  Gimmighoul:
+    stats: { HP: 45, Attack: 30, Defense: 70, SpecialAttack: 75, SpecialDefense: 70, Speed: 10 }
+    catch-rate: 45
+    height: 0.3
+    weight: 5
+    gender: genderless
+  Gholdengo:
+    stats: { HP: 87, Attack: 60, Defense: 95, SpecialAttack: 133, SpecialDefense: 91, Speed: 84 }
+    catch-rate: 45
+    height: 1.2
+    weight: 30
+    gender: genderless
+GreatTusk:
+  GreatTusk:
+    stats: { HP: 115, Attack: 131, Defense: 131, SpecialAttack: 53, SpecialDefense: 53, Speed: 87 }
+    catch-rate: 30
+    height: 2.2
+    weight: 320
+    gender: genderless
+ScreamTail:
+  ScreamTail:
+    stats: { HP: 115, Attack: 65, Defense: 99, SpecialAttack: 65, SpecialDefense: 115, Speed: 111 }
+    catch-rate: 50
+    height: 1.2
+    weight: 8
+    gender: genderless
+FlutterMane:
+  FlutterMane:
+    stats: { HP: 55, Attack: 55, Defense: 55, SpecialAttack: 135, SpecialDefense: 135, Speed: 135 }
+    catch-rate: 30
+    height: 1.4
+    weight: 4
+    gender: genderless
+SlitherWing:
+  SlitherWing:
+    stats: { HP: 85, Attack: 135, Defense: 79, SpecialAttack: 85, SpecialDefense: 105, Speed: 81 }
+    catch-rate: 30
+    height: 3.2
+    weight: 92
+    gender: genderless
+SandyShocks:
+  SandyShocks:
+    stats: { HP: 85, Attack: 81, Defense: 97, SpecialAttack: 121, SpecialDefense: 85, Speed: 101 }
+    catch-rate: 30
+    height: 2.3
+    weight: 60
+    gender: genderless
+IronTreads:
+  IronTreads:
+    stats: { HP: 90, Attack: 112, Defense: 120, SpecialAttack: 72, SpecialDefense: 70, Speed: 106 }
+    catch-rate: 30
+    height: 0.9
+    weight: 240
+    gender: genderless
+IronBundle:
+  IronBundle:
+    stats: { HP: 56, Attack: 80, Defense: 114, SpecialAttack: 124, SpecialDefense: 60, Speed: 136 }
+    catch-rate: 50
+    height: 0.6
+    weight: 11
+    gender: genderless
+IronHands:
+  IronHands:
+    stats: { HP: 154, Attack: 140, Defense: 108, SpecialAttack: 50, SpecialDefense: 68, Speed: 50 }
+    catch-rate: 50
+    height: 1.8
+    weight: 380.7
+    gender: genderless
+IronMoth:
+  IronMoth:
+    stats: { HP: 80, Attack: 70, Defense: 60, SpecialAttack: 140, SpecialDefense: 110, Speed: 110 }
+    catch-rate: 30
+    height: 1.2
+    weight: 36
+    gender: genderless
+IronThorns:
+  IronThorns:
+    stats: { HP: 100, Attack: 134, Defense: 110, SpecialAttack: 70, SpecialDefense: 84, Speed: 72 }
+    catch-rate: 30
+    height: 1.6
+    weight: 303
+    gender: genderless
+RoaringMoon:
+  RoaringMoon:
+    stats: { HP: 105, Attack: 139, Defense: 71, SpecialAttack: 55, SpecialDefense: 101, Speed: 119 }
+    catch-rate: 10
+    height: 2
+    weight: 380
+    gender: genderless
+TingLu:
+  TingLu:
+    stats: { HP: 155, Attack: 110, Defense: 125, SpecialAttack: 55, SpecialDefense: 80, Speed: 45 }
+    catch-rate: 6
+    height: 2.7
+    weight: 699.7
+    gender: genderless
+ChiYu:
+  ChiYu:
+    stats: { HP: 55, Attack: 80, Defense: 80, SpecialAttack: 135, SpecialDefense: 120, Speed: 100 }
+    catch-rate: 6
+    height: 0.4
+    weight: 4.9
+    gender: genderless

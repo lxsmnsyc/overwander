@@ -145,3 +145,12 @@ EjectPack:
   flags: [Consumable, Holdable, Marketable]
   buy: 3000
   sell: 1500
+
+# The capsule a Paradox pokemon draws on when neither sun nor Electric
+# Terrain is there to wake its ability
+BoosterEnergy:
+  type: Held
+  icon: held/booster-energy
+  flags: [Consumable, Holdable, Marketable]
+  buy: 3000
+  sell: 1500

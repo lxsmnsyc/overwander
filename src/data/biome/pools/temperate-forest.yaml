@@ -125,6 +125,8 @@ land:
       Bonsly: prized
       MimeJr: prized
       Happiny: prized
+      IronValiant: 8
+      IronLeaves: 8
     special:
       Kartana: 10
       Xerneas: 10
@@ -227,6 +229,9 @@ land:
       Bonsly: prized
       MimeJr: prized
       Happiny: prized
+      FlutterMane: 8
+      IronValiant: 8
+      IronLeaves: 8
     special:
       Kartana: 10
       Xerneas: 10
@@ -330,6 +335,9 @@ land:
       Bonsly: prized
       MimeJr: prized
       Happiny: prized
+      FlutterMane: 8
+      IronValiant: 8
+      IronLeaves: 8
     special:
       Kartana: 10
       Xerneas: 10

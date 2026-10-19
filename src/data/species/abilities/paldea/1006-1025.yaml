@@ -13,3 +13,38 @@ Poltchageist:
     abilities: [Hospitality]
     # Cursed Body and Levitate are this registry's rather than the mainline's, filling it to four
     hidden: [Heatproof, CursedBody, Levitate]
+IronValiant:
+  IronValiant:
+    abilities: [QuarkDrive]
+    # Sharpness, Trace and Download are this registry's rather than the mainline's, filling it to four
+    hidden: [Sharpness, Trace, Download]
+Koraidon:
+  Koraidon:
+    abilities: [OrichalcumPulse]
+    # Tough Claws, Guts and Intimidate are this registry's rather than the mainline's, filling it to four
+    hidden: [ToughClaws, Guts, Intimidate]
+Miraidon:
+  Miraidon:
+    abilities: [HadronEngine]
+    # Levitate, Download and Transistor are this registry's rather than the mainline's, filling it to four
+    hidden: [Levitate, Download, Transistor]
+WalkingWake:
+  WalkingWake:
+    abilities: [Protosynthesis]
+    # Swift Swim, Inner Focus and Water Absorb are this registry's rather than the mainline's, filling it to four
+    hidden: [SwiftSwim, InnerFocus, WaterAbsorb]
+IronLeaves:
+  IronLeaves:
+    abilities: [QuarkDrive]
+    # Sharpness, Justified and Leaf Guard are this registry's rather than the mainline's, filling it to four
+    hidden: [Sharpness, Justified, LeafGuard]
+GougingFire:
+  GougingFire:
+    abilities: [Protosynthesis]
+    # Flash Fire, Rock Head and Inner Focus are this registry's rather than the mainline's, filling it to four
+    hidden: [FlashFire, RockHead, InnerFocus]
+RagingBolt:
+  RagingBolt:
+    abilities: [Protosynthesis]
+    # Volt Absorb, Inner Focus and Static are this registry's rather than the mainline's, filling it to four
+    hidden: [VoltAbsorb, InnerFocus, Static]

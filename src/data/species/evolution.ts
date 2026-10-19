@@ -30,7 +30,8 @@ export const SUPPORTED_METHODS =
   EvolutionMethod.KnownMove |
   EvolutionMethod.StatComparison |
   EvolutionMethod.Special |
-  EvolutionMethod.Walked;
+  EvolutionMethod.Walked |
+  EvolutionMethod.Candy;
 
 /**
  * What an evolution check is measured against: the catch itself, its
@@ -102,6 +103,11 @@ export interface EvolutionContext {
    * shut
    */
   walked?: number;
+  /**
+   * The candies its family's pile holds. Gimmighoul is the only line
+   * that reads it. Left out, a road that spends candies stays shut
+   */
+  candies?: number;
   /**
    * Whether it is the one in a hundred (see `isOneInAHundred`).
    * Tandemaus is the only line that reads it. Left out, it is one of
@@ -256,6 +262,11 @@ export function meetsEvolutionCriteria(
   }
   if ((method & EvolutionMethod.Walked) !== 0) {
     if (evolution.walked == null || (context.walked ?? 0) < evolution.walked) {
+      return false;
+    }
+  }
+  if ((method & EvolutionMethod.Candy) !== 0) {
+    if (evolution.candies == null || (context.candies ?? 0) < evolution.candies) {
       return false;
     }
   }

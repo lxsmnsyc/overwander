@@ -149,6 +149,11 @@
                 "minimum": 0,
                 "description": "The steps it has to walk as the buddy"
               },
+              "candies": {
+                "type": "number",
+                "minimum": 0,
+                "description": "The candies of its family the evolution spends"
+              },
               "rare": {
                 "type": "boolean",
                 "description": "Taken only by the one in a hundred, or only by the rest"

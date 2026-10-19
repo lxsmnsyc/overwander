@@ -23,3 +23,52 @@ Poltchageist:
     height: 0.2
     weight: 2.2
     gender: genderless
+IronValiant:
+  IronValiant:
+    stats: { HP: 74, Attack: 130, Defense: 90, SpecialAttack: 120, SpecialDefense: 60, Speed: 116 }
+    catch-rate: 10
+    height: 1.4
+    weight: 35
+    gender: genderless
+Koraidon:
+  Koraidon:
+    stats: { HP: 100, Attack: 135, Defense: 115, SpecialAttack: 85, SpecialDefense: 100, Speed: 135 }
+    catch-rate: 3
+    height: 2.5
+    weight: 303
+    gender: genderless
+Miraidon:
+  Miraidon:
+    stats: { HP: 100, Attack: 85, Defense: 100, SpecialAttack: 135, SpecialDefense: 115, Speed: 135 }
+    catch-rate: 3
+    height: 3.5
+    weight: 240
+    gender: genderless
+WalkingWake:
+  WalkingWake:
+    stats: { HP: 99, Attack: 83, Defense: 91, SpecialAttack: 125, SpecialDefense: 83, Speed: 109 }
+    catch-rate: 5
+    height: 3.5
+    weight: 280
+    gender: genderless
+IronLeaves:
+  IronLeaves:
+    stats: { HP: 90, Attack: 130, Defense: 88, SpecialAttack: 70, SpecialDefense: 108, Speed: 104 }
+    catch-rate: 5
+    height: 1.5
+    weight: 125
+    gender: genderless
+GougingFire:
+  GougingFire:
+    stats: { HP: 105, Attack: 115, Defense: 121, SpecialAttack: 65, SpecialDefense: 93, Speed: 91 }
+    catch-rate: 10
+    height: 3.5
+    weight: 590
+    gender: genderless
+RagingBolt:
+  RagingBolt:
+    stats: { HP: 125, Attack: 73, Defense: 91, SpecialAttack: 137, SpecialDefense: 89, Speed: 75 }
+    catch-rate: 10
+    height: 5.2
+    weight: 480
+    gender: genderless

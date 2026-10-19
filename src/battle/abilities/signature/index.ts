@@ -85,6 +85,9 @@ import tadbulbToWiglett from './tadbulb-to-wiglett';
 import finizenToGlimmet from './finizen-to-glimmet';
 import greavardToFrigibax from './greavard-to-frigibax';
 import paldeaRegionals from './paldea-regionals';
+import paldeaLegends from './paldea-legends';
+import ancientParadox from './ancient-paradox';
+import futureParadox from './future-paradox';
 import skwovetToYamper from './skwovet-to-yamper';
 import applinToPincurchin from './applin-to-pincurchin';
 import sinisteaToMilcery from './sinistea-to-milcery';
@@ -185,6 +188,9 @@ const setupAbilities = [
   ...finizenToGlimmet,
   ...greavardToFrigibax,
   ...paldeaRegionals,
+  ...paldeaLegends,
+  ...ancientParadox,
+  ...futureParadox,
   ...skwovetToYamper,
   ...applinToPincurchin,
   ...sinisteaToMilcery,

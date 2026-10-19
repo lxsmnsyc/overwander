@@ -3,3 +3,17 @@ Poltchageist:
   Sinistcha: { name: Sinistcha, category: Matcha Pokemon }
   PoltchageistArtisan: { name: Poltchageist Artisan, category: Matcha Pokemon }
   SinistchaMasterpiece: { name: Sinistcha Masterpiece, category: Matcha Pokemon }
+IronValiant:
+  IronValiant: { name: Iron Valiant, category: Paradox Pokemon }
+Koraidon:
+  Koraidon: { name: Koraidon, category: Paradox Pokemon }
+Miraidon:
+  Miraidon: { name: Miraidon, category: Paradox Pokemon }
+WalkingWake:
+  WalkingWake: { name: Walking Wake, category: Paradox Pokemon }
+IronLeaves:
+  IronLeaves: { name: Iron Leaves, category: Paradox Pokemon }
+GougingFire:
+  GougingFire: { name: Gouging Fire, category: Paradox Pokemon }
+RagingBolt:
+  RagingBolt: { name: Raging Bolt, category: Paradox Pokemon }

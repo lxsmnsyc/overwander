@@ -1429,6 +1429,7 @@ export const EVOLUTION_METHOD_IDS = {
   StatComparison: EvolutionMethod.StatComparison,
   Special: EvolutionMethod.Special,
   Walked: EvolutionMethod.Walked,
+  Candy: EvolutionMethod.Candy,
 } as const satisfies Record<string, EvolutionMethod>;
 
 export const MOVE_IDS = {
@@ -3304,6 +3305,29 @@ export const ABILITY_IDS = {
   BogDown: Abilities.BogDown,
   Raging: Abilities.Raging,
   TeaService: Abilities.TeaService,
+  CoinScatter: Abilities.CoinScatter,
+  WitheredTablets: Abilities.WitheredTablets,
+  ShatteredSword: Abilities.ShatteredSword,
+  CrackedVessel: Abilities.CrackedVessel,
+  ScatteredBeads: Abilities.ScatteredBeads,
+  SunSprint: Abilities.SunSprint,
+  DriveMode: Abilities.DriveMode,
+  HeadlongGuard: Abilities.HeadlongGuard,
+  ShriekSpeed: Abilities.ShriekSpeed,
+  EerieFlutter: Abilities.EerieFlutter,
+  AncientCocoon: Abilities.AncientCocoon,
+  EarthCurrent: Abilities.EarthCurrent,
+  MoonHowl: Abilities.MoonHowl,
+  SteamSurge: Abilities.SteamSurge,
+  MoltenBulwark: Abilities.MoltenBulwark,
+  StormCloud: Abilities.StormCloud,
+  TrackLaying: Abilities.TrackLaying,
+  IcePack: Abilities.IcePack,
+  IronGrip: Abilities.IronGrip,
+  ToxicExhaust: Abilities.ToxicExhaust,
+  SandGenerator: Abilities.SandGenerator,
+  Afterimage: Abilities.Afterimage,
+  TerrainEdge: Abilities.TerrainEdge,
 } as const satisfies Record<string, Abilities>;
 
 export const ITEM_IDS = {

@@ -89,6 +89,7 @@ const WORLD = v.object({
           }),
         ),
         walked: v.optional(COUNT),
+        candies: v.optional(COUNT),
         rare: v.optional(v.boolean()),
         shed: v.optional(v.boolean()),
       }),
@@ -196,6 +197,9 @@ function readEvolutions(
     }
     if (road.walked != null) {
       evolution.walked = road.walked;
+    }
+    if (road.candies != null) {
+      evolution.candies = road.candies;
     }
     if (road.rare != null) {
       evolution.rare = road.rare;

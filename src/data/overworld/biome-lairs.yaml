@@ -43,6 +43,7 @@ Badlands:
     UltraPlant,
     UltraRuin,
     EnergyPlant,
+    GroundblightShrine,
   ]
 Mountain:
   [
@@ -57,6 +58,7 @@ Mountain:
     TenCaratHill,
     UltraCrater,
     TowerOfDarkness,
+    ZeroLab,
   ]
 AlpineTundra: [CeruleanCave, SpearPillar, SnowslideSlope]
-Volcano: [MtEmber, TerraCave, StarkMountain]
+Volcano: [MtEmber, TerraCave, StarkMountain, FirescourgeShrine]

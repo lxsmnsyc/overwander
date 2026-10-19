@@ -58,3 +58,6 @@ EjectButton:
 EjectPack:
   name: Eject Pack
   description: Swaps its holder out for the strongest of their bench when a stat is knocked down.
+BoosterEnergy:
+  name: Booster Energy
+  description: Wakes a Protosynthesis or Quark Drive holder's boost without sun or Electric Terrain, used up as it does.

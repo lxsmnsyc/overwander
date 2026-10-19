@@ -35,7 +35,8 @@ const PAY_DAY_BORROWERS = new Set<Moves>([
 
 /**
  * Whether a pokemon fielded with these moves and abilities could ever
- * land a Pay Day. A new move or ability that borrows moves belongs in
+ * scatter coins: a Pay Day or a Make It Rain, or Gimmighoul's Coin
+ * Scatter. A new move or ability that borrows moves belongs in
  * `PAY_DAY_BORROWERS` or beside Imposter, or its coins are thrown away
  */
 function canScatterCoins(
@@ -43,7 +44,12 @@ function canScatterCoins(
   abilities: readonly Abilities[],
   rush: boolean,
 ): boolean {
-  return rush || canUse(Moves.PayDay, moves, abilities);
+  return (
+    rush ||
+    abilities.includes(Abilities.CoinScatter) ||
+    canUse(Moves.PayDay, moves, abilities) ||
+    canUse(Moves.MakeItRain, moves, abilities)
+  );
 }
 
 /** Whether these moves and abilities could ever reach `move`, borrowed or not */

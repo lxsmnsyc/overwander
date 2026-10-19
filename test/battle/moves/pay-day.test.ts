@@ -29,6 +29,11 @@ describe('what a Pay Day report may claim', () => {
     expect(payDayCeiling(10, [Moves.Tackle], [Abilities.Imposter], 0)).toBeGreaterThan(0);
   });
 
+  it('counts Make It Rain and Coin Scatter as scattering coins', () => {
+    expect(payDayCeiling(10, [Moves.MakeItRain], [], 0)).toBeGreaterThan(0);
+    expect(payDayCeiling(10, [Moves.Tackle], [Abilities.CoinScatter], 0)).toBeGreaterThan(0);
+  });
+
   it('doubles when the team could have called Happy Hour', () => {
     expect(payDayCeiling(50, [Moves.PayDay], [], 0, true)).toBe(
       PAY_DAY_COINS_PER_LEVEL * 50 * HAPPY_HOUR_FACTOR,

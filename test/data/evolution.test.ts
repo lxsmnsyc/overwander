@@ -746,6 +746,27 @@ describe('evolution data', () => {
     ]);
   });
 
+  it('holds a Gimmighoul back until its family has 999 candies', () => {
+    const context = {
+      species: Species.Gimmighoul,
+      level: 1,
+      carried: new Set<Items>(),
+      held: new Set<Items>(),
+      canEvolve: false,
+      moves: new Set<Moves>(),
+      stats: EVEN_STATS,
+      friendship: BASE_FRIENDSHIP,
+      time: TimeOfDay.Day,
+      gender: Genders.Genderless,
+    };
+
+    expect(getAvailableEvolutions(context)).toEqual([]);
+    expect(getAvailableEvolutions({ ...context, candies: 998 })).toEqual([]);
+    expect(getAvailableEvolutions({ ...context, candies: 999 })).toEqual([
+      { species: Species.Gholdengo, method: EvolutionMethod.Candy, candies: 999 },
+    ]);
+  });
+
   it('evolves a Dipplin that knows Dragon Cheer at any level', () => {
     const context = {
       species: Species.Dipplin,

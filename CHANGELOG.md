@@ -1,5 +1,85 @@
 # overwander
 
+## 4.41.1
+
+### Patch Changes
+
+- 505e9f0: Bloodmoon Ursaluna is a legend, staged by the new Timeless Woods lair in the taiga and the montane forest at night, rather than a rare wild spawn.
+
+## 4.41.0
+
+### Minor Changes
+
+- 97e8f7f: - Primeape evolves into Annihilape after landing Rage Fist 20 times across its fights.
+  - Girafarig evolves into Farigiraf, and Dunsparce into Dudunsparce, once they know Twin Beam and Hyper Drill.
+  - Bisharp evolves into Kingambit holding the new Leader's Crest.
+  - Applin evolves into Dipplin with the new Syrupy Apple, and Dipplin into Hydrapple once it knows Dragon Cheer.
+  - Duraludon evolves into Archaludon with the new Metal Alloy.
+  - Paldean Wooper and Clodsire live in the swamp. Bog Down keeps an enemy that hits it with a Ground move from switching out for 6 seconds.
+  - Paldean Tauros roams in all three breeds. Raging winds up 20% faster while its Attack is raised.
+  - Bloodmoon Ursaluna prowls the taiga at night, carrying its family's Sweet Paw.
+  - Poltchageist and Sinistcha haunt the forest at night, evolving with the new Unremarkable Teacup. Tea Service winds up healing moves for a teammate 40% faster.
+- d3000de: - One Sinistea and Poltchageist in a hundred is the real thing: an antique Sinistea grows into an antique Polteageist with the new Chipped Pot, and an artisan Poltchageist into a masterpiece Sinistcha with the new Masterpiece Teacup.
+  - One Dunsparce in a hundred grows into Three-Segment Dudunsparce.
+  - A wild Polteageist, Sinistcha or Dudunsparce is its rare form just as often. Each is drawn as its usual form until it has art of its own.
+
+## 4.40.0
+
+### Minor Changes
+
+- a7a4fd6: - One Tandemaus in a hundred grows into Maushold's family of three, and a wild Maushold is the family of three just as often. Which one a catch is never changes.
+- 1fc3193: - Lechonk and Oinkologne roam the grassland. Pig Out casts Stockpile each time it eats a Berry.
+  - Tarountula and Spidops lurk in the forest at night. Tripwire slows the first move of an enemy that takes the field mid-fight.
+  - Nymble and Lokix hop about the steppe. Knockback pushes back a target's wind-up with each contact move.
+  - Pawmi, Pawmo and Pawmot live on the mountain. Pawmo evolves after walking 1,000 steps as the buddy. Static Palms paralyses with its punches 20% of the time.
+  - Tandemaus and Maushold scurry through the woodland. Scatter Brood spreads a multi-hit move's strikes across the enemies.
+  - Fidough and Dachsbun play in the shrubland. Fresh Batch hands a Sitrus Berry to a teammate every 20 seconds.
+  - Smoliv, Dolliv and Arboliva grow on the steppe. Anoint cures a teammate's status whenever it heals them.
+  - Nacli, Naclstack and Garganacl are found on the mountain. Brine Rebound answers a Water move with Salt Cure.
+  - Charcadet, Armarouge and Ceruledge burn on the volcano at night, evolving with the new Auspicious and Malicious Armor. Kindling speeds up its next move after a Fire move.
+  - Tadbulb and Bellibolt glow in the bog. Bubble Shock hits a soaked target harder.
+  - Wattrel and Kilowattrel fly over the beach. Lightning Dive hits harder under Tailwind.
+  - Bramblin rolls through the desert and Toedscool hides in the bog, each waiting on its evolution. Windswept speeds it up after a wind move, and Mycelium Mat cures a teammate Grassy Terrain heals.
+  - Capsakid and Scovillain grow in the desert. Heat Tolerance turns a burn into healing.
+  - Rellor rolls in the badlands and Flittle on the savanna, each waiting on its evolution. Ball Toss hands its item to a teammate in trouble, and Stare Down taunts with its Psychic moves.
+  - Tinkatink, Tinkatuff and Tinkaton live in the woodland. Tinker remakes a teammate's used-up item once.
+  - Wiglett and Wugtrio poke out of the beach sand. Sand Duck makes Ground moves miss and raises its Speed.
+  - Finizen and Palafin swim the ocean. Lifeguard takes a teammate's finishing blow once.
+  - Varoom and Revavroom roar on the mountain. Redline winds up faster the lower its HP.
+  - Cyclizar runs the steppe. Shed Decoy puts up a free Substitute the first time it falls below half HP.
+  - Orthworm burrows in the desert. Slag Trail lays Spikes with its Steel moves.
+  - Glimmet and Glimmora shine in the badlands at night. Glimmering slows every poisoned enemy.
+  - Greavard and Houndstone haunt the grassland at night. Grave Digger picks up a fallen teammate's item.
+  - Cetoddle and Cetitan roam the tundra. Snow Hoard raises its Attack while snow falls.
+  - Veluza swims the kelp forest. Fillet Thrift halves what HP-costing moves cost it.
+  - Dondozo and Tatsugiri live in the ocean and the coral reef, Tatsugiri in all three shapes. Mouthful swallows a teammate in trouble to heal it, and Back Seat Orders powers up its teammates while it is in cover.
+  - Frigibax, Arctibax and Baxcalibur live on the glacier. Glaive Guard raises its defences after a move that leaves it open.
+  - Every Gen 9 ability works in battle, from Zero to Hero and Commander to Protosynthesis, Quark Drive and the four Ruins.
+  - Revival Blessing and Last Respects have pictures of their own, now that one family learns each.
+- fc92ffd: - Sprigatito, Floragato and Meowscarada roam the grassland in the morning and day. Petal Scatter splashes 1/4 of a Grass critical hit onto every other enemy.
+  - Fuecoco, Crocalor and Skeledirge laze on the savanna by day and evening. Spreading Flame carries a burn from a Fire move to the other enemy lowest on HP.
+  - Quaxly, Quaxwell and Quaquaval splash about the swamp from morning to evening. Wake slows the target and every other enemy when a Water move lands, once every 8 seconds.
+
+### Patch Changes
+
+- 20604e9: - Bisharp leaves the rare spawn band until Kingambit arrives, like the other lines waiting on a Gen 9 evolution.
+
+## 4.39.0
+
+### Minor Changes
+
+- 822fc27: - The 69 moves Scarlet and Violet and their two expansions brought are in the game.
+  - Most ride what was already there: Silk Trap and Burning Bulwark guard like King's Shield, Axe Kick and Supercell Slam crash like High Jump Kick, Mortal Spin sweeps like Rapid Spin, Ruination halves like Super Fang, and Comeuppance hits back like Metal Burst.
+  - The rest have rules of their own: Last Respects counts fallen teammates, Rage Fist counts hits taken, Glaive Rush leaves its user open, Salt Cure and Syrup Bomb wear the target down as it acts, Revival Blessing brings a teammate back, and Gigaton Hammer and Blood Moon cannot be thrown twice in a row.
+  - Snow now raises Ice types' Defense 1.5x, and Snowscape and Chilly Reception call it up.
+  - Dancer copies Fiery Dance, Victory Dance and Aqua Step.
+  - Every pokemon from Kanto to Hisui learns them by level, machine, tutor and egg, as Scarlet and Violet teach them.
+  - Older pokemon also learn the older moves Scarlet and Violet newly teach them, such as Wave Crash for Squirtle's line and Dual Wingbeat for Starly's.
+  - Every Paldea signature move has a picture of its own. Koraidon charges in, Gholdengo rains coins, Tinkaton's hammer comes down, Dondozo flings its Tatsugiri, and each Starmobile's Torque rolls in as its own wheel.
+  - The moves many pokemon learn are drawn as the older move they look like. Shed Tail drops its substitute and Chilly Reception tells its cold joke before either walks off.
+  - Chilly Reception calls the snow once rather than twice.
+  - Every older signature move that shared a picture now has its own too, from Sketch and Volt Tackle to King's Shield, Pyro Ball and Dire Claw.
+
 ## 4.38.0
 
 ### Minor Changes

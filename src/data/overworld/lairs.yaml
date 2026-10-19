@@ -341,3 +341,7 @@ AreaZeroUnderdepths:
 LoyaltyPlaza:
   species: [Pecharunt]
   reserved: true
+# The old wood behind Kitakami the bear raised under the red moon roams, where
+# Perrin's hunt ends
+TimelessWoods:
+  species: [UrsalunaBloodmoon]

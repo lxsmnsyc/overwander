@@ -16,7 +16,10 @@ rather than being waved through.
 | **By trade**                    | Yes       | A pokemon that changed hands as what it is            |
 | **By friendship**               | Yes       | The three Kanto babies ask for 220                    |
 | **By time of day**              | Yes       | An Espeon by day, an Umbreon by night                 |
+| **By knowing a move**           | Yes       | An Aipom that knows Double Hit                        |
 | **By one stat against another** | Yes       | A Tyrogue at level 20, its Attack against its Defense |
+| **By steps walked**             | Yes       | Steps walked as your buddy: a Pawmo asks for 1,000    |
+| **One in a hundred**            | Yes       | Fixed for each pokemon: a Tandemaus's family of three |
 | Weather, party, place           | No        | Nothing stores the answer, so it is never offered     |
 
 A **trade evolution** opens the moment a pokemon changes hands, and what it
@@ -31,6 +34,16 @@ A trade evolution that also asks for a **held item** spends it at the handover.
 An Onix traded in a Metal Coat arrives without the coat and with nothing left to
 ask for. An Onix nobody traded still has to hold one, and spends a **Linking
 Cord** as well.
+
+A **one in a hundred** evolution is decided by the pokemon itself, not by
+chance on the day. One Tandemaus in a hundred grows into Maushold's family of
+three and every other one into the family of four, and which one a Tandemaus is
+never changes. Its sheet shows only the evolution it can take. One Dunsparce in
+a hundred grows into Three-Segment Dudunsparce the same way.
+
+The antique Sinistea and the artisan Poltchageist are rare forms of their own,
+met as such. Each evolves with its own item: the **Chipped Pot** for an antique
+Sinistea and the **Masterpiece Teacup** for an artisan Poltchageist.
 
 An **Everstone** refuses every evolution while the pokemon holds it. It is not
 held back from anything else: it still levels, learns and fights.

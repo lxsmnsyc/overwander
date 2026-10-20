@@ -224,8 +224,10 @@ Teddiursa:
     biomes: [Taiga, MontaneForest]
     active: [Night]
     # Raised under a red moon rather than grown from an Ursaring, so it is
-    # met as it is
+    # met as it is. One bear to a game, the way Volcarona answers to its
+    # castle, so it is staged by the Timeless Woods and raided there
     base-form: false
+    rank: legendary
 Slugma:
   Slugma:
     types: [Fire]

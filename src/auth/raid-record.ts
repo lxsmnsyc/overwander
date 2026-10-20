@@ -75,6 +75,12 @@ export const enum RaidKind {
    * is caught: the calmers are paid in items and gold
    */
   Noble = 6,
+  /**
+   * A Tera raid: a pokemon of the tile's biome, any stage, Terastallized
+   * for the whole fight into a Tera type read off the lobby. Cleared, it
+   * pays Tera Shards of that type beside the prize
+   */
+  Tera = 7,
 }
 
 /**
@@ -222,10 +228,13 @@ export function getRaidTitle(raid: RaidRecord | RaidView): string {
   if (raid.kind === RaidKind.Noble) {
     return getNobleRaidTitle(raid.species);
   }
+  if (raid.kind === RaidKind.Tera) {
+    return getTeraRaidTitle(raid.species);
+  }
   return getLairTitle(raid.lair, raid.biome, raid.kind === RaidKind.Shadow);
 }
 
-/** Whether a landmark stages a raid: either lair, a Totem, a Max Raid, an Alpha or a Noble */
+/** Whether a landmark stages a raid: either lair, a Totem, a Max Raid, an Alpha, a Noble or a Tera */
 export function isRaidLandmark(landmark: Landmark): boolean {
   return (
     landmark === Landmark.LegendaryLair ||
@@ -233,7 +242,8 @@ export function isRaidLandmark(landmark: Landmark): boolean {
     landmark === Landmark.Totem ||
     landmark === Landmark.MaxRaid ||
     landmark === Landmark.AlphaRaid ||
-    landmark === Landmark.NobleArena
+    landmark === Landmark.NobleArena ||
+    landmark === Landmark.TeraRaid
   );
 }
 
@@ -256,6 +266,9 @@ export function getRaidKindAt(snapshot: ChunkSnapshot, cell: number): RaidKind |
   }
   if (landmark === Landmark.NobleArena) {
     return RaidKind.Noble;
+  }
+  if (landmark === Landmark.TeraRaid) {
+    return RaidKind.Tera;
   }
   if (landmark !== Landmark.LegendaryLair && landmark !== Landmark.ShadowLair) {
     return null;
@@ -285,6 +298,11 @@ export function getAlphaRaidTitle(species: Species): string {
 /** What a Noble raid's lobby is called, after the Noble in it */
 export function getNobleRaidTitle(species: Species): string {
   return `Noble ${getSpeciesData(species).name}`;
+}
+
+/** What a Tera raid's lobby is called, after the boss in it */
+export function getTeraRaidTitle(species: Species): string {
+  return `Tera Raid ${getSpeciesData(species).name}`;
 }
 
 /**
@@ -328,6 +346,7 @@ const RAID_ID_TAGS: Record<RaidKind, string> = {
   [RaidKind.Max]: 'max',
   [RaidKind.Alpha]: 'alpha',
   [RaidKind.Noble]: 'noble',
+  [RaidKind.Tera]: 'tera',
 };
 
 /**
@@ -385,6 +404,9 @@ export function mythicalRelicOf(id: string): Items | null {
   return found == null ? null : (Number(found[1]) as Items);
 }
 
+/** What a raid prize's spawn id ends in, after its lobby's id */
+const REWARD_SUFFIX = '$reward';
+
 /**
  * The reward for clearing a raid: the legendary as a meetable spawn.
  * The chunk, biome and window are the raid's, but the two rolls are
@@ -397,5 +419,10 @@ export function deriveRaidReward(raid: RaidRecord, id: string, uid: string): [st
   // walks away with their own individual of the same legendary
   const rng = new AleaRNG(`${id}:${raid.traitValue}:reward:${uid}`);
 
-  return [`${id}$reward`, [raid.species, rng.int32(), rng.int32()]];
+  return [`${id}${REWARD_SUFFIX}`, [raid.species, rng.int32(), rng.int32()]];
+}
+
+/** The lobby a raid prize came out of, read off its spawn id. Null for any other spawn */
+export function rewardLobbyOf(spawn: string): string | null {
+  return spawn.endsWith(REWARD_SUFFIX) ? spawn.slice(0, -REWARD_SUFFIX.length) : null;
 }

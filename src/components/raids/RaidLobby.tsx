@@ -36,6 +36,7 @@ import { getSpeciesData } from '../../data/species';
 import { TYPE_EFFECTIVENESS, type Types, getTypeFactor } from '../../data/constants/types';
 import { ChevronRightIcon } from '../icons';
 import { RAID_BOSS_LEVEL } from '../../overworld/raid';
+import { getTeraRaidType } from '../../data/overworld/tera-raids';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import LobbyInviteDialog from '../battle/LobbyInviteDialog';
 import LobbyParty from '../battle/LobbyParty';
@@ -146,9 +147,15 @@ function ChartRows(props: {
 /**
  * What is waiting in the lair, asleep, and what to bring against it.
  * The lair's name is the panel's own heading. A row on a phone, a
- * column beside the trainers from `md` up
+ * column beside the trainers from `md` up. A Tera raid's boss is hit
+ * as its Tera type alone, so the chart is read off that
  */
-function BossCard(props: { species: number; mythical: boolean; hosting: boolean }): JSX.Element {
+function BossCard(props: {
+  species: number;
+  mythical: boolean;
+  hosting: boolean;
+  tera: Types | null;
+}): JSX.Element {
   const [wide, setWide] = createSignal(false);
 
   onMount(() => {
@@ -165,7 +172,8 @@ function BossCard(props: { species: number; mythical: boolean; hosting: boolean 
   });
 
   const data = (): ReturnType<typeof getSpeciesData> => getSpeciesData(props.species);
-  const chart = (): Map<number, Types[]> => defenceChart(data().types);
+  const chart = (): Map<number, Types[]> =>
+    defenceChart(props.tera == null ? data().types : [props.tera]);
 
   return (
     <div
@@ -194,6 +202,16 @@ function BossCard(props: { species: number; mythical: boolean; hosting: boolean 
           <div class="flex flex-wrap gap-1 md:justify-center">
             <For each={data().types}>{(type) => <TypeBadge type={type} />}</For>
           </div>
+          <Show when={props.tera}>
+            {(tera) => (
+              <div class="flex items-center gap-1.5 md:justify-center">
+                <span class="text-xs font-extrabold tracking-wider text-muted uppercase">
+                  Tera type
+                </span>
+                <TypeBadge type={tera()} />
+              </div>
+            )}
+          </Show>
         </div>
       </div>
 
@@ -454,6 +472,11 @@ function LobbyRows(
                 species={record().species}
                 mythical={record().kind === RaidKind.Mythical}
                 hosting={isHost()}
+                tera={
+                  record().kind === RaidKind.Tera
+                    ? getTeraRaidType(record().species, props.raidId)
+                    : null
+                }
               />
 
               <div class="flex min-h-0 flex-col gap-2 md:pl-4">

@@ -138,6 +138,15 @@ export default class Unit {
   /** Whether it is Dynamaxed right now. Set and cleared by `dynamax` and `revertDynamax` */
   dynamaxed = false;
 
+  /**
+   * The type it Terastallizes into, copied off its record. Unknown
+   * reads as its first type when the time comes
+   */
+  teraType = Types.Unknown;
+
+  /** Whether it has Terastallized. Set by `terastallize` and kept for the fight */
+  terastallized = false;
+
   gender = Genders.Genderless;
 
   setGender(gender: Genders): void {

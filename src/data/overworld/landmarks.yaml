@@ -82,3 +82,8 @@ AlphaRaid:
 NobleArena:
   weight: 0
   picture: noble
+# Carved from the cache rolls after the Alpha, and drawn off the sheet: a
+# faceted crystal grown out of a bed of rock
+TeraRaid:
+  weight: 0
+  picture: tera

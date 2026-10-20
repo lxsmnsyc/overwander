@@ -1,0 +1,79 @@
+# Spent fifty at a time on a pokemon to change its Tera type, the way a mint
+# changes a nature. Found rather than stocked, and paid out by Tera raids.
+# The Stellar Shard is carried but nothing spends it yet.
+
+NormalTeraShard:
+  type: Training
+  icon: other/normal-tera-shard
+  flags: [Consumable, Usable]
+FireTeraShard:
+  type: Training
+  icon: other/fire-tera-shard
+  flags: [Consumable, Usable]
+WaterTeraShard:
+  type: Training
+  icon: other/water-tera-shard
+  flags: [Consumable, Usable]
+ElectricTeraShard:
+  type: Training
+  icon: other/electric-tera-shard
+  flags: [Consumable, Usable]
+GrassTeraShard:
+  type: Training
+  icon: other/grass-tera-shard
+  flags: [Consumable, Usable]
+IceTeraShard:
+  type: Training
+  icon: other/ice-tera-shard
+  flags: [Consumable, Usable]
+FightingTeraShard:
+  type: Training
+  icon: other/fighting-tera-shard
+  flags: [Consumable, Usable]
+PoisonTeraShard:
+  type: Training
+  icon: other/poison-tera-shard
+  flags: [Consumable, Usable]
+GroundTeraShard:
+  type: Training
+  icon: other/ground-tera-shard
+  flags: [Consumable, Usable]
+FlyingTeraShard:
+  type: Training
+  icon: other/flying-tera-shard
+  flags: [Consumable, Usable]
+PsychicTeraShard:
+  type: Training
+  icon: other/psychic-tera-shard
+  flags: [Consumable, Usable]
+BugTeraShard:
+  type: Training
+  icon: other/bug-tera-shard
+  flags: [Consumable, Usable]
+RockTeraShard:
+  type: Training
+  icon: other/rock-tera-shard
+  flags: [Consumable, Usable]
+GhostTeraShard:
+  type: Training
+  icon: other/ghost-tera-shard
+  flags: [Consumable, Usable]
+DragonTeraShard:
+  type: Training
+  icon: other/dragon-tera-shard
+  flags: [Consumable, Usable]
+DarkTeraShard:
+  type: Training
+  icon: other/dark-tera-shard
+  flags: [Consumable, Usable]
+SteelTeraShard:
+  type: Training
+  icon: other/steel-tera-shard
+  flags: [Consumable, Usable]
+FairyTeraShard:
+  type: Training
+  icon: other/fairy-tera-shard
+  flags: [Consumable, Usable]
+StellarTeraShard:
+  type: Training
+  icon: other/stellar-tera-shard

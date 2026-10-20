@@ -11,6 +11,9 @@ import {
 import { getBannedBossMoves } from '../data/overworld/boss-moves';
 import { getTotemAlly, getTotemSize } from '../data/overworld/totems';
 import { ALPHA_COPIES, getAlphaSize } from '../data/overworld/alphas';
+import { getTeraRaidType } from '../data/overworld/tera-raids';
+import type { Types } from '../data/constants/types';
+import { rewardLobbyOf } from '../auth/raid-record';
 import AleaRNG from '../core/alea';
 import { MAX_LEVEL } from '../data/constants/levels';
 import {
@@ -74,6 +77,8 @@ export const MAX_RAID_REWARD_LEVEL = 40;
 export const ALPHA_RAID_REWARD_LEVEL = 40;
 /** A Noble is calmed, never caught, so its level is only what a record would say */
 export const NOBLE_RAID_REWARD_LEVEL = 40;
+/** A Tera raid's prize, whatever stage it is: its Tera type is the prize */
+export const TERA_RAID_REWARD_LEVEL = 40;
 
 /**
  * What clearing one pays, on top of the pokemon.
@@ -98,6 +103,8 @@ export const MAX_RAID_GOLD = 50000;
 export const ALPHA_RAID_GOLD = 50000;
 /** A Noble pays a Totem's purse and a tenth more, since nobody catches it */
 export const NOBLE_RAID_GOLD = 55000;
+/** A Tera raid pays a Totem's purse, and its shards on top */
+export const TERA_RAID_GOLD = 50000;
 export const MYTHICAL_RAID_GOLD = 200000;
 
 /**
@@ -318,6 +325,21 @@ export function keepsGigantamaxFactor(encounter: {
 }
 
 /**
+ * The Tera type a prize keeps: a Tera raid's is its boss's, read off
+ * the lobby its spawn id names. Null for every other arrival, which
+ * rolls its own
+ */
+export function keptTeraType(encounter: {
+  type: EncounterType;
+  species: Species;
+  spawn: string;
+}): Types | null {
+  const lobby = encounter.type === EncounterType.TeraRaid ? rewardLobbyOf(encounter.spawn) : null;
+
+  return lobby == null ? null : getTeraRaidType(encounter.species, lobby);
+}
+
+/**
  * The raid boss as a catch snapshot, so a battle builds it from the
  * same shape as a player's party. Its individual values are perfect
  * and its effort values maxed; the nature and ability come from the
@@ -333,6 +355,7 @@ export function createRaidBossSnapshot(
   max = false,
   alpha = false,
   noble = false,
+  tera: Types | null = null,
 ): CatchSnapshot {
   // The lobby shares the raid's trait value, so every player fights a
   // boss of exactly the same build. A Totem and an Alpha stand at
@@ -403,6 +426,9 @@ export function createRaidBossSnapshot(
     // A Max Raid's boss is a giant from the first moment to the last
     ...(max ? { dynamaxed: true } : {}),
     ...(max && isGigantamaxBoss(species) ? { gigantamax: true } : {}),
+    // A Tera raid's boss is Terastallized as it is fielded, into the
+    // type its lobby read
+    ...(tera == null ? {} : { teraType: tera, terastallized: true }),
   };
 }
 
@@ -503,7 +529,7 @@ export function createAlphaCopySnapshots(species: Species, traitValue: number): 
 /**
  * The boss side of a raid, as the catches its team snapshot holds: the
  * boss alone, a Totem with the ally it will call, or an Alpha with the
- * copies it will summon
+ * copies it will summon. `tera` is a Tera raid boss's Tera type
  */
 export function createRaidBossTeam(
   species: Species,
@@ -513,8 +539,9 @@ export function createRaidBossTeam(
   max = false,
   alpha = false,
   noble = false,
+  tera: Types | null = null,
 ): CatchSnapshot[] {
-  const boss = createRaidBossSnapshot(species, traitValue, shadow, totem, max, alpha, noble);
+  const boss = createRaidBossSnapshot(species, traitValue, shadow, totem, max, alpha, noble, tera);
 
   if (alpha) {
     return [boss, ...createAlphaCopySnapshots(species, traitValue)];

@@ -169,6 +169,7 @@ function asPreview(gift: CatchGift | EncounterGift): CaughtPokemon {
     canEvolve: false,
     featProgress: 0,
     gigantamax: false,
+    teraType: null,
     auctionable: false,
     moves: gift.moves,
     movePoints: {},

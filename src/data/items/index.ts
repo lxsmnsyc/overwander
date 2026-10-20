@@ -19,6 +19,7 @@ import { describePlate } from './plates';
 import { describePowerItem } from './power-items';
 import { describePurifyingGem } from './purifying-gem';
 import { describeRareCandy } from './rare-candy';
+import { describeTeraShard } from './tera-shards';
 import { describeTreat } from './treats';
 import { describeTypeBooster } from './type-boosters';
 import { describeValuable } from './valuables';
@@ -85,6 +86,7 @@ const ITEM_FAMILIES = [
   'ability-items',
   'purifying-gem',
   'max-mushrooms',
+  'tera-shards',
   'balms',
   'sacred-ash',
   'soothe-bell',
@@ -126,6 +128,7 @@ const DESCRIBERS = new Map<string, (item: Items) => string>([
   ['power-items', describePowerItem],
   ['purifying-gem', describePurifyingGem],
   ['rare-candy', describeRareCandy],
+  ['tera-shards', describeTeraShard],
   ['treats', describeTreat],
   ['type-boosters', describeTypeBooster],
   ['valuables', describeValuable],

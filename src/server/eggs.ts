@@ -71,6 +71,7 @@ import {
 import createOverworld from '../overworld/setup';
 import deriveNestEgg, { NEST_HATCH_FACTOR } from '../overworld/nest-egg';
 import resolveBuddy from './buddy';
+import { rollTeraType } from '../data/species/tera-type';
 import { isCatchLocked } from './locks';
 import { recordFoundSpecies } from './pokedex';
 
@@ -253,6 +254,8 @@ async function writeEgg(
       // raid's prize does
       abilities: hatching,
       items: [],
+      // Rolled for what is inside, which an evolution later keeps
+      teraType: rollTeraType(fields.species),
       // It was never anybody else's: this owner is where the pokemon
       // begins, egg and all
       history: [{ owner: uid, acquiredAt: foundAt, kind: Acquisition.Egg, ball: fields.ball }],

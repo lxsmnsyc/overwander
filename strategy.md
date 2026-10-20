@@ -16,7 +16,6 @@ How Paldea, Kitakami and the Blueberry Academy go in, batch by batch, on top of 
 - **Batches 11 and 12 are built** on `paldea-evolutions`. Dipplin evolves into Hydrapple at any level once it knows Dragon Cheer (a TM), and Kingambit at 60 holding a Leader's Crest, since the game cannot count defeated Bisharp. The Masterpiece Teacup waits with the Artisan forms.
 - **Batches 13 to 17 are built** on `paldea-legends`, with Gimmighoul and Gholdengo from batch 10. Gimmighoul is drawn as its Roaming form and Miraidon in Low Power mode, through `STAND_INS`. Gholdengo costs 999 Gimmighoul candies, standing in for the 999 coins. The Paradox pokemon are prized finds rather than lair legends.
 - **Batch 18 is built** on `paldea-terastal`. Decided while building: a Tera type shows as a type badge on the catch sheet and in a raid lobby, and a Tera raid pays 5 to 8 Tera Shards of the boss's Tera type on top of a raid's gold. A Tera raid boss is off its own types half the time, so every type's shards can be won.
-- **Batches 19 and 20 are built** on `paldea-kitakami`. A worn shape's ability now follows the species change itself, so Teal Ogerpon wears Defiant with nothing in hand and Terapagos picks up Tera Shell through Tera Shift. Each sits on top of the catch's own ability, as an Origin forme's does. Okidogi, Stellar Terapagos and Teraform Zero wait for their art.
 - **Lines waiting on Gen 9,** marked `awaiting: evolution`: Primeape (Annihilape), Girafarig (Farigiraf), Dunsparce (Dudunsparce), Applin (Dipplin), Duraludon (Archaludon) and Bisharp (Kingambit). Each mark comes off with its evolution.
   - Galarian Mr. Mime keeps its mark in `world/kanto/101-125.yaml`: Mr. Rime is still not drawn.
   - The ability audit is clean. None of these lines carries an invented filler, so their evolutions break no pool.
@@ -302,8 +301,7 @@ Batch 18, built the way Megas, Z-Moves and Dynamax were: automatic, once per sid
 
 ## Still to decide
 
-- How a Tera type is shown on the catch sheet and in a raid lobby.
-- What else a Tera raid pays beside Tera Shards.
+- Nothing for Terastallization: both open questions were settled in batch 18.
 
 ## Pace
 

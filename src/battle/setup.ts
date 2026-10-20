@@ -12,6 +12,7 @@ import setupAbilityMechanics from './mechanics/ability';
 import setupAllianceMechanics from './mechanics/alliance';
 import setupBattleMechanics from './mechanics/battle';
 import setupDynamaxMechanics from './mechanics/dynamax';
+import setupTerastalMechanics from './mechanics/terastal';
 import setupItemMechanics from './mechanics/item';
 import {
   setupAttackMechanics,
@@ -59,6 +60,8 @@ export default function createBattle(
   setupUnitMechanics(battle);
   setupAbilityMechanics(battle);
   setupItemMechanics(battle);
+  // Ahead of weather and terrain, so its power floor reads a move's own power
+  setupTerastalMechanics(battle);
   setupWeatherMechanics(battle);
   setupTerrainMechanics(battle);
   // Ahead of the moves, so a giant refuses a switch before anything reacts to one

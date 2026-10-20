@@ -3,6 +3,7 @@ import decode, { type Image } from '../src/server/sprites/png.ts';
 import writeAtlas, { type Cut, type Drawn, assertWhole, cut, tighten } from './atlas.ts';
 import drawAlphaSite from './landmark-alpha.ts';
 import drawNobleArena from './landmark-noble.ts';
+import drawTeraCrystal from './landmark-tera.ts';
 
 /**
  * The landmarks, cut out of an overworld rip.
@@ -17,9 +18,9 @@ import drawNobleArena from './landmark-noble.ts';
  * that stands on both layers: the hole in the hillside from above, and
  * the way back out from below.
  *
- * The Alpha's ground and the Noble Arena are drawn on a grid rather
- * than cut, since the rip has nothing like either (`landmark-alpha.ts`,
- * `landmark-noble.ts`).
+ * The Alpha's ground, the Noble Arena and the Tera crystal are drawn on
+ * a grid rather than cut, since the rip has nothing like them
+ * (`landmark-alpha.ts`, `landmark-noble.ts`, `landmark-tera.ts`).
  *
  * A shortlist rather than a decision. Several landmarks have more than
  * one candidate here, since which of them reads as a portal or a claimed
@@ -144,7 +145,7 @@ function shade(image: Image, swaps: Record<string, string>): Image {
 function drawnPieces(): Drawn[] {
   const pieces: Drawn[] = [];
 
-  for (const draw of [drawAlphaSite, drawNobleArena]) {
+  for (const draw of [drawAlphaSite, drawNobleArena, drawTeraCrystal]) {
     const { name, image, base } = draw();
     const crop = tighten(image);
 

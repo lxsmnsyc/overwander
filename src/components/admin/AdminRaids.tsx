@@ -31,6 +31,7 @@ const KINDS: Record<RaidKind, string> = {
   [RaidKind.Max]: 'max',
   [RaidKind.Alpha]: 'alpha',
   [RaidKind.Noble]: 'noble',
+  [RaidKind.Tera]: 'tera',
 };
 
 /**

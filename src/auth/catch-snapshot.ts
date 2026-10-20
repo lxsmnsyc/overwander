@@ -2,9 +2,11 @@
 // assertions that tsc requires but tsgolint (resolving const enums to
 // number) considers unnecessary
 // oxlint-disable typescript/no-unnecessary-type-assertion
+import type { Types } from '../data/constants/types';
 import type { Stats } from '../data/constants/stats';
 import { BASE_FRIENDSHIP } from '../data/constants/friendship';
 import { defaultSlots } from '../data/constants/slots';
+import { isTeraType } from '../data/species/tera-type';
 import Biome from '../data/ids/biome';
 import { Balls } from '../data/ids/items';
 import type Abilities from '../data/ids/abilities';
@@ -66,6 +68,11 @@ export interface CatchSnapshot {
    * which is what every snapshot written before the factor was
    */
   gigantamax?: boolean;
+  /**
+   * The type it Terastallizes into. Left out reads as the species' first
+   * type, which is what every catch made before Terastallization holds
+   */
+  teraType?: Types;
   moves: Moves[];
   /**
    * What has been spent on each of those moves, keyed by move id. It
@@ -105,6 +112,8 @@ export interface CatchSnapshot {
   called?: boolean;
   /** Set on a Max Raid's boss: it fights Dynamaxed from start to end */
   dynamaxed?: boolean;
+  /** Set on a Tera raid's boss: it fights Terastallized into its `teraType` from the start */
+  terastallized?: boolean;
   /**
    * Set, beside `called`, on a copy an Alpha summons. It is built
    * each time the Alpha calls one, so a fallen copy can be replaced
@@ -144,6 +153,7 @@ export function previewSnapshot(snapshot: CatchSnapshot): CaughtPokemon {
     traded: false,
     canEvolve: false,
     gigantamax: snapshot.gigantamax === true,
+    teraType: snapshot.teraType ?? null,
     featProgress: 0,
     auctionable: false,
     moves: snapshot.moves,
@@ -193,6 +203,7 @@ export function createCatchSnapshot(id: string, caught: CaughtPokemon): CatchSna
     shiny: caught.shiny,
     shadow: caught.shadow,
     ...(caught.gigantamax ? { gigantamax: true } : {}),
+    ...(caught.teraType == null ? {} : { teraType: caught.teraType }),
     moves: caught.moves,
     movePoints: caught.movePoints,
     abilities: caught.abilities,
@@ -244,8 +255,10 @@ export function asCatchSnapshot(value: unknown): CatchSnapshot {
     // catch, which is what Return and Frustration answer to
     friendship: data.friendship == null ? BASE_FRIENDSHIP : asNumber(data.friendship),
     ...(data.gigantamax === true ? { gigantamax: true } : {}),
+    ...(isTeraType(data.teraType) ? { teraType: data.teraType } : {}),
     ...(data.called === true ? { called: true } : {}),
     ...(data.dynamaxed === true ? { dynamaxed: true } : {}),
+    ...(data.terastallized === true ? { terastallized: true } : {}),
     ...(data.alphaCopy === true ? { alphaCopy: true } : {}),
     ...(typeof data.balms === 'number' && data.balms > 0 ? { balms: Math.floor(data.balms) } : {}),
   };

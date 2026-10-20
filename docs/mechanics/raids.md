@@ -87,6 +87,23 @@ Beaten, an Alpha pays 50,000 and waits at level 40 at its species' own size and
 abilities, with **3 different stats at 31**, picked at random from the prize's
 own rolls. The other three are rolled as any raid prize's are.
 
+## Tera raids
+
+A **Tera crystal** is a cluster of faceted crystals grown out of a bed of rock,
+glowing red while its boss is home. It stands in open country and underground
+alike. Its boss is picked the way an Alpha's is: **any species the tile's own
+biome spawns there, at any stage**, short of a legendary, a mythical, an Ultra
+Beast or a true shadow. A new boss is picked each raid window.
+
+The boss is **Terastallized for the whole fight**. Its Tera type is read off
+the lobby: half the time one of its own types, otherwise any of the 18. The
+lobby shows it beside the boss's own types, and the lobby's type chart is read
+off the Tera type alone, since that is all it is when hit.
+
+Beaten, it pays 50,000 and waits at level 40. Each fighter also takes **5 to 8
+Tera Shards** of the boss's Tera type, and the prize, once caught, **keeps the
+boss's Tera type** rather than rolling its own.
+
 ## Noble raids
 
 A **Noble Arena** is a raised stone ring under a red shrine gate, a brazier

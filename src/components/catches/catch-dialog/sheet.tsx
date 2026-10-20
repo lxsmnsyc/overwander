@@ -58,6 +58,7 @@ import { isAbilityPatch } from '../../../data/items/ability-items';
 import { isPurifyingGem } from '../../../data/items/purifying-gem';
 import { getFamilyName, getSpeciesData } from '../../../data/species';
 import { getFusionHusk, getFusionPartner, isFusedSpecies } from '../../../data/species/fusion';
+import { teraTypeOf } from '../../../data/species/tera-type';
 
 import { HeartIcon, LockIcon, SparklesIcon, StarIcon } from '../../icons';
 import TypeBadge from '../../sprites/TypeBadge';
@@ -1665,6 +1666,12 @@ export function CatchSheetBody(
                           <Badge>
                             {loaded().walked} {loaded().walked === 1 ? 'step' : 'steps'}
                           </Badge>
+                        </div>
+                        <div class="flex items-center justify-center gap-1.5">
+                          <span class="text-xs font-extrabold tracking-wider text-muted uppercase">
+                            Tera type
+                          </span>
+                          <TypeBadge type={teraTypeOf(loaded())} />
                         </div>
                         <div class="flex flex-wrap items-center justify-center gap-1.5">
                           <Badge tone="gold">

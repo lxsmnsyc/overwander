@@ -1,7 +1,8 @@
 import type SpeciesSpriteAnimation from '../../../canvas/species-sprite-animation';
 import type { Slot } from './field';
 import { type CastLabels, drawCastLabel } from './cast-label';
-import drawFormMark from './form-mark';
+import drawFormMark, { wearsFormMark } from './form-mark';
+import { drawTeraBehind, drawTeraJewel, drawTeraOver, teraLookOf } from './terastal';
 import { type GiantBody, drawGiantBehind, drawGiantOver, giantLookOf } from './dynamax';
 import { COLORS, DYNAMAX_DRAW_SCALE, HIT_REACH, NAMED_RADIUS, TOTEM_DRAW_SCALE } from './metrics';
 import speciesSize from '../../../canvas/species-size';
@@ -666,6 +667,7 @@ export function drawSlot(
       // Asked for on both renderers: the Dynamax look is drawn off the frame
       const quad = sprite.quadOf(x, y, placement);
       const look = giantLookOf(slot.giant ?? 0, unit.gigantamax, clock);
+      const tera = quad == null ? null : teraLookOf(unit, clock);
       const giant: GiantBody | null =
         look == null || quad == null
           ? null
@@ -677,6 +679,9 @@ export function drawSlot(
             };
 
       if (onto == null || quad == null) {
+        if (tera != null && quad != null) {
+          drawTeraBehind(context, quad, tera, alpha);
+        }
         if (giant != null && look != null) {
           drawGiantBehind(context, giant, look, clock, alpha);
           context.save();
@@ -687,6 +692,9 @@ export function drawSlot(
         if (giant != null && look != null) {
           context.restore();
           drawGiantOver(context, giant, look, clock, alpha);
+        }
+        if (tera != null && quad != null) {
+          drawTeraOver(context, quad, tera, clock, alpha);
         }
         // A transformation's flash, laid over the body it is lighting
         if ((slot.glow ?? 0) > 0) {
@@ -700,6 +708,9 @@ export function drawSlot(
         const body = cornersOf(quad);
 
         // Behind the body and hiding nothing: the far clouds and the glow
+        if (tera != null) {
+          drawTeraBehind(context, quad, tera, alpha, onto);
+        }
         if (giant != null && look != null) {
           drawGiantBehind(context, giant, look, clock, alpha, onto);
         }
@@ -709,6 +720,9 @@ export function drawSlot(
         onto.solid?.(false);
         if (giant != null && look != null) {
           drawGiantOver(context, giant, look, clock, alpha, onto);
+        }
+        if (tera != null) {
+          drawTeraOver(context, quad, tera, clock, alpha, onto);
         }
         // A transformation's flash: the body screened over itself, twice
         // at the peak, so it reads as a burst of light
@@ -812,5 +826,20 @@ export function drawSlot(
   }
   // Above the plate, so a shape drawn as its old one still reads as changed
   drawFormMark(context, unit.species, slot.x, slot.y - slot.radius * 2 - 14, clock, faded, onto);
+  // The jewel stays up while it is out of sight, the way its bar does
+  const jewel = teraLookOf(unit, clock);
+
+  if (jewel != null) {
+    drawTeraJewel(
+      context,
+      jewel,
+      slot.x,
+      slot.y - slot.radius * 2 - 14,
+      wearsFormMark(unit.species),
+      clock,
+      faded,
+      onto,
+    );
+  }
   context.globalAlpha = 1;
 }

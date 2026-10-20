@@ -301,7 +301,7 @@ function washedFrame(quad: SpriteQuad, colour: string): HTMLCanvasElement | null
 }
 
 /** The body in one colour at a spread, on whichever renderer is drawing */
-function wash(
+export function wash(
   context: CanvasRenderingContext2D,
   quad: SpriteQuad,
   spread: number,

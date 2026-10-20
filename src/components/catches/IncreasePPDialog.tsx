@@ -13,7 +13,7 @@ import { isEgg } from '../../auth/egg';
 import { usePPItem } from '../../auth/training';
 import type { Items } from '../../data/ids/items';
 import type { Moves } from '../../data/ids/moves';
-import { Species } from '../../data/ids/species';
+import { Genders, Species } from '../../data/ids/species';
 import { PP_UP_LIMIT, getMoveData, getMovePP } from '../../data/moves';
 import { getSpeciesData } from '../../data/species';
 import { PP_ITEMS } from '../../data/items/vitamins';
@@ -206,6 +206,7 @@ function BottleBody(
           <div class="flex justify-center">
             <AnimatedSprite
               species={isEgg(record()) ? Species.Egg : record().species}
+              female={!isEgg(record()) && record().gender === Genders.Female}
               shiny={!isEgg(record()) && isShiny(record())}
               animation={SpriteAnim.Idle}
               direction="Down"

@@ -412,6 +412,31 @@ Lechonk:
       - HyperBeam
       - LashOut
       - StompingTantrum
+  OinkologneFemale:
+    level:
+      1: [Tackle, TailWhip]
+      5: [DisarmingVoice]
+      8: [EchoedVoice]
+      12: [MudShot]
+      15: [Covet]
+      17: [Dig]
+      23: [Headbutt]
+      26: [TakeDown]
+      27: [Yawn]
+      34: [WorkUp]
+      38: [Uproar]
+      42: [DoubleEdge]
+      48: [EarthPower]
+      54: [Belch]
+    teachable:
+      - BodyPress
+      - EarthPower
+      - EnergyBall
+      - GigaImpact
+      - HighHorsepower
+      - HyperBeam
+      - LashOut
+      - StompingTantrum
 Tarountula:
   # TM and tutor moves shared by the whole family
   family-teachable:

@@ -12,7 +12,7 @@ import { type CaughtPokemon, getCaught } from '../../auth/caught';
 import { isShiny } from '../../auth/caught-record';
 import { isEgg } from '../../auth/egg';
 import type { Items } from '../../data/ids/items';
-import { Species } from '../../data/ids/species';
+import { Genders, Species } from '../../data/ids/species';
 import { getSpeciesData } from '../../data/species';
 import { describeItem } from '../details';
 import ItemSprite from '../items/ItemSprite';
@@ -197,6 +197,7 @@ function ListingBody(
           <div class="flex justify-center">
             <AnimatedSprite
               species={isEgg(record()) ? Species.Egg : record().species}
+              female={!isEgg(record()) && record().gender === Genders.Female}
               shiny={!isEgg(record()) && isShiny(record())}
               animation={SpriteAnim.Idle}
               direction="Down"

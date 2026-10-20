@@ -5,7 +5,8 @@
 Anything time-bound reads the server clock through
 [`src/auth/clock.ts`](../../src/auth/clock.ts) rather than `Date.now()`. A
 `'use server'` function returns the server's time, the client measures the offset
-once, and it derives locally for the next minute.
+once, and every later read derives from it locally until it is half an hour old
+(`CLOCK_RESYNC_INTERVAL`).
 
 Timestamps are epoch milliseconds and carry no timezone. The server pins its
 process to **UTC** ([`src/server/timezone.ts`](../../src/server/timezone.ts)), so
@@ -17,7 +18,8 @@ skewed device cannot shift the instants it is given, only how they are read.
 Which _day and hour_ an instant falls in is the player's own, and
 [`src/model/local-time.ts`](../../src/model/local-time.ts) decides it. The offset
 is minutes east of UTC (`+480` for UTC+8), reported by the client from its own
-zone and normalized with `asOffset` to something a zone can actually be.
+zone and normalized with `asOffset` to something a zone can actually be: UTC−12
+to UTC+14, rounded to a quarter hour.
 
 Two things ride on it:
 
@@ -35,7 +37,7 @@ A client can misreport its zone. Everything derived from the offset is therefore
 lobby ids, so inventing a zone yields that zone's world rather than a second
 helping of your own.
 
-The ceiling on that is the roughly 27 offsets a day holds: a determined client
+The ceiling on that is the 105 offsets `asOffset` lets through: a determined client
 can re-claim a landmark once per zone it invents, at the cost of walking a
 different world each time. If that ever matters, the fix is to lock the offset to
 the profile.
@@ -46,7 +48,7 @@ Dates a player reads are stored the way they read them, as a wall clock and the
 zone it was read in: `caught_at_local` beside `caught_at_offset`, and
 `acquired_at_local` beside `acquired_at_offset` on every history row. Keeping the
 two apart is what lets a search for a year or a month stay a plain range scan.
-[`caught-rows.ts`](../../src/auth/caught-rows.ts) re-attaches the offset on the
+[`caught-io.ts`](../../src/server/caught-io.ts) re-attaches the offset on the
 way out, so a reader still sees `2026-08-10T22:14:03.123+08:00`.
 
 The **species day is the exception**: `getDayOfYear` counts in UTC, so the

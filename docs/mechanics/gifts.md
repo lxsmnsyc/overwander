@@ -23,18 +23,29 @@ A gift may carry an expiry date, after which it is neither listed nor claimable.
 
 ## Starting out
 
-Four gifts stand on every shelf, and each is taken once per player:
+Sixteen gifts stand on every shelf, and each is taken once per player:
 
-- **Bulbasaur**, **Charmander** and **Squirtle**, each at level 5.
+- The three starters of every region from Kanto to Unova, each at level 5:
+  **Bulbasaur**, **Charmander** and **Squirtle** from Kanto, **Chikorita**,
+  **Cyndaquil** and **Totodile** from Johto, **Treecko**, **Torchic** and
+  **Mudkip** from Hoenn, **Turtwig**, **Chimchar** and **Piplup** from Sinnoh,
+  and **Snivy**, **Tepig** and **Oshawott** from Unova.
 - **20 Poke Balls** to throw at whatever comes next.
 
-Nothing stops a player taking all three starters. Which one is a first partner is
-a choice rather than a roll.
+Nothing stops a player taking all fifteen starters. Which one is a first partner
+is a choice rather than a roll.
 
 A gifted pokemon says where it came from rather than naming a place on the map,
 and the trainer who gave it stands at the head of its ownership history.
 
+## Other gifts
+
+A [quest](quests.md) pays through the same machinery, the daily board and the
+weekly hunt included. What it pays is handed over the moment the quest is
+claimed rather than left waiting, and it shows in the gift history afterwards.
+
 ## See also
 
 - [Catching](catching.md)
-- [Items and gold](items.md)
+- [Quests](quests.md)
+- [Items](items.md)

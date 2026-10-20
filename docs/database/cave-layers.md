@@ -12,12 +12,17 @@ things:
 - **chunk seeds** become `` `${seed}cave(x, y)` ``, so landmarks, spawns and
   window rows all re-derive underground for free. `chunk_seed` is `text`, so
   `snapshots` and `snapshot_spawns` needed **no migration**.
-- **`roleAt`** reads the depth: underground a cell is `ground` where
-  `isCaveFloor` says so and `wall` everywhere else. There is no water below.
+- **`roleAt`**
+  ([`src/overworld/terrain/ground.ts`](../../src/overworld/terrain/ground.ts))
+  reads the depth: underground a cell is `wall` unless `isCaveOpen` says a
+  player can reach it, and open floor is `water` where `isCaveWater` says so
+  and `ground` everywhere else.
 
 `isCaveFloor` ([`src/overworld/fields.ts`](../../src/overworld/fields.ts)) is
 three things: **chambers** where the surface has rock, **veins** joining them,
-and **elbows** making the veins walkable.
+and **waterways** the water cut for itself. Each is widened by a cell either
+way, and rock thinner than a 2x2 block is opened up, since a cave wall is drawn
+as a cliff and a cliff is never one cell wide.
 
 A vein is a ridge read off `world.stone` at a coarser step and a different
 corner of itself, the way `isRiver` reads the lake field. Its width is what
@@ -32,17 +37,21 @@ country the world grows in a 300-cell square:
 | 0.02          | 23.8%     | 2,771            | 220                    |
 | 0.03          | 25.8%     | 16,518           | 299 (the whole square) |
 
-An **elbow** is the fix for a passage that steps diagonally. A vein corners
-wherever the field does, and a diagonal step never cuts a corner, so two cells
-touching only at their corners are two dead ends. Where a diagonal pair has both
-of its connecting cells solid, the **westerly** one opens: the two candidates
-see the same pair with both offsets negated, so exactly one of them acts without
-either having to ask. It is not exhaustive, since an elbow can meet another
-elbow, but those are under 1% of floor cells and a second pass would widen the
-passages more than it is worth.
+The widening also squares off a vein that steps diagonally, which nothing in
+this game can walk, and it buys roomier passages without joining more of the
+network. At 0.008 the widened floor is 30.3% open, with a biggest walkable
+stretch of 2,454 and a reach of 132. Opening thin rock takes that to 31.5%,
+5,951 and 281.
 
-Measuring this before the elbows existed gave a reach of 79 cells, which was an
-artifact. The field was that connected all along and simply could not be walked.
+Not all floor counts. `isCaveOpen`
+([`src/overworld/cave.ts`](../../src/overworld/cave.ts)) keeps only the floor
+that joins a mouth without leaving its block of 4 by 4 chunks, so a sealed
+pocket no mouth leads to is rock.
+
+**Water underground** comes from the wet field rather than from rain. A
+waterway is a passage filled wall to wall, and the water table floods every
+open cell at or below its level where the rock is wet, so low chambers fill and
+high ones stay dry. Under a volcano the water is lava, as it is above.
 
 Nothing is decorated underground. `getDecorationCells` takes an empty kind list
 at depth, since a cave carries the biome overhead so its spawns and lairs know
@@ -61,9 +70,13 @@ roll the way `portalCellIn` places the portal. The region's portal keeps its
 ring and is refused a mouth **in the scan itself**, so a mouth the surface had
 no room for is not staged underground either. A way in is always a way back out.
 
+A chunk has one mouth at most, and a mouth keeps the chunks around it clear of
+another within `MOUTH_GAP` (12) cells. Which of two neighbours keeps its own is
+a draw off the seed, so the network is the same however a player walks into it.
+
 The scan is cheap-first, because every chunk in the world runs it: one `isRock`
-sample per cell, cached per chunk, and the full `roleAt` reading only for the
-pairs that get past it.
+sample per cell, cached per chunk, and the full reading (`isCaveFloor`, the
+surface water and `isHillside`) only for the pairs that get past it.
 
 ## Which layer a call is about
 

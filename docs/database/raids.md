@@ -5,8 +5,8 @@ Raids run on their own three-hour clock (`RAID_INTERVAL` in
 rather than the 5-minute spawn window, so a lobby stands long enough to gather a
 party. See [Windows](overworld.md#windows) for how a chunk's clocks line up.
 
-Two landmark kinds stage raids, and both are **lairs**. A lair is a place, not a
-pokemon. `Lairs`
+Two landmark kinds stage legendary and shadow raids, and both are **lairs**. A
+lair is a place, not a pokemon. `Lairs`
 ([`src/data/overworld/lair.ts`](../../src/data/overworld/lair.ts)) names the
 places the mainline games gave these legendaries (Seafoam Islands, Power Plant,
 Mt. Ember, Cerulean Cave), maps each to the legendary that lives in it, and
@@ -19,6 +19,11 @@ lists which of them a biome can host.
 - **Shadow lairs** draw from the biome's rare band, except one draw in eight
   (`SHADOW_RAID_LEGENDARY_CHANCE`), which takes over one of the biome's own
   lairs instead. Their boss carries the `Shadow` ability alongside `Boss`.
+
+Five more landmarks stage raids and are not lairs: `Totem`, `MaxRaid`,
+`AlphaRaid`, `NobleArena` and `TeraRaid`. Each stages a pokemon of the tile's
+own biome, picked again every raid window, and stores no lair. What sets each
+apart is in [Raids](../mechanics/raids.md).
 
 A raid is **named after the place**, by `getLairTitle`.
 
@@ -36,45 +41,48 @@ A third kind is not staged by the world. A **mythical raid** is opened by
 spending a **raid item**, and it stands on no landmark. `RAID_ITEMS` in
 [`src/data/items/raid-items.ts`](../../src/data/items/raid-items.ts) maps each
 relic to the species it calls, the Old Sea Map to Mew for instance. Its lobby is
-named after the mythical's own lair (`Faraway Island`). Both the lobby and the
-catch it pays out record `Biome.Beyond`, since a relic calls a species the world
-never places. The world never rolls a mythical of its own (`isMythicalSpecies`
-is excluded from every landmark roll), so carrying the relic is the only way to
-face one. A raid item is found in the **special** band of the overworld item
-pool and nowhere else. It cannot be bought or sold.
+named after the mythical's own lair (`Faraway Island`) and stands on the
+species' home ground (`getSpeciesHome`, or `Biome.Beyond` where it has none).
+The catch it pays out records `Biome.Beyond`, since a relic calls a species the
+world never places. The world never rolls a mythical of its own
+(`isMythicalSpecies` is excluded from every landmark roll), so carrying the
+relic is the only way to face one. A raid item is found in the **special** band
+of the overworld item pool and nowhere else. It cannot be bought or sold.
 
-`hostMythicalRaid` spends the relic **before** the lobby is written, so a raid
-item opens exactly one lobby and is gone whether the boss falls or the party
-does. Nothing restages it. The landmark rule that reopens a failed raid has no
-lobby to reopen, since the id is
-`{chunkSeed}{zone}@{raidTimestamp}$mythical{item}:{uid}` and its record already
-exists. Hosting also refuses a player with no pokemon, rather than spending the
-relic on a lobby nobody can start.
+`hostMythicalRaid` only checks that the relic is carried. `startRaid` spends it
+when the fight begins, so a host who opens a lobby and walks out still has it,
+and a fought lobby has used it up whether the boss falls or the party does.
+Nothing restages it. The landmark rule that reopens a failed raid has no lobby
+to reopen, since the id is `{zone}@{raidTimestamp}$mythical{item}:{uid}`, one
+per relic, player and window, and its record already exists. Hosting also
+refuses a player with no pokemon, rather than opening a lobby nobody can start.
 
 Once open it is an ordinary lobby: it appears in the window's listing, anyone
 may join it, and it is fought, cleared and claimed through the same calls.
 
-A fourth fight is not a raid. A **Team Rocket grunt** stands at a `WanderingNpc`
+One more fight is not a raid. A **Team Rocket grunt** stands at a `TeamRocket`
 cell, and it runs on the three-hour `NPC_INTERVAL` rather than a raid window. It
 is described under [`rocket_stops`](raid-stops.md#rocket_stops).
 
 ## `raids`
 
-Written by `enterRaid` in [`src/auth/raids.ts`](../../src/auth/raids.ts). The id
-is `{chunkSeed}@{raidTimestamp}${kind}{cell}`, derived, so every player who
+Written by `enterRaid` in
+[`src/server/raids/lobby.ts`](../../src/server/raids/lobby.ts). The id is
+`{chunkSeed}{zone}@{raidTimestamp}${kind}{cell}`, derived, so every player who
 walks onto the landmark in the same window joins the lobby already standing, and
-the first to arrive hosts it. The kind tag is `raid` for a legendary raid and
-`shadow` for a shadow one, so the two landmark types never collide on a cell.
-The read and the create share a transaction, so one landmark stages exactly one
-raid per window even when two players walk in together: a player either opens
-the lobby or joins the one already there.
+the first to arrive hosts it. A later world generation puts `#{generation}` in
+front. The kind tag is `raid` for a legendary raid, `shadow` for a shadow one,
+and `totem`, `max`, `alpha`, `noble` or `tera` for the rest, so no two landmark
+types collide on a cell. The read and the create share a transaction, so one
+landmark stages exactly one raid per window even when two players walk in
+together: a player either opens the lobby or joins the one already there.
 
 | Column                             | Type             | Notes                                                       |
 | ---------------------------------- | ---------------- | ----------------------------------------------------------- |
 | `id`                               | `text`           | The derived lobby id                                        |
-| `kind`                             | `smallint`       | Legendary (0) or Shadow (1)                                 |
+| `kind`                             | `smallint`       | A `RaidKind`, from Legendary (0) to Tera (7)                |
 | `species`                          | `integer`        | What is being staged                                        |
-| `lair`                             | `smallint`       | The place it stands in; null for a shadow on a rare species |
+| `lair`                             | `smallint`       | The place it stands in; null where it stands in none        |
 | `biome`                            | `smallint`       | What a lairless shadow raid is named after                  |
 | `trait_value`                      | `integer`        | 32-bit roll the boss' nature and ability derive from        |
 | `host`                             | `uuid`           | Only this player may start the raid                         |
@@ -82,8 +90,9 @@ the lobby or joins the one already there.
 | `window_at`                        | `bigint`         | The **local** raid window, for listing the live lobbies     |
 | `utc_offset`                       | `smallint`       | Minutes east of UTC the window was read in                  |
 | `chunk_seed`, `chunk_x`, `chunk_y` | `text`/`integer` | Where the lobby stands, for a listing with no chunk in hand |
-| `cell`                             | `integer`        | The landmark cell                                           |
+| `cell`                             | `integer`        | The landmark cell; -1 for a mythical                        |
 | `cleared`                          | `boolean`        | Set when the boss goes down                                 |
+| `generation`                       | `smallint`       | The world generation the lobby stands in                    |
 
 Who has joined is `teams` rows pointing back at the raid rather than a list on
 the lobby, so two players joining at once cannot overwrite each other and the
@@ -96,7 +105,7 @@ A claim whose battle never lands is a designed state: it reads as lost, and the
 lobby restages.
 
 A raid is fought with pokemon of one's own, so `canJoinRaids(uid)` gates taking
-part: `hasAnyCaught` in [`src/auth/caught.ts`](../../src/auth/caught.ts), a
+part: `hasAnyCaught` in [`src/server/caught.ts`](../../src/server/caught.ts), a
 single one-row read. A player who owns nothing neither opens a lobby nor
 restages a failed one, and `joinRaid` refuses their team. They may still watch:
 walking in on a running raid opens it as a replay, which settles nothing and
@@ -121,6 +130,7 @@ who opens the dialog and thinks better of it leaves no lobby behind.
 | `Host`       | No lobby, or the last party failed, and they own pokemon | `enterRaid` stages it, then the Raids tab |
 | `Join`       | A lobby is gathering and they own pokemon                | `enterRaid` adopts it, then the Raids tab |
 | `Spectate`   | The battle has started, or they own no pokemon           | Opens the battle, or the lobby, to watch  |
+| `Rejoin`     | The battle is under way and they fielded a party in it   | Walks back into the fight as theirs       |
 
 The dialog shows that button and `Close`. It resolves null, and the player is
 told the lair is quiet, when the cell stages no raid this window, the raid has
@@ -148,7 +158,8 @@ The window allows one defeat of the boss, not one fight:
 - **Under way.** A battle that is neither won nor timed out is what the arrival
   walks into. `joinRaid` refuses once `battle_id` is set, so a player who walks
   onto the landmark then is sent into the battle as a **replay**: they watch the
-  same deterministic fight, settle nothing, and are owed nothing.
+  same deterministic fight, settle nothing, and are owed nothing. A player who
+  fielded a party in it is offered `Rejoin` instead.
 
 Restaging keeps the id, so [`raid_rewards`](raid-stops.md#raid_rewards) still
 pays each player once: a claim is checked against the raid's _current_ battle,
@@ -164,8 +175,8 @@ which only a winning party appears in.
 | `joined_seq` | `bigint` | Identity column, so the host stays first |
 
 The party itself is `team_catches`, one row per slot: `(team_id, slot,
-caught_id)`, up to `TEAM_SIZE` (6), unique on the catch so a pokemon cannot be
-entered twice.
+caught_id)`, up to `TEAM_SIZE` (6), unique on the team and the catch so a
+pokemon cannot be entered twice in one party.
 
 A team holds ids, so it follows whatever those catches become, until a battle
 freezes them.
@@ -206,7 +217,7 @@ the join is attempted.
 
 A full lobby is twenty rows, so it carries a search box of its own, with the
 same grammar as everything else. `TEAM_VOCABULARY` and `matchesTeam` live in
-[`team-search.ts`](../../src/model/search/team.ts).
+[`search/team.ts`](../../src/model/search/team.ts).
 
 | Field             | What it narrows by                               |
 | ----------------- | ------------------------------------------------ |
@@ -220,9 +231,9 @@ What each pokemon in a party is stays out of the grammar: a lobby holds catch
 ids, and the records behind them are read by the row that draws them rather than
 by the row that filters.
 
-A lobby holds `RAID_PLAYER_LIMIT` (20) **players** rather than teams: somebody
-fielding two parties still fills one place. Both sides read the limit, so the
-join button and the server refuse together.
+A lobby holds `RAID_PLAYER_LIMIT` (20) **players**. A player brings one party
+to a lobby, and joining again replaces it rather than taking a second place.
+Both sides read the limit, so the join button and the server refuse together.
 
 ## `raid_invites` and `raid_watchers`
 
@@ -238,8 +249,8 @@ ends alone.
 **`raid_watchers`** is who is standing in a lobby without a party: written on
 the way in, dropped on the way out, and taken by the cascade when the lobby
 goes. A player who owns no pokemon can do nothing else, and the row is what lets
-the lobby list them. Tier 1, the way the lobby itself is, since who is watching
-a raid is as public as who has joined it.
+the lobby list them. It is public to every signed-in player, the way the lobby
+itself is, since who is watching a raid is as public as who has joined it.
 
 Both are followed live, so an invited list and a crowd both move while somebody
 is looking at them.

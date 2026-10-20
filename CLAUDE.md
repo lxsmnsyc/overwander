@@ -11,10 +11,10 @@ Overwander: a seed-generated Pokémon-style overworld with a real-time battle en
 ```bash
 pnpm dev                                  # http://localhost:3000
 pnpm test                                 # whole suite, once
-pnpm exec vitest run test/data.test.ts    # one file
+pnpm exec vitest run test/data/species.test.ts   # one file
 pnpm exec vitest run test/battle -t 'Tough Claws'   # one test by name
 pnpm exec tsc --noEmit                    # type-check
-pnpm exec oxlint src test                 # lint (never biome — this repo migrated off it)
+pnpm exec oxlint src test                 # lint (never biome: this repo migrated off it)
 pnpm exec oxfmt src test                  # format
 ```
 
@@ -26,7 +26,7 @@ The `db` service in `compose.yaml` (port 54322, `overwander`) is production, and
 
 `.claude/skills/*/SKILL.md` and `.agents/skills/*/SKILL.md` hold this project's conventions, and the two sets are not identical. List both and read whichever covers the task before starting; they are not all surfaced in a session's skill listing. The same rules are mirrored for other agents in `AGENTS.md`, `.opencode/AGENTS.md` and `.github/`, so a convention that changes has to change in each.
 
-Three that touch nearly every change: comments stay short and say the why rather than the what (`light-comments`), iteration is a `for...of` loop rather than a callback Array method (`prefer-for-of`), and prose anywhere — comments, docs, commit messages — avoids em-dashes in favour of commas, colons, parentheses or two sentences.
+Three that touch nearly every change: comments stay short and say the why rather than the what (`light-comments`), iteration is a `for...of` loop rather than a callback Array method (`prefer-for-of`), and prose anywhere (comments, docs, commit messages) avoids em-dashes in favour of commas, colons, parentheses or two sentences.
 
 ## Data registries
 
@@ -42,7 +42,7 @@ Real time, not turns. A mainline turn is 2 seconds, written `turns(n)` from `src
 
 Everything is an event on one bus ([src/battle/events/index.ts](src/battle/events/index.ts)). `Check*` events are questions whose answer is a field the listeners mutate (`power`, `immune`, `priority`, `success`); `Unit*` events are things that happened. Listeners pick `EventPriority.Pre | Exact | Post` (or `AttackPriority`), where `Exact` is the mechanic's own answer and `Post` is everyone modifying it.
 
-Effects register themselves and nothing else names them: no mechanic mentions an ability by id. An ability is `createAbility(id, setup)` from [src/battle/abilities/\_\_create.ts](src/battle/abilities/__create/index.ts), which starts its listeners only while some unit on the field holds it. Abilities that share one behaviour go through a `createXAbility` meta factory in that file rather than a local helper. A visual cue is `unit.triggerAbility(id)`, and the effect usually rides the resulting `UnitTriggerAbility` at `Exact`; a cue fires once per matching unit. Reuse a move rather than reimplementing its machinery where one exists (Drought casts Sunny Day; Cursed Body casts Disable).
+Effects register themselves and nothing else names them: no mechanic mentions an ability by id. An ability is `createAbility(id, setup)` from [src/battle/abilities/\_\_create/](src/battle/abilities/__create/index.ts), which starts its listeners only while some unit on the field holds it. Abilities that share one behaviour go through a `createXAbility` meta factory in that folder rather than a local helper. A visual cue is `unit.triggerAbility(id)`, and the effect usually rides the resulting `UnitTriggerAbility` at `Exact`; a cue fires once per matching unit. Reuse a move rather than reimplementing its machinery where one exists (Drought casts Sunny Day; Cursed Body casts Disable).
 
 [src/battle/setup.ts](src/battle/setup.ts) wires a battle: mechanics first, then moves, statuses, abilities, items, then the AI. Tests build one through `test/battle/harness.ts` (`createBattle`, `createUnit`, `pinRandom`) and drive time with `battle.tick(ms)`.
 

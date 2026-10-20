@@ -4,12 +4,8 @@ How Galar and Hisui go in, batch by batch, on top of `gen-8-data`.
 
 ## Where things stand
 
-- **Batches 0 and 2 are merged.** `main` has the Gen 8 ids, the Galar and Hisui regions, the form lists and the ability-pool audit.
-- **Batch 1 is merged except its release page.** The 89 Galar and Hisui moves have their behaviour and pictures, and every region's species learn them.
-- **Left from the audit for later batches:**
-  - Stantler's and Ursaring's `awaiting: evolution` marks come off in batch 18.
-  - Mime Jr.'s second evolution lands with Galarian Mr. Mime in batch 12.
-  - Galarian Darmanitan's Zen Mode stays off until its Zen form is drawn.
+- **Every batch is merged.** Gen 8 shipped as five releases: [the moves](../update/eighth-generation-moves.md), [Galar's routes](../update/galar-routes.md), [Galar's forms and legends](../update/galar-forms-and-legends.md), [Hisui](../update/hisui.md) and [Dynamax](../update/dynamax.md).
+- **Left from the audit:** Galarian Mr. Mime still ships as its line's end, marked `awaiting: evolution`, until Mr. Rime is drawn.
 
 ## What SpriteCollab has
 
@@ -321,7 +317,7 @@ Batch 20, built the way Megas and Z-Moves were: automatic, once per side, with n
   - A unit holding a Mega Stone or a Z-Crystal never Dynamaxes.
   - A side's Mega, Z-Move and Dynamax are each once per fight.
 - **Items:** the Max Mushrooms, plus Max Soup if the factor is a catch flag.
-- **Raids are left as they are.** A raid boss does not Dynamax; that is a later decision once the mechanic exists.
+- **Raids are left as they are.** A lair's boss does not Dynamax. Max Raids, a landmark of their own with a Dynamaxed boss, came with the same release.
 
 ## Decided
 

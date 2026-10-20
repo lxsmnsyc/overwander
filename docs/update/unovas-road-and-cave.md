@@ -90,8 +90,8 @@ a Swoobat with Infiltrator and an Excadrill with Tough Claws.
 
 ## See also
 
-- [The fifth generation's moves](fifth-generation-moves.md), the release before
-  this one.
-- [Sinnoh](sinnoh.md), the one before that.
+- [The fifth generation's moves](fifth-generation-moves.md), an earlier
+  release.
+- [Sinnoh](sinnoh.md), an older one.
 - [Player's guide](../mechanics.md), for the rules in full.
 - [Credits](../credits.md), for the people, libraries and art behind it.

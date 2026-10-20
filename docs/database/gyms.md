@@ -23,33 +23,38 @@ both sides read live in
 | `defenses`                         | `integer`        | Challenges turned away, reset with the holder              |
 | `ousted`                           | `uuid`           | Who was just turned out                                    |
 | `freed_at`                         | `bigint`         | When they were, which is what the bar counts from          |
+| `generation`                       | `smallint`       | The world generation the seat stands in                    |
 
 The party is a **`team_snapshots` row**: a frozen copy, so the holder walks away
 with their pokemon still theirs to raise and fight. Nothing here locks a catch.
 
-Sitting down reads the row `for update`, so two players cannot both find a seat
-free and both take it.
+The key is `(generation, seat_id)`. Sitting down reads the row `for update`, so
+two players cannot both find a seat free and both take it.
 
-Tier 1: a seat is a public fact about a cell, the way a raid lobby is, and it
-is followed live so a seat changing hands is visible from across the chunk.
+Tier 1: a seat is a public fact about a cell, the way a raid lobby is. It is
+not followed live: the board reads who holds each seat in a chunk with the
+chunk's other landmarks (`readLandmarkStandings`), and walking up to a seat reads
+it again (`enterGymSeat`).
 
 ## `gym_challenges`
 
-One challenge in flight per seat and challenger. The row **is** the claim: it
+One challenge in flight per seat and challenger, keyed by
+`(generation, seat_id, challenger)`. The row **is** the claim: it
 carries the battle the challenge became, and the outcome is read off that battle
 rather than stored twice.
 
-| Column       | Type      | Notes                                                 |
-| ------------ | --------- | ----------------------------------------------------- |
-| `seat_id`    | `text`    | The seat challenged                                   |
-| `challenger` | `uuid`    | Who challenged it                                     |
-| `battle_id`  | `text`    | The fight                                             |
-| `held_by`    | `uuid`    | Whose seat it was when the challenge was accepted     |
-| `started_at` | `bigint`  | When it opened                                        |
-| `settled`    | `boolean` | Whether the result has been paid                      |
-| `settled_at` | `bigint`  | What the retry cooldown counts from                   |
-| `window_at`  | `bigint`  | The start of the rolling day the take is counted in   |
-| `taken`      | `integer` | What this challenger has stripped off this seat in it |
+| Column       | Type       | Notes                                                 |
+| ------------ | ---------- | ----------------------------------------------------- |
+| `seat_id`    | `text`     | The seat challenged                                   |
+| `challenger` | `uuid`     | Who challenged it                                     |
+| `battle_id`  | `text`     | The fight                                             |
+| `held_by`    | `uuid`     | Whose seat it was when the challenge was accepted     |
+| `started_at` | `bigint`   | When it opened                                        |
+| `settled`    | `boolean`  | Whether the result has been paid                      |
+| `settled_at` | `bigint`   | What the retry cooldown counts from                   |
+| `window_at`  | `bigint`   | The start of the rolling day the take is counted in   |
+| `taken`      | `integer`  | What this challenger has stripped off this seat in it |
+| `generation` | `smallint` | The world generation of the seat                      |
 
 `held_by` is what keeps a late report honest: a challenge that settles after
 somebody else has taken the seat pays nothing, because what was beaten is not
@@ -88,7 +93,8 @@ open without ever being locked away for good.
 The row survives the seat being emptied rather than being deleted, because
 `gym_challenges` hangs off it and that is where the cooldown and the daily take
 live. Cascading those away on every win would hand every challenger a clean
-slate.
+slate. A holder who gives the seat up (`leaveGymSeat`) does delete the row, and
+its challenges go with it.
 
 ## Settlement
 

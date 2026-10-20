@@ -23,11 +23,11 @@ string is hard-coded English, in registry `name` and `description` fields, the
       `@solid-primitives/i18n` is the lighter fallback.
 - [ ] **Locale plumbing.** A locale setting beside the theme, defaulting from
       `Accept-Language` on the server render, reflected in `<html lang>`.
-- [ ] **Formatting.** Replace the four `toLocaleString('en-US')` calls and any
+- [ ] **Formatting.** Replace the seven `toLocaleString('en-US')` calls and any
       hand-built dates with `Intl`, reading the active locale.
 - [ ] **Registry text out of the entries.** Names and descriptions move into
       per-locale text tables keyed by id (species already use
-      `src/data/text/en/species.yaml`), read through `getSpeciesName(id)` and
+      `src/data/text/en/species/`), read through `getSpeciesName(id)` and
       friends. Derived descriptions (`describeBerry`, the gems, valuables)
       become message templates with parameters rather than string
       concatenation.
@@ -49,7 +49,7 @@ thin slice of it.
 - [ ] **Measure first.** Walk the Vite manifest's static graph for the main
       route to get today's startup total and the size of each chunk.
 - [ ] **Stop the board deriving whole encounters.**
-      `board-view.ts:405` calls `deriveEncounter` for every visible spawn only
+      `board-view.ts:435` calls `deriveEncounter` for every visible spawn only
       to read `.shiny`, which rolls moves, abilities, held items and level.
       Split out a `deriveShiny`. After this the overworld needs no learn sets,
       ability pools or held-item tables.
@@ -59,9 +59,9 @@ thin slice of it.
       under `text/en/species/`. They still load eagerly; loading each field
       when it is first wanted is the next step.
 - [ ] **Move the other registries to YAML** on the same pipeline. Moves,
-      abilities, items, the per-move battle numbers and the spawn pools are
-      done; the lairs are next. The Megas and true
-      shadows can follow once the YAML can say `inherits:`.
+      abilities, items, the per-move battle numbers, the spawn pools and the
+      lairs are done. The Megas and true shadows can follow once the YAML can
+      say `inherits:`.
 - [ ] **Load moves, abilities and items on demand** in the browser, behind a
       Suspense gate around the panels and the battle view. The server keeps
       registering everything eagerly.
@@ -93,8 +93,7 @@ them in SQL. The TypeScript stays the source.
       migration does.
 - [ ] **No foreign keys from player tables** into `game_data`, and none from
       the join tables to moves or abilities, since a species may name one not
-      written up yet (Archen and Archeops name Defeatist, which has no
-      registry entry).
+      written up yet.
 - [ ] **Move box search and auction search to SQL**, which lets them filter
       rows the browser never downloads.
 - [ ] **Localized names.** Once i18n lands, a `names (kind, id, locale, name)`
@@ -111,15 +110,6 @@ Small and unblocked.
 - [ ] adjacent chunk preload
 - [ ] Mini Boss ability
 - [ ] catch tags
-- [ ] **An NPC API.** One NPC is spread over many places today: its id, name,
-      charsets and visit tag in `src/data/overworld/npc.ts`, its counter under
-      `src/components/overworld/npc-dialog/counters/` and its entry in
-      `counter.tsx`, its server handler under `src/server/npcs/` with a client
-      wrapper in `src/auth/npcs.ts`, the trader list in `src/server/validate.ts`,
-      and where it stands in `chunk-snapshot.ts`. A `createNpc` definition
-      should declare all of it in one place, the way `createAbility` does for
-      abilities, so adding the Jeweler or the Archaeologist above is one file.
-
 - [ ] **Zenith forms, region by region.** Kanto is done
       (`src/data/species/zeniths.ts`), and Johto is next. Each batch proposes,
       per species, the stat spread (+100), the worn ability and any type change for approval,
@@ -128,13 +118,6 @@ Small and unblocked.
 - [ ] **Regional Zeniths.** Kanto's regional forms (Alolan, Galarian,
       Hisuian, Paldean) get theirs with their own region's batch, in slot 98
       and down. Ditto has no Zenith (`NO_ZENITH`).
-- [ ] **Type: Null and Silvally.** When Gen 7 lands, Silvally's 17 Memories
-      are form items the way the Plates are: rows in `FORM_ITEMS` derived from
-      the type each Memory loads, gated on RKS System through `SHAPE_NEEDS` the
-      way Arceus is gated on Multitype, with the Memory floating over the
-      changed shape like every other held form (`form-mark.ts`). Type: Null has
-      no forms and evolves by friendship; its Battle Armor and the helmet are
-      the only thing to decide.
 
 ## 3. Player systems
 
@@ -146,22 +129,6 @@ private to its owner and stored, so none of them touches world generation.
 Folders for catches. The catches list opens on the boxes instead of one long
 grid.
 
-- [x] **Data.** A `boxes` table (`id, player, name, colour, position`) and two
-      nullable columns on `caught`: `box` and `box_slot`. A catch with no box is
-      in **Default**, which is not a row, so every existing catch landed there
-      with no migration of its rows. A slot is a square and may leave gaps.
-- [x] **Actions.** Make, rename, recolour and delete a box. Deleting one sends
-      its catches back to Default. File one catch (from its sheet) or a picked
-      set (Move N to), drag onto a box in the rail or onto a square, lay a box
-      out by dex number, close up its gaps, move everything to another box.
-- [x] **Limits.** 32 boxes and a 24-character name, checked in the server
-      function. A box holds any number of catches and pages at the box size.
-- [x] **Pickers.** Every catch picker over the player's own pokemon draws a
-      box switcher once they have made a box, and a square shows which box it
-      lives in while all of them are showing.
-- [ ] **Reorder boxes by drag.** `arrangeBoxes` is written; the rail has no
-      grip to drive it yet.
-- [ ] **Shift-press picks a run, and Pick all N.** In the boxes design, not built.
 - [ ] **`box:<name>` in the search grammar**, for a query that narrows to one
       box without the switcher.
 - [ ] **Overlap to settle.** "Catch tags" in Next up covers some of the same
@@ -184,8 +151,8 @@ and the daycare lady's boost is the only way to hurry it.
       slot. It keeps one rule for how an egg earns steps, and the buddy stays the
       only way to get the boosts (Flame Body, the species of the day).
 - [ ] **Where it hooks in.** Step credit already runs through one server path
-      for the buddy's egg (`creditedEggSteps` and the step report in
-      `src/server/eggs.ts`). Incubated eggs are credited from the same report, at
+      for the buddy's egg (`creditedEggSteps` in `src/model/egg.ts` and the
+      step report in `src/server/eggs.ts`). Incubated eggs are credited from the same report, at
       the same clamp, so walking faster than the clamp still earns nothing.
 - [ ] **Balance.** Incubated eggs could earn a share of the steps (for example
       half) so the buddy slot keeps its value.
@@ -245,18 +212,16 @@ Shortest path to real value, in order:
       map onto clearing cooldowns the way the Leppa Berry already does.
 - [ ] **The three charms left:** Exp Charm, Oval Charm, Mark Charm, on the
       pattern the Shiny and Catching Charms already use.
-- [ ] **Terrain seeds, Terrain Extender and Room Service.** The engine now has
-      terrain and Trick Room, which is what blocked them.
+- [ ] **Room Service.** The engine now has Trick Room, which is what blocked
+      it.
 
 After that:
 
-- Battle items: Max Mushrooms.
-- Poké Balls: Safari and Sport, then the Hisui and legend-specific sets (Beast,
-  Cherish, Dream, Park, Origin, Strange, the Hisuian and feather/wing/jet sets).
+- Poké Balls: Safari and Sport, then the Hisui and legend-specific sets (Cherish,
+  Dream, Park, Origin, Strange, the Hisuian and feather/wing/jet sets).
 - Flutes, all 5. The Poké Flute wakes sleepers; Black and White adjust
   encounter rate and level, which is overworld work.
 - Key items: Coin Case, Berry Pots, Poké Radar, Vs Seeker, Dowsing Machine.
-- Left alone until their species exist: Rusted Sword and Rusted Shield.
 
 ## 5. Engine gaps in Johto moves
 
@@ -443,20 +408,20 @@ the first piece of overworld state that cannot be computed and has to be sent.
 What already exists:
 
 - `positions` holds every player's `chunk_x, chunk_y, cell_x, cell_y, depth,
-moved_at` (`db/migrations/0001_baseline.sql:732`), and the table already sends
+moved_at` (`db/migrations/0001_baseline.sql:728`), and the table already sends
   its changes to the live feed (`src/server/live/rules.ts:34`).
 - `profiles.sprite` already holds the charset a trainer walks as, and it is
   already readable by anybody.
 - `readPositions(uids)` already reads many players' rows in one query
-  (`src/server/positions.ts:98`), and `getPlayerPosition(uid)` already reads
-  anybody's through the server (`src/auth/positions.ts:71`). The profile card
+  (`src/server/positions.ts:109`), and `getPlayerPosition(uid)` already reads
+  anybody's through the server (`src/auth/positions.ts:73`). The profile card
   uses it today to say where a trainer is standing.
 - The chunk canvas already draws several people on several cells in several
   charsets, facing correctly, with cast shadows, occlusion veiling and press
   targets. `loadOWChar` hands each caller its own clone so two people in the same
-  charset stand apart (`src/canvas/overworld/char-sprites.ts:46`). What is missing is a
+  charset stand apart (`src/canvas/overworld/char-sprites.ts:47`). What is missing is a
   prop saying who else is here: `personOn` reads landmarks only
-  (`src/components/overworld/chunk-canvas/index.tsx:769`).
+  (`src/components/overworld/chunk-canvas/index.tsx:801`).
 
 What is in the way:
 
@@ -470,7 +435,7 @@ What is in the way:
       is no index on `chunk_x, chunk_y`. "Who else is in this chunk" is a query
       that does not exist.
 - [ ] **Positions are saved every few seconds rather than every step**
-      (`src/model/position-record.ts:15`), and only the local player has a slide.
+      (`src/model/position-record.ts:16`), and only the local player has a slide.
       Anybody else would hop between saves without one.
 
 The objection to answer first: the world is effectively endless, so two players

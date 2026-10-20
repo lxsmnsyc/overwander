@@ -149,7 +149,7 @@ against Special Defence. A few fixed-damage moves ignore the formula entirely.
 
 ## Statuses and weather
 
-There are twenty-two statuses. Six of them **follow a pokemon out of the
+There are fifty-five statuses. Six of them **follow a pokemon out of the
 battle**: poison, bad poison, sleep, paralysis, burn and freeze. The rest,
 including confusion, flinching, seeding, trapping, hiding and floating, end with
 the fight. A pokemon can leave a raid both poisoned and asleep.
@@ -196,8 +196,11 @@ forms. A raid changes who a new sky covers: see [Raids](raids.md).
 ## Mega Evolution
 
 A pokemon holding its own **Mega Stone** takes its Mega shape as it takes the
-field. There are 48 Megas, from Mega Venusaur to Mega Diancie. Rayquaza needs no
-stone: it Mega Evolves if it knows Dragon Ascent.
+field. There are 97 Megas, from Mega Venusaur to Mega Baxcalibur, worn off 92
+stones (one stone serves both Meowstic, both Magearna and every Tatsugiri).
+Rayquaza needs no stone: it Mega Evolves if it knows Dragon Ascent. Zygarde's
+stone works only on its Complete Forme, so a Zygarde holding one Mega Evolves
+the moment Power Construct makes it Complete.
 
 **One pokemon on a team Mega Evolves in a fight.** Where several hold a stone
 that fits them, it goes to the highest level. A tie on level goes to the bigger
@@ -208,17 +211,30 @@ A Mega keeps its catch's ability and **wears the Mega's own on top**, the way an
 Origin Forme does. Where the line can already have that ability, the Mega wears
 another instead:
 
-| Mega      | Wears           | In place of  |
-| --------- | --------------- | ------------ |
-| Scizor    | Tough Claws     | Technician   |
-| Tyranitar | Sand Force      | Sand Stream  |
-| Blaziken  | Reckless        | Speed Boost  |
-| Medicham  | Iron Fist       | Pure Power   |
-| Latias    | Friend Guard    | Levitate     |
-| Latios    | Tinted Lens     | Levitate     |
-| Abomasnow | Thick Fat       | Snow Warning |
-| Audino    | Triage          | Healer       |
-| Diancie   | Queenly Majesty | Magic Bounce |
+| Mega         | Wears           | In place of      |
+| ------------ | --------------- | ---------------- |
+| Scizor       | Tough Claws     | Technician       |
+| Tyranitar    | Sand Force      | Sand Stream      |
+| Blaziken     | Reckless        | Speed Boost      |
+| Medicham     | Iron Fist       | Pure Power       |
+| Latias       | Friend Guard    | Levitate         |
+| Latios       | Tinted Lens     | Levitate         |
+| Abomasnow    | Thick Fat       | Snow Warning     |
+| Audino       | Triage          | Healer           |
+| Diancie      | Queenly Majesty | Magic Bounce     |
+| Dragonite    | Gale Wings      | Multiscale       |
+| Chimecho     | Punk Rock       | Levitate         |
+| Absol Z      | Sniper          | Sharpness        |
+| Scrafty      | Stamina         | Intimidate       |
+| Chandelure   | Cursed Body     | Infiltrator      |
+| Chesnaught   | Iron Barbs      | Bulletproof      |
+| Greninja     | Technician      | Protean          |
+| Malamar      | Unaware         | Contrary         |
+| Barbaracle   | Rock Head       | Tough Claws      |
+| Crabominable | Guts            | Iron Fist        |
+| Drampa       | Analytic        | Berserk          |
+| Falinks      | Moxie           | Defiant          |
+| Baxcalibur   | Ice Scales      | Thermal Exchange |
 
 The stone glows over the pokemon's head for the rest of the fight, with a Key
 Stone over Mega Rayquaza. That is how a watcher can tell, since not every Mega
@@ -233,6 +249,76 @@ one Mega. Primal Kyogre wears Primordial Sea and raises heavy rain, and Primal
 Groudon wears Desolate Land and raises harsh sunlight. Either sky holds while
 its Primal stands and shuts every ordinary weather out, and the orb floats over
 it the way a stone does over a Mega.
+
+## Terastallization
+
+A pokemon holding a **Tera Orb** takes its **Tera type** as it takes the field,
+and keeps it for the rest of the fight, through switching out. It is **one a
+side a fight**: the first holder to take the field takes it.
+
+- A Terastallized pokemon is hit as its Tera type alone. Nothing changes that
+  type for the rest of the fight: Soak, Roost and a form change all leave it.
+- Its moves of the Tera type get the same-type bonus, **×2** when the Tera type
+  is one of its own types too (×2.25 with Adaptability). Its own types keep
+  their ×1.5.
+- A Tera-type move weaker than **60 power** is raised to 60, unless it strikes
+  several times or has priority.
+- **Tera Blast** takes the Tera type, and lands as a physical move when the
+  user's Attack is higher than its Special Attack.
+
+Every catch has a Tera type of its own, rolled when it is caught: usually one
+of its own types, and one time in twenty any of the eighteen. **50 Tera Shards**
+of a type change it to that type for good. A prize from a
+[Tera raid](raids.md#tera-raids) keeps its boss's Tera type instead. Ogerpon's
+mask decides its Tera type, whatever the catch's own.
+
+A pokemon holding a Dynamax Band, a Mega Stone, a Zenith Shard or a Z-Crystal
+never Terastallizes, and a Terastallized pokemon never Mega Evolves.
+
+## Dynamax
+
+A pokemon holding a **Dynamax Band** grows the first time its HP falls from half
+or more to under half. It is **one a side a fight**, with nothing to press.
+
+- A Dynamaxed pokemon has **twice its HP**, and keeps the size for its next
+  **three moves**. Then it shrinks back with the share of HP it had.
+- Every move it throws goes off as the **Max Move** of its type, and a status
+  move as **Max Guard**. A Max Move hits at 90 to 150 power by what the move it
+  replaces hits with (70 to 100 for Fighting and Poison), and each type's leaves
+  something behind: a weather, a terrain, a stage raised on its own side or a
+  stage dropped on the other.
+- A pokemon with the **Gigantamax Factor** throws its **G-Max Move** in place
+  of the Max Move of its type. Feeding **Max Mushrooms** to one of the 40
+  species with a Gigantamax form gives it the factor for good, and a Gigantamax
+  boss caught from a [Max Raid](raids.md#totems-and-max-raids) already has it.
+- Nothing flinches it or holds it to part of its move set, and nothing but its
+  own move sends it off the field. One-hit KO moves, the moves read off weight,
+  Disable, Encore, Torment, Instruct and anything that forces a switch do
+  nothing to it. Behemoth Blade, Behemoth Bash and Dynamax Cannon hit it twice
+  as hard.
+
+A pokemon that is Terastallized, or that holds a Mega Stone, a Zenith Shard or a
+Z-Crystal, never Dynamaxes.
+
+## Zenith forms
+
+A **Zenith** is this game's own answer to a Mega, for a final stage that has
+none. A pokemon holding its own **Zenith Shard** takes its Zenith shape as it
+takes the field. There are 49, all of them Kanto's so far, from Zenith
+Butterfree to Zenith Mew.
+
+- A Zenith's base stats total **100 more** than its pokemon's, and some take a
+  new type: Zenith Arcanine is Fire and Dragon, Zenith Ninetales Fire and Ghost.
+- It keeps its catch's ability and **wears the Zenith's own on top**, one its
+  line can never be born with, such as Drought on Zenith Rapidash or Comatose on
+  Zenith Snorlax.
+- **One pokemon on a team reaches its Zenith in a fight**, picked the way the
+  Mega is. It is apart from the Mega, so a team can field one of each.
+- A pokemon that has a Mega has no Zenith, and neither does Ditto.
+- Holding a shard rules out a Z-Move, Terastallizing and Dynamaxing.
+
+Each shard is buried only where its own line lives, in the **prized** band; see
+[Items](items.md#the-item-pool).
 
 ## Z-Moves
 
@@ -255,8 +341,8 @@ way.
   assigns them. Z-Curse heals a Ghost to full and raises anything else's
   Attack a stage. Memento, Parting Shot, Healing Wish and Lunar Dance get
   nothing, since their Z-effect heals a replacement that never comes in here.
-- A Mega, or a pokemon holding the stone that would make it one, never throws a
-  Z-Move.
+- A Mega, a Zenith, a pokemon holding the stone or shard that would make it
+  one, and a Terastallized pokemon never throw a Z-Move.
 - A Z-Move is always aimed at one enemy, except Clangorous Soulblaze. Metronome,
   Mimic, Sketch, Mirror Move, Assist, Encore and Instruct never reach one.
 

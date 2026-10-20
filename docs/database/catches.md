@@ -1,6 +1,6 @@
 # Catch records
 
-Written by `recordCatch` in
+Written by `writeCaughtRecord` in
 [`src/server/caught.ts`](../../src/server/caught.ts). A catch is one `caught`
 row under a 20-character id, plus four child tables that hang off it by foreign
 key: `caught_moves`, `caught_abilities`, `caught_items` and `caught_history`.
@@ -25,7 +25,7 @@ catch is on the pages beside it:
 | Column                                | Type        | Notes                                                  |
 | ------------------------------------- | ----------- | ------------------------------------------------------ |
 | `id`                                  | `text`      | 20-character id, and the primary key                   |
-| `owner`                               | `uuid`      | Current owner; null while a lot sits in escrow         |
+| `owner`                               | `uuid`      | Current owner; null in escrow or a release's grace     |
 | `type`                                | `smallint`  | `EncounterType`: how it was originally met             |
 | `species`                             | `integer`   |                                                        |
 | `nickname`                            | `text`      | What its owner calls it; empty until named             |
@@ -35,6 +35,7 @@ catch is on the pages beside it:
 | `ivs`                                 | `integer`   | The six 0-31 values, five bits each, in stat order     |
 | `gender`, `nature`                    | `smallint`  |                                                        |
 | `slots`                               | `smallint`  | Room for abilities, held items and moves               |
+| `learn_from`                          | `smallint`  | Lowest level it may still learn moves from for free    |
 | `shiny`, `shadow`, `egg`              | `boolean`   | What it is                                             |
 | `traded`                              | `boolean`   | Has changed hands; what the box search reads           |
 | `can_evolve`                          | `boolean`   | A handover has met what a trade evolution asks         |
@@ -43,8 +44,11 @@ catch is on the pages beside it:
 | `tera_type`                           | `smallint`  | The type it Terastallizes into; see [Tera Shards][ts]  |
 | `favorite`, `guarded`                 | `boolean`   | See [What the player sets][player-sets]                |
 | `auctionable`                         | `boolean`   | Advisory; the opener re-derives it                     |
-| `hidden`                              | `boolean`   | Folded into a fusion; nothing reads it yet             |
+| `hidden`                              | `boolean`   | Folded into a fusion; the box reads leave it out       |
+| `fused_with`                          | `text`      | The catch folded into this one, for a fusion           |
 | `locked_at`                           | `bigint`    | `started_at` of the battle holding it; 0 when free     |
+| `box`                                 | `text`      | The box it is filed in; null for Default               |
+| `box_slot`                            | `integer`   | Its square in that box, counted from 0                 |
 | `steps`                               | `integer`   | Steps walked in the shell; only eggs accrue any        |
 | `hatch_steps`                         | `integer`   | What hatching costs, frozen when the egg was found     |
 | `stepped_at`                          | `bigint`    | Server instant steps were last credited at             |
@@ -58,21 +62,25 @@ catch is on the pages beside it:
 | `caught_at_local`, `caught_at_offset` | `timestamp` | The catcher's wall clock and their zone ([Time][time]) |
 | `locale`                              | `text`      | The catcher's locale tag, e.g. `en-PH`                 |
 | `ev_hp` … `ev_spe`                    | `smallint`  | Training put into each stat; starts at zero            |
-| `effort_bonus`                        | `smallint`  | Effort granted by wings, over the level allowance      |
+| `effort_bonus`                        | `smallint`  | Effort granted by wings and vitamins, over the level   |
 | `friendship`                          | `smallint`  | 0 to 255, checked                                      |
 | `origin_timestamp`                    | `bigint`    | Snapshot window the spawn belonged to                  |
 | `origin_x`, `origin_y`                | `integer`   | Chunk coordinates                                      |
 | `origin_biome`                        | `smallint`  |                                                        |
 | `origin_place`                        | `text`      | The named place, where there was one                   |
+| `revision`                            | `integer`   | Raised by a trigger on every change, children included |
+| `released_by`                         | `uuid`      | Who let it go, while a release is in its grace         |
+| `released_at`                         | `bigint`    | When it was let go                                     |
+| `released_candy`                      | `integer`   | The candy that release paid                            |
 
 Four child tables carry what a pokemon has several of, one row per slot:
 
-| Table              | Row                                                                     |
-| ------------------ | ----------------------------------------------------------------------- |
-| `caught_moves`     | `(slot, move, points)`; a move and its PP Ups travel together           |
-| `caught_abilities` | `(slot, ability)`; the rolled one, plus Shadow for a shadow             |
-| `caught_items`     | `(slot, item)`; held items, up to `HELD_ITEM_LIMIT`                     |
-| `caught_history`   | `(seq, owner, owner_name, acquired_at, kind, paid, ball)`, oldest first |
+| Table              | Row                                                                       |
+| ------------------ | ------------------------------------------------------------------------- |
+| `caught_moves`     | `(slot, move, points)`; a move and its PP Ups travel together             |
+| `caught_abilities` | `(slot, ability)`; the rolled one, plus Shadow for a shadow               |
+| `caught_items`     | `(slot, item)`; held items, up to the room its `slots` give               |
+| `caught_history`   | `(seq, owner, owner_name, acquired_at_*, kind, paid, ball)`, oldest first |
 
 Each cascades on delete, so releasing a pokemon takes its moves and its history
 with it in one statement.

@@ -17,7 +17,7 @@ alongside a call is never trusted; only what the token proves is.
 
 | Written on the server                                    | What a client could not be trusted with                                                                                                                                                             |
 | -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `recordCatch`                                            | The record is built from the caller's own `encounters` row, so the pokemon written down is the one that was staged, not one the caller describes                                                    |
+| `throwAt`                                                | The catch and the flight are rolled from the caller's own `encounters` row, so the pokemon written down is the one that was staged, and an ended meeting is retired by a key recomputed from it     |
 | `grantItem` / `consumeItem`                              | Item stacks are currency; a client that could write them could mint Master Balls                                                                                                                    |
 | `grantGold` / `spendGold`                                | The same, for the balance                                                                                                                                                                           |
 | `grantCandy` / `useCandy`                                | A candy buys a level, so minting candy mints levels                                                                                                                                                 |
@@ -26,14 +26,13 @@ alongside a call is never trusted; only what the token proves is.
 | `evolveCatch`                                            | The criteria (level, held item, carried item) span several tables                                                                                                                                   |
 | `claimItemCache` / `claimBerryPatch` / `claimPhenomenon` | The reward derives from the chunk seed and the **stored** window; a claim against a cell that holds nothing, or a window that has passed, pays nothing                                              |
 | `startEncounter` / `meetSpawn`                           | The spawn is read from the shared table and has to belong to the chunk's live window                                                                                                                |
-| `markFled`                                               | The key is recomputed from the stored encounter                                                                                                                                                     |
 | `peekRaid`                                               | Reads only, but reads what the world staged: what a lair holds, and whether this player may host, join or only watch, is not a client's to decide                                                   |
 | `joinRaid`                                               | Catch ids are readable by every player, so ownership is checked where a client cannot skip it                                                                                                       |
 | `startRaid`                                              | Only the host may start; teams are frozen from the stored catches                                                                                                                                   |
 | `finishBattle`                                           | Only a player who fielded a team may stamp an outcome, and only the first report counts                                                                                                             |
-| `hostMythicalRaid`                                       | The relic is checked and spent server-side before the lobby exists, so one raid item opens one raid whatever becomes of it                                                                          |
-| `enterRocketStop` / `startRocketBattle`                  | The grunt's party is the chunk's own roll for the window, and the fight freezes the player's party the way a raid does                                                                              |
-| `claimRocketReward`                                      | Gold and a pokemon change hands on a win the server checks, and the `defeated` flag pays exactly once                                                                                               |
+| `hostMythicalRaid`                                       | The relic is checked server-side as the lobby opens and spent by `startRaid` as the fight begins, so one raid item calls one fight whatever becomes of it                                           |
+| `enterStop` / `startStopBattle`                          | The stop's party is the chunk's own roll for the window, and the fight freezes the player's party the way a raid does                                                                               |
+| `claimStopReward`                                        | Gold, an award and a grunt's pokemon change hands on a win the server checks, and the `defeated` flag pays exactly once                                                                             |
 | `recordAftermath`                                        | What a unit spent, and what health it has left, are checked against the frozen snapshot and the record; each player settles once per battle                                                         |
 | `clearRaid`                                              | A landmark shuts only for a battle actually recorded as won                                                                                                                                         |
 | `claimRaidReward`                                        | Participation, the win, and the one-claim marker are all in different tables                                                                                                                        |
@@ -43,7 +42,7 @@ alongside a call is never trusted; only what the token proves is.
 | `remindMove`                                             | The Move Reminder is re-derived from the window, what he can give back is derived again from the stored species, level and move list, and the Heart Scale leaves the bag in the same write          |
 | `buyFossil`                                              | Which two fossils the maniac carries is re-derived from his window, the visit is claimed before the trade, and the gold and the rock move in one transaction                                        |
 | `reviveFossil`                                           | What comes out of a fossil belongs to the fossil and arrives at a fixed level, and the rock leaves the bag before the record is written, and goes back if it never is                               |
-| `walk`                                                   | Steps are credited against the server clock, so a report buys no more than the time since the last one, and what a Pickup buddy found is the server's own roll, landing in the same transaction     |
+| `recordSteps`                                            | Steps are credited against the server clock, so a report buys no more than the time since the last one, and what a Pickup buddy found is the server's own roll, landing in the same transaction     |
 | `hatchEgg`                                               | An egg opens only where the record says it has been carried far enough, and the candy is paid there too                                                                                             |
 | `breedCatches`                                           | Who is standing at the cell, whether the pair can breed and what the egg inherits are all decided server-side; the once-a-window visit is claimed before the fee is taken                           |
 | `boostEgg`                                               | The daycare lady is re-derived from the window, the half a walk she adds is measured against the stored egg, and she serves a player once per window                                                |
@@ -54,7 +53,7 @@ alongside a call is never trusted; only what the token proves is.
 | `claimAuction`                                           | Who won, whether bidding has closed, and the one-claim `settled` flag are all read where a client cannot skip them, and the seller is paid from the same claim                                      |
 | `reclaimAuction`                                         | Only the seller, only once bidding has closed with nobody having bid, and only through the same `settled` flag a collection pass uses, so a lot cannot be pulled off the block or handed back twice |
 | `usePurifyingGem`                                        | The shadow field, the ability and the values move together with the gem leaving the bag, so a rare item is never spent on a pokemon that did not change                                             |
-| `visitNurse`                                             | Who is standing at the cell is re-derived, and the once-a-window marker is taken only once she has actually done something                                                                          |
+| `visitNurse`                                             | Who is standing at the cell is re-derived, and only a pokemon of the player's own that needs her care is touched                                                                                    |
 | `usePortal`                                              | The cell has to really be a portal in a live window, the far end is re-derived rather than accepted, and the key is taken only once the crossing is known to be real                                |
 | `savePosition`                                           | A client that could write this row could write anybody else's; the coordinates are clamped to somewhere that exists, and nothing about the walk is checked because nothing trusts a position        |
 
@@ -82,11 +81,11 @@ re-derives every reward from the seed regardless.
 The server functions that read apply three tiers. The live feed applies the same
 ones to what it sends ([`src/server/live/rules.ts`](../../src/server/live/rules.ts)).
 
-| Tier                  | Tables                                                                                                                                                                                                                                                                                    | Who reads                   |
-| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- |
-| **Public to players** | `caught` and its children, `snapshots`, `snapshot_spawns`, `auctions`, `raids`, `teams`, `team_catches`, `team_snapshots`, `battles`, `battle_teams`, `rocket_stops`, `rocket_party`, `gym_seats`, `raid_watchers`, `awards`, `towns`, `profiles`                                         | Any signed-in player        |
-| **Own rows only**     | `bag_items`, `bag_candies`, `pokedex_entries`, `positions`, `fled_encounters`, `encounters` and its children, `bids`, `auction_sellers`, `friends`, `friend_requests`, `blocks`, `friend_codes`, `trades`, `raid_invites`, `gym_challenges`, the four duel tables, and every claim marker | The player named on the row |
-| **Server only**       | `gifts`, `gift_claims`, the quest and rotation tables, and the account tables (`users`, `sessions`, `identities`, `verifications`, `jwks`, `two_factors`, `passkeys`)                                                                                                                     | Nobody but the server       |
+| Tier                  | Tables                                                                                                                                                                                                                                                                                                                               | Who reads                   |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------- |
+| **Public to players** | `caught` and its children, `snapshots`, `snapshot_spawns`, `auctions`, `raids`, `teams`, `team_catches`, `team_snapshots`, `battles`, `battle_teams`, `rocket_stops`, `rocket_party`, `gym_seats`, `raid_watchers`, `awards`, `towns`, `profiles`                                                                                    | Any signed-in player        |
+| **Own rows only**     | `bag_items`, `bag_candies`, `pokedex_entries`, `positions`, `fled_encounters`, `encounters` and its children, `bids`, `auction_sellers`, `friends`, `friend_requests`, `blocks`, `friend_codes`, `trades`, `raid_invites`, `gym_challenges`, the four duel tables, `boxes`, `team_presets` and their catches, and every claim marker | The player named on the row |
+| **Server only**       | `gifts`, `gift_claims`, the quest and rotation tables, `ledger`, `action_paces`, `staff_actions`, and the account tables (`users`, `sessions`, `identities`, `verifications`, `jwks`, `two_factors`, `passkeys`)                                                                                                                     | Nobody but the server       |
 
 A few consequences worth having in hand:
 
@@ -114,7 +113,7 @@ server cannot break them either:
 | `dex_monotonic`                       | Pokedex counts only rise                                                                                                        |
 | `trades_open_pair`                    | One open trade offer per direction of a pair                                                                                    |
 | `buddy_owner` / `buddy_follows_owner` | A buddy must be an owned catch, and stops following when the catch changes hands                                                |
-| `gift_claims` backfill guard          | A claim may be updated exactly once, to record the catch it became, and again to lose that pointer when the pokemon is released |
+| `backfill_only` on `gift_claims`      | A claim may be updated exactly once, to record the catch it became, and again to lose that pointer when the pokemon is released |
 | Column checks                         | Gold never negative, levels 1 to 100, friendship 0 to 255, a bid above zero                                                     |
 | Foreign keys                          | A team names a real catch; deleting an account takes its rows with it                                                           |
 
@@ -204,8 +203,9 @@ e2e suite, which shares that database.
 ## Indexes
 
 Every table's primary key is an index already, and most reads are a key lookup:
-a bag row is `(player, item)`, an encounter is `(spawn_id, player)`, a claim
-marker is `(marker, player)`. What follows is what the schema adds on top.
+a bag row is `(player, item)`, an encounter is `(generation, spawn_id, player)`,
+a claim marker is `(generation, marker, player)`. What follows is what the
+schema adds on top.
 
 | Table             | Index                                                        | Answers                                                     |
 | ----------------- | ------------------------------------------------------------ | ----------------------------------------------------------- |
@@ -213,10 +213,11 @@ marker is `(marker, player)`. What follows is what the schema adds on top.
 | `caught`          | `(owner, species)`                                           | The Repeat Ball's check                                     |
 | `caught`          | `(owner, level)`, `(owner, friendship)`, `(owner, iv_total)` | Box searches that sort or filter on one field               |
 | `caught`          | Trigram on `nickname` and `origin_place`                     | Substring search, which no ordinary index answers           |
-| `caught_moves`    | `(move)`, and the same for abilities, items and types        | A search running from the move to the pokemon that knows it |
+| `caught_moves`    | `(move)`, and the same for abilities and items               | A search running from the move to the pokemon that knows it |
 | `caught_history`  | `(owner_name)`                                               | Finding what a story trainer once owned                     |
+| `boxes`           | `(player, position)`                                         | A player's boxes, in order                                  |
 | `profiles`        | `(buddy_id)`                                                 | Clearing a buddy that changed hands                         |
-| `snapshots`       | Primary key `(chunk_seed, zone)`                             | The chunk a player is standing in                           |
+| `snapshots`       | Primary key `(generation, chunk_seed, zone)`                 | The chunk a player is standing in                           |
 | `fled_encounters` | `(window_at)`                                                | The hourly sweep                                            |
 | `raids`           | `(window_at, utc_offset)`                                    | The live raid board                                         |
 | `teams`           | `(player)`, `(raid_id)`                                      | A player's lobbies, and a lobby's parties                   |
@@ -231,8 +232,8 @@ per field is enough here where the document store needed one per combination of
 fields. The box search leans on that: it pushes whatever narrows into the query
 and filters the rest in memory.
 
-Three shapes are not queryable as stored, and the search migration answers each:
-bits inside a packed integer become **generated columns** (the six individual
-values, the six carried statuses, the steps an egg has left), a difference
-between two columns becomes one as well, and a substring of a name gets a
-**trigram index**.
+Three shapes are not queryable as stored, and the baseline migration answers
+each: bits inside a packed integer become **generated columns** (the six
+individual values, the six carried statuses, the steps an egg has left), a
+difference between two columns becomes one as well, and a substring of a name
+gets a **trigram index**.

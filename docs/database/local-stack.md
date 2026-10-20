@@ -78,7 +78,7 @@ A migration is a plain SQL file in [`db/migrations/`](../../db/migrations). File
 apply in filename order and are never edited once they have run anywhere:
 
 ```bash
-# write db/migrations/0002_gym_seat_freeing.sql
+# write db/migrations/0011_gym_seat_freeing.sql
 pnpm db:migrate       # applies it, and records it in schema_migrations
 pnpm db:reset         # proves the folder still replays from nothing
 ```

@@ -68,10 +68,10 @@ private to the owning uid.
 | `Lost`      | Bidding closed with somebody else in front       |
 | `Collected` | Won and claimed                                  |
 
-`Outbid` is the one state a player can still do something about, and `canRebid`
-is that question. The Bids panel puts a bid box on those rows, so a raise is
-made from the history rather than by finding the lot on the board again. A `Won`
-row gets a Collect button for the same reason.
+`Outbid` is the one state a player can still do something about, but the Bids
+panel does not answer it. Bidding happens at an auction board and nowhere else,
+so a raise costs the walk the first bid cost. A `Won` row gets a Collect button,
+since what was won is the player's rather than the market's.
 
 ## Collecting
 
@@ -83,10 +83,12 @@ one transaction:
 - an **item** lot lands in the winner's stack;
 - a **catch** lot comes out of escrow: `owner` becomes the winner's uid, an
   `Acquisition.Auction` entry is appended to its history, stamped in the new
-  owner's own zone the way a catch date is, and its `friendship` is **reset to
-  `BASE_FRIENDSHIP`**. What it walked, levelled and was groomed for belonged to
-  the seller, and a pokemon that arrived inseparable would make being loved
-  something that can be bought;
+  owner's own zone the way a catch date is, with the winning bid as `paid`, and
+  its `friendship` is **reset to `BASE_FRIENDSHIP`**. What it walked, levelled
+  and was groomed for belonged to the seller, and a pokemon that arrived
+  inseparable would make being loved something that can be bought. A sale is a
+  change of hands, so it also sets `traded`, opens a trade evolution (spending
+  the held item that evolution asks for) and drops any `feat_progress`;
 - the seller is paid the winning bid;
 - `settled` is set, which is the claim marker: the lot is collected once and the
   purse is paid once.

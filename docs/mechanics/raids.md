@@ -9,12 +9,16 @@ A raid is staged by a **lair**, which is a place rather than a pokemon: the lair
 decides who lives in it, and the raid is named after the place, so two Articuno
 raids in one chunk carry different names.
 
+Every region's legendaries keep a lair, named for where the main games keep
+them: the **Seafoam Islands** for Articuno, the **Spear Pillar** for Dialga and
+Palkia, the **Zero Lab** for Koraidon and Miraidon, and so on. A few others have
+one too, such as the Ultra Beasts, Volcarona and Bloodmoon Ursaluna.
+
 A lair can hold more than one resident, and the raid rolls which of them is at
-home. The **Burned Tower** is the one that does: Raikou, Entei and Suicune all
-live there. The rest hold one legendary each, at the **Seafoam Islands**, the
-**Power Plant**, **Mt. Ember**, **Cerulean Cave**, the **Whirl Islands** and the
-**Bell Tower**. **Faraway Island**, the **Ilex Forest**, **Forina** and
-**Birth Island** hold the mythicals, and no walk ever stages those.
+home. The **Burned Tower** holds Raikou, Entei and Suicune, the **Southern
+Island** Latias and Latios, and the **Embedded Tower** any of the weather trio.
+Most hold one each. The mythicals' lairs, such as **Faraway Island**, the
+**Ilex Forest** and **Birth Island**, are never staged by a walk.
 
 A lobby stands for the whole three-hour raid window and anyone may join it; the
 host starts it. Each player brings up to **six** pokemon, and a lobby holds
@@ -29,11 +33,25 @@ for ten minutes, restages in place with a new host.
 ## Mythical and shadow raids
 
 A **mythical raid** is not staged by the world at all. It is called out by
-spending a relic, and the world never produces a mythical on its own. There are
-four: an **Old Sea Map** calls Mew to the island it names, a **GS Ball** calls
-Celebi to the shrine in the forest it was left at, a **Wish Tag** calls Jirachi
-to the valley the comet passes over, and an **Aurora Ticket** calls Deoxys to
-the island it admits one passenger to.
+spending a relic, and the world never produces a mythical on its own. An **Old
+Sea Map** calls Mew to the island it names, a **GS Ball** calls Celebi to the
+shrine in the forest it was left at, and each of the others calls its own:
+
+| Relic          | Calls     | Relic                  | Calls     |
+| -------------- | --------- | ---------------------- | --------- |
+| Old Sea Map    | Mew       | Liberty Pass           | Victini   |
+| GS Ball        | Celebi    | Music Box              | Meloetta  |
+| Aurora Ticket  | Deoxys    | Colress Machine        | Genesect  |
+| Wish Tag       | Jirachi   | Heart Diamond          | Diancie   |
+| Member Card    | Darkrai   | Sealed Ring            | Hoopa     |
+| Manaphy Egg    | Manaphy   | Steam Valve            | Volcanion |
+| Oak's Letter   | Shaymin   | Ancient Poke Ball      | Magearna  |
+| Azure Flute    | Arceus    | Hero's Charm           | Marshadow |
+| Colt's Petal   | Keldeo    | Windmill Charm         | Zeraora   |
+| Mystery Box    | Meltan    | Mythical Pecha Berry   | Pecharunt |
+
+The relic is spent when the raid starts, and that raid happens once, won or
+lost.
 
 A **shadow raid** usually stages one of the biome's rare species, but one time
 in eight it reaches past them and stages a legendary instead.

@@ -22,13 +22,14 @@ again against the stored record.
 Three server calls in [`src/server/training.ts`](../../src/server/training.ts)
 move it, each in one transaction:
 
-- **`trainEffort`** spends unused points into a stat, or takes them back out
-  with a negative amount. Nothing is consumed, since the points came with the
-  levels.
-- **`useWing`** spends a wing for `WING_EFFORT` (3) points in the wing's own
-  stat and raises `effortBonus` by the same, so a wing grants training rather
-  than spending the pool. That is what makes one worth as much at level 100 as
-  at level 5.
+- **`trainEfforts`** spends unused points into the stats, a whole spread in one
+  press, or takes them back out with negative amounts. Nothing is consumed,
+  since the points came with the levels.
+- **`useEffortItem`** spends a wing for `WING_EFFORT` (3) points in the wing's
+  own stat, or a vitamin for `VITAMIN_EFFORT` (10), and raises `effortBonus` by
+  the same, so the item grants training rather than spending the pool. That is
+  what makes one worth as much at level 100 as at level 5. A Max wing or
+  vitamin fills the stat to the cap, and a held Macho Brace doubles the grant.
 - **`feedEffortBerry`** spends a bitter berry to take `BERRY_EFFORT_DROP` (10)
   points off one stat. They return to the pool rather than being lost, and the
   pokemon gains friendship for it.
@@ -54,9 +55,10 @@ A catch starts at `BASE_FRIENDSHIP` (70). Something hatched starts at
 Herbal medicine is the one loss that **grows** with the band, which is the
 mainline's own asymmetry.
 
-Every **gain** above is doubled for a pokemon whose `ball` is a **Luxury Ball**
-(`friendshipFactor`); neither loss is. The ball is a field of the record, so the
-bonus follows whatever ball the pokemon is in now. Since `useBall`
+Every **gain** above is doubled for a pokemon whose `ball` is a **Luxury Ball**,
+and doubled again while it holds a **Soothe Bell** (`friendshipFactor`);
+neither loss is. The ball is a field of the record, so the bonus follows
+whatever ball the pokemon is in now. Since `useBall`
 ([`balls.ts`](../../src/server/balls.ts)) lets an owner spend a spare ball to
 replace it, the bonus can be bought for a pokemon that was caught in something
 else. What a ball did at the moment of the catch, such as a Heal Ball mending it
@@ -142,11 +144,12 @@ every pokemon a player owns to find the few worth listing.
 Two rules keep it from going out of date:
 
 - **Every write that moves an input rewrites it.** Catching, writing an egg, a
-  bottle cap (`ivs`), purifying (`ivs`, all six up by two), evolving
-  (`species`). Nothing else can change any of the three. `shiny` is fixed at the
-  encounter, and hatching only lifts the shell. Both cap paths matter in _both_
-  directions: a cap can complete a perfect set, and it can also break a blank
-  one, which is the only way a catch stops being auctionable.
+  bottle cap or the Hyper Trainer (`ivs`), purifying (`ivs`, all six up by
+  two), evolving and fusing (`species`). Nothing else can change any of the
+  three. `shiny` is fixed at the encounter, and hatching only lifts the shell.
+  Both cap paths matter in _both_ directions: a cap can complete a perfect set,
+  and it can also break a blank one, which is the only way a catch stops being
+  auctionable.
 - **Nothing decides anything by it.** `openAuction` re-derives from the record
   it is already holding, and the sell picker re-checks every row the query
   returns. The field can cost a listing its place in a list; it can never

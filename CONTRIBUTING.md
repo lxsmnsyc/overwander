@@ -108,7 +108,10 @@ A fix should come with a test that fails without it.
 
 Everything in `src/data/` describes itself and registers itself. Each registry
 is a folder with a `__create.ts`, files of entries and an `index.ts` that
-registers them. Ids are `const enum`s in `src/data/ids/`.
+registers them. Species, moves, abilities, items, the per-move battle numbers
+and the spawn pools are written as YAML, with the player-facing words under
+`src/data/text/en/` (the `data-yaml` skill). Ids are `const enum`s in
+`src/data/ids/`.
 
 Every entry carries a one-line player-facing `description` that says what this
 engine does, not what the mainline does, using this engine's own numbers. A test

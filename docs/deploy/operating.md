@@ -10,13 +10,14 @@ what each failure means.
 
 A development build hands every new account the `admin` role. That grant is
 behind `import.meta.env.DEV`, so it is not merely skipped in a deployed build,
-it is not in the bundle. Grant it by hand once, in the SQL editor:
+it is not in the bundle. Grant it by hand once, through `psql` on the server
+(`docker compose exec db psql -U postgres -d overwander`):
 
 ```sql
 update profiles set role = 'admin' where id = '<your uid>';
 ```
 
-Your uid is the account's id under Authentication, Users. What each role may do
+Your uid is the account's `id` in the `users` table. What each role may do
 is in [Security](../database/security.md).
 
 ## What does not work on a deployed build, by design
@@ -42,7 +43,7 @@ written stays when one is turned off.
 | `RELEASE_GRACE`  | Holds a release for a day, when it can be taken back for the candy it paid, before the sweep deletes it |
 | `STAFF_LOG`      | Keeps `staff_actions`: every role set, ban, gift and teleport, who did it, and when                     |
 
-Read the two records in the dashboard's table editor; players never can.
+Read the two records through `psql`; players never can.
 
 ## Keeping it running
 
@@ -55,9 +56,9 @@ Read the two records in the dashboard's table editor; players never can.
 
 ## Telling everybody something
 
-Add a row to `announcements` in the dashboard's table editor: a `message` of up
-to 280 characters and an `ends_at` in epoch milliseconds. `starts_at` defaults
-to now, so leave it empty to show the line at once or set it to schedule one.
+Add a row to `announcements` through `psql`: a `message` of up to 280
+characters and an `ends_at` in epoch milliseconds. `starts_at` defaults
+to now, so leave it out to show the line at once or set it to schedule one.
 Every open tab shows it as a banner straight away, the sign-in screen included,
 and each player can put it away on their own device. Rows a month past their end
 are swept.

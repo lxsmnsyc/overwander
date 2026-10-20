@@ -17,28 +17,36 @@ Who it is is rolled per cell per window, and the three ranks cannot overlap:
 **Which organisation** it is is not rolled at all. It is the biome's, and it
 never changes.
 
-| Team                | Holds                                                     |
-| ------------------- | --------------------------------------------------------- |
-| **Team Aqua**       | Every ocean, reef, kelp forest, beach, rocky coast, mangrove, swamp and bog |
-| **Team Magma**      | Volcanoes, mountains, alpine tundra, badlands and both deserts |
-| **Team Galactic**   | Glaciers, tundra, taiga, montane forest and the Beyond     |
-| **Team Rocket**     | Everywhere else, and any biome added later until somebody says otherwise |
+| Team              | Holds                                                                       |
+| ----------------- | --------------------------------------------------------------------------- |
+| **Team Aqua**     | Every ocean, reef, kelp forest, beach, rocky coast, mangrove, swamp and bog |
+| **Team Magma**    | Volcanoes, mountains, alpine tundra, badlands and both deserts              |
+| **Team Galactic** | Glaciers, tundra, taiga, montane forest and the Beyond                      |
+| **Team Plasma**   | Every rainforest, temperate forest, tropical seasonal forest and woodland   |
+| **Team Flare**    | Grassland and shrubland                                                     |
+| **Team Rocket**   | Everywhere else, and any biome added later until somebody says otherwise    |
 
 A player who learns that the coast is Aqua's has learned something about the
 world rather than about this window.
 
-| Team              | Its boss          | Its executives                      |
-| ----------------- | ----------------- | ----------------------------------- |
-| **Team Rocket**   | Boss **Giovanni** | Archer, Ariana, Proton, Petrel      |
-| **Team Magma**    | Leader **Maxie**  | Admins Tabitha and Courtney         |
-| **Team Aqua**     | Leader **Archie** | Admins Matt and Shelly              |
-| **Team Galactic** | Boss **Cyrus**    | Commanders Mars, Jupiter and Saturn |
+| Team              | Its boss          | Its executives                                         |
+| ----------------- | ----------------- | ------------------------------------------------------ |
+| **Team Rocket**   | Boss **Giovanni** | Archer, Ariana, Proton, Petrel                         |
+| **Team Magma**    | Leader **Maxie**  | Admins Tabitha and Courtney                            |
+| **Team Aqua**     | Leader **Archie** | Admins Matt and Shelly                                 |
+| **Team Galactic** | Boss **Cyrus**    | Commanders Mars, Jupiter and Saturn                    |
+| **Team Plasma**   | Sage **Ghetsis**  | Admins Colress and Zinzolin                            |
+| **Team Flare**    | Boss **Lysandre** | Scientists Xerosic, Aliana, Bryony, Celosia and Mable  |
 
 Which executive turns up is its own roll, so a team with two of them is no
 likelier to field one than a team with four. Everybody is introduced team first
 and rank before the name, so **Team Aqua Leader Archie** says which organisation
-and how far up it in one line. Everything all three field is shadowed, and it is
-an ordinary trainer battle, so a simultaneous knockout is a draw.
+and how far up it in one line. Everything all three ranks field is shadowed, and
+it is an ordinary trainer battle, so a simultaneous knockout is a draw.
+
+A boss' legendary is one taken from a lair the biome hosts. Where the biome hosts
+none, there is no legendary to have been taken, and a sixth of the rare band
+stands in its place.
 
 Every player fights the cell separately. One player's victory closes nothing for
 anybody else. Losing costs nothing but the attempt: they are still standing and
@@ -48,10 +56,10 @@ Beating one pays a purse drawn per winner, so the same fight is worth a
 different amount to the next player, and leaves a pokemon behind, shadowed and
 at level 10.
 
-| Rank          | Purse             | What it leaves                                      |
-| ------------- | ----------------- | --------------------------------------------------- |
-| **Grunt**     | 5,000 to 15,000   | Any one of its six                                  |
-| **Executive** | 40,000 to 90,000  | Any of its six, and a stash it was carrying         |
+| Rank          | Purse              | What it leaves                                           |
+| ------------- | ------------------ | -------------------------------------------------------- |
+| **Grunt**     | 5,000 to 15,000    | Any one of its six                                       |
+| **Executive** | 40,000 to 90,000   | Any of its six, and a stash it was carrying              |
 | **The boss**  | 120,000 to 250,000 | Their own mark and any of theirs, the legendary included |
 
 The grunt is the commonest fight in the world, and the only place some of a
@@ -62,7 +70,7 @@ badge of its own.
 Every rank leaves a mark on the shelf as well, and every team's marks are its
 own. The rank and file of one team share one between them, each executive has
 their own, and so does each boss. Each is worth going about in that person's
-coat, so the three uniforms are three different unlocks. See
+coat, so the three ranks' uniforms are three different unlocks. See
 [Awards and titles](awards.md).
 
 The executives and the bosses field trained pokemon rather than caught ones, and
@@ -78,15 +86,15 @@ A syndicate is the one person at a crossroads a player can lose to. See
 A **trainer cell** is its own landmark rather than a wanderer's crossroads, and
 whoever is standing on it changes with the same three-hour window. They fight
 fair: nothing they field is a shadow. A win costs them only the purse, which is
-rolled between **1,000 and 10,000** per winner. They keep their party, so
+rolled per winner from the band in the table below. They keep their party, so
 nothing is handed over.
 
 Who turns up decides what they bring:
 
-| Standing there    | What they field                                            |
-| ----------------- | ---------------------------------------------------------- |
+| Standing there    | What they field                                                                                                      |
+| ----------------- | -------------------------------------------------------------------------------------------------------------------- |
 | **Ace Trainer**   | Five fully-grown pokemon of any type, levels 60-80, raised the way the Elite Four raise theirs. Pays 25,000 to 60,000 |
-| **A type expert** | Three to five of their own type, levels 40-60. Pays 5,000 to 15,000 |
+| **A type expert** | Three to five of their own type, levels 40-60. Pays 5,000 to 15,000                                                  |
 
 The type experts are the trainer classes, and every region's are on the road.
 Kanto's are the Bug Catcher, Swimmer, Black Belt, Bird Keeper, Biker, Hiker,
@@ -95,7 +103,7 @@ Sailor, Gentleman, Super Nerd, Juggler, Tamer, Engineer and Gambler.
 
 **A class is not one type only.** Most field one. Some field the pair the
 mainline gives them: a Sailor brings water and fighting, an Engineer steel and
-electric. Two trades may want the same type, so what tells a Beauty from a Lass
+electric, a Furisode Girl grass and fairy. Two trades may want the same type, so what tells a Beauty from a Lass
 is who they are rather than what they carry.
 
 **A class belongs to a region.** A trade more than one region puts on the road
@@ -114,14 +122,25 @@ the game grows. Kanto's covers what Kanto grows.
 
 Hoenn and Sinnoh each bring their own of the trades already on the road, under
 their own names: a **Guitarist** is a Rocker, an **Aroma Lady** a Sage, a
-**Battle Girl** a Black Belt, a **Cyclist** and a **Roughneck** are Bikers. Both
-also bring trades nobody had. Hoenn brings the **Ninja Boy**, the **Tuber** and
+**Battle Girl** a Black Belt, a **Roughneck** a Biker. Both also bring trades
+nobody had. Hoenn brings the **Ninja Boy**, the **Tuber** and
 the **Poké Fan**, and Sinnoh fifteen more, among them the **Pokémon Ranger**,
 the **Worker**, the **Rancher**, the **Pokémon Breeder**, the **Policeman**, the
 **Parasol Lady**, the **Collector** and the **Twins**. Seven of those two
 regions share, the **Young Couple** among them, so each is met in its own
-region's coat. Every one of the four regions now covers every type its own
-country grows.
+region's coat.
+
+Unova brings twenty-two trades of its own, the city trades among them: the
+**Clerk**, the **Depot Agent**, the **Janitor**, the **Baker**, the **Doctor**,
+the **Pilot**, the **Musician**, the **Hoopster** and the **Infielder**, the
+**Suit Actor**, the **Veteran** and the **Backers**. Kalos brings six: the **Sky
+Trainer**, the **Fairy Tale Girl**, the **Furisode Girl**, the **Butler**, the
+**Tourist** and the **Rising Star**, and it is the region that puts fairy on the
+road. Both bring their own of the older trades as well, under their own names
+where the mainline gave them one: Kalos' **Hex Maniac** is a Channeler, its
+**Punk Guy** a Burglar and its **Gardener** a Sage.
+
+Every one of the six regions covers every type its own country grows.
 
 Which of them may be standing on a cell is the country's own. A Swimmer is met
 on the water, a Hiker on hard ground, a Skier in the snow, the same rule the
@@ -129,7 +148,9 @@ gyms follow, so a player hunting one class knows where to walk. What they field
 is their type and nothing else, wherever they are met, and it is drawn from
 their own region rather than from the country they are standing in.
 
-The **Ace Trainer** belongs to no country and may turn up anywhere.
+The **Ace Trainer** belongs to no country and may turn up anywhere. Every
+region has one of its own, and each fields what its own region grows, so the
+six Aces are one trade in six coats.
 
 Beating them is counted for life, class by class. Enough wins over one class
 earns that class' own **title** to wear on the profile, from **Bronze** on its

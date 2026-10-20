@@ -1,6 +1,6 @@
 # Quests, achievements and awards
 
-Five tables and one column, all of them counters or claim markers, all written
+Six tables and one column, all of them counters or claim markers, all written
 by the server alone. A client that could write its own counters could write
 itself rewards.
 
@@ -30,8 +30,11 @@ many different ones the player has stood in.
 
 `bumpProgress` in
 [`src/server/quest-progress.ts`](../../src/server/quest-progress.ts) is the one
-door: every call that does something countable raises its counters in the same
-transaction it does the thing.
+door: every call that does something countable raises its counters once the thing
+is done, in one statement. A bump that fails is swallowed rather than undoing the
+play that earned it, since requirements are totals. `markProgress` beside it
+writes a once-only fact such as a biome. Taking back a released pokemon lowers
+its `Releases` count again.
 
 The counters were **backfilled** from what the game had already written down, so
 a veteran did not start at zero. Steps, level-ups and item uses left nothing
@@ -111,7 +114,8 @@ the truth, and a stored tier would only be something to fall out of step with.
 `quest_progress`, `quest_baselines`, `quest_claims`, `rotation_baselines` and
 `rotation_claims` are **closed** end to end: no server read hands them to a
 browser. Everything is served through the server's own functions.
-`awards` is tier 1, readable by anybody signed in.
+`awards` is public to players, readable by anybody signed in (see
+[Who may read what](security.md#who-may-read-what)).
 
 ## See also
 

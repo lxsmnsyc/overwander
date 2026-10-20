@@ -3,13 +3,13 @@
 ## `profiles`
 
 One row per account, keyed by the auth uid. Set by
-[`src/auth/profile.ts`](../../src/auth/profile.ts). A bare row is written by a
-trigger the moment the account is created, so a foreign key never waits on the
-app having run.
+[`src/auth/profile.ts`](../../src/auth/profile.ts). A bare row is written by
+`createProfile` from Better Auth's user-create hook the moment the account is
+created, so a foreign key never waits on the app having run.
 
 | Column       | Type       | Notes                                    |
 | ------------ | ---------- | ---------------------------------------- |
-| `id`         | `uuid`     | The account, `references auth.users`     |
+| `id`         | `uuid`     | The account, `references users`          |
 | `nickname`   | `text`     | Display name; defaults to `"Trainer"`    |
 | `sprite`     | `text`     | The overworld character they are seen as |
 | `gold`       | `bigint`   | Currency balance; opens at zero          |
@@ -80,12 +80,11 @@ else, so a picker never has to filter empties out.
 
 The browser reads the bag once and keeps it
 ([`src/auth/live-bag.ts`](../../src/auth/live-bag.ts)), so opening a picker or a
-dialog costs no read. A trigger on each table broadcasts every write on the
-private channel `bag:<uid>`: the row as it now stands, or the row that went for
-a stack spent to its last. Only the owner may listen on it, and nobody may send
-on it. It is a broadcast rather than a `postgres_changes` stream because a
-delete cannot be filtered on that stream, so every player would be sent every
-emptied stack.
+dialog costs no read. The `live_changes` trigger on each table sends every write
+to the live feed: the row as it now stands, or the row that went for a stack
+spent to its last.
+[`src/server/live/rules.ts`](../../src/server/live/rules.ts) passes a row only
+to the player it names, so nobody else hears of another player's stacks.
 
 The copy is read whole again when it cannot be sure it has heard everything:
 before the channel is listening, after it reconnects, and after any server call
@@ -111,13 +110,13 @@ A row a transaction means to write is read `for update`, which locks it. Postgre
 does not retry a transaction the way the old optimistic store did, so the lock is
 what keeps two writes to the same stack from interleaving.
 
-`useCandy(catchId)` spends `getCandyCost(caught)` candies to raise a catch by a
-level: one for an ordinary catch, two for a shadow. It reads the catch and the
-stack, then writes both **inside one transaction**, so a candy can never be spent
+`useCandy(catchId, levels)` spends `getCandyCost(caught)` candies for each level
+it raises a catch by: one for an ordinary catch, two for a shadow. It raises as
+many of the asked levels as the stack covers. It reads the catch and the stack,
+then writes both **inside one transaction**, so a candy can never be spent
 without the level landing. It resolves the new level, or null when the catch is
-not the user's, its species' family does not match a stack the user holds, the
-stack is empty, or the catch already sits at `MAX_LEVEL`
-(`src/data/constants/levels.ts`).
+not the user's, the stack cannot cover one level, or the catch already sits at
+`MAX_LEVEL` (`src/data/constants/levels.ts`).
 
 Private: only the owning uid may read the stacks, and only the server may write
 them or the catch the level lands on.
@@ -126,7 +125,8 @@ them or the catch the level lands on.
 
 Every catch pays `getCatchCandy` of its own family: the species' spawn rarity
 band counted from one, so one for a base stage and five for a legendary, and
-four times that on the family's own day. On top of that, `recordCatch` asks the overworld engine
+four times that on the family's own day. On top of that, `payCatch` in
+[`src/server/caught.ts`](../../src/server/caught.ts) asks the overworld engine
 `checkCatchCandy` what the player was **carrying** at the time. Two held items
 answer it, each paying one candy half the time:
 
@@ -136,10 +136,10 @@ answer it, each paying one candy half the time:
 
 Neither is touched by the species day. It already pays four times over on the
 catch itself, and a bonus that multiplied with it would make one day worth a week
-of ordinary ones. Both are paid through `grantCandy` (flat) rather than
-`grantCatchCandy` (boosted), and each is one candy however many families are
-owed. A catch holds one item at a time, so the two are a choice rather than a
-stack. The effects live in
+of ordinary ones. Both are paid flat, outside `catchCandyWorth` (which applies
+the boost), and land with the catch's own candy in one `grantCandies`. Each is
+one candy however many families are owed. A catch holds one item at a time, so
+the two are a choice rather than a stack. The effects live in
 [`src/overworld/items/candy-items.ts`](../../src/overworld/items/candy-items.ts)
 and register themselves the way every other buddy effect does.
 
@@ -172,14 +172,16 @@ Read through [`src/auth/positions.ts`](../../src/auth/positions.ts), written by
 and **the only mutable record of anybody's place in the world**: everything else
 the overworld holds derives from a seed and a window.
 
-| Column     | Type       | Notes                                         |
-| ---------- | ---------- | --------------------------------------------- |
-| `player`   | `uuid`     | Owner, and the primary key                    |
-| `chunk_x`  | `integer`  | Chunk coordinate, clamped to the world        |
-| `chunk_y`  | `integer`  | The same                                      |
-| `cell_x`   | `smallint` | Cell column within the chunk, 0 to 15         |
-| `cell_y`   | `smallint` | Cell row within the chunk, 0 to 15            |
-| `moved_at` | `bigint`   | When it was last written, on the server clock |
+| Column       | Type       | Notes                                         |
+| ------------ | ---------- | --------------------------------------------- |
+| `player`     | `uuid`     | Owner, and the primary key                    |
+| `chunk_x`    | `integer`  | Chunk coordinate, clamped to the world        |
+| `chunk_y`    | `integer`  | The same                                      |
+| `cell_x`     | `smallint` | Cell column within the chunk, 0 to 15         |
+| `cell_y`     | `smallint` | Cell row within the chunk, 0 to 15            |
+| `depth`      | `smallint` | The layer: 0 the surface, 1 the caves         |
+| `moved_at`   | `bigint`   | When it was last written, on the server clock |
+| `generation` | `smallint` | The world generation the place is in          |
 
 It exists for one reason: a player who walked forty chunks, or spent a Portal Key
 crossing the world, should not be put back at their starting point by a page
@@ -267,16 +269,19 @@ into one.
 
 ## `fled_encounters`
 
-Written by `markFled` in
-[`src/server/overworld/index.ts`](../../src/server/overworld/index.ts), read through
-[`src/auth/safari.ts`](../../src/auth/safari.ts). The key is recomputed from the
-stored encounter, so a player cannot retire a meeting they never had.
+Written by `retireEncounter` in
+[`src/server/overworld/spawns.ts`](../../src/server/overworld/spawns.ts), and by a
+throw that ends a meeting in [`src/server/throws.ts`](../../src/server/throws.ts).
+Read through [`src/auth/safari.ts`](../../src/auth/safari.ts). The key is
+recomputed from the stored encounter, so a player cannot retire a meeting they
+never had.
 
-| Column      | Type     | Notes                                    |
-| ----------- | -------- | ---------------------------------------- |
-| `player`    | `uuid`   | Owner, part of the primary key           |
-| `key`       | `text`   | The encounter key scared off             |
-| `window_at` | `bigint` | The window that staged it, for the sweep |
+| Column       | Type       | Notes                                    |
+| ------------ | ---------- | ---------------------------------------- |
+| `player`     | `uuid`     | Owner, part of the primary key           |
+| `generation` | `smallint` | The world generation it was met in       |
+| `key`        | `text`     | The encounter key scared off             |
+| `window_at`  | `bigint`   | The window that staged it, for the sweep |
 
 An encounter key is `` `${x},${y}@${timestamp}:${individualValue}` `` (see
 `encounterKey` in [`src/overworld/safari/index.ts`](../../src/overworld/safari/index.ts)).
@@ -346,6 +351,5 @@ transaction and time beside what else moved in it.
 **What it costs** (measured on local Postgres, September 2026): about 190 bytes a
 row with its indexes, and one more statement per move while it is on. At an
 estimated 600 moves a day per active player, a dozen players come to roughly 40
-MB a month. Rows are swept at 60 days, which holds that near 80 MB; the Free
-plan caps the whole database at 500 MB. Only the server reads or writes it, so
-it costs nothing in egress.
+MB a month. Rows are swept at 60 days, which holds that near 80 MB. Only the
+server reads or writes it.

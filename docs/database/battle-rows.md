@@ -5,12 +5,13 @@ itself, and what each player carries out of it.
 
 ## `team_snapshots`
 
-| Column     | Type       | Notes                                        |
-| ---------- | ---------- | -------------------------------------------- |
-| `id`       | `text`     | The snapshot                                 |
-| `player`   | `uuid`     | Owner; null for the raid boss                |
-| `alliance` | `smallint` | Teams sharing a number fight side by side    |
-| `catches`  | `jsonb`    | The party frozen as it stood at battle start |
+| Column       | Type       | Notes                                        |
+| ------------ | ---------- | -------------------------------------------- |
+| `id`         | `text`     | The snapshot                                 |
+| `player`     | `uuid`     | Owner; null for the raid boss                |
+| `alliance`   | `smallint` | Teams sharing a number fight side by side    |
+| `catches`    | `jsonb`    | The party frozen as it stood at battle start |
+| `created_at` | `bigint`   | When it was frozen, on the server clock      |
 
 The party rides as `jsonb` in a schema that otherwise normalizes, because a
 snapshot is written once, read whole by the engine, and never queried per field.
@@ -19,29 +20,34 @@ A `write_once` trigger refuses to let it be rewritten at all.
 A **catch snapshot**
 ([`src/model/catch-snapshot.ts`](../../src/model/catch-snapshot.ts)) copies
 `caught` (the source id), `species`, `level`, `ivs`, `effortValues`, `nature`,
-`gender`, `height`, `weight`, `shiny`, `moves`, `abilities` and `items`. It is
-never rewritten: levelling, evolving or handing an item over mid-raid must not
-change units already fighting.
+`gender`, `height`, `weight`, `shiny`, `shadow`, `gigantamax`, `teraType`,
+`moves`, `movePoints`, `abilities`, `items`, `slots`, `health`, `statuses` and
+`friendship`. It is never rewritten: levelling, evolving or handing an item over
+mid-raid must not change units already fighting.
 
 `height` and `weight` are the individual's own rather than the species' listed
-ones, and they are **not** stored on the `caught` row. `deriveSize(species,
-traitValue)` in
+ones, and they are **not** stored on the `caught` row.
+`deriveCatchSize(species, traitValue, type)` in
 [`src/overworld/encounter/index.ts`](../../src/overworld/encounter/index.ts)
 reads them off the trait value against the species as it stands, so evolving
-grows the pokemon while keeping its place in the band. The snapshot freezes the
+grows the pokemon while keeping its place in the band. A Totem raid prize keeps
+the Totem's size instead. The snapshot freezes the
 result at battle start, and the battle unit carries it through `setHeight` /
 `setWeight`.
 
 ## The raid boss
 
-The raid boss gets a snapshot of its own: perfect (31) IVs, zero effort values,
-no held items, level `RAID_BOSS_LEVEL`, with nature and ability derived from the
-raid's `trait_value` and an empty `caught` id. Its abilities are `Boss` plus the
-rolled one, and a shadow boss carries `Shadow` between them. It fights alone
-under `BOSS_ALLIANCE`; every player team shares `PLAYER_ALLIANCE`.
+The raid boss gets a snapshot of its own (`createRaidBossSnapshot`): perfect
+(31) IVs, maxed effort values, no held items, level `RAID_BOSS_LEVEL`, with
+nature and ability derived from the raid's `trait_value` and an empty `caught`
+id. Its abilities are `Boss`, then any of `Shadow`, `Totem`, `Alpha` and `Noble`
+the raid calls for, then the rolled one. It fights under `BOSS_ALLIANCE`; every
+player team shares `PLAYER_ALLIANCE`.
 
 Its move list is filtered through `BANNED_BOSS_MOVES`
-([`src/battle/abilities/special/index.ts`](../../src/battle/abilities/special/index.ts)).
+([`src/data/overworld/boss-moves.ts`](../../src/data/overworld/boss-moves.ts)),
+and a Ghost is barred from Curse on top (`getBannedBossMoves`). The first five
+are the copying moves:
 
 | Banned move | Why                                                                 |
 | ----------- | ------------------------------------------------------------------- |
@@ -49,12 +55,16 @@ Its move list is filtered through `BANNED_BOSS_MOVES`
 | Metronome   | It calls any registered move, Transform included                    |
 | Mirror Move | It casts back whatever the target last used                         |
 | Mimic       | It takes a copy of the target's move                                |
+| Sketch      | It keeps a copy of the target's move for good                       |
 
-The last three are banned because each is a route back to the first. Banning
-them is simpler than teaching three different copies what a boss may not become.
+The last four are banned because each is a route back to the first. Banning
+them is simpler than teaching four different copies what a boss may not become.
+The rest of the list is moves a raid pool breaks (Pain Split, Belly Drum,
+Memento, Endeavor and the like), moves aimed at a teammate a lone boss does not
+have, and Rest. The file says why for each.
 
-The ban is applied before the four moves are taken, so a boss barred from one
-still comes with a full set.
+The ban is applied before the moves are taken, so a boss barred from one still
+fills as many of its eight slots as its learnset allows.
 
 Some species are not staged as bosses at all. `canStageBoss` keeps them out of
 both the legendary and the shadow draw on two rules: the species is not in
@@ -64,13 +74,15 @@ become something else and a boss is the one thing that must not. The second rule
 is a rule rather than a list, so a later move ban cannot quietly strand a
 species with an empty kit.
 
-What the `Boss` ability does to damage is worth stating plainly. Only a **hit**
-takes health off a boss: health-scaling damage never lands, and neither does
-anything indirect, whether poison, a burn, a seed, the weather or the crash off
-a missed Jump Kick. Two things still get through on purpose. A **cost**
-(`DamageFlags.Cost`) is paid whatever the payer is, so a boss that explodes
-still dies by it and one that puts up a Substitute still pays for it. And a
-negative amount is a heal, so drains reach it as they would anything else.
+What the `Boss` ability does to damage is worth stating plainly. A **hit** lands
+in full. Indirect and share-of-HP damage (poison, a burn, a seed, the weather,
+the crash off a missed Jump Kick, an OHKO move or Super Fang) all draw on one
+allowance of `BOSS_DAMAGE_CAP` (200), which refills at `BOSS_INDIRECT_RATE` (50)
+a second, so five clocks ticking together are worth no more than one. A **cost**
+(`DamageFlags.Cost`) is paid in full whatever the payer is, so a boss that
+explodes still dies by it and one that puts up a Substitute still pays for it. A
+negative amount is a heal, and every heal on a boss, drains included, is held to
+`BOSS_HEAL_CAP` (1000) a second.
 
 ## `battles` and `battle_teams`
 
@@ -125,11 +137,11 @@ spectator replays the same rolls from the same frozen teams.
 `finishBattle` stamps the outcome once the fight settles, and every participant
 computes the same one, since the fight is deterministic. The `settle_once`
 trigger holds it to that: an outcome may move from Unfinished exactly once, and
-nothing else on the row may move at all. The profile's battle history reads
-`battle_teams` for the player, on its own index, and drops anything still
-`Unfinished`, since an abandoned fight is not a result. Replaying a history
-entry rebuilds the battle from that seed and those snapshots, so it plays out
-identically and awards nothing.
+`id`, `raid_id`, `species`, `started_at` and `limits` may not move with it. The
+profile's battle history reads `battle_teams` for the player, on its own index,
+and drops anything still `Unfinished`, since an abandoned fight is not a result.
+Replaying a history entry rebuilds the battle from that seed and those
+snapshots, so it plays out identically and awards nothing.
 
 ## `battle_aftermaths`
 
@@ -153,10 +165,10 @@ and status](catch-state.md#health-and-status).
 They are reported together because they are one fight: a Sitrus Berry gone and
 the health it restored describe the same moment. Every removal during the battle
 is remembered on the unit (`Unit.consumed`), the health and the carried status
-are read off it at the end, and `recordAftermath(battleId, aftermath)` reports
-the player's **own** party. The outcome is stamped once by whoever sees the
-fight settle, but the aftermath lands per player, since nobody else's catches
-are theirs to write.
+are read off it at the end, and `recordAftermath(battleId, aftermath, defeated,
+outcome)` reports the player's **own** party. The outcome is stamped once by
+whoever sees the fight settle, but the aftermath lands per player, since nobody
+else's catches are theirs to write.
 
 Every one of the player's units is reported, not only the ones that spent
 something: health is owed either way.
@@ -173,10 +185,19 @@ changes nothing further. It applies whichever way the fight went, so a berry
 eaten against a boss that survived is still eaten, and a replay reports nothing
 at all.
 
-The aftermath is written **before** the outcome is stamped. The catches are
+The aftermath is written **before** the party is freed. The catches are
 [locked](catch-state.md#catches-are-locked-while-they-fight) while the battle is
-live and stamping the outcome is what frees them, so reporting afterwards would
-leave a window in which a berry could be pulled back into the bag and kept.
+live and `finishBattle` is what frees them, so reporting afterwards would leave
+a window in which a berry could be pulled back into the bag and kept. The report
+carries the outcome and stamps it when nobody has yet, so a win is known in time
+to be paid as one.
+
+The same report pays the rest of what the fight was worth, on the same marker:
+Pay Day coins (clamped to what the snapshots could have scattered in the time
+the fight ran), one candy per pokemon fielded on a win or per pokemon `defeated`
+on a loss, a Sketch drawn, and progress towards a battle feat. A fight between
+players settles only for the challenger of a gym seat, and never draws a
+Sketch.
 
 ## See also
 

@@ -10,15 +10,24 @@ Written by [`src/server/duels.ts`](../../src/server/duels.ts), read through
 
 ## `duels`
 
-| Column       | Type     | Notes                                     |
-| ------------ | -------- | ----------------------------------------- |
-| `id`         | `text`   | The lobby                                 |
-| `host`       | `uuid`   | Who opened it; only they may start        |
-| `battle_id`  | `text`   | The fight it became, null while gathering |
-| `created_at` | `bigint` | When it opened                            |
+| Column       | Type       | Notes                                               |
+| ------------ | ---------- | --------------------------------------------------- |
+| `id`         | `text`     | The lobby                                           |
+| `host`       | `uuid`     | Who opened it; only they may start                  |
+| `battle_id`  | `text`     | The fight it became, null while gathering           |
+| `created_at` | `bigint`   | When it opened                                      |
+| `limits`     | `integer`  | Packed slots one pokemon may bring                  |
+| `team_size`  | `smallint` | How many a side may field, 1 to 6                   |
+| `max_bst`    | `smallint` | Base stat total cap, 0 for none                     |
+| `bans`       | `smallint` | `DuelBan` flags: legendaries, mythicals, item forms |
 
 Like a raid's, `battle_id` carries no foreign key: the id is claimed on the lobby
 first and the battle written after.
+
+The last four are the host's rules, set by `setDuelRules` while the lobby is
+still gathering. A lobby opens on `DEFAULT_DUEL_RULES`: `PVP_BATTLE_LIMITS`, a
+full party, no cap and no bans. Changing them takes back every ready and cuts a
+party longer than the new `team_size` from its end.
 
 ## `duel_members`
 
@@ -37,9 +46,9 @@ there are two of them, and both chose to be there.
 
 ## `duel_catches`
 
-The party a fighter has assembled, one row per slot, up to `TEAM_SIZE` (6), and
-unique on the catch so a pokemon cannot be entered twice. It cascades from the
-member row, so leaving takes the party with it.
+The party a fighter has assembled, one row per slot, up to the lobby's
+`team_size`, and unique on the catch so a pokemon cannot be entered twice. It
+cascades from the member row, so leaving takes the party with it.
 
 Changing a party takes back that fighter's `ready`. The foreign key on
 `caught_id` **cascades on delete**: a pokemon released while it was waiting in a
@@ -61,13 +70,14 @@ host's start. Anybody else following them gets only the lobby's id.
 
 ## The fight
 
-`startDuel` freezes both parties into `team_snapshots` the way `startRaid` does
-and writes an ordinary `battles` row with a **player on each side**. That is what
-keeps a duel out of every settlement: `recordAftermath` refuses any battle with
-two players in it, except a gym seat's challenger. A duel therefore costs
+`startDuel` freezes both parties into `team_snapshots` the way `startRaid` does,
+though at full health with no status, and writes an ordinary `battles` row with
+a **player on each side**. That is what keeps a duel out of every settlement:
+`recordAftermath` refuses any battle with two players in it, except a gym seat's
+challenger. A duel therefore costs
 nothing and pays nothing, and neither party carries the fight out with it.
 
-It runs under `PVP_BATTLE_LIMITS`, and neither side is a boss, so a mutual
+It runs under the lobby's `limits`, and neither side is a boss, so a mutual
 knockout is a draw.
 
 ## See also

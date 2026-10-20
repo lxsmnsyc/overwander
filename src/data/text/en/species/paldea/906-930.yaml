@@ -13,6 +13,7 @@ Quaxly:
 Lechonk:
   Lechonk: { name: Lechonk, category: Hog Pokemon }
   Oinkologne: { name: Oinkologne, category: Hog Pokemon }
+  OinkologneFemale: { name: Oinkologne, category: Hog Pokemon }
 Tarountula:
   Tarountula: { name: Tarountula, category: String Ball Pokemon }
   Spidops: { name: Spidops, category: Trap Pokemon }

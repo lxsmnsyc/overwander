@@ -2019,6 +2019,9 @@ export const PALDEAN_FORMS: Species[] = [
 /** A Maushold's family of four, and the one in a hundred that is three */
 export const MAUSHOLD_FORMS: Species[] = [Species.Maushold, Species.MausholdThree];
 
+/** The two Oinkologne, the male first */
+export const OINKOLOGNE_FORMS: Species[] = [Species.Oinkologne, Species.OinkologneFemale];
+
 /** A Dudunsparce's two segments, and the one in a hundred with three */
 export const DUDUNSPARCE_FORMS: Species[] = [Species.Dudunsparce, Species.DudunsparceThree];
 

@@ -636,7 +636,8 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
     pending.delete(key);
   });
 
-  const coatKey = (coat: SpawnCoat): string => `${coat.species}:${coat.shiny ? 'shiny' : 'plain'}`;
+  const coatKey = (coat: SpawnCoat): string =>
+    `${coat.species}:${coat.shiny ? 'shiny' : 'plain'}:${coat.female ? 'female' : 'male'}`;
 
   /**
    * The ridden pokemon's own sheet. Kept apart from the spawns' shared
@@ -691,7 +692,7 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
     // than once per frame it is drawn in
     sprites.set(key, null);
 
-    const arriving = loadSpeciesSprite(coat.species, { shiny: coat.shiny })
+    const arriving = loadSpeciesSprite(coat.species, { shiny: coat.shiny, female: coat.female })
       .then((loaded) => {
         sprites.set(key, loaded);
         dirty = true;

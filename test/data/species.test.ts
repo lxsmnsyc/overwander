@@ -59,6 +59,7 @@ import {
   GENESECT_FORMS,
   GIRATINA_FORMS,
   GOURGEIST_FORMS,
+  Genders,
   HISUIAN_FORMS,
   HOOPA_FORMS,
   INDEEDEE_FORMS,
@@ -74,6 +75,7 @@ import {
   MINIOR_FORMS,
   MORPEKO_FORMS,
   NECROZMA_FORMS,
+  OINKOLOGNE_FORMS,
   ORICORIO_FORMS,
   PALAFIN_FORMS,
   PALDEAN_FORMS,
@@ -434,6 +436,27 @@ describe('species forms', () => {
     expect(getSpeciesData(Species.MeowsticFemale).genderRatio).toEqual([0, 1]);
   });
 
+  it('grows each sex of a split line into its own record', () => {
+    // A line whose female is her own pokemon has to send each sex down
+    // its own road, or a female grows into the male-only record
+    for (const [from, male, female] of [
+      [Species.Espurr, Species.Meowstic, Species.MeowsticFemale],
+      [Species.Lechonk, Species.Oinkologne, Species.OinkologneFemale],
+    ]) {
+      const roads = getSpeciesData(from).evolvesInto ?? [];
+
+      expect(roads.map((road) => [road.species, road.gender])).toEqual([
+        [male, Genders.Male],
+        [female, Genders.Female],
+      ]);
+      for (const road of roads) {
+        expect(road.method & EvolutionMethod.Gender).toBeTruthy();
+      }
+      expect(getSpeciesData(male).genderRatio).toEqual([1, 0]);
+      expect(getSpeciesData(female).genderRatio).toEqual([0, 1]);
+    }
+  });
+
   it('treats every registered species but the unowns and the worn shapes as a default form', () => {
     // The flag is absent almost everywhere and answers true rather
     // than being written out three hundred times. The variants are
@@ -506,6 +529,7 @@ describe('species forms', () => {
       ...CALYREX_FORMS.slice(1),
       ...PALDEAN_FORMS,
       ...MAUSHOLD_FORMS.slice(1),
+      ...OINKOLOGNE_FORMS.slice(1),
       ...DUDUNSPARCE_FORMS.slice(1),
       ...TEA_FORMS,
       ...PALAFIN_FORMS.slice(1),

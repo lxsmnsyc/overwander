@@ -8,11 +8,12 @@ import type { Items } from '../data/ids/items';
 import type Lairs from '../data/overworld/lair';
 import { getLairTitle } from '../data/overworld/lair';
 import Landmark from '../data/overworld/landmark';
-import type { Species } from '../data/ids/species';
+import { Genders, type Species } from '../data/ids/species';
 import { canGigantamax } from '../data/moves/gmax-moves';
 import { getSpeciesData } from '../data/species/__create';
 import type Chunk from '../overworld/chunk';
 import { WORLD_GENERATION } from '../overworld/current';
+import { deriveGender } from '../overworld/encounter/traits';
 import { Generation } from '../overworld/world';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
 import type { Spawn } from '../overworld/chunk-snapshot';
@@ -180,6 +181,14 @@ export const enum RaidAction {
  * a raid standing in the world. The dialog reads this first and stages
  * only what the button it shows says it will
  */
+/**
+ * Whether the boss is female, read off its roll the way its snapshot
+ * reads it, so the boss is drawn as the sex it fights as
+ */
+export function isFemaleBoss(species: Species, traitValue: number): boolean {
+  return deriveGender(species, traitValue) === Genders.Female;
+}
+
 export interface RaidView {
   /**
    * The lobby this cell's raid has, or would have when hosted
@@ -193,6 +202,8 @@ export interface RaidView {
   lair: Lairs | null;
   biome: Biome;
   species: Species;
+  /** Whether the boss is female, for the female drawing where it has one */
+  female: boolean;
   /**
    * The battle to watch, when one is already being fought
    */

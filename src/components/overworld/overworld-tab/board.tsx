@@ -2850,6 +2850,7 @@ export default function OverworldBoard(props: {
         id: standing.id,
         species: standing.spawn[0],
         shiny: standing.shiny,
+        female: standing.female,
         // Against the window's own instant, which is what the
         // server weighted the pool by
         featured: isFeaturedSpecies(standing.spawn[0], loaded.snapshot.timestamp),

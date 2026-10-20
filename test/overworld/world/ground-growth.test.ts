@@ -48,8 +48,8 @@ describe('what the ground grows', () => {
     }
   });
 
-  // Skipped: runs past the 20s timeout
-  it.skip('rolls no patch or tree into a chunk that cannot grow one', () => {
+  // Slower than the shared timeout allows, so it gets its own
+  it('rolls no patch or tree into a chunk that cannot grow one', { timeout: 90_000 }, () => {
     const world = new World('overworld');
     let barren = 0;
     let treeless = 0;

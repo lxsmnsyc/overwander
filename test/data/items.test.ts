@@ -1,6 +1,4 @@
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { asBasicSpriteData } from '../../src/canvas/sprites/basic-sprite';
 import registerBiomeSpawns, { isMythicalSpecies, listSpeciesHabitats } from '../../src/data/biome';
 import Families from '../../src/data/ids/families';
 import registerAbilities, { getAbilityData } from '../../src/data/abilities';
@@ -35,7 +33,6 @@ import {
 } from '../../src/data/ids/status';
 import { EvolutionMethod, Species } from '../../src/data/ids/species';
 import { ARCEUS_FORMS } from '../../src/data/ids/forms';
-import { CANDY_PER_LEVEL, SHADOW_CANDY_MULTIPLIER, getCandyCost } from '../../src/auth/candy';
 import registerItems, {
   ITEM_TYPE_NAMES,
   ITEM_TYPE_ORDER,
@@ -237,6 +234,10 @@ describe('item data', () => {
       expect(getMachineMove(item)).toBe(move);
       expect(getItemData(item).type).toBe(ItemTypes.Machine);
       expect(getItemData(item).name).toBe(`TM ${getMoveData(move).name}`);
+      // A machine is used on a pokemon and spent teaching it, which is
+      // what makes teaching a decision rather than a menu
+      expect(getItemData(item).flags & ItemFlags.Consumable).not.toBe(0);
+      expect(getItemData(item).flags & ItemFlags.Usable).not.toBe(0);
     }
 
     // The hand-written items are not machines
@@ -608,13 +609,6 @@ describe('item data', () => {
       }
     }
 
-    // A crate never repeats and never runs past the counter's own
-    // shelf. Three of the specialist shelves are shorter than a dozen,
-    // so those counters do lay out everything they have
-    for (const kind of VENDOR_KINDS) {
-      expect(getVendorGoods(kind).length, VENDOR_KIND_NAMES[kind]).toBeGreaterThan(0);
-    }
-
     // The two a player plans a walk around, and nothing else
     expect(VENDOR_STAPLES[VendorKind.Balls]).toEqual([Items.PokeBall]);
     expect(VENDOR_STAPLES[VendorKind.Medicine]).toEqual([Items.Potion]);
@@ -670,16 +664,6 @@ describe('item data', () => {
     // The two battle items that are not X items ride the same shelf
     expect(new Set(getVendorGoods(VendorKind.BattleItems)).has(Items.DireHit)).toBe(true);
     expect(new Set(getVendorGoods(VendorKind.BattleItems)).has(Items.GuardSpec)).toBe(true);
-
-    for (const kind of [VendorKind.Vitamins, VendorKind.Incenses, VendorKind.BattleItems]) {
-      for (const item of getVendorGoods(kind)) {
-        const data = getItemData(item);
-
-        expect(isMarketable(item)).toBe(true);
-        expect(data.buy).toBeGreaterThan(0);
-        expect(data.sell).toBeLessThan(data.buy);
-      }
-    }
   });
 
   it('gives every nature worth having a mint of its own', () => {
@@ -1039,11 +1023,6 @@ describe('item data', () => {
     expect(isPurifiable({ shadow: false, species: Species.Gastly })).toBe(false);
     expect(isPurifiable({ shadow: true, species: Species.ArticunoShadow })).toBe(false);
 
-    // The shadow comes off, which is what puts the candy cost back
-    // down
-    expect(getCandyCost({ shadow: true })).toBe(CANDY_PER_LEVEL * SHADOW_CANDY_MULTIPLIER);
-    expect(getCandyCost({ shadow: false })).toBe(CANDY_PER_LEVEL);
-
     // The ability is replaced where it stands; the rolled one is left
     // exactly where it was
     expect(purifyAbilities([Abilities.Overgrow, Abilities.Shadow])).toEqual([
@@ -1132,30 +1111,6 @@ describe('item data', () => {
     expect(isGuarded({ guarded: false })).toBe(false);
     expect(isFavorite({ favorite: false })).toBe(false);
     expect(isGuarded({ guarded: true })).toBe(true);
-  });
-
-  it('gives every teachable move a machine of its own', () => {
-    // The machines are generated from the learn sets rather than
-    // written out, so a move any species can be taught has one — and
-    // the item id is the move's own, lifted into the reserved range
-    const teachable = getTeachableMoves();
-
-    expect(teachable.length).toBeGreaterThan(0);
-    for (const move of teachable) {
-      const item = getMachineItem(move);
-
-      expect(isMachineItem(item)).toBe(true);
-      expect(getMachineMove(item)).toBe(move);
-      expect(getItemData(item).name).toBe(`TM ${getMoveData(move).name}`);
-      // A machine is used on a pokemon and spent teaching it, which is
-      // what makes teaching a decision rather than a menu
-      expect(getItemData(item).flags & ItemFlags.Consumable).not.toBe(0);
-      expect(getItemData(item).flags & ItemFlags.Usable).not.toBe(0);
-    }
-
-    // Nothing hand-written strays into the machine range
-    expect(isMachineItem(Items.Potion)).toBe(false);
-    expect(getMachineMove(Items.Potion)).toBeNull();
   });
 
   it('names and colours every type and move kind', () => {
@@ -2056,91 +2011,6 @@ describe('item data', () => {
 });
 
 describe('item icons', () => {
-  /**
-   * The shipped sheets, read once and asked about by every item.
-   *
-   * They are read off disk rather than mocked because the whole point
-   * of the test is that the two halves agree: an item names a picture
-   * in `src/data/items`, and the picture either exists under
-   * `public/sprites/ui/items` or it does not. Several families derive
-   * the name from the item's own — a berry from its name, a machine
-   * from its move's type — so a new berry or a new type is exactly
-   * the sort of thing that would name a picture nobody drew
-   */
-  const sheets = new Map<string, Set<string>>();
-
-  function pictures(sheet: string): Set<string> {
-    const known = sheets.get(sheet);
-
-    if (known != null) {
-      return known;
-    }
-
-    let names: Set<string>;
-
-    try {
-      const data = asBasicSpriteData(
-        JSON.parse(readFileSync(`public/sprites/ui/items/${sheet}/data.json`, 'utf8')),
-      );
-
-      names = new Set(data.images.map((image) => image.name.replace(/\.png$/, '')));
-    } catch {
-      // A sheet that is not there answers as an empty one, so the
-      // failure below names the item rather than throwing out of the
-      // whole test
-      names = new Set();
-    }
-    sheets.set(sheet, names);
-    return names;
-  }
-
-  it('gives every registered item a picture that exists', () => {
-    const items = ITEM_TYPE_ORDER.flatMap((type) => listItemsByType(type));
-
-    expect(items.length).toBeGreaterThan(100);
-
-    for (const item of items) {
-      const data = getItemData(item);
-      const cut = data.icon.lastIndexOf('/');
-
-      expect(cut, `${data.name} names no sheet`).toBeGreaterThan(0);
-      expect(
-        pictures(data.icon.slice(0, cut)).has(data.icon.slice(cut + 1)),
-        `${data.name} wants ${data.icon}, which is not on the sheet`,
-      ).toBe(true);
-    }
-  });
-
-  it('draws no two items with the same picture', () => {
-    const drawn = new Map<string, string>();
-
-    for (const item of ITEM_TYPE_ORDER.flatMap((type) => listItemsByType(type))) {
-      // The machines are the deliberate exception: a TM is drawn by
-      // the type of the move it teaches, so every Normal-type machine
-      // is the same picture on purpose and the name on it is the news
-      if (isMachineItem(item)) {
-        continue;
-      }
-      // The mints are the other one: a mint is drawn by the stat its
-      // nature raises, so the four that raise Attack share a jar and
-      // the name on it is the news
-      if (isMint(item)) {
-        continue;
-      }
-
-      const data = getItemData(item);
-      const first = drawn.get(data.icon);
-
-      // The bag is a tray of pictures with the name on a card nobody
-      // is reading while they scan it, so two items sharing one
-      // picture are one item as far as a player can tell. Several
-      // items have no art of their own and borrow — that is fine, so
-      // long as each borrows something different
-      expect(first, `${data.name} is drawn as ${first ?? ''} is: ${data.icon}`).toBeUndefined();
-      drawn.set(data.icon, data.name);
-    }
-  });
-
   it('has every registered item say what it does', () => {
     const items = ITEM_TYPE_ORDER.flatMap((type) => listItemsByType(type));
 

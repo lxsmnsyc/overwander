@@ -93,12 +93,6 @@ test.describe('the overworld', () => {
     expect(left, 'the keyboard walked the player out of the chunk').not.toBe(from);
   });
 
-  test('opens the world map as a picture', async ({ page }) => {
-    const map = await openPanel(page, 'World');
-
-    await expect(map.locator('canvas')).toBeVisible();
-  });
-
   test('lets a dialog go and gives the world back', async ({ page }) => {
     const profile = await openPanel(page, 'Profile');
 

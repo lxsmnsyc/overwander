@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import type { CommandVocabulary } from '../../src/core/command';
-import parseCommand, { commandFor, completeCommand, everyGiven, given } from '../../src/core/command';
+import parseCommand, {
+  commandFor,
+  completeCommand,
+  everyGiven,
+  given,
+} from '../../src/core/command';
 
 /**
  * What a typed line is asking, and what the bar can offer to finish

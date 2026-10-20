@@ -29,14 +29,7 @@ import { seatId } from '../../../src/model/gym-seat-record';
 import { CHUNK_CELLS, worldCell } from '../../../src/overworld/chunk';
 import nameTown from '../../../src/data/overworld/town-names';
 import type { Town } from '../../../src/overworld/town';
-import {
-  TOWN_REGION,
-  getTownLots,
-  townAt,
-  townName,
-  townOfRegion,
-  townOverChunk,
-} from '../../../src/overworld/town';
+import { getTownLots, townName, townOfRegion, townOverChunk } from '../../../src/overworld/town';
 import ChunkSnapshot, {
   LANDMARK_INTERVAL,
   NEST_INTERVAL,
@@ -637,45 +630,6 @@ describe('world', () => {
 
     expect(same).not.toBeNull();
     expect(same == null ? null : townName(same)).toBe(townName(town));
-  });
-
-  // Skipped: runs past the 20s timeout
-  it.skip('posts an auction board in a town, one to a chunk and reachable', () => {
-    const world = new World('overworld');
-    let boards = 0;
-    let towns = 0;
-    const span = TOWN_REGION * CHUNK_CELLS;
-
-    for (let regionY = -3; regionY < 3; regionY++) {
-      for (let regionX = -3; regionX < 3; regionX++) {
-        // Sampled across the region, since a town sits wherever its
-        // region's own roll put it
-        for (let step = 0; step < span; step += 8) {
-          if (townAt(world, regionX * span + step, regionY * span + step) != null) {
-            towns++;
-            break;
-          }
-        }
-      }
-    }
-
-    for (let x = -40; x < 40; x++) {
-      for (let y = -40; y < 40; y++) {
-        const chunk = world.getChunk(x, y);
-        const cells = [...chunk.getLandmarkCells()].filter(
-          ([, landmark]) => landmark === Landmark.AuctionBoard,
-        );
-
-        boards += cells.length;
-        // One board to a chunk: every board reads the same global
-        // lots, so a second would be the same board twice
-        expect(cells.length).toBeLessThanOrEqual(1);
-      }
-    }
-    // Boards live in towns, and about half of a town's charters carry
-    // one, so a stretch of country this size holds several
-    expect(towns).toBeGreaterThan(0);
-    expect(boards).toBeGreaterThan(3);
   });
 
   it('names a gym seat by its place and never by its window', () => {

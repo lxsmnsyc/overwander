@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { NICKNAME_LIMIT, PLAYER_NAME_LIMIT, asNickname, asPlayerName } from '../../src/model/nickname';
+import {
+  NICKNAME_LIMIT,
+  PLAYER_NAME_LIMIT,
+  asNickname,
+  asPlayerName,
+} from '../../src/model/nickname';
 import type { OwnershipRecord } from '../../src/model/caught-record';
 import {
   Acquisition,

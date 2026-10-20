@@ -3,7 +3,10 @@ import { AuctionLot, type AuctionRecord, asAuctionRecord } from '../../../src/mo
 import { Items } from '../../../src/data/ids/items';
 import { Species } from '../../../src/data/ids/species';
 import { asCaughtPokemon } from '../../../src/model/caught-record';
-import matchesAuction, { AUCTION_VOCABULARY, orderAuctions } from '../../../src/model/search/auction';
+import matchesAuction, {
+  AUCTION_VOCABULARY,
+  orderAuctions,
+} from '../../../src/model/search/auction';
 import registerGameData from '../../../src/data';
 
 beforeAll(() => {

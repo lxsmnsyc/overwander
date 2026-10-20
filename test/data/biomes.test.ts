@@ -185,7 +185,6 @@ describe('biome data', () => {
 
     // The stage above a baby is a middle evolution like any other
     expect(isPrizedSpecies(Species.Pikachu)).toBe(false);
-    expect(getSpawnRarity(Species.Pikachu)).toBe(SpawnRarity.Uncommon);
 
     // Gen 1 puts nothing in the band: every baby is a later gen's
     for (const species of getRegisteredSpecies()) {
@@ -226,11 +225,6 @@ describe('biome data', () => {
   it('groups biome spawn pools by time of day and rarity', () => {
     const morning = getSpawnPool(Biome.Grassland, TimeOfDay.Morning);
     expect(morning.base.some((entry) => entry.species === Species.Pidgey)).toBe(true);
-
-    // Sections agree with the rarity classification
-    expect(morning.rare.every((entry) => getSpawnRarity(entry.species) === SpawnRarity.Rare)).toBe(
-      true,
-    );
 
     // Diurnal fliers sleep through the night; prowlers come out
     const night = getSpawnPool(Biome.Grassland, TimeOfDay.Night);

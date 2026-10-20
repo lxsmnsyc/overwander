@@ -325,7 +325,7 @@ describe('move points', () => {
   });
 
   it('reads a stored record back inside those limits', () => {
-    // Firestore hands back whatever is there. A count past the limit
+    // The store hands back whatever is there. A count past the limit
     // would make a move faster than any amount of gold can buy, and
     // anything that is not a count is not a point spent
     const caught = asCaughtPokemon({

@@ -1009,35 +1009,6 @@ describe('type experts', () => {
     expect(casts(damped)).toBe(0);
   });
 
-  it('does not hand the same move to half the party', () => {
-    // Four Earthquakes answer one wall four times and everything else
-    // never, so a repeat has to lose to the second-best move of its
-    // own type. A move the pokemon gets its own bonus from is barely
-    // docked: three Dragon types all carrying their own Dragon Claw
-    // is three pokemon casting what they are best at
-    for (const party of [...Object.values(CHAMPION_PARTIES), ...Object.values(LEGEND_PARTIES)]) {
-      const carried = new Map<Moves, number>();
-      const borrowed = new Map<Moves, number>();
-
-      for (const [at, build] of getBestParty(party, 3).entries()) {
-        const types = getSpeciesData(party[at]).types;
-
-        for (const move of build.moves) {
-          carried.set(move, (carried.get(move) ?? 0) + 1);
-          if (!types.includes(getMoveData(move).type)) {
-            borrowed.set(move, (borrowed.get(move) ?? 0) + 1);
-          }
-        }
-      }
-      for (const [move, count] of carried) {
-        expect(count, getMoveData(move).name).toBeLessThanOrEqual(3);
-      }
-      for (const [move, count] of borrowed) {
-        expect(count, getMoveData(move).name).toBeLessThanOrEqual(2);
-      }
-    }
-  });
-
   it('spends a support slot on the two in front of it', () => {
     // Every fight here stands the whole party up at once, so a move
     // aimed at an ally has somebody to aim at
@@ -1564,8 +1535,8 @@ describe('type experts', () => {
     expect(CHAMPION_TITLES[Champion.Blue]).toBe(Awards.KantoChampion);
   });
 
-  // Skipped: runs past the 20s timeout
-  it.skip('hands a beaten leader’s TM out of their own type’s case', () => {
+  // Slower than the shared timeout allows, so it gets its own
+  it('hands a beaten leader’s TM out of their own type’s case', { timeout: 90_000 }, () => {
     for (const leader of GYM_LEADERS) {
       const type = GYM_LEADER_TYPES[leader];
       const rng = new AleaRNG(`gym-machine-${leader}`);

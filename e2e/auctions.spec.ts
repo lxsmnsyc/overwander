@@ -8,7 +8,7 @@ import { stageSeller } from './stranger';
  * The board: what is up for auction, and the one thing to do about it
  * that is not reading it.
  *
- * A fresh emulator has an empty board, and that is the interesting
+ * A fresh database has an empty board, and that is the interesting
  * state rather than a hole in the coverage — the list has to stand up
  * and say it is empty rather than leaving the panel looking broken.
  */
@@ -27,7 +27,7 @@ test.describe('the auction board', () => {
 
   test('draws its lots as trays of squares rather than a list of names', async ({ page }) => {
     // Somebody else's lot, so the board has something on it whatever
-    // the emulator was left holding
+    // the database was left holding
     const seller = await stageSeller('Bracken');
     const board = await openAuctionBoard(page, player);
 

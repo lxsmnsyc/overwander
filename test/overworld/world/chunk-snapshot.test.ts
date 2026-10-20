@@ -369,8 +369,8 @@ describe('chunk snapshot', () => {
     expect(swimming).toBeGreaterThan(0);
   });
 
-  // Skipped: runs past the 20s timeout
-  it.skip("keeps the ground species off a cave's water", () => {
+  // Slower than the shared timeout allows, so it gets its own
+  it("keeps the ground species off a cave's water", { timeout: 90_000 }, () => {
     const world = new World('overworld', Depth.Cave);
     const NOON = 12 * 60 * 60 * 1000;
     let flooded = 0;

@@ -15,11 +15,10 @@ import {
 
 /**
  * What a stored dex means, asked of the readers rather than of a
- * store. The document is four maps of counts — see
- * [`pokedex-record.ts`](../src/model/pokedex-record.ts) — and every
+ * store. The record is four maps of counts — see
+ * [`pokedex-record.ts`](../../src/model/pokedex-record.ts) — and every
  * question a screen asks of a dex is answered from them, so what these
- * cover is the arithmetic and the shapes a Firestore document can
- * arrive in
+ * cover is the arithmetic and the shapes a stored record can arrive in
  */
 const DEX = {
   seen: { [Species.Pidgey]: 12, [Species.Gyarados]: 2 },
@@ -92,7 +91,7 @@ describe('pokedex record', () => {
   });
 
   it('reads a dex that was never written as an empty one', () => {
-    // Firestore hands back whatever is there, which for a player who
+    // The store hands back whatever is there, which for a player who
     // has met nobody is nothing at all
     for (const stored of [undefined, null, {}, { seen: null }, { seen: 'many' }]) {
       expect(countDexSpecies(stored, DEX_SEEN)).toBe(0);

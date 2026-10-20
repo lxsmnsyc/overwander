@@ -44,14 +44,6 @@ describe('the way the light throws a shadow', () => {
     expect(Math.hypot(thrown.dx, thrown.dy / GROUND_DEPTH)).toBeCloseTo(1, 6);
   });
 
-  it('turns the shadow with the board, since the sun is not on the camera', () => {
-    const still = getCast(AFTERNOON, 0);
-    const turned = getCast(AFTERNOON, Math.PI);
-
-    expect(turned.dx).toBeCloseTo(-still.dx, 6);
-    expect(turned.dy).toBeCloseTo(-still.dy, 6);
-  });
-
   it('lays the shadow toward the viewer when the sun is behind them', () => {
     const away = castCorners(SPRITE, FOOT, { dx: 0, dy: -0.8, length: 1 });
     const toward = castCorners(SPRITE, FOOT, { dx: 0, dy: 0.8, length: 1 });

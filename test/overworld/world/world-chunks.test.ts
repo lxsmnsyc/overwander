@@ -980,43 +980,47 @@ describe('world', () => {
     expect([...new ChunkSnapshot(chunk, 30 * 60 * 1000).getShadowLairs()]).toEqual([...raids]);
   });
 
-  // Skipped: runs past the 20s timeout
-  it.skip('stages on each lair only what stands on its tile, from the tile own biome', () => {
-    const world = new World('overworld');
-    let staged = 0;
+  // Slower than the shared timeout allows, so it gets its own
+  it(
+    'stages on each lair only what stands on its tile, from the tile own biome',
+    { timeout: 90_000 },
+    () => {
+      const world = new World('overworld');
+      let staged = 0;
 
-    for (let window = 0; window < 6; window++) {
-      for (let x = -16; x < 16; x++) {
-        for (let y = -16; y < 16; y++) {
-          const chunk = world.getChunk(x, y);
-          const snapshot = new ChunkSnapshot(chunk, window * RAID_INTERVAL);
+      for (let window = 0; window < 6; window++) {
+        for (let x = -16; x < 16; x++) {
+          for (let y = -16; y < 16; y++) {
+            const chunk = world.getChunk(x, y);
+            const snapshot = new ChunkSnapshot(chunk, window * RAID_INTERVAL);
 
-          for (const [cell, roll] of [
-            ...snapshot.getLegendaryLairs(),
-            ...snapshot.getShadowLairs(),
-          ]) {
-            const name = getSpeciesData(roll.species).name;
+            for (const [cell, roll] of [
+              ...snapshot.getLegendaryLairs(),
+              ...snapshot.getShadowLairs(),
+            ]) {
+              const name = getSpeciesData(roll.species).name;
 
-            staged++;
-            expect(fitsSurface(roll.species, chunk.getCellSurface(cell)), name).toBe(true);
-            // A lake's lair is on the lake, and a mountain's is not at sea
-            if (roll.lair != null) {
-              const wet = chunk.getCellSurface(cell) === SpawnSurface.Water;
+              staged++;
+              expect(fitsSurface(roll.species, chunk.getCellSurface(cell)), name).toBe(true);
+              // A lake's lair is on the lake, and a mountain's is not at sea
+              if (roll.lair != null) {
+                const wet = chunk.getCellSurface(cell) === SpawnSurface.Water;
 
-              expect(lairStandsOn(roll.lair, wet), name).toBe(true);
+                expect(lairStandsOn(roll.lair, wet), name).toBe(true);
+              }
             }
-          }
-          for (const [cell, roll] of snapshot.getLegendaryLairs()) {
-            expect(getBiomeLairs(snapshot.biomeAt(cell))).toContain(roll.lair);
+            for (const [cell, roll] of snapshot.getLegendaryLairs()) {
+              expect(getBiomeLairs(snapshot.biomeAt(cell))).toContain(roll.lair);
+            }
           }
         }
       }
-    }
-    expect(staged).toBeGreaterThan(0);
-  });
+      expect(staged).toBeGreaterThan(0);
+    },
+  );
 
-  // Skipped: runs past the 20s timeout
-  it.skip('stands a legendary lair with nobody to host as a shadow lair', () => {
+  // Slower than the shared timeout allows, so it gets its own
+  it('stands a legendary lair with nobody to host as a shadow lair', { timeout: 90_000 }, () => {
     const world = new World('overworld');
     // Only the chunks holding a legendary lair are worth a snapshot
     const lairs: ReturnType<World['getChunk']>[] = [];

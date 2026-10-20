@@ -16,15 +16,15 @@ import { type Player, pressBoxSquare } from './game';
  * a browser test, which is why the raid the player *leaves* — the one
  * bug that keeps coming back — had never been exercised end to end.
  *
- * So the lobby is written straight into the emulator. Everything after
+ * So the lobby is written straight into the database. Everything after
  * that is the real game: the raids panel lists it because it is a live
  * raid, joining it goes through the server, starting it writes a real
  * battle from the real teams, and leaving it is the button under test.
  * The only thing skipped is the walk.
  *
- * The writes go in as the emulator's owner — see
- * [`emulator.ts`](./emulator.ts) — which is what lets a test put a
- * document somewhere the security rules would not let a player put one.
+ * The rows go in over the table owner's connection (see
+ * [`admin.ts`](./admin.ts)), which is what lets a test put a row where
+ * no server function would let a player put one.
  */
 
 /**
@@ -52,7 +52,7 @@ function currentWindow(): { timestamp: number; offset: number } {
 }
 
 /**
- * A raid document, in the shape Firestore's REST API wants it
+ * A raid row, in the shape `insertRow` writes it
  */
 function raidFields(
   host: string,
@@ -80,7 +80,7 @@ function raidFields(
 /**
  * Put a lobby in the world with this player hosting it, and answer
  * what it is called. The name is how the spec finds its row among any
- * other raids the emulator happens to be holding
+ * other raids the database happens to be holding
  */
 export async function stageRaid(player: Player): Promise<string> {
   const host = await uidOf(player);

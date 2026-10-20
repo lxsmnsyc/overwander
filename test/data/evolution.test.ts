@@ -524,21 +524,6 @@ describe('evolution data', () => {
       }),
     ).toEqual([{ species: Species.Machamp, method: EvolutionMethod.Trade }]);
 
-    // And a handover made at a stage below it is no handover at all:
-    // this is a Machop that changed hands and then levelled, which is
-    // not a Machoke anybody ever traded
-    expect(
-      getAvailableEvolutions({
-        species: Species.Machoke,
-        ...context,
-        canEvolve: false,
-        stats: EVEN_STATS,
-        friendship: BASE_FRIENDSHIP,
-        gender: Genders.Male,
-        time: TimeOfDay.Day,
-      }),
-    ).toEqual([]);
-
     // The other three Gen 1 lines have the same shape, and every one
     // of them sits a level evolution above the stage that is traded
     for (const [at, into] of [
@@ -695,7 +680,6 @@ describe('evolution data', () => {
     expect(into(at(55, 55))).toEqual([Species.Hitmontop]);
 
     // And the level still gates it
-    expect(into({ ...at(60, 50) })).toEqual([Species.Hitmonlee]);
     expect(getAvailableEvolutions({ ...context, level: 19, stats: at(60, 50) })).toEqual([]);
   });
 

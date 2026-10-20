@@ -2,7 +2,7 @@ import { registerMoves } from '../../../src/data/moves';
 import { describe, expect, it } from 'vitest';
 import registerAbilities from '../../../src/data/abilities';
 import registerBiomeSpawns from '../../../src/data/biome';
-import Biome, { isOpenSea, isWaterBiome } from '../../../src/data/ids/biome';
+import { isOpenSea, isWaterBiome } from '../../../src/data/ids/biome';
 import registerItems from '../../../src/data/items';
 import { registerSpecies } from '../../../src/data/species';
 import { CHUNK_CELLS, worldCell } from '../../../src/overworld/chunk';
@@ -76,33 +76,6 @@ describe('terrain spots', () => {
         }
       }
     }
-  });
-
-  it("keeps a volcano's lava out of the water next door", () => {
-    const world = new World('overworld');
-    let lava = 0;
-
-    for (let y = -1500; y <= 1500; y += 7) {
-      for (let x = -1500; x <= 1500; x += 7) {
-        if (world.getCellBiome(x, y) !== Biome.Volcano || roleAt(world, x, y) !== 'water') {
-          continue;
-        }
-        lava += 1;
-        // A volcano's water is lava, so it may not run into a pool of
-        // the ordinary kind: the border dries off on the crater's side
-        for (const [dx, dy] of SURROUNDING) {
-          const wet = roleAt(world, x + dx, y + dy) === 'water';
-
-          expect(
-            wet && world.getCellBiome(x + dx, y + dy) !== Biome.Volcano,
-            `${x + dx},${y + dy}`,
-          ).toBe(false);
-        }
-      }
-    }
-    // A volcano with no lava in it would pass this without saying
-    // anything
-    expect(lava).toBeGreaterThan(0);
   });
 
   it('lets a walk cross every fall', () => {

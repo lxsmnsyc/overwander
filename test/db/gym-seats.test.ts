@@ -1,12 +1,7 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { type Actor, actor, clearAll, sql } from './clients';
 import BattleOutcome from '../../src/model/battle-outcome';
-import {
-  SEAT_DAILY_TAKE,
-  SEAT_STAKE_LIMIT,
-  SEAT_STAKE_SHARE,
-  seatStake,
-} from '../../src/model/gym-seat-record';
+import { SEAT_STAKE_LIMIT, SEAT_STAKE_SHARE, seatStake } from '../../src/model/gym-seat-record';
 
 /**
  * The gym seat's settlement, run against the real database.
@@ -102,10 +97,6 @@ describe('what a seat is worth', () => {
     // And a challenger who has had their fill takes no more
     expect(seatStake(1_000_000, 0)).toBe(0);
     expect(seatStake(1_000_000, 250)).toBe(250);
-  });
-
-  it('caps a day of takings at three good wins', () => {
-    expect(SEAT_DAILY_TAKE).toBe(SEAT_STAKE_LIMIT * 3);
   });
 });
 

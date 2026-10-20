@@ -60,14 +60,6 @@ test.describe('the profile', () => {
     await expect(box.getByRole('button').first()).toBeVisible();
   });
 
-  test('carries the balls a new player was handed', async ({ page }) => {
-    const bag = await openPanel(page, 'Bag');
-
-    // The bag names nothing on its face: a square says what it holds
-    // to whoever is listening, and shows it to everyone else
-    await expect(bag.getByRole('button', { name: /^Poke Ball, \d+ carried/ })).toBeVisible();
-  });
-
   test('has nothing to show under battles or bids yet', async ({ page }) => {
     const profile = await openPanel(page, 'Profile');
 

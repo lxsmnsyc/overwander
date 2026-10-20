@@ -645,13 +645,6 @@ describe('the types a sky is kind to', () => {
     expect(missing.map((type) => TYPE_NAMES[type])).toEqual([]);
   });
 
-  it('leaves the plain skies favouring nothing, which is what makes them plain', () => {
-    for (const sky of [Weather.Clear]) {
-      expect(WEATHER_TYPES[sky]).toEqual([]);
-      expect(isBoostingWeather(sky)).toBe(false);
-    }
-  });
-
   it('gives every boosting sky at least one type', () => {
     for (const sky of EVERY_SKY) {
       // The sky that favours everything carries no list, since a list

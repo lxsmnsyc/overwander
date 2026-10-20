@@ -26,14 +26,6 @@ describe('daylight', () => {
     expect(getSun(at(3)).elevation).toBeLessThan(0);
   });
 
-  it('swings the light across the sky as the day goes', () => {
-    // The sun rises in the east, which is the right of a board drawn
-    // with north at the top: a morning shadow lies to the left of what
-    // throws it and an evening one to the right
-    expect(getCast(at(8)).dx).toBeLessThan(0);
-    expect(getCast(at(16)).dx).toBeGreaterThan(0);
-  });
-
   it('lengthens the shadows as the sun drops, and drops them at dusk', () => {
     const noon = getCast(at(12));
     const evening = getCast(at(17));

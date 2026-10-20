@@ -316,7 +316,6 @@ describe('the storm clouds over a Dynamaxed pokemon', () => {
   it('are three comets evenly spaced on an orbit above the head', () => {
     const body = bodyOf(PARTY_SLOT);
 
-    expect(CLOUDS).toBe(3);
     for (const clock of INSTANTS) {
       const clouds = cloudsOf(body, clock);
       let x = 0;

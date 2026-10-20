@@ -61,6 +61,12 @@ The Black Augurite and the Peat Block are stocked.
 forces of nature: its team throws Fairy moves at 1.3x while it stands. The
 Reveal Glass shows its Therian shape, which brings Overcoat.
 
+## Bloodmoon Ursaluna
+
+**Bloodmoon Ursaluna** is a legend, the way Volcarona is: one of its kind rather
+than a wild find. It keeps to the Timeless Woods, a lair in the taiga and the
+montane forest, and comes out only at night.
+
 ## See also
 
 - [Galar's forms and legends](galar-forms-and-legends.md), the release before

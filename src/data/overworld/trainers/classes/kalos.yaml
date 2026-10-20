@@ -38,8 +38,6 @@ KalosSwimmer:
   sheets:
     - characters/xy/swimmer-f
     - characters/xy/swimmer-m
-    - characters/xy/swimmer-f-2
-    - characters/xy/swimmer-m-2
   trade: Swimmer
 KalosHiker:
   types: [Ground]

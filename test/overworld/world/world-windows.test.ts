@@ -45,7 +45,7 @@ import { isFossil } from '../../../src/data/items/fossils';
 import Landmark from '../../../src/data/overworld/landmark';
 import { getPortalCell, portalInRegion } from '../../../src/overworld/portal';
 import Npc, { TRADER_OFFERS } from '../../../src/data/overworld/npc';
-import { NPCS, TRADERS, npcSheet, npcSheets } from '../../../src/overworld/npcs';
+import { NPCS, TRADERS, npcSheets } from '../../../src/overworld/npcs';
 import Phenomenon, {
   getPhenomenonGroups,
   getPhenomenonItems,
@@ -527,7 +527,7 @@ describe('world', () => {
       for (const cell of counters) {
         // She is never rolled away: the counter is the landmark
         expect(snapshot.getStandingNpc(cell)).toBe(Npc.NurseJoy);
-        expect(snapshot.getWandererCoats().get(cell)).toBe(npcSheet(Npc.NurseJoy));
+        expect(npcSheets(Npc.NurseJoy)).toContain(snapshot.getWandererCoats().get(cell));
       }
       // And a wandering cell never stages her any more
       for (const npc of snapshot.getWanderingNpcs().values()) {

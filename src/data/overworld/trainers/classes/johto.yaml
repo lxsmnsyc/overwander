@@ -85,6 +85,7 @@ Camper:
   sheets:
     - characters/lgpe/camper
     - characters/lgpe/picnicker
+    - characters/frlg/camper-m
 JohtoGentleman:
   types: [Fire, Electric]
   sheets:

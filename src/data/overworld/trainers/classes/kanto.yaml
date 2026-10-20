@@ -27,6 +27,7 @@ Biker:
   sheets:
     - characters/frlg/roughneck
     - characters/lgpe/punk
+    - characters/lgpe/roughneck
 Hiker:
   types: [Ground]
   sheets:

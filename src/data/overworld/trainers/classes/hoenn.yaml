@@ -36,7 +36,9 @@ HoennBirdKeeper:
   trade: BirdKeeper
 HoennBugCatcher:
   types: [Bug]
-  sheets: [characters/oras/bug-catcher]
+  sheets:
+    - characters/oras/bug-catcher
+    - characters/oras/bug-maniac
   trade: BugCatcher
 HoennSwimmer:
   types: [Water]

@@ -336,3 +336,7 @@ AreaZeroUnderdepths:
 # The plaza honouring the Loyal Three, where their master was found out. A mythical's, so it is never staged
 LoyaltyPlaza:
   species: [Pecharunt]
+# The old wood behind Kitakami the bear raised under the red moon roams, where
+# Perrin's hunt ends
+TimelessWoods:
+  species: [UrsalunaBloodmoon]

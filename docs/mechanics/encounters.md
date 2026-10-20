@@ -60,6 +60,12 @@ A species can come in more than one shape. **Unown** is the one that does: all
 twenty-eight letters stand in the prized band of every biome at equal weight, so
 which letter turns up is the roll and where you walked is not.
 
+A **rare shape** is met one time in a hundred in place of the usual one. A wild
+Maushold is the family of three for the same pokemon whose Tandemaus would have
+grown into one. Dudunsparce, Sinistea, Polteageist, Poltchageist and Sinistcha
+have rare shapes too: Three-Segment Dudunsparce, the antiques, the artisan
+Poltchageist and the masterpiece Sinistcha.
+
 A form is its own pokemon. It has its own sprite, its own abilities and its own
 dex entry. The printed dex still keeps **one row** for the species, and that row
 fills in the moment any form of it is met; pressing the row opens a grid of every

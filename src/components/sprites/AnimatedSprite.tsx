@@ -205,7 +205,7 @@ const AURA_DOWN = 2.2;
  * of one put right.
  *
  * A small canvas rather than a sheet: the painters in
- * [`auras`](../../canvas/auras.ts) are the ones the battle canvas
+ * [`auras`](../../canvas/effects/auras.ts) are the ones the battle canvas
  * runs, sized off the pokemon's ground shadow and centred on the same
  * point. It rides the shared clock the sprites tick on, and it is the
  * one canvas the interface allows itself — the effect is procedural,

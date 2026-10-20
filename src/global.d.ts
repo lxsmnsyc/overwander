@@ -36,7 +36,7 @@ interface Window {
   /**
    * Dev-only: paint the hover cards' safe wedges, so a card that
    * closes while the pointer is on its way to it shows why. Set by
-   * [`hover-card.tsx`](./components/styled/hover-card.tsx) and absent
+   * [`safe-area.ts`](./components/styled/hover-card/safe-area.ts) and absent
    * from a production build
    */
   hoverCardSafeAreas?: (on?: boolean) => void;

@@ -37,7 +37,7 @@ import SceneMarks from './scene-marks';
  * and the graphics card decides what is in front, a pixel at a time.
  *
  * The camera is the board's own projection rather than one placed to
- * look like it: [`boardClipMatrix`](../board.ts) writes the very
+ * look like it: [`boardClipMatrix`](../overworld/board.ts) writes the very
  * transform the rest of the game reads cells through, so a grid ruled
  * on the page lands on the ground it belongs to.
  *

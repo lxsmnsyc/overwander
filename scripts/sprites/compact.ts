@@ -84,12 +84,12 @@ function say(message: string): void {
  *
  * There are two shapes in the collection and this script cares about
  * neither's contents. A pokemon sheet from
- * [`SpeciesSpriteAnimation`](../src/canvas/sprites/species-sprite-animation.ts)
+ * [`SpeciesSpriteAnimation`](../../src/canvas/sprites/species-sprite-animation.ts)
  * wraps its size and sub-images in a `sheet` key and adds animations
  * and anchors, and it is not beside the image at all: a coat and its
  * recolour share one description under `meta`, which is the point of
  * keeping it there. An item or move-category sheet from
- * [`BasicSprite`](../src/canvas/sprites/basic-sprite.ts) is the same size and
+ * [`BasicSprite`](../../src/canvas/sprites/basic-sprite.ts) is the same size and
  * sub-images at the top level of a `data.json` beside the image, with
  * nothing else.
  *

@@ -169,7 +169,7 @@ function fromBattleRow(row: Record<string, unknown>): BattleRecord {
 
 /**
  * Battles are created by the server when a raid starts — see
- * [`src/server/raids.ts`](../server/raids.ts) — so the teams that
+ * [`src/server/raids.ts`](../server/raids/index.ts) — so the teams that
  * enter one are the teams that were actually frozen for it
  */
 

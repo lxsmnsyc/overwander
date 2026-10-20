@@ -164,7 +164,7 @@ readOnly(readBoxOnServer);
  * The player's pokemon that answer one narrowed search.
  *
  * A search is asked in two passes — see
- * [`catch-search.ts`](./catch-search.ts) — and this is the first: the
+ * [`catch-search.ts`](../model/search/catch/index.ts) — and this is the first: the
  * terms the store can answer, beside the owner. The caller still runs
  * the whole predicate over what comes back, because a good part of the
  * grammar (a plain name, a count of hands, one of several marks) is

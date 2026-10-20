@@ -11,7 +11,7 @@ import getIdToken from './session';
  *
  * What the item does is decided by the server against the stored
  * record; the dialog only says which item and which pokemon. See
- * [`src/model/health.ts`](./health.ts) for the rules both sides read.
+ * [`src/model/health.ts`](../model/health.ts) for the rules both sides read.
  */
 
 /**

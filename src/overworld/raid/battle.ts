@@ -35,9 +35,9 @@ import skillOf from '../trainer-skill';
  * The engine only exists in a browser: a fight is played, watched and
  * settled on the client, and the server keeps the record of what it
  * came to rather than replaying it. So everything that builds units,
- * teams and a battle lives here, behind `client-only`, and what is
+ * teams and a battle lives here, apart from the server, and what is
  * written down about a raid before anybody fights it stays in
- * [`raid.ts`](./raid.ts) where both sides can read it
+ * [`raid.ts`](./index.ts) where both sides can read it
  */
 
 function addUnit(battle: Battle, team: Team, snapshot: CatchSnapshot): Unit {

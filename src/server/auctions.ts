@@ -46,7 +46,7 @@ import { moveGoldIn } from './profile';
  * Collecting and reclaiming share the `settled` marker, so a lot is
  * handed over exactly once whichever end it leaves by. The rules both
  * sides read live in
- * [`src/model/auction-record.ts`](../auth/auction-record.ts)
+ * [`src/model/auction-record.ts`](../model/auction-record.ts)
  */
 
 /** One auction row in the record shape, locked for the transaction */

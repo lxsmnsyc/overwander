@@ -20,7 +20,7 @@ export type { WildHeldItems } from './__create';
  * signature item — the one that is only worth anything in those hands
  * — at a hundredth. A market-priced item in the common slot would pay
  * a player more for walking than for playing. The roll is in
- * [`src/overworld/encounter.ts`](../../overworld/encounter.ts), off
+ * [`src/overworld/encounter.ts`](../../overworld/encounter/index.ts), off
  * the same trait value the nature and the ability come from, so two
  * players meeting one spawn see it holding the same thing.
  */

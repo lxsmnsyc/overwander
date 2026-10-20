@@ -18,8 +18,8 @@ import yamlData from './scripts/vite/yaml.ts';
  * also drags in the production SSR manifest, which is not built during
  * a test run and throws on read.
  *
- * SolidStart stays, since it is what resolves the `server-only` and
- * `client-only` markers the modules under test import
+ * SolidStart stays, since it is what resolves the `server-only` marker
+ * the modules under test import
  */
 const forTests = process.env.VITEST != null;
 
@@ -138,19 +138,6 @@ export default defineConfig(({ mode }) => ({
     // The world tests generate thousands of chunks and sit near 5 seconds alone,
     // so the default timeout fails them whenever the machine is busy
     testTimeout: 20_000,
-    /**
-     * The battle engine and the modules that field it are
-     * `client-only`: they are played in a browser and nothing on the
-     * server replays them. Vitest is neither browser nor server, and
-     * the marker's own body throws, so it is resolved to nothing for
-     * the tests that exercise the engine directly
-     */
-    alias: [
-      {
-        find: /^client-only$/,
-        replacement: new URL('./test/stubs/client-only.ts', import.meta.url).pathname,
-      },
-    ],
     /**
      * `test/db` needs the development database and clears it between cases,
      * so it runs on its own as `pnpm test:db` (see `vitest.db.ts`).

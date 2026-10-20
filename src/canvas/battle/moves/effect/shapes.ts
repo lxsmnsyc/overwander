@@ -11,7 +11,7 @@ import type { Painted } from '../__paint';
  * What a move looks like where it lands.
  *
  * This is the second half of a move. The first half — the gap the
- * engine holds it open for — is [`delay.ts`](./delay.ts); this is the
+ * engine holds it open for — is [`delay.ts`](../delay.ts); this is the
  * moment the engine says the effect resolved, drawn on whatever it
  * resolved on. The two are separate because they are separate events,
  * and a move that is a slow burrow and a sharp hit should not have to

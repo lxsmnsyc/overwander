@@ -12,7 +12,7 @@ import computeTrim from './trim';
  * The format is fixed: three walk frames across — standing, one step,
  * the other step — and four facings down, every cell the same size.
  * Which facing each row is comes with the sheet, so the rows are put
- * into the order [`OWCharSprite`](../../canvas/ow-char-sprite.ts)
+ * into the order [`OWCharSprite`](../../canvas/overworld/char-sprite.ts)
  * reads — Down, Left, Right, Up — while packing, and the description
  * carries the walk cycle a three-frame charset plays: step, stand,
  * other step, stand.

@@ -1,7 +1,7 @@
 /**
  * A person walking around the overworld.
  *
- * [`SpeciesSpriteAnimation`](./species-sprite-animation.ts) plays a PMD
+ * [`SpeciesSpriteAnimation`](../sprites/species-sprite-animation.ts) plays a PMD
  * sheet: eight facings, a dozen named clips, per-frame durations, and
  * an anchor for every part of every frame. A character sheet is none of
  * that. It is one grid — four walk frames across, four facings down,
@@ -14,7 +14,7 @@
  * and `indexOf` misses the other four.
  *
  * So this is the other class. It carries the same
- * [`BasicSpriteData`](./basic-sprite.ts) an item sheet does — a
+ * [`BasicSpriteData`](../sprites/basic-sprite.ts) an item sheet does — a
  * `data.json` naming sub-images and an `image.png` holding them, which
  * is what the packing tool emits — and reads a grid out of it. Frame
  * rectangles are worked out once at construction and indexed with

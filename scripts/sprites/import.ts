@@ -74,7 +74,7 @@ function folderOf(slot: Slot, region: string): string {
 /**
  * The three drawn like pokemon without being pokemon, by the form the
  * collection files them under. Their ids are in
- * [`src/data/ids/species.ts`](../src/data/ids/species.ts)
+ * [`src/data/ids/species.ts`](../../src/data/ids/species.ts)
  */
 const MISC: Partial<Record<number, { species: number; name: string }>> = {
   0: { species: 100000, name: 'Missingno' },
@@ -87,7 +87,7 @@ const UNKNOWN = 'unknown';
 
 /**
  * The six a sheet cannot be put on screen without. Written out rather
- * than imported from [`MINIMUM_CAST`](../src/data/constants/cast.ts),
+ * than imported from [`MINIMUM_CAST`](../../src/data/constants/cast.ts),
  * which reaches the `const enum`s node refuses to load
  */
 const MINIMUM = new Set<number>([
@@ -113,7 +113,7 @@ const STAND_IN_TABLE = 'src/canvas/sprites/species-sprites.ts';
 
 /**
  * Where form ids start, matching `SPECIES_FORM_BAND` in
- * [`src/data/ids/species.ts`](../src/data/ids/species.ts). Repeated
+ * [`src/data/ids/species.ts`](../../src/data/ids/species.ts). Repeated
  * rather than imported, since node refuses a `const enum`'s file
  */
 const FORM_BAND = 1000000;

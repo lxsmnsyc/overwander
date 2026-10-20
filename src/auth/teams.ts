@@ -49,7 +49,7 @@ export interface TeamSnapshotRecord {
  * has to happen somewhere a client cannot skip. Forming one goes
  * through `joinRaid`, and freezing one into a battle happens when the
  * host starts the raid — both in
- * [`src/server/raids.ts`](../server/raids.ts)
+ * [`src/server/raids.ts`](../server/raids/index.ts)
  */
 
 export async function getTeam(id: string): Promise<TeamRecord | null> {

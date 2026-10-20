@@ -22,7 +22,7 @@ export const asOutcome = (value: unknown): BattleOutcome => asNumber(value) as B
 /**
  * How long an unsettled raid battle holds its landmark: the same
  * window that decides how long it holds its party
- * ([`src/server/locks.ts`](./locks.ts)). A fight is over in minutes;
+ * ([`src/server/locks.ts`](../locks.ts)). A fight is over in minutes;
  * one still unfinished after this was walked out on, and an abandoned
  * party is not a beaten boss
  */

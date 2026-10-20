@@ -56,7 +56,7 @@ const TEMPLATE = { sheet: 'public/sprites/ui/items/candies', picture: 'red.png' 
 
 /**
  * Which regions have sheets, by the dex numbers they cover. Repeated
- * from [`regions.ts`](../src/data/species/regions.ts), which cannot be
+ * from [`regions.ts`](../../src/data/species/regions.ts), which cannot be
  * imported into a script: it reads `const enum`s, which node refuses
  */
 const REGIONS: { name: string; from: number; to: number }[] = [

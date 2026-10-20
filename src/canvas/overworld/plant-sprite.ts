@@ -1,7 +1,7 @@
 /**
  * A plant standing on an overworld cell.
  *
- * The sheet is the other kind of grid [`OWCharSprite`](./ow-char-sprite.ts)
+ * The sheet is the other kind of grid [`OWCharSprite`](./char-sprite.ts)
  * reads: its rows are **growth stages**, top to bottom, and each row's
  * columns are a loop the plant idles through. A berry plant is two
  * frames across and three stages down, and there is nothing else it

@@ -5,7 +5,7 @@ import { spriteUrl } from '../sprites/origin';
 /**
  * The character sheets, loaded once each.
  *
- * The same bargain [`species-sprites`](./species-sprites.ts) makes: one
+ * The same bargain [`species-sprites`](../sprites/species-sprites.ts) makes: one
  * download a sheet, and a **clone** for every caller, since two people
  * wearing the same charset stand on different cells facing different
  * ways. A sheet that will not load is remembered as a failure, so a

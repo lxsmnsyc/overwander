@@ -484,7 +484,7 @@ export const enum Items {
    * health back every second, a tenth more accuracy, a share of what
    * touching the holder costs — written against a hook the battle
    * engine already has. The battle side of them lives in
-   * [`src/battle/items/gear.ts`](../../battle/items/gear.ts)
+   * [`src/battle/items/gear.ts`](../../battle/items/gear/index.ts)
    */
   Leftovers = 232,
   ShellBell = 233,
@@ -807,7 +807,7 @@ export const enum Items {
    * instead of finding somebody to change hands with. It is the only
    * member of the family with a price, because it is the only one
    * whose evolutions are reachable today. See
-   * [`src/data/items/trade-items.ts`](../items/trade-items.ts)
+   * [`trade-items.yaml`](../items/records/trade-items.yaml)
    */
   LinkingCord = 381,
   // Celebi's relic, numbered after the list rather than beside the

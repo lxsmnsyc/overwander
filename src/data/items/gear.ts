@@ -13,7 +13,7 @@ import { Items } from '../ids/items';
  * berries and the stat items for the same room.
  *
  * The battle side of them lives in
- * [`src/battle/items/gear.ts`](../../battle/items/gear.ts); this is
+ * [`src/battle/items/gear.ts`](../../battle/items/gear/index.ts); this is
  * only which items they are.
  */
 

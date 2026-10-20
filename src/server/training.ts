@@ -28,7 +28,7 @@ import { isCatchLocked } from './locks';
  * on top of them; and a bitter berry, taking ten back off a stat and
  * handing them to the pool to be spent again.
  *
- * The arithmetic itself is in [`src/model/effort.ts`](../auth/effort.ts)
+ * The arithmetic itself is in [`src/model/effort.ts`](../model/effort.ts)
  * so the catch sheet can say what is possible before asking for it.
  * What is here is the part that has to be decided against the stored
  * record: a client that worked out its own budget would simply work

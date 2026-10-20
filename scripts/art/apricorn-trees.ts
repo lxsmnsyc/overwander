@@ -35,7 +35,7 @@ const ROOT = 'public/sprites/overworld/landmarks-apricorn';
 const ICONS = 'public/sprites/ui/items/apricorn';
 
 /**
- * The seven, as [`apricorns.ts`](../src/data/items/apricorns.ts) files
+ * The seven, as [`apricorns.ts`](../../src/data/items/apricorns.ts) files
  * them. Written out rather than imported, since that module reaches
  * the `const enum`s node refuses to load
  */

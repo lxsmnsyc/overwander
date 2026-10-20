@@ -1,7 +1,7 @@
 /**
  * The ground a battle is fought on: a plane with no edges.
  *
- * [`board.ts`](../board.ts) projects a **chunk** — sixteen cells by
+ * [`board.ts`](../overworld/board.ts) projects a **chunk** — sixteen cells by
  * sixteen, with a known middle and known corners — and everything it
  * does follows from the board being bounded. It fits the whole thing
  * into the picture, and it fits it again at every angle, so a board

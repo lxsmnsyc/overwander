@@ -73,7 +73,7 @@ function createItemGate(
 /**
  * Wire up held items, one gate each: an item's listeners run while
  * somebody is carrying that item and at no other time. The item half
- * of [`createAbility`](../abilities/__create.ts), with `setup` called
+ * of [`createAbility`](../abilities/__create/index.ts), with `setup` called
  * once per item rather than once per family.
  *
  * The gate keys on the item being **held**, not enabled: an item that

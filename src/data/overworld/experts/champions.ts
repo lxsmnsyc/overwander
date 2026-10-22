@@ -14,7 +14,7 @@ export { Champion };
  * The champions, read out of `champions.yaml` and
  * `text/en/champions.yaml`; the numbers are `ids/champions.ts`
  */
-const CHAMPION = v.object({
+const CHAMPION = v.strictObject({
   title: v.string(),
   league: v.string(),
   sheets: v.array(v.string()),
@@ -22,7 +22,7 @@ const CHAMPION = v.object({
   party: v.array(v.string()),
 });
 
-const SAID = v.object({ name: v.string(), greeting: v.string() });
+const SAID = v.strictObject({ name: v.string(), greeting: v.string() });
 
 /** Every champion, in the order they are numbered */
 export const CHAMPIONS: Champion[] = [];

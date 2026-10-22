@@ -60,7 +60,7 @@ const NAME = v.string();
 const NAMES = v.array(NAME);
 const COUNT = v.pipe(v.number(), v.minValue(0));
 
-const WORLD = v.object({
+const WORLD = v.strictObject({
   types: NAMES,
   'egg-groups': NAMES,
   habitat: v.optional(NAME),
@@ -72,7 +72,7 @@ const WORLD = v.object({
   'evolves-from': v.optional(NAME),
   'evolves-into': v.optional(
     v.array(
-      v.object({
+      v.strictObject({
         species: NAME,
         method: NAMES,
         level: v.optional(COUNT),
@@ -83,7 +83,7 @@ const WORLD = v.object({
         move: v.optional(NAME),
         natures: v.optional(NAMES),
         compare: v.optional(
-          v.object({
+          v.strictObject({
             stat: NAME,
             against: NAME,
             order: v.picklist(['greater', 'lesser', 'equal']),
@@ -98,14 +98,18 @@ const WORLD = v.object({
   ),
   'egg-species': v.optional(NAME),
   held: v.optional(
-    v.object({ common: v.optional(NAME), uncommon: v.optional(NAME), rare: v.optional(NAME) }),
+    v.strictObject({
+      common: v.optional(NAME),
+      uncommon: v.optional(NAME),
+      rare: v.optional(NAME),
+    }),
   ),
   rank: v.optional(v.picklist(['legendary', 'mythical', 'baby', 'prized', 'mythical-odds'])),
   awaiting: v.optional(v.picklist(['baby', 'evolution'])),
   'spawns-as': v.optional(v.picklist(['water', 'ground'])),
 });
 
-const STATS = v.object({
+const STATS = v.strictObject({
   stats: v.record(NAME, COUNT),
   'catch-rate': COUNT,
   height: COUNT,
@@ -114,18 +118,18 @@ const STATS = v.object({
   'egg-cycles': v.optional(COUNT),
 });
 
-const ABILITIES = v.object({
+const ABILITIES = v.strictObject({
   abilities: NAMES,
   hidden: v.optional(NAMES),
 });
 
-const LEARNSET = v.object({
+const LEARNSET = v.strictObject({
   level: v.optional(v.record(v.string(), NAMES), {}),
   teachable: v.optional(NAMES, []),
   egg: v.optional(NAMES),
 });
 
-const TEXT = v.object({ name: v.string(), category: v.string() });
+const TEXT = v.strictObject({ name: v.string(), category: v.string() });
 
 /** The key a learnsets file keeps the teachable moves its whole family shares under */
 export const FAMILY_TEACHABLE_KEY = 'family-teachable';

@@ -13,7 +13,7 @@ import noblesFile from './nobles.yaml';
  * rule, so an arena in any biome holds somebody.
  */
 
-const NOBLE = v.object({ treasure: v.string(), burst: v.string() });
+const NOBLE = v.strictObject({ treasure: v.string(), burst: v.string() });
 
 /** What each canon Noble leaves its calmers beside the purse, out of `nobles.yaml` */
 export const CANON_NOBLES = new Map<Species, Items>();

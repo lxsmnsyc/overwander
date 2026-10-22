@@ -16,9 +16,9 @@ import groundFile from './ground.yaml';
 const NAME = v.string();
 
 const ground = v.parse(
-  v.object({
+  v.strictObject({
     biomes: v.record(NAME, NAME),
-    effects: v.record(NAME, v.object({ move: NAME, status: NAME })),
+    effects: v.record(NAME, v.strictObject({ move: NAME, status: NAME })),
   }),
   groundFile,
 );

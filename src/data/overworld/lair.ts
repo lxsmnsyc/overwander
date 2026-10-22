@@ -18,7 +18,7 @@ import lairsFile from './lairs.yaml';
  * The data is in `lairs.yaml`, `biome-lairs.yaml` and
  * `text/en/lairs.yaml`; the numbers are `ids/lairs.ts`.
  */
-const LAIR = v.object({
+const LAIR = v.strictObject({
   species: v.array(v.string()),
   underground: v.optional(v.boolean()),
   reserved: v.optional(v.boolean()),

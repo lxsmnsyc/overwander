@@ -36,7 +36,7 @@ interface MegaShape {
 
 const COUNT = v.pipe(v.number(), v.minValue(0));
 
-const MEGA = v.object({
+const MEGA = v.strictObject({
   base: v.string(),
   stats: v.record(v.string(), COUNT),
   types: v.array(v.string()),

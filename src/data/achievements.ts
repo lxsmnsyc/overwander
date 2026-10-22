@@ -33,9 +33,9 @@ import { idOf, idsOf, stringTable } from './yaml';
  */
 
 const ACHIEVEMENT_TEXT = v.parse(
-  v.object({
+  v.strictObject({
     tiers: v.unknown(),
-    lines: v.record(v.string(), v.object({ name: v.string(), deed: v.string() })),
+    lines: v.record(v.string(), v.strictObject({ name: v.string(), deed: v.string() })),
   }),
   achievementTextFile,
 );
@@ -50,10 +50,10 @@ type Thresholds = [number, number, number, number];
 
 const THRESHOLDS = v.tuple([v.number(), v.number(), v.number(), v.number()]);
 
-const FILE = v.object({
+const FILE = v.strictObject({
   lines: v.record(
     v.string(),
-    v.object({
+    v.strictObject({
       metric: v.string(),
       npc: v.optional(v.string()),
       landmark: v.optional(v.string()),

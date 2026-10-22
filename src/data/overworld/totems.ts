@@ -58,7 +58,7 @@ function allStats(stages: number): TotemAura {
   };
 }
 
-const CANON = v.object({
+const CANON = v.strictObject({
   aura: v.record(v.string(), v.number()),
   height: v.number(),
   weight: v.number(),

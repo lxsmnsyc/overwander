@@ -94,7 +94,7 @@ const ITEM_FAMILIES: Record<string, () => Iterable<Items>> = {
 
 const BAND = v.record(v.string(), v.number());
 
-const POOL = v.object({
+const POOL = v.strictObject({
   base: BAND,
   uncommon: BAND,
   scarce: BAND,

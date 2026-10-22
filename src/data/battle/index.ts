@@ -88,7 +88,7 @@ function table<S extends v.GenericSchema, T>(
   return out;
 }
 
-const STATUSES = v.object({
+const STATUSES = v.strictObject({
   target: v.record(NAME, NAME),
   self: v.record(NAME, NAME),
   team: v.record(NAME, NAME),
@@ -111,7 +111,7 @@ export const TEAM_STATUS_MOVES = table(statuses.team, 'statuses.yaml', NAME, (st
 export const EFFECT_STATUS_MOVES = table(
   addedStatusesFile,
   'added-statuses.yaml',
-  v.object({ status: NAME, chance: CHANCE }),
+  v.strictObject({ status: NAME, chance: CHANCE }),
   ({ status, chance }, at) => ({ status: idOf<Statuses>(STATUS_IDS, status, at), chance }),
 );
 
@@ -129,7 +129,7 @@ export interface AttackStageEffect {
 export const EFFECT_STAGE_MOVES = table(
   addedStagesFile,
   'added-stages.yaml',
-  v.object({
+  v.strictObject({
     stages: v.array(NAME),
     value: v.number(),
     chance: CHANCE,
@@ -188,7 +188,7 @@ export interface MultiHitConfig {
 export const MULTI_HIT_MOVES = table(
   multiHitFile,
   'multi-hit.yaml',
-  v.object({ min: COUNT, max: COUNT, escalating: v.optional(v.literal(true)) }),
+  v.strictObject({ min: COUNT, max: COUNT, escalating: v.optional(v.literal(true)) }),
   ({ min, max, escalating }): MultiHitConfig =>
     escalating === true ? { min, max, escalating } : { min, max },
 );
@@ -241,7 +241,7 @@ export const Z_STATUS_EFFECTS = table(
   'z-effects.yaml',
   v.union([
     v.picklist(['heal', 'clear', 'critical', 'centre', 'curse']),
-    v.object({ stages: v.union([v.literal('all'), v.array(NAME)]), value: v.number() }),
+    v.strictObject({ stages: v.union([v.literal('all'), v.array(NAME)]), value: v.number() }),
   ]),
   (effect, at): ZStatusEffect => {
     if (typeof effect === 'string') {
@@ -292,8 +292,8 @@ export const TUTOR_ONLY_MOVES = moveSet(tutorOnlyFile, 'tutor-only.yaml');
 export const PSEUDO_MOVES = moveSet(pseudoFile, 'pseudo.yaml');
 
 const gmax = v.parse(
-  v.object({
-    species: v.record(NAME, v.object({ move: NAME, type: NAME })),
+  v.strictObject({
+    species: v.record(NAME, v.strictObject({ move: NAME, type: NAME })),
     fixed: v.array(NAME),
   }),
   gmaxFile,
@@ -317,7 +317,7 @@ export const FIXED_G_MAX_MOVES = moveSet(gmax.fixed, 'gmax.yaml: fixed');
 const MAPPING = v.record(NAME, NAME);
 
 const maxMoves = v.parse(
-  v.object({
+  v.strictObject({
     types: MAPPING,
     weathers: MAPPING,
     terrains: MAPPING,
@@ -367,7 +367,7 @@ export const MAX_MOVE_ALLY_STAGES = nameMap<Moves, Stages>(
   STAGE_IDS,
 );
 
-const zMoves = v.parse(v.object({ types: MAPPING, signatures: v.array(NAME) }), zMovesFile);
+const zMoves = v.parse(v.strictObject({ types: MAPPING, signatures: v.array(NAME) }), zMovesFile);
 
 /** The Z-Move each type's crystal turns a damaging move of that type into */
 export const TYPE_Z_MOVES = nameMap<Types, Moves>(

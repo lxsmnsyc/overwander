@@ -13,7 +13,7 @@ import flagsFile from './flags.yaml';
 const NAMES = v.array(v.string());
 
 const flags = v.parse(
-  v.object({
+  v.strictObject({
     unreceivable: NAMES,
     protected: NAMES,
     'mold-proof': NAMES,

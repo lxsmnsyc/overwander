@@ -30,7 +30,7 @@ export { ArcadePanel, FrontierBrain, FrontierRule, PikeCurtain };
  * `ids/frontier.ts`. What the rules do is the battle's, and the
  * Pike's curtains and the Arcade's panels are below
  */
-const BRAIN = v.object({
+const BRAIN = v.strictObject({
   rule: v.string(),
   crown: v.string(),
   sheets: v.array(v.string()),
@@ -39,7 +39,7 @@ const BRAIN = v.object({
   'gold-party': v.array(v.string()),
 });
 
-const TEXT = v.object({ name: v.string(), house: v.string(), greeting: v.string() });
+const TEXT = v.strictObject({ name: v.string(), house: v.string(), greeting: v.string() });
 
 /** Every Brain, in the order they are numbered */
 export const FRONTIER_BRAINS: FrontierBrain[] = [];
@@ -143,7 +143,7 @@ export const FRONTIER_TEAM_SIZE = 3;
 export const FRONTIER_TIME_TURNS = 10;
 export const FRONTIER_TIME_LIMIT = turns(FRONTIER_TIME_TURNS);
 
-const ROOMS = v.object({
+const ROOMS = v.strictObject({
   curtains: v.record(v.string(), v.nullable(v.string())),
   panels: v.record(v.string(), v.nullable(v.string())),
 });
@@ -168,7 +168,10 @@ for (const [name, status] of Object.entries(rooms.curtains)) {
     status == null ? null : idOf<Statuses>(STATUS_IDS, status, where);
 }
 
-const ROOM_TEXT = v.parse(v.object({ curtains: v.unknown(), panels: v.unknown() }), roomTextFile);
+const ROOM_TEXT = v.parse(
+  v.strictObject({ curtains: v.unknown(), panels: v.unknown() }),
+  roomTextFile,
+);
 
 /** What each curtain is called, for the line the fight is announced with */
 export const PIKE_CURTAIN_NAMES = stringTable<PikeCurtain>(

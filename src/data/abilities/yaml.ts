@@ -19,9 +19,9 @@ import type { AbilityData } from './__create';
 
 const NAME = v.string();
 
-const TEXT = v.record(NAME, v.object({ name: v.string(), description: v.string() }));
+const TEXT = v.record(NAME, v.strictObject({ name: v.string(), description: v.string() }));
 
-const SIGNATURES = v.object({
+const SIGNATURES = v.strictObject({
   families: v.record(NAME, NAME),
   forms: v.optional(v.record(NAME, v.array(NAME)), {}),
 });

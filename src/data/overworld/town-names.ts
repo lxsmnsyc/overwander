@@ -33,7 +33,7 @@ import { idOf } from '../yaml';
  * is here
  */
 
-const WORDS = v.object({
+const WORDS = v.strictObject({
   heads: v.record(v.string(), v.array(v.string())),
   tails: v.array(v.string()),
   titles: v.array(v.string()),

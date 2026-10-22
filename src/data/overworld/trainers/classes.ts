@@ -35,14 +35,14 @@ export { TrainerClass };
  * names, so its guitarist is the rocker's trade and its aroma lady
  * the sage's
  */
-const CLASS = v.object({
+const CLASS = v.strictObject({
   types: v.array(v.string()),
   sheets: v.array(v.string()),
   trade: v.optional(v.string()),
   ace: v.optional(v.literal(true)),
 });
 
-const TEXT = v.object({ name: v.string(), quote: v.string() });
+const TEXT = v.strictObject({ name: v.string(), quote: v.string() });
 
 /** Each region's files, the class a file is filed under being its region */
 const REGION_FILES: [region: string, classes: unknown, text: unknown][] = [

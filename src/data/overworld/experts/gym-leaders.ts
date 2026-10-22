@@ -32,7 +32,7 @@ export { GymLeader };
  * in Aspertia a league later, so the Basic Badge has two keepers as
  * well. Iris is left out, since Opelucid is Drayden's here
  */
-const LEADER = v.object({
+const LEADER = v.strictObject({
   type: v.string(),
   badge: v.string(),
   sheets: v.array(v.string()),
@@ -41,7 +41,7 @@ const LEADER = v.object({
   signature: v.string(),
 });
 
-const SAID = v.object({ name: v.string(), quote: v.string() });
+const SAID = v.strictObject({ name: v.string(), quote: v.string() });
 
 /** Every leader, in the order they are numbered */
 export const GYM_LEADERS: GymLeader[] = [];

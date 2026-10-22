@@ -43,7 +43,7 @@ export interface FeatMeasure {
 const FEAT = v.strictObject({
   criticals: v.optional(v.number()),
   endured: v.optional(v.number()),
-  landed: v.optional(v.object({ move: v.string(), count: v.number() })),
+  landed: v.optional(v.strictObject({ move: v.string(), count: v.number() })),
   recoil: v.optional(v.number()),
   cumulative: v.optional(v.literal(true)),
 });

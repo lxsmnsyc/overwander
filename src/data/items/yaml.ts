@@ -43,7 +43,7 @@ const NAME = v.string();
 const NAMES = v.array(NAME);
 const COUNT = v.pipe(v.number(), v.minValue(0));
 
-const RECORD = v.object({
+const RECORD = v.strictObject({
   type: NAME,
   icon: v.string(),
   flags: v.optional(v.array(NAME), []),
@@ -206,7 +206,7 @@ export function recordField<K extends keyof ItemRecord>(
   return found;
 }
 
-const TEXT = v.object({ name: v.string(), description: v.optional(v.string()) });
+const TEXT = v.strictObject({ name: v.string(), description: v.optional(v.string()) });
 
 /** The key a text file keeps its family's sentences under */
 export const TEMPLATES_KEY = 'templates';

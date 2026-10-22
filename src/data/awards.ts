@@ -21,7 +21,7 @@ export const AWARD_COLORS: Record<number, string> = {};
  */
 export const AWARD_SPRITES: Partial<Record<Awards, [sheet: string, name: string]>> = {};
 
-const AWARD = v.object({
+const AWARD = v.strictObject({
   color: v.string(),
   sprite: v.optional(v.tuple([v.string(), v.string()])),
 });

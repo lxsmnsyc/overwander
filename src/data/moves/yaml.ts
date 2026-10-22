@@ -32,7 +32,7 @@ const NAME = v.string();
 const NAMES = v.array(NAME);
 const COUNT = v.pipe(v.number(), v.minValue(0));
 
-const BATTLE = v.object({
+const BATTLE = v.strictObject({
   type: NAME,
   category: NAME,
   power: v.optional(COUNT),
@@ -46,7 +46,7 @@ const BATTLE = v.object({
   projectile: v.optional(v.boolean()),
 });
 
-const TEXT = v.object({ name: v.string(), description: v.string() });
+const TEXT = v.strictObject({ name: v.string(), description: v.string() });
 
 const FILE = v.record(NAME, v.unknown());
 

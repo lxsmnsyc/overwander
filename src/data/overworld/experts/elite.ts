@@ -40,19 +40,19 @@ export { EliteMember };
  * The Elite Four, read out of `elite.yaml`, `biome-elite.yaml` and
  * `text/en/elite.yaml`; the numbers are `ids/elite.ts`
  */
-const MEMBER = v.object({
+const MEMBER = v.strictObject({
   type: v.string(),
   honor: v.string(),
   sheets: v.array(v.string()),
   signature: v.string(),
-  pool: v.object({
+  pool: v.strictObject({
     types: v.array(v.string()),
     'egg-groups': v.optional(v.array(v.string())),
     also: v.optional(v.array(v.string())),
   }),
 });
 
-const SAID = v.object({ name: v.string(), quote: v.string() });
+const SAID = v.strictObject({ name: v.string(), quote: v.string() });
 
 /** The league whose Elite Four a mark is one of */
 function leagueOf(honor: Awards, where: string): string {

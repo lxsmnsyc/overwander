@@ -83,20 +83,23 @@ const REWARD = v.union([
   v.strictObject({ award: NAME }),
 ]);
 
-const QUESTS_FILE = v.object({
+const QUESTS_FILE = v.strictObject({
   chains: v.record(NAME, v.array(NAME)),
   quests: v.record(
     NAME,
-    v.object({ requirements: v.array(REQUIREMENT), rewards: v.array(REWARD) }),
+    v.strictObject({ requirements: v.array(REQUIREMENT), rewards: v.array(REWARD) }),
   ),
 });
 
 const DAILY_FILE = v.record(
   NAME,
-  v.object({ requirement: COUNTER, rewards: v.array(v.object({ item: NAME, amount: COUNT })) }),
+  v.strictObject({
+    requirement: COUNTER,
+    rewards: v.array(v.strictObject({ item: NAME, amount: COUNT })),
+  }),
 );
 
-const NAMES_FILE = v.object({
+const NAMES_FILE = v.strictObject({
   chains: v.record(NAME, v.string()),
   quests: v.record(NAME, v.string()),
   daily: v.record(NAME, v.string()),

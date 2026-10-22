@@ -51,7 +51,7 @@ const WEIGHT = v.union([
 
 const BAND = v.record(NAME, WEIGHT);
 
-const GROUPS = v.object({
+const GROUPS = v.strictObject({
   base: BAND,
   uncommon: BAND,
   rare: BAND,
@@ -62,16 +62,16 @@ const GROUPS = v.object({
   mythical: v.optional(BAND),
 });
 
-const TIMES = v.object({ morning: GROUPS, day: GROUPS, evening: GROUPS, night: GROUPS });
+const TIMES = v.strictObject({ morning: GROUPS, day: GROUPS, evening: GROUPS, night: GROUPS });
 
-const BIOME_FILE = v.object({
+const BIOME_FILE = v.strictObject({
   land: v.optional(TIMES),
   water: v.optional(TIMES),
   ice: v.optional(TIMES),
   'cave-legends': v.optional(BAND),
 });
 
-const SHARED_FILE = v.object({ pool: TIMES });
+const SHARED_FILE = v.strictObject({ pool: TIMES });
 
 function readBand(band: v.InferOutput<typeof BAND>, where: string): SpawnEntry[] {
   const entries: SpawnEntry[] = [];

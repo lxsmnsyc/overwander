@@ -39,7 +39,7 @@ export interface ZenithShape {
   shard: Items;
 }
 
-const ZENITH = v.object({
+const ZENITH = v.strictObject({
   base: v.string(),
   stats: v.record(v.string(), v.pipe(v.number(), v.minValue(0))),
   types: v.array(v.string()),

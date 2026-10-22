@@ -24,7 +24,7 @@ import { ITEM_POOL, type ItemPoolEntry, type ItemRarityGroups } from './item-poo
  * The ground each item in `biome-items.yaml` belongs to. A lowercase
  * name there is one of the file's `groups`, laid down in its order
  */
-const FILE = v.object({
+const FILE = v.strictObject({
   groups: v.record(v.string(), v.array(v.string())),
   items: v.record(v.string(), v.array(v.string())),
 });

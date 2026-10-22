@@ -13,13 +13,13 @@ export default Weather;
  * Every sky, read out of `kinds.yaml` and `text/en/weather.yaml`; the
  * numbers are `ids/weather.ts`
  */
-const KIND = v.object({
+const KIND = v.strictObject({
   color: v.string(),
   favours: v.union([v.literal('everything'), v.array(v.string())]),
   battle: v.string(),
 });
 
-const TEXT = v.object({ name: v.string(), description: v.string() });
+const TEXT = v.strictObject({ name: v.string(), description: v.string() });
 
 export const WEATHER_NAMES: Record<number, string> = {};
 

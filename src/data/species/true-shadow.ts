@@ -41,7 +41,7 @@ function readPairs(written: Record<string, string>, where: string): Map<Species,
   return pairs;
 }
 
-const written = v.parse(v.object({ shadows: PAIRS, shapes: PAIRS }), shadowsFile);
+const written = v.parse(v.strictObject({ shadows: PAIRS, shapes: PAIRS }), shadowsFile);
 
 /** Each counterpart and the true shadow of it, out of `true-shadows.yaml` */
 const TRUE_SHADOWS = readPairs(written.shadows, 'true-shadows.yaml: shadows');

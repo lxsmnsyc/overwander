@@ -13,14 +13,14 @@ export { Legend };
  * The legends, read out of `legends.yaml` and `text/en/legends.yaml`;
  * the numbers are `ids/legends.ts`
  */
-const LEGEND = v.object({
+const LEGEND = v.strictObject({
   honor: v.string(),
   sheets: v.array(v.string()),
   prize: v.array(v.string()),
   party: v.array(v.string()),
 });
 
-const SAID = v.object({ name: v.string(), greeting: v.string() });
+const SAID = v.strictObject({ name: v.string(), greeting: v.string() });
 
 /** Every legend, in the order they are numbered */
 export const LEGENDS: Legend[] = [];

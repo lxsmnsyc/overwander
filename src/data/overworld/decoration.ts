@@ -13,7 +13,7 @@ export default Decoration;
  * each kind is called, out of `text/en/decorations.yaml`. The kinds
  * are numbered in `ids/decorations.ts`
  */
-const BIOME = v.object({
+const BIOME = v.strictObject({
   grows: v.array(v.string()),
   blocker: v.optional(v.string()),
   island: v.optional(v.array(v.string())),

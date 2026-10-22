@@ -212,7 +212,10 @@ export function getOtherStat(
   return Math.floor((getSharedStat(level, base, iv, ev) + 5) * nature);
 }
 
-const STAT_TEXT = v.parse(v.object({ stats: v.unknown(), stages: v.unknown() }), statNamesFile);
+const STAT_TEXT = v.parse(
+  v.strictObject({ stats: v.unknown(), stages: v.unknown() }),
+  statNamesFile,
+);
 
 /**
  * What the six stats and the seven stages are called, for anything

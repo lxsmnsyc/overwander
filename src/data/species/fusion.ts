@@ -29,7 +29,7 @@ interface Fusion {
   wearsPartner: boolean;
 }
 
-const FUSION = v.object({
+const FUSION = v.strictObject({
   husk: v.string(),
   partner: v.string(),
   item: v.string(),

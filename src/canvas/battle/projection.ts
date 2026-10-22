@@ -161,6 +161,11 @@ export function scaleAt(z: number): number {
   return FOCAL / (FOCAL + z * DEPTH);
 }
 
+/** The depth, after the turn, that `scaleAt` answers this scale for */
+export function depthAtScale(scale: number): number {
+  return (FOCAL / scale - FOCAL) / DEPTH;
+}
+
 /**
  * Where a place on the ground lands on the canvas.
  *

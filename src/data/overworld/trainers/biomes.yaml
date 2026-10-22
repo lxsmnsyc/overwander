@@ -127,6 +127,7 @@ Beach:
   - KalosSocialite
   - Tourist
   - RisingStar
+  - Triathlete
 Mangrove:
   - Swimmer
   - Biker
@@ -309,6 +310,7 @@ Savanna:
   - KalosRollerSkater
   - SkyTrainer
   - Tourist
+  - Triathlete
 Desert:
   - Hiker
   - PokeManiac
@@ -491,6 +493,7 @@ Grassland:
   - Butler
   - Tourist
   - RisingStar
+  - Triathlete
 TemperateForest:
   - BugCatcher
   - Lass
@@ -715,6 +718,7 @@ Mountain:
   - KalosRollerSkater
   - KalosClerk
   - SkyTrainer
+  - Triathlete
 AlpineTundra:
   - Hiker
   - BirdKeeper
@@ -855,6 +859,7 @@ Steppe:
   - KalosRollerSkater
   - SkyTrainer
   - Tourist
+  - Triathlete
 MontaneForest:
   - Psychic
   - BugCatcher

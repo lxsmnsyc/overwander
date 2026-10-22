@@ -36,6 +36,8 @@ export interface SpawnCoat {
   id: string;
   species: Species;
   shiny: boolean;
+  /** Drawn from the female sheet where the species has one */
+  female: boolean;
   /**
    * Whether it belongs to the day's featured family. The board rings
    * the cell to say so: the crowded pool and the eight-fold shininess

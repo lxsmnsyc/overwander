@@ -154,6 +154,7 @@ export default function WorldScene(props: WorldSceneProps): JSX.Element {
         id: standing.id,
         species: standing.spawn[0],
         shiny: standing.shiny,
+        female: standing.female,
         featured: isFeaturedSpecies(standing.spawn[0], loaded.snapshot.timestamp),
         rank: rankOf(standing.spawn[0]),
       });

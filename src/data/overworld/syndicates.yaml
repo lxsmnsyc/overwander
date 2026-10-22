@@ -30,6 +30,7 @@ Magma:
     sheets:
       - characters/rse/magma-grunt-f
       - characters/rse/magma-grunt-m
+      - characters/oras/magma-grunt
     honor: MagmaGruntDefeated
   executives: [Tabitha, Courtney]
   boss:
@@ -42,6 +43,8 @@ Aqua:
     sheets:
       - characters/rse/aqua-grunt-f
       - characters/rse/aqua-grunt-m
+      - characters/oras/aqua-grunt-f
+      - characters/oras/aqua-grunt-m
     honor: AquaGruntDefeated
   executives: [Matt, Shelly]
   boss:

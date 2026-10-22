@@ -87,13 +87,28 @@ Lechonk:
     active: [Morning, Day]
     evolves-into:
       - species: Oinkologne
-        method: [Level]
+        method: [Level, Gender]
         level: 18
+        gender: Male
+      - species: OinkologneFemale
+        method: [Level, Gender]
+        level: 18
+        gender: Female
   Oinkologne:
     types: [Normal]
     egg-groups: [Field]
     biomes: [Grassland, Woodland]
     active: [Morning, Day]
+    evolves-from: Lechonk
+  OinkologneFemale:
+    types: [Normal]
+    egg-groups: [Field]
+    biomes: [Grassland, Woodland]
+    active: [Morning, Day]
+    # Her own pokemon rather than his coat, the way Meowstic's female
+    # is: she is born Aroma Veil where he is born Lingering Aroma, and
+    # she leans to bulk where he leans to attack
+    base-form: false
     evolves-from: Lechonk
 Tarountula:
   Tarountula:

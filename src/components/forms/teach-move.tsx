@@ -20,7 +20,7 @@ import { isEgg } from '../../model/egg';
 import teachMove, { learnLevelUpMove } from '../../auth/moves';
 import type { Moves } from '../../data/ids/moves';
 import { type Items, getMachineItem } from '../../data/ids/items';
-import { Species } from '../../data/ids/species';
+import { Genders, Species } from '../../data/ids/species';
 import { getMoveData } from '../../data/moves';
 import { getSpeciesData } from '../../data/species';
 import { type LearnResult, describeLearnRefusal } from '../../model/learn-refusal';
@@ -261,6 +261,7 @@ function CatchFace(props: { catchId: string }): JSX.Element {
           <HeadingPortrait>
             <AnimatedSprite
               species={isEgg(loaded()) ? Species.Egg : loaded().species}
+              female={!isEgg(loaded()) && loaded().gender === Genders.Female}
               shiny={!isEgg(loaded()) && isShiny(loaded())}
               direction="Down"
               still

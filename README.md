@@ -147,7 +147,7 @@ give a player a **password link** from the player's admin page instead, or with
 | `pnpm test:db`               | The server modules against the development database                                 |
 | `pnpm test:e2e`              | The Playwright suites under `e2e/`                                                  |
 | `pnpm ai:sim`                | Play AI-against-AI battles and report what the AI casts, by role and by move        |
-| `pnpm exec tsc --noEmit`     | Type-check                                                                          |
+| `pnpm typecheck`             | Type-check                                                                          |
 | `pnpm exec oxlint src test`  | Lint                                                                                |
 | `pnpm exec oxfmt src test`   | Format                                                                              |
 | `pnpm cs:add`                | Add a changeset                                                                     |

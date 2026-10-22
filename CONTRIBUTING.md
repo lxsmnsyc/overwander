@@ -76,7 +76,7 @@ diff.
 Run these before you push. CI runs the first three on every pull request.
 
 ```bash
-pnpm exec tsc --noEmit      # type-check
+pnpm typecheck              # type-check
 pnpm exec oxlint src test   # lint, never biome
 pnpm test                   # the whole unit suite
 pnpm exec oxfmt src test    # format

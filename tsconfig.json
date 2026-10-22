@@ -1,6 +1,9 @@
 {
   "exclude": ["node_modules"],
   "include": ["src", "types", "test", "e2e", "scripts", "db", "playwright.config.ts"],
+  "contentMappers": [
+    { "package": "@overwander/yaml-content-mapper", "extensions": [".yaml"] }
+  ],
   "compilerOptions": {
     "module": "ESNext",
     "lib": ["ESNext", "DOM", "DOM.Iterable"],

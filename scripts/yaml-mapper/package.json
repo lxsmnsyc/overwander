@@ -1,0 +1,16 @@
+{
+  "name": "@overwander/yaml-content-mapper",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Types the game's YAML data for TypeScript 7.1, as the build reads it",
+  "type": "module",
+  "typescript": {
+    "contentMapper": {
+      "compilerOptions": [],
+      "exec": [
+        "node",
+        "server.ts"
+      ]
+    }
+  }
+}

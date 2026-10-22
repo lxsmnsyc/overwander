@@ -245,3 +245,5 @@ A file per family in two folders, each item keyed by name:
 - **Behaviour stays in TypeScript.** Rules that choose a form (`species/forms.ts`), building a Mega, Zenith or true shadow from its base species, weather pairings, and anything that runs in a fight are code. The Mega and Zenith tables themselves are YAML.
 
 The build turns each `.yaml` file into a module (`scripts/vite/yaml.ts`), so the browser never parses YAML.
+
+`pnpm typecheck` runs `tsc` with the YAML content mapper (`scripts/yaml-mapper/`, registered under `contentMappers` in `tsconfig.json`): each import is typed as the JSON of its value, and a file that does not parse is a type error at its own line. `types/yaml.d.ts` types every import as `unknown` for the tools that do not run the mapper.

@@ -90,7 +90,7 @@ Routes follow Sword and Shield's order. The order of batches 4 to 11 may shift w
 7. **Sprites:** `pnpm import-sprites && pnpm compact-sprites`, plus the family candies.
 8. **Text:** every description ends in a full stop (`registry-descriptions`). Run `pnpm id-names` after any enum change.
 9. **Changeset**, `minor`, with one bullet per family. Then a section in the release page for the group of batches.
-10. **Checks:** `pnpm test`, `pnpm exec tsc --noEmit`, and `rtk proxy pnpm exec oxlint src test`, read by its exit code.
+10. **Checks:** `pnpm test`, `pnpm typecheck`, and `rtk proxy pnpm exec oxlint src test`, read by its exit code.
 
 A batch is done when all of that is green and a test asserts each new signature ability against real engine state.
 

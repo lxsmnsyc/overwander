@@ -13,7 +13,7 @@ pnpm dev                                  # http://localhost:3000
 pnpm test                                 # whole suite, once
 pnpm exec vitest run test/data/species.test.ts   # one file
 pnpm exec vitest run test/battle -t 'Tough Claws'   # one test by name
-pnpm exec tsc --noEmit                    # type-check
+pnpm typecheck                            # type-check (tsc with the YAML content mapper)
 pnpm exec oxlint src test                 # lint (never biome: this repo migrated off it)
 pnpm exec oxfmt src test                  # format
 ```

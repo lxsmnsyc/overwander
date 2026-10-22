@@ -1008,6 +1008,121 @@ const TOTEMS: Schema = {
   ),
 };
 
+const COUNTER_ASK: Schema = part(
+  {
+    metric: described(name('metric'), 'The lifetime counter it reads'),
+    count: described(COUNT, 'The total it asks for'),
+    species: name('species'),
+    family: name('family'),
+    type: name('type'),
+    item: name('item'),
+    npc: name('npc'),
+    landmark: name('quest-landmark'),
+    move: name('move'),
+    foe: name('foe'),
+    trainer: name('trainer'),
+  },
+  ['metric', 'count'],
+);
+
+const QUEST_REQUIREMENT: Schema = {
+  anyOf: [
+    COUNTER_ASK,
+    part({ dex: described(COUNT, 'Distinct species caught'), region: name('region') }, ['dex']),
+    part({ 'turn-in': described(name('item'), 'Taken from the bag'), count: COUNT }, [
+      'turn-in',
+      'count',
+    ]),
+  ],
+};
+
+const QUEST_REWARD: Schema = {
+  anyOf: [
+    part({ item: name('item'), amount: COUNT }, ['item', 'amount']),
+    part(
+      {
+        catch: described(name('species'), 'A finished record'),
+        level: COUNT,
+        shiny: { type: 'boolean' },
+        ball: name('ball'),
+      },
+      ['catch', 'level'],
+    ),
+    part(
+      {
+        encounter: described(name('species'), 'A meeting staged in the world'),
+        level: COUNT,
+        shiny: { type: 'boolean' },
+      },
+      ['encounter', 'level'],
+    ),
+    part({ egg: name('species') }, ['egg']),
+    part({ award: name('award') }, ['award']),
+  ],
+};
+
+const QUESTS: Schema = {
+  $schema: DRAFT,
+  title: 'Quests',
+  ...part(
+    {
+      chains: described(
+        { type: 'object', propertyNames: name('chain'), additionalProperties: names('quest') },
+        'Each chain in the order the board shows it, its quests in the order they are claimed',
+      ),
+      quests: {
+        type: 'object',
+        propertyNames: name('quest'),
+        additionalProperties: part(
+          {
+            requirements: { type: 'array', items: QUEST_REQUIREMENT },
+            rewards: { type: 'array', items: QUEST_REWARD },
+          },
+          ['requirements', 'rewards'],
+        ),
+      },
+    },
+    ['chains', 'quests'],
+  ),
+};
+
+const DAILY_QUESTS: Schema = {
+  $schema: DRAFT,
+  title: 'Daily quest pool',
+  type: 'object',
+  additionalProperties: part(
+    {
+      requirement: COUNTER_ASK,
+      rewards: {
+        type: 'array',
+        items: part({ item: name('item'), amount: COUNT }, ['item', 'amount']),
+      },
+    },
+    ['requirement', 'rewards'],
+  ),
+};
+
+const QUEST_TEXT: Schema = {
+  $schema: DRAFT,
+  title: 'Quest names',
+  ...part(
+    {
+      chains: {
+        type: 'object',
+        propertyNames: name('chain'),
+        additionalProperties: { type: 'string' },
+      },
+      quests: {
+        type: 'object',
+        propertyNames: name('quest'),
+        additionalProperties: { type: 'string' },
+      },
+      daily: { type: 'object', additionalProperties: { type: 'string' } },
+    },
+    ['chains', 'quests', 'daily'],
+  ),
+};
+
 const ITEM_BAND: Schema = described(
   {
     type: 'object',
@@ -1150,6 +1265,9 @@ export default function renderDataSchemas(members: Map<string, string[]>): Map<s
     ['item-pool.json', json(ITEM_POOL)],
     ['biome-items.json', json(BIOME_ITEMS)],
     ['totems.json', json(TOTEMS)],
+    ['quests.json', json(QUESTS)],
+    ['quests-daily.json', json(DAILY_QUESTS)],
+    ['quests-text.json', json(QUEST_TEXT)],
     ['honey-tree.json', json({ $schema: DRAFT, title: 'Honey tree pool', ...SPAWN_GROUPS })],
   ]);
 

@@ -57,6 +57,18 @@ Growlithe:
 - **A lair is numbered by the enum in `ids/lairs.ts`,** since a raid prize records it. A new lair is an enum member, a row in each lair file, and `pnpm id-names`. `reserved: true` keeps it out of the world until its batch lists it.
 - **An item family a pool names** is listed in `ITEM_FAMILIES` in `overworld/item-pool.ts`.
 
+## Quests
+
+| file                     | holds                                                                  |
+| ------------------------ | ---------------------------------------------------------------------- |
+| `quests/quests.yaml`     | the written `chains`, in the board's order, and each quest's `requirements` and `rewards` |
+| `quests/daily.yaml`      | the pool the third daily slot draws from                               |
+| `text/en/quests.yaml`    | each chain's, quest's and daily's name                                 |
+
+- **A quest and a chain are numbered by their enums in `quests/types.ts`,** since a claim records the number. A new one is an enum member, a row in each file, and `pnpm id-names`.
+- **The daily pool's order is part of every player's board.** A seed picks by position, so append and never reorder.
+- A requirement is a counter (`metric` and `count`, narrowed by at most one of `species`, `family`, `type`, `item`, `npc`, `landmark`, `move`, `foe` or `trainer`), `dex: n`, or `turn-in`. A reward is `item` and `amount`, `catch`, `encounter`, `egg` or `award`. The metrics, landmarks and foes are the enums in `src/model/quest-record.ts`.
+
 ## Moves
 
 Under `src/data/moves/`, each part filed by generation and the stretch of moves it was written in (`gen-1/bulbasaur-to-blastoise.yaml`), every move keyed by its name:

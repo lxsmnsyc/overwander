@@ -1,0 +1,222 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Quests",
+  "type": "object",
+  "properties": {
+    "chains": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "names.json#/definitions/chain"
+      },
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "$ref": "names.json#/definitions/quest"
+        }
+      },
+      "description": "Each chain in the order the board shows it, its quests in the order they are claimed"
+    },
+    "quests": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "names.json#/definitions/quest"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "requirements": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "metric": {
+                      "$ref": "names.json#/definitions/metric",
+                      "description": "The lifetime counter it reads"
+                    },
+                    "count": {
+                      "type": "number",
+                      "minimum": 0,
+                      "description": "The total it asks for"
+                    },
+                    "species": {
+                      "$ref": "names.json#/definitions/species"
+                    },
+                    "family": {
+                      "$ref": "names.json#/definitions/family"
+                    },
+                    "type": {
+                      "$ref": "names.json#/definitions/type"
+                    },
+                    "item": {
+                      "$ref": "names.json#/definitions/item"
+                    },
+                    "npc": {
+                      "$ref": "names.json#/definitions/npc"
+                    },
+                    "landmark": {
+                      "$ref": "names.json#/definitions/quest-landmark"
+                    },
+                    "move": {
+                      "$ref": "names.json#/definitions/move"
+                    },
+                    "foe": {
+                      "$ref": "names.json#/definitions/foe"
+                    },
+                    "trainer": {
+                      "$ref": "names.json#/definitions/trainer"
+                    }
+                  },
+                  "required": [
+                    "metric",
+                    "count"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "dex": {
+                      "type": "number",
+                      "minimum": 0,
+                      "description": "Distinct species caught"
+                    },
+                    "region": {
+                      "$ref": "names.json#/definitions/region"
+                    }
+                  },
+                  "required": [
+                    "dex"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "turn-in": {
+                      "$ref": "names.json#/definitions/item",
+                      "description": "Taken from the bag"
+                    },
+                    "count": {
+                      "type": "number",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "turn-in",
+                    "count"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            }
+          },
+          "rewards": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "item": {
+                      "$ref": "names.json#/definitions/item"
+                    },
+                    "amount": {
+                      "type": "number",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "item",
+                    "amount"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "catch": {
+                      "$ref": "names.json#/definitions/species",
+                      "description": "A finished record"
+                    },
+                    "level": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "shiny": {
+                      "type": "boolean"
+                    },
+                    "ball": {
+                      "$ref": "names.json#/definitions/ball"
+                    }
+                  },
+                  "required": [
+                    "catch",
+                    "level"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "encounter": {
+                      "$ref": "names.json#/definitions/species",
+                      "description": "A meeting staged in the world"
+                    },
+                    "level": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "shiny": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "encounter",
+                    "level"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "egg": {
+                      "$ref": "names.json#/definitions/species"
+                    }
+                  },
+                  "required": [
+                    "egg"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "award": {
+                      "$ref": "names.json#/definitions/award"
+                    }
+                  },
+                  "required": [
+                    "award"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            }
+          }
+        },
+        "required": [
+          "requirements",
+          "rewards"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "chains",
+    "quests"
+  ],
+  "additionalProperties": false
+}

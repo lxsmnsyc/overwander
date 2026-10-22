@@ -1,4 +1,6 @@
 {
+  "js/ts.tsdk.path": "node_modules/typescript",
+  "js/ts.contentMappers.enabled": true,
   "editor.formatOnSave": true,
   "[javascript]": {
     "editor.defaultFormatter": "oxc.oxc-vscode"

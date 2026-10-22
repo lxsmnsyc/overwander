@@ -12,6 +12,7 @@ import { Types } from '../constants/types';
 import { Stages, Stats } from '../constants/stats';
 import { Statuses, TeamStatuses, Terrains, Weathers } from './status';
 import { MoveRole } from './move-roles';
+import { BuildRole, StatusKind } from './builds';
 import Regions from './regions';
 import Natures from './natures';
 import Awards from './awards';
@@ -4969,6 +4970,30 @@ export const MOVE_ROLE_IDS = {
   Weakens: MoveRole.Weakens,
   Trapping: MoveRole.Trapping,
 } as const satisfies Record<string, MoveRole>;
+
+export const BUILD_ROLE_IDS = {
+  SpecialCore: BuildRole.SpecialCore,
+  PhysicalCore: BuildRole.PhysicalCore,
+  Healer: BuildRole.Healer,
+  Protector: BuildRole.Protector,
+  Redirector: BuildRole.Redirector,
+  FieldControl: BuildRole.FieldControl,
+} as const satisfies Record<string, BuildRole>;
+
+export const STATUS_KIND_IDS = {
+  Setup: StatusKind.Setup,
+  Heal: StatusKind.Heal,
+  Cripple: StatusKind.Cripple,
+  Screen: StatusKind.Screen,
+  Weather: StatusKind.Weather,
+  Boost: StatusKind.Boost,
+  Mend: StatusKind.Mend,
+  Cure: StatusKind.Cure,
+  Shield: StatusKind.Shield,
+  Redirect: StatusKind.Redirect,
+  Hazard: StatusKind.Hazard,
+  Room: StatusKind.Room,
+} as const satisfies Record<string, StatusKind>;
 
 export const REGION_IDS = {
   Unknown: Regions.Unknown,

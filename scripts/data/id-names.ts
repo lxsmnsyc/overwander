@@ -59,6 +59,8 @@ const TABLES: Table[] = [
   { name: 'BATTLE_WEATHER_IDS', enumName: 'Weathers', from: './status' },
   { name: 'TERRAIN_IDS', enumName: 'Terrains', from: './status' },
   { name: 'MOVE_ROLE_IDS', enumName: 'MoveRole', from: './move-roles' },
+  { name: 'BUILD_ROLE_IDS', enumName: 'BuildRole', from: './builds' },
+  { name: 'STATUS_KIND_IDS', enumName: 'StatusKind', from: './builds' },
   { name: 'REGION_IDS', enumName: 'Regions', from: './regions', isDefault: true },
   { name: 'NATURE_IDS', enumName: 'Natures', from: './natures', isDefault: true },
   { name: 'AWARD_IDS', enumName: 'Awards', from: './awards', isDefault: true },

@@ -1,0 +1,88 @@
+# What an ability is worth to an expert build, on a scale where 100 is an
+# ordinary one worth carrying (anything without a `worth`). The numbers are
+# relative to each other and nothing else: they decide which of a species'
+# own pool it awakens.
+#
+# `lean` is what the build carries it for: `offense` to hit with, `guard` to
+# still be standing
+
+# What changes what a pokemon is, rather than helping it along
+WonderGuard: { worth: 200, lean: guard }
+HugePower: { worth: 190, lean: offense }
+PurePower: { worth: 190, lean: offense }
+Multiscale: { worth: 155, lean: guard }
+Protean: { worth: 150, lean: offense }
+Libero: { worth: 150, lean: offense }
+IntrepidSword: { worth: 150, lean: offense }
+GorillaTactics: { worth: 145, lean: offense }
+MagicGuard: { worth: 150, lean: guard }
+Adaptability: { worth: 150, lean: offense }
+Drought: { worth: 150 }
+Drizzle: { worth: 150 }
+Technician: { worth: 145, lean: offense }
+Regenerator: { worth: 145, lean: guard }
+SpeedBoost: { worth: 145, lean: offense }
+SheerForce: { worth: 140, lean: offense }
+Intimidate: { worth: 140, lean: guard }
+Levitate: { worth: 140, lean: guard }
+MagicBounce: { worth: 140, lean: guard }
+PoisonHeal: { worth: 140, lean: guard }
+Guts: { worth: 135, lean: offense }
+NaturalCure: { worth: 135, lean: guard }
+ThickFat: { worth: 135, lean: guard }
+WaterAbsorb: { worth: 135, lean: guard }
+VoltAbsorb: { worth: 135, lean: guard }
+SapSipper: { worth: 130, lean: guard }
+FlashFire: { worth: 130, lean: guard }
+SereneGrace: { worth: 130, lean: offense }
+SkillLink: { worth: 130, lean: offense }
+TintedLens: { worth: 130, lean: offense }
+Prankster: { worth: 130, lean: guard }
+SandStream: { worth: 130 }
+Filter: { worth: 130, lean: guard }
+IceScales: { worth: 130, lean: guard }
+SolidRock: { worth: 130, lean: guard }
+DauntlessShield: { worth: 130, lean: guard }
+DragonsMaw: { worth: 130, lean: offense }
+Transistor: { worth: 125, lean: offense }
+IronFist: { worth: 125, lean: offense }
+StrongJaw: { worth: 125, lean: offense }
+Sharpness: { worth: 125, lean: offense }
+Steelworker: { worth: 125, lean: offense }
+SteelySpirit: { worth: 125, lean: offense }
+UnseenFist: { worth: 125, lean: offense }
+ToughClaws: { worth: 125, lean: offense }
+PunkRock: { worth: 125, lean: offense }
+GaleWings: { worth: 125 }
+SnowWarning: { worth: 125 }
+SwiftSwim: { worth: 125, lean: offense }
+Chlorophyll: { worth: 125, lean: offense }
+SandRush: { worth: 125, lean: offense }
+Unaware: { worth: 125, lean: guard }
+Sniper: { worth: 120, lean: offense }
+NoGuard: { worth: 120, lean: offense }
+SlushRush: { worth: 120, lean: offense }
+Sturdy: { worth: 120, lean: guard }
+MoldBreaker: { worth: 115, lean: offense }
+QuickDraw: { worth: 115, lean: offense }
+ChillingNeigh: { worth: 115, lean: offense }
+GrimNeigh: { worth: 115, lean: offense }
+Reckless: { worth: 115, lean: offense }
+SuperLuck: { worth: 110, lean: offense }
+ClearBody: { worth: 110, lean: guard }
+Static: { worth: 105, lean: guard }
+RoughSkin: { worth: 105, lean: guard }
+# The ones a fight never asks about
+HoneyGather: { worth: 20 }
+Illuminate: { worth: 20 }
+RunAway: { worth: 20 }
+Pickup: { worth: 20 }
+BallFetch: { worth: 20 }
+Stench: { worth: 40 }
+Truant: { worth: 0 }
+
+# Worth an ordinary ability, but leaning one way
+Blaze: { lean: offense }
+Torrent: { lean: offense }
+Overgrow: { lean: offense }
+Swarm: { lean: offense }

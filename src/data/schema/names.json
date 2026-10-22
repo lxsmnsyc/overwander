@@ -4996,6 +4996,32 @@
         "Trapping"
       ]
     },
+    "build-role": {
+      "enum": [
+        "SpecialCore",
+        "PhysicalCore",
+        "Healer",
+        "Protector",
+        "Redirector",
+        "FieldControl"
+      ]
+    },
+    "status-kind": {
+      "enum": [
+        "Setup",
+        "Heal",
+        "Cripple",
+        "Screen",
+        "Weather",
+        "Boost",
+        "Mend",
+        "Cure",
+        "Shield",
+        "Redirect",
+        "Hazard",
+        "Room"
+      ]
+    },
     "region": {
       "enum": [
         "Unknown",

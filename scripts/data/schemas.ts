@@ -41,6 +41,8 @@ const DEFINITIONS: [enumName: string, definition: string][] = [
   ['Weathers', 'battle-weather'],
   ['Terrains', 'terrain'],
   ['MoveRole', 'move-role'],
+  ['BuildRole', 'build-role'],
+  ['StatusKind', 'status-kind'],
   ['Regions', 'region'],
   ['Awards', 'award'],
   ['Lairs', 'lair'],
@@ -1012,6 +1014,56 @@ const BATTLE_LISTS: [file: string, schema: Schema][] = [
   ],
 ];
 
+/** The expert build's prices, in `src/data/builds/` */
+const BUILD_FILES: [file: string, schema: Schema][] = [
+  [
+    'builds-status-moves.json',
+    keyed(
+      'Builds: status moves',
+      'move',
+      part(
+        {
+          worth: described({ type: 'number' }, 'What a slot for it is worth'),
+          kind: described(name('status-kind'), 'What it is for; none is a Cripple'),
+          serves: described(name('move-category'), 'The half of the split a setup sharpens'),
+        },
+        [],
+      ),
+    ),
+  ],
+  [
+    'builds-attacks.json',
+    keyed(
+      'Builds: attacks',
+      'move',
+      part(
+        {
+          drawback: described(
+            { type: 'number', minimum: 0 },
+            'A factor for a cost the entry has no field for',
+          ),
+          power: described(COUNT, 'What a move with no power of its own is worth'),
+        },
+        [],
+      ),
+    ),
+  ],
+  [
+    'builds-abilities.json',
+    keyed(
+      'Builds: abilities',
+      'ability',
+      part(
+        {
+          worth: described({ type: 'number', minimum: 0 }, 'Against 100 for an ordinary ability'),
+          lean: { enum: ['offense', 'guard'] },
+        },
+        [],
+      ),
+    ),
+  ],
+];
+
 function json(schema: Schema): string {
   return `${JSON.stringify(schema, null, 2)}\n`;
 }
@@ -1131,7 +1183,7 @@ export default function renderDataSchemas(members: Map<string, string[]>): Map<s
   for (const [file, title, entry] of BATTLE_FILES) {
     schemas.set(file, json(keyed(title, 'move', entry)));
   }
-  for (const [file, schema] of BATTLE_LISTS) {
+  for (const [file, schema] of [...BATTLE_LISTS, ...BUILD_FILES]) {
     schemas.set(file, json(schema));
   }
   return schemas;

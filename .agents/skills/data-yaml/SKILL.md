@@ -94,6 +94,18 @@ The numbers a fight reads off each move live apart from the move, in `src/data/b
 
 `src/data/battle/index.ts` reads them into the tables the battle files re-export (`STATUS_MOVES`, `RECOIL_MOVES` and the rest). A move is added to a mechanic by adding it to that file; what the mechanic does with the number stays in `src/battle/moves/`.
 
+## Expert builds
+
+What the expert builder pays for a move or an ability lives in `src/data/builds/`, read by `src/data/builds/index.ts`:
+
+| file                | holds                                                                   |
+| ------------------- | ----------------------------------------------------------------------- |
+| `status-moves.yaml` | each priced status move's `worth`, its `kind` (a `StatusKind`, Cripple when left out) and the split a setup `serves` |
+| `attacks.yaml`      | a damaging move's `drawback` factor, or the `power` a move with none is worth |
+| `abilities.yaml`    | an ability's `worth` against 100 for an ordinary one, and its `lean` (`offense` or `guard`) |
+
+- **Every number decides an expert party.** Changing one changes the parties already staged in the world, so change them on purpose. `StatusKind` and `BuildRole` are in `src/data/ids/builds.ts`.
+
 ## Spawn pools
 
 `src/data/biome/pools/<biome>.yaml` holds a biome's pools by surface (`land`, `water`, `ice`), then by time of day, then by rarity band, each band a map from species to weight, and the `cave-legends` met in the caves under it. `cave.yaml` and `town.yaml` hold the two shared pools under `pool:`.

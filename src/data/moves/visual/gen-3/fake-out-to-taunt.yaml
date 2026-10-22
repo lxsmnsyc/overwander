@@ -1,0 +1,31 @@
+# Arriving faster than it can be seen coming
+FakeOut: { landing: Strike }
+
+# Stat moves drawn as what the pokemon does, where the rising or falling arrows said only which stat
+Stockpile: { landing: Stack }
+
+SpitUp: { landing: Blast }
+
+# Health coming back, whenever it arrives
+Swallow: { landing: Mend }
+
+# Named attacks the rules drew as something generic
+HeatWave: { landing: Scorch }
+
+# Ghost and dark, which close on it rather than strike it
+Torment: { landing: Shade }
+
+# Fire that is fire wherever it comes from
+WillOWisp: { landing: Flame }
+
+# Stat moves drawn as what the pokemon does, where the rising or falling arrows said only which stat
+Memento: { landing: Memento }
+
+# The heaviest blows, drawn as what they are rather than as a bigger ordinary hit
+FocusPunch: { landing: Haymaker }
+
+# Stat moves drawn as what the pokemon does, where the rising or falling arrows said only which stat
+Charge: { landing: Crackle }
+
+# Statuses drawn as what they are: poison welling up, spores, an eye, applause, anger, a nail
+Taunt: { landing: Vein }

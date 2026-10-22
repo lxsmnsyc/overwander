@@ -1,0 +1,6 @@
+# Weather, which arrives over the field rather than on whoever
+# called for it
+RainDance: { landing: Sky }
+SunnyDay: { landing: Sky }
+Sandstorm: { landing: Sky, wait: { striking: Rise } }
+Hail: { landing: Sky }

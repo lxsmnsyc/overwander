@@ -8,6 +8,8 @@
  * suggestion, never a bad record. Written by `pnpm id-names`
  */
 
+import { DELAY_SHAPES, EFFECT_SHAPES } from '../../src/data/moves/visual/shape-names.ts';
+
 export const SCHEMA_DIR = 'src/data/schema';
 
 type Schema = Record<string, unknown>;
@@ -771,6 +773,46 @@ const MOVE_CAST = keyed(
 
 const MOVE_TEXT = keyed('Moves: text', 'move', DESCRIBED);
 
+const MOVE_VISUAL = keyed(
+  'Moves: visual',
+  'move',
+  part(
+    {
+      landing: described(name('effect-shape'), 'The shape it lands as'),
+      winding: described(
+        { anyOf: [{ const: 'none' }, name('effect-shape')] },
+        'What its wind-up step lands as, or `none` for nothing',
+      ),
+      wait: described(
+        part({ winding: name('delay-shape'), striking: name('delay-shape') }, []),
+        'How it spends the gap on its wind-up step and on its strike',
+      ),
+      color: described(
+        { anyOf: [{ type: 'string', pattern: '^#[0-9a-f]{6}$' }, name('stage')] },
+        'A hex colour, or the stage whose colour it takes',
+      ),
+    },
+    [],
+  ),
+);
+
+const MOVE_VISUAL_SHAPES = keyed(
+  'Moves: visual shapes',
+  'effect-shape',
+  part(
+    {
+      span: described(COUNT, 'How long it runs at ordinary weight, in milliseconds'),
+      jolt: described(COUNT, 'How hard it shakes the scene at ordinary weight'),
+      arrives: described({ const: true }, 'Crosses the gap or comes down by itself'),
+      wait: described(name('delay-shape'), 'How the gap before it is spent'),
+      color: { type: 'string', pattern: '^#[0-9a-f]{6}$' },
+      staged: described({ const: true }, "Pictures a stat moving, so takes the stat's colour"),
+      types: names('type', 'The types a move falls back on it for'),
+    },
+    [],
+  ),
+);
+
 const ABILITY_TEXT = keyed('Abilities: text', 'ability', DESCRIBED);
 
 const SIGNATURES: Schema = {
@@ -993,6 +1035,8 @@ export default function renderDataSchemas(members: Map<string, string[]>): Map<s
   for (const [enumName, definition] of DEFINITIONS) {
     definitions[definition] = { enum: listed(enumName) };
   }
+  definitions['effect-shape'] = { enum: [...EFFECT_SHAPES] };
+  definitions['delay-shape'] = { enum: [...DELAY_SHAPES] };
 
   const schemas = new Map([
     ['names.json', json({ $schema: DRAFT, title: 'Names', definitions })],
@@ -1039,6 +1083,8 @@ export default function renderDataSchemas(members: Map<string, string[]>): Map<s
     ['moves-battle.json', json(MOVE_BATTLE)],
     ['moves-cast.json', json(MOVE_CAST)],
     ['moves-text.json', json(MOVE_TEXT)],
+    ['moves-visual.json', json(MOVE_VISUAL)],
+    ['moves-visual-shapes.json', json(MOVE_VISUAL_SHAPES)],
     ['abilities-text.json', json(ABILITY_TEXT)],
     ['abilities-signatures.json', json(SIGNATURES)],
     ['items-records.json', json(ITEM_RECORDS)],

@@ -1,0 +1,9 @@
+# Whatever it was holding, thrown at it: a hit rather than the dark
+# closing in, which is what its type alone would have drawn
+# Lobbed rather than shot flat: a bomb, a thrown item, a stone
+Fling: { landing: Impact, wait: { striking: Lobbed } }
+
+PsychoShift: { landing: Warp }
+
+# Thrown high and coming down glittering
+TrumpCard: { landing: Stars }

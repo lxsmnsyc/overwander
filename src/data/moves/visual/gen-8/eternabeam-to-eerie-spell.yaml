@@ -1,0 +1,58 @@
+# Signatures with a picture of their own
+# A rock charged up the way Skull Bash is, and beams drawn up the way
+# Fleur Cannon's is
+Eternabeam: { landing: Dynamax, wait: { striking: Charge } }
+
+# Moves that are an earlier move's picture in all but name
+SteelBeam: { landing: Blaster, wait: { striking: Charge } }
+
+ExpandingForce: { landing: Converge }
+SteelRoller: { landing: Roller }
+ScaleShot: { landing: Stream }
+
+# A rock charged up the way Skull Bash is, and beams drawn up the way
+# Fleur Cannon's is
+MeteorBeam: { landing: Beam, wait: { winding: Charge, striking: Charge } }
+
+# Every older region's signatures, one family each, that once borrowed another move's
+# picture
+ShellSideArm: { landing: Sidearm }
+
+# Moves that are an earlier move's picture in all but name
+MistyExplosion: { landing: Blast }
+GrassyGlide: { landing: Rush }
+RisingVoltage: { landing: Zap }
+TerrainPulse: { landing: Pulse }
+SkitterSmack: { landing: Buzz }
+BurningJealousy: { landing: Scorch }
+LashOut: { landing: Lash }
+Coaching: { landing: Flex }
+
+# Struck and gone: the blow is the first step and the walk off the
+# field is the second, which is why the landing here is the leaving
+FlipTurn: { landing: Relay, winding: Dart }
+
+# Moves that are an earlier move's picture in all but name
+TripleAxel: { landing: Kicks }
+DualWingbeat: { landing: Claw }
+ScorchingSands: { landing: Scorch }
+
+# Signatures with a picture of their own
+JungleHealing: { landing: Jungle }
+WickedBlow: { landing: Singlestrike }
+SurgingStrikes: { landing: Rapidstrike }
+ThunderCage: { landing: Cage }
+
+# A rock charged up the way Skull Bash is, and beams drawn up the way
+# Fleur Cannon's is
+DragonEnergy: { landing: Dragonforce, wait: { striking: Charge } }
+
+FreezingGlare: { landing: Glaring }
+FieryWrath: { landing: Wrath }
+ThunderousKick: { landing: Thunderkick }
+GlacialLance: { landing: Lance }
+AstralBarrage: { landing: Astral }
+
+# Every older region's signatures, one family each, that once borrowed another move's
+# picture
+EerieSpell: { landing: Spell }

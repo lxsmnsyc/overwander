@@ -1,0 +1,50 @@
+# Stat moves drawn as what the pokemon does, where the rising or falling arrows said only which stat
+TailGlow: { landing: Lantern }
+
+# The mythical and legendary signatures: a ball of down and a flare of light for the Eon pair,
+# a falling star, and a psychic blast
+LusterPurge: { landing: Lustre }
+MistBall: { landing: Plume }
+
+# Stat moves drawn as what the pokemon does, where the rising or falling arrows said only which stat
+# Drawn as a screen and as Roost's feathers, but still a raise and a drop on the way
+FeatherDance: { landing: Feathers, wait: { striking: Reach } }
+
+# Something turning in front of its eyes
+TeeterDance: { landing: Trance }
+
+# Fire that is fire wherever it comes from
+BlazeKick: { landing: Flame }
+
+# Water spread about rather than shot: a pulse washes over, and a
+# sport wets the whole field
+MudSport: { landing: Splash }
+
+# Edges and points
+NeedleArm: { landing: Spike }
+
+# Health coming back, whenever it arrives
+SlackOff: { landing: Mend }
+
+# Heard as what it is: a song, a roar, a bell
+HyperVoice: { landing: Roar }
+
+# Edges and points
+CrushClaw: { landing: Claw }
+
+# The starter trio's strongest moves each burst out of the ground round it, the way Frenzy Plant's roots do
+BlastBurn: { landing: Upheaval }
+HydroCannon: { landing: Cannon }
+
+# Ghost and dark, which close on it rather than strike it
+Astonish: { landing: Shade }
+
+# Made of whatever the sky is doing, and three elements at once
+WeatherBall: { landing: Weather }
+
+# A scent is petals on the air, the way Sweet Scent is, and a wish is a star
+# Petals too, but health coming back, so it waits the way healing does
+Aromatherapy: { landing: Petals, wait: { striking: Gather } }
+
+# Stat moves drawn as what the pokemon does, where the rising or falling arrows said only which stat
+FakeTears: { landing: Tears }

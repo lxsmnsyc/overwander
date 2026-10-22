@@ -1,0 +1,21 @@
+# Attacks the rules drew as a plain hit or a plain flame
+Inferno: { landing: Blaze }
+
+# Stat moves drawn as what the pokemon does, a body coming down with its weight, and the Pledges
+WaterPledge: { landing: Pledge }
+FirePledge: { landing: Pledge }
+GrassPledge: { landing: Pledge }
+
+# The moves whose type drew them as a flower burst
+StruggleBug: { landing: Buzz }
+
+# Attacks the rules drew as a plain hit or a plain flame
+DragonTail: { landing: Lash }
+
+# Stat moves drawn as what the pokemon does, a body coming down with its weight, and the Pledges
+WorkUp: { landing: Flex }
+
+# Moves that are an earlier move's picture in all but name
+Electroweb: { landing: Coil }
+WildCharge: { landing: Rush }
+DrillRun: { landing: Drill }

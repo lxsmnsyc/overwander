@@ -1,0 +1,32 @@
+# Wound round it
+Wrap: { landing: Coil }
+
+# Statuses drawn as what they are: poison welling up, spores, an eye, applause, anger, a nail
+Glare: { landing: Stare }
+
+# Stat moves drawn as what the pokemon does, where the rising or falling arrows said only which stat
+Screech: { landing: Screech }
+
+# Rock and earth arriving from above
+RockSlide: { landing: Rocks }
+
+# What the mainline draws for these, rather than what their type
+# and category would have picked
+ThunderWave: { landing: Wave }
+
+Thunder: { landing: Strike }
+
+# Claws and blades, which differ by how many marks and how big
+FurySwipes: { landing: Claw }
+
+# Several of something flying in, where the scatter of hits said nothing about what was thrown
+DoubleKick: { landing: Kicks }
+
+# A point driven in
+HornAttack: { landing: Spike }
+
+# The same point, turning
+HornDrill: { landing: Auger }
+
+# Named attacks the rules drew as something generic
+Thrash: { landing: Rampage }

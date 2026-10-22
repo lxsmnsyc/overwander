@@ -1,0 +1,18 @@
+# Leaves, and something under its feet
+# The ground answers it the way it answers an Earthquake: the knot
+# comes up under whatever is standing on it
+GrassKnot: { landing: Roots, wait: { striking: Rise } }
+
+# Every older region's signatures, one family each, that once borrowed another move's
+# picture
+Chatter: { landing: Chatter }
+
+# Light coming down on it, and light bursting up off it
+Judgment: { landing: Verdict }
+
+# Jets and beams, which the type alone would have drawn as a cloud
+ChargeBeam: { landing: Beam }
+
+# Every older region's signatures, one family each, that once borrowed another move's
+# picture
+AttackOrder: { landing: Attackorder }

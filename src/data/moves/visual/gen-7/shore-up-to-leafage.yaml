@@ -1,0 +1,32 @@
+# Every older region's signatures, one family each, that once borrowed another move's
+# picture
+ShoreUp: { landing: Shore }
+
+# Moves that are an earlier move's picture in all but name
+FirstImpression: { landing: Strike }
+
+# Every older region's signatures, one family each, that once borrowed another move's
+# picture
+BanefulBunker: { landing: Bunker }
+
+# Attacks and signatures with a picture of their own
+SpiritShackle: { landing: Shackle }
+DarkestLariat: { landing: Lariat }
+
+# Moves that are an earlier move's picture in all but name
+SparklingAria: { landing: Song }
+
+# Every older region's signatures, one family each, that once borrowed another move's
+# picture
+IceHammer: { landing: Icehammer }
+FloralHealing: { landing: Floral }
+
+# Moves that are an earlier move's picture in all but name
+HighHorsepower: { landing: Rush }
+StrengthSap: { landing: Drain }
+
+# A blade charged the way Skull Bash is, a beam drawn up the way Hydro Pump's is,
+# a ball lobbed, bubbles blown, a bone tumbling and a veil put up like a screen
+SolarBlade: { landing: Sweep, winding: none, wait: { winding: Charge } }
+
+Leafage: { landing: Leaves }

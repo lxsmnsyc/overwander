@@ -26,7 +26,7 @@ one that covers what you are about to do:
   let clips play at the speed they were drawn at.
 - `move-visuals` - every signature move (one family learns it) has a battle
   shape of its own (two signatures of one pokemon are two shapes); other moves
-  reuse an earlier shape, named in `effect/named.ts`.
+  reuse an earlier shape, named as its `landing` in `src/data/moves/visual/`.
 - `prefer-sets` - use `Set.has` for membership checks instead of scanning arrays.
 - `prefer-for-of` - iterate with `for...of` rather than callback Array methods
   such as `map`, `filter`, `some` and `find`; `sort` and JSX `<For>` stay.

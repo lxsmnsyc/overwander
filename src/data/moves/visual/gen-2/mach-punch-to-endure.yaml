@@ -1,0 +1,40 @@
+# Stat moves drawn as what the pokemon does, where the rising or falling arrows said only which stat
+ScaryFace: { landing: Stare }
+
+# What the target is feeling
+SweetKiss: { landing: Hearts }
+
+# Something the pokemon itself did. The stat moves are drawn by
+# what they do to the stat, so what is left here is the three whose
+# picture is the act
+BellyDrum: { landing: Drum }
+
+# A bomb and a parcel are lobbed, a bone tumbles, and the ground
+# answers a Magnitude the way it answers an Earthquake
+SludgeBomb: { landing: Blast, wait: { striking: Lobbed } }
+
+MudSlap: { landing: Haze }
+Octazooka: { landing: Blast }
+
+# Laid on the ground for whatever walks in next
+Spikes: { landing: Caltrops, wait: { striking: Lobbed } }
+
+# Ghost: something closing on it rather than something thrown
+DestinyBond: { landing: Shade }
+
+# Heard as what it is: a song, a roar, a bell
+# A lullaby's pink, and Perish Song's notes gone dark
+PerishSong: { landing: Song, color: '#6a4a8c' }
+
+# Put up or done to itself, which a dome or a stat's chevrons drew for all of them
+Detect: { landing: Shell }
+
+# Several of something flying in, where the scatter of hits said nothing about what was thrown
+# A bomb and a parcel are lobbed, a bone tumbles, and the ground
+# answers a Magnitude the way it answers an Earthquake
+BoneRush: { landing: Stream, wait: { striking: Spun } }
+
+# Named attacks the rules drew as something generic
+Outrage: { landing: Rampage, wait: { winding: Charge } }
+
+GigaDrain: { landing: Drain }

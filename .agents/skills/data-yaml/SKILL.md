@@ -74,10 +74,12 @@ Under `src/data/moves/`, each part filed by generation and the stretch of moves 
 | ------------------ | ----------------------------------------------------------------------- |
 | `battle/`          | type, category, power, accuracy, priority, pp, target, affects, flags, steps, `projectile` |
 | `cast/`            | the clips the caster plays, most wanted first, ending on a common one   |
+| `visual/`          | how it is drawn where the canvas's rules get it wrong: `landing`, `wait` as `{ winding, striking }`, `winding` (`none` or a shape), `color` (a hex or a stage) |
 | `text/en/moves/`   | each name and description, in the file of the same name                |
 
 - `flags` and `affects` are lists of names (`flags: [Contact, Sound]`); leave `flags` out for none and `affects` out for the default the way the move is cast.
 - `projectile: true` is a move that flies across the gap before it lands.
+- **`visual/shapes.yaml`** holds each landing shape by name: `span`, `jolt`, `arrives`, the `wait` it implies, `color`, `staged` and the `types` that fall back on it. Shape names are not an enum, so they are checked against `EFFECT_SHAPES` and `DELAY_SHAPES` in `visual/shape-names.ts`; a new one is added there and `pnpm id-names` run. The painters stay in `src/canvas/battle/moves/` (the `move-visuals` skill).
 - Moves register in id order, which is the pool Metronome draws from, so where a move is filed changes nothing.
 - What a move does beyond its numbers is code, in `src/battle/moves/`. Which sky a weather move calls up is `src/data/moves/weather.ts`.
 

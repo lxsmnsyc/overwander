@@ -1,0 +1,40 @@
+# Statuses drawn as what they are: poison welling up, spores, an eye, applause, anger, a nail
+Encore: { landing: Applause }
+
+RapidSpin: { landing: Swirl }
+
+# Blown over it rather than shown to it: the move is a smell, and
+# what a pokemon standing in one sees is what the air is carrying
+# Nothing crosses here either: the scent is given off where it
+# stands, and the petals are what arrives
+SweetScent: { landing: Petals, wait: { striking: Charge } }
+
+IronTail: { landing: Lash }
+
+# Healing drawn as where it comes from: the sun, the leaves, the moon
+MorningSun: { landing: Sunbeam }
+Synthesis: { landing: Greening }
+Moonlight: { landing: Moonbeam }
+
+HiddenPower: { landing: Dazzle }
+
+# Two cuts across each other rather than a rake of them
+CrossChop: { landing: Cross }
+
+Twister: { landing: Swirl }
+
+# Something turning in front of its eyes, or behind them
+PsychUp: { landing: Trance }
+
+ExtremeSpeed: { landing: Strike }
+AncientPower: { landing: Rocks }
+
+# Ghost: something closing on it rather than something thrown
+ShadowBall: { landing: Shade }
+
+# Something turning in front of its eyes, or behind them
+# Held rather than sent: the wait is the strike hanging over the
+# target until it arrives
+FutureSight: { landing: Warp, wait: { striking: Charge } }
+
+Whirlpool: { landing: Coil }

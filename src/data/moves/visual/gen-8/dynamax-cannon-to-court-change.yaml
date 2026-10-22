@@ -1,0 +1,34 @@
+# Signatures with a picture of their own
+# A rock charged up the way Skull Bash is, and beams drawn up the way
+# Fleur Cannon's is
+DynamaxCannon: { landing: Maxcannon, wait: { striking: Charge } }
+
+# Every older region's signatures, one family each, that once borrowed another move's
+# picture
+SnipeShot: { landing: Snipe }
+JawLock: { landing: Jawlock }
+StuffCheeks: { landing: Cheeks }
+NoRetreat: { landing: Retreat }
+
+# Moves that are an earlier move's picture in all but name
+TarShot: { landing: Spatter }
+
+# Every older region's signatures, one family each, that once borrowed another move's
+# picture
+MagicPowder: { landing: Powder }
+
+# Signatures with a picture of their own
+DragonDarts: { landing: Darters }
+
+# Every older region's signatures, one family each, that once borrowed another move's
+# picture
+Teatime: { landing: Teatime }
+Octolock: { landing: Octolock }
+
+# Moves that are an earlier move's picture in all but name
+BoltBeak: { landing: Spike }
+FishiousRend: { landing: Jaws }
+
+# Every older region's signatures, one family each, that once borrowed another move's
+# picture
+CourtChange: { landing: Court }

@@ -1,0 +1,23 @@
+# Every older region's signatures, one family each, that once borrowed another move's
+# picture
+FlyingPress: { landing: Flyingpress }
+MatBlock: { landing: Mat }
+
+# Moves that are an earlier move's picture in all but name
+Rototiller: { landing: Sprout }
+
+# Laid on the ground for whatever walks in next, the way Spikes is
+StickyWeb: { landing: Caltrops }
+
+# Moves that are an earlier move's picture in all but name
+FellStinger: { landing: Spike }
+PhantomForce: { landing: Shade, winding: none }
+
+# Every older region's signatures, one family each, that once borrowed another move's
+# picture
+TrickOrTreat: { landing: Treat }
+
+# Moves that are an earlier move's picture in all but name
+NobleRoar: { landing: Roar }
+IonDeluge: { landing: Crackle }
+ParabolicCharge: { landing: Drain }

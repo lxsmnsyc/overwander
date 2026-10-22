@@ -1,0 +1,19 @@
+# Moves that are an earlier move's picture in all but name
+WideGuard: { landing: Shell }
+
+# The waits these Unova moves had before they borrowed an earlier move's picture
+WonderRoom: { landing: Grid, wait: { striking: Brace } }
+
+# The moves whose type drew them as a flower burst
+Psyshock: { landing: Converge }
+
+# Stat moves drawn as what the pokemon does, a body coming down with its weight, and the Pledges
+Autotomize: { landing: Shed }
+
+# Moves that are an earlier move's picture in all but name
+RagePowder: { landing: Haze }
+
+# The waits these Unova moves had before they borrowed an earlier move's picture
+MagicRoom: { landing: Grid, wait: { striking: Brace } }
+
+SmackDown: { landing: Rocks }

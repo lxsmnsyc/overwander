@@ -1,0 +1,25 @@
+# Held between the two of them: an item, a stat, a move. Trick and
+# Skill Swap are drawn this way, and these are the same act
+Switcheroo: { landing: Warp }
+
+# The heaviest blows, drawn as what they are rather than as a bigger ordinary hit
+GigaImpact: { landing: Crash }
+
+# Put up or done to itself, which a dome or a stat's chevrons drew for all of them
+NastyPlot: { landing: Scheme }
+
+# Stone and earth coming down
+Avalanche: { landing: Rocks }
+
+# Arriving faster than it can be seen coming
+ShadowSneak: { landing: Strike }
+
+# Thrown and going off where it lands
+# Lobbed rather than shot flat: a bomb, a thrown item, a stone
+MudBomb: { landing: Blast, wait: { striking: Lobbed } }
+
+# Blades that each cut their own way, where the rake of claws drew all of them alike
+PsychoCut: { landing: Sickles }
+
+# Light rather than an element
+MirrorShot: { landing: Dazzle }

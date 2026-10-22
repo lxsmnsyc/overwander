@@ -1,0 +1,56 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Moves: visual",
+  "type": "object",
+  "propertyNames": {
+    "$ref": "names.json#/definitions/move"
+  },
+  "additionalProperties": {
+    "type": "object",
+    "properties": {
+      "landing": {
+        "$ref": "names.json#/definitions/effect-shape",
+        "description": "The shape it lands as"
+      },
+      "winding": {
+        "anyOf": [
+          {
+            "const": "none"
+          },
+          {
+            "$ref": "names.json#/definitions/effect-shape"
+          }
+        ],
+        "description": "What its wind-up step lands as, or `none` for nothing"
+      },
+      "wait": {
+        "type": "object",
+        "properties": {
+          "winding": {
+            "$ref": "names.json#/definitions/delay-shape"
+          },
+          "striking": {
+            "$ref": "names.json#/definitions/delay-shape"
+          }
+        },
+        "required": [],
+        "additionalProperties": false,
+        "description": "How it spends the gap on its wind-up step and on its strike"
+      },
+      "color": {
+        "anyOf": [
+          {
+            "type": "string",
+            "pattern": "^#[0-9a-f]{6}$"
+          },
+          {
+            "$ref": "names.json#/definitions/stage"
+          }
+        ],
+        "description": "A hex colour, or the stage whose colour it takes"
+      }
+    },
+    "required": [],
+    "additionalProperties": false
+  }
+}

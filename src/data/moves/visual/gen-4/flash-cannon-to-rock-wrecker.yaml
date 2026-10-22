@@ -1,0 +1,22 @@
+# Jets and beams, which the type alone would have drawn as a cloud
+FlashCannon: { landing: Beam }
+
+# Stat moves drawn as what the pokemon does, where the rising or falling arrows said only which stat
+Defog: { landing: Clear }
+
+# A room laid over the field, and a weight put on it
+TrickRoom: { landing: Grid }
+
+# Stone and earth coming down
+# Lobbed rather than shot flat: a bomb, a thrown item, a stone
+DracoMeteor: { landing: Meteors, wait: { striking: Lobbed } }
+
+# Leaves, and something under its feet
+LeafStorm: { landing: Leaves }
+
+# A point driven in, and something long reaching out
+PowerWhip: { landing: Lash }
+
+# Stone and earth coming down
+# Lobbed rather than shot flat: a bomb, a thrown item, a stone
+RockWrecker: { landing: Rocks, wait: { striking: Lobbed } }

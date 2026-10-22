@@ -1,0 +1,67 @@
+# Stat moves drawn as what the pokemon does, where the rising or falling arrows said only which stat
+StringShot: { landing: Silk }
+
+# Put up or done to itself, which a dome or a stat's chevrons drew for all of them
+Harden: { landing: Sheen }
+
+# Something turning in front of its eyes
+Confusion: { landing: Trance }
+
+# Statuses drawn as what they are: poison welling up, spores, an eye, applause, anger, a nail
+StunSpore: { landing: Spores }
+
+# What the mainline draws for these, rather than what their type
+# and category would have picked
+Whirlwind: { landing: Blow }
+
+# Beams: the picture is the line between the two of them
+Psybeam: { landing: Beam }
+
+# The air bending
+Psychic: { landing: Warp }
+
+# Something turning in front of its eyes
+Psywave: { landing: Trance }
+
+# The air bending
+Teleport: { landing: Warp, winding: none, wait: { winding: Vanish, striking: Vanish } }
+
+# Their landing is the stat falling, so what the move itself was
+# stays here: sand and smoke drift across, and light blows out
+Flash: { wait: { striking: Flare } }
+
+# A point driven in
+PoisonSting: { landing: Spike }
+
+# Steadying itself rather than raising a stat, which is why it is
+# not drawn as one
+FocusEnergy: { landing: Nerve }
+
+# Several of something flying in, where the scatter of hits said nothing about what was thrown
+PinMissile: { landing: Stream }
+
+# Stat moves drawn as what the pokemon does, where the rising or falling arrows said only which stat
+Agility: { landing: Haste }
+
+# Wind
+Gust: { landing: Swirl }
+
+# Their landing is the stat falling, so what the move itself was
+# stays here: sand and smoke drift across, and light blows out
+SandAttack: { wait: { striking: Drift } }
+
+# Claws and blades, which differ by how many marks and how big
+WingAttack: { landing: Claw }
+RazorWind: { landing: Claw, winding: none, wait: { winding: Charge, striking: Reach } }
+
+SkyAttack: { winding: none, wait: { winding: Charge, striking: Dive } }
+
+# Teeth
+HyperFang: { landing: Jaws }
+SuperFang: { landing: Jaws }
+
+# A point driven in
+Peck: { landing: Spike }
+
+# The same point, turning
+DrillPeck: { landing: Drill }

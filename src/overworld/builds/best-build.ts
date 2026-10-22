@@ -1,5 +1,5 @@
 import Abilities from '../../data/ids/abilities';
-import { MoveCategories, MoveFlags, Moves } from '../../data/ids/moves';
+import { MoveCategories, MoveFlags, type Moves } from '../../data/ids/moves';
 import Natures, { NATURE_EFFECTS, getNatureFactor } from '../../data/ids/natures';
 import { Stats } from '../../data/constants/stats';
 import type { Species } from '../../data/ids/species';
@@ -13,6 +13,7 @@ import {
 import { MOVE_WEATHERS } from '../../data/moves/weather';
 import { isRecoilMove } from '../../data/moves/recoil';
 import { isPunchMove } from '../../data/moves/punches';
+import { isMultiHitMove } from '../../data/moves/multi-hit';
 import { Weathers } from '../../data/ids/status';
 import {
   ABILITY_WANTS_WEATHER,
@@ -218,29 +219,6 @@ const SLEEPING_ABILITY = 0.35;
 const TECHNICIAN_POWER = 60;
 
 /**
- * The multi-hit moves. The battle side owns what each ability does
- * with them; these are here so the pricing can tell whether the sheet
- * has any
- */
-const MULTI_HITS = new Set<Moves>([
-  Moves.DoubleSlap,
-  Moves.CometPunch,
-  Moves.FuryAttack,
-  Moves.PinMissile,
-  Moves.SpikeCannon,
-  Moves.Barrage,
-  Moves.FurySwipes,
-  Moves.BoneRush,
-  Moves.ArmThrust,
-  Moves.BulletSeed,
-  Moves.IcicleSpear,
-  Moves.RockBlast,
-  Moves.DoubleKick,
-  Moves.Twineedle,
-  Moves.Bonemerang,
-]);
-
-/**
  * The abilities that only pay on a certain kind of move, and how to
  * tell whether the sheet carries any.
  *
@@ -262,7 +240,7 @@ const ABILITY_NEEDS: Partial<Record<Abilities, (move: Moves) => boolean>> = {
   [Abilities.UnseenFist]: (move) => (getMoveData(move).flags & MoveFlags.Contact) !== 0,
   [Abilities.Technician]: (move) => (getMoveData(move).power ?? 0) <= TECHNICIAN_POWER,
   [Abilities.IronFist]: (move) => isPunchMove(move),
-  [Abilities.SkillLink]: (move) => MULTI_HITS.has(move),
+  [Abilities.SkillLink]: (move) => isMultiHitMove(move),
 };
 
 /** What an ability is worth on a sheet that never asks for it */

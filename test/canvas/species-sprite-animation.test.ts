@@ -1202,6 +1202,11 @@ describe('a form drawn on another sheet', () => {
     );
   });
 
+  it('draws a female Oinkologne as his drawing until hers lands', () => {
+    expect(isStandIn(Species.OinkologneFemale)).toBe(true);
+    expect(spriteSheetPath(Species.OinkologneFemale)).toBe(spriteSheetPath(Species.Oinkologne));
+  });
+
   it('draws a fusion as the pokemon inside it until it has art', () => {
     expect(isStandIn(Species.CalyrexIce)).toBe(true);
     expect(spriteSheetPath(Species.CalyrexIce)).toBe(spriteSheetPath(Species.Glastrier));

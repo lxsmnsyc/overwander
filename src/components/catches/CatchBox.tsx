@@ -95,6 +95,8 @@ export interface BoxEntry {
   id: string;
   species: Species;
   shiny: boolean;
+  /** Drawn from the female sheet where the species has one */
+  female: boolean;
   /**
    * An egg is drawn as an egg — what is inside is not the owner's to see
    * — with how far along its walk is
@@ -477,6 +479,7 @@ export default function CatchBox(props: CatchBoxProps): JSX.Element {
         <span class="absolute inset-y-0 left-1/2 aspect-square h-full max-w-full -translate-x-1/2">
           <AnimatedSprite
             species={entry().egg ? Species.Egg : entry().species}
+            female={!entry().egg && entry().female}
             shiny={entry().shiny}
             direction="DownLeft"
             // An egg's clock runs at the speed of its own walk; everything

@@ -82,6 +82,9 @@ const STAND_INS = new Map<Species, Species>([
   [Species.PoltchageistArtisan, Species.Poltchageist],
   [Species.SinistchaMasterpiece, Species.Sinistcha],
   [Species.DudunsparceThree, Species.Dudunsparce],
+  // The collection draws only his Oinkologne, so she wears his drawing
+  // until hers lands
+  [Species.OinkologneFemale, Species.Oinkologne],
 ]);
 
 /** Whether this shape is drawn as another pokemon until it has art of its own */

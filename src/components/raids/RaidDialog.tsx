@@ -252,6 +252,7 @@ export default function RaidDialog(props: RaidDialogProps): JSX.Element {
               <div class="-mb-2 flex min-h-28 w-full items-end justify-center pt-2">
                 <AnimatedSprite
                   species={standing().species}
+                  female={standing().female}
                   animation={SpriteAnim.Sleep}
                   direction="DownLeft"
                   scale={4}

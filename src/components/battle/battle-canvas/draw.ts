@@ -12,7 +12,11 @@ import type Unit from '../../../battle/unit';
 import { paintAura, paintPurifiedAura, paintShadowAura } from '../../../canvas/auras';
 import type Bakery from '../../../canvas/bakery';
 import type { Painter, QuadPoint } from '../../../canvas/gl/quad-batch';
-import projectField, { type FieldView, unprojectField } from '../../../canvas/battle/field';
+import projectField, {
+  type FieldView,
+  depthAtScale,
+  unprojectField,
+} from '../../../canvas/battle/field';
 import type EffectBatch from '../../../canvas/three/effect-batch';
 import type { Spot } from '../../../canvas/three/effect-batch';
 import { litPurifiedAura, litShadowAura, litSparkle } from '../../../canvas/battle/decor';
@@ -410,6 +414,13 @@ export function drawLitDecor(
   // Drawing pixels per field unit where it stands
   const worth = scale / body.size;
   const floor: Spot = [body.spot[0], 0, body.spot[2]];
+  // Judged at the depth the body's own picture is written at, which is
+  // the slot's and not the spot read back off the screen. The two part
+  // by up to a field unit (more mid-lunge), and a storm judged at the
+  // nearer one was drawn over the body it hangs behind
+  const [wx, wz] = kit.away;
+  const shift = depthAtScale(slot.depth) - (floor[0] * wx + floor[2] * wz);
+  const standing: Spot = [floor[0] + wx * shift, 0, floor[2] + wz * shift];
   const seed = Number(nameOf(unit).slice(5));
 
   kit.near(0);
@@ -428,6 +439,7 @@ export function drawLitDecor(
       seed,
       unit.alive ? 1 : 0.35,
       shadowSquash(kit, view, floor, radius, shadow.y / shadow.x),
+      standing,
     );
   }
   // Held until the fight's first tick: nothing moves before it, so a

@@ -1,3 +1,4 @@
+import { Genders } from '../../../data/ids/species';
 import { isFavorite, isGuarded } from '../../../auth/caught-record';
 import { isEgg } from '../../../auth/egg';
 import { tradeWithTrader } from '../../../auth/npcs';
@@ -28,6 +29,7 @@ const trader: NpcScript = async (visit) => {
       id: String(at),
       species: one.species,
       shiny: one.shiny,
+      female: one.gender === Genders.Female,
       egg: false,
       progress: 0,
       fainted: false,

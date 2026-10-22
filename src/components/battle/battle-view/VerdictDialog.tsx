@@ -70,6 +70,7 @@ function Prize(props: { art: JSX.Element; children: JSX.Element }): JSX.Element 
 function UnitArt(props: {
   species: SideUnit['species'];
   shiny: boolean;
+  female: boolean;
   fainted: boolean;
 }): JSX.Element {
   return (
@@ -82,6 +83,7 @@ function UnitArt(props: {
         <AnimatedSprite
           species={props.species}
           shiny={props.shiny}
+          female={props.female}
           animation={SpriteAnim.Idle}
           direction="DownLeft"
           label=""
@@ -233,7 +235,7 @@ export default function VerdictDialog(props: VerdictDialogProps): JSX.Element {
               <Show when={props.spoils?.waiting}>
                 {(species) => (
                   <div class="flex items-center justify-center gap-1.5">
-                    <UnitArt species={species()} shiny={false} fainted={false} />
+                    <UnitArt species={species()} shiny={false} female={false} fainted={false} />
                     <Meta>{getSpeciesData(species()).name} is waiting in the overworld.</Meta>
                   </div>
                 )}
@@ -285,6 +287,7 @@ export default function VerdictDialog(props: VerdictDialogProps): JSX.Element {
                               <UnitArt
                                 species={unit.species}
                                 shiny={unit.shiny}
+                                female={unit.female}
                                 fainted={unit.health <= 0}
                               />
                               <div class="flex min-w-0 grow flex-col gap-0.5">

@@ -182,6 +182,10 @@ const WORLD = block(
         { enum: ['baby', 'evolution'] },
         'A stage of its line a later generation adds that is not registered yet',
       ),
+      'spawns-as': described(
+        { enum: ['water', 'ground'] },
+        'The spawn kind it is met as where its types and egg groups say otherwise',
+      ),
     },
     ['types', 'egg-groups', 'active'],
   ),

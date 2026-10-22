@@ -260,6 +260,12 @@ export interface SpeciesData {
    * leaves the moment the missing stage is written down
    */
   awaiting?: 'baby' | 'evolution';
+  /**
+   * The spawn kind it is met as where its types and egg groups say
+   * otherwise: a Flying type that lives in the water, or a water egg
+   * group that lives on dry land
+   */
+  spawnsAs?: 'water' | 'ground';
 }
 
 /**

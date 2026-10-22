@@ -95,6 +95,7 @@ Magikarp:
   Gyarados:
     types: [Water, Flying]
     egg-groups: [Water2, Dragon]
+    spawns-as: water
     habitat: Water
     biomes:
       - Ocean

@@ -3,7 +3,7 @@ import { SpawnSurface, TimeOfDay } from '../ids/biome';
 import EggGroups from '../ids/egg-groups';
 import type Families from '../ids/families';
 import Abilities from '../ids/abilities';
-import { Habitat, Species } from '../ids/species';
+import { Habitat, type Species } from '../ids/species';
 import { UNOWN_FORMS, getBaseFormSpecies } from '../ids/forms';
 import { Types } from '../constants/types';
 import {
@@ -316,28 +316,25 @@ export const enum SpawnClass {
   Flying = 2,
 }
 
-/** Flying types that live in the water rather than over it */
-const WATER_ONLY_FLIERS = new Set<Species>([Species.Gyarados, Species.Mantine, Species.Mantyke]);
-
-/** Species a water egg group would count as water that live on dry land */
-const DRY_LAND_SPECIES = new Set<Species>([Species.Skorupi, Species.Drapion]);
-
 const WATER_EGG_GROUPS = new Set<EggGroups>([EggGroups.Water1, EggGroups.Water2, EggGroups.Water3]);
 
-/** Which of the three kinds a species is, read off its types, abilities and egg groups */
+/**
+ * Which of the three kinds a species is, read off its types, abilities
+ * and egg groups, unless its line's `spawns-as` says otherwise
+ */
 export function getSpawnClass(species: Species): SpawnClass {
   const data = getSpeciesData(species);
-  const line = getBaseFormSpecies(species);
+  const written = getSpeciesData(getBaseFormSpecies(species)).spawnsAs;
 
   if (
-    !WATER_ONLY_FLIERS.has(line) &&
+    written !== 'water' &&
     (data.types.includes(Types.Flying) ||
       data.eggGroups.includes(EggGroups.Flying) ||
       getSpeciesAbilities(species).has(Abilities.Levitate))
   ) {
     return SpawnClass.Flying;
   }
-  if (DRY_LAND_SPECIES.has(line)) {
+  if (written === 'ground') {
     return SpawnClass.Ground;
   }
   for (const group of data.eggGroups) {

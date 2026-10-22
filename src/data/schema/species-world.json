@@ -210,6 +210,13 @@
             "evolution"
           ],
           "description": "A stage of its line a later generation adds that is not registered yet"
+        },
+        "spawns-as": {
+          "enum": [
+            "water",
+            "ground"
+          ],
+          "description": "The spawn kind it is met as where its types and egg groups say otherwise"
         }
       },
       "required": [

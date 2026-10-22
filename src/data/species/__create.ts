@@ -6,7 +6,7 @@ import type Biome from '../ids/biome';
 import type { TimeOfDay } from '../ids/biome';
 import type EggGroups from '../ids/egg-groups';
 import type Families from '../ids/families';
-import { FAMILY_NAMES } from '../ids/families';
+import { FAMILY_NAMES } from '../ids/text';
 import type { Items } from '../ids/items';
 import type { Moves } from '../ids/moves';
 import { type Genders, Habitat, type Species } from '../ids/species';

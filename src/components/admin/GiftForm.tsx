@@ -25,7 +25,7 @@ import {
   createStatsField,
   packIVs,
 } from '../../data/constants/stats';
-import { NATURE_NAMES } from '../../data/ids/natures';
+import { NATURE_NAMES } from '../../data/ids/text';
 import type Abilities from '../../data/ids/abilities';
 import type Natures from '../../data/ids/natures';
 import { Genders, type Species } from '../../data/ids/species';

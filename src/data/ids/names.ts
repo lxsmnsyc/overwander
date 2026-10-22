@@ -5,12 +5,12 @@ import { MoveAffects, MoveCategories, MoveFlags, MoveTargets, Moves } from './mo
 import { SpriteAnim } from './sprite-anims';
 import Abilities from './abilities';
 import { ItemFlags, ItemTypes, Items } from './items';
-import Biome, { TimeOfDay } from './biome';
+import Biome, { SpawnRarity, TimeOfDay } from './biome';
 import { EggGroups } from './egg-groups';
 import Families from './families';
 import { Types } from '../constants/types';
-import { Stages, Stats } from '../constants/stats';
-import { Statuses, TeamStatuses } from './status';
+import { Stages, Stats } from './stats';
+import { Statuses, TeamStatuses, Weathers } from './status';
 import Regions from './regions';
 import Natures from './natures';
 import Awards from './awards';
@@ -20,7 +20,7 @@ import GymLeader from './gym-leaders';
 import EliteMember from './elite';
 import Champion from './champions';
 import Legend from './legends';
-import FrontierBrain, { FrontierRule } from './frontier';
+import FrontierBrain, { ArcadePanel, FrontierRule, PikeCurtain } from './frontier';
 import Syndicate from './syndicates';
 import Executive from './executives';
 import Npc from './npcs';
@@ -28,7 +28,9 @@ import VendorKind from './vendor-kinds';
 import Decoration from './decorations';
 import Landmark from './landmarks';
 import Phenomenon from './phenomena';
-import Weather from '../overworld/weather/kinds';
+import Weather from './weather';
+import { AchievementLine, AchievementTier } from './achievements';
+import LadderTitle from './ladder-titles';
 
 export const SPECIES_IDS = {
   Missingno: Species.Missingno,
@@ -4230,6 +4232,17 @@ export const TIME_OF_DAY_IDS = {
   Night: TimeOfDay.Night,
 } as const satisfies Record<string, TimeOfDay>;
 
+export const SPAWN_RARITY_IDS = {
+  Base: SpawnRarity.Base,
+  Uncommon: SpawnRarity.Uncommon,
+  Rare: SpawnRarity.Rare,
+  Scarce: SpawnRarity.Scarce,
+  Elusive: SpawnRarity.Elusive,
+  Prized: SpawnRarity.Prized,
+  Special: SpawnRarity.Special,
+  Mythical: SpawnRarity.Mythical,
+} as const satisfies Record<string, SpawnRarity>;
+
 export const EGG_GROUP_IDS = {
   Monster: EggGroups.Monster,
   Water1: EggGroups.Water1,
@@ -4912,6 +4925,19 @@ export const TEAM_STATUS_IDS = {
   AuroraVeil: TeamStatuses.AuroraVeil,
 } as const satisfies Record<string, TeamStatuses>;
 
+export const BATTLE_WEATHER_IDS = {
+  None: Weathers.None,
+  Sunny: Weathers.Sunny,
+  Rain: Weathers.Rain,
+  Sandstorm: Weathers.Sandstorm,
+  Hail: Weathers.Hail,
+  Snow: Weathers.Snow,
+  Fog: Weathers.Fog,
+  ExtremeSunny: Weathers.ExtremeSunny,
+  HeavyRain: Weathers.HeavyRain,
+  StrongWinds: Weathers.StrongWinds,
+} as const satisfies Record<string, Weathers>;
+
 export const REGION_IDS = {
   Unknown: Regions.Unknown,
   Kanto: Regions.Kanto,
@@ -5541,6 +5567,24 @@ export const FRONTIER_RULE_IDS = {
   Singled: FrontierRule.Singled,
 } as const satisfies Record<string, FrontierRule>;
 
+export const PIKE_CURTAIN_IDS = {
+  Poisoned: PikeCurtain.Poisoned,
+  Burned: PikeCurtain.Burned,
+  Paralysed: PikeCurtain.Paralysed,
+  Asleep: PikeCurtain.Asleep,
+  Healed: PikeCurtain.Healed,
+} as const satisfies Record<string, PikeCurtain>;
+
+export const ARCADE_PANEL_IDS = {
+  Sun: ArcadePanel.Sun,
+  Rain: ArcadePanel.Rain,
+  Sandstorm: ArcadePanel.Sandstorm,
+  Hail: ArcadePanel.Hail,
+  Stripped: ArcadePanel.Stripped,
+  Poisoned: ArcadePanel.Poisoned,
+  Mended: ArcadePanel.Mended,
+} as const satisfies Record<string, ArcadePanel>;
+
 export const SYNDICATE_IDS = {
   Rocket: Syndicate.Rocket,
   Magma: Syndicate.Magma,
@@ -5681,3 +5725,38 @@ export const WEATHER_IDS = {
   DarkDay: Weather.DarkDay,
   Fogbow: Weather.Fogbow,
 } as const satisfies Record<string, Weather>;
+
+export const ACHIEVEMENT_TIER_IDS = {
+  None: AchievementTier.None,
+  Bronze: AchievementTier.Bronze,
+  Silver: AchievementTier.Silver,
+  Gold: AchievementTier.Gold,
+  Platinum: AchievementTier.Platinum,
+} as const satisfies Record<string, AchievementTier>;
+
+export const ACHIEVEMENT_LINE_IDS = {
+  Collector: AchievementLine.Collector,
+  Hatcher: AchievementLine.Hatcher,
+  Coach: AchievementLine.Coach,
+  Wayfarer: AchievementLine.Wayfarer,
+  Socialite: AchievementLine.Socialite,
+  Forager: AchievementLine.Forager,
+  Raider: AchievementLine.Raider,
+  Trader: AchievementLine.Trader,
+  Auctioneer: AchievementLine.Auctioneer,
+  Confidant: AchievementLine.Confidant,
+  Wayfinder: AchievementLine.Wayfinder,
+  Matchmaker: AchievementLine.Matchmaker,
+  Purifier: AchievementLine.Purifier,
+  Pathfinder: AchievementLine.Pathfinder,
+} as const satisfies Record<string, AchievementLine>;
+
+export const LADDER_TITLE_IDS = {
+  LeagueChallenger: LadderTitle.LeagueChallenger,
+  EliteConqueror: LadderTitle.EliteConqueror,
+  KantoChampion: LadderTitle.KantoChampion,
+  JohtoChampion: LadderTitle.JohtoChampion,
+  LegendBreaker: LadderTitle.LegendBreaker,
+  HoennChampion: LadderTitle.HoennChampion,
+  SinnohChampion: LadderTitle.SinnohChampion,
+} as const satisfies Record<string, LadderTitle>;

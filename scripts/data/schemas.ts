@@ -56,6 +56,13 @@ const DEFINITIONS: [enumName: string, definition: string][] = [
   ['Landmark', 'landmark'],
   ['Phenomenon', 'phenomenon'],
   ['Weather', 'weather'],
+  ['SpawnRarity', 'spawn-rarity'],
+  ['Weathers', 'battle-weather'],
+  ['PikeCurtain', 'pike-curtain'],
+  ['ArcadePanel', 'arcade-panel'],
+  ['AchievementTier', 'achievement-tier'],
+  ['AchievementLine', 'achievement-line'],
+  ['LadderTitle', 'ladder-title'],
 ];
 
 const DRAFT = 'http://json-schema.org/draft-07/schema#';
@@ -307,14 +314,6 @@ const BIOME_GYM_LEADERS: Schema = {
   additionalProperties: names('gym-leader', 'In the order a gym rolls from them'),
 };
 
-const GYM_LEADER_TEXT: Schema = {
-  $schema: DRAFT,
-  title: 'Gym leader names',
-  type: 'object',
-  propertyNames: name('gym-leader'),
-  additionalProperties: { type: 'string' },
-};
-
 const ELITE: Schema = {
   $schema: DRAFT,
   title: 'Elite Four',
@@ -348,14 +347,6 @@ const BIOME_ELITE: Schema = {
   type: 'object',
   propertyNames: name('biome'),
   additionalProperties: names('elite-member', 'In the order a seat rolls from them'),
-};
-
-const ELITE_TEXT: Schema = {
-  $schema: DRAFT,
-  title: 'Elite Four names',
-  type: 'object',
-  propertyNames: name('elite-member'),
-  additionalProperties: { type: 'string' },
 };
 
 const PARTY: Schema = { ...names('species'), minItems: 6, maxItems: 6 };
@@ -418,15 +409,16 @@ const FRONTIER: Schema = {
 
 const FRONTIER_TEXT: Schema = {
   $schema: DRAFT,
-  title: 'Frontier Brain names',
+  title: 'Frontier Brain words',
   type: 'object',
   propertyNames: name('frontier-brain'),
   additionalProperties: part(
     {
       name: { type: 'string' },
       house: described({ type: 'string' }, 'The house they keep'),
+      greeting: described({ type: 'string' }, 'What they say as the house is entered'),
     },
-    ['name', 'house'],
+    ['name', 'house', 'greeting'],
   ),
 };
 
@@ -571,6 +563,25 @@ const BIOME_PHENOMENA: Schema = {
   propertyNames: name('biome'),
   additionalProperties: names('phenomenon', 'In the order the window rolls from them'),
 };
+
+const COLOR: Schema = { type: 'string', pattern: '^#[0-9a-f]{6}$' };
+
+/** A file of named sections, each its own map */
+function sections(title: string, parts: Record<string, Schema>): Schema {
+  const properties: Record<string, Schema> = {};
+
+  for (const [key, schema] of Object.entries(parts)) {
+    properties[key] = { type: 'object', ...schema };
+  }
+  return {
+    $schema: DRAFT,
+    title,
+    type: 'object',
+    properties,
+    required: Object.keys(parts),
+    additionalProperties: false,
+  };
+}
 
 function namesText(title: string, definition: string): Schema {
   return {
@@ -989,14 +1000,57 @@ export default function renderDataSchemas(members: Map<string, string[]>): Map<s
     ['trainer-sheets-text.json', json(TRAINER_SHEET_TEXT)],
     ['gym-leaders.json', json(GYM_LEADERS)],
     ['biome-gym-leaders.json', json(BIOME_GYM_LEADERS)],
-    ['gym-leaders-text.json', json(GYM_LEADER_TEXT)],
+    [
+      'gym-leaders-text.json',
+      json(
+        spoken(
+          'Gym leader words',
+          'gym-leader',
+          { name: 'What they are called', quote: 'What they say as the challenge is put' },
+          ['name', 'quote'],
+        ),
+      ),
+    ],
     ['elite.json', json(ELITE)],
     ['biome-elite.json', json(BIOME_ELITE)],
-    ['elite-text.json', json(ELITE_TEXT)],
+    [
+      'elite-text.json',
+      json(
+        spoken(
+          'Elite Four words',
+          'elite-member',
+          { name: 'What they are called', quote: 'What they say as they rise' },
+          ['name', 'quote'],
+        ),
+      ),
+    ],
     ['champions.json', json(CHAMPIONS)],
-    ['champions-text.json', json(namesText('Champion names', 'champion'))],
+    [
+      'champions-text.json',
+      json(
+        spoken(
+          'Champion words',
+          'champion',
+          {
+            name: 'What they are called',
+            greeting: 'The whole line as the last fight of their league is put',
+          },
+          ['name', 'greeting'],
+        ),
+      ),
+    ],
     ['legends.json', json(LEGENDS)],
-    ['legends-text.json', json(namesText('Legend names', 'legend'))],
+    [
+      'legends-text.json',
+      json(
+        spoken(
+          'Legend words',
+          'legend',
+          { name: 'What they are called', greeting: 'The whole line as they are met' },
+          ['name', 'greeting'],
+        ),
+      ),
+    ],
     ['frontier.json', json(FRONTIER)],
     ['frontier-text.json', json(FRONTIER_TEXT)],
     ['syndicates.json', json(SYNDICATES)],
@@ -1056,6 +1110,121 @@ export default function renderDataSchemas(members: Map<string, string[]>): Map<s
     ['landmarks-text.json', json(namesText('Landmark names', 'landmark'))],
     ['biome-phenomena.json', json(BIOME_PHENOMENA)],
     ['phenomena-text.json', json(namesText('Phenomenon names', 'phenomenon'))],
+    ['biomes-text.json', json(namesText('Biome names', 'biome'))],
+    ['biome-colors.json', json(keyed('Biome colors', 'biome', COLOR))],
+    ['times-of-day-text.json', json(namesText('Time of day names', 'time-of-day'))],
+    ['spawn-rarities-text.json', json(namesText('Spawn rarity names', 'spawn-rarity'))],
+    [
+      'stats-text.json',
+      json(
+        sections('Stat names', {
+          stats: { propertyNames: name('stat'), additionalProperties: { type: 'string' } },
+          stages: { propertyNames: name('stage'), additionalProperties: { type: 'string' } },
+        }),
+      ),
+    ],
+    ['item-types-text.json', json(namesText('Item type names', 'item-type'))],
+    [
+      'achievements-text.json',
+      json(
+        sections('Achievement words', {
+          tiers: {
+            propertyNames: name('achievement-tier'),
+            additionalProperties: { type: 'string' },
+          },
+          lines: {
+            propertyNames: name('achievement-line'),
+            additionalProperties: part(
+              {
+                name: described({ type: 'string' }, 'What the line is called, and its title'),
+                deed: described({ type: 'string' }, 'What it counts, for the hover card'),
+              },
+              ['name', 'deed'],
+            ),
+          },
+        }),
+      ),
+    ],
+    [
+      'frontier-rooms-text.json',
+      json(
+        sections('Frontier room names', {
+          curtains: {
+            propertyNames: name('pike-curtain'),
+            additionalProperties: { type: 'string' },
+          },
+          panels: { propertyNames: name('arcade-panel'), additionalProperties: { type: 'string' } },
+        }),
+      ),
+    ],
+    [
+      'dex-rungs-text.json',
+      json({ $schema: DRAFT, title: 'Dex rung names', type: 'array', items: { type: 'string' } }),
+    ],
+    ['statuses-text.json', json(namesText('Status names', 'status'))],
+    ['awards-text.json', json(namesText('Award names', 'award'))],
+    [
+      'awards.json',
+      json(
+        keyed(
+          'Awards',
+          'award',
+          part(
+            {
+              color: described(COLOR, 'The earned state of its disc'),
+              sprite: described(
+                {
+                  type: 'array',
+                  items: [{ type: 'string' }, { type: 'string' }],
+                  minItems: 2,
+                  maxItems: 2,
+                },
+                'The extras sheet and the name on it, where a picture ships',
+              ),
+            },
+            ['color'],
+          ),
+        ),
+      ),
+    ],
+    ['families-text.json', json(namesText('Family names', 'family'))],
+    ['natures-text.json', json(namesText('Nature names', 'nature'))],
+    ['egg-groups-text.json', json(namesText('Egg group names', 'egg-group'))],
+    ['titles-text.json', json(namesText('Ladder title names', 'ladder-title'))],
+    [
+      'weather-kinds.json',
+      json(
+        keyed(
+          'Weather kinds',
+          'weather',
+          part(
+            {
+              color: described(COLOR, 'What it is drawn as on the world map'),
+              favours: described(
+                { oneOf: [{ const: 'everything' }, names('type')] },
+                'The types it is kind to: `[]` for none, `everything` for all',
+              ),
+              battle: described(
+                name('battle-weather'),
+                'The sky a fight met under it is fought in',
+              ),
+            },
+            ['color', 'favours', 'battle'],
+          ),
+        ),
+      ),
+    ],
+    [
+      'weather-text.json',
+      json(
+        spoken(
+          'Weather words',
+          'weather',
+          { name: 'What it is called', description: 'What a picture of it cannot say' },
+          ['name', 'description'],
+        ),
+      ),
+    ],
   ]);
 
   for (const [file, title, entry] of BATTLE_FILES) {

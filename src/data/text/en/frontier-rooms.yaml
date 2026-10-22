@@ -1,0 +1,17 @@
+# What the Pike's curtains and the Arcade's panels are called, for the
+# line a fight is announced with
+
+curtains:
+  Poisoned: poisoned
+  Burned: burned
+  Paralysed: paralysed
+  Asleep: put to sleep
+  Healed: mended
+panels:
+  Sun: the sun comes out
+  Rain: the rain comes down
+  Sandstorm: the sand comes up
+  Hail: the hail comes down
+  Stripped: every held item is left at the door
+  Poisoned: everybody is poisoned
+  Mended: everybody is mended

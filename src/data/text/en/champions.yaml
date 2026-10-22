@@ -1,8 +1,21 @@
-# What each champion is called
+# What each champion is called, and the greeting as the last fight of
+# their league is put
 
-Blue: Blue
-Lance: Lance
-Wallace: Wallace
-Cynthia: Cynthia
-Iris: Iris
-Diantha: Diantha
+Blue:
+  name: Blue
+  greeting: Blue smirks. “I am the Champion here. Smell ya later.”
+Lance:
+  name: Lance
+  greeting: Lance looks you over. “So you made it this far. Show me your best.”
+Wallace:
+  name: Wallace
+  greeting: Wallace bows. “Let us make this beautiful, and let us make it brief.”
+Cynthia:
+  name: Cynthia
+  greeting: Cynthia closes her book. “I have been waiting for somebody worth the whole team.”
+Iris:
+  name: Iris
+  greeting: Iris grins. “Everyone told me I was too young for this seat. Come and find out.”
+Diantha:
+  name: Diantha
+  greeting: Diantha smiles as if the cameras were rolling. “Shall we give them a scene worth remembering?”

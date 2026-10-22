@@ -1,5 +1,7 @@
 import { TYPE_NAMES, type Types } from '../constants/types';
 import { TRAINER_BASE_NAMES, TRAINER_TRADES, type TrainerClass } from '../overworld/trainers';
+import LadderTitle from './ladder-titles';
+import { LADDER_TITLE_IDS } from './names';
 import Regions from './regions';
 import { REGIONS, REGION_NAMES } from '../species/regions';
 import {
@@ -8,6 +10,8 @@ import {
   type AchievementLine,
   LINE_NAMES,
 } from '../achievements';
+import titlesFile from '../text/en/titles.yaml';
+import { stringTable } from '../yaml';
 
 /**
  * Player titles: one may be worn on the profile at a time. A title is
@@ -29,19 +33,7 @@ import {
  */
 export type Title = number;
 
-export const enum LadderTitle {
-  /** All 8 of the region's badges */
-  LeagueChallenger = 0,
-  /** All 4 of the Elite Four beaten */
-  EliteConqueror = 1,
-  /** The Champion's own seat */
-  KantoChampion = 2,
-  JohtoChampion = 3,
-  /** Any legend's mark: the fight the league does not ask for */
-  LegendBreaker = 4,
-  HoennChampion = 5,
-  SinnohChampion = 6,
-}
+export { LadderTitle };
 
 const LINE_TITLE_BASE = 100;
 const TYPE_TITLE_BASE = 200;
@@ -153,15 +145,11 @@ export function titleTrainer(title: Title): TrainerClass | null {
   return TRAINER_TRADES.includes(trainer) ? trainer : null;
 }
 
-const LADDER_TITLE_NAMES: Record<LadderTitle, string> = {
-  [LadderTitle.LeagueChallenger]: 'League Challenger',
-  [LadderTitle.EliteConqueror]: 'Elite Conqueror',
-  [LadderTitle.KantoChampion]: 'Kanto Champion',
-  [LadderTitle.JohtoChampion]: 'Johto Champion',
-  [LadderTitle.LegendBreaker]: 'Legend Breaker',
-  [LadderTitle.HoennChampion]: 'Hoenn Champion',
-  [LadderTitle.SinnohChampion]: 'Sinnoh Champion',
-};
+const LADDER_TITLE_NAMES = stringTable<LadderTitle>(
+  LADDER_TITLE_IDS,
+  titlesFile,
+  'text/en/titles.yaml',
+);
 
 /**
  * What a title is called, or null for a number that names none: a

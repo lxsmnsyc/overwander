@@ -1,22 +1,17 @@
 import { ItemTypes } from '../ids/items';
+import { ITEM_TYPE_IDS } from '../ids/names';
+import itemTypeNamesFile from '../text/en/item-types.yaml';
+import { stringTable } from '../yaml';
 
 /**
  * What each kind of item is called. The enum carries ids alone, and a
- * bag that can be narrowed down to one kind needs a word for each of
- * them — plural, because the filter names a shelf rather than a thing
+ * bag that can be narrowed down to one kind needs a word for each
  */
-export const ITEM_TYPE_NAMES: Record<ItemTypes, string> = {
-  [ItemTypes.Medicine]: 'Medicine',
-  [ItemTypes.PokeBall]: 'Poke Balls',
-  [ItemTypes.Berry]: 'Berries',
-  [ItemTypes.Held]: 'Held items',
-  [ItemTypes.Machine]: 'Machines',
-  [ItemTypes.KeyItem]: 'Key items',
-  [ItemTypes.Evolution]: 'Evolution',
-  [ItemTypes.Valuable]: 'Valuables',
-  [ItemTypes.Training]: 'Training',
-  [ItemTypes.Fossil]: 'Fossils',
-};
+export const ITEM_TYPE_NAMES = stringTable<ItemTypes>(
+  ITEM_TYPE_IDS,
+  itemTypeNamesFile,
+  'text/en/item-types.yaml',
+);
 
 /**
  * The order the bag is read in: what is thrown and what mends first,

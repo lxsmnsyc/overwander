@@ -1,0 +1,82 @@
+# What each sky is called, and one line on it saying only what a picture
+# of it cannot say. What it favours is drawn as its types, and the floor
+# is the same under every boosting sky, so neither is written here
+
+Clear:
+  name: Clear
+  description: An ordinary sky, and the one nothing is boosted under.
+Cloudy:
+  name: Cloudy
+  description: Cloud, and an ordinary day under it.
+Overcast:
+  name: Overcast
+  description: A flat grey lid over the chunk.
+Breezy:
+  name: Breezy
+  description: A steady wind across the chunk.
+Drizzle:
+  name: Drizzle
+  description: Light rain.
+Rain:
+  name: Rain
+  description: Steady rain.
+Downpour:
+  name: Downpour
+  description: Rain coming down hard.
+Thunderstorm:
+  name: Thunderstorm
+  description: Rain with thunder in it.
+Mist:
+  name: Mist
+  description: Air you cannot see far through.
+Fog:
+  name: Fog
+  description: Thick fog off the ground.
+Haze:
+  name: Haze
+  description: Hot, hanging air.
+Frost:
+  name: Frost
+  description: Cold enough to settle on everything.
+Snow:
+  name: Snow
+  description: Snow falling over the chunk.
+Blizzard:
+  name: Blizzard
+  description: Snow driven sideways. It chips at whatever is not built for it.
+Hail:
+  name: Hail
+  description: Ice falling hard enough to hurt. It chips at whatever is not built for it.
+Sandstorm:
+  name: Sandstorm
+  description: Sand on the wind. It chips at whatever is not built for it.
+DustHaze:
+  name: Dust Haze
+  description: Dust hanging on still air.
+Heatwave:
+  name: Heatwave
+  description: Heat with nothing behind it.
+FallingAsh:
+  name: Falling Ash
+  description: Ash drifting down from somewhere.
+Aurora:
+  name: Aurora
+  description: Light over the far north, and one of the rarest skies there is.
+Rainbow:
+  name: Rainbow
+  description: An arc over open water, and one of the rarest skies there is.
+PollenDrift:
+  name: Pollen Drift
+  description: Pollen carried through the trees.
+MeteorShower:
+  name: Meteor Shower
+  description: The rarest sky there is. It favours every type, and makes a shiny coat 8x as likely.
+FataMorgana:
+  name: Fata Morgana
+  description: A mirage. Favours every type. 1 in 8 keeps a hidden ability, 1 in 64 a signature.
+DarkDay:
+  name: Dark Day
+  description: Noon gone dark. It favours every type, and 1 in 4 it hands over is a shadow.
+Fogbow:
+  name: Fogbow
+  description: A rainbow with the colour gone. 1 in 4 it meets has room for a 5th move, 1 in 16 a 6th.

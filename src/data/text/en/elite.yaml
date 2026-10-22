@@ -1,26 +1,74 @@
-# What each of the Elite Four is called
+# What each of the Elite Four is called, and what each says as they rise
 
-Lorelei: Lorelei
-Bruno: Bruno
-Agatha: Agatha
-Lance: Lance
-Will: Will
-Koga: Koga
-Karen: Karen
-JohtoBruno: Bruno
-Sidney: Sidney
-Phoebe: Phoebe
-Glacia: Glacia
-Drake: Drake
-Aaron: Aaron
-Bertha: Bertha
-Flint: Flint
-Lucian: Lucian
-Shauntal: Shauntal
-Marshal: Marshal
-Grimsley: Grimsley
-Caitlin: Caitlin
-Malva: Malva
-Siebold: Siebold
-Wikstrom: Wikstrom
-Drasna: Drasna
+Lorelei:
+  name: Lorelei
+  quote: Ice has no mercy. Neither do I.
+Bruno:
+  name: Bruno
+  quote: We will grind you down with our superior power! Hoo hah!
+Agatha:
+  name: Agatha
+  quote: You want to see real ghosts, child? Look closely.
+Lance:
+  name: Lance
+  quote: My dragons know no weakness. Prove me wrong.
+Will:
+  name: Will
+  quote: I have trained all my life for this. I will not lose to you.
+Koga:
+  name: Koga
+  quote: Fufufu! You are already standing in my poison. Shall we begin?
+Karen:
+  name: Karen
+  quote: Strong pokemon. Weak pokemon. Only your favourites matter. Show me yours.
+JohtoBruno:
+  name: Bruno
+  quote: I have come back stronger. Feel the fists of Johto!
+Sidney:
+  name: Sidney
+  quote: No hard feelings, right? Let us just enjoy the fight.
+Phoebe:
+  name: Phoebe
+  quote: I trained with the spirits on Mt. Pyre. They are still with me.
+Glacia:
+  name: Glacia
+  quote: I came here for warmth, and my ice only grew fiercer. See it.
+Drake:
+  name: Drake
+  quote: Do you know what it means to fight beside a dragon? Show me.
+Aaron:
+  name: Aaron
+  quote: Bug pokemon are the strongest of all. I will show you why.
+Bertha:
+  name: Bertha
+  quote: I have been at this longer than you have been alive, dear.
+Flint:
+  name: Flint
+  quote: My hair is not the hottest thing here. Watch.
+Lucian:
+  name: Lucian
+  quote: One moment, let me finish this page. Now then.
+Shauntal:
+  name: Shauntal
+  quote: I am writing a book about trainers like you. Give me a good ending.
+Marshal:
+  name: Marshal
+  quote: My master taught me to seek strength. You look like a step on the way.
+Grimsley:
+  name: Grimsley
+  quote: Win or lose, the cards fall. Let us see how they fall for you.
+Caitlin:
+  name: Caitlin
+  quote: I fight my own battles now. You may regret that I do.
+Malva:
+  name: Malva
+  quote: I report on the news. Today it is your defeat, live.
+Siebold:
+  name: Siebold
+  quote: A battle is a dish. I shall serve you something unforgettable.
+Wikstrom:
+  name: Wikstrom
+  quote: Well met, challenger! My blade and I await your mettle!
+Drasna:
+  name: Drasna
+  quote: Oh my, a challenger! My dragons have been so looking forward to this.

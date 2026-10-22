@@ -1,0 +1,13 @@
+# What each kind of item is called: plural, because the bag's filter
+# names a shelf rather than a thing
+
+Medicine: Medicine
+PokeBall: Poke Balls
+Berry: Berries
+Held: Held items
+Machine: Machines
+KeyItem: Key items
+Evolution: Evolution
+Valuable: Valuables
+Training: Training
+Fossil: Fossils

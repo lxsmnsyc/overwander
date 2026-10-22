@@ -30,7 +30,7 @@ import {
   settleWalk as writeWalk,
 } from '../../auth/positions';
 import type Awards from '../../data/ids/awards';
-import { AWARD_NAMES } from '../../data/ids/awards';
+import { AWARD_NAMES } from '../../data/awards';
 import type { ItemStack } from '../../data/overworld/item-pool';
 import { getItemData } from '../../data/items';
 import ItemSprite from '../items/ItemSprite';

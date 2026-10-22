@@ -1,6 +1,7 @@
 import { STAT_NAMES } from '../constants/stats';
 import { Items } from '../ids/items';
-import Natures, { NATURE_EFFECTS, NATURE_NAMES, getNatureFactor } from '../ids/natures';
+import Natures, { NATURE_EFFECTS, getNatureFactor } from '../ids/natures';
+import { NATURE_NAMES } from '../ids/text';
 import { itemText } from './__create';
 
 /**

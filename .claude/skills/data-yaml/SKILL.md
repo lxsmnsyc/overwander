@@ -48,10 +48,35 @@ Growlithe:
 | `text/en/lairs.yaml`              | each lair's name                                                      |
 | `overworld/item-pool.yaml`        | the ground's items by band, item to weight; a lowercase key is a whole family (`wings: 3`) |
 | `overworld/weather/biomes.yaml`   | each biome's six skies, and the four `corners` every country shares   |
+| `overworld/weather/kinds.yaml`    | each sky's map `color`, the types it `favours` (`[]` for none, `everything` for all) and the `battle` sky it is fought under |
+| `text/en/weather.yaml`            | each sky's name and description                                       |
+| `biome/colors.yaml`               | each biome's map color                                                |
 
 - **Order is part of the world.** A biome's lair list and each band of the item pool are walked by a seeded roll, so moving an entry changes what every player's map holds. Append; never reorder.
 - **A lair is numbered by the enum in `ids/lairs.ts`,** since a raid prize records it. A new lair is an enum member, a row in each lair file, and `pnpm id-names`. `reserved: true` keeps it out of the world until its batch lists it.
 - **An item family a pool names** is listed in `ITEM_FAMILIES` in `overworld/item-pool.ts`.
+
+## Names and lines
+
+The words for the smaller enums sit under `src/data/text/en/`, each keyed by member name and read with `stringTable` from `src/data/yaml.ts` (or a loader of its own where an entry holds more than a string). Every member needs an entry.
+
+| file                                        | holds                                                          |
+| ------------------------------------------- | -------------------------------------------------------------- |
+| `biomes.yaml`, `times-of-day.yaml`, `spawn-rarities.yaml` | what each biome, part of the day and rarity band is called |
+| `stats.yaml`                                | the six stats under `stats:`, the seven stages under `stages:` |
+| `item-types.yaml`                           | each bag shelf's name                                          |
+| `statuses.yaml`                             | how each status reads                                          |
+| `families.yaml`, `natures.yaml`, `egg-groups.yaml` | the names `ids/text.ts` reads                           |
+| `awards.yaml`                               | each award's name; its `color` and `sprite` are `src/data/awards.yaml` |
+| `achievements.yaml`                         | each tier's name under `tiers:`, each line's `name` and `deed` under `lines:` |
+| `titles.yaml`                               | the titles numbered one by one (`ids/ladder-titles.ts`)        |
+| `frontier-rooms.yaml`                       | the Pike's `curtains:` and the Arcade's `panels:`              |
+| `dex-rungs.yaml`                            | the rungs of a dex chain below the last, in order              |
+| `gym-leaders.yaml`, `elite.yaml`            | each expert's `name` and the `quote` they challenge with       |
+| `champions.yaml`, `legends.yaml`            | each one's `name` and the whole `greeting` line                |
+| `frontier.yaml`                             | each Brain's `name`, `house` and `greeting`                    |
+
+An enum these files name is listed in `scripts/data/id-names.ts`, so it lives in `src/data/ids/` with nothing else in its file that reads YAML: `names.ts` imports it, and a loader beside it would import `names.ts` back.
 
 ## Moves
 

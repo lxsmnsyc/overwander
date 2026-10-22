@@ -1,11 +1,19 @@
 import { Stats, getHealthStat, getIV, getOtherStat } from '../data/constants/stats';
 import type { Items } from '../data/ids/items';
 import { getNatureFactor } from '../data/ids/natures';
-import { NON_VOLATILE_MASK, NON_VOLATILE_STATUSES, Statuses, statusFlag } from '../data/ids/status';
+import {
+  NON_VOLATILE_MASK,
+  NON_VOLATILE_STATUSES,
+  type Statuses,
+  statusFlag,
+} from '../data/ids/status';
+import { STATUS_IDS } from '../data/ids/names';
 import type { Species } from '../data/ids/species';
 import { BERRY_HEALS, BERRY_STATUS_CURES } from '../data/items/berries';
 import { MEDICINES } from '../data/items/medicine';
 import { getSpeciesData } from '../data/species';
+import statusNamesFile from '../data/text/en/statuses.yaml';
+import { stringTable } from '../data/yaml';
 
 /**
  * What a battle leaves behind, and what it takes to put it right.
@@ -44,63 +52,11 @@ export function isNonVolatileStatus(status: Statuses): boolean {
 /**
  * How a status reads to a player
  */
-export const STATUS_NAMES: Record<Statuses, string> = {
-  [Statuses.Seeding]: 'Seeded',
-  [Statuses.Poisoned]: 'Poisoned',
-  [Statuses.Sleeping]: 'Asleep',
-  [Statuses.BadlyPoisoned]: 'Badly poisoned',
-  [Statuses.Paralyzed]: 'Paralyzed',
-  [Statuses.Minimized]: 'Minimized',
-  [Statuses.Invulnerable]: 'Invulnerable',
-  [Statuses.Raging]: 'Raging',
-  [Statuses.Biding]: 'Biding',
-  [Statuses.Confused]: 'Confused',
-  [Statuses.Recharging]: 'Recharging',
-  [Statuses.Substituted]: 'Substituted',
-  [Statuses.Burned]: 'Burned',
-  [Statuses.Trapped]: 'Trapped',
-  [Statuses.Flinched]: 'Flinched',
-  [Statuses.Frozen]: 'Frozen',
-  [Statuses.FocusEnergy]: 'Focused',
-  [Statuses.Infatuated]: 'Infatuated',
-  [Statuses.Grounded]: 'Grounded',
-  [Statuses.Floating]: 'Floating',
-  [Statuses.Submerged]: 'Submerged',
-  [Statuses.Dormant]: 'Dormant',
-  [Statuses.Staggered]: 'Staggered',
-  [Statuses.Switching]: 'Switching',
-  [Statuses.Protected]: 'Protected',
-  [Statuses.Enduring]: 'Enduring',
-  [Statuses.Cornered]: 'Cornered',
-  [Statuses.Nightmared]: 'Nightmare',
-  [Statuses.Perishing]: 'Perishing',
-  [Statuses.Bonded]: 'Bonded',
-  [Statuses.Cursed]: 'Cursed',
-  [Statuses.Encored]: 'Encored',
-  [Statuses.Identified]: 'Identified',
-  [Statuses.Comatose]: 'Comatose',
-  [Statuses.Taunted]: 'Taunted',
-  [Statuses.Tormented]: 'Tormented',
-  [Statuses.Imprisoned]: 'Imprisoned',
-  [Statuses.Rooted]: 'Rooted',
-  [Statuses.Drowsy]: 'Drowsy',
-  [Statuses.Centered]: 'Centered',
-  [Statuses.Coated]: 'Coated',
-  [Statuses.Snatching]: 'Snatching',
-  [Statuses.Grudging]: 'Grudging',
-  [Statuses.Uproaring]: 'Uproar',
-  [Statuses.Helped]: 'Helped',
-  [Statuses.MindRead]: 'Read',
-  [Statuses.Embargoed]: 'Embargoed',
-  [Statuses.HealBlocked]: 'Heal Blocked',
-  [Statuses.PowerTricked]: 'Power Trick',
-  [Statuses.Roosting]: 'Roosting',
-  [Statuses.MagnetRisen]: 'Magnet Rise',
-  [Statuses.AquaRinged]: 'Aqua Ring',
-  [Statuses.Telekinetic]: 'Telekinesis',
-  [Statuses.SkyDropped]: 'Sky Drop',
-  [Statuses.PowerShifted]: 'Power Shift',
-};
+export const STATUS_NAMES = stringTable<Statuses>(
+  STATUS_IDS,
+  statusNamesFile,
+  'text/en/statuses.yaml',
+);
 
 /**
  * Everything maximum health is derived from. A catch record satisfies

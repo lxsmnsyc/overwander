@@ -436,3 +436,46 @@ export function getBiome(humidity: number, temperature: number, elevation: numbe
 
   return nearest;
 }
+
+/** How lucky a walk has to be to meet a species, by the band of a pool it is filed in */
+export const enum SpawnRarity {
+  /**
+   * The bottom of a three-stage line, which is the longest walk to a
+   * finished pokemon: they share the odds left over from the rarer
+   * bands, split by their pool weights
+   */
+  Base = 0,
+  /**
+   * The bottom of a two-stage line, one step from finished
+   */
+  Uncommon = 1,
+  /**
+   * The middle of a three-stage line
+   */
+  Rare = 2,
+  /**
+   * The end of a two-stage line
+   */
+  Scarce = 3,
+  /**
+   * The end of a three-stage line, and the species that never evolve
+   * at all
+   */
+  Elusive = 4,
+  /**
+   * The babies and the unowns: species a walk is lucky to meet, but
+   * that a player may meet more than one of
+   */
+  Prized = 5,
+  /**
+   * The legendaries: one-per-world species the world itself stages,
+   * at a lair
+   */
+  Special = 6,
+  /**
+   * The mythicals: one place apiece and no lair, so a raid never
+   * stages one. The relic calls one out to be fought, and this band
+   * is the other way, drawn as often as a legendary
+   */
+  Mythical = 7,
+}

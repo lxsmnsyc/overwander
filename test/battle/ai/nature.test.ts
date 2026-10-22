@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { chooseMove, setupChooseMoveAI } from '../../../src/battle/ai/choose-move';
-import Natures, { NATURE_EFFECTS, NATURE_NAMES } from '../../../src/data/ids/natures';
+import Natures, { NATURE_EFFECTS } from '../../../src/data/ids/natures';
+import { NATURE_NAMES } from '../../../src/data/ids/text';
 import setupNatureAI, { MoveStyle, getMoveStyle } from '../../../src/battle/ai/nature';
 import { Moves } from '../../../src/data/ids/moves';
 import { Stats } from '../../../src/data/constants/stats';

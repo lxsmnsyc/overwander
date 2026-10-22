@@ -26,7 +26,7 @@ import {
 import { VITAMIN_EFFORT } from '../../../../data/items/vitamins';
 import { WING_EFFORT } from '../../../../data/items/wings';
 
-import { NATURE_NAMES } from '../../../../data/ids/natures';
+import { NATURE_NAMES } from '../../../../data/ids/text';
 import { Badge, Button, Hint, HintList, Meta } from '../../../styled';
 
 import { For, type JSX, Show, createEffect, createSignal, on } from 'solid-js';

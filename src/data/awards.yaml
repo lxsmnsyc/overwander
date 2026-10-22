@@ -1,0 +1,364 @@
+# Each award's color, for the earned state of its disc, and the picture
+# drawn on it where one ships: the extras sheet and the name on it. A
+# region's badges are one sheet, in gym order. A mark won off a person is
+# drawn as that person, which the shelf works out for itself
+
+BoulderBadge:
+  color: '#8a8f98'
+  sprite: [badges/kanto, Kanto]
+CascadeBadge:
+  color: '#4aa3df'
+  sprite: [badges/kanto, Kanto (1)]
+ThunderBadge:
+  color: '#f2a636'
+  sprite: [badges/kanto, Kanto (2)]
+RainbowBadge:
+  color: '#58b858'
+  sprite: [badges/kanto, Kanto (3)]
+SoulBadge:
+  color: '#c964b8'
+  sprite: [badges/kanto, Kanto (4)]
+MarshBadge:
+  color: '#caa53d'
+  sprite: [badges/kanto, Kanto (5)]
+VolcanoBadge:
+  color: '#d95340'
+  sprite: [badges/kanto, Kanto (6)]
+EarthBadge:
+  color: '#7ca35c'
+  sprite: [badges/kanto, Kanto (7)]
+LoreleiDefeated:
+  color: '#9fd7e8'
+BrunoDefeated:
+  color: '#c98a4b'
+AgathaDefeated:
+  color: '#8a6fb8'
+LanceDefeated:
+  color: '#5a78c9'
+KantoChampion:
+  color: '#e0b64f'
+  sprite: [badges/kanto, Champion Ribbon]
+KantoDexMedal:
+  color: '#d0342c'
+ZephyrBadge:
+  color: '#8fb8d8'
+  sprite: [badges/johto, Johto]
+HiveBadge:
+  color: '#d0a63c'
+  sprite: [badges/johto, Johto (1)]
+PlainBadge:
+  color: '#d97b8f'
+  sprite: [badges/johto, Johto (2)]
+FogBadge:
+  color: '#8c7fb8'
+  sprite: [badges/johto, Johto (3)]
+StormBadge:
+  color: '#c96b3c'
+  sprite: [badges/johto, Johto (4)]
+MineralBadge:
+  color: '#7f9aa8'
+  sprite: [badges/johto, Johto (5)]
+GlacierBadge:
+  color: '#6fb4d9'
+  sprite: [badges/johto, Johto (6)]
+RisingBadge:
+  color: '#5f9e6a'
+  sprite: [badges/johto, Johto (7)]
+WillDefeated:
+  color: '#b48fd0'
+KogaDefeated:
+  color: '#8f5fa8'
+KarenDefeated:
+  color: '#5c4f56'
+JohtoBrunoDefeated:
+  color: '#c98a4b'
+JohtoChampion:
+  color: '#e0b64f'
+RedDefeated:
+  color: '#d0342c'
+GiovanniDefeated:
+  color: '#b0453c'
+ArcherDefeated:
+  color: '#6f7fa8'
+ArianaDefeated:
+  color: '#c2536f'
+ProtonDefeated:
+  color: '#4f8f7a'
+PetrelDefeated:
+  color: '#7a6f8f'
+RocketGruntDefeated:
+  color: '#3f4550'
+JohtoDexMedal:
+  color: '#d0a63c'
+StoneBadge:
+  color: '#a9a29a'
+  sprite: [badges/hoenn, Hoenn]
+KnuckleBadge:
+  color: '#c96b4a'
+  sprite: [badges/hoenn, Hoenn (1)]
+DynamoBadge:
+  color: '#e8c34a'
+  sprite: [badges/hoenn, Hoenn (2)]
+HeatBadge:
+  color: '#d9542f'
+  sprite: [badges/hoenn, Hoenn (3)]
+BalanceBadge:
+  color: '#b8894a'
+  sprite: [badges/hoenn, Hoenn (4)]
+FeatherBadge:
+  color: '#8fb8d0'
+  sprite: [badges/hoenn, Hoenn (5)]
+MindBadge:
+  color: '#c96fa8'
+  sprite: [badges/hoenn, Hoenn (6)]
+RainBadge:
+  color: '#4a8fd0'
+  sprite: [badges/hoenn, Hoenn (7)]
+HoennDexMedal:
+  color: '#3f9e6a'
+SidneyDefeated:
+  color: '#5c4f56'
+PhoebeDefeated:
+  color: '#8f6fb8'
+GlaciaDefeated:
+  color: '#9fd7e8'
+DrakeDefeated:
+  color: '#c9603c'
+HoennChampion:
+  color: '#e0b64f'
+StevenDefeated:
+  color: '#7f9aa8'
+SilverBraveSymbol:
+  color: '#b8bcc4'
+  sprite: [badges/frontier-emerald, brave-silver]
+GoldBraveSymbol:
+  color: '#e0b64f'
+  sprite: [badges/frontier-emerald, brave-gold]
+SilverGutsSymbol:
+  color: '#b8bcc4'
+  sprite: [badges/frontier-emerald, guts-silver]
+GoldGutsSymbol:
+  color: '#e0b64f'
+  sprite: [badges/frontier-emerald, guts-gold]
+SilverLuckSymbol:
+  color: '#b8bcc4'
+  sprite: [badges/frontier-emerald, luck-silver]
+GoldLuckSymbol:
+  color: '#e0b64f'
+  sprite: [badges/frontier-emerald, luck-gold]
+SilverKnowledgeSymbol:
+  color: '#b8bcc4'
+  sprite: [badges/frontier-emerald, knowledge-silver]
+GoldKnowledgeSymbol:
+  color: '#e0b64f'
+  sprite: [badges/frontier-emerald, knowledge-gold]
+SilverAbilitySymbol:
+  color: '#b8bcc4'
+  sprite: [badges/frontier-emerald, ability-silver]
+GoldAbilitySymbol:
+  color: '#e0b64f'
+  sprite: [badges/frontier-emerald, ability-gold]
+SilverSpiritsSymbol:
+  color: '#b8bcc4'
+  sprite: [badges/frontier-emerald, spirits-silver]
+GoldSpiritsSymbol:
+  color: '#e0b64f'
+  sprite: [badges/frontier-emerald, spirits-gold]
+SilverTacticsSymbol:
+  color: '#b8bcc4'
+  sprite: [badges/frontier-emerald, tactics-silver]
+GoldTacticsSymbol:
+  color: '#e0b64f'
+  sprite: [badges/frontier-emerald, tactics-gold]
+MagmaGruntDefeated:
+  color: '#8c3a2a'
+TabithaDefeated:
+  color: '#b0553c'
+CourtneyDefeated:
+  color: '#c96b5a'
+MaxieDefeated:
+  color: '#a83a2a'
+AquaGruntDefeated:
+  color: '#2a5a8c'
+MattDefeated:
+  color: '#3c7ab0'
+ShellyDefeated:
+  color: '#5a95c9'
+ArchieDefeated:
+  color: '#2a4a9e'
+# Sinnoh's sheet names its badges by number rather than by region,
+# and the numbers are the gym order
+CoalBadge:
+  color: '#6f747c'
+  sprite: [badges/sinnoh, '1']
+ForestBadge:
+  color: '#5aa46a'
+  sprite: [badges/sinnoh, '2']
+CobbleBadge:
+  color: '#c98a4b'
+  sprite: [badges/sinnoh, '3']
+FenBadge:
+  color: '#4aa3b8'
+  sprite: [badges/sinnoh, '4']
+RelicBadge:
+  color: '#8a6fb8'
+  sprite: [badges/sinnoh, '5']
+MineBadge:
+  color: '#8f9aa8'
+  sprite: [badges/sinnoh, '6']
+IcicleBadge:
+  color: '#9fd7e8'
+  sprite: [badges/sinnoh, '7']
+BeaconBadge:
+  color: '#f2c14a'
+  sprite: [badges/sinnoh, '8']
+AaronDefeated:
+  color: '#6fae5a'
+BerthaDefeated:
+  color: '#b8935a'
+FlintDefeated:
+  color: '#d9542f'
+LucianDefeated:
+  color: '#7f6fc9'
+SinnohChampion:
+  color: '#e0b64f'
+SinnohDexMedal:
+  color: '#4a7fc9'
+GalacticGruntDefeated:
+  color: '#4a4f6a'
+MarsDefeated:
+  color: '#c9536f'
+JupiterDefeated:
+  color: '#8f5fa8'
+SaturnDefeated:
+  color: '#4a8fa8'
+CyrusDefeated:
+  color: '#3c5a8c'
+SilverTowerPrint:
+  color: '#b9c0c9'
+GoldTowerPrint:
+  color: '#e0b64f'
+SilverFactoryPrint:
+  color: '#b9c0c9'
+GoldFactoryPrint:
+  color: '#e0b64f'
+SilverArcadePrint:
+  color: '#b9c0c9'
+GoldArcadePrint:
+  color: '#e0b64f'
+SilverCastlePrint:
+  color: '#b9c0c9'
+GoldCastlePrint:
+  color: '#e0b64f'
+SilverHallPrint:
+  color: '#b9c0c9'
+GoldHallPrint:
+  color: '#e0b64f'
+# Unova's sheet is numbered the same way, and its gym order runs the
+# first league's eight then the two the sequels open
+TrioBadge:
+  color: '#7fbf6a'
+  sprite: [badges/unova, '1']
+BasicBadge:
+  color: '#8f9ecb'
+  sprite: [badges/unova, '2']
+InsectBadge:
+  color: '#a8c94f'
+  sprite: [badges/unova, '3']
+BoltBadge:
+  color: '#e9c33f'
+  sprite: [badges/unova, '4']
+QuakeBadge:
+  color: '#b08a52'
+  sprite: [badges/unova, '5']
+JetBadge:
+  color: '#6fbfe0'
+  sprite: [badges/unova, '6']
+FreezeBadge:
+  color: '#9fd9e8'
+  sprite: [badges/unova, '7']
+LegendBadge:
+  color: '#c26a3f'
+  sprite: [badges/unova, '8']
+ToxicBadge:
+  color: '#a05fb8'
+  sprite: [badges/unova, '9']
+WaveBadge:
+  color: '#4f9fd0'
+  sprite: [badges/unova, '10']
+ShauntalDefeated:
+  color: '#7a6fa8'
+MarshalDefeated:
+  color: '#b8563f'
+GrimsleyDefeated:
+  color: '#4f4a52'
+CaitlinDefeated:
+  color: '#d9a3c9'
+UnovaDexMedal:
+  color: '#5aa87f'
+UnovaChampion:
+  color: '#e0b64f'
+NDefeated:
+  color: '#4f8f7a'
+PlasmaGruntDefeated:
+  color: '#3f5a6f'
+ColressDefeated:
+  color: '#7f9fc9'
+ZinzolinDefeated:
+  color: '#6f5f9f'
+GhetsisDefeated:
+  color: '#8f7f4f'
+AlderDefeated:
+  color: '#c4552e'
+# Kalos's sheet numbers its badges out of gym order, so each is named
+# by what is drawn on it
+BugBadge:
+  color: '#7a8f3f'
+  sprite: [badges/kalos, Kalos]
+CliffBadge:
+  color: '#9a8a78'
+  sprite: [badges/kalos, Kalos (1)]
+RumbleBadge:
+  color: '#c0584a'
+  sprite: [badges/kalos, Kalos (2)]
+PlantBadge:
+  color: '#4f9a5f'
+  sprite: [badges/kalos, Kalos (3)]
+VoltageBadge:
+  color: '#f0c93a'
+  sprite: [badges/kalos, Kalos (4)]
+FairyBadge:
+  color: '#e87a9a'
+  sprite: [badges/kalos, Kalos (5)]
+PsychicBadge:
+  color: '#9a5fc0'
+  sprite: [badges/kalos, Kalos (6)]
+IcebergBadge:
+  color: '#6fb0e0'
+  sprite: [badges/kalos, Kalos (7)]
+MalvaDefeated:
+  color: '#d9542f'
+SieboldDefeated:
+  color: '#3f7fc0'
+WikstromDefeated:
+  color: '#8f9aa8'
+DrasnaDefeated:
+  color: '#6a5fb0'
+KalosChampion:
+  color: '#e0b64f'
+AZDefeated:
+  color: '#6a5a8f'
+FlareGruntDefeated:
+  color: '#c8352a'
+XerosicDefeated:
+  color: '#8a9aa8'
+AlianaDefeated:
+  color: '#d9542f'
+BryonyDefeated:
+  color: '#7a8f9f'
+CelosiaDefeated:
+  color: '#e87a9a'
+MableDefeated:
+  color: '#c98a4b'
+LysandreDefeated:
+  color: '#b8322a'

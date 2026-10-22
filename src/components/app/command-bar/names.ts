@@ -2,7 +2,7 @@ import { BIOME_NAMES } from '../../../data/biome';
 import { BALL_ITEMS, type Balls, type Items } from '../../../data/ids/items';
 import { Genders, type Species } from '../../../data/ids/species';
 import { ITEM_TYPE_ORDER, getItemData, listItemsByType } from '../../../data/items';
-import { NATURE_NAMES } from '../../../data/ids/natures';
+import { NATURE_NAMES } from '../../../data/ids/text';
 import { STAT_NAMES, Stats } from '../../../data/constants/stats';
 import { Slots } from '../../../data/constants/slots';
 import { WEATHER_NAMES } from '../../../data/overworld/weather';

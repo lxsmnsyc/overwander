@@ -1,26 +1,31 @@
-import { AWARD_NAMES } from '../../../data/ids/awards';
+import { AWARD_NAMES } from '../../../data/awards';
 import {
+  CHAMPION_GREETINGS,
   CHAMPION_HONORS,
+  CHAMPION_LEAGUES,
   CHAMPION_NAMES,
   CHAMPION_TITLES,
-  Champion,
+  type Champion,
+  ELITE_MEMBER_LEAGUES,
   ELITE_MEMBER_NAMES,
-  EliteMember,
+  ELITE_MEMBER_QUOTES,
+  type EliteMember,
   FRONTIER_BRAIN_NAMES,
   FRONTIER_BRAIN_RULES,
   FRONTIER_BRAIN_SYMBOLS,
   FRONTIER_BRAIN_TITLES,
   FRONTIER_FACILITY_NAMES,
+  FRONTIER_GREETINGS,
   FRONTIER_RENTAL_OFFER,
   FRONTIER_TIME_TURNS,
-  FrontierBrain,
+  type FrontierBrain,
   FrontierRule,
   GYM_LEADER_BADGES,
   GYM_LEADER_NAMES,
-  GymLeader,
+  GYM_LEADER_QUOTES,
+  LEGEND_GREETINGS,
   LEGEND_HONORS,
   LEGEND_NAMES,
-  Legend,
   PIKE_CURTAINS,
   frontierTeamSize,
   getEliteBadges,
@@ -57,155 +62,6 @@ export function saidLevels([lowest, highest]: LevelBand): string {
 }
 
 /**
- * What each expert says as the challenge is put. Their quotes live
- * here with the challenge builder rather than in the wanderer's
- * table: an expert is a person, not a role a cell rolls
- */
-const GYM_LEADER_QUOTES: Record<GymLeader, string> = {
-  [GymLeader.Brock]: 'Rock is solid, kid. Show me you are harder.',
-  [GymLeader.Misty]: 'My water pokemon are tougher than they look. So am I.',
-  [GymLeader.LtSurge]: 'Ten-hut! Survive my electric barrage and the badge is yours, baby!',
-  [GymLeader.Erika]: 'The grass is calm today. Shall we?',
-  [GymLeader.Koga]: 'A ninja’s poison works slowly. Your defeat will not.',
-  [GymLeader.Sabrina]: 'I foresaw this fight. I did not foresee you winning.',
-  [GymLeader.Blaine]: 'My fire burns hot! Bring water. It will not help.',
-  [GymLeader.Giovanni]: 'You have interfered for the last time. Kneel before me.',
-  [GymLeader.Falkner]: 'My father’s birds are watching. Do not embarrass me in front of them.',
-  [GymLeader.Bugsy]: 'I have studied bug pokemon my whole life. You have not.',
-  [GymLeader.Whitney]: 'You look tough! But I am tougher, and I am not going to cry about it.',
-  [GymLeader.Morty]: 'The ghosts show me things. Right now they are showing me you losing.',
-  [GymLeader.Chuck]: 'I train under waterfalls! Your pokemon train under a roof!',
-  [GymLeader.Jasmine]: 'Um... I am sorry. My steel pokemon do not go down easily.',
-  [GymLeader.Pryce]: 'I have seen ninety winters. You will not last one of them.',
-  [GymLeader.Clair]: 'I am the greatest dragon master. Try to prove otherwise.',
-  [GymLeader.Roxanne]: 'I studied rock pokemon at the academy. Let us see what you studied.',
-  [GymLeader.Brawly]: 'I am a big wave in the making! Come and wipe out on me!',
-  [GymLeader.Wattson]: 'Wahahaha! My machines run on my pokemon. Mind the shock!',
-  [GymLeader.Flannery]: 'My grandfather left me this gym. I intend to keep it hot.',
-  [GymLeader.Norman]: 'I am somebody’s father, and I do not go easy on anybody. Come.',
-  [GymLeader.Winona]: 'I have flown with birds all my life. You will not touch us.',
-  [GymLeader.Tate]: 'My sister knows what I am about to do. Do you?',
-  [GymLeader.Liza]: 'My brother and I share one badge. You still have to earn it.',
-  [GymLeader.Juan]: 'Water is elegance, and elegance is strength. Observe.',
-  [GymLeader.Roark]: 'I dig fossils out of this rock all day. Digging you out will be quicker.',
-  [GymLeader.Gardenia]: 'Grass pokemon are wonderful, and mine are wonderfully mean.',
-  [GymLeader.Maylene]: 'I am young to keep a gym. Nobody has taken it off me yet.',
-  [GymLeader.CrasherWake]: 'Crash! The Fen Badge is behind me, and so is a wall of water.',
-  [GymLeader.Fantina]: 'My ghosts dance, and they never miss a step. Shall we?',
-  [GymLeader.Byron]: 'My son keeps a gym of his own. Neither of us gives anything away.',
-  [GymLeader.Candice]: 'Focus! That is all it takes. Mine has never once slipped.',
-  [GymLeader.Volkner]: 'I have been bored for years. Please be worth the electricity.',
-  [GymLeader.Cilan]: 'Allow me to taste your battling style. I expect it is undercooked.',
-  [GymLeader.Chili]: 'My fire burns hotter than my brothers put together! Ready?',
-  [GymLeader.Cress]: 'Composure wins battles. I have rather a lot of it.',
-  [GymLeader.Lenora]: 'You want the badge? Then show me something worth putting in my museum.',
-  [GymLeader.Burgh]: 'My bug pokemon and I are making something beautiful. Try not to spoil it.',
-  [GymLeader.Elesa]: 'The lights are on you now. Let us see how you look losing.',
-  [GymLeader.Clay]: 'I dug this gym out of the ground myself. You will not walk off with it cheap.',
-  [GymLeader.Skyla]: 'I have flown every route in this region. You will not outrun me.',
-  [GymLeader.Brycen]: 'I left the stage for the ice. Nothing here is acting.',
-  [GymLeader.Drayden]: 'A dragon is not tamed by wanting it. Show me what you have.',
-  [GymLeader.Cheren]: 'I used to chase strength. Now I teach it. Let us see what you have learned.',
-  [GymLeader.Roxie]: 'Turn it up! If my poison does not get you, the noise will!',
-  [GymLeader.Marlon]: 'The sea does what it wants, and so do I. Let us have a good one.',
-  [GymLeader.Viola]: 'Hold still, I want this shot. It is the one where you lose.',
-  [GymLeader.Grant]: 'Every wall has a way up. Let us see if you can find mine.',
-  [GymLeader.Korrina]: 'Roller skates on, fists up! I hope you can keep pace!',
-  [GymLeader.Ramos]: 'A garden takes patience, and so does beating me.',
-  [GymLeader.Clemont]: 'The future is now, thanks to science! Watch my invention at work.',
-  [GymLeader.Valerie]: 'Oh, a visitor. My fairies are gentle, until they are not.',
-  [GymLeader.Olympia]: 'I have already seen how this ends. Shall we play it out?',
-  [GymLeader.Wulfric]: 'Ha! A good fight warms the bones. Come on, then!',
-};
-
-/** Which league each champion is the top of */
-const CHAMPION_LEAGUES: Record<Champion, string> = {
-  [Champion.Blue]: 'Kanto',
-  [Champion.Lance]: 'Johto',
-  [Champion.Wallace]: 'Hoenn',
-  [Champion.Cynthia]: 'Sinnoh',
-  [Champion.Iris]: 'Unova',
-  [Champion.Diantha]: 'Kalos',
-};
-
-/** Which league each seat belongs to, for the copy that names it */
-const ELITE_MEMBER_LEAGUES: Record<EliteMember, string> = {
-  [EliteMember.Lorelei]: 'Kanto',
-  [EliteMember.Bruno]: 'Kanto',
-  [EliteMember.Agatha]: 'Kanto',
-  [EliteMember.Lance]: 'Kanto',
-  [EliteMember.Will]: 'Johto',
-  [EliteMember.Koga]: 'Johto',
-  [EliteMember.Karen]: 'Johto',
-  [EliteMember.JohtoBruno]: 'Johto',
-  [EliteMember.Sidney]: 'Hoenn',
-  [EliteMember.Phoebe]: 'Hoenn',
-  [EliteMember.Glacia]: 'Hoenn',
-  [EliteMember.Drake]: 'Hoenn',
-  [EliteMember.Aaron]: 'Sinnoh',
-  [EliteMember.Bertha]: 'Sinnoh',
-  [EliteMember.Flint]: 'Sinnoh',
-  [EliteMember.Lucian]: 'Sinnoh',
-  [EliteMember.Shauntal]: 'Unova',
-  [EliteMember.Marshal]: 'Unova',
-  [EliteMember.Grimsley]: 'Unova',
-  [EliteMember.Caitlin]: 'Unova',
-  [EliteMember.Malva]: 'Kalos',
-  [EliteMember.Siebold]: 'Kalos',
-  [EliteMember.Wikstrom]: 'Kalos',
-  [EliteMember.Drasna]: 'Kalos',
-};
-
-const ELITE_QUOTES: Record<EliteMember, string> = {
-  [EliteMember.Lorelei]: 'Ice has no mercy. Neither do I.',
-  [EliteMember.Bruno]: 'We will grind you down with our superior power! Hoo hah!',
-  [EliteMember.Agatha]: 'You want to see real ghosts, child? Look closely.',
-  [EliteMember.Lance]: 'My dragons know no weakness. Prove me wrong.',
-  [EliteMember.Will]: 'I have trained all my life for this. I will not lose to you.',
-  [EliteMember.Koga]: 'Fufufu! You are already standing in my poison. Shall we begin?',
-  [EliteMember.Karen]: 'Strong pokemon. Weak pokemon. Only your favourites matter. Show me yours.',
-  [EliteMember.JohtoBruno]: 'I have come back stronger. Feel the fists of Johto!',
-  [EliteMember.Sidney]: 'No hard feelings, right? Let us just enjoy the fight.',
-  [EliteMember.Phoebe]: 'I trained with the spirits on Mt. Pyre. They are still with me.',
-  [EliteMember.Glacia]: 'I came here for warmth, and my ice only grew fiercer. See it.',
-  [EliteMember.Drake]: 'Do you know what it means to fight beside a dragon? Show me.',
-  [EliteMember.Aaron]: 'Bug pokemon are the strongest of all. I will show you why.',
-  [EliteMember.Bertha]: 'I have been at this longer than you have been alive, dear.',
-  [EliteMember.Flint]: 'My hair is not the hottest thing here. Watch.',
-  [EliteMember.Lucian]: 'One moment, let me finish this page. Now then.',
-  [EliteMember.Shauntal]: 'I am writing a book about trainers like you. Give me a good ending.',
-  [EliteMember.Marshal]: 'My master taught me to seek strength. You look like a step on the way.',
-  [EliteMember.Grimsley]: 'Win or lose, the cards fall. Let us see how they fall for you.',
-  [EliteMember.Caitlin]: 'I fight my own battles now. You may regret that I do.',
-  [EliteMember.Malva]: 'I report on the news. Today it is your defeat, live.',
-  [EliteMember.Siebold]: 'A battle is a dish. I shall serve you something unforgettable.',
-  [EliteMember.Wikstrom]: 'Well met, challenger! My blade and I await your mettle!',
-  [EliteMember.Drasna]: 'Oh my, a challenger! My dragons have been so looking forward to this.',
-};
-
-/** What a legend says, where they say anything at all */
-const LEGEND_GREETINGS: Record<Legend, string> = {
-  [Legend.Red]: 'Red says nothing. He reaches for a ball.',
-  [Legend.Steven]: 'Steven turns a stone over in his hand. “I was hoping for a real fight.”',
-  [Legend.N]: 'N tilts his head. “Show me what you and your pokemon are to each other.”',
-  [Legend.Alder]: 'Alder laughs and rolls his shoulders. “Let us enjoy this one, shall we?”',
-  [Legend.AZ]: 'AZ looks down at you. “I was a king once. Show me what a trainer is.”',
-};
-
-/** What a champion says as the last fight of their league is put */
-const CHAMPION_GREETINGS: Record<Champion, string> = {
-  [Champion.Blue]: 'Blue smirks. “I am the Champion here. Smell ya later.”',
-  [Champion.Lance]: 'Lance looks you over. “So you made it this far. Show me your best.”',
-  [Champion.Wallace]: 'Wallace bows. “Let us make this beautiful, and let us make it brief.”',
-  [Champion.Cynthia]:
-    'Cynthia closes her book. “I have been waiting for somebody worth the whole team.”',
-  [Champion.Iris]:
-    'Iris grins. “Everyone told me I was too young for this seat. Come and find out.”',
-  [Champion.Diantha]:
-    'Diantha smiles as if the cameras were rolling. “Shall we give them a scene worth remembering?”',
-};
-
-/**
  * What a champion's seat asks to see beaten first, said as the tail
  * of the locked message
  */
@@ -214,29 +70,6 @@ export function championGate(champion: Champion): string {
 
   return `who have beaten all ${CHAMPION_HONORS[champion].length} of ${league}'s Elite Four`;
 }
-
-/** What a Brain says as the house is entered */
-const FRONTIER_GREETINGS: Record<FrontierBrain, string> = {
-  [FrontierBrain.Brandon]: 'You came to my pyramid. Leave everything at the door and climb.',
-  [FrontierBrain.Greta]: 'The clock is running. Fight like it matters, because it is judged.',
-  [FrontierBrain.Lucy]: 'Pick a curtain. What is behind it is not my doing, and I do not care.',
-  [FrontierBrain.Noland]:
-    'Nothing here is yours and nothing here is mine. Pick three and let us see.',
-  [FrontierBrain.Anabel]:
-    'No tricks up here. My three against your three. Begin when you are ready.',
-  [FrontierBrain.Spenser]:
-    'In my palace nobody takes orders. Bring three whose hearts you already know.',
-  [FrontierBrain.Tucker]:
-    'Show me your three first. The Dome always answers, and the crowd loves an answer.',
-  [FrontierBrain.Palmer]: 'My son talks about you. Let us find out whether he was exaggerating.',
-  [FrontierBrain.Thorton]:
-    'Rentals, both sides, no preparation. I have run the numbers. You have not.',
-  [FrontierBrain.Dahlia]: 'Spin it! Whatever it lands on lands on both of us. That is the fun.',
-  [FrontierBrain.Darach]: 'The lady is watching. I am afraid the house keeps its own medicine.',
-  [FrontierBrain.Caitlin]:
-    'Darach usually does this for me. Today I am curious enough to do it myself.',
-  [FrontierBrain.Argenta]: 'One of yours, one of mine. No hiding behind anybody else.',
-};
 
 /**
  * The house rule, said first, because it is the whole of what makes a
@@ -386,7 +219,7 @@ export default function challengerOf(
     return {
       name,
       levels: ELITE_PARTY_LEVELS,
-      greeting: `${name} of the Elite Four rises. “${ELITE_QUOTES[member]}”`,
+      greeting: `${name} of the Elite Four rises. “${ELITE_MEMBER_QUOTES[member]}”`,
       wins: 'Their purse and something from their bag',
     };
   }

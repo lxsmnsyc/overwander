@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Frontier room names",
+  "type": "object",
+  "properties": {
+    "curtains": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "names.json#/definitions/pike-curtain"
+      },
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "panels": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "names.json#/definitions/arcade-panel"
+      },
+      "additionalProperties": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "curtains",
+    "panels"
+  ],
+  "additionalProperties": false
+}

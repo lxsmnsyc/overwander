@@ -5,7 +5,7 @@ import { ENCOUNTER_TYPE_NAMES } from '../../../overworld/encounter';
 import { GENDER_NAMES } from '../../../data/ids/species';
 import { LAIR_NAMES } from '../../../data/overworld/lair';
 import { getItemData } from '../../../data/items';
-import { NATURE_NAMES } from '../../../data/ids/natures';
+import { NATURE_NAMES } from '../../../data/ids/text';
 import { getAbilityData, getRegisteredAbilities } from '../../../data/abilities';
 import { getFamilyName, getRegisteredSpecies, getSpeciesData } from '../../../data/species';
 import { getMoveData, getRegisteredMoves } from '../../../data/moves';

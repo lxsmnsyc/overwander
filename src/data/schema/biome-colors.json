@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Biome colors",
+  "type": "object",
+  "propertyNames": {
+    "$ref": "names.json#/definitions/biome"
+  },
+  "additionalProperties": {
+    "type": "string",
+    "pattern": "^#[0-9a-f]{6}$"
+  }
+}

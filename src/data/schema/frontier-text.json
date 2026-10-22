@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "Frontier Brain names",
+  "title": "Frontier Brain words",
   "type": "object",
   "propertyNames": {
     "$ref": "names.json#/definitions/frontier-brain"
@@ -14,11 +14,16 @@
       "house": {
         "type": "string",
         "description": "The house they keep"
+      },
+      "greeting": {
+        "type": "string",
+        "description": "What they say as the house is entered"
       }
     },
     "required": [
       "name",
-      "house"
+      "house",
+      "greeting"
     ],
     "additionalProperties": false
   }

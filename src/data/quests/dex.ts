@@ -1,7 +1,9 @@
+import * as v from 'valibot';
 import type Awards from '../ids/awards';
 import { Items } from '../ids/items';
 import type Regions from '../ids/regions';
 import { REGIONS, REGION_DEXES, REGION_NAMES } from '../species/regions';
+import rungsFile from '../text/en/dex-rungs.yaml';
 import {
   type ChainData,
   type Chains,
@@ -57,7 +59,7 @@ function regionTitle(region: Regions): string {
  * it are the titles a collector picks up on the way, and a ladder
  * longer than the titles falls back to counting
  */
-const RUNG_NAMES = ['Field Researcher', 'Dex Scholar', 'Dex Master', 'Dex Sage'];
+const RUNG_NAMES = v.parse(v.array(v.string()), rungsFile);
 
 function rungName(region: Regions, rung: number, rungs: number): string {
   if (rung === rungs - 1) {

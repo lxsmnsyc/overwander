@@ -1,7 +1,7 @@
 import { For, type JSX, type Resource, Show } from 'solid-js';
 import type { CandyEarned } from '../../../auth/battles';
 import type { Profile } from '../../../auth/profile';
-import { AWARD_NAMES } from '../../../data/ids/awards';
+import { AWARD_NAMES } from '../../../data/awards';
 import { SpriteAnim } from '../../../data/ids/sprite-anims';
 import { getItemData } from '../../../data/items';
 import { getFamilyName, getSpeciesData } from '../../../data/species';

@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Weather kinds",
+  "type": "object",
+  "propertyNames": {
+    "$ref": "names.json#/definitions/weather"
+  },
+  "additionalProperties": {
+    "type": "object",
+    "properties": {
+      "color": {
+        "type": "string",
+        "pattern": "^#[0-9a-f]{6}$",
+        "description": "What it is drawn as on the world map"
+      },
+      "favours": {
+        "oneOf": [
+          {
+            "const": "everything"
+          },
+          {
+            "type": "array",
+            "items": {
+              "$ref": "names.json#/definitions/type"
+            }
+          }
+        ],
+        "description": "The types it is kind to: `[]` for none, `everything` for all"
+      },
+      "battle": {
+        "$ref": "names.json#/definitions/battle-weather",
+        "description": "The sky a fight met under it is fought in"
+      }
+    },
+    "required": [
+      "color",
+      "favours",
+      "battle"
+    ],
+    "additionalProperties": false
+  }
+}

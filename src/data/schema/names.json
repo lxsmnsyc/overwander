@@ -5695,6 +5695,90 @@
         "DarkDay",
         "Fogbow"
       ]
+    },
+    "spawn-rarity": {
+      "enum": [
+        "Base",
+        "Uncommon",
+        "Rare",
+        "Scarce",
+        "Elusive",
+        "Prized",
+        "Special",
+        "Mythical"
+      ]
+    },
+    "battle-weather": {
+      "enum": [
+        "None",
+        "Sunny",
+        "Rain",
+        "Sandstorm",
+        "Hail",
+        "Snow",
+        "Fog",
+        "ExtremeSunny",
+        "HeavyRain",
+        "StrongWinds"
+      ]
+    },
+    "pike-curtain": {
+      "enum": [
+        "Poisoned",
+        "Burned",
+        "Paralysed",
+        "Asleep",
+        "Healed"
+      ]
+    },
+    "arcade-panel": {
+      "enum": [
+        "Sun",
+        "Rain",
+        "Sandstorm",
+        "Hail",
+        "Stripped",
+        "Poisoned",
+        "Mended"
+      ]
+    },
+    "achievement-tier": {
+      "enum": [
+        "None",
+        "Bronze",
+        "Silver",
+        "Gold",
+        "Platinum"
+      ]
+    },
+    "achievement-line": {
+      "enum": [
+        "Collector",
+        "Hatcher",
+        "Coach",
+        "Wayfarer",
+        "Socialite",
+        "Forager",
+        "Raider",
+        "Trader",
+        "Auctioneer",
+        "Confidant",
+        "Wayfinder",
+        "Matchmaker",
+        "Purifier",
+        "Pathfinder"
+      ]
+    },
+    "ladder-title": {
+      "enum": [
+        "LeagueChallenger",
+        "EliteConqueror",
+        "KantoChampion",
+        "JohtoChampion",
+        "LegendBreaker",
+        "HoennChampion",
+        "SinnohChampion"
+      ]
     }
   }
 }

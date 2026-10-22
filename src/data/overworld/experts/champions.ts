@@ -1,13 +1,6 @@
 import * as v from 'valibot';
 import type Awards from '../../ids/awards';
-import {
-  HOENN_HONORS,
-  JOHTO_HONORS,
-  KALOS_HONORS,
-  KANTO_HONORS,
-  SINNOH_HONORS,
-  UNOVA_HONORS,
-} from '../../ids/awards';
+import { LEAGUE_HONORS } from '../../ids/awards';
 import Champion from '../../ids/champions';
 import { AWARD_IDS, CHAMPION_IDS, SPECIES_IDS } from '../../ids/names';
 import type { Species } from '../../ids/species';
@@ -29,20 +22,18 @@ const CHAMPION = v.object({
   party: v.array(v.string()),
 });
 
-/** Each league's Elite Four, by the name a champion's `league` is written in */
-const LEAGUE_HONORS: Record<string, Awards[]> = {
-  Kanto: KANTO_HONORS,
-  Johto: JOHTO_HONORS,
-  Hoenn: HOENN_HONORS,
-  Sinnoh: SINNOH_HONORS,
-  Unova: UNOVA_HONORS,
-  Kalos: KALOS_HONORS,
-};
+const SAID = v.object({ name: v.string(), greeting: v.string() });
 
 /** Every champion, in the order they are numbered */
 export const CHAMPIONS: Champion[] = [];
 
 export const CHAMPION_NAMES: Record<number, string> = {};
+
+/** What a champion says as the last fight of their league is put */
+export const CHAMPION_GREETINGS: Record<number, string> = {};
+
+/** Which league each champion is the top of */
+export const CHAMPION_LEAGUES: Record<number, string> = {};
 
 /** The sheets each is seen in */
 export const CHAMPION_CHARSETS: Record<number, string[]> = {};
@@ -68,6 +59,7 @@ for (const [name, written] of Object.entries(
   CHAMPIONS.push(champion);
   CHAMPION_TITLES[champion] = idOf<Awards>(AWARD_IDS, written.title, where);
   CHAMPION_HONORS[champion] = idOf(LEAGUE_HONORS, written.league, where);
+  CHAMPION_LEAGUES[champion] = written.league;
   CHAMPION_CHARSETS[champion] = written.sheets;
   CHAMPION_PARTIES[champion] = idsOf<Species>(SPECIES_IDS, written.party, where);
   if (written.prize != null) {
@@ -76,8 +68,11 @@ for (const [name, written] of Object.entries(
 }
 CHAMPIONS.sort((one, two) => one - two);
 
-for (const [name, title] of Object.entries(v.parse(v.record(v.string(), v.string()), namesFile))) {
-  CHAMPION_NAMES[idOf<Champion>(CHAMPION_IDS, name, `text/en/champions.yaml: ${name}`)] = title;
+for (const [name, said] of Object.entries(v.parse(v.record(v.string(), SAID), namesFile))) {
+  const champion = idOf<Champion>(CHAMPION_IDS, name, `text/en/champions.yaml: ${name}`);
+
+  CHAMPION_NAMES[champion] = said.name;
+  CHAMPION_GREETINGS[champion] = said.greeting;
 }
 
 // Every champion the enum has is written down, so no seat stands empty or nameless

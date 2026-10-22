@@ -1,3 +1,4 @@
+import * as v from 'valibot';
 import { Landmark, Metric } from '../model/quest-record';
 import { Types } from './constants/types';
 import Npc from './overworld/npc';
@@ -7,8 +8,12 @@ import {
   type TrainerClass,
   getTradeClasses,
 } from './overworld/trainers';
+import { AchievementLine, AchievementTier } from './ids/achievements';
+import { ACHIEVEMENT_LINE_IDS, ACHIEVEMENT_TIER_IDS } from './ids/names';
 import type { Species } from './ids/species';
 import { getSpeciesData } from './species';
+import achievementsFile from './text/en/achievements.yaml';
+import { idOf, stringTable } from './yaml';
 
 /**
  * Achievements: lifetime awards in 4 tiers, derived from the same
@@ -18,21 +23,19 @@ import { getSpeciesData } from './species';
  * worn in the tier's colour; Platinum adds its Master variant.
  */
 
-export const enum AchievementTier {
-  None = 0,
-  Bronze = 1,
-  Silver = 2,
-  Gold = 3,
-  Platinum = 4,
-}
+const ACHIEVEMENT_TEXT = v.parse(
+  v.object({
+    tiers: v.unknown(),
+    lines: v.record(v.string(), v.object({ name: v.string(), deed: v.string() })),
+  }),
+  achievementsFile,
+);
 
-export const TIER_NAMES: Record<AchievementTier, string> = {
-  [AchievementTier.None]: 'Unranked',
-  [AchievementTier.Bronze]: 'Bronze',
-  [AchievementTier.Silver]: 'Silver',
-  [AchievementTier.Gold]: 'Gold',
-  [AchievementTier.Platinum]: 'Platinum',
-};
+export const TIER_NAMES = stringTable<AchievementTier>(
+  ACHIEVEMENT_TIER_IDS,
+  ACHIEVEMENT_TEXT.tiers,
+  'text/en/achievements.yaml: tiers',
+);
 
 /** The metals: the slot ring and the worn title's badge share them */
 export const TIER_COLORS: Record<AchievementTier, string> = {
@@ -43,24 +46,7 @@ export const TIER_COLORS: Record<AchievementTier, string> = {
   [AchievementTier.Platinum]: '#7bc8d2',
 };
 
-const enum AchievementLine {
-  Collector = 0,
-  Hatcher = 1,
-  Coach = 2,
-  Wayfarer = 3,
-  Socialite = 4,
-  Forager = 5,
-  Raider = 6,
-  Trader = 7,
-  Auctioneer = 8,
-  Confidant = 9,
-  Wayfinder = 10,
-  Matchmaker = 11,
-  Purifier = 12,
-  Pathfinder = 13,
-}
-
-export { AchievementLine };
+export { AchievementLine, AchievementTier };
 
 export const ACHIEVEMENT_LINES: AchievementLine[] = [
   AchievementLine.Collector,
@@ -84,40 +70,22 @@ export const ACHIEVEMENT_LINES: AchievementLine[] = [
  * prefixed at Platinum, so each has to read as something a player
  * would wear
  */
-export const LINE_NAMES: Record<AchievementLine, string> = {
-  [AchievementLine.Collector]: 'Collector',
-  [AchievementLine.Hatcher]: 'Hatcher',
-  [AchievementLine.Coach]: 'Coach',
-  [AchievementLine.Wayfarer]: 'Wayfarer',
-  [AchievementLine.Socialite]: 'Socialite',
-  [AchievementLine.Forager]: 'Forager',
-  [AchievementLine.Raider]: 'Raider',
-  [AchievementLine.Trader]: 'Trader',
-  [AchievementLine.Auctioneer]: 'Auctioneer',
-  [AchievementLine.Confidant]: 'Confidant',
-  [AchievementLine.Wayfinder]: 'Wayfinder',
-  [AchievementLine.Matchmaker]: 'Matchmaker',
-  [AchievementLine.Purifier]: 'Purifier',
-  [AchievementLine.Pathfinder]: 'Pathfinder',
-};
+export const LINE_NAMES: Record<number, string> = {};
 
 /** What each line is counting, said for the hover card */
-export const LINE_DEEDS: Record<AchievementLine, string> = {
-  [AchievementLine.Collector]: 'pokemon caught',
-  [AchievementLine.Hatcher]: 'eggs hatched',
-  [AchievementLine.Coach]: 'levels gained',
-  [AchievementLine.Wayfarer]: 'steps walked',
-  [AchievementLine.Socialite]: 'people served by',
-  [AchievementLine.Forager]: 'landmarks claimed',
-  [AchievementLine.Raider]: 'raids won',
-  [AchievementLine.Trader]: 'trades made',
-  [AchievementLine.Auctioneer]: 'auctions settled',
-  [AchievementLine.Confidant]: 'friends made',
-  [AchievementLine.Wayfinder]: 'portals crossed',
-  [AchievementLine.Matchmaker]: 'pairs bred',
-  [AchievementLine.Purifier]: 'shadows purified',
-  [AchievementLine.Pathfinder]: 'biomes discovered',
-};
+export const LINE_DEEDS: Record<number, string> = {};
+
+for (const [name, said] of Object.entries(ACHIEVEMENT_TEXT.lines)) {
+  const line = idOf(ACHIEVEMENT_LINE_IDS, name, `text/en/achievements.yaml: ${name}`);
+
+  LINE_NAMES[line] = said.name;
+  LINE_DEEDS[line] = said.deed;
+}
+for (const [name, line] of Object.entries(ACHIEVEMENT_LINE_IDS)) {
+  if (!Object.hasOwn(LINE_NAMES, line)) {
+    throw new Error(`text/en/achievements.yaml: ${name} is missing`);
+  }
+}
 
 /**
  * What each line asks of the counters: a metric, narrowed the way a

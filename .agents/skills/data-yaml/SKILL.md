@@ -43,7 +43,7 @@ Growlithe:
 
 | file                              | holds                                                                 |
 | --------------------------------- | --------------------------------------------------------------------- |
-| `overworld/lairs.yaml`            | each lair's `species` (in the order a raid picks), `underground`, `reserved` |
+| `overworld/lairs.yaml`            | each lair's `species` (in the order a raid picks), `stands` (`water` or `island`), `underground`, `reserved` |
 | `overworld/biome-lairs.yaml`      | each biome's lairs, in the order a landmark draws them                |
 | `text/en/lairs.yaml`              | each lair's name                                                      |
 | `overworld/item-pool.yaml`        | the ground's items by band, item to weight; a lowercase key is a whole family (`wings: 3`) |

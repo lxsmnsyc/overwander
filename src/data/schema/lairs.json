@@ -15,6 +15,13 @@
         },
         "description": "Who is at home there, in the order a raid picks from"
       },
+      "stands": {
+        "enum": [
+          "water",
+          "island"
+        ],
+        "description": "On the water only, or an island that stands on water and ground; left out for ground only"
+      },
       "underground": {
         "type": "boolean",
         "description": "A cave under its biome stages it too"

@@ -22,6 +22,7 @@ const LAIR = v.object({
   species: v.array(v.string()),
   underground: v.optional(v.boolean()),
   reserved: v.optional(v.boolean()),
+  stands: v.optional(v.picklist(['water', 'island'])),
 });
 
 /**
@@ -49,6 +50,15 @@ export const EVERY_LAIR: Lairs[] = [];
  */
 const SUBTERRANEAN_LAIRS = new Set<Lairs>();
 
+/**
+ * The lairs whose place is the water itself, a lake or the sea over a
+ * flooded cavern, so a Lake Acuity is never a field
+ */
+const AQUATIC_LAIRS = new Set<Lairs>();
+
+/** The lairs on an island out at sea: a lair at sea is the island being there */
+const ISLAND_LAIRS = new Set<Lairs>();
+
 for (const [name, written] of Object.entries(v.parse(v.record(v.string(), LAIR), lairsFile))) {
   const where = `lairs.yaml: ${name}`;
   const lair = idOf(LAIR_IDS, name, where);
@@ -56,6 +66,11 @@ for (const [name, written] of Object.entries(v.parse(v.record(v.string(), LAIR),
   LAIR_SPECIES[lair] = idsOf<Species>(SPECIES_IDS, written.species, where);
   if (written.underground === true) {
     SUBTERRANEAN_LAIRS.add(lair);
+  }
+  if (written.stands === 'water') {
+    AQUATIC_LAIRS.add(lair);
+  } else if (written.stands === 'island') {
+    ISLAND_LAIRS.add(lair);
   }
   if (written.reserved !== true) {
     EVERY_LAIR.push(lair);
@@ -136,35 +151,6 @@ export function getBiomeLairs(biome: Biome): Lairs[] {
 export function isSubterraneanLair(lair: Lairs): boolean {
   return SUBTERRANEAN_LAIRS.has(lair);
 }
-
-/**
- * The lairs whose place is the water itself: a lake, or the sea over a
- * flooded cavern. They stand only on water, so a Lake Acuity is never
- * a field
- */
-const AQUATIC_LAIRS = new Set<Lairs>([
-  Lairs.LakeAcuity,
-  Lairs.LakeVerity,
-  Lairs.LakeValor,
-  Lairs.MarineCave,
-  Lairs.SeaTemple,
-]);
-
-/**
- * The lairs on an island out at sea, which stand on the water as well
- * as on the ground: a lair at sea is the island being there
- */
-const ISLAND_LAIRS = new Set<Lairs>([
-  Lairs.SeafoamIslands,
-  Lairs.FarawayIsland,
-  Lairs.WhirlIslands,
-  Lairs.IslandCave,
-  Lairs.SouthernIsland,
-  Lairs.BirthIsland,
-  Lairs.FullmoonIsland,
-  Lairs.NewmoonIsland,
-  Lairs.NavelRock,
-]);
 
 /**
  * Whether the lair's place may be on this cell, by whether it is water.

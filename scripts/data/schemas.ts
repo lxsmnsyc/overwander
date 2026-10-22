@@ -216,6 +216,10 @@ const LAIRS: Schema = {
   additionalProperties: part(
     {
       species: names('species', 'Who is at home there, in the order a raid picks from'),
+      stands: described(
+        { enum: ['water', 'island'] },
+        'On the water only, or an island that stands on water and ground; left out for ground only',
+      ),
       underground: described({ type: 'boolean' }, 'A cave under its biome stages it too'),
       reserved: described({ type: 'boolean' }, 'Kept out of the world until its batch lists it'),
     },

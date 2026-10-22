@@ -1,9 +1,13 @@
 # Each lair by its enum name: `species` at home there, in the order a raid
-# picks from; `underground` if a cave under its biome stages it too;
-# `reserved` keeps it out of the world until its batch lists it.
+# picks from; `stands: water` for one whose place is the water itself and
+# `stands: island` for one out at sea, which stands on water and ground alike
+# (every other lair stays off the water); `underground` if a cave under its
+# biome stages it too; `reserved` keeps it out of the world until its batch
+# lists it.
 
 SeafoamIslands:
   species: [Articuno]
+  stands: island
   underground: true
 PowerPlant:
   species: [Zapdos]
@@ -17,6 +21,7 @@ CeruleanCave:
 # the one it has always had
 FarawayIsland:
   species: [Mew]
+  stands: island
 # Where the three beasts were burned and brought back. It is the one lair with
 # more than one resident, which is what the games say: they were made together
 # and set loose together, and no place belongs to any one of them
@@ -24,6 +29,7 @@ BurnedTower:
   species: [Raikou, Entei, Suicune]
 WhirlIslands:
   species: [Lugia]
+  stands: island
   underground: true
 BellTower:
   species: [HoOh]
@@ -38,6 +44,7 @@ DesertRuins:
   underground: true
 IslandCave:
   species: [Regice]
+  stands: island
   underground: true
 AncientTomb:
   species: [Registeel]
@@ -46,10 +53,12 @@ AncientTomb:
 # Tower it holds two, so which of the pair is at home is a roll
 SouthernIsland:
   species: [Latias, Latios]
+  stands: island
 # The three the weather trio sleep in: a cavern that floods, one that fills
 # with heat, and the tower the sky is reached from
 MarineCave:
   species: [Kyogre]
+  stands: water
   underground: true
 TerraCave:
   species: [Groudon]
@@ -60,6 +69,7 @@ SkyPillar:
 # only way there
 BirthIsland:
   species: [Deoxys]
+  stands: island
 # The valley a Jirachi sleeps under, woken by the comet that passes over it. A
 # mythical's lair, so no biome hosts it
 Forina:
@@ -69,10 +79,13 @@ Forina:
 # three places and stayed in them
 LakeAcuity:
   species: [Uxie]
+  stands: water
 LakeVerity:
   species: [Mesprit]
+  stands: water
 LakeValor:
   species: [Azelf]
+  stands: water
 # The top of the mountain, where the two that made the world are called down.
 # It holds both, like the Southern Island, so which of them answers is a roll
 SpearPillar:
@@ -87,12 +100,15 @@ TurnbackCave:
 # that boat
 FullmoonIsland:
   species: [Cresselia]
+  stands: island
 NewmoonIsland:
   species: [Darkrai]
+  stands: island
 # The temple that surfaces once and sinks again, and the prince that lives in
 # it. A mythical's lair, so no biome hosts it
 SeaTemple:
   species: [Manaphy]
+  stands: water
 # The cavern at the top of the volcano, which is not a cave the thing in it
 # lives under but the one it hangs off
 StarkMountain:
@@ -125,6 +141,7 @@ IronRuins:
 # its peak, so which of them answers is a roll
 NavelRock:
   species: [Lugia, HoOh]
+  stands: island
 # The tower set into the sea cliffs, where an orb calls down any of the
 # weather trio, so which of them answers is a roll
 EmbeddedTower:

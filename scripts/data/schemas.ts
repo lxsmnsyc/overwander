@@ -921,6 +921,25 @@ const BATTLE_FILES: [file: string, title: string, entry: Schema][] = [
   ['battle-share.json', 'Battle: shares', SHARE],
   ['battle-z-power.json', 'Battle: Z-power', { type: 'integer', minimum: 1 }],
   ['battle-max-power.json', 'Battle: Max power', { type: 'integer', minimum: 1 }],
+  [
+    'battle-z-effects.json',
+    'Battle: Z-effects',
+    {
+      oneOf: [
+        { enum: ['heal', 'clear', 'critical', 'centre', 'curse'] },
+        part(
+          {
+            stages: described(
+              { oneOf: [{ const: 'all' }, names('stage')] },
+              'The stages raised, or `all` for the five stats',
+            ),
+            value: { type: 'number' },
+          },
+          ['stages', 'value'],
+        ),
+      ],
+    },
+  ],
 ];
 
 function json(schema: Schema): string {

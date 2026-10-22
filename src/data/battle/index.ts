@@ -1,5 +1,5 @@
 import * as v from 'valibot';
-import type { Stages } from '../constants/stats';
+import { Stages } from '../constants/stats';
 import type { Moves } from '../ids/moves';
 import { MOVE_IDS, STAGE_IDS, STATUS_IDS, TEAM_STATUS_IDS } from '../ids/names';
 import type { Statuses, TeamStatuses } from '../ids/status';
@@ -14,6 +14,7 @@ import stagesFile from './stages.yaml';
 import statusesFile from './statuses.yaml';
 import zPowerFile from './z-power.yaml';
 import maxPowerFile from './max-power.yaml';
+import zEffectsFile from './z-effects.yaml';
 
 /**
  * The numbers the battle reads off each move, out of their YAML: what
@@ -190,3 +191,50 @@ export const Z_POWER_OVERRIDES = table(zPowerFile, 'z-power.yaml', COUNT, (power
  * wrong
  */
 export const MAX_POWER_OVERRIDES = table(maxPowerFile, 'max-power.yaml', COUNT, (power) => power);
+
+/** What a type crystal adds to a status move of its type, just before the move goes off */
+export type ZStatusEffect =
+  | { kind: 'stages'; stages: readonly Stages[]; value: number }
+  /** Back to full HP */
+  | { kind: 'heal' }
+  /** Every lowered stage back to 0 */
+  | { kind: 'clear' }
+  /** Critical hit ratio 2 stages up, as Focus Energy */
+  | { kind: 'critical' }
+  /** Draws the other side's moves, as Follow Me */
+  | { kind: 'centre' }
+  /** Full HP for a Ghost, Attack a stage for anything else */
+  | { kind: 'curse' };
+
+const ALL_STATS = [
+  Stages.Attack,
+  Stages.Defense,
+  Stages.SpecialAttack,
+  Stages.SpecialDefense,
+  Stages.Speed,
+] as const;
+
+/** Each status move's Z-effect, for the moves the mainline gives one */
+export const Z_STATUS_EFFECTS = table(
+  zEffectsFile,
+  'z-effects.yaml',
+  v.union([
+    v.picklist(['heal', 'clear', 'critical', 'centre', 'curse']),
+    v.object({ stages: v.union([v.literal('all'), v.array(NAME)]), value: v.number() }),
+  ]),
+  (effect, at): ZStatusEffect => {
+    if (typeof effect === 'string') {
+      return { kind: effect };
+    }
+    if (effect.stages === 'all') {
+      return { kind: 'stages', stages: ALL_STATS, value: effect.value };
+    }
+
+    const stages: Stages[] = [];
+
+    for (const stage of effect.stages) {
+      stages.push(idOf<Stages>(STAGE_IDS, stage, at));
+    }
+    return { kind: 'stages', stages, value: effect.value };
+  },
+);

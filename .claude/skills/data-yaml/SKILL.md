@@ -81,6 +81,7 @@ The numbers a fight reads off each move live apart from the move, in `src/data/b
 | `multi-hit.yaml`      | `min` and `max` strikes, and whether each is `escalating`        |
 | `recoil.yaml`, `drain.yaml`, `heal.yaml` | a share, as a number or a fraction such as `1/3` |
 | `z-power.yaml`        | a type Z-Move's power, for the moves the table by power gets wrong |
+| `z-effects.yaml`      | what a type crystal adds to a status move: `stages` raised by `value`, or `heal`, `clear`, `critical`, `centre` or `curse` |
 
 `src/data/battle/index.ts` reads them into the tables the battle files re-export (`STATUS_MOVES`, `RECOIL_MOVES` and the rest). A move is added to a mechanic by adding it to that file; what the mechanic does with the number stays in `src/battle/moves/`.
 

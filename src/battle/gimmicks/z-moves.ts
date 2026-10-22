@@ -98,7 +98,7 @@ function holdsTypeCrystal(unit: Unit, type: Types): boolean {
 
 /** The Z-effect this unit's crystal adds to a status move, if any */
 function zEffectFor(unit: Unit, move: Moves, target: MoveTarget): ZStatusEffect | null {
-  const effect = Z_STATUS_EFFECTS.get(move);
+  const effect = Z_STATUS_EFFECTS[move];
 
   if (
     effect == null ||

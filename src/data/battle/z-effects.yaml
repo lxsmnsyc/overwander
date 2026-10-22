@@ -1,0 +1,260 @@
+# The Z-effect a type crystal adds to each status move of its type,
+# just before the move goes off. Missing are the moves the mainline
+# gives none, and Memento, Parting Shot, Healing Wish and Lunar Dance,
+# whose Z-effect heals a replacement that never comes in here.
+#
+# A move either raises `stages` by `value` (`all` is the five stats),
+# or names one of the other effects: `heal` (back to full HP), `clear`
+# (every lowered stage back to 0), `critical` (critical hit ratio up
+# two, as Focus Energy), `centre` (draws the other side's moves, as
+# Follow Me) or `curse` (full HP for a Ghost, Attack up one otherwise)
+
+Leer: { stages: [Attack], value: 1 }
+TailWhip: { stages: [Attack], value: 1 }
+Screech: { stages: [Attack], value: 1 }
+Meditate: { stages: [Attack], value: 1 }
+Sharpen: { stages: [Attack], value: 1 }
+WillOWisp: { stages: [Attack], value: 1 }
+Taunt: { stages: [Attack], value: 1 }
+OdorSleuth: { stages: [Attack], value: 1 }
+Howl: { stages: [Attack], value: 1 }
+BulkUp: { stages: [Attack], value: 1 }
+PowerTrick: { stages: [Attack], value: 1 }
+HoneClaws: { stages: [Attack], value: 1 }
+WorkUp: { stages: [Attack], value: 1 }
+Rototiller: { stages: [Attack], value: 1 }
+TopsyTurvy: { stages: [Attack], value: 1 }
+LaserFocus: { stages: [Attack], value: 1 }
+
+MirrorMove: { stages: [Attack], value: 2 }
+
+Splash: { stages: [Attack], value: 3 }
+
+Growl: { stages: [Defense], value: 1 }
+PoisonPowder: { stages: [Defense], value: 1 }
+Toxic: { stages: [Defense], value: 1 }
+Reflect: { stages: [Defense], value: 1 }
+Withdraw: { stages: [Defense], value: 1 }
+Harden: { stages: [Defense], value: 1 }
+Roar: { stages: [Defense], value: 1 }
+PoisonGas: { stages: [Defense], value: 1 }
+SpiderWeb: { stages: [Defense], value: 1 }
+Spikes: { stages: [Defense], value: 1 }
+Charm: { stages: [Defense], value: 1 }
+PainSplit: { stages: [Defense], value: 1 }
+Torment: { stages: [Defense], value: 1 }
+FeatherDance: { stages: [Defense], value: 1 }
+Tickle: { stages: [Defense], value: 1 }
+Block: { stages: [Defense], value: 1 }
+ToxicSpikes: { stages: [Defense], value: 1 }
+AquaRing: { stages: [Defense], value: 1 }
+StealthRock: { stages: [Defense], value: 1 }
+DefendOrder: { stages: [Defense], value: 1 }
+WideGuard: { stages: [Defense], value: 1 }
+QuickGuard: { stages: [Defense], value: 1 }
+MatBlock: { stages: [Defense], value: 1 }
+NobleRoar: { stages: [Defense], value: 1 }
+FlowerShield: { stages: [Defense], value: 1 }
+GrassyTerrain: { stages: [Defense], value: 1 }
+FairyLock: { stages: [Defense], value: 1 }
+PlayNice: { stages: [Defense], value: 1 }
+SpikyShield: { stages: [Defense], value: 1 }
+VenomDrench: { stages: [Defense], value: 1 }
+BabyDollEyes: { stages: [Defense], value: 1 }
+BanefulBunker: { stages: [Defense], value: 1 }
+StrengthSap: { stages: [Defense], value: 1 }
+TearfulLook: { stages: [Defense], value: 1 }
+
+Growth: { stages: [SpecialAttack], value: 1 }
+ConfuseRay: { stages: [SpecialAttack], value: 1 }
+MindReader: { stages: [SpecialAttack], value: 1 }
+Nightmare: { stages: [SpecialAttack], value: 1 }
+SweetKiss: { stages: [SpecialAttack], value: 1 }
+TeeterDance: { stages: [SpecialAttack], value: 1 }
+FakeTears: { stages: [SpecialAttack], value: 1 }
+MetalSound: { stages: [SpecialAttack], value: 1 }
+Gravity: { stages: [SpecialAttack], value: 1 }
+MiracleEye: { stages: [SpecialAttack], value: 1 }
+Embargo: { stages: [SpecialAttack], value: 1 }
+Telekinesis: { stages: [SpecialAttack], value: 1 }
+Soak: { stages: [SpecialAttack], value: 1 }
+SimpleBeam: { stages: [SpecialAttack], value: 1 }
+ReflectType: { stages: [SpecialAttack], value: 1 }
+IonDeluge: { stages: [SpecialAttack], value: 1 }
+Electrify: { stages: [SpecialAttack], value: 1 }
+GearUp: { stages: [SpecialAttack], value: 1 }
+PsychicTerrain: { stages: [SpecialAttack], value: 1 }
+Instruct: { stages: [SpecialAttack], value: 1 }
+
+PsychoShift: { stages: [SpecialAttack], value: 2 }
+HealBlock: { stages: [SpecialAttack], value: 2 }
+
+StunSpore: { stages: [SpecialDefense], value: 1 }
+Whirlwind: { stages: [SpecialDefense], value: 1 }
+Glare: { stages: [SpecialDefense], value: 1 }
+ThunderWave: { stages: [SpecialDefense], value: 1 }
+LightScreen: { stages: [SpecialDefense], value: 1 }
+MeanLook: { stages: [SpecialDefense], value: 1 }
+Flatter: { stages: [SpecialDefense], value: 1 }
+Charge: { stages: [SpecialDefense], value: 1 }
+Wish: { stages: [SpecialDefense], value: 1 }
+Ingrain: { stages: [SpecialDefense], value: 1 }
+MudSport: { stages: [SpecialDefense], value: 1 }
+CosmicPower: { stages: [SpecialDefense], value: 1 }
+WaterSport: { stages: [SpecialDefense], value: 1 }
+WonderRoom: { stages: [SpecialDefense], value: 1 }
+MagicRoom: { stages: [SpecialDefense], value: 1 }
+Entrainment: { stages: [SpecialDefense], value: 1 }
+CraftyShield: { stages: [SpecialDefense], value: 1 }
+MistyTerrain: { stages: [SpecialDefense], value: 1 }
+Confide: { stages: [SpecialDefense], value: 1 }
+EerieImpulse: { stages: [SpecialDefense], value: 1 }
+MagneticFlux: { stages: [SpecialDefense], value: 1 }
+Spotlight: { stages: [SpecialDefense], value: 1 }
+
+MagicCoat: { stages: [SpecialDefense], value: 2 }
+Imprison: { stages: [SpecialDefense], value: 2 }
+Captivate: { stages: [SpecialDefense], value: 2 }
+AromaticMist: { stages: [SpecialDefense], value: 2 }
+Powder: { stages: [SpecialDefense], value: 2 }
+
+SleepPowder: { stages: [Speed], value: 1 }
+StringShot: { stages: [Speed], value: 1 }
+Supersonic: { stages: [Speed], value: 1 }
+Sing: { stages: [Speed], value: 1 }
+Hypnosis: { stages: [Speed], value: 1 }
+LovelyKiss: { stages: [Speed], value: 1 }
+ScaryFace: { stages: [Speed], value: 1 }
+LockOn: { stages: [Speed], value: 1 }
+Safeguard: { stages: [Speed], value: 1 }
+Encore: { stages: [Speed], value: 1 }
+RolePlay: { stages: [Speed], value: 1 }
+Yawn: { stages: [Speed], value: 1 }
+SkillSwap: { stages: [Speed], value: 1 }
+GrassWhistle: { stages: [Speed], value: 1 }
+GastroAcid: { stages: [Speed], value: 1 }
+PowerSwap: { stages: [Speed], value: 1 }
+GuardSwap: { stages: [Speed], value: 1 }
+WorrySeed: { stages: [Speed], value: 1 }
+GuardSplit: { stages: [Speed], value: 1 }
+PowerSplit: { stages: [Speed], value: 1 }
+AfterYou: { stages: [Speed], value: 1 }
+Quash: { stages: [Speed], value: 1 }
+StickyWeb: { stages: [Speed], value: 1 }
+ElectricTerrain: { stages: [Speed], value: 1 }
+ToxicThread: { stages: [Speed], value: 1 }
+SpeedSwap: { stages: [Speed], value: 1 }
+AuroraVeil: { stages: [Speed], value: 1 }
+RainDance: { stages: [Speed], value: 1 }
+SunnyDay: { stages: [Speed], value: 1 }
+Sandstorm: { stages: [Speed], value: 1 }
+Hail: { stages: [Speed], value: 1 }
+
+Trick: { stages: [Speed], value: 2 }
+Recycle: { stages: [Speed], value: 2 }
+Snatch: { stages: [Speed], value: 2 }
+MeFirst: { stages: [Speed], value: 2 }
+Switcheroo: { stages: [Speed], value: 2 }
+AllySwitch: { stages: [Speed], value: 2 }
+Bestow: { stages: [Speed], value: 2 }
+
+Mimic: { stages: [Accuracy], value: 1 }
+FocusEnergy: { stages: [Accuracy], value: 1 }
+DefenseCurl: { stages: [Accuracy], value: 1 }
+SweetScent: { stages: [Accuracy], value: 1 }
+Copycat: { stages: [Accuracy], value: 1 }
+Defog: { stages: [Accuracy], value: 1 }
+TrickRoom: { stages: [Accuracy], value: 1 }
+
+Flash: { stages: [Evasion], value: 1 }
+SandAttack: { stages: [Evasion], value: 1 }
+SmokeScreen: { stages: [Evasion], value: 1 }
+Kinesis: { stages: [Evasion], value: 1 }
+Detect: { stages: [Evasion], value: 1 }
+Camouflage: { stages: [Evasion], value: 1 }
+LuckyChant: { stages: [Evasion], value: 1 }
+MagnetRise: { stages: [Evasion], value: 1 }
+
+Conversion: { stages: all, value: 1 }
+Sketch: { stages: all, value: 1 }
+TrickOrTreat: { stages: all, value: 1 }
+ForestsCurse: { stages: all, value: 1 }
+Geomancy: { stages: all, value: 1 }
+HappyHour: { stages: all, value: 1 }
+Celebrate: { stages: all, value: 1 }
+HoldHands: { stages: all, value: 1 }
+Purify: { stages: all, value: 1 }
+
+Teleport: heal
+Haze: heal
+Mist: heal
+Transform: heal
+Conversion2: heal
+Spite: heal
+BellyDrum: heal
+HealBell: heal
+PsychUp: heal
+Stockpile: heal
+Refresh: heal
+Aromatherapy: heal
+
+LeechSeed: clear
+SwordsDance: clear
+DoubleTeam: clear
+Rest: clear
+Substitute: clear
+Agility: clear
+Minimize: clear
+Disable: clear
+Spore: clear
+Amnesia: clear
+Recover: clear
+Barrier: clear
+AcidArmor: clear
+SoftBoiled: clear
+CottonSpore: clear
+Protect: clear
+PerishSong: clear
+Endure: clear
+Swagger: clear
+MilkDrink: clear
+Attract: clear
+BatonPass: clear
+MorningSun: clear
+Synthesis: clear
+Moonlight: clear
+Swallow: clear
+FollowMe: clear
+HelpingHand: clear
+TailGlow: clear
+SlackOff: clear
+IronDefense: clear
+CalmMind: clear
+DragonDance: clear
+Roost: clear
+RockPolish: clear
+NastyPlot: clear
+HealOrder: clear
+DarkVoid: clear
+Autotomize: clear
+RagePowder: clear
+QuiverDance: clear
+Coil: clear
+ShellSmash: clear
+HealPulse: clear
+ShiftGear: clear
+CottonGuard: clear
+KingsShield: clear
+ShoreUp: clear
+FloralHealing: clear
+
+Foresight: critical
+SleepTalk: critical
+Tailwind: critical
+Acupressure: critical
+HeartSwap: critical
+
+DestinyBond: centre
+Grudge: centre
+
+Curse: curse

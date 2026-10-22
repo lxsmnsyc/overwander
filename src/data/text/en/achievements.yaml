@@ -1,0 +1,53 @@
+# What each achievement tier is called, and each line: its name, which
+# doubles as the title worn from Bronze (Master prefixed at Platinum), and
+# the deed it counts, for the hover card
+
+tiers:
+  None: Unranked
+  Bronze: Bronze
+  Silver: Silver
+  Gold: Gold
+  Platinum: Platinum
+lines:
+  Collector:
+    name: Collector
+    deed: pokemon caught
+  Hatcher:
+    name: Hatcher
+    deed: eggs hatched
+  Coach:
+    name: Coach
+    deed: levels gained
+  Wayfarer:
+    name: Wayfarer
+    deed: steps walked
+  Socialite:
+    name: Socialite
+    deed: people served by
+  Forager:
+    name: Forager
+    deed: landmarks claimed
+  Raider:
+    name: Raider
+    deed: raids won
+  Trader:
+    name: Trader
+    deed: trades made
+  Auctioneer:
+    name: Auctioneer
+    deed: auctions settled
+  Confidant:
+    name: Confidant
+    deed: friends made
+  Wayfinder:
+    name: Wayfinder
+    deed: portals crossed
+  Matchmaker:
+    name: Matchmaker
+    deed: pairs bred
+  Purifier:
+    name: Purifier
+    deed: shadows purified
+  Pathfinder:
+    name: Pathfinder
+    deed: biomes discovered

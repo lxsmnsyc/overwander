@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Weather words",
+  "type": "object",
+  "propertyNames": {
+    "$ref": "names.json#/definitions/weather"
+  },
+  "additionalProperties": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string",
+        "description": "What it is called"
+      },
+      "description": {
+        "type": "string",
+        "description": "What a picture of it cannot say"
+      }
+    },
+    "required": [
+      "name",
+      "description"
+    ],
+    "additionalProperties": false
+  }
+}

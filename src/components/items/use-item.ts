@@ -28,7 +28,7 @@ import { getAbilityData, getSpeciesSignature } from '../../data/abilities';
 import { getAwakenableAbilities } from '../../data/overworld/npc';
 import { Items, getBall, getMachineMove, isMachineItem } from '../../data/ids/items';
 import type { Moves } from '../../data/ids/moves';
-import { NATURE_NAMES } from '../../data/ids/natures';
+import { NATURE_NAMES } from '../../data/ids/text';
 import { Genders, type Species } from '../../data/ids/species';
 import { BERRY_EFFORT_DROPS } from '../../data/items/berries';
 import {

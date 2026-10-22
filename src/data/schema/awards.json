@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Awards",
+  "type": "object",
+  "propertyNames": {
+    "$ref": "names.json#/definitions/award"
+  },
+  "additionalProperties": {
+    "type": "object",
+    "properties": {
+      "color": {
+        "type": "string",
+        "pattern": "^#[0-9a-f]{6}$",
+        "description": "The earned state of its disc"
+      },
+      "sprite": {
+        "type": "array",
+        "items": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "string"
+          }
+        ],
+        "minItems": 2,
+        "maxItems": 2,
+        "description": "The extras sheet and the name on it, where a picture ships"
+      }
+    },
+    "required": [
+      "color"
+    ],
+    "additionalProperties": false
+  }
+}

@@ -1,7 +1,8 @@
 import { STAT_NAMES } from '../constants/stats';
 import type { Items } from '../ids/items';
 import type Natures from '../ids/natures';
-import { NATURE_EFFECTS, NATURE_NAMES, getNatureFactor } from '../ids/natures';
+import { NATURE_EFFECTS, getNatureFactor } from '../ids/natures';
+import { NATURE_NAMES } from '../ids/text';
 import { itemText } from './__create';
 import recordsFile from './records/mints.yaml';
 import { recordField } from './yaml';

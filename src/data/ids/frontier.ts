@@ -102,5 +102,43 @@ const enum FrontierRule {
   Singled = 9,
 }
 
+/**
+ * What is behind the Pike's curtain.
+ *
+ * The mainline's rooms come to the same handful of things: something
+ * is wrong with your party on the far side, or somebody was kind. The
+ * roll is taken when the challenge is accepted and baked into the
+ * party as it is frozen, so what the curtain did is part of the fight
+ * rather than something rolled again on every watch
+ */
+export const enum PikeCurtain {
+  Poisoned = 0,
+  Burned = 1,
+  Paralysed = 2,
+  Asleep = 3,
+  /** The kind room: the party walks out mended, whatever it walked in as */
+  Healed = 4,
+}
+
+/**
+ * What the Arcade's roulette lands on.
+ *
+ * The panel is rolled when the challenge is taken and it lands on
+ * both sides, which is what tells it from the Pike's curtain: the
+ * Arcade changes the fight, the Pike changes the challenger
+ */
+export const enum ArcadePanel {
+  Sun = 0,
+  Rain = 1,
+  Sandstorm = 2,
+  Hail = 3,
+  /** Every held item on the field is left at the door */
+  Stripped = 4,
+  /** Everybody on the field walks in poisoned */
+  Poisoned = 5,
+  /** And the kind panel: everybody walks in whole */
+  Mended = 6,
+}
+
 export { FrontierBrain, FrontierRule };
 export default FrontierBrain;

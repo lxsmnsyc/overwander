@@ -1,3 +1,5 @@
+import * as v from 'valibot';
+
 /**
  * What every YAML registry shares: turning the names a file is written
  * in back into ids, and failing clearly where a name is not one
@@ -32,4 +34,26 @@ export function flagsOf(
     flags |= idOf(table, name, where);
   }
   return flags;
+}
+
+/**
+ * Every member of an enum given a string, out of a file keyed by
+ * member name. A member left out fails the load
+ */
+export function stringTable<T extends number>(
+  ids: Readonly<Record<string, T>>,
+  file: unknown,
+  where: string,
+): Record<number, string> {
+  const table: Record<number, string> = {};
+
+  for (const [name, said] of Object.entries(v.parse(v.record(v.string(), v.string()), file))) {
+    table[idOf(ids, name, `${where}: ${name}`)] = said;
+  }
+  for (const [name, id] of Object.entries(ids)) {
+    if (!Object.hasOwn(table, id)) {
+      throw new Error(`${where}: ${name} is missing`);
+    }
+  }
+  return table;
 }

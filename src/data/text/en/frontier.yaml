@@ -1,16 +1,55 @@
-# What each Frontier Brain is called, and the house they keep, which is
-# what their rule is named for
+# What each Frontier Brain is called, the house they keep (which is what
+# their rule is named for), and what they say as the house is entered
 
-Brandon: { name: Brandon, house: Battle Pyramid }
-Greta: { name: Greta, house: Battle Arena }
-Lucy: { name: Lucy, house: Battle Pike }
-Noland: { name: Noland, house: Battle Factory }
-Anabel: { name: Anabel, house: Battle Tower }
-Spenser: { name: Spenser, house: Battle Palace }
-Tucker: { name: Tucker, house: Battle Dome }
-Palmer: { name: Palmer, house: Battle Tower }
-Thorton: { name: Thorton, house: Battle Factory }
-Dahlia: { name: Dahlia, house: Battle Arcade }
-Darach: { name: Darach, house: Battle Castle }
-Caitlin: { name: Caitlin, house: Battle Castle }
-Argenta: { name: Argenta, house: Battle Hall }
+Brandon:
+  name: Brandon
+  house: Battle Pyramid
+  greeting: You came to my pyramid. Leave everything at the door and climb.
+Greta:
+  name: Greta
+  house: Battle Arena
+  greeting: The clock is running. Fight like it matters, because it is judged.
+Lucy:
+  name: Lucy
+  house: Battle Pike
+  greeting: Pick a curtain. What is behind it is not my doing, and I do not care.
+Noland:
+  name: Noland
+  house: Battle Factory
+  greeting: Nothing here is yours and nothing here is mine. Pick three and let us see.
+Anabel:
+  name: Anabel
+  house: Battle Tower
+  greeting: No tricks up here. My three against your three. Begin when you are ready.
+Spenser:
+  name: Spenser
+  house: Battle Palace
+  greeting: In my palace nobody takes orders. Bring three whose hearts you already know.
+Tucker:
+  name: Tucker
+  house: Battle Dome
+  greeting: Show me your three first. The Dome always answers, and the crowd loves an answer.
+Palmer:
+  name: Palmer
+  house: Battle Tower
+  greeting: My son talks about you. Let us find out whether he was exaggerating.
+Thorton:
+  name: Thorton
+  house: Battle Factory
+  greeting: Rentals, both sides, no preparation. I have run the numbers. You have not.
+Dahlia:
+  name: Dahlia
+  house: Battle Arcade
+  greeting: Spin it! Whatever it lands on lands on both of us. That is the fun.
+Darach:
+  name: Darach
+  house: Battle Castle
+  greeting: The lady is watching. I am afraid the house keeps its own medicine.
+Caitlin:
+  name: Caitlin
+  house: Battle Castle
+  greeting: Darach usually does this for me. Today I am curious enough to do it myself.
+Argenta:
+  name: Argenta
+  house: Battle Hall
+  greeting: One of yours, one of mine. No hiding behind anybody else.

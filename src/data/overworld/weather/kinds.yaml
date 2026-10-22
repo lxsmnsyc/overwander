@@ -1,0 +1,120 @@
+# Every sky there is: what it is drawn as on the world map, the types it
+# favours, and the battle sky a fight met under it is fought in.
+#
+# The colors run cold to warm the way the skies do, and the showpieces
+# are the only saturated ones, so a player scanning the map sees them.
+#
+# Every type is favoured by some sky, weighted by how often a sky turns
+# up: the world is wet and cold, so a type hung on a sandstorm alone
+# would never be boosted. A plain sky favours nothing (`[]`), and a
+# showpiece favours `everything`.
+#
+# Most skies have no mainline counterpart and fight under `None`, and
+# none fights under a primal sky, since those refuse a whole type
+
+Clear:
+  color: '#ece2aa'
+  favours: []
+  battle: None
+Cloudy:
+  color: '#b0b8c4'
+  favours: [Normal]
+  battle: None
+Overcast:
+  color: '#808896'
+  favours: [Dark, Normal]
+  battle: None
+Breezy:
+  color: '#aadece'
+  favours: [Flying]
+  battle: None
+Drizzle:
+  color: '#8cbae6'
+  favours: [Water, Grass]
+  battle: Rain
+Rain:
+  color: '#5288d6'
+  favours: [Water, Electric]
+  battle: Rain
+Downpour:
+  color: '#2852aa'
+  favours: [Water, Grass]
+  battle: Rain
+Thunderstorm:
+  color: '#462882'
+  favours: [Electric, Dragon]
+  battle: Rain
+Mist:
+  color: '#d2d8e2'
+  favours: [Bug, Grass, Poison]
+  battle: Fog
+Fog:
+  color: '#f0f0f4'
+  favours: [Ghost, Dark, Psychic]
+  battle: Fog
+Haze:
+  color: '#d6be96'
+  favours: [Fire, Poison]
+  battle: Sunny
+Frost:
+  color: '#c4e8fa'
+  favours: [Ice, Steel]
+  battle: Snow
+Snow:
+  color: '#fafcff'
+  favours: [Ice, Fairy]
+  battle: Snow
+Blizzard:
+  color: '#96c8f0'
+  favours: [Ice, Steel]
+  battle: Hail
+Hail:
+  color: '#78aabe'
+  favours: [Ice, Rock]
+  battle: Hail
+Sandstorm:
+  color: '#d6a454'
+  favours: [Rock, Ground, Steel]
+  battle: Sandstorm
+DustHaze:
+  color: '#b4966e'
+  favours: [Ground, Rock, Normal]
+  battle: Sandstorm
+Heatwave:
+  color: '#f06e3c'
+  favours: [Fire, Fighting]
+  battle: Sunny
+FallingAsh:
+  color: '#5a5050'
+  favours: [Fire, Dark]
+  battle: Sandstorm
+# The showpieces are worth what they are met under, not what they
+# are fought under: none of them has a sky the engine knows
+Aurora:
+  color: '#50e6aa'
+  favours: [Psychic, Fairy]
+  battle: None
+Rainbow:
+  color: '#fa78c8'
+  favours: [Fairy, Flying]
+  battle: None
+PollenDrift:
+  color: '#f0dc50'
+  favours: [Grass, Bug]
+  battle: None
+MeteorShower:
+  color: '#ff3c3c'
+  favours: everything
+  battle: None
+FataMorgana:
+  color: '#ffaa28'
+  favours: everything
+  battle: None
+DarkDay:
+  color: '#14141e'
+  favours: everything
+  battle: None
+Fogbow:
+  color: '#aa6eff'
+  favours: everything
+  battle: None

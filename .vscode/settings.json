@@ -85,6 +85,24 @@
     "./src/data/schema/landmarks.json": "src/data/overworld/landmarks.yaml",
     "./src/data/schema/landmarks-text.json": "src/data/text/*/landmarks.yaml",
     "./src/data/schema/biome-phenomena.json": "src/data/overworld/biome-phenomena.yaml",
-    "./src/data/schema/phenomena-text.json": "src/data/text/*/phenomena.yaml"
+    "./src/data/schema/phenomena-text.json": "src/data/text/*/phenomena.yaml",
+    "./src/data/schema/biomes-text.json": "src/data/text/*/biomes.yaml",
+    "./src/data/schema/biome-colors.json": "src/data/biome/colors.yaml",
+    "./src/data/schema/times-of-day-text.json": "src/data/text/*/times-of-day.yaml",
+    "./src/data/schema/spawn-rarities-text.json": "src/data/text/*/spawn-rarities.yaml",
+    "./src/data/schema/stats-text.json": "src/data/text/*/stats.yaml",
+    "./src/data/schema/item-types-text.json": "src/data/text/*/item-types.yaml",
+    "./src/data/schema/achievements-text.json": "src/data/text/*/achievements.yaml",
+    "./src/data/schema/frontier-rooms-text.json": "src/data/text/*/frontier-rooms.yaml",
+    "./src/data/schema/dex-rungs-text.json": "src/data/text/*/dex-rungs.yaml",
+    "./src/data/schema/statuses-text.json": "src/data/text/*/statuses.yaml",
+    "./src/data/schema/awards-text.json": "src/data/text/*/awards.yaml",
+    "./src/data/schema/awards.json": "src/data/awards.yaml",
+    "./src/data/schema/families-text.json": "src/data/text/*/families.yaml",
+    "./src/data/schema/natures-text.json": "src/data/text/*/natures.yaml",
+    "./src/data/schema/egg-groups-text.json": "src/data/text/*/egg-groups.yaml",
+    "./src/data/schema/titles-text.json": "src/data/text/*/titles.yaml",
+    "./src/data/schema/weather-kinds.json": "src/data/overworld/weather/kinds.yaml",
+    "./src/data/schema/weather-text.json": "src/data/text/*/weather.yaml"
   }
 }

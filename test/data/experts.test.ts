@@ -27,8 +27,8 @@ import {
   getSpeciesData,
   registerSpecies,
 } from '../../src/data/species';
+import { AWARD_NAMES } from '../../src/data/awards';
 import Awards, {
-  AWARD_NAMES,
   FRONTIER_SYMBOLS,
   HOENN_BADGES,
   HOENN_HONORS,

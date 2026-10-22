@@ -20,10 +20,15 @@ const LEGEND = v.object({
   party: v.array(v.string()),
 });
 
+const SAID = v.object({ name: v.string(), greeting: v.string() });
+
 /** Every legend, in the order they are numbered */
 export const LEGENDS: Legend[] = [];
 
 export const LEGEND_NAMES: Record<number, string> = {};
+
+/** What a legend says, where they say anything at all */
+export const LEGEND_GREETINGS: Record<number, string> = {};
 
 /** The sheets each is seen in */
 export const LEGEND_CHARSETS: Record<number, string[]> = {};
@@ -49,8 +54,11 @@ for (const [name, written] of Object.entries(v.parse(v.record(v.string(), LEGEND
 }
 LEGENDS.sort((one, two) => one - two);
 
-for (const [name, title] of Object.entries(v.parse(v.record(v.string(), v.string()), namesFile))) {
-  LEGEND_NAMES[idOf<Legend>(LEGEND_IDS, name, `text/en/legends.yaml: ${name}`)] = title;
+for (const [name, said] of Object.entries(v.parse(v.record(v.string(), SAID), namesFile))) {
+  const legend = idOf<Legend>(LEGEND_IDS, name, `text/en/legends.yaml: ${name}`);
+
+  LEGEND_NAMES[legend] = said.name;
+  LEGEND_GREETINGS[legend] = said.greeting;
 }
 
 // Every legend the enum has is written down, so none turns up nameless or bare

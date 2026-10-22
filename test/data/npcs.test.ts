@@ -36,7 +36,7 @@ import {
   getSpeciesData,
   registerSpecies,
 } from '../../src/data/species';
-import { AWARD_NAMES } from '../../src/data/ids/awards';
+import { AWARD_NAMES } from '../../src/data/awards';
 import type Awards from '../../src/data/ids/awards';
 import {
   SYNDICATES,

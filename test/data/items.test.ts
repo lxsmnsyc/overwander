@@ -185,7 +185,8 @@ import { PLATES } from '../../src/data/items/plates';
 import { FORM_ITEMS, getItemForms } from '../../src/data/items/form-items';
 import { RAID_ITEMS, getRaidSpecies } from '../../src/data/items/raid-items';
 import { getRegisteredSpecies, getSpeciesData, registerSpecies } from '../../src/data/species';
-import Natures, { NATURE_EFFECTS, NATURE_NAMES } from '../../src/data/ids/natures';
+import Natures, { NATURE_EFFECTS } from '../../src/data/ids/natures';
+import { NATURE_NAMES } from '../../src/data/ids/text';
 
 // Registry-only tests: no battle is involved, the data just has to
 // be registered (re-registration is an idempotent map overwrite)

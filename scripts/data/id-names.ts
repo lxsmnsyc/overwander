@@ -54,7 +54,7 @@ const TABLES: Table[] = [
   { name: 'SPAWN_RARITY_IDS', enumName: 'SpawnRarity', from: './biome' },
   { name: 'EGG_GROUP_IDS', enumName: 'EggGroups', from: './egg-groups' },
   { name: 'FAMILY_IDS', enumName: 'Families', from: './families', isDefault: true },
-  { name: 'TYPE_IDS', enumName: 'Types', from: '../constants/types' },
+  { name: 'TYPE_IDS', enumName: 'Types', from: './types' },
   { name: 'STAT_IDS', enumName: 'Stats', from: './stats' },
   { name: 'STAGE_IDS', enumName: 'Stages', from: './stats' },
   { name: 'STATUS_IDS', enumName: 'Statuses', from: './status' },

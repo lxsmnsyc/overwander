@@ -1141,7 +1141,10 @@ const BATTLE_LISTS: [file: string, schema: Schema][] = [
   ],
   [
     'battle-z-moves.json',
-    closedSections('Battle: Z-Moves', { types: mapping('type', 'move'), signatures: names('move') }),
+    closedSections('Battle: Z-Moves', {
+      types: mapping('type', 'move'),
+      signatures: names('move'),
+    }),
   ],
 ];
 
@@ -1750,6 +1753,25 @@ export default function renderDataSchemas(members: Map<string, string[]>): Map<s
     ['biome-phenomena.json', json(BIOME_PHENOMENA)],
     ['phenomena-text.json', json(namesText('Phenomenon names', 'phenomenon'))],
     ['biomes-text.json', json(namesText('Biome names', 'biome'))],
+    [
+      'types.json',
+      json(
+        keyed(
+          'Types',
+          'type',
+          part(
+            {
+              color: described(COLOR, 'What it is drawn in'),
+              effective: names('type', 'What it hits for double'),
+              resistant: names('type', 'What it hits for half'),
+              immune: names('type', 'What it cannot touch'),
+            },
+            ['color'],
+          ),
+        ),
+      ),
+    ],
+    ['types-text.json', json(namesText('Type names', 'type'))],
     ['biome-colors.json', json(keyed('Biome colors', 'biome', COLOR))],
     ['times-of-day-text.json', json(namesText('Time of day names', 'time-of-day'))],
     ['spawn-rarities-text.json', json(namesText('Spawn rarity names', 'spawn-rarity'))],

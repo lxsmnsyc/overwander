@@ -101,6 +101,8 @@
     "./src/data/schema/biome-phenomena.json": "src/data/overworld/biome-phenomena.yaml",
     "./src/data/schema/phenomena-text.json": "src/data/text/*/phenomena.yaml",
     "./src/data/schema/biomes-text.json": "src/data/text/*/biomes.yaml",
+    "./src/data/schema/types.json": "src/data/types.yaml",
+    "./src/data/schema/types-text.json": "src/data/text/*/types.yaml",
     "./src/data/schema/biome-colors.json": "src/data/biome/colors.yaml",
     "./src/data/schema/times-of-day-text.json": "src/data/text/*/times-of-day.yaml",
     "./src/data/schema/spawn-rarities-text.json": "src/data/text/*/spawn-rarities.yaml",

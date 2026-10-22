@@ -1,0 +1,22 @@
+# What each type is called, wherever a type is read rather than matched
+
+Unknown: Unknown
+Normal: Normal
+Fighting: Fighting
+Flying: Flying
+Poison: Poison
+Ground: Ground
+Rock: Rock
+Bug: Bug
+Ghost: Ghost
+Steel: Steel
+Fire: Fire
+Water: Water
+Grass: Grass
+Electric: Electric
+Psychic: Psychic
+Ice: Ice
+Dragon: Dragon
+Dark: Dark
+Fairy: Fairy
+Stellar: Stellar

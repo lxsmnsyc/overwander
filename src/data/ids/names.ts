@@ -8,7 +8,7 @@ import { Balls, ItemFlags, ItemTypes, Items } from './items';
 import Biome, { SpawnRarity, TimeOfDay } from './biome';
 import { EggGroups } from './egg-groups';
 import Families from './families';
-import { Types } from '../constants/types';
+import { Types } from './types';
 import { Stages, Stats } from './stats';
 import { Statuses, TeamStatuses, Terrains, Weathers } from './status';
 import MoveRole from './move-roles';

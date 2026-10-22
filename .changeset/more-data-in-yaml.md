@@ -11,3 +11,4 @@ More of the game's data is written as YAML:
 - Names and lines: biomes, stats, statuses, awards, achievements, natures, families and egg groups, the overworld's skies, award colours and sprites, and what each gym leader, Elite Four member, champion, legend and Frontier Brain says.
 - The remaining move, AI role, expert build, ground, ability and boss tables, with new Punch, Kick, Dance, Ballistic and HighCrit move flags.
 - The berry and honey tree pools, where items are buried, Alola's Totems, which lairs stand on water, the quests and daily pool, the achievement thresholds, the species pairings (true shadows, fusions, feats, Ultra Beasts), the Nobles, the status casts, the Frontier rooms and the Ace classes.
+- The type chart, with each type's colour, and the type names under the English text.

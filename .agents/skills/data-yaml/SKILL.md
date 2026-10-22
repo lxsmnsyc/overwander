@@ -107,6 +107,10 @@ What a true shadow is (its stats, its name) stays code in `true-shadow.ts`; the 
 
 `src/data/achievements.yaml` holds each achievement line by its enum name (`ids/achievements.ts`): the `metric` it climbs, narrowed by an `npc` or a `landmark`, and its four `tiers`. Beside them are the type lines' `types` and `type-tiers`, the `trainer-tiers`, and each metal's `colors`. A worn title is recorded against a line's number, so a line is appended to the enum and never renumbered.
 
+## Types
+
+`src/data/types.yaml` holds each type by name: the `color` it is drawn in, and what it does attacking, as `effective` (double), `resistant` (half) and `immune` (nothing) lists. A type left off all three takes the hit at face value. The `Types` enum is `ids/types.ts`; `constants/types.ts` reads the file and keeps the matchup sums.
+
 ## Names and lines
 
 The words for the smaller enums sit under `src/data/text/en/`, each keyed by member name and read with `stringTable` from `src/data/yaml.ts` (or a loader of its own where an entry holds more than a string). Every member needs an entry.
@@ -117,6 +121,7 @@ The words for the smaller enums sit under `src/data/text/en/`, each keyed by mem
 | `stats.yaml`                                | the six stats under `stats:`, the seven stages under `stages:` |
 | `item-types.yaml`                           | each bag shelf's name                                          |
 | `statuses.yaml`                             | how each status reads                                          |
+| `types.yaml`                                | each type's name; its colour and matchups are `src/data/types.yaml` |
 | `families.yaml`, `natures.yaml`, `egg-groups.yaml` | the names `ids/text.ts` reads                           |
 | `awards.yaml`                               | each award's name; its `color` and `sprite` are `src/data/awards.yaml` |
 | `achievements.yaml`                         | each tier's name under `tiers:`, each line's `name` and `deed` under `lines:` |

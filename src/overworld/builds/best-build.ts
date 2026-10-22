@@ -12,7 +12,7 @@ import {
 } from '../../data/species/__create';
 import { MOVE_WEATHERS } from '../../data/moves/weather';
 import { isRecoilMove } from '../../data/moves/recoil';
-import { isPunchMove } from '../../data/moves/punches';
+import { isPunchMove } from '../../data/moves/flags';
 import { isMultiHitMove } from '../../data/moves/multi-hit';
 import { Weathers } from '../../data/ids/status';
 import {

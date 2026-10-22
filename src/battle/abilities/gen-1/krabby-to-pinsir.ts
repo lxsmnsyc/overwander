@@ -7,7 +7,7 @@ import { DamageFlags, MoveFlags } from '../../../data/ids/moves';
 import { Statuses, Weathers } from '../../../data/ids/status';
 import { getItemData } from '../../../data/items';
 import { getMoveData } from '../../../data/moves';
-import { isPunchMove } from '../../../data/moves/punches';
+import { isPunchMove } from '../../../data/moves/flags';
 import { checkUnitRating } from '../../ai/rating';
 import { BattleEvents, EffectType, MoveTargetType } from '../../events';
 import { CRASH_MOVES } from '../../moves/crash';

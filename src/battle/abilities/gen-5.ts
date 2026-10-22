@@ -4,7 +4,7 @@ import Abilities from '../../data/ids/abilities';
 import { MoveCategories, type Moves } from '../../data/ids/moves';
 import { Species } from '../../data/ids/species';
 import { Statuses } from '../../data/ids/status';
-import { isDanceMove } from '../../data/moves/dances';
+import { isDanceMove } from '../../data/moves/flags';
 import { getSpeciesData } from '../../data/species';
 import { getWornPartner } from '../../data/species/fusion';
 import type Battle from '../battle';

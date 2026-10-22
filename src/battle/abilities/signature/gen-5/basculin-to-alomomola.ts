@@ -3,7 +3,7 @@ import { Stages, Stats } from '../../../../data/constants/stats';
 import Abilities from '../../../../data/ids/abilities';
 import { Statuses } from '../../../../data/ids/status';
 import { Types } from '../../../../data/constants/types';
-import { isDanceMove } from '../../../../data/moves/dances';
+import { isDanceMove } from '../../../../data/moves/flags';
 import { BattleEvents, EffectType, MoveTargetType } from '../../../events';
 import { MergedLifecycle } from '../../../lifecycle';
 import type Unit from '../../../unit';

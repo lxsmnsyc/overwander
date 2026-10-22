@@ -2,7 +2,7 @@ import { AttackPriority, EventPriority } from '../../../../core/event-emitter';
 import Abilities from '../../../../data/ids/abilities';
 import { MoveAttackFlags, Moves } from '../../../../data/ids/moves';
 import { Statuses } from '../../../../data/ids/status';
-import { isPunchMove } from '../../../../data/moves/punches';
+import { isPunchMove } from '../../../../data/moves/flags';
 import type Battle from '../../../battle';
 import { BattleEvents, EffectType, MoveTargetType, type UnitAttackEvent } from '../../../events';
 import { MergedLifecycle } from '../../../lifecycle';

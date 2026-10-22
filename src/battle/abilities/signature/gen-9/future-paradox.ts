@@ -5,7 +5,7 @@ import Abilities from '../../../../data/ids/abilities';
 import { MoveAttackFlags, MoveCategories, MoveFlags, Moves } from '../../../../data/ids/moves';
 import { Statuses, Terrains } from '../../../../data/ids/status';
 import { getMoveData } from '../../../../data/moves';
-import { isPunchMove } from '../../../../data/moves/punches';
+import { isPunchMove } from '../../../../data/moves/flags';
 import { healWorth } from '../../../ai/score';
 import type Battle from '../../../battle';
 import {

@@ -691,6 +691,38 @@ const SPECIES_TEXT = block(
   ]),
 );
 
+/** A Megas or Zeniths file: each keyed by its own species, and read off its `base` */
+function worn(
+  title: string,
+  stats: string[],
+  properties: Record<string, Schema>,
+  required: string[],
+): Schema {
+  const values: Record<string, Schema> = {};
+
+  for (const stat of stats) {
+    values[stat] = COUNT;
+  }
+  return {
+    $schema: DRAFT,
+    title,
+    type: 'object',
+    propertyNames: name('species'),
+    additionalProperties: part(
+      {
+        base: described(
+          name('species'),
+          'Whose shape it is, and what it does not change is read off',
+        ),
+        stats: part(values, stats),
+        types: names('type', 'One or two types'),
+        ...properties,
+      },
+      ['base', 'stats', 'types', ...required],
+    ),
+  };
+}
+
 /** A file of entries keyed by their own name, as the moves and abilities are */
 function keyed(title: string, definition: string, entry: Schema): Schema {
   return {
@@ -969,6 +1001,41 @@ export default function renderDataSchemas(members: Map<string, string[]>): Map<s
     ['species-abilities.json', json(ABILITIES)],
     ['species-learnsets.json', json(LEARNSETS)],
     ['species-text.json', json(SPECIES_TEXT)],
+    [
+      'species-megas.json',
+      json(
+        worn(
+          'Species: Megas',
+          listed('Stats'),
+          {
+            ability: described(name('ability'), "The mainline's"),
+            filler: described(
+              name('ability'),
+              "Worn instead, where the line already reaches the mainline's",
+            ),
+            height: described(COUNT, 'In meters'),
+            weight: described(COUNT, 'In kilograms'),
+          },
+          ['ability', 'height', 'weight'],
+        ),
+      ),
+    ],
+    ['species-megas-text.json', json(namesText('Mega names', 'species'))],
+    [
+      'species-zeniths.json',
+      json(
+        worn(
+          'Species: Zeniths',
+          listed('Stats'),
+          {
+            ability: described(name('ability'), 'One the line can never be born with'),
+            shard: described(name('item'), 'The shard held to reach it'),
+          },
+          ['ability', 'shard'],
+        ),
+      ),
+    ],
+    ['species-zeniths-text.json', json(namesText('Zenith holders', 'species'))],
     ['moves-battle.json', json(MOVE_BATTLE)],
     ['moves-cast.json', json(MOVE_CAST)],
     ['moves-text.json', json(MOVE_TEXT)],

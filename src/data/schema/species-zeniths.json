@@ -1,0 +1,78 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Species: Zeniths",
+  "type": "object",
+  "propertyNames": {
+    "$ref": "names.json#/definitions/species"
+  },
+  "additionalProperties": {
+    "type": "object",
+    "properties": {
+      "base": {
+        "$ref": "names.json#/definitions/species",
+        "description": "Whose shape it is, and what it does not change is read off"
+      },
+      "stats": {
+        "type": "object",
+        "properties": {
+          "HP": {
+            "type": "number",
+            "minimum": 0
+          },
+          "Attack": {
+            "type": "number",
+            "minimum": 0
+          },
+          "Defense": {
+            "type": "number",
+            "minimum": 0
+          },
+          "SpecialAttack": {
+            "type": "number",
+            "minimum": 0
+          },
+          "SpecialDefense": {
+            "type": "number",
+            "minimum": 0
+          },
+          "Speed": {
+            "type": "number",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "HP",
+          "Attack",
+          "Defense",
+          "SpecialAttack",
+          "SpecialDefense",
+          "Speed"
+        ],
+        "additionalProperties": false
+      },
+      "types": {
+        "type": "array",
+        "items": {
+          "$ref": "names.json#/definitions/type"
+        },
+        "description": "One or two types"
+      },
+      "ability": {
+        "$ref": "names.json#/definitions/ability",
+        "description": "One the line can never be born with"
+      },
+      "shard": {
+        "$ref": "names.json#/definitions/item",
+        "description": "The shard held to reach it"
+      }
+    },
+    "required": [
+      "base",
+      "stats",
+      "types",
+      "ability",
+      "shard"
+    ],
+    "additionalProperties": false
+  }
+}

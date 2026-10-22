@@ -84,7 +84,7 @@ Celebi row.
   other items and the catch's own abilities stay.
 - Stones are never sold. They sit in the rarest band of the item pool.
 - Where a line already reaches its Mega's canon ability, the Mega wears a different one
-  ([`megas.ts`](../src/data/species/megas.ts)).
+  (its `filler` in [`species/megas/`](../src/data/species/megas)).
 
 | Mega | Stat line | Ability it wears |
 | --- | --- | --- |

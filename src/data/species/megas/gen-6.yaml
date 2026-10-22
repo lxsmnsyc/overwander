@@ -1,0 +1,353 @@
+# The Megas of X and Y and of Omega Ruby and Alpha Sapphire, keyed by
+# species, in dex order.
+# Everything not written here is read off `base`.
+#
+# `ability` is the mainline's, worn on top of the catch's own. Where
+# the line already reaches it, wearing it would add nothing, so the
+# Mega wears its `filler` instead, one the line does not have.
+
+VenusaurMega:
+  base: Venusaur
+  stats: { HP: 80, Attack: 100, Defense: 123, SpecialAttack: 122, SpecialDefense: 120, Speed: 80 }
+  types: [Grass, Poison]
+  ability: ThickFat
+  height: 2.4
+  weight: 155.5
+CharizardMegaX:
+  base: Charizard
+  stats: { HP: 78, Attack: 130, Defense: 111, SpecialAttack: 130, SpecialDefense: 85, Speed: 100 }
+  types: [Fire, Dragon]
+  ability: ToughClaws
+  height: 1.7
+  weight: 110.5
+CharizardMegaY:
+  base: Charizard
+  stats: { HP: 78, Attack: 104, Defense: 78, SpecialAttack: 159, SpecialDefense: 115, Speed: 100 }
+  types: [Fire, Flying]
+  ability: Drought
+  height: 1.7
+  weight: 100.5
+BlastoiseMega:
+  base: Blastoise
+  stats: { HP: 79, Attack: 103, Defense: 120, SpecialAttack: 135, SpecialDefense: 115, Speed: 78 }
+  types: [Water]
+  ability: MegaLauncher
+  height: 1.6
+  weight: 101.1
+BeedrillMega:
+  base: Beedrill
+  stats: { HP: 65, Attack: 150, Defense: 40, SpecialAttack: 15, SpecialDefense: 80, Speed: 145 }
+  types: [Bug, Poison]
+  ability: Adaptability
+  height: 1.4
+  weight: 40.5
+PidgeotMega:
+  base: Pidgeot
+  stats: { HP: 83, Attack: 80, Defense: 80, SpecialAttack: 135, SpecialDefense: 80, Speed: 121 }
+  types: [Normal, Flying]
+  ability: NoGuard
+  height: 2.2
+  weight: 50.5
+AlakazamMega:
+  base: Alakazam
+  stats: { HP: 55, Attack: 50, Defense: 65, SpecialAttack: 175, SpecialDefense: 105, Speed: 150 }
+  types: [Psychic]
+  ability: Trace
+  height: 1.2
+  weight: 48
+SlowbroMega:
+  base: Slowbro
+  stats: { HP: 95, Attack: 75, Defense: 180, SpecialAttack: 130, SpecialDefense: 80, Speed: 30 }
+  types: [Water, Psychic]
+  ability: ShellArmor
+  height: 2
+  weight: 120
+GengarMega:
+  base: Gengar
+  stats: { HP: 60, Attack: 65, Defense: 80, SpecialAttack: 170, SpecialDefense: 95, Speed: 130 }
+  types: [Ghost, Poison]
+  ability: ShadowTag
+  height: 1.4
+  weight: 40.5
+KangaskhanMega:
+  base: Kangaskhan
+  stats: { HP: 105, Attack: 125, Defense: 100, SpecialAttack: 60, SpecialDefense: 100, Speed: 100 }
+  types: [Normal]
+  ability: ParentalBond
+  height: 2.2
+  weight: 100
+PinsirMega:
+  base: Pinsir
+  stats: { HP: 65, Attack: 155, Defense: 120, SpecialAttack: 65, SpecialDefense: 90, Speed: 105 }
+  types: [Bug, Flying]
+  ability: Aerilate
+  height: 1.7
+  weight: 59
+GyaradosMega:
+  base: Gyarados
+  stats: { HP: 95, Attack: 155, Defense: 109, SpecialAttack: 70, SpecialDefense: 130, Speed: 81 }
+  types: [Water, Dark]
+  ability: MoldBreaker
+  height: 6.5
+  weight: 305
+AerodactylMega:
+  base: Aerodactyl
+  stats: { HP: 80, Attack: 135, Defense: 85, SpecialAttack: 70, SpecialDefense: 95, Speed: 150 }
+  types: [Rock, Flying]
+  ability: ToughClaws
+  height: 2.1
+  weight: 79
+MewtwoMegaX:
+  base: Mewtwo
+  stats: { HP: 106, Attack: 190, Defense: 100, SpecialAttack: 154, SpecialDefense: 100, Speed: 130 }
+  types: [Psychic, Fighting]
+  ability: Steadfast
+  height: 2.3
+  weight: 127
+MewtwoMegaY:
+  base: Mewtwo
+  stats: { HP: 106, Attack: 150, Defense: 70, SpecialAttack: 194, SpecialDefense: 120, Speed: 140 }
+  types: [Psychic]
+  ability: Insomnia
+  height: 1.5
+  weight: 33
+AmpharosMega:
+  base: Ampharos
+  stats: { HP: 90, Attack: 95, Defense: 105, SpecialAttack: 165, SpecialDefense: 110, Speed: 45 }
+  types: [Electric, Dragon]
+  ability: MoldBreaker
+  height: 1.4
+  weight: 61.5
+SteelixMega:
+  base: Steelix
+  stats: { HP: 75, Attack: 125, Defense: 230, SpecialAttack: 55, SpecialDefense: 95, Speed: 30 }
+  types: [Steel, Ground]
+  ability: SandForce
+  height: 10.5
+  weight: 740
+ScizorMega:
+  base: Scizor
+  stats: { HP: 70, Attack: 150, Defense: 140, SpecialAttack: 65, SpecialDefense: 100, Speed: 75 }
+  types: [Bug, Steel]
+  ability: Technician
+  filler: ToughClaws
+  height: 2
+  weight: 125
+HeracrossMega:
+  base: Heracross
+  stats: { HP: 80, Attack: 185, Defense: 115, SpecialAttack: 40, SpecialDefense: 105, Speed: 75 }
+  types: [Bug, Fighting]
+  ability: SkillLink
+  height: 1.7
+  weight: 62.5
+HoundoomMega:
+  base: Houndoom
+  stats: { HP: 75, Attack: 90, Defense: 90, SpecialAttack: 140, SpecialDefense: 90, Speed: 115 }
+  types: [Dark, Fire]
+  ability: SolarPower
+  height: 1.9
+  weight: 49.5
+TyranitarMega:
+  base: Tyranitar
+  stats: { HP: 100, Attack: 164, Defense: 150, SpecialAttack: 95, SpecialDefense: 120, Speed: 71 }
+  types: [Rock, Dark]
+  ability: SandStream
+  filler: SandForce
+  height: 2.5
+  weight: 255
+SceptileMega:
+  base: Sceptile
+  stats: { HP: 70, Attack: 110, Defense: 75, SpecialAttack: 145, SpecialDefense: 85, Speed: 145 }
+  types: [Grass, Dragon]
+  ability: LightningRod
+  height: 1.9
+  weight: 55.2
+BlazikenMega:
+  base: Blaziken
+  stats: { HP: 80, Attack: 160, Defense: 80, SpecialAttack: 130, SpecialDefense: 80, Speed: 100 }
+  types: [Fire, Fighting]
+  ability: SpeedBoost
+  filler: Reckless
+  height: 1.9
+  weight: 52
+SwampertMega:
+  base: Swampert
+  stats: { HP: 100, Attack: 150, Defense: 110, SpecialAttack: 95, SpecialDefense: 110, Speed: 70 }
+  types: [Water, Ground]
+  ability: SwiftSwim
+  height: 1.9
+  weight: 102
+GardevoirMega:
+  base: Gardevoir
+  stats: { HP: 68, Attack: 85, Defense: 65, SpecialAttack: 165, SpecialDefense: 135, Speed: 100 }
+  types: [Psychic, Fairy]
+  ability: Pixilate
+  height: 1.6
+  weight: 48.4
+SableyeMega:
+  base: Sableye
+  stats: { HP: 50, Attack: 85, Defense: 125, SpecialAttack: 85, SpecialDefense: 115, Speed: 20 }
+  types: [Dark, Ghost]
+  ability: MagicBounce
+  height: 0.5
+  weight: 161
+MawileMega:
+  base: Mawile
+  stats: { HP: 50, Attack: 105, Defense: 125, SpecialAttack: 55, SpecialDefense: 95, Speed: 50 }
+  types: [Steel, Fairy]
+  ability: HugePower
+  height: 1
+  weight: 23.5
+AggronMega:
+  base: Aggron
+  stats: { HP: 70, Attack: 140, Defense: 230, SpecialAttack: 60, SpecialDefense: 80, Speed: 50 }
+  types: [Steel]
+  ability: Filter
+  height: 2.2
+  weight: 395
+MedichamMega:
+  base: Medicham
+  stats: { HP: 60, Attack: 100, Defense: 85, SpecialAttack: 80, SpecialDefense: 85, Speed: 100 }
+  types: [Fighting, Psychic]
+  ability: PurePower
+  filler: IronFist
+  height: 1.3
+  weight: 31.5
+ManectricMega:
+  base: Manectric
+  stats: { HP: 70, Attack: 75, Defense: 80, SpecialAttack: 135, SpecialDefense: 80, Speed: 135 }
+  types: [Electric]
+  ability: Intimidate
+  height: 1.8
+  weight: 44
+SharpedoMega:
+  base: Sharpedo
+  stats: { HP: 70, Attack: 140, Defense: 70, SpecialAttack: 110, SpecialDefense: 65, Speed: 105 }
+  types: [Water, Dark]
+  ability: StrongJaw
+  height: 2.5
+  weight: 130.3
+CameruptMega:
+  base: Camerupt
+  stats: { HP: 70, Attack: 120, Defense: 100, SpecialAttack: 145, SpecialDefense: 105, Speed: 20 }
+  types: [Fire, Ground]
+  ability: SheerForce
+  height: 2.5
+  weight: 320.5
+AltariaMega:
+  base: Altaria
+  stats: { HP: 75, Attack: 110, Defense: 110, SpecialAttack: 110, SpecialDefense: 105, Speed: 80 }
+  types: [Dragon, Fairy]
+  ability: Pixilate
+  height: 1.5
+  weight: 20.6
+BanetteMega:
+  base: Banette
+  stats: { HP: 64, Attack: 165, Defense: 75, SpecialAttack: 93, SpecialDefense: 83, Speed: 75 }
+  types: [Ghost]
+  ability: Prankster
+  height: 1.2
+  weight: 13
+AbsolMega:
+  base: Absol
+  stats: { HP: 65, Attack: 150, Defense: 60, SpecialAttack: 115, SpecialDefense: 60, Speed: 115 }
+  types: [Dark]
+  ability: MagicBounce
+  height: 1.2
+  weight: 49
+GlalieMega:
+  base: Glalie
+  stats: { HP: 80, Attack: 120, Defense: 80, SpecialAttack: 120, SpecialDefense: 80, Speed: 100 }
+  types: [Ice]
+  ability: Refrigerate
+  height: 2.1
+  weight: 350.2
+SalamenceMega:
+  base: Salamence
+  stats: { HP: 95, Attack: 145, Defense: 130, SpecialAttack: 120, SpecialDefense: 90, Speed: 120 }
+  types: [Dragon, Flying]
+  ability: Aerilate
+  height: 1.8
+  weight: 112.6
+MetagrossMega:
+  base: Metagross
+  stats: { HP: 80, Attack: 145, Defense: 150, SpecialAttack: 105, SpecialDefense: 110, Speed: 110 }
+  types: [Steel, Psychic]
+  ability: ToughClaws
+  height: 2.5
+  weight: 942.9
+LatiasMega:
+  base: Latias
+  stats: { HP: 80, Attack: 100, Defense: 120, SpecialAttack: 140, SpecialDefense: 150, Speed: 110 }
+  types: [Dragon, Psychic]
+  ability: Levitate
+  filler: FriendGuard
+  height: 1.8
+  weight: 52
+LatiosMega:
+  base: Latios
+  stats: { HP: 80, Attack: 130, Defense: 100, SpecialAttack: 160, SpecialDefense: 120, Speed: 110 }
+  types: [Dragon, Psychic]
+  ability: Levitate
+  filler: TintedLens
+  height: 2.3
+  weight: 70
+RayquazaMega:
+  base: Rayquaza
+  stats: { HP: 105, Attack: 180, Defense: 100, SpecialAttack: 180, SpecialDefense: 100, Speed: 115 }
+  types: [Dragon, Flying]
+  ability: DeltaStream
+  height: 10.8
+  weight: 392
+LopunnyMega:
+  base: Lopunny
+  stats: { HP: 65, Attack: 136, Defense: 94, SpecialAttack: 54, SpecialDefense: 96, Speed: 135 }
+  types: [Normal, Fighting]
+  ability: Scrappy
+  height: 1.3
+  weight: 28.3
+GarchompMega:
+  base: Garchomp
+  stats: { HP: 108, Attack: 170, Defense: 115, SpecialAttack: 120, SpecialDefense: 95, Speed: 92 }
+  types: [Dragon, Ground]
+  ability: SandForce
+  height: 1.9
+  weight: 95
+LucarioMega:
+  base: Lucario
+  stats: { HP: 70, Attack: 145, Defense: 88, SpecialAttack: 140, SpecialDefense: 70, Speed: 112 }
+  types: [Fighting, Steel]
+  ability: Adaptability
+  height: 1.3
+  weight: 57.5
+AbomasnowMega:
+  base: Abomasnow
+  stats: { HP: 90, Attack: 132, Defense: 105, SpecialAttack: 132, SpecialDefense: 105, Speed: 30 }
+  types: [Grass, Ice]
+  ability: SnowWarning
+  filler: ThickFat
+  height: 2.7
+  weight: 185
+GalladeMega:
+  base: Gallade
+  stats: { HP: 68, Attack: 165, Defense: 95, SpecialAttack: 65, SpecialDefense: 115, Speed: 110 }
+  types: [Psychic, Fighting]
+  ability: InnerFocus
+  height: 1.6
+  weight: 56.4
+AudinoMega:
+  base: Audino
+  stats: { HP: 103, Attack: 60, Defense: 126, SpecialAttack: 80, SpecialDefense: 126, Speed: 50 }
+  types: [Normal, Fairy]
+  ability: Healer
+  filler: Triage
+  height: 1.5
+  weight: 32
+DiancieMega:
+  base: Diancie
+  stats: { HP: 50, Attack: 160, Defense: 110, SpecialAttack: 160, SpecialDefense: 110, Speed: 110 }
+  types: [Rock, Fairy]
+  ability: MagicBounce
+  filler: QueenlyMajesty
+  height: 1.1
+  weight: 27.8

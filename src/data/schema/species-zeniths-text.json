@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Zenith holders",
+  "type": "object",
+  "propertyNames": {
+    "$ref": "names.json#/definitions/species"
+  },
+  "additionalProperties": {
+    "type": "string"
+  }
+}

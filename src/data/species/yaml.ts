@@ -244,7 +244,8 @@ function readHeld(
   return read;
 }
 
-function readStats(stats: Record<string, number>, where: string): Record<Stats, number> {
+/** Base stats written by name, with a clear failure for one left out */
+export function readStats(stats: Record<string, number>, where: string): Record<Stats, number> {
   const values = new Map<Stats, number>();
 
   for (const [name, value] of Object.entries(stats)) {

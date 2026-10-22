@@ -35,6 +35,19 @@ Growlithe:
 - **`egg-cycles`** is written only on the stage a line hatches at, and only where it is not 20.
 - **`active: any`** is every hour of the day. `base-form: false` marks a form, and `worn: true` a shape put on mid-fight. `dex` is written only where the id's own dex number would be wrong.
 
+## Megas and Zeniths
+
+| file                              | holds                                                                 |
+| --------------------------------- | --------------------------------------------------------------------- |
+| `species/megas/gen-N.yaml`        | each Mega by species: `base`, `stats`, `types`, `ability`, `filler`, `height`, `weight` |
+| `species/zeniths/<region>.yaml`   | each Zenith by species: `base`, `stats`, `types`, `ability`, `shard`  |
+| `text/en/megas.yaml`              | each Mega's name                                                      |
+| `text/en/zeniths.yaml`            | who each Zenith is for; the Zenith is named after them in code        |
+
+- **Order is the list.** `listMegas()` walks the Mega files by generation and `listZeniths()` the Zenith files by region, each in the order it writes them, and the Zenith Shards follow the same order.
+- **`filler`** is worn instead of the mainline's `ability` where the line already reaches that ability.
+- Everything else, from learnsets to egg groups, is read off `base` when `species/megas.ts` and `species/zeniths.ts` register them.
+
 ## Regions
 
 `src/data/species/regions.yaml` holds each region by its enum name: the `dex` numbers it covers, ends included, and, for a region with a dex chain, the `milestones` each rung asks for and the `medal` the last one hangs. A rung keeps its number for good, so milestones are appended, never inserted. The sprite folder names stay in `regions.ts` beside the enum.
@@ -119,6 +132,6 @@ A file per family in two folders, each item keyed by name:
 - **A new enum member needs `pnpm id-names`** before the YAML can use it. It rewrites the name tables and the JSON Schemas in `src/data/schema/`, and a test fails when either is out of date. The schemas are for the editor only (completion and squiggles through the Red Hat YAML extension, mapped in `.vscode/settings.json`); the loaders are still what decide whether the data is right, so a field added to a loader is added to `scripts/data/schemas.ts` too.
 - **Keep a file readable in one sitting.** When a file grows past a few hundred lines, split it the way its neighbours are split rather than letting it grow.
 - **Comments are welcome.** They say why a value is what it is, the way they did in the code.
-- **Behaviour stays in TypeScript.** Rules that choose a form (`species/forms.ts`), the Megas and true shadows (built from their base species), weather pairings, and anything that runs in a fight are code.
+- **Behaviour stays in TypeScript.** Rules that choose a form (`species/forms.ts`), building a Mega, Zenith or true shadow from its base species, weather pairings, and anything that runs in a fight are code. The Mega and Zenith tables themselves are YAML.
 
 The build turns each `.yaml` file into a module (`scripts/vite/yaml.ts`), so the browser never parses YAML.

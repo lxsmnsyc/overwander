@@ -60,8 +60,8 @@ thin slice of it.
       when it is first wanted is the next step.
 - [ ] **Move the other registries to YAML** on the same pipeline. Moves,
       abilities, items, the per-move battle numbers, the spawn pools and the
-      lairs are done. The Megas and true shadows can follow once the YAML can
-      say `inherits:`.
+      lairs are done, and so are the Mega and Zenith tables. The true shadows
+      can follow once the YAML can say `inherits:`.
 - [ ] **Load moves, abilities and items on demand** in the browser, behind a
       Suspense gate around the panels and the battle view. The server keeps
       registering everything eagerly.
@@ -111,7 +111,7 @@ Small and unblocked.
 - [ ] Mini Boss ability
 - [ ] catch tags
 - [ ] **Zenith forms, region by region.** Kanto is done
-      (`src/data/species/zeniths.ts`), and Johto is next. Each batch proposes,
+      (`src/data/species/zeniths/kanto.yaml`), and Johto is next. Each batch proposes,
       per species, the stat spread (+100), the worn ability and any type change for approval,
       then adds the shape, its shard id (2000000 + dex × 100 + 01), its tint in
       `scripts/art/item-icons.ts` and its `zenith/<region>` icon.

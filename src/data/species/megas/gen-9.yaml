@@ -1,0 +1,364 @@
+# The Megas of Legends: Z-A and its Mega Dimension, keyed by species,
+# in dex order. They follow the sixth generation's in `listMegas`.
+# Everything not written here is read off `base`.
+#
+# `ability` is the mainline's, worn on top of the catch's own. Where
+# the line already reaches it, wearing it would add nothing, so the
+# Mega wears its `filler` instead, one the line does not have.
+
+RaichuMegaX:
+  base: Raichu
+  stats: { HP: 60, Attack: 135, Defense: 95, SpecialAttack: 90, SpecialDefense: 95, Speed: 110 }
+  types: [Electric]
+  ability: ElectricSurge
+  height: 1.2
+  weight: 38
+RaichuMegaY:
+  base: Raichu
+  stats: { HP: 60, Attack: 100, Defense: 55, SpecialAttack: 160, SpecialDefense: 80, Speed: 130 }
+  types: [Electric]
+  ability: NoGuard
+  height: 1
+  weight: 26
+ClefableMega:
+  base: Clefable
+  stats: { HP: 95, Attack: 80, Defense: 93, SpecialAttack: 135, SpecialDefense: 110, Speed: 70 }
+  types: [Fairy, Flying]
+  ability: MagicBounce
+  height: 1.7
+  weight: 42.3
+VictreebelMega:
+  base: Victreebel
+  stats: { HP: 80, Attack: 125, Defense: 85, SpecialAttack: 135, SpecialDefense: 95, Speed: 70 }
+  types: [Grass, Poison]
+  ability: InnardsOut
+  height: 4.5
+  weight: 125.5
+StarmieMega:
+  base: Starmie
+  stats: { HP: 60, Attack: 100, Defense: 105, SpecialAttack: 130, SpecialDefense: 105, Speed: 120 }
+  types: [Water, Psychic]
+  ability: HugePower
+  height: 2.3
+  weight: 80
+DragoniteMega:
+  base: Dragonite
+  stats: { HP: 91, Attack: 124, Defense: 115, SpecialAttack: 145, SpecialDefense: 125, Speed: 100 }
+  types: [Dragon, Flying]
+  ability: Multiscale
+  filler: GaleWings
+  height: 2.2
+  weight: 290
+MeganiumMega:
+  base: Meganium
+  stats: { HP: 80, Attack: 92, Defense: 115, SpecialAttack: 143, SpecialDefense: 115, Speed: 80 }
+  types: [Grass, Fairy]
+  ability: MegaSol
+  height: 2.4
+  weight: 201
+FeraligatrMega:
+  base: Feraligatr
+  stats: { HP: 85, Attack: 160, Defense: 125, SpecialAttack: 89, SpecialDefense: 93, Speed: 78 }
+  types: [Water, Dragon]
+  ability: Dragonize
+  height: 2.3
+  weight: 108.8
+SkarmoryMega:
+  base: Skarmory
+  stats: { HP: 65, Attack: 140, Defense: 110, SpecialAttack: 40, SpecialDefense: 100, Speed: 110 }
+  types: [Steel, Flying]
+  ability: Stalwart
+  height: 1.7
+  weight: 40.4
+ChimechoMega:
+  base: Chimecho
+  stats: { HP: 75, Attack: 50, Defense: 110, SpecialAttack: 135, SpecialDefense: 120, Speed: 65 }
+  types: [Psychic, Steel]
+  ability: Levitate
+  filler: PunkRock
+  height: 1.2
+  weight: 8
+AbsolMegaZ:
+  base: Absol
+  stats: { HP: 65, Attack: 154, Defense: 60, SpecialAttack: 75, SpecialDefense: 60, Speed: 151 }
+  types: [Dark, Ghost]
+  ability: Sharpness
+  filler: Sniper
+  height: 1.2
+  weight: 49
+StaraptorMega:
+  base: Staraptor
+  stats: { HP: 85, Attack: 140, Defense: 100, SpecialAttack: 60, SpecialDefense: 90, Speed: 110 }
+  types: [Fighting, Flying]
+  ability: Contrary
+  height: 1.9
+  weight: 50
+GarchompMegaZ:
+  base: Garchomp
+  stats: { HP: 108, Attack: 130, Defense: 85, SpecialAttack: 141, SpecialDefense: 85, Speed: 151 }
+  types: [Dragon]
+  ability: Levitate
+  height: 1.9
+  weight: 99
+LucarioMegaZ:
+  base: Lucario
+  stats: { HP: 70, Attack: 100, Defense: 70, SpecialAttack: 164, SpecialDefense: 70, Speed: 151 }
+  types: [Fighting, Steel]
+  ability: AuraGuard
+  height: 1.3
+  weight: 49.4
+FroslassMega:
+  base: Froslass
+  stats: { HP: 70, Attack: 80, Defense: 70, SpecialAttack: 140, SpecialDefense: 100, Speed: 120 }
+  types: [Ice, Ghost]
+  ability: SnowWarning
+  height: 2.6
+  weight: 29.6
+HeatranMega:
+  base: Heatran
+  stats: { HP: 91, Attack: 120, Defense: 106, SpecialAttack: 175, SpecialDefense: 141, Speed: 67 }
+  types: [Fire, Steel]
+  ability: SolidRock
+  height: 2.8
+  weight: 570
+DarkraiMega:
+  base: Darkrai
+  stats: { HP: 70, Attack: 120, Defense: 130, SpecialAttack: 165, SpecialDefense: 130, Speed: 85 }
+  types: [Dark]
+  ability: DarkAura
+  height: 3
+  weight: 240
+EmboarMega:
+  base: Emboar
+  stats: { HP: 110, Attack: 148, Defense: 75, SpecialAttack: 110, SpecialDefense: 110, Speed: 75 }
+  types: [Fire, Fighting]
+  ability: MoldBreaker
+  height: 1.8
+  weight: 180.3
+ExcadrillMega:
+  base: Excadrill
+  stats: { HP: 110, Attack: 165, Defense: 100, SpecialAttack: 65, SpecialDefense: 65, Speed: 103 }
+  types: [Ground, Steel]
+  ability: PiercingDrill
+  height: 0.9
+  weight: 60
+ScolipedeMega:
+  base: Scolipede
+  stats: { HP: 60, Attack: 140, Defense: 149, SpecialAttack: 75, SpecialDefense: 99, Speed: 62 }
+  types: [Bug, Poison]
+  ability: ShellArmor
+  height: 3.2
+  weight: 230.5
+ScraftyMega:
+  base: Scrafty
+  stats: { HP: 65, Attack: 130, Defense: 135, SpecialAttack: 55, SpecialDefense: 135, Speed: 68 }
+  types: [Dark, Fighting]
+  ability: Intimidate
+  filler: Stamina
+  height: 1.1
+  weight: 31
+EelektrossMega:
+  base: Eelektross
+  stats: { HP: 85, Attack: 145, Defense: 80, SpecialAttack: 135, SpecialDefense: 90, Speed: 80 }
+  types: [Electric]
+  ability: Eelevate
+  height: 3
+  weight: 180
+ChandelureMega:
+  base: Chandelure
+  stats: { HP: 60, Attack: 75, Defense: 110, SpecialAttack: 175, SpecialDefense: 110, Speed: 90 }
+  types: [Ghost, Fire]
+  ability: Infiltrator
+  filler: CursedBody
+  height: 2.5
+  weight: 69.6
+GolurkMega:
+  base: Golurk
+  stats: { HP: 89, Attack: 159, Defense: 105, SpecialAttack: 70, SpecialDefense: 105, Speed: 55 }
+  types: [Ground, Ghost]
+  ability: UnseenFist
+  height: 4
+  weight: 330
+ChesnaughtMega:
+  base: Chesnaught
+  stats: { HP: 88, Attack: 137, Defense: 172, SpecialAttack: 74, SpecialDefense: 115, Speed: 44 }
+  types: [Grass, Fighting]
+  ability: Bulletproof
+  filler: IronBarbs
+  height: 1.6
+  weight: 90
+DelphoxMega:
+  base: Delphox
+  stats: { HP: 75, Attack: 69, Defense: 72, SpecialAttack: 159, SpecialDefense: 125, Speed: 134 }
+  types: [Fire, Psychic]
+  ability: Levitate
+  height: 1.5
+  weight: 39
+GreninjaMega:
+  base: Greninja
+  stats: { HP: 72, Attack: 125, Defense: 77, SpecialAttack: 133, SpecialDefense: 81, Speed: 142 }
+  types: [Water, Dark]
+  ability: Protean
+  filler: Technician
+  height: 1.5
+  weight: 40
+PyroarMega:
+  base: Pyroar
+  stats: { HP: 86, Attack: 88, Defense: 92, SpecialAttack: 129, SpecialDefense: 86, Speed: 126 }
+  types: [Fire, Normal]
+  ability: FireMane
+  height: 1.5
+  weight: 93.3
+FloetteMega:
+  base: FloetteEternal
+  stats: { HP: 74, Attack: 85, Defense: 87, SpecialAttack: 155, SpecialDefense: 148, Speed: 102 }
+  types: [Fairy]
+  ability: FairyAura
+  height: 0.2
+  weight: 100.8
+MeowsticMega:
+  base: Meowstic
+  stats: { HP: 74, Attack: 48, Defense: 76, SpecialAttack: 143, SpecialDefense: 101, Speed: 124 }
+  types: [Psychic]
+  ability: Trace
+  height: 0.8
+  weight: 10.1
+MeowsticFemaleMega:
+  base: MeowsticFemale
+  stats: { HP: 74, Attack: 48, Defense: 76, SpecialAttack: 143, SpecialDefense: 101, Speed: 124 }
+  types: [Psychic]
+  ability: Trace
+  height: 0.8
+  weight: 10.1
+MalamarMega:
+  base: Malamar
+  stats: { HP: 86, Attack: 102, Defense: 88, SpecialAttack: 98, SpecialDefense: 120, Speed: 88 }
+  types: [Dark, Psychic]
+  ability: Contrary
+  filler: Unaware
+  height: 2.9
+  weight: 69.8
+BarbaracleMega:
+  base: Barbaracle
+  stats: { HP: 72, Attack: 140, Defense: 130, SpecialAttack: 64, SpecialDefense: 106, Speed: 88 }
+  types: [Rock, Fighting]
+  ability: ToughClaws
+  filler: RockHead
+  height: 2.2
+  weight: 100
+DragalgeMega:
+  base: Dragalge
+  stats: { HP: 65, Attack: 85, Defense: 105, SpecialAttack: 132, SpecialDefense: 163, Speed: 44 }
+  types: [Poison, Dragon]
+  ability: Regenerator
+  height: 2.1
+  weight: 100.3
+HawluchaMega:
+  base: Hawlucha
+  stats: { HP: 78, Attack: 137, Defense: 100, SpecialAttack: 74, SpecialDefense: 93, Speed: 118 }
+  types: [Fighting, Flying]
+  ability: NoGuard
+  height: 1
+  weight: 25
+ZygardeMega:
+  base: ZygardeComplete
+  stats: { HP: 216, Attack: 70, Defense: 91, SpecialAttack: 216, SpecialDefense: 85, Speed: 100 }
+  types: [Dragon, Ground]
+  ability: Pressure
+  height: 7.7
+  weight: 610
+CrabominableMega:
+  base: Crabominable
+  stats: { HP: 97, Attack: 157, Defense: 122, SpecialAttack: 62, SpecialDefense: 107, Speed: 33 }
+  types: [Fighting, Ice]
+  ability: IronFist
+  filler: Guts
+  height: 2.6
+  weight: 252.8
+GolisopodMega:
+  base: Golisopod
+  stats: { HP: 75, Attack: 150, Defense: 175, SpecialAttack: 70, SpecialDefense: 120, Speed: 40 }
+  types: [Bug, Steel]
+  ability: ToughClaws
+  height: 2.3
+  weight: 148
+DrampaMega:
+  base: Drampa
+  stats: { HP: 78, Attack: 85, Defense: 110, SpecialAttack: 160, SpecialDefense: 116, Speed: 36 }
+  types: [Normal, Dragon]
+  ability: Berserk
+  filler: Analytic
+  height: 3
+  weight: 240.5
+MagearnaMega:
+  base: Magearna
+  stats: { HP: 80, Attack: 125, Defense: 115, SpecialAttack: 170, SpecialDefense: 115, Speed: 95 }
+  types: [Steel, Fairy]
+  ability: FullMetalBody
+  height: 1.3
+  weight: 248.1
+MagearnaOriginalMega:
+  base: MagearnaOriginal
+  stats: { HP: 80, Attack: 125, Defense: 115, SpecialAttack: 170, SpecialDefense: 115, Speed: 95 }
+  types: [Steel, Fairy]
+  ability: FullMetalBody
+  height: 1.3
+  weight: 248.1
+ZeraoraMega:
+  base: Zeraora
+  stats: { HP: 88, Attack: 157, Defense: 75, SpecialAttack: 147, SpecialDefense: 80, Speed: 153 }
+  types: [Electric]
+  ability: Transistor
+  height: 1.5
+  weight: 44.5
+FalinksMega:
+  base: Falinks
+  stats: { HP: 65, Attack: 135, Defense: 135, SpecialAttack: 70, SpecialDefense: 65, Speed: 100 }
+  types: [Fighting]
+  ability: Defiant
+  filler: Moxie
+  height: 1.6
+  weight: 99
+ScovillainMega:
+  base: Scovillain
+  stats: { HP: 65, Attack: 138, Defense: 85, SpecialAttack: 138, SpecialDefense: 85, Speed: 75 }
+  types: [Grass, Fire]
+  ability: SpicySpray
+  height: 1.2
+  weight: 22
+GlimmoraMega:
+  base: Glimmora
+  stats: { HP: 83, Attack: 90, Defense: 105, SpecialAttack: 150, SpecialDefense: 96, Speed: 101 }
+  types: [Rock, Poison]
+  ability: Adaptability
+  height: 2.8
+  weight: 77
+TatsugiriMega:
+  base: Tatsugiri
+  stats: { HP: 68, Attack: 65, Defense: 90, SpecialAttack: 135, SpecialDefense: 125, Speed: 92 }
+  types: [Dragon, Water]
+  ability: DragonsMaw
+  height: 0.6
+  weight: 24
+TatsugiriStretchyMega:
+  base: TatsugiriStretchy
+  stats: { HP: 68, Attack: 65, Defense: 90, SpecialAttack: 135, SpecialDefense: 125, Speed: 92 }
+  types: [Dragon, Water]
+  ability: DragonsMaw
+  height: 0.6
+  weight: 24
+TatsugiriDroopyMega:
+  base: TatsugiriDroopy
+  stats: { HP: 68, Attack: 65, Defense: 90, SpecialAttack: 135, SpecialDefense: 125, Speed: 92 }
+  types: [Dragon, Water]
+  ability: DragonsMaw
+  height: 0.6
+  weight: 24
+BaxcaliburMega:
+  base: Baxcalibur
+  stats: { HP: 115, Attack: 175, Defense: 117, SpecialAttack: 105, SpecialDefense: 101, Speed: 87 }
+  types: [Dragon, Ice]
+  ability: ThermalExchange
+  filler: IceScales
+  height: 2.1
+  weight: 315

@@ -1,0 +1,53 @@
+# Every older region's signatures, one family each, that once borrowed another move's
+# picture
+ShellTrap: { landing: Trap }
+
+# A blade charged the way Skull Bash is, a beam drawn up the way Hydro Pump's is,
+# a ball lobbed, bubbles blown, a bone tumbling and a veil put up like a screen
+FleurCannon: { landing: Fleur, wait: { striking: Charge } }
+
+# Moves that are an earlier move's picture in all but name
+StompingTantrum: { landing: Quake }
+
+# Every older region's signatures, one family each, that once borrowed another move's
+# picture
+# A blade charged the way Skull Bash is, a beam drawn up the way Hydro Pump's is,
+# a ball lobbed, bubbles blown, a bone tumbling and a veil put up like a screen
+ShadowBone: { landing: Bone, wait: { striking: Spun } }
+
+Accelerock: { landing: Accelerock }
+
+# Moves that are an earlier move's picture in all but name
+Liquidation: { landing: Torrent }
+
+# Attacks and signatures with a picture of their own
+PrismaticLaser: { landing: Prism }
+
+# Every older region's signatures, one family each, that once borrowed another move's
+# picture
+SpectralThief: { landing: Thief }
+
+# Attacks and signatures with a picture of their own
+SunsteelStrike: { landing: Sunsteel }
+MoongeistBeam: { landing: Moongeist }
+
+# Moves that are an earlier move's picture in all but name
+TearfulLook: { landing: Tears }
+ZingZap: { landing: Rush }
+
+# Attacks and signatures with a picture of their own
+NaturesMadness: { landing: Madness }
+
+# Every older region's signatures, one family each, that once borrowed another move's
+# picture
+MultiAttack: { landing: Multi }
+
+# Attacks and signatures with a picture of their own
+MindBlown: { landing: Detonate }
+
+# Every older region's signatures, one family each, that once borrowed another move's
+# picture
+PlasmaFists: { landing: Plasma }
+
+# Attacks and signatures with a picture of their own
+PhotonGeyser: { landing: Photon }

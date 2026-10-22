@@ -1,0 +1,50 @@
+# Heard as what it is: a song, a roar, a bell
+# A lullaby's pink, and Perish Song's notes gone dark
+Sing: { landing: Song, color: '#f0a8d0' }
+
+# Put up or done to itself, which a dome or a stat's chevrons drew for all of them
+Minimize: { landing: Mirage }
+Metronome: { landing: Wag }
+
+# Stat moves drawn as what the pokemon does, where the rising or falling arrows said only which stat
+DefenseCurl: { landing: Curl }
+
+LightScreen: { landing: Screen, color: SpecialDefense }
+
+# Heard as what it is: a song, a roar, a bell
+Roar: { landing: Roar }
+
+# Something turning in front of its eyes
+ConfuseRay: { landing: Trance }
+
+# A point driven in
+LeechLife: { landing: Drain }
+
+# What the mainline draws for these, rather than what their type
+# and category would have picked
+Haze: { landing: Haze }
+
+# A point driven in
+Absorb: { landing: Drain }
+
+# Named attacks the rules drew as something generic
+PetalDance: { landing: Rampage }
+
+# Something turning in front of its eyes
+Spore: { landing: Trance }
+Hypnosis: { landing: Trance }
+
+# Stat moves drawn as what the pokemon does, where the rising or falling arrows said only which stat
+Amnesia: { landing: Blank }
+
+Recover: { landing: Mend }
+
+# Reaching out and striking with something long
+Slam: { landing: Lash }
+
+# Wound round it
+Constrict: { landing: Coil }
+
+# Stat moves drawn as what the pokemon does, where the rising or falling arrows said only which stat
+# Drawn as a screen and as Roost's feathers, but still a raise and a drop on the way
+Barrier: { landing: Screen, wait: { striking: Focus }, color: Defense }

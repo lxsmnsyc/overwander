@@ -1,0 +1,16 @@
+# Moves that are an earlier move's picture in all but name
+Round: { landing: Song }
+EchoedVoice: { landing: Roar }
+
+# The moves whose type drew them as a flower burst
+StoredPower: { landing: Orbit }
+
+# Moves that are an earlier move's picture in all but name
+QuickGuard: { landing: Shell }
+
+# Stat moves drawn as what the pokemon does, a body coming down with its weight, and the Pledges
+ShellSmash: { landing: Smash }
+
+# Moves that are an earlier move's picture in all but name
+# The waits these Unova moves had before they borrowed an earlier move's picture
+HealPulse: { landing: Mend, wait: { striking: Brace } }

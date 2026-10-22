@@ -2,6 +2,7 @@ import { MoveAffects, MoveCategories, MoveFlags, Moves } from '../../../../data/
 import { Types } from '../../../../data/constants/types';
 import type { Weathers } from '../../../../data/ids/status';
 import { getMoveData } from '../../../../data/moves';
+import { LANDINGS, SHAPE_BY_TYPE, WINDING_AS, WINDING_UP } from '../../../../data/moves/visual';
 import { MULTI_HIT_MOVES, estimateMoveHits } from '../../../../battle/moves/multi-hit';
 import { getStageMoveEffect } from '../../../../battle/moves/stage';
 import PaintedVisual, { type LitPainter, type Painter } from '../__painted';
@@ -16,7 +17,6 @@ import kalos from './regions/kalos/legends';
 import legends from './regions/early/legends';
 import ohko from './themes/ohko';
 import minds from './themes/minds';
-import { BY_TYPE, NAMED } from './named';
 import stats from './themes/stats';
 import unova from './regions/unova';
 import zTypes from './z/types';
@@ -53,48 +53,6 @@ import {
 
 export type { EffectShape } from './shapes';
 export { weightOf } from './shapes';
-
-/**
- * The moves whose first step does nothing to anybody — a charge, a
- * burrow, a climb. The engine still resolves an effect on that step
- * (it is what puts the caster underground), and drawing a hit on
- * whatever the move is aimed at would be a lie about what happened
- */
-const WINDING_UP = new Set<Moves>([
-  Moves.SolarBeam,
-  Moves.SolarBlade,
-  Moves.SkyAttack,
-  Moves.SkullBash,
-  Moves.RazorWind,
-  Moves.Dig,
-  Moves.Fly,
-  Moves.Dive,
-  Moves.Bounce,
-  Moves.ShadowForce,
-  Moves.PhantomForce,
-  Moves.Geomancy,
-  Moves.Teleport,
-  Moves.Bide,
-  Moves.FreezeShock,
-  Moves.IceBurn,
-  Moves.SkyDrop,
-  Moves.ElectroShot,
-]);
-
-/**
- * The moves whose first step is the blow and whose second is
- * something else. U-turn strikes and then leaves, so the hit belongs
- * to the step the engine deals it on and the landing table holds what
- * the move does at the end of it
- */
-const WINDING_AS: Partial<Record<Moves, EffectShape>> = {
-  [Moves.UTurn]: 'Dart',
-  [Moves.FlipTurn]: 'Dart',
-  // Shed Tail makes its substitute and Chilly Reception calls the snow
-  // before either walks off
-  [Moves.ShedTail]: 'Doll',
-  [Moves.ChillyReception]: 'Reception',
-};
 
 /**
  * Where a contact hit stops being a jab and where it becomes a whole
@@ -175,7 +133,7 @@ function contactShape(move: Moves, type: Types): EffectShape {
 
 /** What this move does when it lands. */
 export function effectShapeFor(move: Moves): EffectShape {
-  const named = NAMED[move];
+  const named = LANDINGS[move];
 
   // A move with a picture of its own keeps it, stat or no stat: a
   // breeze of petals is what Sweet Scent is, and the evasion it takes
@@ -226,10 +184,10 @@ export function effectShapeFor(move: Moves): EffectShape {
   }
   if (data.category === MoveCategories.Physical) {
     return (data.flags & MoveFlags.Contact) === 0
-      ? (BY_TYPE[data.type] ?? 'Impact')
+      ? (SHAPE_BY_TYPE[data.type] ?? 'Impact')
       : contactShape(move, data.type);
   }
-  return BY_TYPE[data.type] ?? 'Bloom';
+  return SHAPE_BY_TYPE[data.type] ?? 'Bloom';
 }
 
 /**

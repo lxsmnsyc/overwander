@@ -1,0 +1,47 @@
+# Every older region's signatures, one family each, that once borrowed another move's
+# picture
+ClangorousSoul: { landing: Clangor }
+
+# Moves that are an earlier move's picture in all but name
+BodyPress: { landing: Tonnage }
+
+# Every older region's signatures, one family each, that once borrowed another move's
+# picture
+Decorate: { landing: Decorate }
+DrumBeating: { landing: Drumming }
+
+# Moves that are an earlier move's picture in all but name
+SnapTrap: { landing: Jaws }
+
+# Every older region's signatures, one family each, that once borrowed another move's
+# picture
+PyroBall: { landing: Pyroball }
+
+# Signatures with a picture of their own
+BehemothBlade: { landing: Behemoth }
+BehemothBash: { landing: Bulwark }
+
+# Every older region's signatures, one family each, that once borrowed another move's
+# picture
+AuraWheel: { landing: Aurawheel }
+
+# Moves that are an earlier move's picture in all but name
+BreakingSwipe: { landing: Lash }
+BranchPoke: { landing: Spike }
+
+# Every older region's signatures, one family each, that once borrowed another move's
+# picture
+Overdrive: { landing: Amped }
+AppleAcid: { landing: Acid }
+GravApple: { landing: Gravapple }
+SpiritBreak: { landing: Spiritbreak }
+StrangeSteam: { landing: Strangesteam }
+
+# Moves that are an earlier move's picture in all but name
+LifeDew: { landing: Mend }
+
+# Every older region's signatures, one family each, that once borrowed another move's
+# picture
+Obstruct: { landing: Obstruct }
+FalseSurrender: { landing: Surrender }
+MeteorAssault: { landing: Assault }

@@ -1,0 +1,36 @@
+# Attacks with a picture of their own
+PlayRough: { landing: Scuffle }
+
+# Moves that are an earlier move's picture in all but name
+FairyWind: { landing: Swirl }
+
+# Attacks with a picture of their own
+Moonblast: { landing: Lunar }
+
+# Moves that are an earlier move's picture in all but name
+Boomburst: { landing: Roar }
+
+# Every older region's signatures, one family each, that once borrowed another move's
+# picture
+FairyLock: { landing: Lock }
+KingsShield: { landing: Aegis }
+
+# Moves that are an earlier move's picture in all but name
+PlayNice: { landing: Hearts }
+
+# The legendary and mythical signatures
+DiamondStorm: { landing: Diamonds }
+SteamEruption: { landing: Steam }
+HyperspaceHole: { landing: Portal }
+
+# Attacks with a picture of their own
+WaterShuriken: { landing: Shuriken }
+
+# Moves that are an earlier move's picture in all but name
+MysticalFire: { landing: Blaze }
+
+# Moves that are an earlier move's picture in all but name
+SpikyShield: { landing: Shell }
+
+# Moves that are an earlier move's picture in all but name
+AromaticMist: { landing: Petals }

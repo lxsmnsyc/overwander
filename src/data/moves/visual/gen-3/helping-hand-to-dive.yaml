@@ -1,0 +1,42 @@
+# Something the pokemon did for itself that moves no stat, so the
+# stat rule never sees it
+HelpingHand: { landing: Boost }
+
+# Held between the two of them: an item, an ability, a move
+Trick: { landing: Warp }
+RolePlay: { landing: Warp }
+
+# A scent is petals on the air, the way Sweet Scent is, and a wish is a star
+Wish: { landing: Wishing }
+
+Ingrain: { landing: Roots }
+
+# Something the pokemon did for itself that moves no stat, so the
+# stat rule never sees it
+Recycle: { landing: Boost }
+
+# Edges and points
+BrickBreak: { landing: Claw }
+
+# Something turning in front of its eyes
+Yawn: { landing: Trance }
+
+# Edges and points
+KnockOff: { landing: Claw }
+
+Eruption: { landing: Spout }
+
+# Held between the two of them: an item, an ability, a move
+SkillSwap: { landing: Warp }
+Imprison: { landing: Warp }
+
+# Health coming back, whenever it arrives
+Refresh: { landing: Mend }
+
+# Ghost and dark, which close on it rather than strike it
+Grudge: { landing: Shade }
+Snatch: { landing: Shade }
+
+# Under the water and up under it, up out of reach and down
+# on it: the same two waits Dig and Fly spend
+Dive: { winding: none, wait: { winding: Vanish, striking: Surface } }

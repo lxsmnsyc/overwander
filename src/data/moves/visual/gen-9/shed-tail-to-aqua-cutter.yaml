@@ -1,0 +1,25 @@
+# Moves that are an earlier move's picture in all but name
+# Shed Tail makes its substitute and Chilly Reception calls the snow
+# before either walks off
+ShedTail: { landing: Relay, winding: Doll }
+
+# Signatures with a picture of their own
+ChillyReception: { landing: Relay, winding: Reception }
+
+# Moves that are an earlier move's picture in all but name
+TidyUp: { landing: Clear }
+Snowscape: { landing: Sky }
+Trailblaze: { landing: Rush }
+
+# Signatures with a picture of their own
+HyperDrill: { landing: Hyperdrill }
+TwinBeam: { landing: Twin }
+RageFist: { landing: Ragefist }
+ArmorCannon: { landing: Armor }
+BitterBlade: { landing: Bitter }
+DoubleShock: { landing: Doubleshock }
+GigatonHammer: { landing: Gigaton }
+
+# Moves that are an earlier move's picture in all but name
+Comeuppance: { landing: Turnabout }
+AquaCutter: { landing: Sickles }

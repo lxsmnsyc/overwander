@@ -1,0 +1,45 @@
+# Stat moves drawn as what the pokemon does, where the rising or falling arrows said only which stat
+Charm: { landing: Hearts }
+
+MilkDrink: { landing: Mend }
+Spark: { landing: Zap }
+
+# Blades that each cut their own way, where the rake of claws drew all of them alike
+FuryCutter: { landing: Cutter }
+
+# Something turning in front of its eyes, or behind them
+MeanLook: { landing: Trance }
+
+# What the target is feeling
+Attract: { landing: Hearts }
+
+# Something turning in front of its eyes, or behind them
+SleepTalk: { landing: Trance }
+
+# Heard as what it is: a song, a roar, a bell
+HealBell: { landing: Chime }
+
+# A bomb and a parcel are lobbed, a bone tumbles, and the ground
+# answers a Magnitude the way it answers an Earthquake
+Present: { landing: Blast, wait: { striking: Lobbed } }
+
+Safeguard: { landing: Screen }
+PainSplit: { landing: Drain }
+
+# Fire that stands as a pillar
+SacredFire: { landing: Pyre }
+
+# A bomb and a parcel are lobbed, a bone tumbles, and the ground
+# answers a Magnitude the way it answers an Earthquake
+Magnitude: { wait: { striking: Rise } }
+
+# The heaviest blows, drawn as what they are rather than as a bigger ordinary hit
+DynamicPunch: { landing: Haymaker }
+
+Megahorn: { landing: Spike }
+DragonBreath: { landing: Beam }
+
+# Something the pokemon itself did. The stat moves are drawn by
+# what they do to the stat, so what is left here is the three whose
+# picture is the act
+BatonPass: { landing: Relay }

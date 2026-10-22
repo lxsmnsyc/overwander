@@ -1,6 +1,12 @@
-import { MoveAffects, MoveCategories, MoveFlags, Moves } from '../../../data/ids/moves';
+import { MoveAffects, MoveCategories, MoveFlags, type Moves } from '../../../data/ids/moves';
 import { TYPE_COLORS } from '../../../data/constants/types';
 import { getMoveData } from '../../../data/moves';
+import {
+  ARRIVES_ITSELF,
+  type DelayShape,
+  WAITS,
+  WAIT_BY_LANDING,
+} from '../../../data/moves/visual';
 import PaintedVisual, { type LitPainter, type Painter } from './__painted';
 import LIT_GAPS from './lit/delay';
 import { reachOf } from './lit/shapes';
@@ -21,7 +27,7 @@ import {
   spiral,
   swell,
 } from './__paint';
-import { type EffectShape, effectShapeFor } from './effect';
+import { effectShapeFor } from './effect';
 
 /**
  * What a move looks like in the gap before it lands.
@@ -40,25 +46,7 @@ import { type EffectShape, effectShapeFor } from './effect';
 /** How big the gap's picture is, in canvas pixels before the scale. */
 const REACH = 22;
 
-/** Every way a move can spend the gap. */
-export type DelayShape =
-  | 'Thrown'
-  | 'Brace'
-  | 'Focus'
-  | 'Gather'
-  | 'Gaze'
-  | 'Call'
-  | 'Drift'
-  | 'Flare'
-  | 'Bubbles'
-  | 'Spun'
-  | 'Lobbed'
-  | 'Charge'
-  | 'Vanish'
-  | 'Surface'
-  | 'Dive'
-  | 'Reach'
-  | 'Rise';
+export type { DelayShape } from '../../../data/moves/visual';
 
 function landing(stage: Stage): Point {
   return stage.targets[0] ?? stage.source;
@@ -409,324 +397,6 @@ const PAINTERS: Record<
 };
 
 /**
- * The moves that spend the gap doing something the data cannot say,
- * as **[winding up, striking]**.
- *
- * A two-step move is two different waits and used to draw one picture
- * for both: Dig went underground, and then went underground again
- * instead of coming up. The step the engine is on decides which of the
- * pair is drawn — `undefined` in either place falls back to the
- * ordinary rules
- */
-const NAMED: Partial<Record<Moves, [winding?: DelayShape, striking?: DelayShape]>> = {
-  // Down, then up through the floor underneath whatever it is hitting
-  [Moves.Dig]: ['Vanish', 'Surface'],
-  // Up out of reach, then down onto it
-  [Moves.Fly]: ['Vanish', 'Dive'],
-  // Blown across rather than shot: one orb crossing said the same
-  // thing as every other projectile in the game
-  [Moves.Bubble]: [undefined, 'Bubbles'],
-  [Moves.BubbleBeam]: [undefined, 'Bubbles'],
-  // Tumbling out rather than shot straight
-  [Moves.Bonemerang]: [undefined, 'Spun'],
-  [Moves.BoneClub]: [undefined, 'Spun'],
-  // Thrown in an arc and coming down on it
-  [Moves.EggBomb]: [undefined, 'Lobbed'],
-  [Moves.Teleport]: ['Vanish', 'Vanish'],
-  [Moves.SolarBeam]: ['Charge', 'Charge'],
-  [Moves.SkyAttack]: ['Charge', 'Dive'],
-  // Head down and then straight through: the strike is the pokemon
-  // itself, which the field already throws at what it is hitting
-  [Moves.SkullBash]: ['Charge'],
-  [Moves.RazorWind]: ['Charge', 'Reach'],
-  [Moves.HyperBeam]: ['Charge', 'Charge'],
-  // A jet rather than a thrown thing: what crosses the gap is the beam
-  // itself, so the wait is spent drawing it up rather than in flight
-  [Moves.HydroPump]: ['Charge', 'Charge'],
-  [Moves.Bide]: ['Charge', 'Charge'],
-  [Moves.Earthquake]: [undefined, 'Rise'],
-  [Moves.Fissure]: [undefined, 'Rise'],
-  [Moves.Sandstorm]: [undefined, 'Rise'],
-
-  // Johto. A bomb and a parcel are lobbed, a bone tumbles, and the
-  // ground answers a Magnitude the way it answers an Earthquake
-  [Moves.SludgeBomb]: [undefined, 'Lobbed'],
-  [Moves.Present]: [undefined, 'Lobbed'],
-  [Moves.BoneRush]: [undefined, 'Spun'],
-  [Moves.Magnitude]: [undefined, 'Rise'],
-  [Moves.Spikes]: [undefined, 'Lobbed'],
-  // Held rather than sent: the wait is the strike hanging over the
-  // target until it arrives
-  [Moves.FutureSight]: [undefined, 'Charge'],
-  [Moves.Outrage]: ['Charge'],
-
-  // Hoenn. Under the water and up under it, up out of reach and down
-  // on it: the same two waits Dig and Fly spend
-  [Moves.Dive]: ['Vanish', 'Surface'],
-  [Moves.Bounce]: ['Vanish', 'Dive'],
-  // Thrown in an arc and coming down on it rather than shot flat
-  [Moves.RockTomb]: [undefined, 'Lobbed'],
-  [Moves.MudShot]: [undefined, 'Lobbed'],
-  // Held over it until it arrives, the way Future Sight is
-  [Moves.DoomDesire]: [undefined, 'Charge'],
-  // Their landing is the stat falling, so what the move itself was
-  // stays here: sand and smoke drift across, and light blows out
-  [Moves.SandAttack]: [undefined, 'Drift'],
-  [Moves.SmokeScreen]: [undefined, 'Drift'],
-  [Moves.Flash]: [undefined, 'Flare'],
-
-  // Nothing is thrown: the wind itself is what crosses, so the wait
-  // is spent drawing it up the way Hydro Pump's is
-  [Moves.Aeroblast]: [undefined, 'Charge'],
-
-  // Nothing crosses here either: the scent is given off where it
-  // stands, and the petals are what arrives
-  [Moves.SweetScent]: [undefined, 'Charge'],
-  // Petals too, but health coming back, so it waits the way healing does
-  [Moves.Aromatherapy]: [undefined, 'Gather'],
-  // Drawn as a screen and as Roost's feathers, but still a raise and a drop on the way
-  [Moves.Barrier]: [undefined, 'Focus'],
-  [Moves.FeatherDance]: [undefined, 'Reach'],
-  // The waits these Unova moves had before they borrowed an earlier move's picture
-  [Moves.WonderRoom]: [undefined, 'Brace'],
-  [Moves.MagicRoom]: [undefined, 'Brace'],
-  [Moves.HealPulse]: [undefined, 'Brace'],
-  [Moves.CottonGuard]: [undefined, 'Focus'],
-
-  // Sinnoh. Out of the world and back out of it behind whatever it is
-  // hitting, which is the wait Dig and Fly spend
-  [Moves.ShadowForce]: ['Vanish'],
-  // Lobbed rather than shot flat: a bomb, a thrown item, a stone
-  [Moves.SeedBomb]: [undefined, 'Lobbed'],
-  [Moves.MudBomb]: [undefined, 'Lobbed'],
-  [Moves.MagnetBomb]: [undefined, 'Lobbed'],
-  [Moves.GunkShot]: [undefined, 'Lobbed'],
-  [Moves.Fling]: [undefined, 'Lobbed'],
-  [Moves.NaturalGift]: [undefined, 'Lobbed'],
-  [Moves.RockWrecker]: [undefined, 'Lobbed'],
-  [Moves.StoneEdge]: [undefined, 'Lobbed'],
-  [Moves.DracoMeteor]: [undefined, 'Lobbed'],
-  // Laid rather than thrown at, the way Spikes is
-  [Moves.StealthRock]: [undefined, 'Lobbed'],
-  [Moves.ToxicSpikes]: [undefined, 'Lobbed'],
-  // The ground answers it the way it answers an Earthquake: the knot
-  // comes up under whatever is standing on it
-  [Moves.GrassKnot]: [undefined, 'Rise'],
-
-  // Alola. A blade charged the way Skull Bash is, a beam drawn up the way Hydro Pump's is,
-  // a ball lobbed, bubbles blown, a bone tumbling and a veil put up like a screen
-  [Moves.SolarBlade]: ['Charge'],
-  [Moves.FleurCannon]: [undefined, 'Charge'],
-  [Moves.PollenPuff]: [undefined, 'Lobbed'],
-  [Moves.BouncyBubble]: [undefined, 'Bubbles'],
-  [Moves.ShadowBone]: [undefined, 'Spun'],
-  [Moves.AuroraVeil]: [undefined, 'Brace'],
-
-  // Galar and Hisui. A rock charged up the way Skull Bash is, and beams drawn up the way
-  // Fleur Cannon's is
-  [Moves.MeteorBeam]: ['Charge', 'Charge'],
-  [Moves.Eternabeam]: [undefined, 'Charge'],
-  [Moves.DynamaxCannon]: [undefined, 'Charge'],
-  [Moves.SteelBeam]: [undefined, 'Charge'],
-  [Moves.DragonEnergy]: [undefined, 'Charge'],
-
-  // Paldea. A shot charged up the way Meteor Beam is, beams drawn up the way Fleur Cannon's
-  // is
-  [Moves.ElectroShot]: ['Charge', 'Charge'],
-  [Moves.TeraBlast]: [undefined, 'Charge'],
-  [Moves.FickleBeam]: [undefined, 'Charge'],
-};
-
-/**
- * How the gap is spent where the landing already says it.
- *
- * A cloud, a sound and health coming back each want their own wait,
- * and the shape they land as is what tells them apart: keying off it
- * splits the one charge that most of the game used to share
- */
-/**
- * Landings that already cross the gap or come down onto the target, so
- * the wait before them is the caster winding up rather than a throw
- */
-const ARRIVES_ITSELF = new Set<EffectShape>([
-  // The Frenzy bursts: each falls, gathers or catches on the target
-  'Splinters',
-  'PetalStorm',
-  'Wildfire',
-  'ChargedBlast',
-  'Iceberg',
-  // Sent from the caster
-  'Stream',
-  'Wave',
-  'Zap',
-  'Sickles',
-  'Beam',
-  'Stars',
-  'Spike',
-  'Pulse',
-  'Shuriken',
-  'Shackle',
-  'Techno',
-  'Ruin',
-  'Oblivion',
-  'Overload',
-  // Falling onto the target, or closing in on it
-  'Rocks',
-  'Weather',
-  'Verdict',
-  'Fusion',
-  'Lunar',
-  'Converge',
-  'Tri',
-  // Galar and Hisui: darts and riders cross by themselves, a beam leaves the caster, and a
-  // lance, a storm and a cage come down on the target
-  'Darters',
-  'Astral',
-  'Dynamax',
-  'Lance',
-  'Bleakwind',
-  'Wildbolt',
-  'Sandsear',
-  'Springtide',
-  'Dragonforce',
-  'Glaring',
-  'Maxcannon',
-  'Mystic',
-  'Wrath',
-  'Cage',
-  // Paldea: chains leave the caster, and the treasures and the stars come down on the target
-  'Chains',
-  'Calamity',
-  'Starstorm',
-  // Paldea's other signatures: thrown, poured, fired or dropped onto the target by the
-  // picture itself
-  'Snare',
-  'Lumina',
-  'Order',
-  'Jetfist',
-  'Spice',
-  'Horde',
-  'Salt',
-  'Divers',
-  'Doodle',
-  'Fillet',
-  'Bouquet',
-  'Torch',
-  'Coins',
-  'Twin',
-  'Armor',
-  'Doubleshock',
-  'Gigaton',
-  'Bloodmoon',
-  'Matcha',
-  'Syrup',
-  'Electroshot',
-  'Fickle',
-  'Clap',
-  'Tachyon',
-  'Steamjet',
-  // Every older region's signatures that cross the gap or come down by themselves
-  'Eggbarrage',
-  'Kiss',
-  'Chatter',
-  'Thread',
-  'Revelation',
-  'Scales',
-  'Trap',
-  'Fleur',
-  'Snipe',
-  'Powder',
-  'Drumming',
-  'Pyroball',
-  'Mountaingale',
-  'Barbs',
-  'Esper',
-  'Malice',
-  'Parade',
-  'Chloroblast',
-  'Amped',
-  'Acid',
-  'Gravapple',
-  'Strangesteam',
-  'Sidearm',
-  'Spell',
-  // The Max Moves come down on the target out of the cloud over it
-  'MaxFlare',
-  'MaxGeyser',
-  'MaxHailstorm',
-  'MaxRockfall',
-  'MaxLightning',
-  'MaxOvergrowth',
-  'MaxMindstorm',
-  'MaxStarfall',
-  'MaxStrike',
-  'MaxFlutterby',
-  'MaxPhantasm',
-  'MaxWyrmwind',
-  'MaxDarkness',
-  'MaxKnuckle',
-  'MaxSteelspike',
-  'MaxOoze',
-  'MaxQuake',
-  'MaxAirstream',
-]);
-
-const BY_LANDING: Partial<Record<EffectShape, DelayShape>> = {
-  Haze: 'Drift',
-  Mend: 'Gather',
-  Slumber: 'Gather',
-  Sunbeam: 'Gather',
-  Moonbeam: 'Gather',
-  Greening: 'Gather',
-  Wishing: 'Gather',
-  Feathers: 'Gather',
-  Swarm: 'Gather',
-  Gyro: 'Gather',
-  Drain: 'Gather',
-  Ward: 'Brace',
-  Screen: 'Brace',
-  Boost: 'Focus',
-  Blades: 'Focus',
-  Dance: 'Focus',
-  Sheen: 'Focus',
-  Mirage: 'Focus',
-  Scheme: 'Focus',
-  Shell: 'Brace',
-  Doll: 'Brace',
-  Flop: 'Brace',
-  Wag: 'Brace',
-  Trance: 'Gaze',
-  Warp: 'Gaze',
-  Stall: 'Gaze',
-  Rend: 'Gaze',
-  Exchange: 'Gaze',
-  Void: 'Gaze',
-  Moonlit: 'Gather',
-  Wave: 'Call',
-  // The wind-ups Toxic and Taunt had while they landed as a cloud and a sound
-  Toxin: 'Drift',
-  Vein: 'Call',
-  // The wind-up every stat raise had while it landed as rising arrows
-  Haste: 'Focus',
-  Polish: 'Focus',
-  Flex: 'Focus',
-  Blank: 'Focus',
-  Cosmos: 'Focus',
-  Hive: 'Focus',
-  Crackle: 'Focus',
-  Lantern: 'Focus',
-  Stack: 'Focus',
-  Sprout: 'Focus',
-  Curl: 'Focus',
-  Flutter: 'Focus',
-  Smash: 'Focus',
-  Gears: 'Focus',
-  Windup: 'Focus',
-  Shed: 'Focus',
-  MaxGuard: 'Brace',
-};
-
-/**
  * How this move spends the gap, or nothing where the gap is the
  * pokemon's own business.
  *
@@ -734,7 +404,7 @@ const BY_LANDING: Partial<Record<EffectShape, DelayShape>> = {
  * multi-step cast is winding up whatever it looks like on the way out
  */
 export function delayShapeFor(move: Moves, steps: number): DelayShape | null {
-  const named = NAMED[move]?.[steps > 0 ? 0 : 1];
+  const named = WAITS[move]?.[steps > 0 ? 0 : 1];
 
   if (named != null) {
     return named;
@@ -766,7 +436,7 @@ export function delayShapeFor(move: Moves, steps: number): DelayShape | null {
     // after a ball has already crossed to it is the move arriving twice
     return ARRIVES_ITSELF.has(effectShapeFor(move)) ? 'Charge' : 'Thrown';
   }
-  const landed = BY_LANDING[effectShapeFor(move)];
+  const landed = WAIT_BY_LANDING[effectShapeFor(move)];
 
   if (landed != null) {
     return landed;

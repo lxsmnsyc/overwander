@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Moves: visual shapes",
+  "type": "object",
+  "propertyNames": {
+    "$ref": "names.json#/definitions/effect-shape"
+  },
+  "additionalProperties": {
+    "type": "object",
+    "properties": {
+      "span": {
+        "type": "number",
+        "minimum": 0,
+        "description": "How long it runs at ordinary weight, in milliseconds"
+      },
+      "jolt": {
+        "type": "number",
+        "minimum": 0,
+        "description": "How hard it shakes the scene at ordinary weight"
+      },
+      "arrives": {
+        "const": true,
+        "description": "Crosses the gap or comes down by itself"
+      },
+      "wait": {
+        "$ref": "names.json#/definitions/delay-shape",
+        "description": "How the gap before it is spent"
+      },
+      "color": {
+        "type": "string",
+        "pattern": "^#[0-9a-f]{6}$"
+      },
+      "staged": {
+        "const": true,
+        "description": "Pictures a stat moving, so takes the stat's colour"
+      },
+      "types": {
+        "type": "array",
+        "items": {
+          "$ref": "names.json#/definitions/type"
+        },
+        "description": "The types a move falls back on it for"
+      }
+    },
+    "required": [],
+    "additionalProperties": false
+  }
+}

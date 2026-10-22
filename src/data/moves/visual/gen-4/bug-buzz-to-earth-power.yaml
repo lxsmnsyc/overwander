@@ -1,0 +1,24 @@
+# Heard as what it is: a song, a roar, a bell
+BugBuzz: { landing: Roar }
+
+# Jets and beams, which the type alone would have drawn as a cloud
+DragonPulse: { landing: Beam }
+
+# A body turning into it, and a body arriving whole
+DragonRush: { landing: Slam }
+
+# Light rather than an element
+PowerGem: { landing: Dazzle }
+
+# Carried on the air, or washing over it
+VacuumWave: { landing: Wave }
+
+# Thrown and going off where it lands
+FocusBlast: { landing: Aura }
+EnergyBall: { landing: Blast }
+
+# A blow wrapped in its element, which a plain hit in the type's colour did not say
+BraveBird: { landing: Rush }
+
+# Named attacks the rules drew as something generic
+EarthPower: { landing: Rift }

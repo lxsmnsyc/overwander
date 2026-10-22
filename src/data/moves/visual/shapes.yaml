@@ -1,0 +1,708 @@
+# Each way a move can land, keyed by the shape, in the order they were added:
+#
+# - `span`: how long it runs at ordinary weight, in milliseconds. Wishing
+#   and Starfall are timed to the engine's wait instead, in effect/shapes.ts
+# - `jolt`: how hard it shakes the scene at ordinary weight, in drawing pixels
+# - `arrives`: it crosses the gap or comes down on the target by itself, so
+#   the wait before it is the caster winding up rather than a throw
+# - `wait`: how the gap before it is spent, where the move does not say
+# - `color`: what it is drawn in, where the move's type colour would be wrong
+# - `staged`: it pictures a stat moving, and so takes that stat's colour
+# - `types`: the types a move falls back on it for when nothing else picks
+
+Impact: { span: 400, types: [Rock] }
+Jab: { span: 300 }
+Slam: { span: 620, jolt: 2.5 }
+Brawl: { span: 460 }
+Blast: { span: 700, jolt: 3 }
+Bloom: { span: 520 }
+
+# Sent from the caster
+Beam: { span: 560, arrives: true }
+Zap: { span: 400, arrives: true, types: [Electric] }
+
+Strike: { span: 420, jolt: 1.5 }
+Flame: { span: 620, types: [Fire] }
+Splash: { span: 520, types: [Water] }
+Bubbles: { span: 640 }
+Frost: { span: 620, types: [Ice] }
+Leafy: { span: 480, types: [Grass, Flying] }
+Haze: { span: 700, wait: Drift, types: [Poison] }
+Mark: { span: 560 }
+
+# The colour of the health bar, which is what it is refilling
+Mend: { span: 700, wait: Gather, color: '#4cc46a' }
+
+Ward: { span: 620, wait: Brace, color: '#9ad8ff' }
+Screen: { span: 900, wait: Brace }
+Sky: { span: 760 }
+Quake: { span: 780, jolt: 4, types: [Ground] }
+Drain: { span: 700, wait: Gather }
+Volley: { span: 900 }
+Boomerang: { span: 760 }
+
+# The light itself. A Normal-type grey would be a picture of a
+# shadow rather than of a flash
+Dazzle: { span: 440, color: '#fff2b4' }
+
+Jaws: { span: 420 }
+Claw: { span: 380 }
+Coil: { span: 620 }
+
+# Sent from the caster
+Wave: { span: 560, arrives: true, wait: Call }
+Spike: { span: 380, arrives: true }
+
+Drill: { span: 560 }
+Swirl: { span: 620 }
+Trance: { span: 760, wait: Gaze }
+
+# Falling onto the target, or closing in on it
+Rocks: { span: 620, jolt: 2, arrives: true }
+
+Warp: { span: 620, wait: Gaze }
+Lash: { span: 420 }
+Boost: { span: 560, wait: Focus, staged: true }
+Drop: { span: 560, staged: true }
+Nerve: { span: 620 }
+Drum: { span: 720, jolt: 1.5 }
+Relay: { span: 640 }
+Chasm: { span: 820, jolt: 3.5 }
+Leaves: { span: 560 }
+
+# Sent from the caster
+# Gold, the way the mainline has always drawn them. A Normal-type
+# grey would be a picture of nothing
+Stars: { span: 620, arrives: true, color: '#f0d264' }
+
+Blow: { span: 620 }
+Shade: { span: 660, types: [Dark, Ghost] }
+Hearts: { span: 680 }
+Caltrops: { span: 560 }
+Spout: { span: 780, jolt: 2.5 }
+Roots: { span: 660 }
+Press: { span: 760 }
+Grid: { span: 900 }
+Dart: { span: 640 }
+Gale: { span: 720 }
+Gyro: { span: 900, wait: Gather }
+
+# The petals themselves. A Normal-type grey would be a picture of
+# dust blowing past rather than of a scent
+Petals: { span: 760, color: '#f2a0c8' }
+
+Cross: { span: 460 }
+Punch: { span: 460 }
+Wheel: { span: 620 }
+Torrent: { span: 700, jolt: 1.5 }
+Rush: { span: 620, jolt: 2.5 }
+
+# Dialga's steel blue and Palkia's pink, which the Dragon type's colour is neither of
+Stall: { span: 1000, jolt: 2, wait: Gaze, color: '#8fb0f0' }
+Rend: { span: 1000, jolt: 3, wait: Gaze, color: '#f07ccf' }
+
+# Falling onto the target, or closing in on it
+# Light whatever plate it carries: the move's type changes in battle and the picture cannot know
+Verdict: { span: 1000, jolt: 1.5, arrives: true, color: '#fff2b4' }
+
+Sunburst: { span: 950 }
+Ambush: { span: 720, jolt: 2.5 }
+Vortex: { span: 900 }
+Pyre: { span: 900, jolt: 1.5 }
+Upheaval: { span: 820, jolt: 3.5 }
+
+# Latias' red-white down and Latios' blue light, so the pair read as each other's counterpart
+Plume: { span: 820, color: '#f6a9bd' }
+Lustre: { span: 820, jolt: 2, color: '#8cc8ff' }
+
+# Jirachi's gold, Regigigas' pale stone and Cresselia's moonlight, where the type's colour is grey
+Starfall: { jolt: 2.5, color: '#ffe27a' }
+Grip: { span: 900, jolt: 2, color: '#e2dcc0' }
+
+Surge: { span: 900, jolt: 3 }
+
+# Jirachi's gold, Regigigas' pale stone and Cresselia's moonlight, where the type's colour is grey
+Moonlit: { span: 1000, wait: Gather, color: '#e0d4ff' }
+
+Exchange: { span: 900, wait: Gaze }
+Void: { span: 1000, wait: Gaze }
+Cannon: { span: 820, jolt: 3 }
+Meteors: { span: 1000, jolt: 3.5 }
+Rampage: { span: 900, jolt: 2.5 }
+Rift: { span: 820, jolt: 2.5 }
+Scorch: { span: 820 }
+
+# Sent from the caster
+Pulse: { span: 820, arrives: true }
+
+Freeze: { span: 1000, jolt: 1.5 }
+Shears: { span: 900, jolt: 3 }
+Auger: { span: 950, jolt: 3.5 }
+Shell: { span: 900, wait: Brace }
+
+# A plush doll, water, a brass metronome and Mew's pink, where the type's colour is grey
+Doll: { span: 900, wait: Brace, color: '#e6d3a3' }
+Flop: { span: 900, wait: Brace, color: '#7cc4f0' }
+Wag: { span: 1000, wait: Brace, color: '#e8c86a' }
+Shimmer: { span: 900, color: '#f0a8e0' }
+
+Blades: { span: 1000, wait: Focus, staged: true }
+Dance: { span: 900, wait: Focus, staged: true }
+Sheen: { span: 820, wait: Focus, staged: true }
+Mirage: { span: 820, wait: Focus, staged: true }
+Scheme: { span: 900, wait: Focus, staged: true }
+
+# Falling onto the target, or closing in on it
+Weather: { span: 820, arrives: true }
+Tri: { span: 900, arrives: true }
+
+Blaster: { span: 900, jolt: 3 }
+Crash: { span: 820, jolt: 3.5 }
+Haymaker: { span: 900, jolt: 3 }
+Flurry: { span: 900, jolt: 2 }
+Aura: { span: 760, jolt: 2 }
+
+# Sent from the caster
+Stream: { span: 1000, arrives: true }
+
+Kicks: { span: 700, jolt: 1 }
+
+# Sleep's blue, sunlight, moonlight, leaves, a wishing star, feathers, and the health bar's green under a swarm
+Slumber: { span: 1000, wait: Gather, color: '#bcd4ff' }
+Sunbeam: { span: 900, wait: Gather, color: '#ffd27a' }
+Moonbeam: { span: 900, wait: Gather, color: '#d8dcff' }
+Greening: { span: 900, wait: Gather, color: '#7cd67a' }
+Wishing: { wait: Gather, color: '#ffe27a' }
+Feathers: { span: 1000, wait: Gather, color: '#e8e0d0' }
+Swarm: { span: 1000, wait: Gather, color: '#4cc46a' }
+
+Song: { span: 1000 }
+Roar: { span: 820, jolt: 1.5 }
+
+# A brass bell
+Chime: { span: 1000, color: '#ffd86a' }
+
+Sweep: { span: 620, jolt: 1 }
+Crescent: { span: 700, jolt: 1.5 }
+
+# Sent from the caster
+Sickles: { span: 820, jolt: 1, arrives: true }
+
+Cutter: { span: 760, jolt: 1 }
+
+# The wind-ups Toxic and Taunt had while they landed as a cloud and a sound
+Toxin: { span: 900, wait: Drift }
+
+# Yellow spores and eyes, gold applause, an anger mark's red and a curse's purple, where the types' colours say none of them
+Spores: { span: 900, color: '#f0d84a' }
+Stare: { span: 820, color: '#f0c830' }
+Applause: { span: 1000, color: '#ffe07a' }
+
+# The wind-ups Toxic and Taunt had while they landed as a cloud and a sound
+Vein: { span: 900, wait: Call, color: '#e8404a' }
+
+Nail: { span: 1000, jolt: 1, color: '#8a5ab0' }
+
+# The wind-up every stat raise had while it landed as rising arrows
+Haste: { span: 700, wait: Focus, staged: true }
+Polish: { span: 900, wait: Focus, staged: true }
+Flex: { span: 820, jolt: 1, wait: Focus, staged: true }
+
+Howl: { span: 820, staged: true }
+
+# The wind-up every stat raise had while it landed as rising arrows
+Blank: { span: 900, wait: Focus, staged: true }
+
+# Night sky, bees, a tail light, stored orbs, a sprout, feathers, cotton, silk and tears
+Cosmos: { span: 1000, wait: Focus, color: '#b8a8ff' }
+Hive: { span: 1000, wait: Focus, color: '#f0c040' }
+
+Crackle: { span: 900, wait: Focus }
+
+# Night sky, bees, a tail light, stored orbs, a sprout, feathers, cotton, silk and tears
+Lantern: { span: 900, wait: Focus, color: '#fff27a' }
+Stack: { span: 1000, wait: Focus, color: '#f0c890' }
+Sprout: { span: 900, wait: Focus, color: '#7cd67a' }
+
+Curl: { span: 820, wait: Focus, staged: true }
+
+Screech: { span: 820 }
+
+# Night sky, bees, a tail light, stored orbs, a sprout, feathers, cotton, silk and tears
+Tickle: { span: 820, color: '#f0e6d8' }
+Cotton: { span: 900, color: '#f4f4ec' }
+Silk: { span: 900, color: '#f0f0f0' }
+Tears: { span: 900, color: '#8cc8ff' }
+
+Memento: { span: 1000 }
+Clear: { span: 900 }
+
+# Falling onto the target, or closing in on it
+Converge: { span: 900, jolt: 2, arrives: true }
+
+Resonance: { span: 900 }
+Orbit: { span: 900, jolt: 1.5 }
+Gambit: { span: 900, jolt: 3 }
+Buzz: { span: 820 }
+
+# Sent from the caster
+# Plasma, whichever drive Techno Blast carries: the move's type changes in battle and the picture cannot know
+Techno: { span: 900, jolt: 2, arrives: true, color: '#a8dcff' }
+
+Victory: { span: 1000, jolt: 3.5 }
+
+# Reshiram's blue fire, and Meloetta's green where the Normal type's grey is nothing
+Azure: { span: 1000, jolt: 2, color: '#5aa8ff' }
+
+Thunderclap: { span: 820, jolt: 3 }
+
+# Falling onto the target, or closing in on it
+Fusion: { span: 950, jolt: 3, arrives: true }
+
+Frostbolt: { span: 1000, jolt: 2 }
+Frostfire: { span: 1000, jolt: 2 }
+Glaze: { span: 1000, jolt: 1 }
+Searing: { span: 900, jolt: 2 }
+Smite: { span: 950, jolt: 2.5 }
+
+# Reshiram's blue fire, and Meloetta's green where the Normal type's grey is nothing
+Aria: { span: 1000, color: '#8fe0b0' }
+
+# The wind-up every stat raise had while it landed as rising arrows
+Flutter: { span: 1000, wait: Focus, staged: true }
+
+# A shell's pale cream, where the Normal type's grey reads as stone
+Smash: { span: 900, jolt: 1.5, wait: Focus, color: '#d8c8a8' }
+
+Gears: { span: 900, wait: Focus }
+Windup: { span: 900, wait: Focus, staged: true }
+Shed: { span: 820, wait: Focus }
+
+Tonnage: { span: 900, jolt: 4 }
+Pledge: { span: 900, jolt: 2 }
+Aerial: { span: 760, jolt: 1 }
+Plummet: { span: 900, jolt: 3 }
+Roller: { span: 900, jolt: 2.5 }
+Turnabout: { span: 900, jolt: 2 }
+Leech: { span: 900 }
+Ram: { span: 820, jolt: 3 }
+Blaze: { span: 1000, jolt: 1.5 }
+Firedance: { span: 900 }
+Spatter: { span: 700, jolt: 1.5 }
+Sparkle: { span: 520, types: [Fairy] }
+Geo: { span: 1000 }
+Terrain: { span: 1100 }
+Arrows: { span: 1100, jolt: 3 }
+Groundswell: { span: 1000, jolt: 3.5 }
+Precipice: { span: 1000, jolt: 3.5 }
+
+# Yveltal's crimson, Rayquaza's green, a diamond's pale pink and white steam, where the types' colours are none of them
+Ascent: { span: 1000, jolt: 3.5, color: '#5ad07a' }
+
+Fury: { span: 1100, jolt: 2 }
+Portal: { span: 950, jolt: 1.5 }
+Scuffle: { span: 820 }
+
+# Yveltal's crimson, Rayquaza's green, a diamond's pale pink and white steam, where the types' colours are none of them
+Diamonds: { span: 1000, jolt: 1.5, color: '#f4d4f0' }
+
+# Sent from the caster
+Oblivion: { span: 1000, arrives: true, color: '#d6384a' }
+
+Ruin: { span: 1100, jolt: 3, arrives: true }
+
+Origin: { span: 1100, jolt: 3 }
+
+# Falling onto the target, or closing in on it
+Lunar: { span: 900, jolt: 2, arrives: true }
+
+# Yveltal's crimson, Rayquaza's green, a diamond's pale pink and white steam, where the types' colours are none of them
+Steam: { span: 1000, jolt: 2, color: '#dfeaf4' }
+
+# Sent from the caster
+Shuriken: { span: 900, arrives: true }
+
+# Mewtwo's violet, Lugia's silver-blue and Keldeo's blade of light, where the types' colours are none of them
+Overload: { span: 1000, jolt: 3, arrives: true, color: '#b27cff' }
+
+Jetstream: { span: 1000, jolt: 2.5, color: '#bcd8ff' }
+Resolute: { span: 950, jolt: 2.5, color: '#8fd8ff' }
+
+Blitz: { span: 1500 }
+Pummel: { span: 1500 }
+Skystrike: { span: 1500 }
+Downpour: { span: 1500 }
+Tectonic: { span: 1500 }
+Continental: { span: 1500 }
+Cocoon: { span: 1500 }
+Nightmare: { span: 1500 }
+Corkscrew: { span: 1500 }
+Overdrive: { span: 1500 }
+Hydrovortex: { span: 1500 }
+Doom: { span: 1500 }
+Havoc: { span: 1500 }
+Psyche: { span: 1500 }
+Slammer: { span: 1500 }
+Drake: { span: 1500 }
+Eclipse: { span: 1500 }
+Twinkle: { span: 1500 }
+Catastropika: { span: 1500 }
+ArrowRaid: { span: 1500 }
+Moonsault: { span: 1500 }
+Operetta: { span: 1500 }
+Sparksurfer: { span: 1500 }
+Pancake: { span: 1500 }
+Evoboost: { span: 1300 }
+Megavolt: { span: 1500 }
+Snuggle: { span: 1500 }
+Guardian: { span: 1500 }
+SevenStar: { span: 1500 }
+Supernova: { span: 1500 }
+Skyburn: { span: 1500 }
+Sunraze: { span: 1500 }
+Moonraze: { span: 1500 }
+Stormshards: { span: 1500 }
+Soulblaze: { span: 1500 }
+Sunsteel: { span: 1000 }
+Moongeist: { span: 1000 }
+Photon: { span: 1000 }
+Prism: { span: 1000 }
+Enforcer: { span: 1000 }
+Aurora: { span: 1000 }
+
+# Sent from the caster
+Shackle: { span: 1000, arrives: true }
+
+Anchor: { span: 1000 }
+Lariat: { span: 1000 }
+Madness: { span: 1000 }
+Spotlight: { span: 1000 }
+Pollen: { span: 1000 }
+Detonate: { span: 1000 }
+Behemoth: { span: 1000, jolt: 3 }
+Bulwark: { span: 1000, jolt: 3.5 }
+
+# Galar and Hisui: darts and riders cross by themselves, a beam leaves the caster, and a
+# lance, a storm and a cage come down on the target
+Dynamax: { span: 1200, jolt: 2.5, arrives: true }
+Darters: { span: 900, arrives: true }
+Lance: { span: 1000, jolt: 3, arrives: true }
+Astral: { span: 1100, jolt: 2, arrives: true }
+Bleakwind: { span: 1200, arrives: true }
+Wildbolt: { span: 1200, arrives: true }
+Sandsear: { span: 1200, arrives: true }
+Springtide: { span: 1200, arrives: true }
+Dragonforce: { span: 1100, arrives: true }
+Glaring: { span: 1000, arrives: true }
+
+Thunderkick: { span: 800, jolt: 2 }
+
+# Galar and Hisui: darts and riders cross by themselves, a beam leaves the caster, and a
+# lance, a storm and a cage come down on the target
+Wrath: { span: 1000, arrives: true }
+
+Singlestrike: { span: 800, jolt: 3 }
+Rapidstrike: { span: 1000 }
+Jungle: { span: 1000 }
+
+# Galar and Hisui: darts and riders cross by themselves, a beam leaves the caster, and a
+# lance, a storm and a cage come down on the target
+Maxcannon: { span: 1200, jolt: 2.5, arrives: true }
+Mystic: { span: 1100, arrives: true }
+Cage: { span: 1000, arrives: true }
+
+Collision: { span: 1000, jolt: 3 }
+Neon: { span: 1000 }
+
+# Paldea: chains leave the caster, and the treasures and the stars come down on the target
+Calamity: { span: 1100, jolt: 2, arrives: true }
+
+Cudgel: { span: 900, jolt: 2.5 }
+
+# Paldea: chains leave the caster, and the treasures and the stars come down on the target
+Starstorm: { span: 1200, jolt: 2, arrives: true }
+Chains: { span: 1000, arrives: true }
+
+# Paldea's other signatures: thrown, poured, fired or dropped onto the target by the
+# picture itself
+Snare: { span: 1000, arrives: true }
+Lumina: { span: 1200, jolt: 2, arrives: true }
+Order: { span: 1100, jolt: 2.5, arrives: true }
+Jetfist: { span: 800, jolt: 2, arrives: true }
+Spice: { span: 1100, arrives: true }
+
+Burnout: { span: 1100, jolt: 1.5 }
+
+# Paldea's other signatures: thrown, poured, fired or dropped onto the target by the
+# picture itself
+Horde: { span: 1300, arrives: true }
+
+Glaive: { span: 1000, jolt: 3 }
+
+# Paldea's other signatures: thrown, poured, fired or dropped onto the target by the
+# picture itself
+Salt: { span: 1200, jolt: 1.5, arrives: true }
+Divers: { span: 1200, jolt: 2, arrives: true }
+
+Spinner: { span: 1100, jolt: 2 }
+
+# Paldea's other signatures: thrown, poured, fired or dropped onto the target by the
+# picture itself
+Doodle: { span: 1100, arrives: true }
+Fillet: { span: 1000, arrives: true }
+
+Kowtow: { span: 1200, jolt: 3 }
+
+# Paldea's other signatures: thrown, poured, fired or dropped onto the target by the
+# picture itself
+Bouquet: { span: 1100, jolt: 1.5, arrives: true }
+Torch: { span: 1200, jolt: 1.5, arrives: true }
+
+Stepdance: { span: 1100 }
+Bull: { span: 900, jolt: 3 }
+
+# Paldea's other signatures: thrown, poured, fired or dropped onto the target by the
+# picture itself
+Coins: { span: 1300, jolt: 1, arrives: true }
+
+Hyperdrill: { span: 1000, jolt: 3 }
+
+# Paldea's other signatures: thrown, poured, fired or dropped onto the target by the
+# picture itself
+Twin: { span: 1100, jolt: 1.5, arrives: true }
+
+Ragefist: { span: 1000, jolt: 2.5 }
+
+# Paldea's other signatures: thrown, poured, fired or dropped onto the target by the
+# picture itself
+Armor: { span: 1300, jolt: 2.5, arrives: true }
+
+Bitter: { span: 1100, jolt: 1.5 }
+
+# Paldea's other signatures: thrown, poured, fired or dropped onto the target by the
+# picture itself
+Doubleshock: { span: 1200, jolt: 2.5, arrives: true }
+Gigaton: { span: 1200, jolt: 4, arrives: true }
+Bloodmoon: { span: 1300, jolt: 2, arrives: true }
+Matcha: { span: 1300, jolt: 1, arrives: true }
+Syrup: { span: 1100, jolt: 1.5, arrives: true }
+Electroshot: { span: 1300, jolt: 3, arrives: true }
+Fickle: { span: 1200, jolt: 2.5, arrives: true }
+
+Firewall: { span: 1100 }
+
+# Paldea's other signatures: thrown, poured, fired or dropped onto the target by the
+# picture itself
+Clap: { span: 900, jolt: 3, arrives: true }
+
+Cleave: { span: 1100, jolt: 3 }
+
+# Paldea's other signatures: thrown, poured, fired or dropped onto the target by the
+# picture itself
+Tachyon: { span: 1100, jolt: 1, arrives: true }
+
+Psyblade: { span: 1000, jolt: 1.5 }
+
+# Paldea's other signatures: thrown, poured, fired or dropped onto the target by the
+# picture itself
+Steamjet: { span: 1200, jolt: 1.5, arrives: true }
+
+Reception: { span: 1300 }
+Blazing: { span: 1000, jolt: 2.5 }
+Wicked: { span: 1000, jolt: 2.5 }
+Noxious: { span: 1000, jolt: 2 }
+Combat: { span: 1000, jolt: 3 }
+Magical: { span: 1000, jolt: 2 }
+
+# Every older region's signatures that cross the gap or come down by themselves
+Eggbarrage: { span: 1200, jolt: 1.5, arrives: true }
+
+Boneclub: { span: 900, jolt: 2.5 }
+
+# Every older region's signatures that cross the gap or come down by themselves
+Kiss: { span: 1200, arrives: true }
+
+Conversion: { span: 1000 }
+Spoon: { span: 1100 }
+Sketch: { span: 1200 }
+Reconvert: { span: 1000 }
+Volt: { span: 1000, jolt: 3.5 }
+
+# Every older region's signatures that cross the gap or come down by themselves
+Chatter: { span: 1100, arrives: true }
+
+Attackorder: { span: 1200, jolt: 2 }
+Grind: { span: 1100, jolt: 2.5 }
+Mat: { span: 1000 }
+Treat: { span: 1100 }
+Curse: { span: 1100 }
+Lock: { span: 1100 }
+Aegis: { span: 1000 }
+Wrathland: { span: 1200, jolt: 3 }
+Shore: { span: 1100 }
+Bunker: { span: 1000 }
+Icehammer: { span: 1000, jolt: 3 }
+Floral: { span: 1100 }
+
+# Every older region's signatures that cross the gap or come down by themselves
+Thread: { span: 1000, arrives: true }
+
+Purify: { span: 1100 }
+
+# Every older region's signatures that cross the gap or come down by themselves
+Revelation: { span: 1200, jolt: 1.5, arrives: true }
+
+Trop: { span: 1000, jolt: 2 }
+Instruct: { span: 1000 }
+Beak: { span: 1200, jolt: 3 }
+
+# Every older region's signatures that cross the gap or come down by themselves
+Scales: { span: 1100, jolt: 2, arrives: true }
+Trap: { span: 1200, jolt: 3, arrives: true }
+Fleur: { span: 1200, jolt: 3, arrives: true }
+
+Bone: { span: 1000, jolt: 2.5 }
+Accelerock: { span: 800, jolt: 1.5 }
+Thief: { span: 1100, jolt: 2 }
+Multi: { span: 1000, jolt: 2.5 }
+Plasma: { span: 1100, jolt: 2.5 }
+Clangor: { span: 1200 }
+Ironbash: { span: 1100, jolt: 3 }
+
+# Every older region's signatures that cross the gap or come down by themselves
+Snipe: { span: 900, jolt: 1.5, arrives: true }
+
+Jawlock: { span: 1000, jolt: 2 }
+Cheeks: { span: 1100 }
+Retreat: { span: 1100 }
+
+# Every older region's signatures that cross the gap or come down by themselves
+Powder: { span: 1100, arrives: true }
+
+Teatime: { span: 1200 }
+Octolock: { span: 1100 }
+Court: { span: 1100 }
+Decorate: { span: 1100 }
+
+# Every older region's signatures that cross the gap or come down by themselves
+Drumming: { span: 1100, jolt: 2.5, arrives: true }
+Pyroball: { span: 1100, jolt: 2.5, arrives: true }
+
+Direclaw: { span: 1000, jolt: 2 }
+Psyshield: { span: 1000, jolt: 2.5 }
+Stoneaxe: { span: 1100, jolt: 3 }
+
+# Every older region's signatures that cross the gap or come down by themselves
+Mountaingale: { span: 1200, jolt: 3, arrives: true }
+
+Victorydance: { span: 1200 }
+
+# Every older region's signatures that cross the gap or come down by themselves
+Barbs: { span: 1100, jolt: 1.5, arrives: true }
+Esper: { span: 1100, jolt: 1.5, arrives: true }
+Malice: { span: 1100, jolt: 1.5, arrives: true }
+
+Shelter: { span: 1000 }
+Triplearrows: { span: 1100, jolt: 2 }
+
+# Every older region's signatures that cross the gap or come down by themselves
+Parade: { span: 1200, jolt: 1.5, arrives: true }
+
+Ceaseless: { span: 1100, jolt: 2.5 }
+Blessing: { span: 1200 }
+Takeheart: { span: 1200 }
+
+# Every older region's signatures that cross the gap or come down by themselves
+Chloroblast: { span: 1200, jolt: 3, arrives: true }
+
+Flyingpress: { span: 1000, jolt: 3 }
+Revival: { span: 1200 }
+Respects: { span: 1100, jolt: 2 }
+Aurawheel: { span: 1000, jolt: 2.5 }
+
+# Every older region's signatures that cross the gap or come down by themselves
+Amped: { span: 1100, jolt: 2.5, arrives: true }
+Acid: { span: 1000, jolt: 1.5, arrives: true }
+Gravapple: { span: 1100, jolt: 3.5, arrives: true }
+
+Spiritbreak: { span: 1000, jolt: 3 }
+
+# Every older region's signatures that cross the gap or come down by themselves
+Strangesteam: { span: 1200, arrives: true }
+
+Obstruct: { span: 900 }
+Surrender: { span: 1200, jolt: 2.5 }
+Assault: { span: 1000, jolt: 3.5 }
+
+# Every older region's signatures that cross the gap or come down by themselves
+Sidearm: { span: 1000, jolt: 2.5, arrives: true }
+Spell: { span: 1200, jolt: 1.5, arrives: true }
+
+Whiff: { span: 320, color: '#c8ccd4' }
+
+# The Max Moves: the cloud, the blast and what the type leaves behind
+# The Max Moves come down on the target out of the cloud over it
+MaxFlare: { span: 1200, jolt: 3, arrives: true }
+MaxGeyser: { span: 1200, jolt: 3, arrives: true }
+MaxHailstorm: { span: 1200, jolt: 3, arrives: true }
+MaxRockfall: { span: 1200, jolt: 3, arrives: true }
+MaxLightning: { span: 1200, jolt: 3, arrives: true }
+MaxOvergrowth: { span: 1200, jolt: 3, arrives: true }
+MaxMindstorm: { span: 1200, jolt: 3, arrives: true }
+MaxStarfall: { span: 1200, jolt: 3, arrives: true }
+MaxStrike: { span: 1200, jolt: 3, arrives: true }
+MaxFlutterby: { span: 1200, jolt: 3, arrives: true }
+MaxPhantasm: { span: 1200, jolt: 3, arrives: true }
+MaxWyrmwind: { span: 1200, jolt: 3, arrives: true }
+MaxDarkness: { span: 1200, jolt: 3, arrives: true }
+MaxKnuckle: { span: 1200, jolt: 3, arrives: true }
+MaxSteelspike: { span: 1200, jolt: 3, arrives: true }
+MaxOoze: { span: 1200, jolt: 3, arrives: true }
+MaxQuake: { span: 1200, jolt: 3, arrives: true }
+MaxAirstream: { span: 1200, jolt: 3, arrives: true }
+
+MaxGuard: { span: 1000, wait: Brace }
+
+# The G-Max Moves, a Gigantamax's signature each, timed with their gathering like the Z-Moves
+GMaxVineLash: { span: 1300, jolt: 2 }
+GMaxWildfire: { span: 1300, jolt: 2.5 }
+GMaxCannonade: { span: 1300, jolt: 2.5 }
+GMaxBefuddle: { span: 1300 }
+GMaxVoltCrash: { span: 1300, jolt: 3.5 }
+GMaxGoldRush: { span: 1300 }
+GMaxChiStrike: { span: 1300, jolt: 3 }
+GMaxTerror: { span: 1300 }
+GMaxFoamBurst: { span: 1300 }
+GMaxResonance: { span: 1300 }
+GMaxCuddle: { span: 1300, jolt: 3 }
+GMaxReplenish: { span: 1300, jolt: 3.5 }
+GMaxMalodor: { span: 1300 }
+GMaxMeltdown: { span: 1300, jolt: 3 }
+GMaxDrumSolo: { span: 1300, jolt: 2.5 }
+GMaxFireball: { span: 1300, jolt: 3 }
+GMaxHydrosnipe: { span: 1300, jolt: 2 }
+GMaxWindRage: { span: 1300, jolt: 2 }
+GMaxGravitas: { span: 1300, jolt: 3 }
+GMaxStonesurge: { span: 1300, jolt: 2 }
+GMaxVolcalith: { span: 1300, jolt: 3.5 }
+GMaxTartness: { span: 1300 }
+GMaxSweetness: { span: 1300 }
+GMaxSandblast: { span: 1300, jolt: 2 }
+GMaxStunShock: { span: 1300 }
+GMaxCentiferno: { span: 1300, jolt: 2 }
+GMaxSmite: { span: 1300, jolt: 2.5 }
+GMaxSnooze: { span: 1300 }
+GMaxFinale: { span: 1300 }
+GMaxSteelsurge: { span: 1300, jolt: 2 }
+GMaxDepletion: { span: 1300 }
+GMaxOneBlow: { span: 1300, jolt: 4 }
+GMaxRapidFlow: { span: 1300, jolt: 2.5 }
+
+# The Frenzy bursts: each is a whole moment, a fall or a gathering
+# and then what it does
+# The Frenzy bursts: each falls, gathers or catches on the target
+Splinters: { span: 1400, jolt: 3, arrives: true }
+PetalStorm: { span: 1300, jolt: 1.5, arrives: true }
+Wildfire: { span: 1400, jolt: 2, arrives: true }
+ChargedBlast: { span: 1300, jolt: 3.5, arrives: true }
+Iceberg: { span: 1400, jolt: 3.5, arrives: true }

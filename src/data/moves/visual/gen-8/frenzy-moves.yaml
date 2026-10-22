@@ -1,0 +1,7 @@
+# The Frenzy bursts of Hisui's five Nobles. The plain burst is drawn
+# as its type's strongest move instead: see `getBurstStandIn`
+FrenzyStoneAxe: { landing: Splinters }
+FrenzyPetalStorm: { landing: PetalStorm }
+FrenzyWildfire: { landing: Wildfire }
+FrenzyBlast: { landing: ChargedBlast }
+FrenzyIceberg: { landing: Iceberg }

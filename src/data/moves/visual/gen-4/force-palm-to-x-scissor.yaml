@@ -1,0 +1,28 @@
+# Thrown and going off where it lands
+# Hyper Beam's orange, Solar Beam's sunlight and Aura Sphere's blue, which their types' colours are not
+AuraSphere: { landing: Aura, color: '#5aa8ff' }
+
+# Stat moves drawn as what the pokemon does, where the rising or falling arrows said only which stat
+RockPolish: { landing: Polish }
+
+# A point driven in, and something long reaching out
+PoisonJab: { landing: Spike }
+
+# Named attacks the rules drew as something generic
+DarkPulse: { landing: Pulse }
+
+# Blades that each cut their own way, where the rake of claws drew all of them alike
+NightSlash: { landing: Crescent }
+
+# A point driven in, and something long reaching out
+AquaTail: { landing: Lash }
+
+# Thrown and going off where it lands
+# Lobbed rather than shot flat: a bomb, a thrown item, a stone
+SeedBomb: { landing: Blast, wait: { striking: Lobbed } }
+
+# Blades that each cut their own way, where the rake of claws drew all of them alike
+AirSlash: { landing: Sickles }
+
+# Two cuts across each other, the way Cross Chop lands
+XScissor: { landing: Cross }

@@ -1,0 +1,8 @@
+# Health coming back, whatever the move is called
+Roost: { landing: Feathers }
+
+# A room laid over the field, and a weight put on it
+Gravity: { landing: Press }
+
+# Something turning in front of its eyes
+MiracleEye: { landing: Trance }

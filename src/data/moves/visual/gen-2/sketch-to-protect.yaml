@@ -1,0 +1,37 @@
+# Every older region's signatures, one family each, that once borrowed another move's
+# picture
+Sketch: { landing: Sketch }
+
+# Several of something flying in, where the scatter of hits said nothing about what was thrown
+TripleKick: { landing: Kicks }
+
+SpiderWeb: { landing: Coil }
+
+# Ghost: something closing on it rather than something thrown
+Nightmare: { landing: Shade }
+
+# A blow wrapped in its element, which a plain hit in the type's colour did not say
+FlameWheel: { landing: Wheel }
+
+# Statuses drawn as what they are: poison welling up, spores, an eye, applause, anger, a nail
+Curse: { landing: Nail }
+
+# Every older region's signatures, one family each, that once borrowed another move's
+# picture
+Conversion2: { landing: Reconvert }
+
+# Wind that keeps blowing out of it rather than a jet: the move is
+# a storm aimed at something
+# Nothing is thrown: the wind itself is what crosses, so the wait
+# is spent drawing it up the way Hydro Pump's is
+Aeroblast: { landing: Jetstream, wait: { striking: Charge } }
+
+# Stat moves drawn as what the pokemon does, where the rising or falling arrows said only which stat
+CottonSpore: { landing: Cotton }
+
+# Ghost: something closing on it rather than something thrown
+Spite: { landing: Shade }
+
+# Put up or done to itself, which a dome or a stat's chevrons drew for all of them
+# Protect's green shell; Detect keeps its type's orange
+Protect: { landing: Shell, color: '#8fe39a' }

@@ -1,0 +1,117 @@
+# Stat moves drawn as what the pokemon does, where the rising or falling arrows said only which stat
+Growl: { landing: Roar }
+
+# Wound round it
+LeechSeed: { landing: Coil }
+
+# Reaching out and striking with something long
+VineWhip: { landing: Lash }
+
+# What the mainline draws for these, rather than what their type
+# and category would have picked
+RazorLeaf: { landing: Leaves }
+
+# Stat moves drawn as what the pokemon does, where the rising or falling arrows said only which stat
+Growth: { landing: Sprout }
+
+# Beams: the picture is the line between the two of them
+# The two that hold far longer and far thicker than any other
+# Hyper Beam's orange, Solar Beam's sunlight and Aura Sphere's blue, which their types' colours are not
+SolarBeam:
+  { landing: Blaster, winding: none, wait: { winding: Charge, striking: Charge }, color: '#fff0a0' }
+
+# Put up or done to itself, which a dome or a stat's chevrons drew for all of them
+SwordsDance: { landing: Blades }
+
+# Statuses drawn as what they are: poison welling up, spores, an eye, applause, anger, a nail
+Toxic: { landing: Toxin }
+
+# A point driven in
+MegaDrain: { landing: Drain }
+
+# Put up or done to itself, which a dome or a stat's chevrons drew for all of them
+DoubleTeam: { landing: Mirage }
+
+Bide: { winding: none, wait: { winding: Charge, striking: Charge } }
+Reflect: { landing: Screen, color: Defense }
+Rest: { landing: Slumber }
+
+# Beams: the picture is the line between the two of them
+# The two that hold far longer and far thicker than any other
+# Hyper Beam's orange, Solar Beam's sunlight and Aura Sphere's blue, which their types' colours are not
+HyperBeam: { landing: Blaster, wait: { winding: Charge, striking: Charge }, color: '#ffb04a' }
+
+# Something turning in front of its eyes
+SleepPowder: { landing: Trance }
+
+# Claws and blades, which differ by how many marks and how big
+Cut: { landing: Claw }
+
+# Put up or done to itself, which a dome or a stat's chevrons drew for all of them
+Substitute: { landing: Doll }
+
+# Claws and blades, which differ by how many marks and how big
+Scratch: { landing: Claw }
+Slash: { landing: Claw }
+
+# Beams: the picture is the line between the two of them
+Flamethrower: { landing: Beam }
+
+# Wound round it
+FireSpin: { landing: Coil }
+
+# Rock and earth arriving from above
+SeismicToss: { landing: Rocks }
+
+# Down, then up through the floor underneath whatever it is hitting
+Dig: { winding: none, wait: { winding: Vanish, striking: Surface } }
+
+FireBlast: { landing: Flame }
+
+# What the mainline draws for these, rather than what their type
+# and category would have picked
+Swift: { landing: Stars }
+
+# Head down and then straight through: the strike is the pokemon
+# itself, which the field already throws at what it is hitting
+SkullBash: { winding: none, wait: { winding: Charge } }
+
+Earthquake: { landing: Quake, wait: { striking: Rise } }
+
+# What the mainline draws for these, rather than what their type
+# and category would have picked
+Fissure: { landing: Chasm, wait: { striking: Rise } }
+
+# Up out of reach, then down onto it
+Fly: { winding: none, wait: { winding: Vanish, striking: Dive } }
+
+# Not beams. A bubble move is a spray of them in the mainline, and
+# this was drawing a solid jet after a thrown orb: two pictures,
+# neither of them the move
+# Blown across rather than shot: one orb crossing said the same
+# thing as every other projectile in the game
+Bubble: { landing: Bubbles, wait: { striking: Bubbles } }
+
+# Teeth
+Bite: { landing: Jaws }
+
+# Stat moves drawn as what the pokemon does, where the rising or falling arrows said only which stat
+Withdraw: { landing: Curl }
+
+# Beams: the picture is the line between the two of them
+# A jet rather than a thrown thing: what crosses the gap is the beam
+# itself, so the wait is spent drawing it up rather than in flight
+HydroPump: { landing: Beam, wait: { winding: Charge, striking: Charge } }
+
+# Not beams. A bubble move is a spray of them in the mainline, and
+# this was drawing a solid jet after a thrown orb: two pictures,
+# neither of them the move
+# Blown across rather than shot: one orb crossing said the same
+# thing as every other projectile in the game
+BubbleBeam: { landing: Bubbles, wait: { striking: Bubbles } }
+
+# Beams: the picture is the line between the two of them
+IceBeam: { landing: Beam }
+
+Blizzard: { landing: Frost }
+Surf: { landing: Splash }

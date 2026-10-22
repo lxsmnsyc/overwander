@@ -1,0 +1,22 @@
+# Signatures with a picture of their own
+# A shot charged up the way Meteor Beam is, beams drawn up the way Fleur Cannon's is
+ElectroShot: { landing: Electroshot, winding: none, wait: { winding: Charge, striking: Charge } }
+
+TeraStarstorm: { landing: Starstorm }
+
+# A shot charged up the way Meteor Beam is, beams drawn up the way Fleur Cannon's is
+FickleBeam: { landing: Fickle, wait: { striking: Charge } }
+
+BurningBulwark: { landing: Firewall }
+Thunderclap: { landing: Clap }
+MightyCleave: { landing: Cleave }
+TachyonCutter: { landing: Tachyon }
+
+# Moves that are an earlier move's picture in all but name
+HardPress: { landing: Tonnage }
+DragonCheer: { landing: Howl }
+TemperFlare: { landing: Rush }
+SupercellSlam: { landing: Plummet }
+
+# Signatures with a picture of their own
+MalignantChain: { landing: Chains }

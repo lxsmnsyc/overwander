@@ -1,0 +1,31 @@
+# Stat moves drawn as what the pokemon does, where the rising or falling arrows said only which stat
+DefendOrder: { landing: Hive }
+
+HealOrder: { landing: Swarm }
+
+# Time stopping and space torn open
+RoarOfTime: { landing: Stall }
+SpacialRend: { landing: Rend }
+
+# Moonlight and the dark it answers, for the Lunar pair
+LunarDance: { landing: Moonlit }
+
+# Two great hands closing on it
+CrushGrip: { landing: Grip }
+
+# Wound round it, or closing on it
+MagmaStorm: { landing: Vortex }
+
+# Moonlight and the dark it answers, for the Lunar pair
+DarkVoid: { landing: Void }
+
+# Light coming down on it, and light bursting up off it
+SeedFlare: { landing: Sunburst }
+
+# Carried on the air, or washing over it
+OminousWind: { landing: Blow }
+
+# Out of the dark behind whatever it hits
+# Out of the world and back out of it behind whatever it is
+# hitting, which is the wait Dig and Fly spend
+ShadowForce: { landing: Ambush, winding: none, wait: { winding: Vanish } }

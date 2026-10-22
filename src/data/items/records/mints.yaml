@@ -10,6 +10,7 @@ LonelyMint:
   flags: [Consumable, Usable, Marketable]
   buy: 12000
   sell: 6000
+  nature: Lonely
 
 BraveMint:
   type: Training
@@ -17,6 +18,7 @@ BraveMint:
   flags: [Consumable, Usable, Marketable]
   buy: 12000
   sell: 6000
+  nature: Brave
 
 AdamantMint:
   type: Training
@@ -24,6 +26,7 @@ AdamantMint:
   flags: [Consumable, Usable, Marketable]
   buy: 12000
   sell: 6000
+  nature: Adamant
 
 NaughtyMint:
   type: Training
@@ -31,6 +34,7 @@ NaughtyMint:
   flags: [Consumable, Usable, Marketable]
   buy: 12000
   sell: 6000
+  nature: Naughty
 
 BoldMint:
   type: Training
@@ -38,6 +42,7 @@ BoldMint:
   flags: [Consumable, Usable, Marketable]
   buy: 12000
   sell: 6000
+  nature: Bold
 
 RelaxedMint:
   type: Training
@@ -45,6 +50,7 @@ RelaxedMint:
   flags: [Consumable, Usable, Marketable]
   buy: 12000
   sell: 6000
+  nature: Relaxed
 
 ImpishMint:
   type: Training
@@ -52,6 +58,7 @@ ImpishMint:
   flags: [Consumable, Usable, Marketable]
   buy: 12000
   sell: 6000
+  nature: Impish
 
 LaxMint:
   type: Training
@@ -59,6 +66,7 @@ LaxMint:
   flags: [Consumable, Usable, Marketable]
   buy: 12000
   sell: 6000
+  nature: Lax
 
 TimidMint:
   type: Training
@@ -66,6 +74,7 @@ TimidMint:
   flags: [Consumable, Usable, Marketable]
   buy: 12000
   sell: 6000
+  nature: Timid
 
 HastyMint:
   type: Training
@@ -73,6 +82,7 @@ HastyMint:
   flags: [Consumable, Usable, Marketable]
   buy: 12000
   sell: 6000
+  nature: Hasty
 
 SeriousMint:
   type: Training
@@ -80,6 +90,7 @@ SeriousMint:
   flags: [Consumable, Usable, Marketable]
   buy: 12000
   sell: 6000
+  nature: Serious
 
 JollyMint:
   type: Training
@@ -87,6 +98,7 @@ JollyMint:
   flags: [Consumable, Usable, Marketable]
   buy: 12000
   sell: 6000
+  nature: Jolly
 
 NaiveMint:
   type: Training
@@ -94,6 +106,7 @@ NaiveMint:
   flags: [Consumable, Usable, Marketable]
   buy: 12000
   sell: 6000
+  nature: Naive
 
 ModestMint:
   type: Training
@@ -101,6 +114,7 @@ ModestMint:
   flags: [Consumable, Usable, Marketable]
   buy: 12000
   sell: 6000
+  nature: Modest
 
 MildMint:
   type: Training
@@ -108,6 +122,7 @@ MildMint:
   flags: [Consumable, Usable, Marketable]
   buy: 12000
   sell: 6000
+  nature: Mild
 
 QuietMint:
   type: Training
@@ -115,6 +130,7 @@ QuietMint:
   flags: [Consumable, Usable, Marketable]
   buy: 12000
   sell: 6000
+  nature: Quiet
 
 RashMint:
   type: Training
@@ -122,6 +138,7 @@ RashMint:
   flags: [Consumable, Usable, Marketable]
   buy: 12000
   sell: 6000
+  nature: Rash
 
 CalmMint:
   type: Training
@@ -129,6 +146,7 @@ CalmMint:
   flags: [Consumable, Usable, Marketable]
   buy: 12000
   sell: 6000
+  nature: Calm
 
 GentleMint:
   type: Training
@@ -136,6 +154,7 @@ GentleMint:
   flags: [Consumable, Usable, Marketable]
   buy: 12000
   sell: 6000
+  nature: Gentle
 
 SassyMint:
   type: Training
@@ -143,6 +162,7 @@ SassyMint:
   flags: [Consumable, Usable, Marketable]
   buy: 12000
   sell: 6000
+  nature: Sassy
 
 CarefulMint:
   type: Training
@@ -150,3 +170,4 @@ CarefulMint:
   flags: [Consumable, Usable, Marketable]
   buy: 12000
   sell: 6000
+  nature: Careful

@@ -6,74 +6,93 @@ NormalTeraShard:
   type: Training
   icon: other/normal-tera-shard
   flags: [Consumable, Usable]
+  tera: Normal
 FireTeraShard:
   type: Training
   icon: other/fire-tera-shard
   flags: [Consumable, Usable]
+  tera: Fire
 WaterTeraShard:
   type: Training
   icon: other/water-tera-shard
   flags: [Consumable, Usable]
+  tera: Water
 ElectricTeraShard:
   type: Training
   icon: other/electric-tera-shard
   flags: [Consumable, Usable]
+  tera: Electric
 GrassTeraShard:
   type: Training
   icon: other/grass-tera-shard
   flags: [Consumable, Usable]
+  tera: Grass
 IceTeraShard:
   type: Training
   icon: other/ice-tera-shard
   flags: [Consumable, Usable]
+  tera: Ice
 FightingTeraShard:
   type: Training
   icon: other/fighting-tera-shard
   flags: [Consumable, Usable]
+  tera: Fighting
 PoisonTeraShard:
   type: Training
   icon: other/poison-tera-shard
   flags: [Consumable, Usable]
+  tera: Poison
 GroundTeraShard:
   type: Training
   icon: other/ground-tera-shard
   flags: [Consumable, Usable]
+  tera: Ground
 FlyingTeraShard:
   type: Training
   icon: other/flying-tera-shard
   flags: [Consumable, Usable]
+  tera: Flying
 PsychicTeraShard:
   type: Training
   icon: other/psychic-tera-shard
   flags: [Consumable, Usable]
+  tera: Psychic
 BugTeraShard:
   type: Training
   icon: other/bug-tera-shard
   flags: [Consumable, Usable]
+  tera: Bug
 RockTeraShard:
   type: Training
   icon: other/rock-tera-shard
   flags: [Consumable, Usable]
+  tera: Rock
 GhostTeraShard:
   type: Training
   icon: other/ghost-tera-shard
   flags: [Consumable, Usable]
+  tera: Ghost
 DragonTeraShard:
   type: Training
   icon: other/dragon-tera-shard
   flags: [Consumable, Usable]
+  tera: Dragon
 DarkTeraShard:
   type: Training
   icon: other/dark-tera-shard
   flags: [Consumable, Usable]
+  tera: Dark
 SteelTeraShard:
   type: Training
   icon: other/steel-tera-shard
   flags: [Consumable, Usable]
+  tera: Steel
 FairyTeraShard:
   type: Training
   icon: other/fairy-tera-shard
   flags: [Consumable, Usable]
+  tera: Fairy
 StellarTeraShard:
   type: Training
   icon: other/stellar-tera-shard
+  tera: Stellar

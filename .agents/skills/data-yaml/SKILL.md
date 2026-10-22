@@ -121,12 +121,29 @@ A file per family in two folders, each item keyed by name:
 
 | folder                 | holds                                                         |
 | ---------------------- | ------------------------------------------------------------- |
-| `items/records/`       | type, icon (`sheet/name`), flags, buy and sell; flags and prices left out for none |
+| `items/records/`       | type, icon (`sheet/name`), flags, buy and sell; flags and prices left out for none. Also the one thing the item names, where it names one |
 | `text/en/items/`       | each name, and a written-out `description` where the line is the item's own |
 
 - **A line that follows a table is a template.** The family's text file keeps the sentence under `templates:` with `{placeholders}`, the item leaves its `description` out, and the family's `describeX(item)` fills it in with `itemText` from the table the engine reads (the `registry-descriptions` skill). The describer is listed in `DESCRIBERS` in `src/data/items/index.ts`.
 - **The family order is `ITEM_FAMILIES` in `src/data/items/index.ts`**, and a shelf lists a type's items in that order, each file's in the order it writes them. A new family is added there.
-- **Behaviour stays in the family's TS file**: what a berry does, how much a drink gives back, which type a gem lifts. The machines are generated from the learnsets, so they have no records, only templates.
+- **Which thing an item names is a record field; what it does with it stays in the family's TS file.** The type a gem lifts and the Mega a stone opens are written on the record, and what a berry does or how a lifted type is lifted is code. The family's TS file builds its table (`GEMS`, `MEGA_STONES`) out of its records with `recordField` or `readFamilyRecords` from `items/yaml.ts`, in the order the file writes them. The fields:
+
+  | field                  | on                                                  |
+  | ---------------------- | --------------------------------------------------- |
+  | `mega`, `forms`        | a Mega Stone: its Mega, and the Megas of the species' other forms |
+  | `z-type`, `z-move`     | a type Z-Crystal: the type it turns and its Z-Move  |
+  | `holders`, `move`, `z-move` | a signature Z-Crystal                          |
+  | `species`, `pairs`     | a whole fossil's species; a top half's `{ bottom: species }` |
+  | `lifts`                | a gem, plate, incense or type booster: the type it lifts |
+  | `move-type`            | a Drive or Memory: the type it gives its move       |
+  | `tera`                 | a Tera Shard's type                                 |
+  | `stat`, `fills`        | a vitamin, wing or power item's stat; the stat a Max one fills |
+  | `nature`               | a mint's nature                                     |
+  | `calls`                | a raid item's mythical                              |
+  | `stage`                | an X item's stage                                   |
+  | `restore`, `cures`, `revives`, `bitter` | medicine: health (`full` for the pool), statuses (`all` for every one), a revive's share, herbal mouthfuls |
+
+- The machines are generated from the learnsets, so they have no records, only templates.
 
 ## Rules
 

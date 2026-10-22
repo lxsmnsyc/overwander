@@ -1,6 +1,8 @@
-import { Items } from '../ids/items';
+import type { Items } from '../ids/items';
 import { NON_VOLATILE_STATUSES, Statuses } from '../ids/status';
 import { itemText } from './__create';
+import recordsFile from './records/medicine.yaml';
+import { readFamilyRecords } from './yaml';
 
 /**
  * Medicine: what a party is put right with between fights.
@@ -62,40 +64,38 @@ export interface MedicineEffect {
 }
 
 /**
- * Every medicine and what it does. A potion's numbers are the
- * mainline's, which are tuned against the same stat formula this game
- * derives health from
+ * Every medicine and what it does, out of its record. A potion's
+ * numbers are the mainline's, which are tuned against the same stat
+ * formula this game derives health from
  */
-export const MEDICINES = new Map<Items, MedicineEffect>([
-  [Items.Potion, { restore: 20, cures: null, revives: 0 }],
-  [Items.SuperPotion, { restore: 60, cures: null, revives: 0 }],
-  [Items.HyperPotion, { restore: 120, cures: null, revives: 0 }],
-  [Items.MaxPotion, { restore: FULL, cures: null, revives: 0 }],
-  // The one item that does both halves of the job at once, which is
-  // what makes it worth what it costs
-  [Items.FullRestore, { restore: FULL, cures: EVERY_STATUS, revives: 0 }],
-  [
-    Items.Antidote,
-    { restore: 0, cures: new Set([Statuses.Poisoned, Statuses.BadlyPoisoned]), revives: 0 },
-  ],
-  [Items.BurnHeal, { restore: 0, cures: new Set([Statuses.Burned]), revives: 0 }],
-  [Items.IceHeal, { restore: 0, cures: new Set([Statuses.Frozen]), revives: 0 }],
-  [Items.Awakening, { restore: 0, cures: new Set([Statuses.Sleeping]), revives: 0 }],
-  [Items.ParalyzeHeal, { restore: 0, cures: new Set([Statuses.Paralyzed]), revives: 0 }],
-  [Items.FullHeal, { restore: 0, cures: EVERY_STATUS, revives: 0 }],
-  // A revive brings a pokemon back on half a pool; the Max on a whole
-  // one. Neither does anything to a pokemon that is still standing
-  [Items.Revive, { restore: 0, cures: null, revives: 0.5 }],
-  [Items.MaxRevive, { restore: 0, cures: null, revives: 1 }],
-  // The herbal four. Each one out-does the bottle it stands beside —
-  // the powder beats a Super Potion, the root beats a Hyper Potion,
-  // the herb is a Max Revive — and each is paid for in what the
-  // pokemon thinks of the player rather than in gold
-  [Items.EnergyPowder, { restore: 50, cures: null, revives: 0, bitter: 1 }],
-  [Items.EnergyRoot, { restore: 200, cures: null, revives: 0, bitter: 2 }],
-  [Items.HealPowder, { restore: 0, cures: EVERY_STATUS, revives: 0, bitter: 1 }],
-  [Items.RevivalHerb, { restore: 0, cures: null, revives: 1, bitter: 3 }],
-]);
+export const MEDICINES = new Map<Items, MedicineEffect>();
+
+for (const [item, record] of readFamilyRecords('medicine', recordsFile)) {
+  const { restore, cures, revives, bitter } = record;
+
+  if (restore == null && cures == null && revives == null) {
+    continue;
+  }
+
+  let cured: Set<Statuses> | null = null;
+
+  if (cures === 'all') {
+    cured = EVERY_STATUS;
+  } else if (cures != null) {
+    cured = new Set(cures);
+  }
+
+  const effect: MedicineEffect = {
+    restore: restore === 'full' ? FULL : (restore ?? 0),
+    cures: cured,
+    revives: revives ?? 0,
+  };
+
+  if (bitter != null) {
+    effect.bitter = bitter;
+  }
+  MEDICINES.set(item, effect);
+}
 
 /**
  * Whether the item is medicine

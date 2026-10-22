@@ -1,35 +1,17 @@
 import { TYPE_NAMES, Types } from '../constants/types';
-import { Items } from '../ids/items';
+import type { Items } from '../ids/items';
 import type { Species } from '../ids/species';
 import { teraTypeOf } from '../species/tera-type';
 import { itemText } from './__create';
+import recordsFile from './records/tera-shards.yaml';
+import { recordField } from './yaml';
 
 /**
  * The Tera Shards: one per type, spent fifty at a time to change a
  * catch's Tera type to the shard's. The Stellar Shard is carried but
  * nothing spends it yet.
  */
-export const TERA_SHARDS = new Map<Items, Types>([
-  [Items.NormalTeraShard, Types.Normal],
-  [Items.FireTeraShard, Types.Fire],
-  [Items.WaterTeraShard, Types.Water],
-  [Items.ElectricTeraShard, Types.Electric],
-  [Items.GrassTeraShard, Types.Grass],
-  [Items.IceTeraShard, Types.Ice],
-  [Items.FightingTeraShard, Types.Fighting],
-  [Items.PoisonTeraShard, Types.Poison],
-  [Items.GroundTeraShard, Types.Ground],
-  [Items.FlyingTeraShard, Types.Flying],
-  [Items.PsychicTeraShard, Types.Psychic],
-  [Items.BugTeraShard, Types.Bug],
-  [Items.RockTeraShard, Types.Rock],
-  [Items.GhostTeraShard, Types.Ghost],
-  [Items.DragonTeraShard, Types.Dragon],
-  [Items.DarkTeraShard, Types.Dark],
-  [Items.SteelTeraShard, Types.Steel],
-  [Items.FairyTeraShard, Types.Fairy],
-  [Items.StellarTeraShard, Types.Stellar],
-]);
+export const TERA_SHARDS = recordField('tera-shards', recordsFile, 'tera');
 
 const SHARD_OF_TYPE = new Map<Types, Items>();
 

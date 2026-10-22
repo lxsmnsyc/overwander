@@ -1,6 +1,9 @@
-import { STAT_NAMES, Stats } from '../constants/stats';
-import { Items } from '../ids/items';
+import type { Stats } from '../constants/stats';
+import { STAT_NAMES } from '../constants/stats';
+import type { Items } from '../ids/items';
 import { itemText } from './__create';
+import recordsFile from './records/power-items.yaml';
+import { recordField } from './yaml';
 
 /**
  * The power items: held gear whose whole effect is on the next
@@ -16,14 +19,7 @@ import { itemText } from './__create';
  * values for fighting. That half is not written, because nothing here
  * asks an item what a fight was worth yet
  */
-export const POWER_ITEMS: Map<Items, Stats> = new Map([
-  [Items.PowerWeight, Stats.HP],
-  [Items.PowerBracer, Stats.Attack],
-  [Items.PowerBelt, Stats.Defense],
-  [Items.PowerLens, Stats.SpecialAttack],
-  [Items.PowerBand, Stats.SpecialDefense],
-  [Items.PowerAnklet, Stats.Speed],
-]);
+export const POWER_ITEMS = recordField('power-items', recordsFile, 'stat');
 
 /**
  * The stat this item forces an egg to inherit, or null for anything

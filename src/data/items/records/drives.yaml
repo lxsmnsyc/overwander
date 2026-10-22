@@ -6,21 +6,25 @@ DouseDrive:
   icon: held/douse-drive
   flags: [Holdable]
   sell: 2000
+  move-type: Water
 
 ShockDrive:
   type: Held
   icon: held/shock-drive
   flags: [Holdable]
   sell: 2000
+  move-type: Electric
 
 BurnDrive:
   type: Held
   icon: held/burn-drive
   flags: [Holdable]
   sell: 2000
+  move-type: Fire
 
 ChillDrive:
   type: Held
   icon: held/chill-drive
   flags: [Holdable]
   sell: 2000
+  move-type: Ice

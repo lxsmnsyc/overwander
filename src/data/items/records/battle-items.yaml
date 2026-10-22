@@ -11,6 +11,7 @@ XAttack:
   flags: [Consumable, Holdable, Marketable]
   buy: 1500
   sell: 750
+  stage: Attack
 
 XDefense:
   type: Held
@@ -18,6 +19,7 @@ XDefense:
   flags: [Consumable, Holdable, Marketable]
   buy: 1500
   sell: 750
+  stage: Defense
 
 XSpAtk:
   type: Held
@@ -25,6 +27,7 @@ XSpAtk:
   flags: [Consumable, Holdable, Marketable]
   buy: 1500
   sell: 750
+  stage: SpecialAttack
 
 XSpDef:
   type: Held
@@ -32,6 +35,7 @@ XSpDef:
   flags: [Consumable, Holdable, Marketable]
   buy: 1500
   sell: 750
+  stage: SpecialDefense
 
 XSpeed:
   type: Held
@@ -39,6 +43,7 @@ XSpeed:
   flags: [Consumable, Holdable, Marketable]
   buy: 1500
   sell: 750
+  stage: Speed
 
 XAccuracy:
   type: Held
@@ -46,6 +51,7 @@ XAccuracy:
   flags: [Consumable, Holdable, Marketable]
   buy: 1500
   sell: 750
+  stage: Accuracy
 
 DireHit:
   type: Held

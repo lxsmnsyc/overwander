@@ -7,549 +7,644 @@ Venusaurite:
   icon: mega-stones/venusaurite
   flags: [Holdable]
   sell: 2000
+  mega: VenusaurMega
 
 CharizarditeX:
   type: Held
   icon: mega-stones/charizardite-x
   flags: [Holdable]
   sell: 2000
+  mega: CharizardMegaX
 
 CharizarditeY:
   type: Held
   icon: mega-stones/charizardite-y
   flags: [Holdable]
   sell: 2000
+  mega: CharizardMegaY
 
 Blastoisinite:
   type: Held
   icon: mega-stones/blastoisinite
   flags: [Holdable]
   sell: 2000
+  mega: BlastoiseMega
 
 Beedrillite:
   type: Held
   icon: mega-stones/beedrillite
   flags: [Holdable]
   sell: 2000
+  mega: BeedrillMega
 
 Pidgeotite:
   type: Held
   icon: mega-stones/pidgeotite
   flags: [Holdable]
   sell: 2000
+  mega: PidgeotMega
 
 Alakazite:
   type: Held
   icon: mega-stones/alakazite
   flags: [Holdable]
   sell: 2000
+  mega: AlakazamMega
 
 Slowbronite:
   type: Held
   icon: mega-stones/slowbronite
   flags: [Holdable]
   sell: 2000
+  mega: SlowbroMega
 
 Gengarite:
   type: Held
   icon: mega-stones/gengarite
   flags: [Holdable]
   sell: 2000
+  mega: GengarMega
 
 Kangaskhanite:
   type: Held
   icon: mega-stones/kangaskhanite
   flags: [Holdable]
   sell: 2000
+  mega: KangaskhanMega
 
 Pinsirite:
   type: Held
   icon: mega-stones/pinsirite
   flags: [Holdable]
   sell: 2000
+  mega: PinsirMega
 
 Gyaradosite:
   type: Held
   icon: mega-stones/gyaradosite
   flags: [Holdable]
   sell: 2000
+  mega: GyaradosMega
 
 Aerodactylite:
   type: Held
   icon: mega-stones/aerodactylite
   flags: [Holdable]
   sell: 2000
+  mega: AerodactylMega
 
 MewtwoniteX:
   type: Held
   icon: mega-stones/mewtwonite-x
   flags: [Holdable]
   sell: 2000
+  mega: MewtwoMegaX
 
 MewtwoniteY:
   type: Held
   icon: mega-stones/mewtwonite-y
   flags: [Holdable]
   sell: 2000
+  mega: MewtwoMegaY
 
 Ampharosite:
   type: Held
   icon: mega-stones/ampharosite
   flags: [Holdable]
   sell: 2000
+  mega: AmpharosMega
 
 Steelixite:
   type: Held
   icon: mega-stones/steelixite
   flags: [Holdable]
   sell: 2000
+  mega: SteelixMega
 
 Scizorite:
   type: Held
   icon: mega-stones/scizorite
   flags: [Holdable]
   sell: 2000
+  mega: ScizorMega
 
 Heracronite:
   type: Held
   icon: mega-stones/heracronite
   flags: [Holdable]
   sell: 2000
+  mega: HeracrossMega
 
 Houndoominite:
   type: Held
   icon: mega-stones/houndoominite
   flags: [Holdable]
   sell: 2000
+  mega: HoundoomMega
 
 Tyranitarite:
   type: Held
   icon: mega-stones/tyranitarite
   flags: [Holdable]
   sell: 2000
+  mega: TyranitarMega
 
 Sceptilite:
   type: Held
   icon: mega-stones/sceptilite
   flags: [Holdable]
   sell: 2000
+  mega: SceptileMega
 
 Blazikenite:
   type: Held
   icon: mega-stones/blazikenite
   flags: [Holdable]
   sell: 2000
+  mega: BlazikenMega
 
 Swampertite:
   type: Held
   icon: mega-stones/swampertite
   flags: [Holdable]
   sell: 2000
+  mega: SwampertMega
 
 Gardevoirite:
   type: Held
   icon: mega-stones/gardevoirite
   flags: [Holdable]
   sell: 2000
+  mega: GardevoirMega
 
 Sablenite:
   type: Held
   icon: mega-stones/sablenite
   flags: [Holdable]
   sell: 2000
+  mega: SableyeMega
 
 Mawilite:
   type: Held
   icon: mega-stones/mawilite
   flags: [Holdable]
   sell: 2000
+  mega: MawileMega
 
 Aggronite:
   type: Held
   icon: mega-stones/aggronite
   flags: [Holdable]
   sell: 2000
+  mega: AggronMega
 
 Medichamite:
   type: Held
   icon: mega-stones/medichamite
   flags: [Holdable]
   sell: 2000
+  mega: MedichamMega
 
 Manectite:
   type: Held
   icon: mega-stones/manectite
   flags: [Holdable]
   sell: 2000
+  mega: ManectricMega
 
 Sharpedonite:
   type: Held
   icon: mega-stones/sharpedonite
   flags: [Holdable]
   sell: 2000
+  mega: SharpedoMega
 
 Cameruptite:
   type: Held
   icon: mega-stones/cameruptite
   flags: [Holdable]
   sell: 2000
+  mega: CameruptMega
 
 Altarianite:
   type: Held
   icon: mega-stones/altarianite
   flags: [Holdable]
   sell: 2000
+  mega: AltariaMega
 
 Banettite:
   type: Held
   icon: mega-stones/banettite
   flags: [Holdable]
   sell: 2000
+  mega: BanetteMega
 
 Absolite:
   type: Held
   icon: mega-stones/absolite
   flags: [Holdable]
   sell: 2000
+  mega: AbsolMega
 
 Glalitite:
   type: Held
   icon: mega-stones/glalitite
   flags: [Holdable]
   sell: 2000
+  mega: GlalieMega
 
 Salamencite:
   type: Held
   icon: mega-stones/salamencite
   flags: [Holdable]
   sell: 2000
+  mega: SalamenceMega
 
 Metagrossite:
   type: Held
   icon: mega-stones/metagrossite
   flags: [Holdable]
   sell: 2000
+  mega: MetagrossMega
 
 Latiasite:
   type: Held
   icon: mega-stones/latiasite
   flags: [Holdable]
   sell: 2000
+  mega: LatiasMega
 
 Latiosite:
   type: Held
   icon: mega-stones/latiosite
   flags: [Holdable]
   sell: 2000
+  mega: LatiosMega
 
 Lopunnite:
   type: Held
   icon: mega-stones/lopunnite
   flags: [Holdable]
   sell: 2000
+  mega: LopunnyMega
 
 Garchompite:
   type: Held
   icon: mega-stones/garchompite
   flags: [Holdable]
   sell: 2000
+  mega: GarchompMega
 
 Lucarionite:
   type: Held
   icon: mega-stones/lucarionite
   flags: [Holdable]
   sell: 2000
+  mega: LucarioMega
 
 Abomasite:
   type: Held
   icon: mega-stones/abomasite
   flags: [Holdable]
   sell: 2000
+  mega: AbomasnowMega
 
 Galladite:
   type: Held
   icon: mega-stones/galladite
   flags: [Holdable]
   sell: 2000
+  mega: GalladeMega
 
 Audinite:
   type: Held
   icon: mega-stones/audinite
   flags: [Holdable]
   sell: 2000
+  mega: AudinoMega
 
 Diancite:
   type: Held
   icon: mega-stones/diancite
   flags: [Holdable]
   sell: 2000
+  mega: DiancieMega
 
 RaichuniteX:
   type: Held
   icon: mega-stones/raichunite-x
   flags: [Holdable]
   sell: 2000
+  mega: RaichuMegaX
 
 RaichuniteY:
   type: Held
   icon: mega-stones/raichunite-y
   flags: [Holdable]
   sell: 2000
+  mega: RaichuMegaY
 
 Clefablite:
   type: Held
   icon: mega-stones/clefablite
   flags: [Holdable]
   sell: 2000
+  mega: ClefableMega
 
 Victreebelite:
   type: Held
   icon: mega-stones/victreebelite
   flags: [Holdable]
   sell: 2000
+  mega: VictreebelMega
 
 Starminite:
   type: Held
   icon: mega-stones/starminite
   flags: [Holdable]
   sell: 2000
+  mega: StarmieMega
 
 Dragoninite:
   type: Held
   icon: mega-stones/dragoninite
   flags: [Holdable]
   sell: 2000
+  mega: DragoniteMega
 
 Meganiumite:
   type: Held
   icon: mega-stones/meganiumite
   flags: [Holdable]
   sell: 2000
+  mega: MeganiumMega
 
 Feraligite:
   type: Held
   icon: mega-stones/feraligite
   flags: [Holdable]
   sell: 2000
+  mega: FeraligatrMega
 
 Skarmorite:
   type: Held
   icon: mega-stones/skarmorite
   flags: [Holdable]
   sell: 2000
+  mega: SkarmoryMega
 
 Chimechite:
   type: Held
   icon: mega-stones/chimechite
   flags: [Holdable]
   sell: 2000
+  mega: ChimechoMega
 
 AbsoliteZ:
   type: Held
   icon: mega-stones/absolite-z
   flags: [Holdable]
   sell: 2000
+  mega: AbsolMegaZ
 
 Staraptite:
   type: Held
   icon: mega-stones/staraptite
   flags: [Holdable]
   sell: 2000
+  mega: StaraptorMega
 
 GarchompiteZ:
   type: Held
   icon: mega-stones/garchompite-z
   flags: [Holdable]
   sell: 2000
+  mega: GarchompMegaZ
 
 LucarioniteZ:
   type: Held
   icon: mega-stones/lucarionite-z
   flags: [Holdable]
   sell: 2000
+  mega: LucarioMegaZ
 
 Froslassite:
   type: Held
   icon: mega-stones/froslassite
   flags: [Holdable]
   sell: 2000
+  mega: FroslassMega
 
 Heatranite:
   type: Held
   icon: mega-stones/heatranite
   flags: [Holdable]
   sell: 2000
+  mega: HeatranMega
 
 Darkranite:
   type: Held
   icon: mega-stones/darkranite
   flags: [Holdable]
   sell: 2000
+  mega: DarkraiMega
 
 Emboarite:
   type: Held
   icon: mega-stones/emboarite
   flags: [Holdable]
   sell: 2000
+  mega: EmboarMega
 
 Excadrite:
   type: Held
   icon: mega-stones/excadrite
   flags: [Holdable]
   sell: 2000
+  mega: ExcadrillMega
 
 Scolipite:
   type: Held
   icon: mega-stones/scolipite
   flags: [Holdable]
   sell: 2000
+  mega: ScolipedeMega
 
 Scraftinite:
   type: Held
   icon: mega-stones/scraftinite
   flags: [Holdable]
   sell: 2000
+  mega: ScraftyMega
 
 Eelektrossite:
   type: Held
   icon: mega-stones/eelektrossite
   flags: [Holdable]
   sell: 2000
+  mega: EelektrossMega
 
 Chandelurite:
   type: Held
   icon: mega-stones/chandelurite
   flags: [Holdable]
   sell: 2000
+  mega: ChandelureMega
 
 Golurkite:
   type: Held
   icon: mega-stones/golurkite
   flags: [Holdable]
   sell: 2000
+  mega: GolurkMega
 
 Chesnaughtite:
   type: Held
   icon: mega-stones/chesnaughtite
   flags: [Holdable]
   sell: 2000
+  mega: ChesnaughtMega
 
 Delphoxite:
   type: Held
   icon: mega-stones/delphoxite
   flags: [Holdable]
   sell: 2000
+  mega: DelphoxMega
 
 Greninjite:
   type: Held
   icon: mega-stones/greninjite
   flags: [Holdable]
   sell: 2000
+  mega: GreninjaMega
 
 Pyroarite:
   type: Held
   icon: mega-stones/pyroarite
   flags: [Holdable]
   sell: 2000
+  mega: PyroarMega
 
 Floettite:
   type: Held
   icon: mega-stones/floettite
   flags: [Holdable]
   sell: 2000
+  mega: FloetteMega
 
 Meowsticite:
   type: Held
   icon: mega-stones/meowsticite
   flags: [Holdable]
   sell: 2000
+  mega: MeowsticMega
+  forms: [MeowsticFemaleMega]
 
 Malamarite:
   type: Held
   icon: mega-stones/malamarite
   flags: [Holdable]
   sell: 2000
+  mega: MalamarMega
 
 Barbaracite:
   type: Held
   icon: mega-stones/barbaracite
   flags: [Holdable]
   sell: 2000
+  mega: BarbaracleMega
 
 Dragalgite:
   type: Held
   icon: mega-stones/dragalgite
   flags: [Holdable]
   sell: 2000
+  mega: DragalgeMega
 
 Hawluchanite:
   type: Held
   icon: mega-stones/hawluchanite
   flags: [Holdable]
   sell: 2000
+  mega: HawluchaMega
 
 Zygardite:
   type: Held
   icon: mega-stones/zygardite
   flags: [Holdable]
   sell: 2000
+  mega: ZygardeMega
 
 Crabominite:
   type: Held
   icon: mega-stones/crabominite
   flags: [Holdable]
   sell: 2000
+  mega: CrabominableMega
 
 Golisopite:
   type: Held
   icon: mega-stones/golisopite
   flags: [Holdable]
   sell: 2000
+  mega: GolisopodMega
 
 Drampanite:
   type: Held
   icon: mega-stones/drampanite
   flags: [Holdable]
   sell: 2000
+  mega: DrampaMega
 
 Magearnite:
   type: Held
   icon: mega-stones/magearnite
   flags: [Holdable]
   sell: 2000
+  mega: MagearnaMega
+  forms: [MagearnaOriginalMega]
 
 Zeraorite:
   type: Held
   icon: mega-stones/zeraorite
   flags: [Holdable]
   sell: 2000
+  mega: ZeraoraMega
 
 Falinksite:
   type: Held
   icon: mega-stones/falinksite
   flags: [Holdable]
   sell: 2000
+  mega: FalinksMega
 
 Scovillainite:
   type: Held
   icon: mega-stones/scovillainite
   flags: [Holdable]
   sell: 2000
+  mega: ScovillainMega
 
 Glimmoranite:
   type: Held
   icon: mega-stones/glimmoranite
   flags: [Holdable]
   sell: 2000
+  mega: GlimmoraMega
 
 Tatsugirinite:
   type: Held
   icon: mega-stones/tatsugirinite
   flags: [Holdable]
   sell: 2000
+  mega: TatsugiriMega
+  forms: [TatsugiriStretchyMega, TatsugiriDroopyMega]
 
 Baxcalibrite:
   type: Held
   icon: mega-stones/baxcalibrite
   flags: [Holdable]
   sell: 2000
+  mega: BaxcaliburMega

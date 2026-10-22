@@ -1,6 +1,8 @@
-import { TYPE_NAMES, Types } from '../constants/types';
+import { TYPE_NAMES } from '../constants/types';
 import { Items } from '../ids/items';
 import { itemText } from './__create';
+import recordsFile from './records/incenses.yaml';
+import { recordField } from './yaml';
 
 /**
  * The incenses: held smokes, each one a small edge somewhere.
@@ -22,13 +24,7 @@ import { itemText } from './__create';
  * The incenses that lift a type, and the type each lifts. Two of them
  * lift Water: the sea and the waves are the same water
  */
-export const INCENSE_TYPES = new Map<Items, Types>([
-  [Items.OddIncense, Types.Psychic],
-  [Items.RockIncense, Types.Rock],
-  [Items.RoseIncense, Types.Grass],
-  [Items.SeaIncense, Types.Water],
-  [Items.WaveIncense, Types.Water],
-]);
+export const INCENSE_TYPES = recordField('incenses', recordsFile, 'lifts');
 
 /**
  * The incenses that do something other than lift a type

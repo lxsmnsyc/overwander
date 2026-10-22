@@ -9,6 +9,7 @@ SilkScarf:
   flags: [Holdable, Marketable]
   buy: 4000
   sell: 2000
+  lifts: Normal
 
 BlackBelt:
   type: Held
@@ -16,6 +17,7 @@ BlackBelt:
   flags: [Holdable, Marketable]
   buy: 4000
   sell: 2000
+  lifts: Fighting
 
 SharpBeak:
   type: Held
@@ -23,6 +25,7 @@ SharpBeak:
   flags: [Holdable, Marketable]
   buy: 4000
   sell: 2000
+  lifts: Flying
 
 PoisonBarb:
   type: Held
@@ -30,6 +33,7 @@ PoisonBarb:
   flags: [Holdable, Marketable]
   buy: 4000
   sell: 2000
+  lifts: Poison
 
 SoftSand:
   type: Held
@@ -37,6 +41,7 @@ SoftSand:
   flags: [Holdable, Marketable]
   buy: 4000
   sell: 2000
+  lifts: Ground
 
 HardStone:
   type: Held
@@ -44,6 +49,7 @@ HardStone:
   flags: [Holdable, Marketable]
   buy: 4000
   sell: 2000
+  lifts: Rock
 
 SilverPowder:
   type: Held
@@ -51,6 +57,7 @@ SilverPowder:
   flags: [Holdable, Marketable]
   buy: 4000
   sell: 2000
+  lifts: Bug
 
 SpellTag:
   type: Held
@@ -58,6 +65,7 @@ SpellTag:
   flags: [Holdable, Marketable]
   buy: 4000
   sell: 2000
+  lifts: Ghost
 
 MetalCoat:
   type: Held
@@ -65,6 +73,7 @@ MetalCoat:
   flags: [Holdable, Marketable]
   buy: 4000
   sell: 2000
+  lifts: Steel
 
 Charcoal:
   type: Held
@@ -72,6 +81,7 @@ Charcoal:
   flags: [Holdable, Marketable]
   buy: 4000
   sell: 2000
+  lifts: Fire
 
 MysticWater:
   type: Held
@@ -79,6 +89,7 @@ MysticWater:
   flags: [Holdable, Marketable]
   buy: 4000
   sell: 2000
+  lifts: Water
 
 MiracleSeed:
   type: Held
@@ -86,6 +97,7 @@ MiracleSeed:
   flags: [Holdable, Marketable]
   buy: 4000
   sell: 2000
+  lifts: Grass
 
 Magnet:
   type: Held
@@ -93,6 +105,7 @@ Magnet:
   flags: [Holdable, Marketable]
   buy: 4000
   sell: 2000
+  lifts: Electric
 
 TwistedSpoon:
   type: Held
@@ -100,6 +113,7 @@ TwistedSpoon:
   flags: [Holdable, Marketable]
   buy: 4000
   sell: 2000
+  lifts: Psychic
 
 NeverMeltIce:
   type: Held
@@ -107,6 +121,7 @@ NeverMeltIce:
   flags: [Holdable, Marketable]
   buy: 4000
   sell: 2000
+  lifts: Ice
 
 DragonFang:
   type: Held
@@ -114,6 +129,7 @@ DragonFang:
   flags: [Holdable, Marketable]
   buy: 4000
   sell: 2000
+  lifts: Dragon
 
 BlackGlasses:
   type: Held
@@ -121,6 +137,7 @@ BlackGlasses:
   flags: [Holdable, Marketable]
   buy: 4000
   sell: 2000
+  lifts: Dark
 
 FairyFeather:
   type: Held
@@ -128,3 +145,4 @@ FairyFeather:
   flags: [Holdable, Marketable]
   buy: 4000
   sell: 2000
+  lifts: Fairy

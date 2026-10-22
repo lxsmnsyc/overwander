@@ -6,99 +6,116 @@ FightingMemory:
   icon: memories/fighting
   flags: [Holdable]
   sell: 2000
+  move-type: Fighting
 
 FlyingMemory:
   type: Held
   icon: memories/flying
   flags: [Holdable]
   sell: 2000
+  move-type: Flying
 
 PoisonMemory:
   type: Held
   icon: memories/poison
   flags: [Holdable]
   sell: 2000
+  move-type: Poison
 
 GroundMemory:
   type: Held
   icon: memories/ground
   flags: [Holdable]
   sell: 2000
+  move-type: Ground
 
 RockMemory:
   type: Held
   icon: memories/rock
   flags: [Holdable]
   sell: 2000
+  move-type: Rock
 
 BugMemory:
   type: Held
   icon: memories/bug
   flags: [Holdable]
   sell: 2000
+  move-type: Bug
 
 GhostMemory:
   type: Held
   icon: memories/ghost
   flags: [Holdable]
   sell: 2000
+  move-type: Ghost
 
 SteelMemory:
   type: Held
   icon: memories/steel
   flags: [Holdable]
   sell: 2000
+  move-type: Steel
 
 FireMemory:
   type: Held
   icon: memories/fire
   flags: [Holdable]
   sell: 2000
+  move-type: Fire
 
 WaterMemory:
   type: Held
   icon: memories/water
   flags: [Holdable]
   sell: 2000
+  move-type: Water
 
 GrassMemory:
   type: Held
   icon: memories/grass
   flags: [Holdable]
   sell: 2000
+  move-type: Grass
 
 ElectricMemory:
   type: Held
   icon: memories/electric
   flags: [Holdable]
   sell: 2000
+  move-type: Electric
 
 PsychicMemory:
   type: Held
   icon: memories/psychic
   flags: [Holdable]
   sell: 2000
+  move-type: Psychic
 
 IceMemory:
   type: Held
   icon: memories/ice
   flags: [Holdable]
   sell: 2000
+  move-type: Ice
 
 DragonMemory:
   type: Held
   icon: memories/dragon
   flags: [Holdable]
   sell: 2000
+  move-type: Dragon
 
 DarkMemory:
   type: Held
   icon: memories/dark
   flags: [Holdable]
   sell: 2000
+  move-type: Dark
 
 FairyMemory:
   type: Held
   icon: memories/fairy
   flags: [Holdable]
   sell: 2000
+  move-type: Fairy

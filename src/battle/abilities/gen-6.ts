@@ -13,7 +13,7 @@ import {
 import { Species } from '../../data/ids/species';
 import { getBaseFormSpecies } from '../../data/ids/forms';
 import { NON_VOLATILE_STATUSES, Statuses, Terrains, Weathers } from '../../data/ids/status';
-import { getMoveData } from '../../data/moves';
+import { getMoveData, hasMoveFlag } from '../../data/moves';
 import { MULTI_HIT_MOVES } from '../../data/moves/multi-hit';
 import { MergedLifecycle } from '../lifecycle';
 import type Battle from '../battle';
@@ -154,7 +154,7 @@ const setupAbilities = [
     battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
       if (
         !event.immune &&
-        (getMoveData(event.move).flags & MoveFlags.Ballistic) !== 0 &&
+        hasMoveFlag(event.move, MoveFlags.Ballistic) &&
         event.target.type === MoveTargetType.Unit &&
         event.target.unit.hasAbility(Abilities.Bulletproof)
       ) {

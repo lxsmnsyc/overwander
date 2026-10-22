@@ -10,6 +10,7 @@ export {
   SPEED_COOLDOWN_HALVING,
   getMoveCooldown,
   getMoveData,
+  hasMoveFlag,
   getMovePP,
   getRegisteredMoves,
   getSpeedCooldownFactor,

@@ -1,0 +1,43 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Biome ground",
+  "type": "object",
+  "properties": {
+    "biomes": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "names.json#/definitions/biome"
+      },
+      "additionalProperties": {
+        "$ref": "names.json#/definitions/type"
+      }
+    },
+    "effects": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "names.json#/definitions/type"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "move": {
+            "$ref": "names.json#/definitions/move"
+          },
+          "status": {
+            "$ref": "names.json#/definitions/status"
+          }
+        },
+        "required": [
+          "move",
+          "status"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "biomes",
+    "effects"
+  ],
+  "additionalProperties": false
+}

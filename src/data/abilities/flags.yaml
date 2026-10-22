@@ -1,0 +1,48 @@
+# The abilities a mechanic treats apart, by what sets them apart. Each list
+# keeps its order
+
+# What Receiver and Power of Alchemy will not take up: the ones that copy in
+# their own right, and the ones only a particular shape can use
+unreceivable:
+  - Receiver
+  - PowerOfAlchemy
+  - Trace
+  - Forecast
+  - FlowerGift
+  - Multitype
+  - Illusion
+  - WonderGuard
+  - ZenMode
+  - Imposter
+  - StanceChange
+  - PowerConstruct
+  - Schooling
+  - ShieldsDown
+  - Comatose
+  - Disguise
+  - RksSystem
+
+# The special-tier ones that can never be disabled, by Neutralizing Gas,
+# Mold Breaker or anything else
+protected:
+  - Boss
+  - Shadow
+  - Totem
+  - TotemAlly
+  - Alpha
+  - Noble
+
+# The ones Mold Breaker and the moves that pierce like it cannot see past,
+# though Neutralizing Gas still quiets them
+mold-proof:
+  - FullMetalBody
+  - ShadowShield
+  - PrismArmor
+
+# The ones the AI knows about without seeing them cue: a raid boss, an Alpha,
+# a Noble, or the ally a Totem calls, is plainly one
+always-known:
+  - Boss
+  - TotemAlly
+  - Alpha
+  - Noble

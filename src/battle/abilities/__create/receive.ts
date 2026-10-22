@@ -1,33 +1,10 @@
 import { EventPriority } from '../../../core/event-emitter';
-import Abilities from '../../../data/ids/abilities';
+import type Abilities from '../../../data/ids/abilities';
+import { UNRECEIVABLE } from '../../../data/abilities/flags';
 import type Battle from '../../battle';
 import { BattleEvents } from '../../events';
 import { abilitiesOf } from '../../moves/ability-moves';
 import { createAbility } from './create';
-
-/**
- * What Receiver and Power of Alchemy will not take up: the ones that
- * copy in their own right, and the ones only a particular shape can use
- */
-const UNRECEIVABLE = new Set<Abilities>([
-  Abilities.Receiver,
-  Abilities.PowerOfAlchemy,
-  Abilities.Trace,
-  Abilities.Forecast,
-  Abilities.FlowerGift,
-  Abilities.Multitype,
-  Abilities.Illusion,
-  Abilities.WonderGuard,
-  Abilities.ZenMode,
-  Abilities.Imposter,
-  Abilities.StanceChange,
-  Abilities.PowerConstruct,
-  Abilities.Schooling,
-  Abilities.ShieldsDown,
-  Abilities.Comatose,
-  Abilities.Disguise,
-  Abilities.RksSystem,
-]);
 
 /**
  * Meta ability for the ones that take up a fallen teammate's ability

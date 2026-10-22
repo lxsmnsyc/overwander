@@ -1064,6 +1064,34 @@ const BUILD_FILES: [file: string, schema: Schema][] = [
   ],
 ];
 
+/** The other tables that moved out of the code, each in its own folder */
+const OTHER_FILES: [file: string, schema: Schema][] = [
+  [
+    'biome-ground.json',
+    sections('Biome ground', {
+      biomes: mapping('biome', 'type'),
+      effects: {
+        type: 'object',
+        propertyNames: name('type'),
+        additionalProperties: part({ move: name('move'), status: name('status') }, [
+          'move',
+          'status',
+        ]),
+      },
+    }),
+  ],
+  [
+    'abilities-flags.json',
+    sections('Ability flags', {
+      unreceivable: names('ability', 'What Receiver and Power of Alchemy will not take up'),
+      protected: names('ability', 'What nothing can disable'),
+      'mold-proof': names('ability', 'What Mold Breaker cannot see past'),
+      'always-known': names('ability', 'What the AI knows about without seeing it cue'),
+    }),
+  ],
+  ['boss-banned.json', nameList('Moves a boss is never staged with', 'move')],
+];
+
 function json(schema: Schema): string {
   return `${JSON.stringify(schema, null, 2)}\n`;
 }
@@ -1183,7 +1211,7 @@ export default function renderDataSchemas(members: Map<string, string[]>): Map<s
   for (const [file, title, entry] of BATTLE_FILES) {
     schemas.set(file, json(keyed(title, 'move', entry)));
   }
-  for (const [file, schema] of [...BATTLE_LISTS, ...BUILD_FILES]) {
+  for (const [file, schema] of [...BATTLE_LISTS, ...BUILD_FILES, ...OTHER_FILES]) {
     schemas.set(file, json(schema));
   }
   return schemas;

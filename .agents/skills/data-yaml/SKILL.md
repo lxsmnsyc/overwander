@@ -48,6 +48,8 @@ Growlithe:
 | `text/en/lairs.yaml`              | each lair's name                                                      |
 | `overworld/item-pool.yaml`        | the ground's items by band, item to weight; a lowercase key is a whole family (`wings: 3`) |
 | `overworld/weather/biomes.yaml`   | each biome's six skies, and the four `corners` every country shares   |
+| `overworld/boss-banned.yaml`      | the moves a boss is never staged with, each under a comment saying why |
+| `biome/ground.yaml`               | the type each biome's ground counts as (`biomes`), and the move and status each type of ground gives (`effects`) |
 
 - **Order is part of the world.** A biome's lair list and each band of the item pool are walked by a seeded roll, so moving an entry changes what every player's map holds. Append; never reorder.
 - **A lair is numbered by the enum in `ids/lairs.ts`,** since a raid prize records it. A new lair is an enum member, a row in each lair file, and `pnpm id-names`. `reserved: true` keeps it out of the world until its batch lists it.
@@ -120,6 +122,8 @@ What the expert builder pays for a move or an ability lives in `src/data/builds/
 ## Abilities
 
 An ability is a name and a line, so all of it is text: `text/en/abilities/gen-N.yaml`, grouped under a comment naming the line that introduces it, `text/en/abilities/signature/<region>.yaml` for the signatures, and `text/en/abilities/special.yaml` for the marks of what a pokemon is (Boss, Shadow, Totem, Totem Ally, Purified). Which family is granted which signature is `src/data/abilities/signatures/<region>.yaml`, under `families:`, with a regional line's own under `forms:`. A family is filed under the region its species files are.
+
+`src/data/abilities/flags.yaml` lists the abilities a mechanic treats apart, by flag: `unreceivable` (Receiver and Power of Alchemy skip them), `protected` (nothing disables them), `mold-proof` (Mold Breaker cannot see past them) and `always-known` (the AI knows them without a cue). Each list keeps its order.
 
 ## Items
 

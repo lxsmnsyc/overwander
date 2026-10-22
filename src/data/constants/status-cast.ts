@@ -1,6 +1,10 @@
-import type { CastAnimation } from './cast';
-import { SpriteAnim } from '../ids/sprite-anims';
-import { Statuses } from '../ids/status';
+import * as v from 'valibot';
+import { type CastAnimation, readCast } from './cast';
+import { STATUS_IDS } from '../ids/names';
+import type { SpriteAnim } from '../ids/sprite-anims';
+import type { Statuses } from '../ids/status';
+import { idOf } from '../yaml';
+import castFile from './status-cast.yaml';
 
 /**
  * What a pokemon looks like while something is being done **to** it.
@@ -26,37 +30,18 @@ import { Statuses } from '../ids/status';
 
 /**
  * Which status a pokemon carrying several is drawn by, and what each
- * of them looks like — in order, first match wins.
- *
- * The order is the order the fight reads them in. A flinch is first
- * because it is the one that is about to end: it costs the pokemon
- * the moment it is in, and a moment is all it lasts. Then the ones
- * that stop it acting at all, then the ones it can act through — a
- * pokemon that is both confused and paralyzed is drawn paralyzed,
- * because that is the one deciding whether it moves at all
+ * of them looks like, in order, first match wins. Written in
+ * `status-cast.yaml`
  */
-export const STATUS_CAST: [status: Statuses, cast: readonly CastAnimation[]][] = [
-  // Knocked out of its own turn: it took something and it is showing
-  [Statuses.Flinched, [SpriteAnim.Hurt]],
-  // A boss that has not woken up yet is asleep, as far as the picture
-  // is concerned. Nothing else says what dormant means
-  [Statuses.Dormant, [SpriteAnim.Sleep]],
-  [Statuses.Sleeping, [SpriteAnim.Sleep]],
-  // Reeling where it stands, the way a confused one does
-  [Statuses.Staggered, [SpriteAnim.Twirl, SpriteAnim.Shake, SpriteAnim.Hurt]],
-  // Shivering where it stands: a Shake reads as cold on the sheets
-  // that have one, and a Hurt reads as unable to move on the ones
-  // that do not
-  [Statuses.Frozen, [SpriteAnim.Shake, SpriteAnim.Hurt]],
-  // Spent, after a move that costs the turn behind it
-  [Statuses.Recharging, [SpriteAnim.Sleep]],
-  [Statuses.Paralyzed, [SpriteAnim.Shock, SpriteAnim.Shake, SpriteAnim.Hurt]],
-  [Statuses.Confused, [SpriteAnim.Twirl, SpriteAnim.Shake, SpriteAnim.Hurt]],
-  // Winding up rather than suffering: both of these are a pokemon
-  // holding something in, and Charge is what a sheet draws that with
-  [Statuses.Biding, [SpriteAnim.Charge]],
-  [Statuses.Raging, [SpriteAnim.Swell, SpriteAnim.RearUp, SpriteAnim.Charge]],
-];
+export const STATUS_CAST: [status: Statuses, cast: readonly CastAnimation[]][] = [];
+
+for (const [name, clips] of Object.entries(
+  v.parse(v.record(v.string(), v.array(v.string())), castFile),
+)) {
+  const where = `status-cast.yaml: ${name}`;
+
+  STATUS_CAST.push([idOf<Statuses>(STATUS_IDS, name, where), readCast(clips, where)]);
+}
 
 /**
  * The clip to draw a unit standing about in, given what it is

@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Nobles",
+  "type": "object",
+  "propertyNames": {
+    "$ref": "names.json#/definitions/species"
+  },
+  "additionalProperties": {
+    "type": "object",
+    "properties": {
+      "treasure": {
+        "$ref": "names.json#/definitions/item",
+        "description": "What it leaves its calmers beside the purse"
+      },
+      "burst": {
+        "$ref": "names.json#/definitions/move",
+        "description": "The Frenzy burst it unleashes"
+      }
+    },
+    "required": [
+      "treasure",
+      "burst"
+    ],
+    "additionalProperties": false
+  }
+}

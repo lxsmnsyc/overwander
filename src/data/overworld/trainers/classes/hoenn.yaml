@@ -21,6 +21,7 @@ PokeFan:
     - characters/oras/pokefan-f
     - characters/oras/pokefan-m
 HoennAceTrainer:
+  ace: true
   types: []
   sheets:
     - characters/oras/ace-trainer

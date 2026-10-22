@@ -1,0 +1,20 @@
+# Hisui's five Nobles: the `treasure` each leaves its calmers beside the
+# purse (Kleavor's own evolution stone, the stone the other four's lines grow
+# on in Hisui, and the ice Avalugg is made of), and the Frenzy `burst` it
+# unleashes. Every other Noble is one by rule and throws the plain burst.
+
+Kleavor:
+  treasure: BlackAugurite
+  burst: FrenzyStoneAxe
+LilligantHisui:
+  treasure: SunStone
+  burst: FrenzyPetalStorm
+ArcanineHisui:
+  treasure: FireStone
+  burst: FrenzyWildfire
+ElectrodeHisui:
+  treasure: LeafStone
+  burst: FrenzyBlast
+AvaluggHisui:
+  treasure: NeverMeltIce
+  burst: FrenzyIceberg

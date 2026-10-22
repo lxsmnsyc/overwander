@@ -32,6 +32,7 @@ JohtoBurglar:
   sheets: [characters/hgss/burglar]
   trade: Burglar
 JohtoAceTrainer:
+  ace: true
   types: []
   sheets:
     - characters/hgss/ace-trainer

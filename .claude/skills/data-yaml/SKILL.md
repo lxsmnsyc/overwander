@@ -63,11 +63,15 @@ What a true shadow is (its stats, its name) stays code in `true-shadow.ts`; the 
 | `overworld/honey-tree.yaml`       | what a lathered honey tree draws out, by band like a biome's pool   |
 | `overworld/biome-items.yaml`      | the ground each item is buried in, by biome or by a named `groups` run; an item not listed is buried everywhere |
 | `overworld/totems.yaml`           | Alola's own Totems: `aura` (or `all`), height, weight and the trial's `crystal`; every other Totem is by rule |
+| `overworld/nobles.yaml`           | Hisui's Nobles: the `treasure` each leaves and the Frenzy `burst` it throws |
+| `overworld/experts/frontier-rooms.yaml` | the Pike's `curtains` (status left, or null) and the Arcade's `panels` (sky put up, or null), in the order the roll draws them |
+| `constants/status-cast.yaml`      | the clips a pokemon carrying a status is drawn in, statuses in the order they win |
 | `overworld/weather/biomes.yaml`   | each biome's six skies, and the four `corners` every country shares   |
 
 - **Order is part of the world.** A biome's lair list and each band of the item and berry pools are walked by a seeded roll, so moving an entry changes what every player's map holds. Append; never reorder.
 - **A lair is numbered by the enum in `ids/lairs.ts`,** since a raid prize records it. A new lair is an enum member, a row in each lair file, and `pnpm id-names`. `reserved: true` keeps it out of the world until its batch lists it.
 - **An item family a pool names** is listed in `ITEM_FAMILIES` in `overworld/item-pool.ts`.
+- **A trainer class is an Ace** with `ace: true` in its `trainers/classes/<region>.yaml` row: one a region, fielding every type at the Ace levels.
 
 ## Quests
 

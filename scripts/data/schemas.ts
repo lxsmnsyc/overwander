@@ -263,6 +263,10 @@ const TRAINER_CLASSES: Schema = {
         name('trainer'),
         "The trade it is one region's version of, left out where it is its own",
       ),
+      ace: described(
+        { const: true },
+        'One of the Aces: every type, five fully grown, higher levels',
+      ),
     },
     ['types', 'sheets'],
   ),
@@ -1219,6 +1223,52 @@ const ULTRA_BEASTS: Schema = {
   ...names('species'),
 };
 
+const NOBLES: Schema = keyed(
+  'Nobles',
+  'species',
+  part(
+    {
+      treasure: described(name('item'), 'What it leaves its calmers beside the purse'),
+      burst: described(name('move'), 'The Frenzy burst it unleashes'),
+    },
+    ['treasure', 'burst'],
+  ),
+);
+
+const STATUS_CAST: Schema = {
+  $schema: DRAFT,
+  title: 'Status casts',
+  type: 'object',
+  propertyNames: name('status'),
+  additionalProperties: names('sprite-anim', 'Most wanted first, ending on a common clip'),
+};
+
+const FRONTIER_ROOMS: Schema = {
+  $schema: DRAFT,
+  title: 'Frontier rooms',
+  ...part(
+    {
+      curtains: described(
+        {
+          type: 'object',
+          propertyNames: name('pike-curtain'),
+          additionalProperties: { anyOf: [name('status'), { type: 'null' }] },
+        },
+        'In the order the roll draws them: the status each leaves, or null',
+      ),
+      panels: described(
+        {
+          type: 'object',
+          propertyNames: name('arcade-panel'),
+          additionalProperties: { anyOf: [name('weather'), { type: 'null' }] },
+        },
+        'In the order the roll draws them: the sky each puts up, or null',
+      ),
+    },
+    ['curtains', 'panels'],
+  ),
+};
+
 const ITEM_BAND: Schema = described(
   {
     type: 'object',
@@ -1369,6 +1419,9 @@ export default function renderDataSchemas(members: Map<string, string[]>): Map<s
     ['fusions.json', json(FUSIONS)],
     ['feats.json', json(FEATS)],
     ['ultra-beasts.json', json(ULTRA_BEASTS)],
+    ['nobles.json', json(NOBLES)],
+    ['status-cast.json', json(STATUS_CAST)],
+    ['frontier-rooms.json', json(FRONTIER_ROOMS)],
     ['honey-tree.json', json({ $schema: DRAFT, title: 'Honey tree pool', ...SPAWN_GROUPS })],
   ]);
 

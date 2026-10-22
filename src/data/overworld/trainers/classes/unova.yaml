@@ -85,6 +85,7 @@ Backers:
     - characters/b2w2/backers-2
 # And its own of the trades already on the road
 UnovaAceTrainer:
+  ace: true
   types: []
   sheets:
     - characters/b2w2/ace-trainer-f

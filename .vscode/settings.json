@@ -91,6 +91,9 @@
     "./src/data/schema/true-shadows.json": "src/data/species/true-shadows.yaml",
     "./src/data/schema/fusions.json": "src/data/species/fusions.yaml",
     "./src/data/schema/feats.json": "src/data/species/feats.yaml",
-    "./src/data/schema/ultra-beasts.json": "src/data/species/ultra-beasts.yaml"
+    "./src/data/schema/ultra-beasts.json": "src/data/species/ultra-beasts.yaml",
+    "./src/data/schema/nobles.json": "src/data/overworld/nobles.yaml",
+    "./src/data/schema/status-cast.json": "src/data/constants/status-cast.yaml",
+    "./src/data/schema/frontier-rooms.json": "src/data/overworld/experts/frontier-rooms.yaml"
   }
 }

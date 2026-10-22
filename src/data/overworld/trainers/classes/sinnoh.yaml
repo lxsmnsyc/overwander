@@ -69,6 +69,7 @@ Breeder:
     - characters/dppt/breeder-m
 # And its own of the trades already on the road
 SinnohAceTrainer:
+  ace: true
   types: []
   sheets:
     - characters/dppt/ace-trainer-f

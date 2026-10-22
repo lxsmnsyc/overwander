@@ -1,7 +1,7 @@
 import * as v from 'valibot';
 import turns from '../../../battle/turn';
 import type Awards from '../../ids/awards';
-import FrontierBrain, { FrontierRule } from '../../ids/frontier';
+import FrontierBrain, { ArcadePanel, FrontierRule, PikeCurtain } from '../../ids/frontier';
 import { AWARD_IDS, FRONTIER_BRAIN_IDS, FRONTIER_RULE_IDS, SPECIES_IDS } from '../../ids/names';
 import type { Species } from '../../ids/species';
 import { Statuses } from '../../ids/status';
@@ -11,7 +11,7 @@ import { idOf, idsOf } from '../../yaml';
 import frontierFile from './frontier.yaml';
 import { getWorldExpertPool } from './pools';
 
-export { FrontierBrain, FrontierRule };
+export { ArcadePanel, FrontierBrain, FrontierRule, PikeCurtain };
 
 /**
  * The Frontier Brains, read out of `frontier.yaml` and
@@ -129,24 +129,6 @@ export const FRONTIER_TIME_TURNS = 10;
 export const FRONTIER_TIME_LIMIT = turns(FRONTIER_TIME_TURNS);
 
 /**
- * What is behind the Pike's curtain.
- *
- * The mainline's rooms come to the same handful of things: something
- * is wrong with your party on the far side, or somebody was kind. The
- * roll is taken when the challenge is accepted and baked into the
- * party as it is frozen, so what the curtain did is part of the fight
- * rather than something rolled again on every watch
- */
-export const enum PikeCurtain {
-  Poisoned = 0,
-  Burned = 1,
-  Paralysed = 2,
-  Asleep = 3,
-  /** The kind room: the party walks out mended, whatever it walked in as */
-  Healed = 4,
-}
-
-/**
  * The curtains, in the order they are drawn from. Four of the five
  * cost something and one of them gives, which is the Pike's whole
  * character: it is the one house where walking in is a gamble rather
@@ -187,26 +169,6 @@ export function pickPikeCurtain(roll: number): PikeCurtain {
   const at = Math.floor(Math.abs(roll) * PIKE_CURTAINS.length);
 
   return PIKE_CURTAINS[Math.min(at, PIKE_CURTAINS.length - 1)];
-}
-
-/**
- * What the Arcade's roulette lands on.
- *
- * The panel is rolled when the challenge is taken and it lands on
- * both sides, which is what tells it from the Pike's curtain: the
- * Arcade changes the fight, the Pike changes the challenger
- */
-export const enum ArcadePanel {
-  Sun = 0,
-  Rain = 1,
-  Sandstorm = 2,
-  Hail = 3,
-  /** Every held item on the field is left at the door */
-  Stripped = 4,
-  /** Everybody on the field walks in poisoned */
-  Poisoned = 5,
-  /** And the kind panel: everybody walks in whole */
-  Mended = 6,
 }
 
 export const ARCADE_PANELS: ArcadePanel[] = [

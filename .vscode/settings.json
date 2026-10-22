@@ -76,6 +76,10 @@
     "./src/data/schema/landmarks.json": "src/data/overworld/landmarks.yaml",
     "./src/data/schema/landmarks-text.json": "src/data/text/*/landmarks.yaml",
     "./src/data/schema/biome-phenomena.json": "src/data/overworld/biome-phenomena.yaml",
-    "./src/data/schema/phenomena-text.json": "src/data/text/*/phenomena.yaml"
+    "./src/data/schema/phenomena-text.json": "src/data/text/*/phenomena.yaml",
+    "./src/data/schema/item-pool.json": [
+      "src/data/overworld/item-pool.yaml",
+      "src/data/overworld/berry-pool.yaml"
+    ]
   }
 }

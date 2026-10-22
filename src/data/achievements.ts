@@ -7,6 +7,7 @@ import {
   type TrainerClass,
   getTradeClasses,
 } from './overworld/trainers';
+import { AchievementLine, AchievementTier } from './ids/achievements';
 import type { Species } from './ids/species';
 import { getSpeciesData } from './species';
 
@@ -17,14 +18,6 @@ import { getSpeciesData } from './species';
  * from them wherever it is shown. Bronze unlocks the line's title,
  * worn in the tier's colour; Platinum adds its Master variant.
  */
-
-export const enum AchievementTier {
-  None = 0,
-  Bronze = 1,
-  Silver = 2,
-  Gold = 3,
-  Platinum = 4,
-}
 
 export const TIER_NAMES: Record<AchievementTier, string> = {
   [AchievementTier.None]: 'Unranked',
@@ -43,24 +36,7 @@ export const TIER_COLORS: Record<AchievementTier, string> = {
   [AchievementTier.Platinum]: '#7bc8d2',
 };
 
-const enum AchievementLine {
-  Collector = 0,
-  Hatcher = 1,
-  Coach = 2,
-  Wayfarer = 3,
-  Socialite = 4,
-  Forager = 5,
-  Raider = 6,
-  Trader = 7,
-  Auctioneer = 8,
-  Confidant = 9,
-  Wayfinder = 10,
-  Matchmaker = 11,
-  Purifier = 12,
-  Pathfinder = 13,
-}
-
-export { AchievementLine };
+export { AchievementLine, AchievementTier };
 
 export const ACHIEVEMENT_LINES: AchievementLine[] = [
   AchievementLine.Collector,

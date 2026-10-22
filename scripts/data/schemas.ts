@@ -56,6 +56,16 @@ const DEFINITIONS: [enumName: string, definition: string][] = [
   ['Landmark', 'landmark'],
   ['Phenomenon', 'phenomenon'],
   ['Weather', 'weather'],
+  ['Balls', 'ball'],
+  ['Quests', 'quest'],
+  ['Chains', 'chain'],
+  ['Metric', 'metric'],
+  ['QuestLandmark', 'quest-landmark'],
+  ['Foe', 'foe'],
+  ['AchievementLine', 'achievement-line'],
+  ['AchievementTier', 'achievement-tier'],
+  ['PikeCurtain', 'pike-curtain'],
+  ['ArcadePanel', 'arcade-panel'],
 ];
 
 const DRAFT = 'http://json-schema.org/draft-07/schema#';
@@ -942,6 +952,31 @@ const BATTLE_FILES: [file: string, title: string, entry: Schema][] = [
   ],
 ];
 
+const ITEM_BAND: Schema = described(
+  {
+    type: 'object',
+    propertyNames: { anyOf: [name('item'), { type: 'string', pattern: '^[a-z][a-z-]*$' }] },
+    additionalProperties: COUNT,
+  },
+  'Item and weight in the order a roll walks them; a lowercase key is a whole family at that weight apiece',
+);
+
+const ITEM_POOL: Schema = {
+  $schema: DRAFT,
+  title: 'Item pool',
+  ...part(
+    {
+      base: ITEM_BAND,
+      uncommon: ITEM_BAND,
+      scarce: ITEM_BAND,
+      rare: ITEM_BAND,
+      prized: ITEM_BAND,
+      special: ITEM_BAND,
+    },
+    ['base', 'uncommon', 'scarce', 'rare', 'prized', 'special'],
+  ),
+};
+
 function json(schema: Schema): string {
   return `${JSON.stringify(schema, null, 2)}\n`;
 }
@@ -1056,6 +1091,7 @@ export default function renderDataSchemas(members: Map<string, string[]>): Map<s
     ['landmarks-text.json', json(namesText('Landmark names', 'landmark'))],
     ['biome-phenomena.json', json(BIOME_PHENOMENA)],
     ['phenomena-text.json', json(namesText('Phenomenon names', 'phenomenon'))],
+    ['item-pool.json', json(ITEM_POOL)],
   ]);
 
   for (const [file, title, entry] of BATTLE_FILES) {

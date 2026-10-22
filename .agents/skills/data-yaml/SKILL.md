@@ -47,9 +47,10 @@ Growlithe:
 | `overworld/biome-lairs.yaml`      | each biome's lairs, in the order a landmark draws them                |
 | `text/en/lairs.yaml`              | each lair's name                                                      |
 | `overworld/item-pool.yaml`        | the ground's items by band, item to weight; a lowercase key is a whole family (`wings: 3`) |
+| `overworld/berry-pool.yaml`       | what a berry patch grows, the same shape as the item pool           |
 | `overworld/weather/biomes.yaml`   | each biome's six skies, and the four `corners` every country shares   |
 
-- **Order is part of the world.** A biome's lair list and each band of the item pool are walked by a seeded roll, so moving an entry changes what every player's map holds. Append; never reorder.
+- **Order is part of the world.** A biome's lair list and each band of the item and berry pools are walked by a seeded roll, so moving an entry changes what every player's map holds. Append; never reorder.
 - **A lair is numbered by the enum in `ids/lairs.ts`,** since a raid prize records it. A new lair is an enum member, a row in each lair file, and `pnpm id-names`. `reserved: true` keeps it out of the world until its batch lists it.
 - **An item family a pool names** is listed in `ITEM_FAMILIES` in `overworld/item-pool.ts`.
 

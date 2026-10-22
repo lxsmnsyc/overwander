@@ -1124,6 +1124,11 @@ const SHRUNK: Shrunk[] = [
   { from: 'dark-tera-shard', to: 'other/dark-tera-shard', fit: 28, plain: true },
   { from: 'fairy-tera-shard', to: 'other/fairy-tera-shard', fit: 28, plain: true },
   { from: 'ghost-tera-shard', to: 'other/ghost-tera-shard', fit: 28, plain: true },
+  { from: 'teal-mask', to: 'held/teal-mask', fit: 28, plain: true },
+  { from: 'wellspring-mask', to: 'held/wellspring-mask', fit: 28, plain: true },
+  { from: 'hearthflame-mask', to: 'held/hearthflame-mask', fit: 28, plain: true },
+  { from: 'cornerstone-mask', to: 'held/cornerstone-mask', fit: 28, plain: true },
+  { from: 'mythical-pecha-berry', to: 'key/mythical-pecha-berry', fit: 28, plain: true },
 ];
 
 function lightnessOf(colour: number[]): number {

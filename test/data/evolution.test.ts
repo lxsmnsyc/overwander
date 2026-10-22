@@ -850,6 +850,38 @@ describe('evolution data', () => {
     expect(into(Species.Dunsparce, true)).toEqual([Species.DudunsparceThree]);
   });
 
+  it('moves an Ogerpon between its four masks, the Teal included', () => {
+    const context = {
+      level: 1,
+      carried: new Set<Items>([
+        Items.TealMask,
+        Items.WellspringMask,
+        Items.HearthflameMask,
+        Items.CornerstoneMask,
+      ]),
+      held: new Set<Items>(),
+      canEvolve: false,
+      moves: new Set<Moves>(),
+      stats: EVEN_STATS,
+      friendship: BASE_FRIENDSHIP,
+      time: TimeOfDay.Day,
+      gender: Genders.Female,
+    };
+    const into = (species: Species): Species[] =>
+      getAvailableEvolutions({ ...context, species }).map((entry) => entry.species);
+
+    expect(into(Species.Ogerpon)).toEqual([
+      Species.OgerponWellspring,
+      Species.OgerponHearthflame,
+      Species.OgerponCornerstone,
+    ]);
+    expect(into(Species.OgerponCornerstone)).toEqual([
+      Species.Ogerpon,
+      Species.OgerponWellspring,
+      Species.OgerponHearthflame,
+    ]);
+  });
+
   it('rolls the one in a hundred about once in a hundred, the same each time', () => {
     let rare = 0;
 

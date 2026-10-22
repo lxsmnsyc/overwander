@@ -58,3 +58,15 @@ RustedSword:
 RustedShield:
   name: Rusted Shield
   description: A Zamazenta holding it fights crowned, and its Iron Head becomes Behemoth Bash.
+TealMask:
+  name: Teal Mask
+  description: Puts the Ogerpon it is used on back in its Teal Mask, as a Grass type. Spent on each change.
+WellspringMask:
+  name: Wellspring Mask
+  description: Puts the Ogerpon it is used on in its Wellspring Mask, as a Grass and Water type. Spent on each change.
+HearthflameMask:
+  name: Hearthflame Mask
+  description: Puts the Ogerpon it is used on in its Hearthflame Mask, as a Grass and Fire type. Spent on each change.
+CornerstoneMask:
+  name: Cornerstone Mask
+  description: Puts the Ogerpon it is used on in its Cornerstone Mask, as a Grass and Rock type. Spent on each change.

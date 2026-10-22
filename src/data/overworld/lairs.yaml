@@ -324,23 +324,18 @@ ParadiseBarrens:
 # The fields by the lake in south-west Kitakami Munkidori keeps to
 WistfulFields:
   species: [Munkidori]
-  reserved: true
 # The cliff on the east face of Kitakami's mountain Fezandipiti keeps to
 OniMountain:
   species: [Fezandipiti]
-  reserved: true
 # The den high on Oni Mountain the masked ogre hides in
 DreadedDen:
   species: [Ogerpon]
-  reserved: true
 # The crystal cavern under Area Zero the Stellar Tera Pokemon sleeps in
 AreaZeroUnderdepths:
   species: [Terapagos]
-  reserved: true
 # The plaza honouring the Loyal Three, where their master was found out. A mythical's, so it is never staged
 LoyaltyPlaza:
   species: [Pecharunt]
-  reserved: true
 # The old wood behind Kitakami the bear raised under the red moon roams, where
 # Perrin's hunt ends
 TimelessWoods:

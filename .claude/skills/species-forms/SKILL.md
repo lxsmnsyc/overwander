@@ -35,7 +35,7 @@ So a form's entry is an ordinary species page. It answers for itself, and its ar
 
 ## A form's own ability
 
-A shape worn in battle (an Origin forme with its orb, Sky Shaymin with a Gracidea) brings its own ability as a **bonus**. The form item grants it with `unit.wearAbility` when the holder takes the shape, on top of whatever the catch carries. The list lives in `SHAPE_ABILITIES` in [`src/battle/items/forms.ts`](../../../src/battle/items/forms.ts).
+A shape worn in battle (an Origin forme with its orb, Sky Shaymin with a Gracidea) brings its own ability as a **bonus**. It is worn with `unit.wearAbility` whenever the unit takes the shape, by a form item, Terastallizing or an ability such as Tera Shift, and dropped when it leaves it, on top of whatever the catch carries. The list lives in `SHAPE_ABILITIES` in [`src/battle/items/forms.ts`](../../../src/battle/items/forms.ts).
 
 - It takes no ability slot, and Role Play, Skill Swap, Gastro Acid and Worry Seed cannot touch it, the way Shadow is exempt.
 - It never trades away one of the catch's abilities mid-fight.

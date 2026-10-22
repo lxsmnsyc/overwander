@@ -95,3 +95,8 @@ MysteryBox:
   type: KeyItem
   icon: key/mystery-box
   flags: [Consumable, Usable]
+
+MythicalPechaBerry:
+  type: KeyItem
+  icon: key/mythical-pecha-berry
+  flags: [Consumable, Usable]

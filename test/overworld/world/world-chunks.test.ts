@@ -449,11 +449,12 @@ describe('world', () => {
       return;
     }
 
-    // A mountain holds twelve: the volcano, the cave under it, the
+    // A mountain holds fourteen: the volcano, the cave under it, the
     // tower on it, the tomb cut into it, the two chambers the swords
     // keep, the frozen cavern, the cave the cells gather in, the hill
     // the prism waits in, the crater a rocket launched from, the
-    // tower of the dark style and the lab Area Zero's legends left. Every window stages one of them, and
+    // tower of the dark style, the lab Area Zero's legends left, the
+    // mountain the pheasant keeps and the cavern under Area Zero. Every window stages one of them, and
     // whoever is at home in it
     const hosted = new Set(getBiomeLairs(Biome.Mountain));
 
@@ -471,6 +472,8 @@ describe('world', () => {
         Lairs.UltraCrater,
         Lairs.TowerOfDarkness,
         Lairs.ZeroLab,
+        Lairs.OniMountain,
+        Lairs.AreaZeroUnderdepths,
       ]),
     );
 

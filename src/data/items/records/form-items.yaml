@@ -128,3 +128,29 @@ RustedShield:
   icon: held/rusted-shield
   flags: [Holdable]
   sell: 6000
+
+# Ogerpon's masks, each used to put it in that mask's shape for good, the
+# way a Meteorite rearranges a Deoxys
+TealMask:
+  type: Evolution
+  icon: held/teal-mask
+  flags: [Usable]
+  sell: 6000
+
+WellspringMask:
+  type: Evolution
+  icon: held/wellspring-mask
+  flags: [Usable]
+  sell: 6000
+
+HearthflameMask:
+  type: Evolution
+  icon: held/hearthflame-mask
+  flags: [Usable]
+  sell: 6000
+
+CornerstoneMask:
+  type: Evolution
+  icon: held/cornerstone-mask
+  flags: [Usable]
+  sell: 6000

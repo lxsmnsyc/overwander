@@ -63,3 +63,10 @@ families:
   IronThorns: SandGenerator
   IronValiant: Afterimage
   IronLeaves: TerrainEdge
+
+  # The Loyal Three, Ogerpon, Terapagos and Pecharunt. Okidogi waits for its art
+  Munkidori: MonkeysOath
+  Fezandipiti: PheasantsOath
+  Ogerpon: MaskAura
+  Terapagos: Prismatic
+  Pecharunt: PuppetStrings

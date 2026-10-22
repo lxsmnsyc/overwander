@@ -1228,8 +1228,11 @@ export const enum Items {
   HearthflameMask = 635,
   CornerstoneMask = 636,
 
-  /** The relic Kitakami's mythical leaves behind it: the mochi it fed the Loyal Three */
-  PoisonMochi = 637,
+  /** The relic that calls Kitakami's mythical: the boxed berry from the Mochi Mayhem epilogue */
+  MythicalPechaBerry = 637,
+
+  /** The mask Ogerpon wears when it is in none of the stolen three, which puts it back in the Teal */
+  TealMask = 683,
 }
 
 /**

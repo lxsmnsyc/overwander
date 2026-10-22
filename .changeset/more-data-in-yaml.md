@@ -8,3 +8,4 @@ More of the game's data is written as YAML:
 - The Mega and Zenith tables, with their names under the English text.
 - Move visuals: each move's landing shape, wait, wind-up and colour, and each shape's span, jolt and colour.
 - What each item names, such as a gem's type, a stone's Mega, a fossil's species or a mint's nature, on the item's own record.
+- Names and lines: biomes, stats, statuses, awards, achievements, natures, families and egg groups, the overworld's skies, award colours and sprites, and what each gym leader, Elite Four member, champion, legend and Frontier Brain says.

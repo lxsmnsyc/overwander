@@ -1,5 +1,9 @@
-import { Moves } from '../ids/moves';
-import { Species } from '../ids/species';
+import * as v from 'valibot';
+import type { Moves } from '../ids/moves';
+import { MOVE_IDS, SPECIES_IDS } from '../ids/names';
+import type { Species } from '../ids/species';
+import { idOf } from '../yaml';
+import featsFile from './feats.yaml';
 import { getMoveData } from '../moves/__create';
 import { type EvolutionData, getSpeciesData } from './__create';
 
@@ -36,14 +40,41 @@ export interface FeatMeasure {
   recoil?: number;
 }
 
-export const BATTLE_FEATS = new Map<Species, BattleFeat>([
-  [Species.FarfetchdGalar, { criticals: 3 }],
-  [Species.YamaskGalar, { endured: 49 }],
-  [Species.Stantler, { landed: { move: Moves.PsyshieldBash, count: 20 }, cumulative: true }],
-  [Species.QwilfishHisui, { landed: { move: Moves.BarbBarrage, count: 20 }, cumulative: true }],
-  [Species.BasculinWhite, { recoil: 294, cumulative: true }],
-  [Species.Primeape, { landed: { move: Moves.RageFist, count: 20 }, cumulative: true }],
-]);
+const FEAT = v.strictObject({
+  criticals: v.optional(v.number()),
+  endured: v.optional(v.number()),
+  landed: v.optional(v.object({ move: v.string(), count: v.number() })),
+  recoil: v.optional(v.number()),
+  cumulative: v.optional(v.literal(true)),
+});
+
+/** Each species' feat, out of `feats.yaml` */
+export const BATTLE_FEATS = new Map<Species, BattleFeat>();
+
+for (const [name, written] of Object.entries(v.parse(v.record(v.string(), FEAT), featsFile))) {
+  const where = `feats.yaml: ${name}`;
+  const feat: BattleFeat = {};
+
+  if (written.criticals != null) {
+    feat.criticals = written.criticals;
+  }
+  if (written.endured != null) {
+    feat.endured = written.endured;
+  }
+  if (written.landed != null) {
+    feat.landed = {
+      move: idOf<Moves>(MOVE_IDS, written.landed.move, where),
+      count: written.landed.count,
+    };
+  }
+  if (written.recoil != null) {
+    feat.recoil = written.recoil;
+  }
+  if (written.cumulative === true) {
+    feat.cumulative = true;
+  }
+  BATTLE_FEATS.set(idOf<Species>(SPECIES_IDS, name, where), feat);
+}
 
 /** Whether one fight met the feat this species evolves on */
 export function meetsBattleFeat(species: Species, measure: FeatMeasure): boolean {

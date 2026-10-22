@@ -1,0 +1,28 @@
+# Each counterpart and the true shadow of it, in the order the dex meets the
+# counterparts. No two counterparts share a shadow, so the pairs read
+# backwards too.
+
+shadows:
+  Articuno: ArticunoShadow
+  Zapdos: ZapdosShadow
+  Moltres: MoltresShadow
+  Mewtwo: MewtwoShadow
+  Raikou: RaikouShadow
+  Entei: EnteiShadow
+  Suicune: SuicuneShadow
+  Lugia: LugiaShadow
+  HoOh: HoOhShadow
+  Regirock: RegirockShadow
+  Regice: RegiceShadow
+  Registeel: RegisteelShadow
+  Latias: LatiasShadow
+  Latios: LatiosShadow
+  Kyogre: KyogreShadow
+  Groudon: GroudonShadow
+  Rayquaza: RayquazaShadow
+# The worn shapes a true shadow can take, keyed by its counterpart's shape: a
+# shadow Kyogre holding a Blue Orb reverts to its own Primal
+shapes:
+  KyogrePrimal: KyogreShadowPrimal
+  GroudonPrimal: GroudonShadowPrimal
+  RayquazaMega: RayquazaShadowMega

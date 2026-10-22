@@ -1,7 +1,11 @@
+import * as v from 'valibot';
 import { STAT_ORDER } from '../constants/stats';
-import { Species } from '../ids/species';
+import { SPECIES_IDS } from '../ids/names';
+import type { Species } from '../ids/species';
 import { getBaseFormSpecies, speciesDexNumber } from '../ids/forms';
+import { idOf } from '../yaml';
 import { getSpeciesData, registerSpecies } from './__create';
+import shadowsFile from './true-shadows.yaml';
 
 /**
  * The true shadows: a pokemon that is a shadow by what it is rather
@@ -23,36 +27,30 @@ export const TRUE_SHADOW_BONUS = 10;
  */
 export const TRUE_SHADOW_WEIGHT = 10;
 
-/** Each counterpart and the true shadow of it */
-const TRUE_SHADOWS = new Map<Species, Species>([
-  [Species.Articuno, Species.ArticunoShadow],
-  [Species.Zapdos, Species.ZapdosShadow],
-  [Species.Moltres, Species.MoltresShadow],
-  [Species.Mewtwo, Species.MewtwoShadow],
-  [Species.Raikou, Species.RaikouShadow],
-  [Species.Entei, Species.EnteiShadow],
-  [Species.Suicune, Species.SuicuneShadow],
-  [Species.Lugia, Species.LugiaShadow],
-  [Species.HoOh, Species.HoOhShadow],
-  [Species.Regirock, Species.RegirockShadow],
-  [Species.Regice, Species.RegiceShadow],
-  [Species.Registeel, Species.RegisteelShadow],
-  [Species.Latias, Species.LatiasShadow],
-  [Species.Latios, Species.LatiosShadow],
-  [Species.Kyogre, Species.KyogreShadow],
-  [Species.Groudon, Species.GroudonShadow],
-  [Species.Rayquaza, Species.RayquazaShadow],
-]);
+const PAIRS = v.record(v.string(), v.string());
+
+function readPairs(written: Record<string, string>, where: string): Map<Species, Species> {
+  const pairs = new Map<Species, Species>();
+
+  for (const [from, to] of Object.entries(written)) {
+    pairs.set(
+      idOf<Species>(SPECIES_IDS, from, `${where}: ${from}`),
+      idOf<Species>(SPECIES_IDS, to, `${where}: ${from}`),
+    );
+  }
+  return pairs;
+}
+
+const written = v.parse(v.object({ shadows: PAIRS, shapes: PAIRS }), shadowsFile);
+
+/** Each counterpart and the true shadow of it, out of `true-shadows.yaml` */
+const TRUE_SHADOWS = readPairs(written.shadows, 'true-shadows.yaml: shadows');
 
 /**
  * The worn shapes a true shadow can take, keyed by its counterpart's
- * shape: a shadow Kyogre holding a Blue Orb reverts to its own Primal
+ * shape
  */
-const SHADOW_SHAPES = new Map<Species, Species>([
-  [Species.KyogrePrimal, Species.KyogreShadowPrimal],
-  [Species.GroudonPrimal, Species.GroudonShadowPrimal],
-  [Species.RayquazaMega, Species.RayquazaShadowMega],
-]);
+const SHADOW_SHAPES = readPairs(written.shapes, 'true-shadows.yaml: shapes');
 
 /** The same pairings read backwards, since no two counterparts share one */
 const COUNTERPARTS = new Map<Species, Species>();

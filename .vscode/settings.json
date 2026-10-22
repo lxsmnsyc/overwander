@@ -87,6 +87,10 @@
     "./src/data/schema/quests.json": "src/data/quests/quests.yaml",
     "./src/data/schema/quests-daily.json": "src/data/quests/daily.yaml",
     "./src/data/schema/quests-text.json": "src/data/text/*/quests.yaml",
-    "./src/data/schema/achievements.json": "src/data/achievements.yaml"
+    "./src/data/schema/achievements.json": "src/data/achievements.yaml",
+    "./src/data/schema/true-shadows.json": "src/data/species/true-shadows.yaml",
+    "./src/data/schema/fusions.json": "src/data/species/fusions.yaml",
+    "./src/data/schema/feats.json": "src/data/species/feats.yaml",
+    "./src/data/schema/ultra-beasts.json": "src/data/species/ultra-beasts.yaml"
   }
 }

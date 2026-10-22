@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Battle feats",
+  "type": "object",
+  "propertyNames": {
+    "$ref": "names.json#/definitions/species"
+  },
+  "additionalProperties": {
+    "type": "object",
+    "properties": {
+      "criticals": {
+        "type": "number",
+        "minimum": 0,
+        "description": "Critical hits landed"
+      },
+      "endured": {
+        "type": "number",
+        "minimum": 0,
+        "description": "Damage taken without fainting"
+      },
+      "landed": {
+        "type": "object",
+        "properties": {
+          "move": {
+            "$ref": "names.json#/definitions/move"
+          },
+          "count": {
+            "type": "number",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "move",
+          "count"
+        ],
+        "additionalProperties": false
+      },
+      "recoil": {
+        "type": "number",
+        "minimum": 0,
+        "description": "Recoil taken without fainting"
+      },
+      "cumulative": {
+        "const": true,
+        "description": "Counted across every fight"
+      }
+    },
+    "required": [],
+    "additionalProperties": false
+  }
+}

@@ -1166,6 +1166,59 @@ const ACHIEVEMENTS: Schema = {
   ),
 };
 
+const SPECIES_PAIRS: Schema = {
+  type: 'object',
+  propertyNames: name('species'),
+  additionalProperties: name('species'),
+};
+
+const TRUE_SHADOWS: Schema = {
+  $schema: DRAFT,
+  title: 'True shadows',
+  ...part(
+    {
+      shadows: described(SPECIES_PAIRS, 'Each counterpart and its true shadow'),
+      shapes: described(SPECIES_PAIRS, "Each counterpart's worn shape and the shadow's"),
+    },
+    ['shadows', 'shapes'],
+  ),
+};
+
+const FUSIONS: Schema = keyed(
+  'Fusions',
+  'species',
+  part(
+    {
+      husk: described(name('species'), 'The pokemon the partner is folded into'),
+      partner: described(name('species'), 'The pokemon kept inside it'),
+      item: described(name('item'), 'What joins and parts the pair'),
+      'wears-partner': described({ type: 'boolean' }, "Fights with the partner's abilities too"),
+    },
+    ['husk', 'partner', 'item'],
+  ),
+);
+
+const FEATS: Schema = keyed(
+  'Battle feats',
+  'species',
+  part(
+    {
+      criticals: described(COUNT, 'Critical hits landed'),
+      endured: described(COUNT, 'Damage taken without fainting'),
+      landed: part({ move: name('move'), count: COUNT }, ['move', 'count']),
+      recoil: described(COUNT, 'Recoil taken without fainting'),
+      cumulative: described({ const: true }, 'Counted across every fight'),
+    },
+    [],
+  ),
+);
+
+const ULTRA_BEASTS: Schema = {
+  $schema: DRAFT,
+  title: 'Ultra Beasts',
+  ...names('species'),
+};
+
 const ITEM_BAND: Schema = described(
   {
     type: 'object',
@@ -1312,6 +1365,10 @@ export default function renderDataSchemas(members: Map<string, string[]>): Map<s
     ['quests-daily.json', json(DAILY_QUESTS)],
     ['quests-text.json', json(QUEST_TEXT)],
     ['achievements.json', json(ACHIEVEMENTS)],
+    ['true-shadows.json', json(TRUE_SHADOWS)],
+    ['fusions.json', json(FUSIONS)],
+    ['feats.json', json(FEATS)],
+    ['ultra-beasts.json', json(ULTRA_BEASTS)],
     ['honey-tree.json', json({ $schema: DRAFT, title: 'Honey tree pool', ...SPAWN_GROUPS })],
   ]);
 

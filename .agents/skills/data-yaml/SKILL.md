@@ -36,6 +36,17 @@ Growlithe:
 - **`egg-cycles`** is written only on the stage a line hatches at, and only where it is not 20.
 - **`active: any`** is every hour of the day. `base-form: false` marks a form, and `worn: true` a shape put on mid-fight. `dex` is written only where the id's own dex number would be wrong.
 
+## Species pairings
+
+| file                         | holds                                                              |
+| ---------------------------- | ------------------------------------------------------------------ |
+| `species/true-shadows.yaml`  | each legendary's true shadow (`shadows`), and the worn `shapes` a shadow can take |
+| `species/fusions.yaml`       | each fused shape: `husk`, `partner`, the `item` that joins them, and `wears-partner` |
+| `species/feats.yaml`         | the battle feat a `Special` evolution asks: `criticals`, `endured`, `landed`, `recoil`, `cumulative` |
+| `species/ultra-beasts.yaml`  | the Ultra Beasts                                                   |
+
+What a true shadow is (its stats, its name) stays code in `true-shadow.ts`; the files say only who pairs with whom.
+
 ## Regions
 
 `src/data/species/regions.yaml` holds each region by its enum name: the `dex` numbers it covers, ends included, and, for a region with a dex chain, the `milestones` each rung asks for and the `medal` the last one hangs. A rung keeps its number for good, so milestones are appended, never inserted. The sprite folder names stay in `regions.ts` beside the enum.

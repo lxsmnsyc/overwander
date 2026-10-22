@@ -10,7 +10,7 @@ import { EggGroups } from './egg-groups';
 import Families from './families';
 import { Types } from '../constants/types';
 import { Stages, Stats } from '../constants/stats';
-import { Statuses, TeamStatuses } from './status';
+import { Statuses, TeamStatuses, Terrains, Weathers } from './status';
 import Regions from './regions';
 import Natures from './natures';
 import Awards from './awards';
@@ -4916,6 +4916,27 @@ export const TEAM_STATUS_IDS = {
   StickyWeb: TeamStatuses.StickyWeb,
   AuroraVeil: TeamStatuses.AuroraVeil,
 } as const satisfies Record<string, TeamStatuses>;
+
+export const BATTLE_WEATHER_IDS = {
+  None: Weathers.None,
+  Sunny: Weathers.Sunny,
+  Rain: Weathers.Rain,
+  Sandstorm: Weathers.Sandstorm,
+  Hail: Weathers.Hail,
+  Snow: Weathers.Snow,
+  Fog: Weathers.Fog,
+  ExtremeSunny: Weathers.ExtremeSunny,
+  HeavyRain: Weathers.HeavyRain,
+  StrongWinds: Weathers.StrongWinds,
+} as const satisfies Record<string, Weathers>;
+
+export const TERRAIN_IDS = {
+  None: Terrains.None,
+  Electric: Terrains.Electric,
+  Grassy: Terrains.Grassy,
+  Misty: Terrains.Misty,
+  Psychic: Terrains.Psychic,
+} as const satisfies Record<string, Terrains>;
 
 export const REGION_IDS = {
   Unknown: Regions.Unknown,

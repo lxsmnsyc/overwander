@@ -1,9 +1,20 @@
 import * as v from 'valibot';
 import { Stages } from '../constants/stats';
+import type { Types } from '../constants/types';
 import type { Moves } from '../ids/moves';
-import { MOVE_IDS, STAGE_IDS, STATUS_IDS, TEAM_STATUS_IDS } from '../ids/names';
-import type { Statuses, TeamStatuses } from '../ids/status';
-import { idOf } from '../yaml';
+import {
+  BATTLE_WEATHER_IDS,
+  MOVE_IDS,
+  SPECIES_IDS,
+  STAGE_IDS,
+  STATUS_IDS,
+  TEAM_STATUS_IDS,
+  TERRAIN_IDS,
+  TYPE_IDS,
+} from '../ids/names';
+import type { Species } from '../ids/species';
+import type { Statuses, TeamStatuses, Terrains, Weathers } from '../ids/status';
+import { idOf, idsOf } from '../yaml';
 import addedStagesFile from './added-stages.yaml';
 import addedStatusesFile from './added-statuses.yaml';
 import drainFile from './drain.yaml';
@@ -15,6 +26,12 @@ import statusesFile from './statuses.yaml';
 import zPowerFile from './z-power.yaml';
 import maxPowerFile from './max-power.yaml';
 import zEffectsFile from './z-effects.yaml';
+import rechargeFile from './recharge.yaml';
+import tutorOnlyFile from './tutor-only.yaml';
+import pseudoFile from './pseudo.yaml';
+import gmaxFile from './gmax.yaml';
+import maxMovesFile from './max-moves.yaml';
+import zMovesFile from './z-moves.yaml';
 
 /**
  * The numbers the battle reads off each move, out of their YAML: what
@@ -238,3 +255,123 @@ export const Z_STATUS_EFFECTS = table(
     return { kind: 'stages', stages, value: effect.value };
   },
 );
+
+/** A list of moves, in the order it is written */
+function moveSet(file: unknown, where: string): ReadonlySet<Moves> {
+  return new Set(idsOf<Moves>(MOVE_IDS, v.parse(v.array(NAME), file), where));
+}
+
+/** A map of names to names, each side looked up in its own table, in the order it is written */
+function nameMap<K, T>(
+  written: Record<string, string>,
+  where: string,
+  keys: Readonly<Record<string, K>>,
+  values: Readonly<Record<string, T>>,
+): Map<K, T> {
+  const out = new Map<K, T>();
+
+  for (const [key, value] of Object.entries(written)) {
+    const at = `${where}: ${key}`;
+
+    out.set(idOf(keys, key, at), idOf(values, value, at));
+  }
+  return out;
+}
+
+/** The moves that leave the user standing still once they land */
+export const RECHARGE_MOVES = moveSet(rechargeFile, 'recharge.yaml');
+
+/** The signature moves only the Move Tutor teaches */
+export const TUTOR_ONLY_MOVES = moveSet(tutorOnlyFile, 'tutor-only.yaml');
+
+/** The moves that are not a pokemon's own: confusion, Struggle and the bare swing */
+export const PSEUDO_MOVES = moveSet(pseudoFile, 'pseudo.yaml');
+
+const gmax = v.parse(
+  v.object({
+    species: v.record(NAME, v.object({ move: NAME, type: NAME })),
+    fixed: v.array(NAME),
+  }),
+  gmaxFile,
+);
+
+/** Each species with a Gigantamax form, with its G-Max Move and that move's type */
+export const GMAX_SPECIES = new Map<Species, { move: Moves; type: Types }>();
+
+for (const [name, { move, type }] of Object.entries(gmax.species)) {
+  const at = `gmax.yaml: ${name}`;
+
+  GMAX_SPECIES.set(idOf<Species>(SPECIES_IDS, name, at), {
+    move: idOf<Moves>(MOVE_IDS, move, at),
+    type: idOf<Types>(TYPE_IDS, type, at),
+  });
+}
+
+/** The G-Max Moves that hit at 160 whatever they replace, and through any ability */
+export const FIXED_G_MAX_MOVES = moveSet(gmax.fixed, 'gmax.yaml: fixed');
+
+const MAPPING = v.record(NAME, NAME);
+
+const maxMoves = v.parse(
+  v.object({
+    types: MAPPING,
+    weathers: MAPPING,
+    terrains: MAPPING,
+    'foe-stages': MAPPING,
+    'ally-stages': MAPPING,
+  }),
+  maxMovesFile,
+);
+
+/** The Max Move a damaging move of each type becomes */
+export const TYPE_MAX_MOVES = nameMap<Types, Moves>(
+  maxMoves.types,
+  'max-moves.yaml: types',
+  TYPE_IDS,
+  MOVE_IDS,
+);
+
+/** The sky each weather Max Move calls up */
+export const MAX_MOVE_WEATHERS = nameMap<Moves, Weathers>(
+  maxMoves.weathers,
+  'max-moves.yaml: weathers',
+  MOVE_IDS,
+  BATTLE_WEATHER_IDS,
+);
+
+/** The terrain each terrain Max Move lays */
+export const MAX_MOVE_TERRAINS = nameMap<Moves, Terrains>(
+  maxMoves.terrains,
+  'max-moves.yaml: terrains',
+  MOVE_IDS,
+  TERRAIN_IDS,
+);
+
+/** The stage each Max Move drops a stage on every foe */
+export const MAX_MOVE_FOE_STAGES = nameMap<Moves, Stages>(
+  maxMoves['foe-stages'],
+  'max-moves.yaml: foe-stages',
+  MOVE_IDS,
+  STAGE_IDS,
+);
+
+/** The stage each Max Move raises a stage on the user's whole side */
+export const MAX_MOVE_ALLY_STAGES = nameMap<Moves, Stages>(
+  maxMoves['ally-stages'],
+  'max-moves.yaml: ally-stages',
+  MOVE_IDS,
+  STAGE_IDS,
+);
+
+const zMoves = v.parse(v.object({ types: MAPPING, signatures: v.array(NAME) }), zMovesFile);
+
+/** The Z-Move each type's crystal turns a damaging move of that type into */
+export const TYPE_Z_MOVES = nameMap<Types, Moves>(
+  zMoves.types,
+  'z-moves.yaml: types',
+  TYPE_IDS,
+  MOVE_IDS,
+);
+
+/** The Z-Moves that belong to one line and one move each */
+export const SIGNATURE_Z_MOVES = moveSet(zMoves.signatures, 'z-moves.yaml: signatures');

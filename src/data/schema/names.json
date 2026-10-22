@@ -4941,6 +4941,29 @@
         "AuroraVeil"
       ]
     },
+    "battle-weather": {
+      "enum": [
+        "None",
+        "Sunny",
+        "Rain",
+        "Sandstorm",
+        "Hail",
+        "Snow",
+        "Fog",
+        "ExtremeSunny",
+        "HeavyRain",
+        "StrongWinds"
+      ]
+    },
+    "terrain": {
+      "enum": [
+        "None",
+        "Electric",
+        "Grassy",
+        "Misty",
+        "Psychic"
+      ]
+    },
     "region": {
       "enum": [
         "Unknown",

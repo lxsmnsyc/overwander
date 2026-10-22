@@ -83,6 +83,12 @@ The numbers a fight reads off each move live apart from the move, in `src/data/b
 | `recoil.yaml`, `drain.yaml`, `heal.yaml` | a share, as a number or a fraction such as `1/3` |
 | `z-power.yaml`        | a type Z-Move's power, for the moves the table by power gets wrong |
 | `z-effects.yaml`      | what a type crystal adds to a status move: `stages` raised by `value`, or `heal`, `clear`, `critical`, `centre` or `curse` |
+| `recharge.yaml`       | a list: the moves that leave the user standing still once they land |
+| `tutor-only.yaml`     | a list: the signature moves only the Move Tutor teaches          |
+| `pseudo.yaml`         | a list: the moves that are not a pokemon's own (confusion, Struggle, the bare swing) |
+| `gmax.yaml`           | each Gigantamax `species` with its G-Max `move` and `type`, and the `fixed` ones that always hit at 160 |
+| `max-moves.yaml`      | the Max Move each type becomes, and the `weathers`, `terrains`, `foe-stages` and `ally-stages` each one brings |
+| `z-moves.yaml`        | the Z-Move each type becomes, and the `signatures`                |
 
 `src/data/battle/index.ts` reads them into the tables the battle files re-export (`STATUS_MOVES`, `RECOIL_MOVES` and the rest). A move is added to a mechanic by adding it to that file; what the mechanic does with the number stays in `src/battle/moves/`.
 

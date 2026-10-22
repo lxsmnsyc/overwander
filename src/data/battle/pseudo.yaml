@@ -1,0 +1,6 @@
+# The moves that are not a pokemon's own: a confused unit hitting itself,
+# the bare fallback swing and the last resort. Nothing that reads "the move
+# a pokemon chose" should count them
+- _Confused
+- Struggle
+- Attack

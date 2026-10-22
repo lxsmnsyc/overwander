@@ -1,26 +1,12 @@
-import { Moves } from '../ids/moves';
+import type { Moves } from '../ids/moves';
+import { RECHARGE_MOVES } from '../battle';
 
 /**
- * The moves that leave the user standing still once they land.
- *
- * The table is data rather than mechanics because two sides read it:
- * [`src/battle/moves/recharge.ts`](../../battle/moves/recharge.ts)
- * lays the recharge on, and the expert builder prices the cast that is
- * spent doing nothing. Kept in one place so the two cannot disagree
- * about which moves recharge
+ * The moves that leave the user standing still once they land, read
+ * from `src/data/battle/recharge.yaml`. The battle lays the recharge
+ * on and the expert builder prices the idle cast, so both read this
  */
-export const RECHARGE_MOVES = new Set<Moves>([
-  Moves.HyperBeam,
-  Moves.BlastBurn,
-  Moves.HydroCannon,
-  Moves.FrenzyPlant,
-  Moves.GigaImpact,
-  Moves.RockWrecker,
-  Moves.RoarOfTime,
-  Moves.PrismaticLaser,
-  Moves.Eternabeam,
-  Moves.MeteorAssault,
-]);
+export { RECHARGE_MOVES };
 
 export function isRechargeMove(move: Moves): boolean {
   return RECHARGE_MOVES.has(move);

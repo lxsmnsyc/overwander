@@ -1,0 +1,53 @@
+# The Max Moves: what a Dynamaxed pokemon throws in place of the move it
+# reached for. The battle side is in `src/battle/gimmicks/dynamax/max-moves.ts`
+
+# The Max Move a damaging move of each type becomes
+types:
+  Normal: MaxStrike
+  Fighting: MaxKnuckle
+  Flying: MaxAirstream
+  Poison: MaxOoze
+  Ground: MaxQuake
+  Rock: MaxRockfall
+  Bug: MaxFlutterby
+  Ghost: MaxPhantasm
+  Steel: MaxSteelspike
+  Fire: MaxFlare
+  Water: MaxGeyser
+  Grass: MaxOvergrowth
+  Electric: MaxLightning
+  Psychic: MaxMindstorm
+  Ice: MaxHailstorm
+  Dragon: MaxWyrmwind
+  Dark: MaxDarkness
+  Fairy: MaxStarfall
+
+# The sky each weather Max Move calls up
+weathers:
+  MaxFlare: Sunny
+  MaxGeyser: Rain
+  MaxHailstorm: Hail
+  MaxRockfall: Sandstorm
+
+# The terrain each terrain Max Move lays
+terrains:
+  MaxLightning: Electric
+  MaxOvergrowth: Grassy
+  MaxMindstorm: Psychic
+  MaxStarfall: Misty
+
+# The stage each Max Move drops a stage on every foe
+foe-stages:
+  MaxStrike: Speed
+  MaxFlutterby: SpecialAttack
+  MaxPhantasm: Defense
+  MaxWyrmwind: Attack
+  MaxDarkness: SpecialDefense
+
+# The stage each Max Move raises a stage on the user's whole side
+ally-stages:
+  MaxKnuckle: Attack
+  MaxSteelspike: Defense
+  MaxOoze: SpecialAttack
+  MaxQuake: SpecialDefense
+  MaxAirstream: Speed

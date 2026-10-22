@@ -38,6 +38,8 @@ const DEFINITIONS: [enumName: string, definition: string][] = [
   ['Stages', 'stage'],
   ['Statuses', 'status'],
   ['TeamStatuses', 'team-status'],
+  ['Weathers', 'battle-weather'],
+  ['Terrains', 'terrain'],
   ['Regions', 'region'],
   ['Awards', 'award'],
   ['Lairs', 'lair'],
@@ -942,6 +944,53 @@ const BATTLE_FILES: [file: string, title: string, entry: Schema][] = [
   ],
 ];
 
+/** A list of names, in the order it is written */
+function nameList(title: string, definition: string): Schema {
+  return { $schema: DRAFT, title, ...names(definition) };
+}
+
+/** A map from one kind of name to another */
+function mapping(key: string, value: string): Schema {
+  return { type: 'object', propertyNames: name(key), additionalProperties: name(value) };
+}
+
+/** A file of named sections, each closed so a misspelt key is flagged */
+function sections(title: string, properties: Record<string, Schema>): Schema {
+  return { $schema: DRAFT, title, ...part(properties, Object.keys(properties)) };
+}
+
+/** The battle files that are not keyed by move */
+const BATTLE_LISTS: [file: string, schema: Schema][] = [
+  ['battle-recharge.json', nameList('Battle: recharging moves', 'move')],
+  ['battle-tutor-only.json', nameList('Battle: tutor-only moves', 'move')],
+  ['battle-pseudo.json', nameList('Battle: pseudo-moves', 'move')],
+  [
+    'battle-gmax.json',
+    sections('Battle: G-Max Moves', {
+      species: {
+        type: 'object',
+        propertyNames: name('species'),
+        additionalProperties: part({ move: name('move'), type: name('type') }, ['move', 'type']),
+      },
+      fixed: names('move', 'The ones that hit at 160 whatever they replace'),
+    }),
+  ],
+  [
+    'battle-max-moves.json',
+    sections('Battle: Max Moves', {
+      types: mapping('type', 'move'),
+      weathers: mapping('move', 'battle-weather'),
+      terrains: mapping('move', 'terrain'),
+      'foe-stages': mapping('move', 'stage'),
+      'ally-stages': mapping('move', 'stage'),
+    }),
+  ],
+  [
+    'battle-z-moves.json',
+    sections('Battle: Z-Moves', { types: mapping('type', 'move'), signatures: names('move') }),
+  ],
+];
+
 function json(schema: Schema): string {
   return `${JSON.stringify(schema, null, 2)}\n`;
 }
@@ -1060,6 +1109,9 @@ export default function renderDataSchemas(members: Map<string, string[]>): Map<s
 
   for (const [file, title, entry] of BATTLE_FILES) {
     schemas.set(file, json(keyed(title, 'move', entry)));
+  }
+  for (const [file, schema] of BATTLE_LISTS) {
+    schemas.set(file, json(schema));
   }
   return schemas;
 }

@@ -43,6 +43,8 @@
     "./src/data/schema/battle-recharge.json": "src/data/battle/recharge.yaml",
     "./src/data/schema/battle-tutor-only.json": "src/data/battle/tutor-only.yaml",
     "./src/data/schema/battle-pseudo.json": "src/data/battle/pseudo.yaml",
+    "./src/data/schema/battle-guards.json": "src/data/battle/guards.yaml",
+    "./src/data/schema/battle-ai-roles.json": "src/data/battle/ai-roles.yaml",
     "./src/data/schema/battle-gmax.json": "src/data/battle/gmax.yaml",
     "./src/data/schema/battle-max-moves.json": "src/data/battle/max-moves.yaml",
     "./src/data/schema/battle-z-moves.json": "src/data/battle/z-moves.yaml",

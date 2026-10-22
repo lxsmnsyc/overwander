@@ -38,65 +38,9 @@ import { DRAGGING_MOVES, FORCED_SWITCH_MOVES, SELF_SWITCH_MOVES } from '../moves
 import { GUARDS } from '../moves/team-guards';
 import { TERRAIN_MOVES } from '../moves/terrain';
 import { RECHARGE_MOVES } from '../../data/moves/recharge';
+import { AI_ROLE_MOVES } from '../../data/battle';
+import { MoveRole } from '../../data/ids/move-roles';
 import { RECOIL_MOVES } from '../../data/moves/recoil';
-
-/**
- * What a move is cast for, as the AI weighs it. A move may hold several:
- * Fly is damage, a wind-up and a way out of the next hit all at once
- */
-export const enum MoveRole {
-  // What a status move is cast for
-  /** Keeps the damage off: Protect, Substitute, Fly, Wide Guard */
-  Shield = 0,
-  /** A veil or tempo over the caster's side: screens, Tailwind */
-  TeamSetup = 1,
-  /** Lies on the foe's side and bites whoever acts there */
-  Hazard = 2,
-  /** Changes the whole field: weather, terrain, rooms, Gravity */
-  Field = 3,
-  /** Puts a lasting affliction on a foe: sleep, poison, burn */
-  Status = 4,
-  /** Takes an option away from a foe: Taunt, Disable, Mean Look */
-  Disruption = 5,
-  /** Raises the caster's own stages */
-  SelfBoost = 6,
-  /** Lowers a foe's stages */
-  FoeDrop = 7,
-  /** Puts health back or clears statuses on the caster's side */
-  Heal = 8,
-  /** Helps a teammate rather than the caster: Helping Hand, Follow Me */
-  Support = 9,
-  /** Leaves the field, or ends with the user gone */
-  Pivot = 10,
-  /** Everything else a move may be cast for: callers, copies, swaps */
-  Utility = 11,
-
-  // What a damaging move is, beside the damage itself
-  Damage = 12,
-  Spread = 13,
-  Priority = 14,
-  MultiHit = 15,
-  /** Spends a step winding up before it lands */
-  Charge = 16,
-  Recharge = 17,
-  Recoil = 18,
-  Drain = 19,
-  /** Costs the user its life */
-  Sacrifice = 20,
-  OneHitKO = 21,
-  /** Damage set by a formula rather than power */
-  FixedDamage = 22,
-  /** Locks the user into repeating it */
-  LockIn = 23,
-  /** Lands later than it is cast */
-  Delayed = 24,
-  /** May leave a status on what it hits */
-  Afflicts = 25,
-  /** May lower a stage on what it hits */
-  Weakens = 26,
-  /** Binds its target for a while */
-  Trapping = 27,
-}
 
 /**
  * What each role is worth at the start of a fight, before relevance and
@@ -148,114 +92,12 @@ export const AFFLICTIONS = new Set<Statuses>([
   Statuses.Drowsy,
 ]);
 
-// The moves no registry groups, each with its role
-const SHIELDS = new Set<Moves>([Moves.Substitute, Moves.MagnetRise]);
-const TEAM_SETUPS = new Set<Moves>([Moves.Tailwind, Moves.LuckyChant]);
-const HAZARDS = new Set<Moves>([
-  Moves.Spikes,
-  Moves.ToxicSpikes,
-  Moves.StealthRock,
-  Moves.StickyWeb,
-  // Trades the hazards between the sides, which is laying them on the other one
-  Moves.CourtChange,
-]);
-const FIELDS = new Set<Moves>([
-  Moves.TrickRoom,
-  Moves.WonderRoom,
-  Moves.MagicRoom,
-  Moves.Gravity,
-  Moves.MudSport,
-  Moves.WaterSport,
-  Moves.IonDeluge,
-]);
-const AFFLICTING = new Set<Moves>([Moves.LeechSeed, Moves.Nightmare, Moves.PsychoShift]);
-const DISRUPTING = new Set<Moves>([
-  Moves.Disable,
-  Moves.Encore,
-  Moves.Spite,
-  Moves.Haze,
-  Moves.TopsyTurvy,
-  Moves.Quash,
-  Moves.Electrify,
-  Moves.FairyLock,
-  Moves.Powder,
-  Moves.Soak,
-  Moves.TrickOrTreat,
-  Moves.ForestsCurse,
-  Moves.Telekinesis,
-  Moves.MagicPowder,
-  Moves.CorrosiveGas,
-  Moves.Octolock,
-]);
-const FOE_DROPS = new Set<Moves>([Moves.Captivate]);
-const HEALS = new Set<Moves>([
-  Moves.Rest,
-  Moves.Wish,
-  Moves.Swallow,
-  Moves.PainSplit,
-  Moves.Refresh,
-  Moves.StrengthSap,
-  Moves.Purify,
-  Moves.LifeDew,
-  Moves.JungleHealing,
-  Moves.LunarBlessing,
-  Moves.RevivalBlessing,
-]);
-const SELF_BOOSTS = new Set<Moves>([
-  Moves.BellyDrum,
-  Moves.Stockpile,
-  Moves.Acupressure,
-  Moves.Curse,
-  Moves.Geomancy,
-  Moves.PsychUp,
-  // The next move lands as a critical hit, which is what a boost is for
-  Moves.LaserFocus,
-  Moves.StuffCheeks,
-]);
-const SUPPORTING = new Set<Moves>([
-  Moves.AfterYou,
-  Moves.AllySwitch,
-  Moves.HoldHands,
-  Moves.Bestow,
-  Moves.Instruct,
-  Moves.Coaching,
-  Moves.Teatime,
-  Moves.DragonCheer,
-]);
-const UTILITIES = new Set<Moves>([
-  // Callers and copies, worth whatever they turn into
-  Moves.Mimic,
-  Moves.MirrorMove,
-  Moves.Metronome,
-  Moves.Transform,
-  Moves.Sketch,
-  Moves.SleepTalk,
-  Moves.NaturePower,
-  Moves.Assist,
-  Moves.MeFirst,
-  Moves.Copycat,
-  // Setting up the next move or answering the foe's
-  Moves.MindReader,
-  Moves.LockOn,
-  Moves.MagicCoat,
-  Moves.Snatch,
-  Moves.DestinyBond,
-  Moves.Grudge,
-  Moves.PerishSong,
-  // Changing the caster's own typing or stats
-  Moves.Conversion,
-  Moves.Conversion2,
-  Moves.Camouflage,
-  Moves.ReflectType,
-  Moves.PowerTrick,
-  Moves.PowerShift,
-  Moves.Recycle,
-  // Nothing at all
-  Moves.Splash,
-  Moves.Celebrate,
-  Moves.HappyHour,
-]);
-const SACRIFICING = new Set<Moves>([Moves.FinalGambit, Moves.Memento]);
+export { MoveRole };
+
+/** Whether `src/data/battle/ai-roles.yaml` files a move under a role by hand */
+function filed(move: Moves, role: MoveRole): boolean {
+  return AI_ROLE_MOVES.get(role)?.has(move) === true;
+}
 
 const roles = new Map<Moves, ReadonlySet<MoveRole>>();
 
@@ -263,16 +105,16 @@ function addStatusRoles(move: Moves, found: Set<MoveRole>): void {
   const data = getMoveData(move);
   const atFoe = (data.affects & MoveAffects.Enemy) !== 0;
 
-  if (GUARD_MOVES[move] != null || GUARDS[move] != null || SHIELDS.has(move)) {
+  if (GUARD_MOVES[move] != null || GUARDS[move] != null || filed(move, MoveRole.Shield)) {
     found.add(MoveRole.Shield);
   }
-  if (TEAM_STATUS_MOVES[move] != null || TEAM_SETUPS.has(move)) {
+  if (TEAM_STATUS_MOVES[move] != null || filed(move, MoveRole.TeamSetup)) {
     found.add(MoveRole.TeamSetup);
   }
-  if (HAZARDS.has(move)) {
+  if (filed(move, MoveRole.Hazard)) {
     found.add(MoveRole.Hazard);
   }
-  if (MOVE_WEATHERS.has(move) || TERRAIN_MOVES.has(move) || FIELDS.has(move)) {
+  if (MOVE_WEATHERS.has(move) || TERRAIN_MOVES.has(move) || filed(move, MoveRole.Field)) {
     found.add(MoveRole.Field);
   }
 
@@ -287,11 +129,11 @@ function addStatusRoles(move: Moves, found: Set<MoveRole>): void {
       found.add(MoveRole.Disruption);
     }
   }
-  if (AFFLICTING.has(move)) {
+  if (filed(move, MoveRole.Status)) {
     found.add(MoveRole.Status);
   }
   if (
-    DISRUPTING.has(move) ||
+    filed(move, MoveRole.Disruption) ||
     LOCKOUTS.has(move) ||
     NO_ESCAPE_MOVES.has(move) ||
     IDENTIFYING_MOVES.has(move) ||
@@ -303,13 +145,13 @@ function addStatusRoles(move: Moves, found: Set<MoveRole>): void {
   ) {
     found.add(MoveRole.Disruption);
   }
-  if (FOE_DROPS.has(move)) {
+  if (filed(move, MoveRole.FoeDrop)) {
     found.add(MoveRole.FoeDrop);
   }
-  if (UTILITIES.has(move)) {
+  if (filed(move, MoveRole.Utility)) {
     found.add(MoveRole.Utility);
   }
-  if (CALLS.has(move) || SUPPORTING.has(move)) {
+  if (CALLS.has(move) || filed(move, MoveRole.Support)) {
     found.add(MoveRole.Support);
   }
   if (
@@ -317,13 +159,13 @@ function addStatusRoles(move: Moves, found: Set<MoveRole>): void {
     WEATHER_HEALS.has(move) ||
     PARTY_CURES.has(move) ||
     SACRIFICES.has(move) ||
-    HEALS.has(move) ||
+    filed(move, MoveRole.Heal) ||
     WORN.get(move) === Statuses.AquaRinged ||
     SELF_STATUS_MOVES[move] === Statuses.Rooted
   ) {
     found.add(MoveRole.Heal);
   }
-  if (SELF_BOOSTS.has(move) || FIELD_STAT_MOVES[move] != null) {
+  if (filed(move, MoveRole.SelfBoost) || FIELD_STAT_MOVES[move] != null) {
     found.add(MoveRole.SelfBoost);
   }
   if (SELF_STATUS_MOVES[move] === Statuses.FocusEnergy) {
@@ -417,7 +259,7 @@ function deriveRoles(move: Moves): Set<MoveRole> {
   if (SELF_SWITCH_MOVES.has(move)) {
     found.add(MoveRole.Pivot);
   }
-  if (SELF_DESTRUCT_MOVES.has(move) || SACRIFICES.has(move) || SACRIFICING.has(move)) {
+  if (SELF_DESTRUCT_MOVES.has(move) || SACRIFICES.has(move) || filed(move, MoveRole.Sacrifice)) {
     found.add(MoveRole.Sacrifice);
   }
   return found;

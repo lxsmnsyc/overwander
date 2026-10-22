@@ -89,6 +89,8 @@ The numbers a fight reads off each move live apart from the move, in `src/data/b
 | `gmax.yaml`           | each Gigantamax `species` with its G-Max `move` and `type`, and the `fixed` ones that always hit at 160 |
 | `max-moves.yaml`      | the Max Move each type becomes, and the `weathers`, `terrains`, `foe-stages` and `ally-stages` each one brings |
 | `z-moves.yaml`        | the Z-Move each type becomes, and the `signatures`                |
+| `guards.yaml`         | each guard move and the status it puts on the user (`Protected`, `Enduring`) |
+| `ai-roles.yaml`       | a `MoveRole` to the moves the AI files under it by hand, added to what it reads off each move |
 
 `src/data/battle/index.ts` reads them into the tables the battle files re-export (`STATUS_MOVES`, `RECOIL_MOVES` and the rest). A move is added to a mechanic by adding it to that file; what the mechanic does with the number stays in `src/battle/moves/`.
 

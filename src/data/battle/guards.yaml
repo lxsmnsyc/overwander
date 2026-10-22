@@ -1,0 +1,13 @@
+# The guards, and what each one puts on the user. Protect and Detect turn
+# a hit away; Endure takes it and refuses to fall
+
+Protect: Protected
+Detect: Protected
+Endure: Enduring
+SpikyShield: Protected
+KingsShield: Protected
+BanefulBunker: Protected
+Obstruct: Protected
+MaxGuard: Protected
+SilkTrap: Protected
+BurningBulwark: Protected

@@ -40,6 +40,7 @@ const DEFINITIONS: [enumName: string, definition: string][] = [
   ['TeamStatuses', 'team-status'],
   ['Weathers', 'battle-weather'],
   ['Terrains', 'terrain'],
+  ['MoveRole', 'move-role'],
   ['Regions', 'region'],
   ['Awards', 'award'],
   ['Lairs', 'lair'],
@@ -964,6 +965,26 @@ const BATTLE_LISTS: [file: string, schema: Schema][] = [
   ['battle-recharge.json', nameList('Battle: recharging moves', 'move')],
   ['battle-tutor-only.json', nameList('Battle: tutor-only moves', 'move')],
   ['battle-pseudo.json', nameList('Battle: pseudo-moves', 'move')],
+  [
+    'battle-guards.json',
+    {
+      $schema: DRAFT,
+      title: 'Battle: guards',
+      type: 'object',
+      propertyNames: name('move'),
+      additionalProperties: described(name('status'), 'What the guard puts on the user'),
+    },
+  ],
+  [
+    'battle-ai-roles.json',
+    {
+      $schema: DRAFT,
+      title: 'Battle: AI roles',
+      type: 'object',
+      propertyNames: name('move-role'),
+      additionalProperties: names('move', 'The moves filed under this role by hand'),
+    },
+  ],
   [
     'battle-gmax.json',
     sections('Battle: G-Max Moves', {

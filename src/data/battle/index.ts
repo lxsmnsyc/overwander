@@ -2,9 +2,11 @@ import * as v from 'valibot';
 import { Stages } from '../constants/stats';
 import type { Types } from '../constants/types';
 import type { Moves } from '../ids/moves';
+import type { MoveRole } from '../ids/move-roles';
 import {
   BATTLE_WEATHER_IDS,
   MOVE_IDS,
+  MOVE_ROLE_IDS,
   SPECIES_IDS,
   STAGE_IDS,
   STATUS_IDS,
@@ -32,6 +34,8 @@ import pseudoFile from './pseudo.yaml';
 import gmaxFile from './gmax.yaml';
 import maxMovesFile from './max-moves.yaml';
 import zMovesFile from './z-moves.yaml';
+import guardsFile from './guards.yaml';
+import aiRolesFile from './ai-roles.yaml';
 
 /**
  * The numbers the battle reads off each move, out of their YAML: what
@@ -375,3 +379,23 @@ export const TYPE_Z_MOVES = nameMap<Types, Moves>(
 
 /** The Z-Moves that belong to one line and one move each */
 export const SIGNATURE_Z_MOVES = moveSet(zMoves.signatures, 'z-moves.yaml: signatures');
+
+/** The guards, and what each one puts on the user */
+export const GUARD_MOVES = table(guardsFile, 'guards.yaml', NAME, (status, at) =>
+  idOf<Statuses>(STATUS_IDS, status, at),
+);
+
+/**
+ * The moves the AI files under a role by hand, since no registry groups
+ * them. They add to the roles read off the move's own data
+ */
+export const AI_ROLE_MOVES = new Map<MoveRole, ReadonlySet<Moves>>();
+
+for (const [role, moves] of Object.entries(v.parse(v.record(NAME, v.array(NAME)), aiRolesFile))) {
+  const at = `ai-roles.yaml: ${role}`;
+
+  AI_ROLE_MOVES.set(
+    idOf<MoveRole>(MOVE_ROLE_IDS, role, at),
+    new Set(idsOf<Moves>(MOVE_IDS, moves, at)),
+  );
+}

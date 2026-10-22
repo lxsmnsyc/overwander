@@ -11,6 +11,7 @@ import Families from './families';
 import { Types } from '../constants/types';
 import { Stages, Stats } from '../constants/stats';
 import { Statuses, TeamStatuses, Terrains, Weathers } from './status';
+import { MoveRole } from './move-roles';
 import Regions from './regions';
 import Natures from './natures';
 import Awards from './awards';
@@ -4937,6 +4938,37 @@ export const TERRAIN_IDS = {
   Misty: Terrains.Misty,
   Psychic: Terrains.Psychic,
 } as const satisfies Record<string, Terrains>;
+
+export const MOVE_ROLE_IDS = {
+  Shield: MoveRole.Shield,
+  TeamSetup: MoveRole.TeamSetup,
+  Hazard: MoveRole.Hazard,
+  Field: MoveRole.Field,
+  Status: MoveRole.Status,
+  Disruption: MoveRole.Disruption,
+  SelfBoost: MoveRole.SelfBoost,
+  FoeDrop: MoveRole.FoeDrop,
+  Heal: MoveRole.Heal,
+  Support: MoveRole.Support,
+  Pivot: MoveRole.Pivot,
+  Utility: MoveRole.Utility,
+  Damage: MoveRole.Damage,
+  Spread: MoveRole.Spread,
+  Priority: MoveRole.Priority,
+  MultiHit: MoveRole.MultiHit,
+  Charge: MoveRole.Charge,
+  Recharge: MoveRole.Recharge,
+  Recoil: MoveRole.Recoil,
+  Drain: MoveRole.Drain,
+  Sacrifice: MoveRole.Sacrifice,
+  OneHitKO: MoveRole.OneHitKO,
+  FixedDamage: MoveRole.FixedDamage,
+  LockIn: MoveRole.LockIn,
+  Delayed: MoveRole.Delayed,
+  Afflicts: MoveRole.Afflicts,
+  Weakens: MoveRole.Weakens,
+  Trapping: MoveRole.Trapping,
+} as const satisfies Record<string, MoveRole>;
 
 export const REGION_IDS = {
   Unknown: Regions.Unknown,

@@ -4964,6 +4964,38 @@
         "Psychic"
       ]
     },
+    "move-role": {
+      "enum": [
+        "Shield",
+        "TeamSetup",
+        "Hazard",
+        "Field",
+        "Status",
+        "Disruption",
+        "SelfBoost",
+        "FoeDrop",
+        "Heal",
+        "Support",
+        "Pivot",
+        "Utility",
+        "Damage",
+        "Spread",
+        "Priority",
+        "MultiHit",
+        "Charge",
+        "Recharge",
+        "Recoil",
+        "Drain",
+        "Sacrifice",
+        "OneHitKO",
+        "FixedDamage",
+        "LockIn",
+        "Delayed",
+        "Afflicts",
+        "Weakens",
+        "Trapping"
+      ]
+    },
     "region": {
       "enum": [
         "Unknown",

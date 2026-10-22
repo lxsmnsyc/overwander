@@ -1,5 +1,33 @@
 # overwander
 
+## 4.45.0
+
+### Minor Changes
+
+- f15f422: - Munkidori at the Wistful Fields and Fezandipiti on Oni Mountain. Their Avenging Chain frame makes the next damaging move after a teammate faints sure to badly poison, Munkidori's winding up faster and Fezandipiti's striking every enemy.
+  - Ogerpon at the Dreaded Den, in each of its four masks: the Teal, Wellspring, Hearthflame and Cornerstone Masks are new items, each used to put it in that mask's shape. Each mask's ability is worn in battle, its Tera type is its mask's type, and Mask Aura lifts its teammates' moves of that type.
+  - Terapagos in Area Zero's Underdepths. Tera Shift turns it Terastal as it takes the field, and Prismatic turns its Normal moves into the type that hits hardest.
+  - Pecharunt, called up with the Mythical Pecha Berry. Puppet Strings turns a confused enemy's moves onto its own side.
+
+### Patch Changes
+
+- 505e9f0: Bloodmoon Ursaluna is a legend. It is met at night in the legendary band of the taiga and the montane forest, and raided at the new Timeless Woods lair there.
+- dfd0d27: - The Gen 9 items now use their own art: the Tera Orb, the Tera Shards, Booster Energy, Ogerpon's masks, the armors, the teacups, the Leader's Crest, the Syrupy Apple, the Metal Alloy and the Mythical Pecha Berry.
+
+## 4.44.0
+
+### Minor Changes
+
+- b36489c: - New trainer class: the Triathlete, Hoenn's runners and cyclists, on beaches, grasslands, savannas, steppes and mountains. They field Normal, Fighting and Water types, and count toward a title of their own.
+  - Team Aqua and Team Magma grunts also appear in their Omega Ruby and Alpha Sapphire outfits.
+
+### Patch Changes
+
+- ed40ef1: - A female pokemon of a species drawn again for its females now stands in her own drawing in the overworld, as Frillish, Jellicent, Pyroar and the rest do in a fight. The same goes for raid bosses, the box, the catch sheet, the evolution preview, the battle verdict and the item dialogs.
+  - A female Lechonk now grows into a female Oinkologne, with Aroma Veil and her own stats, rather than into a male one. She wears his drawing until hers lands.
+- f1befdb: - Kalos swimmers stand on the shore in their full-body drawing rather than as a head treading water.
+  - A shadow or purified pokemon's aura stays behind it in battle while it lunges, rather than covering its picture.
+
 ## 4.43.0
 
 ### Minor Changes

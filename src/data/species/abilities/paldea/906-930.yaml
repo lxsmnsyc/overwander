@@ -44,6 +44,9 @@ Lechonk:
   Oinkologne:
     abilities: [LingeringAroma, Gluttony]
     hidden: [ThickFat]
+  OinkologneFemale:
+    abilities: [AromaVeil, Gluttony]
+    hidden: [ThickFat]
 Tarountula:
   Tarountula:
     abilities: [Insomnia]

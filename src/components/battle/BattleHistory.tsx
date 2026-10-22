@@ -16,6 +16,7 @@ import { listClaimedRaids } from '../../auth/raids';
 import { listWaitingEncounters } from '../../auth/safari';
 import type { EncounterRecord } from '../../model/encounter-record';
 import { EncounterType } from '../../overworld/encounter/kinds';
+import { Genders } from '../../data/ids/species';
 import { getSpeciesData } from '../../data/species';
 import {
   Badge,
@@ -359,6 +360,7 @@ function WaitingList(props: { waiting: Resource<EncounterRecord[]> }): JSX.Eleme
                 <span class="flex size-10 shrink-0 items-center justify-center">
                   <AnimatedSprite
                     species={encounter.species}
+                    female={encounter.gender === Genders.Female}
                     animation={SpriteAnim.Idle}
                     direction="DownLeft"
                     shiny={encounter.shiny}

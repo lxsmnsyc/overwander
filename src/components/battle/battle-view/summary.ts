@@ -1,3 +1,4 @@
+import { Genders } from '../../../data/ids/species';
 import { BattleModes } from '../../../battle/battle';
 import type Alliance from '../../../battle/alliance';
 import type Team from '../../../battle/team';
@@ -47,6 +48,7 @@ export interface SideUnit {
   species: Species;
   level: number;
   shiny: boolean;
+  female: boolean;
   dealt: number;
   /** What it finished on, as a share of its full health: zero is fainted */
   health: number;
@@ -137,6 +139,7 @@ export function readSides(built: RaidBattle): SideSummary[] {
         species: unit.species,
         level: unit.level,
         shiny: unit.shiny,
+        female: unit.gender === Genders.Female,
         dealt: unit.dealt,
         health: most <= 0 ? 0 : Math.max(0, Math.min(1, unit.health / most)),
       });

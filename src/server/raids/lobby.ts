@@ -7,6 +7,7 @@ import {
   type RaidRecord,
   type RaidView,
   asRaidRecord,
+  isFemaleBoss,
   mythicalRaidId,
   raidId,
 } from '../../model/raid-record';
@@ -134,6 +135,10 @@ export async function peekRaid(
     lair: existing?.lair ?? roll.lair,
     biome: snapshot.biomeAt(cell),
     species: existing?.species ?? roll.species,
+    female: isFemaleBoss(
+      existing?.species ?? roll.species,
+      existing?.traitValue ?? roll.traitValue,
+    ),
     battle: existing?.battle ?? null,
     teams: existing?.teams.length ?? 0,
     hosting: existing?.host === uid,

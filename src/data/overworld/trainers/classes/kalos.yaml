@@ -35,6 +35,8 @@ KalosFisherman:
   trade: Fisherman
 KalosSwimmer:
   types: [Water]
+  # The other two XY swimmer sheets are drawn treading water, head
+  # only, and a trainer stands on the shore
   sheets:
     - characters/xy/swimmer-f
     - characters/xy/swimmer-m

@@ -1,3 +1,4 @@
+import { Genders } from '../../data/ids/species';
 import { type JSX, type Resource, Show, createResource, createSignal } from 'solid-js';
 import { challengeGymSeat, leaveGymSeat, takeGymSeat } from '../../auth/gym-seats';
 import {
@@ -106,6 +107,7 @@ function SeatCounter(
         id: `${at}`,
         species: entry.species,
         shiny: entry.shiny,
+        female: entry.gender === Genders.Female,
         egg: false,
         progress: 0,
         fainted: false,

@@ -209,6 +209,7 @@ function asSquare(gift: CatchGift | EncounterGift): BoxEntry {
     id: gift.id,
     species: gift.species,
     shiny: gift.shiny,
+    female: gift.gender === Genders.Female,
     egg: false,
     progress: 0,
     fainted: false,

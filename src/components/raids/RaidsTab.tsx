@@ -1,3 +1,4 @@
+import { isFemaleBoss } from '../../model/raid-record';
 import type { PlayerIdentity } from '../../auth/user';
 import {
   For,
@@ -83,6 +84,7 @@ function LairRow(props: {
           {(raid) => (
             <AnimatedSprite
               species={raid().species}
+              female={isFemaleBoss(raid().species, raid().traitValue)}
               animation={SpriteAnim.Sleep}
               direction="DownLeft"
               scale={1}

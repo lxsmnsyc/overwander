@@ -16,7 +16,7 @@ import { getAbilityData, getSpeciesSignature } from '../../data/abilities';
 import { Slots, countAbilitySlots, countsAgainstSlots } from '../../data/constants/slots';
 import type Abilities from '../../data/ids/abilities';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
-import { Species } from '../../data/ids/species';
+import { Genders, Species } from '../../data/ids/species';
 import { getSpeciesData } from '../../data/species';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import { Button, Dialog, DialogActions, Meta, Note, Status } from '../styled';
@@ -161,6 +161,7 @@ function PatchBody(
           <div class="flex justify-center">
             <AnimatedSprite
               species={isEgg(record()) ? Species.Egg : record().species}
+              female={!isEgg(record()) && record().gender === Genders.Female}
               shiny={!isEgg(record()) && isShiny(record())}
               animation={SpriteAnim.Idle}
               direction="Down"

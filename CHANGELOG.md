@@ -1,5 +1,19 @@
 # overwander
 
+## 4.45.0
+
+### Minor Changes
+
+- f15f422: - Munkidori at the Wistful Fields and Fezandipiti on Oni Mountain. Their Avenging Chain frame makes the next damaging move after a teammate faints sure to badly poison, Munkidori's winding up faster and Fezandipiti's striking every enemy.
+  - Ogerpon at the Dreaded Den, in each of its four masks: the Teal, Wellspring, Hearthflame and Cornerstone Masks are new items, each used to put it in that mask's shape. Each mask's ability is worn in battle, its Tera type is its mask's type, and Mask Aura lifts its teammates' moves of that type.
+  - Terapagos in Area Zero's Underdepths. Tera Shift turns it Terastal as it takes the field, and Prismatic turns its Normal moves into the type that hits hardest.
+  - Pecharunt, called up with the Mythical Pecha Berry. Puppet Strings turns a confused enemy's moves onto its own side.
+
+### Patch Changes
+
+- 505e9f0: Bloodmoon Ursaluna is a legend. It is met at night in the legendary band of the taiga and the montane forest, and raided at the new Timeless Woods lair there.
+- dfd0d27: - The Gen 9 items now use their own art: the Tera Orb, the Tera Shards, Booster Energy, Ogerpon's masks, the armors, the teacups, the Leader's Crest, the Syrupy Apple, the Metal Alloy and the Mythical Pecha Berry.
+
 ## 4.44.0
 
 ### Minor Changes

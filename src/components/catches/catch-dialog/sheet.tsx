@@ -50,7 +50,7 @@ import { BALL_ITEMS, type Items, getMachineMove, isMachineItem } from '../../../
 import { MAX_FRIENDSHIP, describeFriendship } from '../../../data/constants/friendship';
 import ItemSprite from '../../items/ItemSprite';
 import type { Moves } from '../../../data/ids/moves';
-import { Species } from '../../../data/ids/species';
+import { Genders, Species } from '../../../data/ids/species';
 
 import { isPPItem } from '../../../data/items/vitamins';
 import { isPreciousItem } from '../../../data/overworld/item-pool';
@@ -1731,6 +1731,7 @@ export function CatchSheetBody(
                           owned={owned() != null}
                           frozen={frozen()}
                           shiny={isShiny(loaded())}
+                          female={loaded().gender === Genders.Female}
                           dexKnows={dexKnows}
                           onEvolve={evolve}
                         />
@@ -1975,6 +1976,7 @@ export function CatchSheetBody(
               <HeadingPortrait>
                 <AnimatedSprite
                   species={isEgg(loaded()) ? Species.Egg : loaded().species}
+                  female={!isEgg(loaded()) && loaded().gender === Genders.Female}
                   shiny={!isEgg(loaded()) && isShiny(loaded())}
                   direction="Down"
                   still

@@ -80,6 +80,7 @@ export function asBoxEntry([id, caught]: [string, CaughtPokemon]): BoxEntry {
     id,
     species: caught.species,
     shiny: !isEgg(caught) && isShiny(caught),
+    female: !isEgg(caught) && caught.gender === Genders.Female,
     egg: isEgg(caught),
     progress: hatchProgress(caught),
     fainted: isFainted(caught),

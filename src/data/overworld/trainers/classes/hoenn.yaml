@@ -152,3 +152,11 @@ HoennParasolLady:
   types: [Water]
   sheets: [characters/oras/parasol-lady]
   trade: ParasolLady
+# Running, cycling and swimming the one route, so the party is built
+# for stamina on land and in the water
+Triathlete:
+  types: [Normal, Fighting, Water]
+  sheets:
+    - characters/oras/triathlete
+    - characters/oras/triathlete-2
+    - characters/oras/triathlete-3

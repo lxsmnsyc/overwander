@@ -67,7 +67,14 @@ Lechonk:
     catch-rate: 100
     height: 1
     weight: 120
-    gender: [8, 0]
+    # Each sex is its own record, so each is only ever that sex
+    gender: [1, 0]
+  OinkologneFemale:
+    stats: { HP: 115, Attack: 90, Defense: 70, SpecialAttack: 59, SpecialDefense: 90, Speed: 65 }
+    catch-rate: 100
+    height: 1
+    weight: 120
+    gender: [0, 1]
 Tarountula:
   Tarountula:
     stats: { HP: 35, Attack: 41, Defense: 45, SpecialAttack: 29, SpecialDefense: 40, Speed: 20 }

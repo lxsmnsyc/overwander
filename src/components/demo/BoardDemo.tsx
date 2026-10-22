@@ -313,6 +313,7 @@ function standing(world: World, at: [number, number]): [at: [number, number], co
         id: `demo-${placed.length}-${spot[0]},${spot[1]}`,
         species: shown.species,
         shiny: shown.shiny === true,
+        female: false,
         featured: shown.featured === true,
         rank: rankOf(shown.species),
       },

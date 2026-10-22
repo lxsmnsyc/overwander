@@ -30,6 +30,8 @@ export interface EvolutionSectionProps {
    * rather than the ordinary one
    */
   shiny: boolean;
+  /** Whether it is female, so what it turns into is drawn as she would be */
+  female: boolean;
   /** What the reader's dex has met and kept, which decides the picture */
   dexKnows: (species: Species) => { met: boolean; owned: boolean; shiny: boolean };
   onEvolve: (species: Species) => void;
@@ -107,6 +109,7 @@ export default function EvolutionSection(props: EvolutionSectionProps): JSX.Elem
                       // sheet blacked out rather than a shiny sheet
                       // fetched to be hidden
                       shiny={props.shiny && known().shiny}
+                      female={props.female}
                       called={props.shiny ? `${getSpeciesData(becomes()).name}, shiny` : undefined}
                       // Standing the way the pokemon above it stands,
                       // met or not: the row is a sum with that picture,

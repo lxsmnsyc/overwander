@@ -13,6 +13,7 @@ import { isShiny } from '../../model/caught-record';
 import { MAX_IV, STAT_NAMES, STAT_ORDER, type Stats, getIV } from '../../data/constants/stats';
 import { Items } from '../../data/ids/items';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
+import { Genders } from '../../data/ids/species';
 import { getSpeciesData } from '../../data/species';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import { Button, Dialog, DialogActions, Note, RadioGroup, Status } from '../styled';
@@ -121,6 +122,7 @@ function CapBody(
           <div class="flex justify-center">
             <AnimatedSprite
               species={record().species}
+              female={record().gender === Genders.Female}
               shiny={isShiny(record())}
               animation={SpriteAnim.Idle}
               direction="Down"

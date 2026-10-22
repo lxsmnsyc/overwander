@@ -1,3 +1,4 @@
+import { isFemaleBoss } from '../../auth/raid-record';
 import type { PlayerIdentity } from '../../auth/user';
 import {
   For,
@@ -152,6 +153,7 @@ function ChartRows(props: {
  */
 function BossCard(props: {
   species: number;
+  female: boolean;
   mythical: boolean;
   hosting: boolean;
   tera: Types | null;
@@ -186,6 +188,7 @@ function BossCard(props: {
         <div class="flex min-h-14 shrink-0 items-end justify-center md:-mb-2 md:min-h-28 md:w-full md:pt-2">
           <AnimatedSprite
             species={props.species}
+            female={props.female}
             animation={SpriteAnim.Sleep}
             direction="DownLeft"
             scale={wide() ? 4 : 2}
@@ -470,6 +473,7 @@ function LobbyRows(
             <div class="flex flex-col gap-3 md:grid md:h-[min(60vh,30rem)] md:grid-cols-[16rem_minmax(0,1fr)] md:gap-0">
               <BossCard
                 species={record().species}
+                female={isFemaleBoss(record().species, record().traitValue)}
                 mythical={record().kind === RaidKind.Mythical}
                 hosting={isHost()}
                 tera={

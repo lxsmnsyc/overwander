@@ -1,6 +1,7 @@
 import { type SnapshotRecord, spawnId } from '../../../auth/snapshot-record';
 import { localNow } from '../../../auth/clock';
 import type Biome from '../../../data/ids/biome';
+import { Genders } from '../../../data/ids/species';
 import type Weather from '../../../data/overworld/weather';
 import type Decoration from '../../../data/overworld/decoration';
 import type { ItemStack } from '../../../data/overworld/item-pool';
@@ -18,7 +19,7 @@ import { blocksWalk } from '../../../overworld/cliff';
 import { isLavaAt } from '../../../overworld/ground';
 import type { Buddy } from '../../../overworld/core';
 import getWorld from '../../../overworld/current';
-import deriveEncounter from '../../../overworld/encounter';
+import deriveEncounter, { deriveGender } from '../../../overworld/encounter';
 import namePlace from '../../../overworld/place';
 import { spawnKey } from '../../../overworld/safari';
 import { DARK_DAY_LAMP_CELLS } from '../../../data/overworld/weather';
@@ -125,7 +126,7 @@ export interface BoardView {
    * under, so an interaction can derive the same encounter every
    * observer sees
    */
-  spawns: Map<number, { id: string; spawn: Spawn; shiny: boolean }>;
+  spawns: Map<number, { id: string; spawn: Spawn; shiny: boolean; female: boolean }>;
   caches: Map<number, ItemStack[]>;
   phenomena: Map<number, Phenomenon>;
   /** What every plant on the board is bearing: patches and trees together */
@@ -288,7 +289,7 @@ export function buildBoardView(
   const visible = overworld.checkSpawnCount(SPAWN_COUNT);
   const landmarks = new Map<number, Landmark>();
   const decorations = new Map<number, Decoration>();
-  const spawns = new Map<number, { id: string; spawn: Spawn; shiny: boolean }>();
+  const spawns = new Map<number, { id: string; spawn: Spawn; shiny: boolean; female: boolean }>();
   const caches = new Map<number, ItemStack[]>();
   const phenomena = new Map<number, Phenomenon>();
   const berries = new Map<number, ItemStack>();
@@ -435,6 +436,9 @@ export function buildBoardView(
           deriveEncounter(snapshot, spawn, player, {
             shinyBoost: overworld.checkEncounterShiny(id),
           }).shiny,
+        // Read off the roll the way the meeting reads it, so a species
+        // drawn again for its females stands in the coat it is met in
+        female: deriveGender(stored.species, stored.traitValue) === Genders.Female,
       });
     }
   }

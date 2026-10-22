@@ -93,7 +93,8 @@ land:
       Ivysaur: 10
       Bayleef: 10
     scarce:
-      Oinkologne: 50
+      Oinkologne: 25
+      OinkologneFemale: 25
       Eldegoss: 39
       Dubwool: 39
       Boltund: 34
@@ -302,7 +303,8 @@ land:
       Ivysaur: 10
       Bayleef: 10
     scarce:
-      Oinkologne: 50
+      Oinkologne: 25
+      OinkologneFemale: 25
       Eldegoss: 39
       Dubwool: 39
       Boltund: 34

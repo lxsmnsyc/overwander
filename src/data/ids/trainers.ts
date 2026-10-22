@@ -64,7 +64,7 @@ const enum TrainerClass {
   Boarder = 43,
 
   /**
-   * Hoenn's own three, and the only new **trades** it brings. A trade
+   * Hoenn's own three, its first new **trades**. A trade
    * carries a title numbered `300 + trade * 2`, and the professors'
    * titles start at 400, so a trade past 49 would answer to one of
    * theirs: new trades take the free low numbers, and every class
@@ -263,6 +263,11 @@ const enum TrainerClass {
   Butler = 203,
   Tourist = 204,
   RisingStar = 205,
+  /**
+   * Hoenn's triathletes, a trade of its own that came late: running,
+   * cycling and swimming the same road. Its title sits in the second band
+   */
+  Triathlete = 206,
 }
 
 export { TrainerClass };

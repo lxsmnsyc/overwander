@@ -1,5 +1,19 @@
 # overwander
 
+## 4.44.0
+
+### Minor Changes
+
+- b36489c: - New trainer class: the Triathlete, Hoenn's runners and cyclists, on beaches, grasslands, savannas, steppes and mountains. They field Normal, Fighting and Water types, and count toward a title of their own.
+  - Team Aqua and Team Magma grunts also appear in their Omega Ruby and Alpha Sapphire outfits.
+
+### Patch Changes
+
+- ed40ef1: - A female pokemon of a species drawn again for its females now stands in her own drawing in the overworld, as Frillish, Jellicent, Pyroar and the rest do in a fight. The same goes for raid bosses, the box, the catch sheet, the evolution preview, the battle verdict and the item dialogs.
+  - A female Lechonk now grows into a female Oinkologne, with Aroma Veil and her own stats, rather than into a male one. She wears his drawing until hers lands.
+- f1befdb: - Kalos swimmers stand on the shore in their full-body drawing rather than as a head treading water.
+  - A shadow or purified pokemon's aura stays behind it in battle while it lunges, rather than covering its picture.
+
 ## 4.43.0
 
 ### Minor Changes

@@ -46,6 +46,13 @@ const TAU = Math.PI * 2;
  */
 const AURA_BEHIND = 0.1;
 
+/**
+ * How deep a body is, as a share of its aura's radius. The aura is judged
+ * at least this far behind the body, so the body still hides it while
+ * it lunges and its picture and its spot on the ground part a little
+ */
+const AURA_DEPTH = 0.6;
+
 /** The dark line round every sparkle shape, so a pale glint still shows on sand */
 const SPARKLE_EDGE = '#5a3c00';
 
@@ -73,7 +80,9 @@ function round(
 /**
  * The storm cloud a shadow pokemon stands in. `radius` is its ground
  * shadow's, and `squash` how much flatter that shadow lies toward the
- * camera than a ground circle does, so the storm lies the same way
+ * camera than a ground circle does, so the storm lies the same way.
+ * `standing` is where the body's own picture is judged, which stays put
+ * while the body lunges
  */
 export function litShadowAura(
   kit: EffectBatch,
@@ -83,9 +92,10 @@ export function litShadowAura(
   seed: number,
   strength: number,
   squash = 1,
+  standing: Spot = floor,
 ): void {
   // Judged just behind the body, as the painted aura is drawn under it: only what reaches past its outline shows
-  kit.flat(floor, AURA_BEHIND);
+  kit.flat(standing, Math.max(AURA_BEHIND, radius * AURA_DEPTH));
   const storm = stormOf(elapsed, seed);
   const [ax, az] = kit.across;
   const [wx, wz] = kit.away;
@@ -168,9 +178,10 @@ export function litPurifiedAura(
   seed: number,
   strength: number,
   squash = 1,
+  standing: Spot = floor,
 ): void {
   // Judged just behind the body, as the painted aura is drawn under it: only what reaches past its outline shows
-  kit.flat(floor, AURA_BEHIND);
+  kit.flat(standing, Math.max(AURA_BEHIND, radius * AURA_DEPTH));
   const ring = radius * 1.15;
 
   kit.pool(floor, radius * 1.5, '#ffecaa', 0.55 * strength, { squash });

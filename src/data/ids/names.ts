@@ -5216,6 +5216,7 @@ export const TRAINER_IDS = {
   Butler: TrainerClass.Butler,
   Tourist: TrainerClass.Tourist,
   RisingStar: TrainerClass.RisingStar,
+  Triathlete: TrainerClass.Triathlete,
 } as const satisfies Record<string, TrainerClass>;
 
 export const GYM_LEADER_IDS = {

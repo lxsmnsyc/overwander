@@ -140,5 +140,6 @@
     "./src/data/schema/nobles.json": "src/data/overworld/nobles.yaml",
     "./src/data/schema/status-cast.json": "src/data/constants/status-cast.yaml",
     "./src/data/schema/frontier-rooms.json": "src/data/overworld/experts/frontier-rooms.yaml"
-  }
+  },
+  "js/ts.experimental.useTsgo": true
 }

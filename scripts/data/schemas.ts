@@ -1092,6 +1092,7 @@ export default function renderDataSchemas(members: Map<string, string[]>): Map<s
     ['biome-phenomena.json', json(BIOME_PHENOMENA)],
     ['phenomena-text.json', json(namesText('Phenomenon names', 'phenomenon'))],
     ['item-pool.json', json(ITEM_POOL)],
+    ['honey-tree.json', json({ $schema: DRAFT, title: 'Honey tree pool', ...SPAWN_GROUPS })],
   ]);
 
   for (const [file, title, entry] of BATTLE_FILES) {

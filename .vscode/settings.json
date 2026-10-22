@@ -80,6 +80,7 @@
     "./src/data/schema/item-pool.json": [
       "src/data/overworld/item-pool.yaml",
       "src/data/overworld/berry-pool.yaml"
-    ]
+    ],
+    "./src/data/schema/honey-tree.json": "src/data/overworld/honey-tree.yaml"
   }
 }

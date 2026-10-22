@@ -114,6 +114,11 @@ function readPool(times: v.InferOutput<typeof TIMES>, where: string): SpawnPool 
   };
 }
 
+/** One pool by band, written the way a biome's are, for a pool no biome owns */
+export function readSpawnGroups(file: unknown, where: string): SpawnRarityGroups {
+  return readGroups(v.parse(GROUPS, file), where);
+}
+
 /** A file's biome, from its name: `deep-ocean.yaml` is the Deep Ocean */
 function biomeOf(path: string): Biome {
   const name = path.slice(path.lastIndexOf('/') + 1, -'.yaml'.length);

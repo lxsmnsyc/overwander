@@ -48,6 +48,7 @@ Growlithe:
 | `text/en/lairs.yaml`              | each lair's name                                                      |
 | `overworld/item-pool.yaml`        | the ground's items by band, item to weight; a lowercase key is a whole family (`wings: 3`) |
 | `overworld/berry-pool.yaml`       | what a berry patch grows, the same shape as the item pool           |
+| `overworld/honey-tree.yaml`       | what a lathered honey tree draws out, by band like a biome's pool   |
 | `overworld/weather/biomes.yaml`   | each biome's six skies, and the four `corners` every country shares   |
 
 - **Order is part of the world.** A biome's lair list and each band of the item and berry pools are walked by a seeded roll, so moving an entry changes what every player's map holds. Append; never reorder.

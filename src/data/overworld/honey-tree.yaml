@@ -1,0 +1,25 @@
+# What a lathered tree draws out, banded by where each sits in its line the
+# way a biome pool is. Nothing listed here spawns in the wild: a honey tree is
+# the only way to meet them.
+
+# The grubs that come for the sweetness
+base:
+  Weedle: 30
+  Wurmple: 30
+  Teddiursa: 20
+# The honey's own makers, and the ones that raid them for it
+uncommon:
+  Combee: 22
+  Burmy: 20
+  Aipom: 12
+rare:
+  Kakuna: 15
+  Silcoon: 15
+  Cascoon: 15
+# The beetles that drink the sap under the honey
+elusive:
+  Heracross: 5
+  Pinsir: 5
+prized:
+  Munchlax: 1
+special: {}

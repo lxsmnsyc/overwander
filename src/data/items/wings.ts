@@ -1,6 +1,8 @@
-import { MAX_EFFORT_PER_STAT, STAT_NAMES, Stats } from '../constants/stats';
-import { Items } from '../ids/items';
+import { MAX_EFFORT_PER_STAT, STAT_NAMES } from '../constants/stats';
+import type { Items } from '../ids/items';
 import { itemText } from './__create';
+import recordsFile from './records/wings.yaml';
+import { recordField } from './yaml';
 
 /**
  * The wings: one stat, three points of effort, and gone.
@@ -15,14 +17,7 @@ import { itemText } from './__create';
  * [`src/server/training.ts`](../../server/training.ts); this is what a
  * wing is and which stat it belongs to.
  */
-export const WING_STATS = new Map<Items, Stats>([
-  [Items.HealthWing, Stats.HP],
-  [Items.MuscleWing, Stats.Attack],
-  [Items.ResistWing, Stats.Defense],
-  [Items.GeniusWing, Stats.SpecialAttack],
-  [Items.CleverWing, Stats.SpecialDefense],
-  [Items.SwiftWing, Stats.Speed],
-]);
+export const WING_STATS = recordField('wings', recordsFile, 'stat');
 
 /**
  * What one wing is worth. Four points of effort buy one point of a
@@ -32,14 +27,7 @@ export const WING_STATS = new Map<Items, Stats>([
 export const WING_EFFORT = 3;
 
 /** The Max wings, each filling its stat's effort at once. Only a flying shadow drops one */
-export const MAX_WING_STATS = new Map<Items, Stats>([
-  [Items.HealthWingMax, Stats.HP],
-  [Items.MuscleWingMax, Stats.Attack],
-  [Items.ResistWingMax, Stats.Defense],
-  [Items.GeniusWingMax, Stats.SpecialAttack],
-  [Items.CleverWingMax, Stats.SpecialDefense],
-  [Items.SwiftWingMax, Stats.Speed],
-]);
+export const MAX_WING_STATS = recordField('wings', recordsFile, 'fills');
 
 /** Whether the item is a wing, Max or not */
 export function isWing(item: Items): boolean {

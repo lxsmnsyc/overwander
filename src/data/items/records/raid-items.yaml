@@ -5,98 +5,118 @@ OldSeaMap:
   type: KeyItem
   icon: key/old-sea-map
   flags: [Consumable, Usable]
+  calls: Mew
 
 GSBall:
   type: KeyItem
   icon: key/gs-ball
   flags: [Consumable, Usable]
+  calls: Celebi
 
 AuroraTicket:
   type: KeyItem
   icon: key/auroraticket
   flags: [Consumable, Usable]
+  calls: Deoxys
 
 WishTag:
   type: KeyItem
   icon: key/wish-tag
   flags: [Consumable, Usable]
+  calls: Jirachi
 
 MemberCard:
   type: KeyItem
   icon: key/member-card
   flags: [Consumable, Usable]
+  calls: Darkrai
 
 ManaphyEgg:
   type: KeyItem
   icon: key/manaphy-egg
   flags: [Consumable, Usable]
+  calls: Manaphy
 
 OaksLetter:
   type: KeyItem
   icon: key/oaks-letter
   flags: [Consumable, Usable]
+  calls: Shaymin
 
 AzureFlute:
   type: KeyItem
   icon: key/azure-flute
   flags: [Consumable, Usable]
+  calls: Arceus
 
 ColtsPetal:
   type: KeyItem
   icon: key/radiant-petal
   flags: [Consumable, Usable]
+  calls: Keldeo
 
 LibertyPass:
   type: KeyItem
   icon: key/liberty-pass
   flags: [Consumable, Usable]
+  calls: Victini
 
 MusicBox:
   type: KeyItem
   icon: key/music-box
   flags: [Consumable, Usable]
+  calls: Meloetta
 
 ColressMachine:
   type: KeyItem
   icon: key/colress-machine
   flags: [Consumable, Usable]
+  calls: Genesect
 
 HeartDiamond:
   type: KeyItem
   icon: key/heart-diamond
   flags: [Consumable, Usable]
+  calls: Diancie
 
 SealedRing:
   type: KeyItem
   icon: key/sealed-ring
   flags: [Consumable, Usable]
+  calls: Hoopa
 
 SteamValve:
   type: KeyItem
   icon: key/steam-valve
   flags: [Consumable, Usable]
+  calls: Volcanion
 
 AncientPokeBall:
   type: KeyItem
   icon: key/ancient-poke-ball
   flags: [Consumable, Usable]
+  calls: Magearna
 
 HerosCharm:
   type: KeyItem
   icon: key/heros-charm
   flags: [Consumable, Usable]
+  calls: Marshadow
 
 WindmillCharm:
   type: KeyItem
   icon: key/windmill-charm
   flags: [Consumable, Usable]
+  calls: Zeraora
 
 MysteryBox:
   type: KeyItem
   icon: key/mystery-box
   flags: [Consumable, Usable]
+  calls: Meltan
 
 MythicalPechaBerry:
   type: KeyItem
   icon: key/mythical-pecha-berry
   flags: [Consumable, Usable]
+  calls: Pecharunt

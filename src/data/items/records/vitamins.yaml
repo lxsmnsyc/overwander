@@ -10,6 +10,7 @@ HPUp:
   flags: [Consumable, Usable, Marketable]
   buy: 5000
   sell: 2500
+  stat: HP
 
 Protein:
   type: Training
@@ -17,6 +18,7 @@ Protein:
   flags: [Consumable, Usable, Marketable]
   buy: 5000
   sell: 2500
+  stat: Attack
 
 Iron:
   type: Training
@@ -24,6 +26,7 @@ Iron:
   flags: [Consumable, Usable, Marketable]
   buy: 5000
   sell: 2500
+  stat: Defense
 
 Calcium:
   type: Training
@@ -31,6 +34,7 @@ Calcium:
   flags: [Consumable, Usable, Marketable]
   buy: 5000
   sell: 2500
+  stat: SpecialAttack
 
 Zinc:
   type: Training
@@ -38,6 +42,7 @@ Zinc:
   flags: [Consumable, Usable, Marketable]
   buy: 5000
   sell: 2500
+  stat: SpecialDefense
 
 Carbos:
   type: Training
@@ -45,37 +50,44 @@ Carbos:
   flags: [Consumable, Usable, Marketable]
   buy: 5000
   sell: 2500
+  stat: Speed
 
 # The Max vitamins are found, never bought
 HPUpMax:
   type: Training
   icon: medicine/hp-up-max
   flags: [Consumable, Usable]
+  fills: HP
 
 ProteinMax:
   type: Training
   icon: medicine/protein-max
   flags: [Consumable, Usable]
+  fills: Attack
 
 IronMax:
   type: Training
   icon: medicine/iron-max
   flags: [Consumable, Usable]
+  fills: Defense
 
 CalciumMax:
   type: Training
   icon: medicine/calcium-max
   flags: [Consumable, Usable]
+  fills: SpecialAttack
 
 ZincMax:
   type: Training
   icon: medicine/zinc-max
   flags: [Consumable, Usable]
+  fills: SpecialDefense
 
 CarbosMax:
   type: Training
   icon: medicine/carbos-max
   flags: [Consumable, Usable]
+  fills: Speed
 
 # The PP items are stocked beside the vitamins and cost more, because
 # what they change is permanent and no berry takes it back: a stat can

@@ -1,6 +1,8 @@
-import { TYPE_NAMES, Types } from '../constants/types';
-import { Items } from '../ids/items';
+import { TYPE_NAMES } from '../constants/types';
+import type { Items } from '../ids/items';
 import { itemText } from './__create';
+import recordsFile from './records/gems.yaml';
+import { recordField } from './yaml';
 
 /**
  * The gems: one per attacking type, and each is spent the moment its
@@ -14,26 +16,7 @@ import { itemText } from './__create';
  * The battle side lives in
  * [`src/battle/items/gems.ts`](../../battle/items/gems.ts).
  */
-export const GEMS = new Map<Items, Types>([
-  [Items.NormalGem, Types.Normal],
-  [Items.FightingGem, Types.Fighting],
-  [Items.FlyingGem, Types.Flying],
-  [Items.PoisonGem, Types.Poison],
-  [Items.GroundGem, Types.Ground],
-  [Items.RockGem, Types.Rock],
-  [Items.BugGem, Types.Bug],
-  [Items.GhostGem, Types.Ghost],
-  [Items.SteelGem, Types.Steel],
-  [Items.FireGem, Types.Fire],
-  [Items.WaterGem, Types.Water],
-  [Items.GrassGem, Types.Grass],
-  [Items.ElectricGem, Types.Electric],
-  [Items.PsychicGem, Types.Psychic],
-  [Items.IceGem, Types.Ice],
-  [Items.DragonGem, Types.Dragon],
-  [Items.DarkGem, Types.Dark],
-  [Items.FairyGem, Types.Fairy],
-]);
+export const GEMS = recordField('gems', recordsFile, 'lifts');
 
 export function describeGem(item: Items): string {
   const type = GEMS.get(item);

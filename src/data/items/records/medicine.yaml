@@ -9,6 +9,7 @@ Potion:
   flags: [Consumable, Usable, Marketable]
   buy: 300
   sell: 150
+  restore: 20
 
 SuperPotion:
   type: Medicine
@@ -16,6 +17,7 @@ SuperPotion:
   flags: [Consumable, Usable, Marketable]
   buy: 700
   sell: 350
+  restore: 60
 
 HyperPotion:
   type: Medicine
@@ -23,6 +25,7 @@ HyperPotion:
   flags: [Consumable, Usable, Marketable]
   buy: 1500
   sell: 750
+  restore: 120
 
 MaxPotion:
   type: Medicine
@@ -30,13 +33,18 @@ MaxPotion:
   flags: [Consumable, Usable, Marketable]
   buy: 2500
   sell: 1250
+  restore: full
 
+# The one item that does both halves of the job at once, which is what
+# makes it worth what it costs
 FullRestore:
   type: Medicine
   icon: medicine/full-restore
   flags: [Consumable, Usable, Marketable]
   buy: 3000
   sell: 1500
+  restore: full
+  cures: all
 
 Antidote:
   type: Medicine
@@ -44,6 +52,7 @@ Antidote:
   flags: [Consumable, Usable, Marketable]
   buy: 200
   sell: 100
+  cures: [Poisoned, BadlyPoisoned]
 
 BurnHeal:
   type: Medicine
@@ -51,6 +60,7 @@ BurnHeal:
   flags: [Consumable, Usable, Marketable]
   buy: 200
   sell: 100
+  cures: [Burned]
 
 IceHeal:
   type: Medicine
@@ -58,6 +68,7 @@ IceHeal:
   flags: [Consumable, Usable, Marketable]
   buy: 200
   sell: 100
+  cures: [Frozen]
 
 Awakening:
   type: Medicine
@@ -65,6 +76,7 @@ Awakening:
   flags: [Consumable, Usable, Marketable]
   buy: 200
   sell: 100
+  cures: [Sleeping]
 
 ParalyzeHeal:
   type: Medicine
@@ -72,6 +84,7 @@ ParalyzeHeal:
   flags: [Consumable, Usable, Marketable]
   buy: 200
   sell: 100
+  cures: [Paralyzed]
 
 FullHeal:
   type: Medicine
@@ -79,14 +92,18 @@ FullHeal:
   flags: [Consumable, Usable, Marketable]
   buy: 600
   sell: 300
+  cures: all
 
-# A revive is what a lost raid costs, so it is priced like one
+# A revive is what a lost raid costs, so it is priced like one. It
+# brings a pokemon back on half a pool, the Max on a whole one, and
+# neither does anything to a pokemon that is still standing
 Revive:
   type: Medicine
   icon: medicine/revive
   flags: [Consumable, Usable, Marketable]
   buy: 2000
   sell: 1000
+  revives: 0.5
 
 MaxRevive:
   type: Medicine
@@ -94,17 +111,22 @@ MaxRevive:
   flags: [Consumable, Usable, Marketable]
   buy: 4000
   sell: 2000
+  revives: 1
 
 # The herbal four are the cheap answer to all three problems, and
 # every price here undercuts the bottle it competes with. What they
 # cost instead is friendship, which is the one thing gold cannot buy
-# back: a groomer sells half of what is left, never the last of it
+# back: a groomer sells half of what is left, never the last of it.
+# Each out-does the bottle it stands beside: the powder beats a Super
+# Potion, the root a Hyper Potion, and the herb is a Max Revive
 EnergyPowder:
   type: Medicine
   icon: medicine/energy-powder
   flags: [Consumable, Usable, Marketable]
   buy: 500
   sell: 250
+  restore: 50
+  bitter: 1
 
 EnergyRoot:
   type: Medicine
@@ -112,6 +134,8 @@ EnergyRoot:
   flags: [Consumable, Usable, Marketable]
   buy: 800
   sell: 400
+  restore: 200
+  bitter: 2
 
 HealPowder:
   type: Medicine
@@ -119,6 +143,8 @@ HealPowder:
   flags: [Consumable, Usable, Marketable]
   buy: 450
   sell: 225
+  cures: all
+  bitter: 1
 
 RevivalHerb:
   type: Medicine
@@ -126,3 +152,5 @@ RevivalHerb:
   flags: [Consumable, Usable, Marketable]
   buy: 2800
   sell: 1400
+  revives: 1
+  bitter: 3

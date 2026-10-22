@@ -14,6 +14,7 @@ OddIncense:
   flags: [Holdable, Marketable]
   buy: 3000
   sell: 1500
+  lifts: Psychic
 
 RockIncense:
   type: Held
@@ -21,6 +22,7 @@ RockIncense:
   flags: [Holdable, Marketable]
   buy: 3000
   sell: 1500
+  lifts: Rock
 
 RoseIncense:
   type: Held
@@ -28,6 +30,7 @@ RoseIncense:
   flags: [Holdable, Marketable]
   buy: 3000
   sell: 1500
+  lifts: Grass
 
 SeaIncense:
   type: Held
@@ -35,6 +38,7 @@ SeaIncense:
   flags: [Holdable, Marketable]
   buy: 3000
   sell: 1500
+  lifts: Water
 
 WaveIncense:
   type: Held
@@ -42,6 +46,7 @@ WaveIncense:
   flags: [Holdable, Marketable]
   buy: 3000
   sell: 1500
+  lifts: Water
 
 FullIncense:
   type: Held

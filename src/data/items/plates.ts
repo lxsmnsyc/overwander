@@ -1,6 +1,8 @@
-import { TYPE_NAMES, Types } from '../constants/types';
-import { Items } from '../ids/items';
+import { TYPE_NAMES } from '../constants/types';
+import type { Items } from '../ids/items';
 import { itemText } from './__create';
+import recordsFile from './records/plates.yaml';
+import { recordField } from './yaml';
 
 /**
  * The plates: old stone tablets, one for every type but Normal, each
@@ -16,25 +18,7 @@ import { itemText } from './__create';
  * [`src/battle/items/type-boosters.ts`](../../battle/items/type-boosters.ts),
  * so there is one place that decides what lifting a type means.
  */
-export const PLATES = new Map<Items, Types>([
-  [Items.FistPlate, Types.Fighting],
-  [Items.SkyPlate, Types.Flying],
-  [Items.ToxicPlate, Types.Poison],
-  [Items.EarthPlate, Types.Ground],
-  [Items.StonePlate, Types.Rock],
-  [Items.InsectPlate, Types.Bug],
-  [Items.SpookyPlate, Types.Ghost],
-  [Items.IronPlate, Types.Steel],
-  [Items.FlamePlate, Types.Fire],
-  [Items.SplashPlate, Types.Water],
-  [Items.MeadowPlate, Types.Grass],
-  [Items.ZapPlate, Types.Electric],
-  [Items.MindPlate, Types.Psychic],
-  [Items.IciclePlate, Types.Ice],
-  [Items.DracoPlate, Types.Dragon],
-  [Items.DreadPlate, Types.Dark],
-  [Items.PixiePlate, Types.Fairy],
-]);
+export const PLATES = recordField('plates', recordsFile, 'lifts');
 
 export function describePlate(item: Items): string {
   const type = PLATES.get(item);

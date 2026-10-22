@@ -30,6 +30,118 @@
         "type": "number",
         "minimum": 0,
         "description": "What a vendor pays, or left out for nothing"
+      },
+      "mega": {
+        "$ref": "names.json#/definitions/species",
+        "description": "The Mega a stone opens"
+      },
+      "forms": {
+        "type": "array",
+        "items": {
+          "$ref": "names.json#/definitions/species"
+        },
+        "description": "The Megas a stone opens for the species' other forms"
+      },
+      "z-type": {
+        "$ref": "names.json#/definitions/type",
+        "description": "The type whose damaging moves a type crystal turns"
+      },
+      "z-move": {
+        "$ref": "names.json#/definitions/move",
+        "description": "The Z-Move a crystal turns a move into"
+      },
+      "holders": {
+        "type": "array",
+        "items": {
+          "$ref": "names.json#/definitions/species"
+        },
+        "description": "Who may use a signature crystal, every form included"
+      },
+      "move": {
+        "$ref": "names.json#/definitions/move",
+        "description": "The one move a signature crystal turns"
+      },
+      "species": {
+        "$ref": "names.json#/definitions/species",
+        "description": "What a whole fossil brings back"
+      },
+      "pairs": {
+        "type": "object",
+        "propertyNames": {
+          "$ref": "names.json#/definitions/item"
+        },
+        "additionalProperties": {
+          "$ref": "names.json#/definitions/species"
+        },
+        "description": "What a top half brings back beside each bottom"
+      },
+      "lifts": {
+        "$ref": "names.json#/definitions/type",
+        "description": "The type whose moves it lifts"
+      },
+      "move-type": {
+        "$ref": "names.json#/definitions/type",
+        "description": "The type it gives Techno Blast or Multi-Attack"
+      },
+      "tera": {
+        "$ref": "names.json#/definitions/type",
+        "description": "A Tera Shard's type"
+      },
+      "stat": {
+        "$ref": "names.json#/definitions/stat",
+        "description": "The stat a vitamin, wing or power item works on"
+      },
+      "fills": {
+        "$ref": "names.json#/definitions/stat",
+        "description": "The stat a Max vitamin or wing fills"
+      },
+      "nature": {
+        "$ref": "names.json#/definitions/nature",
+        "description": "The nature a mint leaves behind"
+      },
+      "calls": {
+        "$ref": "names.json#/definitions/species",
+        "description": "The mythical a raid item calls"
+      },
+      "stage": {
+        "$ref": "names.json#/definitions/stage",
+        "description": "The stage an X item puts back up"
+      },
+      "restore": {
+        "oneOf": [
+          {
+            "const": "full"
+          },
+          {
+            "type": "number",
+            "minimum": 0
+          }
+        ],
+        "description": "Health a medicine gives back, or `full` for the whole pool"
+      },
+      "cures": {
+        "oneOf": [
+          {
+            "const": "all"
+          },
+          {
+            "type": "array",
+            "items": {
+              "$ref": "names.json#/definitions/status"
+            }
+          }
+        ],
+        "description": "What a medicine takes off, or `all` for every status"
+      },
+      "revives": {
+        "type": "number",
+        "minimum": 0,
+        "description": "The share of the pool a revive brings a fainted pokemon back at"
+      },
+      "bitter": {
+        "type": "number",
+        "minimum": 0,
+        "description": "How many mouthfuls of herbal bitterness it costs"
       }
     },
     "required": [

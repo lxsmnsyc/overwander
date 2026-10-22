@@ -74,6 +74,7 @@ import resolveBuddy from './buddy';
 import { rollTeraType } from '../data/species/tera-type';
 import { isCatchLocked } from './locks';
 import { recordFoundSpecies } from './pokedex';
+import { Boost, boostOf, boosted } from './boosts';
 
 /**
  * Eggs, written with admin credentials.
@@ -596,6 +597,9 @@ export async function hatchEgg(
   now: number,
   offset: number,
 ): Promise<Species | null> {
+  // Read before the transaction opens, so a boost the instance has not
+  // remembered is not fetched over a second connection while the egg is locked
+  const candyBoost = await boostOf(Boost.Candy, now);
   const hatched = await tx(async (transaction) => {
     const stored = await readCaughtIn(transaction, catchId);
 
@@ -628,7 +632,7 @@ export async function hatchEgg(
     await grantStacksIn(transaction, CANDY_STACKS, uid, [
       [
         getSpeciesData(caught.species).family,
-        catchCandyWorth(caught.species, toLocalTime(now, asOffset(offset))),
+        boosted(catchCandyWorth(caught.species, toLocalTime(now, asOffset(offset))), candyBoost),
       ],
     ]);
     return { species: caught.species, shiny: caught.shiny };

@@ -24,6 +24,7 @@ import { Types } from '../data/constants/types';
 import { getRegisteredMoves } from '../data/moves';
 import BATTLE_TIMEOUT from '../auth/battle-lock';
 import { canCallHappyHour, payDayCeiling } from '../battle/moves/pay-day';
+import { Boost, boostOf, boostedAll } from './boosts';
 import { Z_MOVES } from '../data/moves/z-moves';
 import { G_MAX_MOVES, getGMaxMove } from '../data/moves/gmax-moves';
 import { FRENZY_MOVES } from '../data/moves/frenzy-moves';
@@ -398,10 +399,12 @@ export default async function recordAftermath(
 
     earned.set(family, (earned.get(family) ?? 0) + 1);
   }
-  await grantCandies(uid, earned);
+  const paidOut = boostedAll(earned, await boostOf(Boost.Candy, Date.now()));
+
+  await grantCandies(uid, paidOut);
   const candies: CandyEarned[] = [];
 
-  for (const [family, count] of earned) {
+  for (const [family, count] of paidOut) {
     candies.push({ family, count });
   }
   return candies;

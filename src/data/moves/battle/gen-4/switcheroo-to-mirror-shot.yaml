@@ -31,7 +31,7 @@ BulletPunch:
   priority: 1
   pp: 30
   target: Unit
-  flags: [Contact]
+  flags: [Contact, Punch]
 
 Avalanche:
   type: Ice
@@ -60,7 +60,7 @@ ShadowClaw:
   accuracy: 100
   pp: 15
   target: Unit
-  flags: [Contact, Slicing]
+  flags: [Contact, Slicing, HighCrit]
 
 ThunderFang:
   type: Electric
@@ -106,6 +106,7 @@ MudBomb:
   accuracy: 85
   pp: 10
   target: Unit
+  flags: [Ballistic]
   projectile: true
 
 PsychoCut:
@@ -115,7 +116,7 @@ PsychoCut:
   accuracy: 100
   pp: 20
   target: Unit
-  flags: [Slicing]
+  flags: [Slicing, HighCrit]
   projectile: true
 
 ZenHeadbutt:

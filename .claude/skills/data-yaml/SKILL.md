@@ -64,6 +64,7 @@ Under `src/data/moves/`, each part filed by generation and the stretch of moves 
 | `text/en/moves/`   | each name and description, in the file of the same name                |
 
 - `flags` and `affects` are lists of names (`flags: [Contact, Sound]`); leave `flags` out for none and `affects` out for the default the way the move is cast.
+- A flag is what a family of moves shares and an ability or a mechanic reads: `Contact`, `Sound`, `Powder`, `Bite`, `Slicing`, `Wind`, `Punch` (Iron Fist), `Kick`, `Dance` (Dancer), `Ballistic` (Bulletproof) and `HighCrit` (a critical hit ratio a stage up). A move joins one by naming it, not by a list in the code.
 - `projectile: true` is a move that flies across the gap before it lands.
 - Moves register in id order, which is the pool Metronome draws from, so where a move is filed changes nothing.
 - What a move does beyond its numbers is code, in `src/battle/moves/`. Which sky a weather move calls up is `src/data/moves/weather.ts`.

@@ -52,7 +52,7 @@ RazorLeaf:
   pp: 25
   target: None
   affects: [Unit, Enemy]
-  flags: [Slicing]
+  flags: [Slicing, HighCrit]
   projectile: true
 
 Growth:
@@ -75,6 +75,7 @@ SwordsDance:
   category: Status
   pp: 20
   target: None
+  flags: [Dance]
 
 Toxic:
   type: Poison
@@ -225,7 +226,7 @@ Slash:
   accuracy: 100
   pp: 20
   target: Unit
-  flags: [Contact, Slicing]
+  flags: [Contact, Slicing, HighCrit]
 
 Flamethrower:
   type: Fire
@@ -250,7 +251,7 @@ MegaPunch:
   accuracy: 85
   pp: 20
   target: Unit
-  flags: [Contact]
+  flags: [Contact, Punch]
 
 MegaKick:
   type: Normal
@@ -259,7 +260,7 @@ MegaKick:
   accuracy: 75
   pp: 5
   target: Unit
-  flags: [Contact]
+  flags: [Contact, Kick]
 
 Submission:
   type: Fighting

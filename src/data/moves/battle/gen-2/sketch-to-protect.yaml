@@ -15,7 +15,7 @@ TripleKick:
   accuracy: 90
   pp: 10
   target: Unit
-  flags: [Contact]
+  flags: [Contact, Kick]
 
 Thief:
   type: Dark
@@ -91,6 +91,7 @@ Aeroblast:
   accuracy: 95
   pp: 5
   target: Unit
+  flags: [HighCrit]
   projectile: true
 
 CottonSpore:

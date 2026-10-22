@@ -33,7 +33,7 @@ QuiverDance:
   category: Status
   pp: 20
   target: None
-  flags: [Wind]
+  flags: [Wind, Dance]
 
 HeavySlam:
   type: Steel
@@ -58,6 +58,7 @@ ElectroBall:
   accuracy: 100
   pp: 10
   target: Unit
+  flags: [Ballistic]
   projectile: true
 
 Soak:
@@ -98,6 +99,7 @@ AcidSpray:
   accuracy: 100
   pp: 20
   target: Unit
+  flags: [Ballistic]
   projectile: true
 
 FoulPlay:

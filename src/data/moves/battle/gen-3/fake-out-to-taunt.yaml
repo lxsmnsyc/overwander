@@ -100,7 +100,7 @@ FocusPunch:
   priority: -3
   pp: 20
   target: Unit
-  flags: [Contact]
+  flags: [Contact, Punch]
 
 SmellingSalts:
   type: Normal

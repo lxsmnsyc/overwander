@@ -185,6 +185,7 @@ TenMillionVoltThunderbolt:
   power: 195
   pp: 1
   target: Unit
+  flags: [HighCrit]
 
 LightThatBurnsTheSky:
   type: Psychic

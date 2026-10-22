@@ -9,7 +9,7 @@ MachPunch:
   priority: 1
   pp: 30
   target: Unit
-  flags: [Contact]
+  flags: [Contact, Punch]
 
 ScaryFace:
   type: Normal
@@ -47,6 +47,7 @@ SludgeBomb:
   accuracy: 100
   pp: 10
   target: Unit
+  flags: [Ballistic]
   projectile: true
 
 MudSlap:
@@ -65,6 +66,7 @@ Octazooka:
   accuracy: 85
   pp: 10
   target: Unit
+  flags: [Ballistic]
   projectile: true
 
 Spikes:
@@ -80,6 +82,7 @@ ZapCannon:
   accuracy: 50
   pp: 5
   target: Unit
+  flags: [Ballistic]
   projectile: true
 
 Foresight:

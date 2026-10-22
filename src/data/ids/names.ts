@@ -2504,6 +2504,11 @@ export const MOVE_FLAG_IDS = {
   Bite: MoveFlags.Bite,
   Slicing: MoveFlags.Slicing,
   Wind: MoveFlags.Wind,
+  Punch: MoveFlags.Punch,
+  Kick: MoveFlags.Kick,
+  Dance: MoveFlags.Dance,
+  Ballistic: MoveFlags.Ballistic,
+  HighCrit: MoveFlags.HighCrit,
 } as const satisfies Record<string, MoveFlags>;
 
 export const SPRITE_ANIM_IDS = {

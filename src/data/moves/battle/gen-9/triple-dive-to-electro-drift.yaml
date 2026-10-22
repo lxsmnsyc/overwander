@@ -65,7 +65,7 @@ AquaStep:
   accuracy: 100
   pp: 10
   target: Unit
-  flags: [Contact]
+  flags: [Contact, Dance]
 
 RagingBull:
   type: Normal

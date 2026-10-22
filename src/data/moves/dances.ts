@@ -1,27 +1,7 @@
-import { Moves } from '../ids/moves';
+import { getMoveData } from './__create';
+import { MoveFlags, type Moves } from '../ids/moves';
 
-/**
- * The moves that are danced rather than thrown.
- *
- * The mainline marks these with a flag of their own, which is what a
- * Dancer copies and what Petilil's line shares with the pokemon
- * standing beside it. Kept as data so the engine and anything that
- * reads a move's shape cannot disagree about what counts as a dance
- */
-export const DANCE_MOVES = new Set<Moves>([
-  Moves.AquaStep,
-  Moves.DragonDance,
-  Moves.FeatherDance,
-  Moves.FieryDance,
-  Moves.LunarDance,
-  Moves.PetalDance,
-  Moves.QuiverDance,
-  Moves.RevelationDance,
-  Moves.SwordsDance,
-  Moves.TeeterDance,
-  Moves.VictoryDance,
-]);
-
+/** Whether a move is danced, which is what a Dancer copies */
 export function isDanceMove(move: Moves): boolean {
-  return DANCE_MOVES.has(move);
+  return (getMoveData(move).flags & MoveFlags.Dance) !== 0;
 }

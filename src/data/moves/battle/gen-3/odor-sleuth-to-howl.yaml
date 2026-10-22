@@ -80,7 +80,7 @@ ShadowPunch:
   power: 60
   pp: 20
   target: Unit
-  flags: [Contact]
+  flags: [Contact, Punch]
 
 Extrasensory:
   type: Psychic
@@ -97,7 +97,7 @@ SkyUppercut:
   accuracy: 90
   pp: 15
   target: Unit
-  flags: [Contact]
+  flags: [Contact, Punch]
 
 SandTomb:
   type: Ground
@@ -130,6 +130,7 @@ BulletSeed:
   accuracy: 100
   pp: 30
   target: Unit
+  flags: [Ballistic]
   projectile: true
 
 AerialAce:

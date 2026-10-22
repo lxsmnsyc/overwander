@@ -145,7 +145,7 @@ PlasmaFists:
   accuracy: 100
   pp: 15
   target: Unit
-  flags: [Contact]
+  flags: [Contact, Punch]
 
 PhotonGeyser:
   type: Psychic

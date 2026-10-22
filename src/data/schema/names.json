@@ -4767,7 +4767,12 @@
         "Powder",
         "Bite",
         "Slicing",
-        "Wind"
+        "Wind",
+        "Punch",
+        "Kick",
+        "Dance",
+        "Ballistic",
+        "HighCrit"
       ]
     },
     "sprite-anim": {

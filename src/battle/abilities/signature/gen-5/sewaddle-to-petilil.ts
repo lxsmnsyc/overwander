@@ -2,7 +2,7 @@ import { EventPriority } from '../../../../core/event-emitter';
 import Abilities from '../../../../data/ids/abilities';
 import { MoveFlags } from '../../../../data/ids/moves';
 import { Statuses } from '../../../../data/ids/status';
-import { isDanceMove } from '../../../../data/moves/dances';
+import { isDanceMove } from '../../../../data/moves/flags';
 import { getMoveData } from '../../../../data/moves';
 import { BattleEvents, EffectType } from '../../../events';
 import { MergedLifecycle } from '../../../lifecycle';

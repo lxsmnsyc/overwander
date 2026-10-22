@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Ability flags",
+  "type": "object",
+  "properties": {
+    "unreceivable": {
+      "type": "array",
+      "items": {
+        "$ref": "names.json#/definitions/ability"
+      },
+      "description": "What Receiver and Power of Alchemy will not take up"
+    },
+    "protected": {
+      "type": "array",
+      "items": {
+        "$ref": "names.json#/definitions/ability"
+      },
+      "description": "What nothing can disable"
+    },
+    "mold-proof": {
+      "type": "array",
+      "items": {
+        "$ref": "names.json#/definitions/ability"
+      },
+      "description": "What Mold Breaker cannot see past"
+    },
+    "always-known": {
+      "type": "array",
+      "items": {
+        "$ref": "names.json#/definitions/ability"
+      },
+      "description": "What the AI knows about without seeing it cue"
+    }
+  },
+  "required": [
+    "unreceivable",
+    "protected",
+    "mold-proof",
+    "always-known"
+  ],
+  "additionalProperties": false
+}

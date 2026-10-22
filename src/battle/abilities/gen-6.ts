@@ -6,13 +6,14 @@ import {
   DamageFlags,
   MoveAttackFlags,
   MoveCategories,
+  MoveFlags,
   MoveTargets,
   Moves,
 } from '../../data/ids/moves';
 import { Species } from '../../data/ids/species';
 import { getBaseFormSpecies } from '../../data/ids/forms';
 import { NON_VOLATILE_STATUSES, Statuses, Terrains, Weathers } from '../../data/ids/status';
-import { getMoveData } from '../../data/moves';
+import { getMoveData, hasMoveFlag } from '../../data/moves';
 import { MULTI_HIT_MOVES } from '../../data/moves/multi-hit';
 import { MergedLifecycle } from '../lifecycle';
 import type Battle from '../battle';
@@ -129,36 +130,6 @@ function sweetenedBy(unit: Unit): Unit | undefined {
 }
 
 /**
- * What a shell thick enough to stop a shot turns away: everything
- * thrown rather than swung, which the mainline calls ballistic
- * https://bulbapedia.bulbagarden.net/wiki/Bulletproof_(Ability)
- */
-const BALLISTIC_MOVES = new Set<Moves>([
-  Moves.AcidSpray,
-  Moves.AuraSphere,
-  Moves.Barrage,
-  Moves.BulletSeed,
-  Moves.EggBomb,
-  Moves.ElectroBall,
-  Moves.EnergyBall,
-  Moves.FocusBlast,
-  Moves.GyroBall,
-  Moves.IceBall,
-  Moves.MagnetBomb,
-  Moves.MistBall,
-  Moves.MudBomb,
-  Moves.Octazooka,
-  Moves.RockBlast,
-  Moves.RockWrecker,
-  Moves.SearingShot,
-  Moves.SeedBomb,
-  Moves.ShadowBall,
-  Moves.SludgeBomb,
-  Moves.WeatherBall,
-  Moves.ZapCannon,
-]);
-
-/**
  * One aura over the whole field, its own side included. A break on
  * the field turns every aura round rather than switching it off,
  * which is what the mainline does with it
@@ -183,7 +154,7 @@ const setupAbilities = [
     battle.on(BattleEvents.CheckUnitMoveImmunity, EventPriority.Post, (event) => {
       if (
         !event.immune &&
-        BALLISTIC_MOVES.has(event.move) &&
+        hasMoveFlag(event.move, MoveFlags.Ballistic) &&
         event.target.type === MoveTargetType.Unit &&
         event.target.unit.hasAbility(Abilities.Bulletproof)
       ) {

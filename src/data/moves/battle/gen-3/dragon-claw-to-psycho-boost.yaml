@@ -50,7 +50,7 @@ PoisonTail:
   accuracy: 100
   pp: 25
   target: Unit
-  flags: [Contact]
+  flags: [Contact, HighCrit]
 
 Covet:
   type: Normal
@@ -97,13 +97,14 @@ LeafBlade:
   accuracy: 100
   pp: 15
   target: Unit
-  flags: [Contact, Slicing]
+  flags: [Contact, Slicing, HighCrit]
 
 DragonDance:
   type: Dragon
   category: Status
   pp: 20
   target: None
+  flags: [Dance]
 
 RockBlast:
   type: Rock
@@ -112,6 +113,7 @@ RockBlast:
   accuracy: 90
   pp: 10
   target: Unit
+  flags: [Ballistic]
   projectile: true
 
 ShockWave:

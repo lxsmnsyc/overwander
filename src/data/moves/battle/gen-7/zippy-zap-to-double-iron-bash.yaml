@@ -114,4 +114,4 @@ DoubleIronBash:
   accuracy: 100
   pp: 5
   target: Unit
-  flags: [Contact]
+  flags: [Contact, Punch]

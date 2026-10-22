@@ -96,7 +96,7 @@ CrossChop:
   accuracy: 80
   pp: 5
   target: Unit
-  flags: [Contact]
+  flags: [Contact, HighCrit]
 
 Twister:
   type: Dragon
@@ -158,6 +158,7 @@ ShadowBall:
   accuracy: 100
   pp: 15
   target: Unit
+  flags: [Ballistic]
   projectile: true
 
 FutureSight:

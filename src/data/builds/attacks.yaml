@@ -1,0 +1,88 @@
+# What an expert build makes of a damaging move beyond its entry.
+#
+# `drawback` is a factor for a move whose whole character is a cost the
+# registry has no field for: a recoil, a condition that has to already be
+# true, a user that is not there afterwards. 0 is a move an expert is never
+# built with.
+#
+# `power` is what a move with no power of its own is worth, read as the power
+# a plain move would need to do the same against something its own level. A
+# move with neither is one an expert is never built with: the one-hit
+# knockouts, and the ones that answer a blow rather than throw one
+
+# The pokemon is not there afterwards, which no amount of power
+# pays for on a team of three
+Explosion: { drawback: 0 }
+SelfDestruct: { drawback: 0 }
+
+# Worth nothing until every other move on the sheet has been cast,
+# so it is a wasted slot for most of a fight
+LastResort: { drawback: 0.3 }
+
+# Worth its power only where nothing touched the user first
+FocusPunch: { drawback: 0.5 }
+# And only against something already asleep
+DreamEater: { drawback: 0.5 }
+# And only against what shares a type with the user, which most of
+# the far side does not
+Synchronoise: { drawback: 0.25 }
+# Paid for later rather than now
+FutureSight: { drawback: 0.7 }
+DoomDesire: { drawback: 0.7 }
+
+# The ones that pay for the swing out of the swinger. A fight here
+# is cast after cast rather than turn after turn, so a move that
+# halves the stat it just fired from is worth its face value once
+# and much less every time after
+Overheat: { drawback: 0.6 }
+PsychoBoost: { drawback: 0.6 }
+# Both of its drops are a stage rather than two, and one of them is
+# a defence it may not have been using anyway
+Superpower: { drawback: 0.75 }
+# Its drops land on defences and Speed rather than the stat it fired from
+VCreate: { drawback: 0.75 }
+# Burns the user's own Fire type away, and fails without it, so it
+# is one swing a fight
+BurnUp: { drawback: 0.5 }
+DoubleShock: { drawback: 0.5 }
+# Paldea's: a drop on the stat it fired from, and two on Speed
+MakeItRain: { drawback: 0.75 }
+SpinOut: { drawback: 0.75 }
+
+# A level's worth of damage, flat: reliable, and never more than that
+SeismicToss: { power: 70 }
+NightShade: { power: 70 }
+Psywave: { power: 55 }
+# Half of what the target has left. It never finishes anything, so
+# it is worth less than the figure suggests
+SuperFang: { power: 80 }
+# Fixed amounts, which a fight at this level has outgrown
+DragonRage: { power: 30 }
+SonicBoom: { power: 15 }
+
+# How friendly the pokemon is, and an expert's is freshly staged
+Return: { power: 90 }
+Frustration: { power: 40 }
+# A type and a power that are whatever the pokemon was born with
+HiddenPower: { power: 60 }
+# Off the weight of whoever is hit, which averages out about here
+GrassKnot: { power: 60 }
+LowKick: { power: 60 }
+WringOut: { power: 80 }
+CrushGrip: { power: 80 }
+# Only while the user is nearly gone, which is not where a fight is
+# spent
+Flail: { power: 45 }
+Reversal: { power: 45 }
+Endeavor: { power: 40 }
+# Off the stages the target has taken, or the user has
+Punishment: { power: 60 }
+StoredPower: { power: 40 }
+# What is left in the bag, or what the last of it does
+TrumpCard: { power: 60 }
+Present: { power: 40 }
+Fling: { power: 40 }
+NaturalGift: { power: 60 }
+SpitUp: { power: 50 }
+# The ground's own roll
+Magnitude: { power: 71 }

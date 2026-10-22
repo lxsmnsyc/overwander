@@ -102,7 +102,7 @@ DoubleKick:
   accuracy: 100
   pp: 30
   target: Unit
-  flags: [Contact]
+  flags: [Contact, Kick]
 
 HornAttack:
   type: Normal

@@ -9,6 +9,7 @@ SearingShot:
   pp: 5
   target: None
   affects: [Unit, Own, Enemy]
+  flags: [Ballistic]
 
 TechnoBlast:
   type: Normal
@@ -72,6 +73,7 @@ FieryDance:
   accuracy: 100
   pp: 10
   target: Unit
+  flags: [Dance]
 
 FreezeShock:
   type: Ice

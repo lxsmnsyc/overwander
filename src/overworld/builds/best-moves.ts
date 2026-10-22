@@ -11,6 +11,13 @@ import { MOVE_WEATHERS, getWeatherMove } from '../../data/moves/weather';
 import { estimateMoveHits } from '../../data/moves/multi-hit';
 import { isRechargeMove } from '../../data/moves/recharge';
 import { BuildRole, StatusKind, coreCategory, coreRoleOf, isCoreRole } from './roles';
+import {
+  ESTIMATED_POWER,
+  MOVE_DRAWBACKS,
+  SETUP_CATEGORY,
+  STATUS_KINDS,
+  STATUS_WORTH,
+} from '../../data/builds';
 
 /**
  * What a species is best built as: the four moves an expert's copy of
@@ -50,244 +57,6 @@ const NEUTRAL_ACCURACY = 100;
  * why a Charizard carried Wing Attack over the Aerial Ace beside it
  */
 const NEVER_MISS_WORTH = 1.05;
-
-/**
- * What a move that deals no damage is worth a slot for. Only the ones
- * that change a fight rather than decorate it, since a party fielding
- * two of these is a party that does not attack.
- *
- * They are priced against the attacks they displace: a stat-doubling
- * setup beats a mid attack, a heal matches one, and a crippling
- * status sits just under
- */
-const STATUS_WORTH: Partial<Record<Moves, number>> = {
-  // Setup: what a pokemon spends its first cast on when the rest of
-  // the fight is worth more for it
-  [Moves.SwordsDance]: 120,
-  [Moves.DragonDance]: 120,
-  [Moves.TailGlow]: 120,
-  [Moves.CalmMind]: 115,
-  [Moves.NastyPlot]: 115,
-  [Moves.BellyDrum]: 110,
-  [Moves.BulkUp]: 110,
-  [Moves.Agility]: 85,
-  [Moves.RockPolish]: 85,
-  [Moves.Growth]: 90,
-  [Moves.Amnesia]: 90,
-  [Moves.IronDefense]: 88,
-  [Moves.CosmicPower]: 86,
-  [Moves.DefendOrder]: 86,
-  [Moves.DoubleTeam]: 85,
-  [Moves.Acupressure]: 80,
-  [Moves.QuiverDance]: 120,
-  [Moves.ShellSmash]: 120,
-  [Moves.ShiftGear]: 115,
-  [Moves.Coil]: 110,
-  [Moves.HoneClaws]: 105,
-  [Moves.WorkUp]: 100,
-  [Moves.CottonGuard]: 88,
-  [Moves.Autotomize]: 85,
-
-  // Health back, which is worth about what a hit takes off
-  [Moves.Recover]: 105,
-  [Moves.SoftBoiled]: 105,
-  [Moves.MilkDrink]: 105,
-  [Moves.SlackOff]: 105,
-  [Moves.Roost]: 105,
-  [Moves.HealOrder]: 105,
-  [Moves.Synthesis]: 95,
-  [Moves.MorningSun]: 95,
-  [Moves.Moonlight]: 95,
-  [Moves.Wish]: 85,
-  [Moves.AquaRing]: 85,
-
-  // And taking somebody out of the fight without hitting them
-  [Moves.Spore]: 115,
-  [Moves.SleepPowder]: 100,
-  [Moves.ThunderWave]: 100,
-  [Moves.WillOWisp]: 100,
-  [Moves.Toxic]: 85,
-  [Moves.LeechSeed]: 100,
-  [Moves.Substitute]: 80,
-  [Moves.Glare]: 95,
-  [Moves.StunSpore]: 95,
-  [Moves.Screech]: 90,
-  [Moves.Reflect]: 90,
-  [Moves.LightScreen]: 90,
-  [Moves.LovelyKiss]: 90,
-  [Moves.DarkVoid]: 90,
-  [Moves.GastroAcid]: 80,
-  [Moves.WorrySeed]: 75,
-  [Moves.Captivate]: 70,
-  [Moves.Hypnosis]: 85,
-  [Moves.Encore]: 85,
-  [Moves.Taunt]: 85,
-  [Moves.ConfuseRay]: 85,
-  [Moves.Protect]: 85,
-  [Moves.Yawn]: 85,
-  [Moves.Sing]: 80,
-  // Changing what the target is rather than what it has, which only
-  // sometimes matters
-  [Moves.Soak]: 70,
-  [Moves.PowerSplit]: 65,
-  [Moves.GuardSplit]: 65,
-  [Moves.SimpleBeam]: 60,
-  [Moves.Entrainment]: 60,
-
-  // What a support lays over its own side or under the other's. They
-  // are priced low here and lifted by the role that wants them
-  [Moves.Spikes]: 90,
-  [Moves.StealthRock]: 90,
-  [Moves.ToxicSpikes]: 85,
-  // It changes who lands first rather than who acts more, and it
-  // slows its own side's quick moves as much as the far side's
-  [Moves.TrickRoom]: 70,
-  [Moves.LuckyChant]: 70,
-  [Moves.Safeguard]: 80,
-  [Moves.HealBell]: 85,
-  [Moves.Aromatherapy]: 85,
-  [Moves.Haze]: 80,
-  [Moves.Mist]: 70,
-  [Moves.WideGuard]: 75,
-  [Moves.QuickGuard]: 70,
-  [Moves.MatBlock]: 70,
-  [Moves.CraftyShield]: 65,
-  [Moves.Detect]: 80,
-  [Moves.Endure]: 60,
-  [Moves.KingsShield]: 90,
-  [Moves.SpikyShield]: 90,
-  [Moves.StickyWeb]: 85,
-  [Moves.Refresh]: 60,
-  [Moves.AromaticMist]: 70,
-  [Moves.AllySwitch]: 70,
-  [Moves.WonderRoom]: 60,
-  [Moves.MagicRoom]: 60,
-
-  // Sleeping off everything at once, which is only a plan with
-  // something to do while asleep
-  [Moves.Rest]: 80,
-  [Moves.SleepTalk]: 60,
-
-  // What one of the six does for the other five. A support standing
-  // behind two cores is the pokemon these were written for
-  [Moves.HelpingHand]: 105,
-  [Moves.FollowMe]: 100,
-  [Moves.RagePowder]: 100,
-  [Moves.HealPulse]: 95,
-  [Moves.AfterYou]: 70,
-  // Twice as often for the whole side while it blows
-  [Moves.Tailwind]: 100,
-  [Moves.BatonPass]: 90,
-  // The user is spent to make a teammate whole, which only a support
-  // standing behind two cores can afford
-  [Moves.LunarDance]: 85,
-  [Moves.HealingWish]: 80,
-
-  // The skies. Worth nothing on their own: what prices one is what
-  // the build is waiting to do under it
-  [Moves.SunnyDay]: 100,
-  [Moves.RainDance]: 100,
-  [Moves.Sandstorm]: 90,
-  [Moves.Hail]: 90,
-};
-
-/**
- * What each of those is for. Anything absent is read as a cripple,
- * which is what most of the list is
- */
-const STATUS_KINDS: Partial<Record<Moves, StatusKind>> = {
-  [Moves.SwordsDance]: StatusKind.Setup,
-  [Moves.DragonDance]: StatusKind.Setup,
-  [Moves.TailGlow]: StatusKind.Setup,
-  [Moves.CalmMind]: StatusKind.Setup,
-  [Moves.NastyPlot]: StatusKind.Setup,
-  [Moves.BellyDrum]: StatusKind.Setup,
-  [Moves.BulkUp]: StatusKind.Setup,
-  [Moves.Agility]: StatusKind.Setup,
-  [Moves.RockPolish]: StatusKind.Setup,
-  [Moves.Growth]: StatusKind.Setup,
-  [Moves.Amnesia]: StatusKind.Setup,
-  [Moves.IronDefense]: StatusKind.Setup,
-  [Moves.CosmicPower]: StatusKind.Setup,
-  [Moves.DefendOrder]: StatusKind.Setup,
-  [Moves.DoubleTeam]: StatusKind.Setup,
-  [Moves.Acupressure]: StatusKind.Setup,
-  [Moves.QuiverDance]: StatusKind.Setup,
-  [Moves.ShellSmash]: StatusKind.Setup,
-  [Moves.ShiftGear]: StatusKind.Setup,
-  [Moves.Coil]: StatusKind.Setup,
-  [Moves.HoneClaws]: StatusKind.Setup,
-  [Moves.WorkUp]: StatusKind.Setup,
-  [Moves.CottonGuard]: StatusKind.Setup,
-  [Moves.Autotomize]: StatusKind.Setup,
-
-  [Moves.Recover]: StatusKind.Heal,
-  [Moves.SlackOff]: StatusKind.Heal,
-  [Moves.Synthesis]: StatusKind.Heal,
-  [Moves.MorningSun]: StatusKind.Heal,
-  [Moves.Moonlight]: StatusKind.Heal,
-  [Moves.Roost]: StatusKind.Heal,
-  [Moves.HealOrder]: StatusKind.Heal,
-  [Moves.AquaRing]: StatusKind.Heal,
-  [Moves.Rest]: StatusKind.Heal,
-  [Moves.LeechSeed]: StatusKind.Heal,
-
-  [Moves.Refresh]: StatusKind.Heal,
-
-  [Moves.Reflect]: StatusKind.Screen,
-  [Moves.LightScreen]: StatusKind.Screen,
-  [Moves.Safeguard]: StatusKind.Screen,
-  [Moves.Mist]: StatusKind.Screen,
-  [Moves.Haze]: StatusKind.Screen,
-  [Moves.LuckyChant]: StatusKind.Screen,
-  [Moves.WideGuard]: StatusKind.Screen,
-  [Moves.QuickGuard]: StatusKind.Screen,
-  [Moves.MatBlock]: StatusKind.Screen,
-  [Moves.CraftyShield]: StatusKind.Screen,
-  [Moves.Tailwind]: StatusKind.Screen,
-
-  [Moves.Protect]: StatusKind.Shield,
-  [Moves.Detect]: StatusKind.Shield,
-  [Moves.Endure]: StatusKind.Shield,
-  [Moves.KingsShield]: StatusKind.Shield,
-  [Moves.SpikyShield]: StatusKind.Shield,
-  [Moves.Substitute]: StatusKind.Shield,
-  [Moves.SleepTalk]: StatusKind.Shield,
-
-  [Moves.HealBell]: StatusKind.Cure,
-  [Moves.Aromatherapy]: StatusKind.Cure,
-
-  [Moves.Spikes]: StatusKind.Hazard,
-  [Moves.StealthRock]: StatusKind.Hazard,
-  [Moves.ToxicSpikes]: StatusKind.Hazard,
-  [Moves.StickyWeb]: StatusKind.Hazard,
-
-  [Moves.TrickRoom]: StatusKind.Room,
-  [Moves.WonderRoom]: StatusKind.Room,
-  [Moves.MagicRoom]: StatusKind.Room,
-
-  [Moves.HelpingHand]: StatusKind.Boost,
-  [Moves.BatonPass]: StatusKind.Boost,
-  [Moves.AfterYou]: StatusKind.Boost,
-  [Moves.AromaticMist]: StatusKind.Boost,
-
-  [Moves.HealPulse]: StatusKind.Mend,
-  // Cast at the user or a teammate: see `EITHER_HEALS`
-  [Moves.SoftBoiled]: StatusKind.Mend,
-  [Moves.MilkDrink]: StatusKind.Mend,
-  [Moves.Wish]: StatusKind.Mend,
-  [Moves.HealingWish]: StatusKind.Mend,
-  [Moves.LunarDance]: StatusKind.Mend,
-
-  [Moves.FollowMe]: StatusKind.Redirect,
-  [Moves.RagePowder]: StatusKind.Redirect,
-  [Moves.AllySwitch]: StatusKind.Redirect,
-
-  [Moves.SunnyDay]: StatusKind.Weather,
-  [Moves.RainDance]: StatusKind.Weather,
-  [Moves.Sandstorm]: StatusKind.Weather,
-  [Moves.Hail]: StatusKind.Weather,
-};
 
 /** Heals cast at the user or a teammate, priced as whichever the role pays more for */
 const EITHER_HEALS = new Set<Moves>([Moves.SoftBoiled, Moves.MilkDrink]);
@@ -687,27 +456,6 @@ export interface BuildOptions {
 }
 
 /**
- * Which half of the split a setup move serves, so a Dragon Dance is
- * not offered to something that never swings and a Calm Mind is not
- * offered to something that never blasts. The ones that raise a
- * defence or a speed serve either, and are absent
- */
-const SETUP_CATEGORY: Partial<Record<Moves, MoveCategories>> = {
-  [Moves.SwordsDance]: MoveCategories.Physical,
-  [Moves.BellyDrum]: MoveCategories.Physical,
-  [Moves.BulkUp]: MoveCategories.Physical,
-  [Moves.DragonDance]: MoveCategories.Physical,
-  [Moves.ShiftGear]: MoveCategories.Physical,
-  [Moves.Coil]: MoveCategories.Physical,
-  [Moves.HoneClaws]: MoveCategories.Physical,
-  [Moves.QuiverDance]: MoveCategories.Special,
-  [Moves.CalmMind]: MoveCategories.Special,
-  [Moves.NastyPlot]: MoveCategories.Special,
-  [Moves.TailGlow]: MoveCategories.Special,
-  [Moves.Growth]: MoveCategories.Special,
-};
-
-/**
  * How much a type opens up, from what it hits for double. Normal
  * reaches nothing at all and Ground reaches five, and a move is worth
  * what it lets its holder reach as well as what it hits for
@@ -737,56 +485,6 @@ function coverageWeight(type: Types): number {
   COVERAGE.set(type, weight);
   return weight;
 }
-
-/**
- * What a move costs beyond what its entry says.
- *
- * Power, accuracy and wind-up steps are all in a move's data, so
- * nothing that is only those appears here. What is left is the moves
- * whose whole character is a drawback the registry has no field for:
- * a recharge, a recoil, a condition that has to already be true. A
- * factor of 0 is a move an expert is never built with
- */
-const MOVE_DRAWBACKS: Partial<Record<Moves, number>> = {
-  // The pokemon is not there afterwards, which no amount of power
-  // pays for on a team of three
-  [Moves.Explosion]: 0,
-  [Moves.SelfDestruct]: 0,
-
-  // Worth nothing until every other move on the sheet has been cast,
-  // so it is a wasted slot for most of a fight
-  [Moves.LastResort]: 0.3,
-
-  // Worth its power only where nothing touched the user first
-  [Moves.FocusPunch]: 0.5,
-  // And only against something already asleep
-  [Moves.DreamEater]: 0.5,
-  // And only against what shares a type with the user, which most of
-  // the far side does not
-  [Moves.Synchronoise]: 0.25,
-  // Paid for later rather than now
-  [Moves.FutureSight]: 0.7,
-  [Moves.DoomDesire]: 0.7,
-
-  // The ones that pay for the swing out of the swinger. A fight here
-  // is cast after cast rather than turn after turn, so a move that
-  // halves the stat it just fired from is worth its face value once
-  // and much less every time after
-  [Moves.Overheat]: 0.6,
-  [Moves.PsychoBoost]: 0.6,
-  // Both of its drops are a stage rather than two, and one of them is
-  // a defence it may not have been using anyway
-  [Moves.Superpower]: 0.75,
-  // Its drops land on defences and Speed rather than the stat it fired from
-  [Moves.VCreate]: 0.75,
-  // Burns the user's own Fire type away, and fails without it, so it
-  // is one swing a fight
-  [Moves.BurnUp]: 0.5,
-  [Moves.DoubleShock]: 0.5,
-  // Paldea's: a drop on the stat it fired from, and two on Speed
-  [Moves.MakeItRain]: 0.75,
-  [Moves.SpinOut]: 0.75,
-};
 
 /** The abilities that spare the user each kind of cost */
 const CONFUSION_PROOF = new Set<Abilities>([Abilities.OwnTempo]);
@@ -1060,62 +758,6 @@ function weatherAccuracy(move: Moves, context: BuildContext): number | null | un
 function repeatedWorth(taken: number, stab: boolean): number {
   return (stab ? REPEATED_STAB : REPEATED_ATTACK) ** taken;
 }
-
-/**
- * What a move with no power of its own is worth, read as the power a
- * plain move would need to do the same.
- *
- * A move's `power` is null where the engine works the figure out at
- * the cast: off a level, off a health bar, off a weight. Multiplying
- * by null gives nothing, so every one of these was invisible to the
- * builder and a Blissey was handed a Fire Blast to cast off 75 special
- * attack rather than the Seismic Toss beside it.
- *
- * The figures are what the move comes to against something its own
- * level, and a move left out is one an expert is never built with:
- * the one-hit knockouts, which are a 30% roll, and the ones that
- * answer a blow rather than throw one (Counter, Mirror Coat, Metal
- * Burst, Bide), which the AI has no way to set up
- */
-const ESTIMATED_POWER: Partial<Record<Moves, number>> = {
-  // A level's worth of damage, flat: reliable, and never more than that
-  [Moves.SeismicToss]: 70,
-  [Moves.NightShade]: 70,
-  [Moves.Psywave]: 55,
-  // Half of what the target has left. It never finishes anything, so
-  // it is worth less than the figure suggests
-  [Moves.SuperFang]: 80,
-  // Fixed amounts, which a fight at this level has outgrown
-  [Moves.DragonRage]: 30,
-  [Moves.SonicBoom]: 15,
-
-  // How friendly the pokemon is, and an expert's is freshly staged
-  [Moves.Return]: 90,
-  [Moves.Frustration]: 40,
-  // A type and a power that are whatever the pokemon was born with
-  [Moves.HiddenPower]: 60,
-  // Off the weight of whoever is hit, which averages out about here
-  [Moves.GrassKnot]: 60,
-  [Moves.LowKick]: 60,
-  [Moves.WringOut]: 80,
-  [Moves.CrushGrip]: 80,
-  // Only while the user is nearly gone, which is not where a fight is
-  // spent
-  [Moves.Flail]: 45,
-  [Moves.Reversal]: 45,
-  [Moves.Endeavor]: 40,
-  // Off the stages the target has taken, or the user has
-  [Moves.Punishment]: 60,
-  [Moves.StoredPower]: 40,
-  // What is left in the bag, or what the last of it does
-  [Moves.TrumpCard]: 60,
-  [Moves.Present]: 40,
-  [Moves.Fling]: 40,
-  [Moves.NaturalGift]: 60,
-  [Moves.SpitUp]: 50,
-  // The ground's own roll
-  [Moves.Magnitude]: 71,
-};
 
 /**
  * The ones whose figure the species itself answers: how heavy it is,

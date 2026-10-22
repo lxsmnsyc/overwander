@@ -10,7 +10,9 @@ import { EggGroups } from './egg-groups';
 import Families from './families';
 import { Types } from '../constants/types';
 import { Stages, Stats } from './stats';
-import { Statuses, TeamStatuses, Weathers } from './status';
+import { Statuses, TeamStatuses, Terrains, Weathers } from './status';
+import MoveRole from './move-roles';
+import { BuildRole, StatusKind } from './builds';
 import Regions from './regions';
 import Natures from './natures';
 import Awards from './awards';
@@ -2506,6 +2508,11 @@ export const MOVE_FLAG_IDS = {
   Bite: MoveFlags.Bite,
   Slicing: MoveFlags.Slicing,
   Wind: MoveFlags.Wind,
+  Punch: MoveFlags.Punch,
+  Kick: MoveFlags.Kick,
+  Dance: MoveFlags.Dance,
+  Ballistic: MoveFlags.Ballistic,
+  HighCrit: MoveFlags.HighCrit,
 } as const satisfies Record<string, MoveFlags>;
 
 export const SPRITE_ANIM_IDS = {
@@ -4937,6 +4944,69 @@ export const BATTLE_WEATHER_IDS = {
   HeavyRain: Weathers.HeavyRain,
   StrongWinds: Weathers.StrongWinds,
 } as const satisfies Record<string, Weathers>;
+
+export const TERRAIN_IDS = {
+  None: Terrains.None,
+  Electric: Terrains.Electric,
+  Grassy: Terrains.Grassy,
+  Misty: Terrains.Misty,
+  Psychic: Terrains.Psychic,
+} as const satisfies Record<string, Terrains>;
+
+export const MOVE_ROLE_IDS = {
+  Shield: MoveRole.Shield,
+  TeamSetup: MoveRole.TeamSetup,
+  Hazard: MoveRole.Hazard,
+  Field: MoveRole.Field,
+  Status: MoveRole.Status,
+  Disruption: MoveRole.Disruption,
+  SelfBoost: MoveRole.SelfBoost,
+  FoeDrop: MoveRole.FoeDrop,
+  Heal: MoveRole.Heal,
+  Support: MoveRole.Support,
+  Pivot: MoveRole.Pivot,
+  Utility: MoveRole.Utility,
+  Damage: MoveRole.Damage,
+  Spread: MoveRole.Spread,
+  Priority: MoveRole.Priority,
+  MultiHit: MoveRole.MultiHit,
+  Charge: MoveRole.Charge,
+  Recharge: MoveRole.Recharge,
+  Recoil: MoveRole.Recoil,
+  Drain: MoveRole.Drain,
+  Sacrifice: MoveRole.Sacrifice,
+  OneHitKO: MoveRole.OneHitKO,
+  FixedDamage: MoveRole.FixedDamage,
+  LockIn: MoveRole.LockIn,
+  Delayed: MoveRole.Delayed,
+  Afflicts: MoveRole.Afflicts,
+  Weakens: MoveRole.Weakens,
+  Trapping: MoveRole.Trapping,
+} as const satisfies Record<string, MoveRole>;
+
+export const BUILD_ROLE_IDS = {
+  SpecialCore: BuildRole.SpecialCore,
+  PhysicalCore: BuildRole.PhysicalCore,
+  Healer: BuildRole.Healer,
+  Protector: BuildRole.Protector,
+  Redirector: BuildRole.Redirector,
+  FieldControl: BuildRole.FieldControl,
+} as const satisfies Record<string, BuildRole>;
+
+export const STATUS_KIND_IDS = {
+  Setup: StatusKind.Setup,
+  Heal: StatusKind.Heal,
+  Cripple: StatusKind.Cripple,
+  Screen: StatusKind.Screen,
+  Weather: StatusKind.Weather,
+  Boost: StatusKind.Boost,
+  Mend: StatusKind.Mend,
+  Cure: StatusKind.Cure,
+  Shield: StatusKind.Shield,
+  Redirect: StatusKind.Redirect,
+  Hazard: StatusKind.Hazard,
+  Room: StatusKind.Room,
+} as const satisfies Record<string, StatusKind>;
 
 export const REGION_IDS = {
   Unknown: Regions.Unknown,

@@ -71,4 +71,5 @@ AttackOrder:
   accuracy: 100
   pp: 15
   target: Unit
+  flags: [HighCrit]
   projectile: true

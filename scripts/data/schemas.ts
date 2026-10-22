@@ -40,6 +40,11 @@ const DEFINITIONS: [enumName: string, definition: string][] = [
   ['Stages', 'stage'],
   ['Statuses', 'status'],
   ['TeamStatuses', 'team-status'],
+  ['Weathers', 'battle-weather'],
+  ['Terrains', 'terrain'],
+  ['MoveRole', 'move-role'],
+  ['BuildRole', 'build-role'],
+  ['StatusKind', 'status-kind'],
   ['Regions', 'region'],
   ['Awards', 'award'],
   ['Lairs', 'lair'],
@@ -59,7 +64,6 @@ const DEFINITIONS: [enumName: string, definition: string][] = [
   ['Phenomenon', 'phenomenon'],
   ['Weather', 'weather'],
   ['SpawnRarity', 'spawn-rarity'],
-  ['Weathers', 'battle-weather'],
   ['PikeCurtain', 'pike-curtain'],
   ['ArcadePanel', 'arcade-panel'],
   ['AchievementTier', 'achievement-tier'],
@@ -1056,6 +1060,151 @@ const BATTLE_FILES: [file: string, title: string, entry: Schema][] = [
   ],
 ];
 
+/** A list of names, in the order it is written */
+function nameList(title: string, definition: string): Schema {
+  return { $schema: DRAFT, title, ...names(definition) };
+}
+
+/** A map from one kind of name to another */
+function mapping(key: string, value: string): Schema {
+  return { type: 'object', propertyNames: name(key), additionalProperties: name(value) };
+}
+
+/** A file of named sections, each closed so a misspelt key is flagged */
+function closedSections(title: string, properties: Record<string, Schema>): Schema {
+  return { $schema: DRAFT, title, ...part(properties, Object.keys(properties)) };
+}
+
+/** The battle files that are not keyed by move */
+const BATTLE_LISTS: [file: string, schema: Schema][] = [
+  ['battle-recharge.json', nameList('Battle: recharging moves', 'move')],
+  ['battle-tutor-only.json', nameList('Battle: tutor-only moves', 'move')],
+  ['battle-pseudo.json', nameList('Battle: pseudo-moves', 'move')],
+  [
+    'battle-guards.json',
+    {
+      $schema: DRAFT,
+      title: 'Battle: guards',
+      type: 'object',
+      propertyNames: name('move'),
+      additionalProperties: described(name('status'), 'What the guard puts on the user'),
+    },
+  ],
+  [
+    'battle-ai-roles.json',
+    {
+      $schema: DRAFT,
+      title: 'Battle: AI roles',
+      type: 'object',
+      propertyNames: name('move-role'),
+      additionalProperties: names('move', 'The moves filed under this role by hand'),
+    },
+  ],
+  [
+    'battle-gmax.json',
+    closedSections('Battle: G-Max Moves', {
+      species: {
+        type: 'object',
+        propertyNames: name('species'),
+        additionalProperties: part({ move: name('move'), type: name('type') }, ['move', 'type']),
+      },
+      fixed: names('move', 'The ones that hit at 160 whatever they replace'),
+    }),
+  ],
+  [
+    'battle-max-moves.json',
+    closedSections('Battle: Max Moves', {
+      types: mapping('type', 'move'),
+      weathers: mapping('move', 'battle-weather'),
+      terrains: mapping('move', 'terrain'),
+      'foe-stages': mapping('move', 'stage'),
+      'ally-stages': mapping('move', 'stage'),
+    }),
+  ],
+  [
+    'battle-z-moves.json',
+    closedSections('Battle: Z-Moves', { types: mapping('type', 'move'), signatures: names('move') }),
+  ],
+];
+
+/** The expert build's prices, in `src/data/builds/` */
+const BUILD_FILES: [file: string, schema: Schema][] = [
+  [
+    'builds-status-moves.json',
+    keyed(
+      'Builds: status moves',
+      'move',
+      part(
+        {
+          worth: described({ type: 'number' }, 'What a slot for it is worth'),
+          kind: described(name('status-kind'), 'What it is for; none is a Cripple'),
+          serves: described(name('move-category'), 'The half of the split a setup sharpens'),
+        },
+        [],
+      ),
+    ),
+  ],
+  [
+    'builds-attacks.json',
+    keyed(
+      'Builds: attacks',
+      'move',
+      part(
+        {
+          drawback: described(
+            { type: 'number', minimum: 0 },
+            'A factor for a cost the entry has no field for',
+          ),
+          power: described(COUNT, 'What a move with no power of its own is worth'),
+        },
+        [],
+      ),
+    ),
+  ],
+  [
+    'builds-abilities.json',
+    keyed(
+      'Builds: abilities',
+      'ability',
+      part(
+        {
+          worth: described({ type: 'number', minimum: 0 }, 'Against 100 for an ordinary ability'),
+          lean: { enum: ['offense', 'guard'] },
+        },
+        [],
+      ),
+    ),
+  ],
+];
+
+/** The other tables that moved out of the code, each in its own folder */
+const OTHER_FILES: [file: string, schema: Schema][] = [
+  [
+    'biome-ground.json',
+    closedSections('Biome ground', {
+      biomes: mapping('biome', 'type'),
+      effects: {
+        type: 'object',
+        propertyNames: name('type'),
+        additionalProperties: part({ move: name('move'), status: name('status') }, [
+          'move',
+          'status',
+        ]),
+      },
+    }),
+  ],
+  [
+    'abilities-flags.json',
+    closedSections('Ability flags', {
+      unreceivable: names('ability', 'What Receiver and Power of Alchemy will not take up'),
+      protected: names('ability', 'What nothing can disable'),
+      'mold-proof': names('ability', 'What Mold Breaker cannot see past'),
+      'always-known': names('ability', 'What the AI knows about without seeing it cue'),
+    }),
+  ],
+  ['boss-banned.json', nameList('Moves a boss is never staged with', 'move')],
+];
+
 function json(schema: Schema): string {
   return `${JSON.stringify(schema, null, 2)}\n`;
 }
@@ -1371,6 +1520,9 @@ export default function renderDataSchemas(members: Map<string, string[]>): Map<s
 
   for (const [file, title, entry] of BATTLE_FILES) {
     schemas.set(file, json(keyed(title, 'move', entry)));
+  }
+  for (const [file, schema] of [...BATTLE_LISTS, ...BUILD_FILES, ...OTHER_FILES]) {
+    schemas.set(file, json(schema));
   }
   return schemas;
 }

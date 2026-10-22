@@ -8,7 +8,7 @@ CrossPoison:
   accuracy: 100
   pp: 20
   target: Unit
-  flags: [Contact, Slicing]
+  flags: [Contact, Slicing, HighCrit]
 
 GunkShot:
   type: Poison
@@ -34,6 +34,7 @@ MagnetBomb:
   power: 60
   pp: 20
   target: Unit
+  flags: [Ballistic]
   projectile: true
 
 StoneEdge:
@@ -43,6 +44,7 @@ StoneEdge:
   accuracy: 80
   pp: 5
   target: Unit
+  flags: [HighCrit]
   projectile: true
 
 Captivate:

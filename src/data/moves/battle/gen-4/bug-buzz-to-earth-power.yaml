@@ -44,7 +44,7 @@ DrainPunch:
   accuracy: 100
   pp: 10
   target: Unit
-  flags: [Contact]
+  flags: [Contact, Punch]
 
 VacuumWave:
   type: Fighting
@@ -63,6 +63,7 @@ FocusBlast:
   accuracy: 70
   pp: 5
   target: Unit
+  flags: [Ballistic]
   projectile: true
 
 EnergyBall:
@@ -72,6 +73,7 @@ EnergyBall:
   accuracy: 100
   pp: 10
   target: Unit
+  flags: [Ballistic]
   projectile: true
 
 BraveBird:

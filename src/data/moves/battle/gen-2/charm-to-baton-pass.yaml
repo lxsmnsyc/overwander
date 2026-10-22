@@ -160,7 +160,7 @@ DynamicPunch:
   accuracy: 50
   pp: 5
   target: Unit
-  flags: [Contact]
+  flags: [Contact, Punch]
 
 Megahorn:
   type: Bug

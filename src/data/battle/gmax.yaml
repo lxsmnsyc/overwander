@@ -1,0 +1,54 @@
+# The G-Max Moves: what a Gigantamax throws in place of the Max Move of
+# one type. The battle side is in `src/battle/gimmicks/dynamax/gmax-moves.ts`
+
+# Each species with a Gigantamax form, with its G-Max Move and that move's type
+species:
+  Venusaur: { move: GMaxVineLash, type: Grass }
+  Charizard: { move: GMaxWildfire, type: Fire }
+  Blastoise: { move: GMaxCannonade, type: Water }
+  Butterfree: { move: GMaxBefuddle, type: Bug }
+  Pikachu: { move: GMaxVoltCrash, type: Electric }
+  # The Kantonian one only: neither regional Meowth has a Gigantamax form
+  Meowth: { move: GMaxGoldRush, type: Normal }
+  Machamp: { move: GMaxChiStrike, type: Fighting }
+  Gengar: { move: GMaxTerror, type: Ghost }
+  Kingler: { move: GMaxFoamBurst, type: Water }
+  Lapras: { move: GMaxResonance, type: Ice }
+  Eevee: { move: GMaxCuddle, type: Normal }
+  Snorlax: { move: GMaxReplenish, type: Normal }
+  Garbodor: { move: GMaxMalodor, type: Poison }
+  Melmetal: { move: GMaxMeltdown, type: Steel }
+  Rillaboom: { move: GMaxDrumSolo, type: Grass }
+  Cinderace: { move: GMaxFireball, type: Fire }
+  Inteleon: { move: GMaxHydrosnipe, type: Water }
+  Corviknight: { move: GMaxWindRage, type: Flying }
+  Orbeetle: { move: GMaxGravitas, type: Psychic }
+  Drednaw: { move: GMaxStonesurge, type: Water }
+  # Not registered yet: the row is ready for the day Coalossal lands
+  Coalossal: { move: GMaxVolcalith, type: Rock }
+  Flapple: { move: GMaxTartness, type: Grass }
+  Appletun: { move: GMaxSweetness, type: Grass }
+  Sandaconda: { move: GMaxSandblast, type: Ground }
+  Toxtricity: { move: GMaxStunShock, type: Electric }
+  ToxtricityLowKey: { move: GMaxStunShock, type: Electric }
+  Centiskorch: { move: GMaxCentiferno, type: Fire }
+  Hatterene: { move: GMaxSmite, type: Fairy }
+  Grimmsnarl: { move: GMaxSnooze, type: Dark }
+  Alcremie: { move: GMaxFinale, type: Fairy }
+  AlcremieBerry: { move: GMaxFinale, type: Fairy }
+  AlcremieLove: { move: GMaxFinale, type: Fairy }
+  AlcremieStar: { move: GMaxFinale, type: Fairy }
+  AlcremieClover: { move: GMaxFinale, type: Fairy }
+  AlcremieFlower: { move: GMaxFinale, type: Fairy }
+  AlcremieRibbon: { move: GMaxFinale, type: Fairy }
+  # Not registered yet, like Coalossal
+  Copperajah: { move: GMaxSteelsurge, type: Steel }
+  Duraludon: { move: GMaxDepletion, type: Dragon }
+  Urshifu: { move: GMaxOneBlow, type: Dark }
+  UrshifuRapidStrike: { move: GMaxRapidFlow, type: Water }
+
+# The three that hit at 160 whatever they replace, and through any ability
+fixed:
+  - GMaxDrumSolo
+  - GMaxFireball
+  - GMaxHydrosnipe

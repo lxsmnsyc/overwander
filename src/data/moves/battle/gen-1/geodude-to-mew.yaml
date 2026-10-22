@@ -168,7 +168,7 @@ Crabhammer:
   accuracy: 90
   pp: 10
   target: Unit
-  flags: [Contact]
+  flags: [Contact, HighCrit]
 
 Barrage:
   type: Normal
@@ -177,6 +177,7 @@ Barrage:
   accuracy: 85
   pp: 20
   target: Unit
+  flags: [Ballistic]
   projectile: true
 
 EggBomb:
@@ -186,6 +187,7 @@ EggBomb:
   accuracy: 75
   pp: 10
   target: Unit
+  flags: [Ballistic]
   projectile: true
 
 BoneClub:
@@ -212,7 +214,7 @@ CometPunch:
   accuracy: 85
   pp: 15
   target: Unit
-  flags: [Contact]
+  flags: [Contact, Punch]
 
 FirePunch:
   type: Fire
@@ -221,7 +223,7 @@ FirePunch:
   accuracy: 100
   pp: 15
   target: Unit
-  flags: [Contact]
+  flags: [Contact, Punch]
 
 IcePunch:
   type: Ice
@@ -230,7 +232,7 @@ IcePunch:
   accuracy: 100
   pp: 15
   target: Unit
-  flags: [Contact]
+  flags: [Contact, Punch]
 
 ThunderPunch:
   type: Electric
@@ -239,7 +241,7 @@ ThunderPunch:
   accuracy: 100
   pp: 15
   target: Unit
-  flags: [Contact]
+  flags: [Contact, Punch]
 
 RollingKick:
   type: Fighting
@@ -248,7 +250,7 @@ RollingKick:
   accuracy: 85
   pp: 15
   target: Unit
-  flags: [Contact]
+  flags: [Contact, Kick]
 
 JumpKick:
   type: Fighting
@@ -257,7 +259,7 @@ JumpKick:
   accuracy: 95
   pp: 10
   target: Unit
-  flags: [Contact]
+  flags: [Contact, Kick]
 
 HiJumpKick:
   type: Fighting
@@ -266,7 +268,7 @@ HiJumpKick:
   accuracy: 90
   pp: 10
   target: Unit
-  flags: [Contact]
+  flags: [Contact, Kick]
 
 Smog:
   type: Poison
@@ -291,7 +293,7 @@ DizzyPunch:
   accuracy: 100
   pp: 10
   target: Unit
-  flags: [Contact]
+  flags: [Contact, Punch]
 
 Waterfall:
   type: Water

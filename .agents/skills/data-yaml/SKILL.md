@@ -64,6 +64,8 @@ Growlithe:
 | `overworld/weather/kinds.yaml`    | each sky's map `color`, the types it `favours` (`[]` for none, `everything` for all) and the `battle` sky it is fought under |
 | `text/en/weather.yaml`            | each sky's name and description                                       |
 | `biome/colors.yaml`               | each biome's map color                                                |
+| `overworld/boss-banned.yaml`      | the moves a boss is never staged with, each under a comment saying why |
+| `biome/ground.yaml`               | the type each biome's ground counts as (`biomes`), and the move and status each type of ground gives (`effects`) |
 
 - **Order is part of the world.** A biome's lair list and each band of the item pool are walked by a seeded roll, so moving an entry changes what every player's map holds. Append; never reorder.
 - **A lair is numbered by the enum in `ids/lairs.ts`,** since a raid prize records it. A new lair is an enum member, a row in each lair file, and `pnpm id-names`. `reserved: true` keeps it out of the world until its batch lists it.
@@ -103,6 +105,7 @@ Under `src/data/moves/`, each part filed by generation and the stretch of moves 
 | `text/en/moves/`   | each name and description, in the file of the same name                |
 
 - `flags` and `affects` are lists of names (`flags: [Contact, Sound]`); leave `flags` out for none and `affects` out for the default the way the move is cast.
+- A flag is what a family of moves shares and an ability or a mechanic reads: `Contact`, `Sound`, `Powder`, `Bite`, `Slicing`, `Wind`, `Punch` (Iron Fist), `Kick`, `Dance` (Dancer), `Ballistic` (Bulletproof) and `HighCrit` (a critical hit ratio a stage up). A move joins one by naming it, not by a list in the code.
 - `projectile: true` is a move that flies across the gap before it lands.
 - **`visual/shapes.yaml`** holds each landing shape by name: `span`, `jolt`, `arrives`, the `wait` it implies, `color`, `staged` and the `types` that fall back on it. Shape names are not an enum, so they are checked against `EFFECT_SHAPES` and `DELAY_SHAPES` in `visual/shape-names.ts`; a new one is added there and `pnpm id-names` run. The painters stay in `src/canvas/battle/moves/` (the `move-visuals` skill).
 - Moves register in id order, which is the pool Metronome draws from, so where a move is filed changes nothing.
@@ -122,8 +125,28 @@ The numbers a fight reads off each move live apart from the move, in `src/data/b
 | `recoil.yaml`, `drain.yaml`, `heal.yaml` | a share, as a number or a fraction such as `1/3` |
 | `z-power.yaml`        | a type Z-Move's power, for the moves the table by power gets wrong |
 | `z-effects.yaml`      | what a type crystal adds to a status move: `stages` raised by `value`, or `heal`, `clear`, `critical`, `centre` or `curse` |
+| `recharge.yaml`       | a list: the moves that leave the user standing still once they land |
+| `tutor-only.yaml`     | a list: the signature moves only the Move Tutor teaches          |
+| `pseudo.yaml`         | a list: the moves that are not a pokemon's own (confusion, Struggle, the bare swing) |
+| `gmax.yaml`           | each Gigantamax `species` with its G-Max `move` and `type`, and the `fixed` ones that always hit at 160 |
+| `max-moves.yaml`      | the Max Move each type becomes, and the `weathers`, `terrains`, `foe-stages` and `ally-stages` each one brings |
+| `z-moves.yaml`        | the Z-Move each type becomes, and the `signatures`                |
+| `guards.yaml`         | each guard move and the status it puts on the user (`Protected`, `Enduring`) |
+| `ai-roles.yaml`       | a `MoveRole` to the moves the AI files under it by hand, added to what it reads off each move |
 
 `src/data/battle/index.ts` reads them into the tables the battle files re-export (`STATUS_MOVES`, `RECOIL_MOVES` and the rest). A move is added to a mechanic by adding it to that file; what the mechanic does with the number stays in `src/battle/moves/`.
+
+## Expert builds
+
+What the expert builder pays for a move or an ability lives in `src/data/builds/`, read by `src/data/builds/index.ts`:
+
+| file                | holds                                                                   |
+| ------------------- | ----------------------------------------------------------------------- |
+| `status-moves.yaml` | each priced status move's `worth`, its `kind` (a `StatusKind`, Cripple when left out) and the split a setup `serves` |
+| `attacks.yaml`      | a damaging move's `drawback` factor, or the `power` a move with none is worth |
+| `abilities.yaml`    | an ability's `worth` against 100 for an ordinary one, and its `lean` (`offense` or `guard`) |
+
+- **Every number decides an expert party.** Changing one changes the parties already staged in the world, so change them on purpose. `StatusKind` and `BuildRole` are in `src/data/ids/builds.ts`.
 
 ## Spawn pools
 
@@ -139,6 +162,8 @@ The numbers a fight reads off each move live apart from the move, in `src/data/b
 ## Abilities
 
 An ability is a name and a line, so all of it is text: `text/en/abilities/gen-N.yaml`, grouped under a comment naming the line that introduces it, `text/en/abilities/signature/<region>.yaml` for the signatures, and `text/en/abilities/special.yaml` for the marks of what a pokemon is (Boss, Shadow, Totem, Totem Ally, Purified). Which family is granted which signature is `src/data/abilities/signatures/<region>.yaml`, under `families:`, with a regional line's own under `forms:`. A family is filed under the region its species files are.
+
+`src/data/abilities/flags.yaml` lists the abilities a mechanic treats apart, by flag: `unreceivable` (Receiver and Power of Alchemy skip them), `protected` (nothing disables them), `mold-proof` (Mold Breaker cannot see past them) and `always-known` (the AI knows them without a cue). Each list keeps its order.
 
 ## Items
 

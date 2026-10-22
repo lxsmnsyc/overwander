@@ -130,6 +130,16 @@ export const enum MoveFlags {
    * nothing can stand in its way
    */
   Wind = 0b100000,
+  /** Thrown with a fist (boosted by e.g. Iron Fist) */
+  Punch = 0b1000000,
+  /** Thrown with a foot. The mainline has no flag for these */
+  Kick = 0b10000000,
+  /** Danced rather than thrown (copied by e.g. Dancer) */
+  Dance = 0b100000000,
+  /** A ball or a bomb, thrown rather than swung (stopped by e.g. Bulletproof) */
+  Ballistic = 0b1000000000,
+  /** A critical hit ratio one stage up */
+  HighCrit = 0b10000000000,
 }
 
 export const enum MoveAttackFlags {

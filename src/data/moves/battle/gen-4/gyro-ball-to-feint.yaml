@@ -7,7 +7,7 @@ GyroBall:
   accuracy: 100
   pp: 5
   target: Unit
-  flags: [Contact]
+  flags: [Contact, Ballistic]
 
 HealingWish:
   type: Psychic

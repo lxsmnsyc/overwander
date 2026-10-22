@@ -16,6 +16,7 @@ AuraSphere:
   power: 80
   pp: 20
   target: Unit
+  flags: [Ballistic]
   projectile: true
 
 RockPolish:
@@ -49,7 +50,7 @@ NightSlash:
   accuracy: 100
   pp: 15
   target: Unit
-  flags: [Contact, Slicing]
+  flags: [Contact, Slicing, HighCrit]
 
 AquaTail:
   type: Water
@@ -67,6 +68,7 @@ SeedBomb:
   accuracy: 100
   pp: 15
   target: Unit
+  flags: [Ballistic]
   projectile: true
 
 AirSlash:

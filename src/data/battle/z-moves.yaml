@@ -1,0 +1,43 @@
+# The Z-Moves: what a held Z-Crystal turns a move into. The battle side is
+# in `src/battle/gimmicks/z-moves.ts`
+
+# The Z-Move each type's crystal turns a damaging move of that type into
+types:
+  Normal: BreakneckBlitz
+  Fighting: AllOutPummeling
+  Flying: SupersonicSkystrike
+  Poison: AcidDownpour
+  Ground: TectonicRage
+  Rock: ContinentalCrush
+  Bug: SavageSpinOut
+  Ghost: NeverEndingNightmare
+  Steel: CorkscrewCrash
+  Fire: InfernoOverdrive
+  Water: HydroVortex
+  Grass: BloomDoom
+  Electric: GigavoltHavoc
+  Psychic: ShatteredPsyche
+  Ice: SubzeroSlammer
+  Dragon: DevastatingDrake
+  Dark: BlackHoleEclipse
+  Fairy: TwinkleTackle
+
+# The seventeen that belong to one line and one move each
+signatures:
+  - Catastropika
+  - SinisterArrowRaid
+  - MaliciousMoonsault
+  - OceanicOperetta
+  - GuardianOfAlola
+  - SoulStealing7StarStrike
+  - StokedSparksurfer
+  - PulverizingPancake
+  - ExtremeEvoboost
+  - GenesisSupernova
+  - TenMillionVoltThunderbolt
+  - LightThatBurnsTheSky
+  - SearingSunrazeSmash
+  - MenacingMoonrazeMaelstrom
+  - LetsSnuggleForever
+  - SplinteredStormshards
+  - ClangorousSoulblaze

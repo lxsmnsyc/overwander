@@ -4767,7 +4767,12 @@
         "Powder",
         "Bite",
         "Slicing",
-        "Wind"
+        "Wind",
+        "Punch",
+        "Kick",
+        "Dance",
+        "Ballistic",
+        "HighCrit"
       ]
     },
     "sprite-anim": {
@@ -4934,6 +4939,87 @@
         "CraftyShield",
         "StickyWeb",
         "AuroraVeil"
+      ]
+    },
+    "battle-weather": {
+      "enum": [
+        "None",
+        "Sunny",
+        "Rain",
+        "Sandstorm",
+        "Hail",
+        "Snow",
+        "Fog",
+        "ExtremeSunny",
+        "HeavyRain",
+        "StrongWinds"
+      ]
+    },
+    "terrain": {
+      "enum": [
+        "None",
+        "Electric",
+        "Grassy",
+        "Misty",
+        "Psychic"
+      ]
+    },
+    "move-role": {
+      "enum": [
+        "Shield",
+        "TeamSetup",
+        "Hazard",
+        "Field",
+        "Status",
+        "Disruption",
+        "SelfBoost",
+        "FoeDrop",
+        "Heal",
+        "Support",
+        "Pivot",
+        "Utility",
+        "Damage",
+        "Spread",
+        "Priority",
+        "MultiHit",
+        "Charge",
+        "Recharge",
+        "Recoil",
+        "Drain",
+        "Sacrifice",
+        "OneHitKO",
+        "FixedDamage",
+        "LockIn",
+        "Delayed",
+        "Afflicts",
+        "Weakens",
+        "Trapping"
+      ]
+    },
+    "build-role": {
+      "enum": [
+        "SpecialCore",
+        "PhysicalCore",
+        "Healer",
+        "Protector",
+        "Redirector",
+        "FieldControl"
+      ]
+    },
+    "status-kind": {
+      "enum": [
+        "Setup",
+        "Heal",
+        "Cripple",
+        "Screen",
+        "Weather",
+        "Boost",
+        "Mend",
+        "Cure",
+        "Shield",
+        "Redirect",
+        "Hazard",
+        "Room"
       ]
     },
     "region": {
@@ -5706,20 +5792,6 @@
         "Prized",
         "Special",
         "Mythical"
-      ]
-    },
-    "battle-weather": {
-      "enum": [
-        "None",
-        "Sunny",
-        "Rain",
-        "Sandstorm",
-        "Hail",
-        "Snow",
-        "Fog",
-        "ExtremeSunny",
-        "HeavyRain",
-        "StrongWinds"
       ]
     },
     "pike-curtain": {

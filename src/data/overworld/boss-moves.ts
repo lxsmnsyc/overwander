@@ -1,112 +1,20 @@
+import * as v from 'valibot';
 import { Types } from '../constants/types';
 import { Moves } from '../ids/moves';
 import type { Species } from '../ids/species';
 import { getSpeciesData } from '../species';
+import { MOVE_IDS } from '../ids/names';
+import { idsOf } from '../yaml';
+import bannedFile from './boss-banned.yaml';
 
 /**
- * Moves a boss is never staged with.
- *
- * **Transform** copies a player, which throws away the raid-sized
- * health pool the fight is built around. **Metronome**, **Mirror
- * Move**, **Mimic** and **Sketch** are each a way back to it, so
- * banning them is simpler than teaching four kinds of copy what a
- * boss may not become.
- *
- * The rest are moves a raid pool breaks. **Pain Split** averages the
- * two, and a boss pays the half it gives away while the half that
- * would come back is refused as a heal. **Baton Pass** looks for a
- * bench a lone boss does not have. **Destiny Bond** takes whoever
- * lands the last hit down with it, which taxes the party for winning
- * rather than making the fight harder.
- *
- * **Role Play** and **Skill Swap** are Transform by another road:
- * both hand the abilities about, and the one a boss would give away
- * is the Boss ability itself. **Memento** spends the whole of its
- * health rather than a move's worth of it, so a boss that leaves one
- * ends the raid on its own.
- *
- * **Bide** returns double everything it was dealt while it channels,
- * and a lobby is up to ten parties: the harder the raid hits, the
- * more certainly the answer wipes it. **Belly Drum** and a Ghost's
- * **Curse** each cost half the pool, and the pool is the fight's
- * clock, so both hand the party half the raid. **Endeavor** fails
- * while a boss is healthy and fires when it is nearly dead, taking
- * the party down to a sliver at the moment it has won, and **Grudge**
- * costs whoever lands the last hit the move that landed it.
- *
- * **Healing Wish** and **Lunar Dance** spend the whole of the pool
- * the way Memento does, and both are aimed at a teammate a lone boss
- * does not have. **Helping Hand** and **Follow Me** are the same
- * absence without the cost: there is nobody to help or to stand in
- * front of.
- *
- * **Power Swap**, **Guard Swap** and **Heart Swap** hand a boss'
- * boosts over whichever way they are cast, and what a boss builds on
- * doubled stats is worth more to the party than to it. A boss refuses
- * one aimed at it, so the ban is the other half: it never casts one
- * either. **Guard Split** and **Power Split** are refused the same
- * way, so a boss that knows one would only waste the slot.
- *
- * **Final Gambit** throws the user's whole health at its target, and
- * a boss' single-target moves reach every enemy, so one would wipe the
- * lobby and spend the pool doing it. **Quash** would send every
- * enemy's wind-up back to the start at once. **After You**, **Ally
- * Switch** and **Bestow** are spent on a teammate a lone boss does
- * not have. **Hold Hands** and **Aromatic Mist** are the same, and
- * **Celebrate** and **Happy Hour** do nothing a boss can use.
- *
- * **Rest** is the one heal still barred. A boss may put back an
- * eighth of its pool, which is what every other heal is worth to it
- * now, but Rest buys that eighth with a sleep the boss inflicted on
- * itself, so it lands in full: the party gets the fight handed to it
- * while the boss lies there.
- *
- * It is data rather than engine: the list is filtered out of the
- * boss' learnset as the raid is staged, which happens where a raid is
- * written down rather than where one is fought
+ * Moves a boss is never staged with, each with why, in
+ * `boss-banned.yaml`. It is data rather than engine: the list is
+ * filtered out of the boss' learnset as the raid is staged
  */
-const BANNED_BOSS_MOVES = new Set<Moves>([
-  Moves.Transform,
-  Moves.Metronome,
-  Moves.MirrorMove,
-  Moves.Mimic,
-  Moves.Sketch,
-  Moves.PainSplit,
-  Moves.BatonPass,
-  Moves.DestinyBond,
-  Moves.Bide,
-  Moves.BellyDrum,
-  Moves.RolePlay,
-  Moves.SkillSwap,
-  Moves.Memento,
-  Moves.Grudge,
-  Moves.Endeavor,
-  Moves.Rest,
-  Moves.HealingWish,
-  Moves.LunarDance,
-  Moves.HelpingHand,
-  Moves.FollowMe,
-  Moves.PowerSwap,
-  Moves.GuardSwap,
-  Moves.HeartSwap,
-  Moves.GuardSplit,
-  Moves.PowerSplit,
-  Moves.FinalGambit,
-  Moves.Quash,
-  Moves.AfterYou,
-  Moves.AllySwitch,
-  Moves.Bestow,
-  Moves.HoldHands,
-  Moves.AromaticMist,
-  Moves.Celebrate,
-  Moves.HappyHour,
-  // Paid in half its health, which on a raid pool is half the raid
-  Moves.MindBlown,
-  // TODO: temporary. A boss is already immune to Perishing, so the
-  // song costs it a move slot and does nothing. Drop this line when
-  // there is something for it to do
-  Moves.PerishSong,
-]);
+const BANNED_BOSS_MOVES = new Set<Moves>(
+  idsOf<Moves>(MOVE_IDS, v.parse(v.array(v.string()), bannedFile), 'boss-banned.yaml'),
+);
 
 /**
  * What a boss is barred from on top of the list, by what it is.

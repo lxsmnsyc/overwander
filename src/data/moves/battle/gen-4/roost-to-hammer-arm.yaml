@@ -35,4 +35,4 @@ HammerArm:
   accuracy: 90
   pp: 10
   target: Unit
-  flags: [Contact]
+  flags: [Contact, Punch]

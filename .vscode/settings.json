@@ -86,6 +86,7 @@
     "./src/data/schema/totems.json": "src/data/overworld/totems.yaml",
     "./src/data/schema/quests.json": "src/data/quests/quests.yaml",
     "./src/data/schema/quests-daily.json": "src/data/quests/daily.yaml",
-    "./src/data/schema/quests-text.json": "src/data/text/*/quests.yaml"
+    "./src/data/schema/quests-text.json": "src/data/text/*/quests.yaml",
+    "./src/data/schema/achievements.json": "src/data/achievements.yaml"
   }
 }

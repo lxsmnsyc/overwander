@@ -1,0 +1,69 @@
+# What each achievement line counts and the four thresholds it climbs,
+# Bronze to Platinum, ascending. A line's `metric` is narrowed the way a
+# quest requirement narrows one, by an `npc` or a `landmark`.
+
+lines:
+  Collector:
+    metric: Catches
+    tiers: [10, 50, 250, 1000]
+  Hatcher:
+    metric: Hatches
+    tiers: [5, 25, 100, 500]
+  Coach:
+    metric: LevelUps
+    tiers: [25, 150, 750, 3000]
+  Wayfarer:
+    metric: Steps
+    tiers: [5000, 50000, 250000, 1000000]
+  Socialite:
+    metric: NpcVisits
+    tiers: [10, 50, 250, 1000]
+  Forager:
+    metric: Landmarks
+    tiers: [25, 150, 750, 3000]
+  Raider:
+    metric: RaidWins
+    tiers: [5, 25, 100, 500]
+  Trader:
+    metric: Trades
+    tiers: [5, 25, 100, 250]
+  Auctioneer:
+    metric: Auctions
+    tiers: [5, 25, 100, 250]
+  Confidant:
+    metric: Friends
+    tiers: [3, 10, 25, 50]
+  Wayfinder:
+    metric: Landmarks
+    landmark: Portal
+    tiers: [3, 10, 50, 200]
+  Matchmaker:
+    metric: NpcVisits
+    npc: Breeder
+    tiers: [3, 10, 50, 200]
+  Purifier:
+    metric: Purifies
+    tiers: [3, 10, 50, 200]
+  # Platinum is every biome the world generates: 29 today, Beyond excluded
+  # since nobody stands there
+  Pathfinder:
+    metric: Biomes
+    tiers: [3, 10, 20, 29]
+
+# The type lines: one per Gen 1 type, counting lifetime catches of that type,
+# dual-types counting for both. One price for all of them: a thin pool climbs
+# by repeat catches
+types: [Normal, Fighting, Flying, Poison, Ground, Rock, Bug, Ghost, Fire, Water, Grass, Electric, Psychic, Ice, Dragon]
+type-tiers: [10, 50, 250, 1000]
+
+# The trainer lines, one per trade. A stop stands for one window and pays once
+# per player, so these climb far more slowly than a catch counter, and the
+# thresholds are priced for that
+trainer-tiers: [3, 10, 50, 200]
+
+# The metals: the slot ring and the worn title's badge share them
+colors:
+  Bronze: "#b0793f"
+  Silver: "#9aa4b0"
+  Gold: "#e0b64f"
+  Platinum: "#7bc8d2"

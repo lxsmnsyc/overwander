@@ -1,6 +1,16 @@
-import { Landmark, Metric } from '../model/quest-record';
-import { Types } from './constants/types';
-import Npc from './overworld/npc';
+import * as v from 'valibot';
+import { type Landmark, Metric } from '../model/quest-record';
+import achievementsFile from './achievements.yaml';
+import type { Types } from './constants/types';
+import {
+  ACHIEVEMENT_LINE_IDS,
+  ACHIEVEMENT_TIER_IDS,
+  METRIC_IDS,
+  NPC_IDS,
+  QUEST_LANDMARK_IDS,
+  TYPE_IDS,
+} from './ids/names';
+import type Npc from './overworld/npc';
 import {
   TRAINER_CLASSES,
   TRAINER_TRADES,
@@ -10,13 +20,15 @@ import {
 import { AchievementLine, AchievementTier } from './ids/achievements';
 import type { Species } from './ids/species';
 import { getSpeciesData } from './species';
+import { idOf, idsOf } from './yaml';
 
 /**
  * Achievements: lifetime awards in 4 tiers, derived from the same
  * counters the quests read. Nothing is stored when a tier is
  * reached — the counters are the truth, and a standing is computed
  * from them wherever it is shown. Bronze unlocks the line's title,
- * worn in the tier's colour; Platinum adds its Master variant.
+ * worn in the tier's colour; Platinum adds its Master variant. What
+ * each line counts and its thresholds are `achievements.yaml`.
  */
 
 export const TIER_NAMES: Record<AchievementTier, string> = {
@@ -27,14 +39,42 @@ export const TIER_NAMES: Record<AchievementTier, string> = {
   [AchievementTier.Platinum]: 'Platinum',
 };
 
+type Thresholds = [number, number, number, number];
+
+const THRESHOLDS = v.tuple([v.number(), v.number(), v.number(), v.number()]);
+
+const FILE = v.object({
+  lines: v.record(
+    v.string(),
+    v.object({
+      metric: v.string(),
+      npc: v.optional(v.string()),
+      landmark: v.optional(v.string()),
+      tiers: THRESHOLDS,
+    }),
+  ),
+  types: v.array(v.string()),
+  'type-tiers': THRESHOLDS,
+  'trainer-tiers': THRESHOLDS,
+  colors: v.record(v.string(), v.string()),
+});
+
+/** The numbers, out of `achievements.yaml` */
+const written = v.parse(FILE, achievementsFile);
+
 /** The metals: the slot ring and the worn title's badge share them */
 export const TIER_COLORS: Record<AchievementTier, string> = {
   [AchievementTier.None]: '',
-  [AchievementTier.Bronze]: '#b0793f',
-  [AchievementTier.Silver]: '#9aa4b0',
-  [AchievementTier.Gold]: '#e0b64f',
-  [AchievementTier.Platinum]: '#7bc8d2',
+  [AchievementTier.Bronze]: '',
+  [AchievementTier.Silver]: '',
+  [AchievementTier.Gold]: '',
+  [AchievementTier.Platinum]: '',
 };
+
+for (const [name, color] of Object.entries(written.colors)) {
+  TIER_COLORS[idOf<AchievementTier>(ACHIEVEMENT_TIER_IDS, name, `achievements.yaml: colors`)] =
+    color;
+}
 
 export { AchievementLine, AchievementTier };
 
@@ -105,78 +145,52 @@ interface LineAsk {
   landmark?: Landmark;
 }
 
-const LINE_ASKS: Record<AchievementLine, LineAsk> = {
-  [AchievementLine.Collector]: { metric: Metric.Catches },
-  [AchievementLine.Hatcher]: { metric: Metric.Hatches },
-  [AchievementLine.Coach]: { metric: Metric.LevelUps },
-  [AchievementLine.Wayfarer]: { metric: Metric.Steps },
-  [AchievementLine.Socialite]: { metric: Metric.NpcVisits },
-  [AchievementLine.Forager]: { metric: Metric.Landmarks },
-  [AchievementLine.Raider]: { metric: Metric.RaidWins },
-  [AchievementLine.Trader]: { metric: Metric.Trades },
-  [AchievementLine.Auctioneer]: { metric: Metric.Auctions },
-  [AchievementLine.Confidant]: { metric: Metric.Friends },
-  [AchievementLine.Wayfinder]: { metric: Metric.Landmarks, landmark: Landmark.Portal },
-  [AchievementLine.Matchmaker]: { metric: Metric.NpcVisits, npc: Npc.Breeder },
-  [AchievementLine.Purifier]: { metric: Metric.Purifies },
-  [AchievementLine.Pathfinder]: { metric: Metric.Biomes },
-};
+const LINE_ASKS: Record<number, LineAsk> = {};
 
 /** Each line's 4 tier thresholds, Bronze to Platinum, ascending */
-export const LINE_TIERS: Record<AchievementLine, [number, number, number, number]> = {
-  [AchievementLine.Collector]: [10, 50, 250, 1000],
-  [AchievementLine.Hatcher]: [5, 25, 100, 500],
-  [AchievementLine.Coach]: [25, 150, 750, 3000],
-  [AchievementLine.Wayfarer]: [5000, 50_000, 250_000, 1_000_000],
-  [AchievementLine.Socialite]: [10, 50, 250, 1000],
-  [AchievementLine.Forager]: [25, 150, 750, 3000],
-  [AchievementLine.Raider]: [5, 25, 100, 500],
-  [AchievementLine.Trader]: [5, 25, 100, 250],
-  [AchievementLine.Auctioneer]: [5, 25, 100, 250],
-  [AchievementLine.Confidant]: [3, 10, 25, 50],
-  [AchievementLine.Wayfinder]: [3, 10, 50, 200],
-  [AchievementLine.Matchmaker]: [3, 10, 50, 200],
-  [AchievementLine.Purifier]: [3, 10, 50, 200],
-  // Platinum is every biome the world generates: 29 today, Beyond
-  // excluded since nobody stands there
-  [AchievementLine.Pathfinder]: [3, 10, 20, 29],
-};
+export const LINE_TIERS: Record<number, Thresholds> = {};
+
+for (const [name, line] of Object.entries(written.lines)) {
+  const where = `achievements.yaml: ${name}`;
+  const id = idOf<AchievementLine>(ACHIEVEMENT_LINE_IDS, name, where);
+  const ask: LineAsk = { metric: idOf<Metric>(METRIC_IDS, line.metric, where) };
+
+  if (line.npc != null) {
+    ask.npc = idOf<Npc>(NPC_IDS, line.npc, where);
+  }
+  if (line.landmark != null) {
+    ask.landmark = idOf<Landmark>(QUEST_LANDMARK_IDS, line.landmark, where);
+  }
+  LINE_ASKS[id] = ask;
+  LINE_TIERS[id] = line.tiers;
+}
+
+// Every line is written down, so none climbs against nothing
+for (const line of ACHIEVEMENT_LINES) {
+  if (!Object.hasOwn(LINE_ASKS, line)) {
+    throw new Error(`Achievement line ${line} needs a row in achievements.yaml`);
+  }
+}
 
 /**
  * The type lines: one per Gen 1 type, counting lifetime catches of
- * that type, dual-types counting for both. One price for all of
- * them — a thin pool climbs by repeat catches
+ * that type, dual-types counting for both
  */
-export const ACHIEVEMENT_TYPES: Types[] = [
-  Types.Normal,
-  Types.Fighting,
-  Types.Flying,
-  Types.Poison,
-  Types.Ground,
-  Types.Rock,
-  Types.Bug,
-  Types.Ghost,
-  Types.Fire,
-  Types.Water,
-  Types.Grass,
-  Types.Electric,
-  Types.Psychic,
-  Types.Ice,
-  Types.Dragon,
-];
+export const ACHIEVEMENT_TYPES: Types[] = idsOf<Types>(
+  TYPE_IDS,
+  written.types,
+  'achievements.yaml: types',
+);
 
-export const TYPE_TIERS: [number, number, number, number] = [10, 50, 250, 1000];
+export const TYPE_TIERS: Thresholds = written['type-tiers'];
 
 /**
  * The trainer lines: one per **trade** rather than per class, so both
- * regions' Swimmers climb the same line and pay the same title. A
- * stop stands for one window and pays once per player, so these climb
- * far more slowly than a catch counter — the thresholds are priced
- * for that
+ * regions' Swimmers climb the same line and pay the same title
  */
 export const ACHIEVEMENT_TRAINERS: TrainerClass[] = TRAINER_TRADES;
 
-export const TRAINER_TIERS: [number, number, number, number] = [3, 10, 50, 200];
+export const TRAINER_TIERS: Thresholds = written['trainer-tiers'];
 
 /** The counters as `readProgress` hands them over */
 export type Counters = Map<Metric, Map<number, number>>;

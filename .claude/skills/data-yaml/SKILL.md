@@ -69,6 +69,10 @@ Growlithe:
 - **The daily pool's order is part of every player's board.** A seed picks by position, so append and never reorder.
 - A requirement is a counter (`metric` and `count`, narrowed by at most one of `species`, `family`, `type`, `item`, `npc`, `landmark`, `move`, `foe` or `trainer`), `dex: n`, or `turn-in`. A reward is `item` and `amount`, `catch`, `encounter`, `egg` or `award`. The metrics, landmarks and foes are the enums in `src/model/quest-record.ts`.
 
+## Achievements
+
+`src/data/achievements.yaml` holds each achievement line by its enum name (`ids/achievements.ts`): the `metric` it climbs, narrowed by an `npc` or a `landmark`, and its four `tiers`. Beside them are the type lines' `types` and `type-tiers`, the `trainer-tiers`, and each metal's `colors`. A worn title is recorded against a line's number, so a line is appended to the enum and never renumbered.
+
 ## Moves
 
 Under `src/data/moves/`, each part filed by generation and the stretch of moves it was written in (`gen-1/bulbasaur-to-blastoise.yaml`), every move keyed by its name:

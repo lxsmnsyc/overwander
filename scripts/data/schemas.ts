@@ -1123,6 +1123,45 @@ const QUEST_TEXT: Schema = {
   ),
 };
 
+const THRESHOLDS: Schema = described(
+  { type: 'array', items: COUNT, minItems: 4, maxItems: 4 },
+  'Bronze, Silver, Gold and Platinum, ascending',
+);
+
+const ACHIEVEMENTS: Schema = {
+  $schema: DRAFT,
+  title: 'Achievements',
+  ...part(
+    {
+      lines: {
+        type: 'object',
+        propertyNames: name('achievement-line'),
+        additionalProperties: part(
+          {
+            metric: described(name('metric'), 'The lifetime counter it climbs'),
+            npc: name('npc'),
+            landmark: name('quest-landmark'),
+            tiers: THRESHOLDS,
+          },
+          ['metric', 'tiers'],
+        ),
+      },
+      types: names('type', 'The type lines, in the order the shelf shows them'),
+      'type-tiers': THRESHOLDS,
+      'trainer-tiers': THRESHOLDS,
+      colors: described(
+        {
+          type: 'object',
+          propertyNames: name('achievement-tier'),
+          additionalProperties: { type: 'string' },
+        },
+        "Each metal's colour",
+      ),
+    },
+    ['lines', 'types', 'type-tiers', 'trainer-tiers', 'colors'],
+  ),
+};
+
 const ITEM_BAND: Schema = described(
   {
     type: 'object',
@@ -1268,6 +1307,7 @@ export default function renderDataSchemas(members: Map<string, string[]>): Map<s
     ['quests.json', json(QUESTS)],
     ['quests-daily.json', json(DAILY_QUESTS)],
     ['quests-text.json', json(QUEST_TEXT)],
+    ['achievements.json', json(ACHIEVEMENTS)],
     ['honey-tree.json', json({ $schema: DRAFT, title: 'Honey tree pool', ...SPAWN_GROUPS })],
   ]);
 

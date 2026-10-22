@@ -1,7 +1,7 @@
 # The ground's item pool by band, each band a map from item to weight in the
 # order a roll walks it, so moving an entry changes what every stash holds.
 # A lowercase key is a whole family at that weight apiece (`wings: 3`), read
-# from the family's own table. Which ground hides what is biome-items.ts.
+# from the family's own table. Which ground hides what is biome-items.yaml.
 
 base:
   PokeBall: 30

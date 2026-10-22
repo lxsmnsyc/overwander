@@ -952,6 +952,35 @@ const BATTLE_FILES: [file: string, title: string, entry: Schema][] = [
   ],
 ];
 
+const BIOME_ITEMS: Schema = {
+  $schema: DRAFT,
+  title: 'Biome items',
+  ...part(
+    {
+      groups: described(
+        {
+          type: 'object',
+          propertyNames: { type: 'string', pattern: '^[a-z][a-z-]*$' },
+          additionalProperties: names('biome'),
+        },
+        'Named runs of biomes an item can list by the group name',
+      ),
+      items: described(
+        {
+          type: 'object',
+          propertyNames: name('item'),
+          additionalProperties: {
+            type: 'array',
+            items: { anyOf: [name('biome'), { type: 'string', pattern: '^[a-z][a-z-]*$' }] },
+          },
+        },
+        'The ground each item is buried in; an item not listed is buried everywhere',
+      ),
+    },
+    ['groups', 'items'],
+  ),
+};
+
 const ITEM_BAND: Schema = described(
   {
     type: 'object',
@@ -1092,6 +1121,7 @@ export default function renderDataSchemas(members: Map<string, string[]>): Map<s
     ['biome-phenomena.json', json(BIOME_PHENOMENA)],
     ['phenomena-text.json', json(namesText('Phenomenon names', 'phenomenon'))],
     ['item-pool.json', json(ITEM_POOL)],
+    ['biome-items.json', json(BIOME_ITEMS)],
     ['honey-tree.json', json({ $schema: DRAFT, title: 'Honey tree pool', ...SPAWN_GROUPS })],
   ]);
 

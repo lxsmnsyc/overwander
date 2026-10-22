@@ -1,0 +1,54 @@
+# The ground each of these items belongs to. An item not listed is buried
+# everywhere. One line per item rather than one block per biome: what makes a
+# Water Stone a Water Stone is the list of shores it turns up on. A lowercase
+# name is one of the `groups` below, laid down in its order.
+
+groups:
+  water: [Ocean, DeepOcean, CoralReef, KelpForest, PolarOcean]
+  shore: [Beach, RockyCoast, Mangrove]
+  wetland: [Swamp, Bog, Mangrove]
+  forest: [Woodland, TemperateForest, TemperateRainforest, TropicalRainforest, TropicalSeasonalForest, MontaneForest, Taiga]
+  cold: [Glacier, Tundra, AlpineTundra, ColdDesert, Taiga, PolarOcean]
+  arid: [Desert, ColdDesert, Badlands, Steppe]
+  volcanic: [Volcano, Badlands]
+  highland: [Mountain, MontaneForest, AlpineTundra]
+  open: [Grassland, Savanna, Steppe, Shrubland]
+
+items:
+  # The stones, each in the landscape its element belongs to. A line that
+  # asks for one asks the player to go and stand somewhere
+  FireStone: [volcanic, Desert]
+  WaterStone: [water, shore]
+  ThunderStone: [open, Mountain]
+  LeafStone: [forest]
+  MoonStone: [cold, Mountain]
+  SunStone: [Savanna, Desert, TropicalSeasonalForest]
+  ShinyStone: [open, TemperateForest]
+  DuskStone: [forest, Badlands]
+  DawnStone: [highland, Taiga]
+  IceStone: [cold]
+  # The rocks that hold a sky open, each dug out of the sky it holds
+  HeatRock: [volcanic, Desert]
+  DampRock: [wetland, TropicalRainforest, TemperateRainforest]
+  IcyRock: [cold]
+  SmoothRock: [arid]
+  # What the tide leaves
+  ShoalSalt: [shore, water]
+  ShoalShell: [shore, water]
+  Pearl: [water, shore]
+  BigPearl: [water, shore]
+  PearlString: [water]
+  SlowpokeTail: [shore, Swamp]
+  # What grows in the damp shade
+  TinyMushroom: [forest, wetland]
+  BigMushroom: [forest, wetland]
+  BalmMushroom: [forest]
+  Honey: [forest]
+  # Old ground, where what died in it is still near the surface
+  RareBone: [arid, highland, Glacier]
+  # Clear skies, and what falls out of them
+  Stardust: [arid, cold, open]
+  StarPiece: [arid, cold]
+  CometShard: [Desert, ColdDesert, AlpineTundra]
+  # Blown along open ground and caught in the branches
+  PrettyWing: [open, highland, forest]

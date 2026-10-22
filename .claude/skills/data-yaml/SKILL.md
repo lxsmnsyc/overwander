@@ -246,4 +246,4 @@ A file per family in two folders, each item keyed by name:
 
 The build turns each `.yaml` file into a module (`scripts/vite/yaml.ts`), so the browser never parses YAML.
 
-`pnpm typecheck` runs `tsc` with the YAML content mapper (`scripts/yaml-mapper/`, registered under `contentMappers` in `tsconfig.json`): each import is typed as the JSON of its value, and a file that does not parse is a type error at its own line. `types/yaml.d.ts` types every import as `unknown` for the tools that do not run the mapper.
+`pnpm typecheck` runs `tsc` with the YAML content mapper (`scripts/yaml-mapper/`, registered under `contentMappers` in `tsconfig.json`): each import is typed as the JSON of its value, and a file that does not parse is a type error at its own line. There is no `declare module '*.yaml'` fallback, so an editor that is not running the mapper says so with an unresolved import rather than typing the data as `unknown`.

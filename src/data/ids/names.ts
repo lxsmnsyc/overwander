@@ -11,7 +11,7 @@ import Families from './families';
 import { Types } from '../constants/types';
 import { Stages, Stats } from '../constants/stats';
 import { Statuses, TeamStatuses, Terrains, Weathers } from './status';
-import { MoveRole } from './move-roles';
+import MoveRole from './move-roles';
 import { BuildRole, StatusKind } from './builds';
 import Regions from './regions';
 import Natures from './natures';

@@ -2,7 +2,7 @@ import * as v from 'valibot';
 import { Stages } from '../constants/stats';
 import type { Types } from '../constants/types';
 import type { Moves } from '../ids/moves';
-import type { MoveRole } from '../ids/move-roles';
+import type MoveRole from '../ids/move-roles';
 import {
   BATTLE_WEATHER_IDS,
   MOVE_IDS,

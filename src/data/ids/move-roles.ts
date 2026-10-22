@@ -2,7 +2,7 @@
  * What a move is cast for, as the AI weighs it. A move may hold several:
  * Fly is damage, a wind-up and a way out of the next hit all at once
  */
-export const enum MoveRole {
+const enum MoveRole {
   // What a status move is cast for
   /** Keeps the damage off: Protect, Substitute, Fly, Wide Guard */
   Shield = 0,
@@ -55,3 +55,5 @@ export const enum MoveRole {
   /** Binds its target for a while */
   Trapping = 27,
 }
+
+export default MoveRole;

@@ -1,4 +1,4 @@
-import { MoveAffects, MoveCategories, MoveTargets, Moves } from '../../data/ids/moves';
+import { MoveAffects, MoveCategories, MoveTargets, type Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
 import { MOVE_WEATHERS } from '../../data/moves/weather';
@@ -39,7 +39,7 @@ import { GUARDS } from '../moves/team-guards';
 import { TERRAIN_MOVES } from '../moves/terrain';
 import { RECHARGE_MOVES } from '../../data/moves/recharge';
 import { AI_ROLE_MOVES } from '../../data/battle';
-import { MoveRole } from '../../data/ids/move-roles';
+import MoveRole from '../../data/ids/move-roles';
 import { RECOIL_MOVES } from '../../data/moves/recoil';
 
 /**

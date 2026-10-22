@@ -981,6 +981,29 @@ const BIOME_ITEMS: Schema = {
   ),
 };
 
+const TOTEMS: Schema = {
+  $schema: DRAFT,
+  title: 'Totems',
+  type: 'object',
+  propertyNames: name('species'),
+  additionalProperties: part(
+    {
+      aura: described(
+        {
+          type: 'object',
+          propertyNames: { anyOf: [name('stage'), { const: 'all' }] },
+          additionalProperties: { type: 'integer' },
+        },
+        'The stages each stat starts the fight raised by, or `all` for the five',
+      ),
+      height: described(COUNT, 'In meters'),
+      weight: described(COUNT, 'In kilograms'),
+      crystal: described(name('item'), 'What the trial hands over'),
+    },
+    ['aura', 'height', 'weight', 'crystal'],
+  ),
+};
+
 const ITEM_BAND: Schema = described(
   {
     type: 'object',
@@ -1122,6 +1145,7 @@ export default function renderDataSchemas(members: Map<string, string[]>): Map<s
     ['phenomena-text.json', json(namesText('Phenomenon names', 'phenomenon'))],
     ['item-pool.json', json(ITEM_POOL)],
     ['biome-items.json', json(BIOME_ITEMS)],
+    ['totems.json', json(TOTEMS)],
     ['honey-tree.json', json({ $schema: DRAFT, title: 'Honey tree pool', ...SPAWN_GROUPS })],
   ]);
 

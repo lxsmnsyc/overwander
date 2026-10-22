@@ -50,6 +50,7 @@ Growlithe:
 | `overworld/berry-pool.yaml`       | what a berry patch grows, the same shape as the item pool           |
 | `overworld/honey-tree.yaml`       | what a lathered honey tree draws out, by band like a biome's pool   |
 | `overworld/biome-items.yaml`      | the ground each item is buried in, by biome or by a named `groups` run; an item not listed is buried everywhere |
+| `overworld/totems.yaml`           | Alola's own Totems: `aura` (or `all`), height, weight and the trial's `crystal`; every other Totem is by rule |
 | `overworld/weather/biomes.yaml`   | each biome's six skies, and the four `corners` every country shares   |
 
 - **Order is part of the world.** A biome's lair list and each band of the item and berry pools are walked by a seeded roll, so moving an entry changes what every player's map holds. Append; never reorder.

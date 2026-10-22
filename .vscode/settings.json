@@ -82,6 +82,7 @@
       "src/data/overworld/berry-pool.yaml"
     ],
     "./src/data/schema/honey-tree.json": "src/data/overworld/honey-tree.yaml",
-    "./src/data/schema/biome-items.json": "src/data/overworld/biome-items.yaml"
+    "./src/data/schema/biome-items.json": "src/data/overworld/biome-items.yaml",
+    "./src/data/schema/totems.json": "src/data/overworld/totems.yaml"
   }
 }

@@ -30,6 +30,8 @@ interface Table {
   isDefault?: boolean;
   /** Written as a frozen object rather than an `enum` */
   isObject?: boolean;
+  /** Imported under this name, where two enums share one */
+  alias?: string;
 }
 
 const TABLES: Table[] = [
@@ -86,6 +88,17 @@ const TABLES: Table[] = [
   { name: 'ACHIEVEMENT_TIER_IDS', enumName: 'AchievementTier', from: './achievements' },
   { name: 'ACHIEVEMENT_LINE_IDS', enumName: 'AchievementLine', from: './achievements' },
   { name: 'LADDER_TITLE_IDS', enumName: 'LadderTitle', from: './ladder-titles', isDefault: true },
+  { name: 'BALL_IDS', enumName: 'Balls', from: './items' },
+  { name: 'QUEST_IDS', enumName: 'Quests', from: '../quests/types' },
+  { name: 'CHAIN_IDS', enumName: 'Chains', from: '../quests/types' },
+  { name: 'METRIC_IDS', enumName: 'Metric', from: '../../model/quest-record' },
+  {
+    name: 'QUEST_LANDMARK_IDS',
+    enumName: 'Landmark',
+    from: '../../model/quest-record',
+    alias: 'QuestLandmark',
+  },
+  { name: 'FOE_IDS', enumName: 'Foe', from: '../../model/quest-record' },
 ];
 
 /** The member names of one enum, in the order they are declared */
@@ -119,7 +132,7 @@ export function enumMembers(): Map<string, string[]> {
   const members = new Map<string, string[]>();
 
   for (const table of TABLES) {
-    members.set(table.enumName, membersOf(table));
+    members.set(table.alias ?? table.enumName, membersOf(table));
   }
   return members;
 }
@@ -132,19 +145,21 @@ export default function renderIdNames(): string {
 
   for (const table of TABLES) {
     const [fallback, named] = imports.get(table.from) ?? ['', []];
+    const local = table.alias ?? table.enumName;
+    const imported = table.alias == null ? local : `${table.enumName} as ${local}`;
 
     imports.set(
       table.from,
-      table.isDefault === true ? [table.enumName, named] : [fallback, [...named, table.enumName]],
+      table.isDefault === true ? [local, named] : [fallback, [...named, imported]],
     );
 
     const entries: string[] = [];
 
     for (const member of membersOf(table)) {
-      entries.push(`  ${member}: ${table.enumName}.${member},`);
+      entries.push(`  ${member}: ${local}.${member},`);
     }
     blocks.push(
-      `export const ${table.name} = {\n${entries.join('\n')}\n} as const satisfies Record<string, ${table.enumName}>;`,
+      `export const ${table.name} = {\n${entries.join('\n')}\n} as const satisfies Record<string, ${local}>;`,
     );
   }
 
@@ -154,7 +169,10 @@ export default function renderIdNames(): string {
   ];
 
   for (const [from, [fallback, named]] of imports) {
-    const braces = named.length === 0 ? '' : `{ ${[...named].sort().join(', ')} }`;
+    // Sorted by the name each is bound to, which is what the linter reads
+    const bound = (spec: string): string => spec.slice(spec.lastIndexOf(' ') + 1);
+    const sorted = [...named].sort((one, two) => (bound(one) < bound(two) ? -1 : 1));
+    const braces = named.length === 0 ? '' : `{ ${sorted.join(', ')} }`;
     const what = [fallback, braces].filter((part) => part !== '').join(', ');
 
     lines.push(`import ${what} from '${from}';`);

@@ -1,5 +1,9 @@
-import { Items } from '../ids/items';
-import { Species } from '../ids/species';
+import * as v from 'valibot';
+import type { Items } from '../ids/items';
+import { ITEM_IDS, SPECIES_IDS } from '../ids/names';
+import type { Species } from '../ids/species';
+import { idOf } from '../yaml';
+import fusionsFile from './fusions.yaml';
 
 /**
  * A fusion is two pokemon standing as one: the husk takes the shape
@@ -7,7 +11,7 @@ import { Species } from '../ids/species';
  * an item puts the pair together and takes them apart again.
  *
  * Everything that asks about a fusion asks here rather than naming the
- * species, so a new pair is one row in the table
+ * species, so a new pair is one row in `fusions.yaml`
  */
 interface Fusion {
   /** The pokemon the partner is folded into */
@@ -25,62 +29,26 @@ interface Fusion {
   wearsPartner: boolean;
 }
 
-const FUSIONS = new Map<Species, Fusion>([
-  [
-    Species.KyuremBlack,
-    {
-      husk: Species.Kyurem,
-      partner: Species.Zekrom,
-      item: Items.DnaSplicers,
-      wearsPartner: true,
-    },
-  ],
-  [
-    Species.KyuremWhite,
-    {
-      husk: Species.Kyurem,
-      partner: Species.Reshiram,
-      item: Items.DnaSplicers,
-      wearsPartner: true,
-    },
-  ],
-  [
-    Species.NecrozmaDuskMane,
-    {
-      husk: Species.Necrozma,
-      partner: Species.Solgaleo,
-      item: Items.NSolarizer,
-      wearsPartner: false,
-    },
-  ],
-  [
-    Species.NecrozmaDawnWings,
-    {
-      husk: Species.Necrozma,
-      partner: Species.Lunala,
-      item: Items.NLunarizer,
-      wearsPartner: false,
-    },
-  ],
-  [
-    Species.CalyrexIce,
-    {
-      husk: Species.Calyrex,
-      partner: Species.Glastrier,
-      item: Items.ReinsOfUnity,
-      wearsPartner: true,
-    },
-  ],
-  [
-    Species.CalyrexShadow,
-    {
-      husk: Species.Calyrex,
-      partner: Species.Spectrier,
-      item: Items.ReinsOfUnity,
-      wearsPartner: true,
-    },
-  ],
-]);
+const FUSION = v.object({
+  husk: v.string(),
+  partner: v.string(),
+  item: v.string(),
+  'wears-partner': v.optional(v.boolean()),
+});
+
+/** Each fused shape, out of `fusions.yaml` */
+const FUSIONS = new Map<Species, Fusion>();
+
+for (const [name, written] of Object.entries(v.parse(v.record(v.string(), FUSION), fusionsFile))) {
+  const where = `fusions.yaml: ${name}`;
+
+  FUSIONS.set(idOf<Species>(SPECIES_IDS, name, where), {
+    husk: idOf<Species>(SPECIES_IDS, written.husk, where),
+    partner: idOf<Species>(SPECIES_IDS, written.partner, where),
+    item: idOf<Items>(ITEM_IDS, written.item, where),
+    wearsPartner: written['wears-partner'] === true,
+  });
+}
 
 /** Every item that joins a pair, which the evolution road leaves alone */
 export const FUSION_ITEMS = new Set<Items>();

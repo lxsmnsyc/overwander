@@ -85,6 +85,7 @@ Skorupi:
   Skorupi:
     types: [Poison, Bug]
     egg-groups: [Bug, Water3]
+    spawns-as: ground
     biomes: [Desert, Shrubland, Steppe]
     active: [Evening, Night]
     evolves-into:
@@ -94,6 +95,7 @@ Skorupi:
   Drapion:
     types: [Poison, Dark]
     egg-groups: [Bug, Water3]
+    spawns-as: ground
     biomes: [Desert, Shrubland, Steppe]
     active: [Evening, Night]
     evolves-from: Skorupi

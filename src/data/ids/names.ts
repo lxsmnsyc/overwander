@@ -4,7 +4,7 @@ import { EvolutionMethod, Genders, Habitat, Species } from './species';
 import { MoveAffects, MoveCategories, MoveFlags, MoveTargets, Moves } from './moves';
 import { SpriteAnim } from './sprite-anims';
 import Abilities from './abilities';
-import { ItemFlags, ItemTypes, Items } from './items';
+import { Balls, ItemFlags, ItemTypes, Items } from './items';
 import Biome, { SpawnRarity, TimeOfDay } from './biome';
 import { EggGroups } from './egg-groups';
 import Families from './families';
@@ -33,6 +33,8 @@ import Phenomenon from './phenomena';
 import Weather from './weather';
 import { AchievementLine, AchievementTier } from './achievements';
 import LadderTitle from './ladder-titles';
+import { Chains, Quests } from '../quests/types';
+import { Foe, Metric, Landmark as QuestLandmark } from '../../model/quest-record';
 
 export const SPECIES_IDS = {
   Missingno: Species.Missingno,
@@ -5830,3 +5832,121 @@ export const LADDER_TITLE_IDS = {
   HoennChampion: LadderTitle.HoennChampion,
   SinnohChampion: LadderTitle.SinnohChampion,
 } as const satisfies Record<string, LadderTitle>;
+
+export const BALL_IDS = {
+  PokeBall: Balls.PokeBall,
+  GreatBall: Balls.GreatBall,
+  UltraBall: Balls.UltraBall,
+  MasterBall: Balls.MasterBall,
+  PremierBall: Balls.PremierBall,
+  HealBall: Balls.HealBall,
+  LuxuryBall: Balls.LuxuryBall,
+  NetBall: Balls.NetBall,
+  DiveBall: Balls.DiveBall,
+  NestBall: Balls.NestBall,
+  RepeatBall: Balls.RepeatBall,
+  TimerBall: Balls.TimerBall,
+  QuickBall: Balls.QuickBall,
+  DuskBall: Balls.DuskBall,
+  LevelBall: Balls.LevelBall,
+  LureBall: Balls.LureBall,
+  MoonBall: Balls.MoonBall,
+  FriendBall: Balls.FriendBall,
+  LoveBall: Balls.LoveBall,
+  HeavyBall: Balls.HeavyBall,
+  FastBall: Balls.FastBall,
+  BeastBall: Balls.BeastBall,
+} as const satisfies Record<string, Balls>;
+
+export const QUEST_IDS = {
+  FirstCatch: Quests.FirstCatch,
+  GrowingTeam: Quests.GrowingTeam,
+  NewFaces: Quests.NewFaces,
+  FieldNotes: Quests.FieldNotes,
+  PickingFights: Quests.PickingFights,
+  RocketTrouble: Quests.RocketTrouble,
+  CleanupCrew: Quests.CleanupCrew,
+  RaidRookie: Quests.RaidRookie,
+  BossDown: Quests.BossDown,
+  SirenVeteran: Quests.SirenVeteran,
+  OddLights: Quests.OddLights,
+  StormChaser: Quests.StormChaser,
+  EggSpotting: Quests.EggSpotting,
+  OutForAWalk: Quests.OutForAWalk,
+  FreshHatch: Quests.FreshHatch,
+  Matchmaker: Quests.Matchmaker,
+  NestForANibble: Quests.NestForANibble,
+  SideBySide: Quests.SideBySide,
+  DayAtTheSpa: Quests.DayAtTheSpa,
+  GrowthSpurt: Quests.GrowthSpurt,
+  BalancedDiet: Quests.BalancedDiet,
+  NewTricks: Quests.NewTricks,
+  FullBloom: Quests.FullBloom,
+  OpeningBid: Quests.OpeningBid,
+  Sold: Quests.Sold,
+  OverTheHill: Quests.OverTheHill,
+  ThroughTheDoor: Quests.ThroughTheDoor,
+  FarAfield: Quests.FarAfield,
+  FriendlyFace: Quests.FriendlyFace,
+  FairSwap: Quests.FairSwap,
+  FineTuning: Quests.FineTuning,
+} as const satisfies Record<string, Quests>;
+
+export const CHAIN_IDS = {
+  Catching: Chains.Catching,
+  Battling: Chains.Battling,
+  Raiding: Chains.Raiding,
+  Phenomena: Chains.Phenomena,
+  Eggs: Chains.Eggs,
+  Happiness: Chains.Happiness,
+  Training: Chains.Training,
+  Auctions: Chains.Auctions,
+  Biomes: Chains.Biomes,
+  Friends: Chains.Friends,
+} as const satisfies Record<string, Chains>;
+
+export const METRIC_IDS = {
+  Catches: Metric.Catches,
+  Hatches: Metric.Hatches,
+  LevelUps: Metric.LevelUps,
+  ItemUses: Metric.ItemUses,
+  Steps: Metric.Steps,
+  NpcVisits: Metric.NpcVisits,
+  Landmarks: Metric.Landmarks,
+  RaidRuns: Metric.RaidRuns,
+  RaidWins: Metric.RaidWins,
+  Trades: Metric.Trades,
+  Friends: Metric.Friends,
+  Auctions: Metric.Auctions,
+  Purifies: Metric.Purifies,
+  Evolutions: Metric.Evolutions,
+  Releases: Metric.Releases,
+  MovesLearned: Metric.MovesLearned,
+  BattleWins: Metric.BattleWins,
+  GoldEarned: Metric.GoldEarned,
+  GoldSpent: Metric.GoldSpent,
+  Gifts: Metric.Gifts,
+  Bids: Metric.Bids,
+  ShinyCatches: Metric.ShinyCatches,
+  TrainerWins: Metric.TrainerWins,
+  Biomes: Metric.Biomes,
+  EffortAssigned: Metric.EffortAssigned,
+} as const satisfies Record<string, Metric>;
+
+export const QUEST_LANDMARK_IDS = {
+  Cache: QuestLandmark.Cache,
+  Berry: QuestLandmark.Berry,
+  Nest: QuestLandmark.Nest,
+  Phenomenon: QuestLandmark.Phenomenon,
+  Portal: QuestLandmark.Portal,
+  Apricorn: QuestLandmark.Apricorn,
+} as const satisfies Record<string, QuestLandmark>;
+
+export const FOE_IDS = {
+  Rocket: Foe.Rocket,
+  GymLeader: Foe.GymLeader,
+  EliteFour: Foe.EliteFour,
+  Champion: Foe.Champion,
+  Trainer: Foe.Trainer,
+  GymSeat: Foe.GymSeat,
+} as const satisfies Record<string, Foe>;

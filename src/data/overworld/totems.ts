@@ -1,14 +1,18 @@
+import * as v from 'valibot';
 import { STAT_ORDER, Stages, Stats } from '../constants/stats';
 import type Abilities from '../ids/abilities';
 import type { Types } from '../constants/types';
 import { isLegendarySpecies, isMythicalSpecies } from '../biome/__create';
 import { Items } from '../ids/items';
+import { ITEM_IDS, SPECIES_IDS, STAGE_IDS } from '../ids/names';
 import { Species } from '../ids/species';
 import { TYPE_CRYSTALS } from '../items/z-crystals';
 import { getBaseSpecies, getSpeciesData, isWornForm } from '../species/__create';
 import { isFullyEvolved } from '../species/evolution';
 import { isTrueShadow } from '../species/true-shadow';
 import { isUltraBeast } from '../species/ultra-beasts';
+import { idOf } from '../yaml';
+import totemsFile from './totems.yaml';
 
 /**
  * Totem Pokémon: an oversized boss standing at a Totem landmark, an
@@ -16,8 +20,8 @@ import { isUltraBeast } from '../species/ultra-beasts';
  *
  * It starts the fight wrapped in an aura that raises its stats, calls
  * one ally of its own line once it is down to half, and leaves the
- * trial's Z-Crystal behind. Alola's twelve are written out as the
- * games had them (Ultra Sun and Ultra Moon where the two differ);
+ * trial's Z-Crystal behind. Alola's twelve are written out in
+ * `totems.yaml` as the games had them;
  * every other final stage is a Totem by rule, so a site in any biome
  * can hold the Totem of a line that lives there.
  */
@@ -54,50 +58,34 @@ function allStats(stages: number): TotemAura {
   };
 }
 
-/**
- * Alola's Totems, as the trials had them. Hakamo-o was a Totem only in
- * the special demo, so it is not one here
- */
-const CANON_TOTEMS = new Map<Species, CanonTotem>([
-  [
-    Species.Gumshoos,
-    { aura: { [Stages.Defense]: 1 }, height: 1.4, weight: 60, crystal: Items.NormaliumZ },
-  ],
-  [
-    Species.RaticateAlola,
-    { aura: { [Stages.Defense]: 1 }, height: 1.4, weight: 105, crystal: Items.NormaliumZ },
-  ],
-  // The only Totem the same size as its species: the school is what
-  // makes it big, and Schooling already does that
-  [
-    Species.Wishiwashi,
-    { aura: { [Stages.Defense]: 1 }, height: 0.2, weight: 0.3, crystal: Items.WateriumZ },
-  ],
-  [
-    Species.Araquanid,
-    { aura: { [Stages.Speed]: 1 }, height: 3.1, weight: 217.5, crystal: Items.WateriumZ },
-  ],
-  [
-    Species.Salazzle,
-    { aura: { [Stages.SpecialDefense]: 1 }, height: 2.1, weight: 81, crystal: Items.FiriumZ },
-  ],
-  [
-    Species.MarowakAlola,
-    { aura: { [Stages.Speed]: 1 }, height: 1.7, weight: 98, crystal: Items.FiriumZ },
-  ],
-  [
-    Species.Lurantis,
-    { aura: { [Stages.Speed]: 2 }, height: 1.5, weight: 58, crystal: Items.GrassiumZ },
-  ],
-  [Species.Vikavolt, { aura: allStats(1), height: 2.6, weight: 147.5, crystal: Items.ElectriumZ }],
-  [
-    Species.Togedemaru,
-    { aura: { [Stages.Defense]: 2 }, height: 0.6, weight: 13, crystal: Items.ElectriumZ },
-  ],
-  [Species.Mimikyu, { aura: allStats(1), height: 0.4, weight: 2.8, crystal: Items.GhostiumZ }],
-  [Species.KommoO, { aura: allStats(1), height: 2.4, weight: 207.5, crystal: Items.DragoniumZ }],
-  [Species.Ribombee, { aura: allStats(2), height: 0.4, weight: 2, crystal: Items.FairiumZ }],
-]);
+const CANON = v.object({
+  aura: v.record(v.string(), v.number()),
+  height: v.number(),
+  weight: v.number(),
+  crystal: v.string(),
+});
+
+/** Alola's Totems, as the trials had them, written in `totems.yaml` */
+const CANON_TOTEMS = new Map<Species, CanonTotem>();
+
+for (const [name, written] of Object.entries(v.parse(v.record(v.string(), CANON), totemsFile))) {
+  const where = `totems.yaml: ${name}`;
+  let aura: TotemAura = {};
+
+  for (const [stage, stages] of Object.entries(written.aura)) {
+    if (stage === 'all') {
+      aura = { ...aura, ...allStats(stages) };
+    } else {
+      aura[idOf<Stages>(STAGE_IDS, stage, where)] = stages;
+    }
+  }
+  CANON_TOTEMS.set(idOf<Species>(SPECIES_IDS, name, where), {
+    aura,
+    height: written.height,
+    weight: written.weight,
+    crystal: idOf<Items>(ITEM_IDS, written.crystal, where),
+  });
+}
 
 /**
  * How much bigger a Totem by rule is than its species: twice as tall,

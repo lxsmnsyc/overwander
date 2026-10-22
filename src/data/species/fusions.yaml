@@ -1,0 +1,34 @@
+# Each fused shape: the `husk` the partner is folded into, the `partner` kept
+# inside it, and the `item` that joins and parts the pair. `wears-partner`
+# fights with the partner's abilities too: Kyurem's shapes do, and a rider
+# wears its steed's neigh beside the king's Unnerve, which is As One. Necrozma
+# keeps its own armour whatever it has absorbed.
+
+KyuremBlack:
+  husk: Kyurem
+  partner: Zekrom
+  item: DnaSplicers
+  wears-partner: true
+KyuremWhite:
+  husk: Kyurem
+  partner: Reshiram
+  item: DnaSplicers
+  wears-partner: true
+NecrozmaDuskMane:
+  husk: Necrozma
+  partner: Solgaleo
+  item: NSolarizer
+NecrozmaDawnWings:
+  husk: Necrozma
+  partner: Lunala
+  item: NLunarizer
+CalyrexIce:
+  husk: Calyrex
+  partner: Glastrier
+  item: ReinsOfUnity
+  wears-partner: true
+CalyrexShadow:
+  husk: Calyrex
+  partner: Spectrier
+  item: ReinsOfUnity
+  wears-partner: true

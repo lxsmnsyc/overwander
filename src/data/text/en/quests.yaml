@@ -1,0 +1,54 @@
+# What each written chain, quest and daily is called, by the name the data
+# files key it by.
+
+chains:
+  Catching: Catcher's Start
+  Battling: Roadside Rivals
+  Raiding: Raid Sirens
+  Phenomena: Strange Weather
+  Eggs: The Hatchery
+  Happiness: Warm Company
+  Training: Coaching Course
+  Auctions: Auction House
+  Biomes: The Wide World
+  Friends: Better Together
+
+quests:
+  FirstCatch: First Catch
+  GrowingTeam: Growing Team
+  NewFaces: New Faces
+  FieldNotes: Field Notes
+  PickingFights: Picking Fights
+  RocketTrouble: Rocket Trouble
+  CleanupCrew: Cleanup Crew
+  RaidRookie: Raid Rookie
+  BossDown: Boss Down
+  SirenVeteran: Siren Veteran
+  OddLights: Odd Lights
+  StormChaser: Storm Chaser
+  EggSpotting: Egg Spotting
+  OutForAWalk: Out for a Walk
+  FreshHatch: Fresh Hatch
+  Matchmaker: Matchmaker
+  NestForANibble: Nest for a Nibble
+  SideBySide: Side by Side
+  DayAtTheSpa: Day at the Spa
+  GrowthSpurt: Growth Spurt
+  BalancedDiet: Balanced Diet
+  NewTricks: New Tricks
+  FullBloom: Full Bloom
+  OpeningBid: Opening Bid
+  Sold: Sold!
+  OverTheHill: Over the Hill
+  ThroughTheDoor: Through the Door
+  FarAfield: Far Afield
+  FriendlyFace: A Friendly Face
+  FairSwap: Fair Swap
+  FineTuning: Fine Tuning
+
+daily:
+  RoadsideChallenge: Roadside Challenge
+  LocalRounds: Local Rounds
+  ForagersRounds: Forager's Rounds
+  WellSupplied: Well Supplied
+  AnswerTheSiren: Answer the Siren

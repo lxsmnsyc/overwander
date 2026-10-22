@@ -5852,6 +5852,130 @@
         "SinnohChampion"
       ]
     },
+    "ball": {
+      "enum": [
+        "PokeBall",
+        "GreatBall",
+        "UltraBall",
+        "MasterBall",
+        "PremierBall",
+        "HealBall",
+        "LuxuryBall",
+        "NetBall",
+        "DiveBall",
+        "NestBall",
+        "RepeatBall",
+        "TimerBall",
+        "QuickBall",
+        "DuskBall",
+        "LevelBall",
+        "LureBall",
+        "MoonBall",
+        "FriendBall",
+        "LoveBall",
+        "HeavyBall",
+        "FastBall",
+        "BeastBall"
+      ]
+    },
+    "quest": {
+      "enum": [
+        "FirstCatch",
+        "GrowingTeam",
+        "NewFaces",
+        "FieldNotes",
+        "PickingFights",
+        "RocketTrouble",
+        "CleanupCrew",
+        "RaidRookie",
+        "BossDown",
+        "SirenVeteran",
+        "OddLights",
+        "StormChaser",
+        "EggSpotting",
+        "OutForAWalk",
+        "FreshHatch",
+        "Matchmaker",
+        "NestForANibble",
+        "SideBySide",
+        "DayAtTheSpa",
+        "GrowthSpurt",
+        "BalancedDiet",
+        "NewTricks",
+        "FullBloom",
+        "OpeningBid",
+        "Sold",
+        "OverTheHill",
+        "ThroughTheDoor",
+        "FarAfield",
+        "FriendlyFace",
+        "FairSwap",
+        "FineTuning"
+      ]
+    },
+    "chain": {
+      "enum": [
+        "Catching",
+        "Battling",
+        "Raiding",
+        "Phenomena",
+        "Eggs",
+        "Happiness",
+        "Training",
+        "Auctions",
+        "Biomes",
+        "Friends"
+      ]
+    },
+    "metric": {
+      "enum": [
+        "Catches",
+        "Hatches",
+        "LevelUps",
+        "ItemUses",
+        "Steps",
+        "NpcVisits",
+        "Landmarks",
+        "RaidRuns",
+        "RaidWins",
+        "Trades",
+        "Friends",
+        "Auctions",
+        "Purifies",
+        "Evolutions",
+        "Releases",
+        "MovesLearned",
+        "BattleWins",
+        "GoldEarned",
+        "GoldSpent",
+        "Gifts",
+        "Bids",
+        "ShinyCatches",
+        "TrainerWins",
+        "Biomes",
+        "EffortAssigned"
+      ]
+    },
+    "quest-landmark": {
+      "enum": [
+        "Cache",
+        "Berry",
+        "Nest",
+        "Phenomenon",
+        "Portal",
+        "Apricorn"
+      ]
+    },
+    "foe": {
+      "enum": [
+        "Rocket",
+        "GymLeader",
+        "EliteFour",
+        "Champion",
+        "Trainer",
+        "GymSeat"
+      ]
+    },
     "effect-shape": {
       "enum": [
         "Impact",

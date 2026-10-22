@@ -4,6 +4,7 @@
 # What each is called and says is text/en/trainers.
 
 KalosAceTrainer:
+  ace: true
   types: []
   sheets:
     - characters/xy/ace-trainer

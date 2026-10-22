@@ -1,6 +1,7 @@
 import type { Types } from '../constants/types';
 import { MoveCategories, Moves } from '../ids/moves';
-import { Species } from '../ids/species';
+import type { Species } from '../ids/species';
+import { CANON_BURSTS } from '../overworld/nobles';
 import { getMoveData, getRegisteredMoves } from './__create';
 import { G_MAX_MOVES } from './gmax-moves';
 import { MAX_MOVES } from './max-moves';
@@ -10,17 +11,11 @@ import { Z_MOVES } from './z-moves';
 /**
  * The Frenzy bursts a Noble unleashes. Like the G-Max Moves, none of
  * them is learned, copied, called or remembered. The battle side is
- * in `src/battle/abilities/special/noble.ts`
+ * in `src/battle/abilities/special/noble.ts`, and which Noble throws
+ * which burst is `overworld/nobles.yaml`
  */
 
-/** Hisui's five Nobles, each with a burst of its own */
-export const CANON_BURSTS = new Map<Species, Moves>([
-  [Species.Kleavor, Moves.FrenzyStoneAxe],
-  [Species.LilligantHisui, Moves.FrenzyPetalStorm],
-  [Species.ArcanineHisui, Moves.FrenzyWildfire],
-  [Species.ElectrodeHisui, Moves.FrenzyBlast],
-  [Species.AvaluggHisui, Moves.FrenzyIceberg],
-]);
+export { CANON_BURSTS };
 
 /** Every Frenzy burst */
 export const FRENZY_MOVES = new Set<Moves>([...CANON_BURSTS.values(), Moves.FrenzyBurst]);

@@ -1,0 +1,27 @@
+# What a pokemon carrying a status is drawn doing instead of idling, read the
+# way a move's `cast` is: left to right until the sheet has the clip, every
+# list ending on a common one. The order is the order the fight reads them in,
+# first match wins: a flinch first because it is about to end, then the ones
+# that stop a pokemon acting at all, then the ones it can act through. A
+# pokemon both confused and paralyzed is drawn paralyzed, because that is the
+# one deciding whether it moves at all.
+
+# Knocked out of its own turn: it took something and it is showing
+Flinched: [Hurt]
+# A boss that has not woken up yet is asleep, as far as the picture is
+# concerned. Nothing else says what dormant means
+Dormant: [Sleep]
+Sleeping: [Sleep]
+# Reeling where it stands, the way a confused one does
+Staggered: [Twirl, Shake, Hurt]
+# Shivering where it stands: a Shake reads as cold on the sheets that have
+# one, and a Hurt reads as unable to move on the ones that do not
+Frozen: [Shake, Hurt]
+# Spent, after a move that costs the turn behind it
+Recharging: [Sleep]
+Paralyzed: [Shock, Shake, Hurt]
+Confused: [Twirl, Shake, Hurt]
+# Winding up rather than suffering: both of these are a pokemon holding
+# something in, and Charge is what a sheet draws that with
+Biding: [Charge]
+Raging: [Swell, RearUp, Charge]

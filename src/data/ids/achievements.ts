@@ -1,5 +1,5 @@
-/** How far up an achievement line a player stands */
-export const enum AchievementTier {
+/** The four metals an achievement line climbs, and none */
+const enum AchievementTier {
   None = 0,
   Bronze = 1,
   Silver = 2,
@@ -7,8 +7,12 @@ export const enum AchievementTier {
   Platinum = 4,
 }
 
-/** What an achievement counts. A worn title is numbered by it, so append only */
-export const enum AchievementLine {
+/**
+ * The achievement lines. A worn title is recorded against the number,
+ * so a line is appended and never renumbered. What each counts is
+ * `src/data/achievements.yaml`
+ */
+const enum AchievementLine {
   Collector = 0,
   Hatcher = 1,
   Coach = 2,
@@ -24,3 +28,5 @@ export const enum AchievementLine {
   Purifier = 12,
   Pathfinder = 13,
 }
+
+export { AchievementLine, AchievementTier };

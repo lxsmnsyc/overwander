@@ -1,0 +1,22 @@
+# The battle feat each species has to perform to open its `Special`
+# evolution: `criticals` landed, damage `endured` without fainting, a move
+# `landed` some number of times, or `recoil` taken without fainting. A
+# `cumulative` feat is counted across every fight, and its running total is
+# kept on the catch.
+
+FarfetchdGalar:
+  criticals: 3
+YamaskGalar:
+  endured: 49
+Stantler:
+  landed: { move: PsyshieldBash, count: 20 }
+  cumulative: true
+QwilfishHisui:
+  landed: { move: BarbBarrage, count: 20 }
+  cumulative: true
+BasculinWhite:
+  recoil: 294
+  cumulative: true
+Primeape:
+  landed: { move: RageFist, count: 20 }
+  cumulative: true

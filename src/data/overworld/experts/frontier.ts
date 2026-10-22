@@ -9,14 +9,17 @@ import {
   FRONTIER_RULE_IDS,
   PIKE_CURTAIN_IDS,
   SPECIES_IDS,
+  STATUS_IDS,
+  WEATHER_IDS,
 } from '../../ids/names';
 import type { Species } from '../../ids/species';
-import { Statuses } from '../../ids/status';
+import type { Statuses } from '../../ids/status';
 import namesFile from '../../text/en/frontier.yaml';
-import roomsFile from '../../text/en/frontier-rooms.yaml';
-import Weather from '../weather/kinds';
+import roomTextFile from '../../text/en/frontier-rooms.yaml';
+import type Weather from '../weather/kinds';
 import { idOf, idsOf, stringTable } from '../../yaml';
 import frontierFile from './frontier.yaml';
+import roomsFile from './frontier-rooms.yaml';
 import { getWorldExpertPool } from './pools';
 
 export { ArcadePanel, FrontierBrain, FrontierRule, PikeCurtain };
@@ -140,30 +143,32 @@ export const FRONTIER_TEAM_SIZE = 3;
 export const FRONTIER_TIME_TURNS = 10;
 export const FRONTIER_TIME_LIMIT = turns(FRONTIER_TIME_TURNS);
 
+const ROOMS = v.object({
+  curtains: v.record(v.string(), v.nullable(v.string())),
+  panels: v.record(v.string(), v.nullable(v.string())),
+});
+
+const rooms = v.parse(ROOMS, roomsFile);
+
 /**
- * The curtains, in the order they are drawn from. Four of the five
- * cost something and one of them gives, which is the Pike's whole
- * character: it is the one house where walking in is a gamble rather
- * than a test
+ * The curtains, in the order they are drawn from, out of
+ * `frontier-rooms.yaml`
  */
-export const PIKE_CURTAINS: PikeCurtain[] = [
-  PikeCurtain.Poisoned,
-  PikeCurtain.Burned,
-  PikeCurtain.Paralysed,
-  PikeCurtain.Asleep,
-  PikeCurtain.Healed,
-];
+export const PIKE_CURTAINS: PikeCurtain[] = [];
 
 /** The status each curtain leaves on the party, or null for the kind one */
-export const PIKE_CURTAIN_STATUSES: Record<PikeCurtain, Statuses | null> = {
-  [PikeCurtain.Poisoned]: Statuses.Poisoned,
-  [PikeCurtain.Burned]: Statuses.Burned,
-  [PikeCurtain.Paralysed]: Statuses.Paralyzed,
-  [PikeCurtain.Asleep]: Statuses.Sleeping,
-  [PikeCurtain.Healed]: null,
-};
+export const PIKE_CURTAIN_STATUSES: Record<number, Statuses | null> = {};
 
-const ROOM_TEXT = v.parse(v.object({ curtains: v.unknown(), panels: v.unknown() }), roomsFile);
+for (const [name, status] of Object.entries(rooms.curtains)) {
+  const where = `frontier-rooms.yaml: ${name}`;
+  const curtain = idOf<PikeCurtain>(PIKE_CURTAIN_IDS, name, where);
+
+  PIKE_CURTAINS.push(curtain);
+  PIKE_CURTAIN_STATUSES[curtain] =
+    status == null ? null : idOf<Statuses>(STATUS_IDS, status, where);
+}
+
+const ROOM_TEXT = v.parse(v.object({ curtains: v.unknown(), panels: v.unknown() }), roomTextFile);
 
 /** What each curtain is called, for the line the fight is announced with */
 export const PIKE_CURTAIN_NAMES = stringTable<PikeCurtain>(
@@ -183,26 +188,19 @@ export function pickPikeCurtain(roll: number): PikeCurtain {
   return PIKE_CURTAINS[Math.min(at, PIKE_CURTAINS.length - 1)];
 }
 
-export const ARCADE_PANELS: ArcadePanel[] = [
-  ArcadePanel.Sun,
-  ArcadePanel.Rain,
-  ArcadePanel.Sandstorm,
-  ArcadePanel.Hail,
-  ArcadePanel.Stripped,
-  ArcadePanel.Poisoned,
-  ArcadePanel.Mended,
-];
+/** The panels, in the order they are drawn from */
+export const ARCADE_PANELS: ArcadePanel[] = [];
 
 /** The sky a panel puts over the fight, or null for one that is not weather */
-export const ARCADE_PANEL_WEATHER: Record<ArcadePanel, Weather | null> = {
-  [ArcadePanel.Sun]: Weather.Heatwave,
-  [ArcadePanel.Rain]: Weather.Rain,
-  [ArcadePanel.Sandstorm]: Weather.Sandstorm,
-  [ArcadePanel.Hail]: Weather.Hail,
-  [ArcadePanel.Stripped]: null,
-  [ArcadePanel.Poisoned]: null,
-  [ArcadePanel.Mended]: null,
-};
+export const ARCADE_PANEL_WEATHER: Record<number, Weather | null> = {};
+
+for (const [name, sky] of Object.entries(rooms.panels)) {
+  const where = `frontier-rooms.yaml: ${name}`;
+  const panel = idOf<ArcadePanel>(ARCADE_PANEL_IDS, name, where);
+
+  ARCADE_PANELS.push(panel);
+  ARCADE_PANEL_WEATHER[panel] = sky == null ? null : idOf<Weather>(WEATHER_IDS, sky, where);
+}
 
 /** What each panel is called, for the line the fight is announced with */
 export const ARCADE_PANEL_NAMES = stringTable<ArcadePanel>(

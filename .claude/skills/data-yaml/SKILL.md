@@ -11,7 +11,7 @@ Under `src/data/species/`, with a folder per region inside each field:
 
 | folder                   | holds                                                                    |
 | ------------------------ | ------------------------------------------------------------------------ |
-| `world/`                 | types, egg groups, habitat, biomes, active hours, evolutions, form flags, `held` items, `rank`, `awaiting` |
+| `world/`                 | types, egg groups, habitat, biomes, active hours, evolutions, form flags, `held` items, `rank`, `awaiting`, `spawns-as` |
 | `stats/`                 | base stats, catch rate, height, weight, gender ratio, `egg-cycles`       |
 | `abilities/`             | `abilities` and `hidden`                                                 |
 | `learnsets/`             | level, teachable and egg moves, plus a `family-teachable` list           |
@@ -32,6 +32,7 @@ Growlithe:
 - **`held`** is what a wild one carries: `{ common, uncommon, rare }`, at 1/2, 1/20 and 1/100, each slot left out for none. Every stage of a line writes the same.
 - **`rank`** is a hand-kept class the shape of a line cannot say: `legendary` (what a raid or lair stages), `mythical` (what a relic calls), `baby`, `prized` and `mythical-odds` (rarity alone). A true shadow takes its counterpart's, and a Mega has none.
 - **`awaiting: baby | evolution`** marks a line whose missing stage a later generation adds. Take it off when that stage is written down.
+- **`spawns-as: water | ground`** overrides the spawn kind the types and egg groups give (the `spawn-surfaces` skill).
 - **`egg-cycles`** is written only on the stage a line hatches at, and only where it is not 20.
 - **`active: any`** is every hour of the day. `base-form: false` marks a form, and `worn: true` a shape put on mid-fight. `dex` is written only where the id's own dex number would be wrong.
 
@@ -48,6 +49,17 @@ Growlithe:
 - **`filler`** is worn instead of the mainline's `ability` where the line already reaches that ability.
 - Everything else, from learnsets to egg groups, is read off `base` when `species/megas.ts` and `species/zeniths.ts` register them.
 
+## Species pairings
+
+| file                         | holds                                                              |
+| ---------------------------- | ------------------------------------------------------------------ |
+| `species/true-shadows.yaml`  | each legendary's true shadow (`shadows`), and the worn `shapes` a shadow can take |
+| `species/fusions.yaml`       | each fused shape: `husk`, `partner`, the `item` that joins them, and `wears-partner` |
+| `species/feats.yaml`         | the battle feat a `Special` evolution asks: `criticals`, `endured`, `landed`, `recoil`, `cumulative` |
+| `species/ultra-beasts.yaml`  | the Ultra Beasts                                                   |
+
+What a true shadow is (its stats, its name) stays code in `true-shadow.ts`; the files say only who pairs with whom.
+
 ## Regions
 
 `src/data/species/regions.yaml` holds each region by its enum name: the `dex` numbers it covers, ends included, and, for a region with a dex chain, the `milestones` each rung asks for and the `medal` the last one hangs. A rung keeps its number for good, so milestones are appended, never inserted. The sprite folder names stay in `regions.ts` beside the enum.
@@ -56,10 +68,17 @@ Growlithe:
 
 | file                              | holds                                                                 |
 | --------------------------------- | --------------------------------------------------------------------- |
-| `overworld/lairs.yaml`            | each lair's `species` (in the order a raid picks), `underground`, `reserved` |
+| `overworld/lairs.yaml`            | each lair's `species` (in the order a raid picks), `stands` (`water` or `island`), `underground`, `reserved` |
 | `overworld/biome-lairs.yaml`      | each biome's lairs, in the order a landmark draws them                |
 | `text/en/lairs.yaml`              | each lair's name                                                      |
 | `overworld/item-pool.yaml`        | the ground's items by band, item to weight; a lowercase key is a whole family (`wings: 3`) |
+| `overworld/berry-pool.yaml`       | what a berry patch grows, the same shape as the item pool           |
+| `overworld/honey-tree.yaml`       | what a lathered honey tree draws out, by band like a biome's pool   |
+| `overworld/biome-items.yaml`      | the ground each item is buried in, by biome or by a named `groups` run; an item not listed is buried everywhere |
+| `overworld/totems.yaml`           | Alola's own Totems: `aura` (or `all`), height, weight and the trial's `crystal`; every other Totem is by rule |
+| `overworld/nobles.yaml`           | Hisui's Nobles: the `treasure` each leaves and the Frenzy `burst` it throws |
+| `overworld/experts/frontier-rooms.yaml` | the Pike's `curtains` (status left, or null) and the Arcade's `panels` (sky put up, or null), in the order the roll draws them |
+| `constants/status-cast.yaml`      | the clips a pokemon carrying a status is drawn in, statuses in the order they win |
 | `overworld/weather/biomes.yaml`   | each biome's six skies, and the four `corners` every country shares   |
 | `overworld/weather/kinds.yaml`    | each sky's map `color`, the types it `favours` (`[]` for none, `everything` for all) and the `battle` sky it is fought under |
 | `text/en/weather.yaml`            | each sky's name and description                                       |
@@ -67,9 +86,26 @@ Growlithe:
 | `overworld/boss-banned.yaml`      | the moves a boss is never staged with, each under a comment saying why |
 | `biome/ground.yaml`               | the type each biome's ground counts as (`biomes`), and the move and status each type of ground gives (`effects`) |
 
-- **Order is part of the world.** A biome's lair list and each band of the item pool are walked by a seeded roll, so moving an entry changes what every player's map holds. Append; never reorder.
+- **Order is part of the world.** A biome's lair list and each band of the item and berry pools are walked by a seeded roll, so moving an entry changes what every player's map holds. Append; never reorder.
 - **A lair is numbered by the enum in `ids/lairs.ts`,** since a raid prize records it. A new lair is an enum member, a row in each lair file, and `pnpm id-names`. `reserved: true` keeps it out of the world until its batch lists it.
 - **An item family a pool names** is listed in `ITEM_FAMILIES` in `overworld/item-pool.ts`.
+- **A trainer class is an Ace** with `ace: true` in its `trainers/classes/<region>.yaml` row: one a region, fielding every type at the Ace levels.
+
+## Quests
+
+| file                     | holds                                                                  |
+| ------------------------ | ---------------------------------------------------------------------- |
+| `quests/quests.yaml`     | the written `chains`, in the board's order, and each quest's `requirements` and `rewards` |
+| `quests/daily.yaml`      | the pool the third daily slot draws from                               |
+| `text/en/quests.yaml`    | each chain's, quest's and daily's name                                 |
+
+- **A quest and a chain are numbered by their enums in `quests/types.ts`,** since a claim records the number. A new one is an enum member, a row in each file, and `pnpm id-names`.
+- **The daily pool's order is part of every player's board.** A seed picks by position, so append and never reorder.
+- A requirement is a counter (`metric` and `count`, narrowed by at most one of `species`, `family`, `type`, `item`, `npc`, `landmark`, `move`, `foe` or `trainer`), `dex: n`, or `turn-in`. A reward is `item` and `amount`, `catch`, `encounter`, `egg` or `award`. The metrics, landmarks and foes are the enums in `src/model/quest-record.ts`.
+
+## Achievements
+
+`src/data/achievements.yaml` holds each achievement line by its enum name (`ids/achievements.ts`): the `metric` it climbs, narrowed by an `npc` or a `landmark`, and its four `tiers`. Beside them are the type lines' `types` and `type-tiers`, the `trainer-tiers`, and each metal's `colors`. A worn title is recorded against a line's number, so a line is appended to the enum and never renumbered.
 
 ## Names and lines
 

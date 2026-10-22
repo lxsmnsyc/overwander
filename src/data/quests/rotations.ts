@@ -1,4 +1,4 @@
-import { Foe, Landmark, Metric } from '../../model/quest-record';
+import { Metric } from '../../model/quest-record';
 import AleaRNG from '../../core/alea';
 import type Families from '../ids/families';
 import { Items } from '../ids/items';
@@ -7,6 +7,7 @@ import { getRegisteredFamilies } from '../species/__create';
 import { getFamilyName, getRegisteredSpecies, getSpeciesData } from '../species';
 import { getFeaturedFamilies } from '../species/day';
 import { type MetricRequirement, RequirementKind } from './index';
+import { DAILY_POOL } from './written';
 
 /**
  * The rotating quests: a fresh set of dailies every UTC day and one
@@ -57,26 +58,6 @@ function ask(metric: Metric, count: number, rest?: Partial<MetricRequirement>): 
   return { kind: RequirementKind.Counter, metric, count, ...rest };
 }
 
-/** The pool the third daily slot draws from, one per day by seed */
-const DAILY_POOL: [name: string, requirement: MetricRequirement, rewards: RotationReward[]][] = [
-  [
-    'Roadside Challenge',
-    ask(Metric.BattleWins, 1, { foe: Foe.Trainer }),
-    [{ item: Items.HyperPotion, amount: 2 }],
-  ],
-  ['Local Rounds', ask(Metric.NpcVisits, 1), [{ item: Items.SuperPotion, amount: 2 }]],
-  // Named to a kind: "claim 3 landmarks" counted caches, patches,
-  // nests and portal crossings alike, which told a player to go and do
-  // something without saying what
-  [
-    "Forager's Rounds",
-    ask(Metric.Landmarks, 3, { landmark: Landmark.Cache }),
-    [{ item: Items.GreatBall, amount: 3 }],
-  ],
-  ['Well Supplied', ask(Metric.ItemUses, 3), [{ item: Items.UltraBall, amount: 1 }]],
-  ['Answer the Siren', ask(Metric.RaidRuns, 1), [{ item: Items.HyperPotion, amount: 3 }]],
-];
-
 /**
  * Today's three: the featured family's catch where the calendar
  * names one, a walk, and one drawn from the pool
@@ -103,7 +84,7 @@ export function getDailyQuests(now: number): RotationQuest[] {
         };
 
   const rng = new AleaRNG(`daily${dailyWindow(now)}`);
-  const [name, requirement, rewards] = DAILY_POOL[Math.floor(rng.random() * DAILY_POOL.length)];
+  const { name, requirement, rewards } = DAILY_POOL[Math.floor(rng.random() * DAILY_POOL.length)];
 
   return [
     spotlight,

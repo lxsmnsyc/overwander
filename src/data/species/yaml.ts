@@ -102,6 +102,7 @@ const WORLD = v.object({
   ),
   rank: v.optional(v.picklist(['legendary', 'mythical', 'baby', 'prized', 'mythical-odds'])),
   awaiting: v.optional(v.picklist(['baby', 'evolution'])),
+  'spawns-as': v.optional(v.picklist(['water', 'ground'])),
 });
 
 const STATS = v.object({
@@ -405,6 +406,9 @@ export function readSpecies(files: SpeciesFiles): [Species, SpeciesData][] {
     }
     if (place.awaiting != null) {
       data.awaiting = place.awaiting;
+    }
+    if (place['spawns-as'] != null) {
+      data.spawnsAs = place['spawns-as'];
     }
     if (body['egg-cycles'] != null) {
       data.eggCycles = body['egg-cycles'];

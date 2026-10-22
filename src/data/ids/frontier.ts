@@ -111,7 +111,7 @@ const enum FrontierRule {
  * party as it is frozen, so what the curtain did is part of the fight
  * rather than something rolled again on every watch
  */
-export const enum PikeCurtain {
+const enum PikeCurtain {
   Poisoned = 0,
   Burned = 1,
   Paralysed = 2,
@@ -127,7 +127,7 @@ export const enum PikeCurtain {
  * both sides, which is what tells it from the Pike's curtain: the
  * Arcade changes the fight, the Pike changes the challenger
  */
-export const enum ArcadePanel {
+const enum ArcadePanel {
   Sun = 0,
   Rain = 1,
   Sandstorm = 2,
@@ -140,5 +140,5 @@ export const enum ArcadePanel {
   Mended = 6,
 }
 
-export { FrontierBrain, FrontierRule };
+export { ArcadePanel, FrontierBrain, FrontierRule, PikeCurtain };
 export default FrontierBrain;

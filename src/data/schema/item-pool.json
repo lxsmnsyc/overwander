@@ -1,0 +1,130 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Item pool",
+  "type": "object",
+  "properties": {
+    "base": {
+      "type": "object",
+      "propertyNames": {
+        "anyOf": [
+          {
+            "$ref": "names.json#/definitions/item"
+          },
+          {
+            "type": "string",
+            "pattern": "^[a-z][a-z-]*$"
+          }
+        ]
+      },
+      "additionalProperties": {
+        "type": "number",
+        "minimum": 0
+      },
+      "description": "Item and weight in the order a roll walks them; a lowercase key is a whole family at that weight apiece"
+    },
+    "uncommon": {
+      "type": "object",
+      "propertyNames": {
+        "anyOf": [
+          {
+            "$ref": "names.json#/definitions/item"
+          },
+          {
+            "type": "string",
+            "pattern": "^[a-z][a-z-]*$"
+          }
+        ]
+      },
+      "additionalProperties": {
+        "type": "number",
+        "minimum": 0
+      },
+      "description": "Item and weight in the order a roll walks them; a lowercase key is a whole family at that weight apiece"
+    },
+    "scarce": {
+      "type": "object",
+      "propertyNames": {
+        "anyOf": [
+          {
+            "$ref": "names.json#/definitions/item"
+          },
+          {
+            "type": "string",
+            "pattern": "^[a-z][a-z-]*$"
+          }
+        ]
+      },
+      "additionalProperties": {
+        "type": "number",
+        "minimum": 0
+      },
+      "description": "Item and weight in the order a roll walks them; a lowercase key is a whole family at that weight apiece"
+    },
+    "rare": {
+      "type": "object",
+      "propertyNames": {
+        "anyOf": [
+          {
+            "$ref": "names.json#/definitions/item"
+          },
+          {
+            "type": "string",
+            "pattern": "^[a-z][a-z-]*$"
+          }
+        ]
+      },
+      "additionalProperties": {
+        "type": "number",
+        "minimum": 0
+      },
+      "description": "Item and weight in the order a roll walks them; a lowercase key is a whole family at that weight apiece"
+    },
+    "prized": {
+      "type": "object",
+      "propertyNames": {
+        "anyOf": [
+          {
+            "$ref": "names.json#/definitions/item"
+          },
+          {
+            "type": "string",
+            "pattern": "^[a-z][a-z-]*$"
+          }
+        ]
+      },
+      "additionalProperties": {
+        "type": "number",
+        "minimum": 0
+      },
+      "description": "Item and weight in the order a roll walks them; a lowercase key is a whole family at that weight apiece"
+    },
+    "special": {
+      "type": "object",
+      "propertyNames": {
+        "anyOf": [
+          {
+            "$ref": "names.json#/definitions/item"
+          },
+          {
+            "type": "string",
+            "pattern": "^[a-z][a-z-]*$"
+          }
+        ]
+      },
+      "additionalProperties": {
+        "type": "number",
+        "minimum": 0
+      },
+      "description": "Item and weight in the order a roll walks them; a lowercase key is a whole family at that weight apiece"
+    }
+  },
+  "required": [
+    "base",
+    "uncommon",
+    "scarce",
+    "rare",
+    "prized",
+    "special"
+  ],
+  "additionalProperties": false
+}

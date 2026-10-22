@@ -69,6 +69,12 @@ const DEFINITIONS: [enumName: string, definition: string][] = [
   ['AchievementTier', 'achievement-tier'],
   ['AchievementLine', 'achievement-line'],
   ['LadderTitle', 'ladder-title'],
+  ['Balls', 'ball'],
+  ['Quests', 'quest'],
+  ['Chains', 'chain'],
+  ['Metric', 'metric'],
+  ['QuestLandmark', 'quest-landmark'],
+  ['Foe', 'foe'],
 ];
 
 const DRAFT = 'http://json-schema.org/draft-07/schema#';
@@ -185,6 +191,10 @@ const WORLD = block(
         { enum: ['baby', 'evolution'] },
         'A stage of its line a later generation adds that is not registered yet',
       ),
+      'spawns-as': described(
+        { enum: ['water', 'ground'] },
+        'The spawn kind it is met as where its types and egg groups say otherwise',
+      ),
     },
     ['types', 'egg-groups', 'active'],
   ),
@@ -219,6 +229,10 @@ const LAIRS: Schema = {
   additionalProperties: part(
     {
       species: names('species', 'Who is at home there, in the order a raid picks from'),
+      stands: described(
+        { enum: ['water', 'island'] },
+        'On the water only, or an island that stands on water and ground; left out for ground only',
+      ),
       underground: described({ type: 'boolean' }, 'A cave under its biome stages it too'),
       reserved: described({ type: 'boolean' }, 'Kept out of the world until its batch lists it'),
     },
@@ -257,6 +271,10 @@ const TRAINER_CLASSES: Schema = {
       trade: described(
         name('trainer'),
         "The trade it is one region's version of, left out where it is its own",
+      ),
+      ace: described(
+        { const: true },
+        'One of the Aces: every type, five fully grown, higher levels',
       ),
     },
     ['types', 'sheets'],
@@ -1205,6 +1223,336 @@ const OTHER_FILES: [file: string, schema: Schema][] = [
   ['boss-banned.json', nameList('Moves a boss is never staged with', 'move')],
 ];
 
+const BIOME_ITEMS: Schema = {
+  $schema: DRAFT,
+  title: 'Biome items',
+  ...part(
+    {
+      groups: described(
+        {
+          type: 'object',
+          propertyNames: { type: 'string', pattern: '^[a-z][a-z-]*$' },
+          additionalProperties: names('biome'),
+        },
+        'Named runs of biomes an item can list by the group name',
+      ),
+      items: described(
+        {
+          type: 'object',
+          propertyNames: name('item'),
+          additionalProperties: {
+            type: 'array',
+            items: { anyOf: [name('biome'), { type: 'string', pattern: '^[a-z][a-z-]*$' }] },
+          },
+        },
+        'The ground each item is buried in; an item not listed is buried everywhere',
+      ),
+    },
+    ['groups', 'items'],
+  ),
+};
+
+const TOTEMS: Schema = {
+  $schema: DRAFT,
+  title: 'Totems',
+  type: 'object',
+  propertyNames: name('species'),
+  additionalProperties: part(
+    {
+      aura: described(
+        {
+          type: 'object',
+          propertyNames: { anyOf: [name('stage'), { const: 'all' }] },
+          additionalProperties: { type: 'integer' },
+        },
+        'The stages each stat starts the fight raised by, or `all` for the five',
+      ),
+      height: described(COUNT, 'In meters'),
+      weight: described(COUNT, 'In kilograms'),
+      crystal: described(name('item'), 'What the trial hands over'),
+    },
+    ['aura', 'height', 'weight', 'crystal'],
+  ),
+};
+
+const COUNTER_ASK: Schema = part(
+  {
+    metric: described(name('metric'), 'The lifetime counter it reads'),
+    count: described(COUNT, 'The total it asks for'),
+    species: name('species'),
+    family: name('family'),
+    type: name('type'),
+    item: name('item'),
+    npc: name('npc'),
+    landmark: name('quest-landmark'),
+    move: name('move'),
+    foe: name('foe'),
+    trainer: name('trainer'),
+  },
+  ['metric', 'count'],
+);
+
+const QUEST_REQUIREMENT: Schema = {
+  anyOf: [
+    COUNTER_ASK,
+    part({ dex: described(COUNT, 'Distinct species caught'), region: name('region') }, ['dex']),
+    part({ 'turn-in': described(name('item'), 'Taken from the bag'), count: COUNT }, [
+      'turn-in',
+      'count',
+    ]),
+  ],
+};
+
+const QUEST_REWARD: Schema = {
+  anyOf: [
+    part({ item: name('item'), amount: COUNT }, ['item', 'amount']),
+    part(
+      {
+        catch: described(name('species'), 'A finished record'),
+        level: COUNT,
+        shiny: { type: 'boolean' },
+        ball: name('ball'),
+      },
+      ['catch', 'level'],
+    ),
+    part(
+      {
+        encounter: described(name('species'), 'A meeting staged in the world'),
+        level: COUNT,
+        shiny: { type: 'boolean' },
+      },
+      ['encounter', 'level'],
+    ),
+    part({ egg: name('species') }, ['egg']),
+    part({ award: name('award') }, ['award']),
+  ],
+};
+
+const QUESTS: Schema = {
+  $schema: DRAFT,
+  title: 'Quests',
+  ...part(
+    {
+      chains: described(
+        { type: 'object', propertyNames: name('chain'), additionalProperties: names('quest') },
+        'Each chain in the order the board shows it, its quests in the order they are claimed',
+      ),
+      quests: {
+        type: 'object',
+        propertyNames: name('quest'),
+        additionalProperties: part(
+          {
+            requirements: { type: 'array', items: QUEST_REQUIREMENT },
+            rewards: { type: 'array', items: QUEST_REWARD },
+          },
+          ['requirements', 'rewards'],
+        ),
+      },
+    },
+    ['chains', 'quests'],
+  ),
+};
+
+const DAILY_QUESTS: Schema = {
+  $schema: DRAFT,
+  title: 'Daily quest pool',
+  type: 'object',
+  additionalProperties: part(
+    {
+      requirement: COUNTER_ASK,
+      rewards: {
+        type: 'array',
+        items: part({ item: name('item'), amount: COUNT }, ['item', 'amount']),
+      },
+    },
+    ['requirement', 'rewards'],
+  ),
+};
+
+const QUEST_TEXT: Schema = {
+  $schema: DRAFT,
+  title: 'Quest names',
+  ...part(
+    {
+      chains: {
+        type: 'object',
+        propertyNames: name('chain'),
+        additionalProperties: { type: 'string' },
+      },
+      quests: {
+        type: 'object',
+        propertyNames: name('quest'),
+        additionalProperties: { type: 'string' },
+      },
+      daily: { type: 'object', additionalProperties: { type: 'string' } },
+    },
+    ['chains', 'quests', 'daily'],
+  ),
+};
+
+const THRESHOLDS: Schema = described(
+  { type: 'array', items: COUNT, minItems: 4, maxItems: 4 },
+  'Bronze, Silver, Gold and Platinum, ascending',
+);
+
+const ACHIEVEMENTS: Schema = {
+  $schema: DRAFT,
+  title: 'Achievements',
+  ...part(
+    {
+      lines: {
+        type: 'object',
+        propertyNames: name('achievement-line'),
+        additionalProperties: part(
+          {
+            metric: described(name('metric'), 'The lifetime counter it climbs'),
+            npc: name('npc'),
+            landmark: name('quest-landmark'),
+            tiers: THRESHOLDS,
+          },
+          ['metric', 'tiers'],
+        ),
+      },
+      types: names('type', 'The type lines, in the order the shelf shows them'),
+      'type-tiers': THRESHOLDS,
+      'trainer-tiers': THRESHOLDS,
+      colors: described(
+        {
+          type: 'object',
+          propertyNames: name('achievement-tier'),
+          additionalProperties: { type: 'string' },
+        },
+        "Each metal's colour",
+      ),
+    },
+    ['lines', 'types', 'type-tiers', 'trainer-tiers', 'colors'],
+  ),
+};
+
+const SPECIES_PAIRS: Schema = {
+  type: 'object',
+  propertyNames: name('species'),
+  additionalProperties: name('species'),
+};
+
+const TRUE_SHADOWS: Schema = {
+  $schema: DRAFT,
+  title: 'True shadows',
+  ...part(
+    {
+      shadows: described(SPECIES_PAIRS, 'Each counterpart and its true shadow'),
+      shapes: described(SPECIES_PAIRS, "Each counterpart's worn shape and the shadow's"),
+    },
+    ['shadows', 'shapes'],
+  ),
+};
+
+const FUSIONS: Schema = keyed(
+  'Fusions',
+  'species',
+  part(
+    {
+      husk: described(name('species'), 'The pokemon the partner is folded into'),
+      partner: described(name('species'), 'The pokemon kept inside it'),
+      item: described(name('item'), 'What joins and parts the pair'),
+      'wears-partner': described({ type: 'boolean' }, "Fights with the partner's abilities too"),
+    },
+    ['husk', 'partner', 'item'],
+  ),
+);
+
+const FEATS: Schema = keyed(
+  'Battle feats',
+  'species',
+  part(
+    {
+      criticals: described(COUNT, 'Critical hits landed'),
+      endured: described(COUNT, 'Damage taken without fainting'),
+      landed: part({ move: name('move'), count: COUNT }, ['move', 'count']),
+      recoil: described(COUNT, 'Recoil taken without fainting'),
+      cumulative: described({ const: true }, 'Counted across every fight'),
+    },
+    [],
+  ),
+);
+
+const ULTRA_BEASTS: Schema = {
+  $schema: DRAFT,
+  title: 'Ultra Beasts',
+  ...names('species'),
+};
+
+const NOBLES: Schema = keyed(
+  'Nobles',
+  'species',
+  part(
+    {
+      treasure: described(name('item'), 'What it leaves its calmers beside the purse'),
+      burst: described(name('move'), 'The Frenzy burst it unleashes'),
+    },
+    ['treasure', 'burst'],
+  ),
+);
+
+const STATUS_CAST: Schema = {
+  $schema: DRAFT,
+  title: 'Status casts',
+  type: 'object',
+  propertyNames: name('status'),
+  additionalProperties: names('sprite-anim', 'Most wanted first, ending on a common clip'),
+};
+
+const FRONTIER_ROOMS: Schema = {
+  $schema: DRAFT,
+  title: 'Frontier rooms',
+  ...part(
+    {
+      curtains: described(
+        {
+          type: 'object',
+          propertyNames: name('pike-curtain'),
+          additionalProperties: { anyOf: [name('status'), { type: 'null' }] },
+        },
+        'In the order the roll draws them: the status each leaves, or null',
+      ),
+      panels: described(
+        {
+          type: 'object',
+          propertyNames: name('arcade-panel'),
+          additionalProperties: { anyOf: [name('weather'), { type: 'null' }] },
+        },
+        'In the order the roll draws them: the sky each puts up, or null',
+      ),
+    },
+    ['curtains', 'panels'],
+  ),
+};
+
+const ITEM_BAND: Schema = described(
+  {
+    type: 'object',
+    propertyNames: { anyOf: [name('item'), { type: 'string', pattern: '^[a-z][a-z-]*$' }] },
+    additionalProperties: COUNT,
+  },
+  'Item and weight in the order a roll walks them; a lowercase key is a whole family at that weight apiece',
+);
+
+const ITEM_POOL: Schema = {
+  $schema: DRAFT,
+  title: 'Item pool',
+  ...part(
+    {
+      base: ITEM_BAND,
+      uncommon: ITEM_BAND,
+      scarce: ITEM_BAND,
+      rare: ITEM_BAND,
+      prized: ITEM_BAND,
+      special: ITEM_BAND,
+    },
+    ['base', 'uncommon', 'scarce', 'rare', 'prized', 'special'],
+  ),
+};
+
 function json(schema: Schema): string {
   return `${JSON.stringify(schema, null, 2)}\n`;
 }
@@ -1516,6 +1864,21 @@ export default function renderDataSchemas(members: Map<string, string[]>): Map<s
         ),
       ),
     ],
+    ['item-pool.json', json(ITEM_POOL)],
+    ['biome-items.json', json(BIOME_ITEMS)],
+    ['totems.json', json(TOTEMS)],
+    ['quests.json', json(QUESTS)],
+    ['quests-daily.json', json(DAILY_QUESTS)],
+    ['quests-text.json', json(QUEST_TEXT)],
+    ['achievements.json', json(ACHIEVEMENTS)],
+    ['true-shadows.json', json(TRUE_SHADOWS)],
+    ['fusions.json', json(FUSIONS)],
+    ['feats.json', json(FEATS)],
+    ['ultra-beasts.json', json(ULTRA_BEASTS)],
+    ['nobles.json', json(NOBLES)],
+    ['status-cast.json', json(STATUS_CAST)],
+    ['frontier-rooms.json', json(FRONTIER_ROOMS)],
+    ['honey-tree.json', json({ $schema: DRAFT, title: 'Honey tree pool', ...SPAWN_GROUPS })],
   ]);
 
   for (const [file, title, entry] of BATTLE_FILES) {

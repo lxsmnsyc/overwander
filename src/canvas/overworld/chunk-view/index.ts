@@ -1,0 +1,4497 @@
+import { FULL_BOARD_EXTRA } from '../../../overworld/board';
+import { CHUNK_CELLS, SQUARES } from '../../../overworld/grid';
+import LRUMap from '../../../core/lru-map';
+import {
+  BOARD_CELLS,
+  BOARD_CENTER,
+  BOARD_SPAN,
+  type BoardCell,
+  type ProjectedPoint,
+  TERRACE_LIFT,
+  TURN_DEAD_ZONE,
+  VIEW_RADIUS,
+  angleOf,
+  boardCellAtFraction,
+  boardCellOf,
+  boardCells,
+  boardIndexOf,
+  boardStand,
+  boardView,
+  compassMarks,
+  depthOrder,
+  facingFrom,
+  fitPicture,
+  projectAir,
+  projectBoardCell,
+  projectBoardCellQuad,
+  radiusOf,
+  reachOf,
+  setBoardFlat,
+  setBoardScreen,
+  setBoardStand,
+  shortestTurn,
+  unprojectGround,
+  yawTurns,
+} from '../../../canvas/overworld/board';
+import type SpeciesSpriteAnimation from '../../../canvas/sprites/species-sprite-animation';
+import { SPRITE_DIRECTIONS, type SpriteDirection } from '../../../canvas/sprites/sheet';
+import drawSparkle, { SPARKLE_LIFE } from '../../../canvas/effects/sparkle';
+import drawHerald, { HERALD_BURST_LIFE } from '../../../canvas/overworld/herald';
+import speciesSize from '../../../canvas/sprites/species-size';
+import {
+  batchAmbient,
+  batchSkybox,
+  getAmbient,
+  getSkybox,
+  paintAmbient,
+  paintSkybox,
+} from '../../../canvas/overworld/daylight';
+import Weather from '../../../data/overworld/weather';
+import pixelRatio from '../../../canvas/ratio';
+import paintSky, { CAVERN, type Lamp, batchSky, batchWash, paintCavern } from '../../../canvas/sky';
+import createTwist from '../../../canvas/overworld/twist';
+import { localNow } from '../../../auth/clock';
+import loadSpeciesSprite from '../../../canvas/sprites/species-sprites';
+import drawTileQuad, { grownQuad } from '../../../canvas/overworld/tile-quad';
+import loadTerrainTiles, { type TerrainTiles } from '../../../canvas/overworld/terrain-tiles';
+import createBoardScene, {
+  type BoardScene,
+  type SceneSpot,
+  hazeAt,
+} from '../../../canvas/three/board-scene';
+import terrainCell from '../../../canvas/overworld/terrain-cell';
+import QuadBatch, { type Painter } from '../../../canvas/gl/quad-batch';
+import Bakery, { type Baked } from '../../../canvas/bakery';
+import {
+  type ShadowPatch,
+  type SpriteQuad,
+  cornersOf,
+  shadowCorners,
+} from '../../../canvas/sprites/placement';
+import type Biome from '../../../data/ids/biome';
+import type { BoardGround } from '../../../overworld/board/ground';
+import { SpriteAnim } from '../../../data/ids/sprite-anims';
+import type Decoration from '../../../data/overworld/decoration';
+import { getBlocker } from '../../../data/overworld/decoration';
+import Landmark from '../../../data/overworld/landmark';
+import Phenomenon from '../../../data/overworld/phenomenon';
+import Npc from '../../../data/overworld/npc';
+import { npcSheet } from '../../../overworld/npcs';
+import facingToward from '../../../canvas/sprites/facing';
+import type OWCharSprite from '../../../canvas/overworld/char-sprite';
+import type Strangers from '../../../overworld/strangers';
+import type { StrangerStanding } from '../../../overworld/strangers';
+import loadOWChar, { OW_SPRITE_ROOT } from '../../../canvas/overworld/char-sprites';
+import type OWPlantSprite from '../../../canvas/overworld/plant-sprite';
+import loadOWPlant from '../../../canvas/overworld/plant-sprites';
+import apricornTreeSheet from '../../../data/overworld/apricorn-tree';
+import berryPlantSheet from '../../../data/overworld/berry-plant';
+import decorationPicture, { grottoPicture } from '../../../data/overworld/decoration-sprite';
+import landmarkPicture, { LANDMARK_SHEET } from '../../../data/overworld/landmark-sprite';
+import type BasicSprite from '../../../canvas/sprites/basic-sprite';
+import type { Colour } from '../../../canvas/gl/colour';
+import {
+  CAVE_LIGHT,
+  DARK_DAY_LIGHT,
+  DAYLIGHT,
+  LAMP_COLOUR,
+  LAMP_STRENGTH,
+  type Lighting,
+  dimmed,
+  encoded,
+  isLit,
+  litAt,
+} from '../../../canvas/overworld/lighting';
+import loadBasicSprite from '../../../canvas/sprites/basic-sprites';
+import type { ItemStack } from '../../../data/overworld/item-pool';
+import {
+  CELL,
+  CELL_STRIDE,
+  CHUNK_LINE,
+  CLOCK_STEP,
+  COLORS,
+  DRAW_PACE,
+  GOAL_PULSE,
+  HERALD_ALPHA,
+  HERALD_ARC_POINTS,
+  HERALD_MOTE,
+  HERALD_MOTES,
+  HERALD_RISE,
+  HERALD_SEAL,
+  HERALD_TURN,
+  HERALD_WEIGHT,
+  HOVER_GLOW,
+  IDLE_PACE,
+  LOADING_LABEL,
+  LOADING_SIZE,
+  MARK_WEIGHT,
+  NPC_CELLS,
+  PICKED_STAGE,
+  PICK_INSET_SIDE,
+  PICK_INSET_TOP,
+  PIECE_SHADOW_WIDTH,
+  PLANT_CELLS,
+  PLANT_PHASES,
+  PLAYER_SHEET,
+  PRESS_SLOP,
+  QUARTER_TURN,
+  RIPPLE_ALPHA,
+  RIPPLE_FADE,
+  RIPPLE_PERIOD,
+  RIPPLE_POINTS,
+  RIPPLE_RINGS,
+  RIPPLE_SPREAD,
+  RIPPLE_WEIGHT,
+  SCENERY_CELLS,
+  SLIDE_PACE,
+  SNAP_STEPS,
+  SPRITE_STANDS,
+  VEIL_ALPHA,
+  VEIL_FADE,
+  VEIL_SHARE,
+  WEATHER_FADE,
+  compassArrow,
+  coverOf,
+  grownArrow,
+  isTurningPress,
+  lampSquash,
+  pictureWidth,
+  shadowSquash,
+  slideGain,
+} from '../../../canvas/overworld/metrics';
+import {
+  type AuraPart,
+  CellAura,
+  type RiddenCoat,
+  SHADOW_STAMP,
+  type SpawnCoat,
+  auraCorners,
+  bakeShadowDisc,
+  bakeWord,
+  drawCellAura,
+  drawPhenomenon,
+  facingOf,
+  landmarkCallOut,
+  paintCellAura,
+  paintHerald,
+  paintPhenomenon,
+  paintSparkle,
+  phenomenonSpan,
+  plantCallOut,
+} from '../../../canvas/overworld/scenery';
+import {
+  RaidBeacon,
+  beaconCorners,
+  drawRaidBeacon,
+  paintRaidBeacon,
+} from '../../../canvas/overworld/beacon';
+
+/**
+ * How near the viewer the backdrop is drawn, in the scene's own clip
+ * space: behind the country, which is all there is behind it
+ */
+const BEHIND = 0.99;
+
+/** How much of the night a raid site's light lifts, against how deep the night is */
+const BEACON_NIGHT_LIFT = 1.6;
+
+/** How far a mark spreads past the cell it belongs to, in cells */
+const RING_SPREAD = 2;
+
+/**
+ * And how far a standing picture is brought forward of the ground it
+ * stands on, in cells. Enough to break the tie with its own cell,
+ * which would otherwise cut its feet away, and short of the step a
+ * cliff stands so that one in front of it still hides it
+ */
+const SPRITE_LIFT = 0.3;
+
+/** Every cell a press can land on, listed once */
+const PRESSABLE = boardCells();
+
+/** Whether a point falls inside a quad, its corners given in order round it */
+function inQuad(point: { x: number; y: number }, corners: { x: number; y: number }[]): boolean {
+  let inside = false;
+
+  for (let at = 0, before = corners.length - 1; at < corners.length; before = at, at += 1) {
+    const one = corners[at];
+    const other = corners[before];
+
+    if (
+      one.y > point.y !== other.y > point.y &&
+      point.x < ((other.x - one.x) * (point.y - one.y)) / (other.y - one.y) + one.x
+    ) {
+      inside = !inside;
+    }
+  }
+  return inside;
+}
+
+export { type RiddenCoat, type SpawnCoat, isTurningPress, slideGain };
+
+/**
+ * The chunk the player is standing in, drawn rather than laid out.
+ *
+ * It was 256 buttons in a CSS grid, which is 256 elements to restyle
+ * every time somebody takes a step. This is one element: the whole
+ * chunk is repainted on a change, which for a grid this size is a
+ * fraction of the work laying it out again would be — and it leaves
+ * room for the things a grid of buttons could not do at all, like
+ * shading the ring a player can actually reach from where they stand.
+ *
+ * What it is *not* is a second source of truth. Where the player is,
+ * what is on a cell and whether it can be reached are all the tab's to
+ * decide; this asks for them per cell and paints the answers.
+ */
+export interface ChunkCanvasProps {
+  /**
+   * What the ground is made of, which is the whole of the background
+   */
+  biome: Biome;
+  /**
+   * Where this is, in a few words.
+   *
+   * Nothing draws it any more — it is at the top of the menu at the
+   * bottom of the screen, where it costs the world nothing — but the
+   * picture is still the thing being named, so it is still what a
+   * screen reader is told this canvas is
+   */
+  caption: string;
+  /**
+   * Where the player is, in world cells. The board is a window that
+   * follows them, so this is what the camera chases: they are drawn in
+   * the middle of the picture and the ground slides under them
+   */
+  at: [number, number];
+  /**
+   * The world cell the board's own cell 0 sits on. It moves with the
+   * player, a cell at a time, which is why the camera is smoothed
+   * against the world rather than against the board
+   */
+  origin: [number, number];
+  /**
+   * The way they are standing, as a step. A walk turns them itself;
+   * this is what turns them when a step was refused, so a player stood
+   * against a landmark faces the landmark
+   */
+  facing: [number, number];
+  /**
+   * The charset the player is drawn in, under `sprites/overworld`.
+   * Left out, the default red-trainer sheet
+   */
+  charset?: string;
+  /**
+   * The other players in sight. Read every frame rather than handed
+   * over as a value, since they walk on their own clock
+   */
+  strangers?: Strangers | null;
+  /**
+   * The pokemon the player is riding while they surf or fly. While it
+   * is set the player is drawn as that pokemon instead of the charset
+   */
+  mount?: RiddenCoat | null;
+  landmarks: Map<number, Landmark>;
+  /**
+   * What each phenomenon cell is showing this hour. The kind decides
+   * the picture: rings, dust or a passing shadow, drawn as the thing
+   * itself rather than as a marker
+   */
+  phenomena: Map<number, Phenomenon>;
+  /**
+   * The ground the board is standing on, cell by cell and a little
+   * way past its own edges. It is the world's answer rather than the
+   * chunk's, which is what lets a lake or a ridge carry on into the
+   * chunk beside this one
+   */
+  ground: BoardGround;
+  /**
+   * Who is standing on each wandering-NPC cell this window. A landmark
+   * says somebody is there; this says who, which is what decides the
+   * charset they are drawn in
+   */
+  wanderers: Map<number, Npc>;
+  /**
+   * The style each wanderer turned up in this window, by cell. A cell
+   * with no coat falls back to the role's first style
+   */
+  coats: Map<number, string>;
+  /**
+   * What each plant is bearing this window, by cell: a patch's berry
+   * or a tree's apricorn. A landmark says the plant is there; this
+   * says what is on it, which is what decides the drawing
+   */
+  berries: Map<number, ItemStack>;
+  /**
+   * The patches this player has already stripped this window. They keep
+   * their plant and lose their fruit: the bare stage is on the same
+   * sheet, and a bush drawn in fruit that answers nothing is the board
+   * lying about the cell
+   */
+  picked: Set<number>;
+  /**
+   * The caches this player has already dug up this window. They are
+   * still there and still drawn: an empty one open on the ground says
+   * what a cell that would answer nothing looks like
+   */
+  dug: Set<number>;
+  /**
+   * The glow under a landmark that says where this player stands with
+   * it: a raid won, a fight still waiting, their own seat, a wanderer
+   * not yet visited
+   */
+  auras: Map<number, CellAura>;
+  /**
+   * What a Max Raid's pillar burns as this window, by cell. A Max Raid
+   * left out burns red; a Totem site needs no word
+   */
+  beacons?: Map<number, RaidBeacon>;
+  /**
+   * The chunk's scenery by cell. It is drawn and nothing else: a tree
+   * cannot be pressed, and standing on one does nothing
+   */
+  decorations: Map<number, Decoration>;
+  /**
+   * Which cells hold a pokemon this window, and which pokemon. It is
+   * what stands there rather than only that something does: the
+   * ground draws the pokemon itself
+   */
+  spawns: Map<number, SpawnCoat>;
+  /**
+   * What to call the cell when the pointer rests on it
+   */
+  label: (index: number) => string;
+  /**
+   * Which way round the camera has been walked, in radians. It is the
+   * caller's so that it survives a chunk change
+   */
+  yaw: number;
+  onTurn: (yaw: number) => void;
+  /**
+   * Where this chunk stands between the middle of the world and its
+   * edge, from -1 to 1. It decides how high the sun gets here: the
+   * day is the same length everywhere, and the light is not
+   */
+  latitude: number;
+  /**
+   * What the sky over this chunk is doing. Drawn over the world and
+   * under the player's own instruments, the same as the hour's light
+   */
+  weather: Weather;
+  /**
+   * How far the player sees in the dark, in cells. Only a sky that has
+   * put the lights out reads it, and what it is worth is the buddy's
+   * business rather than the board's
+   */
+  lamp: number;
+  /**
+   * Whether this board is underground. A cave has no sky over it, so
+   * the weather is not drawn at all and the dark never lifts
+   */
+  underground: boolean;
+  /**
+   * Leaves the cave dark off, so a page for looking at the terrain can
+   * see all of it. The game never sets it
+   */
+  lit?: boolean;
+  /**
+   * The hour the board is lit at, as a local time in milliseconds. The
+   * game leaves it out and the board reads the player's own clock; a
+   * page showing what the day looks like sets it rather than waiting
+   * for the hour to come round
+   */
+  time?: number;
+  /**
+   * A cell the player has asked to be at — the chunk's own, or one of
+   * the ring of country drawn around it.
+   *
+   * The canvas has no idea what that costs. Where the player is, what
+   * is standing in the way and how long a walk takes are the tab's, and
+   * this says only which square was pressed
+   */
+  onPress: (cell: BoardCell) => void;
+  /**
+   * The world cell a pressed walk to open ground is heading for, marked
+   * until the walk ends so the player can see which square they asked for
+   */
+  goal?: [number, number] | null;
+  /**
+   * A shiny has just been drawn that was not being drawn before.
+   *
+   * Handed up rather than worked out by the caller, because the two
+   * would otherwise disagree: what the caller knows is what the window
+   * rolled, and what a player can actually see is what has a sheet and
+   * is on the board. Called at most once a frame, however many arrived
+   * in it
+   */
+  onShiny?: () => void;
+  /**
+   * A legendary's or a mythical's herald has just started, handed up
+   * the same way and for the same reason as `onShiny`. A mythical
+   * wins a frame that started both
+   */
+  onHerald?: (rank: 'legendary' | 'mythical') => void;
+  /**
+   * How to find where a cell is on the screen, handed up once there is
+   * a canvas to measure. It is what lets a caller hang something over
+   * a cell — a reward, a remark — in the page's own coordinates rather
+   * than the board's
+   */
+  onPlaced?: (spotOf: (cell: number) => CellSpot | null) => void;
+}
+
+/**
+ * Where a cell is on the **screen**, in client coordinates: the middle
+ * of its ground, and how big a sprite standing there is drawn. Client
+ * coordinates because what hangs over a cell is a fixed element on the
+ * page rather than anything the board draws
+ */
+export interface CellSpot {
+  x: number;
+  y: number;
+  scale: number;
+}
+
+/**
+ * How many sheets of one kind are held before the least recently used
+ * one is let go of.
+ *
+ * Sheets are kept across chunks so walking back into country whose
+ * pokemon have already been met draws at once. What that is not is a
+ * reason to hold every coat met since the page opened: a player who
+ * has crossed a hundred chunks would be carrying hundreds of decoded
+ * sheets for the handful standing in front of them.
+ *
+ * Comfortably more than a board can show, and that margin is the
+ * point: a coat evicted while it is still standing on the board is a
+ * pokemon that vanishes and then loads itself again
+ */
+const SHEET_LIMIT = 128;
+
+/**
+ * The pictures one cell can carry. A cell can hold a tree and a
+ * pokemon standing beside it, and either may be in front of the player
+ * without the other, so each fades under a key of its own
+ */
+const enum Standing {
+  Scenery = 0,
+  Grotto = 1,
+  Mark = 2,
+  Plant = 3,
+  Person = 4,
+  Spawn = 5,
+}
+
+/** How many of those there are, which is what spaces the keys out */
+const STANDINGS = 6;
+
+/** The player's settings the board is drawn by */
+export interface ChunkViewSettings {
+  boardEdge: 'haze' | 'full' | 'plain';
+  flatBoard: boolean;
+  gridLines: boolean;
+  chunkLines: boolean;
+  stepHighlight: boolean;
+}
+
+/** The three stacked canvases the board is drawn on, back to front */
+export interface ChunkViewElements {
+  /** The picture, under everything and answering no pointer */
+  layer: HTMLCanvasElement;
+  /** The scene, swapped for a fresh element whenever it is rebuilt at another size */
+  stage: HTMLCanvasElement;
+  /** The one that answers the pointer and the keyboard */
+  canvas: HTMLCanvasElement;
+}
+
+export interface ChunkView {
+  /** Something the board is drawn from has changed: draw it again */
+  invalidate: () => void;
+  dispose: () => void;
+}
+
+/**
+ * Draw the chunk onto its canvases until disposed. `props` is read as
+ * the board is drawn, so a getter on it is followed without being told,
+ * and `invalidate` is how anything else says a redraw is due
+ */
+export default function createChunkView(
+  elements: ChunkViewElements,
+  props: ChunkCanvasProps,
+  settings: () => ChunkViewSettings,
+): ChunkView {
+  const { canvas, layer } = elements;
+  let stage = elements.stage;
+  /** What disposing undoes, in the order it was set up */
+  const undo: (() => void)[] = [];
+  const later = (step: () => void): void => {
+    undo.push(step);
+  };
+
+  /**
+   * How long the board has been on screen, in milliseconds.
+   *
+   * A clock of the canvas' own rather than the wall's: the sparkle a
+   * shiny throws is measured against the frames that actually ran, so
+   * a tab left in the background comes back with the sparkle where it
+   * was rather than long over
+   */
+  let clock = 0;
+
+  /**
+   * Whether the last picture had something moving on its own in it, and
+   * whether anything worth drawing has changed since. Between the two the
+   * loop skips frames that would only repeat the last one
+   */
+  let animating = true;
+  let dirty = true;
+  /** The bushes last drawn and the frame each showed, since their frames run on the clock */
+  const plantsShown: { plant: OWPlantSprite; phase: number; frame: number }[] = [];
+
+  /** The weather giving way and the one taking over, with when on `clock` it began */
+  const skies = { from: props.weather, to: props.weather, since: -WEATHER_FADE };
+
+  /**
+   * Which shinies have already been announced, and when.
+   *
+   * A shiny is the one thing on this board worth looking twice at, and
+   * it is a **recolour**: some of them are a shade off the ordinary
+   * coat, and a player who does not know the palette would walk past
+   * one. So the first sight of it throws a handful of stars, once.
+   *
+   * Keyed by the name the window published the pokemon under rather
+   * than by the cell it is standing on. The board follows the player,
+   * so a cell is a different square after every step, and a sparkle
+   * keyed to the ground announced itself again with each one
+   */
+  const sparkles = new Map<string, number>();
+  /** And when each legendary or mythical was first drawn, for its own burst */
+  const heralds = new Map<string, number>();
+
+  /**
+   * How many are remembered. A name is unique to its window, so the
+   * map only grows as far as the shinies actually met; the cap is
+   * there so that a session left running all afternoon is bounded.
+   * Far more than a board can hold, since forgetting one still
+   * standing on it is what starts a sparkle over
+   */
+  const SPARKLE_MEMORY = 512;
+
+  /** Which goal is marked, and when it was pressed, so a new press pulses and a replan does not */
+  let markedGoal = '';
+  let goalAt = 0;
+
+  /** A published name as a number, for the stars a shiny throws */
+  const nameSeed = (name: string): number => {
+    let mixed = 0;
+
+    for (let at = 0; at < name.length; at++) {
+      mixed = (Math.imul(mixed, 31) + name.charCodeAt(at)) | 0;
+    }
+    return Math.abs(mixed);
+  };
+
+  /**
+   * A square of the board said as the world's own cell.
+   *
+   * Everything a cell looks like is derived rather than stored: which
+   * tile of the tileset it draws, which way the pokemon standing on it
+   * faces, where a bush is in its sway. Derived from the *board* cell,
+   * all of it changed every time the player took a step, since the
+   * board moves and the world does not
+   */
+  const worldOf = (index: number): [number, number] => [
+    props.origin[0] + (index % BOARD_CELLS),
+    props.origin[1] + Math.floor(index / BOARD_CELLS),
+  ];
+
+  /**
+   * The same, as one number to seed with. A spatial hash rather than a
+   * row and a column: the world is 65,536 cells across, and a plain
+   * index of it overflows what the seeds downstream can multiply
+   */
+  const seedOf = (index: number): number => {
+    const [x, y] = worldOf(index);
+
+    return (Math.imul(x, 73_856_093) ^ Math.imul(y, 19_349_663)) >>> 1;
+  };
+
+  /**
+   * The country one cell of the board belongs to. Its own rather than
+   * the player's: a border runs between two cells now, and a tree on
+   * the far side of one is a tree of that country
+   */
+  const biomeAt = (index: number): Biome =>
+    props.ground.biome(index % BOARD_CELLS, Math.floor(index / BOARD_CELLS));
+
+  /**
+   * How faint each picture standing in front of the player is drawn,
+   * while it is in the way of them.
+   *
+   * Kept between frames because it is a fade rather than a switch: a
+   * tree the player has just stepped behind is on its way to faint,
+   * and one they have stepped out from behind is on its way back.
+   * Anything at full strength is dropped rather than stored, so a
+   * board nobody is hiding behind carries nothing
+   */
+  const veils = new Map<number, number>();
+
+  /** When the last frame was drawn, on the board's own clock */
+  let paintedAt = 0;
+
+  /**
+   * One animation per species standing in the chunk, shared by every
+   * cell holding that species. Two Rattata in a field are one sheet
+   * and one playhead — they are scenery, and scenery need not be out
+   * of step to be believed
+   */
+  /**
+   * The load behind each coat, so one that is already on its way is
+   * waited on rather than asked for again
+   */
+  const pending = new Map<string, Promise<void>>();
+
+  // Keyed by the coat rather than by the species: a shiny Rattata is
+  // a different sheet from the plain one standing beside it, and the
+  // two have to be able to stand in the same chunk.
+  //
+  // Held newest-first and bounded. Each drawn coat is read every
+  // frame, which is what keeps what is on screen at the front of the
+  // list and out of reach of the drop
+  const sprites = new LRUMap<string, SpeciesSpriteAnimation | null>(SHEET_LIMIT, (key) => {
+    // The load goes with the sheet. A promise left behind is what a
+    // later ask would be answered with, instead of a fetch
+    pending.delete(key);
+  });
+
+  const coatKey = (coat: SpawnCoat): string =>
+    `${coat.species}:${coat.shiny ? 'shiny' : 'plain'}:${coat.female ? 'female' : 'male'}`;
+
+  /**
+   * The ridden pokemon's own sheet. Kept apart from the spawns' shared
+   * ones, since a spawn of the same species would otherwise turn with
+   * the player
+   */
+  let ridden: { key: string; sprite: SpeciesSpriteAnimation | null } | null = null;
+
+  /** Load the ridden pokemon's sheet when the mount changes; asked every frame */
+  const followMount = (): void => {
+    const coat = props.mount;
+    const key = coat == null ? '' : `${coat.species}:${coat.shiny}:${coat.female}`;
+
+    if (key === (ridden?.key ?? '')) {
+      return;
+    }
+    dirty = true;
+    if (coat == null) {
+      ridden = null;
+      return;
+    }
+
+    const loading = { key, sprite: null };
+
+    ridden = loading;
+    loadSpeciesSprite(coat.species, { shiny: coat.shiny, female: coat.female })
+      .then((sprite) => {
+        if (ridden === loading) {
+          ridden = { key, sprite };
+          dirty = true;
+        }
+      })
+      .catch(() => {
+        // The charset stands in until a sheet does
+      });
+  };
+
+  /**
+   * Ask for a coat's sheet, and answer when it has landed one way or
+   * the other. A species with no shiny drawing falls back to its
+   * ordinary one inside the loader, so a missing sheet costs the
+   * sparkle rather than the pokemon
+   */
+  const loadCoat = async (coat: SpawnCoat): Promise<void> => {
+    const key = coatKey(coat);
+    const already = pending.get(key);
+
+    if (already != null) {
+      return already;
+    }
+
+    // Held as null until it lands, so a coat is asked for once rather
+    // than once per frame it is drawn in
+    sprites.set(key, null);
+
+    const arriving = loadSpeciesSprite(coat.species, { shiny: coat.shiny, female: coat.female })
+      .then((loaded) => {
+        sprites.set(key, loaded);
+        dirty = true;
+      })
+      .catch(() => {
+        // The dot it always was
+      });
+
+    pending.set(key, arriving);
+    return arriving;
+  };
+
+  /**
+   * The charsets, by the folder they are in. One entry a sheet rather
+   * than a cell: the people who wander are drawn from a handful of
+   * charsets, and a chunk holding two of the same trade should not
+   * fetch it twice
+   */
+  const arriving = new Map<string, Promise<void>>();
+
+  const people = new LRUMap<string, OWCharSprite | null>(SHEET_LIMIT, (key) => {
+    arriving.delete(key);
+  });
+
+  /**
+   * The berry plants, by the folder they are in. Shared rather than
+   * cloned: a plant's frame is a function of the clock it is drawn
+   * with, so one sheet serves every patch bearing that berry
+   */
+  const plants = new Map<string, OWPlantSprite | null>();
+
+  /**
+   * The scenery atlases, by the folder they are in. Both are stills, so
+   * one copy serves every cell that draws off them
+   */
+  const scenery = new Map<string, BasicSprite | null>();
+
+  /**
+   * When a sheet last failed to come, so a miss is retried after a
+   * pause rather than either refetched every frame or given up on for
+   * the life of the board — a charset the processor is writing this
+   * minute is missing now and there in a moment
+   */
+  const missedAt = new Map<string, number>();
+
+  const RETRY_PACE = 5000;
+
+  const loadPerson = async (sheet: string): Promise<void> => {
+    const already = arriving.get(sheet);
+
+    if (already != null) {
+      return already;
+    }
+
+    const missed = missedAt.get(sheet);
+
+    if (missed != null && performance.now() - missed < RETRY_PACE) {
+      return;
+    }
+
+    // Held as null until it lands, so a sheet is asked for once rather
+    // than once per frame somebody wearing it is drawn in
+    people.set(sheet, null);
+
+    const loading = loadOWChar(sheet)
+      .then((loaded) => {
+        if (loaded == null) {
+          // Forgotten rather than kept: the next ask past the pause
+          // fetches again
+          missedAt.set(sheet, performance.now());
+          people.delete(sheet);
+          arriving.delete(sheet);
+        } else {
+          people.set(sheet, loaded);
+          missedAt.delete(sheet);
+          dirty = true;
+        }
+      })
+      .catch(() => {
+        // The letter in a circle it always was
+      });
+
+    arriving.set(sheet, loading);
+    return loading;
+  };
+
+  const personFor = (sheet: string): OWCharSprite | null => {
+    if (!people.has(sheet)) {
+      loadPerson(sheet).catch(() => {
+        // Already answered inside: nothing else to do with it
+      });
+      return null;
+    }
+    return people.get(sheet) ?? null;
+  };
+
+  /**
+   * The person on a cell, once their sheet is in hand: a wanderer, or
+   * whoever stands at one of the fighting landmarks. A cell with no
+   * charset yet is the letter in a circle it was before there were any
+   */
+  const personOn = (index: number): OWCharSprite | null => {
+    const landmark = props.landmarks.get(index);
+    let fallback: Npc | null = null;
+
+    if (landmark === Landmark.WanderingNpc) {
+      fallback = props.wanderers.get(index) ?? null;
+    } else if (landmark === Landmark.Market) {
+      fallback = Npc.Vendor;
+    } else if (landmark === Landmark.PokemonCenter) {
+      fallback = Npc.NurseJoy;
+    } else if (landmark === Landmark.TeamRocket) {
+      fallback = Npc.RocketGrunt;
+    } else if (
+      landmark === Landmark.Trainer ||
+      landmark === Landmark.GymLeader ||
+      landmark === Landmark.EliteFour ||
+      landmark === Landmark.Champion ||
+      landmark === Landmark.FrontierBrain
+    ) {
+      // The experts wear their own coats from the snapshot; the plain
+      // trainer's sheet only stands in while a coat is missing
+      fallback = Npc.Trainer;
+    }
+    if (fallback == null) {
+      return null;
+    }
+
+    const person = personFor(props.coats.get(index) ?? npcSheet(fallback));
+
+    return person?.ready === true ? person : null;
+  };
+
+  const drawnAsPerson = (index: number): boolean => personOn(index) != null;
+
+  const loadPlant = async (sheet: string): Promise<void> => {
+    const already = arriving.get(sheet);
+
+    if (already != null) {
+      return already;
+    }
+
+    const missed = missedAt.get(sheet);
+
+    if (missed != null && performance.now() - missed < RETRY_PACE) {
+      return;
+    }
+
+    plants.set(sheet, null);
+
+    const loading = loadOWPlant(sheet)
+      .then((loaded) => {
+        if (loaded == null) {
+          missedAt.set(sheet, performance.now());
+          plants.delete(sheet);
+          arriving.delete(sheet);
+        } else {
+          plants.set(sheet, loaded);
+          missedAt.delete(sheet);
+          dirty = true;
+        }
+      })
+      .catch(() => {
+        // The letter in a circle it always was
+      });
+
+    arriving.set(sheet, loading);
+    return loading;
+  };
+
+  /**
+   * The plant growing on a cell, once its sheet is in hand. A patch
+   * whose berry has no drawing yet is the letter in a circle it was
+   * before there were any
+   */
+  const plantOn = (index: number): OWPlantSprite | null => {
+    const bearing = props.berries.get(index);
+    const landmark = props.landmarks.get(index);
+
+    if (
+      bearing == null ||
+      (landmark !== Landmark.BerryPatch && landmark !== Landmark.ApricornTree)
+    ) {
+      return null;
+    }
+
+    // An apricorn tree is the same shape of drawing as a bush, on a
+    // sheet of its own colour
+    const sheet =
+      landmark === Landmark.ApricornTree
+        ? apricornTreeSheet(bearing.item)
+        : berryPlantSheet(bearing.item);
+
+    if (!plants.has(sheet)) {
+      loadPlant(sheet).catch(() => {
+        // Already answered inside: nothing else to do with it
+      });
+      return null;
+    }
+
+    const plant = plants.get(sheet) ?? null;
+
+    return plant?.ready === true ? plant : null;
+  };
+
+  const loadScenery = async (sheet: string): Promise<void> => {
+    const already = arriving.get(sheet);
+
+    if (already != null) {
+      return already;
+    }
+
+    const missed = missedAt.get(sheet);
+
+    if (missed != null && performance.now() - missed < RETRY_PACE) {
+      return;
+    }
+
+    scenery.set(sheet, null);
+
+    const loading = loadBasicSprite(`${OW_SPRITE_ROOT}/${sheet}`)
+      .then((loaded) => {
+        if (loaded == null) {
+          missedAt.set(sheet, performance.now());
+          scenery.delete(sheet);
+          arriving.delete(sheet);
+        } else {
+          scenery.set(sheet, loaded);
+          missedAt.delete(sheet);
+          dirty = true;
+        }
+      })
+      .catch(() => {
+        // The cone and the mound it always was
+      });
+
+    arriving.set(sheet, loading);
+    return loading;
+  };
+
+  /**
+   * What stands on a cell nothing can walk through.
+   *
+   * The rock that used to be drawn as a wall of the country is a tree
+   * now, or whatever the country grows in its place, so a blocked cell
+   * carries a piece of scenery rather than a tile of its own
+   */
+  const standingAt = (index: number): Decoration | null => {
+    const cell = boardCellOf(index);
+
+    // Underground the rock is its own cliff, so nothing grows on it
+    if (props.underground || props.ground.role(cell.x, cell.y) !== 'wall') {
+      return null;
+    }
+    return getBlocker(props.ground.biome(cell.x, cell.y));
+  };
+
+  /**
+   * The picture a piece of scenery is drawn as, once its atlas is in
+   * hand. A kind whose sheet has not landed is the shape it was before
+   * there were any
+   */
+  const sceneryOn = (index: number): { sheet: BasicSprite; name: string } | null => {
+    const kind = props.decorations.get(index) ?? standingAt(index);
+
+    if (kind == null) {
+      return null;
+    }
+
+    const picture = decorationPicture(kind, biomeAt(index), seedOf(index));
+
+    if (!scenery.has(picture.sheet)) {
+      loadScenery(picture.sheet).catch(() => {
+        // Already answered inside: nothing else to do with it
+      });
+      return null;
+    }
+
+    const sheet = scenery.get(picture.sheet) ?? null;
+
+    return sheet?.ready === true ? { sheet, name: picture.name } : null;
+  };
+
+  /**
+   * Stand one picture from an atlas on a cell.
+   *
+   * Everything that stands on the board and is not alive comes through
+   * here: a tree, a rock, a cave mouth. The sheet says where the piece
+   * meets the ground and how much ground it covers, and this is what
+   * puts those two answers on a tile
+   */
+  const standPiece = (
+    context: CanvasRenderingContext2D,
+    piece: { sheet: BasicSprite; name: string } | null,
+    middle: { x: number; y: number; scale: number },
+    magnify: number,
+    lay?: (placed: SpriteQuad | null, alpha?: number) => boolean,
+    /** How faint to draw it, asked once the piece has been placed */
+    fade?: (placed: SpriteQuad | null) => number,
+    /** What it throws on the ground, laid before the piece itself */
+    shadow?: (placed: SpriteQuad) => void,
+  ): void => {
+    const cell = piece?.sheet.frameOf(piece.name);
+
+    if (piece == null || cell == null) {
+      return;
+    }
+
+    // A sheet that says how much ground its pieces cover is drawn so
+    // that much of it is one square: a tree comes out the size of the
+    // tree rather than the size of the square the packing needed for
+    // the tallest one on the sheet. Anything that does not say is
+    // sized off its own cell
+    const stands = piece.sheet.data.stands;
+    const scale =
+      stands == null
+        ? (CELL * SCENERY_CELLS * middle.scale * magnify) / cell.sourceHeight
+        : (CELL * middle.scale * magnify) / stands;
+    // The atlas is pixel art and BasicSprite draws for the interface,
+    // where nothing is scaled up far enough to care
+    const smoothing = context.imageSmoothingEnabled;
+
+    context.imageSmoothingEnabled = false;
+    // Where the piece meets the ground, which the sheet worked out
+    // when it was cut: the middle of the patch it stands on, never the
+    // shadow the rip lays under it. Standing the cell's floor on the
+    // tile instead puts the shadow on the tile and the piece a row
+    // behind it
+    const base = cell.base ?? [cell.sourceWidth / 2, cell.sourceHeight];
+
+    const left = middle.x - base[0] * scale;
+    const top = middle.y - base[1] * scale;
+    const where = { scale, anchor: 'top-left' } as const;
+
+    const quad = piece.sheet.quadOf(piece.name, left, top, where);
+    const alpha = fade?.(quad) ?? 1;
+
+    if (quad != null) {
+      shadow?.(quad);
+    }
+
+    if (lay?.(quad, alpha) !== true) {
+      piece.sheet.draw(context, piece.name, left, top, alpha === 1 ? where : { ...where, alpha });
+    }
+    context.imageSmoothingEnabled = smoothing;
+  };
+
+  /**
+   * The tree a hidden grotto is hiding under, once the tree sheet has
+   * landed. It is drawn as scenery and nothing else: what makes a
+   * grotto hidden is that it looks like a tree
+   */
+  const grottoOn = (index: number): { sheet: BasicSprite; name: string } | null => {
+    if (props.phenomena.get(index) !== Phenomenon.HiddenGrotto) {
+      return null;
+    }
+
+    const picture = grottoPicture(biomeAt(index), seedOf(index));
+
+    if (!scenery.has(picture.sheet)) {
+      loadScenery(picture.sheet).catch(() => {
+        // Already answered inside: nothing else to do with it
+      });
+      return null;
+    }
+
+    const sheet = scenery.get(picture.sheet) ?? null;
+
+    return sheet?.ready === true ? { sheet, name: picture.name } : null;
+  };
+
+  /**
+   * The picture a landmark is drawn as, once its sheet is in hand.
+   *
+   * Null for the landmarks somebody is standing on and for the berry
+   * patches, which grow their own bush: both are drawn already, and a
+   * mark under them would be the cell saying the same thing twice
+   */
+  const landmarkOn = (index: number): { sheet: BasicSprite; name: string } | null => {
+    const kind = props.landmarks.get(index);
+
+    if (kind == null || drawnAsPerson(index)) {
+      return null;
+    }
+
+    const name = landmarkPicture(kind, props.dug.has(index), props.underground);
+
+    if (name == null) {
+      return null;
+    }
+    if (!scenery.has(LANDMARK_SHEET)) {
+      loadScenery(LANDMARK_SHEET).catch(() => {
+        // Already answered inside: nothing else to do with it
+      });
+      return null;
+    }
+
+    const sheet = scenery.get(LANDMARK_SHEET) ?? null;
+
+    return sheet?.ready === true ? { sheet, name } : null;
+  };
+
+  /**
+   * The player's own walker, and the copy is the point.
+   *
+   * The charsets are cached one to a sheet, so everybody wearing a
+   * sheet was drawn from a single sprite — and a sprite carries the
+   * playhead. The player is the only one who walks, so every NPC in
+   * that charset was drawn at whatever frame of the player's stride
+   * the last step left behind: the Champion wears Red's sheet, and so
+   * does the player, so the two moved as one. A clone shares the
+   * picture and the grid and keeps a playhead of its own
+   */
+  let mine: OWCharSprite | null = null;
+  let mineSheet: string | null = null;
+
+  /**
+   * Each other player's own clone, for the same reason, with where
+   * they were drawn last so the stride follows how far they moved
+   */
+  const walkers = new Map<string, { sheet: string; sprite: OWCharSprite; x: number; y: number }>();
+  /** The other players as they stand this frame */
+  let crowd: StrangerStanding[] = [];
+
+  const playerPerson = (): OWCharSprite | null => {
+    const sheet = props.charset ?? PLAYER_SHEET;
+    const shared = personFor(sheet);
+
+    if (shared?.ready !== true) {
+      return null;
+    }
+    if (mine == null || mineSheet !== sheet) {
+      mine = shared.clone();
+      mineSheet = sheet;
+    }
+    return mine;
+  };
+
+  /**
+   * Where the player is, in **world** cells, chasing `props.at` at
+   * walking pace. They are drawn in the middle of the picture whatever
+   * this says: what it moves is the ground, so a step is the country
+   * sliding under them rather than a sprite crossing a fixed board. A
+   * jump too far to be a step snaps instead
+   */
+  const slide = { x: props.at[0], y: props.at[1] };
+  /** Where the last step went to, and how long it was: 1, or √2 diagonally */
+  const stepped = { x: props.at[0], y: props.at[1], stride: 1 };
+  /**
+   * How high the ground under the player stands, eased the way their
+   * step is. The picture is centred on it, so walking up a terrace
+   * carries the camera up with them instead of leaving them drawn two
+   * levels above the middle of the screen
+   */
+  const underfoot = { at: props.ground.level(BOARD_CENTER, BOARD_CENTER) * TERRACE_LIFT };
+
+  /** The way the player last walked, which is the way they stand. */
+  let heading: SpriteDirection = 'Down';
+
+  /**
+   * The countries in sight, once their ground has landed.
+   *
+   * One pack for every country rather than a sheet apiece, so it is
+   * asked for once. Not part of the wait the pokemon are: a board with
+   * nothing packed is drawn in the flat colour it always was, so there
+   * is nothing to gain by standing still until it arrives
+   */
+  let terrain: TerrainTiles | null = null;
+  /** The scene the country is drawn in, once there is art for it */
+  let staged: BoardScene | null = null;
+  /** The window the scene was last built for, so it is rebuilt on a step */
+  let built: string | null = null;
+
+  /**
+   * The squares on screen with their outlines, far to near, kept between
+   * frames: they only move when the camera, the screen or the ground does
+   */
+  let projected: {
+    key: string;
+    ground: BoardGround;
+    drawn: { square: BoardCell; outline: ProjectedPoint[]; lift: number; depth: number }[];
+    lifted: Set<number>;
+  } | null = null;
+  /** The standing pass's cells in paint order, kept while nothing on the board changes */
+  let standOrder: {
+    yaw: number;
+    /** Which cells other players stand on, as a string so a new frame with the same cells matches */
+    crowded: string;
+    projected: object;
+    ground: BoardGround;
+    landmarks: Map<number, Landmark>;
+    decorations: Map<number, Decoration>;
+    spawns: Map<number, SpawnCoat>;
+    phenomena: Map<number, Phenomenon>;
+    order: number[];
+  } | null = null;
+
+  /** How many cells the scene reaches past the board on each side: only the full board reaches further */
+  const edgeExtra = (): number => (settings().boardEdge === 'full' ? FULL_BOARD_EXTRA : 0);
+
+  /** The edge the scene was last built for, and how to take that one down */
+  let stagedExtra: number | null = null;
+  let unstage: (() => void) | null = null;
+
+  /**
+   * Build the scene for the board's edge, taking down the one before.
+   * A disposed scene loses its context, so a rebuild at another size
+   * draws on a fresh element in the old one's place
+   */
+  const restage = (): void => {
+    const extra = edgeExtra();
+
+    if (extra === stagedExtra) {
+      return;
+    }
+    if (unstage != null) {
+      unstage();
+
+      const fresh = stage.ownerDocument.createElement('canvas');
+
+      fresh.className = stage.className;
+      fresh.setAttribute('aria-hidden', 'true');
+      stage.replaceWith(fresh);
+      stage = fresh;
+    }
+    stagedExtra = extra;
+
+    let live = true;
+    let scene: BoardScene | null = null;
+
+    // The tilesets the ground is drawn from: one pack for every biome
+    // rather than a rip apiece, so it is asked for once
+    loadTerrainTiles().then(
+      (pack) => {
+        if (!live) {
+          return;
+        }
+        terrain = pack;
+        dirty = true;
+        scene = createBoardScene(stage, pack, BOARD_CELLS + extra * 2, extra);
+        staged = scene;
+        built = null;
+      },
+      () => {
+        // The flat colour, until it lands
+      },
+    );
+    unstage = () => {
+      live = false;
+      // A battle unmounts the board, and a scene left behind keeps its WebGL context
+      staged = null;
+      scene?.dispose();
+    };
+  };
+
+  later(() => {
+    unstage?.();
+  });
+
+  const spriteFor = (coat: SpawnCoat): SpeciesSpriteAnimation | null => {
+    const key = coatKey(coat);
+
+    if (!sprites.has(key)) {
+      loadCoat(coat).catch(() => {
+        // Already answered inside: nothing else to do with it
+      });
+      return null;
+    }
+    return sprites.get(key) ?? null;
+  };
+
+  /**
+   * Whether the sheets for what is standing in this chunk are still
+   * coming.
+   *
+   * The board used to draw itself the moment it had a chunk and let
+   * the pokemon appear one at a time as their sheets landed, which
+   * reads as a field filling up rather than as a field. It waits
+   * instead: the ground is drawn, nothing is standing on it yet, and
+   * the picture arrives whole.
+   *
+   * It is only ever the **first** wait, and deliberately so. The board
+   * follows the player rather than the chunk, so something whose sheet
+   * has not been met walks into view every few steps: waited for every
+   * time, the whole field would blank each time one did. After the
+   * first picture a newcomer at the rim simply arrives when it lands
+   */
+  let loading = true;
+  let arrived = false;
+
+  /**
+   * The coat keys standing in this chunk right now.
+   *
+   * Only these are advanced each frame, and only these survive a cut
+   * back: the cache holds every sheet met since the page opened, and
+   * walking a playhead nobody is looking at costs a frame for every
+   * chunk ever visited
+   */
+  let coatsOf: { spawns: Map<number, SpawnCoat>; keys: Set<string> } | null = null;
+
+  const drawnCoats = (): Set<string> => {
+    if (coatsOf?.spawns !== props.spawns) {
+      const keys = new Set<string>();
+
+      for (const coat of props.spawns.values()) {
+        keys.add(coatKey(coat));
+      }
+      coatsOf = { spawns: props.spawns, keys };
+    }
+    return coatsOf.keys;
+  };
+
+  /** The charsets worn in this chunk, which is everybody drawn as a person */
+  const worn = (): Set<string> => {
+    const sheets = new Set<string>(props.coats.values());
+
+    for (const npc of props.wanderers.values()) {
+      sheets.add(npcSheet(npc));
+    }
+    return sheets;
+  };
+
+  /** What the last wait was for, so a new chunk's standing starts a new one */
+  let waitedFor: { spawns: unknown; coats: unknown; wanderers: unknown } | null = null;
+  let stopWaiting: (() => void) | null = null;
+
+  /** Wait for every sheet standing in the chunk; asked every frame, and only acts on a change */
+  const waitForSheets = (): void => {
+    if (
+      waitedFor?.spawns === props.spawns &&
+      waitedFor.coats === props.coats &&
+      waitedFor.wanderers === props.wanderers
+    ) {
+      return;
+    }
+    waitedFor = { spawns: props.spawns, coats: props.coats, wanderers: props.wanderers };
+    stopWaiting?.();
+
+    const coats = [...props.spawns.values()];
+    let live = true;
+
+    stopWaiting = () => {
+      live = false;
+    };
+
+    // The people standing in the chunk are part of the picture the
+    // same way the pokemon are, so the board waits for their sheets
+    // too. The coats carry everyone — wanderers and the fighting
+    // landmarks alike
+    const wearing = [...worn()];
+
+    // Nothing to wait for is not a wait: an empty chunk is finished
+    const settle = (): void => {
+      if (live) {
+        arrived = true;
+        loading = false;
+        dirty = true;
+      }
+    };
+
+    let ready = true;
+
+    for (const coat of coats) {
+      if (!sprites.has(coatKey(coat))) {
+        ready = false;
+        break;
+      }
+    }
+    if (ready) {
+      for (const sheet of wearing) {
+        if (!people.has(sheet)) {
+          ready = false;
+          break;
+        }
+      }
+    }
+    if (ready) {
+      settle();
+      return;
+    }
+    if (!arrived) {
+      loading = true;
+    }
+
+    const loads: Promise<void>[] = [];
+
+    for (const sheet of wearing) {
+      loads.push(loadPerson(sheet));
+    }
+    for (const coat of coats) {
+      loads.push(loadCoat(coat));
+    }
+    Promise.all(loads)
+      .then(settle)
+      .catch(() => {
+        // A sheet that will not load is drawn as the dot it always
+        // was; it is not a reason to hold the whole board back
+        settle();
+      });
+  };
+
+  later(() => {
+    stopWaiting?.();
+  });
+
+  /** The cell the pointer is over, which the board lights and the tooltip names */
+  let hovered: BoardCell | null = null;
+
+  /**
+   * How big the canvas is on screen, in CSS pixels. The picture is
+   * fitted into it, so this is what decides how large the board is
+   * drawn
+   */
+  let box = {
+    width: pictureWidth(),
+    height: pictureWidth() * boardView().aspect,
+  };
+  /**
+   * Which way round the board is being looked at. It is the camera's,
+   * not the world's: nothing about the chunk changes when it turns,
+   * and walking north is still walking north.
+   *
+   * It belongs to the caller rather than to this canvas. Walking
+   * across a chunk boundary takes the board away and brings another
+   * one back, and a camera that lives here would be facing front
+   * again every time — which is the one moment a player is most
+   * likely to have turned it deliberately, to see what they were
+   * walking toward
+   */
+  const yaw = (): number => props.yaw;
+
+  /**
+   * How far the ground is drawn from where it lives, in cells.
+   *
+   * The board's corner moves a whole cell the instant a step is taken;
+   * the player catches up over the next quarter second. The difference
+   * between the two is this, and adding it to every square on the
+   * ground is what makes a step a scroll rather than a jump. The
+   * player is drawn without it, which is why they stay in the middle
+   */
+  const camera = (): [number, number] => [
+    BOARD_CENTER - (slide.x - props.origin[0]),
+    BOARD_CENTER - (slide.y - props.origin[1]),
+  ];
+
+  /** A square of ground where it is actually drawn */
+  const shifted = (cell: BoardCell): BoardCell => {
+    const [dx, dy] = camera();
+
+    return { x: cell.x + dx, y: cell.y + dy };
+  };
+
+  /**
+   * How high each corner of a laid-back cell is drawn: far left, far
+   * right, near right, near left, each sunk to the lowest ground meeting
+   * there, which is how a step becomes a slope
+   */
+  const cornerLifts = (cell: BoardCell): number[] => {
+    const sunk = (cx: number, cy: number): number => {
+      let low = Number.POSITIVE_INFINITY;
+
+      for (const [ox, oy] of SQUARES) {
+        low = Math.min(low, props.ground.level(cx + ox, cy + oy));
+      }
+      return low * TERRACE_LIFT;
+    };
+
+    return [
+      sunk(cell.x, cell.y),
+      sunk(cell.x + 1, cell.y),
+      sunk(cell.x + 1, cell.y + 1),
+      sunk(cell.x, cell.y + 1),
+    ];
+  };
+
+  /** And where the middle of one is, which is where things stand */
+  const groundPoint = (index: number): ProjectedPoint => {
+    const cell = boardCellOf(index);
+
+    // Whatever stands on a cell stands on top of it: a tree on a
+    // terrace is drawn at the height of the terrace, not at the foot
+    // of the cliff holding it up
+    return projectBoardCell(
+      shifted(cell),
+      yaw(),
+      boardView().mode === '2d' ? 0 : props.ground.level(cell.x, cell.y) * TERRACE_LIFT,
+    );
+  };
+
+  /**
+   * A point between cells, for somebody walking across them, stood at
+   * the height of the cell they are passing through
+   */
+  const groundBetween = (x: number, y: number, cell: BoardCell): ProjectedPoint =>
+    projectBoardCell(
+      shifted({ x, y }),
+      yaw(),
+      boardView().mode === '2d' ? 0 : props.ground.level(cell.x, cell.y) * TERRACE_LIFT,
+    );
+
+  const setYaw = (turn: (angle: number) => number): void => {
+    props.onTurn(turn(props.yaw));
+  };
+  /**
+   * The drag turning it, while one is in progress. Not a signal:
+   * nothing is drawn from it — the yaw it produces is what the
+   * picture reads
+   */
+  let turning: { pointer: number; angle: number } | null = null;
+  /**
+   * The two fingers doing the same job, for a screen with no right
+   * button to hold down
+   */
+  const twist = createTwist();
+  /**
+   * Whether the last press actually moved the camera. A drag that
+   * turned the board is not also a press on the cell it ended over,
+   * and on the Mac the two arrive as the same gesture
+   */
+  let turned = false;
+  /** Where the mouse last was over the board, so the hover can follow a board sliding under it */
+  let pointer: { clientX: number; clientY: number } | null = null;
+  /** The cell a press went down on, and where, which is what its click acts on */
+  let pressed: { cell: BoardCell | null; clientX: number; clientY: number } | null = null;
+  /**
+   * What the last frame stood up that can be pressed, far to near, in the
+   * canvas' own pixels. A pokemon is drawn upward from its cell, so a
+   * press on its body lands on the ground behind it without these
+   */
+  let pickable: { index: number; left: number; top: number; right: number; bottom: number }[] = [];
+  /** What a cell is called, for the tooltip and for a screen reader */
+  const nameOf = (cell: BoardCell | null): string => {
+    const index = cell == null ? null : boardIndexOf(cell);
+
+    return index == null ? '' : props.label(index);
+  };
+
+  // Compared by cell, since the pointer hands a new object on every move and each change redraws
+  const setHovered = (cell: BoardCell | null): void => {
+    if (hovered?.x === cell?.x && hovered?.y === cell?.y) {
+      return;
+    }
+    hovered = cell;
+    dirty = true;
+    // A canvas has no per-cell elements to hang a tooltip on, so the
+    // one tooltip it has says whatever the pointer is over
+    canvas.title = nameOf(cell);
+    canvas.style.cursor = cell == null ? 'default' : 'pointer';
+  };
+
+  /**
+   * Which cell a pointer at these page coordinates is over.
+   *
+   * The board is a trapezoid on a stretched canvas, so the reading
+   * goes back through both: the element's own box turns the pointer
+   * into a fraction of the picture, and the projection turns that
+   * fraction back into the cell it was drawn from. A press near the
+   * top corners lands on no cell at all now, which is honest — there
+   * is no board there
+   */
+  const fractionAt = (event: {
+    clientX: number;
+    clientY: number;
+  }): { x: number; y: number } | null => {
+    const element = canvas;
+
+    const bounds = element.getBoundingClientRect();
+
+    // The pointer reads the board the painter drew, so it names the
+    // same screen first
+    setBoardScreen(bounds.width, bounds.height);
+    // Through the picture rather than the element. They were the same
+    // thing while the canvas was the board; now the canvas is the page
+    // and the picture is as much of it as the board's proportions
+    // allow, so a press has to be put back through the same fitting
+    // the painter drew it with
+    const frame = fitPicture(bounds.width, bounds.height);
+
+    if (frame.width === 0 || frame.height === 0) {
+      return null;
+    }
+    return {
+      x: (event.clientX - bounds.left - frame.x) / frame.width,
+      y: (event.clientY - bounds.top - frame.y) / frame.height,
+    };
+  };
+
+  /**
+   * The other way round: a cell's middle in client coordinates. The
+   * pointer's road out, walked backwards, so a card hung over a cell
+   * sits where a press on it would land
+   */
+  const spotOf = (cell: number): CellSpot | null => {
+    const element = canvas;
+
+    const bounds = element.getBoundingClientRect();
+
+    setBoardScreen(bounds.width, bounds.height);
+
+    const frame = fitPicture(bounds.width, bounds.height);
+
+    if (frame.width === 0 || frame.height === 0) {
+      return null;
+    }
+    const point = groundPoint(cell);
+
+    return {
+      x: bounds.left + frame.x + point.x * frame.width,
+      y: bounds.top + frame.y + point.y * frame.height,
+      scale: point.scale,
+    };
+  };
+
+  // Handed up once, since it reads the canvas and the yaw as it is
+  // called rather than closing over either
+  props.onPlaced?.(spotOf);
+
+  const cellAt = (event: { clientX: number; clientY: number }): BoardCell | null => {
+    const at = fractionAt(event);
+
+    if (at == null) {
+      return null;
+    }
+    if (boardView().mode === '2d') {
+      return boardCellAtFraction(at.x, at.y, yaw(), camera());
+    }
+    // Every cell is tested against its outline as drawn, corners sunk
+    // down any slope, and the nearest one the point is inside is on top.
+    // Asked of the whole board: guessing candidates from a reading at
+    // each level drifts by cells once the ground stands many levels off
+    let found: BoardCell | null = null;
+    let nearest = Number.NEGATIVE_INFINITY;
+
+    for (const cell of PRESSABLE) {
+      const depth = projectBoardCell(shifted(cell), yaw()).y;
+
+      if (depth <= nearest) {
+        continue;
+      }
+      const lifts = cornerLifts(cell);
+      const level = lifts[0] === lifts[1] && lifts[1] === lifts[2] && lifts[2] === lifts[3];
+      const corners = level ? projectBoardCellQuad(shifted(cell), yaw(), lifts[0]) : [];
+
+      if (!level) {
+        for (let corner = 0; corner < lifts.length; corner++) {
+          corners.push(projectBoardCellQuad(shifted(cell), yaw(), lifts[corner])[corner]);
+        }
+      }
+      if (inQuad(at, corners)) {
+        nearest = depth;
+        found = cell;
+      }
+    }
+    return found ?? boardCellAtFraction(at.x, at.y, yaw(), camera());
+  };
+
+  /**
+   * The cell a point is aiming at: whatever pressable thing is drawn
+   * under it, front first, and otherwise the ground under it
+   */
+  const aimAt = (event: { clientX: number; clientY: number }): BoardCell | null => {
+    const bounds = canvas.getBoundingClientRect();
+    const x = event.clientX - bounds.left;
+    const y = event.clientY - bounds.top;
+
+    for (let at = pickable.length - 1; at >= 0; at--) {
+      const pick = pickable[at];
+
+      if (x >= pick.left && x <= pick.right && y >= pick.top && y <= pick.bottom) {
+        return boardCellOf(pick.index);
+      }
+    }
+    return cellAt(event);
+  };
+
+  /**
+   * Take hold of the plane, or let go of it.
+   *
+   * What is grabbed is a **point on the ground**, not a number of
+   * pixels: the board then turns so that point stays under the
+   * pointer, the way a hand on a map turns the map. Dragging along one
+   * axis and multiplying by a constant is a slider with a board drawn
+   * next to it — it turns whichever way the mouse went rather than
+   * whichever way the player pushed the ground
+   */
+  const grab = (event: MouseEvent): number | null => {
+    const at = fractionAt(event);
+
+    if (at == null) {
+      return null;
+    }
+
+    const ground = unprojectGround(at.x, at.y, yaw());
+
+    return radiusOf(ground) < TURN_DEAD_ZONE ? null : angleOf(ground);
+  };
+
+  /**
+   * Turn the board so the grabbed point comes back under the pointer.
+   *
+   * The point is held in the world's own angles, and the pointer is
+   * read in the camera's; the difference between the two is the yaw,
+   * by construction. It is applied as the shortest way round, so
+   * dragging past due south carries on rather than snapping back
+   */
+  const dragTo = (event: MouseEvent, grabbed: number): void => {
+    const at = fractionAt(event);
+
+    if (at == null) {
+      return;
+    }
+
+    const seen = unprojectGround(at.x, at.y, 0);
+
+    if (radiusOf(seen) < TURN_DEAD_ZONE) {
+      return;
+    }
+    setYaw((angle) => angle + shortestTurn(angle, angleOf(seen) - grabbed));
+  };
+
+  const element = canvas;
+  const context = element.getContext('2d');
+
+  if (context == null) {
+    return { invalidate: () => {}, dispose: () => {} };
+  }
+
+  /**
+   * The picture, on its own canvas under the one that answers the
+   * pointer: a 2D context and a GL context cannot both be had from
+   * the same element.
+   *
+   * Stacked rather than drawn aside and copied in. A canvas over
+   * another cannot be washed by it, and the hour's light is a
+   * multiply, which has to read what is under it — so the layer
+   * paints the country itself and the wash lands on something
+   * opaque. What is left above is only what still has to be painted
+   */
+  const drawing = layer;
+
+  /**
+   * The batch, or null where the browser will not give a WebGL
+   * context and where it has taken one away. Both leave the 2D
+   * passes to draw as they always did
+   */
+  let layerBatch = QuadBatch.create(drawing);
+
+  /**
+   * The drawn art, kept as pictures. Nothing on this sheet changes
+   * frame to frame, so each piece is drawn once and stamped after
+   */
+  const bakery = new Bakery();
+  /**
+   * What a dark sky is kept off, rebuilt every frame as the board is
+   * walked over. A landmark, a pokemon and the player each carry
+   * one; everything else is left to the dark
+   */
+  const lamps: Lamp[] = [];
+  /**
+   * The light the board is drawn under, rebuilt every frame: what
+   * reaches everywhere, and every lamp standing on it
+   */
+  const lighting: Lighting = { ambient: DAYLIGHT, sources: [] };
+  /**
+   * The ambient in hand, and what it is on its way from and to. A
+   * sky turning over swaps its light as slowly as it swaps its rain,
+   * so the run is timed rather than chased: a light that moved a
+   * share of what was left every frame took three fades to arrive
+   */
+  const easing: { since: number; under: boolean; from: Colour; to: Colour; light: Colour } = {
+    since: 0,
+    under: false,
+    from: [1, 1, 1, 1],
+    to: [1, 1, 1, 1],
+    light: [1, 1, 1, 1],
+  };
+
+  /**
+   * One light written on all four corners, and the four a ground
+   * tile is lit by. Both are handed straight to the batch and read
+   * before the next call, so they are filled in place rather than
+   * built each time
+   */
+  const evenly: Colour[] = [
+    [1, 1, 1, 1],
+    [1, 1, 1, 1],
+    [1, 1, 1, 1],
+    [1, 1, 1, 1],
+  ];
+  const cornerwise: Colour[] = [
+    [1, 1, 1, 1],
+    [1, 1, 1, 1],
+    [1, 1, 1, 1],
+    [1, 1, 1, 1],
+  ];
+
+  // Bent to the page's own curve on the way in: these go to the
+  // shader that multiplies the stored colours, unlike the country's
+  // corners, which are lit in plain light
+  const copyInto = (held: Colour, light: Colour): void => {
+    encoded(light, held);
+  };
+
+  /** One reading, for a thing standing on a cell rather than lying across it */
+  const shading = (light: Colour): Colour[] => {
+    for (const held of evenly) {
+      copyInto(held, light);
+    }
+    return evenly;
+  };
+
+  /**
+   * The light at the four corners of a square, far left, far right,
+   * near right, near left: the order a quad's corners come in, so a
+   * lamp's pool falls off across a tile rather than in steps of one
+   */
+  const tileLight = (square: BoardCell): Colour[] => {
+    const at = shifted(square);
+
+    copyInto(cornerwise[0], litAt(lighting, at.x, at.y));
+    copyInto(cornerwise[1], litAt(lighting, at.x + 1, at.y));
+    copyInto(cornerwise[2], litAt(lighting, at.x + 1, at.y + 1));
+    copyInto(cornerwise[3], litAt(lighting, at.x, at.y + 1));
+    return cornerwise;
+  };
+
+  /**
+   * What reaches everywhere this frame.
+   *
+   * Only the dark places are lit this way: a cave, and a day whose
+   * sky has put the lights out. The hour itself stays a wash over
+   * the finished frame, since it belongs to the sky and the weather
+   * as much as to the ground, and a picture lit cell by cell leaves
+   * everything that is not a cell standing at noon
+   */
+  const ambientLight = (now: number): Colour => {
+    let wanted = DAYLIGHT;
+
+    if (props.underground) {
+      wanted = props.lit === true ? DAYLIGHT : CAVE_LIGHT;
+    } else if (props.weather === Weather.DarkDay) {
+      wanted = DARK_DAY_LIGHT;
+    }
+
+    if (wanted[0] !== easing.to[0] || wanted[1] !== easing.to[1] || wanted[2] !== easing.to[2]) {
+      for (let channel = 0; channel < 3; channel += 1) {
+        easing.from[channel] = easing.light[channel];
+        easing.to[channel] = wanted[channel];
+      }
+      easing.since = now;
+    }
+    // A cave mouth is a different place rather than a sky turning
+    // over: what is on the other side of it is lit the moment the
+    // board is
+    const sudden = easing.under !== props.underground;
+
+    easing.under = props.underground;
+    if (sudden) {
+      // Arrived, so the run it was on is over rather than still
+      // running from wherever the surface left it
+      for (let channel = 0; channel < 3; channel += 1) {
+        easing.from[channel] = easing.to[channel];
+      }
+      easing.since = now;
+    }
+
+    const step = sudden ? 1 : Math.min(1, (now - easing.since) / WEATHER_FADE);
+
+    for (let channel = 0; channel < 3; channel += 1) {
+      easing.light[channel] =
+        easing.from[channel] + (easing.to[channel] - easing.from[channel]) * step;
+    }
+    return easing.light;
+  };
+  /** What the batch holds of it, so a newly baked piece re-uploads */
+  let baked = -1;
+  /** Whether the layer has been emptied down to a pixel under the scene */
+  let layerIdle = false;
+
+  drawing.addEventListener('webglcontextlost', (event) => {
+    // Refused, because the default is that the context never comes
+    // back: the board wants it again the moment it can have it
+    event.preventDefault();
+    layerBatch = null;
+  });
+  drawing.addEventListener('webglcontextrestored', () => {
+    layerBatch = QuadBatch.create(drawing);
+    layerIdle = false;
+  });
+  later(() => {
+    layerBatch?.dispose();
+    layerBatch = null;
+  });
+
+  // How big the page is, watched rather than measured once: the
+  // canvas *is* the page, so a resized window or a turned phone is a
+  // different picture and a board of the wrong size in the middle of
+  // it
+  box = { width: element.clientWidth, height: element.clientHeight };
+
+  const watching = new ResizeObserver(() => {
+    box = { width: element.clientWidth, height: element.clientHeight };
+    dirty = true;
+  });
+
+  watching.observe(element);
+  later(() => {
+    watching.disconnect();
+  });
+
+  /**
+   * Where the picture is on this screen, and how much larger it came
+   * out than the one everything here is measured against.
+   *
+   * Both are worked out once a frame rather than per point: the
+   * canvas is the page, so they change when the window does and at
+   * no other time
+   */
+  let placed = fitPicture(pictureWidth(), pictureWidth() * boardView().aspect);
+  let magnify = 1;
+
+  /**
+   * A projected point in the screen's own pixels. The projection
+   * answers in fractions of the picture because three different
+   * sizes ask it the same question — the painter, the pointer and
+   * the browser test — and this is where the picture is
+   */
+  const at = (point: ProjectedPoint): ProjectedPoint => ({
+    x: placed.x + point.x * placed.width,
+    y: placed.y + point.y * placed.height,
+    scale: point.scale,
+  });
+
+  /**
+   * A pool of light on the ground, for a point already on the
+   * screen. It is a circle of `props.lamp` cells laid back the way
+   * the ground is, and it grows with the cell it stands on the way
+   * everything else on the board does
+   */
+  const lampAt = (point: ProjectedPoint): Lamp => ({
+    x: point.x,
+    y: point.y,
+    reach: CELL * magnify * props.lamp * point.scale,
+    squash: lampSquash(),
+  });
+
+  /**
+   * Lay four corners out as a path, ready to be filled or stroked.
+   * Nothing here is a rect: a cell is a quad, with its two far
+   * corners closer together than its two near ones, and so is the
+   * board
+   */
+  const traceQuad = (corners: { x: number; y: number }[]): void => {
+    context.beginPath();
+    context.moveTo(corners[0].x, corners[0].y);
+    for (const corner of corners.slice(1)) {
+      context.lineTo(corner.x, corner.y);
+    }
+    context.closePath();
+  };
+
+  /**
+   * The four corners of the ring around the player, in the picture's
+   * own pixels — or null while there is nowhere to draw it. It is
+   * clipped to the board, so a player standing against an edge is
+   * ringed by the ground that is actually there
+   */
+  const reachOutline = (): ProjectedPoint[] | null => {
+    // Measured out from the middle, the way every other ground
+    // point is: the square the cells are indexed in is wider than
+    // the one the picture is fitted to
+    const left = 0.5 - 1.5 / BOARD_SPAN;
+    const right = 0.5 + 1.5 / BOARD_SPAN;
+    const far = left;
+    const near = right;
+    // Lifted onto the ground the player is standing on: a ring drawn
+    // at the board's floor sits at the foot of the cliff they are
+    // standing on top of
+    const floor = boardView().mode === '2d' ? 0 : underfoot.at;
+
+    const outline: ProjectedPoint[] = [];
+
+    for (const corner of [
+      { u: left, v: far },
+      { u: right, v: far },
+      { u: right, v: near },
+      { u: left, v: near },
+    ]) {
+      outline.push(at(projectAir(corner, floor, yaw())));
+    }
+    return outline;
+  };
+
+  /**
+   * Every square of country the picture is made of, worked out once.
+   * It runs off the picture on every side, and it is also every
+   * square the pointer may land on: what a player can see is what
+   * they can head for
+   */
+  const painted = boardCells();
+
+  /**
+   * The hour the world is standing in, on the player's own clock.
+   *
+   * It is the same number the spawn pools are picked from —
+   * `toLocalTime(serverNow(), …)` — so what is out there and how it
+   * is lit agree. Read per frame rather than kept in a signal: it is
+   * only ever asked for while a frame is being drawn, and a signal
+   * ticking every second would redraw the board for the sake of a
+   * light that has barely moved
+   */
+  const worldTime = (): number => props.time ?? localNow();
+
+  /**
+   * The pokemon standing about are the only thing here that moves
+   * on its own, so the chunk keeps a frame clock of its own — the
+   * battle canvas can borrow the fight's, and there is no fight
+   * here. It stops with the component
+   */
+  let last = 0;
+  /** When the picture was last redrawn, on the frame clock */
+  let drewAt = 0;
+  /** Whether the player was still sliding last tick */
+  let sliding = false;
+  /**
+   * Until when a ridden pokemon keeps its walk going. Held a slide past
+   * the last movement, so the pause between two steps does not drop it
+   * to idle and restart the walk from its first frame every step
+   */
+  let strideUntil = 0;
+
+  // Everything the drawing reads is a signal or a closure over one,
+  // so reading them here is what subscribes the picture to them
+  const drawFrame = (): void => {
+    // Worked out afresh by whatever this picture draws that moves on its own
+    animating = false;
+    plantsShown.length = 0;
+
+    /** The scene, where there is terrain art to build one from */
+    const show = staged;
+    /**
+     * What the marks are written into: the scene's own, so a grid
+     * line is hidden by the cliff in front of it and covered by
+     * whatever stands on the cell. The layer below only draws where
+     * there is no scene
+     */
+    const marks = show?.marks ?? null;
+    const batch: Painter | null = marks ?? layerBatch;
+
+    /**
+     * The screen, as it is this frame.
+     *
+     * The canvas is the page: it is however large the window is, and
+     * the backing store is that in real pixels. Sized here rather
+     * than once at the start, because a window that is resized — or
+     * a phone that is turned over — is a different page
+     */
+    const screen = box;
+    const ratio = pixelRatio();
+
+    // A backing store of one pixel while the layer below is drawing
+    // the picture. The element is still the whole page — it is what
+    // the pointer and the keyboard talk to — but it has nothing on
+    // it, so there is no second screen of pixels to composite
+    const across = batch == null ? Math.round(screen.width * ratio) : 1;
+    const down = batch == null ? Math.round(screen.height * ratio) : 1;
+
+    if (element.width !== across) {
+      element.width = across;
+    }
+    if (element.height !== down) {
+      element.height = down;
+    }
+    // Set rather than multiplied: resizing a canvas throws its
+    // transform away, so this is what puts it back — and it is the
+    // only transform the drawing below assumes
+    context.setTransform(ratio, 0, 0, ratio, 0, 0);
+
+    // Which of the two boards this screen is drawn with, before a
+    // single point is put through it: a screen taller than it is
+    // wide is drawn flat, and so is any screen when the player asked
+    setBoardFlat(settings().flatBoard);
+    setBoardScreen(screen.width, screen.height);
+    // Nothing stands above a flat board, so there is nothing for the
+    // camera to climb there either
+    setBoardStand(boardView().mode === '2d' ? 0 : underfoot.at);
+    placed = fitPicture(screen.width, screen.height);
+    magnify = placed.width / pictureWidth();
+
+    /**
+     * Which of the two boards this is, for everything that is not
+     * the projection itself.
+     *
+     * Flat on there is no third dimension left to draw in: a shadow
+     * is the patch under the feet rather than the thing's own
+     * picture leaned along the light, and the weather falls against
+     * the glass rather than standing in the world
+     */
+    const flat = boardView().mode === '2d';
+
+    // The scene's camera is the board's own projection, so it is
+    // handed the page it is drawn on rather than placed to look like
+    // it: what is ruled on the ground lands on the ground
+    show?.look(yaw(), screen, placed, ratio, camera());
+
+    const hazy = settings().boardEdge === 'haze';
+
+    /**
+     * The light this frame is drawn under: what reaches everywhere,
+     * and every lamp standing on the board.
+     *
+     * The sources are filled in below, as the board is walked over,
+     * so they are in hand before anything is drawn under them
+     */
+    lighting.ambient = ambientLight(clock);
+    lighting.sources.length = 0;
+    if (props.lamp > 0 && isLit(lighting)) {
+      // The player carries one, and so does every landmark: the
+      // same things the dark was kept off before, now throwing the
+      // light themselves. Gathered before the ground is laid, since
+      // the ground is lit by them
+      lighting.sources.push({
+        x: BOARD_CENTER + 0.5,
+        z: BOARD_CENTER + 0.5,
+        reach: props.lamp,
+        colour: LAMP_COLOUR,
+        strength: LAMP_STRENGTH,
+      });
+      for (const index of props.landmarks.keys()) {
+        const cell = shifted(boardCellOf(index));
+
+        lighting.sources.push({
+          x: cell.x + 0.5,
+          z: cell.y + 0.5,
+          reach: props.lamp,
+          colour: LAMP_COLOUR,
+          strength: LAMP_STRENGTH,
+        });
+      }
+    }
+    show?.light(isLit(lighting) ? (x, z) => litAt(lighting, x, z) : null);
+
+    if (show != null) {
+      if (!hazy) {
+        show.haze(null);
+      } else if (props.underground) {
+        show.haze({ top: CAVERN.colour, bottom: CAVERN.colour });
+      } else {
+        const { zenith, horizon } = getSkybox(worldTime(), props.latitude);
+        // Taken down by whatever reaches the board: a day the sky has
+        // put out takes the sky with it, so the rim does not glow
+        // around a country nothing is lighting
+        const light = lighting.ambient;
+
+        show.haze({ top: dimmed(zenith, light), bottom: dimmed(horizon, light) });
+      }
+    }
+
+    /** How long since the last frame, for anything easing its way somewhere */
+    const since = Math.max(0, Math.min(VEIL_FADE, clock - paintedAt));
+
+    paintedAt = clock;
+
+    // Last frame's picture, cleared: what is drawn over it is the
+    // country to the corners of the canvas, so nothing of it may be
+    // left showing through a square the ground has since slid off
+    context.clearRect(0, 0, screen.width, screen.height);
+
+    /** The whole layer, as the four corners the backdrop fills */
+    const screenBox = [
+      { x: 0, y: 0 },
+      { x: screen.width, y: 0 },
+      { x: screen.width, y: screen.height },
+      { x: 0, y: screen.height },
+    ];
+
+    if (marks == null) {
+      layerIdle = false;
+    } else if (!layerIdle) {
+      // Nothing of the old layer is left showing under the scene, and one
+      // clear pixel is all it keeps rather than a screen composited for nothing
+      layerBatch?.begin(1, 1, 1);
+      layerBatch?.end();
+      layerIdle = layerBatch != null;
+    }
+    if (batch != null) {
+      batch.begin(screen.width, screen.height, ratio);
+      if (baked !== bakery.revision) {
+        batch.invalidate(bakery.sheet);
+        baked = bakery.revision;
+      }
+      // Behind everything in the scene, which is what a backdrop is
+      marks?.depth(BEHIND);
+      // The hour's sky over the whole layer, or the cave's dark. Opaque,
+      // which is what lets the hour's light be a multiply: a wash only
+      // means what it means over something opaque
+      if (props.underground) {
+        batch.solid(CAVERN.colour, screenBox);
+      } else {
+        batchSkybox(
+          batch,
+          screen.width,
+          screen.height,
+          worldTime(),
+          props.latitude,
+          lighting.ambient,
+        );
+      }
+    }
+
+    context.save();
+
+    if (batch == null) {
+      if (props.underground) {
+        context.fillStyle = CAVERN.colour;
+        context.fillRect(0, 0, screen.width, screen.height);
+      } else {
+        paintSkybox(context, screen.width, screen.height, worldTime(), props.latitude);
+      }
+    }
+
+    context.textAlign = 'center';
+    context.textBaseline = 'middle';
+
+    // What the wait is, where the board is. It is drawn over the
+    // ground rather than instead of it: the country is already
+    // correct, and only what stands on it is late
+    if (loading) {
+      marks?.glass();
+
+      const middle = at(projectAir({ u: 0.5, v: 0.5 }, boardStand(), yaw()));
+      const size = Math.round(LOADING_SIZE * magnify);
+      const font = `bold ${size}px monospace`;
+      const word =
+        batch == null
+          ? null
+          : bakeWord(bakery, LOADING_LABEL, font, COLORS.loading, COLORS.loadingHalo);
+
+      if (batch == null || word == null) {
+        context.font = font;
+        context.fillStyle = COLORS.loadingHalo;
+        context.fillText(LOADING_LABEL, middle.x, middle.y + 1);
+        context.fillStyle = COLORS.loading;
+        context.fillText(LOADING_LABEL, middle.x, middle.y);
+      } else {
+        // Stamped at the size it was baked, so the halo is the one
+        // the stroke drew rather than a scaled copy of it
+        const half = { x: word.width / 2, y: word.height / 2 };
+
+        batch.quad(bakery.sheet, word, [
+          { x: middle.x - half.x, y: middle.y - half.y },
+          { x: middle.x + half.x, y: middle.y - half.y },
+          { x: middle.x + half.x, y: middle.y + half.y },
+          { x: middle.x - half.x, y: middle.y + half.y },
+        ]);
+      }
+    }
+
+    /**
+     * The ground first, all of it, and then everything standing on
+     * it.
+     *
+     * Two passes rather than one, because a sprite is taller than
+     * the cell it stands in: painted cell by cell, the row in front
+     * would lay its ground over the feet of the row behind. Ground
+     * is flat and cannot occlude anything, so it is finished before
+     * the first pokemon is drawn
+     */
+    /**
+     * The ground as tiles, where the biome has been packed.
+     *
+     * Which tile a cell gets is decided by what is around it, so the
+     * terrain is read once for the whole board rather than per cell:
+     * every cell asks about its eight neighbours, and half of those
+     * questions are the same question asked from the other side
+     */
+    const ground = props.ground;
+    // How far round the camera has been walked, in quarters. The
+    // ground art is drawn for one point of view and can only be
+    // turned in quarters, so it changes over at the halfway point
+    const turns = yawTurns(yaw());
+
+    /**
+     * One tile, on whichever layer the ground is being drawn on.
+     *
+     * The batched layer is handed the cell's true four corners; the
+     * 2D one can only take three of them and reads the fourth as a
+     * parallelogram, which is the approximation it has always drawn
+     */
+    /** What the new tilesets are asked about a cell. */
+    const look = {
+      biome: (x: number, y: number) => ground.biome(x, y),
+      role: (x: number, y: number) => ground.role(x, y),
+      paved: (x: number, y: number) => ground.road(x, y),
+      trail: (x: number, y: number) => ground.route(x, y) || ground.town(x, y),
+      level: (x: number, y: number) => ground.level(x, y),
+      seam: (x: number, y: number) => ground.seam(x, y),
+      bare: (x: number, y: number) => ground.bare?.(x, y) === true,
+    };
+
+    const laidBack = !flat;
+
+    // How high a cell stands. Only where the board is laid back:
+    // seen from straight above a step up is invisible, and lifting
+    // it would only slide the ground off the grid
+    const liftOf = (square: BoardCell): number =>
+      laidBack ? ground.level(square.x, square.y) * TERRACE_LIFT : 0;
+
+    /** The middle cell, which is where the player is drawn */
+    const midCell = { x: BOARD_CENTER, y: BOARD_CENTER };
+
+    /**
+     * How near the viewer the top of a square is, for a mark lying
+     * on it. Where the ground is drawn rather than where it lives,
+     * and in cells rather than board widths, which is what the scene
+     * is built in
+     */
+    const floorOf = (square: BoardCell, lift: number, spread?: number): number => {
+      const spot = shifted(square);
+
+      return show?.depthAt({ x: spot.x, z: spot.y, y: lift * BOARD_SPAN }, spread) ?? 0;
+    };
+
+    /**
+     * One composed cell, laid on its quad in the world's own way
+     * round: the cell was composed with the shore already turned in
+     * it, and nothing else in it follows the camera
+     */
+    const layTile = (
+      sheet: HTMLCanvasElement,
+      corners: ProjectedPoint[],
+      square?: BoardCell,
+    ): void => {
+      if (batch == null) {
+        drawTileQuad(context, sheet, { x: 0, y: 0 }, 16, corners);
+        return;
+      }
+      const lit = square == null || !isLit(lighting) ? undefined : tileLight(square);
+
+      batch.quad(sheet, { x: 0, y: 0, width: 16, height: 16 }, grownQuad(corners), 1, lit);
+    };
+
+    /**
+     * One cell of ground, composed from the pack. Answers whether it
+     * drew anything, since a cell it could not draw still wants the
+     * flat colour it had before
+     *
+     * It is the fallback for a board with no scene: one cell is a
+     * few layers composed into a tile of its own, so the board lays
+     * a single quad for it the way it always has
+     */
+    const paintGround = (square: BoardCell, corners: ProjectedPoint[]): boolean => {
+      const pack = terrain;
+      const cell =
+        pack == null
+          ? null
+          : terrainCell(pack, look, square.x, square.y, undefined, turns, laidBack);
+
+      if (cell == null) {
+        return false;
+      }
+      layTile(cell, corners, square);
+      return true;
+    };
+
+    /**
+     * Whether a square reaches the screen at all. The country is
+     * drawn well past the picture, so a good half of it is behind
+     * the edges: a square nobody can see is worth neither a tile nor
+     * a grid line
+     */
+    const onScreen = (corners: ProjectedPoint[]): boolean => {
+      let left = Number.POSITIVE_INFINITY;
+      let right = Number.NEGATIVE_INFINITY;
+      let top = Number.POSITIVE_INFINITY;
+      let bottom = Number.NEGATIVE_INFINITY;
+
+      for (const corner of corners) {
+        left = Math.min(left, corner.x);
+        right = Math.max(right, corner.x);
+        top = Math.min(top, corner.y);
+        bottom = Math.max(bottom, corner.y);
+      }
+      return right >= 0 && left <= screen.width && bottom >= 0 && top <= screen.height;
+    };
+
+    /**
+     * Every square on the screen this frame and where it landed,
+     * worked out once. The ground is painted into these corners and
+     * the grid is ruled round the same ones, so a square is put
+     * through the projection once rather than once a pass
+     */
+    const [cameraX, cameraY] = camera();
+    // Everything the projection reads, so a frame where none of it moved reuses the last one
+    const frameKey = [
+      cameraX,
+      cameraY,
+      yaw(),
+      screen.width,
+      screen.height,
+      placed.x,
+      placed.y,
+      placed.width,
+      placed.height,
+      laidBack ? underfoot.at : 0,
+    ].join(',');
+
+    const project = (): NonNullable<typeof projected> => {
+      /** The cells standing above the ground, which carry a wall */
+      const raised = new Set<number>();
+      const squares: NonNullable<typeof projected>['drawn'] = [];
+
+      for (const square of painted) {
+        const lift = liftOf(square);
+        const spot = { x: square.x + cameraX, y: square.y + cameraY };
+        const outline: ProjectedPoint[] = [];
+
+        for (const point of projectBoardCellQuad(spot, yaw(), lift)) {
+          outline.push(at(point));
+        }
+
+        if (onScreen(outline)) {
+          // Far to near by where the **ground** lies, not by where the
+          // lifted quad landed: a cell raised two steps is drawn higher up
+          // the picture, and sorted by that it would fall behind the flat
+          // ground in front of it and be painted over
+          squares.push({ square, outline, lift, depth: projectBoardCell(spot, yaw()).y });
+        }
+      }
+      squares.sort((one, other) => one.depth - other.depth);
+
+      if (laidBack) {
+        for (const { square } of squares) {
+          if (ground.level(square.x, square.y) > 0) {
+            raised.add(square.y * BOARD_CELLS + square.x);
+          }
+        }
+      }
+      return { key: frameKey, ground, drawn: squares, lifted: raised };
+    };
+    const kept = projected?.key === frameKey && projected.ground === ground ? projected : project();
+
+    projected = kept;
+
+    const { drawn, lifted } = kept;
+
+    /**
+     * The ground, in one pass of its own before anything is ruled
+     * over it, over every square the picture is made of
+     */
+    /**
+     * A cell's quad with each corner sunk to the lowest ground meeting
+     * there, the scene's own rule, so a cliff tile runs from the ground
+     * above it to the ground below
+     */
+    const slopedQuad = (square: BoardCell): ProjectedPoint[] => {
+      const cell = shifted(square);
+      const lifts = laidBack ? cornerLifts(square) : [0, 0, 0, 0];
+
+      const quad: ProjectedPoint[] = [];
+
+      for (let corner = 0; corner < lifts.length; corner++) {
+        quad.push(at(projectBoardCellQuad(cell, yaw(), lifts[corner])[corner]));
+      }
+      return quad;
+    };
+
+    if (show != null) {
+      // The country as a scene: the ground at its own height, a cliff
+      // tile between one level and the next, and a depth buffer to say
+      // what is in front of what. Rebuilt on a step rather than a
+      // frame, since the geometry is in cells and only the camera
+      // moves between them
+      // The shape of the screen is part of it, since the flat board
+      // stands no elevation, and so is the quarter the camera is
+      // round to, since that is what picks the edge tiles
+      const extra = edgeExtra();
+      const window = `${props.origin[0]},${props.origin[1]}|${flat ? '2d' : '3d'}|${turns}|${
+        props.underground ? 'cave' : 'day'
+      }|${extra}`;
+
+      if (built !== window) {
+        // Asked in the board's own cells, which is what the look
+        // answers: the window it covers is already the world's
+        show.ground(
+          look,
+          [-extra, -extra],
+          turns,
+          [props.origin[0] - extra, props.origin[1] - extra],
+          `${flat ? '2d' : '3d'}|${props.underground ? 'cave' : 'day'}`,
+        );
+        built = window;
+      }
+    } else if (terrain != null) {
+      // No scene to draw it in, so the country is laid a quad at a
+      // time the way it was. Smoothing off for the pass: these are
+      // pixel tiles, and grown to the size of a cell they lose the
+      // edges they are drawn with
+      context.save();
+      context.imageSmoothingEnabled = false;
+      for (const { square } of drawn) {
+        paintGround(square, slopedQuad(square));
+      }
+      context.restore();
+    }
+
+    /**
+     * A town's streets, where the country has no paving of its own.
+     *
+     * The pack lays a street with the rest of the cell, so this is
+     * only for a board drawing nothing but flat colour: a wash over
+     * the road's cells, grown by a hair since two washes meeting on
+     * a hairline leave a seam down the middle
+     */
+    context.save();
+    for (const square of painted) {
+      if (terrain != null || !ground.road(square.x, square.y)) {
+        continue;
+      }
+      const corners: ProjectedPoint[] = [];
+
+      for (const point of projectBoardCellQuad(shifted(square), yaw())) {
+        corners.push(at(point));
+      }
+      const washed = grownQuad(corners);
+
+      if (batch != null) {
+        batch.solid(COLORS.road, washed);
+        continue;
+      }
+      traceQuad(washed);
+      context.fillStyle = COLORS.road;
+      context.fill();
+    }
+    context.restore();
+
+    /**
+     * A piece of baked art, stamped on the point it belongs to.
+     * Answers whether it drew, since a piece the sheet had no room
+     * for is drawn the way it always was
+     */
+    const stamp = (
+      sheet: HTMLCanvasElement,
+      piece: Baked | null,
+      spot: ProjectedPoint,
+      span: number,
+    ): boolean => {
+      if (batch == null || piece == null || !(span > 0)) {
+        return false;
+      }
+      const half = span / 2;
+
+      batch.quad(
+        sheet,
+        piece,
+        [
+          { x: spot.x - half, y: spot.y - half },
+          { x: spot.x + half, y: spot.y - half },
+          { x: spot.x + half, y: spot.y + half },
+          { x: spot.x - half, y: spot.y + half },
+        ],
+        1,
+        undefined,
+        // Baked large and stamped smaller, which is the one place on
+        // this board where smoothing is what is wanted
+        'smooth',
+      );
+      return true;
+    };
+
+    /**
+     * One cell ruled on the board: the grid line round it, over a
+     * breath of light on the square under the pointer.
+     *
+     * Every cell rules its own four edges rather than the board
+     * ruling a lattice, so two cells sharing an edge lay their lines
+     * over each other. That doubling is what the grid looks like:
+     * ruled once each, the inside of the board would go pale and
+     * only its outer edge would keep its weight. The line is only
+     * ruled while the player has grid lines on
+     */
+    const gridLines = settings().gridLines;
+    const chunkLines = settings().chunkLines;
+
+    /**
+     * The edges of this cell that are a chunk's edge: its far side
+     * where it is the first row of a chunk, its left where it is the
+     * first column. Each edge between two chunks is ruled once, by
+     * the cell on its far or right-hand side
+     */
+    const chunkEdges = (square: BoardCell, corners: ProjectedPoint[]): void => {
+      const edges: [ProjectedPoint, ProjectedPoint][] = [];
+
+      // The corners run far left, far right, near right, near left
+      if ((square.y + props.origin[1]) % CHUNK_CELLS === 0) {
+        edges.push([corners[0], corners[1]]);
+      }
+      if ((square.x + props.origin[0]) % CHUNK_CELLS === 0) {
+        edges.push([corners[3], corners[0]]);
+      }
+      for (const [from, to] of edges) {
+        if (batch != null) {
+          batch.line(COLORS.chunk, from, to, CHUNK_LINE);
+          continue;
+        }
+        context.beginPath();
+        context.moveTo(from.x, from.y);
+        context.lineTo(to.x, to.y);
+        context.strokeStyle = COLORS.chunk;
+        context.lineWidth = CHUNK_LINE;
+        context.stroke();
+        context.lineWidth = 1;
+      }
+    };
+    const rule = (corners: ProjectedPoint[], glow: number): void => {
+      if (batch != null) {
+        if (glow > 0) {
+          batch.solid(COLORS.highlight, corners, glow);
+        }
+        if (gridLines) {
+          batch.outline(COLORS.grid, corners, 1);
+        }
+        return;
+      }
+      if (!gridLines && glow <= 0) {
+        return;
+      }
+      traceQuad(corners);
+
+      if (glow > 0) {
+        const prior = context.globalAlpha;
+
+        context.globalAlpha = prior * glow;
+        context.fillStyle = COLORS.highlight;
+        context.fill();
+        context.globalAlpha = prior;
+      }
+      if (gridLines) {
+        context.strokeStyle = COLORS.grid;
+        context.stroke();
+      }
+    };
+
+    /**
+     * A cell called out in a colour: the mark the keyboard leaves
+     * under the cell it is pointing at, lent to anything else that
+     * needs a cell to stand out. On a dark line under the coloured
+     * one, so it reads on snow as well as on grass
+     */
+    const callOut = (corners: ProjectedPoint[], colour: string): void => {
+      if (batch != null) {
+        batch.outline(COLORS.ringShade, corners, MARK_WEIGHT + 2);
+        batch.outline(colour, corners, MARK_WEIGHT);
+        return;
+      }
+      traceQuad(corners);
+      context.strokeStyle = COLORS.ringShade;
+      context.lineWidth = MARK_WEIGHT + 2;
+      context.stroke();
+      context.strokeStyle = colour;
+      context.lineWidth = MARK_WEIGHT;
+      context.stroke();
+      context.lineWidth = 1;
+    };
+
+    /**
+     * A round patch of one colour, where a sheet has not landed and
+     * a circle is what stands in for it. One baked disc stamped and
+     * tinted, which is what every round thing on this board is
+     */
+    const dot = (spot: { x: number; y: number }, radius: number, colour: string): void => {
+      const disc = batch == null ? null : bakeShadowDisc(bakery);
+
+      if (batch == null || disc == null) {
+        context.fillStyle = colour;
+        context.beginPath();
+        context.arc(spot.x, spot.y, radius, 0, Math.PI * 2);
+        context.fill();
+        return;
+      }
+      const reach = radius * SHADOW_STAMP;
+
+      batch.quad(
+        bakery.sheet,
+        disc,
+        [
+          { x: spot.x - reach, y: spot.y - reach },
+          { x: spot.x + reach, y: spot.y - reach },
+          { x: spot.x + reach, y: spot.y + reach },
+          { x: spot.x - reach, y: spot.y + reach },
+        ],
+        1,
+        colour,
+        'smooth',
+      );
+    };
+
+    /**
+     * A sprite laid into the batch. Answers whether it went, so a
+     * caller can draw it the old way when there is no batch
+     */
+    /**
+     * Where the loop has got to, so a piece knows which cell it is
+     * standing on: the scene wants a place on the board rather than
+     * a box on the page
+     */
+    let standingOn: {
+      spot: SceneSpot;
+      middle: { x: number; y: number; scale: number };
+      floor: number;
+    } | null = null;
+
+    const place = (quad: SpriteQuad | null, alpha = 1): boolean => {
+      if (quad == null || batch == null) {
+        return false;
+      }
+      if (marks != null && show != null && standingOn != null) {
+        // Standing up in the world, however flat the picture is: how
+        // far above its own foot the box reaches, in cells, is what
+        // says how near the viewer its top edge is
+        const span = CELL * standingOn.middle.scale * magnify;
+        const spot = standingOn.spot;
+        const above = span > 0 ? (standingOn.middle.y - quad.top) / span : 0;
+
+        // The foot's own depth at the bottom of the box, never
+        // below it: what a sheet draws under the feet is the shadow
+        // it was ripped with, and that lies on the ground rather
+        // than under it
+        marks.standing(
+          show.depthAt(spot, SPRITE_LIFT),
+          show.depthAt({ ...spot, y: spot.y + above }, SPRITE_LIFT),
+        );
+      }
+      // Lit where it stands: one reading at its feet, since a sprite
+      // is a flat picture and a pool of light falls on the ground
+      // rather than up the front of it
+      const spot = standingOn?.spot;
+      const lit =
+        spot == null || !isLit(lighting)
+          ? undefined
+          : shading(litAt(lighting, spot.x + 0.5, spot.z + 0.5));
+
+      batch.quad(quad.sheet, quad.source, cornersOf(quad), alpha, lit);
+      // Back to the ground for whatever else the cell has on it
+      marks?.depth(standingOn?.floor ?? 0);
+      return true;
+    };
+
+    /**
+     * The patch a thing throws on the ground: one round stamp,
+     * stretched and turned away from the light by how low it is
+     */
+    const shade = (patch: ShadowPatch | null): boolean => {
+      const disc = batch == null || patch == null ? null : bakeShadowDisc(bakery);
+
+      if (batch == null || patch == null || disc == null) {
+        return false;
+      }
+      batch.quad(
+        bakery.sheet,
+        disc,
+        shadowCorners({
+          ...patch,
+          radiusX: patch.radiusX * SHADOW_STAMP,
+          radiusY: patch.radiusY * SHADOW_STAMP,
+        }),
+        patch.alpha,
+        patch.colour,
+        'smooth',
+      );
+      return true;
+    };
+
+    /**
+     * What a piece of scenery throws on the ground: the patch it
+     * stands on, and its own picture leaned along the light where
+     * the sun throws one. A tree standing on nothing read as a tree
+     * cut out and laid on the board
+     */
+    const standShadow = (quad: SpriteQuad, foot: { x: number; y: number }): void => {
+      const wide = quad.width * PIECE_SHADOW_WIDTH;
+      const patch: ShadowPatch = {
+        x: foot.x,
+        y: foot.y,
+        footX: foot.x,
+        footY: foot.y,
+        radiusX: wide,
+        radiusY: wide * shadowSquash(),
+        angle: 0,
+        colour: COLORS.shadow,
+        alpha: 1,
+      };
+
+      if (shade(patch)) {
+        return;
+      }
+      context.save();
+      context.fillStyle = patch.colour;
+      context.globalAlpha = patch.alpha;
+      context.beginPath();
+      context.ellipse(patch.x, patch.y, patch.radiusX, patch.radiusY, patch.angle, 0, Math.PI * 2);
+      context.fill();
+      context.restore();
+    };
+
+    /** Which phenomena have been repainted for this frame already */
+    const repainted = new Set<Phenomenon>();
+    const repaintedAuras = new Set<string>();
+
+    /** One layer of a cell's aura, if it has one */
+    const stampAura = (index: number, middle: ProjectedPoint, part: AuraPart): void => {
+      // A grotto needs no word from the caller: a claimed one is no
+      // longer in the phenomena at all
+      const aura =
+        props.auras.get(index) ??
+        (props.phenomena.get(index) === Phenomenon.HiddenGrotto ? CellAura.Grotto : null);
+
+      if (aura == null) {
+        return;
+      }
+      animating = true;
+      const squash = shadowSquash();
+      const picture = batch == null ? null : paintCellAura(aura, part, clock, squash);
+
+      if (picture == null || batch == null) {
+        drawCellAura(context, middle, aura, part, clock, magnify, squash);
+        return;
+      }
+      // Repainted since it was uploaded, so the batch is told once a frame
+      if (!repaintedAuras.has(`${aura}:${part}`)) {
+        batch.invalidate(picture);
+        repaintedAuras.add(`${aura}:${part}`);
+      }
+      batch.quad(
+        picture,
+        { x: 0, y: 0, width: picture.width, height: picture.height },
+        auraCorners(middle, magnify),
+        1,
+        undefined,
+        'smooth',
+      );
+    };
+
+    /** Which raid site a cell is painted as, if it is one */
+    const beaconOn = (index: number): RaidBeacon | null => {
+      const landmark = props.landmarks.get(index);
+
+      if (landmark === Landmark.Totem) {
+        return RaidBeacon.Totem;
+      }
+      if (landmark !== Landmark.MaxRaid) {
+        return null;
+      }
+      // Won this window: the light goes out until the next boss
+      if (props.auras.get(index) === CellAura.Cleared) {
+        return RaidBeacon.Spent;
+      }
+      return props.beacons?.get(index) ?? RaidBeacon.Max;
+    };
+
+    /** The lit raid sites, stamped again over the night so their light carries */
+    const glowing: { middle: ProjectedPoint; beacon: RaidBeacon }[] = [];
+
+    /** One half of a raid site, if the cell is one */
+    const stampBeacon = (
+      index: number,
+      middle: ProjectedPoint,
+      part: AuraPart,
+      alpha = 1,
+    ): void => {
+      const beacon = beaconOn(index);
+
+      if (beacon == null) {
+        return;
+      }
+      if (part === 'air' && alpha === 1 && beacon !== RaidBeacon.Spent) {
+        glowing.push({ middle, beacon });
+      }
+      animating = true;
+      const squash = shadowSquash();
+      const picture = batch == null ? null : paintRaidBeacon(beacon, part, clock, squash);
+
+      if (picture == null || batch == null) {
+        context.save();
+        context.globalAlpha = alpha;
+        drawRaidBeacon(context, middle, beacon, part, clock, magnify, squash);
+        context.restore();
+        return;
+      }
+      if (!repaintedAuras.has(`beacon${beacon}:${part}`)) {
+        batch.invalidate(picture);
+        repaintedAuras.add(`beacon${beacon}:${part}`);
+      }
+      batch.quad(
+        picture,
+        { x: 0, y: 0, width: picture.width, height: picture.height },
+        beaconCorners(middle, magnify),
+        alpha,
+        undefined,
+        'smooth',
+      );
+    };
+
+    /** The cell the cursor is over, once this frame */
+    const under = hovered;
+    /**
+     * Whether the cursor is over this square. Read against the
+     * board's own coordinates rather than the chunk's, so a
+     * square lights up wherever the ground has slid to
+     */
+    const beneath = (square: BoardCell): boolean =>
+      under != null && under.x === square.x && under.y === square.y;
+    /** The square the cursor is over, kept to ring once the grid is laid */
+    let hoveredOutline: ProjectedPoint[] | null = null;
+    let hoveredFloor = 0;
+    const stepHighlight = import.meta.env.DEV && settings().stepHighlight;
+    // The square a pressed walk is heading for, in the board's own cells
+    const goal = props.goal ?? null;
+    const goalKey = goal == null ? '' : `${goal[0]},${goal[1]}`;
+
+    if (goalKey !== markedGoal) {
+      markedGoal = goalKey;
+      goalAt = clock;
+    }
+
+    const goalX = goal == null ? -1 : goal[0] - props.origin[0];
+    const goalY = goal == null ? -1 : goal[1] - props.origin[1];
+    let goalOutline: ProjectedPoint[] | null = null;
+    let goalFloor = 0;
+
+    for (const { square, outline, lift } of drawn) {
+      const hot = beneath(square);
+
+      // Lying on the cell they ring, so a cliff in front of it hides
+      // them and whatever stands on it covers them
+      marks?.depth(floorOf(square, lift));
+      rule(outline, hot ? HOVER_GLOW : 0);
+      if (chunkLines) {
+        chunkEdges(square, outline);
+      }
+      // Dev only: a cliff tile in red and a seamed one in green, to check the step rules by eye
+      if (stepHighlight) {
+        const step = props.ground.step?.(square.x, square.y);
+
+        if (step != null) {
+          const colour = step === 'cliff' ? '#ff0000' : '#00ff00';
+
+          if (batch == null) {
+            traceQuad(outline);
+            context.globalAlpha *= 0.45;
+            context.fillStyle = colour;
+            context.fill();
+            context.globalAlpha /= 0.45;
+          } else {
+            batch.solid(colour, outline, 0.45);
+          }
+        }
+      }
+      if (hot) {
+        hoveredOutline = outline;
+        hoveredFloor = floorOf(square, lift);
+      }
+      if (square.x === goalX && square.y === goalY) {
+        goalOutline = outline;
+        goalFloor = floorOf(square, lift);
+      }
+
+      const index = square.y * BOARD_CELLS + square.x;
+      const landmark = props.landmarks.get(index);
+      // What is going on here, which is no longer a landmark: it is
+      // rolled over the chunk by the hour and drawn wherever it fell
+      const showing = props.phenomena.get(index);
+
+      // Somebody standing there is drawn with the rest of what
+      // stands, in paint order — so the letter under their feet as
+      // well would be the cell saying the same thing twice. What the
+      // letter did say is kept as the cell itself, called out in the
+      // colour of what walking up to them does, which the coat they
+      // are drawn in does not tell anybody
+      if (drawnAsPerson(index)) {
+        if (landmark != null) {
+          callOut(outline, landmarkCallOut(landmark));
+        }
+        continue;
+      }
+      // A patch and a tree are called out in what they bear, which
+      // is the one thing about them worth knowing from a distance.
+      // Read off the bearing rather than off the plant, so a cell
+      // whose drawing is still loading is already coded
+      const bearing = props.berries.get(index);
+
+      if (
+        bearing != null &&
+        (landmark === Landmark.BerryPatch || landmark === Landmark.ApricornTree)
+      ) {
+        callOut(outline, plantCallOut(landmark));
+        continue;
+      }
+      if (plantOn(index) != null) {
+        continue;
+      }
+      if (showing != null) {
+        // The grotto is a tree with a hollow in it, so it stands with
+        // the scenery rather than lying on the ground with the marks;
+        // everything else that is going on is drawn here
+        if (showing !== Phenomenon.HiddenGrotto) {
+          const middle = at(groundPoint(index));
+          animating = true;
+          // Faded into the haze the way the ground under it is
+          marks?.carry(0, 0, hazy ? 1 - hazeAt(reachOf(shifted(square))) : 1);
+          const picture = batch == null ? null : paintPhenomenon(showing, clock);
+          let drew = false;
+
+          if (picture != null && batch != null) {
+            // Repainted since it was uploaded, so the batch is told
+            // once for each kind rather than once for each cell
+            if (!repainted.has(showing)) {
+              batch.invalidate(picture);
+              repainted.add(showing);
+            }
+            drew = stamp(
+              picture,
+              { x: 0, y: 0, width: picture.width, height: picture.height },
+              middle,
+              phenomenonSpan(middle, magnify),
+            );
+          }
+          if (!drew) {
+            drawPhenomenon(context, middle, showing, clock, magnify);
+          }
+          marks?.carry(0, 0);
+        }
+        continue;
+      }
+    }
+
+    /**
+     * What the player can put a hand on: the square they are
+     * standing in and the eight around it, drawn as **one ring**
+     * rather than as nine outlined cells.
+     *
+     * Shading each of the nine drew a block of bright squares in the
+     * middle of the board — a thing on the ground rather than a
+     * measure of how far the player can lean, and it buried whatever
+     * was standing inside it. One line round the outside says the
+     * same and leaves the ground under it alone.
+     *
+     * The line is straight between the corners because the
+     * projection is perspective: it maps straight lines to straight
+     * lines, so four corners are the whole of a rectangle however
+     * the board is turned
+     */
+    /**
+     * The day's featured family, saying so from the ground: rings
+     * travelling out of the cell it is standing on.
+     *
+     * Drawn as a circle in the world rather than a circle on the
+     * screen, so it lies on the board with everything else on it and
+     * turns when the camera does. Under whatever is standing there,
+     * since it is a fact about the ground
+     */
+    const ripple = (
+      index: number,
+      spread: number,
+      alpha: number,
+      colour: string = COLORS.featured,
+    ): void => {
+      const cell = boardCellOf(index);
+      const spot = shifted(cell);
+      const floor = liftOf(cell);
+
+      marks?.depth(floorOf(cell, floor, RING_SPREAD));
+      const midU = 0.5 + (spot.x - BOARD_CENTER) / BOARD_SPAN;
+      const midV = 0.5 + (spot.y - BOARD_CENTER) / BOARD_SPAN;
+      const radius = spread / BOARD_SPAN / 2;
+      const ring: ProjectedPoint[] = [];
+
+      for (let step = 0; step < RIPPLE_POINTS; step++) {
+        const angle = (step / RIPPLE_POINTS) * Math.PI * 2;
+
+        ring.push(
+          at(
+            projectAir(
+              { u: midU + Math.cos(angle) * radius, v: midV + Math.sin(angle) * radius },
+              floor,
+              yaw(),
+            ),
+          ),
+        );
+      }
+      if (batch != null) {
+        batch.outline(colour, ring, RIPPLE_WEIGHT, alpha);
+        return;
+      }
+      context.beginPath();
+      context.moveTo(ring[0].x, ring[0].y);
+      for (const corner of ring.slice(1)) {
+        context.lineTo(corner.x, corner.y);
+      }
+      context.closePath();
+
+      const prior = context.globalAlpha;
+
+      context.globalAlpha = prior * alpha;
+      context.strokeStyle = colour;
+      context.lineWidth = RIPPLE_WEIGHT;
+      context.stroke();
+      context.lineWidth = 1;
+      context.globalAlpha = prior;
+    };
+
+    for (const [index, standing] of props.spawns) {
+      if (!standing.featured) {
+        continue;
+      }
+      animating = true;
+      // Several rings in the air at once, evenly apart, so the cell
+      // is never without one and never has only a spent one
+      for (let ring = 0; ring < RIPPLE_RINGS; ring++) {
+        const phase = (clock / RIPPLE_PERIOD + ring / RIPPLE_RINGS) % 1;
+
+        ripple(index, 0.2 + phase * RIPPLE_SPREAD, (1 - phase) ** RIPPLE_FADE * RIPPLE_ALPHA);
+      }
+    }
+
+    /**
+     * One arc of a seal, lying on the ground round a cell: `from`
+     * and `to` are where it runs between, in radians
+     */
+    const sealArc = (
+      index: number,
+      radius: number,
+      from: number,
+      to: number,
+      colour: string,
+      alpha: number,
+    ): void => {
+      const cell = boardCellOf(index);
+      const spot = shifted(cell);
+      const floor = liftOf(cell);
+
+      marks?.depth(floorOf(cell, floor, RING_SPREAD));
+      const midU = 0.5 + (spot.x - BOARD_CENTER) / BOARD_SPAN;
+      const midV = 0.5 + (spot.y - BOARD_CENTER) / BOARD_SPAN;
+      const round = radius / BOARD_SPAN / 2;
+      const arc: ProjectedPoint[] = [];
+
+      for (let step = 0; step < HERALD_ARC_POINTS; step++) {
+        const angle = from + ((to - from) * step) / (HERALD_ARC_POINTS - 1);
+
+        arc.push(
+          at(
+            projectAir(
+              { u: midU + Math.cos(angle) * round, v: midV + Math.sin(angle) * round },
+              floor,
+              yaw(),
+            ),
+          ),
+        );
+      }
+      if (batch != null) {
+        for (let step = 0; step < arc.length - 1; step++) {
+          batch.line(colour, arc[step], arc[step + 1], HERALD_WEIGHT, alpha);
+        }
+        return;
+      }
+
+      const prior = context.globalAlpha;
+
+      context.beginPath();
+      context.moveTo(arc[0].x, arc[0].y);
+      for (const point of arc.slice(1)) {
+        context.lineTo(point.x, point.y);
+      }
+      context.globalAlpha = prior * alpha;
+      context.strokeStyle = colour;
+      context.lineWidth = HERALD_WEIGHT;
+      context.lineCap = 'round';
+      context.stroke();
+      context.lineWidth = 1;
+      context.lineCap = 'butt';
+      context.globalAlpha = prior;
+    };
+
+    /**
+     * The aura a legendary or a mythical stands in: a seal of broken
+     * rings turning under it, and a few motes coming off it.
+     *
+     * Held for as long as it is standing there rather than thrown
+     * once, since one of these is the rarest thing on the board and
+     * a player walking up from behind should still see it. It lies
+     * flat: anything standing up out of the cell reads as a landmark
+     * rather than as the pokemon
+     */
+    for (const [index, standing] of props.spawns) {
+      if (standing.rank == null) {
+        continue;
+      }
+      animating = true;
+      const colour = standing.rank === 'mythical' ? COLORS.mythical : COLORS.legendary;
+      const turn = (clock / HERALD_TURN) * Math.PI * 2;
+      // Breathing, so a seal that holds its size is still alive
+      const lit = HERALD_ALPHA * (0.75 + 0.25 * Math.sin((clock / HERALD_TURN) * Math.PI * 2));
+
+      for (const band of HERALD_SEAL) {
+        const step = (Math.PI * 2) / band.arcs;
+
+        for (let arc = 0; arc < band.arcs; arc++) {
+          const from = turn * band.way + arc * step;
+
+          sealArc(index, band.radius, from, from + step * band.fill, colour, lit);
+        }
+      }
+
+      const cell = boardCellOf(index);
+      const spot = shifted(cell);
+      const floor = liftOf(cell);
+      const midU = 0.5 + (spot.x - BOARD_CENTER) / BOARD_SPAN;
+      const midV = 0.5 + (spot.y - BOARD_CENTER) / BOARD_SPAN;
+      const seed = nameSeed(standing.id);
+
+      marks?.depth(floorOf(cell, floor, RING_SPREAD));
+      for (let mote = 0; mote < HERALD_MOTES; mote++) {
+        // Each on its own clock, so they are never a row of lights
+        // rising together
+        const phase = (clock / HERALD_TURN + ((seed >> mote) & 0xff) / 256) % 1;
+        const angle = ((mote + 0.5) / HERALD_MOTES) * Math.PI * 2 + phase * 1.2;
+        const round = (1.4 / BOARD_SPAN / 2) * (0.5 + phase * 0.5);
+        const point = at(
+          projectAir(
+            { u: midU + Math.cos(angle) * round, v: midV + Math.sin(angle) * round },
+            floor + phase * HERALD_RISE,
+            yaw(),
+          ),
+        );
+        const half = (HERALD_MOTE * point.scale) / 2;
+        const alpha = Math.sin(phase * Math.PI) * HERALD_ALPHA;
+        const speck = [
+          { x: point.x - half, y: point.y - half },
+          { x: point.x + half, y: point.y - half },
+          { x: point.x + half, y: point.y + half },
+          { x: point.x - half, y: point.y + half },
+        ];
+
+        if (batch != null) {
+          batch.solid(colour, speck, alpha);
+          continue;
+        }
+
+        const prior = context.globalAlpha;
+
+        context.globalAlpha = prior * alpha;
+        context.fillStyle = colour;
+        context.fillRect(point.x - half, point.y - half, half * 2, half * 2);
+        context.globalAlpha = prior;
+      }
+    }
+
+    // The cell under the cursor, ruled after the whole grid is laid:
+    // its neighbours draw their own edges over it, so a ring left in
+    // the loop would come out with two sides missing
+    if (hoveredOutline != null) {
+      marks?.depth(hoveredFloor);
+      callOut(hoveredOutline, COLORS.highlight);
+    }
+    if (goalOutline != null) {
+      marks?.depth(goalFloor);
+      callOut(goalOutline, COLORS.goal);
+
+      // One ring out of the square as it is pressed, so the tap itself shows
+      const pulsed = (clock - goalAt) / GOAL_PULSE;
+
+      if (pulsed < 1) {
+        animating = true;
+        ripple(
+          goalY * BOARD_CELLS + goalX,
+          0.2 + pulsed * RIPPLE_SPREAD * 0.6,
+          (1 - pulsed) * RIPPLE_ALPHA,
+          COLORS.goal,
+        );
+      }
+    }
+
+    const reach = reachOutline();
+
+    if (reach != null) {
+      marks?.depth(floorOf(midCell, liftOf(midCell), RING_SPREAD));
+      if (batch == null) {
+        context.beginPath();
+        context.moveTo(reach[0].x, reach[0].y);
+        for (const corner of reach.slice(1)) {
+          context.lineTo(corner.x, corner.y);
+        }
+        context.closePath();
+        context.strokeStyle = COLORS.highlight;
+        context.lineWidth = 2;
+        context.stroke();
+        context.lineWidth = 1;
+      } else {
+        batch.outline(COLORS.highlight, reach, 2);
+      }
+    }
+
+    /**
+     * And then whatever is standing on it, from the back of the
+     * board forwards — which is the order the cells are numbered in,
+     * so a pokemon in front is drawn over the one behind it rather
+     * than through it
+     */
+    // The sliding player belongs to the row they are passing
+    // through, so occlusion is read off where they are drawn rather
+    // than where the walk is headed
+    const playerCell = BOARD_CENTER * BOARD_CELLS + BOARD_CENTER;
+    /**
+     * Where the player is drawn, which is the middle of the picture
+     * and stays there. Everything about them comes off it: the
+     * sprite, the shadow, and the light they carry
+     */
+    const afoot = at(
+      projectBoardCell(
+        { x: BOARD_CENTER, y: BOARD_CENTER },
+        yaw(),
+        // The height the camera is centred on rather than the cell's
+        // own, so they hold the middle of the picture while the
+        // ground drops away under them
+        flat ? 0 : underfoot.at,
+      ),
+    );
+
+    lamps.length = 0;
+    // The light travels with them rather than with the cell they are
+    // nearest, so a walk across a dark board carries its own pool
+    // instead of the board switching on a square at a time
+    lamps.push(lampAt(afoot));
+
+    const walker = playerPerson();
+    const mount = ridden?.sprite?.ready === true ? ridden.sprite : null;
+    /** How the ridden pokemon stands, sized the way a spawn of it would be */
+    const riding =
+      mount == null || props.mount == null
+        ? null
+        : ({
+            scale:
+              (CELL * speciesSize(props.mount.species, mount) * afoot.scale * magnify) /
+              SPRITE_STANDS,
+            anchor: 'shadow',
+          } as const);
+    /**
+     * How the player is drawn, and the box that comes to on the
+     * screen.
+     *
+     * Worked out before the board is walked rather than at their own
+     * turn in it: whatever is drawn in front of them has to know
+     * where they are to know that it is in the way
+     */
+    const walking =
+      walker == null
+        ? null
+        : ({
+            scale: (CELL * NPC_CELLS * afoot.scale * magnify) / walker.sourceFrameHeight,
+            anchor: 'foot',
+          } as const);
+    let playerBox = walking == null ? null : walker?.quadOf(afoot.x, afoot.y, walking);
+
+    if (mount != null && riding != null) {
+      playerBox = mount.quadOf(afoot.x, afoot.y, riding);
+    }
+    /** Whether the painting has reached the player's own row yet */
+    let passed = false;
+
+    /**
+     * How faint one of a cell's pictures is drawn while it stands
+     * between the camera and the player.
+     *
+     * A tree in the row in front hides the one thing on the board a
+     * player is actually watching, so it gives way rather than
+     * winning: it fades while it covers them and comes back as they
+     * step out from behind it. Only what is drawn *after* them can
+     * be in front of them, and only what covers a real part of them
+     * is in the way — a sprite clipping their elbow is not
+     */
+    const veil = (index: number, kind: Standing, quad: SpriteQuad | null): number => {
+      const key = index * STANDINGS + kind;
+      const held = veils.get(key) ?? 1;
+      const hiding =
+        passed && playerBox != null && quad != null && coverOf(playerBox, quad) >= VEIL_SHARE;
+      const target = hiding ? VEIL_ALPHA : 1;
+      // Eased over the same span either way, so stepping behind a
+      // tree and stepping out from behind it cost the same
+      const stride = (since / VEIL_FADE) * (1 - VEIL_ALPHA);
+      const level =
+        target > held ? Math.min(target, held + stride) : Math.max(target, held - stride);
+
+      if (level >= 1) {
+        veils.delete(key);
+        return 1;
+      }
+      veils.set(key, level);
+      return level;
+    };
+
+    /**
+     * The shinies drawn this frame, so the sparkles of those that
+     * have been walked away from can be let go of. The board moves
+     * over the world, and a map keyed by world cell would otherwise
+     * remember every shiny met all session
+     */
+    /** Whether one of them is new, which is a thing to be heard */
+    /** Whether a shiny's sparkle started this frame, which is what the board chimes for */
+    let announced = false;
+    /** Which herald started this frame, if any, for the board to sound */
+    let heralded: 'legendary' | 'mythical' | null = null;
+
+    /**
+     * A burst thrown over a pokemon the first time it is drawn: the
+     * shiny's sparkle, and the aura's arrival for a legendary or a
+     * mythical.
+     *
+     * Announced on the first draw rather than the first sight, since
+     * one thrown while the sheet was still coming would be over
+     * before there was anything to burst around. `held` remembers
+     * when each started, so it plays once and no more
+     */
+    const announce = (
+      id: string,
+      name: string,
+      held: Map<string, number>,
+      life: number,
+      middle: ProjectedPoint,
+      scale: number,
+      /** The picture at this moment, for the batch, and the same drawn straight on */
+      paint: (seed: number, age: number, density: number) => HTMLCanvasElement | null,
+      draw: (seed: number, age: number, spot: ProjectedPoint, sized: number) => void,
+      /** Whether this one is starting now, for a caller with a cue to play */
+    ): boolean => {
+      // Seeded off the pokemon rather than off the ground, so the
+      // stars stand in the same places for as long as it does
+      const seed = nameSeed(id);
+      let starting = false;
+
+      if (!held.has(name)) {
+        // Oldest first, which is insertion order: the map is only
+        // trimmed when it has run well past a board's worth of them
+        if (held.size >= SPARKLE_MEMORY) {
+          held.delete(held.keys().next().value ?? '');
+        }
+        held.set(name, clock);
+        starting = true;
+      }
+      const age = clock - (held.get(name) ?? clock);
+      // A spent burst draws nothing, so it is neither painted nor uploaded again
+      const spent = age > life;
+
+      animating ||= !spent;
+      const glint = batch == null || spent ? null : paint(seed, age, scale * ratio);
+
+      if (!spent && (batch == null || glint == null)) {
+        draw(seed, age, middle, scale);
+      } else if (batch != null && glint != null) {
+        // Painted in screen pixels around the point the pokemon
+        // stands on, so it is stamped at the size it was painted
+        const half = { x: glint.width / ratio / 2, y: glint.height / ratio / 2 };
+
+        batch.invalidate(glint);
+        batch.quad(
+          glint,
+          { x: 0, y: 0, width: glint.width, height: glint.height },
+          [
+            { x: middle.x - half.x, y: middle.y - half.y },
+            { x: middle.x + half.x, y: middle.y - half.y },
+            { x: middle.x + half.x, y: middle.y + half.y },
+            { x: middle.x - half.x, y: middle.y + half.y },
+          ],
+          1,
+          undefined,
+          'smooth',
+        );
+      }
+      return starting;
+    };
+
+    // Another player belongs to the cell they are nearest, which is the
+    // row they are drawn in
+    const crowdOn = new Map<number, StrangerStanding[]>();
+
+    for (const one of crowd) {
+      const bx = Math.round(one.x - props.origin[0]);
+      const by = Math.round(one.y - props.origin[1]);
+
+      if (!walkers.has(one.uid) || bx < 0 || by < 0 || bx >= BOARD_CELLS || by >= BOARD_CELLS) {
+        continue;
+      }
+
+      const index = by * BOARD_CELLS + bx;
+      const here = crowdOn.get(index);
+
+      if (here == null) {
+        crowdOn.set(index, [one]);
+      } else {
+        here.push(one);
+      }
+    }
+
+    const crowded = [...crowdOn.keys()].sort((a, b) => a - b).join(',');
+
+    /**
+     * Everything with something standing on it, from the back of the
+     * board forwards. Only those cells: the country is a thousand
+     * squares wide now, and asking every one of them what is on it
+     * is a thousand lookups a frame to be told about grass
+     */
+    if (
+      standOrder?.yaw !== yaw() ||
+      standOrder.crowded !== crowded ||
+      standOrder.projected !== kept ||
+      standOrder.ground !== ground ||
+      standOrder.landmarks !== props.landmarks ||
+      standOrder.decorations !== props.decorations ||
+      standOrder.spawns !== props.spawns ||
+      standOrder.phenomena !== props.phenomena
+    ) {
+      const blocked: number[] = [];
+
+      for (let y = 0; y < BOARD_CELLS; y += 1) {
+        for (let x = 0; x < BOARD_CELLS; x += 1) {
+          if (ground.role(x, y) === 'wall') {
+            blocked.push(y * BOARD_CELLS + x);
+          }
+        }
+      }
+      // Every cell with a wall under its edge joins the depth-ordered
+      // pass: a wall has to be able to hide whatever stands behind it,
+      // which the ground, being flat, never does
+      const walled = [...lifted];
+      const occupied: number[] = [];
+
+      for (const index of [
+        playerCell,
+        ...props.landmarks.keys(),
+        ...props.decorations.keys(),
+        ...walled,
+        ...blocked,
+        ...props.spawns.keys(),
+        ...props.phenomena.keys(),
+        ...crowdOn.keys(),
+      ]) {
+        if (reachOf(boardCellOf(index)) <= VIEW_RADIUS) {
+          occupied.push(index);
+        }
+      }
+
+      standOrder = {
+        yaw: yaw(),
+        crowded,
+        projected: kept,
+        ground,
+        landmarks: props.landmarks,
+        decorations: props.decorations,
+        spawns: props.spawns,
+        phenomena: props.phenomena,
+        order: depthOrder(occupied, yaw()),
+      };
+    }
+
+    const picks: typeof pickable = [];
+    /** A pressable picture this frame, trimmed to the body where the frame is padded */
+    const pickOn = (index: number, quad: SpriteQuad | null, padded: boolean): void => {
+      if (quad == null) {
+        return;
+      }
+      const side = padded ? quad.width * PICK_INSET_SIDE : 0;
+
+      picks.push({
+        index,
+        left: quad.left + side,
+        right: quad.left + quad.width - side,
+        top: quad.top + (padded ? quad.height * PICK_INSET_TOP : 0),
+        bottom: quad.top + quad.height,
+      });
+    };
+
+    for (const index of standOrder.order) {
+      const cell = boardCellOf(index);
+      const middle = at(groundPoint(index));
+      const drawnAt = shifted(cell);
+
+      // What stands in the haze fades in the same steps as the ground under it
+      marks?.carry(0, 0, hazy ? 1 - hazeAt(reachOf(drawnAt)) : 1);
+
+      const floor = floorOf(cell, liftOf(cell));
+
+      standingOn = {
+        spot: { x: drawnAt.x, z: drawnAt.y, y: liftOf(cell) * BOARD_SPAN },
+        middle,
+        floor,
+      };
+      // Everything ruled or stamped on this cell lies on top of it
+      marks?.depth(floor);
+
+      // Nothing standing anywhere while the sheets are still coming:
+      // a field that fills in one pokemon at a time reads as a page
+      // loading rather than as a place
+      const rolled = props.spawns.get(index);
+      const standing = loading ? undefined : rolled;
+
+      // What a dark sky is kept off: the player, and the places worth
+      // walking to. A pokemon standing on a cell carries no light of
+      // its own, since finding one in the dark is what the sky is
+      // for, so it is seen when a lamp reaches it and not before.
+      //
+      // Gathered here rather than derived again: this loop already
+      // knows where everything on the board ended up on the screen
+      if (props.landmarks.get(index) != null) {
+        lamps.push(lampAt(middle));
+      }
+
+      // Scenery first of everything that stands on a cell: a tree is
+      // the backdrop a pokemon is standing in front of, and a lair
+      // is the backdrop the whole cell is about
+      if (!loading) {
+        // The ring and its light lie under the landmark and whoever
+        // stands on it; the glints are drawn over them further down
+        stampAura(index, middle, 'ground');
+        stampBeacon(index, middle, 'ground');
+        standPiece(
+          context,
+          sceneryOn(index),
+          middle,
+          magnify,
+          place,
+          (quad) => veil(index, Standing.Scenery, quad),
+          (quad) => {
+            standShadow(quad, middle);
+          },
+        );
+        standPiece(
+          context,
+          grottoOn(index),
+          middle,
+          magnify,
+          place,
+          (quad) => veil(index, Standing.Grotto, quad),
+          (quad) => {
+            standShadow(quad, middle);
+          },
+        );
+        standPiece(
+          context,
+          landmarkOn(index),
+          middle,
+          magnify,
+          place,
+          (quad) => {
+            pickOn(index, quad, false);
+            return veil(index, Standing.Mark, quad);
+          },
+          (quad) => {
+            standShadow(quad, middle);
+          },
+        );
+      }
+
+      // A bush is drawn before whatever is standing beside it: it is
+      // scenery with a berry on it, and a pokemon in front of it
+      // should read as being in front of it
+      const plant = loading ? null : plantOn(index);
+
+      if (plant != null) {
+        const growing = {
+          scale: (CELL * PLANT_CELLS * middle.scale * magnify) / plant.sourceFrameHeight,
+          // A patch in fruit is the bottom row of the sheet, and one
+          // this player has stripped is the top: the same bush
+          // without its berries
+          stage: props.picked.has(index) ? PICKED_STAGE : plant.ripe,
+          at: clock,
+          // Out of step with its neighbours, so a chunk with four
+          // patches on it is four bushes rather than one drawn four
+          // times
+          phase: (Math.abs(seedOf(index)) % PLANT_PHASES) / PLANT_PHASES,
+          // The soil the plant grows out of, which the sheet says
+          // where to find
+          anchor: 'foot',
+        } as const;
+
+        const grown = plant.quadOf(middle.x, middle.y, growing);
+
+        plantsShown.push({
+          plant,
+          phase: growing.phase,
+          frame: plant.frameAt(clock, growing.phase),
+        });
+        const alpha = veil(index, Standing.Plant, grown);
+
+        if (grown != null) {
+          standShadow(grown, middle);
+        }
+        if (!place(grown, alpha)) {
+          plant.draw(context, middle.x, middle.y, alpha === 1 ? growing : { ...growing, alpha });
+        }
+      }
+
+      const person = loading ? null : personOn(index);
+
+      if (person != null) {
+        // Looking at the player, seen from wherever the camera has
+        // been walked to: somebody waiting at a crossroads watches
+        // whoever is coming up to it
+        person.facing =
+          SPRITE_DIRECTIONS[
+            facingFrom(
+              SPRITE_DIRECTIONS.indexOf(
+                facingToward(
+                  index % BOARD_CELLS,
+                  Math.floor(index / BOARD_CELLS),
+                  BOARD_CENTER,
+                  BOARD_CENTER,
+                ),
+              ),
+              yaw(),
+            )
+          ];
+        // Feet on the cell, and the patch under them drawn first:
+        // a charset has no shadow marker to measure, so the bottom
+        // middle of the cell is where the ground is
+        const standingPerson = {
+          scale: (CELL * NPC_CELLS * middle.scale * magnify) / person.sourceFrameHeight,
+          anchor: 'foot',
+        } as const;
+
+        const thrown = {
+          ...standingPerson,
+          color: COLORS.shadow,
+          // Lying the way the board lies
+          squash: shadowSquash(),
+        };
+
+        if (!shade(person.shadowOf(middle.x, middle.y, thrown))) {
+          person.drawShadow(context, middle.x, middle.y, thrown);
+        }
+        const stood = person.quadOf(middle.x, middle.y, standingPerson);
+        const alpha = veil(index, Standing.Person, stood);
+
+        pickOn(index, stood, true);
+
+        if (!place(stood, alpha)) {
+          person.draw(
+            context,
+            middle.x,
+            middle.y,
+            alpha === 1 ? standingPerson : { ...standingPerson, alpha },
+          );
+        }
+      }
+
+      const passing = loading ? undefined : crowdOn.get(index);
+
+      for (const one of passing ?? []) {
+        const stranger = walkers.get(one.uid)?.sprite;
+
+        if (stranger == null) {
+          continue;
+        }
+
+        const spot = at(groundBetween(one.x - props.origin[0], one.y - props.origin[1], cell));
+
+        stranger.facing =
+          SPRITE_DIRECTIONS[
+            facingFrom(
+              SPRITE_DIRECTIONS.indexOf(facingToward(0, 0, one.facing[0], one.facing[1])),
+              yaw(),
+            )
+          ];
+
+        const standingStranger = {
+          scale: (CELL * NPC_CELLS * spot.scale * magnify) / stranger.sourceFrameHeight,
+          anchor: 'foot',
+        } as const;
+        const thrown = {
+          ...standingStranger,
+          color: COLORS.shadow,
+          squash: shadowSquash(),
+        };
+
+        if (!shade(stranger.shadowOf(spot.x, spot.y, thrown))) {
+          stranger.drawShadow(context, spot.x, spot.y, thrown);
+        }
+
+        const stood = stranger.quadOf(spot.x, spot.y, standingStranger);
+        const alpha = veil(index, Standing.Person, stood);
+
+        if (!place(stood, alpha)) {
+          stranger.draw(
+            context,
+            spot.x,
+            spot.y,
+            alpha === 1 ? standingStranger : { ...standingStranger, alpha },
+          );
+        }
+      }
+
+      if (!loading) {
+        stampAura(index, middle, 'air');
+        stampBeacon(index, middle, 'air');
+      }
+
+      if (standing != null) {
+        const sprite = spriteFor(standing);
+
+        if (sprite?.ready === true) {
+          // Facing the way it is standing in the world, seen from
+          // wherever the camera has been walked to: turn a quarter
+          // and something that was facing you is facing across you
+          sprite.play(SpriteAnim.Idle, {
+            direction:
+              SPRITE_DIRECTIONS[facingFrom(facingOf(seedOf(index), standing.species), yaw())],
+            loop: true,
+          });
+
+          // Sized the way the scenery is: so many source pixels of
+          // the sheet stand on one cell, with the dex height saying
+          // how far this one is off ordinary
+          const scale =
+            (CELL * speciesSize(standing.species, sprite) * middle.scale * magnify) / SPRITE_STANDS;
+          // The sheet's own shadow marker is the point that stands on
+          // the ground, so putting it on the middle of the cell is
+          // the whole of standing a pokemon there — whatever is drawn
+          // above it and however much empty frame is under its feet.
+          //
+          // What is drawn on that spot ties the billboard to the
+          // cell. A sprite is a couple of cells tall and stands over
+          // the rows behind it, so the eye reads it as belonging to
+          // whichever row its *body* covers rather than to the one
+          // its feet are on — and no amount of moving it up or down
+          // fixes that, because the feet were already in the right
+          // place. A patch of ground shading beneath says which cell
+          // it is standing on, squashed the way this board squashes
+          // everything lying on the ground, and sized by the sheet:
+          // the description carries a shadow size per pokemon
+          const placement = { scale, anchor: 'shadow' } as const;
+
+          const thrown = {
+            ...placement,
+            color: COLORS.shadow,
+            squash: shadowSquash(),
+          };
+
+          if (!shade(sprite.shadowOf(middle.x, middle.y, thrown))) {
+            sprite.drawShadow(context, middle.x, middle.y, thrown);
+          }
+          // Upright, and at its own size: the ground is tilted and
+          // the pokemon on it are not, which is what a billboard is
+          // and what makes them look like they are standing up out
+          // of the board
+          const stood = sprite.quadOf(middle.x, middle.y, placement);
+          const alpha = veil(index, Standing.Spawn, stood);
+
+          pickOn(index, stood, true);
+
+          if (!place(stood, alpha)) {
+            sprite.draw(
+              context,
+              middle.x,
+              middle.y,
+              alpha === 1 ? placement : { ...placement, alpha },
+            );
+          }
+
+          if (standing.shiny) {
+            announced ||= announce(
+              standing.id,
+              standing.id,
+              sparkles,
+              SPARKLE_LIFE,
+              middle,
+              scale,
+              (seed, age, density) => paintSparkle(standing.id, seed, age, density),
+              (seed, age, spot, sized) => {
+                drawSparkle(context, seed, age, spot.x, spot.y, sized);
+              },
+            );
+          }
+          if (standing.rank != null) {
+            const colour = standing.rank === 'mythical' ? COLORS.mythical : COLORS.legendary;
+            const name = `${standing.id}:rank`;
+            const started = announce(
+              standing.id,
+              name,
+              heralds,
+              HERALD_BURST_LIFE,
+              middle,
+              scale,
+              (seed, age, density) => paintHerald(name, seed, age, colour, density),
+              (seed, age, spot, sized) => {
+                drawHerald(context, seed, age, spot.x, spot.y, sized, colour);
+              },
+            );
+
+            if (started && heralded !== 'mythical') {
+              heralded = standing.rank;
+            }
+          }
+        } else {
+          dot(middle, CELL * 0.18 * middle.scale * magnify, COLORS.spawn);
+        }
+      }
+
+      if (index === playerCell) {
+        const spot = afoot;
+
+        // Drawn in the middle whatever the ground has slid to, so
+        // they are placed there rather than on the cell the loop is
+        // carrying
+        standingOn = {
+          spot: { x: midCell.x, z: midCell.y, y: liftOf(midCell) * BOARD_SPAN },
+          middle: afoot,
+          floor: floorOf(midCell, liftOf(midCell)),
+        };
+        marks?.depth(standingOn.floor);
+
+        if (mount != null && riding != null) {
+          const thrown = {
+            ...riding,
+            color: COLORS.shadow,
+            squash: shadowSquash(),
+          };
+
+          if (!shade(mount.shadowOf(spot.x, spot.y, thrown))) {
+            mount.drawShadow(context, spot.x, spot.y, thrown);
+          }
+          if (!place(mount.quadOf(spot.x, spot.y, riding))) {
+            mount.draw(context, spot.x, spot.y, riding);
+          }
+        } else if (walker == null || walking == null) {
+          // The dot it was before the sheet landed, on its own line
+          const radius = CELL * 0.3 * spot.scale * magnify;
+
+          dot(spot, radius + 1, COLORS.glyph);
+          dot(spot, radius, COLORS.player);
+        } else {
+          // Facing the walked way, seen from wherever the camera
+          // has been walked to
+          walker.facing = SPRITE_DIRECTIONS[facingFrom(SPRITE_DIRECTIONS.indexOf(heading), yaw())];
+
+          const thrown = {
+            ...walking,
+            color: COLORS.shadow,
+            squash: shadowSquash(),
+          };
+
+          if (!shade(walker.shadowOf(spot.x, spot.y, thrown))) {
+            walker.drawShadow(context, spot.x, spot.y, thrown);
+          }
+          if (!place(walker.quadOf(spot.x, spot.y, walking))) {
+            walker.draw(context, spot.x, spot.y, walking);
+          }
+        }
+        // Everything from here is nearer the camera than they are,
+        // so it is the only thing that can stand in front of them
+        passed = true;
+      }
+    }
+
+    pickable = picks;
+
+    if (announced) {
+      props.onShiny?.();
+    }
+    if (heralded != null) {
+      props.onHerald?.(heralded);
+    }
+
+    // The board is finished, so it is put back where it was found:
+    // what is drawn from here is the player's own instruments, and
+    // they are not the thing being carried off
+    context.restore();
+    batch?.carry(0, 0, 1);
+
+    // The hour's own light, over everything standing in the world
+    // and under everything the player reads: a compass tinted by the
+    // evening is a compass that is harder to read at night for
+    // nothing.
+    //
+    // Then the sky, over the light rather than under it: rain at
+    // dusk is dusk seen through rain. Its own colour first and the
+    // fall after it, the order they were always drawn in
+    // Where the board is and which way round it is, so the weather
+    // can stand in the world rather than on the glass
+    // Flat on, the weather is drawn against the glass the way it
+    // always was: seen from straight above there is no height for a
+    // drop to fall through, and a fall standing in the world would
+    // be a field of dots holding still
+    const sky = flat ? undefined : { yaw: yaw(), ...placed };
+
+    // In front of the world rather than in it: the light and the
+    // weather are the glass the board is seen through
+    marks?.glass();
+
+    // A change of weather crossfades rather than switching in one frame
+    if (props.weather !== skies.to) {
+      skies.from = skies.to;
+      skies.to = props.weather;
+      skies.since = clock;
+    }
+    const risen = Math.min(1, (clock - skies.since) / WEATHER_FADE);
+
+    // Anything but a clear sky falls, flashes or drifts, and a fade is moving by definition
+    if (!props.underground && (risen < 1 || skies.to !== Weather.Clear)) {
+      animating = true;
+    }
+
+    if (batch == null) {
+      // No hour underground: the sun does not reach a cave, and the
+      // dark below is the cave's own
+      if (!props.underground) {
+        paintAmbient(context, screen.width, screen.height, worldTime(), props.latitude);
+      }
+      if (props.underground) {
+        // No sky down here, so no weather and no hour: the dark is
+        // the cave's own and the only thing that lifts it is a light
+        if (props.lit !== true) {
+          paintCavern(context, screen.width, screen.height, lamps);
+        }
+      } else {
+        // A strength of 0 draws nothing, so outside a fade this is one sky
+        paintSky(context, screen.width, screen.height, skies.from, clock, 1 - risen, lamps, sky);
+        paintSky(context, screen.width, screen.height, skies.to, clock, risen, lamps, sky);
+      }
+    } else if (!props.underground) {
+      // The hour over the whole picture, the way it always was: the
+      // sky and the weather stand in it as much as the ground does.
+      // What the lighting answers for is the dark places, so the
+      // weather's own lamps are passed as nothing and a lightless
+      // day is dark because nothing lit it rather than because a
+      // veil was laid over it
+      const { width, height } = screen;
+
+      batchAmbient(batch, width, height, worldTime(), props.latitude);
+
+      batchWash(batch, width, height, skies.from, clock, 1 - risen, null, sky);
+      batchWash(batch, width, height, skies.to, clock, risen, null, sky);
+      batchSky(batch, width, height, skies.from, clock, 1 - risen, sky);
+      batchSky(batch, width, height, skies.to, clock, risen, sky);
+    }
+
+    // A raid site's light is its own, so the night is lifted off it
+    // by as much as the night took
+    const night = props.underground ? 0 : getAmbient(worldTime(), props.latitude).depth;
+
+    if (night > 0) {
+      for (const { middle, beacon } of glowing) {
+        const picture =
+          batch == null ? null : paintRaidBeacon(beacon, 'air', clock, shadowSquash());
+
+        if (picture == null || batch == null) {
+          context.save();
+          context.globalAlpha = Math.min(1, night * BEACON_NIGHT_LIFT);
+          drawRaidBeacon(context, middle, beacon, 'air', clock, magnify, shadowSquash());
+          context.restore();
+          continue;
+        }
+        batch.quad(
+          picture,
+          { x: 0, y: 0, width: picture.width, height: picture.height },
+          beaconCorners(middle, magnify),
+          Math.min(1, night * BEACON_NIGHT_LIFT),
+          undefined,
+          'smooth',
+        );
+      }
+    }
+
+    /**
+     * And the compass: four marks standing off the four edges of the
+     * board, on the ground rather than in a corner of the canvas.
+     *
+     * A dial in the corner was a second picture to read: a needle to
+     * compare against a board, when the thing a player actually wants
+     * to know is which edge of *this board* is north. Put the marks
+     * where the edges are and there is nothing to compare.
+     *
+     * Each is a triangle turned the way it stands for, and north is
+     * the only one coloured: a shape and a colour are read at a
+     * glance, where four letters had to be read one at a time
+     */
+    const hub = at(projectAir({ u: 0.5, v: 0.5 }, boardStand(), yaw()));
+
+    for (const mark of compassMarks(yaw())) {
+      const spot = at(mark);
+      // Which way is out, measured on the screen rather than on the
+      // ground: the picture is taller than it is wide in the
+      // projection's own units, so a bearing taken before the fit
+      // comes out leaning
+      const away = Math.hypot(spot.x - hub.x, spot.y - hub.y);
+
+      if (away === 0) {
+        continue;
+      }
+      const out = { x: (spot.x - hub.x) / away, y: (spot.y - hub.y) / away };
+      const points = compassArrow(spot, out, magnify);
+      const halo = grownArrow(points, magnify);
+      const ink = mark.north ? COLORS.compassNorth : COLORS.compass;
+
+      if (batch == null) {
+        traceQuad(halo);
+        context.fillStyle = COLORS.compassHalo;
+        context.fill();
+        traceQuad(points);
+        context.fillStyle = ink;
+        context.fill();
+      } else {
+        batch.triangle(COLORS.compassHalo, halo);
+        batch.triangle(ink, points);
+      }
+    }
+
+    // A veil still easing in or out is drawn again next frame
+    if (veils.size > 0) {
+      animating = true;
+    }
+    // Nothing else goes on the picture, so it is handed over here:
+    // the ground, the world standing on it, the hour's light, the
+    // sky and the compass, in one call
+    // The scene finishes its own marks as it renders, so ending them here too built them twice
+    if (show == null) {
+      batch?.end();
+    }
+    show?.draw();
+
+    // Nothing else is written on the board. The chunk used to caption
+    // itself in a corner of the picture, which cost four cells of
+    // the world to say something that never changes while the
+    // player is standing in it — it is inside the menu now, where
+    // the rest of the game's furniture is
+  };
+
+  let frame = requestAnimationFrame(function step(now: number): void {
+    frame = requestAnimationFrame(step);
+    // What the board is drawn from may have changed since the last frame
+    followMount();
+    restage();
+    waitForSheets();
+
+    const elapsed = last === 0 ? 0 : now - last;
+
+    last = now;
+    // Capped, so a stalled frame or a tab coming back picks animations up where they were
+    clock += Math.min(elapsed, CLOCK_STEP);
+
+    // Only what is standing here. The cache outlives the chunk, so
+    // walking every playhead in it means paying for every chunk
+    // ever visited on every frame of the one in front
+    for (const key of drawnCoats()) {
+      const sprite = sprites.get(key);
+
+      if (sprite == null) {
+        continue;
+      }
+      const before = sprite.frame;
+
+      sprite.update(elapsed);
+      // An idle pokemon on a new frame is a picture worth drawing
+      if (sprite.frame !== before) {
+        dirty = true;
+      }
+    }
+    for (const shown of plantsShown) {
+      if (shown.plant.frameAt(clock, shown.phase) !== shown.frame) {
+        dirty = true;
+      }
+    }
+
+    // And the climb, at the same pace: a step onto a terrace is one
+    // step, so the ground it stands on is reached in one step's time
+    const climbing = props.ground.level(BOARD_CENTER, BOARD_CENTER) * TERRACE_LIFT;
+    const climb = climbing - underfoot.at;
+
+    if (climb !== 0) {
+      const gain = Math.min(Math.abs(climb), (elapsed / SLIDE_PACE) * TERRACE_LIFT);
+
+      underfoot.at += Math.sign(climb) * gain;
+      dirty = true;
+    }
+
+    // The player's slide toward wherever the tab says they are, and
+    // the walk cycle fed by how far it actually moved this frame
+    const walker = playerPerson();
+    const [goalX, goalY] = props.at;
+
+    if (goalX !== stepped.x || goalY !== stepped.y) {
+      // Anything longer than a diagonal is a jump, which snaps anyway
+      stepped.stride = Math.min(Math.hypot(goalX - stepped.x, goalY - stepped.y), Math.SQRT2);
+      stepped.x = goalX;
+      stepped.y = goalY;
+    }
+    const dx = goalX - slide.x;
+    const dy = goalY - slide.y;
+    const span = Math.hypot(dx, dy);
+    const facing = heading;
+
+    // The tick a slide ends is drawn too, or the player holds a stride
+    if (span > 0 || sliding) {
+      dirty = true;
+    }
+    sliding = span > 0;
+
+    if (span > SNAP_STEPS * stepped.stride) {
+      slide.x = goalX;
+      slide.y = goalY;
+      // Standing still, so the way they are standing is the caller's
+      // to say: a step refused by a landmark moved nobody and still
+      // turned them to face it
+      heading = facingToward(0, 0, props.facing[0], props.facing[1]);
+      walker?.stop();
+    } else if (span > 0) {
+      const gain = slideGain(span, elapsed, stepped.stride);
+
+      heading = facingToward(slide.x, slide.y, goalX, goalY);
+      slide.x += (dx / span) * gain;
+      slide.y += (dy / span) * gain;
+      walker?.advanceBy(gain * CELL_STRIDE);
+      strideUntil = clock + SLIDE_PACE * stepped.stride;
+    } else {
+      heading = facingToward(0, 0, props.facing[0], props.facing[1]);
+      walker?.stop();
+    }
+    if (heading !== facing) {
+      dirty = true;
+    }
+
+    // The other players, each walked by how far they moved this frame
+    crowd = props.strangers?.standing({ x: props.at[0], y: props.at[1] }) ?? [];
+
+    const present = new Set<string>();
+
+    for (const one of crowd) {
+      const shared = personFor(one.charset);
+
+      if (shared?.ready !== true) {
+        continue;
+      }
+      present.add(one.uid);
+
+      const known = walkers.get(one.uid);
+
+      if (known?.sheet !== one.charset) {
+        walkers.set(one.uid, { sheet: one.charset, sprite: shared.clone(), x: one.x, y: one.y });
+        dirty = true;
+        continue;
+      }
+
+      const moved = Math.hypot(one.x - known.x, one.y - known.y);
+
+      if (moved > 0) {
+        dirty = true;
+      }
+      if (one.moving) {
+        known.sprite.advanceBy(moved * CELL_STRIDE);
+      } else {
+        known.sprite.stop();
+      }
+      known.x = one.x;
+      known.y = one.y;
+    }
+    for (const uid of walkers.keys()) {
+      if (!present.has(uid)) {
+        walkers.delete(uid);
+        dirty = true;
+      }
+    }
+    // The board slides under a cursor that holds still, so what it is
+    // over is read again rather than left where the last move put it
+    if (pointer != null && turning == null && (sliding || dirty)) {
+      setHovered(aimAt(pointer));
+    }
+
+    // The ridden pokemon walks while a walk is under way and idles once it stops
+    const mounted = ridden?.sprite;
+
+    if (mounted?.ready === true) {
+      const direction = SPRITE_DIRECTIONS[facingFrom(SPRITE_DIRECTIONS.indexOf(heading), yaw())];
+
+      if (!(clock < strideUntil && mounted.play(SpriteAnim.Walk, { direction }))) {
+        mounted.play(SpriteAnim.Idle, { direction });
+      }
+
+      const before = mounted.frame;
+
+      mounted.update(elapsed);
+      if (mounted.frame !== before) {
+        dirty = true;
+      }
+    }
+    // Everything above keeps time every tick, but a 120 Hz screen redraws
+    // only every other one. Half a tick of slack keeps a 60 Hz screen on every one.
+    // A picture with nothing moving is only redrawn at the slow pace, for the hour's light
+    const due = dirty || animating ? DRAW_PACE : IDLE_PACE;
+
+    if (now - drewAt + elapsed / 2 >= due) {
+      drewAt = now;
+      dirty = false;
+      drawFrame();
+    }
+  });
+
+  later(() => {
+    cancelAnimationFrame(frame);
+  });
+
+  // The overworld is what the tab is for, so it takes the keyboard
+  // when it opens rather than waiting to be clicked. Never off a
+  // dialog, though: the board is redrawn whenever the chunk changes,
+  // and a command that moved the player would take the keyboard out
+  // of the bar that moved them
+  if (document.activeElement?.closest('[tc-dialog]') == null) {
+    element.focus({ preventScroll: true });
+  }
+
+  followMount();
+  restage();
+  waitForSheets();
+  canvas.style.cursor = 'default';
+
+  // The right button walks the camera round the board rather than
+  // opening the browser's own menu over it
+  const menu = (event: MouseEvent): void => {
+    event.preventDefault();
+  };
+
+  const down = (event: PointerEvent): void => {
+    // A fresh press starts as a press. Cleared here rather than at the
+    // click it guards, since a two finger lift often sends no click at
+    // all to clear it
+    if (event.isPrimary) {
+      turned = false;
+    }
+    twist.down(event);
+    if (!isTurningPress(event)) {
+      // Aimed now, while the board is where the player saw it: by the
+      // time the button comes up a walk has slid it along
+      if (event.isPrimary) {
+        pressed = { cell: aimAt(event), clientX: event.clientX, clientY: event.clientY };
+      }
+      return;
+    }
+    event.preventDefault();
+
+    const grabbed = grab(event);
+
+    if (grabbed == null) {
+      return;
+    }
+    // Captured, so a drag that leaves the canvas keeps turning it
+    // rather than stopping at the edge
+    canvas.setPointerCapture(event.pointerId);
+    turning = { pointer: event.pointerId, angle: grabbed };
+  };
+
+  const move = (event: PointerEvent): void => {
+    const spun = twist.move(event);
+
+    // Two fingers turn it, and the cell the first one is over is not
+    // being pressed while they do
+    if (spun != null) {
+      turned = true;
+      setYaw((angle) => angle + spun);
+      setHovered(null);
+      return;
+    }
+
+    const drag = turning;
+
+    if (drag?.pointer === event.pointerId) {
+      turned = true;
+      dragTo(event, drag.angle);
+      // Whatever the pointer was over has moved out from under it
+      setHovered(null);
+      return;
+    }
+    // A finger is not a cursor: a tap ends with the board lit under
+    // wherever it landed, and nothing takes it away again
+    pointer = event.pointerType === 'touch' ? null : event;
+    setHovered(pointer == null ? null : aimAt(pointer));
+  };
+
+  const up = (event: PointerEvent): void => {
+    twist.up(event);
+    if (turning?.pointer === event.pointerId) {
+      canvas.releasePointerCapture(event.pointerId);
+      turning = null;
+    }
+  };
+
+  const cancel = (event: PointerEvent): void => {
+    twist.up(event);
+    turning = null;
+  };
+
+  const leave = (): void => {
+    pointer = null;
+    setHovered(null);
+  };
+
+  // The camera only. Walking and reaching are read at the window, so
+  // that they answer whether or not the board has ever been clicked on
+  // (see `app/keys.ts`). An eighth of a turn a press, which is one
+  // sprite facing
+  const key = (event: KeyboardEvent): void => {
+    if (event.key === 'q' || event.key === 'e') {
+      event.preventDefault();
+      setYaw((angle) => angle + (event.key === 'q' ? -QUARTER_TURN : QUARTER_TURN) / 2);
+    }
+  };
+
+  const click = (event: MouseEvent): void => {
+    // A control-click is how the Mac turns the board, and unlike a
+    // right-click it still comes back round as an ordinary click: left
+    // alone it would press whichever cell the drag finished over
+    if (isTurningPress(event) || turned) {
+      turned = false;
+      return;
+    }
+    // And nothing while the pokemon standing on the board have yet to
+    // arrive, since a player cannot see what they would be walking into
+    if (loading) {
+      return;
+    }
+
+    const held = pressed;
+
+    pressed = null;
+
+    // The cell the press went down on, unless the pointer wandered off
+    // it first, in which case it is wherever it came up
+    const cell =
+      held != null &&
+      Math.hypot(event.clientX - held.clientX, event.clientY - held.clientY) <= PRESS_SLOP
+        ? held.cell
+        : aimAt(event);
+
+    if (cell != null) {
+      props.onPress(cell);
+    }
+  };
+
+  canvas.addEventListener('contextmenu', menu);
+  canvas.addEventListener('pointerdown', down);
+  canvas.addEventListener('pointermove', move);
+  canvas.addEventListener('pointerup', up);
+  canvas.addEventListener('pointercancel', cancel);
+  canvas.addEventListener('mouseleave', leave);
+  canvas.addEventListener('keydown', key);
+  canvas.addEventListener('click', click);
+  later(() => {
+    canvas.removeEventListener('contextmenu', menu);
+    canvas.removeEventListener('pointerdown', down);
+    canvas.removeEventListener('pointermove', move);
+    canvas.removeEventListener('pointerup', up);
+    canvas.removeEventListener('pointercancel', cancel);
+    canvas.removeEventListener('mouseleave', leave);
+    canvas.removeEventListener('keydown', key);
+    canvas.removeEventListener('click', click);
+  });
+
+  return {
+    invalidate: () => {
+      dirty = true;
+    },
+    dispose: () => {
+      for (const step of undo) {
+        step();
+      }
+    },
+  };
+}

@@ -1,15 +1,15 @@
 import { describe, expect, it } from 'vitest';
-import type { Slot } from '../../src/components/battle/battle-canvas/field';
+import type { Slot } from '../../src/canvas/battle/field/field';
 import type SpeciesSpriteAnimation from '../../src/canvas/sprites/species-sprite-animation';
 import type Bakery from '../../src/canvas/bakery';
 import type { Painter, QuadBlend } from '../../src/canvas/gl/quad-batch';
-import { type SlotBatch, drawSlot } from '../../src/components/battle/battle-canvas/draw';
+import { type SlotBatch, drawSlot } from '../../src/canvas/battle/field/draw';
 import {
   BOSS_RADIUS,
   DYNAMAX_GLOW,
   GIGANTAMAX_GLOW,
   PARTY_SLOT,
-} from '../../src/components/battle/battle-canvas/metrics';
+} from '../../src/canvas/battle/field/metrics';
 import { createBattle, createUnit } from '../battle/harness';
 import type Unit from '../../src/battle/unit';
 import {
@@ -17,7 +17,7 @@ import {
   type GiantBody,
   type Puff,
   cloudsOf,
-} from '../../src/components/battle/battle-canvas/dynamax';
+} from '../../src/canvas/battle/field/dynamax';
 
 /**
  * A Dynamaxed pokemon is drawn washed in red, ringed by a glow and

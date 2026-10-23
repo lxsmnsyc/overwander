@@ -58,6 +58,10 @@ The map is never stored. A chunk's terrain, landmarks, spawns, stashes and raids
 
 The wrapper shape is fixed: an exported client function calls an inner function whose body opens with `'use server'`, passing an id token, and that inner function checks each of its arguments with `check` from [src/server/validate.ts](src/server/validate.ts) and then calls `requireUid(token)` (a write) or `requireReader(token)` (a read, see the `server-reads` skill) before anything in `src/server/`. Accounts are Better Auth's ([src/server/better-auth.ts](src/server/better-auth.ts)), and the token is its short-lived JWT. Live views follow table changes over the server's own socket (`src/server/live`). SolidStart's transform strips module-level imports that only the server function uses, so import server modules statically at the top of the file rather than dynamically inside it.
 
+## Game logic and drawing
+
+`src/game` holds the game's state and rules as plain TypeScript stores (`src/game/store.ts`), and `src/canvas` holds the draw loops as plain functions. Neither may import Solid or a component, which lint enforces. A component reads a store through `createStoreSignal` and forwards input as calls; the `app-logic` skill has the pattern.
+
 ## UI
 
 Solid with [terracotta](https://github.com/lxsmnsyc/terracotta) headless primitives; build controls on those rather than hand-rolled elements. Canvas is for the overworld and battle scenes only, and interface sprites are drawn as CSS background-images in the DOM. A component that calls `createResource` must not read it: the read belongs in a child under `Suspense`. Several skills cover dialogs, paging, resources and component layout in detail.

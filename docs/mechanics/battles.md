@@ -304,8 +304,8 @@ Z-Crystal, never Dynamaxes.
 
 A **Zenith** is this game's own answer to a Mega, for a final stage that has
 none. A pokemon holding its own **Zenith Shard** takes its Zenith shape as it
-takes the field. There are 49, all of them Kanto's so far, from Zenith
-Butterfree to Zenith Mew.
+takes the field. There are 89 so far: Kanto's 49 and Johto's 40, from Zenith
+Butterfree to Zenith Celebi.
 
 - A Zenith's base stats total **100 more** than its pokemon's, none of it in
   HP, and some take a new type: Zenith Arcanine is Fire and Dragon, Zenith
@@ -315,7 +315,8 @@ Butterfree to Zenith Mew.
   Zenith Snorlax.
 - **One pokemon on a team reaches its Zenith in a fight**, picked the way the
   Mega is. It is apart from the Mega, so a team can field one of each.
-- A pokemon that has a Mega has no Zenith, and neither does Ditto.
+- No two Zeniths of one region wear the same ability.
+- A pokemon that has a Mega has no Zenith, and neither do Ditto and Unown.
 - Holding a shard rules out a Z-Move, Terastallizing and Dynamaxing.
 
 Each shard is buried only where its own line lives, in the **prized** band; see

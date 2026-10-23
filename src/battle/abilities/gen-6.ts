@@ -31,6 +31,7 @@ import {
   createTypeShiftAbility,
   createWaterAbsorbAbility,
 } from './__create';
+import { naturalSpecies } from '../../data/species/zeniths';
 
 /** What a pelt of grass is worth while there is grass to stand on */
 const GRASS_PELT_SCALE = 1.5;
@@ -428,7 +429,7 @@ const setupAbilities = [
         !unit.alive ||
         !unit.hasAbility(Abilities.StanceChange) ||
         getBaseFormSpecies(unit.species) !== Species.Aegislash ||
-        unit.species === shape
+        naturalSpecies(unit.species) === shape
       ) {
         return;
       }

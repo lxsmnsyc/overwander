@@ -30,6 +30,31 @@ describe('Zeniths', () => {
     expect(dog.hasAbility(Abilities.Intimidate)).toBe(true);
   });
 
+  it('keeps the Zenith through a change back to its own shape', () => {
+    const { battle, teamA } = createBattle();
+    const dog = createUnit(battle, teamA);
+    dog.setSpecies(Species.Arcanine);
+    dog.addItem(Items.ArcanineZenithShard);
+
+    dog.enter();
+    // A form change aims at the pokemon's own shape, which for a Zenith is the Zenith
+    dog.setSpecies(Species.Arcanine);
+
+    expect(dog.species).toBe(Species.ArcanineZenith);
+  });
+
+  it('lets a change into a shape the Zenith has none of land as it would on anybody', () => {
+    const { battle, teamA } = createBattle();
+    const dog = createUnit(battle, teamA);
+    dog.setSpecies(Species.Arcanine);
+    dog.addItem(Items.ArcanineZenithShard);
+
+    dog.enter();
+    dog.setSpecies(Species.ArcanineHisui);
+
+    expect(dog.species).toBe(Species.ArcanineHisui);
+  });
+
   it('ignores a shard held by anybody else', () => {
     const { battle, teamA } = createBattle();
     const ninetales = createUnit(battle, teamA);

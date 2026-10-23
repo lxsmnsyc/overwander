@@ -4,13 +4,12 @@ How every generation after Kanto gets its Zeniths, region by region, after [the 
 
 ## Where things stand
 
-- **Kanto is done:** 49 Zeniths, one for every eligible Kanto pokemon.
+- **Kanto and Johto are done:** 49 and 40 Zeniths, one for every eligible pokemon of each. Batch 0 (Zenith shapes, Unown) is in.
 - **The rules are held by `test/data/zeniths.test.ts`.** A Zenith belongs to a final stage with no Mega and no other held-item shape. It fights 100 above its base stat total and wears an ability its line can never be born with. Its shard id is `2000000 + dex × 100 + 01`, and the shard is buried in the prized band only where its line is met.
-- **Left to do: about 420 Zeniths.**
+- **Left to do: about 380 Zeniths.**
 
   | Region | Eligible | Notes |
   | --- | --- | --- |
-  | Johto | 40 | Unown is out |
   | Hoenn | 49 | |
   | Sinnoh | 53 | |
   | Unova | 68 | |
@@ -28,6 +27,7 @@ How every generation after Kanto gets its Zeniths, region by region, after [the 
 - **Shape-shifters get one**, Unown excepted: Castform, Darmanitan, Aegislash, Wishiwashi, Minior, Eternatus, Terapagos, and the other pokemon that change shape mid-fight (Mimikyu, Eiscue, Morpeko, Cramorant, Palafin, Meloetta). Each proposal says how the Zenith sits with the form change, such as whether the shape it changes into keeps the Zenith's stats.
 - **Unown gets none.** It joins Ditto in `NO_ZENITH`, with its reason in the comment.
 - **Regional finals get one** in form slot 98 and down, in the batch of the region whose form it is: Alolan Ninetales goes in with Alola, not Kanto.
+- **No two Zeniths of one region wear the same ability.** A later region may reuse an earlier one's.
 - **Proposals come 4 pokemon at a time**, through questions. Each question offers 3 or 4 concepts for one pokemon, each with its stat spread, worn ability and any type change. A region is built once every pokemon in it is approved.
 
 ## The order

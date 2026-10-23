@@ -1,5 +1,42 @@
 # overwander
 
+## 4.46.0
+
+### Minor Changes
+
+- 6d37151: - 49 new Megas from Legends: Z-A and the Mega Dimension, each with a new Mega Stone. A stone opens the Mega only for the form it names, and one stone serves a species' forms.
+  - Seven new abilities: Mega Sol, Dragonize, Piercing Drill, Eelevate, Spicy Spray, Aura Guard and Fire Mane.
+  - A Zygarde holding a Zygardite Mega Evolves once Power Construct makes it Complete.
+  - Mega Zygarde, Mega Darkrai, Mega Chimecho and 11 more of the new Megas are drawn.
+- 4816272: `pnpm typecheck` runs TypeScript 7.1 with a content mapper for the game's YAML, so each data import is typed from its contents and a file that does not parse is reported at its own line.
+- 2afbbb1: - New: Zenith forms. A final-stage pokemon with no Mega and no other held-item shape can reach its Zenith by holding its own Zenith Shard: 100 more base stat points, an ability worn on top of its own, and sometimes a new type.
+  - One pokemon on a team reaches its Zenith in a fight, separately from the team's Mega, and a Zenith floats its shard above it in battle.
+  - 49 Kanto Zeniths, one for every final stage with no Mega, the legendary birds and Mew included. Zenith Arcanine, for one, is Fire/Dragon and wears Strong Jaw.
+  - A shard is buried in the prized band where its line is met. Omastar's and Kabutops' lines come only from fossils, so their shards can be found anywhere.
+  - A pokemon holding a Zenith Shard can't use a Z-Move, Terastallize or Dynamax, the same as one holding a Mega Stone.
+
+### Patch Changes
+
+- 55ee4af: - The player's guide and the developer docs now match the game. They cover all 1025 species, the Legends: Z-A Megas, Terastallization, Dynamax and Zenith forms.
+  - Release pages no longer list Bloodmoon Ursaluna under Hisui, and their links to earlier releases are fixed.
+- 9c02474: - More looks for people already on the road. Bikers, Hoenn Bug Catchers, Campers, Ladies, Policemen and Maids each gain another sheet, and Frontier Brain Anabel gains her ORAS one.
+  - Nurse Joy, the groomer, the chef, the move reminder, the daycare lady and the vendor each gain alternate looks.
+  - The extra sheets also count as outfits, unlocked the same way as the others.
+- d9f83f4: More of the game's data is written as YAML:
+  
+  - The Z-effect each status move gets, in `src/data/battle/z-effects.yaml`.
+  - The Mega and Zenith tables, with their names under the English text.
+  - Move visuals: each move's landing shape, wait, wind-up and colour, and each shape's span, jolt and colour.
+  - What each item names, such as a gem's type, a stone's Mega, a fossil's species or a mint's nature, on the item's own record.
+  - Names and lines: biomes, stats, statuses, awards, achievements, natures, families and egg groups, the overworld's skies, award colours and sprites, and what each gym leader, Elite Four member, champion, legend and Frontier Brain says.
+  - The remaining move, AI role, expert build, ground, ability and boss tables, with new Punch, Kick, Dance, Ballistic and HighCrit move flags.
+  - The berry and honey tree pools, where items are buried, Alola's Totems, which lairs stand on water, the quests and daily pool, the achievement thresholds, the species pairings (true shadows, fusions, feats, Ultra Beasts), the Nobles, the status casts, the Frontier rooms and the Ace classes.
+  - The type chart, with each type's colour, and the type names under the English text.
+- 1481491: Expert teams now price Skill Link on every multi-hit move, including Scale Shot, Triple Axel and Population Bomb, rather than only the first fifteen.
+- 2760fb2: The game data refuses a key it does not know, so a misspelt field in a YAML file fails the load instead of being skipped.
+- 485d84d: The project type-checks with TypeScript 7.1 beta.
+- f91d1a9: Item and ability descriptions say whose moves they boost. Wise Glasses now reads "Its holder’s special moves hit 1.1x." rather than "1.1x damage from special moves.", which read as damage taken. The same fix covers Muscle Band, Expert Belt, Metronome, Soul Dew, Life Orb, the gems, incenses, plates and type boosters, and abilities such as Blaze, Iron Fist and Technician.
+
 ## 4.45.0
 
 ### Minor Changes

@@ -41255,6 +41255,18 @@
         "bytes": 4726
       }
     },
+    "public/sprites/ui/items/zenith/hoenn/image.png": {
+      "digest": "8ecd5082bb4131da",
+      "bytes": 2700,
+      "width": 32,
+      "height": 400,
+      "compact": {
+        "at": "2026-10-23T14:40:59Z",
+        "as": "already compact",
+        "was": 2700,
+        "bytes": 2700
+      }
+    },
     "public/sprites/ui/items/zenith/johto/image.png": {
       "digest": "1be36dd823f0e46d",
       "bytes": 2227,

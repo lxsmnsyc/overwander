@@ -302,7 +302,7 @@ the day its sheet lands.
 | Zarude | **Vine Swing**: Its moves wind up 30% faster against the last enemy that hit it. | Pickpocket, Tough Claws, Sap Sipper |
 | Galarian Stunfisk | **Bear Trap**: The first contact move each enemy lands on it snaps shut: that enemy cannot act for 1 second. | Strong Jaw, Iron Barbs, Limber |
 | Mr. Rime | Joins the Mime family's signature. | Full |
-| Squawkabilly | **Gang Up**: Its moves hit 1.3x a target a teammate has landed a move on in the last 2 seconds. Needs a new name: Scraggy's signature is already Gang Up. | Keen Eye, shared by every plumage |
+| Squawkabilly | **Pile On**: Its moves hit 1.3x a target a teammate has landed a move on in the last 2 seconds. Renamed from Gang Up, which is Scraggy's. | Keen Eye, shared by every plumage |
 | Maschiff, Mabosstiff | **Snarl Reply**: A contact move landing on it makes it cast Snarl, at most once every 10 seconds. | Mabosstiff is full |
 | Shroodle, Grafaiai | **Pilfer Dash**: Each time it takes an item off someone, its next move winds up 50% faster. | Grafaiai is full |
 | Klawf | **Snap Back**: A contact move landing on it makes it cast Crabhammer at the attacker, at most once every 8 seconds. | Hyper Cutter |

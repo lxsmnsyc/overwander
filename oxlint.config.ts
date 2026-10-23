@@ -15,5 +15,23 @@ export default defineConfig({
       files: ['src/data/items/*.ts'],
       rules: { 'import/prefer-default-export': 'off' },
     },
+    {
+      // The game's logic runs without a UI framework; components reach
+      // its stores through createStoreSignal
+      files: ['src/game/**'],
+      rules: {
+        'no-restricted-imports': [
+          'error',
+          {
+            patterns: [
+              {
+                group: ['solid-js', 'solid-js/*', '@solidjs/*', '**/components/**'],
+                message: 'src/game stays free of Solid and the components: expose a Store instead.',
+              },
+            ],
+          },
+        ],
+      },
+    },
   ],
 });

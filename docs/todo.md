@@ -288,6 +288,44 @@ credit. Collector and Golfer have no Alolan overworld either.
 - [x] Houndoom
 - [ ] Tyranitar
 
+### Waiting for SpriteCollab
+
+Galar, Hisui and Paldea are in, apart from what the collection has not drawn
+(`../SpriteCollab/compact`, checked against `GAPS.md`). Each line below keeps
+its reserved id, and its signature and fillers are already approved: build it
+the day its sheet lands.
+
+| Line | Signature | Fillers |
+| --- | --- | --- |
+| Rolycoly, Carkol, Coalossal | **Tar Coat**: Each Fire move it lands casts Tar Shot on the target. | Coalossal is full |
+| Cufant, Copperajah | **Patina**: Each hit it takes turns it greener: +1 Special Defense, up to +3. | Copperajah: Thick Fat, Steelworker |
+| Zarude | **Vine Swing**: Its moves wind up 30% faster against the last enemy that hit it. | Pickpocket, Tough Claws, Sap Sipper |
+| Galarian Stunfisk | **Bear Trap**: The first contact move each enemy lands on it snaps shut: that enemy cannot act for 1 second. | Strong Jaw, Iron Barbs, Limber |
+| Mr. Rime | Joins the Mime family's signature. | Full |
+| Squawkabilly | **Gang Up**: Its moves hit 1.3x a target a teammate has landed a move on in the last 2 seconds. Needs a new name: Scraggy's signature is already Gang Up. | Keen Eye, shared by every plumage |
+| Maschiff, Mabosstiff | **Snarl Reply**: A contact move landing on it makes it cast Snarl, at most once every 10 seconds. | Mabosstiff is full |
+| Shroodle, Grafaiai | **Pilfer Dash**: Each time it takes an item off someone, its next move winds up 50% faster. | Grafaiai is full |
+| Klawf | **Snap Back**: A contact move landing on it makes it cast Crabhammer at the attacker, at most once every 8 seconds. | Hyper Cutter |
+| Bombirdier | **Heavy Load**: While it holds an item, it takes 0.85x from every hit. | Sniper |
+| Flamigo | **In Step**: Its moves wind up 20% faster while a teammate is winding up a move at the same time. | Dancer |
+| Brute Bonnet | **Fungal Feast**: It heals 1/8 of its HP each time an enemy falls asleep, from any source. | Effect Spore, Strong Jaw, Guts |
+| Iron Jugulis | **Searchlight**: Its moves hit a target that is mid-Fly, Dig, Dive, Bounce or Phantom Force. | Sniper, Infiltrator, Keen Eye |
+| Iron Boulder | **Rock Blade**: Its Rock moves count as slicing moves, so Sharpness's 1.5x reaches them. | Sharpness, Justified, Sturdy |
+| Iron Crown | **Tachyon Edge**: Its slicing moves cannot miss and wind up 15% faster. | Sharpness, Justified, Clear Body |
+
+Already built and waiting only for art: Wo-Chien and Chien-Pao (the Ruin
+frame) and Okidogi (the Loyal Three's).
+
+- [ ] Final stages, whose first stage ships as its line's end marked
+      `awaiting: evolution`: Brambleghast, Toedscruel, Rabsca, Espathra.
+- [ ] Forms: Darmanitan-Galar Zen (Zen Mode stays off on the Galarian line
+      until then), Cramorant Gulping and Gorging, Morpeko Hangry, Calyrex Ice
+      and Shadow Rider (with As One), Zarude Dada, Gimmighoul Chest,
+      Dudunsparce Three-Segment, Squawkabilly's colours, Oinkologne's female,
+      Terapagos Stellar, and every Gigantamax.
+- [ ] Falinks' own sheet, which retires its Brass stand-in and hidden id.
+- [ ] Mimicry, with Galarian Stunfisk.
+
 ## 7. Ideas, not committed to
 
 ### Dungeons

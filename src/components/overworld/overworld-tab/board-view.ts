@@ -29,7 +29,7 @@ import createOverworld from '../../../overworld/setup';
 import { isGigantamaxBoss } from '../../../overworld/raid';
 import { RaidBeacon } from '../../../canvas/overworld/beacon';
 import settings from '../../app/settings';
-import { BOARD_CELLS, BOARD_CENTER, BOARD_RADIUS, PUBLISHED_SPAWNS, boardMargin } from './metrics';
+import { BOARD_CELLS, BOARD_CENTER, BOARD_RADIUS, PUBLISHED_SPAWNS, boardMargin } from '../../../game/overworld/board-metrics';
 
 /**
  * The board is a window on world cells rather than a chunk, so

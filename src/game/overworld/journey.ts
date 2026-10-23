@@ -1,5 +1,4 @@
-import type { NestOffer } from '../../../server/overworld';
-import type { EggState } from '../NestDialog';
+import type { NestOffer } from '../../server/overworld';
 
 /**
  * A walk in progress: where it is going, and what happens when it gets
@@ -20,6 +19,9 @@ export interface Journey {
    */
   act: boolean;
 }
+
+/** Where an egg on offer stands with this player */
+export type EggState = 'offered' | 'taken' | 'bare';
 
 /**
  * Whether an egg the world is holding is still going spare, or is one

@@ -7,7 +7,7 @@ import {
   runningWindows,
   viewChunks,
 } from '../../src/components/overworld/overworld-tab/board-view';
-import { BOARD_CELLS, BOARD_CENTER } from '../../src/components/overworld/overworld-tab/metrics';
+import { BOARD_CELLS, BOARD_CENTER } from '../../src/game/overworld/board-metrics';
 import AleaRNG from '../../src/core/alea';
 import { chunkOfCell } from '../../src/overworld/chunk';
 import ChunkSnapshot, { SNAPSHOT_INTERVAL } from '../../src/overworld/chunk-snapshot';

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { BOARD_CELLS, BOARD_MARGIN } from '../../../src/components/overworld/overworld-tab/metrics';
+import { BOARD_CELLS, BOARD_MARGIN } from '../../../src/game/overworld/board-metrics';
 import { buildBoardView } from '../../../src/components/overworld/overworld-tab/board-view';
 import { type BoardGround, readBoardGround } from '../../../src/overworld/board/ground';
 import { Depth } from '../../../src/overworld/depth';

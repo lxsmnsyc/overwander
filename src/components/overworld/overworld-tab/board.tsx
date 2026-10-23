@@ -10,8 +10,10 @@ import {
 } from './board-view';
 import challengerOf, { championGate, eliteGate, frontierGate } from './challengers';
 import { describeItem } from '../../details';
-import { type Journey, stateOf } from './journey';
+import { stateOf } from '../../../game/overworld/journey';
 import { useAuth } from '../../../auth/context';
+import createBoardWalk, { type BoardWalk } from '../../../game/overworld/walk';
+import createStoreSignal from '../../app/store-signal';
 import type { Unwatch } from '../../../auth/watch';
 import LRUMap from '../../../core/lru-map';
 import { settled } from '../../app/resource-reads';
@@ -19,10 +21,7 @@ import { type Direction, actionOf, forTheGame } from '../../app/keys';
 import settings from '../../app/settings';
 import { DEFAULT_CHARSET } from '../../../data/overworld/charsets';
 import { watchProfile } from '../../../auth/profile';
-import openSight, { type Sight } from '../../../auth/sight';
-import { MAX_STEP_REPORT } from '../../../model/egg';
 import type { SnapshotRecord } from '../../../model/snapshot-record';
-import { type EggWalk, type WalkReport, walk } from '../../../auth/eggs';
 import type { EncounterRecord } from '../../../model/encounter-record';
 import { getLocalOffset } from '../../../model/local-time';
 import { localNow } from '../../../auth/clock';
@@ -79,7 +78,7 @@ import type Phenomenon from '../../../data/overworld/phenomenon';
 import { PHENOMENON_NAMES } from '../../../data/overworld/phenomenon';
 import { getSpeciesData } from '../../../data/species';
 import { isFeaturedSpecies } from '../../../data/species/day';
-import { CHUNK_CELLS, cellInChunk, chunkOfCell, worldCell } from '../../../overworld/chunk';
+import { CHUNK_CELLS, worldCell } from '../../../overworld/chunk';
 import ChunkSnapshot, { RocketRank, SNAPSHOT_INTERVAL } from '../../../overworld/chunk-snapshot';
 import type { Buddy } from '../../../overworld/core';
 import getWorld from '../../../overworld/current';
@@ -88,22 +87,9 @@ import { Depth } from '../../../overworld/depth';
 import { throughMouth } from '../../../overworld/cave';
 import { townAt, townName } from '../../../overworld/town';
 import { discoverTown } from '../../../auth/towns';
-import { canStep, findPathBeside, findPathNear, stepDuration } from '../../../overworld/path';
 import type SafariSession from '../../../overworld/safari';
-import { isInWorld } from '../../../overworld/world';
-import Biome, { isIceBiome } from '../../../data/ids/biome';
-import { Moves } from '../../../data/ids/moves';
 import { Genders } from '../../../data/ids/species';
-import {
-  type CellFacts,
-  type FieldMove,
-  type Travel,
-  canEnter,
-  canLand,
-  canUseFieldMove,
-} from '../../../overworld/field-moves';
-import { useDig, useTeleport } from '../../../auth/field-moves';
-import { type FieldMoveOffer, GameDialog, useGame } from '../../app/game-context';
+import { GameDialog, useGame } from '../../app/game-context';
 import { createCellNotes } from '../cell-notes';
 import ItemSprite from '../../items/ItemSprite';
 import sayItems, { FIND_TONES } from '../../items/say-items';
@@ -136,17 +122,11 @@ import {
   FIGHT_LANDMARKS,
   HARVEST_LANDMARKS,
   ICON_SIZE,
-  PLAYER_CELL,
   PUBLISHED_SPAWNS,
   REFRESH_DEBOUNCE,
-  SAVE_DELAY,
-  SAVE_FLOOR,
   STANDINGS_MEMORY,
-  START_CELL,
-  STEP_PACE,
-  STEP_REPORT_SIZE,
   TOWN_NAME_PACE,
-} from './metrics';
+} from '../../../game/overworld/board-metrics';
 import playEffect, { Effect } from '../../app/sound';
 
 /**
@@ -229,26 +209,44 @@ export default function OverworldBoard(props: {
    * chunk and the cell inside it are worked out from it when the
    * server has to be told where somebody is
    */
-  const [atX, setAtX] = createSignal(START_CELL);
-  const [atY, setAtY] = createSignal(START_CELL);
+  const game = useGame();
+  const toast = useToast();
+  const walk: BoardWalk<BoardView> = createBoardWalk<BoardView>({
+    uid: () => auth.user()?.uid ?? null,
+    elsewhere: () => game.elsewhere(),
+    takeWalk: game.takeWalk,
+    standHere: game.standHere,
+    setPosition: game.setPosition,
+    settleWalk: game.settleWalk,
+    setFieldMoves: game.setFieldMoves,
+    found: (items) => {
+      sayItems(toast, items, 'Your buddy found');
+    },
+    failed: (message) => {
+      toast.push({ message, tone: 'ember' });
+    },
+  });
+
+  onCleanup(() => {
+    walk.dispose();
+  });
+  createEffect(() => {
+    walk.setCharset(charset());
+  });
+
+  const atX = createStoreSignal(walk.x);
+  const atY = createStoreSignal(walk.y);
   /**
    * Which layer they are on. The caves are the same coordinates one
    * layer down, so this is half of saying where the player is: the
    * same cell is open ground above and solid rock below
    */
-  const [atDepth, setAtDepth] = createSignal<Depth>(Depth.Surface);
+  const atDepth = createStoreSignal(walk.depth);
   /** The world the board is reading, which is the layer they are on */
   const around = (): World => getWorld(atDepth());
-  const chunkX = (): number => chunkOfCell(atX());
-  const chunkY = (): number => chunkOfCell(atY());
   /** The world cell the board's own cell 0 sits on */
   const originX = (): number => atX() - BOARD_CENTER;
   const originY = (): number => atY() - BOARD_CENTER;
-  /**
-   * Where they are standing on the board, which is the middle of it
-   * and always will be: the window moves, they do not
-   */
-  const cell = (): number => PLAYER_CELL;
   /** A board cell said as a world cell, and the way back */
   const boardOf = (index: number): [number, number] => [
     originX() + (index % BOARD_CELLS),
@@ -299,8 +297,6 @@ export default function OverworldBoard(props: {
    * one away
    */
   const [once, setOnce] = createSignal(false);
-  const game = useGame();
-  const toast = useToast();
   /**
    * How the board says where a cell is, once it is drawn. Held in a
    * signal rather than a variable because what reads it is built
@@ -383,7 +379,7 @@ export default function OverworldBoard(props: {
    * same cell does not open the same thing twice
    */
   const [busy, setBusy] = createSignal(false);
-  const [placed, setPlaced] = createSignal(false);
+  const placed = createStoreSignal(walk.placed);
   /**
    * The player's own offset from UTC. The world's instants come from
    * the server, but which hour of the day they fall in is theirs —
@@ -470,15 +466,9 @@ export default function OverworldBoard(props: {
   createEffect(() => {
     const at = game.position();
 
-    if (at == null || placed()) {
-      return;
+    if (at != null) {
+      walk.place(at);
     }
-    setAtX(worldCell(at.chunkX, at.cellX));
-    setAtY(worldCell(at.chunkY, at.cellY));
-    setAtDepth(at.depth);
-    // Last, so nothing that watches a chunk starts watching the wrong
-    // one: the whole overworld waits on being placed
-    setPlaced(true);
   });
 
   // Put somewhere by something other than a walk (a staff teleport, Dig
@@ -491,9 +481,7 @@ export default function OverworldBoard(props: {
         if (at == null || !placed()) {
           return;
         }
-        setAtX(worldCell(at.chunkX, at.cellX));
-        setAtY(worldCell(at.chunkY, at.cellY));
-        setAtDepth(at.depth);
+        walk.standAt(worldCell(at.chunkX, at.cellX), worldCell(at.chunkY, at.cellY), at.depth);
       },
       { defer: true },
     ),
@@ -1462,210 +1450,8 @@ export default function OverworldBoard(props: {
       });
   };
 
-  /**
-   * The egg walking with the player, as of the last report. Null
-   * while they carry none — which is most of the time, and costs
-   * nothing to keep asking about
-   */
-  const [carried, setCarried] = createSignal<EggWalk | null>(null);
-  /**
-   * Paces walked but not yet reported, and whether a report is in
-   * flight. Neither belongs in a signal: nothing renders from them
-   */
-  let pending = 0;
-  let reporting = false;
-  /** When the position was last written, which is what SAVE_FLOOR is measured from */
-  let settledAt = 0;
-
-  /**
-   * Hand the paces walked so far to the server. A walk in progress
-   * reports in batches of `STEP_REPORT_SIZE`; `force` is for the
-   * moments a walk **stops** — the same moments the position is
-   * written down — where the last few paces are worth keeping even
-   * though they are not a batch
-   */
-  const takeReport = (report: WalkReport | null): void => {
-    setCarried(report?.egg ?? null);
-
-    // A find is worth saying out loud: it lands in the bag while
-    // the player is looking at the map rather than at their
-    // inventory, and nothing else would tell them
-    if (report != null && report.picked.length > 0) {
-      sayItems(toast, report.picked, 'Your buddy found');
-    }
-  };
-
-  const reportSteps = (force = false): void => {
-    if (reporting || pending === 0 || (!force && pending < STEP_REPORT_SIZE)) {
-      return;
-    }
-    // Nobody walking alongside means nothing on the server to credit
-    if (buddy() === null) {
-      pending = 0;
-      return;
-    }
-
-    // Past the cap the server would drop them, so the rest wait for the next report
-    const steps = Math.min(pending, MAX_STEP_REPORT);
-
-    pending -= steps;
-    reporting = true;
-    walk(steps)
-      .then(takeReport)
-      .catch(() => {
-        // A dropped report is a few paces, not an error worth
-        // interrupting the walk over; the next one carries on
-      })
-      .finally(() => {
-        reporting = false;
-      });
-  };
-
-  /**
-   * Where they stopped, and what it cost the egg they are carrying.
-   *
-   * The two settle together on purpose. A position saved without the
-   * paces that led to it would have a player come back further along
-   * than their egg — the walk would have happened to the map and not
-   * to the egg — so the steps go first and the position follows
-   */
-  const settle = (chunk: number, row: number, x: number, y: number): void => {
-    // A screen that has stood down writes nothing. Its coordinates are
-    // where the player used to be, and putting them back would take
-    // the walk off whichever screen has it
-    if (game.elsewhere() != null) {
-      return;
-    }
-    settledAt = Date.now();
-    // The paces ride the save, unless a report is already out with them
-    const steps = reporting ? 0 : pending;
-
-    if (steps > 0) {
-      pending = 0;
-      reporting = true;
-    }
-    // What the rest of the game is told, so the world map's camera is
-    // looking at the chunk the player is actually in — and so a
-    // remount of this tab picks the walk up rather than the record
-    game.setPosition({
-      player: auth.user()?.uid ?? '',
-      chunkX: chunk,
-      chunkY: row,
-      cellX: x,
-      cellY: y,
-      depth: atDepth(),
-      movedAt: Date.now(),
-    });
-    game
-      .settleWalk(chunk, row, x, y, atDepth(), steps)
-      .then((report) => {
-        if (steps > 0) {
-          takeReport(report);
-        }
-      })
-      .catch(() => {
-        // A position that did not save is a walk that will save it
-      })
-      .finally(() => {
-        if (steps > 0) {
-          reporting = false;
-        }
-      });
-  };
-
-  /**
-   * Standing down ends the walk here, so the paces walked since the
-   * last report go now. Nothing else will send them: the settle they
-   * would have ridden is refused for as long as another screen has the
-   * walk
-   */
-  createEffect(() => {
-    if (game.elsewhere() != null) {
-      reportSteps(true);
-    }
-  });
-
-  /**
-   * Take the walk back: stand where the other screen left the player
-   * and write it down, which is what stands that screen down in turn
-   */
-  const resume = (): void => {
-    const at = game.elsewhere();
-
-    if (at == null) {
-      return;
-    }
-    setAtX(worldCell(at.chunkX, at.cellX));
-    setAtY(worldCell(at.chunkY, at.cellY));
-    game.takeWalk();
-  };
-
-  // ...and remembered as they walk. A step is a keypress, so the
-  // writes are held back to one every SAVE_DELAY: the effect re-runs
-  // on every move and clears the timer it set last time, so what
-  // lands is where they stopped rather than every square they crossed.
-  // SAVE_FLOOR holds the rest of the wait, since a walk of two steps
-  // and a pause, over and over, is otherwise a write every few seconds
-  createEffect(() => {
-    const user = auth.user();
-    const at = {
-      chunkX: chunkX(),
-      chunkY: chunkY(),
-      cellX: cellInChunk(atX()),
-      cellY: cellInChunk(atY()),
-    };
-
-    if (user == null || !placed()) {
-      return;
-    }
-
-    const owed = Math.max(SAVE_DELAY, SAVE_FLOOR - (Date.now() - settledAt));
-    const timer = setTimeout(() => {
-      settle(at.chunkX, at.chunkY, at.cellX, at.cellY);
-    }, owed);
-
-    onCleanup(() => {
-      clearTimeout(timer);
-    });
-  });
-
-  // Leaving the tab unmounts it, which would drop a walk that had not
-  // reached the end of its delay — so the last of it is settled on the
-  // way out rather than thrown away
-  onCleanup(() => {
-    if (placed()) {
-      settle(chunkX(), chunkY(), cellInChunk(atX()), cellInChunk(atY()));
-    }
-  });
-
-  const move = (deltaX: number, deltaY: number): void => {
-    // The walk is on another screen: this one is a picture of where
-    // the player was until somebody asks for it back
-    if (game.elsewhere() != null) {
-      return;
-    }
-    // A step is a reason to wonder what is around, at most every few
-    // seconds of walking
-    askForWindow();
-
-    const x = atX() + deltaX;
-    const y = atY() + deltaY;
-
-    // The world is finite: its outermost chunks have nothing beyond
-    // them, so a walk into the edge goes nowhere
-    if (!isInWorld(chunkOfCell(x), chunkOfCell(y))) {
-      return;
-    }
-
-    // Nothing else happens: a boundary is a line on a map now, and
-    // crossing one moves the window a cell like every other step
-    setAtX(x);
-    setAtY(y);
-    // A cell crossed is a step walked, and an egg only moves while it
-    // is the one being carried
-    pending += 1;
-    reportSteps();
-  };
+  const carried = createStoreSignal(walk.carried);
+  const resume = walk.resume;
 
   /**
    * Meet a spawn (or a grotto's pokemon): the encounter is derived
@@ -1941,10 +1727,12 @@ export default function OverworldBoard(props: {
       // One cell, not a crossing: a mouth joins the two cells it sits
       // between, so going under moves a player into the hillside
       // rather than anywhere they did not walk to
-      setAtDepth(going);
-      setAtX(worldCell(chunk.x, through % CHUNK_CELLS));
-      setAtY(worldCell(chunk.y, Math.floor(through / CHUNK_CELLS)));
-      settle(chunk.x, chunk.y, through % CHUNK_CELLS, Math.floor(through / CHUNK_CELLS));
+      walk.standAt(
+        worldCell(chunk.x, through % CHUNK_CELLS),
+        worldCell(chunk.y, Math.floor(through / CHUNK_CELLS)),
+        going,
+      );
+      walk.settle();
       remark(going === Depth.Cave ? 'Into the dark.' : 'Back out into the light.');
       return null;
     }
@@ -2101,276 +1889,22 @@ export default function OverworldBoard(props: {
       });
   };
 
-  /**
-   * The way the player is standing, as a step.
-   *
-   * A step into something that cannot be walked through still turns
-   * them to face it, which is the whole of what makes the interact key
-   * mean anything: what is in front of the player is a fact about
-   * where they are looking, not about where they last arrived from
-   */
-  const [facing, setFacing] = createSignal<[number, number]>([0, 1]);
+  const facing = createStoreSignal(walk.facing);
+  const sight = createStoreSignal(walk.sight);
 
-  /**
-   * The other players in sight, and this one as they see them. Opened
-   * once the board is placed, so nobody sees the player at the start
-   * cell on the way to where they really are
-   */
-  const [sight, setSight] = createSignal<Sight | null>(null);
-  // By uid, so a refreshed session is not a reason to rejoin every channel
-  const seer = createMemo(() => auth.user()?.uid ?? null);
-
+  // What the walk reads from the board and the session, changing
   createEffect(() => {
-    const uid = seer();
-
-    if (uid == null || !placed()) {
-      return;
-    }
-
-    const opened = openSight(uid, STEP_PACE);
-
-    setSight(opened);
-    onCleanup(() => {
-      opened.close();
-      setSight(null);
-    });
-  });
-  createEffect(() => {
-    sight()?.setCharset(charset());
-  });
-  // A screen that stood down keeps watching but is not seen, or a
-  // player on two screens would stand in two places
-  createEffect(() => {
-    sight()?.setSeen(game.elsewhere() == null);
-  });
-  createEffect(() => {
-    sight()?.stand(atDepth(), atX(), atY(), facing());
+    view();
+    buddy();
+    auth.user();
+    game.elsewhere();
+    walk.refresh();
   });
 
-  /**
-   * The cell one step from where the player stands. Always on the
-   * board: they stand in the middle of it, and the middle is eight
-   * cells from every edge
-   */
-  const ahead = ([dx, dy]: [number, number]): number =>
-    (BOARD_CENTER + dy) * BOARD_CELLS + (BOARD_CENTER + dx);
+  const ahead = walk.ahead;
 
-  /**
-   * Where the player is walking, if they are.
-   *
-   * A press says where to be; this is what is left of it while they
-   * get there. It is re-planned at every step rather than kept as a
-   * list of squares, because the chunk moves under a walk — a window
-   * turns over, another player takes a spawn, a pokemon appears in the
-   * way — and a route worked out once would walk straight through
-   * whatever arrived after it was drawn
-   */
-  const [journey, setJourney] = createSignal<Journey | null>(null);
-
-  /** How the player is getting about: on foot, or riding the buddy over water or through the air */
-  const [travel, setTravel] = createSignal<Travel>('walk');
-
-  /** What stands on a board cell, as far as a step onto it cares */
-  const factsAt = (loaded: BoardView, index: number): CellFacts => {
-    const x = index % BOARD_CELLS;
-    const y = Math.floor(index / BOARD_CELLS);
-    const wet = loaded.ground.role(x, y) === 'water';
-    const biome = loaded.ground.biome(x, y);
-
-    return {
-      fixture: loaded.landmarks.has(index),
-      scenery: loaded.decorations.has(index),
-      solid: loaded.walls.has(index),
-      // A frozen lake is walked like ground, so only open water needs Surf
-      water: wet && biome !== Biome.Volcano && !isIceBiome(biome),
-      lava: wet && biome === Biome.Volcano,
-    };
-  };
-
-  /**
-   * Whether a step onto a cell is allowed, from where the player stands
-   * and however they are getting about. It is the same answer whether
-   * the walk was pressed for or walked with the keyboard
-   */
-  const standable = (loaded: BoardView, index: number): boolean =>
-    canEnter(travel(), factsAt(loaded, cell()), factsAt(loaded, index));
-
-  /** Whether the buddy can learn a field move, which is all a field move asks */
-  const knows = (field: FieldMove): boolean => canUseFieldMove(buddy()?.species, field);
-
-  /** Whether open water touches the player's cell, which is where Surf starts */
-  const besideWater = (loaded: BoardView): boolean => {
-    for (const [dx, dy] of [
-      [0, -1],
-      [1, 0],
-      [0, 1],
-      [-1, 0],
-    ] as const) {
-      if (factsAt(loaded, ahead([dx, dy])).water) {
-        return true;
-      }
-    }
-    return false;
-  };
-
-  /** Whether the last step was taken on water, so the first one ashore ends a surf */
-  let afloat = false;
-
-  createEffect(() => {
-    const loaded = view();
-    const mode = travel();
-
-    if (loaded == null || mode === 'walk') {
-      return;
-    }
-    // A buddy put away takes the ride with it, and nothing flies underground
-    if (
-      !knows(mode === 'surf' ? Moves.Surf : Moves.Fly) ||
-      (mode === 'fly' && loaded.underground)
-    ) {
-      setTravel('walk');
-      return;
-    }
-    if (mode === 'surf') {
-      const wet = factsAt(loaded, cell()).water;
-
-      if (afloat && !wet) {
-        setTravel('walk');
-      }
-      afloat = wet;
-    }
-  });
-
-  /** Whether Surf can be pressed here: to start beside water, or to stop on dry ground */
-  const surfOffered = (loaded: BoardView): boolean => {
-    if (!knows(Moves.Surf)) {
-      return false;
-    }
-    if (travel() === 'surf') {
-      return !factsAt(loaded, cell()).water;
-    }
-    return travel() === 'walk' && besideWater(loaded);
-  };
-
-  /** Whether Fly can be pressed here: to take off above ground, or to land where a walk could stand */
-  const flyOffered = (loaded: BoardView): boolean => {
-    if (!knows(Moves.Fly)) {
-      return false;
-    }
-    if (travel() === 'fly') {
-      return canLand(factsAt(loaded, cell()));
-    }
-    return travel() === 'walk' && !loaded.underground;
-  };
-
-  /** Start or stop surfing. It starts beside water and stops on dry ground */
-  const toggleSurf = (): void => {
-    const loaded = view();
-
-    if (loaded == null) {
-      return;
-    }
-    if (travel() === 'surf') {
-      if (!factsAt(loaded, cell()).water) {
-        setTravel('walk');
-      }
-      return;
-    }
-    if (knows(Moves.Surf) && besideWater(loaded)) {
-      afloat = false;
-      setTravel('surf');
-    }
-  };
-
-  /** Take off, or come down where a walk could stand */
-  const toggleFly = (): void => {
-    const loaded = view();
-
-    if (loaded == null) {
-      return;
-    }
-    if (travel() === 'fly') {
-      if (canLand(factsAt(loaded, cell()))) {
-        setTravel('walk');
-      }
-      return;
-    }
-    if (knows(Moves.Fly) && !loaded.underground) {
-      setTravel('fly');
-    }
-  };
-
-  /** Whether a Dig or Teleport is on its way to the server */
-  const [warping, setWarping] = createSignal(false);
-
-  /** Dig or Teleport: the server moves the player, and the board follows */
-  const warp = (field: Moves.Dig | Moves.Teleport): void => {
-    if (warping()) {
-      return;
-    }
-    setWarping(true);
-    (field === Moves.Dig ? useDig() : useTeleport())
-      .then((at) => {
-        setWarping(false);
-        if (at == null) {
-          toast.push({
-            message:
-              field === Moves.Dig ? 'There is no way up within reach.' : 'No town is near enough.',
-            tone: 'ember',
-          });
-          return;
-        }
-        setJourney(null);
-        setTravel('walk');
-        game.standHere(at);
-      })
-      .catch((caught: unknown) => {
-        setWarping(false);
-        toast.push({
-          message: caught instanceof Error ? caught.message : String(caught),
-          tone: 'ember',
-        });
-      });
-  };
-
-  // The moves usable where the player stands, handed to the menu bar
-  createEffect(() => {
-    const loaded = view();
-    const offers: FieldMoveOffer[] = [];
-
-    if (loaded != null) {
-      if (surfOffered(loaded)) {
-        offers.push({ name: 'Surf', active: travel() === 'surf', busy: false, use: toggleSurf });
-      }
-      if (flyOffered(loaded)) {
-        offers.push({ name: 'Fly', active: travel() === 'fly', busy: false, use: toggleFly });
-      }
-      if (knows(Moves.Dig) && loaded.underground) {
-        offers.push({
-          name: 'Dig',
-          active: false,
-          busy: warping(),
-          use: () => {
-            warp(Moves.Dig);
-          },
-        });
-      }
-      if (knows(Moves.Teleport)) {
-        offers.push({
-          name: 'Teleport',
-          active: false,
-          busy: warping(),
-          use: () => {
-            warp(Moves.Teleport);
-          },
-        });
-      }
-    }
-    game.setFieldMoves(offers);
-  });
-  onCleanup(() => {
-    game.setFieldMoves([]);
-  });
+  const journey = createStoreSignal(walk.journey);
+  const travel = createStoreSignal(walk.travel);
 
   /** The buddy as the player is drawn riding it */
   const mount = (): RiddenCoat | null => {
@@ -2396,198 +1930,7 @@ export default function OverworldBoard(props: {
     { equals: (was, now) => was?.[0] === now?.[0] && was?.[1] === now?.[1] },
   );
 
-  /**
-   * When the next step may be taken: the last one's start plus how long
-   * it takes, a diagonal being √2 times a straight step. The pace is
-   * measured from it rather than from the press, so pressing again
-   * mid-walk changes where the player is going without changing how
-   * fast they get there
-   */
-  let nextStepAt = 0;
-
-  /** How long until the next step, or a whole pace when the last one did not move */
-  const untilNextStep = (): number => {
-    const owed = nextStepAt - Date.now();
-
-    return owed > 0 ? owed : STEP_PACE;
-  };
-
-  /**
-   * Whether the walk has arrived. Reaching for something ends beside
-   * it rather than on it: standing on top of what you are looking at
-   * is not what walking up to something means
-   */
-  const arrived = (plan: Journey): boolean => {
-    const standing = seatOf(plan.goalX, plan.goalY);
-
-    return plan.act
-      ? standing != null && withinReach(standing)
-      : atX() === plan.goalX && atY() === plan.goalY;
-  };
-
-  /**
-   * One cell of the walk: work out the way from where they are now,
-   * and take a single step along it.
-   *
-   * Stopping is as much a part of this as walking. A route that no
-   * longer exists — the way blocked, the goal now standing under a
-   * pokemon — ends the walk where it stands rather than casting about
-   * for somewhere else to go, since the player can see the board and
-   * will press again
-   */
-  /** The walk whose route the other players have been told, so it is told once */
-  let announced: Journey | null = null;
-
-  /** A route of board cells as the steps between them */
-  const stepsAlong = (from: number, cells: number[]): [number, number][] => {
-    const steps: [number, number][] = [];
-    let at = from;
-
-    for (const onto of cells) {
-      steps.push([
-        (onto % BOARD_CELLS) - (at % BOARD_CELLS),
-        Math.floor(onto / BOARD_CELLS) - Math.floor(at / BOARD_CELLS),
-      ]);
-      at = onto;
-    }
-    return steps;
-  };
-
-  const stride = (): void => {
-    const plan = journey();
-    const loaded = view();
-
-    if (plan == null || loaded == null) {
-      return;
-    }
-
-    // Something opened on the way — a grunt stepped out, a pokemon was
-    // walked up to — and the rest of the walk is not what the player
-    // is answering now. The walk is dropped rather than held: they can
-    // see where they stand when the dialog is gone
-    if (engaged()) {
-      setJourney(null);
-      return;
-    }
-
-    if (arrived(plan)) {
-      const standing = seatOf(plan.goalX, plan.goalY);
-
-      setJourney(null);
-      if (plan.act && standing != null) {
-        reach(standing);
-      }
-      return;
-    }
-
-    const goal = seatOf(plan.goalX, plan.goalY);
-
-    // The goal has been left behind: a walk only ever heads for
-    // something the player can see, so one off the board is one that
-    // is not being walked to any more
-    if (goal == null) {
-      setJourney(null);
-      return;
-    }
-
-    const here = cell();
-    // The chunk's fixtures stop a walk: a landmark is walked up to and
-    // a tree is walked round, because both are standing there. A
-    // pokemon is not — where one is this window is not a fact about
-    // the ground, and a route that bent round every spawn made a busy
-    // chunk feel like a maze
-    // Solid rock stops a walk the way a fixture does
-    const passable = (index: number): boolean => standable(loaded, index);
-    // A goal nothing can stand on is walked up to instead of refused,
-    // so a press on a boulder still takes the player over to it
-    const route = plan.act
-      ? findPathBeside(here, goal, passable)
-      : findPathNear(here, goal, passable);
-    const next = route?.[0];
-
-    if (next == null) {
-      setJourney(null);
-      return;
-    }
-    const step: [number, number] = [
-      (next % BOARD_CELLS) - (here % BOARD_CELLS),
-      Math.floor(next / BOARD_CELLS) - Math.floor(here / BOARD_CELLS),
-    ];
-
-    // A route is a run of single steps, a diagonal included, and
-    // nothing else. A walk is what carries the egg and what the world is
-    // seen from, so one that jumped would be a teleport with a walk's
-    // name on it
-    if (Math.max(Math.abs(step[0]), Math.abs(step[1])) !== 1) {
-      setJourney(null);
-      return;
-    }
-    // Told once, as all of it: the ground and what stands on it are
-    // fixed, so the route found at the first step is the one walked
-    if (announced !== plan && route != null) {
-      announced = plan;
-      sight()?.plan(stepsAlong(here, route));
-    }
-    nextStepAt = Date.now() + stepDuration(step, STEP_PACE);
-    move(step[0], step[1]);
-  };
-
-  // A walk that ends short of its route says where it stopped
-  createEffect(() => {
-    if (journey() == null) {
-      announced = null;
-      untrack(sight)?.plan(null);
-    }
-  });
-
-  /**
-   * The walk itself: a step, and then the next as soon as that one is
-   * done, until it arrives or gives up. Each step waits out its own
-   * length, so a diagonal takes √2 times a straight one.
-   *
-   * The first step is taken the moment the press lands, unless the
-   * last one is still under way — a new press restarts this effect,
-   * and stepping straight away on every press let a player who kept
-   * re-pressing walk as fast as they could click.
-   *
-   * Everything the step reads is read outside the effect's tracking,
-   * so the only thing that restarts the clock is a **new** press: read
-   * plainly, a step that moves the player would re-run this, clear the
-   * timer and step again immediately, which is a walk at the speed of
-   * the message queue
-   */
-  createEffect(() => {
-    if (journey() == null) {
-      return;
-    }
-    let timer: ReturnType<typeof setTimeout> | null = null;
-    // A step can end the walk from inside itself, by arriving or by
-    // crossing an edge, which disposes this effect there and then. A
-    // timer set after that would outlive the walk and drive the next
-    let ended = false;
-
-    const pace = (): void => {
-      timer = null;
-      untrack(stride);
-      if (!ended) {
-        timer = setTimeout(pace, untilNextStep());
-      }
-    };
-    const owed = nextStepAt - Date.now();
-
-    if (owed > 0) {
-      timer = setTimeout(pace, owed);
-    } else {
-      pace();
-    }
-
-    onCleanup(() => {
-      ended = true;
-      if (timer != null) {
-        clearTimeout(timer);
-      }
-    });
-  });
+  const untilNextStep = walk.untilNextStep;
 
   /**
    * A square the player has asked to be at.
@@ -2612,21 +1955,7 @@ export default function OverworldBoard(props: {
       return;
     }
 
-    const [x, y] = boardOf(index);
-
-    if (holdsSomething(loaded, index)) {
-      setJourney(null);
-
-      if (withinReach(index)) {
-        reach(index);
-      } else {
-        setJourney({ goalX: x, goalY: y, act: true });
-      }
-      return;
-    }
-    // Scenery is not a thing to reach for, but it is still somewhere
-    // to head: the walk stops on the nearest cell that can be stood on
-    setJourney(index === cell() ? null : { goalX: x, goalY: y, act: false });
+    walk.press(index);
   };
 
   /** Which way each direction goes, in cells */
@@ -2649,31 +1978,7 @@ export default function OverworldBoard(props: {
    * as a pressed walk, so neither a held key nor a mashed one outruns
    * the other
    */
-  const stepBy = (ways: [number, number][]): void => {
-    const loaded = view();
-    const first = ways.at(0);
-
-    if (loaded == null || first == null || engaged() || Date.now() < nextStepAt) {
-      return;
-    }
-    // The keyboard is the player walking themselves, so a walk they
-    // pressed for is dropped rather than raced
-    setJourney(null);
-
-    const passable = (index: number): boolean => standable(loaded, index);
-
-    for (const way of ways) {
-      if (canStep(cell(), way[0], way[1], passable)) {
-        setFacing(way);
-        nextStepAt = Date.now() + stepDuration(way, STEP_PACE);
-        move(way[0], way[1]);
-        return;
-      }
-    }
-    // Nowhere to go turns the player and nothing more, which is what
-    // leaves the interact key an answer
-    setFacing(first);
-  };
+  const stepBy = walk.stepBy;
 
   /**
    * Reach for whatever the player is facing. Nothing in front of them
@@ -2689,6 +1994,18 @@ export default function OverworldBoard(props: {
     }
     reach(target);
   };
+
+  walk.attach({
+    buddy,
+    view,
+    engaged,
+    holdsSomething,
+    withinReach,
+    reach,
+    askForWindow: () => {
+      askForWindow();
+    },
+  });
 
   /**
    * Walking with the keyboard, for as long as a key is held.
@@ -3205,19 +2522,16 @@ export default function OverworldBoard(props: {
                 // Out of a portal and into the one it opened onto:
                 // the far side is a chunk away rather than a step, so
                 // the whole position moves at once
-                setAtX(worldCell(destination.x, destination.cell % CHUNK_CELLS));
-                setAtY(worldCell(destination.y, Math.floor(destination.cell / CHUNK_CELLS)));
+                walk.standAt(
+                  worldCell(destination.x, destination.cell % CHUNK_CELLS),
+                  worldCell(destination.y, Math.floor(destination.cell / CHUNK_CELLS)),
+                );
                 remark(`Through to ${destination.name}. Chunk ${destination.x}, ${destination.y}.`);
                 // A key was spent getting here, so where it got them is
                 // written down now rather than in a second and a half.
                 // The paces that led to the portal go with it; the
                 // crossing itself is not a walk and adds none
-                settle(
-                  destination.x,
-                  destination.y,
-                  destination.cell % CHUNK_CELLS,
-                  Math.floor(destination.cell / CHUNK_CELLS),
-                );
+                walk.settle();
               }}
             />
           </>

@@ -12,7 +12,7 @@ import {
   PLAYER_CELL,
   PUBLISHED_SPAWNS,
   STEP_PACE,
-} from '../../overworld/overworld-tab/metrics';
+} from '../../../game/overworld/board-metrics';
 import ChunkCanvas, { type SpawnCoat } from '../../overworld/chunk-canvas';
 import { CellAura, rankOf } from '../../../canvas/overworld/scenery';
 import { getSkybox, latitudeOf } from '../../../canvas/overworld/daylight';

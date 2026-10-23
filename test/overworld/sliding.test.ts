@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { slideGain } from '../../src/canvas/overworld/chunk-view';
 import { SLIDE_PACE, SNAP_STEPS } from '../../src/canvas/overworld/metrics';
-import { STEP_PACE } from '../../src/components/overworld/overworld-tab/metrics';
+import { STEP_PACE } from '../../src/game/overworld/board-metrics';
 
 describe('the walker sliding after the cell it is walking to', () => {
   const FRAME = 1000 / 60;

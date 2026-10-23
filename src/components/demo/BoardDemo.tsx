@@ -11,7 +11,7 @@ import { CellAura, type SpawnCoat, rankOf } from '../../canvas/overworld/scenery
 import { BOARD_CELLS, BOARD_CENTER, boardIndexOf, viewFor } from '../../canvas/overworld/board';
 import { SLIDE_PACE } from '../../canvas/overworld/metrics';
 import { findPathNear } from '../../overworld/path';
-import { boardMargin } from '../overworld/overworld-tab/metrics';
+import { boardMargin } from '../../game/overworld/board-metrics';
 import settings, { type BoardEdge, setSetting } from '../app/settings';
 import World, { Generation } from '../../overworld/world';
 import { WORLD_SEED } from '../../overworld/current';

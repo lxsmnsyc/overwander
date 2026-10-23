@@ -1,7 +1,7 @@
 import { EventPriority } from '../../core/event-emitter';
 import type { Species } from '../../data/ids/species';
 import { ZENITH_SHARDS } from '../../data/items/zenith-shards';
-import { getZenithForm, getZenithShape, isZenithSpecies } from '../../data/species/zeniths';
+import { getZenithForm, getZenithOwner, isZenithSpecies } from '../../data/species/zeniths';
 import type Battle from '../battle';
 import { BattleEvents } from '../events';
 import type Team from '../team';
@@ -10,13 +10,18 @@ import { pickShapeHolder } from './mega';
 
 /**
  * The Zenith this unit could reach here, or null where it has none.
- * The shard has to name the pokemon the unit is now
+ * The shard has to name the unit's pokemon, and a pokemon kept in
+ * another shape (an Attack Deoxys) reaches the Zenith of that shape
  */
 export function zenithOf(unit: Unit): Species | null {
   for (const [item, shape] of ZENITH_SHARDS) {
     // Held rather than enabled, the way a Mega Stone is
-    if (unit.items[item] != null && shape.base === unit.species) {
-      return shape.zenith;
+    if (unit.items[item] != null) {
+      const zenith = getZenithForm(shape.zenith, unit.species);
+
+      if (zenith != null) {
+        return zenith;
+      }
     }
   }
   return null;
@@ -57,7 +62,7 @@ export default function setupZeniths(battle: Battle): void {
     if (zenith == null || spent.has(unit.team) || pickZenith(unit.team) !== unit) {
       return;
     }
-    const shape = getZenithShape(unit.species);
+    const shape = getZenithOwner(zenith);
 
     spent.add(unit.team);
     unit.setSpecies(zenith);

@@ -19,7 +19,6 @@ import usePurifyingGem from '../../auth/purify';
 import { useAbilityCapsule } from '../../auth/ability-items';
 import useSkillBook from '../../auth/skill-book';
 import useUtilityBelt from '../../auth/utility-belt';
-import playEffect, { Effect } from '../app/sound';
 import { feedEffortBerry, useEffortItem } from '../../auth/training';
 import { MAX_LEVEL } from '../../data/constants/levels';
 import { MAX_EFFORT_PER_STAT, type Stats } from '../../data/constants/stats';
@@ -48,9 +47,7 @@ import { MAX_VITAMIN_STATS, VITAMIN_STATS, isPPItem, isVitamin } from '../../dat
 import { MAX_WING_STATS, WING_STATS, isWing } from '../../data/items/wings';
 import { PP_UP_LIMIT } from '../../data/moves';
 import { getSpeciesData } from '../../data/species';
-import type { ToastTone } from '../styled';
-import { describeItem } from '../details';
-import { describeIVs, withArticle } from '../catches/catch-dialog/describe';
+import { describeIVs, describeItem, withArticle } from '../details';
 
 /**
  * Spending one item on one pokemon: whether it would mean anything,
@@ -190,10 +187,18 @@ export function effortStatOf(item: Items): Stats | null {
   );
 }
 
+/** How a report is coloured: as news, as a gain, or as a refusal */
+export type SpentTone = 'neutral' | 'leaf' | 'ember';
+
+/** The sound a spend is worth making, for the interface to play */
+export type SpentCue = 'level-up' | 'purified' | 'item-slot' | 'ability-learned';
+
 /** What spending it came to */
 export interface Spent {
   said: string;
-  tone: ToastTone;
+  tone: SpentTone;
+  /** A sound the moment deserves, where it deserves one */
+  cue?: SpentCue;
   /**
    * The level it grew to, for the candies that grow one. A level may
    * have a move waiting behind it: see `getLevelMoves`
@@ -260,8 +265,7 @@ export default async function spendItemOn(catchId: string, item: Items): Promise
     if (level == null) {
       return { said: 'That candy could not be used.', tone: 'ember', level: null };
     }
-    playEffect(Effect.LevelUp);
-    return { said: `Grew to level ${level}.`, tone: 'neutral', level };
+    return { said: `Grew to level ${level}.`, tone: 'neutral', level, cue: 'level-up' };
   }
 
   if (item === Items.RareCandyMax) {
@@ -270,8 +274,8 @@ export default async function spendItemOn(catchId: string, item: Items): Promise
     if (grown == null) {
       return { said: 'That candy could not be used.', tone: 'ember', level: null };
     }
-    playEffect(Effect.LevelUp);
     return {
+      cue: 'level-up',
       said: `Grew to level ${grown.level}.`,
       tone: 'neutral',
       level: grown.level,
@@ -313,8 +317,12 @@ export default async function spendItemOn(catchId: string, item: Items): Promise
     if (ivs == null) {
       return refused(item);
     }
-    playEffect(Effect.Purified);
-    return { said: `The shadow is gone — ${describeIVs(ivs)}.`, tone: 'neutral', level: null };
+    return {
+      said: `The shadow is gone — ${describeIVs(ivs)}.`,
+      tone: 'neutral',
+      level: null,
+      cue: 'purified',
+    };
   }
 
   if (isMaxMushrooms(item)) {
@@ -342,8 +350,12 @@ export default async function spendItemOn(catchId: string, item: Items): Promise
     if (slots == null) {
       return refused(item);
     }
-    playEffect(Effect.ItemSlot);
-    return { said: `Room for ${slots} held items now.`, tone: 'neutral', level: null };
+    return {
+      said: `Room for ${slots} held items now.`,
+      tone: 'neutral',
+      level: null,
+      cue: 'item-slot',
+    };
   }
 
   if (isSkillBook(item)) {
@@ -352,8 +364,7 @@ export default async function spendItemOn(catchId: string, item: Items): Promise
     if (slots == null) {
       return refused(item);
     }
-    playEffect(Effect.ItemSlot);
-    return { said: `Room for ${slots} moves now.`, tone: 'neutral', level: null };
+    return { said: `Room for ${slots} moves now.`, tone: 'neutral', level: null, cue: 'item-slot' };
   }
 
   if (isAbilityCapsule(item)) {
@@ -362,8 +373,8 @@ export default async function spendItemOn(catchId: string, item: Items): Promise
     if (drawn == null) {
       return refused(item);
     }
-    playEffect(Effect.AbilityLearned);
     return {
+      cue: 'ability-learned',
       said: `${getAbilityData(drawn.ability).name} came up — ${drawn.slots} abilities now.`,
       tone: 'neutral',
       level: null,

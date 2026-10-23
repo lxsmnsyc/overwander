@@ -65,8 +65,8 @@ import { GENDER_LABELS, GENDER_MARKS } from '../catch-summary';
 import InventoryPicker from '../../items/InventoryPicker';
 
 import { describeItem } from '../../details';
-import spentToast from '../../items/spent-toast';
-import spendItemOn, { isUsableOn } from '../../items/use-item';
+import spentToast, { playSpentCue } from '../../items/spent-toast';
+import spendItemOn, { isUsableOn } from '../../../game/items/use-item';
 import createCandyFeed from '../../../game/catches/candy-feed';
 import createStoreSignal from '../../app/store-signal';
 
@@ -959,6 +959,7 @@ export function CatchSheetBody(
 
     spendItemOn(catchId, item)
       .then((result) => {
+        playSpentCue(result);
         toast.push(spentToast(item, result));
         props.onRecordChanged();
         props.onBagChanged();

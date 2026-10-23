@@ -38,9 +38,9 @@ import { askTeachings } from '../forms/teach-move';
 import CandyGrid, { type CandyPile } from './CandyGrid';
 import ItemGrid, { type ItemCell } from './ItemGrid';
 import { describeItem } from '../details';
-import spendItemOn, { isUsableOn } from './use-item';
+import spendItemOn, { isUsableOn } from '../../game/items/use-item';
 import { getLevelMovesBetween } from '../../model/level-moves';
-import spentToast from './spent-toast';
+import spentToast, { playSpentCue } from './spent-toast';
 import { GameDialog, useGame } from '../app/game-context';
 import { Hint, HintList, Note, TabBar, TabButton, TabGroup, TabPane, useToast } from '../styled';
 import settings, { setSetting } from '../app/settings';
@@ -382,6 +382,7 @@ function BagBody(
 
     spendItemOn(catchId, item)
       .then(async (result) => {
+        playSpentCue(result);
         toast.push(spentToast(item, result));
         changed();
 

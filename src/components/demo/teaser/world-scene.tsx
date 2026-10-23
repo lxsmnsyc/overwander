@@ -5,7 +5,7 @@ import {
   boardChunks,
   buildBoardView,
   naming,
-} from '../../overworld/overworld-tab/board-view';
+} from '../../../game/overworld/board-view';
 import {
   BOARD_CELLS,
   BOARD_CENTER,
@@ -30,6 +30,7 @@ import type { Depth } from '../../../overworld/depth';
 import { type CellFacts, canEnter } from '../../../overworld/field-moves';
 import { findPathNear } from '../../../overworld/path';
 import Strangers, { type Facing } from '../../../overworld/strangers';
+import settings from '../../app/settings';
 
 const EXPERT_LANDMARKS = new Set<Landmark>([
   Landmark.GymLeader,
@@ -100,6 +101,7 @@ export default function WorldScene(props: WorldSceneProps): JSX.Element {
       new Set(),
       props.depth,
       props.now,
+      settings().boardEdge,
     );
   });
 

@@ -6,7 +6,7 @@ import {
   buildBoardView,
   runningWindows,
   viewChunks,
-} from '../../src/components/overworld/overworld-tab/board-view';
+} from '../../src/game/overworld/board-view';
 import { BOARD_CELLS, BOARD_CENTER } from '../../src/game/overworld/board-metrics';
 import AleaRNG from '../../src/core/alea';
 import { chunkOfCell } from '../../src/overworld/chunk';

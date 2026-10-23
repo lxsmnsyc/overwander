@@ -1,27 +1,22 @@
 import {
   type BoardView,
   type Placed,
-  type WatchedWindow,
-  boardChunks,
   buildBoardView,
   naming,
-  runningWindows,
-  viewChunks,
-} from './board-view';
+} from '../../../game/overworld/board-view';
 import challengerOf, { championGate, eliteGate, frontierGate } from './challengers';
 import { describeItem } from '../../details';
 import { stateOf } from '../../../game/overworld/journey';
 import { useAuth } from '../../../auth/context';
 import createBoardWalk, { type BoardWalk } from '../../../game/overworld/walk';
+import createBoardWindows from '../../../game/overworld/windows';
 import createStoreSignal from '../../app/store-signal';
-import type { Unwatch } from '../../../auth/watch';
 import LRUMap from '../../../core/lru-map';
 import { settled } from '../../app/resource-reads';
 import { type Direction, actionOf, forTheGame } from '../../app/keys';
 import settings from '../../app/settings';
 import { DEFAULT_CHARSET } from '../../../data/overworld/charsets';
 import { watchProfile } from '../../../auth/profile';
-import type { SnapshotRecord } from '../../../model/snapshot-record';
 import type { EncounterRecord } from '../../../model/encounter-record';
 import { getLocalOffset } from '../../../model/local-time';
 import { localNow } from '../../../auth/clock';
@@ -42,15 +37,9 @@ import {
   claimItemCache,
   claimNest,
   claimPhenomenon,
-  listClaimedItemCaches,
-  listClaimedPhenomena,
-  listLatheredHoneyTrees,
-  listPickedBerryPatches,
   peekNest,
   peekPhenomenonEgg,
   startEncounter,
-  visitChunkWindow,
-  watchSnapshotWindow,
 } from '../../../auth/snapshots';
 import type { PlayerIdentity } from '../../../auth/user';
 import { type BoardCell, boardIndexOf } from '../../../canvas/overworld/board';
@@ -79,7 +68,8 @@ import { PHENOMENON_NAMES } from '../../../data/overworld/phenomenon';
 import { getSpeciesData } from '../../../data/species';
 import { isFeaturedSpecies } from '../../../data/species/day';
 import { CHUNK_CELLS, worldCell } from '../../../overworld/chunk';
-import ChunkSnapshot, { RocketRank, SNAPSHOT_INTERVAL } from '../../../overworld/chunk-snapshot';
+import type ChunkSnapshot from '../../../overworld/chunk-snapshot';
+import { RocketRank } from '../../../overworld/chunk-snapshot';
 import type { Buddy } from '../../../overworld/core';
 import getWorld from '../../../overworld/current';
 import type World from '../../../overworld/world';
@@ -113,7 +103,6 @@ import {
   on,
   onCleanup,
   onMount,
-  untrack,
 } from 'solid-js';
 import {
   BOARD_CELLS,
@@ -122,8 +111,6 @@ import {
   FIGHT_LANDMARKS,
   HARVEST_LANDMARKS,
   ICON_SIZE,
-  PUBLISHED_SPAWNS,
-  REFRESH_DEBOUNCE,
   STANDINGS_MEMORY,
   TOWN_NAME_PACE,
 } from '../../../game/overworld/board-metrics';
@@ -136,20 +123,6 @@ import playEffect, { Effect } from '../../app/sound';
  * through turns them to face it, and the interact key is what reaches
  * for whatever they are facing
  */
-/**
- * What each claim list answered, by player, list, chunk and window.
- *
- * A claim changes when the player takes something or the window turns
- * over, and neither happens because they walked a square. Kept outside
- * the board, so coming back from a battle or another tab asks nothing
- */
-const claimed = new LRUMap<string, Promise<number[]>>(CLAIM_MEMORY);
-
-/**
- * The chunk windows last seen, by layer, zone and chunk. A board mounted
- * again starts from any that are still live instead of reading each one
- */
-const keptWindows = new LRUMap<string, SnapshotRecord>(CLAIM_MEMORY);
 
 /**
  * The world itself, which is where the buddy and what has fled are
@@ -487,326 +460,22 @@ export default function OverworldBoard(props: {
     ),
   );
 
-  /**
-   * The windows of every chunk the board overlaps, by chunk key.
-   *
-   * One subscription apiece: what time it is there and what is
-   * standing in it arrive together, since they are one document, and a
-   * spawn caught by another player disappears from every screen the
-   * moment its window is rewritten. Kept as a map rather than a single
-   * value because the board straddles chunks now, and a board waiting
-   * on all four of them at once would blank whenever any one of them
-   * turned over
-   */
-  const [windows, setWindows] = createSignal<Map<string, WatchedWindow>>(new Map());
-
-  /**
-   * The chunks the board is showing. A memo compared by content so
-   * that a step staying inside the same four is not a reason to open
-   * the subscriptions again: the window moves a cell at a time and the
-   * chunks under it change every sixteen
-   */
-  const overlapped = createMemo(() => boardChunks(originX(), originY()), [], {
-    equals: (was, now) => {
-      if (was.length !== now.length) {
-        return false;
-      }
-      for (const [at, [x, y]] of was.entries()) {
-        if (x !== now[at][0] || y !== now[at][1]) {
-          return false;
-        }
-      }
-      return true;
+  const boardWindows = createBoardWindows({
+    walk: walk,
+    zone,
+    uid: () => auth.user()?.uid ?? null,
+    failed: (message) => {
+      remark(message, 'ember');
     },
   });
 
-  /**
-   * The windows the board is showing, named by chunk and by the
-   * instant each was rolled. What is read once per window rather than
-   * once per step hangs off this: a step that changes neither is not a
-   * reason to ask the server anything
-   */
-  const windowKey = createMemo(() => {
-    const parts: string[] = [];
-
-    for (const [x, y] of overlapped()) {
-      parts.push(`${x},${y}@${windows().get(`${x},${y}`)?.record.timestamp ?? ''}`);
-    }
-    return parts.join(' ');
-  });
-
-  /** Every chunk the board draws, which is further out than the ones it watches */
-  const seen = createMemo(() => viewChunks(originX(), originY()), [], {
-    equals: (was, now) => was.join(' ') === now.join(' '),
-  });
-
-  /**
-   * The subscription open on each chunk the board is watching.
-   *
-   * Held across the effect rather than inside it, so a step that
-   * changes which chunks are in range stops the ones that left and
-   * starts the ones that arrived instead of closing every socket and
-   * opening it again. The set turns over every eight cells or so,
-   * and each fresh watcher costs a read
-   */
-  const watched = new Map<string, Unwatch>();
-  /** Which layer those subscriptions are open on */
-  const watchedLayer: { depth: Depth | null } = { depth: null };
-
-  /**
-   * Seeing into a chunk publishes (or adopts) its window's spawns;
-   * everything after that arrives through the subscriptions below,
-   * so a window rolling over or a spawn another player caught shows
-   * up without a reload.
-   *
-   * Every chunk the board overlaps, not only the one the player is
-   * standing in: what is drawn is what is being looked at, and a
-   * quarter of the board left unrolled would be a field with nothing
-   * in it until the player crossed into it
-   */
-  /** Chunks with a visit on its way, so a second ask for one waits on the first */
-  const visiting = new Set<string>();
-
-  const visit = (x: number, y: number, known?: SnapshotRecord | null): void => {
-    const key = `${x},${y}`;
-
-    if (visiting.has(key)) {
-      return;
-    }
-    visiting.add(key);
-
-    const depth = untrack(atDepth);
-
-    // The window always rolls the lure's extras, so every player of
-    // the chunk shares one set of rolls whoever publishes them
-    visitChunkWindow(around().getChunk(x, y), PUBLISHED_SPAWNS, zone, known)
-      .then((record) => {
-        // Taken as it was published, since the watch lets its own window's echo pass unread
-        if (watchedLayer.depth !== depth || !watched.has(key)) {
-          return;
-        }
-        keptWindows.set(`${depth}|${zone}|${key}`, record);
-        setWindows((held) => new Map(held).set(key, { x, y, record }));
-      })
-      .catch((caught: unknown) => {
-        remark(caught instanceof Error ? caught.message : String(caught), 'ember');
-      })
-      .finally(() => {
-        visiting.delete(key);
-      });
-  };
-
-  /** Whether a window still stands, which is when visiting its chunk would only read it again */
-  const isLive = (record: WatchedWindow['record']): boolean =>
-    record.spawns.length > 0 && localNow(zone) < record.timestamp + SNAPSHOT_INTERVAL;
-
-  /**
-   * Visit the chunks whose window is missing or has run out; the watch
-   * below already carries a live one's changes. `everything` is for a
-   * board caught behind the world, which may be wrong about what is live
-   */
-  const refreshWindow = (everything = false): void => {
-    const held = windows();
-
-    for (const [x, y] of overlapped()) {
-      const record = held.get(`${x},${y}`)?.record;
-
-      if (everything || record == null || !isLive(record)) {
-        // A board caught behind the world cannot trust what it holds, so that is read again
-        visit(x, y, everything ? undefined : record);
-      }
-    }
-  };
-
-  /**
-   * When the chunk was last asked for. It is a plain variable rather
-   * than a signal: nothing renders off it, and a debounce that caused
-   * a redraw would be a strange thing
-   */
-  let askedAt = 0;
-
-  /**
-   * Ask for the chunk, unless it was just asked for. `whatever` skips
-   * the five-second wait, for coming back to the page or a window
-   * running out. A chunk walked into is asked for by its watch instead
-   */
-  const askForWindow = (whatever = false, everything = false): void => {
-    const at = Date.now();
-
-    if (!whatever && at - askedAt < REFRESH_DEBOUNCE) {
-      return;
-    }
-    askedAt = at;
-    refreshWindow(everything);
-  };
-
-  /**
-   * The page coming back to the front.
-   *
-   * A tab left open all afternoon is showing an afternoon-old chunk.
-   * Nothing is polling for it any more, so the moment somebody looks
-   * at the page again is the moment to find out what is there
-   */
-  onMount(() => {
-    const onReturn = (): void => {
-      if (document.visibilityState === 'visible' && placed()) {
-        askForWindow(true);
-      }
-    };
-
-    // Only a return from hidden: a tab that was merely unfocused kept its timers running
-    document.addEventListener('visibilitychange', onReturn);
-
-    onCleanup(() => {
-      document.removeEventListener('visibilitychange', onReturn);
-    });
-  });
-
-  createEffect(() => {
-    // Nothing is watched until the player has been put somewhere:
-    // chunk 0,0 is not where they are, and publishing its window
-    // would be a visit nobody made
-    if (!placed()) {
-      return;
-    }
-
-    const wanted = overlapped();
-    const depth = atDepth();
-    const keys = new Set<string>();
-
-    // A cave has the same chunk coordinates as the ground above it, so a
-    // change of layer drops every window: kept, the board drew one layer's
-    // spawns under the other layer's ids and met a different pokemon
-    if (depth !== watchedLayer.depth) {
-      for (const stop of watched.values()) {
-        stop();
-      }
-      watched.clear();
-      setWindows(new Map());
-      watchedLayer.depth = depth;
-    }
-
-    for (const [x, y] of wanted) {
-      keys.add(`${x},${y}`);
-    }
-
-    for (const [key, stop] of watched) {
-      if (!keys.has(key)) {
-        stop();
-        watched.delete(key);
-      }
-    }
-    // What the board has walked away from is dropped rather than left
-    // to be drawn if the player walks back before it is re-read
-    setWindows((held) => {
-      const kept = new Map<string, WatchedWindow>();
-
-      for (const [key, watching] of held) {
-        if (keys.has(key)) {
-          kept.set(key, watching);
-        }
-      }
-      return kept;
-    });
-
-    for (const [x, y] of wanted) {
-      const key = `${x},${y}`;
-
-      if (watched.has(key)) {
-        continue;
-      }
-
-      const kept = keptWindows.get(`${depth}|${zone}|${key}`);
-
-      watched.set(
-        key,
-        watchSnapshotWindow(
-          around().getChunk(x, y),
-          zone,
-          (record) => {
-            // A read that was already on its way when the layer changed
-            if (watchedLayer.depth !== depth) {
-              return;
-            }
-            if (record == null) {
-              keptWindows.delete(`${depth}|${zone}|${key}`);
-            } else {
-              keptWindows.set(`${depth}|${zone}|${key}`, record);
-            }
-            setWindows((held) => {
-              const next = new Map(held);
-
-              if (record == null) {
-                next.delete(key);
-              } else {
-                next.set(key, { x, y, record });
-              }
-              return next;
-            });
-            // Nobody has published this window yet, so this board does
-            // and keeps what it published
-            if (record == null || !isLive(record)) {
-              visit(x, y, record);
-            }
-          },
-          () => untrack(windows).get(key)?.record.timestamp,
-          kept == null || !isLive(kept) ? undefined : kept,
-        ),
-      );
-    }
-  });
-
   onCleanup(() => {
-    for (const stop of watched.values()) {
-      stop();
-    }
-    watched.clear();
+    boardWindows.dispose();
   });
 
-  /** Bumped when a window the board is showing runs out */
-  const [expiries, setExpiries] = createSignal(0);
-
-  // Nothing else asks for a window while the player stands still, so the
-  // soonest one to run out is what wakes the board to ask for the next
-  createEffect(() => {
-    const held = windows();
-
-    if (!placed()) {
-      return;
-    }
-
-    const now = localNow(zone);
-    let soonest = Number.POSITIVE_INFINITY;
-
-    for (const { record } of held.values()) {
-      const ends = record.timestamp + SNAPSHOT_INTERVAL;
-
-      if (ends > now) {
-        soonest = Math.min(soonest, ends);
-      }
-    }
-    if (!Number.isFinite(soonest)) {
-      return;
-    }
-
-    const timer = setTimeout(() => {
-      setExpiries((count) => count + 1);
-      // A hidden tab asks nothing: coming back to the page catches up
-      if (document.visibilityState === 'visible') {
-        askForWindow(true);
-      }
-    }, soonest - now);
-
-    onCleanup(() => {
-      clearTimeout(timer);
-    });
-  });
-
-  // Rather than staying pressable and answering "too late"
-  const liveWindows = createMemo(() => {
-    expiries();
-    return runningWindows(windows(), localNow(zone));
-  });
+  const liveWindows = createStoreSignal(boardWindows.live);
+  const askForWindow = boardWindows.askForWindow;
+  const forgetClaims = boardWindows.forgetClaims;
 
   // What walks beside the player changes what the chunk holds, so the
   // buddy's effects are read alongside it
@@ -842,182 +511,17 @@ export default function OverworldBoard(props: {
           fled() ?? new Set(),
           atDepth(),
           localNow(zone),
+          settings().boardEdge,
         )
       : null,
   );
 
-  /**
-   * The cells whose happening this player has already walked into.
-   *
-   * A phenomenon is claimed once an hour per player, so one already
-   * taken is a cell that would answer nothing. It is dropped from the
-   * board the moment it pays out rather than left standing to be
-   * pressed again, and re-read from the store on arrival so it stays
-   * dropped across a reload or a walk back into the chunk
-   */
-  const [spent, setSpent] = createSignal<Set<string>>(new Set());
+  boardWindows.attach(() => view()?.chunks ?? null);
 
-  /**
-   * A claim list read from every chunk the board draws, gathered into
-   * one set of world cells. Out past the watched chunks there is no
-   * window to hand the server, so the current one stands in: a claim is
-   * stamped with its landmark or phenomenon window, which the clock
-   * alone decides
-   */
-  const gather = (
-    named: string,
-    ask: (snapshot: ChunkSnapshot) => Promise<number[]>,
-    take: (cells: Set<string>) => void,
-    /** The window the list's claims are stamped with, which is what makes a remembered answer stale */
-    stamp: (snapshot: ChunkSnapshot) => number,
-  ): void => {
-    const loaded = untrack(view);
-
-    if (loaded == null) {
-      return;
-    }
-
-    const who = untrack(() => auth.user()?.uid ?? '');
-    const held = new Map<string, (typeof loaded.chunks)[number]>();
-
-    for (const piece of loaded.chunks) {
-      held.set(`${piece.x},${piece.y}`, piece);
-    }
-
-    const current = Math.floor(localNow(zone) / SNAPSHOT_INTERVAL) * SNAPSHOT_INTERVAL;
-    const lists: Promise<string[]>[] = [];
-    let live = true;
-
-    for (const [x, y] of untrack(seen)) {
-      const piece = held.get(`${x},${y}`) ?? {
-        x,
-        y,
-        snapshot: new ChunkSnapshot(untrack(around).getChunk(x, y), current, zone),
-        world: (at: number): [number, number] => [
-          x * CHUNK_CELLS + (at % CHUNK_CELLS),
-          y * CHUNK_CELLS + Math.floor(at / CHUNK_CELLS),
-        ],
-      };
-
-      lists.push(
-        (async (): Promise<string[]> => {
-          // The player is in the key because a claim is theirs: signing
-          // in as somebody else must not read back the last one's
-          const key = `${who}|${named}|${piece.snapshot.depth}|${piece.x},${piece.y}|${stamp(piece.snapshot)}`;
-          const known = claimed.get(key) ?? ask(piece.snapshot);
-
-          claimed.set(key, known);
-          try {
-            const cells: string[] = [];
-
-            for (const taken of await known) {
-              cells.push(piece.world(taken).join(','));
-            }
-            return cells;
-          } catch (caught) {
-            // A list that failed is not the answer for the rest of the
-            // window: it is asked again the next time the board looks
-            claimed.delete(key);
-            throw caught;
-          }
-        })(),
-      );
-    }
-
-    Promise.all(lists)
-      .then((found) => {
-        if (live) {
-          take(new Set(found.flat()));
-        }
-      })
-      .catch(() => {
-        // A board that cannot say what was already taken draws it all:
-        // pressing a spent cell costs a refusal, not a mistake
-      });
-    onCleanup(() => {
-      live = false;
-    });
-  };
-
-  /** Patches, caches and honey trees refill with the landmarks, not with the spawns */
-  const landmarkWindow = (snapshot: ChunkSnapshot): number => snapshot.landmarkTimestamp;
-
-  /**
-   * Forget what the server said about claims.
-   *
-   * Called when this player takes something, which is the one thing
-   * that can make a remembered list wrong. A press is rare next to a
-   * step, so the whole lot is dropped rather than the one entry: the
-   * next look asks again and the board agrees with the store
-   */
-  const forgetClaims = (): void => {
-    claimed.clear();
-  };
-
-  createEffect(() => {
-    // Read again when a window turns over, and not when the player
-    // takes a step: the board moves under them constantly
-    windowKey();
-    seen();
-    gather(
-      'phenomena',
-      listClaimedPhenomena,
-      (cells) => {
-        setSpent(cells);
-      },
-      (snapshot) => snapshot.phenomenonTimestamp,
-    );
-  });
-
-  /**
-   * The patches this player has already stripped this window.
-   *
-   * Read from the store on arrival rather than only remembered from the
-   * press, so a bare bush stays bare across a reload or a walk back
-   * into the chunk. The markers behind it are keyed by the window, so
-   * the set empties itself when the patches grow again
-   */
-  const [picked, setPicked] = createSignal<Set<string>>(new Set());
-
-  /**
-   * The caches this player has already dug up this window, which the
-   * board draws open and empty. Read from the store for the same
-   * reason the bare bushes are: an emptied cache should stay emptied
-   * across a reload
-   */
-  const [dug, setDug] = createSignal<Set<string>>(new Set());
-
-  /** The honey trees this player has lathered this window, by world cell */
-  const [lathered, setLathered] = createSignal<Set<string>>(new Set());
-
-  createEffect(() => {
-    windowKey();
-    seen();
-    gather(
-      'patches',
-      listPickedBerryPatches,
-      (cells) => {
-        setPicked(cells);
-      },
-      landmarkWindow,
-    );
-    gather(
-      'caches',
-      listClaimedItemCaches,
-      (cells) => {
-        setDug(cells);
-      },
-      landmarkWindow,
-    );
-    gather(
-      'honey',
-      listLatheredHoneyTrees,
-      (cells) => {
-        setLathered(cells);
-      },
-      landmarkWindow,
-    );
-  });
+  const spent = createStoreSignal(boardWindows.spent);
+  const picked = createStoreSignal(boardWindows.picked);
+  const dug = createStoreSignal(boardWindows.dug);
+  const lathered = createStoreSignal(boardWindows.lathered);
 
   /**
    * The glow under each landmark saying where this player stands with
@@ -1434,7 +938,7 @@ export default function OverworldBoard(props: {
         // A grotto that has been opened is spent for this player,
         // whichever way the answer went: the cell stops being drawn
         if (offer.from === 'grotto') {
-          setSpent((cells) => new Set(cells).add(keyAt(offer.spot)));
+          boardWindows.spent.update((cells) => new Set(cells).add(keyAt(offer.spot)));
           forgetClaims();
         } else {
           // Its ring goes once the egg is taken
@@ -1507,7 +1011,7 @@ export default function OverworldBoard(props: {
 
       // Empty either way: the stash was already carried off, or this
       // press carried it off
-      setDug((cells) => new Set(cells).add(keyAt(spot)));
+      boardWindows.dug.update((cells) => new Set(cells).add(keyAt(spot)));
       forgetClaims();
       // What came out of the ground is put in front of them rather
       // than said under the map: a player pressing a cell is looking
@@ -1520,7 +1024,7 @@ export default function OverworldBoard(props: {
 
       // Bare either way: the bush was already stripped, or this press
       // stripped it
-      setPicked((cells) => new Set(cells).add(keyAt(spot)));
+      boardWindows.picked.update((cells) => new Set(cells).add(keyAt(spot)));
       forgetClaims();
       announce(at, 'Bare bushes. Come back next window.', berries == null ? null : [berries]);
       return null;
@@ -1530,7 +1034,7 @@ export default function OverworldBoard(props: {
 
       // Picked either way, and worth saying what they are for: an
       // apricorn is nothing until Kurt has it
-      setPicked((cells) => new Set(cells).add(keyAt(spot)));
+      boardWindows.picked.update((cells) => new Set(cells).add(keyAt(spot)));
       forgetClaims();
       announce(at, 'Picked bare. Come back next window.', apricorns == null ? null : [apricorns]);
       return null;
@@ -1686,7 +1190,7 @@ export default function OverworldBoard(props: {
       // Every one of those leaves the cell spent for this player, so
       // it stops being drawn rather than standing there to be pressed
       // again for nothing
-      setSpent((cells) => new Set(cells).add(keyAt(spot)));
+      boardWindows.spent.update((cells) => new Set(cells).add(keyAt(spot)));
       forgetClaims();
 
       if (claim == null) {
@@ -2498,7 +2002,7 @@ export default function OverworldBoard(props: {
                 setHoneyTree(null);
               }}
               onLathered={(_, encounter) => {
-                setLathered((cells) => new Set(cells).add(treeKey()));
+                boardWindows.lathered.update((cells) => new Set(cells).add(treeKey()));
                 if (encounter == null) {
                   return;
                 }

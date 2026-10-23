@@ -4,7 +4,7 @@ import {
   boardChunks,
   buildBoardView,
   viewChunks,
-} from '../../src/components/overworld/overworld-tab/board-view';
+} from '../../src/game/overworld/board-view';
 import { BOARD_CENTER, BOARD_RADIUS } from '../../src/game/overworld/board-metrics';
 
 /**

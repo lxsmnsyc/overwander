@@ -33,6 +33,7 @@ import {
   createTypeShiftAbility,
   getAbilityHolders,
 } from './__create';
+import { naturalSpecies } from '../../data/species/zeniths';
 
 /** What Neuroforce makes a super-effective blow worth */
 export const NEUROFORCE_SCALE = 1.25;
@@ -262,7 +263,7 @@ const setupAbilities = [
         unit.health > unit.checkStat(Stats.HP, 0) * SCHOOLING_THRESHOLD;
       const shape = schooled ? Species.WishiwashiSchool : Species.Wishiwashi;
 
-      if (unit.species === shape) {
+      if (naturalSpecies(unit.species) === shape) {
         return;
       }
       unit.triggerAbility(Abilities.Schooling);
@@ -442,7 +443,9 @@ const setupAbilities = [
    */
   createAbility(Abilities.ShieldsDown, (battle) => {
     function shelled(unit: Unit): boolean {
-      return unit.species === Species.Minior && unit.hasAbility(Abilities.ShieldsDown);
+      return (
+        naturalSpecies(unit.species) === Species.Minior && unit.hasAbility(Abilities.ShieldsDown)
+      );
     }
 
     function settle(unit: Unit): void {
@@ -457,7 +460,7 @@ const setupAbilities = [
       const shell = unit.health > unit.checkStat(Stats.HP, 0) * SHIELDS_DOWN_THRESHOLD;
       const shape = shell ? Species.Minior : getMiniorCore(unit);
 
-      if (unit.species === shape) {
+      if (naturalSpecies(unit.species) === shape) {
         return;
       }
       unit.triggerAbility(Abilities.ShieldsDown);
@@ -546,7 +549,7 @@ const setupAbilities = [
             event.flags & DamageFlags.Indirect ||
             cause.type !== EffectType.Move ||
             cause.unit === target ||
-            target.species !== Species.Mimikyu ||
+            naturalSpecies(target.species) !== Species.Mimikyu ||
             !target.hasAbility(Abilities.Disguise)
           ) {
             return;
@@ -557,7 +560,10 @@ const setupAbilities = [
         battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
           const unit = event.source;
 
-          if (event.ability !== Abilities.Disguise || unit.species !== Species.Mimikyu) {
+          if (
+            event.ability !== Abilities.Disguise ||
+            naturalSpecies(unit.species) !== Species.Mimikyu
+          ) {
             return;
           }
           unit.setSpecies(Species.MimikyuBusted);

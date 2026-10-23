@@ -33,6 +33,7 @@ import {
   movesOfType,
 } from './__create';
 import { registerWeatherWant } from '../ai/weather-wants';
+import { naturalSpecies } from '../../data/species/zeniths';
 
 // The skies these thrive under, so the AI weighs a weather move by who gains from it
 registerWeatherWant(Abilities.FlowerGift, [Weathers.Sunny]);
@@ -167,7 +168,7 @@ const setupAbilities = [
 
       const shape = isWeatherSunny(unit) ? Species.CherrimSunshine : Species.Cherrim;
 
-      if (unit.species !== shape) {
+      if (naturalSpecies(unit.species) !== shape) {
         unit.triggerAbility(Abilities.FlowerGift);
         unit.setSpecies(shape);
       }

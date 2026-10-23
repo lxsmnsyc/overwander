@@ -3,11 +3,12 @@ import registerGameData from '../../src/data';
 import { STAT_ORDER } from '../../src/data/constants/stats';
 import { getBaseFormSpecies } from '../../src/data/ids/forms';
 import { Items } from '../../src/data/ids/items';
-import type { Species } from '../../src/data/ids/species';
+import { Species } from '../../src/data/ids/species';
 import { FORM_ITEMS } from '../../src/data/items/form-items';
 import { getItemBiomes } from '../../src/data/overworld/biome-items';
 import { getItemBand } from '../../src/data/overworld/item-pool';
 import {
+  getRegisteredSpecies,
   getSpeciesAbilities,
   getSpeciesData,
   isFullyEvolved,
@@ -18,8 +19,13 @@ import {
   NO_ZENITH,
   ZENITH_BONUS,
   ZENITH_SHAPES,
+  getZenithForm,
+  listZenithForms,
+  naturalSpecies,
   zenithShardId,
 } from '../../src/data/species/zeniths';
+import { getSpeciesRegion } from '../../src/data/species/regions';
+import Regions from '../../src/data/ids/regions';
 
 function totalOf(species: Species): number {
   let total = 0;
@@ -89,5 +95,59 @@ describe('Zeniths', () => {
     expect(getItemBiomes(Items.OmastarZenithShard)).toEqual([]);
     expect(getItemBiomes(Items.KabutopsZenithShard)).toEqual([]);
     expect(getItemBiomes(Items.ArcanineZenithShard).length).toBeGreaterThan(0);
+  });
+
+  it('puts each Zenith shape 100 above the shape it stands in for, in the same pokemon', () => {
+    for (const form of listZenithForms()) {
+      expect(totalOf(form.zenith), form.holder).toBe(totalOf(form.base) + ZENITH_BONUS);
+      expect(getBaseFormSpecies(form.base), form.holder).toBe(getBaseFormSpecies(form.of));
+      expect(getZenithForm(form.of, form.base), form.holder).toBe(form.zenith);
+      expect(getSpeciesAbilities(form.base).has(form.ability), form.holder).toBe(false);
+    }
+  });
+
+  it('answers to the pokemon underneath, which is what a form change asks', () => {
+    expect(naturalSpecies(Species.ArcanineZenith)).toBe(Species.Arcanine);
+    expect(naturalSpecies(Species.Arcanine)).toBe(Species.Arcanine);
+  });
+
+  it('gives every eligible pokemon of a finished region its Zenith', () => {
+    // Added to as each region's batch lands
+    const finished = new Set<Regions>([Regions.Kanto]);
+    const spoken = new Set<Species>(NO_ZENITH);
+
+    for (const mega of listMegas()) {
+      spoken.add(getMegaBase(mega)!);
+    }
+    for (const forms of FORM_ITEMS.values()) {
+      for (const form of forms) {
+        spoken.add(getBaseFormSpecies(form));
+      }
+    }
+
+    const having = new Set<Species>();
+
+    for (const shape of ZENITH_SHAPES) {
+      having.add(shape.base);
+    }
+
+    const missing: string[] = [];
+
+    for (const species of getRegisteredSpecies()) {
+      const data = getSpeciesData(species);
+
+      if (
+        data.baseForm === false ||
+        data.worn === true ||
+        !finished.has(getSpeciesRegion(species)) ||
+        !isFullyEvolved(species) ||
+        spoken.has(species) ||
+        having.has(species)
+      ) {
+        continue;
+      }
+      missing.push(data.name);
+    }
+    expect(missing).toEqual([]);
   });
 });

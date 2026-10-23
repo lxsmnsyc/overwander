@@ -3,6 +3,7 @@ import { Moves } from '../../data/ids/moves';
 import { Species } from '../../data/ids/species';
 import type Battle from '../battle';
 import { BattleEvents } from '../events';
+import { naturalSpecies } from '../../data/species/zeniths';
 
 /**
  * Relic Song turns a Meloetta over: the singer becomes the dancer and
@@ -21,7 +22,7 @@ export default function setupRelicSong(battle: Battle): void {
       return;
     }
 
-    const step = STEPS.get(event.source.species);
+    const step = STEPS.get(naturalSpecies(event.source.species));
 
     if (step != null) {
       event.source.setSpecies(step);

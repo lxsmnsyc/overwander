@@ -39,6 +39,7 @@ import {
   movesFlagged,
   movesOfType,
 } from './__create';
+import { naturalSpecies } from '../../data/species/zeniths';
 
 /** What Rocky Payload makes of its Rock moves */
 export const ROCKY_PAYLOAD_SCALE = 1.5;
@@ -396,7 +397,7 @@ const setupAbilities = [
     return new MergedLifecycle([
       battle.on(BattleEvents.UnitLeavesField, EventPriority.Post, (event) => {
         if (
-          event.source.species === Species.Palafin &&
+          naturalSpecies(event.source.species) === Species.Palafin &&
           event.source.hasAbility(Abilities.ZeroToHero)
         ) {
           left.add(event.source);
@@ -408,7 +409,7 @@ const setupAbilities = [
         if (
           left.has(unit) &&
           unit.alive &&
-          unit.species === Species.Palafin &&
+          naturalSpecies(unit.species) === Species.Palafin &&
           unit.hasAbility(Abilities.ZeroToHero) &&
           findSpeciesData(Species.PalafinHero) != null
         ) {
@@ -416,7 +417,10 @@ const setupAbilities = [
         }
       }),
       battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
-        if (event.ability === Abilities.ZeroToHero && event.source.species === Species.Palafin) {
+        if (
+          event.ability === Abilities.ZeroToHero &&
+          naturalSpecies(event.source.species) === Species.Palafin
+        ) {
           left.delete(event.source);
           // Both shapes share an HP stat, so its health stands
           event.source.setSpecies(Species.PalafinHero);
@@ -957,7 +961,7 @@ const setupAbilities = [
     function shift(unit: Unit): void {
       if (
         unit.alive &&
-        unit.species === Species.Terapagos &&
+        naturalSpecies(unit.species) === Species.Terapagos &&
         unit.hasAbility(Abilities.TeraShift) &&
         findSpeciesData(Species.TerapagosTerastal) != null
       ) {
@@ -975,7 +979,10 @@ const setupAbilities = [
         }
       }),
       battle.on(BattleEvents.UnitTriggerAbility, EventPriority.Exact, (event) => {
-        if (event.ability === Abilities.TeraShift && event.source.species === Species.Terapagos) {
+        if (
+          event.ability === Abilities.TeraShift &&
+          naturalSpecies(event.source.species) === Species.Terapagos
+        ) {
           event.source.setSpecies(Species.TerapagosTerastal);
         }
       }),

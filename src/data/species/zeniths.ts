@@ -3,7 +3,12 @@ import type { Stats } from '../constants/stats';
 import type { Types } from '../constants/types';
 import type Abilities from '../ids/abilities';
 import type { Items } from '../ids/items';
-import { FORMS_PER_SPECIES, speciesDexNumber, speciesFormIndex } from '../ids/forms';
+import {
+  FORMS_PER_SPECIES,
+  getBaseFormSpecies,
+  speciesDexNumber,
+  speciesFormIndex,
+} from '../ids/forms';
 import { ABILITY_IDS, ITEM_IDS, REGION_IDS, SPECIES_IDS, TYPE_IDS } from '../ids/names';
 import { Species } from '../ids/species';
 import { idOf, idsOf } from '../yaml';
@@ -233,6 +238,41 @@ export function getZenithBase(species: Species): Species | null {
 /** The Zenith this pokemon reaches, or null for one that has none */
 export function getZenithShape(base: Species): ZenithShape | null {
   return ZENITH_OF.get(base) ?? null;
+}
+
+/** The Zenith a Zenith or any of its shapes belongs to, or null for everything else */
+export function getZenithOwner(species: Species): ZenithShape | null {
+  return ZENITH_OWNER.get(species) ?? null;
+}
+
+/**
+ * The shapes a pokemon is put into for good and keeps, the way a
+ * Meteorite rearranges a Deoxys: what it evolves into without leaving
+ * its own species
+ */
+export function listKeptShapes(species: Species): Species[] {
+  const kept: Species[] = [];
+
+  for (const road of getSpeciesData(species).evolvesInto ?? []) {
+    if (getBaseFormSpecies(road.species) === getBaseFormSpecies(species)) {
+      kept.push(road.species);
+    }
+  }
+  return kept;
+}
+
+/**
+ * Whether a pokemon is as far as its line goes. Turning into a kept
+ * shape of itself is not growing up, so a Deoxys is its line's last
+ * stage although it has somewhere to go
+ */
+export function isLastStage(species: Species): boolean {
+  for (const road of getSpeciesData(species).evolvesInto ?? []) {
+    if (getBaseFormSpecies(road.species) !== getBaseFormSpecies(species)) {
+      return false;
+    }
+  }
+  return true;
 }
 
 /** Every Zenith there is, in the order the dex meets their pokemon */

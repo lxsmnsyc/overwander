@@ -9,7 +9,7 @@ import { getMegaStone } from '../../../data/items/mega-stones';
 import { getFusionItem } from '../../../data/species/fusion';
 import { isMegaSpecies } from '../../../data/species/megas';
 import { getShadowlessSpecies } from '../../../data/species/true-shadow';
-import { getZenithBase, getZenithShape } from '../../../data/species/zeniths';
+import { getZenithOwner } from '../../../data/species/zeniths';
 import { isStandIn } from '../../../canvas/sprites/species-sprites';
 import type { SlotBatch } from './draw';
 
@@ -61,9 +61,8 @@ function sheetOf(name: string): BasicSprite | null {
 
 /** The shard that puts a pokemon in this Zenith, or null for anything that is not one */
 function zenithShardOf(species: Species): Items | null {
-  const base = getZenithBase(species);
-
-  return base == null ? null : (getZenithShape(base)?.shard ?? null);
+  // Through the Zenith that owns it, so a Zenith's weather shape keeps the mark
+  return getZenithOwner(species)?.shard ?? null;
 }
 
 function iconOf(worn: Species): { sheet: string; name: string } | null {

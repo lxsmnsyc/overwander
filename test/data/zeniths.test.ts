@@ -11,7 +11,6 @@ import {
   getRegisteredSpecies,
   getSpeciesAbilities,
   getSpeciesData,
-  isFullyEvolved,
   listMegas,
 } from '../../src/data/species';
 import { getMegaBase } from '../../src/data/species/megas';
@@ -20,6 +19,8 @@ import {
   ZENITH_BONUS,
   ZENITH_SHAPES,
   getZenithForm,
+  isLastStage,
+  listKeptShapes,
   listZenithForms,
   naturalSpecies,
   zenithShardId,
@@ -59,7 +60,7 @@ describe('Zeniths', () => {
 
     for (const shape of ZENITH_SHAPES) {
       expect(getSpeciesData(shape.base).baseForm, shape.holder).not.toBe(false);
-      expect(isFullyEvolved(shape.base), shape.holder).toBe(true);
+      expect(isLastStage(shape.base), shape.holder).toBe(true);
       expect(spoken.has(shape.base), shape.holder).toBe(false);
       expect(seen.has(shape.base), shape.holder).toBe(false);
       expect(getBaseFormSpecies(shape.zenith), shape.holder).toBe(getBaseFormSpecies(shape.base));
@@ -106,6 +107,21 @@ describe('Zeniths', () => {
     }
   });
 
+  it('gives every shape its pokemon is kept in a Zenith shape of its own', () => {
+    // One shard for the whole line, so an Attack Deoxys holding it reaches a Zenith too
+    for (const shape of ZENITH_SHAPES) {
+      for (const kept of listKeptShapes(shape.base)) {
+        expect(getZenithForm(shape.zenith, kept), shape.holder).not.toBeNull();
+      }
+    }
+  });
+
+  it('counts a pokemon that only turns into kept shapes of itself as its last stage', () => {
+    expect(isLastStage(Species.Deoxys)).toBe(true);
+    expect(isLastStage(Species.Rotom)).toBe(true);
+    expect(isLastStage(Species.Growlithe)).toBe(false);
+  });
+
   it('answers to the pokemon underneath, which is what a form change asks', () => {
     expect(naturalSpecies(Species.ArcanineZenith)).toBe(Species.Arcanine);
     expect(naturalSpecies(Species.Arcanine)).toBe(Species.Arcanine);
@@ -140,7 +156,7 @@ describe('Zeniths', () => {
         data.baseForm === false ||
         data.worn === true ||
         !finished.has(getSpeciesRegion(species)) ||
-        !isFullyEvolved(species) ||
+        !isLastStage(species) ||
         spoken.has(species) ||
         having.has(species)
       ) {

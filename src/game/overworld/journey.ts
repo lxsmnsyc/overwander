@@ -20,6 +20,9 @@ export interface Journey {
   act: boolean;
 }
 
+/** Where an egg on offer was found */
+export type EggSource = 'nest' | 'grotto';
+
 /** Where an egg on offer stands with this player */
 export type EggState = 'offered' | 'taken' | 'bare';
 

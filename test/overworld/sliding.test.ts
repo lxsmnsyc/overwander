@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { slideGain } from '../../src/components/overworld/chunk-canvas';
+import { slideGain } from '../../src/canvas/overworld/chunk-view';
 import { SLIDE_PACE, SNAP_STEPS } from '../../src/canvas/overworld/metrics';
 import { STEP_PACE } from '../../src/components/overworld/overworld-tab/metrics';
 

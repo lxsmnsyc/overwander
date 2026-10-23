@@ -28,7 +28,7 @@ How the game's logic moves out of the Solid components, so the UI layer draws an
   - **Logic** lives in `src/game/`, as plain TypeScript. It holds state, applies rules, calls `src/auth/`, and exposes what the UI reads through a small observable store.
   - **UI** lives in `src/components/`. It reads those stores, renders, and forwards input as calls into `src/game/`.
 - **No Solid in `src/game/`.** A store is a plain value with a `subscribe`. One adapter in `src/components/` turns a store into a Solid signal.
-- **Canvas stays where it is.** `src/canvas` is already UI-free drawing, and the draw loops move out of the components into `src/game/` beside the state they draw.
+- **Drawing goes to `src/canvas`.** A component's draw loop moves into `src/canvas` as a plain function the component mounts, and lint keeps Solid out of `src/canvas` as it does `src/game`.
 - **Tests:** a module in `src/game/` is tested without a DOM, the way the battle engine is.
 
 ## The order
@@ -40,8 +40,10 @@ Largest and most-used first, one area at a time, each leaving the game working.
 | 0 | Store | The observable store, the Solid adapter, and a lint rule that refuses `solid-js` under `src/game/` |
 | 1 | Session | `game-context.tsx` becomes `src/game/session/`: player, position, team, bag, settings |
 | 2 | Battle | The event-to-picture mapping and the battle view's state out of `battle-canvas` and `battle-view` |
-| 3 | Overworld walk | Chunk loading, movement and encounters out of `chunk-canvas` |
-| 4 | Overworld board | What each landmark and cell does when pressed, out of `overworld-tab/board.tsx` |
+| 3a | Board renderer | `chunk-canvas` becomes `src/canvas/overworld/chunk-view`, the way the battle field became `src/canvas/battle/field` |
+| 3b | Walk | Position, steps, journeys, Surf, Fly, Dig and Teleport, and step reports out of `overworld-tab/board.tsx` into `src/game/overworld/walk.ts` |
+| 3c | Windows | Watched windows, snapshots and claims out of `board.tsx` |
+| 4 | Overworld board | What pressing a cell does (NPCs, stops, lairs, seats, portals, eggs), out of `board.tsx` |
 | 5 | Catches | The catch sheet, the box and the picker's actions and filters |
 | 6 | Items and trades | Inventory, auctions, trades, gifts |
 | 7 | Social | Raids, duels, friends, quests, profile |

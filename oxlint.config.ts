@@ -16,9 +16,9 @@ export default defineConfig({
       rules: { 'import/prefer-default-export': 'off' },
     },
     {
-      // The game's logic runs without a UI framework; components reach
-      // its stores through createStoreSignal
-      files: ['src/game/**'],
+      // The game's logic and its drawing run without a UI framework;
+      // components reach them through createStoreSignal and plain calls
+      files: ['src/game/**', 'src/canvas/**'],
       rules: {
         'no-restricted-imports': [
           'error',
@@ -26,7 +26,8 @@ export default defineConfig({
             patterns: [
               {
                 group: ['solid-js', 'solid-js/*', '@solidjs/*', '**/components/**'],
-                message: 'src/game stays free of Solid and the components: expose a Store instead.',
+                message:
+                  'src/game and src/canvas stay free of Solid and the components: expose a Store or a plain function instead.',
               },
             ],
           },

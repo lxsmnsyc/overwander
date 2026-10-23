@@ -12,7 +12,7 @@ The sprites are pixel art drawn with nearest-neighbour sampling. Most effects ar
 | Move landings, lit scene | `src/canvas/battle/moves/lit/` (about 27,900 lines), through `src/canvas/three/effect-batch.ts` | Quads in field units, each shaded per pixel by one fragment shader that knows 12 shapes (glow, ring, streak, star, shard, ribbon, bubble, leaf, pit, heart, pane, puff) |
 | Move waits | `src/canvas/battle/moves/delay.ts` and `lit/delay.ts` | As above |
 | Battle cues | `src/canvas/battle/cues/` and `cues/lit` | Canvas 2D shapes, and effect atlases for marks |
-| Battle weather and field | `src/canvas/battle/weather.ts`, `field-weather.ts`, `battle-canvas/dynamax.ts` | Canvas 2D |
+| Battle weather and field | `src/canvas/battle/weather.ts`, `field-weather.ts`, `src/canvas/battle/field/dynamax.ts` | Canvas 2D |
 | Overworld auras and sparkle | `src/canvas/effects/` | Canvas 2D, radial gradients |
 | Overworld sky and weather | `src/canvas/sky/` | Canvas 2D and small stretched buffers |
 | Board lights | `src/canvas/overworld/beacon.ts`, `herald.ts` | Canvas 2D, radial gradients |

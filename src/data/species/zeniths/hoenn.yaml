@@ -1,0 +1,425 @@
+# The Zeniths of the pokemon this stretch of the dex holds, keyed by
+# species, in the order the dex meets their pokemon. Each fights 100
+# above its pokemon's base stat total with its HP untouched, held to by
+# a test, and wears an `ability` the line can never be born with.
+# Everything not written here is read off `base`.
+
+# The pack hunter's bite is its whole kit
+MightyenaZenith:
+  base: Mightyena
+  stats: { HP: 70, Attack: 139, Defense: 82, SpecialAttack: 50, SpecialDefense: 72, Speed: 107 }
+  types: [Dark]
+  ability: StrongJaw
+  shard: MightyenaZenithShard
+
+# It eats its berry and runs flat out
+LinooneZenith:
+  base: Linoone
+  stats: { HP: 78, Attack: 109, Defense: 72, SpecialAttack: 50, SpecialDefense: 72, Speed: 139 }
+  types: [Normal]
+  ability: Unburden
+  shard: LinooneZenithShard
+
+# Its Quiver Dance hits through any resistance
+BeautiflyZenith:
+  base: Beautifly
+  stats: { HP: 60, Attack: 50, Defense: 61, SpecialAttack: 133, SpecialDefense: 72, Speed: 119 }
+  types: [Bug, Flying]
+  ability: TintedLens
+  shard: BeautiflyZenithShard
+
+# Its dust poisons anything it settles on
+DustoxZenith:
+  base: Dustox
+  stats: { HP: 60, Attack: 40, Defense: 88, SpecialAttack: 99, SpecialDefense: 115, Speed: 83 }
+  types: [Bug, Poison]
+  ability: Corrosion
+  shard: DustoxZenithShard
+
+# The dancing pokemon joins every dance on the field
+LudicoloZenith:
+  base: Ludicolo
+  stats: { HP: 80, Attack: 70, Defense: 89, SpecialAttack: 134, SpecialDefense: 112, Speed: 95 }
+  types: [Water, Grass]
+  ability: Dancer
+  shard: LudicoloZenithShard
+
+# Its leaf blades cut deeper than its winds
+ShiftryZenith:
+  base: Shiftry
+  stats: { HP: 90, Attack: 132, Defense: 71, SpecialAttack: 100, SpecialDefense: 70, Speed: 117 }
+  types: [Grass, Dark]
+  ability: Sharpness
+  shard: ShiftryZenithShard
+
+# Every quick strike it throws takes to the air
+SwellowZenith:
+  base: Swellow
+  stats: { HP: 60, Attack: 132, Defense: 72, SpecialAttack: 70, SpecialDefense: 67, Speed: 154 }
+  types: [Normal, Flying]
+  ability: Aerilate
+  shard: SwellowZenithShard
+
+# Its beak swallows the water aimed at its allies
+PelipperZenith:
+  base: Pelipper
+  stats: { HP: 60, Attack: 50, Defense: 118, SpecialAttack: 124, SpecialDefense: 94, Speed: 94 }
+  types: [Water, Flying]
+  ability: StormDrain
+  shard: PelipperZenithShard
+
+# Surskit's water comes back, and the rain with it
+MasquerainZenith:
+  base: Masquerain
+  stats: { HP: 70, Attack: 60, Defense: 73, SpecialAttack: 122, SpecialDefense: 104, Speed: 125 }
+  types: [Bug, Water]
+  ability: Drizzle
+  shard: MasquerainZenithShard
+
+# The mushroom boxer leads with its fists
+BreloomZenith:
+  base: Breloom
+  stats: { HP: 60, Attack: 161, Defense: 93, SpecialAttack: 60, SpecialDefense: 72, Speed: 114 }
+  types: [Grass, Fighting]
+  ability: IronFist
+  shard: BreloomZenithShard
+
+# Every burn or poison only stirs it further
+SlakingZenith:
+  base: Slaking
+  stats: { HP: 150, Attack: 177, Defense: 111, SpecialAttack: 95, SpecialDefense: 82, Speed: 155 }
+  types: [Normal]
+  ability: Guts
+  shard: SlakingZenithShard
+
+# The ninja's draw is quicker than the eye
+NinjaskZenith:
+  base: Ninjask
+  stats: { HP: 61, Attack: 123, Defense: 62, SpecialAttack: 56, SpecialDefense: 72, Speed: 182 }
+  types: [Bug, Dark]
+  ability: QuickDraw
+  shard: NinjaskZenithShard
+
+# A shell of one hit point that still holds through the first blow
+ShedinjaZenith:
+  base: Shedinja
+  stats: { HP: 1, Attack: 140, Defense: 75, SpecialAttack: 40, SpecialDefense: 40, Speed: 40 }
+  types: [Bug, Ghost]
+  ability: Sturdy
+  shard: ShedinjaZenithShard
+
+# The loudspeaker plays louder and shrugs off noise
+ExploudZenith:
+  base: Exploud
+  stats: { HP: 104, Attack: 91, Defense: 85, SpecialAttack: 136, SpecialDefense: 95, Speed: 79 }
+  types: [Normal]
+  ability: PunkRock
+  shard: ExploudZenithShard
+
+# The sumo's palm never misses
+HariyamaZenith:
+  base: Hariyama
+  stats: { HP: 144, Attack: 148, Defense: 82, SpecialAttack: 40, SpecialDefense: 77, Speed: 83 }
+  types: [Fighting]
+  ability: NoGuard
+  shard: HariyamaZenithShard
+
+# The prim cat turns its charm into a type
+DelcattyZenith:
+  base: Delcatty
+  stats: { HP: 70, Attack: 71, Defense: 76, SpecialAttack: 116, SpecialDefense: 77, Speed: 90 }
+  types: [Normal, Fairy]
+  ability: Pixilate
+  shard: DelcattyZenithShard
+
+# Its cheering lifts its allies' moves
+PlusleZenith:
+  base: Plusle
+  stats: { HP: 60, Attack: 50, Defense: 65, SpecialAttack: 110, SpecialDefense: 94, Speed: 126 }
+  types: [Electric]
+  ability: PowerSpot
+  shard: PlusleZenithShard
+
+# Its guard softens the hits its allies take
+MinunZenith:
+  base: Minun
+  stats: { HP: 60, Attack: 40, Defense: 75, SpecialAttack: 100, SpecialDefense: 104, Speed: 126 }
+  types: [Electric]
+  ability: FriendGuard
+  shard: MinunZenithShard
+
+# Its glow dazzles anything that would strike first
+VolbeatZenith:
+  base: Volbeat
+  stats: { HP: 65, Attack: 73, Defense: 88, SpecialAttack: 60, SpecialDefense: 122, Speed: 122 }
+  types: [Bug, Fairy]
+  ability: Dazzling
+  shard: VolbeatZenithShard
+
+# The swarm's leader lets nothing move before it
+IllumiseZenith:
+  base: Illumise
+  stats: { HP: 65, Attack: 47, Defense: 86, SpecialAttack: 107, SpecialDefense: 118, Speed: 107 }
+  types: [Bug, Fairy]
+  ability: QueenlyMajesty
+  shard: IllumiseZenithShard
+
+# The gas it belches silences every ability around it
+SwalotZenith:
+  base: Swalot
+  stats: { HP: 100, Attack: 73, Defense: 112, SpecialAttack: 73, SpecialDefense: 111, Speed: 98 }
+  types: [Poison]
+  ability: NeutralizingGas
+  shard: SwalotZenithShard
+
+# Its blubber shrugs off fire and ice
+WailordZenith:
+  base: Wailord
+  stats: { HP: 170, Attack: 90, Defense: 88, SpecialAttack: 104, SpecialDefense: 88, Speed: 60 }
+  types: [Water]
+  ability: ThickFat
+  shard: WailordZenithShard
+
+# It burns hotter under the sun it brings
+TorkoalZenith:
+  base: Torkoal
+  stats: { HP: 70, Attack: 85, Defense: 153, SpecialAttack: 135, SpecialDefense: 95, Speed: 32 }
+  types: [Fire]
+  ability: SolarPower
+  shard: TorkoalZenithShard
+
+# Its pearls focus a field of psychic power
+GrumpigZenith:
+  base: Grumpig
+  stats: { HP: 80, Attack: 45, Defense: 76, SpecialAttack: 129, SpecialDefense: 132, Speed: 108 }
+  types: [Psychic]
+  ability: PsychicSurge
+  shard: GrumpigZenithShard
+
+# No two Spinda alike, and no two turns
+SpindaZenith:
+  base: Spinda
+  stats: { HP: 60, Attack: 89, Defense: 78, SpecialAttack: 78, SpecialDefense: 78, Speed: 77 }
+  types: [Normal]
+  ability: Moody
+  shard: SpindaZenithShard
+
+# The desert spirit raises the sandstorm
+FlygonZenith:
+  base: Flygon
+  stats: { HP: 80, Attack: 122, Defense: 97, SpecialAttack: 91, SpecialDefense: 91, Speed: 139 }
+  types: [Ground, Dragon]
+  ability: SandStream
+  shard: FlygonZenithShard
+
+# It waits motionless for whatever walks in
+CacturneZenith:
+  base: Cacturne
+  stats: { HP: 70, Attack: 143, Defense: 77, SpecialAttack: 126, SpecialDefense: 76, Speed: 83 }
+  types: [Grass, Dark]
+  ability: Stakeout
+  shard: CacturneZenithShard
+
+# The claw fighter never backs down
+ZangooseZenith:
+  base: Zangoose
+  stats: { HP: 73, Attack: 143, Defense: 77, SpecialAttack: 60, SpecialDefense: 71, Speed: 134 }
+  types: [Normal, Fighting]
+  ability: Defiant
+  shard: ZangooseZenithShard
+
+# Its blade tail shows the poisoned no mercy
+SeviperZenith:
+  base: Seviper
+  stats: { HP: 73, Attack: 117, Defense: 77, SpecialAttack: 117, SpecialDefense: 76, Speed: 98 }
+  types: [Poison, Dark]
+  ability: Merciless
+  shard: SeviperZenithShard
+
+# Moonlight turns it fairy
+LunatoneZenith:
+  base: Lunatone
+  stats: { HP: 90, Attack: 55, Defense: 82, SpecialAttack: 128, SpecialDefense: 113, Speed: 92 }
+  types: [Rock, Fairy]
+  ability: MistySurge
+  shard: LunatoneZenithShard
+
+# The sun itself, burning
+SolrockZenith:
+  base: Solrock
+  stats: { HP: 90, Attack: 128, Defense: 113, SpecialAttack: 55, SpecialDefense: 87, Speed: 87 }
+  types: [Rock, Fire]
+  ability: Drought
+  shard: SolrockZenithShard
+
+# It eats the grass that would have felled it
+WhiscashZenith:
+  base: Whiscash
+  stats: { HP: 110, Attack: 106, Defense: 90, SpecialAttack: 76, SpecialDefense: 87, Speed: 99 }
+  types: [Water, Ground]
+  ability: SapSipper
+  shard: WhiscashZenithShard
+
+# The rogue gets faster with every move
+CrawdauntZenith:
+  base: Crawdaunt
+  stats: { HP: 63, Attack: 145, Defense: 97, SpecialAttack: 80, SpecialDefense: 73, Speed: 110 }
+  types: [Water, Dark]
+  ability: SpeedBoost
+  shard: CrawdauntZenithShard
+
+# The ancient doll turns back what is thrown at it
+ClaydolZenith:
+  base: Claydol
+  stats: { HP: 60, Attack: 70, Defense: 130, SpecialAttack: 95, SpecialDefense: 145, Speed: 100 }
+  types: [Ground, Psychic]
+  ability: MagicBounce
+  shard: ClaydolZenithShard
+
+# The sea lily roots a field of grass around it
+CradilyZenith:
+  base: Cradily
+  stats: { HP: 86, Attack: 81, Defense: 116, SpecialAttack: 100, SpecialDefense: 138, Speed: 74 }
+  types: [Rock, Grass]
+  ability: GrassySurge
+  shard: CradilyZenithShard
+
+# Its claws strike harder than its armour
+ArmaldoZenith:
+  base: Armaldo
+  stats: { HP: 75, Attack: 158, Defense: 117, SpecialAttack: 60, SpecialDefense: 91, Speed: 94 }
+  types: [Rock, Bug]
+  ability: ToughClaws
+  shard: ArmaldoZenithShard
+
+# The most beautiful pokemon mends whenever it leaves
+MiloticZenith:
+  base: Milotic
+  stats: { HP: 95, Attack: 60, Defense: 97, SpecialAttack: 124, SpecialDefense: 154, Speed: 110 }
+  types: [Water, Fairy]
+  ability: Regenerator
+  shard: MiloticZenithShard
+
+# It brings its own snow, and still follows the sky
+CastformZenith:
+  base: Castform
+  stats: { HP: 70, Attack: 88, Defense: 88, SpecialAttack: 88, SpecialDefense: 87, Speed: 99 }
+  types: [Normal]
+  ability: SnowWarning
+  shard: CastformZenithShard
+  forms:
+    CastformSunnyZenith:
+      base: CastformSunny
+      stats: { HP: 70, Attack: 88, Defense: 88, SpecialAttack: 88, SpecialDefense: 87, Speed: 99 }
+    CastformRainyZenith:
+      base: CastformRainy
+      stats: { HP: 70, Attack: 88, Defense: 88, SpecialAttack: 88, SpecialDefense: 87, Speed: 99 }
+    CastformSnowyZenith:
+      base: CastformSnowy
+      stats: { HP: 70, Attack: 88, Defense: 88, SpecialAttack: 88, SpecialDefense: 87, Speed: 99 }
+
+# It hides in plain sight as someone else
+KecleonZenith:
+  base: Kecleon
+  stats: { HP: 60, Attack: 112, Defense: 87, SpecialAttack: 60, SpecialDefense: 142, Speed: 79 }
+  types: [Normal]
+  ability: Illusion
+  shard: KecleonZenithShard
+
+# The fruit dinosaur eats well
+TropiusZenith:
+  base: Tropius
+  stats: { HP: 99, Attack: 79, Defense: 100, SpecialAttack: 83, SpecialDefense: 120, Speed: 79 }
+  types: [Grass, Dragon]
+  ability: CheekPouch
+  shard: TropiusZenithShard
+
+# Its icy hide turns aside special hits
+WalreinZenith:
+  base: Walrein
+  stats: { HP: 110, Attack: 80, Defense: 103, SpecialAttack: 114, SpecialDefense: 127, Speed: 96 }
+  types: [Ice, Water]
+  ability: IceScales
+  shard: WalreinZenithShard
+
+# The deep-sea hunter grows stronger with every catch
+HuntailZenith:
+  base: Huntail
+  stats: { HP: 55, Attack: 148, Defense: 111, SpecialAttack: 94, SpecialDefense: 81, Speed: 96 }
+  types: [Water, Dark]
+  ability: Moxie
+  shard: HuntailZenithShard
+
+# Its Shell Smash goes twice as far
+GorebyssZenith:
+  base: Gorebyss
+  stats: { HP: 55, Attack: 84, Defense: 111, SpecialAttack: 139, SpecialDefense: 88, Speed: 108 }
+  types: [Water, Psychic]
+  ability: Simple
+  shard: GorebyssZenithShard
+
+# The living fossil hits with the full weight of both its types
+RelicanthZenith:
+  base: Relicanth
+  stats: { HP: 100, Attack: 134, Defense: 143, SpecialAttack: 45, SpecialDefense: 77, Speed: 86 }
+  types: [Water, Rock]
+  ability: Adaptability
+  shard: RelicanthZenithShard
+
+# Its love heals first
+LuvdiscZenith:
+  base: Luvdisc
+  stats: { HP: 43, Attack: 30, Defense: 83, SpecialAttack: 95, SpecialDefense: 92, Speed: 87 }
+  types: [Water, Fairy]
+  ability: Triage
+  shard: LuvdiscZenithShard
+
+# The golem of rock, made to hurl it
+RegirockZenith:
+  base: Regirock
+  stats: { HP: 80, Attack: 150, Defense: 225, SpecialAttack: 50, SpecialDefense: 113, Speed: 62 }
+  types: [Rock]
+  ability: RockyPayload
+  shard: RegirockZenithShard
+
+# The golem of ice, all force and no frills
+RegiceZenith:
+  base: Regice
+  stats: { HP: 80, Attack: 50, Defense: 113, SpecialAttack: 137, SpecialDefense: 225, Speed: 75 }
+  types: [Ice]
+  ability: SheerForce
+  shard: RegiceZenithShard
+
+# The golem of steel turns every weakening back
+RegisteelZenith:
+  base: Registeel
+  stats: { HP: 80, Attack: 100, Defense: 188, SpecialAttack: 75, SpecialDefense: 175, Speed: 62 }
+  types: [Steel]
+  ability: MirrorArmor
+  shard: RegisteelZenithShard
+
+# It fights on in its thousand-year sleep
+JirachiZenith:
+  base: Jirachi
+  stats: { HP: 100, Attack: 113, Defense: 125, SpecialAttack: 112, SpecialDefense: 125, Speed: 125 }
+  types: [Steel, Psychic]
+  ability: Comatose
+  shard: JirachiZenithShard
+
+# The visitor from space grows with every foe it fells, whatever shape it is in
+DeoxysZenith:
+  base: Deoxys
+  stats: { HP: 50, Attack: 169, Defense: 75, SpecialAttack: 169, SpecialDefense: 75, Speed: 162 }
+  types: [Psychic]
+  ability: BeastBoost
+  shard: DeoxysZenithShard
+  forms:
+    DeoxysAttackZenith:
+      base: DeoxysAttack
+      stats: { HP: 50, Attack: 203, Defense: 42, SpecialAttack: 202, SpecialDefense: 42, Speed: 161 }
+    DeoxysDefenseZenith:
+      base: DeoxysDefense
+      stats: { HP: 50, Attack: 84, Defense: 201, SpecialAttack: 84, SpecialDefense: 201, Speed: 80 }
+    DeoxysSpeedZenith:
+      base: DeoxysSpeed
+      stats: { HP: 50, Attack: 108, Defense: 115, SpecialAttack: 107, SpecialDefense: 115, Speed: 205 }

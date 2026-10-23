@@ -620,7 +620,14 @@ describe('species forms', () => {
   it('tells a worn shape from a shape that is met', () => {
     // A letter is caught; a sky is put on. Only the second kind is
     // filled in off the pokemon wearing it
-    expect(getWornForms(Species.Castform)).toEqual(CASTFORM_FORMS.slice(1));
+    // Its Zenith and the Zenith's own skies are put on as well
+    expect(getWornForms(Species.Castform)).toEqual([
+      ...CASTFORM_FORMS.slice(1),
+      Species.CastformZenith,
+      Species.CastformSunnyZenith,
+      Species.CastformRainyZenith,
+      Species.CastformSnowyZenith,
+    ]);
     expect(getWornForms(Species.Unown)).toEqual([]);
     expect(getWornForms(Species.Pikachu)).toEqual([]);
 

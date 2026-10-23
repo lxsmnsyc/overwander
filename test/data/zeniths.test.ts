@@ -142,7 +142,7 @@ describe('Zeniths', () => {
 
   it('gives every eligible pokemon of a finished region its Zenith', () => {
     // Added to as each region's batch lands
-    const finished = new Set<Regions>([Regions.Kanto, Regions.Johto]);
+    const finished = new Set<Regions>([Regions.Kanto, Regions.Johto, Regions.Hoenn]);
     const spoken = new Set<Species>(NO_ZENITH);
 
     for (const mega of listMegas()) {

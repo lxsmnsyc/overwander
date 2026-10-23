@@ -59,6 +59,30 @@ How every generation after Kanto gets its Zeniths, region by region, after [the 
 6. **Changeset**, `minor`, with one line for the region. A release page per region, with a row in `docs/update.md`.
 7. **Checks:** `pnpm test`, `pnpm typecheck`, and `rtk proxy pnpm exec oxlint src test`, read by its exit code.
 
+## Approved
+
+### Johto
+
+Approved so far, built once all 40 are in.
+
+| Pokemon | Types | Worn ability | HP / Atk / Def / SpA / SpD / Spe |
+| --- | --- | --- | --- |
+| Typhlosion | Fire/Ground | Drought | 88 / 84 / 88 / 149 / 95 / 130 |
+| Furret | Normal | Prankster | 105 / 76 / 84 / 45 / 85 / 120 |
+| Noctowl | Psychic/Flying | Magic Bounce | 110 / 50 / 60 / 126 / 116 / 90 |
+| Ledian | Bug/Fighting | Technician | 65 / 95 / 60 / 55 / 110 / 105 |
+| Ariados | Bug/Dark | Prankster | 90 / 90 / 90 / 60 / 100 / 70 |
+| Crobat | Poison/Dark | Strong Jaw | 95 / 125 / 90 / 70 / 90 / 165 |
+| Lanturn | Water/Electric | Electric Surge | 135 / 58 / 68 / 116 / 86 / 97 |
+| Xatu | Psychic/Flying | Prankster | 95 / 75 / 90 / 105 / 100 / 105 |
+| Bellossom | Grass/Fairy | Dancer | 85 / 80 / 95 / 120 / 120 / 90 |
+| Azumarill | Water/Fairy | Sheer Force | 110 / 70 / 90 / 70 / 90 / 90 |
+| Sudowoodo | Rock/Grass | Illusion | 70 / 120 / 125 / 30 / 85 / 80 |
+| Politoed | Water | Prankster | 110 / 75 / 85 / 100 / 120 / 110 |
+| Jumpluff | Grass/Flying | Wind Rider | 85 / 85 / 80 / 55 / 105 / 150 |
+| Sunflora | Grass/Fire | Drought | 75 / 75 / 75 / 135 / 95 / 70 |
+| Quagsire | Water/Ground | Regenerator | 125 / 85 / 105 / 65 / 85 / 65 |
+
 ## Pace
 
 - **One region per PR, stacked.**

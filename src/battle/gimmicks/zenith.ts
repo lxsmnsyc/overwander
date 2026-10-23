@@ -1,7 +1,7 @@
 import { EventPriority } from '../../core/event-emitter';
 import type { Species } from '../../data/ids/species';
 import { ZENITH_SHARDS } from '../../data/items/zenith-shards';
-import { getZenithShape, isZenithSpecies } from '../../data/species/zeniths';
+import { getZenithForm, getZenithShape, isZenithSpecies } from '../../data/species/zeniths';
 import type Battle from '../battle';
 import { BattleEvents } from '../events';
 import type Team from '../team';
@@ -39,6 +39,16 @@ export function pickZenith(team: Team): Unit | null {
  */
 export default function setupZeniths(battle: Battle): void {
   const spent = new Set<Team>();
+
+  // A Zenith that changes shape changes into its Zenith of that shape,
+  // so a stance or a weather does not take the Zenith off it
+  battle.on(BattleEvents.UnitSetSpecies, EventPriority.Pre, (event) => {
+    const into = getZenithForm(event.source.species, event.species);
+
+    if (into != null) {
+      event.species = into;
+    }
+  });
 
   battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
     const unit = event.source;

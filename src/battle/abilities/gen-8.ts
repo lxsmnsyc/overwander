@@ -29,6 +29,7 @@ import {
   createToughClawsAbility,
   getAbilityHolders,
 } from './__create';
+import { naturalSpecies } from '../../data/species/zeniths';
 
 // The ice comes back under hail or snow, so the AI weighs calling one up
 registerWeatherWant(Abilities.IceFace, [Weathers.Hail, Weathers.Snow]);
@@ -252,7 +253,7 @@ const setupAbilities = [
 
           if (
             !FISHING_MOVES.has(event.move) ||
-            bird.species !== Species.Cramorant ||
+            naturalSpecies(bird.species) !== Species.Cramorant ||
             !bird.alive ||
             !bird.hasAbility(Abilities.GulpMissile)
           ) {
@@ -320,7 +321,11 @@ const setupAbilities = [
    */
   createAbility(Abilities.IceFace, (battle) => {
     function refreeze(unit: Unit): void {
-      if (unit.alive && unit.species === Species.EiscueNoice && isWeatherHail(unit)) {
+      if (
+        unit.alive &&
+        naturalSpecies(unit.species) === Species.EiscueNoice &&
+        isWeatherHail(unit)
+      ) {
         unit.triggerAbility(Abilities.IceFace);
       }
     }
@@ -339,7 +344,7 @@ const setupAbilities = [
           !event.success ||
           !isStruckBy(event) ||
           cause.type !== EffectType.Move ||
-          target.species !== Species.Eiscue ||
+          naturalSpecies(target.species) !== Species.Eiscue ||
           !target.hasAbility(Abilities.IceFace) ||
           getMoveData(cause.move).category !== MoveCategories.Physical
         ) {
@@ -360,9 +365,9 @@ const setupAbilities = [
         if (event.ability !== Abilities.IceFace) {
           return;
         }
-        if (unit.species === Species.Eiscue) {
+        if (naturalSpecies(unit.species) === Species.Eiscue) {
           unit.setSpecies(Species.EiscueNoice);
-        } else if (unit.species === Species.EiscueNoice) {
+        } else if (naturalSpecies(unit.species) === Species.EiscueNoice) {
           unit.setSpecies(Species.Eiscue);
         }
       }),
@@ -381,7 +386,8 @@ const setupAbilities = [
       new MergedLifecycle([
         ...onUnitActs(battle, (unit) => {
           if (
-            (unit.species === Species.Morpeko || unit.species === Species.MorpekoHangry) &&
+            (naturalSpecies(unit.species) === Species.Morpeko ||
+              naturalSpecies(unit.species) === Species.MorpekoHangry) &&
             unit.alive
           ) {
             unit.triggerAbility(Abilities.HungerSwitch);
@@ -393,9 +399,9 @@ const setupAbilities = [
           if (event.ability !== Abilities.HungerSwitch) {
             return;
           }
-          if (unit.species === Species.Morpeko) {
+          if (naturalSpecies(unit.species) === Species.Morpeko) {
             unit.setSpecies(Species.MorpekoHangry);
-          } else if (unit.species === Species.MorpekoHangry) {
+          } else if (naturalSpecies(unit.species) === Species.MorpekoHangry) {
             unit.setSpecies(Species.Morpeko);
           }
         }),

@@ -295,3 +295,243 @@ MewZenithShard:
   icon: zenith/kanto/mew
   flags: [Holdable]
   sell: 2000
+
+TyphlosionZenithShard:
+  type: Held
+  icon: zenith/johto/typhlosion
+  flags: [Holdable]
+  sell: 2000
+
+FurretZenithShard:
+  type: Held
+  icon: zenith/johto/furret
+  flags: [Holdable]
+  sell: 2000
+
+NoctowlZenithShard:
+  type: Held
+  icon: zenith/johto/noctowl
+  flags: [Holdable]
+  sell: 2000
+
+LedianZenithShard:
+  type: Held
+  icon: zenith/johto/ledian
+  flags: [Holdable]
+  sell: 2000
+
+AriadosZenithShard:
+  type: Held
+  icon: zenith/johto/ariados
+  flags: [Holdable]
+  sell: 2000
+
+CrobatZenithShard:
+  type: Held
+  icon: zenith/johto/crobat
+  flags: [Holdable]
+  sell: 2000
+
+LanturnZenithShard:
+  type: Held
+  icon: zenith/johto/lanturn
+  flags: [Holdable]
+  sell: 2000
+
+XatuZenithShard:
+  type: Held
+  icon: zenith/johto/xatu
+  flags: [Holdable]
+  sell: 2000
+
+BellossomZenithShard:
+  type: Held
+  icon: zenith/johto/bellossom
+  flags: [Holdable]
+  sell: 2000
+
+AzumarillZenithShard:
+  type: Held
+  icon: zenith/johto/azumarill
+  flags: [Holdable]
+  sell: 2000
+
+SudowoodoZenithShard:
+  type: Held
+  icon: zenith/johto/sudowoodo
+  flags: [Holdable]
+  sell: 2000
+
+PolitoedZenithShard:
+  type: Held
+  icon: zenith/johto/politoed
+  flags: [Holdable]
+  sell: 2000
+
+JumpluffZenithShard:
+  type: Held
+  icon: zenith/johto/jumpluff
+  flags: [Holdable]
+  sell: 2000
+
+SunfloraZenithShard:
+  type: Held
+  icon: zenith/johto/sunflora
+  flags: [Holdable]
+  sell: 2000
+
+QuagsireZenithShard:
+  type: Held
+  icon: zenith/johto/quagsire
+  flags: [Holdable]
+  sell: 2000
+
+EspeonZenithShard:
+  type: Held
+  icon: zenith/johto/espeon
+  flags: [Holdable]
+  sell: 2000
+
+UmbreonZenithShard:
+  type: Held
+  icon: zenith/johto/umbreon
+  flags: [Holdable]
+  sell: 2000
+
+SlowkingZenithShard:
+  type: Held
+  icon: zenith/johto/slowking
+  flags: [Holdable]
+  sell: 2000
+
+WobbuffetZenithShard:
+  type: Held
+  icon: zenith/johto/wobbuffet
+  flags: [Holdable]
+  sell: 2000
+
+ForretressZenithShard:
+  type: Held
+  icon: zenith/johto/forretress
+  flags: [Holdable]
+  sell: 2000
+
+GranbullZenithShard:
+  type: Held
+  icon: zenith/johto/granbull
+  flags: [Holdable]
+  sell: 2000
+
+QwilfishZenithShard:
+  type: Held
+  icon: zenith/johto/qwilfish
+  flags: [Holdable]
+  sell: 2000
+
+ShuckleZenithShard:
+  type: Held
+  icon: zenith/johto/shuckle
+  flags: [Holdable]
+  sell: 2000
+
+MagcargoZenithShard:
+  type: Held
+  icon: zenith/johto/magcargo
+  flags: [Holdable]
+  sell: 2000
+
+CorsolaZenithShard:
+  type: Held
+  icon: zenith/johto/corsola
+  flags: [Holdable]
+  sell: 2000
+
+OctilleryZenithShard:
+  type: Held
+  icon: zenith/johto/octillery
+  flags: [Holdable]
+  sell: 2000
+
+DelibirdZenithShard:
+  type: Held
+  icon: zenith/johto/delibird
+  flags: [Holdable]
+  sell: 2000
+
+MantineZenithShard:
+  type: Held
+  icon: zenith/johto/mantine
+  flags: [Holdable]
+  sell: 2000
+
+KingdraZenithShard:
+  type: Held
+  icon: zenith/johto/kingdra
+  flags: [Holdable]
+  sell: 2000
+
+DonphanZenithShard:
+  type: Held
+  icon: zenith/johto/donphan
+  flags: [Holdable]
+  sell: 2000
+
+SmeargleZenithShard:
+  type: Held
+  icon: zenith/johto/smeargle
+  flags: [Holdable]
+  sell: 2000
+
+HitmontopZenithShard:
+  type: Held
+  icon: zenith/johto/hitmontop
+  flags: [Holdable]
+  sell: 2000
+
+MiltankZenithShard:
+  type: Held
+  icon: zenith/johto/miltank
+  flags: [Holdable]
+  sell: 2000
+
+BlisseyZenithShard:
+  type: Held
+  icon: zenith/johto/blissey
+  flags: [Holdable]
+  sell: 2000
+
+RaikouZenithShard:
+  type: Held
+  icon: zenith/johto/raikou
+  flags: [Holdable]
+  sell: 2000
+
+EnteiZenithShard:
+  type: Held
+  icon: zenith/johto/entei
+  flags: [Holdable]
+  sell: 2000
+
+SuicuneZenithShard:
+  type: Held
+  icon: zenith/johto/suicune
+  flags: [Holdable]
+  sell: 2000
+
+LugiaZenithShard:
+  type: Held
+  icon: zenith/johto/lugia
+  flags: [Holdable]
+  sell: 2000
+
+HoOhZenithShard:
+  type: Held
+  icon: zenith/johto/hooh
+  flags: [Holdable]
+  sell: 2000
+
+CelebiZenithShard:
+  type: Held
+  icon: zenith/johto/celebi
+  flags: [Holdable]
+  sell: 2000

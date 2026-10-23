@@ -4,13 +4,12 @@ How every generation after Kanto gets its Zeniths, region by region, after [the 
 
 ## Where things stand
 
-- **Kanto is done:** 49 Zeniths, one for every eligible Kanto pokemon.
+- **Kanto and Johto are done:** 49 and 40 Zeniths, one for every eligible pokemon of each. Batch 0 (Zenith shapes, Unown) is in.
 - **The rules are held by `test/data/zeniths.test.ts`.** A Zenith belongs to a final stage with no Mega and no other held-item shape. It fights 100 above its base stat total and wears an ability its line can never be born with. Its shard id is `2000000 + dex × 100 + 01`, and the shard is buried in the prized band only where its line is met.
-- **Left to do: about 420 Zeniths.**
+- **Left to do: about 380 Zeniths.**
 
   | Region | Eligible | Notes |
   | --- | --- | --- |
-  | Johto | 40 | Unown is out |
   | Hoenn | 49 | |
   | Sinnoh | 53 | |
   | Unova | 68 | |
@@ -28,6 +27,7 @@ How every generation after Kanto gets its Zeniths, region by region, after [the 
 - **Shape-shifters get one**, Unown excepted: Castform, Darmanitan, Aegislash, Wishiwashi, Minior, Eternatus, Terapagos, and the other pokemon that change shape mid-fight (Mimikyu, Eiscue, Morpeko, Cramorant, Palafin, Meloetta). Each proposal says how the Zenith sits with the form change, such as whether the shape it changes into keeps the Zenith's stats.
 - **Unown gets none.** It joins Ditto in `NO_ZENITH`, with its reason in the comment.
 - **Regional finals get one** in form slot 98 and down, in the batch of the region whose form it is: Alolan Ninetales goes in with Alola, not Kanto.
+- **No two Zeniths of one region wear the same ability.** A later region may reuse an earlier one's.
 - **Proposals come 4 pokemon at a time**, through questions. Each question offers 3 or 4 concepts for one pokemon, each with its stat spread, worn ability and any type change. A region is built once every pokemon in it is approved.
 
 ## The order
@@ -58,30 +58,6 @@ How every generation after Kanto gets its Zeniths, region by region, after [the 
 5. **Abilities:** any worn ability not built yet is built in this batch, with a test.
 6. **Changeset**, `minor`, with one line for the region. A release page per region, with a row in `docs/update.md`.
 7. **Checks:** `pnpm test`, `pnpm typecheck`, and `rtk proxy pnpm exec oxlint src test`, read by its exit code.
-
-## Approved
-
-### Johto
-
-Approved so far, built once all 40 are in.
-
-| Pokemon | Types | Worn ability | HP / Atk / Def / SpA / SpD / Spe |
-| --- | --- | --- | --- |
-| Typhlosion | Fire/Ground | Drought | 88 / 84 / 88 / 149 / 95 / 130 |
-| Furret | Normal | Prankster | 105 / 76 / 84 / 45 / 85 / 120 |
-| Noctowl | Psychic/Flying | Magic Bounce | 110 / 50 / 60 / 126 / 116 / 90 |
-| Ledian | Bug/Fighting | Technician | 65 / 95 / 60 / 55 / 110 / 105 |
-| Ariados | Bug/Dark | Prankster | 90 / 90 / 90 / 60 / 100 / 70 |
-| Crobat | Poison/Dark | Strong Jaw | 95 / 125 / 90 / 70 / 90 / 165 |
-| Lanturn | Water/Electric | Electric Surge | 135 / 58 / 68 / 116 / 86 / 97 |
-| Xatu | Psychic/Flying | Prankster | 95 / 75 / 90 / 105 / 100 / 105 |
-| Bellossom | Grass/Fairy | Dancer | 85 / 80 / 95 / 120 / 120 / 90 |
-| Azumarill | Water/Fairy | Sheer Force | 110 / 70 / 90 / 70 / 90 / 90 |
-| Sudowoodo | Rock/Grass | Illusion | 70 / 120 / 125 / 30 / 85 / 80 |
-| Politoed | Water | Prankster | 110 / 75 / 85 / 100 / 120 / 110 |
-| Jumpluff | Grass/Flying | Wind Rider | 85 / 85 / 80 / 55 / 105 / 150 |
-| Sunflora | Grass/Fire | Drought | 75 / 75 / 75 / 135 / 95 / 70 |
-| Quagsire | Water/Ground | Regenerator | 125 / 85 / 105 / 65 / 85 / 65 |
 
 ## Pace
 

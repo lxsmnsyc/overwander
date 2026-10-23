@@ -58,3 +58,6 @@ one that covers what you are about to do:
   already existed behaves differently, `minor` when something new exists,
   `major` only with the maintainer's approval. The description stays short,
   a list when it covers several things.
+- `let-layout-explain` - avoid unnecessary secondary labels and descriptions;
+  let grouping, alignment and order explain a screen, and keep words for what
+  the layout cannot show (icon-only buttons, consequences, empty states).

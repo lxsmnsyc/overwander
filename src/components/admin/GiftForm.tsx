@@ -16,7 +16,7 @@ import {
 } from '../styled';
 import { ITEM_TYPE_ORDER, getItemData, listItemsByType } from '../../data/items';
 import { BALL_ITEMS, Balls, type Items } from '../../data/ids/items';
-import { GiftKind } from '../../auth/gift-record';
+import { GiftKind } from '../../model/gift-record';
 import {
   MAX_IV,
   STAT_NAMES,
@@ -25,7 +25,7 @@ import {
   createStatsField,
   packIVs,
 } from '../../data/constants/stats';
-import { NATURE_NAMES } from '../../data/ids/natures';
+import { NATURE_NAMES } from '../../data/ids/text';
 import type Abilities from '../../data/ids/abilities';
 import type Natures from '../../data/ids/natures';
 import { Genders, type Species } from '../../data/ids/species';

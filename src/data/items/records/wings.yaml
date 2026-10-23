@@ -8,64 +8,76 @@ HealthWing:
   icon: medicine/health-wing
   flags: [Consumable, Usable]
   sell: 100
+  stat: HP
 
 MuscleWing:
   type: Training
   icon: medicine/muscle-wing
   flags: [Consumable, Usable]
   sell: 100
+  stat: Attack
 
 ResistWing:
   type: Training
   icon: medicine/resist-wing
   flags: [Consumable, Usable]
   sell: 100
+  stat: Defense
 
 GeniusWing:
   type: Training
   icon: medicine/genius-wing
   flags: [Consumable, Usable]
   sell: 100
+  stat: SpecialAttack
 
 CleverWing:
   type: Training
   icon: medicine/clever-wing
   flags: [Consumable, Usable]
   sell: 100
+  stat: SpecialDefense
 
 SwiftWing:
   type: Training
   icon: medicine/swift-wing
   flags: [Consumable, Usable]
   sell: 100
+  stat: Speed
 
 # Only a flying shadow drops a Max wing
 HealthWingMax:
   type: Training
   icon: medicine/health-wing-max
   flags: [Consumable, Usable]
+  fills: HP
 
 MuscleWingMax:
   type: Training
   icon: medicine/muscle-wing-max
   flags: [Consumable, Usable]
+  fills: Attack
 
 ResistWingMax:
   type: Training
   icon: medicine/resist-wing-max
   flags: [Consumable, Usable]
+  fills: Defense
 
 GeniusWingMax:
   type: Training
   icon: medicine/genius-wing-max
   flags: [Consumable, Usable]
+  fills: SpecialAttack
 
 CleverWingMax:
   type: Training
   icon: medicine/clever-wing-max
   flags: [Consumable, Usable]
+  fills: SpecialDefense
 
 SwiftWingMax:
   type: Training
   icon: medicine/swift-wing-max
   flags: [Consumable, Usable]
+  fills: Speed

@@ -1,6 +1,6 @@
 import { For, type JSX, type Resource, Show, Suspense, createResource } from 'solid-js';
 import type { CaughtPokemon } from '../../auth/caught';
-import { previewSnapshot } from '../../auth/catch-snapshot';
+import { previewSnapshot } from '../../model/catch-snapshot';
 import { type Profile, getProfiles } from '../../auth/profile';
 import { type TeamSnapshotRecord, getTeamSnapshotBatched } from '../../auth/teams';
 import { getSpeciesData } from '../../data/species';

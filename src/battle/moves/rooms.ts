@@ -2,7 +2,7 @@ import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Stats } from '../../data/constants/stats';
 import { Moves } from '../../data/ids/moves';
 import { USELESS_PENALTY } from '../ai/score';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents } from '../events';
 import turns from '../turn';
 

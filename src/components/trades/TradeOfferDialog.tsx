@@ -1,7 +1,7 @@
 import { type JSX, Show, createEffect, createResource, createSignal, on } from 'solid-js';
 import { getBuddy } from '../../auth/buddy';
 import { countCaught, isFavorite } from '../../auth/caught';
-import { isEgg } from '../../auth/egg';
+import { isEgg } from '../../model/egg';
 import { type Profile, watchProfile } from '../../auth/profile';
 import { TRADE_GOLD_LIMIT, offerTrade } from '../../auth/trades';
 import { useGame } from '../app/game-context';

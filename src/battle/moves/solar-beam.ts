@@ -1,9 +1,9 @@
 import { EventPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
 import { Weathers } from '../../data/ids/status';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents } from '../events';
-import { isWeatherSunny } from '../utils';
+import { isWeatherSunny } from '../weather';
 
 // Weathers that halve Solar Beam's power
 const HALVING_WEATHERS = new Set<Weathers>([

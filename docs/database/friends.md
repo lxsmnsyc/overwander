@@ -44,8 +44,8 @@ friend to somebody who is a stranger back.
 | `recipient` | `uuid`   | Who was asked   |
 | `sent_at`   | `bigint` | When they asked |
 
-One row, pointing one way. The pair is the primary key, so asking twice rewrites
-the request that was already standing rather than adding a second. An index on
+One row, pointing one way. The pair is the primary key, so asking twice leaves
+the request that was already standing as it was rather than adding a second. An index on
 `recipient` is what answers "who is waiting on me".
 
 `blocks`, keyed by `(blocker, blocked)`
@@ -97,8 +97,9 @@ A settled trade appends `Acquisition.Trade` to both records' histories, resets
 
 ## Asking, and answering
 
-`sendFriendRequest` reads three rows in a transaction: the friendship, the
-request this player has standing, and the one coming the other way. A request
+`sendFriendRequest` first refuses a pair with a block between them either way,
+then reads two rows in a transaction: the friendship, and the request coming the
+other way. A request
 that **crosses** one already coming back makes the friendship on the spot, since
 both sides have now said yes, and clears both directions, so nobody is left holding a
 request from somebody who is already a friend.

@@ -3,7 +3,7 @@ import ChunkSnapshot, { SNAPSHOT_INTERVAL } from '../../overworld/chunk-snapshot
 import getWorld, { WORLD_GENERATION } from '../../overworld/current';
 import { Depth } from '../../overworld/depth';
 import { type Tx, getSql, jsonOf, tx } from '../db';
-import { asOffset, toLocalTime, toZoneKey } from '../../auth/local-time';
+import { asOffset, toLocalTime, toZoneKey } from '../../model/local-time';
 import { asNumber, asRecordArray } from '../read';
 
 /**

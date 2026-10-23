@@ -11,10 +11,10 @@ Overwander: a seed-generated Pokémon-style overworld with a real-time battle en
 ```bash
 pnpm dev                                  # http://localhost:3000
 pnpm test                                 # whole suite, once
-pnpm exec vitest run test/data.test.ts    # one file
+pnpm exec vitest run test/data/species.test.ts   # one file
 pnpm exec vitest run test/battle -t 'Tough Claws'   # one test by name
-pnpm exec tsc --noEmit                    # type-check
-pnpm exec oxlint src test                 # lint (never biome — this repo migrated off it)
+pnpm typecheck                            # type-check (tsc with the YAML content mapper)
+pnpm exec oxlint src test                 # lint (never biome: this repo migrated off it)
 pnpm exec oxfmt src test                  # format
 ```
 
@@ -26,7 +26,7 @@ The `db` service in `compose.yaml` (port 54322, `overwander`) is production, and
 
 `.claude/skills/*/SKILL.md` and `.agents/skills/*/SKILL.md` hold this project's conventions, and the two sets are not identical. List both and read whichever covers the task before starting; they are not all surfaced in a session's skill listing. The same rules are mirrored for other agents in `AGENTS.md`, `.opencode/AGENTS.md` and `.github/`, so a convention that changes has to change in each.
 
-Three that touch nearly every change: comments stay short and say the why rather than the what (`light-comments`), iteration is a `for...of` loop rather than a callback Array method (`prefer-for-of`), and prose anywhere — comments, docs, commit messages — avoids em-dashes in favour of commas, colons, parentheses or two sentences.
+Three that touch nearly every change: comments stay short and say the why rather than the what (`light-comments`), iteration is a `for...of` loop rather than a callback Array method (`prefer-for-of`), and prose anywhere (comments, docs, commit messages) avoids em-dashes in favour of commas, colons, parentheses or two sentences.
 
 ## Data registries
 
@@ -38,11 +38,11 @@ Ability pools have their own rules about what a species may reach, which the `ab
 
 ## Battle engine
 
-Real time, not turns. A mainline turn is 2 seconds, written `turns(n)` from `src/battle/turn.ts` rather than as milliseconds. Per-turn residuals have no clock to hang on: they are paid when a unit begins casting or channelling, via `onUnitActs`.
+Real time, not turns. A mainline turn is 2 seconds, written `turns(n)` from `src/battle/turn.ts` rather than as milliseconds. Per-turn residuals have no clock to hang on: they are paid when a unit begins casting or channelling, via `onUnitActs` (`src/battle/acts.ts`).
 
 Everything is an event on one bus ([src/battle/events/index.ts](src/battle/events/index.ts)). `Check*` events are questions whose answer is a field the listeners mutate (`power`, `immune`, `priority`, `success`); `Unit*` events are things that happened. Listeners pick `EventPriority.Pre | Exact | Post` (or `AttackPriority`), where `Exact` is the mechanic's own answer and `Post` is everyone modifying it.
 
-Effects register themselves and nothing else names them: no mechanic mentions an ability by id. An ability is `createAbility(id, setup)` from [src/battle/abilities/\_\_create.ts](src/battle/abilities/__create/index.ts), which starts its listeners only while some unit on the field holds it. Abilities that share one behaviour go through a `createXAbility` meta factory in that file rather than a local helper. A visual cue is `unit.triggerAbility(id)`, and the effect usually rides the resulting `UnitTriggerAbility` at `Exact`; a cue fires once per matching unit. Reuse a move rather than reimplementing its machinery where one exists (Drought casts Sunny Day; Cursed Body casts Disable).
+Effects register themselves and nothing else names them: no mechanic mentions an ability by id. An ability is `createAbility(id, setup)` from [src/battle/abilities/\_\_create/](src/battle/abilities/__create/index.ts), which starts its listeners only while some unit on the field holds it. Abilities that share one behaviour go through a `createXAbility` meta factory in that folder rather than a local helper. A visual cue is `unit.triggerAbility(id)`, and the effect usually rides the resulting `UnitTriggerAbility` at `Exact`; a cue fires once per matching unit. Reuse a move rather than reimplementing its machinery where one exists (Drought casts Sunny Day; Cursed Body casts Disable).
 
 [src/battle/setup.ts](src/battle/setup.ts) wires a battle: mechanics first, then moves, statuses, abilities, items, then the AI. Tests build one through `test/battle/harness.ts` (`createBattle`, `createUnit`, `pinRandom`) and drive time with `battle.tick(ms)`.
 
@@ -54,6 +54,7 @@ The map is never stored. A chunk's terrain, landmarks, spawns, stashes and raids
 
 - `src/auth/` runs in the browser: thin wrappers around server functions, for reads and writes alike. No browser code reaches the database.
 - `src/server/` is privileged. Every module starts with `import 'server-only'` and reads and writes over the table-owner connection ([src/server/db.ts](src/server/db.ts)). There are no row policies, so a server function is what decides who may see or change a row.
+- `src/model/` is what both sides share: each stored record's shape and normaliser (`*-record.ts`), the rules read off a record (health, eggs, stacks, the local clock), and the search parsers (`search/`). Nothing in it opens with `'use server'` or imports `server-only`.
 
 The wrapper shape is fixed: an exported client function calls an inner function whose body opens with `'use server'`, passing an id token, and that inner function checks each of its arguments with `check` from [src/server/validate.ts](src/server/validate.ts) and then calls `requireUid(token)` (a write) or `requireReader(token)` (a read, see the `server-reads` skill) before anything in `src/server/`. Accounts are Better Auth's ([src/server/better-auth.ts](src/server/better-auth.ts)), and the token is its short-lived JWT. Live views follow table changes over the server's own socket (`src/server/live`). SolidStart's transform strips module-level imports that only the server function uses, so import server modules statically at the top of the file rather than dynamically inside it.
 

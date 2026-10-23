@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
-import { asCatchSnapshot } from '../../src/auth/catch-snapshot';
-import { dynamaxActsLeft } from '../../src/battle/mechanics/dynamax';
+import { asCatchSnapshot } from '../../src/model/catch-snapshot';
+import { dynamaxActsLeft } from '../../src/battle/gimmicks/dynamax';
 import type Unit from '../../src/battle/unit';
 import registerGameData from '../../src/data';
 import { Stats } from '../../src/data/constants/stats';
@@ -11,8 +11,8 @@ import {
   PLAYER_ALLIANCE,
   createRaidBossTeam,
   keepsGigantamaxFactor,
-} from '../../src/overworld/raid';
-import { createRaidBattle } from '../../src/overworld/raid-battle';
+} from '../../src/overworld/raid/index';
+import { createRaidBattle } from '../../src/overworld/raid/battle';
 import { BattleEvents } from '../../src/battle/events';
 import { AttackPriority } from '../../src/core/event-emitter';
 import { Moves } from '../../src/data/ids/moves';

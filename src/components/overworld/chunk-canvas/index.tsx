@@ -41,12 +41,12 @@ import {
   shortestTurn,
   unprojectGround,
   yawTurns,
-} from '../../../canvas/board';
-import type SpeciesSpriteAnimation from '../../../canvas/species-sprite-animation';
-import { SPRITE_DIRECTIONS, type SpriteDirection } from '../../../canvas/sprite-sheet';
-import drawSparkle, { SPARKLE_LIFE } from '../../../canvas/sparkle';
-import drawHerald, { HERALD_BURST_LIFE } from '../../../canvas/herald';
-import speciesSize from '../../../canvas/species-size';
+} from '../../../canvas/overworld/board';
+import type SpeciesSpriteAnimation from '../../../canvas/sprites/species-sprite-animation';
+import { SPRITE_DIRECTIONS, type SpriteDirection } from '../../../canvas/sprites/sheet';
+import drawSparkle, { SPARKLE_LIFE } from '../../../canvas/effects/sparkle';
+import drawHerald, { HERALD_BURST_LIFE } from '../../../canvas/overworld/herald';
+import speciesSize from '../../../canvas/sprites/species-size';
 import {
   batchAmbient,
   batchSkybox,
@@ -54,22 +54,22 @@ import {
   getSkybox,
   paintAmbient,
   paintSkybox,
-} from '../../../canvas/daylight';
+} from '../../../canvas/overworld/daylight';
 import Weather from '../../../data/overworld/weather';
 import settings from '../../app/settings';
 import pixelRatio from '../../../canvas/ratio';
 import paintSky, { CAVERN, type Lamp, batchSky, batchWash, paintCavern } from '../../../canvas/sky';
-import createTwist from '../../../canvas/twist';
+import createTwist from '../../../canvas/overworld/twist';
 import { localNow } from '../../../auth/clock';
-import loadSpeciesSprite from '../../../canvas/species-sprites';
-import drawTileQuad, { grownQuad } from '../../../canvas/tile-quad';
-import loadTerrainTiles, { type TerrainTiles } from '../../../canvas/terrain-tiles';
+import loadSpeciesSprite from '../../../canvas/sprites/species-sprites';
+import drawTileQuad, { grownQuad } from '../../../canvas/overworld/tile-quad';
+import loadTerrainTiles, { type TerrainTiles } from '../../../canvas/overworld/terrain-tiles';
 import createBoardScene, {
   type BoardScene,
   type SceneSpot,
   hazeAt,
 } from '../../../canvas/three/board-scene';
-import terrainCell from '../../../canvas/terrain-cell';
+import terrainCell from '../../../canvas/overworld/terrain-cell';
 import QuadBatch, { type Painter } from '../../../canvas/gl/quad-batch';
 import Bakery, { type Baked } from '../../../canvas/bakery';
 import {
@@ -77,9 +77,9 @@ import {
   type SpriteQuad,
   cornersOf,
   shadowCorners,
-} from '../../../canvas/placement';
+} from '../../../canvas/sprites/placement';
 import type Biome from '../../../data/ids/biome';
-import type { BoardGround } from '../../../overworld/board-ground';
+import type { BoardGround } from '../../../overworld/board/ground';
 import { SpriteAnim } from '../../../data/ids/sprite-anims';
 import type Decoration from '../../../data/overworld/decoration';
 import { getBlocker } from '../../../data/overworld/decoration';
@@ -87,18 +87,18 @@ import Landmark from '../../../data/overworld/landmark';
 import Phenomenon from '../../../data/overworld/phenomenon';
 import Npc from '../../../data/overworld/npc';
 import { npcSheet } from '../../../overworld/npcs';
-import facingToward from '../../../canvas/facing';
-import type OWCharSprite from '../../../canvas/ow-char-sprite';
+import facingToward from '../../../canvas/sprites/facing';
+import type OWCharSprite from '../../../canvas/overworld/char-sprite';
 import type Strangers from '../../../overworld/strangers';
 import type { StrangerStanding } from '../../../overworld/strangers';
-import loadOWChar, { OW_SPRITE_ROOT } from '../../../canvas/ow-char-sprites';
-import type OWPlantSprite from '../../../canvas/ow-plant-sprite';
-import loadOWPlant from '../../../canvas/ow-plant-sprites';
+import loadOWChar, { OW_SPRITE_ROOT } from '../../../canvas/overworld/char-sprites';
+import type OWPlantSprite from '../../../canvas/overworld/plant-sprite';
+import loadOWPlant from '../../../canvas/overworld/plant-sprites';
 import apricornTreeSheet from '../../../data/overworld/apricorn-tree';
 import berryPlantSheet from '../../../data/overworld/berry-plant';
 import decorationPicture, { grottoPicture } from '../../../data/overworld/decoration-sprite';
 import landmarkPicture, { LANDMARK_SHEET } from '../../../data/overworld/landmark-sprite';
-import type BasicSprite from '../../../canvas/basic-sprite';
+import type BasicSprite from '../../../canvas/sprites/basic-sprite';
 import type { Colour } from '../../../canvas/gl/colour';
 import {
   CAVE_LIGHT,
@@ -111,8 +111,8 @@ import {
   encoded,
   isLit,
   litAt,
-} from '../../../canvas/lighting';
-import loadBasicSprite from '../../../canvas/basic-sprites';
+} from '../../../canvas/overworld/lighting';
+import loadBasicSprite from '../../../canvas/sprites/basic-sprites';
 import type { ItemStack } from '../../../data/overworld/item-pool';
 import {
   CELL,
@@ -168,7 +168,7 @@ import {
   pictureWidth,
   shadowSquash,
   slideGain,
-} from './metrics';
+} from '../../../canvas/overworld/metrics';
 import {
   type AuraPart,
   CellAura,
@@ -188,8 +188,13 @@ import {
   paintSparkle,
   phenomenonSpan,
   plantCallOut,
-} from './scenery';
-import { RaidBeacon, beaconCorners, drawRaidBeacon, paintRaidBeacon } from './beacon';
+} from '../../../canvas/overworld/scenery';
+import {
+  RaidBeacon,
+  beaconCorners,
+  drawRaidBeacon,
+  paintRaidBeacon,
+} from '../../../canvas/overworld/beacon';
 
 /**
  * How near the viewer the backdrop is drawn, in the scene's own clip

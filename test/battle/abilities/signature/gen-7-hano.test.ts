@@ -9,18 +9,19 @@ import {
   MoveTargetType,
 } from '../../../../src/battle/events';
 import type Unit from '../../../../src/battle/unit';
-import { unitTarget } from '../../../../src/battle/utils';
+import { unitTarget } from '../../../../src/battle/unit-checks';
 import { getMiniorCore } from '../../../../src/battle/abilities/gen-7';
 import {
   CASTLE_DRAIN_FRACTION,
   CHARGED_SPINES_SCALE,
   STARFALL_SCALE,
-} from '../../../../src/battle/abilities/signature/sandygast-to-togedemaru';
+} from '../../../../src/battle/abilities/signature/gen-7/sandygast-to-togedemaru';
 import { Stages, Stats } from '../../../../src/data/constants/stats';
 import { Types } from '../../../../src/data/constants/types';
 import Abilities from '../../../../src/data/ids/abilities';
 import { MoveCategories, Moves } from '../../../../src/data/ids/moves';
-import { MINIOR_FORMS, Species } from '../../../../src/data/ids/species';
+import { Species } from '../../../../src/data/ids/species';
+import { MINIOR_FORMS } from '../../../../src/data/ids/forms';
 import { Statuses } from '../../../../src/data/ids/status';
 import { createBattle, createUnit, pinRandom } from '../../harness';
 import { NONE_CAUSE, act, dealDamage } from './helpers';

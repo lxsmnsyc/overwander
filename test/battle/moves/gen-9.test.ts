@@ -10,7 +10,7 @@ import { Moves } from '../../../src/data/ids/moves';
 import { Species } from '../../../src/data/ids/species';
 import { Statuses, Weathers } from '../../../src/data/ids/status';
 import { getMoveData } from '../../../src/data/moves';
-import { isDanceMove } from '../../../src/data/moves/dances';
+import { isDanceMove } from '../../../src/data/moves/flags';
 import { createBattle, createUnit, pinRandom } from '../harness';
 
 const NONE_TARGET = { type: MoveTargetType.None } as const;

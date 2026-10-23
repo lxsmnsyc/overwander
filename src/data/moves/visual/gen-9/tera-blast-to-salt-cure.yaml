@@ -1,0 +1,31 @@
+# Moves that are an earlier move's picture in all but name
+# A shot charged up the way Meteor Beam is, beams drawn up the way Fleur Cannon's is
+TeraBlast: { landing: Beam, wait: { striking: Charge } }
+
+# Signatures with a picture of their own
+SilkTrap: { landing: Snare }
+
+# Every older region's signatures, one family each, that once borrowed another move's
+# picture
+LastRespects: { landing: Respects }
+
+# Signatures with a picture of their own
+LuminaCrash: { landing: Lumina }
+OrderUp: { landing: Order }
+JetPunch: { landing: Jetfist }
+SpicyExtract: { landing: Spice }
+SpinOut: { landing: Burnout }
+PopulationBomb: { landing: Horde }
+
+# Moves that are an earlier move's picture in all but name
+IceSpinner: { landing: Swirl }
+
+# Signatures with a picture of their own
+GlaiveRush: { landing: Glaive }
+
+# Every older region's signatures, one family each, that once borrowed another move's
+# picture
+RevivalBlessing: { landing: Revival }
+
+# Signatures with a picture of their own
+SaltCure: { landing: Salt }

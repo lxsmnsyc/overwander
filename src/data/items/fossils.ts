@@ -1,5 +1,7 @@
-import { Items } from '../ids/items';
-import { Species } from '../ids/species';
+import type { Items } from '../ids/items';
+import type { Species } from '../ids/species';
+import recordsFile from './records/fossils.yaml';
+import { readFamilyRecords } from './yaml';
 
 /**
  * The fossils: an extinct pokemon, still in the rock.
@@ -21,34 +23,33 @@ import { Species } from '../ids/species';
  * What each whole fossil brings back. It is one species per fossil,
  * and no species is named by two, so the map reads both ways
  */
-export const FOSSIL_SPECIES = new Map<Items, Species>([
-  [Items.HelixFossil, Species.Omanyte],
-  [Items.DomeFossil, Species.Kabuto],
-  [Items.OldAmber, Species.Aerodactyl],
-  [Items.RootFossil, Species.Lileep],
-  [Items.ClawFossil, Species.Anorith],
-  [Items.SkullFossil, Species.Cranidos],
-  [Items.ArmorFossil, Species.Shieldon],
-  [Items.CoverFossil, Species.Tirtouga],
-  [Items.PlumeFossil, Species.Archen],
-  [Items.JawFossil, Species.Tyrunt],
-  [Items.SailFossil, Species.Amaura],
-]);
+export const FOSSIL_SPECIES = new Map<Items, Species>();
 
 /**
  * Galar's fossils come in halves, and what comes out is the pair's
  * rather than either half's. Each pair names one species, and no
  * species is named twice here or in the map above
  */
-export const FOSSIL_PAIRS: [top: Items, bottom: Items, species: Species][] = [
-  [Items.FossilizedBird, Items.FossilizedDrake, Species.Dracozolt],
-  [Items.FossilizedBird, Items.FossilizedDino, Species.Arctozolt],
-  [Items.FossilizedFish, Items.FossilizedDrake, Species.Dracovish],
-  [Items.FossilizedFish, Items.FossilizedDino, Species.Arctovish],
-];
+export const FOSSIL_PAIRS: [top: Items, bottom: Items, species: Species][] = [];
 
-export const FOSSIL_TOPS: Items[] = [Items.FossilizedBird, Items.FossilizedFish];
-export const FOSSIL_BOTTOMS: Items[] = [Items.FossilizedDrake, Items.FossilizedDino];
+export const FOSSIL_TOPS: Items[] = [];
+export const FOSSIL_BOTTOMS: Items[] = [];
+
+// A top writes its pairs, and the bottoms are the halves those name
+for (const [item, { species, pairs }] of readFamilyRecords('fossils', recordsFile)) {
+  if (species != null) {
+    FOSSIL_SPECIES.set(item, species);
+  }
+  if (pairs != null) {
+    FOSSIL_TOPS.push(item);
+    for (const [bottom, revived] of pairs) {
+      FOSSIL_PAIRS.push([item, bottom, revived]);
+      if (!FOSSIL_BOTTOMS.includes(bottom)) {
+        FOSSIL_BOTTOMS.push(bottom);
+      }
+    }
+  }
+}
 
 export function isFossilTop(item: Items): boolean {
   return FOSSIL_TOPS.includes(item);

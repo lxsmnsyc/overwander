@@ -4,13 +4,13 @@ import { describe, expect, it } from 'vitest';
 import { AttackPriority, EventPriority } from '../../../../src/core/event-emitter';
 import { BattleEvents, EffectType } from '../../../../src/battle/events';
 import type Unit from '../../../../src/battle/unit';
-import { unitTarget } from '../../../../src/battle/utils';
+import { unitTarget } from '../../../../src/battle/unit-checks';
 import { FLUFFY_CONTACT_SCALE, FLUFFY_FIRE_SCALE } from '../../../../src/battle/abilities/gen-7';
 import {
   FOND_CRUSH_SCALE,
   OPENING_SLASH_SCALE,
   TOXIC_DOME_SCALE,
-} from '../../../../src/battle/abilities/signature/mareanie-to-wimpod';
+} from '../../../../src/battle/abilities/signature/gen-7/mareanie-to-wimpod';
 import { Stats } from '../../../../src/data/constants/stats';
 import { Types } from '../../../../src/data/constants/types';
 import Abilities from '../../../../src/data/ids/abilities';

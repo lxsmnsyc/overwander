@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { BattleModes } from '../../src/battle/core';
+import { BattleModes } from '../../src/battle/battle';
 import { MoveTargetType } from '../../src/battle/events';
 import type Unit from '../../src/battle/unit';
 import { Stats } from '../../src/data/constants/stats';

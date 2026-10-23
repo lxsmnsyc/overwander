@@ -1,7 +1,7 @@
 import 'server-only';
 import AleaRNG from '../core/alea';
 import { Depth, WORLD_MAX, WORLD_MIN } from '../overworld/world';
-import { asChunkCoordinate } from '../auth/position-record';
+import { asChunkCoordinate } from '../model/position-record';
 import findPlayer, { nameOf } from './players';
 import getWorld from '../overworld/current';
 import { pickFreeCell } from '../overworld/start';

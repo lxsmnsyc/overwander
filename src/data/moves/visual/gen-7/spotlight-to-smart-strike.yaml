@@ -1,0 +1,28 @@
+# Attacks and signatures with a picture of their own
+Spotlight: { landing: Spotlight }
+
+# Every older region's signatures, one family each, that once borrowed another move's
+# picture
+ToxicThread: { landing: Thread }
+
+# Moves that are an earlier move's picture in all but name
+LaserFocus: { landing: Nerve }
+GearUp: { landing: Gears }
+ThroatChop: { landing: Claw }
+
+# Attacks and signatures with a picture of their own
+# A blade charged the way Skull Bash is, a beam drawn up the way Hydro Pump's is,
+# a ball lobbed, bubbles blown, a bone tumbling and a veil put up like a screen
+PollenPuff: { landing: Pollen, wait: { striking: Lobbed } }
+
+AnchorShot: { landing: Anchor }
+
+# The terrains, which light the floor rather than land on anybody
+PsychicTerrain: { landing: Terrain }
+
+# Moves that are an earlier move's picture in all but name
+FireLash: { landing: Lash }
+PowerTrip: { landing: Orbit }
+BurnUp: { landing: Blaze }
+SpeedSwap: { landing: Warp }
+SmartStrike: { landing: Spike }

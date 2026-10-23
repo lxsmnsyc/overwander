@@ -1,25 +1,33 @@
-import { Items } from '../ids/items';
-import { Species } from '../ids/species';
+import * as v from 'valibot';
+import type { Items } from '../ids/items';
+import type { Moves } from '../ids/moves';
+import { ITEM_IDS, MOVE_IDS, SPECIES_IDS } from '../ids/names';
+import type { Species } from '../ids/species';
+import { idOf } from '../yaml';
+import noblesFile from './nobles.yaml';
 
 /**
  * Noble Pokémon, as Legends: Arceus had them: a frenzied lord of the
  * land that is calmed rather than beaten. The five Nobles of Hisui are
- * written out; every other final stage of a tile's biome is a Noble by
+ * written out in `nobles.yaml`; every other final stage of a tile's biome is a Noble by
  * rule, so an arena in any biome holds somebody.
  */
 
-/**
- * The five canon Nobles, with what each leaves its calmers beside the
- * purse: Kleavor's own evolution stone, the stone the other four's
- * lines grow on in Hisui, and the ice Avalugg is made of
- */
-export const CANON_NOBLES = new Map<Species, Items>([
-  [Species.Kleavor, Items.BlackAugurite],
-  [Species.LilligantHisui, Items.SunStone],
-  [Species.ArcanineHisui, Items.FireStone],
-  [Species.ElectrodeHisui, Items.LeafStone],
-  [Species.AvaluggHisui, Items.NeverMeltIce],
-]);
+const NOBLE = v.strictObject({ treasure: v.string(), burst: v.string() });
+
+/** What each canon Noble leaves its calmers beside the purse, out of `nobles.yaml` */
+export const CANON_NOBLES = new Map<Species, Items>();
+
+/** The Frenzy burst each canon Noble unleashes */
+export const CANON_BURSTS = new Map<Species, Moves>();
+
+for (const [name, written] of Object.entries(v.parse(v.record(v.string(), NOBLE), noblesFile))) {
+  const where = `nobles.yaml: ${name}`;
+  const noble = idOf<Species>(SPECIES_IDS, name, where);
+
+  CANON_NOBLES.set(noble, idOf<Items>(ITEM_IDS, written.treasure, where));
+  CANON_BURSTS.set(noble, idOf<Moves>(MOVE_IDS, written.burst, where));
+}
 
 /**
  * How often an arena whose biome is home to a canon Noble holds one of

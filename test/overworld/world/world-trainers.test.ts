@@ -9,22 +9,22 @@ import registerBiomeSpawns, {
   getSpawnRarity,
   spawnRanks,
 } from '../../../src/data/biome';
-import { isCoreRole } from '../../../src/data/species/best-moves';
+import { isCoreRole } from '../../../src/overworld/builds/roles';
 import { getStoneMega } from '../../../src/data/items/mega-stones';
 import {
   CORE_COUNT,
   assignBuildRoles,
   getBestNature,
   getBestParty,
-} from '../../../src/data/species/best-build';
+} from '../../../src/overworld/builds/best-build';
 import Biome, { getTimeOfDay } from '../../../src/data/ids/biome';
 import { EVERY_LAIR, getBiomeLairs, getLairResidents } from '../../../src/data/overworld/lair';
 import canMeetSpecies from '../../../src/data/overworld/reach';
 import { Items } from '../../../src/data/ids/items';
 import registerItems, { getItemData } from '../../../src/data/items';
-import { getExpertHeldItems } from '../../../src/data/items/expert-loadout';
+import { getExpertHeldItems } from '../../../src/overworld/builds/held-items';
 import { Slots, countAbilitySlots, getSlots } from '../../../src/data/constants/slots';
-import type { CatchSnapshot } from '../../../src/auth/catch-snapshot';
+import type { CatchSnapshot } from '../../../src/model/catch-snapshot';
 import {
   type ItemBand,
   MAX_KINDS,
@@ -33,7 +33,7 @@ import {
 } from '../../../src/data/overworld/item-pool';
 import { Species } from '../../../src/data/ids/species';
 import { getSpeciesAbilityPools, getSpeciesData, registerSpecies } from '../../../src/data/species';
-import { isShiny } from '../../../src/auth/caught-record';
+import { isShiny } from '../../../src/model/caught-record';
 import {
   MAX_EFFORT_PER_STAT,
   MAX_IV,
@@ -42,7 +42,7 @@ import {
   Stats,
   getIV,
 } from '../../../src/data/constants/stats';
-import { type StopRecord, deriveStopReward } from '../../../src/auth/stop-record';
+import { type StopRecord, deriveStopReward } from '../../../src/model/stop-record';
 import ChunkSnapshot, {
   EXECUTIVE_CHANCE,
   NPC_INTERVAL,
@@ -54,7 +54,7 @@ import {
   LEGENDARY_RAID_GOLD,
   MYTHICAL_RAID_GOLD,
   SHADOW_RAID_GOLD,
-} from '../../../src/overworld/raid';
+} from '../../../src/overworld/raid/index';
 import {
   ACE_OUTFIT,
   BOSS_OUTFIT,

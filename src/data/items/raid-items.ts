@@ -1,7 +1,9 @@
 import { isMythicalSpecies } from '../biome';
-import { Species } from '../ids/species';
+import type { Species } from '../ids/species';
 import { getRegisteredSpecies } from '../species';
-import { Items } from '../ids/items';
+import type { Items } from '../ids/items';
+import recordsFile from './records/raid-items.yaml';
+import { recordField } from './yaml';
 
 /**
  * Raid items: the relics that call a mythical out to be fought.
@@ -18,28 +20,7 @@ import { Items } from '../ids/items';
  * mythical rare — see
  * [`src/data/overworld/item-pool.ts`](../overworld/item-pool.ts).
  */
-export const RAID_ITEMS = new Map<Items, Species>([
-  [Items.OldSeaMap, Species.Mew],
-  [Items.GSBall, Species.Celebi],
-  [Items.AuroraTicket, Species.Deoxys],
-  [Items.WishTag, Species.Jirachi],
-  [Items.MemberCard, Species.Darkrai],
-  [Items.ManaphyEgg, Species.Manaphy],
-  [Items.OaksLetter, Species.Shaymin],
-  [Items.AzureFlute, Species.Arceus],
-  [Items.ColtsPetal, Species.Keldeo],
-  [Items.LibertyPass, Species.Victini],
-  [Items.MusicBox, Species.Meloetta],
-  [Items.ColressMachine, Species.Genesect],
-  [Items.HeartDiamond, Species.Diancie],
-  [Items.SealedRing, Species.Hoopa],
-  [Items.SteamValve, Species.Volcanion],
-  [Items.AncientPokeBall, Species.Magearna],
-  [Items.HerosCharm, Species.Marshadow],
-  [Items.WindmillCharm, Species.Zeraora],
-  [Items.MysteryBox, Species.Meltan],
-  [Items.MythicalPechaBerry, Species.Pecharunt],
-]);
+export const RAID_ITEMS = recordField('raid-items', recordsFile, 'calls');
 
 function isRegisteredSpecies(species: Species): boolean {
   return getRegisteredSpecies().includes(species);

@@ -30,7 +30,7 @@ import {
   readOwned,
   searchBox,
 } from '../server/caught-reads';
-import { readOnly } from '../utils/server-calls';
+import { readOnly } from './server-calls';
 import { ServerFlag, isFlagOn } from '../server/flags';
 import check, {
   CATCH_CONSTRAINTS,
@@ -47,11 +47,11 @@ import check, {
   TOKEN,
   UID,
 } from '../server/validate';
-import type { CatchConstraint, CatchContext } from './catch-search';
+import type { CatchConstraint, CatchContext } from '../model/search/catch';
 import { announceBuddyChange } from './buddy-changes';
-import { type CatchOrder, type CaughtPokemon, asCaughtPokemon } from './caught-record';
+import { type CatchOrder, type CaughtPokemon, asCaughtPokemon } from '../model/caught-record';
 import getIdToken from './session';
-import batchedQuery from '../utils/batched-query';
+import batchedQuery from './batched-query';
 
 export {
   HELD_ITEM_LIMIT,
@@ -59,9 +59,9 @@ export {
   getCatchName,
   isFavorite,
   isGuarded,
-} from './caught-record';
-export { NICKNAME_LIMIT, asNickname } from './nickname';
-export type { CatchOrder, CaughtPokemon, OwnershipRecord } from './caught-record';
+} from '../model/caught-record';
+export { NICKNAME_LIMIT, asNickname } from '../model/nickname';
+export type { CatchOrder, CaughtPokemon, OwnershipRecord } from '../model/caught-record';
 
 /** How many ids one read by id sends, as `CATCH_IDS` allows */
 const READ_PAGE = 1000;
@@ -164,7 +164,7 @@ readOnly(readBoxOnServer);
  * The player's pokemon that answer one narrowed search.
  *
  * A search is asked in two passes — see
- * [`catch-search.ts`](./catch-search.ts) — and this is the first: the
+ * [`catch-search.ts`](../model/search/catch/index.ts) — and this is the first: the
  * terms the store can answer, beside the owner. The caller still runs
  * the whole predicate over what comes back, because a good part of the
  * grammar (a plain name, a count of hands, one of several marks) is

@@ -1,0 +1,37 @@
+# What the Mega Evolutions Lumiose City brought wear, described in this
+# engine's terms rather than the mainline's
+
+# Mega Meganium
+MegaSol:
+  name: Mega Sol
+  description: Its own moves go off as if the sun were out, whatever the sky is doing.
+
+# Mega Feraligatr
+Dragonize:
+  name: Dragonize
+  description: Its Normal moves become Dragon moves and hit 1.2x.
+
+# Mega Lucario Z
+AuraGuard:
+  name: Aura Guard
+  description: Contact moves do 1/2 damage to it.
+
+# Mega Excadrill
+PiercingDrill:
+  name: Piercing Drill
+  description: Its contact moves go through a guard, breaking it, but only 1/4 of the blow lands.
+
+# Mega Eelektross
+Eelevate:
+  name: Eelevate
+  description: It floats over Ground moves and hazards on the ground, and each foe it knocks out raises its highest stat by 1 stage.
+
+# Mega Pyroar
+FireMane:
+  name: Fire Mane
+  description: Its Fire moves hit 1.5x.
+
+# Mega Scovillain
+SpicySpray:
+  name: Spicy Spray
+  description: Any move that hurts it burns the attacker.

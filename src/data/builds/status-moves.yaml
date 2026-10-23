@@ -1,0 +1,138 @@
+# What a move that deals no damage is worth a slot for an expert build.
+# Only the ones that change a fight rather than decorate it, priced against
+# the attacks they displace: a stat-doubling setup beats a mid attack, a heal
+# matches one, and a crippling status sits just under.
+#
+# `worth` is the price, `kind` is what the move is for (a move with none is a
+# Cripple), and `serves` is the half of the split a setup move sharpens. A
+# setup that raises a defence or a speed serves either, and has no `serves`
+
+# Setup: what a pokemon spends its first cast on when the rest of
+# the fight is worth more for it
+SwordsDance: { worth: 120, kind: Setup, serves: Physical }
+DragonDance: { worth: 120, kind: Setup, serves: Physical }
+TailGlow: { worth: 120, kind: Setup, serves: Special }
+CalmMind: { worth: 115, kind: Setup, serves: Special }
+NastyPlot: { worth: 115, kind: Setup, serves: Special }
+BellyDrum: { worth: 110, kind: Setup, serves: Physical }
+BulkUp: { worth: 110, kind: Setup, serves: Physical }
+Agility: { worth: 85, kind: Setup }
+RockPolish: { worth: 85, kind: Setup }
+Growth: { worth: 90, kind: Setup, serves: Special }
+Amnesia: { worth: 90, kind: Setup }
+IronDefense: { worth: 88, kind: Setup }
+CosmicPower: { worth: 86, kind: Setup }
+DefendOrder: { worth: 86, kind: Setup }
+DoubleTeam: { worth: 85, kind: Setup }
+Acupressure: { worth: 80, kind: Setup }
+QuiverDance: { worth: 120, kind: Setup, serves: Special }
+ShellSmash: { worth: 120, kind: Setup }
+ShiftGear: { worth: 115, kind: Setup, serves: Physical }
+Coil: { worth: 110, kind: Setup, serves: Physical }
+HoneClaws: { worth: 105, kind: Setup, serves: Physical }
+WorkUp: { worth: 100, kind: Setup }
+CottonGuard: { worth: 88, kind: Setup }
+Autotomize: { worth: 85, kind: Setup }
+
+# Health back, which is worth about what a hit takes off
+Recover: { worth: 105, kind: Heal }
+# Cast at the user or a teammate: see `EITHER_HEALS`
+SoftBoiled: { worth: 105, kind: Mend }
+MilkDrink: { worth: 105, kind: Mend }
+SlackOff: { worth: 105, kind: Heal }
+Roost: { worth: 105, kind: Heal }
+HealOrder: { worth: 105, kind: Heal }
+Synthesis: { worth: 95, kind: Heal }
+MorningSun: { worth: 95, kind: Heal }
+Moonlight: { worth: 95, kind: Heal }
+Wish: { worth: 85, kind: Mend }
+AquaRing: { worth: 85, kind: Heal }
+
+# And taking somebody out of the fight without hitting them
+Spore: { worth: 115 }
+SleepPowder: { worth: 100 }
+ThunderWave: { worth: 100 }
+WillOWisp: { worth: 100 }
+Toxic: { worth: 85 }
+LeechSeed: { worth: 100, kind: Heal }
+Substitute: { worth: 80, kind: Shield }
+Glare: { worth: 95 }
+StunSpore: { worth: 95 }
+Screech: { worth: 90 }
+Reflect: { worth: 90, kind: Screen }
+LightScreen: { worth: 90, kind: Screen }
+LovelyKiss: { worth: 90 }
+DarkVoid: { worth: 90 }
+GastroAcid: { worth: 80 }
+WorrySeed: { worth: 75 }
+Captivate: { worth: 70 }
+Hypnosis: { worth: 85 }
+Encore: { worth: 85 }
+Taunt: { worth: 85 }
+ConfuseRay: { worth: 85 }
+Protect: { worth: 85, kind: Shield }
+Yawn: { worth: 85 }
+Sing: { worth: 80 }
+# Changing what the target is rather than what it has, which only
+# sometimes matters
+Soak: { worth: 70 }
+PowerSplit: { worth: 65 }
+GuardSplit: { worth: 65 }
+SimpleBeam: { worth: 60 }
+Entrainment: { worth: 60 }
+
+# What a support lays over its own side or under the other's. They
+# are priced low here and lifted by the role that wants them
+Spikes: { worth: 90, kind: Hazard }
+StealthRock: { worth: 90, kind: Hazard }
+ToxicSpikes: { worth: 85, kind: Hazard }
+# It changes who lands first rather than who acts more, and it
+# slows its own side's quick moves as much as the far side's
+TrickRoom: { worth: 70, kind: Room }
+LuckyChant: { worth: 70, kind: Screen }
+Safeguard: { worth: 80, kind: Screen }
+HealBell: { worth: 85, kind: Cure }
+Aromatherapy: { worth: 85, kind: Cure }
+Haze: { worth: 80, kind: Screen }
+Mist: { worth: 70, kind: Screen }
+WideGuard: { worth: 75, kind: Screen }
+QuickGuard: { worth: 70, kind: Screen }
+MatBlock: { worth: 70, kind: Screen }
+CraftyShield: { worth: 65, kind: Screen }
+Detect: { worth: 80, kind: Shield }
+Endure: { worth: 60, kind: Shield }
+KingsShield: { worth: 90, kind: Shield }
+SpikyShield: { worth: 90, kind: Shield }
+StickyWeb: { worth: 85, kind: Hazard }
+Refresh: { worth: 60, kind: Heal }
+AromaticMist: { worth: 70, kind: Boost }
+AllySwitch: { worth: 70, kind: Redirect }
+WonderRoom: { worth: 60, kind: Room }
+MagicRoom: { worth: 60, kind: Room }
+
+# Sleeping off everything at once, which is only a plan with
+# something to do while asleep
+Rest: { worth: 80, kind: Heal }
+SleepTalk: { worth: 60, kind: Shield }
+
+# What one of the six does for the other five. A support standing
+# behind two cores is the pokemon these were written for
+HelpingHand: { worth: 105, kind: Boost }
+FollowMe: { worth: 100, kind: Redirect }
+RagePowder: { worth: 100, kind: Redirect }
+HealPulse: { worth: 95, kind: Mend }
+AfterYou: { worth: 70, kind: Boost }
+# Twice as often for the whole side while it blows
+Tailwind: { worth: 100, kind: Screen }
+BatonPass: { worth: 90, kind: Boost }
+# The user is spent to make a teammate whole, which only a support
+# standing behind two cores can afford
+LunarDance: { worth: 85, kind: Mend }
+HealingWish: { worth: 80, kind: Mend }
+
+# The skies. Worth nothing on their own: what prices one is what
+# the build is waiting to do under it
+SunnyDay: { worth: 100, kind: Weather }
+RainDance: { worth: 100, kind: Weather }
+Sandstorm: { worth: 90, kind: Weather }
+Hail: { worth: 90, kind: Weather }

@@ -9,27 +9,31 @@ in the first place.
 received it, as a local ISO 8601 string in _their_ own zone the way a catch date
 is, and **how**:
 
-| `Acquisition` | Written by         | What it means                                  |
-| ------------- | ------------------ | ---------------------------------------------- |
-| `Caught`      | `recordCatch`      | They threw the ball                            |
-| `Egg`         | `writeEgg`         | It came to them as an egg, nest or breeder     |
-| `Auction`     | `claimAuction`     | They won it on the block                       |
-| `Trade`       | nothing yet        | Reserved for a swap between two players        |
-| `Gift`        | `claimMysteryGift` | They took it out of a mystery gift             |
-| `Revived`     | `reviveFossil`     | They carried a fossil to somebody with a bench |
+| `Acquisition` | Written by                | What it means                                     |
+| ------------- | ------------------------- | ------------------------------------------------- |
+| `Caught`      | `throwAt`                 | They threw the ball                               |
+| `Egg`         | `writeEgg`                | It came to them as an egg, nest or breeder        |
+| `Auction`     | `claimAuction`            | They won it on the block                          |
+| `Trade`       | `acceptTrade`, the trader | They swapped for it, with a player or the trader  |
+| `Gift`        | `claimMysteryGift`        | They took it out of a mystery gift                |
+| `Revived`     | `reviveFossil`            | They carried a fossil to somebody with a bench    |
+| `Shed`        | `evolveCatch`             | Another pokemon evolving left it behind in a ball |
 
 It is a different question from the record's own `type` ([Encounter
 kinds](encounters.md#encounter-kinds)), which says how the pokemon was first met
 and never changes. A Mewtwo can be a legendary raid prize _and_ something its
 second owner bought, and the two fields say so separately.
 
-`Trade` exists before player-to-player trading does, so a member added later
-cannot leave old records to be told apart from new ones by their shape. A lot
-won at auction is recorded as `Auction`, and it is what sets the record's
-`traded` field today.
+`Trade` is written by `acceptTrade`, a swap between two players, and by the NPC
+trader. A trade and a lot won at auction both set the record's `traded` field.
+
+An owner who is not a player has no uid. The trader's pokemon begins its
+history with an entry naming the trader in `owner_name`, and a row must name one
+or the other.
 
 An entry also carries `paid`: what that owner spent in gold, where the handover
-cost gold at all. Only `claimAuction` writes it, with the winning bid. It
+cost gold at all. `claimAuction` writes it with the winning bid, and
+`acceptTrade` writes it for whichever side added gold to a swap. It
 belongs to the **handover** rather than to the pokemon. A Mewtwo may come round
 the block twice, and what the second winner paid says nothing about what the
 first did. It is the only place the figure survives, since the lot is settled
@@ -45,7 +49,7 @@ A record written before the field existed still reads correctly, because both
 cases are knowable. The **first** entry is where the pokemon began, which the
 record's `type` already says, where `Hatched` means an egg and anything else
 means a catch. Every entry **after** it can only be a sale, since the auction
-house has been the one thing that ever appended one. `reclaimAuction` appends
+house was the one thing that appended one before then. `reclaimAuction` appends
 nothing: an unsold lot came back to the same person.
 
 The catch dialog shows the chain under **Owners**, oldest first: who, how they

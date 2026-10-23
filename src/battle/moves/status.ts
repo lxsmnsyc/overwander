@@ -9,7 +9,7 @@ import {
   TEAM_STATUS_MOVES,
 } from '../../data/battle';
 import { getMoveData } from '../../data/moves';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import resolveMoveTargets from '../mechanics/move/targeting';
 import type Unit from '../unit';

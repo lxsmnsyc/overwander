@@ -56,7 +56,9 @@ Twins:
   sheets: [characters/dppt/twins]
 Policeman:
   types: [Fire, Dark]
-  sheets: [characters/dppt/policeman]
+  sheets:
+    - characters/dppt/policeman
+    - characters/frlg/officer
 Jogger:
   types: [Normal, Fighting]
   sheets: [characters/dppt/jogger]
@@ -67,6 +69,7 @@ Breeder:
     - characters/dppt/breeder-m
 # And its own of the trades already on the road
 SinnohAceTrainer:
+  ace: true
   types: []
   sheets:
     - characters/dppt/ace-trainer-f

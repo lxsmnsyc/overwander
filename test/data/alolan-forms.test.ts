@@ -7,7 +7,8 @@ import { TimeOfDay } from '../../src/data/ids/biome';
 import { Items } from '../../src/data/ids/items';
 import type { Moves } from '../../src/data/ids/moves';
 import Regions from '../../src/data/ids/regions';
-import { ALOLAN_FORMS, Genders, Species } from '../../src/data/ids/species';
+import { Genders, Species } from '../../src/data/ids/species';
+import { ALOLAN_FORMS } from '../../src/data/ids/forms';
 import registerItems from '../../src/data/items';
 import { registerMoves } from '../../src/data/moves';
 import {

@@ -8,35 +8,43 @@ badges won, achievements climbed, and the title they wear over their name.
 The region's gyms, its Elite Four and its Champion each keep a landmark of their
 own, and beating one is kept for good.
 
-| Award               | How many | Earned by                              |
-| ------------------- | -------- | -------------------------------------- |
-| **Gym badge**       | 32       | Beating that gym's leader              |
-| **Elite Four mark** | 16       | Beating that member of the Elite Four  |
-| **Champion**        | 4        | Beating that league's Champion          |
-| **Legend's mark**   | 2        | Beating a legend, who asks for nothing |
+| Award               | How many | Earned by                                                                                            |
+| ------------------- | -------- | ---------------------------------------------------------------------------------------------------- |
+| **Gym badge**       | 50       | Beating that gym's leader                                                                            |
+| **Elite Four mark** | 24       | Beating that member of the Elite Four                                                                |
+| **Champion**        | 6        | Beating that league's Champion                                                                       |
+| **Legend's mark**   | 5        | Beating a legend, who asks for nothing                                                               |
 | **Frontier symbol** | 24       | Taking a facility: silver for the win, gold for its second three. Hoenn hangs symbols, Sinnoh prints |
-| **Syndicate marks** | 19       | Beating a grunt, an executive or the boss of Team Rocket, Team Magma, Team Aqua or Team Galactic |
-| **Dex medal**       | 4        | Filling that region's dex                |
+| **Syndicate marks** | 30       | Beating a grunt, an executive or the boss of any of the six syndicates                               |
+| **Dex medal**       | 5        | Filling that region's dex                                                                            |
 
-Kanto, Johto, Hoenn and Sinnoh keep eight gyms apiece, and their leaders share
-the world's countries: which of them keeps a given gym is fixed for that gym, so
-a badge is always in the same place. Hoenn seats nine people for its eight,
-since Tate and Liza keep one gym between them and pay the one badge either way.
-Sinnoh's eight are Roark, Gardenia, Maylene, Crasher Wake, Fantina, Byron,
-Candice and Volkner.
+Six regions keep a league. Kanto, Johto, Hoenn, Sinnoh and Kalos keep eight gyms
+apiece and Unova keeps ten, and their leaders share the world's countries: which
+of them keeps a given gym is fixed for that gym, so a badge is always in the
+same place. Hoenn seats nine people for its eight, since Tate and Liza keep one
+gym between them and pay the one badge either way. Sinnoh's eight are Roark,
+Gardenia, Maylene, Crasher Wake, Fantina, Byron, Candice and Volkner.
+
+Unova seats thirteen people over its ten badges. Cilan, Chili and Cress keep
+Striaton between them and pay the one Trio Badge, and Lenora and Cheren both pay
+the Basic Badge, since Nacrene's fight passes to Aspertia a league later. The
+rest are Burgh, Elesa, Clay, Skyla, Brycen, Drayden, Roxie and Marlon. Kalos's
+eight are Viola, Grant, Korrina, Ramos, Clemont, Valerie, Olympia and Wulfric.
 
 Kanto's and Johto's Elite Fours come to seven people rather than eight, four
 apiece. Bruno keeps a seat in each, and each is its own fight with its own mark:
 walking only one region's gyms earns you the Bruno of that region and that mark
 alone. Hoenn's four are its own four people, and so are Sinnoh's: Aaron, Bertha,
-Flint and Lucian. Each of the **Elite Four asks to see all eight of their own
-league's badges** before they will fight, and each **Champion asks for all four
-of their own league's marks**. Sinnoh's champion is Cynthia.
+Flint and Lucian. Unova's are Shauntal, Marshal, Grimsley and Caitlin, and
+Kalos's are Malva, Siebold, Wikstrom and Drasna. Each of the **Elite Four asks
+to see every badge of their own league** before they will fight, and each
+**Champion asks for all four of their own league's marks**. Sinnoh's champion is
+Cynthia, Unova's is Iris and Kalos's is Diantha.
 
-A **legend** stands outside all of that. One turns up in a champion's seat one
-window in sixty-four, and under the rarest skies for certain; no badge case is
-asked for, and beating one leaves their mark. See
-[People you meet](npcs.md).
+A **legend** stands outside all of that. There are five: Red, Steven, N, Alder
+and AZ. One turns up in a champion's seat one window in sixty-four, and under
+the rarest skies for certain; no badge case is asked for, and beating one leaves
+their mark. See [Gyms and the league](npc-league.md).
 
 An award also counts how many times its fight has been won, since a gym can be
 challenged again whenever its window comes round. Winning once puts the badge on
@@ -56,8 +64,8 @@ There are three kinds of line:
   claimed, raids won, trades made, auctions settled, friends made, portals
   crossed, pairs bred, shadows purified and biomes discovered. The Pathfinder's
   Platinum is every biome the world grows.
-- **Types**, one per type, counting lifetime catches of it. A dual-type pokemon
-  counts for both.
+- **Types**, one for each of the fifteen types the first generation knew,
+  counting lifetime catches of it. A dual-type pokemon counts for both.
 - **Trainer classes**, one per class of duelling trainer, counting wins against
   them. These climb far more slowly, since a trainer stands for one window and
   pays once, and the thresholds are priced for that.
@@ -67,15 +75,15 @@ There are three kinds of line:
 A title is worn over the name on the profile, one at a time, in the colour of
 the tier that unlocked it.
 
-| Title                 | Unlocked by                         |
-| --------------------- | ----------------------------------- |
-| **League Challenger** | Every badge in the region           |
-| **Elite Conqueror**   | All four of the Elite Four          |
-| **Champion**          | The Champion's own seat             |
-| **Legend Breaker**    | Any legend's mark                   |
-| **{Region} Professor** | That region's dex filled           |
-| A line's title        | That achievement line at **Bronze** |
-| Its Master form       | The same line at **Platinum**       |
+| Title                  | Unlocked by                                     |
+| ---------------------- | ----------------------------------------------- |
+| **League Challenger**  | Every one of Kanto's eight badges               |
+| **Elite Conqueror**    | All four of Kanto's Elite Four                  |
+| **{Region} Champion**  | That Champion, in Kanto, Johto, Hoenn or Sinnoh |
+| **Legend Breaker**     | Any legend's mark                               |
+| **{Region} Professor** | That region's dex filled                        |
+| A line's title         | That achievement line at **Bronze**             |
+| Its Master form        | The same line at **Platinum**                   |
 
 Every achievement line carries a pair of titles, so a Collector at Bronze may be
 called one and a Collector at Platinum may be called a Master Collector. The
@@ -97,22 +105,23 @@ Two are yours from the start, and you may switch between them whenever you like:
 **Red** and **Leaf**. Every other character is earned, from the same deeds the
 titles come from.
 
-| Character                 | Unlocked by                     |
-| ------------------------- | ------------------------------- |
-| A gym leader              | That leader's badge             |
-| One of the Elite Four     | Beating that member             |
-| The Champion's other look | The Champion's own seat         |
-| A legend's other looks    | That legend's mark              |
-| A syndicate's boss        | Beating Giovanni, Maxie or Archie |
-| A syndicate executive     | Beating that executive          |
-| A syndicate's uniform     | Beating any of that team's grunts |
-| **Professor Oak**         | Kanto's dex filled              |
-| **Professor Elm**         | Johto's dex filled              |
-| **Professor Birch**       | Hoenn's dex filled              |
-| **Professor Rowan**       | Sinnoh's dex filled, in both his looks |
-| Oak in Johto              | Both dexes filled               |
-| A Kanto leader's later look | That badge **and** Johto's crown |
-| A class of trainer        | That region's class at **Bronze** |
+| Character                   | Unlocked by                            |
+| --------------------------- | -------------------------------------- |
+| A gym leader                | That leader's badge                    |
+| One of the Elite Four       | Beating that member                    |
+| A Champion's looks          | That Champion's seat                   |
+| A legend's other looks      | That legend's mark                     |
+| A syndicate's boss          | Beating that boss                      |
+| A syndicate executive       | Beating that executive                 |
+| A syndicate's uniform       | Beating any of that team's grunts      |
+| **Professor Oak**           | Kanto's dex filled                     |
+| **Professor Elm**           | Johto's dex filled                     |
+| **Professor Birch**         | Hoenn's dex filled                     |
+| **Professor Rowan**         | Sinnoh's dex filled, in both his looks |
+| **Professor Juniper**       | Unova's dex filled                     |
+| Oak in Johto                | Kanto's and Johto's dexes filled       |
+| A Kanto leader's later look | That badge **and** Johto's crown       |
+| A class of trainer          | That region's class at **Bronze**      |
 
 So beating Brock lets you go about as Brock, and putting down enough Bug
 Catchers is what lets you dress as one. Where a character was drawn twice, once
@@ -129,8 +138,9 @@ Janine's rather than her father's, so the Soul Badge is what pays her.
 
 The professors are earned by filling a dex rather than by fighting: Kanto's pays
 Oak in the two looks he is drawn in there, Johto's pays Elm, Hoenn's pays Birch,
-Sinnoh's pays Rowan in both of his, and holding both of the first two pays Oak as
-he is drawn in Johto.
+Sinnoh's pays Rowan in both of his, Unova's pays Juniper, and holding both of the
+first two pays Oak as he is drawn in Johto. Kalos and the regions after it keep
+no dex chain yet, so nothing is paid for filling theirs.
 
 ## See also
 

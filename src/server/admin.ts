@@ -1,9 +1,9 @@
 import 'server-only';
-import { type RaidKind, asRaidRecord, getRaidTitle } from '../auth/raid-record';
+import { type RaidKind, asRaidRecord, getRaidTitle } from '../model/raid-record';
 import type { Species } from '../data/ids/species';
 import { WORLD_GENERATION } from '../overworld/current';
 import { getSql } from './db';
-import type { PositionRecord } from '../auth/position-record';
+import type { PositionRecord } from '../model/position-record';
 import { readPosition, readPositions } from './positions';
 import { asNumber, asRecord, asString } from './read';
 

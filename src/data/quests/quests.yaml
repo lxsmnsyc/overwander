@@ -1,0 +1,207 @@
+# The written quests. `chains` holds each chain's quests in the order they
+# are claimed, the chains in the order the board shows them; the pokedex
+# chains are generated after these (dex.ts). Each quest asks `requirements`
+# and pays `rewards`. A requirement is a counter (`metric` and `count`,
+# narrowed by at most one of `species`, `family`, `type`, `item`, `npc`,
+# `landmark`, `move`, `foe` or `trainer`), `dex: n` distinct species caught,
+# or `turn-in` items taken from the bag. A reward is an `item` and `amount`,
+# a finished `catch`, a staged `encounter`, an `egg` or an `award`. The names
+# are text/en/quests.yaml.
+
+chains:
+  Catching: [FirstCatch, GrowingTeam, NewFaces, FieldNotes]
+  Battling: [PickingFights, RocketTrouble, CleanupCrew]
+  Raiding: [RaidRookie, BossDown, SirenVeteran]
+  Phenomena: [OddLights, StormChaser]
+  Eggs: [EggSpotting, OutForAWalk, FreshHatch, Matchmaker, NestForANibble]
+  Happiness: [SideBySide, DayAtTheSpa]
+  Training: [GrowthSpurt, BalancedDiet, FineTuning, NewTricks, FullBloom]
+  Auctions: [OpeningBid, Sold]
+  Biomes: [OverTheHill, ThroughTheDoor, FarAfield]
+  Friends: [FriendlyFace, FairSwap]
+
+quests:
+  # Catcher's Start: throw a ball, then meet the dex
+  FirstCatch:
+    requirements:
+      - { metric: Catches, count: 1 }
+    rewards:
+      - { item: PokeBall, amount: 10 }
+  GrowingTeam:
+    requirements:
+      - { metric: Catches, count: 5 }
+    rewards:
+      - { item: GreatBall, amount: 5 }
+  NewFaces:
+    requirements:
+      - { dex: 5 }
+    rewards:
+      - { item: UltraBall, amount: 3 }
+  FieldNotes:
+    requirements:
+      - { dex: 10 }
+    rewards:
+      - { encounter: Scyther, level: 15 }
+
+  # Roadside Rivals: duels, Team Rocket, and the shadow they leave
+  PickingFights:
+    requirements:
+      - { metric: BattleWins, count: 1, foe: Trainer }
+    rewards:
+      - { item: SuperPotion, amount: 5 }
+  RocketTrouble:
+    requirements:
+      - { metric: BattleWins, count: 1, foe: Rocket }
+    rewards:
+      - { item: Revive, amount: 2 }
+  CleanupCrew:
+    requirements:
+      - { metric: Purifies, count: 1 }
+    rewards:
+      - { item: PurifyingGem, amount: 1 }
+
+  # Raid Sirens: answer one, win one, make a habit of it
+  RaidRookie:
+    requirements:
+      - { metric: RaidRuns, count: 1 }
+    rewards:
+      - { item: HyperPotion, amount: 5 }
+  BossDown:
+    requirements:
+      - { metric: RaidWins, count: 1 }
+    rewards:
+      - { catch: Eevee, level: 5, ball: PremierBall }
+  SirenVeteran:
+    requirements:
+      - { metric: RaidWins, count: 5 }
+    rewards:
+      - { item: RareCandy, amount: 3 }
+
+  # Strange Weather: what a phenomenon hides
+  OddLights:
+    requirements:
+      - { metric: Landmarks, count: 1, landmark: Phenomenon }
+    rewards:
+      - { item: SitrusBerry, amount: 3 }
+  StormChaser:
+    requirements:
+      - { metric: Landmarks, count: 5, landmark: Phenomenon }
+    rewards:
+      - { item: MoonStone, amount: 1 }
+
+  # The Hatchery: find a nest, walk it warm, then breed your own. The
+  # berries the first quest pays are the ones the last one asks back, so the
+  # chain feeds itself
+  EggSpotting:
+    requirements:
+      - { metric: Landmarks, count: 1, landmark: Nest }
+    rewards:
+      - { item: OranBerry, amount: 5 }
+  OutForAWalk:
+    requirements:
+      - { metric: Steps, count: 1000 }
+    rewards:
+      - { item: SitrusBerry, amount: 2 }
+  FreshHatch:
+    requirements:
+      - { metric: Hatches, count: 1 }
+    rewards:
+      - { item: HPUp, amount: 1 }
+  Matchmaker:
+    requirements:
+      - { metric: NpcVisits, count: 1, npc: Breeder }
+    rewards:
+      - { item: Everstone, amount: 1 }
+  NestForANibble:
+    requirements:
+      - { turn-in: OranBerry, count: 3 }
+    rewards:
+      - { egg: Chansey }
+
+  # Warm Company: friendship is walked and groomed
+  SideBySide:
+    requirements:
+      - { metric: Steps, count: 2500 }
+    rewards:
+      - { item: OranBerry, amount: 10 }
+  DayAtTheSpa:
+    requirements:
+      - { metric: NpcVisits, count: 1, npc: Groomer }
+    rewards:
+      - { item: LuxuryBall, amount: 1 }
+
+  # Coaching Course: levels, vitamins, moves, and the payoff. Growth Spurt
+  # hands over the Protein that Balanced Diet asks to see used
+  GrowthSpurt:
+    requirements:
+      - { metric: LevelUps, count: 1 }
+    rewards:
+      - { item: RareCandy, amount: 1 }
+      - { item: Protein, amount: 1 }
+  BalancedDiet:
+    requirements:
+      - { metric: ItemUses, count: 1, item: Protein }
+    rewards:
+      - { item: Iron, amount: 1 }
+      - { item: Carbos, amount: 1 }
+  FineTuning:
+    requirements:
+      - { metric: EffortAssigned, count: 10 }
+    rewards:
+      - { item: MuscleWing, amount: 3 }
+      - { item: SwiftWing, amount: 3 }
+  NewTricks:
+    requirements:
+      - { metric: MovesLearned, count: 1 }
+    rewards:
+      - { item: HeartScale, amount: 1 }
+  FullBloom:
+    requirements:
+      - { metric: Evolutions, count: 1 }
+    rewards:
+      - { item: PPUp, amount: 1 }
+
+  # Auction House: a bid placed, then a lot settled either side
+  OpeningBid:
+    requirements:
+      - { metric: Bids, count: 1 }
+    rewards:
+      - { item: Nugget, amount: 1 }
+  Sold:
+    requirements:
+      - { metric: Auctions, count: 1 }
+    rewards:
+      - { item: BigNugget, amount: 1 }
+
+  # The Wide World: the map is bigger than the first field
+  OverTheHill:
+    requirements:
+      - { metric: Biomes, count: 3 }
+    rewards:
+      - { item: TinyMushroom, amount: 2 }
+  ThroughTheDoor:
+    requirements:
+      - { metric: Landmarks, count: 1, landmark: Portal }
+    rewards:
+      - { item: PortalKey, amount: 1 }
+  FarAfield:
+    # Doors rather than biomes. A counter behind a prerequisite is measured
+    # from the moment it opens, and there are only 29 biomes in the world, so
+    # a player who had already seen most of them could never find another
+    # eight
+    requirements:
+      - { metric: Landmarks, count: 5, landmark: Portal }
+    rewards:
+      - { item: PearlString, amount: 1 }
+
+  # Better Together: a friend made, then a trade across the tie
+  FriendlyFace:
+    requirements:
+      - { metric: Friends, count: 1 }
+    rewards:
+      - { item: UltraBall, amount: 3 }
+  FairSwap:
+    requirements:
+      - { metric: Trades, count: 1 }
+    rewards:
+      - { item: GreatBall, amount: 5 }

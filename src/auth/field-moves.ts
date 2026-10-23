@@ -4,7 +4,7 @@ import {
   useTeleport as useTeleportOnServerSide,
 } from '../server/field-moves';
 import check, { TOKEN } from '../server/validate';
-import type { PositionRecord } from './position-record';
+import type { PositionRecord } from '../model/position-record';
 import { syncServerClock } from './clock';
 import getIdToken from './session';
 

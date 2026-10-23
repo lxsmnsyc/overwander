@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Status casts",
+  "type": "object",
+  "propertyNames": {
+    "$ref": "names.json#/definitions/status"
+  },
+  "additionalProperties": {
+    "type": "array",
+    "items": {
+      "$ref": "names.json#/definitions/sprite-anim"
+    },
+    "description": "Most wanted first, ending on a common clip"
+  }
+}

@@ -23,7 +23,7 @@ import type { Moves } from '../../data/ids/moves';
 import { isAbilityPatch } from '../../data/items/ability-items';
 import { isPPItem } from '../../data/items/vitamins';
 import { type InventoryEntry, getInventory } from '../../auth/inventory';
-import { getLocalOffset } from '../../auth/local-time';
+import { getLocalOffset } from '../../model/local-time';
 import useEscapeRope from '../../auth/escape-rope';
 import { hostMythicalRaid } from '../../auth/raids';
 import { isEscapeRope } from '../../data/items/escape-rope';

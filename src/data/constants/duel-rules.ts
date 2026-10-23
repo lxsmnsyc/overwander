@@ -1,6 +1,7 @@
 import { SpawnRarity, getSpawnRarity } from '../biome';
 import type { Items } from '../ids/items';
-import { Species, getBaseFormSpecies, speciesDexNumber } from '../ids/species';
+import { Species } from '../ids/species';
+import { getBaseFormSpecies, speciesDexNumber } from '../ids/forms';
 import { getItemForms } from '../items/form-items';
 import { getSpeciesData } from '../species';
 import { DuelBan } from './duel-bans';

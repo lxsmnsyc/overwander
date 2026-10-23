@@ -1,0 +1,19 @@
+# Moves that are an earlier move's picture in all but name
+BabyDollEyes: { landing: Hearts }
+Infestation: { landing: Buzz }
+
+# The legendary and mythical signatures
+OblivionWing: { landing: Oblivion }
+ThousandArrows: { landing: Arrows }
+ThousandWaves: { landing: Groundswell }
+
+# Every older region's signatures, one family each, that once borrowed another move's
+# picture
+LandsWrath: { landing: Wrathland }
+
+# The legendary and mythical signatures
+LightOfRuin: { landing: Ruin }
+OriginPulse: { landing: Origin }
+PrecipiceBlades: { landing: Precipice }
+DragonAscent: { landing: Ascent }
+HyperspaceFury: { landing: Fury }

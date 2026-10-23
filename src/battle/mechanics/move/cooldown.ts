@@ -1,7 +1,7 @@
 import { EventPriority } from '../../../core/event-emitter';
 import { Stats } from '../../../data/constants/stats';
 import { PP_COOLDOWN_BASIS, getSpeedCooldownFactor } from '../../../data/moves';
-import type Battle from '../../core';
+import type Battle from '../../battle';
 import type { MoveState } from '../../events';
 import { BattleEvents } from '../../events';
 

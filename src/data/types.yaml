@@ -1,0 +1,91 @@
+# Each type: the colour it is drawn in, and what it does attacking.
+# A type hits whatever it lists under `effective` for double, under
+# `resistant` for half and under `immune` not at all; everything else
+# takes it at face value. The colours are the series' own, so a player
+# who knows what Water looks like need not read the word.
+# `Unknown` is the type nothing is, drawn the colour of nothing in
+# particular, and neither it nor Stellar has a row of matchups.
+
+Unknown:
+  color: '#8a8a8a'
+Normal:
+  color: '#9fa19f'
+  resistant: [Rock, Steel]
+  immune: [Ghost]
+Fighting:
+  color: '#ff8000'
+  effective: [Normal, Rock, Steel, Ice, Dark]
+  resistant: [Flying, Poison, Bug, Psychic, Fairy]
+  immune: [Ghost]
+Flying:
+  color: '#81b9ef'
+  effective: [Fighting, Bug, Grass]
+  resistant: [Rock, Steel, Electric]
+Poison:
+  color: '#9141cb'
+  effective: [Grass, Fairy]
+  resistant: [Poison, Ground, Rock, Ghost]
+  immune: [Steel]
+Ground:
+  color: '#915121'
+  effective: [Poison, Electric, Rock, Steel, Fire]
+  resistant: [Bug, Grass]
+  immune: [Flying]
+Rock:
+  color: '#afa981'
+  effective: [Flying, Bug, Fire, Ice]
+  resistant: [Fighting, Ground, Steel]
+Bug:
+  color: '#91a119'
+  effective: [Grass, Psychic, Dark]
+  resistant: [Fighting, Flying, Poison, Ghost, Steel, Fire, Fairy]
+Ghost:
+  color: '#704170'
+  effective: [Ghost, Psychic]
+  resistant: [Dark]
+  immune: [Normal]
+Steel:
+  color: '#60a1b8'
+  effective: [Rock, Ice, Fairy]
+  resistant: [Steel, Fire, Water, Electric]
+Fire:
+  color: '#e62829'
+  effective: [Bug, Steel, Grass, Ice]
+  resistant: [Rock, Fire, Water, Dragon]
+Water:
+  color: '#2980ef'
+  effective: [Rock, Ground, Fire]
+  resistant: [Water, Grass, Dragon]
+Grass:
+  color: '#3fa129'
+  effective: [Rock, Ground, Water]
+  resistant: [Flying, Poison, Bug, Steel, Fire, Grass, Dragon]
+Electric:
+  color: '#fac000'
+  effective: [Flying, Water]
+  resistant: [Grass, Electric, Dragon]
+  immune: [Ground]
+Psychic:
+  color: '#ef4179'
+  effective: [Fighting, Poison]
+  resistant: [Steel, Psychic]
+  immune: [Dark]
+Ice:
+  color: '#3dcef3'
+  effective: [Flying, Ground, Grass, Dragon]
+  resistant: [Steel, Fire, Water, Ice]
+Dragon:
+  color: '#5060e1'
+  effective: [Dragon]
+  resistant: [Steel]
+  immune: [Fairy]
+Dark:
+  color: '#624d4e'
+  effective: [Psychic, Ghost]
+  resistant: [Fighting, Dark, Fairy]
+Fairy:
+  color: '#ef70ef'
+  effective: [Fighting, Dragon, Dark]
+  resistant: [Poison, Steel, Fire]
+Stellar:
+  color: '#40b5a5'

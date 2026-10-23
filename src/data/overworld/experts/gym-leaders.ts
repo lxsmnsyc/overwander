@@ -32,7 +32,7 @@ export { GymLeader };
  * in Aspertia a league later, so the Basic Badge has two keepers as
  * well. Iris is left out, since Opelucid is Drayden's here
  */
-const LEADER = v.object({
+const LEADER = v.strictObject({
   type: v.string(),
   badge: v.string(),
   sheets: v.array(v.string()),
@@ -41,10 +41,15 @@ const LEADER = v.object({
   signature: v.string(),
 });
 
+const SAID = v.strictObject({ name: v.string(), quote: v.string() });
+
 /** Every leader, in the order they are numbered */
 export const GYM_LEADERS: GymLeader[] = [];
 
 export const GYM_LEADER_NAMES: Record<number, string> = {};
+
+/** What each says as the challenge is put */
+export const GYM_LEADER_QUOTES: Record<number, string> = {};
 
 /** What each leader fields */
 export const GYM_LEADER_TYPES: Record<number, Types> = {};
@@ -102,9 +107,11 @@ for (const [name, written] of Object.entries(v.parse(v.record(v.string(), LEADER
 }
 GYM_LEADERS.sort((one, two) => one - two);
 
-for (const [name, title] of Object.entries(v.parse(v.record(v.string(), v.string()), namesFile))) {
-  GYM_LEADER_NAMES[idOf<GymLeader>(GYM_LEADER_IDS, name, `text/en/gym-leaders.yaml: ${name}`)] =
-    title;
+for (const [name, said] of Object.entries(v.parse(v.record(v.string(), SAID), namesFile))) {
+  const leader = idOf<GymLeader>(GYM_LEADER_IDS, name, `text/en/gym-leaders.yaml: ${name}`);
+
+  GYM_LEADER_NAMES[leader] = said.name;
+  GYM_LEADER_QUOTES[leader] = said.quote;
 }
 
 // Every leader the enum has is written down, so none stands nameless or bare

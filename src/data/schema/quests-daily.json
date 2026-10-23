@@ -1,0 +1,81 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Daily quest pool",
+  "type": "object",
+  "additionalProperties": {
+    "type": "object",
+    "properties": {
+      "requirement": {
+        "type": "object",
+        "properties": {
+          "metric": {
+            "$ref": "names.json#/definitions/metric",
+            "description": "The lifetime counter it reads"
+          },
+          "count": {
+            "type": "number",
+            "minimum": 0,
+            "description": "The total it asks for"
+          },
+          "species": {
+            "$ref": "names.json#/definitions/species"
+          },
+          "family": {
+            "$ref": "names.json#/definitions/family"
+          },
+          "type": {
+            "$ref": "names.json#/definitions/type"
+          },
+          "item": {
+            "$ref": "names.json#/definitions/item"
+          },
+          "npc": {
+            "$ref": "names.json#/definitions/npc"
+          },
+          "landmark": {
+            "$ref": "names.json#/definitions/quest-landmark"
+          },
+          "move": {
+            "$ref": "names.json#/definitions/move"
+          },
+          "foe": {
+            "$ref": "names.json#/definitions/foe"
+          },
+          "trainer": {
+            "$ref": "names.json#/definitions/trainer"
+          }
+        },
+        "required": [
+          "metric",
+          "count"
+        ],
+        "additionalProperties": false
+      },
+      "rewards": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "item": {
+              "$ref": "names.json#/definitions/item"
+            },
+            "amount": {
+              "type": "number",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "item",
+            "amount"
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+    "required": [
+      "requirement",
+      "rewards"
+    ],
+    "additionalProperties": false
+  }
+}

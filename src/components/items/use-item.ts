@@ -11,10 +11,10 @@ import {
   getMovePoints,
   isShadow,
   isShiny,
-} from '../../auth/caught-record';
-import { isEgg } from '../../auth/egg';
+} from '../../model/caught-record';
+import { isEgg } from '../../model/egg';
 import useHealingItem from '../../auth/healing';
-import { healedByItem } from '../../auth/health';
+import { healedByItem } from '../../model/health';
 import usePurifyingGem from '../../auth/purify';
 import { useAbilityCapsule } from '../../auth/ability-items';
 import useSkillBook from '../../auth/skill-book';
@@ -28,7 +28,7 @@ import { getAbilityData, getSpeciesSignature } from '../../data/abilities';
 import { getAwakenableAbilities } from '../../data/overworld/npc';
 import { Items, getBall, getMachineMove, isMachineItem } from '../../data/ids/items';
 import type { Moves } from '../../data/ids/moves';
-import { NATURE_NAMES } from '../../data/ids/natures';
+import { NATURE_NAMES } from '../../data/ids/text';
 import { Genders, type Species } from '../../data/ids/species';
 import { BERRY_EFFORT_DROPS } from '../../data/items/berries';
 import {

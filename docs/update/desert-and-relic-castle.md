@@ -100,6 +100,6 @@ Moxie, and a Simipour Water Absorb or Analytic.
 
 - [Unova's second road and first cave](unovas-road-and-cave.md), an earlier
   release.
-- [The fifth generation's moves](fifth-generation-moves.md), the one before it.
+- [The fifth generation's moves](fifth-generation-moves.md), another.
 - [Player's guide](../mechanics.md), for the rules in full.
 - [Credits](../credits.md), for the people, libraries and art behind it.

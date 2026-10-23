@@ -1,7 +1,7 @@
 import 'server-only';
-import BattleOutcome from '../../auth/battle-outcome';
-import BATTLE_TIMEOUT from '../../auth/battle-lock';
-import { readBattle } from '../raid-io';
+import BattleOutcome from '../../model/battle-outcome';
+import BATTLE_TIMEOUT from '../../model/battle-lock';
+import { readBattle } from './io';
 import { asNumber } from '../read';
 
 /** How a raid battle's result is read, and when a silent one counts as lost */
@@ -22,7 +22,7 @@ export const asOutcome = (value: unknown): BattleOutcome => asNumber(value) as B
 /**
  * How long an unsettled raid battle holds its landmark: the same
  * window that decides how long it holds its party
- * ([`src/server/locks.ts`](./locks.ts)). A fight is over in minutes;
+ * ([`src/server/locks.ts`](../locks.ts)). A fight is over in minutes;
  * one still unfinished after this was walked out on, and an abandoned
  * party is not a beaten boss
  */

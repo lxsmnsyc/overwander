@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Stat names",
+  "type": "object",
+  "properties": {
+    "stats": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "names.json#/definitions/stat"
+      },
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "stages": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "names.json#/definitions/stage"
+      },
+      "additionalProperties": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "stats",
+    "stages"
+  ],
+  "additionalProperties": false
+}

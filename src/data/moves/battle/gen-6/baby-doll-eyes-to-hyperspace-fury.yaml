@@ -41,7 +41,7 @@ PowerUpPunch:
   accuracy: 100
   pp: 20
   target: Unit
-  flags: [Contact]
+  flags: [Contact, Punch]
 
 OblivionWing:
   type: Flying

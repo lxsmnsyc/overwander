@@ -15,7 +15,7 @@ import {
 import { BattleEvents, EffectType, MoveTargetType } from '../../../src/battle/events';
 import turns from '../../../src/battle/turn';
 import type Unit from '../../../src/battle/unit';
-import { unitTarget } from '../../../src/battle/utils';
+import { unitTarget } from '../../../src/battle/unit-checks';
 import { Stages, Stats } from '../../../src/data/constants/stats';
 import { Types } from '../../../src/data/constants/types';
 import Abilities from '../../../src/data/ids/abilities';

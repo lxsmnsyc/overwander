@@ -2,10 +2,10 @@
 
 import { describe, expect, it } from 'vitest';
 import { NEUROFORCE_SCALE } from '../../../../src/battle/abilities/gen-7';
-import { MOLD_PROOF_ABILITIES } from '../../../../src/battle/abilities/protected';
+import { MOLD_PROOF_ABILITIES } from '../../../../src/battle/abilities/unsuppressible';
 import { SKY_ARC_RISE } from '../../../../src/battle/abilities/signature/__create';
 import { MoveTargetType } from '../../../../src/battle/events';
-import { unitTarget } from '../../../../src/battle/utils';
+import { unitTarget } from '../../../../src/battle/unit-checks';
 import { SpawnRarity, getSpawnRarity } from '../../../../src/data/biome';
 import { Stages, Stats } from '../../../../src/data/constants/stats';
 import { Types } from '../../../../src/data/constants/types';

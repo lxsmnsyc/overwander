@@ -1,23 +1,23 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { type Actor, actor, caughtRow, clearAll, sql } from './clients';
-import BattleOutcome from '../../src/auth/battle-outcome';
-import { asOffset, toLocalTime } from '../../src/auth/local-time';
-import { RaidAction, RaidKind, raidId } from '../../src/auth/raid-record';
-import { ITEM_STACKS } from '../../src/auth/stacks';
+import BattleOutcome from '../../src/model/battle-outcome';
+import { asOffset, toLocalTime } from '../../src/model/local-time';
+import { RaidAction, RaidKind, raidId } from '../../src/model/raid-record';
+import { ITEM_STACKS } from '../../src/model/stacks';
 import AleaRNG from '../../src/core/alea';
 import { Items } from '../../src/data/ids/items';
 import { Species } from '../../src/data/ids/species';
 import { NOBLE_BALM_PACK, getNobleTreasure } from '../../src/data/overworld/nobles';
 import { claimRaidReward, enterRaid, joinRaid, peekRaid, startRaid } from '../../src/server/raids';
 import { NOBLE_RAID_BALMS, NOBLE_RAID_EXTRA_BALM_CHANCE } from '../../src/server/raids/reward';
-import { writeRaid } from '../../src/server/raid-io';
+import { writeRaid } from '../../src/server/raids/io';
 import { grantItem } from '../../src/server/inventory';
 import { readStack } from '../../src/server/stacks';
 import { tx } from '../../src/server/db';
 import ChunkSnapshot, { type RaidRoll } from '../../src/overworld/chunk-snapshot';
 import getWorld from '../../src/overworld/current';
 import { Depth } from '../../src/overworld/depth';
-import { NOBLE_RAID_GOLD } from '../../src/overworld/raid';
+import { NOBLE_RAID_GOLD } from '../../src/overworld/raid/index';
 
 /**
  * A calmed Noble against the real database: the purse, the Balms, a

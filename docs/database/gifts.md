@@ -10,7 +10,7 @@ its player's uid; an open one names nobody, stands on every shelf at once, and i
 taken once each. That is why taking one is a row of its own: a single offer has
 as many claims as there are players.
 
-`gifts` ([`src/auth/gift-record.ts`](../../src/auth/gift-record.ts))
+`gifts` ([`src/model/gift-record.ts`](../../src/model/gift-record.ts))
 
 | Column       | Type     | What it is                                            |
 | ------------ | -------- | ----------------------------------------------------- |
@@ -18,7 +18,7 @@ as many claims as there are players.
 | `player`     | `uuid`   | Whose it is; null for one anybody may take            |
 | `offered_at` | `bigint` | When it was shelved                                   |
 | `gift`       | `jsonb`  | What the player sees: `MysteryGift`, below            |
-| `encounter`  | `jsonb`  | The rolled meeting, for a catch gift and nothing else |
+| `encounter`  | `jsonb`  | The rolled meeting for a pokemon gift; null for items |
 
 The offer rides as `jsonb` because it is a write-once union of three shapes, read
 whole by the server and never queried by field, the same argument that froze team
@@ -27,7 +27,9 @@ whose it is, and when it went up.
 
 A personal gift's id is `{gift}:{uid}`, which is what stops a second one being
 opened for the same player; an open gift's id is its own. Either way
-the id is what the gift calls itself, and what a claim names.
+the id is what the gift calls itself, and what a claim names. The id also says
+who wrote it: `staff-` for the dashboard's (`giveGift`), `quest-` for a quest
+reward and `rotation-` for a daily quest's or weekly hunt's.
 
 `gift` is one of three shapes, each carrying an `id`, a `reason` sentence shown
 on its card, and an `expiresAt` after which it is neither listed nor claimable:
@@ -79,7 +81,7 @@ hand-over transaction. Nothing else about a claim may move.
 
 ## The gift encounter
 
-A catch gift stores the whole `EncounterRecord` it will become
+A pokemon gift stores the whole `EncounterRecord` it will become
 ([Encounter kinds](encounters.md)) rather than a seed to re-roll on the way out,
 and that one rolled meeting is what **every** taker receives. Two people taking
 one open gift get the same individual, which is what a distribution is.
@@ -113,14 +115,17 @@ to whom, stays readable.
 
 ## What is given today
 
-Four open offers, standing on every shelf:
+Open offers, standing on every shelf:
 
-- `starter-{species}`: Bulbasaur, Charmander and Squirtle, each at level 5.
+- `starter-{species}`: every grass, fire and water starter in `STARTER_SPECIES`
+  (Kanto through Unova today), each at level 5.
 - `starterBalls`: 20 Poke Balls.
 
-They are written the first time anybody asks for their shelf, all four in one
-transaction, and every later ask reads what is already there. Each is taken once
-per player, so a first partner is a choice rather than a die the game throws, and
-nothing stops somebody taking all three.
+They are written the first time anybody asks for their shelf, and every later
+ask reads what is already there. They are written gift by gift rather than all
+or none (`offerEach`), so a starter added later still reaches a database that
+holds the earlier ones. Each is taken once per player, so a first partner is a
+choice rather than a die the game throws, and nothing stops somebody taking all
+of them.
 
 See [`src/server/gifts.ts`](../../src/server/gifts.ts).

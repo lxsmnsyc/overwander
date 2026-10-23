@@ -18,7 +18,7 @@ rows cannot: who came with whom, and that the fight is one boss with a lobby
 closed around it.
 
 Facing is worked out per unit by
-[`facingToward`](../../src/canvas/facing.ts), which rounds the angle to the boss
+[`facingToward`](../../src/canvas/sprites/facing.ts), which rounds the angle to the boss
 to one of the eight rows a sheet carries. It sits in its own module with its own
 test because a canvas y axis grows **downward**, so `down` is the larger y.
 Getting that backwards turns a lobby inside out, with everybody looking away
@@ -49,7 +49,7 @@ mark the size of a pokemon turned the field into a wall of white rings.
 
 [`/demo/raid`](../../src/routes/demo/raid.tsx) stages a raid out of a seed: one
 boss against `DEMO_TEAMS` (8) parties of `DEMO_TEAM_SIZE` (6), rolled by
-[`createDemoRaidTeams`](../../src/overworld/demo-raid.ts) and fought by the same
+[`createDemoRaidTeams`](../../src/overworld/raid/demo.ts) and fought by the same
 `createRaidBattle` a real lobby uses, over the same `TeamSnapshotRecord` shape a
 real lobby publishes. It writes nothing, settles no raid and pays nobody.
 
@@ -59,7 +59,7 @@ stages is one somebody walked to, filled a lobby for and paid for, so the part
 of the game that most needs watching was the hardest to reach. The seed is in
 the URL, so a fight is a link and two people watch the same frames.
 
-Three pages sit beside it under the same rules:
+Other pages sit beside it under the same rules, among them:
 
 - [`/demo/move`](../../src/routes/demo/move.tsx) stages one move in a live
   engine, with an **Always hits** switch on by default, so a Fissure can be
@@ -86,8 +86,8 @@ have a player.
 
 The parties are rolled between `DEMO_MIN_LEVEL` (70) and `DEMO_MAX_LEVEL` (80),
 high enough that a field of them lasts long enough against a maxed boss to be
-worth watching. They are rolled out of the **fully evolved** species only, 317
-of the 559, since at level 70 a Caterpie would have evolved twice over long ago.
+worth watching. They are rolled out of the **fully evolved** species only, 691
+of the 1422, since at level 70 a Caterpie would have evolved twice over long ago.
 Eight full parties is a lobby the canvas can draw as eight points of a circle,
 and a crowd besides: whatever the canvas does with a busy field, it does here
 first.

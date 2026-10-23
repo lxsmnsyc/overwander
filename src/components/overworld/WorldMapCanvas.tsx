@@ -4,7 +4,7 @@ import type Weather from '../../data/overworld/weather';
 import { WEATHER_COLORS, WEATHER_NAMES, favorsEverything } from '../../data/overworld/weather';
 import type Biome from '../../data/ids/biome';
 import LRUMap from '../../core/lru-map';
-import shadeCell from '../../canvas/world-shade';
+import shadeCell from '../../canvas/overworld/world-shade';
 import settings from '../app/settings';
 import { CHUNK_CELLS, worldCell } from '../../overworld/grid';
 import { TOWN_RADIUS, TOWN_REGION, townOfRegion } from '../../overworld/town';

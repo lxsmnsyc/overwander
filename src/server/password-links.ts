@@ -1,6 +1,6 @@
 import 'server-only';
 import createPasswordLink from '../../db/password-link';
-import { canActOn, runsTheGame } from '../auth/staff';
+import { canActOn, runsTheGame } from '../model/staff';
 import { getSql } from './db';
 import { readRole } from './roles';
 import { StaffAction, recordStaffAction } from './staff-log';

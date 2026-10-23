@@ -1,25 +1,25 @@
 import 'server-only';
 import * as v from 'valibot';
 import { CELL_COUNT, CHUNK_CELLS } from '../overworld/grid';
-import { AuctionLot, MAX_INCREMENT, MAX_STARTING_BID } from '../auth/auction-record';
-import { MAX_OFFSET, MIN_OFFSET } from '../auth/local-time';
-import { NICKNAME_LIMIT, PLAYER_NAME_LIMIT } from '../auth/nickname';
+import { AuctionLot, MAX_INCREMENT, MAX_STARTING_BID } from '../model/auction-record';
+import { MAX_OFFSET, MIN_OFFSET } from '../model/local-time';
+import { NICKNAME_LIMIT, PLAYER_NAME_LIMIT } from '../model/nickname';
 import { SPECIAL_ABILITIES, Slots, mostSlots } from '../data/constants/slots';
 import { DUEL_BANS, MAX_BST_CAP } from '../data/constants/duel-bans';
 import { WORLD_MAX, WORLD_MIN } from '../overworld/world';
-import BattleOutcome from '../auth/battle-outcome';
-import { CLAIM_CHUNK_LIMIT } from '../auth/snapshot-record';
+import BattleOutcome from '../model/battle-outcome';
+import { CLAIM_CHUNK_LIMIT } from '../model/snapshot-record';
 import { Depth } from '../overworld/depth';
-import { GiftKind } from '../auth/gift-record';
-import { LobbyRole } from '../auth/lobby-role';
+import { GiftKind } from '../model/gift-record';
+import { LobbyRole } from '../model/lobby-role';
 import { MAX_EFFORT_PER_STAT, MAX_PACKED_IVS, Stats } from '../data/constants/stats';
 import { MAX_LEVEL } from '../data/constants/levels';
 import Npc, { TRADER_OFFERS } from '../data/overworld/npc';
-import { RaidKind } from '../auth/raid-record';
-import TEAM_SIZE from '../auth/team-size';
-import { BOX_COLOURS, BOX_LIMIT, BOX_NAME_LIMIT, BOX_SLOT_LIMIT } from '../auth/box-record';
+import { RaidKind } from '../model/raid-record';
+import TEAM_SIZE from '../model/team-size';
+import { BOX_COLOURS, BOX_LIMIT, BOX_NAME_LIMIT, BOX_SLOT_LIMIT } from '../model/box-record';
 import { FEATURES } from './switches';
-import { TRADE_GOLD_LIMIT } from '../auth/trade-record';
+import { TRADE_GOLD_LIMIT } from '../model/trade-record';
 
 /**
  * What a server function accepts before it acts.

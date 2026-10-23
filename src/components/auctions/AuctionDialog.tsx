@@ -9,8 +9,8 @@ import {
   openItemAuction,
 } from '../../auth/auctions';
 import { type CaughtPokemon, getCaught } from '../../auth/caught';
-import { isShiny } from '../../auth/caught-record';
-import { isEgg } from '../../auth/egg';
+import { isShiny } from '../../model/caught-record';
+import { isEgg } from '../../model/egg';
 import type { Items } from '../../data/ids/items';
 import { Genders, Species } from '../../data/ids/species';
 import { getSpeciesData } from '../../data/species';

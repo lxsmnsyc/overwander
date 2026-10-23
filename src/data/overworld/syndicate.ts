@@ -18,16 +18,16 @@ export { Executive, Syndicate };
  * `text/en/`; the numbers are `ids/syndicates.ts` and
  * `ids/executives.ts`
  */
-const RANK = v.object({ sheets: v.array(v.string()), honor: v.string() });
+const RANK = v.strictObject({ sheets: v.array(v.string()), honor: v.string() });
 
-const SYNDICATE = v.object({
+const SYNDICATE = v.strictObject({
   grunt: RANK,
   executives: v.array(v.string()),
   boss: RANK,
   biomes: v.array(v.string()),
 });
 
-const SYNDICATE_TEXT = v.object({
+const SYNDICATE_TEXT = v.strictObject({
   name: v.string(),
   boss: v.string(),
   'boss-title': v.string(),
@@ -36,7 +36,7 @@ const SYNDICATE_TEXT = v.object({
   'grunt-quote': v.string(),
 });
 
-const EXECUTIVE_TEXT = v.object({ name: v.string(), quote: v.string() });
+const EXECUTIVE_TEXT = v.strictObject({ name: v.string(), quote: v.string() });
 
 export const EXECUTIVE_NAMES: Record<number, string> = {};
 

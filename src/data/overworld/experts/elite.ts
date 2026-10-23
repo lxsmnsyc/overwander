@@ -10,6 +10,7 @@ import {
   KALOS_HONORS,
   KANTO_BADGES,
   KANTO_HONORS,
+  LEAGUE_HONORS,
   SINNOH_BADGES,
   SINNOH_HONORS,
   UNOVA_BADGES,
@@ -39,22 +40,40 @@ export { EliteMember };
  * The Elite Four, read out of `elite.yaml`, `biome-elite.yaml` and
  * `text/en/elite.yaml`; the numbers are `ids/elite.ts`
  */
-const MEMBER = v.object({
+const MEMBER = v.strictObject({
   type: v.string(),
   honor: v.string(),
   sheets: v.array(v.string()),
   signature: v.string(),
-  pool: v.object({
+  pool: v.strictObject({
     types: v.array(v.string()),
     'egg-groups': v.optional(v.array(v.string())),
     also: v.optional(v.array(v.string())),
   }),
 });
 
+const SAID = v.strictObject({ name: v.string(), quote: v.string() });
+
+/** The league whose Elite Four a mark is one of */
+function leagueOf(honor: Awards, where: string): string {
+  for (const [league, honors] of Object.entries(LEAGUE_HONORS)) {
+    if (honors.includes(honor)) {
+      return league;
+    }
+  }
+  throw new Error(`${where}: the honor is no league's`);
+}
+
 /** Every seat, in the order they are numbered */
 export const ELITE_MEMBERS: EliteMember[] = [];
 
 export const ELITE_MEMBER_NAMES: Record<number, string> = {};
+
+/** What each says as they rise */
+export const ELITE_MEMBER_QUOTES: Record<number, string> = {};
+
+/** Which league each seat belongs to, read off the mark it pays */
+export const ELITE_MEMBER_LEAGUES: Record<number, string> = {};
 
 /** The type each is known for */
 export const ELITE_MEMBER_TYPES: Record<number, Types> = {};
@@ -95,15 +114,18 @@ for (const [name, written] of Object.entries(v.parse(v.record(v.string(), MEMBER
   ELITE_MEMBERS.push(member);
   ELITE_MEMBER_TYPES[member] = idOf<Types>(TYPE_IDS, written.type, where);
   ELITE_MEMBER_HONORS[member] = idOf<Awards>(AWARD_IDS, written.honor, where);
+  ELITE_MEMBER_LEAGUES[member] = leagueOf(ELITE_MEMBER_HONORS[member], where);
   ELITE_MEMBER_CHARSETS[member] = written.sheets;
   ELITE_MEMBER_SIGNATURES[member] = idOf<Species>(SPECIES_IDS, written.signature, where);
   ELITE_MEMBER_POOLS[member] = pool;
 }
 ELITE_MEMBERS.sort((one, two) => one - two);
 
-for (const [name, title] of Object.entries(v.parse(v.record(v.string(), v.string()), namesFile))) {
-  ELITE_MEMBER_NAMES[idOf<EliteMember>(ELITE_MEMBER_IDS, name, `text/en/elite.yaml: ${name}`)] =
-    title;
+for (const [name, said] of Object.entries(v.parse(v.record(v.string(), SAID), namesFile))) {
+  const member = idOf<EliteMember>(ELITE_MEMBER_IDS, name, `text/en/elite.yaml: ${name}`);
+
+  ELITE_MEMBER_NAMES[member] = said.name;
+  ELITE_MEMBER_QUOTES[member] = said.quote;
 }
 
 // Every seat the enum has is written down, so none stands nameless or bare

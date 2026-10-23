@@ -1,0 +1,23 @@
+# Every older region's signatures, one family each, that once borrowed another move's
+# picture
+Purify: { landing: Purify }
+RevelationDance: { landing: Revelation }
+
+# Attacks and signatures with a picture of their own
+CoreEnforcer: { landing: Enforcer }
+
+# Every older region's signatures, one family each, that once borrowed another move's
+# picture
+TropKick: { landing: Trop }
+Instruct: { landing: Instruct }
+BeakBlast: { landing: Beak }
+ClangingScales: { landing: Scales }
+
+# Moves that are an earlier move's picture in all but name
+DragonHammer: { landing: Tonnage }
+BrutalSwing: { landing: Swirl }
+
+# Attacks and signatures with a picture of their own
+# A blade charged the way Skull Bash is, a beam drawn up the way Hydro Pump's is,
+# a ball lobbed, bubbles blown, a bone tumbling and a veil put up like a screen
+AuroraVeil: { landing: Aurora, wait: { striking: Brace } }

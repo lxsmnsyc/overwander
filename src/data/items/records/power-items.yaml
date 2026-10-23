@@ -17,6 +17,7 @@ PowerWeight:
   flags: [Holdable, Marketable]
   buy: 10000
   sell: 5000
+  stat: HP
 
 PowerBracer:
   type: Held
@@ -24,6 +25,7 @@ PowerBracer:
   flags: [Holdable, Marketable]
   buy: 10000
   sell: 5000
+  stat: Attack
 
 PowerBelt:
   type: Held
@@ -31,6 +33,7 @@ PowerBelt:
   flags: [Holdable, Marketable]
   buy: 10000
   sell: 5000
+  stat: Defense
 
 PowerLens:
   type: Held
@@ -38,6 +41,7 @@ PowerLens:
   flags: [Holdable, Marketable]
   buy: 10000
   sell: 5000
+  stat: SpecialAttack
 
 PowerBand:
   type: Held
@@ -45,6 +49,7 @@ PowerBand:
   flags: [Holdable, Marketable]
   buy: 10000
   sell: 5000
+  stat: SpecialDefense
 
 PowerAnklet:
   type: Held
@@ -52,3 +57,4 @@ PowerAnklet:
   flags: [Holdable, Marketable]
   buy: 10000
   sell: 5000
+  stat: Speed

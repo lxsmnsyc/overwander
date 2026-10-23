@@ -1,6 +1,6 @@
 import 'server-only';
-import { Acquisition, asCaughtPokemon } from '../auth/caught-record';
-import { asOffset, toLocalISO } from '../auth/local-time';
+import { Acquisition, asCaughtPokemon } from '../model/caught-record';
+import { asOffset, toLocalISO } from '../model/local-time';
 import {
   TRADE_ESCROW,
   type TradeRecord,
@@ -9,8 +9,8 @@ import {
   asTradeRecord,
   canAnswerTrade,
   canCancelTrade,
-} from '../auth/trade-record';
-import { FriendTie } from '../auth/friend-record';
+} from '../model/trade-record';
+import { FriendTie } from '../model/friend-record';
 import { BASE_FRIENDSHIP } from '../data/constants/friendship';
 import type { Species } from '../data/ids/species';
 import { settleHandover } from '../data/species';
@@ -22,7 +22,7 @@ import { readFriendTie } from './friends';
 import { isCatchLocked } from './locks';
 import { recordFoundSpecies } from './pokedex';
 import { isAnyCatchQueued } from './raids';
-import { Metric } from '../auth/quest-record';
+import { Metric } from '../model/quest-record';
 import { type ProgressBump, bumpProgress } from './quest-progress';
 import { asNumber, asString } from './read';
 import { moveGoldIn } from './profile';

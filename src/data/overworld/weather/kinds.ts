@@ -1,204 +1,71 @@
-import { Types } from '../../constants/types';
-
-/**
- * The sky over a chunk.
- *
- * Weather is derived from the world seed the way the biomes are, out
- * of two noise channels read against the ground underneath. It is not
- * stored anywhere: everybody standing in the same place in the same
- * hour sees the same sky without asking the server, which is the rule
- * every other feature of a chunk follows.
- *
- * It reaches the game in two ways. A pokemon of a type the sky
- * favours comes with a floor under every one of its values, so a wet
- * afternoon is worth going out in for the things rain is about. A trainer met out on the road is fought under
- * the sky that was over the road, which is the only kind of fight the
- * weather reaches: a raid, a duel and a league seat are all fought
- * under a clear sky whatever the world was doing. That one fight
- * keeps its sky on its own record, because the sky moves on and the
- * fight has to replay as it was fought.
- */
-
-/** Every sky there is, what each is called and what it favours */
-const enum Weather {
-  Clear = 0,
-  Cloudy = 1,
-  Overcast = 2,
-  Breezy = 3,
-  Drizzle = 4,
-  Rain = 5,
-  Downpour = 6,
-  Thunderstorm = 7,
-  Mist = 8,
-  Fog = 9,
-  Haze = 10,
-  Frost = 11,
-  Snow = 12,
-  Blizzard = 13,
-  Hail = 14,
-  Sandstorm = 15,
-  DustHaze = 16,
-  Heatwave = 17,
-  FallingAsh = 18,
-  Aurora = 19,
-  Rainbow = 20,
-  PollenDrift = 21,
-  MeteorShower = 22,
-  FataMorgana = 23,
-  DarkDay = 24,
-  Fogbow = 25,
-}
+import * as v from 'valibot';
+import type { Types } from '../../constants/types';
+import { BATTLE_WEATHER_IDS, TYPE_IDS, WEATHER_IDS } from '../../ids/names';
+import type { Weathers } from '../../ids/status';
+import Weather from '../../ids/weather';
+import textFile from '../../text/en/weather.yaml';
+import { idOf, idsOf } from '../../yaml';
+import kindsFile from './kinds.yaml';
 
 export default Weather;
 
-export const WEATHER_NAMES: Record<Weather, string> = {
-  [Weather.Clear]: 'Clear',
-  [Weather.Cloudy]: 'Cloudy',
-  [Weather.Overcast]: 'Overcast',
-  [Weather.Breezy]: 'Breezy',
-  [Weather.Drizzle]: 'Drizzle',
-  [Weather.Rain]: 'Rain',
-  [Weather.Downpour]: 'Downpour',
-  [Weather.Thunderstorm]: 'Thunderstorm',
-  [Weather.Mist]: 'Mist',
-  [Weather.Fog]: 'Fog',
-  [Weather.Haze]: 'Haze',
-  [Weather.Frost]: 'Frost',
-  [Weather.Snow]: 'Snow',
-  [Weather.Blizzard]: 'Blizzard',
-  [Weather.Hail]: 'Hail',
-  [Weather.Sandstorm]: 'Sandstorm',
-  [Weather.DustHaze]: 'Dust Haze',
-  [Weather.Heatwave]: 'Heatwave',
-  [Weather.FallingAsh]: 'Falling Ash',
-  [Weather.Aurora]: 'Aurora',
-  [Weather.Rainbow]: 'Rainbow',
-  [Weather.PollenDrift]: 'Pollen Drift',
-  [Weather.MeteorShower]: 'Meteor Shower',
-  [Weather.FataMorgana]: 'Fata Morgana',
-  [Weather.DarkDay]: 'Dark Day',
-  [Weather.Fogbow]: 'Fogbow',
-};
+/**
+ * Every sky, read out of `kinds.yaml` and `text/en/weather.yaml`; the
+ * numbers are `ids/weather.ts`
+ */
+const KIND = v.strictObject({
+  color: v.string(),
+  favours: v.union([v.literal('everything'), v.array(v.string())]),
+  battle: v.string(),
+});
+
+const TEXT = v.strictObject({ name: v.string(), description: v.string() });
+
+export const WEATHER_NAMES: Record<number, string> = {};
+
+/** What each sky is drawn as on the world map, where a chunk is one square of colour */
+export const WEATHER_COLORS: Record<number, string> = {};
+
+/** One line on each sky, and only what a picture of it cannot say */
+export const WEATHER_DESCRIPTIONS: Record<number, string> = {};
 
 /**
- * What each sky is drawn as on the world map, where a chunk is one
- * square of colour. They run cold to warm the way the skies
- * themselves do, and the four showpieces are the only saturated ones,
- * so a player scanning the map sees them without being told
+ * The types each sky is kind to. These are the world's own pairings
+ * rather than the battle engine's. Empty both for a plain sky and for
+ * one in `WEATHER_FAVORS_EVERYTHING`
  */
-export const WEATHER_COLORS: Record<Weather, string> = {
-  [Weather.Clear]: '#ece2aa',
-  [Weather.Cloudy]: '#b0b8c4',
-  [Weather.Overcast]: '#808896',
-  [Weather.Breezy]: '#aadece',
-  [Weather.Drizzle]: '#8cbae6',
-  [Weather.Rain]: '#5288d6',
-  [Weather.Downpour]: '#2852aa',
-  [Weather.Thunderstorm]: '#462882',
-  [Weather.Mist]: '#d2d8e2',
-  [Weather.Fog]: '#f0f0f4',
-  [Weather.Haze]: '#d6be96',
-  [Weather.Frost]: '#c4e8fa',
-  [Weather.Snow]: '#fafcff',
-  [Weather.Blizzard]: '#96c8f0',
-  [Weather.Hail]: '#78aabe',
-  [Weather.Sandstorm]: '#d6a454',
-  [Weather.DustHaze]: '#b4966e',
-  [Weather.Heatwave]: '#f06e3c',
-  [Weather.FallingAsh]: '#5a5050',
-  [Weather.Aurora]: '#50e6aa',
-  [Weather.Rainbow]: '#fa78c8',
-  [Weather.PollenDrift]: '#f0dc50',
-  [Weather.MeteorShower]: '#ff3c3c',
-  [Weather.FataMorgana]: '#ffaa28',
-  [Weather.DarkDay]: '#14141e',
-  [Weather.Fogbow]: '#aa6eff',
-};
+export const WEATHER_TYPES: Record<number, Types[]> = {};
 
-/**
- * One line on each sky, and only what a picture of it cannot say.
- *
- * What the sky favours is drawn as its types rather than written out,
- * and the floor is the same under every boosting sky, so neither is
- * repeated here
- */
-export const WEATHER_DESCRIPTIONS: Record<Weather, string> = {
-  [Weather.Clear]: 'An ordinary sky, and the one nothing is boosted under.',
-  [Weather.Cloudy]: 'Cloud, and an ordinary day under it.',
-  [Weather.Overcast]: 'A flat grey lid over the chunk.',
-  [Weather.Breezy]: 'A steady wind across the chunk.',
-  [Weather.Drizzle]: 'Light rain.',
-  [Weather.Rain]: 'Steady rain.',
-  [Weather.Downpour]: 'Rain coming down hard.',
-  [Weather.Thunderstorm]: 'Rain with thunder in it.',
-  [Weather.Mist]: 'Air you cannot see far through.',
-  [Weather.Fog]: 'Thick fog off the ground.',
-  [Weather.Haze]: 'Hot, hanging air.',
-  [Weather.Frost]: 'Cold enough to settle on everything.',
-  [Weather.Snow]: 'Snow falling over the chunk.',
-  [Weather.Blizzard]: 'Snow driven sideways. It chips at whatever is not built for it.',
-  [Weather.Hail]: 'Ice falling hard enough to hurt. It chips at whatever is not built for it.',
-  [Weather.Sandstorm]: 'Sand on the wind. It chips at whatever is not built for it.',
-  [Weather.DustHaze]: 'Dust hanging on still air.',
-  [Weather.Heatwave]: 'Heat with nothing behind it.',
-  [Weather.FallingAsh]: 'Ash drifting down from somewhere.',
-  [Weather.Aurora]: 'Light over the far north, and one of the rarest skies there is.',
-  [Weather.Rainbow]: 'An arc over open water, and one of the rarest skies there is.',
-  [Weather.PollenDrift]: 'Pollen carried through the trees.',
-  [Weather.MeteorShower]:
-    'The rarest sky there is. It favours every type, and makes a shiny coat 8x as likely.',
-  [Weather.FataMorgana]:
-    'A mirage. Favours every type. 1 in 8 keeps a hidden ability, 1 in 64 a signature.',
-  [Weather.DarkDay]: 'Noon gone dark. It favours every type, and 1 in 4 it hands over is a shadow.',
-  [Weather.Fogbow]:
-    'A rainbow with the colour gone. 1 in 4 it meets has room for a 5th move, 1 in 16 a 6th.',
-};
+/** The skies kind to every type, which `isWeatherFavored` answers yes for first */
+export const WEATHER_FAVORS_EVERYTHING = new Set<Weather>();
 
-/**
- * The types each sky is kind to.
- *
- * Every type in the game is favoured by some sky, so no player is left
- * with weather that never means anything to what they are raising. A
- * plain sky favours nothing, which is what makes it plain.
- *
- * These are the world's own pairings rather than the battle engine's.
- * The engine knows four skies and what they do to Fire and Water; this
- * says which pokemon a sky is worth going out for, which is a question
- * the mainline has no answer to.
- *
- * The pairings are weighted by how often a sky actually turns up, not
- * only by what it looks like. The world is wet and cold, so its damp
- * skies are common and its storms are rare: a type hung on a sandstorm
- * alone is a type nobody is ever boosted for, which is why mist
- * carries the forest types and thunder carries three.
- */
-export const WEATHER_TYPES: Record<Weather, Types[]> = {
-  [Weather.Clear]: [],
-  [Weather.Cloudy]: [Types.Normal],
-  [Weather.Breezy]: [Types.Flying],
-  [Weather.Overcast]: [Types.Dark, Types.Normal],
-  [Weather.Drizzle]: [Types.Water, Types.Grass],
-  [Weather.Rain]: [Types.Water, Types.Electric],
-  [Weather.Downpour]: [Types.Water, Types.Grass],
-  [Weather.Thunderstorm]: [Types.Electric, Types.Dragon],
-  [Weather.Mist]: [Types.Bug, Types.Grass, Types.Poison],
-  [Weather.Fog]: [Types.Ghost, Types.Dark, Types.Psychic],
-  [Weather.Haze]: [Types.Fire, Types.Poison],
-  [Weather.Frost]: [Types.Ice, Types.Steel],
-  [Weather.Snow]: [Types.Ice, Types.Fairy],
-  [Weather.Blizzard]: [Types.Ice, Types.Steel],
-  [Weather.Hail]: [Types.Ice, Types.Rock],
-  [Weather.Sandstorm]: [Types.Rock, Types.Ground, Types.Steel],
-  [Weather.DustHaze]: [Types.Ground, Types.Rock, Types.Normal],
-  [Weather.Heatwave]: [Types.Fire, Types.Fighting],
-  [Weather.FallingAsh]: [Types.Fire, Types.Dark],
-  [Weather.Aurora]: [Types.Psychic, Types.Fairy],
-  [Weather.Rainbow]: [Types.Fairy, Types.Flying],
-  [Weather.PollenDrift]: [Types.Grass, Types.Bug],
-  // Empty because it favours everything: `isWeatherFavored` answers
-  // yes for this sky before it reads the table
-  [Weather.MeteorShower]: [],
-  [Weather.FataMorgana]: [],
-  [Weather.DarkDay]: [],
-  [Weather.Fogbow]: [],
-};
+/** The battle sky an overworld one is fought under */
+export const BATTLE_WEATHER: Record<number, Weathers> = {};
+
+for (const [name, written] of Object.entries(v.parse(v.record(v.string(), KIND), kindsFile))) {
+  const where = `weather/kinds.yaml: ${name}`;
+  const sky = idOf<Weather>(WEATHER_IDS, name, where);
+
+  WEATHER_COLORS[sky] = written.color;
+  BATTLE_WEATHER[sky] = idOf<Weathers>(BATTLE_WEATHER_IDS, written.battle, where);
+  if (written.favours === 'everything') {
+    WEATHER_FAVORS_EVERYTHING.add(sky);
+    WEATHER_TYPES[sky] = [];
+  } else {
+    WEATHER_TYPES[sky] = idsOf<Types>(TYPE_IDS, written.favours, where);
+  }
+}
+
+for (const [name, said] of Object.entries(v.parse(v.record(v.string(), TEXT), textFile))) {
+  const sky = idOf<Weather>(WEATHER_IDS, name, `text/en/weather.yaml: ${name}`);
+
+  WEATHER_NAMES[sky] = said.name;
+  WEATHER_DESCRIPTIONS[sky] = said.description;
+}
+
+// Every sky the enum has is written down, so none is drawn bare or nameless
+for (const [name, sky] of Object.entries(WEATHER_IDS)) {
+  if (!Object.hasOwn(WEATHER_COLORS, sky) || !Object.hasOwn(WEATHER_NAMES, sky)) {
+    throw new Error(`${name} needs a record in weather/kinds.yaml and a name in text/en`);
+  }
+}

@@ -25,7 +25,7 @@ import {
 import { MAX_IV, STAT_ORDER, createStatsField, packIVs } from '../../../data/constants/stats';
 import { everyGiven, given } from '../../../core/command';
 import type { CommandGift } from '../../../auth/commands';
-import { GiftKind } from '../../../auth/gift-record';
+import { GiftKind } from '../../../model/gift-record';
 
 /**
  * What a `/gift-` line was asking for.

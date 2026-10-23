@@ -40,7 +40,7 @@ interface DecorationArt {
   names: string[];
 }
 
-const ART = v.object({
+const ART = v.strictObject({
   sheet: v.picklist([DECORATION_SHEET, TREE_SHEET]),
   pictures: v.array(v.string()),
 });

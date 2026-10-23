@@ -1,6 +1,6 @@
 import 'server-only';
 import type { Items } from '../data/ids/items';
-import type { EncounterRecord } from '../auth/encounter-record';
+import type { EncounterRecord } from '../model/encounter-record';
 import { WORLD_GENERATION } from '../overworld/current';
 import { type Tx, getSql } from './db';
 import { asNumber } from './read';

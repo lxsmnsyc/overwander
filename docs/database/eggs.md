@@ -29,10 +29,13 @@ one, since it is carried rather than accompanied.
 
 A breeder's egg is written the same way a nest's is, by `grantBredEgg`, and
 differs only in where the pokemon inside comes from. Three of its six individual
-values are copied straight off one parent or the other and the rest are rolled.
-The moves its line can only inherit are passed on by whichever parent actually
-knows them, which is what makes breeding a way to _teach_ a move rather than
-roll one. Its nature, ability and gender are its own.
+values are copied straight off one parent or the other and the rest are rolled;
+a Destiny Knot on either parent makes it five, and a power item names one stat
+that is copied off its holder. The moves its line can only inherit are passed on
+by whichever parent actually knows them, which is what makes breeding a way to
+_teach_ a move rather than roll one, and a level-up move both parents know comes
+across early. It is laid in its mother's ball and usually takes her ability. Its
+nature is its own unless a parent holds an Everstone, and its gender is its own.
 
 A shadow parent may pass the shadow on, on a coin toss, so breeding two of them
 is no more certain than one. An egg that inherits it is written `shadow: true`,
@@ -51,19 +54,21 @@ re-derives them from the roll.
 ## Walking
 
 Only the buddy walks. The client counts cells crossed and reports them in
-batches of eight through `walk` ([`src/auth/eggs.ts`](../../src/auth/eggs.ts)).
+batches of `MAX_STEP_REPORT` (256) through `walk`
+([`src/auth/eggs.ts`](../../src/auth/eggs.ts)).
 `recordSteps` credits them **against the server's own clock**, so a report buys
 no more than `(now - steppedAt) / MIN_STEP_INTERVAL` steps whatever it claims,
-at 250 ms a pace, capped at 64 a report, and never past `hatchSteps`. The stamp
-moves on every report, credited or not, so a refused one banks no time for the
-next. That is why `stepped_at` lives on the catch row, which only the server
+at 250 ms a pace, capped at `MAX_STEP_REPORT` a report, and never past
+`hatchSteps`. The stamp moves on every report, credited or not, so a refused one
+banks no time for the next. That is why `stepped_at` lives on the catch row, which only the server
 writes, rather than beside the profile's `buddy_id`, which the player writes.
 
 `hatchSteps` is settled when the egg is written. It starts from the **species'
 own** hatch cycles. `getEggHatchSteps` runs at `STEPS_PER_EGG_CYCLE` (128) a
-cycle, so a Magikarp's 5 cycles are 640 steps and a Mewtwo's 120 are 15,360. Two
-things move it from there: a shadow egg doubles it, and a **Flame Body** buddy
-standing beside the player at the pick-up halves it. Both are frozen onto the
+cycle, so a Magikarp's 5 cycles are 640 steps and a Mewtwo's 120 are 15,360.
+Three things move it from there: a nest's egg needs half (`NEST_HATCH_FACTOR`),
+since it was already laid, a shadow egg doubles it, and a **Flame Body** buddy
+standing beside the player at the pick-up halves it. All are frozen onto the
 record rather than asked again during the walk, since once an egg is being
 carried it _is_ the buddy and there is nothing beside the player left to ask.
 
@@ -72,14 +77,15 @@ pays 1.2 paces for every one walked while the egg's own family is the day's
 featured one. The perk belongs to the day rather than to the egg, so it cannot
 be frozen onto the record.
 
-A report also credits whatever a **Pickup** buddy found along the way: the same
-call rolls it from the item pool and writes the stack in the same transaction,
+When the buddy has already hatched, the same report pays friendship instead, a
+point every `FRIENDSHIP_STEP_INTERVAL` paces, and credits whatever a **Pickup**
+buddy found along the way: the same call rolls it from the item pool and writes the stack in the same transaction,
 so a find cannot be reported twice or lost between the walk and the bag.
 
 `hatchEgg` takes the flag off once `steps` has reached `hatchSteps` and pays the
 family's candy, exactly as meeting the pokemon any other way would have. The
 shared rules both sides read, `getEggHatchSteps`, `canHatch`, `creditableSteps`
-and `creditedEggSteps`, are in [`src/auth/egg.ts`](../../src/auth/egg.ts).
+and `creditedEggSteps`, are in [`src/model/egg.ts`](../../src/model/egg.ts).
 
 ## See also
 

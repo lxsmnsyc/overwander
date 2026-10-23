@@ -11,7 +11,7 @@ import {
   HISUIAN_FORMS,
   PALDEAN_FORMS,
   speciesDexNumber,
-} from '../ids/species';
+} from '../ids/forms';
 import { getRegisteredSpecies } from './__create';
 
 /**
@@ -30,7 +30,7 @@ import { getRegisteredSpecies } from './__create';
  */
 
 /** One region as `regions.yaml` writes it */
-const REGION = v.object({
+const REGION = v.strictObject({
   dex: v.tuple([v.number(), v.number()]),
   milestones: v.optional(v.array(v.number())),
   medal: v.optional(v.string()),

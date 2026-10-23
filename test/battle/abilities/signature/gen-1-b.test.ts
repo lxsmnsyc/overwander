@@ -21,7 +21,7 @@ import {
   ROLLBACK_SAMPLE,
   ROLLBACK_THRESHOLD,
   ROLLBACK_WINDOW,
-} from '../../../../src/battle/abilities/signature/eevee-to-dragonite';
+} from '../../../../src/battle/abilities/signature/gen-1/eevee-to-dragonite';
 import {
   BLAST_FURNACE_CHANCE,
   BULLHEADED_EXPOSED_SCALE,
@@ -47,13 +47,13 @@ import {
   STATIC_FIELD_STEP,
   UPSTREAM_SCALE,
   WHIRL_CURRENT_CAST_SCALE,
-} from '../../../../src/battle/abilities/signature/krabby-to-pinsir';
+} from '../../../../src/battle/abilities/signature/gen-1/krabby-to-pinsir';
 import {
   DREAM_FEAST_FRACTION,
   LIVING_TUNNEL_ALLY_SCALE,
   LIVING_TUNNEL_SELF_SCALE,
   NIGHT_TERROR_DURATION,
-} from '../../../../src/battle/abilities/signature/geodude-to-drowzee';
+} from '../../../../src/battle/abilities/signature/gen-1/geodude-to-drowzee';
 import {
   BattleEvents,
   EffectType,

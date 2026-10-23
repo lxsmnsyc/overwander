@@ -10,7 +10,7 @@ import {
   onCleanup,
   onMount,
 } from 'solid-js';
-import type { AuraKind } from '../../canvas/auras';
+import type { AuraKind } from '../../canvas/effects/auras';
 import { Species } from '../../data/ids/species';
 import { LockIcon, MoonIcon, SparklesIcon, StarIcon, SunIcon } from '../icons';
 import createLongPress, { type LongPress } from '../styled/long-press';

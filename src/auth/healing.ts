@@ -2,7 +2,7 @@ import type { Items } from '../data/ids/items';
 import healOnServerSide from '../server/healing';
 import { requireUid } from '../server/auth';
 import check, { GAME_ID, ID, TOKEN } from '../server/validate';
-import type { HealthState } from './health';
+import type { HealthState } from '../model/health';
 import getIdToken from './session';
 
 /**
@@ -11,7 +11,7 @@ import getIdToken from './session';
  *
  * What the item does is decided by the server against the stored
  * record; the dialog only says which item and which pokemon. See
- * [`src/auth/health.ts`](./health.ts) for the rules both sides read.
+ * [`src/model/health.ts`](../model/health.ts) for the rules both sides read.
  */
 
 /**

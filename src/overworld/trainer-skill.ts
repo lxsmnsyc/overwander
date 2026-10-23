@@ -1,4 +1,4 @@
-import type { CatchSnapshot } from '../auth/catch-snapshot';
+import type { CatchSnapshot } from '../model/catch-snapshot';
 import { BASIC_SKILL, GYM_SKILL, TOP_SKILL, type TrainerSkill } from '../battle/ai/skill';
 import Abilities from '../data/ids/abilities';
 

@@ -1,6 +1,6 @@
 import { For, type JSX, type Resource, Show, Suspense, createResource } from 'solid-js';
-import { isShiny } from '../../auth/caught-record';
-import { isEgg } from '../../auth/egg';
+import { isShiny } from '../../model/caught-record';
+import { isEgg } from '../../model/egg';
 import { Genders, Species } from '../../data/ids/species';
 import CatchCard from '../catches/CatchCard';
 import AnimatedSprite from '../sprites/AnimatedSprite';

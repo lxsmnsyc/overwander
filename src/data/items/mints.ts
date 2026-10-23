@@ -1,7 +1,11 @@
 import { STAT_NAMES } from '../constants/stats';
-import { Items } from '../ids/items';
-import Natures, { NATURE_EFFECTS, NATURE_NAMES, getNatureFactor } from '../ids/natures';
+import type { Items } from '../ids/items';
+import type Natures from '../ids/natures';
+import { NATURE_EFFECTS, getNatureFactor } from '../ids/natures';
+import { NATURE_NAMES } from '../ids/text';
 import { itemText } from './__create';
+import recordsFile from './records/mints.yaml';
+import { recordField } from './yaml';
 
 /**
  * The mints: the only thing that changes a pokemon's nature.
@@ -23,29 +27,7 @@ import { itemText } from './__create';
  * (Hardy, Docile, Bashful, Quirky) have no mint of their own, since
  * Serious already says "raise nothing, lower nothing"
  */
-export const MINT_NATURES = new Map<Items, Natures>([
-  [Items.LonelyMint, Natures.Lonely],
-  [Items.BraveMint, Natures.Brave],
-  [Items.AdamantMint, Natures.Adamant],
-  [Items.NaughtyMint, Natures.Naughty],
-  [Items.BoldMint, Natures.Bold],
-  [Items.RelaxedMint, Natures.Relaxed],
-  [Items.ImpishMint, Natures.Impish],
-  [Items.LaxMint, Natures.Lax],
-  [Items.TimidMint, Natures.Timid],
-  [Items.HastyMint, Natures.Hasty],
-  [Items.SeriousMint, Natures.Serious],
-  [Items.JollyMint, Natures.Jolly],
-  [Items.NaiveMint, Natures.Naive],
-  [Items.ModestMint, Natures.Modest],
-  [Items.MildMint, Natures.Mild],
-  [Items.QuietMint, Natures.Quiet],
-  [Items.RashMint, Natures.Rash],
-  [Items.CalmMint, Natures.Calm],
-  [Items.GentleMint, Natures.Gentle],
-  [Items.SassyMint, Natures.Sassy],
-  [Items.CarefulMint, Natures.Careful],
-]);
+export const MINT_NATURES = recordField('mints', recordsFile, 'nature');
 
 /** Whether the item is one of the mints */
 export function isMint(item: Items): boolean {

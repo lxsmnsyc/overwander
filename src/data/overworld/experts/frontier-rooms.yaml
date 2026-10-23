@@ -1,0 +1,21 @@
+# The Pike's curtains and the Arcade's panels, each in the order a stop's roll
+# draws from, so the order is part of every challenge: append, never reorder.
+# A curtain names the status it leaves on the party (null for the kind room),
+# a panel the sky it puts over the fight (null for one that is not weather).
+
+# Four of the five cost something and one of them gives, which is the Pike's
+# whole character: walking in is a gamble rather than a test
+curtains:
+  Poisoned: Poisoned
+  Burned: Burned
+  Paralysed: Paralyzed
+  Asleep: Sleeping
+  Healed: null
+panels:
+  Sun: Heatwave
+  Rain: Rain
+  Sandstorm: Sandstorm
+  Hail: Hail
+  Stripped: null
+  Poisoned: null
+  Mended: null

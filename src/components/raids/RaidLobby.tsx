@@ -1,4 +1,4 @@
-import { isFemaleBoss } from '../../auth/raid-record';
+import { isFemaleBoss } from '../../model/raid-record';
 import type { PlayerIdentity } from '../../auth/user';
 import {
   For,
@@ -45,7 +45,11 @@ import SpectatorList from '../battle/SpectatorList';
 import { openForm } from '../forms/stack';
 import { PickTeamForm } from '../forms/pick-team';
 import TypeBadge from '../sprites/TypeBadge';
-import matchesTeam, { TEAM_VOCABULARY, type TeamContext, orderTeams } from '../../auth/team-search';
+import matchesTeam, {
+  TEAM_VOCABULARY,
+  type TeamContext,
+  orderTeams,
+} from '../../model/search/team';
 import {
   Badge,
   Button,

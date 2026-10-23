@@ -11,34 +11,41 @@ chunk seed like any landmark, but who is standing on it is drawn afresh every
 for. A player who needs a breeder and finds a daycare lady waits for the next
 window or walks to another one.
 
-`NPCS` holds **nine** of them. `Npc.RocketGrunt` bars the cell and fights
-whoever accepts, and its state lives in
-[`rocket_stops`](raid-stops.md#rocket_stops), the stop table every fighting
-landmark shares, rather than in a claim marker. The eight who do something to a
-pokemon are below.
+`NPCS` holds the **fourteen** roles whose definition under `src/overworld/npcs`
+says `wanders`. The people who fight are not among them: a Team Rocket grunt and
+a duelling trainer stand at `TeamRocket` and `Trainer` landmarks of their own,
+and their state lives in [`rocket_stops`](raid-stops.md#rocket_stops), the stop
+table every fighting landmark shares, rather than in a claim marker. The vendor
+and Nurse Joy do not wander either. The eight below are covered here. The Move
+Tutor, the Channeler, the Dojo Master, Kurt, the Chef, the Geologist, the Trader
+and the Hyper Trainer are in
+[People you meet](../mechanics/npcs.md#the-specialists).
 
-None of them trusts the caller about who they are talking to.
-`src/server/npcs/index.ts` re-derives the chunk, the zone and the window and
-checks the NPC standing there **before** doing anything.
+None of them trusts the caller about who they are talking to. `resolveNpc` in
+[`src/server/npcs/visits.ts`](../../src/server/npcs/visits.ts) re-derives the
+chunk, the zone and the window from the server's clock and checks the NPC
+standing there **before** doing anything.
 
-**Each of them serves a player once per window**, the vendor and the fossil
-scientist aside, since what those two hand over is paced by a purse and by a bag
-of fossils rather than by the clock. A row in `npc_claims`, whose marker is
-`{npc}{cell}` stamped with the NPC window, records that this player has been
-seen. A second ask before the passer-by changes is turned away whatever they can
-pay. Its `payload` holds whatever the visit is worth remembering, such as which
-pokemon the nurse tended. It is write-once audit data and nothing queries it by
-field.
+**The ones with a visit tag serve a player once per window**: the breeder, the
+daycare lady, the groomer, the fossil maniac, the Channeler, the Trader and the
+Hyper Trainer. The rest take no marker, since what they hand over is paced by a
+purse, a Heart Scale or a bag of fossils rather than by the clock. A row in
+`npc_claims`, whose marker is `{chunkSeed}{zone}@{npcTimestamp}${tag}{cell}` and
+which is keyed with the player and the world `generation`, records that this
+player has been seen. A second ask before the passer-by changes is turned away
+whatever they can pay. Its `payload` holds whatever the visit is worth
+remembering, such as which pair the breeder was handed. It is write-once audit
+data and nothing queries it by field.
 
 The marker is per cell, so walking to another wandering cell finds somebody who
 has not seen you yet. That walk is what a second egg costs.
 
 The marker is taken as late as each call can manage, once the visit is known to
 be one that will land. A pair that cannot breed, an egg already ready to hatch,
-or a party that needed nothing is refused without spending it. The two that
-charge claim the visit _before_ taking the gold, since a player already seen
-should not be charged to be told so, and both the gold and the visit go back if
-the write behind them fails.
+or a pokemon the groomer can do nothing for is refused without spending it. The
+ones that charge a fee claim the visit _before_ taking the gold, since a player
+already seen should not be charged to be told so, and both the gold and the
+visit go back if the write behind them fails.
 
 Nurse Joy takes no marker at all: she heals as often as she is asked, so there
 is no visit to spend. She is not a wanderer either. A `PokemonCenter` landmark
@@ -91,17 +98,16 @@ answers `Npc.Vendor` for a `Market` one.
   He shares [`learnMove`](../mechanics/training.md#teaching-a-move) with the
   machines, so a full list asks which move goes and a list with room asks
   nothing. The scale leaves the bag in the **same transaction** the move list is
-  written in, so it is only ever consumed when the move is actually taught, and
-  the window's marker is given back when he refuses.
+  written in, so it is only ever consumed when the move is actually taught.
 
-  He is the one wanderer whose price is not gold. A scale is dug out of the
+  He takes no marker, and his price is not gold. A scale is dug out of the
   ground, no vendor stocks one and no vendor takes one, so what paces him is
   walking.
 
-- **Fossil Maniac** carries **two of the three fossils**, drawn without repeats
-  from the same seed he was (`getFossilOffer`), and will part with **one** of
-  them for `FOSSIL_PRICES` gold while he is standing there. He is the only place
-  in the game a fossil can be bought, since everywhere else one is dug out of
+- **Fossil Maniac** carries **two fossils** (`FOSSIL_OFFER_KINDS`), drawn
+  without repeats from the same seed he was (`getFossilOffer`), and will part
+  with **one** of them for `FOSSIL_PRICES` gold while he is standing there. He is
+  the only place in the game a fossil can be bought, since everywhere else one is dug out of
   the ground. Which two he has is the window's, so a player after a particular
   one waits for it or walks somewhere else. `buyFossil` claims the visit before
   the trade and gives it back when the purse will not stretch, and the gold and
@@ -110,8 +116,10 @@ answers `Npc.Vendor` for a `Market` one.
 - **Fossil Scientist** takes a fossil and hands back what was in it, and takes
   **nothing else**. Which species comes out belongs to the rock
   (`FOSSIL_SPECIES`), and it arrives at `FOSSIL_REVIVE_LEVEL` (20), so the only
-  thing the player decides is which fossil to hand over. The record is written
-  as an `EncounterType.Revived` catch with `Acquisition.Revived` in its history.
+  thing the player decides is which fossil to hand over. A Galar fossil is two
+  halves, and both are spent on each pokemon. He opens up to
+  `FOSSIL_BENCH_LIMIT` (6) in one handover. The record is written as an
+  `EncounterType.Revived` catch with `Acquisition.Revived` in its history.
   Nobody met it, and calling it wild would name a chunk the species has not
   lived in for a very long time.
 
@@ -121,18 +129,20 @@ answers `Npc.Vendor` for a `Market` one.
   thing. The fossil leaves the bag first and is put back if the record is never
   written, since a fossil spent on nothing cannot be walked off.
 
-- **Vendor**, the shop, another who takes **no marker at all**. What most of the
-  others hand over is something the world cannot make twice in a window. What he
-  hands over is a potion, so a player may deal with him as often as their purse
-  allows while he is standing there.
+- **Vendor**, the shop at a `Market`, another who takes **no marker at all**.
+  What most of the others hand over is something the world cannot make twice in
+  a window. What he hands over is a potion, so a player may deal with him as
+  often as their purse allows while he is standing there.
 
-  What he **sells** is a crate of `VENDOR_STOCK_KINDS` (6) kinds, derived from
-  the same seed he was (`getVendorStock`), so it is part of who walked up rather
-  than anything stored, and every player who reaches him this window is offered
-  the same six things. Two are always the staples, a Poke Ball and a Potion. The
-  rest are drawn without repeats from the balls and the medicine. The price is
-  the registry's `buy`, so an item costs the same from every vendor in the
-  world.
+  The window rolls which counter he set up (`getVendorKind`, one of
+  `VENDOR_KINDS`: balls, medicine, vitamins, incenses, X items or machines). What
+  he **sells** is a crate of `VENDOR_STOCK_KINDS` (12) kinds off that shelf,
+  derived from the same seed he was (`getVendorStock`), so it is part of who
+  walked up rather than anything stored, and every player who reaches him this
+  window is offered the same twelve things. The balls counter always carries a
+  Poke Ball and the medicine counter a Potion (`VENDOR_STAPLES`). The rest are
+  drawn without repeats. The price is the registry's `buy`, so an item costs the
+  same from every vendor in the world.
 
   What he **buys** is wider: anything `Marketable` at all, at the registry's
   `sell`, which is where the pearls, star pieces and nuggets a walk turns up
@@ -151,8 +161,8 @@ What a bred egg inherits, and what it does not, is in
 ## Portals
 
 A `Portal` landmark is a way through to another one. It does nothing on its own.
-Opening it takes a **Portal Key**, the rarest band's newest entry, and the key
-is **spent in the crossing**.
+Opening it takes a **Portal Key**, from the item pool's **prized** band, and
+the key is **spent in the crossing**.
 
 The traveller names a **town**, never a destination. Where they come out is that
 town's own portal, on its plaza, derived in
@@ -186,7 +196,7 @@ full name reads `Rimefell Village, Ashmarch`.
 
 The county is what makes it work. Without one, a name would have to be unique
 across the world's 262,144 regions, and one biome's words only make 49,920
-names, five times less world than words. A county is 64x64 regions, so a name
+names, five times more world than words. A county is 64x64 regions, so a name
 only has to be unique inside **one county and one biome**: 4,096 regions against
 49,920 names, which leaves room to spend the 3,840 unmarked names first, so only
 about 1 town in 16 carries a mark.
@@ -207,8 +217,9 @@ exists, and a test walks the world's corners to prove it cannot.
 ## The register
 
 `towns` holds the one fact no derivation can reach: **whether anybody has walked
-in**. Just `(region_x, region_y, found_by, found_at)`, no name column and no
-unique index, because there is nothing to reserve.
+in**. Just `(region_x, region_y, found_by, found_at)` and the world
+`generation`, keyed by the generation and the region. There is no name column
+and nothing unique on a name, because there is nothing to reserve.
 
 Every row is public, and that is the point. A town one player found is a town
 everybody can cross to, so the portal's name box is a shared register rather

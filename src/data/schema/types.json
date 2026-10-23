@@ -1,0 +1,43 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Types",
+  "type": "object",
+  "propertyNames": {
+    "$ref": "names.json#/definitions/type"
+  },
+  "additionalProperties": {
+    "type": "object",
+    "properties": {
+      "color": {
+        "type": "string",
+        "pattern": "^#[0-9a-f]{6}$",
+        "description": "What it is drawn in"
+      },
+      "effective": {
+        "type": "array",
+        "items": {
+          "$ref": "names.json#/definitions/type"
+        },
+        "description": "What it hits for double"
+      },
+      "resistant": {
+        "type": "array",
+        "items": {
+          "$ref": "names.json#/definitions/type"
+        },
+        "description": "What it hits for half"
+      },
+      "immune": {
+        "type": "array",
+        "items": {
+          "$ref": "names.json#/definitions/type"
+        },
+        "description": "What it cannot touch"
+      }
+    },
+    "required": [
+      "color"
+    ],
+    "additionalProperties": false
+  }
+}

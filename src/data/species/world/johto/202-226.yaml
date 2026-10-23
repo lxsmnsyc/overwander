@@ -327,6 +327,7 @@ Mantine:
   Mantine:
     types: [Water, Flying]
     egg-groups: [Water1]
+    spawns-as: water
     habitat: Water
     biomes: [Ocean, CoralReef, KelpForest]
     active: any
@@ -336,6 +337,7 @@ Mantine:
   Mantyke:
     types: [Water, Flying]
     egg-groups: [NoEggsDiscovered]
+    spawns-as: water
     habitat: Water
     biomes: [Ocean, CoralReef, KelpForest]
     active: any

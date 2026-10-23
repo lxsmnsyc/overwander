@@ -106,7 +106,7 @@ PetalDance:
   accuracy: 100
   pp: 10
   target: Unit
-  flags: [Contact]
+  flags: [Contact, Dance]
   steps: 2
 
 Spore:
@@ -124,7 +124,7 @@ KarateChop:
   accuracy: 100
   pp: 25
   target: Unit
-  flags: [Contact]
+  flags: [Contact, HighCrit]
 
 Hypnosis:
   type: Psychic
@@ -155,7 +155,7 @@ LowKick:
   accuracy: 100
   pp: 20
   target: Unit
-  flags: [Contact]
+  flags: [Contact, Kick]
 
 Slam:
   type: Normal

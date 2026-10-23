@@ -3157,42 +3157,6 @@
         "bytes": 1174
       }
     },
-    "public/sprites/overworld/characters/frlg/man-1/image.png": {
-      "digest": "92b0ac8e0f99a7cd",
-      "bytes": 1114,
-      "width": 51,
-      "height": 104,
-      "compact": {
-        "at": "2026-08-25T15:25:39Z",
-        "as": "already compact",
-        "was": 1114,
-        "bytes": 1114
-      }
-    },
-    "public/sprites/overworld/characters/frlg/man-2/image.png": {
-      "digest": "bf561f15a89945bf",
-      "bytes": 1332,
-      "width": 51,
-      "height": 108,
-      "compact": {
-        "at": "2026-08-25T15:25:39Z",
-        "as": "already compact",
-        "was": 1332,
-        "bytes": 1332
-      }
-    },
-    "public/sprites/overworld/characters/frlg/man-3/image.png": {
-      "digest": "b6048b770ae2b86d",
-      "bytes": 1044,
-      "width": 51,
-      "height": 104,
-      "compact": {
-        "at": "2026-08-25T15:25:39Z",
-        "as": "already compact",
-        "was": 1044,
-        "bytes": 1044
-      }
-    },
     "public/sprites/overworld/characters/frlg/misty/image.png": {
       "digest": "f02088225e5f387a",
       "bytes": 1328,
@@ -4441,18 +4405,6 @@
         "bytes": 1033
       }
     },
-    "public/sprites/overworld/characters/lgpe/gym-guide/image.png": {
-      "digest": "bc2ddbc341820961",
-      "bytes": 1138,
-      "width": 51,
-      "height": 104,
-      "compact": {
-        "at": "2026-08-25T16:13:10Z",
-        "as": "already compact",
-        "was": 1138,
-        "bytes": 1138
-      }
-    },
     "public/sprites/overworld/characters/lgpe/hiker/image.png": {
       "digest": "74a7ba9c19b9c076",
       "bytes": 1393,
@@ -4511,18 +4463,6 @@
         "as": "already compact",
         "was": 1250,
         "bytes": 1250
-      }
-    },
-    "public/sprites/overworld/characters/lgpe/man/image.png": {
-      "digest": "bbc0b371cafb015f",
-      "bytes": 1159,
-      "width": 51,
-      "height": 108,
-      "compact": {
-        "at": "2026-08-25T16:13:10Z",
-        "as": "already compact",
-        "was": 1159,
-        "bytes": 1159
       }
     },
     "public/sprites/overworld/characters/lgpe/misty/image.png": {
@@ -5857,30 +5797,6 @@
         "bytes": 991
       }
     },
-    "public/sprites/overworld/characters/rse/man-2/image.png": {
-      "digest": "4974444e5cc70f71",
-      "bytes": 1098,
-      "width": 57,
-      "height": 104,
-      "compact": {
-        "at": "2026-09-04T11:12:51Z",
-        "as": "already compact",
-        "was": 1098,
-        "bytes": 1098
-      }
-    },
-    "public/sprites/overworld/characters/rse/man/image.png": {
-      "digest": "147ecb0e03801453",
-      "bytes": 1063,
-      "width": 51,
-      "height": 104,
-      "compact": {
-        "at": "2026-09-04T11:12:51Z",
-        "as": "already compact",
-        "was": 1063,
-        "bytes": 1063
-      }
-    },
     "public/sprites/overworld/characters/rse/may-2/image.png": {
       "digest": "acbcb7d28cf65aff",
       "bytes": 1353,
@@ -6553,18 +6469,6 @@
         "bytes": 1716
       }
     },
-    "public/sprites/overworld/characters/xy/gym-guy/image.png": {
-      "digest": "4b39c23e8d0f1d30",
-      "bytes": 1257,
-      "width": 60,
-      "height": 108,
-      "compact": {
-        "at": "2026-09-24T15:26:49Z",
-        "as": "already compact",
-        "was": 1257,
-        "bytes": 1257
-      }
-    },
     "public/sprites/overworld/characters/xy/harmony/image.png": {
       "digest": "3313e46d1b76f184",
       "bytes": 1306,
@@ -6733,42 +6637,6 @@
         "bytes": 1346
       }
     },
-    "public/sprites/overworld/characters/xy/man-1/image.png": {
-      "digest": "d382af0489517ef0",
-      "bytes": 1106,
-      "width": 54,
-      "height": 104,
-      "compact": {
-        "at": "2026-09-24T15:26:49Z",
-        "as": "already compact",
-        "was": 1106,
-        "bytes": 1106
-      }
-    },
-    "public/sprites/overworld/characters/xy/man-2/image.png": {
-      "digest": "0a5e8466f1c07a9a",
-      "bytes": 1026,
-      "width": 51,
-      "height": 104,
-      "compact": {
-        "at": "2026-09-24T15:26:49Z",
-        "as": "already compact",
-        "was": 1026,
-        "bytes": 1026
-      }
-    },
-    "public/sprites/overworld/characters/xy/man-3/image.png": {
-      "digest": "dec919e460597827",
-      "bytes": 1036,
-      "width": 54,
-      "height": 108,
-      "compact": {
-        "at": "2026-09-24T15:26:49Z",
-        "as": "already compact",
-        "was": 1036,
-        "bytes": 1036
-      }
-    },
     "public/sprites/overworld/characters/xy/monsieur/image.png": {
       "digest": "3ca8ce58d6507f89",
       "bytes": 1164,
@@ -6793,18 +6661,6 @@
         "bytes": 1095
       }
     },
-    "public/sprites/overworld/characters/xy/mystery-gift-girl/image.png": {
-      "digest": "f9759502e2e2a513",
-      "bytes": 1134,
-      "width": 57,
-      "height": 104,
-      "compact": {
-        "at": "2026-09-24T15:26:49Z",
-        "as": "already compact",
-        "was": 1134,
-        "bytes": 1134
-      }
-    },
     "public/sprites/overworld/characters/xy/olympia/image.png": {
       "digest": "3d1edbec95b237f0",
       "bytes": 1534,
@@ -6815,18 +6671,6 @@
         "as": "already compact",
         "was": 1534,
         "bytes": 1534
-      }
-    },
-    "public/sprites/overworld/characters/xy/owner/image.png": {
-      "digest": "f257995d781e9f17",
-      "bytes": 1186,
-      "width": 57,
-      "height": 108,
-      "compact": {
-        "at": "2026-09-24T14:55:23Z",
-        "as": "already compact",
-        "was": 1186,
-        "bytes": 1186
       }
     },
     "public/sprites/overworld/characters/xy/paxton/image.png": {
@@ -7213,18 +7057,6 @@
         "bytes": 1125
       }
     },
-    "public/sprites/overworld/characters/xy/swimmer-f-2/image.png": {
-      "digest": "22b8ff0f6c3e093c",
-      "bytes": 981,
-      "width": 72,
-      "height": 84,
-      "compact": {
-        "at": "2026-09-24T15:26:49Z",
-        "as": "already compact",
-        "was": 981,
-        "bytes": 981
-      }
-    },
     "public/sprites/overworld/characters/xy/swimmer-f/image.png": {
       "digest": "bd0a2f990902fe88",
       "bytes": 1445,
@@ -7235,18 +7067,6 @@
         "as": "already compact",
         "was": 1445,
         "bytes": 1445
-      }
-    },
-    "public/sprites/overworld/characters/xy/swimmer-m-2/image.png": {
-      "digest": "082142303ff7bc44",
-      "bytes": 912,
-      "width": 69,
-      "height": 84,
-      "compact": {
-        "at": "2026-09-24T15:26:49Z",
-        "as": "already compact",
-        "was": 912,
-        "bytes": 912
       }
     },
     "public/sprites/overworld/characters/xy/swimmer-m/image.png": {
@@ -7271,18 +7091,6 @@
         "as": "already compact",
         "was": 1511,
         "bytes": 1511
-      }
-    },
-    "public/sprites/overworld/characters/xy/teenager/image.png": {
-      "digest": "282e0e3d9b683dc6",
-      "bytes": 1203,
-      "width": 60,
-      "height": 100,
-      "compact": {
-        "at": "2026-09-24T15:26:49Z",
-        "as": "already compact",
-        "was": 1203,
-        "bytes": 1203
       }
     },
     "public/sprites/overworld/characters/xy/tierno/image.png": {
@@ -7451,30 +7259,6 @@
         "as": "already compact",
         "was": 1745,
         "bytes": 1745
-      }
-    },
-    "public/sprites/overworld/characters/xy/woman-1/image.png": {
-      "digest": "3116889a93c9aa7e",
-      "bytes": 1160,
-      "width": 60,
-      "height": 104,
-      "compact": {
-        "at": "2026-09-24T15:26:49Z",
-        "as": "already compact",
-        "was": 1160,
-        "bytes": 1160
-      }
-    },
-    "public/sprites/overworld/characters/xy/woman-2/image.png": {
-      "digest": "efd16ad1a2c41d4f",
-      "bytes": 1105,
-      "width": 60,
-      "height": 104,
-      "compact": {
-        "at": "2026-09-24T15:26:49Z",
-        "as": "already compact",
-        "was": 1105,
-        "bytes": 1105
       }
     },
     "public/sprites/overworld/characters/xy/worker-1/image.png": {
@@ -9625,6 +9409,30 @@
         "bytes": 8478
       }
     },
+    "public/sprites/pokemon/alola/1078001/regular.png": {
+      "digest": "a48c884191afc1e4",
+      "bytes": 16826,
+      "width": 223,
+      "height": 501,
+      "compact": {
+        "at": "2026-10-14T02:41:54Z",
+        "as": "already compact",
+        "was": 16826,
+        "bytes": 16826
+      }
+    },
+    "public/sprites/pokemon/alola/1078001/shiny.png": {
+      "digest": "4eaedcebda1e4082",
+      "bytes": 16795,
+      "width": 223,
+      "height": 501,
+      "compact": {
+        "at": "2026-10-14T02:41:54Z",
+        "as": "already compact",
+        "was": 16795,
+        "bytes": 16795
+      }
+    },
     "public/sprites/pokemon/alola/1080001/regular.png": {
       "digest": "17a12ff512412b84",
       "bytes": 7757,
@@ -9719,6 +9527,30 @@
         "as": "already compact",
         "was": 5366,
         "bytes": 5366
+      }
+    },
+    "public/sprites/pokemon/alola/1080701/regular.png": {
+      "digest": "2c5d6c2c6304a262",
+      "bytes": 7597,
+      "width": 212,
+      "height": 165,
+      "compact": {
+        "at": "2026-10-14T02:41:54Z",
+        "as": "already compact",
+        "was": 7597,
+        "bytes": 7597
+      }
+    },
+    "public/sprites/pokemon/alola/1080701/shiny.png": {
+      "digest": "b98648428ca8d1f2",
+      "bytes": 7505,
+      "width": 212,
+      "height": 165,
+      "compact": {
+        "at": "2026-10-14T02:41:54Z",
+        "as": "already compact",
+        "was": 7505,
+        "bytes": 7505
       }
     },
     "public/sprites/pokemon/alola/722/regular.png": {
@@ -15373,6 +15205,30 @@
         "bytes": 13979
       }
     },
+    "public/sprites/pokemon/hoenn/1035801/regular.png": {
+      "digest": "b98e9e81fcb73e5e",
+      "bytes": 2003,
+      "width": 188,
+      "height": 50,
+      "compact": {
+        "at": "2026-10-14T02:41:54Z",
+        "as": "already compact",
+        "was": 2003,
+        "bytes": 2003
+      }
+    },
+    "public/sprites/pokemon/hoenn/1035801/shiny.png": {
+      "digest": "c3c0981fadc7c31a",
+      "bytes": 2051,
+      "width": 188,
+      "height": 50,
+      "compact": {
+        "at": "2026-10-14T02:41:54Z",
+        "as": "already compact",
+        "was": 2051,
+        "bytes": 2051
+      }
+    },
     "public/sprites/pokemon/hoenn/1035901/regular.png": {
       "digest": "9f2bf4954f781da0",
       "bytes": 9064,
@@ -20125,6 +19981,18 @@
         "bytes": 27799
       }
     },
+    "public/sprites/pokemon/johto/1022701/regular.png": {
+      "digest": "e1cd1be625a2880b",
+      "bytes": 10060,
+      "width": 178,
+      "height": 304,
+      "compact": {
+        "at": "2026-10-14T02:41:54Z",
+        "as": "already compact",
+        "was": 10060,
+        "bytes": 10060
+      }
+    },
     "public/sprites/pokemon/johto/1022901/regular.png": {
       "digest": "960476bf56b55087",
       "bytes": 6985,
@@ -23593,6 +23461,30 @@
         "bytes": 5240
       }
     },
+    "public/sprites/pokemon/kalos/1067006/regular.png": {
+      "digest": "b8a906ed34173b25",
+      "bytes": 17747,
+      "width": 362,
+      "height": 398,
+      "compact": {
+        "at": "2026-10-14T02:41:54Z",
+        "as": "already compact",
+        "was": 17747,
+        "bytes": 17747
+      }
+    },
+    "public/sprites/pokemon/kalos/1067006/shiny.png": {
+      "digest": "71c3a1960a2748a7",
+      "bytes": 17894,
+      "width": 362,
+      "height": 398,
+      "compact": {
+        "at": "2026-10-14T02:41:54Z",
+        "as": "already compact",
+        "was": 17894,
+        "bytes": 17894
+      }
+    },
     "public/sprites/pokemon/kalos/1067101/regular.png": {
       "digest": "36bbd53f90430e0e",
       "bytes": 8199,
@@ -23713,6 +23605,54 @@
         "bytes": 12805
       }
     },
+    "public/sprites/pokemon/kalos/1069101/regular.png": {
+      "digest": "b2838cba8ce29499",
+      "bytes": 8770,
+      "width": 376,
+      "height": 126,
+      "compact": {
+        "at": "2026-10-14T02:41:54Z",
+        "as": "already compact",
+        "was": 8770,
+        "bytes": 8770
+      }
+    },
+    "public/sprites/pokemon/kalos/1069101/shiny.png": {
+      "digest": "27a20ad4261e8e98",
+      "bytes": 8659,
+      "width": 376,
+      "height": 126,
+      "compact": {
+        "at": "2026-10-14T02:41:54Z",
+        "as": "already compact",
+        "was": 8659,
+        "bytes": 8659
+      }
+    },
+    "public/sprites/pokemon/kalos/1070101/regular.png": {
+      "digest": "c8d7602eba0daff6",
+      "bytes": 4249,
+      "width": 224,
+      "height": 85,
+      "compact": {
+        "at": "2026-10-14T02:41:54Z",
+        "as": "already compact",
+        "was": 4249,
+        "bytes": 4249
+      }
+    },
+    "public/sprites/pokemon/kalos/1070101/shiny.png": {
+      "digest": "dc5b0e852011a290",
+      "bytes": 4149,
+      "width": 224,
+      "height": 85,
+      "compact": {
+        "at": "2026-10-14T02:41:54Z",
+        "as": "already compact",
+        "was": 4149,
+        "bytes": 4149
+      }
+    },
     "public/sprites/pokemon/kalos/1071003/regular.png": {
       "digest": "a6fcbabd5fbaa464",
       "bytes": 3317,
@@ -23807,6 +23747,30 @@
         "as": "already compact",
         "was": 59934,
         "bytes": 59934
+      }
+    },
+    "public/sprites/pokemon/kalos/1071805/regular.png": {
+      "digest": "68502ac1d8f27d8f",
+      "bytes": 114101,
+      "width": 922,
+      "height": 1026,
+      "compact": {
+        "at": "2026-10-14T02:41:54Z",
+        "as": "already compact",
+        "was": 114101,
+        "bytes": 114101
+      }
+    },
+    "public/sprites/pokemon/kalos/1071805/shiny.png": {
+      "digest": "5f460abe03c031e8",
+      "bytes": 112703,
+      "width": 922,
+      "height": 1026,
+      "compact": {
+        "at": "2026-10-14T02:41:54Z",
+        "as": "already compact",
+        "was": 112703,
+        "bytes": 112703
       }
     },
     "public/sprites/pokemon/kalos/1071901/regular.png": {
@@ -30433,6 +30397,30 @@
         "bytes": 2513
       }
     },
+    "public/sprites/pokemon/paldea/1097803/regular.png": {
+      "digest": "c931b4b27ae4461c",
+      "bytes": 7760,
+      "width": 166,
+      "height": 226,
+      "compact": {
+        "at": "2026-10-14T02:41:54Z",
+        "as": "already compact",
+        "was": 7760,
+        "bytes": 7760
+      }
+    },
+    "public/sprites/pokemon/paldea/1097803/shiny.png": {
+      "digest": "0fcda9c413bc8cca",
+      "bytes": 7697,
+      "width": 166,
+      "height": 226,
+      "compact": {
+        "at": "2026-10-14T02:41:54Z",
+        "as": "already compact",
+        "was": 7697,
+        "bytes": 7697
+      }
+    },
     "public/sprites/pokemon/paldea/1099901/regular.png": {
       "digest": "ceff3d986d6a74c7",
       "bytes": 1957,
@@ -32939,6 +32927,18 @@
         "as": "already compact",
         "was": 24900,
         "bytes": 24900
+      }
+    },
+    "public/sprites/pokemon/sinnoh/1049102/regular.png": {
+      "digest": "44cdedf5bce49c6a",
+      "bytes": 20829,
+      "width": 395,
+      "height": 439,
+      "compact": {
+        "at": "2026-10-14T02:41:54Z",
+        "as": "already compact",
+        "was": 20829,
+        "bytes": 20829
       }
     },
     "public/sprites/pokemon/sinnoh/1049201/regular.png": {
@@ -36517,6 +36517,30 @@
         "bytes": 2080
       }
     },
+    "public/sprites/pokemon/unova/1053001/regular.png": {
+      "digest": "db64133ed46c3d0a",
+      "bytes": 16117,
+      "width": 279,
+      "height": 317,
+      "compact": {
+        "at": "2026-10-14T02:41:54Z",
+        "as": "already compact",
+        "was": 16117,
+        "bytes": 16117
+      }
+    },
+    "public/sprites/pokemon/unova/1053001/shiny.png": {
+      "digest": "ca7dc1109b8e84bc",
+      "bytes": 16289,
+      "width": 279,
+      "height": 317,
+      "compact": {
+        "at": "2026-10-14T02:41:54Z",
+        "as": "already compact",
+        "was": 16289,
+        "bytes": 16289
+      }
+    },
     "public/sprites/pokemon/unova/1055001/regular.png": {
       "digest": "d6b9cb0277bed1cc",
       "bytes": 2519,
@@ -36587,6 +36611,30 @@
         "as": "already compact",
         "was": 2720,
         "bytes": 2720
+      }
+    },
+    "public/sprites/pokemon/unova/1056001/regular.png": {
+      "digest": "0e1c9fef83fd9155",
+      "bytes": 3757,
+      "width": 104,
+      "height": 179,
+      "compact": {
+        "at": "2026-10-14T02:41:54Z",
+        "as": "already compact",
+        "was": 3757,
+        "bytes": 3757
+      }
+    },
+    "public/sprites/pokemon/unova/1056001/shiny.png": {
+      "digest": "cc736df3779e99c7",
+      "bytes": 3817,
+      "width": 104,
+      "height": 179,
+      "compact": {
+        "at": "2026-10-14T02:41:54Z",
+        "as": "already compact",
+        "was": 3817,
+        "bytes": 3817
       }
     },
     "public/sprites/pokemon/unova/1058501/regular.png": {
@@ -36731,6 +36779,30 @@
         "as": "already compact",
         "was": 6538,
         "bytes": 6538
+      }
+    },
+    "public/sprites/pokemon/unova/1060401/regular.png": {
+      "digest": "414056563c2e538e",
+      "bytes": 25422,
+      "width": 298,
+      "height": 513,
+      "compact": {
+        "at": "2026-10-14T02:41:54Z",
+        "as": "already compact",
+        "was": 25422,
+        "bytes": 25422
+      }
+    },
+    "public/sprites/pokemon/unova/1060401/shiny.png": {
+      "digest": "11dc45f55678dfff",
+      "bytes": 25422,
+      "width": 298,
+      "height": 513,
+      "compact": {
+        "at": "2026-10-14T02:41:54Z",
+        "as": "already compact",
+        "was": 25422,
+        "bytes": 25422
       }
     },
     "public/sprites/pokemon/unova/1064501/regular.png": {
@@ -41040,15 +41112,15 @@
       }
     },
     "public/sprites/ui/items/medicine/image.png": {
-      "digest": "81e1f22c9c4be609",
-      "bytes": 9463,
+      "digest": "2d2ff318ad7e4846",
+      "bytes": 15609,
       "width": 185,
-      "height": 123,
+      "height": 139,
       "compact": {
-        "at": "2026-09-30T05:27:59Z",
+        "at": "2026-10-14T02:41:54Z",
         "as": "already compact",
-        "was": 9463,
-        "bytes": 9463
+        "was": 15609,
+        "bytes": 15609
       }
     },
     "public/sprites/ui/items/mega-stones/image.png": {
@@ -41181,6 +41253,18 @@
         "as": "already compact",
         "was": 4726,
         "bytes": 4726
+      }
+    },
+    "public/sprites/ui/items/zenith/kanto/image.png": {
+      "digest": "96507682bd41aa7b",
+      "bytes": 1694,
+      "width": 15,
+      "height": 784,
+      "compact": {
+        "at": "2026-10-19T11:55:26Z",
+        "as": "already compact",
+        "was": 1694,
+        "bytes": 1694
       }
     },
     "public/sprites/ui/move-categories/image.png": {

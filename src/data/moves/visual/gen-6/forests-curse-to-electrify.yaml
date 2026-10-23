@@ -1,0 +1,28 @@
+# Every older region's signatures, one family each, that once borrowed another move's
+# picture
+ForestsCurse: { landing: Curse }
+
+# Moves that are an earlier move's picture in all but name
+PetalBlizzard: { landing: Petals }
+FreezeDry: { landing: Freeze }
+
+# Struck and gone: the blow is the first step and the walk off the
+# field is the second, which is why the landing here is the leaving
+PartingShot: { landing: Relay }
+
+# Moves that are an earlier move's picture in all but name
+TopsyTurvy: { landing: Warp }
+DrainingKiss: { landing: Drain }
+
+# Moves that are an earlier move's picture in all but name
+CraftyShield: { landing: Shell }
+
+# Moves that are an earlier move's picture in all but name
+FlowerShield: { landing: Petals }
+
+# The terrains, which light the floor rather than land on anybody
+GrassyTerrain: { landing: Terrain }
+MistyTerrain: { landing: Terrain }
+
+# Moves that are an earlier move's picture in all but name
+Electrify: { landing: Crackle }

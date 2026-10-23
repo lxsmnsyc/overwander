@@ -186,7 +186,7 @@ RazorWind:
   accuracy: 100
   pp: 10
   target: Unit
-  flags: [Slicing, Wind]
+  flags: [Slicing, Wind, HighCrit]
   steps: 1
 
 SkyAttack:
@@ -196,6 +196,7 @@ SkyAttack:
   accuracy: 90
   pp: 5
   target: Unit
+  flags: [HighCrit]
   steps: 1
 
 HyperFang:

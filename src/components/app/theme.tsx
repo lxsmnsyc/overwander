@@ -6,7 +6,7 @@ import { MoonIcon, SunIcon } from '../icons';
  * Day and night.
  *
  * The whole of the switch is a `dark` class on the root element: the
- * colours in [`app.css`](../app.css) are named twice, once under
+ * colours in [`app.css`](../../app.css) are named twice, once under
  * `:root` and once under `.dark`, so nothing in the game asks which
  * theme it is in — `bg-paper` is paper in both, and paper is white by
  * day and navy at night.
@@ -21,7 +21,7 @@ import { MoonIcon, SunIcon } from '../icons';
 /**
  * Where the choice is remembered. It is terracotta's key rather than
  * one of ours, and the no-flash script in
- * [`entry-server.tsx`](../entry-server.tsx) reads the same one — the
+ * [`entry-server.tsx`](../../entry-server.tsx) reads the same one — the
  * two have to agree or the page paints in the wrong theme and then
  * corrects itself in front of the player
  */

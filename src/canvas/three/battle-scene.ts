@@ -1,5 +1,5 @@
 import { Camera, Scene, WebGLRenderer } from 'three';
-import { type FieldView, fieldClipDepth, fieldClipMatrix, fieldLens } from '../battle/field';
+import { type FieldView, fieldClipDepth, fieldClipMatrix, fieldLens } from '../battle/projection';
 import EffectBatch from './effect-batch';
 import SceneMarks from './scene-marks';
 

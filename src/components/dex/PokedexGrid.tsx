@@ -1,6 +1,6 @@
 import { Index, type JSX, Show } from 'solid-js';
 import type { Species } from '../../data/ids/species';
-import { unownLetter } from '../../data/ids/species';
+import { unownLetter } from '../../data/ids/forms';
 import { getSpeciesData } from '../../data/species';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 

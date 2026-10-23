@@ -3,9 +3,9 @@ import { Types } from '../../data/constants/types';
 import { DamageFlags, Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, EffectType } from '../events';
-import { isWeatherSunny } from '../utils';
+import { isWeatherSunny } from '../weather';
 import turns from '../turn';
 import createTimedStatus from './__create';
 

@@ -1,5 +1,5 @@
 import { For, type JSX, Show } from 'solid-js';
-import { STATUS_NAMES } from '../../auth/health';
+import { STATUS_NAMES } from '../../model/health';
 import { unpackStatuses } from '../../data/ids/status';
 import { STATUS_COLORS } from '../battle/UnitCard';
 import { TooltipHost } from '../styled';

@@ -70,7 +70,7 @@ export interface NpcDefinition {
 /** What a person says and is called, which is text rather than code */
 type NpcText = Pick<NpcDefinition, 'name' | 'description' | 'quote' | 'spent'>;
 
-const TEXT = v.object({
+const TEXT = v.strictObject({
   name: v.string(),
   description: v.string(),
   quote: v.string(),

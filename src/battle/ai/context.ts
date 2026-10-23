@@ -2,7 +2,7 @@ import { Stats } from '../../data/constants/stats';
 import { MoveAffects, type Moves } from '../../data/ids/moves';
 import { TeamStatuses } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
-import type Battle from '../core';
+import type Battle from '../battle';
 import {
   BattleEvents,
   type CheckUnitAIRatingEvent,

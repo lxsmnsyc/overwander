@@ -1,4 +1,4 @@
-import { isFemaleBoss } from '../../auth/raid-record';
+import { isFemaleBoss } from '../../model/raid-record';
 import type { PlayerIdentity } from '../../auth/user';
 import {
   For,
@@ -13,7 +13,7 @@ import {
   onMount,
 } from 'solid-js';
 import { localNow, syncServerClock } from '../../auth/clock';
-import { getLocalOffset, toLocalTime } from '../../auth/local-time';
+import { getLocalOffset, toLocalTime } from '../../model/local-time';
 import {
   type RaidInvite,
   type RaidRecord,
@@ -23,7 +23,7 @@ import {
   watchLiveRaids,
   watchRaidInvites,
 } from '../../auth/raids';
-import { LobbyRole } from '../../auth/lobby-role';
+import { LobbyRole } from '../../model/lobby-role';
 import { type Profile, watchProfile } from '../../auth/profile';
 import { RAID_INTERVAL } from '../../overworld/chunk-snapshot';
 import RaidLobby from './RaidLobby';

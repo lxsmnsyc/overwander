@@ -1,7 +1,7 @@
 import { type JSX, Show, createEffect, createSignal, onCleanup } from 'solid-js';
-import type BasicSprite from '../../canvas/basic-sprite';
-import type { BasicSpriteImage } from '../../canvas/basic-sprite';
-import loadBasicSprite from '../../canvas/basic-sprites';
+import type BasicSprite from '../../canvas/sprites/basic-sprite';
+import type { BasicSpriteImage } from '../../canvas/sprites/basic-sprite';
+import loadBasicSprite from '../../canvas/sprites/basic-sprites';
 
 /**
  * One picture out of a still sheet, drawn by the browser rather than

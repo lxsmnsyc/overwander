@@ -13,7 +13,7 @@ import { Slots } from '../../data/constants/slots';
 import awakenAbility, { type Awakening } from '../awaken';
 import widenSlot from '../slot-items';
 import { learnMove } from '../moves';
-import { LearnRefusal, type LearnResult } from '../../auth/learn-refusal';
+import { LearnRefusal, type LearnResult } from '../../model/learn-refusal';
 import { releaseVisit, resolveNpc, takeVisit } from './visits';
 
 /** The two who deal in moves, and the one who deals in abilities */

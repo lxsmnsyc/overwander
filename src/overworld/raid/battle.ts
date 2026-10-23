@@ -1,0 +1,374 @@
+import type { CatchSnapshot } from '../../model/catch-snapshot';
+import type BattleAftermath from '../../model/battle-aftermath';
+import { getMaxHealth, rescaleHealth } from '../../model/health';
+import type { TeamSnapshotRecord } from '../../auth/teams';
+import Alliance from '../../battle/alliance';
+import type Battle from '../../battle/battle';
+import { BattleModes } from '../../battle/battle';
+import { BattleEvents, EffectType } from '../../battle/events';
+import { EventPriority } from '../../core/event-emitter';
+import type Biome from '../../data/ids/biome';
+import createBattle from '../../battle/setup';
+import Team from '../../battle/team';
+import Unit from '../../battle/unit';
+import { holdAlphaCopy, holdTotemAlly } from '../../battle/abilities/special';
+import { holdBalms } from '../../battle/abilities/special/noble';
+import { dynamax } from '../../battle/gimmicks/dynamax';
+import { terastallize } from '../../battle/gimmicks/terastal';
+import { UNLIMITED_BATTLE_LIMITS } from '../../data/constants/battle-limits';
+import { STAT_ORDER, Stats, StatsKind, getIV } from '../../data/constants/stats';
+import {
+  NON_VOLATILE_STATUSES,
+  packStatuses,
+  settleStatuses,
+  unpackStatuses,
+} from '../../data/ids/status';
+import { featMove } from '../../data/species/feats';
+import { getSpeciesData } from '../../data/species/__create';
+import { BOSS_ALLIANCE } from '.';
+import { setTrainerSkill } from '../../battle/ai/skill';
+import skillOf from '../trainer-skill';
+
+/**
+ * A raid, fielded.
+ *
+ * The engine only exists in a browser: a fight is played, watched and
+ * settled on the client, and the server keeps the record of what it
+ * came to rather than replaying it. So everything that builds units,
+ * teams and a battle lives here, apart from the server, and what is
+ * written down about a raid before anybody fights it stays in
+ * [`raid.ts`](./index.ts) where both sides can read it
+ */
+
+function addUnit(battle: Battle, team: Team, snapshot: CatchSnapshot): Unit {
+  // The boss' snapshot carries no catch id, so its unit stands for no
+  // record — the empty string travels through unchanged
+  const unit = new Unit(battle, team, snapshot.caught);
+
+  // A Totem's ally and an Alpha's copies join their team only when called
+  if (snapshot.called !== true) {
+    team.addUnit(unit);
+  }
+  // Species first: it seeds the base stats and types the rest builds on
+  unit.setSpecies(snapshot.species);
+  unit.setLevel(snapshot.level);
+  unit.setNature(snapshot.nature);
+  unit.setGender(snapshot.gender);
+  // Drawn from the shiny sheet, so a sparkling pokemon fights looking
+  // like itself
+  unit.shiny = snapshot.shiny;
+  // The factor travels with the catch, so its G-Max Move does too
+  unit.gigantamax = snapshot.gigantamax === true;
+  // A catch from before Terastallization has none stored and reads as its first type
+  unit.teraType = snapshot.teraType ?? getSpeciesData(snapshot.species).types[0];
+  // What it thinks of its owner, which is what Return and Frustration
+  // are worth in its hands
+  unit.friendship = snapshot.friendship;
+  // The individual's own measurements, not the species' listed ones
+  unit.setHeight(snapshot.height);
+  unit.setWeight(snapshot.weight);
+  // What it has room for, so anything asking whether a hand is free
+  // asks the record rather than a rule of the battle's own
+  unit.setSlots(snapshot.slots);
+
+  for (const stat of STAT_ORDER) {
+    unit.setStat(StatsKind.Individual, stat, getIV(snapshot.ivs, stat));
+    unit.setStat(StatsKind.Effort, stat, snapshot.effortValues[stat]);
+  }
+  for (const move of snapshot.moves) {
+    unit.addMove(move);
+    // What its owner spent on the move, frozen with the rest of it. A
+    // snapshot from before PP Ups existed carries nothing, and the
+    // move fights at the PP it is registered with
+    unit.setMovePoints(move, snapshot.movePoints[String(move)] ?? 0);
+  }
+  for (const ability of snapshot.abilities) {
+    unit.addAbility(ability);
+  }
+  for (const item of snapshot.items) {
+    unit.addItem(item);
+  }
+  // The unit walks in as the record left it: the share of health it
+  // kept out of its last fight, and the statuses it did not shake off.
+  //
+  // The share, not the number. An ability can change what a unit's
+  // pool is worth — a Boss carries a raid-sized one — and the record
+  // it was copied from knows nothing about that, so the stored health
+  // is read against the stored maximum and applied against the one
+  // the unit actually fights with. A boss at full comes out at full;
+  // a half-hurt pokemon that turns out to have a bigger pool here is
+  // still half hurt
+  unit.setHealth(
+    rescaleHealth(snapshot.health, getMaxHealth(snapshot), unit.checkStat(Stats.HP, 0)),
+  );
+
+  // The cause is nothing in particular — the burn came from a battle
+  // that is over. Adding them through the ordinary path is deliberate:
+  // an immunity refuses one, and a held berry eats itself to cure it
+  // before the first turn, both of which are the right answers
+  for (const status of unpackStatuses(snapshot.statuses)) {
+    unit.addStatus(status, { type: EffectType.None });
+  }
+  // After its health, which growing doubles
+  if (snapshot.dynamaxed === true) {
+    dynamax(unit, { permanent: true });
+  }
+  if (snapshot.terastallized === true) {
+    terastallize(unit);
+  }
+
+  return unit;
+}
+
+/**
+ * Walk the built units onto the field, fastest first.
+ *
+ * Entering is what puts a unit in the AI's idle set and what fires
+ * the abilities that read the field on arrival, so the order it
+ * happens in is the order the first move is cast in. Speed decides
+ * it, which is the answer a mainline turn would give.
+ *
+ * A raid orders each party on its own: the parties arrive side by
+ * side, and whose Crobat is quickest says nothing about who should
+ * act ahead of another player. Every other fight is one field, so
+ * the whole of it is ordered together.
+ *
+ * It runs after every unit is built, not beside each one: a unit
+ * announced before its health was set is not alive yet, so it is
+ * never counted idle and never acts
+ */
+function enterBySpeed(battle: Battle, parties: Unit[][]): void {
+  const fields = battle.mode === BattleModes.Raid ? parties : [parties.flat()];
+
+  for (const field of fields) {
+    // Sorted on a copy, so what a caller was handed keeps the order
+    // the snapshots were stored in
+    for (const unit of [...field].sort(
+      (one, two) => two.checkStat(Stats.Speed, 0) - one.checkStat(Stats.Speed, 0),
+    )) {
+      unit.enter();
+    }
+  }
+}
+
+export interface RaidBattle {
+  battle: Battle;
+  /**
+   * The units of every team, keyed by the alliance they fight under
+   */
+  units: Map<number, Unit[]>;
+  /**
+   * The alliances themselves, so a caller can tell which side the
+   * settled battle named as its winner
+   */
+  alliances: Map<number, Alliance>;
+}
+
+/**
+ * Field the stored team snapshots in a battle already built: teams
+ * sharing an alliance number fight side by side, and each unit
+ * carries the catch record it was copied from.
+ *
+ * It is shared because a raid is not the only fight assembled this
+ * way — a Team Rocket grunt's party is frozen and fielded exactly
+ * like a player's, only under a battle of its own kind
+ */
+export function fieldTeams(
+  battle: Battle,
+  teams: TeamSnapshotRecord[],
+  bossAlliance: number | null,
+): Omit<RaidBattle, 'battle'> {
+  const alliances = new Map<number, Alliance>();
+  const units = new Map<number, Unit[]>();
+  const parties: Unit[][] = [];
+
+  for (const record of teams) {
+    let alliance = alliances.get(record.alliance);
+
+    if (alliance == null) {
+      // The boss side is marked, so a raid that ends with nobody
+      // standing still resolves in the party's favor. A trainer
+      // fight marks nobody: a mutual knockout is a draw there
+      alliance = new Alliance(battle, record.alliance === bossAlliance);
+      alliances.set(record.alliance, alliance);
+    }
+
+    // A snapshot published with an empty player — the boss, a
+    // grunt's party — belongs to nobody
+    const team = new Team(battle, alliance, record.player);
+
+    alliance.addTeam(team);
+    setTrainerSkill(team, skillOf(record, record.alliance === bossAlliance));
+
+    const fielded = units.get(record.alliance) ?? [];
+    const party: Unit[] = [];
+
+    for (const snapshot of record.catches) {
+      // Built when summoned rather than now, and again for each one
+      // that replaces it
+      if (snapshot.alphaCopy === true) {
+        holdAlphaCopy(team, () => addUnit(battle, team, snapshot));
+        continue;
+      }
+
+      const unit = addUnit(battle, team, snapshot);
+
+      if (snapshot.balms != null) {
+        holdBalms(team, snapshot.balms);
+      }
+      if (snapshot.called === true) {
+        holdTotemAlly(team, unit);
+      } else {
+        party.push(unit);
+      }
+    }
+
+    parties.push(party);
+    fielded.push(...party);
+    units.set(record.alliance, fielded);
+  }
+
+  // On the start rather than now. The countdown shows every unit as it
+  // was stored, and what entering does to it (a form item's shape, an
+  // Intimidate, a Drought) happens where the field can be watched
+  battle.on(BattleEvents.Start, EventPriority.Pre, () => {
+    enterBySpeed(battle, parties);
+  });
+
+  return { units, alliances };
+}
+
+/**
+ * Assemble a raid battle from its stored team snapshots. The battle
+ * id seeds the RNG, so every participant and spectator replays the
+ * same rolls, and teams sharing an alliance number fight side by
+ * side — the boss stands in its own
+ */
+export function createRaidBattle(
+  battleId: string,
+  teams: TeamSnapshotRecord[],
+  limits = UNLIMITED_BATTLE_LIMITS,
+  biome?: Biome,
+): RaidBattle {
+  // The boss carries Boss (and, in a shadow raid, Shadow) alongside
+  // its own rolled ability, so the per-unit limit has to fit all three
+  const battle = createBattle(battleId, {
+    mode: BattleModes.Raid,
+    realtime: true,
+    limits,
+    biome,
+  });
+
+  return { battle, ...fieldTeams(battle, teams, BOSS_ALLIANCE) };
+}
+
+/**
+ * What the battle did to one player's party, catch by catch: the
+ * items it spent, the health it has left and the status it is still
+ * carrying.
+ *
+ * Every one of the player's units is reported, not only the ones that
+ * lost something — a pokemon that ate nothing still walks out of the
+ * fight at whatever health it has. A unit standing for no record is
+ * skipped, and so is every unit belonging to somebody else: a player
+ * reports their own party, never a teammate's
+ */
+export function collectAftermath(built: RaidBattle, player: string): BattleAftermath[] {
+  const report: BattleAftermath[] = [];
+
+  for (const fielded of built.units.values()) {
+    for (const unit of fielded) {
+      if (unit.caught === '' || unit.team.player !== player) {
+        continue;
+      }
+      report.push({
+        caught: unit.caught,
+        items: [...unit.consumed],
+        health: Math.max(0, Math.floor(unit.health)),
+        statuses: carriedStatuses(unit),
+        coins: Math.max(0, Math.floor(unit.coins)),
+        // Only what a feat could read, so most reports carry neither
+        ...(unit.criticals > 0 ? { criticals: unit.criticals } : {}),
+        ...(unit.taken >= 1 ? { taken: Math.floor(unit.taken) } : {}),
+        ...(landedForFeat(unit) > 0 ? { landed: landedForFeat(unit) } : {}),
+        ...(unit.recoil >= 1 ? { recoil: Math.floor(unit.recoil) } : {}),
+        ...(unit.sketched == null ? {} : { sketched: unit.sketched }),
+      });
+    }
+  }
+
+  return report;
+}
+
+/** Uses landed of the one move its species' feat counts */
+function landedForFeat(unit: Unit): number {
+  const move = featMove(unit.species);
+
+  return move == null ? 0 : (unit.landed.get(move) ?? 0);
+}
+
+/**
+ * How many of the other side this player's team put down.
+ *
+ * A lost fight still pays for what it beat, and this is the count it
+ * pays on. It is the client's word, like the Pay Day coins beside it,
+ * so the server clamps it to the party it actually staged
+ */
+export function countDefeated(built: RaidBattle, player: string): number {
+  let mine: Alliance | null = null;
+
+  for (const fielded of built.units.values()) {
+    for (const unit of fielded) {
+      if (unit.team.player === player) {
+        mine = unit.team.alliance;
+      }
+    }
+  }
+
+  // Only the other alliance counts: the other parties in a raid lobby
+  // fight beside this player, so their faints are no win of theirs
+  let downed = 0;
+
+  for (const fielded of built.units.values()) {
+    for (const unit of fielded) {
+      if (unit.team.alliance !== mine && unit.health <= 0) {
+        downed += 1;
+      }
+    }
+  }
+  return downed;
+}
+
+/**
+ * The statuses the unit carries out of the fight. A unit can hold
+ * several at once — poisoned and asleep is an ordinary way to come
+ * out of a raid — so all of them travel, in the order the list names
+ * them. Everything volatile (confusion, a substitute, the field's own
+ * effects) ends with the battle
+ */
+function carriedStatuses(unit: Unit): number {
+  const carried: (typeof NON_VOLATILE_STATUSES)[number][] = [];
+
+  for (const status of NON_VOLATILE_STATUSES) {
+    if (unit.getStatus(status) != null) {
+      carried.push(status);
+    }
+  }
+  return settleStatuses(packStatuses(carried));
+}
+
+/**
+ * Whether every unit of the alliance has fainted — how a raid is won
+ * (the boss' alliance) or lost (the players')
+ */
+export function isAllianceDown(units: Unit[]): boolean {
+  if (units.length === 0) {
+    return false;
+  }
+  for (const unit of units) {
+    if (unit.health > 0) {
+      return false;
+    }
+  }
+  return true;
+}

@@ -1,0 +1,13 @@
+# The moves that leave the user standing still once they land. The battle
+# lays the recharge on, and the expert builder prices the cast spent doing
+# nothing
+- HyperBeam
+- BlastBurn
+- HydroCannon
+- FrenzyPlant
+- GigaImpact
+- RockWrecker
+- RoarOfTime
+- PrismaticLaser
+- Eternabeam
+- MeteorAssault

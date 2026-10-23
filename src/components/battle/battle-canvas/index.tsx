@@ -1,6 +1,6 @@
 import { type JSX, createSignal, onCleanup, onMount } from 'solid-js';
-import type Battle from '../../../battle/core';
-import type SpeciesSpriteAnimation from '../../../canvas/species-sprite-animation';
+import type Battle from '../../../battle/battle';
+import type SpeciesSpriteAnimation from '../../../canvas/sprites/species-sprite-animation';
 
 import type { FieldVisual } from '../../../canvas/battle/moves/__painted';
 import attackMarkVisual from '../../../canvas/battle/attack';
@@ -13,7 +13,7 @@ import morphCue from '../../../canvas/battle/cues/morph';
 import { frenzyGathering, frenzyWarning } from '../../../canvas/battle/cues/frenzy';
 import { FRENZY_MOVES, getBurstStandIn } from '../../../data/moves/frenzy-moves';
 import pixelRatio from '../../../canvas/ratio';
-import createTwist from '../../../canvas/twist';
+import createTwist from '../../../canvas/overworld/twist';
 import createLongPress from '../../styled/long-press';
 import paintWeather, { batchHaze } from '../../../canvas/battle/weather';
 import buildWeather from '../../../canvas/battle/field-weather';
@@ -24,15 +24,15 @@ import {
   moveEffectVisual,
   moveMissVisual,
 } from '../../../canvas/battle/moves';
-import { type FieldPoint, type FieldView, unprojectField } from '../../../canvas/battle/field';
-import { shortestTurn } from '../../../canvas/board';
-import loadTerrainTiles, { TERRAIN_TILE } from '../../../canvas/terrain-tiles';
+import { type FieldPoint, type FieldView, unprojectField } from '../../../canvas/battle/projection';
+import { shortestTurn } from '../../../canvas/overworld/board';
+import loadTerrainTiles, { TERRAIN_TILE } from '../../../canvas/overworld/terrain-tiles';
 import drawFloor, { type Arena, type FloorRegion, type FloorTile, drawGroundShade } from './floor';
 import createBattleScene from '../../../canvas/three/battle-scene';
 import Bakery from '../../../canvas/bakery';
 import Biome from '../../../data/ids/biome';
 
-import loadSpeciesSprite from '../../../canvas/species-sprites';
+import loadSpeciesSprite from '../../../canvas/sprites/species-sprites';
 import { BattleEvents, EffectType, type MoveTarget, MoveTargetType } from '../../../battle/events';
 import type Abilities from '../../../data/ids/abilities';
 import type Team from '../../../battle/team';
@@ -44,7 +44,8 @@ import { isLoopingCast, pickCast } from '../../../data/constants/cast';
 
 import { Stats } from '../../../data/constants/stats';
 import { MoveFlags, Moves } from '../../../data/ids/moves';
-import { Genders, Species, getBaseFormSpecies } from '../../../data/ids/species';
+import { Genders, Species } from '../../../data/ids/species';
+import { getBaseFormSpecies } from '../../../data/ids/forms';
 import { getItemForms } from '../../../data/items/form-items';
 import { getStoneMega } from '../../../data/items/mega-stones';
 import { Items } from '../../../data/ids/items';

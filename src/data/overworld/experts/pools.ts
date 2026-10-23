@@ -1,6 +1,7 @@
 import type { Types } from '../../constants/types';
 import type EggGroups from '../../ids/egg-groups';
-import { Species, getBaseFormSpecies } from '../../ids/species';
+import { Species } from '../../ids/species';
+import { getBaseFormSpecies } from '../../ids/forms';
 import {
   getGrowthRoads,
   getRegisteredSpecies,

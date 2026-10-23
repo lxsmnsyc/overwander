@@ -1,15 +1,15 @@
 import { AttackPriority, EventPriority } from '../../../core/event-emitter';
 import { Stages, Stats } from '../../../data/constants/stats';
 import { DamageFlags, type MoveCategories, type Moves, StatFlags } from '../../../data/ids/moves';
-import type { Types } from '../../../data/constants/types';
+import { Types } from '../../../data/constants/types';
 import type { MoveTarget, UnitAttackEvent } from '../../events';
 import type Unit from '../../unit';
 import type Abilities from '../../../data/ids/abilities';
-import type { Statuses } from '../../../data/ids/status';
-import type Battle from '../../core';
+import { Statuses } from '../../../data/ids/status';
+import type Battle from '../../battle';
 import { BattleEvents, EffectType, MoveTargetType } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
-import { unitTarget } from '../../utils';
+import { unitTarget } from '../../unit-checks';
 import { createAbility, createContactHazard } from './create';
 
 /** Abilities that refuse something: a status, a stat drop, a critical, an aim */
@@ -117,6 +117,43 @@ export function createKeenEyeAbility(targetAbility: Abilities): (battle: Battle)
               event.accuracy *=
                 accuracyStageFactor(accuracy) / accuracyStageFactor(accuracy - evasion);
             }
+          }
+        }),
+      ]),
+  );
+}
+
+/**
+ * Meta ability for the ones that float (Levitate, Eelevate): off the
+ * ground unless something pins it there, which is what turns Ground
+ * moves and grounded hazards away
+ * https://bulbapedia.bulbagarden.net/wiki/Levitate_(Ability)
+ */
+export function createLevitateAbility(targetAbility: Abilities): (battle: Battle) => void {
+  return createAbility(
+    targetAbility,
+    (battle) =>
+      new MergedLifecycle([
+        battle.on(BattleEvents.CheckUnitGrounded, EventPriority.Post, (event) => {
+          if (
+            event.grounded &&
+            event.source.status[Statuses.Grounded] == null &&
+            event.source.hasAbility(targetAbility)
+          ) {
+            event.grounded = false;
+          }
+        }),
+        // The cue only fires when a real Ground move was avoided
+        battle.on(BattleEvents.UnitTriggerMoveFailed, EventPriority.Post, (event) => {
+          const target = event.parent.target;
+
+          if (
+            target.type === MoveTargetType.Unit &&
+            target.unit.hasAbility(targetAbility) &&
+            !target.unit.checkGrounded() &&
+            event.parent.source.checkMoveType(event.parent.move, target) === Types.Ground
+          ) {
+            target.unit.triggerAbility(targetAbility);
           }
         }),
       ]),

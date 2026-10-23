@@ -1,0 +1,28 @@
+# The pool the third daily slot draws from, one a day by seed, so the order is
+# part of every player's board: append, never reorder. Each is one counter
+# `requirement`, written the way a quest's is, and its `rewards`. The names
+# are text/en/quests.yaml.
+
+RoadsideChallenge:
+  requirement: { metric: BattleWins, count: 1, foe: Trainer }
+  rewards:
+    - { item: HyperPotion, amount: 2 }
+LocalRounds:
+  requirement: { metric: NpcVisits, count: 1 }
+  rewards:
+    - { item: SuperPotion, amount: 2 }
+# Named to a kind: "claim 3 landmarks" counted caches, patches, nests and
+# portal crossings alike, which told a player to go and do something without
+# saying what
+ForagersRounds:
+  requirement: { metric: Landmarks, count: 3, landmark: Cache }
+  rewards:
+    - { item: GreatBall, amount: 3 }
+WellSupplied:
+  requirement: { metric: ItemUses, count: 3 }
+  rewards:
+    - { item: UltraBall, amount: 1 }
+AnswerTheSiren:
+  requirement: { metric: RaidRuns, count: 1 }
+  rewards:
+    - { item: HyperPotion, amount: 3 }

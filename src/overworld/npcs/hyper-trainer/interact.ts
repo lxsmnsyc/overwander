@@ -1,5 +1,5 @@
-import { isGuarded } from '../../../auth/caught-record';
-import { isEgg } from '../../../auth/egg';
+import { isGuarded } from '../../../model/caught-record';
+import { isEgg } from '../../../model/egg';
 import { hyperTrain } from '../../../auth/npcs';
 import { MAX_IV, STAT_NAMES, STAT_ORDER, type Stats, getIV } from '../../../data/constants/stats';
 import { hyperTrainingCost } from '../../../data/overworld/npc';

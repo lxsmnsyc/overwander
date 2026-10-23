@@ -1,0 +1,86 @@
+# Rock and earth arriving from above
+RockThrow: { landing: Rocks }
+
+SelfDestruct: { landing: Blast }
+Explosion: { landing: Blast }
+
+# Heard rather than felt, without carrying the sound flag: a boom
+# is a shockwave and a face is pulled
+SonicBoom: { landing: Wave }
+
+# Made of whatever the sky is doing, and three elements at once
+TriAttack: { landing: Tri }
+
+# Beams: the picture is the line between the two of them
+AuroraBeam: { landing: Beam }
+
+# Teeth
+Clamp: { landing: Jaws }
+
+# Reaching out and striking with something long
+Lick: { landing: Lash }
+
+# The air bending
+NightShade: { landing: Warp }
+
+# A point driven in
+DreamEater: { landing: Drain }
+
+# Wound round it
+Bind: { landing: Coil }
+
+# Teeth
+ViceGrip: { landing: Jaws }
+Guillotine: { landing: Shears }
+Crabhammer: { landing: Jaws }
+
+# Every older region's signatures, one family each, that once borrowed another move's
+# picture
+Barrage: { landing: Eggbarrage }
+
+# Something lobbed that goes off where it lands, rather than debris
+# falling out of the sky onto it
+# Thrown in an arc and coming down on it
+EggBomb: { landing: Blast, wait: { striking: Lobbed } }
+
+# Every older region's signatures, one family each, that once borrowed another move's
+# picture
+# Tumbling out rather than shot straight
+BoneClub: { landing: Boneclub, wait: { striking: Spun } }
+
+# Thrown and coming back. Nothing else in the game does this, and
+# as a lash it read as a whip rather than as a bone in the air
+Bonemerang: { landing: Boomerang, wait: { striking: Spun } }
+
+# A blow wrapped in its element, which a plain hit in the type's colour did not say
+FirePunch: { landing: Punch }
+IcePunch: { landing: Punch }
+ThunderPunch: { landing: Punch }
+
+# Their landing is the stat falling, so what the move itself was
+# stays here: sand and smoke drift across, and light blows out
+SmokeScreen: { wait: { striking: Drift } }
+
+# A blow wrapped in its element, which a plain hit in the type's colour did not say
+Waterfall: { landing: Torrent }
+
+# Every older region's signatures, one family each, that once borrowed another move's
+# picture
+LovelyKiss: { landing: Kiss }
+
+# Put up or done to itself, which a dome or a stat's chevrons drew for all of them
+Splash: { landing: Flop }
+
+# What the mainline draws for these, rather than what their type
+# and category would have picked
+Mist: { landing: Haze }
+
+# Put up or done to itself, which a dome or a stat's chevrons drew for all of them
+Transform: { landing: Shimmer }
+
+# Every older region's signatures, one family each, that once borrowed another move's
+# picture
+Conversion: { landing: Conversion }
+Kinesis: { landing: Spoon }
+
+SoftBoiled: { landing: Mend }

@@ -1,4 +1,4 @@
-import { readOnly } from '../utils/server-calls';
+import { readOnly } from './server-calls';
 import type { Species } from '../data/ids/species';
 import check, { TOKEN, UID } from '../server/validate';
 import {
@@ -17,12 +17,12 @@ import {
   hasCaughtShiny,
   hasSeenSpecies,
   listDexTallies,
-} from './pokedex-record';
+} from '../model/pokedex-record';
 
 /**
  * The dex as a screen wants it: every species the player has ever met,
  * in one read, collapsed into the map shape
- * [`pokedex-record.ts`](./pokedex-record.ts) describes.
+ * [`pokedex-record.ts`](../model/pokedex-record.ts) describes.
  *
  * Only the server writes one: a dex is a record of what actually
  * happened, so a client that could write one could claim to have met

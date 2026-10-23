@@ -1,5 +1,5 @@
 import 'server-only';
-import { asOffset } from '../auth/local-time';
+import { asOffset } from '../model/local-time';
 import type { Sql, Tx } from './db';
 import { asNumber, asNumberArray, asRecord, asRecordArray, asString } from './read';
 

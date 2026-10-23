@@ -1,0 +1,71 @@
+# What a berry patch grows, by band like the item pool, each band a map from
+# berry to weight in the order a roll walks it. The single-status cures are
+# everyday finds, the ones that restore something are scarcer, and the berries
+# a fight turns on are the rare and special picks. A lowercase key is a whole
+# family at that weight apiece, read from the family's own table.
+
+base:
+  CheriBerry: 10
+  ChestoBerry: 10
+  PechaBerry: 10
+  RawstBerry: 10
+  AspearBerry: 10
+  # The flavour berries, grown for the safari and nothing else. Fourteen
+  # thin slots together weigh about what the five cures do
+  bait: 3
+uncommon:
+  LeppaBerry: 10
+  OranBerry: 10
+  PersimBerry: 10
+  # The bitter ones a pokemon is fed to take training back off a stat. They
+  # are how a player changes their mind about where a pokemon's effort went,
+  # so they grow where they will be found
+  effort-berries: 4
+  # A third of the holder's health back is worth more than any of the cures,
+  # and the ones whose nature cannot stand the taste pay for it in confusion
+  FigyBerry: 5
+  WikiBerry: 5
+  MagoBerry: 5
+  AguavBerry: 5
+  IapapaBerry: 5
+# Nothing grows scarce: a roll that lands here falls to uncommon
+scarce: {}
+rare:
+  LumBerry: 10
+  SitrusBerry: 10
+  # The berries that answer a blow after it has landed
+  EnigmaBerry: 4
+  KeeBerry: 4
+  MarangaBerry: 4
+  JabocaBerry: 4
+  RowapBerry: 4
+  # One per type, and one type is what a raid is: a party that knows what it
+  # is walking into can dig for the berry that answers it. Eighteen thin
+  # slots between them, the way the plates share theirs in the item pool
+  resist-berries: 2
+# A bush grows nothing permanent. The prized band is for the things that
+# change a pokemon for good, a cap or a gem, and a berry is eaten, so the band
+# is left empty and its slice of the roll falls through to the rare one
+prized: {}
+special:
+  # What a pokemon holds against the moment it is nearly out. A fight already
+  # lost is not usually won back, and these are what does it
+  LiechiBerry: 10
+  GanlonBerry: 10
+  SalacBerry: 10
+  PetayaBerry: 10
+  ApicotBerry: 10
+  LansatBerry: 6
+  CustapBerry: 6
+  MicleBerry: 6
+  # Two stages at once, and no saying which: the thinnest slot of the lot,
+  # and the one worth the walk
+  StarfBerry: 4
+  # The prize grades. They settle no fight, so they are here for scarcity
+  # rather than for power. Gold is half of silver's slot
+  SilverRazzBerry: 4
+  SilverNanabBerry: 4
+  SilverPinapBerry: 4
+  GoldenRazzBerry: 2
+  GoldenNanabBerry: 2
+  GoldenPinapBerry: 2

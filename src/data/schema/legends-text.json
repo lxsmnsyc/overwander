@@ -1,11 +1,26 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "Legend names",
+  "title": "Legend words",
   "type": "object",
   "propertyNames": {
     "$ref": "names.json#/definitions/legend"
   },
   "additionalProperties": {
-    "type": "string"
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string",
+        "description": "What they are called"
+      },
+      "greeting": {
+        "type": "string",
+        "description": "The whole line as they are met"
+      }
+    },
+    "required": [
+      "name",
+      "greeting"
+    ],
+    "additionalProperties": false
   }
 }

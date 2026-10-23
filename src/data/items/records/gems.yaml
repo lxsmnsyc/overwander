@@ -11,6 +11,7 @@ NormalGem:
   flags: [Consumable, Holdable, Marketable]
   buy: 1500
   sell: 750
+  lifts: Normal
 
 FightingGem:
   type: Held
@@ -18,6 +19,7 @@ FightingGem:
   flags: [Consumable, Holdable, Marketable]
   buy: 1500
   sell: 750
+  lifts: Fighting
 
 FlyingGem:
   type: Held
@@ -25,6 +27,7 @@ FlyingGem:
   flags: [Consumable, Holdable, Marketable]
   buy: 1500
   sell: 750
+  lifts: Flying
 
 PoisonGem:
   type: Held
@@ -32,6 +35,7 @@ PoisonGem:
   flags: [Consumable, Holdable, Marketable]
   buy: 1500
   sell: 750
+  lifts: Poison
 
 GroundGem:
   type: Held
@@ -39,6 +43,7 @@ GroundGem:
   flags: [Consumable, Holdable, Marketable]
   buy: 1500
   sell: 750
+  lifts: Ground
 
 RockGem:
   type: Held
@@ -46,6 +51,7 @@ RockGem:
   flags: [Consumable, Holdable, Marketable]
   buy: 1500
   sell: 750
+  lifts: Rock
 
 BugGem:
   type: Held
@@ -53,6 +59,7 @@ BugGem:
   flags: [Consumable, Holdable, Marketable]
   buy: 1500
   sell: 750
+  lifts: Bug
 
 GhostGem:
   type: Held
@@ -60,6 +67,7 @@ GhostGem:
   flags: [Consumable, Holdable, Marketable]
   buy: 1500
   sell: 750
+  lifts: Ghost
 
 SteelGem:
   type: Held
@@ -67,6 +75,7 @@ SteelGem:
   flags: [Consumable, Holdable, Marketable]
   buy: 1500
   sell: 750
+  lifts: Steel
 
 FireGem:
   type: Held
@@ -74,6 +83,7 @@ FireGem:
   flags: [Consumable, Holdable, Marketable]
   buy: 1500
   sell: 750
+  lifts: Fire
 
 WaterGem:
   type: Held
@@ -81,6 +91,7 @@ WaterGem:
   flags: [Consumable, Holdable, Marketable]
   buy: 1500
   sell: 750
+  lifts: Water
 
 GrassGem:
   type: Held
@@ -88,6 +99,7 @@ GrassGem:
   flags: [Consumable, Holdable, Marketable]
   buy: 1500
   sell: 750
+  lifts: Grass
 
 ElectricGem:
   type: Held
@@ -95,6 +107,7 @@ ElectricGem:
   flags: [Consumable, Holdable, Marketable]
   buy: 1500
   sell: 750
+  lifts: Electric
 
 PsychicGem:
   type: Held
@@ -102,6 +115,7 @@ PsychicGem:
   flags: [Consumable, Holdable, Marketable]
   buy: 1500
   sell: 750
+  lifts: Psychic
 
 IceGem:
   type: Held
@@ -109,6 +123,7 @@ IceGem:
   flags: [Consumable, Holdable, Marketable]
   buy: 1500
   sell: 750
+  lifts: Ice
 
 DragonGem:
   type: Held
@@ -116,6 +131,7 @@ DragonGem:
   flags: [Consumable, Holdable, Marketable]
   buy: 1500
   sell: 750
+  lifts: Dragon
 
 DarkGem:
   type: Held
@@ -123,6 +139,7 @@ DarkGem:
   flags: [Consumable, Holdable, Marketable]
   buy: 1500
   sell: 750
+  lifts: Dark
 
 FairyGem:
   type: Held
@@ -130,3 +147,4 @@ FairyGem:
   flags: [Consumable, Holdable, Marketable]
   buy: 1500
   sell: 750
+  lifts: Fairy

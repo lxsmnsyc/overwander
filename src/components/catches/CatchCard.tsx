@@ -9,14 +9,14 @@ import {
   isPurified,
   isShadow,
   isShiny,
-} from '../../auth/caught-record';
-import { isEgg } from '../../auth/egg';
-import { getMaxHealth, getStats, isFainted } from '../../auth/health';
+} from '../../model/caught-record';
+import { isEgg } from '../../model/egg';
+import { getMaxHealth, getStats, isFainted } from '../../model/health';
 import getSigil from '../../data/constants/sigil';
 import { LockIcon, MoonIcon, SparklesIcon, StarIcon, SunIcon } from '../icons';
 import { MAX_IV_STARS, Stats, getIVStars } from '../../data/constants/stats';
 import type { Items } from '../../data/ids/items';
-import { NATURE_NAMES } from '../../data/ids/natures';
+import { NATURE_NAMES } from '../../data/ids/text';
 import { getSpeciesData } from '../../data/species';
 import StatusSquares from './StatusSquares';
 import TypeBadge from '../sprites/TypeBadge';

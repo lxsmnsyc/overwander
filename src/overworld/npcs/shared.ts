@@ -1,6 +1,6 @@
 import type { CaughtPokemon } from '../../auth/caught';
-import { isShadow } from '../../auth/caught-record';
-import { isEgg } from '../../auth/egg';
+import { isShadow } from '../../model/caught-record';
+import { isEgg } from '../../model/egg';
 import { Items } from '../../data/ids/items';
 import { getItemData } from '../../data/items';
 import { getHeldPowerStat } from '../../data/items/power-items';

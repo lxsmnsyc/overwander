@@ -12,8 +12,8 @@ players are holding, quests and badges to collect, an auction house and
 friend-to-friend trades, and a real-time battle engine both sides replay from a
 seed.
 
-The dex runs to 493: Kanto, Johto, Hoenn and Sinnoh, with their moves,
-abilities and items.
+The dex runs to 1025, all nine generations from Kanto to Paldea, with their
+moves, abilities, items and forms.
 Where the old games and the modern ones disagree, the mechanics follow the
 modern ones.
 
@@ -147,9 +147,9 @@ give a player a **password link** from the player's admin page instead, or with
 | `pnpm test:db`               | The server modules against the development database                                 |
 | `pnpm test:e2e`              | The Playwright suites under `e2e/`                                                  |
 | `pnpm ai:sim`                | Play AI-against-AI battles and report what the AI casts, by role and by move        |
-| `npx tsc --noEmit`           | Type-check                                                                          |
-| `npx oxlint src test`        | Lint                                                                                |
-| `npx oxfmt src test`         | Format                                                                              |
+| `pnpm typecheck`             | Type-check                                                                          |
+| `pnpm exec oxlint src test`  | Lint                                                                                |
+| `pnpm exec oxfmt src test`   | Format                                                                              |
 | `pnpm cs:add`                | Add a changeset                                                                     |
 
 ## Where things live
@@ -160,9 +160,10 @@ give a player a **password link** from the player's admin page instead, or with
 | `src/overworld/`       | The world: chunks, snapshots, landmarks, encounters, safari, breeding, raids                                              |
 | `src/battle/`          | The battle engine: events, units, moves, statuses, abilities, items, AI                                                   |
 | `src/auth/`            | The browser's side: `'use server'` wrappers around every read and write, sign-in, and the live feed                       |
+| `src/model/`           | What both sides agree on: the shape of each stored record, the rules read off it, and the search parsers                  |
 | `src/server/`          | Reads and writes over the owner connection, behind a verified caller                                                      |
 | `src/components/`      | The UI, in a folder per feature (`overworld/`, `catches/`, `battle/`, …) over the shared `sprites/`, `styled/` and `app/` |
-| `src/canvas/`          | Sprite sheets and the animation class the map and battle canvases draw with                                               |
+| `src/canvas/`          | Drawing: sprite sheets, the overworld board, the battle field and its move effects, the sky                               |
 | `src/core/`            | The shared primitives: seeded RNG, Perlin noise, the event engine                                                         |
 | `public/sprites/`      | Sprite sheets by region: a folder per pokemon holding its layout, its frames and a PNG per coat                           |
 | `sprite-pipeline.json` | What has been done to each sheet, and to which version of it                                                              |

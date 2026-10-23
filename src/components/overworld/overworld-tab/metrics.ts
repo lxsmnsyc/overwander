@@ -7,7 +7,7 @@ import {
 } from '../../../overworld/board';
 import type { BoardEdge } from '../../app/settings';
 import { CHUNK_CELLS } from '../../../overworld/chunk';
-import { MAX_STEP_REPORT } from '../../../auth/egg';
+import { MAX_STEP_REPORT } from '../../../model/egg';
 
 /**
  * The landmarks a player fights somebody at, all served by the one

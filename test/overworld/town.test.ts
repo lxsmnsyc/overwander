@@ -19,7 +19,7 @@ import {
 } from '../../src/overworld/town';
 import Landmark, { LANDMARK_NAMES } from '../../src/data/overworld/landmark';
 import { isOpenSea } from '../../src/data/ids/biome';
-import { readGround } from '../../src/overworld/ground';
+import { readGround } from '../../src/overworld/terrain/ground';
 
 /**
  * The towns, which are the one thing in the world that is laid out

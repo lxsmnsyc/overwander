@@ -1,0 +1,19 @@
+# Wound round it, or closing on it
+WorrySeed: { landing: Coil }
+
+# Arriving faster than it can be seen coming
+SuckerPunch: { landing: Strike }
+
+# Laid on the ground for whatever walks in next, the way Spikes is
+# Laid rather than thrown at, the way Spikes is
+ToxicSpikes: { landing: Caltrops, wait: { striking: Lobbed } }
+
+# Two hearts trading places between them
+HeartSwap: { landing: Exchange }
+
+# Water put round it and left turning there, which is what the move
+# is: the healing comes later, a turn at a time
+AquaRing: { landing: Gyro }
+
+# A blow wrapped in its element, which a plain hit in the type's colour did not say
+FlareBlitz: { landing: Rush }

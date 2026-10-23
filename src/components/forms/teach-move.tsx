@@ -14,16 +14,16 @@ import {
   untrack,
 } from 'solid-js';
 import { type CaughtPokemon, getCaught } from '../../auth/caught';
-import { getCatchSlots, isShiny } from '../../auth/caught-record';
+import { getCatchSlots, isShiny } from '../../model/caught-record';
 import { Slots } from '../../data/constants/slots';
-import { isEgg } from '../../auth/egg';
+import { isEgg } from '../../model/egg';
 import teachMove, { learnLevelUpMove } from '../../auth/moves';
 import type { Moves } from '../../data/ids/moves';
 import { type Items, getMachineItem } from '../../data/ids/items';
 import { Genders, Species } from '../../data/ids/species';
 import { getMoveData } from '../../data/moves';
 import { getSpeciesData } from '../../data/species';
-import { type LearnResult, describeLearnRefusal } from '../../auth/learn-refusal';
+import { type LearnResult, describeLearnRefusal } from '../../model/learn-refusal';
 import { MOVE_SLOT, MOVE_SLOTS, MoveLine } from '../catches/MovePicker';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import { type CounterCost, CounterStep, CounterTerms, HeadingPortrait } from './terms';

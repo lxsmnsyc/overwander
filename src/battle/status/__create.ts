@@ -1,6 +1,6 @@
 import { EventPriority } from '../../core/event-emitter';
 import type { Statuses } from '../../data/ids/status';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, type CheckUnitStatusDamageEvent, type ProgressData } from '../events';
 import { TURN } from '../turn';
 import type Unit from '../unit';

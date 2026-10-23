@@ -3,7 +3,7 @@
 // to number) considers unnecessary
 // oxlint-disable typescript/no-unnecessary-type-assertion
 import type Families from '../data/ids/families';
-import { CANDY_STACKS, getStack, listStacks } from './stacks';
+import { CANDY_STACKS, getStack, listStacks } from '../model/stacks';
 import {
   useCandy as feedOnServer,
   useRareCandyMax as rareMaxOnServer,
@@ -21,8 +21,8 @@ export {
   SPECIES_DAY_CANDY_BOOST,
   getCatchCandy,
   getReleaseCandy,
-} from './candy-rules';
-export { default as getCandyCost } from './candy-rules';
+} from '../model/candy-rules';
+export { default as getCandyCost } from '../model/candy-rules';
 
 /**
  * One family's candy stack, a row in `bag_candies`. A candy feeds any

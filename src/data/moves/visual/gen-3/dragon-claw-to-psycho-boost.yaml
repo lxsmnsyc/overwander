@@ -1,0 +1,56 @@
+# Edges and points
+DragonClaw: { landing: Claw }
+
+FrenzyPlant: { landing: Roots }
+
+# Stat moves drawn as what the pokemon does, where the rising or falling arrows said only which stat
+BulkUp: { landing: Flex }
+
+# Under the water and up under it, up out of reach and down
+# on it: the same two waits Dig and Fly spend
+Bounce: { winding: none, wait: { winding: Vanish, striking: Dive } }
+
+# Water spread about rather than shot: a pulse washes over, and a
+# sport wets the whole field
+# Thrown in an arc and coming down on it rather than shot flat
+MudShot: { landing: Splash, wait: { striking: Lobbed } }
+
+# Edges and points
+PoisonTail: { landing: Lash }
+
+# Wanting what it holds
+Covet: { landing: Hearts }
+
+# Every older region's signatures, one family each, that once borrowed another move's
+# picture
+VoltTackle: { landing: Volt }
+
+# Edges and points
+MagicalLeaf: { landing: Leaves }
+
+# Water spread about rather than shot: a pulse washes over, and a
+# sport wets the whole field
+WaterSport: { landing: Splash }
+
+# Put up or done to itself, which a dome or a stat's chevrons drew for all of them
+CalmMind: { landing: Scheme }
+
+# Blades that each cut their own way, where the rake of claws drew all of them alike
+LeafBlade: { landing: Sweep }
+
+# Put up or done to itself, which a dome or a stat's chevrons drew for all of them
+DragonDance: { landing: Dance }
+
+# Several of something flying in, where the scatter of hits said nothing about what was thrown
+RockBlast: { landing: Stream }
+
+# Water spread about rather than shot: a pulse washes over, and a
+# sport wets the whole field
+WaterPulse: { landing: Wave }
+
+# The mythical and legendary signatures: a ball of down and a flare of light for the Eon pair,
+# a falling star, and a psychic blast
+# Held over it until it arrives, the way Future Sight is
+DoomDesire: { landing: Starfall, wait: { striking: Charge } }
+
+PsychoBoost: { landing: Surge }

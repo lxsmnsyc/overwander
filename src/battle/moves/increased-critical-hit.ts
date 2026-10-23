@@ -1,40 +1,12 @@
 import { EventPriority } from '../../core/event-emitter';
-import { Moves } from '../../data/ids/moves';
-import type Battle from '../core';
+import { MoveFlags } from '../../data/ids/moves';
+import { hasMoveFlag } from '../../data/moves';
+import type Battle from '../battle';
 import { BattleEvents } from '../events';
-
-const INCREASED_CRITICAL_HIT_RATIO_MOVES = new Set([
-  Moves.TenMillionVoltThunderbolt,
-  Moves.RazorLeaf,
-  Moves.Slash,
-  Moves.RazorWind,
-  Moves.SkyAttack,
-  Moves.KarateChop,
-  Moves.Crabhammer,
-  Moves.Aeroblast,
-  Moves.CrossChop,
-  Moves.BlazeKick,
-  Moves.AirCutter,
-  Moves.PoisonTail,
-  Moves.LeafBlade,
-  Moves.NightSlash,
-  Moves.ShadowClaw,
-  Moves.PsychoCut,
-  Moves.CrossPoison,
-  Moves.StoneEdge,
-  Moves.AttackOrder,
-  Moves.SpacialRend,
-  Moves.DrillRun,
-  Moves.SnipeShot,
-  Moves.EsperWing,
-  Moves.TripleArrows,
-  Moves.AquaCutter,
-  Moves.IvyCudgel,
-]);
 
 export default function setupIncreasedCriticalHitRatioMoves(battle: Battle): void {
   battle.on(BattleEvents.UnitAttackCheckCriticalRatio, EventPriority.Post, (event) => {
-    if (INCREASED_CRITICAL_HIT_RATIO_MOVES.has(event.parent.move)) {
+    if (hasMoveFlag(event.parent.move, MoveFlags.HighCrit)) {
       // Additive so it stacks with Focus Energy and similar boosts
       event.value += 1;
     }

@@ -1,4 +1,4 @@
-import { boardView, projectAir } from '../board';
+import { boardView, projectAir } from '../overworld/board';
 import { type Fall, SALTS, scatterOf } from './fall';
 
 /** One falling thing, in front of the camera and in the world */

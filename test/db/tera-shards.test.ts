@@ -1,6 +1,6 @@
 import { afterAll, beforeEach, describe, expect, it } from 'vitest';
 import { type Actor, actor, caughtRow, clearAll, sql } from './clients';
-import { ITEM_STACKS } from '../../src/auth/stacks';
+import { ITEM_STACKS } from '../../src/model/stacks';
 import { Types } from '../../src/data/constants/types';
 import { Balls, Items } from '../../src/data/ids/items';
 import { Species } from '../../src/data/ids/species';
@@ -10,8 +10,8 @@ import { acceptTrade, offerTrade } from '../../src/server/trades';
 import { grantStacksIn, readStack } from '../../src/server/stacks';
 import { tx } from '../../src/server/db';
 import { writeCaughtRecord } from '../../src/server/caught';
-import { asEncounterRecord } from '../../src/auth/encounter-record';
-import { Acquisition } from '../../src/auth/caught-record';
+import { asEncounterRecord } from '../../src/model/encounter-record';
+import { Acquisition } from '../../src/model/caught-record';
 import { TERA_TYPES } from '../../src/data/species/tera-type';
 
 /**

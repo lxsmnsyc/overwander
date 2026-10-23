@@ -5,7 +5,7 @@ description: How a step between terrace levels works in the overworld, what a cl
 
 # Terraces and cliffs
 
-`levelAt` in `src/overworld/terrace.ts` says how high a cell stands. A level only counts where the cell belongs to a 2x2 block standing at least that high, so a cliff is never one cell wide. The first step stands above the beaches and wetlands, so the sea and the low shore beside it are both level 0 and a coast meets open sea without a cliff.
+`levelAt` in `src/overworld/terrain/terrace.ts` says how high a cell stands. A level only counts where the cell belongs to a 2x2 block standing at least that high, so a cliff is never one cell wide. The first step stands above the beaches and wetlands, so the sea and the low shore beside it are both level 0 and a coast meets open sea without a cliff.
 
 The steps belong to the generation (`world.terraceSteps`). The first generation climbs through 3 levels and is frozen. The second climbs through 20 evenly spaced ones (`SECOND_TERRACE_COUNT`), a cliff about every ten cells. Anything written as a count of levels has to be carried over as a height (`levelBelow`), the way the cave water table is, since a level means a different height in each generation.
 
@@ -13,7 +13,7 @@ In the second generation a town is flat: every cell within two cells of its foot
 
 ## The edge tile is the cliff
 
-A cell standing higher than **any** of its eight neighbours is a face (`isFace` in `src/overworld/cliff.ts`). Diagonals count: a cell touching lower ground only at a corner is where the ring's inside corner is drawn, and that tile is as much the cliff as a side.
+A cell standing higher than **any** of its eight neighbours is a face (`isFace` in `src/overworld/terrain/cliff.ts`). Diagonals count: a cell touching lower ground only at a corner is where the ring's inside corner is drawn, and that tile is as much the cliff as a side.
 
 - Nobody walks on a face, unless a seam runs through it (`blocksWalk`). Water on a face is always a seam: a pool never sits at a dry drop, so it pours into more water. A natural pass (`isPassAt`) is a band three cells wide crossing a cliff every twenty cells along it, offset by a seeded hash per stretch and level, so a walk beside a terrace is never far from a way up. A road or a route on a face is always a seam, corners and diagonal-only faces included, so no street is ever cut by a cliff. A natural pass seams a face only where it leads somewhere (`leadsThrough`): lower ground straight beside it, and where the faces beside it turn a corner, every one of those faces a way through too (water, a road or a route counts). A pass face touching lower ground only at a diagonal, or a corner joined to a single other seam, reaches the high ground only diagonally, so it stays a cliff. Faces on two opposite sides are a straight cliff line, the usual way through.
 - Underground every face is a seam (`isSeam` answers yes at `Depth.Cave`), corners included, so no cliff ever crosses a cave passage. A cave's rock walls are not faces: they are `wall` cells, raised a level only for drawing.
@@ -21,11 +21,11 @@ A cell standing higher than **any** of its eight neighbours is a face (`isFace` 
 
 ## Lava
 
-A volcano's water is lava (`isLavaAt` in `src/overworld/ground.ts`, `Chunk.getLavaCells()`). Nobody walks on it, whatever the cliffs around it say, and nothing is placed on it: no landmark, spawn, phenomenon or player start. Any other water stays walkable. Ice pools are water drawn as ice, and a spawn on one draws from the biome's ice pool (see `spawn-surfaces`).
+A volcano's water is lava (`isLavaAt` in `src/overworld/terrain/ground.ts`, `Chunk.getLavaCells()`). Nobody walks on it, whatever the cliffs around it say, and nothing is placed on it: no landmark, spawn, phenomenon or player start. Any other water stays walkable. Ice pools are water drawn as ice, and a spawn on one draws from the biome's ice pool (see `spawn-surfaces`).
 
 ## Water at a step
 
-Water is never a cliff unless the lower ground beside it, diagonals included, is water too. Then the two are one fall. Water that would stand at the lip of a dry drop is dried to ground by the lip rule in `src/overworld/ground.ts`. Every 2x2 block of water stands on one level, so a cell's water depends only on the water below it and the lip rule reads the finished answer there.
+Water is never a cliff unless the lower ground beside it, diagonals included, is water too. Then the two are one fall. Water that would stand at the lip of a dry drop is dried to ground by the lip rule in `src/overworld/terrain/ground.ts`. Every 2x2 block of water stands on one level, so a cell's water depends only on the water below it and the lip rule reads the finished answer there.
 
 ## Drawing it
 

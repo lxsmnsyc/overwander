@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Totems",
+  "type": "object",
+  "propertyNames": {
+    "$ref": "names.json#/definitions/species"
+  },
+  "additionalProperties": {
+    "type": "object",
+    "properties": {
+      "aura": {
+        "type": "object",
+        "propertyNames": {
+          "anyOf": [
+            {
+              "$ref": "names.json#/definitions/stage"
+            },
+            {
+              "const": "all"
+            }
+          ]
+        },
+        "additionalProperties": {
+          "type": "integer"
+        },
+        "description": "The stages each stat starts the fight raised by, or `all` for the five"
+      },
+      "height": {
+        "type": "number",
+        "minimum": 0,
+        "description": "In meters"
+      },
+      "weight": {
+        "type": "number",
+        "minimum": 0,
+        "description": "In kilograms"
+      },
+      "crystal": {
+        "$ref": "names.json#/definitions/item",
+        "description": "What the trial hands over"
+      }
+    },
+    "required": [
+      "aura",
+      "height",
+      "weight",
+      "crystal"
+    ],
+    "additionalProperties": false
+  }
+}

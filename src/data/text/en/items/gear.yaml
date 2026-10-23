@@ -3,16 +3,16 @@ ShellBell:
   description: Hands its holder back 1/8 of the damage it deals.
 MuscleBand:
   name: Muscle Band
-  description: 1.1x damage from physical moves.
+  description: Its holder’s physical moves hit 1.1x.
 WiseGlasses:
   name: Wise Glasses
-  description: 1.1x damage from special moves.
+  description: Its holder’s special moves hit 1.1x.
 ExpertBelt:
   name: Expert Belt
-  description: 1.2x damage, but only from super-effective blows.
+  description: Its holder’s super-effective moves hit 1.2x.
 Metronome:
   name: Metronome
-  description: +0.2x damage for each repeat cast of the same move, up to 2x. Resets on a change.
+  description: Each repeat cast of the same move adds 0.2x to its holder’s damage, up to 2x. Resets on a change.
 WideLens:
   name: Wide Lens
   description: 1.1x accuracy on everything its holder throws.
@@ -108,7 +108,7 @@ BigRoot:
   description: 1.3x on everything its holder drains.
 SoulDew:
   name: Soul Dew
-  description: 1.2x damage from a Latios’ or Latias’ Psychic and Dragon moves.
+  description: A Latios’ or Latias’ Psychic and Dragon moves hit 1.2x while it holds this.
 LoadedDice:
   name: Loaded Dice
   description: A move of its holder’s that strikes several times never lands fewer than 4.

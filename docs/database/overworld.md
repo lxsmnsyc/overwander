@@ -43,22 +43,24 @@ empty.
 
 ## `snapshots`
 
-Written by `resolveSnapshotWindow` in
-[`src/auth/snapshots.ts`](../../src/auth/snapshots.ts), through the
-`publish_snapshot` function rather than by a table write. Keyed by
-`(chunk_seed, zone)`.
+Rolled by `resolveSnapshotWindow` in
+[`src/auth/snapshots.ts`](../../src/auth/snapshots.ts) and stored by
+`writeSnapshotWindow` in
+[`src/server/snapshot-windows.ts`](../../src/server/snapshot-windows.ts).
+Keyed by `(generation, chunk_seed, zone)`.
 
 | Column       | Type       | Notes                                                        |
 | ------------ | ---------- | ------------------------------------------------------------ |
+| `generation` | `smallint` | The world generation it was rolled in                        |
 | `chunk_seed` | `text`     | The chunk this window belongs to                             |
 | `zone`       | `text`     | The timezone it was read in                                  |
 | `utc_offset` | `smallint` | Minutes east of UTC the window was read in                   |
 | `window_at`  | `bigint`   | The 5-minute **local** window, floored to `SNAPSHOT_INTERVAL` |
 
-This is the one client write in the game besides the profile, and the function
-is what makes it safe. It refuses a window older than the stored one, and swaps
-the spawn rows in the same statement. Whoever finds the row missing or expired
-writes the new window and is told they refreshed it. Everyone else **in the same
+The browser rolls the window and the server stores it, and the server function
+is what makes that safe. It refuses a window older than the stored one, and
+swaps the spawn rows in the same transaction. Whoever finds the row missing or
+expired writes the new window and is told they refreshed it. Everyone else **in the same
 zone** adopts the stored timestamp. The instant used to judge expiry comes from
 the [server clock](time.md#clock), never the device. Only the zone it is read in
 is the player's.
@@ -75,6 +77,7 @@ their roll order in `idx`.
 
 | Column               | Type       | Notes                       |
 | -------------------- | ---------- | --------------------------- |
+| `generation`         | `smallint` | The snapshot they belong to |
 | `chunk_seed`, `zone` | `text`     | The snapshot they belong to |
 | `idx`                | `smallint` | Roll order, from zero       |
 | `species`            | `integer`  |                             |
@@ -83,7 +86,7 @@ their roll order in `idx`.
 
 Where a spawn stands is not stored. The cells are re-derived from the same seed
 and window by `getSpawnCells`, so the nth roll is the nth placed cell on every
-screen. Its **name** is derived too, `{chunkSeed}:{zone}@{timestamp}#{index}`
+screen. Its **name** is derived too, `{chunkSeed}{zone}@{timestamp}#{index}`
 from `spawnId`, which is what an encounter row is keyed by. Nothing has to keep
 a row alive just to give a spawn a name.
 
@@ -93,9 +96,11 @@ spawns inside it, so there is nothing stale to sweep up.
 A window publishes `SPAWN_COUNT` (8) spawns plus `LURE_SPAWN_BONUS` (3) more.
 The extras are rolled for every chunk so that all its visitors share one set of
 rolls. A **lure** buddy (Arena Trap, Illuminate or No Guard) decides who can see
-them rather than whether they exist. A player without one neither sees the last
-three on the map nor may meet them: `meetSpawn` compares the index off the spawn
-id against `checkSpawnCount(SPAWN_COUNT)` and refuses anything past it.
+them rather than whether they exist. A player without one is not shown the last
+three on the map: the board draws only `checkSpawnCount(SPAWN_COUNT)` of them.
+`meetSpawn` does not judge the count again, so a player who swaps their buddy
+after walking in is not refused a spawn already on their board. It refuses only
+an index past the stored rolls.
 
 Two held items answer the same question the other way. A **Pure Incense** and a
 **Cleanse Tag** each take 3 off what their holder can see, floored at nothing.
@@ -130,17 +135,18 @@ are allowed to claim.
 Placement leaves room to walk. Every **fixture**, scenery and landmarks alike,
 keeps the ring of cells around it clear, diagonals included, so no two of them
 touch. Spawns are exempt: `getSpawns` skips the decoration and landmark
-**cells** and nothing more, and keeps no ring of its own. The walk's `passable`
-test blocks both fixtures and neither spawn, so a tree is walked round and a
+**cells** (and rock, cliff faces, lava and this hour's phenomena) but not their
+rings, and keeps no ring of its own. The walk's `passable` test blocks both
+fixtures and neither spawn, so a tree is walked round and a
 pokemon is walked through.
 
-They are placed in order, decorations then landmarks then spawns, into the
-central 14x14, which leaves a clear cell all the way round the chunk. The first
-two are fixed to the chunk seed forever and only the spawns roll again each
-window, so the fixed cells are taken first and the spawns fit into what is left.
-A chunk rolls **eight to twelve** decorations and as many landmarks, and each
-placement costs up to nine cells, so a crowded roll can run out of room. Every
-loop stops early when it does, taking fewer rather than crowding them.
+They are placed in order, landmarks then decorations then spawns, anywhere in
+the chunk (`PLACEMENT_AREA` is the whole 16x16). The first two are fixed to the
+chunk seed forever and only the spawns roll again each window, so the fixed
+cells are taken first and the spawns fit into what is left. A chunk rolls **two
+to four** landmarks and **eight to twelve** decorations, and each placement costs
+up to nine cells, so a crowded roll can run out of room. Every loop stops early
+when it does, taking fewer rather than crowding them.
 
 ## See also
 

@@ -1,5 +1,5 @@
-import { getCatchSlots } from '../../../auth/caught-record';
-import { isEgg } from '../../../auth/egg';
+import { getCatchSlots } from '../../../model/caught-record';
+import { isEgg } from '../../../model/egg';
 import { trainMoveSlot } from '../../../auth/npcs';
 import { Slots, mostSlots } from '../../../data/constants/slots';
 import { DOJO_MASTER_FEE } from '../../../data/overworld/npc';

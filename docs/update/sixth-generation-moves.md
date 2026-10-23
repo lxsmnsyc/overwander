@@ -107,8 +107,8 @@ machine, tutor and egg, the way X, Y, Omega Ruby and Alpha Sapphire teach them.
 
 ## See also
 
-- [Unova's second road and first cave](unovas-road-and-cave.md), the release
-  before this one.
+- [Unova's second road and first cave](unovas-road-and-cave.md), an earlier
+  release.
 - [The fifth generation's moves](fifth-generation-moves.md), which this follows.
 - [Player's guide](../mechanics.md), for the rules in full.
 - [Credits](../credits.md), for the people, libraries and art behind it.

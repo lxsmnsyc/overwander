@@ -11,7 +11,9 @@ import { BattleEvents, EffectType, type UnitAttackEvent } from '../../events';
 import { MAJOR_STATUS_CONDITIONS } from '../../status';
 import type Team from '../../team';
 import type Unit from '../../unit';
-import { hasAnyStatus, isWeatherRainy, isWeatherSunny, onUnitActs, unitTarget } from '../../utils';
+import { hasAnyStatus, unitTarget } from '../../unit-checks';
+import { isWeatherRainy, isWeatherSunny } from '../../weather';
+import onUnitActs from '../../acts';
 import {
   createAbility,
   createBlazeAbility,

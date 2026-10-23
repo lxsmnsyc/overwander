@@ -19,7 +19,7 @@ import { REGION_NAMES, getSpeciesRegion } from './regions';
  *
  * The pictures are palette swaps of one drawing, painted in the
  * colours of the family's base species. See
- * [`scripts/family-candies.ts`](../../../scripts/family-candies.ts).
+ * [`scripts/art/family-candies.ts`](../../../scripts/art/family-candies.ts).
  */
 
 /** Where the sheets sit under the interface sprites. */

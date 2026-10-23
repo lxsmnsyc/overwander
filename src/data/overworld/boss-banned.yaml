@@ -1,0 +1,104 @@
+# Moves a boss is never staged with: the list is filtered out of its learnset
+# as the raid is staged. A Ghost is refused Curse on top of these, which is
+# code (`getBannedBossMoves`)
+
+# Copies a player, which throws away the raid-sized health pool the fight is
+# built around. Metronome, Mirror Move, Mimic and Sketch are each a way back
+# to it, so banning them is simpler than teaching four kinds of copy what a
+# boss may not become
+- Transform
+- Metronome
+- MirrorMove
+- Mimic
+- Sketch
+
+# Averages the two, and a boss pays the half it gives away while the half
+# that would come back is refused as a heal
+- PainSplit
+
+# Looks for a bench a lone boss does not have
+- BatonPass
+
+# Takes whoever lands the last hit down with it, which taxes the party for
+# winning rather than making the fight harder
+- DestinyBond
+
+# Returns double everything it was dealt while it channels, and a lobby is up
+# to ten parties: the harder the raid hits, the more certainly the answer
+# wipes it
+- Bide
+
+# Costs half the pool (as a Ghost's Curse does), and the pool is the fight's
+# clock, so it hands the party half the raid
+- BellyDrum
+
+# Role Play and Skill Swap are Transform by another road: both hand the
+# abilities about, and the one a boss would give away is the Boss ability
+- RolePlay
+- SkillSwap
+
+# Spends the whole of its health rather than a move's worth of it, so a boss
+# that leaves one ends the raid on its own
+- Memento
+
+# Costs whoever lands the last hit the move that landed it
+- Grudge
+
+# Fails while a boss is healthy and fires when it is nearly dead, taking the
+# party down to a sliver at the moment it has won
+- Endeavor
+
+# The one heal still barred. A boss may put back an eighth of its pool, but
+# Rest buys that eighth with a sleep the boss inflicted on itself, so it
+# lands in full: the party gets the fight handed to it while the boss lies
+# there
+- Rest
+
+# Spend the whole of the pool the way Memento does, aimed at a teammate a
+# lone boss does not have
+- HealingWish
+- LunarDance
+
+# The same absence without the cost: nobody to help or to stand in front of
+- HelpingHand
+- FollowMe
+
+# Hand a boss' boosts over whichever way they are cast, and what a boss builds
+# on doubled stats is worth more to the party than to it. A boss refuses one
+# aimed at it, so the ban is the other half: it never casts one either
+- PowerSwap
+- GuardSwap
+- HeartSwap
+
+# Refused the same way, so a boss that knows one would only waste the slot
+- GuardSplit
+- PowerSplit
+
+# Throws the user's whole health at its target, and a boss' single-target
+# moves reach every enemy, so one would wipe the lobby and spend the pool
+# doing it
+- FinalGambit
+
+# Would send every enemy's wind-up back to the start at once
+- Quash
+
+# Spent on a teammate a lone boss does not have
+- AfterYou
+- AllySwitch
+- Bestow
+
+# Spent on a teammate as well, like After You
+- HoldHands
+- AromaticMist
+
+# Do nothing a boss can use
+- Celebrate
+- HappyHour
+
+# Paid in half its health, which on a raid pool is half the raid
+- MindBlown
+
+# TODO: temporary. A boss is already immune to Perishing, so the
+# song costs it a move slot and does nothing. Drop this line when
+# there is something for it to do
+- PerishSong

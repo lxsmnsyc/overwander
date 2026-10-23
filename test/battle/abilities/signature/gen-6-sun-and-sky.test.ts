@@ -11,7 +11,7 @@ import {
   TOP_ROPE_CAP,
   TOP_ROPE_GAIN,
   TOP_ROPE_STEP,
-} from '../../../../src/battle/abilities/signature/inkay-to-hawlucha';
+} from '../../../../src/battle/abilities/signature/gen-6/inkay-to-hawlucha';
 import { createBattle, createUnit, pinRandom } from '../../harness';
 import { NONE_CAUSE, dealDamage } from './helpers';
 

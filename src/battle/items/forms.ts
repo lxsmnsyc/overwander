@@ -3,9 +3,10 @@ import Abilities from '../../data/ids/abilities';
 import { Items } from '../../data/ids/items';
 import { Moves } from '../../data/ids/moves';
 import { FORM_ITEMS } from '../../data/items/form-items';
-import { Species, getBaseFormSpecies } from '../../data/ids/species';
+import { Species } from '../../data/ids/species';
+import { getBaseFormSpecies } from '../../data/ids/forms';
 import { getShadowlessSpecies, getTrueShadowShape } from '../../data/species/true-shadow';
-import type Battle from '../core';
+import type Battle from '../battle';
 import type Unit from '../unit';
 import { BattleEvents } from '../events';
 import { MergedLifecycle } from '../lifecycle';
@@ -41,7 +42,7 @@ const SHAPE_ABILITIES = new Map<Species, Abilities>([
   [Species.TerapagosTerastal, Abilities.TeraShell],
 ]);
 
-/** The ability a shape brings, read off the plain shape for a true shadow's */
+/** A true shadow's shape brings what its counterpart's would */
 function shapeAbilityOf(species: Species): Abilities | undefined {
   return SHAPE_ABILITIES.get(getShadowlessSpecies(species) ?? species);
 }

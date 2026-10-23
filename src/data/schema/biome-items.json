@@ -1,0 +1,47 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Biome items",
+  "type": "object",
+  "properties": {
+    "groups": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "pattern": "^[a-z][a-z-]*$"
+      },
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "$ref": "names.json#/definitions/biome"
+        }
+      },
+      "description": "Named runs of biomes an item can list by the group name"
+    },
+    "items": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "names.json#/definitions/item"
+      },
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "anyOf": [
+            {
+              "$ref": "names.json#/definitions/biome"
+            },
+            {
+              "type": "string",
+              "pattern": "^[a-z][a-z-]*$"
+            }
+          ]
+        }
+      },
+      "description": "The ground each item is buried in; an item not listed is buried everywhere"
+    }
+  },
+  "required": [
+    "groups",
+    "items"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,297 @@
+# Held, never spent, and never listed: a shard is dug up rather than
+# bought. It sells for what a Mega Stone does. Each icon sits on a sheet
+# for its pokemon's region.
+
+ButterfreeZenithShard:
+  type: Held
+  icon: zenith/kanto/butterfree
+  flags: [Holdable]
+  sell: 2000
+
+RaticateZenithShard:
+  type: Held
+  icon: zenith/kanto/raticate
+  flags: [Holdable]
+  sell: 2000
+
+FearowZenithShard:
+  type: Held
+  icon: zenith/kanto/fearow
+  flags: [Holdable]
+  sell: 2000
+
+ArbokZenithShard:
+  type: Held
+  icon: zenith/kanto/arbok
+  flags: [Holdable]
+  sell: 2000
+
+SandslashZenithShard:
+  type: Held
+  icon: zenith/kanto/sandslash
+  flags: [Holdable]
+  sell: 2000
+
+NidoqueenZenithShard:
+  type: Held
+  icon: zenith/kanto/nidoqueen
+  flags: [Holdable]
+  sell: 2000
+
+NidokingZenithShard:
+  type: Held
+  icon: zenith/kanto/nidoking
+  flags: [Holdable]
+  sell: 2000
+
+NinetalesZenithShard:
+  type: Held
+  icon: zenith/kanto/ninetales
+  flags: [Holdable]
+  sell: 2000
+
+WigglytuffZenithShard:
+  type: Held
+  icon: zenith/kanto/wigglytuff
+  flags: [Holdable]
+  sell: 2000
+
+VileplumeZenithShard:
+  type: Held
+  icon: zenith/kanto/vileplume
+  flags: [Holdable]
+  sell: 2000
+
+ParasectZenithShard:
+  type: Held
+  icon: zenith/kanto/parasect
+  flags: [Holdable]
+  sell: 2000
+
+VenomothZenithShard:
+  type: Held
+  icon: zenith/kanto/venomoth
+  flags: [Holdable]
+  sell: 2000
+
+DugtrioZenithShard:
+  type: Held
+  icon: zenith/kanto/dugtrio
+  flags: [Holdable]
+  sell: 2000
+
+PersianZenithShard:
+  type: Held
+  icon: zenith/kanto/persian
+  flags: [Holdable]
+  sell: 2000
+
+GolduckZenithShard:
+  type: Held
+  icon: zenith/kanto/golduck
+  flags: [Holdable]
+  sell: 2000
+
+ArcanineZenithShard:
+  type: Held
+  icon: zenith/kanto/arcanine
+  flags: [Holdable]
+  sell: 2000
+
+PoliwrathZenithShard:
+  type: Held
+  icon: zenith/kanto/poliwrath
+  flags: [Holdable]
+  sell: 2000
+
+MachampZenithShard:
+  type: Held
+  icon: zenith/kanto/machamp
+  flags: [Holdable]
+  sell: 2000
+
+TentacruelZenithShard:
+  type: Held
+  icon: zenith/kanto/tentacruel
+  flags: [Holdable]
+  sell: 2000
+
+GolemZenithShard:
+  type: Held
+  icon: zenith/kanto/golem
+  flags: [Holdable]
+  sell: 2000
+
+RapidashZenithShard:
+  type: Held
+  icon: zenith/kanto/rapidash
+  flags: [Holdable]
+  sell: 2000
+
+FarfetchdZenithShard:
+  type: Held
+  icon: zenith/kanto/farfetchd
+  flags: [Holdable]
+  sell: 2000
+
+DodrioZenithShard:
+  type: Held
+  icon: zenith/kanto/dodrio
+  flags: [Holdable]
+  sell: 2000
+
+DewgongZenithShard:
+  type: Held
+  icon: zenith/kanto/dewgong
+  flags: [Holdable]
+  sell: 2000
+
+MukZenithShard:
+  type: Held
+  icon: zenith/kanto/muk
+  flags: [Holdable]
+  sell: 2000
+
+CloysterZenithShard:
+  type: Held
+  icon: zenith/kanto/cloyster
+  flags: [Holdable]
+  sell: 2000
+
+HypnoZenithShard:
+  type: Held
+  icon: zenith/kanto/hypno
+  flags: [Holdable]
+  sell: 2000
+
+KinglerZenithShard:
+  type: Held
+  icon: zenith/kanto/kingler
+  flags: [Holdable]
+  sell: 2000
+
+ElectrodeZenithShard:
+  type: Held
+  icon: zenith/kanto/electrode
+  flags: [Holdable]
+  sell: 2000
+
+ExeggutorZenithShard:
+  type: Held
+  icon: zenith/kanto/exeggutor
+  flags: [Holdable]
+  sell: 2000
+
+MarowakZenithShard:
+  type: Held
+  icon: zenith/kanto/marowak
+  flags: [Holdable]
+  sell: 2000
+
+HitmonleeZenithShard:
+  type: Held
+  icon: zenith/kanto/hitmonlee
+  flags: [Holdable]
+  sell: 2000
+
+HitmonchanZenithShard:
+  type: Held
+  icon: zenith/kanto/hitmonchan
+  flags: [Holdable]
+  sell: 2000
+
+WeezingZenithShard:
+  type: Held
+  icon: zenith/kanto/weezing
+  flags: [Holdable]
+  sell: 2000
+
+SeakingZenithShard:
+  type: Held
+  icon: zenith/kanto/seaking
+  flags: [Holdable]
+  sell: 2000
+
+MrMimeZenithShard:
+  type: Held
+  icon: zenith/kanto/mr-mime
+  flags: [Holdable]
+  sell: 2000
+
+JynxZenithShard:
+  type: Held
+  icon: zenith/kanto/jynx
+  flags: [Holdable]
+  sell: 2000
+
+TaurosZenithShard:
+  type: Held
+  icon: zenith/kanto/tauros
+  flags: [Holdable]
+  sell: 2000
+
+LaprasZenithShard:
+  type: Held
+  icon: zenith/kanto/lapras
+  flags: [Holdable]
+  sell: 2000
+
+VaporeonZenithShard:
+  type: Held
+  icon: zenith/kanto/vaporeon
+  flags: [Holdable]
+  sell: 2000
+
+JolteonZenithShard:
+  type: Held
+  icon: zenith/kanto/jolteon
+  flags: [Holdable]
+  sell: 2000
+
+FlareonZenithShard:
+  type: Held
+  icon: zenith/kanto/flareon
+  flags: [Holdable]
+  sell: 2000
+
+OmastarZenithShard:
+  type: Held
+  icon: zenith/kanto/omastar
+  flags: [Holdable]
+  sell: 2000
+
+KabutopsZenithShard:
+  type: Held
+  icon: zenith/kanto/kabutops
+  flags: [Holdable]
+  sell: 2000
+
+SnorlaxZenithShard:
+  type: Held
+  icon: zenith/kanto/snorlax
+  flags: [Holdable]
+  sell: 2000
+
+ArticunoZenithShard:
+  type: Held
+  icon: zenith/kanto/articuno
+  flags: [Holdable]
+  sell: 2000
+
+ZapdosZenithShard:
+  type: Held
+  icon: zenith/kanto/zapdos
+  flags: [Holdable]
+  sell: 2000
+
+MoltresZenithShard:
+  type: Held
+  icon: zenith/kanto/moltres
+  flags: [Holdable]
+  sell: 2000
+
+MewZenithShard:
+  type: Held
+  icon: zenith/kanto/mew
+  flags: [Holdable]
+  sell: 2000

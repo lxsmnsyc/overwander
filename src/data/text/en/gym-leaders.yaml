@@ -1,56 +1,164 @@
-# What each gym leader is called
+# What each gym leader is called, and what each says as the challenge is put
 
-Brock: Brock
-Misty: Misty
-LtSurge: Lt. Surge
-Erika: Erika
-Koga: Koga
-Sabrina: Sabrina
-Blaine: Blaine
-Giovanni: Giovanni
-Falkner: Falkner
-Bugsy: Bugsy
-Whitney: Whitney
-Morty: Morty
-Chuck: Chuck
-Jasmine: Jasmine
-Pryce: Pryce
-Clair: Clair
-Roxanne: Roxanne
-Brawly: Brawly
-Wattson: Wattson
-Flannery: Flannery
-Norman: Norman
-Winona: Winona
-Tate: Tate
-Liza: Liza
-Juan: Juan
-Roark: Roark
-Gardenia: Gardenia
-Maylene: Maylene
-CrasherWake: Crasher Wake
-Fantina: Fantina
-Byron: Byron
-Candice: Candice
-Volkner: Volkner
-Cilan: Cilan
-Chili: Chili
-Cress: Cress
-Lenora: Lenora
-Burgh: Burgh
-Elesa: Elesa
-Clay: Clay
-Skyla: Skyla
-Brycen: Brycen
-Drayden: Drayden
-Cheren: Cheren
-Roxie: Roxie
-Marlon: Marlon
-Viola: Viola
-Grant: Grant
-Korrina: Korrina
-Ramos: Ramos
-Clemont: Clemont
-Valerie: Valerie
-Olympia: Olympia
-Wulfric: Wulfric
+Brock:
+  name: Brock
+  quote: Rock is solid, kid. Show me you are harder.
+Misty:
+  name: Misty
+  quote: My water pokemon are tougher than they look. So am I.
+LtSurge:
+  name: Lt. Surge
+  quote: Ten-hut! Survive my electric barrage and the badge is yours, baby!
+Erika:
+  name: Erika
+  quote: The grass is calm today. Shall we?
+Koga:
+  name: Koga
+  quote: A ninja’s poison works slowly. Your defeat will not.
+Sabrina:
+  name: Sabrina
+  quote: I foresaw this fight. I did not foresee you winning.
+Blaine:
+  name: Blaine
+  quote: My fire burns hot! Bring water. It will not help.
+Giovanni:
+  name: Giovanni
+  quote: You have interfered for the last time. Kneel before me.
+Falkner:
+  name: Falkner
+  quote: My father’s birds are watching. Do not embarrass me in front of them.
+Bugsy:
+  name: Bugsy
+  quote: I have studied bug pokemon my whole life. You have not.
+Whitney:
+  name: Whitney
+  quote: You look tough! But I am tougher, and I am not going to cry about it.
+Morty:
+  name: Morty
+  quote: The ghosts show me things. Right now they are showing me you losing.
+Chuck:
+  name: Chuck
+  quote: I train under waterfalls! Your pokemon train under a roof!
+Jasmine:
+  name: Jasmine
+  quote: Um... I am sorry. My steel pokemon do not go down easily.
+Pryce:
+  name: Pryce
+  quote: I have seen ninety winters. You will not last one of them.
+Clair:
+  name: Clair
+  quote: I am the greatest dragon master. Try to prove otherwise.
+Roxanne:
+  name: Roxanne
+  quote: I studied rock pokemon at the academy. Let us see what you studied.
+Brawly:
+  name: Brawly
+  quote: I am a big wave in the making! Come and wipe out on me!
+Wattson:
+  name: Wattson
+  quote: Wahahaha! My machines run on my pokemon. Mind the shock!
+Flannery:
+  name: Flannery
+  quote: My grandfather left me this gym. I intend to keep it hot.
+Norman:
+  name: Norman
+  quote: I am somebody’s father, and I do not go easy on anybody. Come.
+Winona:
+  name: Winona
+  quote: I have flown with birds all my life. You will not touch us.
+Tate:
+  name: Tate
+  quote: My sister knows what I am about to do. Do you?
+Liza:
+  name: Liza
+  quote: My brother and I share one badge. You still have to earn it.
+Juan:
+  name: Juan
+  quote: Water is elegance, and elegance is strength. Observe.
+Roark:
+  name: Roark
+  quote: I dig fossils out of this rock all day. Digging you out will be quicker.
+Gardenia:
+  name: Gardenia
+  quote: Grass pokemon are wonderful, and mine are wonderfully mean.
+Maylene:
+  name: Maylene
+  quote: I am young to keep a gym. Nobody has taken it off me yet.
+CrasherWake:
+  name: Crasher Wake
+  quote: Crash! The Fen Badge is behind me, and so is a wall of water.
+Fantina:
+  name: Fantina
+  quote: My ghosts dance, and they never miss a step. Shall we?
+Byron:
+  name: Byron
+  quote: My son keeps a gym of his own. Neither of us gives anything away.
+Candice:
+  name: Candice
+  quote: Focus! That is all it takes. Mine has never once slipped.
+Volkner:
+  name: Volkner
+  quote: I have been bored for years. Please be worth the electricity.
+Cilan:
+  name: Cilan
+  quote: Allow me to taste your battling style. I expect it is undercooked.
+Chili:
+  name: Chili
+  quote: My fire burns hotter than my brothers put together! Ready?
+Cress:
+  name: Cress
+  quote: Composure wins battles. I have rather a lot of it.
+Lenora:
+  name: Lenora
+  quote: You want the badge? Then show me something worth putting in my museum.
+Burgh:
+  name: Burgh
+  quote: My bug pokemon and I are making something beautiful. Try not to spoil it.
+Elesa:
+  name: Elesa
+  quote: The lights are on you now. Let us see how you look losing.
+Clay:
+  name: Clay
+  quote: I dug this gym out of the ground myself. You will not walk off with it cheap.
+Skyla:
+  name: Skyla
+  quote: I have flown every route in this region. You will not outrun me.
+Brycen:
+  name: Brycen
+  quote: I left the stage for the ice. Nothing here is acting.
+Drayden:
+  name: Drayden
+  quote: A dragon is not tamed by wanting it. Show me what you have.
+Cheren:
+  name: Cheren
+  quote: I used to chase strength. Now I teach it. Let us see what you have learned.
+Roxie:
+  name: Roxie
+  quote: Turn it up! If my poison does not get you, the noise will!
+Marlon:
+  name: Marlon
+  quote: The sea does what it wants, and so do I. Let us have a good one.
+Viola:
+  name: Viola
+  quote: Hold still, I want this shot. It is the one where you lose.
+Grant:
+  name: Grant
+  quote: Every wall has a way up. Let us see if you can find mine.
+Korrina:
+  name: Korrina
+  quote: Roller skates on, fists up! I hope you can keep pace!
+Ramos:
+  name: Ramos
+  quote: A garden takes patience, and so does beating me.
+Clemont:
+  name: Clemont
+  quote: The future is now, thanks to science! Watch my invention at work.
+Valerie:
+  name: Valerie
+  quote: Oh, a visitor. My fairies are gentle, until they are not.
+Olympia:
+  name: Olympia
+  quote: I have already seen how this ends. Shall we play it out?
+Wulfric:
+  name: Wulfric
+  quote: Ha! A good fight warms the bones. Come on, then!

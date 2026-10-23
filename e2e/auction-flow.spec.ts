@@ -59,8 +59,8 @@ async function arrive(browser: Browser): Promise<Trader> {
 
 /**
  * Put gold in a player's purse. It is a server-only field — a client
- * that could write it could mint its own bids — so it is written as
- * the emulator's owner
+ * that could write it could mint its own bids — so it is written over
+ * the table owner's connection
  */
 async function grantGold(trader: Trader, gold: number): Promise<void> {
   await setGold(trader.uid, gold);
@@ -102,7 +102,7 @@ async function putItUp(page: Page, named: RegExp, opening: number): Promise<void
  * What the board calls a player: the local part of the address they
  * registered with, which is what a profile is seeded from. It is
  * unique per run, so it is how a spec finds *its* lot on a board the
- * emulator has been accumulating since the first test
+ * database has been accumulating since the first test
  */
 function nicknameOf(trader: Trader): string {
   return trader.player.email.split('@')[0];

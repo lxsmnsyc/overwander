@@ -8,207 +8,295 @@ NormaliumZ:
   icon: z-crystals/normalium-z
   flags: [Holdable]
   sell: 2000
+  z-type: Normal
+  z-move: BreakneckBlitz
 
 FightiniumZ:
   type: Held
   icon: z-crystals/fightinium-z
   flags: [Holdable]
   sell: 2000
+  z-type: Fighting
+  z-move: AllOutPummeling
 
 FlyiniumZ:
   type: Held
   icon: z-crystals/flyinium-z
   flags: [Holdable]
   sell: 2000
+  z-type: Flying
+  z-move: SupersonicSkystrike
 
 PoisoniumZ:
   type: Held
   icon: z-crystals/poisonium-z
   flags: [Holdable]
   sell: 2000
+  z-type: Poison
+  z-move: AcidDownpour
 
 GroundiumZ:
   type: Held
   icon: z-crystals/groundium-z
   flags: [Holdable]
   sell: 2000
+  z-type: Ground
+  z-move: TectonicRage
 
 RockiumZ:
   type: Held
   icon: z-crystals/rockium-z
   flags: [Holdable]
   sell: 2000
+  z-type: Rock
+  z-move: ContinentalCrush
 
 BuginiumZ:
   type: Held
   icon: z-crystals/buginium-z
   flags: [Holdable]
   sell: 2000
+  z-type: Bug
+  z-move: SavageSpinOut
 
 GhostiumZ:
   type: Held
   icon: z-crystals/ghostium-z
   flags: [Holdable]
   sell: 2000
+  z-type: Ghost
+  z-move: NeverEndingNightmare
 
 SteeliumZ:
   type: Held
   icon: z-crystals/steelium-z
   flags: [Holdable]
   sell: 2000
+  z-type: Steel
+  z-move: CorkscrewCrash
 
 FiriumZ:
   type: Held
   icon: z-crystals/firium-z
   flags: [Holdable]
   sell: 2000
+  z-type: Fire
+  z-move: InfernoOverdrive
 
 WateriumZ:
   type: Held
   icon: z-crystals/waterium-z
   flags: [Holdable]
   sell: 2000
+  z-type: Water
+  z-move: HydroVortex
 
 GrassiumZ:
   type: Held
   icon: z-crystals/grassium-z
   flags: [Holdable]
   sell: 2000
+  z-type: Grass
+  z-move: BloomDoom
 
 ElectriumZ:
   type: Held
   icon: z-crystals/electrium-z
   flags: [Holdable]
   sell: 2000
+  z-type: Electric
+  z-move: GigavoltHavoc
 
 PsychiumZ:
   type: Held
   icon: z-crystals/psychium-z
   flags: [Holdable]
   sell: 2000
+  z-type: Psychic
+  z-move: ShatteredPsyche
 
 IciumZ:
   type: Held
   icon: z-crystals/icium-z
   flags: [Holdable]
   sell: 2000
+  z-type: Ice
+  z-move: SubzeroSlammer
 
 DragoniumZ:
   type: Held
   icon: z-crystals/dragonium-z
   flags: [Holdable]
   sell: 2000
+  z-type: Dragon
+  z-move: DevastatingDrake
 
 DarkiniumZ:
   type: Held
   icon: z-crystals/darkinium-z
   flags: [Holdable]
   sell: 2000
+  z-type: Dark
+  z-move: BlackHoleEclipse
 
 FairiumZ:
   type: Held
   icon: z-crystals/fairium-z
   flags: [Holdable]
   sell: 2000
+  z-type: Fairy
+  z-move: TwinkleTackle
 
 PikaniumZ:
   type: Held
   icon: z-crystals/pikanium-z
   flags: [Holdable]
   sell: 2000
+  holders: [Pikachu]
+  move: VoltTackle
+  z-move: Catastropika
 
+# Only a Pikachu in one of Ash's caps, and none of those is in the dex yet
 PikashuniumZ:
   type: Held
   icon: z-crystals/pikashunium-z
   flags: [Holdable]
   sell: 2000
+  holders: []
+  move: Thunderbolt
+  z-move: TenMillionVoltThunderbolt
 
 AloraichiumZ:
   type: Held
   icon: z-crystals/aloraichium-z
   flags: [Holdable]
   sell: 2000
+  holders: [RaichuAlola]
+  move: Thunderbolt
+  z-move: StokedSparksurfer
 
 EeviumZ:
   type: Held
   icon: z-crystals/eevium-z
   flags: [Holdable]
   sell: 2000
+  holders: [Eevee]
+  move: LastResort
+  z-move: ExtremeEvoboost
 
 SnorliumZ:
   type: Held
   icon: z-crystals/snorlium-z
   flags: [Holdable]
   sell: 2000
+  holders: [Snorlax]
+  move: GigaImpact
+  z-move: PulverizingPancake
 
 MewniumZ:
   type: Held
   icon: z-crystals/mewnium-z
   flags: [Holdable]
   sell: 2000
+  holders: [Mew]
+  move: Psychic
+  z-move: GenesisSupernova
 
 DecidiumZ:
   type: Held
   icon: z-crystals/decidium-z
   flags: [Holdable]
   sell: 2000
+  holders: [Decidueye]
+  move: SpiritShackle
+  z-move: SinisterArrowRaid
 
 InciniumZ:
   type: Held
   icon: z-crystals/incinium-z
   flags: [Holdable]
   sell: 2000
+  holders: [Incineroar]
+  move: DarkestLariat
+  z-move: MaliciousMoonsault
 
 PrimariumZ:
   type: Held
   icon: z-crystals/primarium-z
   flags: [Holdable]
   sell: 2000
+  holders: [Primarina]
+  move: SparklingAria
+  z-move: OceanicOperetta
 
 LycaniumZ:
   type: Held
   icon: z-crystals/lycanium-z
   flags: [Holdable]
   sell: 2000
+  holders: [Lycanroc, LycanrocMidnight, LycanrocDusk]
+  move: StoneEdge
+  z-move: SplinteredStormshards
 
 MimikiumZ:
   type: Held
   icon: z-crystals/mimikium-z
   flags: [Holdable]
   sell: 2000
+  holders: [Mimikyu, MimikyuBusted]
+  move: PlayRough
+  z-move: LetsSnuggleForever
 
 KommoniumZ:
   type: Held
   icon: z-crystals/kommonium-z
   flags: [Holdable]
   sell: 2000
+  holders: [KommoO]
+  move: ClangingScales
+  z-move: ClangorousSoulblaze
 
 TapuniumZ:
   type: Held
   icon: z-crystals/tapunium-z
   flags: [Holdable]
   sell: 2000
+  holders: [TapuKoko, TapuLele, TapuBulu, TapuFini]
+  move: NaturesMadness
+  z-move: GuardianOfAlola
 
 SolganiumZ:
   type: Held
   icon: z-crystals/solganium-z
   flags: [Holdable]
   sell: 2000
+  holders: [Solgaleo, NecrozmaDuskMane]
+  move: SunsteelStrike
+  z-move: SearingSunrazeSmash
 
 LunaliumZ:
   type: Held
   icon: z-crystals/lunalium-z
   flags: [Holdable]
   sell: 2000
+  holders: [Lunala, NecrozmaDawnWings]
+  move: MoongeistBeam
+  z-move: MenacingMoonrazeMaelstrom
 
 UltranecroziumZ:
   type: Held
   icon: z-crystals/ultranecrozium-z
   flags: [Holdable]
   sell: 2000
+  holders: [NecrozmaDuskMane, NecrozmaDawnWings, NecrozmaUltra]
+  move: PhotonGeyser
+  z-move: LightThatBurnsTheSky
 
 MarshadiumZ:
   type: Held
   icon: z-crystals/marshadium-z
   flags: [Holdable]
   sell: 2000
+  holders: [Marshadow]
+  move: SpectralThief
+  z-move: SoulStealing7StarStrike

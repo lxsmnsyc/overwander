@@ -1,6 +1,6 @@
 import LRUMap from '../core/lru-map';
 import { readBoxRevisions, readCaughtRevised } from './caught';
-import type { CaughtPokemon } from './caught-record';
+import type { CaughtPokemon } from '../model/caught-record';
 
 /**
  * Boxes kept between readings.

@@ -49,7 +49,9 @@ Noland:
 Anabel:
   rule: None
   crown: HoennChampion
-  sheets: [characters/rse/anabel]
+  sheets:
+    - characters/rse/anabel
+    - characters/oras/anabel
   symbols: [SilverAbilitySymbol, GoldAbilitySymbol]
   party: [Alakazam, Entei, Snorlax]
   gold-party: [Raikou, Snorlax, Latios]

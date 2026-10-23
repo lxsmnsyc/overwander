@@ -1,0 +1,36 @@
+# What each biome is painted on the map, roughly following its climate:
+# blues for water, greens for the wooded belt, sand and ochre for the
+# dry regions, greys and whites for the cold and high ones
+
+DeepOcean: '#123a63'
+Ocean: '#1d5b90'
+CoralReef: '#2e9ab5'
+Beach: '#e2d6a2'
+Mangrove: '#4a6b4a'
+Swamp: '#54604a'
+TropicalRainforest: '#14532d'
+TropicalSeasonalForest: '#3f7d3a'
+Savanna: '#b8a044'
+Desert: '#dcb96b'
+Shrubland: '#9aa458'
+Grassland: '#7cae4c'
+TemperateForest: '#3c7a4b'
+TemperateRainforest: '#2f6b58'
+ColdDesert: '#b9b099'
+Taiga: '#3f6156'
+Tundra: '#8fa39a'
+Mountain: '#7a7268'
+AlpineTundra: '#a8a89c'
+Glacier: '#dff0f5'
+Woodland: '#5f9147'
+Steppe: '#c2b566'
+MontaneForest: '#46705a'
+PolarOcean: '#7fa8c4'
+Volcano: '#6b3326'
+Badlands: '#b0764a'
+RockyCoast: '#8d9aa0'
+Bog: '#5c566b'
+KelpForest: '#2e8a6e'
+# Nowhere on the map is ever painted with it; it is here because a
+# record can carry the biome and something has to answer for it
+Beyond: '#1a1030'

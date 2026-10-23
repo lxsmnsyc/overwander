@@ -5,12 +5,13 @@ import { TYPE_EFFECTIVENESS, TYPE_EFFECTIVENESS_FACTOR, Types } from '../../data
 import { DamageFlags, MoveCategories, MoveFlags } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
 import { Statuses, Weathers } from '../../data/ids/status';
-import { Species, getBaseFormSpecies } from '../../data/ids/species';
-import type Battle from '../core';
+import { Species } from '../../data/ids/species';
+import { getBaseFormSpecies } from '../../data/ids/forms';
+import type Battle from '../battle';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import { MergedLifecycle } from '../lifecycle';
 import { STATUS_MOVES } from '../moves/status';
-import { unitTarget } from '../utils';
+import { unitTarget } from '../unit-checks';
 import type Unit from '../unit';
 import {
   createAbility,

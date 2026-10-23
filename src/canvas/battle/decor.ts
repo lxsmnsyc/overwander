@@ -9,7 +9,7 @@ import {
   drift,
   lifeOf,
   stormOf,
-} from '../auras';
+} from '../effects/auras';
 import {
   SPARKLE_BURST,
   SPARKLE_COLORS,
@@ -25,7 +25,7 @@ import {
   SPARKLE_STAR_SIZE,
   SPARKLE_TINTS,
   sparkleStar,
-} from '../sparkle';
+} from '../effects/sparkle';
 import type EffectBatch from '../three/effect-batch';
 import type { Spot } from '../three/effect-batch';
 import { aside } from './moves/lit/shapes';

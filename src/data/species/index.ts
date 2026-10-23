@@ -1,5 +1,6 @@
 import { registerSpecies as registerSpeciesData } from './__create';
 import registerMegaSpecies from './megas';
+import registerZenithSpecies from './zeniths';
 import registerTrueShadowSpecies from './true-shadow';
 import { readSpecies } from './yaml';
 
@@ -84,6 +85,13 @@ export {
   trueShadowName,
 } from './true-shadow';
 export { getMegaBase, isMegaSpecies, listMegas } from './megas';
+export {
+  ZENITH_BONUS,
+  getZenithBase,
+  getZenithShape,
+  isZenithSpecies,
+  listZeniths,
+} from './zeniths';
 
 export function registerSpecies(): void {
   // Written as YAML, a folder per field and a block of families per file (see ./yaml.ts)
@@ -100,5 +108,6 @@ export function registerSpecies(): void {
   }
   // Last: each one is a copy of a counterpart that has to exist first
   registerMegaSpecies();
+  registerZenithSpecies();
   registerTrueShadowSpecies();
 }

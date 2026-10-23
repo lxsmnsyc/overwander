@@ -1,0 +1,10 @@
+# A body turning into it, and a body arriving whole
+GyroBall: { landing: Swirl }
+
+HealingWish: { landing: Mend }
+
+# Lobbed rather than shot flat: a bomb, a thrown item, a stone
+NaturalGift: { wait: { striking: Lobbed } }
+
+# Arriving faster than it can be seen coming
+Feint: { landing: Strike }

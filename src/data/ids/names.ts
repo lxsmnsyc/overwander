@@ -1,16 +1,18 @@
-// Written by scripts/id-names.ts from the enums it lists; run `pnpm id-names`
+// Written by scripts/data/id-names.ts from the enums it lists; run `pnpm id-names`
 // rather than editing it
 import { EvolutionMethod, Genders, Habitat, Species } from './species';
 import { MoveAffects, MoveCategories, MoveFlags, MoveTargets, Moves } from './moves';
 import { SpriteAnim } from './sprite-anims';
 import Abilities from './abilities';
-import { ItemFlags, ItemTypes, Items } from './items';
-import Biome, { TimeOfDay } from './biome';
+import { Balls, ItemFlags, ItemTypes, Items } from './items';
+import Biome, { SpawnRarity, TimeOfDay } from './biome';
 import { EggGroups } from './egg-groups';
 import Families from './families';
-import { Types } from '../constants/types';
-import { Stages, Stats } from '../constants/stats';
-import { Statuses, TeamStatuses } from './status';
+import { Types } from './types';
+import { Stages, Stats } from './stats';
+import { Statuses, TeamStatuses, Terrains, Weathers } from './status';
+import MoveRole from './move-roles';
+import { BuildRole, StatusKind } from './builds';
 import Regions from './regions';
 import Natures from './natures';
 import Awards from './awards';
@@ -20,7 +22,7 @@ import GymLeader from './gym-leaders';
 import EliteMember from './elite';
 import Champion from './champions';
 import Legend from './legends';
-import FrontierBrain, { FrontierRule } from './frontier';
+import FrontierBrain, { ArcadePanel, FrontierRule, PikeCurtain } from './frontier';
 import Syndicate from './syndicates';
 import Executive from './executives';
 import Npc from './npcs';
@@ -28,7 +30,11 @@ import VendorKind from './vendor-kinds';
 import Decoration from './decorations';
 import Landmark from './landmarks';
 import Phenomenon from './phenomena';
-import Weather from '../overworld/weather/kinds';
+import Weather from './weather';
+import { AchievementLine, AchievementTier } from './achievements';
+import LadderTitle from './ladder-titles';
+import { Chains, Quests } from '../quests/types';
+import { Foe, Metric, Landmark as QuestLandmark } from '../../model/quest-record';
 
 export const SPECIES_IDS = {
   Missingno: Species.Missingno,
@@ -1267,6 +1273,55 @@ export const SPECIES_IDS = {
   GalladeMega: Species.GalladeMega,
   AudinoMega: Species.AudinoMega,
   DiancieMega: Species.DiancieMega,
+  RaichuMegaX: Species.RaichuMegaX,
+  RaichuMegaY: Species.RaichuMegaY,
+  ClefableMega: Species.ClefableMega,
+  VictreebelMega: Species.VictreebelMega,
+  StarmieMega: Species.StarmieMega,
+  DragoniteMega: Species.DragoniteMega,
+  MeganiumMega: Species.MeganiumMega,
+  FeraligatrMega: Species.FeraligatrMega,
+  SkarmoryMega: Species.SkarmoryMega,
+  ChimechoMega: Species.ChimechoMega,
+  AbsolMegaZ: Species.AbsolMegaZ,
+  StaraptorMega: Species.StaraptorMega,
+  GarchompMegaZ: Species.GarchompMegaZ,
+  LucarioMegaZ: Species.LucarioMegaZ,
+  FroslassMega: Species.FroslassMega,
+  HeatranMega: Species.HeatranMega,
+  DarkraiMega: Species.DarkraiMega,
+  EmboarMega: Species.EmboarMega,
+  ExcadrillMega: Species.ExcadrillMega,
+  ScolipedeMega: Species.ScolipedeMega,
+  ScraftyMega: Species.ScraftyMega,
+  EelektrossMega: Species.EelektrossMega,
+  ChandelureMega: Species.ChandelureMega,
+  GolurkMega: Species.GolurkMega,
+  ChesnaughtMega: Species.ChesnaughtMega,
+  DelphoxMega: Species.DelphoxMega,
+  GreninjaMega: Species.GreninjaMega,
+  PyroarMega: Species.PyroarMega,
+  FloetteMega: Species.FloetteMega,
+  MeowsticMega: Species.MeowsticMega,
+  MeowsticFemaleMega: Species.MeowsticFemaleMega,
+  MalamarMega: Species.MalamarMega,
+  BarbaracleMega: Species.BarbaracleMega,
+  DragalgeMega: Species.DragalgeMega,
+  HawluchaMega: Species.HawluchaMega,
+  ZygardeMega: Species.ZygardeMega,
+  CrabominableMega: Species.CrabominableMega,
+  GolisopodMega: Species.GolisopodMega,
+  DrampaMega: Species.DrampaMega,
+  MagearnaMega: Species.MagearnaMega,
+  MagearnaOriginalMega: Species.MagearnaOriginalMega,
+  ZeraoraMega: Species.ZeraoraMega,
+  FalinksMega: Species.FalinksMega,
+  ScovillainMega: Species.ScovillainMega,
+  GlimmoraMega: Species.GlimmoraMega,
+  TatsugiriMega: Species.TatsugiriMega,
+  TatsugiriStretchyMega: Species.TatsugiriStretchyMega,
+  TatsugiriDroopyMega: Species.TatsugiriDroopyMega,
+  BaxcaliburMega: Species.BaxcaliburMega,
   KyogrePrimal: Species.KyogrePrimal,
   GroudonPrimal: Species.GroudonPrimal,
   RattataAlola: Species.RattataAlola,
@@ -1400,6 +1455,55 @@ export const SPECIES_IDS = {
   OgerponCornerstoneTera: Species.OgerponCornerstoneTera,
   TerapagosTerastal: Species.TerapagosTerastal,
   TerapagosStellar: Species.TerapagosStellar,
+  ButterfreeZenith: Species.ButterfreeZenith,
+  RaticateZenith: Species.RaticateZenith,
+  FearowZenith: Species.FearowZenith,
+  ArbokZenith: Species.ArbokZenith,
+  SandslashZenith: Species.SandslashZenith,
+  NidoqueenZenith: Species.NidoqueenZenith,
+  NidokingZenith: Species.NidokingZenith,
+  NinetalesZenith: Species.NinetalesZenith,
+  WigglytuffZenith: Species.WigglytuffZenith,
+  VileplumeZenith: Species.VileplumeZenith,
+  ParasectZenith: Species.ParasectZenith,
+  VenomothZenith: Species.VenomothZenith,
+  DugtrioZenith: Species.DugtrioZenith,
+  PersianZenith: Species.PersianZenith,
+  GolduckZenith: Species.GolduckZenith,
+  ArcanineZenith: Species.ArcanineZenith,
+  PoliwrathZenith: Species.PoliwrathZenith,
+  MachampZenith: Species.MachampZenith,
+  TentacruelZenith: Species.TentacruelZenith,
+  GolemZenith: Species.GolemZenith,
+  RapidashZenith: Species.RapidashZenith,
+  FarfetchdZenith: Species.FarfetchdZenith,
+  DodrioZenith: Species.DodrioZenith,
+  DewgongZenith: Species.DewgongZenith,
+  MukZenith: Species.MukZenith,
+  CloysterZenith: Species.CloysterZenith,
+  HypnoZenith: Species.HypnoZenith,
+  KinglerZenith: Species.KinglerZenith,
+  ElectrodeZenith: Species.ElectrodeZenith,
+  ExeggutorZenith: Species.ExeggutorZenith,
+  MarowakZenith: Species.MarowakZenith,
+  HitmonleeZenith: Species.HitmonleeZenith,
+  HitmonchanZenith: Species.HitmonchanZenith,
+  WeezingZenith: Species.WeezingZenith,
+  SeakingZenith: Species.SeakingZenith,
+  MrMimeZenith: Species.MrMimeZenith,
+  JynxZenith: Species.JynxZenith,
+  TaurosZenith: Species.TaurosZenith,
+  LaprasZenith: Species.LaprasZenith,
+  VaporeonZenith: Species.VaporeonZenith,
+  JolteonZenith: Species.JolteonZenith,
+  FlareonZenith: Species.FlareonZenith,
+  OmastarZenith: Species.OmastarZenith,
+  KabutopsZenith: Species.KabutopsZenith,
+  SnorlaxZenith: Species.SnorlaxZenith,
+  ArticunoZenith: Species.ArticunoZenith,
+  ZapdosZenith: Species.ZapdosZenith,
+  MoltresZenith: Species.MoltresZenith,
+  MewZenith: Species.MewZenith,
 } as const satisfies Record<string, Species>;
 
 export const GENDER_IDS = {
@@ -2406,6 +2510,11 @@ export const MOVE_FLAG_IDS = {
   Bite: MoveFlags.Bite,
   Slicing: MoveFlags.Slicing,
   Wind: MoveFlags.Wind,
+  Punch: MoveFlags.Punch,
+  Kick: MoveFlags.Kick,
+  Dance: MoveFlags.Dance,
+  Ballistic: MoveFlags.Ballistic,
+  HighCrit: MoveFlags.HighCrit,
 } as const satisfies Record<string, MoveFlags>;
 
 export const SPRITE_ANIM_IDS = {
@@ -3975,7 +4084,101 @@ export const ITEM_IDS = {
   HearthflameMask: Items.HearthflameMask,
   CornerstoneMask: Items.CornerstoneMask,
   MythicalPechaBerry: Items.MythicalPechaBerry,
+  RaichuniteX: Items.RaichuniteX,
+  RaichuniteY: Items.RaichuniteY,
+  Clefablite: Items.Clefablite,
+  Victreebelite: Items.Victreebelite,
+  Starminite: Items.Starminite,
+  Dragoninite: Items.Dragoninite,
+  Meganiumite: Items.Meganiumite,
+  Feraligite: Items.Feraligite,
+  Skarmorite: Items.Skarmorite,
+  Chimechite: Items.Chimechite,
+  AbsoliteZ: Items.AbsoliteZ,
+  Staraptite: Items.Staraptite,
+  GarchompiteZ: Items.GarchompiteZ,
+  LucarioniteZ: Items.LucarioniteZ,
+  Froslassite: Items.Froslassite,
+  Heatranite: Items.Heatranite,
+  Darkranite: Items.Darkranite,
+  Emboarite: Items.Emboarite,
+  Excadrite: Items.Excadrite,
+  Scolipite: Items.Scolipite,
+  Scraftinite: Items.Scraftinite,
+  Eelektrossite: Items.Eelektrossite,
+  Chandelurite: Items.Chandelurite,
+  Golurkite: Items.Golurkite,
+  Chesnaughtite: Items.Chesnaughtite,
+  Delphoxite: Items.Delphoxite,
+  Greninjite: Items.Greninjite,
+  Pyroarite: Items.Pyroarite,
+  Floettite: Items.Floettite,
+  Meowsticite: Items.Meowsticite,
+  Malamarite: Items.Malamarite,
+  Barbaracite: Items.Barbaracite,
+  Dragalgite: Items.Dragalgite,
+  Hawluchanite: Items.Hawluchanite,
+  Zygardite: Items.Zygardite,
+  Crabominite: Items.Crabominite,
+  Golisopite: Items.Golisopite,
+  Drampanite: Items.Drampanite,
+  Magearnite: Items.Magearnite,
+  Zeraorite: Items.Zeraorite,
+  Falinksite: Items.Falinksite,
+  Scovillainite: Items.Scovillainite,
+  Glimmoranite: Items.Glimmoranite,
+  Tatsugirinite: Items.Tatsugirinite,
+  Baxcalibrite: Items.Baxcalibrite,
   TealMask: Items.TealMask,
+  ButterfreeZenithShard: Items.ButterfreeZenithShard,
+  RaticateZenithShard: Items.RaticateZenithShard,
+  FearowZenithShard: Items.FearowZenithShard,
+  ArbokZenithShard: Items.ArbokZenithShard,
+  SandslashZenithShard: Items.SandslashZenithShard,
+  NidoqueenZenithShard: Items.NidoqueenZenithShard,
+  NidokingZenithShard: Items.NidokingZenithShard,
+  NinetalesZenithShard: Items.NinetalesZenithShard,
+  WigglytuffZenithShard: Items.WigglytuffZenithShard,
+  VileplumeZenithShard: Items.VileplumeZenithShard,
+  ParasectZenithShard: Items.ParasectZenithShard,
+  VenomothZenithShard: Items.VenomothZenithShard,
+  DugtrioZenithShard: Items.DugtrioZenithShard,
+  PersianZenithShard: Items.PersianZenithShard,
+  GolduckZenithShard: Items.GolduckZenithShard,
+  ArcanineZenithShard: Items.ArcanineZenithShard,
+  PoliwrathZenithShard: Items.PoliwrathZenithShard,
+  MachampZenithShard: Items.MachampZenithShard,
+  TentacruelZenithShard: Items.TentacruelZenithShard,
+  GolemZenithShard: Items.GolemZenithShard,
+  RapidashZenithShard: Items.RapidashZenithShard,
+  FarfetchdZenithShard: Items.FarfetchdZenithShard,
+  DodrioZenithShard: Items.DodrioZenithShard,
+  DewgongZenithShard: Items.DewgongZenithShard,
+  MukZenithShard: Items.MukZenithShard,
+  CloysterZenithShard: Items.CloysterZenithShard,
+  HypnoZenithShard: Items.HypnoZenithShard,
+  KinglerZenithShard: Items.KinglerZenithShard,
+  ElectrodeZenithShard: Items.ElectrodeZenithShard,
+  ExeggutorZenithShard: Items.ExeggutorZenithShard,
+  MarowakZenithShard: Items.MarowakZenithShard,
+  HitmonleeZenithShard: Items.HitmonleeZenithShard,
+  HitmonchanZenithShard: Items.HitmonchanZenithShard,
+  WeezingZenithShard: Items.WeezingZenithShard,
+  SeakingZenithShard: Items.SeakingZenithShard,
+  MrMimeZenithShard: Items.MrMimeZenithShard,
+  JynxZenithShard: Items.JynxZenithShard,
+  TaurosZenithShard: Items.TaurosZenithShard,
+  LaprasZenithShard: Items.LaprasZenithShard,
+  VaporeonZenithShard: Items.VaporeonZenithShard,
+  JolteonZenithShard: Items.JolteonZenithShard,
+  FlareonZenithShard: Items.FlareonZenithShard,
+  OmastarZenithShard: Items.OmastarZenithShard,
+  KabutopsZenithShard: Items.KabutopsZenithShard,
+  SnorlaxZenithShard: Items.SnorlaxZenithShard,
+  ArticunoZenithShard: Items.ArticunoZenithShard,
+  ZapdosZenithShard: Items.ZapdosZenithShard,
+  MoltresZenithShard: Items.MoltresZenithShard,
+  MewZenithShard: Items.MewZenithShard,
 } as const satisfies Record<string, Items>;
 
 export const ITEM_TYPE_IDS = {
@@ -4037,6 +4240,17 @@ export const TIME_OF_DAY_IDS = {
   Evening: TimeOfDay.Evening,
   Night: TimeOfDay.Night,
 } as const satisfies Record<string, TimeOfDay>;
+
+export const SPAWN_RARITY_IDS = {
+  Base: SpawnRarity.Base,
+  Uncommon: SpawnRarity.Uncommon,
+  Rare: SpawnRarity.Rare,
+  Scarce: SpawnRarity.Scarce,
+  Elusive: SpawnRarity.Elusive,
+  Prized: SpawnRarity.Prized,
+  Special: SpawnRarity.Special,
+  Mythical: SpawnRarity.Mythical,
+} as const satisfies Record<string, SpawnRarity>;
 
 export const EGG_GROUP_IDS = {
   Monster: EggGroups.Monster,
@@ -4720,6 +4934,82 @@ export const TEAM_STATUS_IDS = {
   AuroraVeil: TeamStatuses.AuroraVeil,
 } as const satisfies Record<string, TeamStatuses>;
 
+export const BATTLE_WEATHER_IDS = {
+  None: Weathers.None,
+  Sunny: Weathers.Sunny,
+  Rain: Weathers.Rain,
+  Sandstorm: Weathers.Sandstorm,
+  Hail: Weathers.Hail,
+  Snow: Weathers.Snow,
+  Fog: Weathers.Fog,
+  ExtremeSunny: Weathers.ExtremeSunny,
+  HeavyRain: Weathers.HeavyRain,
+  StrongWinds: Weathers.StrongWinds,
+} as const satisfies Record<string, Weathers>;
+
+export const TERRAIN_IDS = {
+  None: Terrains.None,
+  Electric: Terrains.Electric,
+  Grassy: Terrains.Grassy,
+  Misty: Terrains.Misty,
+  Psychic: Terrains.Psychic,
+} as const satisfies Record<string, Terrains>;
+
+export const MOVE_ROLE_IDS = {
+  Shield: MoveRole.Shield,
+  TeamSetup: MoveRole.TeamSetup,
+  Hazard: MoveRole.Hazard,
+  Field: MoveRole.Field,
+  Status: MoveRole.Status,
+  Disruption: MoveRole.Disruption,
+  SelfBoost: MoveRole.SelfBoost,
+  FoeDrop: MoveRole.FoeDrop,
+  Heal: MoveRole.Heal,
+  Support: MoveRole.Support,
+  Pivot: MoveRole.Pivot,
+  Utility: MoveRole.Utility,
+  Damage: MoveRole.Damage,
+  Spread: MoveRole.Spread,
+  Priority: MoveRole.Priority,
+  MultiHit: MoveRole.MultiHit,
+  Charge: MoveRole.Charge,
+  Recharge: MoveRole.Recharge,
+  Recoil: MoveRole.Recoil,
+  Drain: MoveRole.Drain,
+  Sacrifice: MoveRole.Sacrifice,
+  OneHitKO: MoveRole.OneHitKO,
+  FixedDamage: MoveRole.FixedDamage,
+  LockIn: MoveRole.LockIn,
+  Delayed: MoveRole.Delayed,
+  Afflicts: MoveRole.Afflicts,
+  Weakens: MoveRole.Weakens,
+  Trapping: MoveRole.Trapping,
+} as const satisfies Record<string, MoveRole>;
+
+export const BUILD_ROLE_IDS = {
+  SpecialCore: BuildRole.SpecialCore,
+  PhysicalCore: BuildRole.PhysicalCore,
+  Healer: BuildRole.Healer,
+  Protector: BuildRole.Protector,
+  Redirector: BuildRole.Redirector,
+  FieldControl: BuildRole.FieldControl,
+} as const satisfies Record<string, BuildRole>;
+
+export const STATUS_KIND_IDS = {
+  Setup: StatusKind.Setup,
+  Heal: StatusKind.Heal,
+  Cripple: StatusKind.Cripple,
+  Screen: StatusKind.Screen,
+  Weather: StatusKind.Weather,
+  Boost: StatusKind.Boost,
+  Mend: StatusKind.Mend,
+  Cure: StatusKind.Cure,
+  Shield: StatusKind.Shield,
+  Redirect: StatusKind.Redirect,
+  Hazard: StatusKind.Hazard,
+  Room: StatusKind.Room,
+} as const satisfies Record<string, StatusKind>;
+
 export const REGION_IDS = {
   Unknown: Regions.Unknown,
   Kanto: Regions.Kanto,
@@ -5349,6 +5639,24 @@ export const FRONTIER_RULE_IDS = {
   Singled: FrontierRule.Singled,
 } as const satisfies Record<string, FrontierRule>;
 
+export const PIKE_CURTAIN_IDS = {
+  Poisoned: PikeCurtain.Poisoned,
+  Burned: PikeCurtain.Burned,
+  Paralysed: PikeCurtain.Paralysed,
+  Asleep: PikeCurtain.Asleep,
+  Healed: PikeCurtain.Healed,
+} as const satisfies Record<string, PikeCurtain>;
+
+export const ARCADE_PANEL_IDS = {
+  Sun: ArcadePanel.Sun,
+  Rain: ArcadePanel.Rain,
+  Sandstorm: ArcadePanel.Sandstorm,
+  Hail: ArcadePanel.Hail,
+  Stripped: ArcadePanel.Stripped,
+  Poisoned: ArcadePanel.Poisoned,
+  Mended: ArcadePanel.Mended,
+} as const satisfies Record<string, ArcadePanel>;
+
 export const SYNDICATE_IDS = {
   Rocket: Syndicate.Rocket,
   Magma: Syndicate.Magma,
@@ -5489,3 +5797,156 @@ export const WEATHER_IDS = {
   DarkDay: Weather.DarkDay,
   Fogbow: Weather.Fogbow,
 } as const satisfies Record<string, Weather>;
+
+export const ACHIEVEMENT_TIER_IDS = {
+  None: AchievementTier.None,
+  Bronze: AchievementTier.Bronze,
+  Silver: AchievementTier.Silver,
+  Gold: AchievementTier.Gold,
+  Platinum: AchievementTier.Platinum,
+} as const satisfies Record<string, AchievementTier>;
+
+export const ACHIEVEMENT_LINE_IDS = {
+  Collector: AchievementLine.Collector,
+  Hatcher: AchievementLine.Hatcher,
+  Coach: AchievementLine.Coach,
+  Wayfarer: AchievementLine.Wayfarer,
+  Socialite: AchievementLine.Socialite,
+  Forager: AchievementLine.Forager,
+  Raider: AchievementLine.Raider,
+  Trader: AchievementLine.Trader,
+  Auctioneer: AchievementLine.Auctioneer,
+  Confidant: AchievementLine.Confidant,
+  Wayfinder: AchievementLine.Wayfinder,
+  Matchmaker: AchievementLine.Matchmaker,
+  Purifier: AchievementLine.Purifier,
+  Pathfinder: AchievementLine.Pathfinder,
+} as const satisfies Record<string, AchievementLine>;
+
+export const LADDER_TITLE_IDS = {
+  LeagueChallenger: LadderTitle.LeagueChallenger,
+  EliteConqueror: LadderTitle.EliteConqueror,
+  KantoChampion: LadderTitle.KantoChampion,
+  JohtoChampion: LadderTitle.JohtoChampion,
+  LegendBreaker: LadderTitle.LegendBreaker,
+  HoennChampion: LadderTitle.HoennChampion,
+  SinnohChampion: LadderTitle.SinnohChampion,
+} as const satisfies Record<string, LadderTitle>;
+
+export const BALL_IDS = {
+  PokeBall: Balls.PokeBall,
+  GreatBall: Balls.GreatBall,
+  UltraBall: Balls.UltraBall,
+  MasterBall: Balls.MasterBall,
+  PremierBall: Balls.PremierBall,
+  HealBall: Balls.HealBall,
+  LuxuryBall: Balls.LuxuryBall,
+  NetBall: Balls.NetBall,
+  DiveBall: Balls.DiveBall,
+  NestBall: Balls.NestBall,
+  RepeatBall: Balls.RepeatBall,
+  TimerBall: Balls.TimerBall,
+  QuickBall: Balls.QuickBall,
+  DuskBall: Balls.DuskBall,
+  LevelBall: Balls.LevelBall,
+  LureBall: Balls.LureBall,
+  MoonBall: Balls.MoonBall,
+  FriendBall: Balls.FriendBall,
+  LoveBall: Balls.LoveBall,
+  HeavyBall: Balls.HeavyBall,
+  FastBall: Balls.FastBall,
+  BeastBall: Balls.BeastBall,
+} as const satisfies Record<string, Balls>;
+
+export const QUEST_IDS = {
+  FirstCatch: Quests.FirstCatch,
+  GrowingTeam: Quests.GrowingTeam,
+  NewFaces: Quests.NewFaces,
+  FieldNotes: Quests.FieldNotes,
+  PickingFights: Quests.PickingFights,
+  RocketTrouble: Quests.RocketTrouble,
+  CleanupCrew: Quests.CleanupCrew,
+  RaidRookie: Quests.RaidRookie,
+  BossDown: Quests.BossDown,
+  SirenVeteran: Quests.SirenVeteran,
+  OddLights: Quests.OddLights,
+  StormChaser: Quests.StormChaser,
+  EggSpotting: Quests.EggSpotting,
+  OutForAWalk: Quests.OutForAWalk,
+  FreshHatch: Quests.FreshHatch,
+  Matchmaker: Quests.Matchmaker,
+  NestForANibble: Quests.NestForANibble,
+  SideBySide: Quests.SideBySide,
+  DayAtTheSpa: Quests.DayAtTheSpa,
+  GrowthSpurt: Quests.GrowthSpurt,
+  BalancedDiet: Quests.BalancedDiet,
+  NewTricks: Quests.NewTricks,
+  FullBloom: Quests.FullBloom,
+  OpeningBid: Quests.OpeningBid,
+  Sold: Quests.Sold,
+  OverTheHill: Quests.OverTheHill,
+  ThroughTheDoor: Quests.ThroughTheDoor,
+  FarAfield: Quests.FarAfield,
+  FriendlyFace: Quests.FriendlyFace,
+  FairSwap: Quests.FairSwap,
+  FineTuning: Quests.FineTuning,
+} as const satisfies Record<string, Quests>;
+
+export const CHAIN_IDS = {
+  Catching: Chains.Catching,
+  Battling: Chains.Battling,
+  Raiding: Chains.Raiding,
+  Phenomena: Chains.Phenomena,
+  Eggs: Chains.Eggs,
+  Happiness: Chains.Happiness,
+  Training: Chains.Training,
+  Auctions: Chains.Auctions,
+  Biomes: Chains.Biomes,
+  Friends: Chains.Friends,
+} as const satisfies Record<string, Chains>;
+
+export const METRIC_IDS = {
+  Catches: Metric.Catches,
+  Hatches: Metric.Hatches,
+  LevelUps: Metric.LevelUps,
+  ItemUses: Metric.ItemUses,
+  Steps: Metric.Steps,
+  NpcVisits: Metric.NpcVisits,
+  Landmarks: Metric.Landmarks,
+  RaidRuns: Metric.RaidRuns,
+  RaidWins: Metric.RaidWins,
+  Trades: Metric.Trades,
+  Friends: Metric.Friends,
+  Auctions: Metric.Auctions,
+  Purifies: Metric.Purifies,
+  Evolutions: Metric.Evolutions,
+  Releases: Metric.Releases,
+  MovesLearned: Metric.MovesLearned,
+  BattleWins: Metric.BattleWins,
+  GoldEarned: Metric.GoldEarned,
+  GoldSpent: Metric.GoldSpent,
+  Gifts: Metric.Gifts,
+  Bids: Metric.Bids,
+  ShinyCatches: Metric.ShinyCatches,
+  TrainerWins: Metric.TrainerWins,
+  Biomes: Metric.Biomes,
+  EffortAssigned: Metric.EffortAssigned,
+} as const satisfies Record<string, Metric>;
+
+export const QUEST_LANDMARK_IDS = {
+  Cache: QuestLandmark.Cache,
+  Berry: QuestLandmark.Berry,
+  Nest: QuestLandmark.Nest,
+  Phenomenon: QuestLandmark.Phenomenon,
+  Portal: QuestLandmark.Portal,
+  Apricorn: QuestLandmark.Apricorn,
+} as const satisfies Record<string, QuestLandmark>;
+
+export const FOE_IDS = {
+  Rocket: Foe.Rocket,
+  GymLeader: Foe.GymLeader,
+  EliteFour: Foe.EliteFour,
+  Champion: Foe.Champion,
+  Trainer: Foe.Trainer,
+  GymSeat: Foe.GymSeat,
+} as const satisfies Record<string, Foe>;

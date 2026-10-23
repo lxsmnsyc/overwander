@@ -1,0 +1,19 @@
+# A point driven in, and something long reaching out
+Pluck: { landing: Spike }
+
+# Carried on the air, or washing over it
+Tailwind: { landing: Blow }
+
+# A stat that rises without the move naming which one, so the stage
+# rule never sees it
+Acupressure: { landing: Boost }
+
+# Thrown and going off where it lands
+MetalBurst: { landing: Blast }
+
+# Struck and gone: the blow is the first step and the walk off the
+# field is the second, which is why the landing here is the leaving
+UTurn: { landing: Relay, winding: Dart }
+
+# The heaviest blows, drawn as what they are rather than as a bigger ordinary hit
+CloseCombat: { landing: Flurry }

@@ -9,7 +9,7 @@ A battle leaves a party in the state it ended in. A pokemon walks out of a raid
 at whatever health it had when the boss fell, still burned if it was burned, and
 walks into the next fight that way. The report that writes it is
 [`battle_aftermaths`](battle-rows.md#battle_aftermaths), and the rules both
-sides read are in [`src/auth/health.ts`](../../src/auth/health.ts).
+sides read are in [`src/model/health.ts`](../../src/model/health.ts).
 
 **The maximum is stored beside the current figure.** It comes from the same
 formula the battle fights on (`getHealthStat` in
@@ -84,14 +84,14 @@ they meant.
 
 ## What the player sets
 
-Four of the six `PokemonFlags` are the game's own: shiny, shadow, egg, and the
-battle lock. Two are the player's, set from the catch dialog and cleared the
-same way, and neither says anything about the pokemon itself:
+Most of the row's marks are the game's own: shiny, shadow, egg, and the battle
+lock. Two are the player's, `favorite` and `guarded`, set from the catch dialog
+and cleared the same way, and neither says anything about the pokemon itself:
 
 | Flag       | Button              | What it refuses                                                                                  |
 | ---------- | ------------------- | ------------------------------------------------------------------------------------------------ |
-| `Favorite` | Favorite/Unfavorite | Releasing, listing at auction, and trading when there is trading                                 |
-| `Guarded`  | Lock/Unlock         | Levels, training, values moved, evolution, fights, healing, purifying, items given or taken back |
+| `favorite` | Favorite/Unfavorite | Releasing, listing at auction, and trading                                                       |
+| `guarded`  | Lock/Unlock         | Levels, training, values moved, evolution, fights, healing, purifying, items given or taken back |
 
 They answer different questions on purpose.
 
@@ -105,11 +105,12 @@ A **guarded** pokemon is about keeping one as it is. The line is drawn around
 the sheet: anything that would rewrite a stored field is refused, and anything
 that only ever adds to the pokemon is left alone.
 
-Refused: `useCandy` (a level), `trainEffort`, `useWing` and `feedEffortBerry`
-(effort), `useBottleCap` (values), `evolveCatch`, `useHealingItem`,
-`usePurifyingGem`, `visitNurse` (she heals and purifies), `joinRaid`, and both
-`giveItem` and `takeItem`, since a locked pokemon is not reached into in either
-direction, so what it is holding stays what it was holding.
+Refused: `useCandy` (a level), `trainEfforts`, `useEffortItem` and
+`feedEffortBerry` (effort), `useBottleCap` (values), `evolveCatch`,
+`useHealingItem`, `usePurifyingGem`, `visitNurse` (she heals and purifies),
+`joinRaid`, and both `giveItem` and `takeItem`, since a locked pokemon is not
+reached into in either direction, so what it is holding stays what it was
+holding.
 `publishTeamSnapshot` drops it from a party the way it drops an egg or a fainted
 pokemon, so a stop fight leaves it behind too.
 
@@ -127,10 +128,11 @@ dialog greys out every section a lock refuses, and the pickers say _a favorite_
 or _locked_, so the refusal is visible before the press.
 
 `setFavorite` and `setGuarded`
-([`src/server/caught.ts`](../../src/server/caught.ts)) write through `withFlag`,
-so setting one cannot drop another, and a shiny shadow stays a shiny shadow.
-Both refuse while the pokemon is **fighting**, the way every other edit to a
-live record does.
+([`src/server/caught.ts`](../../src/server/caught.ts)) each write only their own
+boolean column, so setting one cannot drop another, and a shiny shadow stays a
+shiny shadow. `setCatchMarks` does the same over a whole selection. All of them
+refuse while the pokemon is **fighting**, the way every other edit to a live
+record does.
 
 ## Catches are locked while they fight
 
@@ -139,14 +141,15 @@ underneath it would leave the two describing different pokemon. The worst case
 is not cosmetic: a player who pulls a berry back into the bag mid-raid would
 have it eaten in the battle and still be holding it afterwards.
 
-So `startRaid` sets `lock` as it freezes each team, in the **same transaction**
-as the snapshot, and every write that edits a catch refuses while the lock
-holds: `giveItem`, `takeItem`, `useCandy`, `evolveCatch`, and `joinRaid`, which
-will not field a pokemon already fighting elsewhere. Trading will ask the same
-question: a locked pokemon is not up for trade.
+So `startRaid` sets `locked_at` as it freezes each team, in the **same
+transaction** as the snapshot, and every write that edits a catch refuses while
+the lock holds: `giveItem`, `takeItem`, `useCandy`, `evolveCatch`, and
+`joinRaid`, which will not field a pokemon already fighting elsewhere. Trading
+asks the same question: a locked pokemon is not up for trade.
 
 `isCatchLocked` ([`src/server/locks.ts`](../../src/server/locks.ts)) answers
-from the two columns alone, against the server's own clock; no row is fetched.
+from the `locked_at` stamp alone, against the server's own clock; no row is
+fetched.
 Two things end a lock:
 
 - **The fight.** `finishBattle` stamps the outcome and then calls
@@ -166,7 +169,7 @@ nothing. A claim whose teams then field nothing leaves the raid pointing at a
 battle row that was never written, which reads as lost and restages.
 
 The client asks the same question through `isLockLive`
-([`src/auth/battle-lock.ts`](../../src/auth/battle-lock.ts)) so the catch dialog
+([`src/model/battle-lock.ts`](../../src/model/battle-lock.ts)) so the catch dialog
 can grey its buttons out and say why. The refusal itself is the server's.
 
 ## See also

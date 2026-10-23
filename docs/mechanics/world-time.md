@@ -8,17 +8,20 @@ hour brings, and which family the day features.
 Different parts of a chunk refresh on different timers. The easier something is
 to obtain, the sooner it returns.
 
-| What changes                                    | How often  |
-| ----------------------------------------------- | ---------- |
-| The pokemon standing in a chunk                 | 5 minutes  |
-| Item caches, berry patches and apricorn trees   | 15 minutes |
-| Where things are happening, and what they are   | 1 hour     |
-| The weather over a chunk                        | 1 hour     |
-| Legendary and shadow raids                      | 3 hours    |
-| Who is at a wandering-NPC cell, grunts included | 3 hours    |
-| Which counter a market stall is keeping         | 3 hours    |
-| Which trainer is standing at a trainer cell     | 3 hours    |
-| The egg lying in a nest                         | 12 hours   |
+| What changes                                                        | How often  |
+| ------------------------------------------------------------------- | ---------- |
+| The pokemon standing in a chunk                                     | 5 minutes  |
+| Item caches, berry patches, apricorn crops and honey trees          | 15 minutes |
+| Where things are happening, and what they are                       | 1 hour     |
+| The weather over a chunk                                            | 1 hour     |
+| Every raid: lairs, Max Raids, Totems, Alphas, Nobles, Tera crystals | 3 hours    |
+| Who is at a wandering-NPC cell or a Team Rocket cell                | 3 hours    |
+| Which counter a market stall is keeping, and what is on it          | 3 hours    |
+| Which trainer is standing at a trainer cell                         | 3 hours    |
+| Who holds a league seat or a Frontier Brain's house                 | 3 hours    |
+| The egg lying in a nest                                             | 12 hours   |
+
+An apricorn tree keeps its colour for good. Only the crop on it turns over.
 
 Every one of these is a whole number of five-minute windows and all of them are
 counted from the same instant, so a landmark never changes halfway through what
@@ -48,15 +51,20 @@ so a whole day passes in 6 hours. Setting `VITE_REAL_TIME_OF_DAY` to `true`
 reads the hours in the table from the player's own clock instead. The light
 follows whichever clock is in use.
 
+Anything on a longer timer reads the time of day at the start of its window. On
+the game clock that means a nest, whose windows open at midnight and noon, is
+always drawn from the morning's pokemon, and a raid or a three-hour cell only
+ever sees morning or evening.
+
 ## The species day
 
 One pokemon family is featured each day of the year, and it is the same family
-for every player in the world. The species day is counted in UTC, so it turns
-over at the same instant everywhere rather than sweeping around the world with
-local midnight.
+for every player in the world. The day follows each player's local clock, so it
+turns over at their own midnight.
 
-There are far fewer families than days in the year, so most days feature no
-family at all.
+There are more families than days in the year (540 of them), so every day
+features at least one family and some days feature two. Each family comes up
+once a year.
 
 On its day, the featured family receives six bonuses:
 

@@ -14,9 +14,9 @@ import {
   canReclaim,
   isAuctionableCatch,
   isAuctionableItem,
-} from '../auth/auction-record';
-import { asOffset, toLocalISO } from '../auth/local-time';
-import { Acquisition, asCaughtPokemon } from '../auth/caught-record';
+} from '../model/auction-record';
+import { asOffset, toLocalISO } from '../model/local-time';
+import { Acquisition, asCaughtPokemon } from '../model/caught-record';
 import { isEggRecord, isFavoriteRecord, withoutHeld } from './catch-fields';
 import { BASE_FRIENDSHIP } from '../data/constants/friendship';
 import type { Species } from '../data/ids/species';
@@ -24,12 +24,12 @@ import { settleHandover } from '../data/species';
 import { readCaughtIn, updateCaughtIn } from './caught-io';
 import { type Tx, newDocId, tx } from './db';
 import { readStackIn, spendStackIn, writeStackIn } from './stacks';
-import { ITEM_STACKS } from '../auth/stacks';
+import { ITEM_STACKS } from '../model/stacks';
 import { hasSpareCatchIn } from './caught';
 import { recordFoundSpecies } from './pokedex';
 import { isAnyCatchQueued } from './raids';
 import { isCatchLocked } from './locks';
-import { Metric } from '../auth/quest-record';
+import { Metric } from '../model/quest-record';
 import { bumpProgress } from './quest-progress';
 import { asNumber } from './read';
 import { moveGoldIn } from './profile';
@@ -46,7 +46,7 @@ import { moveGoldIn } from './profile';
  * Collecting and reclaiming share the `settled` marker, so a lot is
  * handed over exactly once whichever end it leaves by. The rules both
  * sides read live in
- * [`src/auth/auction-record.ts`](../auth/auction-record.ts)
+ * [`src/model/auction-record.ts`](../model/auction-record.ts)
  */
 
 /** One auction row in the record shape, locked for the transaction */

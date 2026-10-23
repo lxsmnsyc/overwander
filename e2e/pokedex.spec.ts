@@ -35,7 +35,7 @@ const DEX = 'Dex Entry';
  * Which pokemon a new account is handed is the game's own roll, so a
  * spec that wants a **filled-in** entry cannot rely on having met any
  * particular species. The dex is the server's to write, so this writes
- * it as the emulator's owner and the page is read again
+ * it over the table owner's connection and the page is read again
  */
 async function stageDex(page: Page, player: Player, species: number): Promise<void> {
   await setDexCounts(await uidOf(player), [species]);

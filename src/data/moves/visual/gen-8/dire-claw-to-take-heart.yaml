@@ -1,0 +1,48 @@
+# Every older region's signatures, one family each, that once borrowed another move's
+# picture
+DireClaw: { landing: Direclaw }
+PsyshieldBash: { landing: Psyshield }
+
+# Moves that are an earlier move's picture in all but name
+PowerShift: { landing: Exchange }
+
+# Every older region's signatures, one family each, that once borrowed another move's
+# picture
+StoneAxe: { landing: Stoneaxe }
+
+# Signatures with a picture of their own
+SpringtideStorm: { landing: Springtide }
+MysticalPower: { landing: Mystic }
+
+# Moves that are an earlier move's picture in all but name
+RagingFury: { landing: Rampage }
+WaveCrash: { landing: Torrent }
+
+# Every older region's signatures, one family each, that once borrowed another move's
+# picture
+Chloroblast: { landing: Chloroblast }
+MountainGale: { landing: Mountaingale }
+VictoryDance: { landing: Victorydance }
+
+# Moves that are an earlier move's picture in all but name
+HeadlongRush: { landing: Rush }
+
+# Every older region's signatures, one family each, that once borrowed another move's
+# picture
+BarbBarrage: { landing: Barbs }
+EsperWing: { landing: Esper }
+BitterMalice: { landing: Malice }
+Shelter: { landing: Shelter }
+TripleArrows: { landing: Triplearrows }
+InfernalParade: { landing: Parade }
+CeaselessEdge: { landing: Ceaseless }
+
+# Signatures with a picture of their own
+BleakwindStorm: { landing: Bleakwind }
+WildboltStorm: { landing: Wildbolt }
+SandsearStorm: { landing: Sandsear }
+
+# Every older region's signatures, one family each, that once borrowed another move's
+# picture
+LunarBlessing: { landing: Blessing }
+TakeHeart: { landing: Takeheart }

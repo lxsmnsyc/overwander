@@ -484,7 +484,7 @@ export const enum Items {
    * health back every second, a tenth more accuracy, a share of what
    * touching the holder costs — written against a hook the battle
    * engine already has. The battle side of them lives in
-   * [`src/battle/items/gear.ts`](../../battle/items/gear.ts)
+   * [`src/battle/items/gear.ts`](../../battle/items/gear/index.ts)
    */
   Leftovers = 232,
   ShellBell = 233,
@@ -807,7 +807,7 @@ export const enum Items {
    * instead of finding somebody to change hands with. It is the only
    * member of the family with a price, because it is the only one
    * whose evolutions are reachable today. See
-   * [`src/data/items/trade-items.ts`](../items/trade-items.ts)
+   * [`trade-items.yaml`](../items/records/trade-items.yaml)
    */
   LinkingCord = 381,
   // Celebi's relic, numbered after the list rather than beside the
@@ -1231,8 +1231,111 @@ export const enum Items {
   /** The relic that calls Kitakami's mythical: the boxed berry from the Mochi Mayhem epilogue */
   MythicalPechaBerry = 637,
 
+  /** The Mega Stones Legends: Z-A brought */
+  RaichuniteX = 638,
+  RaichuniteY = 639,
+  Clefablite = 640,
+  Victreebelite = 641,
+  Starminite = 642,
+  Dragoninite = 643,
+  Meganiumite = 644,
+  Feraligite = 645,
+  Skarmorite = 646,
+  Chimechite = 647,
+  AbsoliteZ = 648,
+  Staraptite = 649,
+  GarchompiteZ = 650,
+  LucarioniteZ = 651,
+  Froslassite = 652,
+  Heatranite = 653,
+  Darkranite = 654,
+  Emboarite = 655,
+  Excadrite = 656,
+  Scolipite = 657,
+  Scraftinite = 658,
+  Eelektrossite = 659,
+  Chandelurite = 660,
+  Golurkite = 661,
+  Chesnaughtite = 662,
+  Delphoxite = 663,
+  Greninjite = 664,
+  Pyroarite = 665,
+  Floettite = 666,
+  Meowsticite = 667,
+  Malamarite = 668,
+  Barbaracite = 669,
+  Dragalgite = 670,
+  Hawluchanite = 671,
+  Zygardite = 672,
+  Crabominite = 673,
+  Golisopite = 674,
+  Drampanite = 675,
+  Magearnite = 676,
+  Zeraorite = 677,
+  Falinksite = 678,
+  Scovillainite = 679,
+  Glimmoranite = 680,
+  Tatsugirinite = 681,
+  Baxcalibrite = 682,
+
   /** The mask Ogerpon wears when it is in none of the stolen three, which puts it back in the Teal */
   TealMask = 683,
+
+  /**
+   * The Zenith Shards, one per Zenith: 2000000 marks a shard as a
+   * Zenith's, then the dex number of the pokemon it is for times 100,
+   * then which Zenith of that dex number it is. The species' own is 01
+   * (its slot 99), a regional form's counts up as its slot counts down
+   */
+  ButterfreeZenithShard = 2001201,
+  RaticateZenithShard = 2002001,
+  FearowZenithShard = 2002201,
+  ArbokZenithShard = 2002401,
+  SandslashZenithShard = 2002801,
+  NidoqueenZenithShard = 2003101,
+  NidokingZenithShard = 2003401,
+  NinetalesZenithShard = 2003801,
+  WigglytuffZenithShard = 2004001,
+  VileplumeZenithShard = 2004501,
+  ParasectZenithShard = 2004701,
+  VenomothZenithShard = 2004901,
+  DugtrioZenithShard = 2005101,
+  PersianZenithShard = 2005301,
+  GolduckZenithShard = 2005501,
+  ArcanineZenithShard = 2005901,
+  PoliwrathZenithShard = 2006201,
+  MachampZenithShard = 2006801,
+  TentacruelZenithShard = 2007301,
+  GolemZenithShard = 2007601,
+  RapidashZenithShard = 2007801,
+  FarfetchdZenithShard = 2008301,
+  DodrioZenithShard = 2008501,
+  DewgongZenithShard = 2008701,
+  MukZenithShard = 2008901,
+  CloysterZenithShard = 2009101,
+  HypnoZenithShard = 2009701,
+  KinglerZenithShard = 2009901,
+  ElectrodeZenithShard = 2010101,
+  ExeggutorZenithShard = 2010301,
+  MarowakZenithShard = 2010501,
+  HitmonleeZenithShard = 2010601,
+  HitmonchanZenithShard = 2010701,
+  WeezingZenithShard = 2011001,
+  SeakingZenithShard = 2011901,
+  MrMimeZenithShard = 2012201,
+  JynxZenithShard = 2012401,
+  TaurosZenithShard = 2012801,
+  LaprasZenithShard = 2013101,
+  VaporeonZenithShard = 2013401,
+  JolteonZenithShard = 2013501,
+  FlareonZenithShard = 2013601,
+  OmastarZenithShard = 2013901,
+  KabutopsZenithShard = 2014101,
+  SnorlaxZenithShard = 2014301,
+  ArticunoZenithShard = 2014401,
+  ZapdosZenithShard = 2014501,
+  MoltresZenithShard = 2014601,
+  MewZenithShard = 2015101,
 }
 
 /**

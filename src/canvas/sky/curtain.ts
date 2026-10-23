@@ -1,6 +1,6 @@
 import Weather from '../../data/overworld/weather';
 import type { QuadPoint } from '../gl/quad-batch';
-import { projectAir } from '../board';
+import { projectAir } from '../overworld/board';
 import type { SkyCamera } from './drops';
 import { sheetOf, tintOf } from './field';
 

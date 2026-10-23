@@ -1,8 +1,8 @@
 // From the record module rather than from `auth/auctions`, which
 // reaches into the server half of the app: importing it here drags
 // `server-only` into a plain Node test and refuses to load at all
-import { AUCTION_DURATION, AuctionLot } from '../src/auth/auction-record';
-import { getLocalOffset } from '../src/auth/local-time';
+import { AUCTION_DURATION, AuctionLot } from '../src/model/auction-record';
+import { getLocalOffset } from '../src/model/local-time';
 import { Items } from '../src/data/ids/items';
 import { copyable, findRows, insertRow, sql, stageAccount } from './admin';
 
@@ -12,7 +12,7 @@ import { copyable, findRows, insertRow, sql, stageAccount } from './admin';
  * Half of what a player does in this game is done at somebody else —
  * bidding on their lot, joining their lobby, looking at who they are —
  * and none of it can be tested with one browser signed into one
- * account. A stranger is written straight into the emulator instead: a
+ * account. A stranger is written straight into the database instead: a
  * profile, so they have a name, and a lot on the board, so the player
  * has somewhere to meet them.
  *
@@ -47,7 +47,7 @@ export async function stageSeller(called: string): Promise<Stranger> {
   // A real account rather than a profile alone: friend rows point at users
   const email = `seller-${stamp}@example.com`;
   const uid = await stageAccount(email, 'walking-in-the-tall-grass');
-  // Stamped, because the emulator is reused between runs: a lot stands
+  // Stamped, because the database is reused between runs: a lot stands
   // for a day, so yesterday's Wisteria is still on the board this
   // morning and a spec asking for "the seller called Wisteria" finds
   // two of her

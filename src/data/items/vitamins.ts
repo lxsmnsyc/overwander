@@ -1,7 +1,9 @@
-import { MAX_EFFORT_PER_STAT, STAT_NAMES, Stats } from '../constants/stats';
+import { MAX_EFFORT_PER_STAT, STAT_NAMES } from '../constants/stats';
 import { Items } from '../ids/items';
 import { PP_UP_LIMIT } from '../moves';
 import { itemText } from './__create';
+import recordsFile from './records/vitamins.yaml';
+import { recordField } from './yaml';
 
 /**
  * The vitamins: ten points of effort in one stat, and gone.
@@ -19,14 +21,7 @@ import { itemText } from './__create';
  * holds whatever is poured into a stat, and a vitamin that would spill
  * over it is refused rather than partly drunk.
  */
-export const VITAMIN_STATS = new Map<Items, Stats>([
-  [Items.HPUp, Stats.HP],
-  [Items.Protein, Stats.Attack],
-  [Items.Iron, Stats.Defense],
-  [Items.Calcium, Stats.SpecialAttack],
-  [Items.Zinc, Stats.SpecialDefense],
-  [Items.Carbos, Stats.Speed],
-]);
+export const VITAMIN_STATS = recordField('vitamins', recordsFile, 'stat');
 
 /**
  * What one vitamin is worth: ten points, which is two and a half
@@ -35,14 +30,7 @@ export const VITAMIN_STATS = new Map<Items, Stats>([
 export const VITAMIN_EFFORT = 10;
 
 /** The Max vitamins, each filling its stat's effort at once. Found, never bought */
-export const MAX_VITAMIN_STATS = new Map<Items, Stats>([
-  [Items.HPUpMax, Stats.HP],
-  [Items.ProteinMax, Stats.Attack],
-  [Items.IronMax, Stats.Defense],
-  [Items.CalciumMax, Stats.SpecialAttack],
-  [Items.ZincMax, Stats.SpecialDefense],
-  [Items.CarbosMax, Stats.Speed],
-]);
+export const MAX_VITAMIN_STATS = recordField('vitamins', recordsFile, 'fills');
 
 /** Whether the item is a vitamin, Max or not */
 export function isVitamin(item: Items): boolean {

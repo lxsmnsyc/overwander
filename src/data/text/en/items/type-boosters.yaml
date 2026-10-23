@@ -1,5 +1,5 @@
 templates:
-  type: '{type} moves hit 1.2x for as long as it is held.'
+  type: 'Its holder’s {type} moves hit 1.2x for as long as it is held.'
 SilkScarf: { name: Silk Scarf }
 BlackBelt: { name: Black Belt }
 SharpBeak: { name: Sharp Beak }

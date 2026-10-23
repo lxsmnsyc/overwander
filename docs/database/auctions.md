@@ -4,7 +4,7 @@ The auction house is the one place something passes from one player to another.
 The server decides everything about it in
 [`src/server/auctions.ts`](../../src/server/auctions.ts). The rules both sides
 read, covering what a bid must clear, when bidding closes and who may collect,
-live in [`src/auth/auction-record.ts`](../../src/auth/auction-record.ts), and
+live in [`src/model/auction-record.ts`](../../src/model/auction-record.ts), and
 the browser reads the board through
 [`src/auth/auctions.ts`](../../src/auth/auctions.ts).
 
@@ -41,7 +41,9 @@ afterwards:
 | `settled`      | `boolean`  | Whether the lot has been handed over                             |
 
 Two checks hold the shape of a lot: exactly one of `item` and `caught_id` is
-filled, matching what `lot` says, and a bidder is never the seller.
+filled, matching what `lot` says, and a bidder is never the seller. The one
+exception is a settled catch lot, whose `caught_id` is nulled if the pokemon is
+later deleted.
 
 Every signed-in player can read it, since a board nobody can see is of no use,
 and only the server writes it. `watchOpenAuctions` follows the unsettled lots,
@@ -120,7 +122,7 @@ The board takes the same grammar the bag and the box do (`field:value` pairs, a
 leading `!` to refuse one, `|` inside a value to accept any of several, a
 comparison or a range for a number), asked of a lot rather than of something
 owned. `AUCTION_VOCABULARY` and `matchesAuction` live in
-[`auction-search.ts`](../../src/auth/auction-search.ts).
+[`search/auction.ts`](../../src/model/search/auction.ts).
 
 There is no query half: the board already holds every live lot, so every term is
 answered over what it read.
@@ -179,7 +181,7 @@ Anything else, a rare or a fully-evolved anything, a bidder can walk out and
 catch, which is what makes it not worth a day of the board.
 
 Both rules live in
-[`src/auth/auction-record.ts`](../../src/auth/auction-record.ts) and are read by
+[`src/model/auction-record.ts`](../../src/model/auction-record.ts) and are read by
 both sides: the sell pickers leave out everything that fails, and `openAuction`
 asks again from the **stored** record before it takes the lot.
 
@@ -192,22 +194,25 @@ field is an index and never an authority: the picker re-checks every row it
 returns, and `openAuction` derives the answer from `ivs`, `shiny` and `species`
 rather than reading it.
 
-## Four pokemon refused outright
+## Pokemon refused outright
 
-These are refused even when they would otherwise qualify, inside the same
-transaction that would have written the listing:
+These are refused even when they would otherwise qualify. All but the lobby
+check run inside the same transaction that would have written the listing:
 
-| Refused            | Checked with          | Why                                                                           |
-| ------------------ | --------------------- | ----------------------------------------------------------------------------- |
-| Fighting           | `isCatchLocked`       | The battle runs on a frozen copy of a record that has to still be there       |
-| Waiting in a lobby | `isAnyCatchQueued`    | The lobby holds its id, so it would be silently dropped when the raid started |
-| An egg             | `isEggRecord`         | A bidder cannot see into one and the seller can                               |
-| The player's buddy | the profile's `buddy` | Not something to sell by misreading a list, and a lot cannot be taken back    |
+| Refused            | Checked with             | Why                                                                           |
+| ------------------ | ------------------------ | ----------------------------------------------------------------------------- |
+| Fighting           | `isCatchLocked`          | The battle runs on a frozen copy of a record that has to still be there       |
+| Waiting in a lobby | `isAnyCatchQueued`       | The lobby holds its id, so it would be silently dropped when the raid started |
+| An egg             | `isEggRecord`            | A bidder cannot see into one and the seller can                               |
+| A favorite         | `isFavoriteRecord`       | The flag is the player's own standing answer, and a lot cannot be taken back  |
+| The player's buddy | the profile's `buddy_id` | Not something to sell by misreading a list, and a lot cannot be taken back    |
+| Their last pokemon | `hasSpareCatchIn`        | A lot leaves the seller's hands as it is listed, the same rule as releasing   |
 
-Unlike the eligibility rules above, these four are **shown and refused** rather
-than hidden: a player looking for one of them wants the reason. What does not
-qualify for the block at all is left out of the list, since that would be most
-of a box and a hundred greyed rows say nothing.
+The sell picker leaves these out too, the same as what does not qualify for the
+block at all: a square that can never be pressed only raises a question about
+why. The reason is said where the mark was put on, so the catch sheet is what
+says a favorite cannot be sold. Only the server can see a raid lobby, so a
+queued pokemon is refused when the listing is tried.
 
 The egg rule is about what an auction _is_. A catch lot is readable precisely so
 a bidder can look at what they are bidding on; an egg shows nothing but the word

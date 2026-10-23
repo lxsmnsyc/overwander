@@ -13,8 +13,8 @@ import {
 import {
   SEEPAGE_DELAY,
   SEEPAGE_SHARE,
-} from '../../../../src/battle/abilities/signature/goomy-and-noibat';
-import type Battle from '../../../../src/battle/core';
+} from '../../../../src/battle/abilities/signature/gen-6/goomy-and-noibat';
+import type Battle from '../../../../src/battle/battle';
 import {
   BattleEvents,
   type UnitAttackEvent,

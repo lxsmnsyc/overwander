@@ -12,7 +12,7 @@ import {
   SAND_RIDER_SCALE,
   SWEET_PAW_SHARE,
   TIMELINE_SPLIT_THRESHOLD,
-} from '../../../../src/battle/abilities/signature/chikorita-to-celebi';
+} from '../../../../src/battle/abilities/signature/gen-2/chikorita-to-celebi';
 import { AttackPriority, EventPriority } from '../../../../src/core/event-emitter';
 import { BattleEvents, EffectType, MoveTargetType } from '../../../../src/battle/events';
 import { Stages, Stats } from '../../../../src/data/constants/stats';
@@ -23,7 +23,7 @@ import { MoveCategories, Moves } from '../../../../src/data/ids/moves';
 import { Statuses, TeamStatuses, Weathers } from '../../../../src/data/ids/status';
 import turns from '../../../../src/battle/turn';
 import { layersUnder } from '../../../../src/battle/moves/spikes';
-import { unitTarget } from '../../../../src/battle/utils';
+import { unitTarget } from '../../../../src/battle/unit-checks';
 import Team from '../../../../src/battle/team';
 import { createBattle, createUnit, pinRandom } from '../../harness';
 import { NONE_CAUSE, act, resolveAttackDamage, rollMove } from './helpers';

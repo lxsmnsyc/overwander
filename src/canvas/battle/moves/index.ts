@@ -22,7 +22,7 @@ export type { EffectShape } from './effect';
  *   itself is what crosses.
  * - **The landing.** `UnitTriggerMoveEffect` fires once per target the
  *   move actually resolved on, which is where
- *   [`effect.ts`](./effect.ts) draws. A move that missed never gets
+ *   [`effect.ts`](./effect/index.ts) draws. A move that missed never gets
  *   here, and a spread move gets here once per pokemon it caught.
  *
  * Both are **drawn** rather than played off a sheet. The atlas under

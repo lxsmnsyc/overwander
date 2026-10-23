@@ -1,5 +1,6 @@
-import { Stages } from '../constants/stats';
 import { Items } from '../ids/items';
+import recordsFile from './records/battle-items.yaml';
+import { recordField } from './yaml';
 
 /**
  * The battle items: an X Attack, a Dire Hit, a Guard Spec.
@@ -14,14 +15,7 @@ import { Items } from '../ids/items';
 /**
  * The X items, and the stage each one puts back up
  */
-export const X_ITEM_STAGES: Map<Items, Stages> = new Map([
-  [Items.XAttack, Stages.Attack],
-  [Items.XDefense, Stages.Defense],
-  [Items.XSpAtk, Stages.SpecialAttack],
-  [Items.XSpDef, Stages.SpecialDefense],
-  [Items.XSpeed, Stages.Speed],
-  [Items.XAccuracy, Stages.Accuracy],
-]);
+export const X_ITEM_STAGES = recordField('battle-items', recordsFile, 'stage');
 
 /**
  * Every battle item, for callers that only care that it is one

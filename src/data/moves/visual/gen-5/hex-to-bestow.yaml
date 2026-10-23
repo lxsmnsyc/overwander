@@ -1,0 +1,12 @@
+# Attacks the rules drew as a plain hit or a plain flame
+SkyDrop: { landing: Plummet, winding: none }
+
+# Stat moves drawn as what the pokemon does, a body coming down with its weight, and the Pledges
+ShiftGear: { landing: Gears }
+
+# Attacks the rules drew as a plain hit or a plain flame
+Incinerate: { landing: Scorch }
+Acrobatics: { landing: Aerial }
+
+# The moves whose type drew them as a flower burst
+FinalGambit: { landing: Gambit }

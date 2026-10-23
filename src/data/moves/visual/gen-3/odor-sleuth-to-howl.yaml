@@ -1,0 +1,46 @@
+# Ground closing round it, and rock coming down on it
+# Thrown in an arc and coming down on it rather than shot flat
+RockTomb: { landing: Rocks, wait: { striking: Lobbed } }
+
+# Carried on the air
+SilverWind: { landing: Blow }
+
+# Stat moves drawn as what the pokemon does, where the rising or falling arrows said only which stat
+MetalSound: { landing: Screech }
+
+# Heard as what it is: a song, a roar, a bell
+GrassWhistle: { landing: Song }
+
+# Stat moves drawn as what the pokemon does, where the rising or falling arrows said only which stat
+Tickle: { landing: Tickle }
+CosmicPower: { landing: Cosmos }
+
+WaterSpout: { landing: Spout }
+
+# Jets and light, which the type alone would have drawn as a cloud
+SignalBeam: { landing: Beam }
+
+# Ghost and dark, which close on it rather than strike it
+ShadowPunch: { landing: Shade }
+
+# Jets and light, which the type alone would have drawn as a cloud
+Extrasensory: { landing: Warp }
+
+# Arriving faster than it can be seen coming
+SkyUppercut: { landing: Strike }
+
+# Ground closing round it, and rock coming down on it
+SandTomb: { landing: Coil }
+
+# Named attacks the rules drew as something generic
+SheerCold: { landing: Freeze }
+
+# Several of something flying in, where the scatter of hits said nothing about what was thrown
+BulletSeed: { landing: Stream }
+IcicleSpear: { landing: Stream }
+
+# Put up or done to itself, which a dome or a stat's chevrons drew for all of them
+IronDefense: { landing: Sheen }
+
+# Stat moves drawn as what the pokemon does, where the rising or falling arrows said only which stat
+Howl: { landing: Howl }

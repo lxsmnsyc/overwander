@@ -1,6 +1,6 @@
 import { For, type JSX, Show, createSignal } from 'solid-js';
 import { getReleaseCandy } from '../../../auth/candy';
-import { isFavorite, isGuarded } from '../../../auth/caught-record';
+import { isFavorite, isGuarded } from '../../../model/caught-record';
 import type Families from '../../../data/ids/families';
 import { getFamilyName, getSpeciesData } from '../../../data/species';
 import CandySprite from '../../sprites/CandySprite';

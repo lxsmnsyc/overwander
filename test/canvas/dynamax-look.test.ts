@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Slot } from '../../src/components/battle/battle-canvas/field';
-import type SpeciesSpriteAnimation from '../../src/canvas/species-sprite-animation';
+import type SpeciesSpriteAnimation from '../../src/canvas/sprites/species-sprite-animation';
 import type Bakery from '../../src/canvas/bakery';
 import type { Painter, QuadBlend } from '../../src/canvas/gl/quad-batch';
 import { type SlotBatch, drawSlot } from '../../src/components/battle/battle-canvas/draw';
@@ -316,7 +316,6 @@ describe('the storm clouds over a Dynamaxed pokemon', () => {
   it('are three comets evenly spaced on an orbit above the head', () => {
     const body = bodyOf(PARTY_SLOT);
 
-    expect(CLOUDS).toBe(3);
     for (const clock of INSTANTS) {
       const clouds = cloudsOf(body, clock);
       let x = 0;

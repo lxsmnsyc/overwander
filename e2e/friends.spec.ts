@@ -17,7 +17,7 @@ import { openAuctionBoard } from './walk';
  *
  * Both ways in are tested: the lookup by friend code, and the menu on
  * a profile being visited. Neither can be tested with one account
- * alone, so the other trainer is opened straight in the emulator — a
+ * alone, so the other trainer is opened straight in the database — a
  * real account, with a friend code written the way the server mints
  * one
  */

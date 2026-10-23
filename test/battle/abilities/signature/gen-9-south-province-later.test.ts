@@ -3,9 +3,9 @@ import {
   BRINE_REBOUND_COOLDOWN,
   FRESH_BATCH_INTERVAL,
   KINDLING_SCALE,
-} from '../../../../src/battle/abilities/signature/fidough-to-charcadet';
+} from '../../../../src/battle/abilities/signature/gen-9/fidough-to-charcadet';
 import { EffectType } from '../../../../src/battle/events';
-import { unitTarget } from '../../../../src/battle/utils';
+import { unitTarget } from '../../../../src/battle/unit-checks';
 import { Stats } from '../../../../src/data/constants/stats';
 import { Types } from '../../../../src/data/constants/types';
 import Abilities from '../../../../src/data/ids/abilities';

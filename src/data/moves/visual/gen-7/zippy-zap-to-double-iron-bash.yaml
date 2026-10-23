@@ -1,0 +1,16 @@
+# Moves that are an earlier move's picture in all but name
+ZippyZap: { landing: Strike }
+FloatyFall: { landing: Plummet }
+
+# A blade charged the way Skull Bash is, a beam drawn up the way Hydro Pump's is,
+# a ball lobbed, bubbles blown, a bone tumbling and a veil put up like a screen
+BouncyBubble: { landing: Bubbles, wait: { striking: Bubbles } }
+
+SizzlySlide: { landing: Rush }
+GlitzyGlow: { landing: Warp }
+SappySeed: { landing: Roots }
+SparklySwirl: { landing: Swirl }
+
+# Every older region's signatures, one family each, that once borrowed another move's
+# picture
+DoubleIronBash: { landing: Ironbash }

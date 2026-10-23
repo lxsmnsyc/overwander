@@ -2,7 +2,7 @@
 # way a bottle cap is.
 #
 # Its own picture, tinted out of a piece of sea glass by
-# `scripts/item-icons.ts`. A shadow is purple, so what lifts one is the
+# `scripts/art/item-icons.ts`. A shadow is purple, so what lifts one is the
 # same shard gone white.
 
 PurifyingGem:

@@ -7,7 +7,7 @@ import { getMoveData } from '../../../data/moves';
 import { BattleEvents, EffectType, MoveTargetType } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
 import type Unit from '../../unit';
-import { unitTarget } from '../../utils';
+import { unitTarget } from '../../unit-checks';
 import { createHeldItem, holds } from '../__create';
 import {
   FOCUS_BAND_CHANCE,

@@ -1,0 +1,7 @@
+MeFirst: { landing: Warp }
+Copycat: { landing: Warp }
+
+# Held between the two of them: an item, a stat, a move. Trick and
+# Skill Swap are drawn this way, and these are the same act
+PowerSwap: { landing: Warp }
+GuardSwap: { landing: Warp }

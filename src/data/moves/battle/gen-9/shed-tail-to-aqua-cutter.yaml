@@ -78,7 +78,7 @@ RageFist:
   accuracy: 100
   pp: 10
   target: Unit
-  flags: [Contact]
+  flags: [Contact, Punch]
 
 ArmorCannon:
   type: Fire
@@ -130,4 +130,4 @@ AquaCutter:
   accuracy: 100
   pp: 20
   target: Unit
-  flags: [Slicing]
+  flags: [Slicing, HighCrit]

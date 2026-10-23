@@ -1,0 +1,15 @@
+# Attacks the rules drew as a plain hit or a plain flame
+FlameBurst: { landing: Spatter }
+
+# Stat moves drawn as what the pokemon does, a body coming down with its weight, and the Pledges
+QuiverDance: { landing: Flutter }
+HeavySlam: { landing: Tonnage }
+
+# The moves whose type drew them as a flower burst
+Synchronoise: { landing: Resonance }
+
+# Stat moves drawn as what the pokemon does, a body coming down with its weight, and the Pledges
+Coil: { landing: Windup }
+
+# Attacks the rules drew as a plain hit or a plain flame
+FoulPlay: { landing: Turnabout }

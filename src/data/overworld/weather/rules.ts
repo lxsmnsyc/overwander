@@ -1,5 +1,5 @@
 import type { Types } from '../../constants/types';
-import Weather, { WEATHER_TYPES } from './kinds';
+import Weather, { WEATHER_FAVORS_EVERYTHING, WEATHER_TYPES } from './kinds';
 
 /** What a sky is worth to whatever is met under it */
 /**
@@ -66,12 +66,7 @@ export function spawnFavoredTypes(weather: Weather): Types[] {
 
 /** Whether the sky is kind to everything rather than to a type of it */
 export function favorsEverything(weather: Weather): boolean {
-  return (
-    weather === Weather.MeteorShower ||
-    weather === Weather.FataMorgana ||
-    weather === Weather.DarkDay ||
-    weather === Weather.Fogbow
-  );
+  return WEATHER_FAVORS_EVERYTHING.has(weather);
 }
 
 /**

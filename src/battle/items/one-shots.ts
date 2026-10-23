@@ -7,7 +7,7 @@ import Abilities from '../../data/ids/abilities';
 import { Statuses, Terrains } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
 import { checkTeamUnit } from '../ai/rating';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, EffectType } from '../events';
 import { MergedLifecycle } from '../lifecycle';
 import type Unit from '../unit';

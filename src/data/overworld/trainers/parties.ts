@@ -1,4 +1,5 @@
-import { Species, getBaseFormSpecies } from '../../ids/species';
+import { Species } from '../../ids/species';
+import { getBaseFormSpecies } from '../../ids/forms';
 import type Regions from '../../ids/regions';
 import {
   getGrowthRoads,
@@ -11,7 +12,7 @@ import {
 import { SpawnRarity, getSpawnRarity } from '../../biome';
 import { EVERY_LAIR, getLairResidents } from '../lair';
 import canMeetSpecies from '../reach';
-import { TRAINER_REGIONS, TRAINER_TYPES, TrainerClass } from './classes';
+import { ACE_TRAINERS, TRAINER_REGIONS, TRAINER_TYPES, type TrainerClass } from './classes';
 
 /**
  * What the Ace fields: five fully-grown pokemon, and none of them the
@@ -34,17 +35,11 @@ export const TYPE_TRAINER_LEVELS: [minimum: number, maximum: number] = [40, 60];
 /**
  * Whether this is one of the Aces. Each region has one, and what
  * makes them the hard fight of the road is the same in both: no type,
- * five fully-grown, and the levels and the purse to match
+ * five fully-grown, and the levels and the purse to match. Marked
+ * `ace: true` in the class YAML
  */
 export function isAceTrainer(trainer: TrainerClass): boolean {
-  return (
-    trainer === TrainerClass.AceTrainer ||
-    trainer === TrainerClass.JohtoAceTrainer ||
-    trainer === TrainerClass.HoennAceTrainer ||
-    trainer === TrainerClass.SinnohAceTrainer ||
-    trainer === TrainerClass.UnovaAceTrainer ||
-    trainer === TrainerClass.KalosAceTrainer
-  );
+  return ACE_TRAINERS.has(trainer);
 }
 
 /** The level band a class fights in */

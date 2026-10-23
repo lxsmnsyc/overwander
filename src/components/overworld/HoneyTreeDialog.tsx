@@ -1,12 +1,12 @@
 import { type JSX, type Resource, Show, Suspense, createResource, createSignal } from 'solid-js';
-import type { EncounterRecord } from '../../auth/encounter-record';
+import type { EncounterRecord } from '../../model/encounter-record';
 import { getItemCount } from '../../auth/inventory';
 import { latherHoneyTree } from '../../auth/snapshots';
 import { Items } from '../../data/ids/items';
 import { LATHER_COST } from '../../data/overworld/honey-tree';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
 import AtlasSprite from '../sprites/AtlasSprite';
-import { OW_SPRITE_ROOT } from '../../canvas/ow-char-sprites';
+import { OW_SPRITE_ROOT } from '../../canvas/overworld/char-sprites';
 import Landmark from '../../data/overworld/landmark';
 import landmarkPicture, { LANDMARK_SHEET } from '../../data/overworld/landmark-sprite';
 

@@ -7,7 +7,7 @@ import { DamageFlags, MoveFlags } from '../../../data/ids/moves';
 import { Statuses, Weathers } from '../../../data/ids/status';
 import { getItemData } from '../../../data/items';
 import { getMoveData } from '../../../data/moves';
-import { isPunchMove } from '../../../data/moves/punches';
+import { isPunchMove } from '../../../data/moves/flags';
 import { checkUnitRating } from '../../ai/rating';
 import { BattleEvents, EffectType, MoveTargetType } from '../../events';
 import { CRASH_MOVES } from '../../moves/crash';
@@ -16,7 +16,10 @@ import { transformUnit } from '../../moves/transform';
 import { PROTECTED_ABILITIES } from '../special';
 import { MAJOR_STATUS_CONDITIONS } from '../../status';
 import type Unit from '../../unit';
-import { hasAnyStatus, holdsAnyItem, isWeatherSunny, onUnitActs, unitTarget } from '../../utils';
+import { hasAnyStatus, unitTarget } from '../../unit-checks';
+import { isWeatherSunny } from '../../weather';
+import onUnitActs from '../../acts';
+import { holdsAnyItem } from '../../items/held';
 import {
   createAbility,
   createFilterAbility,

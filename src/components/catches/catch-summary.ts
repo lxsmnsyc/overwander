@@ -1,7 +1,7 @@
 import type { CaughtPokemon } from '../../auth/caught';
-import { catchAura, isFavorite, isGuarded, isShiny } from '../../auth/caught-record';
-import { isEgg } from '../../auth/egg';
-import { STATUS_NAMES, getMaxHealth, isFainted } from '../../auth/health';
+import { catchAura, isFavorite, isGuarded, isShiny } from '../../model/caught-record';
+import { isEgg } from '../../model/egg';
+import { STATUS_NAMES, getMaxHealth, isFainted } from '../../model/health';
 import { Genders } from '../../data/ids/species';
 import { unpackStatuses } from '../../data/ids/status';
 import { getSpeciesData } from '../../data/species';

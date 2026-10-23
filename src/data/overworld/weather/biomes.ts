@@ -112,11 +112,11 @@ const RAREST: Record<'wildest' | 'stillest' | 'bleakest' | 'thickest', number> =
 
 const NAME = v.string();
 
-const FILE = v.object({
-  corners: v.object({ wildest: NAME, stillest: NAME, bleakest: NAME, thickest: NAME }),
+const FILE = v.strictObject({
+  corners: v.strictObject({ wildest: NAME, stillest: NAME, bleakest: NAME, thickest: NAME }),
   biomes: v.record(
     NAME,
-    v.object({
+    v.strictObject({
       clear: NAME,
       stirred: NAME,
       damp: NAME,

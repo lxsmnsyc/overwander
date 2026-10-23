@@ -1,5 +1,5 @@
 import * as v from 'valibot';
-import { CAST_ANIMATIONS, type CastAnimation } from '../constants/cast';
+import { readCast } from '../constants/cast';
 import type { Types } from '../constants/types';
 import type { MoveCategories, MoveTargets, Moves } from '../ids/moves';
 import {
@@ -8,10 +8,9 @@ import {
   MOVE_FLAG_IDS,
   MOVE_IDS,
   MOVE_TARGET_IDS,
-  SPRITE_ANIM_IDS,
   TYPE_IDS,
 } from '../ids/names';
-import { flagsOf, idOf, idsOf } from '../yaml';
+import { flagsOf, idOf } from '../yaml';
 import { PROJECTILE_DELAY, type RegisterMoveData } from './__create';
 
 /**
@@ -33,7 +32,7 @@ const NAME = v.string();
 const NAMES = v.array(NAME);
 const COUNT = v.pipe(v.number(), v.minValue(0));
 
-const BATTLE = v.object({
+const BATTLE = v.strictObject({
   type: NAME,
   category: NAME,
   power: v.optional(COUNT),
@@ -47,7 +46,7 @@ const BATTLE = v.object({
   projectile: v.optional(v.boolean()),
 });
 
-const TEXT = v.object({ name: v.string(), description: v.string() });
+const TEXT = v.strictObject({ name: v.string(), description: v.string() });
 
 const FILE = v.record(NAME, v.unknown());
 
@@ -64,25 +63,6 @@ function collect(files: Record<string, unknown>): Map<string, { where: string; p
     }
   }
   return parts;
-}
-
-const CASTS = new Set<number>(CAST_ANIMATIONS);
-
-function isCast(anim: number): anim is CastAnimation {
-  return CASTS.has(anim);
-}
-
-/** The clips a move asks for, each one a clip a cast may name */
-function castOf(names: string[], where: string): CastAnimation[] {
-  const clips: CastAnimation[] = [];
-
-  for (const anim of idsOf(SPRITE_ANIM_IDS, names, where)) {
-    if (!isCast(anim)) {
-      throw new Error(`${where}: ${anim} is not a clip a move can play`);
-    }
-    clips.push(anim);
-  }
-  return clips;
 }
 
 /** Every move file, as the build hands them over */
@@ -119,7 +99,7 @@ export function readMoves(files: MoveFiles): [Moves, RegisterMoveData][] {
       pp: numbers.pp,
       target: idOf<MoveTargets>(MOVE_TARGET_IDS, numbers.target, where),
       flags: flagsOf(MOVE_FLAG_IDS, numbers.flags, where),
-      cast: castOf(v.parse(NAMES, need(cast, 'cast')), where),
+      cast: readCast(v.parse(NAMES, need(cast, 'cast')), where),
     };
 
     if (numbers.power != null) {

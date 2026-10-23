@@ -4,7 +4,7 @@ import { getMoveData } from '../../data/moves';
 import { isMaxMove } from '../../data/moves/max-moves';
 import { BLOW_GUARDS, guardOf } from '../moves/protect';
 import { Statuses } from '../../data/ids/status';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import turns from '../turn';
 import createTimedStatus from './__create';

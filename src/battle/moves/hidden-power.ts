@@ -2,7 +2,7 @@ import { EventPriority } from '../../core/event-emitter';
 import { Stats, StatsKind } from '../../data/constants/stats';
 import { Types } from '../../data/constants/types';
 import { Moves } from '../../data/ids/moves';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents } from '../events';
 import type Unit from '../unit';
 

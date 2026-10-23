@@ -75,3 +75,4 @@ IvyCudgel:
   accuracy: 100
   pp: 10
   target: Unit
+  flags: [HighCrit]

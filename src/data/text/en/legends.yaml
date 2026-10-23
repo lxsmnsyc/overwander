@@ -1,7 +1,17 @@
-# What each legend is called
+# What each legend is called, and what they say, where they say anything
 
-Red: Red
-Steven: Steven
-N: N
-Alder: Alder
-AZ: AZ
+Red:
+  name: Red
+  greeting: Red says nothing. He reaches for a ball.
+Steven:
+  name: Steven
+  greeting: Steven turns a stone over in his hand. “I was hoping for a real fight.”
+N:
+  name: 'N'
+  greeting: N tilts his head. “Show me what you and your pokemon are to each other.”
+Alder:
+  name: Alder
+  greeting: Alder laughs and rolls his shoulders. “Let us enjoy this one, shall we?”
+AZ:
+  name: AZ
+  greeting: AZ looks down at you. “I was a king once. Show me what a trainer is.”

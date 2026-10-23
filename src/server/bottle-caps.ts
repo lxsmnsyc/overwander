@@ -1,11 +1,11 @@
 import 'server-only';
-import { asCaughtPokemon, isAuctionableCatch } from '../auth/caught-record';
-import { ITEM_STACKS } from '../auth/stacks';
+import { asCaughtPokemon, isAuctionableCatch } from '../model/caught-record';
+import { ITEM_STACKS } from '../model/stacks';
 import type { Items } from '../data/ids/items';
 import { MAX_IV, STAT_ORDER, type Stats, getIV } from '../data/constants/stats';
-import { getMaxHealth, rescaleHealth } from '../auth/health';
+import { getMaxHealth, rescaleHealth } from '../model/health';
 import { capAsksForStat, capStats, isBottleCap, polishIVs } from '../data/items/bottle-caps';
-import { Metric } from '../auth/quest-record';
+import { Metric } from '../model/quest-record';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
 import { bumpProgress } from './quest-progress';
 import { readStackIn, writeStackIn } from './stacks';

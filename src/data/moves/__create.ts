@@ -1,6 +1,12 @@
 import type { CastAnimation } from '../constants/cast';
 import type { Types } from '../constants/types';
-import { MoveAffects, type MoveCategories, MoveTargets, type Moves } from '../ids/moves';
+import {
+  MoveAffects,
+  type MoveCategories,
+  type MoveFlags,
+  MoveTargets,
+  type Moves,
+} from '../ids/moves';
 
 export interface MoveData {
   name: string;
@@ -101,6 +107,14 @@ export function registerMove(move: Moves, data: RegisterMoveData): void {
 
 export function getRegisteredMoves(): Moves[] {
   return [...MOVE_DATA.keys()];
+}
+
+/**
+ * Whether a move carries a flag. A pseudo-move with no data of its own,
+ * such as a confused unit hitting itself, carries none
+ */
+export function hasMoveFlag(move: Moves, flag: MoveFlags): boolean {
+  return ((MOVE_DATA.get(move)?.flags ?? 0) & flag) !== 0;
 }
 
 export function getMoveData(move: Moves): MoveData {

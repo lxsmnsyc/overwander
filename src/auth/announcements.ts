@@ -1,4 +1,4 @@
-import { readOnly } from '../utils/server-calls';
+import { readOnly } from './server-calls';
 import { type Unwatch, watchTable } from './watch';
 import readAnnouncements from '../server/announcements';
 

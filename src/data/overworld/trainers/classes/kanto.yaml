@@ -4,6 +4,7 @@
 # What each is called and says is text/en/trainers.
 
 AceTrainer:
+  ace: true
   types: []
   sheets:
     - characters/frlg/ace-trainer-f
@@ -27,6 +28,7 @@ Biker:
   sheets:
     - characters/frlg/roughneck
     - characters/lgpe/punk
+    - characters/lgpe/roughneck
 Hiker:
   types: [Ground]
   sheets:

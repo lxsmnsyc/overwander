@@ -1,7 +1,7 @@
-import type { SpriteQuad } from '../../../canvas/placement';
-import { cornersOf } from '../../../canvas/placement';
+import type { SpriteQuad } from '../../../canvas/sprites/placement';
+import { cornersOf } from '../../../canvas/sprites/placement';
 import type { QuadPoint } from '../../../canvas/gl/quad-batch';
-import type { Point } from '../../../canvas/sprite-sheet';
+import type { Point } from '../../../canvas/sprites/sheet';
 import type { Baked } from '../../../canvas/bakery';
 import type { SlotBatch } from './draw';
 import { DYNAMAX_GLOW, GIGANTAMAX_GLOW } from './metrics';

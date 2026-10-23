@@ -1,9 +1,9 @@
-import type { CatchSnapshot } from '../../src/auth/catch-snapshot';
-import { getMaxHealth } from '../../src/auth/health';
+import type { CatchSnapshot } from '../../src/model/catch-snapshot';
+import { getMaxHealth } from '../../src/model/health';
 import type { TeamSnapshotRecord } from '../../src/auth/teams';
 import { MoveRole, getMoveRoles } from '../../src/battle/ai/roles';
-import type Battle from '../../src/battle/core';
-import { BattleModes } from '../../src/battle/core';
+import type Battle from '../../src/battle/battle';
+import { BattleModes } from '../../src/battle/battle';
 import { BattleEvents } from '../../src/battle/events';
 import createBattle from '../../src/battle/setup';
 import AleaRNG from '../../src/core/alea';
@@ -14,11 +14,11 @@ import { Slots, defaultSlots, withSlots } from '../../src/data/constants/slots';
 import { MAX_IV, Stats, packIVs } from '../../src/data/constants/stats';
 import { Species } from '../../src/data/ids/species';
 import type { Moves } from '../../src/data/ids/moves';
-import { getExpertHeldItems } from '../../src/data/items/expert-loadout';
+import { getExpertHeldItems } from '../../src/overworld/builds/held-items';
 import { getRegisteredSpecies, isFullyEvolved, isWornForm } from '../../src/data/species';
-import { getBestParty } from '../../src/data/species/best-build';
+import { getBestParty } from '../../src/overworld/builds/best-build';
 import { deriveGender, deriveSize } from '../../src/overworld/encounter';
-import { fieldTeams } from '../../src/overworld/raid-battle';
+import { fieldTeams } from '../../src/overworld/raid/battle';
 
 /** The names of the roles, for the report: the enum is erased at build */
 export const ROLE_NAMES: Record<MoveRole, string> = {

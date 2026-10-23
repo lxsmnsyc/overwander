@@ -5,7 +5,7 @@ import { claimStarter, dialogNamed, expectShut, openPanel, signIn } from './game
  * The lobbies gathering in the current window.
  *
  * What the list holds depends on the world and the hour, and neither
- * is this test's to arrange: a fresh emulator has no raids in it, and
+ * is this test's to arrange: a fresh database has no raids in it, and
  * one that has been walked around in may have several. So this asserts
  * the two things that are true either way — that the panel resolves to
  * *an answer* rather than sitting on "Loading raids…", and that a

@@ -1,11 +1,10 @@
-export const enum Stats {
-  HP = 0,
-  Attack = 1,
-  Defense = 2,
-  SpecialAttack = 3,
-  SpecialDefense = 4,
-  Speed = 5,
-}
+import * as v from 'valibot';
+import { STAGE_IDS, STAT_IDS } from '../ids/names';
+import { Stages, Stats } from '../ids/stats';
+import statNamesFile from '../text/en/stats.yaml';
+import { stringTable } from '../yaml';
+
+export { Stages, Stats };
 
 export type StatsField = { [key in Stats]: number };
 
@@ -213,40 +212,26 @@ export function getOtherStat(
   return Math.floor((getSharedStat(level, base, iv, ev) + 5) * nature);
 }
 
-export const enum Stages {
-  Attack = 0,
-  Defense = 1,
-  SpecialAttack = 2,
-  SpecialDefense = 3,
-  Speed = 4,
-  Evasion = 5,
-  Accuracy = 6,
-}
+const STAT_TEXT = v.parse(
+  v.strictObject({ stats: v.unknown(), stages: v.unknown() }),
+  statNamesFile,
+);
 
 /**
  * What the six stats and the seven stages are called, for anything
- * that prints one: an item description, a dex entry, a catch sheet.
- * One vocabulary, so two screens cannot name the same stat
- * differently
+ * that prints one: an item description, a dex entry, a catch sheet
  */
-export const STAT_NAMES: Record<Stats, string> = {
-  [Stats.HP]: 'HP',
-  [Stats.Attack]: 'Attack',
-  [Stats.Defense]: 'Defense',
-  [Stats.SpecialAttack]: 'Sp. Attack',
-  [Stats.SpecialDefense]: 'Sp. Defense',
-  [Stats.Speed]: 'Speed',
-};
+export const STAT_NAMES = stringTable<Stats>(
+  STAT_IDS,
+  STAT_TEXT.stats,
+  'text/en/stats.yaml: stats',
+);
 
-export const STAGE_NAMES: Record<Stages, string> = {
-  [Stages.Attack]: 'Attack',
-  [Stages.Defense]: 'Defense',
-  [Stages.SpecialAttack]: 'Sp. Attack',
-  [Stages.SpecialDefense]: 'Sp. Defense',
-  [Stages.Speed]: 'Speed',
-  [Stages.Evasion]: 'Evasion',
-  [Stages.Accuracy]: 'Accuracy',
-};
+export const STAGE_NAMES = stringTable<Stages>(
+  STAGE_IDS,
+  STAT_TEXT.stages,
+  'text/en/stats.yaml: stages',
+);
 
 /**
  * How far a stage can be pushed either way. Everything that changes a

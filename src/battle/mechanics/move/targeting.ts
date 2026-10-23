@@ -1,6 +1,6 @@
 import { MoveAffects, MoveTargets } from '../../../data/ids/moves';
 import type Alliance from '../../alliance';
-import type Battle from '../../core';
+import type Battle from '../../battle';
 import type { MoveTarget } from '../../events';
 import { MoveTargetType } from '../../events';
 import type Team from '../../team';

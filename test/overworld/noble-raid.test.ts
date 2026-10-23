@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
-import { asCatchSnapshot } from '../../src/auth/catch-snapshot';
+import { asCatchSnapshot } from '../../src/model/catch-snapshot';
 import {
   BALM_EVERY,
   BALM_SHARE,
@@ -9,8 +9,8 @@ import {
   NOBLE_THRESHOLDS,
   balmsLeft,
   burstEffectOf,
-} from '../../src/battle/abilities/noble';
-import { PROTECTED_ABILITIES } from '../../src/battle/abilities/special';
+} from '../../src/battle/abilities/special/noble';
+import { PROTECTED_ABILITIES } from '../../src/battle/abilities/special/index';
 import { BattleEvents, EffectType, MoveTargetType } from '../../src/battle/events';
 import { stonesOver } from '../../src/battle/moves/stealth-rock';
 import { STAGGER_DURATION } from '../../src/battle/status/staggered';
@@ -28,8 +28,8 @@ import { Items } from '../../src/data/ids/items';
 import { Species } from '../../src/data/ids/species';
 import { Statuses, TeamStatuses } from '../../src/data/ids/status';
 import { CANON_BURSTS, FRENZY_MOVES, getNobleBurst } from '../../src/data/moves/frenzy-moves';
-import { BOSS_ALLIANCE, PLAYER_ALLIANCE, createRaidBossTeam } from '../../src/overworld/raid';
-import { type RaidBattle, countDefeated, createRaidBattle } from '../../src/overworld/raid-battle';
+import { BOSS_ALLIANCE, PLAYER_ALLIANCE, createRaidBossTeam } from '../../src/overworld/raid/index';
+import { type RaidBattle, countDefeated, createRaidBattle } from '../../src/overworld/raid/battle';
 
 beforeAll(() => {
   registerGameData();

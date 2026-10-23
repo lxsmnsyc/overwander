@@ -406,22 +406,3 @@ export async function openCatch(page: Page, index = 0): Promise<Locator> {
   await expectOpen(sheet);
   return sheet;
 }
-
-/**
- * How far a thing sits from the middle of the panel it is in, in
- * pixels. A centred heading is a couple of pixels off at most; one
- * that is laid out from the left is off by half the panel
- */
-export async function offCentre(dialog: Locator, inside: Locator): Promise<number> {
-  await settled(dialog.page());
-
-  const outer = await panelOf(dialog).boundingBox();
-  const inner = await inside.boundingBox();
-
-  expect(outer, 'the panel should be on screen').not.toBeNull();
-  expect(inner, 'the thing being measured should be on screen').not.toBeNull();
-
-  const middle = (outer?.x ?? 0) + (outer?.width ?? 0) / 2;
-
-  return Math.abs((inner?.x ?? 0) + (inner?.width ?? 0) / 2 - middle);
-}

@@ -4,12 +4,13 @@ import { Types } from '../../data/constants/types';
 import { DamageFlags, Moves } from '../../data/ids/moves';
 import { Species } from '../../data/ids/species';
 import { Statuses } from '../../data/ids/status';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, EffectType, MoveTargetType, type UnitAttackEvent } from '../events';
 import { HEAL_BLOCK_DURATION } from '../status/heal-blocked';
 import turns from '../turn';
 import type Unit from '../unit';
-import { isWeatherRainy, isWeatherSunny, onUnitActs } from '../utils';
+import { isWeatherRainy, isWeatherSunny } from '../weather';
+import onUnitActs from '../acts';
 import { clearSpikes } from './spikes';
 import { clearStealthRock } from './stealth-rock';
 import { clearSteelsurge } from './steelsurge';
@@ -305,7 +306,11 @@ function setupMarks(battle: Battle): void {
     const coat = syrup.get(unit);
 
     if (coat != null) {
-      unit.addStage(Stages.Speed, -1, { type: EffectType.Move, move: Moves.SyrupBomb, unit: coat.by });
+      unit.addStage(Stages.Speed, -1, {
+        type: EffectType.Move,
+        move: Moves.SyrupBomb,
+        unit: coat.by,
+      });
       if (coat.left <= 1) {
         syrup.delete(unit);
       } else {

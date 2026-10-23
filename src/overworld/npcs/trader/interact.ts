@@ -1,6 +1,6 @@
 import { Genders } from '../../../data/ids/species';
-import { isFavorite, isGuarded } from '../../../auth/caught-record';
-import { isEgg } from '../../../auth/egg';
+import { isFavorite, isGuarded } from '../../../model/caught-record';
+import { isEgg } from '../../../model/egg';
 import { tradeWithTrader } from '../../../auth/npcs';
 import { SPAWN_RARITY_NAMES, getSpawnRarity } from '../../../data/biome';
 import { getSpeciesData } from '../../../data/species';

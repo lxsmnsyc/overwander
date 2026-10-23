@@ -1,7 +1,7 @@
 import { AttackPriority } from '../../core/event-emitter';
 import { Stages } from '../../data/constants/stats';
 import { Moves } from '../../data/ids/moves';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, EffectType } from '../events';
 
 /**

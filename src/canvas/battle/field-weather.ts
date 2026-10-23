@@ -1,7 +1,7 @@
 import { Weathers } from '../../data/ids/status';
 import type EffectBatch from '../three/effect-batch';
 import type { Spot } from '../three/effect-batch';
-import projectField, { type FieldView, unprojectField } from './field';
+import projectField, { type FieldView, unprojectField } from './projection';
 import { noise } from './moves/__paint';
 
 /**

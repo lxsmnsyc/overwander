@@ -2,7 +2,7 @@ import { AttackPriority, EventPriority } from '../../../core/event-emitter';
 import { Items } from '../../../data/ids/items';
 import { MoveCategories } from '../../../data/ids/moves';
 import { Statuses } from '../../../data/ids/status';
-import type Battle from '../../core';
+import type Battle from '../../battle';
 import { BattleEvents, EffectType } from '../../events';
 import { createHeldItem, holds } from '../__create';
 import { KINGS_ROCK_CHANCE, RAZOR_CLAW_CRITICAL_STAGES } from './worths';

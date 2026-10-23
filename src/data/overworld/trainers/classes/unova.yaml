@@ -43,13 +43,17 @@ Janitor:
   sheets: [characters/b2w2/janitor]
 Lady:
   types: [Grass, Normal]
-  sheets: [characters/b2w2/lady]
+  sheets:
+    - characters/b2w2/lady
+    - characters/frlg/lady
 Linebacker:
   types: [Rock, Steel]
   sheets: [characters/b2w2/linebacker]
 Maid:
   types: [Ice, Normal]
-  sheets: [characters/b2w2/maid]
+  sheets:
+    - characters/b2w2/maid
+    - characters/dppt/maid
 Musician:
   types: [Electric]
   sheets: [characters/b2w2/musician]
@@ -81,6 +85,7 @@ Backers:
     - characters/b2w2/backers-2
 # And its own of the trades already on the road
 UnovaAceTrainer:
+  ace: true
   types: []
   sheets:
     - characters/b2w2/ace-trainer-f

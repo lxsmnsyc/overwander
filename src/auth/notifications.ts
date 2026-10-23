@@ -2,7 +2,7 @@ import { type AuctionRecord, canClaim, canReclaim, watchMyAuctions } from './auc
 import { watchDuelInvites } from './duels';
 import { watchFriendRequests } from './friends';
 import { watchRaidInvites } from './raids';
-import { TradeStatus } from './trade-record';
+import { TradeStatus } from '../model/trade-record';
 import { watchTrades } from './trades';
 import type { Unwatch } from './watch';
 

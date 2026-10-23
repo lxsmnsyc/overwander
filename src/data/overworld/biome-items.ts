@@ -1,7 +1,12 @@
+import * as v from 'valibot';
 import type Biome from '../ids/biome';
-import BiomeIds from '../ids/biome';
 import type { Items } from '../ids/items';
-import { Items as ItemIds } from '../ids/items';
+import { BIOME_IDS, ITEM_IDS } from '../ids/names';
+import { idOf, idsOf } from '../yaml';
+import groundFile from './biome-items.yaml';
+import type Families from '../ids/families';
+import { ZENITH_SHARDS } from '../items/zenith-shards';
+import { getRegisteredSpecies, getSpeciesData } from '../species/__create';
 import { ITEM_POOL, type ItemPoolEntry, type ItemRarityGroups } from './item-pool';
 
 /**
@@ -10,114 +15,101 @@ import { ITEM_POOL, type ItemPoolEntry, type ItemRarityGroups } from './item-poo
  * [`ITEM_POOL`](./item-pool.ts) is the whole ladder and stays the one
  * place a band and its odds are read from. What is decided here is
  * only **where**: most of the shelf is buried everywhere, and the
- * things below belong to a landscape instead, so a stone is a reason
+ * things in `biome-items.yaml` belong to a landscape instead, so a stone is a reason
  * to cross the map rather than a slot in a table. The world is one
  * continuous map, so nothing here is out of anybody's reach.
  */
 
-const WATER = [
-  BiomeIds.Ocean,
-  BiomeIds.DeepOcean,
-  BiomeIds.CoralReef,
-  BiomeIds.KelpForest,
-  BiomeIds.PolarOcean,
-];
-const SHORE = [BiomeIds.Beach, BiomeIds.RockyCoast, BiomeIds.Mangrove];
-const WETLAND = [BiomeIds.Swamp, BiomeIds.Bog, BiomeIds.Mangrove];
-const FOREST = [
-  BiomeIds.Woodland,
-  BiomeIds.TemperateForest,
-  BiomeIds.TemperateRainforest,
-  BiomeIds.TropicalRainforest,
-  BiomeIds.TropicalSeasonalForest,
-  BiomeIds.MontaneForest,
-  BiomeIds.Taiga,
-];
-const COLD = [
-  BiomeIds.Glacier,
-  BiomeIds.Tundra,
-  BiomeIds.AlpineTundra,
-  BiomeIds.ColdDesert,
-  BiomeIds.Taiga,
-  BiomeIds.PolarOcean,
-];
-const ARID = [BiomeIds.Desert, BiomeIds.ColdDesert, BiomeIds.Badlands, BiomeIds.Steppe];
-const VOLCANIC = [BiomeIds.Volcano, BiomeIds.Badlands];
-const HIGHLAND = [BiomeIds.Mountain, BiomeIds.MontaneForest, BiomeIds.AlpineTundra];
-const OPEN = [BiomeIds.Grassland, BiomeIds.Savanna, BiomeIds.Steppe, BiomeIds.Shrubland];
+/**
+ * The ground each item in `biome-items.yaml` belongs to. A lowercase
+ * name there is one of the file's `groups`, laid down in its order
+ */
+const FILE = v.strictObject({
+  groups: v.record(v.string(), v.array(v.string())),
+  items: v.record(v.string(), v.array(v.string())),
+});
+
+function readGroundItems(): [item: Items, biomes: Biome[]][] {
+  const written = v.parse(FILE, groundFile);
+  const groups = new Map<string, Biome[]>();
+
+  for (const [name, biomes] of Object.entries(written.groups)) {
+    groups.set(name, idsOf<Biome>(BIOME_IDS, biomes, `biome-items.yaml: groups: ${name}`));
+  }
+
+  const ground: [item: Items, biomes: Biome[]][] = [];
+
+  for (const [name, places] of Object.entries(written.items)) {
+    const where = `biome-items.yaml: ${name}`;
+    const biomes: Biome[] = [];
+
+    for (const place of places) {
+      const group = groups.get(place);
+
+      if (group == null) {
+        biomes.push(idOf<Biome>(BIOME_IDS, place, where));
+      } else {
+        biomes.push(...group);
+      }
+    }
+    ground.push([idOf<Items>(ITEM_IDS, name, where), biomes]);
+  }
+  return ground;
+}
+
+const GROUND_ITEMS = readGroundItems();
+
+let homes: Map<Items, Set<Biome>> | null = null;
 
 /**
- * The ground each of these belongs to. An item not listed is buried
- * everywhere.
- *
- * One line per item rather than one block per biome: what makes a
- * Water Stone a Water Stone is the list of shores it turns up on, and
- * that list is easier to keep right written in one place
+ * Where each Zenith Shard is buried: wherever any stage of its line
+ * is met, read off the species so a line moved to new ground takes
+ * its shard along. A final stage is often met nowhere itself, and a
+ * line met nowhere at all (a revived fossil) is buried everywhere
  */
-const GROUND_ITEMS: [item: Items, biomes: Biome[]][] = [
-  // The stones, each in the landscape its element belongs to. A line
-  // that asks for one asks the player to go and stand somewhere
-  [ItemIds.FireStone, [...VOLCANIC, BiomeIds.Desert]],
-  [ItemIds.WaterStone, [...WATER, ...SHORE]],
-  [ItemIds.ThunderStone, [...OPEN, BiomeIds.Mountain]],
-  [ItemIds.LeafStone, FOREST],
-  [ItemIds.MoonStone, [...COLD, BiomeIds.Mountain]],
-  [ItemIds.SunStone, [BiomeIds.Savanna, BiomeIds.Desert, BiomeIds.TropicalSeasonalForest]],
-  [ItemIds.ShinyStone, [...OPEN, BiomeIds.TemperateForest]],
-  [ItemIds.DuskStone, [...FOREST, BiomeIds.Badlands]],
-  [ItemIds.DawnStone, [...HIGHLAND, BiomeIds.Taiga]],
-  [ItemIds.IceStone, COLD],
-  // The rocks that hold a sky open, each dug out of the sky it holds
-  [ItemIds.HeatRock, [...VOLCANIC, BiomeIds.Desert]],
-  [ItemIds.DampRock, [...WETLAND, BiomeIds.TropicalRainforest, BiomeIds.TemperateRainforest]],
-  [ItemIds.IcyRock, COLD],
-  [ItemIds.SmoothRock, ARID],
-  // What the tide leaves
-  [ItemIds.ShoalSalt, [...SHORE, ...WATER]],
-  [ItemIds.ShoalShell, [...SHORE, ...WATER]],
-  [ItemIds.Pearl, [...WATER, ...SHORE]],
-  [ItemIds.BigPearl, [...WATER, ...SHORE]],
-  [ItemIds.PearlString, WATER],
-  [ItemIds.SlowpokeTail, [...SHORE, BiomeIds.Swamp]],
-  // What grows in the damp shade
-  [ItemIds.TinyMushroom, [...FOREST, ...WETLAND]],
-  [ItemIds.BigMushroom, [...FOREST, ...WETLAND]],
-  [ItemIds.BalmMushroom, FOREST],
-  [ItemIds.Honey, FOREST],
-  // Old ground, where what died in it is still near the surface
-  [ItemIds.RareBone, [...ARID, ...HIGHLAND, BiomeIds.Glacier]],
-  // Clear skies, and what falls out of them
-  [ItemIds.Stardust, [...ARID, ...COLD, ...OPEN]],
-  [ItemIds.StarPiece, [...ARID, ...COLD]],
-  [ItemIds.CometShard, [BiomeIds.Desert, BiomeIds.ColdDesert, BiomeIds.AlpineTundra]],
-  // Blown along open ground and caught in the branches
-  [ItemIds.PrettyWing, [...OPEN, ...HIGHLAND, ...FOREST]],
-];
+function addZenithHomes(into: Map<Items, Set<Biome>>): void {
+  const families = new Map<Families, Set<Biome>>();
 
-const HOMES = (() => {
-  const homes = new Map<Items, Set<Biome>>();
+  for (const species of getRegisteredSpecies()) {
+    const data = getSpeciesData(species);
+    const ground = families.get(data.family) ?? new Set<Biome>();
 
-  for (const [item, biomes] of GROUND_ITEMS) {
-    homes.set(item, new Set(biomes));
+    for (const biome of data.biomes) {
+      ground.add(biome);
+    }
+    families.set(data.family, ground);
+  }
+  for (const [item, shape] of ZENITH_SHARDS) {
+    const ground = families.get(getSpeciesData(shape.base).family);
+
+    if (ground != null && ground.size > 0) {
+      into.set(item, ground);
+    }
+  }
+}
+
+/** Built the first time it is asked for, since the shards read the species registry */
+function getHomes(): Map<Items, Set<Biome>> {
+  if (homes == null) {
+    homes = new Map();
+    for (const [item, biomes] of GROUND_ITEMS) {
+      homes.set(item, new Set(biomes));
+    }
+    addZenithHomes(homes);
   }
   return homes;
-})();
+}
 
 /** Which biomes hide this item, empty for one the whole world buries */
 export function getItemBiomes(item: Items): Biome[] {
-  for (const [one, biomes] of GROUND_ITEMS) {
-    if (one === item) {
-      return biomes;
-    }
-  }
-  return [];
+  return [...(getHomes().get(item) ?? [])];
 }
 
 /** Whether this ground hides this item, true for anything homeless */
 export function isItemBuriedIn(item: Items, biome: Biome): boolean {
-  const homes = HOMES.get(item);
+  const ground = getHomes().get(item);
 
-  return homes == null || homes.has(biome);
+  return ground == null || ground.has(biome);
 }
 
 const POOLS = new Map<Biome, ItemRarityGroups>();

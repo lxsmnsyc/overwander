@@ -93,6 +93,7 @@ VictoryDance:
   category: Status
   pp: 10
   target: None
+  flags: [Dance]
 
 HeadlongRush:
   type: Ground
@@ -119,6 +120,7 @@ EsperWing:
   accuracy: 100
   pp: 10
   target: Unit
+  flags: [HighCrit]
 
 BitterMalice:
   type: Ghost
@@ -141,6 +143,7 @@ TripleArrows:
   accuracy: 100
   pp: 10
   target: Unit
+  flags: [HighCrit]
   projectile: true
 
 InfernalParade:

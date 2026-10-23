@@ -1,5 +1,5 @@
 import { type JSX, type Resource, Show, Suspense, createResource, createSignal } from 'solid-js';
-import { isLockLive } from '../../auth/battle-lock';
+import { isLockLive } from '../../model/battle-lock';
 import readBox from '../../auth/box';
 import { syncServerClock } from '../../auth/clock';
 import CatchPicker, { type CatchOption } from '../catches/catch-picker';

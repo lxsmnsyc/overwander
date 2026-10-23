@@ -1,6 +1,6 @@
 import { LockedCard, QuestCard, RotationCard } from './cards';
 import { describeReward } from './describe';
-import type { QuestStanding } from '../../../auth/quest-record';
+import type { QuestStanding } from '../../../model/quest-record';
 import { claimQuest } from '../../../auth/quests';
 import { type RotationBoard, type RotationScope, claimRotation } from '../../../auth/rotations';
 import { CHAINS, CHAIN_ORDER, type Chains, type Quests } from '../../../data/quests';

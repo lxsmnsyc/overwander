@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { EffectType } from '../../src/battle/events';
-import { unitTarget } from '../../src/battle/utils';
+import { unitTarget } from '../../src/battle/unit-checks';
 import { Stats } from '../../src/data/constants/stats';
 import Abilities from '../../src/data/ids/abilities';
 import { Moves } from '../../src/data/ids/moves';

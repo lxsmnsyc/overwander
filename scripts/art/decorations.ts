@@ -1,0 +1,287 @@
+import { readFileSync } from 'node:fs';
+import decode, { type Image } from '../../src/server/sprites/png.ts';
+import writeAtlas, {
+  type Crop,
+  type Cut,
+  type Drawn,
+  assertWhole,
+  compose,
+  cut,
+  standsOn,
+  tighten,
+} from '../lib/atlas.ts';
+import groundPoint from '../lib/ground.ts';
+
+/**
+ * The scenery, cut out of an overworld rip and packed into two atlases.
+ *
+ * The rip is a wall of tiles, buildings and props with no table in it,
+ * so where each piece of scenery sits is written down here. The
+ * coordinates were read off the sheet by looking: they are the one
+ * thing about this that cannot be derived.
+ *
+ * Trees are a sheet of their own because there are many of them: the
+ * rip draws each tree in four or five shades and the biomes want
+ * different ones, so a board loads a dozen trees and eleven other props
+ * rather than one sheet that grows every time a biome is given a tree.
+ *
+ * Both sheets share **one cell**, sized off the tallest piece of either.
+ * A caller draws a cell at whatever a board cell is worth, so two
+ * sheets measured against different squares would put a rock and a pine
+ * at sizes the rip never drew them.
+ */
+
+const SOURCE = process.argv[2] ?? 'image.png';
+
+/**
+ * Where each piece sits on the rip, and what it is.
+ *
+ * Boxes take in the **shadow** as well as the picture: every
+ * free-standing piece here is drawn over a soft ellipse of its own, and
+ * a box measured off the lit foliage alone cuts the bottom off it
+ */
+const DECORATION_CUTS: Cut[] = [
+  { name: 'cactus', x: 321, y: 195, width: 30, height: 29 },
+  { name: 'shrub', x: 210, y: 202, width: 28, height: 25 },
+  { name: 'grass', x: 48, y: 320, width: 16, height: 16, crowded: true },
+  { name: 'flower', x: 192, y: 336, width: 16, height: 16, crowded: true },
+  { name: 'rock', x: 481, y: 369, width: 14, height: 14 },
+  { name: 'boulder', x: 484, y: 645, width: 24, height: 27 },
+  // Reeds and kelp are the same plant here, so the tallest blades on
+  // the sheet stand for both
+  { name: 'reed', x: 528, y: 328, width: 30, height: 36 },
+  { name: 'coral', x: 451, y: 370, width: 11, height: 13 },
+  { name: 'ice', x: 417, y: 627, width: 30, height: 29 },
+  { name: 'mushroom', x: 64, y: 197, width: 16, height: 30 },
+  { name: 'stump', x: 264, y: 197, width: 32, height: 30 },
+
+  // The variants. A chunk rolls eight to twelve pieces of scenery out
+  // of a list of three or four kinds, so one picture a kind put the
+  // same rock down four times: these are what the roll spreads over.
+  // Most are shelved among their neighbours on the rip, hence
+  // `crowded`
+  //
+  // Pebbles, in a block of four: two brown, one capped with snow and
+  // one sitting in a ring of it
+  { name: 'rock-brown', x: 353, y: 593, width: 15, height: 15, crowded: true },
+  { name: 'rock-snow', x: 369, y: 593, width: 15, height: 15, crowded: true },
+  { name: 'rock-pair', x: 353, y: 609, width: 15, height: 15, crowded: true },
+  { name: 'rock-iced', x: 368, y: 608, width: 16, height: 16, crowded: true },
+  // Boulders, drawn shoulder to shoulder in one row: bare, snowed on,
+  // grown over, and one weathered into a stack
+  { name: 'boulder-brown', x: 353, y: 657, width: 31, height: 31, crowded: true },
+  { name: 'boulder-snow', x: 384, y: 657, width: 32, height: 31, crowded: true },
+  { name: 'boulder-moss', x: 416, y: 657, width: 32, height: 31, crowded: true },
+  { name: 'boulder-stack', x: 448, y: 656, width: 32, height: 32, crowded: true },
+  // Bushes, from the shelf the round one came off
+  { name: 'shrub-sapling', x: 146, y: 194, width: 12, height: 33, crowded: true },
+  { name: 'shrub-conifer', x: 160, y: 194, width: 16, height: 32, crowded: true },
+  { name: 'shrub-spiky', x: 176, y: 194, width: 16, height: 32, crowded: true },
+  { name: 'shrub-fern', x: 192, y: 194, width: 16, height: 33, crowded: true },
+  { name: 'shrub-tall', x: 241, y: 194, width: 14, height: 33, crowded: true },
+  { name: 'shrub-flower', x: 304, y: 198, width: 16, height: 26 },
+  { name: 'shrub-star', x: 144, y: 352, width: 16, height: 16, crowded: true },
+  { name: 'shrub-dark', x: 64, y: 368, width: 16, height: 16, crowded: true },
+  // Tufts, out of the rip's grid of ground plants
+  { name: 'grass-broad', x: 48, y: 336, width: 16, height: 16, crowded: true },
+  { name: 'grass-blades', x: 96, y: 352, width: 16, height: 16, crowded: true },
+  { name: 'grass-fern', x: 112, y: 352, width: 16, height: 16, crowded: true },
+  { name: 'flower-white', x: 176, y: 336, width: 16, height: 16, crowded: true },
+  { name: 'flower-blue', x: 192, y: 352, width: 16, height: 16, crowded: true },
+  // Toadstools, which is what the rip draws beside the pale ones
+  { name: 'mushroom-red', x: 48, y: 352, width: 16, height: 16, crowded: true },
+  { name: 'cactus-flower', x: 353, y: 195, width: 30, height: 29 },
+  // Dead wood: a mossy log, a bare one, and two stumps cut low. The
+  // rip draws a snowbound log beside them, and nothing cold enough for
+  // it grows a stump
+  { name: 'log-moss', x: 17, y: 194, width: 30, height: 14, crowded: true },
+  { name: 'log', x: 81, y: 210, width: 31, height: 17 },
+  { name: 'stump-pale', x: 96, y: 194, width: 16, height: 14 },
+  { name: 'stump-dark', x: 49, y: 192, width: 14, height: 16, crowded: true },
+  // Ice, from the shelf the dome came off: shards, a splinter, a floe
+  { name: 'ice-shards', x: 384, y: 624, width: 16, height: 16, crowded: true },
+  { name: 'ice-shard', x: 400, y: 610, width: 14, height: 14 },
+  { name: 'ice-floe', x: 400, y: 628, width: 14, height: 12 },
+  { name: 'coral-brain', x: 465, y: 368, width: 15, height: 9 },
+  { name: 'coral-red', x: 482, y: 353, width: 10, height: 14 },
+  { name: 'coral-small', x: 500, y: 374, width: 8, height: 10 },
+];
+
+/**
+ * The trees.
+ *
+ * The rip draws each tree in four or five shades along a row, so a
+ * variant is one column of one of those rows. Which **row** it comes
+ * from is what makes a tree a different tree rather than the same one
+ * recoloured
+ */
+const TREE_CUTS: Cut[] = [
+  { name: 'round', x: 593, y: 0, width: 46, height: 51 },
+  { name: 'broadleaf', x: 789, y: 67, width: 57, height: 71 },
+  { name: 'dark', x: 981, y: 67, width: 57, height: 71 },
+  { name: 'jungle', x: 533, y: 67, width: 54, height: 70 },
+  { name: 'olive', x: 1172, y: 67, width: 56, height: 65 },
+  { name: 'autumn', x: 1504, y: 0, width: 47, height: 56 },
+  { name: 'dry', x: 1552, y: 0, width: 47, height: 56 },
+  { name: 'fir', x: 1028, y: 3, width: 40, height: 48 },
+  { name: 'pine', x: 21, y: 64, width: 53, height: 69 },
+  { name: 'pine-dark', x: 213, y: 64, width: 53, height: 69 },
+  { name: 'pine-blue', x: 149, y: 64, width: 53, height: 69 },
+  { name: 'palm', x: 662, y: 146, width: 36, height: 54 },
+];
+
+/**
+ * The snow, which the rip draws beside every family as a coat and not
+ * as a tree: bare snow in the crown's shape, nothing under it.
+ *
+ * So it is composed onto each tree it covers rather than packed on its
+ * own, and a snowbound pine is that pine with its own trunk and shadow
+ * still under the snow. Swapping in one white tree instead would take a
+ * biome's chosen shade of pine away from it in the cold.
+ *
+ * Each family draws **two** coats, a light dusting and a full one, and
+ * the full one is what these are: it is the coat cut to the family's
+ * own width, and its box therefore lines up corner to corner with any
+ * tree of that family. The light one is a few pixels narrower and set
+ * off to one side in its cell, which is what made a coat sit inside a
+ * crown with the green showing round it.
+ *
+ * There is no coat for the palm, and no beach cold enough to want one
+ */
+interface Coat extends Cut {
+  /** The trees it covers. They share a silhouette, so it fits them all */
+  over: string[];
+}
+
+const COAT_CUTS: Coat[] = [
+  { name: 'round-snow', over: ['round'], x: 833, y: 0, width: 46, height: 43 },
+  { name: 'leaf-snow', over: ['broadleaf', 'dark'], x: 1109, y: 67, width: 57, height: 46 },
+  { name: 'jungle-snow', over: ['jungle'], x: 725, y: 67, width: 54, height: 51 },
+  { name: 'olive-snow', over: ['olive'], x: 1492, y: 67, width: 56, height: 53 },
+  { name: 'dry-snow', over: ['autumn', 'dry'], x: 1408, y: 0, width: 47, height: 40 },
+  { name: 'fir-snow', over: ['fir'], x: 1124, y: 3, width: 40, height: 41 },
+  {
+    name: 'pine-snow',
+    over: ['pine', 'pine-dark', 'pine-blue'],
+    x: 341,
+    y: 64,
+    width: 53,
+    height: 55,
+  },
+];
+
+const sheet = decode(readFileSync(SOURCE));
+const ALL: Cut[] = [...DECORATION_CUTS, ...TREE_CUTS, ...COAT_CUTS];
+
+for (const area of ALL) {
+  assertWhole(sheet, area);
+}
+
+/**
+ * The rip lays its pieces over a flat shadow: pure black, half
+ * transparent (alpha 89 under most, 77 under the small ones), and the
+ * only half-transparent colour on any of them. Only some pieces carry
+ * one, so a rock beside a rock looked lit two ways; every baked shadow
+ * is cleared before anything is measured
+ */
+function withoutShadow(image: Image): Image {
+  for (let at = 0; at < image.rgba.length; at += 4) {
+    const { rgba } = image;
+
+    if (rgba[at] === 0 && rgba[at + 1] === 0 && rgba[at + 2] === 0 && rgba[at + 3] < 255) {
+      rgba[at + 3] = 0;
+    }
+  }
+  return image;
+}
+
+const boxes = new Map<string, Image>(
+  ALL.map((area) => [area.name, withoutShadow(cut(sheet, area))]),
+);
+
+/** The cut of that name, which the tables above have or the run is wrong. */
+function boxOf(name: string): Image {
+  const box = boxes.get(name);
+
+  if (box == null) {
+    throw new Error(`Nothing on the rip is called ${name}.`);
+  }
+  return box;
+}
+
+const crops = new Map<string, Crop>(ALL.map((area) => [area.name, tighten(boxOf(area.name))]));
+
+function cropOf(name: string): Crop {
+  const crop = crops.get(name);
+
+  if (crop == null) {
+    throw new Error(`Nothing on the rip is called ${name}.`);
+  }
+  return crop;
+}
+
+function cutOf(name: string): Cut {
+  const area = ALL.find((one) => one.name === name);
+
+  if (area == null) {
+    throw new Error(`Nothing on the rip is called ${name}.`);
+  }
+  return area;
+}
+
+/**
+ * One tree with its coat composed onto it: the same tree, in the snow.
+ *
+ * Baked rather than layered at draw time. A coat carries no trunk and
+ * no shadow, so laying it over the tree is the only way it reads as
+ * snow at all, and doing that here means the sheet holds exactly what
+ * the board draws instead of two pictures that have to keep finding
+ * each other
+ */
+function underSnow(coat: Coat, tree: string): Drawn {
+  const over = cropOf(coat.name);
+  const under = cropOf(tree);
+  // The coat is cut to its family's own width and sits at the same
+  // place in its cell, so the two boxes line up corner to corner. The
+  // widths are the check on that: a coat a few pixels narrower is the
+  // light dusting from the cell beside it, which lands somewhere else
+  if (cutOf(coat.name).width !== cutOf(tree).width) {
+    throw new Error(`The coat ${coat.name} is not cut to the width of ${tree}.`);
+  }
+  const x = over.left - under.left;
+  const y = cutOf(coat.name).y - cutOf(tree).y + over.top - under.top;
+  const out = compose([
+    { image: under.image, x: 0, y: 0 },
+    { image: over.image, x, y },
+  ]);
+  const left = Math.min(0, x);
+  const top = Math.min(0, y);
+
+  const whole = tighten(out);
+  const [baseX, baseY] = groundPoint(under.image);
+
+  return {
+    name: `${tree}-snow`,
+    image: whole.image,
+    base: [baseX - left - whole.left, baseY - top - whole.top],
+  };
+}
+
+const decorationArt: Drawn[] = DECORATION_CUTS.map((area) => ({
+  name: area.name,
+  image: cropOf(area.name).image,
+}));
+const bareTrees: Drawn[] = TREE_CUTS.map((area) => ({
+  name: area.name,
+  image: cropOf(area.name).image,
+}));
+const treeArt: Drawn[] = [
+  ...bareTrees,
+  ...COAT_CUTS.flatMap((coat) => coat.over.map((tree) => underSnow(coat, tree))),
+];
+
+writeAtlas('decorations', decorationArt);
+// Measured over the trees themselves rather than the whole sheet: a
+// tree in snow is the same tree, and counting both would give the
+// families with the most shades the most votes
+writeAtlas('trees', treeArt, standsOn(bareTrees));

@@ -2,11 +2,12 @@ import { AttackPriority, EventPriority } from '../../../core/event-emitter';
 import type { Stages } from '../../../data/constants/stats';
 import type Abilities from '../../../data/ids/abilities';
 import { DamageFlags } from '../../../data/ids/moves';
-import type Battle from '../../core';
+import type Battle from '../../battle';
 import { BattleEvents, EffectType } from '../../events';
 import { MergedLifecycle } from '../../lifecycle';
 import type Unit from '../../unit';
 import { createAbility } from './create';
+import { STAT_STAGES, createStatExtremes } from './stats';
 
 /** Abilities that raise one of their holder's stages when something happens */
 
@@ -43,6 +44,33 @@ export function createMoxieAbility(ability: Abilities, stage: Stages): (battle: 
         }),
       ]),
   );
+}
+
+/**
+ * Meta ability for the ones a knockout feeds where the holder is
+ * already strongest (Beast Boost, Eelevate): whatever it knocks out
+ * raises its highest stat by one stage
+ * https://bulbapedia.bulbagarden.net/wiki/Beast_Boost_(Ability)
+ */
+export function createBeastBoostAbility(ability: Abilities): (battle: Battle) => void {
+  return createAbility(ability, (battle) => {
+    const stats = createStatExtremes();
+
+    return battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
+      const killer = event.attacker;
+
+      if (killer === event.source || !killer.alive || !killer.hasAbility(ability)) {
+        return;
+      }
+
+      const stage = STAT_STAGES[stats.extremes(killer).highest];
+
+      if (stage != null) {
+        killer.triggerAbility(ability);
+        killer.addStage(stage, 1, { type: EffectType.Ability, ability, unit: killer });
+      }
+    });
+  });
 }
 
 /**

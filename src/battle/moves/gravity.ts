@@ -3,7 +3,7 @@ import { Types } from '../../data/constants/types';
 import Abilities from '../../data/ids/abilities';
 import { Moves } from '../../data/ids/moves';
 import { USELESS_PENALTY } from '../ai/score';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, MoveTargetType } from '../events';
 import turns from '../turn';
 
@@ -57,7 +57,11 @@ export default function setupGravity(battle: Battle): void {
       const target = event.target.unit;
 
       // Whichever way it was staying up, the floor has it now
-      if (target.types.has(Types.Flying) || target.hasAbility(Abilities.Levitate)) {
+      if (
+        target.types.has(Types.Flying) ||
+        target.hasAbility(Abilities.Levitate) ||
+        target.hasAbility(Abilities.Eelevate)
+      ) {
         event.immune = false;
       }
     }

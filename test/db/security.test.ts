@@ -2,7 +2,7 @@ import { hashPassword } from 'better-auth/crypto';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { type Actor, actor, clearAll, sql } from './clients';
 import { readSecurity, securityUnlocked, unlockSecurity } from '../../src/server/security';
-import { ADMIN_ROLE, MODERATOR_ROLE, OWNER_ROLE } from '../../src/auth/staff';
+import { ADMIN_ROLE, MODERATOR_ROLE, OWNER_ROLE } from '../../src/model/staff';
 import makePasswordLink from '../../src/server/password-links';
 
 /**

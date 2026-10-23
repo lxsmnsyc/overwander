@@ -7,7 +7,7 @@ import {
   listRotations as listOnServerSide,
 } from '../server/rotations';
 import { syncServerClock } from './clock';
-import { getLocalOffset, getLocale } from './local-time';
+import { getLocalOffset, getLocale } from '../model/local-time';
 import getIdToken from './session';
 
 /**

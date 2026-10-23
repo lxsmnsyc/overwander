@@ -6,10 +6,8 @@ import { decay } from './__paint';
 /**
  * A move's picture, drawn rather than played.
  *
- * It is the same contract the sheet-backed
- * [`MoveVisual`](./__visual.ts) answers — the field advances it by the
- * battle's own tick and draws it, and drops it when it is finished —
- * so the canvas does not care which kind it is holding.
+ * It answers `FieldVisual` below: the field advances it by the
+ * battle's own tick, draws it, and drops it when it is finished.
  *
  * What it holds is one function. A painter is handed the stage and how
  * far through it is, and draws that instant; it keeps nothing between

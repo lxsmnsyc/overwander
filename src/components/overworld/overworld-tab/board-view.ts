@@ -1,4 +1,4 @@
-import { type SnapshotRecord, spawnId } from '../../../auth/snapshot-record';
+import { type SnapshotRecord, spawnId } from '../../../model/snapshot-record';
 import { localNow } from '../../../auth/clock';
 import type Biome from '../../../data/ids/biome';
 import { Genders } from '../../../data/ids/species';
@@ -14,9 +14,9 @@ import ChunkSnapshot, {
   type Spawn,
 } from '../../../overworld/chunk-snapshot';
 import { CHUNK_CELLS, cellInChunk, chunkOfCell } from '../../../overworld/chunk';
-import { type BoardGround, readBoardGround } from '../../../overworld/board-ground';
-import { blocksWalk } from '../../../overworld/cliff';
-import { isLavaAt } from '../../../overworld/ground';
+import { type BoardGround, readBoardGround } from '../../../overworld/board/ground';
+import { blocksWalk } from '../../../overworld/terrain/cliff';
+import { isLavaAt } from '../../../overworld/terrain/ground';
 import type { Buddy } from '../../../overworld/core';
 import getWorld from '../../../overworld/current';
 import deriveEncounter, { deriveGender } from '../../../overworld/encounter';
@@ -27,7 +27,7 @@ import { CAVE_DARK_CELLS } from '../../../data/overworld/cave';
 import { Depth } from '../../../overworld/depth';
 import createOverworld from '../../../overworld/setup';
 import { isGigantamaxBoss } from '../../../overworld/raid';
-import { RaidBeacon } from '../../overworld/chunk-canvas/beacon';
+import { RaidBeacon } from '../../../canvas/overworld/beacon';
 import settings from '../../app/settings';
 import { BOARD_CELLS, BOARD_CENTER, BOARD_RADIUS, PUBLISHED_SPAWNS, boardMargin } from './metrics';
 

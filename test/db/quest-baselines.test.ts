@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { type Actor, actor, clearAll, sql } from './clients';
-import { Metric } from '../../src/auth/quest-record';
+import { Metric } from '../../src/model/quest-record';
 import registerData from '../../src/data';
 import { Quests } from '../../src/data/quests';
 import { bumpProgress } from '../../src/server/quest-progress';

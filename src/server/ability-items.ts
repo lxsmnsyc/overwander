@@ -1,6 +1,6 @@
 import 'server-only';
-import { Metric } from '../auth/quest-record';
-import { ITEM_STACKS } from '../auth/stacks';
+import { Metric } from '../model/quest-record';
+import { ITEM_STACKS } from '../model/stacks';
 import { countAbilitySlots, getSlots } from '../data/constants/slots';
 import { getSpeciesSignature } from '../data/abilities';
 import type Abilities from '../data/ids/abilities';

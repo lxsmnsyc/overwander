@@ -1,12 +1,7 @@
 import { useSearchParams } from '@solidjs/router';
 import { type JSX, Show, createEffect, createMemo, createSignal, onCleanup } from 'solid-js';
 import { MoveTargetType } from '../../battle/events';
-import {
-  type DemoRules,
-  type MoveDemo as Staged,
-  aimFor,
-  createMoveDemo,
-} from '../../battle/demo-move';
+import { type DemoRules, type MoveDemo as Staged, aimFor, createMoveDemo } from './demo-move';
 import BattleField from '../battle/BattleField';
 import BattleTopBar from '../battle/BattleTopBar';
 import BiomePicker, { biomeFrom } from './BiomePicker';
@@ -14,7 +9,7 @@ import { Badge, Button, Combobox, Meta, Note, Row, Switch } from '../styled';
 import { MOVE_CATEGORY_NAMES, type Moves } from '../../data/ids/moves';
 import { TYPE_NAMES } from '../../data/constants/types';
 import { getMoveData, getRegisteredMoves } from '../../data/moves';
-import { dynamax } from '../../battle/mechanics/dynamax';
+import { dynamax } from '../../battle/gimmicks/dynamax';
 import { Species } from '../../data/ids/species';
 
 /**

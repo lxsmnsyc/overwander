@@ -7,7 +7,7 @@
 # Bulbasaur
 Overgrow:
   name: Overgrow
-  description: Grass moves hit 1.5x while it is down to 1/3 of its HP.
+  description: Its Grass moves hit 1.5x while it is down to 1/3 of its HP.
 Chlorophyll:
   name: Chlorophyll
   description: 2x Speed in sunlight.
@@ -18,13 +18,13 @@ ThickFat:
 # Charmander
 Blaze:
   name: Blaze
-  description: Fire moves hit 1.5x while it is down to 1/3 of its HP.
+  description: Its Fire moves hit 1.5x while it is down to 1/3 of its HP.
 SolarPower:
   name: Solar Power
   description: 2x Special Attack in sunlight, and costs 1/8 of its HP each time it acts.
 ToughClaws:
   name: Tough Claws
-  description: 1.3x power on contact moves.
+  description: Its contact moves hit 1.3x.
 Drought:
   name: Drought
   description: Calls out the sun as it enters the field.
@@ -32,7 +32,7 @@ Drought:
 # Squirtle
 Torrent:
   name: Torrent
-  description: Water moves hit 1.5x while it is down to 1/3 of its HP.
+  description: Its Water moves hit 1.5x while it is down to 1/3 of its HP.
 RainDish:
   name: Rain Dish
   description: Restores 1/16 of its HP each time it acts in rain.
@@ -61,7 +61,7 @@ TintedLens:
 # Beedrill
 Swarm:
   name: Swarm
-  description: Bug moves hit 1.5x while it is down to 1/3 of its HP.
+  description: Its Bug moves hit 1.5x while it is down to 1/3 of its HP.
 Sniper:
   name: Sniper
   description: 1.5x on critical hits. As a buddy, a critical throw gets 2 chances at its shake.
@@ -124,7 +124,7 @@ Rivalry:
   description: 1.25x against its own gender, 0.75x against the other.
 SheerForce:
   name: Sheer Force
-  description: 1.3x on moves with an added effect, which never lands.
+  description: Its moves with an added effect hit 1.3x, and the effect never lands.
 
 # Clefairy
 CuteCharm:
@@ -193,7 +193,7 @@ Pickup:
   description: Picks up an item somebody else used, if it has room for one. As a buddy, finds an item every 512 steps walked.
 Technician:
   name: Technician
-  description: 1.5x on moves of 60 power or less.
+  description: Its moves of 60 power or less hit 1.5x.
 Limber:
   name: Limber
   description: Cannot be paralysed.
@@ -373,13 +373,13 @@ BattleArmor:
 # Tyrogue (Hitmonlee/Hitmonchan)
 Reckless:
   name: Reckless
-  description: 1.2x on recoil and crash moves.
+  description: Its recoil and crash moves hit 1.2x.
 Unburden:
   name: Unburden
   description: 2x Speed while its item is gone.
 IronFist:
   name: Iron Fist
-  description: 1.2x on punching moves.
+  description: Its punching moves hit 1.2x.
 
 # Koffing
 NeutralizingGas:
@@ -392,7 +392,7 @@ NaturalCure:
   description: Cures itself when it leaves the field.
 SereneGrace:
   name: Serene Grace
-  description: 2x the odds of a move's added effect.
+  description: Its moves are 2x as likely to land their added effects.
 Healer:
   name: Healer
   description: 30% to cure an ally's status each time it acts.
@@ -443,7 +443,7 @@ Imposter:
 # Eevee
 Adaptability:
   name: Adaptability
-  description: Same-type moves hit 2x rather than 1.5x.
+  description: Its same-type moves hit 2x rather than 1.5x.
 Anticipation:
   name: Anticipation
   description: Takes half damage from the worst enemy move it braced for. As a buddy, shows how ready a wild pokemon is to flee.
@@ -467,7 +467,7 @@ Download:
 # Kabuto (Kabutops)
 Sharpness:
   name: Sharpness
-  description: 1.5x power on slicing moves.
+  description: Its slicing moves hit 1.5x.
 
 # Aerodactyl
 Pressure:
@@ -475,7 +475,7 @@ Pressure:
   description: Moves aimed at it cost 2x the cooldown. As a buddy, the top of the wild level band lifts by 3.
 StrongJaw:
   name: Strong Jaw
-  description: 1.5x power on biting moves.
+  description: Its biting moves hit 1.5x.
 
 # Snorlax
 Immunity:

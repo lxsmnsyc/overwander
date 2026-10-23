@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import type Battle from '../../src/battle/core';
-import { BattleModes } from '../../src/battle/core';
+import type Battle from '../../src/battle/battle';
+import { BattleModes } from '../../src/battle/battle';
 import { BattleEvents, type MoveTarget, MoveTargetType } from '../../src/battle/events';
 import type Unit from '../../src/battle/unit';
 import { WEATHER_ROCK_FACTOR } from '../../src/battle/items/gear';

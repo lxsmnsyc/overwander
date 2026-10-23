@@ -1,6 +1,6 @@
 import type { CaughtPokemon } from '../../../auth/caught';
-import { getHeldItemRoom } from '../../../auth/caught-record';
-import { isEgg } from '../../../auth/egg';
+import { getHeldItemRoom } from '../../../model/caught-record';
+import { isEgg } from '../../../model/egg';
 import describeDate from '../../../core/dates';
 import { BIOME_NAMES, TIME_OF_DAY_NAMES } from '../../../data/biome';
 import { EVOLUTION_FRIENDSHIP } from '../../../data/constants/friendship';
@@ -23,7 +23,7 @@ import { describeItem } from '../../details';
 import ItemSprite from '../../items/ItemSprite';
 import { HeartIcon } from '../../icons';
 import { type JSX, Show } from 'solid-js';
-import { getMaxHealth } from '../../../auth/health';
+import { getMaxHealth } from '../../../model/health';
 import { ItemFlags, Items } from '../../../data/ids/items';
 import { getItemData } from '../../../data/items';
 

@@ -6,10 +6,11 @@ import type Biome from '../ids/biome';
 import type { TimeOfDay } from '../ids/biome';
 import type EggGroups from '../ids/egg-groups';
 import type Families from '../ids/families';
-import { FAMILY_NAMES } from '../ids/families';
+import { FAMILY_NAMES } from '../ids/text';
 import type { Items } from '../ids/items';
 import type { Moves } from '../ids/moves';
-import { type Genders, Habitat, type Species, getBaseFormSpecies } from '../ids/species';
+import { type Genders, Habitat, type Species } from '../ids/species';
+import { getBaseFormSpecies } from '../ids/forms';
 
 /**
  * One way a species evolves: the target species and the required
@@ -259,6 +260,12 @@ export interface SpeciesData {
    * leaves the moment the missing stage is written down
    */
   awaiting?: 'baby' | 'evolution';
+  /**
+   * The spawn kind it is met as where its types and egg groups say
+   * otherwise: a Flying type that lives in the water, or a water egg
+   * group that lives on dry land
+   */
+  spawnsAs?: 'water' | 'ground';
 }
 
 /**

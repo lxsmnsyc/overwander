@@ -1,5 +1,5 @@
 import 'server-only';
-import { asBoolean } from '../auth/__normalize';
+import { asBoolean } from '../model/normalize';
 import { Stats } from '../data/constants/stats';
 
 /**

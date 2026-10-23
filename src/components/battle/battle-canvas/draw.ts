@@ -1,29 +1,29 @@
-import type SpeciesSpriteAnimation from '../../../canvas/species-sprite-animation';
+import type SpeciesSpriteAnimation from '../../../canvas/sprites/species-sprite-animation';
 import type { Slot } from './field';
 import { type CastLabels, drawCastLabel } from './cast-label';
 import drawFormMark, { wearsFormMark } from './form-mark';
 import { drawTeraBehind, drawTeraJewel, drawTeraOver, teraLookOf } from './terastal';
 import { type GiantBody, drawGiantBehind, drawGiantOver, giantLookOf } from './dynamax';
 import { COLORS, DYNAMAX_DRAW_SCALE, HIT_REACH, NAMED_RADIUS, TOTEM_DRAW_SCALE } from './metrics';
-import speciesSize from '../../../canvas/species-size';
+import speciesSize from '../../../canvas/sprites/species-size';
 import { type Striking, animationFor } from './motion';
 import type { ProgressData } from '../../../battle/events';
 import type Unit from '../../../battle/unit';
-import { paintAura, paintPurifiedAura, paintShadowAura } from '../../../canvas/auras';
+import { paintAura, paintPurifiedAura, paintShadowAura } from '../../../canvas/effects/auras';
 import type Bakery from '../../../canvas/bakery';
 import type { Painter, QuadPoint } from '../../../canvas/gl/quad-batch';
 import projectField, {
   type FieldView,
   depthAtScale,
   unprojectField,
-} from '../../../canvas/battle/field';
+} from '../../../canvas/battle/projection';
 import type EffectBatch from '../../../canvas/three/effect-batch';
 import type { Spot } from '../../../canvas/three/effect-batch';
 import { litPurifiedAura, litShadowAura, litSparkle } from '../../../canvas/battle/decor';
-import { cornersOf, shadowCorners } from '../../../canvas/placement';
-import { SHADOW_STAMP, bakeShadowDisc, paintSparkle } from '../../overworld/chunk-canvas/scenery';
-import drawSparkle, { SPARKLE_LIFE } from '../../../canvas/sparkle';
-import type { Point } from '../../../canvas/sprite-sheet';
+import { cornersOf, shadowCorners } from '../../../canvas/sprites/placement';
+import { SHADOW_STAMP, bakeShadowDisc, paintSparkle } from '../../../canvas/overworld/scenery';
+import drawSparkle, { SPARKLE_LIFE } from '../../../canvas/effects/sparkle';
+import type { Point } from '../../../canvas/sprites/sheet';
 import { Stats } from '../../../data/constants/stats';
 import Abilities from '../../../data/ids/abilities';
 import { SpriteAnim } from '../../../data/ids/sprite-anims';

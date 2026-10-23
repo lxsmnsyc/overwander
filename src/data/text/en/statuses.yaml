@@ -1,0 +1,57 @@
+# How each status reads to a player
+
+Seeding: Seeded
+Poisoned: Poisoned
+Sleeping: Asleep
+BadlyPoisoned: Badly poisoned
+Paralyzed: Paralyzed
+Minimized: Minimized
+Invulnerable: Invulnerable
+Raging: Raging
+Biding: Biding
+Confused: Confused
+Recharging: Recharging
+Substituted: Substituted
+Burned: Burned
+Trapped: Trapped
+Flinched: Flinched
+Frozen: Frozen
+FocusEnergy: Focused
+Infatuated: Infatuated
+Grounded: Grounded
+Floating: Floating
+Submerged: Submerged
+Dormant: Dormant
+Switching: Switching
+Protected: Protected
+Enduring: Enduring
+Cornered: Cornered
+Nightmared: Nightmare
+Perishing: Perishing
+Bonded: Bonded
+Cursed: Cursed
+Encored: Encored
+Identified: Identified
+Comatose: Comatose
+Taunted: Taunted
+Tormented: Tormented
+Imprisoned: Imprisoned
+Rooted: Rooted
+Drowsy: Drowsy
+Centered: Centered
+Coated: Coated
+Snatching: Snatching
+Grudging: Grudging
+Uproaring: Uproar
+Helped: Helped
+MindRead: Read
+Embargoed: Embargoed
+HealBlocked: Heal Blocked
+PowerTricked: Power Trick
+Roosting: Roosting
+MagnetRisen: Magnet Rise
+AquaRinged: Aqua Ring
+Telekinetic: Telekinesis
+SkyDropped: Sky Drop
+PowerShifted: Power Shift
+Staggered: Staggered

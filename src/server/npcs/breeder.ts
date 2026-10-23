@@ -1,6 +1,6 @@
 import 'server-only';
-import { asCaughtPokemon, isShadow } from '../../auth/caught-record';
-import { isEgg } from '../../auth/egg';
+import { asCaughtPokemon, isShadow } from '../../model/caught-record';
+import { isEgg } from '../../model/egg';
 import Npc, { BREEDING_FEE } from '../../data/overworld/npc';
 import { Items } from '../../data/ids/items';
 import type { Species } from '../../data/ids/species';
@@ -11,7 +11,7 @@ import { readCaughtMany } from '../caught-io';
 import { getSql } from '../db';
 import { isCatchLocked } from '../locks';
 import { grantGold, spendGold } from '../profile';
-import { Metric } from '../../auth/quest-record';
+import { Metric } from '../../model/quest-record';
 import { bumpProgress } from '../quest-progress';
 import { releaseVisit, resolveNpc, takeVisit } from './visits';
 

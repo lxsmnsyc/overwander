@@ -1,9 +1,10 @@
 import type Biome from '../ids/biome';
-import { SpawnSurface, TimeOfDay } from '../ids/biome';
+import { SpawnRarity, SpawnSurface, TimeOfDay } from '../ids/biome';
 import EggGroups from '../ids/egg-groups';
 import type Families from '../ids/families';
 import Abilities from '../ids/abilities';
-import { Habitat, Species, UNOWN_FORMS, getBaseFormSpecies } from '../ids/species';
+import { Habitat, type Species } from '../ids/species';
+import { UNOWN_FORMS, getBaseFormSpecies } from '../ids/forms';
 import { Types } from '../constants/types';
 import {
   type SpeciesRank,
@@ -315,28 +316,25 @@ export const enum SpawnClass {
   Flying = 2,
 }
 
-/** Flying types that live in the water rather than over it */
-const WATER_ONLY_FLIERS = new Set<Species>([Species.Gyarados, Species.Mantine, Species.Mantyke]);
-
-/** Species a water egg group would count as water that live on dry land */
-const DRY_LAND_SPECIES = new Set<Species>([Species.Skorupi, Species.Drapion]);
-
 const WATER_EGG_GROUPS = new Set<EggGroups>([EggGroups.Water1, EggGroups.Water2, EggGroups.Water3]);
 
-/** Which of the three kinds a species is, read off its types, abilities and egg groups */
+/**
+ * Which of the three kinds a species is, read off its types, abilities
+ * and egg groups, unless its line's `spawns-as` says otherwise
+ */
 export function getSpawnClass(species: Species): SpawnClass {
   const data = getSpeciesData(species);
-  const line = getBaseFormSpecies(species);
+  const written = getSpeciesData(getBaseFormSpecies(species)).spawnsAs;
 
   if (
-    !WATER_ONLY_FLIERS.has(line) &&
+    written !== 'water' &&
     (data.types.includes(Types.Flying) ||
       data.eggGroups.includes(EggGroups.Flying) ||
       getSpeciesAbilities(species).has(Abilities.Levitate))
   ) {
     return SpawnClass.Flying;
   }
-  if (DRY_LAND_SPECIES.has(line)) {
+  if (written === 'ground') {
     return SpawnClass.Ground;
   }
   for (const group of data.eggGroups) {
@@ -565,47 +563,7 @@ export function getEggPool(biome: Biome, time: TimeOfDay): SpawnEntry[] {
   return pool;
 }
 
-export const enum SpawnRarity {
-  /**
-   * The bottom of a three-stage line, which is the longest walk to a
-   * finished pokemon: they share the odds left over from the rarer
-   * bands, split by their pool weights
-   */
-  Base = 0,
-  /**
-   * The bottom of a two-stage line, one step from finished
-   */
-  Uncommon = 1,
-  /**
-   * The middle of a three-stage line
-   */
-  Rare = 2,
-  /**
-   * The end of a two-stage line
-   */
-  Scarce = 3,
-  /**
-   * The end of a three-stage line, and the species that never evolve
-   * at all
-   */
-  Elusive = 4,
-  /**
-   * The babies and the unowns: species a walk is lucky to meet, but
-   * that a player may meet more than one of
-   */
-  Prized = 5,
-  /**
-   * The legendaries: one-per-world species the world itself stages,
-   * at a lair
-   */
-  Special = 6,
-  /**
-   * The mythicals: one place apiece and no lair, so a raid never
-   * stages one. The relic calls one out to be fought, and this band
-   * is the other way, drawn as often as a legendary
-   */
-  Mythical = 7,
-}
+export { SpawnRarity };
 
 /**
  * Which rarity each band of a pool is, in the order a dex reads them:

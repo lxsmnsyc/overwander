@@ -1,7 +1,7 @@
 import { Title } from '@solidjs/meta';
 import { useSearchParams } from '@solidjs/router';
 import { type JSX, Show, createEffect, createSignal, onCleanup } from 'solid-js';
-import type Battle from '../../battle/core';
+import type Battle from '../../battle/battle';
 import BattleField from '../../components/battle/BattleField';
 import BattleParty from '../../components/battle/BattleParty';
 import BattleTopBar from '../../components/battle/BattleTopBar';
@@ -10,15 +10,15 @@ import { Badge, Button, Meta, Note, Select, Switch } from '../../components/styl
 import type { Species } from '../../data/ids/species';
 import { Stats } from '../../data/constants/stats';
 import { EffectType, MoveTargetType } from '../../battle/events';
-import { NOBLE_THRESHOLDS } from '../../battle/abilities/noble';
+import { NOBLE_THRESHOLDS } from '../../battle/abilities/special/noble';
 import { Statuses } from '../../data/ids/status';
 import { FRENZY_MOVES, getNobleBurst } from '../../data/moves/frenzy-moves';
 import { getMoveData } from '../../data/moves';
 import { getSpeciesData } from '../../data/species';
 import { CANON_NOBLES } from '../../data/overworld/nobles';
-import { DEMO_TEAMS, DEMO_TEAM_SIZE, createDemoRaidTeams } from '../../overworld/demo-raid';
+import { DEMO_TEAMS, DEMO_TEAM_SIZE, createDemoRaidTeams } from '../../overworld/raid/demo';
 import { BOSS_ALLIANCE, PLAYER_ALLIANCE } from '../../overworld/raid';
-import { type RaidBattle, createRaidBattle } from '../../overworld/raid-battle';
+import { type RaidBattle, createRaidBattle } from '../../overworld/raid/battle';
 
 /**
  * A raid to look at: a boss, five parties, and nothing else, staged

@@ -82,4 +82,5 @@ RockWrecker:
   accuracy: 90
   pp: 5
   target: Unit
+  flags: [Ballistic]
   projectile: true

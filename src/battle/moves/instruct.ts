@@ -6,7 +6,7 @@ import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Moves } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
 import { RECHARGE_MOVES } from '../../data/moves/recharge';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, type MoveTarget, MoveTargetType } from '../events';
 import type Unit from '../unit';
 

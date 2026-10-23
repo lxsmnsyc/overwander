@@ -4,16 +4,20 @@ import { Stages, Stats } from '../../data/constants/stats';
 import { Types } from '../../data/constants/types';
 import Abilities from '../../data/ids/abilities';
 import { DamageFlags, MoveCategories, MoveFlags, Moves } from '../../data/ids/moves';
-import { MINIOR_FORMS, Species, getBaseFormSpecies } from '../../data/ids/species';
+import { Species } from '../../data/ids/species';
+import { MINIOR_FORMS, getBaseFormSpecies } from '../../data/ids/forms';
 import { NON_VOLATILE_STATUSES, Statuses, Terrains } from '../../data/ids/status';
 import { getMoveData } from '../../data/moves';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, EffectType, MoveTargetType, type UnitAttackEvent } from '../events';
 import { MergedLifecycle } from '../lifecycle';
 import type Unit from '../unit';
-import { isOwnBerry, isPrimalWeather, onUnitActs } from '../utils';
+import { isPrimalWeather } from '../weather';
+import onUnitActs from '../acts';
+import { isOwnBerry } from '../items/held';
 import {
   createAbility,
+  createBeastBoostAbility,
   createClearBodyAbility,
   createFilterAbility,
   createGooeyAbility,
@@ -29,7 +33,6 @@ import {
   createTypeShiftAbility,
   getAbilityHolders,
 } from './__create';
-import { STAT_STAGES, createStatExtremes } from './signature/__create';
 
 /** What Neuroforce makes a super-effective blow worth */
 export const NEUROFORCE_SCALE = 1.25;
@@ -123,29 +126,7 @@ const setupAbilities = [
 
   // The Ultra Beasts: whatever it knocks out makes it stronger where
   // it is already strongest
-  // https://bulbapedia.bulbagarden.net/wiki/Beast_Boost_(Ability)
-  createAbility(Abilities.BeastBoost, (battle) => {
-    const stats = createStatExtremes();
-
-    return battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
-      const killer = event.attacker;
-
-      if (killer === event.source || !killer.alive || !killer.hasAbility(Abilities.BeastBoost)) {
-        return;
-      }
-
-      const stage = STAT_STAGES[stats.extremes(killer).highest];
-
-      if (stage != null) {
-        killer.triggerAbility(Abilities.BeastBoost);
-        killer.addStage(stage, 1, {
-          type: EffectType.Ability,
-          ability: Abilities.BeastBoost,
-          unit: killer,
-        });
-      }
-    });
-  }),
+  createBeastBoostAbility(Abilities.BeastBoost),
 
   // Ultra Necrozma: the light it let out lands hardest where it
   // already lands well

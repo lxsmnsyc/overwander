@@ -26,6 +26,7 @@ import { describeValuable } from './valuables';
 import { describeVitamin } from './vitamins';
 import { describeWing } from './wings';
 import { describeZCrystal } from './z-crystals';
+import { describeZenithShard } from './zenith-shards';
 import registerMachines from './machines';
 import { readItems } from './yaml';
 
@@ -47,6 +48,7 @@ export {
 } from './fossils';
 export { FORM_ITEMS, getItemForms } from './form-items';
 export { MEGA_STONES, getMegaStone, getStoneMega } from './mega-stones';
+export { ZENITH_SHARDS } from './zenith-shards';
 export { ITEM_TYPE_NAMES, ITEM_TYPE_ORDER } from './names';
 export { WING_EFFORT, WING_STATS, isWing } from './wings';
 
@@ -100,6 +102,7 @@ const ITEM_FAMILIES = [
   'fossils',
   'form-items',
   'mega-stones',
+  'zenith-shards',
   'wings',
   'vitamins',
 ] as const;
@@ -135,6 +138,7 @@ const DESCRIBERS = new Map<string, (item: Items) => string>([
   ['vitamins', describeVitamin],
   ['wings', describeWing],
   ['z-crystals', describeZCrystal],
+  ['zenith-shards', describeZenithShard],
 ]);
 
 /**

@@ -109,4 +109,4 @@ DrillRun:
   accuracy: 95
   pp: 10
   target: Unit
-  flags: [Contact]
+  flags: [Contact, HighCrit]

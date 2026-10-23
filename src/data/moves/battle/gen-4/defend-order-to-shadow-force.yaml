@@ -46,7 +46,7 @@ SpacialRend:
   accuracy: 95
   pp: 5
   target: Unit
-  flags: [Slicing]
+  flags: [Slicing, HighCrit]
 
 LunarDance:
   type: Psychic
@@ -54,6 +54,7 @@ LunarDance:
   pp: 10
   target: Unit
   affects: [Unit, Own]
+  flags: [Dance]
 
 CrushGrip:
   type: Normal

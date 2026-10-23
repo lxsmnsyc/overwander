@@ -1,6 +1,6 @@
 ---
 name: batched-queries
-description: Where `batchedQuery` from src/utils/batched-query.ts belongs, which is the browser, and why the server reads many keys with one query instead. Applies whenever writing or reviewing a read that fetches one key at a time, or reaching for batchedQuery.
+description: Where `batchedQuery` from src/auth/batched-query.ts belongs, which is the browser, and why the server reads many keys with one query instead. Applies whenever writing or reviewing a read that fetches one key at a time, or reaching for batchedQuery.
 ---
 
 # Batched queries belong in the browser

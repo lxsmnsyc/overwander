@@ -39,7 +39,7 @@ point of one. Lifting a block does not restore the friendship it undid.
 | **Trading pokemon** | Below                                               |
 | **Duels**           | [Battle lobbies](duels.md)                          |
 | **Raids**           | Calling a friend into a lobby, to fight or to watch |
-| **Auctions**        | [Items and gold](items.md), open to everybody       |
+| **Auctions**        | [Auctions](economy.md#auctions), open to everybody  |
 
 ## Trading
 
@@ -66,9 +66,10 @@ A traded pokemon arrives with its **friendship reset** and counts as having
 changed hands as what it was, which is what opens a
 [trade evolution](training.md#evolution) for that stage and no other.
 Neither side may trade a pokemon that is fighting, waiting in a lobby, still an
-egg, locked, or walking beside them as a buddy.
+egg, marked as a favorite, or walking beside them as a buddy. Nor may the
+proposer offer the last pokemon they have.
 
 ## See also
 
 - [Battle lobbies](duels.md): fighting a friend on purpose
-- [Items and gold](items.md): the auction house, where anybody may bid
+- [Gold and auctions](economy.md#auctions): the auction house, where anybody may bid

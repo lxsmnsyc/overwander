@@ -1,0 +1,12 @@
+# How lucky a walk has to be, in a word. The bands are named for how
+# often they come up rather than for what is in them: "uncommon" is
+# what a player meets, while the rule behind it is a fact about the line
+
+Base: Common
+Uncommon: Uncommon
+Rare: Rare
+Scarce: Scarce
+Elusive: Elusive
+Prized: Prized
+Special: Legendary
+Mythical: Mythical

@@ -1,4 +1,4 @@
-import type Battle from '../../core';
+import type Battle from '../../battle';
 import bulbasaurToPikachu from './bulbasaur-to-pikachu';
 import sandshrewToOddish from './sandshrew-to-oddish';
 import parasToTentacool from './paras-to-tentacool';

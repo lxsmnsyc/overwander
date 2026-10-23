@@ -1,7 +1,7 @@
 import 'server-only';
-import { TEAM_PRESET_LIMIT, type TeamPresetRecord } from '../auth/team-preset-record';
-import TEAM_SIZE from '../auth/team-size';
-import { asNickname } from '../auth/nickname';
+import { TEAM_PRESET_LIMIT, type TeamPresetRecord } from '../model/team-preset-record';
+import TEAM_SIZE from '../model/team-size';
+import { asNickname } from '../model/nickname';
 import { type Tx, getSql, newDocId, tx } from './db';
 import { readCaughtMany } from './caught-io';
 import { asNumber, asString } from './read';

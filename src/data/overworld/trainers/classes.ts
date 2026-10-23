@@ -35,13 +35,14 @@ export { TrainerClass };
  * names, so its guitarist is the rocker's trade and its aroma lady
  * the sage's
  */
-const CLASS = v.object({
+const CLASS = v.strictObject({
   types: v.array(v.string()),
   sheets: v.array(v.string()),
   trade: v.optional(v.string()),
+  ace: v.optional(v.literal(true)),
 });
 
-const TEXT = v.object({ name: v.string(), quote: v.string() });
+const TEXT = v.strictObject({ name: v.string(), quote: v.string() });
 
 /** Each region's files, the class a file is filed under being its region */
 const REGION_FILES: [region: string, classes: unknown, text: unknown][] = [
@@ -99,6 +100,12 @@ export const TRAINER_BASE_NAMES: Record<number, string> = {};
 /** What each says as the duel is put to the player */
 export const TRAINER_QUOTES: Record<number, string> = {};
 
+/**
+ * The Aces, one a region: no type, five fully grown, and the levels
+ * and the purse to match
+ */
+export const ACE_TRAINERS = new Set<TrainerClass>();
+
 for (const [file, classes, text] of REGION_FILES) {
   const region = idOf<Regions>(
     REGION_IDS,
@@ -116,6 +123,9 @@ for (const [file, classes, text] of REGION_FILES) {
     TRAINER_CHARSETS[trainer] = written.sheets;
     TRAINER_TRADE[trainer] =
       written.trade == null ? trainer : idOf<TrainerClass>(TRAINER_IDS, written.trade, where);
+    if (written.ace === true) {
+      ACE_TRAINERS.add(trainer);
+    }
   }
   for (const [name, said] of Object.entries(v.parse(v.record(v.string(), TEXT), text))) {
     const trainer = idOf<TrainerClass>(TRAINER_IDS, name, `text/en/trainers/${file}.yaml: ${name}`);

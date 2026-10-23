@@ -10,8 +10,8 @@ import {
 import { RadioGroup, RadioGroupOption } from 'terracotta';
 import { useAbilityPatch } from '../../auth/ability-items';
 import { type CaughtPokemon, getCaught } from '../../auth/caught';
-import { getCatchSlots, isShiny } from '../../auth/caught-record';
-import { isEgg } from '../../auth/egg';
+import { getCatchSlots, isShiny } from '../../model/caught-record';
+import { isEgg } from '../../model/egg';
 import { getAbilityData, getSpeciesSignature } from '../../data/abilities';
 import { Slots, countAbilitySlots, countsAgainstSlots } from '../../data/constants/slots';
 import type Abilities from '../../data/ids/abilities';

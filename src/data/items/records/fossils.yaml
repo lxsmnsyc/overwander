@@ -8,66 +8,79 @@ HelixFossil:
   type: Fossil
   icon: fossils/helix
   flags: [Consumable]
+  species: Omanyte
 
 DomeFossil:
   type: Fossil
   icon: fossils/dome
   flags: [Consumable]
+  species: Kabuto
 
 OldAmber:
   type: Fossil
   icon: fossils/old-amber
   flags: [Consumable]
+  species: Aerodactyl
 
 RootFossil:
   type: Fossil
   icon: fossils/root
   flags: [Consumable]
+  species: Lileep
 
 ClawFossil:
   type: Fossil
   icon: fossils/claw
   flags: [Consumable]
+  species: Anorith
 
 SkullFossil:
   type: Fossil
   icon: fossils/skull
   flags: [Consumable]
+  species: Cranidos
 
 ArmorFossil:
   type: Fossil
   icon: fossils/armor
   flags: [Consumable]
+  species: Shieldon
 
 CoverFossil:
   type: Fossil
   icon: fossils/cover
   flags: [Consumable]
+  species: Tirtouga
 
 PlumeFossil:
   type: Fossil
   icon: fossils/plume
   flags: [Consumable]
+  species: Archen
 
 JawFossil:
   type: Fossil
   icon: fossils/jaw
   flags: [Consumable]
+  species: Tyrunt
 
 SailFossil:
   type: Fossil
   icon: fossils/sail
   flags: [Consumable]
+  species: Amaura
 
 FossilizedBird:
   type: Fossil
   icon: fossils/bird
   flags: [Consumable]
+  pairs: { FossilizedDrake: Dracozolt, FossilizedDino: Arctozolt }
 
 FossilizedFish:
   type: Fossil
   icon: fossils/fish
   flags: [Consumable]
+  pairs: { FossilizedDrake: Dracovish, FossilizedDino: Arctovish }
 
 FossilizedDrake:
   type: Fossil

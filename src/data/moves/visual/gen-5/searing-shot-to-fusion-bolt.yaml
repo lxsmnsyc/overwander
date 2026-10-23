@@ -1,0 +1,30 @@
+# The legendary and mythical signatures
+SearingShot: { landing: Searing }
+
+# The moves whose type drew them as a flower burst
+TechnoBlast: { landing: Techno }
+
+# The legendary and mythical signatures
+RelicSong: { landing: Aria }
+
+# A gold blade for the Swords of Justice, and Keldeo's aqua one
+SecretSword: { landing: Resolute, color: '#7ad8ff' }
+
+Glaciate: { landing: Glaze }
+BoltStrike: { landing: Thunderclap }
+BlueFlare: { landing: Azure }
+
+# Attacks the rules drew as a plain hit or a plain flame
+FieryDance: { landing: Firedance }
+
+# The legendary and mythical signatures
+FreezeShock: { landing: Frostbolt, winding: none }
+IceBurn: { landing: Frostfire, winding: none }
+
+# Moves that are an earlier move's picture in all but name
+Snarl: { landing: Roar }
+
+# The legendary and mythical signatures
+VCreate: { landing: Victory }
+FusionFlare: { landing: Fusion }
+FusionBolt: { landing: Fusion }

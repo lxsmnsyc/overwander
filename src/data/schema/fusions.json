@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Fusions",
+  "type": "object",
+  "propertyNames": {
+    "$ref": "names.json#/definitions/species"
+  },
+  "additionalProperties": {
+    "type": "object",
+    "properties": {
+      "husk": {
+        "$ref": "names.json#/definitions/species",
+        "description": "The pokemon the partner is folded into"
+      },
+      "partner": {
+        "$ref": "names.json#/definitions/species",
+        "description": "The pokemon kept inside it"
+      },
+      "item": {
+        "$ref": "names.json#/definitions/item",
+        "description": "What joins and parts the pair"
+      },
+      "wears-partner": {
+        "type": "boolean",
+        "description": "Fights with the partner's abilities too"
+      }
+    },
+    "required": [
+      "husk",
+      "partner",
+      "item"
+    ],
+    "additionalProperties": false
+  }
+}

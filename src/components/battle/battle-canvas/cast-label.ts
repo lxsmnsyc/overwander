@@ -1,4 +1,4 @@
-import { castShownAs } from '../../../battle/moves/max-moves';
+import { castShownAs } from '../../../battle/gimmicks/dynamax/max-moves';
 import type Unit from '../../../battle/unit';
 import type Bakery from '../../../canvas/bakery';
 import type { QuadPoint } from '../../../canvas/gl/quad-batch';

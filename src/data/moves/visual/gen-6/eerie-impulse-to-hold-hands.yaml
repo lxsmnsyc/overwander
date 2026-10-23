@@ -1,0 +1,17 @@
+# Moves that are an earlier move's picture in all but name
+EerieImpulse: { landing: Pulse }
+VenomDrench: { landing: Toxin }
+
+# The legendary and mythical signatures
+Geomancy: { landing: Geo, winding: none }
+
+# Moves that are an earlier move's picture in all but name
+MagneticFlux: { landing: Crackle }
+HappyHour: { landing: Applause }
+
+# The terrains, which light the floor rather than land on anybody
+ElectricTerrain: { landing: Terrain }
+
+# Moves that are an earlier move's picture in all but name
+Celebrate: { landing: Applause }
+HoldHands: { landing: Hearts }

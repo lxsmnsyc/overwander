@@ -1,6 +1,6 @@
-import type BasicSprite from '../../../canvas/basic-sprite';
-import loadBasicSprite, { UI_SPRITE_ROOT } from '../../../canvas/basic-sprites';
-import { type SpriteQuad, cornersOf } from '../../../canvas/placement';
+import type BasicSprite from '../../../canvas/sprites/basic-sprite';
+import loadBasicSprite, { UI_SPRITE_ROOT } from '../../../canvas/sprites/basic-sprites';
+import { type SpriteQuad, cornersOf } from '../../../canvas/sprites/placement';
 import type { Items } from '../../../data/ids/items';
 import type { Species } from '../../../data/ids/species';
 import { getItemData } from '../../../data/items';
@@ -9,14 +9,15 @@ import { getMegaStone } from '../../../data/items/mega-stones';
 import { getFusionItem } from '../../../data/species/fusion';
 import { isMegaSpecies } from '../../../data/species/megas';
 import { getShadowlessSpecies } from '../../../data/species/true-shadow';
-import { isStandIn } from '../../../canvas/species-sprites';
+import { getZenithBase, getZenithShape } from '../../../data/species/zeniths';
+import { isStandIn } from '../../../canvas/sprites/species-sprites';
 import type { SlotBatch } from './draw';
 
 /**
- * The stone a Mega is wearing, or the item a held shape is (an orb, a
- * Plate, a Drive, the Reveal Glass), floating over it. Not every one
- * of those shapes has art of its own, so this is what tells a watcher
- * the shape has changed
+ * The stone a Mega is wearing, the shard a Zenith is, or the item a held
+ * shape is (an orb, a Plate, a Drive, the Reveal Glass), floating over it.
+ * Not every one of those shapes has art of its own, and no Zenith does,
+ * so this is what tells a watcher the shape has changed
  */
 
 /** What a Mega with no stone wears instead: Rayquaza's Key Stone */
@@ -58,6 +59,13 @@ function sheetOf(name: string): BasicSprite | null {
   return sheets.get(name) ?? null;
 }
 
+/** The shard that puts a pokemon in this Zenith, or null for anything that is not one */
+function zenithShardOf(species: Species): Items | null {
+  const base = getZenithBase(species);
+
+  return base == null ? null : (getZenithShape(base)?.shard ?? null);
+}
+
 function iconOf(worn: Species): { sheet: string; name: string } | null {
   // A true shadow's shape wears what its counterpart's does
   const species = getShadowlessSpecies(worn) ?? worn;
@@ -66,13 +74,16 @@ function iconOf(worn: Species): { sheet: string; name: string } | null {
   const item =
     SHAPE_ITEMS.get(species) ??
     (isMegaSpecies(species) ? getMegaStone(species) : null) ??
+    zenithShardOf(species) ??
     (isStandIn(species) ? getFusionItem(species) : null);
 
   if (item != null) {
-    // An item's icon is written as its sheet and its name
-    const [sheet, name] = getItemData(item).icon.split('/');
+    // An item's icon is its sheet and its name, cut at the last slash
+    // since a shard's sheet sits in a folder of its own
+    const icon = getItemData(item).icon;
+    const cut = icon.lastIndexOf('/');
 
-    return { sheet, name };
+    return { sheet: icon.slice(0, cut), name: icon.slice(cut + 1) };
   }
   return isMegaSpecies(species) ? KEY_STONE : null;
 }

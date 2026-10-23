@@ -1,6 +1,6 @@
-import { isGuarded, isShadow } from '../../../auth/caught-record';
-import { isEgg } from '../../../auth/egg';
-import { needsCare } from '../../../auth/health';
+import { isGuarded, isShadow } from '../../../model/caught-record';
+import { isEgg } from '../../../model/egg';
+import { needsCare } from '../../../model/health';
 import { visitNurse } from '../../../auth/npcs';
 import playEffect, { Effect } from '../../../components/app/sound';
 import { PickCatchForm } from '../../../components/forms/pick-catch';

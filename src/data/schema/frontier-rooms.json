@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Frontier rooms",
+  "type": "object",
+  "properties": {
+    "curtains": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "names.json#/definitions/pike-curtain"
+      },
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "$ref": "names.json#/definitions/status"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "description": "In the order the roll draws them: the status each leaves, or null"
+    },
+    "panels": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "names.json#/definitions/arcade-panel"
+      },
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "$ref": "names.json#/definitions/weather"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "description": "In the order the roll draws them: the sky each puts up, or null"
+    }
+  },
+  "required": [
+    "curtains",
+    "panels"
+  ],
+  "additionalProperties": false
+}

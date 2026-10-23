@@ -2,10 +2,10 @@ import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import type { Items } from '../../data/ids/items';
 import { Moves } from '../../data/ids/moves';
 import { USELESS_PENALTY } from '../ai/score';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import type Unit from '../unit';
-import { hasFreeItemSlot, stealableItem } from '../utils';
+import { hasFreeItemSlot, stealableItem } from '../items/held';
 import { seesFully } from '../ai/fog';
 
 /**

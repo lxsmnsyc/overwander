@@ -1,10 +1,10 @@
 import { For, type JSX, Show, createMemo, createResource, createSignal } from 'solid-js';
 import { type CaughtPokemon, getCaughtBatched, isGuarded } from '../../auth/caught';
-import { getCatchName, isShiny } from '../../auth/caught-record';
-import { isEgg } from '../../auth/egg';
+import { getCatchName, isShiny } from '../../model/caught-record';
+import { isEgg } from '../../model/egg';
 import { Genders } from '../../data/ids/species';
 import AnimatedSprite from '../sprites/AnimatedSprite';
-import { isFainted } from '../../auth/health';
+import { isFainted } from '../../model/health';
 import { TEAM_SIZE } from '../../auth/teams';
 import { type TeamPresetRecord, listTeamPresets } from '../../auth/team-presets';
 import { type FormProps, defineForm } from './form';

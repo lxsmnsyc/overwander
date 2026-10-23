@@ -13,7 +13,7 @@ import {
   GiftKind,
   type ItemGift,
   type MysteryGift,
-} from '../../auth/gift-record';
+} from '../../model/gift-record';
 import { GameDialog, useGame } from '../app/game-context';
 import { type GiftLedgerRow, listAllGifts } from '../../auth/admin';
 import { claimMysteryGift, listMysteryGifts } from '../../auth/gifts';
@@ -25,7 +25,7 @@ import { Balls } from '../../data/ids/items';
 import Natures from '../../data/ids/natures';
 import { Genders } from '../../data/ids/species';
 import { EncounterType } from '../../overworld/encounter';
-import { getMaxHealth } from '../../auth/health';
+import { getMaxHealth } from '../../model/health';
 import { getSpeciesData } from '../../data/species';
 import sayItems from '../items/say-items';
 import CatchCard from '../catches/CatchCard';

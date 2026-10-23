@@ -32,6 +32,7 @@ JohtoBurglar:
   sheets: [characters/hgss/burglar]
   trade: Burglar
 JohtoAceTrainer:
+  ace: true
   types: []
   sheets:
     - characters/hgss/ace-trainer
@@ -85,6 +86,7 @@ Camper:
   sheets:
     - characters/lgpe/camper
     - characters/lgpe/picnicker
+    - characters/frlg/camper-m
 JohtoGentleman:
   types: [Fire, Electric]
   sheets:

@@ -11,7 +11,7 @@ export default Landmark;
  * The landmarks, read out of `landmarks.yaml` and
  * `text/en/landmarks.yaml`; the numbers are `ids/landmarks.ts`
  */
-const LANDMARK = v.object({
+const LANDMARK = v.strictObject({
   weight: v.pipe(v.number(), v.minValue(0)),
   picture: v.optional(v.string()),
   taken: v.optional(v.string()),

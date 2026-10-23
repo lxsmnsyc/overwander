@@ -1,4 +1,6 @@
+import { SPRITE_ANIM_IDS } from '../ids/names';
 import { SpriteAnim } from '../ids/sprite-anims';
+import { idsOf } from '../yaml';
 
 /**
  * What a pokemon looks like it is doing while it uses a move.
@@ -114,6 +116,25 @@ export type UncommonCast = (typeof UNCOMMON_CAST)[number];
 export type CastAnimation = CommonCast | UncommonCast;
 
 export const CAST_ANIMATIONS: CastAnimation[] = [...COMMON_CAST, ...UNCOMMON_CAST];
+
+const CASTS = new Set<number>(CAST_ANIMATIONS);
+
+function isCast(anim: number): anim is CastAnimation {
+  return CASTS.has(anim);
+}
+
+/** Clips written by name in YAML, each one a clip a cast may name */
+export function readCast(names: string[], where: string): CastAnimation[] {
+  const clips: CastAnimation[] = [];
+
+  for (const anim of idsOf(SPRITE_ANIM_IDS, names, where)) {
+    if (!isCast(anim)) {
+      throw new Error(`${where}: ${anim} is not a clip a cast can play`);
+    }
+    clips.push(anim);
+  }
+  return clips;
+}
 
 const MINIMUM = new Set<SpriteAnim>(MINIMUM_CAST);
 const COMMON = new Set<SpriteAnim>(COMMON_CAST);

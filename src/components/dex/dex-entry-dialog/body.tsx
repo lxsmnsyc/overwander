@@ -7,7 +7,7 @@ import {
   listLevelMoves,
   townHours,
 } from './species-facts';
-import { EGG_HATCH_STEPS } from '../../../auth/egg';
+import { EGG_HATCH_STEPS } from '../../../model/egg';
 import type { PokedexView, SpeciesDexEntry } from '../../../auth/pokedex';
 import { BIOME_NAMES } from '../../../data/biome';
 import { STAT_ORDER } from '../../../data/constants/stats';

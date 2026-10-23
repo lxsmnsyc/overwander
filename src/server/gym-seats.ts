@@ -1,8 +1,8 @@
 import 'server-only';
-import BattleOutcome from '../auth/battle-outcome';
-import { asCaughtPokemon } from '../auth/caught-record';
-import { createCatchSnapshot } from '../auth/catch-snapshot';
-import type { CatchSnapshot } from '../auth/catch-snapshot';
+import BattleOutcome from '../model/battle-outcome';
+import { asCaughtPokemon } from '../model/caught-record';
+import { createCatchSnapshot } from '../model/catch-snapshot';
+import type { CatchSnapshot } from '../model/catch-snapshot';
 import { PVP_BATTLE_LIMITS } from '../data/constants/battle-limits';
 import {
   CHALLENGER_ALLIANCE,
@@ -16,10 +16,10 @@ import {
   asGymSeatRecord,
   seatId,
   seatStake,
-} from '../auth/gym-seat-record';
-import { getMaxHealth, isFainted } from '../auth/health';
-import { Foe, Metric } from '../auth/quest-record';
-import TEAM_SIZE from '../auth/team-size';
+} from '../model/gym-seat-record';
+import { getMaxHealth, isFainted } from '../model/health';
+import { Foe, Metric } from '../model/quest-record';
+import TEAM_SIZE from '../model/team-size';
 import Landmark from '../data/overworld/landmark';
 import getWorld, { WORLD_GENERATION } from '../overworld/current';
 import { isEggRecord, isGuardedRecord } from './catch-fields';
@@ -28,7 +28,7 @@ import { type Tx, getSql, jsonOf, newDocId, tx } from './db';
 import { isCatchLocked } from './locks';
 import { resolveSnapshot } from './overworld';
 import { bumpProgress } from './quest-progress';
-import { foughtBattle, readBattle } from './raid-io';
+import { foughtBattle, readBattle } from './raids/io';
 import { isAnyCatchQueued, publishTeamSnapshot } from './raids';
 import { recordSeenOpponents } from './pokedex';
 import { asNumber, asString } from './read';

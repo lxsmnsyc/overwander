@@ -3,14 +3,14 @@ import { Stats } from '../../data/constants/stats';
 import { Types } from '../../data/constants/types';
 import Abilities from '../../data/ids/abilities';
 import { Statuses } from '../../data/ids/status';
-import type Battle from '../core';
+import type Battle from '../battle';
 import type Unit from '../unit';
 import { ItemTypes } from '../../data/ids/items';
 import { getItemData } from '../../data/items';
 import { BattleEvents, EffectType } from '../events';
 import { MergedLifecycle } from '../lifecycle';
 import { SEALED_DURATION } from './signature/__create';
-import { hasAnyStatus } from '../utils';
+import { hasAnyStatus } from '../unit-checks';
 import {
   createAbility,
   createStatusBoostAbility,

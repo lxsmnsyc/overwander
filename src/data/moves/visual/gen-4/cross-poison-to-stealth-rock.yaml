@@ -1,0 +1,14 @@
+# Thrown and going off where it lands
+# Lobbed rather than shot flat: a bomb, a thrown item, a stone
+GunkShot: { landing: Blast, wait: { striking: Lobbed } }
+MagnetBomb: { landing: Blast, wait: { striking: Lobbed } }
+
+# Stone and earth coming down
+StoneEdge: { landing: Rocks, wait: { striking: Lobbed } }
+
+# Something turning in front of its eyes
+Captivate: { landing: Hearts }
+
+# Laid on the ground for whatever walks in next, the way Spikes is
+# Laid rather than thrown at, the way Spikes is
+StealthRock: { landing: Caltrops, wait: { striking: Lobbed } }

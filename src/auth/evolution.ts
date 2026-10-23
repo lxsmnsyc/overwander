@@ -15,9 +15,9 @@ import { requireUid } from '../server/auth';
 import check, { GAME_ID, ID, LOCALE, OFFSET, TOKEN } from '../server/validate';
 import { getCandyCount } from './candy';
 import { type CaughtPokemon, getCaught } from './caught';
-import { getStats } from './health';
+import { getStats } from '../model/health';
 import { type InventoryEntry, getInventory } from './inventory';
-import { getLocalOffset, getLocale } from './local-time';
+import { getLocalOffset, getLocale } from '../model/local-time';
 import { localNow } from './clock';
 import getIdToken from './session';
 

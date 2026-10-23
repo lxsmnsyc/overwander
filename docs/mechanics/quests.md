@@ -41,9 +41,10 @@ for every player in the world:
 | **Daily**  | Three: the day's featured family (or plain catches), a walk, and one drawn from a small pool | Every day  |
 | **Weekly** | One hunt: five catches from a single family line                                             | Every week |
 
-Both are read in **UTC**, so they turn over at the same moment everywhere rather
-than sweeping around the world with local midnight. The weekly hunt never names
-a legendary: those belong to raids.
+Both are read on **your own clock**: the daily board turns over at your local
+midnight and the weekly one at the start of your Monday. Everyone on the same
+date is shown the same quests. The weekly hunt never names a legendary: those
+belong to raids.
 
 Progress on a rotating quest is counted **from the moment the window first sees
 you**, not from your lifetime total, so a board is always something to go and do
@@ -69,13 +70,14 @@ opening with something a new trainer would do anyway:
 | **The Wide World**    | Biomes, and the portals between them          | 3     |
 | **Better Together**   | Friends, and a fair swap                      | 2     |
 
-One more chain is the **dex** itself, and there is one per region. Kanto's asks
-for 25 caught, then 75, then 150. Johto's asks for 20, then 50, then 99. Hoenn's
-asks for 27, then 68, then 133. Sinnoh's asks for 21, then 54, then 103. The
-last rung of each hangs that region's medal on the shelf along with a Master
-Ball. The last rung is every species of the region but its mythicals: Mew,
-Celebi, Jirachi, Deoxys, Darkrai, Manaphy, Shaymin and Arceus are nobody's to
-walk into.
+One more chain is the **dex** itself, and there is one per region whose dex is
+open: Kanto, Johto, Hoenn, Sinnoh and Unova so far. Kanto's asks for 25 caught,
+then 75, then 150. Johto's asks for 20, then 50, then 99. Hoenn's asks for 27,
+then 68, then 133. Sinnoh's asks for 21, then 54, then 103. Unova's asks for 31,
+then 78, then 152. The last rung of each hangs that region's medal on the shelf
+along with a Master Ball. The last rung is every species of the region but its
+mythicals: Mew, Celebi, Jirachi, Deoxys, Darkrai, Manaphy, Shaymin, Arceus,
+Victini, Keldeo, Meloetta and Genesect are nobody's to walk into.
 
 ## See also
 

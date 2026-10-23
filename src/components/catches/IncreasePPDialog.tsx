@@ -8,8 +8,8 @@ import {
   createSignal,
 } from 'solid-js';
 import { type CaughtPokemon, getCaught } from '../../auth/caught';
-import { getMovePoints, isShiny } from '../../auth/caught-record';
-import { isEgg } from '../../auth/egg';
+import { getMovePoints, isShiny } from '../../model/caught-record';
+import { isEgg } from '../../model/egg';
 import { usePPItem } from '../../auth/training';
 import type { Items } from '../../data/ids/items';
 import type { Moves } from '../../data/ids/moves';

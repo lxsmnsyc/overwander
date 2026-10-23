@@ -143,13 +143,8 @@ playwright-report
 blob-report
 .playwright
 
-# Firebase emulators: logs, the UI's downloads and any exported state
-firebase-debug.log
-firestore-debug.log
-database-debug.log
-pubsub-debug.log
-ui-debug.log
-.firebase
+# What a vitest run leaves behind
+.vitest
 
 .DS_Store
 
@@ -159,3 +154,6 @@ ui-debug.log
 
 # Database dumps scripts/backup.sh keeps on the server
 backups/
+
+# Editor workspaces
+*.code-workspace

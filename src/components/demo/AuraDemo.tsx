@@ -1,7 +1,7 @@
 import { For, type JSX, Show, createMemo, createSignal } from 'solid-js';
 import { Button, Meta, Row, Select } from '../styled';
 import AnimatedSprite from '../sprites/AnimatedSprite';
-import type { AuraKind } from '../../canvas/auras';
+import type { AuraKind } from '../../canvas/effects/auras';
 import { getRegisteredSpecies, getSpeciesData } from '../../data/species';
 import type { Species } from '../../data/ids/species';
 import { SpriteAnim } from '../../data/ids/sprite-anims';

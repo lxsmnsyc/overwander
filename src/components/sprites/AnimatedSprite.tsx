@@ -7,18 +7,18 @@ import {
   createSignal,
   onCleanup,
 } from 'solid-js';
-import { type AuraKind, paintPurifiedAura, paintShadowAura } from '../../canvas/auras';
+import { type AuraKind, paintPurifiedAura, paintShadowAura } from '../../canvas/effects/auras';
 import settings from '../app/settings';
-import type SpeciesSpriteAnimation from '../../canvas/species-sprite-animation';
-import speciesSize from '../../canvas/species-size';
-import loadSpeciesSprite from '../../canvas/species-sprites';
+import type SpeciesSpriteAnimation from '../../canvas/sprites/species-sprite-animation';
+import speciesSize from '../../canvas/sprites/species-size';
+import loadSpeciesSprite from '../../canvas/sprites/species-sprites';
 import drawSparkle, {
   SPARKLE_FRAME,
   SPARKLE_LIFE,
   SPARKLE_SPREAD,
   SPARKLE_STAR_SIZE,
-} from '../../canvas/sparkle';
-import type { Point, SpriteDirection } from '../../canvas/sprite-sheet';
+} from '../../canvas/effects/sparkle';
+import type { Point, SpriteDirection } from '../../canvas/sprites/sheet';
 import type { Species } from '../../data/ids/species';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
 
@@ -205,7 +205,7 @@ const AURA_DOWN = 2.2;
  * of one put right.
  *
  * A small canvas rather than a sheet: the painters in
- * [`auras`](../../canvas/auras.ts) are the ones the battle canvas
+ * [`auras`](../../canvas/effects/auras.ts) are the ones the battle canvas
  * runs, sized off the pokemon's ground shadow and centred on the same
  * point. It rides the shared clock the sprites tick on, and it is the
  * one canvas the interface allows itself — the effect is procedural,

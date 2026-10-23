@@ -9,7 +9,7 @@ import { Moves } from '../../src/data/ids/moves';
 import { Species } from '../../src/data/ids/species';
 import registerItems from '../../src/data/items';
 import { registerMoves } from '../../src/data/moves';
-import { getExpertHeldItems, isBattleHeldItem } from '../../src/data/items/expert-loadout';
+import { getExpertHeldItems, isBattleHeldItem } from '../../src/overworld/builds/held-items';
 import Npc, {
   EXECUTIVE_CHARSETS,
   EXECUTIVE_HONORS,
@@ -36,7 +36,7 @@ import {
   getSpeciesData,
   registerSpecies,
 } from '../../src/data/species';
-import { AWARD_NAMES } from '../../src/data/ids/awards';
+import { AWARD_NAMES } from '../../src/data/awards';
 import type Awards from '../../src/data/ids/awards';
 import {
   SYNDICATES,

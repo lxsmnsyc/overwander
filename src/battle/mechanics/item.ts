@@ -2,9 +2,9 @@ import { EventPriority } from '../../core/event-emitter';
 import { Slots } from '../../data/constants/slots';
 import { ItemFlags } from '../../data/ids/items';
 import { getItemData } from '../../data/items';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents } from '../events';
-import { countHeldItems } from '../utils';
+import { countHeldItems } from '../items/held';
 
 export default function setupItemMechanics(battle: Battle): void {
   /**

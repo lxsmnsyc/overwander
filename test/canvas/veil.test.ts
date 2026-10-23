@@ -1,9 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  VEIL_ALPHA,
-  VEIL_SHARE,
-  coverOf,
-} from '../../src/components/overworld/chunk-canvas/metrics';
+import { VEIL_ALPHA, VEIL_SHARE, coverOf } from '../../src/canvas/overworld/metrics';
 
 /**
  * What decides that something on the board is standing in the way of

@@ -76,7 +76,7 @@ diff.
 Run these before you push. CI runs the first three on every pull request.
 
 ```bash
-pnpm exec tsc --noEmit      # type-check
+pnpm typecheck              # type-check
 pnpm exec oxlint src test   # lint, never biome
 pnpm test                   # the whole unit suite
 pnpm exec oxfmt src test    # format
@@ -108,7 +108,10 @@ A fix should come with a test that fails without it.
 
 Everything in `src/data/` describes itself and registers itself. Each registry
 is a folder with a `__create.ts`, files of entries and an `index.ts` that
-registers them. Ids are `const enum`s in `src/data/ids/`.
+registers them. Species, moves, abilities, items, the per-move battle numbers
+and the spawn pools are written as YAML, with the player-facing words under
+`src/data/text/en/` (the `data-yaml` skill). Ids are `const enum`s in
+`src/data/ids/`.
 
 Every entry carries a one-line player-facing `description` that says what this
 engine does, not what the mainline does, using this engine's own numbers. A test
@@ -127,6 +130,9 @@ rather than reimplementing it.
 
 - `src/auth/` runs in the browser, and reads and writes through server functions.
 - `src/server/` is privileged. Every module opens with `import 'server-only'`.
+- `src/model/` is shared by both: the shape of each stored record, the rules
+  read off it, and the search parsers. It holds no server function and no
+  privileged import.
 
 A server function checks each of its arguments with `check` from
 `src/server/validate.ts`, then calls `requireUid(token)` before touching

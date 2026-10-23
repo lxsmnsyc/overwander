@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import Regions from '../../src/data/ids/regions';
-import { PALDEAN_FORMS, Species } from '../../src/data/ids/species';
+import { Species } from '../../src/data/ids/species';
+import { PALDEAN_FORMS } from '../../src/data/ids/forms';
 import { REGIONS, getRegionSpan, getSpeciesRegion } from '../../src/data/species/regions';
 
 describe('Paldea', () => {

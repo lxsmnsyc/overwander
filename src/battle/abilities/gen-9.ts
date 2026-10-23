@@ -9,14 +9,16 @@ import { NON_VOLATILE_STATUSES, Statuses, Terrains, Weathers } from '../../data/
 import { getMoveData } from '../../data/moves';
 import { isPseudoMove } from '../../data/moves/pseudo';
 import { findSpeciesData } from '../../data/species';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, type EffectCause, EffectType, MoveTargetType } from '../events';
 import { MergedLifecycle } from '../lifecycle';
 import { FORCED_SWITCH_MOVES } from '../moves/switch-out';
 import { setToxicSpikes, toxicLayersUnder } from '../moves/toxic-spikes';
 import type Team from '../team';
 import type Unit from '../unit';
-import { isOwnBerry, isPrimalWeather, isWeatherSunny, onUnitActs } from '../utils';
+import { isPrimalWeather, isWeatherSunny } from '../weather';
+import onUnitActs from '../acts';
+import { isOwnBerry } from '../items/held';
 import {
   createAbility,
   createAbsorbStageAbility,

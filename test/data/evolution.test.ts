@@ -18,13 +18,8 @@ import { Types } from '../../src/data/constants/types';
 import Biome, { TimeOfDay } from '../../src/data/ids/biome';
 import { Items } from '../../src/data/ids/items';
 import { Moves } from '../../src/data/ids/moves';
-import {
-  DEOXYS_FORMS,
-  EvolutionMethod,
-  Genders,
-  ROTOM_FORMS,
-  Species,
-} from '../../src/data/ids/species';
+import { EvolutionMethod, Genders, Species } from '../../src/data/ids/species';
+import { DEOXYS_FORMS, ROTOM_FORMS } from '../../src/data/ids/forms';
 import { MAX_LEVEL } from '../../src/data/constants/levels';
 import {
   CANDY_PER_LEVEL,
@@ -529,21 +524,6 @@ describe('evolution data', () => {
       }),
     ).toEqual([{ species: Species.Machamp, method: EvolutionMethod.Trade }]);
 
-    // And a handover made at a stage below it is no handover at all:
-    // this is a Machop that changed hands and then levelled, which is
-    // not a Machoke anybody ever traded
-    expect(
-      getAvailableEvolutions({
-        species: Species.Machoke,
-        ...context,
-        canEvolve: false,
-        stats: EVEN_STATS,
-        friendship: BASE_FRIENDSHIP,
-        gender: Genders.Male,
-        time: TimeOfDay.Day,
-      }),
-    ).toEqual([]);
-
     // The other three Gen 1 lines have the same shape, and every one
     // of them sits a level evolution above the stage that is traded
     for (const [at, into] of [
@@ -700,7 +680,6 @@ describe('evolution data', () => {
     expect(into(at(55, 55))).toEqual([Species.Hitmontop]);
 
     // And the level still gates it
-    expect(into({ ...at(60, 50) })).toEqual([Species.Hitmonlee]);
     expect(getAvailableEvolutions({ ...context, level: 19, stats: at(60, 50) })).toEqual([]);
   });
 

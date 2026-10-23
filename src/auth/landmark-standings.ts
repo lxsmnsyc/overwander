@@ -1,10 +1,10 @@
-import { readOnly } from '../utils/server-calls';
+import { readOnly } from './server-calls';
 import Landmark from '../data/overworld/landmark';
 import { NPC_VISIT_TAGS } from '../overworld/npcs';
 import type ChunkSnapshot from '../overworld/chunk-snapshot';
-import { getRaidKindAt, raidId } from './raid-record';
-import { seatId } from './gym-seat-record';
-import { stopIdOf } from './stop-record';
+import { getRaidKindAt, raidId } from '../model/raid-record';
+import { seatId } from '../model/gym-seat-record';
+import { stopIdOf } from '../model/stop-record';
 import getIdToken from './session';
 import { requireReader } from '../server/auth';
 import check, { STANDING_IDS, TOKEN, UID } from '../server/validate';

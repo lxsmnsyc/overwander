@@ -4,6 +4,10 @@ import type { Moves } from '../ids/moves';
 export { MULTI_HIT_MOVES };
 export type { MultiHitConfig };
 
+export function isMultiHitMove(move: Moves): boolean {
+  return MULTI_HIT_MOVES[move] != null;
+}
+
 /** What the 2-5 distribution below averages out at */
 const EXPECTED_HITS = 3.1;
 

@@ -1,11 +1,11 @@
 import 'server-only';
-import { ITEM_STACKS } from '../auth/stacks';
+import { ITEM_STACKS } from '../model/stacks';
 import { type Items, getBall } from '../data/ids/items';
 import { isEggRecord } from './catch-fields';
 import { readCaughtIn, updateCaughtIn } from './caught-io';
 import { tx } from './db';
 import { isCatchLocked } from './locks';
-import { Metric } from '../auth/quest-record';
+import { Metric } from '../model/quest-record';
 import { bumpProgress } from './quest-progress';
 import { readStackIn, writeStackIn } from './stacks';
 

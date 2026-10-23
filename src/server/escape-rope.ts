@@ -1,6 +1,6 @@
 import 'server-only';
 import { Items } from '../data/ids/items';
-import type { PositionRecord } from '../auth/position-record';
+import type { PositionRecord } from '../model/position-record';
 import { CHUNK_CELLS } from '../overworld/chunk';
 import getWorld from '../overworld/current';
 import { Depth } from '../overworld/depth';

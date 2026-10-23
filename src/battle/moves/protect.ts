@@ -2,26 +2,13 @@ import { AttackPriority, EventPriority } from '../../core/event-emitter';
 import { Stages, Stats } from '../../data/constants/stats';
 import { DamageFlags, Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
-import type Battle from '../core';
+import type Battle from '../battle';
 import { BattleEvents, EffectType, MoveTargetType } from '../events';
 import type Unit from '../unit';
+import { GUARD_MOVES } from '../../data/battle';
 
-/**
- * The guards, and what each one puts on the user. Protect and Detect
- * turn a hit away; Endure takes it and refuses to fall
- */
-export const GUARD_MOVES: { [key in Moves]?: Statuses } = {
-  [Moves.Protect]: Statuses.Protected,
-  [Moves.Detect]: Statuses.Protected,
-  [Moves.Endure]: Statuses.Enduring,
-  [Moves.SpikyShield]: Statuses.Protected,
-  [Moves.KingsShield]: Statuses.Protected,
-  [Moves.BanefulBunker]: Statuses.Protected,
-  [Moves.Obstruct]: Statuses.Protected,
-  [Moves.MaxGuard]: Statuses.Protected,
-  [Moves.SilkTrap]: Statuses.Protected,
-  [Moves.BurningBulwark]: Statuses.Protected,
-};
+/** The guards and what each puts on the user, from `src/data/battle/guards.yaml` */
+export { GUARD_MOVES };
 
 /** What a Spiky Shield costs whatever touches it, as a share of its HP */
 export const SPIKY_SHIELD_SHARE = 1 / 8;

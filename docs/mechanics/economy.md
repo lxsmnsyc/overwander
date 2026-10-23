@@ -5,21 +5,25 @@ where one player's things pass to another.
 
 ## Where gold comes from
 
-| Source                                               | Amount                       |
-| ---------------------------------------------------- | ---------------------------- |
-| Clearing a mythical raid                             | 200,000                      |
-| Clearing a legendary raid                            | 80,000                       |
-| Clearing a shadow raid                               | 35,000                       |
-| Beating a roadside trainer or a Team Rocket grunt    | 5,000 to 15,000              |
-| Beating a gym leader                                 | 20,000 to 50,000             |
-| Beating an Ace Trainer                               | 25,000 to 60,000             |
-| Beating a Rocket executive                           | 40,000 to 90,000             |
-| Beating one of the Elite Four                        | 50,000 to 110,000            |
-| Beating Giovanni                                     | 120,000 to 250,000           |
-| Beating a Champion                                   | 150,000 to 300,000           |
-| Taking a gym seat                                    | A tenth of the loser's purse |
-| Selling an auction lot                               | The winning bid              |
-| Selling to a vendor or the chef                      | The item's price, per piece  |
+| Source                                           | Amount                                       |
+| ------------------------------------------------ | -------------------------------------------- |
+| Clearing a mythical raid                         | 200,000                                      |
+| Clearing a legendary raid                        | 80,000                                       |
+| Clearing a Noble raid                            | 55,000                                       |
+| Clearing a Totem, Max, Alpha or Tera raid        | 50,000                                       |
+| Clearing a shadow raid                           | 35,000                                       |
+| Beating a roadside trainer or a syndicate grunt  | 5,000 to 15,000                              |
+| Beating a gym leader                             | 20,000 to 50,000                             |
+| Beating an Ace Trainer                           | 25,000 to 60,000                             |
+| Beating a syndicate executive                    | 40,000 to 90,000                             |
+| Beating one of the Elite Four                    | 50,000 to 110,000                            |
+| Beating a syndicate's boss                       | 120,000 to 250,000                           |
+| Beating a Champion                               | 150,000 to 300,000                           |
+| Beating a Frontier Brain                         | 200,000 to 400,000                           |
+| Beating a legend                                 | 250,000 to 500,000                           |
+| Taking a gym seat                                | A tenth of the loser's purse, at most 60,000 |
+| Selling an auction lot                           | The winning bid                              |
+| Selling to the vendor, the chef or the Geologist | The item's price, per piece                  |
 
 Everyone in a raid is paid the same amount. Everything else rolls its own purse
 per winner, so the same trainer pays two players differently.
@@ -29,16 +33,17 @@ Two items on the **buddy** raise a player's own share wherever it came from: a
 
 ## Where gold goes
 
-| Sink                    | Amount                          |
-| ----------------------- | ------------------------------- |
-| A breeder's egg         | 5,000                           |
-| A daycare lady's boost  | 2,500                           |
-| A groomer's visit       | 2,500                           |
-| A fossil off the maniac | 12,000, or 30,000 for the amber |
-| Buying from a vendor    | The item's price, per piece     |
-| An auction bid          | Whatever was named              |
+| Sink                    | Amount                              |
+| ----------------------- | ----------------------------------- |
+| A breeder's egg         | 5,000                               |
+| A daycare lady's boost  | 2,500                               |
+| A groomer's visit       | 2,500                               |
+| A fossil off the maniac | 12,000, or 30,000 for the amber     |
+| The Hyper Trainer       | 10,000 for each point a stat climbs |
+| Buying from a vendor    | The item's price, per piece         |
+| An auction bid          | Whatever was named                  |
 
-The four paid travellers set the pace as much as the price, since each helps a
+The five paid travellers set the pace as much as the price, since each helps a
 player once per three-hour window at a given cell. Gold buys convenience rather
 than volume. The maniac's fossil is the most expensive because it is the only
 purchase that buys a **pokemon**, one of the three the world does not produce at
@@ -83,19 +88,20 @@ What may be listed is deliberately narrow. One listing a day is the scarcest
 thing a player has, and anything below these bars is something a bidder could
 walk out and find for themselves.
 
-| A lot          | The bar it has to clear                                                  |
-| -------------- | ------------------------------------------------------------------------ |
-| **An item**    | The **special** band, and nothing below it                               |
-| **A pokemon**  | Perfect stats, no stats at all, shiny, or a special-tier species         |
+| A lot         | The bar it has to clear                                          |
+| ------------- | ---------------------------------------------------------------- |
+| **An item**   | The **special** band, and nothing below it                       |
+| **A pokemon** | Perfect stats, no stats at all, shiny, or a special-tier species |
 
-Four are refused even when they qualify:
+Five are refused even when they qualify:
 
-| Refused                   | Why                                                     |
-| ------------------------- | -------------------------------------------------------- |
-| One **in a fight**        | It is busy being something else                         |
-| One **in a raid lobby**   | The same                                                |
-| An **egg**                | A bidder cannot see inside one and the seller can       |
-| The **buddy**             | A lot cannot be withdrawn, so it is refused up front rather than quietly sent home |
+| Refused                 | Why                                                                                |
+| ----------------------- | ---------------------------------------------------------------------------------- |
+| One **in a fight**      | It is busy being something else                                                    |
+| One **in a raid lobby** | The same                                                                           |
+| An **egg**              | A bidder cannot see inside one and the seller can                                  |
+| A **favorite**          | A lot cannot be taken back, and the mark says it stays                             |
+| The **buddy**           | A lot cannot be withdrawn, so it is refused up front rather than quietly sent home |
 
 Nothing happens when bidding closes, because somebody must come back for the
 lot. Usually that is the winner. A lot **nobody bid on** has no winner, so the

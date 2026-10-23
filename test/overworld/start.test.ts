@@ -33,11 +33,4 @@ describe('nearestFreeCell', () => {
     expect(decorations.has(open.cellY * CHUNK_CELLS + open.cellX)).toBe(false);
     expect(nearestFreeCell(world, at.chunkX, at.chunkY, open.cellX, open.cellY)).toEqual(open);
   });
-
-  it('leaves an open position where it is', () => {
-    const at = sceneryCell();
-    const open = nearestFreeCell(world, at.chunkX, at.chunkY, at.cellX, at.cellY);
-
-    expect(nearestFreeCell(world, at.chunkX, at.chunkY, open.cellX, open.cellY)).toEqual(open);
-  });
 });

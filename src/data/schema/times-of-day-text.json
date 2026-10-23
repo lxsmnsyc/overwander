@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Time of day names",
+  "type": "object",
+  "propertyNames": {
+    "$ref": "names.json#/definitions/time-of-day"
+  },
+  "additionalProperties": {
+    "type": "string"
+  }
+}

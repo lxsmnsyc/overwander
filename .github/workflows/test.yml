@@ -31,7 +31,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - name: Type-check
-        run: pnpm exec tsc --noEmit
+        run: pnpm typecheck
 
       # Warnings are the repo's own backlog, so only errors fail this
       - name: Lint

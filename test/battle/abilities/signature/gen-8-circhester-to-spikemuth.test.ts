@@ -1,17 +1,17 @@
 // Snom through Stonjourner.
 
 import { describe, expect, it } from 'vitest';
-import type Battle from '../../../../src/battle/core';
+import type Battle from '../../../../src/battle/battle';
 import { type MoveTarget, MoveTargetType } from '../../../../src/battle/events';
 import type Unit from '../../../../src/battle/unit';
-import { unitTarget } from '../../../../src/battle/utils';
+import { unitTarget } from '../../../../src/battle/unit-checks';
 import {
   RANK_AND_FILE_HITS,
   RANK_AND_FILE_SCALE,
   SOLSTICE_DURATION,
   SOLSTICE_INTERVAL,
   SOLSTICE_SCALE,
-} from '../../../../src/battle/abilities/signature/snom-to-stonjourner';
+} from '../../../../src/battle/abilities/signature/gen-8/snom-to-stonjourner';
 import { Stages, Stats } from '../../../../src/data/constants/stats';
 import { Types } from '../../../../src/data/constants/types';
 import Abilities from '../../../../src/data/ids/abilities';

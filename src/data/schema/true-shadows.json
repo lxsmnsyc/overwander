@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "True shadows",
+  "type": "object",
+  "properties": {
+    "shadows": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "names.json#/definitions/species"
+      },
+      "additionalProperties": {
+        "$ref": "names.json#/definitions/species"
+      },
+      "description": "Each counterpart and its true shadow"
+    },
+    "shapes": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "names.json#/definitions/species"
+      },
+      "additionalProperties": {
+        "$ref": "names.json#/definitions/species"
+      },
+      "description": "Each counterpart's worn shape and the shadow's"
+    }
+  },
+  "required": [
+    "shadows",
+    "shapes"
+  ],
+  "additionalProperties": false
+}

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { AttackPriority, EventPriority } from '../../../src/core/event-emitter';
 import { BattleEvents, EffectType, MoveTargetType } from '../../../src/battle/events';
-import { castShownAs } from '../../../src/battle/moves/max-moves';
+import { castShownAs } from '../../../src/battle/gimmicks/dynamax/max-moves';
 import type Unit from '../../../src/battle/unit';
 import { Stages, Stats, StatsKind } from '../../../src/data/constants/stats';
 import { Types } from '../../../src/data/constants/types';

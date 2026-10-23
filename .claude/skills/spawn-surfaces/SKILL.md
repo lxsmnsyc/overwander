@@ -27,7 +27,7 @@ A surface with no pool of its own draws from the land pool, cut the same way: a 
 - **Water**: Water type, or the Water 1, 2 or 3 egg group. Stands only on water, unless its `habitat` is `Amphibious`, which lets it onto ground and ice as well.
 - **Ground**: everything else. Stands only on ground and ice.
 
-Two hand-picked lists in `src/data/biome/__create.ts` override the rules: `WATER_ONLY_FLIERS` (Gyarados, Mantine, Mantyke) are water rather than flying, and `DRY_LAND_SPECIES` (Skorupi, Drapion) are ground despite their egg group. Add to them rather than bending the rules.
+A species' `spawns-as` (in its `world/` YAML, read off the base form) overrides the rules: `spawns-as: water` (Gyarados, Mantine, Mantyke) is water rather than flying, and `spawns-as: ground` (Skorupi, Drapion) is ground despite its egg group. Write the field rather than bending the rules.
 
 `fitsSurface` states the placement rule. Caves cut their own pool the same way.
 

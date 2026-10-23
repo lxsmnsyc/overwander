@@ -1,0 +1,125 @@
+# The moves no registry groups, each under the role the AI casts it for.
+# They are added on top of the roles read off a move's own data. Every role
+# but Sacrifice is read for status moves only
+
+Shield:
+  - Substitute
+  - MagnetRise
+
+TeamSetup:
+  - Tailwind
+  - LuckyChant
+
+Hazard:
+  - Spikes
+  - ToxicSpikes
+  - StealthRock
+  - StickyWeb
+  # Trades the hazards between the sides, which is laying them on the other one
+  - CourtChange
+
+Field:
+  - TrickRoom
+  - WonderRoom
+  - MagicRoom
+  - Gravity
+  - MudSport
+  - WaterSport
+  - IonDeluge
+
+Status:
+  - LeechSeed
+  - Nightmare
+  - PsychoShift
+
+Disruption:
+  - Disable
+  - Encore
+  - Spite
+  - Haze
+  - TopsyTurvy
+  - Quash
+  - Electrify
+  - FairyLock
+  - Powder
+  - Soak
+  - TrickOrTreat
+  - ForestsCurse
+  - Telekinesis
+  - MagicPowder
+  - CorrosiveGas
+  - Octolock
+
+FoeDrop:
+  - Captivate
+
+Heal:
+  - Rest
+  - Wish
+  - Swallow
+  - PainSplit
+  - Refresh
+  - StrengthSap
+  - Purify
+  - LifeDew
+  - JungleHealing
+  - LunarBlessing
+  - RevivalBlessing
+
+SelfBoost:
+  - BellyDrum
+  - Stockpile
+  - Acupressure
+  - Curse
+  - Geomancy
+  - PsychUp
+  # The next move lands as a critical hit, which is what a boost is for
+  - LaserFocus
+  - StuffCheeks
+
+Support:
+  - AfterYou
+  - AllySwitch
+  - HoldHands
+  - Bestow
+  - Instruct
+  - Coaching
+  - Teatime
+  - DragonCheer
+
+Utility:
+  # Callers and copies, worth whatever they turn into
+  - Mimic
+  - MirrorMove
+  - Metronome
+  - Transform
+  - Sketch
+  - SleepTalk
+  - NaturePower
+  - Assist
+  - MeFirst
+  - Copycat
+  # Setting up the next move or answering the foe's
+  - MindReader
+  - LockOn
+  - MagicCoat
+  - Snatch
+  - DestinyBond
+  - Grudge
+  - PerishSong
+  # Changing the caster's own typing or stats
+  - Conversion
+  - Conversion2
+  - Camouflage
+  - ReflectType
+  - PowerTrick
+  - PowerShift
+  - Recycle
+  # Nothing at all
+  - Splash
+  - Celebrate
+  - HappyHour
+
+Sacrifice:
+  - FinalGambit
+  - Memento

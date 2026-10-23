@@ -1,0 +1,45 @@
+# What the ground a fight is had on counts as, for the three moves that read
+# it: Camouflage takes its type, Nature Power throws its move and Secret
+# Power leaves its status. A biome added later needs one line here
+
+# What the ground underfoot counts as
+biomes:
+  DeepOcean: Water
+  Ocean: Water
+  CoralReef: Water
+  PolarOcean: Water
+  KelpForest: Water
+  Mangrove: Water
+  Beach: Ground
+  RockyCoast: Rock
+  Swamp: Poison
+  Bog: Poison
+  TropicalRainforest: Grass
+  TropicalSeasonalForest: Grass
+  TemperateForest: Grass
+  TemperateRainforest: Grass
+  MontaneForest: Grass
+  Woodland: Grass
+  Taiga: Grass
+  Grassland: Grass
+  Shrubland: Grass
+  Savanna: Ground
+  Steppe: Ground
+  Desert: Ground
+  ColdDesert: Ground
+  Badlands: Rock
+  Mountain: Rock
+  Tundra: Ice
+  AlpineTundra: Ice
+  Glacier: Ice
+  Volcano: Fire
+
+# What each ground throws, and what it leaves behind
+effects:
+  Water: { move: Surf, status: Confused }
+  Grass: { move: RazorLeaf, status: Sleeping }
+  Ground: { move: Earthquake, status: Paralyzed }
+  Rock: { move: RockSlide, status: Flinched }
+  Ice: { move: IcyWind, status: Frozen }
+  Fire: { move: Flamethrower, status: Burned }
+  Poison: { move: Sludge, status: Poisoned }

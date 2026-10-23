@@ -20,7 +20,7 @@ import { TeamStatuses, Weathers } from '../../../data/ids/status';
  * The mainline pays a Leftovers out at the end of every turn, and the
  * closest thing to a turn a real-time fight has is a move: the payout
  * comes as its holder reaches for one. See
- * [`onUnitActs`](../utils.ts), which is where the abilities that work
+ * [`onUnitActs`](../../acts.ts), which is where the abilities that work
  * the same way — Solar Power, Rain Dish, Dry Skin — are paid from too
  */
 

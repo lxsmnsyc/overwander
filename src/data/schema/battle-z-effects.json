@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Battle: Z-effects",
+  "type": "object",
+  "propertyNames": {
+    "$ref": "names.json#/definitions/move"
+  },
+  "additionalProperties": {
+    "oneOf": [
+      {
+        "enum": [
+          "heal",
+          "clear",
+          "critical",
+          "centre",
+          "curse"
+        ]
+      },
+      {
+        "type": "object",
+        "properties": {
+          "stages": {
+            "oneOf": [
+              {
+                "const": "all"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "names.json#/definitions/stage"
+                }
+              }
+            ],
+            "description": "The stages raised, or `all` for the five stats"
+          },
+          "value": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "stages",
+          "value"
+        ],
+        "additionalProperties": false
+      }
+    ]
+  }
+}

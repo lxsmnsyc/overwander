@@ -21,7 +21,7 @@ import {
   releaseCatches,
 } from '../../../auth/caught';
 import CatchPicker, { type CatchOption, type CatchPickerProps } from '../catch-picker';
-import BattleData from '../../app/battle-data';
+import BattleData from '../../app/BattleData';
 import { useGame } from '../../app/game-context';
 import createClientSignal from '../../app/client-signal';
 import { answered } from '../../app/resource-reads';

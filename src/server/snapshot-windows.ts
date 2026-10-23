@@ -1,7 +1,7 @@
 import 'server-only';
-import type { SpawnRoll } from '../auth/snapshot-record';
+import type { SpawnRoll } from '../model/snapshot-record';
 import { WORLD_GENERATION } from '../overworld/current';
-import { asOffset, toZoneKey } from '../auth/local-time';
+import { asOffset, toZoneKey } from '../model/local-time';
 import { getSql, tx } from './db';
 import { asNumber } from './read';
 

@@ -33,7 +33,7 @@ import {
 import { Slots, getSlots } from '../../data/constants/slots';
 import { DuelBan } from '../../data/constants/duel-bans';
 import { duelRefusal } from '../../data/constants/duel-rules';
-import { LobbyRole } from '../../auth/lobby-role';
+import { LobbyRole } from '../../model/lobby-role';
 import { type Profile, getProfiles } from '../../auth/profile';
 import DuelRulesDialog from '../battle/DuelRulesDialog';
 import LobbyInviteDialog from '../battle/LobbyInviteDialog';

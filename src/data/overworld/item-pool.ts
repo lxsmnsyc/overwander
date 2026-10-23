@@ -4,12 +4,14 @@ import type { Items } from '../ids/items';
 import { ITEM_IDS } from '../ids/names';
 import { idOf } from '../yaml';
 import poolFile from './item-pool.yaml';
+import { BAIT_BERRIES, BERRY_EFFORT_DROPS, BERRY_RESIST_TYPES } from '../items/berries';
 import { DRIVES } from '../items/drives';
 import { MARKET_GEAR } from '../items/gear';
 import { ONE_SHOTS } from '../items/one-shots';
 import { ORBS } from '../items/orbs';
 import { MEGA_STONES } from '../items/mega-stones';
 import { MEMORIES } from '../items/memories';
+import { ZENITH_SHARDS } from '../items/zenith-shards';
 import { PLATES } from '../items/plates';
 import { SIGNATURE_CRYSTALS, TYPE_CRYSTALS } from '../items/z-crystals';
 import { MAX_VITAMIN_STATS, VITAMIN_STATS } from '../items/vitamins';
@@ -75,6 +77,7 @@ const ITEM_FAMILIES: Record<string, () => Iterable<Items>> = {
   plates: () => PLATES.keys(),
   drives: () => DRIVES.keys(),
   'mega-stones': () => MEGA_STONES.keys(),
+  'zenith-shards': () => ZENITH_SHARDS.keys(),
   memories: () => MEMORIES.keys(),
   'type-crystals': () => TYPE_CRYSTALS.keys(),
   'signature-crystals': () => SIGNATURE_CRYSTALS.keys(),
@@ -84,11 +87,14 @@ const ITEM_FAMILIES: Record<string, () => Iterable<Items>> = {
   mints: () => MINT_NATURES.keys(),
   'max-vitamins': () => MAX_VITAMIN_STATS.keys(),
   'tera-shards': listTypeShards,
+  bait: () => BAIT_BERRIES,
+  'effort-berries': () => BERRY_EFFORT_DROPS.keys(),
+  'resist-berries': () => BERRY_RESIST_TYPES.keys(),
 };
 
 const BAND = v.record(v.string(), v.number());
 
-const POOL = v.object({
+const POOL = v.strictObject({
   base: BAND,
   uncommon: BAND,
   scarce: BAND,
@@ -98,7 +104,7 @@ const POOL = v.object({
 });
 
 /** One band as written, in its order, each family laid down in its own */
-function readBand(written: Record<string, number>, band: string): ItemPoolEntry[] {
+function readBand(written: Record<string, number>, where: string): ItemPoolEntry[] {
   const entries: ItemPoolEntry[] = [];
 
   for (const [key, weight] of Object.entries(written)) {
@@ -107,22 +113,23 @@ function readBand(written: Record<string, number>, band: string): ItemPoolEntry[
     if (Object.hasOwn(ITEM_FAMILIES, key)) {
       entries.push(...evenlyWeighted(family(), weight));
     } else {
-      entries.push({ item: idOf(ITEM_IDS, key, `item-pool.yaml: ${band}`), weight });
+      entries.push({ item: idOf(ITEM_IDS, key, where), weight });
     }
   }
   return entries;
 }
 
-function readItemPool(): ItemRarityGroups {
-  const written = v.parse(POOL, poolFile);
+/** A pool file by band, as `item-pool.yaml` and `berry-pool.yaml` write one */
+export function readItemPool(file: unknown, name: string): ItemRarityGroups {
+  const written = v.parse(POOL, file);
 
   return {
-    base: readBand(written.base, 'base'),
-    uncommon: readBand(written.uncommon, 'uncommon'),
-    scarce: readBand(written.scarce, 'scarce'),
-    rare: readBand(written.rare, 'rare'),
-    prized: readBand(written.prized, 'prized'),
-    special: readBand(written.special, 'special'),
+    base: readBand(written.base, `${name}: base`),
+    uncommon: readBand(written.uncommon, `${name}: uncommon`),
+    scarce: readBand(written.scarce, `${name}: scarce`),
+    rare: readBand(written.rare, `${name}: rare`),
+    prized: readBand(written.prized, `${name}: prized`),
+    special: readBand(written.special, `${name}: special`),
   };
 }
 
@@ -148,7 +155,7 @@ function readItemPool(): ItemRarityGroups {
  * own ground holds, which is this pool less whatever belongs
  * somewhere else
  */
-export const ITEM_POOL: ItemRarityGroups = readItemPool();
+export const ITEM_POOL: ItemRarityGroups = readItemPool(poolFile, 'item-pool.yaml');
 
 /**
  * Which band of the pool something is drawn from

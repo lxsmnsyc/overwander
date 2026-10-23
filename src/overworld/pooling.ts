@@ -1,6 +1,6 @@
 import CellMemo from '../core/cell-memo';
 import { SURROUNDING } from './grid';
-import { levelAt } from './terrace';
+import { levelAt } from './terrain/terrace';
 import type World from './world';
 
 /**

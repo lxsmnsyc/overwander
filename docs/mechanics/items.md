@@ -4,7 +4,8 @@ What a player carries, what each kind of item does, and what a pokemon can take
 into a fight.
 
 Almost everything a player carries was dug out of the ground. The only shop is a
-[vendor who wanders](npcs.md), and he stocks balls and medicine alone. The
+[vendor who wanders](npcs.md), and each counter he sets up stocks one shelf:
+balls, medicine, vitamins, incenses, battle items or machines. The
 overworld is the game's supply of items, and raids are its supply of gold.
 [Where items come from](item-sources.md) covers the digging, and
 [Gold and auctions](economy.md) covers the money.
@@ -42,12 +43,12 @@ Every source of items rolls first for a rarity band:
 
 | Band         | Contents                                                                                                                                                                                                                                                                                                          |
 | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Base**     | Poke, Great, Premier, Heal and Luxury Balls; Pearls, Stardust, shoal salt and shells, Pretty Wings, Tiny Mushrooms, Relic Copper; Black Sludge and a Sticky Barb; the everyday medicine; Energy and Heal Powder                                                                                                   |
-| **Uncommon** | The seven utility balls; Big Pearls, Star Pieces, Big Mushrooms, Rare Bones; Super Potions and Full Heals; Heart Scales; the Everstone |
-| **Scarce**   | Ultra Balls and Kurt's seven apricorn balls; Relic Silver; Hyper Potions, Energy Roots, Max Potions, Revives and Revival Herbs; the six wings; the sixteen one-shot answers, from a Focus Sash to a Weakness Policy; the type boosters and the everyday gear, from a Muscle Band to a Scope Lens; the four weather rocks, Light Clay and a Big Root; a Shed Shell, Heavy-Duty Boots and Loaded Dice; the Macho Brace, the Soothe Bell, the Exp. Share and the Lucky Egg |
-| **Rare**     | The evolution stones, the Rotom Catalog, the Linking Cord and the items a trade or a held evolution asks for, from a King's Rock to a Razor Fang; Rare Candies, the six vitamins and PP Ups; Nuggets and the richer valuables; Full Restores and Max Revives; the species relics and the Soul Dew; the seventeen plates, the Drives and the 47 Mega Stones; the choice items, the vest and the Eviolite; the Flame, Toxic and Life Orbs; Leftovers |
-| **Prized**   | Bottle Caps, the Purifying Gem, the Utility Belt, the Ability Capsule, the Ability Patch, the Sacred Ash, the Portal Key, the Amulet Coin, the six power items, the fossils, the ruins, the 21 mints; the Meteorite, the Adamant, Lustrous and Griseous Orbs and the Gracidea; the PP Max and the Explorer Kit |
-| **Special**  | Master Ball, Shiny Charm, Golden Bottle Cap, the four raid relics (the Old Sea Map, the **GS Ball**, the **Wish Tag** and the **Aurora Ticket**), the Relic Crown                                                                                                                                                                                          |
+| **Base**     | Poke, Great, Premier, Heal and Luxury Balls; Pearls, Stardust, shoal salt and shells, Pretty Wings, Tiny Mushrooms, Relic Copper; Black Sludge and a Sticky Barb; Escape Ropes; the everyday medicine; Energy and Heal Powder; Honey                                                                                                  |
+| **Uncommon** | The seven utility balls and the Beast Ball; Big Pearls, Star Pieces, Big Mushrooms, Rare Bones; Super Potions and Full Heals; Heart Scales; the Everstone |
+| **Scarce**   | Ultra Balls and Kurt's seven apricorn balls; Relic Silver; Hyper Potions, Energy Roots, Max Potions, Revives and Revival Herbs; the six wings; the twenty-one one-shot answers, from a Focus Sash to a Weakness Policy; the type boosters and the everyday gear, from a Muscle Band to a Scope Lens; the four weather rocks, Light Clay, a Terrain Extender and a Big Root; a Shed Shell, Heavy-Duty Boots and Loaded Dice; the Macho Brace, the Soothe Bell, the Exp. Share and the Lucky Egg |
+| **Rare**     | The ten evolution stones, the Rotom Catalog, the Zygarde Cube, the Linking Cord and the items a trade or a held evolution asks for, from a King's Rock to a Razor Fang; Rare Candies, the six vitamins and PP Ups; Nuggets and the richer valuables; Full Restores and Max Revives; the species relics and the Soul Dew; the seventeen plates, the Drives, the Memories, the 35 Z-Crystals, the Dynamax Band and the 92 Mega Stones; the choice items, the vest and the Eviolite; the Flame, Toxic and Life Orbs; Leftovers; the eighteen Tera Shards |
+| **Prized**   | The 49 Zenith Shards; Bottle Caps, the Purifying Gem, the Utility Belt, the Skill Book, the Ability Capsule, the Ability Patch, the Sacred Ash, the Portal Key, the Amulet Coin, the six power items, the fossils, the ruins, the 21 mints; the items one legendary's shapes ask for, from the Meteorite, the orbs and the Gracidea to the DNA Splicers, the Reveal Glass, the Rusted Sword and Shield and Ogerpon's masks; Max Mushrooms; the PP Max and the Explorer Kit |
+| **Special**  | Master Ball, Shiny Charm, Catching Charm, Golden Bottle Cap, the twenty raid relics (the Old Sea Map, the **GS Ball** and the rest, see [Raids](raids.md#mythical-and-shadow-raids)), the six Max vitamins and the Rare Candy Max, the Relic Crown                                                                                                                                                                                          |
 
 The line between uncommon and scarce is **use**. Uncommon restocks a bag: balls,
 potions, the smaller valuables. Scarce is gear and training, the things that
@@ -73,10 +74,11 @@ one or takes one, so a scale is worth exactly one forgotten move, restored by
 the [Move Reminder](npcs.md).
 
 The **fossils** are the only items worth a pokemon. Each names one species: a
-Helix Fossil an Omanyte, a Dome Fossil a Kabuto, an Old Amber an Aerodactyl, and
-none of those three appears anywhere in the world, so reviving one at the
-[Fossil Scientist](npcs.md) is the only way to meet them. All three sit in the
-**prized** band, with the amber the thinnest slot of the three.
+Helix Fossil an Omanyte, a Dome Fossil a Kabuto, an Old Amber an Aerodactyl, a
+Sail Fossil an Amaura, and so on. None of those species appears anywhere in the
+world, so reviving one at the [Fossil Scientist](npcs.md) is the only way to
+meet them. Galar's four fossils are halves, and two make one pokemon. All of
+them sit in the **prized** band, with the amber the thinnest slot.
 
 ## Battle gear
 
@@ -103,7 +105,7 @@ all of it:
 | **Choosing**          | The three Choice items: one move, in exchange for a stat and a half                   |
 | **Standing up**       | An Assault Vest, an Eviolite, a Focus Band, a Rocky Helmet                            |
 | **Accuracy and luck** | A Wide Lens, a Zoom Lens, a Scope Lens, Bright Powder, a Quick Claw                   |
-| **Turning a fight**   | The sixteen one-shots: a Focus Sash, a Weakness Policy, an Eject Button, a White Herb |
+| **Turning a fight**   | The 21 one-shots: a Focus Sash, a Weakness Policy, an Eject Button, a White Herb      |
 | **Costing something** | A Flame Orb, a Toxic Orb, a Sticky Barb, an Iron Ball                                 |
 
 The **species relics** are the same idea for one pokemon each: a Thick Club for
@@ -115,6 +117,13 @@ The **Mega Stones** are one per Mega, and each is worth something only to the
 pokemon it names. They are buried like the plates, one thin slot each, and no
 shop stocks them. How a stone is used is in
 [Battles](battles.md#mega-evolution).
+
+The **Zenith Shards** are the same idea for a final stage with no Mega. Each is
+buried only where its own line lives, so finding one means going to that
+pokemon's ground. The **Dynamax Band** and the **Tera Orb** are held for the
+other two changes a side can make once a fight, and **Max Mushrooms** give one
+pokemon the Gigantamax Factor for good. All of these are in
+[Battles](battles.md#terastallization).
 
 The **six power items** are the odd ones out. They are worn for breeding rather
 than for a fight, and each names one stat and passes it straight to an egg.

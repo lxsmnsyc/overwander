@@ -1,0 +1,644 @@
+{
+  "compact": true,
+  "width": 15,
+  "height": 784,
+  "images": [
+    {
+      "name": "arbok.png",
+      "x": 0,
+      "y": 64,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "arcanine.png",
+      "x": 0,
+      "y": 0,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "articuno.png",
+      "x": 0,
+      "y": 720,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "butterfree.png",
+      "x": 0,
+      "y": 16,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "cloyster.png",
+      "x": 0,
+      "y": 400,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "dewgong.png",
+      "x": 0,
+      "y": 368,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "dodrio.png",
+      "x": 0,
+      "y": 352,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "dugtrio.png",
+      "x": 0,
+      "y": 208,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "electrode.png",
+      "x": 0,
+      "y": 448,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "exeggutor.png",
+      "x": 0,
+      "y": 464,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "farfetchd.png",
+      "x": 0,
+      "y": 336,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "fearow.png",
+      "x": 0,
+      "y": 48,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "flareon.png",
+      "x": 0,
+      "y": 656,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "golduck.png",
+      "x": 0,
+      "y": 240,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "golem.png",
+      "x": 0,
+      "y": 304,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "hitmonchan.png",
+      "x": 0,
+      "y": 512,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "hitmonlee.png",
+      "x": 0,
+      "y": 496,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "hypno.png",
+      "x": 0,
+      "y": 416,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "jolteon.png",
+      "x": 0,
+      "y": 640,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "jynx.png",
+      "x": 0,
+      "y": 576,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "kabutops.png",
+      "x": 0,
+      "y": 688,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "kingler.png",
+      "x": 0,
+      "y": 432,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "lapras.png",
+      "x": 0,
+      "y": 608,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "machamp.png",
+      "x": 0,
+      "y": 272,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "marowak.png",
+      "x": 0,
+      "y": 480,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "mew.png",
+      "x": 0,
+      "y": 768,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "moltres.png",
+      "x": 0,
+      "y": 752,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "mr-mime.png",
+      "x": 0,
+      "y": 560,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "muk.png",
+      "x": 0,
+      "y": 384,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "nidoking.png",
+      "x": 0,
+      "y": 112,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "nidoqueen.png",
+      "x": 0,
+      "y": 96,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "ninetales.png",
+      "x": 0,
+      "y": 128,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "omastar.png",
+      "x": 0,
+      "y": 672,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "parasect.png",
+      "x": 0,
+      "y": 176,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "persian.png",
+      "x": 0,
+      "y": 224,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "poliwrath.png",
+      "x": 0,
+      "y": 256,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "rapidash.png",
+      "x": 0,
+      "y": 320,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "raticate.png",
+      "x": 0,
+      "y": 32,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "sandslash.png",
+      "x": 0,
+      "y": 80,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "seaking.png",
+      "x": 0,
+      "y": 544,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "snorlax.png",
+      "x": 0,
+      "y": 704,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "tauros.png",
+      "x": 0,
+      "y": 592,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "tentacruel.png",
+      "x": 0,
+      "y": 288,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "vaporeon.png",
+      "x": 0,
+      "y": 624,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "venomoth.png",
+      "x": 0,
+      "y": 192,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "vileplume.png",
+      "x": 0,
+      "y": 160,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "weezing.png",
+      "x": 0,
+      "y": 528,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "wigglytuff.png",
+      "x": 0,
+      "y": 144,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "zapdos.png",
+      "x": 0,
+      "y": 736,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    }
+  ]
+}

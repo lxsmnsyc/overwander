@@ -14,6 +14,7 @@ RevelationDance:
   accuracy: 100
   pp: 15
   target: Unit
+  flags: [Dance]
 
 CoreEnforcer:
   type: Dragon
@@ -31,7 +32,7 @@ TropKick:
   accuracy: 100
   pp: 15
   target: Unit
-  flags: [Contact]
+  flags: [Contact, Kick]
 
 Instruct:
   type: Psychic

@@ -1,4 +1,4 @@
-import { asRecord, asString } from './__normalize';
+import { asRecord, asString } from '../model/normalize';
 
 /**
  * The signed-in player as the interface reads one. It is this shape

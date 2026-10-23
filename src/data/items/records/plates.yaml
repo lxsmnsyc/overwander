@@ -11,99 +11,116 @@ FistPlate:
   icon: plates/fist
   flags: [Holdable]
   sell: 2000
+  lifts: Fighting
 
 SkyPlate:
   type: Held
   icon: plates/sky
   flags: [Holdable]
   sell: 2000
+  lifts: Flying
 
 ToxicPlate:
   type: Held
   icon: plates/toxic
   flags: [Holdable]
   sell: 2000
+  lifts: Poison
 
 EarthPlate:
   type: Held
   icon: plates/earth
   flags: [Holdable]
   sell: 2000
+  lifts: Ground
 
 StonePlate:
   type: Held
   icon: plates/stone
   flags: [Holdable]
   sell: 2000
+  lifts: Rock
 
 InsectPlate:
   type: Held
   icon: plates/insect
   flags: [Holdable]
   sell: 2000
+  lifts: Bug
 
 SpookyPlate:
   type: Held
   icon: plates/spooky
   flags: [Holdable]
   sell: 2000
+  lifts: Ghost
 
 IronPlate:
   type: Held
   icon: plates/iron
   flags: [Holdable]
   sell: 2000
+  lifts: Steel
 
 FlamePlate:
   type: Held
   icon: plates/flame
   flags: [Holdable]
   sell: 2000
+  lifts: Fire
 
 SplashPlate:
   type: Held
   icon: plates/splash
   flags: [Holdable]
   sell: 2000
+  lifts: Water
 
 MeadowPlate:
   type: Held
   icon: plates/meadow
   flags: [Holdable]
   sell: 2000
+  lifts: Grass
 
 ZapPlate:
   type: Held
   icon: plates/zap
   flags: [Holdable]
   sell: 2000
+  lifts: Electric
 
 MindPlate:
   type: Held
   icon: plates/mind
   flags: [Holdable]
   sell: 2000
+  lifts: Psychic
 
 IciclePlate:
   type: Held
   icon: plates/icicle
   flags: [Holdable]
   sell: 2000
+  lifts: Ice
 
 DracoPlate:
   type: Held
   icon: plates/draco
   flags: [Holdable]
   sell: 2000
+  lifts: Dragon
 
 DreadPlate:
   type: Held
   icon: plates/dread
   flags: [Holdable]
   sell: 2000
+  lifts: Dark
 
 PixiePlate:
   type: Held
   icon: plates/pixie
   flags: [Holdable]
   sell: 2000
+  lifts: Fairy

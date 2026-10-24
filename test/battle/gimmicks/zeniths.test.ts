@@ -7,10 +7,12 @@ import type Unit from '../../../src/battle/unit';
 import { packSlots } from '../../../src/data/constants/slots';
 import { Stats } from '../../../src/data/constants/stats';
 import { Types } from '../../../src/data/constants/types';
+import { Weathers } from '../../../src/data/ids/status';
 import Abilities from '../../../src/data/ids/abilities';
 import { Items } from '../../../src/data/ids/items';
 import { Moves } from '../../../src/data/ids/moves';
 import { Species } from '../../../src/data/ids/species';
+import { MOVE_DELAY } from '../../../src/battle/mechanics/move';
 import { createBattle, createUnit } from '../harness';
 
 describe('Zeniths', () => {
@@ -53,6 +55,39 @@ describe('Zeniths', () => {
     dog.setSpecies(Species.ArcanineHisui);
 
     expect(dog.species).toBe(Species.ArcanineHisui);
+  });
+
+  it('puts a Deoxys kept in another shape at the Zenith of that shape', () => {
+    const { battle, teamA } = createBattle();
+    const deoxys = createUnit(battle, teamA);
+    deoxys.setSpecies(Species.DeoxysAttack);
+    deoxys.addItem(Items.DeoxysZenithShard);
+
+    deoxys.enter();
+
+    expect(deoxys.species).toBe(Species.DeoxysAttackZenith);
+    expect(deoxys.stats[0][Stats.Attack]).toBe(200);
+    expect(deoxys.hasAbility(Abilities.BeastBoost)).toBe(true);
+  });
+
+  it('turns a Castform Zenith with the weather, from its own snow to the sun', () => {
+    const { battle, teamA } = createBattle();
+    const cloud = createUnit(battle, teamA);
+    cloud.setSpecies(Species.Castform);
+    cloud.addAbility(Abilities.Forecast);
+    cloud.addItem(Items.CastformZenithShard);
+
+    cloud.enter();
+    // Snow Warning calls up its sky by casting the move for it, which lands a delay later
+    battle.tick(MOVE_DELAY);
+
+    expect(cloud.species).toBe(Species.CastformSnowyZenith);
+    expect([...cloud.types]).toEqual([Types.Ice]);
+
+    battle.setWeather(Weathers.Sunny);
+
+    expect(cloud.species).toBe(Species.CastformSunnyZenith);
+    expect([...cloud.types]).toEqual([Types.Fire]);
   });
 
   it('ignores a shard held by anybody else', () => {

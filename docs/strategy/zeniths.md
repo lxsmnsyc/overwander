@@ -10,7 +10,7 @@ How every generation after Kanto gets its Zeniths, region by region, after [the 
 
   | Region | Eligible | Notes |
   | --- | --- | --- |
-  | Unova | 69 | Kyurem, with a shape for Black and White Kyurem |
+  | Unova | 69 | Kyurem, with a shape for Black and White Kyurem. Born forms such as Basculin's stripes and Sawsbuck's seasons get shapes under one shard each |
   | Kalos | 27 | Zygarde, with a shape for its 10% Forme |
   | Alola | 50 | Necrozma, with a shape for Dusk Mane and Dawn Wings |
   | Galar | 46 | Calyrex, with a shape for each Rider |
@@ -28,7 +28,7 @@ How every generation after Kanto gets its Zeniths, region by region, after [the 
 - **Unown gets none.** It joins Ditto in `NO_ZENITH`, with its reason in the comment.
 - **Regional finals get one** in form slot 98 and down, in the batch of the region whose form it is: Alolan Ninetales goes in with Alola, not Kanto.
 - **No two Zeniths of one region wear the same ability.** A later region may reuse an earlier one's.
-- **Proposals come 4 pokemon at a time**, through questions. Each pokemon's abilities, ancestors' included, and its team role come first. Each question offers 3 or 4 concepts for one pokemon, each with its stat spread, worn ability and any type change, and every concept serves that role: an ability that undoes the pokemon's own best move, or a spread bent to fit the ability, is not offered. A region is built once every pokemon in it is approved.
+- **Proposals come 4 pokemon at a time**, through questions. Each pokemon's abilities, ancestors' included, and its team role come first. Each question offers 3 or 4 concepts for one pokemon, each with its stat spread, worn ability and any type change, and every concept serves that role: an ability that undoes the pokemon's own best move, or a spread bent to fit the ability, is not offered. Before a round goes out, every option is checked against the abilities the region has already approved, so nothing taken is offered again. A region is built once every pokemon in it is approved.
 
 ## The order
 

@@ -41291,6 +41291,18 @@
         "bytes": 1694
       }
     },
+    "public/sprites/ui/items/zenith/sinnoh/image.png": {
+      "digest": "b76bd8cef2894bbe",
+      "bytes": 2831,
+      "width": 32,
+      "height": 432,
+      "compact": {
+        "at": "2026-10-24T02:08:23Z",
+        "as": "already compact",
+        "was": 2831,
+        "bytes": 2831
+      }
+    },
     "public/sprites/ui/move-categories/image.png": {
       "digest": "daceb76248da2137",
       "bytes": 403,

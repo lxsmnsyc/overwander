@@ -4,13 +4,12 @@ How every generation after Kanto gets its Zeniths, region by region, after [the 
 
 ## Where things stand
 
-- **Kanto, Johto and Hoenn are done:** 49, 40 and 50 Zeniths, one for every eligible pokemon of each. Batch 0 (Zenith shapes, Unown) is in.
+- **Kanto, Johto, Hoenn and Sinnoh are done:** 49, 40, 50 and 54 Zeniths, one for every eligible pokemon of each. Batch 0 (Zenith shapes, Unown) is in.
 - **The rules are held by `test/data/zeniths.test.ts`.** A Zenith belongs to a final stage with no Mega and no other held-item shape. It fights 100 above its base stat total and wears an ability its line can never be born with. Its shard id is `2000000 + dex × 100 + 01`, and the shard is buried in the prized band only where its line is met.
-- **Left to do: about 335 Zeniths.**
+- **Left to do: about 281 Zeniths.**
 
   | Region | Eligible | Notes |
   | --- | --- | --- |
-  | Sinnoh | 54 | Rotom, with a shape for each of its five appliances |
   | Unova | 69 | Kyurem, with a shape for Black and White Kyurem |
   | Kalos | 27 | Zygarde, with a shape for its 10% Forme |
   | Alola | 50 | Necrozma, with a shape for Dusk Mane and Dawn Wings |
@@ -25,10 +24,11 @@ How every generation after Kanto gets its Zeniths, region by region, after [the 
 - **Shedinja and Smeargle get one.** Shedinja's +100 is spread over everything but its 1 HP.
 - **Shape-shifters get one**, Unown excepted: Castform, Darmanitan, Aegislash, Wishiwashi, Minior, Eternatus, Terapagos, and the other pokemon that change shape mid-fight (Mimikyu, Eiscue, Morpeko, Cramorant, Palafin, Meloetta). Each proposal says how the Zenith sits with the form change, such as whether the shape it changes into keeps the Zenith's stats.
 - **Kept shapes share one shard.** A pokemon that is put into a shape for good, as a Meteorite does to Deoxys, has one Zenith with a Zenith shape for each kept shape (`forms` in the YAML), all wearing one ability. Whichever shape holds the shard fights as that shape's Zenith. The gap test counts these pokemon, and a test holds that every kept shape has its Zenith shape. Shapes take form slot 98 and down, after any regional final.
+- **Born shapes share one shard too.** A form a pokemon is met in rather than changed into, such as a Trash Wormadam or an East Sea Gastrodon, gets a Zenith shape under the same shard, and a test holds that every same-region form has one. A true shadow gets none: nothing puts one right, and its counterpart's shard does nothing for it.
 - **Unown gets none.** It joins Ditto in `NO_ZENITH`, with its reason in the comment.
 - **Regional finals get one** in form slot 98 and down, in the batch of the region whose form it is: Alolan Ninetales goes in with Alola, not Kanto.
 - **No two Zeniths of one region wear the same ability.** A later region may reuse an earlier one's.
-- **Proposals come 4 pokemon at a time**, through questions. Each question offers 3 or 4 concepts for one pokemon, each with its stat spread, worn ability and any type change. A region is built once every pokemon in it is approved.
+- **Proposals come 4 pokemon at a time**, through questions. Each pokemon's abilities, ancestors' included, and its team role come first. Each question offers 3 or 4 concepts for one pokemon, each with its stat spread, worn ability and any type change, and every concept serves that role: an ability that undoes the pokemon's own best move, or a spread bent to fit the ability, is not offered. A region is built once every pokemon in it is approved.
 
 ## The order
 

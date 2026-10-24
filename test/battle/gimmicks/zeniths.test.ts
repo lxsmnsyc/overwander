@@ -90,6 +90,32 @@ describe('Zeniths', () => {
     expect([...cloud.types]).toEqual([Types.Fire]);
   });
 
+  it('puts a Wormadam born in another cloak at the Zenith of that cloak', () => {
+    const { battle, teamA } = createBattle();
+    const wormadam = createUnit(battle, teamA);
+    wormadam.setSpecies(Species.WormadamTrash);
+    wormadam.addItem(Items.WormadamZenithShard);
+
+    wormadam.enter();
+
+    expect(wormadam.species).toBe(Species.WormadamTrashZenith);
+    expect([...wormadam.types]).toEqual([Types.Bug, Types.Steel]);
+    expect(wormadam.hasAbility(Abilities.FurCoat)).toBe(true);
+  });
+
+  it('opens a Cherrim Zenith in the sun it brings', () => {
+    const { battle, teamA } = createBattle();
+    const cherrim = createUnit(battle, teamA);
+    cherrim.setSpecies(Species.Cherrim);
+    cherrim.addAbility(Abilities.FlowerGift);
+    cherrim.addItem(Items.CherrimZenithShard);
+
+    cherrim.enter();
+    battle.tick(MOVE_DELAY);
+
+    expect(cherrim.species).toBe(Species.CherrimSunshineZenith);
+  });
+
   it('ignores a shard held by anybody else', () => {
     const { battle, teamA } = createBattle();
     const ninetales = createUnit(battle, teamA);

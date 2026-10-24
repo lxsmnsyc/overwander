@@ -11,6 +11,7 @@ import {
   getRegisteredSpecies,
   getSpeciesAbilities,
   getSpeciesData,
+  getSpeciesForms,
   listMegas,
 } from '../../src/data/species';
 import { getMegaBase } from '../../src/data/species/megas';
@@ -20,12 +21,14 @@ import {
   ZENITH_SHAPES,
   getZenithForm,
   isLastStage,
+  isZenithSpecies,
   listKeptShapes,
   listZenithForms,
   naturalSpecies,
   zenithShardId,
 } from '../../src/data/species/zeniths';
 import { getSpeciesRegion } from '../../src/data/species/regions';
+import { isTrueShadow } from '../../src/data/species/true-shadow';
 import Regions from '../../src/data/ids/regions';
 
 function totalOf(species: Species): number {
@@ -129,6 +132,24 @@ describe('Zeniths', () => {
     }
   });
 
+  it('gives every other shape its pokemon is born or worn in a Zenith shape of its own', () => {
+    // A Trash Wormadam or an East Sea Gastrodon holds the same shard. A
+    // regional form waits for its own region's batch, and a true shadow
+    // is past putting right
+    for (const shape of ZENITH_SHAPES) {
+      for (const form of getSpeciesForms(shape.base)) {
+        if (
+          isZenithSpecies(form) ||
+          isTrueShadow(form) ||
+          getSpeciesRegion(form) !== getSpeciesRegion(shape.base)
+        ) {
+          continue;
+        }
+        expect(getZenithForm(shape.zenith, form), getSpeciesData(form).name).not.toBeNull();
+      }
+    }
+  });
+
   it('counts a pokemon that only turns into kept shapes of itself as its last stage', () => {
     expect(isLastStage(Species.Deoxys)).toBe(true);
     expect(isLastStage(Species.Rotom)).toBe(true);
@@ -142,7 +163,12 @@ describe('Zeniths', () => {
 
   it('gives every eligible pokemon of a finished region its Zenith', () => {
     // Added to as each region's batch lands
-    const finished = new Set<Regions>([Regions.Kanto, Regions.Johto, Regions.Hoenn]);
+    const finished = new Set<Regions>([
+      Regions.Kanto,
+      Regions.Johto,
+      Regions.Hoenn,
+      Regions.Sinnoh,
+    ]);
     const spoken = new Set<Species>(NO_ZENITH);
 
     for (const mega of listMegas()) {

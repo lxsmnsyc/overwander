@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { MoveTargetType } from '../../../src/battle/events';
+import { EffectType, MoveTargetType } from '../../../src/battle/events';
 import { canDynamax } from '../../../src/battle/gimmicks/dynamax';
 import { canTerastallize } from '../../../src/battle/gimmicks/terastal';
 import { zCastShownAs } from '../../../src/battle/gimmicks/z-moves';
@@ -114,6 +114,53 @@ describe('Zeniths', () => {
     battle.tick(MOVE_DELAY);
 
     expect(cherrim.species).toBe(Species.CherrimSunshineZenith);
+  });
+
+  it('turns a Darmanitan Zenith into its Zen Mode Zenith below half', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const darmanitan = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+    darmanitan.setSpecies(Species.Darmanitan);
+    darmanitan.setHealth(darmanitan.checkStat(Stats.HP, 0));
+    darmanitan.addAbility(Abilities.ZenMode);
+    darmanitan.addItem(Items.DarmanitanZenithShard);
+
+    darmanitan.enter();
+    foe.enter();
+
+    expect(darmanitan.species).toBe(Species.DarmanitanZenith);
+    expect([...darmanitan.types]).toEqual([Types.Fire, Types.Fighting]);
+
+    foe.damage({ type: EffectType.None }, darmanitan, darmanitan.health * 0.6, 0);
+
+    expect(darmanitan.species).toBe(Species.DarmanitanZenZenith);
+    expect([...darmanitan.types]).toEqual([Types.Fire, Types.Psychic]);
+    expect(darmanitan.hasAbility(Abilities.Berserk)).toBe(true);
+  });
+
+  it('puts a fused Kyurem at the Zenith of the dragon it holds', () => {
+    const { battle, teamA } = createBattle();
+    const kyurem = createUnit(battle, teamA);
+    kyurem.setSpecies(Species.KyuremBlack);
+    kyurem.addItem(Items.KyuremZenithShard);
+
+    kyurem.enter();
+
+    expect(kyurem.species).toBe(Species.KyuremBlackZenith);
+    expect(kyurem.stats[0][Stats.Attack]).toBe(200);
+    expect(kyurem.hasAbility(Abilities.IceScales)).toBe(true);
+  });
+
+  it('puts a Blue-Striped Basculin at its own Zenith, Dark like the red', () => {
+    const { battle, teamA } = createBattle();
+    const basculin = createUnit(battle, teamA);
+    basculin.setSpecies(Species.BasculinBlue);
+    basculin.addItem(Items.BasculinZenithShard);
+
+    basculin.enter();
+
+    expect(basculin.species).toBe(Species.BasculinBlueZenith);
+    expect([...basculin.types]).toEqual([Types.Water, Types.Dark]);
   });
 
   it('ignores a shard held by anybody else', () => {

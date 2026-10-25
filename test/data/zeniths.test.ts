@@ -134,13 +134,15 @@ describe('Zeniths', () => {
 
   it('gives every other shape its pokemon is born or worn in a Zenith shape of its own', () => {
     // A Trash Wormadam or an East Sea Gastrodon holds the same shard. A
-    // regional form waits for its own region's batch, and a true shadow
+    // regional form waits for its own region's batch, a form that still
+    // evolves (a White-Striped Basculin) has no Zenith, and a true shadow
     // is past putting right
     for (const shape of ZENITH_SHAPES) {
       for (const form of getSpeciesForms(shape.base)) {
         if (
           isZenithSpecies(form) ||
           isTrueShadow(form) ||
+          !isLastStage(form) ||
           getSpeciesRegion(form) !== getSpeciesRegion(shape.base)
         ) {
           continue;
@@ -168,6 +170,7 @@ describe('Zeniths', () => {
       Regions.Johto,
       Regions.Hoenn,
       Regions.Sinnoh,
+      Regions.Unova,
     ]);
     const spoken = new Set<Species>(NO_ZENITH);
 

@@ -1,0 +1,904 @@
+{
+  "compact": true,
+  "width": 32,
+  "height": 560,
+  "images": [
+    {
+      "name": "accelgor.png",
+      "x": 0,
+      "y": 400,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "alomomola.png",
+      "x": 0,
+      "y": 336,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "amoonguss.png",
+      "x": 0,
+      "y": 320,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "archeops.png",
+      "x": 15,
+      "y": 224,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "basculin.png",
+      "x": 15,
+      "y": 160,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "beartic.png",
+      "x": 0,
+      "y": 384,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "beheeyem.png",
+      "x": 0,
+      "y": 368,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "bouffalant.png",
+      "x": 0,
+      "y": 432,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "braviary.png",
+      "x": 15,
+      "y": 432,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "carracosta.png",
+      "x": 0,
+      "y": 224,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "cinccino.png",
+      "x": 0,
+      "y": 256,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "cobalion.png",
+      "x": 15,
+      "y": 480,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "cofagrigus.png",
+      "x": 15,
+      "y": 208,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "conkeldurr.png",
+      "x": 0,
+      "y": 112,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "crustle.png",
+      "x": 15,
+      "y": 192,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "cryogonal.png",
+      "x": 15,
+      "y": 384,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "darmanitan.png",
+      "x": 15,
+      "y": 176,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "druddigon.png",
+      "x": 15,
+      "y": 416,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "durant.png",
+      "x": 0,
+      "y": 464,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "emolga.png",
+      "x": 0,
+      "y": 304,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "escavalier.png",
+      "x": 15,
+      "y": 304,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "ferrothorn.png",
+      "x": 0,
+      "y": 352,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "galvantula.png",
+      "x": 15,
+      "y": 336,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "garbodor.png",
+      "x": 0,
+      "y": 240,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "gigalith.png",
+      "x": 0,
+      "y": 96,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "gothitelle.png",
+      "x": 15,
+      "y": 256,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "haxorus.png",
+      "x": 15,
+      "y": 368,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "heatmor.png",
+      "x": 15,
+      "y": 448,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "hydreigon.png",
+      "x": 15,
+      "y": 464,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "jellicent.png",
+      "x": 15,
+      "y": 320,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "keldeo.png",
+      "x": 15,
+      "y": 528,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "klinklang.png",
+      "x": 15,
+      "y": 352,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "krookodile.png",
+      "x": 0,
+      "y": 176,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "kyurem.png",
+      "x": 0,
+      "y": 528,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "leavanny.png",
+      "x": 0,
+      "y": 144,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "liepard.png",
+      "x": 15,
+      "y": 32,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "lilligant.png",
+      "x": 0,
+      "y": 160,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "mandibuzz.png",
+      "x": 0,
+      "y": 448,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "maractus.png",
+      "x": 0,
+      "y": 192,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "meloetta.png",
+      "x": 0,
+      "y": 544,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "mienshao.png",
+      "x": 0,
+      "y": 416,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "musharna.png",
+      "x": 15,
+      "y": 64,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "reshiram.png",
+      "x": 0,
+      "y": 512,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "reuniclus.png",
+      "x": 0,
+      "y": 272,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "samurott.png",
+      "x": 0,
+      "y": 16,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "sawk.png",
+      "x": 15,
+      "y": 128,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "sawsbuck.png",
+      "x": 15,
+      "y": 288,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "seismitoad.png",
+      "x": 15,
+      "y": 112,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "serperior.png",
+      "x": 15,
+      "y": 0,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "sigilyph.png",
+      "x": 0,
+      "y": 208,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "simipour.png",
+      "x": 0,
+      "y": 64,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "simisage.png",
+      "x": 0,
+      "y": 48,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "simisear.png",
+      "x": 15,
+      "y": 48,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "stoutland.png",
+      "x": 0,
+      "y": 32,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "stunfisk.png",
+      "x": 15,
+      "y": 400,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "swanna.png",
+      "x": 15,
+      "y": 272,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "swoobat.png",
+      "x": 15,
+      "y": 96,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "terrakion.png",
+      "x": 0,
+      "y": 496,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "throh.png",
+      "x": 0,
+      "y": 128,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "unfezant.png",
+      "x": 0,
+      "y": 80,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "vanilluxe.png",
+      "x": 0,
+      "y": 288,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "victini.png",
+      "x": 0,
+      "y": 0,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "virizion.png",
+      "x": 15,
+      "y": 496,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "volcarona.png",
+      "x": 0,
+      "y": 480,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "watchog.png",
+      "x": 15,
+      "y": 16,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "whimsicott.png",
+      "x": 15,
+      "y": 144,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "zebstrika.png",
+      "x": 15,
+      "y": 80,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "zekrom.png",
+      "x": 15,
+      "y": 512,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "zoroark.png",
+      "x": 15,
+      "y": 240,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    }
+  ]
+}

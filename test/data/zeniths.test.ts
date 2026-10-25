@@ -30,6 +30,7 @@ import {
 import { getSpeciesRegion } from '../../src/data/species/regions';
 import { isTrueShadow } from '../../src/data/species/true-shadow';
 import Regions from '../../src/data/ids/regions';
+import Abilities from '../../src/data/ids/abilities';
 
 function totalOf(species: Species): number {
   let total = 0;
@@ -38,6 +39,29 @@ function totalOf(species: Species): number {
     total += getSpeciesData(species).stats[stat];
   }
   return total;
+}
+
+// A shape an ability of its own turns a pokemon into mid-fight. Its
+// Mega is in reach of every pokemon that can have the ability
+const ABILITY_SHAPES = new Map<Species, Abilities>([
+  [Species.ZygardeComplete, Abilities.PowerConstruct],
+]);
+
+function addMegaBases(spoken: Set<Species>): void {
+  for (const mega of listMegas()) {
+    const base = getMegaBase(mega)!;
+    const ability = ABILITY_SHAPES.get(base);
+
+    spoken.add(base);
+    if (ability == null) {
+      continue;
+    }
+    for (const form of getSpeciesForms(getBaseFormSpecies(base))) {
+      if (getSpeciesAbilities(form).has(ability)) {
+        spoken.add(form);
+      }
+    }
+  }
 }
 
 describe('Zeniths', () => {
@@ -50,9 +74,7 @@ describe('Zeniths', () => {
     // shape a form item puts something in
     const spoken = new Set<Species>(NO_ZENITH);
 
-    for (const mega of listMegas()) {
-      spoken.add(getMegaBase(mega)!);
-    }
+    addMegaBases(spoken);
     for (const forms of FORM_ITEMS.values()) {
       for (const form of forms) {
         spoken.add(getBaseFormSpecies(form));
@@ -171,12 +193,11 @@ describe('Zeniths', () => {
       Regions.Hoenn,
       Regions.Sinnoh,
       Regions.Unova,
+      Regions.Kalos,
     ]);
     const spoken = new Set<Species>(NO_ZENITH);
 
-    for (const mega of listMegas()) {
-      spoken.add(getMegaBase(mega)!);
-    }
+    addMegaBases(spoken);
     for (const forms of FORM_ITEMS.values()) {
       for (const form of forms) {
         spoken.add(getBaseFormSpecies(form));

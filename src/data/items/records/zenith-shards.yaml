@@ -1573,3 +1573,159 @@ MeloettaZenithShard:
   icon: zenith/unova/meloetta
   flags: [Holdable]
   sell: 2000
+
+DiggersbyZenithShard:
+  type: Held
+  icon: zenith/kalos/diggersby
+  flags: [Holdable]
+  sell: 2000
+
+TalonflameZenithShard:
+  type: Held
+  icon: zenith/kalos/talonflame
+  flags: [Holdable]
+  sell: 2000
+
+VivillonZenithShard:
+  type: Held
+  icon: zenith/kalos/vivillon
+  flags: [Holdable]
+  sell: 2000
+
+FlorgesZenithShard:
+  type: Held
+  icon: zenith/kalos/florges
+  flags: [Holdable]
+  sell: 2000
+
+GogoatZenithShard:
+  type: Held
+  icon: zenith/kalos/gogoat
+  flags: [Holdable]
+  sell: 2000
+
+PangoroZenithShard:
+  type: Held
+  icon: zenith/kalos/pangoro
+  flags: [Holdable]
+  sell: 2000
+
+FurfrouZenithShard:
+  type: Held
+  icon: zenith/kalos/furfrou
+  flags: [Holdable]
+  sell: 2000
+
+AegislashZenithShard:
+  type: Held
+  icon: zenith/kalos/aegislash
+  flags: [Holdable]
+  sell: 2000
+
+AromatisseZenithShard:
+  type: Held
+  icon: zenith/kalos/aromatisse
+  flags: [Holdable]
+  sell: 2000
+
+SlurpuffZenithShard:
+  type: Held
+  icon: zenith/kalos/slurpuff
+  flags: [Holdable]
+  sell: 2000
+
+ClawitzerZenithShard:
+  type: Held
+  icon: zenith/kalos/clawitzer
+  flags: [Holdable]
+  sell: 2000
+
+HelioliskZenithShard:
+  type: Held
+  icon: zenith/kalos/heliolisk
+  flags: [Holdable]
+  sell: 2000
+
+TyrantrumZenithShard:
+  type: Held
+  icon: zenith/kalos/tyrantrum
+  flags: [Holdable]
+  sell: 2000
+
+AurorusZenithShard:
+  type: Held
+  icon: zenith/kalos/aurorus
+  flags: [Holdable]
+  sell: 2000
+
+SylveonZenithShard:
+  type: Held
+  icon: zenith/kalos/sylveon
+  flags: [Holdable]
+  sell: 2000
+
+DedenneZenithShard:
+  type: Held
+  icon: zenith/kalos/dedenne
+  flags: [Holdable]
+  sell: 2000
+
+CarbinkZenithShard:
+  type: Held
+  icon: zenith/kalos/carbink
+  flags: [Holdable]
+  sell: 2000
+
+GoodraZenithShard:
+  type: Held
+  icon: zenith/kalos/goodra
+  flags: [Holdable]
+  sell: 2000
+
+KlefkiZenithShard:
+  type: Held
+  icon: zenith/kalos/klefki
+  flags: [Holdable]
+  sell: 2000
+
+TrevenantZenithShard:
+  type: Held
+  icon: zenith/kalos/trevenant
+  flags: [Holdable]
+  sell: 2000
+
+GourgeistZenithShard:
+  type: Held
+  icon: zenith/kalos/gourgeist
+  flags: [Holdable]
+  sell: 2000
+
+AvaluggZenithShard:
+  type: Held
+  icon: zenith/kalos/avalugg
+  flags: [Holdable]
+  sell: 2000
+
+NoivernZenithShard:
+  type: Held
+  icon: zenith/kalos/noivern
+  flags: [Holdable]
+  sell: 2000
+
+XerneasZenithShard:
+  type: Held
+  icon: zenith/kalos/xerneas
+  flags: [Holdable]
+  sell: 2000
+
+YveltalZenithShard:
+  type: Held
+  icon: zenith/kalos/yveltal
+  flags: [Holdable]
+  sell: 2000
+
+VolcanionZenithShard:
+  type: Held
+  icon: zenith/kalos/volcanion
+  flags: [Holdable]
+  sell: 2000

@@ -1283,6 +1283,32 @@ TINTS.push(zenithShard('unova', 'zekrom', '#5060e1', '#fac000'));
 TINTS.push(zenithShard('unova', 'kyurem', '#5060e1', '#3dcef3'));
 TINTS.push(zenithShard('unova', 'keldeo', '#2980ef', '#ff8000'));
 TINTS.push(zenithShard('unova', 'meloetta', '#9fa19f', '#ef4179'));
+TINTS.push(zenithShard('kalos', 'diggersby', '#915121', '#ff8000'));
+TINTS.push(zenithShard('kalos', 'talonflame', '#e62829', '#81b9ef'));
+TINTS.push(zenithShard('kalos', 'vivillon', '#91a119', '#81b9ef'));
+TINTS.push(zenithShard('kalos', 'florges', '#ef70ef'));
+TINTS.push(zenithShard('kalos', 'gogoat', '#3fa129', '#915121'));
+TINTS.push(zenithShard('kalos', 'pangoro', '#ff8000', '#624d4e'));
+TINTS.push(zenithShard('kalos', 'furfrou', '#9fa19f'));
+TINTS.push(zenithShard('kalos', 'aegislash', '#60a1b8', '#704170'));
+TINTS.push(zenithShard('kalos', 'aromatisse', '#ef70ef'));
+TINTS.push(zenithShard('kalos', 'slurpuff', '#ef70ef'));
+TINTS.push(zenithShard('kalos', 'clawitzer', '#2980ef'));
+TINTS.push(zenithShard('kalos', 'heliolisk', '#fac000', '#9fa19f'));
+TINTS.push(zenithShard('kalos', 'tyrantrum', '#afa981', '#5060e1'));
+TINTS.push(zenithShard('kalos', 'aurorus', '#afa981', '#3dcef3'));
+TINTS.push(zenithShard('kalos', 'sylveon', '#ef70ef'));
+TINTS.push(zenithShard('kalos', 'dedenne', '#fac000', '#ef70ef'));
+TINTS.push(zenithShard('kalos', 'carbink', '#afa981', '#ef70ef'));
+TINTS.push(zenithShard('kalos', 'goodra', '#5060e1', '#2980ef'));
+TINTS.push(zenithShard('kalos', 'klefki', '#60a1b8', '#ef70ef'));
+TINTS.push(zenithShard('kalos', 'trevenant', '#704170', '#3fa129'));
+TINTS.push(zenithShard('kalos', 'gourgeist', '#704170', '#3fa129'));
+TINTS.push(zenithShard('kalos', 'avalugg', '#3dcef3'));
+TINTS.push(zenithShard('kalos', 'noivern', '#81b9ef', '#5060e1'));
+TINTS.push(zenithShard('kalos', 'xerneas', '#ef70ef'));
+TINTS.push(zenithShard('kalos', 'yveltal', '#624d4e', '#81b9ef'));
+TINTS.push(zenithShard('kalos', 'volcanion', '#e62829', '#2980ef'));
 
 /**
  * The marks a swap cannot make, painted on where the picture already

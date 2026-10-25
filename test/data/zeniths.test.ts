@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import registerGameData from '../../src/data';
-import { STAT_ORDER } from '../../src/data/constants/stats';
+import { STAT_ORDER, Stats } from '../../src/data/constants/stats';
 import { getBaseFormSpecies } from '../../src/data/ids/forms';
 import { Items } from '../../src/data/ids/items';
 import { Species } from '../../src/data/ids/species';
@@ -72,6 +72,19 @@ describe('Zeniths', () => {
   it('puts each exactly 100 points above its own base stat total', () => {
     for (const shape of ZENITH_SHAPES) {
       expect(totalOf(shape.zenith), shape.holder).toBe(totalOf(shape.base) + ZENITH_BONUS);
+    }
+  });
+
+  it("keeps its pokemon's HP, as a Mega does", () => {
+    for (const shape of ZENITH_SHAPES) {
+      expect(getSpeciesData(shape.zenith).stats[Stats.HP], shape.holder).toBe(
+        getSpeciesData(shape.base).stats[Stats.HP],
+      );
+    }
+    for (const form of listZenithForms()) {
+      expect(getSpeciesData(form.zenith).stats[Stats.HP], form.holder).toBe(
+        getSpeciesData(form.base).stats[Stats.HP],
+      );
     }
   });
 

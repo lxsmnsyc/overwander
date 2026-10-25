@@ -1,13 +1,13 @@
 # The Zeniths of the pokemon this stretch of the dex holds, keyed by
 # species, in the order the dex meets their pokemon. Each fights 100
-# above its pokemon's base stat total, held to by a test, and wears an
-# `ability` the line can never be born with. Everything not written
-# here is read off `base`.
+# above its pokemon's base stat total with its HP untouched, held to by
+# a test, and wears an `ability` the line can never be born with.
+# Everything not written here is read off `base`.
 
 # Its Confusion and Psybeam made a type, and a dancer of Quiver Dance
 ButterfreeZenith:
   base: Butterfree
-  stats: { HP: 70, Attack: 45, Defense: 60, SpecialAttack: 125, SpecialDefense: 100, Speed: 95 }
+  stats: { HP: 60, Attack: 45, Defense: 61, SpecialAttack: 129, SpecialDefense: 102, Speed: 98 }
   types: [Bug, Psychic]
   ability: Dancer
   shard: ButterfreeZenithShard
@@ -15,7 +15,7 @@ ButterfreeZenith:
 # The scout rat, quick to punish whatever just walked in
 RaticateZenith:
   base: Raticate
-  stats: { HP: 75, Attack: 111, Defense: 70, SpecialAttack: 50, SpecialDefense: 80, Speed: 127 }
+  stats: { HP: 55, Attack: 119, Defense: 73, SpecialAttack: 50, SpecialDefense: 82, Speed: 134 }
   types: [Normal]
   ability: Stakeout
   shard: RaticateZenithShard
@@ -23,7 +23,7 @@ RaticateZenith:
 # Drill Run's beak made a type, and luck to find the weak spot
 FearowZenith:
   base: Fearow
-  stats: { HP: 80, Attack: 120, Defense: 70, SpecialAttack: 61, SpecialDefense: 71, Speed: 140 }
+  stats: { HP: 65, Attack: 125, Defense: 71, SpecialAttack: 61, SpecialDefense: 73, Speed: 147 }
   types: [Flying, Ground]
   ability: SuperLuck
   shard: FearowZenithShard
@@ -31,7 +31,7 @@ FearowZenith:
 # The hood pattern made menace: no mercy for poisoned prey
 ArbokZenith:
   base: Arbok
-  stats: { HP: 80, Attack: 125, Defense: 79, SpecialAttack: 65, SpecialDefense: 89, Speed: 110 }
+  stats: { HP: 60, Attack: 133, Defense: 82, SpecialAttack: 65, SpecialDefense: 91, Speed: 117 }
   types: [Poison, Dark]
   ability: Merciless
   shard: ArbokZenithShard
@@ -39,7 +39,7 @@ ArbokZenith:
 # Claws hardened into steel
 SandslashZenith:
   base: Sandslash
-  stats: { HP: 85, Attack: 130, Defense: 130, SpecialAttack: 45, SpecialDefense: 75, Speed: 85 }
+  stats: { HP: 75, Attack: 134, Defense: 132, SpecialAttack: 45, SpecialDefense: 77, Speed: 87 }
   types: [Ground, Steel]
   ability: ToughClaws
   shard: SandslashZenithShard
@@ -47,7 +47,7 @@ SandslashZenith:
 # Its spines scatter where it is struck
 NidoqueenZenith:
   base: Nidoqueen
-  stats: { HP: 110, Attack: 102, Defense: 112, SpecialAttack: 85, SpecialDefense: 110, Speed: 86 }
+  stats: { HP: 90, Attack: 105, Defense: 118, SpecialAttack: 88, SpecialDefense: 116, Speed: 88 }
   types: [Poison, Ground]
   ability: ToxicDebris
   shard: NidoqueenZenithShard
@@ -55,7 +55,7 @@ NidoqueenZenith:
 # The venom of its horn
 NidokingZenith:
   base: Nidoking
-  stats: { HP: 91, Attack: 132, Defense: 87, SpecialAttack: 115, SpecialDefense: 85, Speed: 95 }
+  stats: { HP: 81, Attack: 136, Defense: 88, SpecialAttack: 118, SpecialDefense: 86, Speed: 96 }
   types: [Poison, Ground]
   ability: ToxicChain
   shard: NidokingZenithShard
@@ -63,7 +63,7 @@ NidokingZenith:
 # The thousand-year curse of its legend
 NinetalesZenith:
   base: Ninetales
-  stats: { HP: 83, Attack: 76, Defense: 85, SpecialAttack: 126, SpecialDefense: 115, Speed: 120 }
+  stats: { HP: 73, Attack: 76, Defense: 86, SpecialAttack: 131, SpecialDefense: 117, Speed: 122 }
   types: [Fire, Ghost]
   ability: CursedBody
   shard: NinetalesZenithShard
@@ -71,7 +71,7 @@ NinetalesZenith:
 # Its voice at full volume
 WigglytuffZenith:
   base: Wigglytuff
-  stats: { HP: 150, Attack: 70, Defense: 75, SpecialAttack: 115, SpecialDefense: 80, Speed: 45 }
+  stats: { HP: 140, Attack: 70, Defense: 79, SpecialAttack: 118, SpecialDefense: 83, Speed: 45 }
   types: [Normal, Fairy]
   ability: PunkRock
   shard: WigglytuffZenithShard
@@ -79,7 +79,7 @@ WigglytuffZenith:
 # Its pollen spreads when it is shaken
 VileplumeZenith:
   base: Vileplume
-  stats: { HP: 85, Attack: 80, Defense: 105, SpecialAttack: 140, SpecialDefense: 115, Speed: 65 }
+  stats: { HP: 75, Attack: 80, Defense: 107, SpecialAttack: 143, SpecialDefense: 118, Speed: 67 }
   types: [Grass, Poison]
   ability: SeedSower
   shard: VileplumeZenithShard
@@ -87,7 +87,7 @@ VileplumeZenith:
 # The mushroom has wholly taken the host
 ParasectZenith:
   base: Parasect
-  stats: { HP: 80, Attack: 125, Defense: 100, SpecialAttack: 60, SpecialDefense: 100, Speed: 40 }
+  stats: { HP: 60, Attack: 133, Defense: 105, SpecialAttack: 60, SpecialDefense: 105, Speed: 42 }
   types: [Bug, Ghost]
   ability: MyceliumMight
   shard: ParasectZenithShard
@@ -95,7 +95,7 @@ ParasectZenith:
 # Its wings beat faster as the fight goes on
 VenomothZenith:
   base: Venomoth
-  stats: { HP: 80, Attack: 65, Defense: 70, SpecialAttack: 125, SpecialDefense: 90, Speed: 120 }
+  stats: { HP: 70, Attack: 65, Defense: 71, SpecialAttack: 129, SpecialDefense: 92, Speed: 123 }
   types: [Bug, Poison]
   ability: SpeedBoost
   shard: VenomothZenithShard
@@ -103,7 +103,7 @@ VenomothZenith:
 # It digs under anything that would stop it
 DugtrioZenith:
   base: Dugtrio
-  stats: { HP: 55, Attack: 130, Defense: 70, SpecialAttack: 50, SpecialDefense: 80, Speed: 140 }
+  stats: { HP: 35, Attack: 138, Defense: 75, SpecialAttack: 50, SpecialDefense: 82, Speed: 145 }
   types: [Ground]
   ability: MoldBreaker
   shard: DugtrioZenithShard
@@ -111,7 +111,7 @@ DugtrioZenith:
 # The haughty cat's tricks
 PersianZenith:
   base: Persian
-  stats: { HP: 85, Attack: 100, Defense: 70, SpecialAttack: 80, SpecialDefense: 80, Speed: 125 }
+  stats: { HP: 65, Attack: 108, Defense: 72, SpecialAttack: 84, SpecialDefense: 84, Speed: 127 }
   types: [Normal]
   ability: Prankster
   shard: PersianZenithShard
@@ -119,7 +119,7 @@ PersianZenith:
 # The gem on its brow awake
 GolduckZenith:
   base: Golduck
-  stats: { HP: 90, Attack: 82, Defense: 88, SpecialAttack: 130, SpecialDefense: 100, Speed: 110 }
+  stats: { HP: 80, Attack: 82, Defense: 89, SpecialAttack: 134, SpecialDefense: 102, Speed: 113 }
   types: [Water, Psychic]
   ability: PsychicSurge
   shard: GolduckZenithShard
@@ -136,7 +136,7 @@ ArcanineZenith:
 # The swimmer's fists
 PoliwrathZenith:
   base: Poliwrath
-  stats: { HP: 110, Attack: 125, Defense: 105, SpecialAttack: 70, SpecialDefense: 100, Speed: 100 }
+  stats: { HP: 90, Attack: 133, Defense: 108, SpecialAttack: 70, SpecialDefense: 102, Speed: 107 }
   types: [Water, Fighting]
   ability: IronFist
   shard: PoliwrathZenithShard
@@ -144,7 +144,7 @@ PoliwrathZenith:
 # Four arms and no fear of a Ghost
 MachampZenith:
   base: Machamp
-  stats: { HP: 100, Attack: 160, Defense: 90, SpecialAttack: 65, SpecialDefense: 95, Speed: 95 }
+  stats: { HP: 90, Attack: 163, Defense: 91, SpecialAttack: 65, SpecialDefense: 96, Speed: 100 }
   types: [Fighting]
   ability: Scrappy
   shard: MachampZenithShard
@@ -152,7 +152,7 @@ MachampZenith:
 # A jellyfish regrows what it loses
 TentacruelZenith:
   base: Tentacruel
-  stats: { HP: 90, Attack: 70, Defense: 85, SpecialAttack: 110, SpecialDefense: 130, Speed: 130 }
+  stats: { HP: 80, Attack: 70, Defense: 87, SpecialAttack: 114, SpecialDefense: 131, Speed: 133 }
   types: [Water, Poison]
   ability: Regenerator
   shard: TentacruelZenithShard
@@ -160,7 +160,7 @@ TentacruelZenith:
 # A boulder that throws itself
 GolemZenith:
   base: Golem
-  stats: { HP: 100, Attack: 150, Defense: 150, SpecialAttack: 55, SpecialDefense: 85, Speed: 55 }
+  stats: { HP: 80, Attack: 158, Defense: 155, SpecialAttack: 55, SpecialDefense: 90, Speed: 57 }
   types: [Rock, Ground]
   ability: RockyPayload
   shard: GolemZenithShard
@@ -168,7 +168,7 @@ GolemZenith:
 # A mane hot enough to bring out the sun
 RapidashZenith:
   base: Rapidash
-  stats: { HP: 75, Attack: 130, Defense: 80, SpecialAttack: 85, SpecialDefense: 90, Speed: 140 }
+  stats: { HP: 65, Attack: 133, Defense: 81, SpecialAttack: 86, SpecialDefense: 91, Speed: 144 }
   types: [Fire]
   ability: Drought
   shard: RapidashZenithShard
@@ -176,7 +176,7 @@ RapidashZenith:
 # A master of its leek
 FarfetchdZenith:
   base: Farfetchd
-  stats: { HP: 72, Attack: 120, Defense: 70, SpecialAttack: 58, SpecialDefense: 72, Speed: 85 }
+  stats: { HP: 52, Attack: 128, Defense: 74, SpecialAttack: 58, SpecialDefense: 74, Speed: 91 }
   types: [Normal, Flying]
   ability: Technician
   shard: FarfetchdZenithShard
@@ -184,7 +184,7 @@ FarfetchdZenith:
 # Three heads, three chances
 DodrioZenith:
   base: Dodrio
-  stats: { HP: 80, Attack: 140, Defense: 80, SpecialAttack: 60, SpecialDefense: 70, Speed: 140 }
+  stats: { HP: 60, Attack: 148, Defense: 83, SpecialAttack: 60, SpecialDefense: 72, Speed: 147 }
   types: [Normal, Flying]
   ability: SereneGrace
   shard: DodrioZenithShard
@@ -192,7 +192,7 @@ DodrioZenith:
 # It brings the snow its body thrives in
 DewgongZenith:
   base: Dewgong
-  stats: { HP: 110, Attack: 70, Defense: 100, SpecialAttack: 100, SpecialDefense: 115, Speed: 80 }
+  stats: { HP: 90, Attack: 70, Defense: 105, SpecialAttack: 108, SpecialDefense: 120, Speed: 82 }
   types: [Water, Ice]
   ability: SnowWarning
   shard: DewgongZenithShard
@@ -200,7 +200,7 @@ DewgongZenith:
 # Sludge that clings to whatever touches it
 MukZenith:
   base: Muk
-  stats: { HP: 125, Attack: 125, Defense: 95, SpecialAttack: 65, SpecialDefense: 120, Speed: 70 }
+  stats: { HP: 105, Attack: 130, Defense: 100, SpecialAttack: 65, SpecialDefense: 125, Speed: 75 }
   types: [Poison]
   ability: Gooey
   shard: MukZenithShard
@@ -208,7 +208,7 @@ MukZenith:
 # The shell at last covers its weak side
 CloysterZenith:
   base: Cloyster
-  stats: { HP: 70, Attack: 115, Defense: 180, SpecialAttack: 85, SpecialDefense: 85, Speed: 90 }
+  stats: { HP: 50, Attack: 120, Defense: 180, SpecialAttack: 85, SpecialDefense: 95, Speed: 95 }
   types: [Water, Ice]
   ability: IceScales
   shard: CloysterZenithShard
@@ -216,7 +216,7 @@ CloysterZenith:
 # The pendulum never misses its mark
 HypnoZenith:
   base: Hypno
-  stats: { HP: 95, Attack: 73, Defense: 90, SpecialAttack: 110, SpecialDefense: 135, Speed: 80 }
+  stats: { HP: 85, Attack: 73, Defense: 92, SpecialAttack: 114, SpecialDefense: 137, Speed: 82 }
   types: [Psychic]
   ability: CompoundEyes
   shard: HypnoZenithShard
@@ -224,7 +224,7 @@ HypnoZenith:
 # One claw, all of its strength
 KinglerZenith:
   base: Kingler
-  stats: { HP: 75, Attack: 150, Defense: 120, SpecialAttack: 50, SpecialDefense: 80, Speed: 100 }
+  stats: { HP: 55, Attack: 155, Defense: 121, SpecialAttack: 50, SpecialDefense: 88, Speed: 106 }
   types: [Water]
   ability: Adaptability
   shard: KinglerZenithShard
@@ -232,7 +232,7 @@ KinglerZenith:
 # Everything it does is a discharge, Explosion included
 ElectrodeZenith:
   base: Electrode
-  stats: { HP: 80, Attack: 80, Defense: 80, SpecialAttack: 110, SpecialDefense: 90, Speed: 150 }
+  stats: { HP: 60, Attack: 88, Defense: 83, SpecialAttack: 117, SpecialDefense: 92, Speed: 150 }
   types: [Electric]
   ability: Galvanize
   shard: ElectrodeZenithShard
@@ -240,7 +240,7 @@ ElectrodeZenith:
 # A walking jungle
 ExeggutorZenith:
   base: Exeggutor
-  stats: { HP: 105, Attack: 105, Defense: 95, SpecialAttack: 150, SpecialDefense: 100, Speed: 75 }
+  stats: { HP: 95, Attack: 106, Defense: 96, SpecialAttack: 153, SpecialDefense: 103, Speed: 77 }
   types: [Grass, Psychic]
   ability: GrassySurge
   shard: ExeggutorZenithShard
@@ -248,7 +248,7 @@ ExeggutorZenith:
 # The mother's bone, and the grudge of the one who lost her
 MarowakZenith:
   base: Marowak
-  stats: { HP: 80, Attack: 110, Defense: 120, SpecialAttack: 50, SpecialDefense: 95, Speed: 70 }
+  stats: { HP: 60, Attack: 118, Defense: 122, SpecialAttack: 50, SpecialDefense: 99, Speed: 76 }
   types: [Ground, Fighting]
   ability: Mummy
   shard: MarowakZenithShard
@@ -256,7 +256,7 @@ MarowakZenith:
 # Legs that stretch past any guard
 HitmonleeZenith:
   base: Hitmonlee
-  stats: { HP: 70, Attack: 150, Defense: 68, SpecialAttack: 35, SpecialDefense: 120, Speed: 112 }
+  stats: { HP: 50, Attack: 158, Defense: 72, SpecialAttack: 35, SpecialDefense: 122, Speed: 118 }
   types: [Fighting]
   ability: LongReach
   shard: HitmonleeZenithShard
@@ -264,7 +264,7 @@ HitmonleeZenith:
 # Elemental punches thrown for power alone
 HitmonchanZenith:
   base: Hitmonchan
-  stats: { HP: 70, Attack: 135, Defense: 99, SpecialAttack: 35, SpecialDefense: 125, Speed: 91 }
+  stats: { HP: 50, Attack: 142, Defense: 104, SpecialAttack: 35, SpecialDefense: 129, Speed: 95 }
   types: [Fighting]
   ability: SheerForce
   shard: HitmonchanZenithShard
@@ -272,7 +272,7 @@ HitmonchanZenith:
 # A gas that eats through anything
 WeezingZenith:
   base: Weezing
-  stats: { HP: 85, Attack: 90, Defense: 130, SpecialAttack: 115, SpecialDefense: 100, Speed: 70 }
+  stats: { HP: 65, Attack: 90, Defense: 133, SpecialAttack: 123, SpecialDefense: 107, Speed: 72 }
   types: [Poison]
   ability: Corrosion
   shard: WeezingZenithShard
@@ -280,7 +280,7 @@ WeezingZenith:
 # The queen of the river, too dazzling to rush
 SeakingZenith:
   base: Seaking
-  stats: { HP: 90, Attack: 122, Defense: 85, SpecialAttack: 65, SpecialDefense: 90, Speed: 98 }
+  stats: { HP: 80, Attack: 126, Defense: 87, SpecialAttack: 65, SpecialDefense: 91, Speed: 101 }
   types: [Water]
   ability: Dazzling
   shard: SeakingZenithShard
@@ -288,7 +288,7 @@ SeakingZenith:
 # Invisible walls that blunt the worst of a hit
 MrMimeZenith:
   base: MrMime
-  stats: { HP: 70, Attack: 45, Defense: 95, SpecialAttack: 125, SpecialDefense: 130, Speed: 95 }
+  stats: { HP: 40, Attack: 45, Defense: 108, SpecialAttack: 136, SpecialDefense: 134, Speed: 97 }
   types: [Psychic, Fairy]
   ability: PrismArmor
   shard: MrMimeZenithShard
@@ -296,7 +296,7 @@ MrMimeZenith:
 # The ice queen, whom nobody strikes first
 JynxZenith:
   base: Jynx
-  stats: { HP: 85, Attack: 50, Defense: 65, SpecialAttack: 140, SpecialDefense: 110, Speed: 105 }
+  stats: { HP: 65, Attack: 50, Defense: 73, SpecialAttack: 146, SpecialDefense: 114, Speed: 107 }
   types: [Ice, Psychic]
   ability: QueenlyMajesty
   shard: JynxZenithShard
@@ -304,7 +304,7 @@ JynxZenith:
 # It charges head first and feels nothing
 TaurosZenith:
   base: Tauros
-  stats: { HP: 95, Attack: 130, Defense: 105, SpecialAttack: 40, SpecialDefense: 90, Speed: 130 }
+  stats: { HP: 75, Attack: 138, Defense: 107, SpecialAttack: 40, SpecialDefense: 95, Speed: 135 }
   types: [Normal]
   ability: RockHead
   shard: TaurosZenithShard
@@ -312,7 +312,7 @@ TaurosZenith:
 # It sings across the sea
 LaprasZenith:
   base: Lapras
-  stats: { HP: 150, Attack: 85, Defense: 100, SpecialAttack: 120, SpecialDefense: 115, Speed: 65 }
+  stats: { HP: 130, Attack: 85, Defense: 105, SpecialAttack: 129, SpecialDefense: 120, Speed: 66 }
   types: [Water, Ice]
   ability: LiquidVoice
   shard: LaprasZenithShard
@@ -320,7 +320,7 @@ LaprasZenith:
 # It melts into the water it fights in
 VaporeonZenith:
   base: Vaporeon
-  stats: { HP: 150, Attack: 65, Defense: 80, SpecialAttack: 140, SpecialDefense: 115, Speed: 75 }
+  stats: { HP: 130, Attack: 65, Defense: 85, SpecialAttack: 148, SpecialDefense: 120, Speed: 77 }
   types: [Water]
   ability: WaterBubble
   shard: VaporeonZenithShard
@@ -328,7 +328,7 @@ VaporeonZenith:
 # Its static charges the ground
 JolteonZenith:
   base: Jolteon
-  stats: { HP: 85, Attack: 65, Defense: 80, SpecialAttack: 140, SpecialDefense: 105, Speed: 150 }
+  stats: { HP: 65, Attack: 65, Defense: 85, SpecialAttack: 148, SpecialDefense: 107, Speed: 155 }
   types: [Electric]
   ability: ElectricSurge
   shard: JolteonZenithShard
@@ -336,7 +336,7 @@ JolteonZenith:
 # Its mane at its fullest
 FlareonZenith:
   base: Flareon
-  stats: { HP: 85, Attack: 150, Defense: 85, SpecialAttack: 95, SpecialDefense: 125, Speed: 85 }
+  stats: { HP: 65, Attack: 155, Defense: 91, SpecialAttack: 95, SpecialDefense: 129, Speed: 90 }
   types: [Fire]
   ability: Fluffy
   shard: FlareonZenithShard
@@ -344,7 +344,7 @@ FlareonZenith:
 # The ancient sea comes back with it
 OmastarZenith:
   base: Omastar
-  stats: { HP: 85, Attack: 60, Defense: 135, SpecialAttack: 140, SpecialDefense: 90, Speed: 85 }
+  stats: { HP: 70, Attack: 60, Defense: 137, SpecialAttack: 144, SpecialDefense: 94, Speed: 90 }
   types: [Rock, Water]
   ability: Drizzle
   shard: OmastarZenithShard
@@ -352,7 +352,7 @@ OmastarZenith:
 # The hunter that grows bolder with each kill
 KabutopsZenith:
   base: Kabutops
-  stats: { HP: 80, Attack: 145, Defense: 115, SpecialAttack: 65, SpecialDefense: 80, Speed: 110 }
+  stats: { HP: 60, Attack: 153, Defense: 118, SpecialAttack: 65, SpecialDefense: 82, Speed: 117 }
   types: [Rock, Water]
   ability: Moxie
   shard: KabutopsZenithShard
@@ -360,7 +360,7 @@ KabutopsZenith:
 # It fights in its sleep
 SnorlaxZenith:
   base: Snorlax
-  stats: { HP: 180, Attack: 130, Defense: 85, SpecialAttack: 65, SpecialDefense: 130, Speed: 50 }
+  stats: { HP: 160, Attack: 135, Defense: 90, SpecialAttack: 65, SpecialDefense: 135, Speed: 55 }
   types: [Normal]
   ability: Comatose
   shard: SnorlaxZenithShard
@@ -368,7 +368,7 @@ SnorlaxZenith:
 # Feathers of ice that turn the first blow
 ArticunoZenith:
   base: Articuno
-  stats: { HP: 105, Attack: 85, Defense: 115, SpecialAttack: 130, SpecialDefense: 140, Speed: 105 }
+  stats: { HP: 90, Attack: 85, Defense: 118, SpecialAttack: 136, SpecialDefense: 143, Speed: 108 }
   types: [Ice, Flying]
   ability: Multiscale
   shard: ArticunoZenithShard
@@ -376,7 +376,7 @@ ArticunoZenith:
 # Lightning made flesh
 ZapdosZenith:
   base: Zapdos
-  stats: { HP: 100, Attack: 90, Defense: 100, SpecialAttack: 150, SpecialDefense: 105, Speed: 135 }
+  stats: { HP: 90, Attack: 90, Defense: 102, SpecialAttack: 153, SpecialDefense: 106, Speed: 139 }
   types: [Electric, Flying]
   ability: Transistor
   shard: ZapdosZenithShard
@@ -384,7 +384,7 @@ ZapdosZenith:
 # The flame that never goes out
 MoltresZenith:
   base: Moltres
-  stats: { HP: 100, Attack: 100, Defense: 100, SpecialAttack: 155, SpecialDefense: 105, Speed: 120 }
+  stats: { HP: 90, Attack: 100, Defense: 101, SpecialAttack: 159, SpecialDefense: 107, Speed: 123 }
   types: [Fire, Flying]
   ability: MagicGuard
   shard: MoltresZenithShard
@@ -392,7 +392,7 @@ MoltresZenith:
 # The ancestor reads every foe
 MewZenith:
   base: Mew
-  stats: { HP: 115, Attack: 115, Defense: 115, SpecialAttack: 125, SpecialDefense: 115, Speed: 115 }
+  stats: { HP: 100, Attack: 118, Defense: 118, SpecialAttack: 129, SpecialDefense: 118, Speed: 117 }
   types: [Psychic]
   ability: Download
   shard: MewZenithShard

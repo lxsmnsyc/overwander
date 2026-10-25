@@ -307,8 +307,9 @@ none. A pokemon holding its own **Zenith Shard** takes its Zenith shape as it
 takes the field. There are 49, all of them Kanto's so far, from Zenith
 Butterfree to Zenith Mew.
 
-- A Zenith's base stats total **100 more** than its pokemon's, and some take a
-  new type: Zenith Arcanine is Fire and Dragon, Zenith Ninetales Fire and Ghost.
+- A Zenith's base stats total **100 more** than its pokemon's, none of it in
+  HP, and some take a new type: Zenith Arcanine is Fire and Dragon, Zenith
+  Ninetales Fire and Ghost.
 - It keeps its catch's ability and **wears the Zenith's own on top**, one its
   line can never be born with, such as Drought on Zenith Rapidash or Comatose on
   Zenith Snorlax.

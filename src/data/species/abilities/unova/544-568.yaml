@@ -69,6 +69,9 @@ Darumaka:
   DarmanitanGalar:
     abilities: [GorillaTactics]
     hidden: [ZenMode]
+  DarmanitanGalarZen:
+    abilities: [GorillaTactics]
+    hidden: [ZenMode]
 Maractus:
   Maractus:
     abilities: [WaterAbsorb, Chlorophyll]

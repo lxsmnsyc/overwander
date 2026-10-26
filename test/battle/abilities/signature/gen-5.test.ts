@@ -882,6 +882,27 @@ describe('the desert families', () => {
     expect(darmanitan.species).toBe(Species.Darmanitan);
     expect(darmanitan.types.has(Types.Psychic)).toBe(false);
   });
+
+  it('sits a Galarian Darmanitan down into its own Zen shape', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const darmanitan = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    darmanitan.setSpecies(Species.DarmanitanGalar);
+    darmanitan.setHealth(darmanitan.checkStat(Stats.HP, 0));
+    darmanitan.addAbility(Abilities.ZenMode);
+    darmanitan.enter();
+    foe.enter();
+
+    foe.damage({ type: EffectType.None }, darmanitan, darmanitan.health * 0.6, 0);
+
+    expect(darmanitan.species).toBe(Species.DarmanitanGalarZen);
+    expect(darmanitan.types.has(Types.Fire)).toBe(true);
+
+    darmanitan.heal({ type: EffectType.None }, darmanitan, darmanitan.checkStat(Stats.HP, 0), 0);
+
+    expect(darmanitan.species).toBe(Species.DarmanitanGalar);
+  });
 });
 
 describe('the old city and the back alleys', () => {

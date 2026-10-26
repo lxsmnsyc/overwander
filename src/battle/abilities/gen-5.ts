@@ -26,12 +26,14 @@ export const ZEN_MODE_THRESHOLD = 1 / 2;
 
 /**
  * Each Darmanitan's standing shape and the Zen shape it sits down
- * into, by either of the two. Galarian Darmanitan has a Zen shape of
- * its own but no sprite for it yet, so it is left out until it does
+ * into, by either of the two
  */
 const ZEN_SHAPES = new Map<Species, { standing: Species; zen: Species }>();
 
-for (const shapes of [{ standing: Species.Darmanitan, zen: Species.DarmanitanZen }]) {
+for (const shapes of [
+  { standing: Species.Darmanitan, zen: Species.DarmanitanZen },
+  { standing: Species.DarmanitanGalar, zen: Species.DarmanitanGalarZen },
+]) {
   ZEN_SHAPES.set(shapes.standing, shapes);
   ZEN_SHAPES.set(shapes.zen, shapes);
 }

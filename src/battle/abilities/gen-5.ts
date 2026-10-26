@@ -20,6 +20,7 @@ import {
   getAbilityHolders,
 } from './__create';
 import { FOLDED_CREEDS, HUSK_CREED } from './signature/gen-5/tao-trio';
+import { naturalSpecies } from '../../data/species/zeniths';
 
 /** How far a Darmanitan has to fall before it sits down */
 export const ZEN_MODE_THRESHOLD = 1 / 2;
@@ -164,7 +165,7 @@ const setupAbilities = [
    */
   createAbility(Abilities.ZenMode, (battle) => {
     function settle(unit: Unit): void {
-      const shapes = ZEN_SHAPES.get(unit.species);
+      const shapes = ZEN_SHAPES.get(naturalSpecies(unit.species));
 
       if (!unit.alive || !unit.hasAbility(Abilities.ZenMode) || shapes == null) {
         return;
@@ -173,7 +174,7 @@ const setupAbilities = [
       const low = unit.health < unit.checkStat(Stats.HP, 0) * ZEN_MODE_THRESHOLD;
       const shape = low ? shapes.zen : shapes.standing;
 
-      if (unit.species === shape) {
+      if (naturalSpecies(unit.species) === shape) {
         return;
       }
       unit.triggerAbility(Abilities.ZenMode);

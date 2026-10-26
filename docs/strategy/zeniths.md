@@ -4,13 +4,12 @@ How every generation after Kanto gets its Zeniths, region by region, after [the 
 
 ## Where things stand
 
-- **Kanto is done:** 49 Zeniths, one for every eligible Kanto pokemon.
-- **The rules are held by `test/data/zeniths.test.ts`.** A Zenith belongs to a final stage with no Mega and no other held-item shape. It fights 100 above its base stat total and wears an ability its line can never be born with. Its shard id is `2000000 + dex × 100 + 01`, and the shard is buried in the prized band only where its line is met.
-- **Left to do: about 420 Zeniths.**
+- **Kanto and Johto are done:** 49 and 40 Zeniths, one for every eligible pokemon of each. Batch 0 (Zenith shapes, Unown) is in.
+- **The rules are held by `test/data/zeniths.test.ts`.** A Zenith belongs to a final stage with no Mega and no other held-item shape. It fights 100 above its base stat total, none of it in HP, and wears an ability its line can never be born with. Its shard id is `2000000 + dex × 100 + 01`, and the shard is buried in the prized band only where its line is met.
+- **Left to do: about 380 Zeniths.**
 
   | Region | Eligible | Notes |
   | --- | --- | --- |
-  | Johto | 40 | Unown is out |
   | Hoenn | 49 | |
   | Sinnoh | 53 | |
   | Unova | 68 | |
@@ -24,10 +23,11 @@ How every generation after Kanto gets its Zeniths, region by region, after [the 
 ## Decided
 
 - **Legendaries and mythicals get one**, as Kanto's birds and Mew did.
-- **Shedinja and Smeargle get one.** Shedinja's +100 is spread over everything but its 1 HP.
+- **Shedinja and Smeargle get one.** Shedinja keeps its 1 HP, as every Zenith keeps its HP.
 - **Shape-shifters get one**, Unown excepted: Castform, Darmanitan, Aegislash, Wishiwashi, Minior, Eternatus, Terapagos, and the other pokemon that change shape mid-fight (Mimikyu, Eiscue, Morpeko, Cramorant, Palafin, Meloetta). Each proposal says how the Zenith sits with the form change, such as whether the shape it changes into keeps the Zenith's stats.
 - **Unown gets none.** It joins Ditto in `NO_ZENITH`, with its reason in the comment.
 - **Regional finals get one** in form slot 98 and down, in the batch of the region whose form it is: Alolan Ninetales goes in with Alola, not Kanto.
+- **No two Zeniths of one region wear the same ability.** A later region may reuse an earlier one's.
 - **Proposals come 4 pokemon at a time**, through questions. Each question offers 3 or 4 concepts for one pokemon, each with its stat spread, worn ability and any type change. A region is built once every pokemon in it is approved.
 
 ## The order
@@ -49,7 +49,7 @@ How every generation after Kanto gets its Zeniths, region by region, after [the 
 
 1. **Branch** `zenith-<region>`, stacked on the previous batch, linked with `gh stack link`.
 2. **Propose, 4 at a time.** For each pokemon, 3 or 4 concepts:
-   - a stat spread exactly 100 above its base total;
+   - a stat spread exactly 100 above its base total, with HP left as it is;
    - a worn ability from any generation that its line can never be born with, built already or built in this batch (`ability-pools`);
    - a type change only where its moves or its look already argue for one, as Butterfree's Psychic does.
    The comment above each entry in the YAML says the reason in one line, as Kanto's do.

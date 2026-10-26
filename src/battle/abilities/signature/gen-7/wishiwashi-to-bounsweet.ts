@@ -11,6 +11,7 @@ import { MergedLifecycle } from '../../../lifecycle';
 import type Unit from '../../../unit';
 import onUnitActs from '../../../acts';
 import { createAbility, getAbilityHolders } from '../../__create';
+import { naturalSpecies } from '../../../../data/species/zeniths';
 
 /** What a lone Wishiwashi heals each time it acts */
 export const REGROUP_HEAL_FRACTION = 1 / 8;
@@ -58,7 +59,7 @@ const setupAbilities = [
       new MergedLifecycle([
         ...onUnitActs(battle, (unit) => {
           if (
-            unit.species !== Species.Wishiwashi ||
+            naturalSpecies(unit.species) !== Species.Wishiwashi ||
             !unit.hasAbility(Abilities.Regroup) ||
             unit.health >= unit.checkStat(Stats.HP, 0)
           ) {

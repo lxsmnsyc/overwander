@@ -88,9 +88,15 @@ export { getMegaBase, isMegaSpecies, listMegas } from './megas';
 export {
   ZENITH_BONUS,
   getZenithBase,
+  getZenithForm,
+  getZenithOwner,
   getZenithShape,
   isZenithSpecies,
+  isLastStage,
+  listKeptShapes,
+  listZenithForms,
   listZeniths,
+  naturalSpecies,
 } from './zeniths';
 
 export function registerSpecies(): void {

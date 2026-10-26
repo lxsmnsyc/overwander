@@ -41255,6 +41255,18 @@
         "bytes": 4726
       }
     },
+    "public/sprites/ui/items/zenith/johto/image.png": {
+      "digest": "1be36dd823f0e46d",
+      "bytes": 2227,
+      "width": 32,
+      "height": 320,
+      "compact": {
+        "at": "2026-10-23T12:17:48Z",
+        "as": "already compact",
+        "was": 2227,
+        "bytes": 2227
+      }
+    },
     "public/sprites/ui/items/zenith/kanto/image.png": {
       "digest": "96507682bd41aa7b",
       "bytes": 1694,

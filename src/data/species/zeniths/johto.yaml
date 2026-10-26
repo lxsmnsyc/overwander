@@ -1,0 +1,325 @@
+# The Zeniths of the pokemon this stretch of the dex holds, keyed by
+# species, in the order the dex meets their pokemon. Each fights 100
+# above its pokemon's base stat total with its HP untouched, held to by
+# a test, and wears an `ability` the line can never be born with.
+# Everything not written here is read off `base`.
+
+# Its flames burn hotter than any Blaze could make them
+TyphlosionZenith:
+  base: Typhlosion
+  stats: { HP: 78, Attack: 84, Defense: 78, SpecialAttack: 156, SpecialDefense: 103, Speed: 135 }
+  types: [Fire]
+  ability: Adaptability
+  shard: TyphlosionZenithShard
+
+# The lookout fights with tooth and claw
+FurretZenith:
+  base: Furret
+  stats: { HP: 85, Attack: 116, Defense: 74, SpecialAttack: 45, SpecialDefense: 65, Speed: 130 }
+  types: [Normal]
+  ability: ToughClaws
+  shard: FurretZenithShard
+
+# The seer of the night, its Extrasensory turned into a type
+NoctowlZenith:
+  base: Noctowl
+  stats: { HP: 100, Attack: 50, Defense: 61, SpecialAttack: 131, SpecialDefense: 118, Speed: 92 }
+  types: [Psychic, Flying]
+  ability: MagicBounce
+  shard: NoctowlZenithShard
+
+# Its little fists land like falling stars
+LedianZenith:
+  base: Ledian
+  stats: { HP: 55, Attack: 102, Defense: 61, SpecialAttack: 55, SpecialDefense: 110, Speed: 107 }
+  types: [Bug, Fighting]
+  ability: Technician
+  shard: LedianZenithShard
+
+# The web laid before anybody moves
+AriadosZenith:
+  base: Ariados
+  stats: { HP: 70, Attack: 90, Defense: 95, SpecialAttack: 60, SpecialDefense: 108, Speed: 77 }
+  types: [Bug, Dark]
+  ability: Prankster
+  shard: AriadosZenithShard
+
+# The bat that bites
+CrobatZenith:
+  base: Crobat
+  stats: { HP: 85, Attack: 129, Defense: 91, SpecialAttack: 70, SpecialDefense: 91, Speed: 169 }
+  types: [Poison, Dark]
+  ability: StrongJaw
+  shard: CrobatZenithShard
+
+# Its lure lights the whole field
+LanturnZenith:
+  base: Lanturn
+  stats: { HP: 125, Attack: 58, Defense: 69, SpecialAttack: 121, SpecialDefense: 87, Speed: 100 }
+  types: [Water, Electric]
+  ability: ElectricSurge
+  shard: LanturnZenithShard
+
+# It has seen every blow coming
+XatuZenith:
+  base: Xatu
+  stats: { HP: 65, Attack: 75, Defense: 89, SpecialAttack: 120, SpecialDefense: 101, Speed: 120 }
+  types: [Psychic, Flying]
+  ability: MagicGuard
+  shard: XatuZenithShard
+
+# The flower that dances whatever dance it sees
+BellossomZenith:
+  base: Bellossom
+  stats: { HP: 75, Attack: 80, Defense: 95, SpecialAttack: 123, SpecialDefense: 122, Speed: 95 }
+  types: [Grass, Fairy]
+  ability: Dancer
+  shard: BellossomZenithShard
+
+# All its strength, none of it wasted
+AzumarillZenith:
+  base: Azumarill
+  stats: { HP: 100, Attack: 72, Defense: 91, SpecialAttack: 71, SpecialDefense: 91, Speed: 95 }
+  types: [Water, Fairy]
+  ability: SheerForce
+  shard: AzumarillZenithShard
+
+# The mimic made real: a tree after all
+SudowoodoZenith:
+  base: Sudowoodo
+  stats: { HP: 70, Attack: 120, Defense: 125, SpecialAttack: 30, SpecialDefense: 85, Speed: 80 }
+  types: [Rock, Grass]
+  ability: Illusion
+  shard: SudowoodoZenithShard
+
+# The king whose rain washes it clean
+PolitoedZenith:
+  base: Politoed
+  stats: { HP: 90, Attack: 75, Defense: 100, SpecialAttack: 103, SpecialDefense: 125, Speed: 107 }
+  types: [Water]
+  ability: Hydration
+  shard: PolitoedZenithShard
+
+# Carried on every wind
+JumpluffZenith:
+  base: Jumpluff
+  stats: { HP: 75, Attack: 88, Defense: 81, SpecialAttack: 55, SpecialDefense: 106, Speed: 155 }
+  types: [Grass, Flying]
+  ability: WindRider
+  shard: JumpluffZenithShard
+
+# The flower that brings its own sun
+SunfloraZenith:
+  base: Sunflora
+  stats: { HP: 75, Attack: 75, Defense: 75, SpecialAttack: 135, SpecialDefense: 95, Speed: 70 }
+  types: [Grass, Fire]
+  ability: Drought
+  shard: SunfloraZenithShard
+
+# Unbothered, and back for more every time
+QuagsireZenith:
+  base: Quagsire
+  stats: { HP: 95, Attack: 85, Defense: 114, SpecialAttack: 65, SpecialDefense: 93, Speed: 78 }
+  types: [Water, Ground]
+  ability: Regenerator
+  shard: QuagsireZenithShard
+
+# The sun is where its power comes from
+EspeonZenith:
+  base: Espeon
+  stats: { HP: 65, Attack: 65, Defense: 71, SpecialAttack: 152, SpecialDefense: 112, Speed: 160 }
+  types: [Psychic]
+  ability: SolarPower
+  shard: EspeonZenithShard
+
+# The moon does not care how strong you have become
+UmbreonZenith:
+  base: Umbreon
+  stats: { HP: 95, Attack: 65, Defense: 146, SpecialAttack: 60, SpecialDefense: 158, Speed: 101 }
+  types: [Dark]
+  ability: Unaware
+  shard: UmbreonZenithShard
+
+# The crowned sage bends the field to its thinking
+SlowkingZenith:
+  base: Slowking
+  stats: { HP: 95, Attack: 75, Defense: 91, SpecialAttack: 133, SpecialDefense: 121, Speed: 75 }
+  types: [Water, Psychic]
+  ability: PsychicSurge
+  shard: SlowkingZenithShard
+
+# Whatever lands on it, it remembers
+WobbuffetZenith:
+  base: Wobbuffet
+  stats: { HP: 190, Attack: 33, Defense: 82, SpecialAttack: 33, SpecialDefense: 87, Speed: 80 }
+  types: [Psychic]
+  ability: CursedBody
+  shard: WobbuffetZenithShard
+
+# A shell of spikes
+ForretressZenith:
+  base: Forretress
+  stats: { HP: 75, Attack: 103, Defense: 177, SpecialAttack: 60, SpecialDefense: 85, Speed: 65 }
+  types: [Bug, Steel]
+  ability: IronBarbs
+  shard: ForretressZenithShard
+
+# The bulldog that bites harder when it hurts
+GranbullZenith:
+  base: Granbull
+  stats: { HP: 90, Attack: 145, Defense: 87, SpecialAttack: 60, SpecialDefense: 79, Speed: 89 }
+  types: [Fairy]
+  ability: Guts
+  shard: GranbullZenithShard
+
+# Its spines finish what its poison starts
+QwilfishZenith:
+  base: Qwilfish
+  stats: { HP: 65, Attack: 128, Defense: 96, SpecialAttack: 55, SpecialDefense: 66, Speed: 130 }
+  types: [Water, Poison]
+  ability: Merciless
+  shard: QwilfishZenithShard
+
+# The shell breaks open all at once
+ShuckleZenith:
+  base: Shuckle
+  stats: { HP: 20, Attack: 60, Defense: 230, SpecialAttack: 60, SpecialDefense: 230, Speed: 5 }
+  types: [Bug, Rock]
+  ability: Simple
+  shard: ShuckleZenithShard
+
+# Douse it and it only runs faster
+MagcargoZenith:
+  base: Magcargo
+  stats: { HP: 60, Attack: 50, Defense: 133, SpecialAttack: 128, SpecialDefense: 92, Speed: 67 }
+  types: [Fire, Rock]
+  ability: SteamEngine
+  shard: MagcargoZenithShard
+
+# The reef cuts whoever touches it
+CorsolaZenith:
+  base: Corsola
+  stats: { HP: 65, Attack: 80, Defense: 133, SpecialAttack: 77, SpecialDefense: 120, Speed: 35 }
+  types: [Water, Rock]
+  ability: RoughSkin
+  shard: CorsolaZenithShard
+
+# The cannon that never misses its pulse
+OctilleryZenith:
+  base: Octillery
+  stats: { HP: 75, Attack: 105, Defense: 88, SpecialAttack: 143, SpecialDefense: 87, Speed: 82 }
+  types: [Water]
+  ability: MegaLauncher
+  shard: OctilleryZenithShard
+
+# It brings the winter with it
+DelibirdZenith:
+  base: Delibird
+  stats: { HP: 45, Attack: 80, Defense: 70, SpecialAttack: 90, SpecialDefense: 70, Speed: 75 }
+  types: [Ice, Flying]
+  ability: SnowWarning
+  shard: DelibirdZenithShard
+
+# The rain follows it across the sea
+MantineZenith:
+  base: Mantine
+  stats: { HP: 85, Attack: 40, Defense: 81, SpecialAttack: 102, SpecialDefense: 162, Speed: 115 }
+  types: [Water, Flying]
+  ability: Drizzle
+  shard: MantineZenithShard
+
+# The dragon of the deep comes into its own
+KingdraZenith:
+  base: Kingdra
+  stats: { HP: 75, Attack: 95, Defense: 95, SpecialAttack: 140, SpecialDefense: 106, Speed: 129 }
+  types: [Water, Dragon]
+  ability: DragonsMaw
+  shard: KingdraZenithShard
+
+# It charges out of its own sandstorm
+DonphanZenith:
+  base: Donphan
+  stats: { HP: 90, Attack: 145, Defense: 145, SpecialAttack: 60, SpecialDefense: 85, Speed: 75 }
+  types: [Ground]
+  ability: SandStream
+  shard: DonphanZenithShard
+
+# It paints whatever it faces
+SmeargleZenith:
+  base: Smeargle
+  stats: { HP: 55, Attack: 45, Defense: 72, SpecialAttack: 44, SpecialDefense: 69, Speed: 65 }
+  types: [Normal]
+  ability: Trace
+  shard: SmeargleZenithShard
+
+# The spinning wall that hardens with every blow
+HitmontopZenith:
+  base: Hitmontop
+  stats: { HP: 50, Attack: 95, Defense: 138, SpecialAttack: 35, SpecialDefense: 153, Speed: 84 }
+  types: [Fighting]
+  ability: Stamina
+  shard: HitmontopZenithShard
+
+# The milk that comes first
+MiltankZenith:
+  base: Miltank
+  stats: { HP: 95, Attack: 91, Defense: 127, SpecialAttack: 40, SpecialDefense: 98, Speed: 139 }
+  types: [Normal]
+  ability: Triage
+  shard: MiltankZenithShard
+
+# The nurse who keeps everybody well
+BlisseyZenith:
+  base: Blissey
+  stats: { HP: 255, Attack: 10, Defense: 35, SpecialAttack: 100, SpecialDefense: 160, Speed: 80 }
+  types: [Normal, Fairy]
+  ability: MistySurge
+  shard: BlisseyZenithShard
+
+# The thunder that struck the tower
+RaikouZenith:
+  base: Raikou
+  stats: { HP: 90, Attack: 85, Defense: 86, SpecialAttack: 152, SpecialDefense: 105, Speed: 162 }
+  types: [Electric]
+  ability: Transistor
+  shard: RaikouZenithShard
+
+# The volcano grows with every victory
+EnteiZenith:
+  base: Entei
+  stats: { HP: 115, Attack: 154, Defense: 96, SpecialAttack: 90, SpecialDefense: 92, Speed: 133 }
+  types: [Fire]
+  ability: Moxie
+  shard: EnteiZenithShard
+
+# The north wind over clear water
+SuicuneZenith:
+  base: Suicune
+  stats: { HP: 100, Attack: 75, Defense: 137, SpecialAttack: 124, SpecialDefense: 137, Speed: 107 }
+  types: [Water]
+  ability: WaterBubble
+  shard: SuicuneZenithShard
+
+# The guardian of the sea shrugs off what should break it
+LugiaZenith:
+  base: Lugia
+  stats: { HP: 106, Attack: 103, Defense: 155, SpecialAttack: 115, SpecialDefense: 179, Speed: 122 }
+  types: [Psychic, Flying]
+  ability: Filter
+  shard: LugiaZenithShard
+
+# Its sacred fire always burns
+HoOhZenith:
+  base: HoOh
+  stats: { HP: 106, Attack: 152, Defense: 101, SpecialAttack: 121, SpecialDefense: 165, Speed: 135 }
+  types: [Fire, Flying]
+  ability: SereneGrace
+  shard: HoOhZenithShard
+
+# The forest grows wherever it goes
+CelebiZenith:
+  base: Celebi
+  stats: { HP: 100, Attack: 100, Defense: 125, SpecialAttack: 125, SpecialDefense: 125, Speed: 125 }
+  types: [Psychic, Grass]
+  ability: GrassySurge
+  shard: CelebiZenithShard

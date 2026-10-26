@@ -28,6 +28,7 @@ import {
   createWeightAbility,
   movesFlagged,
 } from './__create';
+import { naturalSpecies } from '../../data/species/zeniths';
 
 /** Whether the move's type comes to more than the ordinary amount. */
 function isWeakTo(type: Types, target: Unit): boolean {
@@ -272,7 +273,7 @@ const setupAbilities = [
 
       const shape = FORECAST_SHAPES.get(unit.checkWeather()) ?? Species.Castform;
 
-      if (unit.species === shape) {
+      if (naturalSpecies(unit.species) === shape) {
         return;
       }
       unit.triggerAbility(Abilities.Forecast);

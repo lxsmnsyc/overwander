@@ -1,5 +1,15 @@
 # overwander
 
+## 4.47.0
+
+### Minor Changes
+
+- ebe537d: Johto's 40 Zeniths, from Typhlosion to Celebi, each with its own Zenith Shard. Unown has no Zenith.
+
+### Patch Changes
+
+- c1eadb2: Zeniths keep their pokemon's HP, as a Mega does. Each Kanto Zenith's HP points move into the stats it already raised.
+
 ## 4.46.1
 
 ### Patch Changes

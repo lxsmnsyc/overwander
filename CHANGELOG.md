@@ -1,5 +1,11 @@
 # overwander
 
+## 4.46.1
+
+### Patch Changes
+
+- b3e73a4: Galarian Darmanitan's Zen Mode now works: below half HP it sits down into Galarian Zen Darmanitan, an Ice and Fire type.
+
 ## 4.46.0
 
 ### Minor Changes

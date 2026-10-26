@@ -1,4 +1,5 @@
 import { createSignal } from 'solid-js';
+import type { BoardEdge } from '../../overworld/board';
 import { isServer } from 'solid-js/web';
 import { asNumber, asRecord, asString } from '../../model/normalize';
 import { BALL_ITEMS, Balls } from '../../data/ids/items';
@@ -39,8 +40,7 @@ export const SETTINGS_PANES = [
 
 export type SettingsPane = (typeof SETTINGS_PANES)[number];
 
-/** What the board shows past the country it keeps track of */
-export type BoardEdge = 'haze' | 'full' | 'plain';
+export type { BoardEdge };
 
 export interface GameSettings {
   /**

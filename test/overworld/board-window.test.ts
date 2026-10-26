@@ -4,8 +4,8 @@ import {
   boardChunks,
   buildBoardView,
   viewChunks,
-} from '../../src/components/overworld/overworld-tab/board-view';
-import { BOARD_CENTER, BOARD_RADIUS } from '../../src/components/overworld/overworld-tab/metrics';
+} from '../../src/game/overworld/board-view';
+import { BOARD_CENTER, BOARD_RADIUS } from '../../src/game/overworld/board-metrics';
 
 /**
  * The board is a window on world cells rather than a chunk, so what

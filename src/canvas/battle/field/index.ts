@@ -1,0 +1,1794 @@
+import type Battle from '../../../battle/battle';
+import type SpeciesSpriteAnimation from '../../../canvas/sprites/species-sprite-animation';
+
+import type { FieldVisual } from '../../../canvas/battle/moves/__painted';
+import attackMarkVisual from '../../../canvas/battle/attack';
+import abilityCueFor, {
+  itemCueFor,
+  statusCueFor,
+  statusTriggerFor,
+} from '../../../canvas/battle/cues';
+import morphCue from '../../../canvas/battle/cues/morph';
+import { frenzyGathering, frenzyWarning } from '../../../canvas/battle/cues/frenzy';
+import { FRENZY_MOVES, getBurstStandIn } from '../../../data/moves/frenzy-moves';
+import pixelRatio from '../../../canvas/ratio';
+import createTwist from '../../../canvas/overworld/twist';
+import createLongPress from '../../long-press';
+import paintWeather, { batchHaze } from '../../../canvas/battle/weather';
+import buildWeather from '../../../canvas/battle/field-weather';
+import {
+  RIDES_THE_WAIT,
+  delayShapeFor,
+  moveDelayVisual,
+  moveEffectVisual,
+  moveMissVisual,
+} from '../../../canvas/battle/moves';
+import { type FieldPoint, type FieldView, unprojectField } from '../../../canvas/battle/projection';
+import { shortestTurn } from '../../../canvas/overworld/board';
+import loadTerrainTiles, { TERRAIN_TILE } from '../../../canvas/overworld/terrain-tiles';
+import drawFloor, { type Arena, type FloorRegion, type FloorTile, drawGroundShade } from './floor';
+import createBattleScene from '../../../canvas/three/battle-scene';
+import Bakery from '../../../canvas/bakery';
+import Biome from '../../../data/ids/biome';
+
+import loadSpeciesSprite from '../../../canvas/sprites/species-sprites';
+import { BattleEvents, EffectType, type MoveTarget, MoveTargetType } from '../../../battle/events';
+import type Abilities from '../../../data/ids/abilities';
+import type Team from '../../../battle/team';
+import type Unit from '../../../battle/unit';
+import { AttackPriority, EventPriority } from '../../../core/event-emitter';
+import { SWITCHING_SPAN } from '../../../battle/status/switching';
+import { AI_REST_PERIOD } from '../../../battle/ai/idle';
+import { isLoopingCast, pickCast } from '../../../data/constants/cast';
+
+import { Stats } from '../../../data/constants/stats';
+import { MoveFlags, Moves } from '../../../data/ids/moves';
+import { Genders, Species } from '../../../data/ids/species';
+import { getBaseFormSpecies } from '../../../data/ids/forms';
+import { getItemForms } from '../../../data/items/form-items';
+import { getStoneMega } from '../../../data/items/mega-stones';
+import { Items } from '../../../data/ids/items';
+
+import { Statuses, Terrains } from '../../../data/ids/status';
+import { TYPE_COLORS, Types } from '../../../data/constants/types';
+import { getMoveData } from '../../../data/moves';
+import {
+  bodyOf,
+  boxOf,
+  drawAim,
+  drawLitDecor,
+  drawSlot,
+  fieldBodyOf,
+  scaleOf,
+  withinSlot,
+} from './draw';
+import type { Spot } from '../../../canvas/three/effect-batch';
+import { spread } from '../../../canvas/battle/moves/__paint';
+import {
+  FIELD_HORIZON,
+  type Slot,
+  type Stand,
+  type Standing,
+  aimedAt,
+  lobbyCamera,
+  project,
+  readField,
+  ringStandings,
+  skiesOver,
+  unitsOf,
+} from './field';
+import { type CastLabels, interruptCast, trackCast } from './cast-label';
+import {
+  COLORS,
+  DYNAMAX_GROW_SPAN,
+  FIELD_UNIT,
+  HEIGHT,
+  JOLT_BEAT,
+  LOADING_LABEL,
+  TURN_DEAD_ZONE,
+  TURN_SLOP,
+  WIDTH,
+} from './metrics';
+import {
+  CUE_GAP,
+  type Casting,
+  LUNGE_REACH,
+  LUNGE_SPAN,
+  type Lunge,
+  type Striking,
+  type Trade,
+} from './motion';
+
+/**
+ * The battle as a picture.
+ *
+ * [`BattleField`](../../../components/battle/BattleField.tsx) says everything there is to say
+ * about a unit and says it in words; this says the two things a player
+ * watches for — who is still up, and what is about to land on them —
+ * and says them where they can be taken in at a glance.
+ *
+ * The battle mutates its units in place, so this does not observe
+ * them — it redraws on the engine's own `Tick`, which is the frame the
+ * units moved in. Nothing here keeps a clock of its own: a picture
+ * drawn from a second timer would drift from the fight it is a picture
+ * of, and would keep animating after the battle had stopped.
+ */
+
+export interface BattleFieldOptions {
+  battle: Battle;
+  /**
+   * The ground the fight is standing on. Left out, or set to a biome
+   * nobody has packed a tileset for, and the field is the plain colour
+   * it has always been
+   */
+  biome?: Biome;
+  /**
+   * Whose side of the field is drawn at the bottom. A spectator has no
+   * party of their own, and is shown the fighting side instead
+   */
+  player: string;
+  /**
+   * Fired once every sheet the fight needs has landed.
+   *
+   * The caller is what starts the battle, and it should not start one
+   * nobody can see: the first seconds are when a raid boss winds up
+   * and a party opens on its buffs, and a fight that begins while the
+   * sheets are still coming spends them on an empty field
+   */
+  onReady?: () => void;
+  /**
+   * Which pokemon the pointer is over, and where on the screen it is
+   * standing, so the caller can put a card over it. Null when the
+   * pointer is over the field itself
+   */
+  onHover?: (unit: Unit | null, at: UnitSpot | null) => void;
+  /**
+   * A pokemon that was pressed. The field itself does nothing with a
+   * press — a real-time battle is fought by the engine — so what
+   * opening one means is the caller's
+   */
+  onPick?: (unit: Unit) => void;
+}
+
+/**
+ * Where a pokemon is on the **screen**, in client coordinates: the
+ * middle of it, and the top and bottom of the room it takes up. It is
+ * what a card floating over the field is placed against, so it is
+ * measured in the page's own units rather than the field's
+ */
+export interface UnitSpot {
+  x: number;
+  top: number;
+  bottom: number;
+}
+
+/** How far past its outermost pokemon a side's ring reaches, in field units */
+const ARENA_MARGIN = 6;
+
+/** What each terrain tints the ground it is laid on */
+const TERRAIN_TINTS: Record<Terrains, string | null> = {
+  [Terrains.None]: null,
+  [Terrains.Electric]: TYPE_COLORS[Types.Electric],
+  [Terrains.Grassy]: TYPE_COLORS[Types.Grass],
+  [Terrains.Misty]: TYPE_COLORS[Types.Fairy],
+  [Terrains.Psychic]: TYPE_COLORS[Types.Psychic],
+};
+
+/** The ground each side stands on: the boss's, and each party's */
+function arenasOf(standings: Standing[], field: { middle: Unit[] }, battle: Battle): Arena[] {
+  const groups = new Map<unknown, { team: Team; places: FieldPoint[] }>();
+
+  for (const standing of standings) {
+    const key = field.middle.includes(standing.unit) ? 'middle' : standing.unit.team;
+    const held = groups.get(key) ?? { team: standing.unit.team, places: [] };
+
+    held.places.push(standing.place);
+    groups.set(key, held);
+  }
+
+  const arenas: Arena[] = [];
+
+  // A terrain over the whole field outranks a side's own, as weather does
+  for (const [key, { team, places }] of groups) {
+    const terrain =
+      battle.terrain.current === Terrains.None ? team.terrain.current : battle.terrain.current;
+
+    let x = 0;
+    let z = 0;
+
+    // The boss side is centred on the boss, which is the first of it,
+    // so its ring stays put when a Totem's ally arrives
+    if (key === 'middle') {
+      x = places[0].x;
+      z = places[0].z;
+    } else {
+      for (const place of places) {
+        x += place.x;
+        z += place.z;
+      }
+      x /= places.length;
+      z /= places.length;
+    }
+
+    let radius = 0;
+
+    for (const place of places) {
+      radius = Math.max(radius, Math.hypot(place.x - x, place.z - z));
+    }
+    arenas.push({ x, z, radius: radius + ARENA_MARGIN, tint: TERRAIN_TINTS[terrain] });
+  }
+  return arenas;
+}
+
+/** The shapes a unit's held items (a form item, a Mega Stone) can put it in, of its own species */
+function heldForms(unit: Unit): Species[] {
+  const base = getBaseFormSpecies(unit.species);
+  const forms: Species[] = [];
+
+  for (const key of Object.keys(unit.items)) {
+    const item: Items = Number(key);
+    const mega = getStoneMega(item);
+
+    for (const form of mega == null ? getItemForms(item) : [mega]) {
+      if (form !== unit.appearance && getBaseFormSpecies(form) === base) {
+        forms.push(form);
+      }
+    }
+  }
+  return forms;
+}
+
+/** What a unit is drawn as, and the look it is transforming out of */
+interface Appearance {
+  appearance: Species;
+  sprite: SpeciesSpriteAnimation | null;
+  /** The sheet it wore before, shown until the new one arrives and through the first half */
+  from: SpeciesSpriteAnimation | null;
+  /** When the transformation started on the battle clock, or null for none */
+  morphAt: number | null;
+}
+
+/** How long a transformation takes, in milliseconds */
+const MORPH = 600;
+
+/** How grown each unit is drawn, from 0 to 1, and the clock it was last read at */
+const grown = new WeakMap<Unit, { share: number; at: number }>();
+
+/**
+ * How far a unit is through growing into a Dynamax or shrinking out
+ * of one, eased toward whichever it is now
+ */
+function growthOf(unit: Unit, clock: number): number {
+  const wanted = unit.dynamaxed ? 1 : 0;
+  const held = grown.get(unit) ?? { share: wanted, at: clock };
+  const step = Math.max(0, clock - held.at) / DYNAMAX_GROW_SPAN;
+  const share =
+    held.share < wanted ? Math.min(wanted, held.share + step) : Math.max(wanted, held.share - step);
+
+  grown.set(unit, { share, at: clock });
+  return share * share * (3 - 2 * share);
+}
+
+/**
+ * How far through a transformation a unit is: a flash that brightens
+ * the old look, swaps at the peak, and settles on the new one. Also a
+ * small swell, so the body pops as it changes
+ */
+function morphOf(held: Appearance | undefined, clock: number): { glow: number; swell: number } {
+  if (held?.morphAt == null) {
+    return { glow: 0, swell: 0 };
+  }
+  const t = (clock - held.morphAt) / MORPH;
+
+  if (t >= 1) {
+    held.morphAt = null;
+    held.from = null;
+    return { glow: 0, swell: 0 };
+  }
+  return { glow: 1 - Math.abs(t * 2 - 1), swell: 0.1 * Math.sin(Math.PI * t) };
+}
+
+/**
+ * How long a substitute takes to step in front of the pokemon it is
+ * standing in for, and to step back off when it breaks
+ */
+const STAND_FADE = 320;
+
+/**
+ * The move a picture is drawn for: itself, but for a Noble's plain
+ * burst, which is drawn as the strongest move of the type it is thrown in
+ */
+function shownAs(source: Unit, move: Moves, target: MoveTarget): Moves {
+  return move === Moves.FrenzyBurst ? getBurstStandIn(source.checkMoveType(move, target)) : move;
+}
+
+export default function createBattleField(
+  canvas: HTMLCanvasElement,
+  floorCanvas: HTMLCanvasElement | undefined,
+  props: BattleFieldOptions,
+): () => void {
+  /** What tearing the field down undoes, in the order it was set up */
+  const undo: (() => void)[] = [];
+  const later = (step: () => void): void => {
+    undo.push(step);
+  };
+
+  /**
+   * Who is mid-throw at whom. Not a signal, like everything else the
+   * tick moves along
+   */
+  const lunging: Lunge[] = [];
+
+  /**
+   * Teammates mid-swap, walking to each other's spots
+   */
+  const trades: Trade[] = [];
+
+  /**
+   * The order each party is drawn in. The engine's own order never
+   * changes — a switch swaps nothing in the team — so the canvas
+   * keeps the order it draws, and a switch swaps it here
+   */
+  const arranged = new Map<Team, Unit[]>();
+
+  const arrange = (team: Team, units: Unit[]): Unit[] => {
+    const kept = arranged.get(team);
+
+    if (kept != null && kept.length === units.length) {
+      let current = true;
+
+      for (const one of kept) {
+        if (!team.units.has(one)) {
+          current = false;
+          break;
+        }
+      }
+      if (current) {
+        return kept;
+      }
+    }
+
+    const fresh = [...units];
+
+    arranged.set(team, fresh);
+    return fresh;
+  };
+
+  /**
+   * How long this battle has been running, by its own clock rather
+   * than the wall's — what spaces out a cue that keeps firing
+   */
+  let clock = 0;
+
+  /** The move-name plates on the field, kept past a cast for their exit */
+  const labels: CastLabels = new Map();
+
+  /**
+   * The move effects playing right now. Not a signal: nothing renders
+   * off it — the tick moves them along and the same tick draws them
+   */
+  const casting: Casting[] = [];
+
+  /**
+   * What each unit has thrown and is waiting to land.
+   *
+   * The engine holds the wait rather than the unit — a move in the air
+   * is a timer inside the move mechanics — so the canvas keeps its own
+   * note of it, filled when a move fires and emptied when it lands.
+   * Not a signal, like everything else here: the tick that moves it on
+   * is the tick that draws it
+   */
+  const striking = new Map<Unit, Striking>();
+
+  /**
+   * Who is not on the field to be seen: a pokemon underground or out
+   * of sight above it.
+   *
+   * A move that goes somewhere the field cannot show says so with its
+   * gap — the hole it went through, drawn where it stood — and leaving
+   * the body standing in the hole made a nonsense of both that picture
+   * and of the move being untouchable. It comes back when the striking
+   * step fires, which is the moment it arrives
+   */
+  const gone = new Set<Unit>();
+
+  /**
+   * What the last frame drew, for the pointer to hit-test against. Not
+   * a signal, like the rest of the frame's state: it is written by the
+   * draw and read by whatever the pointer does next
+   */
+  let placed: Slot[] = [];
+
+  /**
+   * Which way round the field is being looked at. It starts behind the
+   * viewer's own team and can be dragged from there — a ring always
+   * has a far side, and the fight is worth walking round. Not a
+   * signal: the frame that changes it is the frame that redraws
+   */
+  let yaw = 0;
+  /** The camera the last frame was drawn from, for reading the ground under the pointer */
+  let looked: FieldView | null = null;
+
+  /**
+   * One animation per unit, keyed by what that unit currently looks
+   * like. A unit that changes what it looks like — a Transform, a
+   * substitute taking the hits — is drawn as the new thing from the
+   * frame it changed, and the sheet it changed away from stays cached
+   * for whoever else is wearing it
+   */
+  const sprites = new Map<Unit, Appearance>();
+
+  /**
+   * The load behind each unit's current sheet, so the opening wait can
+   * be told when the field is drawable
+   */
+  const loads = new Map<Unit, Promise<void>>();
+
+  /**
+   * The doll in front of each substituted pokemon, and how far in it
+   * is. One animation per unit rather than one shared between them:
+   * an animation carries where it is in its own clip, and two dolls
+   * sharing one would breathe in step.
+   *
+   * An entry outlives the status by as long as the fade out takes,
+   * which is what lets the pokemon come back rather than reappear
+   */
+  const dolls = new Map<Unit, Stand>();
+
+  const standFor = (unit: Unit): Stand | null => {
+    const held = dolls.get(unit);
+
+    if (held != null) {
+      return held;
+    }
+    if (unit.status[Statuses.Substituted] == null) {
+      return null;
+    }
+
+    const waiting: Stand = { sprite: null, share: 0, arriving: true };
+
+    dolls.set(unit, waiting);
+    // The doll is the doll whoever is behind it: never shiny, never
+    // the female sheet, since neither is a fact about the substitute
+    loadSpeciesSprite(Species.Substitute, { female: false, shiny: false })
+      .then((loaded) => {
+        if (dolls.get(unit) === waiting) {
+          waiting.sprite = loaded;
+        }
+      })
+      .catch(() => {
+        // Nothing to stand in front of it, so the pokemon stays as it
+        // is: the rings the status draws still say a substitute is up
+      });
+    return waiting;
+  };
+
+  /**
+   * Whether the sheets for everybody on the field are still coming.
+   *
+   * The field is drawn either way — the ground, the slots, the health
+   * bars — but nothing is fought over it until the pokemon are on it,
+   * and the caller holds the battle back while this is true
+   */
+  let loading = true;
+
+  /** Plays the form change's light on a unit, once the field is up to draw it */
+  let morphed: ((unit: Unit) => void) | null = null;
+
+  const spriteFor = (unit: Unit): SpeciesSpriteAnimation | null => {
+    const known = sprites.get(unit);
+
+    if (known != null && known.appearance === unit.appearance) {
+      // The old look until the new sheet is in, then the swap half way
+      // through the transformation
+      if (known.sprite == null || known.morphAt == null) {
+        return known.sprite ?? known.from;
+      }
+      return clock - known.morphAt < MORPH / 2 ? known.from : known.sprite;
+    }
+
+    // Held before the sheet arrives, so a unit is asked for once
+    // rather than once per frame it is drawn in. What it looked like
+    // before is kept to transform out of
+    const waiting: Appearance = {
+      appearance: unit.appearance,
+      sprite: null,
+      from: known?.sprite ?? known?.from ?? null,
+      morphAt: null,
+    };
+
+    sprites.set(unit, waiting);
+    loads.set(
+      unit,
+      // A female pokemon is drawn from its own sheet where the species
+      // has one. Its **appearance** is what is asked for and its own
+      // gender and coat are what ask: a Transform copies the look,
+      // not the sex and not the sparkle
+      loadSpeciesSprite(unit.appearance, {
+        female: unit.gender === Genders.Female,
+        shiny: unit.shiny,
+      })
+        .then((loaded) => {
+          // Only if it is still what the unit looks like: a sheet that
+          // arrives after a Transform belongs to nobody
+          if (sprites.get(unit) === waiting) {
+            waiting.sprite = loaded;
+            if (waiting.from != null) {
+              waiting.morphAt = clock;
+              morphed?.(unit);
+            }
+          }
+        })
+        .catch(() => {
+          // Drawn as a circle, which is what it was before there were
+          // sprites at all
+        }),
+    );
+    return null;
+  };
+
+  const element = canvas;
+  const context = element.getContext('2d');
+
+  if (context == null) {
+    return () => {};
+  }
+
+  /**
+   * Every sheet the fight opens with, asked for at once.
+   *
+   * `spriteFor` is what caches them, so this is the ordinary path
+   * walked early rather than a second way of loading a pokemon.
+   * Anything that turns up later — a Transform, a substitute — is
+   * loaded the way it always was: mid-fight is no place to stop.
+   *
+   * `allSettled` rather than `all`: a sheet that will not load
+   * leaves that unit drawn as the circle it was before there were
+   * sprites, and holding the whole battle back for it would mean a
+   * fight nobody can start
+   */
+  let live = true;
+
+  /**
+   * The biome's ground, once it lands. The fight is not held back
+   * for it the way it is for the sheets: a floor that arrives late
+   * appears under a fight already under way, which is better than a
+   * fight that waited for scenery
+   */
+  let floor: FloorTile | null = null;
+  const standing = props.biome ?? Biome.Beyond;
+
+  if (standing !== Biome.Beyond) {
+    loadTerrainTiles()
+      .then((pack) => {
+        const country = pack.of(standing, 'ground');
+
+        if (live && country != null) {
+          // The country's plain fill, which is the tile a chunk lays
+          // where the ground is its own on every side
+          floor = { sheet: country.fill(), x: 0, y: 0, tile: TERRAIN_TILE };
+        }
+      })
+      .catch(() => {
+        // The plain field, which is what it was before
+      });
+  }
+
+  const settling: Promise<void>[] = [];
+
+  for (const unit of props.battle.units()) {
+    spriteFor(unit);
+    settling.push(loads.get(unit) ?? Promise.resolve());
+    // The shapes its held item may put it in as it walks on, warmed
+    // now so the change plays as the fight starts rather than once a
+    // sheet has crossed the network
+    for (const form of heldForms(unit)) {
+      settling.push(
+        loadSpeciesSprite(form, {
+          female: unit.gender === Genders.Female,
+          shiny: unit.shiny,
+        }).then(() => undefined),
+      );
+    }
+  }
+  Promise.allSettled(settling)
+    .then(() => {
+      if (live) {
+        loading = false;
+        props.onReady?.();
+      }
+    })
+    .catch(() => {
+      if (live) {
+        loading = false;
+        props.onReady?.();
+      }
+    });
+
+  later(() => {
+    live = false;
+  });
+
+  /**
+   * Fit the backing store to the room the element has been given,
+   * and lay the ground.
+   *
+   * The field is drawn in its own coordinates whatever the screen
+   * is, and used to be blown up to fit — which meant the picture was
+   * letterboxed and the page showed through above and below it. Now
+   * the canvas is the size of the page, the drawing is centred
+   * inside it at the largest scale that fits, and the ground colour
+   * is painted over the whole of it. The fight is the same size it
+   * always was; what changed is that there is field around it
+   * instead of nothing.
+   *
+   * The backing store is only reallocated when the element actually
+   * changes size: assigning `width` clears the canvas and hands back
+   * a fresh buffer, which is not a thing to do sixty times a second
+   */
+  let sized = { width: 0, height: 0, ratio: 0 };
+
+  /**
+   * The field as a three.js scene, drawn into its own element under
+   * the visible one: a 2D context and a GL context cannot both be had
+   * from one canvas. Null where the browser gives no WebGL, which
+   * paints everything the way it always was
+   */
+  let scene = floorCanvas == null ? null : createBattleScene(floorCanvas);
+
+  /**
+   * The drawn art the field stamps rather than paints: the round
+   * patch under a pokemon, and the name of whatever it is winding up
+   */
+  const bakery = new Bakery();
+  /** What the batch holds of that sheet, so a fresh bake re-uploads */
+  let baked = -1;
+
+  /**
+   * How the drawing's own coordinates sit on the element, which the
+   * 2D context carries in its transform and the batch is told
+   */
+  let stage = { scale: 1, offsetX: 0, offsetY: 0 };
+
+  /**
+   * How much of the drawing's own coordinates the element covers.
+   * Larger than the picture, since the field is centred in a canvas
+   * the size of the page and the margins are field as well
+   */
+  let region: FloorRegion = { left: 0, top: 0, right: WIDTH, bottom: HEIGHT };
+
+  const ground = (): void => {
+    const ratio = pixelRatio();
+    const width = Math.max(1, element.clientWidth);
+    const height = Math.max(1, element.clientHeight);
+
+    if (sized.width !== width || sized.height !== height || sized.ratio !== ratio) {
+      element.width = Math.round(width * ratio);
+      element.height = Math.round(height * ratio);
+      sized = { width, height, ratio };
+    }
+
+    // Fitted to the height. A phone held upright is narrow, and fitting
+    // the width there left the fight a strip across the middle of a
+    // tall screen; the field runs on past the sides instead
+    const scale = height / HEIGHT;
+
+    context.setTransform(ratio, 0, 0, ratio, 0, 0);
+    // Cleared rather than filled: the field's own colour is the
+    // background of the layer below, so the margins are field
+    // whether or not the biome has ground to lay over them
+    context.clearRect(0, 0, width, height);
+    const offsetX = (width - WIDTH * scale) / 2;
+    const offsetY = (height - HEIGHT * scale) / 2;
+
+    context.transform(scale, 0, 0, scale, offsetX, offsetY);
+    stage = { scale, offsetX, offsetY };
+    region = {
+      left: -offsetX / scale,
+      top: -offsetY / scale,
+      right: (width - offsetX) / scale,
+      bottom: (height - offsetY) / scale,
+    };
+  };
+
+  const draw = (): void => {
+    ground();
+
+    // Nothing but the field while the sheets are still coming. The
+    // caller holds the battle back until they land, so there is
+    // nothing happening to draw — and a row of circles standing in
+    // for pokemon reads as a fight that has already gone wrong
+    if (loading) {
+      context.fillStyle = COLORS.text;
+      context.font = 'bold 18px monospace';
+      context.textAlign = 'center';
+      context.textBaseline = 'middle';
+      context.fillText(LOADING_LABEL, WIDTH / 2, HEIGHT / 2);
+      return;
+    }
+
+    // A heavy landing shakes the scene. Only there: the painted
+    // fallback keeps the look it had
+    if (scene != null) {
+      let jolt = 0;
+
+      for (const cast of casting) {
+        if (cast.visual.drawLit != null) {
+          jolt = Math.max(jolt, cast.visual.jolt ?? 0);
+        }
+      }
+      if (jolt > 0) {
+        const beat = Math.floor(clock / JOLT_BEAT);
+        const dx = spread(beat, 1) * jolt;
+        const dy = spread(beat, 2) * jolt;
+
+        stage = {
+          scale: stage.scale,
+          offsetX: stage.offsetX + dx * stage.scale,
+          offsetY: stage.offsetY + dy * stage.scale,
+        };
+        context.translate(dx, dy);
+      }
+    }
+
+    const field = readField(props.battle, props.player, arrange);
+
+    // The camera. It starts behind whoever is looking at the fight,
+    // which is the one thing about the field a player should never
+    // have to work out, and it can be walked round from there
+    const view: FieldView = {
+      width: WIDTH,
+      height: HEIGHT,
+      // A ring that has outgrown its room is looked at from further
+      // back, so a raid of sixteen fills the same picture a raid of
+      // four does
+      unit: FIELD_UNIT * lobbyCamera(field.teams.length).zoom,
+      horizon: FIELD_HORIZON,
+      yaw,
+    };
+    looked = view;
+    // The ground the fight is standing on, under everything on it:
+    // a few hundred tiles laid on a tilted plane, which a 2D context
+    // charges a transform and a blit apiece for
+    const batch = scene?.marks ?? null;
+
+    const standings = ringStandings(field, spriteFor, standFor);
+    const arenas = arenasOf(standings, field, props.battle);
+
+    if (scene == null || batch == null) {
+      if (floor != null) {
+        drawFloor(context, floor, view, region);
+      }
+      drawGroundShade(context, view, region, arenas, clock);
+    } else {
+      // Opened here and drawn once the fight is written into it.
+      // Cleared every frame whether or not there is ground to lay,
+      // since a biome that stops having one would otherwise keep the
+      // last floor it drew
+      scene.look(view, stage, sized, sized.ratio);
+      if (baked !== bakery.revision) {
+        batch.invalidate(bakery.sheet);
+        baked = bakery.revision;
+      }
+      // Carrying the transform that centres the field, so everything
+      // below is written in the drawing's own coordinates the way
+      // the painted pass draws it
+      batch.carry(stage.offsetX, stage.offsetY, 1, stage.scale);
+      // At the back of the scene, under the whole fight
+      batch.depth(scene.depthOf(0));
+      if (floor != null) {
+        drawFloor(context, floor, view, region, batch);
+      }
+      drawGroundShade(context, view, region, arenas, clock, batch);
+    }
+
+    const slots = project(standings, view, striking);
+    const at = new Map<Unit, Slot>();
+
+    for (const slot of slots) {
+      at.set(slot.unit, slot);
+      slot.giant = growthOf(slot.unit, clock);
+    }
+
+    // Whoever is throwing itself at somebody is drawn part of the
+    // way there. It is done to the slot rather than to the standing
+    // so everything measured off the slot comes with it: the bars,
+    // the name, and the move's own picture, which should go off
+    // where the body actually is
+    // Mid-swap, each stands part of the way from the other's spot
+    // to its own: eased at both ends, so the walk reads as a walk
+    for (const trade of trades) {
+      const one = at.get(trade.a);
+      const other = at.get(trade.b);
+
+      if (one == null || other == null) {
+        continue;
+      }
+
+      const share = (1 - Math.cos(Math.PI * Math.min(1, trade.elapsed / trade.window))) / 2;
+      const rest = 1 - share;
+
+      one.offset = [(other.x - one.x) * rest, (other.y - one.y) * rest];
+      other.offset = [(one.x - other.x) * rest, (one.y - other.y) * rest];
+    }
+
+    for (const lunge of lunging) {
+      const from = at.get(lunge.source);
+      const to = at.get(lunge.target);
+
+      if (from == null || to == null) {
+        continue;
+      }
+      // Out and back on a half sine: it leaves fastest at the start
+      // and is still for an instant at the far end, which is where
+      // the hit lands
+      const share = Math.sin(Math.PI * Math.min(1, lunge.elapsed / lunge.window)) * LUNGE_REACH;
+
+      from.offset = [(to.x - from.x) * share, (to.y - from.y) * share];
+    }
+
+    // Kept for the pointer: what was drawn where, as of the last
+    // frame. Hit-testing a canvas means asking the drawing, and the
+    // drawing is this list
+    placed = slots;
+
+    const onto =
+      batch == null
+        ? undefined
+        : {
+            batch,
+            bakery,
+            lit: true,
+            density: stage.scale * sized.ratio,
+            solid: (on: boolean): void => {
+              batch.opaque(on);
+            },
+          };
+
+    // Who is aiming at whom, under the bodies: a field of four
+    // winding up says who is busy and nothing about who is about to
+    // be hit. Only what is being worked on now, so a move already in
+    // the air is left to its own picture
+    for (const slot of slots) {
+      const aim = aimedAt(slot.unit);
+
+      if (aim == null || !slot.unit.alive) {
+        continue;
+      }
+      // The colour of the bar it is filling, so the line and the bar
+      // are read as one thing
+      const colour = slot.unit.casting == null ? COLORS.channel : COLORS.cast;
+      const casts = bodyOf(slot);
+
+      // On the ground at the caster's own depth
+      batch?.depth(scene?.depthOf(slot.depth) ?? 0);
+
+      for (const on of unitsOf(aim)) {
+        const target = on === slot.unit ? null : at.get(on);
+
+        if (target != null && on.alive) {
+          drawAim(context, casts, bodyOf(target), colour, clock, onto);
+        }
+      }
+    }
+
+    for (const slot of slots) {
+      // Standing at the depth of the ground under its feet
+      const near = scene?.depthOf(slot.depth) ?? 0;
+
+      batch?.standing(near, near);
+      trackCast(labels, slot.unit, clock);
+      const morph = morphOf(sprites.get(slot.unit), clock);
+
+      slot.glow = morph.glow;
+      slot.swell = morph.swell;
+      drawSlot(context, slot, striking, clock, labels, gone.has(slot.unit), onto);
+    }
+
+    // The sky, over the pokemon and under whatever is going off:
+    // weather is the field's own state rather than anybody's move,
+    // and it belongs behind the thing being watched.
+    //
+    // One patch per sky rather than one over the picture. Outside a
+    // fight between players the weather is the **team's**: a raid
+    // has one side standing in its own sunshine and the other in the
+    // dry, and only a boss puts weather over everybody
+    const skies = skiesOver(slots, props.battle, { width: WIDTH, height: HEIGHT });
+
+    if (batch == null) {
+      for (const patch of skies) {
+        context.save();
+        context.translate(patch.x, patch.y);
+        paintWeather(context, patch.weather, patch, clock);
+        context.restore();
+      }
+    } else {
+      // On the glass, in front of every pokemon
+      batch.glass();
+      for (const patch of skies) {
+        // Carried rather than clipped: the batch has no scissor, and
+        // the painters lay their sky out from their own origin
+        batch.carry(
+          stage.offsetX + patch.x * stage.scale,
+          stage.offsetY + patch.y * stage.scale,
+          1,
+          stage.scale,
+        );
+        batchHaze(batch, patch.weather, patch, clock);
+      }
+      batch.carry(stage.offsetX, stage.offsetY, 1, stage.scale);
+    }
+    if (scene != null) {
+      for (const slot of slots) {
+        drawLitDecor(scene.effects, slot, view, clock, gone.has(slot.unit));
+      }
+      // What falls and drifts, in the field among the pokemon
+      for (const patch of skies) {
+        const whole = patch.width >= WIDTH;
+
+        // The field's own sky runs on into the margins round the drawing
+        buildWeather(
+          scene.effects,
+          patch.weather,
+          view,
+          {
+            left: whole ? region.left : patch.x,
+            top: patch.y <= 0 ? region.top : patch.y,
+            right: whole ? region.right : patch.x + patch.width,
+            bottom: patch.y + patch.height >= HEIGHT ? region.bottom : patch.y + patch.height,
+            bleed: whole ? 40 : 0,
+          },
+          clock,
+        );
+      }
+      // Effects with a scene version are built into it, in field units,
+      // where one passing behind a pokemon is hidden by it
+      for (const cast of casting) {
+        const from = at.get(cast.source);
+        const source = from == null || cast.visual.drawLit == null ? null : fieldBodyOf(from, view);
+
+        if (source == null) {
+          continue;
+        }
+        const targets: Spot[] = [];
+
+        for (const target of cast.targets) {
+          const slot = at.get(target);
+          const body = slot == null ? null : fieldBodyOf(slot, view);
+
+          if (body != null) {
+            targets.push(body.spot);
+          }
+        }
+        cast.visual.drawLit?.(scene.effects, { source: source.spot, targets, size: source.size });
+      }
+      scene.draw();
+    }
+
+    // Move effects go on top of everything: they are the loudest
+    // thing on the field for as long as they last, and a ring drawn
+    // under a pokemon is a ring nobody sees. A caster that has since
+    // left the field takes its effect with it
+    for (const cast of casting) {
+      const from = at.get(cast.source);
+
+      // Built into the scene above instead
+      if (from == null || (scene != null && cast.visual.drawLit != null)) {
+        continue;
+      }
+      const targets: ReturnType<typeof bodyOf>[] = [];
+
+      for (const target of cast.targets) {
+        const slot = at.get(target);
+
+        if (slot != null) {
+          targets.push(bodyOf(slot));
+        }
+      }
+      cast.visual.draw(context, {
+        source: bodyOf(from),
+        targets,
+        scale: scaleOf(from),
+      });
+    }
+  };
+
+  /** Put a picture on the field. */
+  const paint = (visual: FieldVisual, source: Unit, targets: Unit[]): void => {
+    casting.push({ source, targets, visual });
+  };
+
+  morphed = (unit) => {
+    paint(morphCue(), unit, []);
+  };
+
+  // A move announces itself when it fires, and its picture is built
+  // and started here — the one moment the canvas hears about a move
+  // as a whole rather than about what it did
+  const firing = props.battle.on(BattleEvents.UnitTriggerMove, AttackPriority.Post, (event) => {
+    // What the caster aimed at, and nothing more.
+    //
+    // A move that goes out to everybody could be asked who it is
+    // about to reach, and drawing one thing crossing to each of them
+    // was worse rather than better: a spread move in a raid is forty
+    // gaps at once, and forty things in the air is a screen nobody
+    // can read. One flight, at what it was pointed at
+    const crossing: Unit[] = [];
+
+    if (event.target.type === MoveTargetType.Unit) {
+      if (event.target.unit !== event.source) {
+        crossing.push(event.target.unit);
+      }
+    } else if (event.target.type === MoveTargetType.Team) {
+      for (const target of event.target.team.units) {
+        if (target !== event.source) {
+          crossing.push(target);
+        }
+      }
+    }
+
+    // The window the engine is actually holding the move open for,
+    // asked of it rather than read off the data — a listener may
+    // have nudged it, and both the throw and its picture belong to
+    // the move that is happening rather than to the one registered
+    const window = event.source.checkMoveDelay(event.move, event.target);
+
+    // What the thrower is doing: the move's own clip, played at its
+    // own speed for the flight and the rest that follows it. The
+    // rest is the AI's, and it is what gives a gesture room — a
+    // 250ms flight is not long enough to see a throw in.
+    //
+    // Never shorter than the clip itself, whatever the engine's
+    // timings add up to. A gesture cut off partway is a pokemon
+    // snapping back to standing mid-swing: the last frame of a
+    // Strike is 83ms, and the window it was being held for ran out
+    // 42ms before it
+    const sprite = spriteFor(event.source);
+    const gesture =
+      sprite == null
+        ? 0
+        : sprite.lengthOf(pickCast(getMoveData(event.move).cast, (name) => sprite.has(name)));
+
+    striking.set(event.source, {
+      move: event.move,
+      window: Math.max(window + AI_REST_PERIOD, gesture),
+      elapsed: 0,
+      at: event.target,
+    });
+
+    // A contact move has nothing in the air to draw, because the
+    // thing crossing the gap is the pokemon itself
+    if ((getMoveData(event.move).flags & MoveFlags.Contact) !== 0 && crossing.length > 0) {
+      for (let index = 0; index < lunging.length; index++) {
+        if (lunging[index].source === event.source) {
+          lunging.splice(index, 1);
+          break;
+        }
+      }
+      lunging.push({
+        source: event.source,
+        target: crossing[0],
+        elapsed: 0,
+        // A move held in the air is one the pokemon is still
+        // crossing, so the throw lasts as long as the crossing does
+        window: Math.max(LUNGE_SPAN, window),
+      });
+    }
+
+    // What fills the gap, for exactly as long as the engine holds
+    // it. A contact move fills it with the pokemon and draws nothing
+    const shown = shownAs(event.source, event.move, event.target);
+    const shape = delayShapeFor(shown, event.steps);
+
+    // A step that takes the caster off the field takes its sprite
+    // with it, and any other step puts it back: the strike of a Dig
+    // is the pokemon coming up through the floor
+    if (shape === 'Vanish') {
+      gone.add(event.source);
+    } else {
+      gone.delete(event.source);
+    }
+
+    const gap = moveDelayVisual(shown, event.steps, window);
+
+    if (gap != null) {
+      paint(gap, event.source, crossing);
+    }
+  });
+
+  // The move resolving, which the engine says once per pokemon it
+  // actually landed on. A miss never arrives here, and a spread move
+  // arrives once for each one it caught — so the landing is drawn
+  // where it happened rather than where it was aimed
+  const landed = props.battle.on(
+    BattleEvents.UnitTriggerMoveEffect,
+    AttackPriority.Post,
+    (event) => {
+      // Already falling since it was queued, see `queued` below
+      if (RIDES_THE_WAIT.has(event.move)) {
+        return;
+      }
+
+      const struck: Unit[] = [];
+
+      if (event.target.type === MoveTargetType.Unit) {
+        struck.push(event.target.unit);
+      } else if (event.target.type === MoveTargetType.Team) {
+        struck.push(...event.target.team.units);
+      }
+
+      // Nothing on a step that was only the wind-up: what happened
+      // is that the caster went underground, which the gap drew
+      // The sky is read only by a shape made of it, and only as it lands
+      const landing = moveEffectVisual(
+        shownAs(event.source, event.move, event.target),
+        event.steps,
+        () => event.source.checkWeather(),
+      );
+
+      if (landing != null) {
+        paint(landing, event.source, struck);
+      }
+    },
+  );
+
+  // A strike queued to land later is drawn from now, so its star is
+  // in the air for the whole wait and lands with the blow
+  const queued = props.battle.on(
+    BattleEvents.UnitTriggerMoveTarget,
+    AttackPriority.Post,
+    (event) => {
+      if (!RIDES_THE_WAIT.has(event.move) || event.target.type !== MoveTargetType.Unit) {
+        return;
+      }
+
+      const falling = moveEffectVisual(event.move, event.steps);
+
+      if (falling != null) {
+        paint(falling, event.source, [event.target.unit]);
+      }
+    },
+  );
+
+  // It went past. Drawn, because a move that misses and shows
+  // nothing reads as a move that never happened — and the one-hit
+  // knockouts miss far more often than they land
+  const missing = props.battle.on(
+    BattleEvents.UnitTriggerMoveMissed,
+    EventPriority.Post,
+    (event) => {
+      const { parent } = event;
+      const struck: Unit[] = [];
+
+      if (parent.target.type === MoveTargetType.Unit) {
+        struck.push(parent.target.unit);
+      } else if (parent.target.type === MoveTargetType.Team) {
+        struck.push(...parent.target.team.units);
+      }
+      paint(moveMissVisual(parent.move), parent.source, struck);
+    },
+  );
+
+  // A status landing, and each time it bites afterwards. Both are
+  // about one pokemon and nobody else, so the cue is drawn on it —
+  // the stage's source with nothing aimed at
+  const ailing = props.battle.on(BattleEvents.UnitAddStatus, EventPriority.Post, (event) => {
+    const cue = statusCueFor(event.status);
+
+    if (cue != null) {
+      paint(cue, event.source, []);
+    }
+  });
+
+  /**
+   * When each status last drew its own cue, on the battle's clock.
+   *
+   * A status that refuses a cast is asked every time the pokemon
+   * tries — which for a sleeping unit under an AI is many times a
+   * second — so the refusal is held back to one every `CUE_GAP`,
+   * like an ability's. The residuals bite far slower than that and
+   * are never touched by it
+   */
+  const bitten = new WeakMap<Unit, Map<Statuses, number>>();
+
+  const biting = props.battle.on(BattleEvents.UnitTriggerStatus, EventPriority.Post, (event) => {
+    const cue = statusTriggerFor(event.status);
+
+    if (cue == null) {
+      return;
+    }
+    let held = bitten.get(event.source);
+
+    if (held == null) {
+      held = new Map();
+      bitten.set(event.source, held);
+    }
+    if (clock - (held.get(event.status) ?? -CUE_GAP) < CUE_GAP) {
+      return;
+    }
+    held.set(event.status, clock);
+    paint(cue, event.source, []);
+  });
+
+  /**
+   * When each ability last drew a cue, on the battle's own clock.
+   *
+   * Some of them fire constantly — a raid boss refuses something
+   * dozens of times a minute — and a cue per refusal is a strobe
+   * rather than an answer. Held back to one every `CUE_GAP`, per
+   * pokemon and per ability, so the first of a run still shows
+   */
+  const cued = new WeakMap<Unit, Map<Abilities, number>>();
+
+  /**
+   * What each blow is resolving as, while it resolves.
+   *
+   * The engine works a blow out in pieces — the type multipliers one
+   * defending type at a time, then whether it crits — and each piece
+   * is its own event carrying the attack it belongs to. They are
+   * collected here against that attack and read when it lands, which
+   * is the only moment all of it is known
+   */
+  const resolving = new WeakMap<object, { effectiveness: number; critical: boolean }>();
+
+  const resolved = (parent: object): { effectiveness: number; critical: boolean } => {
+    let found = resolving.get(parent);
+
+    if (found == null) {
+      found = { effectiveness: 1, critical: false };
+      resolving.set(parent, found);
+    }
+    return found;
+  };
+
+  const typing = props.battle.on(
+    BattleEvents.UnitAttackResolveEffectiveness,
+    EventPriority.Post,
+    (event) => {
+      resolved(event.parent).effectiveness *= event.multiplier;
+    },
+  );
+
+  const critting = props.battle.on(
+    BattleEvents.UnitAttackResolveCriticalHit,
+    EventPriority.Post,
+    (event) => {
+      resolved(event.parent).critical = event.critical;
+    },
+  );
+
+  // One blow landing. A move's own picture says what the move is;
+  // this says what it did to this pokemon, which is a different
+  // answer every time it lands — five times over for a barrage,
+  // dull for a resistance, loud for a critical
+  const blowing = props.battle.on(BattleEvents.UnitAttack, AttackPriority.Cleanup, (event) => {
+    const known = resolved(event);
+    const maxHealth = event.target.checkStat(Stats.HP, 0);
+
+    paint(
+      attackMarkVisual({
+        move: event.move,
+        type: event.type,
+        share: maxHealth <= 0 ? 0 : event.value / maxHealth,
+        effectiveness: known.effectiveness,
+        critical: known.critical,
+        struck: event.success,
+      }),
+      event.source,
+      [event.target],
+    );
+  });
+
+  // A Noble winding up its burst: the whole field is warned, since
+  // the windup is the party's chance to raise a guard
+  const telegraphing = props.battle.on(BattleEvents.UnitCast, EventPriority.Post, (event) => {
+    if (!FRENZY_MOVES.has(event.move) || event.source.casting == null) {
+      return;
+    }
+
+    const windup = event.source.casting.time.duration;
+
+    paint(frenzyGathering(windup), event.source, []);
+    for (const foe of props.battle.units(event.source.team.alliance)) {
+      if (foe.alive) {
+        paint(frenzyWarning(windup), foe, []);
+      }
+    }
+  });
+
+  // A Balm landing on a Noble, drawn on the Noble it soothed
+  const soothing = props.battle.on(BattleEvents.UnitDamage, AttackPriority.Post, (event) => {
+    if (event.success && event.cause.type === EffectType.Item && event.cause.item === Items.Balm) {
+      paint(itemCueFor(Items.Balm), event.target, []);
+    }
+  });
+
+  // A held item going off: a berry eaten, a band that took the blow,
+  // a claw that got there first. Not throttled the way an ability
+  // is — most of them are spent as they fire, so a second one is a
+  // second item rather than the same one shouting
+  const spending = props.battle.on(BattleEvents.UnitTriggerItem, EventPriority.Post, (event) => {
+    paint(itemCueFor(event.item), event.source, []);
+  });
+
+  // An ability going off. It is the quietest thing in a fight —
+  // no cast, no flight, just a number that came out different — so
+  // every trigger draws something, however small
+  const triggering = props.battle.on(
+    BattleEvents.UnitTriggerAbility,
+    EventPriority.Post,
+    (event) => {
+      let held = cued.get(event.source);
+
+      if (held == null) {
+        held = new Map();
+        cued.set(event.source, held);
+      }
+      if (clock - (held.get(event.ability) ?? -CUE_GAP) < CUE_GAP) {
+        return;
+      }
+      held.set(event.ability, clock);
+      paint(abilityCueFor(event.ability), event.source, []);
+    },
+  );
+
+  // Landed. The gesture is **not** over: the hit lands when the
+  // engine says, and the throw goes on being drawn for the rest of
+  // its window — which is what stops a quarter-second flight cutting
+  // a second of animation off at the knees
+  const landing = props.battle.on(BattleEvents.UnitTriggerMoveEnd, EventPriority.Post, (event) => {
+    const thrown = striking.get(event.source);
+
+    if (thrown != null && event.source.casting == null) {
+      // Nothing else to show it: the unit is between moves, so the
+      // window is left to run down on the tick
+      thrown.at = undefined;
+    }
+  });
+
+  // The picture is redrawn on the battle's own frame, so it can only
+  // ever show a state the battle was actually in
+  /**
+   * The sprites run on the battle's clock, like everything else
+   * here: the tick says how much time passed, and every animation
+   * on the field is moved on by exactly that much. A fight that is
+   * paused is a field of pokemon holding still
+   */
+  // A move that never lands leaves nothing hanging: an interrupted
+  // thrower stops throwing, and one that faints has finished with
+  // whatever it was doing
+  const stopping = props.battle.on(BattleEvents.UnitInterrupt, EventPriority.Post, (event) => {
+    striking.delete(event.source);
+    interruptCast(labels, event.source, clock);
+    // Whatever took it off the field was interrupted, so it is back
+    gone.delete(event.source);
+  });
+
+  const fainting = props.battle.on(BattleEvents.UnitFaints, EventPriority.Post, (event) => {
+    striking.delete(event.source);
+    gone.delete(event.source);
+  });
+
+  // A switch swaps two teammates' places. The engine's team keeps
+  // its order, so the drawn order swaps here — and the pair walk to
+  // each other's spots rather than appearing there
+  const trading = props.battle.on(BattleEvents.UnitSwitch, EventPriority.Post, (event) => {
+    if (event.source === event.target) {
+      return;
+    }
+
+    const order = arrange(event.source.team, [...event.source.team.units]);
+    const from = order.indexOf(event.source);
+    const to = order.indexOf(event.target);
+
+    if (from < 0 || to < 0) {
+      return;
+    }
+    [order[from], order[to]] = [order[to], order[from]];
+
+    // A pair switched again mid-walk starts the walk over
+    for (let index = 0; index < trades.length; index++) {
+      if (trades[index].a === event.source || trades[index].b === event.source) {
+        trades.splice(index, 1);
+        break;
+      }
+    }
+    trades.push({ a: event.source, b: event.target, elapsed: 0, window: SWITCHING_SPAN });
+  });
+
+  // The walk is the engine's: its progression events move the
+  // picture, so a fast-forwarded switch fast-forwards the walk
+  const walking = props.battle.on(BattleEvents.UnitUpdateSwitch, EventPriority.Post, (event) => {
+    let trade: Trade | undefined;
+
+    for (const entry of trades) {
+      if (entry.a === event.source) {
+        trade = entry;
+        break;
+      }
+    }
+    if (trade == null) {
+      return;
+    }
+    trade.elapsed = event.data.progress ?? trade.elapsed;
+    trade.window = event.data.duration ?? trade.window;
+  });
+
+  // Arrival snaps both onto their spots, however the walk got there
+  const arriving = props.battle.on(BattleEvents.UnitFinishSwitch, EventPriority.Post, (event) => {
+    for (let index = 0; index < trades.length; index++) {
+      if (trades[index].a === event.source) {
+        trades.splice(index, 1);
+        break;
+      }
+    }
+  });
+
+  const ticking = props.battle.on(BattleEvents.Tick, EventPriority.Post, (event) => {
+    clock += event.duration;
+    // A gesture runs out on its own clock rather than when the hit
+    // lands, so a pokemon is seen finishing what it threw
+    for (const [unit, thrown] of striking) {
+      thrown.elapsed = (thrown.elapsed ?? 0) + event.duration;
+      if (thrown.elapsed < thrown.window) {
+        continue;
+      }
+      // The window says when the engine is done with the move; the
+      // drawing says when the pokemon is. A one-shot still running
+      // is a swing part-way through, and dropping it there is what
+      // made the last frame of a Strike flash by
+      const sprite = spriteFor(unit);
+      const playing = sprite?.playing;
+
+      if (sprite != null && playing != null && !isLoopingCast(playing) && !sprite.finished) {
+        continue;
+      }
+      striking.delete(unit);
+    }
+    // Back on the field once there is nothing left to be away for.
+    // The striking step normally brings it up, but a move that
+    // vanishes on its **last** step — a Teleport — has no such step,
+    // and a caster with no cast and nothing in the air is a caster
+    // standing there
+    for (const unit of gone) {
+      if (unit.casting == null && unit.channeling == null && !striking.has(unit)) {
+        gone.delete(unit);
+      }
+    }
+    for (let index = lunging.length - 1; index >= 0; index--) {
+      lunging[index].elapsed += event.duration;
+      if (lunging[index].elapsed >= lunging[index].window) {
+        lunging.splice(index, 1);
+      }
+    }
+    for (const held of sprites.values()) {
+      held.sprite?.update(event.duration);
+    }
+    // The doll steps in front while the substitute is up and steps
+    // off once it has broken, which is the same crossfade run either
+    // way. It is dropped only once it is all the way off, so the
+    // pokemon is never seen popping back
+    for (const [unit, doll] of dolls) {
+      const wanted = unit.status[Statuses.Substituted] == null ? 0 : 1;
+      const step = event.duration / STAND_FADE;
+
+      doll.arriving = wanted === 1;
+      doll.share =
+        wanted > doll.share
+          ? Math.min(wanted, doll.share + step)
+          : Math.max(wanted, doll.share - step);
+      doll.sprite?.update(event.duration);
+
+      if (doll.share <= 0 && wanted === 0) {
+        dolls.delete(unit);
+      }
+    }
+    // Move effects run on the same clock as everything else, and one
+    // that has run its course is dropped after the frame that shows
+    // its last moment
+    for (let index = casting.length - 1; index >= 0; index--) {
+      casting[index].visual.advance(event.duration);
+    }
+    draw();
+    for (let index = casting.length - 1; index >= 0; index--) {
+      if (casting[index].visual.finished) {
+        casting.splice(index, 1);
+      }
+    }
+  });
+
+  // Dragging the field round, for whoever is only watching it. A
+  // pointer that started on the canvas keeps turning it wherever it
+  // goes, so a drag that runs off the edge does not stick
+  let turning: { pointer: number; angle: number; clientX: number; clientY: number } | null = null;
+  /**
+   * Two fingers doing the same job. A phone has the drag already:
+   * one finger down is a press on a pokemon, and it is only the
+   * second one that says the camera is what is being moved
+   */
+  const twist = createTwist();
+  /**
+   * Whether the pointer moved far enough to have turned the field. A
+   * drag that walked the camera round is not also a press on
+   * whichever pokemon it finished over
+   */
+  let turned = false;
+
+  /**
+   * A point on the page in the drawing's own coordinates. The field
+   * is centred in a canvas the size of the page, so the margins are
+   * stage offset rather than stretched picture
+   */
+  const drawingAt = (event: MouseEvent): { x: number; y: number } => {
+    const bounds = element.getBoundingClientRect();
+
+    return {
+      x: (event.clientX - bounds.left - stage.offsetX) / stage.scale,
+      y: (event.clientY - bounds.top - stage.offsetY) / stage.scale,
+    };
+  };
+
+  /**
+   * Which way round the middle of the field a point under the pointer
+   * lies, as the camera at `heading` sees it. Null over the sky, and
+   * near the middle, where a pixel would swing the field half a turn
+   */
+  const bearingAt = (event: MouseEvent, heading: number): number | null => {
+    if (looked == null) {
+      return null;
+    }
+
+    const { x, y } = drawingAt(event);
+    const point = unprojectField(x, y, { ...looked, yaw: heading });
+
+    if (point == null || Math.hypot(point.x, point.z) < TURN_DEAD_ZONE) {
+      return null;
+    }
+    return Math.atan2(point.z, point.x);
+  };
+
+  /**
+   * Which pokemon the pointer is over, from where they were last
+   * drawn. The last match wins: `placed` is painted back to front,
+   * so on a crowded field that is the one in front — the one it
+   * looks like the pointer is over
+   */
+  const under = (event: PointerEvent | MouseEvent): Slot | null => {
+    const { x, y } = drawingAt(event);
+    let found: Slot | null = null;
+
+    for (const slot of placed) {
+      if (slot.visible && withinSlot(slot, x, y)) {
+        found = slot;
+      }
+    }
+    return found;
+  };
+
+  /**
+   * The same slot in the page's own coordinates, for a card placed
+   * over it. The box is the drawn sprite's where there is one, so a
+   * card clears the top of a tall pokemon rather than cutting across
+   * it
+   */
+  const spotOf = (slot: Slot): UnitSpot => {
+    const bounds = element.getBoundingClientRect();
+    const left = bounds.left + stage.offsetX;
+    const top = bounds.top + stage.offsetY;
+    const box = boxOf(slot);
+
+    return {
+      x: left + (box == null ? slot.x : box.left + box.width / 2) * stage.scale,
+      top: top + (box == null ? slot.y - slot.radius * 2 : box.top) * stage.scale,
+      // Under the feet, where the bars are: a card dropped below a
+      // pokemon should clear what it is standing on
+      bottom: top + (slot.y + 16) * stage.scale,
+    };
+  };
+
+  let hovered: Unit | null = null;
+
+  const report = (slot: Slot | null): void => {
+    const unit = slot?.unit ?? null;
+
+    // Reported on every move rather than only on a change: the
+    // pokemon walks about under a still pointer, and a card left at
+    // the coordinates it opened at drifts off its own sprite
+    hovered = unit;
+    element.style.cursor = unit == null ? 'default' : 'pointer';
+    props.onHover?.(unit, slot == null ? null : spotOf(slot));
+  };
+
+  /**
+   * The finger being held, so the card knows which pokemon the hold
+   * was over. A hold reports no coordinates of its own
+   */
+  let holding: PointerEvent | null = null;
+  /**
+   * A finger has no hover, so the card that a pointer raises by
+   * resting on a pokemon is raised by holding one instead
+   */
+  const held = createLongPress(() => {
+    if (holding != null) {
+      report(under(holding));
+    }
+  });
+  later(held.cancel);
+
+  const grab = (event: PointerEvent): void => {
+    // A fresh press starts as a press. The flag is cleared here
+    // rather than at the click it guards, since a two finger lift
+    // often sends no click at all to clear it
+    if (event.isPrimary) {
+      turned = false;
+    }
+    // A press on the glass puts the last card away: a finger cannot
+    // move off a pokemon, so pressing somewhere else is how it says
+    // it has finished with one
+    if (event.pointerType === 'touch' && hovered != null) {
+      report(null);
+    }
+    holding = event;
+    held.onPointerDown(event);
+    twist.down(event);
+    // The second finger takes the drag off the first: what was a
+    // swipe is now a twist, and the two would pull the same yaw two
+    // ways
+    if (twist.turning()) {
+      turning = null;
+      return;
+    }
+    // The left button and nothing else. A right-drag belongs to the
+    // browser — on a Mac it is also what a ctrl-click is — and a
+    // canvas that swallowed it would take the context menu with it
+    if (!event.isPrimary || event.button !== 0) {
+      return;
+    }
+    event.preventDefault();
+
+    // A point on the ground is taken hold of, the way the overworld
+    // board is: the field then turns about its middle to keep that
+    // point under the pointer
+    const angle = bearingAt(event, 0);
+
+    if (angle == null) {
+      return;
+    }
+    turning = {
+      pointer: event.pointerId,
+      angle: angle - yaw,
+      clientX: event.clientX,
+      clientY: event.clientY,
+    };
+    element.setPointerCapture(event.pointerId);
+  };
+
+  const turn = (event: PointerEvent): void => {
+    const spun = twist.move(event);
+
+    if (spun != null) {
+      if (hovered != null) {
+        report(null);
+      }
+      turned = true;
+      yaw += spun;
+      draw();
+      return;
+    }
+    held.onPointerMove(event);
+    if (turning?.pointer !== event.pointerId) {
+      // A finger sliding over a pokemon is not pointing at it, and
+      // the hold above is what asks about one
+      if (event.pointerType !== 'touch') {
+        report(under(event));
+      }
+      return;
+    }
+    // Nothing is hovered while the field is being turned: the pointer
+    // is dragging the camera rather than pointing at anything on it
+    if (hovered != null) {
+      report(null);
+    }
+    // A pointer that has barely moved was aiming rather than
+    // turning: the pick under it still stands
+    if (Math.hypot(event.clientX - turning.clientX, event.clientY - turning.clientY) > TURN_SLOP) {
+      turned = true;
+    }
+
+    const seen = bearingAt(event, 0);
+
+    if (seen == null) {
+      return;
+    }
+    yaw += shortestTurn(yaw, seen - turning.angle);
+    draw();
+  };
+
+  const release = (event: PointerEvent): void => {
+    held.onPointerUp(event);
+    twist.up(event);
+    turning = null;
+    if (element.hasPointerCapture(event.pointerId)) {
+      element.releasePointerCapture(event.pointerId);
+    }
+  };
+
+  // The canvas has nothing a context menu is any use for, and on a
+  // Mac the menu is what a ctrl-click raises — so it comes up in the
+  // middle of a drag, over the field, whether or not the drag was
+  // ever going to turn anything. Refusing it here is the only way to
+  // keep it off: ignoring the button in `grab` stops the field
+  // turning, it does not stop the browser
+  const menu = (event: MouseEvent): void => {
+    event.preventDefault();
+  };
+
+  const leave = (): void => {
+    report(null);
+  };
+
+  const press = (event: MouseEvent): void => {
+    // The drag that turned the field ends over some pokemon or
+    // other, and that is not who was picked
+    if (turned) {
+      turned = false;
+      return;
+    }
+
+    const slot = under(event);
+
+    if (slot != null) {
+      props.onPick?.(slot.unit);
+    }
+  };
+
+  element.addEventListener('contextmenu', menu);
+  element.addEventListener('pointerleave', leave);
+  element.addEventListener('click', press);
+  element.addEventListener('pointerdown', grab);
+  element.addEventListener('pointermove', turn);
+  element.addEventListener('pointerup', release);
+  element.addEventListener('pointercancel', release);
+
+  // Something to look at before the first tick lands
+  draw();
+
+  later(() => {
+    morphed = null;
+    scene?.dispose();
+    scene = null;
+    element.removeEventListener('contextmenu', menu);
+    element.removeEventListener('pointerleave', leave);
+    element.removeEventListener('click', press);
+    element.removeEventListener('pointerdown', grab);
+    element.removeEventListener('pointermove', turn);
+    element.removeEventListener('pointerup', release);
+    element.removeEventListener('pointercancel', release);
+    firing.stop();
+    landed.stop();
+    queued.stop();
+    missing.stop();
+    ailing.stop();
+    biting.stop();
+    triggering.stop();
+    spending.stop();
+    telegraphing.stop();
+    soothing.stop();
+    typing.stop();
+    critting.stop();
+    blowing.stop();
+    landing.stop();
+    stopping.stop();
+    fainting.stop();
+    trading.stop();
+    walking.stop();
+    arriving.stop();
+    ticking.stop();
+  });
+
+  return () => {
+    for (const step of undo) {
+      step();
+    }
+  };
+}

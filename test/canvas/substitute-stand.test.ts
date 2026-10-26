@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import type { Slot, Stand } from '../../src/components/battle/battle-canvas/field';
+import type { Slot, Stand } from '../../src/canvas/battle/field/field';
 import type SpeciesSpriteAnimation from '../../src/canvas/sprites/species-sprite-animation';
-import { drawSlot } from '../../src/components/battle/battle-canvas/draw';
+import { drawSlot } from '../../src/canvas/battle/field/draw';
 import { createBattle, createUnit } from '../battle/harness';
 import type Unit from '../../src/battle/unit';
 

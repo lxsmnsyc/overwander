@@ -7,7 +7,7 @@ import {
   getLevelMoves,
   getLevelMovesBetween,
   nextOfferLevel,
-} from '../../src/components/items/use-item';
+} from '../../src/model/level-moves';
 
 /**
  * What a run of candy presses has to offer.

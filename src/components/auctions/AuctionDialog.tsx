@@ -11,7 +11,7 @@ import {
 import { type CaughtPokemon, getCaught } from '../../auth/caught';
 import { isShiny } from '../../model/caught-record';
 import { isEgg } from '../../model/egg';
-import type { Items } from '../../data/ids/items';
+import type { AuctionSubject } from '../../game/session/types';
 import { Genders, Species } from '../../data/ids/species';
 import { getSpeciesData } from '../../data/species';
 import { describeItem } from '../details';
@@ -36,14 +36,7 @@ import { SpriteAnim } from '../../data/ids/sprite-anims';
  * day ends with nobody having bid at all
  */
 
-/**
- * What is being put up. It is the same shape the auction record uses
- * to say what a lot holds, so the dialog and the lot it opens are
- * describing the thing the same way
- */
-export type AuctionSubject =
-  | { lot: AuctionLot.Catch; catchId: string }
-  | { lot: AuctionLot.Item; item: Items };
+export type { AuctionSubject };
 
 export interface AuctionDialogProps {
   /**

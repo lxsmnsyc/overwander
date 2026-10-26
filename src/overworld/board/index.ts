@@ -63,5 +63,8 @@ export const FULL_BOARD_REACH = 48;
 
 /** How many cells the full board adds on each side of the ordinary one */
 export const FULL_BOARD_EXTRA = FULL_BOARD_REACH - VIEW_RADIUS;
+
+/** What the board shows past the country it keeps track of */
+export type BoardEdge = 'haze' | 'full' | 'plain';
 export const BOARD_CENTER = VIEW_RADIUS;
 export const BOARD_COUNT = BOARD_CELLS * BOARD_CELLS;

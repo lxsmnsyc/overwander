@@ -1,0 +1,111 @@
+import { getDueQuests } from '../../auth/quests';
+import type { Store } from '../store';
+
+/**
+ * Telling a player that something they were doing anyway has come
+ * due.
+ *
+ * Progress is counters the server bumps wherever the play happens, so
+ * nothing on the client knows a quest was finished — the board would
+ * say so the next time it was opened, which is exactly when a player
+ * is not walking. This asks, and says the difference.
+ *
+ * The first answer after signing in is swallowed: a returning player
+ * with four quests standing wants the board, not four toasts. What is
+ * announced after that is what crossed while they were looking at
+ * something else
+ */
+
+/** How often the asking happens while nothing else prompts it */
+const SWEEP_INTERVAL = 180_000;
+
+/**
+ * The least time between two asks prompted by the collection
+ * changing. A run of catches is a handful of changes in a minute, and
+ * each of them would otherwise be a question of its own
+ */
+const RECORD_PACE = 30_000;
+
+export default function followDueQuests(
+  records: Store<number>,
+  say: (name: string) => void,
+): () => void {
+  const announced = new Set<string>();
+  let seeded = false;
+  let askedAt = 0;
+  let cancelled = false;
+
+  const sweep = (): void => {
+    askedAt = Date.now();
+    getDueQuests()
+      .then((due) => {
+        if (cancelled) {
+          return;
+        }
+        for (const quest of due) {
+          if (!announced.has(quest.key) && seeded) {
+            say(quest.name);
+          }
+          announced.add(quest.key);
+        }
+        // Something claimed is something that may come due again:
+        // a rotating ask keeps its key only for its own window
+        for (const key of announced) {
+          let still = false;
+
+          for (const quest of due) {
+            if (quest.key === key) {
+              still = true;
+              break;
+            }
+          }
+          if (!still) {
+            announced.delete(key);
+          }
+        }
+        seeded = true;
+      })
+      .catch(() => {
+        // A board nobody could read is not worth interrupting play
+        // over; the next sweep asks again
+      });
+  };
+
+  let missed = false;
+
+  // A hidden tab has nobody to show a toast to, so it asks once it is looked at again
+  const tick = (): void => {
+    if (document.visibilityState === 'hidden') {
+      missed = true;
+      return;
+    }
+    sweep();
+  };
+  const onVisible = (): void => {
+    if (missed && document.visibilityState === 'visible') {
+      missed = false;
+      sweep();
+    }
+  };
+
+  // Every collection change is worth asking about, but not one ask apiece
+  const paced = (): void => {
+    if (Date.now() - askedAt >= RECORD_PACE) {
+      tick();
+    }
+  };
+
+  paced();
+
+  const timer = setInterval(tick, SWEEP_INTERVAL);
+  const unsubscribe = records.subscribe(paced);
+
+  document.addEventListener('visibilitychange', onVisible);
+
+  return () => {
+    cancelled = true;
+    clearInterval(timer);
+    unsubscribe();
+    document.removeEventListener('visibilitychange', onVisible);
+  };
+}

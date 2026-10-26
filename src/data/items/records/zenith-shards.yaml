@@ -2413,3 +2413,99 @@ DarmanitanGalarZenithShard:
   icon: zenith/galar/darmanitan-galar
   flags: [Holdable]
   sell: 2000
+
+WyrdeerZenithShard:
+  type: Held
+  icon: zenith/hisui/wyrdeer
+  flags: [Holdable]
+  sell: 2000
+
+KleavorZenithShard:
+  type: Held
+  icon: zenith/hisui/kleavor
+  flags: [Holdable]
+  sell: 2000
+
+UrsalunaZenithShard:
+  type: Held
+  icon: zenith/hisui/ursaluna
+  flags: [Holdable]
+  sell: 2000
+
+BasculegionZenithShard:
+  type: Held
+  icon: zenith/hisui/basculegion
+  flags: [Holdable]
+  sell: 2000
+
+SneaslerZenithShard:
+  type: Held
+  icon: zenith/hisui/sneasler
+  flags: [Holdable]
+  sell: 2000
+
+OverqwilZenithShard:
+  type: Held
+  icon: zenith/hisui/overqwil
+  flags: [Holdable]
+  sell: 2000
+
+ArcanineHisuiZenithShard:
+  type: Held
+  icon: zenith/hisui/arcanine-hisui
+  flags: [Holdable]
+  sell: 2000
+
+ElectrodeHisuiZenithShard:
+  type: Held
+  icon: zenith/hisui/electrode-hisui
+  flags: [Holdable]
+  sell: 2000
+
+TyphlosionHisuiZenithShard:
+  type: Held
+  icon: zenith/hisui/typhlosion-hisui
+  flags: [Holdable]
+  sell: 2000
+
+SamurottHisuiZenithShard:
+  type: Held
+  icon: zenith/hisui/samurott-hisui
+  flags: [Holdable]
+  sell: 2000
+
+LilligantHisuiZenithShard:
+  type: Held
+  icon: zenith/hisui/lilligant-hisui
+  flags: [Holdable]
+  sell: 2000
+
+ZoroarkHisuiZenithShard:
+  type: Held
+  icon: zenith/hisui/zoroark-hisui
+  flags: [Holdable]
+  sell: 2000
+
+BraviaryHisuiZenithShard:
+  type: Held
+  icon: zenith/hisui/braviary-hisui
+  flags: [Holdable]
+  sell: 2000
+
+GoodraHisuiZenithShard:
+  type: Held
+  icon: zenith/hisui/goodra-hisui
+  flags: [Holdable]
+  sell: 2000
+
+AvaluggHisuiZenithShard:
+  type: Held
+  icon: zenith/hisui/avalugg-hisui
+  flags: [Holdable]
+  sell: 2000
+
+DecidueyeHisuiZenithShard:
+  type: Held
+  icon: zenith/hisui/decidueye-hisui
+  flags: [Holdable]
+  sell: 2000

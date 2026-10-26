@@ -212,6 +212,7 @@ describe('Zeniths', () => {
       Regions.Kalos,
       Regions.Alola,
       Regions.Galar,
+      Regions.Hisui,
     ]);
     const spoken = new Set<Species>(NO_ZENITH);
 

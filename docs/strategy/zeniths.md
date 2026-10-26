@@ -4,15 +4,14 @@ How every generation after Kanto gets its Zeniths, region by region, after [the 
 
 ## Where things stand
 
-- **Kanto, Johto, Hoenn, Sinnoh, Unova, Kalos, Alola and Galar are done:** 49, 40, 50, 54, 69, 26, 60 and 54 Zeniths (Alola's counting its 10 Alolan finals, Galar's its 8 Galarian finals), one for every eligible pokemon of each. Batch 0 (Zenith shapes, Unown) is in.
+- **Kanto, Johto, Hoenn, Sinnoh, Unova, Kalos, Alola, Galar and Hisui are done:** 49, 40, 50, 54, 69, 26, 60, 54 and 16 Zeniths (Alola's counting its 10 Alolan finals, Galar's its 8 Galarian finals, Hisui's its 10 Hisuian finals), one for every eligible pokemon of each. Batch 0 (Zenith shapes, Unown) is in.
 - **The rules are held by `test/data/zeniths.test.ts`.** A Zenith belongs to a final stage with no Mega and no other held-item shape. It fights 100 above its base stat total, none of it in HP, and wears an ability its line can never be born with. Its shard id is `2000000 + dex × 100 + 01`, and the shard is buried in the prized band only where its line is met.
-- **Left to do: about 80 Zeniths.**
+- **Left to do: 74 Zeniths.**
 
   | Region | Eligible | Notes |
   | --- | --- | --- |
-  | Hisui | 6 | |
-  | Paldea | 59 | Ogerpon, with a shape for each mask. Bramblin, Toedscool, Rellor and Flittle wait for their final stages |
-  | Regional finals | about 12 | Hisuian and Paldean finals, and Mr. Rime once it is in |
+  | Paldea | 71 | Ogerpon, with a shape for each mask. Bramblin, Toedscool, Rellor and Flittle wait for their final stages |
+  | Regional finals | 3 | The Paldean Tauros breeds, and Mr. Rime once it is in |
 
 ## Decided
 
@@ -44,7 +43,7 @@ How every generation after Kanto gets its Zeniths, region by region, after [the 
 | 6 | Alola | 50, then the 10 Alolan finals of Kanto lines |
 | 7 | Galar | 46, then the 8 Galarian finals |
 | 8 | Hisui | 6, then the Hisuian finals |
-| 9 | Paldea | 59, then the Paldean Tauros breeds |
+| 9 | Paldea | 71, then the Paldean Tauros breeds |
 
 ## What every batch does
 

@@ -1689,6 +1689,22 @@ export const enum Items {
   MoltresGalarZenithShard = 2014602,
   SlowkingGalarZenithShard = 2019902,
   DarmanitanGalarZenithShard = 2055503,
+  WyrdeerZenithShard = 2089901,
+  KleavorZenithShard = 2090001,
+  UrsalunaZenithShard = 2090101,
+  BasculegionZenithShard = 2090201,
+  SneaslerZenithShard = 2090301,
+  OverqwilZenithShard = 2090401,
+  ArcanineHisuiZenithShard = 2005902,
+  ElectrodeHisuiZenithShard = 2010102,
+  TyphlosionHisuiZenithShard = 2015702,
+  SamurottHisuiZenithShard = 2050302,
+  LilligantHisuiZenithShard = 2054902,
+  ZoroarkHisuiZenithShard = 2057102,
+  BraviaryHisuiZenithShard = 2062802,
+  GoodraHisuiZenithShard = 2070602,
+  AvaluggHisuiZenithShard = 2071302,
+  DecidueyeHisuiZenithShard = 2072402,
 }
 
 /**

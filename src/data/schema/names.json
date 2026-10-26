@@ -1905,7 +1905,25 @@
         "MoltresGalarZenith",
         "SlowkingGalarZenith",
         "DarmanitanGalarZenith",
-        "DarmanitanGalarZenZenith"
+        "DarmanitanGalarZenZenith",
+        "WyrdeerZenith",
+        "KleavorZenith",
+        "UrsalunaZenith",
+        "UrsalunaBloodmoonZenith",
+        "BasculegionZenith",
+        "BasculegionFemaleZenith",
+        "SneaslerZenith",
+        "OverqwilZenith",
+        "ArcanineHisuiZenith",
+        "ElectrodeHisuiZenith",
+        "TyphlosionHisuiZenith",
+        "SamurottHisuiZenith",
+        "LilligantHisuiZenith",
+        "ZoroarkHisuiZenith",
+        "BraviaryHisuiZenith",
+        "GoodraHisuiZenith",
+        "AvaluggHisuiZenith",
+        "DecidueyeHisuiZenith"
       ]
     },
     "gender": {
@@ -4881,7 +4899,23 @@
         "ZapdosGalarZenithShard",
         "MoltresGalarZenithShard",
         "SlowkingGalarZenithShard",
-        "DarmanitanGalarZenithShard"
+        "DarmanitanGalarZenithShard",
+        "WyrdeerZenithShard",
+        "KleavorZenithShard",
+        "UrsalunaZenithShard",
+        "BasculegionZenithShard",
+        "SneaslerZenithShard",
+        "OverqwilZenithShard",
+        "ArcanineHisuiZenithShard",
+        "ElectrodeHisuiZenithShard",
+        "TyphlosionHisuiZenithShard",
+        "SamurottHisuiZenithShard",
+        "LilligantHisuiZenithShard",
+        "ZoroarkHisuiZenithShard",
+        "BraviaryHisuiZenithShard",
+        "GoodraHisuiZenithShard",
+        "AvaluggHisuiZenithShard",
+        "DecidueyeHisuiZenithShard"
       ]
     },
     "biome": {

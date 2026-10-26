@@ -1423,6 +1423,22 @@ TINTS.push(zenithShard('galar', 'zapdos-galar', '#ff8000', '#81b9ef'));
 TINTS.push(zenithShard('galar', 'moltres-galar', '#624d4e', '#81b9ef'));
 TINTS.push(zenithShard('galar', 'slowking-galar', '#9141cb', '#ef4179'));
 TINTS.push(zenithShard('galar', 'darmanitan-galar', '#3dcef3'));
+TINTS.push(zenithShard('hisui', 'wyrdeer', '#9fa19f', '#ef4179'));
+TINTS.push(zenithShard('hisui', 'kleavor', '#91a119', '#afa981'));
+TINTS.push(zenithShard('hisui', 'ursaluna', '#915121', '#9fa19f'));
+TINTS.push(zenithShard('hisui', 'basculegion', '#2980ef', '#704170'));
+TINTS.push(zenithShard('hisui', 'sneasler', '#ff8000', '#9141cb'));
+TINTS.push(zenithShard('hisui', 'overqwil', '#624d4e', '#9141cb'));
+TINTS.push(zenithShard('hisui', 'arcanine-hisui', '#e62829', '#afa981'));
+TINTS.push(zenithShard('hisui', 'electrode-hisui', '#fac000', '#3fa129'));
+TINTS.push(zenithShard('hisui', 'typhlosion-hisui', '#e62829', '#704170'));
+TINTS.push(zenithShard('hisui', 'samurott-hisui', '#2980ef', '#624d4e'));
+TINTS.push(zenithShard('hisui', 'lilligant-hisui', '#3fa129', '#ff8000'));
+TINTS.push(zenithShard('hisui', 'zoroark-hisui', '#9fa19f', '#704170'));
+TINTS.push(zenithShard('hisui', 'braviary-hisui', '#ef4179', '#81b9ef'));
+TINTS.push(zenithShard('hisui', 'goodra-hisui', '#60a1b8', '#5060e1'));
+TINTS.push(zenithShard('hisui', 'avalugg-hisui', '#3dcef3', '#afa981'));
+TINTS.push(zenithShard('hisui', 'decidueye-hisui', '#3fa129', '#ff8000'));
 
 /**
  * The marks a swap cannot make, painted on where the picture already

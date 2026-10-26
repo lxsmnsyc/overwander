@@ -20,16 +20,12 @@ Boundaries: code/commits/PRs written normal.
 Conventions for this repository live in `.agents/skills/*/SKILL.md`. Read the
 one that covers what you are about to do:
 
-- `light-comments` - keep comments short and about the why; most blocks are 1-4
-  lines, and design history belongs in git rather than in a doc block.
 - `sprite-fps` - every sprite sheet animates at 24fps; count in `SPRITE_TICK` and
   let clips play at the speed they were drawn at.
 - `move-visuals` - every signature move (one family learns it) has a battle
   shape of its own (two signatures of one pokemon are two shapes); other moves
   reuse an earlier shape, named as its `landing` in `src/data/moves/visual/`.
 - `prefer-sets` - use `Set.has` for membership checks instead of scanning arrays.
-- `prefer-for-of` - iterate with `for...of` rather than callback Array methods
-  such as `map`, `filter`, `some` and `find`; `sort` and JSX `<For>` stay.
 - `batched-queries` - `batchedQuery` is for the browser, where many rows each read
   one key at once; the server reads many keys with one query instead, and never
   merges separate requests or batches inside a transaction.
@@ -53,14 +49,6 @@ one that covers what you are about to do:
   `openForm` and awaited; an NPC is a folder under `src/overworld/npcs` whose
   `createNpc` names who they are and lazily loads the script that talks
   through a conversation of forms, and the server still decides.
-- `changesets` - every change against `main` ships with one, and a fix for
-  something the same branch broke ships with none. `patch` when something that
-  already existed behaves differently, `minor` when something new exists,
-  `major` only with the maintainer's approval. The description stays short,
-  a list when it covers several things.
-- `let-layout-explain` - avoid unnecessary secondary labels and descriptions;
-  let grouping, alignment and order explain a screen, and keep words for what
-  the layout cannot show (icon-only buttons, consequences, empty states).
 - `app-logic` - state and rules live in `src/game` as plain stores, drawing in
   `src/canvas` as plain functions; components read stores through
   `createStoreSignal` and reach the interface's toasts, sounds and forms only

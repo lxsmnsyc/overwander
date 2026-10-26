@@ -9,7 +9,7 @@ branches:
 
 ## Outcome
 
-Every eligible pokemon has its Zenith (`now`). The game then plays in Japanese and Spanish beside English, boots lighter, and the remaining items are in (`next`). Pixel effects, dungeons, the signature rebalance, game data in Postgres and the player systems follow (`later`).
+Every eligible pokemon has its Zenith (`now`). The game then plays in Japanese and Spanish beside English, boots lighter, wild pokemon come, go and roam around the player, and the remaining items are in (`next`). Pixel effects, dungeons, the signature rebalance, game data in Postgres and the player systems follow (`later`).
 
 ## Acceptance
 
@@ -75,6 +75,7 @@ Every eligible pokemon has its Zenith (`now`). The game then plays in Japanese a
 - todo: Alola trainers, Mega sprites, Waiting for SpriteCollab -> inbox: blocked on art.
 - todo: Forms waiting for art -> built for Galarian Zen Darmanitan (b3e73a4f7), Cramorant Gulping and Gorging, Morpeko Hangry, Calyrex Ice and Shadow Rider, Oinkologne's female and Three-Segment Dudunsparce (registered, waiting only for sheets). The rest -> inbox.
 - todo: Ideas (open world gimmicks, seeing other players) -> inbox: not committed to.
+- Added 2026-10-26, spawn radius, caps and roaming (after Minecraft and wAthena) -> spawn-life-design, spawn-lifetimes, spawn-radius, spawn-roaming.
 
 ## Open questions
 
@@ -82,6 +83,7 @@ Every eligible pokemon has its Zenith (`now`). The game then plays in Japanese a
 
 ## Gates
 
+- spawn-life-design is gated: the user sets the radius, caps, lifetimes and roaming numbers.
 - Every Zenith node is gated: the user approves each pokemon's proposal before data is written.
 - dungeon-questions and rebalance-bounds are the user's decisions.
 - Contracts stop for user review once frozen.

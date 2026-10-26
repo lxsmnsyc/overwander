@@ -56,7 +56,7 @@ Batches 0 to 4 land in English only and change nothing a player sees. Batches 5 
 
 ## Database
 
-The `game_data` plan in [todo.md](../todo.md) gains a `names (kind, id, locale, name)` table once batch 2 lands, so box and auction search work in the player's language.
+The `game_data` plan in [the roadmap](../roadmaps/overwander/nodes/gamedata-names/brief.md) gains a `names (kind, id, locale, name)` table once batch 2 lands, so box and auction search work in the player's language.
 
 ## Pace
 

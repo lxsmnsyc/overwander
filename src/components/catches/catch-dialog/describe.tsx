@@ -19,13 +19,15 @@ import {
   isFatefulEncounter,
   isRaidEncounter,
 } from '../../../overworld/encounter';
-import { describeItem } from '../../details';
+import { describeIVs, describeItem, withArticle } from '../../details';
 import ItemSprite from '../../items/ItemSprite';
 import { HeartIcon } from '../../icons';
 import { type JSX, Show } from 'solid-js';
 import { getMaxHealth } from '../../../model/health';
 import { ItemFlags, Items } from '../../../data/ids/items';
 import { getItemData } from '../../../data/items';
+
+export { describeIVs, withArticle };
 
 /**
  * How much training one press moves. Four points buy one point of the
@@ -75,20 +77,6 @@ export function natureShift(nature: Natures, stat: Stats): number {
  * same six differently is two vocabularies for one thing
  */
 export const STAT_LABELS: Record<Stats, string> = STAT_NAMES;
-
-/**
- * The six values as a dex prints them, used in the record, in what a
- * bottle cap reports back, and on an auction lot — a bidder is buying
- * these more than they are buying the species
- */
-export function describeIVs(ivs: number): string {
-  const parts: string[] = [];
-
-  for (const stat of STAT_ORDER) {
-    parts.push(`${STAT_LABELS[stat]} ${getIV(ivs, stat)}`);
-  }
-  return parts.join(' · ');
-}
 
 /**
  * Where it came from, for the ones that came from somewhere.
@@ -457,14 +445,6 @@ export function describeEvolutionMethod(
 /** How far along a goal is, the way a feat says it: " (412/1000)" */
 function tally(progress: number | undefined, goal: number): string {
   return progress == null ? '' : ` (${Math.min(progress, goal)}/${goal})`;
-}
-
-/**
- * A name with the article that belongs in front of it. Nothing here
- * is plural or proper, so the only question is the vowel
- */
-export function withArticle(name: string): string {
-  return `${/^[aeiou]/i.test(name) ? 'an' : 'a'} ${name}`;
 }
 
 /**

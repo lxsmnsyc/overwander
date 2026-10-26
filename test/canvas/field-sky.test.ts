@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { BattleModes } from '../../src/battle/battle';
 import { MoveTargetType } from '../../src/battle/events';
 import { skyOverTeam } from '../../src/battle/weather';
-import { type Slot, skiesOver } from '../../src/components/battle/battle-canvas/field';
+import { type Slot, skiesOver } from '../../src/canvas/battle/field/field';
 import { Weathers } from '../../src/data/ids/status';
 import { Moves } from '../../src/data/ids/moves';
 import { createBattle, createUnit } from '../battle/harness';

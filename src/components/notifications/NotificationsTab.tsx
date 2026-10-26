@@ -13,7 +13,7 @@ import {
 } from '../styled';
 import FriendEntry from '../friends/FriendEntry';
 import { GameDialog, useGame } from '../app/game-context';
-import ProfileSection from '../profile/sections';
+import ProfileSection from '../../game/session/profile-section';
 
 /**
  * Everything waiting on the player, in one list.

@@ -20,7 +20,7 @@ import { Statuses, Terrains, Weathers } from '../../../src/data/ids/status';
 import * as gmax from '../../../src/data/moves/gmax-moves';
 import { maxPowerOf } from '../../../src/data/moves/max-moves';
 import { castShownAs } from '../../../src/battle/gimmicks/dynamax/max-moves';
-import { placesOf } from '../../../src/components/battle/battle-canvas/field';
+import { placesOf } from '../../../src/canvas/battle/field/field';
 import { createBattle, createUnit, pinRandom } from '../harness';
 
 const NONE = { type: MoveTargetType.None } as const;

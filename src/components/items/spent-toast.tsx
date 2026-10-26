@@ -4,7 +4,8 @@ import type { Items } from '../../data/ids/items';
 import SpeciesCoat from '../sprites/SpeciesCoat';
 import type { ToastRequest } from '../styled';
 import { describeItem } from '../details';
-import type { Spent } from './use-item';
+import type { Spent, SpentCue } from '../../game/items/use-item';
+import playEffect, { Effect } from '../app/sound';
 
 /**
  * What using an item says, as a toast.
@@ -40,4 +41,18 @@ export default function spentToast(item: Items, spent: Spent): ToastRequest {
     message: `${STAT_LABELS[trained.stat]} ${trained.from} → ${trained.to}`,
     tone: spent.tone,
   };
+}
+
+const CUE_EFFECTS: Record<SpentCue, Effect> = {
+  'level-up': Effect.LevelUp,
+  purified: Effect.Purified,
+  'item-slot': Effect.ItemSlot,
+  'ability-learned': Effect.AbilityLearned,
+};
+
+/** Play the sound a spend asked for, if it asked for one */
+export function playSpentCue(spent: Spent): void {
+  if (spent.cue != null) {
+    playEffect(CUE_EFFECTS[spent.cue]);
+  }
 }

@@ -20,7 +20,8 @@ Darumaka:
   Darmanitan: { name: Darmanitan, category: Blazing Pokemon }
   DarmanitanZen: { name: Darmanitan Zen, category: Blazing Pokemon }
   DarumakaGalar: { name: Galarian Darumaka, category: Zen Charm Pokemon }
-  DarmanitanGalar: { name: Galarian Darmanitan, category: Blazing Pokemon }
+  DarmanitanGalar: { name: Galarian Darmanitan, category: Zen Charm Pokemon }
+  DarmanitanGalarZen: { name: Galarian Darmanitan Zen, category: Zen Charm Pokemon }
 Maractus:
   Maractus: { name: Maractus, category: Cactus Pokemon }
 Dwebble:

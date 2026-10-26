@@ -1,13 +1,8 @@
-import Landmark from '../../../data/overworld/landmark';
-import {
-  BOARD_CELLS,
-  BOARD_CENTER,
-  BOARD_RADIUS,
-  FULL_BOARD_EXTRA,
-} from '../../../overworld/board';
-import type { BoardEdge } from '../../app/settings';
-import { CHUNK_CELLS } from '../../../overworld/chunk';
-import { MAX_STEP_REPORT } from '../../../model/egg';
+import Landmark from '../../data/overworld/landmark';
+import { BOARD_CELLS, BOARD_CENTER, BOARD_RADIUS, FULL_BOARD_EXTRA } from '../../overworld/board';
+import type { BoardEdge } from '../../overworld/board';
+import { CHUNK_CELLS } from '../../overworld/chunk';
+import { MAX_STEP_REPORT } from '../../model/egg';
 
 /**
  * The landmarks a player fights somebody at, all served by the one
@@ -38,7 +33,7 @@ export const HARVEST_LANDMARKS = new Set([
  * re-exported here because the board reads it beside its other
  * measurements
  */
-export { PUBLISHED_SPAWNS } from '../../../auth/snapshots';
+export { PUBLISHED_SPAWNS } from '../../auth/snapshots';
 
 /**
  * How wide the board is and where the player stands on it. Both the

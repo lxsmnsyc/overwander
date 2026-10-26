@@ -1,4 +1,4 @@
-import { AWARD_NAMES } from '../../../data/awards';
+import { AWARD_NAMES } from '../../data/awards';
 import {
   CHAMPION_GREETINGS,
   CHAMPION_HONORS,
@@ -29,9 +29,9 @@ import {
   PIKE_CURTAINS,
   frontierTeamSize,
   getEliteBadges,
-} from '../../../data/overworld/experts';
-import Landmark from '../../../data/overworld/landmark';
-import { EXECUTIVE_HONORS, EXECUTIVE_QUOTES } from '../../../data/overworld/npc';
+} from '../../data/overworld/experts';
+import Landmark from '../../data/overworld/landmark';
+import { EXECUTIVE_HONORS, EXECUTIVE_QUOTES } from '../../data/overworld/npc';
 import {
   SYNDICATE_BOSS_HONORS,
   SYNDICATE_BOSS_QUOTES,
@@ -41,9 +41,9 @@ import {
   bossName,
   executiveName,
   gruntName,
-} from '../../../data/overworld/syndicate';
-import { RocketRank } from '../../../overworld/chunk-snapshot';
-import type ChunkSnapshot from '../../../overworld/chunk-snapshot';
+} from '../../data/overworld/syndicate';
+import { RocketRank } from '../../overworld/chunk-snapshot';
+import type ChunkSnapshot from '../../overworld/chunk-snapshot';
 import {
   CHAMPION_PARTY_LEVELS,
   ELITE_PARTY_LEVELS,
@@ -52,9 +52,42 @@ import {
   LEGEND_PARTY_LEVELS,
   type LevelBand,
   rocketPartyLevels,
-} from '../../../overworld/stop';
-import { TRAINER_QUOTES, trainerLevels, trainerNameIn } from '../../../data/overworld/trainers';
-import type { StopChallenge } from '../StopDialog';
+} from '../../overworld/stop';
+import { TRAINER_QUOTES, trainerLevels, trainerNameIn } from '../../data/overworld/trainers';
+
+/**
+ * A named challenger above the rank and file: a duelling trainer's
+ * class, a gym leader, one of the Elite Four, or the Champion. The
+ * name titles the dialog, the band prices the lineup, and the stake
+ * line says what a win earns
+ */
+export interface StopChallenge {
+  name: string;
+  levels: LevelBand;
+  greeting: string;
+  /** What beating them pays, in a line. Losing costs nothing but the fight */
+  wins: string;
+  /** A Frontier facility's house rule, said before the fight */
+  rule?: string;
+  /**
+   * The most this fight takes, where the house sets it: a Frontier
+   * facility is three a side. Absent everywhere else, which is the
+   * game's own six
+   */
+  bring?: number;
+  /**
+   * Whether the house lends the party rather than taking the
+   * player's. The six on offer are drawn off the stop, so the dialog
+   * lays them out itself and the picks are places in that list
+   */
+  rented?: boolean;
+  /**
+   * Whether the house has named nobody yet. The Dome draws its three
+   * against the party that walks in, so there is no lineup to lay out
+   * until the challenge is taken
+   */
+  unseen?: boolean;
+}
 
 /** A band said the way a lineup reads it: "levels 45-65" */
 export function saidLevels([lowest, highest]: LevelBand): string {

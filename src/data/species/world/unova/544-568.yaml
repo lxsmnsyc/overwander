@@ -172,6 +172,14 @@ Darumaka:
     active: [Morning, Day]
     base-form: false
     evolves-from: DarumakaGalar
+  DarmanitanGalarZen:
+    types: [Ice, Fire]
+    egg-groups: [Field]
+    active: [Morning, Day]
+    # Sitting down lets the fire it had kept in burst out of its
+    # snowball, and it gets faster and harder hitting rather than calmer
+    base-form: false
+    evolves-from: DarumakaGalar
 Maractus:
   # The cactus: it keeps the desert's water for the months there is
   # none, and it rattles its arms to put the birds off

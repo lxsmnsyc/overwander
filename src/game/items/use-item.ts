@@ -19,7 +19,6 @@ import usePurifyingGem from '../../auth/purify';
 import { useAbilityCapsule } from '../../auth/ability-items';
 import useSkillBook from '../../auth/skill-book';
 import useUtilityBelt from '../../auth/utility-belt';
-import playEffect, { Effect } from '../app/sound';
 import { feedEffortBerry, useEffortItem } from '../../auth/training';
 import { MAX_LEVEL } from '../../data/constants/levels';
 import { MAX_EFFORT_PER_STAT, type Stats } from '../../data/constants/stats';
@@ -27,7 +26,6 @@ import { MAX_SLOTS, countAbilitySlots, mostSlots } from '../../data/constants/sl
 import { getAbilityData, getSpeciesSignature } from '../../data/abilities';
 import { getAwakenableAbilities } from '../../data/overworld/npc';
 import { Items, getBall, getMachineMove, isMachineItem } from '../../data/ids/items';
-import type { Moves } from '../../data/ids/moves';
 import { NATURE_NAMES } from '../../data/ids/text';
 import { Genders, type Species } from '../../data/ids/species';
 import { BERRY_EFFORT_DROPS } from '../../data/items/berries';
@@ -48,10 +46,8 @@ import { UTILITY_BELT_SLOT, isUtilityBelt } from '../../data/items/utility-belt'
 import { MAX_VITAMIN_STATS, VITAMIN_STATS, isPPItem, isVitamin } from '../../data/items/vitamins';
 import { MAX_WING_STATS, WING_STATS, isWing } from '../../data/items/wings';
 import { PP_UP_LIMIT } from '../../data/moves';
-import { getMovesLearnedAt, getMovesLearnedBetween, getSpeciesData } from '../../data/species';
-import type { ToastTone } from '../styled';
-import { describeItem } from '../details';
-import { describeIVs, withArticle } from '../catches/catch-dialog/describe';
+import { getSpeciesData } from '../../data/species';
+import { describeIVs, describeItem, withArticle } from '../details';
 
 /**
  * Spending one item on one pokemon: whether it would mean anything,
@@ -177,93 +173,6 @@ export function asksAQuestion(item: Items): boolean {
 }
 
 /**
- * The moves the level just reached has to offer.
- *
- * The species' list for **that level exactly**, minus anything it
- * knows already, so a candy bringing a pokemon back to a level it has
- * been at before does not offer the same move twice. A move from any
- * earlier level is the Move Reminder's trade and costs a Heart Scale
- */
-export function getLevelMoves(caught: CaughtPokemon, level: number): Moves[] {
-  if (isEgg(caught)) {
-    return [];
-  }
-
-  const knows = new Set(caught.moves);
-
-  const offered: Moves[] = [];
-
-  for (const learned of getMovesLearnedAt(caught.species, level)) {
-    if (!knows.has(learned)) {
-      offered.push(learned);
-    }
-  }
-  return offered;
-}
-
-/**
- * The same, for every level in a run of them: what a pokemon fed
- * twenty candies at once passed through, in the order it grew.
- *
- * A jump is not a level: the candy button gathers a run of presses
- * into one feeding, and the moves of the levels it went **through**
- * are as much the pokemon's as the one it stopped on. `from` and `to`
- * are both inclusive, so a grow from 5 to 25 asks for 6 through 25.
- *
- * A move listed at two of those levels is offered once, since being
- * asked the same question twice in one run is the same nuisance as
- * being asked about a move the pokemon already knows.
- *
- * It is the run the server judges a level-up move against, so both
- * read `getMovesLearnedBetween` rather than each walking the levels
- * their own way
- */
-export function getLevelMovesBetween(caught: CaughtPokemon, from: number, to: number): Moves[] {
-  if (isEgg(caught)) {
-    return [];
-  }
-
-  const knows = new Set(caught.moves);
-
-  const offered: Moves[] = [];
-
-  for (const learned of getMovesLearnedBetween(caught.species, from, to)) {
-    if (!knows.has(learned)) {
-      offered.push(learned);
-    }
-  }
-  return offered;
-}
-
-/**
- * The next level that would ask a question: the lowest one above
- * `above` where the species learns something this pokemon does not
- * know, or null where the rest of the way to the cap asks nothing.
- *
- * It is what lets a run of candy presses be batched at all. The store
- * teaches a levelled move only while the pokemon is standing on the
- * level that offers it, so a call that crosses several offers can
- * teach the last of them and no more. A stretch with no offer in it
- * has nothing to lose, and goes over in one call
- */
-export function nextOfferLevel(caught: CaughtPokemon, above: number): number | null {
-  if (isEgg(caught)) {
-    return null;
-  }
-
-  const knows = new Set(caught.moves);
-
-  for (let level = above + 1; level <= MAX_LEVEL; level++) {
-    for (const move of getMovesLearnedAt(caught.species, level)) {
-      if (!knows.has(move)) {
-        return level;
-      }
-    }
-  }
-  return null;
-}
-
-/**
  * Which stat an item trains, for the two kinds that train one. Null
  * for everything else, which is most of the bag
  */
@@ -278,10 +187,18 @@ export function effortStatOf(item: Items): Stats | null {
   );
 }
 
+/** How a report is coloured: as news, as a gain, or as a refusal */
+export type SpentTone = 'neutral' | 'leaf' | 'ember';
+
+/** The sound a spend is worth making, for the interface to play */
+export type SpentCue = 'level-up' | 'purified' | 'item-slot' | 'ability-learned';
+
 /** What spending it came to */
 export interface Spent {
   said: string;
-  tone: ToastTone;
+  tone: SpentTone;
+  /** A sound the moment deserves, where it deserves one */
+  cue?: SpentCue;
   /**
    * The level it grew to, for the candies that grow one. A level may
    * have a move waiting behind it: see `getLevelMoves`
@@ -348,8 +265,7 @@ export default async function spendItemOn(catchId: string, item: Items): Promise
     if (level == null) {
       return { said: 'That candy could not be used.', tone: 'ember', level: null };
     }
-    playEffect(Effect.LevelUp);
-    return { said: `Grew to level ${level}.`, tone: 'neutral', level };
+    return { said: `Grew to level ${level}.`, tone: 'neutral', level, cue: 'level-up' };
   }
 
   if (item === Items.RareCandyMax) {
@@ -358,8 +274,8 @@ export default async function spendItemOn(catchId: string, item: Items): Promise
     if (grown == null) {
       return { said: 'That candy could not be used.', tone: 'ember', level: null };
     }
-    playEffect(Effect.LevelUp);
     return {
+      cue: 'level-up',
       said: `Grew to level ${grown.level}.`,
       tone: 'neutral',
       level: grown.level,
@@ -401,8 +317,12 @@ export default async function spendItemOn(catchId: string, item: Items): Promise
     if (ivs == null) {
       return refused(item);
     }
-    playEffect(Effect.Purified);
-    return { said: `The shadow is gone — ${describeIVs(ivs)}.`, tone: 'neutral', level: null };
+    return {
+      said: `The shadow is gone — ${describeIVs(ivs)}.`,
+      tone: 'neutral',
+      level: null,
+      cue: 'purified',
+    };
   }
 
   if (isMaxMushrooms(item)) {
@@ -430,8 +350,12 @@ export default async function spendItemOn(catchId: string, item: Items): Promise
     if (slots == null) {
       return refused(item);
     }
-    playEffect(Effect.ItemSlot);
-    return { said: `Room for ${slots} held items now.`, tone: 'neutral', level: null };
+    return {
+      said: `Room for ${slots} held items now.`,
+      tone: 'neutral',
+      level: null,
+      cue: 'item-slot',
+    };
   }
 
   if (isSkillBook(item)) {
@@ -440,8 +364,7 @@ export default async function spendItemOn(catchId: string, item: Items): Promise
     if (slots == null) {
       return refused(item);
     }
-    playEffect(Effect.ItemSlot);
-    return { said: `Room for ${slots} moves now.`, tone: 'neutral', level: null };
+    return { said: `Room for ${slots} moves now.`, tone: 'neutral', level: null, cue: 'item-slot' };
   }
 
   if (isAbilityCapsule(item)) {
@@ -450,8 +373,8 @@ export default async function spendItemOn(catchId: string, item: Items): Promise
     if (drawn == null) {
       return refused(item);
     }
-    playEffect(Effect.AbilityLearned);
     return {
+      cue: 'ability-learned',
       said: `${getAbilityData(drawn.ability).name} came up — ${drawn.slots} abilities now.`,
       tone: 'neutral',
       level: null,

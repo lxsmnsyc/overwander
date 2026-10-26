@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import type { Slot } from '../../src/components/battle/battle-canvas/field';
+import type { Slot } from '../../src/canvas/battle/field/field';
 import type SpeciesSpriteAnimation from '../../src/canvas/sprites/species-sprite-animation';
 import type Bakery from '../../src/canvas/bakery';
 import type { Painter, QuadBlend } from '../../src/canvas/gl/quad-batch';
-import { type SlotBatch, drawSlot } from '../../src/components/battle/battle-canvas/draw';
-import { BOSS_RADIUS, PARTY_SLOT } from '../../src/components/battle/battle-canvas/metrics';
-import { JEWEL_REACH, jewelFacets } from '../../src/components/battle/battle-canvas/terastal';
+import { type SlotBatch, drawSlot } from '../../src/canvas/battle/field/draw';
+import { BOSS_RADIUS, PARTY_SLOT } from '../../src/canvas/battle/field/metrics';
+import { JEWEL_REACH, jewelFacets } from '../../src/canvas/battle/field/terastal';
 import { terastallize } from '../../src/battle/gimmicks/terastal';
 import { TYPE_COLORS, Types } from '../../src/data/constants/types';
 import { createBattle, createUnit } from '../battle/harness';

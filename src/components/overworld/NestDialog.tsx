@@ -5,6 +5,7 @@ import type { Buddy } from '../../overworld/core';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import { Button, Dialog, DialogActions, Meta } from '../styled';
 import { CounterSpent, CounterTerms, HeadingPortrait } from '../forms/terms';
+import type { EggSource, EggState } from '../../game/overworld/journey';
 
 /**
  * An egg that has been found, put to the player before it is theirs.
@@ -28,7 +29,7 @@ import { CounterSpent, CounterTerms, HeadingPortrait } from '../forms/terms';
  * pokemon is the rarest thing in the overworld, and saying which is
  * which is the only clue to how easily it could be found again
  */
-export type EggSource = 'nest' | 'grotto';
+export type { EggSource };
 
 const FOUND: Record<EggSource, string> = {
   nest: 'An egg, warm in the nest.',
@@ -53,7 +54,7 @@ const BARE: Record<EggSource, string> = {
  * same reason a quiet lair is: a player who pressed a cell asked a
  * question, and the answer belongs where they are looking
  */
-export type EggState = 'offered' | 'taken' | 'bare';
+export type { EggState };
 
 export interface NestDialogProps {
   /**

@@ -37,7 +37,7 @@ import { LobbyRole } from '../../model/lobby-role';
 import { GameDialog, useGame } from '../app/game-context';
 import { ActionsIcon } from '../icons';
 import PlayerPlace from './PlayerPlace';
-import ProfileSection from './sections';
+import ProfileSection from '../../game/session/profile-section';
 import TeamsCard from './TeamsCard';
 import TradesTab from '../trades/TradesTab';
 import { getTitleName, titleLine, titleType } from '../../data/ids/titles';

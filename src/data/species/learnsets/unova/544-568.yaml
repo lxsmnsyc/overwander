@@ -1041,6 +1041,43 @@ Darumaka:
         Reversal,
         StoneEdge,
       ]
+  DarmanitanGalarZen:
+    level:
+      1: [Tackle, Bite, PowderSnow, Taunt, IcicleCrash]
+      12: [Avalanche]
+      16: [WorkUp]
+      20: [IceFang]
+      24: [Headbutt]
+      28: [IcePunch]
+      32: [Uproar]
+      38: [BellyDrum]
+      44: [Blizzard]
+      50: [Thrash]
+      56: [Superpower]
+    teachable:
+      [
+        Avalanche,
+        Blizzard,
+        BodyPress,
+        BodySlam,
+        BulkUp,
+        Bulldoze,
+        BurningJealousy,
+        Earthquake,
+        FocusBlast,
+        GigaImpact,
+        HyperBeam,
+        IceBeam,
+        IceFang,
+        IcePunch,
+        IronDefense,
+        IronHead,
+        LashOut,
+        Payback,
+        Psychic,
+        Reversal,
+        StoneEdge,
+      ]
 Maractus:
   Maractus:
     level:

@@ -7,8 +7,8 @@ import {
   aimedAt,
   project,
   unitsOf,
-} from '../../src/components/battle/battle-canvas/field';
-import { drawAim } from '../../src/components/battle/battle-canvas/draw';
+} from '../../src/canvas/battle/field/field';
+import { drawAim } from '../../src/canvas/battle/field/draw';
 import { createBattle, createUnit } from '../battle/harness';
 import type Unit from '../../src/battle/unit';
 

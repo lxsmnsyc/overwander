@@ -22,40 +22,9 @@ import { Button, Dialog, DialogActions, Meta, useToast } from '../styled';
 import { CounterStep, CounterTerms, HeadingPortrait } from '../forms/terms';
 import { TEAM_SIZE } from '../../auth/teams';
 import { useGame } from '../app/game-context';
+import type { StopChallenge } from '../../game/overworld/challengers';
 
-/**
- * A named challenger above the rank and file: a duelling trainer's
- * class, a gym leader, one of the Elite Four, or the Champion. The
- * name titles the dialog, the band prices the lineup, and the stake
- * line says what a win earns
- */
-export interface StopChallenge {
-  name: string;
-  levels: LevelBand;
-  greeting: string;
-  /** What beating them pays, in a line. Losing costs nothing but the fight */
-  wins: string;
-  /** A Frontier facility's house rule, said before the fight */
-  rule?: string;
-  /**
-   * The most this fight takes, where the house sets it: a Frontier
-   * facility is three a side. Absent everywhere else, which is the
-   * game's own six
-   */
-  bring?: number;
-  /**
-   * Whether the house lends the party rather than taking the
-   * player's. The six on offer are drawn off the stop, so the dialog
-   * lays them out itself and the picks are places in that list
-   */
-  rented?: boolean;
-  /**
-   * Whether the house has named nobody yet. The Dome draws its three
-   * against the party that walks in, so there is no lineup to lay out
-   * until the challenge is taken
-   */
-  unseen?: boolean;
-}
+export type { StopChallenge };
 
 export interface StopDialogProps {
   user: PlayerIdentity;

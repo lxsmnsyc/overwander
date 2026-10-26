@@ -61,3 +61,7 @@ one that covers what you are about to do:
 - `let-layout-explain` - avoid unnecessary secondary labels and descriptions;
   let grouping, alignment and order explain a screen, and keep words for what
   the layout cannot show (icon-only buttons, consequences, empty states).
+- `app-logic` - state and rules live in `src/game` as plain stores, drawing in
+  `src/canvas` as plain functions; components read stores through
+  `createStoreSignal` and reach the interface's toasts, sounds and forms only
+  as callbacks the module is handed.

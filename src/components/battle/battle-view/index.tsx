@@ -1,40 +1,15 @@
-import {
-  type JSX,
-  Show,
-  batch,
-  createEffect,
-  createResource,
-  createSignal,
-  from,
-  onCleanup,
-  onMount,
-} from 'solid-js';
+import { type JSX, Show, createResource, createSignal, onCleanup, onMount } from 'solid-js';
 import type Unit from '../../../battle/unit';
-import {
-  BattleOutcome,
-  type BattleRecord,
-  type CandyEarned,
-  finishBattle,
-  listBattleTeams,
-  recordAftermath,
-  watchBattle,
-} from '../../../auth/battles';
+import type { CandyEarned } from '../../../auth/battles';
 import { useAuth } from '../../../auth/context';
-import createClientSignal from '../../app/client-signal';
 import playEffect, { Effect } from '../../app/sound';
 import { forTheGame } from '../../app/keys';
-import { answered } from '../../app/resource-reads';
-import { PLAYER_ALLIANCE, RaidKind, clearRaid, getRaid, getRaidTitle } from '../../../auth/raids';
+import createStoreSignal from '../../app/store-signal';
+import { RaidKind, getRaidTitle } from '../../../auth/raids';
 import { BattleModes } from '../../../battle/battle';
 import BattleKind, { getBattleKind } from '../../../model/battle-kind';
-import {
-  type RaidBattle,
-  collectAftermath,
-  countDefeated,
-  createRaidBattle,
-} from '../../../overworld/raid/battle';
 import Npc from '../../../data/overworld/npc';
-import { createTrainerBattle } from '../../../overworld/stop/battle';
+import createBattleWatch, { type Outcome } from '../../../game/battle/watch';
 import BattleField from '../BattleField';
 import BattleTopBar from '../BattleTopBar';
 import CandySprite from '../../sprites/CandySprite';
@@ -46,30 +21,6 @@ import { Button, Dialog, DialogActions, Note, Status, useToast } from '../../sty
 import type { ActiveBattle, PendingReward, Spoils } from '../../app/game-context';
 import { type Profile, getProfiles } from '../../../auth/profile';
 
-/**
- * How often the view re-reads the units; the battle itself runs on
- * its own frame timer
- */
-const POLL_INTERVAL = 250;
-
-/**
- * How long the field is held before the fight starts, in seconds.
- *
- * A real-time battle is over in half a minute and nobody presses
- * anything in it, so the moment it opens is the only chance a player
- * has to see what they brought and what they are up against. Dropped
- * straight in, the first exchange had already landed before the
- * sprites finished loading. The engine is seeded and deterministic —
- * holding the start changes nothing about how the fight goes, only
- * when it begins
- */
-const COUNTDOWN = 3;
-
-/**
- * How often the countdown is stepped, in milliseconds
- */
-const COUNTDOWN_TICK = 1000;
-
 export interface BattleViewProps {
   active: ActiveBattle;
   /** Out of the fight, to wherever the view was opened from */
@@ -80,14 +31,13 @@ export interface BattleViewProps {
   spoils?: () => Spoils | null;
 }
 
-/**
- * A battle, taking the whole page. A raid battle settles its raid
- * when it ends — the outcome is stamped, a win shuts the lobby and
- * leaves the legendary waiting in the overworld. A replay settles
- * nothing and can be walked out of at any point
- */
 /** How large a candy is drawn on the toast that says a fight paid it */
 const CANDY_ART = 24;
+
+/**
+ * A battle, taking the whole page. The fight itself, from building it
+ * to settling it, is `src/game/battle/watch.ts`; this draws it
+ */
 
 export default function BattleView(props: BattleViewProps): JSX.Element {
   const auth = useAuth();
@@ -95,19 +45,9 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
 
   /**
    * What the team brought home for having fought: a pile a family,
-   * each drawn as the family's own candy. One line per pile rather
-   * than a sentence listing them, since which pile grew is the thing
-   * being reported
+   * each drawn as the family's own candy, one line per pile since which
+   * pile grew is the thing being reported
    */
-  /** Candy the settled fight paid, for the summary */
-  const [candy, setCandy] = createSignal<CandyEarned[]>([]);
-  /** Whether the view has been left, so a late payout is said in passing instead */
-  let gone = false;
-
-  onCleanup(() => {
-    gone = true;
-  });
-
   const sayCandy = (earned: CandyEarned[]): void => {
     for (const pile of earned) {
       toast.push({
@@ -118,33 +58,45 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
     }
   };
 
-  // Followed rather than read once: the outcome is stamped by
-  // whoever watches the fight settle, and that may not be this player
-  const record = from<BattleRecord | null>((set) =>
-    watchBattle(props.active.id, (battle) => {
-      set(battle);
-    }),
-  );
-  const [instance, setInstance] = createSignal<RaidBattle | null>(null);
-  const [status, setStatus] = createSignal<string | null>(null);
-  // The units mutate in place, so the view re-reads them on a timer
-  const [revision, setRevision] = createSignal(0);
-  const [recorded, setRecorded] = createSignal(false);
+  const watch = createBattleWatch(props.active, () => auth.user()?.uid ?? null, {
+    // Over the count rather than after it: the fanfare is what the
+    // three seconds are for
+    started: () => {
+      playEffect(Effect.BattleStart);
+    },
+    // Said the moment it settles, rather than when the dialog over it
+    // is read: the fight is what the player is watching
+    settled: (result) => {
+      if (result === 'won') {
+        playEffect(Effect.BattleWon);
+      } else if (result === 'lost') {
+        playEffect(Effect.BattleLost);
+      } else {
+        playEffect(Effect.BattleDraw);
+      }
+    },
+    reward: (reward) => {
+      props.onReward(reward);
+    },
+    candyInPassing: sayCandy,
+  });
+
+  onMount(() => {
+    onCleanup(watch.start());
+  });
+
+  const record = createStoreSignal(watch.record);
+  const instance = createStoreSignal(watch.instance);
+  const staged = createStoreSignal(watch.raid);
+  const revision = createStoreSignal(watch.revision);
+  const counting = createStoreSignal(watch.counting);
+  const status = createStoreSignal(watch.status);
+  const candy = createStoreSignal(watch.candy);
   // Whether the player has closed the verdict. Once, per battle: the
   // view is rebuilt for the next one, so nothing has to reset it
   const [dismissed, setDismissed] = createSignal(false);
-  // Whether the player is being asked to confirm walking out of a
-  // live fight
+  // Whether the player is being asked to confirm walking out of a live fight
   const [leaving, setLeaving] = createSignal(false);
-  /**
-   * Seconds left before the fight starts, or null once it has
-   */
-  const [counting, setCounting] = createSignal<number | null>(null);
-  /**
-   * Whether the canvas has every pokemon's sheet in hand. Nothing is
-   * counted down and nothing is started until it does
-   */
-  const [drawable, setDrawable] = createSignal(false);
   /**
    * The catch sheet a pressed pokemon opened, if it stands for a
    * record at all: a raid boss belongs to nobody and has none
@@ -152,205 +104,24 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
   const [opened, setOpened] = createSignal<Unit | null>(null);
   const [speed, setSpeed] = createSignal(1);
 
-  // Only a replay may be hurried: a fight that counts is played in real time
-  createEffect(() => {
-    const built = instance();
-
-    if (built != null && props.active.replay) {
-      built.battle.speed = speed();
-    }
-  });
-  createEffect(() => {
-    const loaded = record();
-
-    if (loaded == null || instance() != null) {
-      return;
-    }
-
-    let cancelled = false;
-
-    listBattleTeams(loaded)
-      .then((teams) => {
-        if (cancelled) {
-          return;
-        }
-
-        // Rebuilt under the rules it was fought under, read off the
-        // record rather than off how the view was opened: a replay
-        // arrives with no hints, and a grunt's fight replayed as a
-        // raid is a different fight
-        const kind = getBattleKind(loaded);
-        let built: RaidBattle;
-
-        if (kind === BattleKind.Raid) {
-          built = createRaidBattle(props.active.id, teams, loaded.limits, loaded.biome);
-        } else {
-          built = createTrainerBattle(
-            props.active.id,
-            teams,
-            loaded.limits,
-            kind === BattleKind.Player ? BattleModes.PvP : BattleModes.Npc,
-            loaded.weather,
-            loaded.biome,
-            loaded.rules,
-          );
-        }
-
-        // Built and set up, but not yet running. The canvas says when
-        // it has every sheet the fight needs, and the countdown starts
-        // from there: three, two, one over an empty field is three
-        // seconds of the fight spent on nothing
-        built.battle.initialize();
-        setInstance(built);
-      })
-      .catch((caught: unknown) => {
-        setStatus(caught instanceof Error ? caught.message : String(caught));
-      });
-
-    onCleanup(() => {
-      cancelled = true;
-    });
-  });
-
-  // Three, two, one. The last step starts the battle rather than
-  // counting to zero and leaving it to somebody else
-  createEffect(() => {
-    const built = instance();
-    const left = counting();
-
-    if (built == null || left == null) {
-      return;
-    }
-
-    const timer = setTimeout(() => {
-      if (left > 1) {
-        setCounting(left - 1);
-        return;
-      }
-      setCounting(null);
-      built.battle.start();
-    }, COUNTDOWN_TICK);
-
-    onCleanup(() => {
-      clearTimeout(timer);
-    });
-  });
-
-  createEffect(() => {
-    if (instance() == null) {
-      return;
-    }
-
-    const timer = setInterval(() => {
-      setRevision((value) => value + 1);
-    }, POLL_INTERVAL);
-
-    onCleanup(() => {
-      clearInterval(timer);
-    });
-  });
-
-  // A battle left running would keep ticking behind the tabs
-  onCleanup(() => {
-    instance()?.battle.end();
-  });
-
-  /**
-   * How the battle ended, once the engine says it has. The outcome
-   * mechanics settle it when nothing can act any more, so the view
-   * only has to read the verdict
-   */
-  /**
-   * Which alliance this player is fighting under, or null when they
-   * are only watching.
-   *
-   * A raid and a grunt's fight put the player on `PLAYER_ALLIANCE`
-   * every time, and reading that number was enough until two players
-   * stood on opposite sides of the same battle: one of them is on the
-   * other number, and the verdict would have been backwards for them
-   */
-  const side = (): number | null => {
-    const built = instance();
-    const user = auth.user();
-
-    if (built == null || user == null) {
-      return null;
-    }
-    for (const [alliance, fielded] of built.units) {
-      for (const unit of fielded) {
-        if (unit.team.player === user.uid) {
-          return alliance;
-        }
-      }
-    }
-    return null;
-  };
-
-  const outcome = (): 'won' | 'lost' | 'draw' | null => {
+  const outcome = (): Outcome | null => {
     revision();
-    const built = instance();
-
-    if (built == null || !built.battle.settled) {
-      return null;
-    }
-
-    // A spectator reads it from the party's side, which is what the
-    // raid and the grunt's fight are about
-    const mine = side() ?? PLAYER_ALLIANCE;
-
-    if (built.battle.winner === built.alliances.get(mine)) {
-      return 'won';
-    }
-    if (built.battle.winner != null) {
-      return 'lost';
-    }
-    // Nobody left standing, or a stalemate neither side can break
-    return 'draw';
+    instance();
+    return watch.outcome();
   };
 
-  /**
-   * What the fight is called: a raid is named for the lair it is being
-   * fought in, and a stop names the grunt standing in the way.
-   *
-   * The lair is read once rather than followed. The name of a place
-   * does not change while somebody is fighting in it, and the raid
-   * record is cleared the moment the boss goes down — a subscription
-   * would watch its own prize delete the title out from under it
-   */
-  const client = createClientSignal();
-  const [staged] = createResource(
-    () => client() && props.active.raid,
-    async (raidId) => getRaid(raidId),
-  );
-  // Read without waiting, since this body declares it: a lair still
-  // arriving leaves the fight named after what kind it is rather than
-  // holding the screen for a subtitle
   const lair = (): string | null => {
-    const found = answered(staged);
+    const found = staged();
 
     return found == null ? null : getRaidTitle(found);
   };
 
   /** A Max Raid's name already says what the fight is, so it goes up alone */
-  const standsAlone = (): boolean => answered(staged)?.kind === RaidKind.Max;
+  const standsAlone = (): boolean => staged()?.kind === RaidKind.Max;
 
-  /**
-   * Who the other side was, where it belonged to nobody.
-   *
-   * The overworld says so when the fight is opened from a stop; a
-   * replay arrives with nothing but a battle id, and the record kept
-   * the name and the coat for exactly that
-   */
   const opponent = (): { name: string; sprite: string } | null => {
-    if (props.active.opponent != null) {
-      return props.active.opponent;
-    }
-
-    const loaded = record();
-
-    return loaded == null || loaded.opponent === ''
-      ? null
-      : { name: loaded.opponent, sprite: loaded.opponentSprite };
+    record();
+    return watch.opponent();
   };
 
   const title = (): string => {
@@ -381,11 +152,8 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
       return 'The other side went down.';
     }
     if (props.active.stop != null) {
-      // Only a grunt leaves the pokemon they were beaten with. A
-      // duelling trainer, a gym leader and the three rungs above them
-      // keep their party and pay a purse, so a win at one of those
-      // stops must not send the player looking for something standing
-      // in the overworld
+      // Only a grunt leaves the pokemon they were beaten with; everyone
+      // else keeps their party and pays a purse
       if (props.active.npc === Npc.Trainer) {
         return `${opponent()?.name ?? 'The trainer'} is beaten. They keep their party, and the purse is yours.`;
       }
@@ -398,11 +166,8 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
     }
     return 'The raid boss is down — it is waiting in the overworld.';
   };
-  /**
-   * The fight's contributions and its sides, both only once the
-   * battle has settled. `revision` is read so they are re-counted as
-   * the units mutate
-   */
+
+  /** The fight's contributions and its sides, both only once the battle has settled */
   const contributions = (): Contribution[] => {
     revision();
     const built = instance();
@@ -438,35 +203,6 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
   /** Whether this fight ranks whole teams rather than single pokemon */
   const raiding = (): boolean => instance()?.battle.mode === BattleModes.Raid;
 
-  /**
-   * Whether the end has been heard. `outcome` is read on every nudge
-   * of the fight, and a verdict is a thing that happens once
-   */
-  let sounded = false;
-
-  // Said the moment it settles, rather than when the dialog over it is
-  // read: the fight is what the player is watching
-  createEffect(() => {
-    const result = outcome();
-
-    if (result == null || sounded) {
-      return;
-    }
-    sounded = true;
-    if (result === 'won') {
-      playEffect(Effect.BattleWon);
-    } else if (result === 'lost') {
-      playEffect(Effect.BattleLost);
-    } else {
-      playEffect(Effect.BattleDraw);
-    }
-  });
-
-  /**
-   * What the end of the fight is called, and what it says. A replay
-   * settles nothing, so it only reports what happened; a fight that
-   * counted says where the prize went
-   */
   const verdict = (): { title: string; said: string } | null => {
     switch (outcome()) {
       case 'won':
@@ -485,76 +221,13 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
     }
   };
 
-  /**
-   * Whether the signed-in player fought in this battle. A spectator
-   * — anyone who walked in on a raid already under way — watches the
-   * same deterministic fight but settles nothing and is owed nothing
-   */
-  const fought = (): boolean => {
-    const user = auth.user();
-
-    return user != null && record()?.players.includes(user.uid) === true;
-  };
-
-  /**
-   * Walking out of a grunt's fight concedes it: the loss is stamped
-   * and the party's aftermath written on the way out. Nothing else
-   * ever could — the fight lives on a stop the player may never walk
-   * back to, and an Unfinished battle holds its stop until the window
-   * rolls. A raid is left freely (the lobby restages, and the fight
-   * may be someone else's to finish), and a fight that already
-   * settled is the recording effect's to write
-   */
-  const concede = (): void => {
-    const loaded = record();
-    const built = instance();
-    const user = auth.user();
-
-    if (
-      props.active.replay ||
-      recorded() ||
-      outcome() != null ||
-      loaded == null ||
-      getBattleKind(loaded) !== BattleKind.Npc ||
-      !fought()
-    ) {
-      return;
-    }
-    setRecorded(true);
-
-    // Collected before the engine is torn down; the writes then run
-    // behind the teardown. Aftermath first — stamping the outcome
-    // frees the party, and a freed pokemon can have its berry pulled
-    // back
-    const aftermath = built != null && user != null ? collectAftermath(built, user.uid) : [];
-    // Counted here too, before the teardown: conceding still pays for
-    // whatever the party managed to put down first
-    const defeated = built != null && user != null ? countDefeated(built, user.uid) : 0;
-
-    (async () => {
-      if (aftermath.length > 0) {
-        sayCandy(await recordAftermath(props.active.id, aftermath, defeated, BattleOutcome.Lost));
-      }
-      await finishBattle(props.active.id, BattleOutcome.Lost);
-    })().catch(() => {
-      // Leaving is not a moment to hold the player in; if the write
-      // never lands, the battle lock's own timeout frees the party
-    });
-  };
-
   /** Out of the fight, in one batch; where it goes is the opener's to say */
   const leave = (): void => {
-    concede();
-    instance()?.battle.end();
-    batch(() => {
-      // The instance is deliberately **not** cleared here. Unsetting
-      // the battle takes this whole view down, and its own cleanup
-      // ends the engine; clearing it first only empties the accessor
-      // that the canvas and the card rows are still reading from while
-      // they are being disposed
-      setCounting(null);
-      props.onLeave();
-    });
+    watch.leave();
+    // The battle is deliberately not cleared here: unsetting it takes
+    // this whole view down, and the canvas is still reading it while
+    // it is disposed
+    props.onLeave();
   };
 
   /**
@@ -572,24 +245,21 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
 
   /**
    * The Leave press. Walking out of a fight still being fought is
-   * asked about first — for a grunt's fight it concedes — while a
-   * replay, a spectator or a finished field is left without ceremony
+   * asked about first, while a replay, a spectator or a finished field
+   * is left without ceremony
    */
   const askToLeave = (): void => {
-    if (props.active.replay || outcome() != null || record() == null || !fought()) {
-      leave();
+    if (watch.leaveNeedsAsking()) {
+      setLeaving(true);
       return;
     }
-    setLeaving(true);
+    leave();
   };
 
   /**
-   * Escape leaves, the way the button does.
-   *
-   * Read at the window and only while nothing on the page has the
-   * keyboard: a dialog open over the fight answers its own Escape by
-   * closing, and asking to leave underneath it would be answering a
-   * question the player did not ask
+   * Escape leaves, the way the button does, and only while nothing on
+   * the page has the keyboard: a dialog open over the fight answers its
+   * own Escape by closing
    */
   onMount(() => {
     const onKey = (event: KeyboardEvent): void => {
@@ -603,81 +273,6 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
     window.addEventListener('keydown', onKey);
     onCleanup(() => {
       window.removeEventListener('keydown', onKey);
-    });
-  });
-
-  // A raid battle is recorded once, by whichever fighter sees it end
-  createEffect(() => {
-    const result = outcome();
-    const raidId = props.active.raid;
-
-    if (props.active.replay || !fought() || recorded() || result == null) {
-      return;
-    }
-
-    const won = result === 'won';
-    const stop = props.active.stop;
-    const seat = props.active.seat;
-    const built = instance();
-    const user = auth.user();
-
-    setRecorded(true);
-    (async () => {
-      // What the fight cost is owed whichever way it went: a berry
-      // eaten against a boss that survived is still eaten, and health
-      // it took off is still gone. Only this player's own catches are
-      // reported, and the aftermath is written before the outcome is
-      // stamped — stamping it frees the party, and a freed pokemon
-      // can have its berry pulled back
-      // A fight between players settles for the gym seat's challenger
-      // and nobody else: their party was really there. Every other
-      // player-versus-player fight settles nothing, and the server
-      // refuses one anyway, so this only spares the round trip
-      if (
-        built != null &&
-        user != null &&
-        (built.battle.mode !== BattleModes.PvP || seat != null)
-      ) {
-        const aftermath = collectAftermath(built, user.uid);
-
-        if (aftermath.length > 0) {
-          const earned = await recordAftermath(
-            props.active.id,
-            aftermath,
-            countDefeated(built, user.uid),
-            won ? BattleOutcome.Won : BattleOutcome.Lost,
-          );
-
-          // Onto the summary while it is up, in passing once the player has left
-          if (gone) {
-            sayCandy(earned);
-          } else {
-            setCandy(earned);
-          }
-        }
-      }
-
-      await finishBattle(props.active.id, won ? BattleOutcome.Won : BattleOutcome.Lost);
-
-      if (won && raidId != null) {
-        // The legendary waits on the raid itself, so it can be
-        // collected here or from the battle history later
-        await clearRaid(raidId);
-        props.onReward({ raid: raidId });
-      }
-      // A beaten grunt keeps what they owe on their own stop, so it
-      // is collected back in the overworld — and only a win closes
-      // the stop; losing leaves them standing there
-      if (won && stop != null) {
-        props.onReward({ stop });
-      }
-      // A seat is settled either way: the win takes it, and the loss
-      // is one more challenge its holder turned away
-      if (seat != null) {
-        props.onReward({ seat });
-      }
-    })().catch((caught: unknown) => {
-      setStatus(caught instanceof Error ? caught.message : String(caught));
     });
   });
 
@@ -710,17 +305,7 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
                   setOpened(unit);
                 }
               }}
-              onReady={() => {
-                // Once. A canvas that reported twice would start the
-                // countdown over the top of itself
-                if (!drawable()) {
-                  setDrawable(true);
-                  setCounting(COUNTDOWN);
-                  // Over the count rather than after it: the fanfare
-                  // is what the three seconds are for
-                  playEffect(Effect.BattleStart);
-                }
-              }}
+              onReady={watch.ready}
             />
           )}
         </Show>
@@ -734,7 +319,14 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
               title={title()}
               replay={props.active.replay}
               speed={speed()}
-              onSpeed={props.active.replay ? setSpeed : undefined}
+              onSpeed={
+                props.active.replay
+                  ? (next) => {
+                      setSpeed(next);
+                      watch.setSpeed(next);
+                    }
+                  : undefined
+              }
               onLeave={askToLeave}
             />
           )}

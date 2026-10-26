@@ -113,6 +113,12 @@ Darumaka:
     height: 1.7
     weight: 120
     gender: [1, 1]
+  DarmanitanGalarZen:
+    stats: { HP: 105, Attack: 160, Defense: 55, SpecialAttack: 30, SpecialDefense: 55, Speed: 135 }
+    catch-rate: 60
+    height: 1.7
+    weight: 120
+    gender: [1, 1]
 Maractus:
   Maractus:
     stats: { HP: 75, Attack: 86, Defense: 67, SpecialAttack: 106, SpecialDefense: 67, Speed: 60 }

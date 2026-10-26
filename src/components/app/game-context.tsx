@@ -2,203 +2,49 @@ import {
   type Accessor,
   type JSX,
   type ParentProps,
-  type Setter,
   createContext,
   createEffect,
-  createSignal,
-  on,
   onCleanup,
   useContext,
 } from 'solid-js';
 import { useAuth } from '../../auth/context';
-import type Npc from '../../data/overworld/npc';
 import type Weather from '../../data/overworld/weather';
 import type { EncounterRecord } from '../../model/encounter-record';
-import { type Notice, watchNotifications } from '../../auth/notifications';
-import { claimRaidReward } from '../../auth/raids';
-import { claimStopReward } from '../../auth/stops';
-import { settleGymChallenge } from '../../auth/gym-seats';
+import type { Notice } from '../../auth/notifications';
 import type { PositionRecord } from '../../model/position-record';
-import type Biome from '../../data/ids/biome';
 import type { Species } from '../../data/ids/species';
 import type { WalkReport } from '../../auth/eggs';
-import {
-  getPosition,
-  savePosition,
-  visitBiome,
-  watchPosition,
-  settleWalk as writeWalk,
-} from '../../auth/positions';
-import type Awards from '../../data/ids/awards';
 import { AWARD_NAMES } from '../../data/awards';
-import type { ItemStack } from '../../data/overworld/item-pool';
 import { getItemData } from '../../data/items';
+import type { WritableStore } from '../../game/store';
+import createSession, {
+  type ActiveBattle,
+  type AuctionSubject,
+  type FieldMoveOffer,
+  GameDialog,
+  type OpenSheet,
+  type PendingReward,
+  type Spoils,
+} from '../../game/session';
+import type ProfileSection from '../../game/session/profile-section';
+import type { Depth } from '../../overworld/depth';
 import ItemSprite from '../items/ItemSprite';
-import watchDueQuests from './due-quests';
 import playEffect, { Effect, playEffectAfter } from './sound';
+import createStoreSignal from './store-signal';
 import { useToast } from '../styled';
-import type { AuctionSubject } from '../auctions/AuctionDialog';
-import type ProfileSection from '../profile/sections';
-import { ensureProfile } from '../../auth/profile';
-import getWorld from '../../overworld/current';
-import { Depth } from '../../overworld/depth';
-import pickStartPosition, { type StartPosition, nearestFreeCell } from '../../overworld/start';
-/**
- * What is open over the world.
- *
- * The overworld is not one of these: it is the page, and everything
- * else is something pulled over the top of it and put away again. A
- * player is always standing somewhere, so there is no state in which
- * the map is not what they are looking at — only states where
- * something is covering it
- */
-export const enum GameDialog {
-  None = 0,
-  Profile = 1,
-  Raids = 2,
-  Auctions = 3,
-  Map = 4,
-  /**
-   * The player's pokemon and the player's bag, which were two tabs
-   * inside the profile.
-   *
-   * They are the two things a player opens most and the two that had
-   * least to do with the page they were on: a profile is who somebody
-   * is, and their box of pokemon is not that. Behind the menu they are
-   * one press rather than two, and the profile is left with what it
-   * was always about
-   */
-  Catches = 5,
-  Inventory = 6,
-  /**
-   * Every pokemon there is, and how much of each the player has met.
-   *
-   * It is beside the catches rather than inside them: a box is what
-   * somebody has and a dex is what there is, and the difference
-   * between the two is the game
-   */
-  Pokedex = 7,
-  /**
-   * What the game is holding for the player until they come for it
-   */
-  Gifts = 8,
-  /**
-   * The quest board: what the game asks, and what each ask pays
-   */
-  Quests = 9,
-  /**
-   * Battle lobbies: the private fights a player has been called into,
-   * and the one they are hosting
-   */
-  Battles = 10,
-  /**
-   * How the game is set up for this player, and what it is made of
-   */
-  Settings = 11,
-  /**
-   * Everything waiting on the player, wherever it came from: the one
-   * screen that says an invitation has landed
-   */
-  Notifications = 12,
-  /**
-   * What the game has shipped, newest first: the release pages, read
-   * as a feed rather than as documentation
-   */
-  News = 13,
-}
 
-/**
- * A battle the player is watching. A raid battle settles the raid it
- * was fought for and a Team Rocket fight settles its stop; a replay
- * settles nothing — it re-runs a finished battle from its seed and
- * frozen teams for the record alone
- */
-export interface ActiveBattle {
-  id: string;
-  replay: boolean;
-  /**
-   * The raid the battle belongs to, for a raid battle
-   */
-  raid?: string;
-  /**
-   * The stop the battle was accepted at, whoever was standing there
-   */
-  stop?: string;
-  /**
-   * Who the stop staged, for the screens that name the other side:
-   * the summary, the title, the word a win is announced with. A stop
-   * is not only a grunt (a duelling trainer, a gym leader, one of the
-   * Elite Four, the Champion), and it is the overworld rather than the
-   * battle that knows which, so the name and the face travel with the
-   * fight rather than being worked out again from a stop id
-   */
-  opponent?: { name: string; sprite: string };
-  /**
-   * What kind of person the stop staged. A grunt leaves the pokemon
-   * they were beaten with and everybody else keeps their party, so
-   * this is what a win is allowed to promise
-   */
-  npc?: Npc;
-  /**
-   * The gym seat the battle was a challenge for. A win moves the
-   * seat, so the settlement is the seat's rather than a purse's
-   */
-  seat?: string;
-}
-
-/**
- * Something won and not yet collected: the overworld turns it into a
- * safari encounter the next time the player is standing there.
- *
- * Nothing about the prize travels in it — the species, the level,
- * whether it is shadowed, the chunk and window it comes from are all
- * read off the raid or the stop when it is claimed
- */
-/**
- * What a settled fight paid, for the battle's own summary to lay out.
- * Gold is negative for a purse lost at a gym seat
- */
-export interface Spoils {
-  gold: number;
-  award: Awards | null;
-  items: ItemStack[];
-  /** What the fight left standing in the overworld, to be met there */
-  waiting: Species | null;
-  seat: 'freed' | 'held' | null;
-}
-
-export type PendingReward =
-  | { raid: string; stop?: undefined; seat?: undefined }
-  | { stop: string; raid?: undefined; seat?: undefined }
-  // A seat settles whichever way the fight went: a win moves it, a
-  // loss counts towards the stand its holder is keeping
-  | { seat: string; raid?: undefined; stop?: undefined };
-
-/**
- * A catch opened in full, and whether it is being read or handled.
- * Somebody else's pokemon — a lot on the block — is read-only: the
- * whole record, and nothing to press
- */
-export interface OpenSheet {
-  catchId: string;
-  readOnly?: boolean;
-}
-
-/**
- * One field move the board can use where the player stands, handed to
- * the menu bar to offer. `active` is Surf or Fly in use, and `busy` is
- * a Dig or Teleport still on its way
- */
-export interface FieldMoveOffer {
-  name: string;
-  active: boolean;
-  busy: boolean;
-  use: () => void;
-}
+export {
+  type ActiveBattle,
+  type FieldMoveOffer,
+  GameDialog,
+  type OpenSheet,
+  type PendingReward,
+  type Spoils,
+};
 
 export interface GameState {
   dialog: Accessor<GameDialog>;
-  setDialog: Setter<GameDialog>;
+  setDialog: (value: GameDialog) => void;
   /**
    * Where the player is standing, or null while it is still being
    * found out.
@@ -208,7 +54,7 @@ export interface GameState {
    * here, and the overworld publishes every step back to it
    */
   position: Accessor<PositionRecord | null>;
-  setPosition: Setter<PositionRecord | null>;
+  setPosition: (value: PositionRecord | null) => void;
   /**
    * Where the walk went when it went to another screen, or null while
    * this one still has it.
@@ -271,42 +117,42 @@ export interface GameState {
    * Null while the chunk is still being read
    */
   place: Accessor<string | null>;
-  setPlace: Setter<string | null>;
+  setPlace: (value: string | null) => void;
   /**
    * What the sky over that place is doing, travelling the same way the
    * words for the place do and for the same reason. Null while the
    * chunk is still being read
    */
   weather: Accessor<Weather | null>;
-  setWeather: Setter<Weather | null>;
+  setWeather: (value: Weather | null) => void;
   /**
    * The buddy's field moves usable right here, travelling from the board
    * to the menu bar the way the place's name does. Empty off the board
    */
   fieldMoves: Accessor<FieldMoveOffer[]>;
-  setFieldMoves: Setter<FieldMoveOffer[]>;
+  setFieldMoves: (value: FieldMoveOffer[]) => void;
   /**
    * The raid lobby the player is in, shown inside the raids dialog
    */
   raid: Accessor<string | null>;
-  setRaid: Setter<string | null>;
+  setRaid: (value: string | null) => void;
   /**
    * The battle lobby the player is in, shown inside the battles
    * dialog the same way a raid lobby fills the raids one
    */
   duel: Accessor<string | null>;
-  setDuel: Setter<string | null>;
+  setDuel: (value: string | null) => void;
   /**
    * The battle in progress. While one is set, it takes the whole
    * page — world, bar and all
    */
   battle: Accessor<ActiveBattle | null>;
-  setBattle: Setter<ActiveBattle | null>;
+  setBattle: (value: ActiveBattle | null) => void;
   reward: Accessor<PendingReward | null>;
-  setReward: Setter<PendingReward | null>;
+  setReward: (value: PendingReward | null) => void;
   /** What the fight on screen paid, once it is claimed */
   spoils: Accessor<Spoils | null>;
-  setSpoils: Setter<Spoils | null>;
+  setSpoils: (value: Spoils | null) => void;
   /**
    * What a cleared raid or a beaten grunt left standing, once it has
    * been collected: the encounter the player is about to meet.
@@ -318,7 +164,7 @@ export interface GameState {
    * world has drawn itself again"
    */
   encounter: Accessor<EncounterRecord | null>;
-  setEncounter: Setter<EncounterRecord | null>;
+  setEncounter: (value: EncounterRecord | null) => void;
   /**
    * The catch sheet, which is a screen rather than a panel.
    *
@@ -330,12 +176,12 @@ export interface GameState {
    * which is what a whole record needs
    */
   sheet: Accessor<OpenSheet | null>;
-  setSheet: Setter<OpenSheet | null>;
+  setSheet: (value: OpenSheet | null) => void;
   /**
    * A lot being put up, from wherever it was chosen
    */
   listing: Accessor<AuctionSubject | null>;
-  setListing: Setter<AuctionSubject | null>;
+  setListing: (value: AuctionSubject | null) => void;
   /**
    * Somebody else's profile, by uid, or null when nobody's is open.
    *
@@ -347,7 +193,7 @@ export interface GameState {
    * pressed still on it
    */
   visiting: Accessor<string | null>;
-  setVisiting: Setter<string | null>;
+  setVisiting: (value: string | null) => void;
   /**
    * Which part of the player's **own** profile to open at, or null to
    * open it where it always opens.
@@ -357,7 +203,7 @@ export interface GameState {
    * tab and the button read as one that had done nothing
    */
   profileAt: Accessor<ProfileSection | null>;
-  setProfileAt: Setter<ProfileSection | null>;
+  setProfileAt: (value: ProfileSection | null) => void;
   /**
    * The friend a trade is being offered to, or null when none is.
    *
@@ -366,7 +212,7 @@ export interface GameState {
    * profile — and the dialog opens over that rather than inside it
    */
   trading: Accessor<string | null>;
-  setTrading: Setter<string | null>;
+  setTrading: (value: string | null) => void;
   /**
    * The species whose dex entry is open, or null when none is.
    *
@@ -376,7 +222,7 @@ export interface GameState {
    * asked for it would be a panel boxed inside another panel's room
    */
   dexEntry: Accessor<Species | null>;
-  setDexEntry: Setter<Species | null>;
+  setDexEntry: (value: Species | null) => void;
   /**
    * The species whose **forms** are being looked through, if any.
    *
@@ -386,7 +232,7 @@ export interface GameState {
    * a page of its own on the other side of this one
    */
   dexForms: Accessor<Species | null>;
-  setDexForms: Setter<Species | null>;
+  setDexForms: (value: Species | null) => void;
   /**
    * Bumped whenever a record changes under a list that is showing:
    * an evolution renames a row, a release takes one away, a listing
@@ -422,12 +268,15 @@ export function useGame(): GameState {
   return state;
 }
 
+/** A store's value and its setter, the way a component reads and writes it */
+function storeSignal<T>(store: WritableStore<T>): [Accessor<T>, (value: T) => void] {
+  return [createStoreSignal(store), store.set];
+}
+
 /**
- * Where the signed-in player is: what is open over the world, which
- * raid lobby they are in, and whether a battle has taken the page. It
- * lives above all of it because the overworld opens lobbies the raids
- * dialog shows, and both raids and replays open battles that replace
- * everything
+ * The game's session (`src/game/session`) as Solid signals, for the
+ * components below. The session holds the state and the rules; this
+ * says and plays what it asks for, and starts it for whoever signs in
  */
 export default function GameProvider(
   props: ParentProps<{
@@ -440,475 +289,86 @@ export default function GameProvider(
   }>,
 ): JSX.Element {
   const auth = useAuth();
-  /** Who is playing on this screen, which on the dashboard is nobody */
-  const player = (): ReturnType<typeof auth.user> => (props.managing === true ? null : auth.user());
   const toast = useToast();
-  const [dialog, setDialog] = createSignal(GameDialog.None);
-  const [position, setPosition] = createSignal<PositionRecord | null>(null);
-  const [elsewhere, setElsewhere] = createSignal<PositionRecord | null>(null);
-  /**
-   * The newest stamp this screen wrote. Every write comes back around
-   * the subscription, and one mistaken for somebody else's would stand
-   * this screen down in the middle of its own walk
-   */
-  let wroteAt = 0;
-
-  /** Saves still on their way, and the news that arrived while one was */
-  let saving = 0;
-  let heldNews: PositionRecord | null = null;
-
-  const hearPosition = (record: PositionRecord | null): void => {
-    // A save's own change can arrive before its stamp does, so news is
-    // held until every save out has come back
-    if (record != null && saving > 0) {
-      heldNews = record;
-      return;
-    }
-
-    const here = position();
-
-    // A row nobody has written yet, this screen's own coming back
-    // around, or news that arrived before there was anything to
-    // compare it against
-    if (record == null || record.movedAt <= wroteAt || here == null || elsewhere() != null) {
-      return;
-    }
-    if (record.chunkX !== here.chunkX || record.chunkY !== here.chunkY) {
-      setElsewhere(record);
-    }
-  };
-
-  /** One save out and back, keeping its stamp and holding news that lands before it */
-  const track = async (save: () => Promise<number>): Promise<void> => {
-    saving += 1;
-    try {
-      wroteAt = Math.max(wroteAt, await save());
-    } finally {
-      saving -= 1;
-      if (saving === 0 && heldNews != null) {
-        const news = heldNews;
-
-        heldNews = null;
-        hearPosition(news);
-      }
-    }
-  };
-
-  const settleWalk = async (
-    chunkX: number,
-    chunkY: number,
-    cellX: number,
-    cellY: number,
-    depth: Depth,
-    steps: number,
-  ): Promise<WalkReport | null> => {
-    let report: WalkReport | null = null;
-
-    await track(async () => {
-      const settled = await writeWalk(steps, chunkX, chunkY, cellX, cellY, depth);
-
-      report = settled.report;
-      return settled.stamp;
-    });
-    return report;
-  };
-
-  const saveWalk = (
-    chunkX: number,
-    chunkY: number,
-    cellX: number,
-    cellY: number,
-    depth: Depth,
-  ): void => {
-    track(async () => savePosition(chunkX, chunkY, cellX, cellY, depth)).catch(() => {
-      // A position that did not save is a walk that will save it,
-      // and there is nothing here worth interrupting a walk for
-    });
-  };
-
-  const [moved, setMoved] = createSignal<PositionRecord | null>(null);
-
-  const standHere = (at: PositionRecord): void => {
-    wroteAt = Math.max(wroteAt, at.movedAt);
-    setElsewhere(null);
-    setPosition(at);
-    setMoved(at);
-  };
-
-  const takeWalk = (): void => {
-    const at = elsewhere();
-
-    if (at == null) {
-      return;
-    }
-    setElsewhere(null);
-    setPosition(at);
-    saveWalk(at.chunkX, at.chunkY, at.cellX, at.cellY, at.depth);
-  };
-  const [place, setPlace] = createSignal<string | null>(null);
-  const [weather, setWeather] = createSignal<Weather | null>(null);
-  const [fieldMoves, setFieldMoves] = createSignal<FieldMoveOffer[]>([]);
-
-  // A profile on first sight, seeded from whatever the sign-in
-  // already knows. The game reads a profile everywhere, so a player
-  // the database has never heard of would leave every one of those
-  // readings waiting on a row that is never coming
-  createEffect(() => {
-    const user = player();
-
-    if (user == null) {
-      return;
-    }
-    ensureProfile(user).catch(() => {
-      // Nothing to do about it here: the profile is read through a
-      // subscription that will pick it up whenever it does appear,
-      // and a sign-in is not worth interrupting over a nickname
-    });
-  });
-
-  // Where they left off, or — for somebody who has never walked
-  // anywhere — somewhere random in the starting region, written down
-  // at once so the dice are rolled for them exactly once
-  createEffect(() => {
-    const user = player();
-
-    if (user == null || position() != null) {
-      return;
-    }
-
-    let cancelled = false;
-
-    const standAt = (at: PositionRecord | StartPosition, store: boolean): void => {
-      if (cancelled) {
-        return;
-      }
-      setPosition({
-        player: user.uid,
-        chunkX: at.chunkX,
-        chunkY: at.chunkY,
-        cellX: at.cellX,
-        cellY: at.cellY,
-        // A player put down for the first time is put down outside, and
-        // a start position has no layer of its own to carry
-        depth: 'depth' in at ? at.depth : Depth.Surface,
-        movedAt: 'movedAt' in at ? at.movedAt : 0,
-      });
-
-      if (store) {
-        saveWalk(
-          at.chunkX,
-          at.chunkY,
-          at.cellX,
-          at.cellY,
-          'depth' in at ? at.depth : Depth.Surface,
-        );
-      }
-    };
-
-    getPosition(user.uid)
-      .then((stored) => {
-        if (stored != null) {
-          // Scenery can have moved onto a saved cell since, so step off it and keep the new spot
-          const open = nearestFreeCell(
-            getWorld(),
-            stored.chunkX,
-            stored.chunkY,
-            stored.cellX,
-            stored.cellY,
-          );
-
-          standAt(
-            { ...stored, ...open },
-            open.cellX !== stored.cellX || open.cellY !== stored.cellY,
-          );
-          return;
-        }
-        standAt(pickStartPosition(getWorld(), `${user.uid}:${Date.now()}:${Math.random()}`), true);
-      })
-      .catch(() => {
-        // Their position could not be read, which is no reason to keep
-        // them out of the world. Nothing is written for it either: a
-        // save on top of a failed read could move somebody whose real
-        // record was there all along
-        standAt(pickStartPosition(getWorld(), `${user.uid}:${Date.now()}:${Math.random()}`), false);
-      });
-
-    onCleanup(() => {
-      cancelled = true;
-    });
-  });
-
-  /**
-   * And followed after that, for the one thing a second screen can do
-   * to this one.
-   *
-   * Only a chunk counts. Two screens standing in the same chunk write
-   * cells over each other and neither view moves, which is untidy and
-   * harmless; a chunk written from somewhere else is a walk that has
-   * gone on without this screen, and carrying on here would be two
-   * boards pulling one player apart.
-   *
-   * It sticks once it is set. A write of this screen's own still in
-   * flight when the news arrives would otherwise land, look newer, and
-   * quietly start the walk up again under a player who never asked for
-   * it back
-   */
-  createEffect(() => {
-    const user = player();
-
-    if (user == null) {
-      return;
-    }
-
-    const stop = watchPosition(user.uid, hearPosition);
-
-    onCleanup(stop);
-  });
-
-  /** The biome the server has been told about, so one walk marks it once */
-  let marked: Biome | null = null;
-
-  // Standing in a biome is what discovers it, and the mark is the one
-  // part of a walk the server sees: sent by itself, and only where the
-  // ground underfoot has changed to something else
-  createEffect(() => {
-    const at = position();
-
-    if (at == null) {
-      return;
-    }
-
-    const biome = getWorld().getChunk(at.chunkX, at.chunkY).biome;
-
-    if (biome === marked) {
-      return;
-    }
-    marked = biome;
-    visitBiome(at.chunkX, at.chunkY).catch(() => {
-      // A mark that did not land is one the next crossing sends again
-      marked = null;
-    });
-  });
-  const [sheet, setSheet] = createSignal<OpenSheet | null>(null);
-  const [listing, setListing] = createSignal<AuctionSubject | null>(null);
-  const [visiting, setVisiting] = createSignal<string | null>(null);
-  const [profileAt, setProfileAt] = createSignal<ProfileSection | null>(null);
-  const [trading, setTrading] = createSignal<string | null>(null);
-  const [dexEntry, setDexEntry] = createSignal<Species | null>(null);
-  const [dexForms, setDexForms] = createSignal<Species | null>(null);
-  const [records, setRecords] = createSignal(0);
-
-  // Said wherever the player is, since the board is shut whenever it
-  // is worth hearing
   // One tune for a sweep however many quests came due in it: several
   // at once would be the same sound over itself
   let questSoundedAt = 0;
 
-  watchDueQuests(
-    () => player()?.uid ?? null,
-    records,
-    (name) => {
+  const session = createSession({
+    questDue: (name) => {
       toast.push({ title: 'Quest complete', message: `${name} is ready to claim.`, tone: 'leaf' });
       if (Date.now() - questSoundedAt > QUEST_SOUND_GAP) {
         questSoundedAt = Date.now();
         playEffect(Effect.QuestComplete);
       }
     },
-  );
-
-  /** What is waiting on them, for as long as they are signed in */
-  const [notices, setNotices] = createSignal<Notice[]>([]);
-
-  createEffect(() => {
-    const user = player();
-
-    if (user == null) {
-      setNotices([]);
-      return;
-    }
-
-    // What was already waiting at sign-in is not news, so the first
-    // report only fills this; after it, one chime per report with anything new
-    const heard = new Set<string>();
-    let seeded = false;
-
-    const stop = watchNotifications(user.uid, (waiting) => {
-      let fresh = false;
-
-      for (const notice of waiting) {
-        if (!heard.has(notice.id)) {
-          heard.add(notice.id);
-          fresh = true;
-        }
+    notice: () => {
+      playEffect(Effect.Notice);
+    },
+    // The claim lands while the win's own fanfare is still going, so the march waits for it
+    trainerBeaten: () => {
+      playEffectAfter(Effect.TrainerBeaten, Effect.BattleWon);
+    },
+    paidInPassing: (paid) => {
+      if (paid.seat === 'freed') {
+        toast.push({
+          title: 'The seat is open',
+          message:
+            paid.gold > 0 ? `You beat them off it. +${paid.gold} gold` : 'You beat them off it.',
+          tone: 'leaf',
+        });
+      } else if (paid.seat === 'held') {
+        toast.push({
+          message:
+            paid.gold < 0
+              ? `Their line-up held. −${-paid.gold} gold`
+              : 'Their line-up held. The seat stays theirs.',
+          tone: 'ember',
+        });
+      } else if (paid.gold > 0) {
+        toast.push({ message: `The purse is yours. +${paid.gold} gold`, tone: 'leaf' });
       }
-      if (fresh && seeded) {
-        playEffect(Effect.Notice);
+      if (paid.award != null) {
+        toast.push({ title: AWARD_NAMES[paid.award], message: 'Yours, for good.', tone: 'leaf' });
       }
-      seeded = true;
-      setNotices(waiting);
-    });
-
-    onCleanup(stop);
+      for (const { item: won, amount } of paid.items) {
+        toast.push({
+          title: amount > 1 ? `${getItemData(won).name} ×${amount}` : getItemData(won).name,
+          message: 'Left behind by the fight.',
+          art: () => <ItemSprite item={won} size={24} label="" />,
+          tone: 'leaf',
+        });
+      }
+    },
   });
 
-  const [raid, setRaid] = createSignal<string | null>(null);
-  const [duel, setDuel] = createSignal<string | null>(null);
-  const [battle, setBattle] = createSignal<ActiveBattle | null>(null);
-  const [reward, setReward] = createSignal<PendingReward | null>(null);
-  const [spoils, setSpoils] = createSignal<Spoils | null>(null);
-
-  // A new fight, or none, starts with nothing paid yet
-  createEffect(
-    on(battle, () => {
-      setSpoils(null);
-    }),
-  );
-  const [encounter, setEncounter] = createSignal<EncounterRecord | null>(null);
-
-  /**
-   * Collect what a won fight left behind, the moment it is won.
-   *
-   * The prize is claimed here rather than by the overworld: the
-   * overworld is unmounted while the battle has the page, so an effect
-   * living there could not start until the player had already left the
-   * fight and the world had drawn itself again. Claimed here, the
-   * pokemon is standing there waiting by the time they arrive
-   */
-  /**
-   * Said in passing, for a claim that lands after the player has left
-   * the battle screen: its summary is gone, and nothing else would say
-   * what the fight was worth
-   */
-  const sayInPassing = (paid: Spoils): void => {
-    if (paid.seat === 'freed') {
-      toast.push({
-        title: 'The seat is open',
-        message:
-          paid.gold > 0 ? `You beat them off it. +${paid.gold} gold` : 'You beat them off it.',
-        tone: 'leaf',
-      });
-    } else if (paid.seat === 'held') {
-      toast.push({
-        message:
-          paid.gold < 0
-            ? `Their line-up held. −${-paid.gold} gold`
-            : 'Their line-up held. The seat stays theirs.',
-        tone: 'ember',
-      });
-    } else if (paid.gold > 0) {
-      toast.push({ message: `The purse is yours. +${paid.gold} gold`, tone: 'leaf' });
-    }
-    if (paid.award != null) {
-      toast.push({ title: AWARD_NAMES[paid.award], message: 'Yours, for good.', tone: 'leaf' });
-    }
-    for (const { item: won, amount } of paid.items) {
-      toast.push({
-        title: amount > 1 ? `${getItemData(won).name} ×${amount}` : getItemData(won).name,
-        message: 'Left behind by the fight.',
-        art: () => <ItemSprite item={won} size={24} label="" />,
-        tone: 'leaf',
-      });
-    }
-  };
-
-  /** Onto the summary while the battle has the page, in passing once it does not */
-  const pay = (paid: Spoils): void => {
-    if (battle() == null) {
-      sayInPassing(paid);
-      return;
-    }
-    setSpoils(paid);
-  };
-
-  const NOTHING: Spoils = { gold: 0, award: null, items: [], waiting: null, seat: null };
-
-  /**
-   * Collect what a won fight left behind, the moment it is won.
-   *
-   * The prize is claimed here rather than by the overworld: the
-   * overworld is unmounted while the battle has the page, so an effect
-   * living there could not start until the player had already left the
-   * fight and the world had drawn itself again. Claimed here, the
-   * pokemon is standing there waiting by the time they arrive
-   */
   createEffect(() => {
-    const owed = reward();
+    // Who is playing on this screen, which on the dashboard is nobody
+    const user = props.managing === true ? null : auth.user();
 
-    if (owed == null) {
-      return;
+    if (user != null) {
+      onCleanup(session.start(user));
     }
-    setReward(null);
-
-    if (owed.seat != null) {
-      settleGymChallenge(owed.seat)
-        .then((settled) => {
-          if (settled != null) {
-            pay({
-              ...NOTHING,
-              seat: settled.freed ? 'freed' : 'held',
-              gold: settled.freed ? settled.gold : -settled.gold,
-            });
-          }
-        })
-        .catch(() => {
-          // Nothing is lost: the challenge stays unsettled until
-          // somebody reports it, and the seat has not moved
-        });
-      return;
-    }
-
-    if (owed.stop == null) {
-      claimRaidReward(owed.raid)
-        .then((collected) => {
-          if (collected == null) {
-            return;
-          }
-          pay({
-            ...NOTHING,
-            gold: collected.gold,
-            items: collected.items,
-            waiting: collected.encounter?.species ?? null,
-          });
-          // A calmed Noble leaves items and gold, and nobody waiting
-          if (collected.encounter != null) {
-            setEncounter(collected.encounter);
-          }
-        })
-        .catch(() => {
-          // Nothing is lost by a claim that failed: the raid keeps
-          // what it owes until somebody collects it
-        });
-      return;
-    }
-    claimStopReward(owed.stop)
-      .then((collected) => {
-        if (collected == null) {
-          return;
-        }
-        // Only on the first win over whoever hands it out, which is
-        // when the award is not null. The claim lands while the win's
-        // own fanfare is still going, so the march waits for it
-        if (collected.award != null) {
-          playEffectAfter(Effect.TrainerBeaten, Effect.BattleWon);
-        }
-        pay({
-          ...NOTHING,
-          gold: collected.gold,
-          award: collected.award,
-          items: collected.items,
-          waiting: collected.encounter?.species ?? null,
-        });
-        // A duelling trainer pays a purse and leaves no pokemon, so
-        // there is nothing to stand waiting in the overworld
-        if (collected.encounter != null) {
-          setEncounter(collected.encounter);
-        }
-      })
-      .catch(() => {
-        // Nothing is lost by a claim that failed: the stop keeps what
-        // it owes until somebody collects it
-      });
   });
+
+  const [dialog, setDialog] = storeSignal(session.dialog);
+  const [position, setPosition] = storeSignal(session.position);
+  const [place, setPlace] = storeSignal(session.place);
+  const [weather, setWeather] = storeSignal(session.weather);
+  const [fieldMoves, setFieldMoves] = storeSignal(session.fieldMoves);
+  const [raid, setRaid] = storeSignal(session.raid);
+  const [duel, setDuel] = storeSignal(session.duel);
+  const [battle, setBattle] = storeSignal(session.battle);
+  const [reward, setReward] = storeSignal(session.reward);
+  const [spoils, setSpoils] = storeSignal(session.spoils);
+  const [encounter, setEncounter] = storeSignal(session.encounter);
+  const [sheet, setSheet] = storeSignal(session.sheet);
+  const [listing, setListing] = storeSignal(session.listing);
+  const [visiting, setVisiting] = storeSignal(session.visiting);
+  const [profileAt, setProfileAt] = storeSignal(session.profileAt);
+  const [trading, setTrading] = storeSignal(session.trading);
+  const [dexEntry, setDexEntry] = storeSignal(session.dexEntry);
+  const [dexForms, setDexForms] = storeSignal(session.dexForms);
 
   return (
     <GameContext.Provider
@@ -917,16 +377,16 @@ export default function GameProvider(
         setDialog,
         position,
         setPosition,
-        elsewhere,
-        standHere,
-        moved,
-        takeWalk,
-        saveWalk,
-        settleWalk,
+        elsewhere: createStoreSignal(session.elsewhere),
+        standHere: session.standHere,
+        moved: createStoreSignal(session.moved),
+        takeWalk: session.takeWalk,
+        saveWalk: session.saveWalk,
+        settleWalk: session.settleWalk,
         place,
+        setPlace,
         weather,
         setWeather,
-        setPlace,
         fieldMoves,
         setFieldMoves,
         raid,
@@ -955,11 +415,9 @@ export default function GameProvider(
         setDexEntry,
         dexForms,
         setDexForms,
-        records,
-        notices,
-        touchRecords: () => {
-          setRecords((count) => count + 1);
-        },
+        records: createStoreSignal(session.records),
+        touchRecords: session.touchRecords,
+        notices: createStoreSignal(session.notices),
       }}
     >
       {props.children}

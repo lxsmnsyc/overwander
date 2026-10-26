@@ -7,7 +7,14 @@ import groundFile from './biome-items.yaml';
 import type Families from '../ids/families';
 import { ZENITH_SHARDS } from '../items/zenith-shards';
 import { getRegisteredSpecies, getSpeciesData } from '../species/__create';
-import { ITEM_POOL, type ItemPoolEntry, type ItemRarityGroups } from './item-pool';
+import {
+  ITEM_BAND_ODDS,
+  ITEM_POOL,
+  type ItemBandOdds,
+  type ItemPoolEntry,
+  type ItemRarityGroups,
+  getItemOdds,
+} from './item-pool';
 
 /**
  * Which ground hides what.
@@ -152,4 +159,19 @@ export function getItemPool(biome: Biome): ItemRarityGroups {
 
   POOLS.set(biome, pool);
   return pool;
+}
+
+/**
+ * How often a stash turns up this item where it is most often buried.
+ * Each biome's pool leaves out what belongs elsewhere, so the global
+ * pool, thinned by every Zenith Shard there is, would rank the
+ * valuables wrong; this keeps the ladder each biome holds
+ */
+export function getGroundOdds(item: Items, odds: ItemBandOdds = ITEM_BAND_ODDS): number {
+  let best = 0;
+
+  for (const biome of Object.values(BIOME_IDS)) {
+    best = Math.max(best, getItemOdds(item, odds, getItemPool(biome)));
+  }
+  return best;
 }

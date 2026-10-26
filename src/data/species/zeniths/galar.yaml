@@ -1,0 +1,500 @@
+# The Zeniths of the pokemon this stretch of the dex holds, keyed by
+# species, in the order the dex meets their pokemon, then the Galarian
+# finals of older lines. Each fights 100 above its pokemon's base stat
+# total with its HP untouched, held to by a test, and wears an
+# `ability` the line can never be born with. Everything not written
+# here is read off `base`.
+
+# The boss of the troop drums hardest when it is hurt
+RillaboomZenith:
+  base: Rillaboom
+  stats: { HP: 100, Attack: 170, Defense: 100, SpecialAttack: 60, SpecialDefense: 75, Speed: 125 }
+  types: [Grass]
+  ability: Guts
+  shard: RillaboomZenithShard
+
+# The striker warms up as it runs, faster with every lap
+CinderaceZenith:
+  base: Cinderace
+  stats: { HP: 80, Attack: 146, Defense: 95, SpecialAttack: 65, SpecialDefense: 95, Speed: 149 }
+  types: [Fire]
+  ability: SpeedBoost
+  shard: CinderaceZenithShard
+
+# The secret agent fires its finger gun before the foe can act
+InteleonZenith:
+  base: Inteleon
+  stats: { HP: 70, Attack: 85, Defense: 75, SpecialAttack: 165, SpecialDefense: 90, Speed: 145 }
+  types: [Water]
+  ability: QuickDraw
+  shard: InteleonZenithShard
+
+# Its berry hoard has made it fat enough to shrug off fire and ice
+GreedentZenith:
+  base: Greedent
+  stats: { HP: 120, Attack: 105, Defense: 125, SpecialAttack: 55, SpecialDefense: 110, Speed: 45 }
+  types: [Normal]
+  ability: ThickFat
+  shard: GreedentZenithShard
+
+# The tireless sky taxi hardens its armour with every blow
+CorviknightZenith:
+  base: Corviknight
+  stats: { HP: 98, Attack: 92, Defense: 140, SpecialAttack: 53, SpecialDefense: 115, Speed: 97 }
+  types: [Flying, Steel]
+  ability: Stamina
+  shard: CorviknightZenithShard
+
+# Its huge brain floods the field with psychic power
+OrbeetleZenith:
+  base: Orbeetle
+  stats: { HP: 60, Attack: 45, Defense: 115, SpecialAttack: 130, SpecialDefense: 125, Speed: 130 }
+  types: [Bug, Psychic]
+  ability: PsychicSurge
+  shard: OrbeetleZenithShard
+
+# The fox thief lifts the item off whatever it hits
+ThievulZenith:
+  base: Thievul
+  stats: { HP: 70, Attack: 58, Defense: 58, SpecialAttack: 127, SpecialDefense: 97, Speed: 145 }
+  types: [Dark]
+  ability: Magician
+  shard: ThievulZenithShard
+
+# Its cotton puff soaks up the blows
+EldegossZenith:
+  base: Eldegoss
+  stats: { HP: 60, Attack: 50, Defense: 130, SpecialAttack: 80, SpecialDefense: 140, Speed: 100 }
+  types: [Grass]
+  ability: Fluffy
+  shard: EldegossZenithShard
+
+# Its dense wool smothers anything that strikes it
+DubwoolZenith:
+  base: Dubwool
+  stats: { HP: 72, Attack: 90, Defense: 130, SpecialAttack: 60, SpecialDefense: 120, Speed: 118 }
+  types: [Normal]
+  ability: FurCoat
+  shard: DubwoolZenithShard
+
+# Its rock-hard shell blunts the blows that should hurt most
+DrednawZenith:
+  base: Drednaw
+  stats: { HP: 90, Attack: 125, Defense: 120, SpecialAttack: 48, SpecialDefense: 98, Speed: 104 }
+  types: [Water, Rock]
+  ability: SolidRock
+  shard: DrednawZenithShard
+
+# The electricity in its legs only makes it run faster
+BoltundZenith:
+  base: Boltund
+  stats: { HP: 69, Attack: 130, Defense: 75, SpecialAttack: 90, SpecialDefense: 75, Speed: 151 }
+  types: [Electric]
+  ability: MotorDrive
+  shard: BoltundZenithShard
+
+# With its berry eaten it flits off as light as a wing
+FlappleZenith:
+  base: Flapple
+  stats: { HP: 70, Attack: 145, Defense: 85, SpecialAttack: 95, SpecialDefense: 65, Speed: 125 }
+  types: [Grass, Dragon]
+  ability: Unburden
+  shard: FlappleZenithShard
+
+# An apple tree on its back grows its berry back
+AppletunZenith:
+  base: Appletun
+  stats: { HP: 110, Attack: 85, Defense: 115, SpecialAttack: 115, SpecialDefense: 115, Speed: 45 }
+  types: [Grass, Dragon]
+  ability: Harvest
+  shard: AppletunZenithShard
+
+# The sand snake slithers fast through the dunes
+SandacondaZenith:
+  base: Sandaconda
+  stats: { HP: 72, Attack: 147, Defense: 135, SpecialAttack: 65, SpecialDefense: 80, Speed: 111 }
+  types: [Ground]
+  ability: SandRush
+  shard: SandacondaZenithShard
+
+# Too dim to notice how strong the foe has grown
+CramorantZenith:
+  base: Cramorant
+  stats: { HP: 70, Attack: 85, Defense: 95, SpecialAttack: 100, SpecialDefense: 120, Speed: 105 }
+  types: [Flying, Water]
+  ability: Unaware
+  shard: CramorantZenithShard
+  forms:
+    CramorantGulpingZenith:
+      base: CramorantGulping
+      stats: { HP: 70, Attack: 85, Defense: 95, SpecialAttack: 100, SpecialDefense: 120, Speed: 105 }
+    CramorantGorgingZenith:
+      base: CramorantGorging
+      stats: { HP: 70, Attack: 85, Defense: 95, SpecialAttack: 100, SpecialDefense: 120, Speed: 105 }
+
+# The hunter swells with every catch it spears
+BarraskewdaZenith:
+  base: Barraskewda
+  stats: { HP: 61, Attack: 158, Defense: 80, SpecialAttack: 60, SpecialDefense: 65, Speed: 166 }
+  types: [Water]
+  ability: Moxie
+  shard: BarraskewdaZenithShard
+
+# It strums its chest and every shout comes out electric
+ToxtricityZenith:
+  base: Toxtricity
+  stats: { HP: 75, Attack: 98, Defense: 80, SpecialAttack: 149, SpecialDefense: 80, Speed: 120 }
+  types: [Electric, Poison]
+  ability: Galvanize
+  shard: ToxtricityZenithShard
+  forms:
+    ToxtricityLowKeyZenith:
+      base: ToxtricityLowKey
+      stats: { HP: 75, Attack: 98, Defense: 80, SpecialAttack: 149, SpecialDefense: 80, Speed: 120 }
+
+# Its burning body bakes the field into harsh sunlight
+CentiskorchZenith:
+  base: Centiskorch
+  stats: { HP: 100, Attack: 145, Defense: 80, SpecialAttack: 100, SpecialDefense: 105, Speed: 95 }
+  types: [Fire, Bug]
+  ability: Drought
+  shard: CentiskorchZenithShard
+
+# The octopus grows back whatever it loses
+GrapploctZenith:
+  base: Grapploct
+  stats: { HP: 80, Attack: 128, Defense: 115, SpecialAttack: 70, SpecialDefense: 110, Speed: 77 }
+  types: [Fighting, Water]
+  ability: Regenerator
+  shard: GrapploctZenithShard
+
+# A spirit in tea leaves, and a soothing cup heals first
+PolteageistZenith:
+  base: Polteageist
+  stats: { HP: 60, Attack: 65, Defense: 85, SpecialAttack: 154, SpecialDefense: 134, Speed: 110 }
+  types: [Ghost, Grass]
+  ability: Triage
+  shard: PolteageistZenithShard
+  forms:
+    PolteageistAntiqueZenith:
+      base: PolteageistAntique
+      stats: { HP: 60, Attack: 65, Defense: 85, SpecialAttack: 154, SpecialDefense: 134, Speed: 110 }
+      types: [Ghost, Grass]
+
+# The forest witch walks in a mist of her own
+HattereneZenith:
+  base: Hatterene
+  stats: { HP: 57, Attack: 90, Defense: 115, SpecialAttack: 176, SpecialDefense: 143, Speed: 29 }
+  types: [Psychic, Fairy]
+  ability: MistySurge
+  shard: HattereneZenithShard
+
+# Hair wound into muscle hits with brute strength
+GrimmsnarlZenith:
+  base: Grimmsnarl
+  stats: { HP: 95, Attack: 160, Defense: 80, SpecialAttack: 95, SpecialDefense: 85, Speed: 95 }
+  types: [Dark, Fairy]
+  ability: SheerForce
+  shard: GrimmsnarlZenithShard
+
+# The street brawler swings at anyone, ghosts included
+ObstagoonZenith:
+  base: Obstagoon
+  stats: { HP: 93, Attack: 130, Defense: 111, SpecialAttack: 60, SpecialDefense: 96, Speed: 130 }
+  types: [Dark, Normal]
+  ability: Scrappy
+  shard: ObstagoonZenithShard
+
+# The viking cat goes berserk once it is badly hurt
+PerrserkerZenith:
+  base: Perrserker
+  stats: { HP: 70, Attack: 140, Defense: 115, SpecialAttack: 50, SpecialDefense: 85, Speed: 80 }
+  types: [Steel]
+  ability: Berserk
+  shard: PerrserkerZenithShard
+
+# Dead coral of stone, thirsting for the sea it lost
+CursolaZenith:
+  base: Cursola
+  stats: { HP: 60, Attack: 95, Defense: 90, SpecialAttack: 170, SpecialDefense: 145, Speed: 50 }
+  types: [Ghost, Rock]
+  ability: WaterAbsorb
+  shard: CursolaZenithShard
+
+# The duck knight never backs down from a fight
+SirfetchdZenith:
+  base: Sirfetchd
+  stats: { HP: 62, Attack: 160, Defense: 110, SpecialAttack: 68, SpecialDefense: 97, Speed: 110 }
+  types: [Fighting, Flying]
+  ability: Defiant
+  shard: SirfetchdZenithShard
+
+# Its shadow shows horrific memories to all who look
+RunerigusZenith:
+  base: Runerigus
+  stats: { HP: 58, Attack: 125, Defense: 170, SpecialAttack: 50, SpecialDefense: 150, Speed: 30 }
+  types: [Ground, Ghost]
+  ability: Intimidate
+  shard: RunerigusZenithShard
+
+# Its cream body sticks to whatever touches it
+AlcremieZenith:
+  base: Alcremie
+  stats: { HP: 65, Attack: 60, Defense: 110, SpecialAttack: 125, SpecialDefense: 141, Speed: 94 }
+  types: [Fairy]
+  ability: Gooey
+  shard: AlcremieZenithShard
+  forms:
+    AlcremieBerryZenith:
+      base: AlcremieBerry
+      stats: { HP: 65, Attack: 60, Defense: 110, SpecialAttack: 125, SpecialDefense: 141, Speed: 94 }
+    AlcremieLoveZenith:
+      base: AlcremieLove
+      stats: { HP: 65, Attack: 60, Defense: 110, SpecialAttack: 125, SpecialDefense: 141, Speed: 94 }
+    AlcremieStarZenith:
+      base: AlcremieStar
+      stats: { HP: 65, Attack: 60, Defense: 110, SpecialAttack: 125, SpecialDefense: 141, Speed: 94 }
+    AlcremieCloverZenith:
+      base: AlcremieClover
+      stats: { HP: 65, Attack: 60, Defense: 110, SpecialAttack: 125, SpecialDefense: 141, Speed: 94 }
+    AlcremieFlowerZenith:
+      base: AlcremieFlower
+      stats: { HP: 65, Attack: 60, Defense: 110, SpecialAttack: 125, SpecialDefense: 141, Speed: 94 }
+    AlcremieRibbonZenith:
+      base: AlcremieRibbon
+      stats: { HP: 65, Attack: 60, Defense: 110, SpecialAttack: 125, SpecialDefense: 141, Speed: 94 }
+
+# A sea urchin in a hard spined shell survives any one blow
+PincurchinZenith:
+  base: Pincurchin
+  stats: { HP: 48, Attack: 111, Defense: 125, SpecialAttack: 116, SpecialDefense: 110, Speed: 25 }
+  types: [Electric, Water]
+  ability: Sturdy
+  shard: PincurchinZenithShard
+
+# A moth's many-faceted eyes guide its blizzards home
+FrosmothZenith:
+  base: Frosmoth
+  stats: { HP: 70, Attack: 65, Defense: 65, SpecialAttack: 165, SpecialDefense: 95, Speed: 115 }
+  types: [Ice, Bug]
+  ability: CompoundEyes
+  shard: FrosmothZenithShard
+
+# The stone circle hurls its own megaliths
+StonjournerZenith:
+  base: Stonjourner
+  stats: { HP: 100, Attack: 160, Defense: 145, SpecialAttack: 20, SpecialDefense: 50, Speed: 95 }
+  types: [Rock]
+  ability: RockyPayload
+  shard: StonjournerZenithShard
+
+# It brings the snow of its home, which rebuilds its ice face
+EiscueZenith:
+  base: Eiscue
+  stats: { HP: 75, Attack: 115, Defense: 130, SpecialAttack: 65, SpecialDefense: 110, Speed: 75 }
+  types: [Ice]
+  ability: SnowWarning
+  shard: EiscueZenithShard
+  forms:
+    EiscueNoiceZenith:
+      base: EiscueNoice
+      stats: { HP: 75, Attack: 115, Defense: 90, SpecialAttack: 65, SpecialDefense: 70, Speed: 155 }
+
+# The butler greets each ally with a cup of tea
+IndeedeeZenith:
+  base: Indeedee
+  stats: { HP: 60, Attack: 65, Defense: 85, SpecialAttack: 125, SpecialDefense: 120, Speed: 120 }
+  types: [Psychic, Normal]
+  ability: Hospitality
+  shard: IndeedeeZenithShard
+  forms:
+    IndeedeeFemaleZenith:
+      base: IndeedeeFemale
+      stats: { HP: 70, Attack: 55, Defense: 95, SpecialAttack: 115, SpecialDefense: 130, Speed: 110 }
+
+# A hamster that gnaws on everything in reach
+MorpekoZenith:
+  base: Morpeko
+  stats: { HP: 58, Attack: 135, Defense: 68, SpecialAttack: 70, SpecialDefense: 68, Speed: 137 }
+  types: [Electric, Dark]
+  ability: StrongJaw
+  shard: MorpekoZenithShard
+  forms:
+    MorpekoHangryZenith:
+      base: MorpekoHangry
+      stats: { HP: 58, Attack: 135, Defense: 68, SpecialAttack: 70, SpecialDefense: 68, Speed: 137 }
+
+# Its dragon half gives its blows their power
+DracozoltZenith:
+  base: Dracozolt
+  stats: { HP: 90, Attack: 135, Defense: 100, SpecialAttack: 80, SpecialDefense: 85, Speed: 115 }
+  types: [Electric, Dragon]
+  ability: DragonsMaw
+  shard: DracozoltZenithShard
+
+# The ice on its upper body cracks off and frees it to move
+ArctozoltZenith:
+  base: Arctozolt
+  stats: { HP: 90, Attack: 135, Defense: 110, SpecialAttack: 90, SpecialDefense: 100, Speed: 80 }
+  types: [Electric, Ice]
+  ability: WeakArmor
+  shard: ArctozoltZenithShard
+
+# The apex predator's jaws break through anything
+DracovishZenith:
+  base: Dracovish
+  stats: { HP: 90, Attack: 125, Defense: 110, SpecialAttack: 70, SpecialDefense: 90, Speed: 120 }
+  types: [Water, Dragon]
+  ability: MoldBreaker
+  shard: DracovishZenithShard
+
+# Its frozen hide halves the blows of special attacks
+ArctovishZenith:
+  base: Arctovish
+  stats: { HP: 90, Attack: 115, Defense: 115, SpecialAttack: 80, SpecialDefense: 110, Speed: 95 }
+  types: [Water, Ice]
+  ability: IceScales
+  shard: ArctovishZenithShard
+
+# It fires its Dreepy with a practised aim
+DragapultZenith:
+  base: Dragapult
+  stats: { HP: 88, Attack: 155, Defense: 95, SpecialAttack: 100, SpecialDefense: 95, Speed: 167 }
+  types: [Dragon, Ghost]
+  ability: Technician
+  shard: DragapultZenithShard
+
+# Its crystalline core turns aside the blows that should hurt most
+EternatusZenith:
+  base: Eternatus
+  stats: { HP: 140, Attack: 85, Defense: 125, SpecialAttack: 165, SpecialDefense: 125, Speed: 150 }
+  types: [Poison, Dragon]
+  ability: PrismArmor
+  shard: EternatusZenithShard
+
+# The master reads every guard, even a ghost
+UrshifuZenith:
+  base: Urshifu
+  stats: { HP: 100, Attack: 160, Defense: 110, SpecialAttack: 63, SpecialDefense: 80, Speed: 137 }
+  types: [Fighting, Dark]
+  ability: MindsEye
+  shard: UrshifuZenithShard
+  forms:
+    UrshifuRapidStrikeZenith:
+      base: UrshifuRapidStrike
+      stats: { HP: 100, Attack: 160, Defense: 110, SpecialAttack: 63, SpecialDefense: 80, Speed: 137 }
+
+# A body of pure current hovers off the ground
+RegielekiZenith:
+  base: Regieleki
+  stats: { HP: 80, Attack: 100, Defense: 80, SpecialAttack: 130, SpecialDefense: 80, Speed: 210 }
+  types: [Electric]
+  ability: Levitate
+  shard: RegielekiZenithShard
+
+# Its dragon-shaped head is all jagged scales
+RegidragoZenith:
+  base: Regidrago
+  stats: { HP: 200, Attack: 115, Defense: 90, SpecialAttack: 100, SpecialDefense: 75, Speed: 100 }
+  types: [Dragon]
+  ability: RoughSkin
+  shard: RegidragoZenithShard
+
+# The wild horse charges with no regard for itself
+GlastrierZenith:
+  base: Glastrier
+  stats: { HP: 100, Attack: 190, Defense: 150, SpecialAttack: 65, SpecialDefense: 145, Speed: 30 }
+  types: [Ice]
+  ability: Reckless
+  shard: GlastrierZenithShard
+
+# A steed made of nothing but ghostly power
+SpectrierZenith:
+  base: Spectrier
+  stats: { HP: 100, Attack: 65, Defense: 70, SpecialAttack: 185, SpecialDefense: 90, Speed: 170 }
+  types: [Ghost]
+  ability: Adaptability
+  shard: SpectrierZenithShard
+
+# A king grows stronger for every subject that falls
+CalyrexZenith:
+  base: Calyrex
+  stats: { HP: 100, Attack: 80, Defense: 105, SpecialAttack: 105, SpecialDefense: 105, Speed: 105 }
+  types: [Psychic, Grass]
+  ability: SupremeOverlord
+  shard: CalyrexZenithShard
+  forms:
+    CalyrexIceZenith:
+      base: CalyrexIce
+      stats: { HP: 100, Attack: 195, Defense: 175, SpecialAttack: 85, SpecialDefense: 175, Speed: 50 }
+    CalyrexShadowZenith:
+      base: CalyrexShadow
+      stats: { HP: 100, Attack: 85, Defense: 100, SpecialAttack: 195, SpecialDefense: 125, Speed: 175 }
+
+# The unicorn's magic turns its body blows to Fairy
+RapidashGalarZenith:
+  base: RapidashGalar
+  stats: { HP: 65, Attack: 140, Defense: 80, SpecialAttack: 80, SpecialDefense: 90, Speed: 145 }
+  types: [Psychic, Fairy]
+  ability: Pixilate
+  shard: RapidashGalarZenithShard
+
+# The Shellder on its arm fires true
+SlowbroGalarZenith:
+  base: SlowbroGalar
+  stats: { HP: 95, Attack: 125, Defense: 110, SpecialAttack: 125, SpecialDefense: 105, Speed: 30 }
+  types: [Poison, Psychic]
+  ability: Sniper
+  shard: SlowbroGalarZenithShard
+
+# It breathes in polluted air and filters it clean
+WeezingGalarZenith:
+  base: WeezingGalar
+  stats: { HP: 65, Attack: 90, Defense: 140, SpecialAttack: 105, SpecialDefense: 110, Speed: 80 }
+  types: [Poison, Fairy]
+  ability: Filter
+  shard: WeezingGalarZenithShard
+
+# Its psychic glare finds the weak point
+ArticunoGalarZenith:
+  base: ArticunoGalar
+  stats: { HP: 90, Attack: 85, Defense: 100, SpecialAttack: 160, SpecialDefense: 115, Speed: 130 }
+  types: [Psychic, Flying]
+  ability: Neuroforce
+  shard: ArticunoGalarZenithShard
+
+# Its mighty legs kick hard on contact
+ZapdosGalarZenith:
+  base: ZapdosGalar
+  stats: { HP: 90, Attack: 160, Defense: 100, SpecialAttack: 85, SpecialDefense: 100, Speed: 145 }
+  types: [Fighting, Flying]
+  ability: ToughClaws
+  shard: ZapdosGalarZenithShard
+
+# Its malevolent aura strengthens every Dark move
+MoltresGalarZenith:
+  base: MoltresGalar
+  stats: { HP: 90, Attack: 85, Defense: 100, SpecialAttack: 140, SpecialDefense: 135, Speed: 130 }
+  types: [Dark, Flying]
+  ability: DarkAura
+  shard: MoltresGalarZenithShard
+
+# Shellder's toxin laces every spell it chants
+SlowkingGalarZenith:
+  base: SlowkingGalar
+  stats: { HP: 95, Attack: 65, Defense: 105, SpecialAttack: 145, SpecialDefense: 150, Speed: 30 }
+  types: [Poison, Psychic]
+  ability: ToxicChain
+  shard: SlowkingGalarZenithShard
+
+# It rams with the snowball on its head and feels nothing
+DarmanitanGalarZenith:
+  base: DarmanitanGalar
+  stats: { HP: 105, Attack: 170, Defense: 85, SpecialAttack: 30, SpecialDefense: 75, Speed: 115 }
+  types: [Ice]
+  ability: RockHead
+  shard: DarmanitanGalarZenithShard
+  forms:
+    DarmanitanGalarZenZenith:
+      base: DarmanitanGalarZen
+      stats: { HP: 105, Attack: 190, Defense: 85, SpecialAttack: 30, SpecialDefense: 75, Speed: 155 }

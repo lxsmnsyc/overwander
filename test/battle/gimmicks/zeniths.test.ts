@@ -223,6 +223,49 @@ describe('Zeniths', () => {
     expect(fish.species).toBe(Species.WishiwashiZenith);
   });
 
+  it('sits a Galarian Darmanitan Zenith down into its Zen Zenith and back up', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const darmanitan = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+    darmanitan.setSpecies(Species.DarmanitanGalar);
+    darmanitan.setHealth(darmanitan.checkStat(Stats.HP, 0));
+    darmanitan.addAbility(Abilities.ZenMode);
+    darmanitan.addItem(Items.DarmanitanGalarZenithShard);
+
+    darmanitan.enter();
+    foe.enter();
+
+    expect(darmanitan.species).toBe(Species.DarmanitanGalarZenith);
+    expect(darmanitan.hasAbility(Abilities.RockHead)).toBe(true);
+
+    foe.damage({ type: EffectType.None }, darmanitan, darmanitan.health * 0.6, 0);
+
+    expect(darmanitan.species).toBe(Species.DarmanitanGalarZenZenith);
+    expect([...darmanitan.types]).toEqual([Types.Ice, Types.Fire]);
+
+    darmanitan.heal({ type: EffectType.None }, darmanitan, darmanitan.checkStat(Stats.HP, 0), 0);
+
+    expect(darmanitan.species).toBe(Species.DarmanitanGalarZenith);
+  });
+
+  it("gives a Calyrex Zenith on either steed that steed's own shape", () => {
+    const { battle, teamA, teamB } = createBattle();
+    const ice = createUnit(battle, teamA);
+    const shadow = createUnit(battle, teamB);
+    ice.setSpecies(Species.CalyrexIce);
+    ice.addItem(Items.CalyrexZenithShard);
+    shadow.setSpecies(Species.CalyrexShadow);
+    shadow.addItem(Items.CalyrexZenithShard);
+
+    ice.enter();
+    shadow.enter();
+
+    expect(ice.species).toBe(Species.CalyrexIceZenith);
+    expect([...ice.types]).toEqual([Types.Psychic, Types.Ice]);
+    expect(shadow.species).toBe(Species.CalyrexShadowZenith);
+    expect(shadow.hasAbility(Abilities.SupremeOverlord)).toBe(true);
+  });
+
   it('gives an Alolan Ninetales its own Zenith, and nothing for the Kanto shard', () => {
     const { battle, teamA, teamB } = createBattle();
     const alolan = createUnit(battle, teamA);

@@ -2089,3 +2089,327 @@ MarowakAlolaZenithShard:
   icon: zenith/alola/marowak-alola
   flags: [Holdable]
   sell: 2000
+
+RillaboomZenithShard:
+  type: Held
+  icon: zenith/galar/rillaboom
+  flags: [Holdable]
+  sell: 2000
+
+CinderaceZenithShard:
+  type: Held
+  icon: zenith/galar/cinderace
+  flags: [Holdable]
+  sell: 2000
+
+InteleonZenithShard:
+  type: Held
+  icon: zenith/galar/inteleon
+  flags: [Holdable]
+  sell: 2000
+
+GreedentZenithShard:
+  type: Held
+  icon: zenith/galar/greedent
+  flags: [Holdable]
+  sell: 2000
+
+CorviknightZenithShard:
+  type: Held
+  icon: zenith/galar/corviknight
+  flags: [Holdable]
+  sell: 2000
+
+OrbeetleZenithShard:
+  type: Held
+  icon: zenith/galar/orbeetle
+  flags: [Holdable]
+  sell: 2000
+
+ThievulZenithShard:
+  type: Held
+  icon: zenith/galar/thievul
+  flags: [Holdable]
+  sell: 2000
+
+EldegossZenithShard:
+  type: Held
+  icon: zenith/galar/eldegoss
+  flags: [Holdable]
+  sell: 2000
+
+DubwoolZenithShard:
+  type: Held
+  icon: zenith/galar/dubwool
+  flags: [Holdable]
+  sell: 2000
+
+DrednawZenithShard:
+  type: Held
+  icon: zenith/galar/drednaw
+  flags: [Holdable]
+  sell: 2000
+
+BoltundZenithShard:
+  type: Held
+  icon: zenith/galar/boltund
+  flags: [Holdable]
+  sell: 2000
+
+FlappleZenithShard:
+  type: Held
+  icon: zenith/galar/flapple
+  flags: [Holdable]
+  sell: 2000
+
+AppletunZenithShard:
+  type: Held
+  icon: zenith/galar/appletun
+  flags: [Holdable]
+  sell: 2000
+
+SandacondaZenithShard:
+  type: Held
+  icon: zenith/galar/sandaconda
+  flags: [Holdable]
+  sell: 2000
+
+CramorantZenithShard:
+  type: Held
+  icon: zenith/galar/cramorant
+  flags: [Holdable]
+  sell: 2000
+
+BarraskewdaZenithShard:
+  type: Held
+  icon: zenith/galar/barraskewda
+  flags: [Holdable]
+  sell: 2000
+
+ToxtricityZenithShard:
+  type: Held
+  icon: zenith/galar/toxtricity
+  flags: [Holdable]
+  sell: 2000
+
+CentiskorchZenithShard:
+  type: Held
+  icon: zenith/galar/centiskorch
+  flags: [Holdable]
+  sell: 2000
+
+GrapploctZenithShard:
+  type: Held
+  icon: zenith/galar/grapploct
+  flags: [Holdable]
+  sell: 2000
+
+PolteageistZenithShard:
+  type: Held
+  icon: zenith/galar/polteageist
+  flags: [Holdable]
+  sell: 2000
+
+HattereneZenithShard:
+  type: Held
+  icon: zenith/galar/hatterene
+  flags: [Holdable]
+  sell: 2000
+
+GrimmsnarlZenithShard:
+  type: Held
+  icon: zenith/galar/grimmsnarl
+  flags: [Holdable]
+  sell: 2000
+
+ObstagoonZenithShard:
+  type: Held
+  icon: zenith/galar/obstagoon
+  flags: [Holdable]
+  sell: 2000
+
+PerrserkerZenithShard:
+  type: Held
+  icon: zenith/galar/perrserker
+  flags: [Holdable]
+  sell: 2000
+
+CursolaZenithShard:
+  type: Held
+  icon: zenith/galar/cursola
+  flags: [Holdable]
+  sell: 2000
+
+SirfetchdZenithShard:
+  type: Held
+  icon: zenith/galar/sirfetchd
+  flags: [Holdable]
+  sell: 2000
+
+RunerigusZenithShard:
+  type: Held
+  icon: zenith/galar/runerigus
+  flags: [Holdable]
+  sell: 2000
+
+AlcremieZenithShard:
+  type: Held
+  icon: zenith/galar/alcremie
+  flags: [Holdable]
+  sell: 2000
+
+PincurchinZenithShard:
+  type: Held
+  icon: zenith/galar/pincurchin
+  flags: [Holdable]
+  sell: 2000
+
+FrosmothZenithShard:
+  type: Held
+  icon: zenith/galar/frosmoth
+  flags: [Holdable]
+  sell: 2000
+
+StonjournerZenithShard:
+  type: Held
+  icon: zenith/galar/stonjourner
+  flags: [Holdable]
+  sell: 2000
+
+EiscueZenithShard:
+  type: Held
+  icon: zenith/galar/eiscue
+  flags: [Holdable]
+  sell: 2000
+
+IndeedeeZenithShard:
+  type: Held
+  icon: zenith/galar/indeedee
+  flags: [Holdable]
+  sell: 2000
+
+MorpekoZenithShard:
+  type: Held
+  icon: zenith/galar/morpeko
+  flags: [Holdable]
+  sell: 2000
+
+DracozoltZenithShard:
+  type: Held
+  icon: zenith/galar/dracozolt
+  flags: [Holdable]
+  sell: 2000
+
+ArctozoltZenithShard:
+  type: Held
+  icon: zenith/galar/arctozolt
+  flags: [Holdable]
+  sell: 2000
+
+DracovishZenithShard:
+  type: Held
+  icon: zenith/galar/dracovish
+  flags: [Holdable]
+  sell: 2000
+
+ArctovishZenithShard:
+  type: Held
+  icon: zenith/galar/arctovish
+  flags: [Holdable]
+  sell: 2000
+
+DragapultZenithShard:
+  type: Held
+  icon: zenith/galar/dragapult
+  flags: [Holdable]
+  sell: 2000
+
+EternatusZenithShard:
+  type: Held
+  icon: zenith/galar/eternatus
+  flags: [Holdable]
+  sell: 2000
+
+UrshifuZenithShard:
+  type: Held
+  icon: zenith/galar/urshifu
+  flags: [Holdable]
+  sell: 2000
+
+RegielekiZenithShard:
+  type: Held
+  icon: zenith/galar/regieleki
+  flags: [Holdable]
+  sell: 2000
+
+RegidragoZenithShard:
+  type: Held
+  icon: zenith/galar/regidrago
+  flags: [Holdable]
+  sell: 2000
+
+GlastrierZenithShard:
+  type: Held
+  icon: zenith/galar/glastrier
+  flags: [Holdable]
+  sell: 2000
+
+SpectrierZenithShard:
+  type: Held
+  icon: zenith/galar/spectrier
+  flags: [Holdable]
+  sell: 2000
+
+CalyrexZenithShard:
+  type: Held
+  icon: zenith/galar/calyrex
+  flags: [Holdable]
+  sell: 2000
+
+RapidashGalarZenithShard:
+  type: Held
+  icon: zenith/galar/rapidash-galar
+  flags: [Holdable]
+  sell: 2000
+
+SlowbroGalarZenithShard:
+  type: Held
+  icon: zenith/galar/slowbro-galar
+  flags: [Holdable]
+  sell: 2000
+
+WeezingGalarZenithShard:
+  type: Held
+  icon: zenith/galar/weezing-galar
+  flags: [Holdable]
+  sell: 2000
+
+ArticunoGalarZenithShard:
+  type: Held
+  icon: zenith/galar/articuno-galar
+  flags: [Holdable]
+  sell: 2000
+
+ZapdosGalarZenithShard:
+  type: Held
+  icon: zenith/galar/zapdos-galar
+  flags: [Holdable]
+  sell: 2000
+
+MoltresGalarZenithShard:
+  type: Held
+  icon: zenith/galar/moltres-galar
+  flags: [Holdable]
+  sell: 2000
+
+SlowkingGalarZenithShard:
+  type: Held
+  icon: zenith/galar/slowking-galar
+  flags: [Holdable]
+  sell: 2000
+
+DarmanitanGalarZenithShard:
+  type: Held
+  icon: zenith/galar/darmanitan-galar
+  flags: [Holdable]
+  sell: 2000

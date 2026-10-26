@@ -4,16 +4,15 @@ How every generation after Kanto gets its Zeniths, region by region, after [the 
 
 ## Where things stand
 
-- **Kanto, Johto, Hoenn, Sinnoh, Unova, Kalos and Alola are done:** 49, 40, 50, 54, 69, 26 and 60 Zeniths (Alola's counting its 10 Alolan finals), one for every eligible pokemon of each. Batch 0 (Zenith shapes, Unown) is in.
+- **Kanto, Johto, Hoenn, Sinnoh, Unova, Kalos, Alola and Galar are done:** 49, 40, 50, 54, 69, 26, 60 and 54 Zeniths (Alola's counting its 10 Alolan finals, Galar's its 8 Galarian finals), one for every eligible pokemon of each. Batch 0 (Zenith shapes, Unown) is in.
 - **The rules are held by `test/data/zeniths.test.ts`.** A Zenith belongs to a final stage with no Mega and no other held-item shape. It fights 100 above its base stat total, none of it in HP, and wears an ability its line can never be born with. Its shard id is `2000000 + dex × 100 + 01`, and the shard is buried in the prized band only where its line is met.
-- **Left to do: about 135 Zeniths.**
+- **Left to do: about 80 Zeniths.**
 
   | Region | Eligible | Notes |
   | --- | --- | --- |
-  | Galar | 46 | Calyrex, with a shape for each Rider |
   | Hisui | 6 | |
   | Paldea | 59 | Ogerpon, with a shape for each mask. Bramblin, Toedscool, Rellor and Flittle wait for their final stages |
-  | Regional finals | about 20 | Galarian, Hisuian and Paldean finals |
+  | Regional finals | about 12 | Hisuian and Paldean finals, and Mr. Rime once it is in |
 
 ## Decided
 
@@ -28,6 +27,8 @@ How every generation after Kanto gets its Zeniths, region by region, after [the 
 - **Zygarde gets none.** Power Construct can take any Zygarde to the Complete Forme, which has a Mega, so the tests count a Mega of a shape an ability reaches as the whole pokemon's.
 - **Regional finals get one** in form slot 98 and down, in the batch of the region whose form it is: Alolan Ninetales goes in with Alola, not Kanto. A regional final's Zenith wears an ability of its own, never its base line's Zenith ability: only shapes changed into in battle share one.
 - **No two Zeniths of one region wear the same ability.** A later region may reuse an earlier one's.
+- **A worn ability never copies one the line is born with.** Mummy is not offered to Runerigus, which has Wandering Spirit, nor Sand Stream to Sandaconda, which has Sand Spit.
+- **A pokemon still waiting for its next stage waits for its Zenith too.** Galarian Mr. Mime is `awaiting: evolution` until Mr. Rime is in, and the gap test skips it.
 - **Proposals come 4 pokemon at a time**, through questions. Each pokemon's abilities, ancestors' included, and its team role come first. Each question offers 3 or 4 concepts for one pokemon, each with its stat spread, worn ability and any type change, and every concept serves that role and ties to the pokemon's look or lore: an ability that undoes the pokemon's own best move, or a spread bent to fit the ability, is not offered. The question itself carries the pokemon's types, base stats, its total before and after, its abilities and its role, and each option shows the change on every stat it moves. Before a round goes out, every option is checked against the abilities the region has already approved, so nothing taken is offered again. A region is built once every pokemon in it is approved.
 
 ## The order
@@ -41,7 +42,7 @@ How every generation after Kanto gets its Zeniths, region by region, after [the 
 | 4 | Unova | 69 |
 | 5 | Kalos | 26 |
 | 6 | Alola | 50, then the 10 Alolan finals of Kanto lines |
-| 7 | Galar | 46, then the Galarian finals |
+| 7 | Galar | 46, then the 8 Galarian finals |
 | 8 | Hisui | 6, then the Hisuian finals |
 | 9 | Paldea | 59, then the Paldean Tauros breeds |
 

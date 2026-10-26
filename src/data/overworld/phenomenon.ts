@@ -13,7 +13,8 @@ import { PLATES } from '../items/plates';
 import { SIGNATURE_CRYSTALS, TYPE_CRYSTALS } from '../items/z-crystals';
 import { isValuable } from '../items/valuables';
 import { MAX_WING_STATS, WING_STATS } from '../items/wings';
-import { type ItemPoolEntry, type ItemRarityGroups, getItemBand, getItemOdds } from './item-pool';
+import { type ItemPoolEntry, type ItemRarityGroups, getItemBand } from './item-pool';
+import { getGroundOdds } from './biome-items';
 import { EvolutionMethod } from '../ids/species';
 import { getRegisteredSpecies, getSpeciesData } from '../species';
 
@@ -157,7 +158,7 @@ function weigh(items: Items[]): ItemPoolEntry[] {
   for (const item of items) {
     if (isValuable(item)) {
       valuables += 1;
-      ground += getItemOdds(item);
+      ground += getGroundOdds(item);
     }
   }
   // Nothing to weight by leaves them as flat as everything else,
@@ -166,7 +167,7 @@ function weigh(items: Items[]): ItemPoolEntry[] {
   const entries: ItemPoolEntry[] = [];
 
   for (const item of items) {
-    entries.push({ item, weight: isValuable(item) ? getItemOdds(item) * share : 1 });
+    entries.push({ item, weight: isValuable(item) ? getGroundOdds(item) * share : 1 });
   }
   return entries;
 }

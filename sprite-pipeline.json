@@ -41267,6 +41267,18 @@
         "bytes": 3321
       }
     },
+    "public/sprites/ui/items/zenith/galar/image.png": {
+      "digest": "0f39a383c0d0959d",
+      "bytes": 3071,
+      "width": 32,
+      "height": 432,
+      "compact": {
+        "at": "2026-10-26T09:59:23Z",
+        "as": "already compact",
+        "was": 3071,
+        "bytes": 3071
+      }
+    },
     "public/sprites/ui/items/zenith/hoenn/image.png": {
       "digest": "8ecd5082bb4131da",
       "bytes": 2700,

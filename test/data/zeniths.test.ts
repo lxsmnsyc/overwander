@@ -201,7 +201,8 @@ describe('Zeniths', () => {
 
   it('gives every eligible pokemon of a finished region its Zenith', () => {
     // Added to as each region's batch lands. Its regional finals count
-    // as its own, so Alolan Ninetales is owed with Alola
+    // as its own, so Alolan Ninetales is owed with Alola. A pokemon whose
+    // next stage is not in yet, such as Galarian Mr. Mime, waits for it
     const finished = new Set<Regions>([
       Regions.Kanto,
       Regions.Johto,
@@ -210,6 +211,7 @@ describe('Zeniths', () => {
       Regions.Unova,
       Regions.Kalos,
       Regions.Alola,
+      Regions.Galar,
     ]);
     const spoken = new Set<Species>(NO_ZENITH);
 
@@ -222,8 +224,13 @@ describe('Zeniths', () => {
 
     const having = new Set<Species>();
 
+    // A shape a regional final changes into, such as Galarian Zen
+    // Darmanitan, is reached through that final's Zenith
     for (const shape of ZENITH_SHAPES) {
       having.add(shape.base);
+      for (const form of shape.forms) {
+        having.add(form.base);
+      }
     }
 
     const missing: string[] = [];
@@ -234,6 +241,7 @@ describe('Zeniths', () => {
       if (
         (data.baseForm === false && !isRegionalForm(species)) ||
         data.worn === true ||
+        data.awaiting === 'evolution' ||
         !finished.has(getSpeciesRegion(species)) ||
         !isLastStage(species) ||
         spoken.has(species) ||

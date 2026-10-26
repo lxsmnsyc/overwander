@@ -21,8 +21,8 @@ import {
   MAX_STACK,
   PHENOMENON_BAND_ODDS,
   getItemBand,
-  getItemOdds,
 } from '../../../src/data/overworld/item-pool';
+import { getGroundOdds } from '../../../src/data/overworld/biome-items';
 import { Species } from '../../../src/data/ids/species';
 import { getBaseSpecies, getSpeciesData, registerSpecies } from '../../../src/data/species';
 import { seatId } from '../../../src/model/gym-seat-record';
@@ -1084,7 +1084,7 @@ describe('world', () => {
 
         for (const one of valuables) {
           for (const other of valuables) {
-            if (getItemOdds(one.item) > getItemOdds(other.item)) {
+            if (getGroundOdds(one.item) > getGroundOdds(other.item)) {
               expect(
                 one.weight,
                 `${getItemData(one.item).name} against ${getItemData(other.item).name}`,

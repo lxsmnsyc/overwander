@@ -243,9 +243,14 @@ export const ITEM_BAND_ODDS: ItemBandOdds = {
  * Two items are not ranked by their bands. A band eight times rarer
  * does not make a wide slot in it rarer than a thin slot in the band
  * below, and the ladder the valuables are priced along is read here
- * rather than off `getItemBand`
+ * rather than off `getItemBand`. A biome's own pool, which leaves out
+ * what belongs to other ground, gives the odds of a stash there
  */
-export function getItemOdds(item: Items, odds: ItemBandOdds = ITEM_BAND_ODDS): number {
+export function getItemOdds(
+  item: Items,
+  odds: ItemBandOdds = ITEM_BAND_ODDS,
+  pool: ItemRarityGroups = ITEM_POOL,
+): number {
   const band = getItemBand(item);
 
   if (band == null) {
@@ -254,7 +259,7 @@ export function getItemOdds(item: Items, odds: ItemBandOdds = ITEM_BAND_ODDS): n
   let total = 0;
   let weight = 0;
 
-  for (const entry of ITEM_POOL[band]) {
+  for (const entry of pool[band]) {
     total += entry.weight;
     if (entry.item === item) {
       weight += entry.weight;

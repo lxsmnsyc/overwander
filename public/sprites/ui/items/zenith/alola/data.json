@@ -1,0 +1,787 @@
+{
+  "compact": true,
+  "width": 32,
+  "height": 480,
+  "images": [
+    {
+      "name": "araquanid.png",
+      "x": 0,
+      "y": 96,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "bewear.png",
+      "x": 0,
+      "y": 128,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "blacephalon.png",
+      "x": 0,
+      "y": 384,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "bruxish.png",
+      "x": 0,
+      "y": 224,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "buzzwole.png",
+      "x": 0,
+      "y": 304,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "celesteela.png",
+      "x": 15,
+      "y": 320,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "comfey.png",
+      "x": 0,
+      "y": 144,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "decidueye.png",
+      "x": 0,
+      "y": 0,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "dhelmise.png",
+      "x": 15,
+      "y": 224,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "dugtrio-alola.png",
+      "x": 0,
+      "y": 432,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "exeggutor-alola.png",
+      "x": 0,
+      "y": 464,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "golem-alola.png",
+      "x": 0,
+      "y": 448,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "gumshoos.png",
+      "x": 0,
+      "y": 32,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "guzzlord.png",
+      "x": 15,
+      "y": 336,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "incineroar.png",
+      "x": 15,
+      "y": 0,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "kartana.png",
+      "x": 0,
+      "y": 336,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "komala.png",
+      "x": 0,
+      "y": 192,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "kommo-o.png",
+      "x": 0,
+      "y": 240,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "lunala.png",
+      "x": 0,
+      "y": 288,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "lurantis.png",
+      "x": 15,
+      "y": 96,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "lycanroc.png",
+      "x": 0,
+      "y": 64,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "marowak-alola.png",
+      "x": 15,
+      "y": 464,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "marshadow.png",
+      "x": 15,
+      "y": 352,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "melmetal.png",
+      "x": 15,
+      "y": 384,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "mimikyu.png",
+      "x": 15,
+      "y": 208,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "minior.png",
+      "x": 15,
+      "y": 176,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "mudsdale.png",
+      "x": 15,
+      "y": 80,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "muk-alola.png",
+      "x": 15,
+      "y": 448,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "naganadel.png",
+      "x": 0,
+      "y": 368,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "necrozma.png",
+      "x": 0,
+      "y": 352,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "nihilego.png",
+      "x": 15,
+      "y": 288,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "ninetales-alola.png",
+      "x": 15,
+      "y": 416,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "oranguru.png",
+      "x": 15,
+      "y": 144,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "oricorio.png",
+      "x": 0,
+      "y": 48,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "palossand.png",
+      "x": 15,
+      "y": 160,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "passimian.png",
+      "x": 0,
+      "y": 160,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "persian-alola.png",
+      "x": 15,
+      "y": 432,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "pheromosa.png",
+      "x": 15,
+      "y": 304,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "primarina.png",
+      "x": 0,
+      "y": 16,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "pyukumuku.png",
+      "x": 0,
+      "y": 176,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "raichu-alola.png",
+      "x": 15,
+      "y": 400,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "raticate-alola.png",
+      "x": 0,
+      "y": 400,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "ribombee.png",
+      "x": 15,
+      "y": 48,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "salazzle.png",
+      "x": 15,
+      "y": 112,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "sandslash-alola.png",
+      "x": 0,
+      "y": 416,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "shiinotic.png",
+      "x": 0,
+      "y": 112,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "solgaleo.png",
+      "x": 15,
+      "y": 272,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "stakataka.png",
+      "x": 15,
+      "y": 368,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "tapu-bulu.png",
+      "x": 15,
+      "y": 256,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "tapu-fini.png",
+      "x": 0,
+      "y": 272,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "tapu-koko.png",
+      "x": 15,
+      "y": 240,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "tapu-lele.png",
+      "x": 0,
+      "y": 256,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "togedemaru.png",
+      "x": 0,
+      "y": 208,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "toucannon.png",
+      "x": 15,
+      "y": 16,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "toxapex.png",
+      "x": 0,
+      "y": 80,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "tsareena.png",
+      "x": 15,
+      "y": 128,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "turtonator.png",
+      "x": 15,
+      "y": 192,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "vikavolt.png",
+      "x": 15,
+      "y": 32,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "wishiwashi.png",
+      "x": 15,
+      "y": 64,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "xurkitree.png",
+      "x": 0,
+      "y": 320,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    }
+  ]
+}

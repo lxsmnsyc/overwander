@@ -41255,6 +41255,18 @@
         "bytes": 4726
       }
     },
+    "public/sprites/ui/items/zenith/alola/image.png": {
+      "digest": "0d17997efb2955fe",
+      "bytes": 3321,
+      "width": 32,
+      "height": 480,
+      "compact": {
+        "at": "2026-10-26T01:12:40Z",
+        "as": "already compact",
+        "was": 3321,
+        "bytes": 3321
+      }
+    },
     "public/sprites/ui/items/zenith/hoenn/image.png": {
       "digest": "8ecd5082bb4131da",
       "bytes": 2700,

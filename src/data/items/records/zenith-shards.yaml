@@ -1729,3 +1729,363 @@ VolcanionZenithShard:
   icon: zenith/kalos/volcanion
   flags: [Holdable]
   sell: 2000
+
+DecidueyeZenithShard:
+  type: Held
+  icon: zenith/alola/decidueye
+  flags: [Holdable]
+  sell: 2000
+
+IncineroarZenithShard:
+  type: Held
+  icon: zenith/alola/incineroar
+  flags: [Holdable]
+  sell: 2000
+
+PrimarinaZenithShard:
+  type: Held
+  icon: zenith/alola/primarina
+  flags: [Holdable]
+  sell: 2000
+
+ToucannonZenithShard:
+  type: Held
+  icon: zenith/alola/toucannon
+  flags: [Holdable]
+  sell: 2000
+
+GumshoosZenithShard:
+  type: Held
+  icon: zenith/alola/gumshoos
+  flags: [Holdable]
+  sell: 2000
+
+VikavoltZenithShard:
+  type: Held
+  icon: zenith/alola/vikavolt
+  flags: [Holdable]
+  sell: 2000
+
+OricorioZenithShard:
+  type: Held
+  icon: zenith/alola/oricorio
+  flags: [Holdable]
+  sell: 2000
+
+RibombeeZenithShard:
+  type: Held
+  icon: zenith/alola/ribombee
+  flags: [Holdable]
+  sell: 2000
+
+LycanrocZenithShard:
+  type: Held
+  icon: zenith/alola/lycanroc
+  flags: [Holdable]
+  sell: 2000
+
+WishiwashiZenithShard:
+  type: Held
+  icon: zenith/alola/wishiwashi
+  flags: [Holdable]
+  sell: 2000
+
+ToxapexZenithShard:
+  type: Held
+  icon: zenith/alola/toxapex
+  flags: [Holdable]
+  sell: 2000
+
+MudsdaleZenithShard:
+  type: Held
+  icon: zenith/alola/mudsdale
+  flags: [Holdable]
+  sell: 2000
+
+AraquanidZenithShard:
+  type: Held
+  icon: zenith/alola/araquanid
+  flags: [Holdable]
+  sell: 2000
+
+LurantisZenithShard:
+  type: Held
+  icon: zenith/alola/lurantis
+  flags: [Holdable]
+  sell: 2000
+
+ShiinoticZenithShard:
+  type: Held
+  icon: zenith/alola/shiinotic
+  flags: [Holdable]
+  sell: 2000
+
+SalazzleZenithShard:
+  type: Held
+  icon: zenith/alola/salazzle
+  flags: [Holdable]
+  sell: 2000
+
+BewearZenithShard:
+  type: Held
+  icon: zenith/alola/bewear
+  flags: [Holdable]
+  sell: 2000
+
+TsareenaZenithShard:
+  type: Held
+  icon: zenith/alola/tsareena
+  flags: [Holdable]
+  sell: 2000
+
+ComfeyZenithShard:
+  type: Held
+  icon: zenith/alola/comfey
+  flags: [Holdable]
+  sell: 2000
+
+OranguruZenithShard:
+  type: Held
+  icon: zenith/alola/oranguru
+  flags: [Holdable]
+  sell: 2000
+
+PassimianZenithShard:
+  type: Held
+  icon: zenith/alola/passimian
+  flags: [Holdable]
+  sell: 2000
+
+PalossandZenithShard:
+  type: Held
+  icon: zenith/alola/palossand
+  flags: [Holdable]
+  sell: 2000
+
+PyukumukuZenithShard:
+  type: Held
+  icon: zenith/alola/pyukumuku
+  flags: [Holdable]
+  sell: 2000
+
+MiniorZenithShard:
+  type: Held
+  icon: zenith/alola/minior
+  flags: [Holdable]
+  sell: 2000
+
+KomalaZenithShard:
+  type: Held
+  icon: zenith/alola/komala
+  flags: [Holdable]
+  sell: 2000
+
+TurtonatorZenithShard:
+  type: Held
+  icon: zenith/alola/turtonator
+  flags: [Holdable]
+  sell: 2000
+
+TogedemaruZenithShard:
+  type: Held
+  icon: zenith/alola/togedemaru
+  flags: [Holdable]
+  sell: 2000
+
+MimikyuZenithShard:
+  type: Held
+  icon: zenith/alola/mimikyu
+  flags: [Holdable]
+  sell: 2000
+
+BruxishZenithShard:
+  type: Held
+  icon: zenith/alola/bruxish
+  flags: [Holdable]
+  sell: 2000
+
+DhelmiseZenithShard:
+  type: Held
+  icon: zenith/alola/dhelmise
+  flags: [Holdable]
+  sell: 2000
+
+KommoOZenithShard:
+  type: Held
+  icon: zenith/alola/kommo-o
+  flags: [Holdable]
+  sell: 2000
+
+TapuKokoZenithShard:
+  type: Held
+  icon: zenith/alola/tapu-koko
+  flags: [Holdable]
+  sell: 2000
+
+TapuLeleZenithShard:
+  type: Held
+  icon: zenith/alola/tapu-lele
+  flags: [Holdable]
+  sell: 2000
+
+TapuBuluZenithShard:
+  type: Held
+  icon: zenith/alola/tapu-bulu
+  flags: [Holdable]
+  sell: 2000
+
+TapuFiniZenithShard:
+  type: Held
+  icon: zenith/alola/tapu-fini
+  flags: [Holdable]
+  sell: 2000
+
+SolgaleoZenithShard:
+  type: Held
+  icon: zenith/alola/solgaleo
+  flags: [Holdable]
+  sell: 2000
+
+LunalaZenithShard:
+  type: Held
+  icon: zenith/alola/lunala
+  flags: [Holdable]
+  sell: 2000
+
+NihilegoZenithShard:
+  type: Held
+  icon: zenith/alola/nihilego
+  flags: [Holdable]
+  sell: 2000
+
+BuzzwoleZenithShard:
+  type: Held
+  icon: zenith/alola/buzzwole
+  flags: [Holdable]
+  sell: 2000
+
+PheromosaZenithShard:
+  type: Held
+  icon: zenith/alola/pheromosa
+  flags: [Holdable]
+  sell: 2000
+
+XurkitreeZenithShard:
+  type: Held
+  icon: zenith/alola/xurkitree
+  flags: [Holdable]
+  sell: 2000
+
+CelesteelaZenithShard:
+  type: Held
+  icon: zenith/alola/celesteela
+  flags: [Holdable]
+  sell: 2000
+
+KartanaZenithShard:
+  type: Held
+  icon: zenith/alola/kartana
+  flags: [Holdable]
+  sell: 2000
+
+GuzzlordZenithShard:
+  type: Held
+  icon: zenith/alola/guzzlord
+  flags: [Holdable]
+  sell: 2000
+
+NecrozmaZenithShard:
+  type: Held
+  icon: zenith/alola/necrozma
+  flags: [Holdable]
+  sell: 2000
+
+MarshadowZenithShard:
+  type: Held
+  icon: zenith/alola/marshadow
+  flags: [Holdable]
+  sell: 2000
+
+NaganadelZenithShard:
+  type: Held
+  icon: zenith/alola/naganadel
+  flags: [Holdable]
+  sell: 2000
+
+StakatakaZenithShard:
+  type: Held
+  icon: zenith/alola/stakataka
+  flags: [Holdable]
+  sell: 2000
+
+BlacephalonZenithShard:
+  type: Held
+  icon: zenith/alola/blacephalon
+  flags: [Holdable]
+  sell: 2000
+
+MelmetalZenithShard:
+  type: Held
+  icon: zenith/alola/melmetal
+  flags: [Holdable]
+  sell: 2000
+
+RaticateAlolaZenithShard:
+  type: Held
+  icon: zenith/alola/raticate-alola
+  flags: [Holdable]
+  sell: 2000
+
+RaichuAlolaZenithShard:
+  type: Held
+  icon: zenith/alola/raichu-alola
+  flags: [Holdable]
+  sell: 2000
+
+SandslashAlolaZenithShard:
+  type: Held
+  icon: zenith/alola/sandslash-alola
+  flags: [Holdable]
+  sell: 2000
+
+NinetalesAlolaZenithShard:
+  type: Held
+  icon: zenith/alola/ninetales-alola
+  flags: [Holdable]
+  sell: 2000
+
+DugtrioAlolaZenithShard:
+  type: Held
+  icon: zenith/alola/dugtrio-alola
+  flags: [Holdable]
+  sell: 2000
+
+PersianAlolaZenithShard:
+  type: Held
+  icon: zenith/alola/persian-alola
+  flags: [Holdable]
+  sell: 2000
+
+GolemAlolaZenithShard:
+  type: Held
+  icon: zenith/alola/golem-alola
+  flags: [Holdable]
+  sell: 2000
+
+MukAlolaZenithShard:
+  type: Held
+  icon: zenith/alola/muk-alola
+  flags: [Holdable]
+  sell: 2000
+
+ExeggutorAlolaZenithShard:
+  type: Held
+  icon: zenith/alola/exeggutor-alola
+  flags: [Holdable]
+  sell: 2000
+
+MarowakAlolaZenithShard:
+  type: Held
+  icon: zenith/alola/marowak-alola
+  flags: [Holdable]
+  sell: 2000

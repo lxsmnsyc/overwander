@@ -202,6 +202,45 @@ describe('Zeniths', () => {
     expect(pumpkin.hasAbility(Abilities.Harvest)).toBe(true);
   });
 
+  it('schools a Wishiwashi Zenith into its School Zenith and scatters it back', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const fish = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+    fish.setSpecies(Species.Wishiwashi);
+    fish.setLevel(20);
+    fish.setHealth(fish.checkStat(Stats.HP, 0));
+    fish.addAbility(Abilities.Schooling);
+    fish.addItem(Items.WishiwashiZenithShard);
+
+    fish.enter();
+    foe.enter();
+
+    expect(fish.species).toBe(Species.WishiwashiSchoolZenith);
+    expect(fish.hasAbility(Abilities.Intimidate)).toBe(true);
+
+    foe.damage({ type: EffectType.None }, fish, fish.checkStat(Stats.HP, 0) * 0.8, 0);
+
+    expect(fish.species).toBe(Species.WishiwashiZenith);
+  });
+
+  it('gives an Alolan Ninetales its own Zenith, and nothing for the Kanto shard', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const alolan = createUnit(battle, teamA);
+    const other = createUnit(battle, teamB);
+    alolan.setSpecies(Species.NinetalesAlola);
+    alolan.addItem(Items.NinetalesAlolaZenithShard);
+    other.setSpecies(Species.NinetalesAlola);
+    other.addItem(Items.NinetalesZenithShard);
+
+    alolan.enter();
+    other.enter();
+
+    expect(alolan.species).toBe(Species.NinetalesAlolaZenith);
+    expect([...alolan.types]).toEqual([Types.Ice, Types.Fairy]);
+    expect(alolan.hasAbility(Abilities.IceScales)).toBe(true);
+    expect(other.species).toBe(Species.NinetalesAlola);
+  });
+
   it('ignores a shard held by anybody else', () => {
     const { battle, teamA } = createBattle();
     const ninetales = createUnit(battle, teamA);

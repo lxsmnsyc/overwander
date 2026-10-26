@@ -304,9 +304,9 @@ Z-Crystal, never Dynamaxes.
 
 A **Zenith** is this game's own answer to a Mega, for a final stage that has
 none. A pokemon holding its own **Zenith Shard** takes its Zenith shape as it
-takes the field. There are 418 so far: Kanto's 49, Johto's 40, Hoenn's 50,
-Sinnoh's 54, Unova's 69, Kalos's 26, Alola's 60, Galar's 54 and Hisui's 16,
-from Zenith Butterfree to Zenith Hisuian Decidueye.
+takes the field. There are 478: Kanto's 49, Johto's 40, Hoenn's 50,
+Sinnoh's 54, Unova's 69, Kalos's 26, Alola's 60, Galar's 54, Hisui's 16 and
+Paldea's 60, from Zenith Butterfree to Zenith Paldean Tauros.
 
 - A Zenith's base stats total **100 more** than its pokemon's, none of it in
   HP, and some take a new type: Zenith Arcanine is Fire and Dragon, Zenith

@@ -41339,6 +41339,18 @@
         "bytes": 1694
       }
     },
+    "public/sprites/ui/items/zenith/paldea/image.png": {
+      "digest": "daabc430263fb676",
+      "bytes": 3213,
+      "width": 32,
+      "height": 480,
+      "compact": {
+        "at": "2026-10-26T16:34:59Z",
+        "as": "already compact",
+        "was": 3213,
+        "bytes": 3213
+      }
+    },
     "public/sprites/ui/items/zenith/sinnoh/image.png": {
       "digest": "b76bd8cef2894bbe",
       "bytes": 2831,

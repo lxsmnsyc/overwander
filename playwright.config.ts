@@ -1,5 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 import { TEST_DATABASE_URL } from './test/test-database.ts';
+// Before any spec loads, so the code the specs import from src finds what vite would give it
+import './e2e/vite-hooks.ts';
 
 /**
  * The browser tests: the game as a player meets it.

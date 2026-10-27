@@ -53,7 +53,24 @@ lines:
 # The type lines: one per Gen 1 type, counting lifetime catches of that type,
 # dual-types counting for both. One price for all of them: a thin pool climbs
 # by repeat catches
-types: [Normal, Fighting, Flying, Poison, Ground, Rock, Bug, Ghost, Fire, Water, Grass, Electric, Psychic, Ice, Dragon]
+types:
+  [
+    Normal,
+    Fighting,
+    Flying,
+    Poison,
+    Ground,
+    Rock,
+    Bug,
+    Ghost,
+    Fire,
+    Water,
+    Grass,
+    Electric,
+    Psychic,
+    Ice,
+    Dragon,
+  ]
 type-tiers: [10, 50, 250, 1000]
 
 # The trainer lines, one per trade. A stop stands for one window and pays once
@@ -63,7 +80,7 @@ trainer-tiers: [3, 10, 50, 200]
 
 # The metals: the slot ring and the worn title's badge share them
 colors:
-  Bronze: "#b0793f"
-  Silver: "#9aa4b0"
-  Gold: "#e0b64f"
-  Platinum: "#7bc8d2"
+  Bronze: '#b0793f'
+  Silver: '#9aa4b0'
+  Gold: '#e0b64f'
+  Platinum: '#7bc8d2'

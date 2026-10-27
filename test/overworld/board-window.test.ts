@@ -1,10 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { CHUNK_CELLS, cellInChunk, chunkOfCell, worldCell } from '../../src/overworld/chunk';
-import {
-  boardChunks,
-  buildBoardView,
-  viewChunks,
-} from '../../src/game/overworld/board-view';
+import { boardChunks, buildBoardView, viewChunks } from '../../src/game/overworld/board-view';
 import { BOARD_CENTER, BOARD_RADIUS } from '../../src/game/overworld/board-metrics';
 
 /**

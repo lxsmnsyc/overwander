@@ -36,11 +36,13 @@ async function teraTypeOf(catchId: string): Promise<number | null> {
 beforeEach(async () => {
   await clearAll();
   await sql`delete from trades`;
-  await sql`delete from caught where id in ('tera-bulbasaur', 'tera-friend')`;
+  await sql`delete from caught where id in ('tera-bulbasaur', 'tera-spare', 'tera-friend')`;
   [owner, friend] = await Promise.all([actor('terashards'), actor('terafriend')]);
 
   const rows: Record<string, unknown>[] = [
     { ...caughtRow('tera-bulbasaur', owner.uid), species: Species.Bulbasaur },
+    // A trade never takes a player's last pokemon
+    caughtRow('tera-spare', owner.uid),
     caughtRow('tera-friend', friend.uid),
   ];
 

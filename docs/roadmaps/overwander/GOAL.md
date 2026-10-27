@@ -76,7 +76,7 @@ Every eligible pokemon has its Zenith (`now`). The game then plays in Japanese a
 - todo: Forms waiting for art -> built for Galarian Zen Darmanitan (b3e73a4f7), Cramorant Gulping and Gorging, Morpeko Hangry, Calyrex Ice and Shadow Rider, Oinkologne's female and Three-Segment Dudunsparce (registered, waiting only for sheets). The rest -> inbox.
 - todo: Ideas (open world gimmicks, seeing other players) -> inbox: not committed to.
 - Added 2026-10-26, spawn radius, caps and roaming (after Minecraft and wAthena) -> spawn-life-design, spawn-lifetimes, spawn-radius, spawn-roaming.
-- Added 2026-10-27, updating the dependencies -> deps-update. Migrating to Solid 2.0 -> solid-2 (outline, waits for Solid 2.0 stable and SolidStart support).
+- Added 2026-10-27, updating the dependencies -> deps-update. Migrating to Solid 2.0 -> solid-2 (outline, waits for Solid 2.0 stable; @solidjs/vite-plugin replaces @solidjs/start and vite-plugin-solid).
 
 ## Open questions
 

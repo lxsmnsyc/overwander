@@ -12,12 +12,7 @@ import {
 } from '../../src/canvas/battle/field/metrics';
 import { createBattle, createUnit } from '../battle/harness';
 import type Unit from '../../src/battle/unit';
-import {
-  CLOUDS,
-  type GiantBody,
-  type Puff,
-  cloudsOf,
-} from '../../src/canvas/battle/field/dynamax';
+import { CLOUDS, type GiantBody, type Puff, cloudsOf } from '../../src/canvas/battle/field/dynamax';
 
 /**
  * A Dynamaxed pokemon is drawn washed in red, ringed by a glow and

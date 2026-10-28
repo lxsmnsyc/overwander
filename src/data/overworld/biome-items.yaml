@@ -7,7 +7,16 @@ groups:
   water: [Ocean, DeepOcean, CoralReef, KelpForest, PolarOcean]
   shore: [Beach, RockyCoast, Mangrove]
   wetland: [Swamp, Bog, Mangrove]
-  forest: [Woodland, TemperateForest, TemperateRainforest, TropicalRainforest, TropicalSeasonalForest, MontaneForest, Taiga]
+  forest:
+    [
+      Woodland,
+      TemperateForest,
+      TemperateRainforest,
+      TropicalRainforest,
+      TropicalSeasonalForest,
+      MontaneForest,
+      Taiga,
+    ]
   cold: [Glacier, Tundra, AlpineTundra, ColdDesert, Taiga, PolarOcean]
   arid: [Desert, ColdDesert, Badlands, Steppe]
   volcanic: [Volcano, Badlands]

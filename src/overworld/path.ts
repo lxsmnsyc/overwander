@@ -62,7 +62,10 @@ function costBetween(one: number, other: number): number {
   const across = Math.abs((one % BOARD_CELLS) - (other % BOARD_CELLS));
   const along = Math.abs(Math.floor(one / BOARD_CELLS) - Math.floor(other / BOARD_CELLS));
 
-  return STRAIGHT_COST * Math.max(across, along) + (DIAGONAL_COST - STRAIGHT_COST) * Math.min(across, along);
+  return (
+    STRAIGHT_COST * Math.max(across, along) +
+    (DIAGONAL_COST - STRAIGHT_COST) * Math.min(across, along)
+  );
 }
 
 /**
@@ -180,7 +183,6 @@ function search(
       }
       return route.reverse();
     }
-
 
     // The cell being walked to is checked for what is standing on it
     // rather than the one being left, so a player who somehow ends up

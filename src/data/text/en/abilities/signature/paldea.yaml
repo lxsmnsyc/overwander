@@ -89,7 +89,7 @@ FilletThrift:
   description: Moves that cost HP to use (Fillet Away, Substitute, Belly Drum, Shed Tail) cost it half.
 Mouthful:
   name: Mouthful
-  description: "When a teammate drops below 1/3 HP, it swallows them: they cannot be targeted for 4 seconds and heal 1/4 of their HP, once per teammate per fight."
+  description: 'When a teammate drops below 1/3 HP, it swallows them: they cannot be targeted for 4 seconds and heal 1/4 of their HP, once per teammate per fight.'
 BackSeatOrders:
   name: Back Seat Orders
   description: While it is behind a Substitute or under its own Protect, each move a teammate lands hits 1.2x.

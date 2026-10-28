@@ -2,12 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { FieldView } from '../../src/canvas/battle/projection';
 import { MoveTargetType } from '../../src/battle/events';
 import { Moves } from '../../src/data/ids/moves';
-import {
-  type Standing,
-  aimedAt,
-  project,
-  unitsOf,
-} from '../../src/canvas/battle/field/field';
+import { type Standing, aimedAt, project, unitsOf } from '../../src/canvas/battle/field/field';
 import { drawAim } from '../../src/canvas/battle/field/draw';
 import { createBattle, createUnit } from '../battle/harness';
 import type Unit from '../../src/battle/unit';

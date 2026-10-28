@@ -3,11 +3,7 @@ import { asCaughtPokemon } from '../../src/model/caught-record';
 import { Moves } from '../../src/data/ids/moves';
 import { Species } from '../../src/data/ids/species';
 import registerGameData from '../../src/data';
-import {
-  getLevelMoves,
-  getLevelMovesBetween,
-  nextOfferLevel,
-} from '../../src/model/level-moves';
+import { getLevelMoves, getLevelMovesBetween, nextOfferLevel } from '../../src/model/level-moves';
 
 /**
  * What a run of candy presses has to offer.

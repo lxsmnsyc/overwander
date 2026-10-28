@@ -1,5 +1,16 @@
 # overwander
 
+## 4.48.0
+
+### Minor Changes
+
+- dda09e9: Hoenn's 50 Zeniths, from Mightyena to Deoxys, each with its own Zenith Shard. Castform's weather shapes and Deoxys's four shapes each have a Zenith of their own.
+- f8bcf76: Sinnoh's 54 Zeniths, from Torterra to Manaphy, each with its own Zenith Shard. Rotom's appliances, Wormadam's cloaks, Cherrim's Sunshine form and East Sea Gastrodon each have a Zenith of their own.
+
+### Patch Changes
+
+- 49bc394: The board now works out whether a wild pokemon is shiny without rolling the rest of its meeting, and counts the sky as the meeting does, so a pokemon that sparkles under a meteor shower is drawn shiny before it is met.
+
 ## 4.47.0
 
 ### Minor Changes

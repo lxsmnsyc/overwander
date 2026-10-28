@@ -19,7 +19,7 @@ import { blocksWalk } from '../../overworld/terrain/cliff';
 import { isLavaAt } from '../../overworld/terrain/ground';
 import type { Buddy } from '../../overworld/core';
 import getWorld from '../../overworld/current';
-import deriveEncounter, { deriveGender } from '../../overworld/encounter';
+import { deriveGender, deriveShiny } from '../../overworld/encounter';
 import namePlace from '../../overworld/place';
 import { spawnKey } from '../../overworld/safari';
 import { DARK_DAY_LAMP_CELLS } from '../../data/overworld/weather';
@@ -434,16 +434,17 @@ export function buildBoardView(
         spawn,
         // Whether it sparkles for *this* player, worked out the way the
         // server will work it out when the meeting is staged: the same
-        // derivation, the same species-day boost, and the same overworld
-        // engine asked what the buddy adds to the odds. A shiny standing
-        // in a field is the one thing in the world worth crossing it
-        // for, so it is drawn in its own coat rather than left as a
-        // surprise sprung after the ball is thrown
+        // roll, the same species-day boost, the same sky, and the same
+        // overworld engine asked what the buddy adds to the odds. A
+        // shiny standing in a field is the one thing in the world worth
+        // crossing it for, so it is drawn in its own coat rather than
+        // left as a surprise sprung after the ball is thrown
         shiny:
           player != null &&
-          deriveEncounter(snapshot, spawn, player, {
+          deriveShiny(stored.species, stored.traitValue, snapshot.timestamp, player, {
+            weather: snapshot.weather,
             shinyBoost: overworld.checkEncounterShiny(id),
-          }).shiny,
+          }),
         // Read off the roll the way the meeting reads it, so a species
         // drawn again for its females stands in the coat it is met in
         female: deriveGender(stored.species, stored.traitValue) === Genders.Female,

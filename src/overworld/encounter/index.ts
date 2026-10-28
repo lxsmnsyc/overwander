@@ -21,6 +21,7 @@ import { TOTEM_PERFECT_STATS, getTotemAbility } from '../../data/overworld/totem
 import { pickAlphaPerfectStats } from '../../data/overworld/alphas';
 import AleaRNG from '../../core/alea';
 import type Biome from '../../data/ids/biome';
+import type { Species } from '../../data/ids/species';
 import {
   SPECIES_DAY_HIDDEN_ABILITY_BOOST,
   SPECIES_DAY_SHINY_BOOST,
@@ -162,6 +163,36 @@ function seededRandom(seed: string): () => number {
   return () => rng.random();
 }
 
+/**
+ * Whether a spawn sparkles for one player, without rolling the rest of
+ * the meeting. The board asks this of every spawn it draws, and the
+ * meeting asks it too, so the two never disagree
+ */
+export function deriveShiny(
+  species: Species,
+  traitValue: number,
+  timestamp: number,
+  userId: string,
+  options: Pick<EncounterOptions, 'type' | 'weather' | 'shinyBoost'> = {},
+): boolean {
+  const sky = options.weather;
+
+  // The day's featured family sparkles eight times as often, the
+  // rarest sky doubles whatever is standing under it, and whatever
+  // the player carries multiplies that further. A Totem-sized pokemon
+  // never sparkles
+  return (
+    options.type !== EncounterType.TotemRaid &&
+    isShinyFor(
+      userId,
+      traitValue,
+      (isFeaturedSpecies(species, timestamp) ? SPECIES_DAY_SHINY_BOOST : 1) *
+        (sky == null ? 1 : shinyBoostOf(sky)) *
+        (options.shinyBoost ?? 1),
+    )
+  );
+}
+
 export default function deriveEncounter(
   snapshot: ChunkSnapshot,
   spawn: Spawn,
@@ -295,20 +326,13 @@ export default function deriveEncounter(
     ability,
     ...(abilities.length > 1 ? { abilities } : {}),
     gender,
-    // The day's featured family sparkles eight times as often, the
-    // rarest sky doubles whatever is standing under it, and whatever
-    // the player carries multiplies that further
-    // A Totem-sized pokemon never sparkles
     shiny:
-      !totem &&
       userId != null &&
-      isShinyFor(
-        userId,
-        traitValue,
-        (featured ? SPECIES_DAY_SHINY_BOOST : 1) *
-          (sky == null ? 1 : shinyBoostOf(sky)) *
-          (options.shinyBoost ?? 1),
-      ),
+      deriveShiny(species, traitValue, snapshot.timestamp, userId, {
+        type,
+        weather: sky,
+        shinyBoost: options.shinyBoost,
+      }),
     // A dark day closes a share of the hearts that arrive under it,
     // rolled per pokemon and per player the way the sparkle is. A
     // caller that already knows keeps saying: a shadow raid's prize

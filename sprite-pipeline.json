@@ -41279,6 +41279,18 @@
         "bytes": 2227
       }
     },
+    "public/sprites/ui/items/zenith/kalos/image.png": {
+      "digest": "1e55c31e003f4100",
+      "bytes": 1781,
+      "width": 32,
+      "height": 208,
+      "compact": {
+        "at": "2026-10-25T23:43:37Z",
+        "as": "already compact",
+        "was": 1781,
+        "bytes": 1781
+      }
+    },
     "public/sprites/ui/items/zenith/kanto/image.png": {
       "digest": "96507682bd41aa7b",
       "bytes": 1694,
@@ -41301,6 +41313,18 @@
         "as": "already compact",
         "was": 2831,
         "bytes": 2831
+      }
+    },
+    "public/sprites/ui/items/zenith/unova/image.png": {
+      "digest": "06fd96bf048696ad",
+      "bytes": 3519,
+      "width": 32,
+      "height": 560,
+      "compact": {
+        "at": "2026-10-25T22:36:21Z",
+        "as": "already compact",
+        "was": 3519,
+        "bytes": 3519
       }
     },
     "public/sprites/ui/move-categories/image.png": {

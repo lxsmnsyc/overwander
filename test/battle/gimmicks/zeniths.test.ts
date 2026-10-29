@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { MoveTargetType } from '../../../src/battle/events';
+import { EffectType, MoveTargetType } from '../../../src/battle/events';
 import { canDynamax } from '../../../src/battle/gimmicks/dynamax';
 import { canTerastallize } from '../../../src/battle/gimmicks/terastal';
 import { zCastShownAs } from '../../../src/battle/gimmicks/z-moves';
@@ -10,10 +10,11 @@ import { Types } from '../../../src/data/constants/types';
 import { Weathers } from '../../../src/data/ids/status';
 import Abilities from '../../../src/data/ids/abilities';
 import { Items } from '../../../src/data/ids/items';
-import { Moves } from '../../../src/data/ids/moves';
+import { MoveCategories, Moves } from '../../../src/data/ids/moves';
 import { Species } from '../../../src/data/ids/species';
 import { MOVE_DELAY } from '../../../src/battle/mechanics/move';
 import { createBattle, createUnit } from '../harness';
+import { dealDamage } from '../abilities/signature/helpers';
 
 describe('Zeniths', () => {
   it('puts an Arcanine holding its shard at its Zenith, Strong Jaw worn on top', () => {
@@ -114,6 +115,91 @@ describe('Zeniths', () => {
     battle.tick(MOVE_DELAY);
 
     expect(cherrim.species).toBe(Species.CherrimSunshineZenith);
+  });
+
+  it('turns a Darmanitan Zenith into its Zen Mode Zenith below half', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const darmanitan = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+    darmanitan.setSpecies(Species.Darmanitan);
+    darmanitan.setHealth(darmanitan.checkStat(Stats.HP, 0));
+    darmanitan.addAbility(Abilities.ZenMode);
+    darmanitan.addItem(Items.DarmanitanZenithShard);
+
+    darmanitan.enter();
+    foe.enter();
+
+    expect(darmanitan.species).toBe(Species.DarmanitanZenith);
+    expect([...darmanitan.types]).toEqual([Types.Fire, Types.Fighting]);
+
+    foe.damage({ type: EffectType.None }, darmanitan, darmanitan.health * 0.6, 0);
+
+    expect(darmanitan.species).toBe(Species.DarmanitanZenZenith);
+    expect([...darmanitan.types]).toEqual([Types.Fire, Types.Psychic]);
+    expect(darmanitan.hasAbility(Abilities.Berserk)).toBe(true);
+  });
+
+  it('puts a fused Kyurem at the Zenith of the dragon it holds', () => {
+    const { battle, teamA } = createBattle();
+    const kyurem = createUnit(battle, teamA);
+    kyurem.setSpecies(Species.KyuremBlack);
+    kyurem.addItem(Items.KyuremZenithShard);
+
+    kyurem.enter();
+
+    expect(kyurem.species).toBe(Species.KyuremBlackZenith);
+    expect(kyurem.stats[0][Stats.Attack]).toBe(200);
+    expect(kyurem.hasAbility(Abilities.IceScales)).toBe(true);
+  });
+
+  it('puts a Blue-Striped Basculin at its own Zenith, Dark like the red', () => {
+    const { battle, teamA } = createBattle();
+    const basculin = createUnit(battle, teamA);
+    basculin.setSpecies(Species.BasculinBlue);
+    basculin.addItem(Items.BasculinZenithShard);
+
+    basculin.enter();
+
+    expect(basculin.species).toBe(Species.BasculinBlueZenith);
+    expect([...basculin.types]).toEqual([Types.Water, Types.Dark]);
+  });
+
+  it('draws an Aegislash Zenith into its Blade Zenith and back', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const sword = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+    sword.setSpecies(Species.Aegislash);
+    sword.addAbility(Abilities.StanceChange);
+    sword.addItem(Items.AegislashZenithShard);
+
+    sword.enter();
+    foe.enter();
+
+    expect(sword.species).toBe(Species.AegislashZenith);
+
+    dealDamage(sword, foe, Moves.IronHead, 80, Types.Steel, MoveCategories.Physical);
+
+    expect(sword.species).toBe(Species.AegislashBladeZenith);
+    expect(sword.stats[0][Stats.Attack]).toBe(170);
+    expect(sword.hasAbility(Abilities.Sharpness)).toBe(true);
+
+    sword.addMove(Moves.KingsShield);
+    sword.cast(Moves.KingsShield, { type: MoveTargetType.None });
+
+    expect(sword.species).toBe(Species.AegislashZenith);
+  });
+
+  it('puts a Super Gourgeist at its own Zenith, on its own HP', () => {
+    const { battle, teamA } = createBattle();
+    const pumpkin = createUnit(battle, teamA);
+    pumpkin.setSpecies(Species.GourgeistSuper);
+    pumpkin.addItem(Items.GourgeistZenithShard);
+
+    pumpkin.enter();
+
+    expect(pumpkin.species).toBe(Species.GourgeistSuperZenith);
+    expect(pumpkin.stats[0][Stats.HP]).toBe(85);
+    expect(pumpkin.hasAbility(Abilities.Harvest)).toBe(true);
   });
 
   it('ignores a shard held by anybody else', () => {

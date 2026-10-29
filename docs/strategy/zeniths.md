@@ -4,14 +4,12 @@ How every generation after Kanto gets its Zeniths, region by region, after [the 
 
 ## Where things stand
 
-- **Kanto, Johto, Hoenn and Sinnoh are done:** 49, 40, 50 and 54 Zeniths, one for every eligible pokemon of each. Batch 0 (Zenith shapes, Unown) is in.
+- **Kanto, Johto, Hoenn, Sinnoh, Unova and Kalos are done:** 49, 40, 50, 54, 69 and 26 Zeniths, one for every eligible pokemon of each. Batch 0 (Zenith shapes, Unown) is in.
 - **The rules are held by `test/data/zeniths.test.ts`.** A Zenith belongs to a final stage with no Mega and no other held-item shape. It fights 100 above its base stat total, none of it in HP, and wears an ability its line can never be born with. Its shard id is `2000000 + dex × 100 + 01`, and the shard is buried in the prized band only where its line is met.
-- **Left to do: about 281 Zeniths.**
+- **Left to do: about 185 Zeniths.**
 
   | Region | Eligible | Notes |
   | --- | --- | --- |
-  | Unova | 69 | Kyurem, with a shape for Black and White Kyurem. Born forms such as Basculin's stripes and Sawsbuck's seasons get shapes under one shard each |
-  | Kalos | 27 | Zygarde, with a shape for its 10% Forme |
   | Alola | 50 | Necrozma, with a shape for Dusk Mane and Dawn Wings |
   | Galar | 46 | Calyrex, with a shape for each Rider |
   | Hisui | 6 | |
@@ -26,9 +24,10 @@ How every generation after Kanto gets its Zeniths, region by region, after [the 
 - **Kept shapes share one shard.** A pokemon that is put into a shape for good, as a Meteorite does to Deoxys, has one Zenith with a Zenith shape for each kept shape (`forms` in the YAML), all wearing one ability. Whichever shape holds the shard fights as that shape's Zenith. The gap test counts these pokemon, and a test holds that every kept shape has its Zenith shape. Shapes take form slot 98 and down, after any regional final.
 - **Born shapes share one shard too.** A form a pokemon is met in rather than changed into, such as a Trash Wormadam or an East Sea Gastrodon, gets a Zenith shape under the same shard, and a test holds that every same-region form has one. A true shadow gets none: nothing puts one right, and its counterpart's shard does nothing for it.
 - **Unown gets none.** It joins Ditto in `NO_ZENITH`, with its reason in the comment.
-- **Regional finals get one** in form slot 98 and down, in the batch of the region whose form it is: Alolan Ninetales goes in with Alola, not Kanto.
+- **Zygarde gets none.** Power Construct can take any Zygarde to the Complete Forme, which has a Mega, so the tests count a Mega of a shape an ability reaches as the whole pokemon's.
+- **Regional finals get one** in form slot 98 and down, in the batch of the region whose form it is: Alolan Ninetales goes in with Alola, not Kanto. A regional final's Zenith wears an ability of its own, never its base line's Zenith ability: only shapes changed into in battle share one.
 - **No two Zeniths of one region wear the same ability.** A later region may reuse an earlier one's.
-- **Proposals come 4 pokemon at a time**, through questions. Each pokemon's abilities, ancestors' included, and its team role come first. Each question offers 3 or 4 concepts for one pokemon, each with its stat spread, worn ability and any type change, and every concept serves that role: an ability that undoes the pokemon's own best move, or a spread bent to fit the ability, is not offered. Before a round goes out, every option is checked against the abilities the region has already approved, so nothing taken is offered again. A region is built once every pokemon in it is approved.
+- **Proposals come 4 pokemon at a time**, through questions. Each pokemon's abilities, ancestors' included, and its team role come first. Each question offers 3 or 4 concepts for one pokemon, each with its stat spread, worn ability and any type change, and every concept serves that role and ties to the pokemon's look or lore: an ability that undoes the pokemon's own best move, or a spread bent to fit the ability, is not offered. The question itself carries the pokemon's types, base stats, its total before and after, its abilities and its role, and each option shows the change on every stat it moves. Before a round goes out, every option is checked against the abilities the region has already approved, so nothing taken is offered again. A region is built once every pokemon in it is approved.
 
 ## The order
 
@@ -39,7 +38,7 @@ How every generation after Kanto gets its Zeniths, region by region, after [the 
 | 2 | Hoenn | 50, Deoxys included |
 | 3 | Sinnoh | 54 |
 | 4 | Unova | 69 |
-| 5 | Kalos | 27 |
+| 5 | Kalos | 26 |
 | 6 | Alola | 50, then the Alolan finals of Kanto lines |
 | 7 | Galar | 46, then the Galarian finals |
 | 8 | Hisui | 6, then the Hisuian finals |

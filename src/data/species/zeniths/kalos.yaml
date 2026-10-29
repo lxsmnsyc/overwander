@@ -1,0 +1,292 @@
+# The Zeniths of the pokemon this stretch of the dex holds, keyed by
+# species, in the order the dex meets their pokemon. Each fights 100
+# above its pokemon's base stat total with its HP untouched, held to by
+# a test, and wears an `ability` the line can never be born with.
+# Everything not written here is read off `base`.
+
+# The digger's great arms made a type, and every punch lands harder
+DiggersbyZenith:
+  base: Diggersby
+  stats: { HP: 85, Attack: 126, Defense: 82, SpecialAttack: 50, SpecialDefense: 82, Speed: 98 }
+  types: [Ground, Fighting]
+  ability: IronFist
+  shard: DiggersbyZenithShard
+
+# Its dive gathers pace with every turn it stays aloft
+TalonflameZenith:
+  base: Talonflame
+  stats: { HP: 78, Attack: 141, Defense: 86, SpecialAttack: 74, SpecialDefense: 84, Speed: 136 }
+  types: [Fire, Flying]
+  ability: SpeedBoost
+  shard: TalonflameZenithShard
+
+# Its scales scatter light that gets through any resistance
+VivillonZenith:
+  base: Vivillon
+  stats: { HP: 80, Attack: 52, Defense: 65, SpecialAttack: 130, SpecialDefense: 65, Speed: 119 }
+  types: [Bug, Flying]
+  ability: TintedLens
+  shard: VivillonZenithShard
+  forms:
+    VivillonIcySnowZenith:
+      base: VivillonIcySnow
+      stats: { HP: 80, Attack: 52, Defense: 65, SpecialAttack: 130, SpecialDefense: 65, Speed: 119 }
+    VivillonPolarZenith:
+      base: VivillonPolar
+      stats: { HP: 80, Attack: 52, Defense: 65, SpecialAttack: 130, SpecialDefense: 65, Speed: 119 }
+    VivillonTundraZenith:
+      base: VivillonTundra
+      stats: { HP: 80, Attack: 52, Defense: 65, SpecialAttack: 130, SpecialDefense: 65, Speed: 119 }
+    VivillonContinentalZenith:
+      base: VivillonContinental
+      stats: { HP: 80, Attack: 52, Defense: 65, SpecialAttack: 130, SpecialDefense: 65, Speed: 119 }
+    VivillonGardenZenith:
+      base: VivillonGarden
+      stats: { HP: 80, Attack: 52, Defense: 65, SpecialAttack: 130, SpecialDefense: 65, Speed: 119 }
+    VivillonElegantZenith:
+      base: VivillonElegant
+      stats: { HP: 80, Attack: 52, Defense: 65, SpecialAttack: 130, SpecialDefense: 65, Speed: 119 }
+    VivillonModernZenith:
+      base: VivillonModern
+      stats: { HP: 80, Attack: 52, Defense: 65, SpecialAttack: 130, SpecialDefense: 65, Speed: 119 }
+    VivillonMarineZenith:
+      base: VivillonMarine
+      stats: { HP: 80, Attack: 52, Defense: 65, SpecialAttack: 130, SpecialDefense: 65, Speed: 119 }
+    VivillonArchipelagoZenith:
+      base: VivillonArchipelago
+      stats: { HP: 80, Attack: 52, Defense: 65, SpecialAttack: 130, SpecialDefense: 65, Speed: 119 }
+    VivillonHighPlainsZenith:
+      base: VivillonHighPlains
+      stats: { HP: 80, Attack: 52, Defense: 65, SpecialAttack: 130, SpecialDefense: 65, Speed: 119 }
+    VivillonSandstormZenith:
+      base: VivillonSandstorm
+      stats: { HP: 80, Attack: 52, Defense: 65, SpecialAttack: 130, SpecialDefense: 65, Speed: 119 }
+    VivillonRiverZenith:
+      base: VivillonRiver
+      stats: { HP: 80, Attack: 52, Defense: 65, SpecialAttack: 130, SpecialDefense: 65, Speed: 119 }
+    VivillonMonsoonZenith:
+      base: VivillonMonsoon
+      stats: { HP: 80, Attack: 52, Defense: 65, SpecialAttack: 130, SpecialDefense: 65, Speed: 119 }
+    VivillonSavannahZenith:
+      base: VivillonSavannah
+      stats: { HP: 80, Attack: 52, Defense: 65, SpecialAttack: 130, SpecialDefense: 65, Speed: 119 }
+    VivillonSunZenith:
+      base: VivillonSun
+      stats: { HP: 80, Attack: 52, Defense: 65, SpecialAttack: 130, SpecialDefense: 65, Speed: 119 }
+    VivillonOceanZenith:
+      base: VivillonOcean
+      stats: { HP: 80, Attack: 52, Defense: 65, SpecialAttack: 130, SpecialDefense: 65, Speed: 119 }
+    VivillonJungleZenith:
+      base: VivillonJungle
+      stats: { HP: 80, Attack: 52, Defense: 65, SpecialAttack: 130, SpecialDefense: 65, Speed: 119 }
+    VivillonFancyZenith:
+      base: VivillonFancy
+      stats: { HP: 80, Attack: 52, Defense: 65, SpecialAttack: 130, SpecialDefense: 65, Speed: 119 }
+    VivillonPokeBallZenith:
+      base: VivillonPokeBall
+      stats: { HP: 80, Attack: 52, Defense: 65, SpecialAttack: 130, SpecialDefense: 65, Speed: 119 }
+
+# The garden keeper tends its wounds before anything else moves
+FlorgesZenith:
+  base: Florges
+  stats: { HP: 78, Attack: 65, Defense: 118, SpecialAttack: 142, SpecialDefense: 154, Speed: 95 }
+  types: [Fairy]
+  ability: Triage
+  shard: FlorgesZenithShard
+  forms:
+    FlorgesYellowZenith:
+      base: FlorgesYellow
+      stats: { HP: 78, Attack: 65, Defense: 118, SpecialAttack: 142, SpecialDefense: 154, Speed: 95 }
+    FlorgesOrangeZenith:
+      base: FlorgesOrange
+      stats: { HP: 78, Attack: 65, Defense: 118, SpecialAttack: 142, SpecialDefense: 154, Speed: 95 }
+    FlorgesBlueZenith:
+      base: FlorgesBlue
+      stats: { HP: 78, Attack: 65, Defense: 118, SpecialAttack: 142, SpecialDefense: 154, Speed: 95 }
+    FlorgesWhiteZenith:
+      base: FlorgesWhite
+      stats: { HP: 78, Attack: 65, Defense: 118, SpecialAttack: 142, SpecialDefense: 154, Speed: 95 }
+
+# The mountain goat butts heads without feeling it, sure-footed on the ground it climbs
+GogoatZenith:
+  base: Gogoat
+  stats: { HP: 123, Attack: 145, Defense: 82, SpecialAttack: 97, SpecialDefense: 96, Speed: 88 }
+  types: [Grass, Ground]
+  ability: RockHead
+  shard: GogoatZenithShard
+
+# The gang boss's glare takes the fight out of anyone facing it
+PangoroZenith:
+  base: Pangoro
+  stats: { HP: 95, Attack: 159, Defense: 103, SpecialAttack: 69, SpecialDefense: 96, Speed: 73 }
+  types: [Fighting, Dark]
+  ability: Intimidate
+  shard: PangoroZenithShard
+
+# The king's old guard dog stands its post and cannot be driven off
+FurfrouZenith:
+  base: Furfrou
+  stats: { HP: 75, Attack: 130, Defense: 80, SpecialAttack: 65, SpecialDefense: 95, Speed: 127 }
+  types: [Normal]
+  ability: GuardDog
+  shard: FurfrouZenithShard
+
+# The royal sword cuts deeper with every slicing stroke
+AegislashZenith:
+  base: Aegislash
+  stats: { HP: 60, Attack: 50, Defense: 160, SpecialAttack: 50, SpecialDefense: 160, Speed: 120 }
+  types: [Steel, Ghost]
+  ability: Sharpness
+  shard: AegislashZenithShard
+  forms:
+    AegislashBladeZenith:
+      base: AegislashBlade
+      stats: { HP: 60, Attack: 170, Defense: 50, SpecialAttack: 170, SpecialDefense: 50, Speed: 120 }
+
+# Its perfume clings to anything that touches it
+AromatisseZenith:
+  base: Aromatisse
+  stats: { HP: 101, Attack: 72, Defense: 102, SpecialAttack: 139, SpecialDefense: 119, Speed: 29 }
+  types: [Fairy]
+  ability: LingeringAroma
+  shard: AromatisseZenithShard
+
+# The sweet-eater savours every berry twice over
+SlurpuffZenith:
+  base: Slurpuff
+  stats: { HP: 82, Attack: 130, Defense: 96, SpecialAttack: 85, SpecialDefense: 85, Speed: 102 }
+  types: [Fairy]
+  ability: Ripen
+  shard: SlurpuffZenithShard
+
+# The pistol shrimp's cavitation bubble doubles its every Water blast
+ClawitzerZenith:
+  base: Clawitzer
+  stats: { HP: 71, Attack: 73, Defense: 98, SpecialAttack: 160, SpecialDefense: 104, Speed: 94 }
+  types: [Water]
+  ability: WaterBubble
+  shard: ClawitzerZenithShard
+
+# It makes its power from sunlight, so it brings the sun
+HelioliskZenith:
+  base: Heliolisk
+  stats: { HP: 62, Attack: 55, Defense: 72, SpecialAttack: 149, SpecialDefense: 104, Speed: 139 }
+  types: [Electric, Normal]
+  ability: Drought
+  shard: HelioliskZenithShard
+
+# The ancient king grows stronger for every subject that falls
+TyrantrumZenith:
+  base: Tyrantrum
+  stats: { HP: 82, Attack: 166, Defense: 119, SpecialAttack: 69, SpecialDefense: 74, Speed: 111 }
+  types: [Rock, Dragon]
+  ability: SupremeOverlord
+  shard: TyrantrumZenithShard
+
+# Its diamond crystals bend the light of a super-effective hit
+AurorusZenith:
+  base: Aurorus
+  stats: { HP: 123, Attack: 77, Defense: 112, SpecialAttack: 129, SpecialDefense: 112, Speed: 68 }
+  types: [Rock, Ice]
+  ability: PrismArmor
+  shard: AurorusZenithShard
+
+# Its soothing aura makes nothing of a foe worked up for a fight
+SylveonZenith:
+  base: Sylveon
+  stats: { HP: 95, Attack: 65, Defense: 95, SpecialAttack: 150, SpecialDefense: 130, Speed: 90 }
+  types: [Fairy]
+  ability: Unaware
+  shard: SylveonZenithShard
+
+# The antenna mouse feeds off any current sent its way
+DedenneZenith:
+  base: Dedenne
+  stats: { HP: 67, Attack: 58, Defense: 72, SpecialAttack: 126, SpecialDefense: 82, Speed: 126 }
+  types: [Electric, Fairy]
+  ability: VoltAbsorb
+  shard: DedenneZenithShard
+
+# A jewel made under pressure only hardens when struck
+CarbinkZenith:
+  base: Carbink
+  stats: { HP: 50, Attack: 50, Defense: 180, SpecialAttack: 70, SpecialDefense: 180, Speed: 70 }
+  types: [Rock, Fairy]
+  ability: Stamina
+  shard: CarbinkZenithShard
+
+# The rain-loving slime brings its own rain and turns to water
+GoodraZenith:
+  base: Goodra
+  stats: { HP: 90, Attack: 100, Defense: 110, SpecialAttack: 150, SpecialDefense: 150, Speed: 100 }
+  types: [Dragon, Water]
+  ability: Drizzle
+  shard: GoodraZenithShard
+
+# The key collector takes whatever is held by a hand that touches it
+KlefkiZenith:
+  base: Klefki
+  stats: { HP: 57, Attack: 80, Defense: 121, SpecialAttack: 95, SpecialDefense: 117, Speed: 100 }
+  types: [Steel, Fairy]
+  ability: Pickpocket
+  shard: KlefkiZenithShard
+
+# Its roots hold anyone lost in its forest
+TrevenantZenith:
+  base: Trevenant
+  stats: { HP: 85, Attack: 155, Defense: 101, SpecialAttack: 65, SpecialDefense: 102, Speed: 66 }
+  types: [Ghost, Grass]
+  ability: ShadowTag
+  shard: TrevenantZenithShard
+
+# The harvest pumpkin finds its berry again
+GourgeistZenith:
+  base: Gourgeist
+  stats: { HP: 65, Attack: 110, Defense: 142, SpecialAttack: 58, SpecialDefense: 115, Speed: 104 }
+  types: [Ghost, Grass]
+  ability: Harvest
+  shard: GourgeistZenithShard
+  forms:
+    GourgeistSuperZenith:
+      base: GourgeistSuper
+      stats: { HP: 85, Attack: 120, Defense: 142, SpecialAttack: 58, SpecialDefense: 115, Speed: 74 }
+
+# Its clear ice blunts the blows that ought to break it
+AvaluggZenith:
+  base: Avalugg
+  stats: { HP: 95, Attack: 147, Defense: 184, SpecialAttack: 44, SpecialDefense: 106, Speed: 38 }
+  types: [Ice]
+  ability: Filter
+  shard: AvaluggZenithShard
+
+# Its ultrasonic waves crush boulders, and sound bounces off it
+NoivernZenith:
+  base: Noivern
+  stats: { HP: 85, Attack: 70, Defense: 95, SpecialAttack: 142, SpecialDefense: 95, Speed: 148 }
+  types: [Flying, Dragon]
+  ability: PunkRock
+  shard: NoivernZenithShard
+
+# The life-giver wraps the field in a mist that keeps harm off the living
+XerneasZenith:
+  base: Xerneas
+  stats: { HP: 126, Attack: 131, Defense: 110, SpecialAttack: 161, SpecialDefense: 113, Speed: 139 }
+  types: [Fairy]
+  ability: MistySurge
+  shard: XerneasZenithShard
+
+# The destroyer takes in the life of whatever falls
+YveltalZenith:
+  base: Yveltal
+  stats: { HP: 126, Attack: 131, Defense: 105, SpecialAttack: 171, SpecialDefense: 108, Speed: 139 }
+  types: [Dark, Flying]
+  ability: SoulHeart
+  shard: YveltalZenithShard
+
+# Its steam comes out at full force, all of it spent on the blast
+VolcanionZenith:
+  base: Volcanion
+  stats: { HP: 80, Attack: 110, Defense: 120, SpecialAttack: 170, SpecialDefense: 110, Speed: 110 }
+  types: [Fire, Water]
+  ability: SheerForce
+  shard: VolcanionZenithShard

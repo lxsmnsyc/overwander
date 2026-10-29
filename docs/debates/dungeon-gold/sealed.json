@@ -1,0 +1,253 @@
+{
+  "round": 1,
+  "claims": {
+    "J1": {
+      "id": "J1",
+      "by": "judge",
+      "kind": "fact",
+      "axis": "economy",
+      "text": "Stop purses today, rolled once per winner: type trainer and grunt 5k to 15k, gym 20k to 50k, ace trainer 25k to 60k, executive 40k to 90k, elite 50k to 110k, Giovanni 120k to 250k, Champion 150k to 300k (a legend seat 250k to 500k), Frontier Brain 200k to 400k",
+      "evidence": {
+        "type": "measured",
+        "source": "src/overworld/stop/gold.ts"
+      },
+      "round": 1
+    },
+    "J2": {
+      "id": "J2",
+      "by": "judge",
+      "kind": "fact",
+      "axis": "economy",
+      "text": "Raid purses are flat: Shadow 35k, Totem, Max, Alpha and Tera 50k, Noble 55k, Legendary 80k, Mythical 200k",
+      "evidence": {
+        "type": "measured",
+        "source": "src/overworld/raid/index.ts:98-108"
+      },
+      "round": 1
+    },
+    "J3": {
+      "id": "J3",
+      "by": "judge",
+      "kind": "fact",
+      "axis": "economy",
+      "text": "Raids and NPC stops turn over every 3 hours, the window a dungeon run is cleared once in",
+      "evidence": {
+        "type": "measured",
+        "source": "src/overworld/chunk-snapshot.ts:258,266 (RAID_INTERVAL, NPC_INTERVAL)"
+      },
+      "round": 1
+    },
+    "J4": {
+      "id": "J4",
+      "by": "judge",
+      "kind": "fact",
+      "axis": "economy",
+      "text": "Shop prices are small beside the purses: 243 priced items, median 3,000, 90th percentile 10,000, highest 29,400. Full Restore 3,000, Max Revive 4,000, machines 2,000 to 12,000, NPC fees 2,500 to 5,000",
+      "evidence": {
+        "type": "measured",
+        "source": "buy: fields in src/data/items/records/*.yaml; src/data/items/machines.ts; src/data/overworld/npc.ts"
+      },
+      "round": 1
+    },
+    "J5": {
+      "id": "J5",
+      "by": "judge",
+      "kind": "fact",
+      "axis": "economy",
+      "text": "A trade carries at most 1,000,000 gold, so between players gold is worth what other players sell for it",
+      "evidence": {
+        "type": "measured",
+        "source": "src/model/trade-record.ts:24 (TRADE_GOLD_LIMIT)"
+      },
+      "round": 1
+    },
+    "J6": {
+      "id": "J6",
+      "by": "judge",
+      "kind": "fact",
+      "axis": "economy",
+      "text": "Every purse goes through checkGoldReward, which a buddy's Luck Incense doubles, so any per-fight purse doubles with it",
+      "evidence": {
+        "type": "measured",
+        "source": "src/overworld/core.ts:177; src/server/stops.ts:679-693"
+      },
+      "round": 1
+    },
+    "J7": {
+      "id": "J7",
+      "by": "judge",
+      "kind": "fact",
+      "axis": "economy",
+      "text": "PR #141 paid a hideout 120k to 250k, a lair 80k and a Frontier 200k to 400k on the clear alone, nothing per fight",
+      "evidence": {
+        "type": "prior-art",
+        "source": "git show cca72e31c:docs/mechanics/dungeons.md",
+        "detail": "the earlier build's 'What clearing pays' table; it was never played, so it says nothing about how the numbers felt"
+      },
+      "round": 1
+    },
+    "P1": {
+      "id": "P1",
+      "by": "proponent",
+      "kind": "proposal",
+      "text": "Each fight in a run pays the stop purse of the same foe from J1, and the end of the run pays its boss's purse. A dungeon fight is then worth what the same fight is worth on the map, and the run is worth its fights",
+      "evidence": {
+        "type": "source",
+        "source": "src/overworld/stop/gold.ts"
+      },
+      "round": 1
+    },
+    "P2": {
+      "id": "P2",
+      "by": "proponent",
+      "kind": "proposal",
+      "text": "Lair hordes have no stop band, so a horde pays 10k to 25k (between a grunt and an ace), the stairs' horde 25k to 60k, and the legendary at the end 80k, the Legendary raid's purse",
+      "evidence": {
+        "type": "source",
+        "source": "J1, J2"
+      },
+      "round": 1
+    },
+    "P3": {
+      "id": "P3",
+      "by": "proponent",
+      "kind": "proposal",
+      "text": "Endless Stair floors pay per floor, rising with the floor, so a long climb pays most",
+      "evidence": {
+        "type": "estimate",
+        "source": "reasoned guess"
+      },
+      "round": 1
+    },
+    "P4": {
+      "id": "P4",
+      "by": "proponent",
+      "kind": "proposal",
+      "text": "Companion Trail trainers pay half the type-trainer band, 2,500 to 7,500, since the partner fights beside the player and heals them",
+      "evidence": {
+        "type": "source",
+        "source": "J1"
+      },
+      "round": 1
+    },
+    "P5": {
+      "id": "P5",
+      "by": "proponent",
+      "kind": "alternative",
+      "text": "One flat purse per kind on the clear, as raids and PR #141 do, and nothing per fight",
+      "evidence": {
+        "type": "prior-art",
+        "source": "J7, J2"
+      },
+      "round": 1
+    },
+    "O1": {
+      "id": "O1",
+      "by": "opponent",
+      "kind": "cost",
+      "axis": "economy",
+      "severity": "medium",
+      "answers": [
+        "P1"
+      ],
+      "text": "Summing fights makes a 5-floor hideout pay about 610k on average, over 3 times a Giovanni stop (185k mean), which floods gold into trades capped at 1M",
+      "estimate": {
+        "value": 610000,
+        "unit": "gold, 5-floor hideout mean"
+      },
+      "evidence": {
+        "type": "estimate",
+        "source": "5 floors x (2 grunts at 10k + an executive at 65k) + 185k, from J1"
+      },
+      "round": 1
+    },
+    "O2": {
+      "id": "O2",
+      "by": "opponent",
+      "kind": "risk",
+      "axis": "economy",
+      "severity": "high",
+      "answers": [
+        "P3"
+      ],
+      "text": "The Endless Stair can be started at any time (decided in dungeons.md). Per-floor gold lets a player farm its easy first floors over and over with no window to stop them",
+      "evidence": {
+        "type": "source",
+        "source": "docs/strategy/dungeons.md, Decided: the Endless Stair"
+      },
+      "round": 1
+    },
+    "O3": {
+      "id": "O3",
+      "by": "opponent",
+      "kind": "rebuttal",
+      "answers": [
+        "P5"
+      ],
+      "text": "With gold only on the clear, losing on the last floor pays nothing for every fight before it, while a stop pays each fight as it is won",
+      "evidence": {
+        "type": "source",
+        "source": "src/server/stops.ts:648-695 pays on the first claim of each stop"
+      },
+      "round": 1
+    },
+    "O4": {
+      "id": "O4",
+      "by": "opponent",
+      "kind": "risk",
+      "axis": "economy",
+      "severity": "high",
+      "answers": [
+        "P1"
+      ],
+      "text": "A failed run restarts from floor 1 in the same window. If each fight pays on every attempt, losing on purpose and refighting the first floor's grunts farms gold",
+      "evidence": {
+        "type": "source",
+        "source": "docs/strategy/dungeons.md, Decided: a run"
+      },
+      "round": 1
+    },
+    "P6": {
+      "id": "P6",
+      "by": "proponent",
+      "kind": "concession",
+      "answers": [
+        "P1"
+      ],
+      "why": "O4: restarts in the same window would pay the same fights again",
+      "text": "Each fight pays once per window, keyed like a stop's purse by the dungeon, the window, the floor, the room and the player. A restarted run refights for nothing it was already paid",
+      "round": 1
+    },
+    "P7": {
+      "id": "P7",
+      "by": "proponent",
+      "kind": "concession",
+      "answers": [
+        "P3"
+      ],
+      "why": "O2: no window bounds the Stair",
+      "text": "The Stair pays no gold per floor. Each 8th floor pays once per account, the first time the player reaches it: 2,500 gold times the floor number, so 20k at floor 8 and 200k at floor 80",
+      "round": 1
+    },
+    "O5": {
+      "id": "O5",
+      "by": "opponent",
+      "kind": "cost",
+      "axis": "economy",
+      "severity": "low",
+      "answers": [
+        "P1"
+      ],
+      "text": "A run burns the player's own medicine, about 5 to 10 Full Restores or Max Revives on a hard run, 15k to 40k gold, so the purse is partly a refund",
+      "estimate": {
+        "value": 40000,
+        "unit": "gold, high end"
+      },
+      "evidence": {
+        "type": "source",
+        "source": "J4 prices"
+      },
+      "round": 1
+    }
+  }
+}

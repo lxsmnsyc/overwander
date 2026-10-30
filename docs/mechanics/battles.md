@@ -304,9 +304,9 @@ Z-Crystal, never Dynamaxes.
 
 A **Zenith** is this game's own answer to a Mega, for a final stage that has
 none. A pokemon holding its own **Zenith Shard** takes its Zenith shape as it
-takes the field. There are 288 so far: Kanto's 49, Johto's 40, Hoenn's 50,
-Sinnoh's 54, Unova's 69 and Kalos's 26, from Zenith Butterfree to Zenith
-Volcanion.
+takes the field. There are 402 so far: Kanto's 49, Johto's 40, Hoenn's 50,
+Sinnoh's 54, Unova's 69, Kalos's 26, Alola's 60 and Galar's 54, from Zenith
+Butterfree to Zenith Galarian Darmanitan.
 
 - A Zenith's base stats total **100 more** than its pokemon's, none of it in
   HP, and some take a new type: Zenith Arcanine is Fire and Dragon, Zenith
@@ -321,6 +321,8 @@ Volcanion.
   weather shapes, Deoxys's four kept shapes, Rotom's appliances, Wormadam's
   cloaks, Black and White Kyurem, Sawsbuck's seasons and Aegislash's two
   stances each have a Zenith shape of their own, and one shard serves them all.
+- A regional final has a Zenith and a shard of its own: an Alolan Ninetales
+  holding the Kanto shard stays as it is.
 - A pokemon that has a Mega has no Zenith, and neither do Ditto and Unown.
   Zygarde counts as having one: Power Construct can take any Zygarde to the
   Complete Forme, which has a Mega.

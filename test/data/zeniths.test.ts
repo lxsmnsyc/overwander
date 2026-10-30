@@ -47,6 +47,15 @@ const ABILITY_SHAPES = new Map<Species, Abilities>([
   [Species.ZygardeComplete, Abilities.PowerConstruct],
 ]);
 
+// A shape only a held item puts its pokemon in, so a shard holder never
+// reaches it: Ultra Necrozma bursts out of an Ultranecrozium Z
+const HELD_SHAPES = new Set<Species>([Species.NecrozmaUltra]);
+
+/** A regional final, such as an Alolan Ninetales, is met in another region from its line */
+function isRegionalForm(species: Species): boolean {
+  return getSpeciesRegion(species) !== getSpeciesRegion(getBaseFormSpecies(species));
+}
+
 function addMegaBases(spoken: Set<Species>): void {
   for (const mega of listMegas()) {
     const base = getMegaBase(mega)!;
@@ -84,7 +93,10 @@ describe('Zeniths', () => {
     const seen = new Set<Species>();
 
     for (const shape of ZENITH_SHAPES) {
-      expect(getSpeciesData(shape.base).baseForm, shape.holder).not.toBe(false);
+      // A regional final is a form of its line but a pokemon of its own region
+      if (!isRegionalForm(shape.base)) {
+        expect(getSpeciesData(shape.base).baseForm, shape.holder).not.toBe(false);
+      }
       expect(isLastStage(shape.base), shape.holder).toBe(true);
       expect(spoken.has(shape.base), shape.holder).toBe(false);
       expect(seen.has(shape.base), shape.holder).toBe(false);
@@ -157,13 +169,15 @@ describe('Zeniths', () => {
   it('gives every other shape its pokemon is born or worn in a Zenith shape of its own', () => {
     // A Trash Wormadam or an East Sea Gastrodon holds the same shard. A
     // regional form waits for its own region's batch, a form that still
-    // evolves (a White-Striped Basculin) has no Zenith, and a true shadow
-    // is past putting right
+    // evolves (a White-Striped Basculin) has no Zenith, a true shadow is
+    // past putting right, and a shape a held item makes is out of reach
+    // of a pokemon holding its shard
     for (const shape of ZENITH_SHAPES) {
       for (const form of getSpeciesForms(shape.base)) {
         if (
           isZenithSpecies(form) ||
           isTrueShadow(form) ||
+          HELD_SHAPES.has(form) ||
           !isLastStage(form) ||
           getSpeciesRegion(form) !== getSpeciesRegion(shape.base)
         ) {
@@ -186,7 +200,9 @@ describe('Zeniths', () => {
   });
 
   it('gives every eligible pokemon of a finished region its Zenith', () => {
-    // Added to as each region's batch lands
+    // Added to as each region's batch lands. Its regional finals count
+    // as its own, so Alolan Ninetales is owed with Alola. A pokemon whose
+    // next stage is not in yet, such as Galarian Mr. Mime, waits for it
     const finished = new Set<Regions>([
       Regions.Kanto,
       Regions.Johto,
@@ -194,6 +210,8 @@ describe('Zeniths', () => {
       Regions.Sinnoh,
       Regions.Unova,
       Regions.Kalos,
+      Regions.Alola,
+      Regions.Galar,
     ]);
     const spoken = new Set<Species>(NO_ZENITH);
 
@@ -206,8 +224,13 @@ describe('Zeniths', () => {
 
     const having = new Set<Species>();
 
+    // A shape a regional final changes into, such as Galarian Zen
+    // Darmanitan, is reached through that final's Zenith
     for (const shape of ZENITH_SHAPES) {
       having.add(shape.base);
+      for (const form of shape.forms) {
+        having.add(form.base);
+      }
     }
 
     const missing: string[] = [];
@@ -216,8 +239,9 @@ describe('Zeniths', () => {
       const data = getSpeciesData(species);
 
       if (
-        data.baseForm === false ||
+        (data.baseForm === false && !isRegionalForm(species)) ||
         data.worn === true ||
+        data.awaiting === 'evolution' ||
         !finished.has(getSpeciesRegion(species)) ||
         !isLastStage(species) ||
         spoken.has(species) ||

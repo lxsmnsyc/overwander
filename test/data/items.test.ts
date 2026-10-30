@@ -62,11 +62,14 @@ import BERRY_POOL from '../../src/data/overworld/berry-pool';
 import { TUTOR_ONLY_MOVES, getMoveData, registerMoves } from '../../src/data/moves';
 import AleaRNG from '../../src/core/alea';
 import {
+  ITEM_BAND_ODDS,
   ITEM_POOL,
   getItemBand,
   getItemOdds,
   isPreciousItem,
 } from '../../src/data/overworld/item-pool';
+import { getItemPool } from '../../src/data/overworld/biome-items';
+import { BIOME_IDS } from '../../src/data/ids/names';
 import {
   FOSSIL_OFFER_KINDS,
   FOSSIL_REVIVE_LEVEL,
@@ -1522,53 +1525,60 @@ describe('item data', () => {
     // whatever band a valuable is in, every valuable in a rarer band
     // is a rarer find than it. The rest of the pool is banded by what
     // a thing does rather than what it costs, so this is the ladder's
-    // rule and not the pool's
+    // rule and not the pool's.
+    //
+    // Each biome's stash draws from its own pool, which leaves out what
+    // belongs to other ground, such as the Zenith Shards of lines met
+    // elsewhere, so the ladder is held in every one of them
     const bands = ['base', 'uncommon', 'scarce', 'rare', 'prized', 'special'];
     const rung = (item: Items): number => bands.indexOf(getItemBand(item) ?? '');
 
-    for (const [item] of VALUABLE_SELL) {
-      for (const [other] of VALUABLE_SELL) {
-        if (rung(other) > rung(item)) {
-          expect(
-            getItemOdds(other),
-            `${getItemData(other).name} against ${getItemData(item).name}`,
-          ).toBeLessThan(getItemOdds(item));
+    for (const biome of Object.values(BIOME_IDS)) {
+      const pool = getItemPool(biome);
+      const odds = (item: Items): number => getItemOdds(item, ITEM_BAND_ODDS, pool);
+      const where = (item: Items): string => `${getItemData(item).name} in biome ${biome}`;
+
+      for (const [item] of VALUABLE_SELL) {
+        for (const [other] of VALUABLE_SELL) {
+          if (rung(other) > rung(item) && odds(item) > 0 && odds(other) > 0) {
+            expect(odds(other), `${where(other)} against ${getItemData(item).name}`).toBeLessThan(
+              odds(item),
+            );
+          }
         }
       }
-    }
 
-    // The ruins are a ladder inside one band as well as across two,
-    // and there the price order is the whole order: each is dearer
-    // than the last and each is scarcer than the last
-    const ruins = [
-      Items.RelicVase,
-      Items.CometShard,
-      Items.RelicBand,
-      Items.RelicStatue,
-      Items.RelicCrown,
-    ];
+      // The ruins are a ladder inside one band as well as across two,
+      // and there the price order is the whole order: each is dearer
+      // than the last and each is scarcer than the last
+      const ruins = [
+        Items.RelicVase,
+        Items.CometShard,
+        Items.RelicBand,
+        Items.RelicStatue,
+        Items.RelicCrown,
+      ];
 
-    for (const [at, item] of ruins.slice(0, -1).entries()) {
-      const next = ruins[at + 1];
+      for (const [at, item] of ruins.slice(0, -1).entries()) {
+        const next = ruins[at + 1];
 
-      expect(getItemData(next).sell).toBeGreaterThan(getItemData(item).sell);
-      expect(getItemOdds(next), getItemData(next).name).toBeLessThan(getItemOdds(item));
-    }
+        expect(getItemData(next).sell).toBeGreaterThan(getItemData(item).sell);
+        if (odds(item) > 0 && odds(next) > 0) {
+          expect(odds(next), where(next)).toBeLessThan(odds(item));
+        }
+      }
 
-    // And the dearest find in the game is the rarest find in the game,
-    // against everything the ground hides rather than against the four
-    // beside it
-    const hidden = new Set(
-      (['base', 'uncommon', 'rare', 'prized', 'special'] as const).flatMap((band) =>
-        ITEM_POOL[band].map((entry) => entry.item),
-      ),
-    );
-
-    for (const item of hidden) {
-      if (item !== Items.RelicCrown) {
-        expect(getItemOdds(item), getItemData(item).name).toBeGreaterThan(
-          getItemOdds(Items.RelicCrown),
-        );
+      // And the dearest find in the game is the rarest find in the game,
+      // against everything the ground hides rather than against the four
+      // beside it
+      if (odds(Items.RelicCrown) > 0) {
+        for (const band of ['base', 'uncommon', 'rare', 'prized', 'special'] as const) {
+          for (const entry of pool[band]) {
+            if (entry.item !== Items.RelicCrown) {
+              expect(odds(entry.item), where(entry.item)).toBeGreaterThan(odds(Items.RelicCrown));
+            }
+          }
+        }
       }
     }
   });

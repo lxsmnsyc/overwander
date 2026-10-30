@@ -1,0 +1,709 @@
+{
+  "compact": true,
+  "width": 32,
+  "height": 432,
+  "images": [
+    {
+      "name": "alcremie.png",
+      "x": 15,
+      "y": 208,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "appletun.png",
+      "x": 0,
+      "y": 96,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "arctovish.png",
+      "x": 15,
+      "y": 288,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "arctozolt.png",
+      "x": 15,
+      "y": 272,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "articuno-galar.png",
+      "x": 15,
+      "y": 384,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "barraskewda.png",
+      "x": 15,
+      "y": 112,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "boltund.png",
+      "x": 0,
+      "y": 80,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "calyrex.png",
+      "x": 15,
+      "y": 352,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "centiskorch.png",
+      "x": 15,
+      "y": 128,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "cinderace.png",
+      "x": 15,
+      "y": 0,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "corviknight.png",
+      "x": 0,
+      "y": 32,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "cramorant.png",
+      "x": 0,
+      "y": 112,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "cursola.png",
+      "x": 0,
+      "y": 192,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "darmanitan-galar.png",
+      "x": 15,
+      "y": 416,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "dracovish.png",
+      "x": 0,
+      "y": 288,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "dracozolt.png",
+      "x": 0,
+      "y": 272,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "dragapult.png",
+      "x": 0,
+      "y": 304,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "drednaw.png",
+      "x": 15,
+      "y": 64,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "dubwool.png",
+      "x": 0,
+      "y": 64,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "eiscue.png",
+      "x": 15,
+      "y": 240,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "eldegoss.png",
+      "x": 15,
+      "y": 48,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "eternatus.png",
+      "x": 15,
+      "y": 304,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "flapple.png",
+      "x": 15,
+      "y": 80,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "frosmoth.png",
+      "x": 15,
+      "y": 224,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "glastrier.png",
+      "x": 15,
+      "y": 336,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "grapploct.png",
+      "x": 0,
+      "y": 144,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "greedent.png",
+      "x": 15,
+      "y": 16,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "grimmsnarl.png",
+      "x": 15,
+      "y": 160,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "hatterene.png",
+      "x": 0,
+      "y": 160,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "indeedee.png",
+      "x": 0,
+      "y": 256,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "inteleon.png",
+      "x": 0,
+      "y": 16,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "moltres-galar.png",
+      "x": 15,
+      "y": 400,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "morpeko.png",
+      "x": 15,
+      "y": 256,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "obstagoon.png",
+      "x": 0,
+      "y": 176,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "orbeetle.png",
+      "x": 15,
+      "y": 32,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "perrserker.png",
+      "x": 15,
+      "y": 176,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "pincurchin.png",
+      "x": 0,
+      "y": 224,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "polteageist.png",
+      "x": 15,
+      "y": 144,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "rapidash-galar.png",
+      "x": 0,
+      "y": 368,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "regidrago.png",
+      "x": 0,
+      "y": 336,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "regieleki.png",
+      "x": 15,
+      "y": 320,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "rillaboom.png",
+      "x": 0,
+      "y": 0,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "runerigus.png",
+      "x": 0,
+      "y": 208,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "sandaconda.png",
+      "x": 15,
+      "y": 96,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "sirfetchd.png",
+      "x": 15,
+      "y": 192,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "slowbro-galar.png",
+      "x": 15,
+      "y": 368,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "slowking-galar.png",
+      "x": 0,
+      "y": 416,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "spectrier.png",
+      "x": 0,
+      "y": 352,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "stonjourner.png",
+      "x": 0,
+      "y": 240,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "thievul.png",
+      "x": 0,
+      "y": 48,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "toxtricity.png",
+      "x": 0,
+      "y": 128,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "urshifu.png",
+      "x": 0,
+      "y": 320,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "weezing-galar.png",
+      "x": 0,
+      "y": 384,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    },
+    {
+      "name": "zapdos-galar.png",
+      "x": 0,
+      "y": 400,
+      "width": 15,
+      "height": 16,
+      "sourceWidth": 32,
+      "sourceHeight": 32,
+      "trim": [
+        8,
+        8
+      ]
+    }
+  ]
+}

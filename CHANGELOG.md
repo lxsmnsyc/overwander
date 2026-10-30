@@ -1,5 +1,12 @@
 # overwander
 
+## 4.50.0
+
+### Minor Changes
+
+- e7ff9de: Alola's 60 Zeniths, from Decidueye to Melmetal plus the ten Alolan finals of Kanto lines, each with its own Zenith Shard. Wishiwashi's School, Minior's cores, Busted Mimikyu, Dusk Mane and Dawn Wings Necrozma, Oricorio's styles and Lycanroc's forms each have a Zenith of their own.
+- 3f7aedb: Galar's 54 Zeniths, from Rillaboom to Calyrex plus the eight Galarian finals of older lines, each with its own Zenith Shard. Calyrex's Riders, Alcremie's Sweets, Cramorant's catches, Noice Eiscue, Hangry Morpeko and Galarian Zen Darmanitan each have a Zenith of their own.
+
 ## 4.49.0
 
 ### Minor Changes

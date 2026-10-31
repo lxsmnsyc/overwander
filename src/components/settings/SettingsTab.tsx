@@ -28,6 +28,8 @@ import {
 } from '../styled';
 import CreditsCard from './CreditsCard';
 import SecurityPane from './SecurityPane';
+import { type Locale, chooseLocale, currentLocale } from '../../i18n/locale';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * How the game is set up for this player, and what it is made of.
@@ -53,6 +55,43 @@ function ThemeSetting(): JSX.Element {
       checked={showing() === 'dark'}
       onChange={(dark) => {
         setScheme(dark ? 'dark' : 'light');
+      }}
+    />
+  );
+}
+
+/**
+ * Each language, named in itself so a player who cannot read the
+ * current one can still find theirs. The note is in the language too
+ */
+const LANGUAGES: { value: Locale; label: string; description?: string }[] = [
+  { value: 'en', label: 'English' },
+  {
+    value: 'ja',
+    label: '日本語',
+    description: 'まだ ほんやくされていない がめんは えいごで ひょうじされます。',
+  },
+  {
+    value: 'es',
+    label: 'Español',
+    description: 'Las pantallas que aún no están traducidas se muestran en inglés.',
+  },
+];
+
+/**
+ * The language the game is drawn in. Choosing one reloads the page,
+ * since everything on it was rendered in the old one
+ */
+function LanguageSetting(): JSX.Element {
+  return (
+    <RadioGroup
+      label={m.settings_language()}
+      value={currentLocale()}
+      options={LANGUAGES}
+      onChange={(locale) => {
+        if (locale !== currentLocale()) {
+          Promise.resolve(chooseLocale(locale)).catch(() => undefined);
+        }
       }}
     />
   );
@@ -121,6 +160,7 @@ function bindKey(action: GameAction, key: string): void {
 function DisplayPane(): JSX.Element {
   return (
     <Card>
+      <LanguageSetting />
       <ThemeSetting />
       <Switch
         label="Reduce motion"

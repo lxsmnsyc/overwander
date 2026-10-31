@@ -1,5 +1,16 @@
 # overwander
 
+## 4.52.0
+
+### Minor Changes
+
+- 751b34b: The overworld reads in Japanese and Spanish as well as English: the board, the world map and the overworld dialogs. Pick the language under Settings, Display. Screens not translated yet stay in English.
+
+### Patch Changes
+
+- bc3b61a: Dates and numbers are written the same way on every machine: a date reads "12 Aug 2026" everywhere, where the friends list, trades, passkeys and the admin pages used to follow the device's own format.
+- 8db68a9: Battles read in Japanese and Spanish as well as English: the battle view, the duel lobby and its rules, the verdict and the battle history. Status conditions use the games' own Japanese and Spanish names.
+
 ## 4.51.1
 
 ### Patch Changes

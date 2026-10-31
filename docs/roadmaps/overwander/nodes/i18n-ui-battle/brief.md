@@ -1,7 +1,7 @@
 ---
 id: i18n-ui-battle
 title: Translate the battle interface
-status: active
+status: done
 priority: should
 type: feature
 outline: false

@@ -59,7 +59,7 @@ Every eligible pokemon has its Zenith (`now`). The game then plays in Japanese a
 - Strategy index (`docs/strategy/README.md`) -> this file, milestones and Sources.
 - App logic plan, batches 0 to 6 -> built: PR #228. Batches 7 and 8 -> dropped in the plan itself.
 - Zeniths (plan deleted once finished, see git history) batches 0 to 7 -> zenith-johto-galar. Batch 8 -> zenith-hisui. Batch 9 -> zenith-paldea. Mr. Rime's Zenith -> inbox: waits for its art.
-- Translations batches 0 to 9 -> i18n-plumbing, i18n-registry-loader, i18n-official-names, i18n-templates, i18n-server-text, i18n-ui-overworld, i18n-ui-battle, i18n-ui-rest, i18n-descriptions, i18n-people-places. Its Database section -> gamedata-names.
+- Translations batches 0 to 9 -> i18n-plumbing, i18n-registry-loader, i18n-official-names, i18n-templates, i18n-server-text, i18n-ui-overworld, i18n-ui-battle, i18n-ui-shell, i18n-ui-catches, i18n-ui-social (batch 7 split in three; the admin panel, /demo and the sprite processor stay English as staff and developer tools), i18n-descriptions, i18n-people-places. Its Database section -> gamedata-names.
 - Pixel effects batches 0 to 8 -> pixel-grid, pixel-lit-scene, pixel-canvas-moves, pixel-battle-cues, pixel-battle-weather, pixel-auras, pixel-sky, pixel-board-lights, pixel-raid-sites.
 - Dungeons batches 0 to 12 -> dungeon-questions, dungeon-runs, dungeon-floors, dungeon-walking, dungeon-elite-four, dungeon-frontier, dungeon-endless-stair, dungeon-companion-trail, dungeon-gimmicks, dungeon-victory-road, dungeon-hideouts, dungeon-lairs, dungeon-standings.
 - Rebalance batches 0 to 5+ -> rebalance-experts, rebalance-simulator, rebalance-first-run, rebalance-move-audit, rebalance-bounds, rebalance-reworks.

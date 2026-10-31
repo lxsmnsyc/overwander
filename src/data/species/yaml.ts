@@ -24,7 +24,7 @@ import {
 } from '../ids/names';
 import type { Species } from '../ids/species';
 import { speciesDexNumber, speciesFormIndex } from '../ids/forms';
-import { flagsOf, idOf, idsOf } from '../yaml';
+import { flagsOf, idOf, idsOf, localize, readOverlays, splitLocales } from '../yaml';
 import type {
   EvolutionData,
   LearnSetData,
@@ -49,7 +49,8 @@ import type {
  * - `abilities/` holds the ability pools
  * - `learnsets/` holds the moves it learns by level, machine and egg
  * - `text/<locale>/species/` holds each name and category, filed the
- *   same way
+ *   same way, English complete and any other locale laid over it (see
+ *   `splitLocales`)
  *
  * A file names things the way the code does (`Arcanine`, `FireStone`),
  * and every name is checked here against the enum it belongs to, so a
@@ -163,6 +164,15 @@ function collect(files: Record<string, unknown>): Map<string, Written> {
         parts.set(name, { where: `${path}: ${family}`, family, part });
       }
     }
+  }
+  return parts;
+}
+
+function readParts(files: Record<string, unknown>): Map<string, unknown> {
+  const parts = new Map<string, unknown>();
+
+  for (const [name, placed] of collect(files)) {
+    parts.set(name, placed.part);
   }
   return parts;
 }
@@ -332,7 +342,10 @@ export function readSpecies(files: SpeciesFiles): [Species, SpeciesData][] {
   const stats = collect(files.stats);
   const abilities = collect(files.abilities);
   const learnsets = collect(files.learnsets);
-  const text = collect(files.text);
+  // English text is the record, and any other locale is laid over it
+  const byLocale = splitLocales(files.text);
+  const text = collect(byLocale.english);
+  const translated = readOverlays(byLocale.overlays, readParts);
   const shared = familyTeachables(files.learnsets);
   const read: [Species, SpeciesData][] = [];
 
@@ -417,6 +430,7 @@ export function readSpecies(files: SpeciesFiles): [Species, SpeciesData][] {
     if (body['egg-cycles'] != null) {
       data.eggCycles = body['egg-cycles'];
     }
+    localize(data, name, translated, ['name', 'category']);
     read.push([species, data]);
   }
 

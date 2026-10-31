@@ -24,7 +24,7 @@ export function registerMoves(): void {
   const read = readMoves({
     battle: import.meta.glob('./battle/**/*.yaml', { eager: true, import: 'default' }),
     cast: import.meta.glob('./cast/**/*.yaml', { eager: true, import: 'default' }),
-    text: import.meta.glob('../text/en/moves/**/*.yaml', { eager: true, import: 'default' }),
+    text: import.meta.glob('../text/*/moves/**/*.yaml', { eager: true, import: 'default' }),
   });
 
   for (const [move, data] of read) {

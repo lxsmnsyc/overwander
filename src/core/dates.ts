@@ -20,12 +20,8 @@ import { formatDate, formatMoment, formatRelative } from '../i18n/format';
  */
 const RECENT = 7 * 24 * 60 * 60 * 1000;
 
-/**
- * The stamp as a date, whichever way it was stored. A catch keeps a
- * local ISO string, which reads as local time; a battle keeps epoch
- * milliseconds
- */
-function asDate(stamp: string | number): Date {
+function parseStamp(stamp: string | number): Date {
+  // A catch keeps a local ISO string with its offset, a battle keeps epoch milliseconds
   return new Date(stamp);
 }
 
@@ -36,7 +32,7 @@ function asDate(stamp: string | number): Date {
  * show what it holds rather than a lie about it
  */
 export default function describeDate(stamp: string | number, now = Date.now()): string {
-  const when = asDate(stamp);
+  const when = parseStamp(stamp);
 
   if (Number.isNaN(when.getTime())) {
     return String(stamp);
@@ -52,7 +48,7 @@ export default function describeDate(stamp: string | number, now = Date.now()): 
  * times in one day, where the date alone would say nothing
  */
 export function describeMoment(stamp: string | number, now = Date.now()): string {
-  const when = asDate(stamp);
+  const when = parseStamp(stamp);
 
   if (Number.isNaN(when.getTime())) {
     return String(stamp);

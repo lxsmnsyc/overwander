@@ -3,7 +3,7 @@ import type Abilities from '../ids/abilities';
 import type Families from '../ids/families';
 import { ABILITY_IDS, FAMILY_IDS, SPECIES_IDS } from '../ids/names';
 import type { Species } from '../ids/species';
-import { idOf, idsOf } from '../yaml';
+import { idOf, idsOf, localize, readOverlays, splitLocales } from '../yaml';
 import type { AbilityData } from './__create';
 
 /**
@@ -26,20 +26,42 @@ const SIGNATURES = v.strictObject({
   forms: v.optional(v.record(NAME, v.array(NAME)), {}),
 });
 
-/** Every ability the files name, in id order */
+function readEntries(files: Record<string, unknown>): Map<string, unknown> {
+  const entries = new Map<string, unknown>();
+
+  for (const file of Object.values(files)) {
+    for (const [name, entry] of Object.entries(v.parse(v.record(NAME, v.unknown()), file))) {
+      entries.set(name, entry);
+    }
+  }
+  return entries;
+}
+
+/**
+ * Every ability the files name, in id order. The files are every
+ * locale's: English is the record, and any other locale is laid over it
+ * (see `splitLocales`)
+ */
 export function readAbilities(files: Record<string, unknown>): [Abilities, AbilityData][] {
+  // English is the record, and any other locale is laid over it
+  const byLocale = splitLocales(files);
+  const translated = readOverlays(byLocale.overlays, readEntries);
+
+  // Each ability once, its text read in the player's locale
   const read = new Map<Abilities, AbilityData>();
 
-  for (const [path, file] of Object.entries(files)) {
+  for (const [path, file] of Object.entries(byLocale.english)) {
     for (const [name, data] of Object.entries(v.parse(TEXT, file))) {
       const ability = idOf<Abilities>(ABILITY_IDS, name, path);
 
       if (read.has(ability)) {
         throw new Error(`${path}: ${name} is written twice`);
       }
+      localize(data, name, translated, ['name', 'description']);
       read.set(ability, data);
     }
   }
+  // In id order, which is the order the registry lists them in
   return [...read].sort(([one], [two]) => one - two);
 }
 

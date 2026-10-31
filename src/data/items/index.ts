@@ -150,7 +150,7 @@ export default function registerItems(): void {
   const { items, text } = readItems(
     {
       records: import.meta.glob('./records/*.yaml', { eager: true, import: 'default' }),
-      text: import.meta.glob('../text/en/items/*.yaml', { eager: true, import: 'default' }),
+      text: import.meta.glob('../text/*/items/*.yaml', { eager: true, import: 'default' }),
     },
     ITEM_FAMILIES,
   );
@@ -169,7 +169,8 @@ export default function registerItems(): void {
       if (describe == null) {
         throw new Error(`${family}: ${data.name} has no description and nothing writes one`);
       }
-      registerItem(item, { ...data, description: describe(item) });
+      // Assigned rather than spread, so a translated name stays translated
+      registerItem(item, Object.assign(data, { description: describe(item) }));
     }
   }
   registerMachines();

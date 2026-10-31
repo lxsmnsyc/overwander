@@ -15,7 +15,7 @@ export type { AbilityData } from './__create';
 export default function registerAbilities(): void {
   // Written as YAML: the abilities are all text, the grants a file per region (see ./yaml.ts)
   const abilities = readAbilities(
-    import.meta.glob('../text/en/abilities/**/*.yaml', { eager: true, import: 'default' }),
+    import.meta.glob('../text/*/abilities/**/*.yaml', { eager: true, import: 'default' }),
   );
 
   for (const [ability, data] of abilities) {

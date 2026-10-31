@@ -17,13 +17,15 @@ import {
  */
 const decided = new WeakMap<Request, Locale>();
 
-function requestLocale(): Locale {
+function readRequestLocale(): Locale {
+  // Outside a request, as at start-up, nothing asked for a language
   const event = getRequestEvent();
 
   if (event == null) {
     return baseLocale;
   }
 
+  // Worked out on the first message of a request and kept for the rest
   let locale = decided.get(event.request);
 
   if (locale == null) {
@@ -33,4 +35,4 @@ function requestLocale(): Locale {
   return locale;
 }
 
-overwriteGetLocale(requestLocale);
+overwriteGetLocale(readRequestLocale);

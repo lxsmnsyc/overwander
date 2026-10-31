@@ -25,12 +25,13 @@ import {
 
 export type { Locale };
 
-export { baseLocale, locales };
+export { baseLocale, isLocale, locales };
 
 /** The locale the page was rendered in, read once: it only changes with a reload */
 let rendered: Locale | undefined;
 
 function readRendered(): Locale {
+  // A lang the game has no locale for reads as English
   if (rendered == null) {
     const lang = document.documentElement.lang;
 
@@ -65,6 +66,7 @@ const INTL_TAGS: Record<Locale, string> = {
   en: 'en-GB',
 };
 
-export function intlTag(locale: Locale = currentLocale()): string {
+/** The tag `Intl` formats a locale's numbers and dates with, the active locale's by default */
+export function getIntlTag(locale: Locale = currentLocale()): string {
   return INTL_TAGS[locale];
 }

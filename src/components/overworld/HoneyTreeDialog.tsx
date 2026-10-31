@@ -14,6 +14,7 @@ import { Button, Dialog, DialogActions, Note, useToast } from '../styled';
 import { CostBadge, CounterSpent, CounterTerms, HeadingPortrait } from '../forms/terms';
 import { failed, readable } from '../app/resource-reads';
 import playEffect, { Effect } from '../app/sound';
+import describeFailure from '../../i18n/refusals';
 
 /** The tree beside the heading */
 const TREE_SPRITE = 28;
@@ -76,7 +77,7 @@ function HoneyTreeBody(
       .catch((caught: unknown) => {
         setBusy(false);
         toast.push({
-          message: caught instanceof Error ? caught.message : String(caught),
+          message: describeFailure(caught),
           tone: 'ember',
         });
       });

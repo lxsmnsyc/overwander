@@ -1,5 +1,6 @@
 import { decodeJwt } from 'jose';
 import authClient from './auth-client';
+import { refuse } from '../model/refusal';
 
 /**
  * The signed-in player's token, which is what a privileged server
@@ -32,7 +33,7 @@ async function fetchToken(): Promise<string> {
   const token = data?.token ?? '';
 
   if (token === '') {
-    throw new Error('Not signed in');
+    throw refuse('not-signed-in');
   }
   held = { token, expiresAt: expiryOf(token) };
   return token;

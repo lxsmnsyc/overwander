@@ -23,6 +23,7 @@ import AnimatedSprite from '../sprites/AnimatedSprite';
 import { Button, Dialog, DialogActions, Meta, Note, Status } from '../styled';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
 import { ArrowRightIcon } from '../icons';
+import describeFailure from '../../i18n/refusals';
 
 /**
  * Spending a PP Up or a PP Max on one move.
@@ -195,7 +196,7 @@ function BottleBody(
       })
       .catch((thrown: unknown) => {
         setBusy(false);
-        setStatus(thrown instanceof Error ? thrown.message : String(thrown));
+        setStatus(describeFailure(thrown));
       });
   };
 

@@ -19,6 +19,7 @@ import {
 import { createTrainerBattle } from '../../overworld/stop/battle';
 import type { ActiveBattle, PendingReward } from '../session/types';
 import { type Store, createStore } from '../store';
+import describeFailure from '../../i18n/refusals';
 
 /** How often the units are re-read; the battle itself runs on its own frame timer */
 const POLL_INTERVAL = 250;
@@ -103,7 +104,7 @@ export default function createBattleWatch(
   let gone = false;
 
   const say = (caught: unknown): void => {
-    status.set(caught instanceof Error ? caught.message : String(caught));
+    status.set(describeFailure(caught));
   };
 
   const side = (): number | null => {

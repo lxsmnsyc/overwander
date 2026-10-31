@@ -47,9 +47,6 @@ export const PACE_RULES: Record<Pace, PaceRule> = {
   [Pace.Steps]: { burst: 512, perSecond: 5 },
 };
 
-/** What a player acting too fast is told */
-export const PACE_MESSAGE = 'Slow down a moment.';
-
 /** One bucket to spend from, and how much */
 export interface PaceCost {
   pace: Pace;

@@ -4,6 +4,7 @@ import type { CatchConstraint, CatchOp } from '../model/search/catch';
 import { getSql } from './db';
 import { readCaughtMany } from './caught-io';
 import { asString } from './read';
+import { refuse } from '../model/refusal';
 
 /**
  * The box reads, in the record shape. Every catch is public to a
@@ -136,7 +137,7 @@ function compare(sql: Sql, column: Fragment, op: CatchOp, value: Value): Fragmen
     return op === 'in' ? sql`${column} in ${sql(listed)}` : sql`not (${column} in ${sql(listed)})`;
   }
   if (Array.isArray(value)) {
-    throw new Error('A list is only compared with in or nin.');
+    throw refuse('list-comparison');
   }
   switch (op) {
     case 'neq':

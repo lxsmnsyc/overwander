@@ -1,5 +1,6 @@
 import { BUILD_HEADER, STALE_BUILD_HEADER, isServerCall } from '../model/build';
 import { countServerCall } from './server-calls';
+import { refuse } from '../model/refusal';
 
 /** The stale build a reload was last asked for, so a page that comes back stale is not reloaded forever */
 const RELOADED_KEY = 'stale-build-reload';
@@ -48,7 +49,7 @@ export default function guardServerCalls(): void {
     if (response.headers.has(STALE_BUILD_HEADER)) {
       reloadForNewBuild();
       // Thrown, so the caller's failure path runs rather than reading an empty answer
-      throw new Error('A new version of the game is out. Reloading.');
+      throw refuse('new-version');
     }
     return response;
   };

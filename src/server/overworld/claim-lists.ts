@@ -10,6 +10,7 @@ import { berryPrefix } from './berries';
 import { cachePrefix } from './caches';
 import { honeyPrefix } from './honey';
 import { phenomenonPrefix } from './phenomena';
+import { refuse } from '../../model/refusal';
 
 /** What a player has already taken out of one chunk this window, by cell */
 export interface ChunkClaims {
@@ -62,7 +63,7 @@ export async function listChunkClaims(
   depth: Depth = Depth.Surface,
 ): Promise<ChunkClaims[]> {
   if (chunks.length > CLAIM_CHUNK_LIMIT) {
-    throw new Error('Too many chunks asked about at once.');
+    throw refuse('too-many-chunks');
   }
 
   const zone = asOffset(offset);
@@ -135,7 +136,7 @@ export async function listClaimsFor(
   now: number,
 ): Promise<ChunkClaims[]> {
   if (queries.length > CLAIM_CHUNK_LIMIT) {
-    throw new Error('Too many chunks asked about at once.');
+    throw refuse('too-many-chunks');
   }
 
   const groups = new Map<

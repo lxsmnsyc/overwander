@@ -3,6 +3,7 @@ import type { Moves } from '../../data/ids/moves';
 import type { CaughtPokemon } from '../../model/caught-record';
 import { getLevelMovesBetween, nextOfferLevel } from '../../model/level-moves';
 import { type Store, createStore } from '../store';
+import describeFailure from '../../i18n/refusals';
 
 /**
  * How long the sheet waits after the last candy press before sending
@@ -239,7 +240,7 @@ export default function createCandyFeed(deps: CandyFeedDeps): CandyFeed {
         if (here()) {
           queued.update((waiting) => Math.max(0, waiting - levels));
         }
-        deps.failed(caught instanceof Error ? caught.message : String(caught));
+        deps.failed(describeFailure(caught));
       })
       .finally(() => {
         running = false;

@@ -37,6 +37,7 @@ import {
 } from '../styled';
 import createClientSignal from '../app/client-signal';
 import { formatDate } from '../../i18n/format';
+import describeFailure from '../../i18n/refusals';
 
 /**
  * Two-factor and passkeys. Nothing here is shown until the password is
@@ -55,7 +56,7 @@ function createAct(): { busy: () => boolean; wrong: () => string | null; act: Ac
     setBusy(true);
     action()
       .catch((caught: unknown) => {
-        setWrong(caught instanceof Error ? caught.message : String(caught));
+        setWrong(describeFailure(caught));
       })
       .finally(() => {
         setBusy(false);

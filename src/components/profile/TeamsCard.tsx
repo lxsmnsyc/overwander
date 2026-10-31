@@ -27,6 +27,7 @@ import {
   Row,
   Status,
 } from '../styled';
+import describeFailure from '../../i18n/refusals';
 
 /**
  * The parties a player saved for themselves.
@@ -146,7 +147,7 @@ export default function TeamsCard(props: TeamsCardProps): JSX.Element {
         Promise.resolve(refetch()).catch(() => undefined);
       })
       .catch((caught: unknown) => {
-        setStatus(caught instanceof Error ? caught.message : String(caught));
+        setStatus(describeFailure(caught));
       });
   };
 
@@ -156,7 +157,7 @@ export default function TeamsCard(props: TeamsCardProps): JSX.Element {
         Promise.resolve(refetch()).catch(() => undefined);
       })
       .catch((caught: unknown) => {
-        setStatus(caught instanceof Error ? caught.message : String(caught));
+        setStatus(describeFailure(caught));
       });
   };
 

@@ -1,7 +1,7 @@
 ---
 id: i18n-templates
 title: Built descriptions as message templates
-status: active
+status: done
 priority: should
 type: feature
 outline: false

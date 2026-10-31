@@ -27,12 +27,6 @@ export const enum Feature {
   Claims = 'claims',
 }
 
-/** What a player is told when maintenance is on and its switch names no message */
-export const MAINTENANCE_MESSAGE = 'The game is closed for maintenance. Try again soon.';
-
-/** What a player is told when one part is closed and its switch names no message */
-export const CLOSED_MESSAGE = 'This is closed for now. Try again soon.';
-
 /** Every part in the order the dashboard lists them, maintenance first */
 export const FEATURES: readonly Feature[] = [
   Feature.Everything,

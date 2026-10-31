@@ -1,3 +1,26 @@
 {
-  "$schema": "https://inlang.com/schema/inlang-message-format"
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "refusal_not_signed_in": "Not signed in",
+  "refusal_banned": "This account is banned.",
+  "refusal_closed": "This is closed for now. Try again soon.",
+  "refusal_maintenance": "The game is closed for maintenance. Try again soon.",
+  "refusal_pace": "Slow down a moment.",
+  "refusal_not_allowed": "Not allowed",
+  "refusal_invalid": "Refused: {detail}",
+  "refusal_friends_full": "Your friends list is full",
+  "refusal_friend_requests_closed": "That trainer is not taking friend requests",
+  "refusal_nobody_answers": "Nobody answers to {name}.",
+  "refusal_not_walked": "They have not walked anywhere yet.",
+  "refusal_too_many_chunks": "Too many chunks asked about at once.",
+  "refusal_list_comparison": "A list is only compared with in or nin.",
+  "refusal_confirm_password": "Confirm your password first.",
+  "refusal_gift_on_shelf": "That gift is already on the shelf.",
+  "refusal_not_yours": "That account is not yours to act on.",
+  "refusal_new_version": "A new version of the game is out. Reloading.",
+  "refusal_safari_ended": "The safari session has ended",
+  "gift_reason_starter": "A first partner, for a trainer with none.",
+  "gift_reason_starter_balls": "Something to throw at the next one.",
+  "gift_reason_quest": "Quest: {name}.",
+  "gift_reason_daily": "Daily: {name}.",
+  "gift_reason_hunt": "Hunt: {name}."
 }

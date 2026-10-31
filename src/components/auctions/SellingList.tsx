@@ -23,6 +23,7 @@ import {
   Status,
   createPager,
 } from '../styled';
+import describeFailure from '../../i18n/refusals';
 
 /**
  * What the player has put on the block, and what became of it.
@@ -169,7 +170,7 @@ export default function SellingList(props: SellingListProps): JSX.Element {
         props.onChanged();
       })
       .catch((thrown: unknown) => {
-        setStatus(thrown instanceof Error ? thrown.message : String(thrown));
+        setStatus(describeFailure(thrown));
       });
   };
 

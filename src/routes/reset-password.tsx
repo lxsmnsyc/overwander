@@ -3,6 +3,7 @@ import { type JSX, Show, createSignal } from 'solid-js';
 import { Title } from '@solidjs/meta';
 import { choosePassword } from '../auth/actions';
 import { Button, Card, Note, Status, TextField } from '../components/styled';
+import describeFailure from '../i18n/refusals';
 
 /**
  * Where a password link from staff lands: the player chooses a password
@@ -34,7 +35,7 @@ export default function ResetPasswordPage(): JSX.Element {
         setDone(true);
       })
       .catch((caught: unknown) => {
-        setWrong(caught instanceof Error ? caught.message : String(caught));
+        setWrong(describeFailure(caught));
       })
       .finally(() => {
         setBusy(false);

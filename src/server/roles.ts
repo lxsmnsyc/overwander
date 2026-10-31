@@ -4,6 +4,7 @@ import { requireUid } from './auth';
 import { getSql } from './db';
 import { asString } from './read';
 import { StaffAction, recordStaffAction } from './staff-log';
+import { refuse } from '../model/refusal';
 
 /**
  * Who is allowed to do what, decided here rather than by the screen
@@ -54,7 +55,7 @@ export async function requireStaff(token: string): Promise<string> {
   const uid = await requireUid(token);
 
   if (!isStaff(await readRole(uid))) {
-    throw new Error('Not allowed');
+    throw refuse('not-allowed');
   }
   return uid;
 }
@@ -68,7 +69,7 @@ export async function requireAdmin(token: string): Promise<string> {
   const uid = await requireUid(token);
 
   if (!runsTheGame(await readRole(uid))) {
-    throw new Error('Not allowed');
+    throw refuse('not-allowed');
   }
   return uid;
 }

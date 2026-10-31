@@ -103,6 +103,7 @@ import {
   on as following,
   onCleanup,
 } from 'solid-js';
+import describeFailure from '../../../i18n/refusals';
 
 /**
  * Re-exported from where the battle card reads them too: an ability on
@@ -487,7 +488,7 @@ export function CatchSheetBody(
         props.onChange?.();
       })
       .catch((caught: unknown) => {
-        say(caught instanceof Error ? caught.message : String(caught), 'ember');
+        say(describeFailure(caught), 'ember');
       });
   };
 
@@ -513,7 +514,7 @@ export function CatchSheetBody(
         props.onChange?.();
       })
       .catch((caught: unknown) => {
-        say(caught instanceof Error ? caught.message : String(caught), 'ember');
+        say(describeFailure(caught), 'ember');
       });
   };
 
@@ -542,7 +543,7 @@ export function CatchSheetBody(
         props.onChange?.();
       })
       .catch((thrown: unknown) => {
-        say(thrown instanceof Error ? thrown.message : String(thrown), 'ember');
+        say(describeFailure(thrown), 'ember');
       });
   };
 
@@ -559,7 +560,7 @@ export function CatchSheetBody(
         props.onBuddyChanged();
       })
       .catch((caught: unknown) => {
-        say(caught instanceof Error ? caught.message : String(caught), 'ember');
+        say(describeFailure(caught), 'ember');
       });
   };
 
@@ -585,7 +586,7 @@ export function CatchSheetBody(
         props.onChange?.();
       })
       .catch((caught: unknown) => {
-        say(caught instanceof Error ? caught.message : String(caught), 'ember');
+        say(describeFailure(caught), 'ember');
       });
   };
 
@@ -653,7 +654,7 @@ export function CatchSheetBody(
           settleFusion(species, 'They came apart.');
         })
         .catch((caught: unknown) => {
-          say(caught instanceof Error ? caught.message : String(caught), 'ember');
+          say(describeFailure(caught), 'ember');
         });
       return;
     }
@@ -696,7 +697,7 @@ export function CatchSheetBody(
         props.onChange?.();
       })
       .catch((caught: unknown) => {
-        say(caught instanceof Error ? caught.message : String(caught), 'ember');
+        say(describeFailure(caught), 'ember');
       });
   };
 
@@ -713,7 +714,7 @@ export function CatchSheetBody(
         props.onChange?.();
       })
       .catch((caught: unknown) => {
-        say(caught instanceof Error ? caught.message : String(caught), 'ember');
+        say(describeFailure(caught), 'ember');
       });
   };
 
@@ -771,7 +772,7 @@ export function CatchSheetBody(
       })
       .catch((caught: unknown) => {
         setRenaming(false);
-        say(caught instanceof Error ? caught.message : String(caught), 'ember');
+        say(describeFailure(caught), 'ember');
       });
   };
 
@@ -864,7 +865,7 @@ export function CatchSheetBody(
       })
       .catch((caught: unknown) => {
         setReleasing(false);
-        say(caught instanceof Error ? caught.message : String(caught), 'ember');
+        say(describeFailure(caught), 'ember');
       });
   };
 
@@ -976,7 +977,7 @@ export function CatchSheetBody(
         }
       })
       .catch((caught: unknown) => {
-        say(caught instanceof Error ? caught.message : String(caught), 'ember');
+        say(describeFailure(caught), 'ember');
       });
   };
 
@@ -1769,7 +1770,7 @@ export function CatchSheetBody(
               settleFusion(species, 'The two are one.');
             })
             .catch((caught: unknown) => {
-              say(caught instanceof Error ? caught.message : String(caught), 'ember');
+              say(describeFailure(caught), 'ember');
             });
         }}
       />

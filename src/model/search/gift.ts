@@ -3,6 +3,7 @@ import type { QueryVocabulary } from '../../core/query';
 import { alternatives, askedTerms, holds, parseControls, within } from '../../core/query';
 import { getItemData } from '../../data/items';
 import { getSpeciesData } from '../../data/species';
+import describeGiftReason from '../../i18n/gift-reasons';
 
 /**
  * What a search box over the gift ledger can be asked.
@@ -87,7 +88,7 @@ const FIELDS = new Map<string, GiftField>(
     name: (gift, value) => holds(describeGiftName(gift), value),
     // The sentence the card carries, which is where a distribution
     // says what it was for
-    reason: (gift, value) => holds(gift.reason, value),
+    reason: (gift, value) => holds(describeGiftReason(gift.reason), value),
     level: (gift, value) => {
       const pokemon = given(gift);
 
@@ -116,7 +117,7 @@ export default function matchesGift(
     const answered =
       term.field === ''
         ? holds(describeGiftName(gift), term.value) ||
-          holds(gift.reason, term.value) ||
+          holds(describeGiftReason(gift.reason), term.value) ||
           holds(context.recipient ?? 'everybody', term.value)
         : FIELDS.get(term.field)?.(gift, term.value, context) === true;
 

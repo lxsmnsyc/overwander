@@ -40,6 +40,7 @@ import challengerOf, {
 import { type EggSource, type EggState, stateOf } from './journey';
 import type { BoardWalk } from './walk';
 import type { BoardWindows } from './windows';
+import describeFailure from '../../i18n/refusals';
 
 /** An egg the player has been offered, and where */
 export interface EggOffer {
@@ -551,7 +552,7 @@ export default function createBoardInteractions(deps: InteractDeps): BoardIntera
         }
       })
       .catch((caught: unknown) => {
-        deps.remark(caught instanceof Error ? caught.message : String(caught), 'ember');
+        deps.remark(describeFailure(caught), 'ember');
       })
       .finally(() => {
         busy.set(false);
@@ -595,7 +596,7 @@ export default function createBoardInteractions(deps: InteractDeps): BoardIntera
       })
       .catch((caught: unknown) => {
         taking.set(false);
-        deps.remark(caught instanceof Error ? caught.message : String(caught), 'ember');
+        deps.remark(describeFailure(caught), 'ember');
       });
   };
 
@@ -635,7 +636,7 @@ export default function createBoardInteractions(deps: InteractDeps): BoardIntera
           session.set(opened);
         })
         .catch((caught: unknown) => {
-          deps.remark(caught instanceof Error ? caught.message : String(caught), 'ember');
+          deps.remark(describeFailure(caught), 'ember');
         });
     },
   };

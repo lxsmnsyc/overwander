@@ -7,6 +7,7 @@ import { twoFactor } from 'better-auth/plugins/two-factor';
 import { Pool } from 'pg';
 import { securityUnlocked } from './security';
 import { createProfile } from './profile';
+import { refuse } from '../model/refusal';
 
 /**
  * Accounts, sessions and sign-in, run by this server with Better Auth.
@@ -124,7 +125,7 @@ function createAuth() {
         const session = await getSessionFromCtx(ctx);
 
         if (session == null || !(await securityUnlocked(session.user.id))) {
-          throw new APIError('FORBIDDEN', { message: 'Confirm your password first.' });
+          throw new APIError('FORBIDDEN', { message: refuse('confirm-password').message });
         }
       }),
     },

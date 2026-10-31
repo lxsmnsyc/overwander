@@ -13,6 +13,7 @@ import { answered } from '../../../app/resource-reads';
 import { BoxIcon } from '../../../icons';
 import { Dialog, Menu, type MenuAction } from '../../../styled';
 import BoxForm from '../../catches-list/box-form';
+import describeFailure from '../../../../i18n/refusals';
 
 /**
  * Which box a pokemon is filed in, beside its name, and the menu that
@@ -55,7 +56,7 @@ export default function BoxChip(props: BoxChipProps): JSX.Element {
   };
 
   const failed = (caught: unknown): void => {
-    props.onFailed(caught instanceof Error ? caught.message : String(caught));
+    props.onFailed(describeFailure(caught));
   };
 
   const move = (box: string | null, name: string): void => {

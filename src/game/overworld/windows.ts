@@ -23,6 +23,7 @@ import {
   runningWindows,
   viewChunks,
 } from './board-view';
+import describeFailure from '../../i18n/refusals';
 
 /**
  * What each claim list answered, by player, list, chunk and window.
@@ -167,7 +168,7 @@ export default function createBoardWindows(deps: WindowsDeps): BoardWindows {
         hold((held) => new Map(held).set(key, { x: cx, y: cy, record }));
       })
       .catch((caught: unknown) => {
-        deps.failed(caught instanceof Error ? caught.message : String(caught));
+        deps.failed(describeFailure(caught));
       })
       .finally(() => {
         visiting.delete(key);

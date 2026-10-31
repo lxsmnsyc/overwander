@@ -25,6 +25,7 @@ import {
 import { isUltraBeast } from '../../data/species/ultra-beasts';
 import Phenomenon from '../../data/overworld/phenomenon';
 import { type Encounter, EncounterType, isRaidEncounter } from '../encounter';
+import { refuse } from '../../model/refusal';
 
 export const enum SafariState {
   Active = 0,
@@ -894,7 +895,7 @@ export default class SafariSession<
 
   private assertActive(): void {
     if (this.state !== SafariState.Active) {
-      throw new Error('The safari session has ended');
+      throw refuse('safari-ended');
     }
   }
 }

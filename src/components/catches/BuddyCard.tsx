@@ -19,6 +19,7 @@ import CatchPicker from './catch-picker';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import { Badge, Button, Meta, Note, Row, Status } from '../styled';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
+import describeFailure from '../../i18n/refusals';
 
 /**
  * Who is walking with the player.
@@ -158,7 +159,7 @@ function BuddyBody(
         props.onChosen();
       })
       .catch((failed: unknown) => {
-        setStatus(failed instanceof Error ? failed.message : String(failed));
+        setStatus(describeFailure(failed));
       });
   };
 

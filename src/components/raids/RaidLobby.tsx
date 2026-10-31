@@ -64,6 +64,7 @@ import {
 import watchLive from '../app/watch';
 import { useGame } from '../app/game-context';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
+import describeFailure from '../../i18n/refusals';
 
 export interface RaidLobbyProps {
   user: PlayerIdentity;
@@ -429,7 +430,7 @@ function LobbyRows(
         setStatus(result == null ? failure : null);
       })
       .catch((caught: unknown) => {
-        setStatus(caught instanceof Error ? caught.message : String(caught));
+        setStatus(describeFailure(caught));
       });
   };
 

@@ -31,6 +31,7 @@ import { Button, DialogActions, Meta, Note, Status } from '../styled';
 import playEffect, { Effect } from '../app/sound';
 import { type FormProps, defineForm } from './form';
 import { openForm } from './stack';
+import describeFailure from '../../i18n/refusals';
 
 /**
  * Teaching one move to one pokemon.
@@ -137,7 +138,7 @@ function TeachBody(
       })
       .catch((thrown: unknown) => {
         setBusy(false);
-        setStatus(thrown instanceof Error ? thrown.message : String(thrown));
+        setStatus(describeFailure(thrown));
       });
   };
 

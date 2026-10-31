@@ -38,6 +38,7 @@ import describeWhere from '../../overworld/bearing';
 import { CostBadge, CounterStep, CounterTerms, HeadingPortrait } from '../forms/terms';
 import { failed, readable } from '../app/resource-reads';
 import playEffect, { Effect } from '../app/sound';
+import describeFailure from '../../i18n/refusals';
 
 /** The portal beside the heading */
 const PORTAL_SPRITE = 28;
@@ -180,7 +181,7 @@ function PortalBody(
       .catch((caught: unknown) => {
         setBusy(false);
         toast.push({
-          message: caught instanceof Error ? caught.message : String(caught),
+          message: describeFailure(caught),
           tone: 'ember',
         });
       });

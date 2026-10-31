@@ -19,6 +19,7 @@ import ItemSprite from '../items/ItemSprite';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import { Button, Dialog, DialogActions, Field, Meta, Note, Row, Status } from '../styled';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
+import describeFailure from '../../i18n/refusals';
 
 /**
  * Putting one thing on the block — a pokemon, or a single item out of
@@ -160,7 +161,7 @@ function ListingBody(
       .catch((thrown: unknown) => {
         setBusy(false);
         setConfirming(false);
-        setStatus(thrown instanceof Error ? thrown.message : String(thrown));
+        setStatus(describeFailure(thrown));
       });
   };
 

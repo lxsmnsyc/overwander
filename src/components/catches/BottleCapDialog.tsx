@@ -18,6 +18,7 @@ import { getSpeciesData } from '../../data/species';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import { Button, Dialog, DialogActions, Note, RadioGroup, Status } from '../styled';
 import { describeIVs } from './catch-dialog/describe';
+import describeFailure from '../../i18n/refusals';
 
 /**
  * Spending a Bottle Cap on the stat the player picks. Nothing leaves
@@ -111,7 +112,7 @@ function CapBody(
       })
       .catch((thrown: unknown) => {
         setBusy(false);
-        setStatus(thrown instanceof Error ? thrown.message : String(thrown));
+        setStatus(describeFailure(thrown));
       });
   };
 

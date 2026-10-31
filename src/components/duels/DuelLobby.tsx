@@ -46,6 +46,7 @@ import { PickTeamForm } from '../forms/pick-team';
 import watchLive from '../app/watch';
 import { Button, DialogActions, Meta, Note, Status } from '../styled';
 import { useGame } from '../app/game-context';
+import describeFailure from '../../i18n/refusals';
 
 export interface DuelLobbyProps {
   user: PlayerIdentity;
@@ -214,7 +215,7 @@ function LobbyRows(
         setStatus(result === false || result == null ? failure : null);
       })
       .catch((caught: unknown) => {
-        setStatus(caught instanceof Error ? caught.message : String(caught));
+        setStatus(describeFailure(caught));
       })
       .finally(() => {
         setBusy(false);

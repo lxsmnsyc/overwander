@@ -9,6 +9,7 @@ import createClientSignal from '../../app/client-signal';
 import { useGame } from '../../app/game-context';
 import { answered } from '../../app/resource-reads';
 import { Button, List, ListRow, Meta, useToast } from '../../styled';
+import describeFailure from '../../../i18n/refusals';
 
 /** What a refused take-back says, by why */
 const REFUSED: Record<string, string> = {
@@ -60,7 +61,7 @@ export function createReleased(): Released {
       })
       .catch((caught: unknown) => {
         toast.push({
-          message: caught instanceof Error ? caught.message : String(caught),
+          message: describeFailure(caught),
           tone: 'ember',
         });
       })

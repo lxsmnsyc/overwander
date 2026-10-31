@@ -47,6 +47,7 @@ import {
   type ToastTone,
   useToast,
 } from '../styled';
+import describeGiftReason from '../../i18n/gift-reasons';
 
 /**
  * What the game is holding for the player, and the taking of it.
@@ -375,7 +376,7 @@ function GiftShelf(props: {
               ],
         card: () => (
           <>
-            <Meta>{gift.reason}</Meta>
+            <Meta>{describeGiftReason(gift.reason)}</Meta>
             <Show when={note}>{(said) => <Meta>{said()}</Meta>}</Show>
           </>
         ),
@@ -420,7 +421,7 @@ function GiftShelf(props: {
                 {/* The box's own card, reading the gift as the record
                     it is about to become */}
                 <CatchCard caught={asPreview(row().gift)} />
-                <Meta>{row().gift.reason}</Meta>
+                <Meta>{describeGiftReason(row().gift.reason)}</Meta>
                 <Show when={row().note}>{(said) => <Meta>{said()}</Meta>}</Show>
               </div>
             )}

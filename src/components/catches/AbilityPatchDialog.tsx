@@ -21,6 +21,7 @@ import { getSpeciesData } from '../../data/species';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import { Button, Dialog, DialogActions, Meta, Note, Status } from '../styled';
 import playEffect, { Effect } from '../app/sound';
+import describeFailure from '../../i18n/refusals';
 
 /**
  * Spending an Ability Patch on one pokemon.
@@ -150,7 +151,7 @@ function PatchBody(
       })
       .catch((thrown: unknown) => {
         setBusy(false);
-        setStatus(thrown instanceof Error ? thrown.message : String(thrown));
+        setStatus(describeFailure(thrown));
       });
   };
 

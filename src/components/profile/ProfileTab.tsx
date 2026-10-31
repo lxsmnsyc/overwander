@@ -56,6 +56,7 @@ import {
   TabPane,
 } from '../styled';
 import { formatNumber } from '../../i18n/format';
+import describeFailure from '../../i18n/refusals';
 
 /**
  * The tier the wearer stands at on the worn title's line, read off
@@ -276,7 +277,7 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
   const leave = (): void => {
     setError(null);
     signOut().catch((caught: unknown) => {
-      setError(caught instanceof Error ? caught.message : String(caught));
+      setError(describeFailure(caught));
     });
   };
 
@@ -308,7 +309,7 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
         game.setDialog(GameDialog.Battles);
       })
       .catch((caught: unknown) => {
-        setError(caught instanceof Error ? caught.message : String(caught));
+        setError(describeFailure(caught));
       })
       .finally(() => {
         setStaging(false);

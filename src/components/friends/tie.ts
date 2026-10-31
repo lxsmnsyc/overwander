@@ -9,6 +9,7 @@ import {
   sendFriendRequest,
   unblockPlayer,
 } from '../../auth/friends';
+import describeFailure from '../../i18n/refusals';
 
 /** The one press each standing offers */
 const PRESS: Record<FriendTie, (uid: string) => Promise<FriendTie>> = {
@@ -106,7 +107,7 @@ export default function createFriendTie(
         setTie(now);
       })
       .catch((caught: unknown) => {
-        setError(caught instanceof Error ? caught.message : String(caught));
+        setError(describeFailure(caught));
       })
       .finally(() => {
         setBusy(false);

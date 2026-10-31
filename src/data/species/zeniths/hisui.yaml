@@ -1,0 +1,142 @@
+# The Zeniths of the pokemon this stretch of the dex holds, keyed by
+# species, in the order the dex meets their pokemon, then the Hisuian
+# finals of older lines. Each fights 100 above its pokemon's base stat
+# total with its HP untouched, held to by a test, and wears an
+# `ability` the line can never be born with. Everything not written
+# here is read off `base`.
+
+# The orbs in its antlers bend the space around it into a psychic field
+WyrdeerZenith:
+  base: Wyrdeer
+  stats: { HP: 103, Attack: 115, Defense: 92, SpecialAttack: 145, SpecialDefense: 95, Speed: 75 }
+  types: [Normal, Psychic]
+  ability: PsychicSurge
+  shard: WyrdeerZenithShard
+
+# It hacks again and again with both stone axes
+KleavorZenith:
+  base: Kleavor
+  stats: { HP: 70, Attack: 165, Defense: 110, SpecialAttack: 45, SpecialDefense: 80, Speed: 130 }
+  types: [Bug, Rock]
+  ability: SkillLink
+  shard: KleavorZenithShard
+
+# A winter of fattening up shrugs off fire and ice
+UrsalunaZenith:
+  base: Ursaluna
+  stats: { HP: 130, Attack: 170, Defense: 125, SpecialAttack: 45, SpecialDefense: 110, Speed: 70 }
+  types: [Ground, Normal]
+  ability: ThickFat
+  shard: UrsalunaZenithShard
+  forms:
+    UrsalunaBloodmoonZenith:
+      base: UrsalunaBloodmoon
+      stats: { HP: 113, Attack: 70, Defense: 140, SpecialAttack: 175, SpecialDefense: 95, Speed: 62 }
+
+# It carries the souls of its fallen school, and each fallen teammate adds to its blows
+BasculegionZenith:
+  base: Basculegion
+  stats: { HP: 120, Attack: 142, Defense: 80, SpecialAttack: 90, SpecialDefense: 90, Speed: 108 }
+  types: [Water, Ghost]
+  ability: SupremeOverlord
+  shard: BasculegionZenithShard
+  forms:
+    BasculegionFemaleZenith:
+      base: BasculegionFemale
+      stats: { HP: 120, Attack: 102, Defense: 80, SpecialAttack: 130, SpecialDefense: 90, Speed: 108 }
+
+# The hooked claws it climbs cliffs with tear into whatever they touch
+SneaslerZenith:
+  base: Sneasler
+  stats: { HP: 80, Attack: 170, Defense: 80, SpecialAttack: 40, SpecialDefense: 90, Speed: 150 }
+  types: [Fighting, Poison]
+  ability: ToughClaws
+  shard: SneaslerZenithShard
+
+# It sheds its toxic spines on whatever strikes it
+OverqwilZenith:
+  base: Overqwil
+  stats: { HP: 85, Attack: 125, Defense: 135, SpecialAttack: 65, SpecialDefense: 95, Speed: 105 }
+  types: [Dark, Poison]
+  ability: ToxicDebris
+  shard: OverqwilZenithShard
+
+# The castle's guardian charges headlong
+ArcanineHisuiZenith:
+  base: ArcanineHisui
+  stats: { HP: 95, Attack: 150, Defense: 90, SpecialAttack: 95, SpecialDefense: 90, Speed: 135 }
+  types: [Fire, Rock]
+  ability: Reckless
+  shard: ArcanineHisuiZenithShard
+
+# An Apricorn packed with stored current
+ElectrodeHisuiZenith:
+  base: ElectrodeHisui
+  stats: { HP: 60, Attack: 50, Defense: 80, SpecialAttack: 130, SpecialDefense: 90, Speed: 180 }
+  types: [Electric, Grass]
+  ability: Transistor
+  shard: ElectrodeHisuiZenithShard
+
+# Its flames are spirit as much as fire
+TyphlosionHisuiZenith:
+  base: TyphlosionHisui
+  stats: { HP: 73, Attack: 84, Defense: 88, SpecialAttack: 154, SpecialDefense: 95, Speed: 140 }
+  types: [Fire, Ghost]
+  ability: Adaptability
+  shard: TyphlosionHisuiZenithShard
+
+# A ruthless swordsman who draws its seamitar first
+SamurottHisuiZenith:
+  base: SamurottHisui
+  stats: { HP: 90, Attack: 143, Defense: 90, SpecialAttack: 100, SpecialDefense: 80, Speed: 125 }
+  types: [Water, Dark]
+  ability: QuickDraw
+  shard: SamurottHisuiZenithShard
+
+# The mountain dancer copies every dance it sees
+LilligantHisuiZenith:
+  base: LilligantHisui
+  stats: { HP: 70, Attack: 135, Defense: 85, SpecialAttack: 50, SpecialDefense: 85, Speed: 155 }
+  types: [Grass, Fighting]
+  ability: Dancer
+  shard: LilligantHisuiZenithShard
+
+# A trickster fox whose tricks come first
+ZoroarkHisuiZenith:
+  base: ZoroarkHisui
+  stats: { HP: 55, Attack: 100, Defense: 80, SpecialAttack: 155, SpecialDefense: 80, Speed: 140 }
+  types: [Normal, Ghost]
+  ability: Prankster
+  shard: ZoroarkHisuiZenithShard
+
+# Its battle cry rides the wind
+BraviaryHisuiZenith:
+  base: BraviaryHisui
+  stats: { HP: 110, Attack: 83, Defense: 80, SpecialAttack: 152, SpecialDefense: 90, Speed: 95 }
+  types: [Psychic, Flying]
+  ability: Aerilate
+  shard: BraviaryHisuiZenithShard
+
+# Its metal shell takes the edge off the blows that should hurt most
+GoodraHisuiZenith:
+  base: GoodraHisui
+  stats: { HP: 80, Attack: 110, Defense: 130, SpecialAttack: 130, SpecialDefense: 170, Speed: 80 }
+  types: [Steel, Dragon]
+  ability: Filter
+  shard: GoodraHisuiZenithShard
+
+# The glacier on its back halves special hits
+AvaluggHisuiZenith:
+  base: AvaluggHisui
+  stats: { HP: 95, Attack: 137, Defense: 184, SpecialAttack: 34, SpecialDefense: 86, Speed: 78 }
+  types: [Ice, Rock]
+  ability: IceScales
+  shard: AvaluggHisuiZenithShard
+
+# The ronin archer's aim makes every critical hit count
+DecidueyeHisuiZenith:
+  base: DecidueyeHisui
+  stats: { HP: 88, Attack: 152, Defense: 90, SpecialAttack: 95, SpecialDefense: 105, Speed: 100 }
+  types: [Grass, Fighting]
+  ability: Sniper
+  shard: DecidueyeHisuiZenithShard

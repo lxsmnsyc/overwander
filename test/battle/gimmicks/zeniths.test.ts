@@ -248,6 +248,55 @@ describe('Zeniths', () => {
     expect(darmanitan.species).toBe(Species.DarmanitanGalarZenith);
   });
 
+  it('shifts a Terapagos Zenith into its Terastal Zenith as it arrives', () => {
+    const { battle, teamA } = createBattle();
+    const terapagos = createUnit(battle, teamA);
+    terapagos.setSpecies(Species.Terapagos);
+    terapagos.addAbility(Abilities.TeraShift);
+    terapagos.addItem(Items.TerapagosZenithShard);
+
+    terapagos.enter();
+
+    expect(terapagos.species).toBe(Species.TerapagosTerastalZenith);
+    expect(terapagos.hasAbility(Abilities.MirrorArmor)).toBe(true);
+  });
+
+  it('brings a Palafin Zenith back from a switch as its Hero Zenith', () => {
+    const { battle, teamA } = createBattle();
+    const palafin = createUnit(battle, teamA);
+    palafin.setSpecies(Species.Palafin);
+    palafin.addAbility(Abilities.ZeroToHero);
+    palafin.addItem(Items.PalafinZenithShard);
+
+    palafin.enter();
+
+    expect(palafin.species).toBe(Species.PalafinZenith);
+
+    palafin.leave();
+    palafin.enter();
+
+    expect(palafin.species).toBe(Species.PalafinHeroZenith);
+    expect(palafin.hasAbility(Abilities.Moxie)).toBe(true);
+  });
+
+  it('gives each Paldean Tauros breed its own shape of the one Zenith', () => {
+    const { battle, teamA, teamB } = createBattle();
+    const blaze = createUnit(battle, teamA);
+    const aqua = createUnit(battle, teamB);
+    blaze.setSpecies(Species.TaurosPaldeaBlaze);
+    blaze.addItem(Items.TaurosPaldeaZenithShard);
+    aqua.setSpecies(Species.TaurosPaldeaAqua);
+    aqua.addItem(Items.TaurosPaldeaZenithShard);
+
+    blaze.enter();
+    aqua.enter();
+
+    expect(blaze.species).toBe(Species.TaurosPaldeaBlazeZenith);
+    expect([...blaze.types]).toEqual([Types.Fighting, Types.Fire]);
+    expect(aqua.species).toBe(Species.TaurosPaldeaAquaZenith);
+    expect(aqua.hasAbility(Abilities.RockHead)).toBe(true);
+  });
+
   it("gives a Calyrex Zenith on either steed that steed's own shape", () => {
     const { battle, teamA, teamB } = createBattle();
     const ice = createUnit(battle, teamA);

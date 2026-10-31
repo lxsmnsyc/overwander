@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import describeDate, { describeMoment } from '../../src/core/dates';
 import { formatDate, formatMoment, formatNumber, formatRelative } from '../../src/i18n/format';
-import { currentLocale, intlTag } from '../../src/i18n/locale';
+import { currentLocale, getIntlTag } from '../../src/i18n/locale';
 
 /**
  * Numbers and dates in the active locale. Outside a request the locale
@@ -16,7 +16,7 @@ const DAY = 24 * 60 * MINUTE;
 describe('the formatters', () => {
   it('start in English', () => {
     expect(currentLocale()).toBe('en');
-    expect(intlTag()).toBe('en-GB');
+    expect(getIntlTag()).toBe('en-GB');
   });
 
   it('group numbers', () => {

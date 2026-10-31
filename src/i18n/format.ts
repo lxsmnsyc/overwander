@@ -1,4 +1,4 @@
-import { intlTag } from './locale';
+import { getIntlTag } from './locale';
 
 /**
  * Numbers and dates in the active locale. Every number and date a
@@ -23,8 +23,9 @@ const dates = new Map<string, Intl.DateTimeFormat>();
 const moments = new Map<string, Intl.DateTimeFormat>();
 const relatives = new Map<string, Intl.RelativeTimeFormat>();
 
-function reuse<F>(cache: Map<string, F>, build: (tag: string) => F): F {
-  const tag = intlTag();
+function reuseFormatter<F>(cache: Map<string, F>, build: (tag: string) => F): F {
+  // One formatter per locale tag, built the first time it is asked for
+  const tag = getIntlTag();
   let formatter = cache.get(tag);
 
   if (formatter == null) {
@@ -36,17 +37,17 @@ function reuse<F>(cache: Map<string, F>, build: (tag: string) => F): F {
 
 /** A count or an amount, grouped: "12,500" */
 export function formatNumber(value: number): string {
-  return reuse(numbers, (tag) => new Intl.NumberFormat(tag)).format(value);
+  return reuseFormatter(numbers, (tag) => new Intl.NumberFormat(tag)).format(value);
 }
 
 /** A calendar date: "12 Aug 2026" */
 export function formatDate(at: number | Date): string {
-  return reuse(dates, (tag) => new Intl.DateTimeFormat(tag, DATE)).format(at);
+  return reuseFormatter(dates, (tag) => new Intl.DateTimeFormat(tag, DATE)).format(at);
 }
 
 /** A date with the time of day: "12 Aug 2026, 14:05" */
 export function formatMoment(at: number | Date): string {
-  return reuse(moments, (tag) => new Intl.DateTimeFormat(tag, MOMENT)).format(at);
+  return reuseFormatter(moments, (tag) => new Intl.DateTimeFormat(tag, MOMENT)).format(at);
 }
 
 /**
@@ -55,15 +56,16 @@ export function formatMoment(at: number | Date): string {
  * a half minutes is "60 minutes ago"
  */
 export function formatRelative(at: number | Date, now = Date.now()): string {
+  // Past distances are negative, so a gap of none still reads as past
   const gap = (typeof at === 'number' ? at : at.getTime()) - now;
   const size = Math.abs(gap);
-  const relative = reuse(
+  const sign = gap > 0 ? 1 : -1;
+  const relative = reuseFormatter(
     relatives,
     (tag) => new Intl.RelativeTimeFormat(tag, { numeric: 'always' }),
   );
-  // Past distances are negative, so a gap of none still reads as past
-  const sign = gap > 0 ? 1 : -1;
 
+  // The largest unit the distance fills, rounded to the nearest whole one
   if (size < MINUTE) {
     return relative.format(sign * Math.round(size / 1000), 'second');
   }

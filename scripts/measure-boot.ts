@@ -40,7 +40,8 @@ const CLIENT_ENTRY = 'src/entry-client.tsx';
 
 const sizes = new Map<string, Size>();
 
-function measure(file: string): Size {
+function measureFile(file: string): Size {
+  // Each file is read and compressed once, however many lists it is in
   let size = sizes.get(file);
 
   if (size == null) {
@@ -56,7 +57,7 @@ function measure(file: string): Size {
   return size;
 }
 
-function add(total: Size, size: Size): void {
+function addSize(total: Size, size: Size): void {
   total.raw += size.raw;
   total.gzip += size.gzip;
   total.brotli += size.brotli;
@@ -66,31 +67,32 @@ function sumFiles(files: Iterable<string>): Size {
   const total = { raw: 0, gzip: 0, brotli: 0 };
 
   for (const file of files) {
-    add(total, measure(file));
+    addSize(total, measureFile(file));
   }
   return total;
 }
 
-function kib(bytes: number): string {
+function formatKib(bytes: number): string {
   return `${(bytes / 1024).toFixed(1)} KiB`;
 }
 
-function row(size: Size, label: string): string {
-  return `${kib(size.raw).padStart(12)} ${kib(size.gzip).padStart(12)} ${kib(size.brotli).padStart(12)}  ${label}`;
+function formatRow(size: Size, label: string): string {
+  return `${formatKib(size.raw).padStart(12)} ${formatKib(size.gzip).padStart(12)} ${formatKib(size.brotli).padStart(12)}  ${label}`;
 }
 
-/** Every file a chunk loads at once: its own, its CSS, and the same for each static import */
 function collectStatic(
   manifest: Manifest,
   key: string,
   files: Set<string>,
   seen: Set<string>,
 ): void {
+  // A chunk two others import is counted once
   if (seen.has(key)) {
     return;
   }
   seen.add(key);
 
+  // The chunk's own file and its CSS load with it
   const chunk = manifest[key];
 
   if (chunk == null) {
@@ -100,13 +102,15 @@ function collectStatic(
   for (const css of chunk.css ?? []) {
     files.add(css);
   }
+
+  // And so does everything it imports statically, all the way down
   for (const imported of chunk.imports ?? []) {
     collectStatic(manifest, imported, files, seen);
   }
 }
 
-/** The manifest key of a route file, which SolidStart suffixes with its query */
 function findRoute(manifest: Manifest, route: string): string {
+  // SolidStart keys a route by its file with a query after it
   const prefix = `src/routes/${route}?`;
 
   for (const key of Object.keys(manifest)) {
@@ -118,12 +122,13 @@ function findRoute(manifest: Manifest, route: string): string {
 }
 
 function main(): void {
+  // The manifest of the last build
   if (!existsSync(MANIFEST)) {
     throw new Error(`No ${MANIFEST}: run \`pnpm build\` first`);
   }
 
-  const parsed: unknown = JSON.parse(readFileSync(MANIFEST, 'utf8'));
   // The build wrote it, in Vite's manifest shape
+  const parsed: unknown = JSON.parse(readFileSync(MANIFEST, 'utf8'));
   // oxlint-disable-next-line typescript/no-unsafe-type-assertion
   const manifest = parsed as Manifest;
   const route = process.argv[2] ?? 'index.tsx';
@@ -136,18 +141,19 @@ function main(): void {
   collectStatic(manifest, CLIENT_ENTRY, startup, seen);
   collectStatic(manifest, routeKey, startup, seen);
 
+  // Printed largest first, then the total
   const ordered = [...startup];
 
-  ordered.sort((a, b) => measure(b).raw - measure(a).raw);
+  ordered.sort((a, b) => measureFile(b).raw - measureFile(a).raw);
 
   const header = `${'raw'.padStart(12)} ${'gzip'.padStart(12)} ${'brotli'.padStart(12)}  file`;
 
   console.log(`Startup for src/routes/${route}: ${startup.size} files\n`);
   console.log(header);
   for (const file of ordered) {
-    console.log(row(measure(file), file));
+    console.log(formatRow(measureFile(file), file));
   }
-  console.log(row(sumFiles(startup), 'total'));
+  console.log(formatRow(sumFiles(startup), 'total'));
 
   // What each dynamic import made from the startup set adds once it is
   // asked for. Other routes are left out: they are other pages
@@ -178,7 +184,7 @@ function main(): void {
     }
     rows.sort((a, b) => b.size.raw - a.size.raw);
     for (const { size, label } of rows) {
-      console.log(row(size, label));
+      console.log(formatRow(size, label));
     }
   }
 }

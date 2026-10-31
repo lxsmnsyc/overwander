@@ -1,7 +1,7 @@
 ---
 id: zenith-johto-galar
 title: Zeniths for Johto through Galar
-status: active
+status: done
 priority: must
 type: feature
 outline: false

@@ -1,7 +1,7 @@
 ---
 id: deps-update
 title: Update the project's dependencies
-status: todo
+status: done
 priority: should
 type: chore
 outline: false

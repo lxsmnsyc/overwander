@@ -1,7 +1,7 @@
 ---
 id: zenith-paldea
 title: Zeniths for Paldea and the Paldean finals
-status: todo
+status: done
 priority: must
 type: feature
 outline: false
@@ -40,15 +40,15 @@ Batch 9 of the Zenith plan: 59 Paldea Zeniths (Ogerpon with a shape per mask), t
 
 ## Steps
 
-- [ ] Proposals 4 at a time, as in zenith-hisui.
-- [ ] Data, shards, tints, generated sheet, ids.
-- [ ] Add `Regions.Paldea` to the finished set; regional finals are now all covered.
-- [ ] Release page, minor changeset, strategy table. The plan is finished: delete `docs/strategy/zeniths.md` and move anything left waiting to the inbox.
+- [x] Proposals 4 at a time, as in zenith-hisui.
+- [x] Data, shards, tints, generated sheet, ids.
+- [x] Add `Regions.Paldea` to the finished set; regional finals are now all covered.
+- [x] Release page, minor changeset, strategy table. The plan is finished: delete `docs/strategy/zeniths.md` and move anything left waiting to the inbox.
 
 ## Acceptance
 
-- [ ] Gap test lists nothing missing for any region.
-- [ ] Fast check passes: `pnpm exec vitest run test/data test/battle/gimmicks/zeniths.test.ts`
+- [x] Gap test lists nothing missing for any region.
+- [x] Fast check passes: `pnpm exec vitest run test/data test/battle/gimmicks/zeniths.test.ts`
 
 ## Sizing
 

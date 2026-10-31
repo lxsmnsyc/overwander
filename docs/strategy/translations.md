@@ -1,6 +1,6 @@
 # Translation strategy
 
-How the game gets Japanese and Spanish beside English. This plan comes after [the Zeniths](zeniths.md), so each region's Zenith names are in English already when it starts.
+How the game gets Japanese and Spanish beside English. This plan comes after the Zeniths, which are all in, so each region's Zenith names are in English already when it starts.
 
 ## Where things stand
 

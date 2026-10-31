@@ -1,7 +1,7 @@
 ---
 id: zenith-hisui
 title: Zeniths for Hisui and the Hisuian finals
-status: todo
+status: done
 priority: must
 type: feature
 outline: false

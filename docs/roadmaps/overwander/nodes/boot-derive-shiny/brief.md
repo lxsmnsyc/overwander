@@ -1,7 +1,7 @@
 ---
 id: boot-derive-shiny
 title: Read shininess without deriving the encounter
-status: todo
+status: done
 priority: should
 type: refactor
 outline: false

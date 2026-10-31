@@ -41,7 +41,10 @@ frame) and Okidogi (the Loyal Three's).
       Gigantamax. Galarian Zen Darmanitan, Cramorant Gulping and Gorging, Morpeko
       Hangry, Calyrex Ice and Shadow Rider, Oinkologne's female and
       Three-Segment Dudunsparce are registered and wait only for their sheets.
-- [ ] Mr. Rime's Zenith, once Mr. Rime is in.
+- [ ] Zeniths for every line above and every final stage below, once each is
+      built, Mr. Rime's included. The Zenith plan is finished and deleted; its
+      rules are held by `test/data/zeniths.test.ts`, and the plan itself is in
+      `git show 061577f96:docs/strategy/zeniths.md`.
 - [ ] Falinks' own sheet, which retires its Brass stand-in and hidden id.
 - [ ] Mimicry, with Galarian Stunfisk.
 

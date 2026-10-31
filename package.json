@@ -23,6 +23,7 @@
     "sound-stamps": "node scripts/sound/stamps.ts",
     "typecheck": "node scripts/i18n/compile.ts && tsc --noEmit --runExternalCode",
     "i18n": "node scripts/i18n/compile.ts",
+    "measure-boot": "node scripts/measure-boot.ts",
     "test": "vitest run",
     "test:db": "vitest run --config vitest.db.ts",
     "test:e2e": "playwright test",

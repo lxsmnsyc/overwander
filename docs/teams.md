@@ -2,13 +2,20 @@
 
 Six teams: PvP and raids, each without legendaries, with legendaries, and with mythicals.
 Every species, move, ability and item below was checked against the registries in
-`src/data`.
+`src/data`. A team gets one Mega, one Zenith, one Z-Move, one Dynamax and one Tera, and
+each row says which of them it takes.
 
 ## How to read a row
 
 - Moves are eight, which is the cap. The first four in bold are the ones to take first.
 - Abilities are four, which is the cap. A signature ability counts as one of the four.
 - Items are eight, which is the cap. The first one listed is the one to get first.
+- Held change says which of the five once-a-fight changes the row takes: Mega, Zenith,
+  Z-Move, Dynamax or Tera (with its Tera type). The item for it is the first item listed,
+  and the moves are already set for it. None means the row holds no change. See
+  [Held changes](#held-changes) for what each one does.
+- A team holds one of each change. A backup takes the change of the main it replaces, and
+  a backup marked None leaves that change unused while it is fielded.
 - EV priority is 252 in the first stat and 248 in the second. A catch earns 5 points a
   level and 500 by level 100, and 252 is the most one stat takes.
 - Shadow? says whether a shadow catch suits the slot.
@@ -74,15 +81,33 @@ Blissey at 12, Jirachi at 21, and Celebi and Mew at 40. Florges, Latias, Manaphy
 Diancie cannot learn it. It now sits on every Togekiss, Clefable, Blissey, Jirachi and
 Celebi row.
 
+### Held changes
+
+Five changes are held rather than pressed, and each is once a side a fight. One pokemon
+holds one change, so a team can field all five on five different pokemon.
+
+| Change | Held item | Who takes it | Where the item comes from |
+| --- | --- | --- | --- |
+| **Mega** | its own Mega Stone | the holder with the highest level, then the biggest Mega by base-stat total, then whoever stands earliest, as it takes the field | the rare band of the item pool, never sold |
+| **Zenith** | its own Zenith Shard | picked the way the Mega is, and apart from it, as it takes the field | the prized band, buried only where the line lives |
+| **Z-Move** | a Z-Crystal | the first holder to throw a matching move | the rare band, dust clouds, and a Totem's first clear |
+| **Dynamax** | a Dynamax Band | the first holder whose HP falls from half or more to under half | the rare band, dust clouds, and one Max Raid clear in ten |
+| **Tera** | a Tera Orb | the first holder to take the field | nowhere yet, see below |
+
+- A pokemon holding a Mega Stone, a Zenith Shard or a Z-Crystal never Dynamaxes or
+  Terastallizes. A Dynamax Band holder never Terastallizes. A Mega, a Zenith and their
+  holders never throw a Z-Move.
+- A form item (an orb, a Plate, the Prison Bottle, the Rusted Sword) is none of the five.
+  It leaves all of them free, but a pokemon whose shape comes from a held item has no
+  Zenith.
+- The Tera Orb is in the item registry, priced and holdable, but no cache, shelf, raid or
+  reward hands one out yet. The Tera picks below are what to do once it can be had.
+
 ### Megas
 
-- A Mega Stone is a held item, so it takes one of the eight item slots. Rayquaza needs no
-  stone, only Dragon Ascent.
-- A team Mega Evolves once per fight. The game picks the highest level first, then the
-  biggest base-stat total, then whoever stands earliest.
+- Rayquaza needs no stone, only Dragon Ascent.
 - The Mega's ability is worn on top of the catch's four. Stats and types change. Moves,
   other items and the catch's own abilities stay.
-- Stones are never sold. They sit in the rarest band of the item pool.
 - Where a line already reaches its Mega's canon ability, the Mega wears a different one
   (its `filler` in [`species/megas/`](../src/data/species/megas)).
 
@@ -90,14 +115,100 @@ Celebi row.
 | --- | --- | --- |
 | **Mega Metagross** | 80/145/150/105/110/110 | Tough Claws, and every move on its set makes contact |
 | **Mega Latias** | 80/100/120/140/150/110 | Friend Guard, which multiplies with its own Eon Shield |
+| **Mega Chandelure** | 60/75/110/175/110/90 | Cursed Body, since the line already reaches Infiltrator |
+| **Mega Heatran** | 91/120/106/175/141/67 | Solid Rock |
+| **Mega Darkrai** | 70/120/130/165/130/85 | Dark Aura, 1.33x on every Dark move on the field, the enemy's too |
+| **Mega Clefable** | 95/80/93/135/110/70, Fairy and Flying | Magic Bounce |
+| **Mega Dragonite** | 91/124/115/145/125/100 | Gale Wings, since the line already reaches Multiscale |
 | **Mega Mewtwo Y** | 106/150/70/194/120/140 | Insomnia |
 | **Mega Mewtwo X** | 106/190/100/154/100/130 | Steadfast |
 | **Mega Rayquaza** | 105/180/100/180/100/115 | Delta Stream |
 | **Mega Diancie** | 50/160/110/160/110/110 | Queenly Majesty |
 | **Mega Audino** | 103/60/126/80/126/50 | Triage, which puts every heal 3 priority brackets early |
 
-Two traps. The automatic pick reads level first, so one stone per team is the simple
-rule. Rayquaza cannot opt out once it knows Dragon Ascent.
+Mega Chandelure is the new raid Mega: 30 more Special Attack and 20 more in each defence,
+on the pokemon that already deals the most. Mega Dragonite moves 10 Attack into 45
+Special Attack, which a physical set does not want, so Dragonite takes the Tera instead.
+Mega Clefable gains Special Attack but turns Fairy and Flying, weak to Rock, Electric,
+Ice, Poison and Steel, so it stays plain.
+
+Two traps. The automatic pick reads level first, so one stone and one shard per team is
+the simple rule. Rayquaza cannot opt out once it knows Dragon Ascent.
+
+### Zeniths
+
+A Zenith is this game's own Mega for a final stage that has none. It fights 100 above its
+pokemon's base-stat total, none of it in HP, sometimes with a new type, and wears an
+ability its line can never be born with on top of the catch's four. A pokemon with a Mega
+has no Zenith, and neither does one whose shape a held item decides. On these teams that
+rules out Metagross, Latias, Mewtwo, Rayquaza, Clefable, Dragonite, Chandelure, Darkrai,
+Heatran, Diancie, Arceus, Hoopa, Tornadus, Zacian and Genesect.
+
+| Zenith | Stat line | Types | Ability it wears | What it does for the row |
+| --- | --- | --- | --- | --- |
+| **Hydreigon** | 92/105/100/160/100/143 | Dark, Dragon | Mega Launcher | Dark Pulse and Dragon Pulse hit 1.5x |
+| **Primarina** | 80/74/94/166/116/100 | Water, Fairy | Water Bubble | Liquid Voice makes Hyper Voice a Water move, so it hits 2x and still reaches the whole enemy side |
+| **Volcarona** | 85/60/85/160/120/140 | Bug, Fire | Simple | Each Quiver Dance is +2 to three stats. Every drop it takes counts double too |
+| **Breloom** | 60/161/93/60/72/114 | Grass, Fighting | Iron Fist | Drain Punch and Mach Punch hit 1.2x |
+| **Jirachi** | 100/113/125/112/125/125 | Steel, Psychic | Comatose | No status lands on it, so a raid boss's paralysis never slows Seven Wishes |
+| **Togekiss** | 85/50/113/143/133/121 | Fairy, Flying | Pixilate | Only pays with Hyper Voice. The real gain is 18 in each defence and 41 Speed |
+| **Celebi** | 100/100/125/125/125/125 | Psychic, Grass | Grassy Surge | In a raid the grass covers your own party only, and heals each grounded member 1/16 of its HP every time it acts |
+| **Blissey** | 255/10/35/100/160/80 | Normal, Fairy | Misty Surge | In a raid the mist covers your own party only, so the boss's status cannot land on your grounded five while yours still lands on it |
+| **Florges** | 78/65/118/142/154/95 | Fairy | Triage | Wish goes off a step ahead of everything else |
+| **Carbink** | 50/50/180/70/180/70 | Rock, Fairy | Stamina | +1 Defense per hit, and a raid boss hits constantly |
+| **Aegislash** | 60/50/160/50/160/120 | Steel, Ghost | Sharpness | Sacred Sword hits 1.5x, in both stances |
+| **Tyrantrum** | 82/166/119/69/74/111 | Rock, Dragon | Supreme Overlord | Up to 1.5x as teammates fall |
+| **Ribombee** | 60/55/85/130/95/139 | Bug, Fairy | Prankster | Tailwind, Stun Spore and the screens go out first |
+| **Heliolisk** | 62/55/72/149/104/139 | Electric, Normal | Drought | A sun setter of its own |
+| **Goodra** | 90/100/110/150/150/100 | Dragon, Water | Drizzle | Its rain halves Fire, so never beside the sun core |
+| **Volcanion** | 80/110/120/170/110/110 | Fire, Water | Sheer Force | 1.3x on Steam Eruption and Flamethrower, and their burn never lands. Will-O-Wisp still burns |
+| **Mew** | 100/118/118/129/118/117 | Psychic | Download | +1 to whichever attack the enemy is softer against |
+| **Keldeo** | 91/72/95/164/95/163 | Water, Fighting | Sniper | 1.5x on critical hits |
+| **Manaphy** | 100/100/118/147/118/117 | Water | Adaptability | Its Water moves hit 2x |
+
+Two cautions. Misty Terrain also refuses the poison Breloom's Toxic Orb gives it, so a
+Zenith Blissey costs Breloom its Poison Heal and its Facade. Cofagrigus and Trevenant wear
+Shadow Tag, which does nothing here: a raid boss cannot be trapped, and nobody flees a
+fight between players. Take either for the stats or not at all.
+
+### Dynamax
+
+- The holder grows the first time its HP falls under half: twice its HP, current and max,
+  for its next three moves. Then it shrinks back with the share of HP it had.
+- Every damaging move goes off as the Max Move of its type, and every status move as
+  Max Guard. Never give the band to a pokemon whose value is its status moves: three
+  casts of Max Guard replace its screens, heals and redirection.
+- The Max Moves worth building for raise a stage on the user's whole side every cast:
+  Steel gives Max Steelspike (+1 Defense), Fighting Max Knuckle (+1 Attack), Poison Max
+  Ooze (+1 Special Attack), Ground Max Quake (+1 Special Defense) and Flying Max Airstream
+  (+1 Speed). Three casts are +3, and a raid boss's clear only takes its own drops.
+- Fire, Water, Ice and Rock set sun, rain, hail and sand. In a raid that sky covers only
+  your own party, so an Ice move hails on your own five and any of the four replaces a
+  teammate's sun.
+- None of the rows below can Gigantamax. The G-Max Moves worth a slot are G-Max Resonance
+  (Lapras, Aurora Veil on the side), G-Max Finale (Alcremie, heals the side 1/6), G-Max
+  Sweetness (Appletun, cures the side's statuses), and G-Max Vine Lash, Wildfire, Cannonade
+  and Volcalith (Venusaur, Charizard, Blastoise, Coalossal), which take 1/6 a turn for four
+  turns from every foe not of their type. Against a raid boss those four are one more
+  clock under the shared allowance.
+
+### Tera
+
+- The holder Terastallizes as it takes the field and stays so for the fight.
+- A Tera type that is one of its own types lifts that type's moves from 1.5x to 2x (2.25x
+  with Adaptability) for the whole fight, a flat 1.33x. Its other type keeps 1.5x.
+- It is hit as its Tera type alone, so the Tera type also decides its weaknesses.
+- A catch's Tera type is usually one of its own types. Fifty Tera Shards of a type change
+  it, and Tera raids pay them.
+
+### Z-Moves
+
+A type crystal turns one damaging move into a Z-Move of 100 to 200 power, once a side.
+On a status move of its type it pays a Z-effect instead, at most a stage, a heal or a
+clear, and spends the side's Z-Move on whichever matching move goes out first. On these
+teams every attacker already holds a stone, a shard, a band or an orb, so only the
+backup Mew holds a crystal: Mewnium Z turns its Psychic into Genesis Supernova, 185 power
+and Psychic Terrain.
 
 ### Worn shapes
 
@@ -152,18 +263,22 @@ shadows, not six.
 
 ### True shadows
 
-Nine true shadows are the Articuno, Zapdos, Moltres, Mewtwo, Raikou, Entei, Suicune,
-Lugia and Ho-Oh of the dark: XD-144, XD-145, XD-146, XD-150, XD-243, XD-244, XD-245,
-XD-249 and XD-250 ([`true-shadow.ts`](../src/data/species/true-shadow.ts)). Each copies its
+Seventeen true shadows are the Articuno, Zapdos, Moltres, Mewtwo, Raikou, Entei, Suicune,
+Lugia, Ho-Oh, Regirock, Regice, Registeel, Latias, Latios, Kyogre, Groudon and Rayquaza of
+the dark: XD-144 to XD-146, XD-150, XD-243 to XD-245, XD-249, XD-250 and XD-377 to XD-384
+([`true-shadows.yaml`](../src/data/species/true-shadows.yaml)). Each copies its
 counterpart and adds 10 to every stat, and each carries Shadow permanently.
 
 - They are only found under a dark day, in the special band of the wild pool and in
   shadow lairs.
 - A Purifying Gem refuses one.
-- No stone finds one, so a true shadow never Mega Evolves.
-- XD-150 hits hardest of the nine, at about 205 effective Special Attack. XD-250 is the
-  physical one, at about 175 effective Attack. The three birds, XD-245 and XD-249 are not
-  worth it, because Shadow taxes the bulk they are built on.
+- A true shadow takes only the worn shapes drawn in its own colours: XD-382 and XD-383
+  revert to their Primals with the orb, and XD-384 Mega Evolves through Dragon Ascent.
+  No Mega Stone fits any of them, so XD-150 never Mega Evolves.
+- A true shadow can still hold a Dynamax Band or a Tera Orb.
+- XD-150 hits hardest of the first nine, at about 205 effective Special Attack. XD-250 is
+  the physical one, at about 175 effective Attack. The three birds, XD-245 and XD-249 are
+  not worth it, because Shadow taxes the bulk they are built on.
 
 ### Mythicals
 
@@ -236,24 +351,36 @@ below half HP, once per unit. Sharpness lifts Sacred Sword, Behemoth Blade and P
 
 Two cores that take something off the field, and four supports that keep them standing.
 
-| Role | Pokemon | Nature | EV priority | Shadow? | Abilities (4) | Moves, priority four in bold | Items, priority first |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| Field control | **Whimsicott** 60/67/85/77/75/116 | Timid | 252 Speed, 248 HP | No | Spore Drift, Prankster, Magic Bounce, Infiltrator | **Taunt, Encore, Cotton Spore, Tailwind**, then Stun Spore, Charm, Moonblast, Substitute | **Focus Sash**, Leftovers, Bright Powder, Clear Amulet, Lax Incense, Mental Herb, Shell Bell, Quick Claw |
-| Redirector | **Togekiss** 85/50/95/120/115/80 | Calm | 252 HP, 248 Special Defense | No | Fair Share, Serene Grace, Friend Guard, Super Luck | **Follow Me, Air Slash, Roost, Thunder Wave**, then Life Dew, Dazzling Gleam, Wish, Light Screen | **Rocky Helmet**, Leftovers, Bright Powder, Lax Incense, Shell Bell, Light Clay, Focus Band, Wide Lens |
-| Protector and healer | **Clefable** 95/70/73/95/90/60 | Bold | 252 HP, 248 Defense | No | Wishing Well, Magic Guard, Unaware, Friend Guard | **Reflect, Light Screen, Life Dew, Moonblast**, then Soft-Boiled, Encore, Charm, Thunder Wave | **Light Clay**, Leftovers, Shell Bell, Bright Powder, Focus Band, Mental Herb, Lax Incense, Quick Claw |
-| Core, spread damage | **Hydreigon** 92/105/90/125/90/98 | Modest | 252 Special Attack, 248 Speed | **Yes** | Three Heads, Levitate, Berserk, Pressure | **Draco Meteor, Dark Pulse, Flamethrower, Nasty Plot**, then Earth Power, Flash Cannon, Tailwind, Protect | **White Herb**, Expert Belt, Leftovers, Wise Glasses, Focus Sash, Shell Bell, Wide Lens, Scope Lens |
-| Core, setup sweeper | **Dragonite** 91/134/95/100/100/80 | Adamant | 252 Attack, 248 Speed | Only if healed | Serene Storm, Multiscale, Marvel Scale, Inner Focus | **Dragon Dance, Dragon Claw, Fire Punch, Roost**, then Iron Head, Thunder Punch, Waterfall, Substitute | **Protective Pads**, Leftovers, Expert Belt, Muscle Band, Shell Bell, Focus Sash, Wide Lens, Quick Claw |
-| Core, immediate damage | **Metagross** 80/135/130/95/90/70 | Adamant | 252 Attack, 248 HP | **Yes**, first pick | Hive Mind, Steelworker, Clear Body, Levitate | **Meteor Mash, Bullet Punch, Zen Headbutt, Ice Punch**, then Iron Head, Hammer Arm, Rock Slide, Protect | **Expert Belt**, Wide Lens, Muscle Band, Leftovers, Shell Bell, Scope Lens, Protective Pads, Quick Claw |
-| | | | | | | | |
-| Field control, backup | **Klefki** 57/80/91/80/87/75 | Bold | 252 HP, 248 Defense | No | Keyring, Prankster, Levitate, Magician | **Thunder Wave, Reflect, Light Screen, Spikes**, then Dazzling Gleam, Safeguard, Foul Play, Protect | **Light Clay**, Leftovers, Bright Powder, Lax Incense, Shell Bell, Focus Band, Mental Herb, Quick Claw |
-| Redirector, backup | **Amoonguss** 114/85/70/85/80/30 | Bold | 252 HP, 248 Defense | No | Sporeburst, Regenerator, Effect Spore, Overcoat | **Rage Powder, Spore, Giga Drain, Sludge Bomb**, then Synthesis, Protect, Toxic, Substitute | **Leftovers**, Rocky Helmet, Shell Bell, Bright Powder, Focus Band, Lax Incense, Mental Herb, Light Clay |
-| Protector and healer, backup | **Ribombee** 60/55/60/95/70/124 | Timid | 252 Speed, 248 HP | No | Honey Share, Friend Guard, Sweet Veil, Shield Dust | **Pollen Puff, Tailwind, Stun Spore, Light Screen**, then Reflect, Aromatherapy, Quiver Dance, Protect | **Light Clay**, Leftovers, Bright Powder, Focus Sash, Shell Bell, Lax Incense, Mental Herb, Quick Claw |
-| Core, spread damage, backup | **Primarina** 80/74/74/126/116/60 | Modest | 252 Special Attack, 248 HP | **Yes** | Aria Audience, Liquid Voice, Torrent, Hydration | **Hyper Voice, Moonblast, Ice Beam, Encore**, then Scald, Helping Hand, Light Screen, Protect | **Throat Spray**, Wise Glasses, Leftovers, Expert Belt, Shell Bell, Bright Powder, Focus Sash, Wide Lens |
-| Core, setup sweeper, backup | **Aegislash** 60/50/140/50/140/60 | Adamant | 252 Attack, 248 HP | No, the shield stance is half its value | Turn the Blade, Stance Change, Clear Body, Cursed Body | **Swords Dance, Iron Head, Sacred Sword, King's Shield**, then Shadow Ball, Flash Cannon, Substitute, Protect | **Leftovers**, Expert Belt, Muscle Band, Shell Bell, Wide Lens, Scope Lens, Focus Band, Protective Pads |
-| Core, immediate damage, backup | **Tyrantrum** 82/121/119/69/59/71 | Adamant | 252 Attack, 248 HP | **Yes** | Jaw Snap, Strong Jaw, Rock Head, Intimidate | **Crunch, Iron Head, Stone Edge, Dragon Claw**, then Head Smash, Rock Slide, Superpower, Protect | **Expert Belt**, Muscle Band, Leftovers, Shell Bell, Wide Lens, Scope Lens, Protective Pads, Focus Band |
+| Role | Pokemon | Nature | EV priority | Shadow? | Held change | Abilities (4) | Moves, priority four in bold | Items, priority first |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Field control | **Whimsicott** 60/67/85/77/75/116 | Timid | 252 Speed, 248 HP | No | None | Spore Drift, Prankster, Magic Bounce, Infiltrator | **Taunt, Encore, Cotton Spore, Tailwind**, then Stun Spore, Charm, Moonblast, Substitute | **Focus Sash**, Leftovers, Bright Powder, Clear Amulet, Lax Incense, Mental Herb, Shell Bell, Quick Claw |
+| Redirector | **Togekiss** 85/50/95/120/115/80 | Calm | 252 HP, 248 Special Defense | No | **Dynamax** | Fair Share, Serene Grace, Friend Guard, Super Luck | **Follow Me, Air Slash, Roost, Thunder Wave**, then Life Dew, Dazzling Gleam, Wish, Light Screen | **Dynamax Band**, Rocky Helmet, Leftovers, Bright Powder, Lax Incense, Shell Bell, Light Clay, Focus Band |
+| Protector and healer | **Clefable** 95/70/73/95/90/60 | Bold | 252 HP, 248 Defense | No | None | Wishing Well, Magic Guard, Unaware, Friend Guard | **Reflect, Light Screen, Life Dew, Moonblast**, then Soft-Boiled, Encore, Charm, Thunder Wave | **Light Clay**, Leftovers, Shell Bell, Bright Powder, Focus Band, Mental Herb, Lax Incense, Quick Claw |
+| Core, spread damage | **Hydreigon** 92/105/90/125/90/98 | Modest | 252 Special Attack, 248 Speed | **Yes** | **Zenith** | Three Heads, Levitate, Berserk, Pressure | **Dragon Pulse, Dark Pulse, Flamethrower, Nasty Plot**, then Draco Meteor, Earth Power, Flash Cannon, Protect | **Hydreigon Zenith Shard**, White Herb, Expert Belt, Leftovers, Wise Glasses, Focus Sash, Shell Bell, Wide Lens |
+| Core, setup sweeper | **Dragonite** 91/134/95/100/100/80 | Adamant | 252 Attack, 248 Speed | Only if healed | **Tera** Dragon | Serene Storm, Multiscale, Marvel Scale, Inner Focus | **Dragon Dance, Dragon Claw, Fire Punch, Roost**, then Iron Head, Thunder Punch, Waterfall, Substitute | **Tera Orb**, Protective Pads, Leftovers, Expert Belt, Muscle Band, Shell Bell, Focus Sash, Wide Lens |
+| Core, immediate damage | **Metagross** 80/135/130/95/90/70 | Adamant | 252 Attack, 248 HP | **Yes**, first pick | **Mega** | Hive Mind, Steelworker, Clear Body, Levitate | **Meteor Mash, Bullet Punch, Zen Headbutt, Ice Punch**, then Iron Head, Hammer Arm, Rock Slide, Protect | **Metagrossite**, Expert Belt, Wide Lens, Muscle Band, Leftovers, Shell Bell, Scope Lens, Protective Pads |
+| | | | | | | | | |
+| Field control, backup | **Klefki** 57/80/91/80/87/75 | Bold | 252 HP, 248 Defense | No | None | Keyring, Prankster, Levitate, Magician | **Thunder Wave, Reflect, Light Screen, Spikes**, then Dazzling Gleam, Safeguard, Foul Play, Protect | **Light Clay**, Leftovers, Bright Powder, Lax Incense, Shell Bell, Focus Band, Mental Herb, Quick Claw |
+| Redirector, backup | **Amoonguss** 114/85/70/85/80/30 | Bold | 252 HP, 248 Defense | No | **Dynamax** | Sporeburst, Regenerator, Effect Spore, Overcoat | **Rage Powder, Spore, Giga Drain, Sludge Bomb**, then Synthesis, Protect, Toxic, Substitute | **Dynamax Band**, Leftovers, Rocky Helmet, Shell Bell, Bright Powder, Focus Band, Lax Incense, Mental Herb |
+| Protector and healer, backup | **Ribombee** 60/55/60/95/70/124 | Timid | 252 Speed, 248 HP | No | None | Honey Share, Friend Guard, Sweet Veil, Shield Dust | **Pollen Puff, Tailwind, Stun Spore, Light Screen**, then Reflect, Aromatherapy, Quiver Dance, Protect | **Light Clay**, Leftovers, Bright Powder, Focus Sash, Shell Bell, Lax Incense, Mental Herb, Quick Claw |
+| Core, spread damage, backup | **Primarina** 80/74/74/126/116/60 | Modest | 252 Special Attack, 248 HP | **Yes** | **Zenith** | Aria Audience, Liquid Voice, Torrent, Hydration | **Hyper Voice, Moonblast, Ice Beam, Encore**, then Scald, Helping Hand, Light Screen, Protect | **Primarina Zenith Shard**, Throat Spray, Wise Glasses, Leftovers, Expert Belt, Shell Bell, Bright Powder, Focus Sash |
+| Core, setup sweeper, backup | **Aegislash** 60/50/140/50/140/60 | Adamant | 252 Attack, 248 HP | No, the shield stance is half its value | **Tera** Steel | Turn the Blade, Stance Change, Clear Body, Cursed Body | **Swords Dance, Iron Head, Sacred Sword, King's Shield**, then Shadow Ball, Flash Cannon, Substitute, Protect | **Tera Orb**, Leftovers, Expert Belt, Muscle Band, Shell Bell, Wide Lens, Scope Lens, Focus Band |
+| Core, immediate damage, backup | **Tyrantrum** 82/121/119/69/59/71 | Adamant | 252 Attack, 248 HP | **Yes** | None | Jaw Snap, Strong Jaw, Rock Head, Intimidate | **Crunch, Iron Head, Stone Edge, Dragon Claw**, then Head Smash, Rock Slide, Superpower, Protect | **Expert Belt**, Muscle Band, Leftovers, Shell Bell, Wide Lens, Scope Lens, Protective Pads, Focus Band |
 
 Notes.
 
+- Zenith Hydreigon is 160 Special Attack and 143 Speed, and Mega Launcher lifts Dark Pulse
+  and Dragon Pulse 1.5x. Dragon Pulse takes Draco Meteor's place in the first four: 85
+  power at 1.5x with no drop, on 10 PP to Draco Meteor's 5.
+- Togekiss holds the Dynamax Band because doubled HP under half keeps the redirector
+  standing. Air Slash becomes Max Airstream, +1 Speed to all six a cast. Follow Me is Max
+  Guard while it is grown, so it redirects only from the cast before.
+- Tera Dragon gives Dragonite's Dragon Claw 2x. Pure Dragon takes Ice at 2x rather than
+  4x, and gives up the Ground immunity.
+- A backup takes the held change of the main it replaces. Tyrantrum has neither a Mega nor
+  a free Zenith, so fielding it leaves the team without a Mega. Primarina wants the Zenith
+  more than Hydreigon does: Water Bubble doubles a spread Hyper Voice on 166 Special
+  Attack.
 - Whimsicott moves first at 116 Speed with Prankster. Spore Drift makes Stun Spore and
   Cotton Spore unmissable, and Magic Bounce returns an enemy status move to its sender.
   Encore, now a machine, locks a setup sweeper into its boost.
@@ -274,24 +401,34 @@ Notes.
 
 The same six roles. Rayquaza is the Mega, because Dragon Ascent needs no stone.
 
-| Role | Pokemon | Nature | EV priority | Shadow? | Abilities (4) | Moves, priority four in bold | Items, priority first |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| Field control | **Tornadus** 79/115/70/125/80/111 | Timid | 252 Special Attack, 248 Speed | **Yes** | Windfall, Prankster, Defiant, Wind Rider | **Tailwind, Taunt, Hurricane, Heat Wave**, then Air Slash, Knock Off, Nasty Plot, U-turn | **Wide Lens**, Leftovers, Expert Belt, Wise Glasses, Focus Sash, Zoom Lens, Bright Powder, Shell Bell |
-| Protector and healer | **Latias** 80/80/90/110/130/110 | Calm | 252 HP, 248 Special Defense | No | Eon Shield, Levitate, Healer, Multiscale | **Wish, Heal Pulse, Reflect, Light Screen**, then Recover, Dragon Pulse, Tailwind, Helping Hand | **Soul Dew**, Light Clay, Leftovers, Shell Bell, Bright Powder, Focus Sash, Lax Incense, Wide Lens |
-| Redirector | **Togekiss** 85/50/95/120/115/80 | Calm | 252 HP, 248 Special Defense | No | Fair Share, Serene Grace, Friend Guard, Super Luck | **Follow Me, Air Slash, Roost, Thunder Wave**, then Life Dew, Dazzling Gleam, Wish, Light Screen | **Rocky Helmet**, Leftovers, Bright Powder, Lax Incense, Shell Bell, Light Clay, Focus Band, Wide Lens |
-| Core, special | **XD-150** 116/120/100/164/100/140 | Timid | 252 Special Attack, 248 Speed | Always, it is one by nature | Genetic Apex, Magic Guard, Pressure, Unnerve | **Calm Mind, Psystrike, Aura Sphere, Ice Beam**, then Recover, Thunderbolt, Shadow Ball, Taunt | **Focus Sash**, Expert Belt, Leftovers, Wise Glasses, Shell Bell, Scope Lens, Bright Powder, Quick Claw |
-| Core, physical | **Rayquaza** 105/150/90/150/90/95 | Adamant | 252 Attack, 248 Speed | Yes, but walk its friendship up first | Primal Sky, Multiscale, Intimidate, Air Lock | **Dragon Dance, Dragon Ascent, Extreme Speed, Dragon Claw**, then Iron Head, Stone Edge, Waterfall, Protect | **Protective Pads**, Leftovers, Muscle Band, Expert Belt, Shell Bell, Focus Sash, Scope Lens, Wide Lens |
-| Second protector | **Clefable** 95/70/73/95/90/60 | Bold | 252 HP, 248 Defense | No | Wishing Well, Magic Guard, Unaware, Friend Guard | **Reflect, Light Screen, Life Dew, Moonblast**, then Soft-Boiled, Encore, Charm, Thunder Wave | **Light Clay**, Leftovers, Shell Bell, Bright Powder, Focus Band, Mental Herb, Lax Incense, Quick Claw |
-| | | | | | | | |
-| Field control, backup | **Whimsicott** 60/67/85/77/75/116 | Timid | 252 Speed, 248 HP | No | Spore Drift, Prankster, Magic Bounce, Infiltrator | **Taunt, Encore, Cotton Spore, Tailwind**, then Stun Spore, Charm, Moonblast, Substitute | **Focus Sash**, Leftovers, Bright Powder, Clear Amulet, Lax Incense, Mental Herb, Shell Bell, Quick Claw |
-| Protector and healer, backup | **Florges** 78/65/68/112/154/75 | Calm | 252 HP, 248 Special Defense | Never, Hothouse shares its Special Defense | Hothouse, Flower Veil, Unaware, Symbiosis | **Wish, Heal Bell, Aromatherapy, Moonblast**, then Light Screen, Safeguard, Helping Hand, Protect | **Leftovers**, Light Clay, Shell Bell, Bright Powder, Focus Band, Lax Incense, Mental Herb, Quick Claw |
-| Redirector, backup | **Clefable** 95/70/73/95/90/60 | Bold | 252 HP, 248 Defense | No | Wishing Well, Magic Guard, Unaware, Friend Guard | **Follow Me, Life Dew, Reflect, Light Screen**, then Soft-Boiled, Moonblast, Encore, Charm | **Light Clay**, Leftovers, Shell Bell, Bright Powder, Focus Band, Mental Herb, Lax Incense, Quick Claw |
-| Core, special, backup | **Mewtwo** 106/110/90/154/90/130 | Timid | 252 Special Attack, 248 Speed | **Yes** | Genetic Apex, Magic Guard, Pressure, Unnerve | **Calm Mind, Psystrike, Aura Sphere, Ice Beam**, then Recover, Thunderbolt, Shadow Ball, Taunt | **Expert Belt**, Leftovers, Wise Glasses, Focus Sash, Shell Bell, Scope Lens, Bright Powder, Quick Claw |
-| Core, physical, backup | **Zacian** 92/150/115/80/115/148 crowned | Adamant | 252 Attack, 248 Speed | **Yes** | Sworn Blade, Intrepid Sword, Sharpness, Justified | **Swords Dance, Iron Head, Sacred Sword, Play Rough**, then Close Combat, Psycho Cut, Quick Attack, Protect | **Rusted Sword**, Muscle Band, Expert Belt, Leftovers, Shell Bell, Scope Lens, Wide Lens, Focus Sash |
-| Second protector, backup | **Goodra** 90/100/70/110/150/80 | Calm | 252 HP, 248 Special Defense | No, its 150 Special Defense is the point | Seepage, Sap Sipper, Hydration, Water Absorb | **Draco Meteor, Thunderbolt, Protect, Toxic**, then Flamethrower, Ice Beam, Sludge Bomb, Substitute | **Leftovers**, Shell Bell, Bright Powder, Wise Glasses, Expert Belt, Focus Band, Lax Incense, Wide Lens |
+| Role | Pokemon | Nature | EV priority | Shadow? | Held change | Abilities (4) | Moves, priority four in bold | Items, priority first |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Field control | **Tornadus** 79/115/70/125/80/111 | Timid | 252 Special Attack, 248 Speed | **Yes** | **Dynamax** | Windfall, Prankster, Defiant, Wind Rider | **Tailwind, Taunt, Hurricane, Heat Wave**, then Air Slash, Knock Off, Nasty Plot, U-turn | **Dynamax Band**, Wide Lens, Leftovers, Expert Belt, Wise Glasses, Focus Sash, Zoom Lens, Bright Powder |
+| Protector and healer | **Latias** 80/80/90/110/130/110 | Calm | 252 HP, 248 Special Defense | No | None | Eon Shield, Levitate, Healer, Multiscale | **Wish, Heal Pulse, Reflect, Light Screen**, then Recover, Dragon Pulse, Tailwind, Helping Hand | **Soul Dew**, Light Clay, Leftovers, Shell Bell, Bright Powder, Focus Sash, Lax Incense, Wide Lens |
+| Redirector | **Togekiss** 85/50/95/120/115/80 | Calm | 252 HP, 248 Special Defense | No | **Zenith** | Fair Share, Serene Grace, Friend Guard, Super Luck | **Follow Me, Air Slash, Roost, Thunder Wave**, then Life Dew, Hyper Voice, Wish, Light Screen | **Togekiss Zenith Shard**, Rocky Helmet, Leftovers, Bright Powder, Lax Incense, Shell Bell, Light Clay, Focus Band |
+| Core, special | **XD-150** 116/120/100/164/100/140 | Timid | 252 Special Attack, 248 Speed | Always, it is one by nature | **Tera** Psychic | Genetic Apex, Magic Guard, Pressure, Unnerve | **Calm Mind, Psystrike, Aura Sphere, Ice Beam**, then Recover, Thunderbolt, Shadow Ball, Taunt | **Tera Orb**, Focus Sash, Expert Belt, Leftovers, Wise Glasses, Shell Bell, Scope Lens, Bright Powder |
+| Core, physical | **Rayquaza** 105/150/90/150/90/95 | Adamant | 252 Attack, 248 Speed | Yes, but walk its friendship up first | **Mega**, through Dragon Ascent | Primal Sky, Multiscale, Intimidate, Air Lock | **Dragon Dance, Dragon Ascent, Extreme Speed, Dragon Claw**, then Iron Head, Stone Edge, Waterfall, Protect | **Protective Pads**, Leftovers, Muscle Band, Expert Belt, Shell Bell, Focus Sash, Scope Lens, Wide Lens |
+| Second protector | **Clefable** 95/70/73/95/90/60 | Bold | 252 HP, 248 Defense | No | None | Wishing Well, Magic Guard, Unaware, Friend Guard | **Reflect, Light Screen, Life Dew, Moonblast**, then Soft-Boiled, Encore, Charm, Thunder Wave | **Light Clay**, Leftovers, Shell Bell, Bright Powder, Focus Band, Mental Herb, Lax Incense, Quick Claw |
+| | | | | | | | | |
+| Field control, backup | **Whimsicott** 60/67/85/77/75/116 | Timid | 252 Speed, 248 HP | No | None | Spore Drift, Prankster, Magic Bounce, Infiltrator | **Taunt, Encore, Cotton Spore, Tailwind**, then Stun Spore, Charm, Moonblast, Substitute | **Focus Sash**, Leftovers, Bright Powder, Clear Amulet, Lax Incense, Mental Herb, Shell Bell, Quick Claw |
+| Protector and healer, backup | **Florges** 78/65/68/112/154/75 | Calm | 252 HP, 248 Special Defense | Never, Hothouse shares its Special Defense | None | Hothouse, Flower Veil, Unaware, Symbiosis | **Wish, Heal Bell, Aromatherapy, Moonblast**, then Light Screen, Safeguard, Helping Hand, Protect | **Leftovers**, Light Clay, Shell Bell, Bright Powder, Focus Band, Lax Incense, Mental Herb, Quick Claw |
+| Redirector, backup | **Clefable** 95/70/73/95/90/60 | Bold | 252 HP, 248 Defense | No | None | Wishing Well, Magic Guard, Unaware, Friend Guard | **Follow Me, Life Dew, Reflect, Light Screen**, then Soft-Boiled, Moonblast, Encore, Charm | **Light Clay**, Leftovers, Shell Bell, Bright Powder, Focus Band, Mental Herb, Lax Incense, Quick Claw |
+| Core, special, backup | **Mewtwo** 106/110/90/154/90/130 | Timid | 252 Special Attack, 248 Speed | **Yes** | **Tera** Psychic | Genetic Apex, Magic Guard, Pressure, Unnerve | **Calm Mind, Psystrike, Aura Sphere, Ice Beam**, then Recover, Thunderbolt, Shadow Ball, Taunt | **Tera Orb**, Expert Belt, Leftovers, Wise Glasses, Focus Sash, Shell Bell, Scope Lens, Bright Powder |
+| Core, physical, backup | **Zacian** 92/150/115/80/115/148 crowned | Adamant | 252 Attack, 248 Speed | **Yes** | None | Sworn Blade, Intrepid Sword, Sharpness, Justified | **Swords Dance, Iron Head, Sacred Sword, Play Rough**, then Close Combat, Psycho Cut, Quick Attack, Protect | **Rusted Sword**, Muscle Band, Expert Belt, Leftovers, Shell Bell, Scope Lens, Wide Lens, Focus Sash |
+| Second protector, backup | **Goodra** 90/100/70/110/150/80 | Calm | 252 HP, 248 Special Defense | No, its 150 Special Defense is the point | None | Seepage, Sap Sipper, Hydration, Water Absorb | **Draco Meteor, Thunderbolt, Protect, Toxic**, then Flamethrower, Ice Beam, Sludge Bomb, Substitute | **Leftovers**, Shell Bell, Bright Powder, Wise Glasses, Expert Belt, Focus Band, Lax Incense, Wide Lens |
 
 Notes.
 
+- Zenith Togekiss has 113/133 defences and 121 Speed. Hyper Voice takes Dazzling Gleam's
+  place in its back four, so Pixilate has something to turn. None of the other main slots
+  can take the Zenith: Latias, Clefable and XD-150's counterpart have Megas, and Tornadus's
+  shape is the Reveal Glass's.
+- Dynamaxed, Tornadus's Hurricane becomes Max Airstream, +1 Speed to all six a cast, and
+  Heat Wave Max Flare. Tailwind and Taunt are Max Guard for those three casts.
+- Tera Psychic gives XD-150's Psystrike 2x for the whole fight. A true shadow cannot Mega
+  Evolve, but nothing stops it Terastallizing.
+- Goodra's Zenith wears Drizzle, whose rain halves Tornadus's Heat Wave, so Goodra stays
+  plain.
 - Windfall gives the team 1.3x on Flying moves, which Togekiss collects as well. Wide Lens
   is Tornadus's first item because Hurricane is 70 accuracy.
 - Eon Shield 0.8x multiplies with Friend Guard 0.75x, so a hit on anyone but Latias lands
@@ -313,24 +450,37 @@ Four of the six are mythicals. No mythical learns Follow Me or Rage Powder, so T
 keeps the redirector slot, and Whimsicott's unmissable powder beats anything a mythical
 offers in field control.
 
-| Role | Pokemon | Nature | EV priority | Shadow? | Abilities (4) | Moves, priority four in bold | Items, priority first |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| Field control | **Whimsicott** 60/67/85/77/75/116 | Timid | 252 Speed, 248 HP | No | Spore Drift, Prankster, Magic Bounce, Infiltrator | **Taunt, Encore, Cotton Spore, Tailwind**, then Stun Spore, Charm, Moonblast, Substitute | **Focus Sash**, Leftovers, Bright Powder, Clear Amulet, Lax Incense, Mental Herb, Shell Bell, Quick Claw |
-| Redirector | **Togekiss** 85/50/95/120/115/80 | Calm | 252 HP, 248 Special Defense | No | Fair Share, Serene Grace, Friend Guard, Super Luck | **Follow Me, Air Slash, Roost, Thunder Wave**, then Life Dew, Dazzling Gleam, Wish, Light Screen | **Rocky Helmet**, Leftovers, Bright Powder, Lax Incense, Shell Bell, Light Clay, Focus Band, Wide Lens |
-| Protector and healer | **Jirachi** 100/100/100/100/100/100 | Calm | 252 HP, 248 Special Defense | Never, no mythical can be shadowed | Seven Wishes, Magic Bounce, Levitate, Healer | **Wish, Life Dew, Reflect, Light Screen**, then Helping Hand, Cosmic Power, Toxic, Protect | **Light Clay**, Leftovers, Shell Bell, Bright Powder, Focus Band, Lax Incense, Mental Herb, Quick Claw |
-| Cleric and second protector | **Celebi** 100/100/100/100/100/100 | Calm | 252 HP, 248 Special Defense | Never, no mythical can be shadowed | Timeline Split, Healer, Anticipation, Natural Cure | **Heal Bell, Recover, Leech Seed, Light Screen**, then Life Dew, Giga Drain, Reflect, Protect | **Big Root**, Leftovers, Light Clay, Shell Bell, Bright Powder, Focus Band, Lax Incense, Mental Herb |
-| Core, special | **Arceus** 120/120/120/120/120/120 | Modest | 252 Special Attack, 248 HP | Never, no mythical can be shadowed | Firstlight, Multitype, Adaptability, Filter | **Judgment, Calm Mind, Recover, Thunder Wave**, then Ice Beam, Flamethrower, Earth Power, Protect | **Pixie Plate**, Leftovers, Wise Glasses, Expert Belt, Shell Bell, Bright Powder, Focus Sash, Wide Lens |
-| Core, second attacker | **Hoopa Unbound** 80/160/60/170/130/80 | Modest | 252 Special Attack, 248 HP | Never, no mythical can be shadowed | Ringback, Prankster, Levitate, Trace | **Nasty Plot, Hyperspace Hole, Dark Pulse, Thunder Wave**, then Psyshock, Focus Blast, Taunt, Substitute | **Prison Bottle**, Life Orb, Leftovers, Wise Glasses, Black Glasses, Shell Bell, Focus Sash, Bright Powder |
-| | | | | | | | |
-| Field control, backup | **Darkrai** 70/90/90/135/90/125 | Timid | 252 Special Attack, 248 Speed | Never, no mythical can be shadowed | Waxing Dark, Prankster, Bad Dreams, Infiltrator | **Taunt, Thunder Wave, Nasty Plot, Dark Pulse**, then Will-O-Wisp, Dark Void, Substitute, Protect | **Focus Sash**, Black Glasses, Leftovers, Wide Lens, Bright Powder, Lax Incense, Shell Bell, Quick Claw |
-| Redirector, backup | **Clefable** 95/70/73/95/90/60 | Bold | 252 HP, 248 Defense | No | Wishing Well, Magic Guard, Unaware, Friend Guard | **Follow Me, Life Dew, Reflect, Light Screen**, then Soft-Boiled, Moonblast, Encore, Charm | **Light Clay**, Leftovers, Shell Bell, Bright Powder, Focus Band, Mental Herb, Lax Incense, Quick Claw |
-| Protector and healer, backup | **Manaphy** 100/100/100/100/100/100 | Calm | 252 HP, 248 Special Defense | Never, no mythical can be shadowed | Heartcurrent, Friend Guard, Healer, Water Absorb | **Reflect, Light Screen, Aqua Ring, Helping Hand**, then Tail Glow, Surf, Ice Beam, Protect | **Light Clay**, Leftovers, Shell Bell, Bright Powder, Focus Band, Lax Incense, Mental Herb, Quick Claw |
-| Cleric, backup | **Meloetta** 100/77/77/128/128/90 | Calm | 252 HP, 248 Special Defense | Never, no mythical can be shadowed | Countertune, Healer, Serene Grace, Soundproof | **Heal Bell, Light Screen, Thunder Wave, Psychic**, then Charm, Fake Tears, Helping Hand, Protect | **Leftovers**, Light Clay, Shell Bell, Bright Powder, Focus Band, Lax Incense, Mental Herb, Quick Claw |
-| Core, special, backup | **Mew** 100/100/100/100/100/100 | Modest | 252 Special Attack, 248 Speed | Never, no mythical can be shadowed | Ancestral Memory, Protean, Adaptability, Trace | **Nasty Plot, Aura Sphere, Psychic, Soft-Boiled**, then Taunt, Tailwind, Thunder Wave, Protect | **Wise Glasses**, Leftovers, Focus Sash, Shell Bell, Bright Powder, Lax Incense, Wide Lens, Quick Claw |
-| Core, second attacker, backup | **Keldeo** 91/72/90/129/90/108 | Timid | 252 Special Attack, 248 Speed | Never, no mythical can be shadowed | Tide Vigil, Justified, Analytic, Swift Swim | **Secret Sword, Hydro Pump, Calm Mind, Taunt**, then Scald, Icy Wind, Substitute, Protect | **Mystic Water**, Leftovers, Wise Glasses, Expert Belt, Shell Bell, Focus Sash, Bright Powder, Wide Lens |
+| Role | Pokemon | Nature | EV priority | Shadow? | Held change | Abilities (4) | Moves, priority four in bold | Items, priority first |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Field control | **Whimsicott** 60/67/85/77/75/116 | Timid | 252 Speed, 248 HP | No | None | Spore Drift, Prankster, Magic Bounce, Infiltrator | **Taunt, Encore, Cotton Spore, Tailwind**, then Stun Spore, Charm, Moonblast, Substitute | **Focus Sash**, Leftovers, Bright Powder, Clear Amulet, Lax Incense, Mental Herb, Shell Bell, Quick Claw |
+| Redirector | **Togekiss** 85/50/95/120/115/80 | Calm | 252 HP, 248 Special Defense | No | **Dynamax** | Fair Share, Serene Grace, Friend Guard, Super Luck | **Follow Me, Air Slash, Roost, Thunder Wave**, then Life Dew, Dazzling Gleam, Wish, Light Screen | **Dynamax Band**, Rocky Helmet, Leftovers, Bright Powder, Lax Incense, Shell Bell, Light Clay, Focus Band |
+| Protector and healer | **Jirachi** 100/100/100/100/100/100 | Calm | 252 HP, 248 Special Defense | Never, no mythical can be shadowed | **Zenith** | Seven Wishes, Magic Bounce, Levitate, Healer | **Wish, Life Dew, Reflect, Light Screen**, then Helping Hand, Cosmic Power, Toxic, Protect | **Jirachi Zenith Shard**, Light Clay, Leftovers, Shell Bell, Bright Powder, Focus Band, Lax Incense, Mental Herb |
+| Cleric and second protector | **Celebi** 100/100/100/100/100/100 | Calm | 252 HP, 248 Special Defense | Never, no mythical can be shadowed | None | Timeline Split, Healer, Anticipation, Natural Cure | **Heal Bell, Recover, Leech Seed, Light Screen**, then Life Dew, Giga Drain, Reflect, Protect | **Big Root**, Leftovers, Light Clay, Shell Bell, Bright Powder, Focus Band, Lax Incense, Mental Herb |
+| Core, special | **Arceus** 120/120/120/120/120/120 | Modest | 252 Special Attack, 248 HP | Never, no mythical can be shadowed | None | Firstlight, Multitype, Adaptability, Filter | **Judgment, Calm Mind, Recover, Thunder Wave**, then Ice Beam, Flamethrower, Earth Power, Protect | **Pixie Plate**, Leftovers, Wise Glasses, Expert Belt, Shell Bell, Bright Powder, Focus Sash, Wide Lens |
+| Core, second attacker | **Hoopa Unbound** 80/160/60/170/130/80 | Modest | 252 Special Attack, 248 HP | Never, no mythical can be shadowed | **Tera** Dark | Ringback, Prankster, Levitate, Trace | **Nasty Plot, Hyperspace Hole, Dark Pulse, Thunder Wave**, then Psyshock, Focus Blast, Taunt, Substitute | **Tera Orb**, Prison Bottle, Life Orb, Leftovers, Wise Glasses, Black Glasses, Shell Bell, Focus Sash |
+| | | | | | | | | |
+| Field control, backup | **Darkrai** 70/90/90/135/90/125 | Timid | 252 Special Attack, 248 Speed | Never, no mythical can be shadowed | **Mega** | Waxing Dark, Prankster, Bad Dreams, Infiltrator | **Taunt, Thunder Wave, Nasty Plot, Dark Pulse**, then Will-O-Wisp, Dark Void, Substitute, Protect | **Darkranite**, Focus Sash, Black Glasses, Leftovers, Wide Lens, Bright Powder, Lax Incense, Shell Bell |
+| Redirector, backup | **Clefable** 95/70/73/95/90/60 | Bold | 252 HP, 248 Defense | No | None | Wishing Well, Magic Guard, Unaware, Friend Guard | **Follow Me, Life Dew, Reflect, Light Screen**, then Soft-Boiled, Moonblast, Encore, Charm | **Light Clay**, Leftovers, Shell Bell, Bright Powder, Focus Band, Mental Herb, Lax Incense, Quick Claw |
+| Protector and healer, backup | **Manaphy** 100/100/100/100/100/100 | Calm | 252 HP, 248 Special Defense | Never, no mythical can be shadowed | None | Heartcurrent, Friend Guard, Healer, Water Absorb | **Reflect, Light Screen, Aqua Ring, Helping Hand**, then Tail Glow, Surf, Ice Beam, Protect | **Light Clay**, Leftovers, Shell Bell, Bright Powder, Focus Band, Lax Incense, Mental Herb, Quick Claw |
+| Cleric, backup | **Meloetta** 100/77/77/128/128/90 | Calm | 252 HP, 248 Special Defense | Never, no mythical can be shadowed | None | Countertune, Healer, Serene Grace, Soundproof | **Heal Bell, Light Screen, Thunder Wave, Psychic**, then Charm, Fake Tears, Helping Hand, Protect | **Leftovers**, Light Clay, Shell Bell, Bright Powder, Focus Band, Lax Incense, Mental Herb, Quick Claw |
+| Core, special, backup | **Mew** 100/100/100/100/100/100 | Modest | 252 Special Attack, 248 Speed | Never, no mythical can be shadowed | **Z-Move** | Ancestral Memory, Protean, Adaptability, Trace | **Nasty Plot, Aura Sphere, Psychic, Soft-Boiled**, then Taunt, Tailwind, Thunder Wave, Protect | **Mewnium Z**, Wise Glasses, Leftovers, Focus Sash, Shell Bell, Bright Powder, Lax Incense, Wide Lens |
+| Core, second attacker, backup | **Keldeo** 91/72/90/129/90/108 | Timid | 252 Special Attack, 248 Speed | Never, no mythical can be shadowed | **Tera** Water | Tide Vigil, Justified, Analytic, Swift Swim | **Secret Sword, Hydro Pump, Calm Mind, Taunt**, then Scald, Icy Wind, Substitute, Protect | **Tera Orb**, Mystic Water, Leftovers, Wise Glasses, Expert Belt, Shell Bell, Focus Sash, Bright Powder |
 
 Notes.
 
+- None of the six main slots has a Mega. Field Darkrai with its Darkranite to give the
+  team one: 165 Special Attack on 130/130 defences, and Dark Aura lifts its Dark Pulse and
+  Hoopa's 1.33x.
+- Zenith Jirachi wears Comatose, so no status lands on the protector, on 125 in both
+  defences and 125 Speed.
+- Togekiss holds the Dynamax Band for the same reasons as on the team without
+  legendaries.
+- Tera Dark gives Hoopa's Dark Pulse 2x, and pure Dark takes Bug at 2x rather than 4x. The
+  Prison Bottle is a form item, so it does not block the orb.
+- Arceus holds no change. Its Plate already decides its type, and a Terastallized Arceus
+  is hit as its Tera type whatever the Plate says.
+- Mew holds Mewnium Z, which turns its Psychic into Genesis Supernova, 185 power and
+  Psychic Terrain, once a fight.
 - Arceus is the strongest unit here and the slowest to finish. Multitype makes it the type
   of its Plate, Judgment is thrown as that type, Adaptability doubles the same-type bonus,
   and Firstlight reads a resistance as 1x. Only an immunity stops it. The Pixie Plate is
@@ -357,27 +507,41 @@ Notes.
 
 Five clocks, a physical attacker, a protector and a cleric.
 
-| Role | Pokemon | Nature | EV priority | Shadow? | Abilities (4) | Moves, priority four in bold | Items, priority first |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| Burn, Curse, main special damage | **Chandelure** 60/55/90/145/90/80 | Modest | 252 Special Attack, 248 HP | No, it dies to the boss | Hexlight, Infiltrator, Flash Fire, Flame Body | **Will-O-Wisp, Curse, Hex, Fire Blast**, then Calm Mind, Shadow Ball, Substitute, Confuse Ray | **Wide Lens**, Focus Sash, Expert Belt, Leftovers, Wise Glasses, Shell Bell, Bright Powder, Zoom Lens |
-| Leech Seed and party multiplier | **Breloom** 60/130/80/60/60/70 | Adamant | 252 Attack, 248 HP | No, Mycelium needs it standing | Mycelium, Poison Heal, Technician, Quick Feet | **Leech Seed, Drain Punch, Facade, Mach Punch**, then Seed Bomb, Swords Dance, Substitute, Sludge Bomb | **Toxic Orb**, Big Root, Expert Belt, Wide Lens, Muscle Band, Leftovers, Shell Bell, Protective Pads |
-| Toxic and per-action chip | **Magcargo** 60/50/120/90/80/30 | Bold | 252 HP, 248 Defense | No | Magma Trail, Flame Body, Solid Rock, Magma Armor | **Lava Plume, Fire Blast, Protect, Toxic**, then Earth Power, Rock Slide, Yawn, Rest | **Leftovers**, Rocky Helmet, Shell Bell, Wide Lens, Wise Glasses, Bright Powder, Focus Band, Light Clay |
-| Primary physical damage | **Metagross** 80/135/130/95/90/70 | Adamant | 252 Attack, 248 HP | **Yes**, first pick | Hive Mind, Steelworker, Clear Body, Levitate | **Meteor Mash, Bullet Punch, Zen Headbutt, Ice Punch**, then Iron Head, Hammer Arm, Rock Slide, Substitute | **Expert Belt**, Wide Lens, Muscle Band, Leftovers, Shell Bell, Scope Lens, Protective Pads, Focus Band |
-| Protector and passive healer | **Clefable** 95/70/73/95/90/60 | Bold | 252 HP, 248 Defense | No | Wishing Well, Magic Guard, Unaware, Friend Guard | **Reflect, Light Screen, Life Dew, Toxic**, then Thunder Wave, Charm, Soft-Boiled, Protect | **Light Clay**, Leftovers, Shell Bell, Bright Powder, Focus Band, Mental Herb, Lax Incense, Quick Claw |
-| Cleric and damage support | **Florges** 78/65/68/112/154/75 | Calm | 252 HP, 248 Special Defense | Never, Hothouse shares its Special Defense | Hothouse, Flower Veil, Unaware, Symbiosis | **Wish, Heal Bell, Aromatherapy, Moonblast**, then Light Screen, Safeguard, Helping Hand, Protect | **Leftovers**, Light Clay, Shell Bell, Bright Powder, Focus Band, Lax Incense, Mental Herb, Quick Claw |
-| | | | | | | | |
-| Burn and special damage, backup | **Cofagrigus** 58/50/145/95/105/30 | Modest | 252 HP, 248 Special Attack | No, its 145/105 defences are the point | Death Mask, Mummy, Cursed Body, Pressure | **Will-O-Wisp, Hex, Curse, Shadow Ball**, then Toxic, Nasty Plot, Pain Split, Protect | **Leftovers**, Expert Belt, Wise Glasses, Shell Bell, Light Clay, Bright Powder, Focus Band, Wide Lens |
-| Leech Seed, backup | **Trevenant** 85/110/76/65/82/56 | Adamant | 252 Attack, 248 HP | No | Undergrowth, Harvest, Natural Cure, Frisk | **Leech Seed, Will-O-Wisp, Horn Leech, Wood Hammer**, then Shadow Ball, Protect, Toxic, Substitute | **Leftovers**, Big Root, Expert Belt, Muscle Band, Shell Bell, Rocky Helmet, Wide Lens, Focus Band |
-| Toxic carrier, backup | **Amoonguss** 114/85/70/85/80/30 | Bold | 252 HP, 248 Defense | No | Sporeburst, Regenerator, Effect Spore, Overcoat | **Toxic, Sludge Bomb, Giga Drain, Protect**, then Synthesis, Rage Powder, Substitute, Seed Bomb | **Leftovers**, Rocky Helmet, Shell Bell, Bright Powder, Focus Band, Lax Incense, Mental Herb, Light Clay |
-| Primary physical damage, backup | **Aegislash** 60/50/140/50/140/60 | Adamant | 252 Attack, 248 HP | No, the shield stance is half its value | Turn the Blade, Stance Change, Clear Body, Cursed Body | **Swords Dance, Iron Head, Sacred Sword, King's Shield**, then Shadow Ball, Flash Cannon, Substitute, Protect | **Leftovers**, Expert Belt, Muscle Band, Shell Bell, Wide Lens, Scope Lens, Focus Band, Protective Pads |
-| Protector, backup | **Carbink** 50/50/150/50/150/50 | Bold | 252 HP, 248 Defense | Never, it is nothing but defences | Crystal Growth, Clear Body, Sturdy, Levitate | **Reflect, Light Screen, Moonblast, Safeguard**, then Calm Mind, Power Gem, Protect, Rest | **Light Clay**, Leftovers, Shell Bell, Bright Powder, Focus Band, Lax Incense, Mental Herb, Quick Claw |
-| Cleric, backup | **Blissey** 255/10/10/75/135/55 | Calm | 252 Defense, 248 Special Defense | Never | Cushioned, Healer, Friend Guard, Serene Grace | **Life Dew, Soft-Boiled, Heal Pulse, Helping Hand**, then Safeguard, Light Screen, Reflect, Protect | **Leftovers**, Light Clay, Bright Powder, Shell Bell, Focus Band, Lax Incense, Mental Herb, Quick Claw |
+| Role | Pokemon | Nature | EV priority | Shadow? | Held change | Abilities (4) | Moves, priority four in bold | Items, priority first |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Burn, Curse, main special damage | **Chandelure** 60/55/90/145/90/80 | Modest | 252 Special Attack, 248 HP | No, it dies to the boss | **Mega** | Hexlight, Infiltrator, Flash Fire, Flame Body | **Will-O-Wisp, Curse, Hex, Fire Blast**, then Calm Mind, Shadow Ball, Substitute, Confuse Ray | **Chandelurite**, Wide Lens, Focus Sash, Expert Belt, Leftovers, Wise Glasses, Shell Bell, Bright Powder |
+| Leech Seed and party multiplier | **Breloom** 60/130/80/60/60/70 | Adamant | 252 Attack, 248 HP | No, Mycelium needs it standing | **Zenith** | Mycelium, Poison Heal, Technician, Quick Feet | **Leech Seed, Drain Punch, Facade, Mach Punch**, then Seed Bomb, Swords Dance, Substitute, Sludge Bomb | **Breloom Zenith Shard**, Toxic Orb, Big Root, Expert Belt, Wide Lens, Muscle Band, Leftovers, Shell Bell |
+| Toxic and per-action chip | **Magcargo** 60/50/120/90/80/30 | Bold | 252 HP, 248 Defense | No | None | Magma Trail, Flame Body, Solid Rock, Magma Armor | **Lava Plume, Fire Blast, Protect, Toxic**, then Earth Power, Rock Slide, Yawn, Rest | **Leftovers**, Rocky Helmet, Shell Bell, Wide Lens, Wise Glasses, Bright Powder, Focus Band, Light Clay |
+| Primary physical damage | **Metagross** 80/135/130/95/90/70 | Adamant | 252 Attack, 248 HP | **Yes**, first pick | **Dynamax** | Hive Mind, Steelworker, Clear Body, Levitate | **Meteor Mash, Bullet Punch, Iron Head, Hammer Arm**, then Zen Headbutt, Agility, Iron Defense, Substitute | **Dynamax Band**, Expert Belt, Wide Lens, Muscle Band, Leftovers, Shell Bell, Scope Lens, Protective Pads |
+| Protector and passive healer | **Clefable** 95/70/73/95/90/60 | Bold | 252 HP, 248 Defense | No | None | Wishing Well, Magic Guard, Unaware, Friend Guard | **Reflect, Light Screen, Life Dew, Toxic**, then Thunder Wave, Charm, Soft-Boiled, Protect | **Light Clay**, Leftovers, Shell Bell, Bright Powder, Focus Band, Mental Herb, Lax Incense, Quick Claw |
+| Cleric and damage support | **Florges** 78/65/68/112/154/75 | Calm | 252 HP, 248 Special Defense | Never, Hothouse shares its Special Defense | None | Hothouse, Flower Veil, Unaware, Symbiosis | **Wish, Heal Bell, Aromatherapy, Moonblast**, then Light Screen, Safeguard, Helping Hand, Protect | **Leftovers**, Light Clay, Shell Bell, Bright Powder, Focus Band, Lax Incense, Mental Herb, Quick Claw |
+| | | | | | | | | |
+| Burn and special damage, backup | **Cofagrigus** 58/50/145/95/105/30 | Modest | 252 HP, 248 Special Attack | No, its 145/105 defences are the point | None | Death Mask, Mummy, Cursed Body, Pressure | **Will-O-Wisp, Hex, Curse, Shadow Ball**, then Toxic, Nasty Plot, Pain Split, Protect | **Leftovers**, Expert Belt, Wise Glasses, Shell Bell, Light Clay, Bright Powder, Focus Band, Wide Lens |
+| Leech Seed, backup | **Trevenant** 85/110/76/65/82/56 | Adamant | 252 Attack, 248 HP | No | None | Undergrowth, Harvest, Natural Cure, Frisk | **Leech Seed, Will-O-Wisp, Horn Leech, Wood Hammer**, then Shadow Ball, Protect, Toxic, Substitute | **Leftovers**, Big Root, Expert Belt, Muscle Band, Shell Bell, Rocky Helmet, Wide Lens, Focus Band |
+| Toxic carrier, backup | **Amoonguss** 114/85/70/85/80/30 | Bold | 252 HP, 248 Defense | No | None | Sporeburst, Regenerator, Effect Spore, Overcoat | **Toxic, Sludge Bomb, Giga Drain, Protect**, then Synthesis, Rage Powder, Substitute, Seed Bomb | **Leftovers**, Rocky Helmet, Shell Bell, Bright Powder, Focus Band, Lax Incense, Mental Herb, Light Clay |
+| Primary physical damage, backup | **Aegislash** 60/50/140/50/140/60 | Adamant | 252 Attack, 248 HP | No, the shield stance is half its value | **Dynamax** | Turn the Blade, Stance Change, Clear Body, Cursed Body | **Swords Dance, Iron Head, Sacred Sword, King's Shield**, then Shadow Ball, Flash Cannon, Substitute, Protect | **Dynamax Band**, Leftovers, Expert Belt, Muscle Band, Shell Bell, Wide Lens, Scope Lens, Focus Band |
+| Protector, backup | **Carbink** 50/50/150/50/150/50 | Bold | 252 HP, 248 Defense | Never, it is nothing but defences | None | Crystal Growth, Clear Body, Sturdy, Levitate | **Reflect, Light Screen, Moonblast, Safeguard**, then Calm Mind, Power Gem, Protect, Rest | **Light Clay**, Leftovers, Shell Bell, Bright Powder, Focus Band, Lax Incense, Mental Herb, Quick Claw |
+| Cleric, backup | **Blissey** 255/10/10/75/135/55 | Calm | 252 Defense, 248 Special Defense | Never | None | Cushioned, Healer, Friend Guard, Serene Grace | **Life Dew, Soft-Boiled, Heal Pulse, Helping Hand**, then Safeguard, Light Screen, Reflect, Protect | **Leftovers**, Light Clay, Bright Powder, Shell Bell, Focus Band, Lax Incense, Mental Herb, Quick Claw |
 
 Clocks: burn and Curse from Chandelure, Leech Seed from Breloom, Toxic and paralysis from
 Clefable, and Magma Trail from Magcargo.
 
 Notes.
 
+- Mega Chandelure is 175 Special Attack, and 110 in each defence on the row that used to
+  die to the boss.
+- Zenith Breloom is 161 Attack and 114 Speed, and Iron Fist lifts Drain Punch and Mach
+  Punch 1.2x.
+- Metagross holds the Dynamax Band. Doubled HP comes once the boss drives it under half,
+  and its Steel and Fighting moves become Max Steelspike (+1 Defense) and Max Knuckle (+1
+  Attack) to all six a cast. Its moves are set for that: Ice Punch would become Max
+  Hailstorm and hail on your own five, and Rock Slide Max Rockfall and sand.
+- Nobody holds the Tera Orb. The three attackers hold the other changes, and the rest are
+  worth their status moves.
+- Mega Metagross is still the pick against a boss you cannot out-damage. Then the band has
+  no attacker to go to, since Breloom holds the shard. Zenith Blissey, fielded, keeps the
+  boss's status off your grounded five, but it also refuses Breloom's Toxic Orb poison, so
+  move the shard from Breloom to Blissey when you field it.
 - Cast Will-O-Wisp first. Against a burned boss Hex doubles to 130 base and takes Hexlight
   1.4x and Mycelium 1.2x, neither of which is capped.
 - Clefable applies Toxic rather than Magcargo, because it acts far more often.
@@ -400,27 +564,35 @@ Notes.
 The same five clocks with a sun core. Deliberately not all Fire, because one rolled Flash
 Fire, Heatproof or Thick Fat would blank the damage and the status at once.
 
-| Role | Pokemon | Nature | EV priority | Shadow? | Abilities (4) | Moves, priority four in bold | Items, priority first |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| Burn, Curse, special damage | **Chandelure** 60/55/90/145/90/80 | Modest | 252 Special Attack, 248 HP | No, it dies to the boss | Hexlight, Infiltrator, Flash Fire, Flame Body | **Will-O-Wisp, Curse, Hex, Fire Blast**, then Calm Mind, Shadow Ball, Substitute, Confuse Ray | **Wide Lens**, Focus Sash, Expert Belt, Leftovers, Wise Glasses, Shell Bell, Bright Powder, Zoom Lens |
-| Sun setter, per-action clock, sweeper | **Volcarona** 85/60/65/135/105/100 | Modest | 252 Special Attack, 248 HP | No, Quiver Dance needs it alive | Ember Halo, Drought, Magic Guard, Flame Body | **Quiver Dance, Fiery Dance, Bug Buzz, Roost**, then Heat Wave, Flamethrower, Giga Drain, Substitute | **Leftovers**, Expert Belt, Wise Glasses, Shell Bell, Focus Sash, Bright Powder, Wide Lens, Zoom Lens |
-| Primary physical damage | **Metagross** 80/135/130/95/90/70 | Adamant | 252 Attack, 248 HP | **Yes**, first pick | Hive Mind, Steelworker, Clear Body, Levitate | **Meteor Mash, Bullet Punch, Zen Headbutt, Ice Punch**, then Iron Head, Hammer Arm, Rock Slide, Substitute | **Expert Belt**, Wide Lens, Muscle Band, Leftovers, Shell Bell, Scope Lens, Protective Pads, Focus Band |
-| Leech Seed and party multiplier | **Breloom** 60/130/80/60/60/70 | Adamant | 252 Attack, 248 HP | No, Mycelium needs it standing | Mycelium, Poison Heal, Technician, Quick Feet | **Leech Seed, Drain Punch, Facade, Mach Punch**, then Seed Bomb, Swords Dance, Substitute, Sludge Bomb | **Toxic Orb**, Big Root, Expert Belt, Wide Lens, Muscle Band, Leftovers, Shell Bell, Protective Pads |
-| Protector and healer | **Latias** 80/80/90/110/130/110 | Calm | 252 HP, 248 Special Defense | Never, Eon Shield stops when it falls | Eon Shield, Levitate, Healer, Multiscale | **Wish, Heal Pulse, Reflect, Light Screen**, then Recover, Helping Hand, Dragon Pulse, Protect | **Soul Dew**, Light Clay, Leftovers, Shell Bell, Bright Powder, Focus Sash, Lax Incense, Wide Lens |
-| Second protector and Toxic clock | **Clefable** 95/70/73/95/90/60 | Bold | 252 HP, 248 Defense | No | Wishing Well, Magic Guard, Unaware, Friend Guard | **Toxic, Reflect, Light Screen, Life Dew**, then Thunder Wave, Charm, Soft-Boiled, Protect | **Light Clay**, Leftovers, Shell Bell, Bright Powder, Focus Band, Mental Herb, Lax Incense, Quick Claw |
-| | | | | | | | |
-| Burn and special damage, backup | **Cofagrigus** 58/50/145/95/105/30 | Modest | 252 HP, 248 Special Attack | No, its 145/105 defences are the point | Death Mask, Mummy, Cursed Body, Pressure | **Will-O-Wisp, Hex, Curse, Shadow Ball**, then Toxic, Nasty Plot, Pain Split, Protect | **Leftovers**, Expert Belt, Wise Glasses, Shell Bell, Light Clay, Bright Powder, Focus Band, Wide Lens |
-| Sun core, backup | **Heliolisk** 62/55/52/109/94/109 | Modest | 252 Special Attack, 248 Speed | **Yes** | Backfeed, Dry Skin, Solar Power, Overcoat | **Thunderbolt, Thunder, Dark Pulse, Solar Beam**, then Discharge, Thunder Wave, Protect, Substitute | **Expert Belt**, Wise Glasses, Leftovers, Focus Sash, Shell Bell, Wide Lens, Bright Powder, Zoom Lens |
-| Primary damage, conditional swap | **Heatran** 91/90/106/130/106/77 | Modest | 252 Special Attack, 248 HP | No | Lavadome, Flash Fire, Flame Body, Magma Armor | **Lava Plume, Earth Power, Flamethrower, Protect**, then Magma Storm, Flash Cannon, Will-O-Wisp, Heat Wave | **Expert Belt**, Leftovers, Wise Glasses, Wide Lens, Shell Bell, Focus Sash, Bright Powder, Zoom Lens |
-| Leech Seed, backup | **Trevenant** 85/110/76/65/82/56 | Adamant | 252 Attack, 248 HP | No | Undergrowth, Harvest, Natural Cure, Frisk | **Leech Seed, Will-O-Wisp, Horn Leech, Wood Hammer**, then Shadow Ball, Protect, Toxic, Substitute | **Leftovers**, Big Root, Expert Belt, Muscle Band, Shell Bell, Rocky Helmet, Wide Lens, Focus Band |
-| Protector and healer, backup | **Florges** 78/65/68/112/154/75 | Calm | 252 HP, 248 Special Defense | Never, Hothouse shares its Special Defense | Hothouse, Flower Veil, Unaware, Symbiosis | **Wish, Heal Bell, Aromatherapy, Moonblast**, then Light Screen, Safeguard, Helping Hand, Protect | **Leftovers**, Light Clay, Shell Bell, Bright Powder, Focus Band, Lax Incense, Mental Herb, Quick Claw |
-| Second protector, backup | **Goodra** 90/100/70/110/150/80 | Calm | 252 HP, 248 Special Defense | No, its 150 Special Defense is the point | Seepage, Sap Sipper, Hydration, Water Absorb | **Draco Meteor, Thunderbolt, Protect, Toxic**, then Flamethrower, Ice Beam, Sludge Bomb, Substitute | **Leftovers**, Shell Bell, Bright Powder, Wise Glasses, Expert Belt, Focus Band, Lax Incense, Wide Lens |
+| Role | Pokemon | Nature | EV priority | Shadow? | Held change | Abilities (4) | Moves, priority four in bold | Items, priority first |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Burn, Curse, special damage | **Chandelure** 60/55/90/145/90/80 | Modest | 252 Special Attack, 248 HP | No, it dies to the boss | **Mega** | Hexlight, Infiltrator, Flash Fire, Flame Body | **Will-O-Wisp, Curse, Hex, Fire Blast**, then Calm Mind, Shadow Ball, Substitute, Confuse Ray | **Chandelurite**, Wide Lens, Focus Sash, Expert Belt, Leftovers, Wise Glasses, Shell Bell, Bright Powder |
+| Sun setter, per-action clock, sweeper | **Volcarona** 85/60/65/135/105/100 | Modest | 252 Special Attack, 248 HP | No, Quiver Dance needs it alive | **Zenith** | Ember Halo, Drought, Magic Guard, Flame Body | **Quiver Dance, Fiery Dance, Bug Buzz, Roost**, then Heat Wave, Flamethrower, Giga Drain, Substitute | **Volcarona Zenith Shard**, Leftovers, Expert Belt, Wise Glasses, Shell Bell, Focus Sash, Bright Powder, Wide Lens |
+| Primary physical damage | **Metagross** 80/135/130/95/90/70 | Adamant | 252 Attack, 248 HP | **Yes**, first pick | **Dynamax** | Hive Mind, Steelworker, Clear Body, Levitate | **Meteor Mash, Bullet Punch, Iron Head, Hammer Arm**, then Zen Headbutt, Agility, Iron Defense, Substitute | **Dynamax Band**, Expert Belt, Wide Lens, Muscle Band, Leftovers, Shell Bell, Scope Lens, Protective Pads |
+| Leech Seed and party multiplier | **Breloom** 60/130/80/60/60/70 | Adamant | 252 Attack, 248 HP | No, Mycelium needs it standing | None | Mycelium, Poison Heal, Technician, Quick Feet | **Leech Seed, Drain Punch, Facade, Mach Punch**, then Seed Bomb, Swords Dance, Substitute, Sludge Bomb | **Toxic Orb**, Big Root, Expert Belt, Wide Lens, Muscle Band, Leftovers, Shell Bell, Protective Pads |
+| Protector and healer | **Latias** 80/80/90/110/130/110 | Calm | 252 HP, 248 Special Defense | Never, Eon Shield stops when it falls | None | Eon Shield, Levitate, Healer, Multiscale | **Wish, Heal Pulse, Reflect, Light Screen**, then Recover, Helping Hand, Dragon Pulse, Protect | **Soul Dew**, Light Clay, Leftovers, Shell Bell, Bright Powder, Focus Sash, Lax Incense, Wide Lens |
+| Second protector and Toxic clock | **Clefable** 95/70/73/95/90/60 | Bold | 252 HP, 248 Defense | No | None | Wishing Well, Magic Guard, Unaware, Friend Guard | **Toxic, Reflect, Light Screen, Life Dew**, then Thunder Wave, Charm, Soft-Boiled, Protect | **Light Clay**, Leftovers, Shell Bell, Bright Powder, Focus Band, Mental Herb, Lax Incense, Quick Claw |
+| | | | | | | | | |
+| Burn and special damage, backup | **Cofagrigus** 58/50/145/95/105/30 | Modest | 252 HP, 248 Special Attack | No, its 145/105 defences are the point | None | Death Mask, Mummy, Cursed Body, Pressure | **Will-O-Wisp, Hex, Curse, Shadow Ball**, then Toxic, Nasty Plot, Pain Split, Protect | **Leftovers**, Expert Belt, Wise Glasses, Shell Bell, Light Clay, Bright Powder, Focus Band, Wide Lens |
+| Sun core, backup | **Heliolisk** 62/55/52/109/94/109 | Modest | 252 Special Attack, 248 Speed | **Yes** | **Zenith** | Backfeed, Dry Skin, Solar Power, Overcoat | **Thunderbolt, Thunder, Dark Pulse, Solar Beam**, then Discharge, Thunder Wave, Protect, Substitute | **Heliolisk Zenith Shard**, Expert Belt, Wise Glasses, Leftovers, Focus Sash, Shell Bell, Wide Lens, Bright Powder |
+| Primary damage, conditional swap | **Heatran** 91/90/106/130/106/77 | Modest | 252 Special Attack, 248 HP | No | **Mega**, in Chandelure's place | Lavadome, Flash Fire, Flame Body, Magma Armor | **Lava Plume, Earth Power, Flamethrower, Protect**, then Magma Storm, Flash Cannon, Will-O-Wisp, Heat Wave | **Heatranite**, Expert Belt, Leftovers, Wise Glasses, Wide Lens, Shell Bell, Focus Sash, Bright Powder |
+| Leech Seed, backup | **Trevenant** 85/110/76/65/82/56 | Adamant | 252 Attack, 248 HP | No | None | Undergrowth, Harvest, Natural Cure, Frisk | **Leech Seed, Will-O-Wisp, Horn Leech, Wood Hammer**, then Shadow Ball, Protect, Toxic, Substitute | **Leftovers**, Big Root, Expert Belt, Muscle Band, Shell Bell, Rocky Helmet, Wide Lens, Focus Band |
+| Protector and healer, backup | **Florges** 78/65/68/112/154/75 | Calm | 252 HP, 248 Special Defense | Never, Hothouse shares its Special Defense | None | Hothouse, Flower Veil, Unaware, Symbiosis | **Wish, Heal Bell, Aromatherapy, Moonblast**, then Light Screen, Safeguard, Helping Hand, Protect | **Leftovers**, Light Clay, Shell Bell, Bright Powder, Focus Band, Lax Incense, Mental Herb, Quick Claw |
+| Second protector, backup | **Goodra** 90/100/70/110/150/80 | Calm | 252 HP, 248 Special Defense | No, its 150 Special Defense is the point | None | Seepage, Sap Sipper, Hydration, Water Absorb | **Draco Meteor, Thunderbolt, Protect, Toxic**, then Flamethrower, Ice Beam, Sludge Bomb, Substitute | **Leftovers**, Shell Bell, Bright Powder, Wise Glasses, Expert Belt, Focus Band, Lax Incense, Wide Lens |
 
 Clocks: burn and Curse from Chandelure, Leech Seed from Breloom, Toxic and paralysis from
 Clefable, and Ember Halo from Volcarona.
 
 Notes.
 
+- Zenith Volcarona wears Simple: each Quiver Dance is +2 Special Attack, Special Defense
+  and Speed, on 160 Special Attack and 140 Speed. Zenith Heliolisk brings its own Drought,
+  so it is the sun core backup that needs no Volcarona.
+- Metagross holds the Dynamax Band as on the team without legendaries. When Metagross is
+  the Mega instead, the band goes to Breloom, whose Drain Punch and Mach Punch become Max
+  Knuckle.
+- Keep Ice and Water moves off the Dynamax: they replace Drought's sun with hail or rain.
+  Max Flare only resets the sun. Zenith Goodra brings rain, so Goodra stays plain.
 - Drought gives every Fire move 1.5x. Morning Sun is egg-only on Volcarona, so Roost is
   the heal.
 - Ember Halo is a second per-action clock beside Curse, and it needs no cast.
@@ -430,8 +602,10 @@ Notes.
   pair Groudon with Mega Rayquaza.
 - Heatran is the conditional swap. Lavadome gives the party 1.25x against a burned boss,
   the best multiplier here, but it is burn-locked and a third Fire body.
-- Mega Latias and Mega Metagross are the two Mega choices. Take Latias against a boss that
-  is killing you and Metagross against one you cannot out-damage.
+- Chandelure holds the stone by default. Move it to Latias (Latiasite) against a boss
+  that is killing you, or to Metagross (Metagrossite) against one you cannot out-damage,
+  and give Chandelure back its Zoom Lens. Mega Heatran, at 175 Special Attack and 141
+  Special Defense, is the reason to field the conditional swap with its stone.
 
 ## Raids, with mythicals
 
@@ -439,27 +613,37 @@ Four damage clocks instead of five. The fifth slot buys Regalia, which gives the
 Defense every 10 seconds up to +3, and Seven Wishes, which heals all six a quarter of
 their HP for no action.
 
-| Role | Pokemon | Nature | EV priority | Shadow? | Abilities (4) | Moves, priority four in bold | Items, priority first |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| Burn, Curse, main special damage | **Chandelure** 60/55/90/145/90/80 | Modest | 252 Special Attack, 248 HP | No, it dies to the boss | Hexlight, Infiltrator, Flash Fire, Flame Body | **Will-O-Wisp, Curse, Hex, Fire Blast**, then Calm Mind, Shadow Ball, Substitute, Confuse Ray | **Wide Lens**, Focus Sash, Expert Belt, Leftovers, Wise Glasses, Shell Bell, Bright Powder, Zoom Lens |
-| Leech Seed and party multiplier | **Breloom** 60/130/80/60/60/70 | Adamant | 252 Attack, 248 HP | No, Mycelium needs it standing | Mycelium, Poison Heal, Technician, Quick Feet | **Leech Seed, Drain Punch, Facade, Mach Punch**, then Seed Bomb, Swords Dance, Substitute, Sludge Bomb | **Toxic Orb**, Big Root, Expert Belt, Wide Lens, Muscle Band, Leftovers, Shell Bell, Protective Pads |
-| Toxic, cleric and team Defense | **Diancie** 50/100/150/100/150/50 | Bold | 252 HP, 248 Defense | Never, no mythical can be shadowed | Regalia, Magic Bounce, Solid Rock, Clear Body | **Toxic, Heal Bell, Reflect, Light Screen**, then Charm, Fake Tears, Diamond Storm, Protect | **Light Clay**, Leftovers, Shell Bell, Bright Powder, Focus Band, Lax Incense, Mental Herb, Quick Claw |
-| Paralysis and flexible damage | **Arceus** 120/120/120/120/120/120 | Modest | 252 Special Attack, 248 HP | Never, no mythical can be shadowed | Firstlight, Multitype, Adaptability, Filter | **Judgment, Thunder Wave, Calm Mind, Recover**, then Will-O-Wisp, Toxic, Earth Power, Protect | **Pixie Plate**, Leftovers, Wise Glasses, Expert Belt, Shell Bell, Bright Powder, Focus Sash, Wide Lens |
-| Party heal and screens | **Jirachi** 100/100/100/100/100/100 | Calm | 252 HP, 248 Special Defense | Never, no mythical can be shadowed | Seven Wishes, Magic Bounce, Levitate, Healer | **Wish, Life Dew, Reflect, Light Screen**, then Helping Hand, Cosmic Power, Toxic, Protect | **Light Clay**, Leftovers, Shell Bell, Bright Powder, Focus Band, Lax Incense, Mental Herb, Quick Claw |
-| Primary physical damage | **Metagross** 80/135/130/95/90/70 | Adamant | 252 Attack, 248 HP | **Yes**, first pick | Hive Mind, Steelworker, Clear Body, Levitate | **Meteor Mash, Bullet Punch, Zen Headbutt, Ice Punch**, then Iron Head, Hammer Arm, Rock Slide, Substitute | **Expert Belt**, Wide Lens, Muscle Band, Leftovers, Shell Bell, Scope Lens, Protective Pads, Focus Band |
-| | | | | | | | |
-| Burn and special damage, backup | **Volcanion** 80/110/120/130/90/70 | Modest | 252 Special Attack, 248 HP | Never, no mythical can be shadowed | Boiler, Water Absorb, Flash Fire, Steam Engine | **Steam Eruption, Will-O-Wisp, Flamethrower, Protect**, then Hydro Pump, Earth Power, Haze, Substitute | **Charcoal**, Leftovers, Wise Glasses, Expert Belt, Shell Bell, Bright Powder, Safety Goggles, Wide Lens |
-| Leech Seed and cleric, backup | **Celebi** 100/100/100/100/100/100 | Calm | 252 HP, 248 Special Defense | Never, no mythical can be shadowed | Timeline Split, Healer, Anticipation, Natural Cure | **Leech Seed, Heal Bell, Recover, Light Screen**, then Life Dew, Giga Drain, Toxic, Protect | **Big Root**, Leftovers, Light Clay, Shell Bell, Bright Powder, Focus Band, Lax Incense, Mental Herb |
-| Toxic and protector, backup | **Clefable** 95/70/73/95/90/60 | Bold | 252 HP, 248 Defense | No | Wishing Well, Magic Guard, Unaware, Friend Guard | **Reflect, Light Screen, Life Dew, Toxic**, then Thunder Wave, Charm, Soft-Boiled, Protect | **Light Clay**, Leftovers, Shell Bell, Bright Powder, Focus Band, Mental Herb, Lax Incense, Quick Claw |
-| Paralysis and damage, backup | **Genesect** 71/120/95/120/95/99 | Modest | 252 Special Attack, 248 HP | Never, no mythical can be shadowed | Overclock, Download, Analytic, Adaptability | **Techno Blast, Thunder Wave, Flamethrower, Bug Buzz**, then Ice Beam, Thunderbolt, Flash Cannon, Protect | **Burn Drive**, Leftovers, Wise Glasses, Expert Belt, Shell Bell, Bright Powder, Wide Lens, Focus Sash |
-| Party heal, backup | **Florges** 78/65/68/112/154/75 | Calm | 252 HP, 248 Special Defense | Never, Hothouse shares its Special Defense | Hothouse, Flower Veil, Unaware, Symbiosis | **Wish, Heal Bell, Aromatherapy, Moonblast**, then Light Screen, Safeguard, Helping Hand, Protect | **Leftovers**, Light Clay, Shell Bell, Bright Powder, Focus Band, Lax Incense, Mental Herb, Quick Claw |
-| Primary physical damage, backup | **Aegislash** 60/50/140/50/140/60 | Adamant | 252 Attack, 248 HP | No, the shield stance is half its value | Turn the Blade, Stance Change, Clear Body, Cursed Body | **Swords Dance, Iron Head, Sacred Sword, King's Shield**, then Shadow Ball, Flash Cannon, Substitute, Protect | **Leftovers**, Expert Belt, Muscle Band, Shell Bell, Wide Lens, Scope Lens, Focus Band, Protective Pads |
+| Role | Pokemon | Nature | EV priority | Shadow? | Held change | Abilities (4) | Moves, priority four in bold | Items, priority first |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Burn, Curse, main special damage | **Chandelure** 60/55/90/145/90/80 | Modest | 252 Special Attack, 248 HP | No, it dies to the boss | **Mega** | Hexlight, Infiltrator, Flash Fire, Flame Body | **Will-O-Wisp, Curse, Hex, Fire Blast**, then Calm Mind, Shadow Ball, Substitute, Confuse Ray | **Chandelurite**, Wide Lens, Focus Sash, Expert Belt, Leftovers, Wise Glasses, Shell Bell, Bright Powder |
+| Leech Seed and party multiplier | **Breloom** 60/130/80/60/60/70 | Adamant | 252 Attack, 248 HP | No, Mycelium needs it standing | None | Mycelium, Poison Heal, Technician, Quick Feet | **Leech Seed, Drain Punch, Facade, Mach Punch**, then Seed Bomb, Swords Dance, Substitute, Sludge Bomb | **Toxic Orb**, Big Root, Expert Belt, Wide Lens, Muscle Band, Leftovers, Shell Bell, Protective Pads |
+| Toxic, cleric and team Defense | **Diancie** 50/100/150/100/150/50 | Bold | 252 HP, 248 Defense | Never, no mythical can be shadowed | None | Regalia, Magic Bounce, Solid Rock, Clear Body | **Toxic, Heal Bell, Reflect, Light Screen**, then Charm, Fake Tears, Diamond Storm, Protect | **Light Clay**, Leftovers, Shell Bell, Bright Powder, Focus Band, Lax Incense, Mental Herb, Quick Claw |
+| Paralysis and flexible damage | **Arceus** 120/120/120/120/120/120 | Modest | 252 Special Attack, 248 HP | Never, no mythical can be shadowed | None | Firstlight, Multitype, Adaptability, Filter | **Judgment, Thunder Wave, Calm Mind, Recover**, then Will-O-Wisp, Toxic, Earth Power, Protect | **Pixie Plate**, Leftovers, Wise Glasses, Expert Belt, Shell Bell, Bright Powder, Focus Sash, Wide Lens |
+| Party heal and screens | **Jirachi** 100/100/100/100/100/100 | Calm | 252 HP, 248 Special Defense | Never, no mythical can be shadowed | **Zenith** | Seven Wishes, Magic Bounce, Levitate, Healer | **Wish, Life Dew, Reflect, Light Screen**, then Helping Hand, Cosmic Power, Toxic, Protect | **Jirachi Zenith Shard**, Light Clay, Leftovers, Shell Bell, Bright Powder, Focus Band, Lax Incense, Mental Herb |
+| Primary physical damage | **Metagross** 80/135/130/95/90/70 | Adamant | 252 Attack, 248 HP | **Yes**, first pick | **Dynamax** | Hive Mind, Steelworker, Clear Body, Levitate | **Meteor Mash, Bullet Punch, Iron Head, Hammer Arm**, then Zen Headbutt, Agility, Iron Defense, Substitute | **Dynamax Band**, Expert Belt, Wide Lens, Muscle Band, Leftovers, Shell Bell, Scope Lens, Protective Pads |
+| | | | | | | | | |
+| Burn and special damage, backup | **Volcanion** 80/110/120/130/90/70 | Modest | 252 Special Attack, 248 HP | Never, no mythical can be shadowed | None | Boiler, Water Absorb, Flash Fire, Steam Engine | **Steam Eruption, Will-O-Wisp, Flamethrower, Protect**, then Hydro Pump, Earth Power, Haze, Substitute | **Charcoal**, Leftovers, Wise Glasses, Expert Belt, Shell Bell, Bright Powder, Safety Goggles, Wide Lens |
+| Leech Seed and cleric, backup | **Celebi** 100/100/100/100/100/100 | Calm | 252 HP, 248 Special Defense | Never, no mythical can be shadowed | None | Timeline Split, Healer, Anticipation, Natural Cure | **Leech Seed, Heal Bell, Recover, Light Screen**, then Life Dew, Giga Drain, Toxic, Protect | **Big Root**, Leftovers, Light Clay, Shell Bell, Bright Powder, Focus Band, Lax Incense, Mental Herb |
+| Toxic and protector, backup | **Clefable** 95/70/73/95/90/60 | Bold | 252 HP, 248 Defense | No | None | Wishing Well, Magic Guard, Unaware, Friend Guard | **Reflect, Light Screen, Life Dew, Toxic**, then Thunder Wave, Charm, Soft-Boiled, Protect | **Light Clay**, Leftovers, Shell Bell, Bright Powder, Focus Band, Mental Herb, Lax Incense, Quick Claw |
+| Paralysis and damage, backup | **Genesect** 71/120/95/120/95/99 | Modest | 252 Special Attack, 248 HP | Never, no mythical can be shadowed | None | Overclock, Download, Analytic, Adaptability | **Techno Blast, Thunder Wave, Flamethrower, Bug Buzz**, then Ice Beam, Thunderbolt, Flash Cannon, Protect | **Burn Drive**, Leftovers, Wise Glasses, Expert Belt, Shell Bell, Bright Powder, Wide Lens, Focus Sash |
+| Party heal, backup | **Florges** 78/65/68/112/154/75 | Calm | 252 HP, 248 Special Defense | Never, Hothouse shares its Special Defense | **Zenith** | Hothouse, Flower Veil, Unaware, Symbiosis | **Wish, Heal Bell, Aromatherapy, Moonblast**, then Light Screen, Safeguard, Helping Hand, Protect | **Florges Zenith Shard**, Leftovers, Light Clay, Shell Bell, Bright Powder, Focus Band, Lax Incense, Mental Herb |
+| Primary physical damage, backup | **Aegislash** 60/50/140/50/140/60 | Adamant | 252 Attack, 248 HP | No, the shield stance is half its value | **Dynamax** | Turn the Blade, Stance Change, Clear Body, Cursed Body | **Swords Dance, Iron Head, Sacred Sword, King's Shield**, then Shadow Ball, Flash Cannon, Substitute, Protect | **Dynamax Band**, Leftovers, Expert Belt, Muscle Band, Shell Bell, Wide Lens, Scope Lens, Focus Band |
 
 Clocks: burn and Curse from Chandelure, Leech Seed from Breloom, Toxic from Diancie, and
 paralysis from Arceus.
 
 Notes.
 
+- Chandelure holds the stone as on the team without legendaries. Mega Diancie trades 40
+  in each defence for offence, which undoes what Diancie is here for.
+- Zenith Jirachi wears Comatose, which keeps the boss's paralysis off the party healer, so
+  Seven Wishes keeps its pace. Florges takes the shard when it replaces Jirachi. Zenith
+  Celebi is the other party heal: its Grassy Terrain covers only your party and heals each
+  grounded member 1/16 every time it acts.
+- Metagross holds the Dynamax Band as on the team without legendaries, and its Max
+  Steelspike Defense stacks with Regalia's.
+- Nobody holds the Tera Orb. Arceus fights as its Plate's type, which the boss's weakness
+  picks.
 - Diancie is why this team survives. Regalia reaches +3 Defense about 30 seconds in, which
   is roughly 0.4x incoming physical damage, and it stacks with Reflect and with the burn.
   The catch is 50 HP behind those 150/150 defences, so Reflect goes up first.
@@ -493,6 +677,9 @@ Notes.
 | Magic Bounce | Toxic, Thunder Wave and Charm come back at you | Diancie's own Magic Bounce returns them again. Lead with damage |
 | Dry Skin | nothing, it takes 1.25x from Fire | Bring both Fire attackers |
 | Unseen Fist | Its contact moves go through Protect and King's Shield | Use Substitute where a row offers it, and put the screens up first |
+| Tera raid | Its own types: it is hit as its Tera type alone | Read every row above off the Tera type the lobby shows. A Fire Tera turns away the burn whatever its species |
+| Max Raid | Twice the HP, and every move is a Max Move that drops your stages or lays a sky that covers everybody | Its status moves come out as Max Guard, so no Haze or Thunder Wave. Your own Dynamax's Max Steelspike and Max Knuckle win back the Defense and Attack its drops take. Crowned Zacian's Behemoth Blade and Crowned Zamazenta's Behemoth Bash hit it 2x |
+| Max Raid with rain or hail | Max Geyser's rain halves the sun core's Fire, and Max Hailstorm chips your five | Take the team without the sun core, and lead the damage with Metagross and Breloom |
 
 Never let one type carry both the status engine and the damage. A single rolled ability
 takes out both at once.
@@ -501,7 +688,10 @@ takes out both at once.
 
 A machine is stocked as `TM <move name>` and is spent on use, so two pokemon wanting
 Protect need two machines. The costs below cover all twelve rows of a team, mains and
-backups, so building the six alone costs roughly half.
+backups, so building the six alone costs roughly half. They were counted before the held
+changes went into the rows: each change item pushed out the row's last item, and the Dynamax
+Metagross rows swap Ice Punch and Rock Slide for Agility and Iron Defense, so the figures
+are close but not exact.
 
 | Team | Machines | Held items | Total |
 | --- | --- | --- | --- |
@@ -555,3 +745,6 @@ since a finished catch already has them.
 
 Leftovers, Big Root, Soul Dew, the Plates, the Drives, the Mega Stones, the orbs, the
 Prison Bottle, the Reveal Glass and the Rusted Sword are found rather than bought. So is every relic.
+So are the Zenith Shards, each buried only where its own line lives, the Z-Crystals, the
+Dynamax Band, the Max Mushrooms and the Tera Shards. The Tera Orb has no source at all
+yet. None of these are in the costs above.

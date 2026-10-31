@@ -6,6 +6,7 @@ import createChunkView, {
   type ChunkView,
 } from '../../canvas/overworld/chunk-view';
 import settings from '../app/settings';
+import { m } from '../../i18n/paraglide/messages.js';
 
 export type {
   CellSpot,
@@ -88,7 +89,10 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
         role="application"
         // The caption is painted, so it is said here as well: it is the
         // only place the chunk names itself now
-        aria-label={`Chunk map. ${props.caption}. ${ahead() || 'Empty ground'} ahead of you.`}
+        aria-label={m.board_chunk_map({
+          caption: props.caption,
+          ahead: ahead() || m.board_empty_ground(),
+        })}
         // The board takes the gestures rather than the page: a two
         // finger twist here would otherwise be the browser's own pinch,
         // and a drag would scroll whatever is behind it

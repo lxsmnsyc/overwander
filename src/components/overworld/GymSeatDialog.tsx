@@ -24,6 +24,7 @@ import Landmark from '../../data/overworld/landmark';
 import landmarkPicture, { LANDMARK_SHEET } from '../../data/overworld/landmark-sprite';
 import { CounterSpent, CounterStep, CounterTerms, HeadingPortrait } from '../forms/terms';
 import describeFailure from '../../i18n/refusals';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * A gym seat, put to whoever walked up to it.
@@ -112,7 +113,10 @@ function SeatCounter(
         egg: false,
         progress: 0,
         fainted: false,
-        label: `${getSpeciesData(entry.species).name}, Lv. ${entry.level}`,
+        label: m.ow_lineup_square({
+          species: getSpeciesData(entry.species).name,
+          level: entry.level,
+        }),
       });
     }
     return squares;
@@ -128,7 +132,7 @@ function SeatCounter(
           toast.push({ message: failed, tone: 'ember' });
           return;
         }
-        toast.push({ title: 'Gym Seat', message: said, tone: 'leaf' });
+        toast.push({ title: m.gym_seat_title(), message: said, tone: 'leaf' });
         props.onChange?.();
       })
       .catch((caught: unknown) => {
@@ -153,8 +157,8 @@ function SeatCounter(
     setPicking(null);
     act(
       async () => takeGymSeat(chunk, cell, catches),
-      mine() ? 'Your new line-up is standing.' : 'The seat is yours. Come back and defend it.',
-      'They would not stand. Somebody else took the seat, you were just beaten off it, or nothing you picked can fight.',
+      mine() ? m.gym_seat_restaged() : m.gym_seat_taken(),
+      m.gym_seat_take_failed(),
     );
   };
 
@@ -178,7 +182,7 @@ function SeatCounter(
 
         if (battle == null) {
           toast.push({
-            message: 'The seat has moved on. Somebody else may be holding it now.',
+            message: m.gym_seat_moved_on(),
             tone: 'ember',
           });
           return;
@@ -220,11 +224,7 @@ function SeatCounter(
     if (chunk == null || cell == null) {
       return;
     }
-    act(
-      async () => leaveGymSeat(chunk, cell),
-      'You stood down. The seat is open again.',
-      'It is not yours to give up.',
-    );
+    act(async () => leaveGymSeat(chunk, cell), m.gym_seat_stood_down(), m.gym_seat_not_yours());
   };
 
   return (
@@ -232,7 +232,7 @@ function SeatCounter(
       <Dialog
         isOpen={props.cell != null && picking() == null}
         onClose={props.onClose}
-        title="Gym Seat"
+        title={m.gym_seat_title()}
         lead={
           <HeadingPortrait>
             <AtlasSprite
@@ -243,29 +243,27 @@ function SeatCounter(
             />
           </HeadingPortrait>
         }
-        description="A team left standing for the next trainer to fight."
+        description={m.gym_seat_description()}
       >
         <div class="flex flex-col gap-3">
           {/* What a challenge moves either way, and how often it can be tried */}
           <CounterTerms
             rows={[
-              { label: 'Win', value: `The seat, and ${stake()}% of their purse` },
-              { label: 'Lose', value: `${stake()}% of your purse` },
+              { label: m.ow_win(), value: m.gym_seat_win_value({ stake: stake() }) },
+              { label: m.gym_seat_lose(), value: m.gym_seat_lose_value({ stake: stake() }) },
             ]}
-            often={`${SEAT_DAILY_TAKE} takes a day · ${Math.max(
-              0,
-              SEAT_DAILY_TAKE - (props.standing?.taken ?? 0),
-            )} left`}
+            often={m.gym_seat_often({
+              daily: SEAT_DAILY_TAKE,
+              left: Math.max(0, SEAT_DAILY_TAKE - (props.standing?.taken ?? 0)),
+            })}
           />
           <Show
             when={held()}
             fallback={
               <Note>
                 {barred()
-                  ? `You were beaten off this seat. It is open to everybody else for another
-                     ${minutes(props.standing?.barredUntil ?? 0)} minutes.`
-                  : `Nobody is holding this seat. Leave a team standing and it is yours until
-                     somebody beats it off you.`}
+                  ? m.gym_seat_barred({ minutes: minutes(props.standing?.barredUntil ?? 0) })
+                  : m.gym_seat_empty()}
               </Note>
             }
           >
@@ -279,11 +277,18 @@ function SeatCounter(
                 >
                   <div class="flex min-w-0 grow flex-col gap-0.5">
                     <PlayerPlate
-                      name={mine() ? 'Your seat' : (props.holder.latest?.name ?? 'A trainer')}
+                      name={
+                        mine()
+                          ? m.gym_seat_yours()
+                          : (props.holder.latest?.name ?? m.gym_seat_a_trainer())
+                      }
                       sprite={props.holder.latest?.sprite ?? null}
                     />
                     <Meta class="text-left">
-                      {lineup().length} standing · {seated().defenses} turned away
+                      {m.gym_seat_standing({
+                        count: lineup().length,
+                        defenses: seated().defenses,
+                      })}
                     </Meta>
                   </div>
                   <Show when={!mine()}>
@@ -292,12 +297,12 @@ function SeatCounter(
                         game.setVisiting(seated().holder);
                       }}
                     >
-                      Profile
+                      {m.gym_seat_profile()}
                     </Button>
                   </Show>
                 </div>
 
-                <CounterStep>{mine() ? 'Your line-up' : 'Their line-up'}</CounterStep>
+                <CounterStep>{mine() ? m.gym_seat_your_lineup() : m.ow_their_lineup()}</CounterStep>
                 <CatchBox
                   entries={lineup()}
                   capacity={Math.max(1, lineup().length)}
@@ -305,29 +310,22 @@ function SeatCounter(
                   cardOnly
                 />
 
-                <Show
-                  when={!mine()}
-                  fallback={
-                    <Meta>
-                      They fight for you while you are away, at full health every time, and nothing
-                      that happens to them is written back to your pokemon. What a beaten challenger
-                      pays lands in your purse.
-                    </Meta>
-                  }
-                >
-                  <Meta>Your party carries the fight out with it. Theirs does not.</Meta>
+                <Show when={!mine()} fallback={<Meta>{m.gym_seat_defends()}</Meta>}>
+                  <Meta>{m.gym_seat_carries()}</Meta>
                 </Show>
                 <Show when={!mine() && spent()}>
                   <CounterSpent
-                    title="Done for today"
-                    says="You have taken all this seat will give you today."
+                    title={m.gym_seat_done_title()}
+                    says={m.gym_seat_done()}
                     quoted={false}
                   />
                 </Show>
                 <Show when={!mine() && !spent() && cooling()}>
                   <CounterSpent
-                    title="Not just yet"
-                    says={`They have seen you off. Come back in ${minutes(props.standing?.cooldownUntil ?? 0)} minutes.`}
+                    title={m.gym_seat_cooling_title()}
+                    says={m.gym_seat_cooling({
+                      minutes: minutes(props.standing?.cooldownUntil ?? 0),
+                    })}
                     quoted={false}
                   />
                 </Show>
@@ -348,11 +346,11 @@ function SeatCounter(
                     pickTeam('take');
                   }}
                 >
-                  {held() == null ? 'Take the seat' : 'Change the line-up'}
+                  {held() == null ? m.gym_seat_take() : m.gym_seat_change()}
                 </Button>
                 <Show when={mine()}>
                   <Button disabled={busy()} onClick={vacate}>
-                    Stand down
+                    {m.gym_seat_stand_down()}
                   </Button>
                 </Show>
               </>
@@ -367,11 +365,11 @@ function SeatCounter(
                   pickTeam('challenge');
                 }}
               >
-                Challenge
+                {m.gym_seat_challenge()}
               </Button>
             </Show>
           </Show>
-          <Button onClick={props.onClose}>Walk on</Button>
+          <Button onClick={props.onClose}>{m.ow_walk_on()}</Button>
         </DialogActions>
       </Dialog>
     </>
@@ -394,7 +392,7 @@ export default function GymSeatDialog(props: GymSeatDialogProps): JSX.Element {
     async (uid): Promise<Holder> => {
       const profile = await getProfile(uid);
 
-      return { name: profile?.nickname ?? 'A trainer', sprite: profile?.sprite ?? null };
+      return { name: profile?.nickname ?? m.gym_seat_a_trainer(), sprite: profile?.sprite ?? null };
     },
   );
 

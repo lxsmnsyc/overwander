@@ -15,6 +15,8 @@ import { CostBadge, CounterSpent, CounterTerms, HeadingPortrait } from '../forms
 import { failed, readable } from '../app/resource-reads';
 import playEffect, { Effect } from '../app/sound';
 import describeFailure from '../../i18n/refusals';
+import { m } from '../../i18n/paraglide/messages.js';
+import { describeItem } from '../details';
 
 /** The tree beside the heading */
 const TREE_SPRITE = 28;
@@ -57,11 +59,14 @@ function HoneyTreeBody(
       .then((result) => {
         setBusy(false);
         if (result == null) {
-          toast.push({ message: 'The tree will not take honey right now.', tone: 'ember' });
+          toast.push({ message: m.honey_tree_refused(), tone: 'ember' });
           return;
         }
         if (result.kind === 'no-honey') {
-          toast.push({ message: 'You have no Honey to lather it with.', tone: 'ember' });
+          toast.push({
+            message: m.honey_tree_no_honey({ item: describeItem(Items.Honey) }),
+            tone: 'ember',
+          });
           props.onSpent();
           return;
         }
@@ -87,30 +92,31 @@ function HoneyTreeBody(
     <>
       <CounterTerms
         cost={{ item: Items.Honey, amount: LATHER_COST }}
-        have={{ amount: jars(), short: jars() < LATHER_COST, unit: 'Honey' }}
-        often={props.lathered ? 'Used this while' : 'One lather a window'}
+        have={{ amount: jars(), short: jars() < LATHER_COST, unit: describeItem(Items.Honey) }}
+        often={props.lathered ? m.ow_used_this_while() : m.honey_tree_often()}
       />
       <Show when={failed(props.jars)}>{(said) => <Note>{said()}</Note>}</Show>
       <Show
         when={!props.lathered}
-        fallback={
-          <CounterSpent says="The bark is still sticky. Come back next window." quoted={false} />
-        }
+        fallback={<CounterSpent says={m.honey_tree_sticky()} quoted={false} />}
       >
-        <Note>Lather it with honey and see what comes down for it.</Note>
+        <Note>{m.honey_tree_invite()}</Note>
       </Show>
       <DialogActions>
         <Show when={!props.lathered}>
           <Button
             tone="primary"
             disabled={busy() || jars() < LATHER_COST}
-            label={`Lather, ${LATHER_COST} Honey`}
+            label={m.honey_tree_lather_label({
+              cost: LATHER_COST,
+              item: describeItem(Items.Honey),
+            })}
             onClick={lather}
           >
-            Lather <CostBadge cost={{ item: Items.Honey, amount: LATHER_COST }} />
+            {m.honey_tree_lather()} <CostBadge cost={{ item: Items.Honey, amount: LATHER_COST }} />
           </Button>
         </Show>
-        <Button onClick={close}>Walk on</Button>
+        <Button onClick={close}>{m.ow_walk_on()}</Button>
       </DialogActions>
     </>
   );
@@ -127,7 +133,7 @@ export default function HoneyTreeDialog(props: HoneyTreeDialogProps): JSX.Elemen
     <Dialog
       isOpen={props.cell != null}
       onClose={props.onClose}
-      title="Honey Tree"
+      title={m.honey_tree_title()}
       lead={
         <HeadingPortrait>
           <AtlasSprite
@@ -138,9 +144,9 @@ export default function HoneyTreeDialog(props: HoneyTreeDialogProps): JSX.Elemen
           />
         </HeadingPortrait>
       }
-      description="Something lives in this tree, and it cannot resist honey."
+      description={m.honey_tree_description()}
     >
-      <Suspense fallback={<Note>Counting jars…</Note>}>
+      <Suspense fallback={<Note>{m.honey_tree_counting()}</Note>}>
         <HoneyTreeBody
           {...props}
           jars={jars}

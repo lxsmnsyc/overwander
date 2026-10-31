@@ -41,6 +41,7 @@ import { type EggSource, type EggState, stateOf } from './journey';
 import type { BoardWalk } from './walk';
 import type { BoardWindows } from './windows';
 import describeFailure from '../../i18n/refusals';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /** An egg the player has been offered, and where */
 export interface EggOffer {
@@ -240,7 +241,7 @@ export default function createBoardInteractions(deps: InteractDeps): BoardIntera
   ): Promise<string | null> => {
     if (await isEncounterRetired(user.uid, encounter)) {
       // Ran off or already in the bag: either way nobody is standing there
-      return 'Nothing here. This one is done with you.';
+      return m.interact_done_with_you();
     }
     once.set(metOnce);
     session.set(await createSafariSession(user, encounter));
@@ -257,7 +258,7 @@ export default function createBoardInteractions(deps: InteractDeps): BoardIntera
   ): Promise<string | null> => {
     const grunt = landmark === Landmark.TeamRocket;
     const staged = challengerOf(spot.snapshot, landmark, spot.cell);
-    const who = staged?.name ?? 'Team Rocket';
+    const who = staged?.name ?? m.ow_team_rocket();
     const stop = await enterStop(spot.snapshot, spot.cell);
 
     if (stop === 'locked') {
@@ -270,18 +271,16 @@ export default function createBoardInteractions(deps: InteractDeps): BoardIntera
           : null;
       const housed =
         landmark === Landmark.FrontierBrain ? loaded.snapshot.getFrontierBrain(at) : null;
-      let asked: string | null = null;
-
       if (seated != null) {
-        asked = eliteGate(seated);
-      } else if (crowned != null) {
-        asked = championGate(crowned);
-      } else if (housed != null) {
-        asked = frontierGate(housed);
+        return eliteGate(seated, who);
       }
-      return asked == null
-        ? `${who} is not taking challengers.`
-        : `${who} only faces challengers ${asked}.`;
+      if (crowned != null) {
+        return championGate(crowned, who);
+      }
+      if (housed != null) {
+        return frontierGate(housed, who);
+      }
+      return m.interact_not_taking({ who });
     }
     if (stop === 'beaten') {
       // A beaten grunt may still owe the pokemon they left; everybody
@@ -301,15 +300,15 @@ export default function createBoardInteractions(deps: InteractDeps): BoardIntera
         deps.setEncounter(owed.encounter);
         return null;
       }
-      return grunt ? 'They have moved on.' : `${who} is done with you this window.`;
+      return grunt ? m.interact_moved_on() : m.interact_done_this_window({ who });
     }
     if (stop == null) {
       // Nobody staged there: the board is behind the world, so it asks again
       windows.askForWindow(true, true);
-      return 'Nobody is standing there any more.';
+      return m.interact_nobody_standing();
     }
     if (!(await canJoinRaids(user.uid))) {
-      return `${who} wants a battle, and you have nothing to fight with.`;
+      return m.interact_nothing_to_fight({ who });
     }
     // Put to the player rather than taken for them; the dialog accepts it
     challenge.set({
@@ -341,15 +340,15 @@ export default function createBoardInteractions(deps: InteractDeps): BoardIntera
     taken(windows.spent, spot);
 
     if (claim == null) {
-      return `${PHENOMENON_NAMES[kind]}, and nothing under it now.`;
+      return m.interact_happening_spent({ name: PHENOMENON_NAMES[kind] });
     }
     if (claim.kind === 'item') {
-      deps.announce(at, 'Nothing was left behind.', claim.items);
+      deps.announce(at, m.interact_left_behind(), claim.items);
       return null;
     }
     if (claim.kind === 'egg') {
       // An egg is peeked at above, unless the hour turned over between the two calls
-      return 'An egg, tucked away in the grotto. Walk it warm.';
+      return m.interact_grotto_egg();
     }
     return meet(user, claim.encounter, true);
   };
@@ -381,8 +380,8 @@ export default function createBoardInteractions(deps: InteractDeps): BoardIntera
     }
     lairReason.set(
       standing != null || (await canJoinRaids(user.uid))
-        ? 'The lair is quiet. Nothing has come out this window.'
-        : 'You need a pokemon of your own to raid. You can watch one already under way.',
+        ? m.interact_lair_quiet()
+        : m.interact_lair_need_pokemon(),
     );
     lair.set([spot, standing]);
     return null;
@@ -397,7 +396,7 @@ export default function createBoardInteractions(deps: InteractDeps): BoardIntera
     const spot = loaded.at(at);
 
     if (spot == null) {
-      return 'That is not loaded yet.';
+      return m.interact_not_loaded();
     }
 
     const spawn = loaded.spawns.get(at);
@@ -406,7 +405,7 @@ export default function createBoardInteractions(deps: InteractDeps): BoardIntera
       // The server decides what stands there: a turned-over window's spawn is not met
       const encounter = await startEncounter(spot.snapshot, spawn.id);
 
-      return encounter == null ? 'Too late. The chunk has moved on.' : meet(user, encounter);
+      return encounter == null ? m.interact_too_late() : meet(user, encounter);
     }
 
     const landmark = loaded.landmarks.get(at);
@@ -416,25 +415,21 @@ export default function createBoardInteractions(deps: InteractDeps): BoardIntera
 
       // Empty either way: carried off before, or by this press
       taken(windows.dug, spot);
-      deps.announce(at, 'Picked clean. Come back next window.', stash);
+      deps.announce(at, m.interact_cache_empty(), stash);
       return null;
     }
     if (landmark === Landmark.BerryPatch) {
       const berries = await claimBerryPatch(spot.snapshot, spot.cell);
 
       taken(windows.picked, spot);
-      deps.announce(at, 'Bare bushes. Come back next window.', berries == null ? null : [berries]);
+      deps.announce(at, m.interact_patch_bare(), berries == null ? null : [berries]);
       return null;
     }
     if (landmark === Landmark.ApricornTree) {
       const apricorns = await claimApricornTree(spot.snapshot, spot.cell);
 
       taken(windows.picked, spot);
-      deps.announce(
-        at,
-        'Picked bare. Come back next window.',
-        apricorns == null ? null : [apricorns],
-      );
+      deps.announce(at, m.interact_tree_bare(), apricorns == null ? null : [apricorns]);
       return null;
     }
     if (landmark != null && FIGHT_LANDMARKS.has(landmark)) {
@@ -451,7 +446,7 @@ export default function createBoardInteractions(deps: InteractDeps): BoardIntera
       if (standing === 'absent') {
         // A seat is a fixture, so this is a stale chunk rather than a seat that moved
         windows.askForWindow(true, true);
-        return 'There is no seat there any more.';
+        return m.interact_no_seat();
       }
       seat.set([spot, standing]);
       return null;
@@ -465,7 +460,7 @@ export default function createBoardInteractions(deps: InteractDeps): BoardIntera
       const standing = spot.snapshot.getStandingNpc(spot.cell);
 
       if (standing == null) {
-        return 'Nobody is passing through right now.';
+        return m.interact_nobody_passing();
       }
       board?.talk(spot, standing, user.uid);
       return null;
@@ -503,7 +498,7 @@ export default function createBoardInteractions(deps: InteractDeps): BoardIntera
       if (through == null) {
         // A mouth is cut into the ground rather than rolled, so this is a stale chunk
         windows.askForWindow(true, true);
-        return 'There is no way through there any more.';
+        return m.interact_no_way_through();
       }
 
       const going = walk.depth.get() === Depth.Cave ? Depth.Surface : Depth.Cave;
@@ -516,7 +511,7 @@ export default function createBoardInteractions(deps: InteractDeps): BoardIntera
         going,
       );
       walk.settle();
-      deps.remark(going === Depth.Cave ? 'Into the dark.' : 'Back out into the light.');
+      deps.remark(going === Depth.Cave ? m.interact_into_dark() : m.interact_into_light());
       return null;
     }
     if (landmark === Landmark.Portal) {

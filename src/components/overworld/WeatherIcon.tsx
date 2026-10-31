@@ -9,6 +9,7 @@ import Weather, {
 } from '../../data/overworld/weather';
 import TypeBadge from '../sprites/TypeBadge';
 import { Detail, TooltipHost } from '../styled';
+import { m } from '../../i18n/paraglide/messages.js';
 import {
   AshIcon,
   AuroraIcon,
@@ -99,10 +100,10 @@ export function WeatherFavors(props: { weather: Weather }): JSX.Element {
   return (
     <Show
       when={!favorsEverything(props.weather)}
-      fallback={<Detail label="Favors">Every type</Detail>}
+      fallback={<Detail label={m.weather_favors()}>{m.weather_every_type()}</Detail>}
     >
       <Show when={favored().length > 0}>
-        <Detail label="Favors">
+        <Detail label={m.weather_favors()}>
           <span class="flex flex-wrap gap-1">
             <For each={favored()}>{(type) => <TypeBadge type={type} />}</For>
           </span>

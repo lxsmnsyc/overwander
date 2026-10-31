@@ -5,6 +5,7 @@ import {
   naming,
 } from '../../../game/overworld/board-view';
 import { describeItem } from '../../details';
+import { m } from '../../../i18n/paraglide/messages.js';
 import { useAuth } from '../../../auth/context';
 import createBoardWalk, { type BoardWalk } from '../../../game/overworld/walk';
 import createBoardWindows from '../../../game/overworld/windows';
@@ -166,7 +167,7 @@ export default function OverworldBoard(props: {
     settleWalk: game.settleWalk,
     setFieldMoves: game.setFieldMoves,
     found: (items) => {
-      sayItems(toast, items, 'Your buddy found');
+      sayItems(toast, items, m.board_buddy_found());
     },
     failed: (message) => {
       toast.push({ message, tone: 'ember' });
@@ -372,12 +373,12 @@ export default function OverworldBoard(props: {
       toast.push(
         got
           ? {
-              title: 'An egg',
-              message: 'Yours now. Walk it warm and see what hatches.',
+              title: m.board_egg_title(),
+              message: m.board_egg_yours(),
               tone: 'leaf',
             }
           : {
-              message: 'It is gone. Somebody beat you to it, or the window turned over.',
+              message: m.board_egg_gone(),
               tone: 'ember',
             },
       );
@@ -1179,7 +1180,7 @@ export default function OverworldBoard(props: {
         when={view()}
         fallback={
           <div class="flex h-full items-center justify-center">
-            <Note>Loading the world…</Note>
+            <Note>{m.board_loading()}</Note>
           </div>
         }
       >
@@ -1284,8 +1285,10 @@ export default function OverworldBoard(props: {
               <Show when={carried()}>
                 {(egg) => (
                   <Badge tone={egg().steps >= egg().hatchSteps ? 'leaf' : 'neutral'}>
-                    Egg · {egg().steps} / {egg().hatchSteps}
-                    {egg().steps >= egg().hatchSteps ? ' · ready' : ''}
+                    {(egg().steps >= egg().hatchSteps ? m.board_egg_ready : m.board_egg_steps)({
+                      steps: egg().steps,
+                      hatch: egg().hatchSteps,
+                    })}
                   </Badge>
                 )}
               </Show>
@@ -1304,10 +1307,8 @@ export default function OverworldBoard(props: {
             class="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3
               bg-paper/80 p-4 text-center backdrop-blur-sm"
           >
-            <Note>
-              This walk is being played on another screen, in chunk {at().chunkX}, {at().chunkY}.
-            </Note>
-            <Button onClick={resume}>Walk here instead</Button>
+            <Note>{m.board_elsewhere({ x: at().chunkX, y: at().chunkY })}</Note>
+            <Button onClick={resume}>{m.board_walk_here()}</Button>
           </div>
         )}
       </Show>
@@ -1441,7 +1442,9 @@ export default function OverworldBoard(props: {
                   worldCell(destination.x, destination.cell % CHUNK_CELLS),
                   worldCell(destination.y, Math.floor(destination.cell / CHUNK_CELLS)),
                 );
-                remark(`Through to ${destination.name}. Chunk ${destination.x}, ${destination.y}.`);
+                remark(
+                  m.board_through({ name: destination.name, x: destination.x, y: destination.y }),
+                );
                 // A key was spent getting here, so where it got them is
                 // written down now rather than in a second and a half.
                 // The paces that led to the portal go with it; the

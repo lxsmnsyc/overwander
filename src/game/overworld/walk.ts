@@ -33,6 +33,8 @@ import {
 } from './board-metrics';
 import type { Journey } from './journey';
 import describeFailure from '../../i18n/refusals';
+import { m } from '../../i18n/paraglide/messages.js';
+import { describeMove } from '../details';
 
 /** What a step onto a board cell needs to know of the board in view */
 export interface WalkGround {
@@ -660,9 +662,7 @@ export default function createBoardWalk<View extends WalkGround>(
       .then((at) => {
         warping.set(false);
         if (at == null) {
-          deps.failed(
-            field === Moves.Dig ? 'There is no way up within reach.' : 'No town is near enough.',
-          );
+          deps.failed(field === Moves.Dig ? m.walk_no_way_up() : m.walk_no_town());
           refresh();
           return;
         }
@@ -706,18 +706,23 @@ export default function createBoardWalk<View extends WalkGround>(
     if (loaded != null) {
       if (surfOffered(loaded)) {
         offers.push({
-          name: 'Surf',
+          name: describeMove(Moves.Surf),
           active: travel.get() === 'surf',
           busy: false,
           use: toggleSurf,
         });
       }
       if (flyOffered(loaded)) {
-        offers.push({ name: 'Fly', active: travel.get() === 'fly', busy: false, use: toggleFly });
+        offers.push({
+          name: describeMove(Moves.Fly),
+          active: travel.get() === 'fly',
+          busy: false,
+          use: toggleFly,
+        });
       }
       if (knows(Moves.Dig) && loaded.underground) {
         offers.push({
-          name: 'Dig',
+          name: describeMove(Moves.Dig),
           active: false,
           busy: warping.get(),
           use: () => {
@@ -727,7 +732,7 @@ export default function createBoardWalk<View extends WalkGround>(
       }
       if (knows(Moves.Teleport)) {
         offers.push({
-          name: 'Teleport',
+          name: describeMove(Moves.Teleport),
           active: false,
           busy: warping.get(),
           use: () => {

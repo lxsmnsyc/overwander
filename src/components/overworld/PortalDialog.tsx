@@ -39,6 +39,7 @@ import { CostBadge, CounterStep, CounterTerms, HeadingPortrait } from '../forms/
 import { failed, readable } from '../app/resource-reads';
 import playEffect, { Effect } from '../app/sound';
 import describeFailure from '../../i18n/refusals';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /** The portal beside the heading */
 const PORTAL_SPRITE = 28;
@@ -168,7 +169,7 @@ function PortalBody(
 
         if (arrived == null) {
           toast.push({
-            message: 'The portal stayed shut. A key opens one, and only one.',
+            message: m.portal_shut(),
             tone: 'ember',
           });
           props.onSpent();
@@ -194,26 +195,26 @@ function PortalBody(
         have={{
           amount: readable(props.keys) ?? 0,
           short: (readable(props.keys) ?? 0) === 0,
-          unit: (readable(props.keys) ?? 0) === 1 ? 'Portal Key' : 'Portal Keys',
+          unit: m.portal_keys({ count: readable(props.keys) ?? 0 }),
         }}
-        often="One key a crossing"
+        often={m.portal_often()}
       />
       <Show when={failed(props.keys)}>{(said) => <Note>{said()}</Note>}</Show>
 
       <Show
         when={towns().length > 0}
-        fallback={<Note class="text-center">Nobody has walked into a town yet.</Note>}
+        fallback={<Note class="text-center">{m.portal_no_towns()}</Note>}
       >
-        <CounterStep>Choose a town</CounterStep>
+        <CounterStep>{m.portal_choose()}</CounterStep>
         <TextField
-          label="Town"
-          placeholder="Search towns"
+          label={m.portal_town()}
+          placeholder={m.portal_search()}
           value={query()}
           onChange={(typed) => {
             setQuery(typed);
           }}
         />
-        <Show when={listed().length > 0} fallback={<Note>No town by that name.</Note>}>
+        <Show when={listed().length > 0} fallback={<Note>{m.portal_no_match()}</Note>}>
           <List>
             <For each={page.shown()}>
               {(town) => (
@@ -246,12 +247,12 @@ function PortalBody(
         <Button
           tone="primary"
           disabled={busy() || chosen() == null || (readable(props.keys) ?? 0) === 0}
-          label="Cross, 1 Portal Key"
+          label={m.portal_cross_label()}
           onClick={cross}
         >
-          Cross <CostBadge cost={{ item: Items.PortalKey }} />
+          {m.portal_cross()} <CostBadge cost={{ item: Items.PortalKey }} />
         </Button>
-        <Button onClick={close}>Walk on</Button>
+        <Button onClick={close}>{m.ow_walk_on()}</Button>
       </DialogActions>
     </>
   );
@@ -288,7 +289,7 @@ export default function PortalDialog(props: PortalDialogProps): JSX.Element {
     <Dialog
       isOpen={props.cell != null}
       onClose={props.onClose}
-      title="Portal"
+      title={m.portal_title()}
       lead={
         <HeadingPortrait>
           <AtlasSprite
@@ -299,9 +300,9 @@ export default function PortalDialog(props: PortalDialogProps): JSX.Element {
           />
         </HeadingPortrait>
       }
-      description="A ring of standing stones, and a way through to any town's plaza."
+      description={m.portal_description()}
     >
-      <Suspense fallback={<Note>Reading the register…</Note>}>
+      <Suspense fallback={<Note>{m.portal_reading()}</Note>}>
         <PortalBody
           {...props}
           keys={keys}

@@ -32,6 +32,7 @@ import { SpriteAnim } from '../../data/ids/sprite-anims';
 import settings, { setSetting } from '../app/settings';
 import { failed, readable } from '../app/resource-reads';
 import describeFailure from '../../i18n/refusals';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /** One command in the safari's menu: a chunky tile on a hard drop */
 const TILE =
@@ -62,10 +63,10 @@ const GENDER_MARKS: Record<Genders, string> = {
   [Genders.Female]: '♀',
 };
 
-const THROW_MESSAGES: Record<ThrowResult, string> = {
-  [ThrowResult.Caught]: 'Caught!',
-  [ThrowResult.BrokeFree]: 'It broke free.',
-  [ThrowResult.Fled]: 'It fled.',
+const THROW_MESSAGES: Record<ThrowResult, () => string> = {
+  [ThrowResult.Caught]: m.safari_throw_caught,
+  [ThrowResult.BrokeFree]: m.safari_throw_broke_free,
+  [ThrowResult.Fled]: m.safari_throw_fled,
 };
 
 /**
@@ -99,11 +100,11 @@ const BALL_SHAKE = 400;
 const BALL_REST = 200;
 const BALL_SETTLE = 320;
 
-const STATE_MESSAGES: Record<SafariState, string> = {
-  [SafariState.Active]: '',
-  [SafariState.Caught]: 'Caught. It is yours.',
-  [SafariState.Fled]: 'It fled, and it will not be back.',
-  [SafariState.Exited]: 'You walked away.',
+const STATE_MESSAGES: Record<SafariState, () => string> = {
+  [SafariState.Active]: () => '',
+  [SafariState.Caught]: m.safari_state_caught,
+  [SafariState.Fled]: m.safari_state_fled,
+  [SafariState.Exited]: m.safari_state_exited,
 };
 
 export interface SafariDialogProps {
@@ -484,8 +485,8 @@ function SafariBody(
           props.onSpent(thrown);
         }
         return eaten
-          ? `Fed ${describeItem(thrown)}. It is watching you now.`
-          : `It would not take the ${describeItem(thrown)}.`;
+          ? m.safari_fed({ item: describeItem(thrown) })
+          : m.safari_refused_treat({ item: describeItem(thrown) });
       }
 
       const spent = active.ball;
@@ -503,7 +504,7 @@ function SafariBody(
       }
       if (thrownAt == null) {
         setRocking(null);
-        return 'No ball of that kind to throw.';
+        return m.safari_no_ball();
       }
       // A ball that held stays where it stopped. The pokemon is inside
       // it, so putting the sprite back in the field said it had got
@@ -546,12 +547,12 @@ function SafariBody(
       // A ball that held on the first shake is the one throw worth
       // saying anything more about than that it worked
       if (thrownAt.critical && thrownAt.result === ThrowResult.Caught) {
-        return 'Caught, first shake!';
+        return m.safari_first_shake();
       }
       if (thrownAt.pocketed != null) {
-        return `It fled, and dropped its ${describeItem(thrownAt.pocketed)}.`;
+        return m.safari_pocketed({ item: describeItem(thrownAt.pocketed) });
       }
-      return THROW_MESSAGES[thrownAt.result];
+      return THROW_MESSAGES[thrownAt.result]();
     });
   };
 
@@ -570,7 +571,7 @@ function SafariBody(
     const active = session();
 
     if (active == null) {
-      return 'Encounter';
+      return m.safari_encounter();
     }
     const { encounter } = active;
     // Caught before, the level, the marks, then the name and its gender
@@ -581,18 +582,18 @@ function SafariBody(
           {/* The ball fills 18 of its 32-pixel cell, so the cell is drawn at 28 to bring
               the ball up to the icons beside it, and pulled in so the line keeps their height */}
           <ItemSprite item={BALL_ITEMS[Balls.PokeBall]} size={28} label="" class="-m-1.5" />
-          <span class="sr-only">Caught before</span>
+          <span class="sr-only">{m.safari_caught_before()}</span>
         </Show>
-        <span>Lv. {encounter.level}</span>
+        <span>{m.ow_level({ level: encounter.level })}</span>
         <Show when={isShiny(encounter)}>
           {/* The bar's own white rather than gold, which barely shows on
               the blue. The word is what a screen reader hears */}
           <SparklesIcon aria-hidden="true" class="size-4 shrink-0" />
-          <span class="sr-only">Shiny</span>
+          <span class="sr-only">{m.safari_shiny()}</span>
         </Show>
         <Show when={isShadow(encounter)}>
           <FireIcon aria-hidden="true" class="size-4 shrink-0" />
-          <span class="sr-only">Shadow</span>
+          <span class="sr-only">{m.safari_shadow()}</span>
         </Show>
         <span>
           {`${getSpeciesData(encounter.species).name} ${GENDER_MARKS[encounter.gender]}`.trimEnd()}
@@ -637,9 +638,9 @@ function SafariBody(
     const active = session();
 
     if (active != null && active.state !== SafariState.Active) {
-      return STATE_MESSAGES[active.state];
+      return STATE_MESSAGES[active.state]();
     }
-    return narrated() ?? 'What will you do?';
+    return narrated() ?? m.safari_question();
   };
 
   return (
@@ -654,8 +655,7 @@ function SafariBody(
       // a battle screen, and the pokemon's own box is its heading
       quiet
       title={met()}
-      description="One encounter, one throw at a time. A treat makes it easier to catch and every
-        turn gives it another chance to bolt."
+      description={m.safari_description()}
     >
       <Show when={session()}>
         {(held) => {
@@ -739,7 +739,9 @@ function SafariBody(
                           direction="Down"
                           fill
                           sized
-                          label={`${getSpeciesData(active().encounter.species).name}, standing in front of you`}
+                          label={m.safari_standing({
+                            name: getSpeciesData(active().encounter.species).name,
+                          })}
                         />
                       </div>
                     }
@@ -759,8 +761,8 @@ function SafariBody(
                           size={BALL_SPRITE}
                           label={
                             active().state === SafariState.Caught
-                              ? 'The ball holds'
-                              : 'The ball rocks'
+                              ? m.safari_ball_holds()
+                              : m.safari_ball_rocks()
                           }
                         />
                       </span>
@@ -787,15 +789,15 @@ function SafariBody(
                       when={caught()}
                       fallback={
                         <button type="button" class={`${TILE} col-span-2`} onClick={leave}>
-                          Walk on
+                          {m.ow_walk_on()}
                         </button>
                       }
                     >
                       <button type="button" class={TILE} onClick={leave}>
-                        Walk on
+                        {m.ow_walk_on()}
                       </button>
                       <button type="button" class={`${TILE} ${TILE_PRIMARY}`} onClick={openSheet}>
-                        Have a look
+                        {m.safari_have_a_look()}
                       </button>
                     </Show>
                   </div>
@@ -813,8 +815,8 @@ function SafariBody(
                         onClick={leave}
                       >
                         <ArrowLeftIcon class="size-5" aria-hidden="true" />
-                        Run
-                        <span class={TILE_NOTE}>Walk away</span>
+                        {m.safari_run()}
+                        <span class={TILE_NOTE}>{m.safari_walk_away()}</span>
                       </button>
                       {/* The ball in hand is the label: it is the one thing
                         checked between every throw */}
@@ -822,11 +824,14 @@ function SafariBody(
                         type="button"
                         class={`${TILE} ${TILE_PRIMARY}`}
                         disabled={throwing() || stockOf(inHand()) === 0}
-                        aria-label={`Throw ${describeItem(inHand())}, ${stockOf(inHand())} left`}
+                        aria-label={m.safari_throw_label({
+                          item: describeItem(inHand()),
+                          count: stockOf(inHand()),
+                        })}
                         onClick={hurl}
                       >
                         <ItemSprite item={inHand()} size={THROW_SPRITE} label="" class="-my-1" />
-                        Throw
+                        {m.safari_throw()}
                         <span class={`${TILE_NOTE} text-on-accent/85`}>
                           {describeItem(inHand())} × {stockOf(inHand())}
                         </span>
@@ -840,8 +845,8 @@ function SafariBody(
                         }}
                       >
                         <BagIcon class="size-5" aria-hidden="true" />
-                        Bag
-                        <span class={TILE_NOTE}>Balls, treats</span>
+                        {m.safari_bag()}
+                        <span class={TILE_NOTE}>{m.safari_bag_note()}</span>
                       </button>
                     </div>
                   }
@@ -852,7 +857,7 @@ function SafariBody(
                     inline
                     player={props.user.uid}
                     value={inHand()}
-                    empty="Nothing in the bag to throw."
+                    empty={m.safari_bag_empty()}
                     filter={(entry) =>
                       getBall(entry.item) != null || (isTreat(entry.item) && active().canFeed())
                     }
@@ -870,7 +875,7 @@ function SafariBody(
                       setRummaging(false);
                     }}
                   >
-                    Never mind
+                    {m.safari_never_mind()}
                   </button>
                 </Show>
               </Show>

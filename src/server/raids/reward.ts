@@ -135,11 +135,15 @@ async function nobleSpoils(uid: string, lobby: string, raid: RaidRecord): Promis
   return items;
 }
 
+/** How often a cleared Tera raid hands a fighter a Tera Orb, as a Max Raid does its band */
+export const TERA_RAID_ORB_CHANCE = 1 / 10;
+
 /**
  * What a cleared Tera raid leaves this player beside the pokemon: Tera
  * Shards of the boss's Tera type, `TERA_RAID_SHARDS` and up to
- * `TERA_RAID_EXTRA_SHARDS` more. Rolled off the lobby and the player,
- * so a claim asked twice answers the same
+ * `TERA_RAID_EXTRA_SHARDS` more, and a Tera Orb one clear in ten.
+ * Rolled off the lobby and the player, so a claim asked twice answers
+ * the same
  */
 async function teraSpoils(uid: string, lobby: string, raid: RaidRecord): Promise<ItemStack[]> {
   const shard =
@@ -149,11 +153,18 @@ async function teraSpoils(uid: string, lobby: string, raid: RaidRecord): Promise
     return [];
   }
 
+  // The draws land in order: the shards, then the orb
   const rng = new AleaRNG(`${lobby}:${uid}:tera`);
   const amount = TERA_RAID_SHARDS + Math.floor(rng.random() * (TERA_RAID_EXTRA_SHARDS + 1));
+  const orb = rng.random() < TERA_RAID_ORB_CHANCE;
+  const items: ItemStack[] = [{ item: shard, amount }];
 
   await grantItem(uid, shard, amount);
-  return [{ item: shard, amount }];
+  if (orb) {
+    await grantItem(uid, Items.TeraOrb);
+    items.push({ item: Items.TeraOrb, amount: 1 });
+  }
+  return items;
 }
 
 /**

@@ -92,7 +92,7 @@ holds one change, so a team can field all five on five different pokemon.
 | **Zenith** | its own Zenith Shard | picked the way the Mega is, and apart from it, as it takes the field | the prized band, buried only where the line lives |
 | **Z-Move** | a Z-Crystal | the first holder to throw a matching move | the rare band, dust clouds, and a Totem's first clear |
 | **Dynamax** | a Dynamax Band | the first holder whose HP falls from half or more to under half | the rare band, dust clouds, and one Max Raid clear in ten |
-| **Tera** | a Tera Orb | the first holder to take the field | nowhere yet, see below |
+| **Tera** | a Tera Orb | the first holder to take the field | the rare band, dust clouds, and one Tera raid clear in ten |
 
 - A pokemon holding a Mega Stone, a Zenith Shard or a Z-Crystal never Dynamaxes or
   Terastallizes. A Dynamax Band holder never Terastallizes. A Mega, a Zenith and their
@@ -100,8 +100,6 @@ holds one change, so a team can field all five on five different pokemon.
 - A form item (an orb, a Plate, the Prison Bottle, the Rusted Sword) is none of the five.
   It leaves all of them free, but a pokemon whose shape comes from a held item has no
   Zenith.
-- The Tera Orb is in the item registry, priced and holdable, but no cache, shelf, raid or
-  reward hands one out yet. The Tera picks below are what to do once it can be had.
 
 ### Megas
 
@@ -746,5 +744,5 @@ since a finished catch already has them.
 Leftovers, Big Root, Soul Dew, the Plates, the Drives, the Mega Stones, the orbs, the
 Prison Bottle, the Reveal Glass and the Rusted Sword are found rather than bought. So is every relic.
 So are the Zenith Shards, each buried only where its own line lives, the Z-Crystals, the
-Dynamax Band, the Max Mushrooms and the Tera Shards. The Tera Orb has no source at all
-yet. None of these are in the costs above.
+Dynamax Band, the Tera Orb, the Max Mushrooms and the Tera Shards. None of these are in
+the costs above.

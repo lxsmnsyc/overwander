@@ -119,8 +119,8 @@ lobby shows it beside the boss's own types, and the lobby's type chart is read
 off the Tera type alone, since that is all it is when hit.
 
 Beaten, it pays 50,000 and waits at level 40. Each fighter also takes **5 to 8
-Tera Shards** of the boss's Tera type, and the prize, once caught, **keeps the
-boss's Tera type** rather than rolling its own.
+Tera Shards** of the boss's Tera type, and a **Tera Orb** one clear in ten. The
+prize, once caught, **keeps the boss's Tera type** rather than rolling its own.
 
 ## Noble raids
 

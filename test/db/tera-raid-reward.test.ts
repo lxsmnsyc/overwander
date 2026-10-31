@@ -6,7 +6,7 @@ import { asOffset, toLocalTime } from '../../src/model/local-time';
 import { RaidAction, RaidKind, raidId } from '../../src/model/raid-record';
 import { ITEM_STACKS } from '../../src/model/stacks';
 import AleaRNG from '../../src/core/alea';
-import { Balls } from '../../src/data/ids/items';
+import { Balls, Items } from '../../src/data/ids/items';
 import { getTeraShard } from '../../src/data/items/tera-shards';
 import {
   TERA_RAID_EXTRA_SHARDS,
@@ -14,6 +14,7 @@ import {
   getTeraRaidType,
 } from '../../src/data/overworld/tera-raids';
 import { claimRaidReward, enterRaid, peekRaid } from '../../src/server/raids';
+import { TERA_RAID_ORB_CHANCE } from '../../src/server/raids/reward';
 import { writeCaughtRecord } from '../../src/server/caught';
 import { writeRaid } from '../../src/server/raids/io';
 import { readStack } from '../../src/server/stacks';
@@ -108,23 +109,25 @@ afterAll(async () => {
 });
 
 describe('a beaten Tera raid', () => {
-  it('pays its purse and shards of its Tera type, and the prize keeps that type', async () => {
+  it('pays its purse, shards of its Tera type and the orb at its odds, and the prize keeps that type', async () => {
     const found = findTeraRaid();
     const lobby = await wonRaid(found, 'tera-battle');
     const tera = getTeraRaidType(found.roll.species, lobby);
     const shard = getTeraShard(tera);
-    // Rolled the way the claim rolls it
-    const amount =
-      TERA_RAID_SHARDS +
-      Math.floor(
-        new AleaRNG(`${lobby}:${fighter.uid}:tera`).random() * (TERA_RAID_EXTRA_SHARDS + 1),
-      );
+    // Rolled the way the claim rolls it: the shards, then the orb
+    const rng = new AleaRNG(`${lobby}:${fighter.uid}:tera`);
+    const amount = TERA_RAID_SHARDS + Math.floor(rng.random() * (TERA_RAID_EXTRA_SHARDS + 1));
+    const orb = rng.random() < TERA_RAID_ORB_CHANCE;
     const reward = await claimRaidReward(fighter.uid, lobby);
 
     expect(shard).not.toBeNull();
     expect(reward?.gold).toBe(TERA_RAID_GOLD);
-    expect(reward?.items).toEqual([{ item: shard, amount }]);
+    expect(reward?.items).toEqual([
+      { item: shard, amount },
+      ...(orb ? [{ item: Items.TeraOrb, amount: 1 }] : []),
+    ]);
     expect(await readStack(ITEM_STACKS, fighter.uid, shard!)).toBe(amount);
+    expect(await readStack(ITEM_STACKS, fighter.uid, Items.TeraOrb)).toBe(orb ? 1 : 0);
     expect(reward?.encounter?.type).toBe(EncounterType.TeraRaid);
     expect(reward?.encounter?.species).toBe(found.roll.species);
 

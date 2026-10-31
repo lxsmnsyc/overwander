@@ -251,6 +251,7 @@ function buildPool(phenomenon: Phenomenon): Items[] {
       ...TYPE_CRYSTALS.keys(),
       ...SIGNATURE_CRYSTALS.keys(),
       Items.DynamaxBand,
+      Items.TeraOrb,
       ...listItemsByType(ItemTypes.Valuable),
     ];
   }

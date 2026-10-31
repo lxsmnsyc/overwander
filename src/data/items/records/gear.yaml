@@ -289,8 +289,10 @@ DynamaxBand:
   buy: 8000
   sell: 4000
 
-# Lets its pokemon Terastallize, priced with the Dynamax Band. The
-# behaviour is the Terastal mechanic's, in `src/battle/gimmicks/terastal.ts`
+# Lets its pokemon Terastallize, priced with the Dynamax Band and found
+# where it is: the rare band, dust clouds, and one Tera raid clear in
+# ten. The behaviour is the Terastal mechanic's, in
+# `src/battle/gimmicks/terastal.ts`
 TeraOrb:
   type: Held
   icon: held/tera-orb

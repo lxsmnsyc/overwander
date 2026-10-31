@@ -34,6 +34,14 @@ Taken from the games, never translated fresh. Names of species, moves, items, ab
 | Totem, Alpha, Noble | ぬし, オヤブン, キング | dominante, alfa, señorial |
 | frenzy (a Noble's) | あらぶり | frenesí |
 | Friend code | フレンドコード | Código de amigo |
+| Pokedex | ずかん | Pokédex |
+| Box, Boxes | ボックス | caja, Cajas |
+| move, ability, item, type, weather, status | わざ, とくせい, どうぐ, タイプ, てんき, じょうたい | movimiento, habilidad, objeto, tipo, tiempo, estado |
+| Power, PP | いりょく, PP | Potencia, PP |
+| Mystery Gift | ふしぎな おくりもの | Regalo Misterioso |
+| Move Reminder | わざおもいだし | Recordador de Movimientos |
+| machine (TM) | わざマシン | máquina |
+| Poke Ball | モンスターボール | Poké Ball |
 
 ## Terms this engine invented
 
@@ -74,6 +82,26 @@ Taken from the games, never translated fresh. Names of species, moves, items, ab
 | replay | リプレイ | repetición | A settled fight played again from its record |
 | raid boss | レイドボス, ボス | jefe de la incursión, jefe | The pokemon a raid fights |
 | base stat total | しゅぞくちの ごうけい | total de estadísticas base | The duel rule's cap |
+| Close, Back, Never mind | とじる, もどる, やめる | Cerrar, Atrás, Da igual | The shared way out of a panel or a form |
+| the counter (a shop) | カウンター | el mostrador | A vendor's buy and sell form |
+| crate (what a counter sells from) | はこ | la caja | The vendor's stock |
+| Notices | おしらせ | Avisos | The panel of things waiting on the player |
+| Gifts (the panel) | おくりもの | Regalos | The shelf of things the game holds for the player |
+| Quests | クエスト | Misiones | The quest board |
+| News | ニュース | Novedades | The release feed |
+| Settings | せってい | Ajustes | The settings panel |
+| Auctions | オークション | Subastas | The auction board |
+| Sign in, Sign out, Create account | サインイン, サインアウト, アカウントを つくる | Iniciar sesión, Cerrar sesión, Crear cuenta | The landing page |
+| passkey | パスキー | llave de acceso | A device sign-in |
+| authenticator app, backup code | にんしょうアプリ, バックアップコード | aplicación de autenticación, código de respaldo | Two-factor sign-in |
+| staff | スタッフ | el equipo | Whoever runs the game |
+| field move | フィールドわざ | movimiento de campo | A buddy's travel move on the bar |
+| shelf (gifts waiting) | たな | estante | Where gifts wait to be claimed |
+| claim, meet (a gift) | うけとる, あう | Recoger, Encontrar | Taking a gift, or standing before a gifted encounter |
+| Friend (a notice), friend request | フレンド, フレンドしんせい | amistad, solicitud de amistad | |
+| block, unblock | ブロック, ブロックを やめる | bloquear, desbloquear | |
+| lot, bid | ロット, にゅうさつ | lote, puja | An auction's entry and an offer on it |
+| trade | こうかん | intercambio | Swapping pokemon with a friend |
 
 ## Status conditions
 
@@ -91,6 +119,12 @@ The names a status shows on a card or a catch, in `src/data/text/<locale>/status
 | Dormant (a boss warming up) | きゅうみん | Latente |
 | Switching | こうたい | Cambiando |
 | Staggered (a Noble knocked down) | よろめき | Aturdido |
+
+## Money and counts
+
+- `ui_gold` writes money as おかね {amount} in Japanese and {amount} de dinero in Spanish, after the verdict's `verdict_gold`.
+- A Japanese count of pokemon takes ひき (`{count}ひき`), a count of moves つ, of times かい, of waiting things けん.
+- Japanese quotes a line in 「」, Spanish in «».
 
 ## Language names
 

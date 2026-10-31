@@ -1,5 +1,6 @@
 import type { JSX, ParentProps } from 'solid-js';
 import { InformationIcon } from '../icons';
+import { m } from '../../i18n/paraglide/messages.js';
 import HoverCard, { type HoverCardPlacement } from './hover-card';
 
 /**
@@ -18,7 +19,7 @@ export default function Hint(props: HintProps): JSX.Element {
   return (
     <HoverCard
       title={props.title}
-      kind="Help"
+      kind={m.ui_help()}
       description={props.description}
       placement={props.placement ?? 'bottom'}
       class="inline-flex rounded text-muted transition-colors hover:text-ink

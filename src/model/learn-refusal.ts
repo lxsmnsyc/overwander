@@ -49,30 +49,3 @@ export function isRefusal(value: unknown): boolean {
 export function learnedMoves(result: LearnResult | null): Moves[] | null {
   return result != null && 'moves' in result ? result.moves : null;
 }
-
-/**
- * The refusal as a sentence, with the pokemon's name and what was
- * being taught filled in. Written to be read by whoever pressed the
- * button rather than by whoever wrote the rule
- */
-export function describeLearnRefusal(refusal: LearnRefusal, named: string, move: string): string {
-  if (refusal === LearnRefusal.Known) {
-    return `${named} already knows ${move}.`;
-  }
-  if (refusal === LearnRefusal.NotLearnable) {
-    return `${named} cannot learn ${move} this way.`;
-  }
-  if (refusal === LearnRefusal.NoRoom) {
-    return `${named} has no room for ${move}, and nothing it could forget was chosen.`;
-  }
-  if (refusal === LearnRefusal.Unpaid) {
-    return `What teaching ${move} costs is not in your bag.`;
-  }
-  if (refusal === LearnRefusal.Unfriendly) {
-    return `${named} is not close enough to you yet to learn ${move}.`;
-  }
-  if (refusal === LearnRefusal.Gone) {
-    return 'Whoever was standing here has walked on.';
-  }
-  return `${named} cannot be taught right now: it may be hatching, put away, or in a battle.`;
-}

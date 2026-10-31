@@ -5,6 +5,7 @@ import { syncServerClock } from '../../auth/clock';
 import CatchPicker, { type CatchOption } from '../catches/catch-picker';
 import { Button, DialogActions, DialogSection, Note, Status } from '../styled';
 import { CostBadge, type CounterCost, CounterStep, CounterTerms, PickOne } from './terms';
+import { m } from '../../i18n/paraglide/messages.js';
 import { type FormProps, defineForm } from './form';
 
 /** The player's pokemon, each with whether it is locked in a battle by the server's clock */
@@ -100,7 +101,7 @@ function PickCatchBody(
             />
           }
         >
-          <CounterStep>{props.input.step ?? 'Choose your pokemon'}</CounterStep>
+          <CounterStep>{props.input.step ?? m.pick_catch_step()}</CounterStep>
           {/* Live, so the picker draws no confirm of its own: the dock's button is the one press */}
           <CatchPicker
             inline
@@ -143,7 +144,7 @@ function PickCatchView(props: FormProps<PickCatchInput, CatchOption[]>): JSX.Ele
   const [options] = createResource(() => props.input.player, loadCatchOptions);
 
   return (
-    <Suspense fallback={<Note class="text-center">Looking them over…</Note>}>
+    <Suspense fallback={<Note class="text-center">{m.pick_catch_loading()}</Note>}>
       <PickCatchBody {...props} options={options} />
     </Suspense>
   );
@@ -151,7 +152,7 @@ function PickCatchView(props: FormProps<PickCatchInput, CatchOption[]>): JSX.Ele
 
 /** Some of the player's pokemon, picked for a purpose */
 export const PickCatchForm = defineForm<PickCatchInput, CatchOption[]>({
-  title: (input) => input.title ?? 'Your pokemon',
-  prompt: (input) => input.prompt ?? 'Choose one of your pokemon.',
+  title: (input) => input.title ?? m.pick_catch_title(),
+  prompt: (input) => input.prompt ?? m.pick_catch_prompt(),
   view: (props) => <PickCatchView {...props} />,
 });

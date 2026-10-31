@@ -7,6 +7,7 @@ import {
   groupCredits,
 } from '../../data/credits';
 import { Card, Note } from '../styled';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * Who this game is built out of, read from the list rather than kept
@@ -102,7 +103,7 @@ function CreditsList(props: { credits: Resource<Credits> }): JSX.Element {
 
   return (
     <>
-      <Card title="Where the art comes from">
+      <Card title={m.credits_art_title()}>
         <ul class="m-0 flex list-none flex-col gap-2 p-0">
           <For each={held().sources}>
             {(source) => (
@@ -123,28 +124,24 @@ function CreditsList(props: { credits: Resource<Credits> }): JSX.Element {
         </ul>
       </Card>
 
-      <Card title="Pokemon sprites">
-        <p class="max-w-prose text-sm text-muted">
-          Everybody named on a sheet that ships, and the pokemon they drew.
-        </p>
+      <Card title={m.credits_sprites_title()}>
+        <p class="max-w-prose text-sm text-muted">{m.credits_sprites_note()}</p>
         <Artists artists={groupCredits(held().sprites)} />
       </Card>
 
-      <Card title="Overworld characters">
+      <Card title={m.credits_overworld_title()}>
         <Artists artists={groupCredits(held().overworld)} name={sheetName} />
       </Card>
 
       <Show when={held().scenery.length > 0}>
-        <Card title="Landmarks, decorations and trees">
-          <p class="max-w-prose text-sm text-muted">
-            Names alone: which of them drew which tile was never written down.
-          </p>
+        <Card title={m.credits_scenery_title()}>
+          <p class="max-w-prose text-sm text-muted">{m.credits_scenery_note()}</p>
           <p class="max-w-prose text-sm">{held().scenery.join(', ')}</p>
         </Card>
       </Show>
 
-      <Card title="Libraries">
-        <p class="max-w-prose text-sm text-muted">What ships in the game.</p>
+      <Card title={m.credits_libraries_title()}>
+        <p class="max-w-prose text-sm text-muted">{m.credits_libraries_note()}</p>
         <ul class="m-0 flex list-none flex-col gap-2 p-0">
           <For each={packages('runtime')}>
             {(one) => (
@@ -157,7 +154,9 @@ function CreditsList(props: { credits: Resource<Credits> }): JSX.Element {
             )}
           </For>
         </ul>
-        <p class="max-w-prose text-sm text-muted">And what only builds it: {buildNames()}.</p>
+        <p class="max-w-prose text-sm text-muted">
+          {m.credits_build_note({ names: buildNames() })}
+        </p>
       </Card>
     </>
   );
@@ -169,8 +168,8 @@ export default function CreditsCard(): JSX.Element {
   return (
     <Suspense
       fallback={
-        <Card title="Credits">
-          <Note>Reading the credits…</Note>
+        <Card title={m.credits_title()}>
+          <Note>{m.credits_loading()}</Note>
         </Card>
       }
     >

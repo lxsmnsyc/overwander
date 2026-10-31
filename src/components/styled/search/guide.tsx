@@ -1,5 +1,6 @@
 import { type JSX, Show } from 'solid-js';
 import type { QueryVocabulary } from '../../../core/query';
+import { m } from '../../../i18n/paraglide/messages.js';
 import { InformationIcon } from '../../icons';
 import HoverCard from '../hover-card';
 
@@ -86,9 +87,9 @@ export default function SearchGuide(props: SearchGuideProps): JSX.Element {
 
   return (
     <HoverCard
-      title="Searching"
-      kind="Help"
-      description="A word finds a name. Everything else narrows."
+      title={m.search_guide_title()}
+      kind={m.ui_help()}
+      description={m.search_guide_description()}
       placement="bottom"
       width="wide"
       // The trigger is focusable but is not a button, so the ring the
@@ -99,24 +100,25 @@ export default function SearchGuide(props: SearchGuideProps): JSX.Element {
         // Named on the icon rather than beside it: the card's own
         // trigger takes its name from what is inside it, and a name
         // hidden from the pointer is a target nobody can reach
-        <InformationIcon class="size-4" role="img" aria-label="How to search" />
+        <InformationIcon class="size-4" role="img" aria-label={m.search_guide_label()} />
       }
     >
       <ul class="flex flex-col gap-2">
         <Show when={props.example}>
-          {(shown) => <Rule shows={shown()}>One field, one value. Terms narrow each other.</Rule>}
+          {(shown) => <Rule shows={shown()}>{m.search_guide_field()}</Rule>}
         </Show>
-        <Rule shows={refused()}>A term with a bang in front of it is refused.</Rule>
-        <Rule shows={either()}>A bar inside a value takes any of them.</Rule>
+        <Rule shows={refused()}>{m.search_guide_refused()}</Rule>
+        <Rule shows={either()}>{m.search_guide_either()}</Rule>
         <Rule shows="field:&gt;50">
-          A number takes a comparison, or a range: <code>field:30-60</code>.
+          {m.search_guide_number_before()}
+          <code>field:30-60</code>
+          {m.search_guide_number_after()}
         </Rule>
-        <Rule shows='field:"two words"'>Quotes hold a value that carries a space.</Rule>
-        <Rule shows={arranged()}>Arranges the answers rather than narrowing them.</Rule>
+        <Rule shows='field:"two words"'>{m.search_guide_quotes()}</Rule>
+        <Rule shows={arranged()}>{m.search_guide_sort()}</Rule>
       </ul>
       <p class="mt-2 text-xs text-muted">
-        Start typing a field and the box offers the {props.vocabulary.fields.length} it knows, then
-        the values that one takes.
+        {m.search_guide_offers({ count: props.vocabulary.fields.length })}
       </p>
     </HoverCard>
   );

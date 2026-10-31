@@ -1,6 +1,7 @@
 import { type JSX, Show, createSignal, onCleanup, onMount } from 'solid-js';
 import { Toggle } from 'terracotta';
 import { ExpandIcon, ShrinkIcon } from '../icons';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * The game with the screen to itself.
@@ -72,8 +73,8 @@ export default function FullscreenToggle(props: { class?: string }): JSX.Element
         onChange={fill}
         // The words rather than the arrows: a screen reader is not
         // shown which way they point
-        title={filling() ? 'Leave fullscreen' : 'Fill the screen'}
-        aria-label={filling() ? 'Leave fullscreen' : 'Fill the screen'}
+        title={filling() ? m.fullscreen_leave() : m.fullscreen_fill()}
+        aria-label={filling() ? m.fullscreen_leave() : m.fullscreen_fill()}
         class={props.class}
       >
         <Show when={filling()} fallback={<ExpandIcon class="size-5" aria-hidden="true" />}>

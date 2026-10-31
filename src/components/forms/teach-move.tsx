@@ -23,7 +23,7 @@ import { type Items, getMachineItem } from '../../data/ids/items';
 import { Genders, Species } from '../../data/ids/species';
 import { getMoveData } from '../../data/moves';
 import { getSpeciesData } from '../../data/species';
-import { type LearnResult, describeLearnRefusal } from '../../model/learn-refusal';
+import { LearnRefusal, type LearnResult } from '../../model/learn-refusal';
 import { MOVE_SLOT, MOVE_SLOTS, MoveLine } from '../catches/MovePicker';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import { type CounterCost, CounterStep, CounterTerms, HeadingPortrait } from './terms';
@@ -32,6 +32,7 @@ import playEffect, { Effect } from '../app/sound';
 import { type FormProps, defineForm } from './form';
 import { openForm } from './stack';
 import describeFailure from '../../i18n/refusals';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * Teaching one move to one pokemon.
@@ -54,6 +55,26 @@ export interface TeachMoveInput {
    * machine for the move out of the player's bag
    */
   teach?: (catchId: string, move: Moves, replaces: number) => Promise<LearnResult | null>;
+}
+
+/** Why a teaching was refused, as a sentence with the pokemon and the move filled in */
+function describeLearnRefusal(refusal: LearnRefusal, name: string, move: string): string {
+  switch (refusal) {
+    case LearnRefusal.Known:
+      return m.learn_refusal_known({ name, move });
+    case LearnRefusal.NotLearnable:
+      return m.learn_refusal_not_learnable({ name, move });
+    case LearnRefusal.NoRoom:
+      return m.learn_refusal_no_room({ name, move });
+    case LearnRefusal.Unpaid:
+      return m.learn_refusal_unpaid({ move });
+    case LearnRefusal.Unfriendly:
+      return m.learn_refusal_unfriendly({ name, move });
+    case LearnRefusal.Gone:
+      return m.learn_refusal_gone();
+    default:
+      return m.learn_refusal_unavailable({ name });
+  }
 }
 
 function TeachBody(
@@ -101,14 +122,14 @@ function TeachBody(
     const loaded = record();
 
     if (loaded == null) {
-      return 'This pokemon';
+      return m.teach_this_pokemon();
     }
-    return isEgg(loaded) ? 'Egg' : getSpeciesData(loaded.species).name;
+    return isEgg(loaded) ? m.ui_egg() : getSpeciesData(loaded.species).name;
   };
 
   /** What the press does: give up a move for it, or only take it */
   const action = (): string =>
-    full() ? `Forget ${getMoveData(known()[forgetting()] ?? 0).name}` : 'Teach it';
+    full() ? m.teach_forget({ move: getMoveData(known()[forgetting()] ?? 0).name }) : m.teach_it();
 
   const teach = (): void => {
     const { catchId, move } = props.input;
@@ -126,7 +147,7 @@ function TeachBody(
         // sentence. A null is nobody refusing: whoever would have
         // taught it is no longer standing there
         if (result == null) {
-          setStatus(`${named()} could not be taught ${taught()} just now.`);
+          setStatus(m.teach_failed({ name: named(), move: taught() }));
           return;
         }
         if ('refused' in result) {
@@ -146,12 +167,12 @@ function TeachBody(
     <>
       <Meta class="block">
         {full()
-          ? `${named()} already knows ${known().length}. Choose the one it forgets.`
-          : `${named()} has room for it.`}
+          ? m.teach_full({ name: named(), count: known().length })
+          : m.teach_room({ name: named() })}
       </Meta>
       <CounterTerms
         cost={costOf()}
-        rows={[{ label: named(), value: `knows ${known().length} of ${room()}` }]}
+        rows={[{ label: named(), value: m.teach_knows({ count: known().length, room: room() }) }]}
       />
 
       {/* The move on offer, set apart from the ones it already knows */}
@@ -161,7 +182,7 @@ function TeachBody(
             class="shrink-0 rounded-full bg-tide px-2 py-0.5 text-[10px] font-extrabold
               tracking-wide text-white uppercase"
           >
-            New
+            {m.teach_new()}
           </span>
           <MoveLine move={props.input.move} />
         </div>
@@ -169,8 +190,8 @@ function TeachBody(
           rows={[
             ...(getMoveData(props.input.move).power == null
               ? []
-              : [{ label: 'Power', value: String(getMoveData(props.input.move).power) }]),
-            { label: 'PP', value: String(getMoveData(props.input.move).pp) },
+              : [{ label: m.teach_power(), value: String(getMoveData(props.input.move).power) }]),
+            { label: m.teach_pp(), value: String(getMoveData(props.input.move).pp) },
           ]}
         />
       </div>
@@ -179,7 +200,7 @@ function TeachBody(
         when={full()}
         fallback={
           <>
-            <CounterStep>Its moves</CounterStep>
+            <CounterStep>{m.teach_its_moves()}</CounterStep>
             <ul class={MOVE_SLOTS}>
               <For each={known()}>
                 {(move) => (
@@ -198,7 +219,7 @@ function TeachBody(
           </>
         }
       >
-        <CounterStep>Choose one to forget</CounterStep>
+        <CounterStep>{m.teach_choose_forget()}</CounterStep>
         <ul class={MOVE_SLOTS}>
           <Index each={known()}>
             {(move, at) => (
@@ -222,8 +243,10 @@ function TeachBody(
           </Index>
         </ul>
         <Meta>
-          {getMoveData(known()[forgetting()] ?? 0).name} → {taught()}. Only a level-up move comes
-          back, and only from the Move Reminder.
+          {m.teach_forget_note({
+            forgotten: getMoveData(known()[forgetting()] ?? 0).name,
+            move: taught(),
+          })}
         </Meta>
       </Show>
 
@@ -231,7 +254,7 @@ function TeachBody(
 
       <DialogActions>
         <Button tone="primary" disabled={busy() || record() == null} onClick={teach}>
-          {busy() ? 'Teaching…' : action()}
+          {busy() ? m.teach_busy() : action()}
         </Button>
         <Button disabled={busy()} onClick={props.cancel}>
           {props.leave}
@@ -245,7 +268,7 @@ function TeachView(props: FormProps<TeachMoveInput, true>): JSX.Element {
   const [caught] = createResource(() => props.input.catchId, getCaught);
 
   return (
-    <Suspense fallback={<Note class="text-center">Looking it over…</Note>}>
+    <Suspense fallback={<Note class="text-center">{m.teach_loading()}</Note>}>
       <TeachBody {...props} caught={caught} />
     </Suspense>
   );
@@ -278,8 +301,8 @@ function CatchFace(props: { catchId: string }): JSX.Element {
 
 /** Teaching a move, answered with true once it is learned */
 export const TeachMoveForm = defineForm<TeachMoveInput, true>({
-  title: (input) => `Teach ${getMoveData(input.move).name}?`,
-  prompt: (input) => `${input.cost ?? 'The machine'} is spent teaching it.`,
+  title: (input) => m.teach_title({ move: getMoveData(input.move).name }),
+  prompt: (input) => m.teach_prompt({ cost: input.cost ?? m.teach_the_machine() }),
   lead: (input) => <CatchFace catchId={input.catchId} />,
   width: 'wide',
   // Answered by its buttons alone: a level hands a move over once
@@ -322,7 +345,7 @@ export function askTeachings(
       openForm(TeachMoveForm, {
         catchId: current.catchId,
         move: current.move,
-        cost: current.levelled ? 'Nothing' : undefined,
+        cost: current.levelled ? m.teach_nothing() : undefined,
         teach: current.levelled ? learnLevelUpMove : undefined,
       })
         .then((taught) => {

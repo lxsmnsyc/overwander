@@ -14,6 +14,7 @@ import {
 } from '../styled';
 import BUILTINS from './markdown';
 import { RELEASES, type Release } from './releases';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * What the game has shipped, newest first.
@@ -50,10 +51,7 @@ export default function NewsTab(): JSX.Element {
 
   return (
     <>
-      <Show
-        when={RELEASES.length > 0}
-        fallback={<Note>Nothing has shipped yet. There will be a page here when it does.</Note>}
-      >
+      <Show when={RELEASES.length > 0} fallback={<Note>{m.news_empty()}</Note>}>
         <List>
           <For each={RELEASES}>
             {(release, at) => (
@@ -68,7 +66,7 @@ export default function NewsTab(): JSX.Element {
                   <span class="flex items-center gap-2 font-bold text-ink">
                     {release.name}
                     <Show when={at() === 0}>
-                      <Badge tone="leaf">Latest</Badge>
+                      <Badge tone="leaf">{m.news_latest()}</Badge>
                     </Show>
                   </span>
                   {/* The line the releases page carries, which is what
@@ -88,12 +86,12 @@ export default function NewsTab(): JSX.Element {
         onClose={close}
         width="wide"
         terse
-        title={reading()?.name ?? 'News'}
-        description={reading()?.brought ?? 'What this release brought.'}
+        title={reading()?.name ?? m.panel_news()}
+        description={reading()?.brought ?? m.news_release_description()}
       >
         <ReleasePage release={reading()} />
         <DialogActions>
-          <Button onClick={close}>Close</Button>
+          <Button onClick={close}>{m.ui_close()}</Button>
         </DialogActions>
       </Dialog>
     </>

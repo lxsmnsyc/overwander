@@ -1,5 +1,6 @@
 import { type JSX, type ParentProps, Suspense } from 'solid-js';
 import { TabGroup as HeadlessTabGroup, Tab, TabList, TabPanel } from 'terracotta';
+import { m } from '../../i18n/paraglide/messages.js';
 import { Note } from './feedback';
 
 /**
@@ -133,7 +134,7 @@ export function TabButton(props: ParentProps<{ value: number; class?: string }>)
 export function TabPane(props: ParentProps<{ value: number }>): JSX.Element {
   return (
     <TabPanel value={props.value}>
-      <Suspense fallback={<Note>Loading…</Note>}>{props.children}</Suspense>
+      <Suspense fallback={<Note>{m.ui_loading()}</Note>}>{props.children}</Suspense>
     </TabPanel>
   );
 }

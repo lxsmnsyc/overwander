@@ -3,6 +3,7 @@ import { type Announcement, liveAnnouncements, watchAnnouncements } from '../../
 import { serverNow } from '../../auth/clock';
 import { CloseIcon } from '../icons';
 import watchLive from './watch';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /** Where the announcements a player has put away are remembered */
 const DISMISSED_KEY = 'dismissed-announcements';
@@ -83,7 +84,7 @@ export default function Announcements(): JSX.Element {
             <span class="min-w-0 flex-1 break-words">{announcement.message}</span>
             <button
               type="button"
-              aria-label="Dismiss"
+              aria-label={m.ui_dismiss()}
               class="inline-flex shrink-0 cursor-pointer items-center rounded-full border-0
                 bg-transparent p-0.5 text-ink shadow-none hover:text-gold"
               onClick={() => {

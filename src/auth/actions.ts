@@ -1,6 +1,7 @@
 import authClient from './auth-client';
 import authRefusal from './refusal';
 import { forgetIdToken } from './session';
+import { m } from '../i18n/paraglide/messages.js';
 
 /**
  * Signing in and out, through the site's own Better Auth routes.
@@ -72,7 +73,7 @@ export async function signInWithPasskey(): Promise<void> {
   const result = await authClient.signIn.passkey();
 
   if (result.error != null) {
-    throw authRefusal(result.error, 'That passkey did not sign you in.');
+    throw authRefusal(result.error, m.auth_refusal_passkey);
   }
 }
 
@@ -81,7 +82,7 @@ export async function choosePassword(token: string, newPassword: string): Promis
   const { error } = await authClient.resetPassword({ token, newPassword });
 
   if (error != null) {
-    throw authRefusal(error, 'Could not set that password.');
+    throw authRefusal(error, m.auth_refusal_set_password);
   }
 }
 
@@ -102,6 +103,6 @@ export async function signOut(): Promise<void> {
   const { error } = await authClient.signOut();
 
   if (error != null) {
-    throw authRefusal(error, 'Could not sign you out just now.');
+    throw authRefusal(error, m.auth_refusal_sign_out);
   }
 }

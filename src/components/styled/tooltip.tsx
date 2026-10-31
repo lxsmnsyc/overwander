@@ -10,6 +10,7 @@ import {
 } from 'solid-js';
 import { Portal } from 'solid-js/web';
 import { arrow, autoUpdate, flip, offset, shift, useFloating } from 'solid-floating-ui';
+import { m } from '../../i18n/paraglide/messages.js';
 import closeWhenGone from './gone';
 import { holds } from './hover-card/placing';
 import createLongPress from './long-press';
@@ -27,14 +28,14 @@ import { usePortalHost } from './portal-host';
 /** What kind of thing a tooltip names, which picks the chip beside the name */
 export type TooltipKind = 'item' | 'candy' | 'type' | 'weather' | 'ability' | 'status' | 'move';
 
-const KIND_CHIPS: Record<TooltipKind, { label: string; tone: string }> = {
-  item: { label: 'Item', tone: 'bg-leaf-soft text-leaf-dark' },
-  candy: { label: 'Candy', tone: 'bg-leaf-soft text-leaf-dark' },
-  type: { label: 'Type', tone: 'bg-ember-soft text-ember-dark' },
-  weather: { label: 'Weather', tone: 'bg-gold-soft text-gold' },
-  ability: { label: 'Ability', tone: 'bg-tide-soft text-tide-dark' },
-  status: { label: 'Status', tone: 'bg-line-soft text-arcane' },
-  move: { label: 'Move', tone: 'bg-tide-soft text-tide-dark' },
+const KIND_CHIPS: Record<TooltipKind, { label: () => string; tone: string }> = {
+  item: { label: m.tooltip_kind_item, tone: 'bg-leaf-soft text-leaf-dark' },
+  candy: { label: m.tooltip_kind_candy, tone: 'bg-leaf-soft text-leaf-dark' },
+  type: { label: m.tooltip_kind_type, tone: 'bg-ember-soft text-ember-dark' },
+  weather: { label: m.tooltip_kind_weather, tone: 'bg-gold-soft text-gold' },
+  ability: { label: m.tooltip_kind_ability, tone: 'bg-tide-soft text-tide-dark' },
+  status: { label: m.tooltip_kind_status, tone: 'bg-line-soft text-arcane' },
+  move: { label: m.tooltip_kind_move, tone: 'bg-tide-soft text-tide-dark' },
 };
 
 export interface TooltipProps {
@@ -126,7 +127,7 @@ export interface TooltipNotch {
  * drawn only when the caller says where the thing it points at is
  */
 export function Tooltip(props: TooltipProps & { notch?: TooltipNotch }): JSX.Element {
-  const chip = (): { label: string; tone: string } | null =>
+  const chip = (): { label: () => string; tone: string } | null =>
     props.kind == null ? null : KIND_CHIPS[props.kind];
 
   return (
@@ -144,7 +145,7 @@ export function Tooltip(props: TooltipProps & { notch?: TooltipNotch }): JSX.Ele
               class={`shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-extrabold
                 tracking-wide uppercase ${shown().tone}`}
             >
-              {shown().label}
+              {shown().label()}
             </span>
           )}
         </Show>

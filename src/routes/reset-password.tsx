@@ -4,6 +4,7 @@ import { Title } from '@solidjs/meta';
 import { choosePassword } from '../auth/actions';
 import { Button, Card, Note, Status, TextField } from '../components/styled';
 import describeFailure from '../i18n/refusals';
+import { m } from '../i18n/paraglide/messages.js';
 
 /**
  * Where a password link from staff lands: the player chooses a password
@@ -25,7 +26,7 @@ export default function ResetPasswordPage(): JSX.Element {
 
   const submit = (): void => {
     if (password() !== again()) {
-      setWrong('The two passwords are not the same.');
+      setWrong(m.reset_mismatch());
       return;
     }
     setWrong(null);
@@ -44,18 +45,16 @@ export default function ResetPasswordPage(): JSX.Element {
 
   return (
     <main class="mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center px-4 py-16">
-      <Title>Choose a password · Overwander</Title>
-      <Card title="Choose a password">
-        <Show
-          when={token() !== ''}
-          fallback={<Note>This link is missing its token. Ask staff for a new one.</Note>}
-        >
+      <Title>{m.reset_page_title()}</Title>
+      <Card title={m.reset_title()}>
+        <Show when={token() !== ''} fallback={<Note>{m.reset_no_token()}</Note>}>
           <Show
             when={!done()}
             fallback={
               <Note>
-                Your password is set. <A href="/">Sign in</A> with your account's email and this
-                password.
+                {m.reset_done_before()}
+                <A href="/">{m.reset_done_link()}</A>
+                {m.reset_done_after()}
               </Note>
             }
           >
@@ -67,18 +66,18 @@ export default function ResetPasswordPage(): JSX.Element {
               }}
             >
               <TextField
-                label="New password"
+                label={m.login_new_password()}
                 kind="password"
                 value={password()}
                 autocomplete="new-password"
-                hint="At least 8 characters."
+                hint={m.login_password_hint({ count: 8 })}
                 disabled={busy()}
                 onChange={(value) => {
                   setPassword(value);
                 }}
               />
               <TextField
-                label="The same again"
+                label={m.reset_again()}
                 kind="password"
                 value={again()}
                 autocomplete="new-password"
@@ -88,7 +87,7 @@ export default function ResetPasswordPage(): JSX.Element {
                 }}
               />
               <Button type="submit" tone="primary" class="justify-center" disabled={busy()}>
-                Set password
+                {m.reset_submit()}
               </Button>
             </form>
           </Show>

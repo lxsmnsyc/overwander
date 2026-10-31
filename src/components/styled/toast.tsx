@@ -11,6 +11,7 @@ import {
   useContext,
 } from 'solid-js';
 import { Portal } from 'solid-js/web';
+import { m } from '../../i18n/paraglide/messages.js';
 import { rootPortalHost } from './portal-host';
 
 /**
@@ -158,7 +159,7 @@ function ToastCard(props: { toast: Toast; onClose: () => void }): JSX.Element {
           who has read it should not have to wait for it */}
       <button
         type="button"
-        aria-label="Dismiss"
+        aria-label={m.ui_dismiss()}
         class="shrink-0 rounded-full border-0 bg-transparent px-1.5 py-0 leading-none text-muted
           shadow-none hover:border-0 hover:text-ember active:translate-y-0"
         onClick={props.onClose}

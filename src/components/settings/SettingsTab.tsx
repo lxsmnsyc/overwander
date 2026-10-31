@@ -50,8 +50,8 @@ function ThemeSetting(): JSX.Element {
 
   return (
     <Switch
-      label="Dark mode"
-      description="Draws the game in its night colours. Follows your machine until you choose."
+      label={m.settings_dark_mode()}
+      description={m.settings_dark_mode_description()}
       checked={showing() === 'dark'}
       onChange={(dark) => {
         setScheme(dark ? 'dark' : 'light');
@@ -97,39 +97,57 @@ function LanguageSetting(): JSX.Element {
   );
 }
 
-const CLOCKS: { value: ClockFormat; label: string; description: string }[] = [
-  { value: '24h', label: '24-hour', description: 'Twenty past eight in the evening is 20:20.' },
-  { value: '12h', label: '12-hour', description: 'The same hour is 8:20 pm.' },
-];
+function readClocks(): { value: ClockFormat; label: string; description: string }[] {
+  return [
+    {
+      value: '24h',
+      label: m.settings_clock_24h(),
+      description: m.settings_clock_24h_description(),
+    },
+    {
+      value: '12h',
+      label: m.settings_clock_12h(),
+      description: m.settings_clock_12h_description(),
+    },
+  ];
+}
 
-const BOARD_EDGES: { value: BoardEdge; label: string; description: string }[] = [
-  { value: 'haze', label: 'Haze', description: 'The country fades into the sky toward the edge.' },
-  {
-    value: 'full',
-    label: 'Full board',
-    description: 'The ground reaches every corner of the screen. Heavier to draw.',
-  },
-  {
-    value: 'plain',
-    label: 'Plain',
-    description: 'The board stops at its edge, with the sky past it.',
-  },
-];
+function readBoardEdges(): { value: BoardEdge; label: string; description: string }[] {
+  return [
+    {
+      value: 'haze',
+      label: m.settings_edge_haze(),
+      description: m.settings_edge_haze_description(),
+    },
+    {
+      value: 'full',
+      label: m.settings_edge_full(),
+      description: m.settings_edge_full_description(),
+    },
+    {
+      value: 'plain',
+      label: m.settings_edge_plain(),
+      description: m.settings_edge_plain_description(),
+    },
+  ];
+}
 
-const BOX_WIDTHS: { value: BoxColumns; label: string; description: string }[] = [
-  { value: 5, label: 'Five wide', description: '25 to a box, and the largest squares.' },
-  { value: 6, label: 'Six wide', description: '30 to a box, the way the games lay one out.' },
-  { value: 8, label: 'Eight wide', description: '40 to a box, for sweeping a long collection.' },
-];
+function readBoxWidths(): { value: BoxColumns; label: string; description: string }[] {
+  return [
+    { value: 5, label: m.settings_box_five(), description: m.settings_box_five_description() },
+    { value: 6, label: m.settings_box_six(), description: m.settings_box_six_description() },
+    { value: 8, label: m.settings_box_eight(), description: m.settings_box_eight_description() },
+  ];
+}
 
 /** What each direction does where it is used, said once */
-const CONTROL_NOTES: Record<GameAction, string> = {
-  up: 'North on the board.',
-  down: 'South on the board.',
-  left: 'West on the board.',
-  right: 'East on the board.',
-  interact: 'Whatever the player is facing.',
-  menu: 'Puts the keyboard on the bar along the bottom.',
+const CONTROL_NOTES: Record<GameAction, () => string> = {
+  up: m.settings_control_up,
+  down: m.settings_control_down,
+  left: m.settings_control_left,
+  right: m.settings_control_right,
+  interact: m.settings_control_interact,
+  menu: m.settings_control_menu,
 };
 
 /**
@@ -163,18 +181,17 @@ function DisplayPane(): JSX.Element {
       <LanguageSetting />
       <ThemeSetting />
       <Switch
-        label="Reduce motion"
-        description="Holds the decoration still: fades, transitions, and the idle a pokemon
-          breathes at. Walking, battles and eggs still move."
+        label={m.settings_reduce_motion()}
+        description={m.settings_reduce_motion_description()}
         checked={settings().reduceMotion}
         onChange={(on) => {
           setSetting('reduceMotion', on);
         }}
       />
       <RadioGroup
-        label="Clock"
+        label={m.settings_clock()}
         value={settings().clock}
-        options={CLOCKS}
+        options={readClocks()}
         onChange={(clock) => {
           setSetting('clock', clock);
         }}
@@ -186,15 +203,12 @@ function DisplayPane(): JSX.Element {
 function ControlsPane(): JSX.Element {
   return (
     <Card>
-      <Note>
-        The arrows always walk, whatever these say. Read while nothing else on the page has the
-        keyboard, so a key typed into a search box is a key typed into a search box.
-      </Note>
+      <Note>{m.settings_controls_note()}</Note>
       <For each={ACTION_ORDER}>
         {(action) => (
           <KeyBind
-            label={ACTION_NAMES[action]}
-            description={CONTROL_NOTES[action]}
+            label={ACTION_NAMES[action]()}
+            description={CONTROL_NOTES[action]()}
             value={settings().keys[action]}
             onChange={(key) => {
               bindKey(action, key);
@@ -210,50 +224,48 @@ function WorldPane(): JSX.Element {
   return (
     <Card>
       <Switch
-        label="Grid lines"
-        description="Rules a line round every cell of the board."
+        label={m.settings_grid_lines()}
+        description={m.settings_grid_lines_description()}
         checked={settings().gridLines}
         onChange={(on) => {
           setSetting('gridLines', on);
         }}
       />
       <Switch
-        label="Chunk lines"
-        description="Rules a line where one chunk of the world meets the next."
+        label={m.settings_chunk_lines()}
+        description={m.settings_chunk_lines_description()}
         checked={settings().chunkLines}
         onChange={(on) => {
           setSetting('chunkLines', on);
         }}
       />
       <Switch
-        label="World map grid"
-        description="Rules every chunk on the world map, the detailed map as well."
+        label={m.settings_map_grid()}
+        description={m.settings_map_grid_description()}
         checked={settings().mapGrid}
         onChange={(on) => {
           setSetting('mapGrid', on);
         }}
       />
       <Switch
-        label="Flat board"
-        description="Draws the board flat from straight above on a wide screen too, the way an
-          upright screen always shows it."
+        label={m.settings_flat_board()}
+        description={m.settings_flat_board_description()}
         checked={settings().flatBoard}
         onChange={(on) => {
           setSetting('flatBoard', on);
         }}
       />
       <RadioGroup
-        label="Board edge"
+        label={m.settings_board_edge()}
         value={settings().boardEdge}
-        options={BOARD_EDGES}
+        options={readBoardEdges()}
         onChange={(edge) => {
           setSetting('boardEdge', edge);
         }}
       />
       <Switch
-        label="Detailed world map"
-        description="Draws water, cliffs, towns and routes on the map, and takes a moment to fill
-          in. Off, the map shows each chunk's country at once, with towns picked out."
+        label={m.settings_detailed_map()}
+        description={m.settings_detailed_map_description()}
         checked={settings().detailedMap}
         onChange={(on) => {
           setSetting('detailedMap', on);
@@ -267,18 +279,17 @@ function PlayPane(): JSX.Element {
   return (
     <Card>
       <Switch
-        label="Keep the last ball"
-        description="A meeting opens on whatever ball you last threw, where you still carry
-          one. Off, every meeting opens on a Poke Ball."
+        label={m.settings_keep_ball()}
+        description={m.settings_keep_ball_description()}
         checked={settings().keepBall}
         onChange={(on) => {
           setSetting('keepBall', on);
         }}
       />
       <RadioGroup
-        label="Box width"
+        label={m.settings_box_width()}
         value={settings().boxColumns}
-        options={BOX_WIDTHS}
+        options={readBoxWidths()}
         onChange={(columns) => {
           setSetting('boxColumns', columns);
         }}
@@ -290,17 +301,17 @@ function PlayPane(): JSX.Element {
 function AudioPane(): JSX.Element {
   return (
     <Card>
-      <Note>Music is kept for when there is some. Sound is what the world does now.</Note>
+      <Note>{m.settings_audio_note()}</Note>
       <Slider
-        label="Sound"
-        description="What the world says in passing, a shiny sparkling among it."
+        label={m.settings_sound()}
+        description={m.settings_sound_description()}
         value={settings().sound}
         onChange={(level) => {
           setSetting('sound', level);
         }}
       />
       <Slider
-        label="Music"
+        label={m.settings_music()}
         value={settings().music}
         onChange={(level) => {
           setSetting('music', level);
@@ -314,16 +325,16 @@ function DevelopmentPane(): JSX.Element {
   return (
     <Card>
       <Switch
-        label="Highlight cliffs and seams"
-        description="Tints cliff tiles red and seamed tiles green on the board."
+        label={m.settings_step_highlight()}
+        description={m.settings_step_highlight_description()}
         checked={settings().stepHighlight}
         onChange={(on) => {
           setSetting('stepHighlight', on);
         }}
       />
       <Switch
-        label="Boosted shiny odds"
-        description="Rolls about half of all spawns shiny. Off, spawns roll at the real odds."
+        label={m.settings_shiny_boost()}
+        description={m.settings_shiny_boost_description()}
         checked={settings().devShinyBoost}
         onChange={(on) => {
           setSetting('devShinyBoost', on);
@@ -347,7 +358,7 @@ function dexLine(): string {
       newest = Math.max(newest, REGIONS.indexOf(region));
     }
   }
-  return `Gens 1 to ${newest}, ${count} species, with the newest rules wherever generations disagree`;
+  return m.settings_about_dex({ newest, count });
 }
 
 /** One line of the about page: what it is, and what it says */
@@ -364,42 +375,31 @@ function AboutPane(): JSX.Element {
   return (
     <Panel>
       <Card title="Overwander">
-        <p class="max-w-prose text-sm">
-          A Pokemon-style overworld you walk through, generated as you go. The map is never stored:
-          one seed produces the climate, the climate sorts into biomes, and each chunk rolls its own
-          landmarks, spawns, stashes and raids from that seed plus the clock. Two players standing
-          in the same place at the same time compute the same world without exchanging any of it.
-        </p>
-        <Line label="Written by">Alexis H. Munsayac</Line>
-        <Line label="Dex">{dexLine()}</Line>
-        <Line label="Source">MIT licensed, except the art and the names</Line>
+        <p class="max-w-prose text-sm">{m.settings_about_game()}</p>
+        <Line label={m.settings_about_written_by()}>Alexis H. Munsayac</Line>
+        <Line label={m.settings_about_dex_label()}>{dexLine()}</Line>
+        <Line label={m.settings_about_source()}>{m.settings_about_license()}</Line>
       </Card>
 
       <CreditsCard />
 
-      <Card title="What this is not">
-        <p class="max-w-prose text-sm">
-          Overwander is a fan project. Pokemon is a trademark of Nintendo, Creatures Inc. and GAME
-          FREAK Inc., and The Pokemon Company owns the franchise. None of them is affiliated with
-          this project, has endorsed it, or has seen it. The species, moves, abilities, items and
-          type chart are theirs. Nothing here is sold, and nothing here is offered as an official
-          product.
-        </p>
+      <Card title={m.settings_about_not_title()}>
+        <p class="max-w-prose text-sm">{m.settings_about_not()}</p>
       </Card>
     </Panel>
   );
 }
 
 /** Each section's label, in the order the list shows them */
-const PANE_LABELS: Record<SettingsPane, string> = {
-  display: 'Display',
-  controls: 'Controls',
-  world: 'World',
-  play: 'Play',
-  audio: 'Audio',
-  security: 'Security',
-  about: 'About',
-  development: 'Development',
+const PANE_LABELS: Record<SettingsPane, () => string> = {
+  display: m.settings_pane_display,
+  controls: m.settings_pane_controls,
+  world: m.settings_pane_world,
+  play: m.settings_pane_play,
+  audio: m.settings_pane_audio,
+  security: m.settings_pane_security,
+  about: m.settings_pane_about,
+  development: m.settings_pane_development,
 };
 
 const PANE_BODIES: Record<SettingsPane, () => JSX.Element> = {
@@ -455,7 +455,7 @@ export default function SettingsTab(): JSX.Element {
                 <span aria-hidden="true" class="mx-2 my-1 hidden h-0.5 bg-line-soft md:block" />
               </Show>
               <TabButton value={SETTINGS_PANES.indexOf(pane)} class="md:justify-start">
-                {PANE_LABELS[pane]}
+                {PANE_LABELS[pane]()}
               </TabButton>
             </>
           )}

@@ -7,6 +7,7 @@ import AnimatedSprite from '../sprites/AnimatedSprite';
 import { isFainted } from '../../model/health';
 import { TEAM_SIZE } from '../../auth/teams';
 import { type TeamPresetRecord, listTeamPresets } from '../../auth/team-presets';
+import { m } from '../../i18n/paraglide/messages.js';
 import { type FormProps, defineForm } from './form';
 import { useAuth } from '../../auth/context';
 import CatchPicker, { type CatchOption } from '../catches/catch-picker';
@@ -29,17 +30,17 @@ import {
  */
 function heldBack(option: CatchOption, healed = false): string | null {
   if (isEgg(option.caught)) {
-    return 'not hatched';
+    return m.pick_team_not_hatched();
   }
   if (!healed && isFainted(option.caught)) {
-    return 'fainted';
+    return m.pick_team_fainted();
   }
   // Put away by its owner. Nothing is wrong with it: they said so
   if (isGuarded(option.caught)) {
-    return 'locked';
+    return m.pick_team_locked();
   }
   // One pokemon, one battle. It comes back when the raid it is in ends
-  return option.fighting ? 'in a raid' : null;
+  return option.fighting ? m.pick_team_in_raid() : null;
 }
 
 /** The two halves of forming a team: the box, and the teams already saved */
@@ -101,10 +102,10 @@ function SavedTeam(props: {
     <TeamRow name={props.preset.name} catches={party.latest ?? []}>
       <span class="truncate font-bold">{props.preset.name}</span>
       <Show when={short() > 0}>
-        <Badge tone="ember">{short()} cannot come</Badge>
+        <Badge tone="ember">{m.pick_team_short({ count: short() })}</Badge>
       </Show>
       <span class="grow" />
-      <Button onClick={props.onUse}>Load</Button>
+      <Button onClick={props.onUse}>{m.pick_team_load()}</Button>
     </TeamRow>
   );
 }
@@ -212,7 +213,7 @@ function PickTeamView(props: FormProps<PickTeamInput, string[]>): JSX.Element {
                 {(option) => (
                   <button
                     type="button"
-                    aria-label={`Take ${getCatchName(option().caught)} out of the team`}
+                    aria-label={m.pick_team_take_out({ name: getCatchName(option().caught) })}
                     class="relative flex size-full cursor-pointer flex-col items-center
                       justify-end rounded-xl border-2 border-line bg-paper p-1 shadow-pop-sm
                       hover:border-ember"
@@ -232,7 +233,7 @@ function PickTeamView(props: FormProps<PickTeamInput, string[]>): JSX.Element {
                       />
                     </span>
                     <span class="text-[10px] font-extrabold text-muted">
-                      Lv {option().caught.level}
+                      {m.pick_team_level({ level: option().caught.level })}
                     </span>
                     <span
                       aria-hidden="true"
@@ -259,9 +260,9 @@ function PickTeamView(props: FormProps<PickTeamInput, string[]>): JSX.Element {
         class="flex flex-col gap-3"
       >
         <TabBar class="self-start">
-          <TabButton value={TeamTab.Box}>Your pokemon</TabButton>
+          <TabButton value={TeamTab.Box}>{m.pick_catch_title()}</TabButton>
           <TabButton value={TeamTab.Saved}>
-            Teams
+            {m.pick_team_saved_tab()}
             <Show when={saved().length > 0}>
               <Badge class="ml-1.5">{saved().length}</Badge>
             </Show>
@@ -279,8 +280,8 @@ function PickTeamView(props: FormProps<PickTeamInput, string[]>): JSX.Element {
             max={max()}
             // Strongest first. A team is picked for what it can win
             sort="level"
-            verb="Join with"
-            empty="No catches to bring."
+            verb={m.pick_team_join_with()}
+            empty={m.pick_team_empty()}
             reason={(option) =>
               heldBack(option, props.input.healed) ?? props.input.refuse?.(option) ?? null
             }
@@ -294,10 +295,7 @@ function PickTeamView(props: FormProps<PickTeamInput, string[]>): JSX.Element {
         </TabPane>
 
         <TabPane value={TeamTab.Saved}>
-          <Show
-            when={saved().length > 0}
-            fallback={<Note>You have saved no teams. The profile is where they are made.</Note>}
-          >
+          <Show when={saved().length > 0} fallback={<Note>{m.pick_team_no_saved()}</Note>}>
             <TeamRows>
               <For each={saved()}>
                 {([, preset]) => (
@@ -323,7 +321,7 @@ function PickTeamView(props: FormProps<PickTeamInput, string[]>): JSX.Element {
             props.submit(picks());
           }}
         >
-          Join with {picks().length} / {max()}
+          {m.pick_team_join({ count: picks().length, max: max() })}
         </Button>
         <Button onClick={props.cancel}>{props.leave}</Button>
       </DialogActions>
@@ -333,8 +331,8 @@ function PickTeamView(props: FormProps<PickTeamInput, string[]>): JSX.Element {
 
 /** The catches to bring into a fight, at most `max` of them */
 export const PickTeamForm = defineForm<PickTeamInput, string[]>({
-  title: () => 'Form a team',
-  prompt: (input) => `Tap to bring one, tap again to leave it. Up to ${input.max ?? TEAM_SIZE}.`,
+  title: () => m.pick_team_title(),
+  prompt: (input) => m.pick_team_prompt({ max: input.max ?? TEAM_SIZE }),
   width: 'wide',
   view: (props) => <PickTeamView {...props} />,
 });

@@ -56,16 +56,3 @@ export interface FoundPlayer {
   uid: string;
   tie: FriendTie;
 }
-
-/** What the button offering the tie should say */
-const LABELS: Record<FriendTie, string> = {
-  [FriendTie.None]: 'Add friend',
-  [FriendTie.Friends]: 'Remove friend',
-  [FriendTie.Sent]: 'Cancel request',
-  [FriendTie.Received]: 'Accept request',
-  [FriendTie.Blocked]: 'Unblock',
-};
-
-export function friendActionLabel(tie: FriendTie): string {
-  return LABELS[tie];
-}

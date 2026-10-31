@@ -32,6 +32,7 @@ import ItemSprite from '../items/ItemSprite';
 import playEffect, { Effect, playEffectAfter } from './sound';
 import createStoreSignal from './store-signal';
 import { useToast } from '../styled';
+import { m } from '../../i18n/paraglide/messages.js';
 
 export {
   type ActiveBattle,
@@ -296,7 +297,11 @@ export default function GameProvider(
 
   const session = createSession({
     questDue: (name) => {
-      toast.push({ title: 'Quest complete', message: `${name} is ready to claim.`, tone: 'leaf' });
+      toast.push({
+        title: m.toast_quest_complete(),
+        message: m.toast_quest_ready({ name }),
+        tone: 'leaf',
+      });
       if (Date.now() - questSoundedAt > QUEST_SOUND_GAP) {
         questSoundedAt = Date.now();
         playEffect(Effect.QuestComplete);
@@ -312,29 +317,30 @@ export default function GameProvider(
     paidInPassing: (paid) => {
       if (paid.seat === 'freed') {
         toast.push({
-          title: 'The seat is open',
+          title: m.toast_seat_open(),
           message:
-            paid.gold > 0 ? `You beat them off it. +${paid.gold} gold` : 'You beat them off it.',
+            paid.gold > 0 ? m.toast_seat_freed_gold({ amount: paid.gold }) : m.toast_seat_freed(),
           tone: 'leaf',
         });
       } else if (paid.seat === 'held') {
         toast.push({
           message:
-            paid.gold < 0
-              ? `Their line-up held. −${-paid.gold} gold`
-              : 'Their line-up held. The seat stays theirs.',
+            paid.gold < 0 ? m.toast_seat_held_gold({ amount: -paid.gold }) : m.toast_seat_held(),
           tone: 'ember',
         });
       } else if (paid.gold > 0) {
-        toast.push({ message: `The purse is yours. +${paid.gold} gold`, tone: 'leaf' });
+        toast.push({ message: m.toast_purse_won({ amount: paid.gold }), tone: 'leaf' });
       }
       if (paid.award != null) {
-        toast.push({ title: AWARD_NAMES[paid.award], message: 'Yours, for good.', tone: 'leaf' });
+        toast.push({ title: AWARD_NAMES[paid.award], message: m.toast_award_won(), tone: 'leaf' });
       }
       for (const { item: won, amount } of paid.items) {
         toast.push({
-          title: amount > 1 ? `${getItemData(won).name} ×${amount}` : getItemData(won).name,
-          message: 'Left behind by the fight.',
+          title:
+            amount > 1
+              ? m.ui_item_times({ item: getItemData(won).name, amount })
+              : getItemData(won).name,
+          message: m.toast_items_left(),
           art: () => <ItemSprite item={won} size={24} label="" />,
           tone: 'leaf',
         });

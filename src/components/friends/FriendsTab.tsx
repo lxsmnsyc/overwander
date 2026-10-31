@@ -37,6 +37,7 @@ import {
 import FriendEntry from './FriendEntry';
 import { useGame } from '../app/game-context';
 import describeFailure from '../../i18n/refusals';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * Everybody the player has agreed with, and everybody they have shut
@@ -105,14 +106,14 @@ function Roster(props: {
   const roster = createPager(asked, LIST_PAGE);
 
   return (
-    <Show when={asked().length > 0} fallback={<Note>Nobody here matches.</Note>}>
+    <Show when={asked().length > 0} fallback={<Note>{m.friends_no_match()}</Note>}>
       <List>
         <For each={roster.shown()}>
           {(uid) => (
             <FriendEntry
               uid={uid}
               since={props.made.get(uid)}
-              when="Friends since"
+              when={(date) => m.friends_since({ date })}
               onOpen={() => {
                 game.setVisiting(uid);
               }}
@@ -122,7 +123,7 @@ function Roster(props: {
                   game.setTrading(uid);
                 }}
               >
-                Trade
+                {m.friends_trade()}
               </Button>
               <Button
                 tone="danger"
@@ -131,7 +132,7 @@ function Roster(props: {
                   props.onAct(uid, removeFriend(uid));
                 }}
               >
-                Remove
+                {m.ui_remove_action()}
               </Button>
             </FriendEntry>
           )}
@@ -191,7 +192,7 @@ export default function FriendsTab(props: FriendsTabProps): JSX.Element {
         <Search
           vocabulary={FRIEND_VOCABULARY}
           example="sort:since"
-          placeholder="Name, or sort:since"
+          placeholder={m.friends_search()}
           value={query()}
           onChange={(typed) => {
             setQuery(typed);
@@ -199,11 +200,8 @@ export default function FriendsTab(props: FriendsTabProps): JSX.Element {
         />
       </Show>
 
-      <Show
-        when={roll().length > 0}
-        fallback={<Note>Nobody yet. Add a friend by their code.</Note>}
-      >
-        <Suspense fallback={<Note>Reading names…</Note>}>
+      <Show when={roll().length > 0} fallback={<Note>{m.friends_empty()}</Note>}>
+        <Suspense fallback={<Note>{m.friends_loading()}</Note>}>
           <Roster
             uids={roll()}
             made={made()}
@@ -213,14 +211,12 @@ export default function FriendsTab(props: FriendsTabProps): JSX.Element {
             onAct={act}
           />
         </Suspense>
-        <Note>
-          {roll().length} of {FRIEND_LIMIT}
-        </Note>
+        <Note>{m.friends_count({ count: roll().length, limit: FRIEND_LIMIT })}</Note>
       </Show>
 
       <Show when={(blocked() ?? []).length > 0}>
         <Divider />
-        <Note>Blocked. They cannot ask you, and you cannot ask them.</Note>
+        <Note>{m.friends_blocked()}</Note>
         <List>
           <For each={shunned.shown()}>
             {(uid) => (
@@ -231,7 +227,7 @@ export default function FriendsTab(props: FriendsTabProps): JSX.Element {
                     act(uid, unblockPlayer(uid));
                   }}
                 >
-                  Unblock
+                  {m.friends_tie_unblock()}
                 </Button>
               </FriendEntry>
             )}

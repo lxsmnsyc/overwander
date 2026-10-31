@@ -10,6 +10,21 @@ import {
   unblockPlayer,
 } from '../../auth/friends';
 import describeFailure from '../../i18n/refusals';
+import { m } from '../../i18n/paraglide/messages.js';
+
+/** What the button offering the tie says */
+const LABELS: Record<FriendTie, () => string> = {
+  [FriendTie.None]: m.friends_tie_add,
+  [FriendTie.Friends]: m.friends_tie_remove,
+  [FriendTie.Sent]: m.friends_tie_cancel,
+  [FriendTie.Received]: m.friends_tie_accept,
+  [FriendTie.Blocked]: m.friends_tie_unblock,
+};
+
+/** What the button offering the tie says, in the reader's language */
+export function friendActionLabel(tie: FriendTie): string {
+  return LABELS[tie]();
+}
 
 /** The one press each standing offers */
 const PRESS: Record<FriendTie, (uid: string) => Promise<FriendTie>> = {

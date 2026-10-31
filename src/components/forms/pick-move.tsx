@@ -15,6 +15,7 @@ import {
   createPager,
 } from '../styled';
 import { CostBadge, type CounterCost, CounterStep, CounterTerms } from './terms';
+import { m } from '../../i18n/paraglide/messages.js';
 import { type FormProps, defineForm } from './form';
 
 export interface PickMoveInput {
@@ -70,7 +71,7 @@ function PickMoveView(props: FormProps<PickMoveInput, Moves>): JSX.Element {
         <Show when={props.input.moves.length >= SEARCH_FROM}>
           <Search
             value={query()}
-            placeholder="Name or type"
+            placeholder={m.pick_move_search()}
             onChange={(typed) => {
               setQuery(typed);
             }}
@@ -83,7 +84,7 @@ function PickMoveView(props: FormProps<PickMoveInput, Moves>): JSX.Element {
             each={page.shown()}
             fallback={
               <li class="col-span-full">
-                <Note>No move matches that.</Note>
+                <Note>{m.pick_move_none()}</Note>
               </li>
             }
           >
@@ -139,8 +140,8 @@ function PickMoveView(props: FormProps<PickMoveInput, Moves>): JSX.Element {
 
 /** One move out of those on offer */
 export const PickMoveForm = defineForm<PickMoveInput, Moves>({
-  title: (input) => input.title ?? 'Choose a move',
-  prompt: (input) => input.prompt ?? 'Choose one of the moves on offer.',
+  title: (input) => input.title ?? m.pick_move_title(),
+  prompt: (input) => input.prompt ?? m.pick_move_prompt(),
   // Moves are listed two to a row, which needs the room
   width: 'wide',
   view: (props) => <PickMoveView {...props} />,

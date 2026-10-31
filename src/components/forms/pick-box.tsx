@@ -2,6 +2,7 @@ import { type JSX, Show, createSignal } from 'solid-js';
 import CatchBox, { type BoxEntry } from '../catches/CatchBox';
 import { Button, DialogActions, DialogSection, Meta } from '../styled';
 import { CounterStep } from './terms';
+import { m } from '../../i18n/paraglide/messages.js';
 import { type FormProps, defineForm } from './form';
 
 export interface PickBoxInput {
@@ -70,7 +71,7 @@ function PickBoxView(props: FormProps<PickBoxInput, string>): JSX.Element {
 
 /** One pokemon out of a box of them that is not the player's */
 export const PickBoxForm = defineForm<PickBoxInput, string>({
-  title: (input) => input.title ?? 'Choose one',
-  prompt: (input) => input.prompt ?? 'Choose one of these.',
+  title: (input) => input.title ?? m.pick_box_title(),
+  prompt: (input) => input.prompt ?? m.pick_box_prompt(),
   view: (props) => <PickBoxView {...props} />,
 });

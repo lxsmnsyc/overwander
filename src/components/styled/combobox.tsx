@@ -9,6 +9,7 @@ import {
   Combobox as HeadlessCombobox,
   Transition,
 } from 'terracotta';
+import { m } from '../../i18n/paraglide/messages.js';
 import { SHEER } from './transition';
 import { Badge, BadgeDismiss } from './feedback';
 import { FieldFrame } from './form';
@@ -139,7 +140,7 @@ export default function Combobox<V>(props: ComboboxProps<V>): JSX.Element {
       // the badges over it, and one of them repeated inside would be
       // the value said twice
       value={props.multiple === true ? undefined : named(props.value)}
-      placeholder={props.placeholder ?? 'Search…'}
+      placeholder={props.placeholder ?? m.ui_search_placeholder()}
       disabled={props.disabled}
       aria-describedby={parts.describedBy}
       aria-invalid={props.error == null ? undefined : true}
@@ -211,7 +212,7 @@ export default function Combobox<V>(props: ComboboxProps<V>): JSX.Element {
                   <AutocompleteStateChild>
                     {(state) => (
                       <Show when={nothingMatches((value) => state.matches(value))}>
-                        <li class="px-2 py-1 text-sm text-muted">Nothing matches that.</li>
+                        <li class="px-2 py-1 text-sm text-muted">{m.ui_nothing_matches()}</li>
                       </Show>
                     )}
                   </AutocompleteStateChild>
@@ -233,7 +234,7 @@ export default function Combobox<V>(props: ComboboxProps<V>): JSX.Element {
               {named(value)}
               <BadgeDismiss
                 tone="tide"
-                label={`Remove ${named(value)}`}
+                label={m.ui_remove({ name: named(value) })}
                 disabled={props.disabled}
                 onDismiss={() => {
                   const kept: V[] = [];

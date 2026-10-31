@@ -22,15 +22,10 @@ import BidsList from '../auctions/BidsList';
 import SellingList from '../auctions/SellingList';
 import FriendsTab from '../friends/FriendsTab';
 import RequestsTab from '../friends/RequestsTab';
-import createFriendTie from '../friends/tie';
+import createFriendTie, { friendActionLabel } from '../friends/tie';
 import createClientSignal from '../app/client-signal';
 import { answered } from '../app/resource-reads';
-import {
-  type FriendRequests,
-  FriendTie,
-  friendActionLabel,
-  watchFriendRequests,
-} from '../../auth/friends';
+import { type FriendRequests, FriendTie, watchFriendRequests } from '../../auth/friends';
 import EditProfileDialog from './EditProfileDialog';
 import { hostDuel, inviteToDuel } from '../../auth/duels';
 import LobbyRole from '../../model/lobby-role';

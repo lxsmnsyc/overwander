@@ -33,6 +33,7 @@ import TradeOfferDialog from '../components/trades/TradeOfferDialog';
 import { ThemeToggle } from '../components/app/theme';
 import WorldMapDialog from '../components/overworld/WorldMapDialog';
 import { Button, Dialog, DialogActions, Note } from '../components/styled';
+import { m } from '../i18n/paraglide/messages.js';
 
 /**
  * The fight, fetched when there is one, and only in a browser.
@@ -84,36 +85,34 @@ type Panelled =
   | GameDialog.Settings
   | GameDialog.News;
 
-const TITLES: Record<Panelled, string> = {
-  [GameDialog.Notifications]: 'Notifications',
-  [GameDialog.Profile]: 'Profile',
-  [GameDialog.Raids]: 'Raids',
-  [GameDialog.Auctions]: 'Auctions',
-  [GameDialog.Catches]: 'Boxes',
-  [GameDialog.Inventory]: 'Bag',
-  [GameDialog.Pokedex]: 'Pokedex',
-  [GameDialog.Gifts]: 'Gifts',
-  [GameDialog.Quests]: 'Quests',
-  [GameDialog.Battles]: 'Battle',
-  [GameDialog.Settings]: 'Settings',
-  [GameDialog.News]: 'News',
+const TITLES: Record<Panelled, () => string> = {
+  [GameDialog.Notifications]: m.panel_notifications,
+  [GameDialog.Profile]: m.panel_profile,
+  [GameDialog.Raids]: m.panel_raids,
+  [GameDialog.Auctions]: m.panel_auctions,
+  [GameDialog.Catches]: m.panel_boxes,
+  [GameDialog.Inventory]: m.panel_bag,
+  [GameDialog.Pokedex]: m.panel_pokedex,
+  [GameDialog.Gifts]: m.panel_gifts,
+  [GameDialog.Quests]: m.panel_quests,
+  [GameDialog.Battles]: m.panel_battle,
+  [GameDialog.Settings]: m.panel_settings,
+  [GameDialog.News]: m.panel_news,
 };
 
-const DESCRIPTIONS: Record<Panelled, string> = {
-  [GameDialog.Notifications]: 'Everything waiting on you, wherever it came from.',
-  [GameDialog.Profile]:
-    'Your details, your buddy, your friends, your battles, your bids and your trades.',
-  [GameDialog.Raids]: 'Every lobby still gathering in the current window.',
-  [GameDialog.Auctions]: 'What is up for auction, and what you have to sell.',
-  [GameDialog.Catches]: 'Every pokemon you have caught, filed into boxes.',
-  [GameDialog.Inventory]: 'Everything you are carrying.',
-  [GameDialog.Pokedex]: 'Every pokemon there is, and how many of them you have met.',
-  [GameDialog.Gifts]: 'What the game is holding for you, until you come for it.',
-  [GameDialog.Quests]: 'What the game asks of you, and what each ask pays.',
-  [GameDialog.Battles]:
-    'The private fights you have been called into, and the one you are hosting.',
-  [GameDialog.Settings]: 'How the game is set up for you, and what it is made of.',
-  [GameDialog.News]: 'What the game has shipped, newest first.',
+const DESCRIPTIONS: Record<Panelled, () => string> = {
+  [GameDialog.Notifications]: m.panel_notifications_description,
+  [GameDialog.Profile]: m.panel_profile_description,
+  [GameDialog.Raids]: m.panel_raids_description,
+  [GameDialog.Auctions]: m.panel_auctions_description,
+  [GameDialog.Catches]: m.panel_boxes_description,
+  [GameDialog.Inventory]: m.panel_bag_description,
+  [GameDialog.Pokedex]: m.panel_pokedex_description,
+  [GameDialog.Gifts]: m.panel_gifts_description,
+  [GameDialog.Quests]: m.panel_quests_description,
+  [GameDialog.Battles]: m.panel_battle_description,
+  [GameDialog.Settings]: m.panel_settings_description,
+  [GameDialog.News]: m.panel_news_description,
 };
 
 /**
@@ -186,14 +185,14 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             onClose={close}
             width="wide"
             terse
-            title={TITLES[GameDialog.Pokedex]}
-            description={DESCRIPTIONS[GameDialog.Pokedex]}
+            title={TITLES[GameDialog.Pokedex]()}
+            description={DESCRIPTIONS[GameDialog.Pokedex]()}
           >
             <BattleData>
               <PokedexTab player={props.user.uid} />
             </BattleData>
             <DialogActions>
-              <Button onClick={close}>Close</Button>
+              <Button onClick={close}>{m.ui_close()}</Button>
             </DialogActions>
           </Dialog>
 
@@ -203,14 +202,14 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             width="wide"
             terse
             aside={<BagHint />}
-            title={TITLES[GameDialog.Inventory]}
-            description={DESCRIPTIONS[GameDialog.Inventory]}
+            title={TITLES[GameDialog.Inventory]()}
+            description={DESCRIPTIONS[GameDialog.Inventory]()}
           >
             <BattleData>
               <InventoryList player={props.user.uid} />
             </BattleData>
             <DialogActions>
-              <Button onClick={close}>Close</Button>
+              <Button onClick={close}>{m.ui_close()}</Button>
             </DialogActions>
           </Dialog>
 
@@ -221,14 +220,14 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             onClose={close}
             width="wide"
             terse
-            title={TITLES[GameDialog.Gifts]}
-            description={DESCRIPTIONS[GameDialog.Gifts]}
+            title={TITLES[GameDialog.Gifts]()}
+            description={DESCRIPTIONS[GameDialog.Gifts]()}
           >
             <BattleData>
               <GiftsTab />
             </BattleData>
             <DialogActions>
-              <Button onClick={close}>Close</Button>
+              <Button onClick={close}>{m.ui_close()}</Button>
             </DialogActions>
           </Dialog>
 
@@ -239,14 +238,14 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             onClose={close}
             width="wide"
             terse
-            title={TITLES[GameDialog.Quests]}
-            description={DESCRIPTIONS[GameDialog.Quests]}
+            title={TITLES[GameDialog.Quests]()}
+            description={DESCRIPTIONS[GameDialog.Quests]()}
           >
             <BattleData>
               <QuestsTab isOpen={showing(GameDialog.Quests)} onClose={close} />
             </BattleData>
             <DialogActions>
-              <Button onClick={close}>Close</Button>
+              <Button onClick={close}>{m.ui_close()}</Button>
             </DialogActions>
           </Dialog>
 
@@ -258,12 +257,12 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             onClose={close}
             width="wide"
             terse
-            title={TITLES[GameDialog.Notifications]}
-            description={DESCRIPTIONS[GameDialog.Notifications]}
+            title={TITLES[GameDialog.Notifications]()}
+            description={DESCRIPTIONS[GameDialog.Notifications]()}
           >
             <NotificationsTab notices={game.notices()} />
             <DialogActions>
-              <Button onClick={close}>Close</Button>
+              <Button onClick={close}>{m.ui_close()}</Button>
             </DialogActions>
           </Dialog>
 
@@ -274,12 +273,12 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             onClose={close}
             width="wide"
             terse
-            title={TITLES[GameDialog.Settings]}
-            description={DESCRIPTIONS[GameDialog.Settings]}
+            title={TITLES[GameDialog.Settings]()}
+            description={DESCRIPTIONS[GameDialog.Settings]()}
           >
             <SettingsTab />
             <DialogActions>
-              <Button onClick={close}>Close</Button>
+              <Button onClick={close}>{m.ui_close()}</Button>
             </DialogActions>
           </Dialog>
 
@@ -290,12 +289,12 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             onClose={close}
             width="wide"
             terse
-            title={TITLES[GameDialog.News]}
-            description={DESCRIPTIONS[GameDialog.News]}
+            title={TITLES[GameDialog.News]()}
+            description={DESCRIPTIONS[GameDialog.News]()}
           >
             <NewsTab />
             <DialogActions>
-              <Button onClick={close}>Close</Button>
+              <Button onClick={close}>{m.ui_close()}</Button>
             </DialogActions>
           </Dialog>
 
@@ -305,12 +304,12 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             // Broad for the side list of sections beside what is open
             width="broad"
             quiet
-            title={TITLES[GameDialog.Profile]}
-            description={DESCRIPTIONS[GameDialog.Profile]}
+            title={TITLES[GameDialog.Profile]()}
+            description={DESCRIPTIONS[GameDialog.Profile]()}
           >
             <ProfileTab player={props.user.uid} section={game.profileAt() ?? undefined} />
             <DialogActions>
-              <Button onClick={close}>Close</Button>
+              <Button onClick={close}>{m.ui_close()}</Button>
             </DialogActions>
           </Dialog>
 
@@ -330,8 +329,8 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             // opened from the *world* rather than from that button
             // arrives with no word about where it came from
             terse
-            title={lobby() ?? TITLES[GameDialog.Raids]}
-            description={DESCRIPTIONS[GameDialog.Raids]}
+            title={lobby() ?? TITLES[GameDialog.Raids]()}
+            description={DESCRIPTIONS[GameDialog.Raids]()}
           >
             <RaidsTab
               user={props.user}
@@ -344,7 +343,7 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             />
             <Show when={lobby() == null}>
               <DialogActions>
-                <Button onClick={close}>Close</Button>
+                <Button onClick={close}>{m.ui_close()}</Button>
               </DialogActions>
             </Show>
           </Dialog>
@@ -359,8 +358,8 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             insistent={seated()}
             width="wide"
             terse
-            title={duelling() ?? TITLES[GameDialog.Battles]}
-            description={DESCRIPTIONS[GameDialog.Battles]}
+            title={duelling() ?? TITLES[GameDialog.Battles]()}
+            description={DESCRIPTIONS[GameDialog.Battles]()}
           >
             <DuelsTab
               user={props.user}
@@ -373,7 +372,7 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             />
             <Show when={duelling() == null}>
               <DialogActions>
-                <Button onClick={close}>Close</Button>
+                <Button onClick={close}>{m.ui_close()}</Button>
               </DialogActions>
             </Show>
           </Dialog>
@@ -383,8 +382,8 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             onClose={close}
             width="wide"
             terse
-            title={TITLES[GameDialog.Auctions]}
-            description={DESCRIPTIONS[GameDialog.Auctions]}
+            title={TITLES[GameDialog.Auctions]()}
+            description={DESCRIPTIONS[GameDialog.Auctions]()}
           >
             {/* The board draws pokemon as squares and searches them
                 by move and by held item, which are names out of the
@@ -408,9 +407,9 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
                   setSelling(!selling());
                 }}
               >
-                {selling() ? 'Board' : 'Add'}
+                {selling() ? m.auctions_board() : m.auctions_add()}
               </Button>
-              <Button onClick={close}>Close</Button>
+              <Button onClick={close}>{m.ui_close()}</Button>
             </DialogActions>
           </Dialog>
 
@@ -565,16 +564,14 @@ function Banned(props: {
           class="flex max-w-md flex-col gap-3 rounded-panel border-4 border-ember bg-paper p-4
           text-center shadow-pop"
         >
-          <h1>This account is banned.</h1>
-          <Note>
-            {profile()?.banReason === '' ? 'Nothing else was said about it.' : profile()?.banReason}
-          </Note>
+          <h1>{m.refusal_banned()}</h1>
+          <Note>{profile()?.banReason === '' ? m.banned_no_reason() : profile()?.banReason}</Note>
           <Button
             onClick={() => {
               signOut().catch(() => undefined);
             }}
           >
-            Sign out
+            {m.ui_sign_out()}
           </Button>
         </div>
       </div>
@@ -592,7 +589,7 @@ export default function Home(): JSX.Element {
         when={auth.user()}
         fallback={
           <div class="flex h-full items-center justify-center px-4">
-            <Show when={!auth.loading()} fallback={<Note>Loading session…</Note>}>
+            <Show when={!auth.loading()} fallback={<Note>{m.landing_loading()}</Note>}>
               {/* The title screen: the game's name and what it is, then
                   the one thing there is to do about it, on the same white
                   sheet every dialog is drawn on */}
@@ -602,9 +599,7 @@ export default function Home(): JSX.Element {
               >
                 <header class="flex flex-col items-center gap-1 text-center">
                   <h1 class="text-4xl font-black tracking-tight">Overwander</h1>
-                  <p class="text-sm text-muted">
-                    A world grown from a seed, and real-time battles in it.
-                  </p>
+                  <p class="text-sm text-muted">{m.landing_tagline()}</p>
                 </header>
                 {/* Worth changing before signing in as much as after: the
                     menu that carries it is behind the sign-in */}

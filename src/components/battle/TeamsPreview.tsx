@@ -9,6 +9,7 @@ import PlayerPlate from '../profile/PlayerPlate';
 import { Note } from '../styled';
 import type { SideSummary } from './battle-view/summary';
 import { formatNumber } from '../../i18n/format';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * A raid's aftermath, team by team: each party as the fight left it,
@@ -109,14 +110,16 @@ function TeamsRows(props: TeamsPreviewProps & { loaded: Resource<PreviewRow[]> }
         {(row, at) => (
           <TeamRow
             catches={row.catches}
-            name={row.player === props.player ? 'You' : row.name}
+            name={row.player === props.player ? m.battle_you() : row.name}
             ended={ended(row)}
             tone={tone(row)}
           >
             <Show
               when={row.player !== ''}
               fallback={
-                <span class="shrink-0 text-xs font-black text-ember-dark uppercase">Boss</span>
+                <span class="shrink-0 text-xs font-black text-ember-dark uppercase">
+                  {m.battle_boss()}
+                </span>
               }
             >
               <span class="w-6 shrink-0 text-center font-black text-muted tabular-nums">
@@ -130,7 +133,7 @@ function TeamsRows(props: TeamsPreviewProps & { loaded: Resource<PreviewRow[]> }
                 fallback={<span class="truncate font-bold">{row.name}</span>}
               >
                 <PlayerPlate
-                  name={row.player === props.player ? 'You' : row.name}
+                  name={row.player === props.player ? m.battle_you() : row.name}
                   sprite={row.sprite}
                   onOpen={
                     props.onVisit != null && row.player !== props.player
@@ -144,8 +147,8 @@ function TeamsRows(props: TeamsPreviewProps & { loaded: Resource<PreviewRow[]> }
               <span class="font-black tabular-nums">{formatNumber(Math.round(dealt(row)))}</span>
               <span class="text-xs text-muted">
                 {row.player === ''
-                  ? 'dealt back'
-                  : `${Math.round(share(row) * 100)}% of the damage`}
+                  ? m.battle_dealt_back()
+                  : m.battle_damage_share({ percent: Math.round(share(row) * 100) })}
               </span>
             </span>
             {/* The share drawn as well as said, so the order reads at a glance */}
@@ -194,7 +197,7 @@ export default function TeamsPreview(props: TeamsPreviewProps): JSX.Element {
         const lead = snapshot.catches.at(0);
         const profile: Profile | undefined = profiles.get(snapshot.player);
         // A side no player owns is named for what led it out
-        const wild = lead == null ? 'Wild' : getSpeciesData(lead.species).name;
+        const wild = lead == null ? m.battle_wild() : getSpeciesData(lead.species).name;
         const catches: [string, CaughtPokemon][] = [];
         const nth = met.get(snapshot.alliance) ?? 0;
 
@@ -204,7 +207,7 @@ export default function TeamsPreview(props: TeamsPreviewProps): JSX.Element {
         }
         rows.push({
           player: snapshot.player,
-          name: snapshot.player === '' ? wild : (profile?.nickname ?? 'A trainer'),
+          name: snapshot.player === '' ? wild : (profile?.nickname ?? m.duels_a_trainer()),
           sprite: profile?.sprite ?? null,
           catches,
           alliance: snapshot.alliance,
@@ -216,7 +219,7 @@ export default function TeamsPreview(props: TeamsPreviewProps): JSX.Element {
   );
 
   return (
-    <Suspense fallback={<Note>Loading teams…</Note>}>
+    <Suspense fallback={<Note>{m.battle_loading_teams()}</Note>}>
       <TeamsRows {...props} loaded={loaded} />
     </Suspense>
   );

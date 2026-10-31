@@ -47,6 +47,7 @@ import watchLive from '../app/watch';
 import { Button, DialogActions, Meta, Note, Status } from '../styled';
 import { useGame } from '../app/game-context';
 import describeFailure from '../../i18n/refusals';
+import { m } from '../../i18n/paraglide/messages.js';
 
 export interface DuelLobbyProps {
   user: PlayerIdentity;
@@ -73,10 +74,10 @@ const STAMP =
 const STAMP_READY = 'border-leaf-dark bg-leaf text-on-accent shadow-pop-sm';
 
 /** What each ban reads as on the rules chips */
-const BAN_CHIPS: [DuelBan, string][] = [
-  [DuelBan.Legendary, 'No legendaries'],
-  [DuelBan.Mythical, 'No mythicals'],
-  [DuelBan.ItemForms, 'No held-item forms'],
+const BAN_CHIPS: [DuelBan, () => string][] = [
+  [DuelBan.Legendary, m.duel_rules_no_legendaries],
+  [DuelBan.Mythical, m.duel_rules_no_mythicals],
+  [DuelBan.ItemForms, m.duel_rules_no_item_forms],
 ];
 
 /** How many watchers' faces are drawn before the count says the rest */
@@ -149,7 +150,9 @@ function LobbyRows(
       props.onTitle?.(null);
       return;
     }
-    props.onTitle?.(isHost() ? 'Your lobby' : `${named(record.host)}'s lobby`);
+    props.onTitle?.(
+      isHost() ? m.duels_your_lobby() : m.duels_their_lobby({ name: named(record.host) }),
+    );
   });
 
   // A seated player leaves by Leave alone: shutting the panel any other
@@ -232,7 +235,7 @@ function LobbyRows(
   };
 
   const takeSeat = (): void => {
-    act(async () => setDuelRole(props.duelId, LobbyRole.Fighter), 'That seat could not be taken.');
+    act(async () => setDuelRole(props.duelId, LobbyRole.Fighter), m.duels_seat_failed());
   };
 
   /** Your own seat's controls under it: the party, and the way back to watching */
@@ -251,29 +254,23 @@ function LobbyRows(
           })
             .then((catches) => {
               if (catches != null) {
-                act(
-                  async () => setDuelParty(props.duelId, catches),
-                  'That team could not be brought: one of them may already be in another lobby.',
-                );
+                act(async () => setDuelParty(props.duelId, catches), m.duels_team_failed());
               }
             })
             .catch(() => undefined);
         }}
       >
-        {member.catches.length > 0 ? 'Change team' : 'Form a team'}
+        {member.catches.length > 0 ? m.duels_change_team() : m.duels_form_team()}
       </Button>
       {/* Stepping back drops the party */}
       <Button
         tone="ghost"
         disabled={busy()}
         onClick={() => {
-          act(
-            async () => setDuelRole(props.duelId, LobbyRole.Spectator),
-            'That could not be changed.',
-          );
+          act(async () => setDuelRole(props.duelId, LobbyRole.Spectator), m.duels_change_failed());
         }}
       >
-        Watch instead
+        {m.duels_watch_instead()}
       </Button>
     </div>
   );
@@ -287,7 +284,7 @@ function LobbyRows(
       when={member.player === props.user.uid}
       fallback={
         <span class={`${STAMP} ${member.ready ? STAMP_READY : 'border-line bg-paper text-muted'}`}>
-          {member.ready ? '✓ Ready' : 'Choosing…'}
+          {member.ready ? m.duels_ready_stamp() : m.duels_choosing()}
         </span>
       }
     >
@@ -299,10 +296,10 @@ function LobbyRows(
           member.ready ? STAMP_READY : 'border-tide bg-tide-soft text-tide-dark shadow-pop-sm'
         }`}
         onClick={() => {
-          act(async () => setDuelReady(props.duelId, !member.ready), 'That could not be changed.');
+          act(async () => setDuelReady(props.duelId, !member.ready), m.duels_change_failed());
         }}
       >
-        {member.ready ? '✓ Ready' : "I'm ready"}
+        {member.ready ? m.duels_ready_stamp() : m.duels_ready_button()}
       </button>
     </Show>
   );
@@ -320,11 +317,11 @@ function LobbyRows(
           class="flex min-w-0 flex-col items-center gap-1.5 rounded-xl border-2 border-dashed
             border-line bg-paper/55 px-3 py-4 text-center"
         >
-          <span class="text-sm font-extrabold">Seat {at + 1} is open</span>
-          <Meta>Waiting for a trainer to sit down.</Meta>
+          <span class="text-sm font-extrabold">{m.duels_seat_open({ seat: at + 1 })}</span>
+          <Meta>{m.duels_seat_waiting()}</Meta>
           <Show when={!fighting()}>
             <Button disabled={busy()} onClick={takeSeat}>
-              Take this seat
+              {m.duels_take_seat()}
             </Button>
           </Show>
         </div>
@@ -342,7 +339,7 @@ function LobbyRows(
               <span class="flex min-w-0 items-center gap-1">
                 <Show
                   when={taken().player !== props.user.uid}
-                  fallback={<span class="truncate text-sm font-extrabold">You</span>}
+                  fallback={<span class="truncate text-sm font-extrabold">{m.battle_you()}</span>}
                 >
                   <button
                     type="button"
@@ -360,11 +357,11 @@ function LobbyRows(
                     class="shrink-0 rounded-full bg-gold-soft px-1.5 text-[9.5px] font-extrabold
                       text-gold uppercase"
                   >
-                    Host
+                    {m.duels_host_tag()}
                   </span>
                 </Show>
               </span>
-              <Meta>Seat {at + 1}</Meta>
+              <Meta>{m.duels_seat({ seat: at + 1 })}</Meta>
             </span>
             {stamp(taken())}
           </div>
@@ -378,39 +375,42 @@ function LobbyRows(
   /** Why the host cannot start yet, or what the guest is waiting on */
   const waiting = (record: DuelRecord): string | null => {
     if (isHost()) {
-      return getDuelBlocker(record) ?? 'Both seats are ready.';
+      return getDuelBlocker(record) ?? m.duels_seats_ready();
     }
-    return 'The host starts the fight.';
+    return m.duels_host_starts();
   };
 
   return (
     <>
-      <Show when={duel()} fallback={<Note>Loading the lobby…</Note>}>
+      <Show when={duel()} fallback={<Note>{m.duels_loading_lobby()}</Note>}>
         {(record) => (
           <div class="flex flex-col gap-3">
             {/* What the other side agrees to when they say they are ready */}
             <CounterTerms
               rows={[
-                { label: 'Team', value: `${teamSize()} per side` },
-                { label: 'Moves', value: String(getSlots(limits(), Slots.Move)) },
-                { label: 'Abilities', value: String(getSlots(limits(), Slots.Ability)) },
-                { label: 'Items', value: String(getSlots(limits(), Slots.Item)) },
+                { label: m.duels_term_team(), value: m.duels_per_side({ count: teamSize() }) },
+                { label: m.duel_rules_moves(), value: String(getSlots(limits(), Slots.Move)) },
+                {
+                  label: m.duel_rules_abilities(),
+                  value: String(getSlots(limits(), Slots.Ability)),
+                },
+                { label: m.duels_term_items(), value: String(getSlots(limits(), Slots.Item)) },
               ]}
             >
               {/* Nothing is recorded: no candy, no aftermath, and what the party spent comes back */}
               <Show when={maxBst() > 0}>
                 <span class={`${TERM_CHIP} bg-line-soft`}>
-                  <span class="font-semibold text-muted">Stat total</span>≤ {maxBst()}
+                  <span class="font-semibold text-muted">{m.duels_stat_total()}</span>≤ {maxBst()}
                 </span>
               </Show>
               <For each={BAN_CHIPS}>
                 {([ban, label]) => (
                   <Show when={(bans() & ban) !== 0}>
-                    <span class={`${TERM_CHIP} bg-ember-soft text-ember-dark`}>{label}</span>
+                    <span class={`${TERM_CHIP} bg-ember-soft text-ember-dark`}>{label()}</span>
                   </Show>
                 )}
               </For>
-              <span class={`${TERM_CHIP} bg-line-soft`}>Unranked</span>
+              <span class={`${TERM_CHIP} bg-line-soft`}>{m.duels_unranked()}</span>
               <Show when={isHost()}>
                 <button
                   type="button"
@@ -421,7 +421,7 @@ function LobbyRows(
                     setArranging(true);
                   }}
                 >
-                  Change rules
+                  {m.duels_change_rules()}
                 </button>
               </Show>
             </CounterTerms>
@@ -441,7 +441,7 @@ function LobbyRows(
                   border-[3px] border-paper bg-ember text-sm font-extrabold text-on-accent
                   shadow-pop"
               >
-                VS
+                {m.duels_vs()}
               </span>
               {seat(() => fighters().at(1), 1)}
             </div>
@@ -462,7 +462,7 @@ function LobbyRows(
                     )}
                   </For>
                 </span>
-                Watching · {watchers().length}
+                {m.duels_watching({ count: watchers().length })}
               </DisclosureButton>
               <DisclosurePanel class="max-h-48 overflow-y-auto pt-2">
                 <SpectatorList player={props.user.uid} watching={watchers()} />
@@ -477,20 +477,20 @@ function LobbyRows(
               }
             >
               <Button disabled={busy()} onClick={invite}>
-                Invite
+                {m.lobby_invite()}
               </Button>
               <Show when={isHost()}>
                 <Button
                   tone="primary"
                   disabled={busy() || getDuelBlocker(record()) != null}
                   onClick={() => {
-                    act(async () => startDuel(props.duelId), 'The battle could not be started.');
+                    act(async () => startDuel(props.duelId), m.duels_start_failed());
                   }}
                 >
-                  Start
+                  {m.duels_start()}
                 </Button>
               </Show>
-              <Button onClick={back}>{isHost() ? 'Close lobby' : 'Leave'}</Button>
+              <Button onClick={back}>{isHost() ? m.duels_close_lobby() : m.duels_leave()}</Button>
             </DialogActions>
           </div>
         )}
@@ -502,8 +502,8 @@ function LobbyRows(
         onClose={() => {
           setCalling(false);
         }}
-        title="Invite to the battle"
-        description="They see the call in their own Battle panel, and joining answers it."
+        title={m.duels_invite_title()}
+        description={m.duels_invite_description()}
         present={present()}
         // Only the host arranges the fight itself; anybody in the room
         // may call somebody in to watch it
@@ -520,7 +520,7 @@ function LobbyRows(
         rules={{ limits: limits(), teamSize: teamSize(), maxBst: maxBst(), bans: bans() }}
         onSubmit={(rules) => {
           setArranging(false);
-          act(async () => setDuelRules(props.duelId, rules), 'Those rules could not be set.');
+          act(async () => setDuelRules(props.duelId, rules), m.duels_rules_failed());
         }}
       />
     </>
@@ -572,7 +572,7 @@ export default function DuelLobby(props: DuelLobbyProps): JSX.Element {
   );
 
   return (
-    <Suspense fallback={<Note>Loading the lobby…</Note>}>
+    <Suspense fallback={<Note>{m.duels_loading_lobby()}</Note>}>
       <LobbyRows {...props} duel={() => duel() ?? null} names={names} />
     </Suspense>
   );

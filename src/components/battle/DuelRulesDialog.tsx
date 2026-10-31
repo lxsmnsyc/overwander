@@ -5,6 +5,7 @@ import { withLimit } from '../../data/constants/battle-limits';
 import { Slots, getSlots, leastSlots, mostSlots } from '../../data/constants/slots';
 import { BST_CAPS, DuelBan } from '../../data/constants/duel-bans';
 import { Button, Checkbox, Dialog, DialogActions, Hint, HintList, Note, Select } from '../styled';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * What the host is setting the fight to.
@@ -44,11 +45,14 @@ for (let count = 1; count <= TEAM_SIZE; count++) {
   TEAM_CHOICES.push(count);
 }
 
-/** The stat total caps, with none first */
-const BST_OPTIONS: { value: number; label: string }[] = [];
+/** The stat total caps, with none first, read when shown so the label follows the locale */
+function readBstOptions(): { value: number; label: string }[] {
+  const options: { value: number; label: string }[] = [];
 
-for (const cap of BST_CAPS) {
-  BST_OPTIONS.push({ value: cap, label: cap === 0 ? 'No cap' : String(cap) });
+  for (const cap of BST_CAPS) {
+    options.push({ value: cap, label: cap === 0 ? m.duel_rules_no_cap() : String(cap) });
+  }
+  return options;
 }
 
 const countOptions = (counts: number[]): { value: number; label: string }[] => {
@@ -103,29 +107,24 @@ export default function DuelRulesDialog(props: DuelRulesDialogProps): JSX.Elemen
     <Dialog
       isOpen={props.isOpen}
       onClose={props.onClose}
-      title="Rules of the fight"
+      title={m.duel_rules_title()}
       aside={
-        <Hint title="About duel rules">
+        <Hint title={m.duel_rules_hint_title()}>
           <HintList>
-            <li>
-              Each limit is a ceiling. A pokemon fights with what it has, cut down to the limit.
-            </li>
-            <li>
-              A list is cut from the top, so order a pokemon's moves, abilities and held items on
-              its sheet.
-            </li>
-            <li>Changing a rule takes both sides' Ready away.</li>
-            <li>A pokemon the new rules bar is taken out of its party.</li>
+            <li>{m.duel_rules_hint_ceiling()}</li>
+            <li>{m.duel_rules_hint_order()}</li>
+            <li>{m.duel_rules_hint_ready()}</li>
+            <li>{m.duel_rules_hint_barred()}</li>
           </HintList>
         </Hint>
       }
-      description="What each pokemon may bring, and how many of them a side may field."
+      description={m.duel_rules_description()}
     >
-      {slotField('Moves', Slots.Move)}
-      {slotField('Abilities', Slots.Ability)}
-      {slotField('Held items', Slots.Item)}
+      {slotField(m.duel_rules_moves(), Slots.Move)}
+      {slotField(m.duel_rules_abilities(), Slots.Ability)}
+      {slotField(m.duel_rules_held_items(), Slots.Item)}
       <Select
-        label="Team size"
+        label={m.duel_rules_team_size()}
         value={draft().teamSize}
         options={countOptions(TEAM_CHOICES)}
         onChange={(count) => {
@@ -133,25 +132,22 @@ export default function DuelRulesDialog(props: DuelRulesDialogProps): JSX.Elemen
         }}
       />
       <Select
-        label="Highest base stat total"
+        label={m.duel_rules_max_bst()}
         value={draft().maxBst}
-        options={BST_OPTIONS}
+        options={readBstOptions()}
         onChange={(cap) => {
           setDraft((held) => ({ ...held, maxBst: cap }));
         }}
       />
-      {banField('No legendaries', DuelBan.Legendary)}
-      {banField('No mythicals', DuelBan.Mythical)}
+      {banField(m.duel_rules_no_legendaries(), DuelBan.Legendary)}
+      {banField(m.duel_rules_no_mythicals(), DuelBan.Mythical)}
       {banField(
-        'No held-item forms',
+        m.duel_rules_no_item_forms(),
         DuelBan.ItemForms,
-        'A pokemon holding an item that changes its form, such as a Plate or an orb, stays out.',
+        m.duel_rules_no_item_forms_description(),
       )}
 
-      <Note>
-        A ceiling, not an allowance: a pokemon fights with what it actually has, cut to this. Both
-        sides lose their ready, and a party longer than the new team size loses its tail.
-      </Note>
+      <Note>{m.duel_rules_note()}</Note>
 
       <DialogActions>
         <Button
@@ -160,9 +156,9 @@ export default function DuelRulesDialog(props: DuelRulesDialogProps): JSX.Elemen
             props.onSubmit(draft());
           }}
         >
-          Save
+          {m.battle_save()}
         </Button>
-        <Button onClick={props.onClose}>Cancel</Button>
+        <Button onClick={props.onClose}>{m.battle_cancel()}</Button>
       </DialogActions>
     </Dialog>
   );

@@ -1,3 +1,4 @@
+import { m } from '../../i18n/paraglide/messages.js';
 import { BOARD_SPAN, boardView } from './board';
 
 /**
@@ -143,9 +144,13 @@ export const CELL_STRIDE = 32;
 
 /**
  * What the board says while the sheets for what is standing on it are
- * still coming, and how large it is drawn in board pixels
+ * still coming, read when drawn so it follows the locale
  */
-export const LOADING_LABEL = 'Loading…';
+export function readLoadingLabel(): string {
+  return m.canvas_loading();
+}
+
+/** How large the loading label is drawn, in board pixels */
 export const LOADING_SIZE = 18;
 
 /**

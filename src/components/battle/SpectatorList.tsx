@@ -4,6 +4,7 @@ import PlayerPlate from '../profile/PlayerPlate';
 import { LIST_PAGE, List, ListRow, Note, type Pager, createPager } from '../styled';
 import { useGame } from '../app/game-context';
 import { settled } from '../app/resource-reads';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * Who is in the room without a party: a raid lobby's onlookers, a
@@ -38,7 +39,7 @@ function Watchers(
           {(uid) => (
             <ListRow selected={uid === props.player}>
               <PlayerPlate
-                name={uid === props.player ? 'You' : named(uid)}
+                name={uid === props.player ? m.battle_you() : named(uid)}
                 sprite={names()?.get(uid)?.sprite ?? null}
                 onOpen={
                   uid === props.player
@@ -76,8 +77,8 @@ export default function SpectatorList(props: SpectatorListProps): JSX.Element {
   );
 
   return (
-    <Show when={props.watching.length > 0} fallback={<Note>Nobody is watching.</Note>}>
-      <Suspense fallback={<Note>Reading the room…</Note>}>
+    <Show when={props.watching.length > 0} fallback={<Note>{m.spectators_none()}</Note>}>
+      <Suspense fallback={<Note>{m.spectators_reading()}</Note>}>
         <Watchers {...props} names={names} page={page} />
       </Suspense>
     </Show>

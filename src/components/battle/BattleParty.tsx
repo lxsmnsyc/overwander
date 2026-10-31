@@ -13,6 +13,7 @@ import { BattleEvents } from '../../battle/events';
 import Unit from '../../battle/unit';
 import { type BaseEvent, EventPriority } from '../../core/event-emitter';
 import UnitCard from './UnitCard';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * The player's own pokemon, as a row of cards over the field.
@@ -221,7 +222,7 @@ export default function BattleParty(props: BattlePartyProps): JSX.Element {
     <ul
       // Named, because there are two of these rows in a fight between
       // two trainers and they are otherwise the same list twice
-      aria-label={props.theirs === true ? 'The other side' : 'Your party'}
+      aria-label={props.theirs === true ? m.battle_other_side() : m.battle_your_party()}
       // `items-stretch` rather than `items-end`: a card carries a row
       // of status squares only while it has a status, so a party
       // where one pokemon is poisoned drew one tall card and five

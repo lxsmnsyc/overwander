@@ -84,10 +84,10 @@ import {
   FIELD_UNIT,
   HEIGHT,
   JOLT_BEAT,
-  LOADING_LABEL,
   TURN_DEAD_ZONE,
   TURN_SLOP,
   WIDTH,
+  readLoadingLabel,
 } from './metrics';
 import {
   CUE_GAP,
@@ -703,7 +703,7 @@ export default function createBattleField(
       context.font = 'bold 18px monospace';
       context.textAlign = 'center';
       context.textBaseline = 'middle';
-      context.fillText(LOADING_LABEL, WIDTH / 2, HEIGHT / 2);
+      context.fillText(readLoadingLabel(), WIDTH / 2, HEIGHT / 2);
       return;
     }
 

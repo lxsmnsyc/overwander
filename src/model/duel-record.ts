@@ -6,6 +6,7 @@ import { asNumber, asRecord, asRecordArray, asString, asStringArray } from './no
 import { PVP_BATTLE_LIMITS } from '../data/constants/battle-limits';
 import { LobbyRole } from './lobby-role';
 import TEAM_SIZE from './team-size';
+import { m } from '../i18n/paraglide/messages.js';
 
 /**
  * What a battle lobby is, and how a stored one is read back. Both the
@@ -152,17 +153,17 @@ export function getDuelBlocker(duel: DuelRecord): string | null {
   const fighters = getDuelFighters(duel);
 
   if (fighters.length < DUEL_FIGHTERS) {
-    return 'Waiting for a second trainer.';
+    return m.duels_blocker_second();
   }
   let unready = false;
 
   for (const member of fighters) {
     if (member.catches.length === 0) {
-      return 'Both sides need a party.';
+      return m.duels_blocker_party();
     }
     if (!member.ready) {
       unready = true;
     }
   }
-  return unready ? 'Both sides have to be ready.' : null;
+  return unready ? m.duels_blocker_ready() : null;
 }

@@ -9,6 +9,7 @@ import { type CaughtPokemon, getCaughtBatched } from '../../auth/caught';
 import { settled } from '../app/resource-reads';
 import TeamStrip from '../catches/TeamStrip';
 import { HoverCard, Note } from '../styled';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * One lobby party's live records, square for square. The reads live
@@ -52,7 +53,7 @@ export default function LobbyParty(props: {
   );
 
   return (
-    <Suspense fallback={<Note>Reading the party…</Note>}>
+    <Suspense fallback={<Note>{m.lobby_reading_party()}</Note>}>
       <Show when={props.flat} fallback={<PartyStrip party={party} class={props.class} />} keyed>
         {(size) => <PartyRow party={party} size={size} />}
       </Show>
@@ -94,7 +95,7 @@ function PartyRow(props: {
             <HoverCard
               class="block size-full"
               title={titleCatch(caught)}
-              kind="Pokémon"
+              kind={m.battle_kind_pokemon()}
               trigger={
                 <span
                   class="flex size-full items-end justify-center rounded-lg border-2 border-line-soft

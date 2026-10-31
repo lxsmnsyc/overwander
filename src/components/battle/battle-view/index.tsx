@@ -20,6 +20,7 @@ import { getFamilyName } from '../../../data/species';
 import { Button, Dialog, DialogActions, Note, Status, useToast } from '../../styled';
 import type { ActiveBattle, PendingReward, Spoils } from '../../app/game-context';
 import { type Profile, getProfiles } from '../../../auth/profile';
+import { m } from '../../../i18n/paraglide/messages.js';
 
 export interface BattleViewProps {
   active: ActiveBattle;
@@ -51,7 +52,7 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
   const sayCandy = (earned: CandyEarned[]): void => {
     for (const pile of earned) {
       toast.push({
-        title: `${pile.count} ${getFamilyName(pile.family)} candy`,
+        title: m.battle_candy_earned({ count: pile.count, family: getFamilyName(pile.family) }),
         art: () => <CandySprite family={pile.family} size={CANDY_ART} label="" />,
         tone: 'leaf',
       });
@@ -129,18 +130,18 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
       // A stop is not only a grunt: a duelling trainer, a gym leader
       // and the Champion are all fought from one, and each was named
       // on the way in
-      return opponent()?.name ?? 'Team Rocket';
+      return opponent()?.name ?? m.ow_team_rocket();
     }
     if (instance()?.battle.mode === BattleModes.PvP) {
-      return props.active.seat == null ? 'Battle' : 'Gym Seat';
+      return props.active.seat == null ? m.battle_title_battle() : m.battle_title_gym_seat();
     }
 
     const named = lair();
 
     if (named == null) {
-      return 'Raid Battle';
+      return m.battle_title_raid();
     }
-    return standsAlone() ? named : `Raid Battle: ${named}`;
+    return standsAlone() ? named : m.battle_title_raid_named({ name: named });
   };
 
   /**
@@ -149,22 +150,22 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
    */
   const victory = (): string => {
     if (props.active.replay) {
-      return 'The other side went down.';
+      return m.battle_victory_replay();
     }
     if (props.active.stop != null) {
       // Only a grunt leaves the pokemon they were beaten with; everyone
       // else keeps their party and pays a purse
       if (props.active.npc === Npc.Trainer) {
-        return `${opponent()?.name ?? 'The trainer'} is beaten. They keep their party, and the purse is yours.`;
+        return m.battle_victory_trainer({ name: opponent()?.name ?? m.battle_the_trainer() });
       }
-      return `${opponent()?.name ?? 'The grunt'} is beaten. What was left behind is waiting in the overworld.`;
+      return m.battle_victory_grunt({ name: opponent()?.name ?? m.battle_the_grunt() });
     }
     // A fight between players pays nothing on purpose, so what a win
     // says is the win itself
     if (instance()?.battle.mode === BattleModes.PvP && props.active.seat == null) {
-      return 'Their party is down. Nothing changes hands.';
+      return m.battle_victory_pvp();
     }
-    return 'The raid boss is down — it is waiting in the overworld.';
+    return m.battle_victory_raid();
   };
 
   /** The fight's contributions and its sides, both only once the battle has settled */
@@ -206,13 +207,13 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
   const verdict = (): { title: string; said: string } | null => {
     switch (outcome()) {
       case 'won':
-        return { title: 'Victory', said: victory() };
+        return { title: m.battle_victory(), said: victory() };
       case 'lost':
-        return { title: 'Defeat', said: 'The party fainted.' };
+        return { title: m.battle_defeat(), said: m.battle_defeat_said() };
       case 'draw':
         return {
-          title: 'A draw',
-          said: 'Both sides went down together.',
+          title: m.battle_draw(),
+          said: m.battle_draw_said(),
         };
       // Still being fought, so there is no verdict to give
       case null:
@@ -238,9 +239,9 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
     const loaded = record();
 
     if (loaded != null && getBattleKind(loaded) === BattleKind.Npc) {
-      return 'Walking out concedes the fight: it counts as a loss, and what the party spent stays spent.';
+      return m.battle_leave_concedes();
     }
-    return 'The party stays locked to the fight until it settles or times out. Walk back into the lair to rejoin it.';
+    return m.battle_leave_locked();
   };
 
   /**
@@ -288,7 +289,7 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
           when={instance()}
           fallback={
             <div class="flex h-full w-full items-center justify-center">
-              <Note>Building the battle…</Note>
+              <Note>{m.battle_building()}</Note>
             </div>
           }
         >
@@ -383,21 +384,21 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
         onClose={() => {
           setLeaving(false);
         }}
-        title="Leave the battle?"
-        description="Whether to walk out of a fight that is still going."
+        title={m.battle_leave_title()}
+        description={m.battle_leave_description()}
         terse
       >
         <p class="text-center">{leavingSaid()}</p>
         <DialogActions>
           <Button tone="primary" onClick={leave}>
-            Leave anyway
+            {m.battle_leave_anyway()}
           </Button>
           <Button
             onClick={() => {
               setLeaving(false);
             }}
           >
-            Keep fighting
+            {m.battle_keep_fighting()}
           </Button>
         </DialogActions>
       </Dialog>

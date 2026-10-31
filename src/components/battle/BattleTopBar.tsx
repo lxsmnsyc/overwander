@@ -8,6 +8,7 @@ import { Stats } from '../../data/constants/stats';
 import Abilities from '../../data/ids/abilities';
 import { getSpeciesData } from '../../data/species';
 import { Badge, Button } from '../styled';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /** What moves a side's standing, and so what redraws the bar */
 const STANDING_EVENTS = [
@@ -75,7 +76,7 @@ function Meter(props: { side: SideStanding; wide?: boolean }): JSX.Element {
         class={`h-2.5 min-w-12 grow overflow-hidden rounded-full border border-line bg-line-soft
           ${props.wide === true ? 'min-w-24' : 'sm:w-24 sm:grow-0'}`}
         role="img"
-        aria-label={`${Math.round(props.side.health * 100)}% health left`}
+        aria-label={m.battle_health_left({ percent: Math.round(props.side.health * 100) })}
       >
         <div
           class={`h-full rounded-full transition-[width] duration-300
@@ -151,17 +152,21 @@ export default function BattleTopBar(props: BattleTopBarProps): JSX.Element {
         // A Noble's HP is its Frenzy, which is what the party drains
         boss = standingOf(
           units,
-          units[0].hasAbility(Abilities.Noble) ? `${name}'s Frenzy` : name,
+          units[0].hasAbility(Abilities.Noble) ? m.battle_frenzy({ name }) : name,
           false,
         );
         continue;
       }
       if (own == null) {
         // A spectator has no side, so each is numbered
-        sides.push(standingOf(units, `Side ${sides.length + 1}`, sides.length === 0));
+        sides.push(
+          standingOf(units, m.battle_side({ side: sides.length + 1 }), sides.length === 0),
+        );
         continue;
       }
-      sides.push(standingOf(units, alliance === own ? 'You' : 'Foe', alliance === own));
+      sides.push(
+        standingOf(units, alliance === own ? m.battle_you() : m.battle_foe(), alliance === own),
+      );
     }
     // Yours first, so it always reads left to right the same way
     sides.sort((one, other) => Number(other.friendly) - Number(one.friendly));
@@ -180,10 +185,10 @@ export default function BattleTopBar(props: BattleTopBarProps): JSX.Element {
         <div class="flex min-w-0 items-center gap-2">
           <span class="flex min-w-0 shrink items-center gap-2">
             <span class="truncate text-sm font-bold">
-              {props.replay === true ? 'Replay' : props.title}
+              {props.replay === true ? m.battle_replay() : props.title}
             </span>
             <Show when={props.replay}>
-              <Badge>Awards nothing</Badge>
+              <Badge>{m.battle_awards_nothing()}</Badge>
             </Show>
           </span>
 
@@ -193,7 +198,11 @@ export default function BattleTopBar(props: BattleTopBarProps): JSX.Element {
 
           <Show when={props.onSpeed}>
             {(choose) => (
-              <div class="pointer-events-auto flex shrink-0" role="group" aria-label="Replay speed">
+              <div
+                class="pointer-events-auto flex shrink-0"
+                role="group"
+                aria-label={m.battle_replay_speed()}
+              >
                 <Index each={SPEEDS}>
                   {(speed) => (
                     <button
@@ -209,7 +218,7 @@ export default function BattleTopBar(props: BattleTopBarProps): JSX.Element {
                         choose()(speed());
                       }}
                     >
-                      {speed()}x
+                      {m.battle_speed({ speed: speed() })}
                     </button>
                   )}
                 </Index>
@@ -226,7 +235,7 @@ export default function BattleTopBar(props: BattleTopBarProps): JSX.Element {
                     leave()();
                   }}
                 >
-                  Leave
+                  {m.duels_leave()}
                 </Button>
               </span>
             )}
@@ -247,7 +256,7 @@ export default function BattleTopBar(props: BattleTopBarProps): JSX.Element {
                   leave()();
                 }}
               >
-                Leave
+                {m.duels_leave()}
               </Button>
             </span>
           )}

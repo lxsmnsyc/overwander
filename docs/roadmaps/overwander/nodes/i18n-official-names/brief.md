@@ -1,7 +1,7 @@
 ---
 id: i18n-official-names
 title: Official Japanese and Spanish names
-status: active
+status: done
 priority: should
 type: feature
 outline: false

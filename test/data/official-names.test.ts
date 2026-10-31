@@ -14,6 +14,7 @@ import registerGameData from '../../src/data/index';
 import { getItemData } from '../../src/data/items';
 import { getMoveData } from '../../src/data/moves';
 import { getSpeciesData } from '../../src/data/species';
+import { listTrueShadows } from '../../src/data/species/true-shadow';
 
 /**
  * The official Japanese and Spanish names, written by
@@ -57,6 +58,15 @@ describe('the official names', () => {
     expect(getSpeciesData(Species.Bulbasaur).category).toBe('Seed Pokemon');
     expect(getMoveData(Moves.Tackle).name).toBe('Tackle');
     expect(TYPE_NAMES[Types.Fire]).toBe('Fire');
+  });
+
+  it('give every true shadow its code name in each locale', () => {
+    for (const locale of ['en', 'ja', 'es']) {
+      active.locale = locale;
+      for (const shadow of listTrueShadows()) {
+        expect(getSpeciesData(shadow).name).toMatch(/XD-\d+/);
+      }
+    }
   });
 
   it('write Japanese without kanji', () => {

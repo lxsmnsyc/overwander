@@ -3,8 +3,8 @@ import { MoveCategories, Moves } from '../ids/moves';
 import { TYPE_IDS } from '../ids/names';
 import { TUTOR_ONLY_MOVES, getMoveData } from '../moves';
 import { getRegisteredSpecies, getSpeciesData } from '../species';
-import { findIdName } from '../yaml';
-import { itemText, registerItem } from './__create';
+import { deriveLocalized, findIdName } from '../yaml';
+import { type ItemData, itemText, registerItem } from './__create';
 
 /**
  * A machine's price follows the move it teaches: a status or weak
@@ -102,7 +102,7 @@ export default function registerMachines(): void {
     const buy = priceOf(move);
 
     registerMachine(move, {
-      description: itemText('machines', 'stocked', { move: getMoveData(move).name }),
+      template: 'stocked',
       flags: ItemFlags.Usable | ItemFlags.Consumable | ItemFlags.Marketable,
       buy,
       sell: buy * MACHINE_RESALE,
@@ -112,7 +112,7 @@ export default function registerMachines(): void {
   // paid for one is out of pocket
   for (const move of getWithdrawnMachineMoves()) {
     registerMachine(move, {
-      description: itemText('machines', 'withdrawn', { move: getMoveData(move).name }),
+      template: 'withdrawn',
       flags: ItemFlags.Usable | ItemFlags.Consumable,
       buy: priceOf(move),
       sell: priceOf(move),
@@ -122,14 +122,26 @@ export default function registerMachines(): void {
 
 function registerMachine(
   move: Moves,
-  terms: { description: string; flags: ItemFlags; buy: number; sell: number },
+  terms: { template: string; flags: ItemFlags; buy: number; sell: number },
 ): void {
-  registerItem(getMachineItem(move), {
-    name: itemText('machines', 'name', { move: getMoveData(move).name }),
+  const data: ItemData = {
+    name: '',
+    description: '',
     // A machine is drawn in the colours of the move it teaches, which is
     // the whole of what a machine looks like: the `tm` sheet holds one per type
     icon: `tm/${findIdName(TYPE_IDS, getMoveData(move).type).toLowerCase()}`,
     type: ItemTypes.Machine,
-    ...terms,
-  });
+    flags: terms.flags,
+    buy: terms.buy,
+    sell: terms.sell,
+  };
+
+  // Its name and line name the move, so each is written in the reader's locale
+  deriveLocalized(data, 'name', () =>
+    itemText('machines', 'name', { move: getMoveData(move).name }),
+  );
+  deriveLocalized(data, 'description', () =>
+    itemText('machines', terms.template, { move: getMoveData(move).name }),
+  );
+  registerItem(getMachineItem(move), data);
 }

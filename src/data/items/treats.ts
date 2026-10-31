@@ -1,6 +1,7 @@
 import { Items } from '../ids/items';
 import { NON_VOLATILE_STATUSES, Statuses } from '../ids/status';
 import { itemText } from './__create';
+import { formatList } from '../../i18n/format';
 
 /**
  * The regional treats: what somebody brings back from a city they
@@ -56,11 +57,7 @@ function describeSweet(): string {
     cured.add(itemText('treats', CURE_WORDS.get(status) ?? ''));
   }
 
-  const names = [...cured];
-  const last = names.pop() ?? '';
-  const list = names.length > 0 ? `${names.join(', ')} or ${last}` : last;
-
-  return itemText('treats', 'sweet', { cures: list });
+  return itemText('treats', 'sweet', { cures: formatList([...cured], 'or') });
 }
 
 export function isTreat(item: Items): boolean {

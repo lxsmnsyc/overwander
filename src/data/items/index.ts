@@ -1,4 +1,5 @@
 import type { Items } from '../ids/items';
+import { deriveLocalized } from '../yaml';
 import { registerItem, registerItemTemplates } from './__create';
 import { describeAbilityItem } from './ability-items';
 import { describeApricorn } from './apricorns';
@@ -156,7 +157,7 @@ export default function registerItems(): void {
   );
 
   for (const [family, words] of text) {
-    registerItemTemplates(family, words.templates);
+    registerItemTemplates(family, words.templates, words.translatedTemplates);
   }
   for (const { item, data } of items) {
     registerItem(item, data);
@@ -169,8 +170,9 @@ export default function registerItems(): void {
       if (describe == null) {
         throw new Error(`${family}: ${data.name} has no description and nothing writes one`);
       }
-      // Assigned rather than spread, so a translated name stays translated
-      registerItem(item, Object.assign(data, { description: describe(item) }));
+      // Written when read, in the reader's locale, out of the family's templates
+      deriveLocalized(data, 'description', () => describe(item));
+      registerItem(item, data);
     }
   }
   registerMachines();

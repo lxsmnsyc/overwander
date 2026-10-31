@@ -3,7 +3,7 @@ import { STAT_ORDER } from '../constants/stats';
 import { SPECIES_IDS } from '../ids/names';
 import type { Species } from '../ids/species';
 import { getBaseFormSpecies, speciesDexNumber } from '../ids/forms';
-import { extendRecord, idOf } from '../yaml';
+import { deriveLocalized, extendRecord, idOf } from '../yaml';
 import { getSpeciesData, registerSpecies } from './__create';
 import shadowsFile from './true-shadows.yaml';
 
@@ -121,23 +121,30 @@ export default function registerTrueShadowSpecies(): void {
       stats[stat] += TRUE_SHADOW_BONUS;
     }
 
-    // A worn shape keeps its prefix: Primal Kyogre's is Primal XD-382
-    const plain = getSpeciesData(getBaseFormSpecies(counterpart)).name;
+    const record = extendRecord(base, {
+      baseForm: false,
+      stats,
+      // Met in the dark and nowhere else, so no biome lists one and
+      // no pool stages one: the sky is what decides, not the country
+      biomes: [],
+      // It keeps its counterpart's rank, which is what stages it in the
+      // same band, but carries nothing and lays no egg of its own
+      heldItems: undefined,
+      eggCycles: undefined,
+    });
 
-    registerSpecies(
-      shadow,
-      extendRecord(base, {
-        baseForm: false,
-        name: base.name.replace(plain, trueShadowName(shadow)),
-        stats,
-        // Met in the dark and nowhere else, so no biome lists one and
-        // no pool stages one: the sky is what decides, not the country
-        biomes: [],
-        // It keeps its counterpart's rank, which is what stages it in the
-        // same band, but carries nothing and lays no egg of its own
-        heldItems: undefined,
-        eggCycles: undefined,
-      }),
-    );
+    // Its counterpart's name with the code name in place of the pokemon's,
+    // so a worn shape keeps its prefix (Primal Kyogre's is Primal XD-382).
+    // Built out of translated names, so written in the reader's locale; a
+    // shape whose name is not translated yet carries the code name alone
+    deriveLocalized(record, 'name', () => {
+      const whole = getSpeciesData(counterpart).name;
+      const plain = getSpeciesData(getBaseFormSpecies(counterpart)).name;
+
+      return whole.includes(plain)
+        ? whole.replace(plain, trueShadowName(shadow))
+        : trueShadowName(shadow);
+    });
+    registerSpecies(shadow, record);
   }
 }

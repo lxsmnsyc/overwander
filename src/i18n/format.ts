@@ -1,4 +1,4 @@
-import { getIntlTag } from './locale';
+import { type Locale, currentLocale, getIntlTag } from './locale';
 
 /**
  * Numbers and dates in the active locale. Every number and date a
@@ -22,6 +22,8 @@ const numbers = new Map<string, Intl.NumberFormat>();
 const dates = new Map<string, Intl.DateTimeFormat>();
 const moments = new Map<string, Intl.DateTimeFormat>();
 const relatives = new Map<string, Intl.RelativeTimeFormat>();
+const conjunctions = new Map<string, Intl.ListFormat>();
+const disjunctions = new Map<string, Intl.ListFormat>();
 
 function reuseFormatter<F>(cache: Map<string, F>, build: (tag: string) => F): F {
   // One formatter per locale tag, built the first time it is asked for
@@ -76,4 +78,26 @@ export function formatRelative(at: number | Date, now = Date.now()): string {
     return relative.format(sign * Math.round(size / HOUR), 'hour');
   }
   return relative.format(sign * Math.round(size / DAY), 'day');
+}
+
+/** A list joined the way the locale joins one: "a, b and c", or "a, b or c" */
+export function formatList(items: readonly string[], joiner: 'and' | 'or'): string {
+  const list =
+    joiner === 'and'
+      ? reuseFormatter(conjunctions, (tag) => new Intl.ListFormat(tag, { type: 'conjunction' }))
+      : reuseFormatter(disjunctions, (tag) => new Intl.ListFormat(tag, { type: 'disjunction' }));
+
+  return list.format(items);
+}
+
+/** What goes between two sentences: Japanese runs them on, the others leave a space */
+const SENTENCE_GAPS: Record<Locale, string> = {
+  en: ' ',
+  ja: '',
+  es: ' ',
+};
+
+/** Sentences written one after another, as the locale writes them */
+export function joinSentences(sentences: readonly string[]): string {
+  return sentences.join(SENTENCE_GAPS[currentLocale()]);
 }

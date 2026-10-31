@@ -3,6 +3,7 @@ import { NON_VOLATILE_STATUSES, Statuses } from '../ids/status';
 import { itemText } from './__create';
 import recordsFile from './records/medicine.yaml';
 import { readFamilyRecords } from './yaml';
+import { formatList, joinSentences } from '../../i18n/format';
 
 /**
  * Medicine: what a party is put right with between fights.
@@ -185,11 +186,11 @@ export function describeMedicine(item: Items): string {
       cured.add(itemText('medicine', CURE_WORDS.get(status) ?? ''));
     }
 
-    parts.push(itemText('medicine', 'cure', { cures: [...cured].join(' and ') }));
+    parts.push(itemText('medicine', 'cure', { cures: formatList([...cured], 'and') }));
   }
 
   if (effect.bitter != null) {
     parts.push(itemText('medicine', BITTER_TIMES[effect.bitter] ?? 'bitter'));
   }
-  return parts.join(' ');
+  return joinSentences(parts);
 }

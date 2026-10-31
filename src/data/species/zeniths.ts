@@ -306,20 +306,22 @@ export default function registerZenithSpecies(): void {
     for (const form of shape.forms) {
       const own = getSpeciesData(form.base);
 
-      registerSpecies(form.zenith, {
-        ...own,
-        name: `Zenith ${form.holder}`,
-        baseForm: false,
-        worn: true,
-        stats: { ...form.stats },
-        types: form.types.length > 0 ? form.types : own.types,
-        abilities: [form.ability],
-        hiddenAbilities: [],
-        evolvesFrom: undefined,
-        evolvesInto: undefined,
-        eggSpecies: undefined,
-        biomes: [],
-      });
+      registerSpecies(
+        form.zenith,
+        extendRecord(own, {
+          name: `Zenith ${form.holder}`,
+          baseForm: false,
+          worn: true,
+          stats: { ...form.stats },
+          types: form.types.length > 0 ? form.types : own.types,
+          abilities: [form.ability],
+          hiddenAbilities: [],
+          evolvesFrom: undefined,
+          evolvesInto: undefined,
+          eggSpecies: undefined,
+          biomes: [],
+        }),
+      );
     }
   }
 }

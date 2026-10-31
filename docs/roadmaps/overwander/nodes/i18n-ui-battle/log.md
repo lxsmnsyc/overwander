@@ -11,3 +11,4 @@
 - Translation: 180 keys in ja and es. Japanese follows batch 5 (kana, spaced, きみ for the reader). Spanish candy count is a plural with a `*` variant.
 - Status names in `src/data/text/{ja,es}/statuses.yaml`: game condition names, else the official move name from the move registry. `test/i18n/status-names.test.ts` checks the locale switch and that both files name every status.
 - Term list: official terms, the battle terms, and a status table.
+- Review: no wrong meanings or terms; changed es duels_dismiss to Rechazar, es history_meet to Encontrar, ja duels_invited to しょうたいが きている.

@@ -26,6 +26,14 @@ Taken from the games, never translated fresh. Names of species, moves, items, ab
 | Den (lair) | すあな | guarida |
 | raid | レイド | incursión |
 | prize money (a purse won) | しょうきん | premio en dinero (su premio en dinero for theirs) |
+| Victory, Defeat, draw | しょうり, はいぼく, ひきわけ | Victoria, Derrota, Empate |
+| fainted | ひんし | Debilitado |
+| candy | アメ | caramelo |
+| Legendary, Mythical | でんせつ, まぼろし | legendario, singular |
+| Max Raid, Tera Raid | マックスレイド, テラレイド | incursión Dinamax, teraincursión |
+| Totem, Alpha, Noble | ぬし, オヤブン, キング | dominante, alfa, señorial |
+| frenzy (a Noble's) | あらぶり | frenesí |
+| Friend code | フレンドコード | Código de amigo |
 
 ## Terms this engine invented
 
@@ -51,6 +59,38 @@ Taken from the games, never translated fresh. Names of species, moves, items, ab
 | Sky (map layer) | そら | Cielo | The weather wash on the map |
 | the house (Frontier facility) | (left implicit) | la casa | The facility setting its rule |
 | Walk on | たちさる | Seguir | The way out of an overworld dialog |
+| you (the reader) | きみ | tú | How a line names the player reading it |
+| party (the pokemon a player fights with) | てもち | equipo | The team a player brings to a fight |
+| side | がわ, サイド | bando | One alliance in a fight |
+| foe | あいて | Rival | The other side, on the top bar |
+| overworld | フィールド | el mundo | Where a prize waits after a fight |
+| gold (money won or lost) | おかね | dinero | A fight's money line on the verdict |
+| duel | たいせん | combate | A fight two players arrange |
+| lobby | ロビー | sala | Where a duel is arranged |
+| seat (in a duel lobby) | せき | plaza | One of a duel's two fighting places |
+| fighter, spectator | たいせんしゃ, かんせんしゃ | combatiente, espectador | What a lobby invite calls someone in as |
+| host | ホスト | anfitrión | Whoever opened the lobby |
+| Ready | じゅんびOK | Listo | A seat's agreement to start |
+| replay | リプレイ | repetición | A settled fight played again from its record |
+| raid boss | レイドボス, ボス | jefe de la incursión, jefe | The pokemon a raid fights |
+| base stat total | しゅぞくちの ごうけい | total de estadísticas base | The duel rule's cap |
+
+## Status conditions
+
+The names a status shows on a card or a catch, in `src/data/text/<locale>/statuses.yaml`. A condition the games name (poison, sleep, confusion, flinching) uses the games' word. A status a move leaves (Taunted, Encored, Rooted) uses that move's official name, as the move registry writes it. A status this engine invented is translated once:
+
+| English | ja | es |
+| --- | --- | --- |
+| Poisoned, Badly poisoned | どく, もうどく | Envenenado, Gravemente envenenado |
+| Asleep, Paralyzed, Burned, Frozen | ねむり, まひ, やけど, こおり | Dormido, Paralizado, Quemado, Congelado |
+| Confused, Infatuated, Flinched | こんらん, メロメロ, ひるみ | Confuso, Enamorado, Amedrentado |
+| Drowsy (Yawn) | ねむけ | Somnoliento |
+| Comatose | ぜったいねむり | Letargo Perenne |
+| Invulnerable, Recharging, Trapped | むてき, はんどう, バインド | Invulnerable, Recargando, Atrapado |
+| Floating, Cornered | ふゆう, にげられない | Flotando, Sin escapatoria |
+| Dormant (a boss warming up) | きゅうみん | Latente |
+| Switching | こうたい | Cambiando |
+| Staggered (a Noble knocked down) | よろめき | Aturdido |
 
 ## Language names
 

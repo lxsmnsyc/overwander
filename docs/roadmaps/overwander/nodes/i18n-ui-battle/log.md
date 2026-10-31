@@ -8,3 +8,6 @@
 - `LOBBY_ROLE_NAMES` and `BATTLE_KIND_NAMES` (src/model) are left alone; the components read their own messages. `BATTLE_KIND_NAMES` has a test; `LOBBY_ROLE_NAMES` is now unused.
 - `summary.ts` and `src/game/battle/watch.ts` build no sentences: nothing to extract there.
 - Extraction commit: typecheck and lint pass; the key test fails until the translation commit adds ja and es.
+- Translation: 180 keys in ja and es. Japanese follows batch 5 (kana, spaced, きみ for the reader). Spanish candy count is a plural with a `*` variant.
+- Status names in `src/data/text/{ja,es}/statuses.yaml`: game condition names, else the official move name from the move registry. `test/i18n/status-names.test.ts` checks the locale switch and that both files name every status.
+- Term list: official terms, the battle terms, and a status table.

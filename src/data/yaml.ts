@@ -318,3 +318,34 @@ export function localeStringTable<T extends number>(
   }
   return table;
 }
+
+/**
+ * Makes a field of a record a line the code writes, worked out in the
+ * active locale the first time each locale reads it. For text built out
+ * of other text (an item's description out of its family's templates
+ * and a move's name), which would otherwise be written once in whatever
+ * locale registered it
+ */
+export function deriveLocalized<T extends object>(
+  record: T,
+  field: keyof T & string,
+  derive: () => string,
+): void {
+  const written = new Map<Locale, string>();
+
+  Object.defineProperty(record, field, {
+    configurable: true,
+    enumerable: true,
+    get: () => {
+      // Each locale's line is written once and kept
+      const locale = currentLocale();
+      let line = written.get(locale);
+
+      if (line == null) {
+        line = derive();
+        written.set(locale, line);
+      }
+      return line;
+    },
+  });
+}

@@ -1,5 +1,6 @@
 import type { ItemTypes, Items } from '../ids/items';
 import { formatNumber } from '../../i18n/format';
+import { type Locale, currentLocale } from '../../i18n/locale';
 
 export interface ItemData {
   name: string;
@@ -73,12 +74,19 @@ const ITEM_DATA = new Map<Items, ItemData>();
 
 /**
  * The sentences each family's text file keeps for the lines its code
- * fills in, by family and then by the template's own name
+ * fills in, by family and then by the template's own name, in English
+ * and in each locale that translates them
  */
 const ITEM_TEMPLATES = new Map<string, Map<string, string>>();
+const TRANSLATED_TEMPLATES = new Map<string, ReadonlyMap<Locale, Map<string, string>>>();
 
-export function registerItemTemplates(family: string, templates: Map<string, string>): void {
+export function registerItemTemplates(
+  family: string,
+  templates: Map<string, string>,
+  translated: ReadonlyMap<Locale, Map<string, string>> = new Map(),
+): void {
   ITEM_TEMPLATES.set(family, templates);
+  TRANSLATED_TEMPLATES.set(family, translated);
 }
 
 /** What a template's placeholders are filled with */
@@ -91,7 +99,10 @@ export type TemplateValues = Readonly<Record<string, string | number>>;
  * the player a brace
  */
 export function itemText(family: string, template: string, values: TemplateValues = {}): string {
-  const written = ITEM_TEMPLATES.get(family)?.get(template);
+  // The active locale's sentence, or the English one where it has none
+  const written =
+    TRANSLATED_TEMPLATES.get(family)?.get(currentLocale())?.get(template) ??
+    ITEM_TEMPLATES.get(family)?.get(template);
 
   if (written == null) {
     throw new Error(`No "${template}" template for ${family}`);

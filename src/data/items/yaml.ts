@@ -19,6 +19,7 @@ import type Natures from '../ids/natures';
 import type { Species } from '../ids/species';
 import type { Statuses } from '../ids/status';
 import { flagsOf, idOf, idsOf, localize, readOverlays, splitLocales } from '../yaml';
+import type { Locale } from '../../i18n/locale';
 import type { ItemData } from './__create';
 
 /**
@@ -236,6 +237,8 @@ export interface WrittenItem {
 /** What one family's text file holds */
 export interface FamilyText {
   templates: Map<string, string>;
+  /** The templates each other locale writes, laid over the English ones */
+  translatedTemplates: Map<Locale, Map<string, string>>;
   items: Map<string, v.InferOutput<typeof TEXT>>;
 }
 
@@ -243,7 +246,11 @@ function readText(files: Record<string, unknown>): Map<string, FamilyText> {
   const families = new Map<string, FamilyText>();
 
   for (const [path, file] of Object.entries(files)) {
-    const text: FamilyText = { templates: new Map(), items: new Map() };
+    const text: FamilyText = {
+      templates: new Map(),
+      translatedTemplates: new Map(),
+      items: new Map(),
+    };
 
     for (const [key, value] of Object.entries(v.parse(TEXT_FILE, file))) {
       if (key === TEMPLATES_KEY) {
@@ -264,13 +271,37 @@ function readEntries(files: Record<string, unknown>): Map<string, unknown> {
 
   for (const file of Object.values(files)) {
     for (const [key, value] of Object.entries(v.parse(TEXT_FILE, file))) {
-      // The templates wait for the batch that turns built descriptions into messages
+      // The templates are not an item: `addTranslatedTemplates` reads them
       if (key !== TEMPLATES_KEY) {
         entries.set(key, value);
       }
     }
   }
   return entries;
+}
+
+function addTranslatedTemplates(
+  text: Map<string, FamilyText>,
+  overlays: ReadonlyMap<Locale, Record<string, unknown>>,
+): void {
+  for (const [locale, files] of overlays) {
+    for (const [path, file] of Object.entries(files)) {
+      // A locale file's templates sit under the same key as the English file's
+      const written = v.parse(TEXT_FILE, file)[TEMPLATES_KEY];
+      const family = text.get(familyOf(path));
+
+      if (written == null || family == null) {
+        continue;
+      }
+
+      const templates = new Map<string, string>();
+
+      for (const [name, template] of Object.entries(v.parse(v.record(NAME, v.string()), written))) {
+        templates.set(name, template);
+      }
+      family.translatedTemplates.set(locale, templates);
+    }
+  }
 }
 
 /**
@@ -286,6 +317,8 @@ export function readItems(
   const byLocale = splitLocales(files.text);
   const text = readText(byLocale.english);
   const translated = readOverlays(byLocale.overlays, readEntries);
+
+  addTranslatedTemplates(text, byLocale.overlays);
   const records = new Map<string, Record<string, unknown>>();
 
   for (const [path, file] of Object.entries(files.records)) {
@@ -332,7 +365,7 @@ export function readItems(
         sell: read.sell,
       };
 
-      // A description the family's code writes waits for the templates batch
+      // A description the family's code writes is worked out per locale when it is registered
       localize(data, name, translated, ['name', 'description']);
       items.push({ family, item, data });
     }

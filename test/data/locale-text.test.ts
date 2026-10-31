@@ -3,7 +3,8 @@ import { readAbilities } from '../../src/data/abilities/yaml';
 import { readItems } from '../../src/data/items/yaml';
 import { readMoves } from '../../src/data/moves/yaml';
 import { readSpecies } from '../../src/data/species/yaml';
-import { extendRecord, localize, splitLocales } from '../../src/data/yaml';
+import { itemText, registerItemTemplates } from '../../src/data/items/__create';
+import { deriveLocalized, extendRecord, localize, splitLocales } from '../../src/data/yaml';
 import type { Locale } from '../../src/i18n/locale';
 
 /**
@@ -24,6 +25,7 @@ vi.mock('../../src/i18n/locale', () => ({
   locales: ['en', 'xx'],
   isLocale: (value: unknown) => value === 'en' || value === 'xx',
   currentLocale: () => active.locale,
+  getIntlTag: () => 'en-GB',
 }));
 
 afterEach(() => {
@@ -165,6 +167,58 @@ describe('a record copied off another', () => {
     expect(mega.name).toBe('Mega Venusaur');
     active.locale = 'en';
     expect(mega.category).toBe('Seed Pokemon');
+  });
+});
+
+describe('an item family laid over English', () => {
+  it('fills in the template of the active locale, or the English one where it has none', () => {
+    const items = readItems(
+      {
+        records: import.meta.glob('../../src/data/items/records/ability-items.yaml', {
+          eager: true,
+          import: 'default',
+        }),
+        text: {
+          ...import.meta.glob('../../src/data/text/en/items/ability-items.yaml', {
+            eager: true,
+            import: 'default',
+          }),
+          '../../src/data/text/xx/items/ability-items.yaml': {
+            templates: { capsule: 'Tire une capacité, {slots} au plus.' },
+          },
+        },
+      },
+      ['ability-items'],
+    );
+    const family = items.text.get('ability-items');
+
+    if (family == null) {
+      throw new Error('No ability-items text');
+    }
+    registerItemTemplates('ability-items', family.templates, family.translatedTemplates);
+
+    active.locale = 'xx';
+    expect(itemText('ability-items', 'capsule', { slots: 2 })).toBe(
+      'Tire une capacité, 2 au plus.',
+    );
+    active.locale = 'en';
+    expect(itemText('ability-items', 'capsule', { slots: 2 })).toMatch(/^Draws another ability/);
+  });
+
+  it('writes a derived line once per locale, in that locale', () => {
+    const record = { description: '' };
+    let written = 0;
+
+    deriveLocalized(record, 'description', () => {
+      written++;
+      return `Line in ${active.locale}.`;
+    });
+
+    expect(record.description).toBe('Line in en.');
+    expect(record.description).toBe('Line in en.');
+    active.locale = 'xx';
+    expect(record.description).toBe('Line in xx.');
+    expect(written).toBe(2);
   });
 });
 

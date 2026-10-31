@@ -1,6 +1,6 @@
 import { For, type JSX, Show, createSignal, from } from 'solid-js';
 import { type FriendLink, watchFriends } from '../../auth/friends';
-import { LobbyRole } from '../../model/lobby-role';
+import LobbyRole from '../../model/lobby-role';
 import { m } from '../../i18n/paraglide/messages.js';
 import FriendEntry from '../friends/FriendEntry';
 import {

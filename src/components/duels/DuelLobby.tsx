@@ -33,7 +33,8 @@ import {
 import { Slots, getSlots } from '../../data/constants/slots';
 import { DuelBan } from '../../data/constants/duel-bans';
 import { duelRefusal } from '../../data/constants/duel-rules';
-import { LobbyRole } from '../../model/lobby-role';
+import LobbyRole from '../../model/lobby-role';
+import { DuelBlocker } from '../../model/duel-record';
 import { type Profile, getProfiles } from '../../auth/profile';
 import DuelRulesDialog from '../battle/DuelRulesDialog';
 import LobbyInviteDialog from '../battle/LobbyInviteDialog';
@@ -82,6 +83,13 @@ const BAN_CHIPS: [DuelBan, () => string][] = [
 
 /** How many watchers' faces are drawn before the count says the rest */
 const WATCH_FACES = 5;
+
+/** What the lobby says for each reason the host cannot start, called when shown */
+const BLOCKER_MESSAGES: Record<DuelBlocker, () => string> = {
+  [DuelBlocker.NoSecond]: m.duels_blocker_second,
+  [DuelBlocker.NoParty]: m.duels_blocker_party,
+  [DuelBlocker.Unready]: m.duels_blocker_ready,
+};
 
 function LobbyRows(
   props: DuelLobbyProps & {
@@ -375,7 +383,9 @@ function LobbyRows(
   /** Why the host cannot start yet, or what the guest is waiting on */
   const waiting = (record: DuelRecord): string | null => {
     if (isHost()) {
-      return getDuelBlocker(record) ?? m.duels_seats_ready();
+      const blocker = getDuelBlocker(record);
+
+      return blocker == null ? m.duels_seats_ready() : BLOCKER_MESSAGES[blocker]();
     }
     return m.duels_host_starts();
   };

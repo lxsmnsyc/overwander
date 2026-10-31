@@ -11,7 +11,7 @@ import BattleOutcome from '../model/battle-outcome';
 import { CLAIM_CHUNK_LIMIT } from '../model/snapshot-record';
 import { Depth } from '../overworld/depth';
 import { GiftKind } from '../model/gift-record';
-import { LobbyRole } from '../model/lobby-role';
+import LobbyRole from '../model/lobby-role';
 import { MAX_EFFORT_PER_STAT, MAX_PACKED_IVS, Stats } from '../data/constants/stats';
 import { MAX_LEVEL } from '../data/constants/levels';
 import Npc, { TRADER_OFFERS } from '../data/overworld/npc';
@@ -332,6 +332,7 @@ export const BATTLE_OUTCOME = v.picklist([
   BattleOutcome.Unfinished,
   BattleOutcome.Won,
   BattleOutcome.Lost,
+  BattleOutcome.Drawn,
 ]);
 
 /**

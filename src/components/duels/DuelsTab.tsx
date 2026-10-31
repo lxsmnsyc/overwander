@@ -9,7 +9,7 @@ import {
   watchDuelInvites,
   watchMyDuels,
 } from '../../auth/duels';
-import { LobbyRole } from '../../model/lobby-role';
+import LobbyRole from '../../model/lobby-role';
 import { type Profile, watchProfile } from '../../auth/profile';
 import DuelLobby from './DuelLobby';
 import { Button, DialogSection, List, ListRow, Meta, Note, Panel, RowButton } from '../styled';

@@ -19,9 +19,13 @@
 - `src/components/catches/{StatusSquares.tsx,TargetStrip.tsx,catch-summary.ts}` (not owned): updated to `getStatusName`, as the brief asks.
 - `src/data/text/{ja,es}/statuses.yaml` (not owned): the status names are registry text like type and nature names, so they live beside those rather than in Paraglide messages.
 
+- A drawn duel was stored as `Lost` and showed red in the history. `BattleOutcome.Drawn` (3) is stamped for a draw and shows untinted as "A draw". A gym-seat draw still settles as before: the challenger pays. The bug was on main before this batch.
+- `getDuelBlocker` returns a `DuelBlocker` reason, and the lobby says it, so `src/model` holds no messages. The unused `LOBBY_ROLE_NAMES` and `BATTLE_KIND_NAMES` are gone, and `LobbyRole` is a default export.
+
 ## Stubs left
 
-- `LOBBY_ROLE_NAMES` (`src/model/lobby-role.ts`) is no longer read by anything; `BATTLE_KIND_NAMES` (`src/model/battle-kind.ts`) is read only by its test. The components read their own messages. Batch 7 or a cleanup can delete or move them.
+- `catch-summary.ts` still appends the English `' · fainted'` after a localized status name. It moves with the catches screens in batch 7.
+
 - English still shows on these screens from outside this batch: the panel titles and Close buttons from the menu dialogs ("Battle", "Profile"), the Profile panel around the history, the Form a team picker (`forms/pick-team.tsx`), `duelRefusal` reasons, and `CounterTerms` furniture. Batch 7.
 - Award names (`AWARD_NAMES`), NPC names (`npcName`) and raid titles (`getRaidTitle`) stay English: batch 9. Signature ability and some move names (Attack) show English: batch 8.
 

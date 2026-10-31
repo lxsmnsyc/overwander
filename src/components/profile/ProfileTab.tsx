@@ -33,7 +33,7 @@ import {
 } from '../../auth/friends';
 import EditProfileDialog from './EditProfileDialog';
 import { hostDuel, inviteToDuel } from '../../auth/duels';
-import { LobbyRole } from '../../model/lobby-role';
+import LobbyRole from '../../model/lobby-role';
 import { GameDialog, useGame } from '../app/game-context';
 import { ActionsIcon } from '../icons';
 import PlayerPlace from './PlayerPlace';

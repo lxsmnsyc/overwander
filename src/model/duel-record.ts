@@ -4,9 +4,8 @@
 // oxlint-disable typescript/no-unnecessary-type-assertion
 import { asNumber, asRecord, asRecordArray, asString, asStringArray } from './normalize';
 import { PVP_BATTLE_LIMITS } from '../data/constants/battle-limits';
-import { LobbyRole } from './lobby-role';
+import LobbyRole from './lobby-role';
 import TEAM_SIZE from './team-size';
-import { m } from '../i18n/paraglide/messages.js';
 
 /**
  * What a battle lobby is, and how a stored one is read back. Both the
@@ -144,26 +143,36 @@ export function getDuelSpectators(duel: DuelRecord): DuelMember[] {
   return membersIn(duel, LobbyRole.Spectator);
 }
 
+/** Why the host cannot start a duel yet */
+export const enum DuelBlocker {
+  /** The second fighter's seat is empty */
+  NoSecond = 0,
+  /** A fighter has picked no party */
+  NoParty = 1,
+  /** A fighter has not said they are ready */
+  Unready = 2,
+}
+
 /**
- * Why the host cannot start yet, or null when they can. A sentence
+ * Why the host cannot start yet, or null when they can. A reason
  * rather than a boolean: the Start button is dead for one of three
  * different reasons and the lobby has to say which
  */
-export function getDuelBlocker(duel: DuelRecord): string | null {
+export function getDuelBlocker(duel: DuelRecord): DuelBlocker | null {
   const fighters = getDuelFighters(duel);
 
   if (fighters.length < DUEL_FIGHTERS) {
-    return m.duels_blocker_second();
+    return DuelBlocker.NoSecond;
   }
   let unready = false;
 
   for (const member of fighters) {
     if (member.catches.length === 0) {
-      return m.duels_blocker_party();
+      return DuelBlocker.NoParty;
     }
     if (!member.ready) {
       unready = true;
     }
   }
-  return unready ? m.duels_blocker_ready() : null;
+  return unready ? DuelBlocker.Unready : null;
 }

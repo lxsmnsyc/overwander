@@ -51,6 +51,7 @@ const OUTCOME_LABELS: Record<BattleOutcome, () => string> = {
   [BattleOutcome.Unfinished]: m.history_unfinished,
   [BattleOutcome.Won]: m.verdict_won,
   [BattleOutcome.Lost]: m.verdict_lost,
+  [BattleOutcome.Drawn]: m.battle_draw,
 };
 
 /** What each kind of fight is called on the filter and the row's badge */
@@ -69,6 +70,7 @@ const OUTCOME_ROW_TONES: Record<BattleOutcome, 'leaf' | 'ember' | undefined> = {
   [BattleOutcome.Unfinished]: undefined,
   [BattleOutcome.Won]: 'leaf',
   [BattleOutcome.Lost]: 'ember',
+  [BattleOutcome.Drawn]: undefined,
 };
 
 /**

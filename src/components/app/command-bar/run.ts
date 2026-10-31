@@ -21,6 +21,7 @@ import readPlayer from './player';
 import readTeleport from './teleport';
 import teleport, { banPlayer, findPlayer, giveCommandGift } from '../../../auth/commands';
 import { localNow } from '../../../auth/clock';
+import describeFailure from '../../../i18n/refusals';
 
 /**
  * Running what was typed, and saying what happened.
@@ -70,7 +71,7 @@ function done(message: string): CommandResult {
 
 /** What went wrong, in the server's own words where it said any */
 function wrong(error: unknown): CommandResult {
-  return refused(error instanceof Error ? error.message : 'It did not go through.');
+  return refused(error instanceof Error ? describeFailure(error) : 'It did not go through.');
 }
 
 async function runTeleport(parameters: CommandArguments): Promise<CommandResult> {

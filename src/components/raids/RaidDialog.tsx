@@ -10,6 +10,7 @@ import AnimatedSprite from '../sprites/AnimatedSprite';
 import TypeBadge from '../sprites/TypeBadge';
 import { GameDialog, useGame } from '../app/game-context';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
+import describeFailure from '../../i18n/refusals';
 
 /**
  * What the one button says. A lair offers exactly one thing at a time
@@ -213,7 +214,7 @@ export default function RaidDialog(props: RaidDialogProps): JSX.Element {
       .catch((caught: unknown) => {
         setBusy(false);
         toast.push({
-          message: caught instanceof Error ? caught.message : String(caught),
+          message: describeFailure(caught),
           tone: 'ember',
         });
       });

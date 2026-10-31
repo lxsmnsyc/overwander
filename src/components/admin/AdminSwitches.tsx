@@ -9,6 +9,7 @@ import {
 } from 'solid-js';
 import { type SwitchRow, listSwitches, setSwitch } from '../../auth/admin';
 import { Badge, Button, Card, List, ListRow, Note, Status, Switch, TextField } from '../styled';
+import describeFailure from '../../i18n/refusals';
 
 /**
  * The switches that close a part of the game, flipped live. A closed
@@ -66,7 +67,7 @@ function SwitchLine(props: {
         props.onChanged();
       })
       .catch((caught: unknown) => {
-        setError(caught instanceof Error ? caught.message : String(caught));
+        setError(describeFailure(caught));
       })
       .finally(() => {
         setBusy(false);

@@ -10,6 +10,7 @@ import { Button, Dialog, DialogActions, List, Meta, Note, Row, Status, TextField
 import FriendEntry from './FriendEntry';
 import createFriendTie from './tie';
 import { useGame } from '../app/game-context';
+import describeFailure from '../../i18n/refusals';
 
 /**
  * Finding somebody to ask, and being findable.
@@ -117,7 +118,7 @@ export default function AddFriendDialog(props: AddFriendDialogProps): JSX.Elemen
         }
       })
       .catch((caught: unknown) => {
-        setError(caught instanceof Error ? caught.message : String(caught));
+        setError(describeFailure(caught));
       })
       .finally(() => {
         setLooking(false);

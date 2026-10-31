@@ -5,6 +5,7 @@ import { PLAYER_NAME_LIMIT, asNickname } from '../../model/nickname';
 import { type Title, getTitleName } from '../../data/ids/titles';
 import { Button, Combobox, Dialog, DialogActions, Status, TextField } from '../styled';
 import SpritePicker from './SpritePicker';
+import describeFailure from '../../i18n/refusals';
 
 /**
  * The things about a trainer that are theirs to set: what they are
@@ -99,7 +100,7 @@ export default function EditProfileDialog(props: EditProfileDialogProps): JSX.El
         props.onClose();
       })
       .catch((caught: unknown) => {
-        setError(caught instanceof Error ? caught.message : String(caught));
+        setError(describeFailure(caught));
       })
       .finally(() => {
         setSaving(false);

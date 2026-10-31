@@ -4,6 +4,7 @@ import { Metric } from '../model/quest-record';
 import { type Tx, getSql, tx } from './db';
 import { bumpProgress } from './quest-progress';
 import { asNumber, asString } from './read';
+import { refuse } from '../model/refusal';
 
 /**
  * Friendships, requests and blocks, written over the owner
@@ -68,10 +69,10 @@ export async function sendFriendRequest(
     return FriendTie.None;
   }
   if (await blockedBetween(uid, target)) {
-    throw new Error('That trainer is not taking friend requests');
+    throw refuse('friend-requests-closed');
   }
   if (await isFull(uid)) {
-    throw new Error('Your friends list is full');
+    throw refuse('friends-full');
   }
   return tx(async (transaction) => {
     const already = await transaction`
@@ -128,7 +129,7 @@ export async function acceptFriendRequest(
     return FriendTie.None;
   }
   if (await isFull(uid)) {
-    throw new Error('Your friends list is full');
+    throw refuse('friends-full');
   }
   const tie = await tx(async (transaction) => {
     const asked = await transaction`

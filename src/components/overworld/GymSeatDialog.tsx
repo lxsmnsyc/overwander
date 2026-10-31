@@ -23,6 +23,7 @@ import { OW_SPRITE_ROOT } from '../../canvas/overworld/char-sprites';
 import Landmark from '../../data/overworld/landmark';
 import landmarkPicture, { LANDMARK_SHEET } from '../../data/overworld/landmark-sprite';
 import { CounterSpent, CounterStep, CounterTerms, HeadingPortrait } from '../forms/terms';
+import describeFailure from '../../i18n/refusals';
 
 /**
  * A gym seat, put to whoever walked up to it.
@@ -133,7 +134,7 @@ function SeatCounter(
       .catch((caught: unknown) => {
         setBusy(false);
         toast.push({
-          message: caught instanceof Error ? caught.message : String(caught),
+          message: describeFailure(caught),
           tone: 'ember',
         });
       });
@@ -188,7 +189,7 @@ function SeatCounter(
       .catch((caught: unknown) => {
         setBusy(false);
         toast.push({
-          message: caught instanceof Error ? caught.message : String(caught),
+          message: describeFailure(caught),
           tone: 'ember',
         });
       });

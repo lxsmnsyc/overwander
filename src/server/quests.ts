@@ -7,7 +7,6 @@ import type { EncounterRecord } from '../model/encounter-record';
 import {
   QUESTS,
   QUEST_ORDER,
-  type QuestData,
   type QuestRequirement,
   type QuestReward,
   QuestRewardKind,
@@ -39,6 +38,7 @@ import { openQuestBaselines, readProgress, readQuestBaselines } from './quest-pr
 import { getSql, tx } from './db';
 import { readStack, readStackIn, spendStackIn } from './stacks';
 import { asNumber, asRecord } from './read';
+import { writeGiftReason } from '../model/gift-reason';
 
 /**
  * The quests: requirements read off the lifetime counters, rewards
@@ -192,8 +192,12 @@ function questGiftId(uid: string, quest: Quests, at: number): string {
 }
 
 /** A reward as the staff-gift shape the gift machinery pays out */
-function asGiftSpec(uid: string, data: QuestData, reward: QuestReward): StaffGift | null {
-  const common = { reason: `Quest: ${data.name}.`, player: uid, expiresAt: null };
+function asGiftSpec(uid: string, quest: Quests, reward: QuestReward): StaffGift | null {
+  const common = {
+    reason: writeGiftReason('quest', { quest: String(quest) }),
+    player: uid,
+    expiresAt: null,
+  };
 
   if (reward.kind === QuestRewardKind.Item) {
     return { ...common, kind: GiftKind.Item, item: reward.item, amount: reward.amount };
@@ -440,7 +444,7 @@ export async function claimQuest(
       continue;
     }
 
-    const spec = asGiftSpec(uid, data, reward);
+    const spec = asGiftSpec(uid, quest, reward);
 
     if (spec == null) {
       continue;

@@ -48,6 +48,7 @@ import AuctionDialog, { type AuctionSubject } from '../AuctionDialog';
 import { AUCTION_DURATION } from '../../../model/auction-record';
 import { type JSX, type Resource, Show, createSignal, from } from 'solid-js';
 import playEffect, { Effect } from '../../app/sound';
+import describeFailure from '../../../i18n/refusals';
 
 export interface AuctionTabProps {
   /**
@@ -209,7 +210,7 @@ export function AuctionBoard(
         );
       })
       .catch((thrown: unknown) => {
-        setStatus(thrown instanceof Error ? thrown.message : String(thrown));
+        setStatus(describeFailure(thrown));
       });
   };
 
@@ -224,7 +225,7 @@ export function AuctionBoard(
         refresh();
       })
       .catch((thrown: unknown) => {
-        setStatus(thrown instanceof Error ? thrown.message : String(thrown));
+        setStatus(describeFailure(thrown));
       });
   };
 
@@ -236,7 +237,7 @@ export function AuctionBoard(
         refresh();
       })
       .catch((thrown: unknown) => {
-        setStatus(thrown instanceof Error ? thrown.message : String(thrown));
+        setStatus(describeFailure(thrown));
       });
   };
 

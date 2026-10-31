@@ -32,6 +32,7 @@ import {
   STEP_REPORT_SIZE,
 } from './board-metrics';
 import type { Journey } from './journey';
+import describeFailure from '../../i18n/refusals';
 
 /** What a step onto a board cell needs to know of the board in view */
 export interface WalkGround {
@@ -672,7 +673,7 @@ export default function createBoardWalk<View extends WalkGround>(
       })
       .catch((caught: unknown) => {
         warping.set(false);
-        deps.failed(caught instanceof Error ? caught.message : String(caught));
+        deps.failed(describeFailure(caught));
         refresh();
       });
   };

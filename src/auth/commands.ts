@@ -16,6 +16,7 @@ import { syncServerClock } from './clock';
 import teleportOnServerSide from '../server/teleport';
 import getIdToken from './session';
 import { StaffAction, recordStaffAction } from '../server/staff-log';
+import { refuse } from '../model/refusal';
 
 /**
  * What the command bar asks the server for.
@@ -96,7 +97,7 @@ async function findOnServer(token: string, named: string): Promise<FoundTrainer>
   const player = await findPlayerOnServerSide(caller, named);
 
   if (player == null) {
-    throw new Error(`Nobody answers to ${named}.`);
+    throw refuse('nobody-answers', { name: named });
   }
   return { player, nickname: await nameOf(player) };
 }
@@ -126,12 +127,12 @@ async function giftOnServer(
   const player = to == null ? null : await findPlayerOnServerSide(caller, to);
 
   if (to != null && player == null) {
-    throw new Error(`Nobody answers to ${to}.`);
+    throw refuse('nobody-answers', { name: to });
   }
   const written = await giveGift({ ...gift, player }, await syncServerClock());
 
   if (!written) {
-    throw new Error('That gift is already on the shelf.');
+    throw refuse('gift-on-shelf');
   }
   await recordStaffAction(caller, StaffAction.Gift, player, { ...gift });
   return player == null ? null : { player, nickname: await nameOf(player) };
@@ -166,10 +167,10 @@ async function banOnServer(
   const player = await findPlayerOnServerSide(caller, named);
 
   if (player == null) {
-    throw new Error(`Nobody answers to ${named}.`);
+    throw refuse('nobody-answers', { name: named });
   }
   if ((await setBan(caller, player, banned, reason)) == null) {
-    throw new Error('That account is not yours to act on.');
+    throw refuse('not-yours');
   }
   return { player, nickname: await nameOf(player) };
 }

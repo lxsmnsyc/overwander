@@ -31,6 +31,7 @@ import { Badge, Dialog, Status, useToast } from '../styled';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
 import settings, { setSetting } from '../app/settings';
 import { failed, readable } from '../app/resource-reads';
+import describeFailure from '../../i18n/refusals';
 
 /** One command in the safari's menu: a chunky tile on a hard drop */
 const TILE =
@@ -435,7 +436,7 @@ function SafariBody(
       })
       .catch((failure: unknown) => {
         toast.push({
-          message: failure instanceof Error ? failure.message : String(failure),
+          message: describeFailure(failure),
           tone: 'ember',
         });
       })

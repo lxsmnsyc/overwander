@@ -87,6 +87,7 @@ import {
   TOWN_NAME_PACE,
 } from '../../../game/overworld/board-metrics';
 import playEffect, { Effect } from '../../app/sound';
+import describeFailure from '../../../i18n/refusals';
 
 /**
  * The overworld as the player walks it: the arrows or the bound keys
@@ -511,7 +512,7 @@ export default function OverworldBoard(props: {
     });
     talking.done
       .catch((caught: unknown) => {
-        remark(caught instanceof Error ? caught.message : String(caught), 'ember');
+        remark(describeFailure(caught), 'ember');
       })
       .finally(() => {
         talking = undefined;

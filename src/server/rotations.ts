@@ -15,6 +15,7 @@ import { type Counters, countOf } from './quests';
 import { readProgress } from './quest-progress';
 import { asNumber, asRecord } from './read';
 import { toLocalTime } from '../model/local-time';
+import { writeGiftReason } from '../model/gift-reason';
 
 /**
  * The rotating board, measured from baselines: the quests are the
@@ -244,7 +245,7 @@ export async function claimRotation(
     offers.push(
       makeGiftOffer(
         {
-          reason: `${scope === 'daily' ? 'Daily' : 'Hunt'}: ${quest.name}.`,
+          reason: writeGiftReason(scope === 'daily' ? 'daily' : 'hunt', { name: quest.name }),
           player: uid,
           expiresAt: null,
           kind: GiftKind.Item,

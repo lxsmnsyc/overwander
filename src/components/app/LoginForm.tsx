@@ -20,6 +20,7 @@ import listSignInProviders, { type SignInProvider } from '../../auth/sign-in-opt
 import { Button, Checkbox, Note, Status, TabBar, TabButton, TabGroup, TextField } from '../styled';
 import { KeyIcon } from '../icons';
 import createClientSignal from './client-signal';
+import describeFailure from '../../i18n/refusals';
 
 /**
  * The way in: an address and a password, a passkey, and Google or
@@ -252,7 +253,7 @@ export default function LoginForm(): JSX.Element {
   const run: Run = (action) => (): void => {
     setError(null);
     action().catch((caught: unknown) => {
-      setError(caught instanceof Error ? caught.message : String(caught));
+      setError(describeFailure(caught));
     });
   };
 

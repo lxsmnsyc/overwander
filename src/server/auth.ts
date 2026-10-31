@@ -2,8 +2,9 @@ import 'server-only';
 import { type JWTPayload, type JWTVerifyGetKey, createLocalJWKSet, errors, jwtVerify } from 'jose';
 import getAuth from './better-auth';
 import { getSql } from './db';
-import { PACE_MESSAGE, Pace, type PaceCost, admit } from './pace';
-import { CLOSED_MESSAGE, Feature, MAINTENANCE_MESSAGE } from './switches';
+import { Pace, type PaceCost, admit } from './pace';
+import { Feature } from './switches';
+import { refuse } from '../model/refusal';
 
 /**
  * Who a token says the caller is, checked without a round trip: the
@@ -11,11 +12,6 @@ import { CLOSED_MESSAGE, Feature, MAINTENANCE_MESSAGE } from './switches';
  * its own key set. The keys are read once and read again only when a
  * token names one this process has not seen, which a key rotation does
  */
-
-/**
- * What a banned account is told, wherever it tries to act
- */
-export const BANNED_MESSAGE = 'This account is banned.';
 
 let keys: Promise<JWTVerifyGetKey> | null = null;
 
@@ -88,13 +84,13 @@ export async function requireUidFor(
  */
 export async function requireReader(token: string): Promise<string> {
   if (token === '') {
-    throw new Error('Not signed in');
+    throw refuse('not-signed-in');
   }
 
   const uid = (await verify(token)).sub;
 
   if (uid == null || uid === '') {
-    throw new Error('Not signed in');
+    throw refuse('not-signed-in');
   }
   return uid;
 }
@@ -106,14 +102,14 @@ async function admitCaller(
   feature?: Feature,
 ): Promise<string> {
   if (token === '') {
-    throw new Error('Not signed in');
+    throw refuse('not-signed-in');
   }
 
   const payload = await verify(token);
   const uid = payload.sub;
 
   if (uid == null || uid === '') {
-    throw new Error('Not signed in');
+    throw refuse('not-signed-in');
   }
 
   const costs: PaceCost[] = [{ pace: Pace.Any, cost: 1 }];
@@ -125,15 +121,17 @@ async function admitCaller(
   const { banned, paced, closed } = await admit(getSql(), uid, costs, Date.now(), feature);
 
   if (banned) {
-    throw new Error(BANNED_MESSAGE);
+    throw refuse('banned');
   }
   if (closed != null) {
-    const fallback = closed.feature === Feature.Everything ? MAINTENANCE_MESSAGE : CLOSED_MESSAGE;
-
-    throw new Error(closed.message === '' ? fallback : closed.message);
+    // The staff's own words travel with it, shown as written
+    throw refuse(
+      closed.feature === Feature.Everything ? 'maintenance' : 'closed',
+      closed.message === '' ? {} : { message: closed.message },
+    );
   }
   if (!paced) {
-    throw new Error(PACE_MESSAGE);
+    throw refuse('pace');
   }
   return uid;
 }

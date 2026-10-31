@@ -8,6 +8,7 @@ import {
 import { Button, Divider, LIST_PAGE, List, Note, Status, createPager } from '../styled';
 import FriendEntry from './FriendEntry';
 import { useGame } from '../app/game-context';
+import describeFailure from '../../i18n/refusals';
 
 /**
  * What is waiting on an answer, both ways.
@@ -56,7 +57,7 @@ export default function RequestsTab(props: RequestsTabProps): JSX.Element {
     setBusy(uid);
     said
       .catch((caught: unknown) => {
-        setError(caught instanceof Error ? caught.message : String(caught));
+        setError(describeFailure(caught));
       })
       .finally(() => {
         setBusy('');

@@ -23,6 +23,7 @@ import { CounterStep, CounterTerms, HeadingPortrait } from '../forms/terms';
 import { TEAM_SIZE } from '../../auth/teams';
 import { useGame } from '../app/game-context';
 import type { StopChallenge } from '../../game/overworld/challengers';
+import describeFailure from '../../i18n/refusals';
 
 export type { StopChallenge };
 
@@ -198,7 +199,7 @@ export default function StopDialog(props: StopDialogProps): JSX.Element {
       })
       .catch((caught: unknown) => {
         toast.push({
-          message: caught instanceof Error ? caught.message : String(caught),
+          message: describeFailure(caught),
           tone: 'ember',
         });
       });

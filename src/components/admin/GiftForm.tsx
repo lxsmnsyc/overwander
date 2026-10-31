@@ -49,6 +49,7 @@ import ItemGrid, { type ItemCell } from '../items/ItemGrid';
 import ItemSprite from '../items/ItemSprite';
 import type { StaffGift } from '../../auth/admin';
 import { offerGift } from '../../auth/admin';
+import describeFailure from '../../i18n/refusals';
 
 /**
  * Putting something on somebody's shelf, or on everybody's.
@@ -396,7 +397,7 @@ export default function GiftForm(props: GiftFormProps): JSX.Element {
         props.onGiven();
       })
       .catch((caught: unknown) => {
-        setWrong(caught instanceof Error ? caught.message : String(caught));
+        setWrong(describeFailure(caught));
       })
       .finally(() => {
         setBusy(false);

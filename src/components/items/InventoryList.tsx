@@ -45,6 +45,7 @@ import { GameDialog, useGame } from '../app/game-context';
 import { Hint, HintList, Note, TabBar, TabButton, TabGroup, TabPane, useToast } from '../styled';
 import settings, { setSetting } from '../app/settings';
 import { failed, readable } from '../app/resource-reads';
+import describeFailure from '../../i18n/refusals';
 
 export interface InventoryListProps {
   player: string;
@@ -241,7 +242,7 @@ function BagBody(
         game.setDialog(GameDialog.Raids);
       })
       .catch((caught: unknown) => {
-        said(caught instanceof Error ? caught.message : String(caught), 'ember');
+        said(describeFailure(caught), 'ember');
       });
   };
 
@@ -262,7 +263,7 @@ function BagBody(
         said('Up the rope, and out into the light.', 'leaf');
       })
       .catch((caught: unknown) => {
-        said(caught instanceof Error ? caught.message : String(caught), 'ember');
+        said(describeFailure(caught), 'ember');
       });
   };
 
@@ -403,7 +404,7 @@ function BagBody(
         }
       })
       .catch((caught: unknown) => {
-        said(caught instanceof Error ? caught.message : String(caught), 'ember');
+        said(describeFailure(caught), 'ember');
       });
   };
 

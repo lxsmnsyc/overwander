@@ -30,6 +30,7 @@ import {
   createPager,
 } from '../styled';
 import playEffect, { Effect } from '../app/sound';
+import describeFailure from '../../i18n/refusals';
 
 /**
  * Where the player stands, said the way they would say it
@@ -106,7 +107,7 @@ function BidRows(
         props.onChanged();
       })
       .catch((thrown: unknown) => {
-        setStatus(thrown instanceof Error ? thrown.message : String(thrown));
+        setStatus(describeFailure(thrown));
       });
   };
 

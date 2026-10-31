@@ -36,6 +36,7 @@ import {
 } from '../styled';
 import FriendEntry from './FriendEntry';
 import { useGame } from '../app/game-context';
+import describeFailure from '../../i18n/refusals';
 
 /**
  * Everybody the player has agreed with, and everybody they have shut
@@ -175,7 +176,7 @@ export default function FriendsTab(props: FriendsTabProps): JSX.Element {
     setBusy(uid);
     done
       .catch((caught: unknown) => {
-        setError(caught instanceof Error ? caught.message : String(caught));
+        setError(describeFailure(caught));
       })
       .finally(() => {
         setBusy('');

@@ -21,6 +21,7 @@ import { recordSeenSpecies } from './pokedex';
 import { getSql, jsonOf, tx } from './db';
 import { writeEncounter } from './encounter-io';
 import { asNumber, asRecord, asString } from './read';
+import { writeGiftReason } from '../model/gift-reason';
 
 /**
  * The gifts the game gives.
@@ -288,7 +289,7 @@ async function ensureStarterGifts(now: number): Promise<void> {
     const gift: CatchGift = {
       kind: GiftKind.Catch,
       id,
-      reason: 'A first partner, for a trainer with none.',
+      reason: writeGiftReason('starter'),
       expiresAt: null,
       species,
       level: STARTER_LEVEL,
@@ -332,7 +333,7 @@ async function ensureStarterGifts(now: number): Promise<void> {
         gift: {
           kind: GiftKind.Item,
           id: STARTER_BALL_GIFT,
-          reason: 'Something to throw at the next one.',
+          reason: writeGiftReason('starter-balls'),
           expiresAt: null,
           item: Items.PokeBall,
           amount: STARTER_BALLS,

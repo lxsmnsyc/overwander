@@ -1,4 +1,5 @@
 import type { Resource } from 'solid-js';
+import describeFailure from '../../i18n/refusals';
 
 /**
  * Two ways to read a resource without the loading state being kept by
@@ -70,5 +71,5 @@ export function failed(resource: Resource<unknown>): string | null {
 
   const error: unknown = resource.error;
 
-  return error instanceof Error ? error.message : null;
+  return error instanceof Error ? describeFailure(error) : null;
 }

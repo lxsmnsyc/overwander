@@ -6,6 +6,7 @@ import findPlayer, { nameOf } from './players';
 import getWorld from '../overworld/current';
 import { pickFreeCell } from '../overworld/start';
 import savePosition, { readPosition } from './positions';
+import { refuse } from '../model/refusal';
 
 /**
  * Putting a player somewhere, by the authority of whoever asked.
@@ -62,19 +63,19 @@ export default async function teleport(
   const player = await findPlayer(caller, named);
 
   if (player == null) {
-    throw new Error(`Nobody answers to ${named}.`);
+    throw refuse('nobody-answers', { name: named });
   }
 
   if (wanted.to != null) {
     const host = await findPlayer(caller, wanted.to);
 
     if (host == null) {
-      throw new Error(`Nobody answers to ${wanted.to}.`);
+      throw refuse('nobody-answers', { name: wanted.to });
     }
     const standing = await readPosition(host);
 
     if (standing == null) {
-      throw new Error('They have not walked anywhere yet.');
+      throw refuse('not-walked');
     }
     await savePosition(
       player,

@@ -20,6 +20,7 @@ import TEAM_SIZE from '../model/team-size';
 import { BOX_COLOURS, BOX_LIMIT, BOX_NAME_LIMIT, BOX_SLOT_LIMIT } from '../model/box-record';
 import { FEATURES } from './switches';
 import { TRADE_GOLD_LIMIT } from '../model/trade-record';
+import { refuse } from '../model/refusal';
 
 /**
  * What a server function accepts before it acts.
@@ -86,7 +87,7 @@ export default function check<T>(
   const result = v.safeParse(schema, value);
 
   if (!result.success) {
-    throw new Error(`Refused: ${result.issues[0].message}`);
+    throw refuse('invalid', { detail: result.issues[0].message });
   }
   return value;
 }

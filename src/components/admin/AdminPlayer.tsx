@@ -14,6 +14,7 @@ import ProfileTab from '../profile/ProfileTab';
 import { createPasswordLink, getPlayer, setPlayerBan, setPlayerRole } from '../../auth/admin';
 import useStaff from './staff-context';
 import { formatDate } from '../../i18n/format';
+import describeFailure from '../../i18n/refusals';
 
 /**
  * One account, from both sides.
@@ -60,7 +61,7 @@ function PasswordLinkCard(props: { uid: string }): JSX.Element {
         setLink(made);
       })
       .catch((caught: unknown) => {
-        setWrong(caught instanceof Error ? caught.message : String(caught));
+        setWrong(describeFailure(caught));
       })
       .finally(() => {
         setBusy(false);
@@ -143,7 +144,7 @@ function PlayerCard(props: { uid: string; player: Resource<PlayerRow | null> }):
         keep(value);
       })
       .catch((caught: unknown) => {
-        setWrong(caught instanceof Error ? caught.message : String(caught));
+        setWrong(describeFailure(caught));
       })
       .finally(() => {
         setBusy(false);

@@ -33,6 +33,7 @@ import CatchActions from './actions';
 import BoxHeading from './heading';
 import BoxRail, { type RailBox } from './rail';
 import ReleasedList, { createReleased } from './released';
+import describeFailure from '../../../i18n/refusals';
 
 export interface CatchesListProps {
   player: string;
@@ -270,7 +271,7 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
       })
       .catch((caught: unknown) => {
         toast.push({
-          message: caught instanceof Error ? caught.message : String(caught),
+          message: describeFailure(caught),
           tone: 'ember',
         });
       })
@@ -295,7 +296,7 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
       })
       .catch((caught: unknown) => {
         toast.push({
-          message: caught instanceof Error ? caught.message : String(caught),
+          message: describeFailure(caught),
           tone: 'ember',
         });
       })

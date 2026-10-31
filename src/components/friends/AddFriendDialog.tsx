@@ -1,10 +1,5 @@
 import { type JSX, type Resource, Show, Suspense, createResource, createSignal } from 'solid-js';
-import {
-  type FoundPlayer,
-  FriendTie,
-  findPlayerByCode,
-  getMyFriendCode,
-} from '../../auth/friends';
+import { type FoundPlayer, FriendTie, findPlayerByCode, getMyFriendCode } from '../../auth/friends';
 import { Button, Dialog, DialogActions, List, Meta, Note, Row, Status, TextField } from '../styled';
 import FriendEntry from './FriendEntry';
 import createFriendTie, { friendActionLabel } from './tie';

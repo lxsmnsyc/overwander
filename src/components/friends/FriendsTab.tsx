@@ -200,10 +200,7 @@ export default function FriendsTab(props: FriendsTabProps): JSX.Element {
         />
       </Show>
 
-      <Show
-        when={roll().length > 0}
-        fallback={<Note>{m.friends_empty()}</Note>}
-      >
+      <Show when={roll().length > 0} fallback={<Note>{m.friends_empty()}</Note>}>
         <Suspense fallback={<Note>{m.friends_loading()}</Note>}>
           <Roster
             uids={roll()}

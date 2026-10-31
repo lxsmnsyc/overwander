@@ -25,11 +25,7 @@ import RequestsTab from '../friends/RequestsTab';
 import createFriendTie, { friendActionLabel } from '../friends/tie';
 import createClientSignal from '../app/client-signal';
 import { answered } from '../app/resource-reads';
-import {
-  type FriendRequests,
-  FriendTie,
-  watchFriendRequests,
-} from '../../auth/friends';
+import { type FriendRequests, FriendTie, watchFriendRequests } from '../../auth/friends';
 import EditProfileDialog from './EditProfileDialog';
 import { hostDuel, inviteToDuel } from '../../auth/duels';
 import LobbyRole from '../../model/lobby-role';

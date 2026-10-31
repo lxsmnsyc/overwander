@@ -205,7 +205,10 @@ function PasskeyList(props: {
   onChanged: () => void;
 }): JSX.Element {
   return (
-    <Show when={(props.passkeys() ?? []).length > 0} fallback={<Note>{m.security_no_passkeys()}</Note>}>
+    <Show
+      when={(props.passkeys() ?? []).length > 0}
+      fallback={<Note>{m.security_no_passkeys()}</Note>}
+    >
       <List>
         <For each={props.passkeys()}>
           {(one) => (
@@ -320,10 +323,7 @@ function Unlock(props: { onUnlocked: (password: string) => void }): JSX.Element 
 
   return (
     <Card title={m.security_confirm_title()}>
-      <Show
-        when={!none()}
-        fallback={<Note>{m.security_no_password()}</Note>}
-      >
+      <Show when={!none()} fallback={<Note>{m.security_no_password()}</Note>}>
         <Note>{m.security_confirm_note()}</Note>
         <Row class="items-end">
           <TextField

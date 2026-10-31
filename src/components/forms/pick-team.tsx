@@ -295,10 +295,7 @@ function PickTeamView(props: FormProps<PickTeamInput, string[]>): JSX.Element {
         </TabPane>
 
         <TabPane value={TeamTab.Saved}>
-          <Show
-            when={saved().length > 0}
-            fallback={<Note>{m.pick_team_no_saved()}</Note>}
-          >
+          <Show when={saved().length > 0} fallback={<Note>{m.pick_team_no_saved()}</Note>}>
             <TeamRows>
               <For each={saved()}>
                 {([, preset]) => (

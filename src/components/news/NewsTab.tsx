@@ -51,10 +51,7 @@ export default function NewsTab(): JSX.Element {
 
   return (
     <>
-      <Show
-        when={RELEASES.length > 0}
-        fallback={<Note>{m.news_empty()}</Note>}
-      >
+      <Show when={RELEASES.length > 0} fallback={<Note>{m.news_empty()}</Note>}>
         <List>
           <For each={RELEASES}>
             {(release, at) => (

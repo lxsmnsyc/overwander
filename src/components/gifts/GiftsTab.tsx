@@ -113,7 +113,9 @@ function takenTimes(claims: number): string {
 /** The ledger's line: whose it is, and how it has moved since */
 function describeLedger(row: GiftLedgerRow): string {
   const parts = [
-    row.recipient == null ? m.gifts_ledger_everybody() : m.gifts_ledger_for({ name: row.recipient }),
+    row.recipient == null
+      ? m.gifts_ledger_everybody()
+      : m.gifts_ledger_for({ name: row.recipient }),
     takenTimes(row.claims),
   ];
 
@@ -472,8 +474,12 @@ function GiftShelf(props: {
       class="flex flex-col gap-3"
     >
       <TabBar>
-        <TabButton value={GiftView.Catches}>{counted(m.gifts_tab_catches(), handed().length)}</TabButton>
-        <TabButton value={GiftView.Items}>{counted(m.gifts_tab_items(), things().length)}</TabButton>
+        <TabButton value={GiftView.Catches}>
+          {counted(m.gifts_tab_catches(), handed().length)}
+        </TabButton>
+        <TabButton value={GiftView.Items}>
+          {counted(m.gifts_tab_items(), things().length)}
+        </TabButton>
         <TabButton value={GiftView.Encounters}>
           {counted(m.gifts_tab_encounters(), meetings().length)}
         </TabButton>
@@ -481,7 +487,11 @@ function GiftShelf(props: {
       <TabPane value={GiftView.Catches}>
         <Show
           when={handed().length > 0}
-          fallback={<Note class="text-center">{emptily(m.gifts_offered_pokemon, m.gifts_waiting_pokemon)}</Note>}
+          fallback={
+            <Note class="text-center">
+              {emptily(m.gifts_offered_pokemon, m.gifts_waiting_pokemon)}
+            </Note>
+          }
         >
           {box(handed())}
         </Show>
@@ -489,7 +499,9 @@ function GiftShelf(props: {
       <TabPane value={GiftView.Items}>
         <Show
           when={things().length > 0}
-          fallback={<Note class="text-center">{emptily(m.gifts_offered_items, m.gifts_waiting_items)}</Note>}
+          fallback={
+            <Note class="text-center">{emptily(m.gifts_offered_items, m.gifts_waiting_items)}</Note>
+          }
         >
           <ItemGrid entries={itemCells()} />
         </Show>
@@ -497,7 +509,11 @@ function GiftShelf(props: {
       <TabPane value={GiftView.Encounters}>
         <Show
           when={meetings().length > 0}
-          fallback={<Note class="text-center">{emptily(m.gifts_offered_meetings, m.gifts_waiting_meetings)}</Note>}
+          fallback={
+            <Note class="text-center">
+              {emptily(m.gifts_offered_meetings, m.gifts_waiting_meetings)}
+            </Note>
+          }
         >
           {box(meetings())}
         </Show>

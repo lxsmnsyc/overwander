@@ -9,3 +9,5 @@
 - Translation: ja and es for every new key plus the 23 `refusal_*` and `gift_reason_*` keys. Key test exemption removed, and a new case checks every refusal and gift reason differs from English. Term list extended (shell terms, money and counts).
 - `reset_done_link` added so the password page's link reads as an imperative in Spanish.
 - Review (one fresh agent): no must-fix findings. Applied 10 nits (purse toast unit, gender-neutral friend request line, outbid wording, teach_room, reset_done_before, friends_asked, landmarks window, source label, ja add-friend title, ja pane spacing). Kept: ja minutes read ふん for every count (kana cannot vary it without kanji), and the です/ます legal paragraph.
+- Screenshots in ja and es at 1280x720; one clipping (ja About tab) fixed with じょうほう. The dev database's `jwks` row was encrypted under another secret, so e2e sign-in failed until it was cleared (dev database only).
+- Full check: typecheck, lint exit 0, `pnpm test` with eight load timeouts that pass alone (tera-sites on its own).

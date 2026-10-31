@@ -99,15 +99,31 @@ function LanguageSetting(): JSX.Element {
 
 function readClocks(): { value: ClockFormat; label: string; description: string }[] {
   return [
-    { value: '24h', label: m.settings_clock_24h(), description: m.settings_clock_24h_description() },
-    { value: '12h', label: m.settings_clock_12h(), description: m.settings_clock_12h_description() },
+    {
+      value: '24h',
+      label: m.settings_clock_24h(),
+      description: m.settings_clock_24h_description(),
+    },
+    {
+      value: '12h',
+      label: m.settings_clock_12h(),
+      description: m.settings_clock_12h_description(),
+    },
   ];
 }
 
 function readBoardEdges(): { value: BoardEdge; label: string; description: string }[] {
   return [
-    { value: 'haze', label: m.settings_edge_haze(), description: m.settings_edge_haze_description() },
-    { value: 'full', label: m.settings_edge_full(), description: m.settings_edge_full_description() },
+    {
+      value: 'haze',
+      label: m.settings_edge_haze(),
+      description: m.settings_edge_haze_description(),
+    },
+    {
+      value: 'full',
+      label: m.settings_edge_full(),
+      description: m.settings_edge_full_description(),
+    },
     {
       value: 'plain',
       label: m.settings_edge_plain(),

@@ -319,17 +319,13 @@ export default function GameProvider(
         toast.push({
           title: m.toast_seat_open(),
           message:
-            paid.gold > 0
-              ? m.toast_seat_freed_gold({ amount: paid.gold })
-              : m.toast_seat_freed(),
+            paid.gold > 0 ? m.toast_seat_freed_gold({ amount: paid.gold }) : m.toast_seat_freed(),
           tone: 'leaf',
         });
       } else if (paid.seat === 'held') {
         toast.push({
           message:
-            paid.gold < 0
-              ? m.toast_seat_held_gold({ amount: -paid.gold })
-              : m.toast_seat_held(),
+            paid.gold < 0 ? m.toast_seat_held_gold({ amount: -paid.gold }) : m.toast_seat_held(),
           tone: 'ember',
         });
       } else if (paid.gold > 0) {

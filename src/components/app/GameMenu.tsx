@@ -237,9 +237,7 @@ function Windows(props: { now: number; class?: string }): JSX.Element {
           )}
         </For>
       </dl>
-      <p class="mt-2 text-xs text-muted">
-        {m.menu_windows_note()}
-      </p>
+      <p class="mt-2 text-xs text-muted">{m.menu_windows_note()}</p>
     </>
   );
 }
@@ -643,7 +641,11 @@ export default function GameMenu(): JSX.Element {
                           class={TILE}
                           disabled={entry.dialog == null}
                           // The word alone reads as something the game can do and will not
-                          title={entry.dialog == null ? m.menu_not_yet({ label: entry.label() }) : entry.label()}
+                          title={
+                            entry.dialog == null
+                              ? m.menu_not_yet({ label: entry.label() })
+                              : entry.label()
+                          }
                           onClick={() => {
                             if (entry.dialog != null) {
                               openDialog(entry.dialog);

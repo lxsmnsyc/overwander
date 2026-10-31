@@ -565,9 +565,7 @@ function Banned(props: {
           text-center shadow-pop"
         >
           <h1>{m.refusal_banned()}</h1>
-          <Note>
-            {profile()?.banReason === '' ? m.banned_no_reason() : profile()?.banReason}
-          </Note>
+          <Note>{profile()?.banReason === '' ? m.banned_no_reason() : profile()?.banReason}</Note>
           <Button
             onClick={() => {
               signOut().catch(() => undefined);

@@ -119,10 +119,7 @@ export default function NotificationsTab(props: NotificationsTabProps): JSX.Elem
   };
 
   return (
-    <Show
-      when={props.notices.length > 0}
-      fallback={<Note>{m.notices_empty()}</Note>}
-    >
+    <Show when={props.notices.length > 0} fallback={<Note>{m.notices_empty()}</Note>}>
       <List>
         <For each={waiting.shown()}>
           {(notice) => (

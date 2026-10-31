@@ -260,9 +260,7 @@ function LobbyRows(
             healed: true,
             // What the host barred stays in the box, greyed, with the reason
             refuse: (option) =>
-              describeDuelRefusal(
-                duelRefusal(option.caught, { maxBst: maxBst(), bans: bans() }),
-              ),
+              describeDuelRefusal(duelRefusal(option.caught, { maxBst: maxBst(), bans: bans() })),
           })
             .then((catches) => {
               if (catches != null) {

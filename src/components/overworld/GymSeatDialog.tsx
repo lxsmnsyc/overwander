@@ -13,6 +13,7 @@ import type { PlayerIdentity } from '../../auth/user';
 import { getSpeciesData } from '../../data/species';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
 import { useGame } from '../app/game-context';
+import { formatNumber } from '../../i18n/format';
 import { openForm } from '../forms/stack';
 import { PickTeamForm } from '../forms/pick-team';
 import CatchBox, { type BoxEntry } from '../catches/CatchBox';
@@ -253,8 +254,8 @@ function SeatCounter(
               { label: m.gym_seat_lose(), value: m.gym_seat_lose_value({ stake: stake() }) },
             ]}
             often={m.gym_seat_often({
-              daily: SEAT_DAILY_TAKE,
-              left: Math.max(0, SEAT_DAILY_TAKE - (props.standing?.taken ?? 0)),
+              daily: formatNumber(SEAT_DAILY_TAKE),
+              left: formatNumber(Math.max(0, SEAT_DAILY_TAKE - (props.standing?.taken ?? 0))),
             })}
           />
           <Show

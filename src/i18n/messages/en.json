@@ -66,7 +66,7 @@
       "selectors": ["countPlural"],
       "match": {
         "countPlural=one": "Portal Key",
-        "countPlural=other": "Portal Keys"
+        "countPlural=*": "Portal Keys"
       }
     }
   ],
@@ -99,7 +99,7 @@
   "gym_seat_win_value": "The seat, and {stake}% of their purse",
   "gym_seat_lose": "Lose",
   "gym_seat_lose_value": "{stake}% of your purse",
-  "gym_seat_often": "{daily} takes a day · {left} left",
+  "gym_seat_often": "Up to {daily} gold a day · {left} left",
   "gym_seat_barred": "You were beaten off this seat. It is open to everybody else for another {minutes} minutes.",
   "gym_seat_empty": "Nobody is holding this seat. Leave a team standing and it is yours until somebody beats it off you.",
   "gym_seat_yours": "Your seat",
@@ -217,7 +217,6 @@
   "interact_no_way_through": "There is no way through there any more.",
   "interact_into_dark": "Into the dark.",
   "interact_into_light": "Back out into the light.",
-  "challenger_levels": "levels {lowest}-{highest}",
   "challenger_rule_bare": "Nothing is held: no items on either side.",
   "challenger_rule_timed": "Judged after {turns} turns: whoever has more of their party left standing takes it.",
   "challenger_rule_curtained": "A curtain is drawn as you walk in, and one room in {rooms} is kind: your three arrive poisoned, burned, paralysed, asleep, or mended. Hers arrive as they are.",

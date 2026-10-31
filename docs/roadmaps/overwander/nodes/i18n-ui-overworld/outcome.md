@@ -19,6 +19,8 @@
 - The picker sits in Settings, which is otherwise batch 7. Only the Language label is a message; the rest of the pane stays English.
 - The term list says 日本語 in kanji for the language's own name, the one kanji in the Japanese text.
 
+- The Gym Seat's daily line showed the gold cap as a bare count ("180000 takes a day"). It now reads "Up to 180,000 gold a day · 120,000 left", in each locale. The bug was on main before this batch.
+
 ## Stubs left
 
 - `refusal_*` and `gift_reason_*` are still English in ja and es (batch 4 left them; the key test allows them missing). They show in the overworld as toasts, so batch 7 (`i18n-ui-rest`) or a small follow-up should translate them.

@@ -48,7 +48,7 @@
       ],
       "match": {
         "countPlural=one": "Llave del Portal",
-        "countPlural=other": "Llaves del Portal"
+        "countPlural=*": "Llaves del Portal"
       }
     }
   ],
@@ -81,7 +81,7 @@
   "gym_seat_win_value": "El puesto y el {stake} % de su dinero",
   "gym_seat_lose": "Si pierdes",
   "gym_seat_lose_value": "El {stake} % de tu dinero",
-  "gym_seat_often": "{daily} conquistas al día · quedan {left}",
+  "gym_seat_often": "Hasta {daily} de dinero al día · quedan {left}",
   "gym_seat_barred": "Te echaron de este puesto. Durante otros {minutes} minutos solo pueden desafiarlo los demás.",
   "gym_seat_empty": "Nadie ocupa este puesto. Deja aquí un equipo y será tuyo hasta que alguien te lo quite.",
   "gym_seat_yours": "Tu puesto",
@@ -199,7 +199,6 @@
   "interact_no_way_through": "Por ahí ya no se puede pasar.",
   "interact_into_dark": "Hacia la oscuridad.",
   "interact_into_light": "De vuelta a la luz.",
-  "challenger_levels": "niveles {lowest}-{highest}",
   "challenger_rule_bare": "Nadie lleva nada: sin objetos en ningún bando.",
   "challenger_rule_timed": "Se juzga tras {turns} turnos: gana quien tenga más miembros del equipo en pie.",
   "challenger_rule_curtained": "Al entrar se corre una cortina, y una sala de cada {rooms} es amable: tus tres llegan envenenados, quemados, paralizados, dormidos o curados. Los suyos llegan tal cual.",

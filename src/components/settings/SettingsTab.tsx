@@ -90,7 +90,7 @@ function LanguageSetting(): JSX.Element {
       options={LANGUAGES}
       onChange={(locale) => {
         if (locale !== currentLocale()) {
-          Promise.resolve(chooseLocale(locale)).catch(() => undefined);
+          chooseLocale(locale);
         }
       }}
     />

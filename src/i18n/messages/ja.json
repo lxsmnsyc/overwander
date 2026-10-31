@@ -47,7 +47,7 @@
         "countPlural"
       ],
       "match": {
-        "countPlural=other": "ポータルキー"
+        "countPlural=*": "ポータルキー"
       }
     }
   ],
@@ -80,7 +80,7 @@
   "gym_seat_win_value": "シートと あいての おかねの {stake}%",
   "gym_seat_lose": "まけたら",
   "gym_seat_lose_value": "きみの おかねの {stake}%",
-  "gym_seat_often": "1にち {daily}かい ・ のこり {left}かい",
+  "gym_seat_often": "1にち {daily}まで ・ のこり {left}",
   "gym_seat_barred": "きみは この シートで まけた。 あと {minutes}ふん、 ほかの ひとだけが ちょうせんできる。",
   "gym_seat_empty": "この シートには だれも すわっていない。 チームを のこせば、 だれかに うばわれるまで きみの ものだ。",
   "gym_seat_yours": "きみの シート",
@@ -198,7 +198,6 @@
   "interact_no_way_through": "もう そこから とおりぬけられない。",
   "interact_into_dark": "くらやみの なかへ。",
   "interact_into_light": "あかるい ところへ もどった。",
-  "challenger_levels": "レベル {lowest}〜{highest}",
   "challenger_rule_bare": "どうぐは もたせない： どちらの ポケモンも なにも もたずに たたかう。",
   "challenger_rule_timed": "{turns}ターンで はんてい： のこっている ポケモンが おおい ほうの かち。",
   "challenger_rule_curtained": "はいると カーテンが ひらかれる。 {rooms}へやに ひとつは めぐみの へや： きみの 3びきは どく、 やけど、 まひ、 ねむり の どれかに なるか、 かいふくして とうじょうする。 あいての ポケモンは そのままだ。",

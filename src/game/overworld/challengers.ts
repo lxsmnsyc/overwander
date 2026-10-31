@@ -91,10 +91,6 @@ export interface StopChallenge {
 }
 
 /** A band said the way a lineup reads it: "levels 45-65" */
-export function saidLevels([lowest, highest]: LevelBand): string {
-  return m.challenger_levels({ lowest, highest });
-}
-
 /**
  * The locked message at a champion's seat, which names what it asks to
  * see beaten first

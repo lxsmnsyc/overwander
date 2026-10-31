@@ -1,7 +1,7 @@
 {
   "$schema": "https://inlang.com/schema/inlang-message-format",
   "ow_walk_on": "たちさる",
-  "ow_used_this_while": "この じかんわくは つかいました",
+  "ow_used_this_while": "この じかんわくは つかった",
   "ow_level": "Lv. {level}",
   "ow_lineup_square": "{species} Lv. {level}",
   "ow_win": "かったら",
@@ -36,9 +36,22 @@
   "portal_title": "ポータル",
   "portal_description": "たちならぶ いしの わ。 どの まちの ひろばにも つうじている。",
   "portal_reading": "めいぼを よんでいます…",
-  "portal_shut": "ポータルは ひらかなかった。 キー 1つで ひらくのは 1かいだけ。",
-  "portal_keys": "ポータルキー",
-  "portal_often": "わたるごとに キー 1つ",
+  "portal_shut": "ポータルは ひらかなかった。 ポータルキー 1つで ひらけるのは 1かいだけ。",
+  "portal_keys": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=other": "ポータルキー"
+      }
+    }
+  ],
+  "portal_often": "わたるごとに ポータルキー 1つ",
   "portal_no_towns": "まだ だれも まちに はいっていない。",
   "portal_choose": "まちを えらぶ",
   "portal_town": "まち",
@@ -51,7 +64,7 @@
   "stop_grunt_refuses": "したっぱは もう きみと かかわりたくないようだ。",
   "stop_levels": "レベル",
   "stop_levels_value": "{lowest}〜{highest}",
-  "stop_bring": "つれていける かず",
+  "stop_bring": "つれていく かず",
   "stop_bring_value": "{count}ひきまで",
   "stop_unseen": "まだ だれも きまっていない。 きみの メンバーが きまってから えらばれる。",
   "stop_rent": "レンタルする {size}ひきを えらぶ ・ {taken}ひき えらんだ",
@@ -117,14 +130,14 @@
   "world_map_title": "せかいちず",
   "world_map_description": "よこ {span}チャンク、 ちゅうしんは {x}, {y}。 ちずを ドラッグするか ちずの うえの ボタンで うごかそう。",
   "world_map_steering": "ちずの うごかしかた",
-  "world_map_steering_hint": "まず ちずを クリックしよう。 キーは キーボードを うけとっている ところに とどく。",
+  "world_map_steering_hint": "まず ちずを クリックしよう。 キーは いま えらんでいる ところに はたらく。",
   "world_map_key_drag": "ドラッグ",
   "world_map_drag": "ちずを ひっぱって うごかす。 すみの ボタンでも うごかせる。",
   "world_map_arrows": "1チャンク うごかす。 WASDでも おなじ。",
   "world_map_stride": "{stride}チャンク ずつ うごかす。",
   "world_map_home": "いま いる チャンクに もどる。 Cでも おなじ。",
   "world_map_rim": "カメラは せかいの なかに とどまる。 はしで うごかしても もどってくる。",
-  "world_map_sky_hint": "チャンクを てんきの いろで ぬり、 いってみる かちの ある 4つの そらを まるで かこむ",
+  "world_map_sky_hint": "チャンクを てんきの いろで ぬり、 いってみる かちの ある 4つを まるく かこむ",
   "world_map_sky": "そら",
   "world_map_key": "はんれい",
   "world_map_you": "きみ",
@@ -137,14 +150,14 @@
   "world_map_pan_east": "ひがしへ うごかす",
   "world_map_pan_south": "みなみへ うごかす",
   "world_map_back_to_you": "きみの いばしょに もどる",
-  "world_map_quiet": "いま みえる はんいに かわった そらは ない。",
+  "world_map_quiet": "この じかん、 みえる はんいに かわった ものは ない。",
   "world_map_worth": "いってみる かちが ある：",
   "world_map_close": "とじる",
   "world_map_town_in": "まち、 {biome}",
   "world_map_place": "{place} ({x}, {y})",
   "world_map_place_sky": "{place}、 {weather} ({x}, {y})",
   "world_map_canvas": "せかいちず。 よこ {span}チャンク、 ちゅうしんは {x}, {y}。 ドラッグか やじるしキーで うごかせる。",
-  "weather_favors": "ゆうり",
+  "weather_favors": "ゆうりな タイプ",
   "weather_every_type": "すべての タイプ",
   "board_chunk_map": "チャンクの ちず。 {caption}。 まえには {ahead}。",
   "board_empty_ground": "なにも ない じめん",
@@ -157,7 +170,7 @@
   "board_elsewhere": "この ぼうけんは べつの がめんで つづいている。 いばしょは チャンク {x}, {y}。",
   "board_walk_here": "ここで あるく",
   "board_egg_steps": "タマゴ ・ {steps} / {hatch}",
-  "board_egg_ready": "タマゴ ・ {steps} / {hatch} ・ もうすぐ",
+  "board_egg_ready": "タマゴ ・ {steps} / {hatch} ・ うまれそう",
   "board_through": "{name}に でた。 チャンク {x}, {y}。",
   "walk_no_way_up": "ちかくに ちじょうへ でる みちが ない。",
   "walk_no_town": "ちかくに まちが ない。",
@@ -188,10 +201,10 @@
   "challenger_levels": "レベル {lowest}〜{highest}",
   "challenger_rule_bare": "どうぐは もたせない： どちらの ポケモンも なにも もたずに たたかう。",
   "challenger_rule_timed": "{turns}ターンで はんてい： のこっている ポケモンが おおい ほうの かち。",
-  "challenger_rule_curtained": "はいると カーテンが ひらかれる。 {rooms}へやに ひとつは めぐみの へや： きみの 3ひきは どく、 やけど、 まひ、 ねむり の どれかに なるか、 かいふくして とうじょうする。 あいての ポケモンは そのままだ。",
-  "challenger_rule_rented": "りょうほうに ポケモンを かしだす： テーブルの {offer}ひきから 3ひきを えらぶ。 きみの ボックスは つかわない。 きみの ポケモンは でないので、 なにも うしなわない。",
+  "challenger_rule_curtained": "はいると カーテンが ひらかれる。 {rooms}へやに ひとつは めぐみの へや： きみの 3びきは どく、 やけど、 まひ、 ねむり の どれかに なるか、 かいふくして とうじょうする。 あいての ポケモンは そのままだ。",
+  "challenger_rule_rented": "りょうほうに ポケモンを かしだす： テーブルの {offer}ひきから 3びきを えらぶ。 きみの ボックスは つかわない。 きみの ポケモンは でないので、 なにも うしなわない。",
   "challenger_rule_natured": "めいれいは できない： ここの ポケモンは せいかくで わざを えらぶ。 ずぶとい ポケモンは まもり、 ゆうかんな ポケモンは なんでも ふりまわす。",
-  "challenger_rule_countered": "きみが えらぶまで あいては きまらない： きみの メンバーが きまった しゅんかん、 かれの 3ひきが 1ひきずつ きみに あわせて えらばれる。 なんにでも たいおうできる チームは ここでは なにも たいおうできない。",
+  "challenger_rule_countered": "きみが えらぶまで あいては きまらない： きみの メンバーが きまった しゅんかん、 かれの 3びきが 1ひきずつ きみに あわせて えらばれる。 なんにでも たいおうできる チームは ここでは やくに たたない。",
   "challenger_rule_rolled": "はいると ルーレットが まわり、 りょうほうに あたる： たたかいの あいだ ずっと つづく てんき、 もちものは いりぐちに あずける、 ぜんいん どく、 または ぜんいん かいふく。",
   "challenger_rule_unhealed": "かいふくは きんし： たたかいの あいだ きみの がわは キズぐすりも きのみも すいとりも HPを もどせない。 あいては いつもどおり かいふくする。",
   "challenger_rule_singled": "きみの 1ぴきと かのじょの 1ぴき。 かのじょの ポケモンは きみの ポケモンが きまった しゅんかんに それに あわせて えらばれる。 ほかの ポケモンで おぎなうことは できない。",
@@ -210,5 +223,6 @@
   "challenger_legend_wins": "{award}の しるし、 いちばん おおきな しょうきん、 めずらしい もの",
   "challenger_champion_wins": "{title}の しょうごう、 いちばん おおきな しょうきん、 きねんの しな",
   "challenger_frontier_greeting": "{name}が {facility}を まもっている。 「{quote}」",
-  "challenger_frontier_wins": "{symbol}と しょうきん"
+  "challenger_frontier_wins": "{symbol}と しょうきん",
+  "settings_language": "げんご"
 }

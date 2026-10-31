@@ -62,13 +62,8 @@
   "portal_shut": "The portal stayed shut. A key opens one, and only one.",
   "portal_keys": [
     {
-      "declarations": [
-        "input count",
-        "local countPlural = count: plural"
-      ],
-      "selectors": [
-        "countPlural"
-      ],
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
       "match": {
         "countPlural=one": "Portal Key",
         "countPlural=other": "Portal Keys"
@@ -247,5 +242,6 @@
   "challenger_legend_wins": "The mark for {award}, the largest purse and a rare find",
   "challenger_champion_wins": "The {title} title, the largest purse and a keepsake",
   "challenger_frontier_greeting": "{name} keeps the {facility}. “{quote}”",
-  "challenger_frontier_wins": "The {symbol} and a purse"
+  "challenger_frontier_wins": "The {symbol} and a purse",
+  "settings_language": "Language"
 }

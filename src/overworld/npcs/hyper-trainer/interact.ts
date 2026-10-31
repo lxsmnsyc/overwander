@@ -8,6 +8,7 @@ import type { Choice } from '../../../components/forms/choice';
 import { pickCatchThenForm } from '../../../components/forms/pick-catch-then';
 import { goldHeld } from '../shared';
 import type { NpcScript } from '../create';
+import { formatNumber } from '../../../i18n/format';
 
 /** The pokemon and the value, asked on one screen */
 const TrainForm = pickCatchThenForm<Stats>();
@@ -37,12 +38,12 @@ const hyper: NpcScript = async (visit) => {
         if (iv >= MAX_IV) {
           refused = 'At the top';
         } else if (cost > gold) {
-          refused = `${cost.toLocaleString('en-US')} gold`;
+          refused = `${formatNumber(cost)} gold`;
         }
         values.push({
           label: `${STAT_NAMES[stat]}  ${iv} → ${MAX_IV}`,
           value: stat,
-          detail: `${cost.toLocaleString('en-US')} gold`,
+          detail: `${formatNumber(cost)} gold`,
           refused,
           cost: { gold: cost },
         });
@@ -65,7 +66,7 @@ const hyper: NpcScript = async (visit) => {
   playEffect(Effect.LevelUp);
   visit.notify({
     title: STAT_NAMES[stat],
-    message: `Trained to ${MAX_IV}. −${cost.toLocaleString('en-US')} gold`,
+    message: `Trained to ${MAX_IV}. −${formatNumber(cost)} gold`,
     tone: 'leaf',
   });
   visit.changed();

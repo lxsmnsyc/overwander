@@ -14,6 +14,7 @@ import ItemSprite from '../../../items/ItemSprite';
 import { DialogSection, List, ListRow, Meta, RowButton } from '../../../styled';
 
 import { For, type JSX, Show } from 'solid-js';
+import { formatNumber } from '../../../../i18n/format';
 
 /**
  * Whose hands it has passed through, oldest first. A previous owner is
@@ -86,10 +87,7 @@ export default function HistorySection(props: HistorySectionProps): JSX.Element 
                   digit by digit. Tested for absence
                   rather than truth: nought gold is a
                   price, and nothing is not */}
-                  <Show when={entry.paid != null}>
-                    {' '}
-                    · {(entry.paid ?? 0).toLocaleString('en-US')} gold
-                  </Show>
+                  <Show when={entry.paid != null}> · {formatNumber(entry.paid ?? 0)} gold</Show>
                 </Meta>
               </ListRow>
             )}

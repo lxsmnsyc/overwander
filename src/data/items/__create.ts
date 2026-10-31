@@ -1,4 +1,5 @@
 import type { ItemTypes, Items } from '../ids/items';
+import { formatNumber } from '../../i18n/format';
 
 export interface ItemData {
   name: string;
@@ -102,7 +103,7 @@ export function itemText(family: string, template: string, values: TemplateValue
 
     const value = values[key];
 
-    return typeof value === 'number' ? value.toLocaleString('en-US') : value;
+    return typeof value === 'number' ? formatNumber(value) : value;
   });
 }
 

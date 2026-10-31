@@ -55,6 +55,7 @@ import {
   TabGroup,
   TabPane,
 } from '../styled';
+import { formatNumber } from '../../i18n/format';
 
 /**
  * The tier the wearer stands at on the worn title's line, read off
@@ -388,7 +389,7 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
                     <TitleBadge player={props.player} title={loaded().title ?? -1} name={worn} />
                   )}
                 </Show>
-                <Badge tone="gold">{loaded().gold.toLocaleString()} gold</Badge>
+                <Badge tone="gold">{formatNumber(loaded().gold)} gold</Badge>
               </Row>
               <div class="col-span-3 md:col-span-2 md:col-start-2">
                 <PlayerPlace player={props.player} />

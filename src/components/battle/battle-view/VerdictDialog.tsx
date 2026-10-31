@@ -14,6 +14,7 @@ import CandySprite from '../../sprites/CandySprite';
 import { Badge, Button, Dialog, DialogActions, Meta } from '../../styled';
 import TeamsPreview from '../TeamsPreview';
 import type { SideSummary, SideUnit } from './summary';
+import { formatNumber } from '../../../i18n/format';
 
 /**
  * What a settled fight says about itself: the word for how it went,
@@ -206,7 +207,7 @@ export default function VerdictDialog(props: VerdictDialogProps): JSX.Element {
                 <Show when={props.spoils != null && props.spoils.gold !== 0}>
                   <Badge tone={(props.spoils?.gold ?? 0) > 0 ? 'gold' : 'ember'}>
                     {(props.spoils?.gold ?? 0) > 0 ? '+' : '−'}
-                    {Math.abs(props.spoils?.gold ?? 0).toLocaleString()} gold
+                    {formatNumber(Math.abs(props.spoils?.gold ?? 0))} gold
                   </Badge>
                 </Show>
                 <Show when={props.spoils?.award}>
@@ -270,7 +271,7 @@ export default function VerdictDialog(props: VerdictDialogProps): JSX.Element {
                       </div>
                       <div class="flex flex-col gap-1">
                         <Meta class="text-left tabular-nums">
-                          {Math.round(side.dealt).toLocaleString()} damage ·{' '}
+                          {formatNumber(Math.round(side.dealt))} damage ·{' '}
                           {Math.round(share(side) * 100)}%
                         </Meta>
                         <div class="h-1.5 overflow-hidden rounded-full bg-line-soft">
@@ -312,7 +313,7 @@ export default function VerdictDialog(props: VerdictDialogProps): JSX.Element {
                                 </Show>
                               </div>
                               <span class="shrink-0 text-sm text-muted tabular-nums">
-                                {Math.round(unit.dealt).toLocaleString()}
+                                {formatNumber(Math.round(unit.dealt))}
                               </span>
                             </li>
                           )}
@@ -340,7 +341,7 @@ export default function VerdictDialog(props: VerdictDialogProps): JSX.Element {
             {(top) => (
               <Meta class="text-center">
                 ★ Best: {getSpeciesData(top().unit.species).name} ({sideName(top().side)}),{' '}
-                {Math.round(top().unit.dealt).toLocaleString()} damage
+                {formatNumber(Math.round(top().unit.dealt))} damage
               </Meta>
             )}
           </Show>

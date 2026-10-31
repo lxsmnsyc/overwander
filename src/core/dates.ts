@@ -1,4 +1,4 @@
-import { format, formatDistanceToNowStrict, isValid, parseISO } from 'date-fns';
+import { formatDate, formatMoment, formatRelative } from '../i18n/format';
 
 /**
  * Dates as somebody would say them.
@@ -6,10 +6,11 @@ import { format, formatDistanceToNowStrict, isValid, parseISO } from 'date-fns';
  * Everything stored is an instant or a local ISO stamp, which is the
  * right thing to keep and the wrong thing to show: "2026-08-12" is a
  * date a machine reads. What a player wants to know about a catch is
- * roughly when — this week, last spring — and what they want to know
+ * roughly when (this week, last spring), and what they want to know
  * about a battle they fought an hour ago is that it was an hour ago.
  *
- * Both are here so the whole game says them the same way.
+ * Both are here so the whole game says them the same way, in the
+ * active locale.
  */
 
 /**
@@ -21,10 +22,11 @@ const RECENT = 7 * 24 * 60 * 60 * 1000;
 
 /**
  * The stamp as a date, whichever way it was stored. A catch keeps a
- * local ISO string, a battle keeps epoch milliseconds
+ * local ISO string, which reads as local time; a battle keeps epoch
+ * milliseconds
  */
 function asDate(stamp: string | number): Date {
-  return typeof stamp === 'number' ? new Date(stamp) : parseISO(stamp);
+  return new Date(stamp);
 }
 
 /**
@@ -36,13 +38,13 @@ function asDate(stamp: string | number): Date {
 export default function describeDate(stamp: string | number, now = Date.now()): string {
   const when = asDate(stamp);
 
-  if (!isValid(when)) {
+  if (Number.isNaN(when.getTime())) {
     return String(stamp);
   }
   if (now - when.getTime() < RECENT) {
-    return formatDistanceToNowStrict(when, { addSuffix: true });
+    return formatRelative(when, now);
   }
-  return format(when, 'd MMM yyyy');
+  return formatDate(when);
 }
 
 /**
@@ -52,11 +54,11 @@ export default function describeDate(stamp: string | number, now = Date.now()): 
 export function describeMoment(stamp: string | number, now = Date.now()): string {
   const when = asDate(stamp);
 
-  if (!isValid(when)) {
+  if (Number.isNaN(when.getTime())) {
     return String(stamp);
   }
   if (now - when.getTime() < RECENT) {
-    return formatDistanceToNowStrict(when, { addSuffix: true });
+    return formatRelative(when, now);
   }
-  return format(when, 'd MMM yyyy, HH:mm');
+  return formatMoment(when);
 }

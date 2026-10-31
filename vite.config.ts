@@ -5,6 +5,8 @@ import { nitro } from 'nitro/vite';
 import solidMarked from 'vite-plugin-solid-marked';
 import { defineConfig, loadEnv } from 'vite';
 import yamlData from './scripts/vite/yaml.ts';
+import { paraglideVitePlugin } from '@inlang/paraglide-js';
+import COMPILE_OPTIONS from './src/i18n/compile-options.ts';
 
 /**
  * Nitro is the server runtime: it is what turns the app into something
@@ -76,6 +78,7 @@ export default defineConfig(({ mode }) => ({
   // config file of its own, so the plugin is all the wiring there is
   plugins: [
     yamlData(),
+    paraglideVitePlugin(COMPILE_OPTIONS),
     tailwindcss(),
     // The release pages under docs/ are imported as components, and
     // this is what turns them into JSX. It runs before SolidStart's

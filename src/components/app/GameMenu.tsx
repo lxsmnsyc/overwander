@@ -53,6 +53,7 @@ import FullscreenToggle, { fullscreenOffered } from './FullscreenToggle';
 import { ThemeToggle } from './theme';
 import { actionOf, forTheGame } from './keys';
 import settings, { type ClockFormat } from './settings';
+import { formatNumber } from '../../i18n/format';
 
 /**
  * How a switch is drawn, on the bar and over the keypad alike: the
@@ -321,7 +322,7 @@ export default function GameMenu(): JSX.Element {
   const period = (): string => TIME_OF_DAY_NAMES[getTimeOfDay(now())];
   const clock = (): string => worldClock(now(), settings().clock);
   const place = (): string => game.place() ?? 'Somewhere';
-  const purse = (): string => `${(gold() ?? 0).toLocaleString()} gold`;
+  const purse = (): string => `${formatNumber(gold() ?? 0)} gold`;
 
   /**
    * The server's clock for when, put into the player's own zone for

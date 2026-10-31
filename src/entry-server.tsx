@@ -2,6 +2,9 @@
 import { StartServer, createHandler } from '@solidjs/start/server';
 // The server keeps UTC, whatever the host machine is set to
 import './server/timezone';
+// Each request is rendered in the locale it asks for
+import './i18n/server';
+import { currentLocale } from './i18n/locale';
 
 /**
  * The theme, decided before anything is painted.
@@ -32,7 +35,7 @@ try {
 export default createHandler(() => (
   <StartServer
     document={({ assets, children, scripts }) => (
-      <html lang="en">
+      <html lang={currentLocale()}>
         <head>
           <meta charset="utf-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />

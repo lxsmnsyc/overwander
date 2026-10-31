@@ -36,6 +36,7 @@ import {
   TextField,
 } from '../styled';
 import createClientSignal from '../app/client-signal';
+import { formatDate } from '../../i18n/format';
 
 /**
  * Two-factor and passkeys. Nothing here is shown until the password is
@@ -212,7 +213,7 @@ function PasskeyList(props: {
           {(one) => (
             <ListRow>
               <span class="grow">{one.name === '' ? 'Passkey' : one.name}</span>
-              <Meta>added {new Date(one.createdAt).toLocaleDateString()}</Meta>
+              <Meta>added {formatDate(one.createdAt)}</Meta>
               <Button
                 tone="danger"
                 disabled={props.busy}

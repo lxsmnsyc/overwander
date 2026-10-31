@@ -8,6 +8,7 @@ import TeamRow, { TeamRows } from '../catches/TeamRow';
 import PlayerPlate from '../profile/PlayerPlate';
 import { Note } from '../styled';
 import type { SideSummary } from './battle-view/summary';
+import { formatNumber } from '../../i18n/format';
 
 /**
  * A raid's aftermath, team by team: each party as the fight left it,
@@ -140,7 +141,7 @@ function TeamsRows(props: TeamsPreviewProps & { loaded: Resource<PreviewRow[]> }
               </Show>
             </span>
             <span class="flex shrink-0 flex-col items-end">
-              <span class="font-black tabular-nums">{Math.round(dealt(row)).toLocaleString()}</span>
+              <span class="font-black tabular-nums">{formatNumber(Math.round(dealt(row)))}</span>
               <span class="text-xs text-muted">
                 {row.player === ''
                   ? 'dealt back'

@@ -2,8 +2,7 @@ import * as v from 'valibot';
 import { TYPE_IDS } from '../ids/names';
 import { TypeEffectiveness, Types } from '../ids/types';
 import typesFile from '../types.yaml';
-import namesFile from '../text/en/types.yaml';
-import { idOf, stringTable } from '../yaml';
+import { idOf, localeStringTable } from '../yaml';
 
 export { TypeEffectiveness, Types };
 
@@ -12,7 +11,11 @@ export { TypeEffectiveness, Types };
  * matched: a move's line on a catch sheet, a species' line on a dex
  * entry. `Unknown` is the type nothing is, and it says so
  */
-export const TYPE_NAMES = stringTable<Types>(TYPE_IDS, namesFile, 'text/en/types.yaml');
+export const TYPE_NAMES = localeStringTable<Types>(
+  TYPE_IDS,
+  import.meta.glob('../text/*/types.yaml', { eager: true, import: 'default' }),
+  'text/<locale>/types.yaml',
+);
 
 const MATCHUP_LIST = v.optional(v.array(v.string()), []);
 

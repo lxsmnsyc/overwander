@@ -64,7 +64,22 @@ export function chooseLocale(locale: Locale): Promise<void> | void {
  */
 const INTL_TAGS: Record<Locale, string> = {
   en: 'en-GB',
+  ja: 'ja-JP',
+  es: 'es-ES',
 };
+
+/**
+ * The locales a player can be served. Japanese and Spanish are built
+ * and loaded, but only their official names are written so far, so a
+ * request that asks for one is served English until the interface is
+ * translated too (translations batch 5)
+ */
+export const SHOWN_LOCALES: readonly Locale[] = [baseLocale];
+
+/** Whether a locale is one a player can be served yet */
+export function isShownLocale(locale: Locale): boolean {
+  return SHOWN_LOCALES.includes(locale);
+}
 
 /** The tag `Intl` formats a locale's numbers and dates with, the active locale's by default */
 export function getIntlTag(locale: Locale = currentLocale()): string {

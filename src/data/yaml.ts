@@ -240,3 +240,54 @@ export function extendRecord<T extends object, C extends Partial<T>>(base: T, ch
   // oxlint-disable-next-line typescript/no-unsafe-type-assertion
   return record as T & C;
 }
+
+/**
+ * `stringTable` for a file every locale writes: `files` is the glob of
+ * one file across the locale folders (`../text/*\/types.yaml`). Each
+ * entry a locale translates reads in the active locale
+ */
+export function localeStringTable<T extends number>(
+  ids: Readonly<Record<string, T>>,
+  files: Record<string, unknown>,
+  where: string,
+): Record<number, string> {
+  // English is the whole table, as `stringTable` reads it
+  const byLocale = splitLocales(files);
+  const englishFiles = Object.values(byLocale.english);
+
+  if (englishFiles.length !== 1) {
+    throw new Error(`${where}: expected one English file, found ${englishFiles.length}`);
+  }
+
+  const table = stringTable(ids, englishFiles[0], where);
+
+  // What each other locale calls each entry
+  const translated = new Map<number, Map<Locale, string>>();
+
+  for (const [locale, placed] of byLocale.overlays) {
+    for (const [path, file] of Object.entries(placed)) {
+      for (const [name, said] of Object.entries(v.parse(v.record(v.string(), v.string()), file))) {
+        const id = idOf(ids, name, `${path}: ${name}`);
+        let names = translated.get(id);
+
+        if (names == null) {
+          names = new Map();
+          translated.set(id, names);
+        }
+        names.set(locale, said);
+      }
+    }
+  }
+
+  // A translated entry reads the active locale, the rest stay plain English
+  for (const [id, names] of translated) {
+    const english = table[id];
+
+    Object.defineProperty(table, id, {
+      configurable: true,
+      enumerable: true,
+      get: () => names.get(currentLocale()) ?? english,
+    });
+  }
+  return table;
+}

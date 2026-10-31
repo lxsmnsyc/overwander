@@ -49,6 +49,14 @@ Loaded later, on top of the startup set:
 | `src/components/news/NewsTab.tsx`             | 917.0 KiB  | 111.2 KiB      | 81.4 KiB       |
 | Each NPC's `interact` script                  | 3 to 9 KiB | 1.5 to 4.1 KiB | 1.4 to 3.7 KiB |
 
+## Changes since the baseline
+
+| Change | Startup gzip | Difference |
+| --- | --- | --- |
+| Official ja and es names (i18n-official-names) | 1280.2 KiB | +79.4 KiB (+6.6%) |
+
+Every locale's registry text is bundled with English, so each locale costs every player its download, shown or not. `boot-lazy-registries` should load only the active locale's.
+
 ## Recording a change
 
 A change to what loads at boot runs `pnpm build && pnpm measure-boot` before and after, and puts both startup totals in its pull request. When a change moves the baseline for good, update the tables above with the date and commit.

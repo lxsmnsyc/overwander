@@ -5,6 +5,7 @@ import {
   extractLocaleFromRequest,
   overwriteGetLocale,
 } from './paraglide/runtime.js';
+import { isShownLocale } from './locale';
 
 /**
  * The server's locale, worked out from the request being rendered: the
@@ -29,7 +30,10 @@ function readRequestLocale(): Locale {
   let locale = decided.get(event.request);
 
   if (locale == null) {
-    locale = extractLocaleFromRequest(event.request);
+    const asked = extractLocaleFromRequest(event.request);
+
+    // A locale still being translated is not served, whatever the request asks
+    locale = isShownLocale(asked) ? asked : baseLocale;
     decided.set(event.request, locale);
   }
   return locale;

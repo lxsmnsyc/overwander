@@ -1,7 +1,7 @@
 ---
 id: i18n-registry-loader
 title: Registry text by locale
-status: active
+status: done
 priority: should
 type: feature
 outline: false

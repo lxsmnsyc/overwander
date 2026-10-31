@@ -2,9 +2,9 @@ import type * as SolidWeb from 'solid-js/web';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 /**
- * The server's locale comes from the request being rendered. Only
- * English exists so far, so whatever the request asks for resolves to
- * it; what this holds is that a request is read, and read once.
+ * The server's locale comes from the request being rendered. Japanese
+ * and Spanish are built but not served yet, so whatever the request
+ * asks for resolves to English.
  */
 
 const event = vi.hoisted(() => ({ current: undefined as { request: Request } | undefined }));
@@ -26,9 +26,16 @@ describe('the server locale', () => {
     expect(getLocale()).toBe('en');
   });
 
-  it('falls back to English for a language the game does not have', () => {
+  it('serves English to a request for a locale still being translated', () => {
     event.current = {
       request: new Request('http://localhost/', { headers: { 'accept-language': 'ja,es;q=0.8' } }),
+    };
+    expect(getLocale()).toBe('en');
+  });
+
+  it('serves English for a cookie naming a locale still being translated', () => {
+    event.current = {
+      request: new Request('http://localhost/', { headers: { cookie: 'overwander-locale=ja' } }),
     };
     expect(getLocale()).toBe('en');
   });

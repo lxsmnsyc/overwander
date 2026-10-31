@@ -78,6 +78,7 @@ Every eligible pokemon has its Zenith (`now`). The game then plays in Japanese a
 - Added 2026-10-26, spawn radius, caps and roaming (after Minecraft and wAthena) -> spawn-life-design, spawn-lifetimes, spawn-radius, spawn-roaming.
 - Added 2026-10-27, updating the dependencies -> deps-update. Migrating to Solid 2.0 -> solid-2 (outline, waits for Solid 2.0 stable; @solidjs/vite-plugin replaces @solidjs/start and vite-plugin-solid).
 - Added 2026-10-27, the e2e specs gone stale while they could not load (found by deps-update) -> e2e-specs.
+- Added 2026-10-31, bringing the code written before ts-style was followed in line with it -> ts-style-sweep.
 
 ## Open questions
 

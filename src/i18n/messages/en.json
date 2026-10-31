@@ -62,13 +62,8 @@
   "portal_shut": "The portal stayed shut. A key opens one, and only one.",
   "portal_keys": [
     {
-      "declarations": [
-        "input count",
-        "local countPlural = count: plural"
-      ],
-      "selectors": [
-        "countPlural"
-      ],
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
       "match": {
         "countPlural=one": "Portal Key",
         "countPlural=*": "Portal Keys"
@@ -581,13 +576,8 @@
   "menu_window_nests": "Nest eggs",
   "menu_wait_minutes": [
     {
-      "declarations": [
-        "input count",
-        "local countPlural = count: plural"
-      ],
-      "selectors": [
-        "countPlural"
-      ],
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
       "match": {
         "countPlural=one": "in {count} minute",
         "countPlural=*": "in {count} minutes"
@@ -596,13 +586,8 @@
   ],
   "menu_wait_hours": [
     {
-      "declarations": [
-        "input count",
-        "local countPlural = count: plural"
-      ],
-      "selectors": [
-        "countPlural"
-      ],
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
       "match": {
         "countPlural=one": "in {count} hour",
         "countPlural=*": "in {count} hours"
@@ -787,13 +772,8 @@
   "gifts_item_amount": "{amount} × {item}",
   "gifts_ledger_taken": [
     {
-      "declarations": [
-        "input count",
-        "local countPlural = count: plural"
-      ],
-      "selectors": [
-        "countPlural"
-      ],
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
       "match": {
         "countPlural=one": "taken once",
         "countPlural=*": "taken {count} times"
@@ -888,5 +868,6 @@
   "not_found_page_title": "Not Found",
   "not_found_title": "Page Not Found",
   "not_found_note": "Nothing is standing here.",
-  "not_found_back": "Back to the overworld."
+  "not_found_back": "Back to the overworld.",
+  "reset_done_link": "Sign in"
 }

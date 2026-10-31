@@ -5,15 +5,10 @@ import { m } from '../../src/i18n/paraglide/messages.js';
 /**
  * Every locale's messages file holds the keys English holds, and each
  * message asks for the parameters the English one does, so a call
- * written against English fills in every other locale too. A locale
- * may leave a key out only while its batch is still to be translated;
- * those are listed here and shrink as the batches land.
+ * written against English fills in every other locale too.
  */
 
 const LOCALES = ['ja', 'es'] as const;
-
-/** Keys whose batch has not been translated yet, which fall back to English */
-const UNTRANSLATED = /^(?:refusal|gift_reason)_/;
 
 type Message = string | { declarations?: string[]; match?: Record<string, string> }[];
 
@@ -77,7 +72,7 @@ describe.each(LOCALES)('the %s messages', (locale) => {
     const extra: string[] = [];
 
     for (const key of english.keys()) {
-      if (!translated.has(key) && !UNTRANSLATED.test(key)) {
+      if (!translated.has(key)) {
         missing.push(key);
       }
     }
@@ -115,6 +110,19 @@ describe.each(LOCALES)('the %s messages', (locale) => {
       }
     }
     expect(empty).toEqual([]);
+  });
+
+  it('say every refusal and gift reason in the locale, not in English', () => {
+    const inEnglish: string[] = [];
+
+    for (const [key, message] of translated) {
+      if (/^(?:refusal|gift_reason|auth_refusal|duel_refusal)_/.test(key)) {
+        if (JSON.stringify(message) === JSON.stringify(english.get(key))) {
+          inEnglish.push(key);
+        }
+      }
+    }
+    expect(inEnglish).toEqual([]);
   });
 
   it('are said in the locale asked for', () => {

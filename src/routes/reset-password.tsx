@@ -47,16 +47,13 @@ export default function ResetPasswordPage(): JSX.Element {
     <main class="mx-auto flex min-h-dvh w-full max-w-md flex-col justify-center px-4 py-16">
       <Title>{m.reset_page_title()}</Title>
       <Card title={m.reset_title()}>
-        <Show
-          when={token() !== ''}
-          fallback={<Note>{m.reset_no_token()}</Note>}
-        >
+        <Show when={token() !== ''} fallback={<Note>{m.reset_no_token()}</Note>}>
           <Show
             when={!done()}
             fallback={
               <Note>
                 {m.reset_done_before()}
-                <A href="/">{m.login_sign_in()}</A>
+                <A href="/">{m.reset_done_link()}</A>
                 {m.reset_done_after()}
               </Note>
             }

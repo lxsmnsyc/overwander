@@ -14,6 +14,33 @@ export function idOf<T>(table: Readonly<Record<string, T>>, name: string, where:
   return table[name];
 }
 
+const reversed = new WeakMap<object, Map<unknown, string>>();
+
+/**
+ * The name an id is written under in its table: the enum member's own
+ * key, which never changes with the locale. Anything that files by
+ * name (a sprite path, a sheet) uses this rather than a display name
+ */
+export function findIdName<T>(table: Readonly<Record<string, T>>, id: T): string {
+  // Each table is turned around once, the first time it is asked
+  let names = reversed.get(table);
+
+  if (names == null) {
+    names = new Map();
+    for (const [name, value] of Object.entries(table)) {
+      names.set(value, name);
+    }
+    reversed.set(table, names);
+  }
+
+  const name = names.get(id);
+
+  if (name == null) {
+    throw new Error(`No name for id ${String(id)}`);
+  }
+  return name;
+}
+
 export function idsOf<T>(table: Readonly<Record<string, T>>, names: string[], where: string): T[] {
   const ids: T[] = [];
 

@@ -1,5 +1,6 @@
 import type { Items } from '../ids/items';
-import { getItemData } from '../items';
+import { ITEM_IDS } from '../ids/names';
+import { findIdName } from '../yaml';
 
 /**
  * Where an apricorn tree is drawn from.
@@ -16,10 +17,13 @@ import { getItemData } from '../items';
  * [`scripts/art/apricorn-trees.ts`](../../../scripts/art/apricorn-trees.ts).
  */
 
-/** The colour half of an apricorn's name, which is how it is filed. */
+/**
+ * The colour half of an apricorn's name, which is how it is filed. Read
+ * off the enum's own key, since the name a player reads is translated
+ */
 export function apricornColour(item: Items): string {
-  return getItemData(item)
-    .name.replace(/ apricorn$/i, '')
+  return findIdName(ITEM_IDS, item)
+    .replace(/Apricorn$/, '')
     .toLowerCase();
 }
 

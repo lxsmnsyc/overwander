@@ -73,6 +73,7 @@ import {
   TabGroup,
   TabPane,
 } from '../styled';
+import { formatNumber } from '../../i18n/format';
 
 /**
  * The trainer's shelf, laid out the way the bag's tray is: a grid of
@@ -405,8 +406,8 @@ function LineSlot(props: {
     const next = props.standing?.next;
 
     return next == null
-      ? `${count().toLocaleString('en-US')} ${props.deed}. ${TIER_NAMES[tier()]}.`
-      : `${count().toLocaleString('en-US')} ${props.deed}. ${tierName(tier() + 1)} at ${next.toLocaleString('en-US')}.`;
+      ? `${formatNumber(count())} ${props.deed}. ${TIER_NAMES[tier()]}.`
+      : `${formatNumber(count())} ${props.deed}. ${tierName(tier() + 1)} at ${formatNumber(next)}.`;
   };
 
   return (

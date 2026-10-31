@@ -32,6 +32,7 @@ import {
   createPager,
   useToast,
 } from '../styled';
+import { formatDate } from '../../i18n/format';
 
 /**
  * The player's trades: offers to answer, offers waiting on somebody
@@ -348,7 +349,7 @@ export default function TradesTab(props: TradesTabProps): JSX.Element {
                     <Meta>
                       {SETTLED_WORDS[held().get(id)?.status ?? TradeStatus.Open] ?? ''}
                       {' · '}
-                      {new Date(held().get(id)?.resolvedAt ?? 0).toLocaleDateString()}
+                      {formatDate(held().get(id)?.resolvedAt ?? 0)}
                     </Meta>,
                   )
                 }

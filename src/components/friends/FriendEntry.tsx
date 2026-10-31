@@ -2,6 +2,7 @@ import { type JSX, type ParentProps, Show, children, from } from 'solid-js';
 import { type Profile, watchProfile } from '../../auth/profile';
 import { ListRow, Meta } from '../styled';
 import { PlayerFace } from '../profile/PlayerPlate';
+import { formatDate } from '../../i18n/format';
 
 /**
  * One trainer in a friends list, a request or a block: their face,
@@ -71,7 +72,7 @@ export default function FriendEntry(props: FriendEntryProps): JSX.Element {
       </Show>
       <Show when={props.when != null && (props.since ?? 0) > 0}>
         <Meta>
-          {props.when} {new Date(props.since ?? 0).toLocaleDateString()}
+          {props.when} {formatDate(props.since ?? 0)}
         </Meta>
       </Show>
       {/* On a line of their own on a phone, under the name and the date */}

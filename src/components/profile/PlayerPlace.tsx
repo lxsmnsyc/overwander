@@ -4,6 +4,7 @@ import { Badge, Meta, Note, Row } from '../styled';
 import { getPlayerPosition } from '../../auth/positions';
 import namePlace from '../../overworld/place';
 import { worldCell } from '../../overworld/grid';
+import { formatMoment } from '../../i18n/format';
 
 /**
  * Where a trainer is standing.
@@ -19,7 +20,7 @@ import { worldCell } from '../../overworld/grid';
 
 /** When they were last heard from, said the way a date is said locally */
 function walked(at: number): string {
-  return Number.isNaN(at) || at === 0 ? 'unknown' : new Date(at).toLocaleString();
+  return Number.isNaN(at) || at === 0 ? 'unknown' : formatMoment(at);
 }
 
 /**

@@ -15,6 +15,7 @@ import Listing from './Listing';
 import { listPlayers } from '../../auth/admin';
 import namePlace from '../../overworld/place';
 import { worldCell } from '../../overworld/grid';
+import { formatDate } from '../../i18n/format';
 
 /**
  * Everybody who has ever signed in.
@@ -27,7 +28,7 @@ import { worldCell } from '../../overworld/grid';
 
 /** When the account was opened, said the way a date is said locally */
 function opened(at: number): string {
-  return Number.isNaN(at) ? 'unknown' : new Date(at).toLocaleDateString();
+  return Number.isNaN(at) ? 'unknown' : formatDate(at);
 }
 
 /**

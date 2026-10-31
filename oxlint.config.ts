@@ -3,7 +3,7 @@ import { defineConfig } from 'oxlint';
 
 export default defineConfig({
   extends: [config],
-  ignorePatterns: ['.output'],
+  ignorePatterns: ['.output', 'src/i18n/paraglide'],
   rules: {
     'new-cap': 'off',
     'no-underscore-dangle': 'off',

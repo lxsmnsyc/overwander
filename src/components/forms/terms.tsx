@@ -7,6 +7,7 @@ import CatchPicker, { type CatchOption } from '../catches/catch-picker';
 import ItemSprite from '../items/ItemSprite';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import { Badge, Button, ListRow, Meta } from '../styled';
+import { formatNumber } from '../../i18n/format';
 
 /**
  * The furniture every counter shares, so each reads the same: what it
@@ -19,7 +20,7 @@ export type CounterCost = { gold: number } | { item: Items; amount?: number };
 /** The price written out: gold, or the item, how many, and its name */
 function costChip(cost: CounterCost): JSX.Element {
   if ('gold' in cost) {
-    return `${cost.gold.toLocaleString()} gold`;
+    return `${formatNumber(cost.gold)} gold`;
   }
   return (
     <>
@@ -34,7 +35,7 @@ export function CostBadge(props: { cost: CounterCost }): JSX.Element {
   return (
     <Badge tone="gold">
       {'gold' in props.cost ? (
-        `${props.cost.gold.toLocaleString()} gold`
+        `${formatNumber(props.cost.gold)} gold`
       ) : (
         <>
           <ItemSprite item={props.cost.item} size={16} label="" />
@@ -77,7 +78,7 @@ export function CounterTerms(props: CounterTermsProps): JSX.Element {
           <span
             class={`${TERM_CHIP} ${have().short ? 'bg-ember-soft text-ember-dark' : 'bg-line-soft'}`}
           >
-            You carry {have().amount.toLocaleString()} {have().unit}
+            You carry {formatNumber(have().amount)} {have().unit}
           </span>
         )}
       </Show>

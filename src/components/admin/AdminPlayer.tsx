@@ -13,6 +13,7 @@ import { Badge, Button, Card, Meta, Note, Row, Select, Status, TextField } from 
 import ProfileTab from '../profile/ProfileTab';
 import { createPasswordLink, getPlayer, setPlayerBan, setPlayerRole } from '../../auth/admin';
 import useStaff from './staff-context';
+import { formatDate } from '../../i18n/format';
 
 /**
  * One account, from both sides.
@@ -35,7 +36,7 @@ function asRole(role: string): Role {
 
 /** The day the account was opened, said the way a date is said locally */
 function opened(at: number): string {
-  return Number.isNaN(at) ? 'unknown' : new Date(at).toLocaleDateString();
+  return Number.isNaN(at) ? 'unknown' : formatDate(at);
 }
 
 /**

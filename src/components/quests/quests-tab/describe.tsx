@@ -38,6 +38,7 @@ import ItemSprite from '../../items/ItemSprite';
 import TypeBadge from '../../sprites/TypeBadge';
 import type { ComponentProps, JSX } from 'solid-js';
 import { Dynamic } from 'solid-js/web';
+import { formatNumber } from '../../../i18n/format';
 
 /** What a landmark kind is called on a requirement line */
 const LANDMARK_NAMES: Record<Landmark, string> = {
@@ -149,9 +150,9 @@ export function describeRequirement(requirement: QuestRequirement): string {
         ? `Beat ${count} trainer${count === 1 ? '' : 's'}`
         : `Beat ${count} ${FOE_NAMES[requirement.foe]}`;
     case Metric.GoldEarned:
-      return `Earn ${count.toLocaleString()} gold`;
+      return `Earn ${formatNumber(count)} gold`;
     case Metric.GoldSpent:
-      return `Spend ${count.toLocaleString()} gold`;
+      return `Spend ${formatNumber(count)} gold`;
     case Metric.Gifts:
       return `Claim ${count} mystery gift${count === 1 ? '' : 's'}`;
     case Metric.Bids:

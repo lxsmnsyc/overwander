@@ -12,6 +12,8 @@ import { ToastProvider } from './components/styled';
 import FormHost from './components/forms/FormHost';
 import { ROOT_HOST } from './components/styled/portal-host';
 import './app.css';
+// The browser reads the locale the server rendered the page in
+import './i18n/locale';
 
 // The world is inert until it is registered, and both the server
 // render and the client hydration need it before anything can be

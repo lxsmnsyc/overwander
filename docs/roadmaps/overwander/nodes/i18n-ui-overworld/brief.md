@@ -1,7 +1,7 @@
 ---
 id: i18n-ui-overworld
 title: Translate the overworld interface
-status: active
+status: done
 priority: should
 type: feature
 outline: false

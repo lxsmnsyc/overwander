@@ -17,15 +17,22 @@ const UNTRANSLATED = /^(?:refusal|gift_reason)_/;
 
 type Message = string | { declarations?: string[]; match?: Record<string, string> }[];
 
-function readMessages(locale: string): Record<string, Message> {
-  const read = JSON.parse(
-    readFileSync(new URL(`../../src/i18n/messages/${locale}.json`, import.meta.url), 'utf8'),
-  ) as Record<string, Message>;
-  const messages: Record<string, Message> = {};
+/** A plain message, or a list of variants as the message format writes them */
+function isMessage(value: unknown): value is Message {
+  return typeof value === 'string' || Array.isArray(value);
+}
 
-  for (const [key, message] of Object.entries(read)) {
-    if (key !== '$schema') {
-      messages[key] = message;
+function readMessages(locale: string): Map<string, Message> {
+  const read: unknown = JSON.parse(
+    readFileSync(new URL(`../../src/i18n/messages/${locale}.json`, import.meta.url), 'utf8'),
+  );
+  const messages = new Map<string, Message>();
+
+  if (typeof read === 'object' && read != null) {
+    for (const [key, message] of Object.entries(read)) {
+      if (key !== '$schema' && isMessage(message)) {
+        messages.set(key, message);
+      }
     }
   }
   return messages;
@@ -69,13 +76,13 @@ describe.each(LOCALES)('the %s messages', (locale) => {
     const missing: string[] = [];
     const extra: string[] = [];
 
-    for (const key of Object.keys(english)) {
-      if (!(key in translated) && !UNTRANSLATED.test(key)) {
+    for (const key of english.keys()) {
+      if (!translated.has(key) && !UNTRANSLATED.test(key)) {
         missing.push(key);
       }
     }
-    for (const key of Object.keys(translated)) {
-      if (!(key in english)) {
+    for (const key of translated.keys()) {
+      if (!english.has(key)) {
         extra.push(key);
       }
     }
@@ -86,8 +93,8 @@ describe.each(LOCALES)('the %s messages', (locale) => {
   it('ask for the parameters the English asks for', () => {
     const differing: string[] = [];
 
-    for (const [key, message] of Object.entries(translated)) {
-      const source = english[key];
+    for (const [key, message] of translated) {
+      const source = english.get(key);
 
       if (
         source != null &&
@@ -102,7 +109,7 @@ describe.each(LOCALES)('the %s messages', (locale) => {
   it('leave no message empty', () => {
     const empty: string[] = [];
 
-    for (const [key, message] of Object.entries(translated)) {
+    for (const [key, message] of translated) {
       if (typeof message === 'string' && message.trim() === '') {
         empty.push(key);
       }
@@ -111,7 +118,7 @@ describe.each(LOCALES)('the %s messages', (locale) => {
   });
 
   it('are said in the locale asked for', () => {
-    expect(m.ow_walk_on({}, { locale })).toBe(translated.ow_walk_on);
+    expect(m.ow_walk_on({}, { locale })).toBe(translated.get('ow_walk_on'));
     expect(m.ow_walk_on({}, { locale })).not.toBe(m.ow_walk_on({}, { locale: 'en' }));
   });
 });

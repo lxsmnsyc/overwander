@@ -3,6 +3,7 @@ import { Button, DialogActions, DialogSection, List, ListRow, RowButton } from '
 import { CostBadge, type CounterCost, CounterStep, CounterTerms } from './terms';
 import { type ActionForm, defineForm } from './form';
 import { openForm } from './stack';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /** One answer to a choice */
 export interface Choice<T> {
@@ -130,8 +131,8 @@ function ChoiceView<T>(props: {
 /** One of a handful of answers, typed by what they are */
 export function choiceForm<T>(): ActionForm<ChoiceInput<T>, T> {
   return defineForm<ChoiceInput<T>, T>({
-    title: (input) => input.title ?? 'Choose',
-    prompt: (input) => input.prompt ?? 'Choose one.',
+    title: (input) => input.title ?? m.choice_title(),
+    prompt: (input) => input.prompt ?? m.choice_prompt(),
     view: (props) => (
       <ChoiceView
         input={props.input}

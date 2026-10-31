@@ -33,6 +33,7 @@ import {
 import { Slots, getSlots } from '../../data/constants/slots';
 import { DuelBan } from '../../data/constants/duel-bans';
 import { duelRefusal } from '../../data/constants/duel-rules';
+import describeDuelRefusal from '../../i18n/duel-refusals';
 import LobbyRole from '../../model/lobby-role';
 import { DuelBlocker } from '../../model/duel-record';
 import { type Profile, getProfiles } from '../../auth/profile';
@@ -258,7 +259,10 @@ function LobbyRows(
             // A duel fields everyone healthy, so a fainted pokemon can come
             healed: true,
             // What the host barred stays in the box, greyed, with the reason
-            refuse: (option) => duelRefusal(option.caught, { maxBst: maxBst(), bans: bans() }),
+            refuse: (option) =>
+              describeDuelRefusal(
+                duelRefusal(option.caught, { maxBst: maxBst(), bans: bans() }),
+              ),
           })
             .then((catches) => {
               if (catches != null) {

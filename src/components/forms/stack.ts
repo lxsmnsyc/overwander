@@ -1,6 +1,7 @@
 import { type Accessor, type JSX, createSignal } from 'solid-js';
 import type { DialogWidth } from '../styled';
 import { type ActionForm, widthOf } from './form';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * What one dialog on the stack draws. Every part is a thunk, read
@@ -121,7 +122,7 @@ export async function openForm<I, R>(form: ActionForm<I, R>, input: I): Promise<
             cancel: () => {
               answer(null);
             },
-            leave: 'Never mind',
+            leave: m.ui_never_mind(),
           }),
         onDismiss: () => {
           answer(null);

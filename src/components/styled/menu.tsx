@@ -8,6 +8,7 @@ import {
   PopoverPanel,
   Transition,
 } from 'terracotta';
+import { m } from '../../i18n/paraglide/messages.js';
 import useDropdown from './dropdown';
 import { usePortalHost } from './portal-host';
 import { SHEER } from './transition';
@@ -244,7 +245,7 @@ export default function Menu(props: MenuProps): JSX.Element {
                     setOpen(false);
                   }}
                 >
-                  Never mind
+                  {m.ui_never_mind()}
                 </button>
               </Show>
             </PopoverPanel>

@@ -14,6 +14,7 @@ import {
 import FriendEntry from '../friends/FriendEntry';
 import { GameDialog, useGame } from '../app/game-context';
 import ProfileSection from '../../game/session/profile-section';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * Everything waiting on the player, in one list.
@@ -25,14 +26,14 @@ import ProfileSection from '../../game/session/profile-section';
  */
 
 /** What each kind is called, and the colour it is read in */
-const KIND_LABELS: Record<NoticeKind, string> = {
-  [NoticeKind.RaidInvite]: 'Raid',
-  [NoticeKind.DuelInvite]: 'Battle',
-  [NoticeKind.FriendRequest]: 'Friend',
-  [NoticeKind.TradeOffer]: 'Trade',
-  [NoticeKind.AuctionWon]: 'Auction',
-  [NoticeKind.AuctionUnsold]: 'Auction',
-  [NoticeKind.AuctionOutbid]: 'Auction',
+const KIND_LABELS: Record<NoticeKind, () => string> = {
+  [NoticeKind.RaidInvite]: m.notices_label_raid_invite,
+  [NoticeKind.DuelInvite]: m.notices_label_duel_invite,
+  [NoticeKind.FriendRequest]: m.notices_label_friend_request,
+  [NoticeKind.TradeOffer]: m.notices_label_trade_offer,
+  [NoticeKind.AuctionWon]: m.notices_label_auction_won,
+  [NoticeKind.AuctionUnsold]: m.notices_label_auction_unsold,
+  [NoticeKind.AuctionOutbid]: m.notices_label_auction_outbid,
 };
 
 const KIND_TONES: Record<NoticeKind, BadgeTone> = {
@@ -46,25 +47,25 @@ const KIND_TONES: Record<NoticeKind, BadgeTone> = {
 };
 
 /** What the row says happened, in the words the panel behind it uses */
-const KIND_LINES: Record<NoticeKind, string> = {
-  [NoticeKind.RaidInvite]: 'called you into a raid',
-  [NoticeKind.DuelInvite]: 'called you into a battle',
-  [NoticeKind.FriendRequest]: 'asked to be friends',
-  [NoticeKind.TradeOffer]: 'offered you a trade',
-  [NoticeKind.AuctionWon]: 'You won a lot. It is waiting to be collected.',
-  [NoticeKind.AuctionUnsold]: 'Nobody bid on your lot. Take it back.',
-  [NoticeKind.AuctionOutbid]: 'You have been outbid, and it is still open.',
+const KIND_LINES: Record<NoticeKind, () => string> = {
+  [NoticeKind.RaidInvite]: m.notices_line_raid_invite,
+  [NoticeKind.DuelInvite]: m.notices_line_duel_invite,
+  [NoticeKind.FriendRequest]: m.notices_line_friend_request,
+  [NoticeKind.TradeOffer]: m.notices_line_trade_offer,
+  [NoticeKind.AuctionWon]: m.notices_line_auction_won,
+  [NoticeKind.AuctionUnsold]: m.notices_line_auction_unsold,
+  [NoticeKind.AuctionOutbid]: m.notices_line_auction_outbid,
 };
 
 /** What pressing the row says it will do */
-const KIND_ACTIONS: Record<NoticeKind, string> = {
-  [NoticeKind.RaidInvite]: 'Open the lobby',
-  [NoticeKind.DuelInvite]: 'Open the lobby',
-  [NoticeKind.FriendRequest]: 'Open requests',
-  [NoticeKind.TradeOffer]: 'Open trades',
-  [NoticeKind.AuctionWon]: 'Open bids',
-  [NoticeKind.AuctionUnsold]: 'Open selling',
-  [NoticeKind.AuctionOutbid]: 'Open bids',
+const KIND_ACTIONS: Record<NoticeKind, () => string> = {
+  [NoticeKind.RaidInvite]: m.notices_action_raid_invite,
+  [NoticeKind.DuelInvite]: m.notices_action_duel_invite,
+  [NoticeKind.FriendRequest]: m.notices_action_friend_request,
+  [NoticeKind.TradeOffer]: m.notices_action_trade_offer,
+  [NoticeKind.AuctionWon]: m.notices_action_auction_won,
+  [NoticeKind.AuctionUnsold]: m.notices_action_auction_unsold,
+  [NoticeKind.AuctionOutbid]: m.notices_action_auction_outbid,
 };
 
 /**
@@ -120,7 +121,7 @@ export default function NotificationsTab(props: NotificationsTabProps): JSX.Elem
   return (
     <Show
       when={props.notices.length > 0}
-      fallback={<Note>Nothing is waiting on you. Invitations and offers land here.</Note>}
+      fallback={<Note>{m.notices_empty()}</Note>}
     >
       <List>
         <For each={waiting.shown()}>
@@ -129,15 +130,15 @@ export default function NotificationsTab(props: NotificationsTabProps): JSX.Elem
               when={notice.from}
               fallback={
                 <ListRow>
-                  <Badge tone={KIND_TONES[notice.kind]}>{KIND_LABELS[notice.kind]}</Badge>
-                  <span class="grow text-sm">{KIND_LINES[notice.kind]}</span>
+                  <Badge tone={KIND_TONES[notice.kind]}>{KIND_LABELS[notice.kind]()}</Badge>
+                  <span class="grow text-sm">{KIND_LINES[notice.kind]()}</span>
                   <Button
                     tone="primary"
                     onClick={() => {
                       open(notice);
                     }}
                   >
-                    {KIND_ACTIONS[notice.kind]}
+                    {KIND_ACTIONS[notice.kind]()}
                   </Button>
                 </ListRow>
               }
@@ -145,16 +146,16 @@ export default function NotificationsTab(props: NotificationsTabProps): JSX.Elem
               {/* Somebody sent it, so it is drawn as a person: the same
                   row a friends list uses, with what they did after it */}
               {(sender) => (
-                <FriendEntry uid={sender()} since={notice.at} when="">
-                  <Badge tone={KIND_TONES[notice.kind]}>{KIND_LABELS[notice.kind]}</Badge>
-                  <Meta>{KIND_LINES[notice.kind]}</Meta>
+                <FriendEntry uid={sender()} since={notice.at} when={(date) => date}>
+                  <Badge tone={KIND_TONES[notice.kind]}>{KIND_LABELS[notice.kind]()}</Badge>
+                  <Meta>{KIND_LINES[notice.kind]()}</Meta>
                   <Button
                     tone="primary"
                     onClick={() => {
                       open(notice);
                     }}
                   >
-                    {KIND_ACTIONS[notice.kind]}
+                    {KIND_ACTIONS[notice.kind]()}
                   </Button>
                 </FriendEntry>
               )}

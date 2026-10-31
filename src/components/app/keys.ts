@@ -12,6 +12,8 @@
  * north on the board is up on a list.
  */
 
+import { m } from '../../i18n/paraglide/messages.js';
+
 /** A way about the world, which is what the arrows are always for */
 export type Direction = 'up' | 'down' | 'left' | 'right';
 
@@ -39,13 +41,13 @@ export const DEFAULT_BINDS: KeyBinds = {
  * for the direction rather than for what the overworld does with it,
  * since the overworld is not the only thing that will ask
  */
-export const ACTION_NAMES: Record<GameAction, string> = {
-  up: 'Up',
-  down: 'Down',
-  left: 'Left',
-  right: 'Right',
-  interact: 'Interact',
-  menu: 'Menu',
+export const ACTION_NAMES: Record<GameAction, () => string> = {
+  up: m.key_action_up,
+  down: m.key_action_down,
+  left: m.key_action_left,
+  right: m.key_action_right,
+  interact: m.key_action_interact,
+  menu: m.menu_label,
 };
 
 /** The order they are offered in, which is the shape of the keys */

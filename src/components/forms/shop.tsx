@@ -9,6 +9,7 @@ import {
   TabGroup,
   TabPane,
 } from '../styled';
+import { m } from '../../i18n/paraglide/messages.js';
 import { type FormProps, defineForm } from './form';
 import { ItemTray, type PickItemInput } from './pick-item';
 
@@ -49,8 +50,8 @@ function ShopView(props: FormProps<ShopInput, ShopPick>): JSX.Element {
           class="flex flex-col gap-3"
         >
           <TabBar class="self-start">
-            <TabButton value={Side.Buy}>Buy</TabButton>
-            <TabButton value={Side.Sell}>Sell</TabButton>
+            <TabButton value={Side.Buy}>{m.shop_buy()}</TabButton>
+            <TabButton value={Side.Sell}>{m.shop_sell()}</TabButton>
           </TabBar>
           <TabPane value={Side.Buy}>
             <div class="flex flex-col gap-3">
@@ -83,7 +84,7 @@ function ShopView(props: FormProps<ShopInput, ShopPick>): JSX.Element {
 
 /** Buying from a counter or selling to it, whichever tray the player uses */
 export const ShopForm = defineForm<ShopInput, ShopPick>({
-  title: (input) => input.buy.title ?? 'The counter',
-  prompt: (input) => input.buy.prompt ?? 'Buy from the crate, or sell from your bag.',
+  title: (input) => input.buy.title ?? m.shop_title(),
+  prompt: (input) => input.buy.prompt ?? m.shop_prompt(),
   view: (props) => <ShopView {...props} />,
 });

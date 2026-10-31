@@ -1,6 +1,7 @@
 import { type JSX, type ParentProps, Show, children, from } from 'solid-js';
 import { type Profile, watchProfile } from '../../auth/profile';
 import { ListRow, Meta } from '../styled';
+import { m } from '../../i18n/paraglide/messages.js';
 import { PlayerFace } from '../profile/PlayerPlate';
 import { formatDate } from '../../i18n/format';
 
@@ -17,8 +18,8 @@ export interface FriendEntryProps extends ParentProps {
   uid: string;
   /** When the tie was made or asked, in milliseconds; zero for none */
   since?: number;
-  /** What that date means: "Friends since", "Asked" */
-  when?: string;
+  /** The date said with what it means: "Friends since 12 Aug 2026" */
+  when?: (date: string) => string;
   /**
    * Open their profile. The face and the name become the way in, so a
    * row that had a View button beside three others is a row with one
@@ -38,7 +39,7 @@ export default function FriendEntry(props: FriendEntryProps): JSX.Element {
   const called = (): string => {
     const nickname = profile()?.nickname ?? '';
 
-    return nickname === '' ? 'Unnamed trainer' : nickname;
+    return nickname === '' ? m.friends_unnamed() : nickname;
   };
 
   const actions = children(() => props.children);
@@ -60,7 +61,7 @@ export default function FriendEntry(props: FriendEntryProps): JSX.Element {
             class="flex min-w-0 grow cursor-pointer items-center gap-2 rounded-lg border-0
               bg-transparent p-0 text-left shadow-none transition-colors hover:text-tide-dark
               active:translate-y-0"
-            aria-label={`${called()}, open their profile`}
+            aria-label={m.friends_open_profile({ name: called() })}
             onClick={() => {
               open()();
             }}
@@ -71,9 +72,7 @@ export default function FriendEntry(props: FriendEntryProps): JSX.Element {
         )}
       </Show>
       <Show when={props.when != null && (props.since ?? 0) > 0}>
-        <Meta>
-          {props.when} {formatDate(props.since ?? 0)}
-        </Meta>
+        <Meta>{props.when?.(formatDate(props.since ?? 0))}</Meta>
       </Show>
       {/* On a line of their own on a phone, under the name and the date */}
       <Show when={actions.toArray().length > 0}>

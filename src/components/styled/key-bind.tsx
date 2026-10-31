@@ -1,5 +1,6 @@
 import { type JSX, Show, createSignal, onCleanup } from 'solid-js';
 import Button from './button';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * One key, and the press that changes it.
@@ -22,7 +23,7 @@ export interface KeyBindProps {
 /** A key as it is worth reading: the space bar has no glyph of its own */
 export function keyLabel(key: string): string {
   if (key === ' ') {
-    return 'Space';
+    return m.key_space();
   }
   return key.length === 1 ? key.toUpperCase() : key;
 }
@@ -81,12 +82,12 @@ export default function KeyBind(props: KeyBindProps): JSX.Element {
         // key name on its own says nothing about what it is for
         aria-label={
           listening()
-            ? `Press a key for ${props.label}`
-            : `${props.label}, ${keyLabel(props.value)}`
+            ? m.key_press_for({ label: props.label })
+            : m.key_bound({ label: props.label, key: keyLabel(props.value) })
         }
       >
         <span class="min-w-16 text-center font-mono">
-          {listening() ? 'Press a key' : keyLabel(props.value)}
+          {listening() ? m.key_press() : keyLabel(props.value)}
         </span>
       </Button>
     </div>

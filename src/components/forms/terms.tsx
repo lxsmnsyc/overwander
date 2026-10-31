@@ -8,6 +8,7 @@ import ItemSprite from '../items/ItemSprite';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import { Badge, Button, ListRow, Meta } from '../styled';
 import { formatNumber } from '../../i18n/format';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * The furniture every counter shares, so each reads the same: what it
@@ -20,12 +21,12 @@ export type CounterCost = { gold: number } | { item: Items; amount?: number };
 /** The price written out: gold, or the item, how many, and its name */
 function costChip(cost: CounterCost): JSX.Element {
   if ('gold' in cost) {
-    return `${formatNumber(cost.gold)} gold`;
+    return m.ui_gold({ amount: formatNumber(cost.gold) });
   }
   return (
     <>
       <ItemSprite item={cost.item} size={16} label="" />
-      {cost.amount ?? 1} {getItemData(cost.item).name}
+      {m.terms_item_cost({ count: cost.amount ?? 1, item: getItemData(cost.item).name })}
     </>
   );
 }
@@ -35,7 +36,7 @@ export function CostBadge(props: { cost: CounterCost }): JSX.Element {
   return (
     <Badge tone="gold">
       {'gold' in props.cost ? (
-        `${formatNumber(props.cost.gold)} gold`
+        m.ui_gold({ amount: formatNumber(props.cost.gold) })
       ) : (
         <>
           <ItemSprite item={props.cost.item} size={16} label="" />
@@ -78,7 +79,7 @@ export function CounterTerms(props: CounterTermsProps): JSX.Element {
           <span
             class={`${TERM_CHIP} ${have().short ? 'bg-ember-soft text-ember-dark' : 'bg-line-soft'}`}
           >
-            You carry {formatNumber(have().amount)} {have().unit}
+            {m.terms_you_carry({ amount: formatNumber(have().amount), unit: have().unit })}
           </span>
         )}
       </Show>
@@ -134,12 +135,15 @@ export function PickedRow(props: {
       </span>
       <span class="flex min-w-0 grow flex-col text-left">
         <span class="truncate font-semibold">
-          Lv. {props.option.caught.level} {getCatchName(props.option.caught)}
+          {m.ui_level_name({
+            level: props.option.caught.level,
+            name: getCatchName(props.option.caught),
+          })}
         </span>
         <Show when={props.detail}>{(said) => <Meta class="truncate">{said()}</Meta>}</Show>
       </span>
       <Button disabled={props.busy} onClick={props.onChange}>
-        Change
+        {m.ui_change()}
       </Button>
     </ListRow>
   );
@@ -155,9 +159,9 @@ export function CounterSpent(props: {
 }): JSX.Element {
   return (
     <div class="flex flex-col gap-1 rounded-xl border-2 border-dashed border-line px-3 py-3.5 text-center">
-      <span class="text-sm font-extrabold">{props.title ?? 'Done for this while'}</span>
+      <span class="text-sm font-extrabold">{props.title ?? m.terms_spent_title()}</span>
       <span class={`text-xs text-muted ${props.quoted === false ? '' : 'italic'}`}>
-        {props.quoted === false ? props.says : `“${props.says}”`}
+        {props.quoted === false ? props.says : m.ui_quoted({ text: props.says })}
       </span>
     </div>
   );
@@ -197,7 +201,7 @@ export function PickOne(props: PickOneProps): JSX.Element {
       when={chosen()}
       fallback={
         <>
-          <CounterStep>Choose a pokemon</CounterStep>
+          <CounterStep>{m.terms_choose_pokemon()}</CounterStep>
           <CatchPicker
             inline
             disabled={props.disabled}

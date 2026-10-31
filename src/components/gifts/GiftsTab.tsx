@@ -48,6 +48,7 @@ import {
   useToast,
 } from '../styled';
 import describeGiftReason from '../../i18n/gift-reasons';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * What the game is holding for the player, and the taking of it.
@@ -64,12 +65,16 @@ import describeGiftReason from '../../i18n/gift-reasons';
  * else: the level, the name, and the star that says it sparkles
  */
 function describeGiven(gift: CatchGift | EncounterGift): string {
-  return `Lv. ${gift.level} ${getSpeciesData(gift.species).name}${gift.shiny ? ' ✦' : ''}`;
+  const name = getSpeciesData(gift.species).name;
+
+  return gift.shiny
+    ? m.gifts_given_shiny({ level: gift.level, name })
+    : m.ui_level_name({ level: gift.level, name });
 }
 
 function describeGift(gift: MysteryGift): string {
   return gift.kind === GiftKind.Item
-    ? `${gift.amount} × ${describeItem(gift.item)}`
+    ? m.gifts_item_amount({ amount: gift.amount, item: describeItem(gift.item) })
     : describeGiven(gift);
 }
 
@@ -102,21 +107,18 @@ function isItemRow(row: ShelfRow): row is ItemRow {
 }
 
 function takenTimes(claims: number): string {
-  if (claims === 0) {
-    return 'not taken yet';
-  }
-  return claims === 1 ? 'taken once' : `taken ${claims} times`;
+  return claims === 0 ? m.gifts_ledger_not_taken() : m.gifts_ledger_taken({ count: claims });
 }
 
 /** The ledger's line: whose it is, and how it has moved since */
 function describeLedger(row: GiftLedgerRow): string {
   const parts = [
-    row.recipient == null ? 'For everybody' : `For ${row.recipient}`,
+    row.recipient == null ? m.gifts_ledger_everybody() : m.gifts_ledger_for({ name: row.recipient }),
     takenTimes(row.claims),
   ];
 
   if (row.expired) {
-    parts.push('expired');
+    parts.push(m.gifts_ledger_expired());
   }
   return parts.join(' · ');
 }
@@ -126,7 +128,7 @@ function describeLedger(row: GiftLedgerRow): string {
  * is put in front of the player, and the ball is theirs to throw
  */
 function verbFor(gift: CatchGift | EncounterGift): string {
-  return gift.kind === GiftKind.Encounter ? 'Meet' : 'Claim';
+  return gift.kind === GiftKind.Encounter ? m.gifts_meet() : m.gifts_claim();
 }
 
 /**
@@ -135,7 +137,7 @@ function verbFor(gift: CatchGift | EncounterGift): string {
  * be on screen at a time
  */
 function looking(): JSX.Element {
-  return <Note class="text-center">Looking…</Note>;
+  return <Note class="text-center">{m.ui_looking()}</Note>;
 }
 
 /**
@@ -214,7 +216,10 @@ function asSquare(gift: CatchGift | EncounterGift): BoxEntry {
     egg: false,
     progress: 0,
     fainted: false,
-    label: `${verbFor(gift)} ${describeGiven(gift)}`,
+    label:
+      gift.kind === GiftKind.Encounter
+        ? m.gifts_meet_label({ gift: describeGiven(gift) })
+        : m.gifts_claim_label({ gift: describeGiven(gift) }),
   };
 }
 
@@ -298,10 +303,8 @@ function GiftShelf(props: {
   const meetings = createMemo(() => squaresOf(GiftKind.Encounter));
 
   /** What an empty tab says, which for the ledger is about everybody */
-  const emptily = (what: string): string =>
-    props.everything === true
-      ? `No ${what} have been offered yet.`
-      : `No ${what} are waiting for you.`;
+  const emptily = (offered: () => string, waiting: () => string): string =>
+    props.everything === true ? offered() : waiting();
 
   const say = (message: string, tone: ToastTone): void => {
     toast.push({ message, tone });
@@ -317,13 +320,13 @@ function GiftShelf(props: {
     claimMysteryGift(gift)
       .then((claimed) => {
         if (claimed == null) {
-          say('That gift is no longer waiting.', 'ember');
+          say(m.gifts_gone(), 'ember');
           return;
         }
         // A meeting is not received: it is standing there, and the
         // shelf gets out of the way so the player can throw at it
         if (claimed.encounter != null) {
-          say(`${describeGift(claimed.gift)} is waiting for you.`, 'leaf');
+          say(m.gifts_meeting_waiting({ gift: describeGift(claimed.gift) }), 'leaf');
           game.setDialog(GameDialog.None);
           game.setEncounter(claimed.encounter);
           return;
@@ -331,9 +334,9 @@ function GiftShelf(props: {
         // An item is drawn rather than named, the way every other
         // payout in the game says what it handed over
         if (claimed.gift.kind === GiftKind.Item) {
-          sayItems(toast, [claimed.gift], 'Mystery gift');
+          sayItems(toast, [claimed.gift], m.gifts_mystery_gift());
         } else {
-          say(`Received ${describeGift(claimed.gift)}.`, 'leaf');
+          say(m.gifts_received({ gift: describeGift(claimed.gift) }), 'leaf');
         }
         // A pokemon out of a gift is a new record, and the box behind
         // this panel is showing the old list
@@ -343,7 +346,7 @@ function GiftShelf(props: {
         game.touchRecords();
       })
       .catch(() => {
-        say('That gift could not be taken.', 'ember');
+        say(m.gifts_failed(), 'ember');
       })
       .finally(() => {
         setTaking(null);
@@ -358,7 +361,10 @@ function GiftShelf(props: {
       cells.push({
         item: gift.item,
         amount: gift.amount,
-        said: `${props.viewOnly === true ? '' : 'Claim '}${describeGift(gift)}`,
+        said:
+          props.viewOnly === true
+            ? describeGift(gift)
+            : m.gifts_claim_label({ gift: describeGift(gift) }),
         // Claiming is the only thing a shelf square does, so the
         // square is the button. A visited tray has none at all
         actions:
@@ -366,7 +372,7 @@ function GiftShelf(props: {
             ? []
             : [
                 {
-                  label: 'Claim',
+                  label: m.gifts_claim(),
                   tone: 'primary' as const,
                   disabled: taking() != null,
                   onPress: () => {
@@ -397,8 +403,8 @@ function GiftShelf(props: {
         <HoverCard
           class="block size-full"
           trigger={<span class="block size-full" />}
-          title="Gift"
-          kind="Mystery gift"
+          title={m.gifts_card_title()}
+          kind={m.gifts_mystery_gift()}
           footer={
             <Show when={props.viewOnly !== true && found(entry().id)}>
               {(row) => (
@@ -466,16 +472,16 @@ function GiftShelf(props: {
       class="flex flex-col gap-3"
     >
       <TabBar>
-        <TabButton value={GiftView.Catches}>{counted('Catches', handed().length)}</TabButton>
-        <TabButton value={GiftView.Items}>{counted('Items', things().length)}</TabButton>
+        <TabButton value={GiftView.Catches}>{counted(m.gifts_tab_catches(), handed().length)}</TabButton>
+        <TabButton value={GiftView.Items}>{counted(m.gifts_tab_items(), things().length)}</TabButton>
         <TabButton value={GiftView.Encounters}>
-          {counted('Encounters', meetings().length)}
+          {counted(m.gifts_tab_encounters(), meetings().length)}
         </TabButton>
       </TabBar>
       <TabPane value={GiftView.Catches}>
         <Show
           when={handed().length > 0}
-          fallback={<Note class="text-center">{emptily('pokemon')}</Note>}
+          fallback={<Note class="text-center">{emptily(m.gifts_offered_pokemon, m.gifts_waiting_pokemon)}</Note>}
         >
           {box(handed())}
         </Show>
@@ -483,7 +489,7 @@ function GiftShelf(props: {
       <TabPane value={GiftView.Items}>
         <Show
           when={things().length > 0}
-          fallback={<Note class="text-center">{emptily('items')}</Note>}
+          fallback={<Note class="text-center">{emptily(m.gifts_offered_items, m.gifts_waiting_items)}</Note>}
         >
           <ItemGrid entries={itemCells()} />
         </Show>
@@ -491,7 +497,7 @@ function GiftShelf(props: {
       <TabPane value={GiftView.Encounters}>
         <Show
           when={meetings().length > 0}
-          fallback={<Note class="text-center">{emptily('meetings')}</Note>}
+          fallback={<Note class="text-center">{emptily(m.gifts_offered_meetings, m.gifts_waiting_meetings)}</Note>}
         >
           {box(meetings())}
         </Show>

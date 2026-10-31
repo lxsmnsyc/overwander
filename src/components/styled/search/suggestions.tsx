@@ -2,6 +2,7 @@ import { For, type JSX, Show, createEffect, createSignal } from 'solid-js';
 import { Portal } from 'solid-js/web';
 import { Transition } from 'terracotta';
 import type { QuerySuggestion } from '../../../core/query';
+import { m } from '../../../i18n/paraglide/messages.js';
 import { usePortalHost } from '../portal-host';
 import { SHEER } from '../transition';
 
@@ -89,7 +90,7 @@ export default function Suggestions(props: SuggestionsProps): JSX.Element {
           }}
           id={props.id}
           role="listbox"
-          aria-label="Suggestions"
+          aria-label={m.search_suggestions()}
           class="flex max-h-64 list-none flex-col gap-0.5 overflow-y-auto rounded-xl border-2
           border-tide bg-paper p-1 shadow-float"
         >

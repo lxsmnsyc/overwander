@@ -54,6 +54,7 @@ import { ThemeToggle } from './theme';
 import { actionOf, forTheGame } from './keys';
 import settings, { type ClockFormat } from './settings';
 import { formatNumber } from '../../i18n/format';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * How a switch is drawn, on the bar and over the keypad alike: the
@@ -93,14 +94,14 @@ const CHIP = `shrink-0 cursor-pointer rounded-full border-2 border-tide bg-trans
  * keys never move
  */
 interface MenuEntry {
-  label: string;
+  label: () => string;
   dialog?: GameDialog;
   icon: (props: ComponentProps<'svg'>) => JSX.Element;
 }
 
 /** A labelled row of keys. A new key joins its own row, so no other key moves */
 interface MenuGroup {
-  label: string;
+  label: () => string;
   entries: MenuEntry[];
 }
 
@@ -116,29 +117,29 @@ const PROFILE_NOTICES = new Set<NoticeKind>([
 // world, which is what makes trading somewhere a player goes
 const GROUPS: MenuGroup[] = [
   {
-    label: 'You',
+    label: m.menu_group_you,
     entries: [
-      { label: 'Boxes', dialog: GameDialog.Catches, icon: BoxIcon },
-      { label: 'Bag', dialog: GameDialog.Inventory, icon: BagIcon },
-      { label: 'Pokedex', dialog: GameDialog.Pokedex, icon: SearchIcon },
-      { label: 'Profile', dialog: GameDialog.Profile, icon: UserIcon },
+      { label: m.panel_boxes, dialog: GameDialog.Catches, icon: BoxIcon },
+      { label: m.panel_bag, dialog: GameDialog.Inventory, icon: BagIcon },
+      { label: m.panel_pokedex, dialog: GameDialog.Pokedex, icon: SearchIcon },
+      { label: m.panel_profile, dialog: GameDialog.Profile, icon: UserIcon },
     ],
   },
   {
-    label: 'Play',
+    label: m.menu_group_play,
     entries: [
-      { label: 'World', dialog: GameDialog.Map, icon: MapIcon },
-      { label: 'Quests', dialog: GameDialog.Quests, icon: TrophyIcon },
-      { label: 'Battle', dialog: GameDialog.Battles, icon: SwordsIcon },
-      { label: 'Raids', dialog: GameDialog.Raids, icon: FireIcon },
+      { label: m.menu_world, dialog: GameDialog.Map, icon: MapIcon },
+      { label: m.panel_quests, dialog: GameDialog.Quests, icon: TrophyIcon },
+      { label: m.panel_battle, dialog: GameDialog.Battles, icon: SwordsIcon },
+      { label: m.panel_raids, dialog: GameDialog.Raids, icon: FireIcon },
     ],
   },
   {
-    label: 'Inbox',
+    label: m.menu_group_inbox,
     entries: [
-      { label: 'Notices', dialog: GameDialog.Notifications, icon: BellIcon },
-      { label: 'Gifts', dialog: GameDialog.Gifts, icon: GiftIcon },
-      { label: 'News', dialog: GameDialog.News, icon: NewsIcon },
+      { label: m.menu_notices, dialog: GameDialog.Notifications, icon: BellIcon },
+      { label: m.panel_gifts, dialog: GameDialog.Gifts, icon: GiftIcon },
+      { label: m.panel_news, dialog: GameDialog.News, icon: NewsIcon },
     ],
   },
 ];
@@ -174,7 +175,11 @@ function worldClock(at: number, format: ClockFormat): string {
   }
   // Midnight and noon are both twelve, which is the one case a
   // remainder gets wrong
-  return `${hour % 12 === 0 ? 12 : hour % 12}:${past} ${hour < 12 ? 'am' : 'pm'}`;
+  const twelve = hour % 12 === 0 ? 12 : hour % 12;
+
+  return hour < 12
+    ? m.menu_clock_am({ hour: twelve, minutes: past })
+    : m.menu_clock_pm({ hour: twelve, minutes: past });
 }
 
 /**
@@ -182,13 +187,13 @@ function worldClock(at: number, format: ClockFormat): string {
  * countdown: when the next one lands is what somebody standing in a
  * chunk is deciding on
  */
-const WINDOWS: [called: string, every: number][] = [
-  ['Pokemon', SNAPSHOT_INTERVAL],
-  ['Caches and patches', LANDMARK_INTERVAL],
-  ['Weather', WEATHER_INTERVAL],
-  ['Happenings', PHENOMENON_INTERVAL],
-  ['Raids and wanderers', RAID_INTERVAL],
-  ['Nest eggs', NEST_INTERVAL],
+const WINDOWS: [called: () => string, every: number][] = [
+  [m.menu_window_pokemon, SNAPSHOT_INTERVAL],
+  [m.menu_window_landmarks, LANDMARK_INTERVAL],
+  [m.menu_window_weather, WEATHER_INTERVAL],
+  [m.menu_window_phenomena, PHENOMENON_INTERVAL],
+  [m.menu_window_raids, RAID_INTERVAL],
+  [m.menu_window_nests, NEST_INTERVAL],
 ];
 
 /**
@@ -210,12 +215,12 @@ function saidWait(left: number): string {
   const past = minutes % 60;
 
   if (hours === 0) {
-    return `in ${minutes} minute${minutes === 1 ? '' : 's'}`;
+    return m.menu_wait_minutes({ count: minutes });
   }
   if (past === 0) {
-    return `in ${hours} hour${hours === 1 ? '' : 's'}`;
+    return m.menu_wait_hours({ count: hours });
   }
-  return `in ${hours}h ${past}m`;
+  return m.menu_wait_mixed({ hours, minutes: past });
 }
 
 /** When each window next turns over, rather than how long it runs */
@@ -226,14 +231,14 @@ function Windows(props: { now: number; class?: string }): JSX.Element {
         <For each={WINDOWS}>
           {([called, every]) => (
             <>
-              <dt>{called}</dt>
+              <dt>{called()}</dt>
               <dd>{saidWait(until(props.now, every))}</dd>
             </>
           )}
         </For>
       </dl>
       <p class="mt-2 text-xs text-muted">
-        Counted off your own clock, so nothing turns over halfway through what you are doing at it.
+        {m.menu_windows_note()}
       </p>
     </>
   );
@@ -321,8 +326,8 @@ export default function GameMenu(): JSX.Element {
 
   const period = (): string => TIME_OF_DAY_NAMES[getTimeOfDay(now())];
   const clock = (): string => worldClock(now(), settings().clock);
-  const place = (): string => game.place() ?? 'Somewhere';
-  const purse = (): string => `${formatNumber(gold() ?? 0)} gold`;
+  const place = (): string => game.place() ?? m.menu_somewhere();
+  const purse = (): string => m.ui_gold({ amount: formatNumber(gold() ?? 0) });
 
   /**
    * The server's clock for when, put into the player's own zone for
@@ -403,7 +408,7 @@ export default function GameMenu(): JSX.Element {
 
   return (
     <nav
-      aria-label="Game"
+      aria-label={m.menu_game()}
       // Held to the bottom of the window and centred on it, above the
       // map and below anything opened over the map
       class="pointer-events-none fixed inset-x-0 bottom-4 z-10 flex justify-center px-4"
@@ -424,7 +429,7 @@ export default function GameMenu(): JSX.Element {
       >
         <PopoverButton
           ref={button}
-          aria-label={waiting() > 0 ? `Menu, ${waiting()} waiting` : 'Menu'}
+          aria-label={waiting() > 0 ? m.menu_waiting({ count: waiting() }) : m.menu_label()}
           class={BAR_BUTTON}
         >
           <MenuIcon class="size-5" aria-hidden="true" />
@@ -564,7 +569,7 @@ export default function GameMenu(): JSX.Element {
             }}
             class="flex sm:hidden"
           >
-            <PopoverButton aria-label="Field moves" class={BAR_BUTTON}>
+            <PopoverButton aria-label={m.menu_field_moves()} class={BAR_BUTTON}>
               <ActionsIcon class="size-5" aria-hidden="true" />
               <Show when={activeMove(game.fieldMoves())}>
                 {(offer) => <span class="pr-1">{offer().name}</span>}
@@ -623,12 +628,12 @@ export default function GameMenu(): JSX.Element {
           <PopoverPanel class="flex flex-col gap-1 rounded-panel border-2 border-line bg-paper p-2 shadow-float">
             <For each={GROUPS}>
               {(group) => (
-                <div role="group" aria-label={group.label}>
+                <div role="group" aria-label={group.label()}>
                   <span
                     aria-hidden="true"
                     class="block px-2 pt-1 text-left text-xs font-semibold text-muted uppercase"
                   >
-                    {group.label}
+                    {group.label()}
                   </span>
                   <div class="grid grid-cols-4 gap-1">
                     <For each={group.entries}>
@@ -638,7 +643,7 @@ export default function GameMenu(): JSX.Element {
                           class={TILE}
                           disabled={entry.dialog == null}
                           // The word alone reads as something the game can do and will not
-                          title={entry.dialog == null ? `${entry.label}, not yet` : entry.label}
+                          title={entry.dialog == null ? m.menu_not_yet({ label: entry.label() }) : entry.label()}
                           onClick={() => {
                             if (entry.dialog != null) {
                               openDialog(entry.dialog);
@@ -653,7 +658,7 @@ export default function GameMenu(): JSX.Element {
                               </span>
                             </Show>
                           </span>
-                          {entry.label}
+                          {entry.label()}
                         </button>
                       )}
                     </For>
@@ -674,7 +679,7 @@ export default function GameMenu(): JSX.Element {
                 }}
               >
                 <SettingsIcon class="size-5" aria-hidden="true" />
-                Settings
+                {m.panel_settings()}
               </button>
               <ThemeToggle class={TOGGLE} />
             </div>

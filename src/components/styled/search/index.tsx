@@ -19,6 +19,7 @@ import {
   splitTerms,
   typedTerms,
 } from '../../../core/query';
+import { m } from '../../../i18n/paraglide/messages.js';
 import { SearchIcon } from '../../icons';
 import { Badge, BadgeDismiss, type BadgeTone } from '../feedback';
 import SearchGuide from './guide';
@@ -402,7 +403,7 @@ export default function Search(props: SearchProps): JSX.Element {
           label rather than a placeholder, which is gone the moment
           anything is typed */}
       <label class="flex min-w-0 grow items-center">
-        <span class="sr-only">Search</span>
+        <span class="sr-only">{m.ui_search()}</span>
         <span
           ref={(element: HTMLElement) => {
             field = element;
@@ -435,7 +436,7 @@ export default function Search(props: SearchProps): JSX.Element {
                     {term}
                     <BadgeDismiss
                       tone={TERM_TONES[roleOf(term, vocabulary())]}
-                      label={`Remove ${term}`}
+                      label={m.ui_remove({ name: term })}
                       onDismiss={() => {
                         drop(index());
                       }}

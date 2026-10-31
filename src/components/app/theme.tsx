@@ -1,6 +1,7 @@
 import { type JSX, type ParentProps, Show } from 'solid-js';
 import { ColorSchemeProvider, Toggle, useColorScheme, usePreferredColorScheme } from 'terracotta';
 import { MoonIcon, SunIcon } from '../icons';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * Day and night.
@@ -60,8 +61,8 @@ export function ThemeToggle(props: { class?: string }): JSX.Element {
       }}
       // The label rather than the glyph is what a screen reader gets:
       // a sun is not a word
-      title={showing() === 'dark' ? 'Switch to day' : 'Switch to night'}
-      aria-label={showing() === 'dark' ? 'Switch to day' : 'Switch to night'}
+      title={showing() === 'dark' ? m.theme_to_day() : m.theme_to_night()}
+      aria-label={showing() === 'dark' ? m.theme_to_day() : m.theme_to_night()}
       class={props.class}
     >
       <Show when={showing() === 'dark'} fallback={<SunIcon class="size-5" aria-hidden="true" />}>

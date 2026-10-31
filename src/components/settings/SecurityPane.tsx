@@ -38,6 +38,7 @@ import {
 import createClientSignal from '../app/client-signal';
 import { formatDate } from '../../i18n/format';
 import describeFailure from '../../i18n/refusals';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * Two-factor and passkeys. Nothing here is shown until the password is
@@ -77,7 +78,7 @@ function secretOf(uri: string): string {
 function BackupCodes(props: { codes: string[] }): JSX.Element {
   return (
     <div class="flex flex-col gap-2">
-      <Note>Keep these somewhere safe. Each one signs you in once if the app is lost.</Note>
+      <Note>{m.security_backup_note()}</Note>
       <div class="grid grid-cols-2 gap-1 font-mono text-sm">
         <For each={props.codes}>{(code) => <span>{code}</span>}</For>
       </div>
@@ -96,14 +97,14 @@ function TwoFactorCard(props: {
   const [codes, setCodes] = createSignal<string[] | null>(null);
 
   return (
-    <Card title="Authenticator app">
+    <Card title={m.security_totp_title()}>
       <Show
         when={!props.enabled}
         fallback={
           <>
             <Row>
-              <Badge tone="leaf">on</Badge>
-              <Meta>Signing in with a password also asks for the app's code.</Meta>
+              <Badge tone="leaf">{m.security_on()}</Badge>
+              <Meta>{m.security_totp_on()}</Meta>
             </Row>
             <Show when={codes()}>{(fresh) => <BackupCodes codes={fresh()} />}</Show>
             <Row>
@@ -115,7 +116,7 @@ function TwoFactorCard(props: {
                   });
                 }}
               >
-                New backup codes
+                {m.security_new_codes()}
               </Button>
               <Button
                 tone="danger"
@@ -128,7 +129,7 @@ function TwoFactorCard(props: {
                   });
                 }}
               >
-                Turn off
+                {m.security_turn_off()}
               </Button>
             </Row>
           </>
@@ -138,9 +139,7 @@ function TwoFactorCard(props: {
           when={setup()}
           fallback={
             <>
-              <Note>
-                Ask for a code from an authenticator app whenever you sign in with a password.
-              </Note>
+              <Note>{m.security_totp_offer()}</Note>
               <Row>
                 <Button
                   tone="primary"
@@ -151,7 +150,7 @@ function TwoFactorCard(props: {
                     });
                   }}
                 >
-                  Set up
+                  {m.security_set_up()}
                 </Button>
               </Row>
             </>
@@ -159,16 +158,14 @@ function TwoFactorCard(props: {
         >
           {(started) => (
             <>
-              <Note>
-                Scan this with the app, or type the key into it, then enter the code it shows.
-              </Note>
+              <Note>{m.security_totp_scan()}</Note>
               {/* uqr draws the QR code as SVG markup from the address alone */}
               <div class="w-44 self-center bg-white p-2" innerHTML={renderSVG(started().uri)} />
               <Meta class="font-mono break-all">{secretOf(started().uri)}</Meta>
               <BackupCodes codes={started().backupCodes} />
               <Row class="items-end">
                 <TextField
-                  label="Code"
+                  label={m.login_code()}
                   class="grow"
                   value={code()}
                   autocomplete="one-time-code"
@@ -189,7 +186,7 @@ function TwoFactorCard(props: {
                     });
                   }}
                 >
-                  Turn on
+                  {m.security_turn_on()}
                 </Button>
               </Row>
             </>
@@ -208,13 +205,13 @@ function PasskeyList(props: {
   onChanged: () => void;
 }): JSX.Element {
   return (
-    <Show when={(props.passkeys() ?? []).length > 0} fallback={<Note>No passkeys yet.</Note>}>
+    <Show when={(props.passkeys() ?? []).length > 0} fallback={<Note>{m.security_no_passkeys()}</Note>}>
       <List>
         <For each={props.passkeys()}>
           {(one) => (
             <ListRow>
-              <span class="grow">{one.name === '' ? 'Passkey' : one.name}</span>
-              <Meta>added {formatDate(one.createdAt)}</Meta>
+              <span class="grow">{one.name === '' ? m.login_passkey() : one.name}</span>
+              <Meta>{m.security_added({ date: formatDate(one.createdAt) })}</Meta>
               <Button
                 tone="danger"
                 disabled={props.busy}
@@ -225,7 +222,7 @@ function PasskeyList(props: {
                   });
                 }}
               >
-                Remove
+                {m.ui_remove_action()}
               </Button>
             </ListRow>
           )}
@@ -245,19 +242,17 @@ function PasskeysCard(): JSX.Element {
   };
 
   return (
-    <Card title="Passkeys">
-      <Note>
-        Sign in with this device's fingerprint, face or PIN, or a security key, with no password.
-      </Note>
-      <Suspense fallback={<Note>Reading your passkeys…</Note>}>
+    <Card title={m.security_passkeys_title()}>
+      <Note>{m.security_passkeys_note()}</Note>
+      <Suspense fallback={<Note>{m.security_passkeys_loading()}</Note>}>
         <PasskeyList passkeys={passkeys} act={act} busy={busy()} onChanged={changed} />
       </Suspense>
       <Row class="items-end">
         <TextField
-          label="Name"
+          label={m.security_passkey_name()}
           class="grow"
           value={name()}
-          placeholder="Which device it is"
+          placeholder={m.security_passkey_name_placeholder()}
           disabled={busy()}
           onChange={(value) => {
             setName(value);
@@ -274,7 +269,7 @@ function PasskeysCard(): JSX.Element {
             });
           }}
         >
-          Add a passkey
+          {m.security_add_passkey()}
         </Button>
       </Row>
       <Status message={wrong()} tone="alert" />
@@ -313,7 +308,7 @@ function Unlock(props: { onUnlocked: (password: string) => void }): JSX.Element 
       const result = await unlockSecurity(password());
 
       if (result === 'wrong') {
-        throw new Error('That password is not right.');
+        throw new Error(m.security_wrong_password());
       }
       if (result === 'no-password') {
         setNone(true);
@@ -324,15 +319,15 @@ function Unlock(props: { onUnlocked: (password: string) => void }): JSX.Element 
   };
 
   return (
-    <Card title="Confirm your password">
+    <Card title={m.security_confirm_title()}>
       <Show
         when={!none()}
-        fallback={<Note>This account has no password yet. Ask staff for a password link.</Note>}
+        fallback={<Note>{m.security_no_password()}</Note>}
       >
-        <Note>Type your password to change how this account signs in.</Note>
+        <Note>{m.security_confirm_note()}</Note>
         <Row class="items-end">
           <TextField
-            label="Password"
+            label={m.login_password()}
             kind="password"
             class="grow"
             value={password()}
@@ -344,7 +339,7 @@ function Unlock(props: { onUnlocked: (password: string) => void }): JSX.Element 
             onEnter={submit}
           />
           <Button tone="primary" disabled={busy()} onClick={submit}>
-            Continue
+            {m.login_continue()}
           </Button>
         </Row>
       </Show>
@@ -375,7 +370,7 @@ export default function SecurityPane(): JSX.Element {
         }
       >
         {(typed) => (
-          <Suspense fallback={<Note>Reading your account…</Note>}>
+          <Suspense fallback={<Note>{m.security_loading()}</Note>}>
             <Unlocked
               password={typed()}
               security={security}

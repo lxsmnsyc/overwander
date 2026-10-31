@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import authRefusal from '../../src/auth/refusal';
+import { m } from '../../src/i18n/paraglide/messages.js';
 
 describe('a sign-in refusal', () => {
   it('says what the player can do about a refusal it knows', () => {
@@ -29,7 +30,7 @@ describe('a sign-in refusal', () => {
     const refused = { code: 'FAILED_TO_CREATE_USER', status: 500 };
 
     expect(authRefusal(refused).message).toBe('Could not sign you in just now.');
-    expect(authRefusal(refused, 'Could not sign you out just now.').message).toBe(
+    expect(authRefusal(refused, m.auth_refusal_sign_out).message).toBe(
       'Could not sign you out just now.',
     );
   });

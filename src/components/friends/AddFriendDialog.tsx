@@ -3,14 +3,14 @@ import {
   type FoundPlayer,
   FriendTie,
   findPlayerByCode,
-  friendActionLabel,
   getMyFriendCode,
 } from '../../auth/friends';
 import { Button, Dialog, DialogActions, List, Meta, Note, Row, Status, TextField } from '../styled';
 import FriendEntry from './FriendEntry';
-import createFriendTie from './tie';
+import createFriendTie, { friendActionLabel } from './tie';
 import { useGame } from '../app/game-context';
 import describeFailure from '../../i18n/refusals';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * Finding somebody to ask, and being findable.
@@ -40,7 +40,7 @@ function Found(props: { player: FoundPlayer }): JSX.Element {
               game.setVisiting(props.player.uid);
             }}
           >
-            View
+            {m.friends_view()}
           </Button>
           <Button
             tone={friend.tie() === FriendTie.None ? 'primary' : undefined}
@@ -50,7 +50,7 @@ function Found(props: { player: FoundPlayer }): JSX.Element {
             {/* "Add" until it is asked, then whatever undoes it: the
                 row stays after a press, and a button that still said
                 "Add" would read as one that did nothing */}
-            {friend.tie() === FriendTie.None ? 'Add' : friendActionLabel(friend.tie())}
+            {friend.tie() === FriendTie.None ? m.friends_add() : friendActionLabel(friend.tie())}
           </Button>
         </FriendEntry>
       </List>
@@ -69,7 +69,7 @@ function OwnCode(props: { code: Resource<string> }): JSX.Element {
   return (
     <Row class="items-center justify-between">
       <div class="flex flex-col">
-        <Meta>Your code, for others to add you by</Meta>
+        <Meta>{m.friends_your_code()}</Meta>
         <span class="font-mono text-lg font-semibold tracking-wide">{props.code()}</span>
       </div>
       <Button
@@ -85,7 +85,7 @@ function OwnCode(props: { code: Resource<string> }): JSX.Element {
             });
         }}
       >
-        {copied() ? 'Copied' : 'Copy'}
+        {copied() ? m.friends_copied() : m.friends_copy()}
       </Button>
     </Row>
   );
@@ -114,7 +114,7 @@ export default function AddFriendDialog(props: AddFriendDialogProps): JSX.Elemen
       .then((player) => {
         setFound(player);
         if (player == null) {
-          setSaid('Nobody plays under that code.');
+          setSaid(m.friends_no_code());
         }
       })
       .catch((caught: unknown) => {
@@ -129,17 +129,17 @@ export default function AddFriendDialog(props: AddFriendDialogProps): JSX.Elemen
     <Dialog
       isOpen={props.isOpen}
       onClose={props.onClose}
-      title="Add a friend"
-      description="Share your code to be added, or look a trainer up by theirs. Asking somebody who has already asked you makes the friendship at once."
+      title={m.friends_add_title()}
+      description={m.friends_add_description()}
     >
-      <Suspense fallback={<Note>Fetching your code…</Note>}>
+      <Suspense fallback={<Note>{m.friends_code_loading()}</Note>}>
         <OwnCode code={code} />
       </Suspense>
 
       <div class="flex items-end gap-2">
         <TextField
           class="grow"
-          label="Friend code"
+          label={m.friends_code_label()}
           placeholder="0000-0000-0000"
           value={typed()}
           disabled={looking()}
@@ -148,16 +148,16 @@ export default function AddFriendDialog(props: AddFriendDialogProps): JSX.Elemen
           }}
         />
         <Button tone="primary" disabled={looking() || typed().trim() === ''} onClick={look}>
-          Look up
+          {m.friends_look_up()}
         </Button>
       </div>
 
       <Show when={found()}>{(player) => <Found player={player()} />}</Show>
-      <Note>{looking() ? 'Looking…' : ''}</Note>
+      <Note>{looking() ? m.ui_looking() : ''}</Note>
       <Status message={said()} />
       <Status message={error()} tone="alert" />
       <DialogActions>
-        <Button onClick={props.onClose}>Close</Button>
+        <Button onClick={props.onClose}>{m.ui_close()}</Button>
       </DialogActions>
     </Dialog>
   );

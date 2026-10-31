@@ -45,6 +45,13 @@ function heldForms(species: Species, items: Iterable<Items>): Species[] {
   return forms;
 }
 
+/** Why a pokemon cannot be fielded, which the lobby says in the player's language */
+export type DuelRefusal =
+  | { kind: 'mythical' }
+  | { kind: 'legendary' }
+  | { kind: 'form-item' }
+  | { kind: 'stat-total'; total: number };
+
 /**
  * Why a pokemon cannot be fielded under these rules, or null. Its total
  * is the highest of any shape its held items put it into, since that is
@@ -53,25 +60,25 @@ function heldForms(species: Species, items: Iterable<Items>): Species[] {
 export function duelRefusal(
   caught: { species: Species; items: Items[] },
   rules: DuelSpeciesRules,
-): string | null {
+): DuelRefusal | null {
   const base = getBaseFormSpecies(caught.species);
   const rarity = getSpawnRarity(base);
 
   if ((rules.bans & DuelBan.Mythical) !== 0 && rarity === SpawnRarity.Mythical) {
-    return 'mythical';
+    return { kind: 'mythical' };
   }
   if (
     (rules.bans & DuelBan.Legendary) !== 0 &&
     rarity === SpawnRarity.Special &&
     !RAID_ONLY_LEGENDARIES.has(base)
   ) {
-    return 'legendary';
+    return { kind: 'legendary' };
   }
 
   const forms = heldForms(caught.species, caught.items);
 
   if ((rules.bans & DuelBan.ItemForms) !== 0 && forms.length > 0) {
-    return 'holds a form item';
+    return { kind: 'form-item' };
   }
   if (rules.maxBst > 0) {
     let total = baseStatTotal(caught.species);
@@ -80,7 +87,7 @@ export function duelRefusal(
       total = Math.max(total, baseStatTotal(form));
     }
     if (total > rules.maxBst) {
-      return `stat total ${total}`;
+      return { kind: 'stat-total', total };
     }
   }
   return null;

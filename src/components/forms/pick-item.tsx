@@ -4,6 +4,7 @@ import type { Items } from '../../data/ids/items';
 import InventoryPicker, { type ItemAmount } from '../items/InventoryPicker';
 import { Button, DialogActions, DialogSection, Meta, Note } from '../styled';
 import { CounterStep, CounterTerms } from './terms';
+import { m } from '../../i18n/paraglide/messages.js';
 import { type FormProps, defineForm } from './form';
 
 export interface PickItemInput {
@@ -100,7 +101,7 @@ function PickItemView(props: FormProps<PickItemInput, ItemAmount>): JSX.Element 
 
 /** Something out of a bag or off a shelf, and how many of it */
 export const PickItemForm = defineForm<PickItemInput, ItemAmount>({
-  title: (input) => input.title ?? 'Your bag',
-  prompt: (input) => input.prompt ?? 'Choose an item.',
+  title: (input) => input.title ?? m.pick_item_title(),
+  prompt: (input) => input.prompt ?? m.pick_item_prompt(),
   view: (props) => <PickItemView {...props} />,
 });

@@ -21,6 +21,7 @@ import { Button, Checkbox, Note, Status, TabBar, TabButton, TabGroup, TextField 
 import { KeyIcon } from '../icons';
 import createClientSignal from './client-signal';
 import describeFailure from '../../i18n/refusals';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * The way in: an address and a password, a passkey, and Google or
@@ -75,17 +76,17 @@ function PasswordStep(props: {
       >
         <TabBar class="w-full">
           <TabButton value={Mode.SignIn} class="flex-1 justify-center">
-            Sign in
+            {m.login_sign_in()}
           </TabButton>
           <TabButton value={Mode.Create} class="flex-1 justify-center">
-            Create account
+            {m.login_create()}
           </TabButton>
         </TabBar>
       </TabGroup>
       <TextField
-        label="Email"
+        label={m.login_email()}
         kind="email"
-        placeholder="you@example.com"
+        placeholder={m.login_email_placeholder()}
         autocomplete="username webauthn"
         value={email()}
         onChange={(typed) => {
@@ -93,9 +94,9 @@ function PasswordStep(props: {
         }}
       />
       <TextField
-        label={creating() ? 'New password' : 'Password'}
+        label={creating() ? m.login_new_password() : m.login_password()}
         kind="password"
-        hint={creating() ? `At least ${PASSWORD_MIN} characters.` : undefined}
+        hint={creating() ? m.login_password_hint({ count: PASSWORD_MIN }) : undefined}
         autocomplete={creating() ? 'new-password' : 'current-password'}
         value={password()}
         onChange={(typed) => {
@@ -118,7 +119,7 @@ function PasswordStep(props: {
           }
         })}
       >
-        {creating() ? 'Create account' : 'Sign in'}
+        {creating() ? m.login_create() : m.login_sign_in()}
       </Button>
     </form>
   );
@@ -136,11 +137,9 @@ function CodeStep(props: { run: Run; error: string | null; onBack: () => void })
         event.preventDefault();
       }}
     >
-      <Note>
-        One more step: {backup() ? 'a backup code.' : 'the code from your authenticator app.'}
-      </Note>
+      <Note>{backup() ? m.login_step_backup() : m.login_step_app()}</Note>
       <TextField
-        label={backup() ? 'Backup code' : 'Code'}
+        label={backup() ? m.login_backup_code() : m.login_code()}
         placeholder={backup() ? 'xxxxx-xxxxx' : '123 456'}
         autocomplete="one-time-code"
         value={code()}
@@ -150,7 +149,7 @@ function CodeStep(props: { run: Run; error: string | null; onBack: () => void })
       />
       <Show when={!backup()}>
         <Checkbox
-          label="Trust this device for 30 days"
+          label={m.login_trust()}
           checked={trust()}
           onChange={(value) => {
             setTrust(value);
@@ -166,7 +165,7 @@ function CodeStep(props: { run: Run; error: string | null; onBack: () => void })
           backup() ? verifyBackupCode(code().trim()) : verifySignInCode(code().trim(), trust()),
         )}
       >
-        Continue
+        {m.login_continue()}
       </Button>
       <div class="grid grid-cols-2 gap-2">
         <Button
@@ -176,10 +175,10 @@ function CodeStep(props: { run: Run; error: string | null; onBack: () => void })
             setCode('');
           }}
         >
-          {backup() ? 'Use the app' : 'Use a backup code'}
+          {backup() ? m.login_use_app() : m.login_use_backup()}
         </Button>
         <Button class="justify-center" onClick={props.onBack}>
-          Back
+          {m.ui_back()}
         </Button>
       </div>
     </form>
@@ -192,7 +191,7 @@ function ProviderButtons(props: { run: Run; providers: Resource<SignInProvider[]
       {(provider) => (
         <Button
           class="justify-center"
-          label={`Sign in with ${PROVIDERS[provider].label}`}
+          label={m.login_with({ provider: PROVIDERS[provider].label })}
           onClick={props.run(PROVIDERS[provider].signIn)}
         >
           {PROVIDERS[provider].label}
@@ -222,17 +221,17 @@ function OtherWays(props: {
           before:h-0.5 before:flex-1 before:bg-line-soft after:h-0.5 after:flex-1
           after:bg-line-soft"
       >
-        or
+        {m.login_or()}
       </div>
       <div class="grid grid-cols-2 gap-2">
         <Show when={passkey()}>
           <Button
             class="justify-center"
-            label="Sign in with a passkey"
+            label={m.login_with_passkey()}
             onClick={props.run(signInWithPasskey)}
           >
             <KeyIcon class="size-4" aria-hidden="true" />
-            Passkey
+            {m.login_passkey()}
           </Button>
         </Show>
         <ProviderButtons run={props.run} providers={props.providers} />

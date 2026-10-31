@@ -1,12 +1,13 @@
 import type { JSX } from 'solid-js';
 import { CloseIcon } from '../icons';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /** An × that shuts whatever it sits in, for a top row with no room for the word */
 export default function CloseButton(props: { onPress: () => void; label?: string }): JSX.Element {
   return (
     <button
       type="button"
-      aria-label={props.label ?? 'Close'}
+      aria-label={props.label ?? m.ui_close()}
       class="inline-flex items-center rounded-xl border-2 border-line bg-paper px-2 py-1 text-ink
         shadow-pop hover:border-tide hover:text-tide-dark"
       onClick={() => {

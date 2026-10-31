@@ -2,6 +2,7 @@ import { For, type JSX, Show, createSignal } from 'solid-js';
 import { Portal } from 'solid-js/web';
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions, Transition } from 'terracotta';
 import { FieldFrame } from './form';
+import { m } from '../../i18n/paraglide/messages.js';
 import { SHEER } from './transition';
 import dismissOutside from './dismiss';
 import useDropdown from './dropdown';
@@ -107,7 +108,7 @@ export default function Select<V>(props: SelectProps<V>): JSX.Element {
     return undefined;
   };
   /** The name of what is chosen, or the placeholder standing in for it */
-  const showing = (): string => chosen()?.label ?? props.placeholder ?? 'Choose…';
+  const showing = (): string => chosen()?.label ?? props.placeholder ?? m.ui_choose();
 
   return (
     <FieldFrame
@@ -186,7 +187,7 @@ export default function Select<V>(props: SelectProps<V>): JSX.Element {
                     )}
                   </For>
                   <Show when={props.options.length === 0}>
-                    <li class="px-2 py-1 text-sm text-muted">Nothing to choose from.</li>
+                    <li class="px-2 py-1 text-sm text-muted">{m.ui_nothing_to_choose()}</li>
                   </Show>
                 </ListboxOptions>
               </Transition>

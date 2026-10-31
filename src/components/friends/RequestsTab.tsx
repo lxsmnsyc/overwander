@@ -9,6 +9,7 @@ import { Button, Divider, LIST_PAGE, List, Note, Status, createPager } from '../
 import FriendEntry from './FriendEntry';
 import { useGame } from '../app/game-context';
 import describeFailure from '../../i18n/refusals';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * What is waiting on an answer, both ways.
@@ -68,7 +69,7 @@ export default function RequestsTab(props: RequestsTabProps): JSX.Element {
     <>
       <Show
         when={props.waiting.incoming.length > 0}
-        fallback={<Note>Nobody has asked to be your friend.</Note>}
+        fallback={<Note>{m.friends_no_requests()}</Note>}
       >
         <List>
           <For each={received.shown()}>
@@ -76,7 +77,7 @@ export default function RequestsTab(props: RequestsTabProps): JSX.Element {
               <FriendEntry
                 uid={uid}
                 since={asked().get(uid)}
-                when="Asked"
+                when={(date) => m.friends_asked({ date })}
                 onOpen={() => {
                   game.setVisiting(uid);
                 }}
@@ -88,7 +89,7 @@ export default function RequestsTab(props: RequestsTabProps): JSX.Element {
                     answer(uid, acceptFriendRequest(uid));
                   }}
                 >
-                  Accept
+                  {m.friends_accept()}
                 </Button>
                 <Button
                   disabled={busy() === uid}
@@ -96,7 +97,7 @@ export default function RequestsTab(props: RequestsTabProps): JSX.Element {
                     answer(uid, dropFriendRequest(uid));
                   }}
                 >
-                  Decline
+                  {m.friends_decline()}
                 </Button>
               </FriendEntry>
             )}
@@ -107,14 +108,14 @@ export default function RequestsTab(props: RequestsTabProps): JSX.Element {
 
       <Show when={props.waiting.outgoing.length > 0}>
         <Divider />
-        <Note>Waiting on an answer</Note>
+        <Note>{m.friends_waiting()}</Note>
         <List>
           <For each={sent.shown()}>
             {(uid) => (
               <FriendEntry
                 uid={uid}
                 since={asked().get(uid)}
-                when="Asked"
+                when={(date) => m.friends_asked({ date })}
                 onOpen={() => {
                   game.setVisiting(uid);
                 }}
@@ -125,7 +126,7 @@ export default function RequestsTab(props: RequestsTabProps): JSX.Element {
                     answer(uid, dropFriendRequest(uid));
                   }}
                 >
-                  Cancel
+                  {m.battle_cancel()}
                 </Button>
               </FriendEntry>
             )}

@@ -25,6 +25,7 @@ import {
   Search,
 } from '../styled';
 import type { Choice } from './choice';
+import { m } from '../../i18n/paraglide/messages.js';
 import { type ActionForm, type FormProps, defineForm } from './form';
 import { loadCatchOptions } from './pick-catch';
 import { CostBadge, type CounterCost, CounterStep, CounterTerms, PickOne } from './terms';
@@ -134,7 +135,7 @@ function Offers<T>(props: {
           <Show when={props.choices.length >= SEARCH_FROM}>
             <Search
               value={query()}
-              placeholder="Name or type"
+              placeholder={m.pick_move_search()}
               onChange={(typed) => {
                 setQuery(typed);
               }}
@@ -145,7 +146,7 @@ function Offers<T>(props: {
               each={found()}
               fallback={
                 <li class="col-span-full">
-                  <Note>No move matches that.</Note>
+                  <Note>{m.pick_move_none()}</Note>
                 </li>
               }
             >
@@ -267,14 +268,14 @@ function PickCatchThenBody<T>(
 /** A pokemon and one of the things it offers, typed by what those are */
 export function pickCatchThenForm<T>(): ActionForm<PickCatchThenInput<T>, [CatchOption, T]> {
   return defineForm<PickCatchThenInput<T>, [CatchOption, T]>({
-    title: (input) => input.title ?? 'Your pokemon',
-    prompt: (input) => input.prompt ?? 'Choose one of your pokemon, then what to do.',
+    title: (input) => input.title ?? m.pick_catch_title(),
+    prompt: (input) => input.prompt ?? m.pick_catch_then_prompt(),
     width: 'wide',
     view: (props) => {
       const [options] = createResource(() => props.input.player, loadCatchOptions);
 
       return (
-        <Suspense fallback={<Note class="text-center">Looking them over…</Note>}>
+        <Suspense fallback={<Note class="text-center">{m.pick_catch_loading()}</Note>}>
           <PickCatchThenBody {...props} options={options} />
         </Suspense>
       );

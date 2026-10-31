@@ -3,6 +3,7 @@ import { ArrowLeftIcon, ArrowRightIcon } from '../icons';
 import Button from './button';
 import { Meta } from './list';
 import { Row } from './surface';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * How many rows a paged list of text shows at once. Grids of squares
@@ -38,7 +39,6 @@ export function createPager<T>(
    * follow or the last row of every box goes missing
    */
   size: number | Accessor<number>,
-  unit = 'Page',
 ): Pager<T> {
   const [page, setPage] = createSignal(0);
   const fits = (): number => (typeof size === 'number' ? size : size());
@@ -60,7 +60,7 @@ export function createPager<T>(
       <Show when={pages() > 1 || (options?.range === true && items().length > 0)}>
         <Row class="justify-center">
           <Button
-            label="Previous page"
+            label={m.pager_previous()}
             disabled={page() === 0}
             onClick={() => {
               setPage((at) => Math.max(0, at - 1));
@@ -70,14 +70,16 @@ export function createPager<T>(
           </Button>
           <Meta class="tabular-nums">
             {options?.range === true
-              ? `${unit} ${page() + 1} · ${Math.min(items().length, page() * fits() + 1)}–${Math.min(
-                  items().length,
-                  (page() + 1) * fits(),
-                )} of ${items().length}`
-              : `${unit} ${page() + 1} of ${pages()}`}
+              ? m.pager_range({
+                  page: page() + 1,
+                  first: Math.min(items().length, page() * fits() + 1),
+                  last: Math.min(items().length, (page() + 1) * fits()),
+                  total: items().length,
+                })
+              : m.pager_page({ page: page() + 1, pages: pages() })}
           </Meta>
           <Button
-            label="Next page"
+            label={m.pager_next()}
             disabled={page() >= pages() - 1}
             onClick={() => {
               setPage((at) => Math.min(pages() - 1, at + 1));

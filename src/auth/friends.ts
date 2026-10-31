@@ -33,7 +33,7 @@ import getIdToken from './session';
  * stranger cannot be found without being handed their code.
  */
 
-export { FRIEND_LIMIT, FriendTie, friendActionLabel } from '../model/friend-record';
+export { FRIEND_LIMIT, FriendTie } from '../model/friend-record';
 export type { FoundPlayer, FriendLink, FriendRequests } from '../model/friend-record';
 
 /** Sort by the newest tie first, then by uid so the order is settled */

@@ -3,6 +3,7 @@ import { Button, DialogActions, type DialogWidth } from '../styled';
 import { type Choice, type ChoiceInput, choiceForm } from './choice';
 import { type ActionForm, widthOf } from './form';
 import { openFrame } from './stack';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /** Whoever the player is talking to */
 export interface Speaker {
@@ -135,7 +136,7 @@ export function converse(
               cancel: () => {
                 settle(null);
               },
-              leave: options?.leave ?? 'Walk on',
+              leave: options?.leave ?? m.ow_walk_on(),
             }),
         });
       }),
@@ -150,7 +151,7 @@ export function converse(
 
   const frame = openFrame((close) => ({
     title: () => speaker.name,
-    line: () => <span class="italic">“{line()}”</span>,
+    line: () => <span class="italic">{m.ui_quoted({ text: line() })}</span>,
     lead: speaker.portrait,
     width: () => {
       const now = step();
@@ -168,14 +169,14 @@ export function converse(
           {(now) => (
             <DialogActions>
               <Button tone="primary" onClick={now.next}>
-                Next
+                {m.ui_next()}
               </Button>
               <Button
                 onClick={() => {
                   walk(close);
                 }}
               >
-                Walk on
+                {m.ow_walk_on()}
               </Button>
             </DialogActions>
           )}

@@ -19,6 +19,7 @@ for the questions it has an opinion about.
 | [Animation](engine/animation.md)             | The clip a move asks for, and how one pass fills a cast or a step       |
 | [Drawing a fight](engine/canvas.md)          | The two field layouts, the damage marks, and the demo pages             |
 | [How a fight ends](engine/ending.md)         | The outcome check that runs after every tick                            |
+| [Startup size](engine/boot.md)               | What the main page downloads before it runs, and how to measure it      |
 
 ## See also
 

@@ -1,7 +1,7 @@
 ---
 id: i18n-plumbing
 title: Locale plumbing
-status: active
+status: done
 priority: should
 type: feature
 outline: false

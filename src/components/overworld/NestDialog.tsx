@@ -6,6 +6,7 @@ import AnimatedSprite from '../sprites/AnimatedSprite';
 import { Button, Dialog, DialogActions, Meta } from '../styled';
 import { CounterSpent, CounterTerms, HeadingPortrait } from '../forms/terms';
 import type { EggSource, EggState } from '../../game/overworld/journey';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * An egg that has been found, put to the player before it is theirs.
@@ -31,19 +32,19 @@ import type { EggSource, EggState } from '../../game/overworld/journey';
  */
 export type { EggSource };
 
-const FOUND: Record<EggSource, string> = {
-  nest: 'An egg, warm in the nest.',
-  grotto: 'An egg, tucked away in the grotto.',
+const FOUND: Record<EggSource, () => string> = {
+  nest: m.nest_found_nest,
+  grotto: m.nest_found_grotto,
 };
 
-const AGAIN: Record<EggSource, string> = {
-  nest: 'One egg per player between refills, and you have had yours.',
-  grotto: 'You have already had what this hour hid here.',
+const AGAIN: Record<EggSource, () => string> = {
+  nest: m.nest_again_nest,
+  grotto: m.nest_again_grotto,
 };
 
-const BARE: Record<EggSource, string> = {
-  nest: 'The nest is bare until tomorrow.',
-  grotto: 'Nothing is tucked away here.',
+const BARE: Record<EggSource, () => string> = {
+  nest: m.nest_bare_nest,
+  grotto: m.nest_bare_grotto,
 };
 
 /**
@@ -73,9 +74,9 @@ export interface NestDialogProps {
 }
 
 /** How often each kind hands one out, for the terms */
-const OFTEN: Record<EggSource, string> = {
-  nest: 'One egg a player between refills',
-  grotto: 'One find an hour',
+const OFTEN: Record<EggSource, () => string> = {
+  nest: m.nest_often_nest,
+  grotto: m.nest_often_grotto,
 };
 
 export default function NestDialog(props: NestDialogProps): JSX.Element {
@@ -86,16 +87,16 @@ export default function NestDialog(props: NestDialogProps): JSX.Element {
     const offer = props.offer;
 
     if (offer == null) {
-      return 'An egg, and whether you want to carry it.';
+      return m.nest_heading();
     }
-    return offer.state === 'bare' ? BARE[offer.from] : FOUND[offer.from];
+    return offer.state === 'bare' ? BARE[offer.from]() : FOUND[offer.from]();
   };
 
   return (
     <Dialog
       isOpen={props.offer != null}
       onClose={props.onClose}
-      title="Egg"
+      title={m.nest_title()}
       lead={
         <HeadingPortrait>
           <AnimatedSprite species={Species.Egg} direction="Down" still fill label="" />
@@ -107,25 +108,26 @@ export default function NestDialog(props: NestDialogProps): JSX.Element {
         {(offer) => (
           <div class="flex flex-col gap-3">
             <CounterTerms
-              often={offer().state === 'taken' ? 'Used this while' : OFTEN[offer().from]}
+              often={offer().state === 'taken' ? m.ow_used_this_while() : OFTEN[offer().from]()}
             />
             <Show when={offer().state === 'taken'}>
-              <CounterSpent says={AGAIN[offer().from]} quoted={false} />
+              <CounterSpent says={AGAIN[offer().from]()} quoted={false} />
             </Show>
             <Show when={offer().state === 'bare'}>
-              <CounterSpent title="Nothing here" says={BARE[offer().from]} quoted={false} />
+              <CounterSpent
+                title={m.nest_nothing_here()}
+                says={BARE[offer().from]()}
+                quoted={false}
+              />
             </Show>
             <Show when={asking()}>
               {/* What taking it commits the player to: the pokemon
                   already walking with them is what pays for it */}
-              <Meta>
-                Only your buddy can walk it warm, so taking it means putting down whoever walks with
-                you now. What is inside stays a secret until it opens.
-              </Meta>
+              <Meta>{m.nest_commitment()}</Meta>
               <div class="flex items-center gap-2 rounded-panel border-2 border-line bg-paper px-3 py-1.5">
                 <Show
                   when={props.buddy}
-                  fallback={<span class="text-sm">It will walk with you.</span>}
+                  fallback={<span class="text-sm">{m.nest_walks_with_you()}</span>}
                 >
                   {(walking) => (
                     <>
@@ -142,8 +144,8 @@ export default function NestDialog(props: NestDialogProps): JSX.Element {
                       </span>
                       <span class="text-sm">
                         {walking().species === Species.Egg
-                          ? 'The egg you carry now is put down.'
-                          : `${getSpeciesData(walking().species).name} stops walking with you.`}
+                          ? m.nest_egg_put_down()
+                          : m.nest_buddy_stops({ name: getSpeciesData(walking().species).name })}
                       </span>
                     </>
                   )}
@@ -157,10 +159,10 @@ export default function NestDialog(props: NestDialogProps): JSX.Element {
       <DialogActions>
         <Show when={asking()}>
           <Button tone="primary" disabled={props.busy} onClick={props.onAccept}>
-            Take it
+            {m.nest_take()}
           </Button>
         </Show>
-        <Button onClick={props.onClose}>Walk on</Button>
+        <Button onClick={props.onClose}>{m.ow_walk_on()}</Button>
       </DialogActions>
     </Dialog>
   );

@@ -11,6 +11,7 @@ import settings from '../../app/settings';
 import { Note } from '../../styled';
 
 import OverworldBoard from './board';
+import { m } from '../../../i18n/paraglide/messages.js';
 
 /**
  * The chunk the player is standing in, drawn to fill the screen.
@@ -55,7 +56,7 @@ export default function OverworldTab(): JSX.Element {
   );
 
   return (
-    <Suspense fallback={<Note>Reading the world…</Note>}>
+    <Suspense fallback={<Note>{m.board_reading()}</Note>}>
       <OverworldBoard
         buddy={buddy}
         fled={fled}

@@ -54,6 +54,7 @@ import {
   rocketPartyLevels,
 } from '../../overworld/stop';
 import { TRAINER_QUOTES, trainerLevels, trainerNameIn } from '../../data/overworld/trainers';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * A named challenger above the rank and file: a duelling trainer's
@@ -90,65 +91,51 @@ export interface StopChallenge {
 }
 
 /** A band said the way a lineup reads it: "levels 45-65" */
-export function saidLevels([lowest, highest]: LevelBand): string {
-  return `levels ${lowest}-${highest}`;
-}
-
 /**
- * What a champion's seat asks to see beaten first, said as the tail
- * of the locked message
+ * The locked message at a champion's seat, which names what it asks to
+ * see beaten first
  */
-export function championGate(champion: Champion): string {
-  const league = CHAMPION_LEAGUES[champion];
-
-  return `who have beaten all ${CHAMPION_HONORS[champion].length} of ${league}'s Elite Four`;
+export function championGate(champion: Champion, who: string): string {
+  return m.interact_gate_champion({
+    who,
+    count: CHAMPION_HONORS[champion].length,
+    league: CHAMPION_LEAGUES[champion],
+  });
 }
 
 /**
  * The house rule, said first, because it is the whole of what makes a
- * Frontier fight different from the Champion's. Each ends in a space:
- * the Tower has no rule at all, and its line opens on the party
- * instead of on a gap
+ * Frontier fight different from the Champion's. The Tower has no rule
+ * at all, so it says nothing
  */
-const FRONTIER_RULE_TERMS: Record<FrontierRule, string> = {
-  [FrontierRule.None]: '',
-  [FrontierRule.Bare]: 'Nothing is held: no items on either side. ',
-  [FrontierRule.Timed]: `Judged after ${FRONTIER_TIME_TURNS} turns: whoever has more of their
-     party left standing takes it. `,
-  [FrontierRule.Curtained]: `A curtain is drawn as you walk in, and one room in
-     ${PIKE_CURTAINS.length} is kind: your three arrive poisoned, burned, paralysed, asleep, or
-     mended. Hers arrive as they are. `,
-  [FrontierRule.Rented]: `The house lends both sides: pick 3 of the ${FRONTIER_RENTAL_OFFER} on
-     the table and leave your own box alone. Nothing of yours is on the field, so nothing of
-     yours comes off it. `,
-  [FrontierRule.Natured]: `Nobody fights on orders: every pokemon here picks by its nature, so a
-     bold one guards and a brave one swings whatever the field asks for. `,
-  [FrontierRule.Countered]: `The house names nobody until you do: his 3 are drawn against yours
-     the moment they are frozen, one apiece, so a team that covers everything covers nothing
-     here. `,
-  [FrontierRule.Rolled]: `The wheel is spun as you walk in and it lands on both sides: a sky for
-     the whole fight, every held item left at the door, everybody poisoned, or everybody
-     mended. `,
-  [FrontierRule.Unhealed]: `The house keeps the medicine: nothing puts health back on your side
-     for the whole fight, not a potion, not a berry, not a drain. Theirs heal as usual. `,
-  [FrontierRule.Singled]: `One of yours against one of hers, and hers is drawn against yours the
-     moment it is frozen. Nothing can cover for anything else. `,
+const FRONTIER_RULE_TERMS: Record<FrontierRule, () => string> = {
+  [FrontierRule.None]: () => '',
+  [FrontierRule.Bare]: () => m.challenger_rule_bare(),
+  [FrontierRule.Timed]: () => m.challenger_rule_timed({ turns: FRONTIER_TIME_TURNS }),
+  [FrontierRule.Curtained]: () => m.challenger_rule_curtained({ rooms: PIKE_CURTAINS.length }),
+  [FrontierRule.Rented]: () => m.challenger_rule_rented({ offer: FRONTIER_RENTAL_OFFER }),
+  [FrontierRule.Natured]: () => m.challenger_rule_natured(),
+  [FrontierRule.Countered]: () => m.challenger_rule_countered(),
+  [FrontierRule.Rolled]: () => m.challenger_rule_rolled(),
+  [FrontierRule.Unhealed]: () => m.challenger_rule_unhealed(),
+  [FrontierRule.Singled]: () => m.challenger_rule_singled(),
 };
 
-/** What a Brain's house asks to see: the crown of its region */
-export function frontierGate(brain: FrontierBrain): string {
-  return `holding the title of ${AWARD_NAMES[FRONTIER_BRAIN_TITLES[brain]]}`;
+/** The locked message at a Brain's house, which asks for the crown of its region */
+export function frontierGate(brain: FrontierBrain, who: string): string {
+  return m.interact_gate_frontier({ who, title: AWARD_NAMES[FRONTIER_BRAIN_TITLES[brain]] });
 }
 
 /**
- * What an elite's seat asks to see, said as the tail of the locked
- * message. Each seat asks for its own league's gyms and no more,
- * Bruno's two included
+ * The locked message at an elite's seat. Each seat asks for its own
+ * league's gyms and no more, Bruno's two included
  */
-export function eliteGate(member: EliteMember): string {
-  const asked = getEliteBadges(member);
-
-  return `holding all ${asked.length} ${ELITE_MEMBER_LEAGUES[member]} badges`;
+export function eliteGate(member: EliteMember, who: string): string {
+  return m.interact_gate_elite({
+    who,
+    count: getEliteBadges(member).length,
+    league: ELITE_MEMBER_LEAGUES[member],
+  });
 }
 
 /**
@@ -182,8 +169,11 @@ export default function challengerOf(
       return {
         name: boss,
         levels,
-        greeting: `${boss} himself bars the way. “${SYNDICATE_BOSS_QUOTES[syndicate]}”`,
-        wins: `One of his six, a purse and the mark for ${AWARD_NAMES[SYNDICATE_BOSS_HONORS[syndicate]]}`,
+        greeting: m.challenger_boss_greeting({
+          name: boss,
+          quote: SYNDICATE_BOSS_QUOTES[syndicate],
+        }),
+        wins: m.challenger_boss_wins({ award: AWARD_NAMES[SYNDICATE_BOSS_HONORS[syndicate]] }),
       };
     }
     if (executive != null) {
@@ -192,8 +182,12 @@ export default function challengerOf(
       return {
         name,
         levels,
-        greeting: `${name} of ${team} blocks the way. “${EXECUTIVE_QUOTES[executive]}”`,
-        wins: `One of the six, what they carry, a purse and the mark for ${AWARD_NAMES[EXECUTIVE_HONORS[executive]]}`,
+        greeting: m.challenger_executive_greeting({
+          name,
+          team,
+          quote: EXECUTIVE_QUOTES[executive],
+        }),
+        wins: m.challenger_executive_wins({ award: AWARD_NAMES[EXECUTIVE_HONORS[executive]] }),
       };
     }
 
@@ -202,8 +196,8 @@ export default function challengerOf(
     return {
       name,
       levels,
-      greeting: `A ${name} blocks the way. “${SYNDICATE_GRUNT_QUOTES[syndicate]}”`,
-      wins: `A purse, one of their spare three and the mark for ${AWARD_NAMES[SYNDICATE_GRUNT_HONORS[syndicate]]}`,
+      greeting: m.challenger_grunt_greeting({ name, quote: SYNDICATE_GRUNT_QUOTES[syndicate] }),
+      wins: m.challenger_grunt_wins({ award: AWARD_NAMES[SYNDICATE_GRUNT_HONORS[syndicate]] }),
     };
   }
   if (landmark === Landmark.Trainer) {
@@ -219,8 +213,8 @@ export default function challengerOf(
     return {
       name,
       levels,
-      greeting: `A ${name} squares up. “${TRAINER_QUOTES[trainer]}”`,
-      wins: 'Their purse',
+      greeting: m.challenger_trainer_greeting({ name, quote: TRAINER_QUOTES[trainer] }),
+      wins: m.challenger_trainer_wins(),
     };
   }
   if (landmark === Landmark.GymLeader) {
@@ -236,8 +230,8 @@ export default function challengerOf(
     return {
       name,
       levels: GYM_PARTY_LEVELS,
-      greeting: `${name} takes the challenge. “${GYM_LEADER_QUOTES[leader]}”`,
-      wins: `Their purse and the ${badge}`,
+      greeting: m.challenger_gym_greeting({ name, quote: GYM_LEADER_QUOTES[leader] }),
+      wins: m.challenger_gym_wins({ badge }),
     };
   }
   if (landmark === Landmark.EliteFour) {
@@ -252,8 +246,8 @@ export default function challengerOf(
     return {
       name,
       levels: ELITE_PARTY_LEVELS,
-      greeting: `${name} of the Elite Four rises. “${ELITE_MEMBER_QUOTES[member]}”`,
-      wins: 'Their purse and something from their bag',
+      greeting: m.challenger_elite_greeting({ name, quote: ELITE_MEMBER_QUOTES[member] }),
+      wins: m.challenger_elite_wins(),
     };
   }
   if (landmark === Landmark.Champion) {
@@ -264,7 +258,7 @@ export default function challengerOf(
         name: LEGEND_NAMES[legend],
         levels: LEGEND_PARTY_LEVELS,
         greeting: LEGEND_GREETINGS[legend],
-        wins: `The mark for ${AWARD_NAMES[LEGEND_HONORS[legend]]}, the largest purse and a rare find`,
+        wins: m.challenger_legend_wins({ award: AWARD_NAMES[LEGEND_HONORS[legend]] }),
       };
     }
 
@@ -280,7 +274,7 @@ export default function challengerOf(
       name,
       levels: CHAMPION_PARTY_LEVELS,
       greeting: CHAMPION_GREETINGS[champion],
-      wins: `The ${AWARD_NAMES[CHAMPION_TITLES[champion]]} title, the largest purse and a keepsake`,
+      wins: m.challenger_champion_wins({ title: AWARD_NAMES[CHAMPION_TITLES[champion]] }),
     };
   }
   if (landmark === Landmark.FrontierBrain) {
@@ -301,10 +295,13 @@ export default function challengerOf(
       unseen:
         FRONTIER_BRAIN_RULES[brain] === FrontierRule.Countered ||
         FRONTIER_BRAIN_RULES[brain] === FrontierRule.Singled,
-      greeting: `${name} keeps the ${FRONTIER_FACILITY_NAMES[brain]}.
-        “${FRONTIER_GREETINGS[brain]}”`,
-      wins: `The ${AWARD_NAMES[silver]} and a purse`,
-      rule: FRONTIER_RULE_TERMS[FRONTIER_BRAIN_RULES[brain]].trim() || undefined,
+      greeting: m.challenger_frontier_greeting({
+        name,
+        facility: FRONTIER_FACILITY_NAMES[brain],
+        quote: FRONTIER_GREETINGS[brain],
+      }),
+      wins: m.challenger_frontier_wins({ symbol: AWARD_NAMES[silver] }),
+      rule: FRONTIER_RULE_TERMS[FRONTIER_BRAIN_RULES[brain]]() || undefined,
     };
   }
   return null;

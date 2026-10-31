@@ -69,12 +69,11 @@ const INTL_TAGS: Record<Locale, string> = {
 };
 
 /**
- * The locales a player can be served. Japanese and Spanish are built
- * and loaded, but only their official names are written so far, so a
- * request that asks for one is served English until the interface is
- * translated too (translations batch 5)
+ * The locales a player can be served. All three since the overworld
+ * was translated (translations batch 5); a screen not translated yet
+ * falls back to English message by message
  */
-export const SHOWN_LOCALES: readonly Locale[] = [baseLocale];
+export const SHOWN_LOCALES: readonly Locale[] = locales;
 
 /** Whether a locale is one a player can be served yet */
 export function isShownLocale(locale: Locale): boolean {

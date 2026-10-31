@@ -26,6 +26,7 @@ import {
 import { Button, Dialog, DialogActions, Hint } from '../styled';
 import WorldMapCanvas, { PAN_STRIDE, townsInView } from './WorldMapCanvas';
 import { useGame } from '../app/game-context';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * How many chunks the view spans on each side. It is a window on the
@@ -262,13 +263,8 @@ export default function WorldMapDialog(props: WorldMapDialogProps): JSX.Element 
       onClose={close}
       width="wide"
       quiet
-      title="World Map"
-      description={
-        <>
-          {SPAN} chunks across, centred on {centerX()}, {centerY()}. Drag the map or use the buttons
-          on it to steer.
-        </>
-      }
+      title={m.world_map_title()}
+      description={m.world_map_description({ span: SPAN, x: centerX(), y: centerY() })}
       // The keys, on the one visible row a quiet dialog has. The
       // heading is read out rather than drawn, so a sighted player has
       // nowhere else to find out the map answers the keyboard at all.
@@ -276,19 +272,14 @@ export default function WorldMapDialog(props: WorldMapDialogProps): JSX.Element 
       // carries one: there are four keys to say, and a line of running
       // text is not the shape of a list of them
       bar={
-        <Hint
-          title="Steering the map"
-          description="Click it first: the keys go to whatever has the keyboard."
-        >
+        <Hint title={m.world_map_steering()} description={m.world_map_steering_hint()}>
           <ul class="flex flex-col gap-2">
-            <Key presses="Drag">Pulls the map along. The buttons in its corner step it too.</Key>
-            <Key presses="↑ ↓ ← →">Pan one chunk. WASD does the same.</Key>
-            <Key presses="Shift + ↑ ↓ ← →">Crosses {PAN_STRIDE} chunks at a time.</Key>
-            <Key presses="Home">Back to the chunk you are standing in. C does the same.</Key>
+            <Key presses={m.world_map_key_drag()}>{m.world_map_drag()}</Key>
+            <Key presses="↑ ↓ ← →">{m.world_map_arrows()}</Key>
+            <Key presses="Shift + ↑ ↓ ← →">{m.world_map_stride({ stride: PAN_STRIDE })}</Key>
+            <Key presses="Home">{m.world_map_home()}</Key>
           </ul>
-          <p class="mt-2 text-xs text-muted">
-            The camera is held inside the world, so panning at the rim comes straight back.
-          </p>
+          <p class="mt-2 text-xs text-muted">{m.world_map_rim()}</p>
         </Hint>
       }
     >
@@ -310,26 +301,26 @@ export default function WorldMapDialog(props: WorldMapDialogProps): JSX.Element 
                 type="button"
                 class={CHIP}
                 aria-pressed={sky()}
-                title="Washes each chunk in the colour of its weather, and rings the four worth walking to"
+                title={m.world_map_sky_hint()}
                 onClick={() => {
                   setSky(!sky());
                 }}
               >
-                ☁ Sky
+                ☁ {m.world_map_sky()}
               </button>
               <Popover defaultOpen={false} class="relative">
-                <PopoverButton class={CHIP}>Key</PopoverButton>
+                <PopoverButton class={CHIP}>{m.world_map_key()}</PopoverButton>
                 <PopoverPanel
                   class="absolute top-full right-0 z-30 mt-1 flex max-h-72 w-52 flex-col gap-1
                     overflow-y-auto rounded-panel border-2 border-line bg-paper p-2 text-xs shadow-float"
                 >
                   <span class="flex items-center gap-2">
                     <span class="size-3 shrink-0 border-2 border-white bg-ink/40" />
-                    You
+                    {m.world_map_you()}
                   </span>
                   <span class="flex items-center gap-2">
                     <span class="size-3 shrink-0 border border-white bg-transparent ring-1 ring-black/70" />
-                    Town
+                    {m.world_map_town()}
                   </span>
                   <For each={biomesInView()}>
                     {(biome) => (
@@ -350,30 +341,55 @@ export default function WorldMapDialog(props: WorldMapDialogProps): JSX.Element 
               class="pointer-events-none absolute bottom-1.5 left-1.5 z-10 rounded-lg bg-ink/70
                 px-1.5 py-0.5 text-xs font-semibold text-parchment tabular-nums"
             >
-              <Show when={standing()} fallback="Finding you…">
-                {(at) => `You ${at().chunkX}, ${at().chunkY}`}
+              <Show when={standing()} fallback={m.world_map_finding()}>
+                {(at) => m.world_map_you_at({ x: at().chunkX, y: at().chunkY })}
               </Show>
-              {` · View ${centerX()}, ${centerY()}`}
+              {` · ${m.world_map_view_at({ x: centerX(), y: centerY() })}`}
             </span>
 
             {/* Buttons for whoever has no keyboard to steer with */}
             <div class="absolute right-1.5 bottom-1.5 z-10 grid grid-cols-3 gap-0.5">
               <span />
-              <button type="button" class={PAD} aria-label="Pan north" onClick={step(0, -1)}>
+              <button
+                type="button"
+                class={PAD}
+                aria-label={m.world_map_pan_north()}
+                onClick={step(0, -1)}
+              >
                 <ChevronUpIcon class="size-4" aria-hidden="true" />
               </button>
               <span />
-              <button type="button" class={PAD} aria-label="Pan west" onClick={step(-1, 0)}>
+              <button
+                type="button"
+                class={PAD}
+                aria-label={m.world_map_pan_west()}
+                onClick={step(-1, 0)}
+              >
                 <ChevronLeftIcon class="size-4" aria-hidden="true" />
               </button>
-              <button type="button" class={PAD} aria-label="Back to you" onClick={recenter}>
+              <button
+                type="button"
+                class={PAD}
+                aria-label={m.world_map_back_to_you()}
+                onClick={recenter}
+              >
                 <CrosshairIcon class="size-5" aria-hidden="true" />
               </button>
-              <button type="button" class={PAD} aria-label="Pan east" onClick={step(1, 0)}>
+              <button
+                type="button"
+                class={PAD}
+                aria-label={m.world_map_pan_east()}
+                onClick={step(1, 0)}
+              >
                 <ChevronRightIcon class="size-4" aria-hidden="true" />
               </button>
               <span />
-              <button type="button" class={PAD} aria-label="Pan south" onClick={step(0, 1)}>
+              <button
+                type="button"
+                class={PAD}
+                aria-label={m.world_map_pan_south()}
+                onClick={step(0, 1)}
+              >
                 <ChevronDownIcon class="size-4" aria-hidden="true" />
               </button>
               <span />
@@ -387,11 +403,9 @@ export default function WorldMapDialog(props: WorldMapDialogProps): JSX.Element 
         <div class="mt-3 flex flex-wrap items-center gap-1.5 text-xs">
           <Show
             when={showpieces().length > 0}
-            fallback={
-              <span class="text-muted">Nothing out of the ordinary in view this hour.</span>
-            }
+            fallback={<span class="text-muted">{m.world_map_quiet()}</span>}
           >
-            <span class="text-muted">Worth walking to:</span>
+            <span class="text-muted">{m.world_map_worth()}</span>
             <For each={showpieces()}>
               {(one) => (
                 <button
@@ -410,7 +424,7 @@ export default function WorldMapDialog(props: WorldMapDialogProps): JSX.Element 
       </Show>
 
       <DialogActions>
-        <Button onClick={close}>Close</Button>
+        <Button onClick={close}>{m.world_map_close()}</Button>
       </DialogActions>
     </Dialog>
   );

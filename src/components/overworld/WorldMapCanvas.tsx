@@ -10,6 +10,7 @@ import { CHUNK_CELLS, worldCell } from '../../overworld/grid';
 import { TOWN_RADIUS, TOWN_REGION, townOfRegion } from '../../overworld/town';
 import getWorld from '../../overworld/current';
 import type World from '../../overworld/world';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * The world around the player.
@@ -308,10 +309,14 @@ export default function WorldMapCanvas(props: WorldMapCanvasProps): JSX.Element 
     const x = props.originX + (at % props.span);
     const y = props.originY + Math.floor(at / props.span);
 
-    const place = settledAt(x, y) ? `Town, ${BIOME_NAMES[biome]}` : BIOME_NAMES[biome];
+    const place = settledAt(x, y)
+      ? m.world_map_town_in({ biome: BIOME_NAMES[biome] })
+      : BIOME_NAMES[biome];
     const sky = props.skies?.[at];
 
-    return sky == null ? `${place} (${x}, ${y})` : `${place}, ${WEATHER_NAMES[sky]} (${x}, ${y})`;
+    return sky == null
+      ? m.world_map_place({ place, x, y })
+      : m.world_map_place_sky({ place, weather: WEATHER_NAMES[sky], x, y });
   };
 
   onMount(() => {
@@ -561,9 +566,11 @@ export default function WorldMapCanvas(props: WorldMapCanvasProps): JSX.Element 
         ref={canvas}
         tabindex={0}
         role="application"
-        aria-label={`World map, ${props.span} chunks across, centred on ${
-          props.originX + Math.floor(props.span / 2)
-        }, ${props.originY + Math.floor(props.span / 2)}. Drag or use the arrow keys to pan.`}
+        aria-label={m.world_map_canvas({
+          span: props.span,
+          x: props.originX + Math.floor(props.span / 2),
+          y: props.originY + Math.floor(props.span / 2),
+        })}
         // Blown up from a few hundred pixels, so the chunks stay squares
         // rather than being smeared into each other
         class="block h-auto w-full cursor-grab touch-none rounded-xl border-4 border-tide shadow-pop active:cursor-grabbing

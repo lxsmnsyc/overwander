@@ -24,6 +24,7 @@ import { TEAM_SIZE } from '../../auth/teams';
 import { useGame } from '../app/game-context';
 import type { StopChallenge } from '../../game/overworld/challengers';
 import describeFailure from '../../i18n/refusals';
+import { m } from '../../i18n/paraglide/messages.js';
 
 export type { StopChallenge };
 
@@ -86,7 +87,10 @@ export default function StopDialog(props: StopDialogProps): JSX.Element {
         progress: 0,
         fainted: false,
         mark: taken().includes(at) ? ('picked' as const) : undefined,
-        label: `${getSpeciesData(species).name}, Lv. ${levelInBand(traitValue, FRONTIER_PARTY_LEVELS)}`,
+        label: m.ow_lineup_square({
+          species: getSpeciesData(species).name,
+          level: levelInBand(traitValue, FRONTIER_PARTY_LEVELS),
+        }),
       });
     }
     return squares;
@@ -131,7 +135,10 @@ export default function StopDialog(props: StopDialogProps): JSX.Element {
         egg: false,
         progress: 0,
         fainted: false,
-        label: `${getSpeciesData(entry.species).name}, Lv. ${levelInBand(entry.traitValue, levels())}`,
+        label: m.ow_lineup_square({
+          species: getSpeciesData(entry.species).name,
+          level: levelInBand(entry.traitValue, levels()),
+        }),
       });
     }
     return squares;
@@ -156,15 +163,15 @@ export default function StopDialog(props: StopDialogProps): JSX.Element {
     if (challenger != null) {
       return challenger.greeting;
     }
-    return `A Team Rocket grunt blocks the way. “${getNpc(Npc.RocketGrunt).quote}”`;
+    return m.stop_rocket_greeting({ quote: getNpc(Npc.RocketGrunt).quote });
   };
 
   /** What a challenge that can no longer be taken says */
   const refusal = (): string => {
     if (props.challenger != null) {
-      return `${props.challenger.name} waves you off. Nothing more today.`;
+      return m.stop_waves_off({ name: props.challenger.name });
     }
-    return 'The grunt wants nothing more to do with you.';
+    return m.stop_grunt_refuses();
   };
 
   // A refusal belongs to the grunt that refused: reopened on another
@@ -210,7 +217,7 @@ export default function StopDialog(props: StopDialogProps): JSX.Element {
       <Dialog
         isOpen={props.challenge != null && !picking()}
         onClose={props.onClose}
-        title={props.challenger?.name ?? 'Team Rocket'}
+        title={props.challenger?.name ?? m.ow_team_rocket()}
         lead={
           <HeadingPortrait>
             <NpcSprite npc={props.npc} sheet={props.sheet} size={28} label="" />
@@ -224,16 +231,22 @@ export default function StopDialog(props: StopDialogProps): JSX.Element {
               {/* What the fight asks of a party before the line-up is read */}
               <CounterTerms
                 rows={[
-                  { label: 'Levels', value: `${levels()[0]} to ${levels()[1]}` },
-                  { label: 'You bring', value: `Up to ${props.challenger?.bring ?? TEAM_SIZE}` },
+                  {
+                    label: m.stop_levels(),
+                    value: m.stop_levels_value({ lowest: levels()[0], highest: levels()[1] }),
+                  },
+                  {
+                    label: m.stop_bring(),
+                    value: m.stop_bring_value({ count: props.challenger?.bring ?? TEAM_SIZE }),
+                  },
                   ...(props.challenger == null
                     ? []
-                    : [{ label: 'Win', value: props.challenger.wins }]),
+                    : [{ label: m.ow_win(), value: props.challenger.wins }]),
                 ]}
               />
               {/* A Frontier house rule changes the whole fight, so it is said in full */}
               <Show when={props.challenger?.rule}>{(rule) => <Meta>{rule()}</Meta>}</Show>
-              <CounterStep>Their line-up</CounterStep>
+              <CounterStep>{m.ow_their_lineup()}</CounterStep>
               {/* What they are fielding, in the same box of squares
                   the player reads their own pokemon in: a lineup laid
                   out the way a box is laid out is one they already
@@ -241,10 +254,7 @@ export default function StopDialog(props: StopDialogProps): JSX.Element {
               {/* A house that answers what you bring has nothing to
                   lay out yet, so the space says so rather than
                   standing empty */}
-              <Show
-                when={!unseen()}
-                fallback={<Meta>Nobody named yet. Theirs are drawn once yours are.</Meta>}
-              >
+              <Show when={!unseen()} fallback={<Meta>{m.stop_unseen()}</Meta>}>
                 <CatchBox
                   entries={lineup(record())}
                   capacity={record().party.length}
@@ -262,7 +272,7 @@ export default function StopDialog(props: StopDialogProps): JSX.Element {
         <Show when={rented()}>
           <div class="flex flex-col gap-2 pt-3">
             <CounterStep>
-              Choose {FRONTIER_TEAM_SIZE} to rent · {taken().length} taken
+              {m.stop_rent({ size: FRONTIER_TEAM_SIZE, taken: taken().length })}
             </CounterStep>
             <CatchBox entries={crate()} capacity={crate().length} columns={3} onOpen={toggle} />
           </div>
@@ -297,9 +307,9 @@ export default function StopDialog(props: StopDialogProps): JSX.Element {
                 });
             }}
           >
-            Battle
+            {m.stop_battle()}
           </Button>
-          <Button onClick={props.onClose}>Walk on</Button>
+          <Button onClick={props.onClose}>{m.ow_walk_on()}</Button>
         </DialogActions>
       </Dialog>
     </>

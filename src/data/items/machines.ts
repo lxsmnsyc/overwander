@@ -1,8 +1,9 @@
-import { TYPE_NAMES } from '../constants/types';
 import { ItemFlags, ItemTypes, getMachineItem } from '../ids/items';
 import { MoveCategories, Moves } from '../ids/moves';
+import { TYPE_IDS } from '../ids/names';
 import { TUTOR_ONLY_MOVES, getMoveData } from '../moves';
 import { getRegisteredSpecies, getSpeciesData } from '../species';
+import { findIdName } from '../yaml';
 import { itemText, registerItem } from './__create';
 
 /**
@@ -127,7 +128,7 @@ function registerMachine(
     name: itemText('machines', 'name', { move: getMoveData(move).name }),
     // A machine is drawn in the colours of the move it teaches, which is
     // the whole of what a machine looks like: the `tm` sheet holds one per type
-    icon: `tm/${TYPE_NAMES[getMoveData(move).type].toLowerCase()}`,
+    icon: `tm/${findIdName(TYPE_IDS, getMoveData(move).type).toLowerCase()}`,
     type: ItemTypes.Machine,
     ...terms,
   });

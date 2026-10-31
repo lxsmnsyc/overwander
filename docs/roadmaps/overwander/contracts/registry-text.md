@@ -1,7 +1,7 @@
 ---
 name: registry-text
 version: 1
-status: draft
+status: frozen
 defined_by: i18n-registry-loader
 ---
 
@@ -13,7 +13,12 @@ How registry text is laid out per locale under `src/data/text/<locale>/`, and th
 
 ## Interface
 
-Written by `i18n-registry-loader` before it freezes.
+- **Layout.** A registry's words live under `src/data/text/<locale>/`, English under `text/en/`. A locale file sits at the same path below its locale folder as the English file it translates (`text/ja/moves/gen-1/bulbasaur-to-blastoise.yaml` over `text/en/moves/gen-1/bulbasaur-to-blastoise.yaml`), keyed the same way.
+- **English is complete; a locale is an overlay.** A locale file may leave out entries and fields, which then read in English. It may not write a file, entry or field English lacks, or a value where English writes a map (or the reverse). Each of those fails the load. A locale folder must be one of `locales` in `project.inlang/settings.json`.
+- **Loading.** A registry globs every locale (`../text/*/moves/**/*.yaml`) and passes the files to `splitLocales` from `src/data/yaml.ts`, which returns `{ english, overlays }`. The registry reads `english` as before, reads each overlay into entries with `readOverlays`, and calls `localize(record, entryName, overlays, fields)` on each record it builds.
+- **Lookups.** `localize` turns each translated field into an accessor on the record that reads `currentLocale()`, so `getMoveData(id).name`, `getSpeciesData(id).category` and the rest read the active locale with no new lookup functions. A field no locale translates stays a plain value.
+- **Copies.** A record built from another record (a Mega, a Zenith or a true shadow from its base) is made with `extendRecord(base, changes)`, never a spread. A spread reads each accessor once and keeps that locale's text.
+- **Wired:** species (`name`, `category`), moves and abilities (`name`, `description`), items (`name` and a written `description`). Item `templates:` and the `stringTable` files (types, natures, biomes and the rest) are not wired yet.
 
 ## Changes
 

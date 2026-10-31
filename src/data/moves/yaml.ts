@@ -10,7 +10,7 @@ import {
   MOVE_TARGET_IDS,
   TYPE_IDS,
 } from '../ids/names';
-import { flagsOf, idOf } from '../yaml';
+import { flagsOf, idOf, localize, readOverlays, splitLocales } from '../yaml';
 import { PROJECTILE_DELAY, type RegisterMoveData } from './__create';
 
 /**
@@ -23,7 +23,8 @@ import { PROJECTILE_DELAY, type RegisterMoveData } from './__create';
  * - `battle/` is what a fight reads: type, category, power, accuracy,
  *   priority, PP, who it reaches and how
  * - `cast/` is what the caster looks like doing it, most wanted first
- * - `text/<locale>/moves/` holds each name and description
+ * - `text/<locale>/moves/` holds each name and description, English
+ *   complete and any other locale laid over it (see `splitLocales`)
  *
  * What a move does beyond its numbers is code, in `src/battle/moves/`
  */
@@ -65,6 +66,15 @@ function collect(files: Record<string, unknown>): Map<string, { where: string; p
   return parts;
 }
 
+function readParts(files: Record<string, unknown>): Map<string, unknown> {
+  const parts = new Map<string, unknown>();
+
+  for (const [name, placed] of collect(files)) {
+    parts.set(name, placed.part);
+  }
+  return parts;
+}
+
 /** Every move file, as the build hands them over */
 export interface MoveFiles {
   battle: Record<string, unknown>;
@@ -76,7 +86,10 @@ export interface MoveFiles {
 export function readMoves(files: MoveFiles): [Moves, RegisterMoveData][] {
   const battle = collect(files.battle);
   const cast = collect(files.cast);
-  const text = collect(files.text);
+  // English text is the record, and any other locale is laid over it
+  const byLocale = splitLocales(files.text);
+  const text = collect(byLocale.english);
+  const translated = readOverlays(byLocale.overlays, readParts);
   const read: [Moves, RegisterMoveData][] = [];
 
   for (const [name, placed] of battle) {
@@ -120,6 +133,7 @@ export function readMoves(files: MoveFiles): [Moves, RegisterMoveData][] {
     if (numbers.projectile === true) {
       data.delay = PROJECTILE_DELAY;
     }
+    localize(data, name, translated, ['name', 'description']);
     read.push([idOf<Moves>(MOVE_IDS, name, where), data]);
   }
 

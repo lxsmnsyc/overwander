@@ -11,7 +11,7 @@ import {
 } from '../ids/forms';
 import { ABILITY_IDS, ITEM_IDS, REGION_IDS, SPECIES_IDS, TYPE_IDS } from '../ids/names';
 import { Species } from '../ids/species';
-import { idOf, idsOf } from '../yaml';
+import { extendRecord, idOf, idsOf } from '../yaml';
 import zenithHolders from '../text/en/zeniths.yaml';
 import { getSpeciesData, registerSpecies } from './__create';
 import { readStats } from './yaml';
@@ -285,22 +285,24 @@ export default function registerZenithSpecies(): void {
   for (const shape of ZENITH_SHAPES) {
     const base = getSpeciesData(shape.base);
 
-    registerSpecies(shape.zenith, {
-      ...base,
-      name: `Zenith ${shape.holder}`,
-      baseForm: false,
-      worn: true,
-      stats: { ...shape.stats },
-      types: shape.types,
-      abilities: [shape.ability],
-      hiddenAbilities: [],
-      // Put on in a fight rather than grown into, so it stands in no
-      // line and nothing stages it
-      evolvesFrom: undefined,
-      evolvesInto: undefined,
-      eggSpecies: undefined,
-      biomes: [],
-    });
+    registerSpecies(
+      shape.zenith,
+      extendRecord(base, {
+        name: `Zenith ${shape.holder}`,
+        baseForm: false,
+        worn: true,
+        stats: { ...shape.stats },
+        types: shape.types,
+        abilities: [shape.ability],
+        hiddenAbilities: [],
+        // Put on in a fight rather than grown into, so it stands in no
+        // line and nothing stages it
+        evolvesFrom: undefined,
+        evolvesInto: undefined,
+        eggSpecies: undefined,
+        biomes: [],
+      }),
+    );
     for (const form of shape.forms) {
       const own = getSpeciesData(form.base);
 

@@ -18,7 +18,7 @@ import {
 import type Natures from '../ids/natures';
 import type { Species } from '../ids/species';
 import type { Statuses } from '../ids/status';
-import { flagsOf, idOf, idsOf } from '../yaml';
+import { flagsOf, idOf, idsOf, localize, readOverlays, splitLocales } from '../yaml';
 import type { ItemData } from './__create';
 
 /**
@@ -30,7 +30,8 @@ import type { ItemData } from './__create';
  *   what it costs, and the one thing it names where it names one (the
  *   type a gem lifts, the Mega a stone opens)
  * - `text/<locale>/items/` holds each name, and the description where
- *   it is written out. A family whose lines follow its own tables (a
+ *   it is written out, English complete and any other locale laid over
+ *   it (see `splitLocales`). A family whose lines follow its own tables (a
  *   gem names its type, a drink the health it gives back) keeps the
  *   sentences under `templates:` and leaves the description out; the
  *   family's code picks a sentence and fills it in
@@ -258,6 +259,20 @@ function readText(files: Record<string, unknown>): Map<string, FamilyText> {
   return families;
 }
 
+function readEntries(files: Record<string, unknown>): Map<string, unknown> {
+  const entries = new Map<string, unknown>();
+
+  for (const file of Object.values(files)) {
+    for (const [key, value] of Object.entries(v.parse(TEXT_FILE, file))) {
+      // The templates wait for the batch that turns built descriptions into messages
+      if (key !== TEMPLATES_KEY) {
+        entries.set(key, value);
+      }
+    }
+  }
+  return entries;
+}
+
 /**
  * Every item the files describe, family by family in `order` and in
  * the order each file writes them, which is the order a shelf lists
@@ -267,7 +282,10 @@ export function readItems(
   files: ItemFiles,
   order: readonly string[],
 ): { items: WrittenItem[]; text: Map<string, FamilyText> } {
-  const text = readText(files.text);
+  // English text is the record, and any other locale is laid over it
+  const byLocale = splitLocales(files.text);
+  const text = readText(byLocale.english);
+  const translated = readOverlays(byLocale.overlays, readEntries);
   const records = new Map<string, Record<string, unknown>>();
 
   for (const [path, file] of Object.entries(files.records)) {
@@ -304,19 +322,19 @@ export function readItems(
       // Checked here as well, so a misspelt name fails the load
       readNamed(read, where);
 
-      items.push({
-        family,
-        item,
-        data: {
-          name: said.name,
-          description: said.description ?? '',
-          type: idOf<ItemTypes>(ITEM_TYPE_IDS, read.type, where),
-          icon: read.icon,
-          flags: flagsOf(ITEM_FLAG_IDS, read.flags, where),
-          buy: read.buy,
-          sell: read.sell,
-        },
-      });
+      const data: ItemData = {
+        name: said.name,
+        description: said.description ?? '',
+        type: idOf<ItemTypes>(ITEM_TYPE_IDS, read.type, where),
+        icon: read.icon,
+        flags: flagsOf(ITEM_FLAG_IDS, read.flags, where),
+        buy: read.buy,
+        sell: read.sell,
+      };
+
+      // A description the family's code writes waits for the templates batch
+      localize(data, name, translated, ['name', 'description']);
+      items.push({ family, item, data });
     }
     for (const name of words?.items.keys() ?? []) {
       if (!Object.hasOwn(written, name)) {

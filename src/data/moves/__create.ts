@@ -102,7 +102,13 @@ const MOVE_DATA = new Map<Moves, MoveData>();
 export const PROJECTILE_DELAY = 500;
 
 export function registerMove(move: Moves, data: RegisterMoveData): void {
-  MOVE_DATA.set(move, { ...data, affects: data.affects ?? DEFAULT_AFFECTS[data.target] });
+  // Assigned onto the record rather than spread into a new one, so a
+  // field the loader made read in the player's locale stays that way
+  const record: MoveData = Object.assign(data, {
+    affects: data.affects ?? DEFAULT_AFFECTS[data.target],
+  });
+
+  MOVE_DATA.set(move, record);
 }
 
 export function getRegisteredMoves(): Moves[] {

@@ -3,7 +3,7 @@ import { STAT_ORDER } from '../constants/stats';
 import { SPECIES_IDS } from '../ids/names';
 import type { Species } from '../ids/species';
 import { getBaseFormSpecies, speciesDexNumber } from '../ids/forms';
-import { idOf } from '../yaml';
+import { extendRecord, idOf } from '../yaml';
 import { getSpeciesData, registerSpecies } from './__create';
 import shadowsFile from './true-shadows.yaml';
 
@@ -124,18 +124,20 @@ export default function registerTrueShadowSpecies(): void {
     // A worn shape keeps its prefix: Primal Kyogre's is Primal XD-382
     const plain = getSpeciesData(getBaseFormSpecies(counterpart)).name;
 
-    registerSpecies(shadow, {
-      ...base,
-      baseForm: false,
-      name: base.name.replace(plain, trueShadowName(shadow)),
-      stats,
-      // Met in the dark and nowhere else, so no biome lists one and
-      // no pool stages one: the sky is what decides, not the country
-      biomes: [],
-      // It keeps its counterpart's rank, which is what stages it in the
-      // same band, but carries nothing and lays no egg of its own
-      heldItems: undefined,
-      eggCycles: undefined,
-    });
+    registerSpecies(
+      shadow,
+      extendRecord(base, {
+        baseForm: false,
+        name: base.name.replace(plain, trueShadowName(shadow)),
+        stats,
+        // Met in the dark and nowhere else, so no biome lists one and
+        // no pool stages one: the sky is what decides, not the country
+        biomes: [],
+        // It keeps its counterpart's rank, which is what stages it in the
+        // same band, but carries nothing and lays no egg of its own
+        heldItems: undefined,
+        eggCycles: undefined,
+      }),
+    );
   }
 }

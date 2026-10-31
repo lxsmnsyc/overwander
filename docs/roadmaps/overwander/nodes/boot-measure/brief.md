@@ -1,7 +1,7 @@
 ---
 id: boot-measure
 title: Measure the startup bundle
-status: active
+status: done
 priority: should
 type: feature
 outline: false

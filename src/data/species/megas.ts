@@ -4,7 +4,7 @@ import type { Types } from '../constants/types';
 import type Abilities from '../ids/abilities';
 import { ABILITY_IDS, SPECIES_IDS, TYPE_IDS } from '../ids/names';
 import type { Species } from '../ids/species';
-import { idOf, idsOf } from '../yaml';
+import { extendRecord, idOf, idsOf } from '../yaml';
 import megaNames from '../text/en/megas.yaml';
 import { getSpeciesData, registerSpecies } from './__create';
 import { readStats } from './yaml';
@@ -120,29 +120,31 @@ export default function registerMegaSpecies(): void {
   for (const shape of MEGA_SHAPES) {
     const base = getSpeciesData(shape.base);
 
-    registerSpecies(shape.mega, {
-      ...base,
-      name: shape.name,
-      baseForm: false,
-      worn: true,
-      height: shape.height,
-      weight: shape.weight,
-      stats: { ...shape.stats },
-      types: shape.types,
-      abilities: [shape.filler ?? shape.ability],
-      hiddenAbilities: [],
-      // Put on in a fight rather than grown into, so it stands in no
-      // line and nothing stages it
-      evolvesFrom: undefined,
-      evolvesInto: undefined,
-      eggSpecies: undefined,
-      biomes: [],
-      // Nobody meets one in the wild, and it is no rank of its own:
-      // a Mega Mewtwo is staged by nothing
-      heldItems: undefined,
-      eggCycles: undefined,
-      rank: undefined,
-      awaiting: undefined,
-    });
+    registerSpecies(
+      shape.mega,
+      extendRecord(base, {
+        name: shape.name,
+        baseForm: false,
+        worn: true,
+        height: shape.height,
+        weight: shape.weight,
+        stats: { ...shape.stats },
+        types: shape.types,
+        abilities: [shape.filler ?? shape.ability],
+        hiddenAbilities: [],
+        // Put on in a fight rather than grown into, so it stands in no
+        // line and nothing stages it
+        evolvesFrom: undefined,
+        evolvesInto: undefined,
+        eggSpecies: undefined,
+        biomes: [],
+        // Nobody meets one in the wild, and it is no rank of its own:
+        // a Mega Mewtwo is staged by nothing
+        heldItems: undefined,
+        eggCycles: undefined,
+        rank: undefined,
+        awaiting: undefined,
+      }),
+    );
   }
 }

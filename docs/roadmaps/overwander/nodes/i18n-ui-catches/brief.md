@@ -1,7 +1,7 @@
 ---
 id: i18n-ui-catches
 title: Translate catches, items and the dex
-status: todo
+status: active
 priority: should
 type: feature
 outline: false

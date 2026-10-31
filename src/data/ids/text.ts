@@ -4,8 +4,7 @@ import { EGG_GROUP_IDS, FAMILY_IDS, NATURE_IDS } from './names';
 import type Natures from './natures';
 import eggGroupsFile from '../text/en/egg-groups.yaml';
 import familiesFile from '../text/en/families.yaml';
-import naturesFile from '../text/en/natures.yaml';
-import { stringTable } from '../yaml';
+import { localeStringTable, stringTable } from '../yaml';
 
 /**
  * What the enums in this folder that are only a name are called. They
@@ -25,7 +24,11 @@ export const FAMILY_NAMES = stringTable<Families>(
 );
 
 /** What each nature is called, so nothing prints a nature's number */
-export const NATURE_NAMES = stringTable<Natures>(NATURE_IDS, naturesFile, 'text/en/natures.yaml');
+export const NATURE_NAMES = localeStringTable<Natures>(
+  NATURE_IDS,
+  import.meta.glob('../text/*/natures.yaml', { eager: true, import: 'default' }),
+  'text/<locale>/natures.yaml',
+);
 
 /**
  * What each egg group is called. The water groups are numbered in the

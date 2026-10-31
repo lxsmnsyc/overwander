@@ -18,8 +18,10 @@ How registry text is laid out per locale under `src/data/text/<locale>/`, and th
 - **Loading.** A registry globs every locale (`../text/*/moves/**/*.yaml`) and passes the files to `splitLocales` from `src/data/yaml.ts`, which returns `{ english, overlays }`. The registry reads `english` as before, reads each overlay into entries with `readOverlays`, and calls `localize(record, entryName, overlays, fields)` on each record it builds.
 - **Lookups.** `localize` turns each translated field into an accessor on the record that reads `currentLocale()`, so `getMoveData(id).name`, `getSpeciesData(id).category` and the rest read the active locale with no new lookup functions. A field no locale translates stays a plain value.
 - **Copies.** A record built from another record (a Mega, a Zenith or a true shadow from its base) is made with `extendRecord(base, changes)`, never a spread. A spread reads each accessor once and keeps that locale's text.
-- **Wired:** species (`name`, `category`), moves and abilities (`name`, `description`), items (`name` and a written `description`). Item `templates:` and the `stringTable` files (types, natures, biomes and the rest) are not wired yet.
+- **Flat tables.** A `stringTable` file every locale writes is read with `localeStringTable(ids, files, where)`, given the glob of that one file across locale folders (`../text/*/types.yaml`). Each translated entry reads the active locale.
+- **Wired:** species (`name`, `category`), moves and abilities (`name`, `description`), items (`name` and a written `description`), types and natures. Item `templates:` and the other `stringTable` files (biomes, egg groups and the rest) are not wired yet.
 
 ## Changes
 
 - v1: initial.
+- v2 (i18n-official-names): `localeStringTable` for flat tables; types and natures wired.

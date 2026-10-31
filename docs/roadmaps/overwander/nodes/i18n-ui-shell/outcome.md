@@ -50,6 +50,9 @@ Reuse these rather than adding new ones:
 - `test/data/duel-rules.test.ts` and `test/auth/refusal.test.ts` (not owned): expect the `DuelRefusal` objects and the message-function fallback.
 - `src/routes/index.tsx` also holds the auction panel's Board and Add buttons and the ban screen; they are translated here because the file is owned.
 
+- `src/auth/security.ts` (not owned): the Security pane's refusals go through `authRefusal` with `security_refusal_*` messages. A Better Auth code it knows is said in the player's language; anything else reads as what the call could not do, where it used to show Better Auth's English message.
+- The staff-only command bar (`src/components/app/command-bar/**`) stays English, as the admin panel does: only `runsTheGame` accounts can open it.
+
 ## Stubs left
 
 - `src/overworld/npcs/lessons.ts` passes `cost: 'The Heart Scale'` into the teach form, and the shop NPC (`src/overworld/npcs/shop.tsx`) passes English verbs, empties and price notes into the shop form. NPC lines are out of scope (batch 9 or a follow-up).

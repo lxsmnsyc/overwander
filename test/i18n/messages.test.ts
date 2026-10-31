@@ -116,7 +116,11 @@ describe.each(LOCALES)('the %s messages', (locale) => {
     const inEnglish: string[] = [];
 
     for (const [key, message] of translated) {
-      if (/^(?:refusal|gift_reason|auth_refusal|duel_refusal)_/.test(key)) {
+      if (
+        /^(?:refusal|gift_reason|auth_refusal|duel_refusal|learn_refusal|security_refusal)_/.test(
+          key,
+        )
+      ) {
         if (JSON.stringify(message) === JSON.stringify(english.get(key))) {
           inEnglish.push(key);
         }

@@ -122,7 +122,6 @@ import {
   HERALD_WEIGHT,
   HOVER_GLOW,
   IDLE_PACE,
-  LOADING_LABEL,
   LOADING_SIZE,
   MARK_WEIGHT,
   NPC_CELLS,
@@ -156,6 +155,7 @@ import {
   isTurningPress,
   lampSquash,
   pictureWidth,
+  readLoadingLabel,
   shadowSquash,
   slideGain,
 } from '../../../canvas/overworld/metrics';
@@ -2257,14 +2257,14 @@ export default function createChunkView(
       const word =
         batch == null
           ? null
-          : bakeWord(bakery, LOADING_LABEL, font, COLORS.loading, COLORS.loadingHalo);
+          : bakeWord(bakery, readLoadingLabel(), font, COLORS.loading, COLORS.loadingHalo);
 
       if (batch == null || word == null) {
         context.font = font;
         context.fillStyle = COLORS.loadingHalo;
-        context.fillText(LOADING_LABEL, middle.x, middle.y + 1);
+        context.fillText(readLoadingLabel(), middle.x, middle.y + 1);
         context.fillStyle = COLORS.loading;
-        context.fillText(LOADING_LABEL, middle.x, middle.y);
+        context.fillText(readLoadingLabel(), middle.x, middle.y);
       } else {
         // Stamped at the size it was baked, so the halo is the one
         // the stroke drew rather than a scaled copy of it

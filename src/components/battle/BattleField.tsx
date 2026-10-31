@@ -6,6 +6,7 @@ import { type BaseEvent, EventPriority } from '../../core/event-emitter';
 import BattleCanvas, { type UnitSpot } from './battle-canvas';
 import { CARD_EVENTS, unitsOf } from './BattleParty';
 import UnitCard from './UnitCard';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * The field, and the card that comes up over whichever pokemon the
@@ -104,7 +105,7 @@ export default function BattleField(props: BattleFieldProps): JSX.Element {
           // through to the field and goes the moment the pokemon is left
           <div
             role="tooltip"
-            aria-label="The pokemon under the pointer"
+            aria-label={m.battle_field_hovered()}
             class={`pointer-events-none fixed z-20 -translate-x-1/2
               ${spot().at.top < CARD_ROOM ? 'pt-1.5' : '-translate-y-full pb-1.5'}`}
             style={{

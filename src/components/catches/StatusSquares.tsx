@@ -1,5 +1,5 @@
 import { For, type JSX, Show } from 'solid-js';
-import { STATUS_NAMES } from '../../model/health';
+import { getStatusName } from '../../model/health';
 import { unpackStatuses } from '../../data/ids/status';
 import { STATUS_COLORS } from '../battle/UnitCard';
 import { TooltipHost } from '../styled';
@@ -15,12 +15,12 @@ export default function StatusSquares(props: { statuses: number }): JSX.Element 
       <span class="flex shrink-0 items-center gap-0.5">
         <For each={unpackStatuses(props.statuses)}>
           {(status) => (
-            <TooltipHost class="inline-flex" kind="status" name={STATUS_NAMES[status]}>
+            <TooltipHost class="inline-flex" kind="status" name={getStatusName(status)}>
               <span
                 class="size-2.5 rounded-[2px]"
                 style={{ 'background-color': STATUS_COLORS[status] }}
                 role="img"
-                aria-label={STATUS_NAMES[status]}
+                aria-label={getStatusName(status)}
               />
             </TooltipHost>
           )}

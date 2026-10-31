@@ -15,6 +15,7 @@ import { Badge, Button, Dialog, DialogActions, Meta } from '../../styled';
 import TeamsPreview from '../TeamsPreview';
 import type { SideSummary, SideUnit } from './summary';
 import { formatNumber } from '../../../i18n/format';
+import { m } from '../../../i18n/paraglide/messages.js';
 
 /**
  * What a settled fight says about itself: the word for how it went,
@@ -106,9 +107,9 @@ export default function VerdictDialog(props: VerdictDialogProps): JSX.Element {
       return props.opponent?.name ?? getSpeciesData(side.lead).name;
     }
     if (side.player === props.player) {
-      return 'You';
+      return m.battle_you();
     }
-    return props.names()?.get(side.player)?.nickname ?? 'A trainer';
+    return props.names()?.get(side.player)?.nickname ?? m.duels_a_trainer();
   };
 
   /**
@@ -195,19 +196,22 @@ export default function VerdictDialog(props: VerdictDialogProps): JSX.Element {
           {/* What the fight paid, laid out rather than said in passing */}
           <Show when={paid()}>
             <div class="flex flex-col gap-1.5">
-              <span class="text-center text-xs font-semibold text-muted uppercase">Rewards</span>
+              <span class="text-center text-xs font-semibold text-muted uppercase">
+                {m.verdict_rewards()}
+              </span>
               <div class="flex flex-wrap justify-center gap-1.5">
                 <Show when={props.spoils?.seat}>
                   {(seat) => (
                     <Badge tone={seat() === 'freed' ? 'leaf' : 'ember'}>
-                      {seat() === 'freed' ? 'The seat is open' : 'Their line-up held'}
+                      {seat() === 'freed' ? m.verdict_seat_open() : m.verdict_seat_held()}
                     </Badge>
                   )}
                 </Show>
                 <Show when={props.spoils != null && props.spoils.gold !== 0}>
                   <Badge tone={(props.spoils?.gold ?? 0) > 0 ? 'gold' : 'ember'}>
-                    {(props.spoils?.gold ?? 0) > 0 ? '+' : '−'}
-                    {formatNumber(Math.abs(props.spoils?.gold ?? 0))} gold
+                    {m.verdict_gold({
+                      amount: `${(props.spoils?.gold ?? 0) > 0 ? '+' : '−'}${formatNumber(Math.abs(props.spoils?.gold ?? 0))}`,
+                    })}
                   </Badge>
                 </Show>
                 <Show when={props.spoils?.award}>
@@ -228,7 +232,10 @@ export default function VerdictDialog(props: VerdictDialogProps): JSX.Element {
                 <For each={props.candy}>
                   {(pile) => (
                     <Prize art={<CandySprite family={pile.family} size={24} label="" />}>
-                      {pile.count} {getFamilyName(pile.family)} candy
+                      {m.battle_candy_earned({
+                        count: pile.count,
+                        family: getFamilyName(pile.family),
+                      })}
                     </Prize>
                   )}
                 </For>
@@ -237,7 +244,7 @@ export default function VerdictDialog(props: VerdictDialogProps): JSX.Element {
                 {(species) => (
                   <div class="flex items-center justify-center gap-1.5">
                     <UnitArt species={species()} shiny={false} female={false} fainted={false} />
-                    <Meta>{getSpeciesData(species()).name} is waiting in the overworld.</Meta>
+                    <Meta>{m.verdict_waiting({ species: getSpeciesData(species()).name })}</Meta>
                   </div>
                 )}
               </Show>
@@ -252,7 +259,9 @@ export default function VerdictDialog(props: VerdictDialogProps): JSX.Element {
                 {(side, at) => (
                   <>
                     <Show when={at() > 0}>
-                      <span class="self-center text-center text-sm font-bold text-muted">VS</span>
+                      <span class="self-center text-center text-sm font-bold text-muted">
+                        {m.duels_vs()}
+                      </span>
                     </Show>
                     <section
                       class={`flex min-w-0 flex-col gap-2 rounded-panel border-2 p-3 ${FRAMES[mark(side) ?? 'none']}`}
@@ -264,15 +273,17 @@ export default function VerdictDialog(props: VerdictDialogProps): JSX.Element {
                         <Show when={mark(side)}>
                           {(result) => (
                             <Badge tone={result() === 'won' ? 'leaf' : 'ember'}>
-                              {result() === 'won' ? 'Won' : 'Lost'}
+                              {result() === 'won' ? m.verdict_won() : m.verdict_lost()}
                             </Badge>
                           )}
                         </Show>
                       </div>
                       <div class="flex flex-col gap-1">
                         <Meta class="text-left tabular-nums">
-                          {formatNumber(Math.round(side.dealt))} damage ·{' '}
-                          {Math.round(share(side) * 100)}%
+                          {m.verdict_side_damage({
+                            damage: formatNumber(Math.round(side.dealt)),
+                            percent: Math.round(share(side) * 100),
+                          })}
                         </Meta>
                         <div class="h-1.5 overflow-hidden rounded-full bg-line-soft">
                           <div
@@ -294,16 +305,20 @@ export default function VerdictDialog(props: VerdictDialogProps): JSX.Element {
                               <div class="flex min-w-0 grow flex-col gap-0.5">
                                 <span class="truncate text-sm">
                                   {getSpeciesData(unit.species).name}{' '}
-                                  <span class="text-muted">Lv. {unit.level}</span>
+                                  <span class="text-muted">
+                                    {m.ow_level({ level: unit.level })}
+                                  </span>
                                 </span>
                                 <Show
                                   when={unit.health > 0}
-                                  fallback={<Meta class="text-left">Fainted</Meta>}
+                                  fallback={<Meta class="text-left">{m.verdict_fainted()}</Meta>}
                                 >
                                   <div
                                     class="h-1 w-full max-w-24 overflow-hidden rounded-full bg-line-soft"
                                     role="img"
-                                    aria-label={`${Math.round(unit.health * 100)}% health left`}
+                                    aria-label={m.battle_health_left({
+                                      percent: Math.round(unit.health * 100),
+                                    })}
                                   >
                                     <div
                                       class="h-full bg-leaf"
@@ -331,7 +346,9 @@ export default function VerdictDialog(props: VerdictDialogProps): JSX.Element {
           <Show when={props.raiding ? props.teams : null}>
             {(stamped) => (
               <div class="flex flex-col gap-1.5">
-                <span class="text-xs font-semibold text-muted uppercase">Damage dealt</span>
+                <span class="text-xs font-semibold text-muted uppercase">
+                  {m.verdict_damage_dealt()}
+                </span>
                 <TeamsPreview teams={stamped()} player={props.player} sides={props.sides} />
               </div>
             )}
@@ -340,22 +357,25 @@ export default function VerdictDialog(props: VerdictDialogProps): JSX.Element {
           <Show when={best()}>
             {(top) => (
               <Meta class="text-center">
-                ★ Best: {getSpeciesData(top().unit.species).name} ({sideName(top().side)}),{' '}
-                {formatNumber(Math.round(top().unit.dealt))} damage
+                {m.verdict_best({
+                  species: getSpeciesData(top().unit.species).name,
+                  side: sideName(top().side),
+                  damage: formatNumber(Math.round(top().unit.dealt)),
+                })}
               </Meta>
             )}
           </Show>
 
           <DialogActions>
             <Button tone="primary" onClick={props.onLeave}>
-              {props.replay ? 'Exit replay' : 'Leave battle'}
+              {props.replay ? m.verdict_exit_replay() : m.verdict_leave_battle()}
             </Button>
             <Button
               onClick={() => {
                 props.onDismiss();
               }}
             >
-              Stay and look
+              {m.verdict_stay()}
             </Button>
           </DialogActions>
         </Dialog>

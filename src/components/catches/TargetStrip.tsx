@@ -2,7 +2,7 @@ import { For, type JSX } from 'solid-js';
 import type { CaughtPokemon } from '../../auth/caught';
 import { getCatchName, isShiny } from '../../model/caught-record';
 import { isEgg } from '../../model/egg';
-import { STATUS_NAMES, getMaxHealth, isFainted } from '../../model/health';
+import { getMaxHealth, getStatusName, isFainted } from '../../model/health';
 import { Genders, Species } from '../../data/ids/species';
 import { unpackStatuses } from '../../data/ids/status';
 import AnimatedSprite from '../sprites/AnimatedSprite';
@@ -52,7 +52,7 @@ export default function TargetStrip(props: { caught: CaughtPokemon }): JSX.Eleme
             class="shrink-0 rounded-full bg-ember-soft px-2 py-0.5 text-xs font-bold
               text-ember-dark"
           >
-            {STATUS_NAMES[status]}
+            {getStatusName(status)}
           </span>
         )}
       </For>

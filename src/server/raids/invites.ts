@@ -1,6 +1,6 @@
 import 'server-only';
 import { asRaidRecord } from '../../model/raid-record';
-import { LobbyRole } from '../../model/lobby-role';
+import LobbyRole from '../../model/lobby-role';
 import { getSql } from '../db';
 import { readRaid } from './io';
 import { asString } from '../read';

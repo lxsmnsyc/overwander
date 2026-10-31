@@ -3,7 +3,7 @@
  * both hold people who came to fight and people who came to look, and
  * an invitation to either says which
  */
-export const enum LobbyRole {
+const enum LobbyRole {
   /**
    * Here with a party. In a raid that is a team among many; in a duel
    * it is one of the two seats
@@ -17,7 +17,4 @@ export const enum LobbyRole {
   Spectator = 1,
 }
 
-export const LOBBY_ROLE_NAMES: Record<LobbyRole, string> = {
-  [LobbyRole.Fighter]: 'Fighter',
-  [LobbyRole.Spectator]: 'Spectator',
-};
+export default LobbyRole;

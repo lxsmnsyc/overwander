@@ -4,6 +4,7 @@ import { type BattleRecord, getBattle } from '../../auth/battles';
 import BattleData from '../app/BattleData';
 import BattleView from './battle-view';
 import { Button, Note } from '../styled';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /** The fight itself, once its record is known to exist */
 function Watched(props: { id: string; record: Resource<BattleRecord | null> }): JSX.Element {
@@ -17,8 +18,8 @@ function Watched(props: { id: string; record: Resource<BattleRecord | null> }): 
       when={props.record()}
       fallback={
         <div class="flex h-full flex-col items-center justify-center gap-3 px-4 text-center">
-          <Note>There is no battle at this link.</Note>
-          <Button onClick={home}>Back to the game</Button>
+          <Note>{m.watch_no_battle()}</Note>
+          <Button onClick={home}>{m.watch_back()}</Button>
         </div>
       }
     >
@@ -45,7 +46,7 @@ export default function WatchBattle(props: { id: string }): JSX.Element {
     <Suspense
       fallback={
         <div class="flex h-full items-center justify-center">
-          <Note>Loading the battle…</Note>
+          <Note>{m.watch_loading()}</Note>
         </div>
       }
     >

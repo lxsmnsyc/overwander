@@ -3,7 +3,7 @@
 // number) considers unnecessary
 // oxlint-disable typescript/no-unnecessary-type-assertion
 import type { DuelInvite, DuelRecord, DuelRules } from '../model/duel-record';
-import type { LobbyRole } from '../model/lobby-role';
+import type LobbyRole from '../model/lobby-role';
 import { requireReader, requireUid, requireUidFor } from '../server/auth';
 import { Feature } from '../server/switches';
 import check, {

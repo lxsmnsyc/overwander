@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import BattleKind, { BATTLE_KIND_NAMES, getBattleKind } from '../../src/model/battle-kind';
+import BattleKind, { getBattleKind } from '../../src/model/battle-kind';
 import type { BattleRecord } from '../../src/auth/battles';
 import BattleOutcome from '../../src/model/battle-outcome';
 import Biome from '../../src/data/ids/biome';
@@ -43,11 +43,5 @@ describe('battle kinds', () => {
 
   it('reads players fighting each other off there being two of them', () => {
     expect(getBattleKind(asRecord({ players: ['alice', 'bob'] }))).toBe(BattleKind.Player);
-  });
-
-  it('names every kind', () => {
-    for (const kind of [BattleKind.Raid, BattleKind.Npc, BattleKind.Player]) {
-      expect(BATTLE_KIND_NAMES[kind].length).toBeGreaterThan(0);
-    }
   });
 });

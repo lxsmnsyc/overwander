@@ -10,7 +10,7 @@ import type { Depth } from '../overworld/depth';
 import { asRecordArray, asString } from '../model/normalize';
 import { RaidKind, type RaidRecord, type RaidView, asRaidRecord } from '../model/raid-record';
 import { hasAnyCaught } from './caught';
-import { LobbyRole } from '../model/lobby-role';
+import LobbyRole from '../model/lobby-role';
 import { requireReader, requireUid, requireUidFor } from '../server/auth';
 import { Feature } from '../server/switches';
 import check, {

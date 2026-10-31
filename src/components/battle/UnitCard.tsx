@@ -11,7 +11,7 @@ import type Abilities from '../../data/ids/abilities';
 import type { Items } from '../../data/ids/items';
 import { Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
-import { STATUS_NAMES } from '../../model/health';
+import { getStatusName } from '../../model/health';
 import {
   ABILITY_PILLS,
   type AbilityKind,
@@ -23,6 +23,7 @@ import { getMoveData } from '../../data/moves';
 import { getSpeciesData } from '../../data/species';
 import MoveTooltip from '../moves/MoveTooltip';
 import { Meta, TooltipHost } from '../styled';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * One pokemon in a fight, read in full: what it is, how much of it is
@@ -240,7 +241,7 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
           difference between a party member and the thing killing it is
           usually the level */}
       <div class="flex items-baseline gap-1 truncate">
-        <span class="text-muted">Lv. {unit().level}</span>
+        <span class="text-muted">{m.ow_level({ level: unit().level })}</span>
         <strong class="truncate">{getSpeciesData(unit().species).name}</strong>
       </div>
 
@@ -266,7 +267,11 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
                 <div
                   class={`h-full ${acting().channelling ? 'bg-arcane' : 'bg-gold'}`}
                   style={{ width: `${acting().done * 100}%` }}
-                  title={`${acting().channelling ? 'Channelling' : 'Casting'} ${acting().name}`}
+                  title={
+                    acting().channelling
+                      ? m.battle_channelling({ move: acting().name })
+                      : m.battle_casting({ move: acting().name })
+                  }
                 />
               )}
             </Show>
@@ -287,7 +292,9 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
       <Show when={view().acting}>
         {(acting) => (
           <Meta class="truncate">
-            {acting().channelling ? 'Channelling' : 'Casting'} {acting().name}
+            {acting().channelling
+              ? m.battle_channelling({ move: acting().name })
+              : m.battle_casting({ move: acting().name })}
           </Meta>
         )}
       </Show>
@@ -335,7 +342,7 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
             neither fits in a box this wide: the name is what is
             shown, and the card over it says the rest */}
         <ul class="m-0 flex list-none flex-col gap-0.5 p-0">
-          <For each={view().abilities} fallback={<Meta>No ability</Meta>}>
+          <For each={view().abilities} fallback={<Meta>{m.battle_no_ability()}</Meta>}>
             {(ability) => (
               <li>
                 <TooltipHost
@@ -356,7 +363,7 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
         </ul>
 
         <ul class="m-0 flex list-none flex-col gap-0.5 p-0">
-          <For each={view().items} fallback={<Meta>No item</Meta>}>
+          <For each={view().items} fallback={<Meta>{m.battle_no_item()}</Meta>}>
             {(item) => (
               <li>
                 <TooltipHost class="block" kind="item" {...item}>
@@ -379,11 +386,11 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
         <div class="flex flex-wrap gap-0.5">
           <For each={view().statuses}>
             {(status) => (
-              <TooltipHost class="inline-flex" kind="status" name={STATUS_NAMES[status]}>
+              <TooltipHost class="inline-flex" kind="status" name={getStatusName(status)}>
                 <span
                   class="size-2.5 rounded-[2px]"
                   style={{ 'background-color': STATUS_COLORS[status] }}
-                  aria-label={STATUS_NAMES[status]}
+                  aria-label={getStatusName(status)}
                   role="img"
                 />
               </TooltipHost>

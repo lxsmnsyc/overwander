@@ -11,6 +11,10 @@ const enum BattleOutcome {
   Unfinished = 0,
   Won = 1,
   Lost = 2,
+  /**
+   * Both sides went down together
+   */
+  Drawn = 3,
 }
 
 export default BattleOutcome;

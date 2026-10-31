@@ -1,7 +1,7 @@
 import type { CaughtPokemon } from '../../auth/caught';
 import { catchAura, isFavorite, isGuarded, isShiny } from '../../model/caught-record';
 import { isEgg } from '../../model/egg';
-import { STATUS_NAMES, getMaxHealth, isFainted } from '../../model/health';
+import { getMaxHealth, getStatusName, isFainted } from '../../model/health';
 import { Genders } from '../../data/ids/species';
 import { unpackStatuses } from '../../data/ids/status';
 import { getSpeciesData } from '../../data/species';
@@ -56,7 +56,7 @@ export function describeCatch(caught: CaughtPokemon): string {
   let carried = '';
 
   for (const status of unpackStatuses(caught.statuses)) {
-    carried += ` · ${STATUS_NAMES[status]}`;
+    carried += ` · ${getStatusName(status)}`;
   }
   const condition = isFainted(caught) ? ' · fainted' : `${hurt}${carried}`;
 

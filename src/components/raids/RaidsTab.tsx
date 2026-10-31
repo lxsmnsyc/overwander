@@ -23,7 +23,7 @@ import {
   watchLiveRaids,
   watchRaidInvites,
 } from '../../auth/raids';
-import { LobbyRole } from '../../model/lobby-role';
+import LobbyRole from '../../model/lobby-role';
 import { type Profile, watchProfile } from '../../auth/profile';
 import { RAID_INTERVAL } from '../../overworld/chunk-snapshot';
 import RaidLobby from './RaidLobby';

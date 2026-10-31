@@ -1,0 +1,58 @@
+# How each status reads to a player, in Spanish. The conditions the
+# games name use their names; a status a move leaves uses the move's name
+
+Seeding: Drenadoras
+Poisoned: Envenenado
+Sleeping: Dormido
+BadlyPoisoned: Gravemente envenenado
+Paralyzed: Paralizado
+Minimized: Reducción
+Invulnerable: Invulnerable
+Raging: Furia
+Biding: Venganza
+Confused: Confuso
+Recharging: Recargando
+Substituted: Sustituto
+Burned: Quemado
+Trapped: Atrapado
+Flinched: Amedrentado
+Frozen: Congelado
+FocusEnergy: Foco Energía
+Infatuated: Enamorado
+Grounded: Antiaéreo
+Floating: Flotando
+Submerged: Buceo
+Dormant: Latente
+Switching: Cambiando
+Protected: Protección
+Enduring: Aguante
+Cornered: Sin escapatoria
+Nightmared: Pesadilla
+Perishing: Canto Mortal
+Bonded: Mismo Destino
+Cursed: Maldición
+Encored: Otra Vez
+Identified: Profecía
+Comatose: Letargo Perenne
+Taunted: Mofa
+Tormented: Tormento
+Imprisoned: Sellar
+Rooted: Arraigo
+Drowsy: Somnoliento
+Centered: Señuelo
+Coated: Capa Mágica
+Snatching: Robo
+Grudging: Rabia
+Uproaring: Alboroto
+Helped: Refuerzo
+MindRead: Gran Ojo
+Embargoed: Embargo
+HealBlocked: Anticura
+PowerTricked: Truco Fuerza
+Roosting: Respiro
+MagnetRisen: Levitón
+AquaRinged: Acua Aro
+Telekinetic: Telequinesis
+SkyDropped: Caída Libre
+PowerShifted: Cambiapoder
+Staggered: Aturdido

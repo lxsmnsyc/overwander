@@ -10,7 +10,7 @@ import {
   createSignal,
   from,
 } from 'solid-js';
-import BattleKind, { BATTLE_KIND_NAMES, getBattleKind } from '../../model/battle-kind';
+import BattleKind, { getBattleKind } from '../../model/battle-kind';
 import { BattleOutcome, type BattleRecord, watchBattleHistory } from '../../auth/battles';
 import { listClaimedRaids } from '../../auth/raids';
 import { listWaitingEncounters } from '../../auth/safari';
@@ -44,11 +44,21 @@ import { SpriteAnim } from '../../data/ids/sprite-anims';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import TeamStrip from '../catches/TeamStrip';
 import PlayerPlate, { PlayerFace } from '../profile/PlayerPlate';
+import { m } from '../../i18n/paraglide/messages.js';
 
-const OUTCOME_LABELS: Record<BattleOutcome, string> = {
-  [BattleOutcome.Unfinished]: 'Unfinished',
-  [BattleOutcome.Won]: 'Won',
-  [BattleOutcome.Lost]: 'Lost',
+/** How each outcome reads, called when shown so it follows the locale */
+const OUTCOME_LABELS: Record<BattleOutcome, () => string> = {
+  [BattleOutcome.Unfinished]: m.history_unfinished,
+  [BattleOutcome.Won]: m.verdict_won,
+  [BattleOutcome.Lost]: m.verdict_lost,
+  [BattleOutcome.Drawn]: m.battle_draw,
+};
+
+/** What each kind of fight is called on the filter and the row's badge */
+const KIND_NAMES: Record<BattleKind, () => string> = {
+  [BattleKind.Raid]: m.history_kind_raids,
+  [BattleKind.Npc]: m.history_kind_npc,
+  [BattleKind.Player]: m.history_kind_pvp,
 };
 
 /**
@@ -60,6 +70,7 @@ const OUTCOME_ROW_TONES: Record<BattleOutcome, 'leaf' | 'ember' | undefined> = {
   [BattleOutcome.Unfinished]: undefined,
   [BattleOutcome.Won]: 'leaf',
   [BattleOutcome.Lost]: 'ember',
+  [BattleOutcome.Drawn]: undefined,
 };
 
 /**
@@ -81,11 +92,11 @@ function listKinds(records: BattleRecord[]): FilterOption<KindFilter>[] {
     fought.add(getBattleKind(record));
   }
 
-  const options: FilterOption<KindFilter>[] = [{ value: EVERY_KIND, label: 'All' }];
+  const options: FilterOption<KindFilter>[] = [{ value: EVERY_KIND, label: m.history_all() }];
 
   for (const kind of [BattleKind.Raid, BattleKind.Npc, BattleKind.Player]) {
     if (fought.has(kind)) {
-      options.push({ value: kind, label: BATTLE_KIND_NAMES[kind] });
+      options.push({ value: kind, label: KIND_NAMES[kind]() });
     }
   }
   return options;
@@ -152,7 +163,7 @@ async function loadFought(key: string): Promise<FoughtLine> {
         ? null
         : {
             uid: other.player,
-            name: profile?.nickname ?? 'A trainer',
+            name: profile?.nickname ?? m.duels_a_trainer(),
             sprite: profile?.sprite ?? null,
           },
   };
@@ -164,7 +175,7 @@ function RivalPlate(props: {
   onVisit: (uid: string) => void;
 }): JSX.Element {
   return (
-    <Show when={props.fought()?.rival} fallback={<Meta>A trainer</Meta>}>
+    <Show when={props.fought()?.rival} fallback={<Meta>{m.duels_a_trainer()}</Meta>}>
       {(rival) => (
         <PlayerPlate
           name={rival().name}
@@ -221,10 +232,10 @@ function HistoryRow(props: {
     // never squeezes it out of sight
     <li
       class="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-2"
-      title={OUTCOME_LABELS[props.record.outcome]}
+      title={OUTCOME_LABELS[props.record.outcome]()}
     >
       <div class="w-full shrink-0 sm:w-80">
-        <Suspense fallback={<Note>Reading the team…</Note>}>
+        <Suspense fallback={<Note>{m.history_reading_team()}</Note>}>
           <OwnStrip fought={fought} />
         </Suspense>
       </div>
@@ -234,8 +245,8 @@ function HistoryRow(props: {
       >
         {/* What the fight was, kept on one line */}
         <span class="flex min-w-0 items-center gap-2">
-          <Badge>{BATTLE_KIND_NAMES[kind()]}</Badge>
-          <Meta>vs</Meta>
+          <Badge>{KIND_NAMES[kind()]()}</Badge>
+          <Meta>{m.history_vs()}</Meta>
           <Switch>
             <Match when={kind() === BattleKind.Raid}>
               <span class="flex items-center gap-1.5 font-medium">
@@ -268,7 +279,7 @@ function HistoryRow(props: {
               </span>
             </Match>
             <Match when={kind() === BattleKind.Player}>
-              <Suspense fallback={<Meta>A trainer</Meta>}>
+              <Suspense fallback={<Meta>{m.duels_a_trainer()}</Meta>}>
                 <RivalPlate
                   fought={fought}
                   onVisit={(uid) => {
@@ -291,14 +302,14 @@ function HistoryRow(props: {
               props.onClaimed();
             }}
           >
-            Claim {getSpeciesData(props.record.species).name}
+            {m.history_claim({ species: getSpeciesData(props.record.species).name })}
           </Button>
         </Show>
         <span class="grow" />
         {/* Watching it back, from the row's end: the same fight again, with nothing at stake */}
         <Button
-          label="Watch replay"
-          title="Watch replay"
+          label={m.history_watch_replay()}
+          title={m.history_watch_replay()}
           onClick={() => {
             game.setBattle({ id: props.id, replay: true });
           }}
@@ -306,16 +317,16 @@ function HistoryRow(props: {
           <PlayIcon class="size-5" aria-hidden="true" />
         </Button>
         <Button
-          label="Copy link to this battle"
-          title="Copy link"
+          label={m.history_copy_link_label()}
+          title={m.history_copy_link()}
           onClick={() => {
             navigator.clipboard
               .writeText(`${location.origin}/battle/${props.id}`)
               .then(() => {
-                toast.push({ message: 'Link copied.', tone: 'leaf' });
+                toast.push({ message: m.history_link_copied(), tone: 'leaf' });
               })
               .catch(() => {
-                toast.push({ message: 'The link could not be copied.', tone: 'ember' });
+                toast.push({ message: m.history_link_failed(), tone: 'ember' });
               });
           }}
         >
@@ -327,18 +338,18 @@ function HistoryRow(props: {
 }
 
 /** What each kind of owed meeting is called in the waiting list */
-const WAITING_KINDS: Partial<Record<EncounterType, string>> = {
-  [EncounterType.LegendaryRaid]: 'Raid prize',
-  [EncounterType.ShadowRaid]: 'Shadow raid prize',
-  [EncounterType.MythicalRaid]: 'Mythical raid prize',
-  [EncounterType.TotemRaid]: 'Totem raid prize',
-  [EncounterType.MaxRaid]: 'Max raid prize',
-  [EncounterType.AlphaRaid]: 'Alpha raid prize',
-  [EncounterType.NobleRaid]: 'Noble raid prize',
-  [EncounterType.TeraRaid]: 'Tera raid prize',
-  [EncounterType.Rocket]: 'Left behind',
-  [EncounterType.Fateful]: 'Gift',
-  [EncounterType.Revived]: 'Revived fossil',
+const WAITING_KINDS: Partial<Record<EncounterType, () => string>> = {
+  [EncounterType.LegendaryRaid]: m.history_waiting_raid,
+  [EncounterType.ShadowRaid]: m.history_waiting_shadow_raid,
+  [EncounterType.MythicalRaid]: m.history_waiting_mythical_raid,
+  [EncounterType.TotemRaid]: m.history_waiting_totem_raid,
+  [EncounterType.MaxRaid]: m.history_waiting_max_raid,
+  [EncounterType.AlphaRaid]: m.history_waiting_alpha_raid,
+  [EncounterType.NobleRaid]: m.history_waiting_noble_raid,
+  [EncounterType.TeraRaid]: m.history_waiting_tera_raid,
+  [EncounterType.Rocket]: m.history_waiting_rocket,
+  [EncounterType.Fateful]: m.history_waiting_gift,
+  [EncounterType.Revived]: m.history_waiting_fossil,
 };
 
 /**
@@ -352,7 +363,7 @@ function WaitingList(props: { waiting: Resource<EncounterRecord[]> }): JSX.Eleme
   return (
     <Show when={(props.waiting() ?? []).length > 0}>
       <div class="flex flex-col gap-2">
-        <Meta>Waiting to be caught</Meta>
+        <Meta>{m.history_waiting()}</Meta>
         <List>
           <For each={paged.shown()}>
             {(encounter) => (
@@ -369,7 +380,7 @@ function WaitingList(props: { waiting: Resource<EncounterRecord[]> }): JSX.Eleme
                   />
                 </span>
                 <span class="font-medium">{getSpeciesData(encounter.species).name}</span>
-                <Badge>{WAITING_KINDS[encounter.type] ?? 'Owed'}</Badge>
+                <Badge>{WAITING_KINDS[encounter.type]?.() ?? m.history_waiting_owed()}</Badge>
                 <span class="grow" />
                 <Button
                   tone="primary"
@@ -378,7 +389,7 @@ function WaitingList(props: { waiting: Resource<EncounterRecord[]> }): JSX.Eleme
                     game.setDialog(GameDialog.None);
                   }}
                 >
-                  Meet
+                  {m.history_meet()}
                 </Button>
               </ListRow>
             )}
@@ -463,13 +474,13 @@ function BattleList(
   const paged = createPager(shown, LIST_PAGE);
 
   return (
-    <Show when={battles()} fallback={<Note>Loading battles…</Note>}>
-      <Show when={battles()?.length} fallback={<Note>No battles fought yet.</Note>}>
+    <Show when={battles()} fallback={<Note>{m.history_loading()}</Note>}>
+      <Show when={battles()?.length} fallback={<Note>{m.history_none()}</Note>}>
         {/* Nothing to narrow while every fight was the same kind */}
         <Show when={kinds().length > 2}>
           <Row class="mb-3">
             <Filter
-              label="Kind"
+              label={m.history_kind()}
               value={only()}
               options={kinds()}
               onChange={(picked) => {
@@ -479,7 +490,7 @@ function BattleList(
           </Row>
         </Show>
 
-        <Show when={shown().length} fallback={<Note>None of those yet.</Note>}>
+        <Show when={shown().length} fallback={<Note>{m.history_none_of_kind()}</Note>}>
           <List>
             <For each={paged.shown()}>
               {([id, record]) => (
@@ -521,7 +532,7 @@ export default function BattleHistory(props: BattleHistoryProps): JSX.Element {
       <Suspense>
         <WaitingList waiting={waiting} />
       </Suspense>
-      <Suspense fallback={<Note>Loading battles…</Note>}>
+      <Suspense fallback={<Note>{m.history_loading()}</Note>}>
         <BattleList
           player={props.player}
           viewOnly={props.viewOnly}

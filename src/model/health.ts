@@ -12,8 +12,7 @@ import type { Species } from '../data/ids/species';
 import { BERRY_HEALS, BERRY_STATUS_CURES } from '../data/items/berries';
 import { MEDICINES } from '../data/items/medicine';
 import { getSpeciesData } from '../data/species';
-import statusNamesFile from '../data/text/en/statuses.yaml';
-import { stringTable } from '../data/yaml';
+import { localeStringTable } from '../data/yaml';
 
 /**
  * What a battle leaves behind, and what it takes to put it right.
@@ -49,14 +48,17 @@ export function isNonVolatileStatus(status: Statuses): boolean {
   return statusFlag(status) !== 0;
 }
 
-/**
- * How a status reads to a player
- */
-export const STATUS_NAMES = stringTable<Statuses>(
+/** How each status reads to a player, in every locale that names it */
+const STATUS_NAMES = localeStringTable<Statuses>(
   STATUS_IDS,
-  statusNamesFile,
-  'text/en/statuses.yaml',
+  import.meta.glob('../data/text/*/statuses.yaml', { eager: true, import: 'default' }),
+  'text/<locale>/statuses.yaml',
 );
+
+/** How a status reads to a player, in the active locale */
+export function getStatusName(status: Statuses): string {
+  return STATUS_NAMES[status];
+}
 
 /**
  * Everything maximum health is derived from. A catch record satisfies

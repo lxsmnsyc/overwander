@@ -9,11 +9,12 @@ import {
   watchDuelInvites,
   watchMyDuels,
 } from '../../auth/duels';
-import { LOBBY_ROLE_NAMES } from '../../model/lobby-role';
+import LobbyRole from '../../model/lobby-role';
 import { type Profile, watchProfile } from '../../auth/profile';
 import DuelLobby from './DuelLobby';
 import { Button, DialogSection, List, ListRow, Meta, Note, Panel, RowButton } from '../styled';
 import { useGame } from '../app/game-context';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /** One call, with whoever sent it named rather than left as a uid */
 function InvitedRow(props: {
@@ -29,17 +30,21 @@ function InvitedRow(props: {
   const named = (): string => {
     const nickname = caller()?.nickname ?? '';
 
-    return nickname === '' ? 'A trainer' : nickname;
+    return nickname === '' ? m.duels_a_trainer() : nickname;
   };
 
   return (
     <ListRow>
       <span class="font-medium">{named()}</span>
-      <Meta class="grow">calls you in as {LOBBY_ROLE_NAMES[props.invite.role].toLowerCase()}</Meta>
+      <Meta class="grow">
+        {props.invite.role === LobbyRole.Fighter
+          ? m.duels_invited_fighter()
+          : m.duels_invited_spectator()}
+      </Meta>
       <Button tone="primary" onClick={props.onAccept}>
-        Join
+        {m.duels_join()}
       </Button>
-      <Button onClick={props.onDecline}>Dismiss</Button>
+      <Button onClick={props.onDecline}>{m.duels_dismiss()}</Button>
     </ListRow>
   );
 }
@@ -112,13 +117,10 @@ export default function DuelsTab(props: DuelsTabProps): JSX.Element {
         when={game.duel()}
         fallback={
           <>
-            <Note>
-              A battle between two trainers, arranged rather than found. It settles nothing: no
-              candy, no aftermath, and nobody's record moves.
-            </Note>
+            <Note>{m.duels_intro()}</Note>
 
             <Show when={(invites() ?? []).length > 0}>
-              <DialogSection title="Invited">
+              <DialogSection title={m.duels_invited()}>
                 <List>
                   <For each={invites() ?? []}>
                     {(invite) => (
@@ -137,11 +139,8 @@ export default function DuelsTab(props: DuelsTabProps): JSX.Element {
               </DialogSection>
             </Show>
 
-            <DialogSection title="Your lobbies">
-              <Show
-                when={(mine() ?? []).length > 0}
-                fallback={<Note>You are not in a lobby. Host one, or wait to be called in.</Note>}
-              >
+            <DialogSection title={m.duels_your_lobbies()}>
+              <Show when={(mine() ?? []).length > 0} fallback={<Note>{m.duels_no_lobbies()}</Note>}>
                 <List>
                   <For each={mine() ?? []}>
                     {([id, lobby]) => (
@@ -152,11 +151,11 @@ export default function DuelsTab(props: DuelsTabProps): JSX.Element {
                             open(id);
                           }}
                         >
-                          {lobby.host === props.user.uid ? 'Your lobby' : 'A lobby'}
+                          {lobby.host === props.user.uid ? m.duels_your_lobby() : m.duels_a_lobby()}
                         </RowButton>
                         <Meta>
-                          {lobby.members.length} in the room
-                          {lobby.battle == null ? '' : ' · being fought'}
+                          {m.duels_in_room({ count: lobby.members.length })}
+                          {lobby.battle == null ? '' : ` · ${m.duels_being_fought()}`}
                         </Meta>
                       </ListRow>
                     )}
@@ -173,7 +172,7 @@ export default function DuelsTab(props: DuelsTabProps): JSX.Element {
                   stage(false);
                 }}
               >
-                Host a battle
+                {m.duels_host()}
               </Button>
               {/* Staging a fight for other people: the host takes no
                   seat, and the lobby waits for two guests rather than
@@ -184,7 +183,7 @@ export default function DuelsTab(props: DuelsTabProps): JSX.Element {
                   stage(true);
                 }}
               >
-                Host and watch
+                {m.duels_host_watch()}
               </Button>
             </div>
           </>

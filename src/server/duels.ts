@@ -16,7 +16,7 @@ import { Slots, getSlots } from '../data/constants/slots';
 import { BST_CAPS, DUEL_BANS } from '../data/constants/duel-bans';
 import { duelRefusal } from '../data/constants/duel-rules';
 import TEAM_SIZE from '../model/team-size';
-import { LobbyRole } from '../model/lobby-role';
+import LobbyRole from '../model/lobby-role';
 import { asCaughtPokemon } from '../model/caught-record';
 import { getSql, newDocId, tx } from './db';
 import { isEggRecord, isGuardedRecord } from './catch-fields';

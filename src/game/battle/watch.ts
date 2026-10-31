@@ -36,6 +36,13 @@ const COUNTDOWN_TICK = 1000;
 
 export type Outcome = 'won' | 'lost' | 'draw';
 
+/** What each way a fight ends is stamped on its record as */
+const OUTCOME_STAMPS: Record<Outcome, BattleOutcome> = {
+  won: BattleOutcome.Won,
+  lost: BattleOutcome.Lost,
+  draw: BattleOutcome.Drawn,
+};
+
 export interface BattleWatchEvents {
   /** The field is drawn and the count has begun */
   started: () => void;
@@ -206,6 +213,7 @@ export default function createBattleWatch(
     recorded = true;
 
     const won = result === 'won';
+    const stamped = OUTCOME_STAMPS[result];
     const built = instance.get();
     const uid = player();
 
@@ -226,7 +234,7 @@ export default function createBattleWatch(
             active.id,
             aftermath,
             countDefeated(built, uid),
-            won ? BattleOutcome.Won : BattleOutcome.Lost,
+            stamped,
           );
 
           if (gone) {
@@ -237,7 +245,7 @@ export default function createBattleWatch(
         }
       }
 
-      await finishBattle(active.id, won ? BattleOutcome.Won : BattleOutcome.Lost);
+      await finishBattle(active.id, stamped);
 
       // The legendary waits on the raid itself, so it can be collected
       // here or from the battle history later

@@ -1,6 +1,7 @@
 import { For, type JSX, Show, createSignal, from } from 'solid-js';
 import { type FriendLink, watchFriends } from '../../auth/friends';
-import { LOBBY_ROLE_NAMES, LobbyRole } from '../../model/lobby-role';
+import LobbyRole from '../../model/lobby-role';
+import { m } from '../../i18n/paraglide/messages.js';
 import FriendEntry from '../friends/FriendEntry';
 import {
   Button,
@@ -15,6 +16,11 @@ import {
   createPager,
   useToast,
 } from '../styled';
+
+/** What a role is called on the picker, read when shown so it follows the locale */
+function readRoleName(role: LobbyRole): string {
+  return role === LobbyRole.Fighter ? m.lobby_role_fighter() : m.lobby_role_spectator();
+}
 
 /**
  * Calling people into a lobby, to fight or to watch.
@@ -74,7 +80,7 @@ export default function LobbyInviteDialog(props: LobbyInviteDialogProps): JSX.El
     const options: { value: LobbyRole; label: string }[] = [];
 
     for (const one of roles()) {
-      options.push({ value: one, label: LOBBY_ROLE_NAMES[one] });
+      options.push({ value: one, label: readRoleName(one) });
     }
     return options;
   };
@@ -83,13 +89,13 @@ export default function LobbyInviteDialog(props: LobbyInviteDialogProps): JSX.El
 
   const report = (sent: boolean, remember?: string): void => {
     if (!sent) {
-      toast.push({ message: 'That invite could not be sent.', tone: 'ember' });
+      toast.push({ message: m.lobby_invite_failed(), tone: 'ember' });
       return;
     }
     if (remember != null) {
       setAsked((held) => new Set(held).add(remember));
     }
-    toast.push({ message: 'Invite sent.', tone: 'leaf' });
+    toast.push({ message: m.lobby_invite_sent(), tone: 'leaf' });
   };
 
   const call = (uid: string): void => {
@@ -139,7 +145,7 @@ export default function LobbyInviteDialog(props: LobbyInviteDialogProps): JSX.El
     >
       <Show when={roles().length > 1}>
         <Select
-          label="Calling them in as"
+          label={m.lobby_invite_role()}
           value={asking()}
           options={roleOptions()}
           onChange={(chosen) => {
@@ -152,7 +158,7 @@ export default function LobbyInviteDialog(props: LobbyInviteDialogProps): JSX.El
         <Row class="items-end gap-2">
           <TextField
             class="grow"
-            label="Friend code"
+            label={m.lobby_invite_code()}
             placeholder="0000-0000-0000"
             value={typed()}
             disabled={busy()}
@@ -161,27 +167,27 @@ export default function LobbyInviteDialog(props: LobbyInviteDialogProps): JSX.El
             }}
           />
           <Button tone="primary" disabled={busy() || typed().trim() === ''} onClick={callByCode}>
-            Invite
+            {m.lobby_invite()}
           </Button>
         </Row>
       </Show>
 
       <Show
         when={(friends() ?? []).length > 0}
-        fallback={<Note>Nobody to call: add a friend first.</Note>}
+        fallback={<Note>{m.lobby_invite_no_friends()}</Note>}
       >
         <List>
           <For each={roster.shown()}>
             {(uid) => (
               <FriendEntry uid={uid}>
-                <Show when={!there().has(uid)} fallback={<Note>Already in the lobby.</Note>}>
+                <Show when={!there().has(uid)} fallback={<Note>{m.lobby_invite_present()}</Note>}>
                   <Button
                     disabled={busy() || asked().has(uid)}
                     onClick={() => {
                       call(uid);
                     }}
                   >
-                    {asked().has(uid) ? 'Invited' : 'Invite'}
+                    {asked().has(uid) ? m.lobby_invited() : m.lobby_invite()}
                   </Button>
                 </Show>
               </FriendEntry>
@@ -191,7 +197,7 @@ export default function LobbyInviteDialog(props: LobbyInviteDialogProps): JSX.El
         {roster.controls()}
       </Show>
       <DialogActions>
-        <Button onClick={props.onClose}>Close</Button>
+        <Button onClick={props.onClose}>{m.battle_close()}</Button>
       </DialogActions>
     </Dialog>
   );

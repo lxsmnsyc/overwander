@@ -26,12 +26,6 @@ const enum BattleKind {
   Player = 2,
 }
 
-export const BATTLE_KIND_NAMES: Record<BattleKind, string> = {
-  [BattleKind.Raid]: 'Raids',
-  [BattleKind.Npc]: 'NPC',
-  [BattleKind.Player]: 'PVP',
-};
-
 export function getBattleKind(record: BattleRecord): BattleKind {
   if (record.raid.length > 0) {
     return BattleKind.Raid;

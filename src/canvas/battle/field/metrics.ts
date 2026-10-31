@@ -1,3 +1,5 @@
+import { m } from '../../../i18n/paraglide/messages.js';
+
 /**
  * The picture's own measurements and colours. Everything drawn is laid
  * out in these coordinates whatever the element is sized to.
@@ -80,9 +82,12 @@ export const TURN_SLOP = 4;
 export const JOLT_BEAT = 34;
 
 /**
- * What the field says while the fight's sheets are still coming
+ * What the field says while the fight's sheets are still coming, read
+ * when drawn so it follows the locale
  */
-export const LOADING_LABEL = 'Loading…';
+export function readLoadingLabel(): string {
+  return m.canvas_loading();
+}
 
 export const COLORS = {
   field: '#101823',

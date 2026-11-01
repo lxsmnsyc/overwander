@@ -40,7 +40,7 @@
 
 - `pnpm typecheck` exit 0, `rtk proxy pnpm exec oxlint src test` exit 0 (warnings only).
 - `pnpm exec vitest run test/data test/i18n`: 36 files, 567 tests pass.
-- `pnpm test`: see the final report.
+- `pnpm test`: 277 files, 5771 tests; 5770 pass. `tera-sites` timed out under load and passes alone (6 of 6).
 
 ## Size
 

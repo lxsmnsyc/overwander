@@ -1,4 +1,5 @@
 import { type AuctionRecord, isBidOn } from '../../../auth/auctions';
+import { formatNumber } from '../../../i18n/format';
 import { m } from '../../../i18n/paraglide/messages.js';
 
 const HOUR = 60 * 60 * 1000;
@@ -46,5 +47,17 @@ export function describeRemaining(endsAt: number, at: number): string {
  * the board the one nobody reads
  */
 export function describeStanding(auction: AuctionRecord): string {
-  return m.ui_gold({ amount: isBidOn(auction) ? auction.bid : auction.startingBid });
+  return m.ui_gold({ amount: formatNumber(readStanding(auction)) });
+}
+
+/**
+ * The same figure for the chip on a lot's square, which has room for
+ * a number and a short unit only
+ */
+export function describeStandingShort(auction: AuctionRecord): string {
+  return m.auction_price_chip({ amount: formatNumber(readStanding(auction)) });
+}
+
+function readStanding(auction: AuctionRecord): number {
+  return isBidOn(auction) ? auction.bid : auction.startingBid;
 }

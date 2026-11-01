@@ -24,6 +24,7 @@ import {
   createPager,
 } from '../styled';
 import describeFailure from '../../i18n/refusals';
+import { formatNumber } from '../../i18n/format';
 import { m } from '../../i18n/paraglide/messages.js';
 
 /**
@@ -100,7 +101,7 @@ function describeLot(auction: AuctionRecord, state: LotState, at: number): strin
   if (state === LotState.Unsold) {
     return m.auction_lot_returns();
   }
-  return m.ui_gold({ amount: auction.bid });
+  return m.ui_gold({ amount: formatNumber(auction.bid) });
 }
 
 /**

@@ -162,6 +162,7 @@ The names a status shows on a card or a catch, in `src/data/text/<locale>/status
 ## Money and counts
 
 - `ui_gold` writes money as おかね {amount} in Japanese and {amount} de dinero in Spanish, after the verdict's `verdict_gold`.
+- Where only a number and a short unit fit (the price chip on an auction square, `auction_price_chip`), Spanish writes {amount} ₽, the games' money sign. Money amounts pass through `formatNumber` so they group by locale (25.000 in Spanish).
 - A Japanese count of pokemon takes ひき (`{count}ひき`), a count of moves つ, of times かい, of waiting things けん, of items, boxes and candies こ, of steps ほ, of species しゅるい.
 - Japanese quotes a line in 「」, Spanish in «».
 

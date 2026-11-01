@@ -9,6 +9,7 @@ import watchLive from '../app/watch';
 import CatchPicker, { type CatchOption } from '../catches/catch-picker';
 import NamedCatch from './NamedCatch';
 import { Button, Dialog, DialogActions, Field, Meta, Note, Row, Select, useToast } from '../styled';
+import { formatNumber } from '../../i18n/format';
 import { m } from '../../i18n/paraglide/messages.js';
 
 /**
@@ -232,7 +233,7 @@ export default function TradeOfferDialog(props: TradeOfferDialogProps): JSX.Elem
               </Field>
               <Meta>
                 {goldMode() === 'give'
-                  ? m.trade_gold_taken_now({ gold: gold() })
+                  ? m.trade_gold_taken_now({ gold: formatNumber(gold()) })
                   : m.trade_gold_taken_later()}
               </Meta>
             </Row>

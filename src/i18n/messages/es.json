@@ -1672,6 +1672,7 @@
   "dex_moves_none_level": "No aprende nada al crecer.",
   "dex_moves_none_machines": "No se le puede enseñar nada.",
   "dex_moves_none_egg": "No hereda nada.",
+  "auction_price_chip": "{amount} ₽",
   "auction_closed": "puja cerrada",
   "auction_left_hours": "quedan {hours} h",
   "auction_left_minutes": "quedan {minutes} min",

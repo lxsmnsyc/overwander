@@ -1510,6 +1510,7 @@
   "dex_moves_none_level": "It learns nothing by growing.",
   "dex_moves_none_machines": "Nothing can be taught to it.",
   "dex_moves_none_egg": "It inherits nothing.",
+  "auction_price_chip": "{amount} gold",
   "auction_closed": "bidding closed",
   "auction_left_hours": "{hours}h left",
   "auction_left_minutes": "{minutes}m left",

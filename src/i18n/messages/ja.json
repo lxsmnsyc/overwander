@@ -1452,6 +1452,7 @@
   "dex_moves_none_level": "レベルで おぼえる わざは ない。",
   "dex_moves_none_machines": "おしえられる わざは ない。",
   "dex_moves_none_egg": "うけつぐ わざは ない。",
+  "auction_price_chip": "おかね {amount}",
   "auction_closed": "にゅうさつ しゅうりょう",
   "auction_left_hours": "のこり {hours}じかん",
   "auction_left_minutes": "のこり {minutes}ふん",

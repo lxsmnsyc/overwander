@@ -31,6 +31,7 @@ import {
 } from '../styled';
 import playEffect, { Effect } from '../app/sound';
 import describeFailure from '../../i18n/refusals';
+import { formatNumber } from '../../i18n/format';
 import { m } from '../../i18n/paraglide/messages.js';
 
 /**
@@ -63,7 +64,7 @@ const BID_STATE_TONES: Record<BidState, BadgeTone> = {
  */
 function describeStanding(auction: AuctionRecord, mine: number, state: BidState): string {
   return state === BidState.Leading || state === BidState.Won || state === BidState.Collected
-    ? m.ui_gold({ amount: mine })
+    ? m.ui_gold({ amount: formatNumber(mine) })
     : m.auction_you_bid({ mine, standing: auction.bid });
 }
 

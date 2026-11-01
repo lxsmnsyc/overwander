@@ -20,6 +20,7 @@ import AnimatedSprite from '../sprites/AnimatedSprite';
 import { Button, Dialog, DialogActions, Field, Meta, Note, Row, Status } from '../styled';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
 import describeFailure from '../../i18n/refusals';
+import { formatNumber } from '../../i18n/format';
 import { m } from '../../i18n/paraglide/messages.js';
 
 /**
@@ -280,8 +281,14 @@ function ListingBody(
 
         <Note>
           {props.subject?.lot === AuctionLot.Item
-            ? m.auction_confirm_item({ asking: asking(), raise: raise() })
-            : m.auction_confirm_catch({ asking: asking(), raise: raise() })}
+            ? m.auction_confirm_item({
+                asking: formatNumber(asking()),
+                raise: formatNumber(raise()),
+              })
+            : m.auction_confirm_catch({
+                asking: formatNumber(asking()),
+                raise: formatNumber(raise()),
+              })}
         </Note>
         <Meta>{m.auction_confirm_payment()}</Meta>
 

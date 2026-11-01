@@ -1,6 +1,7 @@
 import { type AuctionRecord, nextBid } from '../../../auth/auctions';
 import { Button, Dialog, DialogActions, Field, Meta, Row } from '../../styled';
 import { type JSX, createEffect, createSignal, on } from 'solid-js';
+import { formatNumber } from '../../../i18n/format';
 import { m } from '../../../i18n/paraglide/messages.js';
 
 /**
@@ -23,7 +24,9 @@ export function bidRefusal(auction: AuctionRecord, player: string, gold: number)
   if (auction.bidder === player) {
     return m.auction_refusal_winning();
   }
-  return gold >= nextBid(auction) ? null : m.auction_refusal_dear({ amount: nextBid(auction) });
+  return gold >= nextBid(auction)
+    ? null
+    : m.auction_refusal_dear({ amount: formatNumber(nextBid(auction)) });
 }
 
 /**
@@ -101,7 +104,9 @@ export function BidDialog(props: {
         </Field>
       </Row>
       <Row class="justify-center">
-        <Meta>{m.auction_bid_meta({ floor: floor(), gold: props.gold })}</Meta>
+        <Meta>
+          {m.auction_bid_meta({ floor: formatNumber(floor()), gold: formatNumber(props.gold) })}
+        </Meta>
       </Row>
 
       <DialogActions>
@@ -113,7 +118,7 @@ export function BidDialog(props: {
             props.onClose();
           }}
         >
-          {m.auction_bid_amount({ amount: amount() })}
+          {m.auction_bid_amount({ amount: formatNumber(amount()) })}
         </Button>
         <Button onClick={props.onClose}>{m.ui_never_mind()}</Button>
       </DialogActions>

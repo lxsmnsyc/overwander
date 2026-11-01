@@ -1,6 +1,6 @@
 import { BidDialog, bidRefusal } from './bidding';
 import { nameItemLot } from './lots';
-import { describeRemaining, describeStanding, now } from './time';
+import { describeRemaining, describeStanding, describeStandingShort, now } from './time';
 import {
   AuctionLot,
   type AuctionRecord,
@@ -49,6 +49,7 @@ import { AUCTION_DURATION } from '../../../model/auction-record';
 import { type JSX, type Resource, Show, createSignal, from } from 'solid-js';
 import playEffect, { Effect } from '../../app/sound';
 import describeFailure from '../../../i18n/refusals';
+import { formatNumber } from '../../../i18n/format';
 import { m } from '../../../i18n/paraglide/messages.js';
 
 export interface AuctionTabProps {
@@ -207,7 +208,9 @@ export function AuctionBoard(
     placeBid(id, amount)
       .then((placed) => {
         setStatus(
-          placed == null ? m.auction_bid_failed() : m.auction_bid_placed({ amount: placed }),
+          placed == null
+            ? m.auction_bid_failed()
+            : m.auction_bid_placed({ amount: formatNumber(placed) }),
         );
       })
       .catch((thrown: unknown) => {
@@ -256,7 +259,7 @@ export function AuctionBoard(
   const claimOf = (id: string, auction: AuctionRecord): LotClaim | undefined => {
     if (canClaim(auction, props.player, now())) {
       return {
-        said: m.auction_won_for({ amount: auction.bid }),
+        said: m.auction_won_for({ amount: formatNumber(auction.bid) }),
         label: m.auction_collect(),
         onClaim: () => {
           collect(id);
@@ -466,7 +469,7 @@ export function AuctionBoard(
       }
       cells.push({
         item: auction.item,
-        note: claimOf(id, auction)?.said ?? describeStanding(auction),
+        note: claimOf(id, auction)?.said ?? describeStandingShort(auction),
         said: m.auction_item_said({
           item: describeItem(auction.item),
           standing: describeStanding(auction),
@@ -606,7 +609,7 @@ export function AuctionBoard(
     <>
       <Row class="justify-center">
         <Show when={props.viewOnly !== true}>
-          <Badge tone="gold">{m.ui_gold({ amount: gold() })}</Badge>
+          <Badge tone="gold">{m.ui_gold({ amount: formatNumber(gold()) })}</Badge>
         </Show>
         <Show when={board().length > SEARCH_FROM}>
           <Search

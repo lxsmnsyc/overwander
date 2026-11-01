@@ -32,7 +32,7 @@ import {
   createPager,
   useToast,
 } from '../styled';
-import { formatDate } from '../../i18n/format';
+import { formatDate, formatNumber } from '../../i18n/format';
 import { m } from '../../i18n/paraglide/messages.js';
 
 /**
@@ -96,12 +96,12 @@ function DealLine(props: { trade: TradeRecord; mine: boolean }): JSX.Element {
     const riding = props.trade.gold;
 
     if (riding > 0) {
-      return m.trade_deal_gives({ offered, asked, gold: riding });
+      return m.trade_deal_gives({ offered, asked, gold: formatNumber(riding) });
     }
     if (riding < 0) {
       return props.mine
-        ? m.trade_deal_asks({ offered, asked, gold: -riding })
-        : m.trade_deal_asks_you({ offered, asked, gold: -riding });
+        ? m.trade_deal_asks({ offered, asked, gold: formatNumber(-riding) })
+        : m.trade_deal_asks_you({ offered, asked, gold: formatNumber(-riding) });
     }
     return m.trade_deal({ offered, asked });
   };

@@ -2,6 +2,7 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 
 import { dirname, join, relative } from 'node:path';
 import * as v from 'valibot';
 import { parse, stringify } from 'yaml';
+import { keepWritten } from './keep-written.ts';
 
 /**
  * Writes the official Japanese and Spanish names of every species,
@@ -20,6 +21,10 @@ import { parse, stringify } from 'yaml';
  * out of the locale files and reads in English. Japanese is the kana
  * the games show by default, never kanji. The files it writes are
  * generated: edit this script or the English, not them.
+ *
+ * A rerun keeps what it does not write. A field beside the names (a
+ * `description`) and an entry it did not match (an engine's own, with
+ * a name written by hand) stay in the file as they are.
  */
 
 /** The PokeAPI commit the tables are read at, so a run is repeatable */
@@ -309,8 +314,11 @@ function writeLocaleFile(
   // A locale file sits where its English file does, under its own locale's folder
   const path = join(TEXT, locale, relative(join(TEXT, 'en'), englishPath));
 
+  // What the file holds beyond the names stays
+  const held = existsSync(path) ? parse(readFileSync(path, 'utf8')) : undefined;
+
   mkdirSync(dirname(path), { recursive: true });
-  writeFileSync(path, HEADER + stringify(content, { lineWidth: 0 }));
+  writeFileSync(path, HEADER + stringify(keepWritten(held, content), { lineWidth: 0 }));
 }
 
 interface Tally {

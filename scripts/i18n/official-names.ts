@@ -1,8 +1,8 @@
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
-import { dirname, join, relative } from 'node:path';
+import { join, relative } from 'node:path';
 import * as v from 'valibot';
-import { parse, stringify } from 'yaml';
-import { keepWritten } from './keep-written.ts';
+import { parse } from 'yaml';
+import { writeKeptFile } from './keep-written.ts';
 
 /**
  * Writes the official Japanese and Spanish names of every species,
@@ -22,9 +22,11 @@ import { keepWritten } from './keep-written.ts';
  * the games show by default, never kanji. The files it writes are
  * generated: edit this script or the English, not them.
  *
- * A rerun keeps what it does not write. A field beside the names (a
- * `description`) and an entry it did not match (an engine's own, with
- * a name written by hand) stay in the file as they are.
+ * A rerun keeps what it does not write (see `keepWritten`). An official
+ * entry whose PokeAPI row disappears keeps its last name. A field beside
+ * the names (a `description`) and an entry it did not match (an engine's
+ * own, with a name written by hand) stay in the file as they are, unless
+ * English no longer has the entry.
  */
 
 /** The PokeAPI commit the tables are read at, so a run is repeatable */
@@ -310,15 +312,12 @@ function writeLocaleFile(
   englishPath: string,
   locale: Locale,
   content: Record<string, unknown>,
+  english: Record<string, unknown>,
 ): void {
   // A locale file sits where its English file does, under its own locale's folder
   const path = join(TEXT, locale, relative(join(TEXT, 'en'), englishPath));
 
-  // What the file holds beyond the names stays
-  const held = existsSync(path) ? parse(readFileSync(path, 'utf8')) : undefined;
-
-  mkdirSync(dirname(path), { recursive: true });
-  writeFileSync(path, HEADER + stringify(keepWritten(held, content), { lineWidth: 0 }));
+  writeKeptFile(path, HEADER, content, english);
 }
 
 interface Tally {
@@ -415,9 +414,8 @@ function writeEntries(
           content[family] = entries;
         }
       }
-      if (Object.keys(content).length > 0) {
-        writeLocaleFile(path, locale, content);
-      }
+      // Even with nothing matched, a file already there goes through the merge
+      writeLocaleFile(path, locale, content, english);
     }
   }
   return tally;
@@ -447,7 +445,7 @@ function writeTable(file: string, find: (english: string) => Official | undefine
     }
   }
   for (const locale of LOCALES) {
-    writeLocaleFile(path, locale, written[locale]);
+    writeLocaleFile(path, locale, written[locale], english);
   }
   return tally;
 }

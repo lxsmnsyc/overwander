@@ -1,4 +1,13 @@
-import { readFileSync, readdirSync } from 'node:fs';
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  readdirSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type * as LocaleModule from '../../src/i18n/locale';
@@ -23,7 +32,8 @@ import { getItemData } from '../../src/data/items';
 import { getMoveData } from '../../src/data/moves';
 import { getSpeciesData } from '../../src/data/species';
 import { listTrueShadows } from '../../src/data/species/true-shadow';
-import { keepWritten } from '../../scripts/i18n/keep-written';
+import { keepWritten, writeKeptFile } from '../../scripts/i18n/keep-written';
+import { STAT_LABELS } from '../../src/components/app/command-bar/names';
 
 /**
  * The official Japanese and Spanish names, written by
@@ -129,6 +139,70 @@ describe('the generator', () => {
   });
 });
 
+describe('the generator on a file', () => {
+  const english = { Tackle: { name: 'Tackle' }, Frenzy: { name: 'Frenzy' } };
+
+  it('keeps a hand-written field, drops a removed English key and reruns unchanged', () => {
+    const folder = mkdtempSync(join(tmpdir(), 'keep-written-'));
+    const path = join(folder, 'ja', 'moves.yaml');
+
+    try {
+      mkdirSync(join(folder, 'ja'));
+      writeFileSync(
+        path,
+        [
+          'Tackle:',
+          '  name: old',
+          '  description: By hand.',
+          'Frenzy:',
+          '  name: Hand name',
+          'Gone:',
+          '  name: Removed from English',
+          '',
+        ].join('\n'),
+      );
+      writeKeptFile(path, '# header\n', { Tackle: { name: 'たいあたり' } }, english);
+
+      const first = readFileSync(path, 'utf8');
+
+      expect(first).toContain('name: たいあたり');
+      expect(first).toContain('description: By hand.');
+      expect(first).toContain('name: Hand name');
+      expect(first).not.toContain('Gone');
+
+      // A second run over its own output writes the same bytes
+      writeKeptFile(path, '# header\n', { Tackle: { name: 'たいあたり' } }, english);
+      expect(readFileSync(path, 'utf8')).toBe(first);
+    } finally {
+      rmSync(folder, { recursive: true, force: true });
+    }
+  });
+
+  it('runs a held file through the merge when nothing matched, and makes no empty file', () => {
+    const folder = mkdtempSync(join(tmpdir(), 'keep-written-'));
+
+    try {
+      const path = join(folder, 'new.yaml');
+
+      writeKeptFile(path, '# header\n', {}, english);
+      expect(existsSync(path)).toBe(false);
+
+      writeFileSync(path, 'Gone:\n  name: x\nFrenzy:\n  name: Hand\n');
+      writeKeptFile(path, '# header\n', {}, english);
+      expect(readFileSync(path, 'utf8')).toBe('# header\nFrenzy:\n  name: Hand\n');
+    } finally {
+      rmSync(folder, { recursive: true, force: true });
+    }
+  });
+
+  it('never drops a top-level string called name', () => {
+    expect(keepWritten({ name: 'kept', Fire: 'ほのお' }, { Fire: 'ほのお' }, {})).toEqual({
+      Fire: 'ほのお',
+      name: 'kept',
+    });
+  });
+});
+
 describe('stat and stage names', () => {
   it('follow the locale', () => {
     active.locale = 'ja';
@@ -143,6 +217,12 @@ describe('stat and stage names', () => {
     active.locale = 'ja';
     expect(ENGLISH_STAT_NAMES[Stats.SpecialAttack]).toBe('Sp. Attack');
     expect(ENGLISH_STAGE_NAMES[Stages.Evasion]).toBe('Evasion');
+  });
+
+  it('stay English in the command bar, which matches them', () => {
+    active.locale = 'ja';
+    expect(STAT_LABELS[Stats.SpecialAttack]).toBe('Sp. Attack');
+    expect(STAT_NAMES[Stats.SpecialAttack]).not.toBe(STAT_LABELS[Stats.SpecialAttack]);
   });
 
   it('name the stat in a vitamin description under each locale', () => {
@@ -161,6 +241,16 @@ describe('Zenith names', () => {
     expect(getSpeciesData(Species.ButterfreeZenith).name).toBe('ゼニスバタフリー');
     active.locale = 'es';
     expect(getSpeciesData(Species.ButterfreeZenith).name).toBe('Cenit-Butterfree');
+  });
+
+  it('name a form Zenith for the pokemon its Zenith is of in each locale', () => {
+    const zenith = getSpeciesData(Species.CastformSunnyZenith);
+
+    expect(zenith.name).toBe('Zenith Castform');
+    active.locale = 'ja';
+    expect(zenith.name).toBe(`ゼニス${getSpeciesData(Species.Castform).name}`);
+    active.locale = 'es';
+    expect(zenith.name).toBe(`Cenit-${getSpeciesData(Species.Castform).name}`);
   });
 
   it('read the active locale on each read', () => {

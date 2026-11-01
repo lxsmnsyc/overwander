@@ -112,7 +112,10 @@ function englishName(holder: string): string {
 /**
  * Names a Zenith in each locale from its template. English says whose
  * it is in the holder the YAML writes; another locale puts the name its
- * own pokemon has in that locale in the template's place
+ * own pokemon has in that locale in the template's place. `own` is the
+ * base species of the Zenith the shape belongs to, so a form Zenith is
+ * named for that pokemon (Castform), not for the form it stands in for
+ * (Sunny Castform), as in English
  */
 function nameZenith(zenith: SpeciesData, holder: string, own: SpeciesData): void {
   deriveLocalized(zenith, 'name', () => {
@@ -388,7 +391,7 @@ export default function registerZenithSpecies(): void {
         biomes: [],
       });
 
-      // A shape is named for the pokemon, as its Zenith is
+      // A shape is named for its Zenith's pokemon, as its Zenith is
       nameZenith(shaped, form.holder, base);
       registerSpecies(form.zenith, shaped);
     }

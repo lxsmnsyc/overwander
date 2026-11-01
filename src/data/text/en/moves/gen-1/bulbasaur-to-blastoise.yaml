@@ -105,7 +105,7 @@ DragonRage:
   description: Deals a flat 40 damage.
 Dig:
   name: Dig
-  description: The user burrows out of sight, then strikes. Only Earthquake and Magnitude (at 2x) and Fissure reach it.
+  description: The user burrows out of sight, then strikes. Only Earthquake, Magnitude and Fissure reach it, and Earthquake and Magnitude hit it 2x.
 FireBlast:
   name: Fire Blast
   description: 10% to burn.
@@ -126,7 +126,7 @@ Fissure:
   description: Takes the target's whole health, at 30% accuracy. Sturdy shrugs it off.
 Fly:
   name: Fly
-  description: The user takes to the air, then strikes. Only Gust and Twister (at 2x), Thunder and Sky Uppercut reach it.
+  description: The user takes to the air, then strikes. Only Gust, Twister, Thunder and Sky Uppercut reach it, and Gust and Twister hit it 2x.
 TailWhip:
   name: Tail Whip
   description: Drops the Defense of everything opposite by a stage.

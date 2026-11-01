@@ -2,47 +2,70 @@
 # Every other field is written by hand, and a rerun keeps it.
 Charm:
   name: あまえる
+  description: あいての こうげきを 2だん さげる。
 Rollout:
   name: ころがる
+  description: 5かい ころがり、 1かい ごとに いりょくが 2ばいに なる。 まるくなるを つかっていると、 さらに 2ばいに なる。
 FalseSwipe:
   name: みねうち
+  description: あいての HPを かならず 1 のこす。
 Swagger:
   name: いばる
+  description: あいてを こんらんさせ、 こうげきを 2だん あげる。
 MilkDrink:
   name: ミルクのみ
+  description: じぶんか てもちの ポケモンの HPを 1/2 かいふくする。
 Spark:
   name: スパーク
+  description: 30%の かくりつで まひに する。
 FuryCutter:
   name: れんぞくぎり
+  description: 4かい きりつけ、 1かい ごとに いりょくが 2ばいに なる。
 SteelWing:
   name: はがねのつばさ
+  description: 10%の かくりつで じぶんの ぼうぎょを 1だん あげる。
 MeanLook:
   name: くろいまなざし
+  description: 10びょうの あいだ、 あいてを こうたい できなく する。 ゴーストタイプは のぞく。 ダメージは あたえない。
 Attract:
   name: メロメロ
+  description: ぎゃくの せいべつの あいては 50%の かくりつで なにも できなく なる。
 SleepTalk:
   name: ねごと
+  description: じぶんが ねむっている ときだけ つかえる。 ほかの わざを ランダムに ひとつ だす。
 HealBell:
   name: いやしのすず
+  description: じぶんの てもち ぜんいんの やけど、 どく、 まひ、 ねむり、 こおりを なおす。 おとの わざ。
 Return:
   name: おんがえし
+  description: じぶんが きみに なついている ほど いりょくが あがる。 さいだい 102。
 Present:
   name: プレゼント
+  description: プレゼントの つつみ。 ふつうは いりょくが 40、 80、 120の どれかに なり、 5かいに 1かいは かわりに あいての HPを かいふくする。
 Frustration:
   name: やつあたり
+  description: じぶんが きみに なついていない ほど いりょくが あがる。 さいだい 102。
 Safeguard:
   name: しんぴのまもり
+  description: 10びょうの あいだ、 じぶんの がわは じょうたいいじょうに ならない。
 PainSplit:
   name: いたみわけ
+  description: ふたりの HPを たして、 おなじに なるよう わける。
 SacredFire:
   name: せいなるほのお
+  description: 50%の かくりつで やけどに する。 だすと、 じぶんの こおりが とける。
 Magnitude:
   name: マグニチュード
+  description: フィールドの ほかの ぜんいんの あしもとを ゆらし、 いりょく 10から 150で ダメージを あたえる。 じめんに もぐっている あいては 2ばい。
 DynamicPunch:
   name: ばくれつパンチ
+  description: あてた あいてを かならず こんらんさせる。
 Megahorn:
   name: メガホーン
+  description: ふれて ダメージを あたえる だけ。
 DragonBreath:
   name: りゅうのいぶき
+  description: 30%の かくりつで まひに する。
 BatonPass:
   name: バトンタッチ
+  description: じぶんを こうたいし、 のうりょくランクを でてくる ポケモンに ひきつぐ。

@@ -2,109 +2,163 @@
 # Every other field is written by hand, and a rerun keeps it.
 Tackle:
   name: たいあたり
+  description: ふれて ダメージを あたえる だけ。
 Growl:
   name: なきごえ
+  description: あいて ぜんいんの こうげきを 1だん さげる。 おとの わざ。
 LeechSeed:
   name: やどりぎのタネ
+  description: あいてに タネを うえつける。 2びょうごとに あいての HPの 1/8を すいとり、 うえた ほうに かいふくさせる。 くさタイプには きかない。
 VineWhip:
   name: つるのムチ
+  description: ふれて ダメージを あたえる だけ。
 PoisonPowder:
   name: どくのこな
+  description: あいてを どくに する。 こなの わざ なので、 くさタイプには きかない。
 RazorLeaf:
   name: はっぱカッター
+  description: あいて ぜんいんに あたる。 きゅうしょに あたりやすい。
 Growth:
   name: せいちょう
+  description: じぶんの とくこうを 1だん あげる。
 SolarBeam:
   name: ソーラービーム
+  description: はれ いがいでは じゅんびが いる。 きり、 あめ、 あられ、 すなあらしでは はんぶんに なる。
 SwordsDance:
   name: つるぎのまい
+  description: じぶんの こうげきを 2だん あげる。
 Toxic:
   name: どくどく
+  description: あいてを もうどくに する。 ながく つづく ほど ダメージが おおきく なる。
 BodySlam:
   name: のしかかり
+  description: 30%の かくりつで まひに する。 ちいさくなるを つかった あいてには かならず あたり、 ダメージが 2ばいに なる。
 TakeDown:
   name: とっしん
+  description: あたえた ダメージの 1/4を じぶんも うける。
 DoubleEdge:
   name: すてみタックル
+  description: あたえた ダメージの 1/3を じぶんも うける。
 Rage:
   name: いかり
+  description: ダメージを うける たびに じぶんの こうげきが 1だん あがる。 ほかの わざを だすまで つづく。
 MegaDrain:
   name: メガドレイン
+  description: あたえた ダメージの 1/2を HPとして かいふくする。
 Mimic:
   name: ものまね
+  description: あいてが さいごに つかった わざに かわる。
 DoubleTeam:
   name: かげぶんしん
+  description: じぶんの かいひを 1だん あげる。
 Bide:
   name: がまん
+  description: ふつうの 2ばいの じかん ちからを ためて、 そのあいだに うけた ダメージの 2ばいを かえす。
 Reflect:
   name: リフレクター
+  description: 10びょうの あいだ、 じぶんの がわが うける ぶつりダメージを 1/3 へらす。
 Rest:
   name: ねむる
+  description: じぶんが ねむって HPを ぜんかいふくし、 すべての じょうたいいじょうが なおる。 ねむれない ときは なにも おきない。
 HyperBeam:
   name: はかいこうせん
+  description: あたった あと、 じぶんは 2びょうの あいだ はんどうで うごけない。
 SleepPowder:
   name: ねむりごな
+  description: あいてを ねむらせる。 こなの わざ なので、 くさタイプには きかない。
 Cut:
   name: いあいぎり
+  description: ふれて ダメージを あたえる だけ。
 Substitute:
   name: みがわり
+  description: じぶんの HPの 1/4を つかって、 こうげきを うける みがわりを つくる。
 Scratch:
   name: ひっかく
+  description: ふれて ダメージを あたえる だけ。
 Ember:
   name: ひのこ
+  description: 10%の かくりつで やけどに する。
 Leer:
   name: にらみつける
+  description: あいて ぜんいんの ぼうぎょを 1だん さげる。
 Slash:
   name: きりさく
+  description: きゅうしょに あたりやすい。
 Flamethrower:
   name: かえんほうしゃ
+  description: 10%の かくりつで やけどに する。
 FireSpin:
   name: ほのおのうず
+  description: あいてを バインドで とらえる。 8びょうの あいだ、 2びょうごとに あいての HPの 1/8を うばい、 にげられなく する。 ゴーストタイプは のぞく。
 MegaPunch:
   name: メガトンパンチ
+  description: ふれて ダメージを あたえる だけ。
 MegaKick:
   name: メガトンキック
+  description: ふれて ダメージを あたえる だけ。
 Submission:
   name: じごくぐるま
+  description: あたえた ダメージの 1/4を じぶんも うける。
 SeismicToss:
   name: ちきゅうなげ
+  description: じぶんの レベルと おなじ ダメージを あたえる。 のうりょくは かんけいない。
 DragonRage:
   name: りゅうのいかり
+  description: かならず 40の ダメージを あたえる。
 Dig:
   name: あなをほる
+  description: じぶんは じめんに もぐって みえなくなり、 そのあと こうげきする。 じしん、 マグニチュード、 じわれだけが とどき、 じしんと マグニチュードは 2ばいに なる。
 FireBlast:
   name: だいもんじ
+  description: 10%の かくりつで やけどに する。
 Swift:
   name: スピードスター
+  description: あいて ぜんいんに あたる。 かならず あたる。
 SkullBash:
   name: ロケットずつき
+  description: じゅんびちゅうに じぶんの ぼうぎょが 1だん あがり、 そのあと こうげきする。
 Strength:
   name: かいりき
+  description: ふれて ダメージを あたえる だけ。
 Earthquake:
   name: じしん
+  description: あいて ぜんいんと みかたに あたる。 あなをほるで もぐっている あいてには 2ばい。
 Fissure:
   name: じわれ
+  description: あいての HPを すべて うばう。 めいちゅうは 30%。 がんじょうには きかない。
 Fly:
   name: そらをとぶ
+  description: じぶんは そらに とびあがり、 そのあと こうげきする。 かぜおこし、 たつまき、 かみなり、 スカイアッパーだけが とどき、 かぜおこしと たつまきは 2ばいに なる。
 TailWhip:
   name: しっぽをふる
+  description: あいて ぜんいんの ぼうぎょを 1だん さげる。
 Bubble:
   name: あわ
+  description: あいて ぜんいんに あたる。 10%の かくりつで あいての すばやさを 1だん さげる。
 WaterGun:
   name: みずでっぽう
+  description: ダメージを あたえる だけ。
 Bite:
   name: かみつく
+  description: 30%の かくりつで ひるませる。
 Withdraw:
   name: からにこもる
+  description: じぶんの ぼうぎょを 1だん あげる。
 HydroPump:
   name: ハイドロポンプ
+  description: ダメージを あたえる だけ。
 BubbleBeam:
   name: バブルこうせん
+  description: 10%の かくりつで あいての すばやさを 1だん さげる。
 IceBeam:
   name: れいとうビーム
+  description: 10%の かくりつで こおりに する。
 Blizzard:
   name: ふぶき
+  description: あいて ぜんいんに あたる。 10%の かくりつで こおりに する。 あられや ゆきの ときは かならず あたる。
 Counter:
   name: カウンター
+  description: さいごに うけた ぶつりこうげきの ダメージを 2ばいにして かえす。 えらんだ あいてでは なく、 こうげきした あいてに あたる。
 Surf:
   name: なみのり
+  description: あいて ぜんいんと みかたに あたる。 ダイビングで もぐっている あいてには 2ばい。

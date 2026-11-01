@@ -2,109 +2,163 @@
 # Every other field is written by hand, and a rerun keeps it.
 Tackle:
   name: Placaje
+  description: Solo daño por contacto.
 Growl:
   name: Gruñido
+  description: Baja 1 nivel el Ataque de todos los rivales. Es un sonido.
 LeechSeed:
   name: Drenadoras
+  description: 'Planta una semilla en el objetivo: cada 2 segundos pierde 1/8 de sus PS, que van a quien la plantó. El tipo Planta es inmune.'
 VineWhip:
   name: Látigo Cepa
+  description: Solo daño por contacto.
 PoisonPowder:
   name: Polvo Veneno
+  description: Envenena al objetivo. Es un polvo, así que el tipo Planta lo ignora.
 RazorLeaf:
   name: Hoja Afilada
+  description: Golpea a todos los rivales. Más probabilidad de golpe crítico.
 Growth:
   name: Desarrollo
+  description: Sube 1 nivel el Ataque Esp. del usuario.
 SolarBeam:
   name: Rayo Solar
+  description: Se prepara salvo que haga sol. Con niebla, lluvia, granizo o tormenta de arena se reduce a la mitad.
 SwordsDance:
   name: Danza Espada
+  description: Sube 2 niveles el Ataque del usuario.
 Toxic:
   name: Tóxico
+  description: 'Envenena gravemente al objetivo: el daño aumenta cuanto más dura.'
 BodySlam:
   name: Golpe Cuerpo
+  description: 30 % de probabilidad de paralizar. No falla contra un objetivo que haya usado Reducción, y le hace el doble de daño.
 TakeDown:
   name: Derribo
+  description: El usuario recibe 1/4 del daño que causa.
 DoubleEdge:
   name: Doble Filo
+  description: El usuario recibe 1/3 del daño que causa.
 Rage:
   name: Furia
+  description: Cada golpe que recibe el usuario le sube 1 nivel el Ataque, hasta que lance otro movimiento.
 MegaDrain:
   name: Megaagotar
+  description: Restaura al usuario 1/2 del daño causado.
 Mimic:
   name: Mimético
+  description: Se sustituye por el último movimiento del objetivo.
 DoubleTeam:
   name: Doble Equipo
+  description: Sube 1 nivel la Evasión del usuario.
 Bide:
   name: Venganza
+  description: Se concentra el doble de tiempo y devuelve el doble del daño recibido mientras tanto.
 Reflect:
   name: Reflejo
+  description: Durante 10 segundos, reduce 1/3 el daño físico contra el bando del usuario.
 Rest:
   name: Descanso
+  description: El usuario se duerme, recupera todos sus PS y se cura de todo. Si no puede dormirse, no pasa nada.
 HyperBeam:
   name: Hiperrayo
+  description: Tras acertar, el usuario debe recargar durante 2 segundos.
 SleepPowder:
   name: Somnífero
+  description: Duerme al objetivo. Es un polvo, así que el tipo Planta lo ignora.
 Cut:
   name: Corte
+  description: Solo daño por contacto.
 Substitute:
   name: Sustituto
+  description: Gasta 1/4 de los PS del usuario en un sustituto que recibe los golpes.
 Scratch:
   name: Arañazo
+  description: Solo daño por contacto.
 Ember:
   name: Ascuas
+  description: 10 % de probabilidad de quemar.
 Leer:
   name: Malicioso
+  description: Baja 1 nivel la Defensa de todos los rivales.
 Slash:
   name: Cuchillada
+  description: Más probabilidad de golpe crítico.
 Flamethrower:
   name: Lanzallamas
+  description: 10 % de probabilidad de quemar.
 FireSpin:
   name: Giro Fuego
+  description: 'Atrapa al objetivo: pierde 1/8 de sus PS cada 2 segundos durante 8 segundos y no puede escapar, salvo si es de tipo Fantasma.'
 MegaPunch:
   name: Megapuño
+  description: Solo daño por contacto.
 MegaKick:
   name: Megapatada
+  description: Solo daño por contacto.
 Submission:
   name: Sumisión
+  description: El usuario recibe 1/4 del daño que causa.
 SeismicToss:
   name: Sísmico
+  description: Causa un daño igual al nivel del usuario, sin importar las estadísticas.
 DragonRage:
   name: Furia Dragón
+  description: Causa siempre 40 de daño.
 Dig:
   name: Excavar
+  description: El usuario se esconde bajo tierra y luego ataca. Solo lo alcanzan Terremoto, Magnitud y Fisura, y Terremoto y Magnitud le hacen el doble de daño.
 FireBlast:
   name: Llamarada
+  description: 10 % de probabilidad de quemar.
 Swift:
   name: Meteoros
+  description: Golpea a todos los rivales. Nunca falla.
 SkullBash:
   name: Cabezazo
+  description: Sube 1 nivel la Defensa del usuario mientras se prepara, y luego golpea.
 Strength:
   name: Fuerza
+  description: Solo daño por contacto.
 Earthquake:
   name: Terremoto
+  description: Golpea a todos los rivales y a los aliados del usuario. Hace el doble de daño a lo que esté bajo tierra por Excavar.
 Fissure:
   name: Fisura
+  description: Quita todos los PS del objetivo, con 30 % de precisión. Robustez lo anula.
 Fly:
   name: Vuelo
+  description: El usuario se eleva por los aires y luego ataca. Solo lo alcanzan Tornado, Ciclón, Trueno y Gancho Alto, y Tornado y Ciclón le hacen el doble de daño.
 TailWhip:
   name: Agitacola
+  description: Baja 1 nivel la Defensa de todos los rivales.
 Bubble:
   name: Burbuja
+  description: Golpea a todos los rivales. 10 % de probabilidad de bajar 1 nivel la Velocidad del objetivo.
 WaterGun:
   name: Pistola Agua
+  description: Solo daño.
 Bite:
   name: Mordisco
+  description: 30 % de probabilidad de amedrentar.
 Withdraw:
   name: Refugio
+  description: Sube 1 nivel la Defensa del usuario.
 HydroPump:
   name: Hidrobomba
+  description: Solo daño.
 BubbleBeam:
   name: Rayo Burbuja
+  description: 10 % de probabilidad de bajar 1 nivel la Velocidad del objetivo.
 IceBeam:
   name: Rayo Hielo
+  description: 10 % de probabilidad de congelar.
 Blizzard:
   name: Ventisca
+  description: Golpea a todos los rivales, con 10 % de probabilidad de congelar, y nunca falla con granizo o nieve.
 Counter:
   name: Contraataque
+  description: Devuelve el doble del último golpe físico recibido, contra quien lo asestó y no contra el objetivo elegido.
 Surf:
   name: Surf
+  description: Golpea a todos los rivales y a los aliados del usuario. Hace el doble de daño a lo que esté bajo el agua por Buceo.

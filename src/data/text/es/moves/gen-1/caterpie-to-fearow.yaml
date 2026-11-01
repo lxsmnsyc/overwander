@@ -2,57 +2,85 @@
 # Every other field is written by hand, and a rerun keeps it.
 StringShot:
   name: Disparo Demora
+  description: Baja 2 niveles la Velocidad de todos los rivales.
 Harden:
   name: Fortaleza
+  description: Sube 1 nivel la Defensa del usuario.
 Confusion:
   name: Confusión
+  description: 10 % de probabilidad de confundir.
 StunSpore:
   name: Paralizador
+  description: Paraliza al objetivo. Es un polvo, así que el tipo Planta lo ignora.
 Supersonic:
   name: Supersónico
+  description: Confunde al objetivo. Es un sonido.
 Whirlwind:
   name: Remolino
+  description: Expulsa al objetivo del campo y hace entrar a su aliado más débil. Tarda en lanzarse.
 Psybeam:
   name: Psicorrayo
+  description: 10 % de probabilidad de confundir.
 Psychic:
   name: Psíquico
+  description: 10 % de probabilidad de bajar 1 nivel la Defensa Esp. del objetivo.
 Psywave:
   name: Psicoonda
+  description: Causa un daño de entre 0,5 y 1,5 veces el nivel del usuario.
 Teleport:
   name: Teletransporte
+  description: Cambia al usuario por su aliado más fuerte. Tarda en lanzarse.
 Flash:
   name: Destello
+  description: Baja 1 nivel la Precisión del objetivo.
 PoisonSting:
   name: Picotazo Veneno
+  description: 30 % de probabilidad de envenenar.
 FuryAttack:
   name: Ataque Furia
+  description: Golpea de 2 a 5 veces, con 0,25 segundos entre golpes.
 FocusEnergy:
   name: Foco Energía
+  description: Hasta que abandone el campo, el usuario tiene mucha más probabilidad de golpe crítico.
 Twineedle:
   name: Doble Ataque
+  description: Golpea 2 veces, cada una con un 20 % de probabilidad de envenenar.
 PinMissile:
   name: Pin Misil
+  description: Golpea de 2 a 5 veces.
 Agility:
   name: Agilidad
+  description: Sube 2 niveles la Velocidad del usuario.
 Gust:
   name: Tornado
+  description: Hace el doble de daño a lo que esté en el aire por Vuelo o Bote.
 SandAttack:
   name: Ataque Arena
+  description: Baja 1 nivel la Precisión del objetivo.
 QuickAttack:
   name: Ataque Rápido
+  description: Se prepara más rápido que un movimiento normal.
 WingAttack:
   name: Ataque Ala
+  description: Solo daño por contacto.
 MirrorMove:
   name: Espejo
+  description: Devuelve al objetivo su último movimiento.
 RazorWind:
   name: Viento Cortante
+  description: Se prepara y luego dispara. Más probabilidad de golpe crítico.
 SkyAttack:
   name: Ataque Aéreo
+  description: Se prepara y luego se lanza en picado. Más probabilidad de golpe crítico, y 30 % de probabilidad de amedrentar.
 HyperFang:
   name: Hipercolmillo
+  description: 10 % de probabilidad de amedrentar.
 SuperFang:
   name: Superdiente
+  description: Reduce a la mitad los PS que le queden al objetivo.
 Peck:
   name: Picotazo
+  description: Solo daño por contacto.
 DrillPeck:
   name: Pico Taladro
+  description: Solo daño por contacto.

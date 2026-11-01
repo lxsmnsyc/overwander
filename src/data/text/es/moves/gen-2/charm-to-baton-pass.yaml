@@ -2,47 +2,70 @@
 # Every other field is written by hand, and a rerun keeps it.
 Charm:
   name: Encanto
+  description: Baja 2 niveles el Ataque del objetivo.
 Rollout:
   name: Rodar
+  description: Rueda 5 veces, y cada pasada tiene el doble de potencia que la anterior. Rizo Defensa la duplica de nuevo.
 FalseSwipe:
   name: Falso Tortazo
+  description: Siempre deja al objetivo con al menos 1 PS.
 Swagger:
   name: Fanfarronear
+  description: Confunde al objetivo y le sube 2 niveles el Ataque.
 MilkDrink:
   name: Batido
+  description: Restaura 1/2 de los PS del usuario o de un Pokémon del equipo.
 Spark:
   name: Chispa
+  description: 30 % de probabilidad de paralizar.
 FuryCutter:
   name: Corte Furia
+  description: Corta 4 veces, y cada corte tiene el doble de potencia que el anterior.
 SteelWing:
   name: Ala de Acero
+  description: 10 % de probabilidad de subir 1 nivel la Defensa del usuario.
 MeanLook:
   name: Mal de Ojo
+  description: El objetivo no puede ser cambiado durante 10 segundos, salvo si es de tipo Fantasma. No le causa daño.
 Attract:
   name: Atracción
+  description: Un objetivo del sexo opuesto tiene un 50 % de probabilidad de no actuar en absoluto.
 SleepTalk:
   name: Sonámbulo
+  description: Solo funciona mientras el usuario duerme. Lanza al azar uno de sus otros movimientos.
 HealBell:
   name: Cascabel Cura
+  description: Cura quemaduras, envenenamiento, parálisis, sueño y congelación de todo el equipo del usuario. Es un sonido.
 Return:
   name: Retribución
+  description: Cuanto más cariño te tiene el usuario, más fuerte golpea, hasta 102 de potencia.
 Present:
   name: Presente
+  description: 'Un paquete: normalmente 40, 80 o 120 de potencia, y 1 de cada 5 veces cura al objetivo en su lugar.'
 Frustration:
   name: Frustración
+  description: Cuanto menos cariño te tiene el usuario, más fuerte golpea, hasta 102 de potencia.
 Safeguard:
   name: Velo Sagrado
+  description: Durante 10 segundos, nada puede causar un problema de estado en el bando del usuario.
 PainSplit:
   name: Divide Dolor
+  description: Suma los PS de ambos lados y los reparte a partes iguales.
 SacredFire:
   name: Fuego Sagrado
+  description: 50 % de probabilidad de quemar. Al lanzarlo, el usuario se descongela.
 Magnitude:
   name: Magnitud
+  description: Sacude el suelo bajo todos los demás del campo, con 10 a 150 de potencia. Los que estén bajo tierra reciben el doble de daño.
 DynamicPunch:
   name: Puño Dinámico
+  description: Siempre confunde a lo que golpea.
 Megahorn:
   name: Megacuerno
+  description: Solo daño por contacto.
 DragonBreath:
   name: Dragoaliento
+  description: 30 % de probabilidad de paralizar.
 BatonPass:
   name: Relevo
+  description: Cambia al usuario y transmite sus niveles de estadísticas a quien entra.

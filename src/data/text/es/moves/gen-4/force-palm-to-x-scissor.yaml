@@ -2,21 +2,31 @@
 # Every other field is written by hand, and a rerun keeps it.
 ForcePalm:
   name: Palmeo
+  description: 30 % de probabilidad de paralizar.
 AuraSphere:
   name: Esfera Aural
+  description: Nunca falla.
 RockPolish:
   name: Pulimento
+  description: Sube 2 niveles la Velocidad del usuario.
 PoisonJab:
   name: Puya Nociva
+  description: 30 % de probabilidad de envenenar.
 DarkPulse:
   name: Pulso Umbrío
+  description: 20 % de probabilidad de amedrentar.
 NightSlash:
   name: Tajo Umbrío
+  description: Más probabilidad de golpe crítico.
 AquaTail:
   name: Acua Cola
+  description: Solo daño por contacto.
 SeedBomb:
   name: Bomba Germen
+  description: Solo daño a distancia.
 AirSlash:
   name: Tajo Aéreo
+  description: 30 % de probabilidad de amedrentar.
 XScissor:
   name: Tijera X
+  description: Solo daño por contacto.

@@ -2,31 +2,46 @@
 # Every other field is written by hand, and a rerun keeps it.
 Wrap:
   name: まきつく
+  description: あいてを バインドで とらえる。 8びょうの あいだ、 2びょうごとに あいての HPの 1/8を うばい、 にげられなく する。 ゴーストタイプは のぞく。
 Glare:
   name: へびにらみ
+  description: あいてを まひに する。
 Screech:
   name: いやなおと
+  description: あいての ぼうぎょを 2だん さげる。 おとの わざ。
 Acid:
   name: ようかいえき
+  description: あいて ぜんいんに あたる。 10%の かくりつで あいての とくぼうを 1だん さげる。
 RockSlide:
   name: いわなだれ
+  description: あいて ぜんいんに あたる。 30%の かくりつで ひるませる。
 ThunderShock:
   name: でんきショック
+  description: 10%の かくりつで まひに する。
 ThunderWave:
   name: でんじは
+  description: あいてを まひに する。
 Thunder:
   name: かみなり
+  description: 30%の かくりつで まひに する。 あめの ときは かならず あたり、 はれの ときは めいちゅうが 50%に なる。
 Thunderbolt:
   name: １０まんボルト
+  description: 10%の かくりつで まひに する。
 PayDay:
   name: ネコにこばん
+  description: じぶんの レベルの 5ばいの おかねを ばらまく。 バトルの あとに もらえる。
 FurySwipes:
   name: みだれひっかき
+  description: 2から 5かい こうげきする。
 DoubleKick:
   name: にどげり
+  description: 2かい こうげきする。
 HornAttack:
   name: つのでつく
+  description: ふれて ダメージを あたえる だけ。
 HornDrill:
   name: つのドリル
+  description: あいての HPを すべて うばう。 めいちゅうは 30%。 がんじょうには きかない。
 Thrash:
   name: あばれる
+  description: おなじ こうげきを 3かい くりかえし、 おわると じぶんが こんらんする。

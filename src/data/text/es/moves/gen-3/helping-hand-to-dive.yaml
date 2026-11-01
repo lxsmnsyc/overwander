@@ -2,45 +2,67 @@
 # Every other field is written by hand, and a rerun keeps it.
 HelpingHand:
   name: Refuerzo
+  description: El siguiente movimiento de un aliado en los próximos 4 segundos hace 1,5 veces el daño.
 Trick:
   name: Truco
+  description: Intercambia los objetos que llevan el usuario y el objetivo.
 RolePlay:
   name: Imitación
+  description: Copia las habilidades del objetivo sobre las del usuario. El objetivo las conserva.
 Wish:
   name: Deseo
+  description: 4 segundos después, restaura 1/2 de los PS del usuario o de un Pokémon del equipo.
 Assist:
   name: Ayuda
+  description: Lanza un movimiento elegido al azar entre los del resto del equipo.
 Ingrain:
   name: Arraigo
+  description: 'Arraiga al usuario: recupera 1/16 de sus PS cada vez que actúa y no puede ser cambiado.'
 Superpower:
   name: Fuerza Bruta
+  description: Tras acertar, baja 1 nivel el Ataque y la Defensa del usuario.
 MagicCoat:
   name: Capa Mágica
+  description: Durante 4 segundos, el primer movimiento de estado dirigido al usuario desde fuera de su equipo se devuelve a quien lo lanzó.
 Recycle:
   name: Reciclaje
+  description: Recupera el último objeto que el usuario gastó.
 Revenge:
   name: Desquite
+  description: Tiene una preparación larga, y el doble de potencia si golpean al usuario mientras se prepara.
 BrickBreak:
   name: Demolición
+  description: Rompe Reflejo y Pantalla de Luz del bando del objetivo, y luego golpea.
 Yawn:
   name: Bostezo
+  description: El objetivo se duerme 4 segundos después.
 KnockOff:
   name: Desarme
+  description: Derriba el objeto que lleva el objetivo.
 Endeavor:
   name: Esfuerzo
+  description: Reduce los PS del objetivo hasta igualarlos con los del usuario.
 Eruption:
   name: Estallido
+  description: Cuantos más PS le queden al usuario, más fuerte golpea, hasta 150 de potencia.
 SkillSwap:
   name: Intercambio
+  description: Intercambia habilidades con el objetivo.
 Imprison:
   name: Sellar
+  description: Durante 10 segundos, el objetivo no puede lanzar ningún movimiento que el usuario también conozca.
 Refresh:
   name: Alivio
+  description: Cura la quemadura, el envenenamiento o la parálisis del usuario.
 Grudge:
   name: Rabia
+  description: Durante 10 segundos, lo que debilite al usuario tendrá el movimiento causante en una recarga de 2 minutos.
 Snatch:
   name: Robo
+  description: Durante 4 segundos, se roba el siguiente movimiento que alguien lance sobre sí mismo.
 SecretPower:
   name: Daño Secreto
+  description: 30 % de probabilidad de causar un problema de estado, y el terreno que se pisa decide cuál.
 Dive:
   name: Buceo
+  description: Se sumerge, donde solo lo alcanzan Surf y Torbellino (el doble de daño), y emerge con el golpe.

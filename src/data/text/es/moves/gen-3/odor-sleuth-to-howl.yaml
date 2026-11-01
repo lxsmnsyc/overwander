@@ -2,43 +2,64 @@
 # Every other field is written by hand, and a rerun keeps it.
 OdorSleuth:
   name: Rastreo
+  description: El objetivo pierde su Evasión y sus inmunidades a los tipos Normal y Lucha.
 RockTomb:
   name: Tumba Rocas
+  description: Siempre baja 1 nivel la Velocidad del objetivo.
 SilverWind:
   name: Viento Plata
+  description: 10 % de probabilidad de subir 1 nivel todas las estadísticas del usuario.
 MetalSound:
   name: Eco Metálico
+  description: Baja 2 niveles la Defensa Esp. del objetivo. Es un sonido.
 GrassWhistle:
   name: Silbato
+  description: Duerme al objetivo. Es un sonido.
 Tickle:
   name: Cosquillas
+  description: Baja 1 nivel el Ataque y la Defensa del objetivo.
 CosmicPower:
   name: Masa Cósmica
+  description: Sube 1 nivel la Defensa y la Defensa Esp. del usuario.
 WaterSpout:
   name: Salpicar
+  description: Cuantos más PS le queden al usuario, más fuerte golpea, hasta 150 de potencia.
 SignalBeam:
   name: Rayo Señal
+  description: 10 % de probabilidad de confundir.
 ShadowPunch:
   name: Puño Sombra
+  description: Nunca falla.
 Extrasensory:
   name: Paranormal
+  description: 10 % de probabilidad de amedrentar.
 SkyUppercut:
   name: Gancho Alto
+  description: Alcanza a un Pokémon que esté en el aire.
 SandTomb:
   name: Bucle Arena
+  description: 'Atrapa al objetivo: pierde 1/8 de sus PS cada 2 segundos durante 8 segundos y no puede escapar, salvo si es de tipo Fantasma.'
 SheerCold:
   name: Frío Polar
+  description: Debilita al objetivo de un golpe, y acierta el 30 % de las veces.
 MuddyWater:
   name: Agua Lodosa
+  description: Golpea a todos los rivales. 30 % de probabilidad de bajar 1 nivel la Precisión del objetivo.
 BulletSeed:
   name: Semilladora
+  description: Golpea de 2 a 5 veces.
 AerialAce:
   name: Golpe Aéreo
+  description: Nunca falla.
 IcicleSpear:
   name: Carámbano
+  description: Golpea de 2 a 5 veces.
 IronDefense:
   name: Defensa Férrea
+  description: Sube 2 niveles la Defensa del usuario.
 Block:
   name: Bloqueo
+  description: El objetivo no puede ser cambiado durante 10 segundos, salvo si es de tipo Fantasma.
 Howl:
   name: Aullido
+  description: Sube 1 nivel el Ataque del usuario. Es un sonido.

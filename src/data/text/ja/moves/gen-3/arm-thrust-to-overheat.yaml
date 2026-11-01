@@ -2,49 +2,73 @@
 # Every other field is written by hand, and a rerun keeps it.
 ArmThrust:
   name: つっぱり
+  description: 2から 5かい こうげきする。
 Camouflage:
   name: ほごしょく
+  description: あしもとの じめんに あった タイプに なる。
 TailGlow:
   name: ほたるび
+  description: じぶんの とくこうを 3だん あげる。
 LusterPurge:
   name: ラスターパージ
+  description: 50%の かくりつで あいての とくぼうを 1だん さげる。
 MistBall:
   name: ミストボール
+  description: 50%の かくりつで あいての とくこうを 1だん さげる。
 FeatherDance:
   name: フェザーダンス
+  description: あいての こうげきを 2だん さげる。
 TeeterDance:
   name: フラフラダンス
+  description: フィールドの ほかの ぜんいんを こんらんさせる。 じぶんの がわも ふくむ。
 BlazeKick:
   name: ブレイズキック
+  description: きゅうしょに あたりやすい。 10%の かくりつで やけどに する。
 MudSport:
   name: どろあそび
+  description: 10びょうの あいだ、 でんきタイプの わざの ダメージが 1/2に なる。
 IceBall:
   name: アイスボール
+  description: 5かい ころがり、 1かい ごとに いりょくが 2ばいに なる。 まるくなるを つかっていると、 さらに 2ばいに なる。
 NeedleArm:
   name: ニードルアーム
+  description: 30%の かくりつで ひるませる。
 SlackOff:
   name: なまける
+  description: じぶんの HPを 1/2 かいふくする。
 HyperVoice:
   name: ハイパーボイス
+  description: あいて ぜんいんに あたる。 おとの わざ。
 PoisonFang:
   name: どくどくのキバ
+  description: 50%の かくりつで もうどくに する。
 CrushClaw:
   name: ブレイククロー
+  description: 50%の かくりつで あいての ぼうぎょを 1だん さげる。
 BlastBurn:
   name: ブラストバーン
+  description: つかった あと、 じぶんは 2びょうの あいだ はんどうで うごけない。
 HydroCannon:
   name: ハイドロカノン
+  description: つかった あと、 じぶんは 2びょうの あいだ はんどうで うごけない。
 MeteorMash:
   name: コメットパンチ
+  description: 20%の かくりつで じぶんの こうげきを 1だん あげる。
 Astonish:
   name: おどろかす
+  description: 30%の かくりつで ひるませる。
 WeatherBall:
   name: ウェザーボール
+  description: はれ、 あめ、 すなあらし、 あられ、 ゆきの ときは 2ばいに なり、 てんきの タイプに なる。
 Aromatherapy:
   name: アロマセラピー
+  description: じぶんの てもち ぜんいんの やけど、 どく、 まひ、 ねむり、 こおりを なおす。
 FakeTears:
   name: うそなき
+  description: あいての とくぼうを 2だん さげる。
 AirCutter:
   name: エアカッター
+  description: あいて ぜんいんに あたる。 きゅうしょに あたりやすい。
 Overheat:
   name: オーバーヒート
+  description: あたった あと、 じぶんの とくこうが 2だん さがる。

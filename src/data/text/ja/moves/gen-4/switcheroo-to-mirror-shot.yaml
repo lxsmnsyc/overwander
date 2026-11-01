@@ -2,31 +2,46 @@
 # Every other field is written by hand, and a rerun keeps it.
 Switcheroo:
   name: すりかえ
+  description: じぶんと あいての もちものを いれかえる。
 GigaImpact:
   name: ギガインパクト
+  description: あたった あと、 じぶんは 2びょうの あいだ はんどうで うごけない。
 NastyPlot:
   name: わるだくみ
+  description: じぶんの とくこうを 2だん あげる。
 BulletPunch:
   name: バレットパンチ
+  description: ふつうの わざより じゅんびが はやく おわる。
 Avalanche:
   name: ゆきなだれ
+  description: この 2びょうの うちに じぶんが ダメージを うけて いれば いりょくが 2ばいに なるが、 じゅんびが ながい。
 IceShard:
   name: こおりのつぶて
+  description: ふつうの わざより じゅんびが はやく おわる。
 ShadowClaw:
   name: シャドークロー
+  description: きゅうしょに あたりやすい。
 ThunderFang:
   name: かみなりのキバ
+  description: 10%の かくりつで まひに し、 10%の かくりつで ひるませる。
 IceFang:
   name: こおりのキバ
+  description: 10%の かくりつで こおりに し、 10%の かくりつで ひるませる。
 FireFang:
   name: ほのおのキバ
+  description: 10%の かくりつで やけどに し、 10%の かくりつで ひるませる。
 ShadowSneak:
   name: かげうち
+  description: ふつうの わざより じゅんびが はやく おわる。
 MudBomb:
   name: どろばくだん
+  description: 30%の かくりつで あいての めいちゅうを 1だん さげる。
 PsychoCut:
   name: サイコカッター
+  description: きゅうしょに あたりやすい。
 ZenHeadbutt:
   name: しねんのずつき
+  description: 20%の かくりつで ひるませる。
 MirrorShot:
   name: ミラーショット
+  description: 30%の かくりつで あいての めいちゅうを 1だん さげる。

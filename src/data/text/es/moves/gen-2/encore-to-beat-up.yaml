@@ -2,47 +2,70 @@
 # Every other field is written by hand, and a rerun keeps it.
 Encore:
   name: Otra Vez
+  description: Obliga al objetivo a usar 3 veces seguidas su lanzamiento actual o el siguiente, durante una recarga. Los movimientos que se preparan no quedan bloqueados.
 Pursuit:
   name: Persecución
+  description: Hace el doble de daño a un objetivo que está siendo cambiado.
 RapidSpin:
   name: Giro Rápido
+  description: Siempre sube 1 nivel la Velocidad del usuario, elimina todas las trampas de su bando y libera al usuario de una atadura o de Drenadoras.
 SweetScent:
   name: Dulce Aroma
+  description: Baja 2 niveles la Evasión de todos los rivales.
 IronTail:
   name: Cola Férrea
+  description: 30 % de probabilidad de bajar 1 nivel la Defensa del objetivo.
 MetalClaw:
   name: Garra Metal
+  description: 10 % de probabilidad de subir 1 nivel el Ataque del usuario.
 VitalThrow:
   name: Llave Vital
+  description: Se prepara durante más tiempo que un movimiento normal y nunca falla.
 MorningSun:
   name: Sol Matinal
+  description: Restaura 1/2 de los PS del usuario, 2/3 con sol y 1/4 con cualquier otro tiempo.
 Synthesis:
   name: Fotosíntesis
+  description: Restaura 1/2 de los PS del usuario, 2/3 con sol y 1/4 con cualquier otro tiempo.
 Moonlight:
   name: Luz Lunar
+  description: Restaura 1/2 de los PS del usuario, 2/3 con sol y 1/4 con cualquier otro tiempo.
 HiddenPower:
   name: Poder Oculto
+  description: Tiene un tipo propio, decidido por los valores individuales del usuario.
 CrossChop:
   name: Tajo Cruzado
+  description: Más probabilidad de golpe crítico.
 Twister:
   name: Ciclón
+  description: Golpea a todos los rivales, con 20 % de probabilidad de amedrentar, y alcanza a un objetivo en el aire, con el doble de daño.
 Crunch:
   name: Triturar
+  description: 20 % de probabilidad de bajar 1 nivel la Defensa del objetivo.
 MirrorCoat:
   name: Manto Espejo
+  description: Devuelve el doble del último golpe especial recibido, contra quien lo asestó y no contra el objetivo elegido.
 PsychUp:
   name: Autosugestión
+  description: Copia los niveles de estadísticas del objetivo sobre los del usuario.
 ExtremeSpeed:
   name: Velocidad Extrema
+  description: Se prepara mucho más rápido que un movimiento normal.
 AncientPower:
   name: Poder Pasado
+  description: 10 % de probabilidad de subir 1 nivel todas las estadísticas del usuario.
 ShadowBall:
   name: Bola Sombra
+  description: 20 % de probabilidad de bajar 1 nivel la Defensa Esp. del objetivo.
 FutureSight:
   name: Premonición
+  description: Impacta 4 segundos después de lanzarse, en el lugar donde esté el objetivo entonces.
 RockSmash:
   name: Golpe Roca
+  description: 50 % de probabilidad de bajar 1 nivel la Defensa del objetivo.
 Whirlpool:
   name: Torbellino
+  description: 'Atrapa al objetivo: pierde 1/8 de sus PS cada 2 segundos durante 8 segundos y no puede escapar, salvo si es de tipo Fantasma. Hace el doble de daño a lo que esté bajo el agua por Buceo.'
 BeatUp:
   name: Paliza
+  description: Golpea una vez por cada Pokémon del equipo que esté en pie y sin problemas de estado.

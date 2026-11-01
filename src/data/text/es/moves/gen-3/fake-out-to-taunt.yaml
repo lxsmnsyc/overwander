@@ -2,35 +2,52 @@
 # Every other field is written by hand, and a rerun keeps it.
 FakeOut:
   name: Sorpresa
+  description: Siempre amedrenta. Solo una vez cada vez que entra al campo.
 Uproar:
   name: Alboroto
+  description: Repite el mismo golpe 3 veces. Nadie duerme mientras dura. Es un sonido.
 Stockpile:
   name: Reserva
+  description: Almacena 3 cargas en 3 pasos, y sube 1 nivel la Defensa y la Defensa Esp. del usuario.
 SpitUp:
   name: Escupir
+  description: 'Gasta lo que almacenó Reserva: 100 de potencia por carga, y nada si no hay ninguna.'
 Swallow:
   name: Tragar
+  description: 'Gasta lo que almacenó Reserva: restaura 1/4, 1/2 o todos los PS del usuario.'
 HeatWave:
   name: Onda Ígnea
+  description: Golpea a todos los rivales. 10 % de probabilidad de quemar.
 Torment:
   name: Tormento
+  description: Durante 10 segundos, el objetivo no puede lanzar el mismo movimiento dos veces seguidas.
 Flatter:
   name: Camelo
+  description: Confunde al objetivo y le sube 1 nivel el Ataque Esp.
 WillOWisp:
   name: Fuego Fatuo
+  description: Siempre quema a lo que alcanza.
 Memento:
   name: Legado
+  description: Baja 2 niveles el Ataque y el Ataque Esp. del objetivo. El usuario se debilita.
 Facade:
   name: Fachada
+  description: El doble de potencia mientras el usuario esté quemado, envenenado o paralizado.
 FocusPunch:
   name: Puño Certero
+  description: Tiene una preparación larga, y el puñetazo se pierde si golpean al usuario antes de que impacte.
 SmellingSalts:
   name: Estímulo
+  description: El doble de potencia contra un objetivo paralizado, y le cura la parálisis.
 FollowMe:
   name: Señuelo
+  description: Durante 4 segundos, todo movimiento de un solo objetivo dirigido al bando del usuario se desvía hacia él.
 NaturePower:
   name: Adaptación
+  description: Lanza el movimiento que pida el terreno que pisa.
 Charge:
   name: Carga
+  description: Sube 1 nivel la Defensa Esp. del usuario, y su siguiente movimiento Eléctrico hace el doble de daño.
 Taunt:
   name: Mofa
+  description: Durante 10 segundos, el objetivo solo puede lanzar movimientos que causen daño.

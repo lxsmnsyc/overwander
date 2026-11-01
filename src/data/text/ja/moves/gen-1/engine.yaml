@@ -2,3 +2,6 @@
 # Every other field is written by hand, and a rerun keeps it.
 Struggle:
   name: わるあがき
+  description: すべての わざが つかえない ときに くりだす。 どの タイプにも はんげんされず、 じぶんの HPの 1/4を うしなう。
+Attack:
+  description: じぶんの からだ そのものを つかった よわい いちげき。 ほんとうの わざが まちじかんの あいだの つなぎに なる。

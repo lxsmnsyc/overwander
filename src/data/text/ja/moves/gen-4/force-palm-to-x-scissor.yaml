@@ -2,21 +2,31 @@
 # Every other field is written by hand, and a rerun keeps it.
 ForcePalm:
   name: はっけい
+  description: 30%の かくりつで まひに する。
 AuraSphere:
   name: はどうだん
+  description: かならず あたる。
 RockPolish:
   name: ロックカット
+  description: じぶんの すばやさを 2だん あげる。
 PoisonJab:
   name: どくづき
+  description: 30%の かくりつで どくに する。
 DarkPulse:
   name: あくのはどう
+  description: 20%の かくりつで ひるませる。
 NightSlash:
   name: つじぎり
+  description: きゅうしょに あたりやすい。
 AquaTail:
   name: アクアテール
+  description: ふれて ダメージを あたえる だけ。
 SeedBomb:
   name: タネばくだん
+  description: はなれて ダメージを あたえる だけ。
 AirSlash:
   name: エアスラッシュ
+  description: 30%の かくりつで ひるませる。
 XScissor:
   name: シザークロス
+  description: ふれて ダメージを あたえる だけ。

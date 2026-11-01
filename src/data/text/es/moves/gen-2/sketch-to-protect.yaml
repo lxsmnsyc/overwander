@@ -2,35 +2,52 @@
 # Every other field is written by hand, and a rerun keeps it.
 Sketch:
   name: Esquema
+  description: Copia el último movimiento que usó el objetivo en lugar de Esquema, para siempre.
 TripleKick:
   name: Triple Patada
+  description: Patea 3 veces, y cada patada es más fuerte que la anterior.
 Thief:
   name: Ladrón
+  description: Roba el objeto del objetivo si el usuario no lleva nada.
 SpiderWeb:
   name: Telaraña
+  description: El objetivo no puede ser cambiado durante 10 segundos, salvo si es de tipo Fantasma. No le causa daño.
 MindReader:
   name: Telépata
+  description: Durante 4 segundos, el siguiente movimiento del usuario contra el objetivo no puede fallar.
 Nightmare:
   name: Pesadilla
+  description: Un objetivo dormido pierde 1/4 de sus PS cada vez que fuera a actuar.
 FlameWheel:
   name: Rueda Fuego
+  description: 10 % de probabilidad de quemar. Al lanzarlo, el usuario se descongela.
 Snore:
   name: Ronquido
+  description: Solo funciona mientras el usuario duerme. 30 % de probabilidad de amedrentar. Es un sonido.
 Curse:
   name: Maldición
+  description: Un tipo Fantasma gasta 1/2 de sus PS para quitarle 1/4 de los del objetivo cada vez que actúa. Cualquier otro baja 1 nivel la Velocidad a cambio de subir 1 nivel el Ataque y la Defensa.
 Flail:
   name: Azote
+  description: Cuantos menos PS le queden al usuario, más fuerte golpea, hasta 200 de potencia.
 Conversion2:
   name: Conversión 2
+  description: Convierte al usuario en un tipo que resiste el último movimiento del objetivo.
 Aeroblast:
   name: Aerochorro
+  description: Más probabilidad de golpe crítico.
 CottonSpore:
   name: Esporagodón
+  description: Baja 2 niveles la Velocidad de todos los rivales. Es una espora, así que el tipo Planta la ignora.
 Reversal:
   name: Inversión
+  description: Cuantos menos PS le queden al usuario, más fuerte golpea, hasta 200 de potencia.
 Spite:
   name: Rencor
+  description: Multiplica por 4 la recarga del último movimiento del objetivo.
 PowderSnow:
   name: Nieve Polvo
+  description: Golpea a todos los rivales. 10 % de probabilidad de congelar.
 Protect:
   name: Protección
+  description: Bloquea todo lo dirigido al usuario durante 2 segundos. Falla si se usa dos veces seguidas.

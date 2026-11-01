@@ -2,21 +2,31 @@
 # Every other field is written by hand, and a rerun keeps it.
 FlashCannon:
   name: Cañón Resplandor
+  description: 10 % de probabilidad de bajar 1 nivel la Defensa Esp. del objetivo.
 RockClimb:
   name: Treparrocas
+  description: 20 % de probabilidad de confundir.
 Defog:
   name: Despejar
+  description: Elimina Púas, Púas Tóxicas y Trampa Rocas de ambos bandos, y Reflejo, Pantalla de Luz, Neblina, Velo Sagrado y Conjuro del bando del objetivo. Baja 1 nivel la Evasión del objetivo.
 TrickRoom:
   name: Espacio Raro
+  description: Durante 10 segundos se invierte el orden de preparación de los movimientos del campo. Si se vuelve a usar, termina.
 DracoMeteor:
   name: Cometa Draco
+  description: Tras acertar, baja 2 niveles el Ataque Esp. del usuario.
 Discharge:
   name: Chispazo
+  description: 30 % de probabilidad de paralizar.
 LavaPlume:
   name: Humareda
+  description: 30 % de probabilidad de quemar.
 LeafStorm:
   name: Lluevehojas
+  description: Tras acertar, baja 2 niveles el Ataque Esp. del usuario.
 PowerWhip:
   name: Latigazo
+  description: Solo daño por contacto.
 RockWrecker:
   name: Romperrocas
+  description: Tras acertar, el usuario debe recargar durante 2 segundos.

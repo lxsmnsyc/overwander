@@ -2,11 +2,16 @@
 # Every other field is written by hand, and a rerun keeps it.
 Roost:
   name: はねやすめ
+  description: さいだいHPの 1/2を かいふくする。 2びょうの あいだ、 ひこうタイプは タイプあいしょうに かんけいしないが、 じめんタイプの わざは やはり あたらない。
 Gravity:
   name: じゅうりょく
+  description: 10びょうの あいだ、 じめんタイプの わざが ひこうタイプや ふゆうの ポケモンにも あたる。
 MiracleEye:
   name: ミラクルアイ
+  description: あいてが あくタイプでも エスパーわざが あたり、 あいての かいひも きかなくなる。
 WakeUpSlap:
   name: めざましビンタ
+  description: ねむっている あいてには いりょくが 2ばいに なり、 めを さまさせる。
 HammerArm:
   name: アームハンマー
+  description: じぶんの すばやさが 1だん さがる。

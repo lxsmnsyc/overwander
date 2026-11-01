@@ -2,45 +2,67 @@
 # Every other field is written by hand, and a rerun keeps it.
 HelpingHand:
   name: てだすけ
+  description: 4びょうの あいだに みかたが だす つぎの わざは、 ダメージが 1.5ばいに なる。
 Trick:
   name: トリック
+  description: あいてと もちものを いれかえる。
 RolePlay:
   name: なりきり
+  description: あいての とくせいを じぶんの とくせいに うわがきする。 あいては そのまま。
 Wish:
   name: ねがいごと
+  description: 4びょう あとに、 じぶんか てもちの ポケモンの HPを 1/2 かいふくする。
 Assist:
   name: ねこのて
+  description: ほかの てもちの ポケモンの わざから ランダムに ひとつ だす。
 Ingrain:
   name: ねをはる
+  description: じぶんを ねづかせる。 こうどうする たびに HPが 1/16 かいふくし、 こうたい できなく なる。
 Superpower:
   name: ばかぢから
+  description: あたった あと、 じぶんの こうげきと ぼうぎょが 1だん ずつ さがる。
 MagicCoat:
   name: マジックコート
+  description: 4びょうの あいだ、 てもちの そとから じぶんに むけた さいしょの へんかわざを、 だした あいてに はねかえす。
 Recycle:
   name: リサイクル
+  description: じぶんが つかいきった さいごの もちものを とりもどす。
 Revenge:
   name: リベンジ
+  description: じゅんびが ながい。 じゅんびちゅうに うたれると いりょくが 2ばいに なる。
 BrickBreak:
   name: かわらわり
+  description: あいての がわの リフレクターと ひかりのかべを こわしてから こうげきする。
 Yawn:
   name: あくび
+  description: 4びょう あとに、 あいてが ねむる。
 KnockOff:
   name: はたきおとす
+  description: あいての もちものを はたきおとす。
 Endeavor:
   name: がむしゃら
+  description: あいての HPを じぶんの HPと おなじに する。
 Eruption:
   name: ふんか
+  description: のこりHPが おおい ほど いりょくが あがる。 さいだい 150。
 SkillSwap:
   name: スキルスワップ
+  description: あいてと とくせいを いれかえる。
 Imprison:
   name: ふういん
+  description: 10びょうの あいだ、 あいては じぶんも おぼえている わざを だせない。
 Refresh:
   name: リフレッシュ
+  description: じぶんの やけど、 どく、 まひを なおす。
 Grudge:
   name: おんねん
+  description: 10びょうの あいだ、 じぶんを たおした あいての その わざは 2ふんの まちじかんに なる。
 Snatch:
   name: よこどり
+  description: 4びょうの あいだ、 だれかが じぶんに かける つぎの わざを よこどりする。
 SecretPower:
   name: ひみつのちから
+  description: 30%の かくりつで じょうたいいじょうに する。 どの じょうたいかは あしもとの ちけいで きまる。
 Dive:
   name: ダイビング
+  description: みずの なかに もぐる。 なみのりと うずしお(2ばい)だけが とどき、 うかびあがって こうげきする。

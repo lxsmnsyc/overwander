@@ -2,47 +2,70 @@
 # Every other field is written by hand, and a rerun keeps it.
 Encore:
   name: アンコール
+  description: あいての いまの わざ か つぎの わざを、 まちじかん 1かい ぶん、 3かい れんぞくで だすように しばる。 じゅんびが いる わざは しばれない。
 Pursuit:
   name: おいうち
+  description: こうたい している さいちゅうの あいてには 2ばいの ダメージ。
 RapidSpin:
   name: こうそくスピン
+  description: かならず じぶんの すばやさが 1だん あがる。 じぶんの がわの わなを すべて とりのぞき、 バインドや やどりぎのタネから ぬけだす。
 SweetScent:
   name: あまいかおり
+  description: あいて ぜんいんの かいひを 2だん さげる。
 IronTail:
   name: アイアンテール
+  description: 30%の かくりつで あいての ぼうぎょを 1だん さげる。
 MetalClaw:
   name: メタルクロー
+  description: 10%の かくりつで じぶんの こうげきを 1だん あげる。
 VitalThrow:
   name: あてみなげ
+  description: ふつうの わざより じゅんびが ながい。 かならず あたる。
 MorningSun:
   name: あさのひざし
+  description: じぶんの HPを 1/2 かいふくする。 はれの ときは 2/3、 ほかの てんきでは 1/4。
 Synthesis:
   name: こうごうせい
+  description: じぶんの HPを 1/2 かいふくする。 はれの ときは 2/3、 ほかの てんきでは 1/4。
 Moonlight:
   name: つきのひかり
+  description: じぶんの HPを 1/2 かいふくする。 はれの ときは 2/3、 ほかの てんきでは 1/4。
 HiddenPower:
   name: めざめるパワー
+  description: どくじの タイプで、 じぶんの こたいちで きまる。
 CrossChop:
   name: クロスチョップ
+  description: きゅうしょに あたりやすい。
 Twister:
   name: たつまき
+  description: あいて ぜんいんに あたる。 20%の かくりつで ひるませる。 そらに いる あいてにも とどき、 2ばいに なる。
 Crunch:
   name: かみくだく
+  description: 20%の かくりつで あいての ぼうぎょを 1だん さげる。
 MirrorCoat:
   name: ミラーコート
+  description: さいごに うけた とくしゅこうげきの ダメージを 2ばいにして かえす。 えらんだ あいてでは なく、 こうげきした あいてに あたる。
 PsychUp:
   name: じこあんじ
+  description: あいての のうりょくランクを じぶんに コピーする。
 ExtremeSpeed:
   name: しんそく
+  description: ふつうの わざより ずっと はやく じゅんびが おわる。
 AncientPower:
   name: げんしのちから
+  description: 10%の かくりつで じぶんの ステータスを ぜんぶ 1だん あげる。
 ShadowBall:
   name: シャドーボール
+  description: 20%の かくりつで あいての とくぼうを 1だん さげる。
 FutureSight:
   name: みらいよち
+  description: だしてから 4びょう あとに、 そのとき あいてが いる ばしょに あたる。
 RockSmash:
   name: いわくだき
+  description: 50%の かくりつで あいての ぼうぎょを 1だん さげる。
 Whirlpool:
   name: うずしお
+  description: あいてを バインドで とらえる。 8びょうの あいだ、 2びょうごとに あいての HPの 1/8を うばい、 にげられなく する。 ゴーストタイプは のぞく。 ダイビングで もぐっている あいてには 2ばい。
 BeatUp:
   name: ふくろだたき
+  description: てもちの ポケモンのうち、 たおれて おらず じょうたいいじょうでも ない ものの かずだけ こうげきする。

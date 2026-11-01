@@ -2,11 +2,16 @@
 # Every other field is written by hand, and a rerun keeps it.
 GyroBall:
   name: ジャイロボール
+  description: あいてより じぶんが おそい ほど いりょくが あがる。 さいだい 150。
 HealingWish:
   name: いやしのねがい
+  description: じぶんは ひんしに なり、 フィールドの みかたの HPが ぜんかいふくし、 じょうたいいじょうが なおる。
 Brine:
   name: しおみず
+  description: HPが 1/2 みまんの あいてには いりょくが 2ばいに なる。
 NaturalGift:
   name: しぜんのめぐみ
+  description: もっている きのみを いりょく 80で なげる。 タイプは きのみが ダメージを やわらげる タイプで、 なければ ノーマル。 きのみは なくなる。
 Feint:
   name: フェイント
+  description: まもると みきりを つらぬいて あたり、 つらぬいた まもりを やぶる。

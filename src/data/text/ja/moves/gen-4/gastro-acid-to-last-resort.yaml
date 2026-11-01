@@ -2,17 +2,25 @@
 # Every other field is written by hand, and a rerun keeps it.
 GastroAcid:
   name: いえき
+  description: あいての とくせいの うち 1つを ランダムに えらび、 バトルが おわるまで はたらかなく する。
 LuckyChant:
   name: おまじない
+  description: 10びょうの あいだ、 じぶんの がわには きゅうしょに あたらない。
 MeFirst:
   name: さきどり
+  description: あいてが だしている わざを さえぎり、 1.5ばいの いりょくで かわりに はなつ。
 Copycat:
   name: まねっこ
+  description: だれかが さいごに つかった わざを だす。
 PowerSwap:
   name: パワースワップ
+  description: じぶんと あいての こうげきと とくこうの のうりょくランクを いれかえる。
 GuardSwap:
   name: ガードスワップ
+  description: じぶんと あいての ぼうぎょと とくぼうの のうりょくランクを いれかえる。
 Punishment:
   name: おしおき
+  description: あいての あげた のうりょくランクが おおい ほど いりょくが あがる。 さいだい 200。
 LastResort:
   name: とっておき
+  description: じぶんの ほかの わざを すべて この バトルで だした あとにしか つかえない。

@@ -2,89 +2,133 @@
 # Every other field is written by hand, and a rerun keeps it.
 RockThrow:
   name: いわおとし
+  description: ダメージを あたえる だけ。
 SelfDestruct:
   name: じばく
+  description: あいて ぜんいんと みかたに あたるが、 じぶんは HPを 200 うしなう。
 Explosion:
   name: だいばくはつ
+  description: あいて ぜんいんと みかたに あたるが、 じぶんは HPを 250 うしなう。
 Stomp:
   name: ふみつけ
+  description: 30%の かくりつで ひるませる。 ちいさくなるを つかった あいてには かならず あたり、 ダメージが 2ばいに なる。
 Headbutt:
   name: ずつき
+  description: 30%の かくりつで ひるませる。
 SonicBoom:
   name: ソニックブーム
+  description: かならず 20の ダメージを あたえる。
 TriAttack:
   name: トライアタック
+  description: 20%の かくりつで やけど、 こおり、 まひの どれかに する。 3つは おなじ かくりつで えらばれる。
 AuroraBeam:
   name: オーロラビーム
+  description: 10%の かくりつで あいての こうげきを 1だん さげる。
 PoisonGas:
   name: どくガス
+  description: あいてを どくに する。
 Sludge:
   name: ヘドロこうげき
+  description: 30%の かくりつで どくに する。
 Clamp:
   name: からではさむ
+  description: あいてを バインドで とらえる。 8びょうの あいだ、 2びょうごとに あいての HPの 1/8を うばい、 にげられなく する。 ゴーストタイプは のぞく。
 SpikeCannon:
   name: とげキャノン
+  description: 2から 5かい こうげきする。
 Lick:
   name: したでなめる
+  description: 30%の かくりつで まひに する。
 NightShade:
   name: ナイトヘッド
+  description: じぶんの レベルと おなじ ダメージを あたえる。 のうりょくは かんけいない。
 DreamEater:
   name: ゆめくい
+  description: ねむっている あいてにしか きかない。 あたえた ダメージの 1/2を HPとして かいふくする。
 Bind:
   name: しめつける
+  description: あいてを バインドで とらえる。 8びょうの あいだ、 2びょうごとに あいての HPの 1/8を うばい、 にげられなく する。 ゴーストタイプは のぞく。
 Meditate:
   name: ヨガのポーズ
+  description: じぶんの こうげきを 1だん あげる。
 ViceGrip:
   name: はさむ
+  description: ふれて ダメージを あたえる だけ。
 Guillotine:
   name: ハサミギロチン
+  description: あいての HPを すべて うばう。 めいちゅうは 30%。 がんじょうには きかない。
 Crabhammer:
   name: クラブハンマー
+  description: きゅうしょに あたりやすい。
 Barrage:
   name: たまなげ
+  description: 2から 5かい こうげきする。
 EggBomb:
   name: タマゴばくだん
+  description: ダメージを あたえる だけ。
 BoneClub:
   name: ホネこんぼう
+  description: 10%の かくりつで ひるませる。
 Bonemerang:
   name: ホネブーメラン
+  description: 2かい こうげきする。
 CometPunch:
   name: れんぞくパンチ
+  description: 2から 5かい こうげきする。
 FirePunch:
   name: ほのおのパンチ
+  description: 10%の かくりつで やけどに する。
 IcePunch:
   name: れいとうパンチ
+  description: 10%の かくりつで こおりに する。
 ThunderPunch:
   name: かみなりパンチ
+  description: 10%の かくりつで まひに する。
 RollingKick:
   name: まわしげり
+  description: 30%の かくりつで ひるませる。
 JumpKick:
   name: とびげり
+  description: はずすと、 じぶんの HPの 1/2を うしなう。
 HiJumpKick:
   name: とびひざげり
+  description: はずすと、 じぶんの HPの 1/2を うしなう。
 Smog:
   name: スモッグ
+  description: 40%の かくりつで どくに する。
 SmokeScreen:
   name: えんまく
+  description: あいての めいちゅうを 1だん さげる。
 DizzyPunch:
   name: ピヨピヨパンチ
+  description: 20%の かくりつで こんらんさせる。
 Waterfall:
   name: たきのぼり
+  description: 20%の かくりつで ひるませる。
 LovelyKiss:
   name: あくまのキッス
+  description: あいてを ねむらせる。
 Splash:
   name: はねる
+  description: なにも おきない。
 Mist:
   name: しろいきり
+  description: 10びょうの あいだ、 じぶんの がわの のうりょくランクを ほかの だれも さげられない。
 Transform:
   name: へんしん
+  description: あいての すがた、 タイプ、 HPいがいの のうりょく、 のうりょくランク、 わざを コピーする。 じぶんが フィールドを はなれるまで つづく。
 AcidArmor:
   name: とける
+  description: じぶんの ぼうぎょを 2だん あげる。
 Sharpen:
   name: かくばる
+  description: じぶんの こうげきを 1だん あげる。
 Conversion:
   name: テクスチャー
+  description: じぶんが もっている いちばん さいしょの わざと おなじ タイプに なり、 もとの タイプは なくなる。
 Kinesis:
   name: スプーンまげ
+  description: あいての めいちゅうを 1だん さげる。
 SoftBoiled:
   name: タマゴうみ
+  description: じぶんか てもちの ポケモンの HPを 1/2 かいふくする。

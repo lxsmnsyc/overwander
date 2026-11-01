@@ -2,41 +2,61 @@
 # Every other field is written by hand, and a rerun keeps it.
 MachPunch:
   name: Ultrapuño
+  description: Se prepara más rápido que un movimiento normal.
 ScaryFace:
   name: Cara Susto
+  description: Baja 2 niveles la Velocidad del objetivo.
 FeintAttack:
   name: Finta
+  description: Nunca falla.
 SweetKiss:
   name: Beso Dulce
+  description: Confunde al objetivo.
 BellyDrum:
   name: Tambor
+  description: Gasta 1/2 de los PS del usuario para poner su Ataque al máximo.
 SludgeBomb:
   name: Bomba Lodo
+  description: 30 % de probabilidad de envenenar.
 MudSlap:
   name: Bofetón Lodo
+  description: Siempre baja 1 nivel la Precisión del objetivo.
 Octazooka:
   name: Pulpocañón
+  description: 50 % de probabilidad de bajar 1 nivel la Precisión del objetivo.
 Spikes:
   name: Púas
+  description: 'Esparce púas: lo que entre por un cambio en el bando rival pierde 1/8 de sus PS, 1/6 con dos capas y 1/4 con tres.'
 ZapCannon:
   name: Electrocañón
+  description: Siempre paraliza a lo que golpea.
 Foresight:
   name: Profecía
+  description: El objetivo pierde su Evasión y sus inmunidades a los tipos Normal y Lucha.
 DestinyBond:
   name: Mismo Destino
+  description: Durante 4 segundos, quien debilite al usuario cae con él.
 PerishSong:
   name: Canto Mortal
+  description: Todo lo que lo oiga se debilita en 8 segundos, salvo que lo cambien antes.
 IcyWind:
   name: Viento Hielo
+  description: Golpea a todos los rivales y siempre les baja 1 nivel la Velocidad.
 Detect:
   name: Detección
+  description: Bloquea todo lo dirigido al usuario durante 2 segundos. Falla si se usa dos veces seguidas.
 BoneRush:
   name: Ataque Óseo
+  description: Golpea de 2 a 5 veces.
 LockOn:
   name: Fijar Blanco
+  description: Durante 4 segundos, el siguiente movimiento del usuario contra el objetivo no puede fallar.
 Outrage:
   name: Enfado
+  description: Repite el mismo golpe 3 veces y deja confuso al usuario.
 GigaDrain:
   name: Gigadrenado
+  description: Restaura al usuario 1/2 del daño causado.
 Endure:
   name: Aguante
+  description: Durante 2 segundos, el usuario no puede quedar por debajo de 1 PS. Falla si se usa dos veces seguidas.

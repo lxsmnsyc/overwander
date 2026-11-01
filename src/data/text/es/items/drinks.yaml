@@ -9,3 +9,5 @@ MoomooMilk:
   name: Leche Mu-mu
 BerryJuice:
   name: Zumo de Baya
+templates:
+  drink: Restaura {restore} PS cuando el portador baja a 1/5 de sus PS.

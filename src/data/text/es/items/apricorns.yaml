@@ -13,3 +13,5 @@ WhiteApricorn:
   name: Bonguri Blanco
 BlackApricorn:
   name: Bonguri Negro
+templates:
+  apricorn: Kurt lo convierte en una {ball}.

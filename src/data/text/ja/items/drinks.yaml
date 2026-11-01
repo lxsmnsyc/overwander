@@ -9,3 +9,5 @@ MoomooMilk:
   name: モーモーミルク
 BerryJuice:
   name: きのみジュース
+templates:
+  drink: もたせた ポケモンの HPが 1/5に なると、 HPを {restore} かいふくする。

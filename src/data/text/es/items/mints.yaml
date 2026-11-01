@@ -41,3 +41,6 @@ SassyMint:
   name: Menta Grosera
 CarefulMint:
   name: Menta Cauta
+templates:
+  mint: 'Cambia su naturaleza a {nature}: {raised} x{up}, {lowered} x{down}. Se gasta al usarse.'
+  neutral: Cambia su naturaleza a {nature}, que no sube ni baja nada. Se gasta al usarse.

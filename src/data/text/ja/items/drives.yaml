@@ -7,3 +7,5 @@ BurnDrive:
   name: ブレイズカセット
 ChillDrive:
   name: フリーズカセット
+templates:
+  drive: もたせている あいだ、 テクノバスターが {type}タイプに なる。

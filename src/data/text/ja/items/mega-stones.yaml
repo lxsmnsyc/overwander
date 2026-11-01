@@ -183,3 +183,5 @@ Tatsugirinite:
   name: シャリタツナイト
 Baxcalibrite:
   name: セグレイブナイト
+templates:
+  stone: '{holder}に もたせると メガシンカ できる。 たたかいで メガシンカ できるのは、 てもちの うち 1ぴきだけ。'

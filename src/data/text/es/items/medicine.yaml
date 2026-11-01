@@ -33,3 +33,19 @@ HealPowder:
   name: Polvo Curación
 RevivalHerb:
   name: Hierba Revivir
+templates:
+  restore: Restaura {restore} PS.
+  restoreAll: Restaura todos los PS.
+  reviveFull: Revive a un Pokémon debilitado con todos sus PS.
+  reviveHalf: Revive a un Pokémon debilitado con 1/2 de sus PS.
+  revive: Revive a un Pokémon debilitado con el {percent} % de sus PS.
+  cureAll: Cura todos los estados.
+  cure: Cura {cures}.
+  poison: el envenenamiento
+  sleep: el sueño
+  paralysis: la parálisis
+  burn: las quemaduras
+  freezing: la congelación
+  bitter: 'Amargo: cuesta amistad.'
+  bitterTwice: 'Amargo: cuesta amistad dos veces.'
+  bitterThrice: 'Amargo: cuesta amistad tres veces.'

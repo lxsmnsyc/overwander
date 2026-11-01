@@ -11,3 +11,6 @@ CleverWing:
   name: せいしんのハネ
 SwiftWing:
   name: しゅんぱつのハネ
+templates:
+  effort: '{stat}の どりょくちを {effort} ふやす。 つかうと なくなる。'
+  max: '{stat}の どりょくちを {max}に する。 つかうと なくなる。'

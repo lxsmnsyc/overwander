@@ -17,3 +17,11 @@ RageCandyBar:
   name: いかりまんじゅう
 SweetHeart:
   name: ハートスイーツ
+templates:
+  sweet: もたせた ポケモンが {cures}の いずれかに なると、 1びょうご に なおす。
+  treat: もたせた ポケモンの HPが 1/5に なると、 HPを {restore} かいふくする。
+  poison: どく
+  sleep: ねむり
+  paralysis: まひ
+  burn: やけど
+  freezing: こおり

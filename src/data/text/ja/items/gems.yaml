@@ -35,3 +35,5 @@ DarkGem:
   name: あくのジュエル
 FairyGem:
   name: ようせいジュエル
+templates:
+  type: もたせた ポケモンの {type}タイプの わざの いりょくが 1.5ばいに なる。 さいしょに あたった わざで なくなる。

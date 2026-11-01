@@ -33,3 +33,5 @@ DarkMemory:
   name: Disco Siniestro
 FairyMemory:
   name: Disco Hada
+templates:
+  memory: Multiataque es de tipo {type} mientras se lleva equipado, y un Silvally con Sistema Alfa también lo es.

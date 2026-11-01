@@ -33,3 +33,5 @@ DreadPlate:
   name: こわもてプレート
 PixiePlate:
   name: せいれいプレート
+templates:
+  plate: もたせている あいだ、 もたせた ポケモンの {type}タイプの わざの いりょくが 1.2ばいに なる。 さばきのつぶても {type}タイプに なり、 マルチタイプの アルセウスは {type}タイプの すがたに なる。

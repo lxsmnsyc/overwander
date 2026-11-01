@@ -7,3 +7,5 @@ BurnDrive:
   name: PiroROM
 ChillDrive:
   name: CrioROM
+templates:
+  drive: Tecno Shock es de tipo {type} mientras se lleva equipado.

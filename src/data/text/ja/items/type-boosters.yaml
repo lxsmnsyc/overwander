@@ -35,3 +35,5 @@ BlackGlasses:
   name: くろいメガネ
 FairyFeather:
   name: ようせいのハネ
+templates:
+  type: もたせている あいだ、 もたせた ポケモンの {type}タイプの わざの いりょくが 1.2ばいに なる。

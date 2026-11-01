@@ -41,3 +41,6 @@ SassyMint:
   name: なまいきミント
 CarefulMint:
   name: しんちょうミント
+templates:
+  mint: 'せいかくを {nature}に する: {raised}が {up}ばい、 {lowered}が {down}ばい。 つかうと なくなる。'
+  neutral: せいかくを {nature}に する。 あがる ステータスも さがる ステータスも ない。 つかうと なくなる。

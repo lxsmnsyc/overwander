@@ -33,3 +33,5 @@ DarkMemory:
   name: ダークメモリ
 FairyMemory:
   name: フェアリーメモリ
+templates:
+  memory: もたせている あいだ、 マルチアタックが {type}タイプに なる。 ＡＲシステムの シルヴァディも おなじ タイプに なる。

@@ -13,3 +13,5 @@ WhiteApricorn:
   name: しろぼんぐり
 BlackApricorn:
   name: くろぼんぐり
+templates:
+  apricorn: ガンテツが これを {ball}に けずって くれる。

@@ -35,3 +35,7 @@ SteelTeraShard:
   name: Teralito Acero
 FairyTeraShard:
   name: Teralito Hada
+templates:
+  shard: Cincuenta de ellos cambian el teratipo de un Pokémon a {type}. Se gastan al usarse.
+StellarTeraShard:
+  description: Un teralito de tipo Astral. Aún no sirve para nada.

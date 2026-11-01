@@ -35,3 +35,5 @@ DarkGem:
   name: Gema Siniestra
 FairyGem:
   name: Gema Hada
+templates:
+  type: Los movimientos de tipo {type} del portador hacen x1,5 de daño. Se gasta con el primero que acierta.

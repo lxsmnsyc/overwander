@@ -13,5 +13,10 @@ Carbos:
   name: Carburante
 PPUp:
   name: Más PP
+  description: Acorta un escalón la recarga de un movimiento, para siempre. Se gasta al usarse.
 PPMax:
   name: PP Máximos
+  description: Acorta la recarga de un movimiento todo lo posible, para siempre. Se gasta al usarse.
+templates:
+  effort: 'Esfuerzo en {stat}: suma {effort}. Se gasta al usarse.'
+  max: 'Esfuerzo en {stat}: lo fija en {max}. Se gasta al usarse.'

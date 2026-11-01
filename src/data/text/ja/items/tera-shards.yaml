@@ -35,3 +35,7 @@ SteelTeraShard:
   name: テラピースはがね
 FairyTeraShard:
   name: テラピースフェアリー
+templates:
+  shard: 50こ あつめて つかうと、 ポケモンの テラスタイプが {type}に かわる。 つかうと なくなる。
+StellarTeraShard:
+  description: ステラタイプの ピース。 まだ つかいみちは ない。

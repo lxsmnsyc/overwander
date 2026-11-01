@@ -45,3 +45,5 @@ RelicStatue:
   name: Efigie Antigua
 RelicCrown:
   name: Corona Antigua
+templates:
+  worth: Vale {sell} de dinero para un vendedor. Nada más.

@@ -183,3 +183,5 @@ Tatsugirinite:
   name: Tatsugirita
 Baxcalibrite:
   name: Baxcaliburita
+templates:
+  stone: Permite que un {holder} que lo lleve megaevolucione. Solo un Pokémon por equipo puede megaevolucionar en un combate.

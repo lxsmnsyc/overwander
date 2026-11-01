@@ -11,9 +11,15 @@ WaveIncense:
   name: さざなみのおこう
 FullIncense:
   name: まんぷくおこう
+  description: もたせた ポケモンの わざの じゅんびが、 ふだんより 1だん おそく なる。
 LaxIncense:
   name: のんきのおこう
+  description: もたせた ポケモンへの わざが、 5%ほど はずれやすく なる。
 LuckIncense:
   name: こううんのおこう
+  description: あいぼうが もっている あいだ、 レイドに かった ときや とおせんぼうの トレーナーを たおした ときの おかねが 2ばいに なる。
 PureIncense:
   name: きよめのおこう
+  description: もっている あいぼうの まわりに あらわれる やせいの ポケモンが 3ひき へる。
+templates:
+  type: もたせている あいだ、 もたせた ポケモンの {type}タイプの わざの いりょくが 1.2ばいに なる。

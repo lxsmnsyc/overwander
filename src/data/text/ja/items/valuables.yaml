@@ -45,3 +45,5 @@ RelicStatue:
   name: こだいのせきぞう
 RelicCrown:
   name: こだいのおうかん
+templates:
+  worth: おみせで おかね {sell}で うれる。 ほかの つかいみちは ない。

@@ -13,5 +13,10 @@ Carbos:
   name: インドメタシン
 PPUp:
   name: ポイントアップ
+  description: わざ 1つの まちじかんを 1だん、 ずっと みじかくする。 つかうと なくなる。
 PPMax:
   name: ポイントマックス
+  description: わざ 1つの まちじかんを、 ずっと いきつく ところまで みじかくする。 つかうと なくなる。
+templates:
+  effort: '{stat}の どりょくちを {effort} ふやす。 つかうと なくなる。'
+  max: '{stat}の どりょくちを {max}に する。 つかうと なくなる。'

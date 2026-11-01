@@ -11,3 +11,6 @@ CleverWing:
   name: Pluma Mente
 SwiftWing:
   name: Pluma Ímpetu
+templates:
+  effort: 'Esfuerzo en {stat}: suma {effort}. Se gasta al usarse.'
+  max: 'Esfuerzo en {stat}: lo fija en {max}. Se gasta al usarse.'

@@ -17,3 +17,11 @@ RageCandyBar:
   name: Caramelo Furia
 SweetHeart:
   name: Corazón Dulce
+templates:
+  sweet: Cura {cures} un segundo después de que lo sufra el portador.
+  treat: Restaura {restore} PS cuando el portador baja a 1/5 de sus PS.
+  poison: el envenenamiento
+  sleep: el sueño
+  paralysis: la parálisis
+  burn: las quemaduras
+  freezing: la congelación

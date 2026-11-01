@@ -150,7 +150,9 @@ export default function StatsSection(props: StatsSectionProps): JSX.Element {
           {/* Beside the arrows it explains */}
           <Badge>{NATURE_NAMES[props.caught.nature]}</Badge>
         </span>
-        <span class="text-right text-xs font-semibold text-muted uppercase">
+        {/* Spills left over the bars rather than wrapping: ごうけい is
+            wider than the column */}
+        <span class="text-right text-xs font-semibold whitespace-nowrap text-muted uppercase">
           {m.catch_stats_total()}
         </span>
         <span class="text-right text-xs font-semibold text-muted uppercase">IV</span>

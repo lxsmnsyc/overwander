@@ -435,7 +435,8 @@ function BagBody(
         }}
         class="flex flex-col gap-3 md:flex-row md:items-start md:gap-4"
       >
-        <TabBar class="md:sticky md:top-0 md:w-44 md:shrink-0 md:flex-col md:overflow-visible">
+        {/* Wide enough for "Objetos equipables" and its count */}
+        <TabBar class="md:sticky md:top-0 md:w-48 md:shrink-0 md:flex-col md:overflow-visible">
           <TabButton value={ALL_ITEMS} class="md:justify-between">
             {m.item_pocket_all()}
             <Count of={readable(props.items)?.length ?? 0} />

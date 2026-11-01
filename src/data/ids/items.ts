@@ -1174,8 +1174,8 @@ export const enum Items {
    */
   DynamaxBand = 604,
   /**
-   * Thrown at a frenzied Noble to soothe its Frenzy. A party packs up
-   * to three when a Noble raid starts
+   * Thrown at a frenzied Noble to soothe its Frenzy. Each player packs up
+   * to three from their bag when a Noble raid starts
    */
   Balm = 605,
 

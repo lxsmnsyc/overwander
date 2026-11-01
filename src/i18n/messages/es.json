@@ -1713,7 +1713,7 @@
   "auction_hint_duration": "Una subasta dura {hours} horas, y solo puedes tener una a la vez.",
   "auction_hint_catches": "Se puede vender un Pokémon variocolor, con IV perfectos o todos a cero, o legendario o singular. Un favorito no se puede vender.",
   "auction_hint_items": "Solo se pueden vender objetos especiales.",
-  "auction_hint_unsold": "Un lote sin pujas no vuelve solo. Recógelo en Perfil, Subastas, Venta.",
+  "auction_hint_unsold": "Un lote sin pujas no vuelve solo. Recógelo en Perfil, Mercado, Venta.",
   "auction_running": "Tienes una subasta en marcha: {remaining}. Una a la vez, es decir, una al día.",
   "auction_from_bag": "De la mochila",
   "auction_bag_empty": "Nada de la mochila es lo bastante raro para la subasta.",
@@ -1784,7 +1784,7 @@
   "trade_pick_yours": "Elige el tuyo",
   "trade_for_their_pick": "Por el que elija {name}.",
   "trade_for": "Por {name}",
-  "trade_their_pick": "Lo elige ella o él",
+  "trade_their_pick": "A su elección",
   "trade_ask_for_one": "Pedir uno",
   "trade_gold": "Dinero",
   "trade_amount": "Cantidad",
@@ -1861,13 +1861,13 @@
   "raid_host": "Anfitrión",
   "raid_join": "Unirse",
   "raid_spectate": "Mirar",
-  "raid_rejoin": "Volver",
+  "raid_rejoin": "Reincorporarse",
   "raid_kind_mythical": "Empezar la incursión gasta la reliquia que la llamó, y solo ocurre una vez, se gane o se pierda.",
   "raid_kind_shadow": "Una incursión Oscura: lo que deja es más fuerte y cuesta el doble de caramelos criarlo.",
   "raid_kind_totem": "Una incursión de dominante: empieza potenciado y llama a un aliado con la mitad de PS. Si lo derrotas deja un Cristal Z y espera con tamaño dominante.",
   "raid_kind_gigantamax": "Una incursión Dinamax: se mantiene Gigamax todo el combate. Si lo derrotas deja Maxisetas y, al capturarlo, conserva su factor Gigamax.",
   "raid_kind_dynamax": "Una incursión Dinamax: se mantiene Dinamax todo el combate. Si lo derrotas deja Maxisetas y, de vez en cuando, una Maximuñequera.",
-  "raid_kind_noble": "Una incursión señorial: sus PS son su frenesí, se tambalea al 3/4, 1/2 y 1/4 y arremete contra todo el equipo entre medias. Si lo calmas deja Bálsamos y dinero en vez de esperar a que lo captures. Cada jugador lleva hasta 3 Bálsamos de su mochila.",
+  "raid_kind_noble": "Una incursión señorial: sus PS son su frenesí, queda aturdido al 3/4, 1/2 y 1/4 y arremete contra todo el equipo entre medias. Si lo calmas deja Bálsamos y dinero en vez de esperar a que lo captures. Cada jugador lleva hasta 3 Bálsamos de su mochila.",
   "raid_kind_tera": "Una teraincursión: se mantiene teracristalizado todo el combate y recibe los golpes solo como su teratipo. Si lo derrotas deja Teralitos de ese tipo y, al capturarlo, conserva su teratipo.",
   "raid_kind_alpha": "Una incursión alfa: con 3/4, 1/2 y 1/4 de PS trae a su lado a seis de los suyos. Si lo derrotas espera con tres estadísticas perfectas.",
   "raid_kind_plain": "Una incursión admite un equipo. Si lo derrotas, espera en el mundo a quien lo combatió.",
@@ -1913,18 +1913,126 @@
   "raid_start_failed": "No se ha podido empezar la incursión.",
   "raid_invite_title": "Invitar a la incursión",
   "raid_invite_description": "Verán la llamada sobre su lista de incursiones, y unirse es responderla.",
-  "quest_landmark_cache": "escondites de objetos",
-  "quest_landmark_berry": "arbustos de bayas",
-  "quest_landmark_nest": "nidos",
-  "quest_landmark_phenomenon": "sucesos",
-  "quest_landmark_portal": "cruces de portal",
-  "quest_landmark_apricorn": "árboles de bonguri",
-  "quest_foe_rocket": "Team Rocket",
-  "quest_foe_gym_leader": "líderes de gimnasio",
-  "quest_foe_elite_four": "miembros del Alto Mando",
-  "quest_foe_champion": "Campeones",
-  "quest_foe_trainer": "Entrenadores en duelo",
-  "quest_foe_gym_seat": "puestos de gimnasio",
+  "quest_landmark_cache": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Reclama {count} escondite de objetos",
+        "countPlural=*": "Reclama {count} escondites de objetos"
+      }
+    }
+  ],
+  "quest_landmark_berry": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Reclama {count} arbusto de bayas",
+        "countPlural=*": "Reclama {count} arbustos de bayas"
+      }
+    }
+  ],
+  "quest_landmark_nest": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Reclama {count} nido",
+        "countPlural=*": "Reclama {count} nidos"
+      }
+    }
+  ],
+  "quest_landmark_phenomenon": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Reclama {count} suceso",
+        "countPlural=*": "Reclama {count} sucesos"
+      }
+    }
+  ],
+  "quest_landmark_portal": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Reclama {count} cruce de portal",
+        "countPlural=*": "Reclama {count} cruces de portal"
+      }
+    }
+  ],
+  "quest_landmark_apricorn": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Reclama {count} árbol de bonguri",
+        "countPlural=*": "Reclama {count} árboles de bonguri"
+      }
+    }
+  ],
+  "quest_foe_rocket": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Gana {count} combate contra el Team Rocket",
+        "countPlural=*": "Gana {count} combates contra el Team Rocket"
+      }
+    }
+  ],
+  "quest_foe_gym_leader": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Vence a {count} líder de gimnasio",
+        "countPlural=*": "Vence a {count} líderes de gimnasio"
+      }
+    }
+  ],
+  "quest_foe_elite_four": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Vence a {count} miembro del Alto Mando",
+        "countPlural=*": "Vence a {count} miembros del Alto Mando"
+      }
+    }
+  ],
+  "quest_foe_champion": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Vence a {count} Campeón",
+        "countPlural=*": "Vence a {count} Campeones"
+      }
+    }
+  ],
+  "quest_foe_trainer": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Vence a {count} Entrenador en duelo",
+        "countPlural=*": "Vence a {count} Entrenadores en duelo"
+      }
+    }
+  ],
+  "quest_foe_gym_seat": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Vence a {count} puesto de gimnasio",
+        "countPlural=*": "Vence a {count} puestos de gimnasio"
+      }
+    }
+  ],
   "quest_hand_over": "Entrega {count} × {item}",
   "quest_dex": "Captura {count} especies distintas",
   "quest_dex_region": "Captura {count} especies distintas de {region}",
@@ -2013,7 +2121,6 @@
       }
     }
   ],
-  "quest_landmark": "Reclama {count} {landmark}",
   "quest_raid_runs": [
     {
       "declarations": ["input count", "local countPlural = count: plural"],
@@ -2119,7 +2226,6 @@
       }
     }
   ],
-  "quest_beat_foe": "Gana {count} combates contra {foe}",
   "quest_gold_earned": "Gana {amount} de dinero",
   "quest_gold_spent": "Gasta {amount} de dinero",
   "quest_gifts": [
@@ -2221,7 +2327,7 @@
   "profile_edit_title": "Editar perfil",
   "profile_edit_description": "Cómo te ven los demás: el nombre en tus lotes y en una sala, y el personaje a su lado.",
   "profile_nickname": "Mote",
-  "profile_nickname_hint": "Se conservan letras, números, espacios y ' . - . Máximo {max}.",
+  "profile_nickname_hint": "Se conservan letras, números, espacios y los signos ' . - (máximo {max}).",
   "profile_title": "Título",
   "profile_title_search": "Busca tus títulos…",
   "profile_title_hint": "Se consigue con logros y la escalera de medallas; se lleva bajo tu nombre.",

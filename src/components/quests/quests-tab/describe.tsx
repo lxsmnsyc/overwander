@@ -41,8 +41,8 @@ import { Dynamic } from 'solid-js/web';
 import { formatNumber } from '../../../i18n/format';
 import { m } from '../../../i18n/paraglide/messages.js';
 
-/** What a landmark kind is called on a requirement line */
-const LANDMARK_NAMES: Record<Landmark, () => string> = {
+/** The goal for claiming one kind of landmark: a sentence per kind, so the noun agrees with the count */
+const LANDMARK_GOALS: Record<Landmark, (inputs: { count: number }) => string> = {
   [Landmark.Cache]: m.quest_landmark_cache,
   [Landmark.Berry]: m.quest_landmark_berry,
   [Landmark.Nest]: m.quest_landmark_nest,
@@ -51,8 +51,8 @@ const LANDMARK_NAMES: Record<Landmark, () => string> = {
   [Landmark.Apricorn]: m.quest_landmark_apricorn,
 };
 
-/** What a battle foe is called on a requirement line */
-const FOE_NAMES: Record<Foe, () => string> = {
+/** The goal for beating one kind of foe: a sentence per kind, so the noun agrees with the count */
+const FOE_GOALS: Record<Foe, (inputs: { count: number }) => string> = {
   [Foe.Rocket]: m.quest_foe_rocket,
   [Foe.GymLeader]: m.quest_foe_gym_leader,
   [Foe.EliteFour]: m.quest_foe_elite_four,
@@ -113,7 +113,7 @@ export function describeRequirement(requirement: QuestRequirement): string {
     case Metric.Landmarks:
       return requirement.landmark == null
         ? m.quest_landmarks({ count })
-        : m.quest_landmark({ count, landmark: LANDMARK_NAMES[requirement.landmark]() });
+        : LANDMARK_GOALS[requirement.landmark]({ count });
     case Metric.RaidRuns:
       return m.quest_raid_runs({ count });
     case Metric.RaidWins:
@@ -149,7 +149,7 @@ export function describeRequirement(requirement: QuestRequirement): string {
     case Metric.BattleWins:
       return requirement.foe == null
         ? m.quest_beat_trainers({ count })
-        : m.quest_beat_foe({ count, foe: FOE_NAMES[requirement.foe]() });
+        : FOE_GOALS[requirement.foe]({ count });
     case Metric.GoldEarned:
       return m.quest_gold_earned({ amount: formatNumber(count) });
     case Metric.GoldSpent:

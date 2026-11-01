@@ -1551,7 +1551,7 @@
   "auction_hint_duration": "An auction runs for {hours} hours, and you can run one at a time.",
   "auction_hint_catches": "A pokemon can be sold if it is shiny, has perfect or all-zero IVs, or is a legendary or mythical. A favourite cannot be sold.",
   "auction_hint_items": "Only special items can be sold.",
-  "auction_hint_unsold": "A lot nobody bids on does not come back on its own. Collect it from Profile, Auction, Selling.",
+  "auction_hint_unsold": "A lot nobody bids on does not come back on its own. Collect it from Profile, Market, Selling.",
   "auction_running": "You have an auction running — {remaining}. One at a time, which is one a day.",
   "auction_from_bag": "From the bag",
   "auction_bag_empty": "Nothing in the bag is rare enough for the block.",
@@ -1751,18 +1751,126 @@
   "raid_start_failed": "The raid could not be started.",
   "raid_invite_title": "Invite to the raid",
   "raid_invite_description": "They see the call above their list of raids, and joining answers it.",
-  "quest_landmark_cache": "item caches",
-  "quest_landmark_berry": "berry patches",
-  "quest_landmark_nest": "nests",
-  "quest_landmark_phenomenon": "phenomena",
-  "quest_landmark_portal": "portal crossings",
-  "quest_landmark_apricorn": "apricorn trees",
-  "quest_foe_rocket": "Team Rocket stops",
-  "quest_foe_gym_leader": "gym leaders",
-  "quest_foe_elite_four": "Elite Four members",
-  "quest_foe_champion": "Champions",
-  "quest_foe_trainer": "duelling trainers",
-  "quest_foe_gym_seat": "gym seats",
+  "quest_landmark_cache": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Claim {count} item cache",
+        "countPlural=*": "Claim {count} item caches"
+      }
+    }
+  ],
+  "quest_landmark_berry": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Claim {count} berry patch",
+        "countPlural=*": "Claim {count} berry patches"
+      }
+    }
+  ],
+  "quest_landmark_nest": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Claim {count} nest",
+        "countPlural=*": "Claim {count} nests"
+      }
+    }
+  ],
+  "quest_landmark_phenomenon": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Claim {count} phenomenon",
+        "countPlural=*": "Claim {count} phenomena"
+      }
+    }
+  ],
+  "quest_landmark_portal": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Claim {count} portal crossing",
+        "countPlural=*": "Claim {count} portal crossings"
+      }
+    }
+  ],
+  "quest_landmark_apricorn": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Claim {count} apricorn tree",
+        "countPlural=*": "Claim {count} apricorn trees"
+      }
+    }
+  ],
+  "quest_foe_rocket": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Beat {count} Team Rocket stop",
+        "countPlural=*": "Beat {count} Team Rocket stops"
+      }
+    }
+  ],
+  "quest_foe_gym_leader": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Beat {count} gym leader",
+        "countPlural=*": "Beat {count} gym leaders"
+      }
+    }
+  ],
+  "quest_foe_elite_four": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Beat {count} Elite Four member",
+        "countPlural=*": "Beat {count} Elite Four members"
+      }
+    }
+  ],
+  "quest_foe_champion": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Beat {count} Champion",
+        "countPlural=*": "Beat {count} Champions"
+      }
+    }
+  ],
+  "quest_foe_trainer": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Beat {count} duelling trainer",
+        "countPlural=*": "Beat {count} duelling trainers"
+      }
+    }
+  ],
+  "quest_foe_gym_seat": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Beat {count} gym seat",
+        "countPlural=*": "Beat {count} gym seats"
+      }
+    }
+  ],
   "quest_hand_over": "Hand over {count} × {item}",
   "quest_dex": "Catch {count} different species",
   "quest_dex_region": "Catch {count} different {region} species",
@@ -1851,7 +1959,6 @@
       }
     }
   ],
-  "quest_landmark": "Claim {count} {landmark}",
   "quest_raid_runs": [
     {
       "declarations": ["input count", "local countPlural = count: plural"],
@@ -1957,7 +2064,6 @@
       }
     }
   ],
-  "quest_beat_foe": "Beat {count} {foe}",
   "quest_gold_earned": "Earn {amount} gold",
   "quest_gold_spent": "Spend {amount} gold",
   "quest_gifts": [

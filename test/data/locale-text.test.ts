@@ -22,8 +22,8 @@ const active = vi.hoisted(() => ({ locale: 'en' }));
 
 vi.mock('../../src/i18n/locale', () => ({
   baseLocale: 'en',
-  locales: ['en', 'xx'],
-  isLocale: (value: unknown) => value === 'en' || value === 'xx',
+  locales: ['en', 'xx', 'ja', 'es'],
+  isLocale: (value: unknown) => ['en', 'xx', 'ja', 'es'].includes(String(value)),
   currentLocale: () => active.locale,
   getIntlTag: () => 'en-GB',
 }));

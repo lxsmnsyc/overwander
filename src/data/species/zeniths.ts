@@ -11,9 +11,9 @@ import {
 } from '../ids/forms';
 import { ABILITY_IDS, ITEM_IDS, REGION_IDS, SPECIES_IDS, TYPE_IDS } from '../ids/names';
 import { Species } from '../ids/species';
-import { baseLocale, currentLocale, type Locale } from '../../i18n/locale';
+import { type Locale, baseLocale, currentLocale } from '../../i18n/locale';
 import { deriveLocalized, extendRecord, idOf, idsOf, splitLocales } from '../yaml';
-import { getSpeciesData, registerSpecies, type SpeciesData } from './__create';
+import { type SpeciesData, getSpeciesData, registerSpecies } from './__create';
 import { readStats } from './yaml';
 
 /**
@@ -76,14 +76,20 @@ const NAME_KEY = 'name';
 /** Where a name says whose Zenith it is */
 const HOLDER_MARK = '{holder}';
 
-/** Each locale's name template, English included */
-const NAME_TEMPLATES = readNameTemplates();
+function readNameTemplate(file: unknown, where: string): string {
+  const words = v.parse(TEXT_FILE, file);
+
+  if (!Object.hasOwn(words, NAME_KEY) || !words[NAME_KEY].includes(HOLDER_MARK)) {
+    throw new Error(`${where}: ${NAME_KEY} must hold ${HOLDER_MARK}`);
+  }
+  return words[NAME_KEY];
+}
 
 function readNameTemplates(): Map<Locale, string> {
   const templates = new Map<Locale, string>();
 
-  for (const file of Object.values(TEXT_FILES.english)) {
-    templates.set(baseLocale, readNameTemplate(file, 'text/en/zeniths.yaml'));
+  for (const [path, file] of Object.entries(TEXT_FILES.english)) {
+    templates.set(baseLocale, readNameTemplate(file, path));
   }
   for (const [locale, placed] of TEXT_FILES.overlays) {
     for (const [path, file] of Object.entries(placed)) {
@@ -96,14 +102,8 @@ function readNameTemplates(): Map<Locale, string> {
   return templates;
 }
 
-function readNameTemplate(file: unknown, where: string): string {
-  const template = v.parse(TEXT_FILE, file)[NAME_KEY];
-
-  if (template == null || !template.includes(HOLDER_MARK)) {
-    throw new Error(`${where}: ${NAME_KEY} must hold ${HOLDER_MARK}`);
-  }
-  return template;
-}
+/** Each locale's name template, English included */
+const NAME_TEMPLATES = readNameTemplates();
 
 function englishName(holder: string): string {
   return (NAME_TEMPLATES.get(baseLocale) ?? '').replace(HOLDER_MARK, holder);
@@ -158,9 +158,13 @@ function readZeniths(): ZenithShape[] {
   const holders: Record<string, string> = {};
 
   for (const file of Object.values(TEXT_FILES.english)) {
-    Object.assign(holders, v.parse(TEXT_FILE, file));
+    for (const [key, holder] of Object.entries(v.parse(TEXT_FILE, file))) {
+      // The name template sits beside the holders
+      if (key !== NAME_KEY) {
+        holders[key] = holder;
+      }
+    }
   }
-  delete holders[NAME_KEY];
   const shapes: ZenithShape[] = [];
 
   for (const [, path, file] of files) {
